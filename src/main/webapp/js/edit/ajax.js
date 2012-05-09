@@ -8,7 +8,7 @@ jQuery(document).ready(function() {
 			cache : false,
 			dataType : "json"
 		}).done(function(jsonObj) {			
-			jQuery.each(jsonObj.zone, function(xhtmlId, xhtml) {
+			jQuery.each(jsonObj.zone, function(xhtmlId, xhtml) {				
 				jQuery("#" + xhtmlId).html(xhtml);	
 			});			
 			jQuery(document).trigger("ajaxUpdate");

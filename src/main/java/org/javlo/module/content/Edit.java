@@ -40,6 +40,28 @@ import org.javlo.user.AdminUserSecurity;
 import org.javlo.user.IUserFactory;
 
 public class Edit implements IModuleAction {
+	
+	private static void prepareUpdateInsertLine(ContentContext ctx) throws Exception {
+		GlobalContext globalContext = GlobalContext.getInstance(ctx.getRequest());
+		EditContext editContext = EditContext.getInstance(globalContext,ctx.getRequest().getSession());
+		I18nAccess i18nAccess = I18nAccess.getInstance(ctx.getRequest());
+		
+		IContentVisualComponent currentTypeComponent = ComponentFactory.getComponentWithType(ctx, editContext.getActiveType());
+
+		String typeName = StringHelper.getFirstNotNull( currentTypeComponent.getComponentLabel(ctx,globalContext.getEditLanguage()), i18nAccess.getText ( "content."+currentTypeComponent.getType()));
+		String insertHere = i18nAccess.getText("content.insert-here", new String[][] {{"type",typeName}});
+		
+		String insertXHTML = "<a class=\"action-button\" href=\""+URLHelper.createURL(ctx)+"?webaction=insert&previous=0&type="+typeName+"\">"+insertHere+"</a>";
+		ctx.addAjaxZone("insert-line-0", insertXHTML);
+		
+		IContentComponentsList elems = ctx.getCurrentPage().getContent(ctx);	
+		while (elems.hasNext(ctx)) {
+			IContentVisualComponent comp = elems.next(ctx);
+			insertXHTML = "<a class=\"action-button\" href=\""+URLHelper.createURL(ctx)+"?webaction=insert&previous="+comp.getId()+"&type="+typeName+"\">"+insertHere+"</a>";
+			ctx.addAjaxZone("insert-line-"+comp.getId(), insertXHTML);
+		}
+		
+	}
 
 	public static class ComponentWrapper {
 		private String type;
@@ -334,7 +356,8 @@ public class Edit implements IModuleAction {
 			Box componentBox = currentModule.getBox("components");
 			if (componentBox != null) {
 				loadComponentList(ctx);
-				componentBox.update(ctx);				
+				componentBox.update(ctx);
+				prepareUpdateInsertLine(ctx);
 			} else {
 				message = "component box not found.";
 			}

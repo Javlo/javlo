@@ -9,6 +9,7 @@ import java.util.LinkedList;
 import java.util.Locale;
 import java.util.Map;
 import java.util.Properties;
+import java.util.Stack;
 
 import javax.servlet.ServletException;
 
@@ -41,6 +42,41 @@ public class Module {
 	}
 
 	private static final EmptyAction emptyAction = new EmptyAction();
+	
+	public static class HtmlLink {
+		private String url;
+		private String legend;
+		private String title;
+		
+		public HtmlLink(String url, String legend, String title) {		
+			this.url = url;
+			this.legend = legend;
+			this.title = title;
+		}
+		public String getUrl() {
+			return url;
+		}
+		public void setUrl(String url) {
+			this.url = url;
+		}
+		public String getLegend() {
+			return legend;
+		}
+		public void setLegend(String legend) {
+			this.legend = legend;
+		}
+		public String getTitle() {
+			return title;
+		}
+		public void setTitle(String title) {
+			this.title = title;
+		}
+		@Override
+		public boolean equals(Object obj) {
+			HtmlLink otherLink = (HtmlLink)obj;
+			return otherLink.getUrl().equals(getUrl()) && otherLink.getLegend().equals(getLegend());
+		}
+	}
 
 	public class Link {
 		public Link(String params, String label, String style) {
@@ -73,7 +109,6 @@ public class Module {
 		public void setActive(boolean active) {
 			this.active = active;
 		}
-
 	}
 
 	public class Box {
@@ -156,6 +191,7 @@ public class Module {
 	private String defaultRenderer;
 	private Map<String,Box> boxes = new HashMap<String, Box>();
 	private String backUrl = null;
+	private Stack<HtmlLink> breadcrumbLinks;
 
 	public Module(File configFile, Locale locale, String modulePath) throws IOException {
 		FileReader fileReader = null;
@@ -480,6 +516,27 @@ public class Module {
 	
 	public String getPath() {
 		return path;
+	}
+	
+	public Collection<HtmlLink> getBreadcrumbList() {
+		return breadcrumbLinks;
+	}
+	
+	public void pushBreadcrumb(HtmlLink link) {
+		if (breadcrumbLinks == null) {
+			breadcrumbLinks = new Stack<HtmlLink>();
+		}
+		if (breadcrumbLinks.size() == 0 || !breadcrumbLinks.peek().equals(link)) {
+			breadcrumbLinks.push(link);
+		}
+	}
+	
+	public HtmlLink popBreadcrumb(HtmlLink link) {
+		return breadcrumbLinks.pop();
+	}
+	
+	public void clearBreadcrump() {
+		breadcrumbLinks = null;
 	}
  	
 }
