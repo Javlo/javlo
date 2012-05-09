@@ -522,6 +522,25 @@ ul,li {
 	margin-right: 290px;
 }
 
+/*** AJAX ***/
+.tabmenu li.module {
+	position: relative;
+}
+
+#ajax-loader {
+	top: 12px;
+	left: 15px;
+	position: absolute;
+	background-image: url("../images/loaders/loader3.gif");
+	background-color: #eeeeee;
+	width: 16px;
+	height: 16px;
+	display: none;
+}
+
+#ajax-loader.active {
+	display: block;
+}
 
 /*** JQUERY UI ***/
 .ui-tabs-nav li a {

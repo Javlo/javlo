@@ -82,7 +82,10 @@
     <div class="tabmenu">
     	<ul>
     	    <c:forEach var="module" items="${modules}">
-        	<li class="module ${module.name} ${module.name == currentModule.name?'current':''} ${module.name == fromModule.name?'from':''}" ><a href="${info.currentURL}?module=${module.name}"><span>${module.title}</span></a></li>
+        	<li class="module ${module.name} ${module.name == currentModule.name?'current':''} ${module.name == fromModule.name?'from':''}">        		
+        		<a href="${info.currentURL}?module=${module.name}"><span>${module.title}</span></a>
+        		${module.name == currentModule.name?'<div id="ajax-loader"></div>':''}
+        	</li>
         	</c:forEach>            	
         </ul>
     </div><!-- tabmenu -->
@@ -91,7 +94,7 @@
     	<img src="/jsp/edit/template/default/images/avatar.png" alt="Avatar" />
         <div class="info">
         	<h3>${currentUser.name}</h3>
-            <small>${currentUser.userInfo.email}</small>
+            <small>${currentUser.userInfo.email}&nbsp;</small>
             <p>
             	<a href="">Account Settings</a> <a href="${info.currentURL}?edit-logout=logout">Logout</a>
             </p>

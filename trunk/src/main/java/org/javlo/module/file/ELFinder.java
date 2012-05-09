@@ -32,7 +32,7 @@ public class ELFinder {
 	private Map<String, String> MIME_TYPES;
 
 	private Map<String, Volume> volumes;
-
+ 
 	public ELFinder(String rootPath, String resourcePath) {
 		Volume volume = new Volume();
 		volume.id = "AB";
