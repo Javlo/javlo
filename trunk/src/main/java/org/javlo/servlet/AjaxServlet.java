@@ -11,6 +11,7 @@ import javax.servlet.http.HttpServletResponse;
 import org.javlo.context.ContentContext;
 import org.javlo.context.EditContext;
 import org.javlo.context.GlobalContext;
+import org.javlo.data.InfoBean;
 import org.javlo.helper.ServletHelper;
 import org.json.JSONObject;
 
@@ -43,6 +44,8 @@ public class AjaxServlet extends HttpServlet {
 			ContentContext ctx = ContentContext.getContentContext(request, response);
 			GlobalContext globalContext = GlobalContext.getInstance(ctx.getRequest());
 			EditContext editCtx = EditContext.getInstance(globalContext, request.getSession());
+			InfoBean.updateInfoBean(ctx);
+			
 			String action = ServletHelper.execAction(ctx);
 			logger.info("exec action : " + action);
 
@@ -57,8 +60,6 @@ public class AjaxServlet extends HttpServlet {
 
 			outMap.put("zone", ctx.getAjaxZone());
 			outMap.write(strWriter);
-			
-			System.out.println("***** AjaxServlet.process : strWriter = "+strWriter); //TODO: remove debug trace
 			
 			response.setContentType("application/json");
 			response.getWriter().write(strWriter.toString());

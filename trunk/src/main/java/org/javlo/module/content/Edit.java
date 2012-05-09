@@ -46,6 +46,7 @@ public class Edit implements IModuleAction {
 		private String label;
 		private String value;
 		private boolean metaTitle;
+		private boolean selected; 
 
 		public ComponentWrapper(String type, String label, String value, boolean metaTitle) {
 			this.type = type;
@@ -86,6 +87,14 @@ public class Edit implements IModuleAction {
 			this.metaTitle = metaTitle;
 		}
 
+		public boolean isSelected() {
+			return selected;
+		}
+
+		public void setSelected(boolean selected) {
+			this.selected = selected;
+		}
+
 	}
 
 	@Override
@@ -123,7 +132,8 @@ public class Edit implements IModuleAction {
 	 * @throws Exception
 	 */
 	private static boolean nameExist(ContentContext ctx, String name) throws Exception {
-		ContentService content = ContentService.createContent(ctx.getRequest());
+		GlobalContext globalContext = GlobalContext.getInstance(ctx.getRequest());
+		ContentService content = ContentService.getInstance(globalContext);
 		MenuElement page = content.getNavigation(ctx);
 		return (page.searchChildFromName(name) != null);
 	}
@@ -140,14 +150,14 @@ public class Edit implements IModuleAction {
 		AdminUserSecurity adminUserSecurity = AdminUserSecurity.getInstance(ctx.getRequest().getSession().getServletContext());
 		GlobalContext globalContext = GlobalContext.getInstance(ctx.getRequest());
 		IUserFactory adminUserFactory = AdminUserFactory.createUserFactory(globalContext, ctx.getRequest().getSession());
-		ContentService.createContent(ctx.getRequest());
+		ContentService.getInstance(globalContext);
 		MenuElement currentPage = ctx.getCurrentPage();
 		if (currentPage.getEditorRoles().size() > 0) {
 			if (!adminUserSecurity.haveRight(adminUserFactory.getCurrentUser(ctx.getRequest().getSession()), AdminUserSecurity.FULL_CONTROL_ROLE)) {
 				if (!adminUserFactory.getCurrentUser(ctx.getRequest().getSession()).validForRoles(currentPage.getEditorRoles())) {
 					MessageRepository messageRepository = MessageRepository.getInstance(ctx);
 					I18nAccess i18nAccess = I18nAccess.getInstance(ctx.getRequest());
-					messageRepository.setGlobalMessageAndNotification(ctx,new GenericMessage(i18nAccess.getText("action.security.noright-onpage"), GenericMessage.ERROR));
+					messageRepository.setGlobalMessageAndNotification(ctx, new GenericMessage(i18nAccess.getText("action.security.noright-onpage"), GenericMessage.ERROR));
 					return false;
 				}
 			}
@@ -176,14 +186,62 @@ public class Edit implements IModuleAction {
 	 * @throws Exception
 	 */
 	private static void modifPage(ContentContext ctx) throws Exception {
-		ContentService.createContent(ctx.getRequest());
 		MenuElement currentPage = ctx.getCurrentPage();
 		currentPage.setModificationDate(new Date());
 		GlobalContext globalContext = GlobalContext.getInstance(ctx.getRequest());
+		ContentService.getInstance(globalContext);
 		EditContext editCtx = EditContext.getInstance(globalContext, ctx.getRequest().getSession());
 		currentPage.setLatestEditor(editCtx.getUserPrincipal().getName());
 		currentPage.setValid(false);
 		currentPage.releaseCache();
+	}
+
+	private static void loadComponentList(ContentContext ctx) throws Exception {
+		//if (ctx.getRequest().getAttribute("components") == null) {
+			GlobalContext globalContext = GlobalContext.getInstance(ctx.getRequest());
+			IContentVisualComponent[] components = ComponentFactory.getComponents(ctx);
+			List<ComponentWrapper> comps = new LinkedList<ComponentWrapper>();
+			EditContext editCtx = EditContext.getInstance(globalContext, ctx.getRequest().getSession());
+			ComponentWrapper titleWrapper = null;
+			for (int i = 0; i < components.length - 1; i++) { // remove title without component
+				if (!components[i].isMetaTitle() || !components[i + 1].isMetaTitle()) { // if next component is title too so the component group is empty
+					IContentVisualComponent comp = components[i];
+					ComponentWrapper compWrapper = new ComponentWrapper(comp.getType(), comp.getComponentLabel(ctx, globalContext.getEditLanguage()), comp.getValue(ctx), comp.isMetaTitle());
+					if (components[i].isMetaTitle()) {
+						titleWrapper = compWrapper;
+					}
+					if (comp.getType().equals(editCtx.getActiveType())) {
+						compWrapper.setSelected(true);
+						if (titleWrapper != null) {
+							{
+								titleWrapper.setSelected(true);
+							}
+						}
+					}
+					comps.add(compWrapper);
+				}
+			}
+			if (!components[components.length - 1].isMetaTitle()) {
+				IContentVisualComponent comp = components[components.length - 1];
+				ComponentWrapper compWrapper = new ComponentWrapper(comp.getType(), comp.getComponentLabel(ctx, globalContext.getEditLanguage()), comp.getValue(ctx), comp.isMetaTitle()); 
+				comps.add(compWrapper);
+				if (comp.getType().equals(editCtx.getActiveType())) {
+					compWrapper.setSelected(true);
+					if (titleWrapper != null) {
+						{
+							titleWrapper.setSelected(true);
+						}
+					}
+				}
+			}
+			ctx.getRequest().setAttribute("components", comps);
+			
+			Module currentModule = ModuleContext.getInstance(globalContext, ctx.getRequest().getSession()).getCurrentModule();
+			Box componentBox = currentModule.getBox("components");
+			I18nAccess i18nAccess = I18nAccess.getInstance(ctx.getRequest());			
+			IContentVisualComponent comp = ComponentFactory.getComponentWithType(ctx, editCtx.getActiveType());
+			componentBox.setTitle(i18nAccess.getText("components.title", new String[][] { { "component", comp.getComponentLabel(ctx, globalContext.getEditLanguage()) } }));
+		//}
 	}
 
 	/**
@@ -194,7 +252,6 @@ public class Edit implements IModuleAction {
 	 * @throws Exception
 	 */
 	private static boolean canModifyCurrentPage(ContentContext ctx) throws Exception {
-		ContentService.createContent(ctx.getRequest());
 		MenuElement currentPage = ctx.getCurrentPage();
 		GlobalContext globalContext = GlobalContext.getInstance(ctx.getRequest());
 		IUserFactory adminUserFactory = AdminUserFactory.createUserFactory(globalContext, ctx.getRequest().getSession());
@@ -213,11 +270,11 @@ public class Edit implements IModuleAction {
 
 	@Override
 	public String prepare(ContentContext ctx, ModuleContext moduleContext) throws Exception {
-		
+
 		HttpServletRequest request = ctx.getRequest();
-		
+
 		GlobalContext globalContext = GlobalContext.getInstance(ctx.getRequest());
-		
+
 		Module currentModule = moduleContext.getCurrentModule();
 
 		/** set the principal renderer **/
@@ -240,24 +297,7 @@ public class Edit implements IModuleAction {
 		}
 
 		/** COMPONENT LIST **/
-		IContentVisualComponent[] components = ComponentFactory.getComponents(ctx);
-		List<ComponentWrapper> comps = new LinkedList<ComponentWrapper>();
-		for (int i = 0; i < components.length - 1; i++) { // remove title without component
-			if (!components[i].isMetaTitle() || !components[i + 1].isMetaTitle()) { // if next component is title too so the component group is empty
-				IContentVisualComponent comp = components[i];
-				comps.add(new ComponentWrapper(comp.getType(), comp.getComponentLabel(ctx, globalContext.getEditLanguage()), comp.getValue(ctx), comp.isMetaTitle()));
-			}
-		}
-		if (!components[components.length - 1].isMetaTitle()) {
-			IContentVisualComponent comp = components[components.length - 1];
-			comps.add(new ComponentWrapper(comp.getType(), comp.getComponentLabel(ctx, globalContext.getEditLanguage()), comp.getValue(ctx), comp.isMetaTitle()));
-		}
-		request.setAttribute("components", comps);
-		Box componentBox = currentModule.getBox("components");
-		I18nAccess i18nAccess = I18nAccess.getInstance(request);
-		EditContext editCtx = EditContext.getInstance(globalContext, request.getSession());
-		IContentVisualComponent comp = ComponentFactory.getComponentWithType(ctx, editCtx.getActiveType());
-		componentBox.setTitle(i18nAccess.getText("components.title", new String[][] { { "component", comp.getComponentLabel(ctx, globalContext.getEditLanguage()) } }));
+		loadComponentList(ctx);
 
 		/** CONTENT **/
 		ComponentContext compCtx = ComponentContext.getInstance(request);
@@ -267,22 +307,22 @@ public class Edit implements IModuleAction {
 				compCtx.addNewComponent(elems.next(ctx));
 			}
 		}
-		
-		/** page properties **/		
+
+		/** page properties **/
 		PageConfiguration pageConfig = PageConfiguration.getInstance(globalContext);
+		EditContext editCtx = EditContext.getInstance(globalContext, ctx.getRequest().getSession());
 		List<Template> templates = pageConfig.getContextTemplates(editCtx);
 		Collections.sort(templates);
 
 		request.setAttribute("templates", templates);
-		
-		String templateImageURL = URLHelper.createTransformStaticTemplateURL(ctx, ctx.getCurrentTemplate(), "template", ctx.getCurrentTemplate().getVisualFile());		
+
+		String templateImageURL = URLHelper.createTransformStaticTemplateURL(ctx, ctx.getCurrentTemplate(), "template", ctx.getCurrentTemplate().getVisualFile());
 		request.setAttribute("templateImageUrl", templateImageURL);
-		
-		
+
 		return null;
 	}
 
-	public static final String performChangeComponent(GlobalContext globalContext, EditContext editCtx, ContentContext ctx, RequestService requestService, I18nAccess i18nAccess, Module currentModule) {
+	public static final String performChangeComponent(GlobalContext globalContext, EditContext editCtx, ContentContext ctx, RequestService requestService, I18nAccess i18nAccess, Module currentModule) throws Exception {
 		String newType = requestService.getParameter("type", null);
 		String message = null;
 		if (newType != null) {
@@ -290,6 +330,14 @@ public class Edit implements IModuleAction {
 			newType = i18nAccess.getText("content." + newType, newType);
 			String msg = i18nAccess.getText("content.new-type", new String[][] { { "type", newType } });
 			MessageRepository.getInstance(ctx).setGlobalMessage(new GenericMessage(msg, GenericMessage.INFO));
+
+			Box componentBox = currentModule.getBox("components");
+			if (componentBox != null) {
+				loadComponentList(ctx);
+				componentBox.update(ctx);				
+			} else {
+				message = "component box not found.";
+			}
 		} else {
 			message = "Fatal error : type not found";
 		}
@@ -343,7 +391,7 @@ public class Edit implements IModuleAction {
 
 	public static final String performSave(ContentContext ctx, GlobalContext globalContext, ContentService content, RequestService requestService, I18nAccess i18nAccess, MessageRepository messageRepository, MenuElement currentPage, AdminUserFactory adminUserFactory) throws Exception {
 
-		if (!canModifyCurrentPage(ctx) || !checkPageSecurity(ctx)) {			
+		if (!canModifyCurrentPage(ctx) || !checkPageSecurity(ctx)) {
 			messageRepository.setGlobalMessageAndNotification(ctx, new GenericMessage(i18nAccess.getText("action.block"), GenericMessage.ERROR));
 			return null;
 		}
@@ -399,7 +447,7 @@ public class Edit implements IModuleAction {
 	public static final String performPageProperties(ServletContext application, ContentContext ctx, ContentService content, EditContext editCtx, PageConfiguration pageConfig, RequestService requestService, I18nAccess i18nAccess, MessageRepository messageRepository) throws Exception {
 
 		if (!canModifyCurrentPage(ctx) || !checkPageSecurity(ctx)) {
-			messageRepository.setGlobalMessageAndNotification(ctx,new GenericMessage(i18nAccess.getText("action.block"), GenericMessage.ERROR));
+			messageRepository.setGlobalMessageAndNotification(ctx, new GenericMessage(i18nAccess.getText("action.block"), GenericMessage.ERROR));
 			return null;
 		}
 
@@ -432,42 +480,42 @@ public class Edit implements IModuleAction {
 				page.setVisible(isView);
 				modify = true;
 			}
-			
-			String templateName = requestService.getParameter("template", null); 
+
+			String templateName = requestService.getParameter("template", null);
 			if (templateName != null) {
-				if (templateName.length() > 1) {					
-					Template template = TemplateFactory.getDiskTemplates(application).get(templateName);					
+				if (templateName.length() > 1) {
+					Template template = TemplateFactory.getDiskTemplates(application).get(templateName);
 					if (template != null && pageConfig.getContextTemplates(editCtx).contains(template)) {
 						page.setTemplateName(template.getName());
 					} else {
-						return "template not found : "+templateName;
+						return "template not found : " + templateName;
 					}
 				} else {
 					page.setTemplateName(null); // inherited
 				}
-				
+
 			}
 			if (errorMessage != null) {
-				messageRepository.setGlobalMessageAndNotification(ctx,new GenericMessage(errorMessage, GenericMessage.ERROR));
+				messageRepository.setGlobalMessageAndNotification(ctx, new GenericMessage(errorMessage, GenericMessage.ERROR));
 			} else {
 				if (modify) {
-					messageRepository.setGlobalMessageAndNotification(ctx,new GenericMessage(i18nAccess.getText("message.update-page-properties"), GenericMessage.INFO));
+					messageRepository.setGlobalMessageAndNotification(ctx, new GenericMessage(i18nAccess.getText("message.update-page-properties"), GenericMessage.INFO));
 				}
 			}
 		}
 		return null;
 	}
-	
-	public static final String performChangeLanguage(RequestService requestService, ContentContext ctx, I18nAccess i18nAccess, MessageRepository messageRepository ) {
+
+	public static final String performChangeLanguage(RequestService requestService, ContentContext ctx, I18nAccess i18nAccess, MessageRepository messageRepository) {
 		String lg = requestService.getParameter("language", null);
 		if (lg != null) {
 			ctx.setContentLanguage(lg);
-			messageRepository.setGlobalMessage(new GenericMessage(i18nAccess.getText("edit.message.new-language")+lg, GenericMessage.INFO));
-			
+			messageRepository.setGlobalMessage(new GenericMessage(i18nAccess.getText("edit.message.new-language") + lg, GenericMessage.INFO));
+
 		} else {
 			return "bad request structure : 'language' not found.";
 		}
-		return null;		
+		return null;
 	}
 
 }

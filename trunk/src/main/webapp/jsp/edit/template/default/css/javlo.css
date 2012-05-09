@@ -353,6 +353,10 @@ ul,li {
 	position: relative;
 }
 
+.component-list .selected {
+	font-weight: bold;
+}
+
 .insert-line {
 	text-align: center;
 	padding: 3px;

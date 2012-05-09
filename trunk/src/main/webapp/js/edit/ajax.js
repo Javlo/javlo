@@ -1,21 +1,17 @@
-jQuery(document).ready(function() {
-	var ajaxLinks = jQuery("a.ajax");
-	for ( var i = 0; i < ajaxLinks.length; i++) {
-		var link = ajaxLinks[i];
-		var href = jQuery(link).attr("href");
-		href = href.replace("/edit/", "/ajax/");
-		jQuery(link).attr("href", "");
-		jQuery(link).bind("click", function() {
-			jQuery.ajax({
-				url : href,
-				cache : false,
-				dataType : "json"
-			}).done(function(jsonObj) {
-				jQuery.each(jsonObj.zone, function(xhtmlId, xhtml) {
-					jQuery("#"+xhtmlId).html(xhtml);
-				});
-			});
-			return false;
+jQuery(document).ready(function() {	
+	jQuery("a.ajax").live("click", function(event) {
+		event.preventDefault();
+		var link = jQuery(this);
+		jQuery.ajax({
+			url : link.attr('href').replace("/edit/", "/ajax/"),
+			cache : false,
+			dataType : "json"
+		}).done(function(jsonObj) {
+			jQuery.each(jsonObj.zone, function(xhtmlId, xhtml) {
+				jQuery("#" + xhtmlId).html(xhtml);	
+			});			
+			jQuery(document).trigger("ajaxUpdate");
 		});
-	}
+	});	
+	jQuery(document).trigger("ajaxUpdate");
 });
