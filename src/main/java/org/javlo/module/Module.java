@@ -81,7 +81,7 @@ public class Module {
 		private Box(String title, String renderer, boolean action) {
 			this.title = StringHelper.neverNull(title);
 			this.renderer = URLHelper.mergePath(path, renderer);
-			this.action = action;
+			this.action = action;			
 			id = "box-"+StringHelper.getRandomId();
 		}
 
@@ -89,6 +89,7 @@ public class Module {
 		private String renderer;
 		private String id;
 		private boolean action;
+		
 
 		public String getTitle() {
 			return title;
@@ -126,7 +127,10 @@ public class Module {
 		public void update(ContentContext ctx) throws ServletException, IOException {
 			AjaxHelper.updateBox(ctx, this);
 		}
-		 
+
+		public Module getModule() {
+			return Module.this;
+		}
 		
 	}
 
@@ -166,7 +170,7 @@ public class Module {
 				fileReader.close();
 			}
 		}
-		path = modulePath;
+		path = modulePath.replace('\\', '/');
 		name = config.get("name");
 		breadcrumb = StringHelper.isTrue(config.get("breadcrumb"));
 		title = config.get("title." + locale.getLanguage());
