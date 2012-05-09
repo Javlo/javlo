@@ -1,0 +1,17 @@
+.current {
+	font-weight: bold;
+}
+
+ul.menu {
+	margin-left: 16px;
+}
+
+.children {
+	margin-left: 16px;
+}
+
+.navigation li a.editor {
+    background-image: url("images/page.png");
+    background-position: 15px center;
+    background-repeat: no-repeat;
+}

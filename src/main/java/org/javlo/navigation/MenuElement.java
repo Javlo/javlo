@@ -1,0 +1,3156 @@
+package org.javlo.navigation;
+
+import java.io.InputStream;
+import java.io.PrintWriter;
+import java.io.Serializable;
+import java.io.StringWriter;
+import java.net.URL;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Calendar;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.Iterator;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
+
+import net.sf.ehcache.Cache;
+import net.sf.ehcache.Element;
+
+import org.apache.commons.lang.StringUtils;
+import org.javlo.comparator.MenuElementPriorityComparator;
+import org.javlo.component.core.AbstractVisualComponent;
+import org.javlo.component.core.ComponentBean;
+import org.javlo.component.core.ComponentFactory;
+import org.javlo.component.core.ContentElementList;
+import org.javlo.component.core.IContentComponentsList;
+import org.javlo.component.core.IContentVisualComponent;
+import org.javlo.component.core.ILink;
+import org.javlo.component.core.IPageRank;
+import org.javlo.component.dynamic.DynamicComponent;
+import org.javlo.component.image.IImageTitle;
+import org.javlo.component.image.ImageTitleBean;
+import org.javlo.component.meta.Category;
+import org.javlo.component.meta.DateComponent;
+import org.javlo.component.meta.Keywords;
+import org.javlo.component.meta.LocationComponent;
+import org.javlo.component.meta.MetaDescription;
+import org.javlo.component.meta.NotSearchPage;
+import org.javlo.component.meta.Tags;
+import org.javlo.component.meta.TimeRangeComponent;
+import org.javlo.component.text.Description;
+import org.javlo.component.title.GroupTitle;
+import org.javlo.component.title.WebSiteTitle;
+import org.javlo.config.StaticConfig;
+import org.javlo.context.ContentContext;
+import org.javlo.context.ContentManager;
+import org.javlo.context.GlobalContext;
+import org.javlo.helper.ElementaryURLHelper;
+import org.javlo.helper.Logger;
+import org.javlo.helper.NavigationHelper;
+import org.javlo.helper.ResourceHelper;
+import org.javlo.helper.StringHelper;
+import org.javlo.helper.URLHelper;
+import org.javlo.helper.XHTMLHelper;
+import org.javlo.message.GenericMessage;
+import org.javlo.message.MessageRepository;
+import org.javlo.service.PersistenceService;
+import org.javlo.service.exception.ServiceException;
+import org.javlo.service.resource.Resource;
+import org.javlo.utils.TimeRange;
+import org.javlo.ztatic.IStaticContainer;
+import org.javlo.ztatic.StaticInfo;
+
+import be.noctis.common.xml.NodeXML;
+import be.noctis.common.xml.XMLFactory;
+
+/**
+ * @author pvanderm
+ */
+public class MenuElement implements Serializable {
+	
+	/**
+	 * bean for the page, can be use in JSTL.
+	 * @author Patrick Vandermaesen
+	 *
+	 */
+	public static class PageBean implements Serializable {
+		private PageDescription info;
+		private String url;
+		private String path;
+		private boolean selected = false;		
+		private List<PageBean> children = new LinkedList<PageBean>();
+		private List<PageBean> realChildren = new LinkedList<PageBean>();
+		private String name = null;
+		private String latestEditor;
+		private String creationDate;
+		private String modificationDate;
+		private String templateId = null;
+		
+		public PageDescription getInfo() {
+			return info;
+		}
+		public void setInfo(PageDescription info) {
+			this.info = info;
+		}
+		public List<PageBean> getChildren() {
+			return children;
+		}
+		public void addChild(PageBean child) {
+			children.add(child);
+			if (child.getInfo().isRealContent() && child.getInfo().isVisible()) {
+				addRealChildren(child);
+			}
+		}		
+		public void clearChildren() {
+			children.clear();
+		}
+		public String getUrl() {
+			return url;
+		}
+		public void setUrl(String url) {
+			this.url = url;
+		}
+		public boolean isSelected() {
+			return selected;
+		}
+		public void setSelected(boolean selected) {
+			this.selected = selected;
+		}
+		/**
+		 * get the list of children with isRealContent() and isVisible() is true.
+		 * @return
+		 */
+		public List<PageBean> getRealChildren() {
+			return realChildren;
+		}
+		private void addRealChildren(PageBean child) {
+			this.realChildren.add(child);
+		}
+		public String getName() {
+			return name;
+		}
+		public void setName(String name) {
+			this.name = name;
+		}
+		public String getPath() {
+			return path;
+		}
+		public void setPath(String path) {
+			this.path = path;
+		}
+		public String getLatestEditor() {
+			return latestEditor;
+		}
+		public void setLatestEditor(String latestEditor) {
+			this.latestEditor = latestEditor;
+		}
+		public String getCreationDate() {
+			return creationDate;
+		}
+		public void setCreationDate(String creationDate) {
+			this.creationDate = creationDate;
+		}
+		public String getModificationDate() {
+			return modificationDate;
+		}
+		public void setModificationDate(String modificationDate) {
+			this.modificationDate = modificationDate;
+		}
+		public String getTemplateId() {
+			return templateId;
+		}
+		public void setTemplateId(String template) {
+			this.templateId = template;
+		}
+		
+	}
+
+	/**
+	 * the description bean of the page, use for cache and JSTL.
+	 * @author Patrick Vandermaesen
+	 *
+	 */
+	public class PageDescription implements Serializable {
+
+		private static final long serialVersionUID = 1L;
+
+		String title = null;
+		String subTitle = null;
+		String pageTitle = null;
+		IImageTitle imageLink = null;
+		String linkOn = null;
+		Collection<IImageTitle> images = null;
+		String description = null;
+		String metaDescription = null;
+		String keywords = null;
+		String globalTitle = null;
+		Date contentDate = null;
+		Boolean empty = null;
+		Boolean realContent = null;
+		String label = null;
+		String location = null;
+		String category = null;
+		Double pageRank = null;
+		List<String> tags = null;
+		Collection<String> resources = null;
+		String headerContent = null;
+		List<String> groupID = null;
+		TimeRange timeRange = null;
+		Boolean contentDateVisible = null;
+		Boolean notInSearch = null;
+		int depth = 0;		
+		public boolean visible = false;
+		
+		public boolean isVisible() {
+			return visible;
+		}
+		public void setVisible(boolean visible) {
+			this.visible = visible;
+		}
+		public int getDepth() {
+			return depth;
+		}
+		public void setDepth(int depth) {
+			this.depth = depth;
+		}
+		public String getTitle() {
+			return title;
+		}
+		public void setTitle(String title) {
+			this.title = title;
+		}
+		public String getSubTitle() {
+			return subTitle;
+		}
+		public void setSubTitle(String subTitle) {
+			this.subTitle = subTitle;
+		}
+		public String getPageTitle() {
+			return pageTitle;
+		}
+		public void setPageTitle(String pageTitle) {
+			this.pageTitle = pageTitle;
+		}
+		public IImageTitle getImageLink() {
+			return imageLink;
+		}
+		public void setImageLink(IImageTitle imageLink) {
+			this.imageLink = imageLink;
+		}
+		public String getLinkOn() {
+			return linkOn;
+		}
+		public void setLinkOn(String linkOn) {
+			this.linkOn = linkOn;
+		}
+		public Collection<IImageTitle> getImages() {
+			return images;
+		}
+		public void setImages(Collection<IImageTitle> images) {
+			this.images = images;
+		}
+		public String getDescription() {
+			return description;
+		}
+		public void setDescription(String description) {
+			this.description = description;
+		}
+		public String getMetaDescription() {
+			return metaDescription;
+		}
+		public void setMetaDescription(String metaDescription) {
+			this.metaDescription = metaDescription;
+		}
+		public String getKeywords() {
+			return keywords;
+		}
+		public void setKeywords(String keywords) {
+			this.keywords = keywords;
+		}
+		public String getGlobalTitle() {
+			return globalTitle;
+		}
+		public void setGlobalTitle(String globalTitle) {
+			this.globalTitle = globalTitle;
+		}
+		public Date getContentDate() {
+			return contentDate;
+		}
+		public void setContentDate(Date contentDate) {
+			this.contentDate = contentDate;
+		}
+		public Boolean isEmpty() {
+			return empty;
+		}
+		public void setEmpty(Boolean isEmpty) {
+			this.empty = isEmpty;
+		}
+		public boolean isRealContent() {
+			if (realContent == null) {
+				return false;
+			}
+			return realContent;
+		}
+		public boolean isRealContentNull() {
+			return realContent == null;
+		}
+		public void setIsRealContent(Boolean isRealContent) {
+			this.realContent = isRealContent;
+		}
+		public String getLabel() {
+			return label;
+		}
+		public void setLabel(String label) {
+			this.label = label;
+		}
+		public String getLocation() {
+			return location;
+		}
+		public void setLocation(String location) {
+			this.location = location;
+		}
+		public String getCategory() {
+			return category;
+		}
+		public void setCategory(String category) {
+			this.category = category;
+		}
+		public Double getPageRank() {
+			return pageRank;
+		}
+		public void setPageRank(Double pageRank) {
+			this.pageRank = pageRank;
+		}
+		public List<String> getTags() {
+			return tags;
+		}
+		public void setTags(List<String> tags) {
+			this.tags = tags;
+		}
+		public Collection<String> getResources() {
+			return resources;
+		}
+		public void setResources(Collection<String> resources) {
+			this.resources = resources;
+		}
+		public String getHeaderContent() {
+			return headerContent;
+		}
+		public void setHeaderContent(String headerContent) {
+			this.headerContent = headerContent;
+		}
+		public List<String> getGroupID() {
+			return groupID;
+		}
+		public void setGroupID(List<String> groupID) {
+			this.groupID = groupID;
+		}
+		public TimeRange getTimeRange() {
+			return timeRange;
+		}
+		public void setTimeRange(TimeRange timeRange) {
+			this.timeRange = timeRange;
+		}
+		public Boolean getIsContentDateVisible() {
+			return contentDateVisible;
+		}
+		public void setIsContentDateVisible(Boolean isContentDateVisible) {
+			this.contentDateVisible = isContentDateVisible;
+		}
+		public Boolean getNotInSearch() {
+			return notInSearch;
+		}
+		public void setNotInSearch(Boolean notInSearch) {
+			this.notInSearch = notInSearch;
+		}
+		
+		
+	};
+
+	static int textCut = 18;
+	
+	// public static final String LOCK_ACCESS = "";
+
+	public static MenuElement getInstance(GlobalContext globalContext) {
+		MenuElement outMenuElement = new MenuElement();
+		outMenuElement.cache = globalContext.getCache("navigation");
+		outMenuElement.cache.removeAll();
+		return outMenuElement;
+	}
+
+	public static MenuElement searchChild(MenuElement elem, ContentContext ctx, String path, Collection<MenuElement> pastNode) throws Exception {
+		if (pastNode.contains(elem)) {
+			return null;
+		} else {
+			pastNode.add(elem);
+		}
+		MenuElement res = null;
+		List<MenuElement> children = elem.getChildMenuElementsWithVirtualList(ctx, false, false);
+		for (MenuElement menuElement : children) {
+			if (menuElement.getVirtualPath(ctx).equals(path)) {
+				return menuElement;
+			} else {
+				res = searchChild(menuElement, ctx, path, pastNode);
+				pastNode.remove(menuElement);
+				if (res != null) {
+					return res;
+				}
+			}
+		}
+		return res;
+	}
+
+	static MenuElement searchChildFromId(MenuElement elem, String id) {
+		MenuElement res = null;
+		MenuElement[] childs = elem.getChildMenuElements();
+		for (int i = 0; (i < childs.length) && (res == null); i++) {
+			if (childs[i].getId().equals(id)) {
+				return childs[i];
+			} else {
+				res = searchChildFromId(childs[i], id);
+			}
+		}
+		return res;
+	}
+
+	static MenuElement searchChildFromName(MenuElement elem, String name) {
+		MenuElement res = null;
+		MenuElement[] childs = elem.getChildMenuElements();
+		for (int i = 0; (i < childs.length) && (res == null); i++) {
+			if (childs[i].getName().equals(name)) {
+				res = childs[i];
+			} else {
+				res = searchChildFromName(childs[i], name);
+			}
+		}
+		return res;
+	}
+
+	static MenuElement searchRealChild(MenuElement elem, ContentContext ctx, String path, Collection<MenuElement> pastNode) throws Exception {
+		if (pastNode.contains(elem)) {
+			return null;
+		} else {
+			pastNode.add(elem);
+		}
+		MenuElement res = null;
+		List<MenuElement> children = elem.getChildMenuElementsList();
+		for (MenuElement menuElement : children) {
+			if (menuElement.getPath().equals(path)) {
+				return menuElement;
+			} else {
+				res = searchRealChild(menuElement, ctx, path, pastNode);
+				pastNode.remove(menuElement);
+				if (res != null) {
+					return res;
+				}
+			}
+		}
+		return res;
+	}
+
+	int priority = 10;
+
+	String name = null;
+
+	// String path = null;
+	String id = StringHelper.getRandomId();
+
+	String[] userRoles = new String[0];
+
+	private String templateId;
+
+	boolean visible = true;
+
+	List<MenuElement> virtualParent = new LinkedList<MenuElement>();
+
+	// ContentElementList contentElementList = null;
+
+	// ContentElementList localContentElementList = null;
+
+	List<MenuElement> virtualChild = new LinkedList<MenuElement>();
+
+	List<MenuElement> childMenuElements = new LinkedList<MenuElement>();
+
+	/* date and user */
+
+	private ComponentBean[] componentBean = new ComponentBean[0];
+
+	MenuElement parent = null;
+
+	Map<String, ContentElementList> contentElementListMap = new HashMap<String, ContentElementList>();
+
+	Map<String, ContentElementList> localContentElementListMap = new HashMap<String, ContentElementList>();
+
+	private Date creationDate = new Date();
+
+	private String creator = null;
+
+	private Date modificationDate = new Date();
+
+	private Date manualModificationDate = null;
+
+	private String latestEditor = "";
+
+	private boolean valid = false;
+
+	private boolean blocked = false;
+
+	private String blocker = "";
+
+	private String validater = "";
+
+	private String reversedLink = "";
+
+	private Date validationDate = null;
+
+	private String linkedURL = "";
+
+	private boolean https = false;
+
+	/**
+	 * protect page localy if there are linked with other website.
+	 */
+	private boolean remote = false;
+
+	// private final Map<String, PageDescription> pageInfinityCache = new HashMap<String, PageDescription>();
+
+	protected Cache cache;
+
+	// private final TimeMap<String, Object> pageTimeCache = new TimeMap<String, Object>(60 * (int) Math.round(((Math.random() + 1) * 60))); // cache between 1u and 2u, all cache can not be updated at the same time
+
+	private final Map<String, String> replacement = new HashMap<String, String>();
+
+	private Collection<String> compToBeDeleted = new LinkedList<String>();
+
+	private Map<String, ComponentBean> contentToBeAdded = new HashMap<String, ComponentBean>(); // key is parent component id
+
+	private Set<String> editGroups = new HashSet<String>();
+
+	private Date latestUpdateLinkedData = null;
+
+	public static java.util.logging.Logger logger = java.util.logging.Logger.getLogger(MenuElement.class.getName());
+
+	protected MenuElement() {
+	}
+
+	public void addAccess(ContentContext ctx) {
+		GlobalContext globalContext = GlobalContext.getInstance(ctx.getRequest());
+		String key = getAccessKey(new Date());
+		int todayAccess = 0;
+
+		String currentAccessString = globalContext.getData(key);
+		if (currentAccessString == null) {
+			currentAccessString = "0";
+		}
+
+		todayAccess = Integer.parseInt(currentAccessString);
+		todayAccess++;
+		globalContext.setData(key, "" + todayAccess);
+	}
+
+	private void addAllRepeatContent(ContentElementList list, ContentContext ctx) throws Exception {
+
+		if (getParent() != null) {
+			getParent().addAllRepeatContent(list, ctx);
+		}
+		ContentElementList currentList = getAllLocalContent(ctx);
+		while (currentList.hasNext(ctx)) {
+			IContentVisualComponent comp = currentList.next(ctx);
+			if ((comp != null) && (comp.isRepeat())) {
+				list.addRepeatElement(comp);
+			}
+		}
+	}
+
+	public void addChildMenuElement(MenuElement menuElement) {
+		synchronized (getLock()) {
+			menuElement.setParent(this);
+			if (childMenuElements == Collections.EMPTY_LIST) {
+				childMenuElements = new LinkedList<MenuElement>();
+			}
+			childMenuElements.add(menuElement);
+			sortChild();
+		}
+	}
+
+	public void addChildMenuElementAutoPriority(MenuElement menuElement) {
+		synchronized (getLock()) {
+			menuElement.setParent(this);
+			if (childMenuElements == Collections.EMPTY_LIST) {
+				childMenuElements = new LinkedList<MenuElement>();
+			}
+
+			int priority = 0;
+			for (MenuElement elem : childMenuElements) {
+				if (elem.getPriority() >= priority) {
+					priority = elem.getPriority();
+				}
+			}
+
+			menuElement.setPriority(priority + 10);
+			childMenuElements.add(menuElement);
+			sortChild();
+		}
+	}
+
+	public void addChildMenuElementOnTop(MenuElement menuElement) {
+		NavigationHelper.changeStepPriority(getChildMenuElements(), 10);
+		synchronized (getLock()) {
+			menuElement.setParent(this);
+			if (childMenuElements == Collections.EMPTY_LIST) {
+				childMenuElements = new LinkedList<MenuElement>();
+			}
+
+			int priority = Integer.MAX_VALUE;
+
+			for (MenuElement elem : childMenuElements) {
+				if (elem.getPriority() <= priority) {
+					priority = elem.getPriority();
+				}
+			}
+
+			if (priority == Integer.MAX_VALUE) {
+				priority = 10;
+			}
+			menuElement.setPriority(priority - 5);
+			childMenuElements.add(menuElement);
+			sortChild();
+		}
+	}
+
+	public void addCompToDelete(String id) {
+		synchronized (compToBeDeleted) {
+			compToBeDeleted.add(id);
+		}
+	}
+
+	public void addContent(String parentId, ComponentBean bean) {
+
+		assert bean != null;
+		synchronized (getLock()) {
+			synchronized (componentBean) {
+				ComponentBean[] newBean = new ComponentBean[componentBean.length + 1];
+				int j = 0;
+				boolean parentFound = false;
+				for (ComponentBean element : componentBean) {
+					if (element.getId().equals(parentId)) {
+						newBean[j] = element;
+						j++;
+						newBean[j] = bean;
+						parentFound = true;
+					} else {
+						newBean[j] = element;
+					}
+					j++;
+				}
+				if (!parentFound) { // component not found
+					newBean[0] = bean;
+					for (int i = 0; i < componentBean.length; i++) {
+						newBean[i + 1] = componentBean[i];
+					}
+				}
+				componentBean = newBean;
+			}
+		}
+		releaseCache();
+	}
+
+	public void addEditorRoles(String group) {
+		editGroups.add(group);
+	}
+
+	/**
+	 * add prepared component
+	 * 
+	 * @param ctx
+	 * @return true if component is added.
+	 */
+	private boolean addPreparedContent(ContentContext ctx) {
+		if (contentToBeAdded.size() == 0) {
+			return false;
+		}
+		logger.info("try to add component : " + contentToBeAdded.size());
+		synchronized (getLock()) {
+			synchronized (contentToBeAdded) {
+				ComponentBean[] newBean = new ComponentBean[componentBean.length + contentToBeAdded.size()];
+				ComponentBean[] workBean = componentBean;
+				boolean parentFound = true;
+				while (parentFound && contentToBeAdded.size() > 0) {
+					parentFound = false;
+					int j = 0;
+					for (ComponentBean element : workBean) {
+						if (element != null) {
+							if (contentToBeAdded.keySet().contains(element.getId())) {
+								newBean[j] = element;
+								j++;
+								newBean[j] = contentToBeAdded.get(element.getId());
+								contentToBeAdded.remove(element.getId());
+								parentFound = true;
+							} else {
+								newBean[j] = element;
+							}
+							j++;
+						}
+					}
+					workBean = newBean;
+					newBean = new ComponentBean[workBean.length];
+				}
+				if (contentToBeAdded.size() > 0) { // component not found
+					if (contentToBeAdded.size() > 1) { // component not found
+						logger.warning("bad structure in contentToBeAdded : more that one parent id not found");
+						StringWriter writer = new StringWriter();
+						PrintWriter out = new PrintWriter(writer);
+						out.println("error : add prepare content");
+						out.println("");
+						out.println("page : " + getPath());
+						out.println("");
+						out.close();
+						// NetHelper.sendMailToAdministrator(ctx, "bad structure in contentToBeAdded : more that one parent id not found", writer.toString());
+						logger.warning(writer.toString());
+					} else {
+						newBean = new ComponentBean[workBean.length];
+						newBean[0] = contentToBeAdded.values().iterator().next();
+						for (int i = 0; i < workBean.length - 1; i++) {
+							newBean[i + 1] = workBean[i];
+						}
+						workBean = newBean;
+					}
+				}
+				contentToBeAdded.clear();
+				for (int i = 0; i < workBean.length; i++) {
+					if (workBean[i] == null) {
+						StringWriter writer = new StringWriter();
+						PrintWriter out = new PrintWriter(writer);
+						out.println("error : add prepare content");
+						out.println("");
+						out.println("page : " + getPath());
+						out.println("error on bean : " + i);
+						out.println("");
+						out.close();
+						// NetHelper.sendMailToAdministrator(ctx, "error null bean found.", writer.toString());
+						logger.warning(writer.toString());
+					}
+				}
+				componentBean = workBean;
+			}
+		}
+		releaseCache();
+		return true;
+	}
+
+	private void addRepeatContent(ContentElementList list, ContentContext ctx) throws Exception {
+
+		if (getParent() != null) {
+			getParent().addRepeatContent(list, ctx);
+		}
+		ContentElementList currentList = getLocalContent(ctx);
+		while (currentList.hasNext(ctx)) {
+			IContentVisualComponent comp = currentList.next(ctx);
+			if ((comp != null) && (comp.isRepeat())) {
+				list.addRepeatElement(comp);
+			}
+		}
+	}
+
+	private void addVirtualChild(MenuElement vChild) {
+		if (vChild != null) {
+			if (!vChild.getId().equals(getId())) {
+				virtualChild.add(vChild);
+			}
+		}
+	}
+
+	public void addVirtualParent(String menuId) {
+		if (menuId.equals(getId())) {
+			return;
+		}
+		MenuElement root = getRoot();
+		MenuElement node = root.searchChildFromId(menuId);
+		if (root.getId().equals(menuId)) {
+			node = root;
+		}
+		if (node != null) {
+			virtualParent.add(node);
+			node.addVirtualChild(this);
+		}
+	}
+
+	public void clearEditorGroups() {
+		editGroups.clear();
+	}
+
+	/**
+	 * clear content of the page, and delete all children.
+	 */
+	private void clearPage() {
+		contentElementListMap.clear();
+		childMenuElements.clear();
+	}
+
+	public void clearVirtualParent() {
+		for (MenuElement parent : virtualParent) {
+			parent.removeVirtualChild(this);
+		}
+		virtualParent.clear();
+	}
+
+	/**
+	 * count the component of a specific type on the current page.
+	 * 
+	 * @param ctx
+	 *            the current context.
+	 * @param inComponentType
+	 *            the type of the component
+	 * @return a count of component.
+	 * @throws Exception
+	 */
+	public int countComponentInCtx(ContentContext ctx, String inComponentType) throws Exception {
+		int c = 0;
+		ContentElementList content = getAllContent(ctx);
+		while (content.hasNext(ctx)) {
+			IContentVisualComponent cpnt = content.next(ctx);
+			if (cpnt.getType().equals(inComponentType)) {
+				c++;
+			}
+		}
+		return c;
+	}
+
+	public boolean deleteCompList(ContentContext ctx) {
+		if (compToBeDeleted.size() == 0) {
+			return false;
+		}
+		synchronized (compToBeDeleted) {
+			synchronized (getLock()) {
+				List<ComponentBean> outList = new LinkedList<ComponentBean>();
+				for (int i = 0; i < componentBean.length; i++) {
+					if (!compToBeDeleted.contains(componentBean[i].getId())) {
+						outList.add(componentBean[i]);
+					} else {
+						IContentVisualComponent comp = ComponentFactory.getComponentWithType(ctx, componentBean[i].getType());
+						if (comp != null) {
+							comp.delete(ctx);
+						}
+					}
+				}
+				componentBean = new ComponentBean[outList.size()];
+				outList.toArray(componentBean);
+			}
+			logger.info("deleted a group of component : " + compToBeDeleted.size());
+			compToBeDeleted.clear();
+			releaseCache();
+		}
+		return true;
+	}
+
+	public void endRendering(ContentContext ctx) {
+		if (deleteCompList(ctx)) {
+			setModificationDate(new Date());
+		}
+		if (addPreparedContent(ctx)) {
+			setManualModificationDate(new Date());
+		}
+	}
+
+	/**
+	 * @see java.lang.Object#equals(java.lang.Object)
+	 */
+	@Override
+	public boolean equals(Object obj) {
+		if (obj == null) {
+			return false;
+		}
+		MenuElement elem = (MenuElement) obj;
+		boolean res = true;
+		if (!isMetadataEquals(elem)) {
+			res = false;
+		} else {
+			if (elem.getChildMenuElements().length != getChildMenuElements().length) {
+				res = false;
+			} else {
+				if (!isContentEquals(elem)) {
+					res = false;
+				} else {
+					res = isChildrenEquals(elem);
+				}
+			}
+		}
+		return res;
+	}
+
+	public int getAccess(ContentContext ctx, Date date) {
+		GlobalContext globalContext = GlobalContext.getInstance(ctx.getRequest());
+		String key = getAccessKey(date);
+		if (globalContext.getData(key) == null) {
+			return 0;
+		} else {
+			return Integer.parseInt(globalContext.getData(key));
+		}
+	}
+
+	private String getAccessKey(Date date) {
+		return "clk__" + getPath() + "__" + StringHelper.renderDate(date, "yyyy-MM-dd");
+	}
+
+	public MenuElement[] getAllChilds() throws Exception {
+		ArrayList<MenuElement> list = getChildElementRecursive(this, 0);
+		MenuElement[] res = new MenuElement[list.size()];
+		list.toArray(res);
+		return res;
+	}
+
+	public List<MenuElement> getAllChildsWithComponentType(ContentContext ctx, String type) throws Exception {
+		return getChildElementRecursive(ctx, this, type, 0);
+	}
+
+	public ContentElementList getAllContent(ContentContext ctx) throws Exception {
+
+		ContentElementList elemList = new ContentElementList(getAllLocalContent(ctx));
+
+		if ((getParent() != null) && (!ctx.isEdit())) {
+			getParent().addAllRepeatContent(elemList, ctx);
+		}
+
+		elemList.initialize(ctx);
+
+		return elemList;
+	}
+
+	/**
+	 * get content for all area
+	 * 
+	 * @param ctx
+	 *            current context
+	 * @return
+	 * @throws Exception
+	 */
+	private synchronized ContentElementList getAllLocalContent(ContentContext ctx) throws Exception {
+		ContentElementList localContentElementList = localContentElementListMap.get(ctx.getRequestContentLanguage());
+		if (localContentElementList == null) {
+
+			logger.fine("update all local content on (ctx:" + ctx + ")");
+
+			/*
+			 * ComponentBean[] localComponentBean; synchronized (componentBean) { localComponentBean = new ComponentBean[componentBean.length]; System.arraycopy(componentBean, 0, localComponentBean, 0, componentBean.length); }
+			 */
+			localContentElementList = new ContentElementList(componentBean, ctx, this, true);
+
+			localContentElementListMap.put(ctx.getRequestContentLanguage(), localContentElementList);
+		}
+
+		localContentElementList.initialize(ctx);
+		return localContentElementList;
+	}
+
+	public ComponentBean[] getAllLocalContentBean() throws Exception {
+		synchronized (componentBean) {
+			return componentBean;
+		}
+	}
+
+	public Collection<Resource> getAllResources(ContentContext ctx) throws Exception {
+		ContentElementList contentList = getAllContent(ctx); // search date in
+		// all area
+		Collection<Resource> outList = new LinkedList<Resource>();
+		while (contentList.hasNext(ctx)) {
+			IContentVisualComponent comp = contentList.next(ctx);
+			if (comp instanceof IStaticContainer) {
+				outList.addAll(((IStaticContainer) comp).getAllResources(ctx));
+			}
+		}
+		return outList;
+	}
+
+	/**
+	 * return the page of this page
+	 * 
+	 * @return a path.
+	 */
+	public List<String> getAllVirtualPath() {
+		List<String> outVPath = new LinkedList<String>();
+		try {
+			if (parent == this) {
+				throw new Exception("recursive reference !!!");
+			} else {
+
+				if (parent == null) {
+					if (getName().equals("root")) {
+						outVPath.add("");
+					} else {
+						outVPath.add(getName());
+					}
+				} else {
+					outVPath.add(parent.getPath() + '/' + getName());
+				}
+
+				for (MenuElement vparent : getVirtualParent()) {
+					outVPath.add(vparent.getPath() + '/' + getName());
+				}
+
+				return outVPath;
+			}
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		return null;
+	}
+
+	/**
+	 * get the content in current language and in default languages order if not exist.
+	 */
+	public ContentElementList getBestLanguageContent(ContentContext ctx) throws Exception {
+		if (isRealContent(ctx)) {
+			return getContent(ctx);
+		} else {
+			ContentContext lgCtx = new ContentContext(ctx);
+			GlobalContext globalContext = GlobalContext.getInstance(ctx.getRequest());
+			Collection<String> defaultLgs = globalContext.getDefaultLanguages();
+			for (String lg : defaultLgs) {
+				lgCtx.setRequestContentLanguage(lg);
+				if (isRealContent(lgCtx)) {
+					return getContent(lgCtx);
+				}
+			}
+		}
+		return getContent(ctx);
+	}
+
+	public String getBlocker() {
+		return blocker;
+	}
+
+	protected String getCacheKey(String subkey) {
+		return this.getClass().getName() + "_" + getId() + "_" + subkey;
+	}
+
+	/**
+	 * get the category of the page (category component)
+	 * 
+	 * @param ctx
+	 * @return
+	 * @throws Exception
+	 */
+	public String getCategory(ContentContext ctx) throws Exception {
+
+		PageDescription desc = getPageDescriptionCached(ctx.getRequestContentLanguage());
+
+		if (desc.category != null) {			
+			return desc.category;
+		}
+		String res = "";
+		ContentContext newCtx = new ContentContext(ctx);
+		newCtx.setArea(null);
+		IContentComponentsList contentList = getContent(newCtx);
+		while (contentList.hasNext(newCtx)) {			
+			IContentVisualComponent elem = contentList.next(newCtx);			
+			if (elem.getType().equals(Category.TYPE)) {
+				res = res + elem.getValue(newCtx);
+			}
+		}
+		desc.category = StringUtils.replace(res, "\"", "&quot;");
+		return desc.category;
+	}
+
+	ArrayList<MenuElement> getChildElementRecursive(ContentContext ctx, MenuElement elem, String type, int deph) throws Exception {
+		ArrayList<MenuElement> result = new ArrayList<MenuElement>();
+		if (type == null) {
+			return result;
+		}
+		if (elem.countComponentInCtx(ctx, type) > 0) {
+			result.add(elem);
+		}
+		MenuElement[] childs = elem.getChildMenuElements();
+		for (MenuElement child : childs) {
+			result.addAll(getChildElementRecursive(ctx, child, type, deph + 1));
+		}
+		return result;
+	}
+
+	ArrayList<MenuElement> getChildElementRecursive(MenuElement elem, int deph) throws Exception {
+		ArrayList<MenuElement> result = new ArrayList<MenuElement>();
+		result.add(elem);
+		MenuElement[] childs = elem.getChildMenuElements();
+		for (MenuElement child : childs) {
+			result.addAll(getChildElementRecursive(child, deph + 1));
+		}
+		return result;
+	}
+
+	public String[] getChildList() throws Exception {
+		ArrayList<String> result = getChildListRecursive(this, 0);
+		String[] finalResult = new String[result.size()];
+		result.toArray(finalResult);
+		return finalResult;
+	}
+
+	/*
+	 * static MenuElement searchChild(MenuElement elem, ContentContext ctx, String path, int depth) { if (depth > MAX_SEARCH_DEPTH) { return null; } MenuElement res = null; List<MenuElement> children = elem.getChildMenuElementsWithVirtualList(false, false); for (MenuElement menuElement : children) { List<String> paths = menuElement.getAllVirtualPath(ctx); if (paths.contains(path)) { return menuElement; } else { res = searchChild(menuElement, ctx, path, depth+1); if (res != null) { return res; } } }
+	 * 
+	 * return res; }
+	 */
+
+	ArrayList<String> getChildListRecursive(MenuElement elem, int deph) throws Exception {
+		ArrayList<String> result = new ArrayList<String>();
+		result.add(elem.getPath());
+		MenuElement[] childs = elem.getChildMenuElements();
+		for (MenuElement child : childs) {
+			result.addAll(getChildListRecursive(child, deph + 1));
+		}
+		return result;
+	}
+
+	/**
+	 * get the child list of the current element.
+	 * 
+	 * @return a array of childs.
+	 */
+	public MenuElement[] getChildMenuElements() {
+		MenuElement[] res = new MenuElement[childMenuElements.size()];
+		childMenuElements.toArray(res);
+		return res;
+	}
+
+	public MenuElement[] getChildMenuElements(ContentContext ctx, boolean visible) throws Exception {
+		if (visible) {
+			return getVisibleChildMenuElements(ctx);
+		} else {
+			return getChildMenuElements();
+		}
+	}
+
+	/**
+	 * get the child list of the current element.
+	 * 
+	 * @return a list of childs.
+	 */
+	public List<MenuElement> getChildMenuElementsList() {
+		return childMenuElements;
+	}
+
+	public List<MenuElement> getChildMenuElementsList(ContentContext ctx, boolean visible) throws Exception {
+		if (visible) {
+			return getVisibleChildMenuElementsList(ctx);
+		} else {
+			return getChildMenuElementsList();
+		}
+	}
+
+	public MenuElement[] getChildMenuElementsWithVirtual(ContentContext ctx, boolean onlyVisible, boolean virtualBefore) throws Exception {
+
+		List<MenuElement> allChild = new LinkedList<MenuElement>();
+		if (virtualBefore) {
+			allChild.addAll(getVirtualChild(ctx, onlyVisible));
+			allChild.addAll(Arrays.asList(getChildMenuElements(ctx, onlyVisible)));
+		} else {
+			allChild.addAll(Arrays.asList(getChildMenuElements(ctx, onlyVisible)));
+			allChild.addAll(getVirtualChild(ctx, onlyVisible));
+		}
+		MenuElement[] res = new MenuElement[allChild.size()];
+		allChild.toArray(res);
+		return res;
+	}
+
+	public List<MenuElement> getChildMenuElementsWithVirtualList(ContentContext ctx, boolean visible, boolean virtualBefore) throws Exception {
+
+		List<MenuElement> allChild = new LinkedList<MenuElement>();
+		if (virtualBefore) {
+			allChild.addAll(getChildMenuElementsList(ctx, visible));
+			allChild.addAll(getVirtualChild(ctx, visible));
+		} else {
+			allChild.addAll(getVirtualChild(ctx, visible));
+			allChild.addAll(Arrays.asList(getChildMenuElements(ctx, visible)));
+		}
+		return allChild;
+	}
+
+	public ComponentBean[] getContent() {
+		return componentBean;
+	}
+
+	/**
+	 * get content of the current area
+	 * 
+	 * @param ctx
+	 *            the content context
+	 * @return a list of component
+	 */
+	public ContentElementList getContent(ContentContext ctx) throws Exception {
+
+		ContentElementList elemList = new ContentElementList(getLocalContent(ctx));
+
+		if ((getParent() != null) && (!ctx.isEdit())) {
+			getParent().addRepeatContent(elemList, ctx);
+		}
+
+		elemList.initialize(ctx);
+
+		return elemList;
+	}
+
+	/**
+	 * return the content separed on the date component.
+	 * 
+	 * @param ctx
+	 * @return
+	 * @throws Exception
+	 */
+	public Map<Date, List<IContentVisualComponent>> getContentByDate(ContentContext ctx) throws Exception {
+
+		Map<Date, List<IContentVisualComponent>> outContentByDate = new HashMap<Date, List<IContentVisualComponent>>();
+
+		Date currentDate = null;
+		ContentContext noAreaCtx = new ContentContext(ctx);
+		noAreaCtx.setArea(null);
+		ContentElementList content = getBestLanguageContent(noAreaCtx);
+		while (content.hasNext(noAreaCtx)) {
+			IContentVisualComponent comp = content.next(noAreaCtx);
+			if (comp.getType().equals(DateComponent.TYPE)) {
+				DateComponent dateComp = (DateComponent) comp;
+				currentDate = dateComp.getDate();
+			} else if (currentDate != null) {
+				if (outContentByDate.get(currentDate) == null) {
+					outContentByDate.put(currentDate, new LinkedList<IContentVisualComponent>());
+				}
+				outContentByDate.get(currentDate).add(comp);
+			}
+		}
+
+		return outContentByDate;
+	}
+
+	public List<IContentVisualComponent> getContentByType(ContentContext ctx, String type) throws Exception {
+
+		List<IContentVisualComponent> outComp = new LinkedList<IContentVisualComponent>();
+
+		ContentElementList content = getAllContent(ctx);
+		while (content.hasNext(ctx)) {
+			IContentVisualComponent comp = content.next(ctx);
+			if (comp.getType().equals(type)) {
+				outComp.add(comp);
+			}
+		}
+		content.initialize(ctx);
+
+		return outComp;
+	}
+
+	/**
+	 * return a language with content. If there are content in current language, it is returned.
+	 * 
+	 * @return a ContentContext with content or current context if there are no content in any language.
+	 * @throws Exception
+	 */
+	public ContentContext getContentContextWithContent(ContentContext ctx) throws Exception {
+		GlobalContext globalContext = GlobalContext.getInstance(ctx.getRequest());
+		if (!globalContext.isAutoSwitchToDefaultLanguage() && !globalContext.isAutoSwitchToFirstLanguage()) {
+			return ctx;
+		}
+		if (isRealContent(ctx)) {
+			return ctx;
+		} else {
+			ContentContext lgCtx = new ContentContext(ctx);
+			if (globalContext.isAutoSwitchToDefaultLanguage()) {
+				Collection<String> defaultLgs = globalContext.getDefaultLanguages();
+				for (String lg : defaultLgs) {
+					/*
+					 * if (globalContext.getLanguages().contains(lg)) { // if content lg exist as lgCtx.setLanguage(lg); }
+					 */
+					lgCtx.setContentLanguage(lg);
+					lgCtx.setRequestContentLanguage(lg);
+					if (isRealContent(lgCtx)) {
+						return lgCtx;
+					}
+				}
+			}
+			if (globalContext.isAutoSwitchToFirstLanguage()) {
+				Collection<String> languages = globalContext.getContentLanguages();
+				for (String lg : languages) {
+					/*
+					 * if (globalContext.getLanguages().contains(lg)) { // if content lg exist as lgCtx.setLanguage(lg); }
+					 */
+					lgCtx.setContentLanguage(lg);
+					lgCtx.setRequestContentLanguage(lg);
+					if (isRealContent(lgCtx)) {
+						return lgCtx;
+					}
+				}
+			}
+		}
+		return ctx;
+
+	}
+
+	/**
+	 * get the date found in the content.
+	 * 
+	 * @return
+	 * @throws Exception
+	 */
+	public Date getContentDate(ContentContext ctx) throws Exception {
+		PageDescription desc = getPageDescriptionCached(ctx.getRequestContentLanguage());
+		if (desc.contentDate != null) {
+			return desc.contentDate;
+		}
+		desc.contentDate = getContentDateComponent(ctx);
+		return desc.contentDate;
+	}
+
+	public Date getContentDateComponent(ContentContext ctx) throws Exception {
+		GlobalContext globalContext = GlobalContext.getInstance(ctx.getRequest());
+		Iterator<String> defaultLgs = globalContext.getDefaultLanguages().iterator();
+		ContentContext localContext = new ContentContext(ctx);
+		while (isEmpty(localContext) && defaultLgs.hasNext()) {
+			localContext.setRequestContentLanguage(defaultLgs.next());
+		}
+		if (!isEmpty(localContext)) {
+			ContentElementList contentList = getAllContent(localContext); // search date in all area
+			while (contentList.hasNext(ctx)) {
+				IContentVisualComponent comp = contentList.next(ctx);
+				if (comp.getType() == DateComponent.TYPE) {
+					return ((DateComponent) comp).getDate();
+				} else if (comp.getType() == TimeRangeComponent.TYPE) {
+					return ((TimeRangeComponent) comp).getStartDate();
+				}
+			}
+		}
+		return null;
+	}
+
+	/**
+	 * return content Date and modification data if no content date.
+	 * 
+	 * @param ctx
+	 * @return
+	 * @throws Exception
+	 */
+	public Date getContentDateNeverNull(ContentContext ctx) throws Exception {
+		Date contentDate = getContentDate(ctx);
+		if (contentDate != null) {
+			return contentDate;
+		} else {
+			return getModificationDate();
+		}
+
+	}
+
+	public Date getCreationDate() {
+		return creationDate;
+	}
+
+	public String getCreator() {
+		if ((creator == null) || (creator.equals("null"))) {
+			return "";
+		}
+		return creator;
+	}
+
+	/**
+	 * return the depth of the current element
+	 * 
+	 * @return a depth
+	 */
+	public int getDepth() {
+		return ContentManager.getPathDepth(getPath());
+	}
+
+	/**
+	 * get description of the page (description component)
+	 * 
+	 * @param ctx
+	 * @return
+	 * @throws Exception
+	 */
+	public String getDescription(ContentContext ctx) throws Exception {
+
+		PageDescription desc = getPageDescriptionCached(ctx.getRequestContentLanguage());
+
+		if (desc.description != null) {
+			return desc.description;
+		}
+		String res = "";
+		ContentContext newCtx = new ContentContext(ctx);
+		newCtx.setArea(null);
+		IContentComponentsList contentList = getAllContent(newCtx);
+		while (contentList.hasNext(newCtx)) {
+			IContentVisualComponent elem = contentList.next(newCtx);
+			if (elem.getType().equals(Description.TYPE)) {
+				res = res + elem.getValue(newCtx);
+			}
+		}
+		desc.description = StringUtils.replace(res, "\"", "&quot;");
+		return desc.description;
+	}
+
+	public Set<String> getEditorRoles() {
+		return editGroups;
+	}
+
+	public Collection<String> getExternalResources(ContentContext ctx) throws Exception {
+		PageDescription desc = getPageDescriptionCached(ctx.getRequestContentLanguage());
+		if (desc.resources == null) {
+			Collection<String> outResources = new LinkedList<String>();
+			ContentElementList content = getAllContent(ctx);
+			while (content.hasNext(ctx)) {
+				IContentVisualComponent comp = content.next(ctx);
+				Collection<String> resources = comp.getExternalResources(ctx);
+				for (String res : resources) {
+					if (outResources.contains(res)) {
+						// TODO: check if this line can be removed
+						// outResources.remove(res);
+					}
+					if (!outResources.contains(res)) {
+						outResources.add(res);
+					}
+				}
+				// outResources.addAll(comp.getExternalResources());
+			}
+			desc.resources = outResources;
+		}
+		return desc.resources;
+	}
+
+	/**
+	 * return the field value of the first component match with the component type
+	 * 
+	 * @param ctx
+	 * @param componentType
+	 * @param fieldName
+	 * @param defaultValue
+	 *            value if component or field not found
+	 * @return
+	 * @throws Exception
+	 */
+	public String getFieldValue(ContentContext ctx, String componentType, String fieldName, String defaultValue) throws Exception {
+		ContentElementList content = getAllContent(ctx);
+		while (content.hasNext(ctx)) {
+			IContentVisualComponent comp = content.next(ctx);
+			if (comp.getType().equals(componentType)) {
+				DynamicComponent dynComp = (DynamicComponent) comp;
+				if (dynComp.getFieldValue(ctx, fieldName) != null) {
+					return dynComp.getFieldValue(ctx, fieldName);
+				} else {
+					return defaultValue;
+				}
+			}
+		}
+		return defaultValue;
+	}
+
+	/**
+	 * return the field values of all components match with the component type
+	 * 
+	 * @param ctx
+	 * @param componentType
+	 * @param fieldName
+	 * @param defaultValue
+	 *            value if component or field not found
+	 * @return a set of values, empty set if not found.
+	 * @throws Exception
+	 */
+	public Set<String> getFieldValues(ContentContext ctx, String componentType, String fieldName) throws Exception {
+		Set<String> values = new HashSet<String>();
+		ContentElementList content = getAllContent(ctx);
+		while (content.hasNext(ctx)) {
+			IContentVisualComponent comp = content.next(ctx);
+			if (comp.getType().equals(componentType)) {
+				DynamicComponent dynComp = (DynamicComponent) comp;
+				if (dynComp.getFieldValue(ctx, fieldName) != null) {
+					values.add(dynComp.getFieldValue(ctx, fieldName));
+
+				}
+			}
+		}
+		return values;
+	}
+
+	public String getFullLabel(ContentContext ctx) throws Exception {
+
+		ContentContext newCtx = new ContentContext(ctx);
+		newCtx.setArea(null); // warning : check if the method is needed.
+
+		PageDescription desc = getPageDescriptionCached(newCtx.getLanguage());
+
+		if (desc.label != null) {
+			return desc.label;
+		}
+
+		newCtx.setRequestContentLanguage(ctx.getLanguage()); // label is from
+		// navigation
+		// language
+		desc.label = getContent(newCtx).getLabel();
+
+		if (desc.label != null) {
+			if ((desc.label.trim().length() == 0) && (name != null)) {
+				GlobalContext globalContext = GlobalContext.getInstance(ctx.getRequest());
+				if (globalContext.isAutoSwitchToDefaultLanguage()) {
+					ContentContext defaultLgCtx = new ContentContext(newCtx);
+
+					Iterator<String> defaultLg = globalContext.getDefaultLanguages().iterator();
+					while (desc.label.trim().length() == 0 && defaultLg.hasNext()) {
+						String lg = defaultLg.next();
+						defaultLgCtx.setLanguage(lg);
+						desc.label = getContent(defaultLgCtx).getLabel();
+					}
+
+					if ((desc.label.trim().length() == 0) && (name != null)) {
+						desc.label = name;
+					}
+				} else {
+					desc.label = name;
+				}
+
+			}
+		}
+		desc.label = StringHelper.removeTag(desc.label);
+		return desc.label;
+	}
+
+	public String getFullName() {
+		return name;
+	}
+
+	public String getGlobalTitle(ContentContext ctx) throws Exception {
+
+		PageDescription desc = getPageDescriptionCached(ctx.getRequestContentLanguage());
+
+		if (desc.globalTitle != null) {
+			return desc.globalTitle;
+		}
+		IContentComponentsList contentList = getAllContent(ctx);
+		while (contentList.hasNext(ctx)) {
+			IContentVisualComponent elem = contentList.next(ctx);
+			if (elem.getType().equals(WebSiteTitle.TYPE)) {
+				desc.globalTitle = elem.getValue(ctx);
+				return desc.globalTitle;
+			}
+		}
+		return GlobalContext.getInstance(ctx.getRequest()).getGlobalTitle();
+	}
+
+	public List<String> getGroupID(ContentContext ctx) throws Exception {
+
+		PageDescription desc = getPageDescriptionCached(ctx.getRequestContentLanguage());
+
+		if (desc.groupID != null) {
+			return desc.groupID;
+		}
+
+		ContentContext lgDefaultCtx = new ContentContext(ctx);
+		lgDefaultCtx.setArea(null);
+		GlobalContext globalContext = GlobalContext.getInstance(ctx.getRequest());
+		Iterator<String> defaultLg = globalContext.getDefaultLanguages().iterator();
+
+		Iterator<IContentVisualComponent> groupIdList = getContentByType(lgDefaultCtx, GroupTitle.TYPE).iterator();
+		GroupTitle groupIdComp = null;
+		if (groupIdList.hasNext()) {
+			groupIdComp = (GroupTitle) groupIdList.next();
+		}
+		while (groupIdComp == null && defaultLg.hasNext()) {
+			String lg = defaultLg.next();
+			lgDefaultCtx.setContentLanguage(lg);
+			lgDefaultCtx.setRequestContentLanguage(lg);
+			groupIdList = getContentByType(lgDefaultCtx, GroupTitle.TYPE).iterator();
+			groupIdComp = null;
+			if (groupIdList.hasNext()) {
+				groupIdComp = (GroupTitle) groupIdList.next();
+			}
+		}
+		List<String> outGroupID = new LinkedList<String>();
+
+		IContentComponentsList contentList = getAllContent(lgDefaultCtx);
+		while (contentList.hasNext(lgDefaultCtx)) {
+			IContentVisualComponent elem = contentList.next(lgDefaultCtx);
+			if (elem.getType().equals(GroupTitle.TYPE)) {
+				outGroupID.add(elem.getId());
+			}
+		}
+		desc.groupID = outGroupID;
+
+		return desc.groupID;
+	}
+
+	public String getHeaderContent(ContentContext ctx) throws Exception {
+		PageDescription desc = getPageDescriptionCached(ctx.getRequestContentLanguage());
+
+		if (desc.headerContent != null) {
+			if (desc.headerContent.trim().length() == 0) {
+				return null;
+			} else {
+				return desc.headerContent;
+			}
+		}
+		StringWriter writer = new StringWriter();
+		PrintWriter out = new PrintWriter(writer);
+		ContentElementList content = getAllContent(ctx);
+		while (content.hasNext(ctx)) {
+			IContentVisualComponent comp = content.next(ctx);
+			if (comp.getHeaderContent(ctx) != null) {
+				out.println(comp.getHeaderContent(ctx));
+			}
+		}
+		out.close();
+		desc.headerContent = writer.toString();
+		if (desc.headerContent.trim().length() == 0) {
+			return null;
+		} else {
+			return desc.headerContent;
+		}
+	}
+
+	/**
+	 * generate a list of navigation element. replace #id with the page id.
+	 * 
+	 * @param startTag
+	 *            insert before path sample : <option value=#id>.
+	 * @param endTag
+	 *            insert after path : </option>
+	 * @return a string with XHTML code
+	 * @throws Exception
+	 * @Deprecated use XHTMLHelper.getHTMLChildList
+	 */
+	public String getHTMLChildList(String startTag, String endTag) throws Exception {
+		return XHTMLHelper.getHTMLChildList(this, null, startTag, null, endTag, true);
+	}
+
+	/*
+	 * public ContentElementList getViewContent(ContentContext ctx, int format) throws Exception { ContentElementList contentElementList = contentElementListMap.get(ctx.getRequestContentLanguage()); if (contentElementList == null) { Content content = Content.createContent(ctx.getRequest()); ContentContext localContext = new ContentContext(ctx); if (!content.contentExistForContext(ctx)) { GlobalContext globalCotext = GlobalContext.getInstance(ctx.getRequest()); Set<String> lgs = globalCotext.getContentLanguages(); for (String lg : lgs) { localContext.setLanguage(lg); if (content.contentExistForContext(localContext)) { break; } } } contentElementList = new ContentElementList(componentBean, localContext, this); contentElementListMap.put(ctx.getRequestContentLanguage(), contentElementList); }
+	 * 
+	 * return contentElementList; }
+	 */
+
+	/**
+	 * @return
+	 */
+	public String getId() {
+		return id;
+	}
+
+	public IImageTitle getImage(ContentContext ctx) throws Exception {
+		PageDescription desc = getPageDescriptionCached(ctx.getRequestContentLanguage());
+		IImageTitle res = null;
+		if (desc.imageLink != null) {
+			res = desc.imageLink;
+		}
+		if (res != null) {
+			return res;
+		}
+		IContentComponentsList contentList = getAllContent(ctx);
+		while (contentList.hasNext(ctx)) {
+			IContentVisualComponent elem = contentList.next(ctx);
+			if ((elem instanceof IImageTitle) && (!elem.isEmpty(ctx)) && (!elem.isRepeat())) {
+				IImageTitle imageComp = (IImageTitle) elem;
+				if (imageComp.isImageValid(ctx)) {
+					res = imageComp;
+					// desc.imageLink = new WeakReference<IImageTitle>(res);
+					desc.imageLink = new ImageTitleBean(res.getImageDescription(ctx), res.getImageURL(ctx), res.getImageLinkURL(ctx));
+					return res;
+				}
+			}
+		}
+		return null;
+	}
+
+	public Collection<IImageTitle> getImages(ContentContext ctx) throws Exception {
+		PageDescription desc = getPageDescriptionCached(ctx.getRequestContentLanguage());
+		Collection<IImageTitle> res = null;
+		if (desc.images != null) {
+			res = desc.images;
+		}
+		if (res != null) {
+			return res;
+		}
+		res = new LinkedList<IImageTitle>();
+		IContentComponentsList contentList = getAllContent(ctx);
+		while (contentList.hasNext(ctx)) {
+			IContentVisualComponent elem = contentList.next(ctx);
+			if ((elem instanceof IImageTitle) && (!elem.isEmpty(ctx)) && (!elem.isRepeat())) {
+				IImageTitle imageComp = (IImageTitle) elem;
+				if (imageComp.isImageValid(ctx)) {
+					res.add(new ImageTitleBean(imageComp.getImageDescription(ctx), imageComp.getImageURL(ctx), imageComp.getImageLinkURL(ctx)));
+					// desc.imageLink = new WeakReference<IImageTitle>(res);
+					// desc.imageLink = new ImageTitleBean(res.getImageDescription(ctx), res.getImageURL(ctx));
+					// return res;
+				}
+			}
+		}
+		desc.images = res;
+		return desc.images;
+	}
+
+	public String getKeywords(ContentContext ctx) throws Exception {
+
+		PageDescription desc = getPageDescriptionCached(ctx.getRequestContentLanguage());
+
+		if (desc.keywords != null) {
+			return desc.keywords;
+		}
+		String res = "";
+		replacement.clear();
+		IContentComponentsList contentList = getAllContent(ctx);
+		while (contentList.hasNext(ctx)) {
+			IContentVisualComponent elem = contentList.next(ctx);
+			if (elem.getType().equals(Keywords.TYPE)) {
+				if (res.length() > 0) {
+					res = res + ',';
+				}
+				res = res + elem.getValue(ctx);
+				Keywords keywords = (Keywords) elem;
+				if (keywords.getStyle(ctx).equals(Keywords.BOLD_IN_CONTENT)) {
+					String[] keys = keywords.getValue().split(",");
+					for (String key : keys) {
+						replacement.put(key.trim(), "<strong>" + key.trim() + "</strong>");
+					}
+				}
+			}
+			List<String> tags = getTags(ctx);
+			for (String tag : tags) {
+				if (res.length() > 0) {
+					res = res + ',';
+				}
+				res = res + tag;
+			}
+		}
+		desc.keywords = res;
+		return desc.keywords;
+	}
+
+	public String getLabel(ContentContext ctx) throws Exception {
+		String res = getFullLabel(ctx);
+
+		if (res != null) {
+			if ((res.trim().length() == 0) && (name != null)) {
+				res = name;
+			}
+			if (StringHelper.htmlSize(res) > getTextCut()) {
+				res = StringHelper.cutEndXHTML(res.trim(), getTextCut()).trim() + "...";
+			}
+		}
+		return res;
+	}
+
+	public int getLastAccess(ContentContext ctx) throws ServiceException {
+		Calendar cal = Calendar.getInstance();
+		int countDay = 0;
+		int outAccess = 0;
+		StaticConfig staticConfig = StaticConfig.getInstance(ctx.getRequest().getSession());
+		while (countDay < staticConfig.getLastAccessPage()) {
+			outAccess = outAccess + getAccess(ctx, cal.getTime());
+			cal.roll(Calendar.DAY_OF_YEAR, false);
+			countDay++;
+		}
+		return outAccess;
+	}
+
+	public String getLatestEditor() {
+		return latestEditor;
+	}
+
+	public String getLinkedURL() {
+		return linkedURL;
+	}
+
+	/**
+	 * get the first link on the page.
+	 * 
+	 * @param ctx
+	 * @return
+	 * @throws Exception
+	 */
+	public String getLinkOn(ContentContext ctx) throws Exception {
+
+		PageDescription desc = getPageDescriptionCached(ctx.getRequestContentLanguage());
+
+		if (desc.linkOn == null) {
+			String res = "";
+			ContentContext newCtx = new ContentContext(ctx);
+			newCtx.setArea(null);
+			IContentComponentsList contentList = getAllContent(newCtx);
+			while (contentList.hasNext(newCtx)) {
+				IContentVisualComponent elem = contentList.next(newCtx);
+				if (elem instanceof ILink) {
+					res = ((ILink) elem).getURL(newCtx);
+				}
+			}
+			desc.linkOn = res;
+		}
+
+		return desc.linkOn;
+	}
+
+	/**
+	 * get content of the current area
+	 * 
+	 * @param ctx
+	 *            current context
+	 * @return
+	 * @throws Exception
+	 */
+	private synchronized ContentElementList getLocalContent(ContentContext ctx) throws Exception {
+		ContentElementList localContentElementList = contentElementListMap.get(ctx.getRequestContentLanguage());
+		if (localContentElementList == null) {
+
+			/*
+			 * ComponentBean[] localComponentBean; synchronized (componentBean) { localComponentBean = new ComponentBean[componentBean.length]; System.arraycopy(componentBean, 0, localComponentBean, 0, componentBean.length); }
+			 */
+			localContentElementList = new ContentElementList(componentBean, ctx, this, false);
+
+			contentElementListMap.put(ctx.getRequestContentLanguage(), localContentElementList);
+
+			logger.fine("update local content  - # component : " + localContentElementList.size(ctx) + " (ctx:" + ctx + ")");
+		}
+
+		localContentElementList.initialize(ctx);
+
+		return localContentElementList;
+
+	}
+
+	public ContentElementList getLocalContentCopy(ContentContext ctx) throws Exception {
+		ContentElementList outList = new ContentElementList(getLocalContent(ctx));
+		outList.initialize(ctx);
+		return outList;
+	}
+
+	/**
+	 * get description of the page (description component)
+	 * 
+	 * @param ctx
+	 * @return
+	 * @throws Exception
+	 */
+	public String getLocation(ContentContext ctx) throws Exception {
+
+		PageDescription desc = getPageDescriptionCached(ctx.getRequestContentLanguage());
+
+		if (desc.location != null) {
+			return desc.location;
+		}
+		String res = "";
+		ContentContext newCtx = new ContentContext(ctx);
+		newCtx.setArea(null);
+		IContentComponentsList contentList = getContent(newCtx);
+		while (contentList.hasNext(newCtx)) {
+			IContentVisualComponent elem = contentList.next(newCtx);
+			if (elem.getType().equals(LocationComponent.TYPE)) {
+				res = res + elem.getValue(newCtx);
+			}
+		}
+		desc.location = StringUtils.replace(res, "\"", "&quot;");
+		return desc.location;
+	}
+
+	/**
+	 * return the object for lock the navigation structure
+	 * 
+	 * @return
+	 */
+	public Object getLock() {
+		return getRoot();
+	}
+
+	public Date getManualModificationDate() {
+		return manualModificationDate;
+	}
+
+	/**
+	 * get the description for meta tag (if no meta description defined return the description)
+	 * 
+	 * @param ctx
+	 * @return
+	 * @throws Exception
+	 */
+	public String getMetaDescription(ContentContext ctx) throws Exception {
+
+		PageDescription desc = getPageDescriptionCached(ctx.getRequestContentLanguage());
+
+		if (desc.metaDescription != null) {
+			return desc.metaDescription;
+		}
+		String res = "";
+		IContentComponentsList contentList = getAllContent(ctx);
+		while (contentList.hasNext(ctx)) {
+			IContentVisualComponent elem = contentList.next(ctx);
+			if (elem.getType().equals(MetaDescription.TYPE)) {
+				res = res + elem.getValue(ctx);
+			}
+		}
+		if (res.trim().length() == 0) {
+			res = getDescription(ctx);
+		}
+		desc.metaDescription = StringUtils.replace(res, "\"", "&quot;");
+		return desc.metaDescription;
+	}
+
+	public Date getModificationDate() {
+		if (getManualModificationDate() != null) {
+			return getManualModificationDate();
+		} else {
+			return getRealModificationDate();
+		}
+	}
+
+	public String getName() {
+		String res = name;
+		return res;
+	}
+
+	/**
+	 * get the previous menu element in the child list
+	 * 
+	 * @return a MenuElement with the same depth, null if current is the first element.
+	 */
+	public MenuElement getNextBrother() {
+		if (getParent() == null) {
+			return null;
+		}
+		MenuElement[] children = getParent().getChildMenuElements();
+		MenuElement elem = null;
+		for (MenuElement child : children) {
+			if (elem != null && elem.equals(this)) {
+				return child;
+			}
+			elem = child;
+		}
+		return null;
+	}
+
+	public MenuElement getNoErrorFreeCurrentPage(ContentContext ctx) throws Exception {
+		if (ctx.getPath().equals("/") || ctx.getPath().equals('/' + ElementaryURLHelper.ROOT_FILE_NAME)) {
+			return this;
+		} else {
+
+			Collection<MenuElement> pastNode = new LinkedList<MenuElement>();
+			MenuElement elem = searchChild(this, ctx, ctx.getPath(), pastNode);
+			if (elem == null) {
+				elem = this;
+			}
+			// DebugHelper.checkAssert(elem == null, "current page (" +
+			// ctx.getPath() + ") not found.");
+			return elem;
+		}
+	}
+
+	public List<IContentVisualComponent> getNoRepeatContentByType(ContentContext ctx, String type) throws Exception {
+
+		List<IContentVisualComponent> outComp = new LinkedList<IContentVisualComponent>();
+
+		ContentElementList content = getAllLocalContent(ctx);
+
+		while (content.hasNext(ctx)) {
+			IContentVisualComponent comp = content.next(ctx);
+			if (comp.getType().equals(type)) {
+				outComp.add(comp);
+			}
+		}
+		content.initialize(ctx);
+
+		return outComp;
+	}
+
+	PageDescription getPageDescriptionCached(String lg) {
+		String key = getCacheKey(lg);
+		Element element = cache.get(key);
+		PageDescription outDesc;
+		if (element == null) {
+			outDesc = new PageDescription();
+			cache.put(new Element(key, outDesc));
+		} else {
+			outDesc = (PageDescription) element.getValue();
+		}
+		return outDesc;
+	}
+	
+	PageDescription getPageBeanCached(String lg) {		
+		String key = getCacheKey("bean-"+lg);
+		Element element = cache.get(key);
+		PageDescription outDesc;
+		if (element == null) {
+			outDesc = new PageDescription(); 
+			cache.put(new Element(key, outDesc));
+		} else {
+			outDesc = (PageDescription) element.getValue();
+		}
+		return outDesc;
+	}
+	
+	public PageBean getPageBean(ContentContext ctx) throws Exception {
+		PageDescription pageDescription = getPageBeanCached(ctx.getLanguage());		
+		if (pageDescription.getTitle() == null) {
+			pageDescription.category = getCategory(ctx);
+			pageDescription.contentDate = getContentDate(ctx);
+			pageDescription.description = getDescription(ctx);
+			pageDescription.globalTitle = getGlobalTitle(ctx);
+			pageDescription.groupID = getGroupID(ctx);
+			pageDescription.headerContent = getHeaderContent(ctx);
+			pageDescription.images = getImages(ctx);
+			pageDescription.contentDateVisible = isContentDateVisible(ctx);
+			pageDescription.empty = isEmpty(ctx);
+			pageDescription.realContent = isRealContent(ctx);
+			pageDescription.keywords = getKeywords(ctx);
+			pageDescription.label = getLabel(ctx);
+			pageDescription.linkOn = getLinkOn(ctx);
+			pageDescription.location = getLocation(ctx);
+			pageDescription.metaDescription = getMetaDescription(ctx);
+			pageDescription.notInSearch = notInSearch(ctx);
+			pageDescription.pageRank = getPageRank(ctx);
+			pageDescription.pageTitle = getPageTitle(ctx);			
+			pageDescription.subTitle = getSubTitle(ctx);
+			pageDescription.tags = getTags(ctx);
+			pageDescription.title = getTitle(ctx);
+			pageDescription.depth = getDepth();
+			pageDescription.visible  = isVisible();
+		
+		}
+		PageBean pageBean = new PageBean();
+		pageBean.setInfo(pageDescription);
+		pageBean.setUrl(URLHelper.createURL(ctx, this));
+		pageBean.setPath(getPath());
+		pageBean.setLatestEditor(getLatestEditor());
+		pageBean.setCreationDate(StringHelper.renderShortDate(ctx, getCreationDate()));
+		pageBean.setModificationDate(StringHelper.renderShortDate(ctx, getModificationDate()));
+		pageBean.setName(getName());
+		pageBean.setTemplateId(getTemplateId());
+		pageBean.setSelected(isSelected(ctx));
+		List<MenuElement> children = getChildMenuElementsList();
+		for (MenuElement child : children) {
+			pageBean.addChild(child.getPageBean(ctx));
+		}
+		return pageBean;
+	}
+
+	/**
+	 * get the page rank (define with content)
+	 * 
+	 * @return a page rank between 0 and 1
+	 * @throws Exception
+	 */
+	public double getPageRank(ContentContext ctx) throws Exception {
+
+		final double defaultValue = 0;
+
+		PageDescription desc = getPageDescriptionCached(ctx.getRequestContentLanguage());
+
+		if (desc.pageRank != null) {
+			return desc.pageRank;
+		}
+
+		ContentElementList contentList = getAllContent(ctx); // search date in
+		// all area
+		while (contentList.hasNext(ctx)) {
+			IContentVisualComponent comp = contentList.next(ctx);
+			if (comp instanceof IPageRank) {
+				if (((IPageRank) comp).getVotes(ctx, getPath()) == 0) {
+					return defaultValue;
+				}
+				if (((IPageRank) comp).getVotes(ctx, getPath()) > 0) {
+					desc.pageRank = (((IPageRank) comp).getRankValue(ctx, getPath())) / (double) (((IPageRank) comp).getVotes(ctx, getPath()));
+					return desc.pageRank;
+				}
+			}
+		}
+		desc.pageRank = defaultValue;
+		return desc.pageRank;
+	}
+
+	public String getPageTitle(ContentContext ctx) throws Exception {
+
+		ContentContext newCtx = new ContentContext(ctx);
+		newCtx.setArea(null); // warning : check if the method is needed.
+
+		PageDescription desc = getPageDescriptionCached(newCtx.getRequestContentLanguage());
+
+		if (desc.pageTitle != null) {
+			return desc.pageTitle;
+		}
+
+		desc.pageTitle = getContent(newCtx).getPageTitle();
+
+		if (desc.pageTitle != null) {
+			if ((desc.pageTitle.trim().length() == 0) && (name != null)) {
+				desc.pageTitle = name;
+			}
+		}
+		return desc.title;
+	}
+
+	/**
+	 * @return Returns the parent.
+	 */
+	public MenuElement getParent() {
+		return parent;
+	}
+
+	/**
+	 * return the page of this page
+	 * 
+	 * @return a path.
+	 */
+	public String getPath() {
+		try {
+			if (parent == this) {
+				throw new Exception("recursive reference !!!");
+			} else {
+				if (parent != null) {
+					return parent.getPath() + '/' + getName();
+				} else {
+					if (getParent() == null) {
+						return "";
+					} else {
+						return getName();
+					}
+				}
+			}
+		} catch (Exception e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		return null;
+	}
+
+	/**
+	 * get the previous menu element in the child list
+	 * 
+	 * @return a MenuElement with the same depth, null if current is the first element.
+	 */
+	public MenuElement getPreviousBrother() {
+		if (getParent() == null) {
+			return null;
+		}
+		MenuElement[] children = getParent().getChildMenuElements();
+		MenuElement brother = null;
+		for (MenuElement child : children) {
+			if (child.equals(this)) {
+				return brother;
+			}
+			brother = child;
+		}
+		return null;
+	}
+
+	public int getPriority() {
+		return priority;
+	}
+
+	public Date getRealModificationDate() {
+		return modificationDate;
+	}
+
+	public Map<String, String> getReplacement() {
+		return replacement;
+	}
+
+	public Collection<StaticInfo> getResources(ContentContext ctx) throws Exception {
+		Collection<StaticInfo> pageResources = new LinkedList<StaticInfo>();
+		GlobalContext globalContext = GlobalContext.getInstance(ctx.getRequest());
+		Collection<StaticInfo> resources = globalContext.getResources(ctx);
+		for (StaticInfo staticInfo : resources) {
+			if (staticInfo.getLinkedPage(ctx) != null) {
+				if (this.getPath().equals(staticInfo.getLinkedPage(ctx).getPath())) {
+					pageResources.add(staticInfo);
+				}
+			}
+		}
+		return pageResources;
+	}
+
+	public String getReversedLink() {
+		return reversedLink;
+	}
+
+	public MenuElement getRoot() {
+		MenuElement rootNode = this;
+		MenuElement parent = getParent();
+		while (parent != null) {
+			rootNode = parent;
+			parent = parent.getParent();
+		}
+		return rootNode;
+	}
+
+	/**
+	 * return the depth of the selection. sample: if the first selected element have childs and sedond not the depth is 2.
+	 * 
+	 * @return a depth
+	 * @throws Exception
+	 */
+	public int getSelectedDepth(ContentContext ctx) throws Exception {
+		MenuElement elem = searchChild(ctx);
+		int res = ContentManager.getPathDepth(ctx.getPath());
+		if (elem.isHaveChild()) {
+			res++;
+		}
+		return res;
+	}
+
+	public double getSiteMapPriority(ContentContext ctx) {
+		try {
+			double pageRank = getPageRank(ctx);
+			if (pageRank == 0) {
+				return 1 / 2;
+			} else {
+				return pageRank;
+			}
+		} catch (Exception e) {
+			e.printStackTrace();
+			return 1 / 2;
+		}
+	}
+
+	public String getSubTitle(ContentContext ctx) throws Exception {
+
+		ContentContext newCtx = new ContentContext(ctx);
+		
+		PageDescription desc = getPageDescriptionCached(newCtx.getRequestContentLanguage());
+
+		if (desc.subTitle != null) {
+			return desc.subTitle;
+		}
+
+		newCtx.setDefaultArea();
+		desc.subTitle = getContent(newCtx).getSubTitle(ctx);
+		if (desc.subTitle == null) {
+			newCtx.setArea(null); // warning : check if the method is needed.
+			desc.subTitle = getContent(newCtx).getSubTitle(ctx);
+		}
+
+		return desc.subTitle;
+	}
+
+	public List<String> getTags(ContentContext ctx) throws Exception {
+
+		PageDescription desc = getPageDescriptionCached(ctx.getRequestContentLanguage());
+
+		if (desc.tags != null) {
+			return desc.tags;
+		}
+
+		ContentContext lgDefaultCtx = new ContentContext(ctx);
+		lgDefaultCtx.setArea(null);
+		GlobalContext globalContext = GlobalContext.getInstance(ctx.getRequest());
+		Iterator<String> defaultLg = globalContext.getDefaultLanguages().iterator();
+
+		Iterator<IContentVisualComponent> tagsList = getContentByType(lgDefaultCtx, Tags.TYPE).iterator();
+		Tags tag = null;
+		if (tagsList.hasNext()) {
+			tag = (Tags) tagsList.next();
+		}
+		while ((tag == null || tag.getTags().size() == 0) && defaultLg.hasNext()) {
+			String lg = defaultLg.next();
+			lgDefaultCtx.setContentLanguage(lg);
+			lgDefaultCtx.setRequestContentLanguage(lg);
+			tagsList = getContentByType(lgDefaultCtx, Tags.TYPE).iterator();
+			tag = null;
+			if (tagsList.hasNext()) {
+				tag = (Tags) tagsList.next();
+			}
+		}
+
+		List<String> outTags = new LinkedList<String>();
+
+		IContentComponentsList contentList = getAllContent(lgDefaultCtx);
+		while (contentList.hasNext(lgDefaultCtx)) {
+			IContentVisualComponent elem = contentList.next(lgDefaultCtx);
+			if (elem.getType().equals(Tags.TYPE)) {
+				outTags.addAll(((Tags) elem).getTags());
+			}
+		}
+		desc.tags = outTags;
+		return desc.tags;
+	}
+	
+	public String getTemplateId() {
+		return templateId;
+	}
+
+	/**
+	 * @return
+	 */
+	public int getTextCut() {
+		return textCut;
+	}
+
+	/**
+	 * get the time range found in the content.
+	 * 
+	 * @return
+	 * @throws Exception
+	 */
+	public TimeRange getTimeRange(ContentContext ctx) throws Exception {
+
+		PageDescription desc = getPageDescriptionCached(ctx.getRequestContentLanguage());
+
+		if (desc.timeRange != null) {
+			return desc.timeRange;
+		}
+
+		List<IContentVisualComponent> content = getContentByType(ctx, TimeRangeComponent.TYPE);
+		if (content.size() > 0) {
+			TimeRangeComponent comp = (TimeRangeComponent) content.iterator().next();
+			desc.timeRange = new TimeRange(comp.getStartDate(), comp.getEndDate());
+		} else {
+			Date contentDate = getContentDateNeverNull(ctx);
+			desc.timeRange = new TimeRange(contentDate, contentDate);
+		}
+
+		return desc.timeRange;
+	}
+
+	public String getTitle(ContentContext ctx) throws Exception {
+
+		ContentContext newCtx = new ContentContext(ctx);
+		newCtx.setArea(null); // warning : check if the method is needed.
+
+		PageDescription desc = getPageDescriptionCached(newCtx.getRequestContentLanguage());
+
+		if (desc.title != null) {
+			return desc.title;
+		}
+
+		desc.title = getContent(newCtx).getTitle();
+
+		if (desc.title != null) {
+			if ((desc.title.trim().length() == 0) && (name != null)) {
+				desc.title = name;
+			}
+		}
+		return desc.title;
+	}
+
+	/**
+	 * @return
+	 */
+	public String[] getUserRoles() {
+		return userRoles;
+	}
+
+	public String getValidater() {
+		return validater;
+	}
+
+	public Date getValidationDate() {
+		return validationDate;
+	}
+
+	public List<MenuElement> getVirtualChild(ContentContext ctx, boolean onlyVisible) throws Exception {
+		List<MenuElement> outList = new LinkedList<MenuElement>();
+		if (onlyVisible) {
+			for (MenuElement menuElement : virtualChild) {
+				if (menuElement.isVisible(ctx)) {
+					outList.add(menuElement);
+				}
+			}
+		} else {
+			outList.addAll(virtualChild);
+		}
+
+		return outList;
+	}
+
+	public List<MenuElement> getVirtualParent() {
+		return virtualParent;
+	}
+
+	/**
+	 * return the page of this page
+	 * 
+	 * @return a path.
+	 */
+	public String getVirtualPath(ContentContext ctx) {
+		return getVirtualPathRec(ctx, 0);
+	}
+
+	/**
+	 * return the page of this page
+	 * 
+	 * @return a path.
+	 */
+	private String getVirtualPathRec(ContentContext ctx, int c) {
+		try {
+			if (parent == null) {
+				return "";
+			}
+			if (parent == this && c > 1000) {
+				GlobalContext globalContext = GlobalContext.getInstance(ctx.getRequest());
+				logger.severe("recursive vpath in :" + getPath() + "  context : " + globalContext.getContextKey());
+			} else {
+
+				MenuElement realParent = parent;
+				/*
+				 * if (!realParent.isSelected(ctx)) { for (MenuElement vparent : getVirtualParent()) { if (vparent.isSelected(ctx)) { realParent = vparent; } } }
+				 */// TODO : warning this comment must be bad, but with it you have a recursive call to isSelected
+
+				if (realParent != null) {
+					return realParent.getVirtualPathRec(ctx, c + 1) + '/' + getName();
+				} else {
+					if (parent == null) {
+						return "";
+					} else {
+						return getName();
+					}
+				}
+			}
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		return null;
+	}
+
+	/**
+	 * get the child list of the current element.
+	 * 
+	 * @return a array of childs.
+	 * @throws Exception
+	 */
+	public MenuElement[] getVisibleChildMenuElements(ContentContext ctx) throws Exception {
+		ArrayList<MenuElement> resObj = new ArrayList<MenuElement>();
+		for (MenuElement element : childMenuElements) {
+			if (element.isVisible(ctx)) {
+				resObj.add(element);
+			} else {
+				GlobalContext globalContext = GlobalContext.getInstance(ctx.getRequest());
+				if (globalContext.isAutoSwitchToDefaultLanguage() && ctx.getRenderMode() != ContentContext.EDIT_MODE) {
+					ContentContext defaultLgCtx = new ContentContext(ctx);
+					defaultLgCtx.setArea(null);
+					Iterator<String> defaultLgs = globalContext.getDefaultLanguages().iterator();
+					boolean insered = false;
+					while (defaultLgs.hasNext() && !insered) {
+						String lg = defaultLgs.next();
+						defaultLgCtx.setRequestContentLanguage(lg);
+						if (element.isVisible(defaultLgCtx)) {
+							resObj.add(element);
+							insered = true;
+						}
+					}
+				}
+			}
+		}
+		MenuElement[] res = new MenuElement[resObj.size()];
+		resObj.toArray(res);
+		return res;
+	}
+
+	public List<MenuElement> getVisibleChildMenuElementsList(ContentContext ctx) throws Exception {
+		List<MenuElement> res = new LinkedList<MenuElement>();
+		for (MenuElement element : childMenuElements) {
+			if (element.isVisible(ctx)) {
+				res.add(element);
+			} else {
+				GlobalContext globalContext = GlobalContext.getInstance(ctx.getRequest());
+				if (globalContext.isAutoSwitchToDefaultLanguage() && ctx.getRenderMode() != ContentContext.EDIT_MODE) {
+					ContentContext defaultLgCtx = new ContentContext(ctx);
+					/*
+					 * defaultLgCtx.setContentLanguage(globalContext.getDefaultLanguage ()); if (element.isVisible(defaultLgCtx)) { res.add(element); }
+					 */
+
+					Iterator<String> defaultLgs = globalContext.getDefaultLanguages().iterator();
+					boolean insered = false;
+					while (defaultLgs.hasNext() && !insered) {
+						String lg = defaultLgs.next();
+						defaultLgCtx.setRequestContentLanguage(lg);
+						if (element.isVisible(defaultLgCtx)) {
+							res.add(element);
+							insered = true;
+						}
+					}
+				}
+			}
+		}
+		return res;
+	}
+
+	public String getXHTMLTitle(ContentContext ctx) throws Exception {
+		String res = getContent(ctx).getXHTMLTitle(ctx);
+
+		if (res != null) {
+			if (res.trim().length() == 0) {
+				res = name;
+			}
+		}
+		return StringHelper.removeTag(res);
+	}
+
+	public boolean isBlocked() {
+		return blocked;
+	}
+
+	/**
+	 * check if a page is parent or parent of a parent.
+	 * 
+	 * @param parent
+	 *            a page of the navigation.
+	 * @return true if page found in paternity
+	 */
+	public boolean isChildOf(MenuElement parent) {
+		if (getParent() == null) {
+			return false;
+		} else if (getParent().equals(parent)) {
+			return true;
+		} else {
+			return getParent().isChildOf(parent);
+		}
+	}
+
+	public boolean isChildrenEquals(MenuElement elem) {
+		if (elem == null) {
+			return false;
+		}
+		return Arrays.equals(getChildMenuElements(), elem.getChildMenuElements());
+	}
+
+	// TODO: change this method with a method in the component, it return is date if visible of not.
+	public boolean isContentDateVisible(ContentContext ctx) throws Exception {
+		PageDescription desc = getPageDescriptionCached(ctx.getRequestContentLanguage());
+		if (desc.contentDateVisible != null) {
+			return desc.contentDateVisible;
+		}
+		desc.contentDateVisible = true;		
+		GlobalContext globalContext = GlobalContext.getInstance(ctx.getRequest());
+		Iterator<String> defaultLgs = globalContext.getDefaultLanguages().iterator();
+		ContentContext localContext = new ContentContext(ctx);
+		while (isEmpty(localContext) && defaultLgs.hasNext()) {
+			localContext.setRequestContentLanguage(defaultLgs.next());
+		}
+		if (!isEmpty(localContext)) {
+			ContentElementList contentList = getAllContent(localContext); // search date in all area			
+			while (contentList.hasNext(ctx)) {
+				IContentVisualComponent comp = contentList.next(ctx);
+				if (comp.getType() == DateComponent.TYPE) {
+					if (((DateComponent) comp).getStyle(ctx).equals(DateComponent.NOT_VISIBLE_TYPE)) {
+						desc.contentDateVisible = false;
+					}
+				}
+			}
+		}		
+		return desc.contentDateVisible;
+	}
+
+	public boolean isContentEquals(MenuElement elem) {
+		if (elem == null) {
+			return false;
+		}
+		return Arrays.equals(elem.componentBean, componentBean);
+	}
+
+	public boolean isEmpty(ContentContext ctx) throws Exception {
+		return isEmpty(ctx, null);
+	}
+
+	public boolean isEmpty(ContentContext ctx, String area) throws Exception {
+
+		PageDescription desc = getPageDescriptionCached(ctx.getRequestContentLanguage());
+
+		if (desc.isEmpty() != null) {
+			return desc.isEmpty();
+		}
+
+		if (ctx.getRequestContentLanguage() == null) {
+			return true;
+		}
+		ContentContext ctxNoArea = new ContentContext(ctx);
+		ctxNoArea.setArea(null);
+		Logger.startCount("local content");
+		IContentComponentsList contentList = getAllLocalContent(ctxNoArea);
+		Logger.stepCount("local content", "local content loaded");
+		while ((contentList.hasNext(ctxNoArea))) {
+			IContentVisualComponent component = contentList.next(ctxNoArea);
+			if (component != null) {
+				if (!component.isEmpty(ctxNoArea)) {
+					if (!component.isRepeat()) {
+						desc.empty = false;
+						return false;
+					}
+				}
+			}
+		}
+		Logger.endCount("local content", "content checked");
+		desc.empty = true;
+		return true;
+	}
+
+	/**
+	 * @return
+	 */
+	public boolean isHaveChild() {
+		return childMenuElements.size() > 0;
+	}
+
+	public boolean isHaveVisibleChild(ContentContext ctx) throws Exception {
+		return getVisibleChildMenuElements(ctx).length > 0;
+	}
+
+	public boolean isHttps() {
+		return https;
+	}
+
+	public boolean isLastSelected(ContentContext ctx) {
+		String[] pathElems = ctx.getPath().split("\\/");
+		if (pathElems.length > 0) {
+			if (name.equals(pathElems[pathElems.length - 1])) {
+				return true;
+			}
+		}
+		return false;
+	}
+
+	public boolean isMetadataEquals(MenuElement elem) {
+		if (elem == null) {
+			return false;
+		}
+		return name.equals(elem.getName()) && visible == elem.visible && Arrays.equals(userRoles, elem.userRoles) && priority == elem.priority;
+	}
+
+	public boolean isRealContent(ContentContext ctx) throws Exception {
+
+		PageDescription desc = getPageDescriptionCached(ctx.getRequestContentLanguage());
+
+		if (!desc.isRealContentNull()) {
+			return desc.isRealContent();
+		}
+
+		ContentContext contentAreaCtx = new ContentContext(ctx);
+		contentAreaCtx.setArea(ComponentBean.DEFAULT_AREA);
+
+		/*
+		 * if (isEmpty(contentAreaCtx)) { return false; }
+		 */
+
+		ContentElementList comps = getContent(contentAreaCtx);
+		while (comps.hasNext(contentAreaCtx)) {
+			IContentVisualComponent comp = comps.next(contentAreaCtx);
+			if (comp.isRealContent(contentAreaCtx)) {
+				desc.realContent = true;
+				return true;
+			}
+		}
+
+		desc.realContent = false;
+
+		return false;
+	}
+
+	public boolean isRealContentAnyLanguage(ContentContext ctx) throws Exception {
+		if (isRealContent(ctx)) {
+			return true;
+		}
+		GlobalContext globalContext = GlobalContext.getInstance(ctx.getRequest());
+		Collection<String> lgs = globalContext.getContentLanguages();
+		ContentContext lgContext = new ContentContext(ctx);
+		for (String lg : lgs) {
+			lgContext.setRequestContentLanguage(lg);
+			lgContext.setArea(null); // remove the area
+			if (isRealContent(lgContext)) {
+				return true;
+			}
+		}
+		return false;
+	}
+
+	/*
+	 * public boolean isSelected(ContentContext ctx) { String[] pathElems = ctx.getPath().split("\\/"); for (String pathElem : pathElems) { if (name.equals(pathElem)) { return true; } } return false; }
+	 */
+
+	public boolean isRemote() {
+		if (getParent() != null && getParent().isRemote()) {
+			return true;
+		} else {
+			return remote;
+		}
+	}
+
+	public boolean isSelected(ContentContext ctx) throws Exception {
+		MenuElement page = ctx.getCurrentPage();
+		if (this.getId().equals(page.getId())) {
+			return true;
+		}
+		while (!this.getId().equals(page.getId()) && page.getParent() != null) {
+			page = page.getParent();
+			if (this.getId().equals(page.getId())) {
+				return true;
+			}
+		}
+		return false;
+	}
+
+	public boolean isValid() {
+		return valid;
+	}
+
+	public boolean isVisible() throws Exception {
+		return visible;
+	}
+
+	/**
+	 * @return
+	 * @throws Exception
+	 */
+	public boolean isVisible(ContentContext ctx) throws Exception {
+		if (!visible) {
+			return false;
+		} else {
+			ContentContext contentAreaCtx = new ContentContext(ctx);
+			contentAreaCtx.setArea(ComponentBean.DEFAULT_AREA);
+			ContentElementList content = this.getContent(contentAreaCtx);
+			while (content.hasNext(contentAreaCtx)) {
+				IContentVisualComponent comp = content.next(contentAreaCtx);
+				if (!comp.isEmpty(contentAreaCtx)) {
+					return true;
+				}
+			}
+
+			MenuElement[] children = this.getAllChilds();
+			for (MenuElement child : children) {
+				content = child.getContent(ctx);
+				while (content.hasNext(contentAreaCtx)) {
+					if (!content.next(contentAreaCtx).isEmpty(contentAreaCtx) /* && child.isVisible() */) { // TODO:
+						return true;
+					}
+				}
+			}
+			return false;
+		}
+	}
+
+	/**
+	 * move the current page under other parent
+	 */
+	public void moveToParent(MenuElement parent) {
+		if (parent != null) {
+			if (getParent() != null) {
+				getParent().removeChild(this);
+			}
+			parent.addChildMenuElement(this);
+			setParent(parent);
+		}
+	}
+
+	/**
+	 * prepare a content to be added at the end of the rendering
+	 * 
+	 * @param ctx
+	 *            the current content context
+	 * @param page
+	 *            the page when the content must be insered
+	 * @param parentComp
+	 *            the parent component
+	 * @param contentType
+	 *            the type of the component
+	 * @param value
+	 *            the value of the component
+	 * @return the if of the new component
+	 * @throws Exception
+	 */
+	public final String prepareAddContent(String lg, String parentCompId, String contentType, String style, String value) throws Exception {
+		ComponentBean comp = new ComponentBean(StringHelper.getRandomId(), contentType, value, lg, false);
+		if (style != null) {
+			comp.setStyle(style);
+		}
+		if (contentToBeAdded.keySet().contains(parentCompId)) {
+			logger.warning("parent id : '" + parentCompId + "' all ready found is parent id list.");
+		} else {
+			contentToBeAdded.put(parentCompId, comp);
+		}
+		return comp.getId();
+	}
+
+	public void releaseCache() {
+		// pageInfinityCache.clear();
+		cache.removeAll();
+		contentElementListMap.clear();
+		localContentElementListMap.clear();
+	}
+
+	public void removeChild(MenuElement elem) {
+		synchronized (getLock()) {
+			childMenuElements.remove(elem);
+		}
+	}
+
+	/**
+	 * remove a component on the page
+	 * 
+	 * @return the type of the component, null if not found
+	 */
+	public String removeContent(ContentContext ctx, String id) {
+		return removeContent(ctx, id, true);
+	}
+
+	/**
+	 * remove a component on the page
+	 * 
+	 * @param releaseCache
+	 *            true if you want release the page cache after deleted component
+	 * @return the type of the component, null if not found
+	 */
+	public String removeContent(ContentContext ctx, String id, boolean releaseCache) {
+		String type = null;
+		synchronized (getLock()) {
+			List<ComponentBean> outList = new LinkedList<ComponentBean>();
+			boolean delete = false;
+			for (int i = 0; i < componentBean.length; i++) {
+				IContentVisualComponent comp = ComponentFactory.getComponentWithType(ctx, componentBean[i].getType());
+				if (!componentBean[i].getId().equals(id)) {
+					if (!delete) {
+						outList.add(componentBean[i]);
+					} else if ((comp != null) && (comp.isContainer())) {
+						delete = false;
+					}
+				} else {
+					if (comp != null) {
+						// added by plm for portlet delete purpose
+						((AbstractVisualComponent) comp).setComponentBean(componentBean[i]);
+
+						comp.delete(ctx);
+						type = comp.getType();
+						if (comp.isContainer()) {
+							delete = true;
+						}
+					}
+				}
+			}
+			// if (type != null) {
+			componentBean = new ComponentBean[outList.size()];
+			outList.toArray(componentBean);
+			// }
+		}
+		if (releaseCache) {
+			releaseCache();
+		}
+
+		return type;
+	}
+
+	public void removeEditorRoles(String group) {
+		editGroups.remove(group);
+	}
+
+	private void removeVirtualChild(MenuElement vChild) {
+		if (vChild != null) {
+			virtualChild.remove(vChild);
+		}
+	}
+
+	/*
+	 * public boolean needJavaScript(ContentContext ctx) throws Exception { PageDescription desc = getPageDescriptionCached(ctx.getRequestContentLanguage()); if (desc.needJavaScript != null) { return desc.needJavaScript; }
+	 * 
+	 * ContentElementList content = getAllContent(ctx); while (content.hasNext()) { IContentVisualComponent comp = content.next(); if (comp.needJavaScript()) { desc.needJavaScript = true; return true; } } desc.needJavaScript = false; return false; }
+	 */
+
+	public MenuElement searchChild(ContentContext ctx) throws Exception {
+		return searchChild(ctx, ctx.getPath());
+	}
+
+	public MenuElement searchChild(ContentContext ctx, String path) throws Exception {
+		/*
+		 * if (path.equals("/")) { return this; } else { Collection<MenuElement> pastNode = new LinkedList<MenuElement>(); return searchChild(this, ctx, path, pastNode); }
+		 */
+		GlobalContext globalContext = GlobalContext.getInstance(ctx.getRequest());
+		return globalContext.getPage(ctx, path);
+	}
+
+	/**
+	 * @param id
+	 * @return
+	 * @Deprecated use NavigationService.getPage(ContentContext, pageKey)
+	 */
+	public MenuElement searchChildFromId(String id) {
+		if ((id == null) || (id.equals("0"))) {
+			return this;
+		} else {
+			return searchChildFromId(this, id);
+		}
+	}
+
+	/**
+	 * @param name
+	 * @return
+	 * @Deprecated use NavigationService.getPage(ContentContext, pageKey)
+	 */
+	public MenuElement searchChildFromName(String name) {
+		if (name.equals(this.getName())) {
+			return this;
+		} else {
+			return searchChildFromName(this, name);
+		}
+	}
+
+	public MenuElement searchRealChild(ContentContext ctx, String path) throws Exception {
+		if (path.equals("/")) {
+			return this;
+		} else {
+			Collection<MenuElement> pastNode = new LinkedList<MenuElement>();
+			return searchRealChild(this, ctx, path, pastNode);
+		}
+	}
+
+	public void setBlocked(boolean blocked) {
+		synchronized (getLock()) {
+			this.blocked = blocked;
+		}
+	}
+
+	public void setBlocker(String blocker) {
+		synchronized (getLock()) {
+			this.blocker = blocker;
+		}
+	}
+
+	public void setChildMenuElements(Collection<MenuElement> childMenuElements) {
+		synchronized (getLock()) {
+			this.childMenuElements = new LinkedList<MenuElement>();
+		}
+	}
+
+	public void setContent(ComponentBean[] newContent) {
+		synchronized (getLock()) {
+			componentBean = newContent;
+
+			releaseCache();
+		}
+	}
+
+	public void setCreationDate(Date createDate) {
+		creationDate = createDate;
+	}
+
+	public void setCreator(String creator) {
+		synchronized (getLock()) {
+			this.creator = creator;
+		}
+	}
+
+	public void setHttps(boolean https) {
+		this.https = https;
+	}
+
+	/**
+	 * @param string
+	 */
+	public void setId(String string) {
+		id = string;
+	}
+
+	public void setLatestEditor(String latestEditor) {
+		synchronized (getLock()) {
+			this.latestEditor = latestEditor;
+		}
+	}
+
+	public void setLinkedURL(String linkedURL) {
+		if (this.linkedURL.length() > 0 && linkedURL.trim().length() == 0) {
+			clearPage();
+		}
+		if (linkedURL == null) { // on load XML
+			this.linkedURL = "";
+			return;
+		}
+		this.linkedURL = linkedURL;
+		if (linkedURL.trim().length() == 0) {
+			setRemote(false);
+		} else {
+			setRemote(true);
+		}
+	}
+
+	public void setManualModificationDate(Date manualModificationDate) {
+		synchronized (getLock()) {
+			this.manualModificationDate = manualModificationDate;
+		}
+	}
+
+	public void setModificationDate(Date modificationDate) {
+		synchronized (getLock()) {
+			this.modificationDate = modificationDate;
+		}
+	}
+
+	/*
+	 * public int getLastAccess(ContentContext ctx) throws ServiceException { String accessPageKey = "access-page-" + ctx.getLanguage(); Integer lastMonthAccess = (Integer) pageTimeCache.get(accessPageKey); if (lastMonthAccess == null) { synchronized (pageTimeCache) { Tracker tracker = Tracker.getTracker(ctx.getRequest().getSession()); StaticConfig staticConfig = StaticConfig.getInstance(ctx.getRequest().getSession()); int outLastMonthAccess = tracker.getPathCountAccess(staticConfig.getLastAccessPage(), URLHelper.mergePath(ctx.getLanguage(), getPath())); pageTimeCache.put(accessPageKey, new Integer(outLastMonthAccess)); return outLastMonthAccess; } } else { return lastMonthAccess; } }
+	 */
+
+	public void setName(String name) {
+		this.name = name;
+	}
+
+	/**
+	 * @param parent
+	 *            The parent to set.
+	 */
+	public void setParent(MenuElement parent) {
+		this.parent = parent;
+	}
+
+	public void setPriority(int newPriority) {
+		synchronized (getLock()) {
+			priority = newPriority;
+			if (getParent() != null) {
+				getParent().sortChild();
+			}
+		}
+	}
+
+	public void setPriorityNoSort(int newPriority) {
+		synchronized (getLock()) {
+			priority = newPriority;
+		}
+	}
+
+	public void setRemote(boolean readOnly) {
+		remote = readOnly;
+	}
+
+	public void setReversedLink(String reversedLink) {
+		this.reversedLink = reversedLink;
+	}
+
+	public void setTemplateName(String inTemplate) {
+		templateId = inTemplate;
+	}
+
+	/**
+	 * @param i
+	 */
+	public void setTextCut(int i) {
+		textCut = i;
+	}
+
+	/**
+	 * @param strings
+	 */
+	public void setUserRoles(String[] strings) {
+		userRoles = strings;
+		if (strings.length == 1) {
+			if (strings[0].trim().length() == 0) {
+				userRoles = new String[0];
+			}
+		}
+	}
+
+	public void setValid(boolean valid) {
+		synchronized (getLock()) {
+			this.valid = valid;
+		}
+	}
+
+	public void setValidater(String validater) {
+		synchronized (getLock()) {
+			this.validater = validater;
+		}
+	}
+
+	public void setValidationDate(Date validationDate) {
+		synchronized (getLock()) {
+			this.validationDate = validationDate;
+		}
+	}
+
+	public void setVirtualParent(List<MenuElement> newVirtualParent) {
+		virtualParent = newVirtualParent;
+	}
+
+	/**
+	 * @param b
+	 */
+	public void setVisible(boolean b) {
+		visible = b;
+	}
+
+	private void sortChild() {
+		Collections.sort(childMenuElements, new MenuElementPriorityComparator());
+	}
+
+	@Override
+	public String toString() {
+		try {
+			return getName() + " [priority : " + getPriority() + ", #children : " + getChildMenuElementsList().size() + ",visible=" + isVisible() + "] " + super.toString();
+		} catch (Exception e) {
+			e.printStackTrace();
+			return getName() + " [priority : " + getPriority() + ", #children : " + getChildMenuElementsList().size() + ",visible=" + e.getMessage() + "] " + super.toString();
+		}
+	}
+
+	public void updateLinkedData(ContentContext ctx) {
+		InputStream in = null;
+		try {
+			if (getLinkedURL().trim().length() == 0) {
+				if (isRemote()) {
+					if (getParent() != null) {
+						getParent().updateLinkedData(ctx);
+					}
+				}
+				return;
+			}
+			StaticConfig staticConfig = StaticConfig.getInstance(ctx.getRequest().getSession());
+			int msTime = staticConfig.getCacheLinkedPage() * 100;
+			Date currentDate = new Date();
+			if (latestUpdateLinkedData != null && latestUpdateLinkedData.getTime() + msTime > currentDate.getTime()) {
+				return;
+			}
+			logger.info("update page : " + getPath() + " on : " + getLinkedURL());
+			latestUpdateLinkedData = new Date();
+
+			String XMLURL = StringHelper.changeFileExtension(getLinkedURL(), "xml");
+
+			URL url = new URL(XMLURL);
+			in = url.openStream();
+
+			NodeXML node = XMLFactory.getFirstNode(in);
+			NodeXML pageNode = node.getChild("page");
+			if (pageNode != null) {
+				clearPage();
+				GlobalContext globalContext = GlobalContext.getInstance(ctx.getRequest());
+				PersistenceService persistenceService = PersistenceService.getInstance(globalContext);
+				NavigationHelper.importPage(ctx, persistenceService, pageNode, this, ctx.getLanguage(), true);
+			}
+		} catch (Exception e) {
+			setRemote(false);
+			logger.warning("can not update page : " + getPath() + " with linked url : " + getLinkedURL());
+			e.printStackTrace();
+			MessageRepository messageRepository = MessageRepository.getInstance(ctx);
+			messageRepository.setGlobalMessage(new GenericMessage(e.getMessage(), GenericMessage.ERROR));
+		} finally {
+			ResourceHelper.closeResource(in);
+		}
+	}
+
+	/**
+	 * valid all children
+	 * 
+	 * @return the number of valided element
+	 * @throws Exception
+	 */
+	public int validAllChildren() throws Exception {
+		MenuElement[] children = getAllChilds();
+		int outValided = 0;
+		for (int i = 0; i < children.length; i++) {
+			if (!children[i].isValid()) {
+				children[i].setValid(true);
+				outValided++;
+			}
+		}
+		return outValided;
+	}
+
+	public boolean notInSearch(ContentContext ctx) throws Exception {
+		PageDescription desc = getPageDescriptionCached(ctx.getRequestContentLanguage());
+
+		if (desc.notInSearch != null) {
+			return desc.notInSearch;
+		}
+		
+		desc.notInSearch = false;
+		ContentContext noAreaCtx = new ContentContext(ctx);
+		noAreaCtx.setArea(null);
+		if (getContentByType(noAreaCtx, NotSearchPage.TYPE).size() > 0) {
+			desc.notInSearch = true;
+		}
+		
+		return desc.notInSearch;
+	}
+
+}

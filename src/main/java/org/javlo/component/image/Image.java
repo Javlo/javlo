@@ -1,0 +1,234 @@
+package org.javlo.component.image;
+
+import java.io.PrintWriter;
+import java.io.StringWriter;
+
+import org.javlo.component.core.ComponentBean;
+import org.javlo.component.core.IPreviewable;
+import org.javlo.component.files.AbstractFileComponent;
+import org.javlo.config.StaticConfig;
+import org.javlo.context.ContentContext;
+import org.javlo.context.GlobalContext;
+import org.javlo.helper.URLHelper;
+import org.javlo.i18n.I18nAccess;
+import org.javlo.image.ImageConfig;
+import org.javlo.ztatic.StaticInfo;
+
+public class Image extends AbstractFileComponent implements IImageTitle, IPreviewable  {
+
+	@Override
+	public String[] getStyleList(ContentContext ctx) {
+		return new String[] { "image-left", "image-right", "image-center" };
+	}
+	
+	@Override
+	public String[] getStyleLabelList(ContentContext ctx) {
+		String left = "left";
+		String right = "right";
+		String center = "center";
+		try {
+			I18nAccess i18n = I18nAccess.getInstance(ctx.getRequest());
+			left = i18n.getText("global.left");
+			right = i18n.getText("global.right");
+			center = i18n.getText("global.center");
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		return new String[] { left, right, center };
+	}
+
+
+	@Override
+	public String getStyleTitle(ContentContext ctx) {
+		return "position";
+	}
+	
+	public String getCSSClassName(ContentContext ctx) {
+		return getStyle(ctx)+' '+getType();
+	}
+	
+	protected ImageConfig config = null;
+
+	@Override
+	public void init(ComponentBean bean, ContentContext ctx) throws Exception {
+		super.init(bean, ctx);
+		GlobalContext globalContext = GlobalContext.getInstance(ctx.getRequest());
+		//Warning : with javlo 1.4 this line has use a other ImageConfig from component.config package, check if regression	
+		config = ImageConfig.getInstance(globalContext, ctx.getRequest().getSession(), ctx.getCurrentTemplate());
+	}
+
+	public String getImageImgName() {
+		return "img_images_" + getId();
+	}
+
+	/**
+	 * @see org.javlo.itf.IContentVisualComponent#getXHTMLCode()
+	 */
+	@Override
+	public String getViewXHTMLCode(ContentContext ctx) throws Exception {
+		StringBuffer res = new StringBuffer();
+		if ((getValue() != null) && (getFileName().trim().length() > 0)) {
+			StaticConfig staticConfig = StaticConfig.getInstance(ctx.getRequest().getSession());
+
+			String fileLink = URLHelper.mergePath(getDirSelected(), getFileName());
+
+			String label = getLabel();
+			if (label.trim().length() == 0) {
+				label = getDescription();
+			}
+
+			String url = URLHelper.createRessourceURL(ctx, getPage(), staticConfig.getImageFolder() + '/' + fileLink).replace('\\', '/');
+			res.append("<div " + getSpecialPreviewCssClass(ctx, getCSSClassName(ctx)) + getSpecialPreviewCssId(ctx) + "><img src=\"");
+			res.append(url);
+			res.append("\" title=\"");
+			res.append(label);
+			res.append("\" alt=\"");
+			res.append(label);
+			res.append("\" /></div>");
+		} else {
+			res.append("&nbsp; <!--IMAGE NOT DEFINED--> ");
+		}
+		return res.toString();
+	}
+
+	@Override
+	protected String getCSSType() {
+		return "image";
+	}
+
+	@Override
+	protected String getPreviewCode(ContentContext ctx) throws Exception {
+		StringWriter res = new StringWriter();
+		PrintWriter out = new PrintWriter(res);
+		out.println("<div id=\"" + getPreviewZoneId() + "\" class=\"list-container\" style=\"height: 220px; overflow: scroll; text-align: center;\">");
+		out.println(getPreviewCode(ctx, getMaxPreviewImages()));
+		out.println("</div>");
+		out.close();
+		return res.toString();
+	}
+
+	protected String getPreviewZoneId() {
+		return "picture-zone-" + getId();
+	}
+
+	@Override
+	public String getPreviewCode(ContentContext ctx, int maxDisplayedImage) throws Exception {		
+		StringWriter res = new StringWriter();
+		PrintWriter out = new PrintWriter(res);
+
+		String[] images = getFileList(getFileDirectory(ctx));
+		String currentFileLink = URLHelper.mergePath(getDirSelected(), getFileName());
+		GlobalContext globalContext = GlobalContext.getInstance(ctx.getRequest());
+		for (int i = 0; i < images.length; i++) {
+			if ((images[i] != null) && (images[i].trim().length() > 0)) {
+				StaticInfo staticInfo = StaticInfo.getInstance(ctx, getFileURL(ctx, images[i]));
+				String fileLink = URLHelper.mergePath(getDirSelected(), images[i]);
+				String selected = "class=\"preview-image\"";
+				boolean isSelectedImage = false;
+				if (fileLink.equals(currentFileLink)) {
+					selected = " class=\"preview-image selected\"";
+					isSelectedImage = true;
+				}
+				String realURL = URLHelper.createRessourceURL(ctx, getPage(), '/' + getImageURL(ctx, images[i])) + "?CRC32=" + staticInfo.getCRC32();
+				String previewURL = URLHelper.createTransformURL(ctx, getPage(), getImageURL(ctx, images[i]), "preview") + "?CRC32=" + staticInfo.getCRC32();
+				String url = URLHelper.createTransformURL(ctx, getPage(), getImageURL(ctx, images[i]), getConfig(ctx).getProperty("thumbnails-filter", "thumbnails") ) + "?CRC32=" + staticInfo.getCRC32();
+				String id = "image_name_select__" + getId();
+				if (i < maxDisplayedImage || isSelectedImage) {
+					out.print("<div " + selected + ">");
+					String onMouseOver = "";
+					if (globalContext.isImagePreview()) {
+						onMouseOver = " onMouseOver=\"previewImage('" + previewURL + "')\" onMouseOut=\"previewClear()\"";
+					}
+					out.print("<a href=\"#\" onclick=\"$('" + id + "').setProperty('value', '" + images[i] + "');" + getJSOnChange(ctx) + "\"><img name=\"" + getImageImgName() + "\"" + onMouseOver + " src=\"");
+					out.print(url);
+					out.print("\" alt=\"\"></a><br />");
+					out.print("<div class=\"name\"><a href=\"" + realURL + "\">" + images[i] + "</a></div>");
+					out.print("</div>");
+				}
+			}
+		}
+		
+		//TODO : create this javascrit method with a other mecanism
+		/*out.println("<script language=\"javascript\">");
+		out.println("autoScroll.delay(250);");
+		out.println("</script>");*/
+		out.close();
+		return res.toString();
+	}
+
+	protected int getMaxPreviewImages() {
+		return Integer.MAX_VALUE;
+	}
+
+	@Override
+	protected String getRelativeFileDirectory(ContentContext ctx) {
+		StaticConfig staticConfig = StaticConfig.getInstance(ctx.getRequest().getSession());
+		return staticConfig.getImageFolder();
+	}
+
+	@Override
+	public String getFileDirectory(ContentContext ctx) {
+		GlobalContext globalContext = GlobalContext.getInstance(ctx.getRequest());
+		String folder = URLHelper.mergePath(globalContext.getDataFolder(), getRelativeFileDirectory(ctx));
+		return folder;
+	}
+
+	@Override
+	public String createFileURL(ContentContext ctx, String url) {
+		StaticConfig staticConfig = StaticConfig.getInstance(ctx.getRequest().getSession());
+		String outURL = URLHelper.createStaticURL(ctx, getPage(), staticConfig.getImageFolder() + '/' + url).replace('\\', '/');
+		return outURL;
+	}
+
+	/*
+	 * @see org.javlo.itf.IContentVisualComponent#getType()
+	 */
+	public String getType() {
+		return "image";
+	}
+
+	@Override
+	public String getHexColor() {
+		return GRAPHIC_COLOR;
+	}
+
+	public String getImageURL(ContentContext ctx) {
+		return getImageURL(ctx, getFileName());
+	}
+
+	public String getImageURL(ContentContext ctx, String fileLink) {
+		StaticConfig staticConfig = StaticConfig.getInstance(ctx.getRequest().getSession());
+		return URLHelper.mergePath(staticConfig.getImageFolder(), URLHelper.mergePath(getDirSelected(), fileLink));
+	}
+
+	@Override
+	public String getHelpURI(ContentContext ctx) {
+		return "/components/image.html";
+	}
+
+	public String getStaticLabel(ContentContext ctx) {
+		if (getLabel() != null && getLabel().trim().length() > 0) {
+			return getLabel();
+		}
+		StaticInfo info = getStaticInfo(ctx);
+		if (info == null || info.getDescription(ctx) == null || info.getDescription(ctx).trim().length() == 0 && getLabel().trim().length() > 0) {
+			return "";
+		} else {
+			return info.getFullDescription(ctx);
+		}
+	}
+
+	public String getImageDescription(ContentContext ctx) {
+		return getStaticLabel(ctx);
+	}
+
+	public boolean isImageValid(ContentContext ctx) {
+		return getValue().trim().length() > 0;
+	}
+
+	@Override
+	public String getImageLinkURL(ContentContext ctx) {
+		return null;
+	}
+
+}

@@ -1,0 +1,532 @@
+/*** general ***/
+
+fieldset {	
+	margin: 8px;
+	padding: 8px;    
+    border-color: -moz-use-text-color #CCCCCC #CCCCCC;
+    border: 1px solid #CCCCCC;
+    border-radius: 3px;            
+}
+
+.auto-height {
+	overflow: scroll;
+	height: 800px;
+}
+
+.box {
+	box-shadow: 1px 1px 2px #CCCCCC;
+	margin-bottom: 20px;
+}
+
+.box  h3 {
+	background: url("../images/titlebg.png") repeat-x scroll left top
+		#688AB5;
+	border: 1px solid #6082AD;
+	color: #FFFFFF;
+    font-size: 12px;
+    font-weight: normal;
+    text-shadow: 1px 1px #4B6592;
+    text-transform: uppercase;
+}
+
+.box h3 span {
+	display: block;
+	padding: 10px 15px;
+}
+
+.box .content {
+    border-radius: 0 0 3px 3px;
+    -moz-border-bottom-colors: none;
+    -moz-border-image: none;
+    -moz-border-left-colors: none;
+    -moz-border-right-colors: none;
+    -moz-border-top-colors: none;
+    background: none repeat scroll 0 0 #FCFCFC;
+    border-color: -moz-use-text-color #CCCCCC #CCCCCC;
+    border-right: 1px solid #CCCCCC;
+    border-style: none solid solid;
+    border-width: 0 1px 1px;
+    color: #666666;
+    overflow: hidden;
+    padding: 20px 15px;
+}
+
+.standard-form .line {
+	height: 36px;	
+}
+
+.standard-form .line label {
+	display: inline-block;	
+	width: 170px;	
+	vertical-align: middle;
+}
+
+.standard-form input, .standard-form select {
+	display: inline-block;
+	vertical-align: text-top;
+	width: 220px;	
+}
+
+#sitelist_wrapper input, #sitelist_wrapper select {
+	width: auto;
+	vertical-align: baseline;
+}
+
+.standard-form .line span {
+	color: #000000;
+}
+
+.standard-form .action {
+	margin-top: 10px;
+}
+
+.standard-form .action, .array-form .action {
+	
+	text-align: right;
+}
+
+.standard-form .action input, .array-form .action input {
+	width: auto;
+    background: url("../images/buttonbg5.png") repeat-x scroll left top #EEEEEE;
+    border: 1px solid #CCCCCC;
+    border-radius: 3px 3px 3px 3px;
+    cursor: pointer;
+    display: inline-block;
+}
+
+.standard-form .action input {
+    margin-left: 5px;
+    padding: 2px 8px;
+}
+
+.standard-form .action input:hover, .array-form .action input:hover {
+	background: #eee;
+	-moz-box-shadow: inset 1px 1px 2px #ccc;
+	-webkit-box-shadow: inset 1px 1px 2px #ccc;
+	box-shadow: inset 1px 1px 2px #ccc;
+}
+
+
+.icone_true {
+	font-size: 0;
+	text-indent: -9999px;
+	display: inline-block;
+	width: 16px;
+	height: 16px;
+	background-image: url("../images/icons/small/black/check.png");
+}
+
+.icone_false {
+	font-size: 0;
+	text-indent: -9999px;
+	display: inline-block;
+	width: 16px;
+	height: 16px;
+	background-image: url("../images/icons/small/black/close.png");
+}
+
+/*** notification ***/
+
+.notebutton ul li.error span {
+    color: #E18B7C;    
+}
+
+.notebutton ul li.info span {
+    color: #6385AE;    
+}
+
+/*** modules ***/
+ul,li {
+	list-style: none;
+}
+
+.widgetbox h4,.widgetbox2 h4 {
+	font-size: 11px;
+}
+
+.widgetbox h4 a,.widgetbox2 h4 a,.widgetbox h4 span,.widgetbox2 h4 span
+	{
+	padding: 10px 15px;
+	display: block;
+	text-transform: none;
+}
+
+.widgetbox ul,.widgetbox2 ul {
+	margin-left: 16px;
+}
+
+.action-button {
+	background: url("../images/bgbutton4.png") repeat-x scroll left top
+		transparent;
+	border: 1px solid #CCCCCC;
+	display: inline-block;
+	padding: 2px 5px;
+	box-shadow: 1px 1px 0 #F7F7F7;
+	border-radius: 3px 3px 3px 3px;
+	color: #333333;
+	margin: 2px 0;
+	padding: 2px 5px;
+}
+
+.action-button:hover {
+	background: url("../images/buttonbg3.png") repeat-x scroll left top
+		transparent;
+	border: 1px solid #304978;
+	color: #FFFFFF;
+	text-shadow: 1px 1px #aaaaaa;
+}
+
+.tabmenu ul li.module a span {
+	background: url("../images/icons/small/white/star.png") no-repeat scroll
+		15px 12px transparent;
+}
+
+.tabmenu ul li.module.from {
+    background: none repeat scroll 0 0 #CFCFCF;    
+    text-shadow: none;
+}
+	
+
+.tabmenu ul li.module.from a {
+	background: none repeat scroll 0 0 transparent;
+    color: #eeeeee;	
+}
+
+.tabmenu ul li.module.current a span {
+	background: url("../images/icons/small/black/star.png") no-repeat scroll
+		15px 12px transparent;
+}
+
+.tabmenu ul li.content a span {
+	background: url("../images/icons/small/white/edit.png") no-repeat
+		scroll 15px 12px transparent;
+}
+
+.tabmenu ul li.content.current a span {
+	background: url("../images/icons/small/black/edit.png") no-repeat
+		scroll 15px 12px transparent;
+}
+
+.tabmenu ul li.template  a span {
+	background: url("../images/icons/small/white/document.png") no-repeat
+		scroll 15px 12px transparent;
+}
+
+.tabmenu ul li.template.current a span {
+	background: url("../images/icons/small/black/document.png") no-repeat
+		scroll 15px 12px transparent;
+}
+
+.tabmenu ul li.admin a span {
+	background: url("../images/icons/small/white/settings.png") no-repeat
+		scroll 15px 12px transparent;
+}
+
+.tabmenu ul li.admin.current a span {
+	background: url("../images/icons/small/black/settings.png") no-repeat
+		scroll 15px 12px transparent;
+}
+
+.tabmenu ul li.file a span {
+	background: url("../images/icons/small/white/save.png") no-repeat
+		scroll 15px 12px transparent;
+}
+
+.tabmenu ul li.file.current a span {
+	background: url("../images/icons/small/black/save.png") no-repeat
+		scroll 15px 12px transparent;
+}
+
+
+
+.breadcrumbs span {
+	display: inline-block;
+	padding: 5px 20px 5px 0;
+}
+
+#tools h3 {
+	font-size: 1em;
+	font-weight: normal;
+	color: #656565;
+	display: block;
+	float: left;
+	padding: 5px 20px 5px 0;
+	background: url("../images/separator2.png") no-repeat scroll right
+		center transparent;
+	margin-right: 10px;
+	padding: 5px 20px 5px 0;
+}
+
+#tools {
+	box-shadow: 1px 1px 0 #F3F3F3;
+	background: url("../images/icons/tools.png") no-repeat scroll 10px 9px
+		#F7F7F7;
+	border-radius: 2px 2px 2px 2px;
+	border: 1px solid #DDDDDD;
+	font-size: 11px;
+	padding: 0 15px 0 30px;
+}
+
+#tools .action-button {
+	display: block;
+	float: right;
+}
+
+#tools .action-button.more {
+	float: left;
+}
+
+#tools .content {
+	height: 31px;
+}
+
+#tools .special {
+	margin-left: 15px;
+	border-left: 1px #DDDDDD solid;
+	padding-left: 15px;
+	float: right;
+	
+}
+
+#tools .special input, #tools .special select {
+	margin-top: 2px;
+	height: 28px;
+}
+
+.action-button.preview span {
+	padding-left: 26px;
+	background: url("../images/icons/small/black/document.png") no-repeat
+		scroll 5px;
+}
+
+.action-button.preview:hover span {
+	background: url("../images/icons/small/white/document.png") no-repeat
+		scroll 5px;
+}
+
+.action-button.page span {
+	padding-left: 26px;
+	background: url("../images/icons/small/black/page_properties.png")
+		no-repeat scroll 5px;
+}
+
+.action-button.page:hover span {
+	background: url("../images/icons/small/white/page_properties.png")
+		no-repeat scroll 5px;
+}
+
+.action-button.edit span {
+	padding-left: 26px;
+	background: url("../images/icons/small/black/edit.png") no-repeat scroll
+		5px;
+}
+
+.action-button.edit:hover span {
+	background: url("../images/icons/small/white/edit.png") no-repeat scroll
+		5px;
+}
+
+.action-button.save span {
+	padding-left: 26px;
+	background: url("../images/icons/small/black/save.png") no-repeat scroll
+		5px;
+}
+
+.action-button.save:hover span {
+	background: url("../images/icons/small/white/save.png") no-repeat scroll
+		5px;
+}
+
+.action-button.publish span {
+	padding-left: 26px;
+	background: url("../images/icons/small/black/publish.png") no-repeat
+		scroll 5px;
+}
+
+.action-button.publish:hover span {
+	background: url("../images/icons/small/white/publish.png") no-repeat
+		scroll 5px;
+}
+
+/*** component list ***/
+.component {
+	position: relative;
+}
+
+.insert-line {
+	text-align: center;
+	padding: 3px;
+}
+
+.component li.title span {
+	background: url("../images/separator2.png") no-repeat scroll right
+		center transparent;
+	margin-right: 10px;
+	color: #006699;
+	display: inline-block;
+	padding: 6px 16px;
+}
+
+.component li.title {
+	border-right: 1px solid #CCCCCC;
+}
+
+.component .header-action {
+	display: block;
+	position: absolute;
+	top: 5px;
+	right: 5px;
+}
+
+.component .header-action a {
+	cursor: pointer;
+	display: block;
+	float: right;
+	margin-left: 8px;
+	height: 8px;
+	width: 8px;
+}
+
+.component .header-action .delete {
+	background: url("../images/icons/close.png") no-repeat scroll 0 0
+		transparent;
+	right: 5px;
+}
+
+.component .header-action .copy {
+	background: url("../images/icons/copy.png") no-repeat scroll 0 0
+		transparent;
+	right: 15px;
+}
+
+.component .header-info {
+	display: block;
+	position: absolute;
+	top: 20px;
+	right: 5px;
+}
+
+.component .header-info span {
+	margin-left: 8px;
+	display: block;
+	float: right;
+	min-width: 8px;
+	height: 8px;
+	color: #dd0000;
+	font-size: 9px;
+	line-height: 8px;
+	display: block;
+}
+
+.component .header-info .repeat {
+	background: url("../images/icons/repeat.png") no-repeat scroll 0 0
+		transparent;
+}
+
+.component .header-info .inlist {
+	background: url("../images/icons/inlist.png") no-repeat scroll 0 0
+		transparent;
+}
+
+.component .preview-image {
+	box-shadow: 1px 1px 0 #F3F3F3;
+	border-radius: 2px 2px 2px 2px;
+	border: 1px solid #DDDDDD;
+	font-size: 11px;
+}
+
+/*** navigation ***/
+.navigation .children a {
+	padding-left: 16px;
+}
+
+.navigation .children .have-children a {
+	background: url("../images/icons/more.png") no-repeat scroll 0 11px
+		transparent;
+}
+
+.navigation .children .real-content a {
+	font-weight: bold;
+}
+
+
+/*** page properties ***/
+
+.page-properties {
+	margin-top: 20px;	
+}
+
+.page-properties .content {
+	position: relative;
+}
+
+.template-preview {
+	float: right;	
+    border-radius: 3px 3px 3px 3px;    
+    background: none repeat scroll 0 0 #FCFCFC;
+    border: 1px solid #CCCCCC;
+    box-shadow: 1px 1px 2px #DDDDDD;
+    padding: 10px;
+    z-index: 1;
+}
+
+.line.template {
+	display: block;
+	margin: 0 0px 0 -8px;
+	padding: 2px 0 1px 8px;
+	border-radius: 3px 3px 3px 3px;
+	border: 1px solid #CCCCCC;
+	border-right: 1px solid #FCFCFC; 	
+	box-shadow: 1px 1px 2px #DDDDDD;
+	background-color: #CCCCCC;
+	z-index: 10;
+}
+
+/*** preview ***/
+
+.box.preview {
+	margin-top: 20px;
+}
+
+.box.preview h3 {
+	display: block;
+}
+
+.preview h3 a {
+	width: 16px;
+	height: 16px;
+	font-size : 0;
+	text-indent: -9999px;
+	background: url("../images/icons/small/white/popup.png") no-repeat
+		scroll 0 0 transparent;
+	float: right;
+	font-size: 0
+}
+
+#preview iframe {
+	width: 100%;
+	height: 96%;
+}
+
+/*** admin ***/
+
+.site-properties {
+	margin-top: 20px;
+}
+
+.site-properties fieldset, .site-properties .action {
+	margin-right: 290px;
+}
+
+
+/*** JQUERY UI ***/
+.ui-tabs-nav li a {
+	padding: 6px 16px;
+}
+
+.ui-tabs-nav {
+	height: 33px;
+}
+.jGrowl {
+	margin-top: 100px;
+}

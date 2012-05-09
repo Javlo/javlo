@@ -1,0 +1,12 @@
+<%@page contentType="text/html"
+        import="
+        org.javlo.context.ContentContext,
+        org.javlo.config.StaticConfig"  
+%><%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c"
+%><%@ taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions" %><%
+StaticConfig staticConfig = StaticConfig.getInstance(request.getSession());
+%>
+
+var currentURL = "${info.currentURL}";
+var dateFormat = "<%=staticConfig.getDefaultJSDateFormat()%>";
+var editLanguage = "${info.editLanguage}";
