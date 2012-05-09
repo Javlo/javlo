@@ -1,0 +1,1071 @@
+package org.javlo.config;
+
+import java.io.File;
+import java.io.IOException;
+import java.io.InputStream;
+import java.lang.reflect.Constructor;
+import java.lang.reflect.InvocationTargetException;
+import java.net.Proxy;
+import java.net.ProxySelector;
+import java.net.URI;
+import java.util.Arrays;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.Iterator;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.Map;
+import java.util.Observable;
+import java.util.Properties;
+import java.util.Set;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+
+import javax.servlet.ServletContext;
+import javax.servlet.http.HttpSession;
+
+import org.apache.commons.configuration.ConfigurationException;
+import org.apache.commons.configuration.PropertiesConfiguration;
+import org.apache.commons.io.FileUtils;
+import org.apache.commons.lang.StringUtils;
+import org.javlo.context.ContentContext;
+import org.javlo.context.GlobalContext;
+import org.javlo.data.source.TestDataSource;
+import org.javlo.helper.ElementaryURLHelper;
+import org.javlo.helper.PatternHelper;
+import org.javlo.helper.ResourceHelper;
+import org.javlo.helper.StringHelper;
+import org.javlo.macro.IMacro;
+import org.javlo.servlet.AccessServlet;
+import org.javlo.user.AdminUserFactory;
+import org.javlo.user.IUserFactory;
+import org.javlo.user.User;
+
+public class StaticConfig extends Observable {
+
+	protected static Logger logger = Logger.getLogger(StaticConfig.class.getName());
+
+	PropertiesConfiguration properties = new PropertiesConfiguration();
+	Map<String, User> editUsers = new HashMap<String, User>();
+
+	public static final String WEBAPP_CONFIG_FILE = "/WEB-INF/config/webapp_config.properties";
+	public static final String SPECIFIC_WEBAPP_CONFIG_FILE = "/WEB-INF/config/specific_webapp_config.properties";
+
+	static final String EDIT_USERS_KEY = "edit.users";
+	static final String DEFAULT_CREDENTIALS = "admin,0DPiKuNIrrVmD8IUCuw1hQxNqZc="; // admin,admin;
+
+	private static final String FILE_NAME = "static-config.properties";
+	private static final String DEFAULT_CONFIG_DIR = "/WEB-INF/config";
+
+	private static final String SMTP_HOST_PARAM = "mail.smtp.host";
+	private static final String SMTP_PORT_PARAM = "mail.smtp.port";
+	private static final String SMTP_USER_PARAM = "mail.smtp.user";
+	private static final String SMTP_PASSWORD_PARAM = "mail.smtp.password";
+
+	private static final String STATIC_CONFIG_RELATIVE_KEY = "static-config.relative";
+	private static final String STATIC_CONFIG_KEY = "static-config.directory";
+
+	private static final String KEY = StaticConfig.class.getName();
+
+	/**
+	 * @Deprecated use getInstance (ServletContext application)
+	 */
+	public static StaticConfig getInstance(HttpSession session) {
+		if (session == null) {
+			return null;
+		} else {
+			return getInstance(session.getServletContext());
+		}
+	}
+
+	public static StaticConfig getInstance(ServletContext application) {
+		StaticConfig outCfg = (StaticConfig) application.getAttribute(KEY);
+		if (outCfg == null) {
+			outCfg = new StaticConfig(application);
+		}
+		return outCfg;
+	}
+
+	private ServletContext application = null;
+
+	private String defaultProxyHost = null;
+
+	private int defaultProxyPort = -1;
+
+	private String staticConfigLocalisation;
+
+	private Class<IUserFactory> adminUserFactoryClass = null;
+
+	private AdminUserFactory admimUserFactory = null;
+
+	private String adminUserFactoryClassName = "";
+
+	private Map<String, String> devices = null;
+
+	private StaticConfig(ServletContext application) {
+		this.application = application;
+		try {
+			synchronized (FILE_NAME) {
+				Properties webappProps = new Properties();
+				InputStream in = application.getResourceAsStream(StaticConfig.WEBAPP_CONFIG_FILE);
+				try {
+					webappProps.load(in);
+				} finally {
+					ResourceHelper.closeResource(in);
+				}
+
+				InputStream inSpec = application.getResourceAsStream(StaticConfig.SPECIFIC_WEBAPP_CONFIG_FILE);
+				if (inSpec != null) {
+					Properties specificWebappProps = new Properties();
+					try {
+						specificWebappProps.load(inSpec);
+					} finally {
+						ResourceHelper.closeResource(inSpec);
+					}
+					webappProps.putAll(specificWebappProps);
+				}
+
+				/** LOAD GOD USERS * */
+				String editUser = webappProps.getProperty(EDIT_USERS_KEY);
+				if (editUser != null) {
+					if (editUser.startsWith("${")) {
+						editUser = DEFAULT_CREDENTIALS;
+					}
+					String[] userPasswordList = editUser.split(";");
+					for (String element : userPasswordList) {
+						try {
+							String[] userPassword = element.split(",");
+							User user = new User(userPassword[0], userPassword[1]);
+							logger.info("add edit user : " + user.getName());
+
+							editUsers.put(user.getName(), user);
+						} catch (RuntimeException e) {
+							logger.severe("the definition of edit users list is not correct.");
+						}
+					}
+				} else {
+					logger.severe("no user found for edit.");
+				}
+
+				/** LOAD STATIC CONFIG FILE LOCATION * */
+				staticConfigLocalisation = webappProps.getProperty(STATIC_CONFIG_KEY);
+				if (staticConfigLocalisation == null || staticConfigLocalisation.trim().length() == 0 || staticConfigLocalisation.contains("${")) {
+					staticConfigLocalisation = application.getRealPath(DEFAULT_CONFIG_DIR + "/" + FILE_NAME);
+				} else {
+					staticConfigLocalisation = ElementaryURLHelper.mergePath(staticConfigLocalisation, FILE_NAME);
+
+					boolean staticConfigRelative = Boolean.parseBoolean(webappProps.getProperty(STATIC_CONFIG_RELATIVE_KEY));
+					if (staticConfigRelative) {
+						staticConfigLocalisation = application.getRealPath(staticConfigLocalisation);
+					}
+				}
+
+				staticConfigLocalisation = replaceFolderVariable(staticConfigLocalisation);
+
+				File file = new File(staticConfigLocalisation);
+				logger.info("load static config : " + file);
+				if (!file.exists()) {
+					if (!file.getParentFile().exists()) {
+						file.getParentFile().mkdirs();
+					}
+					file.createNewFile();
+				}
+				properties.setDelimiterParsingDisabled(true);
+				properties.setFile(file);
+				properties.load();
+			}
+			application.setAttribute(KEY, this);
+		} catch (Exception e) {
+			logger.log(Level.WARNING, "static config file location not found (" + staticConfigLocalisation + "), using default location inside webapp", e);
+		}
+
+	}
+
+	public Level getAbstractComponentLogLevel() {
+		try {
+			return Level.parse(properties.getString("log.component.abstract.level", "INFO"));
+		} catch (IllegalArgumentException e) {
+			e.printStackTrace();
+			return Level.INFO;
+		}
+	}
+
+	public Level getAccessLogLevel() {
+		try {
+			return Level.parse(properties.getString("log.access.level", "INFO"));
+		} catch (IllegalArgumentException e) {
+			e.printStackTrace();
+			return Level.INFO;
+		}
+
+	}
+
+	public AdminUserFactory getAdminUserFactory(GlobalContext globalContext, HttpSession session) throws SecurityException, NoSuchMethodException, ClassNotFoundException, IllegalArgumentException, InstantiationException, IllegalAccessException, InvocationTargetException {
+		if (admimUserFactory == null) {
+			Constructor<IUserFactory> construct = getAdminUserFactoryClass().getConstructor();
+			admimUserFactory = (AdminUserFactory) construct.newInstance();
+			logger.info("create admin user info : " + admimUserFactory.getClass());
+			admimUserFactory.init(globalContext, session);
+		}
+		return admimUserFactory;
+	}
+
+	private Class<IUserFactory> getAdminUserFactoryClass() throws ClassNotFoundException {
+		if (adminUserFactoryClass == null) {
+			adminUserFactoryClassName = getAdminUserFactoryClassName();
+			adminUserFactoryClass = (Class<IUserFactory>) Class.forName(adminUserFactoryClassName);
+		}
+		return adminUserFactoryClass;
+	}
+
+	public String getAdminUserFactoryClassName() {
+		String userFactoryClass = properties.getString("adminuserfactory.class", "org.javlo.user.AdminUserFactory").trim();
+		return userFactoryClass;
+	}
+
+	public Level getAllComponentLogLevel() {
+		try {
+			return Level.parse(properties.getString("log.component.all.level", "INFO"));
+		} catch (IllegalArgumentException e) {
+			e.printStackTrace();
+			return Level.INFO;
+		}
+	}
+
+	/**
+	 * return the folder of data context.
+	 * 
+	 * @return the folder of data context.
+	 */
+	public String getAllDataFolder() {
+		String folder = properties.getString("data-folder", "/WEB-INF/data-ctx/");
+		folder = replaceFolderVariable(folder);
+		if (isDataFolderRelative()) {
+			folder = application.getRealPath(folder);
+		}
+		return folder;
+	}
+
+	public Level getAllLogLevel() {
+		try {
+			return Level.parse(properties.getString("log.all.level", "INFO"));
+		} catch (IllegalArgumentException e) {
+			e.printStackTrace();
+			return Level.INFO;
+		}
+	}
+
+	public String getAllProperties() throws IOException {
+		synchronized (FILE_NAME) {
+			File file = new File(properties.getFile().getAbsolutePath());
+
+			logger.info("load all properties from : " + properties.getFile().getAbsolutePath());
+
+			return FileUtils.readFileToString(file, ContentContext.CHARACTER_ENCODING);
+		}
+	}
+
+	public String getAttribute(String key, String defaultValue) {
+		return properties.getString(key, defaultValue);
+	}
+
+	public Set<String> getBackupExcludePatterns() {
+		String value = properties.getString("backup.exclude-patterns", "");
+		return new HashSet<String>(Arrays.asList(value.split(";")));
+	}
+
+	public String getBackupFolder() {
+		return properties.getString("backup-folder", "backup");
+	}
+
+	public Set<String> getBackupIncludePatterns() {
+		String value = properties.getString("backup.include-patterns", "/persitence/content_2.xml");
+		return new HashSet<String>(Arrays.asList(value.split(";")));
+	}
+
+	public String getCacheFolder() {
+		return properties.getString("cache-folder", "_cache");
+	}
+
+	/**
+	 * cache between two update for linked page (in second)
+	 * 
+	 * @return a time in second.
+	 */
+	public int getCacheLinkedPage() {
+		return Integer.parseInt(properties.getString("cache.linked-page", "30"));
+	}
+
+	public String getContextFolder() {
+		String path = properties.getString("context-folder", "WEB-INF/context");
+
+		path = replaceFolderVariable(path);
+
+		if (isDataFolderRelative()) {
+			path = application.getRealPath(path);
+		}
+		return path;
+	}
+
+	public String getCSVFolder() {
+		return ElementaryURLHelper.mergePath(getStaticFolder(), properties.getString("csv-folder", "csv"));
+	}
+
+	public Map<String, String> getDataSource() {
+		Iterator keys = properties.getKeys();
+		Map<String, String> outDataSource = new HashMap<String, String>();
+		while (keys.hasNext()) {
+			String key = (String) keys.next();
+			if (key.startsWith("data.")) {
+				String dataKey = key.replaceFirst("data.", "");
+				String value = properties.getString(key);
+				outDataSource.put(dataKey, value);
+			}
+		}
+		if (outDataSource.size() == 0) {
+			outDataSource.put("test", TestDataSource.class.getName());
+		}
+		return outDataSource;
+	}
+
+	/*
+	 * public boolean isAccessLogger() { return properties.getBoolean("logger.access", true); }
+	 */
+
+	public String getDBDriver() {
+		return properties.getString("db.driver", null);
+	}
+
+	public String getDBLogin() {
+		return properties.getString("db.login", null);
+	}
+
+	public String getDBPassword() {
+		return properties.getString("db.password", null);
+	}
+
+	public String getDBResourceName() {
+		return properties.getString("db.resource-name", null);
+	}
+
+	public String getDBURL() {
+		return properties.getString("db.url", null);
+	}
+
+	public String getDefaultContext() {
+		return properties.getString("default-context", "default.javlo.org");
+	}
+
+	public String getDefaultImage() {
+		return properties.getString("image.default", "default.png");
+	}
+
+	public String getDefaultProxyHost() {
+		if (defaultProxyPort < 0) {
+			initDefaultProxy();
+		}
+		return defaultProxyHost;
+	}
+
+	public int getDefaultProxyPort() {
+		if (defaultProxyPort < 0) {
+			initDefaultProxy();
+		}
+		return defaultProxyPort;
+	}
+
+	public String getDefaultReport() {
+		String defaultReport = properties.getString("mail.default.report");
+
+		if ((defaultReport != null)) {
+			if (!PatternHelper.MAIL_PATTERN.matcher(defaultReport).matches()) {
+				logger.warning("default report : '" + defaultReport + "' is not a valid email.");
+				defaultReport = "";
+			}
+		} else {
+			defaultReport = "";
+		}
+		return defaultReport;
+	}
+
+	public String getDefaultSender() {
+		String defaultSender = properties.getString("mail.default.sender");
+
+		if ((defaultSender != null)) {
+			if (!PatternHelper.MAIL_PATTERN.matcher(defaultSender).matches()) {
+				logger.warning("default sender : '" + defaultSender + "' is not a valid email.");
+				defaultSender = "";
+			}
+		} else {
+			defaultSender = "";
+		}
+		return defaultSender;
+	}
+
+	public String getDefaultSubject() {
+		String defaultSubject = properties.getString("mail.default.subject");
+
+		if ((defaultSubject != null)) {
+			if (defaultSubject.trim().startsWith("@")) {
+				logger.warning("default subject : '" + defaultSubject + "' is not a valid subject.");
+				defaultSubject = "";
+			}
+		} else {
+			defaultSubject = "";
+		}
+		return defaultSubject;
+	}
+
+	/**
+	 * config the device. device config strucure : device.[device code].[config] sample : device.phone = iphone device.phone = htc device.phone.pointer-device = false
+	 * 
+	 * @return
+	 */
+	public Map<String, String> getDevices() {
+		if (devices == null) {
+			devices = new HashMap<String, String>();
+			Iterator keys = properties.getKeys();
+			while (keys.hasNext()) {
+				String key = (String) keys.next();
+				if (key.startsWith("device.")) {
+					String patternString = properties.getString(key);
+					key = key.replaceFirst("device.", "");
+					devices.put(key, patternString);
+				}
+			}
+		}
+		return devices;
+	}
+
+	public String getDynamicContentPage() {
+		return properties.getString("mailing.dynamic-content-path", "/mailing/dynamic");
+	}
+
+	public String[] getEditTemplate() {
+		String templateRaw = properties.getString("admin.edit-template", "javlo");
+		String[] templates = StringHelper.split(templateRaw, ",");
+		return templates;
+	}
+
+	public Map<String, User> getEditUsers() {
+		/*
+		 * System.out.println("*** edit user : "); for (User user : editUsers.values()) { System.out.println("* user : "+user); }
+		 */
+		return editUsers;
+	}
+
+	public String getEHCacheConfigFile() {
+		String path = properties.getString("ehcacheconfig-file", null);
+		if (path == null) {
+			return null;
+		}
+
+		path = replaceFolderVariable(path);
+
+		if (isDataFolderRelative()) {
+			path = application.getRealPath(path);
+		}
+		return path;
+	}
+
+	public String getEnv() {
+		return properties.getString("deploy.env", "local");
+	}
+
+	/* mailing */
+
+	public String getErrorMailReport() {
+		return properties.getString("debug.email", "error@javlo.org");
+	}
+
+	public String getFileFolder() {
+		return ElementaryURLHelper.mergePath(getStaticFolder(), properties.getString("file-folder", "files"));
+	}
+
+	public String getFlashFolder() {
+		return ElementaryURLHelper.mergePath(getStaticFolder(), properties.getString("flash-folder", "flash"));
+	}
+
+	public String getFooterMessage(String lang) {
+		String msg = properties.getString("message.footer-" + lang, null);
+		if (msg != null) {
+			return msg;
+		}
+		return properties.getString("message.footer", "");
+	}
+
+	public String getGalleryFolder() {
+		return ElementaryURLHelper.mergePath(getStaticFolder(), properties.getString("gallery-folder", "gallery"));
+	}
+
+	public String getHeaderMessage(String lang) {
+		String msg = properties.getString("message.header-" + lang, null);
+		if (msg != null) {
+			return msg;
+		}
+		return properties.getString("message.header", "");
+	}
+
+	public String getI18nEditFile() {
+		String file = replaceFolderVariable(properties.getString("i18n.file.edit", "/WEB-INF/i18n/edit_"));
+		if (isI18nFileRelative()) {
+			file = application.getRealPath(file);
+		}
+		return file;
+	}
+
+	/* config values */
+
+	public String getI18nSpecificEditFile() {
+		String file = replaceFolderVariable(properties.getString("i18n.file.specific-edit", "/WEB-INF/i18n/specific_edit_"));
+		if (isI18nFileRelative()) {
+			file = application.getRealPath(file);
+		}
+		return file;
+	}
+
+	public String getI18nSpecificViewFile() {
+		String file = replaceFolderVariable(properties.getString("i18n.file.specific-view", "/WEB-INF/i18n/specific_view_"));
+		if (isI18nFileRelative()) {
+			file = application.getRealPath(file);
+		}
+		return file;
+	}
+
+	public String getI18nViewFile() {
+		String file = replaceFolderVariable(properties.getString("i18n.file.view", "/WEB-INF/i18n/view_"));
+		if (isI18nFileRelative()) {
+			file = application.getRealPath(file);
+		}
+		return file;
+	}
+
+	public String getImageFolder() {
+		return ElementaryURLHelper.mergePath(getStaticFolder(), properties.getString("image-folder", "images"));
+	}
+	
+	public String getVideoFolder() {
+		return ElementaryURLHelper.mergePath(getStaticFolder(), properties.getString("video-folder", "videos"));
+	}
+
+	public String getIMHelpURI(String lang) {
+		String uri = properties.getString("help.uri.im", null);
+		if (uri != null) {
+			uri = uri.replaceAll("\\[lg\\]", lang);
+		}
+		return uri;
+	}
+
+	public String getInstanceId() {
+		return properties.getString("debug.id", "not debug id defined");
+	}
+
+	public int getLastAccessPage() {
+		return properties.getInt("last-access.page", 60);
+	}
+
+	public int getLastAccessStatic() {
+		return properties.getInt("last-access.static", 60);
+	}
+
+	public String getLDAPInitalContextFactory() {
+		return properties.getString("ldap.initial-context-factory", "com.sun.jndi.ldap.LdapCtxFactory");
+	}
+
+	public String getLDAPProviderURL() {
+		return properties.getString("ldap.provider-url", "ldap://ldappedvds.ep.parl.union.eu:6565/");
+	}
+
+	public String getLDAPSecurityAuthentification() {
+		return properties.getString("ldap.security.authentification", "simple");
+	}
+
+	public String getLDAPSecurityCredentials() {
+		return properties.getString("ldap.security.credentials", "RO-eCARD2010");
+	}
+
+	public String getLDAPSecurityPrincipal() {
+		return properties.getString("ldap.security.principal", "uid=RO-eCARD, ou=Applications, dc=parl, dc=union, dc=eu");
+	}
+
+	public String getLocalMailingFolder() {
+		String outMailingFolder = properties.getString("mailing.folder", "mailing/todo");
+		outMailingFolder = replaceFolderVariable(outMailingFolder);
+		return outMailingFolder;
+	}
+
+	public String getLocalMailingHistoryFolder() {
+		String outMailingFolder = properties.getString("mailing-history.folder", "mailing/old");
+		outMailingFolder = replaceFolderVariable(outMailingFolder);
+		return outMailingFolder;
+	}
+
+	public String getLocalMailingTemplateFolder() {
+		String path = properties.getString("mailing-template-folder", "/mailing-template");
+		path = replaceFolderVariable(path);
+		return path;
+	}
+
+	public String getLocalShareDataFolder() {
+		String path = properties.getString("share-folder", "WEB-INF/share-files");
+		path = replaceFolderVariable(path);
+		return path;
+	}
+
+	public String getLocalTempDir() {
+		String path = properties.getString("temp-folder");
+		if (path != null) {
+			path = replaceFolderVariable(path);
+		}
+		return path;
+	}
+
+	public String getLocalTemplateFolder() {
+		String path = properties.getString("template-folder", "/template");
+		path = replaceFolderVariable(path);
+		return path;
+	}
+
+	public String getLocalThreadFolder() {
+		String path = properties.getString("thread-folder", "/WEB-INF/thread");
+		path = replaceFolderVariable(path);
+		return path;
+	}
+
+	public Level getLoginLogLevel() {
+		try {
+			return Level.parse(properties.getString("log.login.level", "INFO"));
+		} catch (IllegalArgumentException e) {
+			e.printStackTrace();
+			return Level.INFO;
+		}
+	}
+
+	public String getMacroHelpURI(String lang) {
+		String uri = properties.getString("help.uri.macro", null);
+		if (uri != null) {
+			uri = uri.replaceAll("\\[lg\\]", lang);
+		}
+		return uri;
+	}
+
+	public String getMailingFolder() {
+		String outMailingFolder = getLocalMailingFolder();
+		if (isDataFolderRelative()) {
+			outMailingFolder = application.getRealPath(outMailingFolder);
+		}
+		return outMailingFolder;
+	}
+
+	public String getMailingHistoryFolder() {
+		String outMailingFolder = getLocalMailingHistoryFolder();
+		if (isDataFolderRelative()) {
+			outMailingFolder = application.getRealPath(outMailingFolder);
+		}
+		return outMailingFolder;
+	}
+
+	public String getMailingTemplateFolder() {
+		if (isDataFolderRelative()) {
+			return application.getRealPath(getLocalMailingTemplateFolder());
+		} else {
+			return getLocalMailingTemplateFolder();
+		}
+	}
+
+	public int getMaxMenuTitleSize() {
+		return properties.getInt("menu.title-size", 30);
+	}
+
+	public String getMenuEditHelpURI(String lang) {
+		String uri = properties.getString("help.uri.menu-edit", null);
+		if (uri != null) {
+			uri = uri.replaceAll("\\[lg\\]", lang);
+		}
+		return uri;
+	}
+
+	public long getMinFreeSpaceOnDataFolder() {
+		return properties.getLong("system.min-free-space.data", 1024L * 1024L * 10L); // 1 Giga minimum size on the system
+	}
+
+	public Level getNavigationLogLevel() {
+		try {
+			return Level.parse(properties.getString("log.navigation.level", "INFO"));
+		} catch (IllegalArgumentException e) {
+			e.printStackTrace();
+			return Level.INFO;
+		}
+
+	}
+
+	public String getPagePropertiesHelpURI(String lang) {
+		String uri = properties.getString("help.uri.page-properties", null);
+		if (uri != null) {
+			uri = uri.replaceAll("\\[lg\\]", lang);
+		}
+		return uri;
+	}
+
+	public String getPersistanceHelpURI(String lang) {
+		String uri = properties.getString("help.uri.persitance", null);
+		if (uri != null) {
+			uri = uri.replaceAll("\\[lg\\]", lang);
+		}
+		return uri;
+	}
+
+	public String getProductVersion() {
+		return AccessServlet.VERSION;
+	}
+
+	/**
+	 * @return a newly created Properties object
+	 */
+	@SuppressWarnings("unchecked")
+	public Properties getProperties() {
+		Properties result = new Properties();
+		Iterator<String> iter = properties.getKeys();
+		while (iter.hasNext()) {
+			String key = iter.next();
+			result.put(key, properties.getProperty(key));
+		}
+		return result;
+	}
+
+	public String getProxyHost() {
+		return properties.getString("proxy.host", getDefaultProxyHost());
+	}
+
+	public int getProxyPort() {
+		return properties.getInt("proxy.port", getDefaultProxyPort());
+	}
+
+	public int getPublishLoadingDepth() {
+		return properties.getInt("publish.loading.depth", 2);
+	}
+
+	public String getRealPath(String path) {
+		return application.getRealPath(path);
+	}
+
+	public String getSecretKey() {
+		return properties.getString("security.secret-key", "fju43l7m");
+	}
+
+	public String getShareDataFolder() {
+		String folder = getLocalShareDataFolder();
+		if (isDataFolderRelative()) {
+			folder = application.getRealPath(folder);
+		}
+		File file = new File(folder);
+		if (!file.exists()) {
+			file.mkdirs();
+		}
+		return folder;
+	}
+
+	public String getShareDataFolderKey() {
+		return properties.getString("share-folder-key", "___share-files___");
+	}
+
+	public String getShareImageFolder() {
+		return properties.getString("share-image-folder", "images");
+	}
+
+	public String getSMTPHost() {
+		return properties.getString(SMTP_HOST_PARAM, null);
+	}
+
+	public String getSMTPPasswordParam() {
+		return properties.getString(SMTP_PASSWORD_PARAM, null);
+	}
+
+	public String getSMTPPort() {
+		return properties.getString(SMTP_PORT_PARAM, null);
+	}
+
+	public String getSMTPUser() {
+		return properties.getString(SMTP_USER_PARAM, null);
+	}
+
+	public List<IMacro> getSpecialMacros() {
+		List<IMacro> specialMacro = new LinkedList<IMacro>();
+		String macroRaw = properties.getString("class.macro");
+		if (macroRaw != null) {
+			String[] macros = StringHelper.split(macroRaw, ",");
+			for (String macro2 : macros) {
+				try {
+					IMacro macro = (IMacro) Class.forName(macro2).newInstance();
+					specialMacro.add(macro);
+				} catch (InstantiationException e) {
+					e.printStackTrace();
+				} catch (IllegalAccessException e) {
+					e.printStackTrace();
+				} catch (ClassNotFoundException e) {
+					e.printStackTrace();
+				}
+			}
+		}
+		return specialMacro;
+	}
+
+	public String getStaticConfigLocalisation() {
+		return staticConfigLocalisation;
+	}
+
+	public String getStaticFolder() {
+		return properties.getString("static-folder", "static");
+	}
+
+	public String getSynchroCode() {
+		return properties.getString("synchro-code", "120857013478039430485203984");
+	}
+
+	public Level getSynchroLogLevel() {
+		try {
+			return Level.parse(properties.getString("log.synchro", "INFO"));
+		} catch (IllegalArgumentException e) {
+			e.printStackTrace();
+			return Level.INFO;
+		}
+	}
+
+	public String getTeaserFolder() {
+		return ElementaryURLHelper.mergePath(getStaticFolder(), properties.getString("teaser-folder", "teasers"));
+	}
+
+	public String getTempDir() {
+		if (getLocalTempDir() == null) {
+			return null;
+		}
+		if (isDataFolderRelative()) {
+			return application.getRealPath(getLocalTempDir());
+		} else {
+			return getLocalTempDir();
+		}
+	}
+
+	public String getTemplateFolder() {
+		if (isDataFolderRelative()) {
+			return application.getRealPath(getLocalTemplateFolder());
+		} else {
+			return getLocalTemplateFolder();
+		}
+	}
+
+	public String getThreadFolder() {
+		String threadFolder;
+		if (isDataFolderRelative()) {
+			threadFolder = application.getRealPath(getLocalThreadFolder());
+		} else {
+			threadFolder = getLocalThreadFolder();
+		}
+		File theadFolderFile = new File(threadFolder);
+		if (!theadFolderFile.exists()) {
+			theadFolderFile.mkdirs();
+		}
+		return threadFolder;
+	}
+
+	public String getTrashContextFolder() {
+		String path = properties.getString("trash-context-folder", "trash-context-folder");
+		path = replaceFolderVariable(path);
+		if (isDataFolderRelative()) {
+			path = application.getRealPath(path);
+		}
+		return path;
+	}
+
+	public String getTrashFolder() {
+		String path = properties.getString("trash-folder", "WEB-INF/.trash");
+
+		path = replaceFolderVariable(path);
+
+		if (isDataFolderRelative()) {
+			path = application.getRealPath(path);
+		}
+		return path;
+	}
+
+	public String getUserInfoFile() {
+		return properties.getString("userinfo-file", "/users/dc/users-list.csv");
+	}
+
+	public String getVFSFolder() {
+		return ElementaryURLHelper.mergePath(getStaticFolder(), properties.getString("vfs", "vfs"));
+	}
+
+	public String getWelcomeMessage(String lang) {
+		String msg = properties.getString("message.welcome-" + lang, null);
+		if (msg != null) {
+			return msg;
+		}
+		return properties.getString("message.welcome", "");
+	}
+
+	public String getWelcomePopupURL(String lg) {
+		String url = properties.getString("default-welcome-popup", "");
+		url = StringUtils.replace(url, "#lang#", lg);
+		return url;
+	}
+
+	/**
+	 * get the default proxy in the configuration of tomcat
+	 */
+	private void initDefaultProxy() {
+		ProxySelector proxySelector = ProxySelector.getDefault();
+		try {
+			Proxy proxy = proxySelector.select(new URI("http://www.google.com")).iterator().next();
+			if ((proxy != null) && (proxy.address() != null)) {
+				String[] proxyArray = proxy.address().toString().split(":");
+				if (proxyArray.length == 1) {
+					defaultProxyHost = proxyArray[0];
+					defaultProxyPort = 80;
+				} else {
+					defaultProxyHost = proxyArray[0];
+					defaultProxyPort = Integer.parseInt(proxyArray[1]);
+				}
+			} else {
+				defaultProxyPort = 0; // no more search default proxy host
+			}
+		} catch (Throwable e) {
+			defaultProxyPort = 0; // no more search default proxy host
+			e.printStackTrace();
+		}
+	}
+
+	public boolean isAutoCreation() {
+		if (isHostDefineSite()) { // if host don't define site we can create it automaticely.
+			return properties.getBoolean("auto-creation", true);
+		} else {
+			return false;
+		}
+	}
+
+	public boolean isCorporate() {
+		return properties.getBoolean("admin.corporate", true);
+	}
+
+	public boolean isDataFolderRelative() {
+		return properties.getBoolean("data-folder-relative", true);
+	}
+
+	public boolean isDownloadCleanDataFolder() {
+		return properties.getBoolean("download.clean-data-folder", false);
+	}
+
+	public boolean isDownloadIncludeTracking() {
+		return properties.getBoolean("download.include-tracking", false);
+	}
+
+	public boolean isHostDefineSite() {
+		return properties.getBoolean("url.host-define-site", true);
+	}
+	
+	public boolean isRandomDataFoder() {
+		return properties.getBoolean("data-folder-random", false);
+	}
+
+	public boolean isHTMLEditor() {
+		return properties.getBoolean("admin.html-editor", true);
+	}
+
+	public boolean isI18nFileRelative() {
+		return properties.getBoolean("i18n.file.relative", true);
+	}
+
+	public boolean isMailingAsContent() {
+		return properties.getBoolean("mailing.content", false);
+	}
+
+	public boolean isMailingThread() {
+		return StringHelper.isTrue(properties.getString("mailing.thread", "true"));
+	}
+
+	public boolean isPasswordEncryt() {
+		return properties.getBoolean("security.encrypt-password", false);
+	}
+
+	public boolean isRequestWrapper() {
+		return properties.getBoolean("request-wrapper", true);
+	}
+
+	public boolean isTemplateJSP() {
+		return properties.getBoolean("security.template-jsp", true);
+	}
+
+	public boolean isTracking() {
+		return properties.getBoolean("tracking", true);
+	}
+
+	public boolean isViewPrefix() {
+		String viewPrefix = properties.getString("url.view");
+		if (viewPrefix == null) {
+			return false;
+		}
+		return StringHelper.isTrue(viewPrefix);
+	}
+	
+	public boolean isURIWithContext() {
+		return properties.getBoolean("url.context", true);
+	}
+
+	public void reload() {
+		synchronized (FILE_NAME) {
+			properties.clear();
+			try {
+				properties.load();
+			} catch (ConfigurationException e) {
+				e.printStackTrace();
+			}
+			adminUserFactoryClass = null;
+			admimUserFactory = null;
+			adminUserFactoryClassName = "";
+			devices = null;
+		}
+	}
+
+	private String replaceFolderVariable(String folder) {
+		folder = folder.replace("$HOME", System.getProperty("user.home"));
+		return folder;
+	}
+
+	public void storeAllProperties(String content) throws IOException {
+		synchronized (FILE_NAME) {
+			File file = new File(properties.getFile().getAbsolutePath());
+			FileUtils.writeStringToFile(file, content, ContentContext.CHARACTER_ENCODING);
+			properties.clear();
+			try {
+				properties.load();
+			} catch (ConfigurationException e) {
+				e.printStackTrace();
+			}
+
+			devices = null;
+
+			setChanged();
+			notifyObservers();
+
+			logger.info("store and refresh all properties in : " + properties.getFile().getAbsolutePath());
+		}
+	}
+
+	public boolean useHttps() {
+		return properties.getBoolean("security.use-https", false);
+	}
+
+	public boolean useLocalFolder() {
+		return properties.getBoolean("local-folder.use", false);
+	}
+	
+	public String getDefaultDateFormat() {
+		return properties.getString("default-date-format", "dd/MM/yyyy");
+	}
+	
+	public String getDefaultJSDateFormat() {
+		return properties.getString("default-date-format", "d/m/yy");
+	}
+
+
+}

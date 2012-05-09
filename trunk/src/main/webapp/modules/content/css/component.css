@@ -1,0 +1,87 @@
+/*** css for design component in edit mode ***/
+
+#content-edit {		
+	padding-right: 2px;
+}
+
+#content-edit select {
+	padding: 0;
+}
+
+.component .header {
+	padding: 1px;	
+}
+
+.component .header div {
+	display: inline-block;
+	
+}
+
+.component table {
+	width: 100%;
+	border-collapse: collapse;
+}
+
+.component td {
+	width: 50%;
+	padding: 3px;
+}
+
+.component .content {
+    -moz-border-bottom-colors: none;
+    -moz-border-image: none;
+    -moz-border-left-colors: none;
+    -moz-border-right-colors: none;
+    -moz-border-top-colors: none;
+    background: none repeat scroll 0 0 #FCFCFC;
+    border-color: -moz-use-text-color #CCCCCC #CCCCCC;
+    border-right: 1px solid #CCCCCC;
+    border-style: none solid solid;
+    border-width: 0 1px 1px;
+    color: #666666;
+    overflow: hidden;
+    padding: 5px;
+}
+
+.component textarea {
+	width: 96%;	
+}
+
+.component .line textarea {
+	width: auto;	
+}
+
+
+.component .help h1, .component .help .hd {
+	display: none;
+}
+
+.component .help {
+	padding-left: 32px;
+}
+
+.component .help h2, .component .help h3 {
+	margin-top: 16px;
+	margin-left: -16px;
+}
+
+.component .full-width {
+	width: 99%;
+}
+
+.components .line {
+	height: 24px;
+}
+
+.component .line label {
+	float: left;
+	width: 160px;
+}
+
+/*** images ***/
+
+.component .preview-image {
+	margin: 2px;
+	float: left;	
+}
+

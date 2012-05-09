@@ -1,0 +1,347 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<web-app xmlns="http://java.sun.com/xml/ns/javaee" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://java.sun.com/xml/ns/javaee http://java.sun.com/xml/ns/javaee/web-app_2_5.xsd"
+	version="2.5">
+
+	<!-- manage session live cycle  -->
+	<listener>
+		<listener-class>org.javlo.user.SessionListener</listener-class>
+	</listener>
+
+	<filter>
+		<filter-name>CharsetFilter</filter-name>
+		<filter-class>org.javlo.filter.CharsetFilter</filter-class>
+	</filter>
+	<filter-mapping>
+		<filter-name>CharsetFilter</filter-name>
+		<url-pattern>/*</url-pattern>
+	</filter-mapping>
+	
+	<filter>
+		<filter-name>CatchAll</filter-name>
+		<filter-class>org.javlo.portlet.filter.CatchAllFilter</filter-class>
+	</filter>
+	<filter-mapping>
+		<filter-name>CatchAll</filter-name>
+		<url-pattern>/*</url-pattern>
+	</filter-mapping>
+	
+	<servlet>
+		<servlet-name>AccessServlet</servlet-name>
+		<servlet-class>org.javlo.servlet.AccessServlet</servlet-class>
+		<load-on-startup>1</load-on-startup>
+	</servlet>
+	<servlet-mapping>
+		<servlet-name>AccessServlet</servlet-name>
+		<url-pattern>/view/*</url-pattern>
+	</servlet-mapping>
+	<servlet-mapping>
+		<servlet-name>AccessServlet</servlet-name>
+		<url-pattern>/preview/*</url-pattern>
+	</servlet-mapping>
+	<servlet-mapping>
+		<servlet-name>AccessServlet</servlet-name>
+		<url-pattern>/edit/*</url-pattern>
+	</servlet-mapping>
+	<servlet-mapping>
+		<servlet-name>AccessServlet</servlet-name>
+		<url-pattern>/path/*</url-pattern>
+	</servlet-mapping>
+	<servlet-mapping>
+		<servlet-name>AccessServlet</servlet-name>
+		<url-pattern>/time/*</url-pattern>
+	</servlet-mapping>
+	
+	<servlet>
+		<servlet-name>AdminServlet</servlet-name>
+		<servlet-class>org.javlo.servlet.AdminServlet</servlet-class>
+		<load-on-startup>1</load-on-startup>
+	</servlet>	
+	<servlet-mapping>
+		<servlet-name>AdminServlet</servlet-name>
+		<url-pattern>/admin/*</url-pattern>
+	</servlet-mapping>
+	
+
+	<servlet>
+		<servlet-name>ServletWrapper</servlet-name>
+		<servlet-class>org.javlo.servlet.servletwrapper.ServletWrapperServlet</servlet-class>
+		<load-on-startup>1</load-on-startup>
+	</servlet>
+
+	<servlet-mapping>
+		<servlet-name>ServletWrapper</servlet-name>
+		<url-pattern>/wrapper/*</url-pattern>
+	</servlet-mapping>
+
+	<servlet>
+		<servlet-name>AjaxServlet</servlet-name>
+		<servlet-class>org.javlo.servlet.AjaxServlet</servlet-class>
+		<load-on-startup>1</load-on-startup>
+	</servlet>
+	<servlet-mapping>
+		<servlet-name>AjaxServlet</servlet-name>
+		<url-pattern>/ajax/*</url-pattern>
+	</servlet-mapping>
+
+	<servlet>
+		<servlet-name>ContentOnlyServlet</servlet-name>
+		<servlet-class>org.javlo.servlet.ContentOnlyServlet</servlet-class>
+		<load-on-startup>1</load-on-startup>
+	</servlet>
+	<servlet-mapping>
+		<servlet-name>ContentOnlyServlet</servlet-name>
+		<url-pattern>/page/*</url-pattern>
+	</servlet-mapping>
+
+	<servlet>
+		<servlet-name>ExportServlet</servlet-name>
+		<servlet-class>org.javlo.servlet.ExportServlet</servlet-class>
+		<load-on-startup>1</load-on-startup>
+	</servlet>
+	<servlet-mapping>
+		<servlet-name>ExportServlet</servlet-name>
+		<url-pattern>/export/*</url-pattern>
+	</servlet-mapping>
+
+	<servlet>
+		<servlet-name>VFSServlet</servlet-name>
+		<servlet-class>org.javlo.servlet.VFSServlet</servlet-class>
+		<load-on-startup>1</load-on-startup>
+	</servlet>
+	<servlet-mapping>
+		<servlet-name>VFSServlet</servlet-name>
+		<url-pattern>/vfs/*</url-pattern>
+	</servlet-mapping>
+
+	<servlet>
+		<servlet-name>JspExtensionServlet</servlet-name>
+		<servlet-class>org.javlo.servlet.JspExtensionServlet</servlet-class>
+		<load-on-startup>1</load-on-startup>
+	</servlet>
+	<servlet-mapping>
+		<servlet-name>JspExtensionServlet</servlet-name>
+		<url-pattern>/file/*</url-pattern>
+	</servlet-mapping>
+
+	<servlet>
+		<servlet-name>SiteMapServlet</servlet-name>
+		<servlet-class>org.javlo.servlet.SiteMapServlet</servlet-class>
+		<load-on-startup>1</load-on-startup>
+	</servlet>
+	<servlet-mapping>
+		<servlet-name>SiteMapServlet</servlet-name>
+		<url-pattern>/sitemap.xml</url-pattern>
+	</servlet-mapping>
+
+	<servlet>
+		<servlet-name>ZIPServlet</servlet-name>
+		<servlet-class>org.javlo.servlet.ZIPServlet</servlet-class>
+		<load-on-startup>1</load-on-startup>
+	</servlet>
+	<servlet-mapping>
+		<servlet-name>ZIPServlet</servlet-name>
+		<url-pattern>/zip/*</url-pattern>
+	</servlet-mapping>
+
+	<servlet>
+		<servlet-name>FolderServlet</servlet-name>
+		<servlet-class>org.javlo.servlet.FolderServlet</servlet-class>
+		<load-on-startup>1</load-on-startup>
+	</servlet>
+	<servlet-mapping>
+		<servlet-name>FolderServlet</servlet-name>
+		<url-pattern>/folder/*</url-pattern>
+	</servlet-mapping>
+
+	<servlet>
+		<servlet-name>SynchronisationServlet</servlet-name>
+		<servlet-class>org.javlo.servlet.SynchronisationServlet</servlet-class>
+		<load-on-startup>0</load-on-startup>
+	</servlet>
+	<servlet-mapping>
+		<servlet-name>SynchronisationServlet</servlet-name>
+		<url-pattern>/synchro/*</url-pattern>
+	</servlet-mapping>
+
+	<servlet>
+		<servlet-name>ThumbnailServlet</servlet-name>
+		<servlet-class>org.javlo.servlet.ThumbnailServlet</servlet-class>
+		<load-on-startup>1</load-on-startup>
+	</servlet>
+	<servlet-mapping>
+		<servlet-name>ThumbnailServlet</servlet-name>
+		<url-pattern>/thumb/*</url-pattern>
+	</servlet-mapping>
+
+	<servlet>
+		<servlet-name>ImageTransformServlet</servlet-name>
+		<servlet-class>org.javlo.servlet.ImageTransformServlet</servlet-class>
+		<load-on-startup>1</load-on-startup>
+	</servlet>
+	<servlet-mapping>
+		<servlet-name>ImageTransformServlet</servlet-name>
+		<url-pattern>/transform/*</url-pattern>
+	</servlet-mapping>
+
+	<servlet>
+		<servlet-name>UserListServlet</servlet-name>
+		<servlet-class>org.javlo.servlet.UserListServlet</servlet-class>
+		<load-on-startup>1</load-on-startup>
+	</servlet>
+	<servlet-mapping>
+		<servlet-name>UserListServlet</servlet-name>
+		<url-pattern>/users-list/*</url-pattern>
+	</servlet-mapping>
+
+	<servlet>
+		<servlet-name>TrackingServlet</servlet-name>
+		<servlet-class>org.javlo.servlet.TrackingServlet</servlet-class>
+		<load-on-startup>1</load-on-startup>
+	</servlet>
+	<servlet-mapping>
+		<servlet-name>TrackingServlet</servlet-name>
+		<url-pattern>/tracking/*</url-pattern>
+	</servlet-mapping>
+
+	<servlet>
+		<servlet-name>upload</servlet-name>
+		<servlet-class>org.javlo.servlet.UploadServlet</servlet-class>
+		<load-on-startup>1</load-on-startup>
+	</servlet>
+	<servlet-mapping>
+		<servlet-name>upload</servlet-name>
+		<url-pattern>/upload</url-pattern>
+	</servlet-mapping>
+	<servlet>
+		<servlet-name>ressource</servlet-name>
+		<servlet-class>org.javlo.servlet.RessourceServlet</servlet-class>
+		<load-on-startup>1</load-on-startup>
+	</servlet>
+	<servlet-mapping>
+		<servlet-name>ressource</servlet-name>
+		<url-pattern>/ressource/*</url-pattern>
+	</servlet-mapping>
+	<servlet-mapping>
+		<servlet-name>ressource</servlet-name>
+		<url-pattern>/favicon.ico</url-pattern>
+	</servlet-mapping>
+
+	<servlet>
+		<servlet-name>TemplateServlet</servlet-name>
+		<servlet-class>org.javlo.servlet.TemplateServlet</servlet-class>
+		<load-on-startup>1</load-on-startup>
+	</servlet>
+	<servlet-mapping>
+		<servlet-name>TemplateServlet</servlet-name>
+		<url-pattern>/template/*</url-pattern>
+	</servlet-mapping>
+
+	<servlet>
+		<servlet-name>MapServlet</servlet-name>
+		<servlet-class>org.javlo.servlet.MapServlet</servlet-class>
+		<load-on-startup>1</load-on-startup>
+	</servlet>
+	<servlet-mapping>
+		<servlet-name>MapServlet</servlet-name>
+		<url-pattern>/map/*</url-pattern>
+	</servlet-mapping>
+
+	<servlet>
+		<servlet-name>ColorServlet</servlet-name>
+		<servlet-class>org.javlo.servlet.ColorServlet</servlet-class>
+		<load-on-startup>0</load-on-startup>
+	</servlet>
+	<servlet-mapping>
+		<servlet-name>ColorServlet</servlet-name>
+		<url-pattern>/color/*</url-pattern>
+	</servlet-mapping>
+
+	<servlet>
+		<servlet-name>feedback</servlet-name>
+		<servlet-class>org.javlo.servlet.FeedbackServlet</servlet-class>
+		<load-on-startup>1</load-on-startup>
+	</servlet>
+	<servlet-mapping>
+		<servlet-name>feedback</servlet-name>
+		<url-pattern>/feedback/*</url-pattern>
+	</servlet-mapping>
+
+	<servlet>
+		<servlet-name>xml</servlet-name>
+		<servlet-class>org.javlo.servlet.XMLServlet</servlet-class>
+		<load-on-startup>1</load-on-startup>
+	</servlet>
+	<servlet-mapping>
+		<servlet-name>xml</servlet-name>
+		<url-pattern>/xml/*</url-pattern>
+	</servlet-mapping>
+
+	<servlet>
+		<servlet-name>mailing</servlet-name>
+		<servlet-class>org.javlo.servlet.MailingServlet</servlet-class>
+		<load-on-startup>1</load-on-startup>
+	</servlet>
+	<servlet-mapping>
+		<servlet-name>mailing</servlet-name>
+		<url-pattern>/mailing/*</url-pattern>
+	</servlet-mapping>
+
+	<servlet>
+		<servlet-name>IMServlet</servlet-name>
+		<servlet-class>org.javlo.servlet.IMServlet</servlet-class>
+		<load-on-startup>1</load-on-startup>
+	</servlet>
+	<servlet-mapping>
+		<servlet-name>IMServlet</servlet-name>
+		<url-pattern>/im/*</url-pattern>
+	</servlet-mapping>
+
+	<!-- Cewolf -->
+	<servlet>
+		<servlet-name>CewolfServlet</servlet-name>
+		<servlet-class>de.laures.cewolf.CewolfRenderer</servlet-class>
+	</servlet>
+	<servlet-mapping>
+		<servlet-name>CewolfServlet</servlet-name>
+		<url-pattern>/cewolf/*</url-pattern>
+	</servlet-mapping>
+	<!-- end Cewolf -->
+
+
+	<!-- security-constraint>
+		<web-resource-collection>
+			<web-resource-name>all</web-resource-name>
+			<url-pattern>/edit/*</url-pattern>			
+		</web-resource-collection>
+		<auth-constraint>
+			<role-name>*</role-name>
+		</auth-constraint>
+	</security-constraint>
+
+	<login-config>
+		<auth-method>BASIC</auth-method>
+		<realm-name>EPAuth</realm-name>
+	</login-config>
+
+	<security-role>
+		<role-name>*</role-name>
+	</security-role>
+
+
+	<security-constraint> <web-resource-collection>
+		<web-resource-name>edit</web-resource-name>
+		<url-pattern>/edit/*</url-pattern> <url-pattern>/admin/*</url-pattern>
+		<url-pattern>/mailing/*</url-pattern> </web-resource-collection>
+		<auth-constraint> <role-name>*</role-name> </auth-constraint>
+		<user-data-constraint> <transport-guarantee>NONE</transport-guarantee>
+		</user-data-constraint> </security-constraint> <login-config>
+		<auth-method>FORM</auth-method> <realm-name>ecard</realm-name>
+		<form-login-config>
+		<form-login-page>/jsp/edit/login_jee.jsp</form-login-page>
+		<form-error-page>/jsp/edit/login_jee.jsp</form-error-page>
+		</form-login-config>
+	</login-config  -->
+	
+</web-app>
