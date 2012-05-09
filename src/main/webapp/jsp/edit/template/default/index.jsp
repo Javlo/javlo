@@ -34,7 +34,7 @@
 <script type="text/javascript" src="/js/edit/ajax.js"></script>
 <script type="text/javascript" src="/jsp/edit/template/default/js/javlo/core.js"></script>
 <c:if test="${not info.editLanguage eq 'en'}"><script type="text/javascript" src="/jsp/edit/template/default/js/plugins/jquery.ui.datepicker-${info.editLanguage}.js"></script></c:if>
-<script type="text/javascript" src="/jsp/edit/template/default/js/i18n/elfinder.${info.editLanguage}.js"></script>
+<c:if test="${not info.editLanguage eq 'en'}"><script type="text/javascript" src="/jsp/edit/template/default/js/i18n/elfinder.${info.editLanguage}.js"></script></c:if>
 
 <c:forEach var="css" items="${currentModule.CSS}">
 <link rel="stylesheet" href="<c:url value='${css}' />"/>
