@@ -52,10 +52,8 @@ String insertHere = i18nAccess.getText("content.insert-here", new String[][] {{"
 ComponentContext componentContext = ComponentContext.getInstance(request);
 IContentVisualComponent[] components = componentContext.getNewComponents();
 
-
-
 /*** rendering ***/
-%><div class="insert-line">
+%><div class="insert-line" id="insert-line-0">
 	<a class="action-button" href="${info.currentURL}?webaction=insert&previous=0&type=<%=currentTypeComponent.getType()%>"><%=insertHere%></a>
 </div><%
 
@@ -91,7 +89,7 @@ for (IContentVisualComponent comp : components) {
       </div>
       <input type="hidden" name="id-<%=comp.getId()%>" value="true" /> 
   </div>
-  <div class="insert-line">
+  <div class="insert-line" id="insert-line-<%=comp.getId()%>">
 	<a class="action-button" href="${info.currentURL}?webaction=insert&previous=<%=comp.getId()%>&type=<%=currentTypeComponent.getType()%>"><%=insertHere%></a>
   </div>
 <%}

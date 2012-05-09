@@ -86,7 +86,7 @@ public class ModuleContext {
 	}
 
 	private void setCurrentModule(Module currentModule) {
-		this.currentModule = currentModule;
+		this.currentModule = currentModule;		
 	}
 
 	/**

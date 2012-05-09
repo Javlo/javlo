@@ -27,11 +27,14 @@
 <script type="text/javascript" src="/jsp/edit/template/default/js/plugins/jquery.flot.min.js"></script>
 <script type="text/javascript" src="/jsp/edit/template/default/js/plugins/jquery.jgrowl.js"></script>
 <script type="text/javascript" src="/jsp/edit/template/default/js/plugins/jquery.dataTables.min.js"></script>
+<script type="text/javascript" src="/jsp/edit/template/default/js/plugins/elfinder.min.js"></script>
+<script type="text/javascript" src="/jsp/edit/template/default/js/javlo/core.js"></script>
 <script type="text/javascript" src="/jsp/edit/template/default/js/custom/general.js"></script>
 <script type="text/javascript" src="/jsp/edit/template/default/js/custom/gallery.js"></script>
 <script type="text/javascript" src="/js/edit/ajax.js"></script>
 <script type="text/javascript" src="/jsp/edit/template/default/js/javlo/core.js"></script>
 <c:if test="${not info.editLanguage eq 'en'}"><script type="text/javascript" src="/jsp/edit/template/default/js/plugins/jquery.ui.datepicker-${info.editLanguage}.js"></script></c:if>
+<script type="text/javascript" src="/jsp/edit/template/default/js/i18n/elfinder.${info.editLanguage}.js"></script>
 
 <c:forEach var="css" items="${currentModule.CSS}">
 <link rel="stylesheet" href="<c:url value='${css}' />"/>
@@ -40,7 +43,6 @@
 <c:forEach var="js" items="${currentModule.JS}">
 <script type="text/javascript" src="<c:url value='${js}' />"></script>
 </c:forEach>
-
 
 </head>
 
@@ -125,10 +127,23 @@
 
 <c:if test="${currentModule.breadcrumb}">
 	<div class="breadcrumbs">
-		<c:forEach var="page" items="${info.pagePath}">
-		<a href="${page.url}">${page.info.title}</a>
-		</c:forEach>		
-		<span>${info.pageTitle}</span>
+		<c:if test="${empty currentModule.breadcrumbList}">
+			<c:forEach var="page" items="${info.pagePath}">
+			<a href="${page.url}">${page.info.title}</a>
+			</c:forEach>
+			<span>${info.pageTitle}</span>
+		</c:if>
+		<c:if test="${not empty currentModule.breadcrumbList}">
+			<c:forEach var="link" items="${currentModule.breadcrumbList}" varStatus="status">
+			<c:if test="${ status.count < fn:length(currentModule.breadcrumbList) }">
+				<a href="${link.url}" title="${link.title}">${link.legend}</a>
+			</c:if>			
+			<c:if test="${ status.count == fn:length(currentModule.breadcrumbList) }">
+				<span>${link.legend}</span>
+			</c:if>
+			</c:forEach>		
+					
+		</c:if>		
 	</div>
 </c:if>
 

@@ -1,5 +1,6 @@
 package org.javlo.module.admin;
 
+import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.util.Collection;
 import java.util.Collections;
@@ -227,6 +228,11 @@ public class AdminAction implements IModuleAction {
 		}
 
 		request.setAttribute("contextList", ctxAllBean);
+		
+		/* breadcrumb */		
+		if (currentModule.getBreadcrumbList() == null || currentModule.getBreadcrumbList().size() == 0) {
+			currentModule.pushBreadcrumb(new Module.HtmlLink(URLHelper.createURL(ctx), I18nAccess.getInstance(request).getText("global.home"), ""));
+		}
 
 		/*** current context ***/
 
@@ -278,6 +284,8 @@ public class AdminAction implements IModuleAction {
 				String backUrl = URLHelper.createModuleURL(ctx, ctx.getPath(), currentModule.getName(), params);
 				currentModule.setBackUrl(backUrl);
 				
+				
+				
 			} else {
 				msg = "bad context : " + currentContextKey;
 				currentModule.restoreRenderer();
@@ -286,27 +294,35 @@ public class AdminAction implements IModuleAction {
 		} else {
 			currentModule.restoreRenderer();
 			currentModule.restoreToolsRenderer();
+			currentModule.clearBreadcrump();
+			currentModule.pushBreadcrumb(new Module.HtmlLink(URLHelper.createURL(ctx), I18nAccess.getInstance(request).getText("global.home"), ""));
 		}
 
 		return msg;
 	}
 
-	public static final String performChangeSite(RequestService requestService, Module currentModule) {
+	public static final String performChangeSite(HttpServletRequest request, RequestService requestService, ContentContext ctx, Module currentModule) throws FileNotFoundException, IOException {
 		if (requestService.getParameter("change", null) != null) {
 			currentModule.setRenderer("/jsp/site_properties.jsp");
 			currentModule.setToolsRenderer(null);
+			String uri = request.getRequestURI();
+			currentModule.pushBreadcrumb(new Module.HtmlLink(uri, I18nAccess.getInstance(request).getText("global.change")+" : "+request.getParameter("context"), ""));
 		} else if (requestService.getParameter("components", null) != null) {
 			currentModule.setRenderer("/jsp/components.jsp");
 			currentModule.setToolsRenderer(null);
+			String uri = request.getRequestURI();
+			currentModule.pushBreadcrumb(new Module.HtmlLink(uri, I18nAccess.getInstance(request).getText("command.admin.components")+" : "+request.getParameter("context"), ""));
 		}
 		return null;
 	}
 
-	public static final String performUpdateGlobalContext(HttpServletRequest request, MessageRepository messageRepository, RequestService requestService, I18nAccess i18nAccess, Module currentModule) throws ConfigurationException, IOException {
+	public static final String performUpdateGlobalContext(HttpServletRequest request, ContentContext ctx, MessageRepository messageRepository, RequestService requestService, I18nAccess i18nAccess, Module currentModule) throws ConfigurationException, IOException {
 		String msg = null;
 		if (requestService.getParameter("back", null) != null) {
 			currentModule.restoreRenderer();
 			currentModule.restoreToolsRenderer();
+			currentModule.clearBreadcrump();
+			currentModule.pushBreadcrumb(new Module.HtmlLink(URLHelper.createURL(ctx), I18nAccess.getInstance(request).getText("global.home"), ""));
 		} else {
 			String currentContextKey = requestService.getParameter("context", null);
 			if (currentContextKey != null) {
