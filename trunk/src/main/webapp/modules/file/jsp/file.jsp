@@ -5,7 +5,7 @@
 <script type="text/javascript">
 jQuery(document).ready(function() {
 	jQuery('#fileManager').elfinder({
-		url : 'jsp/connector.jsp',
+		url : '${currentModule.path}/jsp/connector.jsp',
 	})
 });
 </script>

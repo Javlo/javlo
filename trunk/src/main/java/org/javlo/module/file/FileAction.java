@@ -13,7 +13,8 @@ public class FileAction implements IModuleAction {
 
 	@Override
 	public String prepare(ContentContext ctx, ModuleContext moduleContext) throws Exception {
-		// TODO Auto-generated method stub
+//		GlobalContext globalContext = GlobalContext.getInstance(ctx.getRequest());
+//		ctx.getRequest().setAttribute("root", URLHelper.mergePath(globalContext.getDataFolder(), globalContext.getStaticConfig().getStaticFolder()));
 		return null;
 	}
 
