@@ -125,13 +125,7 @@ jQuery(document).ready(function(){
 		jQuery(this).parent().fadeOut();
 	});	
 	
-	
-	/** Make footer always at the bottom**/
-	if(jQuery('body').height() > jQuery(window).height()) {
-		jQuery('.footer').removeClass('footer_float');
-	}
-	
-	
+	changeFooter();	
 	
 	/**DROP DOWN MENU**/
 	jQuery(".subnav").css({display: "none"}); // Opera Fix
@@ -143,3 +137,14 @@ jQuery(document).ready(function(){
 
 	
 });
+
+function changeFooter() {	
+	/** Make footer always at the bottom**/
+	if(jQuery('body').height() > jQuery(window).height()) {
+		jQuery('.footer').removeClass('footer_float');
+	} else {
+		jQuery('.footer').addClass('footer_float');
+	}
+}
+
+jQuery(window).resize(changeFooter);

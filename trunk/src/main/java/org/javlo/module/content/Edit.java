@@ -18,6 +18,7 @@ import org.javlo.component.core.IContentVisualComponent;
 import org.javlo.context.ContentContext;
 import org.javlo.context.EditContext;
 import org.javlo.context.GlobalContext;
+import org.javlo.helper.ServletHelper;
 import org.javlo.helper.StringHelper;
 import org.javlo.helper.URLHelper;
 import org.javlo.i18n.I18nAccess;
@@ -51,14 +52,14 @@ public class Edit implements IModuleAction {
 		String typeName = StringHelper.getFirstNotNull( currentTypeComponent.getComponentLabel(ctx,globalContext.getEditLanguage()), i18nAccess.getText ( "content."+currentTypeComponent.getType()));
 		String insertHere = i18nAccess.getText("content.insert-here", new String[][] {{"type",typeName}});
 		
-		String insertXHTML = "<a class=\"action-button\" href=\""+URLHelper.createURL(ctx)+"?webaction=insert&previous=0&type="+typeName+"\">"+insertHere+"</a>";
-		ctx.addAjaxZone("insert-line-0", insertXHTML);
+		String insertXHTML = "<a class=\"action-button ajax\" href=\""+URLHelper.createURL(ctx)+"?webaction=insert&previous=0&type="+currentTypeComponent.getType()+"\">"+insertHere+"</a>";
+		ctx.addAjaxInsideZone("insert-line-0", insertXHTML);
 		
 		IContentComponentsList elems = ctx.getCurrentPage().getContent(ctx);	
 		while (elems.hasNext(ctx)) {
 			IContentVisualComponent comp = elems.next(ctx);
-			insertXHTML = "<a class=\"action-button\" href=\""+URLHelper.createURL(ctx)+"?webaction=insert&previous="+comp.getId()+"&type="+typeName+"\">"+insertHere+"</a>";
-			ctx.addAjaxZone("insert-line-"+comp.getId(), insertXHTML);
+			insertXHTML = "<a class=\"action-button ajax\" href=\""+URLHelper.createURL(ctx)+"?webaction=insert&previous="+comp.getId()+"&type="+currentTypeComponent.getType()+"\">"+insertHere+"</a>";
+			ctx.addAjaxInsideZone("insert-line-"+comp.getId(), insertXHTML);
 		}
 		
 	}
@@ -325,13 +326,13 @@ public class Edit implements IModuleAction {
 		loadComponentList(ctx);
 
 		/** CONTENT **/
-		ComponentContext compCtx = ComponentContext.getInstance(request);
+		/*ComponentContext compCtx = ComponentContext.getInstance(request);
 		IContentComponentsList elems = ctx.getCurrentPage().getContent(ctx);
 		if (compCtx.getNewComponents().length == 0) {
 			while (elems.hasNext(ctx)) {
 				compCtx.addNewComponent(elems.next(ctx));
 			}
-		}
+		}*/
 
 		/** page properties **/
 		PageConfiguration pageConfig = PageConfiguration.getInstance(globalContext);
@@ -370,7 +371,7 @@ public class Edit implements IModuleAction {
 		return message;
 	}
 
-	public static final String performInsert(HttpServletRequest request, ContentContext ctx, ComponentContext compCtx, ContentService content) throws Exception {
+	public static final String performInsert(HttpServletRequest request, ContentContext ctx, ComponentContext compCtx, ContentService content, Module currentModule) throws Exception {
 		String previousId = request.getParameter("previous");
 		String type = request.getParameter("type");
 		if (previousId == null || type == null) {
@@ -380,6 +381,9 @@ public class Edit implements IModuleAction {
 		String newId = content.createContent(ctx, previousId, type, "");
 		if (ctx.isAjax()) {
 			compCtx.addNewComponent(content.getComponent(ctx, newId)); // prepare ajax rendering
+			String componentRenderer = URLHelper.mergePath(currentModule.getPath()+"/jsp/content.jsp");
+			String newComponentXHTML = ServletHelper.executeJSP(ctx, componentRenderer);
+			ctx.addAjaxZone("comp-child-"+previousId, newComponentXHTML);
 		}
 
 		return null;
@@ -394,8 +398,7 @@ public class Edit implements IModuleAction {
 			ClipBoard clipBoard = ClipBoard.getClibBoard(request);
 			if (id.equals(clipBoard.getCopied())) {
 				clipBoard.clear();
-			}
-			ContentService.createContent(request);
+			}			
 			MenuElement elem = ctx.getCurrentPage();
 			String type = elem.removeContent(ctx, id);
 			GlobalContext globalContext = GlobalContext.getInstance(request);
@@ -406,6 +409,12 @@ public class Edit implements IModuleAction {
 				String typeName = type;
 				String msg = i18nAccess.getText("action.component.removed", new String[][] { { "type", typeName } });
 				MessageRepository.getInstance(ctx).setGlobalMessageAndNotification(ctx, new GenericMessage(msg, GenericMessage.INFO));
+			}
+			
+			if (ctx.isAjax()) {
+				ctx.addAjaxZone("comp-"+id, "");
+				ctx.addAjaxZone("comp-child-"+id, "");
+				ctx.addAjaxInsideZone("insert-line-"+id, "");
 			}
 
 			modifPage(ctx);

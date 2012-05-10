@@ -29,12 +29,13 @@
 <script type="text/javascript" src="/jsp/edit/template/default/js/plugins/jquery.dataTables.min.js"></script>
 <script type="text/javascript" src="/jsp/edit/template/default/js/plugins/elfinder.min.js"></script>
 <script type="text/javascript" src="/jsp/edit/template/default/js/javlo/core.js"></script>
-<script type="text/javascript" src="/jsp/edit/template/default/js/custom/general.js"></script>
 <script type="text/javascript" src="/jsp/edit/template/default/js/custom/gallery.js"></script>
 <script type="text/javascript" src="/js/edit/ajax.js"></script>
 <script type="text/javascript" src="/jsp/edit/template/default/js/javlo/core.js"></script>
 <c:if test="${not info.editLanguage eq 'en'}"><script type="text/javascript" src="/jsp/edit/template/default/js/plugins/jquery.ui.datepicker-${info.editLanguage}.js"></script></c:if>
 <c:if test="${not info.editLanguage eq 'en'}"><script type="text/javascript" src="/jsp/edit/template/default/js/i18n/elfinder.${info.editLanguage}.js"></script></c:if>
+<script type="text/javascript" src="/jsp/edit/template/default/js/custom/general.js"></script>
+
 
 <c:forEach var="css" items="${currentModule.CSS}">
 <link rel="stylesheet" href="<c:url value='${css}' />"/>
@@ -197,7 +198,7 @@
 </div><!--maincontent-->
 
 <br />
-<div class="footer footer_float">
+<div id="footer" class="footer footer_float">
 	<div class="footerinner">
     	<a href="http://javlo.org">javlo.org</a> 2012 - v ${info.version}
     </div><!-- footerinner -->

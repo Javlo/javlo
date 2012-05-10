@@ -17,7 +17,14 @@ jQuery(document).bind("ajaxUpdate",function () {
 	//////////// DATE PICKER /////////////////
 	jQuery.datepicker.setDefaults( jQuery.datepicker.regional[ editLanguage ] );
 	jQuery( ".datepicker" ).datepicker({maxDate: "+0D", dateFormat: dateFormat}); 
-
+	fullHeight();
 });
 
+function fullHeight() {
+	jQuery(".full-height").each(function() {
+		var contentHeight = jQuery("#footer").offset().top - jQuery(this).offset().top;
+		jQuery(this).css("height", contentHeight+"px");
+	});
+}
 
+jQuery(window).resize(fullHeight);

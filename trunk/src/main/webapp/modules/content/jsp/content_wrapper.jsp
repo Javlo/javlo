@@ -1,4 +1,4 @@
-<div id="content-edit" class="auto-height">
+<div id="content-edit" class="full-height">
 	<form id="form-content" class="components" action="${info.currentURL}" enctype="multipart/form-data" method="post">
 		<input type="hidden" name="webaction" value="save" />
 		<jsp:include page="content.jsp" />

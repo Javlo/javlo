@@ -1,3 +1,5 @@
+<%@page import="java.util.LinkedList"%>
+<%@page import="java.util.Collection"%>
 <%@page contentType="text/html"
         import="
         java.util.Stack,
@@ -15,7 +17,8 @@
 	    org.javlo.component.core.IContentVisualComponent,
 	    org.javlo.context.GlobalContext,
 	    org.javlo.component.core.ComponentFactory,
-	    org.javlo.component.container.IContainer"
+	    org.javlo.component.container.IContainer,
+	    org.javlo.component.core.IContentComponentsList"
 %><%
 ContentContext ctx = ContentContext.getContentContext ( request, response );
 GlobalContext globalContext = GlobalContext.getInstance(request);
@@ -52,16 +55,34 @@ String insertHere = i18nAccess.getText("content.insert-here", new String[][] {{"
 ComponentContext componentContext = ComponentContext.getInstance(request);
 IContentVisualComponent[] components = componentContext.getNewComponents();
 
+if (components.length == 0) { /* if no specific components asked than render all components for the current context /*
 /*** rendering ***/
 %><div class="insert-line" id="insert-line-0">
-	<a class="action-button" href="${info.currentURL}?webaction=insert&previous=0&type=<%=currentTypeComponent.getType()%>"><%=insertHere%></a>
-</div><%
+	<a class="action-button ajax" href="${info.currentURL}?webaction=insert&previous=0&type=<%=currentTypeComponent.getType()%>"><%=insertHere%></a>
+</div>
+<div id="comp-child-0"></div>
+<%
+ComponentContext compCtx = ComponentContext.getInstance(request);
+IContentComponentsList elems = ctx.getCurrentPage().getContent(ctx);
+Collection<IContentVisualComponent> allComponents = new LinkedList<IContentVisualComponent>();
+while (elems.hasNext(ctx)) {
+	allComponents.add(elems.next(ctx));
+}
+components = allComponents.toArray(components);
+} else { /* / if (components.length == 0) { */
+	String previousId="0";
+ 	if (components[0].getPreviousComponent() != null) {
+ 		previousId=components[0].getPreviousComponent().getId();
+ 	}
+	%><div class="new-component-container" id="comp-child-<%=previousId%>"></div><%
+}
 
 for (IContentVisualComponent comp : components) {
 	String inputSuffix = "-"+comp.getId();
 	String helpText = componentContext.getHelpHTML(ctx, comp);
 %>
-  <div class="tabs component">  	  
+ <div id="comp-<%=comp.getId()%>">
+ <div class="tabs component">  	  
       <ul> 
       	  <li class="title"><span style="color: #<%=comp.getHexColor()%>"><%=comp.getComponentLabel(ctx, globalContext.getEditLanguage()) %></span></li>	
           <li><a href="#tab1<%=inputSuffix%>">${i18n.edit["global.content"]}</a></li>
@@ -69,7 +90,7 @@ for (IContentVisualComponent comp : components) {
           <li><a href="#tab3<%=inputSuffix%>">${i18n.edit["global.help"]}</a></li>
       </ul>
       <div class="header-action">
-      	<a class="delete" title="${i18n.edit['global.delete']}" href="${info.currentURL}?webaction=delete&id=<%=comp.getId()%>"></a>
+      	<a class="delete ajax" title="${i18n.edit['global.delete']}" href="${info.currentURL}?webaction=delete&id=<%=comp.getId()%>"></a>
       	<a class="copy" title="${i18n.edit['content.copy']}"></a>
       </div>
       <div class="header-info">
@@ -90,8 +111,10 @@ for (IContentVisualComponent comp : components) {
       <input type="hidden" name="id-<%=comp.getId()%>" value="true" /> 
   </div>
   <div class="insert-line" id="insert-line-<%=comp.getId()%>">
-	<a class="action-button" href="${info.currentURL}?webaction=insert&previous=<%=comp.getId()%>&type=<%=currentTypeComponent.getType()%>"><%=insertHere%></a>
-  </div>
+	<a class="action-button ajax" href="${info.currentURL}?webaction=insert&previous=<%=comp.getId()%>&type=<%=currentTypeComponent.getType()%>"><%=insertHere%></a>
+  </div>  
+ </div>
+ <div class="new-component-container" id="comp-child-<%=comp.getId()%>"></div>
 <%}
 %>
 

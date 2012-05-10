@@ -19,6 +19,7 @@ import javax.servlet.http.HttpSession;
 import org.javlo.component.core.ComponentBean;
 import org.javlo.config.StaticConfig;
 import org.javlo.helper.StringHelper;
+import org.javlo.helper.URLHelper;
 import org.javlo.user.AdminUserSecurity;
 import org.javlo.user.User;
 import org.javlo.user.UserEditFilter;
@@ -95,14 +96,16 @@ public class EditContext implements Serializable {
 	String[] userRolesDefault = new String[] { "guest" };
 
 	Set<String> licence = new HashSet<String>();
-
-	String editTemplate = "/jsp/edit/template/default/index.jsp";
 	
-	String messageTemplate = "/jsp/edit/template/default/message.jsp";
-	
-	String boxTemplate = "/jsp/edit/template/default/box.jsp";
+	private String editTemplateFolder = "/jsp/edit/template/default";
 
-	String loginRenderer = "/jsp/edit/template/default/login.jsp";
+	String editTemplate = "index.jsp";
+	
+	String messageTemplate = "message.jsp";
+	
+	String boxTemplate = "box.jsp";
+
+	String loginRenderer = "login.jsp";
 
 	String ajaxRenderer = null;
 
@@ -433,15 +436,15 @@ public class EditContext implements Serializable {
 	}
 
 	public String getEditTemplate() {
-		return editTemplate;
+		return URLHelper.mergePath(getEditTemplateFolder(), editTemplate);
 	}
 	
 	public String getMessageTemplate() {
-		return messageTemplate;
+		return URLHelper.mergePath(getEditTemplateFolder(), messageTemplate);
 	}
 	
 	public String getBoxTemplate() {
-		return boxTemplate;
+		return URLHelper.mergePath(getEditTemplateFolder(), boxTemplate);
 	}
 
 	public void setMessageTemplate(String messageTemplate) {
@@ -449,7 +452,7 @@ public class EditContext implements Serializable {
 	}
 
 	public String getLoginRenderer() {
-		return loginRenderer;
+		return URLHelper.mergePath(getEditTemplateFolder(), loginRenderer);
 	}
 
 	public void setLoginRenderer(String loginRenderer) {
@@ -585,5 +588,13 @@ public class EditContext implements Serializable {
 
 	public void setEditPreview(boolean editPreview) {
 		this.editPreview = editPreview;
+	}
+
+	public String getEditTemplateFolder() {
+		return editTemplateFolder;
+	}
+
+	public void setEditTemplateFolder(String editTemplateFolder) {
+		this.editTemplateFolder = editTemplateFolder;
 	}
 }
