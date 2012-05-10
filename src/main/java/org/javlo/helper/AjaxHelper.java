@@ -16,7 +16,7 @@ public class AjaxHelper {
 		EditContext editCtx = EditContext.getInstance(globalContext, ctx.getRequest().getSession());		
 		ctx.getRequest().setAttribute("box", box);
 		String xhtml = ServletHelper.executeJSP(ctx, editCtx.getBoxTemplate());
-		ctx.addAjaxZone(box.getId(), xhtml);
+		ctx.addAjaxInsideZone(box.getId(), xhtml);
 	}
 
 }

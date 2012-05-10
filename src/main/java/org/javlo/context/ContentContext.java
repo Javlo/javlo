@@ -273,10 +273,13 @@ public class ContentContext {
 	private ContentContext() {
 	}
 	
-	private Map<String,String> ajaxZone = new HashMap<String, String>();
+	private Map<String,String> ajaxInsideZone = new HashMap<String, String>();
+	private Map<String, String> ajaxZone = new HashMap<String, String>();;
 	
 	private User currentUser = null;
 	private User currentEditUser = null;
+
+	
 
 	public ContentContext(ContentContext ctx) {
 		path = ctx.getPath();
@@ -828,6 +831,23 @@ public class ContentContext {
 			return getCurrentUser().getId();
 		}
 		return null;
+	}
+	
+	/**
+	 * get Ajax zone that will be updated.
+	 * @return a map with html id as key and xhtml as value.
+	 */
+	public Map<String, String> getAjaxInsideZone() {
+		return ajaxInsideZone;
+	}
+	
+	/**
+	 * add a ajax zone for update.
+	 * @param id a xhtml id
+	 * @param xhtml the new content of the zone
+	 */
+	public void addAjaxInsideZone(String id, String xhtml) {
+		ajaxInsideZone.put(id, xhtml);
 	}
 	
 	/**

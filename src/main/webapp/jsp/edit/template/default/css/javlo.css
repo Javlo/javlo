@@ -8,9 +8,8 @@ fieldset {
     border-radius: 3px;            
 }
 
-.auto-height {
-	overflow: auto;
-	height: 800px;
+.full-height {
+	overflow: auto;	
 }
 
 .box {

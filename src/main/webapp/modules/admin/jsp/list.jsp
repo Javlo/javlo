@@ -99,9 +99,10 @@ jQuery(document).ready(function() {
 		               null,
 		               null,
 		               { "asSorting": [ "" ] }		               
-		           ]
+		           ],
+		 "oLanguage": {"sUrl": "${info.editTemplateURL}/js/plugins/i18n/datatable_${info.editLanguage}.txt"}
 	});
-	
+	changeFooter();	
 });
 </script>
 

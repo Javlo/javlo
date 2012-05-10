@@ -9,8 +9,11 @@ jQuery(document).ready(function() {
 			dataType : "json"
 		}).done(function(jsonObj) {			
 			jQuery.each(jsonObj.zone, function(xhtmlId, xhtml) {				
+				jQuery("#" + xhtmlId).replaceWith(xhtml);	
+			});
+			jQuery.each(jsonObj.insideZone, function(xhtmlId, xhtml) {				
 				jQuery("#" + xhtmlId).html(xhtml);	
-			});			
+			});
 			jQuery(document).trigger("ajaxUpdate");
 			jQuery("#ajax-loader").removeClass("active");
 		});

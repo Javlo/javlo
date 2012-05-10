@@ -42,6 +42,7 @@ public class AjaxServlet extends HttpServlet {
 	private void process(HttpServletRequest request, HttpServletResponse response) throws ServletException {
 		try {
 			ContentContext ctx = ContentContext.getContentContext(request, response);
+			ctx.setAjax(true);
 			GlobalContext globalContext = GlobalContext.getInstance(ctx.getRequest());
 			EditContext editCtx = EditContext.getInstance(globalContext, request.getSession());
 			InfoBean.updateInfoBean(ctx);
@@ -54,10 +55,11 @@ public class AjaxServlet extends HttpServlet {
 			JSONObject outMap = new JSONObject();
 
 			String msgXhtml = ServletHelper.executeJSP(ctx, editCtx.getMessageTemplate());
-			ctx.addAjaxZone(  "message-container", msgXhtml);
+			ctx.addAjaxInsideZone( "message-container", msgXhtml);
 			
 			StringWriter strWriter = new StringWriter();
 
+			outMap.put("insideZone", ctx.getAjaxInsideZone());
 			outMap.put("zone", ctx.getAjaxZone());
 			outMap.write(strWriter);
 			

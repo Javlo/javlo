@@ -7,6 +7,7 @@ import java.util.List;
 import javax.servlet.http.HttpServletRequest;
 
 import org.javlo.context.ContentContext;
+import org.javlo.context.EditContext;
 import org.javlo.context.GlobalContext;
 import org.javlo.helper.StringHelper;
 import org.javlo.helper.URLHelper;
@@ -51,7 +52,7 @@ public class InfoBean {
 			info.setParentPageTitle(currentPage.getParent().getTitle(ctx));
 			info.setParentPageURL(URLHelper.createURL(ctx, currentPage.getParent().getPath()));
 		}
-		info.setCurrentURL(URLHelper.createURL(ctx));
+		info.setCurrentURL(URLHelper.createURL(ctx));		
 		ContentContext lCtx = new ContentContext(ctx);
 		lCtx.setAbsoluteURL(true);
 		info.setCurrentAbsoluteURL(URLHelper.createURL(lCtx));
@@ -89,6 +90,9 @@ public class InfoBean {
 			page = page.getParent();
 			info.pagePath.add(0,page.getPageBean(ctx));
 		}
+		
+		EditContext editContext = EditContext.getInstance(globalContext, ctx.getRequest().getSession());
+		info.setEditTemplateURL(editContext.getEditTemplateFolder());
 
 		return info;
 	}
@@ -112,6 +116,7 @@ public class InfoBean {
 	private String parentPageName = "";
 	private String parentPageTitle = "";
 	private String parentPageURL = null;
+	private String editTemplateURL = null;
 	private String date;
 	private String time;
 	private String templateFolder = "";
@@ -349,5 +354,13 @@ public class InfoBean {
 
 	public void setContentLanguages(Collection<String> contentLanguages) {
 		this.contentLanguages = contentLanguages;
+	}
+
+	public String getEditTemplateURL() {
+		return editTemplateURL;
+	}
+
+	public void setEditTemplateURL(String editTemplateURL) {
+		this.editTemplateURL = editTemplateURL;
 	}
 }
