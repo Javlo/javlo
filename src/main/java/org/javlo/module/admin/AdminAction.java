@@ -270,6 +270,9 @@ public class AdminAction implements IModuleAction {
 				for (String name : templatesName) {
 					Template template = TemplateFactory.getDiskTemplate(request.getSession().getServletContext(), name, false);
 					if (template != null) {
+						if (!template.isTemplateInWebapp(ctx)) {
+							template.importTemplateInWebapp(ctx);
+						}
 						selectedTemplate.add(new Template.TemplateBean(ctx, template));
 					} else {						
 						logger.warning("template not found : "+name);

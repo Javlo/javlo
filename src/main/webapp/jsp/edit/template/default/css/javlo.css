@@ -9,7 +9,7 @@ fieldset {
 }
 
 .auto-height {
-	overflow: scroll;
+	overflow: auto;
 	height: 800px;
 }
 
@@ -237,11 +237,14 @@ ul,li {
 		scroll 15px 12px transparent;
 }
 
-
-
 .breadcrumbs span {
 	display: inline-block;
 	padding: 5px 20px 5px 0;
+}
+
+.breadcrumbs span.title {
+	background: url("../images/separator2.png") no-repeat scroll right center transparent;
+    margin-right: 10px;
 }
 
 #tools h3 {

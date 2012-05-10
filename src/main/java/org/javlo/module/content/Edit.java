@@ -306,15 +306,18 @@ public class Edit implements IModuleAction {
 			currentModule.setToolsRenderer("/jsp/actions.jsp?button_edit=true&button_page=true&button_publish=true");
 			request.setAttribute("previewURL", URLHelper.createURL(ctx.getContextWithOtherRenderMode(ContentContext.PREVIEW_MODE)));
 			currentModule.setRenderer("/jsp/preview.jsp");
+			currentModule.setBreadcrumbTitle(I18nAccess.getInstance(ctx.getRequest()).getText("content.preview"));
 			break;
 		case ContentModuleContext.PAGE_MODE:
 			currentModule.setToolsRenderer("/jsp/actions.jsp?button_edit=true&button_preview=true&button_publish=true");
 			request.setAttribute("page", ctx.getCurrentPage().getPageBean(ctx));
 			currentModule.setRenderer("/jsp/page_properties.jsp");
+			currentModule.setBreadcrumbTitle(I18nAccess.getInstance(ctx.getRequest()).getText("item.title"));
 			break;
 		default:
 			currentModule.setToolsRenderer("/jsp/actions.jsp?button_preview=true&button_page=true&button_save=true&button_publish=true&languages=true");
 			currentModule.setRenderer("/jsp/content_wrapper.jsp");
+			currentModule.setBreadcrumbTitle(I18nAccess.getInstance(ctx.getRequest()).getText("content.mode.content"));
 			break;
 		}
 

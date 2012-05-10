@@ -2,6 +2,7 @@ package org.javlo.context;
 
 import java.io.File;
 import java.io.FileInputStream;
+import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
@@ -42,7 +43,6 @@ import javax.servlet.http.HttpSession;
 
 import net.sf.ehcache.Cache;
 import net.sf.ehcache.CacheManager;
-import net.sf.ehcache.config.CacheConfiguration;
 import net.sf.ehcache.config.Configuration;
 import net.sf.ehcache.config.generator.ConfigurationSource;
 
@@ -74,6 +74,8 @@ import org.javlo.utils.TimeMap;
 import org.javlo.ztatic.StaticInfo;
 
 public class GlobalContext implements Serializable {
+
+	private static final String EHCACHE_FILE = "/WEB-INF/config/ehcache.xml";
 
 	private static final long serialVersionUID = 1L;
 
@@ -242,30 +244,27 @@ public class GlobalContext implements Serializable {
 		return newInstance;
 	}
 
-	private void initCacheManager() {
-		if (staticConfig.getEHCacheConfigFile() == null) {
-			cacheManager = new CacheManager();
-		} else {
-			File ehCacheFile = new File(staticConfig.getEHCacheConfigFile());
-			if (!ehCacheFile.exists()) {
-				logger.severe("ehCache config file not found : " + ehCacheFile);
-				Configuration config = new Configuration();
-				CacheConfiguration cacheConfig = new CacheConfiguration(getContextKey(), 0);
-				cacheConfig.setDiskPersistent(false);
-				cacheConfig.setDiskStorePath("java.io.tmpdir/javlo");
-				//config.addCache(cacheConfig);
-				config.setDefaultCacheConfiguration(cacheConfig);				
-				cacheManager = new CacheManager(config);
+	private void initCacheManager() throws IOException {
+		Configuration cacheConfig;
+		File ehCacheFile = null;
+		if (staticConfig.getEHCacheConfigFile() == null || !(new File(staticConfig.getEHCacheConfigFile()).exists())) {
+			InputStream inConfig = application.getResourceAsStream(EHCACHE_FILE);
+			if (inConfig != null) {
+				cacheConfig = ConfigurationSource.getConfigurationSource(inConfig).createConfiguration();
+				inConfig.close();
 			} else {
-				logger.info("load ehcache config from : " + ehCacheFile);
-				Configuration cacheConfig = ConfigurationSource.getConfigurationSource(ehCacheFile).createConfiguration();
-				cacheConfig.setName(getContextKey());
-				cacheManager = new CacheManager(cacheConfig);
-				if (cacheManager == null) {
-					logger.severe("error on init ehCache width : " + ehCacheFile);
-					cacheManager = new CacheManager();
-				}
+				throw new FileNotFoundException("ehcache config file not found : " + EHCACHE_FILE);
 			}
+		} else {
+			ehCacheFile = new File(staticConfig.getEHCacheConfigFile());
+			logger.info("load ehcache config from : " + ehCacheFile);
+			cacheConfig = ConfigurationSource.getConfigurationSource(ehCacheFile).createConfiguration();
+			}
+		cacheConfig.setName(getContextKey());
+		cacheManager = new CacheManager(cacheConfig);
+		if (cacheManager == null) {
+			logger.severe("error on init ehCache width : " + ehCacheFile);
+			cacheManager = new CacheManager();
 		}
 	}
 

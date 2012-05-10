@@ -175,6 +175,7 @@ public class Module {
 	private File moduleRoot;
 	private boolean sidebar = false;
 	private boolean breadcrumb = false;
+	private String breadcrumbTitle = null;
 	Collection<Box> mainBoxes = new LinkedList<Box>();
 	Collection<Box> sideBoxes = new LinkedList<Box>();
 	String navigationTitle = null;
@@ -537,6 +538,14 @@ public class Module {
 	
 	public void clearBreadcrump() {
 		breadcrumbLinks = null;
+	}
+
+	public String getBreadcrumbTitle() {
+		return breadcrumbTitle;
+	}
+
+	public void setBreadcrumbTitle(String breadcrumbTitle) {
+		this.breadcrumbTitle = breadcrumbTitle;
 	}
  	
 }
