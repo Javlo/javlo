@@ -19,3 +19,5 @@ jQuery(document).bind("ajaxUpdate",function () {
 	jQuery( ".datepicker" ).datepicker({maxDate: "+0D", dateFormat: dateFormat}); 
 
 });
+
+

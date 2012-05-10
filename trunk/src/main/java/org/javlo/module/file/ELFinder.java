@@ -1,4 +1,4 @@
-package org.javlo.module.file;
+﻿package org.javlo.module.file;
 
 import java.io.File;
 import java.io.FileInputStream;

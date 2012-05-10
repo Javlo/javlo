@@ -127,6 +127,9 @@
 
 <c:if test="${currentModule.breadcrumb}">
 	<div class="breadcrumbs">
+		<c:if test="${not empty currentModule.breadcrumbTitle}">
+			<span class="title">${currentModule.breadcrumbTitle}</span>
+		</c:if>
 		<c:if test="${empty currentModule.breadcrumbList}">
 			<c:forEach var="page" items="${info.pagePath}">
 			<a href="${page.url}">${page.info.title}</a>
