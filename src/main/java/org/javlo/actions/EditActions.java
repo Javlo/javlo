@@ -1968,7 +1968,7 @@ public class EditActions {
 
 			if (dblURL != null) {
 				msg = i18nAccess.getText("action.publish.error.same-url", new String[][] { { "url", dblURL } });
-				MessageRepository.getInstance(ctx).setGlobalMessage(new GenericMessage(msg, GenericMessage.WARNING));
+				MessageRepository.getInstance(ctx).setGlobalMessage(new GenericMessage(msg, GenericMessage.ALERT));
 			}
 
 			content.clearComponentCache();

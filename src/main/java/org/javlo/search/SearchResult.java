@@ -21,11 +21,14 @@ import org.javlo.context.ContentContext;
 import org.javlo.context.GlobalContext;
 import org.javlo.helper.StringHelper;
 import org.javlo.helper.URLHelper;
+import org.javlo.i18n.I18nAccess;
+import org.javlo.message.GenericMessage;
+import org.javlo.message.MessageRepository;
 import org.javlo.navigation.MenuElement;
 import org.javlo.service.ContentService;
 
 /**
- * @author pvanderm
+ * @author pvandermaesen
  */
 public class SearchResult {
 
@@ -65,17 +68,11 @@ public class SearchResult {
 		String searchRequest;
 		Date date = null;
 		String dateString = "";
+		String path = null;
 		int priority = 0;
 		int maxPriority = 0;
-		MenuElement page;
 
-		public MenuElement getPage() {
-			return page;
-		}
-
-		public void setPage(MenuElement page) {
-			this.page = page;
-		}
+		// MenuElement page;
 
 		public Date getDate() {
 			return date;
@@ -152,7 +149,10 @@ public class SearchResult {
 		}
 
 		public String getRelevance() {
-			String outRelevance = Math.round((getPriority() * 100) / getMaxPriority()) + " %";
+			if (getMaxPriority() == 0) {
+				return "100&nbsp;%";
+			}
+			String outRelevance = Math.round((getPriority() * 100) / getMaxPriority()) + "&nbsp;%";
 			return StringUtils.leftPad(outRelevance, 5, '0');
 		}
 
@@ -172,6 +172,13 @@ public class SearchResult {
 			this.searchRequest = searchRequest;
 		}
 
+		public String getPath() {
+			return path;
+		}
+
+		public void setPath(String path) {
+			this.path = path;
+		}
 	}
 
 	private SearchResult() {
@@ -186,7 +193,7 @@ public class SearchResult {
 		return res;
 	}
 
-	private void cleanResult() {
+	public void cleanResult() {
 		result.clear();
 	}
 
@@ -198,19 +205,18 @@ public class SearchResult {
 		rst.setSearchRequest(searchElement);
 		rst.setDescription(description);
 		rst.setPriority(priority);
+		rst.setPath(page.getPath());
 		try {
 			if (page.getContentDateNeverNull(ctx) != null) {
-				GlobalContext globalContext = GlobalContext.getInstance(ctx.getRequest());
 				Date date = page.getContentDateNeverNull(ctx);
 				rst.setDate(date);
-				rst.setDateString(StringHelper.renderDate(date, globalContext.getShortDateFormat()));
+				rst.setDateString(StringHelper.renderSortableDate(date));
 			} else {
 				logger.warning("date not found on : " + page.getPath());
 			}
 		} catch (Exception e) {
 			logger.warning(e.getMessage());
 		}
-		rst.setPage(page);
 		if (priority > maxPriority) {
 			maxPriority = priority;
 		}
@@ -239,7 +245,7 @@ public class SearchResult {
 		if (!page.notInSearch(ctx)) {
 
 			if (groupId == null || groupId.trim().length() == 0 || page.getGroupID(ctx).contains(groupId)) {
-				
+
 				ContentContext ctxWithContent = ctx.getContextWithContent(page);
 
 				if (ctxWithContent != null) {
@@ -252,7 +258,7 @@ public class SearchResult {
 
 						if (componentType == null || componentType.contains(cpt.getType())) {
 
-							if (cpt.getSearchLevel() > 0) {								
+							if (cpt.getSearchLevel() > 0) {
 								searchLevel = searchLevel + StringUtils.countMatches(cpt.getTextForSearch().toLowerCase(), inSearchText.toLowerCase()) * cpt.getSearchLevel();
 							}
 						}
@@ -268,6 +274,33 @@ public class SearchResult {
 			searchInPage(children[i], ctx, groupId, inSearchText, componentType);
 		}
 	}
+	
+	public void searchComponentInPage(ContentContext ctx, String componentType) throws Exception {
+		GlobalContext globalContext = GlobalContext.getInstance(ctx.getRequest());
+		ContentService content = ContentService.getInstance(globalContext);
+		searchComponentInPage(content.getNavigation(ctx), ctx, componentType);
+	}
+
+	private void searchComponentInPage(MenuElement page, ContentContext ctx, String componentType) throws Exception {
+
+		if (!page.notInSearch(ctx)) {
+
+			ContentContext ctxWithContent = ctx.getContextWithContent(page);
+
+
+			if (ctxWithContent != null) {				
+				ctxWithContent.setArea(null);
+				int searchLevel = page.getContentByType(ctxWithContent, componentType).size();				
+				if (searchLevel > 0) {
+					addResult(ctx, page, null, page.getName(), page.getFullLabel(ctxWithContent), URLHelper.createURL(ctxWithContent, page.getPath()), page.getDescription(ctxWithContent), searchLevel);
+				}
+			}
+		}
+		MenuElement[] children = page.getChildMenuElements();
+		for (int i = 0; i < children.length; i++) {
+			searchComponentInPage(children[i], ctx, componentType);
+		}
+	}
 
 	public void search(ContentContext ctx, String groupId, String searchText, String sort) throws Exception {
 		setQuery(searchText);
@@ -280,10 +313,41 @@ public class SearchResult {
 			MenuElement nav = content.getNavigation(ctx);
 
 			searchInPage(nav, ctx, groupId, searchText, null);
+
 			Iterator<SearchElement> results = result.iterator();
 			while (results.hasNext()) {
 				SearchElement element = results.next();
 				element.setMaxPriority(maxPriority);
+			}
+			if (result.size() == 0) {
+				I18nAccess i18nAccess = I18nAccess.getInstance(ctx.getRequest());
+				MessageRepository messageRepository = MessageRepository.getInstance(ctx);
+				messageRepository.setGlobalMessageAndNotification(ctx, new GenericMessage(i18nAccess.getText("search.title.no-result") + ' ' + searchText, GenericMessage.ALERT));
+			}
+		}
+	}
+
+	public void searchComponent(ContentContext ctx, String componentType) throws Exception {
+		setQuery(searchText);
+		if (sort != null) {
+			setSort(sort);
+		}
+		synchronized (result) { // if two browser with the same session
+			cleanResult();
+			ContentService content = ContentService.createContent(ctx.getRequest());
+			MenuElement nav = content.getNavigation(ctx);
+
+			searchComponentInPage(nav, ctx, componentType);
+
+			Iterator<SearchElement> results = result.iterator();
+			while (results.hasNext()) {
+				SearchElement element = results.next();
+				element.setMaxPriority(maxPriority);
+			}
+			if (result.size() == 0) {
+				I18nAccess i18nAccess = I18nAccess.getInstance(ctx.getRequest());
+				MessageRepository messageRepository = MessageRepository.getInstance(ctx);
+				messageRepository.setGlobalMessageAndNotification(ctx, new GenericMessage(i18nAccess.getText("search.title.no-result") + ' ' + searchText, GenericMessage.ALERT));
 			}
 		}
 	}

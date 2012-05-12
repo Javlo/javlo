@@ -14,7 +14,7 @@ import org.javlo.helper.XHTMLHelper;
 public class GenericMessage {
 
 	public static final int ERROR = 1;
-	public static final int WARNING = 2;
+	public static final int ALERT = 2;
 	public static final int INFO = 3;
 	public static final int HELP = 4;
 
@@ -66,8 +66,8 @@ public class GenericMessage {
 		case HELP:
 			return "help";
 
-		case WARNING:
-			return "warning";
+		case ALERT:
+			return "alert";
 
 		default:
 			return null;

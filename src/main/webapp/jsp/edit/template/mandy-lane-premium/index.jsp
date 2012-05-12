@@ -56,7 +56,7 @@
 <div class="header">
 	
     <c:if test="${currentModule.search}">
-    <form id="search" action="" method="post">
+    <form id="search" action="${info.currentURL}" method="post">
     	<input type="hidden" name="webaction" value="search" />
     	<input type="text" name="query" /> <button class="searchbutton"></button>
     </form>

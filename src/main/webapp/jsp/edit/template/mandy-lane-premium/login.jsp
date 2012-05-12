@@ -4,27 +4,27 @@
 <html xmlns="http://www.w3.org/1999/xhtml">
 <head>
 <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
-<title>Login Page | Javlo 2</title>
-<link rel="stylesheet" media="screen" href="/jsp/edit/template/default/css/style.css" />
+<title>Javlo 2</title>
+<link rel="stylesheet" media="screen" href="${info.editTemplateURL}/css/style.css" />
 <!--[if IE 9]>
-    <link rel="stylesheet" media="screen" href="/jsp/edit/template/default/css/ie9.css"/>
+    <link rel="stylesheet" media="screen" href="${info.editTemplateURL}/css/ie9.css"/>
 <![endif]-->
 
 <!--[if IE 8]>
-    <link rel="stylesheet" media="screen" href="/jsp/edit/template/default/css/ie8.css"/>
+    <link rel="stylesheet" media="screen" href="${info.editTemplateURL}/css/ie8.css"/>
 <![endif]-->
 
 <!--[if IE 7]>
-    <link rel="stylesheet" media="screen" href="/jsp/edit/template/default/css/ie7.css"/>
+    <link rel="stylesheet" media="screen" href="${info.editTemplateURL}/css/ie7.css"/>
 <![endif]-->
 <script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/jquery/1.7.1/jquery.min.js"></script>
-<script type="text/javascript" src="/jsp/edit/template/default/js/custom/general.js"></script>
+<script type="text/javascript" src="${info.editTemplateURL}/js/custom/general.js"></script>
 </head>
 
 <body>
 
 <div class="loginlogo">
-	<img src="/jsp/edit/template/default/images/logo.png" alt="Logo Javlo" />
+	<img src="${info.editTemplateURL}/images/logo.png" alt="Logo Javlo" />
 </div><!--loginlogo-->
 
 <div class="notification notifyError loginNotify">Invalid username or password. (Type anything)</div>
