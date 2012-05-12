@@ -21,6 +21,11 @@ import org.javlo.helper.StringHelper;
 import org.javlo.helper.URLHelper;
 import org.javlo.utils.ReadOnlyPropertiesMap;
 
+/**
+ * A module is a application inside javlo.
+ * @author Patrick Vandermaesen
+ *
+ */
 public class Module {
 	
 	private static final String CSS_FOLDER = "css";
@@ -373,12 +378,24 @@ public class Module {
 		return renderer;
 	}
 	
+	/**
+	 * set a renderer. Root folder is the root of the module.
+	 * @param renderer
+	 */
 	public void setRenderer(String renderer) {
 		if (renderer != null) {
 			this.renderer = URLHelper.mergePath(path, renderer);
 		} else {
 			this.renderer = null;
 		}
+	}
+	
+	/**
+	 * set a renderer. Root folder is the root of webapps.
+	 * @param renderer
+	 */
+	public void setAbsoluteRenderer(String renderer) {
+		this.renderer = renderer;
 	}
 	
 	/**
@@ -406,6 +423,10 @@ public class Module {
 
 	public boolean isSidebar() {
 		return sidebar;
+	}
+	
+	public void setSidebar(boolean sidebar) {
+		this.sidebar = sidebar;
 	}
 
 	public String getNavigationTitle() {

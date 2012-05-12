@@ -22,7 +22,6 @@ import org.javlo.component.core.IReverseLinkComponent;
 import org.javlo.config.StaticConfig;
 import org.javlo.context.ContentContext;
 import org.javlo.context.GlobalContext;
-import org.javlo.helper.ArrayHelper;
 import org.javlo.helper.StringHelper;
 import org.javlo.helper.URLHelper;
 import org.javlo.helper.XHTMLHelper;
@@ -32,6 +31,7 @@ import org.javlo.service.RequestService;
 import org.javlo.template.Template;
 
 /**
+ * Standard image component.
  * @author pvandermaesen
  */
 public class GlobalImage extends FilterImage {
@@ -274,7 +274,7 @@ public class GlobalImage extends FilterImage {
 
 		// validation
 		if ((getFileName().trim().length() > 0) && (getLabel().trim().length() == 0)) {
-			setMessage(new GenericMessage(i18nAccess.getText("component.message.image_no_label"), GenericMessage.WARNING));
+			setMessage(new GenericMessage(i18nAccess.getText("component.message.image_no_label"), GenericMessage.ALERT));
 		} else if (!isFileNameValid(getFileName())) {
 			setMessage(new GenericMessage(i18nAccess.getText("component.error.file"), GenericMessage.ERROR));
 		}

@@ -1418,6 +1418,15 @@ public class StringHelper {
 		return format.format(date);
 
 	}
+	
+	public static String renderSortableDate(Date date) {
+		if (date == null) {
+			return null;
+		}
+		SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd");
+		return format.format(date);
+
+	}
 
 	public static String renderDate(Locale locale, Date date, String pattern) {
 		if (date == null) {

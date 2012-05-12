@@ -59,7 +59,8 @@ import org.javlo.utils.SufixPreffix;
 import org.javlo.ztatic.StaticInfo;
 
 /**
- * @author pvandermaesen This class is a helper for construct XHTML code.
+ * This class is a helper for construct XHTML code.
+ * @author pvandermaesen
  */
 public class XHTMLHelper {
 
@@ -1734,49 +1735,6 @@ public class XHTMLHelper {
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
-		return out.toString();
-	}
-
-	public static String renderMessage(ContentContext ctx, GenericMessage msg, boolean icone) {
-		if (msg == null) {
-			return "";
-		}
-		String imageName = null;
-		String alt = "";
-		if (icone) {
-			switch (msg.getType()) {
-			case GenericMessage.ERROR:
-				imageName = "error.png";
-				alt = "error";
-				break;
-			case GenericMessage.HELP:
-				imageName = "help.png";
-				alt = "help";
-				break;
-			case GenericMessage.WARNING:
-				imageName = "warning.png";
-				alt = "warning";
-				break;
-			case GenericMessage.INFO:
-				imageName = "info.png";
-				alt = "information";
-				break;
-			default:
-				break;
-			}
-		}
-		StringBuffer out = new StringBuffer();
-		out.append("<div class=\"message\">");
-		out.append("<div class=\"");
-		out.append(msg.getTypeLabel());
-		out.append("\">");
-		if (imageName != null) {
-			out.append(getIconesCode(ctx, imageName, alt));
-		}
-		out.append("<p>");
-		out.append(msg.getMessage());
-		out.append("</p>");
-		out.append("</div></div>");
 		return out.toString();
 	}
 

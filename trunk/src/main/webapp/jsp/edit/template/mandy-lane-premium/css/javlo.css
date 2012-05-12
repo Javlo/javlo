@@ -559,6 +559,17 @@ ul,li {
 	display: block;
 }
 
+/**** search ****/
+
+#search-result h1 {
+	margin: 0 0 20px 0;
+}
+
+#search-result .action {
+	margin-top: 8px;
+	text-align: right;
+}
+
 /*** JQUERY UI ***/
 .ui-tabs-nav li a {
 	padding: 6px 16px;

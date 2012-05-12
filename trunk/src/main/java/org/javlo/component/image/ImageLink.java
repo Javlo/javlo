@@ -217,7 +217,7 @@ public class ImageLink extends FilterImage {
 
 		// validation
 		if ((getFileName().trim().length() > 0) && (getLabel().trim().length() == 0)) {
-			setMessage(new GenericMessage(i18nAccess.getText("component.message.image_no_label"), GenericMessage.WARNING));
+			setMessage(new GenericMessage(i18nAccess.getText("component.message.image_no_label"), GenericMessage.ALERT));
 		} else if (!isFileNameValid(getFileName())) {
 			setMessage(new GenericMessage(i18nAccess.getText("component.error.file"), GenericMessage.ERROR));
 		}
