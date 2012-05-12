@@ -9,12 +9,11 @@ import java.util.LinkedList;
 import javax.servlet.ServletContext;
 import javax.servlet.http.HttpServletRequest;
 
-import org.javlo.actions.IModuleAction;
+import org.javlo.actions.AbstractModuleAction;
 import org.javlo.config.StaticConfig;
 import org.javlo.context.ContentContext;
 import org.javlo.context.GlobalContext;
 import org.javlo.helper.StringHelper;
-import org.javlo.helper.URLHelper;
 import org.javlo.i18n.I18nAccess;
 import org.javlo.message.GenericMessage;
 import org.javlo.message.MessageRepository;
@@ -24,9 +23,7 @@ import org.javlo.service.RequestService;
 import org.javlo.template.Template;
 import org.javlo.template.TemplateFactory;
 
-public class TemplateAction implements IModuleAction {
-	
-	
+public class TemplateAction extends AbstractModuleAction {
 
 	@Override
 	public String getActionGroupName() { 

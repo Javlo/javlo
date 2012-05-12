@@ -39,6 +39,11 @@ public class Module {
 			return null;
 		}
 
+		@Override
+		public String performSearch(ContentContext ctx, ModuleContext moduleContext, String searchText) throws Exception {
+			return null;
+		}
+
 	}
 
 	private static final EmptyAction emptyAction = new EmptyAction();
@@ -124,7 +129,6 @@ public class Module {
 		private String renderer;
 		private String id;
 		private boolean action;
-		
 
 		public String getTitle() {
 			return title;
@@ -193,6 +197,7 @@ public class Module {
 	private Map<String,Box> boxes = new HashMap<String, Box>();
 	private String backUrl = null;
 	private Stack<HtmlLink> breadcrumbLinks;
+	private boolean search;
 
 	public Module(File configFile, Locale locale, String modulePath) throws IOException {
 		FileReader fileReader = null;
@@ -210,7 +215,9 @@ public class Module {
 		path = modulePath.replace('\\', '/');
 		name = config.get("name");
 		breadcrumb = StringHelper.isTrue(config.get("breadcrumb"));
+		search = StringHelper.isTrue(config.get("search"));
 		title = config.get("title." + locale.getLanguage());
+		
 		if (title == null) {
 			title = config.get("title");
 		}
@@ -547,5 +554,12 @@ public class Module {
 	public void setBreadcrumbTitle(String breadcrumbTitle) {
 		this.breadcrumbTitle = breadcrumbTitle;
 	}
- 	
+
+	public boolean isSearch() {
+		return search;
+	}
+
+	public void setSearch(boolean search) {
+		this.search = search;
+	}
 }

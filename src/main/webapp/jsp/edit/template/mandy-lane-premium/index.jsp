@@ -55,9 +55,12 @@
 
 <div class="header">
 	
+    <c:if test="${currentModule.search}">
     <form id="search" action="" method="post">
-    	<input type="text" name="keyword" /> <button class="searchbutton"></button>
+    	<input type="hidden" name="webaction" value="search" />
+    	<input type="text" name="query" /> <button class="searchbutton"></button>
     </form>
+    </c:if>
     
     <div class="topheader">
         <ul class="notebutton">

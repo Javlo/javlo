@@ -10,7 +10,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
-import org.javlo.actions.IModuleAction;
+import org.javlo.actions.AbstractModuleAction;
 import org.javlo.component.core.ComponentContext;
 import org.javlo.component.core.ComponentFactory;
 import org.javlo.component.core.IContentComponentsList;
@@ -40,7 +40,7 @@ import org.javlo.user.AdminUserFactory;
 import org.javlo.user.AdminUserSecurity;
 import org.javlo.user.IUserFactory;
 
-public class Edit implements IModuleAction {
+public class Edit extends AbstractModuleAction {
 	
 	private static void prepareUpdateInsertLine(ContentContext ctx) throws Exception {
 		GlobalContext globalContext = GlobalContext.getInstance(ctx.getRequest());
@@ -372,6 +372,12 @@ public class Edit implements IModuleAction {
 		request.setAttribute("templateImageUrl", templateImageURL);
 
 		return null;
+	}
+	
+	@Override
+	public String performSearch(ContentContext ctx, ModuleContext moduleContext, String query) throws Exception {
+		System.out.println("***** Edit.performSearch : query = "+query); //TODO: remove debug trace
+		return query;
 	}
 
 	public static final String performChangeComponent(GlobalContext globalContext, EditContext editCtx, ContentContext ctx, RequestService requestService, I18nAccess i18nAccess, Module currentModule) throws Exception {
