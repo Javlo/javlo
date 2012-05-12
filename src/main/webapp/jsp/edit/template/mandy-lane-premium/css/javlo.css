@@ -1,5 +1,10 @@
 /*** general ***/
 
+.label-inside.label {
+	color: #aaaaaa;
+	font-style: italic;
+}
+
 fieldset {	
 	margin: 8px;
 	padding: 8px;    
@@ -446,9 +451,18 @@ ul,li {
 	padding-left: 16px;
 }
 
-.navigation .children a {
+.navigation .children a, .navigation .children .add-page form {
 	padding-left: 16px;
 }
+
+.navigation .children .add-page input[type='text'] {
+	width: 120px;
+}
+
+ .navigation .children .add-page input {
+    padding: 3px;
+    margin-left: 0;
+ }
 
 
 .navigation .children .have-children a {
