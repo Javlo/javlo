@@ -446,6 +446,11 @@ ul,li {
 	padding-left: 16px;
 }
 
+.navigation .children a {
+	padding-left: 16px;
+}
+
+
 .navigation .children .have-children a {
 	background: url("../images/icons/more.png") no-repeat scroll 0 11px
 		transparent;

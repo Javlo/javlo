@@ -13,6 +13,7 @@ import org.javlo.context.EditContext;
 import org.javlo.context.GlobalContext;
 import org.javlo.data.InfoBean;
 import org.javlo.helper.ServletHelper;
+import org.javlo.service.NotificationService;
 import org.json.JSONObject;
 
 public class AjaxServlet extends HttpServlet {
@@ -56,6 +57,9 @@ public class AjaxServlet extends HttpServlet {
 
 			String msgXhtml = ServletHelper.executeJSP(ctx, editCtx.getMessageTemplate());
 			ctx.addAjaxInsideZone( "message-container", msgXhtml);
+			
+			int unreadNotification = NotificationService.getInstance(globalContext).getUnreadNotificationSize(editCtx.getUserPrincipal().getName(), 99);
+			ctx.addAjaxInsideZone("notification-count", ""+unreadNotification);
 			
 			StringWriter strWriter = new StringWriter();
 

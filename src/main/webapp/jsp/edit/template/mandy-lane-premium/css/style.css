@@ -755,12 +755,8 @@ h2.prize {
 .leftmenu li a {
 	font-size: 12px;
 	display: block;
-	padding: 5px 0 5px 40px;
+	padding: 5px 0 5px 30px;
 	color: #333;
-}
-
-.leftmenu li a:hover {
-	
 }
 
 .leftmenu li.current a {
@@ -769,10 +765,6 @@ h2.prize {
 	color: #333;
 	border-top: 1px solid #a6c0de;
 	border-bottom: 1px solid #a6c0de;
-}
-
-.leftmenu li.current a:hover {
-	text-decoration: none;
 }
 
 .leftmenu li a.form {

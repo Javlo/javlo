@@ -160,7 +160,13 @@ public class GlobalImage extends FilterImage {
 			finalCode.append("<div style=\"margin-top: 5px; margin-bottom: 5px;\"><label style=\"float: left; width: 160px; height: 16px;\" for=\"" + getDirInputName() + "\">");
 			finalCode.append(getDirLabelTitle(ctx));
 			finalCode.append(" : </label>");
-			finalCode.append(XHTMLHelper.getInputOneSelect(getDirInputName(), ArrayHelper.addFirstElem(getDirList(getFileDirectory(ctx)), ""), getDirSelected(), getJSOnChange(ctx), true));
+			Collection<String> dirsCol = new LinkedList();
+			dirsCol.add("");
+			String[] dirs = getDirList(getFileDirectory(ctx));
+			for (String dir : dirs) {
+				dirsCol.add(dir);
+			}
+			finalCode.append(XHTMLHelper.getInputOneSelect(getDirInputName(), dirsCol, getDirSelected(), "submit-onchange"));
 			finalCode.append("<a class=\"" + EDIT_ACTION_CSS_CLASS + "\" href=\"#\" onclick=\"document.forms['content_update'].dir.value='");
 			finalCode.append(URLHelper.mergePath(getRelativeFileDirectory(ctx), getDirSelected()));
 			finalCode.append("';document.forms['content_update'].submit(); return false;\">&nbsp;");

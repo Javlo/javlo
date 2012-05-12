@@ -5,36 +5,37 @@
 <head>
 <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
 <title>Javlo : ${currentModule.title}</title>
-<link rel="stylesheet" media="screen" href="/jsp/edit/template/default/css/style.css" />
-<link rel="stylesheet" media="screen" href="/jsp/edit/template/default/css/javlo.css" />
+<link rel="stylesheet" media="screen" href="${info.editTemplateURL}/css/style.css" />
+<link rel="stylesheet" media="screen" href="${info.editTemplateURL}/css/javlo.css" />
 <!--[if IE 9]>
-    <link rel="stylesheet" media="screen" href="/jsp/edit/template/default/css/ie9.css"/>
+    <link rel="stylesheet" media="screen" href="${info.editTemplateURL}/css/ie9.css"/>
 <![endif]-->
 
 <!--[if IE 8]>
-    <link rel="stylesheet" media="screen" href="/jsp/edit/template/default/css/ie8.css"/>
+    <link rel="stylesheet" media="screen" href="${info.editTemplateURL}/css/ie8.css"/>
 <![endif]-->
 
 <!--[if IE 7]>
-    <link rel="stylesheet" media="screen" href="/jsp/edit/template/default/css/ie7.css"/>
+    <link rel="stylesheet" media="screen" href="${info.editTemplateURL}/css/ie7.css"/>
 <![endif]-->
 
-<script type="text/javascript" src="/jsp/edit/template/default/js/plugins/jquery-1.7.2.min.js"></script>
-<script type="text/javascript" src="/jsp/edit/template/default/js/plugins/jquery-ui-1.8.20.custom.min.js"></script>
+<script type="text/javascript" src="${info.editTemplateURL}/js/plugins/jquery-1.7.2.min.js"></script>
+<script type="text/javascript" src="${info.editTemplateURL}/js/plugins/jquery-ui-1.8.20.custom.min.js"></script>
 <script type="text/javascript" src="/jsp/edit/global/dynamic_js.jsp"></script>
-<script type="text/javascript" src="/jsp/edit/template/default/js/plugins/jquery.validate.min.js"></script>
-<script type="text/javascript" src="/jsp/edit/template/default/js/plugins/jquery.colorbox-min.js"></script>
-<script type="text/javascript" src="/jsp/edit/template/default/js/plugins/jquery.flot.min.js"></script>
-<script type="text/javascript" src="/jsp/edit/template/default/js/plugins/jquery.jgrowl.js"></script>
-<script type="text/javascript" src="/jsp/edit/template/default/js/plugins/jquery.dataTables.min.js"></script>
-<script type="text/javascript" src="/jsp/edit/template/default/js/plugins/elfinder.min.js"></script>
-<script type="text/javascript" src="/jsp/edit/template/default/js/javlo/core.js"></script>
-<script type="text/javascript" src="/jsp/edit/template/default/js/custom/gallery.js"></script>
+<script type="text/javascript" src="${info.editTemplateURL}/js/plugins/jquery.validate.min.js"></script>
+<script type="text/javascript" src="${info.editTemplateURL}/js/plugins/jquery.colorbox-min.js"></script>
+<script type="text/javascript" src="${info.editTemplateURL}/js/plugins/jquery.flot.min.js"></script>
+<script type="text/javascript" src="${info.editTemplateURL}/js/plugins/jquery.jgrowl.js"></script>
+<script type="text/javascript" src="${info.editTemplateURL}/js/plugins/jquery.dataTables.min.js"></script>
+<script type="text/javascript" src="${info.editTemplateURL}/js/plugins/jquery.form.js"></script>
+<script type="text/javascript" src="${info.editTemplateURL}/js/plugins/elfinder.min.js"></script>
+<script type="text/javascript" src="${info.editTemplateURL}/js/javlo/core.js"></script>
+<script type="text/javascript" src="${info.editTemplateURL}/js/custom/gallery.js"></script>
 <script type="text/javascript" src="/js/edit/ajax.js"></script>
-<script type="text/javascript" src="/jsp/edit/template/default/js/javlo/core.js"></script>
-<c:if test="${not info.editLanguage eq 'en'}"><script type="text/javascript" src="/jsp/edit/template/default/js/plugins/jquery.ui.datepicker-${info.editLanguage}.js"></script></c:if>
-<c:if test="${not info.editLanguage eq 'en'}"><script type="text/javascript" src="/jsp/edit/template/default/js/i18n/elfinder.${info.editLanguage}.js"></script></c:if>
-<script type="text/javascript" src="/jsp/edit/template/default/js/custom/general.js"></script>
+<script type="text/javascript" src="${info.editTemplateURL}/js/javlo/core.js"></script>
+<c:if test="${not info.editLanguage eq 'en'}"><script type="text/javascript" src="${info.editTemplateURL}/js/plugins/jquery.ui.datepicker-${info.editLanguage}.js"></script></c:if>
+<c:if test="${not info.editLanguage eq 'en'}"><script type="text/javascript" src="${info.editTemplateURL}/js/i18n/elfinder.${info.editLanguage}.js"></script></c:if>
+<script type="text/javascript" src="${info.editTemplateURL}/js/custom/general.js"></script>
 
 
 <c:forEach var="css" items="${currentModule.CSS}">
@@ -60,7 +61,7 @@
     <div class="topheader">
         <ul class="notebutton">
             <li class="note">
-                <a href="/jsp/edit/template/default/pages/message.html" class="messagenotify">
+                <a href="${info.editTemplateURL}/pages/message.html" class="messagenotify">
                     <span class="wrap">
                         <span class="thicon msgicon"></span>
                         <span class="count">1</span>
@@ -68,10 +69,10 @@
                 </a>
             </li>
             <li class="note">
-            	<a href="/jsp/edit/template/default/notifications.jsp" class="alertnotify">
+            	<a href="${info.editTemplateURL}/notifications.jsp" class="alertnotify">
                 	<span class="wrap">
                     	<span class="thicon infoicon"></span>
-                        <span class="count">${notificationSize}</span>
+                        <span id="notification-count" class="count">${notificationSize}</span>
                     </span>
                 </a>
             </li>
@@ -80,7 +81,7 @@
 
 
     <!-- logo -->
-	<img src="/jsp/edit/template/default/images/logo2.png" alt="Logo" />
+	<img src="${info.editTemplateURL}/images/logo2.png" alt="Logo" />
     
     <div class="tabmenu">
     	<ul>
@@ -94,7 +95,7 @@
     </div><!-- tabmenu -->
     
     <div class="accountinfo">
-    	<img src="/jsp/edit/template/default/images/avatar.png" alt="Avatar" />
+    	<img src="${info.editTemplateURL}/images/avatar.png" alt="Avatar" />
         <div class="info">
         	<h3>${currentUser.name}</h3>
             <small>${currentUser.userInfo.email}&nbsp;</small>

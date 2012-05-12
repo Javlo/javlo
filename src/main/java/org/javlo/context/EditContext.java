@@ -97,7 +97,7 @@ public class EditContext implements Serializable {
 
 	Set<String> licence = new HashSet<String>();
 	
-	private String editTemplateFolder = "/jsp/edit/template/default";
+	private String editTemplateFolder = "/jsp/edit/template/mandy-lane-premium";
 
 	String editTemplate = "index.jsp";
 	

@@ -773,7 +773,7 @@ public class Template implements Comparable<Template> {
 		String defaultRenderer = properties.getString("html", getParent().getHTMLFile(device));
 		String deviceRenderer = null;
 		if (device != null) {
-			deviceRenderer = properties.getString("html." + device.getCode(), getParent().getHTMLFile(device));
+			deviceRenderer = properties.getString("html." + device.getCode(), defaultRenderer);
 		}
 		if (deviceRenderer != null) {
 			logger.info("device renderer found : " + deviceRenderer);
