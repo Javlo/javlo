@@ -32,6 +32,7 @@
 <script type="text/javascript" src="${info.editTemplateURL}/js/javlo/core.js"></script>
 <script type="text/javascript" src="${info.editTemplateURL}/js/custom/gallery.js"></script>
 <script type="text/javascript" src="/js/edit/ajax.js"></script>
+<script type="text/javascript" src="/js/edit/core.js"></script>
 <script type="text/javascript" src="${info.editTemplateURL}/js/javlo/core.js"></script>
 <c:if test="${not info.editLanguage eq 'en'}"><script type="text/javascript" src="${info.editTemplateURL}/js/plugins/jquery.ui.datepicker-${info.editLanguage}.js"></script></c:if>
 <c:if test="${not info.editLanguage eq 'en'}"><script type="text/javascript" src="${info.editTemplateURL}/js/i18n/elfinder.${info.editLanguage}.js"></script></c:if>
@@ -113,7 +114,7 @@
 			<c:if test="${box.title != null}">		
 			<h3 class="open">${box.title}</h3>
 			</c:if>
-			<div class="content leftmenu" style="display: block;">			
+			<div class="content leftmenu" style="display: block;" >			
 				<jsp:include page="${box.renderer}" />			
 			</div>		
 		</c:forEach>		        

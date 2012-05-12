@@ -84,6 +84,11 @@ public class Edit implements IModuleAction {
 			ctx.addAjaxZone("comp-"+newId, newComponentXHTML);
 		}
 	}
+	
+	private static boolean nameExist(String name, ContentContext ctx, ContentService content) throws Exception {		
+		MenuElement page = content.getNavigation(ctx);
+		return (page.searchChildFromName(name) != null);
+	}
 
 	public static class ComponentWrapper {
 		private String type;
@@ -580,6 +585,48 @@ public class Edit implements IModuleAction {
 			return "bad request structure : 'language' not found.";
 		}
 		return null;
+	}
+	
+	public static String performAddPage(ContentContext ctx, ContentService content) {
+
+		String message = null;
+
+		try {
+			GlobalContext globalContext = GlobalContext.getInstance(ctx.getRequest());
+			EditContext editCtx = EditContext.getInstance(globalContext, ctx.getRequest().getSession());
+
+			String path = ctx.getPath();
+			String nodeName = ctx.getRequest().getParameter("name");
+
+			I18nAccess i18nAccess = I18nAccess.getInstance(globalContext, ctx.getRequest().getSession());
+			message = validNodeName(nodeName, i18nAccess);
+
+			if (nameExist(nodeName, ctx, content)) {
+				message = i18nAccess.getText("action.validation.name-allready-exist", new String[][] { { "name", nodeName } });
+			}
+
+			if (message == null) {				
+				MenuElement elem = MenuElement.getInstance(globalContext);
+				elem.setName(nodeName);
+				elem.setCreator(editCtx.getUserPrincipal().getName());
+				elem.setVisible(globalContext.isNewPageVisible());				
+				ctx.getCurrentPage().addChildMenuElementAutoPriority(elem);
+				path = path + "/" + nodeName;
+				String msg = i18nAccess.getText("action.add.new-page", new String[][] { { "path", path } });
+				MessageRepository.getInstance(ctx).setGlobalMessage(new GenericMessage(msg, GenericMessage.INFO));
+			}
+			PersistenceService persistenceService = PersistenceService.getInstance(globalContext);
+			persistenceService.store(ctx);
+			autoPublish(ctx.getRequest(), ctx.getResponse());
+
+			NavigationService navigationService = NavigationService.getInstance(globalContext, ctx.getRequest().getSession());
+			navigationService.clearPage(ctx);
+
+		} catch (Exception e) {
+			e.printStackTrace();
+			message = e.getMessage();
+		}
+		return message;
 	}
 
 }

@@ -140,11 +140,9 @@ jQuery(document).ready(function(){
 
 function changeFooter() {	
 	/** Make footer always at the bottom**/
-	if(jQuery('body').height() > jQuery(window).height()) {
-		console.log("change footer REMOVE CLASS");
+	if(jQuery('body').height() > jQuery(window).height()) {		
 		jQuery('.footer').removeClass('footer_float');
-	} else {
-		console.log("change footer ADD CLASS");
+	} else {		
 		jQuery('.footer').addClass('footer_float');
 	}
 }
