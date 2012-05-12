@@ -28,3 +28,7 @@ function fullHeight() {
 }
 
 jQuery(window).resize(fullHeight);
+
+function updateLayout() {
+	changeFooter();
+}

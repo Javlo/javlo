@@ -526,7 +526,7 @@ public abstract class AbstractFileComponent extends AbstractVisualComponent impl
 					MessageRepository messageRepository = MessageRepository.getInstance(ctx);
 					messageRepository.setGlobalMessage(new GenericMessage(i18nAccess.getText("content.file.info.create-dir", new String[][] { { "group", newDir } }), GenericMessage.INFO));
 					selectedDir = newDir;
-					// setNeedRefresh(true);
+					setNeedRefresh(true);
 				}
 			} else {
 				MessageRepository messageRepository = MessageRepository.getInstance(ctx);
@@ -559,7 +559,7 @@ public abstract class AbstractFileComponent extends AbstractVisualComponent impl
 					fileName = "";
 					MessageRepository messageRepository = MessageRepository.getInstance(ctx);
 					messageRepository.setGlobalMessage(new GenericMessage(i18nAccess.getText("content.file.info.select-dir", new String[][] { { "group", selectedDir } }), GenericMessage.INFO));
-					// setNeedRefresh(true);
+					setNeedRefresh(true);
 				}
 
 				if (needEncoding()) {

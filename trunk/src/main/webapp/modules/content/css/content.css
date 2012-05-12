@@ -7,11 +7,11 @@ ul.menu {
 }
 
 .children {
-	margin-left: 16px;
+	margin-left: 32px;
 }
 
 .navigation li a.editor {
     background-image: url("images/page.png");
-    background-position: 15px center;
+    background-position: 7px center;
     background-repeat: no-repeat;
 }

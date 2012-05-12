@@ -61,7 +61,28 @@ public class Edit implements IModuleAction {
 			insertXHTML = "<a class=\"action-button ajax\" href=\""+URLHelper.createURL(ctx)+"?webaction=insert&previous="+comp.getId()+"&type="+currentTypeComponent.getType()+"\">"+insertHere+"</a>";
 			ctx.addAjaxInsideZone("insert-line-"+comp.getId(), insertXHTML);
 		}
-		
+	}
+	
+	/**
+	 * update component
+	 * @param ctx
+	 * @param currentModule
+	 * @param newId the id of the component
+	 * @param previousId the id, null for update and previous component for insert.
+	 * @throws Exception
+	 */
+	private static void updateComponent(ContentContext ctx, Module currentModule, String newId, String previousId) throws Exception {
+		ComponentContext compCtx = ComponentContext.getInstance(ctx.getRequest());
+		GlobalContext globalContext = GlobalContext.getInstance(ctx.getRequest());
+		ContentService content = ContentService.getInstance(globalContext);
+		compCtx.addNewComponent(content.getComponent(ctx, newId)); // prepare ajax rendering
+		String componentRenderer = URLHelper.mergePath(currentModule.getPath()+"/jsp/content.jsp");
+		String newComponentXHTML = ServletHelper.executeJSP(ctx, componentRenderer);
+		if (previousId != null) { 
+			ctx.addAjaxZone("comp-child-"+previousId, newComponentXHTML);
+		} else {
+			ctx.addAjaxZone("comp-"+newId, newComponentXHTML);
+		}
 	}
 
 	public static class ComponentWrapper {
@@ -69,7 +90,7 @@ public class Edit implements IModuleAction {
 		private String label;
 		private String value;
 		private boolean metaTitle;
-		private boolean selected; 
+		private boolean selected;
 
 		public ComponentWrapper(String type, String label, String value, boolean metaTitle) {
 			this.type = type;
@@ -371,7 +392,11 @@ public class Edit implements IModuleAction {
 		return message;
 	}
 
-	public static final String performInsert(HttpServletRequest request, ContentContext ctx, ComponentContext compCtx, ContentService content, Module currentModule) throws Exception {
+	public static final String performInsert(HttpServletRequest request, ContentContext ctx, ContentService content, Module currentModule, I18nAccess i18nAccess, MessageRepository messageRepository) throws Exception {
+		if (!canModifyCurrentPage(ctx) || !checkPageSecurity(ctx)) {
+			messageRepository.setGlobalMessageAndNotification(ctx, new GenericMessage(i18nAccess.getText("action.block"), GenericMessage.ERROR));
+			return null;
+		}
 		String previousId = request.getParameter("previous");
 		String type = request.getParameter("type");
 		if (previousId == null || type == null) {
@@ -380,11 +405,11 @@ public class Edit implements IModuleAction {
 
 		String newId = content.createContent(ctx, previousId, type, "");
 		if (ctx.isAjax()) {
-			compCtx.addNewComponent(content.getComponent(ctx, newId)); // prepare ajax rendering
-			String componentRenderer = URLHelper.mergePath(currentModule.getPath()+"/jsp/content.jsp");
-			String newComponentXHTML = ServletHelper.executeJSP(ctx, componentRenderer);
-			ctx.addAjaxZone("comp-child-"+previousId, newComponentXHTML);
+			updateComponent(ctx,currentModule,newId,previousId);
 		}
+		
+		String msg = i18nAccess.getText("action.component.created", new String[][] { { "type", type } });
+		messageRepository.setGlobalMessageAndNotification(ctx, new GenericMessage(msg, GenericMessage.INFO));
 
 		return null;
 	}
@@ -424,7 +449,7 @@ public class Edit implements IModuleAction {
 		return null;
 	}
 
-	public static final String performSave(ContentContext ctx, GlobalContext globalContext, ContentService content, RequestService requestService, I18nAccess i18nAccess, MessageRepository messageRepository, MenuElement currentPage, AdminUserFactory adminUserFactory) throws Exception {
+	public static final String performSave(ContentContext ctx, GlobalContext globalContext, ContentService content, RequestService requestService, I18nAccess i18nAccess, MessageRepository messageRepository, MenuElement currentPage, Module currentModule, AdminUserFactory adminUserFactory) throws Exception {
 
 		if (!canModifyCurrentPage(ctx) || !checkPageSecurity(ctx)) {
 			messageRepository.setGlobalMessageAndNotification(ctx, new GenericMessage(i18nAccess.getText("action.block"), GenericMessage.ERROR));
@@ -444,8 +469,10 @@ public class Edit implements IModuleAction {
 			if (StringHelper.isTrue(requestService.getParameter("id-" + elem.getId(), "false"))) {
 				elem.performConfig(ctx);
 				elem.refresh(ctx);
-			}
-			needRefresh = needRefresh || elem.isNeedRefresh();
+				if (elem.isNeedRefresh()) {
+					updateComponent(ctx, currentModule, elem.getId(), null);
+				}
+			}			
 
 			if (elem.isModify()) {
 				modif = true;
@@ -454,6 +481,7 @@ public class Edit implements IModuleAction {
 				message = elem.getErrorMessage();
 			}
 		}
+		
 		ctx.setNeedRefresh(needRefresh);
 		if (modif) {
 			modifPage(ctx);
@@ -462,6 +490,7 @@ public class Edit implements IModuleAction {
 			}
 			PersistenceService.getInstance(globalContext).store(ctx);
 		}
+		
 		if (message == null) {
 			messageRepository.setGlobalMessageAndNotification(ctx, new GenericMessage(i18nAccess.getText("action.updated"), GenericMessage.INFO));
 			autoPublish(ctx.getRequest(), ctx.getResponse());
