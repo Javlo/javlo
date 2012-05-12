@@ -1,10 +1,10 @@
 package org.javlo.module.demo;
 
-import org.javlo.actions.IModuleAction;
+import org.javlo.actions.AbstractModuleAction;
 import org.javlo.context.ContentContext;
 import org.javlo.module.ModuleContext;
 
-public class Action implements IModuleAction {
+public class Action extends AbstractModuleAction {
 
 	@Override
 	public String getActionGroupName() {

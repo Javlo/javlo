@@ -229,6 +229,7 @@ public class ConfigHelper {
 	 *         <li>Module : current module.</li>
 	 *         <li>MessageRepository</li>
 	 *         <li>FileCache</li>
+	 *         <li>String : the query parameter</li>
 	 *         </ul>
 	 * @throws Exception
 	 * @throws
@@ -278,6 +279,8 @@ public class ConfigHelper {
 			return MessageRepository.getInstance(request);
 		} else if (c.equals(FileCache.class)) {
 			return FileCache.getInstance(request.getSession().getServletContext());
+		} else if (c.equals(String.class)) {
+			return RequestService.getInstance(request).getParameter("query", null);
 		}
 		return null;
 	}

@@ -12,7 +12,7 @@ import java.util.Map;
 import javax.servlet.http.HttpServletRequest;
 
 import org.apache.commons.configuration.ConfigurationException;
-import org.javlo.actions.IModuleAction;
+import org.javlo.actions.AbstractModuleAction;
 import org.javlo.component.core.ComponentFactory;
 import org.javlo.component.core.IContentVisualComponent;
 import org.javlo.component.core.MetaTitle;
@@ -34,7 +34,7 @@ import org.javlo.template.TemplateFactory;
 import org.javlo.user.AdminUserSecurity;
 import org.javlo.ztatic.FileCache;
 
-public class AdminAction implements IModuleAction {
+public class AdminAction extends AbstractModuleAction {
 	
 	private static java.util.logging.Logger logger = java.util.logging.Logger.getLogger(AdminAction.class.getName());
 
