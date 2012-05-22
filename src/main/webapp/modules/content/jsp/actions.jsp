@@ -10,7 +10,7 @@
 		<option value="${lang}"${lang eq info.contentLanguage?' selected="selected"':''}>${lang}</option>
 	</c:forEach>
 	</select>
-	<input type="submit" name="ok" value="${i18n.edit['global.ok']}" />
+	<input class="action-button" type="submit" name="ok" value="${i18n.edit['global.ok']}" />
 </div>
 </form>
 </div>

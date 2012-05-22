@@ -84,8 +84,7 @@ fieldset {
 	margin-top: 10px;
 }
 
-.standard-form .action, .array-form .action {
-	
+.standard-form .action, .array-form .action {	
 	text-align: right;
 }
 
@@ -168,7 +167,7 @@ ul,li {
 	box-shadow: 1px 1px 0 #F7F7F7;
 	border-radius: 3px 3px 3px 3px;
 	color: #333333;
-	margin: 2px 0;
+	margin: 2px 2px;
 	padding: 2px 5px;
 }
 
@@ -241,6 +240,16 @@ ul,li {
 		scroll 15px 12px transparent;
 }
 
+.tabmenu ul li.users a span {
+	background: url("../images/icons/small/white/user.png") no-repeat
+		scroll 15px 12px transparent;
+}
+
+.tabmenu ul li.users.current a span {
+	background: url("../images/icons/small/black/user.png") no-repeat
+		scroll 15px 12px transparent;
+}
+
 .breadcrumbs span {
 	display: inline-block;
 	padding: 5px 20px 5px 0;
@@ -274,7 +283,7 @@ ul,li {
 	padding: 0 15px 0 30px;
 }
 
-#tools .action-button {
+#tools input {
 	display: block;
 	float: right;
 }
@@ -290,14 +299,18 @@ ul,li {
 #tools .special {
 	margin-left: 15px;
 	border-left: 1px #DDDDDD solid;
-	padding-left: 15px;
-	float: right;
-	
+	padding: 0 0 2px 15px;
+	float: right;	
 }
 
-#tools .special input, #tools .special select {
-	margin-top: 2px;
-	height: 28px;
+
+#tools input, #tools select {
+	margin: 2px 3px 0 0;
+	padding: 4px 4px 3px 4px;
+}
+
+#tools input[type=text] {
+	padding: 4px 4px 5px 4px;
 }
 
 .action-button.preview span {
@@ -353,6 +366,18 @@ ul,li {
 .action-button.publish:hover span {
 	background: url("../images/icons/small/white/publish.png") no-repeat
 		scroll 5px;
+}
+
+.action-button.delete span {
+	padding-left: 26px;
+	background: url("../images/icons/small/black/trash.png") no-repeat scroll
+		5px;
+}
+
+.action-button.delete:hover span {
+	padding-left: 26px;
+	background: url("../images/icons/small/white/trash.png") no-repeat scroll
+		5px;
 }
 
 /*** component list ***/

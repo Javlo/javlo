@@ -1,5 +1,7 @@
 package org.javlo.user;
 
+import java.util.List;
+
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 
@@ -9,15 +11,13 @@ import org.javlo.user.exception.UserAllreadyExistException;
 
 public interface IUserFactory {
 
-	public static final int AUTO_LOGIN_AGE_SEC = 60*60*24*30; // 1 month for autologin live cycle
+	public static final int AUTO_LOGIN_AGE_SEC = 6*60*60*24*30; // 6 month for autologin live cycle
 
 	public abstract User getUser(String login);
 
 	public abstract User autoLogin(HttpServletRequest request, String login);
 
 	public abstract User login(HttpServletRequest request, String login, String password);
-
-	//public abstract User login(GlobalContext globalContext, String login, String password);
 
 	public abstract void logout(HttpSession session);
 
@@ -29,7 +29,7 @@ public interface IUserFactory {
 
 	public abstract void clearUserInfoList();
 
-	public abstract IUserInfo[] getUserInfoList();
+	public abstract List<IUserInfo> getUserInfoList();
 
 	public abstract void addUserInfo(IUserInfo userInfo) throws UserAllreadyExistException;
 
@@ -45,7 +45,7 @@ public interface IUserFactory {
 
 	public abstract IUserInfo getUserInfos(String id);
 
-	public abstract IUserInfo[] getUserInfoForRoles(String[] inRoles);
+	public abstract List<IUserInfo> getUserInfoForRoles(String[] inRoles);
 
 	public abstract String[] getAllRoles(GlobalContext globalContext, HttpSession session);
 

@@ -1,5 +1,8 @@
 package org.javlo.user;
 
+import java.util.LinkedList;
+import java.util.List;
+
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 
@@ -9,11 +12,11 @@ import org.javlo.user.exception.UserAllreadyExistException;
 
 public class HardUserFactory extends AdminUserFactory {
 
-	IUserInfo[] userInfoList;
+	List<IUserInfo> userInfoList;
 	User currentUser;
 
 	public HardUserFactory() {
-		userInfoList = new IUserInfo[2];
+		userInfoList = new LinkedList<IUserInfo>();
 		UserInfos ui = new UserInfos();
 		ui.setId("test1");
 		ui.setLogin("test1");
@@ -21,7 +24,7 @@ public class HardUserFactory extends AdminUserFactory {
 		ui.setPassword("test1");
 		ui.setRoles(new String[0]);
 		ui.setPreferredLanguageRaw("fr");
-		userInfoList[0] = ui;
+		userInfoList.add(ui);
 		ui = new UserInfos();
 		ui.setId("test2");
 		ui.setLogin("test2");
@@ -29,7 +32,7 @@ public class HardUserFactory extends AdminUserFactory {
 		ui.setPassword("test2");
 		ui.setRoles(new String[0]);
 		ui.setPreferredLanguageRaw("fr");
-		userInfoList[1] = ui;
+		userInfoList.add(ui);
 	}
 
 	@Override
@@ -77,12 +80,12 @@ public class HardUserFactory extends AdminUserFactory {
 	}
 
 	@Override
-	public IUserInfo[] getUserInfoForRoles(String[] inRoles) {
+	public List<IUserInfo> getUserInfoForRoles(String[] inRoles) {
 		return getUserInfoList();
 	}
 
 	@Override
-	public IUserInfo[] getUserInfoList() {
+	public List<IUserInfo> getUserInfoList() {
 		return userInfoList;
 	}
 

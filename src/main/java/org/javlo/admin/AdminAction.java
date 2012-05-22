@@ -549,7 +549,7 @@ public class AdminAction implements IAction {
 
 				try {
 					Class.forName(adminUserFactory);
-					globalContext.setEditUserFactoryClassName(adminUserFactory);
+					globalContext.setAdminUserFactoryClassName(adminUserFactory);
 					globalContext.resetAdmimUserFactory();
 				} catch (ClassNotFoundException e) {
 					msgRepo.setGlobalMessage(new GenericMessage(i18nAccess.getText("admin.form.message.bad-user-factory"), GenericMessage.ERROR));

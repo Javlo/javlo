@@ -852,24 +852,24 @@ public class GlobalContext implements Serializable {
 		return properties.getString("edit.language", getDefaultEditLanguage());
 	}
 
-	public AdminUserFactory getEditUserFactory(HttpSession session) throws SecurityException, NoSuchMethodException, ClassNotFoundException, IllegalArgumentException, InstantiationException, IllegalAccessException, InvocationTargetException {
-		if (admimUserFactory == null) {
-			Constructor<IUserFactory> construct = getEditUserFactoryClass().getConstructor();
+	public AdminUserFactory getAdminUserFactory(HttpSession session) throws SecurityException, NoSuchMethodException, ClassNotFoundException, IllegalArgumentException, InstantiationException, IllegalAccessException, InvocationTargetException {
+		if (admimUserFactory == null) {		
+			Constructor<IUserFactory> construct = getAdminUserFactoryClass().getConstructor();
 			admimUserFactory = (AdminUserFactory) construct.newInstance();
 			admimUserFactory.init(this, session);
 		}
 		return admimUserFactory;
 	}
 
-	private Class<IUserFactory> getEditUserFactoryClass() throws ClassNotFoundException {
+	private Class<IUserFactory> getAdminUserFactoryClass() throws ClassNotFoundException {
 		if (adminUserFactoryClass == null) {
-			adminUserFactoryClassName = getEditUserFactoryClassName();
+			adminUserFactoryClassName = getAdminUserFactoryClassName();			
 			adminUserFactoryClass = (Class<IUserFactory>) Class.forName(adminUserFactoryClassName);
-		}
+		}		
 		return adminUserFactoryClass;
 	}
 
-	public String getEditUserFactoryClassName() {
+	public String getAdminUserFactoryClassName() {
 		String userFactoryClass = properties.getString("adminuserfactory.class", "org.javlo.user.AdminUserFactory").trim();
 		return userFactoryClass;
 	}
@@ -1231,6 +1231,7 @@ public class GlobalContext implements Serializable {
 	private Class<IUserFactory> getUserFactoryClass() throws ClassNotFoundException {
 		if (userFactoryClass == null) {
 			userFactoryClassName = getUserFactoryClassName();
+			System.out.println("***** GlobalContext.getUserFactoryClass : userFactoryClassName= "+userFactoryClassName); //TODO: remove debug trace
 			userFactoryClass = (Class<IUserFactory>) Class.forName(userFactoryClassName);
 		}
 		return userFactoryClass;
@@ -1768,10 +1769,11 @@ public class GlobalContext implements Serializable {
 		}
 	}
 
-	public void setEditUserFactoryClassName(String userFactoryName) {
+	public void setAdminUserFactoryClassName(String userFactoryName) {
 		synchronized (properties) {
 			properties.setProperty("adminuserfactory.class", userFactoryName);
-			admimUserFactory = null;
+			admimUserFactory = null;	
+			adminUserFactoryClass = null;
 			adminUserFactoryClassName = null;
 			save();
 		}
@@ -2094,6 +2096,7 @@ public class GlobalContext implements Serializable {
 		synchronized (properties) {
 			properties.setProperty("userfactory.class", userFactoryName);
 			userFactory = null;
+			userFactoryClass = null;
 			userFactoryClassName = null;
 			save();
 		}
@@ -2176,7 +2179,7 @@ public class GlobalContext implements Serializable {
 		out.println("**** ContextKey         :  " + getContextKey());
 		out.println("**** Alias of           :  " + getAliasOf());
 		out.println("**** User Factory       :  " + getUserFactoryClassName());
-		out.println("**** Admin User Factory :  " + getEditUserFactoryClassName());
+		out.println("**** Admin User Factory :  " + getAdminUserFactoryClassName());
 		out.println("**** # attributes       :  " + attributes.size());
 		out.println("**** # time attributes  :  " + timeAttributes.size());
 		out.println("**** # cached pages     :  " + viewPages.size());

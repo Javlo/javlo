@@ -213,6 +213,10 @@ public class AccessServlet extends HttpServlet {
 				out.close();
 				return;
 			}
+			
+			I18nAccess i18nAccess = I18nAccess.getInstance(globalContext, request.getSession());
+
+			i18nAccess.requestInit(ctx);
 
 			/* **************** */
 			/* LOGIN EDIT/ADMIN */
@@ -220,6 +224,7 @@ public class AccessServlet extends HttpServlet {
 
 			if (request.getServletPath().equals("/edit") || request.getServletPath().equals("/preview")) {
 				if (!globalContext.isEditable()) {
+					InfoBean.updateInfoBean(ctx);
 					response.setContentType("text/html; charset=" + ContentContext.CHARACTER_ENCODING);
 					getServletContext().getRequestDispatcher("/jsp/error/blocked.jsp").include(request, response);
 					return;
@@ -230,6 +235,7 @@ public class AccessServlet extends HttpServlet {
 				EditContext editCtx = EditContext.getInstance(globalContext, request.getSession());
 				ctx.setArea(editCtx.getCurrentArea());
 				if (editCtx.getUserPrincipal() == null) {
+					InfoBean.updateInfoBean(ctx);
 					response.setContentType("text/html; charset=" + ContentContext.CHARACTER_ENCODING);
 					String jspForLogin = editCtx.getLoginRenderer();
 					getServletContext().getRequestDispatcher(jspForLogin).include(request, response);
@@ -238,10 +244,6 @@ public class AccessServlet extends HttpServlet {
 			}
 
 			RequestHelper.traceMailingFeedBack(ctx);
-
-			I18nAccess i18nAccess = I18nAccess.getInstance(globalContext, request.getSession());
-
-			i18nAccess.requestInit(ctx);
 
 			logger.fine(requestLabel + " : i18nAccess.requestInit(ctx) " + df.format((double) (System.currentTimeMillis() - startTime) / (double) 1000) + " sec.");
 

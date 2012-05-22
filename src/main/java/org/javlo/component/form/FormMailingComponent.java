@@ -6,6 +6,7 @@ package org.javlo.component.form;
 import java.io.ByteArrayOutputStream;
 import java.io.PrintStream;
 import java.util.Arrays;
+import java.util.Collection;
 import java.util.HashSet;
 import java.util.Set;
 import java.util.logging.Logger;
@@ -305,18 +306,18 @@ public class FormMailingComponent extends AbstractVisualComponent implements IAc
 
 			IUserInfo userInfo = null;
 			IUserFactory fact = UserFactory.createUserFactory(globalContext, request.getSession());
-			IUserInfo[] userInfos = fact.getUserInfoList();
-			for (int i = 0; (i < userInfos.length); i++) {
+			Collection<IUserInfo> userInfos = fact.getUserInfoList();
+			for (IUserInfo iUserInfo : userInfos) {
 				String login = email;
-				if (userInfos[i].getLogin().equals(login)) {
-					Set<String> roles = new HashSet<String>(Arrays.asList(userInfos[i].getRoles()));
+				if (iUserInfo.getLogin().equals(login)) {
+					Set<String> roles = new HashSet<String>(Arrays.asList(iUserInfo.getRoles()));
 					if (roles.containsAll(comp.getRoles())) {
 						GenericMessage msg = new GenericMessage(i18nAccess.getContentViewText("user.error.email-allready-exist"), GenericMessage.ERROR);
 						messageRepository.setGlobalMessage(msg);
 						logger.warning("user not registred : " + email);
 						return "";
 					} else {
-						userInfo = userInfos[i];
+						userInfo = iUserInfo;
 					}
 
 				}

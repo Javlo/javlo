@@ -38,6 +38,11 @@
 </div>
 
 <div class="line">
+	<label>${i18n.edit['admin.title.folder']}</label>
+	<span>${currentContext.folder}</span>
+</div>
+
+<div class="line">
 	<label>${i18n.edit['admin.form.size']}</label>
 	<span>${currentContext.size}</span>
 </div>
@@ -75,6 +80,21 @@
 <div class="line">		
 	<label for="content-languages">${i18n.edit['admin.form.content-languages']}</label>
 	<input type="text" id="content-languages" name="content-languages" value="${currentContext.contentLanguages}" />	
+</div>
+
+</fieldset>
+
+<fieldset>
+<legend>${i18n.edit['global.security']}</legend>
+
+<div class="line">		
+	<label for="user-factory">${i18n.edit['admin.form.user-factory']}</label>
+	<input type="text" id="user-factory" name="user-factory" value="${currentContext.userFactoryClassName}" />	
+</div>
+
+<div class="line">		
+	<label for="admin-user-factory">${i18n.edit['admin.form.admin-user-factory']}</label>
+	<input type="text" id="admin-user-factory" name="admin-user-factory" value="${currentContext.adminUserFactoryClassName}" />	
 </div>
 
 </fieldset>

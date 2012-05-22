@@ -4,6 +4,7 @@ import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.SQLException;
 import java.sql.Statement;
+import java.util.Collection;
 import java.util.Collections;
 import java.util.LinkedList;
 import java.util.List;
@@ -98,16 +99,15 @@ public abstract class AbstractDBUserFactory extends UserFactory {
 	}
 
 	@Override
-	public IUserInfo[] getUserInfoForRoles(String[] inRoles) {
+	public List<IUserInfo> getUserInfoForRoles(String[] inRoles) {
 		return getUserInfoList();
 	}
 
 	@Override
-	public IUserInfo[] getUserInfoList() {
+	public List<IUserInfo> getUserInfoList() {
 
 		if (userInfoList == null) {
-			userInfoList = new IUserInfo[allUsers.size()];
-			allUsers.toArray(userInfoList);
+			userInfoList = allUsers;			
 		}
 
 		return userInfoList;

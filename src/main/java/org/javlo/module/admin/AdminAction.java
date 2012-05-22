@@ -2,6 +2,7 @@ package org.javlo.module.admin;
 
 import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.lang.reflect.InvocationTargetException;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
@@ -10,6 +11,7 @@ import java.util.List;
 import java.util.Map;
 
 import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpSession;
 
 import org.apache.commons.configuration.ConfigurationException;
 import org.javlo.actions.AbstractModuleAction;
@@ -50,14 +52,18 @@ public class AdminAction extends AbstractModuleAction {
 		private String languages;
 		private String contentLanguages;
 		private String size;
+		private String folder;
 		private int countUser;
 		private boolean view;
 		private boolean edit;
 		private boolean visibility;
 		private boolean editability;
+		private String userFactoryClassName = "";
+		private String adminUserFactoryClassName = "";
 
-		public GlobalContextBean(GlobalContext globalContext) {
+		public GlobalContextBean(GlobalContext globalContext, HttpSession session) throws SecurityException, NoSuchMethodException, ClassNotFoundException, IllegalArgumentException, InstantiationException, IllegalAccessException, InvocationTargetException {
 			setKey(globalContext.getContextKey());
+			setFolder(globalContext.getFolder());
 			setAdministrator(globalContext.getAdministrator());
 			setAliasOf(globalContext.getAliasOf());
 			setCountUser(globalContext.getCountUser());
@@ -74,6 +80,11 @@ public class AdminAction extends AbstractModuleAction {
 			setDefaultLanguage(globalContext.getDefaultLanguage());
 			setLanguages(StringHelper.collectionToString(globalContext.getLanguages(), ";"));
 			setContentLanguages(StringHelper.collectionToString(globalContext.getContentLanguages(), ";"));
+			
+			/** user engine **/
+			setUserFactoryClassName(globalContext.getUserFactoryClassName());
+			setAdminUserFactoryClassName(globalContext.getAdminUserFactory(session).getClass().getName());
+			
 		}
 
 		public String getKey() {
@@ -204,6 +215,30 @@ public class AdminAction extends AbstractModuleAction {
 			this.contentLanguages = contentLanguages;
 		}
 
+		public String getFolder() {
+			return folder;
+		}
+
+		public void setFolder(String folder) {
+			this.folder = folder;
+		}
+
+		public String getUserFactoryClassName() {
+			return userFactoryClassName;
+		}
+
+		public void setUserFactoryClassName(String userFactoryClassName) {
+			this.userFactoryClassName = userFactoryClassName;
+		}
+
+		public String getAdminUserFactoryClassName() {
+			return adminUserFactoryClassName;
+		}
+
+		public void setAdminUserFactoryClassName(String adminUserFactoryClassName) {
+			this.adminUserFactoryClassName = adminUserFactoryClassName;
+		}
+
 	}
 
 	@Override
@@ -224,7 +259,7 @@ public class AdminAction extends AbstractModuleAction {
 		Collection<GlobalContextBean> ctxAllBean = new LinkedList<GlobalContextBean>();
 		Collection<GlobalContext> allContext = GlobalContextFactory.getAllGlobalContext(request.getSession());
 		for (GlobalContext context : allContext) {
-			ctxAllBean.add(new GlobalContextBean(context));
+			ctxAllBean.add(new GlobalContextBean(context, ctx.getRequest().getSession()));
 		}
 
 		request.setAttribute("contextList", ctxAllBean);
@@ -241,7 +276,7 @@ public class AdminAction extends AbstractModuleAction {
 			request.setAttribute("context", currentContextKey);
 			GlobalContext currentGlobalContext = GlobalContext.getRealInstance(request, currentContextKey);
 			if (currentGlobalContext != null) {
-				request.setAttribute("currentContext", new GlobalContextBean(currentGlobalContext));
+				request.setAttribute("currentContext", new GlobalContextBean(currentGlobalContext, request.getSession()));
 				List<Template> templates = TemplateFactory.getAllDiskTemplates(request.getSession().getServletContext());
 				Collections.sort(templates);				
 
@@ -286,9 +321,6 @@ public class AdminAction extends AbstractModuleAction {
 				params.put("context", currentGlobalContext.getContextKey());
 				String backUrl = URLHelper.createModuleURL(ctx, ctx.getPath(), currentModule.getName(), params);
 				currentModule.setBackUrl(backUrl);
-				
-				
-				
 			} else {
 				msg = "bad context : " + currentContextKey;
 				currentModule.restoreRenderer();
@@ -340,6 +372,24 @@ public class AdminAction extends AbstractModuleAction {
 
 					String defaultLanguage = requestService.getParameter("default-languages", null);
 					currentGlobalContext.setDefaultLanguages(defaultLanguage);
+					
+					/** security **/
+					String userFacotryClass = requestService.getParameter("user-factory", null);
+					try {
+						Class.forName(userFacotryClass).newInstance();
+						currentGlobalContext.setUserFactoryClassName(userFacotryClass);
+					} catch (Exception e) {
+						messageRepository.setGlobalMessage(new GenericMessage(e.getMessage(), GenericMessage.ERROR));
+					}
+					
+					userFacotryClass = requestService.getParameter("admin-user-factory", null);
+					try {
+						Class.forName(userFacotryClass).newInstance();
+						System.out.println("***** AdminAction.performUpdateGlobalContext : userFacotryClass = "+userFacotryClass); //TODO: remove debug trace
+						currentGlobalContext.setAdminUserFactoryClassName(userFacotryClass);						
+					} catch (Exception e) {
+						messageRepository.setGlobalMessage(new GenericMessage(e.getMessage(), GenericMessage.ERROR));
+					}
 
 					messageRepository.setGlobalMessage(new GenericMessage(i18nAccess.getText("admin.message.context-updated"), GenericMessage.INFO));
 				} else {
