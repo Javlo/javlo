@@ -5,6 +5,7 @@ package org.javlo.component.form;
 
 import java.io.ByteArrayOutputStream;
 import java.io.PrintStream;
+import java.util.Collection;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -73,10 +74,10 @@ public class AddressFormRegisterComponent extends FormComponent {
 			if (msg == null) {
 				Form form = Form.getCurrentSessionForm(request.getSession());
 				IUserFactory fact = UserFactory.createUserFactory(globalContext, request.getSession());
-				IUserInfo[] userInfos = fact.getUserInfoList();
-				for (int i = 0; (i < userInfos.length) && (msg == null); i++) {
+				Collection<IUserInfo> userInfos = fact.getUserInfoList();
+				for (IUserInfo iUserInfo : userInfos) {
 					String login = form.getValue("login");
-					if ((fact.getCurrentUser(request.getSession()) == null) && (userInfos[i].getLogin().equals(login))) {
+					if ((fact.getCurrentUser(request.getSession()) == null) && (iUserInfo.getLogin().equals(login))) {
 						msg = "user.error.allready-exist";
 					}
 				}

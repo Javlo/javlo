@@ -9,9 +9,9 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.Serializable;
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.Date;
 import java.util.HashSet;
 import java.util.LinkedList;
@@ -58,7 +58,7 @@ public class UserFactory implements IUserFactory, Serializable {
 
 	private String userInfoFile = null;
 
-	protected IUserInfo[] userInfoList = null; // TODO: create a external
+	protected List<IUserInfo> userInfoList = null; // TODO: create a external
 	// application scope class
 
 	static final String SESSION_KEY = "currentUser";
@@ -99,27 +99,16 @@ public class UserFactory implements IUserFactory, Serializable {
 	 */
 	@Override
 	public void addUserInfo(IUserInfo userInfo) throws UserAllreadyExistException {
-
 		synchronized (lock) {
-
 			userInfo.setModificationDate(new Date());
-
 			if (getUserInfos(userInfo.id()) != null) {
 				throw new UserAllreadyExistException(userInfo.id() + " allready exist.");
 			}
-
 			userInfoList = getUserInfoList();
-
 			if (userInfoList == null) {
 				clearUserInfoList();
 			}
-
-			IUserInfo[] newUserInfoList = new UserInfos[userInfoList.length + 1];
-
-			newUserInfoList[newUserInfoList.length - 1] = userInfo;
-			System.arraycopy(userInfoList, 0, newUserInfoList, 0, userInfoList.length);
-			userInfoList = newUserInfoList;
-
+			userInfoList.add(userInfo);
 		}
 	}
 
@@ -158,9 +147,7 @@ public class UserFactory implements IUserFactory, Serializable {
 	 */
 	@Override
 	public void clearUserInfoList() {
-		synchronized (lock) {
-			userInfoList = new IUserInfo[0];
-		}
+		userInfoList = new LinkedList<IUserInfo>();
 	}
 
 	protected User createUser(String login, String[] roles) {
@@ -191,31 +178,21 @@ public class UserFactory implements IUserFactory, Serializable {
 	 */
 	@Override
 	public void deleteUser(String login) {
-
+		IUserInfo tobeDeleted = null;
 		synchronized (lock) {
-
 			userInfoList = getUserInfoList();
 
-			int toDel = -1;
-			for (int i = 0; i < userInfoList.length; i++) {
-				if (userInfoList[i].getLogin().equals(login)) {
-					toDel = i;
+			for (IUserInfo user : userInfoList) {
+				if (user.getLogin().equals(login)) {
+					tobeDeleted = user;
 				}
 			}
-			if (toDel > -1) {
-				IUserInfo[] newList = new UserInfos[userInfoList.length - 1];
-				for (int i = 0; i < toDel; i++) {
-					newList[i] = userInfoList[i];
-				}
-				for (int i = toDel + 1; i < userInfoList.length; i++) {
-					newList[i - 1] = userInfoList[i];
-				}
-				userInfoList = newList;
+			
+			if (tobeDeleted != null) {
+				userInfoList.remove(tobeDeleted);
 				unlockStore();
 			}
-
 		}
-
 	}
 
 	@Override
@@ -245,7 +222,7 @@ public class UserFactory implements IUserFactory, Serializable {
 	 */
 	@Override
 	public User getUser(String login) {
-		IUserInfo[] users = getUserInfoList();
+		List<IUserInfo> users = getUserInfoList();
 		for (IUserInfo user : users) {
 			if (user.getLogin().equals(login)) {
 				return new User(user);
@@ -260,13 +237,13 @@ public class UserFactory implements IUserFactory, Serializable {
 	 * @see org.javlo.user.IUserFactory#getUserInfoForRoles(java.lang.String[])
 	 */
 	@Override
-	public IUserInfo[] getUserInfoForRoles(String[] inRoles) {
+	public List<IUserInfo> getUserInfoForRoles(String[] inRoles) {
 		Set<String> roles = new HashSet<String>();
 		for (String inRole : inRoles) {
 			roles.add(inRole);
 		}
-		Collection<IUserInfo> outUserList = new ArrayList<IUserInfo>();
-		IUserInfo[] allUserInfo = getUserInfoList();
+		List<IUserInfo> outUserList = new LinkedList<IUserInfo>();
+		List<IUserInfo> allUserInfo = getUserInfoList();
 		for (IUserInfo element : allUserInfo) {
 			Set<String> userRoles = new TreeSet<String>(Arrays.asList(element.getRoles()));
 			userRoles.retainAll(roles);
@@ -274,9 +251,7 @@ public class UserFactory implements IUserFactory, Serializable {
 				outUserList.add(element);
 			}
 		}
-		UserInfos[] finalResult = new UserInfos[outUserList.size()];
-		outUserList.toArray(finalResult);
-		return finalResult;
+		return outUserList;
 	}
 
 	/*
@@ -285,15 +260,16 @@ public class UserFactory implements IUserFactory, Serializable {
 	 * @see org.javlo.user.IUserFactory#getUserInfoList()
 	 */
 	@Override
-	public IUserInfo[] getUserInfoList() {
+	public List<IUserInfo> getUserInfoList() {
 
 		synchronized (lock) {
 			if (userInfoList == null) {
 				String userInfoPath = getFileName();
 				File userInfoFile = new File(userInfoPath);
-				if (!userInfoFile.exists()) {
-					Logger.log(Logger.WARNING, userInfoFile.getPath() + " not found.");
-					userInfoList = new IUserInfo[0];
+				
+				if (!userInfoFile.exists()) {					
+					logger.fine(userInfoFile.getPath() + " not found.");
+					return Collections.EMPTY_LIST;
 				} else {
 					try {
 						InputStream in = new FileInputStream(userInfoFile);
@@ -304,19 +280,20 @@ public class UserFactory implements IUserFactory, Serializable {
 							ResourceHelper.closeResource(in);
 						}
 						String[][] csvArray = fact.getArray();
-						userInfoList = new IUserInfo[csvArray.length - 1];
+						//IUserInfo[] arrayUserInfoList = new IUserInfo[csvArray.length - 1];
+						userInfoList = new LinkedList<IUserInfo>();
 						for (int i = 1; i < csvArray.length; i++) {
-							userInfoList[i - 1] = createUserInfos();
+							IUserInfo newUserInfo = createUserInfos();
 							Map<String, String> values = JavaHelper.createMap(csvArray[0], csvArray[i]);
-							BeanHelper.copy(values, userInfoList[i - 1]);
+							BeanHelper.copy(values, newUserInfo );
+							userInfoList.add(newUserInfo);
 						}
 					} catch (Exception e) {
 						Logger.log(e);
-						userInfoList = new UserInfos[0];
+						userInfoList = Collections.EMPTY_LIST;
 					}
 				}
-			}
-			Arrays.sort(userInfoList);
+			}			
 			return userInfoList;
 		}
 	}
@@ -327,17 +304,16 @@ public class UserFactory implements IUserFactory, Serializable {
 	 * @see org.javlo.user.IUserFactory#getUserInfos(java.lang.String)
 	 */
 	@Override
-	public IUserInfo getUserInfos(String id) {
-		IUserInfo res = null;
-		IUserInfo[] userInfoList = getUserInfoList();
+	public IUserInfo getUserInfos(String id) {		
+		Collection<IUserInfo> userInfoList = getUserInfoList();
 		synchronized (lock) {
-			for (int i = 0; (i < userInfoList.length) && (res == null); i++) {
-				if (userInfoList[i].id().equals(id)) {
-					res = userInfoList[i];
+			for (IUserInfo userInfo : userInfoList) {
+				if (userInfo.id().equals(id)) {
+					return userInfo;
 				}
 			}
 		}
-		return res;
+		return null;
 	}
 
 	@Override
@@ -391,7 +367,7 @@ public class UserFactory implements IUserFactory, Serializable {
 				user = createUser(login, new String[] { AdminUserSecurity.FULL_CONTROL_ROLE });
 			} else if (editCtx.getEditUser(login) != null && (logged || editCtx.hardLogin(login, password))) {
 				logger.fine("log user with password : " + login + " obtain general addmin mode and full control role.");
-				user = createUser(login, new String[] { AdminUserSecurity.GENERAL_ADMIN, AdminUserSecurity.FULL_CONTROL_ROLE });				
+				user = createUser(login, new String[] { AdminUserSecurity.GENERAL_ADMIN, AdminUserSecurity.FULL_CONTROL_ROLE });
 				editCtx.setEditUser(user);
 			} else {
 				logger.fine("fail to log user with password : " + login + ".");
@@ -413,7 +389,8 @@ public class UserFactory implements IUserFactory, Serializable {
 	 * @deprecated, use login(HttpServletRequest request, String login, String password) instead
 	 */
 	/*
-	 * @Override public User login(GlobalContext globalContext, String login, String password) { User user = null; synchronized (lock) { IUserInfo[] users = getUserInfoList(); for (int i = 0; i < users.length; i++) { if (users[i].getLogin() == null) { logger.severe("bad user structure : login not found."); } else if (users[i].getPassword() == null) { logger.severe("bad user structure : password not found ["+users[i].getLogin()+"]"); } else if ((users[i].getLogin().equals(login)) && (users[i].getPassword().equals(password))) { user = new User(users[i]); logger.info("login: " + login + " are logged."); } } } if (user == null) { if (globalContext.administratorLogin(login, password)) { user = createUser(login, new String[] { AdminUserSecurity.FULL_CONTROL_ROLE }); } } if (user == null) { logger.info("login: " + login + " fail, try hard login."); EditContext editCtx = EditContext.getInstance(session); editCtx.hardLogin(login, password); user = editCtx.getEditUser(); } session.setAttribute(SESSION_KEY, user); return user; }
+	 * @Override public User login(GlobalContext globalContext, String login, String password) { User user = null; synchronized (lock) { IUserInfo[] users = getUserInfoList(); for (int i = 0; i < users.length; i++) { if (users[i].getLogin() == null) { logger.severe("bad user structure : login not found."); } else if (users[i].getPassword() == null) { logger.severe("bad user structure : password not found ["+users[i].getLogin()+"]"); } else if ((users[i].getLogin().equals(login)) && (users[i].getPassword().equals(password))) { user = new User(users[i]); logger.info("login: " + login + " are logged."); } } } if (user == null) { if (globalContext.administratorLogin(login, password)) { user = createUser(login, new String[] { AdminUserSecurity.FULL_CONTROL_ROLE }); } } if (user == null) { logger.info("login: " + login + " fail, try hard login."); EditContext editCtx = EditContext.getInstance(session); editCtx.hardLogin(login, password); user = editCtx.getEditUser(); }
+	 * session.setAttribute(SESSION_KEY, user); return user; }
 	 */
 
 	/*
@@ -500,28 +477,26 @@ public class UserFactory implements IUserFactory, Serializable {
 
 	private void unlockStore() {
 
-		IUserInfo[] userInfoList = getUserInfoList();
+		List<IUserInfo> userInfoList = getUserInfoList();
 
 		if (userInfoList == null) {
 			clearUserInfoList();
 		}
 
-		String[][] csvArray = new String[userInfoList.length + 1][];
+		String[][] csvArray = new String[userInfoList.size() + 1][];
 
 		csvArray[0] = createUserInfos().getAllLabels();
-
-		for (int i = 1; i < userInfoList.length + 1; i++) {
-			// UserInfos userInfo = (UserInfos)userInfoList[i-1];
-			String[] values = userInfoList[i - 1].getAllValues();
-			csvArray[i] = values;
+		
+		for (int i = 0; i < userInfoList.size(); i++) {
+			String[] values = userInfoList.get(i).getAllValues();
+			csvArray[i+1] = values;
 		}
 
 		String userInfoPath = getFileName();
 		File userInfoFile = new File(userInfoPath);
 		if (!userInfoFile.exists()) {
 			userInfoFile.getParentFile().mkdirs();
-			Logger.log(Logger.WARNING, userInfoFile.getPath() + " not found.");
-			userInfoList = new UserInfos[0];
+			Logger.log(Logger.WARNING, userInfoFile.getPath() + " not found.");			
 		}
 		FileOutputStream out = null;
 		try {
@@ -553,13 +528,12 @@ public class UserFactory implements IUserFactory, Serializable {
 	public void updateUserInfo(IUserInfo userInfo) {
 
 		synchronized (lock) {
-
 			userInfo.setModificationDate(new Date());
-
-			IUserInfo oldUserInfo = getUserInfos(userInfo.id());
+			User user = getUser(userInfo.id());
+			IUserInfo currentUserInfo = user.getUserInfo();
 			try {
-				if (oldUserInfo != null) {
-					BeanHelper.copy(userInfo, oldUserInfo);
+				if (currentUserInfo != null) {
+					BeanHelper.copy(userInfo, currentUserInfo);				
 				}
 				unlockStore();
 			} catch (Exception e) {

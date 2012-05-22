@@ -1,5 +1,6 @@
 package org.javlo.macro;
 
+import java.util.Collection;
 import java.util.Map;
 
 import org.javlo.context.ContentContext;
@@ -24,7 +25,7 @@ public class EncryptPasswordComponent extends AbstractMacro {
 	public String perform(ContentContext ctx, Map<String, Object> params) throws Exception {
 		GlobalContext globalContext = GlobalContext.getInstance(ctx.getRequest());
 		IUserFactory adminUserFactory = AdminUserFactory.createUserFactory(globalContext, ctx.getRequest().getSession());
-		IUserInfo[] allUserInfo = adminUserFactory.getUserInfoList();
+		Collection<IUserInfo> allUserInfo = adminUserFactory.getUserInfoList();
 		for (IUserInfo iUserInfo : allUserInfo) {
 			iUserInfo.setPassword(StringHelper.encryptPassword(iUserInfo.getPassword()));
 		}

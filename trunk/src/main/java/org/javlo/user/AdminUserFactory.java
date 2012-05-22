@@ -12,6 +12,8 @@ import org.javlo.helper.URLHelper;
 
 public class AdminUserFactory extends UserFactory {
 
+	private static final long serialVersionUID = 1L;
+
 	public static Logger logger = Logger.getLogger(AdminUserFactory.class.getName());
 
 	private static final String ADMIN_USER_INFO_FILE = "/users/admin/edit-users-list.csv";
@@ -19,10 +21,10 @@ public class AdminUserFactory extends UserFactory {
 	private String dataFolder = null;
 
 	public static AdminUserFactory createUserFactory(GlobalContext globalContext, HttpSession session) {		
-		AdminUserFactory res = (AdminUserFactory) session.getAttribute(globalContext.getEditUserFactoryClassName());
+		AdminUserFactory res = (AdminUserFactory) session.getAttribute(globalContext.getAdminUserFactoryClassName());
 		if (res == null) {
 			try {
-				res = globalContext.getEditUserFactory(session);
+				res = globalContext.getAdminUserFactory(session);
 				logger.info("create userFactory : "+res.getClass().getName());
 			} catch (Exception e) {
 				logger.severe(e.getMessage());
@@ -30,7 +32,7 @@ public class AdminUserFactory extends UserFactory {
 			}
 			res.dataFolder = globalContext.getDataFolder();
 			res.init(globalContext, session);
-			session.setAttribute(globalContext.getEditUserFactoryClassName(), res);
+			session.setAttribute(globalContext.getAdminUserFactoryClassName(), res);
 		}
 		return res;
 	}

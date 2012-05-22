@@ -10,6 +10,7 @@ import java.io.StringWriter;
 import java.util.Arrays;
 import java.util.Date;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 import java.util.logging.Logger;
 
@@ -659,18 +660,18 @@ public class UserRegistrationComponent extends AbstractVisualComponent implement
 			if (storeUser) {
 				IUserInfo userInfo = null;
 				IUserFactory fact = UserFactory.createUserFactory(globalContext, request.getSession());
-				IUserInfo[] userInfos = fact.getUserInfoList();
-				for (int i = 0; (i < userInfos.length); i++) {
+				List<IUserInfo> userInfos = fact.getUserInfoList();
+				for (IUserInfo iUserInfo : userInfos) {
 					String login = email;
-					if (userInfos[i].getLogin().equals(login)) {
-						Set<String> roles = new HashSet<String>(Arrays.asList(userInfos[i].getRoles()));
+					if (iUserInfo.getLogin().equals(login)) {
+						Set<String> roles = new HashSet<String>(Arrays.asList(iUserInfo.getRoles()));
 						if (roles.containsAll(comp.getAddRoles())) {
 							GenericMessage msg = new GenericMessage(i18nAccess.getContentViewText("user.error.email-allready-exist"), GenericMessage.ERROR);
 							messageRepository.setGlobalMessage(msg);
 							logger.warning("user not registred : " + email);
 							return "";
 						} else {
-							userInfo = userInfos[i];
+							userInfo = iUserInfo;
 						}
 
 					}

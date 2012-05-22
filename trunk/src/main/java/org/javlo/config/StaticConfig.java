@@ -889,7 +889,7 @@ public class StaticConfig extends Observable {
 	}
 
 	public String getUserInfoFile() {
-		return properties.getString("userinfo-file", "/users/dc/users-list.csv");
+		return properties.getString("userinfo-file", "/users/view/users-list.csv");
 	}
 
 	public String getVFSFolder() {

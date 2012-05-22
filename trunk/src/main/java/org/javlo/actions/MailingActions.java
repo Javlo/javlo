@@ -812,29 +812,28 @@ public class MailingActions implements IAction {
 			logger.info("send mailing from:" + from + " roles :" + rolesToString + " subject:" + subject + " report to:" + reportMail);
 
 			IUserFactory userFactory = UserFactory.createUserFactory(globalContext, ctx.getRequest().getSession());
-			IUserInfo[] userToSend = userFactory.getUserInfoForRoles(roles);
-			InternetAddress[] receivers = new InternetAddress[userToSend.length + vracEmails.size() + 1];
+			List<IUserInfo> userToSend = userFactory.getUserInfoForRoles(roles);
+			InternetAddress[] receivers = new InternetAddress[userToSend.size() + vracEmails.size() + 1];
 			try {
 				receivers[receivers.length - 1] = new InternetAddress(globalContext.getAdministratorEmail());
 			} catch (Exception e) {
 				e.printStackTrace();
 			}
 			int i = 0;
-			for (IUserInfo element : userToSend) {
+			for (IUserInfo userInfo : userToSend) {
 				try {
-					String email = userToSend[i].getEmail();
+					String email = userInfo.getEmail();
 					// todo: clean better that email
 					email = email.trim();
 					if (email.contains("@")) {
-						if ((userToSend[i].getFirstName() != null) && (userToSend[i].getLastName() != null) && ((userToSend[i].getLastName() + userToSend[i].getFirstName()).trim().length() > 0)) {
-							receivers[i] = new InternetAddress(userToSend[i].getEmail(), userToSend[i].getFirstName() + ' ' + userToSend[i].getLastName());
+						if ((userInfo.getFirstName() != null) && (userInfo.getLastName() != null) && ((userInfo.getLastName() + userInfo.getFirstName()).trim().length() > 0)) {
+							receivers[i] = new InternetAddress(userInfo.getEmail(), userInfo.getFirstName() + ' ' + userInfo.getLastName());
 						} else {
-							receivers[i] = new InternetAddress(userToSend[i].getEmail());
+							receivers[i] = new InternetAddress(userInfo.getEmail());
 						}
 					}
 				} catch (Throwable t) {
-					logger.warning("bad email address : " + userToSend[i].getEmail());
-					// e.printStackTrace();
+					logger.warning("bad email address : " + userInfo.getEmail()); 
 				}
 				i++;
 			}

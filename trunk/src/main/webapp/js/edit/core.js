@@ -19,4 +19,9 @@ jQuery(document).ready(function() {
 			}
 		});
 	});	
+	
+	jQuery(".js-hidden").each(function(){				
+		var item = jQuery(this);
+		item.css("display","none");
+	});	
 });

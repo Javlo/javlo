@@ -3,6 +3,8 @@
  */
 package org.javlo.component.form;
 
+import java.util.List;
+
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
@@ -27,10 +29,10 @@ public class FormRegisterComponent extends FormComponent {
 			Form form = Form.getCurrentSessionForm(request.getSession());
 			GlobalContext globalContext = GlobalContext.getInstance(request);
 			IUserFactory fact = UserFactory.createUserFactory(globalContext, request.getSession());
-			IUserInfo[] userInfos = fact.getUserInfoList();
-			for (int i = 0; (i < userInfos.length) && (msg == null); i++) {
+			List<IUserInfo> userInfos = fact.getUserInfoList();
+			for (IUserInfo iUserInfo : userInfos) {
 				String login = form.getValue("login");
-				if ((fact.getCurrentUser(request.getSession()) == null) && (userInfos[i].getLogin().equals(login))) {
+				if ((fact.getCurrentUser(request.getSession()) == null) && (iUserInfo.getLogin().equals(login))) {
 					msg = "user.error.allready-exist";
 				}
 			}
