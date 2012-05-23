@@ -1,17 +1,21 @@
 package org.javlo.module.user;
 
+import java.io.IOException;
 import java.lang.reflect.InvocationTargetException;
 import java.util.Collection;
 import java.util.Collections;
+import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import javax.servlet.http.HttpSession;
 
 import org.javlo.actions.AbstractModuleAction;
 import org.javlo.config.StaticConfig;
 import org.javlo.context.ContentContext;
+import org.javlo.context.GlobalContext;
 import org.javlo.helper.BeanHelper;
 import org.javlo.helper.RequestParameterMap;
 import org.javlo.helper.StringHelper;
@@ -45,6 +49,7 @@ public class UserAction extends AbstractModuleAction {
 			moduleContext.getCurrentModule().restoreAll();
 		} else {
 			IUserFactory userFactory = userContext.getUserFactory(ctx);
+			GlobalContext globalContext = GlobalContext.getInstance(ctx.getRequest());
 			User user = userFactory.getUser(requestService.getParameter("user", null));
 			if (user == null) {
 				return "user not found : " + requestService.getParameter("user", null);
@@ -56,7 +61,12 @@ public class UserAction extends AbstractModuleAction {
 			ctx.getRequest().setAttribute("userInfoMap", userInfoMap);
 			List<String> keys = new LinkedList<String>(userInfoMap.keySet());
 			Collections.sort(keys);
-			ctx.getRequest().setAttribute("userInfoKeys", keys);			
+			ctx.getRequest().setAttribute("userInfoKeys", keys);
+			List<String> roles = new LinkedList<String>(userFactory.getAllRoles(globalContext, ctx.getRequest().getSession()));
+			Collections.sort(roles);
+			ctx.getRequest().setAttribute("roles", roles);
+			
+			
 		}
 
 		return super.prepare(ctx, moduleContext);
@@ -80,7 +90,7 @@ public class UserAction extends AbstractModuleAction {
 		return null;
 	}
 
-	public String performUpdate(ContentContext ctx, RequestService requestService, StaticConfig staticConfig, HttpSession session, Module currentModule, I18nAccess i18nAccess, MessageRepository messageRepository) throws SecurityException, IllegalArgumentException, IllegalAccessException, InvocationTargetException {
+	public String performUpdate(ContentContext ctx, GlobalContext globalContext, RequestService requestService, StaticConfig staticConfig, HttpSession session, Module currentModule, I18nAccess i18nAccess, MessageRepository messageRepository) {
 		if (requestService.getParameter("ok", null) != null) {
 			UserModuleContext userContext = UserModuleContext.getInstance(ctx.getRequest().getSession());
 			IUserFactory userFactory = userContext.getUserFactory(ctx);
@@ -92,16 +102,32 @@ public class UserAction extends AbstractModuleAction {
 			IUserInfo userInfo = user.getUserInfo();
 			String pwd = user.getPassword();
 			
-			BeanHelper.copy(new RequestParameterMap( ctx.getRequest() ), userInfo);
-			
-			if (staticConfig.isPasswordEncryt()) {
-				if (!userInfo.getPassword().equals(pwd)) {
-					userInfo.setPassword(StringHelper.encryptPassword(userInfo.getPassword()));
+			try {
+				BeanHelper.copy(new RequestParameterMap( ctx.getRequest() ), userInfo);
+				
+				if (staticConfig.isPasswordEncryt()) {
+					if (!userInfo.getPassword().equals(pwd)) {
+						userInfo.setPassword(StringHelper.encryptPassword(userInfo.getPassword()));
+					}
 				}
+				
+				userFactory.updateUserInfo(userInfo);
+				userFactory.store();
+				
+				Set<String> newRoles = new HashSet<String>();
+				Set<String> allRoles = userFactory.getAllRoles(globalContext, session);
+				for (String role : allRoles) {
+					if (requestService.getParameter(role, null) != null) {
+						newRoles.add(role);
+					}
+				}
+				IUserInfo ui = user.getUserInfo();
+				ui.setRoles(newRoles);
+				userFactory.updateUserInfo(ui);
+			} catch (Exception e) {
+				e.printStackTrace();
+				return e.getMessage();
 			}
-			
-			userFactory.updateUserInfo(userInfo);
-			userFactory.store();
 			
 			messageRepository.setGlobalMessageAndNotification(ctx,new GenericMessage(i18nAccess.getText("user.message.updated", new String[][] {{"user", user.getLogin() }}), GenericMessage.INFO));
 		}
@@ -121,7 +147,12 @@ public class UserAction extends AbstractModuleAction {
 		newUserInfo.setLogin(newUser);
 		try {
 			userFactory.addUserInfo(newUserInfo);
-			userFactory.store();
+			try {
+				userFactory.store();
+			} catch (IOException e) {
+				e.printStackTrace();
+				return e.getMessage();
+			}
 		} catch (UserAllreadyExistException e) {
 			messageRepository.setGlobalMessage(new GenericMessage(i18nAccess.getText("user.message.user-exist"), GenericMessage.ERROR));			
 		}
@@ -143,7 +174,12 @@ public class UserAction extends AbstractModuleAction {
 				deletedUser++;
 			}
 		}
-		userFactory.store();
+		try {
+			userFactory.store();
+		} catch (IOException e) {
+			e.printStackTrace();
+			return e.getMessage();
+		}
 
 		if (deletedUser > 0) {
 			messageRepository.setGlobalMessageAndNotification(ctx,new GenericMessage(i18nAccess.getText("user.message.delete", new String[][] {{"deletedUser", ""+deletedUser }}), GenericMessage.INFO));

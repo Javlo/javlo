@@ -146,12 +146,12 @@ public class AdminUserSecurity implements Serializable {
 	 */
 	public boolean haveRight(User user, String right) {
 		if (user != null) {
-			String[] roles = user.getRoles();
-			for (int i = 0; i < roles.length; i++) {
-				if (roles[i].equals(FULL_CONTROL_ROLE)) {
+			Set<String> roles = user.getRoles();
+			for (String role : roles) {
+				if (role.equals(FULL_CONTROL_ROLE)) {
 					return true;
 				}
-				Set<String> rightsRole = rights.get(roles[i]);
+				Set<String> rightsRole = rights.get(role);
 				if (rightsRole != null) {
 					if (rightsRole.contains(right.toLowerCase())) {
 						return true;
@@ -165,11 +165,11 @@ public class AdminUserSecurity implements Serializable {
 		return false;
 	}
 
-	public boolean haveRole(User user, String role) {
+	public boolean haveRole(User user, String inRole) {
 		if (user != null) {
-			String[] roles = user.getRoles();
-			for (int i = 0; i < roles.length; i++) {
-				if (roles[i].equalsIgnoreCase(role)) {
+			Set<String> roles = user.getRoles();
+			for (String role : roles) {
+				if (role.equalsIgnoreCase(inRole)) {
 					return true;
 				}
 			}

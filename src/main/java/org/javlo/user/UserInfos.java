@@ -32,7 +32,6 @@ public class UserInfos implements Comparable<IUserInfo>, IUserInfo, Serializable
 		this.password = password;
 	};
 
-	private String id;
 	private String login = "";
 	private String password;
 	private String title = "";
@@ -47,7 +46,7 @@ public class UserInfos implements Comparable<IUserInfo>, IUserInfo, Serializable
 	private String phone = "";
 	private String info = "";
 	private String[] preferredLanguage = new String[0];
-	private String[] roles = new String[0];
+	private  Set<String> roles = new HashSet<String>();
 	private Date creationDate = new Date();
 	private Date modificationDate = new Date();
 
@@ -172,19 +171,19 @@ public class UserInfos implements Comparable<IUserInfo>, IUserInfo, Serializable
 	 * @return
 	 */
 	@Override
-	public String[] getRoles() {
+	public Set<String> getRoles() {
 		return roles;
 	}
 
 	public String getRolesRaw() {
 
-		String[] roles = getRoles();
+		Collection<String> roles = getRoles();
 
 		StringBuffer res = new StringBuffer();
 		String sep = "";
-		for (int i = 0; i < roles.length; i++) {
+		for (String role : roles) {
 			res.append(sep);
-			res.append(roles[i]);
+			res.append(role);
 			sep = "" + ROLES_SEPARATOR;
 		}
 		return res.toString();
@@ -192,8 +191,8 @@ public class UserInfos implements Comparable<IUserInfo>, IUserInfo, Serializable
 
 	public Set<String> getRolesSet() {
 		Set<String> outRoles = new HashSet<String>();
-		for (int i = 0; i < roles.length; i++) {
-			outRoles.add(roles[i]);
+		for (String role : roles) {
+			outRoles.add(role);
 		}
 		return outRoles;
 	}
@@ -202,21 +201,21 @@ public class UserInfos implements Comparable<IUserInfo>, IUserInfo, Serializable
 	 * @param strings
 	 */
 	@Override
-	public void setRoles(String[] strings) {
-		roles = strings;
+	public void setRoles(Set<String> inRoles) {
+		roles = inRoles;
 	}
 
 	@Override
-	public void addRoles(String[] strings) {
+	public void addRoles(Set<String> strings) {
 		if (roles == null) {
-			roles = new String[0];
+			roles = new HashSet<String>();
 		}
 		synchronized (roles) {
 			Set<String> rolesList = new HashSet<String>();
-			rolesList.addAll(Arrays.asList(roles));
-			rolesList.addAll(Arrays.asList(strings));
-			String[] newRoles = new String[rolesList.size()];
-			rolesList.toArray(newRoles);
+			rolesList.addAll(roles);
+			rolesList.addAll(strings);
+			Set<String> newRoles = new HashSet<String>();
+			newRoles.addAll(rolesList);
 			roles = newRoles;
 		}
 	}
@@ -224,7 +223,7 @@ public class UserInfos implements Comparable<IUserInfo>, IUserInfo, Serializable
 	public void setRolesRaw(String rolesRaw) {
 		if (rolesRaw != null) {
 			if (rolesRaw.trim().length() > 0) {
-				roles = rolesRaw.split("" + ROLES_SEPARATOR);
+				roles = new HashSet<String>(StringHelper.stringToCollection(rolesRaw,""+ROLES_SEPARATOR));
 			}
 		}
 	}
@@ -362,7 +361,7 @@ public class UserInfos implements Comparable<IUserInfo>, IUserInfo, Serializable
 
 	@Override
 	public void setId(String id) {
-		this.id = id;
+		setLogin(id);
 	}
 
 	public String getInfo() {
@@ -426,16 +425,15 @@ public class UserInfos implements Comparable<IUserInfo>, IUserInfo, Serializable
 	}
 
 	@Override
-	public void removeRoles(String[] strings) {
+	public void removeRoles(Set<String> strings) {
 		if (roles == null) {
-			roles = new String[0];
+			roles = new HashSet<String>();
 		}
 		synchronized (roles) {
 			Set<String> rolesList = new HashSet<String>();
-			rolesList.addAll(Arrays.asList(roles));
-			rolesList.removeAll(Arrays.asList(strings));
-			String[] newRoles = new String[rolesList.size()];
-			rolesList.toArray(newRoles);
+			rolesList.addAll(roles);
+			rolesList.removeAll(strings);
+			Set<String> newRoles = new HashSet<String>(rolesList);
 			roles = newRoles;
 		}
 	}

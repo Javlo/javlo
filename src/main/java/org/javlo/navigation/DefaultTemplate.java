@@ -259,7 +259,7 @@ public class DefaultTemplate extends Template {
 	}
 
 	@Override
-	public boolean visibleForRoles(String[] inRoles) {
+	public boolean visibleForRoles(Collection<String> inRoles) {
 		return false;
 	}
 

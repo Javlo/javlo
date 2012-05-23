@@ -690,7 +690,7 @@ public class XHTMLHelper {
 
 		return getInputMultiSelect(name, contentArray, contentValue, null, null);
 	}
-
+	
 	public static String getInputMultiSelect(String name, String[] content, String[] value) {
 		String[][] newContent = new String[content.length][2];
 		for (int i = 0; i < content.length; i++) {

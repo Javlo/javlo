@@ -1533,7 +1533,7 @@ public class Template implements Comparable<Template> {
 		return getName();
 	}
 
-	public boolean visibleForRoles(String[] inRoles) {
+	public boolean visibleForRoles(Collection<String> inRoles) {
 		String rolesRaw = properties.getString("roles");
 		if (rolesRaw == null) { // if no role defined -> visible for everybody
 			return true;

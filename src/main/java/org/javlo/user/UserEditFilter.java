@@ -38,8 +38,8 @@ public class UserEditFilter {
 			filtered=true;
 		} else if ( userInfos.getLastName().toLowerCase().indexOf ( getFieldContain("lastName").toLowerCase() ) < 0 ) {
 			filtered=true;
-		} else if ( StringHelper.arrayToString(userInfos.getRoles(), ""+IUserInfo.ROLES_SEPARATOR).toLowerCase().indexOf ( getFieldContain("roles").toLowerCase() ) < 0 ) {
-			if (!(getFieldContain("roles").equals("- no role -") && userInfos.getRoles().length == 0))  {
+		} else if ( StringHelper.collectionToString(userInfos.getRoles(), ""+IUserInfo.ROLES_SEPARATOR).toLowerCase().indexOf ( getFieldContain("roles").toLowerCase() ) < 0 ) {
+			if (!(getFieldContain("roles").equals("- no role -") && userInfos.getRoles().size() == 0))  {
 				filtered=true;
 			}
 		}

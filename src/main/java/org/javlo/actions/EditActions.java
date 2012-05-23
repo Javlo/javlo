@@ -12,6 +12,7 @@ import java.io.PrintStream;
 import java.net.URL;
 import java.nio.charset.Charset;
 import java.text.ParseException;
+import java.util.Arrays;
 import java.util.Calendar;
 import java.util.Collection;
 import java.util.Collections;
@@ -687,9 +688,14 @@ public class EditActions {
 			}
 			IUserInfo userInfos = userFact.getUserInfos(login);
 			if (userInfos != null) {
-				String[] roles = requestService.getParameterValues("roles", new String[0]);
+				Set<String> roles = new HashSet<String>(Arrays.asList(requestService.getParameterValues("roles", new String[0])));
 				userInfos.setRoles(roles);
-				userFact.updateUserInfo(userInfos);
+				try {
+					userFact.updateUserInfo(userInfos);
+				} catch (IOException e) {
+					e.printStackTrace();
+					return e.getMessage();
+				}
 			} else {
 				logger.warning("user info not found for login : " + login);
 			}

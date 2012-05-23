@@ -4,11 +4,14 @@ import java.io.File;
 import java.io.FileReader;
 import java.io.IOException;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.Locale;
 import java.util.Map;
 import java.util.Properties;
+import java.util.Set;
 import java.util.Stack;
 
 import javax.servlet.ServletException;
@@ -19,6 +22,7 @@ import org.javlo.context.GlobalContext;
 import org.javlo.helper.AjaxHelper;
 import org.javlo.helper.StringHelper;
 import org.javlo.helper.URLHelper;
+import org.javlo.user.User;
 import org.javlo.utils.ReadOnlyPropertiesMap;
 
 /**
@@ -203,10 +207,14 @@ public class Module {
 	private String backUrl = null;
 	private Stack<HtmlLink> breadcrumbLinks;
 	private boolean search;
+	private int order;
+	private Set<String> roles;
+	private Map<String,String> config;
+
+	private String description = "?";
 
 	public Module(File configFile, Locale locale, String modulePath) throws IOException {
-		FileReader fileReader = null;
-		Map<String, String> config;
+		FileReader fileReader = null;		
 		try {
 			fileReader = new FileReader(configFile);
 			Properties properties = new Properties();
@@ -221,10 +229,24 @@ public class Module {
 		name = config.get("name");
 		breadcrumb = StringHelper.isTrue(config.get("breadcrumb"));
 		search = StringHelper.isTrue(config.get("search"));
-		title = config.get("title." + locale.getLanguage());
 		
+		order = Integer.parseInt(StringHelper.neverNull(config.get("order"),"100"));
+	
+		/** security **/
+		String rolesRaw = config.get("security.roles");
+		if (rolesRaw != null) {
+			roles = new HashSet<String>();
+			roles.addAll(StringHelper.stringToCollection(rolesRaw, ";"));
+		}
+		
+		title = config.get("title." + locale.getLanguage());
 		if (title == null) {
 			title = config.get("title");
+		}
+		
+		description = config.get("description." + locale.getLanguage());
+		if (description == null) {
+			description = config.get("description");
 		}
 		
 		moduleRoot = configFile.getParentFile();
@@ -582,5 +604,29 @@ public class Module {
 
 	public void setSearch(boolean search) {
 		this.search = search;
+	}
+
+	public int getOrder() {
+		return order;
+	}
+	
+	public Set<String> getRoles() {
+		return roles;
+	}
+	
+	public String getVersion() {
+		return StringHelper.neverNull(config.get("version"), "?");
+	}
+	
+	public String getDescription() {
+		return description ;
+	}
+	
+	public boolean haveRight(User user) {
+		if (getRoles() == null) {
+			return true;
+		} else {
+			return !Collections.disjoint(user.getRoles(), getRoles());
+		}		
 	}
 }

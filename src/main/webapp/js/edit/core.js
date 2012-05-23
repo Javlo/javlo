@@ -23,5 +23,15 @@ jQuery(document).ready(function() {
 	jQuery(".js-hidden").each(function(){				
 		var item = jQuery(this);
 		item.css("display","none");
-	});	
+	});
+	jQuery(".js-submit select").each(function(){				
+		var item = jQuery(this);
+		item.change(function() {
+		  this.form.submit();
+		});
+	});
+	jQuery(".js-submit input[type='submit']").each(function(){				
+		var item = jQuery(this);
+		item.css("display","none");
+	});
 });

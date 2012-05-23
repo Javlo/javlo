@@ -59,7 +59,18 @@ fieldset {
 	height: 36px;	
 }
 
-.standard-form .line label {
+.standard-form .inline {
+	display: inline-block;
+	margin-right: 10px;
+	vertical-align: middle;
+}
+
+.standard-form .inline input[type="checkbox"] {
+	width: auto;
+	vertical-align: middle;
+}
+
+.standard-form .line label,.standard-form .inline label {
 	display: inline-block;	
 	width: 170px;	
 	vertical-align: middle;

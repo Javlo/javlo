@@ -1,6 +1,8 @@
 package org.javlo.user;
 
+import java.io.IOException;
 import java.util.List;
+import java.util.Set;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
@@ -33,13 +35,13 @@ public interface IUserFactory {
 
 	public abstract void addUserInfo(IUserInfo userInfo) throws UserAllreadyExistException;
 
-	public abstract void mergeUserInfo(IUserInfo userInfo);
+	public abstract void mergeUserInfo(IUserInfo userInfo) throws IOException;
 
-	public abstract void updateUserInfo(IUserInfo userInfo);
+	public abstract void updateUserInfo(IUserInfo userInfo) throws IOException;
 
 	public abstract void deleteUser(String login);
 
-	public abstract void store();
+	public abstract void store() throws IOException;
 
 	public abstract IUserInfo createUserInfos();
 
@@ -47,7 +49,7 @@ public interface IUserFactory {
 
 	public abstract List<IUserInfo> getUserInfoForRoles(String[] inRoles);
 
-	public abstract String[] getAllRoles(GlobalContext globalContext, HttpSession session);
+	public abstract Set<String> getAllRoles(GlobalContext globalContext, HttpSession session);
 
 	public abstract void init(GlobalContext globalContext, HttpSession newSession);
 

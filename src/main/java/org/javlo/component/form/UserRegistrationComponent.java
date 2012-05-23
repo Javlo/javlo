@@ -482,8 +482,8 @@ public class UserRegistrationComponent extends AbstractVisualComponent implement
 		return roles;
 	}
 
-	protected String[] getAddRolesAsArray() {
-		return StringHelper.stringToArrayRemoveEmpty(getAddRolesAsRaw());
+	protected Set<String> getAddRolesAsArray() {
+		return new HashSet<String>(StringHelper.stringToCollectionRemoveEmpty(getAddRolesAsRaw()));
 	}
 
 	protected String getRemoveRolesAsRaw() {
@@ -499,12 +499,12 @@ public class UserRegistrationComponent extends AbstractVisualComponent implement
 		return roles;
 	}
 
-	protected String[] getRemoveRolesAsArray() {
-		return StringHelper.stringToArrayRemoveEmpty(getRemoveRolesAsRaw());
+	protected Set<String> getRemoveRolesAsArray() {
+		return new HashSet<String>(StringHelper.stringToCollectionRemoveEmpty(getRemoveRolesAsRaw()));
 	}
 
 	public boolean isRemoveRoles() {
-		return getRemoveRolesAsArray().length > 0;
+		return getRemoveRolesAsArray().size() > 0;
 	}
 
 	/*
@@ -537,7 +537,7 @@ public class UserRegistrationComponent extends AbstractVisualComponent implement
 		I18nAccess i18nAccess = I18nAccess.getInstance(globalContext, request.getSession());
 		MessageRepository messageRepository = MessageRepository.getInstance(ctx);
 
-		boolean storeUser = comp.getAddRolesAsArray().length > 0 || comp.getRemoveRolesAsArray().length > 0; // if no role define we juste send a email.
+		boolean storeUser = comp.getAddRolesAsArray().size() > 0 || comp.getRemoveRolesAsArray().size() > 0; // if no role define we juste send a email.
 		if (!storeUser) {
 			request.setAttribute("nostore", "true"); // display other message if no store user.
 		}
@@ -664,8 +664,7 @@ public class UserRegistrationComponent extends AbstractVisualComponent implement
 				for (IUserInfo iUserInfo : userInfos) {
 					String login = email;
 					if (iUserInfo.getLogin().equals(login)) {
-						Set<String> roles = new HashSet<String>(Arrays.asList(iUserInfo.getRoles()));
-						if (roles.containsAll(comp.getAddRoles())) {
+						if (iUserInfo.getRoles().containsAll(comp.getAddRoles())) {
 							GenericMessage msg = new GenericMessage(i18nAccess.getContentViewText("user.error.email-allready-exist"), GenericMessage.ERROR);
 							messageRepository.setGlobalMessage(msg);
 							logger.warning("user not registred : " + email);
@@ -688,7 +687,7 @@ public class UserRegistrationComponent extends AbstractVisualComponent implement
 
 				userInfo.removeRoles(comp.getRemoveRolesAsArray());
 
-				if (comp.getRemoveRolesAsArray().length > 0) {
+				if (comp.getRemoveRolesAsArray().size() > 0) {
 					for (String role : comp.getRemoveRolesAsArray()) {
 						if (role.trim().length() > 0) {
 							request.setAttribute("unsubscribe", "true");

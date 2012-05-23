@@ -2,6 +2,7 @@ package org.javlo.user;
 
 import java.io.PrintWriter;
 import java.io.StringWriter;
+import java.util.Set;
 
 import org.javlo.context.ContentContext;
 import org.javlo.context.EditContext;
@@ -30,7 +31,7 @@ public class DisplayUser {
 
 	private String modificationDate;
 
-	private String[] roles;
+	private Set<String> roles;
 
 	private ContentContext ctx;
 
@@ -97,7 +98,7 @@ public class DisplayUser {
 		} else {
 			userFactory = UserFactory.createUserFactory(globalContext, ctx.getRequest().getSession());
 		}
-		String[] userRoles = userFactory.getAllRoles(globalContext, ctx.getRequest().getSession());
+		Set<String> userRoles = userFactory.getAllRoles(globalContext, ctx.getRequest().getSession());
 		out.println("<form name=\"roles" + getLogin() + "\" method=\"post\">");
 		out.println("<div style=\"float: left\">");
 		out.println("<input type=\"hidden\" name=\"webaction\" value=\"changeuserroles\"/>");
@@ -140,7 +141,7 @@ public class DisplayUser {
 		this.modificationDate = modificationDate;
 	}
 
-	public void setRoles(String[] roles) {
+	public void setRoles(Set<String> roles) {
 		this.roles = roles;
 	}
 

@@ -5,8 +5,6 @@
         org.javlo.context.ContentContext,
         org.javlo.context.EditContext,
         org.javlo.context.ContentManager,
-        org.javlo.context.Content,
-		org.javlo.message.GlobalMessage,
 		org.javlo.template.Template,
         org.javlo.navigation.MenuElement,
 		org.javlo.component.core.ContentElementList,

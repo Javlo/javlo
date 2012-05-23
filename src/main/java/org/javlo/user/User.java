@@ -5,6 +5,7 @@ package org.javlo.user;
 
 import java.security.Principal;
 import java.util.Arrays;
+import java.util.HashSet;
 import java.util.Set;
 import java.util.TreeSet;
 
@@ -17,7 +18,7 @@ public class User implements Principal {
 
 	String login;
 	String password;
-	String[] roles = new String[0];
+	Set<String> roles = new HashSet<String>();
 	IUserInfo userInfo;
 
 	public User(){ // user only for debug
@@ -38,7 +39,7 @@ public class User implements Principal {
 	public User(String newLogin, String newPassword, String[] newRoles) {
 		login = newLogin;
 		password = newPassword;
-		roles = newRoles;
+		roles.addAll(Arrays.asList(newRoles));
 	}
 
 	/**
@@ -58,25 +59,22 @@ public class User implements Principal {
 	/**
 	 * @return
 	 */
-	public String[] getRoles() {
+	public Set<String> getRoles() {
 		return roles;
 	}
 
 	public boolean validForRoles ( String[] newRoles ) {
 		boolean res = newRoles.length==0;
-		Set<String> rolesSet = new TreeSet<String> ( Arrays.asList(roles) );
 		for (int i = 0; (i<newRoles.length)&&(!res); i++) {
-			res = rolesSet.contains(newRoles[i]);
+			res = getRoles().contains(newRoles[i]);
 		}
 		return res;
 	}
 
 	public boolean validForRoles ( Set<String> rolesSet ) {
-		boolean res = rolesSet.size()==0;
-		for (int i = 0; (i<roles.length)&&(!res); i++) {
-			res = rolesSet.contains(roles[i]);
-		}
-		return res;
+		Set<String> workingRoles = new HashSet<String>();
+		workingRoles.addAll(rolesSet);
+		return workingRoles.retainAll(getRoles());
 	}
 
 	/**

@@ -350,8 +350,8 @@ public class Edit extends AbstractModuleAction {
 				currentModule.setRenderer("/jsp/page_properties.jsp");
 				currentModule.setBreadcrumbTitle(I18nAccess.getInstance(ctx.getRequest()).getText("item.title"));
 				break;
-			default:
-				currentModule.setToolsRenderer("/jsp/actions.jsp?button_preview=true&button_page=true&button_save=true&button_publish=true&languages=true");
+			default:				
+				currentModule.setToolsRenderer("/jsp/actions.jsp?button_preview=true&button_page=true&button_save=true&button_publish=true&languages=true&areas=true");
 				currentModule.setRenderer("/jsp/content_wrapper.jsp");
 				currentModule.setBreadcrumbTitle(I18nAccess.getInstance(ctx.getRequest()).getText("content.mode.content"));
 				break;
@@ -371,6 +371,9 @@ public class Edit extends AbstractModuleAction {
 		EditContext editCtx = EditContext.getInstance(globalContext, ctx.getRequest().getSession());
 		List<Template> templates = pageConfig.getContextTemplates(editCtx);
 		Collections.sort(templates);
+		
+		ctx.getRequest().setAttribute("areas", ctx.getCurrentTemplate().getAreas());
+		ctx.getRequest().setAttribute("currentArea", editCtx.getCurrentArea());
 
 		request.setAttribute("templates", templates);
 
@@ -669,6 +672,19 @@ public class Edit extends AbstractModuleAction {
 			message = e.getMessage();
 		}
 		return message;
+	}
+	
+	public static final String performChangeArea(ContentContext ctx, RequestService requestService, EditContext editContext, I18nAccess i18nAccess, MessageRepository messageRepository) {
+		String area = requestService.getParameter("area", null);
+		if (area == null) {
+			return "bad request structure : need 'area' parameter";
+		}
+		if (!ctx.getCurrentTemplate().getAreas().contains(area)) {
+			return "bad area : "+area;
+		}
+		editContext.setCurrentArea(area);
+		messageRepository.setGlobalMessage(new GenericMessage(i18nAccess.getText("edit.message.new-area") + " : "+area, GenericMessage.INFO));
+		return null;
 	}
 
 }

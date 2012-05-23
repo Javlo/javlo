@@ -237,8 +237,8 @@ public class FormMailingComponent extends AbstractVisualComponent implements IAc
 		return roles;
 	}
 
-	protected String[] getRolesAsArray() {
-		return StringHelper.stringToArray(getRolesAsRaw());
+	protected Set<String> getRolesAsArray() {
+		return new HashSet<String>(StringHelper.stringToCollection(getRolesAsRaw()));
 	}
 	
 	@Override
@@ -310,7 +310,7 @@ public class FormMailingComponent extends AbstractVisualComponent implements IAc
 			for (IUserInfo iUserInfo : userInfos) {
 				String login = email;
 				if (iUserInfo.getLogin().equals(login)) {
-					Set<String> roles = new HashSet<String>(Arrays.asList(iUserInfo.getRoles()));
+					Set<String> roles = new HashSet<String>(iUserInfo.getRoles());
 					if (roles.containsAll(comp.getRoles())) {
 						GenericMessage msg = new GenericMessage(i18nAccess.getContentViewText("user.error.email-allready-exist"), GenericMessage.ERROR);
 						messageRepository.setGlobalMessage(msg);
@@ -329,7 +329,7 @@ public class FormMailingComponent extends AbstractVisualComponent implements IAc
 				userInfo = fact.createUserInfos();
 				userInfo.setLogin(email);
 			}
-			userInfo.addRoles(comp.getRolesAsArray());
+			userInfo.addRoles(comp.getRoles());
 			// } else {
 			// userInfo = fact.getCurrentUser().getUserInfo();
 			// }

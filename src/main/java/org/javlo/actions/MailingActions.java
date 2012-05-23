@@ -555,7 +555,7 @@ public class MailingActions implements IAction {
 
 		if ((rolesRAW != null) && (email != null)) {
 			if (PatternHelper.MAIL_PATTERN.matcher(email).matches()) {
-				String[] roles = StringHelper.stringToArray(rolesRAW);
+				Set<String> roles = new HashSet<String>(StringHelper.stringToCollection(rolesRAW));
 
 				GlobalContext globalContext = GlobalContext.getInstance(request);
 				IUserFactory userFactory = UserFactory.createUserFactory(globalContext, request.getSession());
@@ -628,14 +628,10 @@ public class MailingActions implements IAction {
 
 				if (user != null) {
 					Set<String> rolesToRemove = new HashSet<String>(Arrays.asList(roles));
-					Set<String> userRoles = new HashSet<String>(Arrays.asList(user.getRoles()));
+					Set<String> userRoles = new HashSet<String>(user.getRoles());
 
 					userRoles.removeAll(rolesToRemove);
-
-					String[] newUserRoles = new String[userRoles.size()];
-					userRoles.toArray(newUserRoles);
-
-					user.getUserInfo().setRoles(newUserRoles);
+					user.getUserInfo().setRoles(userRoles);
 					userFactory.store();
 				}
 			}
@@ -666,14 +662,11 @@ public class MailingActions implements IAction {
 			User user = userFactory.getUser(login);
 
 			Set<String> rolesToRemove = new HashSet<String>(Arrays.asList(roles));
-			Set<String> userRoles = new HashSet<String>(Arrays.asList(user.getRoles()));
+			Set<String> userRoles = new HashSet<String>(user.getRoles());
 
 			userRoles.removeAll(rolesToRemove);
 
-			String[] newUserRoles = new String[userRoles.size()];
-			userRoles.toArray(newUserRoles);
-
-			user.getUserInfo().setRoles(newUserRoles);
+			user.getUserInfo().setRoles(userRoles);
 			userFactory.store();
 		}
 		return "";
@@ -705,15 +698,12 @@ public class MailingActions implements IAction {
 
 						if (user != null) {
 							mailAllReadyExist++;
-							String[] oldRoles = user.getRoles();
-							List<String> newRoles = new LinkedList<String>();
-							newRoles.addAll(Arrays.asList(oldRoles));
+							Set<String> newRoles = new HashSet<String>();
+							newRoles.addAll(user.getRoles());
 							for (String role : roles) {
 								newRoles.add(role);
-							}
-							String[] newRolesArray = new String[newRoles.size()];
-							newRoles.toArray(newRolesArray);
-							user.getUserInfo().setRoles(newRolesArray);
+							}						
+							user.getUserInfo().setRoles(newRoles);
 							userFact.store();
 
 						} else {
@@ -722,7 +712,7 @@ public class MailingActions implements IAction {
 							userInfo.setLastName("");
 							userInfo.setEmail(newEmail);
 							userInfo.setLogin(newEmail);
-							userInfo.setRoles(roles);
+							userInfo.setRoles(new HashSet<String>(Arrays.asList(roles)));
 							try {
 								userFact.addUserInfo(userInfo);
 							} catch (UserAllreadyExistException e) {

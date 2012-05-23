@@ -139,6 +139,8 @@ public class GlobalContext implements Serializable {
 	public static final String LICENCE_CORPORATE = "corporate";
 
 	public static final String LOGO_FILE_NAME = "dynamic_template/logo.png";
+	
+	public static final List<String> BASIC_MODULES = Arrays.asList(new String[] {"admin", "content", "file"});
 
 	public GlobalContext() {
 		properties.setDelimiterParsingDisabled(true);
@@ -668,6 +670,18 @@ public class GlobalContext implements Serializable {
 		components.remove(""); // remove empty string
 
 		return components;
+	}
+	
+	public List<String> getModules() {
+		List<String> modules = new LinkedList<String>();
+		String modulesRaw = properties.getString("modules", null);
+		if (modulesRaw == null) {
+			return BASIC_MODULES;
+		}
+		modules.addAll(StringHelper.stringToCollection(modulesRaw));
+		modules.remove(""); // remove empty string
+
+		return modules;
 	}
 
 	public Set<String> getContentLanguages() {
@@ -1648,7 +1662,13 @@ public class GlobalContext implements Serializable {
 	public void setComponents(List<String> components) {
 		synchronized (properties) {
 			properties.setProperty("components", StringHelper.collectionToString(components));
-
+			save();
+		}
+	}
+	
+	public void setModules(List<String> modules) {
+		synchronized (properties) {
+			properties.setProperty("modules", StringHelper.collectionToString(modules));
 			save();
 		}
 	}

@@ -6,8 +6,10 @@ import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.Collection;
 import java.util.Collections;
+import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Set;
 import java.util.logging.Logger;
 
 import javax.naming.InitialContext;
@@ -76,8 +78,8 @@ public abstract class AbstractDBUserFactory extends UserFactory {
 	}
 
 	@Override
-	public String[] getAllRoles(GlobalContext globalContext, HttpSession session) {
-		return new String[0];
+	public Set<String> getAllRoles(GlobalContext globalContext, HttpSession session) {
+		return new HashSet<String>();
 	}
 
 	@Override
