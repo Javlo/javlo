@@ -91,9 +91,9 @@ public class EditContext implements Serializable {
 
 	String defaultViewLanguage = null;
 
-	static final String[] adminUserRoles = new String[] { AdminUserSecurity.FULL_CONTROL_ROLE, AdminUserSecurity.CONTENT_ROLE, AdminUserSecurity.REMOVE_STATIC_ROLE, AdminUserSecurity.NAVIGATION_ROLE, AdminUserSecurity.ADD_NAVIGATION_ROLE, AdminUserSecurity.USER_ROLE, AdminUserSecurity.ADMIN_USER_ROLE, AdminUserSecurity.STATISTICS_ROLE, AdminUserSecurity.PUBLISHER_ROLE, AdminUserSecurity.MAILING_ROLE, AdminUserSecurity.MACRO_ROLE, AdminUserSecurity.WEBDESGIN_ROLE, AdminUserSecurity.LIGHT_INTERAFACE_ROLE, AdminUserSecurity.SYNCHRO_CLIENT, AdminUserSecurity.SYNCHRO_ADMIN, AdminUserSecurity.SYNCHRO_SERVER };
+	static final HashSet<String> adminUserRoles = new HashSet<String> (Arrays.asList(new String[] { AdminUserSecurity.FULL_CONTROL_ROLE, AdminUserSecurity.CONTENT_ROLE, AdminUserSecurity.REMOVE_STATIC_ROLE, AdminUserSecurity.NAVIGATION_ROLE, AdminUserSecurity.ADD_NAVIGATION_ROLE, AdminUserSecurity.USER_ROLE, AdminUserSecurity.ADMIN_USER_ROLE, AdminUserSecurity.STATISTICS_ROLE, AdminUserSecurity.PUBLISHER_ROLE, AdminUserSecurity.MAILING_ROLE, AdminUserSecurity.MACRO_ROLE, AdminUserSecurity.WEBDESGIN_ROLE, AdminUserSecurity.LIGHT_INTERAFACE_ROLE, AdminUserSecurity.SYNCHRO_CLIENT, AdminUserSecurity.SYNCHRO_ADMIN, AdminUserSecurity.SYNCHRO_SERVER }));
 
-	String[] userRolesDefault = new String[] { "guest" };
+	Set<String> userRolesDefault = new HashSet<String>( Arrays.asList(new String[] { "guest" }) );
 
 	Set<String> licence = new HashSet<String>();
 	
@@ -175,7 +175,7 @@ public class EditContext implements Serializable {
 
 		String userRolesDefaultRaw = staticProps.getProperty(USER_ROLES_DEFAULT_KEY);
 		if (userRolesDefaultRaw != null) {
-			userRolesDefault = userRolesDefaultRaw.split(USER_ROLES_SEPARATOR);
+			userRolesDefault =  new HashSet<String>( Arrays.asList(userRolesDefaultRaw.split(USER_ROLES_SEPARATOR)));
 		}
 
 		String defaultEditTemplate = staticProps.getProperty(EDIT_TEMPLATE_KEY);
@@ -281,15 +281,12 @@ public class EditContext implements Serializable {
 	/**
 	 * @return
 	 */
-	public String[] getUserRoles() {
+	public Set<String> getUserRoles() {
 		if (globalContext == null) {
-			return new String[0];
+			return new HashSet<String>();
 		}
 		Set<String> roles = globalContext.getUserRoles();
-		String[] outRoles = new String[roles.size()];
-		roles.toArray(outRoles);
-		Arrays.sort(outRoles);
-		return outRoles;
+		return roles;
 	}
 
 	/**
@@ -384,7 +381,7 @@ public class EditContext implements Serializable {
 		if (outUser != null) {
 			UserInfos ui = new UserInfos();
 			ui.setLogin(outUser.getName());
-			ui.setRoles(new String[] { AdminUserSecurity.GENERAL_ADMIN, AdminUserSecurity.FULL_CONTROL_ROLE });
+			ui.setRoles(new HashSet<String>( Arrays.asList(new String[] { AdminUserSecurity.GENERAL_ADMIN, AdminUserSecurity.FULL_CONTROL_ROLE })));
 			editUser = new User(ui);
 			editUser.setId(outUser.getName());
 		}
@@ -399,7 +396,7 @@ public class EditContext implements Serializable {
 	 */
 	public boolean hardAutoLogin(String inUser) {
 		User outUser = getEditUser(inUser);
-		if ((outUser != null && globalContext != null)) {
+		/*if ((outUser != null && globalContext != null)) {
 			boolean found = false;
 			for (Principal principal : globalContext.getAllPrincipals()) {
 				if (principal != null && principal.getName() != null) {
@@ -408,12 +405,12 @@ public class EditContext implements Serializable {
 					}
 				}
 			}
-		}
+		}*/
 		// editUser=outUser;
 		if (outUser != null) {
 			UserInfos ui = new UserInfos();
 			ui.setLogin(outUser.getName());
-			ui.setRoles(new String[] { AdminUserSecurity.GENERAL_ADMIN, AdminUserSecurity.FULL_CONTROL_ROLE });
+			ui.setRoles(new HashSet<String>( Arrays.asList(new String[] { AdminUserSecurity.GENERAL_ADMIN, AdminUserSecurity.FULL_CONTROL_ROLE })));
 			editUser = new User(ui);
 			editUser.setId(outUser.getName());
 		}
@@ -431,7 +428,7 @@ public class EditContext implements Serializable {
 		return editUser;
 	}
 
-	public String[] getUserRolesDefault() {
+	public Set<String> getUserRolesDefault() {
 		return userRolesDefault;
 	}
 
@@ -471,20 +468,17 @@ public class EditContext implements Serializable {
 		return adminUserEditFilter;
 	}
 
-	public String[] getAdminUserRoles() {
+	public Set<String> getAdminUserRoles() {
 		if (globalContext == null) {
 			return adminUserRoles;
 		}
 		Set<String> roles = globalContext.getAdminUserRoles();
-		String[] outRoles = new String[adminUserRoles.length + roles.size()];
-		int i = 0;
-		while (i < adminUserRoles.length) {
-			outRoles[i] = adminUserRoles[i];
-			i++;
+		Set<String> outRoles = new HashSet<String>();
+		for (String role : adminUserRoles) {
+			outRoles.add(role);
 		}
 		for (String role : roles) {
-			outRoles[i] = role;
-			i++;
+			outRoles.add(role);
 		}
 		// Arrays.sort(outRoles);
 		return outRoles;

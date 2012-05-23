@@ -2,6 +2,6 @@
 <div class="box preview">
 <h3><span>${i18n.edit['command.preview']} <a target="_blank" class="preview-link" href="${previewURL}" title="${i18n.edit['preview.popup']}">${i18n.edit['preview.popup']}</a></span></h3>
 <div id="preview" class="content auto-height">
-<iframe src="${previewURL}"></iframe>
+<iframe src="${previewURL}" class="full-height"></iframe>
 </div>
 </div>

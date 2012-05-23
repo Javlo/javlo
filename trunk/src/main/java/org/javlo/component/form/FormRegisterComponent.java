@@ -3,6 +3,9 @@
  */
 package org.javlo.component.form;
 
+import java.io.IOException;
+import java.util.Arrays;
+import java.util.HashSet;
 import java.util.List;
 
 import javax.servlet.http.HttpServletRequest;
@@ -41,7 +44,7 @@ public class FormRegisterComponent extends FormComponent {
 				if (fact.getCurrentUser(request.getSession()) == null) {
 					userInfo = fact.createUserInfos();
 					userInfo.setLogin(form.getValue("login"));
-					userInfo.setRoles(new String[] { "guest" });
+					userInfo.setRoles(new HashSet<String>(Arrays.asList(new String[] { "guest" })));
 				} else {
 					userInfo = fact.getCurrentUser(request.getSession()).getUserInfo();
 				}
@@ -53,9 +56,19 @@ public class FormRegisterComponent extends FormComponent {
 					if (fact.getCurrentUser(request.getSession()) == null) {
 						fact.addUserInfo(userInfo);
 					} else {
-						fact.updateUserInfo(userInfo);
+						try {
+							fact.updateUserInfo(userInfo);
+						} catch (IOException e) {
+							e.printStackTrace();
+							return e.getMessage();
+						}
 					}
-					fact.store();
+					try {
+						fact.store();
+					} catch (IOException e) {						
+						e.printStackTrace();
+						return e.getMessage();
+					}
 				} catch (UserAllreadyExistException e) {
 					msg = "user.error.allready-exist";
 				}

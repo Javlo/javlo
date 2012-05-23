@@ -32,6 +32,7 @@ import java.util.Collection;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Locale;
@@ -2178,6 +2179,18 @@ public class StringHelper {
 			endIndex = text.indexOf(suffix);
 		}
 		return items;
+	}
+
+	public static Collection<? extends String> stringToCollectionRemoveEmpty(String addRolesAsRaw) {
+		List<String> outList = new LinkedList<String>();
+		outList.addAll(stringToCollection(addRolesAsRaw));
+		Iterator<String> iterator = outList.iterator();
+		while (iterator.hasNext()) {
+			if (iterator.next().trim().length() == 0) {
+				iterator.remove();
+			}
+		}
+		return outList;
 	}
 
 }

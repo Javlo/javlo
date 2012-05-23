@@ -300,6 +300,9 @@ public class AdminAction extends AbstractModuleAction {
 				request.setAttribute("components", components);
 				request.setAttribute("currentComponents", currentComponents);
 				
+				request.setAttribute("allModules", moduleContext.getAllModules());	
+				request.setAttribute("currentModules", currentGlobalContext.getModules());
+				
 				List<String> templatesName = currentGlobalContext.getTemplates();
 				List<Template.TemplateBean> selectedTemplate = new LinkedList<Template.TemplateBean>();
 				for (String name : templatesName) {
@@ -347,6 +350,11 @@ public class AdminAction extends AbstractModuleAction {
 			currentModule.setToolsRenderer(null);
 			String uri = request.getRequestURI();
 			currentModule.pushBreadcrumb(new Module.HtmlLink(uri, I18nAccess.getInstance(request).getText("command.admin.components")+" : "+request.getParameter("context"), ""));
+		} else if (requestService.getParameter("modules", null) != null) {
+			currentModule.setRenderer("/jsp/modules.jsp");
+			currentModule.setToolsRenderer(null);
+			String uri = request.getRequestURI();
+			currentModule.pushBreadcrumb(new Module.HtmlLink(uri, I18nAccess.getInstance(request).getText("command.admin.modules")+" : "+request.getParameter("context"), ""));			
 		}
 		return null;
 	}
@@ -384,8 +392,7 @@ public class AdminAction extends AbstractModuleAction {
 					
 					userFacotryClass = requestService.getParameter("admin-user-factory", null);
 					try {
-						Class.forName(userFacotryClass).newInstance();
-						System.out.println("***** AdminAction.performUpdateGlobalContext : userFacotryClass = "+userFacotryClass); //TODO: remove debug trace
+						Class.forName(userFacotryClass).newInstance();						
 						currentGlobalContext.setAdminUserFactoryClassName(userFacotryClass);						
 					} catch (Exception e) {
 						messageRepository.setGlobalMessage(new GenericMessage(e.getMessage(), GenericMessage.ERROR));
@@ -450,6 +457,36 @@ public class AdminAction extends AbstractModuleAction {
 					currentGlobalContext.setComponents(components);
 
 					messageRepository.setGlobalMessageAndNotification(ctx,new GenericMessage(i18nAccess.getText("admin.message.components-selected"), GenericMessage.INFO));
+
+				} else {
+					msg = "context not found : " + currentContextKey;
+				}
+			} else {
+				msg = "bad request structure need 'context' as parameter.";
+			}
+		}
+		return msg;
+	}
+	
+	public static final String performModulesSelect(HttpServletRequest request, ContentContext ctx, RequestService requestService, MessageRepository messageRepository, I18nAccess i18nAccess, Module currentModule, ModuleContext moduleContext) throws Exception {
+		String msg = null;
+		if (requestService.getParameter("back", null) != null) {
+			currentModule.restoreAll();
+		} else {
+			String currentContextKey = requestService.getParameter("context", null);
+			if (currentContextKey != null) {
+				GlobalContext currentGlobalContext = GlobalContext.getRealInstance(request, currentContextKey);
+				if (currentGlobalContext != null) {					
+					List<String> modules = new LinkedList<String>();
+					for (Module mod : moduleContext.getAllModules()) {
+						if (requestService.getParameter(mod.getName(), null) != null) {
+							modules.add(mod.getName());
+						}
+					}
+					currentGlobalContext.setModules(modules);
+					moduleContext.loadModule(request.getSession(), GlobalContext.getInstance(request));
+
+					messageRepository.setGlobalMessageAndNotification(ctx,new GenericMessage(i18nAccess.getText("admin.message.modules-selected"), GenericMessage.INFO));
 
 				} else {
 					msg = "context not found : " + currentContextKey;

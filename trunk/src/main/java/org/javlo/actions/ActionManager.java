@@ -67,7 +67,7 @@ public class ActionManager {
 	public static IAction getActionModule(HttpServletRequest request, String group) throws IOException, ClassNotFoundException, InstantiationException, IllegalAccessException {
 		GlobalContext globalContext = GlobalContext.getInstance(request);
 		ModuleContext moduleContext = ModuleContext.getInstance(globalContext, request.getSession());
-		Collection<Module> modules = moduleContext.getAllModules();
+		Collection<Module> modules = moduleContext.getModules();
 		IAction action = null;
 		for (Module module : modules) {
 			action = module.getAction();

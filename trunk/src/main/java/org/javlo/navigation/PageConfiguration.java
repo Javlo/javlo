@@ -108,7 +108,7 @@ public class PageConfiguration {
 		return mailingTemplates;
 	}
 
-	public Collection<Template> getMailingTemplates(String[] roles) {
+	public Collection<Template> getMailingTemplates(Collection<String> roles) {
 		Collection<Template> outTemplate = new TreeSet<Template>(Template.TEMPLATE_COMPARATOR);
 		for (Template template : mailingTemplates) {
 			if (template.visibleForRoles(roles)) {
@@ -156,7 +156,7 @@ public class PageConfiguration {
 		return allTemplate;
 	}
 
-	public Collection<Template> getTemplates(String[] roles) {
+	public Collection<Template> getTemplates(Collection<String> roles) {
 		Collection<Template> outTemplate = new TreeSet<Template>(Template.TEMPLATE_COMPARATOR);
 		for (Template template : templates) {
 			if (template.visibleForRoles(roles)) {

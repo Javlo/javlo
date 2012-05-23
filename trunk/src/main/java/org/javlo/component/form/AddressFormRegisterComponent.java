@@ -6,6 +6,8 @@ package org.javlo.component.form;
 import java.io.ByteArrayOutputStream;
 import java.io.PrintStream;
 import java.util.Collection;
+import java.util.HashSet;
+import java.util.Set;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -27,7 +29,6 @@ import org.javlo.user.UserFactory;
 import org.javlo.user.UserInfos;
 import org.javlo.user.exception.UserAllreadyExistException;
 
-
 /**
  * @author pvandermaesen
  */
@@ -47,8 +48,7 @@ public class AddressFormRegisterComponent extends FormComponent {
 	}
 
 	/**
-	 * @see org.javlo.component.AbstractVisualComponent#init(java.lang.String,
-	 *      java.lang.String, org.javlo.ContentContext)
+	 * @see org.javlo.component.AbstractVisualComponent#init(java.lang.String, java.lang.String, org.javlo.ContentContext)
 	 */
 	@Override
 	protected void init(ComponentBean bean, ContentContext ctx) throws Exception {
@@ -84,7 +84,7 @@ public class AddressFormRegisterComponent extends FormComponent {
 				if (msg == null) {
 					UserInfos userInfo;
 					if (fact.getCurrentUser(request.getSession()) == null) {
-						userInfo = (UserInfos)fact.createUserInfos();
+						userInfo = (UserInfos) fact.createUserInfos();
 						userInfo.setId(StringHelper.getRandomId());
 						userInfo.setLogin(form.getValue("email"));
 
@@ -92,13 +92,13 @@ public class AddressFormRegisterComponent extends FormComponent {
 						EditContext editCtx = EditContext.getInstance(globalContext, request.getSession());
 
 						/* retreive user roles */
-						String[] roles = editCtx.getUserRolesDefault();
+						Set<String> roles = editCtx.getUserRolesDefault();
 						String componentId = service.getParameter("component_id", null);
 						if (componentId != null) {
-							ContentService content = ContentService.createContent(request);
+							ContentService content = ContentService.getInstance(globalContext);
 							IContentVisualComponent comp = content.getComponent(ctx, componentId);
 							if ((comp != null) && (comp.getValue(ctx).trim().length() > 0)) {
-								roles = StringHelper.stringToArray(comp.getValue(ctx));
+								roles = new HashSet<String>(StringHelper.stringToCollection(comp.getValue(ctx)));
 							}
 						}
 
@@ -106,15 +106,15 @@ public class AddressFormRegisterComponent extends FormComponent {
 
 						if (service.getParameter("mailing", null) != null) {
 							roles = userInfo.getRoles();
-							String[] rolesMailing = new String[roles.length + 1];
-							for (int i = 0; i < roles.length; i++) {
-								rolesMailing[i] = roles[i];
+							Set<String> rolesMailing = new HashSet<String>();
+							for (String role : roles) {
+								rolesMailing.add(role);
 							}
-							rolesMailing[rolesMailing.length - 1] = "mailing";
+							rolesMailing.add("mailing");
 							userInfo.setRoles(rolesMailing);
 						}
 					} else {
-						userInfo = (UserInfos)fact.getCurrentUser(request.getSession()).getUserInfo();
+						userInfo = (UserInfos) fact.getCurrentUser(request.getSession()).getUserInfo();
 					}
 					userInfo.setPassword("");
 					userInfo.setEmail(form.getValue("email"));
@@ -167,7 +167,7 @@ public class AddressFormRegisterComponent extends FormComponent {
 		out.println("<div>");
 		GlobalContext globalContext = GlobalContext.getInstance(ctx.getRequest());
 		EditContext editCtx = EditContext.getInstance(globalContext, ctx.getRequest().getSession());
-		out.print(XHTMLHelper.getInputMultiSelect(getContentName(), editCtx.getUserRoles(), StringHelper.stringToArray(getValue())));
+		out.print(XHTMLHelper.getInputMultiSelect(getContentName(), editCtx.getUserRoles(), StringHelper.stringToCollection(getValue())));
 		out.println("</div>");
 
 		out.close();

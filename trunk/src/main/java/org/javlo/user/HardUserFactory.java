@@ -1,7 +1,9 @@
 package org.javlo.user;
 
+import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Set;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
@@ -22,7 +24,7 @@ public class HardUserFactory extends AdminUserFactory {
 		ui.setLogin("test1");
 		ui.setEmail("test1@noctis.be");
 		ui.setPassword("test1");
-		ui.setRoles(new String[0]);
+		ui.setRoles(new HashSet<String>());
 		ui.setPreferredLanguageRaw("fr");
 		userInfoList.add(ui);
 		ui = new UserInfos();
@@ -30,7 +32,7 @@ public class HardUserFactory extends AdminUserFactory {
 		ui.setLogin("test2");
 		ui.setEmail("test2@noctis.be");
 		ui.setPassword("test2");
-		ui.setRoles(new String[0]);
+		ui.setRoles(new HashSet<String>());
 		ui.setPreferredLanguageRaw("fr");
 		userInfoList.add(ui);
 	}
@@ -59,8 +61,8 @@ public class HardUserFactory extends AdminUserFactory {
 	}
 
 	@Override
-	public String[] getAllRoles(GlobalContext globalContext, HttpSession session) {
-		return new String[0];
+	public Set<String> getAllRoles(GlobalContext globalContext, HttpSession session) {
+		return new HashSet<String>();
 	}
 
 	@Override

@@ -61,6 +61,7 @@
      		<div class="line action">
      			<input type="submit" name="change" value="${i18n.edit['global.change']}" />
      			<input type="submit" name="components" value="${i18n.edit['command.admin.components']}" />     			
+     			<input type="submit" name="modules" value="${i18n.edit['command.admin.modules']}" />
      		</div>
      	</form>
      </td>          

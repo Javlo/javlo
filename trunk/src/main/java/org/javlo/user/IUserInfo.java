@@ -1,6 +1,7 @@
 package org.javlo.user;
 
 import java.util.Date;
+import java.util.Set;
 
 
 public interface IUserInfo {
@@ -16,7 +17,7 @@ public interface IUserInfo {
 	public String getPassword();
 	public String getEmail();
 	public String[] getPreferredLanguage();
-	public String[] getRoles();
+	public Set<String> getRoles();
 
 	public void setId(String id);
 	public void setLogin(String login);
@@ -26,9 +27,9 @@ public interface IUserInfo {
 	public void setPassword(String password);
 	public void setEmail(String email);
 	public void setPreferredLanguage(String[] preferredLanguage);
-	public void setRoles(String[] strings);
-	public void addRoles(String[] strings);
-	public void removeRoles(String[] strings);
+	public void setRoles(Set<String> strings);
+	public void addRoles(Set<String> strings);
+	public void removeRoles(Set<String> strings);
 	
 	public void setCreationDate(Date creationDate);
 	public Date getCreationDate();

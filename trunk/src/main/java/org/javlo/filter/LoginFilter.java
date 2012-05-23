@@ -174,7 +174,7 @@ public class LoginFilter implements Filter {
 
 					globalContext.eventLogin(editUser.getLogin());
 
-					logger.info(login + " is logged roles : [" + StringHelper.arrayToString(editUser.getRoles(), ",") + ']');
+					logger.info(login + " is logged roles : [" + StringHelper.collectionToString(editUser.getRoles(), ",") + ']');
 
 				} else {
 					logger.info(login + " fail to login.");

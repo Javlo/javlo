@@ -18,7 +18,6 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
-import java.util.TreeSet;
 
 import javax.servlet.ServletContext;
 import javax.servlet.http.HttpServletRequest;
@@ -124,17 +123,17 @@ public class UserFactory implements IUserFactory, Serializable {
 		if (user == null) {
 			// administrator auto login not possible
 			if (editCtx.getEditUser(login) != null && (logged || editCtx.hardAutoLogin(login))) {
-				user = createUser(login, new String[] { AdminUserSecurity.GENERAL_ADMIN, AdminUserSecurity.FULL_CONTROL_ROLE });
+				user = createUser(login, (new HashSet(Arrays.asList(new String[] { AdminUserSecurity.GENERAL_ADMIN, AdminUserSecurity.FULL_CONTROL_ROLE }))));
 				editCtx.setEditUser(user);
 			} else {
 				user = null;
 			}
 		}
 		if (user != null && globalCtx.getAdministrator().equals(user.getLogin())) {
-			user.getUserInfo().addRoles(new String[] { AdminUserSecurity.FULL_CONTROL_ROLE });
+			user.getUserInfo().addRoles(new HashSet(Arrays.asList(new String[] { AdminUserSecurity.FULL_CONTROL_ROLE })));
 		}
 		if (user != null && editCtx.getEditUser(user.getLogin()) != null) {
-			user.getUserInfo().addRoles(new String[] { AdminUserSecurity.GENERAL_ADMIN, AdminUserSecurity.FULL_CONTROL_ROLE });
+			user.getUserInfo().addRoles(new HashSet(Arrays.asList(new String[] { AdminUserSecurity.GENERAL_ADMIN, AdminUserSecurity.FULL_CONTROL_ROLE })));
 		}
 		request.getSession().setAttribute(SESSION_KEY, user);
 		return user;
@@ -150,7 +149,7 @@ public class UserFactory implements IUserFactory, Serializable {
 		userInfoList = new LinkedList<IUserInfo>();
 	}
 
-	protected User createUser(String login, String[] roles) {
+	protected User createUser(String login, Set<String> roles) {
 		UserInfos ui = createUserInfos();
 		ui.setLogin(login);
 		ui.setRoles(roles);
@@ -190,13 +189,12 @@ public class UserFactory implements IUserFactory, Serializable {
 			
 			if (tobeDeleted != null) {
 				userInfoList.remove(tobeDeleted);
-				unlockStore();
 			}
 		}
 	}
 
 	@Override
-	public String[] getAllRoles(GlobalContext globalContext, HttpSession session) {
+	public Set<String> getAllRoles(GlobalContext globalContext, HttpSession session) {
 		EditContext ctx = EditContext.getInstance(globalContext, session);
 		return ctx.getUserRoles();
 	}
@@ -245,7 +243,7 @@ public class UserFactory implements IUserFactory, Serializable {
 		List<IUserInfo> outUserList = new LinkedList<IUserInfo>();
 		List<IUserInfo> allUserInfo = getUserInfoList();
 		for (IUserInfo element : allUserInfo) {
-			Set<String> userRoles = new TreeSet<String>(Arrays.asList(element.getRoles()));
+			Set<String> userRoles = element.getRoles();
 			userRoles.retainAll(roles);
 			if (userRoles.size() > 0) {
 				outUserList.add(element);
@@ -364,10 +362,10 @@ public class UserFactory implements IUserFactory, Serializable {
 		if (user == null || (!logged && user.getPassword() != null && !passwordEqual)) {
 			if (globalCtx.getAdministrator().equals(login) && (logged || globalCtx.administratorLogin(login, password))) {
 				logger.fine("log user with password : " + login + " obtain full control role.");
-				user = createUser(login, new String[] { AdminUserSecurity.FULL_CONTROL_ROLE });
+				user = createUser(login, (new HashSet(Arrays.asList(new String[] { AdminUserSecurity.FULL_CONTROL_ROLE }))));
 			} else if (editCtx.getEditUser(login) != null && (logged || editCtx.hardLogin(login, password))) {
 				logger.fine("log user with password : " + login + " obtain general addmin mode and full control role.");
-				user = createUser(login, new String[] { AdminUserSecurity.GENERAL_ADMIN, AdminUserSecurity.FULL_CONTROL_ROLE });
+				user = createUser(login, (new HashSet(Arrays.asList(new String[] { AdminUserSecurity.GENERAL_ADMIN, AdminUserSecurity.FULL_CONTROL_ROLE }))));
 				editCtx.setEditUser(user);
 			} else {
 				logger.fine("fail to log user with password : " + login + ".");
@@ -375,10 +373,10 @@ public class UserFactory implements IUserFactory, Serializable {
 			}
 		}
 		if (user != null && globalCtx.getAdministrator().equals(user.getLogin())) {
-			user.getUserInfo().addRoles(new String[] { AdminUserSecurity.FULL_CONTROL_ROLE });
+			user.getUserInfo().addRoles((new HashSet(Arrays.asList(new String[] { AdminUserSecurity.FULL_CONTROL_ROLE }))));
 		}
 		if (user != null && editCtx.getEditUser(user.getLogin()) != null) {
-			user.getUserInfo().addRoles(new String[] { AdminUserSecurity.GENERAL_ADMIN, AdminUserSecurity.FULL_CONTROL_ROLE });
+			user.getUserInfo().addRoles((new HashSet(Arrays.asList(new String[] { AdminUserSecurity.GENERAL_ADMIN, AdminUserSecurity.FULL_CONTROL_ROLE }))));
 		}
 		request.getSession().setAttribute(SESSION_KEY, user);
 
@@ -408,7 +406,7 @@ public class UserFactory implements IUserFactory, Serializable {
 	 * @see org.javlo.user.IUserFactory#addUserInfo(org.javlo.user.UserInfos)
 	 */
 	@Override
-	public void mergeUserInfo(IUserInfo userInfo) {
+	public void mergeUserInfo(IUserInfo userInfo) throws IOException {
 
 		synchronized (mergeLock) {
 
@@ -420,17 +418,16 @@ public class UserFactory implements IUserFactory, Serializable {
 					e.printStackTrace();
 				}
 			} else {
-				String[] roles = userInfo.getRoles();
-				String[] currentRoles = currentUserInfo.getRoles();
+				Collection<String> currentRoles = currentUserInfo.getRoles();				
 				List<String> rolesList = new LinkedList<String>();
-				rolesList.addAll(Arrays.asList(roles));
-				for (int i = 0; i < currentRoles.length; i++) {
-					if (!rolesList.contains(currentRoles[i])) {
-						rolesList.add(currentRoles[i]);
+				rolesList.addAll(userInfo.getRoles());
+				for (String role : currentRoles) {
+					if (!rolesList.contains(role)) {
+						rolesList.add(role);
 					}
 				}
-				String[] newRoles = new String[rolesList.size()];
-				rolesList.toArray(newRoles);
+				Set<String> newRoles = new HashSet<String>();
+				newRoles.addAll(rolesList);
 				userInfo.setRoles(newRoles);
 				updateUserInfo(userInfo);
 			}
@@ -469,13 +466,13 @@ public class UserFactory implements IUserFactory, Serializable {
 	 * @see org.javlo.user.IUserFactory#store()
 	 */
 	@Override
-	public void store() {
+	public void store() throws IOException {
 		synchronized (lock) {
 			unlockStore();
 		}
 	}
 
-	private void unlockStore() {
+	private void unlockStore()  throws IOException {
 
 		List<IUserInfo> userInfoList = getUserInfoList();
 
@@ -505,8 +502,6 @@ public class UserFactory implements IUserFactory, Serializable {
 			fact.exportCSV(out);
 			out.close();
 			releaseUserInfoList();
-		} catch (Exception e) {
-			Logger.log(e);
 		} finally {
 			if (out != null) {
 				try {
@@ -525,7 +520,7 @@ public class UserFactory implements IUserFactory, Serializable {
 	 * @see org.javlo.user.IUserFactory#updateUserInfo(org.javlo.user.UserInfos)
 	 */
 	@Override
-	public void updateUserInfo(IUserInfo userInfo) {
+	public void updateUserInfo(IUserInfo userInfo) throws IOException {
 
 		synchronized (lock) {
 			userInfo.setModificationDate(new Date());

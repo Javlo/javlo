@@ -1,5 +1,7 @@
 package org.javlo.user;
 
+import java.util.HashSet;
+import java.util.Set;
 import java.util.logging.Logger;
 
 import javax.servlet.http.HttpServletRequest;
@@ -86,7 +88,7 @@ public class AdminUserFactory extends UserFactory {
 	}*/
 
 	@Override
-	public String[] getAllRoles(GlobalContext globalContext, HttpSession session) {
+	public Set<String> getAllRoles(GlobalContext globalContext, HttpSession session) {
 		EditContext ctx = EditContext.getInstance(globalContext, session);
 		return ctx.getAdminUserRoles();
 	}
