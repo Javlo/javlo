@@ -81,19 +81,17 @@ public class InternalLink extends ComplexPropertiesLink implements IInternalLink
 			String labelTitle = i18nAccess.getText("component.link.label");
 			String reverseLinkLabel = i18nAccess.getText("component.link.reverse");
 
-			out.println("<table class=\"edit\"><tr><td style=\"text-align: center;\" width=\"33%\">");
-
 			String reverseLink = properties.getProperty(REVERSE_LINK_KEY, null);
 			if (reverseLink == null) {
 				reverseLink = "none";
 			}
-			out.println("<label for=\"" + getReverseLinkName() + "\">" + reverseLinkLabel + " : </label>");
+			out.println("<div class=\"line\"><label for=\"" + getReverseLinkName() + "\">" + reverseLinkLabel + " : </label>");
 			out.println(XHTMLHelper.getReverlinkSelectType(ctx, getReverseLinkName(), reverseLink));
 
-			out.println("</td><td style=\"text-align: center;\" width=\"33%\">");
+			out.println("</div><div class=\"line\"><label for=\""+getLinkName()+"\">");
 
 			out.println(linkTitle + " : ");
-			out.println("<select name=\"" + getLinkName() + "\">");
+			out.println("</label><select id=\"" + getLinkName() + "\" name=\"" + getLinkName() + "\">");
 			MenuElement elem = content.getNavigation(ctx);
 			String[] values = elem.getChildList();
 			String currentLink = null;
@@ -116,11 +114,11 @@ public class InternalLink extends ComplexPropertiesLink implements IInternalLink
 			} else {
 				setMessage(new GenericMessage(i18nAccess.getText("component.message.help.choose_link"), GenericMessage.HELP));
 			}
-			out.println("</td><td style=\"text-align: center;\" align=\"center\">");
+			out.println("</div><div class=\"line\"><label for=\""+getLinkLabelName()+"\">");
 			out.print(labelTitle);
-			out.print(" : ");
+			out.print(" : </label>");
 			out.println(XHTMLHelper.getTextInput(getLinkLabelName(), label));
-			out.println("</td></tr></table>");
+			out.println("</div>");
 		} catch (Exception e) {
 			e.printStackTrace();
 		}

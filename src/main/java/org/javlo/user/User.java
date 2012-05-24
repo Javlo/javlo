@@ -24,7 +24,7 @@ public class User implements Principal {
 	public User(){ // user only for debug
 		login="debug1";
 		password="";
-		userInfo = new UserInfos();
+		userInfo = new UserInfo();
 	};
 
 	public User(IUserInfo newUserInfo) {

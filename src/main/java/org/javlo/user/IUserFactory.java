@@ -25,8 +25,6 @@ public interface IUserFactory {
 
 	public abstract User getCurrentUser(HttpSession session);
 
-	public abstract void setCurrentUser(HttpSession session, User user);
-
 	public abstract void releaseUserInfoList();
 
 	public abstract void clearUserInfoList();

@@ -25,6 +25,8 @@ import org.javlo.message.MessageRepository;
 import org.javlo.module.Module;
 import org.javlo.module.ModuleContext;
 import org.javlo.service.RequestService;
+import org.javlo.user.AdminUserFactory;
+import org.javlo.user.AdminUserSecurity;
 import org.javlo.user.IUserFactory;
 import org.javlo.user.IUserInfo;
 import org.javlo.user.User;
@@ -40,17 +42,25 @@ public class UserAction extends AbstractModuleAction {
 	@Override
 	public String prepare(ContentContext ctx, ModuleContext moduleContext) throws Exception {
 
-		UserModuleContext userContext = UserModuleContext.getInstance(ctx.getRequest().getSession());
+		UserModuleContext userContext = UserModuleContext.getInstance(ctx.getRequest());
 		RequestService requestService = RequestService.getInstance(ctx.getRequest());
 
 		ctx.getRequest().setAttribute("users", userContext.getUserFactory(ctx).getUserInfoList());
 
-		if (requestService.getParameter("user", null) == null || requestService.getParameter("back", null) != null) {
+		if ((requestService.getParameter("user", null) == null || requestService.getParameter("back", null) != null) && !userContext.getMode().equals(UserModuleContext.VIEW_MY_SELF)) {
 			moduleContext.getCurrentModule().restoreAll();
 		} else {
 			IUserFactory userFactory = userContext.getUserFactory(ctx);
 			GlobalContext globalContext = GlobalContext.getInstance(ctx.getRequest());
 			User user = userFactory.getUser(requestService.getParameter("user", null));
+
+			if (userContext.getMode().equals(UserModuleContext.VIEW_MY_SELF)) {
+				Module currentModule = moduleContext.getCurrentModule();
+				currentModule.setToolsRenderer(null);
+				currentModule.setRenderer("/jsp/edit.jsp");				
+				user = userFactory.getUser(userFactory.getCurrentUser(ctx.getRequest().getSession()).getLogin());
+			}
+
 			if (user == null) {
 				return "user not found : " + requestService.getParameter("user", null);
 			}
@@ -65,15 +75,14 @@ public class UserAction extends AbstractModuleAction {
 			List<String> roles = new LinkedList<String>(userFactory.getAllRoles(globalContext, ctx.getRequest().getSession()));
 			Collections.sort(roles);
 			ctx.getRequest().setAttribute("roles", roles);
-			
-			
+
 		}
 
 		return super.prepare(ctx, moduleContext);
 	}
 
-	public String performChangeMode(ContentContext ctx, RequestService requestService, HttpSession session) {
-		UserModuleContext userContext = UserModuleContext.getInstance(session);
+	public String performChangeMode(ContentContext ctx, RequestService requestService) {
+		UserModuleContext userContext = UserModuleContext.getInstance(ctx.getRequest());
 		String mode = requestService.getParameter("mode", "");
 		userContext.setMode(mode);
 		if (userContext.getUserFactory(ctx) == null) {
@@ -84,15 +93,15 @@ public class UserAction extends AbstractModuleAction {
 		return null;
 	}
 
-	public String performEdit(Module currentModule) throws IllegalArgumentException, IllegalAccessException, InvocationTargetException {	
+	public String performEdit(Module currentModule) throws IllegalArgumentException, IllegalAccessException, InvocationTargetException {
 		currentModule.setToolsRenderer(null);
 		currentModule.setRenderer("/jsp/edit.jsp");
 		return null;
 	}
 
-	public String performUpdate(ContentContext ctx, GlobalContext globalContext, RequestService requestService, StaticConfig staticConfig, HttpSession session, Module currentModule, I18nAccess i18nAccess, MessageRepository messageRepository) {
+	public String performUpdate(ContentContext ctx, GlobalContext globalContext, RequestService requestService, StaticConfig staticConfig, AdminUserSecurity adminUserSecurity, AdminUserFactory adminUserFactory, HttpSession session, Module currentModule, I18nAccess i18nAccess, MessageRepository messageRepository) {
 		if (requestService.getParameter("ok", null) != null) {
-			UserModuleContext userContext = UserModuleContext.getInstance(ctx.getRequest().getSession());
+			UserModuleContext userContext = UserModuleContext.getInstance(ctx.getRequest());
 			IUserFactory userFactory = userContext.getUserFactory(ctx);
 			User user = userFactory.getUser(requestService.getParameter("user", null));
 			if (user == null) {
@@ -101,19 +110,19 @@ public class UserAction extends AbstractModuleAction {
 			
 			IUserInfo userInfo = user.getUserInfo();
 			String pwd = user.getPassword();
-			
+
 			try {
-				BeanHelper.copy(new RequestParameterMap( ctx.getRequest() ), userInfo);
-				
+				BeanHelper.copy(new RequestParameterMap(ctx.getRequest()), userInfo);
+
 				if (staticConfig.isPasswordEncryt()) {
 					if (!userInfo.getPassword().equals(pwd)) {
 						userInfo.setPassword(StringHelper.encryptPassword(userInfo.getPassword()));
 					}
 				}
-				
+
 				userFactory.updateUserInfo(userInfo);
 				userFactory.store();
-				
+
 				Set<String> newRoles = new HashSet<String>();
 				Set<String> allRoles = userFactory.getAllRoles(globalContext, session);
 				for (String role : allRoles) {
@@ -122,25 +131,33 @@ public class UserAction extends AbstractModuleAction {
 					}
 				}
 				IUserInfo ui = user.getUserInfo();
-				ui.setRoles(newRoles);
-				userFactory.updateUserInfo(ui);
+				if (adminUserSecurity.haveRight(adminUserFactory.getCurrentUser(ctx.getRequest().getSession()), AdminUserSecurity.ADMIN_USER_ROLE, AdminUserSecurity.GENERAL_ADMIN)) {				
+					ui.setRoles(newRoles);
+					userFactory.updateUserInfo(ui);
+				} else {
+					newRoles.removeAll(ui.getRoles());
+					if (newRoles.size() > 0) {
+						messageRepository.setGlobalMessageAndNotification(ctx, new GenericMessage(i18nAccess.getText("global.message.noright"), GenericMessage.ERROR));
+					}
+				}
+
 			} catch (Exception e) {
 				e.printStackTrace();
 				return e.getMessage();
 			}
-			
-			messageRepository.setGlobalMessageAndNotification(ctx,new GenericMessage(i18nAccess.getText("user.message.updated", new String[][] {{"user", user.getLogin() }}), GenericMessage.INFO));
+
+			messageRepository.setGlobalMessageAndNotification(ctx, new GenericMessage(i18nAccess.getText("user.message.updated", new String[][] { { "user", user.getLogin() } }), GenericMessage.INFO));
 		}
 
 		return null;
 	}
-	
+
 	public String performCreateUser(ContentContext ctx, RequestService requestService, I18nAccess i18nAccess, MessageRepository messageRepository) {
 		String newUser = requestService.getParameter("user", null);
 		if (newUser == null) {
 			return "bad request structure : need 'user' as parameter for create a new user.";
 		}
-		UserModuleContext userContext = UserModuleContext.getInstance(ctx.getRequest().getSession());
+		UserModuleContext userContext = UserModuleContext.getInstance(ctx.getRequest());
 		IUserFactory userFactory = userContext.getUserFactory(ctx);
 		IUserInfo newUserInfo = userFactory.createUserInfos();
 		newUserInfo.setId(newUser);
@@ -154,22 +171,22 @@ public class UserAction extends AbstractModuleAction {
 				return e.getMessage();
 			}
 		} catch (UserAllreadyExistException e) {
-			messageRepository.setGlobalMessage(new GenericMessage(i18nAccess.getText("user.message.user-exist"), GenericMessage.ERROR));			
+			messageRepository.setGlobalMessage(new GenericMessage(i18nAccess.getText("user.message.user-exist"), GenericMessage.ERROR));
 		}
-		
-		messageRepository.setGlobalMessageAndNotification(ctx,new GenericMessage(i18nAccess.getText("user.message.create", new String[][] {{"user", newUser }}), GenericMessage.INFO));
-		
-		return null;	
+
+		messageRepository.setGlobalMessageAndNotification(ctx, new GenericMessage(i18nAccess.getText("user.message.create", new String[][] { { "user", newUser } }), GenericMessage.INFO));
+
+		return null;
 	}
-	
+
 	public String performDeleteUser(ContentContext ctx, RequestService requestService, I18nAccess i18nAccess, MessageRepository messageRepository) throws UserAllreadyExistException {
-		UserModuleContext userContext = UserModuleContext.getInstance(ctx.getRequest().getSession());
+		UserModuleContext userContext = UserModuleContext.getInstance(ctx.getRequest());
 		IUserFactory userFactory = userContext.getUserFactory(ctx);
-		
+
 		Collection<IUserInfo> users = new LinkedList<IUserInfo>(userFactory.getUserInfoList());
 		int deletedUser = 0;
 		for (IUserInfo ui : users) {
-			if (requestService.getParameter(ui.getLogin(), null)  != null) {
+			if (requestService.getParameter(ui.getLogin(), null) != null) {
 				userFactory.deleteUser(ui.getLogin());
 				deletedUser++;
 			}
@@ -182,13 +199,13 @@ public class UserAction extends AbstractModuleAction {
 		}
 
 		if (deletedUser > 0) {
-			messageRepository.setGlobalMessageAndNotification(ctx,new GenericMessage(i18nAccess.getText("user.message.delete", new String[][] {{"deletedUser", ""+deletedUser }}), GenericMessage.INFO));
+			messageRepository.setGlobalMessageAndNotification(ctx, new GenericMessage(i18nAccess.getText("user.message.delete", new String[][] { { "deletedUser", "" + deletedUser } }), GenericMessage.INFO));
 		} else {
 			messageRepository.setGlobalMessage(new GenericMessage(i18nAccess.getText("user.message.no-delete"), GenericMessage.ALERT));
 		}
-		
+
 		return null;
-		
+
 	}
 
 }

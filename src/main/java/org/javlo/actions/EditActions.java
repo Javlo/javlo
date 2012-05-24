@@ -88,7 +88,7 @@ import org.javlo.user.IUserFactory;
 import org.javlo.user.IUserInfo;
 import org.javlo.user.UserEditFilter;
 import org.javlo.user.UserFactory;
-import org.javlo.user.UserInfos;
+import org.javlo.user.UserInfo;
 import org.javlo.user.exception.UserAllreadyExistException;
 import org.javlo.utils.CSVFactory;
 import org.javlo.ztatic.FileCache;
@@ -1562,7 +1562,7 @@ public class EditActions {
 					if (userInfoList.size() > 0) {
 						// userFact.clearUserInfoList();
 						for (Object element2 : userInfoList) {
-							UserInfos element = (UserInfos) element2;
+							UserInfo element = (UserInfo) element2;
 							userFact.mergeUserInfo(element);
 						}
 						userFact.store();
@@ -3105,7 +3105,7 @@ public class EditActions {
 					if (userInfoList.size() > 0) {
 						userFact.clearUserInfoList();
 						for (Object element2 : userInfoList) {
-							UserInfos element = (UserInfos) element2;
+							UserInfo element = (UserInfo) element2;
 							try {
 								userFact.addUserInfo(element);
 							} catch (UserAllreadyExistException e) {

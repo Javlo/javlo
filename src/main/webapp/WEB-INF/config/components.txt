@@ -7,17 +7,22 @@
 
 org.javlo.component.title.Title
 org.javlo.component.title.SubTitle
+org.javlo.component.title.PageTitle
+org.javlo.component.title.MenuTitle
 
 --content.title.text
 
 org.javlo.component.text.Description
 org.javlo.component.text.Paragraph
 org.javlo.component.text.XHTML
+org.javlo.component.list.TextList
 
 --content.title.links
 
 org.javlo.component.links.ExternalLink
 org.javlo.component.links.InternalLink
+org.javlo.component.links.PageReferenceComponent
+org.javlo.component.links.ChildrenLink
 
 --content.title.graphic
 
@@ -26,9 +31,14 @@ org.javlo.component.image.GlobalImage
 --content.title.container
 
 org.javlo.component.container.Box
+org.javlo.component.container.RepeatContainer
+org.javlo.component.container.DynamicComponentList
 
 --content.title.web2
 org.javlo.component.meta.Tags
+org.javlo.component.meta.Category
+org.javlo.component.gadget.CountAccess
+org.javlo.component.gadget.CountTool
 
 --content.title.special
 

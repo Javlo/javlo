@@ -38,6 +38,7 @@ if (copiedPath == null) {
 }
 
 int openCount = 0;
+int totalComp = 0;
 
 /** force edit mode in previe mode **/
 ctx.setRenderMode(ContentContext.EDIT_MODE);
@@ -77,7 +78,10 @@ components = allComponents.toArray(components);
 	%><div class="new-component-container" id="comp-child-<%=previousId%>"></div><%
 }
 
-for (IContentVisualComponent comp : components) {
+for (int i=0; i<components.length; i++) {
+	IContentVisualComponent comp = components[i];
+
+	totalComp++;
 	String inputSuffix = "-"+comp.getId();
 	String helpText = componentContext.getHelpHTML(ctx, comp);
 %>
@@ -87,7 +91,7 @@ for (IContentVisualComponent comp : components) {
       	  <li class="title"><span style="color: #<%=comp.getHexColor()%>"><%=comp.getComponentLabel(ctx, globalContext.getEditLanguage()) %></span></li>	
           <li><a href="#tab1<%=inputSuffix%>">${i18n.edit["global.content"]}</a></li>
           <li><a href="#tab2<%=inputSuffix%>">${i18n.edit["global.config"]}</a></li>          
-          <li><a href="#tab3<%=inputSuffix%>">${i18n.edit["global.help"]}</a></li>
+          <%if (helpText != null) {%><li><a href="#tab3<%=inputSuffix%>">${i18n.edit["global.help"]}</a></li><%}%>
       </ul>
       <div class="header-action">
       	<a class="delete ajax" title="${i18n.edit['global.delete']}" href="${info.currentURL}?webaction=delete&id=<%=comp.getId()%>"></a>
@@ -105,16 +109,25 @@ for (IContentVisualComponent comp : components) {
       <div id="tab2<%=inputSuffix%>" class="config">
       	<%=comp.getXHTMLConfig(ctx)%>
       </div>
+      <%if (helpText != null) {%>
       <div id="tab3<%=inputSuffix%>" class="help">
-      	<%if (helpText != null) {%><%=helpText%><%} else {%><p>${i18n.edit["help.notfound"]}</p><%}%>
-      </div>
+      	<%=helpText%>
+      </div><%}%>
       <input type="hidden" name="id-<%=comp.getId()%>" value="true" /> 
   </div>
   <div class="insert-line" id="insert-line-<%=comp.getId()%>">
 	<a class="action-button ajax" href="${info.currentURL}?webaction=insert&previous=<%=comp.getId()%>&type=<%=currentTypeComponent.getType()%>"><%=insertHere%></a>
-  </div>  
+  </div>
  </div>
- <div class="new-component-container" id="comp-child-<%=comp.getId()%>"></div>
+ <div class="new-component-container" id="comp-child-<%=comp.getId()%>"></div><%
+  if (totalComp > 40 && request.getParameter("display-all") == null) {
+  %>
+  <div class="insert-line" id="insert-line-<%=comp.getId()%>">
+	<a class="action-button" href="${info.currentURL}?display-all=true">${i18n.edit["edit.message.display-all-components"]}</a>
+  </div><%
+  i = components.length; // break  
+  }
+  %>  
 <%}
 %>
 

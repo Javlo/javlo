@@ -13,6 +13,7 @@ import javax.servlet.http.HttpSession;
 import org.javlo.context.GlobalContext;
 import org.javlo.helper.URLHelper;
 import org.javlo.user.AdminUserFactory;
+import org.javlo.user.AdminUserSecurity;
 import org.javlo.user.IUserFactory;
 
 public class ModuleContext {
@@ -65,9 +66,13 @@ public class ModuleContext {
 							String webappRoot = session.getServletContext().getRealPath("/");
 							String moduleRoot = dir.getAbsolutePath().replace(webappRoot, "/");
 							Module module = new Module(configFile,new Locale(globalContext.getEditLanguage()),moduleRoot);
-							if (module.haveRight(userFactory.getCurrentUser(session)) && globalContext.getModules().contains(module.getName())) {								
+							
+							AdminUserSecurity adminUserSecurity = AdminUserSecurity.getInstance(session.getServletContext());
+							
+							if ((module.haveRight(userFactory.getCurrentUser(session)) && globalContext.getModules().contains(module.getName())) || adminUserSecurity.isAdmin(userFactory.getCurrentUser(session))) {								
 								modules.add(module);
 							}
+							
 							allModules.add(module);
 						} catch (IOException e) {
 							logger.severe(e.getMessage());

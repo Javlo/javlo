@@ -9,7 +9,6 @@ public interface IUserInfo {
 	public static final char ROLES_SEPARATOR = ';';
 	public static final String PREFERRED_LANGUAGE_SEPARATOR = ",";
 
-	public String id();
 	public String getLogin();
 	public String getTitle();
 	public String getFirstName();

@@ -19,7 +19,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-import javax.servlet.ServletContext;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 
@@ -56,7 +55,7 @@ public class UserFactory implements IUserFactory, Serializable {
 	public static final String USER_FACTORY_KEY = "_user_factory_";
 
 	private String userInfoFile = null;
-
+	
 	protected List<IUserInfo> userInfoList = null; // TODO: create a external
 	// application scope class
 
@@ -72,7 +71,7 @@ public class UserFactory implements IUserFactory, Serializable {
 			e.printStackTrace();
 		}
 		if (res == null) {
-			res = new UserFactory();
+			res = new UserFactory();			
 		}
 		res.init(globalContext, session);
 		return res;
@@ -100,8 +99,8 @@ public class UserFactory implements IUserFactory, Serializable {
 	public void addUserInfo(IUserInfo userInfo) throws UserAllreadyExistException {
 		synchronized (lock) {
 			userInfo.setModificationDate(new Date());
-			if (getUserInfos(userInfo.id()) != null) {
-				throw new UserAllreadyExistException(userInfo.id() + " allready exist.");
+			if (getUserInfos(userInfo.getLogin()) != null) {
+				throw new UserAllreadyExistException(userInfo.getLogin() + " allready exist.");
 			}
 			userInfoList = getUserInfoList();
 			if (userInfoList == null) {
@@ -150,7 +149,7 @@ public class UserFactory implements IUserFactory, Serializable {
 	}
 
 	protected User createUser(String login, Set<String> roles) {
-		UserInfos ui = createUserInfos();
+		UserInfo ui = createUserInfos();
 		ui.setLogin(login);
 		ui.setRoles(roles);
 
@@ -166,8 +165,8 @@ public class UserFactory implements IUserFactory, Serializable {
 	 * @see org.javlo.user.IUserFactory#createUserInfos()
 	 */
 	@Override
-	public UserInfos createUserInfos() {
-		return new UserInfos();
+	public UserInfo createUserInfos() {
+		return new UserInfo();
 	}
 
 	/*
@@ -306,7 +305,7 @@ public class UserFactory implements IUserFactory, Serializable {
 		Collection<IUserInfo> userInfoList = getUserInfoList();
 		synchronized (lock) {
 			for (IUserInfo userInfo : userInfoList) {
-				if (userInfo.id().equals(id)) {
+				if (userInfo.getLogin().equals(id)) {
 					return userInfo;
 				}
 			}
@@ -318,8 +317,7 @@ public class UserFactory implements IUserFactory, Serializable {
 	public void init(GlobalContext globalContext, HttpSession newSession) {
 		dataFolder = globalContext.getDataFolder();
 		StaticConfig staticConfig = StaticConfig.getInstance(newSession.getServletContext());
-		userInfoFile = staticConfig.getUserInfoFile();
-
+		userInfoFile = staticConfig.getUserInfoFile();		
 	}
 
 	/*
@@ -383,14 +381,6 @@ public class UserFactory implements IUserFactory, Serializable {
 		return user;
 	}
 
-	/**
-	 * @deprecated, use login(HttpServletRequest request, String login, String password) instead
-	 */
-	/*
-	 * @Override public User login(GlobalContext globalContext, String login, String password) { User user = null; synchronized (lock) { IUserInfo[] users = getUserInfoList(); for (int i = 0; i < users.length; i++) { if (users[i].getLogin() == null) { logger.severe("bad user structure : login not found."); } else if (users[i].getPassword() == null) { logger.severe("bad user structure : password not found ["+users[i].getLogin()+"]"); } else if ((users[i].getLogin().equals(login)) && (users[i].getPassword().equals(password))) { user = new User(users[i]); logger.info("login: " + login + " are logged."); } } } if (user == null) { if (globalContext.administratorLogin(login, password)) { user = createUser(login, new String[] { AdminUserSecurity.FULL_CONTROL_ROLE }); } } if (user == null) { logger.info("login: " + login + " fail, try hard login."); EditContext editCtx = EditContext.getInstance(session); editCtx.hardLogin(login, password); user = editCtx.getEditUser(); }
-	 * session.setAttribute(SESSION_KEY, user); return user; }
-	 */
-
 	/*
 	 * (non-Javadoc)
 	 * 
@@ -410,7 +400,7 @@ public class UserFactory implements IUserFactory, Serializable {
 
 		synchronized (mergeLock) {
 
-			IUserInfo currentUserInfo = getUserInfos(userInfo.id());
+			IUserInfo currentUserInfo = getUserInfos(userInfo.getLogin());
 			if (currentUserInfo == null) {
 				try {
 					addUserInfo(userInfo);
@@ -448,16 +438,6 @@ public class UserFactory implements IUserFactory, Serializable {
 
 	@Override
 	public void reload(GlobalContext globalContext, HttpSession session) {
-	}
-
-	public void setContext(ServletContext application) {
-		// TODO Auto-generated method stub
-
-	}
-
-	@Override
-	public void setCurrentUser(HttpSession session, User user) {
-		session.setAttribute(SESSION_KEY, user);
 	}
 
 	/*
@@ -524,7 +504,7 @@ public class UserFactory implements IUserFactory, Serializable {
 
 		synchronized (lock) {
 			userInfo.setModificationDate(new Date());
-			User user = getUser(userInfo.id());
+			User user = getUser(userInfo.getLogin());
 			IUserInfo currentUserInfo = user.getUserInfo();
 			try {
 				if (currentUserInfo != null) {
@@ -534,7 +514,6 @@ public class UserFactory implements IUserFactory, Serializable {
 			} catch (Exception e) {
 				Logger.log(e);
 			}
-
 		}
 
 	}
