@@ -74,8 +74,6 @@ public class DynamicComponentList extends AbstractPropertiesComponent {
 
 	boolean fieldMatch(ContentContext ctx, String name, String value) {
 
-		System.out.println("***** DynamicComponentList.fieldMatch : name = " + name); // TODO: remove debug trace
-
 		String filterType = properties.getProperty(name + FILTER_TYPE_SUFFIX, CONTAINS);
 		String filter = properties.getProperty(name + FILTER_SUFFIX, "");
 
