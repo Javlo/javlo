@@ -59,7 +59,7 @@ public class LoginFilter implements Filter {
 			RequestService requestService = RequestService.getInstance(httpRequest);
 
 			String loginId = requestService.getParameter(RemoteLoginService.PARAM_NAME, null);
-			if (loginId != null) {
+			/*if (loginId != null) {
 				logger.fine("try a remote login with id : " + loginId);
 				RemoteLoginService remoteLoginService = RemoteLoginService.getInstance(httpRequest.getSession().getServletContext());
 				User user = remoteLoginService.login(loginId);
@@ -71,7 +71,7 @@ public class LoginFilter implements Filter {
 					next.doFilter(httpRequest, response);
 					return;
 				}
-			}
+			}*/
 
 			Principal logoutUser = null;
 

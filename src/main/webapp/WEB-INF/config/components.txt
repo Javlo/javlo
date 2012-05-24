@@ -39,6 +39,7 @@ org.javlo.component.meta.Tags
 org.javlo.component.meta.Category
 org.javlo.component.gadget.CountAccess
 org.javlo.component.gadget.CountTool
+org.javlo.component.form.FormMailingComponent
 
 --content.title.special
 
