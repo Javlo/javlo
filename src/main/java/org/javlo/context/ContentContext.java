@@ -336,6 +336,12 @@ public class ContentContext {
 		return outContext;
 	}
 	
+	public ContentContext getContextWithArea(String area) {
+		ContentContext outContext = new ContentContext(this);
+		outContext.setArea(area);
+		return outContext;
+	}
+	
 	public ContentContext getContextWithOtherRenderMode(int mode) {
 		ContentContext outContext = new ContentContext(this);
 		outContext.setRenderMode(mode);

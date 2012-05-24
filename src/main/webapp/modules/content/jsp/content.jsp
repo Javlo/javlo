@@ -122,7 +122,7 @@ for (int i=0; i<components.length; i++) {
  <div class="new-component-container" id="comp-child-<%=comp.getId()%>"></div><%
   if (totalComp > 40 && request.getParameter("display-all") == null) {
   %>
-  <div class="insert-line" id="insert-line-<%=comp.getId()%>">
+  <div class="insert-line">
 	<a class="action-button" href="${info.currentURL}?display-all=true">${i18n.edit["edit.message.display-all-components"]}</a>
   </div><%
   i = components.length; // break  

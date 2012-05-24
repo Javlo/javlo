@@ -57,10 +57,12 @@ public class Edit extends AbstractModuleAction {
 
 		String insertXHTML = "<a class=\"action-button ajax\" href=\"" + URLHelper.createURL(ctx) + "?webaction=insert&previous=0&type=" + currentTypeComponent.getType() + "\">" + insertHere + "</a>";
 		ctx.addAjaxInsideZone("insert-line-0", insertXHTML);
-
-		IContentComponentsList elems = ctx.getCurrentPage().getContent(ctx);
-		while (elems.hasNext(ctx)) {
-			IContentVisualComponent comp = elems.next(ctx);
+		
+		ContentContext areaCtx = ctx.getContextWithArea(editContext.getCurrentArea());
+		
+		IContentComponentsList elems = ctx.getCurrentPage().getContent(areaCtx);
+		while (elems.hasNext(areaCtx)) {
+			IContentVisualComponent comp = elems.next(areaCtx);
 			insertXHTML = "<a class=\"action-button ajax\" href=\"" + URLHelper.createURL(ctx) + "?webaction=insert&previous=" + comp.getId() + "&type=" + currentTypeComponent.getType() + "\">" + insertHere + "</a>";
 			ctx.addAjaxInsideZone("insert-line-" + comp.getId(), insertXHTML);
 		}
