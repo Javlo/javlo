@@ -65,7 +65,7 @@ public class CatchAllFilter implements Filter {
 			I18nAccess i18nAccess = I18nAccess.getInstance(globalContext, httpRequest.getSession());
 			RequestService requestService = RequestService.getInstance(httpRequest);
 
-			String loginId = requestService.getParameter(RemoteLoginService.PARAM_NAME, null);
+			/*String loginId = requestService.getParameter(RemoteLoginService.PARAM_NAME, null);
 			if (loginId != null) {
 				logger.fine("try a remote login with id : " + loginId);
 				RemoteLoginService remoteLoginService = RemoteLoginService.getInstance(httpRequest.getSession().getServletContext());
@@ -78,7 +78,7 @@ public class CatchAllFilter implements Filter {
 					// next.doFilter(httpRequest, response);
 					return;
 				}
-			}
+			}*/
 
 			Principal logoutUser = null;
 

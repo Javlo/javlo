@@ -41,7 +41,7 @@ import org.javlo.service.RequestService;
 import org.javlo.user.IUserFactory;
 import org.javlo.user.IUserInfo;
 import org.javlo.user.UserFactory;
-import org.javlo.user.UserInfos;
+import org.javlo.user.UserInfo;
 import org.javlo.user.exception.UserAllreadyExistException;
 
 /**
@@ -701,8 +701,8 @@ public class UserRegistrationComponent extends AbstractVisualComponent implement
 				userInfo.setFirstName(StringHelper.neverNull(firstName));
 				userInfo.setLastName(StringHelper.neverNull(lastName));
 				userInfo.setPassword(StringHelper.neverNull(password));
-				if (userInfo instanceof UserInfos) {
-					UserInfos ui = (UserInfos) userInfo;
+				if (userInfo instanceof UserInfo) {
+					UserInfo ui = (UserInfo) userInfo;
 					ui.setOrganization(StringHelper.neverNull(organization));
 					ui.setAddress(StringHelper.neverNull(street));
 					ui.setPostCode(StringHelper.neverNull(postcode));

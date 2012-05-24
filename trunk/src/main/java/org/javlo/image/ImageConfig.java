@@ -186,22 +186,22 @@ public class ImageConfig {
 
 	public int getMarginLeft(Device device, String filter, String area) {
 		String key = getKey(device, filter, area, "margin-left");
-		return  properties.getInt(key, -1);
+		return  properties.getInt(key, 0);
 	}
 
 	public int getMarginRigth(Device device, String filter, String area) {
 		String key = getKey(device, filter, area, "margin-right");
-		return  properties.getInt(key, -1);
+		return  properties.getInt(key, 0);
 	}
 
 	public int getMarginTop(Device device, String filter, String area) {
 		String key = getKey(device, filter, area, "margin-top");
-		return  properties.getInt(key, -1);
+		return  properties.getInt(key, 0);
 	}
 
 	public int getMarginBottom(Device device, String filter, String area) {
 		String key = getKey(device, filter, area, "margin-bottom");
-		return  properties.getInt(key, -1);
+		return  properties.getInt(key, 0);
 	}
 
 	public String getFileExtension(Device device, String filter, String area) {

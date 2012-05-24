@@ -26,7 +26,7 @@ import org.javlo.service.RequestService;
 import org.javlo.user.IUserFactory;
 import org.javlo.user.IUserInfo;
 import org.javlo.user.UserFactory;
-import org.javlo.user.UserInfos;
+import org.javlo.user.UserInfo;
 import org.javlo.user.exception.UserAllreadyExistException;
 
 /**
@@ -82,9 +82,9 @@ public class AddressFormRegisterComponent extends FormComponent {
 					}
 				}
 				if (msg == null) {
-					UserInfos userInfo;
+					UserInfo userInfo;
 					if (fact.getCurrentUser(request.getSession()) == null) {
-						userInfo = (UserInfos) fact.createUserInfos();
+						userInfo = (UserInfo) fact.createUserInfos();
 						userInfo.setId(StringHelper.getRandomId());
 						userInfo.setLogin(form.getValue("email"));
 
@@ -114,7 +114,7 @@ public class AddressFormRegisterComponent extends FormComponent {
 							userInfo.setRoles(rolesMailing);
 						}
 					} else {
-						userInfo = (UserInfos) fact.getCurrentUser(request.getSession()).getUserInfo();
+						userInfo = (UserInfo) fact.getCurrentUser(request.getSession()).getUserInfo();
 					}
 					userInfo.setPassword("");
 					userInfo.setEmail(form.getValue("email"));

@@ -1244,8 +1244,7 @@ public class GlobalContext implements Serializable {
 
 	private Class<IUserFactory> getUserFactoryClass() throws ClassNotFoundException {
 		if (userFactoryClass == null) {
-			userFactoryClassName = getUserFactoryClassName();
-			System.out.println("***** GlobalContext.getUserFactoryClass : userFactoryClassName= "+userFactoryClassName); //TODO: remove debug trace
+			userFactoryClassName = getUserFactoryClassName();			
 			userFactoryClass = (Class<IUserFactory>) Class.forName(userFactoryClassName);
 		}
 		return userFactoryClass;

@@ -104,7 +104,7 @@
         	<h3>${currentUser.name}</h3>
             <small>${currentUser.userInfo.email}&nbsp;</small>
             <p>
-            	<a href="">Account Settings</a> <a href="${info.currentURL}?edit-logout=logout">Logout</a>
+            	<a href="${info.currentURL}?module=users&webaction=user.ChangeMode&mode=myself">${i18n.edit["global.account-setting"]}</a> <a href="${info.currentURL}?edit-logout=logout">${i18n.edit["global.logout"]}</a>
             </p>
         </div><!-- info -->
     </div><!-- accountinfo -->

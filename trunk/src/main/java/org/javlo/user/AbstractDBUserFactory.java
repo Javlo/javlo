@@ -69,8 +69,8 @@ public abstract class AbstractDBUserFactory extends UserFactory {
 	}
 
 	@Override
-	public UserInfos createUserInfos() {
-		return new UserInfos();
+	public UserInfo createUserInfos() {
+		return new UserInfo();
 	}
 
 	@Override

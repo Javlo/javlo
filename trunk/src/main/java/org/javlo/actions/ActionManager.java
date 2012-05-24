@@ -20,10 +20,14 @@ import org.javlo.context.GlobalContext;
 import org.javlo.ecom.EcomActions;
 import org.javlo.helper.ConfigHelper;
 import org.javlo.helper.StringHelper;
+import org.javlo.i18n.I18nAccess;
 import org.javlo.message.GenericMessage;
 import org.javlo.message.MessageRepository;
 import org.javlo.module.Module;
 import org.javlo.module.ModuleContext;
+import org.javlo.user.AdminUserFactory;
+import org.javlo.user.AdminUserSecurity;
+import org.javlo.user.User;
 
 /**
  * @author pvandermaesen manage the actions for wcms.
@@ -41,8 +45,12 @@ public class ActionManager {
 
 	static final String ACTION_SEPARATOR = ".";
 
+	static final String removeGroup(String actionName) {
+		return actionName.substring(actionName.indexOf(".") + 1);
+	}
+
 	static final String formatActionComponentName(String name) {
-		String workingName = name.substring(name.indexOf(".") + 1);
+		String workingName = removeGroup(name);
 		return formatActionName(workingName);
 	}
 
@@ -57,7 +65,7 @@ public class ActionManager {
 
 	public static IAction getAction(HttpServletRequest request, String group) throws IOException, ClassNotFoundException, InstantiationException, IllegalAccessException {
 		IAction outAction = getActionComponent(request, group);
-		if (outAction != null) {
+		if (outAction == null) {
 			return getActionModule(request, group);
 		} else {
 			return outAction;
@@ -134,23 +142,41 @@ public class ActionManager {
 		GlobalContext globalContext = GlobalContext.getInstance(request);
 		logger.fine("perform action : " + actionName);
 
+		/*
+		 * AdminUserSecurity adminUserSecurity = AdminUserSecurity.getInstance(request.getSession().getServletContext()); IUserFactory userFactory = AdminUserFactory.createAdminUserFactory(globalContext, request.getSession()); if (!adminUserSecurity.haveRight(userFactory.getCurrentUser(request.getSession()), removeGroup(actionName).toLowerCase() )) { I18nAccess i18nAccess = I18nAccess.getInstance(request); ContentContext ctx = ContentContext.getContentContext(request, response); MessageRepository msgRepo = MessageRepository.getInstance(ctx); msgRepo.setGlobalMessageAndNotification(ctx,new GenericMessage(i18nAccess.getText("global.message.noright")+ " ("+actionName+')', GenericMessage.ERROR)); return null; }
+		 */
+
 		String group = getActionGroup(actionName);
 		String message = null;
 
 		try {
 			IAction action;
+			ModuleContext moduleContext = ModuleContext.getInstance(globalContext, request.getSession());
 			if (group == null) {
-				ModuleContext moduleContext = ModuleContext.getInstance(globalContext, request.getSession());
 				action = moduleContext.getCurrentModule().getAction();
 			} else {
 				action = getAction(request, group);
 			}
 
 			if (action != null) {
+				/** security **/
+				if (action instanceof IModuleAction) { // if module action
+					User currentUser = AdminUserFactory.createAdminUserFactory(globalContext, request.getSession()).getCurrentUser(request.getSession());
+					if (!AdminUserSecurity.getInstance(request.getSession().getServletContext()).isAdmin(currentUser)) {
+						if (!moduleContext.getCurrentModule().haveRight(currentUser)) {
+							I18nAccess i18nAccess = I18nAccess.getInstance(request);
+							ContentContext ctx = ContentContext.getContentContext(request, response);
+							MessageRepository msgRepo = MessageRepository.getInstance(ctx);
+							msgRepo.setGlobalMessageAndNotification(ctx, new GenericMessage(i18nAccess.getText("global.message.noright") + " (" + actionName + ')', GenericMessage.ERROR));
+							return null;
+						}
+					}
+				}
 				message = invokeAction(request, response, action, actionName);
 			} else {
 				message = "actions class not found : " + action;
-				logger.severe(message);;
+				logger.severe(message);
+				;
 			}
 		} catch (Throwable t) {
 			if (t.getMessage() != null) {
@@ -163,10 +189,10 @@ public class ActionManager {
 			t.printStackTrace();
 		}
 
-		ContentContext ctx = ContentContext.getContentContext(request, response);		
-		MessageRepository msgRepo = MessageRepository.getInstance(ctx);		
+		ContentContext ctx = ContentContext.getContentContext(request, response);
+		MessageRepository msgRepo = MessageRepository.getInstance(ctx);
 		if (message != null) {
-			msgRepo.setGlobalMessageAndNotification(ctx,new GenericMessage(message, GenericMessage.ERROR));
+			msgRepo.setGlobalMessageAndNotification(ctx, new GenericMessage(message, GenericMessage.ERROR));
 		}
 
 		return message;
@@ -191,21 +217,21 @@ public class ActionManager {
 					paramsInstance[i] = ConfigHelper.smartInstance(clazzes[i], request, response);
 				}
 				if (method.getReturnType().isAssignableFrom(String.class)) {
-					return (String)method.invoke(action, paramsInstance);
+					return (String) method.invoke(action, paramsInstance);
 				} else {
-					message = "bad return type for a action method (must be a String) : "+method;
-					logger.severe(message);					
+					message = "bad return type for a action method (must be a String) : " + method;
+					logger.severe(message);
 				}
 			} else {
 				message = "method not found : " + methodName;
-				logger.warning(message);				
+				logger.warning(message);
 			}
 		} catch (Exception e) {
 			e.printStackTrace();
 			message = "method not found : " + methodName + " on : " + action.getClass().getCanonicalName();
-			logger.fine(message);			
+			logger.fine(message);
 		}
 		return message;
 	}
-	
+
 }

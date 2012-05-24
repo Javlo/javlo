@@ -23,7 +23,7 @@ import org.javlo.helper.URLHelper;
 import org.javlo.user.AdminUserSecurity;
 import org.javlo.user.User;
 import org.javlo.user.UserEditFilter;
-import org.javlo.user.UserInfos;
+import org.javlo.user.UserInfo;
 
 /**
  * @author pvanderm
@@ -379,7 +379,7 @@ public class EditContext implements Serializable {
 		}
 		// editUser=outUser;
 		if (outUser != null) {
-			UserInfos ui = new UserInfos();
+			UserInfo ui = new UserInfo();
 			ui.setLogin(outUser.getName());
 			ui.setRoles(new HashSet<String>( Arrays.asList(new String[] { AdminUserSecurity.GENERAL_ADMIN, AdminUserSecurity.FULL_CONTROL_ROLE })));
 			editUser = new User(ui);
@@ -408,7 +408,7 @@ public class EditContext implements Serializable {
 		}*/
 		// editUser=outUser;
 		if (outUser != null) {
-			UserInfos ui = new UserInfos();
+			UserInfo ui = new UserInfo();
 			ui.setLogin(outUser.getName());
 			ui.setRoles(new HashSet<String>( Arrays.asList(new String[] { AdminUserSecurity.GENERAL_ADMIN, AdminUserSecurity.FULL_CONTROL_ROLE })));
 			editUser = new User(ui);

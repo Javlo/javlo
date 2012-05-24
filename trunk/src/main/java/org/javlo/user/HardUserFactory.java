@@ -19,7 +19,7 @@ public class HardUserFactory extends AdminUserFactory {
 
 	public HardUserFactory() {
 		userInfoList = new LinkedList<IUserInfo>();
-		UserInfos ui = new UserInfos();
+		UserInfo ui = new UserInfo();
 		ui.setId("test1");
 		ui.setLogin("test1");
 		ui.setEmail("test1@noctis.be");
@@ -27,7 +27,7 @@ public class HardUserFactory extends AdminUserFactory {
 		ui.setRoles(new HashSet<String>());
 		ui.setPreferredLanguageRaw("fr");
 		userInfoList.add(ui);
-		ui = new UserInfos();
+		ui = new UserInfo();
 		ui.setId("test2");
 		ui.setLogin("test2");
 		ui.setEmail("test2@noctis.be");
@@ -52,8 +52,8 @@ public class HardUserFactory extends AdminUserFactory {
 	 */
 
 	@Override
-	public UserInfos createUserInfos() {
-		return new UserInfos();
+	public UserInfo createUserInfos() {
+		return new UserInfo();
 	}
 
 	@Override

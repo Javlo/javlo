@@ -38,6 +38,7 @@ import org.javlo.service.ContentService;
 import org.javlo.service.RequestService;
 import org.javlo.user.AdminUserFactory;
 import org.javlo.user.AdminUserSecurity;
+import org.javlo.user.IUserFactory;
 import org.javlo.user.UserFactory;
 import org.javlo.ztatic.FileCache;
 
@@ -265,7 +266,7 @@ public class ConfigHelper {
 			return ContentContext.getContentContext(request, response).getCurrentPage();
 		} else if (c.equals(UserFactory.class)) {
 			return UserFactory.createUserFactory(GlobalContext.getInstance(request), request.getSession());
-		} else if (c.equals(AdminUserFactory.class)) {
+		}  else if (c.equals(AdminUserFactory.class)) {
 			return AdminUserFactory.createUserFactory(GlobalContext.getInstance(request), request.getSession());
 		} else if (c.equals(AdminUserSecurity.class)) {
 			return AdminUserSecurity.getInstance(request.getSession().getServletContext());
