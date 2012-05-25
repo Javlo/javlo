@@ -123,14 +123,14 @@ public class AdminUserSecurity implements Serializable {
 		Set<String> publishSet = new HashSet<String>(Arrays.asList(publishRights));
 		rights.put(PUBLISHER_ROLE, publishSet);
 	}
+	
+	private static AdminUserSecurity instance;
 
-	public static final AdminUserSecurity getInstance(ServletContext application) {
-		AdminUserSecurity ctx = (AdminUserSecurity) application.getAttribute(SESSION_KEY);
-		if (ctx == null) {
-			ctx = new AdminUserSecurity();
-			application.setAttribute(SESSION_KEY, ctx);
+	public static final AdminUserSecurity getInstance() {
+		if (instance == null) {
+			instance = new AdminUserSecurity();			
 		}
-		return ctx;
+		return instance;
 	}
 
 	/**

@@ -269,7 +269,7 @@ public class ConfigHelper {
 		}  else if (c.equals(AdminUserFactory.class)) {
 			return AdminUserFactory.createUserFactory(GlobalContext.getInstance(request), request.getSession());
 		} else if (c.equals(AdminUserSecurity.class)) {
-			return AdminUserSecurity.getInstance(request.getSession().getServletContext());
+			return AdminUserSecurity.getInstance();
 		} else if (c.equals(PageConfiguration.class)) {
 			return PageConfiguration.getInstance(GlobalContext.getInstance(request));
 		} else if (c.equals(ModuleContext.class)) {

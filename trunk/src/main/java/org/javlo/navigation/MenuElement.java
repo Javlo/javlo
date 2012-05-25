@@ -461,7 +461,7 @@ public class MenuElement implements Serializable {
 	// String path = null;
 	String id = StringHelper.getRandomId();
 
-	String[] userRoles = new String[0];
+	Set<String> userRoles = new HashSet<String>();
 
 	private String templateId;
 
@@ -2325,7 +2325,7 @@ public class MenuElement implements Serializable {
 	/**
 	 * @return
 	 */
-	public String[] getUserRoles() {
+	public Set<String> getUserRoles() {
 		return userRoles;
 	}
 
@@ -2602,7 +2602,7 @@ public class MenuElement implements Serializable {
 		if (elem == null) {
 			return false;
 		}
-		return name.equals(elem.getName()) && visible == elem.visible && Arrays.equals(userRoles, elem.userRoles) && priority == elem.priority;
+		return name.equals(elem.getName()) && visible == elem.visible && userRoles.equals(elem.userRoles) && priority == elem.priority;
 	}
 
 	public boolean isRealContent(ContentContext ctx) throws Exception {
@@ -3022,13 +3022,8 @@ public class MenuElement implements Serializable {
 	/**
 	 * @param strings
 	 */
-	public void setUserRoles(String[] strings) {
-		userRoles = strings;
-		if (strings.length == 1) {
-			if (strings[0].trim().length() == 0) {
-				userRoles = new String[0];
-			}
-		}
+	public void setUserRoles(Set<String> roles) {
+		userRoles = roles;		
 	}
 
 	public void setValid(boolean valid) {

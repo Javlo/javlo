@@ -108,7 +108,7 @@ public class SynchronisationServlet extends HttpServlet {
 					response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
 					return;
 				}
-				AdminUserSecurity adminUserSecurity = AdminUserSecurity.getInstance(request.getSession().getServletContext());
+				AdminUserSecurity adminUserSecurity = AdminUserSecurity.getInstance();
 				if (!adminUserSecurity.haveRight(user, AdminUserSecurity.SYNCHRO_CLIENT)) {
 					response.setStatus(HttpServletResponse.SC_FORBIDDEN);
 					return;

@@ -623,10 +623,13 @@ public class Module {
 	}
 	
 	public boolean haveRight(User user) {
+		if (user == null) {
+			return false;
+		}
 		if (getRoles() == null) {
 			return true;
 		} else {
-			return !Collections.disjoint(user.getRoles(), getRoles());
+			return user.validForRoles(getRoles());
 		}		
 	}
 }

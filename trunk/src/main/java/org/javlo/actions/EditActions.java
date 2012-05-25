@@ -197,7 +197,7 @@ public class EditActions {
 	 * @throws Exception
 	 */
 	private static boolean checkPageSecurity(ContentContext ctx) throws Exception {
-		AdminUserSecurity adminUserSecurity = AdminUserSecurity.getInstance(ctx.getRequest().getSession().getServletContext());
+		AdminUserSecurity adminUserSecurity = AdminUserSecurity.getInstance();
 		GlobalContext globalContext = GlobalContext.getInstance(ctx.getRequest());
 		IUserFactory adminUserFactory = AdminUserFactory.createUserFactory(globalContext, ctx.getRequest().getSession());
 		ContentService.createContent(ctx.getRequest());
@@ -544,7 +544,7 @@ public class EditActions {
 		GlobalContext globalContext = GlobalContext.getInstance(request);
 		EditContext editCtx = EditContext.getInstance(globalContext, request.getSession());
 		MenuElement currentPage = ctx.getCurrentPage();
-		AdminUserSecurity userSec = AdminUserSecurity.getInstance(request.getSession().getServletContext());
+		AdminUserSecurity userSec = AdminUserSecurity.getInstance();
 		IUserFactory adminUserFactory = AdminUserFactory.createUserFactory(globalContext, request.getSession());
 		if (!currentPage.isBlocked()) {
 			currentPage.setBlocked(true);
@@ -2572,7 +2572,7 @@ public class EditActions {
 
 			ContentService content = ContentService.createContent(ctx.getRequest());
 			MenuElement currentPage = ctx.getCurrentPage();
-			AdminUserSecurity adminUserSecurity = AdminUserSecurity.getInstance(ctx.getRequest().getSession().getServletContext());
+			AdminUserSecurity adminUserSecurity = AdminUserSecurity.getInstance();
 			IUserFactory adminUserFactory = AdminUserFactory.createUserFactory(globalContext, ctx.getRequest().getSession());
 
 			RequestService requestService = RequestService.getInstance(request);
@@ -3173,7 +3173,7 @@ public class EditActions {
 
 		MenuElement currentElement = ctx.getCurrentPage();
 
-		currentElement.setUserRoles(userRoles);
+		currentElement.setUserRoles(new HashSet<String>(Arrays.asList(userRoles)));
 
 		GlobalContext globalContext = GlobalContext.getInstance(request);
 		PersistenceService persistenceService = PersistenceService.getInstance(globalContext);
@@ -3185,7 +3185,7 @@ public class EditActions {
 	public static String performValidallpages(HttpServletRequest request, HttpServletResponse response) throws Exception {
 		ContentService content = ContentService.createContent(request);
 		ContentContext ctx = ContentContext.getContentContext(request, response);
-		AdminUserSecurity userSec = AdminUserSecurity.getInstance(request.getSession().getServletContext());
+		AdminUserSecurity userSec = AdminUserSecurity.getInstance();
 		GlobalContext globalContext = GlobalContext.getInstance(request);
 		IUserFactory adminUserFactory = AdminUserFactory.createUserFactory(globalContext, request.getSession());
 
@@ -3214,7 +3214,7 @@ public class EditActions {
 		GlobalContext globalContext = GlobalContext.getInstance(request);
 		EditContext editCtx = EditContext.getInstance(globalContext, request.getSession());
 		MenuElement currentPage = ctx.getCurrentPage();
-		AdminUserSecurity userSec = AdminUserSecurity.getInstance(request.getSession().getServletContext());
+		AdminUserSecurity userSec = AdminUserSecurity.getInstance();
 		IUserFactory adminUserFactory = AdminUserFactory.createUserFactory(globalContext, request.getSession());
 
 		if (!userSec.haveRight(adminUserFactory.getCurrentUser(request.getSession()), "admin")) {

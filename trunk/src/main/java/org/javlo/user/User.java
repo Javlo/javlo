@@ -63,15 +63,10 @@ public class User implements Principal {
 		return roles;
 	}
 
-	public boolean validForRoles ( String[] newRoles ) {
-		boolean res = newRoles.length==0;
-		for (int i = 0; (i<newRoles.length)&&(!res); i++) {
-			res = getRoles().contains(newRoles[i]);
-		}
-		return res;
-	}
-
 	public boolean validForRoles ( Set<String> rolesSet ) {
+		if (AdminUserSecurity.getInstance().isAdmin(this)) {
+			return true;
+		}
 		Set<String> workingRoles = new HashSet<String>();
 		workingRoles.addAll(rolesSet);
 		return workingRoles.retainAll(getRoles());

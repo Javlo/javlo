@@ -219,7 +219,7 @@ public class AdminAction implements IAction {
 
 			GlobalContext globalContext = GlobalContext.getInstance(request, contextID);
 			EditContext editCtx = EditContext.getInstance(globalContext, request.getSession());
-			AdminUserSecurity security = AdminUserSecurity.getInstance(request.getSession().getServletContext());
+			AdminUserSecurity security = AdminUserSecurity.getInstance();
 			if (!security.haveRight(editCtx.getEditUser(), AdminUserSecurity.FULL_CONTROL_ROLE)) {
 				return null;
 			}
@@ -330,7 +330,7 @@ public class AdminAction implements IAction {
 
 		GlobalContext globalContext = GlobalContext.getInstance(request);
 		EditContext editCtx = EditContext.getInstance(globalContext, request.getSession());
-		AdminUserSecurity security = AdminUserSecurity.getInstance(request.getSession().getServletContext());
+		AdminUserSecurity security = AdminUserSecurity.getInstance();
 		if (!security.haveRight(editCtx.getEditUser(), AdminUserSecurity.FULL_CONTROL_ROLE)) {
 			return null;
 		}
@@ -353,7 +353,7 @@ public class AdminAction implements IAction {
 	public static final String performDeletetemplate(HttpServletRequest request, HttpServletResponse response) throws Exception {
 		GlobalContext globalContext = GlobalContext.getInstance(request);
 		EditContext editCtx = EditContext.getInstance(globalContext, request.getSession());
-		AdminUserSecurity security = AdminUserSecurity.getInstance(request.getSession().getServletContext());
+		AdminUserSecurity security = AdminUserSecurity.getInstance();
 		if (!security.haveRight(editCtx.getEditUser(), AdminUserSecurity.FULL_CONTROL_ROLE)) {
 			return null;
 		}
@@ -373,7 +373,7 @@ public class AdminAction implements IAction {
 	public static final String performEditable(HttpServletRequest request, HttpServletResponse response) throws ConfigurationException, IOException {
 		GlobalContext globalContext = GlobalContext.getInstance(request);
 		EditContext editCtx = EditContext.getInstance(globalContext, request.getSession());
-		AdminUserSecurity security = AdminUserSecurity.getInstance(request.getSession().getServletContext());
+		AdminUserSecurity security = AdminUserSecurity.getInstance();
 		if (!security.haveRight(editCtx.getEditUser(), AdminUserSecurity.FULL_CONTROL_ROLE)) {
 			return null;
 		}
@@ -440,7 +440,7 @@ public class AdminAction implements IAction {
 
 		GlobalContext globalContext = GlobalContext.getInstance(request);
 		EditContext editCtx = EditContext.getInstance(globalContext, request.getSession());
-		AdminUserSecurity security = AdminUserSecurity.getInstance(request.getSession().getServletContext());
+		AdminUserSecurity security = AdminUserSecurity.getInstance();
 		MessageRepository msgRepo = MessageRepository.getInstance(ContentContext.getContentContext(request, response));
 		I18nAccess i18nAccess = I18nAccess.getInstance(globalContext, request.getSession());
 
@@ -942,7 +942,7 @@ public class AdminAction implements IAction {
 	public static final String performReleaseContent(HttpServletRequest request, HttpServletResponse response, boolean view) throws Exception {
 		GlobalContext globalContext = GlobalContext.getInstance(request);
 		EditContext editCtx = EditContext.getInstance(globalContext, request.getSession());
-		AdminUserSecurity security = AdminUserSecurity.getInstance(request.getSession().getServletContext());
+		AdminUserSecurity security = AdminUserSecurity.getInstance();
 		if (!security.haveRight(editCtx.getEditUser(), AdminUserSecurity.FULL_CONTROL_ROLE)) {
 			return null;
 		}
@@ -1050,7 +1050,7 @@ public class AdminAction implements IAction {
 		boolean fullAccess = false;
 		GlobalContext globalContext = GlobalContext.getInstance(request);
 		EditContext editCtx = EditContext.getInstance(globalContext, request.getSession());
-		AdminUserSecurity security = AdminUserSecurity.getInstance(request.getSession().getServletContext());
+		AdminUserSecurity security = AdminUserSecurity.getInstance();
 		if (security.haveRight(editCtx.getEditUser(), AdminUserSecurity.FULL_CONTROL_ROLE)) {
 			fullAccess = true;
 		}
@@ -1112,7 +1112,7 @@ public class AdminAction implements IAction {
 	public static final String performUpdatetemplate(HttpServletRequest request, HttpServletResponse response) throws Exception {
 		GlobalContext globalContext = GlobalContext.getInstance(request);
 		EditContext editCtx = EditContext.getInstance(globalContext, request.getSession());
-		AdminUserSecurity security = AdminUserSecurity.getInstance(request.getSession().getServletContext());
+		AdminUserSecurity security = AdminUserSecurity.getInstance();
 		if (!security.haveRight(editCtx.getEditUser(), AdminUserSecurity.FULL_CONTROL_ROLE)) {
 			return null;
 		}
@@ -1225,7 +1225,7 @@ public class AdminAction implements IAction {
 	public static final String performValidalltemplate(HttpServletRequest request, HttpServletResponse response) throws ConfigurationException, IOException {
 		GlobalContext globalContext = GlobalContext.getInstance(request);
 		EditContext editCtx = EditContext.getInstance(globalContext, request.getSession());
-		AdminUserSecurity security = AdminUserSecurity.getInstance(request.getSession().getServletContext());
+		AdminUserSecurity security = AdminUserSecurity.getInstance();
 		if (!security.haveRight(editCtx.getEditUser(), AdminUserSecurity.FULL_CONTROL_ROLE)) {
 			return null;
 		}
@@ -1248,7 +1248,7 @@ public class AdminAction implements IAction {
 	public static final String performValidtemplate(HttpServletRequest request, HttpServletResponse response) throws ConfigurationException, IOException {
 		GlobalContext globalContext = GlobalContext.getInstance(request);
 		EditContext editCtx = EditContext.getInstance(globalContext, request.getSession());
-		AdminUserSecurity security = AdminUserSecurity.getInstance(request.getSession().getServletContext());
+		AdminUserSecurity security = AdminUserSecurity.getInstance();
 		if (!security.haveRight(editCtx.getEditUser(), AdminUserSecurity.FULL_CONTROL_ROLE)) {
 			return null;
 		}
@@ -1269,7 +1269,7 @@ public class AdminAction implements IAction {
 	public static final String performVisibility(HttpServletRequest request, HttpServletResponse response) throws ConfigurationException, IOException {
 		GlobalContext globalContext = GlobalContext.getInstance(request);
 		EditContext editCtx = EditContext.getInstance(globalContext, request.getSession());
-		AdminUserSecurity security = AdminUserSecurity.getInstance(request.getSession().getServletContext());
+		AdminUserSecurity security = AdminUserSecurity.getInstance();
 		if (!security.haveRight(editCtx.getEditUser(), AdminUserSecurity.FULL_CONTROL_ROLE)) {
 			return null;
 		}

@@ -419,7 +419,7 @@ public class MultimediaGallery extends TimeRangeComponent {
 						String debugInfo = "";
 						if (ctx.getRenderMode() == ContentContext.PREVIEW_MODE) {
 							EditContext editCtx = EditContext.getInstance(globalContext, ctx.getRequest().getSession());
-							AdminUserSecurity security = AdminUserSecurity.getInstance(ctx.getRequest().getSession().getServletContext());
+							AdminUserSecurity security = AdminUserSecurity.getInstance();
 							if (security.haveRight(editCtx.getEditUser(), AdminUserSecurity.CONTENT_ROLE) && ctx.getRenderMode() == ContentContext.PREVIEW_MODE) {
 								debugInfo = " access:" + info.getAccessFromSomeDays(ctx);
 							}

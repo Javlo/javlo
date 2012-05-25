@@ -1,0 +1,6 @@
+@import url("../../content/css/content.css");
+
+#macro li {
+	margin: 10px;
+	display:inline-block;
+}

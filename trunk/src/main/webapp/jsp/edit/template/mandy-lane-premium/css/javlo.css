@@ -1,5 +1,4 @@
 /*** general ***/
-
 table th {
 	text-align: left;
 }
@@ -9,16 +8,16 @@ table th {
 	font-style: italic;
 }
 
-fieldset {	
+fieldset {
 	margin: 4px 0;
-	padding: 4px;    
-    border-color: -moz-use-text-color #CCCCCC #CCCCCC;
-    border: 1px solid #CCCCCC;
-    border-radius: 3px;            
+	padding: 4px;
+	border-color: -moz-use-text-color #CCCCCC #CCCCCC;
+	border: 1px solid #CCCCCC;
+	border-radius: 3px;
 }
 
 .full-height {
-	overflow: auto;	
+	overflow: auto;
 }
 
 .box {
@@ -31,10 +30,10 @@ fieldset {
 		#688AB5;
 	border: 1px solid #6082AD;
 	color: #FFFFFF;
-    font-size: 12px;
-    font-weight: normal;
-    text-shadow: 1px 1px #4B6592;
-    text-transform: uppercase;
+	font-size: 12px;
+	font-weight: normal;
+	text-shadow: 1px 1px #4B6592;
+	text-transform: uppercase;
 }
 
 .box h3 span {
@@ -43,24 +42,24 @@ fieldset {
 }
 
 .box .content {
-    border-radius: 0 0 3px 3px;
-    -moz-border-bottom-colors: none;
-    -moz-border-image: none;
-    -moz-border-left-colors: none;
-    -moz-border-right-colors: none;
-    -moz-border-top-colors: none;
-    background: none repeat scroll 0 0 #FCFCFC;
-    border-color: -moz-use-text-color #CCCCCC #CCCCCC;
-    border-right: 1px solid #CCCCCC;
-    border-style: none solid solid;
-    border-width: 0 1px 1px;
-    color: #666666;
-    overflow: hidden;
-    padding: 20px 15px;
+	border-radius: 0 0 3px 3px;
+	-moz-border-bottom-colors: none;
+	-moz-border-image: none;
+	-moz-border-left-colors: none;
+	-moz-border-right-colors: none;
+	-moz-border-top-colors: none;
+	background: none repeat scroll 0 0 #FCFCFC;
+	border-color: -moz-use-text-color #CCCCCC #CCCCCC;
+	border-right: 1px solid #CCCCCC;
+	border-style: none solid solid;
+	border-width: 0 1px 1px;
+	color: #666666;
+	overflow: hidden;
+	padding: 20px 15px;
 }
 
 .standard-form .line {
-	min-height: 36px;	
+	min-height: 36px;
 }
 
 .standard-form .inline {
@@ -75,18 +74,18 @@ fieldset {
 }
 
 .standard-form .line label,.standard-form .inline label {
-	display: inline-block;	
-	width: 170px;	
+	display: inline-block;
+	width: 170px;
 	vertical-align: middle;
 }
 
-.standard-form input, .standard-form select {
+.standard-form input,.standard-form select {
 	display: inline-block;
 	vertical-align: text-top;
-	width: 220px;	
+	width: 220px;
 }
 
-#sitelist_wrapper input, #sitelist_wrapper select {
+#sitelist_wrapper input,#sitelist_wrapper select {
 	width: auto;
 	vertical-align: baseline;
 }
@@ -99,31 +98,31 @@ fieldset {
 	margin-top: 10px;
 }
 
-.standard-form .action, .array-form .action {	
+.standard-form .action,.array-form .action {
 	text-align: right;
 }
 
-.standard-form .action input, .array-form .action input {
+.standard-form .action input,.array-form .action input {
 	width: auto;
-    background: url("../images/buttonbg5.png") repeat-x scroll left top #EEEEEE;
-    border: 1px solid #CCCCCC;
-    border-radius: 3px 3px 3px 3px;
-    cursor: pointer;
-    display: inline-block;
+	background: url("../images/buttonbg5.png") repeat-x scroll left top
+		#EEEEEE;
+	border: 1px solid #CCCCCC;
+	border-radius: 3px 3px 3px 3px;
+	cursor: pointer;
+	display: inline-block;
 }
 
 .standard-form .action input {
-    margin-left: 5px;
-    padding: 2px 8px;
+	margin-left: 5px;
+	padding: 2px 8px;
 }
 
-.standard-form .action input:hover, .array-form .action input:hover {
+.standard-form .action input:hover,.array-form .action input:hover {
 	background: #eee;
 	-moz-box-shadow: inset 1px 1px 2px #ccc;
 	-webkit-box-shadow: inset 1px 1px 2px #ccc;
 	box-shadow: inset 1px 1px 2px #ccc;
 }
-
 
 .icone_true {
 	font-size: 0;
@@ -144,13 +143,12 @@ fieldset {
 }
 
 /*** notification ***/
-
 .notebutton ul li.error span {
-    color: #E18B7C;    
+	color: #E18B7C;
 }
 
 .notebutton ul li.info span {
-    color: #6385AE;    
+	color: #6385AE;
 }
 
 /*** modules ***/
@@ -194,20 +192,23 @@ ul,li {
 	text-shadow: 1px 1px #aaaaaa;
 }
 
+.action-button span {
+	text-transform: uppercase;
+}
+
 .tabmenu ul li.module a span {
 	background: url("../images/icons/small/white/star.png") no-repeat scroll
 		15px 12px transparent;
 }
 
 .tabmenu ul li.module.from {
-    background: none repeat scroll 0 0 #CFCFCF;    
-    text-shadow: none;
+	background: none repeat scroll 0 0 #CFCFCF;
+	text-shadow: none;
 }
-	
 
 .tabmenu ul li.module.from a {
 	background: none repeat scroll 0 0 transparent;
-    color: #eeeeee;	
+	color: #eeeeee;
 }
 
 .tabmenu ul li.module.current a span {
@@ -216,13 +217,13 @@ ul,li {
 }
 
 .tabmenu ul li.content a span {
-	background: url("../images/icons/small/white/edit.png") no-repeat
-		scroll 15px 12px transparent;
+	background: url("../images/icons/small/white/edit.png") no-repeat scroll
+		15px 12px transparent;
 }
 
 .tabmenu ul li.content.current a span {
-	background: url("../images/icons/small/black/edit.png") no-repeat
-		scroll 15px 12px transparent;
+	background: url("../images/icons/small/black/edit.png") no-repeat scroll
+		15px 12px transparent;
 }
 
 .tabmenu ul li.template  a span {
@@ -246,23 +247,23 @@ ul,li {
 }
 
 .tabmenu ul li.file a span {
-	background: url("../images/icons/small/white/save.png") no-repeat
-		scroll 15px 12px transparent;
+	background: url("../images/icons/small/white/save.png") no-repeat scroll
+		15px 12px transparent;
 }
 
 .tabmenu ul li.file.current a span {
-	background: url("../images/icons/small/black/save.png") no-repeat
-		scroll 15px 12px transparent;
+	background: url("../images/icons/small/black/save.png") no-repeat scroll
+		15px 12px transparent;
 }
 
 .tabmenu ul li.users a span {
-	background: url("../images/icons/small/white/user.png") no-repeat
-		scroll 15px 12px transparent;
+	background: url("../images/icons/small/white/user.png") no-repeat scroll
+		15px 12px transparent;
 }
 
 .tabmenu ul li.users.current a span {
-	background: url("../images/icons/small/black/user.png") no-repeat
-		scroll 15px 12px transparent;
+	background: url("../images/icons/small/black/user.png") no-repeat scroll
+		15px 12px transparent;
 }
 
 .breadcrumbs span {
@@ -271,8 +272,9 @@ ul,li {
 }
 
 .breadcrumbs span.title {
-	background: url("../images/separator2.png") no-repeat scroll right center transparent;
-    margin-right: 10px;
+	background: url("../images/separator2.png") no-repeat scroll right
+		center transparent;
+	margin-right: 10px;
 }
 
 #tools h3 {
@@ -303,6 +305,10 @@ ul,li {
 	float: right;
 }
 
+#tools .action-button {
+	float: right;
+}
+
 #tools .action-button.more {
 	float: left;
 }
@@ -315,11 +321,10 @@ ul,li {
 	margin-left: 15px;
 	border-left: 1px #DDDDDD solid;
 	padding: 0 0 2px 15px;
-	float: right;	
+	float: right;
 }
 
-
-#tools input, #tools select {
+#tools input,#tools select {
 	margin: 2px 3px 0 0;
 	padding: 4px 4px 3px 4px;
 }
@@ -334,10 +339,23 @@ ul,li {
 		scroll 5px;
 }
 
+
 .action-button.preview:hover span {
 	background: url("../images/icons/small/white/document.png") no-repeat
 		scroll 5px;
 }
+
+.action-button.delete-page span {
+	padding-left: 26px;
+	background: url("../images/icons/small/black/trash.png") no-repeat
+		scroll 5px;
+}
+
+.action-button.delete-page:hover span {	
+	background: url("../images/icons/small/white/trash.png") no-repeat
+		scroll 5px;
+}
+
 
 .action-button.page span {
 	padding-left: 26px;
@@ -385,14 +403,14 @@ ul,li {
 
 .action-button.delete span {
 	padding-left: 26px;
-	background: url("../images/icons/small/black/trash.png") no-repeat scroll
-		5px;
+	background: url("../images/icons/small/black/trash.png") no-repeat
+		scroll 5px;
 }
 
 .action-button.delete:hover span {
 	padding-left: 26px;
-	background: url("../images/icons/small/white/trash.png") no-repeat scroll
-		5px;
+	background: url("../images/icons/small/white/trash.png") no-repeat
+		scroll 5px;
 }
 
 /*** component list ***/
@@ -491,7 +509,7 @@ ul,li {
 	padding-left: 16px;
 }
 
-.navigation .children a, .navigation .children .add-page form {
+.navigation .children a,.navigation .children .add-page form {
 	padding-left: 16px;
 }
 
@@ -499,11 +517,10 @@ ul,li {
 	width: 120px;
 }
 
- .navigation .children .add-page input {
-    padding: 3px;
-    margin-left: 0;
- }
-
+.navigation .children .add-page input {
+	padding: 3px;
+	margin-left: 0;
+}
 
 .navigation .children .have-children a {
 	background: url("../images/icons/more.png") no-repeat scroll 0 11px
@@ -514,11 +531,9 @@ ul,li {
 	font-weight: bold;
 }
 
-
 /*** page properties ***/
-
 .page-properties {
-	margin-top: 20px;	
+	margin-top: 20px;
 }
 
 .page-properties .content {
@@ -526,13 +541,13 @@ ul,li {
 }
 
 .template-preview {
-	float: right;	
-    border-radius: 3px 3px 3px 3px;    
-    background: none repeat scroll 0 0 #FCFCFC;
-    border: 1px solid #CCCCCC;
-    box-shadow: 1px 1px 2px #DDDDDD;
-    padding: 10px;
-    z-index: 1;
+	float: right;
+	border-radius: 3px 3px 3px 3px;
+	background: none repeat scroll 0 0 #FCFCFC;
+	border: 1px solid #CCCCCC;
+	box-shadow: 1px 1px 2px #DDDDDD;
+	padding: 10px;
+	z-index: 1;
 }
 
 .line.template {
@@ -541,14 +556,13 @@ ul,li {
 	padding: 2px 0 1px 8px;
 	border-radius: 3px 3px 3px 3px;
 	border: 1px solid #CCCCCC;
-	border-right: 1px solid #FCFCFC; 	
+	border-right: 1px solid #FCFCFC;
 	box-shadow: 1px 1px 2px #DDDDDD;
 	background-color: #CCCCCC;
 	z-index: 10;
 }
 
 /*** preview ***/
-
 .box.preview {
 	margin-top: 20px;
 }
@@ -560,7 +574,7 @@ ul,li {
 .preview h3 a {
 	width: 16px;
 	height: 16px;
-	font-size : 0;
+	font-size: 0;
 	text-indent: -9999px;
 	background: url("../images/icons/small/white/popup.png") no-repeat
 		scroll 0 0 transparent;
@@ -574,8 +588,7 @@ ul,li {
 }
 
 /*** admin ***/
-
-.site-properties fieldset, .site-properties .action {
+.site-properties fieldset,.site-properties .action {
 	margin-right: 290px;
 }
 
@@ -600,7 +613,6 @@ ul,li {
 }
 
 /**** search ****/
-
 #search-result h1 {
 	margin: 0 0 20px 0;
 }
@@ -618,6 +630,7 @@ ul,li {
 .ui-tabs-nav {
 	height: 33px;
 }
+
 .jGrowl {
 	margin-top: 100px;
 }
