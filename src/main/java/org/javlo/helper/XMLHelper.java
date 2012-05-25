@@ -215,7 +215,7 @@ public class XMLHelper {
 			String id = page.getId();
 			String name = page.getName();
 			int priority = page.getPriority();
-			String[] roles = page.getUserRoles();
+			Collection<String> roles = page.getUserRoles();
 			String template = "";
 			if (page.getTemplateId() != null) {
 				template = page.getTemplateId();

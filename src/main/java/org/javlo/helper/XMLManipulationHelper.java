@@ -917,7 +917,7 @@ public class XMLManipulationHelper {
 		out.newLine();
 		out.append("I18nAccess i18nAccess = I18nAccess.getInstance(request);");
 		out.newLine();
-		out.append("AdminUserSecurity security = AdminUserSecurity.getInstance(request.getSession().getServletContext());");
+		out.append("AdminUserSecurity security = AdminUserSecurity.getInstance();");
 		out.newLine();
 
 		out.append("%>");

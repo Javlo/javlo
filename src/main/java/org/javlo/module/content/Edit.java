@@ -3,6 +3,7 @@ package org.javlo.module.content;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.Date;
+import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -16,9 +17,12 @@ import org.javlo.component.core.ComponentContext;
 import org.javlo.component.core.ComponentFactory;
 import org.javlo.component.core.IContentComponentsList;
 import org.javlo.component.core.IContentVisualComponent;
+import org.javlo.config.StaticConfig;
 import org.javlo.context.ContentContext;
 import org.javlo.context.EditContext;
 import org.javlo.context.GlobalContext;
+import org.javlo.helper.DebugHelper;
+import org.javlo.helper.NavigationHelper;
 import org.javlo.helper.ServletHelper;
 import org.javlo.helper.StringHelper;
 import org.javlo.helper.URLHelper;
@@ -28,6 +32,7 @@ import org.javlo.message.MessageRepository;
 import org.javlo.module.Module;
 import org.javlo.module.Module.Box;
 import org.javlo.module.ModuleContext;
+import org.javlo.navigation.IURLFactory;
 import org.javlo.navigation.MenuElement;
 import org.javlo.navigation.PageConfiguration;
 import org.javlo.search.SearchResult;
@@ -36,9 +41,13 @@ import org.javlo.service.ClipBoard;
 import org.javlo.service.ContentService;
 import org.javlo.service.NavigationService;
 import org.javlo.service.PersistenceService;
+import org.javlo.service.PublishListener;
 import org.javlo.service.RequestService;
+import org.javlo.service.exception.ServiceException;
+import org.javlo.service.syncro.SynchroThread;
 import org.javlo.template.Template;
 import org.javlo.template.TemplateFactory;
+import org.javlo.thread.AbstractThread;
 import org.javlo.user.AdminUserFactory;
 import org.javlo.user.AdminUserSecurity;
 import org.javlo.user.IUserFactory;
@@ -57,9 +66,9 @@ public class Edit extends AbstractModuleAction {
 
 		String insertXHTML = "<a class=\"action-button ajax\" href=\"" + URLHelper.createURL(ctx) + "?webaction=insert&previous=0&type=" + currentTypeComponent.getType() + "\">" + insertHere + "</a>";
 		ctx.addAjaxInsideZone("insert-line-0", insertXHTML);
-		
+
 		ContentContext areaCtx = ctx.getContextWithArea(editContext.getCurrentArea());
-		
+
 		IContentComponentsList elems = ctx.getCurrentPage().getContent(areaCtx);
 		while (elems.hasNext(areaCtx)) {
 			IContentVisualComponent comp = elems.next(areaCtx);
@@ -204,7 +213,7 @@ public class Edit extends AbstractModuleAction {
 	 * @throws Exception
 	 */
 	private static boolean checkPageSecurity(ContentContext ctx) throws Exception {
-		AdminUserSecurity adminUserSecurity = AdminUserSecurity.getInstance(ctx.getRequest().getSession().getServletContext());
+		AdminUserSecurity adminUserSecurity = AdminUserSecurity.getInstance();
 		GlobalContext globalContext = GlobalContext.getInstance(ctx.getRequest());
 		IUserFactory adminUserFactory = AdminUserFactory.createUserFactory(globalContext, ctx.getRequest().getSession());
 		ContentService.getInstance(globalContext);
@@ -347,12 +356,12 @@ public class Edit extends AbstractModuleAction {
 				currentModule.setBreadcrumbTitle(I18nAccess.getInstance(ctx.getRequest()).getText("content.preview"));
 				break;
 			case ContentModuleContext.PAGE_MODE:
-				currentModule.setToolsRenderer("/jsp/actions.jsp?button_edit=true&button_preview=true&button_publish=true");
+				currentModule.setToolsRenderer("/jsp/actions.jsp?button_edit=true&button_preview=true&button_publish=true&button_delete_page=true");
 				request.setAttribute("page", ctx.getCurrentPage().getPageBean(ctx));
 				currentModule.setRenderer("/jsp/page_properties.jsp");
 				currentModule.setBreadcrumbTitle(I18nAccess.getInstance(ctx.getRequest()).getText("item.title"));
 				break;
-			default:				
+			default:
 				currentModule.setToolsRenderer("/jsp/actions.jsp?button_preview=true&button_page=true&button_save=true&button_publish=true&languages=true&areas=true");
 				currentModule.setRenderer("/jsp/content_wrapper.jsp");
 				currentModule.setBreadcrumbTitle(I18nAccess.getInstance(ctx.getRequest()).getText("content.mode.content"));
@@ -373,7 +382,7 @@ public class Edit extends AbstractModuleAction {
 		EditContext editCtx = EditContext.getInstance(globalContext, ctx.getRequest().getSession());
 		List<Template> templates = pageConfig.getContextTemplates(editCtx);
 		Collections.sort(templates);
-		
+
 		ctx.getRequest().setAttribute("areas", ctx.getCurrentTemplate().getAreas());
 		ctx.getRequest().setAttribute("currentArea", editCtx.getCurrentArea());
 
@@ -394,26 +403,26 @@ public class Edit extends AbstractModuleAction {
 				if (ctx.getCurrentTemplate() != null && ctx.getCurrentTemplate().getSearchRenderer(ctx) != null) {
 					ctx.setSpecialContentRenderer(ctx.getCurrentTemplate().getSearchRenderer(ctx));
 				}
-				
+
 				SearchResult search = SearchResult.getInstance(ctx.getRequest().getSession());
 				search.cleanResult();
-				
+
 				if (query.startsWith("comp:")) {
 					query = query.replaceFirst("comp:", "").trim();
-					search.searchComponentInPage(ctx, query);	
+					search.searchComponentInPage(ctx, query);
 				} else {
-					search.search(ctx, (String) null, query, (String) null);					
+					search.search(ctx, (String) null, query, (String) null);
 				}
 
 				Collection<SearchElement> result = search.getSearchResult();
 				if (result.size() > 0) {
-					ctx.getRequest().setAttribute("searchList", result);					
+					ctx.getRequest().setAttribute("searchList", result);
 					Module currentModule = moduleContext.getCurrentModule();
 					currentModule.setAbsoluteRenderer("/jsp/edit/generic_renderer/search.jsp");
 					currentModule.setToolsRenderer(null);
 					currentModule.setBreadcrumb(false);
 					currentModule.setSidebar(false);
-				}				
+				}
 			}
 		} else {
 			msg = "error no query for search.";
@@ -675,18 +684,145 @@ public class Edit extends AbstractModuleAction {
 		}
 		return message;
 	}
-	
+
 	public static final String performChangeArea(ContentContext ctx, RequestService requestService, EditContext editContext, I18nAccess i18nAccess, MessageRepository messageRepository) {
 		String area = requestService.getParameter("area", null);
 		if (area == null) {
 			return "bad request structure : need 'area' parameter";
 		}
 		if (!ctx.getCurrentTemplate().getAreas().contains(area)) {
-			return "bad area : "+area;
+			return "bad area : " + area;
 		}
 		editContext.setCurrentArea(area);
-		messageRepository.setGlobalMessage(new GenericMessage(i18nAccess.getText("edit.message.new-area") + " : "+area, GenericMessage.INFO));
+		messageRepository.setGlobalMessage(new GenericMessage(i18nAccess.getText("edit.message.new-area") + " : " + area, GenericMessage.INFO));
 		return null;
 	}
 
+	public static String performSynchro(ServletContext application, StaticConfig staticConfig, GlobalContext globalContext) throws Exception {
+		if (globalContext.getDMZServerIntra() != null) {
+			SynchroThread synchro = (SynchroThread) AbstractThread.createInstance(staticConfig.getThreadFolder(), SynchroThread.class);
+			synchro.initSynchronisationThread(staticConfig, globalContext, application);
+			synchro.store();
+		}
+		return null;
+	}
+
+	public static String performPublish(ServletContext application, HttpServletRequest request, StaticConfig staticConfig, GlobalContext globalContext, ContentService content, ContentContext ctx, I18nAccess i18nAccess) throws Exception {
+
+		DebugHelper.writeInfo(System.out);
+
+		synchronized (content.getNavigation(ctx).getLock()) {
+
+			String message = null;
+
+			PersistenceService persistenceService = PersistenceService.getInstance(globalContext);
+
+			if (!globalContext.isPortail()) {
+				persistenceService.publishPreviewFile(ctx);
+			} else {
+				ContentContext viewCtx = new ContentContext(ctx);
+				viewCtx.setRenderMode(ContentContext.VIEW_MODE);
+
+				MenuElement viewNav = content.getNavigation(viewCtx);
+				NavigationHelper.publishNavigation(ctx, content.getNavigation(ctx), viewNav);
+				persistenceService.store(viewCtx, ContentContext.VIEW_MODE);
+			}
+
+			globalContext.setPublishDate(new Date());
+
+			content.releaseViewNav(ctx, globalContext);
+
+			String msg = i18nAccess.getText("content.published");
+			MessageRepository.getInstance(ctx).setGlobalMessage(new GenericMessage(msg, GenericMessage.INFO));
+
+			performSynchro(application, staticConfig, globalContext);
+
+			NavigationService navigationService = NavigationService.getInstance(globalContext, request.getSession());
+			navigationService.clearAllPage();
+
+			// clean component list when publish
+			ComponentFactory.cleanComponentList(request.getSession().getServletContext(), globalContext);
+
+			/*** check url ***/
+			ContentContext lgCtx = new ContentContext(ctx);
+			Collection<String> lgs = globalContext.getContentLanguages();
+			Collection<String> urls = new HashSet<String>();
+			String dblURL = null;
+			IURLFactory urlFactory = globalContext.getURLFactory(lgCtx);
+			if (urlFactory != null) {
+				for (String lg : lgs) {
+					lgCtx.setRequestContentLanguage(lg);
+					MenuElement[] children = ContentService.getInstance(globalContext).getNavigation(lgCtx).getAllChilds();
+					for (MenuElement menuElement : children) {
+						String url = lgCtx.getRequestContentLanguage() + urlFactory.createURL(lgCtx, menuElement);
+						if (urls.contains(url)) {
+							dblURL = url;
+						} else {
+							urls.add(url);
+						}
+					}
+				}
+			}
+
+			if (dblURL != null) {
+				msg = i18nAccess.getText("action.publish.error.same-url", new String[][] { { "url", dblURL } });
+				MessageRepository.getInstance(ctx).setGlobalMessage(new GenericMessage(msg, GenericMessage.ALERT));
+			}
+
+			content.clearComponentCache();
+
+			// trick for PortletManager to clear view data, but should be generalized in some PublishManager
+			Collection<PublishListener> listeners = (Collection<PublishListener>) request.getSession().getServletContext().getAttribute(PublishListener.class.getName());
+			if (listeners != null) {
+				for (PublishListener listener : listeners) {
+					listener.onPublish(ctx);
+				}
+			}
+
+			return message;
+		}
+
+	}
+
+	public static String performDeletePage(GlobalContext globalContext, ContentService content, ContentContext ctx, I18nAccess i18nAccess) throws Exception {
+
+		if (!canModifyCurrentPage(ctx)) {
+			MessageRepository messageRepository = MessageRepository.getInstance(ctx);
+			messageRepository.setGlobalMessage(new GenericMessage(i18nAccess.getText("action.block"), GenericMessage.ERROR));
+			return null;
+		}
+
+		String message = null;
+
+		String id = ctx.getRequest().getParameter("page");
+
+		MenuElement menuElement;
+
+		menuElement = content.getNavigation(ctx).searchChildFromId(id);
+		String path = menuElement.getPath();
+
+		String newPath = menuElement.getParent().getPath();
+
+		if (message == null) {
+			if (menuElement == null) {
+				message = i18nAccess.getText("action.remove.can-not-delete");
+			} else {
+				synchronized (menuElement) {
+					menuElement.clearVirtualParent();
+				}
+				NavigationService service = NavigationService.getInstance(globalContext, ctx.getRequest().getSession());
+				service.removeNavigation(ctx, menuElement);
+				String msg = i18nAccess.getText("action.remove.deleted", new String[][] { { "path", path } });
+				MessageRepository.getInstance(ctx).setGlobalMessage(new GenericMessage(msg, GenericMessage.INFO));
+				autoPublish(ctx.getRequest(), ctx.getResponse());
+			}
+		}
+
+		ctx.setPath(newPath);
+
+		NavigationService navigationService = NavigationService.getInstance(globalContext, ctx.getRequest().getSession());
+		navigationService.clearPage(ctx);
+
+		return message;
+	}
 }

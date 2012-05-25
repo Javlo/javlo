@@ -42,7 +42,7 @@ if (path!=null) {
 	ctx.setPath(path);
 }
 
-AdminUserSecurity security = AdminUserSecurity.getInstance(request.getSession().getServletContext());
+AdminUserSecurity security = AdminUserSecurity.getInstance();
 //GlobalContext globalContext = GlobalContext.getInstance(request); EditContext editCtx = EditContext.getInstance(globalContext, request.getSession());
 
 if ( ctx.getSpecialContentRenderer() != null && area.equals(ComponentBean.DEFAULT_AREA)) {
@@ -62,7 +62,7 @@ IContentComponentsList elems = currentPage.getContent(ctx);
 
 boolean access = true;
 //if ( userRoles.length > 0 ) {
-	if ( currentPage.getUserRoles().length > 0 ) {
+	if ( currentPage.getUserRoles().size() > 0 ) {
 		IUserFactory userFactory = UserFactory.createUserFactory(globalContext, request.getSession());
 		User user = userFactory.getCurrentUser(request.getSession());
 		if ( user == null ) {
@@ -83,7 +83,7 @@ IContentVisualComponent elem = null;
 if ( !access ) {
 	if (request.getAttribute("insert_only_one_login") == null) {
 		request.setAttribute("insert_only_one_login", "anything");
-		%><jsp:include page="/jsp/login.jsp" flush="true"/><%		
+		%><jsp:include page="/jsp/view/login.jsp" flush="true"/><%		
 	} else {
 		%>&nbsp;<%
 	}

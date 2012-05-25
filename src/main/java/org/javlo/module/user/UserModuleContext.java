@@ -38,7 +38,7 @@ public class UserModuleContext {
 			session.setAttribute(KEY, userContext);
 		}
 		
-		AdminUserSecurity adminUserSecurity = AdminUserSecurity.getInstance(session.getServletContext());
+		AdminUserSecurity adminUserSecurity = AdminUserSecurity.getInstance();
 		GlobalContext globalContext = GlobalContext.getInstance(request);
 		AdminUserFactory adminUserFactory = AdminUserFactory.createAdminUserFactory(globalContext, session);
 		

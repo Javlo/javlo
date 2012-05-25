@@ -774,8 +774,9 @@ public class URLHelper extends ElementaryURLHelper {
 	 * @param url
 	 * @param moduleName
 	 * @return
+	 * @throws Exception 
 	 */
-	public static String createInterModuleURL(ContentContext ctx, String url, String moduleName) {
+	public static String createInterModuleURL(ContentContext ctx, String url, String moduleName) throws Exception {
 		return createInterModuleURL(ctx, url, moduleName, null);
 	}
 	
@@ -784,8 +785,9 @@ public class URLHelper extends ElementaryURLHelper {
 	 * @param url
 	 * @param moduleName
 	 * @return
+	 * @throws Exception 
 	 */
-	public static String createInterModuleURL(ContentContext ctx, String url, String moduleName, Map<String,String> inParams) {
+	public static String createInterModuleURL(ContentContext ctx, String url, String moduleName, Map<String,String> inParams) throws Exception {
 		Map<String, String> params = new HashMap<String, String>();
 		if (inParams != null) {
 			params.putAll(inParams);

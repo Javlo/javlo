@@ -460,7 +460,7 @@ public class PersistenceService {
 		page.setHttps(StringHelper.isTrue(https));
 
 		page.setTemplateName(layout);
-		page.setUserRoles(StringHelper.stringToArray(roles, ";"));
+		page.setUserRoles(new HashSet<String>(StringHelper.stringToCollection(roles, ";")));
 
 		page.setValid(StringHelper.isTrue(pageXML.getAttributeValue("valid", "false")));
 		page.setValidater(pageXML.getAttributeValue("validater", ""));

@@ -39,7 +39,7 @@ public class TemplateFactory {
 	public static void cleanAllRenderer(ContentContext ctx, boolean mailing, boolean secure) throws IOException {
 		GlobalContext globalContext = GlobalContext.getInstance(ctx.getRequest());
 		EditContext editCtx = EditContext.getInstance(globalContext, ctx.getRequest().getSession());
-		AdminUserSecurity security = AdminUserSecurity.getInstance(ctx.getRequest().getSession().getServletContext());
+		AdminUserSecurity security = AdminUserSecurity.getInstance();
 		if (secure) {
 			if (!security.haveRight(editCtx.getEditUser(), AdminUserSecurity.FULL_CONTROL_ROLE)) {
 				return;

@@ -29,6 +29,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Calendar;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -1836,6 +1837,9 @@ public class StringHelper {
 	public static Collection<String> stringToCollection(String str, String token) {
 		if (str == null) {
 			return null;
+		}
+		if (str.trim().length() == 0) {
+			return Collections.EMPTY_LIST;
 		}
 		return Arrays.asList(str.split(token));
 	}

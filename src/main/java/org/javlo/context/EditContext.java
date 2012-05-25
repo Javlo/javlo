@@ -202,7 +202,7 @@ public class EditContext implements Serializable {
 
 		}
 
-		adminUserSecurity = AdminUserSecurity.getInstance(session.getServletContext());
+		adminUserSecurity = AdminUserSecurity.getInstance();
 	};
 
 	public static final EditContext getInstance(GlobalContext globalContext, HttpSession session) {

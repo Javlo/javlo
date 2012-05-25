@@ -25,6 +25,7 @@ import org.javlo.message.GenericMessage;
 import org.javlo.message.MessageRepository;
 import org.javlo.module.Module;
 import org.javlo.module.ModuleContext;
+import org.javlo.module.ModuleException;
 import org.javlo.user.AdminUserFactory;
 import org.javlo.user.AdminUserSecurity;
 import org.javlo.user.User;
@@ -63,7 +64,7 @@ public class ActionManager {
 		return start.toUpperCase() + end.toLowerCase();
 	}
 
-	public static IAction getAction(HttpServletRequest request, String group) throws IOException, ClassNotFoundException, InstantiationException, IllegalAccessException {
+	public static IAction getAction(HttpServletRequest request, String group) throws IOException, ClassNotFoundException, InstantiationException, IllegalAccessException, ModuleException {
 		IAction outAction = getActionComponent(request, group);
 		if (outAction == null) {
 			return getActionModule(request, group);
@@ -72,7 +73,7 @@ public class ActionManager {
 		}
 	}
 
-	public static IAction getActionModule(HttpServletRequest request, String group) throws IOException, ClassNotFoundException, InstantiationException, IllegalAccessException {
+	public static IAction getActionModule(HttpServletRequest request, String group) throws IOException, ClassNotFoundException, InstantiationException, IllegalAccessException, ModuleException {
 		GlobalContext globalContext = GlobalContext.getInstance(request);
 		ModuleContext moduleContext = ModuleContext.getInstance(globalContext, request.getSession());
 		Collection<Module> modules = moduleContext.getModules();
@@ -162,7 +163,7 @@ public class ActionManager {
 				/** security **/
 				if (action instanceof IModuleAction) { // if module action
 					User currentUser = AdminUserFactory.createAdminUserFactory(globalContext, request.getSession()).getCurrentUser(request.getSession());
-					if (!AdminUserSecurity.getInstance(request.getSession().getServletContext()).isAdmin(currentUser)) {
+					if (!AdminUserSecurity.getInstance().isAdmin(currentUser)) {
 						if (!moduleContext.getCurrentModule().haveRight(currentUser)) {
 							I18nAccess i18nAccess = I18nAccess.getInstance(request);
 							ContentContext ctx = ContentContext.getContentContext(request, response);
