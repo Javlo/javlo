@@ -65,9 +65,9 @@ public class ActionManager {
 	}
 
 	public static IAction getAction(HttpServletRequest request, String group) throws IOException, ClassNotFoundException, InstantiationException, IllegalAccessException, ModuleException {
-		IAction outAction = getActionComponent(request, group);
+		IAction outAction = getActionModule(request, group);
 		if (outAction == null) {
-			return getActionModule(request, group);
+			return getActionComponent(request, group);
 		} else {
 			return outAction;
 		}

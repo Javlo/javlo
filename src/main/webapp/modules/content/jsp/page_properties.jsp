@@ -9,7 +9,7 @@
 	<img src="${templateImageUrl}" alt="template preview" lang="en" />
 </div>
 	
-<form id="form-page-properties" class="standard-form" action="${info.currentURL}" method="post">
+<form id="form-page-properties" class="standard-form js-change-submit" action="${info.currentURL}" method="post">
 
 <div>
 	<input type="hidden" name="webaction" value="pageProperties" />
