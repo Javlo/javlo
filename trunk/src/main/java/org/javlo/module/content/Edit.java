@@ -569,7 +569,7 @@ public class Edit extends AbstractModuleAction {
 		return null;
 	}
 
-	public static final String performPageProperties(ServletContext application, ContentContext ctx, ContentService content, EditContext editCtx, PageConfiguration pageConfig, RequestService requestService, I18nAccess i18nAccess, MessageRepository messageRepository) throws Exception {
+	public static final String performPageProperties(ServletContext application, GlobalContext globalContext, ContentContext ctx, ContentService content, EditContext editCtx, PageConfiguration pageConfig, RequestService requestService, I18nAccess i18nAccess, MessageRepository messageRepository) throws Exception {
 
 		if (!canModifyCurrentPage(ctx) || !checkPageSecurity(ctx)) {
 			messageRepository.setGlobalMessageAndNotification(ctx, new GenericMessage(i18nAccess.getText("action.block"), GenericMessage.ERROR));
@@ -589,7 +589,6 @@ public class Edit extends AbstractModuleAction {
 			String errorMessage = null;
 			boolean modify = false;
 			if (!pageName.equals(newName)) {
-
 				errorMessage = validNodeName(newName, i18nAccess);
 
 				if (nameExist(ctx, newName)) {
@@ -612,6 +611,7 @@ public class Edit extends AbstractModuleAction {
 					Template template = TemplateFactory.getDiskTemplates(application).get(templateName);
 					if (template != null && pageConfig.getContextTemplates(editCtx).contains(template)) {
 						page.setTemplateName(template.getName());
+						modify = true;
 					} else {
 						return "template not found : " + templateName;
 					}
@@ -624,6 +624,7 @@ public class Edit extends AbstractModuleAction {
 				messageRepository.setGlobalMessageAndNotification(ctx, new GenericMessage(errorMessage, GenericMessage.ERROR));
 			} else {
 				if (modify) {
+					PersistenceService.getInstance(globalContext).store(ctx);
 					messageRepository.setGlobalMessageAndNotification(ctx, new GenericMessage(i18nAccess.getText("message.update-page-properties"), GenericMessage.INFO));
 				}
 			}
