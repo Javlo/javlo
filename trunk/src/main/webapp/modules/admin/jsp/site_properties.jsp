@@ -146,6 +146,22 @@
 
 </fieldset>
 
+<fieldset class="templates-plugin">
+<legend>${i18n.edit['admin.title.template-plugin']}</legend>
+<c:forEach var="plugin" items="${templatePlugins}">
+	<div class="inline">
+		<input type="checkbox" id="${plugin.id}" name="${plugin.id}" ${not empty selectedTemplatePlugins[plugin.id]?'checked="cheched"':''}/>
+		<label for="${plugin.id}">${plugin.label} - ${plugin.version}</label>		
+	</div>
+</c:forEach>
+
+<fieldset>
+<legend>${i18n.edit['admin.title.template-plugin-config']}</legend>
+<textarea rows="10" cols="10" name="template-plugin-config">${templatePluginConfig}</textarea>
+</fieldset>
+
+</fieldset>
+
 <div class="action">
 	<input type="submit" name="back" value="${i18n.edit['global.back']}" />
 	<input type="submit" value="${i18n.edit['global.ok']}" />
