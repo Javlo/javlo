@@ -61,6 +61,8 @@ public class StringHelper {
 	 * create a static logger.
 	 */
 	protected static Logger logger = Logger.getLogger(StringHelper.class.getName());
+	
+	public static final String SOMETHING = "st";
 
 	public static final String REQUEST_KEY_FORM_VALID = "__form_request_valid__";
 
@@ -912,6 +914,12 @@ public class StringHelper {
 		res = res || ext.equalsIgnoreCase("php");
 		res = res || ext.equalsIgnoreCase("jsp");
 		res = res || ext.equalsIgnoreCase("asp");
+		return res;
+	}
+	
+	public static final boolean isProperties(String fileName) {
+		String ext = getFileExtension(fileName);
+		boolean res = ext.equalsIgnoreCase("properties");
 		return res;
 	}
 

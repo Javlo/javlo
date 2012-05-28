@@ -139,8 +139,8 @@ public class GlobalContext implements Serializable {
 	public static final String LICENCE_CORPORATE = "corporate";
 
 	public static final String LOGO_FILE_NAME = "dynamic_template/logo.png";
-	
-	public static final List<String> BASIC_MODULES = Arrays.asList(new String[] {"admin", "content", "file"});
+
+	public static final List<String> BASIC_MODULES = Arrays.asList(new String[] { "admin", "content", "file" });
 
 	public GlobalContext() {
 		properties.setDelimiterParsingDisabled(true);
@@ -261,7 +261,7 @@ public class GlobalContext implements Serializable {
 			ehCacheFile = new File(staticConfig.getEHCacheConfigFile());
 			logger.info("load ehcache config from : " + ehCacheFile);
 			cacheConfig = ConfigurationSource.getConfigurationSource(ehCacheFile).createConfiguration();
-			}
+		}
 		cacheConfig.setName(getContextKey());
 		cacheManager = new CacheManager(cacheConfig);
 		if (cacheManager == null) {
@@ -671,7 +671,7 @@ public class GlobalContext implements Serializable {
 
 		return components;
 	}
-	
+
 	public List<String> getModules() {
 		List<String> modules = new LinkedList<String>();
 		String modulesRaw = properties.getString("modules", null);
@@ -867,7 +867,7 @@ public class GlobalContext implements Serializable {
 	}
 
 	public AdminUserFactory getAdminUserFactory(HttpSession session) throws SecurityException, NoSuchMethodException, ClassNotFoundException, IllegalArgumentException, InstantiationException, IllegalAccessException, InvocationTargetException {
-		if (admimUserFactory == null) {		
+		if (admimUserFactory == null) {
 			Constructor<IUserFactory> construct = getAdminUserFactoryClass().getConstructor();
 			admimUserFactory = (AdminUserFactory) construct.newInstance();
 			admimUserFactory.init(this, session);
@@ -877,9 +877,9 @@ public class GlobalContext implements Serializable {
 
 	private Class<IUserFactory> getAdminUserFactoryClass() throws ClassNotFoundException {
 		if (adminUserFactoryClass == null) {
-			adminUserFactoryClassName = getAdminUserFactoryClassName();			
+			adminUserFactoryClassName = getAdminUserFactoryClassName();
 			adminUserFactoryClass = (Class<IUserFactory>) Class.forName(adminUserFactoryClassName);
-		}		
+		}
 		return adminUserFactoryClass;
 	}
 
@@ -1244,7 +1244,7 @@ public class GlobalContext implements Serializable {
 
 	private Class<IUserFactory> getUserFactoryClass() throws ClassNotFoundException {
 		if (userFactoryClass == null) {
-			userFactoryClassName = getUserFactoryClassName();			
+			userFactoryClassName = getUserFactoryClassName();
 			userFactoryClass = (Class<IUserFactory>) Class.forName(userFactoryClassName);
 		}
 		return userFactoryClass;
@@ -1664,7 +1664,7 @@ public class GlobalContext implements Serializable {
 			save();
 		}
 	}
-	
+
 	public void setModules(List<String> modules) {
 		synchronized (properties) {
 			properties.setProperty("modules", StringHelper.collectionToString(modules));
@@ -1791,7 +1791,7 @@ public class GlobalContext implements Serializable {
 	public void setAdminUserFactoryClassName(String userFactoryName) {
 		synchronized (properties) {
 			properties.setProperty("adminuserfactory.class", userFactoryName);
-			admimUserFactory = null;	
+			admimUserFactory = null;
 			adminUserFactoryClass = null;
 			adminUserFactoryClassName = null;
 			save();
@@ -2186,6 +2186,33 @@ public class GlobalContext implements Serializable {
 			if (logo.exists()) {
 				logo.delete();
 			}
+		}
+	}
+
+	public List<String> getTemplatePlugin() {
+		String tp = properties.getString("template.plugins", null);
+		if (tp == null) {
+			return Collections.EMPTY_LIST;
+		} else {
+			return Arrays.asList(tp.split(";"));
+		}
+	}
+	
+	public String getTemplatePluginConfig() {
+		return properties.getString("template.plugins.config", null);
+	}
+	
+	public void setTemplatePlugin(Collection<String> top) {
+		synchronized (properties) {
+			properties.setProperty("template.plugins", StringHelper.collectionToString(top, ";"));
+			save();
+		}
+	}
+	
+	public void setTemplatePluginConfig(String config) {
+		synchronized (properties) {
+			properties.setProperty("template.plugins.config", config);
+			save();
 		}
 	}
 

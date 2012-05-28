@@ -219,40 +219,48 @@ public class Template implements Comparable<Template> {
 		}
 
 	}
-	
+
 	public static final class TemplateBean {
 		private Template template;
 		ContentContext ctx;
 		GlobalContext globalContext;
-		StaticConfig staticConfig;		
-		
+		StaticConfig staticConfig;
+
 		public TemplateBean(ContentContext ctx, Template template) {
-			this.template = template;		
-			this.ctx  =ctx;
+			this.template = template;
+			this.ctx = ctx;
 			this.globalContext = GlobalContext.getInstance(ctx.getRequest());
 			this.staticConfig = StaticConfig.getInstance(ctx.getRequest().getSession());
 		}
+
 		public Template getTemplate() {
 			return template;
 		}
+
 		public void setTemplate(Template template) {
 			this.template = template;
 		}
+
 		public String getPreviewUrl() throws Exception {
 			return URLHelper.createTransformStaticTemplateURL(ctx, template, "template", template.getVisualFile());
 		}
+
 		public String getViewUrl() throws Exception {
 			return URLHelper.createTransformStaticTemplateURL(ctx, template, "template_view", template.getVisualFile());
 		}
+
 		public String getHtmlUrl() throws Exception {
-			return URLHelper.createStaticTemplateURL(ctx, template, template.getHTMLFile(null) );
+			return URLHelper.createStaticTemplateURL(ctx, template, template.getHTMLFile(null));
 		}
+
 		public String getHtmlFile() {
 			return template.getHTMLFile(null);
 		}
-		public String getCreationDate() {			
+
+		public String getCreationDate() {
 			return StringHelper.renderDate(template.getCreationDate(), staticConfig.getDefaultDateFormat());
 		}
+
 		public String getDownloadUrl() {
 			String downloadURL;
 			if (template.isMailing()) {
@@ -263,7 +271,6 @@ public class Template implements Comparable<Template> {
 			return URLHelper.createStaticURL(ctx, downloadURL);
 		}
 	}
-	
 
 	public static class TemplateDateComparator implements Comparator<Template> {
 
@@ -335,6 +342,8 @@ public class Template implements Comparable<Template> {
 	public static final String EDIT_TEMPLATE_CODE = "[edit]";
 
 	private static final String RESOURCES_DIR = "resources";
+
+	public static final String PLUGIN_FOLDER = "plugins";
 
 	public static void main(String[] args) {
 		TemplateData data = new TemplateData("FFFFFF;000000;787878;787878;FFFFFF;55AA55;5555AA;http://localhost:8080;logo.png");
@@ -485,7 +494,8 @@ public class Template implements Comparable<Template> {
 		List<String> ressources = new LinkedList<String>();
 
 		try {
-			XMLManipulationHelper.convertHTMLtoTemplate(i18nAccess, HTMLFile, null, getMap(), getAreas(), ressources, messages);
+			TemplatePluginFactory templatePluginFactory = TemplatePluginFactory.getInstance(globalContext.getServletContext());
+			XMLManipulationHelper.convertHTMLtoTemplate(globalContext, i18nAccess, HTMLFile, null, getMap(), getAreas(), ressources, templatePluginFactory.getAllTemplatePlugin(globalContext.getTemplatePlugin()), messages);
 		} catch (Throwable t) {
 			messages.add(new GenericMessage(t.getMessage(), GenericMessage.ERROR));
 		}
@@ -750,8 +760,9 @@ public class Template implements Comparable<Template> {
 				logger.warning(HTMLFile + " not found.");
 			}
 			try {
-				List<String> ressources = new LinkedList<String>();
-				int depth = XMLManipulationHelper.convertHTMLtoTemplate(HTMLFile, jspFile, getMap(), getAreas(), ressources, false);
+				List<String> resources = new LinkedList<String>();
+				TemplatePluginFactory templatePluginFactory = TemplatePluginFactory.getInstance(globalContext.getServletContext());
+				int depth = XMLManipulationHelper.convertHTMLtoTemplate(globalContext, HTMLFile, jspFile, getMap(), getAreas(), resources, templatePluginFactory.getAllTemplatePlugin(globalContext.getTemplatePlugin()), false);
 				setDepth(depth);
 			} catch (Exception e) {
 				e.printStackTrace();
@@ -1024,10 +1035,8 @@ public class Template implements Comparable<Template> {
 	public synchronized String getRenderer(ContentContext ctx) throws IOException, BadXMLException {
 		String renderer = getRendererFile(ctx.getDevice());
 
-		GlobalContext globalContext = null;
-		if (ctx != null) {
-			globalContext = GlobalContext.getInstance(ctx.getRequest());
-		}
+		GlobalContext globalContext = GlobalContext.getInstance(ctx.getRequest());
+
 		String jspPath = URLHelper.mergePath(getTemplateTargetFolder(globalContext), renderer);
 		File jspFile = new File(jspPath);
 
@@ -1038,9 +1047,9 @@ public class Template implements Comparable<Template> {
 			if (!HTMLFile.exists()) {
 				logger.warning(HTMLFile + " not found.");
 			}
-
-			List<String> ressources = new LinkedList<String>();
-			int depth = XMLManipulationHelper.convertHTMLtoTemplate(HTMLFile, jspFile, getMap(), getAreas(), ressources, isMailing());
+			List<String> resources = new LinkedList<String>();
+			TemplatePluginFactory templatePluginFactory = TemplatePluginFactory.getInstance(globalContext.getServletContext());
+			int depth = XMLManipulationHelper.convertHTMLtoTemplate(globalContext, HTMLFile, jspFile, getMap(), getAreas(), resources, templatePluginFactory.getAllTemplatePlugin(globalContext.getTemplatePlugin()), isMailing());
 			setDepth(depth);
 		}
 		return renderer;
@@ -1305,10 +1314,24 @@ public class Template implements Comparable<Template> {
 			FileUtils.copyDirectory(templateSrc, templateTarget, new WEBFileFilter(this, false, jsp, true), false);
 			/** filter html and css **/
 			Iterator<File> files = FileUtils.iterateFiles(templateSrc, new String[] { "html", "htm", "jsp", "js", "css" }, true);
+
+			/** plugins **/
+			if (globalContext != null) {
+				Collection<String> currentPlugin = globalContext.getTemplatePlugin();
+				if (currentPlugin.size() > 0) {
+					TemplatePluginFactory templatePluginFactory = TemplatePluginFactory.getInstance(ctx.getRequest().getSession().getServletContext());
+					for (String pluginId : currentPlugin) {
+						TemplatePlugin plugin = templatePluginFactory.getTemplatePlugin(pluginId);
+						if (plugin != null) {
+							plugin.importInTemplate(ctx, templateTarget);
+						}
+					}
+				}
+			}
+
 			while (files.hasNext()) {
 				File file = files.next();
 				File targetFile = new File(file.getAbsolutePath().replace(templateSrc.getAbsolutePath(), templateTarget.getAbsolutePath()));
-				// if (!file.getName().equals(getRendererFile()) && !file.getName().equals(getHomeRenderer(globalContext))) { // we can't copy rendered file from parent
 				Map<String, String> map = getTemplateDataMap(globalContext);
 				if (ctx != null) {
 					if (globalContext != null && globalContext.getTemplateData() != null) {
@@ -1336,8 +1359,8 @@ public class Template implements Comparable<Template> {
 					} else {
 						logger.warning("no template data for : " + this);
 					}
+
 					if (FilenameUtils.getExtension(file.getName()).equalsIgnoreCase("jsp")) {
-						// System.out.println("***** Template.importTemplateInWebapp : file = "+file); //TODO: remove debug trace
 						ResourceHelper.filteredFileCopyEscapeScriplet(file, targetFile, map);
 					} else {
 						ResourceHelper.filteredFileCopy(file, targetFile, map);

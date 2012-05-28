@@ -140,19 +140,6 @@ public class MultimediaGallery extends TimeRangeComponent {
 		return writer.toString();
 	}
 
-	@Override
-	public Collection<String> getExternalResources(ContentContext ctx) {
-		Collection<String> resources = new LinkedList<String>();
-		resources.add("/js/mootools.js");
-		resources.add("/js/global.js");
-		resources.add("/js/shadowbox/src/adapter/shadowbox-base.js");
-		resources.add("/js/shadowbox/src/shadowbox.js");
-		resources.add("/js/shadowboxOptions.js");
-		resources.add("/js/onLoadFunctions.js");
-		return resources;
-
-	}
-
 	public String getFileEmbedDirectory(ContentContext ctx, String lg) {
 		GlobalContext globalContext = GlobalContext.getInstance(ctx.getRequest());
 		String folder = URLHelper.mergePath(globalContext.getDataFolder(), getRelativeFileDirectory(ctx));
