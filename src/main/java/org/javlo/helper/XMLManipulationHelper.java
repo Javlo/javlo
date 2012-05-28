@@ -509,7 +509,7 @@ public class XMLManipulationHelper {
 						ByteArrayOutputStream outStream = new ByteArrayOutputStream();
 						PrintStream out = new PrintStream(outStream);
 						out.println("");
-						out.println("<!--   plugins -->");
+						out.println("<!-- template plugins -->");
 						for (TemplatePlugin plugin : templatePlugins) {
 							String headHTML = plugin.getHTMLHead(globalContext);
 							

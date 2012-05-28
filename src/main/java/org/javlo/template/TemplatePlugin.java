@@ -60,7 +60,7 @@ public class TemplatePlugin {
 		String outHead = new String(outStream.toByteArray());
 		
 		/** load external config **/
-		Properties externalConfig = loadConfig(globalContext.getTemplatePluginConfig());
+		Properties externalConfig = loadConfig(globalContext.getTemplatePluginConfig());		
 		for (Object key : externalConfig.keySet()) {
 			outHead = outHead.replace("${"+key+"}", externalConfig.getProperty(key.toString()));
 		}
