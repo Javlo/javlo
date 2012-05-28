@@ -14,42 +14,56 @@ import javax.servlet.ServletContext;
 
 import org.javlo.config.StaticConfig;
 import org.javlo.filter.DirectoryFilter;
+import org.javlo.helper.URLHelper;
 
 public class TemplatePluginFactory {
-	
+
 	private static Logger logger = Logger.getLogger(TemplatePluginFactory.class.getName());
-	
+
+	private static final String PLUGIN_LOCAL_FOLDER = "/WEB-INF/template-plugin";
+
 	private File dir = null;
-	
+	private File localDir = null;
+
 	private static final String KEY = TemplatePluginFactory.class.getName();
-	
+
 	public static TemplatePluginFactory getInstance(ServletContext application) {
-		TemplatePluginFactory fact = (TemplatePluginFactory)application.getAttribute(KEY);
+		TemplatePluginFactory fact = (TemplatePluginFactory) application.getAttribute(KEY);
 		if (fact == null) {
 			fact = new TemplatePluginFactory();
 			fact.dir = new File(StaticConfig.getInstance(application).getTemplatePluginFolder());
-			if (!fact.dir.isDirectory()) {				
-				logger.warning("template plugin folder not found : "+fact.dir);
+			fact.localDir = new File(application.getRealPath(PLUGIN_LOCAL_FOLDER));
+			if (!fact.dir.isDirectory()) {
+				logger.warning("template plugin folder not found : " + fact.dir);
 			}
 		}
 		return fact;
 	}
-	
+
 	public List<TemplatePlugin> getAllTemplatePlugin() throws IOException {
-		if (!dir.isDirectory()) {			
+		if (!dir.isDirectory() && !localDir.isDirectory()) {
 			return Collections.EMPTY_LIST;
 		}
 		List<TemplatePlugin> allTemplatePlungin = new LinkedList<TemplatePlugin>();
-		File[] templatePluginFolders = dir.listFiles(new DirectoryFilter());		
-		for (File folder : templatePluginFolders) {
-			TemplatePlugin tp = TemplatePlugin.getInstance(folder);
-			allTemplatePlungin.add(tp);
+		if (dir.isDirectory()) {
+			File[] templatePluginFolders = dir.listFiles(new DirectoryFilter());
+			for (File folder : templatePluginFolders) {
+				TemplatePlugin tp = TemplatePlugin.getInstance(folder);
+				allTemplatePlungin.add(tp);
+			}
+		}
+		if (localDir.isDirectory()) {
+			File[] templatePluginFolders = localDir.listFiles(new DirectoryFilter());
+			for (File folder : templatePluginFolders) {
+				TemplatePlugin tp = TemplatePlugin.getInstance(folder);
+				allTemplatePlungin.add(tp);
+			}
 		}
 		return allTemplatePlungin;
 	}
-	
+
 	public List<TemplatePlugin> getAllTemplatePlugin(Collection<String> ids) throws IOException {
-		if (!dir.isDirectory()) {			
+		if (!dir.isDirectory() && !localDir.isDirectory()) {
 			return Collections.EMPTY_LIST;
 		}
 		List<TemplatePlugin> allTemplatePlungin = new LinkedList<TemplatePlugin>();
@@ -58,7 +72,7 @@ public class TemplatePluginFactory {
 		}
 		return allTemplatePlungin;
 	}
-	
+
 	public TemplatePlugin getTemplatePlugin(String name, String version) throws IOException {
 		List<TemplatePlugin> plugins = getAllTemplatePlugin();
 		for (TemplatePlugin templatePlugin : plugins) {
@@ -68,7 +82,7 @@ public class TemplatePluginFactory {
 		}
 		return null;
 	}
-	
+
 	public TemplatePlugin getTemplatePlugin(String id) throws IOException {
 		List<TemplatePlugin> plugins = getAllTemplatePlugin();
 		for (TemplatePlugin templatePlugin : plugins) {
@@ -77,6 +91,6 @@ public class TemplatePluginFactory {
 			}
 		}
 		return null;
-	}	
+	}
 
 }

@@ -27,8 +27,7 @@ import javax.servlet.http.HttpServletResponse;
  * @author Benoit Dumont de Chassart
  * 
  */
-public class ELFinder { 
- 
+public class ELFinder {
 	private static final String PROTOCOL_VERSION = "2.0";
 	private static final String HASH_ENCODING = "UTF-8";
 	private static final String DEFAULT_MIME_TYPE = "application/octet-stream";

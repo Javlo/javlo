@@ -416,7 +416,11 @@ public class AdminAction extends AbstractModuleAction {
 					
 					/** template plugin **/
 					String templatePluginConfig = requestService.getParameter("template-plugin-config", "");
-					currentGlobalContext.setTemplatePluginConfig(templatePluginConfig);
+					boolean importTemplate = false;
+					if (!templatePluginConfig.equals(currentGlobalContext.getTemplatePluginConfig())) {
+						currentGlobalContext.setTemplatePluginConfig(templatePluginConfig);
+						importTemplate = true;
+					}
 					
 					Collection<TemplatePlugin> templatePlugins = TemplatePluginFactory.getInstance(request.getSession().getServletContext()).getAllTemplatePlugin();
 					Collection<String> templatePluginsSelection = new LinkedList<String>();
@@ -425,7 +429,15 @@ public class AdminAction extends AbstractModuleAction {
 							templatePluginsSelection.add(templatePlugin.getId());	
 						}
 					}
-					currentGlobalContext.setTemplatePlugin(templatePluginsSelection);
+					if (!currentGlobalContext.getTemplatePlugin().equals(templatePluginsSelection)) {
+						currentGlobalContext.setTemplatePlugin(templatePluginsSelection);
+						importTemplate = true;
+					}
+					
+					if (importTemplate) {
+						TemplateFactory.cleanAllRenderer(ctx, false, true);
+						TemplateFactory.cleanAllRenderer(ctx, true, true);
+					}
 
 					messageRepository.setGlobalMessage(new GenericMessage(i18nAccess.getText("admin.message.context-updated"), GenericMessage.INFO));
 				} else {
