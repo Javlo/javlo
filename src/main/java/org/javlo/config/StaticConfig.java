@@ -625,6 +625,12 @@ public class StaticConfig extends Observable {
 		path = replaceFolderVariable(path);
 		return path;
 	}
+	
+	public String getLocalTemplatePluginFolder() {
+		String path = properties.getString("template-plugin-folder", "/template-plugin");
+		path = replaceFolderVariable(path);
+		return path;
+	}
 
 	public String getLocalThreadFolder() {
 		String path = properties.getString("thread-folder", "/WEB-INF/thread");
@@ -851,6 +857,14 @@ public class StaticConfig extends Observable {
 			return application.getRealPath(getLocalTemplateFolder());
 		} else {
 			return getLocalTemplateFolder();
+		}
+	}
+	
+	public String getTemplatePluginFolder() {
+		if (isDataFolderRelative()) {
+			return application.getRealPath(getLocalTemplatePluginFolder());
+		} else {
+			return getLocalTemplatePluginFolder();
 		}
 	}
 

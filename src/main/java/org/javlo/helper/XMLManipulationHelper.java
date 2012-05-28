@@ -1,8 +1,10 @@
 package org.javlo.helper;
 
 import java.io.BufferedWriter;
+import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.IOException;
+import java.io.PrintStream;
 import java.io.PrintWriter;
 import java.io.StringWriter;
 import java.util.ArrayList;
@@ -19,8 +21,10 @@ import java.util.Stack;
 
 import org.apache.commons.io.FileUtils;
 import org.javlo.context.ContentContext;
+import org.javlo.context.GlobalContext;
 import org.javlo.i18n.I18nAccess;
 import org.javlo.message.GenericMessage;
+import org.javlo.template.TemplatePlugin;
 
 public class XMLManipulationHelper {
 
@@ -234,7 +238,7 @@ public class XMLManipulationHelper {
 		}
 		return remplacement.start(html);
 	}
-
+	
 	/**
 	 * convert a generic html file to a jsp template file for wcms
 	 * 
@@ -252,7 +256,7 @@ public class XMLManipulationHelper {
 	 * @throws IOException
 	 * @throws BadXMLException
 	 */
-	private static int convertHTMLtoJSP(I18nAccess i18nAccess, File htmlFile, File jspFile, Map<String, String> options, List<String> areas, List<String> ressources, List<GenericMessage> messages, boolean isMail) throws IOException {
+	private static int convertHTMLtoJSP(GlobalContext globalContext, I18nAccess i18nAccess, File htmlFile, File jspFile, Map<String, String> options, List<String> areas, List<String> ressources, List<TemplatePlugin> templatePlugins, List<GenericMessage> messages, boolean isMail) throws IOException {
 
 		String templateVersion = StringHelper.getRandomId();
 
@@ -500,8 +504,34 @@ public class XMLManipulationHelper {
 						} else {
 							remplacement.addReplacement(tags[i].getOpenEnd() + 1, tags[i].getOpenEnd() + 1, getHTMLPrefixHead());							
 						}
-
-						remplacement.addReplacement(tags[i].getCloseStart() - 1, tags[i].getCloseStart(), getHTMLSufixHead());
+						
+						/** template plugin **/						
+						ByteArrayOutputStream outStream = new ByteArrayOutputStream();
+						PrintStream out = new PrintStream(outStream);
+						out.println("");
+						out.println("<!--   plugins -->");
+						for (TemplatePlugin plugin : templatePlugins) {
+							String headHTML = plugin.getHTMLHead(globalContext);
+							
+							TagDescription[] pluginTags = searchAllTag(headHTML, false);
+							for (TagDescription tag : pluginTags) {
+								if (tag.getAttributes().get("src") != null) {
+									tag.getAttributes().put("src", "<%=URLHelper.createStaticTemplatePluginURL(ctx, \""+tag.getAttributes().get("src")+"\", \""+plugin.getFolder()+"\")%>");
+								}
+								if (tag.getAttributes().get("href") != null) {
+									tag.getAttributes().put("href", "<%=URLHelper.createStaticTemplatePluginURL(ctx, \""+tag.getAttributes().get("href")+"\", \""+plugin.getFolder()+"\")%>");
+								}
+								String inside = tag.getInside(headHTML);
+								if (tag.getName().equalsIgnoreCase("link")) { // auto close link tag
+									inside = null;
+								}
+								out.println(tag.render(inside));
+							}							
+						}
+						out.println("<!-- end template plugins -->");
+						out.close();
+						
+						remplacement.addReplacement(tags[i].getCloseStart() - 1, tags[i].getCloseStart(), getHTMLSufixHead()+ new String(outStream.toByteArray()) );
 					}
 				}
 
@@ -609,15 +639,15 @@ public class XMLManipulationHelper {
 	}
 
 	public static int convertHTMLtoMail(File htmlFile, File jspFile) throws IOException, BadXMLException {
-		return convertHTMLtoJSP(null, htmlFile, jspFile, Collections.EMPTY_MAP, Collections.EMPTY_LIST, Collections.EMPTY_LIST, null, true);
+		return convertHTMLtoJSP(null, null, htmlFile, jspFile, Collections.EMPTY_MAP, Collections.EMPTY_LIST, Collections.EMPTY_LIST, Collections.EMPTY_LIST, null, true);
 	}
 
-	public static int convertHTMLtoTemplate(File htmlFile, File jspFile, Map<String, String> tagsID, List<String> areas, List<String> ressources, boolean isMailing) throws IOException, BadXMLException {
-		return convertHTMLtoJSP(null, htmlFile, jspFile, tagsID, areas, ressources, null, isMailing);
+	public static int convertHTMLtoTemplate(GlobalContext globalContext, File htmlFile, File jspFile, Map<String, String> tagsID, List<String> areas, List<String> ressources, List<TemplatePlugin> templatePlugins, boolean isMailing) throws IOException, BadXMLException {
+		return convertHTMLtoJSP(globalContext, null, htmlFile, jspFile, tagsID, areas, ressources, templatePlugins, null, isMailing);
 	}
 
-	public static int convertHTMLtoTemplate(I18nAccess i18nAccess, File htmlFile, File jspFile, Map<String, String> tagsID, List<String> areas, List<String> ressources, List<GenericMessage> messages) throws IOException, BadXMLException {
-		return convertHTMLtoJSP(i18nAccess, htmlFile, jspFile, tagsID, areas, ressources, messages, false);
+	public static int convertHTMLtoTemplate(GlobalContext globalContext, I18nAccess i18nAccess, File htmlFile, File jspFile, Map<String, String> tagsID, List<String> areas, List<String> ressources, List<TemplatePlugin> templatePlugins,  List<GenericMessage> messages) throws IOException, BadXMLException {
+		return convertHTMLtoJSP(globalContext, i18nAccess, htmlFile, jspFile, tagsID, areas, ressources, templatePlugins,  messages, false);
 	}
 
 	private static String getAfterBodyCode() throws IOException {
@@ -749,13 +779,10 @@ public class XMLManipulationHelper {
 		out.newLine();
 		out.append("<%}");
 		out.newLine();
-		out.append("%><link rel=\"stylesheet\" type=\"text/css\" href=\"<%=URLHelper.createStaticURL(ctx,\"/css/_basic_style.css\")%>\" />");
+		out.append("%><%=XHTMLNavigationHelper.getRSSHeader(ctx, currentPage)%>");
 		out.newLine();
 
-		out.append("<%=XHTMLNavigationHelper.getRSSHeader(ctx, currentPage)%>");
-		out.newLine();
-
-		out.append("<link rel=\"stylesheet\" type=\"text/css\" href=\"<%=URLHelper.createStaticURL(ctx,\"/jsp/components_css.jsp\")%>\" />");
+		out.append("<link rel=\"stylesheet\" type=\"text/css\" href=\"<%=URLHelper.createStaticURL(ctx,\"/jsp/view/components_css.jsp\")%>\" />");
 		out.newLine();
 		out.append("<link rel=\"shortcut icon\" type=\"image/ico\" href=\"<%=URLHelper.createStaticURL(ctx,\"/favicon.ico\")%>\" />");
 		out.newLine();

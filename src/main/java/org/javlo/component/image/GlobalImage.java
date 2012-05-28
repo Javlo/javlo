@@ -327,22 +327,6 @@ public class GlobalImage extends FilterImage {
 	}
 
 	@Override
-	public Collection<String> getExternalResources(ContentContext ctx) {
-		if (!getConfig(ctx).isClickable() || !getConfig(ctx).needJS()) {
-			return Collections.EMPTY_LIST;
-		}
-		Collection<String> resources = new LinkedList<String>();
-		resources.add("/js/mootools.js");
-		resources.add("/js/global.js");
-		resources.add("/js/shadowbox/src/adapter/shadowbox-base.js");
-		resources.add("/js/shadowbox/src/shadowbox.js");
-		resources.add("/js/shadowboxOptions.js");
-		resources.add("/js/onLoadFunctions.js");
-		return resources;
-
-	}
-
-	@Override
 	public String getFileDirectory(ContentContext ctx) {
 		String folder;
 		StaticConfig staticConfig = StaticConfig.getInstance(ctx.getRequest().getSession());
@@ -493,20 +477,20 @@ public class GlobalImage extends FilterImage {
 					}
 
 					if (!getLink().contains("/")) { // considered as page name
-						res.append("<a" + cssLinkClass + " href=\"" + URLHelper.createURLFromPageName(ctx, getLink().replace(".html", "")) + "\">");
+						res.append("<a" + cssLinkClass + " rel=\""+getConfig(ctx).getProperty("rel", "shadowbox")+"\" href=\"" + URLHelper.createURLFromPageName(ctx, getLink().replace(".html", "")) + "\">");
 					} else {
 						String target = "";
 						GlobalContext globalContext = GlobalContext.getInstance(ctx.getRequest());
 						if (globalContext.isOpenExernalLinkAsPopup(getLink())) {
 							target = "target=\"_blank\" ";
 						}
-						res.append("<a" + cssLinkClass + ' ' + target + "href=\"" + XHTMLHelper.escapeXHTML(getLink()) + "\" title=\""+StringHelper.removeTag(getStaticLabel(ctx))+"\" >");
+						res.append("<a" + cssLinkClass + ' ' + target + "href=\"" + XHTMLHelper.escapeXHTML(getLink()) + "\" title=\""+StringHelper.removeTag(getStaticLabel(ctx))+"\" rel=\""+getConfig(ctx).getProperty("rel", "shadowbox")+"\">");
 					}
 					openLink = true;
 				}
 			} else {
 				if (getConfig(ctx).isClickable()) {
-					res.append("<a class=\"no-link\" href=\"" + viewURL + getConfig(ctx).getProperty("comp.link.suffix", "") + "\" rel=\"shadowbox\" title=\"" + StringHelper.removeTag(getStaticLabel(ctx)) + "\">");
+					res.append("<a class=\"no-link\" href=\"" + viewURL + getConfig(ctx).getProperty("comp.link.suffix", "") + "\" rel=\""+getConfig(ctx).getProperty("rel", "shadowbox")+"\" title=\"" + StringHelper.removeTag(getStaticLabel(ctx)) + "\">");
 					openLink = true;
 				}
 			}

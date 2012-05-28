@@ -10,6 +10,7 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 
+import javax.servlet.ServletContext;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 
@@ -33,6 +34,8 @@ import org.javlo.service.ContentService;
 import org.javlo.service.RequestService;
 import org.javlo.template.Template;
 import org.javlo.template.TemplateFactory;
+import org.javlo.template.TemplatePlugin;
+import org.javlo.template.TemplatePluginFactory;
 import org.javlo.user.AdminUserSecurity;
 import org.javlo.ztatic.FileCache;
 
@@ -250,6 +253,7 @@ public class AdminAction extends AbstractModuleAction {
 	public String prepare(ContentContext ctx, ModuleContext moduleContext) throws Exception {
 	
 		HttpServletRequest request = ctx.getRequest();
+		ServletContext application = request.getSession().getServletContext();
 	
 		ContentContext viewCtx = new ContentContext(ctx);		
 		Module currentModule = moduleContext.getCurrentModule();
@@ -324,6 +328,18 @@ public class AdminAction extends AbstractModuleAction {
 				params.put("context", currentGlobalContext.getContextKey());
 				String backUrl = URLHelper.createModuleURL(ctx, ctx.getPath(), currentModule.getName(), params);
 				currentModule.setBackUrl(backUrl);
+				
+				/** template plugin **/
+				ctx.getRequest().setAttribute("templatePlugins", TemplatePluginFactory.getInstance(application).getAllTemplatePlugin());
+				
+				Map<String, String> selectedPlugin = new HashMap<String,String>();
+				for (String selected : currentGlobalContext.getTemplatePlugin()) {
+					selectedPlugin.put(selected, StringHelper.SOMETHING );
+				}
+				
+				ctx.getRequest().setAttribute("selectedTemplatePlugins", selectedPlugin);
+				ctx.getRequest().setAttribute("templatePluginConfig", currentGlobalContext.getTemplatePluginConfig());				
+				
 			} else {
 				msg = "bad context : " + currentContextKey;
 				currentModule.restoreRenderer();
@@ -397,6 +413,19 @@ public class AdminAction extends AbstractModuleAction {
 					} catch (Exception e) {
 						messageRepository.setGlobalMessage(new GenericMessage(e.getMessage(), GenericMessage.ERROR));
 					}
+					
+					/** template plugin **/
+					String templatePluginConfig = requestService.getParameter("template-plugin-config", "");
+					currentGlobalContext.setTemplatePluginConfig(templatePluginConfig);
+					
+					Collection<TemplatePlugin> templatePlugins = TemplatePluginFactory.getInstance(request.getSession().getServletContext()).getAllTemplatePlugin();
+					Collection<String> templatePluginsSelection = new LinkedList<String>();
+					for (TemplatePlugin templatePlugin : templatePlugins) {
+						if (requestService.getParameter(templatePlugin.getId(), null) != null) {
+							templatePluginsSelection.add(templatePlugin.getId());	
+						}
+					}
+					currentGlobalContext.setTemplatePlugin(templatePluginsSelection);
 
 					messageRepository.setGlobalMessage(new GenericMessage(i18nAccess.getText("admin.message.context-updated"), GenericMessage.INFO));
 				} else {

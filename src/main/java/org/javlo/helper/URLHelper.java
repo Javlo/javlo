@@ -25,6 +25,7 @@ import org.javlo.service.NavigationService;
 import org.javlo.service.RequestService;
 import org.javlo.template.Template;
 import org.javlo.template.TemplateFactory;
+import org.javlo.template.TemplatePlugin;
 
 /**
  * @author pvanderm
@@ -269,7 +270,7 @@ public class URLHelper extends ElementaryURLHelper {
 		return createStaticTemplateURL(ctx, url, templateVersion, true);
 	}
 
-	protected static String createStaticTemplateURL(ContentContext ctx, String url, String templateVersion, boolean withPath) throws Exception {
+	protected static String createStaticTemplateURL(ContentContext ctx, String url, String templateVersion, boolean widthPath) throws Exception {
 		Template template = null;
 		GlobalContext globalContext = GlobalContext.getInstance(ctx.getRequest());
 		if (ctx.getRenderMode() == ContentContext.PAGE_MODE) {
@@ -286,7 +287,7 @@ public class URLHelper extends ElementaryURLHelper {
 			template = Template.getApplicationInstance(ctx.getRequest().getSession().getServletContext(), ctx, templateID, true);
 		}
 
-		ContentService.createContent(ctx.getRequest());
+		//ContentService.createContent(ctx.getRequest());
 		MenuElement elem = ctx.getCurrentPage();
 
 		if (template == null) {
@@ -311,8 +312,35 @@ public class URLHelper extends ElementaryURLHelper {
 		if (templateVersion != null) {
 			url = URLHelper.addParam(url, "template-id", templateVersion);
 		}
-		return createStaticURL(ctx, null, URLHelper.mergePath(templateFullPath, url), withPath);
+		return createStaticURL(ctx, null, URLHelper.mergePath(templateFullPath, url), widthPath);
 		// return createStaticURL(ctx, URLHelper.mergePath(templateFullPath, url));
+	}
+	
+	public static String createStaticTemplatePluginURL(ContentContext ctx, String url, String pluginFolder) throws Exception {
+		
+		if (URLHelper.isAbsoluteURL(url)) {
+			return url;
+		}
+		
+		GlobalContext globalContext = GlobalContext.getInstance(ctx.getRequest());
+		
+		String templateFolder;
+
+		Template template = ctx.getCurrentTemplate();
+
+		if (template.isMailing()) {
+			templateFolder = template.getLocalWorkMailingTemplateFolder();
+		} else {
+			templateFolder = template.getLocalWorkTemplateFolder();
+		}
+		String templateFullPath = URLHelper.mergePath(templateFolder, template.getFolder(globalContext), pluginFolder);
+
+		if (url == null) {
+			return null;
+		}
+		url = url.replace('\\', '/');
+		
+		return createStaticURL(ctx, null, URLHelper.mergePath(templateFullPath, url), true);		
 	}
 
 	public static String createStaticURL(ContentContext ctx, MenuElement referencePage, String inUrl) {
@@ -417,7 +445,7 @@ public class URLHelper extends ElementaryURLHelper {
 		url = URLHelper.mergePath(TRANSFORM + '/' + filter + '/' + "default" + templateFullPath, url);
 		return createStaticURL(ctx, url);
 	}
-
+	
 	public static String createURL(ContentContext ctx) {
 		return createURL(ctx, ctx.getPath());
 	}
