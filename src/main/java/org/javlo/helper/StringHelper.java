@@ -1842,7 +1842,7 @@ public class StringHelper {
 		return stringToCollection(str, "\\?");
 	}
 
-	public static Collection<String> stringToCollection(String str, String token) {
+	public static List<String> stringToCollection(String str, String token) {
 		if (str == null) {
 			return null;
 		}

@@ -1,12 +1,16 @@
 package org.javlo.ztatic;
 
+import java.beans.XMLDecoder;
+import java.beans.XMLEncoder;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.ObjectInputStream;
 import java.io.OutputStream;
+import java.io.Serializable;
 import java.util.Collection;
 import java.util.logging.Logger;
 
@@ -14,6 +18,7 @@ import javax.servlet.ServletContext;
 
 import org.apache.commons.io.FileUtils;
 import org.javlo.helper.ResourceHelper;
+import org.javlo.helper.StringHelper;
 import org.javlo.helper.URLHelper;
 
 /**
@@ -249,6 +254,38 @@ public class FileCache {
 		}
 
 		cacheDir.mkdirs();
+	}
+
+	public void storeBean(String key, Serializable obj) throws IOException {
+		String fileName = StringHelper.createFileName(key) + ".serial.xml";
+		File file = new File(URLHelper.mergePath(application.getRealPath(BASE_DIR), fileName));
+		if (file.exists() && obj == null) {
+			file.delete();
+			return;
+		}
+		file.createNewFile();
+		XMLEncoder encoder = new XMLEncoder(new FileOutputStream(file));
+		try {
+			encoder.writeObject(obj);
+			encoder.flush();
+		} finally {
+			encoder.close();
+		}
+	}
+
+	public Serializable loadBean(String key) throws ClassNotFoundException, IOException {
+		String fileName = StringHelper.createFileName(key) + ".serial.xml";
+		File file = new File(URLHelper.mergePath(application.getRealPath(BASE_DIR), fileName));
+		if (!file.exists()) {			
+			return null;
+		}
+		XMLDecoder decorder = new XMLDecoder(new FileInputStream(file));
+		try {
+			logger.fine("load bean : "+file);
+			return (Serializable) decorder.readObject();
+		} finally {
+			decorder.close();
+		}
 	}
 
 }

@@ -70,8 +70,6 @@ public class ModuleContext {
 							String webappRoot = session.getServletContext().getRealPath("/");
 							String moduleRoot = dir.getAbsolutePath().replace(webappRoot, "/");
 							Module module = new Module(configFile, new Locale(globalContext.getEditLanguage()), moduleRoot);
-							
-							
 
 							if (module.haveRight(userFactory.getCurrentUser(session)) && globalContext.getModules().contains(module.getName())) {
 								modules.add(module);
@@ -108,7 +106,7 @@ public class ModuleContext {
 		}
 	}
 
-	public static final ModuleContext getInstance(GlobalContext globalContext, HttpSession session) throws ModuleException {
+	public static final ModuleContext getInstance(HttpSession session, GlobalContext globalContext) throws ModuleException {
 		ModuleContext outContext = (ModuleContext) session.getAttribute(KEY);
 		if (outContext == null || !outContext.siteKey.equals(globalContext.getContextKey())) {
 			outContext = new ModuleContext(session, globalContext);

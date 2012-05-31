@@ -379,7 +379,7 @@ public class Module {
 	public Collection<Box> getMainBoxes() {
 		return mainBoxes;
 	}
-
+	
 	public Collection<Box> getSideBoxes() {
 		return sideBoxes;
 	}
@@ -542,11 +542,23 @@ public class Module {
 		return box;
 	}
 	
+	/**
+	 * create a a new side box.
+	 * @param name
+	 * @param title
+	 * @param renderer
+	 * @param action
+	 * @return null if box with the same name allready exist.
+	 */
 	public Box createSideBox(String name, String title, String renderer, boolean action) {
+		if (getBox(name) != null) {
+			return null;
+		}
 		Box box = new Box(title, renderer, action);
 		sideBoxes.add(box);
 		if (name != null) {
 			boxes.put(name, box);
+			setSidebar(true);
 		}
 		return box;
 	}
@@ -555,6 +567,7 @@ public class Module {
 		boxes.clear();
 		sideBoxes.clear();
 		mainBoxes.clear();
+		setSidebar(false);
 	}
 
 	public String getBackUrl() {

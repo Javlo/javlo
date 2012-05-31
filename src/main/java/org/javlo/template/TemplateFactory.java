@@ -15,11 +15,14 @@ import java.util.logging.Logger;
 import javax.servlet.ServletContext;
 
 import org.apache.commons.configuration.ConfigurationException;
+import org.apache.commons.io.FileUtils;
 import org.javlo.config.StaticConfig;
 import org.javlo.context.ContentContext;
 import org.javlo.context.EditContext;
 import org.javlo.context.GlobalContext;
 import org.javlo.filter.VisibleDirectoryFilter;
+import org.javlo.helper.StringHelper;
+import org.javlo.helper.URLHelper;
 import org.javlo.user.AdminUserSecurity;
 import org.javlo.user.User;
 
@@ -37,6 +40,22 @@ public class TemplateFactory {
 	public static List<String> TEMPLATE_COLOR_AMBIANCE = Arrays.asList(new String[] { "none", "black", "white", "gray", "red", "green", "blue", "orange", "yellow", "purple", "pink", "brun" });
 
 	public static void cleanAllRenderer(ContentContext ctx, boolean mailing, boolean secure) throws IOException {
+		cleanRenderer(ctx, null, mailing, secure);
+
+	}
+
+	/**
+	 * clear only template with id contains in inTemplates
+	 * 
+	 * @param ctx
+	 * @param inTemplates
+	 *            a list of template id
+	 * @param mailing
+	 *            true is mailing template
+	 * @param secure
+	 * @throws IOException
+	 */
+	public static void cleanRenderer(ContentContext ctx, Collection<String> inTemplates, boolean mailing, boolean secure) throws IOException {
 		GlobalContext globalContext = GlobalContext.getInstance(ctx.getRequest());
 		EditContext editCtx = EditContext.getInstance(globalContext, ctx.getRequest().getSession());
 		AdminUserSecurity security = AdminUserSecurity.getInstance();
@@ -54,7 +73,9 @@ public class TemplateFactory {
 		}
 
 		for (Template template : templates) {
-			template.clearRenderer(ctx);
+			if (inTemplates == null || inTemplates.contains(template.getId())) {
+				template.clearRenderer(ctx);
+			}
 		}
 
 	}
@@ -105,7 +126,8 @@ public class TemplateFactory {
 	}
 
 	/**
-	 * get templates from disk without cache. 
+	 * get templates from disk without cache.
+	 * 
 	 * @param application
 	 * @return
 	 * @throws IOException
@@ -115,7 +137,7 @@ public class TemplateFactory {
 		Collections.sort(outList, Template.TemplateDateComparator.instance);
 		return outList;
 	}
-	
+
 	public static Collection<Template> getAllMaillingTemplates(ServletContext application) throws IOException {
 		List<Template> outList = new LinkedList(getMailingTemplates(application).values());
 		Collections.sort(outList, Template.TemplateDateComparator.instance);
@@ -151,11 +173,14 @@ public class TemplateFactory {
 		Collections.sort(outList, Template.TemplateDateComparator.instance);
 		return outList;
 	}
-	
+
 	/**
-	 * get a template from disk 
-	 * @param application appplication context
-	 * @param templateName the name of the template
+	 * get a template from disk
+	 * 
+	 * @param application
+	 *            appplication context
+	 * @param templateName
+	 *            the name of the template
 	 * @return
 	 * @throws IOException
 	 */
@@ -245,14 +270,38 @@ public class TemplateFactory {
 		return outTemplates;
 	}
 	
+	/**
+	 * get template from disk.
+	 * 
+	 * @param application
+	 * @return
+	 * @throws IOException
+	 */
+	public static Template createDiskTemplates(ServletContext application, String name) throws IOException {
+		StaticConfig staticConfig = StaticConfig.getInstance(application);		
+		File templateFolder = new File(URLHelper.mergePath(staticConfig.getTemplateFolder(), StringHelper.createFileName(name)));
+		if (templateFolder.exists()) {
+			return null;
+		}		
+		File defaultTemplate = new File(staticConfig.getDefaultTemplateFolder());
+		if (defaultTemplate.exists()) {
+			FileUtils.copyDirectory(defaultTemplate, templateFolder);
+		} else {
+			File configFile = new File(URLHelper.mergePath(templateFolder.getAbsolutePath(), Template.CONFIG_FILE));
+			configFile.getParentFile().mkdirs();
+			configFile.createNewFile();
+		}
+		return getDiskTemplates(application).get(name);
+	}
+
 	public static Template getDiskTemplate(ServletContext application, String templateName, boolean mailing) throws IOException {
 		Template template = null;
-		if (templateName != null) {			
-			Map<String,Template> allTemplates;
+		if (templateName != null) {
+			Map<String, Template> allTemplates;
 			if (mailing) {
 				allTemplates = TemplateFactory.getDiskMailingTemplates(application);
 			} else {
-				allTemplates = TemplateFactory.getDiskTemplates(application);	
+				allTemplates = TemplateFactory.getDiskTemplates(application);
 			}
 			template = allTemplates.get(templateName);
 		}

@@ -78,7 +78,7 @@ public class ServletHelper {
 	
 	public static final void prepareModule(ContentContext ctx) throws Exception {
 		GlobalContext globalContext = GlobalContext.getInstance(ctx.getRequest());		
-		ModuleContext moduleContext = ModuleContext.getInstance(globalContext, ctx.getRequest().getSession());
+		ModuleContext moduleContext = ModuleContext.getInstance(ctx.getRequest().getSession(), globalContext);
 		ctx.getRequest().setAttribute("modules", moduleContext.getModules());
 		ctx.getRequest().setAttribute("currentModule", moduleContext.getCurrentModule());
 		if (moduleContext.getFromModule() != null) {

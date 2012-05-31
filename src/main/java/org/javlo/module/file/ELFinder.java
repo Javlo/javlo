@@ -4,10 +4,7 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
-import java.io.UnsupportedEncodingException;
 import java.io.Writer;
-import java.net.URLDecoder;
-import java.net.URLEncoder;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
@@ -22,21 +19,26 @@ import java.util.Set;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import org.javlo.helper.StringHelper;
+
 /**
  * 
  * @author Benoit Dumont de Chassart
- * 
+ *
  */
 public class ELFinder {
 	private static final String PROTOCOL_VERSION = "2.0";
 	private static final String HASH_ENCODING = "UTF-8";
 	private static final String DEFAULT_MIME_TYPE = "application/octet-stream";
-	private static final String VOLUME_SEPARATOR = "_";
+	private static final String VOLUME_SEPARATOR = "_"; 
 
 	private Map<String, String> MIME_TYPES;
 
 	private Map<String, Volume> volumes;
- 
+
+	private Map<FileObject, String> fileToHash = new HashMap<FileObject, String>();
+	private Map<String, FileObject> hashToFile = new HashMap<String, FileObject>();
+
 	public ELFinder(String rootPath, String resourcePath) {
 		Volume volume = new Volume();
 		volume.id = "AB";
@@ -62,7 +64,7 @@ public class ELFinder {
 
 		JSONSerializer.writeJSONString(apiResponse, out);
 
-		//out.write("{\"error\" : \"Invalid backend configuration\"}");
+		// out.write("{\"error\" : \"Invalid backend configuration\"}");
 	}
 
 	private FileObject getFile(HttpServletRequest request, String name) {
@@ -130,31 +132,29 @@ public class ELFinder {
 		System.out.println("ListFiles:");
 		response.put("files", printFiles(files));
 		if (init) {
-			extend(response,
-					prop("api", PROTOCOL_VERSION),
-					prop("uplMaxSize", "32M"));
+			extend(response, prop("api", PROTOCOL_VERSION), prop("uplMaxSize", "32M"));
 		}
 	}
 
 	public void parents(FileObject target, Map<String, Object> response) {
-//		System.out.println("parents - target:" + target);
-//		if (target.isRoot()) {
-//			response.put("tree", listFiles(volumeFiles()));
-//		} else {
-//			List<FileObject> treeFiles = new ArrayList<FileObject>();
-//			FileObject parent = target.getParentFile();
-//			for (FileObject child : parent.getChildren()) {
-//				if (child.isDirectory() && !child.equals(target)) {
-//					treeFiles.add(child);
-//				}
-//			}
-//			treeFiles.add(0, target);
-//			while (parent != null) {
-//				treeFiles.add(0, parent);
-//				parent = parent.getParentFile();
-//			}
-//			response.put("tree", listFiles(treeFiles));
-//		}
+		// System.out.println("parents - target:" + target);
+		// if (target.isRoot()) {
+		// response.put("tree", listFiles(volumeFiles()));
+		// } else {
+		// List<FileObject> treeFiles = new ArrayList<FileObject>();
+		// FileObject parent = target.getParentFile();
+		// for (FileObject child : parent.getChildren()) {
+		// if (child.isDirectory() && !child.equals(target)) {
+		// treeFiles.add(child);
+		// }
+		// }
+		// treeFiles.add(0, target);
+		// while (parent != null) {
+		// treeFiles.add(0, parent);
+		// parent = parent.getParentFile();
+		// }
+		// response.put("tree", listFiles(treeFiles));
+		// }
 	}
 
 	public void tree(FileObject target, Map<String, Object> response) {
@@ -176,7 +176,7 @@ public class ELFinder {
 	private Map<String, Object> printFile(FileObject file) {
 		System.out.println("listFile: " + file.getRelativePath());
 		Map<String, Object> out = obj(
-				// (String) name of file/dir. Required
+		// (String) name of file/dir. Required
 				prop("name", file.file.getName()),
 				// (String) hash of current file/dir path, first symbol must be letter, symbols before _underline_ - volume id, Required.
 				prop("hash", fileToHash(file)),
@@ -193,21 +193,21 @@ public class ELFinder {
 				// (Number) is file locked. If locked that object cannot be deleted and renamed
 				prop("locked", toInt(false)));
 
-//		if (isSymbLink(file)) {
-//			extend(out,
-//					// (String) For symlinks only. Symlink target path.
-//					prop("alias", "files/images"),
-//					// (String) For symlinks only. Symlink target hash.
-//					prop("thash", "l1_c2NhbnMy"));
-//		}
+		// if (isSymbLink(file)) {
+		// extend(out,
+		// // (String) For symlinks only. Symlink target path.
+		// prop("alias", "files/images"),
+		// // (String) For symlinks only. Symlink target hash.
+		// prop("thash", "l1_c2NhbnMy"));
+		// }
 
-//		if (isImage(file)) {
-//			extend(out,
-//					// (String) Only for images. Thumbnail file name, if file do not have thumbnail yet, but it can be generated than it must have value "1"
-//					prop("tmb", "bac0d45b625f8d4633435ffbd52ca495.png"),
-//					// (String) For images - file dimensions. Optionally.
-//					prop("dim", "640x480"));
-//		}
+		// if (isImage(file)) {
+		// extend(out,
+		// // (String) Only for images. Thumbnail file name, if file do not have thumbnail yet, but it can be generated than it must have value "1"
+		// prop("tmb", "bac0d45b625f8d4633435ffbd52ca495.png"),
+		// // (String) For images - file dimensions. Optionally.
+		// prop("dim", "640x480"));
+		// }
 
 		// (Number) Only for directories. Marks if directory has child directories inside it. 0 (or not set) - no, 1 - yes. Do not need to calculate amount.
 		if (file.isDirectory()) {
@@ -227,19 +227,16 @@ public class ELFinder {
 	}
 
 	private Map<String, Object> printOptions(FileObject fil) {
-		return obj(
-				prop("path", fil.getRelativePath()),// (String) Current folder path
+		return obj(prop("path", fil.getRelativePath()),// (String) Current folder path
 				prop("url", "http://localhost/elfinder/files/folder42/"),// (String) Current folder URL
 				prop("tmbURL", "http://localhost/elfinder/files/folder42/.tmb/"),// (String) Thumbnails folder URL
 				prop("separator", "/"), // (String) Разделитель пути для текущего тома
 				prop("disabled", array()), // (Array) List of commands not allowed (disabled) on this volume
 				prop("copyOverwrite", 1), // (Number) Разрешена или нет перезапись файлов с одинаковыми именами на текущем томе
 				propObj("archivers", // (Object) Настройки архиваторов
-						prop("create", array() // (Array)  Список mime типов архивов, которые могут быть созданы
-						),
-						prop("extract", array() // (Array)  Список mime типов архивов, которые могут быть распакованы
-						)
-				));
+						prop("create", array() // (Array) Список mime типов архивов, которые могут быть созданы
+						), prop("extract", array() // (Array) Список mime типов архивов, которые могут быть распакованы
+						)));
 	}
 
 	protected List<Object> printFiles(Collection<FileObject> files) {
@@ -264,7 +261,7 @@ public class ELFinder {
 			while (pos >= 0) {
 				String extension = fileName.substring(pos + 1);
 				String fileMime = MIME_TYPES.get(extension.toLowerCase());
-				//System.out.println(extension + " = " + fileMime);
+				// System.out.println(extension + " = " + fileMime);
 				if (fileMime != null) {
 					mime = fileMime;
 				}
@@ -278,45 +275,18 @@ public class ELFinder {
 	}
 
 	public FileObject hashToFile(String hash) {
-		int pos = hash.indexOf(VOLUME_SEPARATOR);
-		String volumeId = hash.substring(0, pos);
-
-		Volume volume = volumes.get(volumeId);
-		if (volume == null) {
-			throw new RuntimeException("Volume not found.");
-		}
-		String subPathEnc = hash.substring(pos + VOLUME_SEPARATOR.length());
-		String path = decode(subPathEnc);
-		return new FileObject(volume, path);
+		System.out.println("***** ELFinder.hashToFile : hash = "+hash); //TODO: remove debug trace
+		return hashToFile.get(hash);
 	}
 
-	private static String fileToHash(FileObject file) {
-		String subPath = file.file.getPath().substring(file.volume.root.getPath().length());
-		return file.volume.id + VOLUME_SEPARATOR + encode(subPath);
-	}
-
-	private static String encode(String str) {
-		try {
-			return URLEncoder.encode(str, HASH_ENCODING)
-					.replace("_", "%5F")
-					.replace("+", "%20")
-					.replace("-", "%2D")
-					.replace('%', '-');
-			//return new BASE64Encoder().encode(str.getBytes(HASH_ENCODING));
-		} catch (UnsupportedEncodingException ex) {
-			throw new RuntimeException("Forwarded exception.", ex);
-		}
-	}
-
-	private String decode(String str) {
-		try {
-			return URLDecoder.decode(str.replace('-', '%'), HASH_ENCODING);
-			//return new String(new BASE64Decoder().decodeBuffer(str), HASH_ENCODING);
-		} catch (UnsupportedEncodingException ex) {
-			throw new RuntimeException("Forwarded exception.", ex);
-		} catch (IOException ex) {
-			throw new RuntimeException("Forwarded exception.", ex);
-		}
+	private String fileToHash(FileObject file) {		
+		String hash = fileToHash.get(file);
+		if (hash == null) {
+			hash = 'F' + StringHelper.getRandomId();
+			hashToFile.put(hash, file);
+			fileToHash.put(file, hash);
+		}		
+		return hash;
 	}
 
 	private static List<FileObject> filterDirectories(List<FileObject> children) {
@@ -350,6 +320,7 @@ public class ELFinder {
 	private Property prop(String name, Object value) {
 		return new Property(name, value);
 	}
+
 	private Property propObj(String name, Property... props) {
 		return new Property(name, obj(props));
 	}
@@ -369,9 +340,10 @@ public class ELFinder {
 		private String id;
 	}
 
-	public static class FileObject {
+	public class FileObject {
 		private Volume volume;
 		private File file;
+
 		public FileObject(Volume volume, String path) {
 			this.volume = volume;
 			this.file = new File(volume.root, path);
@@ -434,7 +406,7 @@ public class ELFinder {
 
 		@Override
 		public int hashCode() {
-			return fileToHash(this).hashCode();
+			return file.hashCode();
 		}
 
 		@Override

@@ -1,23 +1,14 @@
 package org.javlo.component.multimedia;
 
 import java.io.File;
-import java.io.PrintWriter;
-import java.io.StringWriter;
-import java.util.Calendar;
 import java.util.Collection;
 import java.util.Collections;
-import java.util.GregorianCalendar;
-import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.TreeSet;
 
 import org.javlo.context.ContentContext;
-import org.javlo.context.GlobalContext;
 import org.javlo.helper.ResourceHelper;
-import org.javlo.helper.StringHelper;
-import org.javlo.helper.URLHelper;
-import org.javlo.helper.XHTMLHelper;
 import org.javlo.helper.filefilter.ImageSharedFileFilter;
 import org.javlo.i18n.I18nAccess;
 import org.javlo.ztatic.StaticInfo;
@@ -153,18 +144,6 @@ public class AllImagesGallery extends MultimediaGallery {
 		return TYPE;
 	}
 
-	/**
-	 * @see org.javlo.itf.IContentVisualComponent#getXHTMLCode()
-	 */
-	@Override
-	public String getViewXHTMLCode(ContentContext ctx) throws Exception {
-		if (getStyle(ctx).equals("3D") && ctx.getDevice().isPointerDevice()) { // if no pointer device -> no mouse over -> not possible to put 3D thumbnails
-			return render3DView(ctx);
-		} else {
-			return super.getViewXHTMLCode(ctx);
-		}
-	}
-
 	@Override
 	public int getWordCount(ContentContext ctx) {
 		return 0;
@@ -187,101 +166,6 @@ public class AllImagesGallery extends MultimediaGallery {
 	@Override
 	public boolean isUnique() {
 		return false;
-	}
-
-	protected String render3DView(ContentContext ctx) throws Exception {
-		StringWriter writer = new StringWriter();
-		PrintWriter out = new PrintWriter(writer);
-
-		GlobalContext globalContext = GlobalContext.getInstance(ctx.getRequest());
-
-		Calendar startDate = GregorianCalendar.getInstance();
-		startDate.setTime(getStartDate());
-		Calendar endDate = GregorianCalendar.getInstance();
-		endDate.setTime(getEndDate());
-
-		int index = 0;
-
-		out.println("<div id=\"3D-container\">");
-		out.println("<div class=\"thumbnails-3D\">");
-		out.println("<div class=\"images\">");
-		Collection<File> mulFiles = getAllMultimediaFiles(ctx);
-		for (File file : mulFiles) {
-			org.javlo.helper.Logger.stepCount("multimedia", " file : " + file);
-			String currentLg = ctx.getRequestContentLanguage();
-			File multimediaFile = new File(getMultimediaFilePath(ctx, currentLg, file));
-			if (!(multimediaFile.exists())) {
-				currentLg = globalContext.getDefaultLanguages().iterator().next();
-			} else {
-				file = multimediaFile;
-			}
-			ContentContext lgCtx = new ContentContext(ctx);
-			Iterator<String> defaultLg = globalContext.getDefaultLanguages().iterator();
-			lgCtx.setRequestContentLanguage(lgCtx.getRequestContentLanguage()); // if the page is defined only in a lang the information must still be display in current lg
-			StaticInfo info = StaticInfo.getInstance(lgCtx, file);
-			while (!info.isPertinent(lgCtx) && defaultLg.hasNext()) {
-				lgCtx.setRequestContentLanguage(defaultLg.next());
-			}
-			if (!info.isPertinent(lgCtx)) {
-				lgCtx = ctx;
-			}
-
-			Calendar currentDate = GregorianCalendar.getInstance();
-
-			if (info.getDate(ctx) != null) {
-				currentDate.setTime(info.getDate(ctx));
-			}
-
-			if ((info.isShared(ctx) || !isDisplayOnlyShared()) && info.getDate(ctx) != null && currentDate.after(startDate) && currentDate.before(endDate) && index < getMaxListSize()) {
-
-				File imageFile = new File(getImageFilePath(ctx, file.getAbsolutePath()));
-
-				String multimediaURL = URLHelper.createRessourceURL(lgCtx, getMultimediaFileURL(ctx, currentLg, file));
-
-				String previewURL = multimediaURL;
-				if (StringHelper.isImage(file.getName())) {
-					previewURL = URLHelper.createTransformURL(lgCtx, getImageFileURL(ctx, file), getPreviewFilter(file));
-				}
-
-				String title = info.getTitle(lgCtx);
-				/*
-				 * if (title.trim().length() == 0) { title = file.getName(); }
-				 */
-
-				String filter = "thumbnails-3D";
-
-				if (index < 1 || !getStyle(ctx).equals(IMAGE_AFTER_EXEPT_FIRST)) {
-					if (imageFile.exists()) {
-						out.println("<div class=\"board-thumb-image\"><a href=\"" + previewURL + "\" rel=\"" + getHTMLRelation(ctx) + "\" title=\"" + StringHelper.removeTag(info.getFullDescription(ctx)) + "\">");
-						String event = "";
-						out.println("<img src=\"" + URLHelper.createTransformURL(lgCtx, getImageFileURL(ctx, file), filter) + "\" alt=\"" + StringHelper.removeTag(info.getTitle(ctx)) + "\"" + event + " />");
-						out.println("</a>");
-						out.println(XHTMLHelper.renderSpecialLink(ctx, currentLg, getMultimediaFileURL(ctx, currentLg, file), info));
-						out.println("</div>");
-					} else {
-						logger.info("image not found : " + imageFile);
-					}
-				}
-
-				if (isRenderInfo(ctx)) {
-					out.println("<div id=\"3D-description-" + index + "\" class=\"description\">");
-					out.println("<h4><a href=\"" + previewURL + "\" rel=\"" + getHTMLRelation(ctx) + "\" title=\"" + StringHelper.removeTag(info.getFullDescription(ctx)) + "\">" + title + "</a></h4>");
-					if (info.getLocation(ctx) != null && info.getLocation(ctx).trim().length() > 0) {
-						out.println("<span class=\"place\">" + info.getLocation(ctx) + " - </span>");
-					}
-					out.println("<span class=\"date\">" + StringHelper.renderShortDate(ctx, info.getDate(ctx)) + "</span>");
-					if (info.getDescription(ctx) != null && info.getDescription(ctx).trim().length() > 0) {
-						out.println("<p>" + info.getDescription(ctx) + "</p>");
-					}
-					out.println("</div>");
-				}
-				index++;
-			}
-		}
-		out.println("<div class=\"content_clear\"><span></span></div>");
-		out.println("</div></div></div>");
-		out.close();
-		return writer.toString();
 	}
 
 }

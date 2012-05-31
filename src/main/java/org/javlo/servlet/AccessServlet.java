@@ -306,7 +306,7 @@ public class AccessServlet extends HttpServlet {
 			localLogger.startCount("execute action");
 
 			/*** update module status before action ***/
-			ModuleContext moduleContext = ModuleContext.getInstance(globalContext, request.getSession());
+			ModuleContext moduleContext = ModuleContext.getInstance(request.getSession(), globalContext);
 			if (requestService.getParameter("module", null) != null) {
 				moduleContext.setCurrentModule(requestService.getParameter("module", null));
 				i18nAccess.setCurrentModule(globalContext, moduleContext.getCurrentModule());
