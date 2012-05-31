@@ -270,6 +270,26 @@ public class Template implements Comparable<Template> {
 			}
 			return URLHelper.createStaticURL(ctx, downloadURL);
 		}
+		
+		public Collection<String> getHTMLIDS() {
+			List<String> ids = template.getHTMLIDS();
+			Collections.sort(ids);
+			return ids;
+		}
+		
+		public Collection<String> getAreas() {
+			List<String> areas = template.getAreas();
+			Collections.sort(areas);
+			return areas;
+		}
+		
+		public Map<String,String> getAreasMap() {
+			return template.getAreasMap();
+		}
+		
+		public boolean isValid() {
+			return template.isValid();
+		}
 	}
 
 	public static class TemplateDateComparator implements Comparator<Template> {
@@ -325,7 +345,7 @@ public class Template implements Comparable<Template> {
 
 	private static final String MAIL_FOLDER = "mail";
 
-	private static final String CONFIG_FILE = "config.properties";
+	public static final String CONFIG_FILE = "config.properties";
 
 	private static final String PRIVATE_CONFIG_FILE = "private-config.properties";
 
@@ -587,6 +607,37 @@ public class Template implements Comparable<Template> {
 		}
 		return areas;
 	}
+	
+	public Map<String,String> getAreasMap() {
+		Map<String,String> areas = new HashMap<String, String>();
+		Iterator<String> keys = properties.getKeys();
+		while (keys.hasNext()) {
+			String key = keys.next();
+			if (key.startsWith(XMLManipulationHelper.AREA_PREFIX) && !key.endsWith(".navigation")) {
+				areas.put(key.substring(XMLManipulationHelper.AREA_PREFIX.length()), properties.getString(key));
+			}
+		}
+		return areas;
+	}
+	
+	public void setArea(String area, String id) {
+		properties.setProperty(XMLManipulationHelper.AREA_PREFIX+area, id);
+		try {
+			properties.save();
+		} catch (ConfigurationException e) {
+			e.printStackTrace();
+		}
+	}
+	
+	public void deleteArea(String area) {
+		properties.clearProperty(XMLManipulationHelper.AREA_PREFIX+area);		
+		try {
+			properties.save();
+		} catch (ConfigurationException e) {
+			e.printStackTrace();
+		}
+	}
+
 
 	/**
 	 * this area is display if specialrendere is defined
@@ -762,7 +813,7 @@ public class Template implements Comparable<Template> {
 			try {
 				List<String> resources = new LinkedList<String>();
 				TemplatePluginFactory templatePluginFactory = TemplatePluginFactory.getInstance(globalContext.getServletContext());
-				int depth = XMLManipulationHelper.convertHTMLtoTemplate(globalContext, HTMLFile, jspFile, getMap(), getAreas(), resources, templatePluginFactory.getAllTemplatePlugin(globalContext.getTemplatePlugin()), false);
+				int depth = XMLManipulationHelper.convertHTMLtoTemplate(globalContext, HTMLFile, jspFile, getMap(), getAreas(), resources, templatePluginFactory.getAllTemplatePlugin(globalContext.getTemplatePlugin()), null, false);
 				setDepth(depth);
 			} catch (Exception e) {
 				e.printStackTrace();
@@ -1049,7 +1100,9 @@ public class Template implements Comparable<Template> {
 			}
 			List<String> resources = new LinkedList<String>();
 			TemplatePluginFactory templatePluginFactory = TemplatePluginFactory.getInstance(globalContext.getServletContext());
-			int depth = XMLManipulationHelper.convertHTMLtoTemplate(globalContext, HTMLFile, jspFile, getMap(), getAreas(), resources, templatePluginFactory.getAllTemplatePlugin(globalContext.getTemplatePlugin()), isMailing());
+			List<String> ids = new LinkedList<String>();						
+			int depth = XMLManipulationHelper.convertHTMLtoTemplate(globalContext, HTMLFile, jspFile, getMap(), getAreas(), resources, templatePluginFactory.getAllTemplatePlugin(globalContext.getTemplatePlugin()), ids, isMailing());
+			setHTMLIDS(ids);
 			setDepth(depth);
 		}
 		return renderer;
@@ -1591,6 +1644,24 @@ public class Template implements Comparable<Template> {
 		} else {
 			return super.equals(obj);
 		}
+	}
+	
+	public void setHTMLIDS(Collection<String> ids) {
+		privateProperties.setProperty("html.ids", StringHelper.collectionToString(ids, ","));
+		try {
+			privateProperties.save();
+		} catch (ConfigurationException e) {
+			e.printStackTrace();
+		}
+	}
+	
+	public List<String> getHTMLIDS() {
+		String htmlIds = privateProperties.getString("html.ids");
+		if (htmlIds == null) {
+			return Collections.EMPTY_LIST;
+		}
+		List<String> ids = StringHelper.stringToCollection(htmlIds, ",");		
+		return ids;		
 	}
 
 }

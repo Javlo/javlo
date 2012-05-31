@@ -821,7 +821,7 @@ public class URLHelper extends ElementaryURLHelper {
 			params.putAll(inParams);
 		}
 		GlobalContext globalContext = GlobalContext.getInstance(ctx.getRequest());
-		ModuleContext moduleContext = ModuleContext.getInstance(globalContext, ctx.getRequest().getSession());
+		ModuleContext moduleContext = ModuleContext.getInstance(ctx.getRequest().getSession(), globalContext);
 		params.put("from-module", moduleContext.getCurrentModule().getName());
 		params.put("module", moduleName);
 		return createURL(ctx, url, params);

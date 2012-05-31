@@ -473,7 +473,7 @@ public class MultimediaGallery extends TimeRangeComponent {
 							}
 						}
 					}
-					out.println("</ul></div>");
+					
 				}
 				out.println("<div class=\"end-sequence\"><span></span></div>");
 				out.println("</div>");
@@ -482,6 +482,7 @@ public class MultimediaGallery extends TimeRangeComponent {
 			}
 		}
 
+		out.println("<div class=\"content_clear\"><span>&nbsp;</span></div></ul></div>");
 		out.println("</div>");
 		out.close();
 

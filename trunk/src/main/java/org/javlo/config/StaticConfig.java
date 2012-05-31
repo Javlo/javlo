@@ -543,7 +543,7 @@ public class StaticConfig extends Observable {
 	public String getImageFolder() {
 		return ElementaryURLHelper.mergePath(getStaticFolder(), properties.getString("image-folder", "images"));
 	}
-	
+
 	public String getVideoFolder() {
 		return ElementaryURLHelper.mergePath(getStaticFolder(), properties.getString("video-folder", "videos"));
 	}
@@ -625,7 +625,7 @@ public class StaticConfig extends Observable {
 		path = replaceFolderVariable(path);
 		return path;
 	}
-	
+
 	public String getLocalTemplatePluginFolder() {
 		String path = properties.getString("template-plugin-folder", "/template-plugin");
 		path = replaceFolderVariable(path);
@@ -859,7 +859,12 @@ public class StaticConfig extends Observable {
 			return getLocalTemplateFolder();
 		}
 	}
-	
+
+	public String getDefaultTemplateFolder() {
+		String path = properties.getString("template-default", "/WEB-INF/config/default-template");
+		return application.getRealPath(path);
+	}
+
 	public String getTemplatePluginFolder() {
 		if (isDataFolderRelative()) {
 			return application.getRealPath(getLocalTemplatePluginFolder());
@@ -976,7 +981,7 @@ public class StaticConfig extends Observable {
 	public boolean isHostDefineSite() {
 		return properties.getBoolean("url.host-define-site", true);
 	}
-	
+
 	public boolean isRandomDataFoder() {
 		return properties.getBoolean("data-folder-random", false);
 	}
@@ -1020,7 +1025,7 @@ public class StaticConfig extends Observable {
 		}
 		return StringHelper.isTrue(viewPrefix);
 	}
-	
+
 	public boolean isURIWithContext() {
 		return properties.getBoolean("url.context", true);
 	}
@@ -1072,14 +1077,13 @@ public class StaticConfig extends Observable {
 	public boolean useLocalFolder() {
 		return properties.getBoolean("local-folder.use", false);
 	}
-	
+
 	public String getDefaultDateFormat() {
 		return properties.getString("default-date-format", "dd/MM/yyyy");
 	}
-	
+
 	public String getDefaultJSDateFormat() {
 		return properties.getString("default-date-format", "d/m/yy");
 	}
-
 
 }

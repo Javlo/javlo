@@ -250,6 +250,7 @@ public class GlobalContext implements Serializable {
 		Configuration cacheConfig;
 		File ehCacheFile = null;
 		if (staticConfig.getEHCacheConfigFile() == null || !(new File(staticConfig.getEHCacheConfigFile()).exists())) {
+			logger.info("load default ehcache config from : "+EHCACHE_FILE);
 			InputStream inConfig = application.getResourceAsStream(EHCACHE_FILE);
 			if (inConfig != null) {
 				cacheConfig = ConfigurationSource.getConfigurationSource(inConfig).createConfiguration();
@@ -263,11 +264,12 @@ public class GlobalContext implements Serializable {
 			cacheConfig = ConfigurationSource.getConfigurationSource(ehCacheFile).createConfiguration();
 		}
 		cacheConfig.setName(getContextKey());
-		cacheManager = new CacheManager(cacheConfig);
+		cacheManager = new CacheManager(cacheConfig);		
 		if (cacheManager == null) {
 			logger.severe("error on init ehCache width : " + ehCacheFile);
 			cacheManager = new CacheManager();
 		}
+		cacheManager.setName(getContextKey());
 	}
 
 	public static GlobalContext getRealInstance(HttpServletRequest request, String contextKey) throws IOException, ConfigurationException {
@@ -578,7 +580,7 @@ public class GlobalContext implements Serializable {
 	@Override
 	protected void finalize() throws Throwable {
 		if (cacheManager != null) {
-			cacheManager.shutdown();
+			 cacheManager.shutdown();
 		}
 		stopStoreThread = true;
 		super.finalize();
@@ -662,7 +664,7 @@ public class GlobalContext implements Serializable {
 		}
 		return cache;
 	}
-
+	
 	public List<String> getComponents() {
 		List<String> components = new LinkedList<String>();
 		String componentRaw = properties.getString("components", "");
@@ -2252,6 +2254,9 @@ public class GlobalContext implements Serializable {
 					out.println("**** MaxElementsOnDisk   : " + cache.getCacheConfiguration().getMaxElementsOnDisk());
 					out.println("**** TimeToLiveSeconds   : " + cache.getCacheConfiguration().getTimeToLiveSeconds());
 					out.println("**** TimeToIdleSeconds   : " + cache.getCacheConfiguration().getTimeToIdleSeconds());
+					out.println("**** Eternal ?           : " + cache.getCacheConfiguration().isEternal());
+					out.println("**** Disk Persistent ?   : " + cache.getCacheConfiguration().isDiskPersistent());
+					out.println("**** Over flow to disk ? : " + cache.getCacheConfiguration().isOverflowToDisk());
 					/*
 					 * out.println("**** stat cache hits : " + stat.getCacheHits()); out.println("           memory    : " + stat.getInMemoryHits()); out.println("           disk      : " + stat.getDiskStoreObjectCount()); out.println("**** cache Misses    : " + stat.getCacheMisses()); out.println("**** cache count     : " + stat.getObjectCount());
 					 */

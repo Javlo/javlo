@@ -273,9 +273,9 @@ public class ConfigHelper {
 		} else if (c.equals(PageConfiguration.class)) {
 			return PageConfiguration.getInstance(GlobalContext.getInstance(request));
 		} else if (c.equals(ModuleContext.class)) {
-			return ModuleContext.getInstance(GlobalContext.getInstance(request), request.getSession());
+			return ModuleContext.getInstance(request.getSession(), GlobalContext.getInstance(request));
 		} else if (c.equals(Module.class)) {
-			return ModuleContext.getInstance(GlobalContext.getInstance(request), request.getSession()).getCurrentModule();
+			return ModuleContext.getInstance(request.getSession(), GlobalContext.getInstance(request)).getCurrentModule();
 		} else if (c.equals(MessageRepository.class)) {
 			return MessageRepository.getInstance(request);
 		} else if (c.equals(FileCache.class)) {

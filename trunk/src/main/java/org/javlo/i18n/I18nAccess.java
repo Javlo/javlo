@@ -87,7 +87,7 @@ public class I18nAccess implements Serializable {
 		I18nAccess i18n = new I18nAccess(globalContext);
 		if (ctx.getRenderMode() == ContentContext.EDIT_MODE || ctx.getRenderMode() == ContentContext.PREVIEW_MODE) {
 			i18n.initEdit(globalContext);
-			ModuleContext moduleContext = ModuleContext.getInstance(globalContext, ctx.getRequest().getSession());
+			ModuleContext moduleContext = ModuleContext.getInstance(ctx.getRequest().getSession(), globalContext);
 			i18n.setCurrentModule(globalContext, moduleContext.getCurrentModule());
 		}
 		i18n.changeViewLanguage(ctx);

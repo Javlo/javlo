@@ -316,7 +316,8 @@ public class AdminAction extends AbstractModuleAction {
 							template.importTemplateInWebapp(ctx);
 						}
 						selectedTemplate.add(new Template.TemplateBean(ctx, template));
-					} else {						
+					} else {	
+						currentGlobalContext.removeTemplate(name, false);
 						logger.warning("template not found : "+name);
 					}
 				}
@@ -435,8 +436,8 @@ public class AdminAction extends AbstractModuleAction {
 					}
 					
 					if (importTemplate) {
-						TemplateFactory.cleanAllRenderer(ctx, false, true);
-						TemplateFactory.cleanAllRenderer(ctx, true, true);
+						TemplateFactory.cleanRenderer(ctx, currentGlobalContext.getTemplates(), false, true);
+						//TemplateFactory.cleanRenderer(ctx, currentGlobalContext.getMailingTemplates(), true, true);
 					}
 
 					messageRepository.setGlobalMessage(new GenericMessage(i18nAccess.getText("admin.message.context-updated"), GenericMessage.INFO));

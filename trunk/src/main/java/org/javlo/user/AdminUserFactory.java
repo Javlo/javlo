@@ -11,6 +11,8 @@ import org.javlo.config.StaticConfig;
 import org.javlo.context.EditContext;
 import org.javlo.context.GlobalContext;
 import org.javlo.helper.URLHelper;
+import org.javlo.module.ModuleContext;
+import org.javlo.module.ModuleException;
 
 public class AdminUserFactory extends UserFactory {
 
@@ -67,6 +69,14 @@ public class AdminUserFactory extends UserFactory {
 		GlobalContext globalContext = GlobalContext.getInstance(request);
 		EditContext editContext = EditContext.getInstance(globalContext, request.getSession());
 		editContext.setEditUser(outUser);
+		
+		/** reload module **/
+		try {
+			ModuleContext.getInstance(request.getSession(), globalContext).loadModule(request.getSession(), globalContext);
+		} catch (ModuleException e) {
+			e.printStackTrace();
+		}
+		
 		return outUser;
 	}
 

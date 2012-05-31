@@ -21,6 +21,8 @@ public class TemplatePlugin {
 	private static Logger logger = Logger.getLogger(TemplatePlugin.class.getName());
 
 	private static final String CONFIG_FILE = "config.properties";
+	
+	public static final String HOME_KEY = "${plugin.home}";
 
 	private File dir = null;
 
@@ -45,8 +47,7 @@ public class TemplatePlugin {
 		config = ResourceHelper.loadProperties(createLocalFile(CONFIG_FILE));
 	}
 
-	public String getHTMLHead(GlobalContext globalContext) throws IOException {
-		
+	public String getHTMLHead(GlobalContext globalContext) throws IOException {		
 		ByteArrayOutputStream outStream = new ByteArrayOutputStream();
 		PrintStream out = new PrintStream(outStream);
 		for (int i = 0; i < 10000; i++) {

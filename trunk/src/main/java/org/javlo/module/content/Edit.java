@@ -302,7 +302,7 @@ public class Edit extends AbstractModuleAction {
 		}
 		ctx.getRequest().setAttribute("components", comps);
 
-		Module currentModule = ModuleContext.getInstance(globalContext, ctx.getRequest().getSession()).getCurrentModule();
+		Module currentModule = ModuleContext.getInstance(ctx.getRequest().getSession(), globalContext).getCurrentModule();
 		Box componentBox = currentModule.getBox("components");
 		I18nAccess i18nAccess = I18nAccess.getInstance(ctx.getRequest());
 		IContentVisualComponent comp = ComponentFactory.getComponentWithType(ctx, editCtx.getActiveType());
