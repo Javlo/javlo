@@ -461,11 +461,6 @@ public class Edit extends AbstractModuleAction {
 		} else {
 			message = "Fatal error : type not found";
 		}
-
-		if (requestService.getParameter("comp_id", null) == null) {
-			return performEditpreview(requestService, ctx, componentContext, ContentService.getInstance(globalContext), ModuleContext.getInstance(ctx.getRequest().getSession(), globalContext));
-		}
-
 		return message;
 	}
 
@@ -660,7 +655,7 @@ public class Edit extends AbstractModuleAction {
 		return null;
 	}
 
-	public static String performAddPage(ContentContext ctx, ContentService content) {
+	public static String performAddPage(RequestService requestService, ContentContext ctx, ContentService content) {
 
 		String message = null;
 
@@ -669,7 +664,11 @@ public class Edit extends AbstractModuleAction {
 			EditContext editCtx = EditContext.getInstance(globalContext, ctx.getRequest().getSession());
 
 			String path = ctx.getPath();
-			String nodeName = ctx.getRequest().getParameter("name");
+			String nodeName = requestService.getParameter("name",null);
+			
+			if (nodeName == null) {
+				return "bad request structure : need 'name'.";
+			}
 
 			I18nAccess i18nAccess = I18nAccess.getInstance(globalContext, ctx.getRequest().getSession());
 			message = validNodeName(nodeName, i18nAccess);
@@ -683,17 +682,24 @@ public class Edit extends AbstractModuleAction {
 				elem.setName(nodeName);
 				elem.setCreator(editCtx.getUserPrincipal().getName());
 				elem.setVisible(globalContext.isNewPageVisible());
-				ctx.getCurrentPage().addChildMenuElementAutoPriority(elem);
+				if (requestService.getParameter("add-first", null) == null) {
+					ctx.getCurrentPage().addChildMenuElementAutoPriority(elem);
+				} else {
+					elem.setPriority(0);
+					ctx.getCurrentPage().addChildMenuElement(elem);
+				}
 				path = path + "/" + nodeName;
+				
+				PersistenceService persistenceService = PersistenceService.getInstance(globalContext);
+				persistenceService.store(ctx);
+				autoPublish(ctx.getRequest(), ctx.getResponse());
+
+				NavigationService navigationService = NavigationService.getInstance(globalContext, ctx.getRequest().getSession());
+				navigationService.clearPage(ctx);
+				
 				String msg = i18nAccess.getText("action.add.new-page", new String[][] { { "path", path } });
 				MessageRepository.getInstance(ctx).setGlobalMessage(new GenericMessage(msg, GenericMessage.INFO));
 			}
-			PersistenceService persistenceService = PersistenceService.getInstance(globalContext);
-			persistenceService.store(ctx);
-			autoPublish(ctx.getRequest(), ctx.getResponse());
-
-			NavigationService navigationService = NavigationService.getInstance(globalContext, ctx.getRequest().getSession());
-			navigationService.clearPage(ctx);
 
 		} catch (Exception e) {
 			e.printStackTrace();

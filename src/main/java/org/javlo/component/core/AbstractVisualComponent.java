@@ -1543,7 +1543,13 @@ public abstract class AbstractVisualComponent implements IContentVisualComponent
 
 	@Override
 	public void setRepeat(boolean newRepeat) {
-		componentBean.setRepeat(newRepeat);
+		if (newRepeat == componentBean.isRepeat()) {
+			return;
+		} else {
+			componentBean.setRepeat(newRepeat);
+			setModify();
+			setNeedRefresh(true);
+		}
 	}
 
 	@Override
