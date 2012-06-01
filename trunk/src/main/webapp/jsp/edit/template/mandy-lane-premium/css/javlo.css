@@ -16,8 +16,34 @@ fieldset {
 	border-radius: 3px;
 }
 
+.with-title option {
+	padding-left: 8px;
+}
+
+.with-title option.title {
+	font-weight: bold;
+	padding-left: 2px;
+}
+
+
+
 .full-height {
 	overflow: auto;
+}
+
+a.button {
+	border: 1px solid #CCCCCC;
+	padding: 5px;
+	background-color: #F0F0F0;
+	width: auto;
+}
+
+a.popup span {
+	font-style: italic;
+	padding-right: 12px;
+	background-image: url("../images/icons/popup.png");
+	background-position: right;
+	background-repeat: no-repeat;
 }
 
 .box {
@@ -64,11 +90,13 @@ fieldset {
 
 .standard-form .inline {
 	display: inline-block;
+	margin-top: 10px;
 	margin-right: 10px;
 	vertical-align: middle;
 }
 
-.standard-form .inline input[type="checkbox"] {
+.standard-form .inline input[type="checkbox"],.standard-form .inline input[type="radio"]
+	{
 	width: auto;
 	vertical-align: middle;
 }
@@ -347,7 +375,6 @@ ul,li {
 		scroll 5px;
 }
 
-
 .action-button.preview:hover span {
 	background: url("../images/icons/small/white/document.png") no-repeat
 		scroll 5px;
@@ -359,11 +386,10 @@ ul,li {
 		scroll 5px;
 }
 
-.action-button.delete-page:hover span {	
+.action-button.delete-page:hover span {
 	background: url("../images/icons/small/white/trash.png") no-repeat
 		scroll 5px;
 }
-
 
 .action-button.page span {
 	padding-left: 26px;
@@ -641,4 +667,90 @@ ul,li {
 
 .jGrowl {
 	margin-top: 100px;
+}
+
+/** thumb **/
+.gallery .thumbview .thumb {
+	vertical-align: middle;
+	text-align: center;
+	line-height: 200px;
+	width: 200px;
+	height: 200px;
+}
+
+.gallery .thumbview .thumb .info {
+	text-align: left;
+	width: 180px;
+	height: 180px;
+}
+
+.gallery .thumbview .thumb img {
+	display: inline;
+	vertical-align: middle;
+	max-width: 200px;
+	max-height: 200px;
+}
+
+.gallery .thumbview .info .menu a.preview {
+	background: url("../images/icons/small/white/search.png") no-repeat
+		scroll 4px 4px #83A3CA;
+}
+
+.gallery .thumbview .info .menu a.import {
+	background: url("../images/icons/small/white/import.png") no-repeat
+		scroll 4px 4px #83A3CA;
+}
+
+#remote-sponsors {
+	padding: 20px;
+	display: block;
+	text-align: center;
+}
+
+/** template **/
+#form-edit-template h4 {
+	display: inline-block;
+}
+
+.delete-area {
+	padding: 0 0 0 4px;
+	vertical-align: text-top;
+}
+
+.delete-area a {
+	margin: 0;
+	padding: 0;
+	width: 18px;
+	height: 12px;
+	background: url("../images/icons/close.png") no-repeat scroll 0 0
+		#ffffff;
+	font-size: 0;
+	display: inline-block;
+}
+
+.gallery .thumbview .info .menu a.validate {
+	background: url("../images/icons/small/white/check.png") no-repeat
+		scroll 4px 4px #83A3CA;
+}
+
+/** popup **/
+div.popup {
+	padding: 60px 0;
+	width: 350px;
+	background-color: #EEEEEE;
+	text-align: center;
+}
+
+/** preview **/
+body.previewEdit {
+	background: none;
+}
+
+.previewEdit .maincontent {
+	margin: 0;
+}
+
+.previewEdit .maincontent_inner {
+	width: 100%;
+	margin: 0;
 }
