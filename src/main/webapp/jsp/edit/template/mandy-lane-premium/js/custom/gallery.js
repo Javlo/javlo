@@ -30,6 +30,7 @@ jQuery(document).ready(function(){
 	**/
 	jQuery(".thumb .view").colorbox({rel:'view'});
 	jQuery(".listview .view").colorbox({rel:'listview'});
+	jQuery(".popup").colorbox();
 	
 	
 	/**
