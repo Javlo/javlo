@@ -1,13 +1,16 @@
 jQuery(document).ready(function() {
 	jQuery("input.label-inside").each(function(){				
-		var input = jQuery(this);
-		input.click(function() {			
+		var input = jQuery(this);		
+		input.data.storedName = input.attr("name");
+		input.attr("name", "");
+		input.focus(function() {			
 			var input = jQuery(this);
 			if (input.hasClass("label")) {
-				input.data.storedValue = input.val();
-				input.val("");
+				input.data.storedValue = input.val();				
+				input.val("");				
 				input.removeClass("label");
 			}
+			input.attr("name",input.data.storedName);
 		});
 		input.blur(function() {			
 			var input = jQuery(this);
@@ -15,6 +18,7 @@ jQuery(document).ready(function() {
 				if (input.val().length == 0) {
 					input.val(input.data.storedValue);
 					input.addClass("label");
+					input.attr("name", "");
 				}
 			}
 		});
