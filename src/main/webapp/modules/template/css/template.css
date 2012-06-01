@@ -1,4 +1,4 @@
-.main-template {
+.main-template, .remote-template {
 	margin-top: 20px;
 }
 
@@ -8,5 +8,14 @@
 
 #form-edit-template {
 	margin-right: 290px;
+}
+
+.main-template .unvalid .thumb {
+	border: 1px solid #CC0000;
+	opacity : 0.8;
+}
+
+.main-template .unvalid .thumb img {
+	opacity : 0.8;
 }
 

@@ -1,8 +1,8 @@
-<%@page import="java.util.LinkedList"%>
-<%@page import="java.util.Collection"%>
 <%@page contentType="text/html"
         import="
         java.util.Stack,
+        java.util.LinkedList,
+        java.util.Collection,
         org.javlo.service.ClipBoard,
         org.javlo.context.ContentContext,
         org.javlo.context.EditContext,
@@ -56,13 +56,19 @@ String insertHere = i18nAccess.getText("content.insert-here", new String[][] {{"
 ComponentContext componentContext = ComponentContext.getInstance(request);
 IContentVisualComponent[] components = componentContext.getNewComponents();
 
-if (components.length == 0) { /* if no specific components asked than render all components for the current context /*
+if (components.length == 0 || request.getParameter("firstLine") != null) { /* if no specific components asked than render all components for the current context or force first line */
+String previousId = "0";
+if (components.length > 0 && components[0].getPreviousComponent() != null) {
+	previousId = components[0].getPreviousComponent().getId();
+}
 /*** rendering ***/
-%><div class="insert-line" id="insert-line-0">
-	<a class="action-button ajax" href="${info.currentURL}?webaction=insert&previous=0&type=<%=currentTypeComponent.getType()%>"><%=insertHere%></a>
+%><div class="insert-line" id="insert-line-<%=previousId%>">
+	<a class="action-button ajax" href="${info.currentURL}?webaction=insert&previous=<%=previousId%>&type=<%=currentTypeComponent.getType()%>"><%=insertHere%></a>
 </div>
-<div id="comp-child-0"></div>
+<div id="comp-child-<%=previousId%>"></div>
 <%
+}
+if (components.length == 0) {  /* if no specific components asked than render all components */
 ComponentContext compCtx = ComponentContext.getInstance(request);
 IContentComponentsList elems = ctx.getCurrentPage().getContent(ctx);
 Collection<IContentVisualComponent> allComponents = new LinkedList<IContentVisualComponent>();
@@ -130,4 +136,5 @@ for (int i=0; i<components.length; i++) {
   %>  
 <%}
 %>
+
 
