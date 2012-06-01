@@ -22,8 +22,10 @@ jQuery(document).bind("ajaxUpdate",function () {
 
 function fullHeight() {
 	jQuery(".full-height").each(function() {
-		var contentHeight = jQuery("#footer").offset().top - jQuery(this).offset().top;
-		jQuery(this).css("height", contentHeight+"px");
+		if(typeof  jQuery("#footer") != 'undefined' && jQuery("#footer").offset() != null) {
+			var contentHeight = jQuery("#footer").offset().top - jQuery(this).offset().top;
+			jQuery(this).css("height", contentHeight+"px");
+		}
 	});
 }
 
