@@ -29,7 +29,7 @@
 <tbody> 
  <c:forEach var="context" items="${contextList}">
  <tr class="gradeX">
-     <td class="con0">${context.key}</td>
+     <td class="con0"><a href="${info.currentURL}?webaction=changesite&change=true&context=${context.key}">${context.key}</a></td>
      <td class="con1">${context.administrator}</td>
      <td class="con0">${context.aliasOf}</td>
      <td class="con1">${context.creationDate}</td>
@@ -58,8 +58,7 @@
      			<input type="hidden" name="webaction" value="changesite" />
      			<input type="hidden" name="context" value="${context.key}" />
      		</div>
-     		<div class="line action">
-     			<input type="submit" name="change" value="${i18n.edit['global.change']}" />
+     		<div class="line action">     			
      			<input type="submit" name="components" value="${i18n.edit['command.admin.components']}" />     			
      			<input type="submit" name="modules" value="${i18n.edit['command.admin.modules']}" />
      		</div>

@@ -1,7 +1,7 @@
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
 <%@ taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions" %>
 
-<c:if test="${not empty param.languages and fn:length(info.contentLanguages) > 1}">
+<c:if test="${not empty param.languages and fn:length(info.contentLanguages) > 1 and empty param.previewEdit}">
 <div class="special">
 <form id="form-languages" action="${info.currentURL}" method="post" class="js-submit">
 <div class="select-languages form_default">
@@ -17,7 +17,7 @@
 </div>
 </c:if>
 
-<c:if test="${not empty param.areas and fn:length(areas) > 1}">
+<c:if test="${not empty param.areas and fn:length(areas) > 1 and empty param.previewEdit}">
 <div class="special">
 <form id="form-area" action="${info.currentURL}" method="post" class="js-submit">
 <div class="select-area form_default">
@@ -33,14 +33,34 @@
 </div>
 </c:if>
 
-<c:if test="${not empty param.button_edit}"><a class="action-button more edit" href="${info.currentURL}?webaction=changeMode&mode=1"><span>${i18n.edit['action.edit-content']}</span></a></c:if>
-<c:if test="${not empty param.button_preview}"><a class="action-button more preview" href="${info.currentURL}?webaction=changeMode&mode=2"><span>${i18n.edit['command.preview']}</span></a></c:if>
-<c:if test="${not empty param.button_page}"><a class="action-button more page" href="${info.currentURL}?webaction=changeMode&mode=3"><span>${i18n.edit['item.title']}</span></a></c:if>
+<c:if test="${not empty param.components_list || not empty param.previewEdit}">
+<div class="special"> <!-- components -->
+<form id="form-component-list" action="${info.currentURL}" method="post" class="js-submit">
+<input type="hidden" name="webaction" value="changeComponent" />
+<c:if test="${not empty param.previewEdit}"> 
+<input type="hidden" name="previewEdit" value="true" />
+<input type="hidden" name="comp_id" value="${param.comp_id}" />
+</c:if>
+<select name="type" class="with-title">
+<c:forEach var="comp" items="${components}">
+<c:if test="${comp.metaTitle}">${closeAccordion}
+<option disabled="disabled" class="title">${comp.label}</option>
+</c:if>
+<c:if test="${not comp.metaTitle}">
+<option ${comp.selected?' selected="selected"':''} value="${comp.type}">${comp.label}</option>
+</c:if>
+</c:forEach>
+</select>
+</form>
+</div>
+</c:if>
 
+<c:if test="${not empty param.button_edit and empty param.previewEdit}"><a class="action-button more edit" href="${info.currentURL}?webaction=changeMode&mode=1"><span>${i18n.edit['action.edit-content']}</span></a></c:if>
+<c:if test="${not empty param.button_preview and empty param.previewEdit}"><a class="action-button more preview" href="${info.currentURL}?webaction=changeMode&mode=2"><span>${i18n.edit['command.preview']}</span></a></c:if>
+<c:if test="${not empty param.button_page and empty param.previewEdit}"><a class="action-button more page" href="${info.currentURL}?webaction=changeMode&mode=3"><span>${i18n.edit['item.title']}</span></a></c:if>
 
-
-<c:if test="${not empty param.button_publish}"><a class="action-button publish" href="${info.currentURL}?webaction=publish"><span>${i18n.edit['command.publish']}</span></a></c:if>
+<c:if test="${not empty param.button_publish and empty param.previewEdit}"><a class="action-button publish" href="${info.currentURL}?webaction=publish"><span>${i18n.edit['command.publish']}</span></a></c:if>
 <c:if test="${not empty param.button_save}"><a class="action-button save" href="#save" onclick="jQuery('#form-content').submit(); return false;"><span>${i18n.edit['action.update']}</span></a></c:if>
 
-<c:if test="${not empty param.button_delete_page}"><a class="action-button delete-page" href="${info.currentURL}?webaction=deletePage&page=${info.pageID}"><span>${i18n.edit['edit.action.delete-page']}</span></a></c:if>
+<c:if test="${not empty param.button_delete_page and empty param.previewEdit}"><a class="action-button delete-page" href="${info.currentURL}?webaction=deletePage&page=${info.pageID}"><span>${i18n.edit['edit.action.delete-page']}</span></a></c:if>
 

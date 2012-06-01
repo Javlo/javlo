@@ -4,7 +4,7 @@
 <div id="gridview" class="thumbview">
 <ul>
 <c:forEach var="template" items="${templates}">
-    <li>
+    <li class="${template.valid?'valid':'unvalid'}">
         <div class="thumb">
             <img src="${template.previewUrl}" alt="${template.template.name}" />
             <div class="info">
@@ -27,14 +27,17 @@
                 <p>
                 	<a href="${template.downloadUrl}">${i18n.edit['admin.download-template']}</a>
                 </p>
-                <p class="menu">
+                <p class="menu">                	
                     <a href="${template.viewUrl}" class="view" title="${template.template.name}"></a>
                     <a href="${info.currentURL}?webaction=goEditTemplate&name=${template.template.name}&mailing=${template.template.mailing}" class="edit"></a>
-                    <a href="${info.currentURL}?webaction=deleteTemplate&name=${template.template.name}&mailing=${template.template.mailing}" class="delete"></a>
+                    <a href="${info.currentURL}?webaction=delete&name=${template.template.name}&mailing=${template.template.mailing}" class="delete"></a>
                     <c:if test="${not empty selectUrl}">
                     <a href="${selectUrl}&template=${template.template.name}&mailing=${template.template.mailing}" class="select" title="select"></a>
                     </c:if>
-                </p>
+                    <c:if test="${not template.valid}">
+                    <a href="${selectUrl}?webaction=validate&name=${template.template.name}&mailing=${template.template.mailing}" class="validate" title="validate"></a>
+                    </c:if>
+                </p>                
             </div><!--info-->
         </div><!--thumb-->
  	</li>
