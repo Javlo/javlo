@@ -432,9 +432,6 @@ public class ContentContext {
 			return root;
 		} else {			
 			MenuElement elem = globalContext.getPage(this, getPath());
-			/*
-			 * if (elem == null) { System.out.println("***** ContentContext.getCurrentPage : page not found : "+getPath()); //TODO: remove debug trace response.setStatus(HttpServletResponse.SC_NOT_FOUND, "uri does'nt exist : "+getPath()); elem = globalContext.getPage(this, "/404"); if (elem == null) { elem = root; } return elem; // not in cache } else { System.out.println("***** ContentContext.getCurrentPage : page found : "+getPath()); //TODO: remove debug trace }
-			 */
 			setCurrentPageCached(elem);
 			return elem;
 		}

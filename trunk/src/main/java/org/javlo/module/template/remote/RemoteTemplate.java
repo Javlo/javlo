@@ -17,42 +17,49 @@ public class RemoteTemplate implements IRemoteTemplate {
 	private String authors;
 	private Date creationDate = new Date();
 	
+	@Override
 	public String getZipURL() {
 		return zipURL;
 	}
 	public void setZipURL(String zipURL) {
 		this.zipURL = zipURL;
 	}
+	@Override
 	public String getImageURL() {
 		return imageURL;
 	}
 	public void setImageURL(String imageURL) {
 		this.imageURL = imageURL;
 	}
+	@Override
 	public String getName() {
 		return name;
 	}
 	public void setName(String name) {
 		this.name = name;
 	}
+	@Override
 	public String getDescription() {
 		return description;
 	}
 	public void setDescription(String description) {
 		this.description = description;
 	}
+	@Override
 	public String getLicence() {
 		return licence;
 	}
 	public void setLicence(String licence) {
 		this.licence = licence;
 	}
+	@Override
 	public Date getCreationDate() {
 		return creationDate;
 	}
 	public void setCreationDate(Date creationDate) {
 		this.creationDate = creationDate;
 	}
+	@Override
 	public String getURL() {
 		return URL;
 	}
@@ -63,6 +70,7 @@ public class RemoteTemplate implements IRemoteTemplate {
 	public String getRenderedCreationDate() {
 		return StringHelper.renderDate(creationDate);
 	}
+	@Override
 	public String getAuthors() {
 		return authors;
 	}

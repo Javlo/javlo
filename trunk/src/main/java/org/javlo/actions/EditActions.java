@@ -101,6 +101,7 @@ import be.noctis.common.xml.XMLFactory;
 
 /**
  * @author pvandermaesen list of actions for cms.
+ * @deprecated javlo2 use module.
  */
 public class EditActions {
 
@@ -1991,13 +1992,13 @@ public class EditActions {
 		}
 	}
 
-	public static String performRedo(HttpServletRequest request, HttpServletResponse response) {
+	public static String performRedo(HttpServletRequest request, HttpServletResponse response) throws Exception {
 		try {
 			GlobalContext globalContext = GlobalContext.getInstance(request);
 			PersistenceService persistenceService = PersistenceService.getInstance(globalContext);
 			persistenceService.redo();
 			ContentService content = ContentService.createContent(request);
-			content.releasePreviewNav();
+			content.releasePreviewNav(null);
 		} catch (ServiceException e) {
 			return e.getMessage();
 		}
@@ -2497,13 +2498,13 @@ public class EditActions {
 		return message;
 	}
 
-	public static String performUndo(HttpServletRequest request, HttpServletResponse response) {
+	public static String performUndo(HttpServletRequest request, HttpServletResponse response) throws Exception {
 		try {
 			GlobalContext globalContext = GlobalContext.getInstance(request);
 			PersistenceService persistenceService = PersistenceService.getInstance(globalContext);
 			persistenceService.undo();
 			ContentService content = ContentService.createContent(request);
-			content.releasePreviewNav();
+			content.releasePreviewNav(null);
 		} catch (ServiceException e) {
 			return e.getMessage();
 		}
@@ -3012,7 +3013,7 @@ public class EditActions {
 						ResourceHelper.closeResource(in);
 					}
 					ContentService content = ContentService.createContent(request);
-					content.releasePreviewNav();
+					content.releasePreviewNav(null);
 				}
 				// } else if
 				// (StringHelper.getFileExtension(item.getName()).equalsIgnoreCase("xhtml"))

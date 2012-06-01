@@ -60,6 +60,7 @@ import org.javlo.ztatic.StaticInfo;
 
 /**
  * This class is a helper for construct XHTML code.
+ * 
  * @author pvandermaesen
  */
 public class XHTMLHelper {
@@ -184,7 +185,7 @@ public class XHTMLHelper {
 		outNoXHTML = outNoXHTML.replace("&", "&amp;");
 		outNoXHTML = outNoXHTML.replace("<", "&lt;");
 		outNoXHTML = outNoXHTML.replace(">", "&gt;");
-		outNoXHTML = outNoXHTML.replace("\"", "&quot;");		
+		outNoXHTML = outNoXHTML.replace("\"", "&quot;");
 		return outNoXHTML;
 	}
 
@@ -690,7 +691,7 @@ public class XHTMLHelper {
 
 		return getInputMultiSelect(name, contentArray, contentValue, null, null);
 	}
-	
+
 	public static String getInputMultiSelect(String name, String[] content, String[] value) {
 		String[][] newContent = new String[content.length][2];
 		for (int i = 0; i < content.length; i++) {
@@ -1675,12 +1676,21 @@ public class XHTMLHelper {
 		return writer.toString();
 	}
 
-	public static String renderHeaderResourceInsertion(ContentContext ctx, String resource) {
-		String attKey = "___header_resource_insered_" + resource;
+	public static boolean allReadyInsered(ContentContext ctx, String resource) {
+		if (resource.contains("jquery-1") || resource.contains("jquery-2") || resource.contains("jquery.min")) {
+			resource = "_jquery-library_";
+		}
+		String attKey = "_hri_" + resource;
 		if (ctx.getRequest().getAttribute(attKey) != null) {
-			return "";
+			return true;
 		} else {
-			ctx.getRequest().setAttribute(attKey, resource);
+			ctx.getRequest().setAttribute(attKey, "1");
+			return false;
+		}
+	}
+
+	public static String renderHeaderResourceInsertion(ContentContext ctx, String resource) {
+		if (!allReadyInsered(ctx, resource)) {			
 			if (StringHelper.getFileExtension(resource).equalsIgnoreCase("css")) {
 				return "<link rel=\"stylesheet\" type=\"text/css\" href=\"" + URLHelper.createStaticURL(ctx, resource) + "\" />";
 			} else if (StringHelper.getFileExtension(resource).equalsIgnoreCase("js")) {
@@ -1688,6 +1698,8 @@ public class XHTMLHelper {
 			} else {
 				return "<!-- resource type not identified : " + resource + " -->";
 			}
+		} else {
+			return "<!-- resource allready insered : "+resource+" -->";
 		}
 	}
 
@@ -1754,7 +1766,7 @@ public class XHTMLHelper {
 		return renderSelectLanguage(ctx, autoChange, selectId, inputId, ctx.getLanguage(), renderForm);
 	}
 
-	public static String renderOnlySelectLangue(ContentContext ctx, String selectId, String inputName, String currentLg,  boolean autoChange) {
+	public static String renderOnlySelectLangue(ContentContext ctx, String selectId, String inputName, String currentLg, boolean autoChange) {
 		if (inputName == null) {
 			inputName = "lg";
 		}
@@ -1764,9 +1776,9 @@ public class XHTMLHelper {
 		try {
 
 			if (autoChange) {
-				writer.write("<select id=\"" + selectId + "\" onchange=\"document.forms['select_language_form'].submit();\" name=\""+inputName+"\">");
+				writer.write("<select id=\"" + selectId + "\" onchange=\"document.forms['select_language_form'].submit();\" name=\"" + inputName + "\">");
 			} else {
-				writer.write("<select id=\"" + selectId + "\" name=\""+inputName+"\">");
+				writer.write("<select id=\"" + selectId + "\" name=\"" + inputName + "\">");
 			}
 
 			GlobalContext globalContext = GlobalContext.getInstance(ctx.getRequest());
@@ -1899,16 +1911,16 @@ public class XHTMLHelper {
 	}
 
 	public static String textToXHTML(String text) {
-		return textToXHTML(text, null, (GlobalContext)null);
+		return textToXHTML(text, null, (GlobalContext) null);
 	}
 
-	public static String textToXHTML(String text,  GlobalContext globalContext) {
+	public static String textToXHTML(String text, GlobalContext globalContext) {
 		return textToXHTML(text, null, globalContext);
 	}
 
 	// cssClass and popup not used
 	public static String textToXHTML(String text, String cssClass, GlobalContext globalContext) {
-		String res = autoLink(text,globalContext);
+		String res = autoLink(text, globalContext);
 
 		ByteArrayOutputStream outStream = new ByteArrayOutputStream();
 		PrintStream out = new PrintStream(outStream);
@@ -1953,7 +1965,7 @@ public class XHTMLHelper {
 		return new String(outStream.toByteArray());
 
 	}
-	
+
 	public static String textToXHTMLDIV(String text) {
 		ByteArrayOutputStream outStream = new ByteArrayOutputStream();
 		PrintStream out = new PrintStream(outStream);
@@ -1961,10 +1973,10 @@ public class XHTMLHelper {
 		String line;
 		try {
 			line = reader.readLine();
-			int i=0;
+			int i = 0;
 			while (line != null) {
 				i++;
-				out.println("<div class=\"line-"+i+"\">" + line + "</div>");
+				out.println("<div class=\"line-" + i + "\">" + line + "</div>");
 				line = reader.readLine();
 			}
 		} catch (IOException e) {

@@ -24,13 +24,13 @@ import org.javlo.helper.StringHelper;
 /**
  * 
  * @author Benoit Dumont de Chassart
- *
+ * 
  */
 public class ELFinder {
 	private static final String PROTOCOL_VERSION = "2.0";
 	private static final String HASH_ENCODING = "UTF-8";
 	private static final String DEFAULT_MIME_TYPE = "application/octet-stream";
-	private static final String VOLUME_SEPARATOR = "_"; 
+	private static final String VOLUME_SEPARATOR = "_";
 
 	private Map<String, String> MIME_TYPES;
 
@@ -193,22 +193,6 @@ public class ELFinder {
 				// (Number) is file locked. If locked that object cannot be deleted and renamed
 				prop("locked", toInt(false)));
 
-		// if (isSymbLink(file)) {
-		// extend(out,
-		// // (String) For symlinks only. Symlink target path.
-		// prop("alias", "files/images"),
-		// // (String) For symlinks only. Symlink target hash.
-		// prop("thash", "l1_c2NhbnMy"));
-		// }
-
-		// if (isImage(file)) {
-		// extend(out,
-		// // (String) Only for images. Thumbnail file name, if file do not have thumbnail yet, but it can be generated than it must have value "1"
-		// prop("tmb", "bac0d45b625f8d4633435ffbd52ca495.png"),
-		// // (String) For images - file dimensions. Optionally.
-		// prop("dim", "640x480"));
-		// }
-
 		// (Number) Only for directories. Marks if directory has child directories inside it. 0 (or not set) - no, 1 - yes. Do not need to calculate amount.
 		if (file.isDirectory()) {
 			List<FileObject> children = file.getChildren();
@@ -230,13 +214,8 @@ public class ELFinder {
 		return obj(prop("path", fil.getRelativePath()),// (String) Current folder path
 				prop("url", "http://localhost/elfinder/files/folder42/"),// (String) Current folder URL
 				prop("tmbURL", "http://localhost/elfinder/files/folder42/.tmb/"),// (String) Thumbnails folder URL
-				prop("separator", "/"), // (String) Разделитель пути для текущего тома
-				prop("disabled", array()), // (Array) List of commands not allowed (disabled) on this volume
-				prop("copyOverwrite", 1), // (Number) Разрешена или нет перезапись файлов с одинаковыми именами на текущем томе
-				propObj("archivers", // (Object) Настройки архиваторов
-						prop("create", array() // (Array) Список mime типов архивов, которые могут быть созданы
-						), prop("extract", array() // (Array) Список mime типов архивов, которые могут быть распакованы
-						)));
+				prop("separator", "/"), prop("disabled", array()), // (Array) List of commands not allowed (disabled) on this volume
+				prop("copyOverwrite", 1), propObj("archivers", prop("create", array()), prop("extract", array())));
 	}
 
 	protected List<Object> printFiles(Collection<FileObject> files) {
@@ -275,17 +254,16 @@ public class ELFinder {
 	}
 
 	public FileObject hashToFile(String hash) {
-		System.out.println("***** ELFinder.hashToFile : hash = "+hash); //TODO: remove debug trace
 		return hashToFile.get(hash);
 	}
 
-	private String fileToHash(FileObject file) {		
+	private String fileToHash(FileObject file) {
 		String hash = fileToHash.get(file);
 		if (hash == null) {
 			hash = 'F' + StringHelper.getRandomId();
 			hashToFile.put(hash, file);
 			fileToHash.put(file, hash);
-		}		
+		}
 		return hash;
 	}
 

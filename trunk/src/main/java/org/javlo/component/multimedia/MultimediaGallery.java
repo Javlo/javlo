@@ -424,7 +424,7 @@ public class MultimediaGallery extends TimeRangeComponent {
 				}
 
 				if (isRenderInfo(ctx)) {
-					out.println("<h4><a href=\"" + previewURL + "\" rel=\"" + getHTMLRelation(ctx) + "\" title=\"" + StringHelper.removeTag(info.getFullDescription(lgCtx)) + "\">" + title + "</a></h4>");
+					out.println("<h4><a href=\"" + previewURL + "\" title=\"" + StringHelper.removeTag(info.getFullDescription(lgCtx)) + "\">" + title + "</a></h4>");
 					if (info.getLocation(ctx) != null && info.getLocation(ctx).trim().length() > 0) {
 						out.println("<span class=\"place\">" + info.getLocation(ctx) + " - </span>");
 					}

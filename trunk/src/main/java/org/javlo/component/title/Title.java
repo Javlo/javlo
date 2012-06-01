@@ -78,5 +78,5 @@ public class Title extends AbstractVisualComponent {
 	public boolean isUnique() {
 		return true;
 	}
-
+	
 }

@@ -41,6 +41,7 @@ import org.javlo.user.AdminUserSecurity;
 import org.javlo.user.IUserFactory;
 import org.javlo.user.UserFactory;
 import org.javlo.ztatic.FileCache;
+import org.javlo.ztatic.StaticContext;
 
 /**
  * @author pvandermaesen
@@ -230,7 +231,8 @@ public class ConfigHelper {
 	 *         <li>Module : current module.</li>
 	 *         <li>MessageRepository</li>
 	 *         <li>FileCache</li>
-	 *         <li>String : the query parameter</li>
+	 *         <li>StaticContext</li>
+	 *         <li>String : the query parameter (when user make a search)</li>
 	 *         </ul>
 	 * @throws Exception
 	 * @throws
@@ -280,6 +282,8 @@ public class ConfigHelper {
 			return MessageRepository.getInstance(request);
 		} else if (c.equals(FileCache.class)) {
 			return FileCache.getInstance(request.getSession().getServletContext());
+		} else if (c.equals(StaticContext.class)) {
+			return StaticContext.getInstance(request.getSession());
 		} else if (c.equals(String.class)) {
 			return RequestService.getInstance(request).getParameter("query", null);
 		}

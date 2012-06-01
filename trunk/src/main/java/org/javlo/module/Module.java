@@ -4,7 +4,6 @@ import java.io.File;
 import java.io.FileReader;
 import java.io.IOException;
 import java.util.Collection;
-import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.LinkedList;
@@ -432,7 +431,7 @@ public class Module {
 	 */
 	public void restoreAll() {
 		restoreRenderer();
-		restoreToolsRenderer();
+		restoreToolsRenderer();		
 	}
 
 	public String getTitle() {

@@ -368,7 +368,7 @@ public class AccessServlet extends HttpServlet {
 							}
 							if (!content.contentExistForContext(newCtx)) {
 								logger.info("content not found in " + ctx.getPath() + " lg:" + ctx.getRequestContentLanguage());
-								ctx.setSpecialContentRenderer("/jsp/content_not_found.jsp");
+								ctx.setSpecialContentRenderer("/jsp/view/content_not_found.jsp");
 							} else {
 								ctx = newCtx;
 								ctx.storeInRequest(request);
@@ -519,7 +519,7 @@ public class AccessServlet extends HttpServlet {
 						IUserFactory userFactory = UserFactory.createUserFactory(globalContext, request.getSession());
 						userFactory.logout(ctx.getRequest().getSession());
 						if (globalContext.getAllPrincipals().size() == 0) {
-							content.releasePreviewNav();
+							content.releasePreviewNav(ctx);
 						}
 					}
 

@@ -1,7 +1,6 @@
 package org.javlo.module.template;
 
 import java.awt.image.RenderedImage;
-import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
@@ -22,7 +21,6 @@ import org.javlo.actions.AbstractModuleAction;
 import org.javlo.config.StaticConfig;
 import org.javlo.context.ContentContext;
 import org.javlo.context.GlobalContext;
-import org.javlo.helper.ResourceHelper;
 import org.javlo.helper.StringHelper;
 import org.javlo.helper.URLHelper;
 import org.javlo.helper.XMLManipulationHelper.BadXMLException;
@@ -74,9 +72,10 @@ public class TemplateAction extends AbstractModuleAction {
 			} else {
 				ctx.getRequest().setAttribute("currentTemplate", new Template.TemplateBean(ctx, template));
 			}
-		} /*
-		 * else { module.clearAllBoxes(); module.restoreAll(); }
-		 */
+		} else if (requestService.getParameter("list", null) == null) {
+			module.clearAllBoxes();
+			module.restoreAll();
+		}
 
 		/** choose template if we come from admin module **/
 		if (moduleContext.getFromModule() != null && moduleContext.getFromModule().getName().equals("admin")) {
@@ -163,6 +162,9 @@ public class TemplateAction extends AbstractModuleAction {
 	}
 
 	public String performChangeRenderer(HttpSession session, RequestService requestService, GlobalContext globalContext, Module currentModule, I18nAccess i18nAccess) throws Exception {
+		
+		currentModule.restoreAll();
+		
 		String list = requestService.getParameter("list", null);
 		if (list == null) {
 			return "bad request structure : need 'list' as parameter.";
@@ -217,9 +219,9 @@ public class TemplateAction extends AbstractModuleAction {
 				return "template not found : " + templateName;
 			}
 			Template newTemplate = TemplateFactory.createDiskTemplates(session.getServletContext(), templateName);
-			
+
 			newTemplate.setAuthors(template.getAuthors());
-			
+
 			InputStream in = null;
 			OutputStream out = null;
 			try {
@@ -234,13 +236,9 @@ public class TemplateAction extends AbstractModuleAction {
 				out = new FileOutputStream(visualFile);
 				JAI.create("encode", image, out, "png", null);
 				out.close();
-
-				/*
-				 * BufferedImage image = ImageIO.read(new ByteArrayInputStream(out.toByteArray())); ImageIO.write(image, "png", visualFile);
-				 */
-
-				messageRepository.setGlobalMessageAndNotification(ctx, new GenericMessage(i18nAccess.getText("template.message.imported", new String[][] { { "name", newTemplate.getId() } }), GenericMessage.INFO));
 				
+				messageRepository.setGlobalMessageAndNotification(ctx, new GenericMessage(i18nAccess.getText("template.message.imported", new String[][] { { "name", newTemplate.getId() } }), GenericMessage.INFO));
+
 				templateContext.setCurrentLink(null); // return to local template list.
 				currentModule.restoreAll();
 				currentModule.clearAllBoxes();

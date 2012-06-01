@@ -25,6 +25,7 @@ import org.javlo.context.ContentContext;
 import org.javlo.context.EditContext;
 import org.javlo.context.GlobalContext;
 import org.javlo.context.GlobalContextFactory;
+import org.javlo.data.InfoBean;
 import org.javlo.helper.DebugHelper;
 import org.javlo.helper.StringHelper;
 import org.javlo.navigation.MenuElement;
@@ -39,14 +40,14 @@ public class ContentService {
 	 * create a static logger.
 	 */
 	protected static Logger logger = Logger.getLogger(ContentService.class.getName());
-	
+
 	public static void clearAllContextCache(ContentContext ctx) throws Exception {
 		Collection<GlobalContext> allContext = GlobalContextFactory.getAllGlobalContext(ctx.getRequest().getSession());
 		for (GlobalContext globalContext : allContext) {
-			logger.info("refresh context : "+globalContext.getContextKey());
+			logger.info("refresh context : " + globalContext.getContextKey());
 			ContentService content = ContentService.getInstance(globalContext);
-			content.releaseAll(ctx, globalContext);		
-			PersistenceService.getInstance(globalContext).loadState();			
+			content.releaseAll(ctx, globalContext);
+			PersistenceService.getInstance(globalContext).loadState();
 		}
 		TemplateFactory.clearTemplate(ctx.getRequest().getSession().getServletContext());
 		TemplateFactory.cleanAllRenderer(ctx, true, false);
@@ -56,7 +57,7 @@ public class ContentService {
 	public static void clearAllCache(ContentContext ctx, GlobalContext globalContext) throws Exception {
 		logger.info("refresh context, content and template");
 		ContentService content = ContentService.getInstance(globalContext);
-		content.releaseAll(ctx, globalContext);		
+		content.releaseAll(ctx, globalContext);
 		PersistenceService.getInstance(globalContext).loadState();
 		TemplateFactory.clearTemplate(ctx.getRequest().getSession().getServletContext());
 		TemplateFactory.cleanAllRenderer(ctx, true, false);
@@ -91,7 +92,7 @@ public class ContentService {
 	private Map<String, String> timeTravelerGlobalMap;
 
 	private static final Object LOCK_LOAD_NAVIGATION = new Object();
-	
+
 	@Deprecated
 	public static ContentService createContent(HttpServletRequest request) {
 		return getInstance(GlobalContext.getInstance(request));
@@ -161,7 +162,7 @@ public class ContentService {
 		bean.setList(inBean.isList());
 		bean.setStyle(inBean.getStyle());
 		bean.setArea(inBean.getArea());
-		bean.setRepeat(inBean.isRepeat());		
+		bean.setRepeat(inBean.isRepeat());
 		MenuElement elem = ctx.getCurrentPage();
 		elem.addContent(parentId, bean);
 		return id;
@@ -389,12 +390,12 @@ public class ContentService {
 		}
 		return res;
 	}
-	
+
 	public void loadViewNav(ContentContext ctx) throws Exception {
-		loadViewNav(ctx, GlobalContext.getInstance(ctx.getRequest()));	
+		loadViewNav(ctx, GlobalContext.getInstance(ctx.getRequest()));
 	}
 
-	public void loadViewNav(ContentContext ctx,GlobalContext globalContext) throws Exception {		
+	public void loadViewNav(ContentContext ctx, GlobalContext globalContext) throws Exception {
 		PersistenceService persistenceService = PersistenceService.getInstance(globalContext);
 		Map<String, String> contentAttributeMap = new HashMap<String, String>();
 		MenuElement newViewNav = persistenceService.load(ctx, ContentContext.VIEW_MODE, contentAttributeMap, null);
@@ -424,16 +425,25 @@ public class ContentService {
 
 	public void releaseAll(ContentContext ctx, GlobalContext globalContext) throws Exception {
 		components.clear();
-		releasePreviewNav();
+		releasePreviewNav(ctx);
 		releaseViewNav(ctx, globalContext);
 	}
 
-	public void releasePreviewNav() {
+	/**
+	 * release the preview nav.
+	 * @param ctx if null context will not be updated (and content not reloaded now).
+	 * @throws Exception
+	 */
+	public void releasePreviewNav(ContentContext ctx) throws Exception {
 		logger.fine("release preview nav");
 		clearComponentCache();
 		setPreviewNav(null);
 		if (this.previewGlobalMap != null) {
 			this.previewGlobalMap.clear();
+		}
+		if (ctx != null) {
+			ctx.setCurrentPageCached(null);
+			InfoBean.updateInfoBean(ctx);
 		}
 	}
 
@@ -445,13 +455,14 @@ public class ContentService {
 		}
 	}
 
-	public void releaseViewNav(ContentContext ctx, GlobalContext globalContext) throws Exception {		
+	public void releaseViewNav(ContentContext ctx, GlobalContext globalContext) throws Exception {
 		globalContext.releaseAllCache();
 		clearComponentCache();
 		viewNav = null;
 
-		/*ContentService content = ContentService.getInstance(globalContext);
-		content.loadViewNav(ctx); */
+		/*
+		 * ContentService content = ContentService.getInstance(globalContext); content.loadViewNav(ctx);
+		 */
 	}
 
 	public void removeAttribute(ContentContext ctx, String key) {
@@ -525,11 +536,11 @@ public class ContentService {
 	public void setTimeTravelerNav(MenuElement timeTravelerNav) {
 		this.timeTravelerNav = timeTravelerNav;
 	}
-	
+
 	public boolean isViewNav() {
 		return viewNav != null;
 	}
-	
+
 	public boolean isPreviewNav() {
 		return previewNav != null;
 	}

@@ -110,7 +110,7 @@ public class GlobalImage extends FilterImage {
 		StringBuffer finalCode = new StringBuffer();
 		finalCode.append(getSpecialInputTag());
 
-		finalCode.append("<table class=\"edit normal-layout image\"><tr><td style=\"vertical-align: middle;text-align: center;\">");
+		finalCode.append("<table class=\"js-change-submit edit normal-layout image\"><tr><td style=\"vertical-align: middle;text-align: center;\">");
 
 		finalCode.append(getPreviewCode(ctx));
 
