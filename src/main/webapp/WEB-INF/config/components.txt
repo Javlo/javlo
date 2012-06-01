@@ -47,4 +47,5 @@ org.javlo.component.form.FormMailingComponent
 --content.title.special
 
 org.javlo.component.layout.ContentSeparation
+org.javlo.component.meta.ForceRealContent
 
