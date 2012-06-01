@@ -216,8 +216,8 @@ public class XMLManipulationHelper {
 	public static final String AREA_PREFIX = "area.";
 
 	public static final String AREA_VIEW_PREFIX = "area-view-if-empty.";
-	
-	public static final String HEADER_ZONE  = "<!-- INSERT HEADER HERE -->";
+
+	public static final String HEADER_ZONE = "<!-- INSERT HEADER HERE -->";
 
 	public static String changeLink(String html, String linkPrefix) throws BadXMLException {
 		TagDescription[] tags = searchAllTag(html, false);
@@ -238,7 +238,7 @@ public class XMLManipulationHelper {
 		}
 		return remplacement.start(html);
 	}
-	
+
 	/**
 	 * convert a generic html file to a jsp template file for wcms
 	 * 
@@ -257,7 +257,7 @@ public class XMLManipulationHelper {
 	 * @throws IOException
 	 * @throws BadXMLException
 	 */
-	private static int convertHTMLtoJSP(GlobalContext globalContext, I18nAccess i18nAccess, File htmlFile, File jspFile, Map<String, String> options, List<String> areas, List<String> ressources, List<TemplatePlugin> templatePlugins,List<GenericMessage> messages,  List<String> ids, boolean isMail) throws IOException {
+	private static int convertHTMLtoJSP(GlobalContext globalContext, I18nAccess i18nAccess, File htmlFile, File jspFile, Map<String, String> options, List<String> areas, List<String> ressources, List<TemplatePlugin> templatePlugins, List<GenericMessage> messages, List<String> ids, boolean isMail) throws IOException {
 
 		String templateVersion = StringHelper.getRandomId();
 
@@ -276,19 +276,19 @@ public class XMLManipulationHelper {
 					jspFile.createNewFile();
 				}
 			}
-//			StringBuffer contentBuffered = new StringBuffer();
-//
-//			InputStream in = new FileInputStream(htmlFile);
-//			try {
-//				int read = in.read();
-//				while (read >= 0) {
-//					contentBuffered.append((char) read);
-//					read = in.read();
-//				}
-//			} finally {
-//				RessourceHelper.closeResource(in);
-//			}
-//			String content = contentBuffered.toString();
+			// StringBuffer contentBuffered = new StringBuffer();
+			//
+			// InputStream in = new FileInputStream(htmlFile);
+			// try {
+			// int read = in.read();
+			// while (read >= 0) {
+			// contentBuffered.append((char) read);
+			// read = in.read();
+			// }
+			// } finally {
+			// RessourceHelper.closeResource(in);
+			// }
+			// String content = contentBuffered.toString();
 
 			String content = FileUtils.readFileToString(htmlFile, ContentContext.CHARACTER_ENCODING);
 			TagDescription[] tags = new TagDescription[0];
@@ -440,11 +440,11 @@ public class XMLManipulationHelper {
 						remplacement.addReplacement(tags[i].getOpenStart(), tags[i].getOpenEnd() + 1, tags[i].toString());
 					}
 				}
-				
+
 				/* form action */
 				if (tags[i].getName().equalsIgnoreCase("form")) {
-					String actionValue = attributes.get("action");					
-					if ((actionValue != null) && (!StringHelper.isURL(actionValue))) {						
+					String actionValue = attributes.get("action");
+					if ((actionValue != null) && (!StringHelper.isURL(actionValue))) {
 						attributes.put("action", "<%=URLHelper.createURL(ctx,\"" + actionValue + "\")%>");
 						remplacement.addReplacement(tags[i].getOpenStart(), tags[i].getOpenEnd() + 1, tags[i].toString());
 					}
@@ -502,47 +502,49 @@ public class XMLManipulationHelper {
 				/* head - StyleSheet */
 				if (!isMail) {
 					if (tags[i].getName().equalsIgnoreCase("head")) {
-						
+
 						if (content.indexOf(HEADER_ZONE) > 0) {
-							remplacement.addReplacement(content.indexOf(HEADER_ZONE), content.indexOf(HEADER_ZONE)+HEADER_ZONE.length(), getHTMLPrefixHead());
+							remplacement.addReplacement(content.indexOf(HEADER_ZONE), content.indexOf(HEADER_ZONE) + HEADER_ZONE.length(), getHTMLPrefixHead());
 						} else {
-							remplacement.addReplacement(tags[i].getOpenEnd() + 1, tags[i].getOpenEnd() + 1, getHTMLPrefixHead());							
+							remplacement.addReplacement(tags[i].getOpenEnd() + 1, tags[i].getOpenEnd() + 1, getHTMLPrefixHead());
 						}
-						
-						/** template plugin **/						
+
+						/** template plugin **/
 						ByteArrayOutputStream outStream = new ByteArrayOutputStream();
 						PrintStream out = new PrintStream(outStream);
 						out.println("");
 						out.println("<!-- template plugins -->");
 						for (TemplatePlugin plugin : templatePlugins) {
 							String headHTML = plugin.getHTMLHead(globalContext);
-							
-							
 							TagDescription[] pluginTags = searchAllTag(headHTML, false);
 							for (TagDescription tag : pluginTags) {
+								String resource = null;
 								if (tag.getAttributes().get("src") != null) {
-									tag.getAttributes().put("src", "<%=URLHelper.createStaticTemplatePluginURL(ctx, \""+tag.getAttributes().get("src")+"\", \""+plugin.getFolder()+"\")%>");
+									resource = new File(tag.getAttributes().get("src")).getName(); // for js take only the name of js file.
+									tag.getAttributes().put("src", "<%=URLHelper.createStaticTemplatePluginURL(ctx, \"" + tag.getAttributes().get("src") + "\", \"" + plugin.getFolder() + "\")%>");
 								}
 								if (tag.getAttributes().get("href") != null) {
-									tag.getAttributes().put("href", "<%=URLHelper.createStaticTemplatePluginURL(ctx, \""+tag.getAttributes().get("href")+"\", \""+plugin.getFolder()+"\")%>");
+									resource = tag.getAttributes().get("href");
+									tag.getAttributes().put("href", "<%=URLHelper.createStaticTemplatePluginURL(ctx, \"" + tag.getAttributes().get("href") + "\", \"" + plugin.getFolder() + "\")%>");
 								}
 								String inside = tag.getInside(headHTML);
 								if (tag.getName().equalsIgnoreCase("link")) { // auto close link tag
 									inside = null;
 								}
 								String outHead = tag.render(inside);
-								String homeRendercode = "<%=URLHelper.createStaticTemplatePluginURL(ctx, \"/\", \""+plugin.getFolder()+"\")%>";
+								if (resource != null) {
+									outHead = "<%if (!XHTMLHelper.allReadyInsered(ctx,\"" + resource + "\")) { %>" + outHead + "<%} else {%><!-- resource allready insered: " + resource + " --><%}%>";
+								}
+								String homeRendercode = "<%=URLHelper.createStaticTemplatePluginURL(ctx, \"/\", \"" + plugin.getFolder() + "\")%>";
 								outHead = outHead.replace(TemplatePlugin.HOME_KEY, homeRendercode);
 								out.println(outHead);
-							}							
+
+							}
 						}
 						out.println("<!-- end template plugins -->");
 						out.close();
-						
-						
-						
-						
-						remplacement.addReplacement(tags[i].getCloseStart() - 1, tags[i].getCloseStart(), getHTMLSufixHead()+ new String(outStream.toByteArray()) );
+
+						remplacement.addReplacement(tags[i].getCloseStart() - 1, tags[i].getCloseStart(), getHTMLSufixHead() + new String(outStream.toByteArray()));
 					}
 				}
 
@@ -657,8 +659,8 @@ public class XMLManipulationHelper {
 		return convertHTMLtoJSP(globalContext, null, htmlFile, jspFile, tagsID, areas, ressources, templatePlugins, null, ids, isMailing);
 	}
 
-	public static int convertHTMLtoTemplate(GlobalContext globalContext, I18nAccess i18nAccess, File htmlFile, File jspFile, Map<String, String> tagsID, List<String> areas, List<String> ressources, List<TemplatePlugin> templatePlugins,  List<GenericMessage> messages) throws IOException, BadXMLException {
-		return convertHTMLtoJSP(globalContext, i18nAccess, htmlFile, jspFile, tagsID, areas, ressources, templatePlugins,  messages, null, false);
+	public static int convertHTMLtoTemplate(GlobalContext globalContext, I18nAccess i18nAccess, File htmlFile, File jspFile, Map<String, String> tagsID, List<String> areas, List<String> ressources, List<TemplatePlugin> templatePlugins, List<GenericMessage> messages) throws IOException, BadXMLException {
+		return convertHTMLtoJSP(globalContext, i18nAccess, htmlFile, jspFile, tagsID, areas, ressources, templatePlugins, messages, null, false);
 	}
 
 	private static String getAfterBodyCode() throws IOException {
@@ -710,17 +712,10 @@ public class XMLManipulationHelper {
 		StringWriter writer = new StringWriter();
 		PrintWriter out = new PrintWriter(writer);
 
-		/*out.println("<script type=\"text/javascript\">");
-		out.println("var gaJsHost = ((\"https:\" == document.location.protocol) ? \"https://ssl.\" : \"http://www.\");");
-		out.println("document.write(unescape(\"%3Cscript src='\" + gaJsHost + \"google-analytics.com/ga.js' type='text/javascript'%3E%3C/script%3E\"));");
-		out.println("</script>");
-		out.println("<script type=\"text/javascript\">");
-		out.println("try {");
-		out.println("var pageTracker = _gat._getTracker(\"<%=globalContext.getGoogleAnalyticsUACCT()%>\");");
-		out.println("pageTracker._trackPageview();");
-		out.println("} catch(err) {}</script>");*/
-		
-		
+		/*
+		 * out.println("<script type=\"text/javascript\">"); out.println("var gaJsHost = ((\"https:\" == document.location.protocol) ? \"https://ssl.\" : \"http://www.\");"); out.println("document.write(unescape(\"%3Cscript src='\" + gaJsHost + \"google-analytics.com/ga.js' type='text/javascript'%3E%3C/script%3E\"));"); out.println("</script>"); out.println("<script type=\"text/javascript\">"); out.println("try {"); out.println("var pageTracker = _gat._getTracker(\"<%=globalContext.getGoogleAnalyticsUACCT()%>\");"); out.println("pageTracker._trackPageview();"); out.println("} catch(err) {}</script>");
+		 */
+
 		out.println("<script type=\"text/javascript\">");
 		out.println("var _gaq = _gaq || [];");
 		out.println("_gaq.push(['_setAccount', '<%=globalContext.getGoogleAnalyticsUACCT()%>']);");
@@ -799,34 +794,13 @@ public class XMLManipulationHelper {
 		out.newLine();
 		out.append("<%if (ctx.isInteractiveMode()) {%>");
 		out.newLine();
-		// out.append("<link rel=\"stylesheet\" type=\"text/css\" href=\"<%=URLHelper.createStaticURL(ctx,\"/css/slimbox/slimbox.css\")%>\" />");
-		// out.newLine();
-		out.append("<%=XHTMLHelper.renderHeaderResourceInsertion(ctx, \"/js/mootools.js\")%>");
+		out.append("<%=XHTMLHelper.renderHeaderResourceInsertion(ctx, \"/js/lib/jquery-1.7.2.min.js\")%>");
 		out.newLine();
-		out.append("<%=XHTMLHelper.renderHeaderResourceInsertion(ctx, \"/js/global.js\")%>");
+		out.append("<%=XHTMLHelper.renderHeaderResourceInsertion(ctx, \"/js/lib/jquery-ui-1.8.20.custom.min.js\")%>");
 		out.newLine();
-		out.append("<%=XHTMLHelper.renderHeaderResourceInsertion(ctx, \"/js/calendar/js/HtmlManager.js\")%>");
+		out.append("<%=XHTMLHelper.renderHeaderResourceInsertion(ctx, \"/js/lib/jquery.colorbox-min.js\")%>");
 		out.newLine();
-		out.append("<%=XHTMLHelper.renderHeaderResourceInsertion(ctx, \"/js/calendar/js/calendarFunctions.js\")%>");
-		out.newLine();
-		out.append("<%=XHTMLHelper.renderHeaderResourceInsertion(ctx, \"/js/calendar/js/calendarOptions.js\")%>");
-		out.newLine();
-		out.append("<%=XHTMLHelper.renderHeaderResourceInsertion(ctx, \"/js/calendar/js/calendarTranslate_\"+ctx.getRequestContentLanguage()+\".js\")%>");
-		out.newLine();
-		/*
-		 * out.append("<%=XHTMLHelper.renderHeaderResourceInsertion(ctx, \"/js/calendar/css/reset.css\")%>" ); out.newLine();
-		 */
-		out.append("<%=XHTMLHelper.renderHeaderResourceInsertion(ctx, \"/js/calendar/css/style_calendar.css\")%>");
-		out.newLine();
-		out.append("<%=XHTMLHelper.renderHeaderResourceInsertion(ctx, \"/js/calendar/css/style_calendarcolor.css\")%>");
-		out.newLine();
-		out.append("<%=XHTMLHelper.renderHeaderResourceInsertion(ctx, \"/js/shadowbox/src/adapter/shadowbox-base.js\")%>");
-		out.newLine();
-		out.append("<%=XHTMLHelper.renderHeaderResourceInsertion(ctx, \"/js/shadowbox/src/shadowbox.js\")%>");
-		out.newLine();
-		out.append("<%=XHTMLHelper.renderHeaderResourceInsertion(ctx, \"/js/shadowboxOptions.js\")%>");
-		out.newLine();
-		out.append("<%=XHTMLHelper.renderHeaderResourceInsertion(ctx, \"/js/onLoadFunctions.js\")%>");
+		out.append("<%=XHTMLHelper.renderHeaderResourceInsertion(ctx, \"/css/lib/colorbox.css\")%>");
 		out.newLine();
 		out.append("<%}%>");
 
@@ -834,16 +808,6 @@ public class XMLManipulationHelper {
 		out.newLine();
 		out.append("<%=XHTMLHelper.renderHeaderResourceInsertion(ctx, uri)%>");
 		out.append("<%}%>");
-		/*
-		 * out.newLine();//out.append( "<link rel=\"stylesheet\" type=\"text/css\" href=\"<%=URLHelper.createStaticURL(ctx,\"/css/slimbox/slimbox.css\")%>\" />" ); out.newLine();//out.append( "<script type=\"text/javascript\" src=\"<%=URLHelper.createStaticURL(ctx,\"/js/mootools.js\")%>\"></script>" ); out.newLine();//out.append( "<script type=\"text/javascript\" src=\"<%=URLHelper.createStaticURL(ctx,\"/js/slimbox.js\")%>\"></script>" ); out.newLine();//out.append( "<script type=\"text/javascript\" src=\"<%=URLHelper.createStaticURL(ctx,\"/js/global.js\")%>\"></script>" ); out.newLine();//out.append( "<script type=\"text/javascript\" src=\"<%=URLHelper.createStaticURL(ctx,\"/js/calendar/js/HtmlManager.js\")%>\"></script>" ); out.append("");//out.append( "<script type=\"text/javascript\" src=\"<%=URLHelper.createStaticURL(ctx,\"/js/calendar/js/calendarFunctions.js\")%>\"></script>" ); out.append("");//out.append( "<script type=\"text/javascript\" src=\"<%=URLHelper.createStaticURL(ctx,\"/js/calendar/js/calendarOptions.js\")%>\"></script>" ); out.append("");//out.append( "<script type=\"text/javascript\" src=\"<%=URLHelper.createStaticURL(ctx,\"/js/calendar/js/calendarTranslate_\"+ctx.getLanguage()+\".js\")%>\"></script>" ); // out.append(""); //out.append( "<link rel=\"stylesheet\" type=\"text/css\" href=\"<%=URLHelper.createStaticURL(ctx,\"/js/calendar/css/reset.css\")%>\" />" ); out.append("");//out.append( "<link rel=\"stylesheet\" type=\"text/css\" href=\"<%=URLHelper.createStaticURL(ctx,\"/js/calendar/css/style_calendar.css\")%>\" />" ); out.append("");//out.append( "<link rel=\"stylesheet\" type=\"text/css\" href=\"<%=URLHelper.createStaticURL(ctx,\"/js/calendar/css/style_calendarcolor.css\")%>\" />" );
-		 * 
-		 * out.newLine();
-		 * 
-		 * 
-		 * out.newLine();//out.append( "<script src=\"<%=URLHelper.createStaticURL(ctx,\"/js/shadowbox/src/adapter/shadowbox-base.js\")%>\" type=\"text/javascript\"></script>" ); out.newLine();//out.append( "<script src=\"<%=URLHelper.createStaticURL(ctx,\"/js/shadowbox/src/shadowbox.js\")%>\" type=\"text/javascript\"></script>" ); out.newLine();//out.append( "<script src=\"<%=URLHelper.createStaticURL(ctx,\"/js/shadowboxOptions.js\")%>\" type=\"text/javascript\"></script>" ); out.newLine();//out.append( "<script src=\"<%=URLHelper.createStaticURL(ctx,\"/js/onLoadFunctions.js\")%>\" type=\"text/Javascript\"></script>" );
-		 * 
-		 * out.newLine(); //out.append("<%}%>");
-		 */
 
 		out.close();
 
@@ -855,33 +819,32 @@ public class XMLManipulationHelper {
 		StringWriter outString = new StringWriter();
 		BufferedWriter out = new BufferedWriter(outString);
 
-		out.append("<%=(ctx.isInteractiveMode() ? \"<link rel=\\\"stylesheet\\\" type=\\\"text/css\\\" href=\\\"\"+URLHelper.createStaticURL(ctx,\"/css/edit_preview.css\")+\"\\\"></link>\" : \"\")  %>");
+		out.append("<%if (ctx.getRenderMode() == ContentContext.PREVIEW_MODE) {");
 		out.newLine();
-		out.append("<%=(ctx.isInteractiveMode() ? \"<link rel=\\\"stylesheet\\\" type=\\\"text/css\\\" href=\\\"\"+URLHelper.createStaticURL(ctx,\"/css/edit_preview_specific.css\")+\"\\\"></link>\" : \"\")  %>");
+		out.append("EditContext editCtx = EditContext.getInstance(globalContext, request.getSession());%>");
 		out.newLine();
-		out.append("<%=(ctx.isInteractiveMode() ? \"<script type=\\\"text/javascript\\\" src=\\\"\"+URLHelper.createStaticURL(ctx,\"/js/preview.js\")+\"\\\"></script>\" : \"\")  %>");
+		out.append("<%=(ctx.isInteractiveMode() ? \"<link rel=\\\"stylesheet\\\" type=\\\"text/css\\\" href=\\\"\"+URLHelper.createStaticURL(ctx,\"/css/preview/edit_preview.css\")+\"\\\"></link>\" : \"\")  %>");
 		out.newLine();
-		out.append("<%=(ctx.isInteractiveMode() ? \"<script type=\\\"text/javascript\\\" src=\\\"\"+URLHelper.createStaticURL(ctx,\"/js/content_ajax.js\")+\"\\\"></script>\" : \"\")  %>");
+		out.append("<%=(ctx.isInteractiveMode() ? \"<link rel=\\\"stylesheet\\\" type=\\\"text/css\\\" href=\\\"\"+editCtx.getEditTemplateFolder()+\"/css/edit_preview.css\"+\"\\\"></link>\" : \"\")  %>");
 		out.newLine();
-		out.append("<%=(ctx.isInteractiveMode() ? \"<script type=\\\"text/javascript\\\" src=\\\"\"+URLHelper.createStaticURL(ctx,\"/js/content_preview.js\")+\"\\\"></script>\" : \"\")  %>");
+		out.append("<%=(ctx.isInteractiveMode() ? \"<script type=\\\"text/javascript\\\" src=\\\"\"+URLHelper.createStaticURL(ctx,\"/js/preview/edit_preview.js\")+\"\\\"></script>\" : \"\")  %>");
 		out.newLine();
-		out.append("<%if (ctx.getRenderMode() == ContentContext.PREVIEW_MODE) {" );
+		out.append("<%=(ctx.isInteractiveMode() ? \"<script type=\\\"text/javascript\\\" src=\\\"\"+URLHelper.createStaticURL(ctx,\"/js/edit/ajax.js\")+\"\\\"></script>\" : \"\")  %>");
 		out.newLine();
-		out.append("EditContext editCtx = EditContext.getInstance(globalContext, request.getSession());%>" );
-		//out.newLine();
-  		//out.append("<%=XHTMLHelper.renderHeaderResourceInsertion(ctx, \"/js/calendar/css/reset.css\")%>" );
+		out.append("<%=(ctx.isInteractiveMode() ? \"<script type=\\\"text/javascript\\\" src=\\\"\"+URLHelper.createStaticURL(ctx,\"/js/edit/core.js\")+\"\\\"></script>\" : \"\")  %>");
 		out.newLine();
+
 		out.append("<%if ((ctx.isInteractiveMode())&&(security.haveRight((User)editCtx.getUserPrincipal(), \"update\"))) {%><script type=\"text/javascript\">");
 		out.newLine();
 		out.append("var ajaxURL = \"<%=URLHelper.createAjaxURL(ctx)%>\";");
 		out.newLine();
-		out.append("window.addEvent(\"domready\", function (){");
+		out.append("var currentURL = \"<%=URLHelper.createURL(ctx)%>\";");
 		out.newLine();
-		out.append("var previewEdit = new PreviewEdit();");
+		out.append("var editPreviewURL = \"<%=URLHelper.createURL(ctx.getContextWithOtherRenderMode(ContentContext.EDIT_MODE))%>?module=content&webaction=editPreview&previewEdit=true\";");
 		out.newLine();
-		out.append("});");
-		out.newLine();
-		out.append("</script><%} }%>");
+		out.append("</script><%}%>");
+
+		out.append("<%}%>");
 		out.newLine();
 		out.append("<%if (currentPage.getHeaderContent(ctx) != null) {%><%=currentPage.getHeaderContent(ctx)%><%}%>");
 
@@ -904,6 +867,8 @@ public class XMLManipulationHelper {
 		out.append("		org.javlo.context.ContentContext,");
 		out.newLine();
 		out.append("		org.javlo.service.ContentService,");
+		out.newLine();
+		out.append("		org.javlo.data.InfoBean,");
 		out.newLine();
 		out.append("		org.javlo.i18n.I18nAccess,");
 		out.newLine();
@@ -938,8 +903,10 @@ public class XMLManipulationHelper {
 		out.append("ContentService content = ContentService.createContent(request);");
 		out.newLine();
 		out.append("GlobalContext globalContext = GlobalContext.getInstance(request); ");
-		out.newLine();		
+		out.newLine();
 		out.append("MenuElement currentPage = ctx.getCurrentPage();");
+		out.newLine();
+		out.append("InfoBean infoBean = InfoBean.getCurrentInfoBean(request);");
 		out.newLine();
 		out.append("String currentTitle = currentPage.getContent(ctx).getPageTitle();");
 		out.newLine();
@@ -950,8 +917,6 @@ public class XMLManipulationHelper {
 		out.append("if (globalTitle == null) {");
 		out.append("	globalTitle = globalContext.getGlobalTitle();");
 		out.append("}");
-		//out.newLine();
-		//out.append("GlobalContext globalContext = GlobalContext.getInstance(request); EditContext editCtx = EditContext.getInstance(globalContext, request.getSession());");
 		out.newLine();
 		out.append("I18nAccess i18nAccess = I18nAccess.getInstance(request);");
 		out.newLine();

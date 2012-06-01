@@ -59,6 +59,8 @@ public class FreeCSSTemplateFactory implements IRemoteTemplateFactory {
 			}
 			if (tag.getName().equals("div") && "thumbnail".equalsIgnoreCase(tag.getAttributes().get("class"))) {
 				if (template != null) {
+					template.setLicence("Creative Commons Attribution 3.0 Unported License");
+					template.setAuthors("Free CSS template.");
 					templates.add(template);
 				}
 				template = new RemoteTemplate();
