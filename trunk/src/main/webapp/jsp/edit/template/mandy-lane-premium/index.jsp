@@ -191,7 +191,7 @@
 	
 		<c:forEach var="currentBox" items="${currentModule.mainBoxes}">
 			<c:set var="box" value="${currentBox}" scope="request" />
-			<div id="${box.id}">		
+			<div class="mainBoxe" id="${box.id}">		
 			<jsp:include page="box.jsp" />
 			</div>
 		</c:forEach>
@@ -205,7 +205,7 @@
 <div class="right">
 	<c:forEach var="currentBox" items="${currentModule.sideBoxes}">
 		<c:set var="box" value="${currentBox}" scope="request" />
-		<div id="${box.id}">	
+		<div class="sidebox" id="${box.id}">	
 		<jsp:include page="box.jsp" />
 		</div>
 	</c:forEach>

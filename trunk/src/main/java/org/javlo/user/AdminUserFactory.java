@@ -1,6 +1,5 @@
 package org.javlo.user;
 
-import java.util.HashSet;
 import java.util.Set;
 import java.util.logging.Logger;
 

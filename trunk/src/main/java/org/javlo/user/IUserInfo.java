@@ -15,6 +15,7 @@ public interface IUserInfo {
 	public String getLastName();
 	public String getPassword();
 	public String getEmail();
+	public String getInfo();
 	public String[] getPreferredLanguage();
 	public Set<String> getRoles();
 
@@ -25,6 +26,7 @@ public interface IUserInfo {
 	public void setLastName(String lastName);
 	public void setPassword(String password);
 	public void setEmail(String email);
+	public void setInfo(String info);
 	public void setPreferredLanguage(String[] preferredLanguage);
 	public void setRoles(Set<String> strings);
 	public void addRoles(Set<String> strings);

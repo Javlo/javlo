@@ -189,7 +189,9 @@ public class Module {
 	private boolean breadcrumb = false;
 	private String breadcrumbTitle = null;
 	Collection<Box> mainBoxes = new LinkedList<Box>();
+	Collection<Box> defaultMainBoxes = null;
 	Collection<Box> sideBoxes = new LinkedList<Box>();
+	Collection<Box> defaultSideBoxes = null;
 	String navigationTitle = null;
 	Collection<Box> navigation = new LinkedList<Box>();
 	private String helpTitle = null;
@@ -202,7 +204,8 @@ public class Module {
 	private Collection<String> jsURI = new LinkedList<String>();
 	private String renderer;
 	private String defaultRenderer;
-	private Map<String,Box> boxes = new HashMap<String, Box>();
+	private Map<String,Box> boxes = new HashMap<String, Box>();	
+	private Map<String,Box> defaultBoxes;
 	private String backUrl = null;
 	private Stack<HtmlLink> breadcrumbLinks;
 	private boolean search;
@@ -344,7 +347,9 @@ public class Module {
 			} else {
 				break;
 			}
-		}
+		}		
+		
+		defaultMainBoxes = new LinkedList<Module.Box>(mainBoxes);
 		for (int i = 1; i < 100; i++) {
 			String boxBaseKey = "box.side." + i;
 			String renderer = config.get(boxBaseKey + ".renderer");
@@ -363,6 +368,9 @@ public class Module {
 				break;
 			}
 		}
+		defaultSideBoxes = new LinkedList<Module.Box>(sideBoxes);
+		
+		defaultBoxes = new HashMap<String, Box>(boxes);
 
 		/* action */
 		String actionName = config.get("class.action");
@@ -431,7 +439,14 @@ public class Module {
 	 */
 	public void restoreAll() {
 		restoreRenderer();
-		restoreToolsRenderer();		
+		restoreToolsRenderer();	
+		restoreBoxes();
+	}
+	
+	public synchronized void restoreBoxes() {
+		mainBoxes = new LinkedList<Module.Box>(defaultMainBoxes);
+		sideBoxes = new LinkedList<Module.Box>(defaultSideBoxes);
+		boxes = new HashMap<String, Module.Box>(defaultBoxes);
 	}
 
 	public String getTitle() {
@@ -528,11 +543,11 @@ public class Module {
 		toolsRenderer = defaultToolsRenderer;
 	}
 	
-	public Box getBox(String name) {
+	public synchronized Box getBox(String name) {
 		return boxes.get(name);
 	}
 	
-	public Box createMainBox(String name, String title, String renderer, boolean action) {
+	public synchronized Box createMainBox(String name, String title, String renderer, boolean action) {
 		Box box = new Box(title, renderer, action);
 		mainBoxes.add(box);
 		if (name != null) {
@@ -549,7 +564,7 @@ public class Module {
 	 * @param action
 	 * @return null if box with the same name allready exist.
 	 */
-	public Box createSideBox(String name, String title, String renderer, boolean action) {
+	public synchronized Box createSideBox(String name, String title, String renderer, boolean action) {
 		if (getBox(name) != null) {
 			return null;
 		}
@@ -562,7 +577,7 @@ public class Module {
 		return box;
 	}
 	
-	public void clearAllBoxes() {
+	public synchronized void clearAllBoxes() {
 		boxes.clear();
 		sideBoxes.clear();
 		mainBoxes.clear();

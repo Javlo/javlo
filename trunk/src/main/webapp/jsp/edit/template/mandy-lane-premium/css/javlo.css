@@ -48,7 +48,7 @@ a.popup span {
 
 .box {
 	box-shadow: 1px 1px 2px #CCCCCC;
-	margin-bottom: 20px;
+	margin-bottom: 20px;	
 }
 
 .box  h3 {
@@ -358,6 +358,40 @@ ul,li {
 	border-left: 1px #DDDDDD solid;
 	padding: 0 0 2px 15px;
 	float: right;
+}
+
+#tools .special form {
+	display: inline-block;
+}
+
+#tools .special .close {
+	display: inline-block;
+	font-size: 0;
+    background: url("../images/icons/popup.png") no-repeat scroll 0 0 transparent;
+    right: 5px;
+    cursor: pointer;
+    display: block;
+    float: right;
+    height: 8px;
+    margin: 11px 0 0 4px;
+    width: 8px;
+}
+
+.sidebox, .mainbox {
+	position: relative;
+}
+
+.close-component a {
+	position: absolute;
+	top: 0px;
+	right: 0px;
+	width: 43px;
+	height: 43px;
+	line-height: 60px;
+	font-size: 0;
+    background: url("../images/icons/small/black/close.png") no-repeat scroll center center transparent;     
+    cursor: pointer;
+    display: block;    
 }
 
 #tools input,#tools select {

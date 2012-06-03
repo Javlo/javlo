@@ -28,6 +28,7 @@ import org.javlo.config.StaticConfig;
 import org.javlo.context.ContentContext;
 import org.javlo.context.EditContext;
 import org.javlo.context.GlobalContext;
+import org.javlo.context.UserInterfaceContext;
 import org.javlo.data.InfoBean;
 import org.javlo.helper.DebugHelper;
 import org.javlo.helper.RequestHelper;
@@ -308,6 +309,8 @@ public class AccessServlet extends HttpServlet {
 			/*** update module status before action ***/
 			ModuleContext moduleContext = ModuleContext.getInstance(request.getSession(), globalContext);
 			if (requestService.getParameter("module", null) != null) {
+				UserInterfaceContext uic = UserInterfaceContext.getInstance(request.getSession(), globalContext);
+				uic.setCurrentModule(requestService.getParameter("module", null));
 				moduleContext.setCurrentModule(requestService.getParameter("module", null));
 				i18nAccess.setCurrentModule(globalContext, moduleContext.getCurrentModule());
 			}

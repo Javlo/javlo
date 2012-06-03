@@ -103,6 +103,14 @@ used with JMX monitors.
        overflowToDisk="true"          
         />
         
+    <cache name="remote-template"
+       maxElementsInMemory="0"
+       maxElementsOnDisk="1000000"
+       eternal="true"
+       overflowToDisk="true" 
+       diskPersistent="true"
+        />
+        
     <cache name="navigation-cache-view"
        maxElementsInMemory="1000"
        maxElementsOnDisk="100000"

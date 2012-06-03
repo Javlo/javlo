@@ -1,6 +1,29 @@
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
 <%@ taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions" %>
 
+<c:if test="${not userInterfaceContext.componentsList || not empty param.previewEdit}">
+<div class="special"> <!-- components -->
+<form id="form-component-list" action="${info.currentURL}" method="post" class="js-submit ajax">
+<input type="hidden" name="webaction" value="changeComponent" />
+<c:if test="${not empty param.previewEdit}"> 
+<input type="hidden" name="previewEdit" value="true" />
+<input type="hidden" name="comp_id" value="${param.comp_id}" />
+</c:if>
+<select name="type" class="with-title">
+<c:forEach var="comp" items="${components}">
+<c:if test="${comp.metaTitle}">${closeAccordion}
+<option disabled="disabled" class="title">${comp.label}</option>
+</c:if>
+<c:if test="${not comp.metaTitle}">
+<option ${comp.selected?' selected="selected"':''} value="${comp.type}">${comp.label}</option>
+</c:if>
+</c:forEach>
+</select>
+</form>
+<a class="close" href="${info.currentURL}?webaction=displayComponentsList">x</a>
+</div>
+</c:if>
+
 <c:if test="${not empty param.languages and fn:length(info.contentLanguages) > 1 and empty param.previewEdit}">
 <div class="special">
 <form id="form-languages" action="${info.currentURL}" method="post" class="js-submit">
@@ -22,35 +45,13 @@
 <form id="form-area" action="${info.currentURL}" method="post" class="js-submit">
 <div class="select-area form_default">
 	<input type="hidden" name="webaction" value="changeArea" />
-	<select name="area">
+	<select name="area>
 	<c:forEach var="area" items="${areas}">
 		<option ${currentArea eq area?' selected="selected"':''}>${area}</option>
 	</c:forEach>
 	</select>
 	<input class="action-button" type="submit" name="ok" value="${i18n.edit['global.ok']}" />
 </div>
-</form>
-</div>
-</c:if>
-
-<c:if test="${not empty param.components_list || not empty param.previewEdit}">
-<div class="special"> <!-- components -->
-<form id="form-component-list" action="${info.currentURL}" method="post" class="js-submit">
-<input type="hidden" name="webaction" value="changeComponent" />
-<c:if test="${not empty param.previewEdit}"> 
-<input type="hidden" name="previewEdit" value="true" />
-<input type="hidden" name="comp_id" value="${param.comp_id}" />
-</c:if>
-<select name="type" class="with-title">
-<c:forEach var="comp" items="${components}">
-<c:if test="${comp.metaTitle}">${closeAccordion}
-<option disabled="disabled" class="title">${comp.label}</option>
-</c:if>
-<c:if test="${not comp.metaTitle}">
-<option ${comp.selected?' selected="selected"':''} value="${comp.type}">${comp.label}</option>
-</c:if>
-</c:forEach>
-</select>
 </form>
 </div>
 </c:if>
