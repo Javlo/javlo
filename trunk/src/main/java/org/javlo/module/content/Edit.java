@@ -355,6 +355,10 @@ public class Edit extends AbstractModuleAction {
 		if (request.getParameter("query") == null) {
 			currentModule.setBreadcrumb(true);
 			currentModule.setSidebar(true);
+			UserInterfaceContext userIterfaceContext = UserInterfaceContext.getInstance(ctx.getRequest().getSession(), globalContext);
+			if (!userIterfaceContext.isComponentsList()) {
+				currentModule.clearAllBoxes();
+			}
 			switch (modCtx.getMode()) {
 			case ContentModuleContext.PREVIEW_MODE:
 				currentModule.setToolsRenderer("/jsp/actions.jsp?button_edit=true&button_page=true&button_publish=true");
@@ -371,11 +375,7 @@ public class Edit extends AbstractModuleAction {
 			default:
 				currentModule.setToolsRenderer("/jsp/actions.jsp?button_preview=true&button_page=true&button_save=true&button_publish=true&languages=true&areas=true");
 				currentModule.setRenderer("/jsp/content_wrapper.jsp");
-				currentModule.setBreadcrumbTitle(I18nAccess.getInstance(ctx.getRequest()).getText("content.mode.content"));
-				UserInterfaceContext userIterfaceContext = UserInterfaceContext.getInstance(ctx.getRequest().getSession(), globalContext);
-				if (!userIterfaceContext.isComponentsList()) {
-					currentModule.clearAllBoxes();
-				}
+				currentModule.setBreadcrumbTitle(I18nAccess.getInstance(ctx.getRequest()).getText("content.mode.content"));							
 				break;
 			}
 		}

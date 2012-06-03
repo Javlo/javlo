@@ -21,9 +21,12 @@ org.javlo.component.list.TextList
 
 org.javlo.component.links.ExternalLink
 org.javlo.component.links.InternalLink
+org.javlo.component.links.SimpleInternalLink
 org.javlo.component.links.PageReferenceComponent
 org.javlo.component.links.ChildrenLink
 org.javlo.component.links.Menu
+org.javlo.component.links.ChangeLanguageLink
+org.javlo.component.links.ChangeLanguageMenu
 
 --content.title.graphic
 

@@ -1702,7 +1702,7 @@ public class XHTMLHelper {
 			return "<!-- resource allready insered : "+resource+" -->";
 		}
 	}
-
+	
 	public static String renderLanguage(ContentContext ctx) {
 		GlobalContext globalContext = GlobalContext.getInstance(ctx.getRequest());
 		Set<String> languages;
