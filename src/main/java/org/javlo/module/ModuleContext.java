@@ -1,7 +1,6 @@
 package org.javlo.module;
 
 import java.io.File;
-import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.util.Collection;
 import java.util.Comparator;
@@ -12,6 +11,7 @@ import java.util.logging.Logger;
 import javax.servlet.http.HttpSession;
 
 import org.javlo.context.GlobalContext;
+import org.javlo.context.UserInterfaceContext;
 import org.javlo.helper.URLHelper;
 import org.javlo.i18n.I18nAccess;
 import org.javlo.user.AdminUserFactory;
@@ -113,6 +113,10 @@ public class ModuleContext {
 			session.setAttribute(KEY, outContext);
 			I18nAccess i18nAccess;
 			try {
+				UserInterfaceContext uic = UserInterfaceContext.getInstance(session, globalContext);				
+				if (uic.getCurrentModule() != null) {
+					outContext.setCurrentModule(uic.getCurrentModule());
+				}
 				i18nAccess = I18nAccess.getInstance(globalContext, session);
 				i18nAccess.setCurrentModule(globalContext, outContext.getCurrentModule());
 			} catch (Exception e) {				

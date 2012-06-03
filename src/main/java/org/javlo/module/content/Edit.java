@@ -21,8 +21,10 @@ import org.javlo.component.core.IContentComponentsList;
 import org.javlo.component.core.IContentVisualComponent;
 import org.javlo.config.StaticConfig;
 import org.javlo.context.ContentContext;
+import org.javlo.context.ContextException;
 import org.javlo.context.EditContext;
 import org.javlo.context.GlobalContext;
+import org.javlo.context.UserInterfaceContext;
 import org.javlo.helper.DebugHelper;
 import org.javlo.helper.NavigationHelper;
 import org.javlo.helper.ResourceHelper;
@@ -307,9 +309,11 @@ public class Edit extends AbstractModuleAction {
 
 		Module currentModule = ModuleContext.getInstance(ctx.getRequest().getSession(), globalContext).getCurrentModule();
 		Box componentBox = currentModule.getBox("components");
-		I18nAccess i18nAccess = I18nAccess.getInstance(ctx.getRequest());
-		IContentVisualComponent comp = ComponentFactory.getComponentWithType(ctx, editCtx.getActiveType());
-		componentBox.setTitle(i18nAccess.getText("components.title", new String[][] { { "component", comp.getComponentLabel(ctx, globalContext.getEditLanguage()) } }));
+		if (componentBox != null) {
+			I18nAccess i18nAccess = I18nAccess.getInstance(ctx.getRequest());
+			IContentVisualComponent comp = ComponentFactory.getComponentWithType(ctx, editCtx.getActiveType());
+			componentBox.setTitle(i18nAccess.getText("components.title", new String[][] { { "component", comp.getComponentLabel(ctx, globalContext.getEditLanguage()) } }));
+		}
 		// }
 	}
 
@@ -368,6 +372,10 @@ public class Edit extends AbstractModuleAction {
 				currentModule.setToolsRenderer("/jsp/actions.jsp?button_preview=true&button_page=true&button_save=true&button_publish=true&languages=true&areas=true");
 				currentModule.setRenderer("/jsp/content_wrapper.jsp");
 				currentModule.setBreadcrumbTitle(I18nAccess.getInstance(ctx.getRequest()).getText("content.mode.content"));
+				UserInterfaceContext userIterfaceContext = UserInterfaceContext.getInstance(ctx.getRequest().getSession(), globalContext);
+				if (!userIterfaceContext.isComponentsList()) {
+					currentModule.clearAllBoxes();
+				}
 				break;
 			}
 		}
@@ -386,13 +394,17 @@ public class Edit extends AbstractModuleAction {
 		List<Template> templates = pageConfig.getContextTemplates(editCtx);
 		Collections.sort(templates);
 
-		ctx.getRequest().setAttribute("areas", ctx.getCurrentTemplate().getAreas());
+		if (ctx.getCurrentTemplate() != null) {
+			ctx.getRequest().setAttribute("areas", ctx.getCurrentTemplate().getAreas());
+		}
 		ctx.getRequest().setAttribute("currentArea", editCtx.getCurrentArea());
 
 		request.setAttribute("templates", templates);
 
-		String templateImageURL = URLHelper.createTransformStaticTemplateURL(ctx, ctx.getCurrentTemplate(), "template", ctx.getCurrentTemplate().getVisualFile());
-		request.setAttribute("templateImageUrl", templateImageURL);
+		if (ctx.getCurrentTemplate() != null) {
+			String templateImageURL = URLHelper.createTransformStaticTemplateURL(ctx, ctx.getCurrentTemplate(), "template", ctx.getCurrentTemplate().getVisualFile());
+			request.setAttribute("templateImageUrl", templateImageURL);
+		}
 
 		/** download **/
 		ctx.getRequest().setAttribute("downloadAll", URLHelper.createStaticURL(ctx, "/zip/" + globalContext.getContextKey() + ".zip"));
@@ -449,14 +461,12 @@ public class Edit extends AbstractModuleAction {
 			if (requestService.getParameter("comp_id", null) != null) {
 				return performEditpreview(requestService, ctx, componentContext, ContentService.getInstance(globalContext), ModuleContext.getInstance(ctx.getRequest().getSession(), globalContext));
 			} else {
-				Box componentBox = currentModule.getBox("components");
+				Box componentBox = currentModule.getBox("components");				
 				if (componentBox != null) {
 					loadComponentList(ctx);
 					componentBox.update(ctx);
 					prepareUpdateInsertLine(ctx);
-				} else {
-					message = "component box not found.";
-				}
+				} 
 			}
 		} else {
 			message = "Fatal error : type not found";
@@ -664,8 +674,8 @@ public class Edit extends AbstractModuleAction {
 			EditContext editCtx = EditContext.getInstance(globalContext, ctx.getRequest().getSession());
 
 			String path = ctx.getPath();
-			String nodeName = requestService.getParameter("name",null);
-			
+			String nodeName = requestService.getParameter("name", null);
+
 			if (nodeName == null) {
 				return "bad request structure : need 'name'.";
 			}
@@ -689,14 +699,14 @@ public class Edit extends AbstractModuleAction {
 					ctx.getCurrentPage().addChildMenuElement(elem);
 				}
 				path = path + "/" + nodeName;
-				
+
 				PersistenceService persistenceService = PersistenceService.getInstance(globalContext);
 				persistenceService.store(ctx);
 				autoPublish(ctx.getRequest(), ctx.getResponse());
 
 				NavigationService navigationService = NavigationService.getInstance(globalContext, ctx.getRequest().getSession());
 				navigationService.clearPage(ctx);
-				
+
 				String msg = i18nAccess.getText("action.add.new-page", new String[][] { { "path", path } });
 				MessageRepository.getInstance(ctx).setGlobalMessage(new GenericMessage(msg, GenericMessage.INFO));
 			}
@@ -890,6 +900,16 @@ public class Edit extends AbstractModuleAction {
 			return "component not found : " + compId;
 		}
 		componentContext.addNewComponent(comp);
+		return null;
+	}
+	
+	public static String performDisplayComponentsList(RequestService requestService, UserInterfaceContext userInterfaceContext, Module currentModule) throws ContextException {
+		userInterfaceContext.setComponentsList(!userInterfaceContext.isComponentsList());
+		if (userInterfaceContext.isComponentsList()) {
+			currentModule.restoreBoxes();
+		} else {
+			currentModule.clearAllBoxes();
+		}
 		return null;
 	}
 

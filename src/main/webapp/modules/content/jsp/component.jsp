@@ -1,5 +1,8 @@
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
 <%@ taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions" %>
+<div class="close-component">
+<a class="close" href="${info.currentURL}?webaction=displayComponentsList">x</a>
+</div>
 <div class="accordion component-list"> <!-- components -->
 <c:set var="closeAccordion" value="" />
 <c:forEach var="comp" items="${components}">

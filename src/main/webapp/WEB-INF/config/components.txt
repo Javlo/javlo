@@ -23,6 +23,7 @@ org.javlo.component.links.ExternalLink
 org.javlo.component.links.InternalLink
 org.javlo.component.links.PageReferenceComponent
 org.javlo.component.links.ChildrenLink
+org.javlo.component.links.Menu
 
 --content.title.graphic
 

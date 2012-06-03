@@ -26,6 +26,7 @@ import org.javlo.config.StaticConfig;
 import org.javlo.context.ContentContext;
 import org.javlo.context.EditContext;
 import org.javlo.context.GlobalContext;
+import org.javlo.context.UserInterfaceContext;
 import org.javlo.exception.RessourceNotFoundException;
 import org.javlo.filter.PropertiesFilter;
 import org.javlo.i18n.I18nAccess;
@@ -38,7 +39,6 @@ import org.javlo.service.ContentService;
 import org.javlo.service.RequestService;
 import org.javlo.user.AdminUserFactory;
 import org.javlo.user.AdminUserSecurity;
-import org.javlo.user.IUserFactory;
 import org.javlo.user.UserFactory;
 import org.javlo.ztatic.FileCache;
 import org.javlo.ztatic.StaticContext;
@@ -232,6 +232,7 @@ public class ConfigHelper {
 	 *         <li>MessageRepository</li>
 	 *         <li>FileCache</li>
 	 *         <li>StaticContext</li>
+	 *         <li>UserInterfaceContext</li>
 	 *         <li>String : the query parameter (when user make a search)</li>
 	 *         </ul>
 	 * @throws Exception
@@ -284,6 +285,8 @@ public class ConfigHelper {
 			return FileCache.getInstance(request.getSession().getServletContext());
 		} else if (c.equals(StaticContext.class)) {
 			return StaticContext.getInstance(request.getSession());
+		}  else if (c.equals(UserInterfaceContext.class)) {
+			return UserInterfaceContext.getInstance( request.getSession(), GlobalContext.getInstance(request) );
 		} else if (c.equals(String.class)) {
 			return RequestService.getInstance(request).getParameter("query", null);
 		}
