@@ -368,8 +368,7 @@ public class Module {
 				break;
 			}
 		}
-		defaultSideBoxes = new LinkedList<Module.Box>(sideBoxes);
-		
+		defaultSideBoxes = new LinkedList<Module.Box>(sideBoxes);		
 		defaultBoxes = new HashMap<String, Box>(boxes);
 
 		/* action */

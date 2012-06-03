@@ -434,10 +434,12 @@ public class XMLManipulationHelper {
 				/* link - StyleSheet */
 				if (tags[i].getName().equalsIgnoreCase("link")) {
 					String hrefValue = attributes.get("href");
+					
 					if ((hrefValue != null) && (!StringHelper.isURL(hrefValue))) {
+						String newLinkGeneratorIf = "<%if (!XHTMLHelper.allReadyInsered(ctx, \""+hrefValue+"\")) {%>";
 						ressources.add(hrefValue);
 						attributes.put("href", "<%=URLHelper.createStaticTemplateURL(ctx,\"/" + hrefValue + "\", \"" + templateVersion + "\")%>");
-						remplacement.addReplacement(tags[i].getOpenStart(), tags[i].getOpenEnd() + 1, tags[i].toString());
+						remplacement.addReplacement(tags[i].getOpenStart(), tags[i].getOpenEnd() + 1, newLinkGeneratorIf+tags[i].toString()+"<%}%>");					
 					}
 				}
 
@@ -565,15 +567,21 @@ public class XMLManipulationHelper {
 					}
 				}
 
-				/* ressource */
+				/* resource */
 				String srcValue = attributes.get("src");
 				if ((srcValue != null) && (!StringHelper.isURL(srcValue))) {
 					ressources.add(srcValue);
-					attributes.put("src", "<%=URLHelper.createStaticTemplateURL(ctx,\"/" + srcValue + "\")%>");
-					remplacement.addReplacement(tags[i].getOpenStart(), tags[i].getOpenEnd() + 1, tags[i].toString());
+					if (tags[i].getName().equalsIgnoreCase("script")) {
+						String newLinkGeneratorIf = "<%if (!XHTMLHelper.allReadyInsered(ctx, \""+srcValue+"\")) {%>";
+						attributes.put("src", "<%=URLHelper.createStaticTemplateURL(ctx,\"/" + srcValue + "\")%>");
+						remplacement.addReplacement(tags[i].getOpenStart(), tags[i].getOpenEnd() + 1, newLinkGeneratorIf+tags[i].toString()+"<%}%>");
+					} else {
+						attributes.put("src", "<%=URLHelper.createStaticTemplateURL(ctx,\"/" + srcValue + "\")%>");
+						remplacement.addReplacement(tags[i].getOpenStart(), tags[i].getOpenEnd() + 1, tags[i].toString());
+					}					
 				}
 
-				/* flash ressource access */
+				/* flash resource access */
 				if (tags[i].getName().equalsIgnoreCase("param")) {
 					if (tags[i].getAttributes().get("name") != null && tags[i].getAttributes().get("value") != null) {
 						if (tags[i].getAttributes().get("name").equalsIgnoreCase("movie")) {
@@ -583,7 +591,7 @@ public class XMLManipulationHelper {
 					}
 				}
 
-				/* flash ressource access */
+				/* flash resource access */
 				if (tags[i].getName().equalsIgnoreCase("object")) {
 					if (tags[i].getAttributes().get("data") != null) {
 						tags[i].getAttributes().put("data", "<%=URLHelper.createStaticTemplateURL(ctx,\"/" + tags[i].getAttributes().get("data") + "\")%>");

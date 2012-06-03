@@ -45,7 +45,7 @@
 <form id="form-area" action="${info.currentURL}" method="post" class="js-submit">
 <div class="select-area form_default">
 	<input type="hidden" name="webaction" value="changeArea" />
-	<select name="area>
+	<select name="area">
 	<c:forEach var="area" items="${areas}">
 		<option ${currentArea eq area?' selected="selected"':''}>${area}</option>
 	</c:forEach>

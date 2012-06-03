@@ -11,7 +11,7 @@ import org.javlo.user.IUserInfo;
 import org.javlo.user.User;
 
 public class UserInterfaceContext {
-	
+
 	private static Logger logger = Logger.getLogger(UserInterfaceContext.class.getName());
 
 	private HttpSession session;
@@ -19,21 +19,29 @@ public class UserInterfaceContext {
 	private GlobalContext globalContext;
 
 	private boolean componentsList = true;
-	
+
 	private String currentModule = null;
 
 	public static final String KEY = "userInterfaceContext";
 
+	private static final UserInterfaceContext FAKE_INSTACE = new UserInterfaceContext();
+
 	public static final UserInterfaceContext getInstance(HttpSession session, GlobalContext globalContext) {
 		UserInterfaceContext instance = (UserInterfaceContext) session.getAttribute(KEY);
+		
 		if (instance == null) {
+			AdminUserFactory userFact = AdminUserFactory.createUserFactory(globalContext, session);
+			User user = userFact.getCurrentUser(session);
+			if (userFact == null || user == null) {
+				return FAKE_INSTACE;
+			}
+
 			instance = new UserInterfaceContext();
 			instance.session = session;
 			instance.globalContext = globalContext;
 			session.setAttribute(KEY, instance);
+
 			
-			AdminUserFactory userFact = AdminUserFactory.createUserFactory(globalContext, session);
-			User user = userFact.getCurrentUser(session);
 			if (userFact.getUser(user.getLogin()) != null) { // not god user, so storable user
 				IUserInfo ui = user.getUserInfo();
 				instance.fromString(ui.getInfo());
@@ -43,7 +51,7 @@ public class UserInterfaceContext {
 	}
 
 	public String toString() {
-		return "" + isComponentsList() + ';' +  StringHelper.neverNull(getCurrentModule());
+		return "" + isComponentsList() + ';' + StringHelper.neverNull(getCurrentModule());
 	}
 
 	public void fromString(String content) {
@@ -73,9 +81,9 @@ public class UserInterfaceContext {
 		if (userFact.getUser(user.getLogin()) != null) { // not god user, so storable user
 			IUserInfo ui = user.getUserInfo();
 			ui.setInfo(toString());
-			userFact.updateUserInfo(ui);			
+			userFact.updateUserInfo(ui);
 		} else {
-			logger.warning("can not store user interface information for user "+user.getLogin());
+			logger.warning("can not store user interface information for user " + user.getLogin());
 		}
 	}
 
