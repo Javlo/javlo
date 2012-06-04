@@ -49,8 +49,7 @@ public class JavloELFile extends ELFile {
 		}
 	}
 	
-	public ContentContext getContentContext() {
-		System.out.println("***** JavloELFile.getContentContext : getParentFile() = "+getParentFile()+"     class = "+getClass().getCanonicalName()); //TODO: remove debug trace
+	public ContentContext getContentContext() {		
 		return getParentFile().getContentContext();		
 	}
 
