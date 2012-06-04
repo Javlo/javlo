@@ -3,6 +3,7 @@ package org.javlo.module.file;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.Writer;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -11,7 +12,10 @@ import java.util.Map.Entry;
 import java.util.Properties;
 
 import javax.servlet.ServletContext;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 
+import org.javlo.context.ContentContext;
 import org.javlo.helper.StringHelper;
 
 /**
@@ -27,14 +31,36 @@ public class JavloELFinder extends ELFinder {
 
 	private Map<ELFile, String> fileToHash = new HashMap<ELFile, String>();
 	private Map<String, ELFile> hashToFile = new HashMap<String, ELFile>();
-
-	public JavloELFinder(String rootPath, ServletContext servletContext) {
+	
+	public JavloELFinder(String rootPath, ServletContext application) {
 		super();
-		loadMimeTypes(servletContext);
+		loadMimeTypes(application);
 		ELVolume volume = new ELVolume("AB");
-		volume.setRoot(new JavloELFile(volume, new File(rootPath)));
+		volume.setRoot(new RootJavloELFile(null, volume, new File(rootPath)));
+		fileToHash(volume.getRoot());
+		this.volumes = new ArrayList<ELVolume>();
+		this.volumes.add(volume);		
+	}
+
+	public JavloELFinder(String rootPath, ContentContext ctx) {
+		super();
+		loadMimeTypes(ctx.getRequest().getSession().getServletContext());
+		ELVolume volume = new ELVolume("AB");
+		volume.setRoot(new RootJavloELFile(ctx, volume, new File(rootPath)));
+		fileToHash(volume.getRoot());
 		this.volumes = new ArrayList<ELVolume>();
 		this.volumes.add(volume);
+	}
+	
+	@Override
+	public void process(Writer out, HttpServletRequest request, HttpServletResponse response) throws Exception {
+		List<ELVolume> volumes = getVolumes();
+		ContentContext ctx = ContentContext.getAdminContentContext(request, response);
+		for (ELVolume elVolume : volumes) {
+			RootJavloELFile root = (RootJavloELFile)elVolume.getRoot();
+			root.setContentContext(ctx);
+		}
+		super.process(out,request,response);
 	}
 
 	@Override

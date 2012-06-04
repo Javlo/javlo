@@ -215,16 +215,16 @@
 		<url-pattern>/upload</url-pattern>
 	</servlet-mapping>
 	<servlet>
-		<servlet-name>ressource</servlet-name>
-		<servlet-class>org.javlo.servlet.RessourceServlet</servlet-class>
+		<servlet-name>resource</servlet-name>
+		<servlet-class>org.javlo.servlet.ResourceServlet</servlet-class>
 		<load-on-startup>1</load-on-startup>
 	</servlet>
 	<servlet-mapping>
-		<servlet-name>ressource</servlet-name>
-		<url-pattern>/ressource/*</url-pattern>
+		<servlet-name>resource</servlet-name>
+		<url-pattern>/resource/*</url-pattern>
 	</servlet-mapping>
 	<servlet-mapping>
-		<servlet-name>ressource</servlet-name>
+		<servlet-name>resource</servlet-name>
 		<url-pattern>/favicon.ico</url-pattern>
 	</servlet-mapping>
 

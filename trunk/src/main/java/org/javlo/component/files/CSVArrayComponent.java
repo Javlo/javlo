@@ -106,7 +106,7 @@ public class CSVArrayComponent extends AbstractFileComponent {
 			StaticConfig staticConfig = StaticConfig.getInstance(ctx.getRequest().getSession());
 
 			String url = URLHelper.mergePath(getDirSelected(), getFileName());
-			url = URLHelper.createRessourceURL(ctx, getPage(), staticConfig.getFileFolder() + '/' + url);
+			url = URLHelper.createResourceURL(ctx, getPage(), staticConfig.getFileFolder() + '/' + url);
 			res.append("<a href=\"");
 			res.append(url);
 			res.append("\">");

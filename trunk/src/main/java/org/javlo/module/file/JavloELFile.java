@@ -4,52 +4,82 @@ import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.javlo.context.ContentContext;
+import org.javlo.context.GlobalContext;
+import org.javlo.helper.StringHelper;
+import org.javlo.helper.URLHelper;
+import org.javlo.ztatic.StaticInfo;
 
 public class JavloELFile extends ELFile {
 
 	private File file;
+	private JavloELFile parent;
 
-	public JavloELFile(ELVolume volume, File file) {
-		super(volume);
+	public JavloELFile(ELVolume volume, File file, JavloELFile parent) {
+		super(volume);		
 		this.file = file;
+		this.parent = parent;
 	}
 
-	@Override
 	public File getFile() {
 		return file;
 	}
 
-	@Override
 	public List<ELFile> getChildren() {
 		List<ELFile> children = new ArrayList<ELFile>();
 		File[] array = file.listFiles();
 		if (array != null) {
 			for (File child : array) {
-				children.add(new JavloELFile(getVolume(), child));
+				children.add(new JavloELFile(getVolume(), child, this));
 			}
 		}
 		return children;
 	}
-
+	
 	@Override
+	public boolean isRoot() {
+		return false;
+	}
+
 	public JavloELFile getParentFile() {
 		if (isRoot()) {
 			return null;
 		} else {
-			return new JavloELFile(getVolume(), file.getParentFile());
+			return parent;
 		}
 	}
+	
+	public ContentContext getContentContext() {
+		System.out.println("***** JavloELFile.getContentContext : getParentFile() = "+getParentFile()+"     class = "+getClass().getCanonicalName()); //TODO: remove debug trace
+		return getParentFile().getContentContext();		
+	}
 
-	@Override
 	public String getURL() {
-		//TODO
+		if (getContentContext() != null) {
+			try {
+				StaticInfo info = StaticInfo.getInstance(getContentContext(), file);
+				GlobalContext globalContext = GlobalContext.getInstance(getContentContext().getRequest());
+				return URLHelper.createResourceURL(getContentContext(), '/'+globalContext.getStaticConfig().getStaticFolder()+info.getStaticURL());
+			} catch (Exception e) {
+				e.printStackTrace();
+			}
+		}
 		return null;
 	}
 
-	@Override
 	public String getThumbnailURL() {
-		//TODO
+		if (getContentContext() != null && StringHelper.isImage(file.getName())) {
+			try {
+				StaticInfo info = StaticInfo.getInstance(getContentContext(), file);
+				GlobalContext globalContext = GlobalContext.getInstance(getContentContext().getRequest());
+				return URLHelper.createTransformURL(getContentContext(), globalContext.getStaticConfig().getStaticFolder()+info.getStaticURL(), "icone");
+			} catch (Exception e) {
+				e.printStackTrace();
+			}
+		}
 		return null;
 	}
+
+	
 
 }

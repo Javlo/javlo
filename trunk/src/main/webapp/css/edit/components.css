@@ -1,5 +1,6 @@
 .component .list-container .image-selected {	
 	padding: 2px;
+	border-bottom: 1px #777777 solid;
 	margin: 2px;	
 }
 

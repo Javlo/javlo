@@ -236,7 +236,7 @@ public class ImageLink extends FilterImage {
 	@Override
 	public String createFileURL(ContentContext ctx, String url) {
 		StaticConfig staticConfig = StaticConfig.getInstance(ctx.getRequest().getSession());
-		return URLHelper.createRessourceURL(ctx, getPage(), staticConfig.getImageFolder() + '/' + url);
+		return URLHelper.createResourceURL(ctx, getPage(), staticConfig.getImageFolder() + '/' + url);
 	}
 
 	/*

@@ -126,7 +126,7 @@ public class Video extends GlobalImage implements IAction {
 	@Override
 	public String createFileURL(ContentContext ctx, String url) {
 		StaticConfig staticConfig = StaticConfig.getInstance(ctx.getRequest().getSession());
-		return URLHelper.createRessourceURL(ctx, getPage(), staticConfig.getVideoFolder() + '/' + url);
+		return URLHelper.createResourceURL(ctx, getPage(), staticConfig.getVideoFolder() + '/' + url);
 	}
 
 	protected boolean isImageFilter() {
@@ -252,7 +252,7 @@ public class Video extends GlobalImage implements IAction {
 		if (renderAsLink) {
 			if (getFileName() != null && getFileName().trim().length() > 0) {
 				String fileLink = getImageURL(ctx, getFileName());
-				ctx.getRequest().setAttribute("url", URLHelper.createRessourceURL(ctx, getPage(), fileLink).replace('\\', '/'));
+				ctx.getRequest().setAttribute("url", URLHelper.createResourceURL(ctx, getPage(), fileLink).replace('\\', '/'));
 			} else {
 				ctx.getRequest().setAttribute("url", getLink());
 			}
@@ -273,8 +273,8 @@ public class Video extends GlobalImage implements IAction {
 		} else {
 			if (getFileName() != null && getFileName().trim().length() > 0) {
 				String fileLink = getImageURL(ctx, getFileName());
-				ctx.getRequest().setAttribute("file", URLHelper.createRessourceURL(ctx, getPage(), fileLink).replace('\\', '/'));
-				ctx.getRequest().setAttribute("url", URLHelper.createRessourceURL(ctx, getPage(), fileLink).replace('\\', '/'));
+				ctx.getRequest().setAttribute("file", URLHelper.createResourceURL(ctx, getPage(), fileLink).replace('\\', '/'));
+				ctx.getRequest().setAttribute("url", URLHelper.createResourceURL(ctx, getPage(), fileLink).replace('\\', '/'));
 				ctx.getRequest().setAttribute("type", ResourceHelper.getFileExtensionToManType(StringHelper.getFileExtension(getFileName())));
 				if (getDecorationImage() != null && getDecorationImage().trim().length() > 0) {
 					String imageLink = getImageURL(ctx, getDecorationImage());

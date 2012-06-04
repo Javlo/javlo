@@ -78,7 +78,7 @@ public abstract class FilterImage extends Image {
 			String fileLink = URLHelper.mergePath(getDirSelected(), getFileName());
 			StaticConfig staticConfig = StaticConfig.getInstance(ctx.getRequest().getSession());
 			String thumbURL = URLHelper.createTransformURL(ctx, getPage(), staticConfig.getImageFolder() + '/' + fileLink, getFilter(ctx)).replace('\\', '/');
-			String url = URLHelper.createRessourceURL(ctx, getPage(), staticConfig.getImageFolder() + '/' + fileLink).replace('\\', '/');
+			String url = URLHelper.createResourceURL(ctx, getPage(), staticConfig.getImageFolder() + '/' + fileLink).replace('\\', '/');
 			res.append("<div "+getSpecialPreviewCssClass(ctx, getCSSClassName(ctx) + " "+getFilter(ctx))+getSpecialPreviewCssId(ctx)+">");
 			res.append("<div class=\"labeled-image\">");
 			if (isClickable()) {

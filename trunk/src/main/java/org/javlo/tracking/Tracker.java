@@ -409,7 +409,7 @@ public class Tracker {
 		from = TimeHelper.convertRemoveAfterHour(from);
 
 		StaticConfig staticConfig = StaticConfig.getInstance(ctx.getRequest().getSession());
-		String path = URLHelper.createRessourceURL(ctx, URLHelper.mergePath(staticConfig.getStaticFolder(), staticInfo.getResource(ctx)));
+		String path = URLHelper.createResourceURL(ctx, URLHelper.mergePath(staticConfig.getStaticFolder(), staticInfo.getResource(ctx)));
 		int outAccess = getResourcePathCountAccess(from.getTime(), to.getTime(), path);
 
 		Collection<String> filters = globalContext.getImageViewFilter();

@@ -83,7 +83,7 @@ public class Image extends AbstractFileComponent implements IImageTitle, IPrevie
 				label = getDescription();
 			}
 
-			String url = URLHelper.createRessourceURL(ctx, getPage(), staticConfig.getImageFolder() + '/' + fileLink).replace('\\', '/');
+			String url = URLHelper.createResourceURL(ctx, getPage(), staticConfig.getImageFolder() + '/' + fileLink).replace('\\', '/');
 			res.append("<div " + getSpecialPreviewCssClass(ctx, getCSSClassName(ctx)) + getSpecialPreviewCssId(ctx) + "><img src=\"");
 			res.append(url);
 			res.append("\" title=\"");
@@ -139,7 +139,7 @@ public class Image extends AbstractFileComponent implements IImageTitle, IPrevie
 					selected = " class=\"preview-image selected\"";
 					isSelectedImage = true;
 				}
-				String realURL = URLHelper.createRessourceURL(ctx, getPage(), '/' + getImageURL(ctx, images[i])) + "?CRC32=" + staticInfo.getCRC32();
+				String realURL = URLHelper.createResourceURL(ctx, getPage(), '/' + getImageURL(ctx, images[i])) + "?CRC32=" + staticInfo.getCRC32();
 				String previewURL = URLHelper.createTransformURL(ctx, getPage(), getImageURL(ctx, images[i]), "preview") + "?CRC32=" + staticInfo.getCRC32();
 				String url = URLHelper.createTransformURL(ctx, getPage(), getImageURL(ctx, images[i]), getConfig(ctx).getProperty("thumbnails-filter", "thumbnails") ) + "?CRC32=" + staticInfo.getCRC32();
 				String id = "image_name_select__" + getId();

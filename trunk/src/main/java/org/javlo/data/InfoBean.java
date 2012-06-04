@@ -3,6 +3,7 @@ package org.javlo.data;
 import java.util.Collection;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Set;
 
 import javax.servlet.http.HttpServletRequest;
 
@@ -71,6 +72,7 @@ public class InfoBean {
 		}*/
 		info.setEditLanguage(globalContext.getEditLanguage());
 		info.setContentLanguages(globalContext.getContentLanguages());
+		info.setLanguages(globalContext.getLanguages());
 		info.setLanguage(ctx.getLanguage());		
 		info.setDate(StringHelper.renderDate(currentPage.getContentDateNeverNull(ctx), globalContext.getShortDateFormat()));
 		info.setTime(StringHelper.renderTime(ctx, currentPage.getContentDateNeverNull(ctx)));
@@ -121,6 +123,7 @@ public class InfoBean {
 	private String time;
 	private String templateFolder = "";
 	private Collection<String> contentLanguages;
+	private Collection<String> languages;
 	private MenuElement.PageBean page = null;
 	private MenuElement.PageBean root = null;
 	private List<MenuElement.PageBean> pagePath = new LinkedList<MenuElement.PageBean>();
@@ -350,6 +353,14 @@ public class InfoBean {
 
 	public Collection<String> getContentLanguages() {
 		return contentLanguages;
+	}
+	
+	public Collection<String> getLanguages() {
+		return languages;
+	}
+	
+	private void setLanguages(Set<String> inLanguages) {
+		this.languages = inLanguages;		
 	}
 
 	public void setContentLanguages(Collection<String> contentLanguages) {
