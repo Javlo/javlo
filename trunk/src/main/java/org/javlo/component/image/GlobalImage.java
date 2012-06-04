@@ -160,7 +160,7 @@ public class GlobalImage extends FilterImage {
 			finalCode.append("<div style=\"margin-top: 5px; margin-bottom: 5px;\"><label style=\"float: left; width: 160px; height: 16px;\" for=\"" + getDirInputName() + "\">");
 			finalCode.append(getDirLabelTitle(ctx));
 			finalCode.append(" : </label>");
-			Collection<String> dirsCol = new LinkedList();
+			Collection<String> dirsCol = new LinkedList<String>();
 			dirsCol.add("");
 			String[] dirs = getDirList(getFileDirectory(ctx));
 			for (String dir : dirs) {

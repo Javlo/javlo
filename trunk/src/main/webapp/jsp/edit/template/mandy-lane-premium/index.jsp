@@ -12,6 +12,7 @@
 
 <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
 <title>Javlo : ${currentModule.title}</title>
+<link rel="stylesheet" media="screen" href="/css/edit/components.css" />
 <link rel="stylesheet" media="screen" href="${info.editTemplateURL}/css/style.css" />
 <link rel="stylesheet" media="screen" href="${info.editTemplateURL}/css/javlo.css" />
 <link rel="stylesheet" href="${info.editTemplateURL}/css/plugins/elfinder.css" type="text/css"/>

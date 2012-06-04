@@ -1,7 +1,13 @@
 package org.javlo.component.image;
 
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
+import java.io.PrintStream;
 import java.io.PrintWriter;
 import java.io.StringWriter;
+
+import javax.servlet.ServletContext;
+import javax.servlet.ServletException;
 
 import org.javlo.component.core.ComponentBean;
 import org.javlo.component.core.IPreviewable;
@@ -119,6 +125,10 @@ public class Image extends AbstractFileComponent implements IImageTitle, IPrevie
 		String[] images = getFileList(getFileDirectory(ctx));
 		String currentFileLink = URLHelper.mergePath(getDirSelected(), getFileName());
 		GlobalContext globalContext = GlobalContext.getInstance(ctx.getRequest());
+		out.println("<div class=\"image-selected\">");
+		out.println("<img src=\""+ URLHelper.createTransformURL(ctx, getPage(), getImageURL(ctx, getFileName()), "thumbnails")+"\" />");
+		out.println("<div class=\"name\">"+getFileName()+"</div>");
+		out.println("</div><div class=\"image-list\">");
 		for (int i = 0; i < images.length; i++) {
 			if ((images[i] != null) && (images[i].trim().length() > 0)) {
 				StaticInfo staticInfo = StaticInfo.getInstance(ctx, getFileURL(ctx, images[i]));
@@ -139,7 +149,7 @@ public class Image extends AbstractFileComponent implements IImageTitle, IPrevie
 					if (globalContext.isImagePreview()) {
 						onMouseOver = " onMouseOver=\"previewImage('" + previewURL + "')\" onMouseOut=\"previewClear()\"";
 					}
-					out.print("<a href=\"#\" onclick=\"$('" + id + "').setProperty('value', '" + images[i] + "');" + getJSOnChange(ctx) + "\"><img name=\"" + getImageImgName() + "\"" + onMouseOver + " src=\"");
+					out.print("<a href=\"#\" onclick=\"jQuery('#"+id+"').val('" + images[i] + "');jQuery('#"+id+"').trigger('change');" + getJSOnChange(ctx) + "\"><img name=\"" + getImageImgName() + "\"" + onMouseOver + " src=\"");
 					out.print(url);
 					out.print("\" alt=\"\"></a><br />");
 					out.print("<div class=\"name\"><a href=\"" + realURL + "\">" + images[i] + "</a></div>");
@@ -147,6 +157,7 @@ public class Image extends AbstractFileComponent implements IImageTitle, IPrevie
 				}
 			}
 		}
+		out.println("</div>");
 		
 		//TODO : create this javascrit method with a other mecanism
 		/*out.println("<script language=\"javascript\">");
@@ -195,7 +206,7 @@ public class Image extends AbstractFileComponent implements IImageTitle, IPrevie
 	public String getImageURL(ContentContext ctx) {
 		return getImageURL(ctx, getFileName());
 	}
-
+	
 	public String getImageURL(ContentContext ctx, String fileLink) {
 		StaticConfig staticConfig = StaticConfig.getInstance(ctx.getRequest().getSession());
 		return URLHelper.mergePath(staticConfig.getImageFolder(), URLHelper.mergePath(getDirSelected(), fileLink));

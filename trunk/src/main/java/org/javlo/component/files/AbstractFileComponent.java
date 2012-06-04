@@ -384,9 +384,10 @@ public abstract class AbstractFileComponent extends AbstractVisualComponent impl
 
 
 	public String getJSOnChange(ContentContext ctx) {
-		String ajaxURL = URLHelper.createAjaxURL(ctx);
-		String formRef = "document.forms['content_update']";
-		return "updateComponent(" + formRef + ",'" + ajaxURL + "'); reloadComponent('" + getId() + "','" + ajaxURL + "');";
+//		String ajaxURL = URLHelper.createAjaxURL(ctx);
+//		String formRef = "document.forms['content_update']";
+//		return "updateComponent(" + formRef + ",'" + ajaxURL + "'); reloadComponent('" + getId() + "','" + ajaxURL + "');";
+		return "jQuery(this.form).trigger('submit')";
 	}
 
 	public String getLabel() {
@@ -585,6 +586,10 @@ public abstract class AbstractFileComponent extends AbstractVisualComponent impl
 						messageRepository.setGlobalMessage(new GenericMessage(i18nAccess.getText("content.file.exist"), GenericMessage.ERROR));
 					}
 				}
+			}
+			
+			if (isModify()) {
+				setNeedRefresh(true);
 			}
 
 			storeProperties();

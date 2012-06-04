@@ -1,26 +1,21 @@
 jQuery(document).ready(function() {	
-	
 	jQuery("a.ajax").live("click", function(event) {
 		event.preventDefault();
 		jQuery("#ajax-loader").addClass("active");				
 		ajaxRequest(jQuery(this).attr('href'));	
-	});
-	
-	jQuery('form.ajax').submit(function(event) {
+	});	
+	jQuery('form.ajax').live("submit", function(event) {
 		event.preventDefault();
 		jQuery("#ajax-loader").addClass("active");
 		var queryString = jQuery(this).attr("action")+'?'+jQuery(this).formSerialize(); 
 		ajaxRequest(queryString);
 		return false;
 	});
-	
-	jQuery(document).trigger("ajaxUpdate"); 	
-	
+	jQuery(document).trigger("ajaxUpdate");
 });
 
 function ajaxRequest(url) {
-	url = url.replace("/edit/", "/ajax/");
-	console.log("url : "+url);
+	url = url.replace("/edit/", "/ajax/");	
 	jQuery.ajax({
 		url : url,
 		cache : false,
