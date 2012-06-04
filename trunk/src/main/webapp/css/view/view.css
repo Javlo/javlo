@@ -1,0 +1,16 @@
+#blocked {
+	text-align: center;	
+	padding-top: 250px;
+	font-family: sans-serif;
+}
+
+#blocked #main {
+	display: inline-block;
+	width: 256px;
+	height: 300px;
+	padding-top: 260px;
+	background-image: url("images/lock.png");
+	background-repeat: no-repeat;
+	vertical-align: bottom;
+	
+} 
