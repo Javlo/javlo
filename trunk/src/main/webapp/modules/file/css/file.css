@@ -1,1 +1,3 @@
-@import url("elfinder/elfinder.css");
+@import url("elfinder/smoothness/jquery-ui-1.8.19.custom.css");
+@import url("elfinder/elfinder.min.css");
+@import url("elfinder/theme.css");

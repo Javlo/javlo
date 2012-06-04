@@ -1,73 +1,52 @@
 package org.javlo.module.file;
 
 import java.io.File;
-import java.io.FileInputStream;
 import java.io.IOException;
-import java.io.InputStream;
 import java.io.Writer;
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
-import java.util.Map.Entry;
-import java.util.Properties;
 import java.util.Set;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-
-import org.javlo.helper.StringHelper;
 
 /**
  * 
  * @author Benoit Dumont de Chassart
  * 
  */
-public class ELFinder {
+public abstract class ELFinder {
+
 	private static final String PROTOCOL_VERSION = "2.0";
-	private static final String HASH_ENCODING = "UTF-8";
 	private static final String DEFAULT_MIME_TYPE = "application/octet-stream";
-	private static final String VOLUME_SEPARATOR = "_";
-
-	private Map<String, String> MIME_TYPES;
-
-	private Map<String, Volume> volumes;
-
-	private Map<FileObject, String> fileToHash = new HashMap<FileObject, String>();
-	private Map<String, FileObject> hashToFile = new HashMap<String, FileObject>();
-
-	public ELFinder(String rootPath, String resourcePath) {
-		Volume volume = new Volume();
-		volume.id = "AB";
-		volume.root = new File(rootPath);
-		this.volumes = new HashMap<String, Volume>();
-		this.volumes.put(volume.id, volume);
-		loadMimeTypes(resourcePath);
-		System.out.println(rootPath);
-	}
 
 	public void process(Writer out, HttpServletRequest request, HttpServletResponse response) throws IOException {
 
 		Map<String, Object> apiResponse = new LinkedHashMap<String, Object>();
-
-		String command = request.getParameter("cmd");
-		if ("open".equals(command)) {
-			open(getBoolean(request, "init", false), getFile(request, "target"), getBoolean(request, "tree", false), apiResponse);
-		} else if ("parents".equals(command)) {
-			parents(getFile(request, "target"), apiResponse);
-		} else if ("tree".equals(command)) {
-			tree(getFile(request, "target"), apiResponse);
+		try {
+			String command = request.getParameter("cmd");
+			if ("open".equals(command)) {
+				open(getBoolean(request, "init", false), getFile(request, "target"), getBoolean(request, "tree", false), apiResponse);
+			} else if ("parents".equals(command)) {
+				parents(getFile(request, "target"), apiResponse);
+			} else if ("tree".equals(command)) {
+				tree(getFile(request, "target"), apiResponse);
+			}
+		} catch (Exception ex) {
+			ex.printStackTrace();
+			apiResponse.clear();
+			apiResponse.put("error", "Exception: " + ex.toString());
 		}
 
 		JSONSerializer.writeJSONString(apiResponse, out);
 
-		// out.write("{\"error\" : \"Invalid backend configuration\"}");
 	}
 
-	private FileObject getFile(HttpServletRequest request, String name) {
+	private ELFile getFile(HttpServletRequest request, String name) {
 		String hash = getString(request, name, null);
 		if (hash != null && !hash.isEmpty()) {
 			return hashToFile(hash);
@@ -91,52 +70,33 @@ public class ELFinder {
 		return defaultValue;
 	}
 
-	private void loadMimeTypes(String resourcePath) {
-		try {
-			Map<String, String> mimes = new HashMap<String, String>();
-			InputStream in = new FileInputStream(resourcePath + "/mime-types.properties");
-			Properties p = new Properties();
-			p.load(in);
-			for (Entry<Object, Object> entry : p.entrySet()) {
-				String mime = (String) entry.getKey();
-				String[] extensions = ((String) entry.getValue()).split("\\s");
-				for (String extension : extensions) {
-					mimes.put(extension.toLowerCase(), mime);
-				}
-			}
-			MIME_TYPES = mimes;
-			in.close();
-		} catch (IOException ex) {
-			throw new RuntimeException("Forwarded exception.", ex);
-		}
-	}
-
-	public void open(boolean init, FileObject target, boolean tree, Map<String, Object> response) {
+	public void open(boolean init, ELFile target, boolean tree, Map<String, Object> response) {
 		System.out.println("open - target:" + target);
 		if (target == null) {
-			Volume volume = volumes.values().iterator().next();
-			target = new FileObject(volume, volume.root);
+			ELVolume volume = getVolumes().iterator().next();
+			target = volume.getRoot();
 		}
 		response.put("cwd", printFile(target));
 		response.put("options", printOptions(target));
-		Set<FileObject> files = new LinkedHashSet<FileObject>();
+		Set<ELFile> files = new LinkedHashSet<ELFile>();
 		files.addAll(target.getChildren());
 		if (tree) {
-			files.addAll(volumeFiles());
-			FileObject parent = target.getParentFile();
+			files.addAll(getVolumeFiles());
+			ELFile parent = target.getParentFile();
 			while (parent != null) {
 				files.addAll(parent.getChildren());
 				parent = parent.getParentFile();
 			}
 		}
-		System.out.println("ListFiles:");
 		response.put("files", printFiles(files));
 		if (init) {
 			extend(response, prop("api", PROTOCOL_VERSION), prop("uplMaxSize", "32M"));
 		}
 	}
 
-	public void parents(FileObject target, Map<String, Object> response) {
+	protected abstract List<ELVolume> getVolumes();
+
+	public void parents(ELFile target, Map<String, Object> response) {
 		// System.out.println("parents - target:" + target);
 		// if (target.isRoot()) {
 		// response.put("tree", listFiles(volumeFiles()));
@@ -157,35 +117,34 @@ public class ELFinder {
 		// }
 	}
 
-	public void tree(FileObject target, Map<String, Object> response) {
+	public void tree(ELFile target, Map<String, Object> response) {
 		System.out.println("tree - target:" + target);
-		List<FileObject> treeFiles = new ArrayList<FileObject>();
+		List<ELFile> treeFiles = new ArrayList<ELFile>();
 		treeFiles.add(target);
 		treeFiles.addAll(filterDirectories(target.getChildren()));
 		response.put("tree", printFiles(treeFiles));
 	}
 
-	private List<FileObject> volumeFiles() {
-		List<FileObject> volumeFiles = new ArrayList<FileObject>();
-		for (Volume volume : volumes.values()) {
-			volumeFiles.add(new FileObject(volume, volume.root));
+	private List<ELFile> getVolumeFiles() {
+		List<ELFile> volumeFiles = new ArrayList<ELFile>();
+		for (ELVolume volume : getVolumes()) {
+			volumeFiles.add(volume.getRoot());
 		}
 		return volumeFiles;
 	}
 
-	private Map<String, Object> printFile(FileObject file) {
-		System.out.println("listFile: " + file.getRelativePath());
+	protected Map<String, Object> printFile(ELFile file) {
 		Map<String, Object> out = obj(
-		// (String) name of file/dir. Required
-				prop("name", file.file.getName()),
+				// (String) name of file/dir. Required
+				prop("name", file.getFile().getName()),
 				// (String) hash of current file/dir path, first symbol must be letter, symbols before _underline_ - volume id, Required.
 				prop("hash", fileToHash(file)),
 				// (String) mime type. Required.
-				prop("mime", getMimeType(file.file)),
+				prop("mime", getMimeType(file.getFile())),
 				// (Number) file modification time in unix timestamp. Required.
-				prop("ts", file.file.lastModified()),
+				prop("ts", file.getFile().lastModified()),
 				// (Number) file size in bytes
-				prop("size", file.file.length()),
+				prop("size", file.getFile().length()),
 				// (Number) is readable
 				prop("read", toInt(true)),
 				// (Number) is writable
@@ -195,14 +154,14 @@ public class ELFinder {
 
 		// (Number) Only for directories. Marks if directory has child directories inside it. 0 (or not set) - no, 1 - yes. Do not need to calculate amount.
 		if (file.isDirectory()) {
-			List<FileObject> children = file.getChildren();
+			List<ELFile> children = file.getChildren();
 			extend(out, prop("childs", toInt(children.size() > 0)));
-			List<FileObject> childDirectories = filterDirectories(children);
+			List<ELFile> childDirectories = filterDirectories(children);
 			extend(out, prop("dirs", toInt(childDirectories.size() > 0)));
 		}
 		if (file.isRoot()) {
 			// (String) Volume id. For root dir only.
-			extend(out, prop("volumeid", file.volume.id));
+			extend(out, prop("volumeid", file.getVolume().getId()));
 		} else {
 			// (String) hash of parent directory. Required except roots dirs.
 			extend(out, prop("phash", fileToHash(file.getParentFile())));
@@ -210,42 +169,34 @@ public class ELFinder {
 		return out;
 	}
 
-	private Map<String, Object> printOptions(FileObject fil) {
-		return obj(prop("path", fil.getRelativePath()),// (String) Current folder path
-				prop("url", "http://localhost/elfinder/files/folder42/"),// (String) Current folder URL
-				prop("tmbURL", "http://localhost/elfinder/files/folder42/.tmb/"),// (String) Thumbnails folder URL
-				prop("separator", "/"), prop("disabled", array()), // (Array) List of commands not allowed (disabled) on this volume
-				prop("copyOverwrite", 1), propObj("archivers", prop("create", array()), prop("extract", array())));
+	protected Map<String, Object> printOptions(ELFile file) {
+		return obj(prop("path", file.getRelativePath()),// (String) Current folder path
+				prop("url", file.getURL()),// (String) Current folder URL
+				prop("tmbURL", file.getThumbnailURL()),// (String) Thumbnails folder URL
+				prop("separator", "/"),
+				prop("disabled", array()), // (Array) List of commands not allowed (disabled) on this volume
+				prop("copyOverwrite", 1),
+				propObj("archivers", prop("create", array()), prop("extract", array())));
 	}
 
-	protected List<Object> printFiles(Collection<FileObject> files) {
+	protected List<Object> printFiles(Collection<ELFile> files) {
 		List<Object> out = new ArrayList<Object>();
-		for (FileObject file : files) {
+		for (ELFile file : files) {
 			out.add(printFile(file));
 		}
 		return out;
 	}
 
-	private Object toInt(boolean b) {
+	protected Object toInt(boolean b) {
 		return b ? 1 : 0;
 	}
 
-	private String getMimeType(File file) {
+	protected String getMimeType(File file) {
 		String mime = null;
 		if (file.isDirectory()) {
 			mime = "directory";
 		} else {
-			String fileName = file.getName();
-			int pos = fileName.lastIndexOf('.');
-			while (pos >= 0) {
-				String extension = fileName.substring(pos + 1);
-				String fileMime = MIME_TYPES.get(extension.toLowerCase());
-				// System.out.println(extension + " = " + fileMime);
-				if (fileMime != null) {
-					mime = fileMime;
-				}
-				pos = fileName.lastIndexOf('.', pos - 1);
-			}
+			mime = getFileMimeType(file.getName());
 			if (mime == null) {
 				mime = DEFAULT_MIME_TYPE;
 			}
@@ -253,23 +204,15 @@ public class ELFinder {
 		return mime;
 	}
 
-	public FileObject hashToFile(String hash) {
-		return hashToFile.get(hash);
-	}
+	protected abstract String getFileMimeType(String fileName);
 
-	private String fileToHash(FileObject file) {
-		String hash = fileToHash.get(file);
-		if (hash == null) {
-			hash = 'F' + StringHelper.getRandomId();
-			hashToFile.put(hash, file);
-			fileToHash.put(file, hash);
-		}
-		return hash;
-	}
+	protected abstract ELFile hashToFile(String hash);
 
-	private static List<FileObject> filterDirectories(List<FileObject> children) {
-		List<FileObject> out = new ArrayList<FileObject>();
-		for (FileObject child : children) {
+	protected abstract String fileToHash(ELFile file);
+
+	protected static List<ELFile> filterDirectories(List<ELFile> children) {
+		List<ELFile> out = new ArrayList<ELFile>();
+		for (ELFile child : children) {
 			if (child.isDirectory()) {
 				out.add(child);
 			}
@@ -277,11 +220,11 @@ public class ELFinder {
 		return out;
 	}
 
-	private <T> T[] array(T... values) {
+	protected <T> T[] array(T... values) {
 		return values;
 	}
 
-	private Map<String, Object> obj(Property... props) {
+	protected Map<String, Object> obj(Property... props) {
 		Map<String, Object> out = new LinkedHashMap<String, Object>();
 		for (Property prop : props) {
 			out.put(prop.name, prop.value);
@@ -289,107 +232,27 @@ public class ELFinder {
 		return out;
 	}
 
-	private void extend(Map<String, Object> base, Property... props) {
+	protected void extend(Map<String, Object> base, Property... props) {
 		for (Property prop : props) {
 			base.put(prop.name, prop.value);
 		}
 	}
 
-	private Property prop(String name, Object value) {
+	protected Property prop(String name, Object value) {
 		return new Property(name, value);
 	}
 
-	private Property propObj(String name, Property... props) {
+	protected Property propObj(String name, Property... props) {
 		return new Property(name, obj(props));
 	}
 
-	public static class Property {
+	protected static class Property {
 		private final String name;
 		private final Object value;
 
 		public Property(String name, Object value) {
 			this.name = name;
 			this.value = value;
-		}
-	}
-
-	public static class Volume {
-		private File root;
-		private String id;
-	}
-
-	public class FileObject {
-		private Volume volume;
-		private File file;
-
-		public FileObject(Volume volume, String path) {
-			this.volume = volume;
-			this.file = new File(volume.root, path);
-		}
-
-		public FileObject(Volume volume, File file) {
-			this.volume = volume;
-			this.file = file;
-		}
-
-		public List<FileObject> getChildren() {
-			List<FileObject> children = new ArrayList<FileObject>();
-			File[] array = file.listFiles();
-			if (array != null) {
-				for (File child : array) {
-					children.add(new FileObject(volume, child));
-				}
-			}
-			return children;
-		}
-
-		public FileObject getParentFile() {
-			if (isRoot()) {
-				return null;
-			} else {
-				return new FileObject(volume, file.getParentFile());
-			}
-		}
-
-		public boolean isRoot() {
-			return file.equals(volume.root);
-		}
-
-		public boolean isDirectory() {
-			return file.isDirectory();
-		}
-
-		public String getRelativePath() {
-			String path = "";
-			FileObject parent = getParentFile();
-			if (parent != null) {
-				path += parent.getRelativePath() + "/";
-			}
-			path += file.getName();
-			return path;
-		}
-
-		@Override
-		public boolean equals(Object obj) {
-			if (obj == null) {
-				return false;
-			} else if (obj == this) {
-				return true;
-			} else if (!(obj instanceof FileObject)) {
-				return false;
-			} else {
-				return obj.hashCode() == this.hashCode();
-			}
-		}
-
-		@Override
-		public int hashCode() {
-			return file.hashCode();
-		}
-
-		@Override
-		public String toString() {
-			return file.toString();
 		}
 	}
 
