@@ -9,14 +9,12 @@ public class RootJavloELFile extends JavloELFile {
 	ContentContext ctx;
 	
 	public RootJavloELFile(ContentContext ctx, ELVolume volume, File file) {
-		super(volume, file, null);
-		System.out.println("***** RootJavloELFile.RootJavloELFile : class : "+getClass().getCanonicalName()); //TODO: remove debug trace
+		super(volume, file, null);		
 		this.ctx = ctx;		
 	}
 	
 	@Override
-	public ContentContext getContentContext() {
-		System.out.println("***** RootJavloELFile.getContentContext : "); //TODO: remove debug trace
+	public ContentContext getContentContext() {		
 		return ctx;
 	}
 
