@@ -4,7 +4,9 @@ import java.io.IOException;
 
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 
+import org.apache.http.HttpResponse;
 import org.javlo.actions.ActionManager;
 import org.javlo.context.ContentContext;
 import org.javlo.context.EditContext;
@@ -113,6 +115,12 @@ public class ServletHelper {
 			logger.severe(e.getMessage());
 			return null;
 		}
+	}
+
+	public static void includeBlocked(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+		response.setStatus(503);
+		request.getSession().getServletContext().getRequestDispatcher("/jsp/view/error/blocked.jsp").include(request, response);
+		return;
 	}
 
 }

@@ -226,8 +226,8 @@ public class AccessServlet extends HttpServlet {
 			if (request.getServletPath().equals("/edit") || request.getServletPath().equals("/preview")) {
 				if (!globalContext.isEditable()) {
 					InfoBean.updateInfoBean(ctx);
-					response.setContentType("text/html; charset=" + ContentContext.CHARACTER_ENCODING);
-					getServletContext().getRequestDispatcher("/jsp/error/blocked.jsp").include(request, response);
+					response.setContentType("text/html; charset=" + ContentContext.CHARACTER_ENCODING);					
+					ServletHelper.includeBlocked(request, response);					
 					return;
 				}
 			}
@@ -527,7 +527,7 @@ public class AccessServlet extends HttpServlet {
 					}
 
 					if (!globalContext.isVisible()) {
-						getServletContext().getRequestDispatcher("/jsp/error/blocked.jsp").include(request, response);
+						ServletHelper.includeBlocked(request, response);
 						return;
 					}
 
@@ -541,7 +541,7 @@ public class AccessServlet extends HttpServlet {
 							String msg = i18nAccess.getText("command.admin.block.no-template");
 							infoBean.setContentLanguage(ctx.getContentLanguage());
 							infoBean.setLanguage(ctx.getLanguage());
-							getServletContext().getRequestDispatcher("/jsp/error/blocked.jsp?message=" + msg).include(request, response);
+							ServletHelper.includeBlocked(request, response);
 						} else {
 							if (ctx.getRenderMode() == ContentContext.VIEW_MODE) {
 								content.getNavigation(ctx).getNoErrorFreeCurrentPage(ctx).addAccess(ctx);
@@ -576,6 +576,8 @@ public class AccessServlet extends HttpServlet {
 			} catch (Throwable t) {
 
 				t.printStackTrace();
+				
+				response.setStatus(503);
 
 				Writer out = response.getWriter();
 				out.write("<div style=\"margin-top: 50px; margin-left: auto; margin-right: auto; border: 2px #ff0000 solid; width: 500px; padding: 3px;\" id=\"fatal-error\">");
