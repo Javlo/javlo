@@ -510,7 +510,7 @@ public class Multimedia extends TimeRangeComponent implements IImageTitle {
 
 			if (acceptStaticInfo(ctx, info, index)) {
 
-				String multimediaURL = URLHelper.createRessourceURL(lgCtx, getPage(), getMultimediaFileURL(ctx, currentLg, file));
+				String multimediaURL = URLHelper.createResourceURL(lgCtx, getPage(), getMultimediaFileURL(ctx, currentLg, file));
 
 				String previewURL = multimediaURL;
 				String fileName = ResourceHelper.removeDataFolderDir(globalContext, file.getAbsolutePath());

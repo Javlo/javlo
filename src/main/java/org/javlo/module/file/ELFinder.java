@@ -1,5 +1,6 @@
 package org.javlo.module.file;
 
+
 import java.io.File;
 import java.io.IOException;
 import java.io.Writer;
@@ -24,7 +25,7 @@ public abstract class ELFinder {
 	private static final String PROTOCOL_VERSION = "2.0";
 	private static final String DEFAULT_MIME_TYPE = "application/octet-stream";
 
-	public void process(Writer out, HttpServletRequest request, HttpServletResponse response) throws IOException {
+	public void process(Writer out, HttpServletRequest request, HttpServletResponse response) throws Exception {
 
 		Map<String, Object> apiResponse = new LinkedHashMap<String, Object>();
 		try {
@@ -117,8 +118,7 @@ public abstract class ELFinder {
 		// }
 	}
 
-	public void tree(ELFile target, Map<String, Object> response) {
-		System.out.println("tree - target:" + target);
+	public void tree(ELFile target, Map<String, Object> response) {		
 		List<ELFile> treeFiles = new ArrayList<ELFile>();
 		treeFiles.add(target);
 		treeFiles.addAll(filterDirectories(target.getChildren()));
@@ -148,9 +148,13 @@ public abstract class ELFinder {
 				// (Number) is readable
 				prop("read", toInt(true)),
 				// (Number) is writable
-				prop("write", toInt(false)),
+				prop("write", toInt(true)),
 				// (Number) is file locked. If locked that object cannot be deleted and renamed
-				prop("locked", toInt(false)));
+				prop("locked", toInt(false)),		
+				prop("url", file.getURL()),
+				prop("tmb", file.getThumbnailURL()),
+				prop("tmbURL", file.getThumbnailURL()));
+				
 
 		// (Number) Only for directories. Marks if directory has child directories inside it. 0 (or not set) - no, 1 - yes. Do not need to calculate amount.
 		if (file.isDirectory()) {

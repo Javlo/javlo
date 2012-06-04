@@ -61,7 +61,7 @@ public abstract class ElementaryURLHelper {
 
 	static final String TRANSFORM = "/transform";
 
-	static final String RESSOURCE = "/ressource";
+	static final String RESOURCE = "/resource";
 
 	static final String TEMPLATE = "/template";
 

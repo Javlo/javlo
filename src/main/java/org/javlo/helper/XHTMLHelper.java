@@ -1849,7 +1849,7 @@ public class XHTMLHelper {
 	public static String renderSpecialLink(ContentContext ctx, String currentLg, String multimediaFileURL, StaticInfo staticInfo) throws Exception {
 		StringWriter writer = new StringWriter();
 		PrintWriter out = new PrintWriter(writer);
-		out.println("<div class=\"resource-special-links\"><a class=\"hd\" href=\"" + URLHelper.createRessourceURL(ctx, multimediaFileURL) + "\" title=\"" + StringHelper.removeTag(staticInfo.getFullDescription(ctx)) + "\">");
+		out.println("<div class=\"resource-special-links\"><a class=\"hd\" href=\"" + URLHelper.createResourceURL(ctx, multimediaFileURL) + "\" title=\"" + StringHelper.removeTag(staticInfo.getFullDescription(ctx)) + "\">");
 		out.println("HD");
 		out.println("</a>");
 		if (staticInfo.getLinkedPage(ctx) != null) {

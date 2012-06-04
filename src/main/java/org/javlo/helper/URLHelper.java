@@ -25,7 +25,6 @@ import org.javlo.service.NavigationService;
 import org.javlo.service.RequestService;
 import org.javlo.template.Template;
 import org.javlo.template.TemplateFactory;
-import org.javlo.template.TemplatePlugin;
 
 /**
  * @author pvanderm
@@ -119,11 +118,11 @@ public class URLHelper extends ElementaryURLHelper {
 		return createURL(editCtx, uri);
 	}
 
-	public static String createGeneralRessourceURL(ContentContext ctx, String url) {
+	public static String createGeneralResourceURL(ContentContext ctx, String url) {
 		if (ctx.getRenderMode() == ContentContext.ADMIN_MODE) {
-			return createStaticSharedRessourceURL(ctx, url);
+			return createStaticSharedResourceURL(ctx, url);
 		} else {
-			return createStaticRessourceURL(ctx, url);
+			return createStaticResourceURL(ctx, url);
 		}
 	}
 
@@ -157,7 +156,7 @@ public class URLHelper extends ElementaryURLHelper {
 		return createURL(viewCtx, uri);
 	}
 
-	public static String createRessourceURL(ContentContext ctx, MenuElement currentPage, String url) {
+	public static String createResourceURL(ContentContext ctx, MenuElement currentPage, String url) {
 		if (url == null) {
 			return null;
 		}
@@ -174,19 +173,19 @@ public class URLHelper extends ElementaryURLHelper {
 
 		url = url.replace('\\', '/');
 		if (url.charAt(0) == '/') {
-			return createStaticURL(ctx, currentPage, RESSOURCE + url);
+			return createStaticURL(ctx, currentPage, RESOURCE + url);
 		} else {
-			return createStaticURL(ctx, currentPage, RESSOURCE + '/' + url);
+			return createStaticURL(ctx, currentPage, RESOURCE + '/' + url);
 		}
 	}
 
-	public static String createRessourceURL(ContentContext ctx, String url) {
-		return createRessourceURL(ctx, null, url);
+	public static String createResourceURL(ContentContext ctx, String url) {
+		return createResourceURL(ctx, null, url);
 	}
 
-	public static String createRessourceURLWithoutAccessCount(ContentContext ctx, String url) {
+	public static String createResourceURLWithoutAccessCount(ContentContext ctx, String url) {
 		url = URLHelper.addParam(url, "no-access", "true");
-		return createRessourceURL(ctx, url);
+		return createResourceURL(ctx, url);
 	}
 
 	public static String createRSSURL(ContentContext ctx, String channel) throws Exception {
@@ -236,16 +235,16 @@ public class URLHelper extends ElementaryURLHelper {
 		return createStaticURL(ctx, url);
 	}
 
-	public static String createStaticRessourceURL(ContentContext ctx, String url) {
+	public static String createStaticResourceURL(ContentContext ctx, String url) {
 		if (url == null) {
 			return null;
 		}
 		url = url.replace('\\', '/');
-		URLHelper.mergePath(RESSOURCE, url);
-		return createStaticURL(ctx, URLHelper.mergePath(RESSOURCE, url));
+		URLHelper.mergePath(RESOURCE, url);
+		return createStaticURL(ctx, URLHelper.mergePath(RESOURCE, url));
 	}
 
-	public static String createStaticSharedRessourceURL(ContentContext ctx, String url) {
+	public static String createStaticSharedResourceURL(ContentContext ctx, String url) {
 
 		StaticConfig config = StaticConfig.getInstance(ctx.getRequest().getSession());
 
@@ -254,7 +253,7 @@ public class URLHelper extends ElementaryURLHelper {
 		}
 		url = url.replace('\\', '/');
 		url = URLHelper.mergePath(config.getShareDataFolderKey(), url);
-		url = URLHelper.mergePath(RESSOURCE, url);
+		url = URLHelper.mergePath(RESOURCE, url);
 		return createStaticURL(ctx, url);
 	}
 

@@ -3,6 +3,9 @@ package org.javlo.module.file;
 import java.io.File;
 import java.util.List;
 
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+
 public abstract class ELFile {
 
 	private ELVolume volume;
@@ -63,5 +66,9 @@ public abstract class ELFile {
 	@Override
 	public String toString() {
 		return getFile().toString();
+	}
+	
+	public void updateInfo(HttpServletRequest request, HttpServletResponse respones) {
+		return;
 	}
 }

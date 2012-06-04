@@ -17,7 +17,7 @@ public class FreeImageWithVisibleLabel extends Image {
 		if ((getValue() != null) && (getValue().trim().length() > 0)) {
 			String fileLink = URLHelper.mergePath(getDirSelected(), getFileName());
 			StaticConfig staticConfig = StaticConfig.getInstance(ctx.getRequest().getSession());
-			String url = URLHelper.createRessourceURL(ctx, getPage(), staticConfig.getImageFolder()+'/'+fileLink).replace('\\', '/');
+			String url = URLHelper.createResourceURL(ctx, getPage(), staticConfig.getImageFolder()+'/'+fileLink).replace('\\', '/');
 			res.append("<div class=\"" + getCSSClassName(ctx) + "\">");
 			res.append("<div class=\"labeled-image\">");
 			res.append("<img src=\"");

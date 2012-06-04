@@ -79,7 +79,7 @@ public class GenericFile extends AbstractFileComponent implements IReverseLinkCo
 			return "";
 		}
 		String url = ElementaryURLHelper.mergePath(getDirSelected(), getFileName());
-		url = URLHelper.createRessourceURL(ctx, getPage(), staticConfig.getFileFolder() + '/' + url);
+		url = URLHelper.createResourceURL(ctx, getPage(), staticConfig.getFileFolder() + '/' + url);
 		return url;
 	}
 
@@ -151,7 +151,7 @@ public class GenericFile extends AbstractFileComponent implements IReverseLinkCo
 			StaticConfig staticConfig = StaticConfig.getInstance(ctx.getRequest().getSession());
 
 			String url = ElementaryURLHelper.mergePath(getDirSelected(), getFileName());
-			url = URLHelper.createRessourceURL(ctx, getPage(), staticConfig.getFileFolder() + '/' + url);
+			url = URLHelper.createResourceURL(ctx, getPage(), staticConfig.getFileFolder() + '/' + url);
 
 			String rel = "";
 			if (getStyle(ctx).equals(SHADOW_STYLE)) {

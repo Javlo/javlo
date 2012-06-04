@@ -39,7 +39,7 @@ public class XMLHelper {
 		insertXMLPage(out, allCreatePage, new MenuElement[] { page }, ctx.getContentLanguage(), true);
 		ContentContext absoluteURLCtx = new ContentContext(ctx);
 		absoluteURLCtx.setAbsoluteURL(true);
-		out.println("<resources url=\"" + URLHelper.createRessourceURL(absoluteURLCtx, page, "/") + "\">");
+		out.println("<resources url=\"" + URLHelper.createResourceURL(absoluteURLCtx, page, "/") + "\">");
 		Set<Resource> allResources = new HashSet<Resource>();
 		for (MenuElement menuElement : allCreatePage) {
 			Collection<Resource> resources = menuElement.getAllResources(ctx);

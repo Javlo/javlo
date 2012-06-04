@@ -6,7 +6,7 @@ org.javlo.helper.URLHelper,
 org.javlo.context.GlobalContext,
 org.javlo.module.file.JavloELFinder
 "%><%!
-private static final String SESSION_ATTRIBUTE = "javlo.elfinders"; 
+private static final String SESSION_ATTRIBUTE = "javlo.elfinders";
 
 private synchronized JavloELFinder getELFinder(HttpSession session, String root) {
 	Map<String, JavloELFinder> sessionELFinders = (Map<String, JavloELFinder>)session.getAttribute(SESSION_ATTRIBUTE);

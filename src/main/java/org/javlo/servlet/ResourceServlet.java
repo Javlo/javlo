@@ -32,7 +32,7 @@ import org.javlo.ztatic.StaticInfo;
  * 
  * 
  */
-public class RessourceServlet extends HttpServlet {
+public class ResourceServlet extends HttpServlet {
 
 	private static final long serialVersionUID = 1L;
 
@@ -41,7 +41,7 @@ public class RessourceServlet extends HttpServlet {
 	/**
 	 * create a static logger.
 	 */
-	protected static Logger logger = Logger.getLogger(RessourceServlet.class.getName());
+	protected static Logger logger = Logger.getLogger(ResourceServlet.class.getName());
 
 	static int servletRun = 0;
 
@@ -65,7 +65,7 @@ public class RessourceServlet extends HttpServlet {
 	 * get the text and the picture and build a button
 	 */
 	protected void processRequest(HttpServletRequest request, HttpServletResponse response) throws ServletException {
-
+		
 		servletRun++;
 
 		OutputStream out = null;
@@ -123,7 +123,7 @@ public class RessourceServlet extends HttpServlet {
 			String ressourceURI = pathInfo;
 			ressourceURI = ressourceURI.replace('\\', '/');
 
-			logger.fine("load static ressource : " + ressourceURI);
+			logger.fine("load static ressource : " + ressourceURI);			
 
 			response.setContentType(ResourceHelper.getFileExtensionToManType(StringHelper.getFileExtension(ressourceURI)));
 			if (!pathInfo.equals(FILE_INFO)) {

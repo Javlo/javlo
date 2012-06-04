@@ -7,6 +7,8 @@
 jQuery(document).ready(function() {
 	jQuery('#fileManager').elfinder({
 		url : '${currentModule.path}/jsp/connector.jsp',
+		lang : '${info.editLanguage}',
+		height: '600px'
 	}).elfinder('instance');
 });
 </script>

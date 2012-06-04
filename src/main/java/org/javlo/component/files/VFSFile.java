@@ -189,7 +189,7 @@ public class VFSFile extends AbstractFileComponent implements IReverseLinkCompon
 			return "";
 		}
 		String url = URLHelper.mergePath(getDirSelected(), getFileName());
-		url = URLHelper.createRessourceURL(ctx, getPage(), staticConfig.getFileFolder() + '/' + url);
+		url = URLHelper.createResourceURL(ctx, getPage(), staticConfig.getFileFolder() + '/' + url);
 		return url;
 	}
 

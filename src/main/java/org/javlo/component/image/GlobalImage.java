@@ -72,7 +72,7 @@ public class GlobalImage extends FilterImage {
 	@Override
 	public String createFileURL(ContentContext ctx, String url) {
 		StaticConfig staticConfig = StaticConfig.getInstance(ctx.getRequest().getSession());
-		return URLHelper.createRessourceURL(ctx, getPage(), staticConfig.getImageFolder() + '/' + url);
+		return URLHelper.createResourceURL(ctx, getPage(), staticConfig.getImageFolder() + '/' + url);
 	}
 
 	@Override
@@ -377,7 +377,7 @@ public class GlobalImage extends FilterImage {
 			return getLink();
 		} else if (getFileName() != null) {
 			String fileLink = getImageURL(ctx, getFileName());
-			return URLHelper.createRessourceURL(ctx, getPage(), fileLink).replace('\\', '/');
+			return URLHelper.createResourceURL(ctx, getPage(), fileLink).replace('\\', '/');
 		}
 		return null;
 	}
@@ -459,7 +459,7 @@ public class GlobalImage extends FilterImage {
 
 			String thumbURL;
 			if (RAW_FILTER.equals(filter)) {
-				thumbURL = URLHelper.createRessourceURL(ctx, getPage(), fileLink).replace('\\', '/');
+				thumbURL = URLHelper.createResourceURL(ctx, getPage(), fileLink).replace('\\', '/');
 			} else {
 				thumbURL = URLHelper.createTransformURL(ctx, getPage(), fileLink, filter).replace('\\', '/');
 			}

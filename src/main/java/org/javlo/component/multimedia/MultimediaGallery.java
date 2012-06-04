@@ -385,7 +385,7 @@ public class MultimediaGallery extends TimeRangeComponent {
 
 				File imageFile = new File(getImageFilePath(ctx, file.getAbsolutePath()));
 
-				String multimediaURL = URLHelper.createRessourceURL(lgCtx, getPage(), getMultimediaFileURL(ctx, currentLg, file));
+				String multimediaURL = URLHelper.createResourceURL(lgCtx, getPage(), getMultimediaFileURL(ctx, currentLg, file));
 
 				String previewURL = multimediaURL;
 				if (StringHelper.isImage(file.getName())) {
@@ -448,7 +448,7 @@ public class MultimediaGallery extends TimeRangeComponent {
 					out.println("<div class=\"content-languages\"><ul>");
 					for (String lg : langs) {
 						if ((new File(getMultimediaFilePath(ctx, lg, file))).exists()) {
-							multimediaURL = URLHelper.createRessourceURL(ctx, getMultimediaFileURL(ctx, lg, file));
+							multimediaURL = URLHelper.createResourceURL(ctx, getMultimediaFileURL(ctx, lg, file));
 							lgCtx = new ContentContext(ctx);
 							lgCtx.setRequestContentLanguage(lg);
 							info = StaticInfo.getInstance(lgCtx, getMultimediaFileURL(ctx, lg, file));
@@ -461,7 +461,7 @@ public class MultimediaGallery extends TimeRangeComponent {
 							lgCtx.setRequestContentLanguage(lg);
 							info = StaticInfo.getInstance(lgCtx, file);
 							if (info.isPertinent(lgCtx)) {
-								multimediaURL = URLHelper.createRessourceURL(ctx, getMultimediaFileURL(ctx, file));
+								multimediaURL = URLHelper.createResourceURL(ctx, getMultimediaFileURL(ctx, file));
 								lgCtx = new ContentContext(ctx);
 								lgCtx.setRequestContentLanguage(lg);
 								info = StaticInfo.getInstance(lgCtx, getMultimediaFileURL(ctx, file));
