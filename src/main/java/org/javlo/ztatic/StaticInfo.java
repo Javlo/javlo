@@ -325,8 +325,6 @@ public class StaticInfo {
 		
 		HttpServletRequest request = ctx.getRequest();
 		
-		/*GlobalContext globalContext = GlobalContext.getInstance(ctx.getRequest());
-		StaticInfo outStaticInfo = (StaticInfo) globalContext.getAttribute(inStaticURL);*/
 		StaticInfo outStaticInfo = (StaticInfo) request.getAttribute(inStaticURL);
 
 		if (outStaticInfo == null) {			

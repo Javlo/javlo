@@ -28,18 +28,21 @@ jQuery(document).ready(function() {
 		var item = jQuery(this);
 		item.css("display","none");
 	});
+	
 	jQuery(".js-change-submit select").each(function(){				
 		var item = jQuery(this);
-		item.change(function() {
-		  this.form.submit();
+		item.live("change",function() {
+			jQuery(this.form).trigger("submit");
 		});
 	});
+	
 	jQuery(".js-submit select").each(function(){				
 		var item = jQuery(this);
-		item.change(function() {
-		  this.form.submit();
+		item.live("change", function() {
+			jQuery(this.form).trigger("submit");
 		});
-	});	
+	});
+	
 	jQuery(".js-submit input[type='submit']").each(function(){				
 		var item = jQuery(this);
 		item.css("display","none");

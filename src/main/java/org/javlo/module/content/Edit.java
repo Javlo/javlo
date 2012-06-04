@@ -551,7 +551,7 @@ public class Edit extends AbstractModuleAction {
 			if (StringHelper.isTrue(requestService.getParameter("id-" + elem.getId(), "false"))) {
 				elem.performConfig(ctx);
 				elem.refresh(ctx);
-				if (elem.isNeedRefresh()) {
+				if (elem.isNeedRefresh()) {					
 					updateComponent(ctx, currentModule, elem.getId(), null);
 				}
 			}
