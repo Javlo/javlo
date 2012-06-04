@@ -15,7 +15,6 @@
 <link rel="stylesheet" media="screen" href="/css/edit/components.css" />
 <link rel="stylesheet" media="screen" href="${info.editTemplateURL}/css/style.css" />
 <link rel="stylesheet" media="screen" href="${info.editTemplateURL}/css/javlo.css" />
-<link rel="stylesheet" href="${info.editTemplateURL}/css/plugins/elfinder.css" type="text/css"/>
 <!--[if IE 9]>
     <link rel="stylesheet" media="screen" href="${info.editTemplateURL}/css/ie9.css"/>
 <![endif]-->
@@ -37,14 +36,12 @@
 <script type="text/javascript" src="${info.editTemplateURL}/js/plugins/jquery.jgrowl.js"></script>
 <script type="text/javascript" src="${info.editTemplateURL}/js/plugins/jquery.dataTables.min.js"></script>
 <script type="text/javascript" src="${info.editTemplateURL}/js/plugins/jquery.form.js"></script>
-<script type="text/javascript" src="${info.editTemplateURL}/js/plugins/elfinder.min.js"></script>
 <script type="text/javascript" src="${info.editTemplateURL}/js/javlo/core.js"></script>
 <script type="text/javascript" src="${info.editTemplateURL}/js/custom/gallery.js"></script>
 <script type="text/javascript" src="/js/edit/ajax.js"></script>
 <script type="text/javascript" src="/js/edit/core.js"></script>
 <script type="text/javascript" src="${info.editTemplateURL}/js/javlo/core.js"></script>
 <c:if test="${not info.editLanguage eq 'en'}"><script type="text/javascript" src="${info.editTemplateURL}/js/plugins/jquery.ui.datepicker-${info.editLanguage}.js"></script></c:if>
-<c:if test="${not info.editLanguage eq 'en'}"><script type="text/javascript" src="${info.editTemplateURL}/js/i18n/elfinder.${info.editLanguage}.js"></script></c:if>
 <script type="text/javascript" src="${info.editTemplateURL}/js/custom/general.js"></script>
 
 
