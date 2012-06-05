@@ -43,7 +43,7 @@
 </div><!--loginbox-->
 
 <div class="loginoption">
-	<a href="" class="cant">Can't access your account?</a>
+	<a href="http://www.javlo.org" class="cant">javlo.org</a>
     <input type="checkbox" id="autologin" name="autologin" /> Remember me on this computer.
 </div><!--loginoption-->
 </form>

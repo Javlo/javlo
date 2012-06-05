@@ -202,4 +202,9 @@ public class JavloELFinder extends ELFinder {
 		apiResponse.put("added", printFiles(addedFiles));
 	}
 
+	@Override
+	protected ELFile createELFile(ELFile parent, File file) {
+		return new JavloELFile(parent.getVolume(), file, parent);
+	}
+
 }

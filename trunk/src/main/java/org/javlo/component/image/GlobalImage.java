@@ -18,6 +18,7 @@ import java.util.logging.Logger;
 
 import org.apache.commons.fileupload.FileItem;
 import org.javlo.component.core.ComponentBean;
+import org.javlo.component.core.IContentVisualComponent;
 import org.javlo.component.core.IReverseLinkComponent;
 import org.javlo.config.StaticConfig;
 import org.javlo.context.ContentContext;
@@ -167,9 +168,12 @@ public class GlobalImage extends FilterImage {
 				dirsCol.add(dir);
 			}
 			finalCode.append(XHTMLHelper.getInputOneSelect(getDirInputName(), dirsCol, getDirSelected(), "submit-onchange"));
-			finalCode.append("<a class=\"" + EDIT_ACTION_CSS_CLASS + "\" href=\"#\" onclick=\"document.forms['content_update'].dir.value='");
-			finalCode.append(URLHelper.mergePath(getRelativeFileDirectory(ctx), getDirSelected()));
-			finalCode.append("';document.forms['content_update'].submit(); return false;\">&nbsp;");
+			
+			Map<String, String> filesParams = new HashMap<String, String>();
+			filesParams.put("path", URLHelper.mergePath("/", getRelativeFileDirectory(ctx), getDirSelected()));
+			String staticURL = URLHelper.createModuleURL(ctx, ctx.getPath(), "file", filesParams); 
+			
+			finalCode.append("<a class=\"" + EDIT_ACTION_CSS_CLASS + "\" href=\""+staticURL+"\">&nbsp;");
 			finalCode.append(i18nAccess.getText("content.goto-static"));
 			finalCode.append("</a>");
 			finalCode.append("</div>");
