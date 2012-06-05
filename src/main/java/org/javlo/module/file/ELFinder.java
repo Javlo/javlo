@@ -42,8 +42,8 @@ public abstract class ELFinder {
 
 		Map<String, Object> apiResponse = new LinkedHashMap<String, Object>();
 		try {
-			RequestService requestService = RequestService.getInstance(request);
-			String command = requestService.getParameter("cmd", null);
+			RequestService rs = RequestService.getInstance(request);
+			String command = rs.getParameter("cmd", null);
 			if ("open".equals(command)) {
 				open(getBoolean(request, "init", false), getFile(request, "target"), getBoolean(request, "tree", false), apiResponse);
 			} else if ("parents".equals(command)) {
@@ -55,27 +55,34 @@ public abstract class ELFinder {
 			} else if ("mkdir".equals(command)) {
 				createDir(request.getParameter("target"), request.getParameter("name"), apiResponse);
 			} else if ("rm".equals(command)) {
-				deleteFile(requestService.getParameterValues("targets[]", null), apiResponse);
+				deleteFile(rs.getParameterValues("targets[]", null), apiResponse);
 			} else if ("duplicate".equals(command)) {
-				duplicateFile(requestService.getParameterValues("targets[]", null), apiResponse);
+				duplicateFile(rs.getParameterValues("targets[]", null), apiResponse);
 			} else if ("put".equals(command)) {
-				updateFile(requestService.getParameter("content", null), requestService.getParameter("target", null), apiResponse);
+				updateFile(rs.getParameter("content", null), rs.getParameter("target", null), apiResponse);
 			} else if ("search".equals(command)) {
-				searchFiles(requestService.getParameter("q", null), apiResponse);
+				searchFiles(rs.getParameter("q", null), apiResponse);
 			} else if ("get".equals(command)) {
-				getFile(requestService.getParameter("target", null), apiResponse);
+				getFile(rs.getParameter("target", null), apiResponse);
 			} else if ("rename".equals(command)) {
-				renameFile(requestService.getParameter("target", null), requestService.getParameter("name", null), apiResponse);
+				renameFile(rs.getParameter("target", null), rs.getParameter("name", null), apiResponse);
 			} else if ("upload".equals(command)) {
-				uploadFile(requestService.getParameter("target", null), requestService.getFileItemMap().get("upload[]"), requestService.getParameter("name", null), apiResponse);
+				uploadFile(rs.getParameter("target", null), rs.getFileItemMap().get("upload[]"), rs.getParameter("name", null), apiResponse);
 			} else if ("resize".equals(command)) {
-				String mode = requestService.getParameter("mode", null);
-				String target = requestService.getParameter("target", null);
-				int height = Integer.parseInt(requestService.getParameter("height", "-1"));
-				int width = Integer.parseInt(requestService.getParameter("width", "-1"));
-				int x = Integer.parseInt(requestService.getParameter("x", "-1"));
-				int y = Integer.parseInt(requestService.getParameter("y", "-1"));
+				String mode = rs.getParameter("mode", null);
+				String target = rs.getParameter("target", null);
+				int height = Integer.parseInt(rs.getParameter("height", "-1"));
+				int width = Integer.parseInt(rs.getParameter("width", "-1"));
+				int x = Integer.parseInt(rs.getParameter("x", "-1"));
+				int y = Integer.parseInt(rs.getParameter("y", "-1"));
 				transformFile(target, mode, width, height, x, y, apiResponse);
+			} else if ("paste".equals(command)) {
+				pasteFiles(rs.getParameter("src", null), rs.getParameter("dst", null), rs.getParameterValues("targets[]", null), StringHelper.isTrue(rs.getParameter("cut", "flase")), apiResponse);
+			} 
+			if (request.getSession().getAttribute("ELPath") != null) {
+				apiResponse.clear();
+				init(""+request.getSession().getAttribute("ELPath"), apiResponse);
+				request.getSession().removeAttribute("ELPath");
 			}
 		} catch (ELFinderException elEx) {
 			apiResponse.clear();
@@ -90,6 +97,54 @@ public abstract class ELFinder {
 
 	}
 
+	private void init(String inFolder, Map<String, Object> apiResponse) {		
+		String[] folders = inFolder.split("/");
+		if (folders.length > 1) {
+			String volName = folders[1];
+			ELFile currentFile = null;
+			for (ELFile volume : getVolumeFiles()) {
+				if (volume.getFile().getName().equals(volName)) {
+					currentFile = volume;
+				}
+			}
+			if (currentFile != null) {
+				for (int i = 2; i < folders.length; i++) {
+					for (ELFile file : currentFile.getChildren()) {
+						if (file.getFile().getName().equals(folders[i])) {
+							currentFile = file;
+						}
+					}					
+				}				
+			}
+			if (currentFile != null) {
+				open(true, currentFile, true, apiResponse);
+			}
+		}
+	}
+
+	private void pasteFiles(String srcHashFolder, String dstHashFolder, String[] files, boolean cut, Map<String, Object> apiResponse) throws IOException {
+		ELFile dstFolder = hashToFile(dstHashFolder);
+		List<ELFile> addedFiles = new LinkedList<ELFile>();
+		List<ELFile> removeFiles = new LinkedList<ELFile>();
+		for (String file : files) {
+			ELFile oldFile = hashToFile(file);
+			File newFile = new File(URLHelper.mergePath(dstFolder.getFile().getAbsolutePath(), oldFile.getFile().getName()));
+			if (!newFile.exists()) {
+				ELFile newELFile = createELFile(dstFolder, newFile);
+				ResourceHelper.writeFileToFile(oldFile.getFile(), newFile);
+				addedFiles.add(newELFile);
+				if (cut) {
+					oldFile.getFile().delete();
+					removeFiles.add(oldFile);
+				}
+			}
+		}
+		apiResponse.put("added", printFiles(addedFiles));
+		apiResponse.put("removed", printFiles(removeFiles));
+	}
+
+	protected abstract ELFile createELFile(ELFile parent, File file);
+
 	protected abstract void uploadFile(String folderHash, FileItem[] filesItem, String parameter, Map<String, Object> apiResponse) throws Exception;
 
 	protected abstract void renameFile(String fileHash, String name, Map<String, Object> apiResponse) throws ELFinderException, Exception;
@@ -97,7 +152,7 @@ public abstract class ELFinder {
 	protected abstract void duplicateFile(String[] filesHash, Map<String, Object> apiResponse) throws IOException;
 
 	protected void transformFile(String fileHash, String mode, int width, int height, int x, int y, Map<String, Object> apiResponse) throws Exception {
-		JavloELFile file = (JavloELFile) hashToFile(fileHash);
+		ELFile file = hashToFile(fileHash);
 		if (file.getFile().exists()) {
 			if ("resize".equals(mode)) {
 				BufferedImage img = ImageEngine.loadImage(file.getFile());
@@ -232,7 +287,7 @@ public abstract class ELFinder {
 		}
 		response.put("files", printFiles(files));
 		if (init) {
-			extend(response, prop("api", PROTOCOL_VERSION), prop("uplMaxSize", "32M"));
+			extend(response, prop("api", PROTOCOL_VERSION), prop("uplMaxSize", "512M"));
 		}
 	}
 
@@ -322,7 +377,7 @@ public abstract class ELFinder {
 		if (file.getParentFile() != null) {
 			url = file.getParentFile().getURL();
 		}
-		return obj(prop("path", '/'+file.getRelativePath()),// (String) Current folder path
+		return obj(prop("path", '/' + file.getRelativePath()),// (String) Current folder path
 				prop("url", "/resource/static/"),// (String) Current folder URL
 				prop("tmbURL", file.getThumbnailURL()),// (String) Thumbnails folder URL
 				prop("separator", "/"), prop("disabled", array()), // (Array) List of commands not allowed (disabled) on this volume

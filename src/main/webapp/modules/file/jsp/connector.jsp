@@ -6,13 +6,14 @@ org.javlo.helper.URLHelper,
 org.javlo.context.GlobalContext,
 org.javlo.module.file.JavloELFinder
 "%><%!
-private static final String SESSION_ATTRIBUTE = "javlo.elfinders";
+private static final String SESSION_ATTRIBUTE = "javlo.elfinders"; 
 
 private synchronized JavloELFinder getELFinder(HttpSession session, String root) {
-	Map<String, JavloELFinder> sessionELFinders = (Map<String, JavloELFinder>)session.getAttribute(SESSION_ATTRIBUTE);
+	
+	Map<String, JavloELFinder> sessionELFinders = (Map<String, JavloELFinder>)session.getAttribute(SESSION_ATTRIBUTE+root);
 	if (sessionELFinders == null) {
 		sessionELFinders = new HashMap<String, JavloELFinder>();
-		session.setAttribute(SESSION_ATTRIBUTE, sessionELFinders);
+		session.setAttribute(SESSION_ATTRIBUTE+root, sessionELFinders);
 	}
 
 	JavloELFinder elfinder = sessionELFinders.get(root);
@@ -24,7 +25,6 @@ private synchronized JavloELFinder getELFinder(HttpSession session, String root)
 }
 
 %><%
-
 ContentContext ctx = ContentContext.getContentContext(request, response);
 GlobalContext globalContext = GlobalContext.getInstance(ctx.getRequest());
 String root = URLHelper.mergePath(globalContext.getDataFolder(), globalContext.getStaticConfig().getStaticFolder());

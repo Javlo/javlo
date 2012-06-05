@@ -13,9 +13,9 @@ import org.javlo.ztatic.StaticInfo;
 public class JavloELFile extends ELFile {
 
 	private File file;
-	private JavloELFile parent;
+	private ELFile parent;
 
-	public JavloELFile(ELVolume volume, File file, JavloELFile parent) {
+	public JavloELFile(ELVolume volume, File file, ELFile parent) {
 		super(volume);		
 		this.file = file;
 		this.parent = parent;
@@ -45,7 +45,7 @@ public class JavloELFile extends ELFile {
 		if (isRoot()) {
 			return null;
 		} else {
-			return parent;
+			return (JavloELFile)parent;
 		}
 	}
 	

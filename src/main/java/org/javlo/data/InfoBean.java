@@ -54,6 +54,7 @@ public class InfoBean {
 			info.setParentPageURL(URLHelper.createURL(ctx, currentPage.getParent().getPath()));
 		}
 		info.setCurrentURL(URLHelper.createURL(ctx));		
+		info.setStaticRootURL(URLHelper.createStaticURL(ctx, "/"));
 		ContentContext lCtx = new ContentContext(ctx);
 		lCtx.setAbsoluteURL(true);
 		info.setCurrentAbsoluteURL(URLHelper.createURL(lCtx));
@@ -111,6 +112,7 @@ public class InfoBean {
 	private String editLanguage;
 	private String currentURL;
 	private String currentAbsoluteURL;
+	private String staticRootURL;
 	private String homeAbsoluteURL;
 	private String pageName;
 	private String pageCategory;
@@ -373,5 +375,13 @@ public class InfoBean {
 
 	public void setEditTemplateURL(String editTemplateURL) {
 		this.editTemplateURL = editTemplateURL;
+	}
+
+	public String getStaticRootURL() {
+		return staticRootURL;
+	}
+
+	public void setStaticRootURL(String staticROOTURL) {
+		this.staticRootURL = staticROOTURL;
 	}
 }

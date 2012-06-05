@@ -14,7 +14,9 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.Comparator;
+import java.util.HashMap;
 import java.util.LinkedList;
+import java.util.Map;
 import java.util.Properties;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipInputStream;
@@ -261,16 +263,15 @@ public abstract class AbstractFileComponent extends AbstractVisualComponent impl
 			System.arraycopy(fileList, 0, fileListBlanck, 1, fileList.length);
 
 			finalCode.append(XHTMLHelper.getInputOneSelect(getSelectXHTMLInputName(), fileListBlanck, getFileName(), getJSOnChange(ctx), true));
-
-			/*
-			 * finalCode.append("<a href=\"javascript:document.forms['content_update'].deltype.value='" ); finalCode.append(getType()); finalCode.append("';document.forms['content_update'].delfile.value='" ); finalCode.append(getFileName()); finalCode.append("';document.forms['content_update'].delid.value='" ); finalCode.append(getId());finalCode.append( "';document.forms['content_update'].submit();\">&nbsp;"); finalCode.append(getDeleteTitle()); finalCode.append("</a>");
-			 */
-
+			
 			if (ctx.getRenderMode() == ContentContext.EDIT_MODE) {
 				if (isLinkToStatic()) {
-					finalCode.append("&nbsp;<a class=\"" + IContentVisualComponent.EDIT_ACTION_CSS_CLASS + "\" href=\"#\" onclick=\"document.forms['content_update'].dir.value='");
-					finalCode.append(ElementaryURLHelper.mergePath(getRelativeFileDirectory(ctx), getDirSelected()));
-					finalCode.append("';document.forms['content_update'].submit(); return false;\">");
+					
+					Map<String, String> filesParams = new HashMap<String, String>();
+					filesParams.put("path", URLHelper.mergePath("/", getRelativeFileDirectory(ctx), getDirSelected()));
+					String staticURL = URLHelper.createModuleURL(ctx, ctx.getPath(), "file", filesParams); 
+					
+					finalCode.append("&nbsp;<a class=\"" + IContentVisualComponent.EDIT_ACTION_CSS_CLASS + "\" href=\""+staticURL+"\" >");
 					finalCode.append(i18nAccess.getText("content.goto-static"));
 					finalCode.append("</a>");
 				}
