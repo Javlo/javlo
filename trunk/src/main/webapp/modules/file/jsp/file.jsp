@@ -8,7 +8,24 @@ jQuery(document).ready(function() {
 	jQuery('#fileManager').elfinder({
 		url : '${currentModule.path}/jsp/connector.jsp',
 		lang : '${info.editLanguage}',
-		height: '600px'
+		height: '600px',
+		quicklook : {
+			autoplay : true,
+			jplayer  : 'extensions/jplayer'
+		},
+		uiOptions : {
+		toolbar : [
+		   		['back', 'forward'],
+ 		   		['mkdir', 'mkfile', 'upload'],
+		   		['open', 'download', 'getfile'],
+		   		['info'],
+		   		['quicklook'],		   		
+		   		['rm'],
+		   		['duplicate', 'rename', 'edit', 'resize'],		   		
+		   		['search'],
+		   		['view'],
+		   		['help']
+		   	] }
 	}).elfinder('instance');
 });
 </script>

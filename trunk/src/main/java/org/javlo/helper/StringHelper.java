@@ -724,7 +724,7 @@ public class StringHelper {
 	 * 
 	 * @param inFileName
 	 *            a file name
-	 * @return a file extension without dot ( pdf, zip, ... )
+	 * @return a file name
 	 */
 	public static String getFileNameFromPath(String path) {
 		String outExt = path;

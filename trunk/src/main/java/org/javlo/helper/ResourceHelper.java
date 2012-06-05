@@ -902,6 +902,17 @@ public class ResourceHelper {
 
 		return countByte;
 	}
+	
+	public static final int writeFileToFile(File fileIn, File file) throws IOException {
+		InputStream in = null;
+		try {
+			in = new FileInputStream(fileIn);
+			return writeStreamToFile(in, file);
+		} finally {
+			ResourceHelper.closeResource(in);
+		}
+	}
+
 
 	/**
 	 * write a InputStream in a OuputStream, without close.
@@ -946,6 +957,21 @@ public class ResourceHelper {
 			out.write(content.charAt(i));
 		}
 		out.close();
+	}
+	
+	public static File getFreeFileName(File file) {
+		File folder = file.getParentFile();
+		String newName = file.getName();
+		String ext = StringHelper.getFileExtension(file.getName());
+		String fileName = StringHelper.getFileNameWithoutExtension(file.getName());
+		for (int i = 1; i < 999999; i++) {
+			newName = fileName + "_" + i + '.' + ext;
+			File newFile = new File(URLHelper.mergePath(folder.getAbsolutePath(), newName));
+			if (!newFile.exists()) {
+				return newFile;
+			}
+		}
+		return null;
 	}
 
 }

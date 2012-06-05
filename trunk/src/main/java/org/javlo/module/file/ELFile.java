@@ -1,12 +1,24 @@
 package org.javlo.module.file;
 
 import java.io.File;
+import java.util.Comparator;
 import java.util.List;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 public abstract class ELFile {
+	
+	public static final Comparator<ELFile> FILE_NAME_COMPARATOR = new ELFileNameComparator();
+	
+	private static class ELFileNameComparator implements Comparator<ELFile> {
+
+		@Override
+		public int compare(ELFile f1, ELFile f2) {
+			return f1.getFile().getName().compareTo(f2.getFile().getName());
+		}
+		
+	}
 
 	private ELVolume volume;
 

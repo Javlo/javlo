@@ -351,6 +351,10 @@ public class StaticInfo {
 			if (!file.exists()) {
 				GlobalContext globalContext = GlobalContext.getInstance(request);
 				logger.warning("could not instancied ressource because file does'nt exist : " + file+" context name : "+globalContext.getContextKey());
+			} else if (file.isDirectory()) {
+				if (!staticInfo.staticURL.endsWith("/")) {
+					staticInfo.staticURL = staticInfo.staticURL + '/';
+				}
 			}
 			staticInfo.setFile(file);
 			staticInfo.size = file.length();
