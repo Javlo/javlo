@@ -1,22 +1,29 @@
 package org.javlo.module.file;
 
+import java.awt.image.BufferedImage;
 import java.io.File;
+import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.Writer;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.LinkedHashMap;
-import java.util.LinkedHashSet;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
+import java.util.logging.Logger;
 
+import javax.imageio.ImageIO;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import org.apache.commons.fileupload.FileItem;
+import org.javlo.helper.ResourceHelper;
+import org.javlo.helper.StringHelper;
 import org.javlo.helper.URLHelper;
+import org.javlo.image.ImageEngine;
 import org.javlo.service.RequestService;
 
 /**
@@ -26,6 +33,8 @@ import org.javlo.service.RequestService;
  */
 public abstract class ELFinder {
 
+	private static Logger logger = Logger.getLogger(ELFinder.class.getName());
+
 	private static final String PROTOCOL_VERSION = "2.0";
 	private static final String DEFAULT_MIME_TYPE = "application/octet-stream";
 
@@ -33,7 +42,8 @@ public abstract class ELFinder {
 
 		Map<String, Object> apiResponse = new LinkedHashMap<String, Object>();
 		try {
-			String command = request.getParameter("cmd");
+			RequestService requestService = RequestService.getInstance(request);
+			String command = requestService.getParameter("cmd", null);
 			if ("open".equals(command)) {
 				open(getBoolean(request, "init", false), getFile(request, "target"), getBoolean(request, "tree", false), apiResponse);
 			} else if ("parents".equals(command)) {
@@ -45,10 +55,32 @@ public abstract class ELFinder {
 			} else if ("mkdir".equals(command)) {
 				createDir(request.getParameter("target"), request.getParameter("name"), apiResponse);
 			} else if ("rm".equals(command)) {
-				RequestService requestService = RequestService.getInstance(request);
 				deleteFile(requestService.getParameterValues("targets[]", null), apiResponse);
+			} else if ("duplicate".equals(command)) {
+				duplicateFile(requestService.getParameterValues("targets[]", null), apiResponse);
+			} else if ("put".equals(command)) {
+				updateFile(requestService.getParameter("content", null), requestService.getParameter("target", null), apiResponse);
+			} else if ("search".equals(command)) {
+				searchFiles(requestService.getParameter("q", null), apiResponse);
+			} else if ("get".equals(command)) {
+				getFile(requestService.getParameter("target", null), apiResponse);
+			} else if ("rename".equals(command)) {
+				renameFile(requestService.getParameter("target", null), requestService.getParameter("name", null), apiResponse);
+			} else if ("upload".equals(command)) {
+				uploadFile(requestService.getParameter("target", null), requestService.getFileItemMap().get("upload[]"), requestService.getParameter("name", null), apiResponse);
+			} else if ("resize".equals(command)) {
+				String mode = requestService.getParameter("mode", null);
+				String target = requestService.getParameter("target", null);
+				int height = Integer.parseInt(requestService.getParameter("height", "-1"));
+				int width = Integer.parseInt(requestService.getParameter("width", "-1"));
+				int x = Integer.parseInt(requestService.getParameter("x", "-1"));
+				int y = Integer.parseInt(requestService.getParameter("y", "-1"));
+				transformFile(target, mode, width, height, x, y, apiResponse);
 			}
-		} catch (Exception ex) {
+		} catch (ELFinderException elEx) {
+			apiResponse.clear();
+			apiResponse.put("error", elEx.getMessage());
+		} catch (Throwable ex) {
 			ex.printStackTrace();
 			apiResponse.clear();
 			apiResponse.put("error", "Exception: " + ex.toString());
@@ -58,15 +90,81 @@ public abstract class ELFinder {
 
 	}
 
-	private void createDir(String folderId, String fileName, Map<String, Object> response) {
-		JavloELFile folder = (JavloELFile) hashToFile(folderId);
-		File newFile = new File(URLHelper.mergePath(folder.getFile().getAbsolutePath(), fileName));
-		if (!newFile.exists()) {
-			newFile.mkdirs();
-			JavloELFile newElFile = new JavloELFile(folder.getVolume(), newFile, folder);
-			response.put("added", printFiles(Arrays.asList(new ELFile[] { newElFile })));
+	protected abstract void uploadFile(String folderHash, FileItem[] filesItem, String parameter, Map<String, Object> apiResponse) throws Exception;
+
+	protected abstract void renameFile(String fileHash, String name, Map<String, Object> apiResponse) throws ELFinderException, Exception;
+
+	protected abstract void duplicateFile(String[] filesHash, Map<String, Object> apiResponse) throws IOException;
+
+	protected void transformFile(String fileHash, String mode, int width, int height, int x, int y, Map<String, Object> apiResponse) throws Exception {
+		JavloELFile file = (JavloELFile) hashToFile(fileHash);
+		if (file.getFile().exists()) {
+			if ("resize".equals(mode)) {
+				BufferedImage img = ImageEngine.loadImage(file.getFile());
+				img = ImageEngine.resizeImage(img, width, height);
+				ImageEngine.storeImage(img, file.getFile());
+				apiResponse.put("changed", printFiles(Arrays.asList(new ELFile[] { file })));
+			} else if ("crop".equals(mode)) {
+				BufferedImage img = ImageEngine.loadImage(file.getFile());
+				img = ImageEngine.cropImage(img, width, height, x, y);
+				ImageEngine.storeImage(img, file.getFile());
+				apiResponse.put("changed", printFiles(Arrays.asList(new ELFile[] { file })));
+			}
 		}
 	}
+
+	private void getFile(String fileHash, Map<String, Object> apiResponse) throws FileNotFoundException, IOException {
+		JavloELFile file = (JavloELFile) hashToFile(fileHash);
+		if (file.getFile().exists()) {
+			apiResponse.put("content", ResourceHelper.loadStringFromFile(file.getFile()));
+		}
+	}
+
+	private static void searchFiles(ELFile file, String q, boolean inside, List<ELFile> result) throws FileNotFoundException, IOException {
+		if (file.getFile().isFile()) {
+			if (file.getFile().getName().contains(q)) {
+				result.add(file);
+			} else if (inside) {
+				if (ResourceHelper.getFileContent(file.getFile()).contains(q)) {
+					result.add(file);
+				}
+			}
+		} else {
+			List<ELFile> children = file.getChildren();
+			for (ELFile elFile : children) {
+				searchFiles(elFile, q, inside, result);
+			}
+		}
+	}
+
+	private void searchFiles(String q, Map<String, Object> apiResponse) throws FileNotFoundException, IOException {
+		q = q.trim();
+		boolean inside = !q.startsWith("name:");
+		if (!inside) {
+			q = q.replaceFirst("name:", "");
+			q = q.trim();
+		}
+		List<ELFile> searchResult = new LinkedList<ELFile>();
+		List<ELVolume> volumes = getVolumes();
+		for (ELVolume elVolume : volumes) {
+			searchFiles(elVolume.getRoot(), q, inside, searchResult);
+		}
+
+		apiResponse.put("files", printFiles(searchResult));
+	}
+
+	private void updateFile(String content, String fileHash, Map<String, Object> apiResponse) throws IOException {
+		ELFile file = (ELFile) hashToFile(fileHash);
+		if (file.getFile().exists()) {
+			if (content != null) {
+				ResourceHelper.writeStringToFile(file.getFile(), content);
+				apiResponse.put("changed", printFiles(Arrays.asList(new ELFile[] { file })));
+			}
+
+		}
+	}
+
+	protected abstract void createDir(String folderId, String fileName, Map<String, Object> response);
 
 	private void deleteFile(String[] filesHash, Map<String, Object> apiResponse) {
 		Collection<ELFile> deletedFiles = new LinkedList<ELFile>();
@@ -80,17 +178,13 @@ public abstract class ELFinder {
 		apiResponse.put("removed", printFilesHash(deletedFiles));
 	}
 
-	private void createFile(String folderId, String fileName, Map<String, Object> response) {
+	private void createFile(String folderId, String fileName, Map<String, Object> response) throws IOException {
 		JavloELFile folder = (JavloELFile) hashToFile(folderId);
 		File newFile = new File(URLHelper.mergePath(folder.getFile().getAbsolutePath(), fileName));
 		if (!newFile.exists()) {
-			try {
-				newFile.createNewFile();
-				JavloELFile newElFile = new JavloELFile(folder.getVolume(), newFile, folder);
-				response.put("added", printFiles(Arrays.asList(new ELFile[] { newElFile })));
-			} catch (IOException e) {
-				e.printStackTrace();
-			}
+			newFile.createNewFile();
+			JavloELFile newElFile = new JavloELFile(folder.getVolume(), newFile, folder);
+			response.put("added", printFiles(Arrays.asList(new ELFile[] { newElFile })));
 		}
 	}
 
@@ -126,7 +220,7 @@ public abstract class ELFinder {
 		}
 		response.put("cwd", printFile(target));
 		response.put("options", printOptions(target));
-		Set<ELFile> files = new LinkedHashSet<ELFile>();
+		List<ELFile> files = new LinkedList<ELFile>();
 		files.addAll(target.getChildren());
 		if (tree) {
 			files.addAll(getVolumeFiles());
@@ -197,7 +291,7 @@ public abstract class ELFinder {
 				// (Number) is writable
 				prop("write", toInt(true)),
 				// (Number) is file locked. If locked that object cannot be deleted and renamed
-				prop("locked", toInt(false)), prop("url", file.getURL()), prop("tmb", file.getThumbnailURL()), prop("tmbURL", file.getThumbnailURL()));
+				prop("locked", toInt(false)), prop("tmb", file.getThumbnailURL()));
 
 		// (Number) Only for directories. Marks if directory has child directories inside it. 0 (or not set) - no, 1 - yes. Do not need to calculate amount.
 		if (file.isDirectory()) {
@@ -205,6 +299,13 @@ public abstract class ELFinder {
 			extend(out, prop("childs", toInt(children.size() > 0)));
 			List<ELFile> childDirectories = filterDirectories(children);
 			extend(out, prop("dirs", toInt(childDirectories.size() > 0)));
+		} else if (StringHelper.isImage(file.getFile().getName())) {
+			try {
+				BufferedImage img = ImageIO.read(file.getFile());
+				extend(out, prop("dim", "" + img.getWidth() + 'x' + img.getHeight()));
+			} catch (Throwable e) {
+				logger.warning(e.getMessage());
+			}
 		}
 		if (file.isRoot()) {
 			// (String) Volume id. For root dir only.
@@ -217,15 +318,20 @@ public abstract class ELFinder {
 	}
 
 	protected Map<String, Object> printOptions(ELFile file) {
-		return obj(prop("path", file.getRelativePath()),// (String) Current folder path
-				prop("url", file.getURL()),// (String) Current folder URL
+		String url = null;
+		if (file.getParentFile() != null) {
+			url = file.getParentFile().getURL();
+		}
+		return obj(prop("path", '/'+file.getRelativePath()),// (String) Current folder path
+				prop("url", "/resource/static/"),// (String) Current folder URL
 				prop("tmbURL", file.getThumbnailURL()),// (String) Thumbnails folder URL
 				prop("separator", "/"), prop("disabled", array()), // (Array) List of commands not allowed (disabled) on this volume
 				prop("copyOverwrite", 1), propObj("archivers", prop("create", array()), prop("extract", array())));
 	}
 
-	protected List<Object> printFiles(Collection<ELFile> files) {
+	protected List<Object> printFiles(List<ELFile> files) {
 		List<Object> out = new ArrayList<Object>();
+		Collections.sort(files, ELFile.FILE_NAME_COMPARATOR);
 		for (ELFile file : files) {
 			out.add(printFile(file));
 		}

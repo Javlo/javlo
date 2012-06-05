@@ -52,6 +52,10 @@ public class JavloELFile extends ELFile {
 	public ContentContext getContentContext() {		
 		return getParentFile().getContentContext();		
 	}
+	
+	public StaticInfo getStaticInfo() throws Exception {
+		return StaticInfo.getInstance(getContentContext(), file);
+	}
 
 	public String getURL() {
 		if (getContentContext() != null) {
@@ -71,14 +75,12 @@ public class JavloELFile extends ELFile {
 			try {
 				StaticInfo info = StaticInfo.getInstance(getContentContext(), file);
 				GlobalContext globalContext = GlobalContext.getInstance(getContentContext().getRequest());
-				return URLHelper.createTransformURL(getContentContext(), globalContext.getStaticConfig().getStaticFolder()+info.getStaticURL(), "icone");
+				return URLHelper.createTransformURL(getContentContext(), globalContext.getStaticConfig().getStaticFolder()+info.getStaticURL(), "icone")+"?ts="+file.lastModified();
 			} catch (Exception e) {
 				e.printStackTrace();
 			}
 		}
 		return null;
 	}
-
-	
 
 }

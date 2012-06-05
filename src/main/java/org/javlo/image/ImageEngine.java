@@ -15,8 +15,12 @@ import java.util.logging.Logger;
 
 import javax.imageio.ImageIO;
 import javax.imageio.plugins.jpeg.JPEGImageWriteParam;
+import javax.imageio.stream.ImageOutputStream;
+
+import org.javlo.helper.StringHelper;
 
 import com.jhlabs.image.RGBAdjustFilter;
+import com.sun.corba.se.spi.ior.Writeable;
 import com.sun.image.codec.jpeg.JPEGCodec;
 import com.sun.image.codec.jpeg.JPEGEncodeParam;
 import com.sun.image.codec.jpeg.JPEGImageEncoder;
@@ -43,13 +47,15 @@ public class ImageEngine {
 		}
 	}
 
-	// static File source = new File("c:/trans/margaux1.jpg");
-	static File source = new File("s:/tmp/source_light.jpg");
-
-	static File filter = new File("c:/trans/layer.png");
-
-	// static File target = new File("c:/trans/margaux1_w2.png");
-	static File target = new File("s:/tmp/target_light_1.png");
+	public static BufferedImage loadImage(File file) throws IOException {
+		BufferedImage outImage = ImageIO.read(file);
+		return outImage;		
+	}
+	
+	public static void storeImage(BufferedImage img, File file) throws IOException {		 
+		ImageIO.write(img, StringHelper.getFileExtension(file.getName()).toLowerCase(), file);
+		return;		
+	}
 
 	public static BufferedImage blurring(BufferedImage img) {
 		/*
@@ -840,6 +846,20 @@ public class ImageEngine {
 		}
 		return outImage;
 	}
+	
+	public static BufferedImage cropImage(BufferedImage image, int width, int height, int inX, int inY) {
+		BufferedImage outImage = new BufferedImage(width, height, image.getType());
+		for (int x = 0; x < image.getWidth(); x++) {
+			for (int y = 0; y < image.getHeight(); y++) {
+				if (x>inX && x<inX+width) {
+					if (y>inY && y<inY+height) {
+						outImage.setRGB(x-inX, y-inY, image.getRGB(x, y));
+					}					
+				}
+			}
+		}
+		return outImage;
+	}
 
 	public static void compressJpegFile(BufferedImage image, OutputStream out, double compressionQuality) {
 		try {
@@ -862,11 +882,13 @@ public class ImageEngine {
 	 * @param args
 	 */
 	public static void main(String[] args) {
-		// TODO Auto-generated method stub
+		File source = new File("d:/trans/test.jpg");
+		File target = new File("d:/trans/target.jpg");
+		
 		try {
 			System.out.println("start...");
 			BufferedImage image = ImageIO.read(source);
-			image = resizeImage(image, 300, 420);
+			image = cropImage(image, 100, 100, 100, 100);
 			// image = lightBlurring(image);
 			// image = blurring(image);
 			// image = applyFilter(image,filterImage, true, 50,50,50,50,null);
