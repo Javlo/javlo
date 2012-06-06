@@ -21,6 +21,7 @@ import org.apache.commons.fileupload.FileItem;
 import org.apache.commons.lang.StringUtils;
 import org.javlo.config.StaticConfig;
 import org.javlo.context.ContentContext;
+import org.javlo.context.GlobalContext;
 import org.javlo.helper.ResourceHelper;
 import org.javlo.helper.StringHelper;
 import org.javlo.helper.URLHelper;
@@ -95,7 +96,7 @@ public class JavloELFinder extends ELFinder {
 	@Override
 	protected void changeFolder(ELFile file) {
 		FileModuleContext fileModuleContext = FileModuleContext.getInstance(((JavloELFile)file).getContentContext().getRequest().getSession());	
-		fileModuleContext.setPath(file.getFile().getAbsolutePath().replace(file.getVolume().getRoot().getFile().getAbsolutePath(), ""));
+		fileModuleContext.setPath(file.getFile().getAbsolutePath().replace(file.getVolume().getRoot().getFile().getAbsolutePath(), file.getVolume().getRoot().getFile().getName()));
 	}
 
 	@Override
@@ -212,5 +213,15 @@ public class JavloELFinder extends ELFinder {
 	protected ELFile createELFile(ELFile parent, File file) {
 		return new JavloELFile(parent.getVolume(), file, parent);
 	}
-
+	
+	@Override
+	protected Map<String, Object> printOptions(ELFile file) {
+		Map<String, Object> outOptions = super.printOptions(file);		
+		if (ResourceHelper.isTemplateFile(GlobalContext.getInstance(((JavloELFile)file).getContentContext().getRequest()), file.getFile())) {
+			outOptions.remove("url");
+			String templateName = ResourceHelper.extractTemplateName(GlobalContext.getInstance(((JavloELFile)file).getContentContext().getRequest()), file.getFile());
+			outOptions.put("url", URLHelper.createTemplateResourceURL(((JavloELFile)file).getContentContext(), '/'+templateName+'/'));
+		}
+		return outOptions;
+	}
 }

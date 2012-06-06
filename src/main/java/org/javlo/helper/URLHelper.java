@@ -34,6 +34,8 @@ public class URLHelper extends ElementaryURLHelper {
 	public static String REQUEST_MANAGER_PARAMATER_KEY = "req_man";
 
 	public static String VFS_SERVLET_NAME = "vfs";
+	
+	public static String TEMPLATE_RESOURCE_PREFIX = "__tpl__";
 
 	public static String cleanPath(String path, boolean trimStartSeparator) {
 		path = path.replaceAll("[/\\\\]+", "/");
@@ -255,6 +257,16 @@ public class URLHelper extends ElementaryURLHelper {
 		url = URLHelper.mergePath(config.getShareDataFolderKey(), url);
 		url = URLHelper.mergePath(RESOURCE, url);
 		return createStaticURL(ctx, url);
+	}
+	
+	public static String createTemplateResourceURL(ContentContext ctx, String url) {
+
+		if (url == null) {
+			return null;
+		}
+		url = url.replace('\\', '/');
+		url = URLHelper.mergePath(TEMPLATE_RESOURCE_PREFIX, url);		
+		return createResourceURL(ctx, url);
 	}
 
 	public static String createStaticTemplateURL(ContentContext ctx, String url) throws Exception {
@@ -815,13 +827,17 @@ public class URLHelper extends ElementaryURLHelper {
 	 * @throws Exception 
 	 */
 	public static String createInterModuleURL(ContentContext ctx, String url, String moduleName, Map<String,String> inParams) throws Exception {
+		GlobalContext globalContext = GlobalContext.getInstance(ctx.getRequest());
+		ModuleContext moduleContext = ModuleContext.getInstance(ctx.getRequest().getSession(), globalContext);
+		return createInterModuleURL(ctx, url, moduleName, moduleContext.getCurrentModule().getName(), inParams);
+	}
+	
+	public static String createInterModuleURL(ContentContext ctx, String url, String moduleName, String fromModule, Map<String,String> inParams) throws Exception {
 		Map<String, String> params = new HashMap<String, String>();
 		if (inParams != null) {
 			params.putAll(inParams);
 		}
-		GlobalContext globalContext = GlobalContext.getInstance(ctx.getRequest());
-		ModuleContext moduleContext = ModuleContext.getInstance(ctx.getRequest().getSession(), globalContext);
-		params.put("from-module", moduleContext.getCurrentModule().getName());
+		params.put("from-module", fromModule);
 		params.put("module", moduleName);
 		return createURL(ctx, url, params);
 	}

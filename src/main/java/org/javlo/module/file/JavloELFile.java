@@ -64,8 +64,12 @@ public class JavloELFile extends ELFile {
 		if (getContentContext() != null) {
 			try {
 				StaticInfo info = StaticInfo.getInstance(getContentContext(), file);
-				GlobalContext globalContext = GlobalContext.getInstance(getContentContext().getRequest());
-				return URLHelper.createResourceURL(getContentContext(), '/' + globalContext.getStaticConfig().getStaticFolder() + info.getStaticURL());
+				GlobalContext globalContext = GlobalContext.getInstance(getContentContext().getRequest());				
+				if (!ResourceHelper.isTemplateFile(globalContext, file)) {
+					return URLHelper.createResourceURL(getContentContext(), '/' + globalContext.getStaticConfig().getStaticFolder() + info.getStaticURL());
+				} else {
+					return URLHelper.createTemplateResourceURL(getContentContext(), '/' + globalContext.getStaticConfig().getStaticFolder() + info.getStaticURL());
+				}
 			} catch (Exception e) {
 				e.printStackTrace();
 			}

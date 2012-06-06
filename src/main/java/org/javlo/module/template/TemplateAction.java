@@ -74,9 +74,16 @@ public class TemplateAction extends AbstractModuleAction {
 				module.restoreAll();
 			} else {
 				ctx.getRequest().setAttribute("currentTemplate", new Template.TemplateBean(ctx, template));
-				FileModuleContext.getInstance(ctx.getRequest().getSession()).setRoot(template.getTemplateRealPath());
-				FileModuleContext.getInstance(ctx.getRequest().getSession()).setTitle(template.getId());
-				Map<String,String> params = new HashMap<String, String>();
+
+				Map<String, String> params = new HashMap<String, String>();
+				params.put("name", templateName);
+
+				FileModuleContext fileModuleContext = FileModuleContext.getInstance(ctx.getRequest().getSession());
+				fileModuleContext.clear();
+				fileModuleContext.setRoot(template.getTemplateRealPath());
+				fileModuleContext.setTitle("<a href=\"" + URLHelper.createModuleURL(ctx, ctx.getPath(), "template", params) + "\">" + template.getId() + "</a>");
+
+				params.clear();
 				params.put("webaction", "browse");
 				ctx.getRequest().setAttribute("fileURL", URLHelper.createInterModuleURL(ctx, ctx.getPath(), "file", params));
 			}
@@ -103,7 +110,7 @@ public class TemplateAction extends AbstractModuleAction {
 		} else {
 			request.setAttribute("currentTemplate", new Template.TemplateBean(ctx, template));
 			module.setRenderer(null);
-			module.setToolsRenderer(null);
+			//module.setToolsRenderer(null);
 			module.clearAllBoxes();
 			try {
 				template.getRenderer(ctx); // prepare ids list
@@ -170,9 +177,9 @@ public class TemplateAction extends AbstractModuleAction {
 	}
 
 	public String performChangeRenderer(HttpSession session, RequestService requestService, GlobalContext globalContext, Module currentModule, I18nAccess i18nAccess) throws Exception {
-		
+
 		currentModule.restoreAll();
-		
+
 		String list = requestService.getParameter("list", null);
 		if (list == null) {
 			return "bad request structure : need 'list' as parameter.";
@@ -244,7 +251,7 @@ public class TemplateAction extends AbstractModuleAction {
 				out = new FileOutputStream(visualFile);
 				JAI.create("encode", image, out, "png", null);
 				out.close();
-				
+
 				messageRepository.setGlobalMessageAndNotification(ctx, new GenericMessage(i18nAccess.getText("template.message.imported", new String[][] { { "name", newTemplate.getId() } }), GenericMessage.INFO));
 
 				templateContext.setCurrentLink(null); // return to local template list.
@@ -294,16 +301,10 @@ public class TemplateAction extends AbstractModuleAction {
 		return null;
 	}
 
-	public static void main(String[] args) {
-		try {
-			RenderedImage image = JAI.create("fileload", "c:/trans/test.gif");
-
-			FileOutputStream stream = new FileOutputStream(new File("c:/trans/visual.png"));
-			JAI.create("encode", image, stream, "png", null);
-
-		} catch (IOException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
+	public String performCommit(RequestService requestService, ServletContext application, ContentContext ctx, MessageRepository messageRepository, I18nAccess i18nAccess) throws IOException {
+		Template template = TemplateFactory.getDiskTemplate(application, requestService.getParameter("name", null), StringHelper.isTrue(requestService.getParameter("mailing", null)));
+		template.clearRenderer(ctx);
+		messageRepository.setGlobalMessageAndNotification(ctx, new GenericMessage(i18nAccess.getText("template.message.commited", new String[][] { { "name", requestService.getParameter("name", null) } }), GenericMessage.INFO));
+		return null;
 	}
 }

@@ -380,7 +380,7 @@ public abstract class ELFinder {
 		String url = null;
 		if (file.getParentFile() != null) {
 			url = file.getParentFile().getURL();
-		}
+		}	
 		return obj(prop("path", '/' + file.getRelativePath()),// (String) Current folder path
 				prop("url", "/resource/static/"),// (String) Current folder URL
 				prop("tmbURL", file.getThumbnailURL()),// (String) Thumbnails folder URL
