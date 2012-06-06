@@ -46,6 +46,10 @@ a.popup span {
 	background-repeat: no-repeat;
 }
 
+.mainBox {
+	margin-top: 20px;
+}
+
 .box {
 	box-shadow: 1px 1px 2px #CCCCCC;
 	margin-bottom: 20px;	

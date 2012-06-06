@@ -1,10 +1,8 @@
 package org.javlo.module.file;
 
-import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
 
-import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 
@@ -19,6 +17,7 @@ import org.javlo.module.Module;
 import org.javlo.module.Module.Box;
 import org.javlo.module.Module.HtmlLink;
 import org.javlo.module.ModuleContext;
+import org.javlo.service.RequestService;
 
 public class FileAction extends AbstractModuleAction {
 
@@ -30,13 +29,13 @@ public class FileAction extends AbstractModuleAction {
 	@Override
 	public String prepare(ContentContext ctx, ModuleContext moduleContext) throws Exception {
 		FileModuleContext fileModuleContext = FileModuleContext.getInstance(ctx.getRequest().getSession());
-		Module currentModule = moduleContext.getCurrentModule();
 		
-		if (moduleContext.getFromModule() == null) {			
+		if (moduleContext.getFromModule() == null && ctx.getRequest().getParameter("changeRoot") == null) {			
 			fileModuleContext.clear();
 			moduleContext.getCurrentModule().restoreAll();
 		} else {
-			if (fileModuleContext.getTitle() != null) {
+			if (fileModuleContext.getTitle() != null) {				
+				moduleContext.getCurrentModule().restoreAll();
 				Box box = moduleContext.getCurrentModule().getBox("filemanager");
 				box.setTitle(box.getTitle()+" : "+fileModuleContext.getTitle());
 			}
@@ -49,14 +48,14 @@ public class FileAction extends AbstractModuleAction {
 		return null;
 	}	
 	
-	public String performUpdateBreadCrumb(HttpSession session, StaticConfig staticConfig, ContentContext ctx, EditContext editContext, Module currentModule, I18nAccess i18nAccess) throws ServletException, IOException {		
+	public String performUpdateBreadCrumb(RequestService rs, HttpSession session, StaticConfig staticConfig, ContentContext ctx, EditContext editContext, ModuleContext moduleContext, Module currentModule, I18nAccess i18nAccess) throws Exception {		
 		
 		FileModuleContext fileModuleContext = FileModuleContext.getInstance(ctx.getRequest().getSession());
 		
 		currentModule.clearBreadcrump();
 		currentModule.setBreadcrumbTitle("");
 		
-		String[] pathItems = URLHelper.cleanPath(URLHelper.mergePath(staticConfig.getStaticFolder(),fileModuleContext.getPath()), true).split("/");
+		String[] pathItems = URLHelper.cleanPath(URLHelper.mergePath(fileModuleContext.getPath()), true).split("/");
 		String currentPath = "/";
 		for (String path : pathItems) {
 			if (path.trim().length() > 0) {
@@ -64,7 +63,15 @@ public class FileAction extends AbstractModuleAction {
 				
 				Map<String, String> filesParams = new HashMap<String, String>();
 				filesParams.put("path", currentPath);
-				String staticURL = URLHelper.createModuleURL(ctx, ctx.getPath(), "file", filesParams); 
+				if (rs.getParameter("changeRoot", null) != null) {
+					filesParams.put("changeRoot", "true");
+				}
+				String staticURL;
+				if (moduleContext.getFromModule() != null) {
+					staticURL = URLHelper.createInterModuleURL(ctx, ctx.getPath(), "file", moduleContext.getFromModule().getName(), filesParams);
+				} else {
+					staticURL = URLHelper.createModuleURL(ctx, ctx.getPath(), "file", filesParams);
+				}
 				
 				currentModule.pushBreadcrumb(new HtmlLink(staticURL, path, path));
 			}

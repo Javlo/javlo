@@ -95,27 +95,27 @@ jQuery(document).ready(function(){
 	/**
 	 * Widget Box Toggle
 	**/
-	jQuery('.widgetbox h3, .widgetbox2 h3').hover(function(){
+	/*jQuery('.widgetbox h3, .widgetbox2 h3').hover(function(){
 		jQuery(this).addClass('arrow');
 		return false;
 	},function(){
 		jQuery(this).removeClass('arrow');
 		return false;
-	});
+	});*/
 	
-	jQuery('.widgetbox h3, .widgetbox2 h3').toggle(function(){
-		jQuery(this).next().slideUp('fast');
+	/*jQuery('.widgetbox h3, .widgetbox2 h3').toggle(function(){
+		//jQuery(this).next().slideUp('fast');
 		jQuery(this).css({MozBorderRadius: '3px', 
 						  WebkitBorderRadius: '3px',
 						  borderRadius: '3px'});
 		return false;
 	},function(){
-		jQuery(this).next().slideDown('fast');
+		//jQuery(this).next().slideDown('fast');
 		jQuery(this).css({MozBorderRadius: '3px 3px 0 0', 
 						  WebkitBorderRadius: '3px 3px 0 0',
 						  borderRadius: '3px 3px 0 0'});
 		return false;
-	});
+	});*/
 	
 	
 	/**

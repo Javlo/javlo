@@ -3,7 +3,7 @@
 <div class="multimedia">
 <div class="ep_block">
 <div class="ep_element1col">
-<div class="ep_elementimg_left">
+<div class="ep_elementimg_left thumb-image">
 
 <c:forEach var="resource" items="${resources}" varStatus="status">
 <c:if test="${status.count == 1}">
@@ -15,7 +15,7 @@
 </c:forEach>
 
 <c:if test="${fn:length(resources) gt 1}">
-<ul class="ep-hidden-images">
+<ul class="ep-hidden-images hidden">
 <c:forEach var="resource" items="${resources}" varStatus="status">
 <c:if test="${status.count > 1}">
 <li>

@@ -307,7 +307,7 @@ public class Multimedia extends TimeRangeComponent implements IImageTitle {
 	}
 
 	protected String getHTMLRelation(ContentContext ctx) {
-		return "gal" + getId();
+		return "shadowbox" + getId();
 	}
 
 	protected String getImageFilePath(ContentContext ctx, String fileLink) {

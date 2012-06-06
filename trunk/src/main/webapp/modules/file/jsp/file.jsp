@@ -1,4 +1,7 @@
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
+<c:if test="${not empty param.changeRoot}">
+	<c:set var="changeRoot" value="true" />
+</c:if>
 <c:if test="${not empty param.path}">
 	<c:set var="ELPath" value="${param.path}" scope="session" />
 </c:if>
@@ -14,7 +17,7 @@ jQuery(document).ready(function() {
 		lang : '${info.editLanguage}',
 		height: jQuery("#footer").offset().top - jQuery("#fileManager").offset().top - jQuery(".mainBoxe .widgetbox h3").height(),
 		handlers : {			
-			open: function(event) { ajaxRequest("${info.currentURL}?webaction=updateBreadcrumb"); }
+			open: function(event) { ajaxRequest("${info.currentURL}?webaction=updateBreadcrumb${not empty changeRoot?"&changeRoot=true":""}"); }
 		},
 		quicklook : {
 			autoplay : true,

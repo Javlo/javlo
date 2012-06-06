@@ -137,7 +137,7 @@
 </div><!-- leftmenu -->
 </c:if>
 
-<div class="maincontent">
+<div class="maincontent ${currentModule.name}">
 
 <c:if test="${currentModule.breadcrumb}">
 	<div id="breadcrumbs" class="breadcrumbs">
@@ -169,7 +169,7 @@
 	
 		<c:forEach var="currentBox" items="${currentModule.mainBoxes}">
 			<c:set var="box" value="${currentBox}" scope="request" />
-			<div class="mainBoxe" id="${box.id}">		
+			<div class="mainBox" id="${box.id}">		
 			<jsp:include page="box.jsp" />
 			</div>
 		</c:forEach>

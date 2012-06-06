@@ -3,6 +3,10 @@ body, html {
     padding: 0;
 }
 
+.hidden {
+	display: none;
+}
+
 /** fake input **/
 #fk {
 	position: absolute;
@@ -17,144 +21,6 @@ body, html {
 .content_clear {
 	clear: both;
 	font-size: 0;
-}
-
-/****************/
-/*** VIEW BAR ***/
-/****************/
-#view-bar {
-    width: auto;
-    position: absolute;
-    left: 0px;
-    right: 0px;
-    bottom: 0px;
-    background-color: #dddddd;
-    border-top: 1px #444444 solid;
-    border-bottom: 1px #dddddd solid;
-    font-size: 0.8em;
-    overflow: hidden;
-    height: 62px;
-}
-
-#view-bar[id] {
-    position: fixed;
-}
-
-#view-bar div {
-    float: left;
-}
-
-#view-bar .button {
-    margin-top: 4px;
-    margin-bottom: 3px;
-    margin-left: 10px;
-    border-right: 1px #888888 solid;
-    padding-right: 10px;
-}
-
-#view-bar .button a {
-    color: #444444;
-    text-decoration: none;
-}
-
-#view-bar .view-bar-command {
-    margin: 44px 2px 2px 2px;
-}
-
-#view-bar .view-bar-pub {
-    position: absolute;
-    right: 5px;
-    margin-top: 48px;
-}
-
-#view-bar .view-bar-close {
-    float: right;
-    margin-top: 5px;
-    margin-right: 5px;
-}
-
-#view-bar .view-bar-rank {
-    position: absolute;
-    right: 15px;
-    margin-top: 4px;
-    margin-right: 20px;
-}
-
-#view-bar .view-bar-rank form {
-    display: inline;
-}
-
-#view-bar #google-pub {
-    position: absolute;
-    bottom: 0px;
-    height: 60px;
-    width: 468px;
-    left: 50%;
-    margin-left: -234px;
-}
-
-#view-bar dl, #view-bar dt, #view-bar dd, #view-bar ul, #view-bar ol, #view-bar li, #view-bar h1, #view-bar h2, #view-bar h3, #view-bar h4, #view-bar h5, #view-bar h6, #view-bar pre, #view-bar code, #view-bar form, #view-bar fieldset, #view-bar legend, #view-bar input, #view-bar textarea, #view-bar p, #view-bar blockquote, #view-bar th, #view-bar td {
-    margin: 0;
-    padding: 0;	
-}
-
-#view-bar table {
-    border-collapse: collapse;
-    border-spacing: 0;
-}
-
-#view-bar fieldset, #view-bar img {
-    padding: 0px;
-    margin: 0px;
-    border: 0;
-    display: inline;
-    position: inherit;
-}
-
-#view-bar address, #view-bar caption, #view-bar cite, #view-bar code, #view-bar dfn, #view-bar em, #view-bar strong, #view-bar th, #view-bar var {
-    font-style: normal;
-    font-weight: normal;
-}
-
-#view-bar li {
-    list-style: none;
-}
-
-#view-bar caption, #view-bar th {
-    text-align: left;
-}
-
-#view-bar h1, #view-bar h2, #view-bar h3, #view-bar h4, #view-bar h5, #view-bar h6 {
-    font-size: 100%;
-    font-weight: normal;
-}
-
-#view-bar q:before, #view-bar q:after {
-    content: '';
-}
-
-#view-bar abbr, #view-bar acronym {
-    border: 0;
-    font-variant: normal;
-}
-
-#view-bar sup, #view-bar sub {
-    line-height: -1px;
-    vertical-align: text-top;
-}
-
-#view-bar sub {
-    vertical-align: text-bottom;
-}
-
-#view-bar input, #view-bar textarea, #view-bar select {
-    font-family: inherit;
-    font-size: inherit;
-    font-weight: inherit;
-}
-
-#view-bar a, #view-bar a:hover {
-    border: none 0px;
 }
 
 /****************/
@@ -336,5 +202,4 @@ div.debug-note {
 .hd {
 	font-size: 0;
 	display: none;
-}
 }
