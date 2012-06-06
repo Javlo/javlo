@@ -3,6 +3,7 @@
 <div class="content">
 <div class="template-preview">
 	<img src="${currentTemplate.previewUrl}" alt="${currentTemplate.template.name}" />
+	<div class="actions"><a class="action-button" href="${fileURL}">${i18n.edit['global.browse']}...</a></div>
 </div>
 
 <form id="form-edit-template" action="${info.currentURL}" class="standard-form" method="post">
@@ -61,7 +62,7 @@
 	
 	<div class="action">
 		<input type="submit" name="back" value="${i18n.edit['global.back']}" />
-		<input type="submit" value="${i18n.edit['global.ok']}" />
+		<input type="submit" value="${i18n.edit['global.ok']}" />		
 	</div>
 </form>
 </div>

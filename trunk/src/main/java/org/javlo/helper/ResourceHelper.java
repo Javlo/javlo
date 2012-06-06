@@ -72,25 +72,24 @@ public class ResourceHelper {
 	static final String CONFIG_DIR = "/WEB-INF/config";
 
 	static final String STATIC_COMPONENT_DIR = "/static/components";
-	
+
 	public static class ImageFilenameFilter implements FilenameFilter {
 
 		@Override
 		public boolean accept(File file, String fileName) {
 			return StringHelper.isImage(fileName);
 		}
-		
+
 	}
-	
+
 	public static class VideoFilenameFilter implements FilenameFilter {
 
 		@Override
 		public boolean accept(File file, String fileName) {
 			return StringHelper.isVideo(fileName);
 		}
-		
-	}
 
+	}
 
 	public synchronized static final void appendLineToFile(File file, String content, String encoding) throws IOException {
 		if (!file.exists()) {
@@ -902,7 +901,7 @@ public class ResourceHelper {
 
 		return countByte;
 	}
-	
+
 	public static final int writeFileToFile(File fileIn, File file) throws IOException {
 		InputStream in = null;
 		try {
@@ -912,7 +911,6 @@ public class ResourceHelper {
 			ResourceHelper.closeResource(in);
 		}
 	}
-
 
 	/**
 	 * write a InputStream in a OuputStream, without close.
@@ -958,7 +956,7 @@ public class ResourceHelper {
 		}
 		out.close();
 	}
-	
+
 	public static File getFreeFileName(File file) {
 		File folder = file.getParentFile();
 		String newName = file.getName();
@@ -974,4 +972,37 @@ public class ResourceHelper {
 		return null;
 	}
 
+	/**
+	 * return true if file is insise template folder
+	 * 
+	 * @param globalContext
+	 * @param file
+	 * @return
+	 */
+	public static boolean isTemplateFile(GlobalContext globalContext, File file) {
+		String filePath = file.getAbsolutePath().replace('\\', '/');
+		String templatePath = globalContext.getStaticConfig().getTemplateFolder().replace('\\', '/');
+		return filePath.startsWith(templatePath);
+	}
+
+	/**
+	 * return the name of the template
+	 * 
+	 * @param globalContext
+	 * @param file
+	 * @return
+	 */
+	public static String extractTemplateName(GlobalContext globalContext, File file) {
+		String filePath = file.getAbsolutePath().replace('\\', '/');
+		String templatePath = globalContext.getStaticConfig().getTemplateFolder().replace('\\', '/');
+
+		if (filePath.startsWith(templatePath)) {
+			filePath = filePath.replaceFirst(templatePath, "");			
+			if (filePath.startsWith("/")) {
+				filePath = filePath.substring(1);
+			}
+			return filePath.split("/")[0];
+		}
+		return null;
+	}
 }

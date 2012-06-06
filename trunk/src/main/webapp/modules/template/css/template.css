@@ -19,3 +19,11 @@
 	opacity : 0.8;
 }
 
+.template-preview {
+	text-align: center;
+}
+
+.template-preview .actions {
+	margin-top: 10px;
+}
+

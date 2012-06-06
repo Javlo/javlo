@@ -104,6 +104,8 @@ public class EditContext implements Serializable {
 	String messageTemplate = "message.jsp";
 	
 	String boxTemplate = "box.jsp";
+	
+	String breadcrumbsTemplate = "breadcrumbs.jsp";
 
 	String loginRenderer = "login.jsp";
 
@@ -442,6 +444,10 @@ public class EditContext implements Serializable {
 	
 	public String getBoxTemplate() {
 		return URLHelper.mergePath(getEditTemplateFolder(), boxTemplate);
+	}
+	
+	public String getBreadcrumbsTemplate() {
+		return URLHelper.mergePath(getEditTemplateFolder(), breadcrumbsTemplate);		
 	}
 
 	public void setMessageTemplate(String messageTemplate) {

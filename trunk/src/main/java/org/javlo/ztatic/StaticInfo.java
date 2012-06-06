@@ -306,6 +306,9 @@ public class StaticInfo {
 		String fullURL = URLHelper.cleanPath(file.getPath(), false);
 
 		String fullStaticFolder = URLHelper.mergePath(globalContext.getDataFolder(), staticConfig.getStaticFolder());
+		if (ResourceHelper.isTemplateFile(globalContext, file)) {
+			fullStaticFolder = staticConfig.getTemplateFolder();
+		}
 		if (ctx.getRenderMode() == ContentContext.ADMIN_MODE) {
 			fullStaticFolder = staticConfig.getShareDataFolder();
 		}

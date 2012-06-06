@@ -18,7 +18,6 @@ import java.util.logging.Logger;
 
 import org.apache.commons.fileupload.FileItem;
 import org.javlo.component.core.ComponentBean;
-import org.javlo.component.core.IContentVisualComponent;
 import org.javlo.component.core.IReverseLinkComponent;
 import org.javlo.config.StaticConfig;
 import org.javlo.context.ContentContext;
