@@ -10,7 +10,9 @@ import java.net.URL;
 import java.text.ParseException;
 import java.util.Collection;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.LinkedList;
+import java.util.Map;
 
 import javax.media.jai.JAI;
 import javax.servlet.ServletContext;
@@ -29,6 +31,7 @@ import org.javlo.message.GenericMessage;
 import org.javlo.message.MessageRepository;
 import org.javlo.module.Module;
 import org.javlo.module.ModuleContext;
+import org.javlo.module.file.FileModuleContext;
 import org.javlo.module.template.remote.IRemoteTemplate;
 import org.javlo.module.template.remote.IRemoteTemplateFactory;
 import org.javlo.module.template.remote.RemoteTemplateFactoryManager;
@@ -71,6 +74,11 @@ public class TemplateAction extends AbstractModuleAction {
 				module.restoreAll();
 			} else {
 				ctx.getRequest().setAttribute("currentTemplate", new Template.TemplateBean(ctx, template));
+				FileModuleContext.getInstance(ctx.getRequest().getSession()).setRoot(template.getTemplateRealPath());
+				FileModuleContext.getInstance(ctx.getRequest().getSession()).setTitle(template.getId());
+				Map<String,String> params = new HashMap<String, String>();
+				params.put("webaction", "browse");
+				ctx.getRequest().setAttribute("fileURL", URLHelper.createInterModuleURL(ctx, ctx.getPath(), "file", params));
 			}
 		} else if (requestService.getParameter("list", null) == null) {
 			module.clearAllBoxes();

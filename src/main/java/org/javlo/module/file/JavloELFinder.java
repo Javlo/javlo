@@ -6,7 +6,6 @@ import java.io.InputStream;
 import java.io.Writer;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Collection;
 import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
@@ -19,6 +18,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import org.apache.commons.fileupload.FileItem;
+import org.apache.commons.lang.StringUtils;
 import org.javlo.config.StaticConfig;
 import org.javlo.context.ContentContext;
 import org.javlo.helper.ResourceHelper;
@@ -90,6 +90,12 @@ public class JavloELFinder extends ELFinder {
 			fileToHash.put(file, hash);
 		}
 		return hash;
+	}
+	
+	@Override
+	protected void changeFolder(ELFile file) {
+		FileModuleContext fileModuleContext = FileModuleContext.getInstance(((JavloELFile)file).getContentContext().getRequest().getSession());	
+		fileModuleContext.setPath(file.getFile().getAbsolutePath().replace(file.getVolume().getRoot().getFile().getAbsolutePath(), ""));
 	}
 
 	@Override

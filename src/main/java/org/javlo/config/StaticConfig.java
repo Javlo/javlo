@@ -621,8 +621,7 @@ public class StaticConfig extends Observable {
 	}
 
 	public String getLocalTemplateFolder() {
-		String path = properties.getString("template-folder", "/template");
-		path = replaceFolderVariable(path);
+		String path = properties.getString("template-folder", "/template");		
 		return path;
 	}
 
@@ -856,7 +855,7 @@ public class StaticConfig extends Observable {
 		if (isDataFolderRelative()) {
 			return application.getRealPath(getLocalTemplateFolder());
 		} else {
-			return getLocalTemplateFolder();
+			return replaceFolderVariable(getLocalTemplateFolder());
 		}
 	}
 

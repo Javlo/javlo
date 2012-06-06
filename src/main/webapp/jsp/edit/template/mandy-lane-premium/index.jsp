@@ -140,28 +140,8 @@
 <div class="maincontent">
 
 <c:if test="${currentModule.breadcrumb}">
-	<div class="breadcrumbs">
-		<c:if test="${not empty currentModule.breadcrumbTitle}">
-			<span class="title">${currentModule.breadcrumbTitle}</span>
-		</c:if>
-		<c:if test="${empty currentModule.breadcrumbList}">
-			<c:forEach var="page" items="${info.pagePath}">
-			<c:set var="link" value='<a href="${page.url}">' />
-			${empty param.previewEdit?link:'<span class="title">'}${page.info.title}${empty param.previewEdit?'</a>':'</span>'}
-			</c:forEach>
-			<span>${info.pageTitle}</span>
-		</c:if>
-		<c:if test="${not empty currentModule.breadcrumbList}">
-			<c:forEach var="link" items="${currentModule.breadcrumbList}" varStatus="status">
-			<c:if test="${ status.count < fn:length(currentModule.breadcrumbList) }">
-				<a href="${link.url}" title="${link.title}">${link.legend}</a>
-			</c:if>			
-			<c:if test="${ status.count == fn:length(currentModule.breadcrumbList) }">
-				<span>${link.legend}</span>
-			</c:if>
-			</c:forEach>		
-					
-		</c:if>		
+	<div id="breadcrumbs" class="breadcrumbs">
+		<jsp:include page="breadcrumbs.jsp" />
 	</div>
 </c:if>
 

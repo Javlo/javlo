@@ -267,8 +267,7 @@ public abstract class ELFinder {
 		return defaultValue;
 	}
 
-	public void open(boolean init, ELFile target, boolean tree, Map<String, Object> response) {
-		System.out.println("open - target:" + target);
+	public void open(boolean init, ELFile target, boolean tree, Map<String, Object> response) {		
 		if (target == null) {
 			ELVolume volume = getVolumes().iterator().next();
 			target = volume.getRoot();
@@ -285,11 +284,16 @@ public abstract class ELFinder {
 				parent = parent.getParentFile();
 			}
 		}
+		
 		response.put("files", printFiles(files));
 		if (init) {
 			extend(response, prop("api", PROTOCOL_VERSION), prop("uplMaxSize", "512M"));
 		}
+		
+		changeFolder(target);
 	}
+	
+	protected abstract void changeFolder(ELFile file);
 
 	protected abstract List<ELVolume> getVolumes();
 

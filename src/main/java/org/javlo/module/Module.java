@@ -1,6 +1,7 @@
 package org.javlo.module;
 
 import java.io.File;
+import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.IOException;
 import java.util.Collection;
@@ -26,13 +27,14 @@ import org.javlo.utils.ReadOnlyPropertiesMap;
 
 /**
  * A module is a application inside javlo.
+ * 
  * @author Patrick Vandermaesen
- *
+ * 
  */
 public class Module {
-	
+
 	private static final String CSS_FOLDER = "css";
-	
+
 	private static final String JS_FOLDER = "js";
 
 	public static final class EmptyAction implements IModuleAction {
@@ -55,38 +57,45 @@ public class Module {
 	}
 
 	private static final EmptyAction emptyAction = new EmptyAction();
-	
+
 	public static class HtmlLink {
 		private String url;
 		private String legend;
 		private String title;
-		
-		public HtmlLink(String url, String legend, String title) {		
+
+		public HtmlLink(String url, String legend, String title) {
 			this.url = url;
 			this.legend = legend;
 			this.title = title;
 		}
+
 		public String getUrl() {
 			return url;
 		}
+
 		public void setUrl(String url) {
 			this.url = url;
 		}
+
 		public String getLegend() {
 			return legend;
 		}
+
 		public void setLegend(String legend) {
 			this.legend = legend;
 		}
+
 		public String getTitle() {
 			return title;
 		}
+
 		public void setTitle(String title) {
 			this.title = title;
 		}
+
 		@Override
 		public boolean equals(Object obj) {
-			HtmlLink otherLink = (HtmlLink)obj;
+			HtmlLink otherLink = (HtmlLink) obj;
 			return otherLink.getUrl().equals(getUrl()) && otherLink.getLegend().equals(getLegend());
 		}
 	}
@@ -129,8 +138,8 @@ public class Module {
 		private Box(String title, String renderer, boolean action) {
 			this.title = StringHelper.neverNull(title);
 			this.renderer = URLHelper.mergePath(path, renderer);
-			this.action = action;			
-			id = "box-"+StringHelper.getRandomId();
+			this.action = action;
+			id = "box-" + StringHelper.getRandomId();
 		}
 
 		private String title;
@@ -161,15 +170,17 @@ public class Module {
 		public void setAction(boolean action) {
 			this.action = action;
 		}
+
 		public String getId() {
 			return id;
 		}
-		
+
 		/**
-		 * this method is called when the box must be updated.  This method is used only in ajax context.
+		 * this method is called when the box must be updated. This method is used only in ajax context.
+		 * 
 		 * @param ctx
-		 * @throws IOException 
-		 * @throws ServletException 
+		 * @throws IOException
+		 * @throws ServletException
 		 */
 		public void update(ContentContext ctx) throws ServletException, IOException {
 			AjaxHelper.updateBox(ctx, this);
@@ -178,7 +189,7 @@ public class Module {
 		public Module getModule() {
 			return Module.this;
 		}
-		
+
 	}
 
 	private String name;
@@ -197,26 +208,48 @@ public class Module {
 	private String helpTitle = null;
 	private String helpText = null;
 	private String toolsTitle = null;
-	private String toolsRenderer = null;	
+	private String toolsRenderer = null;
 	private String defaultToolsRenderer = null;
 	private IModuleAction action = emptyAction;
 	private Collection<String> cssURI = new LinkedList<String>();
 	private Collection<String> jsURI = new LinkedList<String>();
 	private String renderer;
 	private String defaultRenderer;
-	private Map<String,Box> boxes = new HashMap<String, Box>();	
-	private Map<String,Box> defaultBoxes;
+	private Map<String, Box> boxes = new HashMap<String, Box>();
+	private Map<String, Box> defaultBoxes;
 	private String backUrl = null;
 	private Stack<HtmlLink> breadcrumbLinks;
 	private boolean search;
 	private int order;
 	private Set<String> roles;
-	private Map<String,String> config;
+	private Map<String, String> config;
+
+	private File configFile;
+	private Locale locale;
+	private String modulePath;
 
 	private String description = "?";
 
 	public Module(File configFile, Locale locale, String modulePath) throws IOException {
-		FileReader fileReader = null;		
+
+		this.configFile = configFile;
+		this.locale = locale;
+		this.modulePath = modulePath;
+
+		loadModule();
+
+	}
+
+	private void loadModule() throws IOException {
+		
+		cssURI.clear();
+		jsURI.clear();
+		boxes.clear();		
+		mainBoxes.clear();		
+		sideBoxes.clear();
+		navigation.clear();
+		
+		FileReader fileReader = null;
 		try {
 			fileReader = new FileReader(configFile);
 			Properties properties = new Properties();
@@ -231,57 +264,62 @@ public class Module {
 		name = config.get("name");
 		breadcrumb = StringHelper.isTrue(config.get("breadcrumb"));
 		search = StringHelper.isTrue(config.get("search"));
-		
-		order = Integer.parseInt(StringHelper.neverNull(config.get("order"),"100"));
-	
+
+		order = Integer.parseInt(StringHelper.neverNull(config.get("order"), "100"));
+
 		/** security **/
 		String rolesRaw = config.get("security.roles");
 		if (rolesRaw != null) {
 			roles = new HashSet<String>();
 			roles.addAll(StringHelper.stringToCollection(rolesRaw, ";"));
 		}
-		
+
 		title = config.get("title." + locale.getLanguage());
 		if (title == null) {
 			title = config.get("title");
 		}
-		
+
 		description = config.get("description." + locale.getLanguage());
 		if (description == null) {
 			description = config.get("description");
 		}
-		
+
 		moduleRoot = configFile.getParentFile();
-		
+
 		/* css */
-		File cssFolder = new File(URLHelper.mergePath(moduleRoot.getAbsolutePath(), CSS_FOLDER));		
+		File cssFolder = new File(URLHelper.mergePath(moduleRoot.getAbsolutePath(), CSS_FOLDER));
 		if (cssFolder.isDirectory()) {
 			File[] cssFiles = cssFolder.listFiles();
-			for (File file : cssFiles) {				
-				if (file.isFile() && StringHelper.getFileExtension(file.getName()).equalsIgnoreCase("css")) {					
-					cssURI.add(ModuleContext.MODULES_FOLDER+'/'+getName()+'/'+CSS_FOLDER+'/'+file.getName());				
+			for (File file : cssFiles) {
+				if (file.isFile() && StringHelper.getFileExtension(file.getName()).equalsIgnoreCase("css")) {
+					cssURI.add(ModuleContext.MODULES_FOLDER + '/' + getName() + '/' + CSS_FOLDER + '/' + file.getName());
 				}
-			}			
+			}
 		}
-		
+
 		/* js */
-		File jsFolder = new File(URLHelper.mergePath(moduleRoot.getAbsolutePath(), JS_FOLDER));		
+		File jsFolder = new File(URLHelper.mergePath(moduleRoot.getAbsolutePath(), JS_FOLDER));
 		if (jsFolder.isDirectory()) {
 			File[] jspFiles = jsFolder.listFiles();
-			for (File file : jspFiles) {				
-				if (file.isFile() && StringHelper.getFileExtension(file.getName()).equalsIgnoreCase("js")) {					
-					jsURI.add(ModuleContext.MODULES_FOLDER+'/'+getName()+'/'+JS_FOLDER+'/'+file.getName());				
+			for (File file : jspFiles) {
+				if (file.isFile() && StringHelper.getFileExtension(file.getName()).equalsIgnoreCase("js")) {
+					jsURI.add(ModuleContext.MODULES_FOLDER + '/' + getName() + '/' + JS_FOLDER + '/' + file.getName());
 				}
-			}			
-		}		
-		
+			}
+			for (int i = 0; i < 100; i++) {
+				if (config.get("js.import."+i) != null) {
+					jsURI.add(ModuleContext.MODULES_FOLDER + '/' + getName() + config.get("js.import."+i)  );
+				}
+			}
+		}
+
 		/* main renderer */
 		renderer = config.get("renderer");
 		if (renderer != null) {
 			renderer = URLHelper.mergePath(path, renderer);
 			defaultRenderer = renderer;
 		}
-		
+
 		/* tools */
 		toolsTitle = config.get("tools.title." + locale.getLanguage());
 		if (toolsTitle == null) {
@@ -321,8 +359,8 @@ public class Module {
 				}
 				Box box = new Box(boxTitle, renderer, StringHelper.isTrue(config.get(navigationBaseKey + ".action")));
 				navigation.add(box);
-				if (config.get(navigationBaseKey+".name") != null) { 
-					boxes.put(config.get(navigationBaseKey+".name"), box);
+				if (config.get(navigationBaseKey + ".name") != null) {
+					boxes.put(config.get(navigationBaseKey + ".name"), box);
 				}
 			} else {
 				break;
@@ -341,14 +379,14 @@ public class Module {
 				}
 				Box box = new Box(boxTitle, renderer, StringHelper.isTrue(config.get(boxBaseKey + ".action")));
 				mainBoxes.add(box);
-				if (config.get(boxBaseKey+".name") != null) { 
-					boxes.put(config.get(boxBaseKey+".name"), box);
+				if (config.get(boxBaseKey + ".name") != null) {
+					boxes.put(config.get(boxBaseKey + ".name"), box);
 				}
 			} else {
 				break;
 			}
-		}		
-		
+		}
+
 		defaultMainBoxes = new LinkedList<Module.Box>(mainBoxes);
 		for (int i = 1; i < 100; i++) {
 			String boxBaseKey = "box.side." + i;
@@ -361,14 +399,14 @@ public class Module {
 				}
 				Box box = new Box(boxTitle, renderer, StringHelper.isTrue(config.get(boxBaseKey + ".action")));
 				sideBoxes.add(box);
-				if (config.get(boxBaseKey+".name") != null) { 
-					boxes.put(config.get(boxBaseKey+".name"), box);
+				if (config.get(boxBaseKey + ".name") != null) {
+					boxes.put(config.get(boxBaseKey + ".name"), box);
 				}
 			} else {
 				break;
 			}
 		}
-		defaultSideBoxes = new LinkedList<Module.Box>(sideBoxes);		
+		defaultSideBoxes = new LinkedList<Module.Box>(sideBoxes);
 		defaultBoxes = new HashMap<String, Box>(boxes);
 
 		/* action */
@@ -385,7 +423,7 @@ public class Module {
 	public Collection<Box> getMainBoxes() {
 		return mainBoxes;
 	}
-	
+
 	public Collection<Box> getSideBoxes() {
 		return sideBoxes;
 	}
@@ -401,13 +439,14 @@ public class Module {
 	public String getHelpText() {
 		return helpText;
 	}
-	
+
 	public String getRenderer() {
 		return renderer;
 	}
-	
+
 	/**
 	 * set a renderer. Root folder is the root of the module.
+	 * 
 	 * @param renderer
 	 */
 	public void setRenderer(String renderer) {
@@ -417,31 +456,31 @@ public class Module {
 			this.renderer = null;
 		}
 	}
-	
+
 	/**
 	 * set a renderer. Root folder is the root of webapps.
+	 * 
 	 * @param renderer
 	 */
 	public void setAbsoluteRenderer(String renderer) {
 		this.renderer = renderer;
 	}
-	
+
 	/**
 	 * restore the renderer of the config file.
 	 */
 	public void restoreRenderer() {
 		renderer = defaultRenderer;
 	}
-	
+
 	/**
 	 * restore all element to value defined in the config.
+	 * @throws IOException 
 	 */
-	public void restoreAll() {
-		restoreRenderer();
-		restoreToolsRenderer();	
-		restoreBoxes();
+	public void restoreAll() throws IOException {
+		loadModule();
 	}
-	
+
 	public synchronized void restoreBoxes() {
 		mainBoxes = new LinkedList<Module.Box>(defaultMainBoxes);
 		sideBoxes = new LinkedList<Module.Box>(defaultSideBoxes);
@@ -459,7 +498,7 @@ public class Module {
 	public boolean isSidebar() {
 		return sidebar;
 	}
-	
+
 	public void setSidebar(boolean sidebar) {
 		this.sidebar = sidebar;
 	}
@@ -483,38 +522,40 @@ public class Module {
 	public void setBreadcrumb(boolean breadcrumb) {
 		this.breadcrumb = breadcrumb;
 	}
-	
+
 	/**
 	 * return the list of URL to CSS files of the module.
+	 * 
 	 * @return
 	 */
 	public Collection<String> getCSS() {
 		return cssURI;
 	}
-	
+
 	/**
 	 * return the list of URL to JS files of the module.
+	 * 
 	 * @return
 	 */
 	public Collection<String> getJS() {
 		return jsURI;
 	}
-	
-	public Properties loadEditI18n (GlobalContext globalContext) throws IOException {
-		File file = new File(moduleRoot.getAbsolutePath(), "edit_"+globalContext.getEditLanguage());
+
+	public Properties loadEditI18n(GlobalContext globalContext) throws IOException {
+		File file = new File(moduleRoot.getAbsolutePath(), "edit_" + globalContext.getEditLanguage());
 		if (!file.exists()) {
-			file = new File(URLHelper.mergePath(moduleRoot.getAbsolutePath(), "/i18n/edit_"+globalContext.getDefaultEditLanguage()+".properties"));
-		}	
+			file = new File(URLHelper.mergePath(moduleRoot.getAbsolutePath(), "/i18n/edit_" + globalContext.getDefaultEditLanguage() + ".properties"));
+		}
 		Properties prop = null;
-		if (file.exists()) {		
-			prop = new Properties();			
+		if (file.exists()) {
+			prop = new Properties();
 			FileReader reader = new FileReader(file);
 			prop.load(reader);
 			reader.close();
 		}
 		return prop;
 	}
-	
+
 	public String getToolsTitle() {
 		return toolsTitle;
 	}
@@ -534,18 +575,18 @@ public class Module {
 			this.toolsRenderer = null;
 		}
 	}
-	
+
 	/**
 	 * restore the tools renderer of the config file.
 	 */
 	public void restoreToolsRenderer() {
 		toolsRenderer = defaultToolsRenderer;
 	}
-	
+
 	public synchronized Box getBox(String name) {
 		return boxes.get(name);
 	}
-	
+
 	public synchronized Box createMainBox(String name, String title, String renderer, boolean action) {
 		Box box = new Box(title, renderer, action);
 		mainBoxes.add(box);
@@ -554,9 +595,10 @@ public class Module {
 		}
 		return box;
 	}
-	
+
 	/**
 	 * create a a new side box.
+	 * 
 	 * @param name
 	 * @param title
 	 * @param renderer
@@ -575,7 +617,7 @@ public class Module {
 		}
 		return box;
 	}
-	
+
 	public synchronized void clearAllBoxes() {
 		boxes.clear();
 		sideBoxes.clear();
@@ -590,15 +632,15 @@ public class Module {
 	public void setBackUrl(String backUrl) {
 		this.backUrl = backUrl;
 	}
-	
+
 	public String getPath() {
 		return path;
 	}
-	
+
 	public Collection<HtmlLink> getBreadcrumbList() {
 		return breadcrumbLinks;
 	}
-	
+
 	public void pushBreadcrumb(HtmlLink link) {
 		if (breadcrumbLinks == null) {
 			breadcrumbLinks = new Stack<HtmlLink>();
@@ -607,11 +649,11 @@ public class Module {
 			breadcrumbLinks.push(link);
 		}
 	}
-	
-	public HtmlLink popBreadcrumb(HtmlLink link) {
+
+	public HtmlLink popBreadcrumb() {
 		return breadcrumbLinks.pop();
 	}
-	
+
 	public void clearBreadcrump() {
 		breadcrumbLinks = null;
 	}
@@ -635,19 +677,19 @@ public class Module {
 	public int getOrder() {
 		return order;
 	}
-	
+
 	public Set<String> getRoles() {
 		return roles;
 	}
-	
+
 	public String getVersion() {
 		return StringHelper.neverNull(config.get("version"), "?");
 	}
-	
+
 	public String getDescription() {
-		return description ;
+		return description;
 	}
-	
+
 	public boolean haveRight(User user) {
 		if (user == null) {
 			return false;
@@ -656,6 +698,6 @@ public class Module {
 			return true;
 		} else {
 			return user.validForRoles(getRoles());
-		}		
+		}
 	}
 }

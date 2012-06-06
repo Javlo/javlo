@@ -6,8 +6,11 @@ import java.util.List;
 
 import org.javlo.context.ContentContext;
 import org.javlo.context.GlobalContext;
+import org.javlo.helper.ResourceHelper;
 import org.javlo.helper.StringHelper;
 import org.javlo.helper.URLHelper;
+import org.javlo.template.Template;
+import org.javlo.template.TemplateFactory;
 import org.javlo.ztatic.StaticInfo;
 
 public class JavloELFile extends ELFile {
@@ -16,7 +19,7 @@ public class JavloELFile extends ELFile {
 	private ELFile parent;
 
 	public JavloELFile(ELVolume volume, File file, ELFile parent) {
-		super(volume);		
+		super(volume);
 		this.file = file;
 		this.parent = parent;
 	}
@@ -35,7 +38,7 @@ public class JavloELFile extends ELFile {
 		}
 		return children;
 	}
-	
+
 	@Override
 	public boolean isRoot() {
 		return false;
@@ -45,14 +48,14 @@ public class JavloELFile extends ELFile {
 		if (isRoot()) {
 			return null;
 		} else {
-			return (JavloELFile)parent;
+			return (JavloELFile) parent;
 		}
 	}
-	
-	public ContentContext getContentContext() {		
-		return getParentFile().getContentContext();		
+
+	public ContentContext getContentContext() {
+		return getParentFile().getContentContext();
 	}
-	
+
 	public StaticInfo getStaticInfo() throws Exception {
 		return StaticInfo.getInstance(getContentContext(), file);
 	}
@@ -62,7 +65,7 @@ public class JavloELFile extends ELFile {
 			try {
 				StaticInfo info = StaticInfo.getInstance(getContentContext(), file);
 				GlobalContext globalContext = GlobalContext.getInstance(getContentContext().getRequest());
-				return URLHelper.createResourceURL(getContentContext(), '/'+globalContext.getStaticConfig().getStaticFolder()+info.getStaticURL());
+				return URLHelper.createResourceURL(getContentContext(), '/' + globalContext.getStaticConfig().getStaticFolder() + info.getStaticURL());
 			} catch (Exception e) {
 				e.printStackTrace();
 			}
@@ -75,7 +78,18 @@ public class JavloELFile extends ELFile {
 			try {
 				StaticInfo info = StaticInfo.getInstance(getContentContext(), file);
 				GlobalContext globalContext = GlobalContext.getInstance(getContentContext().getRequest());
-				return URLHelper.createTransformURL(getContentContext(), globalContext.getStaticConfig().getStaticFolder()+info.getStaticURL(), "icone")+"?ts="+file.lastModified();
+				if (!ResourceHelper.isTemplateFile(globalContext, file)) {
+					return URLHelper.createTransformURL(getContentContext(), globalContext.getStaticConfig().getStaticFolder() + info.getStaticURL(), "icone") + "?ts=" + file.lastModified();
+				} else {
+					String templateName = ResourceHelper.extractTemplateName(globalContext, file);
+					Template template = TemplateFactory.getDiskTemplate(getContentContext().getRequest().getSession().getServletContext(), templateName);
+					if (template != null) {						
+						String url = URLHelper.createTransformStaticTemplateURL(getContentContext(), template, "template", info.getStaticURL().replaceFirst('/'+templateName, ""))+ "?ts=" + file.lastModified();
+						return url;
+					} else {
+						return null;
+					}
+				}
 			} catch (Exception e) {
 				e.printStackTrace();
 			}
