@@ -117,25 +117,31 @@ public class FileAction extends AbstractModuleAction {
 
 	@Override
 	public String prepare(ContentContext ctx, ModulesContext modulesContext) throws Exception {
-		FileModuleContext fileModuleContext = (FileModuleContext) LangHelper.smartInstance(ctx.getRequest(), ctx.getResponse(), FileModuleContext.class);
+		FileModuleContext fileModuleContext = (FileModuleContext) LangHelper.smartInstance(ctx.getRequest(), ctx.getResponse(), FileModuleContext.class);		
+		GlobalContext globalContext = GlobalContext.getInstance(ctx.getRequest());
+		
+		if (ctx.getRequest().getParameter("path") != null) {
+			fileModuleContext.setPath(ctx.getRequest().getParameter("path"));
+			performUpdateBreadCrumb(RequestService.getInstance(ctx.getRequest()), ctx, EditContext.getInstance(globalContext, ctx.getRequest().getSession()), modulesContext, modulesContext.getCurrentModule(), fileModuleContext);
+		}
 
 		if (modulesContext.getFromModule() == null && ctx.getRequest().getParameter("changeRoot") == null) {
 			Box box = modulesContext.getCurrentModule().getBox("filemanager");
-			box.restoreTitle();
+			if (box != null) {
+				box.restoreTitle();
+			}
 		} else {
 			if (fileModuleContext.getTitle() != null) {
 				modulesContext.getCurrentModule().restoreAll();
 				Box box = modulesContext.getCurrentModule().getBox("filemanager");
-				box.setTitle(box.getTitle() + " : " + fileModuleContext.getTitle());
+				box.setTitle(box.getTitle() + " : " + fileModuleContext.getTitle());				
 			}
 		}
 
 		if (fileModuleContext.getCurrentLink().equals(FileModuleContext.PAGE_META)) {
-
-			GlobalContext globalContext = GlobalContext.getInstance(ctx.getRequest());
-
+			modulesContext.getCurrentModule().setToolsRenderer("/jsp/actions.jsp");
+			modulesContext.getCurrentModule().clearAllBoxes();			
 			File folder = new File(URLHelper.mergePath(globalContext.getDataFolder(), fileModuleContext.getPath()));
-
 			if (folder.exists()) {
 				Collection<FileBean> allFileInfo = new LinkedList<FileBean>();
 				for (File file : folder.listFiles((FileFilter) FileFileFilter.FILE)) {
@@ -145,6 +151,10 @@ public class FileAction extends AbstractModuleAction {
 			} else {
 				logger.warning("folder not found : " + folder);
 			}
+		} else {			
+			modulesContext.getCurrentModule().setToolsRenderer(null);
+			modulesContext.getCurrentModule().setRenderer(null);
+			modulesContext.getCurrentModule().restoreBoxes();
 		}
 
 		return super.prepare(ctx, modulesContext);
@@ -155,7 +165,7 @@ public class FileAction extends AbstractModuleAction {
 		return null;
 	}
 
-	public String performUpdateBreadCrumb(RequestService rs, HttpSession session, StaticConfig staticConfig, ContentContext ctx, EditContext editContext, ModulesContext moduleContext, Module currentModule, FileModuleContext fileModuleContext, I18nAccess i18nAccess) throws Exception {
+	public String performUpdateBreadCrumb(RequestService rs, ContentContext ctx, EditContext editContext, ModulesContext moduleContext, Module currentModule, FileModuleContext fileModuleContext) throws Exception {
 
 		currentModule.clearBreadcrump();
 		currentModule.setBreadcrumbTitle("");

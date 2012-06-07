@@ -2,11 +2,7 @@
 <div id="meta-edit" class="form-list">
 
 
-<form action="${info.currentURL}" method="post">
-
-<div class="actions">
-	<input class="action-button" type="submit" value="${i18n.edit['global.save']}"/> 
-</div>
+<form id="form-meta" action="${info.currentURL}" method="post">
 
 <input type="hidden" name="webaction" value="updateMeta" />
 
