@@ -26,6 +26,7 @@ import org.javlo.context.EditContext;
 import org.javlo.context.GlobalContext;
 import org.javlo.context.UserInterfaceContext;
 import org.javlo.helper.DebugHelper;
+import org.javlo.helper.LangHelper;
 import org.javlo.helper.NavigationHelper;
 import org.javlo.helper.ResourceHelper;
 import org.javlo.helper.ServletHelper;
@@ -34,9 +35,9 @@ import org.javlo.helper.URLHelper;
 import org.javlo.i18n.I18nAccess;
 import org.javlo.message.GenericMessage;
 import org.javlo.message.MessageRepository;
-import org.javlo.module.Module;
-import org.javlo.module.Module.Box;
-import org.javlo.module.ModuleContext;
+import org.javlo.module.core.Module;
+import org.javlo.module.core.ModulesContext;
+import org.javlo.module.core.Module.Box;
 import org.javlo.navigation.IURLFactory;
 import org.javlo.navigation.MenuElement;
 import org.javlo.navigation.PageConfiguration;
@@ -307,7 +308,7 @@ public class Edit extends AbstractModuleAction {
 		}
 		ctx.getRequest().setAttribute("components", comps);
 
-		Module currentModule = ModuleContext.getInstance(ctx.getRequest().getSession(), globalContext).getCurrentModule();
+		Module currentModule = ModulesContext.getInstance(ctx.getRequest().getSession(), globalContext).getCurrentModule();
 		Box componentBox = currentModule.getBox("components");
 		if (componentBox != null) {
 			I18nAccess i18nAccess = I18nAccess.getInstance(ctx.getRequest());
@@ -342,16 +343,16 @@ public class Edit extends AbstractModuleAction {
 	/***************/
 
 	@Override
-	public String prepare(ContentContext ctx, ModuleContext moduleContext) throws Exception {
+	public String prepare(ContentContext ctx, ModulesContext modulesContext) throws Exception {
 
 		HttpServletRequest request = ctx.getRequest();
 
 		GlobalContext globalContext = GlobalContext.getInstance(ctx.getRequest());
 
-		Module currentModule = moduleContext.getCurrentModule();
+		Module currentModule = modulesContext.getCurrentModule();
 
 		/** set the principal renderer **/
-		ContentModuleContext modCtx = ContentModuleContext.getInstance(request.getSession());
+		ContentModuleContext modCtx = (ContentModuleContext)LangHelper.smartInstance(request, ctx.getResponse(), ContentModuleContext.class);
 		if (request.getParameter("query") == null) {
 			currentModule.setBreadcrumb(true);
 			currentModule.setSidebar(true);
@@ -414,7 +415,7 @@ public class Edit extends AbstractModuleAction {
 	}
 
 	@Override
-	public String performSearch(ContentContext ctx, ModuleContext moduleContext, String query) throws Exception {
+	public String performSearch(ContentContext ctx, ModulesContext moduleContext, String query) throws Exception {
 		String msg = null;
 		if (query != null) {
 			query = query.trim();
@@ -449,7 +450,7 @@ public class Edit extends AbstractModuleAction {
 		return msg;
 	}
 
-	public static final String performChangeComponent(GlobalContext globalContext, EditContext editCtx, ContentContext ctx, ComponentContext componentContext, RequestService requestService, I18nAccess i18nAccess, Module currentModule) throws Exception {
+	public static final String performChangeComponent(GlobalContext globalContext, EditContext editCtx, ContentContext ctx, ComponentContext componentContext, RequestService requestService, I18nAccess i18nAccess, Module currentModule, ContentModuleContext modCtx) throws Exception {
 		String newType = requestService.getParameter("type", null);
 		String message = null;
 		if (newType != null) {
@@ -459,7 +460,7 @@ public class Edit extends AbstractModuleAction {
 			MessageRepository.getInstance(ctx).setGlobalMessage(new GenericMessage(msg, GenericMessage.INFO));
 
 			if (requestService.getParameter("comp_id", null) != null) {
-				return performEditpreview(requestService, ctx, componentContext, ContentService.getInstance(globalContext), ModuleContext.getInstance(ctx.getRequest().getSession(), globalContext));
+				return performEditpreview(requestService, ctx, componentContext, ContentService.getInstance(globalContext), ModulesContext.getInstance(ctx.getRequest().getSession(), globalContext),modCtx);
 			} else {
 				Box componentBox = currentModule.getBox("components");				
 				if (componentBox != null) {
@@ -584,8 +585,7 @@ public class Edit extends AbstractModuleAction {
 		return null;
 	}
 
-	public static final String performChangeMode(HttpSession session, RequestService requestService) {
-		ContentModuleContext modCtx = ContentModuleContext.getInstance(session);
+	public static final String performChangeMode(HttpSession session, RequestService requestService, ContentModuleContext modCtx) {		
 		modCtx.setMode(Integer.parseInt(requestService.getParameter("mode", "" + ContentModuleContext.EDIT_MODE)));
 		return null;
 	}
@@ -891,9 +891,9 @@ public class Edit extends AbstractModuleAction {
 		return null;
 	}
 
-	public static String performEditpreview(RequestService requestService, ContentContext ctx, ComponentContext componentContext, ContentService content, ModuleContext moduleContext) throws Exception {
+	public static String performEditpreview(RequestService requestService, ContentContext ctx, ComponentContext componentContext, ContentService content, ModulesContext moduleContext, ContentModuleContext modCtx) throws Exception {
 		moduleContext.searchModule("content").restoreAll();
-		performChangeMode(ctx.getRequest().getSession(), requestService);
+		performChangeMode(ctx.getRequest().getSession(), requestService, modCtx);
 		String compId = requestService.getParameter("comp_id", null).substring(3);
 		IContentVisualComponent comp = content.getComponent(ctx, compId);
 		if (comp == null) {

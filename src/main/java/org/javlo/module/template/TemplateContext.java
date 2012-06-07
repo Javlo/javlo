@@ -10,7 +10,7 @@ import javax.servlet.http.HttpSession;
 import org.javlo.bean.Link;
 import org.javlo.context.GlobalContext;
 import org.javlo.i18n.I18nAccess;
-import org.javlo.module.Module;
+import org.javlo.module.core.Module;
 
 public class TemplateContext {
 	
@@ -19,6 +19,8 @@ public class TemplateContext {
 	private I18nAccess i18nAccess = null;
 	private Module module;
 	private String currentLink;
+	
+	private TemplateContext() {};
 	
 	public static final TemplateContext getInstance(HttpSession session, GlobalContext globalContext, Module module) throws FileNotFoundException, IOException {
 		TemplateContext outCtx = (TemplateContext)session.getAttribute(KEY);

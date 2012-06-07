@@ -28,8 +28,8 @@ import org.javlo.helper.URLHelper;
 import org.javlo.i18n.I18nAccess;
 import org.javlo.message.GenericMessage;
 import org.javlo.message.MessageRepository;
-import org.javlo.module.Module;
-import org.javlo.module.ModuleContext;
+import org.javlo.module.core.Module;
+import org.javlo.module.core.ModulesContext;
 import org.javlo.service.ContentService;
 import org.javlo.service.RequestService;
 import org.javlo.template.Template;
@@ -250,7 +250,7 @@ public class AdminAction extends AbstractModuleAction {
 	}
 
 	@Override
-	public String prepare(ContentContext ctx, ModuleContext moduleContext) throws Exception {
+	public String prepare(ContentContext ctx, ModulesContext moduleContext) throws Exception {
 	
 		HttpServletRequest request = ctx.getRequest();
 		ServletContext application = request.getSession().getServletContext();
@@ -510,7 +510,7 @@ public class AdminAction extends AbstractModuleAction {
 		return msg;
 	}
 	
-	public static final String performModulesSelect(HttpServletRequest request, ContentContext ctx, RequestService requestService, MessageRepository messageRepository, I18nAccess i18nAccess, Module currentModule, ModuleContext moduleContext) throws Exception {
+	public static final String performModulesSelect(HttpServletRequest request, ContentContext ctx, RequestService requestService, MessageRepository messageRepository, I18nAccess i18nAccess, Module currentModule, ModulesContext moduleContext) throws Exception {
 		String msg = null;
 		if (requestService.getParameter("back", null) != null) {
 			currentModule.restoreAll();

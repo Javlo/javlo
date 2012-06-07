@@ -1,4 +1,4 @@
-package org.javlo.module;
+package org.javlo.module.core;
 
 import java.io.File;
 import java.io.IOException;
@@ -17,7 +17,7 @@ import org.javlo.i18n.I18nAccess;
 import org.javlo.user.AdminUserFactory;
 import org.javlo.user.IUserFactory;
 
-public class ModuleContext {
+public class ModulesContext {
 
 	private static class ModuleOrderComparator implements Comparator<Module> {
 
@@ -32,11 +32,11 @@ public class ModuleContext {
 
 	}
 
-	private static Logger logger = Logger.getLogger(ModuleContext.class.getName());
+	private static Logger logger = Logger.getLogger(ModulesContext.class.getName());
 
 	static final String MODULES_FOLDER = "/modules";
 
-	private static final String KEY = "module";
+	private static final String KEY = "modulesContext";
 
 	private Module currentModule;
 	private Module fromModule;
@@ -46,7 +46,7 @@ public class ModuleContext {
 
 	private Object siteKey;
 
-	private ModuleContext(HttpSession session, GlobalContext globalContext) throws ModuleException {
+	private ModulesContext(HttpSession session, GlobalContext globalContext) throws ModuleException {
 		loadModule(session, globalContext);
 	}
 
@@ -106,10 +106,10 @@ public class ModuleContext {
 		}
 	}
 
-	public static final ModuleContext getInstance(HttpSession session, GlobalContext globalContext) throws ModuleException {
-		ModuleContext outContext = (ModuleContext) session.getAttribute(KEY);
+	public static final ModulesContext getInstance(HttpSession session, GlobalContext globalContext) throws ModuleException {
+		ModulesContext outContext = (ModulesContext) session.getAttribute(KEY);
 		if (outContext == null || !outContext.siteKey.equals(globalContext.getContextKey())) {
-			outContext = new ModuleContext(session, globalContext);
+			outContext = new ModulesContext(session, globalContext);
 			session.setAttribute(KEY, outContext);
 			I18nAccess i18nAccess;
 			try {

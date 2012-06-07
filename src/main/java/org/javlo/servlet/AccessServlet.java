@@ -41,8 +41,8 @@ import org.javlo.mailing.MailingThread;
 import org.javlo.message.GenericMessage;
 import org.javlo.message.MessageRepository;
 import org.javlo.message.PopupMessage;
-import org.javlo.module.Module;
-import org.javlo.module.ModuleContext;
+import org.javlo.module.core.Module;
+import org.javlo.module.core.ModulesContext;
 import org.javlo.navigation.MenuElement;
 import org.javlo.navigation.PageConfiguration;
 import org.javlo.portlet.PortletWindowImpl;
@@ -307,7 +307,7 @@ public class AccessServlet extends HttpServlet {
 			localLogger.startCount("execute action");
 
 			/*** update module status before action ***/
-			ModuleContext moduleContext = ModuleContext.getInstance(request.getSession(), globalContext);
+			ModulesContext moduleContext = ModulesContext.getInstance(request.getSession(), globalContext);
 			if (requestService.getParameter("module", null) != null) {
 				UserInterfaceContext uic = UserInterfaceContext.getInstance(request.getSession(), globalContext);
 				uic.setCurrentModule(requestService.getParameter("module", null));

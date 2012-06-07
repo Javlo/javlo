@@ -1,7 +1,6 @@
-package org.javlo.module;
+package org.javlo.module.core;
 
 import java.io.File;
-import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.IOException;
 import java.util.Collection;
@@ -45,12 +44,12 @@ public class Module {
 		}
 
 		@Override
-		public String prepare(ContentContext ctx, ModuleContext moduleContext) {
+		public String prepare(ContentContext ctx, ModulesContext moduleContext) {
 			return null;
 		}
 
 		@Override
-		public String performSearch(ContentContext ctx, ModuleContext moduleContext, String searchText) throws Exception {
+		public String performSearch(ContentContext ctx, ModulesContext moduleContext, String searchText) throws Exception {
 			return null;
 		}
 
@@ -137,18 +136,24 @@ public class Module {
 
 		private Box(String title, String renderer, boolean action) {
 			this.title = StringHelper.neverNull(title);
+			this.defaultTitle = this.title;
 			this.renderer = URLHelper.mergePath(path, renderer);
 			this.action = action;
 			id = "box-" + StringHelper.getRandomId();
 		}
 
 		private String title;
+		private String defaultTitle;
 		private String renderer;
 		private String id;
 		private boolean action;
 
 		public String getTitle() {
 			return title;
+		}
+
+		public void restoreTitle() {
+			title = defaultTitle;
 		}
 
 		public String getRenderer() {
@@ -164,7 +169,11 @@ public class Module {
 		}
 
 		public void setRenderer(String renderer) {
-			this.renderer = renderer;
+			if (renderer != null) {
+				this.renderer = URLHelper.mergePath(path, renderer);
+			} else {
+				this.renderer = null;
+			}
 		}
 
 		public void setAction(boolean action) {
@@ -241,14 +250,14 @@ public class Module {
 	}
 
 	private void loadModule() throws IOException {
-		
+
 		cssURI.clear();
 		jsURI.clear();
-		boxes.clear();		
-		mainBoxes.clear();		
+		boxes.clear();
+		mainBoxes.clear();
 		sideBoxes.clear();
 		navigation.clear();
-		
+
 		FileReader fileReader = null;
 		try {
 			fileReader = new FileReader(configFile);
@@ -292,7 +301,7 @@ public class Module {
 			File[] cssFiles = cssFolder.listFiles();
 			for (File file : cssFiles) {
 				if (file.isFile() && StringHelper.getFileExtension(file.getName()).equalsIgnoreCase("css")) {
-					cssURI.add(ModuleContext.MODULES_FOLDER + '/' + getName() + '/' + CSS_FOLDER + '/' + file.getName());
+					cssURI.add(ModulesContext.MODULES_FOLDER + '/' + getName() + '/' + CSS_FOLDER + '/' + file.getName());
 				}
 			}
 		}
@@ -303,12 +312,12 @@ public class Module {
 			File[] jspFiles = jsFolder.listFiles();
 			for (File file : jspFiles) {
 				if (file.isFile() && StringHelper.getFileExtension(file.getName()).equalsIgnoreCase("js")) {
-					jsURI.add(ModuleContext.MODULES_FOLDER + '/' + getName() + '/' + JS_FOLDER + '/' + file.getName());
+					jsURI.add(ModulesContext.MODULES_FOLDER + '/' + getName() + '/' + JS_FOLDER + '/' + file.getName());
 				}
 			}
 			for (int i = 0; i < 100; i++) {
-				if (config.get("js.import."+i) != null) {
-					jsURI.add(ModuleContext.MODULES_FOLDER + '/' + getName() + config.get("js.import."+i)  );
+				if (config.get("js.import." + i) != null) {
+					jsURI.add(ModulesContext.MODULES_FOLDER + '/' + getName() + config.get("js.import." + i));
 				}
 			}
 		}
@@ -475,10 +484,15 @@ public class Module {
 
 	/**
 	 * restore all element to value defined in the config.
-	 * @throws IOException 
+	 * 
+	 * @throws IOException
 	 */
 	public void restoreAll() throws IOException {
 		loadModule();
+	}
+
+	public void restoreTitle() {
+		title = config.get("title");
 	}
 
 	public synchronized void restoreBoxes() {

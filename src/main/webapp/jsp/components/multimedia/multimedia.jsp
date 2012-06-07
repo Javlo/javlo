@@ -3,7 +3,7 @@
 <div class="multimedia">
 <div class="ep_block">
 <div class="ep_element1col">
-<div class="ep_elementimg_left thumb-image">
+<div class="ep_elementimg_left thumbnails thumb-image">
 
 <c:forEach var="resource" items="${resources}" varStatus="status">
 <c:if test="${status.count == 1}">

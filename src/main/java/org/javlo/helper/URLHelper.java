@@ -17,7 +17,7 @@ import org.javlo.config.StaticConfig;
 import org.javlo.context.ContentContext;
 import org.javlo.context.GlobalContext;
 import org.javlo.mailing.MailingContext;
-import org.javlo.module.ModuleContext;
+import org.javlo.module.core.ModulesContext;
 import org.javlo.navigation.MenuElement;
 import org.javlo.navigation.PageConfiguration;
 import org.javlo.service.ContentService;
@@ -828,7 +828,7 @@ public class URLHelper extends ElementaryURLHelper {
 	 */
 	public static String createInterModuleURL(ContentContext ctx, String url, String moduleName, Map<String,String> inParams) throws Exception {
 		GlobalContext globalContext = GlobalContext.getInstance(ctx.getRequest());
-		ModuleContext moduleContext = ModuleContext.getInstance(ctx.getRequest().getSession(), globalContext);
+		ModulesContext moduleContext = ModulesContext.getInstance(ctx.getRequest().getSession(), globalContext);
 		return createInterModuleURL(ctx, url, moduleName, moduleContext.getCurrentModule().getName(), inParams);
 	}
 	

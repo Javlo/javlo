@@ -7,7 +7,7 @@ import javax.servlet.ServletException;
 import org.javlo.context.ContentContext;
 import org.javlo.context.EditContext;
 import org.javlo.context.GlobalContext;
-import org.javlo.module.Module.Box;
+import org.javlo.module.core.Module.Box;
 
 public class AjaxHelper {
 	
