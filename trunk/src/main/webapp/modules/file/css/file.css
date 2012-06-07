@@ -4,6 +4,11 @@
 
 /** break elfinder **/
 
+#tools {
+	margin-top: 20px;
+	margin-bottom: 10px;
+}
+
 .elfinder-cwd-view-icons .elfinder-cwd-file-wrapper {
 	width: 118px;
 	height: 118px;	

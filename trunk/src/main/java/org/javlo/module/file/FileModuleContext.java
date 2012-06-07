@@ -69,9 +69,4 @@ public class FileModuleContext extends AbstractModuleContext {
 		return homeLink;
 	}
 	
-	@Override
-	public void setRendererFromNavigation(String renderer) {		
-		module.getBox("filemanager").setRenderer(renderer);
-	}
-	
 }

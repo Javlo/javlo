@@ -791,6 +791,11 @@ body.previewEdit {
 
 /*** list ****/
 
+.form-list ul {
+	margin: 0;
+	padding: 0;
+}
+
 .form-list .actions {
 	padding: 5px;
 	text-align: center;
@@ -814,7 +819,7 @@ body.previewEdit {
 }
 
 .form-list li {
-	margin: 10px;
+	margin: 10px 10px 10px 0;
     border-radius: 3px 3px 3px 3px;
     border: 1px solid #CCCCCC;    
     position: relative;
