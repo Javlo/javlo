@@ -2,7 +2,7 @@ package org.javlo.module.demo;
 
 import org.javlo.actions.AbstractModuleAction;
 import org.javlo.context.ContentContext;
-import org.javlo.module.ModuleContext;
+import org.javlo.module.core.ModulesContext;
 
 public class Action extends AbstractModuleAction {
 
@@ -12,7 +12,7 @@ public class Action extends AbstractModuleAction {
 	}
 
 	@Override
-	public String prepare(ContentContext ctx, ModuleContext moduleContext) {
+	public String prepare(ContentContext ctx, ModulesContext moduleContext) {
 		if (ctx.getRequest().getAttribute("demoMessage") == null) {
 			ctx.getRequest().setAttribute("demoMessage", "message from action prepare");
 		}

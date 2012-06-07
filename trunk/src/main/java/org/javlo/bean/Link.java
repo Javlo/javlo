@@ -2,9 +2,9 @@ package org.javlo.bean;
 
 public class Link {
 	
-	private String url;
-	private String title;
-	private String label;
+	protected String url;
+	protected String title;
+	protected String label;
 	
 	public Link(String url, String title, String label) {
 		super();

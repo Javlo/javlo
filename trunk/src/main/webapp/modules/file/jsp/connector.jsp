@@ -32,7 +32,7 @@ String root;
 if (request.getParameter("changeRoot") == null) {
 	root = URLHelper.mergePath(globalContext.getDataFolder(), globalContext.getStaticConfig().getStaticFolder());
 } else {
-	root = FileModuleContext.getInstance(session).getRoot();
+	root = ((FileModuleContext)FileModuleContext.getCurrentInstance(session)).getRoot();
 }
 getELFinder(session, root).process(out, request, response);
 %>

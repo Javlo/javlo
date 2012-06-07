@@ -10,8 +10,8 @@ import org.javlo.config.StaticConfig;
 import org.javlo.context.EditContext;
 import org.javlo.context.GlobalContext;
 import org.javlo.helper.URLHelper;
-import org.javlo.module.ModuleContext;
-import org.javlo.module.ModuleException;
+import org.javlo.module.core.ModuleException;
+import org.javlo.module.core.ModulesContext;
 
 public class AdminUserFactory extends UserFactory {
 
@@ -71,7 +71,7 @@ public class AdminUserFactory extends UserFactory {
 		
 		/** reload module **/
 		try {
-			ModuleContext.getInstance(request.getSession(), globalContext).loadModule(request.getSession(), globalContext);
+			ModulesContext.getInstance(request.getSession(), globalContext).loadModule(request.getSession(), globalContext);
 		} catch (ModuleException e) {
 			e.printStackTrace();
 		}

@@ -788,3 +788,99 @@ body.previewEdit {
 	width: 100%;
 	margin: 0;
 }
+
+/*** list ****/
+
+.form-list .actions {
+	padding: 5px;
+	text-align: center;
+}
+
+.form-list .title {
+	border-bottom: 1px #cccccc solid;
+}
+
+.form-list .title span {
+	background: url("../images/separator2.png") no-repeat scroll right center transparent;
+    color: #006699;
+    display: inline-block;
+    margin-right: 0;
+    padding: 6px 16px;
+}
+
+.form-list .title span.size {
+	float: right;
+	background: none;
+}
+
+.form-list li {
+	margin: 10px;
+    border-radius: 3px 3px 3px 3px;
+    border: 1px solid #CCCCCC;    
+    position: relative;
+    background: none repeat scroll 0 0 #FCFCFC;
+    box-shadow: 1px 1px 2px #DDDDDD;
+    display: inline-block;
+    width: 680px;    
+}
+
+.form-list li .body {
+	padding: 10px;
+}
+
+.form-list .download {
+	float: left;	
+	width: 220px;
+	height: 220px;
+	text-align: center;
+}
+
+.form-list .download a {
+	display: block;
+	line-height: 220px;	
+	vertical-align: middle;
+}
+
+.form-list .download a img {
+	vertical-align: middle;
+	display: inline;
+}
+
+.form-list .picture a {
+	text-decoration: none;
+}
+
+.form-list .line textarea {
+	width: 300px;
+	height: 100px;
+}
+
+.form-list .line input {
+	width: 300px;
+}
+
+.form-list .line {
+	margin: 5px 0;	
+}
+
+.form-list .line label {
+	display: inline-block;
+	width: 120px;
+}
+
+.focus-zone {
+	position: relative;
+}
+
+.focus-point {
+	font-size: 0;	
+	border: 4px #cc0000 solid;
+	border-radius: 6px 6px 6px 6px;
+	height: 7px;
+	width: 7px;
+	position: absolute;
+}
+
+.focus-point.drag {
+	border: 3px #00cc00 solid;
+}

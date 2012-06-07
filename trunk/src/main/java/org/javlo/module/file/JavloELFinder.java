@@ -22,6 +22,7 @@ import org.apache.commons.lang.StringUtils;
 import org.javlo.config.StaticConfig;
 import org.javlo.context.ContentContext;
 import org.javlo.context.GlobalContext;
+import org.javlo.helper.LangHelper;
 import org.javlo.helper.ResourceHelper;
 import org.javlo.helper.StringHelper;
 import org.javlo.helper.URLHelper;
@@ -95,7 +96,14 @@ public class JavloELFinder extends ELFinder {
 	
 	@Override
 	protected void changeFolder(ELFile file) {
-		FileModuleContext fileModuleContext = FileModuleContext.getInstance(((JavloELFile)file).getContentContext().getRequest().getSession());	
+		ContentContext ctx = ((JavloELFile)file).getContentContext();
+		FileModuleContext fileModuleContext;
+		try {
+			fileModuleContext = (FileModuleContext)LangHelper.smartInstance(ctx.getRequest(), ctx.getResponse(), FileModuleContext.class);
+		} catch (Exception e) {
+			e.printStackTrace();
+			return;
+		}	
 		fileModuleContext.setPath(file.getFile().getAbsolutePath().replace(file.getVolume().getRoot().getFile().getAbsolutePath(), file.getVolume().getRoot().getFile().getName()));
 	}
 

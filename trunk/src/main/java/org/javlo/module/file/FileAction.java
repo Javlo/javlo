@@ -1,66 +1,171 @@
 package org.javlo.module.file;
 
+import java.io.File;
+import java.io.FileFilter;
+import java.util.Collection;
 import java.util.HashMap;
+import java.util.LinkedList;
 import java.util.Map;
+import java.util.logging.Logger;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 
+import org.apache.commons.io.filefilter.FileFileFilter;
 import org.javlo.actions.AbstractModuleAction;
 import org.javlo.config.StaticConfig;
 import org.javlo.context.ContentContext;
 import org.javlo.context.EditContext;
+import org.javlo.context.GlobalContext;
+import org.javlo.helper.LangHelper;
+import org.javlo.helper.ResourceHelper;
 import org.javlo.helper.ServletHelper;
+import org.javlo.helper.StringHelper;
 import org.javlo.helper.URLHelper;
 import org.javlo.i18n.I18nAccess;
-import org.javlo.module.Module;
-import org.javlo.module.Module.Box;
-import org.javlo.module.Module.HtmlLink;
-import org.javlo.module.ModuleContext;
+import org.javlo.message.GenericMessage;
+import org.javlo.message.MessageRepository;
+import org.javlo.module.core.Module;
+import org.javlo.module.core.Module.Box;
+import org.javlo.module.core.Module.HtmlLink;
+import org.javlo.module.core.ModulesContext;
+import org.javlo.service.PersistenceService;
 import org.javlo.service.RequestService;
+import org.javlo.ztatic.StaticInfo;
 
 public class FileAction extends AbstractModuleAction {
+
+	private static Logger logger = Logger.getLogger(FileAction.class.getName());
+
+	public static class FileBean {
+		ContentContext ctx;
+		StaticInfo staticInfo;
+
+		public FileBean(ContentContext ctx, StaticInfo staticInfo) {
+			this.ctx = ctx;
+			this.staticInfo = staticInfo;
+		}
+
+		public String getURL() {
+			GlobalContext globalContext = GlobalContext.getInstance(ctx.getRequest());
+			return URLHelper.createResourceURL(ctx, '/' + globalContext.getStaticConfig().getStaticFolder() + staticInfo.getStaticURL());
+		}
+
+		public boolean isImage() {
+			return StringHelper.isImage(getName());
+		}
+
+		public String getType() {
+			return getManType().replace('/', '_');
+		}
+
+		public String getThumbURL() throws Exception {
+			GlobalContext globalContext = GlobalContext.getInstance(ctx.getRequest());
+			return URLHelper.createTransformURL(ctx, globalContext.getStaticConfig().getStaticFolder() + staticInfo.getStaticURL(), "list") + "?ts=" + staticInfo.getFile().lastModified();
+		}
+
+		public StaticInfo getStaticInfo() {
+			return staticInfo;
+		}
+
+		public String getName() {
+			return staticInfo.getFile().getName();
+		}
+
+		public String getDescription() {
+			return staticInfo.getDescription(ctx);
+		}
+
+		public String getLocation() {
+			return staticInfo.getLocation(ctx);
+		}
+
+		public String getDate() {
+			return StringHelper.renderTime(staticInfo.getDate(ctx));
+		}
+
+		public String getTitle() {
+			return staticInfo.getTitle(ctx);
+		}
+
+		public String getId() {
+			return getName().replace('.', '_');
+		}
+
+		public int getFocusZoneX() {
+			return staticInfo.getFocusZoneX(ctx);
+		}
+
+		public int getFocusZoneY() {
+			return staticInfo.getFocusZoneY(ctx);
+		}
+		
+		public String getSize() {
+			return StringHelper.renderSize(staticInfo.getFile().length());
+		}
+		
+		public String getManType() {
+			return ResourceHelper.getFileExtensionToManType(StringHelper.getFileExtension(getName()));
+		}
+
+	}
 
 	@Override
 	public String getActionGroupName() {
 		return "file";
 	}
-	
+
 	@Override
-	public String prepare(ContentContext ctx, ModuleContext moduleContext) throws Exception {
-		FileModuleContext fileModuleContext = FileModuleContext.getInstance(ctx.getRequest().getSession());
-		
-		if (moduleContext.getFromModule() == null && ctx.getRequest().getParameter("changeRoot") == null) {			
-			fileModuleContext.clear();
-			moduleContext.getCurrentModule().restoreAll();
+	public String prepare(ContentContext ctx, ModulesContext modulesContext) throws Exception {
+		FileModuleContext fileModuleContext = (FileModuleContext) LangHelper.smartInstance(ctx.getRequest(), ctx.getResponse(), FileModuleContext.class);
+
+		if (modulesContext.getFromModule() == null && ctx.getRequest().getParameter("changeRoot") == null) {
+			Box box = modulesContext.getCurrentModule().getBox("filemanager");
+			box.restoreTitle();
 		} else {
-			if (fileModuleContext.getTitle() != null) {				
-				moduleContext.getCurrentModule().restoreAll();
-				Box box = moduleContext.getCurrentModule().getBox("filemanager");
-				box.setTitle(box.getTitle()+" : "+fileModuleContext.getTitle());
+			if (fileModuleContext.getTitle() != null) {
+				modulesContext.getCurrentModule().restoreAll();
+				Box box = modulesContext.getCurrentModule().getBox("filemanager");
+				box.setTitle(box.getTitle() + " : " + fileModuleContext.getTitle());
 			}
 		}
-		return super.prepare(ctx, moduleContext);
+
+		if (fileModuleContext.getCurrentLink().equals(FileModuleContext.PAGE_META)) {
+
+			GlobalContext globalContext = GlobalContext.getInstance(ctx.getRequest());
+
+			File folder = new File(URLHelper.mergePath(globalContext.getDataFolder(), fileModuleContext.getPath()));
+
+			if (folder.exists()) {
+				Collection<FileBean> allFileInfo = new LinkedList<FileBean>();
+				for (File file : folder.listFiles((FileFilter) FileFileFilter.FILE)) {
+					allFileInfo.add(new FileBean(ctx, StaticInfo.getInstance(ctx, file)));
+				}
+				ctx.getRequest().setAttribute("files", allFileInfo);
+			} else {
+				logger.warning("folder not found : " + folder);
+			}
+		}
+
+		return super.prepare(ctx, modulesContext);
 	}
-	
+
 	public String performBrowse(HttpServletRequest request) {
 		request.setAttribute("changeRoot", "true");
 		return null;
-	}	
-	
-	public String performUpdateBreadCrumb(RequestService rs, HttpSession session, StaticConfig staticConfig, ContentContext ctx, EditContext editContext, ModuleContext moduleContext, Module currentModule, I18nAccess i18nAccess) throws Exception {		
-		
-		FileModuleContext fileModuleContext = FileModuleContext.getInstance(ctx.getRequest().getSession());
-		
+	}
+
+	public String performUpdateBreadCrumb(RequestService rs, HttpSession session, StaticConfig staticConfig, ContentContext ctx, EditContext editContext, ModulesContext moduleContext, Module currentModule, FileModuleContext fileModuleContext, I18nAccess i18nAccess) throws Exception {
+
 		currentModule.clearBreadcrump();
 		currentModule.setBreadcrumbTitle("");
-		
+
 		String[] pathItems = URLHelper.cleanPath(URLHelper.mergePath(fileModuleContext.getPath()), true).split("/");
 		String currentPath = "/";
 		for (String path : pathItems) {
 			if (path.trim().length() > 0) {
 				currentPath = currentPath + path + '/';
-				
+
 				Map<String, String> filesParams = new HashMap<String, String>();
 				filesParams.put("path", currentPath);
 				if (rs.getParameter("changeRoot", null) != null) {
@@ -72,15 +177,93 @@ public class FileAction extends AbstractModuleAction {
 				} else {
 					staticURL = URLHelper.createModuleURL(ctx, ctx.getPath(), "file", filesParams);
 				}
-				
+
 				currentModule.pushBreadcrumb(new HtmlLink(staticURL, path, path));
 			}
 		}
 
 		String componentRenderer = editContext.getBreadcrumbsTemplate();
 		String breadcrumbsHTML = ServletHelper.executeJSP(ctx, componentRenderer);
-		
+
 		ctx.getAjaxInsideZone().put("breadcrumbs", breadcrumbsHTML);
 		return null;
 	}
+
+	public String performUpdateFocus(RequestService rs, ContentContext ctx, GlobalContext globalContext, FileModuleContext fileModuleContext, I18nAccess i18nAccess, MessageRepository messageRepository) throws Exception {
+		File folder = new File(URLHelper.mergePath(globalContext.getDataFolder(), fileModuleContext.getPath()));
+		if (folder.exists()) {
+			for (File file : folder.listFiles((FileFilter) FileFileFilter.FILE)) {
+				StaticInfo staticInfo = StaticInfo.getInstance(ctx, file);
+				FileBean fileBean = new FileBean(ctx, staticInfo);
+
+				String newFocusX = rs.getParameter("posx-" + fileBean.getId(), null);
+				String newFocusY = rs.getParameter("posy-" + fileBean.getId(), null);
+
+				if (newFocusX != null && newFocusY != null) {
+					staticInfo.setFocusZoneX(ctx, (int) Math.round(Double.parseDouble(newFocusX)));
+					staticInfo.setFocusZoneY(ctx, (int) Math.round(Double.parseDouble(newFocusY)));
+					PersistenceService.getInstance(globalContext).store(ctx);
+					messageRepository.setGlobalMessageAndNotification(ctx, new GenericMessage(i18nAccess.getText("file.message.updatefocus", new String[][] { { "file", file.getName() } }), GenericMessage.INFO));					
+				}
+			}
+		} else {
+			return "folder not found : " + folder;
+		}
+		return null;
+	}
+
+	public String performUpdateMeta(RequestService rs, ContentContext ctx, GlobalContext globalContext, FileModuleContext fileModuleContext, I18nAccess i18nAccess, MessageRepository messageRepository) throws Exception {
+		File folder = new File(URLHelper.mergePath(globalContext.getDataFolder(), fileModuleContext.getPath()));
+		if (folder.exists()) {
+			for (File file : folder.listFiles((FileFilter) FileFileFilter.FILE)) {
+				StaticInfo staticInfo = StaticInfo.getInstance(ctx, file);
+				FileBean fileBean = new FileBean(ctx, staticInfo);
+
+				String newFocusX = rs.getParameter("posx-" + fileBean.getId(), null);
+				String newFocusY = rs.getParameter("posy-" + fileBean.getId(), null);
+
+				if (newFocusX != null && newFocusY != null) {
+					staticInfo.setFocusZoneX(ctx, (int) Math.round(Double.parseDouble(newFocusX)));
+					staticInfo.setFocusZoneY(ctx, (int) Math.round(Double.parseDouble(newFocusY)));
+				}
+
+				String title = rs.getParameter("title-" + fileBean.getId(), null);
+				if (title != null) {
+					staticInfo.setTitle(ctx, title);
+				}
+				String description = rs.getParameter("description-" + fileBean.getId(), null);
+				if (description != null) {
+					staticInfo.setDescription(ctx, description);
+				}
+				String location = rs.getParameter("location-" + fileBean.getId(), null);
+				if (location != null) {
+					staticInfo.setLocation(ctx, location);
+				}
+				String date = rs.getParameter("date-" + fileBean.getId(), null);
+				if (date != null) {
+					if (date.trim().length() == 0) {
+						staticInfo.setDate(ctx, null);
+					} else {
+						try {
+							staticInfo.setDate(ctx, StringHelper.parseTime(date));
+						} catch (Exception e) {
+							try {
+								staticInfo.setDate(ctx, StringHelper.parseDate(date));
+							} catch (Exception e1) {
+								messageRepository.setGlobalMessage(new GenericMessage(i18nAccess.getText("file.message.error.date-format"), GenericMessage.ERROR));
+							}
+						}
+					}
+				}
+
+				PersistenceService.getInstance(globalContext).store(ctx);
+				messageRepository.setGlobalMessageAndNotification(ctx, new GenericMessage(i18nAccess.getText("file.message.updatemeta"), GenericMessage.INFO));
+
+			}
+		} else {
+			return "folder not found : " + folder;
+		}
+		return null;
+	}
+
 }

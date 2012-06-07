@@ -23,14 +23,15 @@ import org.javlo.actions.AbstractModuleAction;
 import org.javlo.config.StaticConfig;
 import org.javlo.context.ContentContext;
 import org.javlo.context.GlobalContext;
+import org.javlo.helper.LangHelper;
 import org.javlo.helper.StringHelper;
 import org.javlo.helper.URLHelper;
 import org.javlo.helper.XMLManipulationHelper.BadXMLException;
 import org.javlo.i18n.I18nAccess;
 import org.javlo.message.GenericMessage;
 import org.javlo.message.MessageRepository;
-import org.javlo.module.Module;
-import org.javlo.module.ModuleContext;
+import org.javlo.module.core.Module;
+import org.javlo.module.core.ModulesContext;
 import org.javlo.module.file.FileModuleContext;
 import org.javlo.module.template.remote.IRemoteTemplate;
 import org.javlo.module.template.remote.IRemoteTemplateFactory;
@@ -48,12 +49,12 @@ public class TemplateAction extends AbstractModuleAction {
 	}
 
 	@Override
-	public String prepare(ContentContext ctx, ModuleContext moduleContext) throws Exception {
+	public String prepare(ContentContext ctx, ModulesContext moduleContext) throws Exception {
 		String msg = null;
 		GlobalContext globalContext = GlobalContext.getInstance(ctx.getRequest());
-		Module module = ModuleContext.getInstance(ctx.getRequest().getSession(), globalContext).getCurrentModule();
+		Module module = ModulesContext.getInstance(ctx.getRequest().getSession(), globalContext).getCurrentModule();
 		RequestService requestService = RequestService.getInstance(ctx.getRequest());
-		TemplateContext templateContext = TemplateContext.getInstance(ctx.getRequest().getSession(), globalContext, module);
+		TemplateContext.getInstance(ctx.getRequest().getSession(), globalContext, module);
 
 		Collection<Template> allTemplate = TemplateFactory.getAllDiskTemplates(ctx.getRequest().getSession().getServletContext());
 		Collection<Template.TemplateBean> templates = new LinkedList<Template.TemplateBean>();
@@ -78,7 +79,7 @@ public class TemplateAction extends AbstractModuleAction {
 				Map<String, String> params = new HashMap<String, String>();
 				params.put("name", templateName);
 
-				FileModuleContext fileModuleContext = FileModuleContext.getInstance(ctx.getRequest().getSession());
+				FileModuleContext fileModuleContext = (FileModuleContext)LangHelper.smartInstance(ctx.getRequest(), ctx.getResponse(), FileModuleContext.class);
 				fileModuleContext.clear();
 				fileModuleContext.setRoot(template.getTemplateRealPath());
 				fileModuleContext.setTitle("<a href=\"" + URLHelper.createModuleURL(ctx, ctx.getPath(), "template", params) + "\">" + template.getId() + "</a>");

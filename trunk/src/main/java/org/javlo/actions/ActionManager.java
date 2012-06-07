@@ -18,14 +18,14 @@ import org.javlo.component.core.ComponentFactory;
 import org.javlo.context.ContentContext;
 import org.javlo.context.GlobalContext;
 import org.javlo.ecom.EcomActions;
-import org.javlo.helper.ConfigHelper;
+import org.javlo.helper.LangHelper;
 import org.javlo.helper.StringHelper;
 import org.javlo.i18n.I18nAccess;
 import org.javlo.message.GenericMessage;
 import org.javlo.message.MessageRepository;
-import org.javlo.module.Module;
-import org.javlo.module.ModuleContext;
-import org.javlo.module.ModuleException;
+import org.javlo.module.core.Module;
+import org.javlo.module.core.ModuleException;
+import org.javlo.module.core.ModulesContext;
 import org.javlo.user.AdminUserFactory;
 import org.javlo.user.AdminUserSecurity;
 import org.javlo.user.User;
@@ -75,7 +75,7 @@ public class ActionManager {
 
 	public static IAction getActionModule(HttpServletRequest request, String group) throws IOException, ClassNotFoundException, InstantiationException, IllegalAccessException, ModuleException {
 		GlobalContext globalContext = GlobalContext.getInstance(request);
-		ModuleContext moduleContext = ModuleContext.getInstance(request.getSession(), globalContext);
+		ModulesContext moduleContext = ModulesContext.getInstance(request.getSession(), globalContext);
 		Collection<Module> modules = moduleContext.getModules();
 		IAction action = null;
 		for (Module module : modules) {
@@ -152,7 +152,7 @@ public class ActionManager {
 
 		try {
 			IAction action;
-			ModuleContext moduleContext = ModuleContext.getInstance(request.getSession(), globalContext);
+			ModulesContext moduleContext = ModulesContext.getInstance(request.getSession(), globalContext);
 			if (group == null) {
 				action = moduleContext.getCurrentModule().getAction();
 			} else {
@@ -211,11 +211,20 @@ public class ActionManager {
 					break;
 				}
 			}
+			if (method == null) {
+				methods = action.getClass().getSuperclass().getMethods();
+				for (Method m : methods) {
+					if (m.getName().equalsIgnoreCase(methodName)) {
+						method = m;
+						break;
+					}
+				}
+			}
 			if (method != null) {
 				Class<?>[] clazzes = method.getParameterTypes();
 				Object[] paramsInstance = new Object[clazzes.length];
 				for (int i = 0; i < clazzes.length; i++) {
-					paramsInstance[i] = ConfigHelper.smartInstance(clazzes[i], request, response);
+					paramsInstance[i] = LangHelper.smartInstance(request, response, clazzes[i]);
 				}
 				if (method.getReturnType().isAssignableFrom(String.class)) {
 					return (String) method.invoke(action, paramsInstance);

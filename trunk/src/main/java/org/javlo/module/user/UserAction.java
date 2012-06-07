@@ -22,8 +22,8 @@ import org.javlo.helper.StringHelper;
 import org.javlo.i18n.I18nAccess;
 import org.javlo.message.GenericMessage;
 import org.javlo.message.MessageRepository;
-import org.javlo.module.Module;
-import org.javlo.module.ModuleContext;
+import org.javlo.module.core.Module;
+import org.javlo.module.core.ModulesContext;
 import org.javlo.service.RequestService;
 import org.javlo.user.AdminUserFactory;
 import org.javlo.user.AdminUserSecurity;
@@ -40,7 +40,7 @@ public class UserAction extends AbstractModuleAction {
 	}
 
 	@Override
-	public String prepare(ContentContext ctx, ModuleContext moduleContext) throws Exception {
+	public String prepare(ContentContext ctx, ModulesContext moduleContext) throws Exception {
 
 		UserModuleContext userContext = UserModuleContext.getInstance(ctx.getRequest());
 		RequestService requestService = RequestService.getInstance(ctx.getRequest());

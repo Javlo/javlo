@@ -520,41 +520,43 @@ public class StaticInfo {
 		if (getManualDate(ctx) != null) {
 			return getManualDate(ctx);
 		} else {
-			return getLinkedDate(ctx);
+			Date linkedDate = getLinkedDate(ctx);
+			if (linkedDate == null) {
+				return new Date(getFile().lastModified());
+			} else {
+				return linkedDate;
+			}
 		}
 	}
 
 	public void setDate(ContentContext ctx, Date date) {
 		ContentService content = ContentService.createContent(ctx.getRequest());
-		content.setAttribute(ctx, getKey("date"), StringHelper.renderTime(date));
-		// properties.setProperty("date", StringHelper.renderTime(date));
-		// save();
+		if (date == null) {
+			content.removeAttribute(ctx,  getKey("date"));
+		}  else {
+			content.setAttribute(ctx, getKey("date"), StringHelper.renderTime(date));
+		}
+		
 	}
 
 	public String getResource(ContentContext ctx) {
 		ContentService content = ContentService.createContent(ctx.getRequest());
-		return content.getAttribute(ctx, getKey("resource"), "");
-		// return properties.getString("resource");
+		return content.getAttribute(ctx, getKey("resource"), "");		
 	}
 
 	public void setResource(ContentContext ctx, String resource) {
 		ContentService content = ContentService.createContent(ctx.getRequest());
 		content.setAttribute(ctx, getKey("resource"), resource);
-		// properties.setProperty("resource", resource);
-		// save();
 	}
-
+	
 	public void setEmptyDate(ContentContext ctx) {
 		ContentService content = ContentService.createContent(ctx.getRequest());
 		content.setAttribute(ctx, getKey("date"), "");
-		// properties.setProperty("date", "");
-		// save();
 	}
 
 	public boolean isEmptyDate(ContentContext ctx) {
 		ContentService content = ContentService.createContent(ctx.getRequest());
 		return content.getAttribute(ctx, getKey("date"), null) == null;
-		// return properties.getProperty("date") == null;
 	}
 
 	public long getSize() {
@@ -564,7 +566,6 @@ public class StaticInfo {
 	public String getLinkedPageId(ContentContext ctx) {
 		ContentService content = ContentService.createContent(ctx.getRequest());
 		return content.getAttribute(ctx, getKey("linked-page-id"));
-		// return properties.getString("linked-page-id");
 	}
 
 	public void setLinkedPageId(ContentContext ctx, String pageId) {
@@ -572,9 +573,6 @@ public class StaticInfo {
 			ContentService content = ContentService.createContent(ctx.getRequest());
 			content.setAttribute(ctx, getKey("linked-page-id"), pageId);
 		}
-		// properties.setProperty("linked-page-id", pageId);
-		// setLinkedPage(null);
-		// save();
 	}
 
 	public String getStaticURL() {
@@ -597,28 +595,22 @@ public class StaticInfo {
 		ContentService content = ContentService.createContent(ctx.getRequest());
 		String kzx = content.getAttribute(ctx, getKey("focus-zone-x"), "" + DEFAULT_FOCUS_X);
 		return Integer.parseInt(kzx);
-		// return properties.getInt("focus-zone-x", 500);
 	}
 
 	public int getFocusZoneY(ContentContext ctx) {
 		ContentService content = ContentService.createContent(ctx.getRequest());
 		String kzy = content.getAttribute(ctx, getKey("focus-zone-y"), "" + DEFAULT_FOCUS_Y);
 		return Integer.parseInt(kzy);
-		// return properties.getInt("focus-zone-y", 300);
 	}
 
 	public boolean isShared(ContentContext ctx) {
 		ContentService content = ContentService.createContent(ctx.getRequest());
 		return StringHelper.isTrue(content.getAttribute(ctx, getKey("shared"), "true"));
-
-		// return properties.getBoolean("shared", true);
 	}
 
 	public void setShared(ContentContext ctx, boolean shared) {
 		ContentService content = ContentService.createContent(ctx.getRequest());
 		content.setAttribute(ctx, getKey("shared"), "" + shared);
-		// properties.setProperty("shared", shared);
-		// save();
 	}
 
 	public void setFocusZoneX(ContentContext ctx, int focusZoneX) {
@@ -631,8 +623,6 @@ public class StaticInfo {
 		} else {
 			content.setAttribute(ctx, getKey("focus-zone-x"), "" + focusZoneX);
 		}
-		// properties.setProperty("focus-zone-x", focusZoneX);
-		// save();
 	}
 
 	public void setFocusZoneY(ContentContext ctx, int focusZoneY) {
@@ -642,8 +632,6 @@ public class StaticInfo {
 		} else {
 			content.setAttribute(ctx, getKey("focus-zone-y"), "" + focusZoneY);
 		}
-		// properties.setProperty("focus-zone-y", focusZoneY);
-		// save();
 	}
 
 	public void setLinkedPage(MenuElement linkedPage) {

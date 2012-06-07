@@ -14,7 +14,7 @@ import org.javlo.context.GlobalContext;
 import org.javlo.helper.ElementaryURLHelper.Code;
 import org.javlo.message.GenericMessage;
 import org.javlo.message.MessageRepository;
-import org.javlo.module.ModuleContext;
+import org.javlo.module.core.ModulesContext;
 import org.javlo.navigation.MenuElement;
 import org.javlo.navigation.PageConfiguration;
 import org.javlo.service.ContentService;
@@ -80,7 +80,7 @@ public class ServletHelper {
 	
 	public static final void prepareModule(ContentContext ctx) throws Exception {
 		GlobalContext globalContext = GlobalContext.getInstance(ctx.getRequest());		
-		ModuleContext moduleContext = ModuleContext.getInstance(ctx.getRequest().getSession(), globalContext);
+		ModulesContext moduleContext = ModulesContext.getInstance(ctx.getRequest().getSession(), globalContext);
 		ctx.getRequest().setAttribute("modules", moduleContext.getModules());
 		ctx.getRequest().setAttribute("currentModule", moduleContext.getCurrentModule());
 		if (moduleContext.getFromModule() != null) {

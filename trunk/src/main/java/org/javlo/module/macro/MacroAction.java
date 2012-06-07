@@ -10,7 +10,7 @@ import org.javlo.context.ContentContext;
 import org.javlo.context.GlobalContext;
 import org.javlo.macro.IMacro;
 import org.javlo.macro.MacroFactory;
-import org.javlo.module.ModuleContext;
+import org.javlo.module.core.ModulesContext;
 import org.javlo.service.RequestService;
 
 public class MacroAction extends AbstractModuleAction {
@@ -21,7 +21,7 @@ public class MacroAction extends AbstractModuleAction {
 	}
 	
 	@Override
-	public String prepare(ContentContext ctx, ModuleContext moduleContext) throws Exception {
+	public String prepare(ContentContext ctx, ModulesContext moduleContext) throws Exception {
 		
 		StaticConfig staticConfig = StaticConfig.getInstance(ctx.getRequest().getSession());
 		GlobalContext globalContext = GlobalContext.getInstance(ctx.getRequest());

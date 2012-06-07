@@ -1,10 +1,11 @@
 package org.javlo.module.content;
 
-import javax.servlet.http.HttpSession;
+import java.util.List;
 
-public class ContentModuleContext {
-	
-	private static final String KEY = "moduleContext";
+import org.javlo.bean.LinkToRenderer;
+import org.javlo.module.core.AbstractModuleContext;
+
+public class ContentModuleContext extends AbstractModuleContext {
 	
 	public static final int EDIT_MODE = 1;	
 	public static final int PREVIEW_MODE = 2;
@@ -12,15 +13,6 @@ public class ContentModuleContext {
 	
 	private int mode = EDIT_MODE;
 	
-	public static final ContentModuleContext getInstance(HttpSession session) {
-		ContentModuleContext moduleContext = (ContentModuleContext)session.getAttribute(KEY);
-		if (moduleContext == null) {
-			moduleContext = new ContentModuleContext();
-			session.setAttribute(KEY, moduleContext);
-		}
-		return moduleContext;
-	}
-
 	/**
 	 * get the mode of the content.
 	 * <ul>
@@ -35,6 +27,20 @@ public class ContentModuleContext {
 
 	public void setMode(int mode) {
 		this.mode = mode;
+	}
+
+	@Override
+	public List<LinkToRenderer> getNavigation() {
+		return null;
+	}
+	
+	@Override
+	public void init() {
+	}
+
+	@Override
+	public LinkToRenderer getHomeLink() {		
+		return null;
 	}
 
 	

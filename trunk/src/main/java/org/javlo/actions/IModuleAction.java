@@ -1,7 +1,7 @@
 package org.javlo.actions;
 
 import org.javlo.context.ContentContext;
-import org.javlo.module.ModuleContext;
+import org.javlo.module.core.ModulesContext;
 
 public interface IModuleAction extends IAction {
 
@@ -12,7 +12,7 @@ public interface IModuleAction extends IAction {
 	 * @return eventually the error message
 	 * @throws Exception
 	 */
-	public String prepare(ContentContext ctx, ModuleContext moduleContext) throws Exception;
+	public String prepare(ContentContext ctx, ModulesContext moduleContext) throws Exception;
 	
 	/**
 	 * method called when a seach in lauched from search form.
@@ -22,6 +22,6 @@ public interface IModuleAction extends IAction {
 	 * @return eventually the error message
 	 * @throws Exception
 	 */
-	public String performSearch(ContentContext ctx, ModuleContext moduleContext, String query) throws Exception;
+	public String performSearch(ContentContext ctx, ModulesContext moduleContext, String query) throws Exception;
 	
 }

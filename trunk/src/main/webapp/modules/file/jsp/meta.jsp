@@ -1,11 +1,58 @@
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
-<div id="meta-edit">
+<div id="meta-edit" class="form-list">
 
-<form>
-	<div class="line">
-		<label>name</label>
-		<input name="name" />
-	</div>
+
+<form action="${info.currentURL}" method="post">
+
+<div class="actions">
+	<input class="action-button" type="submit" value="${i18n.edit['global.save']}"/> 
+</div>
+
+<input type="hidden" name="webaction" value="updateMeta" />
+
+<ul>
+<c:forEach var="file" items="${files}">
+	<li>
+		<div class="title"><span><a href="${file.URL}">${file.name}</a></span><span class="size">${file.size}</span>${file.manType}</div>
+		<div class="body">
+		<c:if test="${file.image}">		
+		<div class="download picture">
+			<div class="focus-zone">
+			<a rel="image" href="${file.URL}"><img src="${file.thumbURL}" />&nbsp;</a>
+			<div class="focus-point">x</div>			
+			<input class="posx" type="hidden" name="posx-${file.id}" value="${file.focusZoneX}" />
+			<input class="posy" type="hidden" name="posy-${file.id}" value="${file.focusZoneY}" />
+			</div>			
+		</div>
+		</c:if>
+		<c:if test="${not file.image}">
+		<div class="download file ${file.type}"><a href="${file.URL}">${file.name}</a></div>
+		</c:if>
+		<div class="line">
+			<label for="title-${file.id}">${i18n.edit["field.title"]}</label>
+			<input type="text" id="title-${file.id}" name="title-${file.id}" value="${file.title}" />
+		</div>
+		<div class="line">
+			<label for="description-${file.id}">${i18n.edit["field.description"]}</label>
+			<textarea id="description-${file.id}" name="description-${file.id}" rows="5" cols="10">${file.description}</textarea>
+		</div>
+		<div class="line">
+			<label for="location-${file.id}">${i18n.edit["field.location"]}</label>
+			<input type="text" id="location-${file.id}" name="location-${file.id}" value="${file.location}" />
+		</div>
+		<div class="line">
+			<label for="date-${file.id}">${i18n.edit["field.date"]}</label>
+			<input type="text" id="date-${file.id}" name="date-${file.id}" value="${file.date}" />
+		</div>
+		
+		</div>
+	</li>
+</c:forEach>
+</ul>
+
+<div class="actions">
+	<input class="action-button" type="submit" value="${i18n.edit['global.save']}"/> 
+</div>
 
 </from>
 

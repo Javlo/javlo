@@ -30,8 +30,8 @@ import org.javlo.context.GlobalContext;
 import org.javlo.helper.ConfigHelper;
 import org.javlo.helper.ResourceHelper;
 import org.javlo.helper.StringHelper;
-import org.javlo.module.Module;
-import org.javlo.module.ModuleContext;
+import org.javlo.module.core.Module;
+import org.javlo.module.core.ModulesContext;
 import org.javlo.navigation.PageConfiguration;
 import org.javlo.service.RequestService;
 import org.javlo.service.exception.ServiceException;
@@ -87,7 +87,7 @@ public class I18nAccess implements Serializable {
 		I18nAccess i18n = new I18nAccess(globalContext);
 		if (ctx.getRenderMode() == ContentContext.EDIT_MODE || ctx.getRenderMode() == ContentContext.PREVIEW_MODE) {
 			i18n.initEdit(globalContext);
-			ModuleContext moduleContext = ModuleContext.getInstance(ctx.getRequest().getSession(), globalContext);
+			ModulesContext moduleContext = ModulesContext.getInstance(ctx.getRequest().getSession(), globalContext);
 			i18n.setCurrentModule(globalContext, moduleContext.getCurrentModule());
 		}
 		i18n.changeViewLanguage(ctx);
