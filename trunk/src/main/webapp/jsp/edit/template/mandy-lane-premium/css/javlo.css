@@ -813,9 +813,15 @@ body.previewEdit {
     padding: 6px 16px;
 }
 
+.form-list .title span.last {
+	background: none;
+	color: #333333;
+}
+
 .form-list .title span.size {
 	float: right;
 	background: none;
+	color: #333333;
 }
 
 .form-list li {

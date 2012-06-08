@@ -64,11 +64,13 @@ public class JavloELFile extends ELFile {
 		if (getContentContext() != null) {
 			try {
 				StaticInfo info = StaticInfo.getInstance(getContentContext(), file);
-				GlobalContext globalContext = GlobalContext.getInstance(getContentContext().getRequest());				
+				GlobalContext globalContext = GlobalContext.getSessionInstance(getContentContext().getRequest().getSession());				
 				if (!ResourceHelper.isTemplateFile(globalContext, file)) {
-					return URLHelper.createResourceURL(getContentContext(), '/' + globalContext.getStaticConfig().getStaticFolder() + info.getStaticURL());
+					String url = URLHelper.createResourceURL(getContentContext(), '/' + globalContext.getStaticConfig().getStaticFolder() + info.getStaticURL());					
+					return url;
 				} else {
-					return URLHelper.createTemplateResourceURL(getContentContext(), '/' + globalContext.getStaticConfig().getStaticFolder() + info.getStaticURL());
+					String url = URLHelper.createTemplateResourceURL(getContentContext(), '/' + globalContext.getStaticConfig().getStaticFolder() + info.getStaticURL());				
+					return url;
 				}
 			} catch (Exception e) {
 				e.printStackTrace();
@@ -81,7 +83,7 @@ public class JavloELFile extends ELFile {
 		if (getContentContext() != null && StringHelper.isImage(file.getName())) {
 			try {
 				StaticInfo info = StaticInfo.getInstance(getContentContext(), file);
-				GlobalContext globalContext = GlobalContext.getInstance(getContentContext().getRequest());
+				GlobalContext globalContext = GlobalContext.getSessionInstance(getContentContext().getRequest().getSession());
 				if (!ResourceHelper.isTemplateFile(globalContext, file)) {
 					return URLHelper.createTransformURL(getContentContext(), globalContext.getStaticConfig().getStaticFolder() + info.getStaticURL(), "icone") + "?ts=" + file.lastModified();
 				} else {

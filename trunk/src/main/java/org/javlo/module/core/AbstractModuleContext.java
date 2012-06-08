@@ -21,17 +21,17 @@ public abstract class AbstractModuleContext {
 	private String currentLink;
 	
 	public  static final AbstractModuleContext getInstance(HttpSession session, GlobalContext globalContext, Module module, Class<? extends AbstractModuleContext> implementationClass) throws FileNotFoundException, IOException, InstantiationException, IllegalAccessException {
-		Object context = session.getAttribute(implementationClass.getName());
+		final String KEY = implementationClass.getName()+'_'+globalContext.getContextKey();
+		Object context = session.getAttribute(KEY);
 		if (context == null) {
 			AbstractModuleContext outCtx = implementationClass.newInstance();
 			outCtx = implementationClass.newInstance();
 			outCtx.i18nAccess = I18nAccess.getInstance(globalContext, session);
 			outCtx.module = module;			
 			outCtx.init();
-			session.setAttribute(implementationClass.getName(), outCtx);
+			session.setAttribute(KEY, outCtx);
 			context = outCtx;
-		}
-		 
+		}		 
 		session.setAttribute(getKey(), context);
 		return (AbstractModuleContext)context;
 	}
@@ -75,6 +75,7 @@ public abstract class AbstractModuleContext {
 	 * @param renderer link to a jsp file.
 	 */
 	public void setRendererFromNavigation(String renderer) {
+		System.out.println("***** AbstractModuleContext.setRendererFromNavigation : renderer = "+renderer); //TODO: remove debug trace
 		module.setRenderer(renderer);
 	}
 }

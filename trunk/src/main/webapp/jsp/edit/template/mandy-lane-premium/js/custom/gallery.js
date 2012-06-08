@@ -28,10 +28,10 @@ jQuery(document).ready(function(){
 	/**
 	 * Gallery Colorbox
 	**/
-	jQuery(".thumb .view").colorbox({rel:'view'});
-	jQuery(".listview .view").colorbox({rel:'listview'});
+	jQuery(".thumb .view").colorbox({rel:'view', scalePhotos:true, maxWidth:"75%", maxHeight:"75%"});
+	jQuery(".listview .view").colorbox({rel:'listview', scalePhotos:true, maxWidth:"75%", maxHeight:"75%"});
 	jQuery(".popup").colorbox();
-	jQuery(".form-list .picture a").colorbox({rel:'image'});
+	jQuery(".form-list .picture a").colorbox({rel:'image', scalePhotos:true, maxWidth:"75%", maxHeight:"75%"});
 	
 	
 	/**

@@ -1,7 +1,6 @@
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
 <div id="meta-edit" class="form-list">
 
-
 <form id="form-meta" action="${info.currentURL}" method="post">
 
 <input type="hidden" name="webaction" value="updateMeta" />
@@ -9,7 +8,7 @@
 <ul>
 <c:forEach var="file" items="${files}">
 	<li>
-		<div class="title"><span><a href="${file.URL}">${file.name}</a></span><span class="size">${file.size}</span>${file.manType}</div>
+		<div class="title"><span><a href="${file.URL}">${file.name}</a></span><span class="size">${file.size}</span><span class="last">${file.manType}</span></div>
 		<div class="body">
 		<c:if test="${file.image}">		
 		<div class="download picture">

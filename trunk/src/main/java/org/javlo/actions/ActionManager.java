@@ -65,12 +65,11 @@ public class ActionManager {
 	}
 
 	public static IAction getAction(HttpServletRequest request, String group) throws IOException, ClassNotFoundException, InstantiationException, IllegalAccessException, ModuleException {
-		IAction outAction = getActionModule(request, group);
+		IAction outAction = getActionModule(request, group);		
 		if (outAction == null) {
-			return getActionComponent(request, group);
-		} else {
-			return outAction;
-		}
+			outAction = getActionComponent(request, group);
+		} 
+		return outAction;
 	}
 
 	public static IAction getActionModule(HttpServletRequest request, String group) throws IOException, ClassNotFoundException, InstantiationException, IllegalAccessException, ModuleException {
@@ -84,7 +83,7 @@ public class ActionManager {
 				return action;
 			}
 		}
-		return action;
+		return null;
 	}
 
 	public static IAction getActionComponent(HttpServletRequest request, String group) throws IOException, ClassNotFoundException, InstantiationException, IllegalAccessException {
@@ -158,7 +157,6 @@ public class ActionManager {
 			} else {
 				action = getAction(request, group);
 			}
-
 			if (action != null) {
 				/** security **/
 				if (action instanceof IModuleAction) { // if module action
@@ -177,7 +175,6 @@ public class ActionManager {
 			} else {
 				message = "actions class not found : " + action;
 				logger.severe(message);
-				;
 			}
 		} catch (Throwable t) {
 			if (t.getMessage() != null) {

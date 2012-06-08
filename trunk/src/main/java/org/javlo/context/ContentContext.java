@@ -385,6 +385,12 @@ public class ContentContext {
 		}
 		return null;
 	}
+	
+	public ContentContext getContextForAbsoluteURL() {
+		ContentContext outCtx = new ContentContext(this);
+		outCtx.setAbsoluteURL(true);
+		return outCtx;
+	}
 
 	/**
 	 * get the edit language in edit mode and view language if other mode.

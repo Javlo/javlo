@@ -1,5 +1,8 @@
 package org.javlo.helper;
 
+import java.util.LinkedHashMap;
+import java.util.Map;
+
 import javax.servlet.ServletContext;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -120,6 +123,24 @@ public class LangHelper {
 			return AbstractModuleContext.getInstance(request.getSession(), GlobalContext.getInstance(request), ModulesContext.getInstance(request.getSession(), GlobalContext.getInstance(request)).getCurrentModule(), c);
 		} 
 		return null;
+	}
+	
+	public static class Property {
+		private final String name;
+		private final Object value;
+
+		public Property(String name, Object value) {
+			this.name = name;
+			this.value = value;
+		}
+	}
+	
+	public Map<String, Object> obj(Property... props) {
+		Map<String, Object> out = new LinkedHashMap<String, Object>();
+		for (Property prop : props) {
+			out.put(prop.name, prop.value);
+		}
+		return out;
 	}
 
 }

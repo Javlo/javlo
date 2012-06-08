@@ -32,10 +32,11 @@ public class SearchActions implements IAction {
 		String msg = null;
 		
 		try {
+			RequestService requestService = RequestService.getInstance(request);
 
-			String searchStr = request.getParameter("keywords");
-			String groupId = request.getParameter("search-group");
-			String sort = request.getParameter("sort");
+			String searchStr = requestService.getParameter("keywords",requestService.getParameter("q",null));
+			String groupId = requestService.getParameter("search-group",null);
+			String sort = requestService.getParameter("sort",null);
 			
 			logger.info("search action : "+searchStr);
 			
@@ -43,7 +44,7 @@ public class SearchActions implements IAction {
 				if (searchStr.length() > 0) {
 					ContentContext ctx = ContentContext.getContentContext(request, response);
 					
-					ctx.setSpecialContentRenderer("/jsp/search/search_result.jsp");
+					ctx.setSpecialContentRenderer("/jsp/view/search/search_result.jsp");
 					
 					if (ctx.getCurrentTemplate() != null && ctx.getCurrentTemplate().getSearchRenderer(ctx) != null) {
 						ctx.setSpecialContentRenderer(ctx.getCurrentTemplate().getSearchRenderer(ctx));

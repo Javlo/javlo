@@ -4,6 +4,8 @@ import java.util.List;
 
 import org.javlo.bean.LinkToRenderer;
 import org.javlo.context.ContentContext;
+import org.javlo.context.GlobalContext;
+import org.javlo.i18n.I18nAccess;
 import org.javlo.module.core.AbstractModuleContext;
 import org.javlo.module.core.Module;
 import org.javlo.module.core.ModulesContext;
@@ -14,7 +16,12 @@ import sun.reflect.generics.reflectiveObjects.NotImplementedException;
 public abstract class AbstractModuleAction implements IModuleAction {
 
 	@Override
-	public String prepare(ContentContext ctx, ModulesContext moduleContext) throws Exception {
+	public String prepare(ContentContext ctx, ModulesContext modulesContext) throws Exception {
+		GlobalContext globalContext = GlobalContext.getInstance(ctx.getRequest());
+		I18nAccess i18nAccess = I18nAccess.getInstance(ctx.getRequest());
+		if (i18nAccess.getCurrentModule().equals(modulesContext.getCurrentModule())) {
+			i18nAccess.setCurrentModule(globalContext, modulesContext.getCurrentModule());			
+		}
 		return null;
 	}
 	

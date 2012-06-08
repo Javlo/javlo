@@ -166,9 +166,15 @@ public class I18nAccess implements Serializable {
 	private Module currentModule;
 
 	public void setCurrentModule(GlobalContext globalContext, Module currentModule) throws IOException {
-		this.currentModule = currentModule;
-		moduleEdit = currentModule.loadEditI18n(globalContext);
-		propEditMap = null;
+		if (!currentModule.equals(this.currentModule)) {
+			this.currentModule = currentModule;
+			moduleEdit = currentModule.loadEditI18n(globalContext);
+			propEditMap = null;
+		}
+	}
+	
+	public Module getCurrentModule() {
+		return currentModule;
 	}
 
 	private I18nAccess(GlobalContext globalContext) {
@@ -496,7 +502,7 @@ public class I18nAccess implements Serializable {
 			propEdit = i18nResource.getEditFile(newEditLg, true);
 			if (currentModule != null) {
 				moduleEdit = currentModule.loadEditI18n(globalContext);
-			}			
+			}
 		}
 	}
 

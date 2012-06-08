@@ -52,4 +52,5 @@ org.javlo.component.form.FormMailingComponent
 
 org.javlo.component.layout.ContentSeparation
 org.javlo.component.meta.ForceRealContent
+org.javlo.component.form.SearchResult
 

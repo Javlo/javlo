@@ -378,11 +378,14 @@ public abstract class ELFinder {
 
 	protected Map<String, Object> printOptions(ELFile file) {
 		String url = null;
+		String path = null;
 		if (file.getParentFile() != null) {
-			url = file.getParentFile().getURL();
-		}	
-		return obj(prop("path", '/' + file.getRelativePath()),// (String) Current folder path
-				prop("url", "/resource/static/"),// (String) Current folder URL
+			path = file.getParentFile().getPath();
+			url = file.getVolume().getRoot().getURL();
+		} 
+		return obj(
+				prop("path", path),// (String) Current folder path
+				prop("url", url),// (String) Current folder URL
 				prop("tmbURL", file.getThumbnailURL()),// (String) Thumbnails folder URL
 				prop("separator", "/"), prop("disabled", array()), // (Array) List of commands not allowed (disabled) on this volume
 				prop("copyOverwrite", 1), propObj("archivers", prop("create", array()), prop("extract", array())));

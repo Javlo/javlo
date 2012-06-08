@@ -12,13 +12,13 @@ function openEditor(textarea) {
 	
 	changeFooter();
 	
-	var box = jQuery(".widgetbox");
+	var box = jQuery("#fileManager");	
 	var ta = jQuery(textarea);
 	
 	container.width(box.width()-200);
 	ta.height(box.height()-250);
 	container.css("left", box.offset().left-100 );
-	container.css("top", box.offset().top-50 );
+	container.css("top", box.offset().top-150 );
 	editAreaLoader.init({
 		id : textarea.id
 		,start_highlight: true
