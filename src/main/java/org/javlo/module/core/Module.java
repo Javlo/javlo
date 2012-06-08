@@ -714,4 +714,9 @@ public class Module {
 			return user.validForRoles(getRoles());
 		}
 	}
+	
+	@Override
+	public String toString() {
+		return getClass().getName()+' '+getName();
+	}
 }

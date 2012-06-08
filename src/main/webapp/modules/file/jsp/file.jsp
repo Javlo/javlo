@@ -12,16 +12,13 @@
 <script type="text/javascript">
 jQuery(document).ready(function() {
 	var language = "${info.editLanguage}";
+	changeFooter();
 	jQuery('#fileManager').elfinder({
 		url : '${info.staticRootURL eq "/"?"":info.staticRootURL}${currentModule.path}/jsp/connector.jsp${not empty changeRoot?"?changeRoot=true":""}',
 		lang : '${info.editLanguage}',
-		height: jQuery("#footer").offset().top - jQuery("#fileManager").offset().top - jQuery(".mainBoxe .widgetbox h3").height(),
+		height: jQuery("#footer").offset().top - jQuery("#fileManager").offset().top - (jQuery(".maincontent .left").outerHeight(true) - jQuery(".maincontent .left").height()),
 		handlers : {			
 			open: function(event) { ajaxRequest("${info.currentURL}?webaction=updateBreadcrumb${not empty changeRoot?"&changeRoot=true":""}"); }
-		},
-		quicklook : {
-			autoplay : true,
-			jplayer  : 'extensions/jplayer'
 		},
 		uiOptions : {
 		toolbar : [
@@ -41,7 +38,7 @@ jQuery(document).ready(function() {
 		    edit : {
 		      editors : [
 		        {
-		          mimes : ['text/html','text/properties','text/plain'],  // add here other mimes if required
+		          mimes : ['text/html','text/properties','text/plain','text/jsp'],  // add here other mimes if required
 		          load : function(textarea) {
 		            openEditor(textarea);
 		          },
@@ -55,7 +52,6 @@ jQuery(document).ready(function() {
 		      ]
 		    }
 		  }
-	}).elfinder('instance');
-	changeFooter();
+	}).elfinder('instance');	
 });
 </script>

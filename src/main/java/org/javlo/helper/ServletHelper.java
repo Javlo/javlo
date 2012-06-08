@@ -37,31 +37,34 @@ public class ServletHelper {
 	public static final String execAction(ContentContext ctx) throws Exception {
 
 		RequestService requestService = RequestService.getInstance(ctx.getRequest());
-		String action = requestService.getParameter("webaction", null);
 
-		if (action != null) {
-			/** INIT TEMPLATE **/
+		/** INIT TEMPLATE **/
 
-			GlobalContext globalContext = GlobalContext.getInstance(ctx.getRequest());
+		GlobalContext globalContext = GlobalContext.getInstance(ctx.getRequest());
 
-			if (ctx.getRenderMode() != ContentContext.ADMIN_MODE) {
-				ContentService content = ContentService.getInstance(globalContext);
-				MenuElement elem = content.getNavigation(ctx).getNoErrorFreeCurrentPage(ctx);
-				if (elem != null) {
-					Template template = null;
-					PageConfiguration pageConfig = PageConfiguration.getInstance(globalContext);
-					if (pageConfig.getCurrentTemplate(ctx, elem) != null) {
-						template = pageConfig.getCurrentTemplate(ctx, elem).getFinalTemplate(ctx);
-						ctx.setCurrentTemplate(template);
-					}
+		if (ctx.getRenderMode() != ContentContext.ADMIN_MODE) {
+			ContentService content = ContentService.getInstance(globalContext);
+			MenuElement elem = content.getNavigation(ctx).getNoErrorFreeCurrentPage(ctx);
+			if (elem != null) {
+				Template template = null;
+				PageConfiguration pageConfig = PageConfiguration.getInstance(globalContext);
+				if (pageConfig.getCurrentTemplate(ctx, elem) != null) {
+					template = pageConfig.getCurrentTemplate(ctx, elem).getFinalTemplate(ctx);
+					ctx.setCurrentTemplate(template);
 				}
 			}
+		}
 
-			boolean specialRightON = false;
-			if (globalContext.isSpacialAccessCode(new Code(requestService.getParameter(URLHelper.SPACIAL_RIGHT_CODE_KEY, "no-code")))) {
-				specialRightON = true;
-			}
+		boolean specialRightON = false;
+		if (globalContext.isSpacialAccessCode(new Code(requestService.getParameter(URLHelper.SPACIAL_RIGHT_CODE_KEY, "no-code")))) {
+			specialRightON = true;
+		}
 
+		String[] actions = requestService.getParameterValues("webaction", null);
+		if (actions == null) {
+			return null;
+		}
+		for (String action : actions) {
 			EditContext editCtx = EditContext.getInstance(globalContext, ctx.getRequest().getSession());
 			if ((ctx.getRequest().getServletPath().equals("/edit") || ctx.getRequest().getServletPath().equals("/admin")) && (editCtx.getUserPrincipal() == null && !specialRightON)) {
 				logger.warning("block action : '" + action + "' because user is not logged.");
@@ -72,14 +75,13 @@ public class ServletHelper {
 					ctx.getRequest().setAttribute("message", newMessage);
 				}
 			}
-		} else {
-			action = Track.UNDEFINED_ACTION;
 		}
-		return action;
+
+		return StringHelper.arrayToString(actions, ",");
 	}
-	
+
 	public static final void prepareModule(ContentContext ctx) throws Exception {
-		GlobalContext globalContext = GlobalContext.getInstance(ctx.getRequest());		
+		GlobalContext globalContext = GlobalContext.getInstance(ctx.getRequest());
 		ModulesContext moduleContext = ModulesContext.getInstance(ctx.getRequest().getSession(), globalContext);
 		ctx.getRequest().setAttribute("modules", moduleContext.getModules());
 		ctx.getRequest().setAttribute("currentModule", moduleContext.getCurrentModule());
@@ -100,15 +102,15 @@ public class ServletHelper {
 			MessageRepository.getInstance(ctx).setGlobalMessage(genericMessage);
 		}
 	}
-	
+
 	public static String getSiteKey(HttpServletRequest request) {
 		return request.getServerName().toLowerCase();
 	}
-	
-	public static final  String executeJSP(ContentContext ctx, String url) throws ServletException, IOException {
-		try {			
-			Jsp2String jsp2String = new Jsp2String(ctx.getResponse());			
-			ctx.getRequest().getRequestDispatcher(url).include(ctx.getRequest(), jsp2String);			
+
+	public static final String executeJSP(ContentContext ctx, String url) throws ServletException, IOException {
+		try {
+			Jsp2String jsp2String = new Jsp2String(ctx.getResponse());
+			ctx.getRequest().getRequestDispatcher(url).include(ctx.getRequest(), jsp2String);
 			return jsp2String.toString();
 		} catch (Exception e) {
 			e.printStackTrace();

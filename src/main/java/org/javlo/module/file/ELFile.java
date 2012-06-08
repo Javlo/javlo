@@ -7,6 +7,8 @@ import java.util.List;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import org.javlo.helper.URLHelper;
+
 public abstract class ELFile {
 	
 	public static final Comparator<ELFile> FILE_NAME_COMPARATOR = new ELFileNameComparator();
@@ -78,6 +80,14 @@ public abstract class ELFile {
 	@Override
 	public String toString() {
 		return getFile().toString();
+	}
+	
+	public String getPath() {
+		if (getParentFile() != null) {
+			return URLHelper.mergePath(getParentFile().getPath(),getFile().getName());
+		} else {
+			return "/";
+		}
 	}
 	
 	public void updateInfo(HttpServletRequest request, HttpServletResponse respones) {

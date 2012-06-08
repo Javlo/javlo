@@ -9,11 +9,10 @@ import java.util.Map;
 import java.util.logging.Logger;
 
 import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpSession;
 
 import org.apache.commons.io.filefilter.FileFileFilter;
 import org.javlo.actions.AbstractModuleAction;
-import org.javlo.config.StaticConfig;
+import org.javlo.bean.LinkToRenderer;
 import org.javlo.context.ContentContext;
 import org.javlo.context.EditContext;
 import org.javlo.context.GlobalContext;
@@ -117,6 +116,7 @@ public class FileAction extends AbstractModuleAction {
 
 	@Override
 	public String prepare(ContentContext ctx, ModulesContext modulesContext) throws Exception {
+		String msg = super.prepare(ctx, modulesContext);
 		FileModuleContext fileModuleContext = (FileModuleContext) LangHelper.smartInstance(ctx.getRequest(), ctx.getResponse(), FileModuleContext.class);		
 		GlobalContext globalContext = GlobalContext.getInstance(ctx.getRequest());
 		
@@ -128,14 +128,18 @@ public class FileAction extends AbstractModuleAction {
 		if (modulesContext.getFromModule() == null && ctx.getRequest().getParameter("changeRoot") == null) {
 			Box box = modulesContext.getCurrentModule().getBox("filemanager");
 			if (box != null) {
-				box.restoreTitle();
+				box.restoreTitle();				
 			}
+			fileModuleContext.loadNavigation();			
 		} else {
-			if (fileModuleContext.getTitle() != null) {
+			if (fileModuleContext.getTitle() != null) {				
 				modulesContext.getCurrentModule().restoreAll();
-				Box box = modulesContext.getCurrentModule().getBox("filemanager");
-				box.setTitle(box.getTitle() + " : " + fileModuleContext.getTitle());				
-			}
+				fileModuleContext.getNavigation().clear();
+				LinkToRenderer lnk = fileModuleContext.getHomeLink();
+				fileModuleContext.getNavigation().add(lnk);
+				fileModuleContext.setCurrentLink(lnk.getName());
+				modulesContext.getCurrentModule().setToolsRenderer("/jsp/actions.jsp");
+			}			
 		}
 
 		if (fileModuleContext.getCurrentLink().equals(FileModuleContext.PAGE_META)) {
@@ -151,13 +155,13 @@ public class FileAction extends AbstractModuleAction {
 			} else {
 				logger.warning("folder not found : " + folder);
 			}
-		} else {			
-			modulesContext.getCurrentModule().setToolsRenderer(null);
-			modulesContext.getCurrentModule().setRenderer(null);
-			modulesContext.getCurrentModule().restoreBoxes();
+		} else {
+			if (modulesContext.getCurrentModule().getToolsRenderer() != null && modulesContext.getFromModule() == null) {				
+				modulesContext.getCurrentModule().restoreAll();
+			}
 		}
 
-		return super.prepare(ctx, modulesContext);
+		return msg;
 	}
 
 	public String performBrowse(HttpServletRequest request) {

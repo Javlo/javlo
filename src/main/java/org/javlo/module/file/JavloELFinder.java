@@ -18,7 +18,6 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import org.apache.commons.fileupload.FileItem;
-import org.apache.commons.lang.StringUtils;
 import org.javlo.config.StaticConfig;
 import org.javlo.context.ContentContext;
 import org.javlo.context.GlobalContext;
@@ -224,10 +223,11 @@ public class JavloELFinder extends ELFinder {
 	
 	@Override
 	protected Map<String, Object> printOptions(ELFile file) {
+		GlobalContext globalContext = GlobalContext.getSessionInstance(((JavloELFile)file).getContentContext().getRequest().getSession());
 		Map<String, Object> outOptions = super.printOptions(file);		
-		if (ResourceHelper.isTemplateFile(GlobalContext.getInstance(((JavloELFile)file).getContentContext().getRequest()), file.getFile())) {
+		if (ResourceHelper.isTemplateFile(globalContext, file.getFile())) {
 			outOptions.remove("url");
-			String templateName = ResourceHelper.extractTemplateName(GlobalContext.getInstance(((JavloELFile)file).getContentContext().getRequest()), file.getFile());
+			String templateName = ResourceHelper.extractTemplateName(globalContext, file.getFile());
 			outOptions.put("url", URLHelper.createTemplateResourceURL(((JavloELFile)file).getContentContext(), '/'+templateName+'/'));
 		}
 		return outOptions;

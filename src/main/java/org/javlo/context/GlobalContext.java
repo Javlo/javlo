@@ -163,25 +163,33 @@ public class GlobalContext implements Serializable {
 	public static GlobalContext getDefaultContext(HttpServletRequest request) throws IOException, ConfigurationException {
 		return getRealInstance(request, StaticConfig.getInstance(request.getSession()).getDefaultContext(), false);
 	}
+	
+	public static GlobalContext getSessionInstance(HttpSession session) {
+		String contextKey = (String)session.getAttribute(KEY);		
+		return (GlobalContext)session.getServletContext().getAttribute(contextKey);
+	}
 
 	public static GlobalContext getInstance(HttpServletRequest request) {
 		try {
+			String contextURI;
 			GlobalContext globalContext = (GlobalContext) request.getAttribute(KEY);
 			if (globalContext == null) {
 				StaticConfig staticConfig = StaticConfig.getInstance(request.getSession().getServletContext());
 				if (staticConfig.isHostDefineSite()) {
 					String host = ServletHelper.getSiteKey(request);
 					globalContext = GlobalContext.getInstance(request, host);
+					contextURI = host;
 				} else {
 					RequestService requestService = RequestService.getInstance(request);
 					if (StringHelper.isTrue(requestService.getParameter("__check_context", "true"))) {
-						String contextURI = ContentManager.getContextName(request);
+						contextURI = ContentManager.getContextName(request);
 						if (GlobalContext.isExist(request, contextURI)) {
 							globalContext = GlobalContext.getInstance(request, contextURI);
 							globalContext.setPathPrefix(contextURI);
 						} else {
 							String host = ServletHelper.getSiteKey(request);
 							globalContext = GlobalContext.getInstance(request, host);
+							contextURI = host;
 							if (globalContext == null) {
 								logger.severe("error GlobalContext not found : " + request.getRequestURI());
 								return null;
@@ -192,8 +200,13 @@ public class GlobalContext implements Serializable {
 						return null;
 					}
 				}
+			} else {
+				contextURI = globalContext.getContextKey();
 			}
 			request.setAttribute(KEY, globalContext);
+			
+			request.getSession().setAttribute(KEY, contextURI); // mark global context in session.
+			
 			return globalContext;
 		} catch (ConfigurationException e) {
 			e.printStackTrace();

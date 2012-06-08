@@ -12,8 +12,6 @@ public class FileModuleContext extends AbstractModuleContext {
 	private String title;
 	private String path = "/";
 	
-	private LinkToRenderer homeLink;
-	
 	public static final String KEY = "fileContext";
 	
 	public static final String PAGE_META = "meta";
@@ -24,11 +22,17 @@ public class FileModuleContext extends AbstractModuleContext {
 	 * use getInstance on AbstractModuleContext or smart instance in action method for instantiate.
 	 */
 	@Override
-	public void init(){
-		homeLink = new LinkToRenderer(i18nAccess.getText("file.navigation.explorer"), "explorer", "/jsp/file.jsp");
-		navigation.add(homeLink);
-		navigation.add(new LinkToRenderer(i18nAccess.getText("file.navigation.meta"), PAGE_META, "/jsp/meta.jsp"));		
+	public void init(){		
+		
+		
+		loadNavigation();
 	};
+
+	public void loadNavigation() {		
+		navigation.clear();
+		navigation.add(getHomeLink());
+		navigation.add(new LinkToRenderer(i18nAccess.getText("file.navigation.meta"), PAGE_META, "/jsp/meta.jsp"));		
+	}
 
 	public void clear() {
 		root = null;
@@ -66,7 +70,7 @@ public class FileModuleContext extends AbstractModuleContext {
 
 	@Override
 	public LinkToRenderer getHomeLink() {
-		return homeLink;
+		return new LinkToRenderer(i18nAccess.getText("file.navigation.explorer"), "explorer", "/jsp/file.jsp");
 	}
 	
 }

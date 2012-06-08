@@ -22,6 +22,6 @@ public interface IModuleAction extends IAction {
 	 * @return eventually the error message
 	 * @throws Exception
 	 */
-	public String performSearch(ContentContext ctx, ModulesContext moduleContext, String query) throws Exception;
+	public String performSearch(ContentContext ctx, ModulesContext modulesContext, String query) throws Exception;
 	
 }

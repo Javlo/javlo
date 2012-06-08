@@ -19,7 +19,7 @@ public class SearchResult extends AbstractVisualComponent {
 	
 	@Override
 	public String getViewXHTMLCode(ContentContext ctx) throws Exception {
-		String renderer = "/jsp/search/search_result.jsp";
+		String renderer = "/jsp/components/search/search_result.jsp";
 		
 		if (ctx.getCurrentTemplate() != null && ctx.getCurrentTemplate().getSearchRenderer(ctx) != null) {
 			renderer = ctx.getCurrentTemplate().getSearchRenderer(ctx);
