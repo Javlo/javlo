@@ -424,7 +424,7 @@ public class Edit extends AbstractModuleAction {
 					ctx.setSpecialContentRenderer(ctx.getCurrentTemplate().getSearchRenderer(ctx));
 				}
 
-				SearchResult search = SearchResult.getInstance(ctx.getRequest().getSession());
+				SearchResult search = SearchResult.getInstance(ctx);
 				search.cleanResult();
 
 				if (query.startsWith("comp:")) {
@@ -916,6 +916,44 @@ public class Edit extends AbstractModuleAction {
 		} else {
 			currentModule.clearAllBoxes();
 		}
+		return null;
+	}
+	
+	public static String performMovePage(RequestService rs, ContentContext ctx, GlobalContext globalContext, ContentService content, I18nAccess i18nAccess, MessageRepository messageRepository) throws Exception {
+		String pageName = rs.getParameter("page", null);
+		String pagePreviousName = rs.getParameter("previous", null);
+		if (pageName == null || pagePreviousName == null) {
+			return "bad request structure : need 'page' and 'previous' parameters";
+		}
+		pageName = pageName.replaceFirst("page-", "");
+		MenuElement pagePrevious = null;
+		if (pagePreviousName.startsWith("page-")) {
+			pagePreviousName = pagePreviousName.replaceFirst("page-", "");
+			pagePrevious = content.getNavigation(ctx).searchChildFromName(pagePreviousName);
+			if (pagePrevious ==  null) {
+				return "previous page not found : "+pagePreviousName;
+			}
+		}
+		MenuElement page = content.getNavigation(ctx).searchChildFromName(pageName);
+		if (page == null) {
+			return "page not found : "+pageName;
+		}
+		if (pagePrevious == null) {
+			page.setPriority(0);
+		} else {
+			if (page.getPreviousBrother() != null && page.getPreviousBrother().equals(pagePrevious)) { // page is not really moved
+				return null;
+			}
+			page.setPriority(pagePrevious.getPriority()+1);			
+		}
+		NavigationHelper.changeStepPriority(page.getParent().getAllChilds(), 10);
+		
+		PersistenceService persistenceService = PersistenceService.getInstance(globalContext);
+		persistenceService.store(ctx);
+		autoPublish(ctx.getRequest(), ctx.getResponse());
+		
+		messageRepository.setGlobalMessageAndNotification(ctx, new GenericMessage(i18nAccess.getText("edit.message.moved", new String[][] {{"name", page.getName()}}), GenericMessage.INFO));
+		
 		return null;
 	}
 

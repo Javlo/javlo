@@ -52,7 +52,7 @@ public class SearchActions implements IAction {
 						ctx.setSpecialContentRenderer(ctx.getCurrentTemplate().getSearchRenderer(ctx));
 					}
 
-					SearchResult search = SearchResult.getInstance(request.getSession());
+					SearchResult search = SearchResult.getInstance(ctx);
 					search.search(ctx, groupId, searchStr, sort, componentList);
 					
 					ctx.getRequest().getSession().setAttribute("searchList", search.getSearchResult());

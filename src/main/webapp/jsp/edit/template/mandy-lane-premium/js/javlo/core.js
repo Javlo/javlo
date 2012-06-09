@@ -18,6 +18,17 @@ jQuery(document).bind("ajaxUpdate",function () {
 	jQuery.datepicker.setDefaults( jQuery.datepicker.regional[ editLanguage ] );
 	jQuery( ".datepicker" ).datepicker({maxDate: "+0D", dateFormat: dateFormat}); 
 	fullHeight();
+	
+	/////////// SORTABLE /////////////
+	jQuery(".sortable").sortable({
+		   placeholder: "sortable-target"
+		   ,stop: function(event, ui) {
+			   var url = jQuery("#form-add-page").attr("action");
+			   url=url+"?webaction=movePage&page="+jQuery(ui.item).attr("id")+"&previous="+jQuery(ui.item).prev().attr("id");
+			   ajaxRequest(url);
+		   }
+	});
+	
 });
 
 function fullHeight() {
@@ -34,3 +45,4 @@ jQuery(window).resize(fullHeight);
 function updateLayout() {
 	changeFooter();
 }
+

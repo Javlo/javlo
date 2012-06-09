@@ -20,7 +20,7 @@ public class SearchResult extends AbstractVisualComponent {
 	@Override
 	protected void prepareView(ContentContext ctx) throws Exception {
 		System.out.println("***** SearchResult.prepareView : update CTX"); //TODO: remove debug trace
-		org.javlo.search.SearchResult sr = org.javlo.search.SearchResult.getInstance(ctx.getRequest().getSession());
+		org.javlo.search.SearchResult sr = org.javlo.search.SearchResult.getInstance(ctx);
 		sr.setContentContext(ctx);
 		super.prepareView(ctx);
 	}
@@ -33,6 +33,9 @@ public class SearchResult extends AbstractVisualComponent {
 			renderer = ctx.getCurrentTemplate().getSearchRenderer(ctx);
 		}
 		
+		org.javlo.search.SearchResult sr = org.javlo.search.SearchResult.getInstance(ctx);
+		sr.setContentContext(ctx);
+
 		return executeJSP(ctx, renderer);
 	}
 	
