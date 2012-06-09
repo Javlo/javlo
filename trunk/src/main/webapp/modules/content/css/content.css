@@ -16,6 +16,10 @@ ul.menu {
     background-repeat: no-repeat;
 }
 
+.navigation li.add-page {
+	margin-left: 20px;
+}
+
 .component input, .component textarea, .component select {
 	width: 60%;
 }

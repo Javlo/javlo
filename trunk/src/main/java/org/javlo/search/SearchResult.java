@@ -15,7 +15,7 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.logging.Logger;
 
-import javax.servlet.http.HttpSession;
+import javax.servlet.http.HttpServletRequest;
 
 import org.apache.commons.lang.StringUtils;
 import org.javlo.component.core.ContentElementList;
@@ -229,12 +229,17 @@ public class SearchResult {
 	private SearchResult() {
 	}; /* instance only the class here */
 
-	public static SearchResult getInstance(HttpSession session) {
-		SearchResult res = (SearchResult) session.getAttribute(SEARCH_SESSION_KEY);
+	public static SearchResult getInstance(ContentContext ctx) {
+		SearchResult res = (SearchResult) ctx.getRequest().getAttribute(SEARCH_SESSION_KEY);
 		if (res == null) {
-			res = new SearchResult();
-			session.setAttribute(SEARCH_SESSION_KEY, res);
+			res = (SearchResult) ctx.getRequest().getSession().getAttribute(SearchResult.class.getName());
+			if (res == null) {
+				res = new SearchResult();
+				ctx.getRequest().getSession().setAttribute(SearchResult.class.getName(), res);
+			}
+			ctx.getRequest().setAttribute(SEARCH_SESSION_KEY, res);
 		}
+		res.setContentContext(ctx);
 		return res;
 	}
 
