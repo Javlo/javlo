@@ -850,16 +850,16 @@ public abstract class AbstractVisualComponent implements IContentVisualComponent
 		if (ctx.getRenderMode() == ContentContext.PREVIEW_MODE) {
 			GlobalContext globalContext = GlobalContext.getInstance(ctx.getRequest());
 			EditContext editCtx = EditContext.getInstance(globalContext, ctx.getRequest().getSession());
-			if (ctx.getRenderMode() == ContentContext.PREVIEW_MODE && editCtx.isEditPreview()) {
+			if (editCtx.isEditPreview()) {
 				MenuElement currentPage;
 				try {
 					currentPage = ctx.getCurrentPage();
-					if (currentPage.equals(getPage())) { // not edit component is
+					//f (currentPage.equals(getPage())) { // not edit component is
 						// repeated and user is
 						// not on the definition
 						// page
 						return " class=\"editable-component" + currentClass + "\"";
-					}
+					//}
 				} catch (Exception e) {
 					e.printStackTrace();
 				}

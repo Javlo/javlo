@@ -62,11 +62,17 @@ if (components.length > 0 && components[0].getPreviousComponent() != null) {
 	previousId = components[0].getPreviousComponent().getId();
 }
 /*** rendering ***/
-%><div class="insert-line" id="insert-line-<%=previousId%>">
+
+if (!StringHelper.isTrue(request.getParameter("noinsert"))) {
+%>
+
+<div class="insert-line" id="insert-line-<%=previousId%>">
 	<a class="action-button ajax" href="${info.currentURL}?webaction=insert&previous=<%=previousId%>&type=<%=currentTypeComponent.getType()%>"><%=insertHere%></a>
 </div>
 <div id="comp-child-<%=previousId%>"></div>
 <%
+} else {%><div class="insert-line" id="insert-line-<%=previousId%>">&nbsp;</div><%}
+
 }
 if (components.length == 0) {  /* if no specific components asked than render all components */
 ComponentContext compCtx = ComponentContext.getInstance(request);
@@ -92,6 +98,7 @@ for (int i=0; i<components.length; i++) {
 	String helpText = componentContext.getHelpHTML(ctx, comp);
 %>
  <div id="comp-<%=comp.getId()%>">
+ <input type="hidden" name="components" value="<%=comp.getId()%>" />
  <div class="tabs component">  	  
       <ul> 
       	  <li class="title"><span style="color: #<%=comp.getHexColor()%>"><%=comp.getComponentLabel(ctx, globalContext.getEditLanguage()) %></span></li>	
@@ -120,11 +127,13 @@ for (int i=0; i<components.length; i++) {
       	<%=helpText%>
       </div><%}%>
       <input type="hidden" name="id-<%=comp.getId()%>" value="true" /> 
-  </div>
+  </div><%
+  if (!StringHelper.isTrue(request.getParameter("noinsert"))) {%>  
   <div class="insert-line" id="insert-line-<%=comp.getId()%>">
 	<a class="action-button ajax" href="${info.currentURL}?webaction=insert&previous=<%=comp.getId()%>&type=<%=currentTypeComponent.getType()%>"><%=insertHere%></a>
   </div>
- </div>
+ </div><%
+ }%>
  <div class="new-component-container" id="comp-child-<%=comp.getId()%>"></div><%
   if (totalComp > 40 && request.getParameter("display-all") == null) {
   %>
@@ -136,5 +145,3 @@ for (int i=0; i<components.length; i++) {
   %>  
 <%}
 %>
-
-

@@ -5,6 +5,7 @@ package org.javlo.actions;
 
 import java.text.ParseException;
 import java.util.Date;
+import java.util.List;
 import java.util.logging.Logger;
 
 import javax.servlet.http.HttpServletRequest;
@@ -35,6 +36,7 @@ public class SearchActions implements IAction {
 			RequestService requestService = RequestService.getInstance(request);
 
 			String searchStr = requestService.getParameter("keywords",requestService.getParameter("q",null));
+			List<String> componentList = requestService.getParameterListValues("comps", null);
 			String groupId = requestService.getParameter("search-group",null);
 			String sort = requestService.getParameter("sort",null);
 			
@@ -51,7 +53,7 @@ public class SearchActions implements IAction {
 					}
 
 					SearchResult search = SearchResult.getInstance(request.getSession());
-					search.search(ctx, groupId, searchStr, sort);
+					search.search(ctx, groupId, searchStr, sort, componentList);
 					
 					ctx.getRequest().getSession().setAttribute("searchList", search.getSearchResult());
 					
