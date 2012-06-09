@@ -1,6 +1,19 @@
 /*** general ***/
+
+input, textarea, select {	
+	box-shadow: 1px 1px 3px #CCCCCC inset;
+}
+
+#search input {
+	box-shadow: none;
+}
+
 table th {
 	text-align: left;
+}
+
+.selected {
+	font-weight: bold;
 }
 
 .label-inside.label {

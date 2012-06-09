@@ -431,7 +431,7 @@ public class Edit extends AbstractModuleAction {
 					query = query.replaceFirst("comp:", "").trim();
 					search.searchComponentInPage(ctx, query);
 				} else {
-					search.search(ctx, (String) null, query, (String) null);
+					search.search(ctx, (String) null, query, (String) null, null);
 				}
 
 				Collection<SearchElement> result = search.getSearchResult();
@@ -475,7 +475,7 @@ public class Edit extends AbstractModuleAction {
 		return message;
 	}
 
-	public static final String performInsert(HttpServletRequest request, ContentContext ctx, ContentService content, Module currentModule, I18nAccess i18nAccess, MessageRepository messageRepository) throws Exception {
+	public static final String performInsert(HttpServletRequest request, HttpServletResponse response, GlobalContext globalContext, ContentContext ctx, ContentService content, Module currentModule, I18nAccess i18nAccess, MessageRepository messageRepository) throws Exception {
 		if (!canModifyCurrentPage(ctx) || !checkPageSecurity(ctx)) {
 			messageRepository.setGlobalMessageAndNotification(ctx, new GenericMessage(i18nAccess.getText("action.block"), GenericMessage.ERROR));
 			return null;
@@ -493,6 +493,11 @@ public class Edit extends AbstractModuleAction {
 
 		String msg = i18nAccess.getText("action.component.created", new String[][] { { "type", type } });
 		messageRepository.setGlobalMessageAndNotification(ctx, new GenericMessage(msg, GenericMessage.INFO));
+		
+		PersistenceService persistenceService = PersistenceService.getInstance(globalContext);
+		persistenceService.store(ctx);
+		modifPage(ctx);
+		autoPublish(request, response);
 
 		return null;
 	}
@@ -532,7 +537,7 @@ public class Edit extends AbstractModuleAction {
 		return null;
 	}
 
-	public static final String performSave(ContentContext ctx, GlobalContext globalContext, ContentService content, RequestService requestService, I18nAccess i18nAccess, MessageRepository messageRepository, MenuElement currentPage, Module currentModule, AdminUserFactory adminUserFactory) throws Exception {
+	public static final String performSave(ContentContext ctx, GlobalContext globalContext, ContentService content, RequestService requestService, I18nAccess i18nAccess, MessageRepository messageRepository, Module currentModule, AdminUserFactory adminUserFactory) throws Exception {
 
 		if (!canModifyCurrentPage(ctx) || !checkPageSecurity(ctx)) {
 			messageRepository.setGlobalMessageAndNotification(ctx, new GenericMessage(i18nAccess.getText("action.block"), GenericMessage.ERROR));
@@ -541,14 +546,15 @@ public class Edit extends AbstractModuleAction {
 
 		String message = null;
 
-		IContentComponentsList contentList = currentPage.getAllContent(ctx);
+		//IContentComponentsList contentList = currentPage.getAllContent(ctx);
+		List<String> components = requestService.getParameterListValues("components", Collections.EMPTY_LIST);
 
 		boolean modif = false;
 
 		boolean needRefresh = false;
 
-		while (contentList.hasNext(ctx)) {
-			IContentVisualComponent elem = contentList.next(ctx);
+		for (String compId : components) {
+			IContentVisualComponent elem = content.getCachedComponent(ctx, compId);
 			if (StringHelper.isTrue(requestService.getParameter("id-" + elem.getId(), "false"))) {
 				elem.performConfig(ctx);
 				elem.refresh(ctx);

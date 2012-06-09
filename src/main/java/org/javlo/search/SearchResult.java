@@ -3,12 +3,15 @@
  */
 package org.javlo.search;
 
+import java.io.ByteArrayOutputStream;
+import java.io.PrintStream;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.Date;
 import java.util.Iterator;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.logging.Logger;
 
@@ -25,6 +28,7 @@ import org.javlo.i18n.I18nAccess;
 import org.javlo.message.GenericMessage;
 import org.javlo.message.MessageRepository;
 import org.javlo.navigation.MenuElement;
+import org.javlo.search.SearchResult.SearchElement.Component;
 import org.javlo.service.ContentService;
 
 /**
@@ -51,6 +55,8 @@ public class SearchResult {
 	private final String SORT_RELEVANCE = "relevance";
 	private final String SORT_DATE = "date";
 
+	private ContentContext contentContext = null;
+
 	public class DateComporator implements Comparator<SearchElement> {
 
 		@Override
@@ -60,7 +66,37 @@ public class SearchResult {
 
 	}
 
-	public class SearchElement {
+	public static class SearchElement {
+
+		public static class Component {
+			private IContentVisualComponent comp;
+			private SearchResult searchResult;
+
+			public Component(SearchResult searchResult, IContentVisualComponent comp) {
+				this.comp = comp;
+				this.searchResult = searchResult;
+			}
+
+			public String getType() {
+				return comp.getType();
+			}
+
+			public String getXhtml() {
+				ByteArrayOutputStream outStream = new ByteArrayOutputStream();
+				PrintStream out = new PrintStream(outStream);
+				out.println(comp.getPrefixViewXHTMLCode(searchResult.getContentContext()));
+				try {
+					out.println(comp.getXHTMLCode(searchResult.getContentContext()));
+				} catch (Exception e) {
+					e.printStackTrace();
+					return null;
+				}
+				out.println(comp.getSufixViewXHTMLCode(searchResult.getContentContext()));
+				out.close();
+				return new String(outStream.toByteArray());
+			}
+		}
+
 		String name;
 		String title;
 		String url;
@@ -71,6 +107,7 @@ public class SearchResult {
 		String path = null;
 		int priority = 0;
 		int maxPriority = 0;
+		private List<Component> components;
 
 		// MenuElement page;
 
@@ -179,6 +216,14 @@ public class SearchResult {
 		public void setPath(String path) {
 			this.path = path;
 		}
+
+		public void setComponent(List<Component> componentsRendered) {
+			this.components = componentsRendered;
+		}
+
+		public List<Component> getComponents() {
+			return components;
+		}
 	}
 
 	private SearchResult() {
@@ -197,7 +242,7 @@ public class SearchResult {
 		result.clear();
 	}
 
-	private void addResult(ContentContext ctx, MenuElement page, String searchElement, String name, String title, String url, String description, int priority) {
+	private void addResult(ContentContext ctx, MenuElement page, String searchElement, String name, String title, String url, String description, int priority, List<Component> componentsRendered) {
 		SearchElement rst = new SearchElement();
 		rst.setName(name);
 		rst.setUrl(url);
@@ -206,6 +251,7 @@ public class SearchResult {
 		rst.setDescription(description);
 		rst.setPriority(priority);
 		rst.setPath(page.getPath());
+		rst.setComponent(componentsRendered);
 		try {
 			if (page.getContentDateNeverNull(ctx) != null) {
 				Date date = page.getContentDateNeverNull(ctx);
@@ -253,18 +299,23 @@ public class SearchResult {
 
 					searchText = inSearchText;
 					int searchLevel = 0;
+					List<Component> componentsRenderer = new LinkedList<Component>();
 					while (elemList.hasNext(ctxWithContent)) {
 						IContentVisualComponent cpt = elemList.next(ctxWithContent);
 
 						if (componentType == null || componentType.contains(cpt.getType())) {
 
 							if (cpt.getSearchLevel() > 0) {
-								searchLevel = searchLevel + StringUtils.countMatches(cpt.getTextForSearch().toLowerCase(), inSearchText.toLowerCase()) * cpt.getSearchLevel();
+								int cptSearchLevel = StringUtils.countMatches(cpt.getTextForSearch().toLowerCase(), inSearchText.toLowerCase()) * cpt.getSearchLevel();
+								searchLevel = searchLevel + cptSearchLevel;
+								if (cptSearchLevel > 0) {
+									componentsRenderer.add(new Component(this, cpt));
+								}
 							}
 						}
 					}
 					if (searchLevel != 0) {
-						addResult(ctx, page, inSearchText, page.getName(), page.getFullLabel(ctxWithContent), URLHelper.createURL(ctxWithContent, page.getPath()), page.getDescription(ctxWithContent), searchLevel);
+						addResult(ctx, page, inSearchText, page.getName(), page.getFullLabel(ctxWithContent), URLHelper.createURL(ctxWithContent, page.getPath()), page.getDescription(ctxWithContent), searchLevel, componentsRenderer);
 					}
 				}
 			}
@@ -274,7 +325,7 @@ public class SearchResult {
 			searchInPage(children[i], ctx, groupId, inSearchText, componentType);
 		}
 	}
-	
+
 	public void searchComponentInPage(ContentContext ctx, String componentType) throws Exception {
 		GlobalContext globalContext = GlobalContext.getInstance(ctx.getRequest());
 		ContentService content = ContentService.getInstance(globalContext);
@@ -287,12 +338,11 @@ public class SearchResult {
 
 			ContentContext ctxWithContent = ctx.getContextWithContent(page);
 
-
-			if (ctxWithContent != null) {				
+			if (ctxWithContent != null) {
 				ctxWithContent.setArea(null);
-				int searchLevel = page.getContentByType(ctxWithContent, componentType).size();				
+				int searchLevel = page.getContentByType(ctxWithContent, componentType).size();
 				if (searchLevel > 0) {
-					addResult(ctx, page, null, page.getName(), page.getFullLabel(ctxWithContent), URLHelper.createURL(ctxWithContent, page.getPath()), page.getDescription(ctxWithContent), searchLevel);
+					addResult(ctx, page, null, page.getName(), page.getFullLabel(ctxWithContent), URLHelper.createURL(ctxWithContent, page.getPath()), page.getDescription(ctxWithContent), searchLevel, null);
 				}
 			}
 		}
@@ -302,7 +352,7 @@ public class SearchResult {
 		}
 	}
 
-	public void search(ContentContext ctx, String groupId, String searchText, String sort) throws Exception {
+	public void search(ContentContext ctx, String groupId, String searchText, String sort, List<String> comps) throws Exception {
 		setQuery(searchText);
 		if (sort != null) {
 			setSort(sort);
@@ -312,7 +362,7 @@ public class SearchResult {
 			ContentService content = ContentService.createContent(ctx.getRequest());
 			MenuElement nav = content.getNavigation(ctx);
 
-			searchInPage(nav, ctx, groupId, searchText, null);
+			searchInPage(nav, ctx, groupId, searchText, comps);
 
 			Iterator<SearchElement> results = result.iterator();
 			while (results.hasNext()) {
@@ -352,34 +402,6 @@ public class SearchResult {
 		}
 	}
 
-	/**
-	 * search on the site
-	 * 
-	 * @param ctx
-	 *            current content
-	 * @param groupId
-	 *            you can define group on a page, here you select a specific group
-	 * @param searchText
-	 *            the search you want to search
-	 * @param componentType
-	 *            the list of component where we search.
-	 * @throws Exception
-	 */
-	public void search(ContentContext ctx, String groupId, String searchText, Collection<String> componentType) throws Exception {
-		synchronized (result) { // if two browser with the same session
-			cleanResult();
-			ContentService content = ContentService.createContent(ctx.getRequest());
-			MenuElement nav = content.getNavigation(ctx);
-
-			searchInPage(nav, ctx, groupId, searchText, componentType);
-			Iterator<SearchElement> results = result.iterator();
-			while (results.hasNext()) {
-				SearchElement element = results.next();
-				element.setMaxPriority(maxPriority);
-			}
-		}
-	}
-
 	public Collection<SearchElement> getSearchResultCollection() {
 		return result;
 	}
@@ -393,7 +415,11 @@ public class SearchResult {
 	}
 
 	public String getQuery() {
-		return StringHelper.removeTag(query);
+		if (query != null) {
+			return StringHelper.removeTag(query);
+		} else {
+			return null;
+		}
 	}
 
 	public String getUrlQuery() {
@@ -410,6 +436,14 @@ public class SearchResult {
 
 	public void setSort(String sort) {
 		this.sort = sort;
+	}
+
+	public ContentContext getContentContext() {
+		return contentContext;
+	}
+
+	public void setContentContext(ContentContext contentContext) {
+		this.contentContext = contentContext;
 	}
 
 }

@@ -18,6 +18,14 @@ public class SearchResult extends AbstractVisualComponent {
 	}
 	
 	@Override
+	protected void prepareView(ContentContext ctx) throws Exception {
+		System.out.println("***** SearchResult.prepareView : update CTX"); //TODO: remove debug trace
+		org.javlo.search.SearchResult sr = org.javlo.search.SearchResult.getInstance(ctx.getRequest().getSession());
+		sr.setContentContext(ctx);
+		super.prepareView(ctx);
+	}
+	
+	@Override
 	public String getViewXHTMLCode(ContentContext ctx) throws Exception {
 		String renderer = "/jsp/components/search/search_result.jsp";
 		
@@ -41,6 +49,16 @@ public class SearchResult extends AbstractVisualComponent {
 	@Override
 	public boolean isEmpty(ContentContext ctx) {
 		return false;
+	}
+	
+	@Override
+	public String getPrefixViewXHTMLCode(ContentContext ctx) {
+		return "";
+	}
+	
+	@Override
+	public String getSufixViewXHTMLCode(ContentContext ctx) {
+		return "";
 	}
 
 }

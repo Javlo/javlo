@@ -1,7 +1,7 @@
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
 <%@ taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions" %>
 
-<c:if test="${not userInterfaceContext.componentsList || not empty param.previewEdit}">
+<c:if test="${(not userInterfaceContext.componentsList || not empty param.previewEdit) && empty param.noinsert}">
 <div class="special"> <!-- components -->
 <form id="form-component-list" action="${info.currentURL}" method="post" class="js-submit ajax">
 <input type="hidden" name="webaction" value="changeComponent" />
@@ -20,7 +20,9 @@
 </c:forEach>
 </select>
 </form>
+<c:if test="${empty param.previewEdit}">
 <a class="close" href="${info.currentURL}?webaction=displayComponentsList">x</a>
+</c:if>
 </div>
 </c:if>
 
