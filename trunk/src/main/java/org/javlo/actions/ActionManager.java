@@ -29,6 +29,7 @@ import org.javlo.module.core.ModulesContext;
 import org.javlo.user.AdminUserFactory;
 import org.javlo.user.AdminUserSecurity;
 import org.javlo.user.User;
+import org.javlo.user.exception.JavloSecurityException;
 
 /**
  * @author pvandermaesen manage the actions for wcms.
@@ -65,10 +66,10 @@ public class ActionManager {
 	}
 
 	public static IAction getAction(HttpServletRequest request, String group) throws IOException, ClassNotFoundException, InstantiationException, IllegalAccessException, ModuleException {
-		IAction outAction = getActionModule(request, group);		
+		IAction outAction = getActionModule(request, group);
 		if (outAction == null) {
 			outAction = getActionComponent(request, group);
-		} 
+		}
 		return outAction;
 	}
 
@@ -162,7 +163,7 @@ public class ActionManager {
 				if (action instanceof IModuleAction) { // if module action
 					User currentUser = AdminUserFactory.createAdminUserFactory(globalContext, request.getSession()).getCurrentUser(request.getSession());
 					if (!AdminUserSecurity.getInstance().isAdmin(currentUser)) {
-						if (!moduleContext.getCurrentModule().haveRight(currentUser)) {
+						if (!moduleContext.getCurrentModule().haveRight(request.getSession(), currentUser)) {
 							I18nAccess i18nAccess = I18nAccess.getInstance(request);
 							ContentContext ctx = ContentContext.getContentContext(request, response);
 							MessageRepository msgRepo = MessageRepository.getInstance(ctx);
@@ -177,14 +178,18 @@ public class ActionManager {
 				logger.severe(message);
 			}
 		} catch (Throwable t) {
-			if (t.getMessage() != null) {
-				message = "error in action '" + actionName + "' : " + t.getMessage();
+			if (t.getCause() instanceof JavloSecurityException) {
+				message = t.getMessage();
+				logger.warning(message);
 			} else {
-				message = "error in action '" + actionName + "' contact administrator, current time : " + StringHelper.renderTime(new Date());
+				if (t.getCause().getMessage() != null) {
+					message = "error in action '" + actionName + "' : " + t.getCause().getMessage();
+				} else {
+					message = "error in action '" + actionName + "' contact administrator, current time : " + StringHelper.renderTime(new Date());
+				}
+				logger.severe(message);
+				t.printStackTrace();
 			}
-			logger.severe(message);
-			logger.warning(message);
-			t.printStackTrace();
 		}
 
 		ContentContext ctx = ContentContext.getContentContext(request, response);
@@ -234,9 +239,14 @@ public class ActionManager {
 				logger.warning(message);
 			}
 		} catch (Exception e) {
-			e.printStackTrace();
-			message = "method not found : " + methodName + " on : " + action.getClass().getCanonicalName();
-			logger.fine(message);
+			if (e.getCause() != null && e.getCause() instanceof JavloSecurityException) {
+				message = e.getCause().getMessage();
+				logger.warning(message);
+			} else {
+				e.printStackTrace();
+				message = "error for method : " + methodName + " on : " + action.getClass().getCanonicalName() + "  msg:" + e.getMessage();
+				logger.fine(message);
+			}
 		}
 		return message;
 	}

@@ -14,6 +14,7 @@ import java.util.Set;
 import java.util.Stack;
 
 import javax.servlet.ServletException;
+import javax.servlet.http.HttpSession;
 
 import org.javlo.actions.IModuleAction;
 import org.javlo.context.ContentContext;
@@ -50,6 +51,11 @@ public class Module {
 
 		@Override
 		public String performSearch(ContentContext ctx, ModulesContext moduleContext, String searchText) throws Exception {
+			return null;
+		}
+
+		@Override
+		public Boolean haveRight(HttpSession session, User user) { 
 			return null;
 		}
 
@@ -704,19 +710,24 @@ public class Module {
 		return description;
 	}
 
-	public boolean haveRight(User user) {
-		if (user == null) {
-			return false;
-		}
-		if (getRoles() == null) {
-			return true;
+	public boolean haveRight(HttpSession session, User user) throws ModuleException {
+		Boolean haveRight = getAction().haveRight(session, user);
+		if (haveRight != null) {
+			return haveRight;
 		} else {
-			return user.validForRoles(getRoles());
+			if (user == null) {
+				return false;
+			}
+			if (getRoles() == null) {
+				return true;
+			} else {
+				return user.validForRoles(getRoles());
+			}
 		}
 	}
-	
+
 	@Override
 	public String toString() {
-		return getClass().getName()+' '+getName();
+		return getClass().getName() + ' ' + getName();
 	}
 }

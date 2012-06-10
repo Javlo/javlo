@@ -686,6 +686,17 @@ public class GlobalContext implements Serializable {
 
 		return components;
 	}
+	
+	public List<String> getUsersAccess() {		
+		String usersRaw = properties.getString("users", null);
+		if (usersRaw == null) {
+			return Collections.EMPTY_LIST;
+		}
+		List<String> users = new LinkedList<String>();
+		users.addAll(StringHelper.stringToCollection(usersRaw));
+		users.remove(""); // remove empty string
+		return users;
+	}
 
 	public List<String> getModules() {
 		List<String> modules = new LinkedList<String>();
@@ -1683,6 +1694,13 @@ public class GlobalContext implements Serializable {
 	public void setModules(List<String> modules) {
 		synchronized (properties) {
 			properties.setProperty("modules", StringHelper.collectionToString(modules));
+			save();
+		}
+	}
+	
+	public void setUsersAccess(List<String> users) {
+		synchronized (properties) {
+			properties.setProperty("users", StringHelper.collectionToString(users));
 			save();
 		}
 	}

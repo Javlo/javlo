@@ -2,14 +2,18 @@ package org.javlo.actions;
 
 import java.util.List;
 
+import javax.servlet.http.HttpSession;
+
 import org.javlo.bean.LinkToRenderer;
 import org.javlo.context.ContentContext;
 import org.javlo.context.GlobalContext;
 import org.javlo.i18n.I18nAccess;
 import org.javlo.module.core.AbstractModuleContext;
 import org.javlo.module.core.Module;
+import org.javlo.module.core.ModuleException;
 import org.javlo.module.core.ModulesContext;
 import org.javlo.service.RequestService;
+import org.javlo.user.User;
 
 import sun.reflect.generics.reflectiveObjects.NotImplementedException;
 
@@ -44,6 +48,11 @@ public abstract class AbstractModuleAction implements IModuleAction {
 			}
 		}		
 		return "page not found : "+page;
+	}
+	
+	@Override
+	public Boolean haveRight(HttpSession session, User user) throws ModuleException {
+		return null;
 	}
 
 }

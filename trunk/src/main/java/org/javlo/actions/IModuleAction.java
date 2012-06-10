@@ -1,7 +1,11 @@
 package org.javlo.actions;
 
+import javax.servlet.http.HttpSession;
+
 import org.javlo.context.ContentContext;
+import org.javlo.module.core.ModuleException;
 import org.javlo.module.core.ModulesContext;
+import org.javlo.user.User;
 
 public interface IModuleAction extends IAction {
 
@@ -23,5 +27,12 @@ public interface IModuleAction extends IAction {
 	 * @throws Exception
 	 */
 	public String performSearch(ContentContext ctx, ModulesContext modulesContext, String query) throws Exception;
+	
+	/**
+	 * check if a specific user can use the module.
+	 * @param user
+	 * @return true if access, false if no access and null if this method can't determine access.  If access is not determined by the action javlo will take the user group in config.properties.
+	 */
+	public Boolean haveRight(HttpSession session, User user) throws ModuleException;
 	
 }

@@ -28,7 +28,6 @@ private synchronized JavloELFinder getELFinder(HttpSession session, String root)
 %><%
 ContentContext ctx = ContentContext.getContentContext(request, response);
 GlobalContext globalContext = GlobalContext.getSessionInstance(ctx.getRequest().getSession());
-System.out.println("**** context : "+globalContext.getContextKey());
 String root;
 if (request.getParameter("changeRoot") == null) {
 	root = URLHelper.mergePath(globalContext.getDataFolder(), globalContext.getStaticConfig().getStaticFolder());
