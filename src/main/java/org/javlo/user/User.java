@@ -9,6 +9,8 @@ import java.util.HashSet;
 import java.util.Set;
 import java.util.TreeSet;
 
+import org.javlo.helper.StringHelper;
+
 /**
  * @author pvandermaesen
  */
@@ -64,12 +66,13 @@ public class User implements Principal {
 	}
 
 	public boolean validForRoles ( Set<String> rolesSet ) {
-		if (AdminUserSecurity.getInstance().isAdmin(this)) {
+		if (AdminUserSecurity.getInstance().isAdmin(this)) {			
 			return true;
 		}
 		Set<String> workingRoles = new HashSet<String>();
-		workingRoles.addAll(rolesSet);
-		return workingRoles.retainAll(getRoles());
+		workingRoles.addAll(rolesSet);		
+		workingRoles.retainAll(getRoles());
+		return workingRoles.size() > 0;
 	}
 
 	/**

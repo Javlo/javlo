@@ -248,7 +248,7 @@ public class Edit extends AbstractModuleAction {
 	private static void autoPublish(HttpServletRequest request, HttpServletResponse response) throws Exception {
 		GlobalContext globalContext = GlobalContext.getInstance(request);
 		if (globalContext.isEasy()) {
-			// performPublish(request, response);
+			//performPublish(request, response);
 		}
 	}
 
@@ -752,7 +752,7 @@ public class Edit extends AbstractModuleAction {
 	}
 
 	public static String performPublish(ServletContext application, HttpServletRequest request, StaticConfig staticConfig, GlobalContext globalContext, ContentService content, ContentContext ctx, I18nAccess i18nAccess) throws Exception {
-
+		
 		DebugHelper.writeInfo(System.out);
 
 		synchronized (content.getNavigation(ctx).getLock()) {
@@ -871,6 +871,7 @@ public class Edit extends AbstractModuleAction {
 	}
 
 	public static String performUpload(RequestService requestService, HttpServletRequest request, HttpServletResponse response, ContentContext ctx, ContentService content, I18nAccess i18nAccess) {
+		
 		Collection<FileItem> fileItems = requestService.getAllFileItem();
 
 		for (FileItem item : fileItems) {

@@ -71,7 +71,7 @@ public class ModulesContext {
 							String moduleRoot = dir.getAbsolutePath().replace(webappRoot, "/");
 							Module module = new Module(configFile, new Locale(globalContext.getEditLanguage()), moduleRoot);
 
-							if (module.haveRight(userFactory.getCurrentUser(session)) && globalContext.getModules().contains(module.getName())) {
+							if (module.haveRight(session, userFactory.getCurrentUser(session)) && globalContext.getModules().contains(module.getName())) {
 								modules.add(module);
 							}
 

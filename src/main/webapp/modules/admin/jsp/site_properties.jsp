@@ -97,6 +97,11 @@
 	<input type="text" id="admin-user-factory" name="admin-user-factory" value="${currentContext.adminUserFactoryClassName}" />	
 </div>
 
+<div class="line">		
+	<label for="users-access">${i18n.edit['admin.form.users-access']}</label>
+	<textarea id="users-access" name="users-access">${currentContext.usersAccess}</textarea>	
+</div>
+
 </fieldset>
 
 <fieldset class="templates-list">
