@@ -31,6 +31,7 @@ import org.javlo.helper.URLHelper;
 import org.javlo.i18n.I18nAccess;
 import org.javlo.message.GenericMessage;
 import org.javlo.message.MessageRepository;
+import org.javlo.module.core.ModulesContext;
 import org.javlo.service.DataToIDService;
 import org.javlo.service.RequestService;
 import org.javlo.user.AdminUserFactory;
@@ -124,14 +125,16 @@ public class CatchAllFilter implements Filter {
 								login = httpRequest.getUserPrincipal().getName();
 							}							
 							fact.login(httpRequest, login, request.getParameter("j_password"));
+							ModulesContext.getInstance(httpRequest.getSession(), globalContext).loadModule(httpRequest.getSession(), globalContext);
 						}
 					}
 				}
 				fact.getCurrentUser(((HttpServletRequest) request).getSession());
 			}
+			
+			boolean newUser = false;
 
 			/** EDIT LOGIN **/
-
 			if (fact.getCurrentUser(((HttpServletRequest) request).getSession()) == null) {
 				/* AUTO LOGIN */
 				String autoLoginId = RequestHelper.getCookieValue(httpRequest, "javlo_login_id");
@@ -146,6 +149,7 @@ public class CatchAllFilter implements Filter {
 						String msg = i18nAccess.getText("user.autologin", new String[][] { { "login", autoLoginUser } });
 						MessageRepository messageRepository = MessageRepository.getInstance(((HttpServletRequest) request));
 						messageRepository.setGlobalMessage(new GenericMessage(msg, GenericMessage.INFO));
+						newUser = true;
 					}
 				}
 				if (ContentManager.isEdit((HttpServletRequest) request) || ContentManager.isPreview((HttpServletRequest) request)) {
@@ -154,6 +158,7 @@ public class CatchAllFilter implements Filter {
 						User principalUser = adminFactory.autoLogin(httpRequest, autoLoginUser);
 						if (principalUser != null) {
 							globalContext.addPrincipal(principalUser);
+							newUser = true;
 						}
 					}
 				}
@@ -173,11 +178,11 @@ public class CatchAllFilter implements Filter {
 						DataToIDService service = DataToIDService.getInstance(httpRequest.getSession().getServletContext());
 						String codeId = service.setData(login, ((long) IUserFactory.AUTO_LOGIN_AGE_SEC) * 1000);
 						RequestHelper.setCookieValue(httpResponse, "javlo_login_id", codeId, IUserFactory.AUTO_LOGIN_AGE_SEC, "/edit");
-						RequestHelper.setCookieValue(httpResponse, "javlo_login_id", codeId, IUserFactory.AUTO_LOGIN_AGE_SEC, "/preview");
+						RequestHelper.setCookieValue(httpResponse, "javlo_login_id", codeId, IUserFactory.AUTO_LOGIN_AGE_SEC, "/preview");						
 					}
-					globalContext.addPrincipal(editUser);
-
+					globalContext.addPrincipal(editUser);					
 					globalContext.eventLogin(editUser.getLogin());
+					newUser = true;
 
 					logger.info(login + " is logged roles : [" + StringHelper.collectionToString(editUser.getRoles(), ",") + ']');
 
@@ -185,7 +190,11 @@ public class CatchAllFilter implements Filter {
 					logger.info(login + " fail to login.");
 				}
 
-			} 
+			}
+			
+			if (newUser) {				
+				ModulesContext.getInstance(httpRequest.getSession(), globalContext).loadModule(httpRequest.getSession(), globalContext);
+			}
 		} catch (Exception e) {
 			throw new ServletException(e);
 		}

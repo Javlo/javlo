@@ -38,7 +38,7 @@ jQuery(document).ready(function() {
 		    edit : {
 		      editors : [
 		        {
-		          mimes : ['text/html','text/properties','text/plain','text/jsp'],  // add here other mimes if required
+		          mimes : ['text/html','text/properties','text/plain','text/jsp','text/css'],  // add here other mimes if required
 		          load : function(textarea) {
 		            openEditor(textarea);
 		          },

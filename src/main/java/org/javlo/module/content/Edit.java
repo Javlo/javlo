@@ -1,5 +1,6 @@
 package org.javlo.module.content;
 
+import java.io.IOException;
 import java.io.InputStream;
 import java.util.Collection;
 import java.util.Collections;
@@ -659,12 +660,16 @@ public class Edit extends AbstractModuleAction {
 		return null;
 	}
 
-	public static final String performChangeLanguage(RequestService requestService, ContentContext ctx, I18nAccess i18nAccess, MessageRepository messageRepository) {
+	public static final String performChangeLanguage(RequestService requestService, ContentContext ctx, GlobalContext globalContext, I18nAccess i18nAccess, MessageRepository messageRepository) throws IOException {
 		String lg = requestService.getParameter("language", null);
 		if (lg != null) {
-			ctx.setContentLanguage(lg);
+			if (globalContext.getLanguages().contains(lg)) {
+				ctx.setLanguage(lg);
+			}
+			ctx.setContentLanguage(lg);			
 			messageRepository.setGlobalMessage(new GenericMessage(i18nAccess.getText("edit.message.new-language") + lg, GenericMessage.INFO));
-
+			String newURL = URLHelper.createURL(ctx);
+			ctx.getResponse().sendRedirect(newURL);
 		} else {
 			return "bad request structure : 'language' not found.";
 		}
