@@ -3,7 +3,7 @@ package org.javlo.component.form;
 import org.javlo.component.core.AbstractVisualComponent;
 import org.javlo.context.ContentContext;
 
-public class SearchResult extends AbstractVisualComponent {
+public class SearchResultComponent extends AbstractVisualComponent {
 	
 	public static final String TYPE = "search-result";
 
@@ -13,29 +13,18 @@ public class SearchResult extends AbstractVisualComponent {
 	}
 	
 	@Override
-	protected String getEditXHTMLCode(ContentContext ctx) throws Exception {
-		return "";
-	}
-	
-	@Override
-	protected void prepareView(ContentContext ctx) throws Exception {
-		System.out.println("***** SearchResult.prepareView : update CTX"); //TODO: remove debug trace
-		org.javlo.search.SearchResult sr = org.javlo.search.SearchResult.getInstance(ctx);
-		sr.setContentContext(ctx);
+	public void prepareView(ContentContext ctx) throws Exception {		
 		super.prepareView(ctx);
 	}
 	
 	@Override
-	public String getViewXHTMLCode(ContentContext ctx) throws Exception {
+	public String getViewXHTMLCode(ContentContext ctx) throws Exception {		
 		String renderer = "/jsp/components/search/search_result.jsp";
 		
 		if (ctx.getCurrentTemplate() != null && ctx.getCurrentTemplate().getSearchRenderer(ctx) != null) {
 			renderer = ctx.getCurrentTemplate().getSearchRenderer(ctx);
-		}
-		
-		org.javlo.search.SearchResult sr = org.javlo.search.SearchResult.getInstance(ctx);
-		sr.setContentContext(ctx);
-
+		}		
+		org.javlo.search.SearchResult.getInstance(ctx); // update ctx
 		return executeJSP(ctx, renderer);
 	}
 	
@@ -62,6 +51,16 @@ public class SearchResult extends AbstractVisualComponent {
 	@Override
 	public String getSufixViewXHTMLCode(ContentContext ctx) {
 		return "";
+	}
+	
+	@Override
+	public boolean isValueProperties() {
+		return true;
+	}
+	
+	@Override
+	public boolean isContentCachable(ContentContext ctx) {
+		return false;
 	}
 
 }

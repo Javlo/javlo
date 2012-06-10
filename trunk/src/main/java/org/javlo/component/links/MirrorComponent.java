@@ -152,6 +152,7 @@ public class MirrorComponent extends AbstractVisualComponent {
 	public String getViewXHTMLCode(ContentContext ctx) throws Exception {
 		AbstractVisualComponent comp = (AbstractVisualComponent) getMirrorComponent(ctx);
 		if (comp != null) {
+			comp.prepareView(ctx);
 			return comp.getViewXHTMLCode(ctx);
 		} else {
 			deleteMySelf(ctx);

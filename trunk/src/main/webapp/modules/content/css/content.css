@@ -111,6 +111,18 @@ ul.menu {
 	width: 160px;
 }
 
+.dynamic-component .line textarea {
+	width: 96%;
+}
+
+.component .mceToolbar table {
+	width: auto;
+}
+
+.component .mceToolbar td {
+	width: 20px;
+}
+
 /*** images ***/
 
 .component .preview-image {

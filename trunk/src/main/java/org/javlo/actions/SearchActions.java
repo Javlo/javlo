@@ -11,9 +11,12 @@ import java.util.logging.Logger;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import org.javlo.component.form.SearchResultComponent;
 import org.javlo.context.ContentContext;
 import org.javlo.helper.StringHelper;
+import org.javlo.navigation.MenuElement;
 import org.javlo.search.SearchResult;
+import org.javlo.service.ContentService;
 import org.javlo.service.RequestService;
 import org.javlo.template.TemplateSearchContext;
 
@@ -46,10 +49,12 @@ public class SearchActions implements IAction {
 				if (searchStr.length() > 0) {
 					ContentContext ctx = ContentContext.getContentContext(request, response);
 					
-					ctx.setSpecialContentRenderer("/jsp/view/search/search_result.jsp");
-					
-					if (ctx.getCurrentTemplate() != null && ctx.getCurrentTemplate().getSearchRenderer(ctx) != null) {
-						ctx.setSpecialContentRenderer(ctx.getCurrentTemplate().getSearchRenderer(ctx));
+					if (ctx.getCurrentPage().getContentByType(ctx.getContextWithoutArea(), SearchResultComponent.TYPE).size() == 0) {
+						ctx.setSpecialContentRenderer("/jsp/view/search/search_result.jsp");
+						
+						if (ctx.getCurrentTemplate() != null && ctx.getCurrentTemplate().getSearchRenderer(ctx) != null) {
+							ctx.setSpecialContentRenderer(ctx.getCurrentTemplate().getSearchRenderer(ctx));
+						}						
 					}
 
 					SearchResult search = SearchResult.getInstance(ctx);

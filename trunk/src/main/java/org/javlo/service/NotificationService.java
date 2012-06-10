@@ -18,7 +18,7 @@ public class NotificationService {
 		private String url;
 		private int type;
 		private Date creationDate;
-		private String userId;		
+		private String userId;
 
 		public String getMessage() {
 			return message;
@@ -38,12 +38,13 @@ public class NotificationService {
 
 		/**
 		 * get the type, same time than in GenericMessage
+		 * 
 		 * @return
 		 */
 		public int getType() {
 			return type;
 		}
-		
+
 		public String getTypeLabel() {
 			return GenericMessage.getTypeLabel(getType());
 		}
@@ -67,7 +68,7 @@ public class NotificationService {
 		public void setUserId(String userId) {
 			this.userId = userId;
 		}
-		
+
 		public String getTimeLabel() {
 			return StringHelper.renderTime(getCreationDate());
 		}
@@ -138,8 +139,10 @@ public class NotificationService {
 		Collection<Notification> mustBeRemoved = new LinkedList<Notification>();
 		synchronized (notifications) {
 			for (Notification notif : notifications) {
-				if (currentTime - notif.getCreationDate().getTime() > NOTIFICATION_MAX_AGE) {
-					mustBeRemoved.remove(notif);
+				if (notif != null) {
+					if (currentTime - notif.getCreationDate().getTime() > NOTIFICATION_MAX_AGE) {
+						mustBeRemoved.remove(notif);
+					}
 				}
 			}
 			for (Notification notification : mustBeRemoved) {
@@ -182,7 +185,7 @@ public class NotificationService {
 		}
 		return outNotif;
 	}
-	
+
 	public int getUnreadNotificationSize(String userId, int maxSize) {
 		List<NotificationContainer> notifs = getNotifications(userId, maxSize, false);
 		int outUnreadCount = 0;
@@ -217,7 +220,7 @@ public class NotificationService {
 		notif.setCreationDate(new Date());
 		notif.setType(type);
 		notif.setUserId(userId);
-		notifications.add(0,notif);
+		notifications.add(0, notif);
 	}
 
 }

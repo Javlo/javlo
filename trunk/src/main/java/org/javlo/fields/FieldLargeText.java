@@ -43,21 +43,6 @@ public class FieldLargeText extends Field {
 		return XHTMLHelper.textToXHTML(super.getDisplayValue(ctx, locale));
 	}
 	
-	@Override
-	/*public String getViewXHTMLCode(ContentContext ctx) {
-		StringWriter writer = new StringWriter();
-		PrintWriter out = new PrintWriter(writer);
-
-		out.println(getFieldPrefix(new Locale(ctx.getLanguage())));
-		out.println("<p class=\"" + getType() + " " + getName() + "\">");
-		out.println(XHTMLHelper.textToXHTML(StringHelper.neverNull(getValue())));
-		out.println("</p>");
-		out.println(getFieldSuffix());
-
-		out.close();
-		return writer.toString();
-	}*/
-	
 	public String getType() {
 		return "large-text";
 	}

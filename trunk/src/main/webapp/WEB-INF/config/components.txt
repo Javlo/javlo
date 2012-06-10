@@ -15,6 +15,7 @@ org.javlo.component.title.MenuTitle
 org.javlo.component.text.Description
 org.javlo.component.text.Paragraph
 org.javlo.component.text.XHTML
+org.javlo.component.text.WysiwygParagraph
 org.javlo.component.list.TextList
 
 --content.title.links
@@ -52,5 +53,5 @@ org.javlo.component.form.FormMailingComponent
 
 org.javlo.component.layout.ContentSeparation
 org.javlo.component.meta.ForceRealContent
-org.javlo.component.form.SearchResult
+org.javlo.component.form.SearchResultComponent
 

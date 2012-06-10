@@ -3,7 +3,7 @@
 		<input type="hidden" name="webaction" value="edit.save" />
 		<jsp:include page="content.jsp${not empty param.previewEdit?'?firstLine=true':''}" />
 		<div class="insert-line">
-			<input type="submit" class="action-button" value="${i18n.edit['global.save']}"/>
+			<input id="button-content-submit" type="submit" class="action-button" value="${i18n.edit['global.save']}"/>
 		</div>
 	</form> 
 </div>

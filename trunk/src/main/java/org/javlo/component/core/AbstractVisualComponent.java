@@ -336,7 +336,7 @@ public abstract class AbstractVisualComponent implements IContentVisualComponent
 	 */
 	@Override
 	public String getContentName() {
-		return "__" + getId() + ID_SEPARATOR + "data";
+		return "data__" + getId();
 	}
 
 	public String getContentTimeCache(ContentContext ctx) {
@@ -1133,6 +1133,7 @@ public abstract class AbstractVisualComponent implements IContentVisualComponent
 					if (isContentTimeCachable(ctx)) {
 						synchronized (lockContentTime) {
 							long beforeTime = System.currentTimeMillis();
+							prepareView(ctx);
 							content = getViewXHTMLCode(ctx);
 							logger.fine("render content time cache '" + getType() + "' : " + (System.currentTimeMillis() - beforeTime) / 1000 + " sec.");
 							setContentTimeCache(ctx, content);
@@ -1153,8 +1154,15 @@ public abstract class AbstractVisualComponent implements IContentVisualComponent
 		}
 	}
 
-	protected void prepareView(ContentContext ctx) throws Exception {
+	public void prepareView(ContentContext ctx) throws Exception {
+		ctx.getRequest().setAttribute("style", getStyle(ctx));
 		ctx.getRequest().setAttribute("value", getValue());
+		ctx.getRequest().setAttribute("type", getType());
+		if (isValueProperties()) {
+			Properties p = new Properties();
+			p.load(new StringReader(getValue()));
+			ctx.getRequest().setAttribute("properties", p);
+		}
 	}
 
 	protected void includeComponentJSP(ContentContext ctx, String jsp) throws ServletException, IOException {
@@ -1613,6 +1621,14 @@ public abstract class AbstractVisualComponent implements IContentVisualComponent
 	
 	public String getClassName() {
 		return getClass().getName();
+	}
+	
+	/**
+	 * if content of the component is a list of properties (key=value) this method must return true.  If this method return true prepare method will add a mal called "properties" in request attrivute and this map can be used in renderer (jsp).
+	 * @return true if content is a list of properties.
+	 */
+	public boolean isValueProperties() {
+		return false;
 	}
 
 	// generate compilation error : use for refactoring
