@@ -302,22 +302,23 @@ public class Field implements Cloneable {
 	 * @return
 	 * @throws Exception 
 	 */
-	protected String getDisplayValue(ContentContext ctx, Locale locale) throws Exception {
+	protected String getDisplayValue(ContentContext ctx, Locale locale) throws Exception {		
 		if (getTranslation() != null) {			
 			String key = createKey("value");
 			if (getCurrentLocale() != null) {
 				Locale currentLocale = getCurrentLocale();				
-				Iterator<String> langs = getDefaultLanguages().iterator();
-				while (getValue() == null && langs.hasNext()) {
-					setCurrentLocale(new Locale(langs.next()));
-				}
-				String value = getValue();
+				Iterator<String> langs = getDefaultLanguages().iterator();				
+				while ((getValue() == null || getValue().trim().length() == 0) && langs.hasNext()) {
+					String lg = langs.next();					
+					setCurrentLocale(new Locale(lg));
+				}				
+				String value = getValue();				
 				setCurrentLocale(currentLocale);
 				return value;
-			} else {
+			} else {				
 				return properties.getProperty(key);
 			}
-		}
+		} 
 		return getValue();
 	}
 
@@ -386,7 +387,7 @@ public class Field implements Cloneable {
 			if (getCurrentLocale() != null) {
 				Locale currentLocale = getCurrentLocale();				
 				Iterator<String> langs = getDefaultLanguages().iterator();
-				while (getValue() == null && langs.hasNext()) {
+				while ((getValue() == null || getValue().trim().length() == 0) && langs.hasNext()) {
 					setCurrentLocale(new Locale(langs.next()));
 				}
 				value = getValue();
@@ -578,7 +579,7 @@ public class Field implements Cloneable {
 		return "field." + getUnicName() + '.' + suffix;
 	}
 	
-	public List<Locale> getTranslation() {		
+	public final List<Locale> getTranslation() {		
 		String key = createKey("translation");
 		String rawTranslation = properties.getProperty(key);		
 		if (rawTranslation == null) {

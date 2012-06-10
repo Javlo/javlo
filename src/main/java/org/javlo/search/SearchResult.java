@@ -305,22 +305,22 @@ public class SearchResult {
 					searchText = inSearchText;
 					int searchLevel = 0;
 					List<Component> componentsRenderer = new LinkedList<Component>();
+					
 					while (elemList.hasNext(ctxWithContent)) {
 						IContentVisualComponent cpt = elemList.next(ctxWithContent);
 
 						if (componentType == null || componentType.contains(cpt.getType())) {
-
 							if (cpt.getSearchLevel() > 0) {
 								int cptSearchLevel = StringUtils.countMatches(cpt.getTextForSearch().toLowerCase(), inSearchText.toLowerCase()) * cpt.getSearchLevel();
 								searchLevel = searchLevel + cptSearchLevel;
-								if (cptSearchLevel > 0) {
+								if (cptSearchLevel > 0 && componentType != null) {
 									componentsRenderer.add(new Component(this, cpt));
 								}
 							}
 						}
 					}
 					if (searchLevel != 0) {
-						addResult(ctx, page, inSearchText, page.getName(), page.getFullLabel(ctxWithContent), URLHelper.createURL(ctxWithContent, page.getPath()), page.getDescription(ctxWithContent), searchLevel, componentsRenderer);
+						addResult(ctx, page, inSearchText, page.getName(), page.getFullLabel(ctxWithContent), URLHelper.createURL(ctxWithContent, page.getPath()), page.getDescription(ctxWithContent), searchLevel, componentsRenderer);						
 					}
 				}
 			}

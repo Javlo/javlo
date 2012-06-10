@@ -60,7 +60,7 @@ public class Menu extends AbstractPropertiesComponent {
 	}
 	
 	@Override
-	protected void prepareView(ContentContext ctx) throws Exception {
+	public void prepareView(ContentContext ctx) throws Exception {
 		ContentService content = ContentService.createContent(ctx.getRequest());
 		MenuElement page = content.getNavigation(ctx);
 		

@@ -63,7 +63,7 @@
 <c:if test="${not empty param.button_page and empty param.previewEdit}"><a class="action-button more page" href="${info.currentURL}?webaction=changeMode&mode=3"><span>${i18n.edit['item.title']}</span></a></c:if>
 
 <c:if test="${not empty param.button_publish and empty param.previewEdit}"><a class="action-button publish" href="${info.currentURL}?webaction=publish"><span>${i18n.edit['command.publish']}</span></a></c:if>
-<c:if test="${not empty param.button_save}"><a class="action-button save" href="#save" onclick="jQuery('#form-content').submit(); return false;"><span>${i18n.edit['action.update']}</span></a></c:if>
+<c:if test="${not empty param.button_save}"><a class="action-button save" href="#save" onclick="jQuery('#button-content-submit').click(); return false;"><span>${i18n.edit['action.update']}</span></a></c:if>
 
 <c:if test="${not empty param.button_delete_page and empty param.previewEdit}"><a class="action-button delete-page" href="${info.currentURL}?webaction=deletePage&page=${info.pageID}"><span>${i18n.edit['edit.action.delete-page']}</span></a></c:if>
 
