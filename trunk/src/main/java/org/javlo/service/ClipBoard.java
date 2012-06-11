@@ -22,7 +22,7 @@ public class ClipBoard {
 	
 	private ClipBoard(){};
 	
-	public static ClipBoard getClibBoard ( HttpServletRequest request ) {
+	public static ClipBoard getInstance ( HttpServletRequest request ) {
 		ClipBoard res = (ClipBoard)request.getSession().getAttribute(CLIPBOARD_SESSION_KEY);
 		if ( res == null ) {
 			res = new ClipBoard();
@@ -47,14 +47,14 @@ public class ClipBoard {
 		copied=null;
 	}
 	
-	public IContentVisualComponent getCopiedComponent(ContentContext ctx) throws Exception {
+	public ComponentBean getCopiedComponent(ContentContext ctx) throws Exception {
 		if (copied == null) {
 			return null;
 		}
 		
 		if (copied instanceof ComponentBean) {
 			ContentService content = ContentService.createContent(ctx.getRequest());
-			return content.getComponent(ctx, ((ComponentBean)copied).getId());
+			return (ComponentBean)copied;
 		} else {
 			return null;
 		}

@@ -355,7 +355,7 @@ public class ChildrenLink extends AbstractVisualComponent implements IImageTitle
 				}
 				out.println("</ul>");
 			}
-			out.println("</div>");
+			out.println("<div class=\"clear\">&nbsp;</div></div>");
 		}
 
 		return new String(outStream.toByteArray());

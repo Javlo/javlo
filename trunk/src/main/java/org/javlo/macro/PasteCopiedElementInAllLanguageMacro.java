@@ -21,7 +21,7 @@ public class PasteCopiedElementInAllLanguageMacro extends AbstractMacro {
 	public String perform(ContentContext ctx, Map<String, Object> params) throws Exception {
 		GlobalContext globalContext = GlobalContext.getInstance(ctx.getRequest());
 		MenuElement currentPage = ctx.getCurrentPage();
-		ClipBoard clipBoard = ClipBoard.getClibBoard(ctx.getRequest());
+		ClipBoard clipBoard = ClipBoard.getInstance(ctx.getRequest());
 
 		if (!clipBoard.isEmpty(ctx)) {
 			ComponentBean bean = (ComponentBean) clipBoard.getCopied();

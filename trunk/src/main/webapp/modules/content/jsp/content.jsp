@@ -25,18 +25,6 @@ GlobalContext globalContext = GlobalContext.getInstance(request);
 ContentService content = ContentService.getInstance(globalContext);
 EditContext editContext = EditContext.getInstance(globalContext, request.getSession());
 
-String copiedPath = null;
-if (editContext.getContextForCopy() != null) {
-	MenuElement copiedPage = content.getNavigation(ctx).searchChild(ctx, editContext.getContextForCopy().getPath());
-	if (copiedPage != null) { 
-		copiedPath = copiedPage.getName()+" ("+editContext.getContextForCopy().getLanguage()+')';
-	}
-}
-
-if (copiedPath == null) {
-	copiedPath = "/";
-}
-
 int openCount = 0;
 int totalComp = 0;
 
@@ -46,12 +34,22 @@ ctx.setArea(editContext.getCurrentArea());
 
 I18nAccess i18nAccess = I18nAccess.getInstance ( globalContext, request.getSession() );
 
-ClipBoard clibBoard = ClipBoard.getClibBoard(request);
+ClipBoard clipBoard = ClipBoard.getInstance(request);
 
 IContentVisualComponent currentTypeComponent = ComponentFactory.getComponentWithType(ctx, editContext.getActiveType());
 
 String typeName = StringHelper.getFirstNotNull( currentTypeComponent.getComponentLabel(ctx,globalContext.getEditLanguage()), i18nAccess.getText ( "content."+currentTypeComponent.getType()));
 String insertHere = i18nAccess.getText("content.insert-here", new String[][] {{"type",typeName}});
+
+String pastePageHere = null;
+if (editContext.getContextForCopy() != null) {
+	pastePageHere = i18nAccess.getText("content.paste-here", new String[][] { { "page", editContext.getContextForCopy().getCurrentPage().getName() } });		
+}
+
+String pasteHere = null;
+if (clipBoard.getCopiedComponent(ctx) != null) {
+	pasteHere = i18nAccess.getText("content.paste-comp", new String[][] { { "type", clipBoard.getCopiedComponent(ctx).getType() } });
+}
 
 ComponentContext componentContext = ComponentContext.getInstance(request);
 IContentVisualComponent[] components = componentContext.getNewComponents();
@@ -67,7 +65,13 @@ if (!StringHelper.isTrue(request.getParameter("noinsert"))) {
 %>
 
 <div class="insert-line" id="insert-line-<%=previousId%>">
-	<a class="action-button ajax" href="${info.currentURL}?webaction=insert&previous=<%=previousId%>&type=<%=currentTypeComponent.getType()%>"><%=insertHere%></a>
+	<a class="action-button ajax" href="${info.currentURL}?webaction=insert&previous=<%=previousId%>&type=<%=currentTypeComponent.getType()%>"><%=insertHere%></a><%
+	if (pastePageHere != null) {
+	%><a class="action-button" href="${info.currentURL}?webaction=pastePage&previous=<%=previousId%>"><%=pastePageHere%></a><%
+	}
+	if (pasteHere != null) {
+	%><a class="action-button ajax" href="${info.currentURL}?webaction=pasteComp&previous=<%=previousId%>"><%=pasteHere%></a><%
+	}%>
 </div>
 <div id="comp-child-<%=previousId%>"></div>
 <%
@@ -108,7 +112,7 @@ for (int i=0; i<components.length; i++) {
       </ul>
       <div class="header-action">
       	<a class="delete ajax" title="${i18n.edit['global.delete']}" href="${info.currentURL}?webaction=delete&id=<%=comp.getId()%>"></a>
-      	<a class="copy" title="${i18n.edit['content.copy']}"></a>
+      	<a class="copy ajax" title="${i18n.edit['content.copy']}" href="${info.currentURL}?webaction=copy&id=<%=comp.getId()%>"></a>
       </div>
       <div class="header-info">
       	<%if (comp.isRepeat()) {%><span class="repeat" title="${i18n.edit['content.repeat']}"></span><%}
@@ -130,7 +134,13 @@ for (int i=0; i<components.length; i++) {
   </div><%
   if (!StringHelper.isTrue(request.getParameter("noinsert"))) {%>  
   <div class="insert-line" id="insert-line-<%=comp.getId()%>">
-	<a class="action-button ajax" href="${info.currentURL}?webaction=insert&previous=<%=comp.getId()%>&type=<%=currentTypeComponent.getType()%>"><%=insertHere%></a>
+	<a class="action-button ajax" href="${info.currentURL}?webaction=insert&previous=<%=comp.getId()%>&type=<%=currentTypeComponent.getType()%>"><%=insertHere%></a><%
+	if (pastePageHere != null) {
+	%><a class="action-button" href="${info.currentURL}?webaction=pastePage&previous=<%=comp.getId()%>"><%=pastePageHere%></a><%
+	}
+	if (pasteHere != null) {
+	%><a class="action-button ajax" href="${info.currentURL}?webaction=pasteComp&previous=<%=comp.getId()%>"><%=pasteHere%></a><%
+	}%>
   </div>
  </div><%
  }%>

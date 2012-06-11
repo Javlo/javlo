@@ -5,6 +5,7 @@ import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.PrintStream;
 import java.lang.reflect.InvocationTargetException;
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
@@ -25,6 +26,7 @@ import org.javlo.context.ContentContext;
 import org.javlo.context.EditContext;
 import org.javlo.context.GlobalContext;
 import org.javlo.context.GlobalContextFactory;
+import org.javlo.helper.PatternHelper;
 import org.javlo.helper.StringHelper;
 import org.javlo.helper.URLHelper;
 import org.javlo.i18n.I18nAccess;
@@ -41,13 +43,14 @@ import org.javlo.template.TemplatePlugin;
 import org.javlo.template.TemplatePluginFactory;
 import org.javlo.user.AdminUserSecurity;
 import org.javlo.user.User;
+import org.javlo.user.exception.JavloSecurityException;
 import org.javlo.ztatic.FileCache;
 
 public class AdminAction extends AbstractModuleAction {
 
 	private static java.util.logging.Logger logger = java.util.logging.Logger.getLogger(AdminAction.class.getName());
 
-	public class GlobalContextBean {
+	public static class GlobalContextBean {
 		private String key;
 		private String administrator;
 		private String aliasOf;
@@ -70,6 +73,9 @@ public class AdminAction extends AbstractModuleAction {
 		private String adminUserFactoryClassName = "";
 
 		public GlobalContextBean(GlobalContext globalContext, HttpSession session) throws NoSuchMethodException, ClassNotFoundException, IllegalArgumentException, InstantiationException, IllegalAccessException, InvocationTargetException {
+			if (globalContext == null) {
+				return;
+			}
 			setKey(globalContext.getContextKey());
 			setFolder(globalContext.getFolder());
 			setAdministrator(globalContext.getAdministrator());
@@ -284,7 +290,7 @@ public class AdminAction extends AbstractModuleAction {
 		AdminUserSecurity adminUserSecurity = AdminUserSecurity.getInstance();
 
 		Collection<GlobalContextBean> ctxAllBean = new LinkedList<GlobalContextBean>();
-		Collection<GlobalContext> allContext = GlobalContextFactory.getAllGlobalContext(request.getSession());		
+		Collection<GlobalContext> allContext = GlobalContextFactory.getAllGlobalContext(request.getSession());
 		for (GlobalContext context : allContext) {
 			if (adminUserSecurity.isAdmin(ctx.getCurrentEditUser()) || context.getUsersAccess().contains(ctx.getCurrentEditUser().getLogin())) {
 				ctxAllBean.add(new GlobalContextBean(context, ctx.getRequest().getSession()));
@@ -301,11 +307,17 @@ public class AdminAction extends AbstractModuleAction {
 		/*** current context ***/
 
 		String currentContextKey = request.getParameter("context");
-		if (currentContextKey != null) {
-			request.setAttribute("context", currentContextKey);
-			GlobalContext currentGlobalContext = GlobalContext.getRealInstance(request, currentContextKey);
-			if (currentGlobalContext != null) {
-				request.setAttribute("currentContext", new GlobalContextBean(currentGlobalContext, request.getSession()));
+		if (currentContextKey != null || request.getAttribute("prepareContext") != null) {
+			GlobalContext currentGlobalContext;
+			if (currentContextKey != null) {
+				request.setAttribute("context", currentContextKey);
+				currentGlobalContext = GlobalContext.getRealInstance(request, currentContextKey);				
+			} else {
+				currentGlobalContext = (GlobalContext)request.getAttribute("prepareContext");
+				request.setAttribute("context", currentGlobalContext.getContextKey());
+			}
+			request.setAttribute("currentContext", new GlobalContextBean(currentGlobalContext, request.getSession()));
+			if (currentGlobalContext != null) {				
 				List<Template> templates = TemplateFactory.getAllDiskTemplates(request.getSession().getServletContext());
 				Collections.sort(templates);
 
@@ -381,12 +393,19 @@ public class AdminAction extends AbstractModuleAction {
 		return msg;
 	}
 
-	public static final String performChangeSite(HttpServletRequest request, RequestService requestService, ContentContext ctx, Module currentModule) throws FileNotFoundException, IOException {
+	public static final void editGlobalContext(HttpServletRequest request, Module currentModule, GlobalContext globalContext) throws FileNotFoundException, IOException, NoSuchMethodException, ClassNotFoundException, IllegalArgumentException, InstantiationException, IllegalAccessException, InvocationTargetException {
+		if (globalContext != null) {
+			request.setAttribute("prepareContext", globalContext);
+		}
+		currentModule.setRenderer("/jsp/site_properties.jsp");
+		currentModule.setToolsRenderer(null);
+		String uri = request.getRequestURI();
+		currentModule.pushBreadcrumb(new Module.HtmlLink(uri, I18nAccess.getInstance(request).getText("global.change") + " : " + request.getParameter("context"), ""));
+	}
+
+	public static final String performChangeSite(HttpServletRequest request, RequestService requestService, ContentContext ctx, Module currentModule) throws FileNotFoundException, IOException, NoSuchMethodException, ClassNotFoundException, IllegalArgumentException, InstantiationException, IllegalAccessException, InvocationTargetException {
 		if (requestService.getParameter("change", null) != null) {
-			currentModule.setRenderer("/jsp/site_properties.jsp");
-			currentModule.setToolsRenderer(null);
-			String uri = request.getRequestURI();
-			currentModule.pushBreadcrumb(new Module.HtmlLink(uri, I18nAccess.getInstance(request).getText("global.change") + " : " + request.getParameter("context"), ""));
+			editGlobalContext(request, currentModule, null);
 		} else if (requestService.getParameter("components", null) != null) {
 			currentModule.setRenderer("/jsp/components.jsp");
 			currentModule.setToolsRenderer(null);
@@ -403,10 +422,14 @@ public class AdminAction extends AbstractModuleAction {
 
 	@Override
 	public Boolean haveRight(HttpSession session, User user) throws ModuleException {
-		/*AdminUserSecurity adminUserSecurity = AdminUserSecurity.getInstance();
-		if (adminUserSecurity.isAdmin(user)) {
-			return true;
-		}*/
+		/*
+		 * AdminUserSecurity adminUserSecurity = AdminUserSecurity.getInstance(); if (adminUserSecurity.isAdmin(user)) { return true; }
+		 */
+		
+		if (user == null) {
+			return false;
+		}
+		
 		try {
 			Collection<GlobalContext> allContext = GlobalContextFactory.getAllGlobalContext(session);
 			for (GlobalContext globalContext : allContext) {
@@ -419,7 +442,7 @@ public class AdminAction extends AbstractModuleAction {
 		}
 		return null;
 	}
-	
+
 	public static void checkRight(ContentContext ctx, GlobalContext globalContext) throws org.javlo.user.exception.JavloSecurityException {
 		User user = ctx.getCurrentEditUser();
 		AdminUserSecurity adminUserSecurity = AdminUserSecurity.getInstance();
@@ -430,21 +453,21 @@ public class AdminAction extends AbstractModuleAction {
 			throw new org.javlo.user.exception.JavloSecurityException("You have no sufisant right.");
 		}
 	}
-	
 
-	public static final String performUpdateGlobalContext(HttpServletRequest request, ContentContext ctx, MessageRepository messageRepository, RequestService requestService, I18nAccess i18nAccess, Module currentModule) throws ConfigurationException, IOException, org.javlo.user.exception.JavloSecurityException {
+	public static String performUpdateGlobalContext(RequestService requestService, ContentContext ctx, MessageRepository messageRepository, I18nAccess i18nAccess, Module currentModule) throws ConfigurationException, IOException, org.javlo.user.exception.JavloSecurityException {
 		String msg = null;
 		if (requestService.getParameter("back", null) != null) {
 			currentModule.restoreRenderer();
 			currentModule.restoreToolsRenderer();
 			currentModule.clearBreadcrump();
-			currentModule.pushBreadcrumb(new Module.HtmlLink(URLHelper.createURL(ctx), I18nAccess.getInstance(request).getText("global.home"), ""));
-		} else {
+			currentModule.pushBreadcrumb(new Module.HtmlLink(URLHelper.createURL(ctx), i18nAccess.getText("global.home"), ""));
+		} else {			
 			String currentContextKey = requestService.getParameter("context", null);
 			if (currentContextKey != null) {
-				
-				GlobalContext currentGlobalContext = GlobalContext.getRealInstance(request, currentContextKey);
 
+				GlobalContext currentGlobalContext;				
+				currentGlobalContext = GlobalContext.getRealInstance(ctx.getRequest(), currentContextKey);				
+				
 				if (currentGlobalContext != null) {
 					checkRight(ctx, currentGlobalContext);
 					currentGlobalContext.setGlobalTitle(requestService.getParameter("global-title", null));
@@ -467,6 +490,7 @@ public class AdminAction extends AbstractModuleAction {
 						Class.forName(userFacotryClass).newInstance();
 						currentGlobalContext.setUserFactoryClassName(userFacotryClass);
 					} catch (Exception e) {
+						e.printStackTrace();
 						messageRepository.setGlobalMessage(new GenericMessage(e.getMessage(), GenericMessage.ERROR));
 					}
 
@@ -475,6 +499,7 @@ public class AdminAction extends AbstractModuleAction {
 						Class.forName(userFacotryClass).newInstance();
 						currentGlobalContext.setAdminUserFactoryClassName(userFacotryClass);
 					} catch (Exception e) {
+						e.printStackTrace();
 						messageRepository.setGlobalMessage(new GenericMessage(e.getMessage(), GenericMessage.ERROR));
 					}
 
@@ -486,7 +511,7 @@ public class AdminAction extends AbstractModuleAction {
 						importTemplate = true;
 					}
 
-					Collection<TemplatePlugin> templatePlugins = TemplatePluginFactory.getInstance(request.getSession().getServletContext()).getAllTemplatePlugin();
+					Collection<TemplatePlugin> templatePlugins = TemplatePluginFactory.getInstance(ctx.getRequest().getSession().getServletContext()).getAllTemplatePlugin();
 					Collection<String> templatePluginsSelection = new LinkedList<String>();
 					for (TemplatePlugin templatePlugin : templatePlugins) {
 						if (requestService.getParameter(templatePlugin.getId(), null) != null) {
@@ -507,8 +532,6 @@ public class AdminAction extends AbstractModuleAction {
 				} else {
 					msg = "context not found : " + currentContextKey;
 				}
-			} else {
-				msg = "bad request structure : no context.";
 			}
 		}
 		return msg;
@@ -658,5 +681,29 @@ public class AdminAction extends AbstractModuleAction {
 			msg = "bad request structure need 'context' as parameter.";
 		}
 		return msg;
+	}
+
+	public static String performCreateSite(RequestService rs, ContentContext ctx, MessageRepository messageRepository, I18nAccess i18nAccess, Module currentModule) throws ConfigurationException, IOException, JavloSecurityException, NoSuchMethodException, ClassNotFoundException, IllegalArgumentException, InstantiationException, IllegalAccessException, InvocationTargetException {
+		String siteName = rs.getParameter("context", null);
+		if (siteName == null) {
+			return "bad request structure, need 'context' param.";
+		}
+
+		if (GlobalContext.isExist(ctx.getRequest(), siteName)) {
+			messageRepository.setGlobalMessage(new GenericMessage(i18nAccess.getText("admin.message.site-exist"), GenericMessage.ERROR));
+		}
+
+		if (PatternHelper.ALPHANNUM_NOSPACE_PATTERN.matcher(siteName).matches()) {
+			if (siteName != null && siteName.length() > 0) {
+				GlobalContext globalContext = GlobalContext.getInstance(ctx.getRequest(), siteName);
+				globalContext.setUsersAccess(Arrays.asList(ctx.getCurrentEditUser().getLogin()));
+				messageRepository.setGlobalMessage(new GenericMessage(i18nAccess.getText("admin.message.new-site-create"), GenericMessage.INFO));
+				editGlobalContext(ctx.getRequest(), currentModule, globalContext);
+			}
+		} else {
+			logger.warning("bad site name : " + siteName);
+			messageRepository.setGlobalMessage(new GenericMessage(i18nAccess.getText("admin.message.bad-site-name"), GenericMessage.ERROR));
+		}
+		return null;
 	}
 };

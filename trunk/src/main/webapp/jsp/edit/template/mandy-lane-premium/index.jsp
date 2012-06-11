@@ -70,14 +70,14 @@
     
     <div class="topheader">
         <ul class="notebutton">
-            <li class="note">
+            <%--<li class="note">
                 <a href="${info.editTemplateURL}/pages/message.html" class="messagenotify">
                     <span class="wrap">
                         <span class="thicon msgicon"></span>
                         <span class="count">1</span>
                     </span>
                 </a>
-            </li>
+            </li>  --%>
             <li class="note">
             	<a href="${info.editTemplateURL}/notifications.jsp" class="alertnotify">
                 	<span class="wrap">

@@ -330,6 +330,16 @@ ul,li {
 	margin-right: 10px;
 }
 
+#tools {
+	box-shadow: 1px 1px 0 #F3F3F3;
+	background: url("../images/icons/tools.png") no-repeat scroll 10px 9px
+		#F7F7F7;
+	border-radius: 2px 2px 2px 2px;
+	border: 1px solid #DDDDDD;
+	font-size: 11px;
+	padding: 0 0 0 30px;
+}
+
 #tools h3 {
 	font-size: 1em;
 	font-weight: normal;
@@ -343,19 +353,20 @@ ul,li {
 	padding: 5px 20px 5px 0;
 }
 
-#tools {
-	box-shadow: 1px 1px 0 #F3F3F3;
-	background: url("../images/icons/tools.png") no-repeat scroll 10px 9px
-		#F7F7F7;
-	border-radius: 2px 2px 2px 2px;
-	border: 1px solid #DDDDDD;
-	font-size: 11px;
-	padding: 0 15px 0 30px;
+#tools .clear {
+	height: 0;
+	font-size: 0; 
 }
+
 
 #tools input {
 	display: block;
 	float: right;
+}
+
+#tools .special input {
+	float: none;
+	display: inline-block;
 }
 
 #tools .action-button {
@@ -366,14 +377,12 @@ ul,li {
 	float: left;
 }
 
-#tools .content {
-	height: 31px;
-}
-
 #tools .special {
-	margin-left: 15px;
+	margin: -1px -1px -1px 3px;
+	border-top: 1px #DDDDDD solid;		
+	border-bottom: 1px #DDDDDD solid;
 	border-left: 1px #DDDDDD solid;
-	padding: 0 0 2px 15px;
+	padding: 0 3px 2px 5px;
 	float: right;
 }
 
@@ -417,7 +426,7 @@ ul,li {
 }
 
 #tools input[type=text] {
-	padding: 4px 4px 5px 4px;
+	padding: 4px 4px 3px 4px;
 }
 
 .action-button.preview span {
@@ -480,6 +489,19 @@ ul,li {
 	background: url("../images/icons/small/black/publish.png") no-repeat
 		scroll 5px;
 }
+
+.action-button.copy span {
+	padding-left: 26px;
+	background: url("../images/icons/small/black/copy.png") no-repeat
+		scroll 5px;
+}
+
+.action-button.copy:hover span {
+	padding-left: 26px;
+	background: url("../images/icons/small/white/copy.png") no-repeat
+		scroll 5px;
+}
+
 
 .action-button.publish:hover span {
 	background: url("../images/icons/small/white/publish.png") no-repeat

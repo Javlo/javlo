@@ -29,6 +29,8 @@ public class RequestService {
 	private Map<String, String[]> parameters = new HashMap<String, String[]>();
 
 	private Map<String, FileItem[]> fileItems = new HashMap<String, FileItem[]>();
+	
+	private HttpServletRequest request;
 
 	// todo: use this method for optimisation.
 	private void putParameter(String key, String value) {
@@ -53,7 +55,7 @@ public class RequestService {
 		
 		RequestService instance = (RequestService) request.getAttribute(KEY);
 		if (instance == null) {
-			instance = new RequestService();
+			instance = new RequestService();			
 			request.setAttribute(KEY, instance);
 
 			try {
@@ -113,6 +115,7 @@ public class RequestService {
 			}
 		}
 		
+		instance.request = request;
 		return instance;
 	}
 
@@ -207,6 +210,10 @@ public class RequestService {
 			uri = uri.substring(contextPath.length());
 		}
 		return uri;
+	}
+	
+	public HttpServletRequest getRequest() {
+		return request;
 	}
 
 }

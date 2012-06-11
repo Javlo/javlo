@@ -569,7 +569,7 @@ public class EditActions {
 		EditContext editCtx = EditContext.getInstance(globalContext, request.getSession());
 		editCtx.setPathForCopy(null);
 
-		ClipBoard clipBoard = ClipBoard.getClibBoard(request);
+		ClipBoard clipBoard = ClipBoard.getInstance(request);
 		clipBoard.clear();
 
 		return msg;
@@ -822,7 +822,7 @@ public class EditActions {
 			while (contents.hasNext(ctx)) {
 				IContentVisualComponent elem = contents.next(ctx);
 				if (elem.getId().equals(id)) {
-					ClipBoard clibBoard = ClipBoard.getClibBoard(request);
+					ClipBoard clibBoard = ClipBoard.getInstance(request);
 					clibBoard.copy(elem.getBean(ctx));
 				}
 			}
@@ -1767,7 +1767,7 @@ public class EditActions {
 			return null;
 		}
 
-		ClipBoard clipBoard = ClipBoard.getClibBoard(request);
+		ClipBoard clipBoard = ClipBoard.getInstance(request);
 		if (!clipBoard.isEmpty(ctx)) {
 			String parentId = ContentManager.getParameterValue(request, "number", null);
 			ComponentBean bean = (ComponentBean) clipBoard.getCopied();
@@ -2026,7 +2026,7 @@ public class EditActions {
 
 			id = id.replace(',', '#'); /* hack for resolve base64 probs */
 
-			ClipBoard clipBoard = ClipBoard.getClibBoard(request);
+			ClipBoard clipBoard = ClipBoard.getInstance(request);
 			if (id.equals(clipBoard.getCopied())) {
 				clipBoard.clear();
 			}

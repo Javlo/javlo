@@ -16,8 +16,10 @@ import javax.servlet.http.HttpSession;
 
 import org.apache.commons.fileupload.FileItem;
 import org.javlo.actions.AbstractModuleAction;
+import org.javlo.component.core.ComponentBean;
 import org.javlo.component.core.ComponentContext;
 import org.javlo.component.core.ComponentFactory;
+import org.javlo.component.core.ContentElementList;
 import org.javlo.component.core.IContentComponentsList;
 import org.javlo.component.core.IContentVisualComponent;
 import org.javlo.config.StaticConfig;
@@ -36,9 +38,11 @@ import org.javlo.helper.URLHelper;
 import org.javlo.i18n.I18nAccess;
 import org.javlo.message.GenericMessage;
 import org.javlo.message.MessageRepository;
+import org.javlo.module.core.AbstractModuleContext;
 import org.javlo.module.core.Module;
-import org.javlo.module.core.ModulesContext;
 import org.javlo.module.core.Module.Box;
+import org.javlo.module.core.ModulesContext;
+import org.javlo.module.file.FileModuleContext;
 import org.javlo.navigation.IURLFactory;
 import org.javlo.navigation.MenuElement;
 import org.javlo.navigation.PageConfiguration;
@@ -65,13 +69,30 @@ public class Edit extends AbstractModuleAction {
 		GlobalContext globalContext = GlobalContext.getInstance(ctx.getRequest());
 		EditContext editContext = EditContext.getInstance(globalContext, ctx.getRequest().getSession());
 		I18nAccess i18nAccess = I18nAccess.getInstance(ctx.getRequest());
+		ClipBoard clipBoard = ClipBoard.getInstance(ctx.getRequest());
 
 		IContentVisualComponent currentTypeComponent = ComponentFactory.getComponentWithType(ctx, editContext.getActiveType());
 
 		String typeName = StringHelper.getFirstNotNull(currentTypeComponent.getComponentLabel(ctx, globalContext.getEditLanguage()), i18nAccess.getText("content." + currentTypeComponent.getType()));
 		String insertHere = i18nAccess.getText("content.insert-here", new String[][] { { "type", typeName } });
+		
+		String pastePageHere = null;
+		if (editContext.getContextForCopy() != null) {
+			pastePageHere = i18nAccess.getText("content.paste-here", new String[][] { { "page", editContext.getContextForCopy().getCurrentPage().getName() } });		
+		}
+		
+		String pasteHere = null;
+		if (clipBoard.getCopiedComponent(ctx) != null) {
+			pasteHere = i18nAccess.getText("content.paste-comp", new String[][] { { "type", clipBoard.getCopiedComponent(ctx).getType() } });
+		}
 
 		String insertXHTML = "<a class=\"action-button ajax\" href=\"" + URLHelper.createURL(ctx) + "?webaction=insert&previous=0&type=" + currentTypeComponent.getType() + "\">" + insertHere + "</a>";
+		if (pastePageHere != null) {
+			insertXHTML = insertXHTML + "<a class=\"action-button\" href=\"" + URLHelper.createURL(ctx) + "?webaction=pastePage&previous=0\">" + pastePageHere + "</a>";
+		}
+		if (pasteHere != null) {
+			insertXHTML = insertXHTML + "<a class=\"action-button ajax\" href=\"" + URLHelper.createURL(ctx) + "?webaction=pasteComp&previous=0\">" + pasteHere + "</a>";
+		}
 		ctx.addAjaxInsideZone("insert-line-0", insertXHTML);
 
 		ContentContext areaCtx = ctx.getContextWithArea(editContext.getCurrentArea());
@@ -80,6 +101,12 @@ public class Edit extends AbstractModuleAction {
 		while (elems.hasNext(areaCtx)) {
 			IContentVisualComponent comp = elems.next(areaCtx);
 			insertXHTML = "<a class=\"action-button ajax\" href=\"" + URLHelper.createURL(ctx) + "?webaction=insert&previous=" + comp.getId() + "&type=" + currentTypeComponent.getType() + "\">" + insertHere + "</a>";
+			if (pastePageHere != null) {
+				insertXHTML = insertXHTML + "<a class=\"action-button\" href=\"" + URLHelper.createURL(ctx) + "?webaction=pastePage&previous=" + comp.getId() + "\">" + pastePageHere + "</a>";
+			}
+			if (pasteHere != null) {
+				insertXHTML = insertXHTML + "<a class=\"action-button ajax\" href=\"" + URLHelper.createURL(ctx) + "?webaction=pasteComp&previous=" + comp.getId()+"\">" + pasteHere + "</a>";
+			}
 			ctx.addAjaxInsideZone("insert-line-" + comp.getId(), insertXHTML);
 		}
 	}
@@ -112,6 +139,11 @@ public class Edit extends AbstractModuleAction {
 	private static boolean nameExist(String name, ContentContext ctx, ContentService content) throws Exception {
 		MenuElement page = content.getNavigation(ctx);
 		return (page.searchChildFromName(name) != null);
+	}
+	
+	@Override
+	public AbstractModuleContext getModuleContext(HttpSession session, Module module) throws Exception {
+		return FileModuleContext.getInstance(session, GlobalContext.getSessionInstance(session), module, ContentModuleContext.class);
 	}
 
 	public static class ComponentWrapper {
@@ -375,7 +407,7 @@ public class Edit extends AbstractModuleAction {
 				currentModule.setBreadcrumbTitle(I18nAccess.getInstance(ctx.getRequest()).getText("item.title"));
 				break;
 			default:
-				currentModule.setToolsRenderer("/jsp/actions.jsp?button_preview=true&button_page=true&button_save=true&button_publish=true&languages=true&areas=true");
+				currentModule.setToolsRenderer("/jsp/actions.jsp?button_preview=true&button_page=true&button_save=true&button_copy=true&button_publish=true&languages=true&areas=true");
 				currentModule.setRenderer("/jsp/content_wrapper.jsp");
 				currentModule.setBreadcrumbTitle(I18nAccess.getInstance(ctx.getRequest()).getText("content.mode.content"));							
 				break;
@@ -509,7 +541,7 @@ public class Edit extends AbstractModuleAction {
 		}
 		String id = request.getParameter("id");
 		if (id != null) {
-			ClipBoard clipBoard = ClipBoard.getClibBoard(request);
+			ClipBoard clipBoard = ClipBoard.getInstance(request);
 			if (id.equals(clipBoard.getCopied())) {
 				clipBoard.clear();
 			}
@@ -582,9 +614,13 @@ public class Edit extends AbstractModuleAction {
 		}
 
 		if (message == null) {
-			messageRepository.setGlobalMessageAndNotification(ctx, new GenericMessage(i18nAccess.getText("action.updated"), GenericMessage.INFO));
-			autoPublish(ctx.getRequest(), ctx.getResponse());
-		}
+			if (modif) {
+				messageRepository.setGlobalMessageAndNotification(ctx, new GenericMessage(i18nAccess.getText("action.updated"), GenericMessage.INFO));
+				autoPublish(ctx.getRequest(), ctx.getResponse());
+			} else {
+				messageRepository.setGlobalMessageAndNotification(ctx, new GenericMessage(i18nAccess.getText("action.not-updated"), GenericMessage.ALERT));
+			}
+		} 
 
 		NavigationService navigationService = NavigationService.getInstance(globalContext, ctx.getRequest().getSession());
 		navigationService.clearPage(ctx);
@@ -960,6 +996,99 @@ public class Edit extends AbstractModuleAction {
 		
 		messageRepository.setGlobalMessageAndNotification(ctx, new GenericMessage(i18nAccess.getText("edit.message.moved", new String[][] {{"name", page.getName()}}), GenericMessage.INFO));
 		
+		return null;
+	}
+	
+	public static String performCopyPage(RequestService rs, ContentContext ctx, EditContext editCtx, MessageRepository messageRepository, I18nAccess i18nAccess) throws Exception {		
+		editCtx.setPathForCopy(ctx);		
+		messageRepository.setGlobalMessageAndNotification(ctx, new GenericMessage(i18nAccess.getText("edit.message.copy-page", new String[][] {{"name", ctx.getCurrentPage().getName()}}), GenericMessage.INFO));
+		prepareUpdateInsertLine(ctx);
+		return null;
+	}
+	
+	public static String performPastePage(RequestService rs, ContentContext ctx, GlobalContext globalContext, EditContext editCtx, ContentService content, MessageRepository messageRepository, I18nAccess i18nAccess) throws Exception {
+		String msg = null;
+
+		if (!checkPageSecurity(ctx)) {
+			return null;
+		}
+		
+		ContentContext newCtx = editCtx.getContextForCopy();
+		newCtx.setRequest(ctx.getRequest());
+		newCtx.setResponse(ctx.getResponse());
+
+		ContentElementList elems = newCtx.getCurrentPage().getContent(newCtx);
+
+		String parentId = rs.getParameter("previous", null);
+		if (parentId==null) {
+			return "bad request structure : need 'previous' as parameter.";
+		}
+		IContentVisualComponent parent = content.getComponent(ctx, parentId);
+
+		int c=0;
+		while (elems.hasNext(ctx)) {
+			ComponentBean bean = elems.next(ctx).getBean(ctx);
+			bean.setArea(ctx.getArea());
+			bean.setLanguage(ctx.getRequestContentLanguage());
+			parentId = content.createContent(ctx, bean, parentId);
+			c++;
+		}
+
+		if (parent != null) {
+			IContentVisualComponent nextParent = parent.next();
+			IContentVisualComponent newParent = content.getComponent(ctx, parentId);
+			newParent.setNextComponent(nextParent); // reconnect the list
+			if (nextParent != null) {
+				nextParent.setPreviousComponent(newParent);
+			}
+		}
+		modifPage(ctx);		
+		PersistenceService.getInstance(globalContext).store(ctx);
+		autoPublish(ctx.getRequest(), ctx.getResponse());
+		
+		messageRepository.setGlobalMessageAndNotification(ctx, new GenericMessage(i18nAccess.getText("edit.message.paste-page", new String[][] {{"count", ""+c}}), GenericMessage.INFO));
+		
+		return msg;
+	}
+	
+	public static String performCopy(RequestService rs, ContentContext ctx, EditContext editCtx, ContentService content, ClipBoard clipBoard, MessageRepository messageRepository, I18nAccess i18nAccess) throws Exception {
+		String compId = rs.getParameter("id",  null);
+		if (compId == null) {
+			return "bad request structure : need 'id'.";			
+		}
+		IContentVisualComponent comp = content.getComponent(ctx, compId);
+		if (comp == null) {
+			return "component not found : "+compId;
+		} else {
+			clipBoard.copy(comp.getBean(ctx));
+			messageRepository.setGlobalMessageAndNotification(ctx, new GenericMessage(i18nAccess.getText("edit.message.copy", new String[][] {{"type", ""+comp.getType()}}), GenericMessage.INFO));
+			prepareUpdateInsertLine(ctx);
+		}
+		
+		return null;
+	}
+	
+	public static String performPasteComp(RequestService rs, ContentContext ctx, ContentService content, ClipBoard clipboard, Module currentModule, PersistenceService persistenceService, MessageRepository messageRepository, I18nAccess i18nAccess) throws Exception {
+		String previous = rs.getParameter("previous", null);
+		if (previous == null) {
+			return "bad request structure : need 'previous' parameter.";
+		}
+		ComponentBean comp = clipboard.getCopiedComponent(ctx); 
+		if (comp == null) {
+			return "nothing to paste.";
+		}
+		String newId = content.createContent(ctx, previous, comp.getType(), comp.getValue());
+		if (ctx.isAjax()) {
+			updateComponent(ctx, currentModule, newId, previous);
+		}
+
+		String msg = i18nAccess.getText("action.component.created", new String[][] { { "type", comp.getType() } });
+		messageRepository.setGlobalMessageAndNotification(ctx, new GenericMessage(msg, GenericMessage.INFO));
+		
+		persistenceService.store(ctx);
+		modifPage(ctx);
+		autoPublish(ctx.getRequest(), ctx.getResponse());
+
 		return null;
 	}
 

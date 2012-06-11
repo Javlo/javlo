@@ -11,6 +11,11 @@ import org.javlo.bean.LinkToRenderer;
 import org.javlo.context.GlobalContext;
 import org.javlo.i18n.I18nAccess;
 
+/**
+ * represent the context of a module, for create a context extends this class and for instanciate you class use getInstance with you class for implementationClass param. 
+ * @author Patrick Vandermaesen
+ *
+ */
 public abstract class AbstractModuleContext {
 	
 	private static Logger logger = Logger.getLogger(AbstractModuleContext.class.getName());

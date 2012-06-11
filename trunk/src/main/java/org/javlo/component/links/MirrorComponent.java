@@ -48,7 +48,7 @@ public class MirrorComponent extends AbstractVisualComponent {
 
 		I18nAccess i18nAccess = I18nAccess.getInstance(ctx.getRequest());
 
-		ClipBoard clibBoard = ClipBoard.getClibBoard(ctx.getRequest());
+		ClipBoard clibBoard = ClipBoard.getInstance(ctx.getRequest());
 		ComponentBean comp = null;
 		synchronized (clibBoard) {
 			if (clibBoard.getCopied() instanceof ComponentBean) {

@@ -28,6 +28,7 @@ org.javlo.component.links.ChildrenLink
 org.javlo.component.links.Menu
 org.javlo.component.links.ChangeLanguageLink
 org.javlo.component.links.ChangeLanguageMenu
+org.javlo.component.links.SiteMap
 
 --content.title.graphic
 
