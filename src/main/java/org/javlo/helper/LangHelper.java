@@ -21,7 +21,9 @@ import org.javlo.module.core.Module;
 import org.javlo.module.core.ModulesContext;
 import org.javlo.navigation.MenuElement;
 import org.javlo.navigation.PageConfiguration;
+import org.javlo.service.ClipBoard;
 import org.javlo.service.ContentService;
+import org.javlo.service.PersistenceService;
 import org.javlo.service.RequestService;
 import org.javlo.user.AdminUserFactory;
 import org.javlo.user.AdminUserSecurity;
@@ -59,6 +61,8 @@ public class LangHelper {
 	 *         <li>FileCache</li>
 	 *         <li>StaticContext</li>
 	 *         <li>UserInterfaceContext</li>
+	 *         <li>ClipBoard</li>
+	 *         <li>PersistenceService</li>
 	 *         <li>AbstractModuleContext : return the current module context</li>
 	 *         <li>? extends AbstractModuleContext : instanciate a abstract module</li>>
 	 *         <li>String : the query parameter (when user make a search)</li>
@@ -83,7 +87,7 @@ public class LangHelper {
 			return GlobalContext.getInstance(request);
 		} else if (c.equals(StaticConfig.class)) {
 			return StaticConfig.getInstance(request.getSession());
-		} else if (c.equals(I18nAccess.class)) {		
+		} else if (c.equals(I18nAccess.class)) {
 			return I18nAccess.getInstance(ContentContext.getContentContext(request, response));
 		} else if (c.equals(RequestService.class)) {
 			return RequestService.getInstance(request);
@@ -97,7 +101,7 @@ public class LangHelper {
 			return ContentContext.getContentContext(request, response).getCurrentPage();
 		} else if (c.equals(UserFactory.class)) {
 			return UserFactory.createUserFactory(GlobalContext.getInstance(request), request.getSession());
-		}  else if (c.equals(AdminUserFactory.class)) {
+		} else if (c.equals(AdminUserFactory.class)) {
 			return AdminUserFactory.createUserFactory(GlobalContext.getInstance(request), request.getSession());
 		} else if (c.equals(AdminUserSecurity.class)) {
 			return AdminUserSecurity.getInstance();
@@ -113,18 +117,22 @@ public class LangHelper {
 			return FileCache.getInstance(request.getSession().getServletContext());
 		} else if (c.equals(StaticContext.class)) {
 			return StaticContext.getInstance(request.getSession());
-		}  else if (c.equals(UserInterfaceContext.class)) {
-			return UserInterfaceContext.getInstance( request.getSession(), GlobalContext.getInstance(request) );
+		} else if (c.equals(ClipBoard.class)) {
+			return ClipBoard.getInstance(request);
+		} else if (c.equals(PersistenceService.class)) {
+			return PersistenceService.getInstance(GlobalContext.getInstance(request));
+		} else if (c.equals(UserInterfaceContext.class)) {
+			return UserInterfaceContext.getInstance(request.getSession(), GlobalContext.getInstance(request));
 		} else if (c.equals(String.class)) {
 			return RequestService.getInstance(request).getParameter("query", null);
-		} else if (c.equals(AbstractModuleContext.class)) {			
+		} else if (c.equals(AbstractModuleContext.class)) {
 			return AbstractModuleContext.getCurrentInstance(request.getSession());
-		} else if (AbstractModuleContext.class.isAssignableFrom(c)) {			
+		} else if (AbstractModuleContext.class.isAssignableFrom(c)) {
 			return AbstractModuleContext.getInstance(request.getSession(), GlobalContext.getInstance(request), ModulesContext.getInstance(request.getSession(), GlobalContext.getInstance(request)).getCurrentModule(), c);
-		} 
+		}
 		return null;
 	}
-	
+
 	public static class Property {
 		private final String name;
 		private final Object value;
@@ -134,7 +142,7 @@ public class LangHelper {
 			this.value = value;
 		}
 	}
-	
+
 	public Map<String, Object> obj(Property... props) {
 		Map<String, Object> out = new LinkedHashMap<String, Object>();
 		for (Property prop : props) {

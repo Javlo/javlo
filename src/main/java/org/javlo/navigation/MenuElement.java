@@ -84,6 +84,7 @@ public class MenuElement implements Serializable {
 		private String url;
 		private String path;
 		private boolean selected = false;		
+		private boolean lastSelected = false;
 		private List<PageBean> children = new LinkedList<PageBean>();
 		private List<PageBean> realChildren = new LinkedList<PageBean>();
 		private String name = null;
@@ -167,6 +168,12 @@ public class MenuElement implements Serializable {
 		}
 		public void setTemplateId(String template) {
 			this.templateId = template;
+		}
+		public boolean isLastSelected() {
+			return lastSelected;
+		}
+		public void setLastSelected(boolean lastSelected) {
+			this.lastSelected = lastSelected;
 		}
 		
 	}
@@ -2017,6 +2024,7 @@ public class MenuElement implements Serializable {
 		pageBean.setName(getName());
 		pageBean.setTemplateId(getTemplateId());
 		pageBean.setSelected(isSelected(ctx));
+		pageBean.setLastSelected(isLastSelected(ctx));
 		List<MenuElement> children = getChildMenuElementsList();
 		for (MenuElement child : children) {
 			pageBean.addChild(child.getPageBean(ctx));

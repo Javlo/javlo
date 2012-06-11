@@ -34,16 +34,20 @@ public abstract class AbstractModuleAction implements IModuleAction {
 		throw new NotImplementedException();
 	}
 	
-	public String performChangeRenderer( RequestService rs, AbstractModuleContext moduleContext, Module currentModule ) {
+	public AbstractModuleContext getModuleContext(HttpSession session, Module module) throws Exception {
+		return null; 
+	}
+	
+	public String performChangeRenderer( RequestService rs, Module currentModule ) throws Exception {		
 		String page = rs.getParameter("page", null);
 		if (page == null) {
 			return "bad request structure : need 'page' parameter.";
 		}
-		List<LinkToRenderer> links = moduleContext.getNavigation();
+		List<LinkToRenderer> links = getModuleContext(rs.getRequest().getSession(), currentModule).getNavigation();
 		for (LinkToRenderer linkToRenderer : links) {			
 			if (page.equals(linkToRenderer.getName())) {				
-				moduleContext.setCurrentLink(linkToRenderer.getName());
-				moduleContext.setRendererFromNavigation(linkToRenderer.getRenderer());
+				getModuleContext(rs.getRequest().getSession(), currentModule).setCurrentLink(linkToRenderer.getName());
+				getModuleContext(rs.getRequest().getSession(), currentModule).setRendererFromNavigation(linkToRenderer.getRenderer());
 				return null;
 			}
 		}		

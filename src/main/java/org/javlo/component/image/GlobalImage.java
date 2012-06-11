@@ -170,6 +170,8 @@ public class GlobalImage extends FilterImage {
 			
 			Map<String, String> filesParams = new HashMap<String, String>();
 			filesParams.put("path", URLHelper.mergePath("/", getRelativeFileDirectory(ctx), getDirSelected()));
+			filesParams.put("webaction", "changeRenderer");
+			filesParams.put("page", "meta");
 			String staticURL = URLHelper.createModuleURL(ctx, ctx.getPath(), "file", filesParams); 
 			
 			finalCode.append("<a class=\"" + EDIT_ACTION_CSS_CLASS + "\" href=\""+staticURL+"\">&nbsp;");

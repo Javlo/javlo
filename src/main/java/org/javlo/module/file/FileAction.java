@@ -2,6 +2,8 @@ package org.javlo.module.file;
 
 import java.io.File;
 import java.io.FileFilter;
+import java.io.FileNotFoundException;
+import java.io.IOException;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.LinkedList;
@@ -9,6 +11,7 @@ import java.util.Map;
 import java.util.logging.Logger;
 
 import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpSession;
 
 import org.apache.commons.io.filefilter.FileFileFilter;
 import org.javlo.actions.AbstractModuleAction;
@@ -24,6 +27,7 @@ import org.javlo.helper.URLHelper;
 import org.javlo.i18n.I18nAccess;
 import org.javlo.message.GenericMessage;
 import org.javlo.message.MessageRepository;
+import org.javlo.module.core.AbstractModuleContext;
 import org.javlo.module.core.Module;
 import org.javlo.module.core.Module.Box;
 import org.javlo.module.core.Module.HtmlLink;
@@ -112,6 +116,11 @@ public class FileAction extends AbstractModuleAction {
 	@Override
 	public String getActionGroupName() {
 		return "file";
+	}
+	
+	@Override
+	public AbstractModuleContext getModuleContext(HttpSession session, Module module) throws Exception {
+		return FileModuleContext.getInstance(session, GlobalContext.getSessionInstance(session), module, FileModuleContext.class);
 	}
 
 	@Override

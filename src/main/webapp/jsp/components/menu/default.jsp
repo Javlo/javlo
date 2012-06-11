@@ -5,8 +5,8 @@
 	<c:forEach var="page" items="${page.children}" varStatus="status">
 		<c:if test="${page.info.visible}">
   				<c:if test="${page.info.depth <= end}">				
-				<li class="depth-${page.info.depth} ${page.selected ? "active" : "not-active" }">
-					<a href="${page.url}" title="${page.info.title}" >${page.info.label}</a>				
+				<li class="depth-${page.info.depth} ${page.lastSelected ? "current" : "not-current" } ${page.name}">
+					<a href="${page.url}" title="${page.info.title}" ><span>${page.info.label}</span></a>				
     				<c:set var="page" value="${page}" scope="request" />		 
 		        	<jsp:include page="default.jsp"/>
 		        </li>

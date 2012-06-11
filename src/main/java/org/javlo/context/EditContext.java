@@ -277,6 +277,12 @@ public class EditContext implements Serializable {
 			contextForCopy = null;
 		} else {
 			contextForCopy = new ContentContext(ctx);
+			try {
+				contextForCopy.getCurrentPage();  // put page in cache
+			} catch (Exception e) {
+				contextForCopy = null;
+				e.printStackTrace();
+			}
 		}
 	}
 
