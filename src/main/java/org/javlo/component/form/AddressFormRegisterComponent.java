@@ -175,7 +175,7 @@ public class AddressFormRegisterComponent extends FormComponent {
 	}
 
 	@Override
-	public void refresh(ContentContext ctx) throws Exception {
+	public void performEdit(ContentContext ctx) throws Exception {
 		RequestService service = RequestService.getInstance(ctx.getRequest());
 
 		String specialParam = service.getParameter(getTypeInputName(), null);

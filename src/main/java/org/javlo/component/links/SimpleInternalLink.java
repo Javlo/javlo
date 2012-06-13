@@ -194,7 +194,7 @@ public class SimpleInternalLink extends ComplexPropertiesLink implements IIntern
 	}
 
 	@Override
-	public void refresh(ContentContext ctx) {
+	public void performEdit(ContentContext ctx) {
 
 		ContentService content = ContentService.createContent(ctx.getRequest());
 

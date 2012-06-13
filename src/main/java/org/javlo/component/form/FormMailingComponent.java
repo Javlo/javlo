@@ -203,7 +203,7 @@ public class FormMailingComponent extends AbstractVisualComponent implements IAc
 	}
 
 	@Override
-	public void refresh(ContentContext ctx) throws Exception {
+	public void performEdit(ContentContext ctx) throws Exception {
 		RequestService requestService = RequestService.getInstance(ctx.getRequest());
 		String[] newContent = requestService.getParameterValues(getInputRolesName(), new String[0]);
 

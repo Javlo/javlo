@@ -750,7 +750,7 @@ public class SmartExternalLink extends ComplexPropertiesLink implements IReverse
 	}
 
 	@Override
-	public void refresh(ContentContext ctx) throws Exception {
+	public void performEdit(ContentContext ctx) throws Exception {
 
 		loadData(ctx);
 

@@ -4,6 +4,8 @@ import java.io.Serializable;
 import java.util.Date;
 import java.util.List;
 
+import org.javlo.remote.IRemoteResource;
+
 public interface IRemoteTemplateFactory extends Serializable {
 	
 	public String getName();
@@ -12,14 +14,14 @@ public interface IRemoteTemplateFactory extends Serializable {
 	
 	public boolean checkConnection();
 	
-	public List<IRemoteTemplate> getTemplates();
+	public List<IRemoteResource> getTemplates();
 	
-	public IRemoteTemplate getTemplate(String name);
+	public IRemoteResource getTemplate(String name);
 	
 	public Date latestUpdate();
 	
 	public String getSponsors();
 
-	void setTemplates(List<IRemoteTemplate> templates);
+	void setTemplates(List<IRemoteResource> templates);
 
 }

@@ -138,7 +138,7 @@ public class TimeRangeComponent extends DateComponent {
 	}
 
 	@Override
-	public void refresh(ContentContext ctx) throws Exception {
+	public void performEdit(ContentContext ctx) throws Exception {
 		RequestService requestService = RequestService.getInstance(ctx.getRequest());
 		String newStartDate = requestService.getParameter(getInputStartDateName(), null);
 		String newEndDate = requestService.getParameter(getInputEndDateName(), null);

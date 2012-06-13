@@ -33,7 +33,7 @@ public class PageConfiguration {
 
 	public static PageConfiguration getInstance(GlobalContext globalContext) throws ConfigurationException, IOException {		
 		PageConfiguration pageConfig = (PageConfiguration) globalContext.getAttribute(KEY);
-		if (pageConfig == null) {
+		if (pageConfig == null) {			
 			pageConfig = new PageConfiguration();
 			pageConfig.loadTemplate(globalContext);
 			globalContext.setAttribute(KEY, pageConfig);
@@ -170,7 +170,7 @@ public class PageConfiguration {
 		return true;
 	}
 
-	public void loadTemplate(GlobalContext globalContext) throws IOException {
+	public void loadTemplate(GlobalContext globalContext) throws IOException {		
 		synchronized (KEY) {
 			Collection<Template> allTemplates = TemplateFactory.getAllTemplates(globalContext.getServletContext());
 			templates = new LinkedList<Template>();

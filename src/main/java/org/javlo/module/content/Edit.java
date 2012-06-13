@@ -584,18 +584,18 @@ public class Edit extends AbstractModuleAction {
 
 		boolean modif = false;
 
-		boolean needRefresh = false;
+		//boolean needRefresh = false;
 
 		for (String compId : components) {
-			IContentVisualComponent elem = content.getCachedComponent(ctx, compId);
+			IContentVisualComponent elem = content.getComponent(ctx, compId);
 			if (StringHelper.isTrue(requestService.getParameter("id-" + elem.getId(), "false"))) {
 				elem.performConfig(ctx);
-				elem.refresh(ctx);
-				if (elem.isNeedRefresh()) {					
+				elem.performEdit(ctx);
+				if (elem.isNeedRefresh() && ctx.isAjax()) {					
 					updateComponent(ctx, currentModule, elem.getId(), null);
 				}
 			}
-
+			
 			if (elem.isModify()) {
 				modif = true;
 			}
@@ -604,7 +604,7 @@ public class Edit extends AbstractModuleAction {
 			}
 		}
 
-		ctx.setNeedRefresh(needRefresh);
+		//ctx.setNeedRefresh(needRefresh);
 		if (modif) {
 			modifPage(ctx);
 			if (adminUserFactory.getCurrentUser(ctx.getRequest().getSession()) != null) {
@@ -612,7 +612,7 @@ public class Edit extends AbstractModuleAction {
 			}
 			PersistenceService.getInstance(globalContext).store(ctx);
 		}
-
+		
 		if (message == null) {
 			if (modif) {
 				messageRepository.setGlobalMessageAndNotification(ctx, new GenericMessage(i18nAccess.getText("action.updated"), GenericMessage.INFO));
@@ -1089,6 +1089,12 @@ public class Edit extends AbstractModuleAction {
 		modifPage(ctx);
 		autoPublish(ctx.getRequest(), ctx.getResponse());
 
+		return null;
+	}
+	
+	public static String performClearClipboard(ClipBoard clipboard, EditContext editCtx) {
+		editCtx.setPathForCopy(null);
+		clipboard.clear();
 		return null;
 	}
 

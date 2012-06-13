@@ -206,6 +206,7 @@ public class ImageTransformServlet extends HttpServlet {
 					int mr = config.getMarginRigth(ctx.getDevice(), filter, area);
 					int mb = config.getMarginBottom(ctx.getDevice(), filter, area);
 					// org.javlo.helper.Logger.stepCount("transform", "start - transformation - 3.2");
+					System.out.println("***** ImageTransformServlet.imageTransform : staticInfo.getFocusZoneY(ctx) = "+staticInfo.getFocusZoneY(ctx)); //TODO: remove debug trace
 					img = ImageEngine.resize(img, width, height, config.isCropResize(ctx.getDevice(), filter, area), config.isAddBorder(ctx.getDevice(), filter, area), mt, ml, mr, mb, config.getBGColor(ctx.getDevice(), filter, area), staticInfo.getFocusZoneX(ctx), staticInfo.getFocusZoneY(ctx), config.isFocusZone(ctx.getDevice(), filter, area));
 				}
 			} else {

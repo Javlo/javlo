@@ -92,7 +92,7 @@ public class WeekChildrenLink extends AbstractVisualComponent implements IAction
 	}
 
 	@Override
-	public void refresh(ContentContext ctx) throws Exception {
+	public void performEdit(ContentContext ctx) throws Exception {
 		
 	}
 

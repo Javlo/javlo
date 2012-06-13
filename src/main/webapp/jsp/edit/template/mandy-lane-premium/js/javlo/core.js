@@ -29,6 +29,17 @@ jQuery(document).bind("ajaxUpdate",function () {
 		   }
 	});
 	
+	jQuery('a.needconfirm').click(function(){
+		var link = jQuery(this);
+		var href = link.attr("href");
+		jConfirm(i18n.confirm, i18n.validate, function(r) {
+			if (r) {
+				window.location=href;
+			}
+		});
+		return false;
+	});
+	
 });
 
 function fullHeight() {

@@ -30,12 +30,13 @@ import org.javlo.helper.XMLManipulationHelper.BadXMLException;
 import org.javlo.i18n.I18nAccess;
 import org.javlo.message.GenericMessage;
 import org.javlo.message.MessageRepository;
+import org.javlo.module.core.AbstractModuleContext;
 import org.javlo.module.core.Module;
 import org.javlo.module.core.ModulesContext;
 import org.javlo.module.file.FileModuleContext;
-import org.javlo.module.template.remote.IRemoteTemplate;
 import org.javlo.module.template.remote.IRemoteTemplateFactory;
 import org.javlo.module.template.remote.RemoteTemplateFactoryManager;
+import org.javlo.remote.IRemoteResource;
 import org.javlo.service.RequestService;
 import org.javlo.servlet.zip.ZipManagement;
 import org.javlo.template.Template;
@@ -79,14 +80,14 @@ public class TemplateAction extends AbstractModuleAction {
 				Map<String, String> params = new HashMap<String, String>();
 				params.put("name", templateName);
 
-				FileModuleContext fileModuleContext = (FileModuleContext)LangHelper.smartInstance(ctx.getRequest(), ctx.getResponse(), FileModuleContext.class);
+				FileModuleContext fileModuleContext = FileModuleContext.getInstance(ctx.getRequest());
 				fileModuleContext.clear();
 				fileModuleContext.setRoot(template.getTemplateRealPath());
 				fileModuleContext.setTitle("<a href=\"" + URLHelper.createModuleURL(ctx, ctx.getPath(), "template", params) + "\">" + template.getId() + "</a>");
 
 				params.clear();
 				params.put("webaction", "browse");
-				ctx.getRequest().setAttribute("fileURL", URLHelper.createInterModuleURL(ctx, ctx.getPath(), "file", params));
+				ctx.getRequest().setAttribute("fileURL", URLHelper.createInterModuleURL(ctx, ctx.getPath(), FileModuleContext.MODULE_NAME, params));
 			}
 		} else if (requestService.getParameter("list", null) == null) {
 			module.clearAllBoxes();
@@ -101,7 +102,7 @@ public class TemplateAction extends AbstractModuleAction {
 		return msg;
 	}
 
-	public String performGoEditTemplate(ServletContext application, HttpServletRequest request, ContentContext ctx, RequestService requestService, Module module, I18nAccess i18nAccess) throws IOException {
+	public String performGoEditTemplate(ServletContext application, HttpServletRequest request, ContentContext ctx, RequestService requestService, Module module, I18nAccess i18nAccess) throws Exception {
 		String msg = null;
 		Template template = TemplateFactory.getDiskTemplate(application, requestService.getParameter("name", null), StringHelper.isTrue(requestService.getParameter("mailing", null)));
 		if (template == null) {
@@ -230,7 +231,7 @@ public class TemplateAction extends AbstractModuleAction {
 		templateContext.setCurrentLink(list);
 		if (list != null) {
 			IRemoteTemplateFactory tempFact = RemoteTemplateFactoryManager.getInstance(session.getServletContext()).getRemoteTemplateFactory(globalContext, list);
-			IRemoteTemplate template = tempFact.getTemplate(templateName);
+			IRemoteResource template = tempFact.getTemplate(templateName);
 			if (template == null) {
 				return "template not found : " + templateName;
 			}
@@ -241,7 +242,7 @@ public class TemplateAction extends AbstractModuleAction {
 			InputStream in = null;
 			OutputStream out = null;
 			try {
-				URL zipURL = new URL(template.getZipURL());
+				URL zipURL = new URL(template.getDownloadURL());
 				in = zipURL.openConnection().getInputStream();
 				ZipManagement.uploadZipTemplate(ctx, in, newTemplate.getId(), false);
 				in.close();

@@ -144,14 +144,14 @@ public class ImageTitle extends Image {
 	}
 
 	@Override
-	public void refresh(ContentContext ctx) throws Exception {
+	public void performEdit(ContentContext ctx) throws Exception {
 		String subTitle = ContentManager.getParameterValue(ctx.getRequest(), getSubTitleXHTMLInputName(), null);
 		if (subTitle != null) {
 			if ((!subTitle.equals(getSubTitle()))) {
 				setSubTitle(subTitle);
 				setModify();
 			}
-			super.refresh(ctx);
+			super.performEdit(ctx);
 		}
 	}
 

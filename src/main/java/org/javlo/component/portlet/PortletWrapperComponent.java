@@ -60,7 +60,7 @@ public class PortletWrapperComponent extends AbstractPortletWrapperComponent {
 	}
 
 	@Override
-	public void refresh(ContentContext ctx) throws Exception {
+	public void performEdit(ContentContext ctx) throws Exception {
 		RequestService requestService = RequestService.getInstance(ctx.getRequest());
 		String portletName = requestService.getParameter(getInputName(PORTLET_NAME_FIELD), null);
 		if (portletName != null && portletName.trim().length() > 0) {
@@ -74,7 +74,7 @@ public class PortletWrapperComponent extends AbstractPortletWrapperComponent {
 			storeProperties();
 			setModify();
 		}
-		super.refresh(ctx);
+		super.performEdit(ctx);
 	}
 
 	@Override

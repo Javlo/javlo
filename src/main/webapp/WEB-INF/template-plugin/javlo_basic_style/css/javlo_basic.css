@@ -21,6 +21,9 @@ body, html {
 .content_clear {
 	clear: both;
 	font-size: 0;
+	line-height: 0;
+	height: 0;
+	width: 0;
 }
 
 /****************/
@@ -75,6 +78,10 @@ body, html {
     margin-top: 3px;
     margin-left: 3px;
     margin-bottom: 3px;
+}
+
+.image-center {
+	text-align: center;
 }
 
 .separation {

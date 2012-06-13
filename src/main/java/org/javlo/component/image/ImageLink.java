@@ -270,9 +270,9 @@ public class ImageLink extends FilterImage {
 	}
 
 	@Override
-	public void refresh(ContentContext ctx) throws Exception {
+	public void performEdit(ContentContext ctx) throws Exception {
 		
-		super.refresh(ctx);
+		super.performEdit(ctx);
 		
 		RequestService requestService = RequestService.getInstance(ctx.getRequest());
 		String link = requestService.getParameter(getLinkXHTMLInputName(), null);

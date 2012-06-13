@@ -10,3 +10,7 @@ StaticConfig staticConfig = StaticConfig.getInstance(request.getSession());
 var currentURL = "${info.currentURL}";
 var dateFormat = "<%=staticConfig.getDefaultJSDateFormat()%>";
 var editLanguage = "${info.editLanguage}";
+
+var i18n = [];
+i18n.validation='${i18n.edit['global.validation']}';
+i18n.confirm='${i18n.edit['global.confirm-delete']}';

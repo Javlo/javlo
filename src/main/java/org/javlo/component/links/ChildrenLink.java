@@ -408,7 +408,7 @@ public class ChildrenLink extends AbstractVisualComponent implements IImageTitle
 	}
 
 	@Override
-	public void refresh(ContentContext ctx) throws Exception {
+	public void performEdit(ContentContext ctx) throws Exception {
 		RequestService requestService = RequestService.getInstance(ctx.getRequest());
 		if (requestService.getParameter("comp-" + getId(), null) == null) { // this component is not in edit form
 			return;

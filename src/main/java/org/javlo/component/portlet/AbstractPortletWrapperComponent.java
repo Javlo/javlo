@@ -150,7 +150,7 @@ public abstract class AbstractPortletWrapperComponent extends AbstractProperties
 	}
 
 	@Override
-	public void refresh(ContentContext ctx) throws Exception {
+	public void performEdit(ContentContext ctx) throws Exception {
 		ServletContext application = ctx.getRequest().getSession().getServletContext();
 
 		PortletWindowImpl pw = getPortletWindow(ctx);

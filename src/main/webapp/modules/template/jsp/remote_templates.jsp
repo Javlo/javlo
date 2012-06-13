@@ -18,10 +18,10 @@
                 </p>
                 <p>
                     <label>${i18n.edit['template.creation-date']}:</label>
-                    <span>${template.renderedCreationDate}</span>
+                    <span>${template.creationDate}</span>
                 </p>
                 <p>
-                	<a href="${template.zipURL}">${i18n.edit['admin.download-template']}</a>
+                	<a href="${template.downloadURL}">${i18n.edit['admin.download-template']}</a>
                 </p>
                 <p class="menu">
                     <a href="${template.URL}" class="preview" title="${template.name}" target="_blank"></a>

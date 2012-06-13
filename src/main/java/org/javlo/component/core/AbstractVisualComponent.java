@@ -594,7 +594,13 @@ public abstract class AbstractVisualComponent implements IContentVisualComponent
 		if (ctx.getRenderMode() == ContentContext.PAGE_MODE) {
 			return getBaseHelpURL(ctx) + "/page/" + lang + getHelpURI(ctx);
 		} else {
-			return getBaseHelpURL(ctx) + "/view/" + lang + getHelpURI(ctx);
+			String url  = URLHelper.mergePath(getBaseHelpURL(ctx),lang,getHelpURI(ctx));
+			System.out.println("*********************************************************************************************************");
+			System.out.println("*********************************************************************************************************");			
+			System.out.println("***** AbstractVisualComponent.getHelpURL : type="+getType()+"  help url = "+url); //TODO: remove debug trace
+			System.out.println("*********************************************************************************************************");
+			System.out.println("*********************************************************************************************************");
+			return url;
 		}
 
 	}
@@ -1453,20 +1459,23 @@ public abstract class AbstractVisualComponent implements IContentVisualComponent
 	}
 
 	@Override
-	public void refresh(ContentContext ctx) throws Exception {
+	public void performEdit(ContentContext ctx) throws Exception {
 		RequestService requestService = RequestService.getInstance(ctx.getRequest());
 		String newContent = requestService.getParameter(getContentName(), null);
+		System.out.println("***** AbstractVisualComponent.performEdit : newContent = "+newContent); //TODO: remove debug trace
+		System.out.println("***** AbstractVisualComponent.performEdit : 1.componentBean.getValue() = "+componentBean.getValue()); //TODO: remove debug trace
 		if (newContent != null) {
 			if (!componentBean.getValue().equals(newContent)) {
 				componentBean.setValue(newContent);
 				setModify();
 			}
 		}
+		System.out.println("***** AbstractVisualComponent.performEdit : 2.componentBean.getValue() = "+componentBean.getValue()); //TODO: remove debug trace
 	}
 
 	public final void refresh(HttpServletRequest request, HttpServletResponse response) throws Exception {
 		ContentContext ctx = ContentContext.getContentContext(request, response);
-		refresh(ctx);
+		performEdit(ctx);
 	}
 
 	@Override

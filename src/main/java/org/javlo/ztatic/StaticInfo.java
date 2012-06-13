@@ -591,15 +591,25 @@ public class StaticInfo {
 		this.containers = containers;
 	}
 
+	/**
+	 * return the focus point of a image.  Return always the focus point of edit mode (problem with image cache).
+	 * @param ctx
+	 * @return
+	 */
 	public int getFocusZoneX(ContentContext ctx) {
 		ContentService content = ContentService.createContent(ctx.getRequest());
-		String kzx = content.getAttribute(ctx, getKey("focus-zone-x"), "" + DEFAULT_FOCUS_X);
+		String kzx = content.getAttribute(ctx.getContextWithOtherRenderMode(ContentContext.EDIT_MODE), getKey("focus-zone-x"), "" + DEFAULT_FOCUS_X);
 		return Integer.parseInt(kzx);
 	}
-
+	
+	/**
+	 * return the focus point of a image.  Return always the focus point of edit mode (problem with image cache).
+	 * @param ctx
+	 * @return
+	 */
 	public int getFocusZoneY(ContentContext ctx) {
 		ContentService content = ContentService.createContent(ctx.getRequest());
-		String kzy = content.getAttribute(ctx, getKey("focus-zone-y"), "" + DEFAULT_FOCUS_Y);
+		String kzy = content.getAttribute(ctx.getContextWithOtherRenderMode(ContentContext.EDIT_MODE), getKey("focus-zone-y"), "" + DEFAULT_FOCUS_Y);
 		return Integer.parseInt(kzy);
 	}
 
@@ -613,24 +623,31 @@ public class StaticInfo {
 		content.setAttribute(ctx, getKey("shared"), "" + shared);
 	}
 
+	/**
+	 * change the focus point on a image. 
+	 * @param ctx
+	 * @param focusZoneX
+	 */
 	public void setFocusZoneX(ContentContext ctx, int focusZoneX) {
 		ContentService content = ContentService.createContent(ctx.getRequest());		
-		ContentContext viewCtxContentContext = new ContentContext(ctx);
-		viewCtxContentContext.setRenderMode(ContentContext.VIEW_MODE);
 		if (focusZoneX == DEFAULT_FOCUS_X) {
-			content.removeAttribute(ctx, getKey("focus-zone-x"));
-			content.removeAttribute(viewCtxContentContext, getKey("focus-zone-x"));			
+			content.removeAttribute(ctx, getKey("focus-zone-x"));						
 		} else {
-			content.setAttribute(ctx, getKey("focus-zone-x"), "" + focusZoneX);
+			content.setAttribute(ctx, getKey("focus-zone-x"), "" + focusZoneX);						
 		}
 	}
 
+	/**
+	 * change the focus point on a image.
+	 * @param ctx
+	 * @param focusZoneY
+	 */
 	public void setFocusZoneY(ContentContext ctx, int focusZoneY) {
-		ContentService content = ContentService.createContent(ctx.getRequest());
+		ContentService content = ContentService.createContent(ctx.getRequest());		
 		if (focusZoneY == DEFAULT_FOCUS_Y) {
-			content.removeAttribute(ctx, getKey("focus-zone-y"));
+			content.removeAttribute(ctx, getKey("focus-zone-y"));			
 		} else {
-			content.setAttribute(ctx, getKey("focus-zone-y"), "" + focusZoneY);
+			content.setAttribute(ctx, getKey("focus-zone-y"), "" + focusZoneY);			
 		}
 	}
 

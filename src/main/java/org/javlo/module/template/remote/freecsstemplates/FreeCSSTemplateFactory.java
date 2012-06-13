@@ -18,9 +18,9 @@ import org.javlo.helper.URLHelper;
 import org.javlo.helper.XMLManipulationHelper;
 import org.javlo.helper.XMLManipulationHelper.BadXMLException;
 import org.javlo.helper.XMLManipulationHelper.TagDescription;
-import org.javlo.module.template.remote.IRemoteTemplate;
 import org.javlo.module.template.remote.IRemoteTemplateFactory;
 import org.javlo.module.template.remote.RemoteTemplate;
+import org.javlo.remote.IRemoteResource;
 
 public class FreeCSSTemplateFactory implements IRemoteTemplateFactory {
 
@@ -32,7 +32,7 @@ public class FreeCSSTemplateFactory implements IRemoteTemplateFactory {
 
 	private static final String BASE_URL = "http://www.freecsstemplates.org/css-templates/";
 
-	private List<IRemoteTemplate> templates = new ArrayList<IRemoteTemplate>();
+	private List<IRemoteResource> templates = new ArrayList<IRemoteResource>();
 
 	private Date latestUpdate = null;
 	
@@ -49,8 +49,8 @@ public class FreeCSSTemplateFactory implements IRemoteTemplateFactory {
 		return URLHelper.mergePath("http://", url.getHost(), uri);
 	}
 
-	private List<IRemoteTemplate> extractTemplate(String page) throws BadXMLException {
-		List<IRemoteTemplate> templates = new LinkedList<IRemoteTemplate>();
+	private List<IRemoteResource> extractTemplate(String page) throws BadXMLException {
+		List<IRemoteResource> templates = new LinkedList<IRemoteResource>();
 		TagDescription[] tags = XMLManipulationHelper.searchAllTag(page, false);
 		RemoteTemplate template = null;
 		for (TagDescription tag : tags) {
@@ -87,7 +87,7 @@ public class FreeCSSTemplateFactory implements IRemoteTemplateFactory {
 						}						
 					}
 					if (child.getName().equalsIgnoreCase("a") && child.getInside(page).trim().equalsIgnoreCase("download")) {
-						template.setZipURL(createAbsoluteURL(child.getAttributes().get("href")));
+						template.setDownloadURL(createAbsoluteURL(child.getAttributes().get("href")));
 					}
 					if (child.getName().equalsIgnoreCase("a") && child.getInside(page).trim().equalsIgnoreCase("preview")) {
 						template.setURL(createAbsoluteURL(child.getAttributes().get("href")));
@@ -134,12 +134,12 @@ public class FreeCSSTemplateFactory implements IRemoteTemplateFactory {
 	}
 
 	@Override
-	public List<IRemoteTemplate> getTemplates() {
+	public List<IRemoteResource> getTemplates() {
 		return templates;
 	}
 	
 	@Override
-	public void setTemplates(List<IRemoteTemplate> templates) {
+	public void setTemplates(List<IRemoteResource> templates) {
 		this.templates = templates;
 	}
 
@@ -157,13 +157,13 @@ public class FreeCSSTemplateFactory implements IRemoteTemplateFactory {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-		Collection<IRemoteTemplate> templates = fact.getTemplates();
-		for (IRemoteTemplate iRemoteTemplate : templates) {
+		Collection<IRemoteResource> templates = fact.getTemplates();
+		for (IRemoteResource iRemoteTemplate : templates) {
 			System.out.println("");
 			System.out.println("  name=" + iRemoteTemplate.getName());
-			System.out.println("  date=" + StringHelper.renderDate(iRemoteTemplate.getCreationDate()));
+			System.out.println("  date=" + StringHelper.renderDate(iRemoteTemplate.getDate()));
 			System.out.println("  preview=" + iRemoteTemplate.getImageURL());
-			System.out.println("  zip=" +iRemoteTemplate.getZipURL() );
+			System.out.println("  zip=" +iRemoteTemplate.getDownloadURL() );
 		}
 		System.out.println("");
 		System.out.println("END.");
@@ -183,9 +183,9 @@ public class FreeCSSTemplateFactory implements IRemoteTemplateFactory {
 	}
 
 	@Override
-	public IRemoteTemplate getTemplate(String name) {
-		Collection<IRemoteTemplate> templates = getTemplates();
-		for (IRemoteTemplate template : templates) {
+	public IRemoteResource getTemplate(String name) {
+		Collection<IRemoteResource> templates = getTemplates();
+		for (IRemoteResource template : templates) {
 			if (template.getName().equals(name)) {
 				return template;
 			}
