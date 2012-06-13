@@ -103,7 +103,7 @@ public class Multimedia extends TimeRangeComponent implements IImageTitle {
 	protected boolean displayVideo(ContentContext ctx) {
 		return getStyle(ctx).equals(ALL) || getStyle(ctx).equals(VIDEO);
 	}
-	
+
 	@Override
 	public boolean isRealContent(ContentContext ctx) {
 		return true;
@@ -252,8 +252,11 @@ public class Multimedia extends TimeRangeComponent implements IImageTitle {
 			out.println(XHTMLHelper.getInputOneSelect(getInputBaseFolderName(), folderSelection, getCurrentRootFolder()));
 		}
 		out.println("<input id=\"contentdate\" style=\"width: 120px;\" type=\"text\" id=\"" + getInputStartDateName() + "\" name=\"" + getInputStartDateName() + "\" value=\"" + StringHelper.renderDateWithDefaultValue(getStartDate(), "") + "\"/> - ");
-		out.println("<input style=\"width: 120px;\" type=\"text\" id=\"" + getInputEndDateName() + "\" name=\"" + getInputEndDateName() + "\" value=\"" + StringHelper.renderDateWithDefaultValue(getEndDate(), "") + "\"/>&nbsp;&nbsp;");
-		out.println(i18nAccess.getText("content.multimedia-gallery.list-size") + " : <input style=\"width: 120px;\" type=\"text\" id=\"" + getInputMaxListSizeName() + "\" name=\"" + getInputMaxListSizeName() + "\" value=\"" + getMaxListSize() + "\"/>");
+		out.println("<input style=\"width: 120px;\" type=\"text\" id=\"" + getInputEndDateName() + "\" name=\"" + getInputEndDateName() + "\" value=\"" + StringHelper.renderDateWithDefaultValue(getEndDate(), "") + "\"/>");
+		out.println("<div class=\"line\">");
+		out.println("<label for=\""+getInputMaxListSizeName()+"\">"+i18nAccess.getText("content.multimedia-gallery.list-size")+"</label>");
+		out.println(" : <input style=\"width: 120px;\" type=\"text\" id=\"" + getInputMaxListSizeName() + "\" name=\"" + getInputMaxListSizeName() + "\" value=\"" + getMaxListSize() + "\"/>");
+		out.println("</div>");
 
 		Map<String, String> renderers = getConfig(ctx).getRenderes();
 		if (renderers.size() > 1) {
@@ -268,7 +271,7 @@ public class Multimedia extends TimeRangeComponent implements IImageTitle {
 			out.println("</fieldset>");
 
 			out.println("<div class=\"line\">");
-			out.print("<input type=\"checkbox\" name=\""+getInputNameOrderByAccess()+"\" id=\""+getInputNameOrderByAccess()+"\" ");
+			out.print("<input type=\"checkbox\" name=\"" + getInputNameOrderByAccess() + "\" id=\"" + getInputNameOrderByAccess() + "\" ");
 			if (isOrderByAccess(ctx)) {
 				out.print("checked=\"checked\" ");
 			}
@@ -427,24 +430,24 @@ public class Multimedia extends TimeRangeComponent implements IImageTitle {
 	public String getType() {
 		return TYPE;
 	}
-	
+
 	protected MultimediaResource getFirstRessource(ContentContext ctx) throws Exception {
-		Collection<File> mulFiles = getAllMultimediaFiles(ctx);		
+		Collection<File> mulFiles = getAllMultimediaFiles(ctx);
 		if (mulFiles.size() == 0) {
 			return null;
 		} else {
 			MultimediaResource resource = new MultimediaResource();
-			
+
 			ContentContext lgCtx = ctx.getContextWithContent(getPage());
-			
-			File file =  mulFiles.iterator().next();
-			
-			StaticInfo info = StaticInfo.getInstance(lgCtx,file);
-			
+
+			File file = mulFiles.iterator().next();
+
+			StaticInfo info = StaticInfo.getInstance(lgCtx, file);
+
 			GlobalContext globalContext = GlobalContext.getInstance(ctx.getRequest());
-			
+
 			String fileName = ResourceHelper.removeDataFolderDir(globalContext, file.getAbsolutePath());
-			
+
 			resource.setTitle(info.getTitle(lgCtx));
 			resource.setRelation(getHTMLRelation(ctx));
 			resource.setLocation(info.getLocation(ctx));
@@ -453,14 +456,13 @@ public class Multimedia extends TimeRangeComponent implements IImageTitle {
 			resource.setShortDate(StringHelper.renderDate(resource.getDate(), globalContext.getShortDateFormat()));
 			resource.setMediumDate(StringHelper.renderDate(resource.getDate(), globalContext.getMediumDateFormat()));
 			resource.setFullDate(StringHelper.renderDate(resource.getDate(), globalContext.getFullDateFormat()));
-			
+
 			resource.setURL(fileName);
 			resource.setPreviewURL(fileName);
-			
+
 			return resource;
 		}
 	}
-	
 
 	@Override
 	public String getViewXHTMLCode(ContentContext ctx) throws Exception {
@@ -608,7 +610,7 @@ public class Multimedia extends TimeRangeComponent implements IImageTitle {
 	}
 
 	@Override
-	public void refresh(ContentContext ctx) throws Exception {
+	public void performEdit(ContentContext ctx) throws Exception {
 		RequestService requestService = RequestService.getInstance(ctx.getRequest());
 		String folder = requestService.getParameter(getInputBaseFolderName(), null);
 		String newStartDate = requestService.getParameter(getInputStartDateName(), null);
@@ -643,7 +645,7 @@ public class Multimedia extends TimeRangeComponent implements IImageTitle {
 		} catch (Exception e) {
 			e.printStackTrace();
 			return "";
-		}		
+		}
 	}
 
 	@Override

@@ -5,11 +5,26 @@ jQuery(document).ready(function() {
 		ajaxRequest(jQuery(this).attr('href'));	
 	});	
 	jQuery('form.ajax').live("submit", function(event) {
-		event.preventDefault();
-		jQuery("#ajax-loader").addClass("active");
-		var queryString = jQuery(this).attr("action")+'?'+jQuery(this).formSerialize(); 
-		ajaxRequest(queryString);
-		return false;
+		var form = jQuery(this);
+		console.log("size : "+form.find("input[type='file']").length);
+		var ajaxSubmit = true;
+		jQuery.each(form.find("input[type='file']"), function() {
+			console.log('input file : '+jQuery(this).val());
+			if (jQuery(this).val().length > 0) {			
+				ajaxSubmit = false;				
+			}
+		});
+		if (ajaxSubmit) {
+			console.log("not upload");
+			event.preventDefault();
+			jQuery("#ajax-loader").addClass("active");
+			var queryString = jQuery(this).attr("action")+'?'+jQuery(this).formSerialize(); 
+			ajaxRequest(queryString);
+			return false;
+		} else {
+			console.log("upload");
+			return true;
+		}
 	});
 	jQuery(document).trigger("ajaxUpdate");
 });

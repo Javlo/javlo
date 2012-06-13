@@ -1,5 +1,7 @@
 package org.javlo.bean;
 
+import java.util.Map;
+
 /**
  * user for create a link to a renderer (jsp file).
  * @author Patrick Vandermaesen
@@ -15,6 +17,17 @@ public class LinkToRenderer extends Link {
 		this.renderer = renderer;
 		this.name = name;
 	}
+	public LinkToRenderer(String label, String name, String renderer, Map params) {
+		super("?webaction=changeRenderer&page="+name, label, label);		
+
+		for (Object key : params.keySet()) {
+			url = url + '&' + key + '=' + params.get(key);
+		}
+		
+		this.renderer = renderer;
+		this.name = name;
+	}
+
 	public String getRenderer() {
 		return renderer;
 	}

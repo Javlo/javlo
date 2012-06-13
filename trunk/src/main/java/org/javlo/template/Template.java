@@ -45,6 +45,7 @@ import org.javlo.i18n.I18nAccess;
 import org.javlo.mailing.MailingContext;
 import org.javlo.message.GenericMessage;
 import org.javlo.navigation.DefaultTemplate;
+import org.javlo.remote.IRemoteResource;
 import org.javlo.rendering.Device;
 import org.javlo.service.exception.ServiceException;
 
@@ -220,76 +221,219 @@ public class Template implements Comparable<Template> {
 
 	}
 
-	public static final class TemplateBean {
-		private Template template;
-		ContentContext ctx;
-		GlobalContext globalContext;
-		StaticConfig staticConfig;
+	public static final class TemplateBean implements IRemoteResource {
+		String name;
+		String previewURL;
+		String viewURL;
+		String HTMLURL;
+		String HTMLFile;
+		String creationDate;
+		String downloadURL;
+		List<String> ids;
+		Map<String,String> areaMap;
+		List<String> areas;
+		boolean valid;
+		String imageURL;
+		String url;
+		String authors;
+		String description;
+		String licence;
+		Date date;	
+		String id = StringHelper.getRandomId();
+		boolean mailing;
+		String category = "javlo";
+		
+		public TemplateBean(){};
 
-		public TemplateBean(ContentContext ctx, Template template) {
-			this.template = template;
-			this.ctx = ctx;
-			this.globalContext = GlobalContext.getInstance(ctx.getRequest());
-			this.staticConfig = StaticConfig.getInstance(ctx.getRequest().getSession());
-		}
-
-		public Template getTemplate() {
-			return template;
-		}
-
-		public void setTemplate(Template template) {
-			this.template = template;
-		}
-
-		public String getPreviewUrl() throws Exception {
-			return URLHelper.createTransformStaticTemplateURL(ctx, template, "template", template.getVisualFile());
-		}
-
-		public String getViewUrl() throws Exception {
-			return URLHelper.createTransformStaticTemplateURL(ctx, template, "template_view", template.getVisualFile());
-		}
-
-		public String getHtmlUrl() throws Exception {
-			return URLHelper.createStaticTemplateURL(ctx, template, template.getHTMLFile(null));
-		}
-
-		public String getHtmlFile() {
-			return template.getHTMLFile(null);
-		}
-
-		public String getCreationDate() {
-			return StringHelper.renderDate(template.getCreationDate(), staticConfig.getDefaultDateFormat());
-		}
-
-		public String getDownloadUrl() {
-			String downloadURL;
+		public TemplateBean(ContentContext ctx, Template template) throws Exception {			
+			StaticConfig staticConfig = StaticConfig.getInstance(ctx.getRequest().getSession());
+			
+			name = template.getName();
+			previewURL = URLHelper.createTransformStaticTemplateURL(ctx, template, "template", template.getVisualFile());
+			viewURL = URLHelper.createTransformStaticTemplateURL(ctx, template, "template_view", template.getVisualFile());
+			HTMLURL = URLHelper.createStaticTemplateURL(ctx, template, template.getHTMLFile(null));
+			HTMLFile = template.getHTMLFile(ctx.getDevice());
+			creationDate = StringHelper.renderDate(template.getCreationDate(), staticConfig.getDefaultDateFormat());
 			if (template.isMailing()) {
 				downloadURL = "/folder/mailing-template/" + template.getName() + ".zip";
 			} else {
 				downloadURL = "/folder/template/" + template.getName() + ".zip";
 			}
-			return URLHelper.createStaticURL(ctx, downloadURL);
+			ContentContext remoteCtx = ctx.getContextForAbsoluteURL();
+			downloadURL = URLHelper.createStaticURL(remoteCtx, downloadURL);
+			ids = template.getHTMLIDS();
+			Collections.sort(ids);
+			areas = template.getAreas();
+			Collections.sort(areas);
+			areaMap = template.getAreasMap();
+			valid = template.isValid();			
+			try {
+				imageURL = URLHelper.createTransformStaticTemplateURL(remoteCtx, template, "template", template.getVisualFile());
+			} catch (Exception e) {
+				e.printStackTrace();				
+			}			
+			try {
+				url = URLHelper.createStaticTemplateURL(remoteCtx, template, template.getHTMLFile(null));
+			} catch (Exception e) {
+				e.printStackTrace();
+			}
+			name = template.getName();
+			authors = template.getAuthors();
+			description = template.getDescription(ctx.getLanguage());
+			licence = template.getLicenceFile();
+			date = template.getCreationDate();
+			mailing = template.isMailing();
+		}
+
+		public String getPreviewUrl() throws Exception {
+			return previewURL;
+		}
+
+		public String getViewUrl() throws Exception {
+			return viewURL;
+		}
+
+		public String getHtmlUrl() throws Exception {
+			return HTMLURL;
+		}
+
+		public String getHtmlFile() {
+			return HTMLFile;
+		}
+
+		public String getCreationDate() {
+			return creationDate;
+		}
+
+		public String getDownloadURL() {
+			return downloadURL;			
 		}
 		
 		public Collection<String> getHTMLIDS() {
-			List<String> ids = template.getHTMLIDS();
-			Collections.sort(ids);
+			
 			return ids;
 		}
 		
-		public Collection<String> getAreas() {
-			List<String> areas = template.getAreas();
-			Collections.sort(areas);
+		public Collection<String> getAreas() {			
 			return areas;
 		}
 		
 		public Map<String,String> getAreasMap() {
-			return template.getAreasMap();
+			return areaMap;
 		}
 		
 		public boolean isValid() {
-			return template.isValid();
+			return valid;
 		}
+		
+		public boolean isMailing() {
+			return mailing;
+		}
+
+		@Override
+		public String getImageURL() {
+			return imageURL;
+		}
+
+		@Override
+		public String getURL() {
+			return url;
+		}
+
+		@Override
+		public String getName() {
+			return name;
+		}
+
+		@Override
+		public String getAuthors() {
+			return authors;
+		}
+
+		@Override
+		public String getDescription() {
+			return description;
+		}
+
+		@Override
+		public String getLicence() {
+			return licence;
+		}
+
+		@Override
+		public Date getDate() {
+			return date;
+		}
+
+		@Override
+		public void setDownloadURL(String url) {
+			this.downloadURL = url;
+		}
+
+		@Override
+		public void setImageURL(String url) {
+			this.imageURL = url;
+		}
+
+		@Override
+		public void setURL(String url) {
+			this.url = url;
+		}
+
+		@Override
+		public void setName(String name) {
+			this.name = name;
+		}
+
+		@Override
+		public void setAuthors(String authors) {
+			this.authors = authors;
+		}
+
+		@Override
+		public void setDescription(String description) {
+			this.description = description;
+		}
+
+		@Override
+		public void setLicence(String licence) {
+			this.licence = licence;
+		}
+
+		@Override
+		public void setDate(Date date) {
+			this.date = date;
+		}
+		
+		@Override
+		public String getType() {		
+			return "template";
+		}
+
+		@Override
+		public String getId() {
+			return id;
+		}
+
+		@Override
+		public void setId(String id) {
+			this.id = id;
+		}
+
+		@Override
+		public String getCategory() {
+			return category;
+		}
+
+		@Override
+		public void setCategory(String category) {
+			this.category = category;
+		}
+		
+		@Override
+		public String getDateAsString() {
+			return StringHelper.renderDate(getDate());
+		}	
 	}
 
 	public static class TemplateDateComparator implements Comparator<Template> {
@@ -1663,5 +1807,7 @@ public class Template implements Comparable<Template> {
 		List<String> ids = StringHelper.stringToCollection(htmlIds, ",");		
 		return ids;		
 	}
+	
+	
 
 }

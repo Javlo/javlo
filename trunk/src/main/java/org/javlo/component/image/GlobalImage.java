@@ -166,7 +166,7 @@ public class GlobalImage extends FilterImage {
 			for (String dir : dirs) {
 				dirsCol.add(dir);
 			}
-			finalCode.append(XHTMLHelper.getInputOneSelect(getDirInputName(), dirsCol, getDirSelected(), "submit-onchange"));
+			finalCode.append(XHTMLHelper.getInputOneSelect(getDirInputName(), dirsCol, getDirSelected(), getJSOnChange(ctx), true));
 			
 			Map<String, String> filesParams = new HashMap<String, String>();
 			filesParams.put("path", URLHelper.mergePath("/", getRelativeFileDirectory(ctx), getDirSelected()));
@@ -206,40 +206,36 @@ public class GlobalImage extends FilterImage {
 		} else {
 			logger.severe("template null in GlobalImage");
 		}
-
-		if (canUpload()) {
-			finalCode.append(getImageUploadTitle(ctx));
-			finalCode.append("<br /><input name=\"" + getFileXHTMLInputName() + "\" type=\"file\"/><br/>");
-			
-		}
-
+		
 		String[] fileList = getFileList(getFileDirectory(ctx), getFileFilter());
 		if (fileList.length > 0) {
+			
+			finalCode.append("<div class=\"line\"><label for=\"" + getSelectXHTMLInputName() +"\">"+getImageChangeTitle(ctx)+" : </label>");
 
-			finalCode.append("<label style=\"float: left; width: 80px; height: 16px;\" for=\"" + getSelectXHTMLInputName() + "\">");
-			finalCode.append(getImageChangeTitle(ctx));
-			finalCode.append("</label>");
 
 			String[] fileListBlanck = new String[fileList.length + 1];
 			fileListBlanck[0] = "";
 			System.arraycopy(fileList, 0, fileListBlanck, 1, fileList.length);
 
 			finalCode.append(XHTMLHelper.getInputOneSelect(getSelectXHTMLInputName(), fileListBlanck, getFileName(), getJSOnChange(ctx), true));
+			finalCode.append("</div>");
 
-			// actionURL=actionURL+"?"+RequestHelper.CLOSE_WINDOW_PARAMETER+"=true&"+RequestHelper.CLOSE_WINDOW_URL_PARAMETER+"="+actionURL;
-			
 			if (fileList.length > MAX_PICTURE && isDisplayAllBouton() ) {
 				finalCode.append("<div class=\"line\">");
-				// finalCode.append("<form>");
 				Map<String, String> ajaxParams = new HashMap<String, String>();
 				ajaxParams.put("webaction", "showallpreview");
 				ajaxParams.put("comp-id", getId());
 				String ajaxURL = URLHelper.createAjaxURL(ctx, ajaxParams);
 				finalCode.append("<input type=\"button\" value=\"" + i18nAccess.getText("content.image.show-all") + "\" onclick=\"showAllPictures('" + getPreviewZoneId() + "' , '" + ajaxURL + "');\" />");
-				// finalCode.append("</form>");
 				finalCode.append("</div>");
 			}
 		}
+		
+		if (canUpload()) {
+			finalCode.append("<div class=\"line\"><label for=\"" + getFileXHTMLInputName() +"\">"+getImageUploadTitle(ctx)+" : </label>");
+			finalCode.append("<input name=\"" + getFileXHTMLInputName() + "\" type=\"file\"/></div>");			
+		}
+
 		
 		if (isDecorationImage()) {
 			finalCode.append("<div class=\"line deco-image\">");
@@ -542,7 +538,7 @@ public class GlobalImage extends FilterImage {
 	}
 
 	@Override
-	public void refresh(ContentContext ctx) throws Exception {
+	public void performEdit(ContentContext ctx) throws Exception {
 
 		RequestService requestService = RequestService.getInstance(ctx.getRequest());
 		String link = requestService.getParameter(getLinkXHTMLInputName(), null);
@@ -608,7 +604,7 @@ public class GlobalImage extends FilterImage {
 			}
 		}
 		
-		super.refresh(ctx);
+		super.performEdit(ctx);
 
 	}
 

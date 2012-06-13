@@ -157,7 +157,7 @@ public class MonthChildrenLink extends AbstractVisualComponent implements IActio
 	}
 
 	@Override
-	public void refresh(ContentContext ctx) throws Exception {
+	public void performEdit(ContentContext ctx) throws Exception {
 
 	}
 

@@ -428,7 +428,7 @@ public class UserRegistrationComponent extends AbstractVisualComponent implement
 	}
 
 	@Override
-	public void refresh(ContentContext ctx) throws Exception {
+	public void performEdit(ContentContext ctx) throws Exception {
 		RequestService requestService = RequestService.getInstance(ctx.getRequest());
 		String[] addRoles = requestService.getParameterValues(getInputAddRolesName(), new String[0]);
 		String[] removeRoles = requestService.getParameterValues(getInputRemoveRolesName(), new String[0]);

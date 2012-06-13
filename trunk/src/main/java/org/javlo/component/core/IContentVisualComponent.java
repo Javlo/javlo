@@ -63,7 +63,7 @@ public interface IContentVisualComponent  {
      * action call when update the content page.
      * @throws Exception
      */
-    public void refresh(ContentContext ctx) throws Exception; //TODO: change name with "perform"
+    public void performEdit(ContentContext ctx) throws Exception; //TODO: change name with "perform"
 
 	/**
 	 * the code for view the element in XHTML environment.

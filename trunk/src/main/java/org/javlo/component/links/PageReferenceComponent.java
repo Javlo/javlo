@@ -1259,7 +1259,7 @@ public class PageReferenceComponent extends ComplexPropertiesLink implements IAc
 	}
 
 	@Override
-	public void refresh(ContentContext ctx) throws Exception {
+	public void performEdit(ContentContext ctx) throws Exception {
 		RequestService requestService = RequestService.getInstance(ctx.getRequest());
 
 		if (requestService.getParameter(getCompInputName(), null) != null) {

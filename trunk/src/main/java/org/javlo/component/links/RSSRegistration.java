@@ -126,7 +126,7 @@ public class RSSRegistration extends AbstractPropertiesComponent {
 	}
 
 	@Override
-	public void refresh(ContentContext ctx) {
+	public void performEdit(ContentContext ctx) {
 		RequestService requestService = RequestService.getInstance(ctx.getRequest());
 
 		String channel = requestService.getParameter(getChannelName(), "");

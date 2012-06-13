@@ -197,4 +197,15 @@
 		<url-pattern>/im/*</url-pattern>
 	</servlet-mapping>
 	
+	<!-- REMOTE -->
+	<servlet>
+		<servlet-name>RemoteResourceServlet</servlet-name>
+		<servlet-class>org.javlo.servlet.RemoteResourceServlet</servlet-class>
+		<load-on-startup>1</load-on-startup>
+	</servlet>
+	<servlet-mapping>
+		<servlet-name>RemoteResourceServlet</servlet-name>
+		<url-pattern>/market/*</url-pattern>
+	</servlet-mapping>
+	
 </web-app>

@@ -1084,5 +1084,9 @@ public class StaticConfig extends Observable {
 	public String getDefaultJSDateFormat() {
 		return properties.getString("default-date-format", "d/m/yy");
 	}
+	
+	public String getMarketURL() {
+		return properties.getString("market.url", "http://fa2.noctis.be:8700/market/resources.xml");
+	}
 
 }

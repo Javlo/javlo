@@ -452,8 +452,8 @@ public class RSSReader extends ComplexPropertiesLink {
 	}
 
 	@Override
-	public void refresh(ContentContext ctx) throws Exception {
-		super.refresh(ctx);
+	public void performEdit(ContentContext ctx) throws Exception {
+		super.performEdit(ctx);
 		RequestService requestService = RequestService.getInstance(ctx.getRequest());
 		String label = requestService.getParameter(getLinkLabelName(), null);
 		String link = requestService.getParameter(getLinkName(), "");

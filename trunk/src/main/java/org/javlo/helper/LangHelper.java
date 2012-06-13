@@ -133,19 +133,19 @@ public class LangHelper {
 		return null;
 	}
 
-	public static class Property {
+	public static class MapEntry {
 		private final String name;
 		private final Object value;
 
-		public Property(String name, Object value) {
+		public MapEntry(String name, Object value) {
 			this.name = name;
 			this.value = value;
 		}
 	}
 
-	public Map<String, Object> obj(Property... props) {
+	public static Map<String, Object> obj(MapEntry... props) {
 		Map<String, Object> out = new LinkedHashMap<String, Object>();
-		for (Property prop : props) {
+		for (MapEntry prop : props) {
 			out.put(prop.name, prop.value);
 		}
 		return out;

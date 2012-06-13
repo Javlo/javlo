@@ -2620,7 +2620,7 @@ public class EditActions {
 					IContentVisualComponent elem = contentList.next(ctx);
 					if (StringHelper.isTrue(requestService.getParameter("id-" + elem.getId(), "false"))) {
 						elem.performConfig(ctx);
-						elem.refresh(ctx);						
+						elem.performEdit(ctx);						
 					}
 					needRefresh = needRefresh || elem.isNeedRefresh();
 
@@ -2791,7 +2791,7 @@ public class EditActions {
 				String compId = ContentManager.getParameterValue(request, "component_id", null);
 
 				IContentVisualComponent elem = content.getComponent(ctx, compId);
-				elem.refresh(ctx);
+				elem.performEdit(ctx);
 
 				/** tool bar * */
 				String newStyle = ContentManager.getParameterValue(request, "style_select_" + elem.getId(), null);

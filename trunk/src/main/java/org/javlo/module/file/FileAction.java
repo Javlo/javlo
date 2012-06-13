@@ -2,8 +2,6 @@ package org.javlo.module.file;
 
 import java.io.File;
 import java.io.FileFilter;
-import java.io.FileNotFoundException;
-import java.io.IOException;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.LinkedList;
@@ -34,6 +32,7 @@ import org.javlo.module.core.Module.HtmlLink;
 import org.javlo.module.core.ModulesContext;
 import org.javlo.service.PersistenceService;
 import org.javlo.service.RequestService;
+import org.javlo.ztatic.FileCache;
 import org.javlo.ztatic.StaticInfo;
 
 public class FileAction extends AbstractModuleAction {
@@ -196,9 +195,9 @@ public class FileAction extends AbstractModuleAction {
 				}
 				String staticURL;
 				if (moduleContext.getFromModule() != null) {
-					staticURL = URLHelper.createInterModuleURL(ctx, ctx.getPath(), "file", moduleContext.getFromModule().getName(), filesParams);
+					staticURL = URLHelper.createInterModuleURL(ctx, ctx.getPath(), FileModuleContext.MODULE_NAME, moduleContext.getFromModule().getName(), filesParams);
 				} else {
-					staticURL = URLHelper.createModuleURL(ctx, ctx.getPath(), "file", filesParams);
+					staticURL = URLHelper.createModuleURL(ctx, ctx.getPath(), FileModuleContext.MODULE_NAME, filesParams);
 				}
 
 				currentModule.pushBreadcrumb(new HtmlLink(staticURL, path, path));
@@ -226,7 +225,11 @@ public class FileAction extends AbstractModuleAction {
 					staticInfo.setFocusZoneX(ctx, (int) Math.round(Double.parseDouble(newFocusX)));
 					staticInfo.setFocusZoneY(ctx, (int) Math.round(Double.parseDouble(newFocusY)));
 					PersistenceService.getInstance(globalContext).store(ctx);
-					messageRepository.setGlobalMessageAndNotification(ctx, new GenericMessage(i18nAccess.getText("file.message.updatefocus", new String[][] { { "file", file.getName() } }), GenericMessage.INFO));					
+					messageRepository.setGlobalMessageAndNotification(ctx, new GenericMessage(i18nAccess.getText("file.message.updatefocus", new String[][] { { "file", file.getName() } }), GenericMessage.INFO));	
+					
+					FileCache fileCache = FileCache.getInstance(ctx.getRequest().getSession().getServletContext());
+					fileCache.delete(file.getName());
+					
 				}
 			}
 		} else {
@@ -241,14 +244,6 @@ public class FileAction extends AbstractModuleAction {
 			for (File file : folder.listFiles((FileFilter) FileFileFilter.FILE)) {
 				StaticInfo staticInfo = StaticInfo.getInstance(ctx, file);
 				FileBean fileBean = new FileBean(ctx, staticInfo);
-
-				String newFocusX = rs.getParameter("posx-" + fileBean.getId(), null);
-				String newFocusY = rs.getParameter("posy-" + fileBean.getId(), null);
-
-				if (newFocusX != null && newFocusY != null) {
-					staticInfo.setFocusZoneX(ctx, (int) Math.round(Double.parseDouble(newFocusX)));
-					staticInfo.setFocusZoneY(ctx, (int) Math.round(Double.parseDouble(newFocusY)));
-				}
 
 				String title = rs.getParameter("title-" + fileBean.getId(), null);
 				if (title != null) {

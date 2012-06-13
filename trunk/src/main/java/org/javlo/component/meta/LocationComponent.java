@@ -62,7 +62,7 @@ public class LocationComponent extends AbstractVisualComponent {
 	
 	@Override
 	public String getHexColor() {
-		return TEXT_COLOR;
+		return TITLE_COLOR;
 	}	
 	
 }

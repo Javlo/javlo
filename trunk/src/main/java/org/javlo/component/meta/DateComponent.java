@@ -179,11 +179,11 @@ public class DateComponent extends AbstractVisualComponent {
 
 	@Override
 	public String getHexColor() {
-		return TEXT_COLOR;
+		return TITLE_COLOR;
 	}
 
 	@Override
-	public void refresh(ContentContext ctx) throws Exception {
+	public void performEdit(ContentContext ctx) throws Exception {
 		RequestService requestService = RequestService.getInstance(ctx.getRequest());
 		String newDate = requestService.getParameter(getInputDateName(), null);
 		String newTime = requestService.getParameter(getInputTimeName(), null);

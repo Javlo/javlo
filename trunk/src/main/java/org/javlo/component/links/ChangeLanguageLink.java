@@ -136,7 +136,7 @@ public class ChangeLanguageLink extends ComplexPropertiesLink implements IIntern
 	}
 
 	@Override
-	public void refresh(ContentContext ctx) {
+	public void performEdit(ContentContext ctx) {
 		GlobalContext globalContext = GlobalContext.getInstance(ctx.getRequest());
 
 		RequestService requestService = RequestService.getInstance(ctx.getRequest());

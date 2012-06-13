@@ -43,12 +43,14 @@ String insertHere = i18nAccess.getText("content.insert-here", new String[][] {{"
 
 String pastePageHere = null;
 if (editContext.getContextForCopy() != null) {
-	pastePageHere = i18nAccess.getText("content.paste-here", new String[][] { { "page", editContext.getContextForCopy().getCurrentPage().getName() } });		
+	pastePageHere = i18nAccess.getText("content.paste-here", new String[][] { { "page", editContext.getContextForCopy().getCurrentPage().getName() } });
+	request.setAttribute("cleanClipBoard","true");
 }
 
 String pasteHere = null;
 if (clipBoard.getCopiedComponent(ctx) != null) {
 	pasteHere = i18nAccess.getText("content.paste-comp", new String[][] { { "type", clipBoard.getCopiedComponent(ctx).getType() } });
+	request.setAttribute("cleanClipBoard","true");
 }
 
 ComponentContext componentContext = ComponentContext.getInstance(request);

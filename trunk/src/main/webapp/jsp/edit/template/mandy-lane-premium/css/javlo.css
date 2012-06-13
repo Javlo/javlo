@@ -249,6 +249,29 @@ ul,li {
 	text-transform: uppercase;
 }
 
+.action-button.warning {
+	color: #ffffff;
+	background: url("../images/buttons/button_red.png") repeat-x scroll left top
+		transparent;	
+}
+
+.action-button.warning:hover {
+	background-position: 0 -39px;
+	text-decoration: none;
+}
+
+.action .action-button {
+	vertical-align: text-top;
+	margin: 0 0 0 5px;
+	height: 18px;
+	padding: 0px 5px 4px 5px;	
+}
+
+.action .action-button span {
+	text-transform: none;
+	vertical-align: text-top;	
+}
+
 .tabmenu ul li.module a span {
 	background: url("../images/icons/small/white/star.png") no-repeat scroll
 		15px 12px transparent;
@@ -742,15 +765,15 @@ ul,li {
 .gallery .thumbview .thumb {
 	vertical-align: middle;
 	text-align: center;
-	line-height: 200px;
-	width: 200px;
-	height: 200px;
+	line-height: 204px;
+	width: 204px;
+	height: 204px;
 }
 
 .gallery .thumbview .thumb .info {
 	text-align: left;
-	width: 180px;
-	height: 180px;
+	width: 182px;
+	height: 182px;
 }
 
 .gallery .thumbview .thumb img {

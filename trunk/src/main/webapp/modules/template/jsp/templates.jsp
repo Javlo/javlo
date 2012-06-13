@@ -6,11 +6,11 @@
 <c:forEach var="template" items="${templates}">
     <li class="${template.valid?'valid':'unvalid'}">
         <div class="thumb">
-            <img src="${template.previewUrl}" alt="${template.template.name}" />
+            <img src="${template.previewUrl}" alt="${template.name}" />
             <div class="info">
                 <p>
                     <label>${i18n.edit['global.name']}:</label>
-                    <span>${template.template.name}</span>
+                    <span>${template.name}</span>
                 </p>
                 <p>
                     <label>${i18n.edit['admin.file-source']}:</label>
@@ -18,24 +18,24 @@
                 </p>
                 <p>
                     <label>${i18n.edit['global.author']}:</label>
-                    <span>${template.template.authors}</span>
+                    <span>${template.authors}</span>
                 </p>
                 <p>
                     <label>${i18n.edit['template.creation-date']}:</label>
                     <span>${template.creationDate}</span>
                 </p>
                 <p>
-                	<a href="${template.downloadUrl}">${i18n.edit['admin.download-template']}</a>
+                	<a href="${template.downloadURL}">${i18n.edit['admin.download-template']}</a>
                 </p>
                 <p class="menu">                	
-                    <a href="${template.viewUrl}" class="view" title="${template.template.name}"></a>
-                    <a href="${info.currentURL}?webaction=goEditTemplate&name=${template.template.name}&mailing=${template.template.mailing}" class="edit"></a>
-                    <a href="${info.currentURL}?webaction=delete&name=${template.template.name}&mailing=${template.template.mailing}" class="delete"></a>
+                    <a href="${template.viewUrl}" class="view" title="${template.name}"></a>
+                    <a href="${info.currentURL}?webaction=goEditTemplate&name=${template.name}&mailing=${template.mailing}" class="edit"></a>
+                    <a href="${info.currentURL}?webaction=delete&name=${template.name}&mailing=${template.mailing}" class="delete"></a>
                     <c:if test="${not empty selectUrl}">
-                    <a href="${selectUrl}&template=${template.template.name}&mailing=${template.template.mailing}" class="select" title="select"></a>
+                    <a href="${selectUrl}&template=${template.name}&mailing=${template.mailing}" class="select" title="select"></a>
                     </c:if>
                     <c:if test="${not template.valid}">
-                    <a href="${selectUrl}?webaction=validate&name=${template.template.name}&mailing=${template.template.mailing}" class="validate" title="validate"></a>
+                    <a href="${selectUrl}?webaction=validate&name=${template.name}&mailing=${template.mailing}" class="validate" title="validate"></a>
                     </c:if>
                 </p>                
             </div><!--info-->

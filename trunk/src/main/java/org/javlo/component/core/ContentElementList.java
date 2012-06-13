@@ -67,7 +67,7 @@ public class ContentElementList implements IContentComponentsList {
 				// Logger.stepCount("load component", "load comp step 2");
 				// IContentVisualComponent comp = null;
 
-				if (comp == null || comp.getComponentBean() != bean) {
+				if (comp == null /*|| comp.getComponentBean() != bean*/) {					
 					comp = ComponentFactory.createComponent(ctx, bean, inPage, previousComponent, null);
 					content.setCachedComponent(comp);
 				}

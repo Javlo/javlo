@@ -138,7 +138,7 @@ public class Tags extends ComplexPropertiesLink {
 	}
 
 	@Override
-	public void refresh(ContentContext ctx) {
+	public void performEdit(ContentContext ctx) {
 		GlobalContext globalContext = GlobalContext.getInstance(ctx.getRequest());
 		RequestService requestService = RequestService.getInstance(ctx.getRequest());
 		List<String> tags = globalContext.getTags();

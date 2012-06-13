@@ -136,7 +136,7 @@ public class FreeTextList extends Paragraph {
 	}
 
 	@Override
-	public void refresh(ContentContext ctx) throws Exception {
+	public void performEdit(ContentContext ctx) throws Exception {
 		RequestService requestService = RequestService.getInstance(ctx.getRequest());
 		String newContent = requestService.getParameter(getContentName(), null);
 		String sepValue = requestService.getParameter(getSeparatorInputName(), "");

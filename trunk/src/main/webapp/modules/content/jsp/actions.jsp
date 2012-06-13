@@ -2,7 +2,8 @@
 <%@ taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions" %>
 
 <c:if test="${(not userInterfaceContext.componentsList || not empty param.previewEdit) && empty param.noinsert}">
-<div class="special"> <!-- components -->
+<c:set var="componentsList" value="true" />
+<div class="special last"> <!-- components -->
 <form id="form-component-list" action="${info.currentURL}" method="post" class="js-submit ajax">
 <input type="hidden" name="webaction" value="changeComponent" />
 <c:if test="${not empty param.previewEdit}"> 
@@ -27,7 +28,7 @@
 </c:if>
 
 <c:if test="${not empty param.languages and fn:length(info.contentLanguages) > 1 and empty param.previewEdit}">
-<div class="special last">
+<div class="special${empty componentsList?' last':''}">
 <form id="form-languages" action="${info.currentURL}" method="post" class="js-submit">
 <div class="select-languages form_default">
 	<input type="hidden" name="webaction" value="changeLanguage" />

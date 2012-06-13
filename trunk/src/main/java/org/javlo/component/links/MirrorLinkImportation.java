@@ -153,7 +153,7 @@ public class MirrorLinkImportation extends AbstractVisualComponent {
 	}
 
 	@Override
-	public void refresh(ContentContext ctx) throws Exception {
+	public void performEdit(ContentContext ctx) throws Exception {
 		RequestService requestService = RequestService.getInstance(ctx.getRequest());
 		String newLg = requestService.getParameter(getLanguageName(), null);
 		if (newLg != null) {

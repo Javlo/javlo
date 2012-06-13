@@ -35,6 +35,7 @@ import org.javlo.message.MessageRepository;
 import org.javlo.module.core.Module;
 import org.javlo.module.core.ModuleException;
 import org.javlo.module.core.ModulesContext;
+import org.javlo.navigation.PageConfiguration;
 import org.javlo.service.ContentService;
 import org.javlo.service.RequestService;
 import org.javlo.template.Template;
@@ -527,6 +528,8 @@ public class AdminAction extends AbstractModuleAction {
 						TemplateFactory.cleanRenderer(ctx, currentGlobalContext.getTemplates(), false, true);
 						// TemplateFactory.cleanRenderer(ctx, currentGlobalContext.getMailingTemplates(), true, true);
 					}
+					
+					PageConfiguration.getInstance(currentGlobalContext).loadTemplate(currentGlobalContext); // reload templates					
 
 					messageRepository.setGlobalMessage(new GenericMessage(i18nAccess.getText("admin.message.context-updated"), GenericMessage.INFO));
 				} else {
@@ -648,6 +651,7 @@ public class AdminAction extends AbstractModuleAction {
 				if (templateName != null) {
 					currentGlobalContext.addTemplate(templateName, StringHelper.isTrue(requestService.getParameter("mailing", null)));
 					messageRepository.setGlobalMessageAndNotification(ctx, new GenericMessage(i18nAccess.getText("admin.message.linked-template") + ' ' + templateName, GenericMessage.INFO));
+					PageConfiguration.getInstance(currentGlobalContext).loadTemplate(currentGlobalContext); // reload templates
 				} else {
 					return "bad request structure : need 'template' as parameter";
 				}
@@ -671,6 +675,7 @@ public class AdminAction extends AbstractModuleAction {
 				if (templateName != null) {
 					currentGlobalContext.removeTemplate(templateName, StringHelper.isTrue(requestService.getParameter("mailing", null)));
 					messageRepository.setGlobalMessageAndNotification(ctx, new GenericMessage(i18nAccess.getText("admin.message.unlinked-template") + ' ' + templateName, GenericMessage.INFO));
+					PageConfiguration.getInstance(currentGlobalContext).loadTemplate(currentGlobalContext); // reload templates
 				} else {
 					return "bad request structure : need 'template' as parameter";
 				}
@@ -705,5 +710,18 @@ public class AdminAction extends AbstractModuleAction {
 			messageRepository.setGlobalMessage(new GenericMessage(i18nAccess.getText("admin.message.bad-site-name"), GenericMessage.ERROR));
 		}
 		return null;
+	}
+	
+	public static String performRemoveSite(RequestService rs, ContentContext ctx, MessageRepository messageRepository, I18nAccess i18nAccess) throws ConfigurationException, IOException {		
+		String siteName = rs.getParameter("removed-context", null);
+		if (siteName == null) {
+			return "bad request structure, need 'context' param.";
+		}
+		GlobalContext globalContext = GlobalContext.getInstance(ctx.getRequest(), siteName);
+		if (globalContext == null) {
+			return "site not found : "+siteName;
+		}		
+		globalContext.delete(ctx.getRequest().getSession().getServletContext());		
+		return  null;
 	}
 };

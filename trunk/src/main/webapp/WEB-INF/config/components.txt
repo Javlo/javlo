@@ -9,6 +9,8 @@ org.javlo.component.title.Title
 org.javlo.component.title.SubTitle
 org.javlo.component.title.PageTitle
 org.javlo.component.title.MenuTitle
+org.javlo.component.meta.DateComponent
+org.javlo.component.meta.LocationComponent
 
 --content.title.text
 
@@ -29,6 +31,7 @@ org.javlo.component.links.Menu
 org.javlo.component.links.ChangeLanguageLink
 org.javlo.component.links.ChangeLanguageMenu
 org.javlo.component.links.SiteMap
+org.javlo.component.links.Breadcrumb
 
 --content.title.graphic
 

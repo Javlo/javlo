@@ -7,6 +7,7 @@ import java.util.List;
 
 import org.javlo.context.ContentContext;
 import org.javlo.context.GlobalContext;
+import org.javlo.service.RequestService;
 import org.javlo.service.ReverseLinkService;
 import org.javlo.utils.SufixPreffix;
 
@@ -48,6 +49,13 @@ public class WysiwygParagraph extends Paragraph {
 	@Override
 	public boolean isExtractable() {
 		return false;
+	}
+	
+	@Override
+	public void performEdit(ContentContext ctx) throws Exception {
+		RequestService requestService = RequestService.getInstance(ctx.getRequest());
+		String content = requestService.getParameter(getContentName(), "");		
+		super.performEdit(ctx);
 	}
 
 }

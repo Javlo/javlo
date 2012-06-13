@@ -217,7 +217,6 @@ public class GlobalContext implements Serializable {
 	}
 
 	public static GlobalContext getInstance(HttpServletRequest request, String contextKey) throws IOException, ConfigurationException {
-
 		GlobalContext newInstance = getRealInstance(request, contextKey);
 		String alias = newInstance.getAliasOf();
 		if (alias.trim().length() > 0) {
@@ -232,7 +231,6 @@ public class GlobalContext implements Serializable {
 
 	public static GlobalContext getInstance(ServletContext application, StaticConfig staticConfig, File configFile) throws IOException, ConfigurationException {
 		String contextKey = FilenameUtils.getBaseName(configFile.getName());
-		// ServletContextWeakReference gcc = ServletContextWeakReference.getInstance(application);
 		GlobalContext newInstance = (GlobalContext) application.getAttribute(contextKey);
 		if (newInstance == null) {
 			synchronized (LOCK_GLOBAL_CONTEXT_LOAD) {
@@ -574,6 +572,7 @@ public class GlobalContext implements Serializable {
 
 			// ServletContextWeakReference gcc = ServletContextWeakReference.getInstance(application);
 			synchronized (staticConfig.getContextFolder()) {
+				//cacheManager.removalAll();
 				application.removeAttribute(contextKey);
 			}
 
@@ -950,7 +949,7 @@ public class GlobalContext implements Serializable {
 	}
 
 	public String getHelpURL() {
-		return properties.getString("help-url", "http://help.javlo.org");
+		return properties.getString("help-url", "http://help.javlo.org/javlo2/");
 	}
 
 	public String getHomePage() {

@@ -180,7 +180,7 @@ public class CountTool extends AbstractVisualComponent {
 	}
 
 	@Override
-	public void refresh(ContentContext ctx) throws Exception {
+	public void performEdit(ContentContext ctx) throws Exception {
 		RequestService requestService = RequestService.getInstance(ctx.getRequest());
 		String date = requestService.getParameter(getDateName(), "");
 		String link = requestService.getParameter(getLinkName(), null);

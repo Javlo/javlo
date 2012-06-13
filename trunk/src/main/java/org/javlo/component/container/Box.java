@@ -112,7 +112,7 @@ public class Box extends AbstractVisualComponent implements IContainer {
 	}
 
 	@Override
-	public void refresh(ContentContext ctx) throws Exception {
+	public void performEdit(ContentContext ctx) throws Exception {
 		RequestService requestService = RequestService.getInstance(ctx.getRequest());
 		boolean closeBox = requestService.getParameter(getCloseBoxInputName(), null) != null;
 		if (closeBox ^ isCloseBox()) {

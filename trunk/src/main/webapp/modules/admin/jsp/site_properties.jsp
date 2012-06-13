@@ -168,6 +168,7 @@
 </fieldset>
 
 <div class="action">
+	<a href="${info.currentURL}?webaction=removeSite&removed-context=${currentContext.key}" class="action-button warning needconfirm" title="${i18n.edit['admin.button.remove']}"><span>${i18n.edit['admin.button.remove']}</span></a>
 	<input type="submit" name="back" value="${i18n.edit['global.back']}" />
 	<input type="submit" value="${i18n.edit['global.ok']}" />
 </div>

@@ -214,7 +214,7 @@ public class Contact extends AbstractVisualComponent implements ICSS, IAction {
 	}
 
 	@Override
-	public void refresh(ContentContext ctx) {
+	public void performEdit(ContentContext ctx) {
 
 		String rawInfo = "";
 		RequestService requestService = RequestService.getInstance(ctx.getRequest());

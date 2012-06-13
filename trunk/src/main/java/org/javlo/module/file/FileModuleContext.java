@@ -1,12 +1,24 @@
 package org.javlo.module.file;
 
+import java.io.FileNotFoundException;
+import java.io.IOException;
 import java.util.LinkedList;
 import java.util.List;
 
+import javax.servlet.http.HttpServletRequest;
+
 import org.javlo.bean.LinkToRenderer;
+import org.javlo.context.GlobalContext;
+import org.javlo.helper.LangHelper;
+import org.javlo.helper.URLHelper;
 import org.javlo.module.core.AbstractModuleContext;
+import org.javlo.module.core.Module;
+import org.javlo.module.core.ModuleException;
+import org.javlo.module.core.ModulesContext;
 
 public class FileModuleContext extends AbstractModuleContext {
+	
+	public static final String MODULE_NAME = "file";
 	
 	private String root;
 	private String title;
@@ -23,10 +35,14 @@ public class FileModuleContext extends AbstractModuleContext {
 	 */
 	@Override
 	public void init(){		
-		
-		
 		loadNavigation();
 	};
+	
+	public static FileModuleContext getInstance(HttpServletRequest request) throws FileNotFoundException, InstantiationException, IllegalAccessException, IOException, ModuleException {
+		GlobalContext globalContext = GlobalContext.getInstance(request);
+		Module module = ModulesContext.getInstance(request.getSession(), globalContext).searchModule(MODULE_NAME);
+		return (FileModuleContext) AbstractModuleContext.getInstance(request.getSession(), globalContext, module, FileModuleContext.class);
+	}
 
 	public void loadNavigation() {		
 		navigation.clear();
@@ -64,13 +80,13 @@ public class FileModuleContext extends AbstractModuleContext {
 	}
 
 	@Override
-	public List<LinkToRenderer> getNavigation() {		
+	public List<LinkToRenderer> getNavigation() {
 		return navigation;
 	}
 
 	@Override
-	public LinkToRenderer getHomeLink() {
-		return new LinkToRenderer(i18nAccess.getText("file.navigation.explorer"), "explorer", "/jsp/file.jsp");
+	public LinkToRenderer getHomeLink() {	
+		return new LinkToRenderer(i18nAccess.getText("file.navigation.explorer"), "explorer", "/jsp/file.jsp", LangHelper.obj(new LangHelper.MapEntry("path", URLHelper.mergePath("/",getPath()))));
 	}
 	
 }

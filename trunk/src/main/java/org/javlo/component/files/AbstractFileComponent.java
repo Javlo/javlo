@@ -508,7 +508,7 @@ public abstract class AbstractFileComponent extends AbstractVisualComponent impl
 	}
 
 	@Override
-	public void refresh(ContentContext ctx) throws Exception {
+	public void performEdit(ContentContext ctx) throws Exception {
 		RequestService requestService = RequestService.getInstance(ctx.getRequest());
 		I18nAccess i18nAccess = I18nAccess.getInstance(ctx.getRequest());
 
