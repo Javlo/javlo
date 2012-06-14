@@ -19,6 +19,7 @@ public class RemoteTemplate implements IRemoteResource {
 	private String id = StringHelper.getRandomId();	
 	private Date creationDate = new Date();
 	private String category = null;
+	private String version = "?";
 
 	
 	@Override
@@ -107,5 +108,13 @@ public class RemoteTemplate implements IRemoteResource {
 	@Override
 	public String getDateAsString() {
 		return StringHelper.renderDate(getDate());
-	}	
+	}
+	@Override
+	public String getVersion() {
+		return version;
+	}
+	@Override
+	public void setVersion(String version) {
+		this.version = version;
+	}
 }

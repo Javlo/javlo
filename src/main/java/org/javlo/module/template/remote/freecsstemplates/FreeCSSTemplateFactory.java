@@ -64,6 +64,7 @@ public class FreeCSSTemplateFactory implements IRemoteTemplateFactory {
 					templates.add(template);
 				}
 				template = new RemoteTemplate();
+				template.setCategory("Free CSS template");
 				List<TagDescription> children = XMLManipulationHelper.searchChildren(tags, tag);
 				String fieldName = null;
 				for (TagDescription child : children) {

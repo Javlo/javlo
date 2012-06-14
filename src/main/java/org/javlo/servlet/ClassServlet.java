@@ -2,19 +2,21 @@ package org.javlo.servlet;
 
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
+import java.io.InputStream;
 import java.io.ObjectOutput;
 import java.io.ObjectOutputStream;
+import java.util.jar.Attributes;
+import java.util.jar.JarOutputStream;
+import java.util.jar.Manifest;
 import java.util.logging.Logger;
-import java.util.zip.ZipOutputStream;
 
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import org.javlo.helper.ResourceHelper;
 import org.javlo.servlet.zip.ZipManagement;
-
-import sun.awt.image.ByteArrayImageSource;
 
 public class ClassServlet extends HttpServlet {
 
@@ -44,27 +46,40 @@ public class ClassServlet extends HttpServlet {
 		try {
 			String classPath = request.getPathInfo().substring(1); // remove first '/'
 			String className = classPath.replace('/', '.');
-			
+
+			if (!className.startsWith("org.javlo")) {
+				throw new SecurityException("only javlo package can be access.");
+			}
+
 			if (className.endsWith(".jar")) {
-				
-				classPath = classPath.substring(0,classPath.length()-".jar".length());
+
+				classPath = classPath.substring(0, classPath.length() - ".jar".length());
 				className = classPath.replace('/', '.');
+
+				System.out.println("***** ClassServlet.process : classPath = "+classPath); //TODO: remove debug trace
 				
-				Class clazz = getClass().getClassLoader().loadClass(className);				
+				Class clazz = getClass().getClassLoader().loadClass(className);
+				InputStream in = clazz.getClassLoader().getResourceAsStream('/'+classPath+".class");
 				ByteArrayOutputStream tmpOut = new ByteArrayOutputStream();
-				ObjectOutput out = new ObjectOutputStream(tmpOut);
-				out.writeObject(clazz);
-				out.close();
-				
+				ResourceHelper.writeStreamToStream(in, tmpOut);
+				/*ObjectOutput out = new ObjectOutputStream(tmpOut);
+				out.writeObject(clazz);				out.close();*/
+
+				Manifest manifest = new Manifest();
+				manifest.getMainAttributes().put(Attributes.Name.MANIFEST_VERSION, "1.0");
+
 				response.setContentType("application/gzip");
-				ZipOutputStream outZip = new ZipOutputStream(response.getOutputStream());
-				
-				ZipManagement.addFileInZip(outZip, classPath+".class", new ByteArrayInputStream(tmpOut.toByteArray()));
+				JarOutputStream outZip = new JarOutputStream(response.getOutputStream(), manifest);
+
+				ZipManagement.addFileInZip(outZip, classPath + ".class", new ByteArrayInputStream(tmpOut.toByteArray()));
 
 				outZip.finish();
 				outZip.flush();
 				outZip.close();
-			} else {
+			} else if (className.endsWith(".class")) {
+				classPath = classPath.substring(0, classPath.length() - ".class".length());
+				className = classPath.replace('/', '.');
+
 				Class clazz = getClass().getClassLoader().loadClass(className);
 				ObjectOutput out = new ObjectOutputStream(response.getOutputStream());
 				out.writeObject(clazz);

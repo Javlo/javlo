@@ -12,7 +12,7 @@ import javax.servlet.http.HttpServletResponse;
 import org.javlo.context.ContentContext;
 import org.javlo.context.GlobalContext;
 import org.javlo.helper.StringHelper;
-import org.javlo.remote.RemoteFactory;
+import org.javlo.remote.RemoteResourceFactory;
 import org.javlo.remote.RemoteResourceList;
 
 public class RemoteResourceServlet extends HttpServlet {
@@ -44,14 +44,14 @@ public class RemoteResourceServlet extends HttpServlet {
 	private void process(HttpServletRequest request, HttpServletResponse response) throws ServletException {
 		boolean isBin = StringHelper.getFileExtension(request.getPathInfo()).equalsIgnoreCase("bin");
 		GlobalContext globalContext = GlobalContext.getInstance(request);
-		RemoteFactory remoteFactory = RemoteFactory.getInstance(globalContext);
+		RemoteResourceFactory remoteFactory = RemoteResourceFactory.getInstance(globalContext);
 
 		ContentContext ctx;
 		try {
 			ctx = ContentContext.getContentContext(request, response);
 			if (!isBin) {
 				XMLEncoder encoder = new XMLEncoder(new BufferedOutputStream(response.getOutputStream()));				
-				RemoteResourceList list = remoteFactory.getAllResources(ctx);
+				RemoteResourceList list = remoteFactory.getLocalResources(ctx);
 				encoder.writeObject(list);				
 				encoder.flush();
 				encoder.close();

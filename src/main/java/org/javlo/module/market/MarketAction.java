@@ -3,6 +3,7 @@ package org.javlo.module.market;
 import java.awt.image.RenderedImage;
 import java.io.File;
 import java.io.FileOutputStream;
+import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.net.URL;
@@ -23,7 +24,7 @@ import org.javlo.module.template.TemplateContext;
 import org.javlo.module.template.remote.IRemoteTemplateFactory;
 import org.javlo.module.template.remote.RemoteTemplateFactoryManager;
 import org.javlo.remote.IRemoteResource;
-import org.javlo.remote.RemoteFactory;
+import org.javlo.remote.RemoteResourceFactory;
 import org.javlo.remote.RemoteResourceList;
 import org.javlo.service.RequestService;
 import org.javlo.servlet.zip.ZipManagement;
@@ -42,14 +43,46 @@ public class MarketAction extends AbstractModuleAction {
 		String msg = null;
 		GlobalContext globalContext = GlobalContext.getInstance(ctx.getRequest());
 		Module module = ModulesContext.getInstance(ctx.getRequest().getSession(), globalContext).getCurrentModule();
-		RequestService requestService = RequestService.getInstance(ctx.getRequest());
-		
-		RemoteFactory remoteFactory = RemoteFactory.getInstance(globalContext);
-		RemoteResourceList resourceList =  remoteFactory.loadResource(ctx.getRequest().getSession().getServletContext());
-		
+		RequestService rs = RequestService.getInstance(ctx.getRequest());
+
+		RemoteResourceFactory remoteFactory = RemoteResourceFactory.getInstance(globalContext);
+		RemoteResourceList resourceList = remoteFactory.loadResources();
+
 		ctx.getRequest().setAttribute("resources", resourceList.getList());
 
+		if (rs.getParameter("id", null) != null) {
+			module.setRenderer("/jsp/import.jsp");
+		} else {
+			module.restoreRenderer();
+		}
+
 		return msg;
+	}
+
+	public static String performImportPage(RequestService rs, ContentContext ctx, GlobalContext globalContext, Module currentModule, MessageRepository messageRepository, I18nAccess i18nAccess) throws IOException {
+
+		String remoteId = rs.getParameter("id", null);
+		if (remoteId == null) {
+			return "bad request structure : need 'id' parameter.";
+		}
+
+		RemoteResourceFactory remoteResourceFactory = RemoteResourceFactory.getInstance(globalContext);
+		IRemoteResource resource = remoteResourceFactory.loadResource(remoteId);
+
+		if (resource == null) {
+			return "remote resource not found : " + remoteId;
+		}
+		ctx.getRequest().setAttribute("remoteResource", resource);
+
+		IRemoteResource localResource = remoteResourceFactory.getLocalResource(ctx, resource.getName(), resource.getType());
+		if (localResource != null) {
+			ctx.getRequest().setAttribute("localResource", localResource);
+			messageRepository.setGlobalMessageAndNotification(ctx, new GenericMessage(i18nAccess.getText("market.message.local-found"), GenericMessage.ALERT));
+		} else {
+			messageRepository.setGlobalMessageAndNotification(ctx, new GenericMessage(i18nAccess.getText("market.message.local-not-found"), GenericMessage.INFO));
+		}
+
+		return null;
 	}
 
 	public String performImport(RequestService requestService, HttpSession session, ContentContext ctx, GlobalContext globalContext, Module currentModule, MessageRepository messageRepository, I18nAccess i18nAccess) throws Exception {
@@ -107,5 +140,5 @@ public class MarketAction extends AbstractModuleAction {
 
 		return null;
 	}
-	
+
 }
