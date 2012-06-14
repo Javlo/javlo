@@ -25,7 +25,7 @@
                 </p>
                 <p class="menu">
                     <a href="${remote.URL}" class="preview" title="${resource.name}" target="_blank"></a>
-                    <a href="${info.currentURL}?webaction=import&name=${resource.id}&list=${param.list}" class="import" title="import ${resource.name}"></a>
+                    <a href="${info.currentURL}?webaction=importPage&id=${resource.id}" class="import" title="import ${resource.name}"></a>
                 </p>
             </div><!--info-->
         </div><!--thumb-->

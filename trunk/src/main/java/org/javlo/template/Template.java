@@ -242,6 +242,7 @@ public class Template implements Comparable<Template> {
 		String id = StringHelper.getRandomId();
 		boolean mailing;
 		String category = "javlo";
+		String version;
 		
 		public TemplateBean(){};
 
@@ -283,6 +284,7 @@ public class Template implements Comparable<Template> {
 			licence = template.getLicenceFile();
 			date = template.getCreationDate();
 			mailing = template.isMailing();
+			version = template.getVersion();
 		}
 
 		public String getPreviewUrl() throws Exception {
@@ -433,6 +435,16 @@ public class Template implements Comparable<Template> {
 		@Override
 		public String getDateAsString() {
 			return StringHelper.renderDate(getDate());
+		}
+
+		@Override
+		public String getVersion() {
+			return version;
+		}
+
+		@Override
+		public void setVersion(String version) {
+			this.version = version;
 		}	
 	}
 
@@ -965,6 +977,10 @@ public class Template implements Comparable<Template> {
 			}
 		}
 		return renderer;
+	}
+	
+	public String getVersion() {
+		return properties.getString("version", "?");
 	}
 
 	public String getHomeRendererFullName(GlobalContext globalContext) {

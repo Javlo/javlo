@@ -177,6 +177,20 @@ a.popup span {
 	width: 98%;
 }
 
+.card .label {
+	display: inline-block;
+	width: 170px;
+}
+
+.card .value {
+	font-weight: bold;
+}
+
+.card .image {
+	margin-left: 10px;
+	float: right;
+}
+
 .icone_true {
 	font-size: 0;
 	text-indent: -9999px;

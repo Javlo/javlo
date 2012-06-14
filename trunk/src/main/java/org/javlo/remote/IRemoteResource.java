@@ -25,6 +25,8 @@ public interface IRemoteResource extends Serializable {
 	
 	public String getDateAsString();
 	
+	public String getVersion();
+	
 	public Date getDate();
 	
 	public String getId();
@@ -48,5 +50,7 @@ public interface IRemoteResource extends Serializable {
 	public void setId(String id);
 	
 	public void setCategory(String category);
+	
+	public void setVersion(String version);
 
 }
