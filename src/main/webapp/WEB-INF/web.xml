@@ -208,4 +208,25 @@
 		<url-pattern>/market/*</url-pattern>
 	</servlet-mapping>
 	
+	<servlet>
+		<servlet-name>FolderServlet</servlet-name>
+		<servlet-class>org.javlo.servlet.FolderServlet</servlet-class>
+		<load-on-startup>1</load-on-startup>
+	</servlet>
+	<servlet-mapping>
+		<servlet-name>FolderServlet</servlet-name>
+		<url-pattern>/folder/*</url-pattern>
+	</servlet-mapping>
+	
+	<servlet>
+		<servlet-name>ClassServlet</servlet-name>
+		<servlet-class>org.javlo.servlet.ClassServlet</servlet-class>
+		<load-on-startup>1</load-on-startup>
+	</servlet>
+	<servlet-mapping>
+		<servlet-name>ClassServlet</servlet-name>
+		<url-pattern>/class/*</url-pattern>
+	</servlet-mapping>
+	
+	
 </web-app>
