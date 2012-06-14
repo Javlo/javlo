@@ -14,8 +14,17 @@ body, html {
 }
 
 /** breadcrumb **/
-#breadcrumb .title {
+
+.breadcrumb {
+	margin: 3px 0;
+}
+
+.breadcrumb .title {
     display: none;
+}
+
+.breadcrumb li {
+	display: inline-block;
 }
 
 .content_clear {

@@ -24,7 +24,7 @@
 	<select id="default-template" name="default-template">
 		<option value="">&nbsp;</option>
 		<c:forEach var="template" items="${templates}">
-		<option value="${template.template.name}" ${template.template.name eq currentContext.defaultTemplate?'selected="selected"':''} >${template.template.name}</option>
+		<option value="${template.name}" ${template.name eq currentContext.defaultTemplate?'selected="selected"':''} >${template.name}</option>
 		</c:forEach> 
 	</select>	
 </div>
@@ -113,11 +113,11 @@
 <c:forEach var="template" items="${templates}">
     <li>
         <div class="thumb">
-            <img src="${template.previewUrl}" alt="${template.template.name}" />
+            <img src="${template.previewUrl}" alt="${template.name}" />
             <div class="info">
                 <p>
                     <label>${i18n.edit['global.name']}:</label>
-                    <span>${template.template.name}</span>
+                    <span>${template.name}</span>
                 </p>
                 <p>
                     <label>${i18n.edit['admin.file-source']}:</label>
@@ -125,18 +125,18 @@
                 </p>
                 <p>
                     <label>${i18n.edit['global.author']}:</label>
-                    <span>${template.template.authors}</span>
+                    <span>${template.authors}</span>
                 </p>
                 <p>
                     <label>${i18n.edit['global.date']}:</label>
                     <span>${template.creationDate}</span>
                 </p>
                 <p>
-                	<a href="${template.downloadUrl}">${i18n.edit['admin.download-template']}</a>
+                	<a href="${template.downloadURL}">${i18n.edit['admin.download-template']}</a>
                 </p>
                 <p class="menu">
-                    <a href="${template.viewUrl}" class="view" title="${template.template.name}"></a>                    
-                    <a href="${info.currentURL}?webaction=unlinkTemplate&context=${currentContext.key}&template=${template.template.name}&mailing=${template.template.mailing}" class="delete" title="${i18n.edit['global.unlinked']}"></a>
+                    <a href="${template.viewUrl}" class="view" title="${template.name}"></a>                    
+                    <a href="${info.currentURL}?webaction=unlinkTemplate&context=${currentContext.key}&template=${template.name}&mailing=${template.mailing}" class="delete" title="${i18n.edit['global.unlinked']}"></a>
                 </p>                
             </div><!--info-->
         </div><!--thumb-->        

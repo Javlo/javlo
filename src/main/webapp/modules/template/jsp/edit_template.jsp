@@ -2,19 +2,19 @@
 <%@ taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions" %>
 <div class="content">
 <div class="template-preview">
-	<img src="${currentTemplate.previewUrl}" alt="${currentTemplate.template.name}" />	
+	<img src="${currentTemplate.previewUrl}" alt="${currentTemplate.name}" />	
 </div>
 
 <form id="form-edit-template" action="${info.currentURL}" class="standard-form" method="post">
 	
 	<div>
 		<input type="hidden" name="webaction" value="editTemplate" />
-		<input type="hidden" name="name" value="${currentTemplate.template.name}" />
+		<input type="hidden" name="name" value="${currentTemplate.name}" />
 	</div>
 	
 	<div class="line">
 		<label for="author">${i18n.edit['global.author']}</label>
-		<input type="text" id="author" name="author" value="${currentTemplate.template.authors}" />
+		<input type="text" id="author" name="author" value="${currentTemplate.authors}" />
 	</div>
 	
 	<div class="line">
@@ -27,7 +27,7 @@
 	
 	<c:forEach var="area" items="${currentTemplate.areas}">
 	<div class="inline">
-		<h4>${area}</h4><span class="delete-area"><a href="${info.currentURL}?webaction=deleteArea&area=${area}&name=${currentTemplate.template.id}" title="${i18n.edit['global.delete']}">${i18n.edit['global.delete']}</a></span>
+		<h4>${area}</h4><span class="delete-area"><a href="${info.currentURL}?webaction=deleteArea&area=${area}&name=${currentTemplate.id}" title="${i18n.edit['global.delete']}">${i18n.edit['global.delete']}</a></span>
 		<ul>
 			<c:set var="areaFound" value="false" scope="page" />			
 			<c:forEach var="htmlID" items="${currentTemplate.HTMLIDS}">
