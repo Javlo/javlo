@@ -1053,6 +1053,10 @@ public class PageReferenceComponent extends ComplexPropertiesLink implements IAc
 	}
 
 	@Override
+	/**
+	 * render a list of links to pages.
+	 * exposed in request attributes : "pagesStatus","pages","title","comp".
+	 */
 	public String getViewXHTMLCode(ContentContext ctx) throws Exception {
 
 		Calendar backDate = getBackDate(ctx);

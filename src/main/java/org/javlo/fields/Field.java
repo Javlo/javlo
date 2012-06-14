@@ -600,5 +600,9 @@ public class Field implements Cloneable {
 	public void setCurrentLocale(Locale currentLocale) {
 		this.currentLocale = currentLocale;
 	}
+	
+	public boolean isContentCachable() {
+		return true;
+	}
 
 }

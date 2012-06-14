@@ -1160,10 +1160,17 @@ public abstract class AbstractVisualComponent implements IContentVisualComponent
 		}
 	}
 
+	/**
+	 * prepare the rendering of a component.
+	 * default attributes put in request : style, value, type, compid
+	 * @param ctx
+	 * @throws Exception
+	 */
 	public void prepareView(ContentContext ctx) throws Exception {
 		ctx.getRequest().setAttribute("style", getStyle(ctx));
 		ctx.getRequest().setAttribute("value", getValue());
 		ctx.getRequest().setAttribute("type", getType());
+		ctx.getRequest().setAttribute("compid", getId());
 		if (isValueProperties()) {
 			Properties p = new Properties();
 			p.load(new StringReader(getValue()));

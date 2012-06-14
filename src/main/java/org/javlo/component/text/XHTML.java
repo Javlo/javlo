@@ -68,13 +68,7 @@ public class XHTML extends AbstractVisualComponent {
 	@Override
 	public String getViewXHTMLCode(ContentContext ctx) throws Exception {
 
-		String outContent = XHTMLHelper.replaceManualyJSTLData(ctx, getValue());
-		
-		Collection<String> params = StringHelper.extractItem(outContent, "${param.", "}");
-		RequestService requestService = RequestService.getInstance(ctx.getRequest());
-		for (String param : params) {			
-			outContent = outContent.replace("${param."+param+"}", requestService.getParameter(param, ""));
-		}
+		String outContent = XHTMLHelper.replaceJSTLData(ctx, getValue());
 
 		TagDescription[] tags = XMLManipulationHelper.searchAllTag(outContent, false);
 		StringRemplacementHelper remplacement = new StringRemplacementHelper();

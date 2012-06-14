@@ -54,6 +54,7 @@ import org.javlo.i18n.I18nAccess;
 import org.javlo.message.GenericMessage;
 import org.javlo.navigation.MenuElement;
 import org.javlo.service.ContentService;
+import org.javlo.service.RequestService;
 import org.javlo.service.ReverseLinkService;
 import org.javlo.utils.SufixPreffix;
 import org.javlo.ztatic.StaticInfo;
@@ -1863,7 +1864,13 @@ public class XHTMLHelper {
 		return writer.toString();
 	}
 
-	public static String replaceManualyJSTLData(ContentContext ctx, String xhtml) throws IllegalAccessException, InvocationTargetException, NoSuchMethodException {
+	public static String replaceJSTLData(ContentContext ctx, String xhtml) throws IllegalAccessException, InvocationTargetException, NoSuchMethodException {		
+		Collection<String> params = StringHelper.extractItem(xhtml, "${param.", "}");		
+		RequestService requestService = RequestService.getInstance(ctx.getRequest());
+		for (String param : params) {		
+			xhtml = xhtml.replace("${param."+param+"}", requestService.getParameter(param, ""));
+		}
+		
 		InfoBean infoBean = InfoBean.getCurrentInfoBean(ctx.getRequest());
 		Map<String, Object> properties = BeanUtils.describe(infoBean);
 		for (String key : properties.keySet()) {
@@ -1986,7 +1993,7 @@ public class XHTMLHelper {
 		return new String(outStream.toByteArray());
 
 	}
-
+	
 	private XHTMLHelper() {
 	}
 }

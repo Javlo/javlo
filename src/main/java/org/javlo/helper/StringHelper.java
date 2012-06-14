@@ -2185,7 +2185,10 @@ public class StringHelper {
 		int startIndex = text.indexOf(prefix);
 		int endIndex = text.indexOf(suffix);
 		while (startIndex > -1 && endIndex > startIndex+prefix.length()) {
-			items.add(text.substring(startIndex+prefix.length(), endIndex));
+			String item = text.substring(startIndex+prefix.length(), endIndex);
+			if (!items.contains(item)) {
+				items.add(item);				
+			}			
 			text = text.substring(endIndex+suffix.length());			
 			startIndex = text.indexOf(prefix);
 			endIndex = text.indexOf(suffix);
