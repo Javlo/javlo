@@ -542,6 +542,9 @@ public class DynamicComponent extends AbstractVisualComponent implements IStatic
 		try {
 			java.util.List<Field> fieldsName = getFields(ctx);
 			for (Field field : fieldsName) {
+				if (!field.isContentCachable()) {
+					return false;
+				}
 				if (field instanceof MetaField) {
 					return false;
 				}
@@ -605,5 +608,12 @@ public class DynamicComponent extends AbstractVisualComponent implements IStatic
 	public String getLabel(ContentContext ctx) {
 		return properties.getProperty("component.label-" + ctx.getRequestContentLanguage(), properties.getProperty("component.label", properties.getProperty("component.type")));
 	}
+	
+	@Override
+	public boolean isContentTimeCachable(ContentContext ctx) {
+		return false;
+	}
+	
+	
 
 }
