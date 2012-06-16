@@ -1,0 +1,216 @@
+change log
+
+* 1.3.2.5  [28/07/2010] 
+
+ * staticInfo : remove language attribute.
+
+ * change CVS server.
+ 
+ * FreeTextList : add select box for language, Italic and bold.
+ 
+ * GlobalImage : label priorited
+ 
+* 1.3.2.6 [28/07/2010]
+
+ * component data not check is file exist on init but only when data is needed (getViewData)
+ 
+ * StaticInfo remove language attribute
+
+* 1.3.2.7 [03/08/2010]
+
+ * template filter by javascript
+ 
+ * cms version in content XML files.
+ 
+ * global properties in XML content files.
+ 
+ * bug correction : no default context for the default context.
+ 
+ * display encoding in info.txt file
+ 
+ * bug correction : /view/en return correct page
+ 
+* 1.3.2.8 [06/08/2010]
+
+ * correction of order bug in access sorting
+    
+* 1.3.2.9 [06/08/2010]
+
+    * no more backslash in path + no more empty folder in zip
+    
+* 1.3.3 [06/08/2010]
+
+    * static info not in file but in content
+    
+    * WARNING : need click on "convert to current CMS version : " on /edit "data" tab to import files metadata into content.
+    
+* 1.3.3.1 [02/09/2010]
+
+    * print time rendering AccessServlet (add logger.access=false in static_config for disabled)
+    
+    * bug correction : no linked resource
+     
+    * don't count image if there are in a list sorted by access
+    
+    * no contruct full url when href start with "?" or "#" on template creation.
+    
+    * delete static info when resource is deleted
+    
+    * access resource stored in globalcontext data and not in content
+    
+    * synchronize component on "this"
+    
+    * synchronize on image transform servlet (transform one image at a time)
+    
+    * synchronize ReverseLinkService on a LOCK object and not on the KEY
+    
+    * better management of special edit template
+    
+* 1.3.3.2 [07/09/2010]
+
+    * synchronize persistence with the root node of the navigation
+    
+    * active getContentCache + getAllContentCache in menu element
+    
+    * change modify bit from component to componentBean (because componentBean can be in cache)
+    
+* 1.3.3.3 [29/09/2010]
+
+    * big refactoring in content access (MenuElement) cleaning and remove the "format" notion.
+    
+    * configure log level in static config file.
+    
+    * log for component
+    
+    * RSSReader read the rss feed in a thread
+    
+    * page link add index number in css class
+    
+* 1.3.3.4 [14/11/2010]
+
+    * remove session from userFactory
+    
+    * create mailing without create page at any mail
+    
+    * time traveler
+    
+    * remove linked page
+    
+    * transform some 302 in 301
+    
+    * set publish date in globalcontext and use this date in name of the backup file on publish
+    
+    * move the view backup on publish in backup folder
+    
+       * WARNING: convert to current CMS version to move backup zip's from 'persitence' to backup folder and get last publish date
+       
+    * construct the view backup by zipping the data folder excluding some configurable patterns
+    
+    * new macros 'copy-language-structure' and 'copy-language-structure-here' to copy the component structure of the current language to the others if they are empty
+    
+    * login centralized in a filter
+    
+    * remote login
+    
+    * remote message
+    
+* 1.3.3.5 [21/06/2012]
+
+    * merge of the "LocalFolder" branch
+    
+    * research unused resources in content.
+    
+    * getKey in component
+    
+    * next - previous links component
+    
+    * multi devices
+    
+    * edit template edit mode
+    
+    * configure list (true, false) and area in create press release macro
+    
+    * EHCache on MenuElement
+    
+    * add isRealContent on all components
+     
+    * multimedia + aslist multi area bug solved
+     
+    * dynamic component : prefix and suffix
+    
+    * EHCache for component
+    
+* 1.3.4 [13/09/2011]
+
+    * URL : remove /view
+     
+    * URL : create IURLFactory for leave the url factoring to the developer.
+    
+     * WARNING: URL WILL CHANGE WITH THIS UPDATE (set url.view=true in static-config.properties)
+     
+    * can use reverse link only on the current page
+    
+    * Reverselinkservice in release cache + store in globalContext and not in session (warning: border effect on reverse links)
+    
+    * Cache on NavigationService (and not map) [1.3.4.2]
+    
+    * secure some pages (https)
+    
+    * close all stream in I18nAccess [1.3.4.3]
+    
+    * create i18nResource
+    
+    * "view" jstl map use ReadOnlyMultiMap [1.3.4.4]
+    
+    * remove weakref for globalcontext [1.3.4.5]
+    
+    * change "if (splitedPath.length > splitedPathMinSize) \{" to "if (splitedPath.length >= splitedPathMinSize) \{" in ContentManager warning REGRESSION
+    
+    * remove "unsubscribeHost" and "unsubscribePort", warning: maybe reference in some jsp.
+    
+    * StaticInfo is stored in request and not in GlobalContext. [1.3.4.6]
+    
+* 1.4.2
+ 
+    * fill cache after publish.
+    
+    * site can be defined on context in place of host. [1.4.2.1]
+    
+    * GlobalContext in request and not is Session [1.4.2.2]
+    
+    * Video component + MergeDynamicComponent on all pages and all area
+    
+    * openpop exept for some domains
+    
+    * chat correction
+    
+    * getCategory without area
+    
+* 1.4.3 [trunk]
+ 
+   * filter content for big page.
+   
+   * #2 you can change component config without restart.
+   
+   * #4 tab file can work withtout files inside.
+   
+   * new components : breadcrump and menu
+   
+   * change data folder format old:ctx-[randomid] new:data-[contextkey] [1.4.3.1]
+   
+   * box open/close linked in edit mode.
+   
+   * macro for create site structure with content formated in a simple text file in template (CreateChildrenStructureMacro)
+   
+   * new google analytics js code
+   
+   * page reference without sorting
+   
+   * image config could be different on the same page with in different area [1.4.3.2]
+   
+   * Point of interest will update in view and preview directly without publish.
+   
+   * Correction bug template : "html" property work correctly, now you can change the index html file, with this when you use a herited template you can use a other html define in parent as renderer and you don't need html in current template.
+   
+   * captcha 
+   

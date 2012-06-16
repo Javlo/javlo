@@ -145,21 +145,25 @@ public class ZipManagement {
 		out.closeEntry();
 	}
 
-	static void saveFile(ServletContext serveltContext, String dir, String fileName, InputStream in) throws IOException {
+	public static File saveFile(ServletContext serveltContext, String dir, String fileName, InputStream in) throws IOException {
 		String fullPath = dir + '/' + fileName;
-
 		File file = new File(fullPath);
-		file.getParentFile().mkdirs();
-
-		FileOutputStream out = new FileOutputStream(file);
-		
-		ResourceHelper.writeStreamToStream(in, out);		
-		/*int read = in.read();
-		while (read >= 0) {
-			out.write(read);
-			read = in.read();
-		}*/
-		out.close();
+		if (fileName.endsWith("/") || fileName.endsWith("\\")) {
+			file.mkdirs();
+		} else {
+			if (!file.exists()) {
+				file.getParentFile().mkdirs();
+				file.createNewFile();
+			}
+			OutputStream out = null;
+			try {
+				out = new FileOutputStream(file);
+				ResourceHelper.writeStreamToStream(in, out);
+			} finally {
+				ResourceHelper.closeResource(out);
+			}
+		}
+		return file;
 	}
 
 	public static void uploadZipFile(HttpServletRequest request, HttpServletResponse response, InputStream in) throws Exception {

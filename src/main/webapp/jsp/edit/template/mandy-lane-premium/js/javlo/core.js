@@ -40,6 +40,17 @@ jQuery(document).bind("ajaxUpdate",function () {
 		return false;
 	});
 	
+	jQuery('input.needconfirm').click(function(){
+		var jsInput = this;
+		var input = jQuery(this);		
+		jConfirm(i18n.confirm, i18n.validate, function(r) {
+			if (r) {
+				jsInput.form.submit();
+			}
+		});
+		return false;
+	});
+	
 });
 
 function fullHeight() {

@@ -744,7 +744,7 @@ public class StringHelper {
 	 * @return a file extension without dot ( pdf, zip, ... )
 	 */
 	public static String getFileNameWithoutExtension(String inFileName) {
-		String outExt = "";
+		String outExt = inFileName;
 		int dotIndex = inFileName.lastIndexOf('.');
 		if (dotIndex >= 0) {
 			outExt = inFileName.substring(0, dotIndex);

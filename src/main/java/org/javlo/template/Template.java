@@ -241,8 +241,10 @@ public class Template implements Comparable<Template> {
 		Date date;	
 		String id = StringHelper.getRandomId();
 		boolean mailing;
-		String category = "javlo";
+		String category;
 		String version;
+		String deployId = StringHelper.getRandomId();
+		String type;
 		
 		public TemplateBean(){};
 
@@ -269,7 +271,7 @@ public class Template implements Comparable<Template> {
 			areaMap = template.getAreasMap();
 			valid = template.isValid();			
 			try {
-				imageURL = URLHelper.createTransformStaticTemplateURL(remoteCtx, template, "template", template.getVisualFile());
+				imageURL = URLHelper.createTransformStaticTemplateURL(remoteCtx, template, "template", template.getVisualFile())+"?deployId="+template.getDeployId();
 			} catch (Exception e) {
 				e.printStackTrace();				
 			}			
@@ -285,6 +287,9 @@ public class Template implements Comparable<Template> {
 			date = template.getCreationDate();
 			mailing = template.isMailing();
 			version = template.getVersion();
+			deployId = template.getDeployId();
+			type = IRemoteResource.TYPE_TEMPLATE;
+			category = staticConfig.getMarketServerName();
 		}
 
 		public String getPreviewUrl() throws Exception {
@@ -331,6 +336,10 @@ public class Template implements Comparable<Template> {
 		public boolean isMailing() {
 			return mailing;
 		}
+		
+		public String getDeployId() {
+			return deployId;
+		};
 
 		@Override
 		public String getImageURL() {
@@ -409,7 +418,11 @@ public class Template implements Comparable<Template> {
 		
 		@Override
 		public String getType() {		
-			return "template";
+			return type;
+		}
+		
+		public void setType(String type) {
+			this.type = type;
 		}
 
 		@Override
@@ -534,6 +547,8 @@ public class Template implements Comparable<Template> {
 	private File dir = null;
 
 	private StaticConfig config;
+	
+	private ServletContext application;
 
 	private final String buildId = StringHelper.getRandomId();
 
@@ -542,8 +557,11 @@ public class Template implements Comparable<Template> {
 	private boolean jsp = false;
 
 	private static Template emptyTemplate = null;
+	
+	private String deployId = StringHelper.getRandomId();
 
 	public static Template getApplicationInstance(ServletContext application, ContentContext ctx, String templateDir, boolean mailing) throws ConfigurationException, IOException {
+		
 		Template outTemplate = null;
 		if (templateDir == null) {
 			// logger.severe("templateDir is null");
@@ -572,7 +590,7 @@ public class Template implements Comparable<Template> {
 			if (outTemplate.isAlternativeTemplate(ctx)) {
 				outTemplate = outTemplate.getAlternativeTemplate(StaticConfig.getInstance(application), ctx);
 			}
-		}
+		}		
 		return outTemplate;
 	}
 
@@ -591,7 +609,7 @@ public class Template implements Comparable<Template> {
 		if ((templateDir == null) || templateDir.trim().length() == 0) {
 			return getEmptyInstance();
 		}
-		Template template = new Template();
+		Template template = new Template();		
 		String templateFolder = URLHelper.mergePath(config.getTemplateFolder(), templateDir);
 		if (mailing) {
 			template.setMailing(true);
@@ -683,8 +701,7 @@ public class Template implements Comparable<Template> {
 		return messages;
 	}
 
-	public void clearRenderer(ContentContext ctx) {
-		reload();
+	public void clearRenderer(ContentContext ctx) {	
 		String templateFolder = config.getTemplateFolder();
 		if (isMailing()) {
 			templateFolder = config.getMailingTemplateFolder();
@@ -707,6 +724,7 @@ public class Template implements Comparable<Template> {
 	public void delete() {
 		try {
 			FileUtils.deleteDirectory(new File(getTemplateRealPath()));
+			FileUtils.deleteDirectory(new File(URLHelper.mergePath(getWorkTemplateFolder(), getSourceFolder())));
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
@@ -1419,8 +1437,6 @@ public class Template implements Comparable<Template> {
 		TemplateData templateDataUser = globalContext.getTemplateData();
 		Map<String, String> templateDataMap = new HashMap<String, String>();
 		TemplateData templateData = getTemplateData();
-		// System.out.println("**** StringHelper.colorToHexStringNotNull(templateData.getBackground())     = "+StringHelper.colorToHexStringNotNull(templateData.getBackground()));
-		// System.out.println("**** StringHelper.colorToHexStringNotNull(templateDataUser.getBackground()) = "+StringHelper.colorToHexStringNotNull(templateDataUser.getBackground()));
 		if (templateData.getBackground() != null) {
 			templateDataMap.put(StringHelper.colorToHexStringNotNull(templateData.getBackground()), StringHelper.colorToHexStringNotNull(templateDataUser.getBackground()));
 		}
@@ -1474,7 +1490,7 @@ public class Template implements Comparable<Template> {
 	public String getVisualFile() {
 		return properties.getString("file.visual", getParent().getVisualFile());
 	}
-
+	
 	public String getVisualPDFile() {
 		return properties.getString("file.pdf", getParent().getVisualPDFile());
 	}
@@ -1506,8 +1522,6 @@ public class Template implements Comparable<Template> {
 
 			FileUtils.deleteDirectory(templateTgt);
 			importTemplateInWebapp(ctx, globalContext, templateTgt);
-			// getParent().importTemplateInWebapp(globalContext, templateTgt);
-			// FileUtils.copyDirectory(templateSrc, templateTgt);
 		} else {
 			logger.severe("folder not found : " + templateSrc);
 		}
@@ -1581,6 +1595,7 @@ public class Template implements Comparable<Template> {
 				}
 			}
 		}
+		deployId = StringHelper.getRandomId();
 	}
 
 	public boolean isAlternativeTemplate(ContentContext ctx) {
@@ -1823,7 +1838,11 @@ public class Template implements Comparable<Template> {
 		List<String> ids = StringHelper.stringToCollection(htmlIds, ",");		
 		return ids;		
 	}
-	
-	
+
+	public String getDeployId() {
+		return deployId;
+	}
+
+
 
 }

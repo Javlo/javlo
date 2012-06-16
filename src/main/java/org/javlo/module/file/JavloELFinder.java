@@ -11,6 +11,8 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
+import java.util.zip.ZipEntry;
+import java.util.zip.ZipInputStream;
 import java.util.Properties;
 
 import javax.servlet.ServletContext;
@@ -18,6 +20,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import org.apache.commons.fileupload.FileItem;
+import org.apache.commons.io.FileUtils;
 import org.javlo.config.StaticConfig;
 import org.javlo.context.ContentContext;
 import org.javlo.context.GlobalContext;
@@ -26,6 +29,7 @@ import org.javlo.helper.ResourceHelper;
 import org.javlo.helper.StringHelper;
 import org.javlo.helper.URLHelper;
 import org.javlo.i18n.I18nAccess;
+import org.javlo.servlet.zip.ZipManagement;
 import org.javlo.ztatic.FileCache;
 
 /**
@@ -92,17 +96,17 @@ public class JavloELFinder extends ELFinder {
 		}
 		return hash;
 	}
-	
+
 	@Override
 	protected void changeFolder(ELFile file) {
-		ContentContext ctx = ((JavloELFile)file).getContentContext();
+		ContentContext ctx = ((JavloELFile) file).getContentContext();
 		FileModuleContext fileModuleContext;
 		try {
-			fileModuleContext = (FileModuleContext)LangHelper.smartInstance(ctx.getRequest(), ctx.getResponse(), FileModuleContext.class);
+			fileModuleContext = (FileModuleContext) LangHelper.smartInstance(ctx.getRequest(), ctx.getResponse(), FileModuleContext.class);
 		} catch (Exception e) {
 			e.printStackTrace();
 			return;
-		}	
+		}
 		fileModuleContext.setPath(file.getFile().getAbsolutePath().replace(file.getVolume().getRoot().getFile().getAbsolutePath(), file.getVolume().getRoot().getFile().getName()));
 	}
 
@@ -175,9 +179,18 @@ public class JavloELFinder extends ELFinder {
 
 			if (file.getFile().exists()) {
 				File newFile = ResourceHelper.getFreeFileName(file.getFile());
-				JavloELFile newELFile = new JavloELFile(file.getVolume(), newFile, file.getParentFile());
-				ResourceHelper.writeFileToFile(file.getFile(), newELFile.getFile());
-				addedFiles.add(newELFile);
+				if (file.getFile().isDirectory()) {
+					FileUtils.copyDirectory(file.getFile(), newFile);
+
+					// check fodler ???
+
+					JavloELFile newELFile = new JavloELFile(file.getVolume(), newFile, file.getParentFile());
+					addedFiles.add(newELFile);
+				} else {
+					JavloELFile newELFile = new JavloELFile(file.getVolume(), newFile, file.getParentFile());
+					ResourceHelper.writeFileToFile(file.getFile(), newELFile.getFile());
+					addedFiles.add(newELFile);
+				}
 			}
 		}
 		apiResponse.put("added", printFiles(addedFiles));
@@ -201,16 +214,33 @@ public class JavloELFinder extends ELFinder {
 	protected void uploadFile(String folderHash, FileItem[] filesItem, String parameter, Map<String, Object> apiResponse) throws Exception {
 		JavloELFile folder = (JavloELFile) hashToFile(folderHash);
 		List<ELFile> addedFiles = new LinkedList<ELFile>();
-		if (folder != null && folder.getFile().exists()) {			
+		if (folder != null && folder.getFile().exists()) {
 			for (FileItem fileItem : filesItem) {
 				File newFile = new File(URLHelper.mergePath(folder.getFile().getAbsolutePath(), fileItem.getName()));
-				if (newFile.exists()) {
-					newFile = ResourceHelper.getFreeFileName(newFile);
-				}
 				InputStream in = fileItem.getInputStream();
-				ResourceHelper.writeStreamToFile(in, newFile);
-				ResourceHelper.closeResource(in);
-				addedFiles.add(new JavloELFile(folder.getVolume(), newFile, folder));
+				try {
+					if (!StringHelper.getFileExtension(newFile.getName()).toLowerCase().equals("zip")) {
+						if (newFile.exists()) {
+							newFile = ResourceHelper.getFreeFileName(newFile);
+						}
+						ResourceHelper.writeStreamToFile(in, newFile);
+						ResourceHelper.closeResource(in);
+						addedFiles.add(new JavloELFile(folder.getVolume(), newFile, folder));
+					} else {
+						ZipInputStream zipIn = new ZipInputStream(in);
+						ZipEntry entry = zipIn.getNextEntry();
+						while (entry != null) {
+							File file = ZipManagement.saveFile(application, folder.getFile().getAbsolutePath(), entry.getName(), zipIn);
+							entry = zipIn.getNextEntry();
+							if (file.getParentFile().getAbsolutePath().equals(folder.getFile().getAbsolutePath())) { // list only file inside current folder
+								addedFiles.add(new JavloELFile(folder.getVolume(), file, folder));
+							}
+						}
+						zipIn.close();
+					}
+				} finally {
+					ResourceHelper.closeResource(in);
+				}
 			}
 		}
 		apiResponse.put("added", printFiles(addedFiles));
@@ -220,15 +250,19 @@ public class JavloELFinder extends ELFinder {
 	protected ELFile createELFile(ELFile parent, File file) {
 		return new JavloELFile(parent.getVolume(), file, parent);
 	}
-	
+
 	@Override
 	protected Map<String, Object> printOptions(ELFile file) {
-		GlobalContext globalContext = GlobalContext.getSessionInstance(((JavloELFile)file).getContentContext().getRequest().getSession());
-		Map<String, Object> outOptions = super.printOptions(file);		
+		GlobalContext globalContext = GlobalContext.getSessionInstance(((JavloELFile) file).getContentContext().getRequest().getSession());
+		Map<String, Object> outOptions = super.printOptions(file);
 		if (ResourceHelper.isTemplateFile(globalContext, file.getFile())) {
 			outOptions.remove("url");
 			String templateName = ResourceHelper.extractTemplateName(globalContext, file.getFile());
-			outOptions.put("url", URLHelper.createTemplateResourceURL(((JavloELFile)file).getContentContext(), '/'+templateName+'/'));
+			if (!file.getVolume().getRoot().getFile().getName().equals(templateName)) { // for all templates browsing
+				outOptions.put("url", URLHelper.createTemplateResourceURL(((JavloELFile) file).getContentContext(), "/"));
+			} else {
+				outOptions.put("url", URLHelper.createTemplateResourceURL(((JavloELFile) file).getContentContext(), '/' + templateName + '/'));
+			}
 		}
 		return outOptions;
 	}

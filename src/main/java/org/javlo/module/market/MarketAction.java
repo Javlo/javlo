@@ -9,8 +9,10 @@ import java.io.OutputStream;
 import java.net.URL;
 
 import javax.media.jai.JAI;
+import javax.servlet.ServletContext;
 import javax.servlet.http.HttpSession;
 
+import org.apache.pluto.driver.services.portal.PageConfig;
 import org.javlo.actions.AbstractModuleAction;
 import org.javlo.context.ContentContext;
 import org.javlo.context.GlobalContext;
@@ -18,12 +20,12 @@ import org.javlo.helper.URLHelper;
 import org.javlo.i18n.I18nAccess;
 import org.javlo.message.GenericMessage;
 import org.javlo.message.MessageRepository;
+import org.javlo.module.core.AbstractModuleContext;
 import org.javlo.module.core.Module;
 import org.javlo.module.core.ModulesContext;
-import org.javlo.module.template.TemplateContext;
-import org.javlo.module.template.remote.IRemoteTemplateFactory;
-import org.javlo.module.template.remote.RemoteTemplateFactoryManager;
+import org.javlo.navigation.PageConfiguration;
 import org.javlo.remote.IRemoteResource;
+import org.javlo.remote.LocalResourceFactory;
 import org.javlo.remote.RemoteResourceFactory;
 import org.javlo.remote.RemoteResourceList;
 import org.javlo.service.RequestService;
@@ -37,47 +39,62 @@ public class MarketAction extends AbstractModuleAction {
 	public String getActionGroupName() {
 		return "market";
 	}
+	
+	@Override
+	public AbstractModuleContext getModuleContext(HttpSession session, Module module) throws Exception {		
+		return AbstractModuleContext.getInstance(session, GlobalContext.getSessionInstance(session), module, MarketContext.class);
+	}
 
 	@Override
-	public String prepare(ContentContext ctx, ModulesContext moduleContext) throws Exception {
+	public String prepare(ContentContext ctx, ModulesContext modulesContext) throws Exception {
+		super.prepare(ctx, modulesContext);
 		String msg = null;
 		GlobalContext globalContext = GlobalContext.getInstance(ctx.getRequest());
 		Module module = ModulesContext.getInstance(ctx.getRequest().getSession(), globalContext).getCurrentModule();
 		RequestService rs = RequestService.getInstance(ctx.getRequest());
 
 		RemoteResourceFactory remoteFactory = RemoteResourceFactory.getInstance(globalContext);
-		RemoteResourceList resourceList = remoteFactory.loadResources();
 
-		ctx.getRequest().setAttribute("resources", resourceList.getList());
+		ctx.getRequest().setAttribute("resources", remoteFactory.getResourcesAsMap());
 
 		if (rs.getParameter("id", null) != null) {
 			module.setRenderer("/jsp/import.jsp");
+			module.setToolsRenderer(null);
 		} else {
-			module.restoreRenderer();
+			String currentRenderer = getModuleContext(ctx.getRequest().getSession(), module).getRenderer();
+			ctx.getRequest().setAttribute("viewAllButton", "true");
+			module.setToolsRenderer("/jsp/actions.jsp");
+			if (currentRenderer == null) {
+				module.restoreRenderer();
+			} else {
+				module.setRenderer(currentRenderer);	
+			}			
 		}
 
 		return msg;
 	}
 
 	public static String performImportPage(RequestService rs, ContentContext ctx, GlobalContext globalContext, Module currentModule, MessageRepository messageRepository, I18nAccess i18nAccess) throws IOException {
-
 		String remoteId = rs.getParameter("id", null);
 		if (remoteId == null) {
 			return "bad request structure : need 'id' parameter.";
 		}
 
 		RemoteResourceFactory remoteResourceFactory = RemoteResourceFactory.getInstance(globalContext);
-		IRemoteResource resource = remoteResourceFactory.loadResource(remoteId);
+		IRemoteResource resource = remoteResourceFactory.getResource(ctx,remoteId);
 
 		if (resource == null) {
 			return "remote resource not found : " + remoteId;
 		}
 		ctx.getRequest().setAttribute("remoteResource", resource);
 
-		IRemoteResource localResource = remoteResourceFactory.getLocalResource(ctx, resource.getName(), resource.getType());
+		LocalResourceFactory localResourceFactory = LocalResourceFactory.getInstance(globalContext);
+		IRemoteResource localResource = localResourceFactory.getLocalResource(ctx, resource.getName(), resource.getType());
 		if (localResource != null) {
 			ctx.getRequest().setAttribute("localResource", localResource);
-			messageRepository.setGlobalMessageAndNotification(ctx, new GenericMessage(i18nAccess.getText("market.message.local-found"), GenericMessage.ALERT));
+			if (!messageRepository.haveGlobalMessage()) {
+				messageRepository.setGlobalMessageAndNotification(ctx, new GenericMessage(i18nAccess.getText("market.message.local-found"), GenericMessage.ALERT));
+			}
 		} else {
 			messageRepository.setGlobalMessageAndNotification(ctx, new GenericMessage(i18nAccess.getText("market.message.local-not-found"), GenericMessage.INFO));
 		}
@@ -85,48 +102,42 @@ public class MarketAction extends AbstractModuleAction {
 		return null;
 	}
 
-	public String performImport(RequestService requestService, HttpSession session, ContentContext ctx, GlobalContext globalContext, Module currentModule, MessageRepository messageRepository, I18nAccess i18nAccess) throws Exception {
-		String list = requestService.getParameter("list", null);
-		String templateName = requestService.getParameter("name", null);
-		if (list == null || templateName == null) {
-			return "bad request structure : need 'list' and 'name' as parameter.";
+	public String performImport(RequestService requestService, ServletContext application, HttpSession session, ContentContext ctx, GlobalContext globalContext, Module currentModule, MessageRepository messageRepository, I18nAccess i18nAccess) throws Exception {		
+		String remoteId = requestService.getParameter("id", null);
+		if (remoteId == null) {
+			return "bad request structure : need 'id'.";
 		}
-		TemplateContext templateContext = TemplateContext.getInstance(session, globalContext, currentModule);
-		templateContext.setCurrentLink(list);
-		if (list != null) {
-			IRemoteTemplateFactory tempFact = RemoteTemplateFactoryManager.getInstance(session.getServletContext()).getRemoteTemplateFactory(globalContext, list);
-			IRemoteResource template = tempFact.getTemplate(templateName);
-			if (template == null) {
-				return "template not found : " + templateName;
-			}
-			Template newTemplate = TemplateFactory.createDiskTemplates(session.getServletContext(), templateName);
-
-			newTemplate.setAuthors(template.getAuthors());
-
+		RemoteResourceFactory remoteResourceFactory = RemoteResourceFactory.getInstance(globalContext);
+		IRemoteResource resource = remoteResourceFactory.getResource(ctx,remoteId);
+		if (resource == null) {
+			return "resource not found : "+remoteId;
+		}
+		boolean imported = false;		
+		if (resource.getType().equals(IRemoteResource.TYPE_TEMPLATE)) {
+		
+			Template newTemplate = TemplateFactory.createDiskTemplates(session.getServletContext(), resource.getName());
+			
 			InputStream in = null;
 			OutputStream out = null;
 			try {
-				URL zipURL = new URL(template.getDownloadURL());
+				URL zipURL = new URL(resource.getDownloadURL());
 				in = zipURL.openConnection().getInputStream();
 				ZipManagement.uploadZipTemplate(ctx, in, newTemplate.getId(), false);
-				in.close();
-
-				URL imageURL = new URL(template.getImageURL());
-				File visualFile = new File(URLHelper.mergePath(newTemplate.getTemplateRealPath(), newTemplate.getVisualFile()));
-				RenderedImage image = JAI.create("url", imageURL);
-				out = new FileOutputStream(visualFile);
-				JAI.create("encode", image, out, "png", null);
-				out.close();
-
-				messageRepository.setGlobalMessageAndNotification(ctx, new GenericMessage(i18nAccess.getText("template.message.imported", new String[][] { { "name", newTemplate.getId() } }), GenericMessage.INFO));
-
-				templateContext.setCurrentLink(null); // return to local template list.
-				currentModule.restoreAll();
-				currentModule.clearAllBoxes();
-
+				in.close();		
+				if (resource.getImageURL() != null) {
+					URL imageURL = new URL(resource.getImageURL());
+					File visualFile = new File(URLHelper.mergePath(newTemplate.getTemplateRealPath(), newTemplate.getVisualFile()));
+					RenderedImage image = JAI.create("url", imageURL);
+					out = new FileOutputStream(visualFile);
+					JAI.create("encode", image, out, "png", null);
+					out.close(); 
+				}
+				newTemplate.getRenderer(ctx); // deploy template
+				globalContext.addTemplate(newTemplate.getName(), false);
+				PageConfiguration.getInstance(globalContext).loadTemplate(globalContext);
+				imported=true;				
 			} catch (Exception e) {
 				e.printStackTrace();
-				newTemplate.delete();
 				return e.getMessage();
 			} finally {
 				if (in != null) {
@@ -137,7 +148,38 @@ public class MarketAction extends AbstractModuleAction {
 				}
 			}
 		}
+		
+		if (imported) {
+			TemplateFactory.clearTemplate(application);
+			LocalResourceFactory localResourceFactory = LocalResourceFactory.getInstance(globalContext);
+			localResourceFactory.clear();
+			messageRepository.setGlobalMessageAndNotification(ctx, new GenericMessage(i18nAccess.getText("market.message.imported", new String[][] { { "name", resource.getName() }, {"type",resource.getType()}}), GenericMessage.INFO));
+		} else {
+			messageRepository.setGlobalMessageAndNotification(ctx, new GenericMessage(i18nAccess.getText("market.message.not-imported"), GenericMessage.ERROR));
+		}
 
+		return null;
+	}
+	
+	public static String performDelete(RequestService rs, ServletContext application, ContentContext ctx, GlobalContext globalContext, MessageRepository messageRepository, I18nAccess i18nAccess) throws IOException {		
+		String id = rs.getParameter("lid",null);
+		if (id==null) {
+			return "bad request structure, need 'lid' as parameter";
+		}
+		LocalResourceFactory localResourceFactory = LocalResourceFactory.getInstance(globalContext);
+		IRemoteResource resource = localResourceFactory.getLocalResource(ctx, id);
+		if (resource == null) {
+			return "resource not found : "+id;
+		}
+		if (resource.getType().equals(IRemoteResource.TYPE_TEMPLATE)) {
+			Template template = TemplateFactory.getDiskTemplate(application, resource.getName());
+			if (template != null) {
+				template.delete();				
+			}
+			TemplateFactory.clearTemplate(application);
+			localResourceFactory.clear();
+		}		
+		
 		return null;
 	}
 

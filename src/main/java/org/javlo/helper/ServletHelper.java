@@ -1,12 +1,17 @@
 package org.javlo.helper;
 
 import java.io.IOException;
+import java.util.Arrays;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.Map;
 
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import org.apache.http.HttpResponse;
 import org.javlo.actions.ActionManager;
 import org.javlo.context.ContentContext;
 import org.javlo.context.EditContext;
@@ -21,7 +26,6 @@ import org.javlo.service.ContentService;
 import org.javlo.service.NotificationService;
 import org.javlo.service.RequestService;
 import org.javlo.template.Template;
-import org.javlo.tracking.Track;
 
 public class ServletHelper {
 
@@ -59,12 +63,33 @@ public class ServletHelper {
 		if (globalContext.isSpacialAccessCode(new Code(requestService.getParameter(URLHelper.SPACIAL_RIGHT_CODE_KEY, "no-code")))) {
 			specialRightON = true;
 		}
+		
+		List<String> actions = new LinkedList<String>();
+		List<String> actionsKey = new LinkedList<String>();
+		Map<String, String[]> params = requestService.getParameterMap();
+		
+		Collection<String> keys = params.keySet();
+		for (String key : keys) {			
+			if (key.startsWith("webaction")) {				
+				actionsKey.add(key);
+			}
+		}
+		if (actionsKey.size() > 1) {
+			Collections.sort(actionsKey);
+			for (String key : actionsKey) {
+				actions.addAll(requestService.getParameterListValues(key, Collections.EMPTY_LIST));
+			}
+		} else {
+			actions.addAll(requestService.getParameterListValues("webaction", Collections.EMPTY_LIST));
+		}		
 
-		String[] actions = requestService.getParameterValues("webaction", null);
-		if (actions == null) {
+		//String[] actions = requestService.getParameterValues("webaction", null);
+		
+		if (actions.size() == 0) {
 			return null;
 		}
-		for (String action : actions) {
+		
+		for (String action : actions) {			
 			EditContext editCtx = EditContext.getInstance(globalContext, ctx.getRequest().getSession());
 			if ((ctx.getRequest().getServletPath().equals("/edit") || ctx.getRequest().getServletPath().equals("/admin")) && (editCtx.getUserPrincipal() == null && !specialRightON)) {
 				logger.warning("block action : '" + action + "' because user is not logged.");
@@ -77,7 +102,7 @@ public class ServletHelper {
 			}
 		}
 
-		return StringHelper.arrayToString(actions, ",");
+		return StringHelper.collectionToString(actions, ",");
 	}
 
 	public static final void prepareModule(ContentContext ctx) throws Exception {

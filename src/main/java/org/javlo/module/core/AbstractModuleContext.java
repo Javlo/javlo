@@ -2,11 +2,13 @@ package org.javlo.module.core;
 
 import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.logging.Logger;
 
 import javax.servlet.http.HttpSession;
 
+import org.javlo.bean.Link;
 import org.javlo.bean.LinkToRenderer;
 import org.javlo.context.GlobalContext;
 import org.javlo.i18n.I18nAccess;
@@ -24,15 +26,18 @@ public abstract class AbstractModuleContext {
 	private static final String KEY = "moduleContext";
 	protected I18nAccess i18nAccess = null;
 	protected Module module;
+	protected GlobalContext globalContext;
 	private String currentLink;
+	private String renderer;
 
-	public static final AbstractModuleContext getInstance(HttpSession session, GlobalContext globalContext, Module module, Class<? extends AbstractModuleContext> implementationClass) throws FileNotFoundException, IOException, InstantiationException, IllegalAccessException {		
+	public static final AbstractModuleContext getInstance(HttpSession session, GlobalContext globalContext, Module module, Class<? extends AbstractModuleContext> implementationClass) throws FileNotFoundException, IOException, InstantiationException, IllegalAccessException {
 		final String KEY = implementationClass.getName() + '_' + globalContext.getContextKey();
 		Object context = session.getAttribute(KEY);
 		if (context == null) {
 			AbstractModuleContext outCtx = implementationClass.newInstance();
 			outCtx.i18nAccess = I18nAccess.getInstance(globalContext, session);
 			outCtx.module = module;
+			outCtx.globalContext = globalContext;
 			outCtx.init();
 			session.setAttribute(KEY, outCtx);
 			context = outCtx;
@@ -41,8 +46,8 @@ public abstract class AbstractModuleContext {
 		return (AbstractModuleContext) context;
 	}
 
-	public  static final AbstractModuleContext getCurrentInstance(HttpSession session) {
-		AbstractModuleContext outContext = (AbstractModuleContext)session.getAttribute(getKey());				
+	public static final AbstractModuleContext getCurrentInstance(HttpSession session) {
+		AbstractModuleContext outContext = (AbstractModuleContext) session.getAttribute(getKey());
 		return outContext;
 	}
 
@@ -56,6 +61,23 @@ public abstract class AbstractModuleContext {
 	 * @return
 	 */
 	public abstract List<LinkToRenderer> getNavigation();
+
+	private static void createFlatNavigation(List<LinkToRenderer> outList, LinkToRenderer link) {
+		outList.add(link);
+		if (link.getChildren() != null) {
+			for (Link linkToRenderer : link.getChildren()) {
+				createFlatNavigation(outList, (LinkToRenderer) linkToRenderer);
+			}
+		}
+	}
+
+	public List<LinkToRenderer> getFlatNavigation() {
+		List<LinkToRenderer> flatNavigation = new LinkedList<LinkToRenderer>();
+		for (LinkToRenderer link : getNavigation()) {
+			createFlatNavigation(flatNavigation, link);
+		}
+		return flatNavigation;
+	}
 
 	public abstract LinkToRenderer getHomeLink();
 
@@ -83,7 +105,13 @@ public abstract class AbstractModuleContext {
 	 * @param renderer
 	 *            link to a jsp file.
 	 */
-	public void setRendererFromNavigation(String renderer) {
+	public void setRendererFromNavigation(String renderer) {		
 		module.setRenderer(renderer);
+		this.renderer = renderer;
 	}
+
+	public String getRenderer() {
+		return renderer;
+	}
+
 }

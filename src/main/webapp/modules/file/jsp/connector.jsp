@@ -16,7 +16,6 @@ private synchronized JavloELFinder getELFinder(HttpSession session, String root)
 		sessionELFinders = new HashMap<String, JavloELFinder>();
 		session.setAttribute(SESSION_ATTRIBUTE+root, sessionELFinders);
 	}
-
 	JavloELFinder elfinder = sessionELFinders.get(root);
 	if (elfinder == null) {
 		elfinder = new org.javlo.module.file.JavloELFinder(root, session.getServletContext());

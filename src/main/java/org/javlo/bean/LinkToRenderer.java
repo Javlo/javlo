@@ -1,5 +1,6 @@
 package org.javlo.bean;
 
+import java.util.List;
 import java.util.Map;
 
 /**
@@ -10,13 +11,19 @@ import java.util.Map;
 public class LinkToRenderer extends Link {
 	
 	protected String renderer;
-	protected String name;
-	
+	protected String name;	
+
+	public LinkToRenderer(String label, String name, String renderer, LinkToRenderer parent,  List<? extends LinkToRenderer> children) {
+		super("?webaction=changeRenderer&page="+name, label, label, parent, children);
+		this.renderer = renderer;
+		this.name = name;		
+	}
 	public LinkToRenderer(String label, String name, String renderer) {
 		super("?webaction=changeRenderer&page="+name, label, label);
 		this.renderer = renderer;
 		this.name = name;
-	}
+		
+	}	
 	public LinkToRenderer(String label, String name, String renderer, Map params) {
 		super("?webaction=changeRenderer&page="+name, label, label);		
 
@@ -40,7 +47,5 @@ public class LinkToRenderer extends Link {
 	public void setName(String name) {
 		this.name = name;
 	}
-	
-	
 
 }
