@@ -645,7 +645,19 @@ ul,li {
 }
 
 /*** navigation ***/
-.navigation .children a {
+.navigation li li a, .navigation li li span {
+	padding-left: 48px;
+}
+
+.navigation li span {
+ 	color: #333333;
+    display: block;
+    font-size: 12px;
+    font-weight: bold;
+    padding: 5px 0 5px 30px;
+}
+
+.navigation .children a  {
 	padding-left: 16px;
 }
 
@@ -897,14 +909,14 @@ body.previewEdit {
 }
 
 .form-list li {
-	margin: 10px 10px 10px 0;
+	margin: 10px 6px 0 0;
     border-radius: 3px 3px 3px 3px;
     border: 1px solid #CCCCCC;    
     position: relative;
     background: none repeat scroll 0 0 #FCFCFC;
     box-shadow: 1px 1px 2px #DDDDDD;
     display: inline-block;
-    width: 680px;    
+    width: 535px;    
 }
 
 .form-list li .body {
@@ -934,12 +946,12 @@ body.previewEdit {
 }
 
 .form-list .line textarea {
-	width: 300px;
+	width: 158px;
 	height: 100px;
 }
 
 .form-list .line input {
-	width: 300px;
+	width: 158px;
 }
 
 .form-list .line {

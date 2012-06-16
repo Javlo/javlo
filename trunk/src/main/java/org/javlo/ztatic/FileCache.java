@@ -8,10 +8,10 @@ import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
-import java.io.ObjectInputStream;
 import java.io.OutputStream;
 import java.io.Serializable;
 import java.util.Collection;
+import java.util.Date;
 import java.util.logging.Logger;
 
 import javax.servlet.ServletContext;
@@ -190,6 +190,7 @@ public class FileCache {
 	 */
 	public InputStream getFileInputStream(String key, String fileName, long latestModificationDate) throws FileNotFoundException {
 		File file = getFileName(key, fileName);
+		
 		if (latestModificationDate > file.lastModified()) {
 			return null;
 		}

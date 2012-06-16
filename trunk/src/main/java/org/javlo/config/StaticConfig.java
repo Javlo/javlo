@@ -1086,7 +1086,15 @@ public class StaticConfig extends Observable {
 	}
 	
 	public String getMarketURL() {
-		return properties.getString("market.url", "http://fa2.noctis.be:8700/market/resources.xml");
+		return properties.getString("market.url", "http://market.javlo.org/market/resources.xml");
+	}
+	
+	public ServletContext getServletContext() {
+		return application;
+	}
+	
+	public String getMarketServerName() {
+		return properties.getString("market.server.name", "javlo.org");
 	}
 
 }

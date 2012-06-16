@@ -55,7 +55,7 @@ public class Module {
 		}
 
 		@Override
-		public Boolean haveRight(HttpSession session, User user) { 
+		public Boolean haveRight(HttpSession session, User user) {
 			return null;
 		}
 
@@ -148,11 +148,11 @@ public class Module {
 			id = "box-" + StringHelper.getRandomId();
 		}
 
-		private String title;
-		private String defaultTitle;
-		private String renderer;
-		private String id;
-		private boolean action;
+		protected String title;
+		protected String defaultTitle;
+		protected String renderer;
+		protected String id;
+		protected boolean action;
 
 		public String getTitle() {
 			return title;
@@ -204,7 +204,13 @@ public class Module {
 		public Module getModule() {
 			return Module.this;
 		}
+	}
 
+	private class NavigationBox extends Box {
+		private NavigationBox(String title, boolean action) {
+			super(title, "/", action);
+			this.renderer = "/jsp/edit/modules/navigation.jsp";
+		}
 	}
 
 	private String name;
@@ -361,18 +367,22 @@ public class Module {
 		if (navigationTitle == null) {
 			navigationTitle = config.get("navigation.title");
 		}
-
-		/* navigation */
 		for (int i = 1; i < 100; i++) {
 			String navigationBaseKey = "navigation." + i;
-			String renderer = config.get(navigationBaseKey + ".renderer");
 
-			if (renderer != null) {
+			if (config.get(navigationBaseKey + ".name") != null) {
+				String renderer = config.get(navigationBaseKey + ".renderer");
+
 				String boxTitle = config.get(navigationBaseKey + ".title." + locale.getLanguage());
 				if (boxTitle == null) {
 					boxTitle = config.get(navigationBaseKey + ".title");
 				}
-				Box box = new Box(boxTitle, renderer, StringHelper.isTrue(config.get(navigationBaseKey + ".action")));
+				Box box;
+				if (renderer == null) {
+					box = new NavigationBox(boxTitle, StringHelper.isTrue(config.get(navigationBaseKey + ".action")));
+				} else {
+					box = new Box(boxTitle, renderer, StringHelper.isTrue(config.get(navigationBaseKey + ".action")));
+				}
 				navigation.add(box);
 				if (config.get(navigationBaseKey + ".name") != null) {
 					boxes.put(config.get(navigationBaseKey + ".name"), box);

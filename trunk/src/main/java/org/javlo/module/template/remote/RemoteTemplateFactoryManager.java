@@ -31,24 +31,24 @@ public class RemoteTemplateFactoryManager {
 		return instance;
 	}
 
-	public List<IRemoteTemplateFactory> getAllFactories(GlobalContext globalContext) throws Exception {
-		List<IRemoteTemplateFactory> outFacotries = new LinkedList<IRemoteTemplateFactory>();
+	public List<IRemoteResourcesFactory> getAllFactories(GlobalContext globalContext) throws Exception {
+		List<IRemoteResourcesFactory> outFacotries = new LinkedList<IRemoteResourcesFactory>();
 		for (String name : ALL_FACTORIES) {
 			outFacotries.add(getRemoteTemplateFactory(globalContext, name));
 		}
 		return outFacotries;
 	}
 
-	public IRemoteTemplateFactory getRemoteTemplateFactory(GlobalContext globalContext, String name) throws Exception {
+	public IRemoteResourcesFactory getRemoteTemplateFactory(GlobalContext globalContext, String name) throws Exception {
 		Cache cache = globalContext.getCache("remote-template");
 		if (cache == null) {
 			logger.severe("cache 'remote-template' not found.");
 			return null;
 		}
-		IRemoteTemplateFactory outFactory = null;
+		IRemoteResourcesFactory outFactory = null;
 		if (cache.get(name) == null) {
 			FileCache fileCache = FileCache.getInstance(globalContext.getServletContext());
-			outFactory = (IRemoteTemplateFactory) fileCache.loadBean(name);
+			outFactory = (IRemoteResourcesFactory) fileCache.loadBean(name);
 			if (outFactory == null) {
 				if (FreeCSSTemplateFactory.NAME.equals(name)) {					
 					outFactory = new FreeCSSTemplateFactory();
@@ -58,7 +58,7 @@ public class RemoteTemplateFactoryManager {
 				}
 			}
 		} else {			
-			outFactory = (IRemoteTemplateFactory) cache.get(name).getValue();
+			outFactory = (IRemoteResourcesFactory) cache.get(name).getValue();
 		}
 
 		return outFactory;

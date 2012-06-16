@@ -18,11 +18,11 @@ import org.javlo.helper.URLHelper;
 import org.javlo.helper.XMLManipulationHelper;
 import org.javlo.helper.XMLManipulationHelper.BadXMLException;
 import org.javlo.helper.XMLManipulationHelper.TagDescription;
-import org.javlo.module.template.remote.IRemoteTemplateFactory;
+import org.javlo.module.template.remote.IRemoteResourcesFactory;
 import org.javlo.module.template.remote.RemoteTemplate;
 import org.javlo.remote.IRemoteResource;
 
-public class FreeCSSTemplateFactory implements IRemoteTemplateFactory {
+public class FreeCSSTemplateFactory implements IRemoteResourcesFactory {
 
 	private static final long serialVersionUID = 1L;
 
@@ -135,12 +135,12 @@ public class FreeCSSTemplateFactory implements IRemoteTemplateFactory {
 	}
 
 	@Override
-	public List<IRemoteResource> getTemplates() {
+	public List<IRemoteResource> getResources() {
 		return templates;
 	}
 	
 	@Override
-	public void setTemplates(List<IRemoteResource> templates) {
+	public void setResources(List<IRemoteResource> templates) {
 		this.templates = templates;
 	}
 
@@ -158,7 +158,7 @@ public class FreeCSSTemplateFactory implements IRemoteTemplateFactory {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-		Collection<IRemoteResource> templates = fact.getTemplates();
+		Collection<IRemoteResource> templates = fact.getResources();
 		for (IRemoteResource iRemoteTemplate : templates) {
 			System.out.println("");
 			System.out.println("  name=" + iRemoteTemplate.getName());
@@ -184,8 +184,8 @@ public class FreeCSSTemplateFactory implements IRemoteTemplateFactory {
 	}
 
 	@Override
-	public IRemoteResource getTemplate(String name) {
-		Collection<IRemoteResource> templates = getTemplates();
+	public IRemoteResource getResource(String name) {
+		Collection<IRemoteResource> templates = getResources();
 		for (IRemoteResource template : templates) {
 			if (template.getName().equals(name)) {
 				return template;

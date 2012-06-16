@@ -146,7 +146,11 @@ public class FileAction extends AbstractModuleAction {
 				LinkToRenderer lnk = fileModuleContext.getHomeLink();
 				fileModuleContext.getNavigation().add(lnk);
 				fileModuleContext.setCurrentLink(lnk.getName());
-				modulesContext.getCurrentModule().setToolsRenderer("/jsp/actions.jsp");
+				if (ctx.getRequest().getParameter("name")==null) {
+					modulesContext.getCurrentModule().setToolsRenderer(null);
+				} else {
+					modulesContext.getCurrentModule().setToolsRenderer("/jsp/actions.jsp");
+				}
 			}			
 		}
 
@@ -172,7 +176,7 @@ public class FileAction extends AbstractModuleAction {
 		return msg;
 	}
 
-	public String performBrowse(HttpServletRequest request) {
+	public String performBrowse(HttpServletRequest request, Module currentModule) {		
 		request.setAttribute("changeRoot", "true");
 		return null;
 	}

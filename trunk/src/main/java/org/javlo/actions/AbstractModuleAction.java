@@ -21,6 +21,7 @@ public abstract class AbstractModuleAction implements IModuleAction {
 
 	@Override
 	public String prepare(ContentContext ctx, ModulesContext modulesContext) throws Exception {
+		getModuleContext(ctx.getRequest().getSession(), modulesContext.getCurrentModule()); // load module context
 		GlobalContext globalContext = GlobalContext.getInstance(ctx.getRequest());
 		I18nAccess i18nAccess = I18nAccess.getInstance(ctx.getRequest());
 		if (i18nAccess.getCurrentModule().equals(modulesContext.getCurrentModule())) {
@@ -43,8 +44,8 @@ public abstract class AbstractModuleAction implements IModuleAction {
 		if (page == null) {
 			return "bad request structure : need 'page' parameter.";
 		}
-		List<LinkToRenderer> links = getModuleContext(rs.getRequest().getSession(), currentModule).getNavigation();
-		for (LinkToRenderer linkToRenderer : links) {			
+		List<LinkToRenderer> links = getModuleContext(rs.getRequest().getSession(), currentModule).getFlatNavigation();		
+		for (LinkToRenderer linkToRenderer : links) {		
 			if (page.equals(linkToRenderer.getName())) {				
 				getModuleContext(rs.getRequest().getSession(), currentModule).setCurrentLink(linkToRenderer.getName());
 				getModuleContext(rs.getRequest().getSession(), currentModule).setRendererFromNavigation(linkToRenderer.getRenderer());

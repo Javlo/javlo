@@ -20,6 +20,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import org.apache.commons.fileupload.FileItem;
+import org.apache.commons.io.FileUtils;
 import org.javlo.helper.ResourceHelper;
 import org.javlo.helper.StringHelper;
 import org.javlo.helper.URLHelper;
@@ -221,12 +222,16 @@ public abstract class ELFinder {
 
 	protected abstract void createDir(String folderId, String fileName, Map<String, Object> response);
 
-	private void deleteFile(String[] filesHash, Map<String, Object> apiResponse) {
+	private void deleteFile(String[] filesHash, Map<String, Object> apiResponse) throws IOException {
 		Collection<ELFile> deletedFiles = new LinkedList<ELFile>();
 		for (String fileHash : filesHash) {
 			JavloELFile file = (JavloELFile) hashToFile(fileHash);
 			if (file.getFile().exists()) {
-				file.getFile().delete();
+				if (file.isDirectory()) {
+					FileUtils.deleteDirectory(file.getFile());
+				} else {
+					file.getFile().delete();
+				}
 				deletedFiles.add(file);
 			}
 		}

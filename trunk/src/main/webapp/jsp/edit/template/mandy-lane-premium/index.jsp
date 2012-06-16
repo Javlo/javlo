@@ -163,7 +163,7 @@
 		</c:if>
 	
 		<c:if test="${currentModule.renderer != null}">
-			<div id="main-renderer">
+			<div id="main-renderer">			
 			<jsp:include page="${currentModule.renderer}" />
 			</div>
 		</c:if>

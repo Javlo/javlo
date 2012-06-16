@@ -23,18 +23,16 @@ import org.javlo.actions.AbstractModuleAction;
 import org.javlo.config.StaticConfig;
 import org.javlo.context.ContentContext;
 import org.javlo.context.GlobalContext;
-import org.javlo.helper.LangHelper;
 import org.javlo.helper.StringHelper;
 import org.javlo.helper.URLHelper;
 import org.javlo.helper.XMLManipulationHelper.BadXMLException;
 import org.javlo.i18n.I18nAccess;
 import org.javlo.message.GenericMessage;
 import org.javlo.message.MessageRepository;
-import org.javlo.module.core.AbstractModuleContext;
 import org.javlo.module.core.Module;
 import org.javlo.module.core.ModulesContext;
 import org.javlo.module.file.FileModuleContext;
-import org.javlo.module.template.remote.IRemoteTemplateFactory;
+import org.javlo.module.template.remote.IRemoteResourcesFactory;
 import org.javlo.module.template.remote.RemoteTemplateFactoryManager;
 import org.javlo.remote.IRemoteResource;
 import org.javlo.service.RequestService;
@@ -55,18 +53,26 @@ public class TemplateAction extends AbstractModuleAction {
 		GlobalContext globalContext = GlobalContext.getInstance(ctx.getRequest());
 		Module module = ModulesContext.getInstance(ctx.getRequest().getSession(), globalContext).getCurrentModule();
 		RequestService requestService = RequestService.getInstance(ctx.getRequest());
-		TemplateContext.getInstance(ctx.getRequest().getSession(), globalContext, module);
+		TemplateContext templateContext = TemplateContext.getInstance(ctx.getRequest().getSession(), globalContext, module);
 
 		Collection<Template> allTemplate = TemplateFactory.getAllDiskTemplates(ctx.getRequest().getSession().getServletContext());
-		Collection<Template.TemplateBean> templates = new LinkedList<Template.TemplateBean>();
+		Collection<String> contextTemplates = globalContext.getTemplates();
+
+		Collection<Template.TemplateBean> templates = new LinkedList<Template.TemplateBean>();		
+		if (templateContext.getCurrentLink().equals(TemplateContext.MY_TEMPLATES_LINK.getUrl())) {
+			ctx.getRequest().setAttribute("nobrowse", "true");
+		}
 		for (Template template : allTemplate) {
 			if (!template.isTemplateInWebapp(ctx)) {
 				template.importTemplateInWebapp(ctx);
 			}
-			templates.add(new Template.TemplateBean(ctx, template));
+			if (!templateContext.getCurrentLink().equals(TemplateContext.MY_TEMPLATES_LINK.getUrl()) || contextTemplates.contains(template.getName())) {
+				templates.add(new Template.TemplateBean(ctx, template));
+			}
 		}
 		ctx.getRequest().setAttribute("templates", templates);
 
+		Map<String, String> params = new HashMap<String, String>();
 		String templateName = requestService.getParameter("name", null);
 		if (templateName != null) {
 			Template template = TemplateFactory.getDiskTemplate(ctx.getRequest().getSession().getServletContext(), templateName, StringHelper.isTrue(ctx.getRequest().getParameter("mailing")));
@@ -76,23 +82,26 @@ public class TemplateAction extends AbstractModuleAction {
 				module.restoreAll();
 			} else {
 				ctx.getRequest().setAttribute("currentTemplate", new Template.TemplateBean(ctx, template));
-
-				Map<String, String> params = new HashMap<String, String>();
 				params.put("name", templateName);
 
 				FileModuleContext fileModuleContext = FileModuleContext.getInstance(ctx.getRequest());
 				fileModuleContext.clear();
 				fileModuleContext.setRoot(template.getTemplateRealPath());
-				fileModuleContext.setTitle("<a href=\"" + URLHelper.createModuleURL(ctx, ctx.getPath(), "template", params) + "\">" + template.getId() + "</a>");
-
-				params.clear();
-				params.put("webaction", "browse");
-				ctx.getRequest().setAttribute("fileURL", URLHelper.createInterModuleURL(ctx, ctx.getPath(), FileModuleContext.MODULE_NAME, params));
+				fileModuleContext.setTitle("<a href=\"" + URLHelper.createModuleURL(ctx, ctx.getPath(), TemplateContext.NAME, params) + "\">" + template.getId() + "</a>");
 			}
 		} else if (requestService.getParameter("list", null) == null) {
+			FileModuleContext fileModuleContext = FileModuleContext.getInstance(ctx.getRequest());
+			fileModuleContext.clear();
+			fileModuleContext.setRoot(globalContext.getStaticConfig().getTemplateFolder());
+			I18nAccess i18nAccess = I18nAccess.getInstance(ctx.getRequest());
+			fileModuleContext.setTitle("<a href=\"" + URLHelper.createModuleURL(ctx, ctx.getPath(), TemplateContext.NAME, params) + "\">" + i18nAccess.getText("template.action.browse") + "</a>");
 			module.clearAllBoxes();
 			module.restoreAll();
 		}
+
+		params.clear();
+		params.put("webaction", "browse");
+		ctx.getRequest().setAttribute("fileURL", URLHelper.createInterModuleURL(ctx, ctx.getPath(), FileModuleContext.MODULE_NAME, params));
 
 		/** choose template if we come from admin module **/
 		if (moduleContext.getFromModule() != null && moduleContext.getFromModule().getName().equals("admin")) {
@@ -112,7 +121,7 @@ public class TemplateAction extends AbstractModuleAction {
 		} else {
 			request.setAttribute("currentTemplate", new Template.TemplateBean(ctx, template));
 			module.setRenderer(null);
-			//module.setToolsRenderer(null);
+			// module.setToolsRenderer(null);
 			module.clearAllBoxes();
 			try {
 				template.getRenderer(ctx); // prepare ids list
@@ -188,7 +197,7 @@ public class TemplateAction extends AbstractModuleAction {
 		}
 		TemplateContext.getInstance(session, globalContext, currentModule).setCurrentLink(list);
 		if (list != null) {
-			IRemoteTemplateFactory tempFact = RemoteTemplateFactoryManager.getInstance(session.getServletContext()).getRemoteTemplateFactory(globalContext, list);
+			IRemoteResourcesFactory tempFact = RemoteTemplateFactoryManager.getInstance(session.getServletContext()).getRemoteTemplateFactory(globalContext, list);
 			session.setAttribute("templateFactory", tempFact);
 			if (tempFact != null) {
 				try {
@@ -230,8 +239,8 @@ public class TemplateAction extends AbstractModuleAction {
 		TemplateContext templateContext = TemplateContext.getInstance(session, globalContext, currentModule);
 		templateContext.setCurrentLink(list);
 		if (list != null) {
-			IRemoteTemplateFactory tempFact = RemoteTemplateFactoryManager.getInstance(session.getServletContext()).getRemoteTemplateFactory(globalContext, list);
-			IRemoteResource template = tempFact.getTemplate(templateName);
+			IRemoteResourcesFactory tempFact = RemoteTemplateFactoryManager.getInstance(session.getServletContext()).getRemoteTemplateFactory(globalContext, list);
+			IRemoteResource template = tempFact.getResource(templateName);
 			if (template == null) {
 				return "template not found : " + templateName;
 			}

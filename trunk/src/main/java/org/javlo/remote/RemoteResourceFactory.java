@@ -4,24 +4,20 @@ import java.beans.XMLDecoder;
 import java.io.IOException;
 import java.net.URL;
 import java.net.URLConnection;
-import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.LinkedList;
 import java.util.List;
+import java.util.Map;
 import java.util.logging.Logger;
 
-import org.javlo.component.core.ComponentFactory;
-import org.javlo.component.core.IContentVisualComponent;
 import org.javlo.config.StaticConfig;
 import org.javlo.context.ContentContext;
 import org.javlo.context.GlobalContext;
-import org.javlo.template.Template;
-import org.javlo.template.TemplateFactory;
 
-public class RemoteResourceFactory {
+public class RemoteResourceFactory extends AbstractResourceFactory {
 
 	private GlobalContext globalContext;
 	private RemoteResourceList remoteResources = null;
-	private RemoteResourceList localeResources = null;
-
 	private static Logger logger = Logger.getLogger(RemoteResourceFactory.class.getName());
 
 	private static final String KEY = RemoteResourceFactory.class.getName();
@@ -36,49 +32,78 @@ public class RemoteResourceFactory {
 		return outFact;
 	}
 
-	public RemoteResourceList getLocalResources(ContentContext ctx) {
-		if (remoteResources == null) {
-			List<IRemoteResource> list = new ArrayList<IRemoteResource>();
-			List<Template> templates;
-			try {
-				templates = TemplateFactory.getAllDiskTemplates(globalContext.getServletContext());
-				for (Template template : templates) {
-					list.add(new Template.TemplateBean(ctx, template));
+	@Override
+	public RemoteResourceList getResources(ContentContext ctx) throws IOException {
+		return getResources();		
+	}
+	
+	public List<String> getTypes() throws IOException {
+		List<String> outTypes = new LinkedList<String>();
+		List<IRemoteResource> resources = getResources().getList();
+		for (IRemoteResource resource : resources) {
+			if (!outTypes.contains(resource.getType())) {
+				outTypes.add(resource.getType());
+			}
+		}
+		return outTypes;
+	}
+	
+	public List<String> getCategories(String type) throws IOException {
+		List<String> outCategories = new LinkedList<String>();
+		List<IRemoteResource> resources = getResources().getList();
+		for (IRemoteResource resource : resources) {
+			if (resource.getType().equals(type)) {
+				if (!outCategories.contains(resource.getCategory())) {
+					outCategories.add(resource.getCategory());
 				}
-			} catch (Exception e) {
-				e.printStackTrace();
-			}
-			remoteResources = new RemoteResourceList();
-			remoteResources.setList(list);
-		}
-		return remoteResources;
-	}
-
-	public IRemoteResource getLocalResource(ContentContext ctx, String name, String type) {
-		List<IRemoteResource> resources = getLocalResources(ctx).getList();
-		for (IRemoteResource iRemoteResource : resources) {
-			if (iRemoteResource.getName().equals(name) && iRemoteResource.getType().equals(type)) {
-				return iRemoteResource;
 			}
 		}
-		return null;
+		return outCategories;
 	}
 
-	public RemoteResourceList loadResources() throws IOException {
-		if (localeResources == null) {
+	
+	public RemoteResourceList getResources() throws IOException {
+		if (remoteResources == null) {
 			StaticConfig staticConfig = StaticConfig.getInstance(globalContext.getServletContext());
 			URL url = new URL(staticConfig.getMarketURL());
 			logger.info("load remote resources from : " + url);
 			URLConnection conn = url.openConnection();
 			XMLDecoder decoder = new XMLDecoder(conn.getInputStream());
-			localeResources = (RemoteResourceList) decoder.readObject();
-			logger.info("resources loaded : " + localeResources.getList().size());
+			remoteResources = (RemoteResourceList) decoder.readObject();
+			
+			/*for (IRemoteResource resource : remoteResources.getList()) {
+				System.out.println("name: "+resource.getName());
+				System.out.println("url: "+resource.getURL());
+				System.out.println("image URL : "+resource.getImageURL());
+				System.out.println("");
+			}*/
+			
+			logger.info("resources loaded : " + remoteResources.getList().size());
 		}
-		return localeResources;
+		return remoteResources;
+	}
+	
+	public Map<String, Map<String, List<IRemoteResource>>> getResourcesAsMap() throws IOException {
+		Map<String, Map<String, List<IRemoteResource>>> outMap = new HashMap<String, Map<String,List<IRemoteResource>>>();
+		List<IRemoteResource> resources = getResources().getList();
+		for (IRemoteResource rse : resources) {
+			Map<String, List<IRemoteResource>> typeMap = outMap.get(rse.getType());
+			if (typeMap == null) {
+				typeMap = new HashMap<String, List<IRemoteResource>>();
+				outMap.put(rse.getType(), typeMap);
+			}
+			List<IRemoteResource> catList = typeMap.get(rse.getCategory());
+			if (catList == null) {
+				catList = new LinkedList<IRemoteResource>();
+				typeMap.put(rse.getCategory(), catList);
+			}
+			catList.add(rse);
+		}
+		return outMap;
 	}
 
-	public IRemoteResource loadResource(String id) throws IOException {
-		List<IRemoteResource> resources = loadResources().getList();
+	public IRemoteResource getResource(ContentContext ctx, String id) throws IOException {
+		List<IRemoteResource> resources = getResources(ctx).getList();
 		for (IRemoteResource iRemoteResource : resources) {
 			if (iRemoteResource.getId().equals(id)) {
 				return iRemoteResource;
@@ -99,8 +124,8 @@ public class RemoteResourceFactory {
 	}*/
 
 	public void clear() {
-		remoteResources = null;
-		localeResources = null;
+		remoteResources = null;	
 	}
+
 
 }

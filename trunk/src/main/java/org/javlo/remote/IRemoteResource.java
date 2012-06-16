@@ -5,6 +5,10 @@ import java.util.Date;
 
 public interface IRemoteResource extends Serializable {
 	
+	public static final String TYPE_TEMPLATE = "template";
+	public static final String TYPE_COMPONENT = "component";
+	public static final String TYPE_MODULE = "module";
+	
 	public String getDownloadURL();
 	
 	public String getImageURL();

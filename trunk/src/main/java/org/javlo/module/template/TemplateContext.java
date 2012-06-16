@@ -14,10 +14,12 @@ import org.javlo.module.core.Module;
 
 public class TemplateContext {
 	
-	private static final String KEY = "templateContext";
-	private static Link HOME_LINK = null;
-	private I18nAccess i18nAccess = null;
-	private Module module;
+	public static final String NAME = "template";
+	
+	private static final String KEY = "templateContext";	
+	public static Link MY_TEMPLATES_LINK = null;
+	public static Link ALL_TEMPLATES_LINK = null;
+	private I18nAccess i18nAccess = null;	
 	private String currentLink;
 	
 	private TemplateContext() {};
@@ -26,9 +28,9 @@ public class TemplateContext {
 		TemplateContext outCtx = (TemplateContext)session.getAttribute(KEY);
 		if (outCtx == null) {
 			outCtx = new TemplateContext();
-			outCtx.i18nAccess = I18nAccess.getInstance(globalContext, session);
-			outCtx.module = module;
-			TemplateContext.HOME_LINK = new Link("home", outCtx.i18nAccess.getText("template.renderer.home"));
+			outCtx.i18nAccess = I18nAccess.getInstance(globalContext, session);			
+			TemplateContext.MY_TEMPLATES_LINK = new Link("mytemplates", outCtx.i18nAccess.getText("template.renderer.home"));
+			TemplateContext.ALL_TEMPLATES_LINK = new Link("allmtemplates", outCtx.i18nAccess.getText("template.renderer.all"));
 			session.setAttribute(KEY, outCtx);
 		}
 		return outCtx;
@@ -36,19 +38,14 @@ public class TemplateContext {
 	
 	public List<Link> getLocalNavigation() {
 		List<Link> outRenderers = new LinkedList<Link>();		
-		outRenderers.add(HOME_LINK);		
+		outRenderers.add(MY_TEMPLATES_LINK);		
+		outRenderers.add(ALL_TEMPLATES_LINK);
 		return outRenderers;
 	}
 	
-	public List<Link> getRemoteNavigation() {
-		List<Link> outRenderers = new LinkedList<Link>();
-		outRenderers.add(new Link("freecsstemplate", "free css template"));
-		return outRenderers;
-	}
-
 	public String getCurrentLink() {
 		if (currentLink == null) {
-			return HOME_LINK.getUrl();
+			return MY_TEMPLATES_LINK.getUrl();
 		}
 		return currentLink;
 	}
