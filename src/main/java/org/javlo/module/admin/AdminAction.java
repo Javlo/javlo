@@ -26,6 +26,7 @@ import org.javlo.context.ContentContext;
 import org.javlo.context.EditContext;
 import org.javlo.context.GlobalContext;
 import org.javlo.context.GlobalContextFactory;
+import org.javlo.helper.LangHelper;
 import org.javlo.helper.PatternHelper;
 import org.javlo.helper.StringHelper;
 import org.javlo.helper.URLHelper;
@@ -35,6 +36,7 @@ import org.javlo.message.MessageRepository;
 import org.javlo.module.core.Module;
 import org.javlo.module.core.ModuleException;
 import org.javlo.module.core.ModulesContext;
+import org.javlo.module.template.TemplateContext;
 import org.javlo.navigation.PageConfiguration;
 import org.javlo.service.ContentService;
 import org.javlo.service.RequestService;
@@ -360,9 +362,12 @@ public class AdminAction extends AbstractModuleAction {
 					}
 				}
 				request.setAttribute("templates", selectedTemplate);
-				request.setAttribute("linkUrl", URLHelper.createInterModuleURL(ctx, ctx.getPath(), "template"));
+				
+				Map<String,String> params = LangHelper.obj(LangHelper.entry("webaction","changeRenderer"), LangHelper.entry("list", "allmtemplates"));
+				
+				request.setAttribute("linkUrl", URLHelper.createInterModuleURL(ctx, ctx.getPath(), "template", params));
 
-				Map<String, String> params = new HashMap<String, String>();
+				params = new HashMap<String, String>();
 				params.put("webaction", "admin.selectTemplate");
 				params.put("context", currentGlobalContext.getContextKey());
 				String backUrl = URLHelper.createModuleURL(ctx, ctx.getPath(), currentModule.getName(), params);

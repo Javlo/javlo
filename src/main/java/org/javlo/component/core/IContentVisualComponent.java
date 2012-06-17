@@ -7,6 +7,7 @@ package org.javlo.component.core;
 import java.io.IOException;
 import java.util.Collection;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 
 import org.javlo.component.config.ComponentConfig;
@@ -593,6 +594,28 @@ public interface IContentVisualComponent  {
      * @return
      */
     public String getClassName();
+    
+    /**
+     * return the version of the component : A.B.C
+     * A : major version, no compatibility with the older data
+     * B : new function but compatibilty with older data
+     * C : bug correction
+     * @return ? if version undefined.
+     */
+    public String getVersion();
+    
+    /**
+     * a description of the component;
+     * @return
+     */
+    public String getDescription(Locale local);
+    
+    /**
+     * authors of the component
+     * @return
+     */
+    public String getAuthors();
+    
     
 
 }
