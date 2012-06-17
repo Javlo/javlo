@@ -9,8 +9,6 @@ import javax.servlet.http.HttpServletRequest;
 
 import org.javlo.service.RequestService;
 
-import sun.reflect.generics.reflectiveObjects.NotImplementedException;
-
 public class RequestParameterMap implements Map<String, Object> {
 
 	RequestService requestService;
@@ -21,7 +19,7 @@ public class RequestParameterMap implements Map<String, Object> {
 
 	@Override
 	public void clear() {
-		throw new NotImplementedException();
+		throw new UnsupportedOperationException();
 	}
 
 	@Override
@@ -42,7 +40,7 @@ public class RequestParameterMap implements Map<String, Object> {
 
 	@Override
 	public Set<java.util.Map.Entry<String, Object>> entrySet() {
-		throw new NotImplementedException();
+		throw new UnsupportedOperationException();
 	}
 
 	@Override
@@ -69,17 +67,17 @@ public class RequestParameterMap implements Map<String, Object> {
 
 	@Override
 	public String put(String key, Object value) {
-		throw new NotImplementedException();
+		throw new UnsupportedOperationException();
 	}
 
 	@Override
 	public void putAll(Map<? extends String, ? extends Object> m) {
-		throw new NotImplementedException();
+		throw new UnsupportedOperationException();
 	}
 
 	@Override
 	public String remove(Object key) {
-		throw new NotImplementedException();
+		throw new UnsupportedOperationException();
 	}
 
 	@Override

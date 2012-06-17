@@ -50,8 +50,6 @@ import org.javlo.context.ContentContext;
 import org.javlo.context.GlobalContext;
 import org.javlo.i18n.I18nAccess;
 
-import sun.misc.BASE64Encoder;
-
 /**
  * @author pvandermaesen
  */
@@ -554,7 +552,7 @@ public class StringHelper {
 		}
 
 		byte raw[] = md.digest(); // step 4
-		String hash = (new BASE64Encoder()).encode(raw); // step 5
+		String hash = Base64.encodeBase64String(raw); // step 5
 		return hash; // step 6
 	}
 
@@ -813,7 +811,7 @@ public class StringHelper {
 		for (int i = 0; i < 8; i++) {
 			b[7 - i] = (byte) (randomBase10 >>> (i * 8));
 		}
-		String base64code = new String(new BASE64Encoder().encode(b));
+		String base64code = Base64.encodeBase64String(b);
 		base64code = base64code.replace('=', '-');
 		base64code = base64code.replace('+', '_');
 		base64code = base64code.replace('/', ',');
@@ -1847,7 +1845,7 @@ public class StringHelper {
 			return null;
 		}
 		if (str.trim().length() == 0) {
-			return Collections.EMPTY_LIST;
+			return Collections.emptyList();
 		}
 		return Arrays.asList(str.split(token));
 	}

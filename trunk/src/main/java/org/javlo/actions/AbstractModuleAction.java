@@ -15,8 +15,6 @@ import org.javlo.module.core.ModulesContext;
 import org.javlo.service.RequestService;
 import org.javlo.user.User;
 
-import sun.reflect.generics.reflectiveObjects.NotImplementedException;
-
 public abstract class AbstractModuleAction implements IModuleAction {
 
 	@Override
@@ -32,7 +30,7 @@ public abstract class AbstractModuleAction implements IModuleAction {
 	
 	@Override
 	public String performSearch(ContentContext ctx, ModulesContext moduleContext, String query) throws Exception {	
-		throw new NotImplementedException();
+		throw new UnsupportedOperationException();
 	}
 	
 	public AbstractModuleContext getModuleContext(HttpSession session, Module module) throws Exception {
