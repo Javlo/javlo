@@ -7,15 +7,13 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-import sun.reflect.generics.reflectiveObjects.NotImplementedException;
-
 public class ReadOnlyMultiMap<K, V> implements Map<K, V> {
 
 	private List<Map<K, V>> maps = new LinkedList<Map<K, V>>();
 
 	@Override
 	public void clear() {
-		throw new NotImplementedException();
+		throw new UnsupportedOperationException();
 	}
 
 	@Override
@@ -78,17 +76,17 @@ public class ReadOnlyMultiMap<K, V> implements Map<K, V> {
 
 	@Override
 	public V put(K key, V value) {
-		throw new NotImplementedException();
+		throw new UnsupportedOperationException();
 	}
 
 	@Override
 	public void putAll(Map<? extends K, ? extends V> m) {
-		throw new NotImplementedException();
+		throw new UnsupportedOperationException();
 	}
 
 	@Override
 	public V remove(Object key) {
-		throw new NotImplementedException();
+		throw new UnsupportedOperationException();
 	}
 
 	@Override

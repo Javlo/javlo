@@ -13,7 +13,6 @@ import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
-import java.io.OutputStream;
 import java.util.logging.Logger;
 
 import javax.imageio.ImageIO;
@@ -23,12 +22,6 @@ import javax.servlet.http.HttpServletRequest;
 import org.javlo.helper.ResourceHelper;
 import org.javlo.helper.StringHelper;
 import org.javlo.template.Template;
-import org.javlo.ztatic.FileCache;
-
-import com.sun.image.codec.jpeg.ImageFormatException;
-import com.sun.image.codec.jpeg.JPEGCodec;
-import com.sun.image.codec.jpeg.JPEGEncodeParam;
-import com.sun.image.codec.jpeg.JPEGImageEncoder;
 
 /**
  * @author pvanderm
@@ -89,37 +82,6 @@ public class ImageHelper {
 		String res = path.replaceAll("\\\\ ", "/");
 		res = res.replaceAll(":", "_");
 		return res;
-	}
-
-	public static void saveToDisk(ServletContext context, String cacheDir, BufferedImage image, String name, int width, int filter) {
-		OutputStream out = null;
-		try {
-			FileCache fc = FileCache.getInstance(context);
-			out = fc.saveFile(createSpecialDirectory(width, filter), name);
-			// FileOutputStream out = new FileOutputStream(file);
-			JPEGImageEncoder encoder = JPEGCodec.createJPEGEncoder(out);
-			JPEGEncodeParam param = JPEGCodec.getDefaultJPEGEncodeParam(image);
-			param.setQuality(DIR_IMAGE_QUALITY, true);
-			encoder.setJPEGEncodeParam(param);
-			encoder.encode(image);
-		} catch (FileNotFoundException e) {
-			e.printStackTrace();
-		} catch (ImageFormatException e) {
-			e.printStackTrace();
-		} catch (IOException e) {
-			e.printStackTrace();
-		} catch (Throwable t) {
-			logger.severe(t.getMessage());
-		} finally {
-			if (out != null) {
-				try {
-					out.close();
-				} catch (IOException e) {
-					e.printStackTrace();
-				}
-			}
-		}
-
 	}
 
 	public static BufferedImage createAbsoluteLittleImage(ServletContext servletContext, String name, int width) throws IOException {

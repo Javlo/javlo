@@ -10,20 +10,19 @@ import java.awt.image.Kernel;
 import java.io.File;
 import java.io.IOException;
 import java.io.OutputStream;
+import java.util.Iterator;
 import java.util.Locale;
 import java.util.logging.Logger;
 
+import javax.imageio.IIOImage;
 import javax.imageio.ImageIO;
+import javax.imageio.ImageWriteParam;
+import javax.imageio.ImageWriter;
 import javax.imageio.plugins.jpeg.JPEGImageWriteParam;
-import javax.imageio.stream.ImageOutputStream;
 
 import org.javlo.helper.StringHelper;
 
 import com.jhlabs.image.RGBAdjustFilter;
-import com.sun.corba.se.spi.ior.Writeable;
-import com.sun.image.codec.jpeg.JPEGCodec;
-import com.sun.image.codec.jpeg.JPEGEncodeParam;
-import com.sun.image.codec.jpeg.JPEGImageEncoder;
 
 public class ImageEngine {
 	
@@ -862,19 +861,22 @@ public class ImageEngine {
 	}
 
 	public static void compressJpegFile(BufferedImage image, OutputStream out, double compressionQuality) {
-		try {
-
-			JPEGImageEncoder encoder = JPEGCodec.createJPEGEncoder(out);
-			JPEGEncodeParam param = encoder.getDefaultJPEGEncodeParam(image);
-			param.setQuality((float) compressionQuality, false); // 90%
-			// quality
-			// JPEG
-			encoder.setJPEGEncodeParam(param);
-			encoder.encode(image);
-			out.close();
-
-		} catch (IOException e) {
-			e.printStackTrace();
+		Iterator<ImageWriter> iter = ImageIO.getImageWritersByFormatName("jpeg");
+		if (iter.hasNext()) {
+			ImageWriter writer = iter.next();
+			ImageWriteParam param = writer.getDefaultWriteParam();
+			
+			param.setCompressionMode(ImageWriteParam.MODE_EXPLICIT);
+			param.setCompressionQuality((float) compressionQuality);
+			
+			writer.setOutput(out);
+			IIOImage img = new IIOImage(image, null, null);
+			try {
+				writer.write(null, img, param);
+			} catch (IOException e) {
+				e.printStackTrace();
+			}
+			writer.dispose();
 		}
 	}
 
