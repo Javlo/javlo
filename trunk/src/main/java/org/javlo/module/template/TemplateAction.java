@@ -104,7 +104,7 @@ public class TemplateAction extends AbstractModuleAction {
 		ctx.getRequest().setAttribute("fileURL", URLHelper.createInterModuleURL(ctx, ctx.getPath(), FileModuleContext.MODULE_NAME, params));
 
 		/** choose template if we come from admin module **/
-		if (moduleContext.getFromModule() != null && moduleContext.getFromModule().getName().equals("admin")) {
+		if (moduleContext.getFromModule() != null && moduleContext.getFromModule().getName().equals("admin")) {			
 			ctx.getRequest().setAttribute("selectUrl", moduleContext.getFromModule().getBackUrl());
 		}
 

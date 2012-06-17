@@ -2,6 +2,7 @@ package org.javlo.servlet;
 
 import java.beans.XMLEncoder;
 import java.io.BufferedOutputStream;
+import java.io.Serializable;
 import java.util.logging.Logger;
 
 import javax.servlet.ServletException;
@@ -39,24 +40,37 @@ public class RemoteResourceServlet extends HttpServlet {
 		process(request, response);
 	}
 
-	private void process(HttpServletRequest request, HttpServletResponse response) throws ServletException {
-		boolean isBin = StringHelper.getFileExtension(request.getPathInfo()).equalsIgnoreCase("bin");
+	private void process(HttpServletRequest request, HttpServletResponse response) throws ServletException {		
 		GlobalContext globalContext = GlobalContext.getInstance(request);
 		LocalResourceFactory localFactory = LocalResourceFactory.getInstance(globalContext);
+		
+		String[] paths = request.getPathInfo().split("/");
+		if (paths.length < 1 || paths.length > 2) {
+			response.setStatus(HttpServletResponse.SC_NOT_FOUND, "bad path structure : sample :/type/category.xml.");
+			return;
+		}
+		
+		Serializable obj=null;
+		
+		if (paths.length == 1) { // command
+			String command = paths[0];
+			if (command.equalsIgnoreCase("types")) {
+				obj = localFactory.getTypes();
+			}
+		}
+		
+		if (obj == null) {
+				response.setStatus(HttpServletResponse.SC_NOT_FOUND, "path not found.");
+				return;
+		}
 
 		ContentContext ctx;
 		try {
 			ctx = ContentContext.getContentContext(request, response);
-			if (!isBin) {
-				XMLEncoder encoder = new XMLEncoder(new BufferedOutputStream(response.getOutputStream()));				
-				RemoteResourceList list = localFactory.getResourcesForProxy(ctx);
-				encoder.writeObject(list);				
-				encoder.flush();
-				encoder.close();
-			} else {
-				// bin encodeur
-			}
-		} catch (Exception e) {
+			XMLEncoder encoder = new XMLEncoder(new BufferedOutputStream(response.getOutputStream()));			
+			encoder.writeObject(obj);				
+			encoder.flush();
+			encoder.close();		} catch (Exception e) {
 			e.printStackTrace();
 			throw new ServletException(e);
 		}

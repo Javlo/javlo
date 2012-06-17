@@ -1646,6 +1646,21 @@ public abstract class AbstractVisualComponent implements IContentVisualComponent
 	public boolean isValueProperties() {
 		return false;
 	}
+	
+	@Override
+	public String getVersion() {	
+		return "?";
+	}
+	
+	@Override
+	public String getDescription(Locale local) {	
+		return "";
+	}
+	
+	@Override
+	public String getAuthors() {	
+		return "";
+	}
 
 	// generate compilation error : use for refactoring
 

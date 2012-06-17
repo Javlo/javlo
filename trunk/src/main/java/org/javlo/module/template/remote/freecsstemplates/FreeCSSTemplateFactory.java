@@ -19,8 +19,8 @@ import org.javlo.helper.XMLManipulationHelper;
 import org.javlo.helper.XMLManipulationHelper.BadXMLException;
 import org.javlo.helper.XMLManipulationHelper.TagDescription;
 import org.javlo.module.template.remote.IRemoteResourcesFactory;
-import org.javlo.module.template.remote.RemoteTemplate;
 import org.javlo.remote.IRemoteResource;
+import org.javlo.remote.RemoteBean;
 
 public class FreeCSSTemplateFactory implements IRemoteResourcesFactory {
 
@@ -52,7 +52,7 @@ public class FreeCSSTemplateFactory implements IRemoteResourcesFactory {
 	private List<IRemoteResource> extractTemplate(String page) throws BadXMLException {
 		List<IRemoteResource> templates = new LinkedList<IRemoteResource>();
 		TagDescription[] tags = XMLManipulationHelper.searchAllTag(page, false);
-		RemoteTemplate template = null;
+		RemoteBean template = null;
 		for (TagDescription tag : tags) {
 			if (tag.getName().equals("div") && "ad".equalsIgnoreCase(tag.getAttributes().get("class"))) {				
 				setSponsors(tag.getInside(page));
@@ -63,7 +63,7 @@ public class FreeCSSTemplateFactory implements IRemoteResourcesFactory {
 					template.setAuthors("Free CSS template.");
 					templates.add(template);
 				}
-				template = new RemoteTemplate();
+				template = new RemoteBean();
 				template.setCategory("Free CSS template");
 				List<TagDescription> children = XMLManipulationHelper.searchChildren(tags, tag);
 				String fieldName = null;

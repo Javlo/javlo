@@ -6,7 +6,7 @@ import java.util.List;
 
 import org.javlo.remote.IRemoteResource;
 
-public interface IRemoteTemplateFactory extends Serializable {
+public interface IRemoteResourcesFactory extends Serializable {
 	
 	public String getName();
 	
@@ -14,14 +14,14 @@ public interface IRemoteTemplateFactory extends Serializable {
 	
 	public boolean checkConnection();
 	
-	public List<IRemoteResource> getTemplates();
+	public List<IRemoteResource> getResources();
 	
-	public IRemoteResource getTemplate(String name);
+	public IRemoteResource getResource(String name);
 	
 	public Date latestUpdate();
 	
 	public String getSponsors();
 
-	void setTemplates(List<IRemoteResource> templates);
+	void setResources(List<IRemoteResource> resources);
 
 }

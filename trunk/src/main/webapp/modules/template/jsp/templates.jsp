@@ -25,8 +25,8 @@
                     <span>${template.creationDate}</span>
                 </p>
                 <p>
-                	<a href="${template.downloadURL}">${i18n.edit['admin.download-template']}</a>
-                </p>
+                	<a href="${template.downloadURL}">${i18n.edit['admin.download-template']}</a>                	
+                </p>                
                 <p class="menu">                	
                     <a href="${template.viewUrl}" class="view" title="${template.name}"></a>
                     <a href="${info.currentURL}?webaction=goEditTemplate&name=${template.name}&mailing=${template.mailing}" class="edit"></a>
@@ -35,7 +35,7 @@
                     <a href="${selectUrl}&template=${template.name}&mailing=${template.mailing}" class="select" title="select"></a>
                     </c:if>
                     <c:if test="${not template.valid}">
-                    <a href="${selectUrl}?webaction=validate&name=${template.name}&mailing=${template.mailing}" class="validate" title="validate"></a>
+                    <a href="${info.currentURL}?webaction=validate&name=${template.name}&mailing=${template.mailing}" class="validate" title="validate"></a>
                     </c:if>
                 </p>                
             </div><!--info-->

@@ -7,17 +7,40 @@
 	<version>2.0</version>
 	<packaging>war</packaging>
 	<name>Javlo 2</name>
+	<url>http://www.javlo.org/</url>
+    <inceptionYear>2012</inceptionYear>
+    	
 	<description>
 		Javlo is a easy to use and deploy website content management system. Javlo helps content managers worldwide to create and maintain beautiful websites fast and efficiently.
 		The browser based user interface features configurable editors for structured content with well defined fields.
 		A sophisticated template engine enforces a structured layout, W3C standard compliance and accessibility features for all content.
 	 </description>
+	 
+	 <developers>
+        <developer>
+            <name>Patrick Vandermaesen</name>
+            <id>pvandermaesen</id>
+            <email>pvandermaesen#a@T#noctis.d0t.be</email>
+        </developer>
+
+        <developer>
+            <name>Philippe Le Marchand</name>
+            <id>plemarchand</id>
+            <email>plemarchand#a@T#noctis.d0t.be</email>
+        </developer>
+        
+        <developer>
+            <name>Benoit Dumont de Chassart</name>
+            <id>bdumont</id>
+            <email>bdumont#a@T#noctis.d0t.be</email>
+        </developer>
+    </developers>
 
 	<distributionManagement>
 		<site>
 			<id>javlo-ovh</id>
 			<name>javlo-ovh</name>
-			<url>ftp://ftp.javlo.org/javlo2/www</url>
+			<url>ftp://ftp.javlo.org/www</url>
 		</site>
 	</distributionManagement>
 
@@ -233,9 +256,6 @@
 			<version>1.2</version>
 		</dependency>
 		
-		
-		
-
 	</dependencies>
 	
 	<repositories>

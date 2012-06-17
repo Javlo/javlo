@@ -1,11 +1,10 @@
-package org.javlo.module.template.remote;
+package org.javlo.remote;
 
 import java.util.Date;
 
 import org.javlo.helper.StringHelper;
-import org.javlo.remote.IRemoteResource;
 
-public class RemoteTemplate implements IRemoteResource {
+public class RemoteBean implements IRemoteResource {
 	
 	private static final long serialVersionUID = 1L;
 	
