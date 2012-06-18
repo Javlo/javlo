@@ -538,7 +538,7 @@ public class StringHelper {
 		return "" + codeLength + 'a' + footer + outData;
 	}
 
-	public synchronized static String encryptPassword(String plaintext) {
+	public synchronized static String encryptPassword(String plaintext) {		
 		MessageDigest md = null;
 		try {
 			md = MessageDigest.getInstance("SHA"); // step 2
@@ -551,9 +551,9 @@ public class StringHelper {
 			e.printStackTrace();
 		}
 
-		byte raw[] = md.digest(); // step 4
+		byte raw[] = md.digest(); // step 4		
 		String hash = Base64.encodeBase64String(raw); // step 5
-		return hash; // step 6
+		return hash.trim(); // step 6
 	}
 
 	public static String escapeWordChar(String text) {

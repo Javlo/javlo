@@ -2,13 +2,12 @@
 <%@ taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions" %>
 <div id="gallery" class="gallery remote-resource full-height">
 <div id="gridview" class="thumbview">
-
 <ul>
 <c:set var="max" value="24" />
 <c:if test="${not empty param.viewAll}">
 	<c:set var="max" value="9999" />	
 </c:if>
-<c:forEach var="resource" items="${resources[param.type][param.category]}" begin="1" end="${max}">	
+<c:forEach var="resource" items="${resources}" begin="1" end="${max}">	
     <li>
         <div class="thumb">
             &nbsp;<img src="${resource.imageURL}" alt="${resource.name}" />&nbsp;

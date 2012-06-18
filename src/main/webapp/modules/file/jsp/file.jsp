@@ -20,7 +20,21 @@ jQuery(document).ready(function() {
 		handlers : {			
 			open: function(event) { ajaxRequest("${info.currentURL}?webaction=updateBreadcrumb${not empty changeRoot?"&changeRoot=true":""}"); }
 		},
+		
 		uiOptions : {
+			contextmenu : {
+				// navbarfolder menu
+				navbar : ['open', '|', 'copy', 'cut', 'paste', 'duplicate', '|', 'rm', '|', 'info'],
+
+				// current directory menu
+				cwd    : ['reload', 'back', '|', 'upload', 'mkdir', 'mkfile', 'paste', '|', 'info'],
+
+				// current directory file menu
+				files  : [
+					'getfile', '|','open','|', 'download', '|', 'copy', 'cut', 'paste', 'duplicate', '|',
+					'rm', '|', 'edit', 'rename', 'resize', '|', 'archive', 'extract', '|', 'info'
+				]
+			},
 		toolbar : [
 		   		['back', 'forward'],
  		   		['mkdir', 'mkfile', 'upload'],
@@ -29,7 +43,8 @@ jQuery(document).ready(function() {
 		   		/*['quicklook'],*/
 		   		['copy', 'cut', 'paste'],
 		   		['rm'],
-		   		['duplicate', 'rename', 'edit', 'resize'],		   		
+		   		['duplicate', 'rename', 'edit', 'resize'],
+		   		['extract', 'archive'],
 		   		['search'],
 		   		['view'],
 		   		['help']

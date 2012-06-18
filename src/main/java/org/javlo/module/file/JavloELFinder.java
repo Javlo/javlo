@@ -1,8 +1,12 @@
 package org.javlo.module.file;
 
+import java.io.BufferedOutputStream;
 import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.OutputStream;
 import java.io.Writer;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -11,9 +15,10 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
+import java.util.Properties;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipInputStream;
-import java.util.Properties;
+import java.util.zip.ZipOutputStream;
 
 import javax.servlet.ServletContext;
 import javax.servlet.http.HttpServletRequest;
@@ -21,9 +26,11 @@ import javax.servlet.http.HttpServletResponse;
 
 import org.apache.commons.fileupload.FileItem;
 import org.apache.commons.io.FileUtils;
+import org.apache.commons.lang.StringUtils;
 import org.javlo.config.StaticConfig;
 import org.javlo.context.ContentContext;
 import org.javlo.context.GlobalContext;
+import org.javlo.exception.RessourceNotFoundException;
 import org.javlo.helper.LangHelper;
 import org.javlo.helper.ResourceHelper;
 import org.javlo.helper.StringHelper;
@@ -211,6 +218,79 @@ public class JavloELFinder extends ELFinder {
 	}
 
 	@Override
+	protected void extractFile(String fileHash, Map<String, Object> apiResponse) throws Exception {
+		JavloELFile file = (JavloELFile) hashToFile(fileHash);
+		List<ELFile> addedFiles = new LinkedList<ELFile>();
+		if (file != null && file.getFile().exists()) {
+			InputStream in = null;
+			try {
+				in = new FileInputStream(file.getFile());
+				ZipInputStream zipIn = new ZipInputStream(in);
+				ZipEntry entry = zipIn.getNextEntry();
+				while (entry != null) {
+					File zipFile = ZipManagement.saveFile(application, file.getParentFile().getFile().getAbsolutePath(), entry.getName(), zipIn);
+					entry = zipIn.getNextEntry();
+					if (zipFile.getParentFile().getAbsolutePath().equals(file.getParentFile().getFile().getAbsolutePath())) { // list only file inside current folder
+						addedFiles.add(new JavloELFile(file.getParentFile().getVolume(), zipFile, file.getParentFile()));
+					}
+				}
+				zipIn.close();
+			} finally {
+				ResourceHelper.closeResource(in);
+			}
+
+		}
+		apiResponse.put("added", printFiles(addedFiles));
+	}
+	
+	private static void compressFilesRecu(ZipOutputStream out, String root, File file) throws IOException {
+		String zipName = StringUtils.removeStart(file.getAbsolutePath(),root);		
+		if (file.isFile()) {
+			ZipEntry entry = new ZipEntry(zipName);
+			out.putNextEntry(entry);
+			InputStream in = new FileInputStream(file);
+			try {
+				ResourceHelper.writeStreamToStream(in, out);
+			} finally {
+				ResourceHelper.closeResource(in);
+			}
+		} else {
+			File[] children = file.listFiles();
+			for (File child : children) {
+				compressFilesRecu(out, root, child);
+			}
+		}
+	}
+
+	@Override
+	protected void compressFiles(String[] files, String type, Map<String, Object> apiResponse) throws Exception {
+		List<ELFile> addedFiles = new LinkedList<ELFile>();
+		if (files.length == 0) {
+			return;
+		}
+
+		ZipOutputStream out = null;
+		try {
+			ELFile firstFile = hashToFile(files[0]);
+			File zipFileName = new File(StringHelper.getFileNameWithoutExtension(firstFile.getFile().getAbsolutePath()) + ".zip");
+			zipFileName = ResourceHelper.getFreeFileName(zipFileName);
+			addedFiles.add(new JavloELFile(firstFile.getVolume(), zipFileName, firstFile.getParentFile()));
+			OutputStream outStream = new FileOutputStream(zipFileName);
+
+			out = new ZipOutputStream(new BufferedOutputStream(outStream));
+
+			for (String fileHash : files) {
+				ELFile elfile = hashToFile(fileHash);
+				compressFilesRecu(out, firstFile.getParentFile().getFile().getAbsolutePath(), elfile.getFile());				
+			}
+		} finally {
+			ResourceHelper.closeResource(out);
+		}
+
+		apiResponse.put("added", printFiles(addedFiles));
+	}
+
+	@Override
 	protected void uploadFile(String folderHash, FileItem[] filesItem, String parameter, Map<String, Object> apiResponse) throws Exception {
 		JavloELFile folder = (JavloELFile) hashToFile(folderHash);
 		List<ELFile> addedFiles = new LinkedList<ELFile>();
@@ -219,25 +299,16 @@ public class JavloELFinder extends ELFinder {
 				File newFile = new File(URLHelper.mergePath(folder.getFile().getAbsolutePath(), fileItem.getName()));
 				InputStream in = fileItem.getInputStream();
 				try {
-					if (!StringHelper.getFileExtension(newFile.getName()).toLowerCase().equals("zip")) {
-						if (newFile.exists()) {
-							newFile = ResourceHelper.getFreeFileName(newFile);
-						}
-						ResourceHelper.writeStreamToFile(in, newFile);
-						ResourceHelper.closeResource(in);
-						addedFiles.add(new JavloELFile(folder.getVolume(), newFile, folder));
-					} else {
-						ZipInputStream zipIn = new ZipInputStream(in);
-						ZipEntry entry = zipIn.getNextEntry();
-						while (entry != null) {
-							File file = ZipManagement.saveFile(application, folder.getFile().getAbsolutePath(), entry.getName(), zipIn);
-							entry = zipIn.getNextEntry();
-							if (file.getParentFile().getAbsolutePath().equals(folder.getFile().getAbsolutePath())) { // list only file inside current folder
-								addedFiles.add(new JavloELFile(folder.getVolume(), file, folder));
-							}
-						}
-						zipIn.close();
+					// if (!StringHelper.getFileExtension(newFile.getName()).toLowerCase().equals("zip")) {
+					if (newFile.exists()) {
+						newFile = ResourceHelper.getFreeFileName(newFile);
 					}
+					ResourceHelper.writeStreamToFile(in, newFile);
+					ResourceHelper.closeResource(in);
+					addedFiles.add(new JavloELFile(folder.getVolume(), newFile, folder));
+					/*
+					 * } else { ZipInputStream zipIn = new ZipInputStream(in); ZipEntry entry = zipIn.getNextEntry(); while (entry != null) { File file = ZipManagement.saveFile(application, folder.getFile().getAbsolutePath(), entry.getName(), zipIn); entry = zipIn.getNextEntry(); if (file.getParentFile().getAbsolutePath().equals(folder.getFile().getAbsolutePath())) { // list only file inside current folder addedFiles.add(new JavloELFile(folder.getVolume(), file, folder)); } } zipIn.close(); }
+					 */
 				} finally {
 					ResourceHelper.closeResource(in);
 				}
@@ -264,6 +335,12 @@ public class JavloELFinder extends ELFinder {
 				outOptions.put("url", URLHelper.createTemplateResourceURL(((JavloELFile) file).getContentContext(), '/' + templateName + '/'));
 			}
 		}
+
+		Map<String, String[]> archivers = new HashMap<String, String[]>();
+		archivers.put("create", new String[] { "application/zip" });
+		archivers.put("extract", new String[] { "application/zip" });
+		outOptions.put("archivers", archivers);
+
 		return outOptions;
 	}
 }

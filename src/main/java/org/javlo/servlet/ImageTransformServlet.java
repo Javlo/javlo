@@ -291,12 +291,12 @@ public class ImageTransformServlet extends HttpServlet {
 				if (!"png".equals(fileExtension) && !"gif".equals(fileExtension)) {
 					img = ImageEngine.removeAlpha(img);
 				}
-				if ("jpg".equals(fileExtension)) {
+				/*if ("jpg".equals(fileExtension)) {
 					ImageEngine.compressJpegFile(img, outImage, 0.9);
-				} else {
+				} else {*/
 					// fileExtension never null for now, see ImageConfig
 					ImageIO.write(img, fileExtension, outImage);
-				}
+				/*}*/
 			} finally {
 				outImage.close();
 			}

@@ -113,5 +113,9 @@ public abstract class AbstractModuleContext {
 	public String getRenderer() {
 		return renderer;
 	}
+	
+	public void setRenderer(String renderer) {
+		this.renderer = renderer;
+	}
 
 }

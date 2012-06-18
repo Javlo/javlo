@@ -69,6 +69,10 @@ public abstract class ELFinder {
 				renameFile(rs.getParameter("target", null), rs.getParameter("name", null), apiResponse);
 			} else if ("upload".equals(command)) {
 				uploadFile(rs.getParameter("target", null), rs.getFileItemMap().get("upload[]"), rs.getParameter("name", null), apiResponse);
+			} else if ("archive".equals(command)) {
+				compressFiles( rs.getParameterValues("targets[]",null), rs.getParameter("type", null), apiResponse);
+			} else if ("extract".equals(command)) {
+				extractFile(rs.getParameter("target", null),apiResponse);
 			} else if ("resize".equals(command)) {
 				String mode = rs.getParameter("mode", null);
 				String target = rs.getParameter("target", null);
@@ -78,7 +82,7 @@ public abstract class ELFinder {
 				int y = Integer.parseInt(rs.getParameter("y", "-1"));
 				transformFile(target, mode, width, height, x, y, apiResponse);
 			} else if ("paste".equals(command)) {
-				pasteFiles(rs.getParameter("src", null), rs.getParameter("dst", null), rs.getParameterValues("targets[]", null), StringHelper.isTrue(rs.getParameter("cut", "flase")), apiResponse);
+				pasteFiles(rs.getParameter("src", null), rs.getParameter("dst", null), rs.getParameterValues("targets[]", null), StringHelper.isTrue(rs.getParameter("cut", "false")), apiResponse);
 			} 
 			if (request.getSession().getAttribute("ELPath") != null) {
 				apiResponse.clear();
@@ -147,6 +151,10 @@ public abstract class ELFinder {
 	protected abstract ELFile createELFile(ELFile parent, File file);
 
 	protected abstract void uploadFile(String folderHash, FileItem[] filesItem, String parameter, Map<String, Object> apiResponse) throws Exception;
+	
+	protected abstract void extractFile(String fileHash,Map<String, Object> apiResponse) throws Exception;
+	
+	protected abstract void compressFiles(String[] files, String type, Map<String, Object> apiResponse) throws Exception;
 
 	protected abstract void renameFile(String fileHash, String name, Map<String, Object> apiResponse) throws ELFinderException, Exception;
 

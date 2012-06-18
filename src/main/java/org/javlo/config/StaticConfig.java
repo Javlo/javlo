@@ -1086,7 +1086,7 @@ public class StaticConfig extends Observable {
 	}
 	
 	public String getMarketURL() {
-		return properties.getString("market.url", "http://market.javlo.org/market/resources.xml");
+		return properties.getString("market.url", "http://market.javlo.org/market/");
 	}
 	
 	public ServletContext getServletContext() {
