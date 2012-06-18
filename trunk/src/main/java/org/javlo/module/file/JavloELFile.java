@@ -66,12 +66,10 @@ public class JavloELFile extends ELFile {
 				StaticInfo info = StaticInfo.getInstance(getContentContext(), file);
 				GlobalContext globalContext = GlobalContext.getSessionInstance(getContentContext().getRequest().getSession());				
 				if (!ResourceHelper.isTemplateFile(globalContext, file)) {
-					String url = URLHelper.createResourceURL(getContentContext(), '/' + globalContext.getStaticConfig().getStaticFolder() + info.getStaticURL());
-					System.out.println("***** JavloELFile.getURL : NT url = "+url); //TODO: remove debug trace
+					String url = URLHelper.createResourceURL(getContentContext(), '/' + globalContext.getStaticConfig().getStaticFolder() + info.getStaticURL());					
 					return url;
 				} else {					
-					String url = URLHelper.createTemplateResourceURL(getContentContext(), '/' + globalContext.getStaticConfig().getStaticFolder() + info.getStaticURL());
-					System.out.println("***** JavloELFile.getURL : url = "+url); //TODO: remove debug trace
+					String url = URLHelper.createTemplateResourceURL(getContentContext(), '/' + globalContext.getStaticConfig().getStaticFolder() + info.getStaticURL());					
 					return url;
 				}
 			} catch (Exception e) {

@@ -958,6 +958,9 @@ public class ResourceHelper {
 	}
 
 	public static File getFreeFileName(File file) {
+		if (!file.exists()) {
+			return file;
+		}
 		File folder = file.getParentFile();
 		String newName = file.getName();
 		String ext = StringHelper.getFileExtension(file.getName());

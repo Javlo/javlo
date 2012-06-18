@@ -630,6 +630,7 @@ public class AccessServlet extends HttpServlet {
 		out.println("**** ABST COMP LOG LVL :  " + staticConfig.getAbstractComponentLogLevel());
 		out.println("**** BACKUP EXCL. PAT. :  " + staticConfig.getBackupExcludePatterns());
 		out.println("**** BACKUP INCL. PAT. :  " + staticConfig.getBackupIncludePatterns());
+		out.println("**** HARD USERS        :  " + StringHelper.collectionToString(staticConfig.getEditUsers().keySet(),","));
 		out.println("**** TOTAL MEMORY      :  " + runtime.totalMemory() + " (" + runtime.totalMemory() / 1024 + " KB)" + " (" + runtime.totalMemory() / 1024 / 1024 + " MB)");
 		out.println("**** FREE MEMORY       :  " + runtime.freeMemory() + " (" + runtime.freeMemory() / 1024 + " KB)" + " (" + runtime.freeMemory() / 1024 / 1024 + " MB)");
 		out.println("**** THREAD ****");

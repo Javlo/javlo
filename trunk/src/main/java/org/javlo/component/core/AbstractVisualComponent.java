@@ -1469,15 +1469,12 @@ public abstract class AbstractVisualComponent implements IContentVisualComponent
 	public void performEdit(ContentContext ctx) throws Exception {
 		RequestService requestService = RequestService.getInstance(ctx.getRequest());
 		String newContent = requestService.getParameter(getContentName(), null);
-		System.out.println("***** AbstractVisualComponent.performEdit : newContent = "+newContent); //TODO: remove debug trace
-		System.out.println("***** AbstractVisualComponent.performEdit : 1.componentBean.getValue() = "+componentBean.getValue()); //TODO: remove debug trace
 		if (newContent != null) {
 			if (!componentBean.getValue().equals(newContent)) {
 				componentBean.setValue(newContent);
 				setModify();
 			}
 		}
-		System.out.println("***** AbstractVisualComponent.performEdit : 2.componentBean.getValue() = "+componentBean.getValue()); //TODO: remove debug trace
 	}
 
 	public final void refresh(HttpServletRequest request, HttpServletResponse response) throws Exception {

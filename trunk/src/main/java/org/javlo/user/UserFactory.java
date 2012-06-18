@@ -266,7 +266,7 @@ public class UserFactory implements IUserFactory, Serializable {
 				
 				if (!userInfoFile.exists()) {					
 					logger.fine(userInfoFile.getPath() + " not found.");
-					return Collections.EMPTY_LIST;
+					return new LinkedList<IUserInfo>();
 				} else {
 					try {
 						InputStream in = new FileInputStream(userInfoFile);
@@ -287,7 +287,7 @@ public class UserFactory implements IUserFactory, Serializable {
 						}
 					} catch (Exception e) {
 						Logger.log(e);
-						userInfoList = Collections.EMPTY_LIST;
+						userInfoList =  new LinkedList<IUserInfo>();
 					}
 				}
 			}			
