@@ -293,7 +293,7 @@ public class SearchResult {
 
 	private void searchInPage(MenuElement page, ContentContext ctx, String groupId, String inSearchText, Collection<String> componentType) throws Exception {
 
-		if (!page.notInSearch(ctx)) {
+		if (!page.notInSearch(ctx) || (componentType != null && componentType.size() > 0)) {
 
 			if (groupId == null || groupId.trim().length() == 0 || page.getGroupID(ctx).contains(groupId)) {
 
