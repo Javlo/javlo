@@ -66,20 +66,24 @@ import org.javlo.utils.TimeRange;
 import org.javlo.ztatic.IStaticContainer;
 import org.javlo.ztatic.StaticInfo;
 
-import be.noctis.common.xml.NodeXML;
-import be.noctis.common.xml.XMLFactory;
+import org.javlo.xml.NodeXML;
+import org.javlo.xml.XMLFactory;
 
 /**
  * @author pvanderm
  */
 public class MenuElement implements Serializable {
 	
+	private static final long serialVersionUID = 1L;
+
 	/**
 	 * bean for the page, can be use in JSTL.
 	 * @author Patrick Vandermaesen
 	 *
 	 */
 	public static class PageBean implements Serializable {
+		private static final long serialVersionUID = 1L;
+
 		private PageDescription info;
 		private String url;
 		private String path;
@@ -920,7 +924,7 @@ public class MenuElement implements Serializable {
 
 		ContentElementList elemList = new ContentElementList(getAllLocalContent(ctx));
 
-		if ((getParent() != null) && (!ctx.isEdit())) {
+		if ((getParent() != null) && (ctx.getRenderMode() != ContentContext.EDIT_MODE)) {
 			getParent().addAllRepeatContent(elemList, ctx);
 		}
 
@@ -1191,7 +1195,7 @@ public class MenuElement implements Serializable {
 
 		ContentElementList elemList = new ContentElementList(getLocalContent(ctx));
 
-		if ((getParent() != null) && (!ctx.isEdit())) {
+		if ((getParent() != null) && (ctx.getRenderMode() != ContentContext.EDIT_MODE)) {
 			getParent().addRepeatContent(elemList, ctx);
 		}
 

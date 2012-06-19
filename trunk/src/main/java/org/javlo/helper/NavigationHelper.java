@@ -26,7 +26,7 @@ import org.javlo.navigation.MenuElement;
 import org.javlo.service.ContentService;
 import org.javlo.service.PersistenceService;
 
-import be.noctis.common.xml.NodeXML;
+import org.javlo.xml.NodeXML;
 
 public class NavigationHelper {
 
@@ -163,7 +163,8 @@ public class NavigationHelper {
 	}
 
 	public static MenuElement firstSelectionElement(ContentContext ctx) throws Exception {
-		MenuElement root = ContentService.createContent(ctx.getRequest()).getNavigation(ctx);
+		GlobalContext globalContext = GlobalContext.getInstance(ctx.getRequest());
+		MenuElement root = ContentService.getInstance(globalContext).getNavigation(ctx);
 		ctx.getPath().trim();
 		MenuElement currentPage = root.searchChild(ctx);
 		if ((currentPage == null) || (currentPage.getParent() == null)) {
@@ -238,7 +239,8 @@ public class NavigationHelper {
 		NodeXML properties = pageNode.getParent().getChild("properties");
 		if (properties != null && properties.getAttributeValue("name", "").equals("global")) {
 			NodeXML property = properties.getChild("property");
-			ContentService content = ContentService.createContent(ctx.getRequest());
+			GlobalContext globalContext = GlobalContext.getInstance(ctx.getRequest());
+			ContentService content = ContentService.getInstance(globalContext);
 			while (property != null) {
 				if (content.getAttribute(ctx, property.getAttributeValue("key")) == null) { // if this key doesn't exist in local -> set in global map
 					content.setAttribute(ctx, property.getAttributeValue("key"), property.getContent());
@@ -283,7 +285,8 @@ public class NavigationHelper {
 		ContentContext viewCtx = new ContentContext(ctx);
 		viewCtx.setRenderMode(ContentContext.VIEW_MODE);
 
-		ContentService content = ContentService.createContent(ctx.getRequest());
+		GlobalContext globalContext = GlobalContext.getInstance(ctx.getRequest());
+		ContentService content = ContentService.getInstance(globalContext);
 		IContentVisualComponent comp = content.getCachedComponent(ctx, componentId);
 		IContentVisualComponent viewComp = content.getCachedComponent(viewCtx, componentId);
 		if (comp != null & viewComp != null) {
@@ -326,7 +329,8 @@ public class NavigationHelper {
 	 */
 	public static List<MenuElement> searchLinkTo(ContentContext ctx, MenuElement elem) throws Exception {
 		List<MenuElement> pageList = new LinkedList<MenuElement>();
-		ContentService content = ContentService.createContent(ctx.getRequest());
+		GlobalContext globalContext = GlobalContext.getInstance(ctx.getRequest());
+		ContentService content = ContentService.getInstance(globalContext);
 		MenuElement rootElement = content.getNavigation(ctx);
 		searchLinkTo(ctx, pageList, rootElement, elem);
 		return pageList;
