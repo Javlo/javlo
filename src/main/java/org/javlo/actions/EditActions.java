@@ -46,7 +46,6 @@ import org.javlo.component.core.IPreviewable;
 import org.javlo.component.files.AbstractFileComponent;
 import org.javlo.config.StaticConfig;
 import org.javlo.context.ContentContext;
-import org.javlo.context.ContentManager;
 import org.javlo.context.EditContext;
 import org.javlo.context.GlobalContext;
 import org.javlo.context.StatContext;
@@ -91,13 +90,12 @@ import org.javlo.user.UserFactory;
 import org.javlo.user.UserInfo;
 import org.javlo.user.exception.UserAllreadyExistException;
 import org.javlo.utils.CSVFactory;
+import org.javlo.xml.NodeXML;
+import org.javlo.xml.XMLFactory;
 import org.javlo.ztatic.FileCache;
 import org.javlo.ztatic.IStaticContainer;
 import org.javlo.ztatic.StaticContext;
 import org.javlo.ztatic.StaticInfo;
-
-import be.noctis.common.xml.NodeXML;
-import be.noctis.common.xml.XMLFactory;
 
 /**
  * @author pvandermaesen list of actions for cms.
@@ -177,10 +175,11 @@ public class EditActions {
 	}
 
 	private static boolean canModifyCurrentPage(ContentContext ctx) throws Exception {
-		ContentService.createContent(ctx.getRequest());
-		MenuElement currentPage = ctx.getCurrentPage();
-		GlobalContext globalContext = GlobalContext.getInstance(ctx.getRequest()); IUserFactory adminUserFactory = AdminUserFactory.createUserFactory(globalContext, ctx.getRequest().getSession());
+		GlobalContext globalContext = GlobalContext.getInstance(ctx.getRequest());
+		ContentService.getInstance(globalContext);
+		IUserFactory adminUserFactory = AdminUserFactory.createUserFactory(globalContext, ctx.getRequest().getSession());
 
+		MenuElement currentPage = ctx.getCurrentPage();
 		if (currentPage.isBlocked()) {
 			if (!currentPage.getBlocker().equals(adminUserFactory.getCurrentUser(ctx.getRequest().getSession()).getName())) {
 				return false;
@@ -201,7 +200,6 @@ public class EditActions {
 		AdminUserSecurity adminUserSecurity = AdminUserSecurity.getInstance();
 		GlobalContext globalContext = GlobalContext.getInstance(ctx.getRequest());
 		IUserFactory adminUserFactory = AdminUserFactory.createUserFactory(globalContext, ctx.getRequest().getSession());
-		ContentService.createContent(ctx.getRequest());
 		MenuElement currentPage = ctx.getCurrentPage();
 		if (currentPage.getEditorRoles().size() > 0) {
 			if (!adminUserSecurity.haveRight(adminUserFactory.getCurrentUser(ctx.getRequest().getSession()), AdminUserSecurity.FULL_CONTROL_ROLE)) {
@@ -274,7 +272,8 @@ public class EditActions {
 			String pagePath = requestService.getParameter("linked-page-" + i, null);
 
 			if (pagePath != null) {
-				ContentService content = ContentService.createContent(ctx.getRequest());
+				GlobalContext globalContext = GlobalContext.getInstance(ctx.getRequest());
+				ContentService content = ContentService.getInstance(globalContext);
 				MenuElement page = content.getNavigation(ctx).searchChild(ctx, pagePath);
 				if (page != null) {
 					info.setPageId(page.getId());
@@ -325,10 +324,9 @@ public class EditActions {
 	}
 
 	private static void modifPage(ContentContext ctx) throws Exception {
-		ContentService.createContent(ctx.getRequest());
+		GlobalContext globalContext = GlobalContext.getInstance(ctx.getRequest());
 		MenuElement currentPage = ctx.getCurrentPage();
 		currentPage.setModificationDate(new Date());
-		GlobalContext globalContext = GlobalContext.getInstance(ctx.getRequest());
 		EditContext editCtx = EditContext.getInstance(globalContext, ctx.getRequest().getSession());
 		currentPage.setLatestEditor(editCtx.getUserPrincipal().getName());
 		currentPage.setValid(false);
@@ -336,7 +334,8 @@ public class EditActions {
 	}
 
 	private static boolean nameExist(String name, ContentContext ctx) throws Exception {
-		ContentService content = ContentService.createContent(ctx.getRequest());
+		GlobalContext globalContext = GlobalContext.getInstance(ctx.getRequest());
+		ContentService content = ContentService.getInstance(globalContext);
 		MenuElement page = content.getNavigation(ctx);
 		return (page.searchChildFromName(name) != null);
 	}
@@ -380,7 +379,6 @@ public class EditActions {
 				elem.setName(nodeName);
 				elem.setCreator(editCtx.getUserPrincipal().getName());
 				elem.setVisible(globalContext.isNewPageVisible());
-				ContentService.createContent(request);
 				ctx.getCurrentPage().addChildMenuElementAutoPriority(elem);
 				path = path + "/" + nodeName;
 				String msg = i18nAccess.getText("action.add.new-page", new String[][] { { "path", path } });
@@ -439,7 +437,6 @@ public class EditActions {
 				elem.setName(nodeName);
 				elem.setCreator(editCtx.getUserPrincipal().getName());
 				elem.setVisible(globalContext.isNewPageVisible());
-				ContentService.createContent(request);
 				ctx.getCurrentPage().addChildMenuElementOnTop(elem);
 				path = path + "/" + nodeName;
 				String msg = i18nAccess.getText("action.add.new-page", new String[][] { { "path", path } });
@@ -464,10 +461,13 @@ public class EditActions {
 		I18nAccess i18nAccess = I18nAccess.getInstance(globalContext, request.getSession());		
 		EditContext editCtx = EditContext.getInstance(globalContext, request.getSession());
 		boolean admin = editCtx.getCurrentView() == EditContext.ADMIN_USER_VIEW;
-		if (ContentManager.getParameterValue(request, "login", "").trim().length() == 0) {
+
+		
+		RequestService requestService = RequestService.getInstance(request);
+		if (requestService.getParameter("login", "").trim().length() == 0) {
 			return i18nAccess.getText("user.login-not-empty");
 		}
-		if (ContentManager.getParameterValue(request, "password", "").trim().length() == 0) {
+		if (requestService.getParameter("password", "").trim().length() == 0) {
 			return i18nAccess.getText("user.password-not-empty");
 		}
 		IUserFactory userFactory;
@@ -512,7 +512,6 @@ public class EditActions {
 		RequestService requestService = RequestService.getInstance(request);
 		String[] adminRoles = requestService.getParameterValues("admin_roles", new String[0]);
 
-		ContentService.createContent(request);
 		ContentContext ctx = ContentContext.getContentContext(request, response);
 		if (!checkPageSecurity(ctx)) {
 			return null;
@@ -537,7 +536,6 @@ public class EditActions {
 	}
 
 	public static String performBlockpage(HttpServletRequest request, HttpServletResponse response) throws Exception {
-		ContentService.createContent(request);
 		ContentContext ctx = ContentContext.getContentContext(request, response);
 		if (!checkPageSecurity(ctx)) {
 			return null;
@@ -621,7 +619,6 @@ public class EditActions {
 			}
 
 			if (message == null) {
-				ContentService.createContent(request);
 				MenuElement elem = ctx.getCurrentPage();
 				// if (elem.getParent() != null) { // could not change the root
 				// WHY NOT ?
@@ -706,7 +703,8 @@ public class EditActions {
 
 	public static String performChangeview(HttpServletRequest request, HttpServletResponse response) {
 		String msg = null;
-		String view = ContentManager.getParameterValue(request, "view", null);
+		RequestService requestService = RequestService.getInstance(request);
+		String view = requestService.getParameter("view", null);
 		if (view != null) {
 			GlobalContext globalContext = GlobalContext.getInstance(request);
 			EditContext editCtx = EditContext.getInstance(globalContext, request.getSession());
@@ -815,7 +813,6 @@ public class EditActions {
 
 		String id = request.getParameter("comp_id");
 		if (id != null) {
-			ContentService.createContent(request);
 			ContentContext ctx = ContentContext.getContentContext(request, response);
 			MenuElement currentPage = ctx.getCurrentPage();
 			ContentElementList contents = currentPage.getContent(ctx);
@@ -847,7 +844,8 @@ public class EditActions {
 		List<File> fileList = getFileList(request, response);
 		ContentContext ctx = ContentContext.getContentContext(request, response);
 		StaticContext stcCtx = StaticContext.getInstance(request.getSession(), ctx.getRenderMode());
-		stcCtx.setCutFiles(Collections.EMPTY_LIST);
+		List<File> files = Collections.emptyList();
+		stcCtx.setCutFiles(files);
 		stcCtx.setCopyFiles(fileList);
 		return null;
 	}
@@ -881,10 +879,11 @@ public class EditActions {
 	}
 
 	public static String performCutstaticfile(HttpServletRequest request, HttpServletResponse response) throws Exception {
-		List fileList = getFileList(request, response);
+		List<File> fileList = getFileList(request, response);
 		ContentContext ctx = ContentContext.getContentContext(request, response);
 		StaticContext stcCtx = StaticContext.getInstance(request.getSession(), ctx.getRenderMode());
-		stcCtx.setCopyFiles(Collections.EMPTY_LIST);
+		List<File> files = Collections.emptyList();
+		stcCtx.setCopyFiles(files);
 		stcCtx.setCutFiles(fileList);
 		return null;
 	}
@@ -962,7 +961,8 @@ public class EditActions {
 
 	public static String performDeleteuser(HttpServletRequest request, HttpServletResponse response) {
 		String msg = null;
-		String login = ContentManager.getParameterValue(request, "login", null);
+		RequestService requestService = RequestService.getInstance(request);
+		String login = requestService.getParameter("login", null);
 		if (login != null) {
 			GlobalContext globalContext = GlobalContext.getInstance(request);
 			EditContext editCtx = EditContext.getInstance(globalContext, request.getSession());
@@ -993,7 +993,7 @@ public class EditActions {
 		GlobalContext globalContext = GlobalContext.getInstance(request);
 		PersistenceService persistenceService = PersistenceService.getInstance(globalContext);
 		persistenceService.correctAllFiles();
-		ContentService.createContent(request).releaseAll(ContentContext.getContentContext(request, response), globalContext);
+		ContentService.getInstance(globalContext).releaseAll(ContentContext.getContentContext(request, response), globalContext);
 		return "";
 	}
 
@@ -1010,9 +1010,9 @@ public class EditActions {
 	 */
 	public static String performFindstatic(HttpServletRequest request, HttpServletResponse response) throws Exception {
 		try {
-			ContentService content = ContentService.createContent(request);
+			GlobalContext globalContext = GlobalContext.getInstance(request);
+			ContentService content = ContentService.getInstance(globalContext);
 			ContentContext ctx = ContentContext.getContentContext(request, response);
-			GlobalContext globalContext = GlobalContext.getInstance(ctx.getRequest());
 			MenuElement page = content.getNavigation(ctx);
 
 			StaticContext stcCtx = StaticContext.getInstance(request.getSession());
@@ -1110,7 +1110,6 @@ public class EditActions {
 		if (!checkPageSecurity(ctx)) {
 			return null;
 		}
-		ContentService.createContent(ctx.getRequest());
 		MenuElement currentPage = ctx.getCurrentPage();
 
 		String importURL = requestService.getParameter("import-url", null);
@@ -1201,7 +1200,6 @@ public class EditActions {
 			}
 
 			if (requestService.getParameter("last", null) != null) {
-				ContentService.createContent(ctx.getRequest());
 				MenuElement currentPage = ctx.getCurrentPage();
 				ContentElementList elementList = currentPage.getContent(ctx);
 				while (elementList.hasNext(ctx)) {
@@ -1364,7 +1362,7 @@ public class EditActions {
 			}
 			String type = editCtx.getActiveType();
 
-			ContentService content = ContentService.createContent(request);
+			ContentService content = ContentService.getInstance(globalContext);
 
 			ComponentContext compCtx = ComponentContext.getInstance(request);
 
@@ -1457,7 +1455,8 @@ public class EditActions {
 		for (IMacro macro : macros) {
 			if (requestService.getParameter("macro-" + macro.getName(), null) != null) {
 				ContentContext ctx = ContentContext.getContentContext(request, response);
-				macro.perform(ctx, Collections.EMPTY_MAP);
+				Map<String, Object> params = Collections.emptyMap();
+				macro.perform(ctx, params);
 			}
 		}
 		return null;
@@ -1484,7 +1483,6 @@ public class EditActions {
 	}
 
 	public static String performManualdate(HttpServletRequest request, HttpServletResponse response) throws Exception {
-		ContentService.createContent(request);
 		ContentContext ctx = ContentContext.getContentContext(request, response);
 		MenuElement currentPage = ctx.getCurrentPage();
 		if (currentPage.getManualModificationDate() != null) {
@@ -1496,7 +1494,6 @@ public class EditActions {
 	}
 
 	public static String performManualdatemodification(HttpServletRequest request, HttpServletResponse response) throws Exception {
-		ContentService.createContent(request);
 		ContentContext ctx = ContentContext.getContentContext(request, response);
 		MenuElement currentPage = ctx.getCurrentPage();
 
@@ -1634,15 +1631,17 @@ public class EditActions {
 
 	public static String performMovepreview(HttpServletRequest request, HttpServletResponse response) throws Exception {
 		ContentContext ctx = ContentContext.getContentContext(request, response);
-		MenuElement elem = ctx.getCurrentPage();
 		RequestService requestService = RequestService.getInstance(ctx.getRequest());
 		I18nAccess i18nAccess = I18nAccess.getInstance(ctx.getRequest());
-		MenuElement pageToMove = elem.searchChildFromId(requestService.getParameter("select-page", null));
-		if (pageToMove != null) {
-			MenuElement targetPage = null;
-			if (elem != null) {
+
+		MenuElement elem = ctx.getCurrentPage();
+		if (elem != null) {
+			MenuElement pageToMove = elem.searchChildFromId(requestService.getParameter("select-page", null));
+			if (pageToMove != null) {
 				MenuElement[] children = elem.getChildMenuElements();
 				NavigationHelper.changeStepPriority(children, 10);
+
+				MenuElement targetPage = null;
 				if (requestService.getParameter("page_0", null) != null) {
 					pageToMove.setPriority(5);
 				} else {
@@ -1664,10 +1663,10 @@ public class EditActions {
 				}
 				GlobalContext globalContext = GlobalContext.getInstance(request);
 				PersistenceService.getInstance(globalContext).store(ctx);
-			} else {
-				logger.warning("page not found : " + requestService.getParameter("select-page", null));
-				MessageRepository.getInstance(ctx).setGlobalMessage(new GenericMessage(i18nAccess.getText("global.page-not-found"), GenericMessage.ERROR));
 			}
+		} else {
+			logger.warning("page not found : " + requestService.getParameter("select-page", null));
+			MessageRepository.getInstance(ctx).setGlobalMessage(new GenericMessage(i18nAccess.getText("global.page-not-found"), GenericMessage.ERROR));
 		}
 		return null;
 	}
@@ -1679,7 +1678,8 @@ public class EditActions {
 			if (!checkPageSecurity(ctx)) {
 				return null;
 			}
-			MenuElement elem = ContentService.createContent(request).getNavigation(ctx).searchChildFromId(pageId);
+			GlobalContext globalContext = GlobalContext.getInstance(request);
+			MenuElement elem = ContentService.getInstance(globalContext).getNavigation(ctx).searchChildFromId(pageId);
 			if ((elem != null) && (elem.getParent() != null)) {
 				String path = elem.getPath();
 				MenuElement newParent = null;
@@ -1690,7 +1690,6 @@ public class EditActions {
 					}
 				}
 				elem.moveToParent(newParent);
-				GlobalContext globalContext = GlobalContext.getInstance(request);
 				PersistenceService.getInstance(globalContext).store(ctx);
 				I18nAccess i18nAccess = I18nAccess.getInstance(globalContext, request.getSession());
 				String[][] balises = { { "path", path }, { "new-path", elem.getPath() } };
@@ -1710,12 +1709,12 @@ public class EditActions {
 			if (!checkPageSecurity(ctx)) {
 				return null;
 			}
-			MenuElement elem = ContentService.createContent(request).getNavigation(ctx).searchChildFromId(pageId);
+			GlobalContext globalContext = GlobalContext.getInstance(request);
+			MenuElement elem = ContentService.getInstance(globalContext).getNavigation(ctx).searchChildFromId(pageId);
 			if ((elem != null) && (elem.getParent() != null)) {
 				if (elem.getParent().getParent() != null) {
 					String path = elem.getPath();
 					elem.moveToParent(elem.getParent().getParent());
-					GlobalContext globalContext = GlobalContext.getInstance(request);
 					PersistenceService.getInstance(globalContext).store(ctx);
 					I18nAccess i18nAccess = I18nAccess.getInstance(globalContext, request.getSession());
 					String[][] balises = { { "path", path }, { "new-path", elem.getPath() } };
@@ -1769,15 +1768,16 @@ public class EditActions {
 
 		ClipBoard clipBoard = ClipBoard.getInstance(request);
 		if (!clipBoard.isEmpty(ctx)) {
-			String parentId = ContentManager.getParameterValue(request, "number", null);
+			RequestService requestService = RequestService.getInstance(request);
+			String parentId = requestService.getParameter("number", null);
 			ComponentBean bean = (ComponentBean) clipBoard.getCopied();
-			ContentService content = ContentService.createContent(request);
+			GlobalContext globalContext = GlobalContext.getInstance(request);
+			ContentService content = ContentService.getInstance(globalContext);
 			bean.setArea(ctx.getArea());
 			content.createContent(ctx, bean, parentId);
 
 			modifPage(ctx);
 
-			GlobalContext globalContext = GlobalContext.getInstance(request);
 			PersistenceService.getInstance(globalContext).store(ctx);
 			autoPublish(request, response);
 		}
@@ -1787,14 +1787,14 @@ public class EditActions {
 	public static String performPastepage(HttpServletRequest request, HttpServletResponse response) throws Exception {
 		String msg = null;
 
-		ContentService content = ContentService.createContent(request);
+		GlobalContext globalContext = GlobalContext.getInstance(request);
+		ContentService content = ContentService.getInstance(globalContext);
 		ContentContext ctx = ContentContext.getContentContext(request, response);
 
 		if (!checkPageSecurity(ctx)) {
 			return null;
 		}
 
-		GlobalContext globalContext = GlobalContext.getInstance(request);
 		EditContext editCtx = EditContext.getInstance(globalContext, request.getSession());
 		ContentContext newCtx = editCtx.getContextForCopy();
 		newCtx.setRequest(request);
@@ -1802,7 +1802,8 @@ public class EditActions {
 
 		ContentElementList elems = newCtx.getCurrentPage().getContent(newCtx);
 
-		String parentId = ContentManager.getParameterValue(request, "number", null);
+		RequestService requestService = RequestService.getInstance(request);
+		String parentId = requestService.getParameter("number", null);
 		IContentVisualComponent parent = content.getComponent(ctx, parentId);
 
 		while (elems.hasNext(ctx)) {
@@ -1832,13 +1833,13 @@ public class EditActions {
 
 		String msg = null;
 
-		ContentService content = ContentService.createContent(request);
+		GlobalContext globalContext = GlobalContext.getInstance(request);
+		ContentService content = ContentService.getInstance(globalContext);
 		ContentContext ctx = ContentContext.getContentContext(request, response);
 		if (!checkPageSecurity(ctx)) {
 			return null;
 		}
 
-		GlobalContext globalContext = GlobalContext.getInstance(request);
 		EditContext editCtx = EditContext.getInstance(globalContext, request.getSession());
 		ContentContext newCtx = editCtx.getContextForCopy();
 		newCtx.setRequest(request);
@@ -1870,8 +1871,8 @@ public class EditActions {
 		StaticContext stcCtx = StaticContext.getInstance(request.getSession(), ctx.getRenderMode());
 
 		File currentPath = getCurrentDir(request, response);
-		Iterator copyFiles = stcCtx.getCopyFiles().iterator();
-		Iterator cutFiles = stcCtx.getCutFiles().iterator();
+		Iterator<File> copyFiles = stcCtx.getCopyFiles().iterator();
+		Iterator<File> cutFiles = stcCtx.getCutFiles().iterator();
 
 		while (copyFiles.hasNext()) {
 			File file = (File) copyFiles.next();
@@ -1903,13 +1904,12 @@ public class EditActions {
 
 		DebugHelper.writeInfo(System.out);
 
-		ContentService content = ContentService.createContent(request);
+		GlobalContext globalContext = GlobalContext.getInstance(request);
+		ContentService content = ContentService.getInstance(globalContext);
 		ContentContext ctx = ContentContext.getContentContext(request, response);
 		synchronized (content.getNavigation(ctx).getLock()) {
 
 			String message = null;
-
-			GlobalContext globalContext = GlobalContext.getInstance(request);
 
 			PersistenceService persistenceService = PersistenceService.getInstance(globalContext);
 
@@ -1961,7 +1961,7 @@ public class EditActions {
 			if (urlFactory != null) {
 				for (String lg : lgs) {
 					lgCtx.setRequestContentLanguage(lg);
-					MenuElement[] children = ContentService.createContent(ctx.getRequest()).getNavigation(lgCtx).getAllChilds();
+					MenuElement[] children = ContentService.getInstance(globalContext).getNavigation(lgCtx).getAllChilds();
 					for (MenuElement menuElement : children) {
 						String url = lgCtx.getRequestContentLanguage() + urlFactory.createURL(lgCtx, menuElement);
 						if (urls.contains(url)) {
@@ -1997,7 +1997,7 @@ public class EditActions {
 			GlobalContext globalContext = GlobalContext.getInstance(request);
 			PersistenceService persistenceService = PersistenceService.getInstance(globalContext);
 			persistenceService.redo();
-			ContentService content = ContentService.createContent(request);
+			ContentService content = ContentService.getInstance(globalContext);
 			content.releasePreviewNav(null);
 		} catch (ServiceException e) {
 			return e.getMessage();
@@ -2030,7 +2030,6 @@ public class EditActions {
 			if (id.equals(clipBoard.getCopied())) {
 				clipBoard.clear();
 			}
-			ContentService.createContent(request);
 			MenuElement elem = ctx.getCurrentPage();
 			String type = elem.removeContent(ctx, id);
 			GlobalContext globalContext = GlobalContext.getInstance(request);
@@ -2067,7 +2066,8 @@ public class EditActions {
 		String path = request.getParameter("del_path");
 		String id = request.getParameter("del_id");
 
-		ContentService content = ContentService.createContent(request);
+		GlobalContext globalContext = GlobalContext.getInstance(request);
+		ContentService content = ContentService.getInstance(globalContext);
 		MenuElement menuElement;
 		if (path != null) {
 			menuElement = content.getNavigation(ctx).searchChild(ctx, path);
@@ -2076,27 +2076,23 @@ public class EditActions {
 			path = menuElement.getPath();
 		}
 
-		String newPath = menuElement.getParent().getPath();
+		if (menuElement != null) {
+			String newPath = menuElement.getParent().getPath();
 		
-		GlobalContext globalContext = GlobalContext.getInstance(request);
-
-		if (message == null) {
-			if (menuElement == null) {
-				message = i18nAccess.getText("action.remove.can-not-delete");
-			} else {
-				synchronized (menuElement) {
-					menuElement.clearVirtualParent();
-				}
-
-				NavigationService service = NavigationService.getInstance(globalContext, request.getSession());
-				service.removeNavigation(ctx, menuElement);
-				String msg = i18nAccess.getText("action.remove.deleted", new String[][] { { "path", path } });
-				MessageRepository.getInstance(ctx).setGlobalMessage(new GenericMessage(msg, GenericMessage.INFO));
-				autoPublish(request, response);
+			synchronized (menuElement) {
+				menuElement.clearVirtualParent();
 			}
-		}
 
-		ctx.setPath(newPath);
+			NavigationService service = NavigationService.getInstance(globalContext, request.getSession());
+			service.removeNavigation(ctx, menuElement);
+			String msg = i18nAccess.getText("action.remove.deleted", new String[][] { { "path", path } });
+			MessageRepository.getInstance(ctx).setGlobalMessage(new GenericMessage(msg, GenericMessage.INFO));
+			autoPublish(request, response);
+
+			ctx.setPath(newPath);
+		} else {
+			message = i18nAccess.getText("action.remove.can-not-delete");
+		}
 
 		NavigationService navigationService = NavigationService.getInstance(globalContext, ctx.getRequest().getSession());
 		navigationService.clearPage(ctx);
@@ -2124,10 +2120,10 @@ public class EditActions {
 
 			String id = request.getParameter("number");
 			if (id != null) {
-				ContentService content = ContentService.createContent(request);
+				GlobalContext globalContext = GlobalContext.getInstance(request);
+				ContentService content = ContentService.getInstance(globalContext);
 				IContentVisualComponent comp = content.getComponent(ctx, id);
 				comp.setRepeat(true);
-				GlobalContext globalContext = GlobalContext.getInstance(request);
 				PersistenceService persistenceService = PersistenceService.getInstance(globalContext);
 				persistenceService.store(ctx);
 				// dao.updateContentRepeat(request, id, true);
@@ -2146,7 +2142,8 @@ public class EditActions {
 	}
 
 	public static String performReversedlink(HttpServletRequest request, HttpServletResponse response) throws Exception {
-		ContentService content = ContentService.createContent(request);
+		GlobalContext globalContext = GlobalContext.getInstance(request);
+		ContentService content = ContentService.getInstance(globalContext);
 		ContentContext ctx = ContentContext.getContentContext(request, response);
 		if (!checkPageSecurity(ctx)) {
 			return null;
@@ -2158,7 +2155,6 @@ public class EditActions {
 
 			/* check if reverse link is ok */
 			String[] lines = StringHelper.readLines(reversedLink);
-			GlobalContext globalContext = GlobalContext.getInstance(request);
 			ReverseLinkService reverseLinkService = ReverseLinkService.getInstance(globalContext);
 			Map<String, MenuElement> reverseLink = reverseLinkService.getReversedLinkCache(content.getNavigation(ctx));
 			Set<String> texts = reverseLink.keySet();
@@ -2465,7 +2461,6 @@ public class EditActions {
 				return null;
 			}
 
-			ContentService.createContent(request);
 			MenuElement elem = ctx.getCurrentPage();
 			String layout = requestService.getParameter("template", null);
 
@@ -2503,7 +2498,7 @@ public class EditActions {
 			GlobalContext globalContext = GlobalContext.getInstance(request);
 			PersistenceService persistenceService = PersistenceService.getInstance(globalContext);
 			persistenceService.undo();
-			ContentService content = ContentService.createContent(request);
+			ContentService content = ContentService.getInstance(globalContext);
 			content.releasePreviewNav(null);
 		} catch (ServiceException e) {
 			return e.getMessage();
@@ -2531,10 +2526,10 @@ public class EditActions {
 
 			String id = request.getParameter("number");
 			if (id != null) {
-				ContentService content = ContentService.createContent(request);
+				GlobalContext globalContext = GlobalContext.getInstance(request);
+				ContentService content = ContentService.getInstance(globalContext);
 				IContentVisualComponent comp = content.getComponent(ctx, id);
 				comp.setRepeat(false);
-				GlobalContext globalContext = GlobalContext.getInstance(request);
 				PersistenceService persistenceService = PersistenceService.getInstance(globalContext);
 				persistenceService.store(ctx);
 			} else {
@@ -2571,7 +2566,7 @@ public class EditActions {
 				return null;
 			}
 
-			ContentService content = ContentService.createContent(ctx.getRequest());
+			ContentService content = ContentService.getInstance(globalContext);
 			MenuElement currentPage = ctx.getCurrentPage();
 			AdminUserSecurity adminUserSecurity = AdminUserSecurity.getInstance();
 			IUserFactory adminUserFactory = AdminUserFactory.createUserFactory(globalContext, ctx.getRequest().getSession());
@@ -2656,7 +2651,8 @@ public class EditActions {
 	}
 
 	public static String performUpdatefraternity(HttpServletRequest request, HttpServletResponse response) throws Exception {
-		ContentService content = ContentService.createContent(request);
+		GlobalContext globalContext = GlobalContext.getInstance(request);
+		ContentService content = ContentService.getInstance(globalContext);
 		ContentContext ctx = ContentContext.getContentContext(request, response);
 		if (!checkPageSecurity(ctx)) {
 			return null;
@@ -2707,7 +2703,7 @@ public class EditActions {
 
 							ctx.setPath(currentPage.getPath());
 
-							GlobalContext globalContext = GlobalContext.getInstance(request); PersistenceService.getInstance(globalContext).store(ctx);
+							PersistenceService.getInstance(globalContext).store(ctx);
 							I18nAccess i18nAccess = I18nAccess.getInstance(globalContext, request.getSession());
 							if (newBrother != null) {
 								String[][] balises = { { "path", path }, { "new-path", newBrother.getPath() } };
@@ -2726,11 +2722,10 @@ public class EditActions {
 			} else {
 				logger.warning("new brother id not found");
 			}
-			GlobalContext globalContext = GlobalContext.getInstance(request); PersistenceService.getInstance(globalContext).store(ctx);
+			PersistenceService.getInstance(globalContext).store(ctx);
 		}
 
 		if (requestService.getParameter("ok", null) != null) {
-			GlobalContext globalContext = GlobalContext.getInstance(request);
 			EditContext editCtx = EditContext.getInstance(globalContext, request.getSession());
 			editCtx.setMainRenderer(null);
 			editCtx.setCommandRenderer(null);
@@ -2763,9 +2758,10 @@ public class EditActions {
 				return null;
 			}
 
-			String delFile = ContentManager.getParameterValue(request, "delfile", "");
-			String delType = ContentManager.getParameterValue(request, "deltype", "");
-			String delId = ContentManager.getParameterValue(request, "delid", "");
+			RequestService requestService = RequestService.getInstance(request);
+			String delFile = requestService.getParameter("delfile", "");
+			String delType = requestService.getParameter("deltype", "");
+			String delId = requestService.getParameter("delid", "");
 			if (delFile.length() > 0) {
 				ComponentBean bean = new ComponentBean();
 				bean.setId(delId);
@@ -2784,17 +2780,17 @@ public class EditActions {
 			} else {
 				message = null;
 
-				ContentService content = ContentService.createContent(ctx.getRequest());
+				ContentService content = ContentService.getInstance(globalContext);
 
 				boolean modif = false;
 
-				String compId = ContentManager.getParameterValue(request, "component_id", null);
+				String compId = requestService.getParameter("component_id", null);
 
 				IContentVisualComponent elem = content.getComponent(ctx, compId);
 				elem.performEdit(ctx);
 
 				/** tool bar * */
-				String newStyle = ContentManager.getParameterValue(request, "style_select_" + elem.getId(), null);
+				String newStyle = requestService.getParameter("style_select_" + elem.getId(), null);
 				if (newStyle != null) {
 					if (!newStyle.equals(elem.getStyle(ctx))) {
 						elem.setStyle(ctx, newStyle);
@@ -2828,7 +2824,8 @@ public class EditActions {
 	}
 
 	public static String performUpdatepaternity(HttpServletRequest request, HttpServletResponse response) throws Exception {
-		ContentService content = ContentService.createContent(request);
+		GlobalContext globalContext = GlobalContext.getInstance(request);
+		ContentService content = ContentService.getInstance(globalContext);
 		ContentContext ctx = ContentContext.getContentContext(request, response);
 		if (!checkPageSecurity(ctx)) {
 			return null;
@@ -2844,7 +2841,7 @@ public class EditActions {
 						if (newParrent != null) {
 							String path = currentPage.getPath();
 							currentPage.moveToParent(newParrent);
-							GlobalContext globalContext = GlobalContext.getInstance(request); PersistenceService.getInstance(globalContext).store(ctx);
+							PersistenceService.getInstance(globalContext).store(ctx);
 							I18nAccess i18nAccess = I18nAccess.getInstance(globalContext, request.getSession());
 							String[][] balises = { { "path", path }, { "new-path", newParrent.getPath() } };
 							String msg = i18nAccess.getText("action.link.move", balises);
@@ -2861,10 +2858,9 @@ public class EditActions {
 			} else {
 				logger.warning("new parent id not found");
 			}
-			GlobalContext globalContext = GlobalContext.getInstance(request); PersistenceService.getInstance(globalContext).store(ctx);
+			PersistenceService.getInstance(globalContext).store(ctx);
 		}
 
-		GlobalContext globalContext = GlobalContext.getInstance(request);
 		EditContext editCtx = EditContext.getInstance(globalContext, request.getSession());
 		editCtx.setMainRenderer(null);
 		editCtx.setCommandRenderer(null);
@@ -2876,8 +2872,8 @@ public class EditActions {
 	}
 
 	public static String performUpdatevirtualpaternity(HttpServletRequest request, HttpServletResponse response) throws Exception {
-		ContentService.createContent(request);
 		ContentContext ctx = ContentContext.getContentContext(request, response);
+		GlobalContext globalContext = GlobalContext.getInstance(request);
 		if (!checkPageSecurity(ctx)) {
 			return null;
 		}
@@ -2891,10 +2887,9 @@ public class EditActions {
 					currentPage.addVirtualParent(element);
 				}
 			}
-			GlobalContext globalContext = GlobalContext.getInstance(request); PersistenceService.getInstance(globalContext).store(ctx);
+			PersistenceService.getInstance(globalContext).store(ctx);
 		}
 
-		GlobalContext globalContext = GlobalContext.getInstance(request);
 		EditContext editCtx = EditContext.getInstance(globalContext, request.getSession());
 		editCtx.setMainRenderer(null);
 		editCtx.setCommandRenderer(null);
@@ -3012,7 +3007,8 @@ public class EditActions {
 					} finally {
 						ResourceHelper.closeResource(in);
 					}
-					ContentService content = ContentService.createContent(request);
+					GlobalContext globalContext = GlobalContext.getInstance(request);
+					ContentService content = ContentService.getInstance(globalContext);
 					content.releasePreviewNav(null);
 				}
 				// } else if
@@ -3166,7 +3162,6 @@ public class EditActions {
 		RequestService requestService = RequestService.getInstance(request);
 		String[] userRoles = requestService.getParameterValues("user_roles", new String[0]);
 
-		ContentService.createContent(request);
 		ContentContext ctx = ContentContext.getContentContext(request, response);
 		if (!checkPageSecurity(ctx)) {
 			return null;
@@ -3184,10 +3179,10 @@ public class EditActions {
 	}
 
 	public static String performValidallpages(HttpServletRequest request, HttpServletResponse response) throws Exception {
-		ContentService content = ContentService.createContent(request);
+		GlobalContext globalContext = GlobalContext.getInstance(request);
+		ContentService content = ContentService.getInstance(globalContext);
 		ContentContext ctx = ContentContext.getContentContext(request, response);
 		AdminUserSecurity userSec = AdminUserSecurity.getInstance();
-		GlobalContext globalContext = GlobalContext.getInstance(request);
 		IUserFactory adminUserFactory = AdminUserFactory.createUserFactory(globalContext, request.getSession());
 
 		if (!userSec.haveRight(adminUserFactory.getCurrentUser(request.getSession()), "admin")) {
@@ -3206,8 +3201,6 @@ public class EditActions {
 	}
 
 	public static String performValidationpage(HttpServletRequest request, HttpServletResponse response) throws Exception {
-
-		ContentService.createContent(request);
 		ContentContext ctx = ContentContext.getContentContext(request, response);
 		if (!checkPageSecurity(ctx)) {
 			return null;

@@ -8,6 +8,7 @@ import java.util.Map;
 
 import javax.portlet.PortletConfig;
 import javax.servlet.ServletContext;
+import javax.servlet.ServletRequest;
 import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -55,6 +56,11 @@ public class PortletRequestContextImpl extends PortletContextImpl implements Por
 	@Override
 	public Object getAttribute(String name) {
 		return getContainerRequest().getAttribute(name);
+	}
+
+	@Override
+	public Object getAttribute(String name, ServletRequest servletRequest) {
+		return servletRequest.getAttribute(name);
 	}
 
 	@Override

@@ -53,8 +53,8 @@ import org.javlo.servlet.zip.ZipManagement;
 import org.javlo.tracking.Track;
 import org.javlo.ztatic.StaticInfo;
 
-import be.noctis.common.xml.NodeXML;
-import be.noctis.common.xml.XMLFactory;
+import org.javlo.xml.NodeXML;
+import org.javlo.xml.XMLFactory;
 
 public class PersistenceService {
 
@@ -113,25 +113,6 @@ public class PersistenceService {
 
 	private static String getKey(GlobalContext globalContext) {
 		return KEY + globalContext.getContextKey();
-	}
-
-	public static void main(String[] args) {
-		Calendar calFrom = Calendar.getInstance();
-		calFrom.setTime(new Date("02/06/2010 9:35:00"));
-		Calendar calTo = Calendar.getInstance();
-		calTo.setTime(new Date("02/07/2010 9:35:00"));
-		Calendar tmpCal = Calendar.getInstance();
-		System.out.println("*** calTo = " + StringHelper.renderDate(calTo.getTime()));
-		while (calFrom.before(calTo) || ((calFrom.get(Calendar.DAY_OF_MONTH) == calTo.get(Calendar.DAY_OF_MONTH)))) {
-			tmpCal.roll(Calendar.DAY_OF_YEAR, true);
-			System.out.println("*** calFrom = " + StringHelper.renderDate(calFrom.getTime()));
-			System.out.println("*** tmpCal = " + StringHelper.renderDate(tmpCal.getTime()));
-			if (tmpCal.before(calFrom)) {
-				tmpCal.roll(Calendar.YEAR, true);
-			}
-			calFrom.setTime(tmpCal.getTime());
-		}
-		System.out.println("*** end ***");
 	}
 
 	private static String trackToString(Track track) {
@@ -878,7 +859,7 @@ public class PersistenceService {
 		logger.info("store in " + renderMode + " mode.");
 
 		PersistenceThread persThread = new PersistenceThread();
-		ContentService content = ContentService.createContent(ctx.getRequest());
+		ContentService content = ContentService.getInstance(globalContext);
 		MenuElement menuElement = content.getNavigation(ctx);
 		String defaultLg = globalContext.getDefaultLanguages().iterator().next();
 		if (!globalContext.getLanguages().contains(defaultLg)) {
