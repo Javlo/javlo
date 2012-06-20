@@ -5,6 +5,7 @@ import java.io.PrintStream;
 import java.util.Arrays;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Locale;
 import java.util.regex.Pattern;
 
 import org.javlo.component.properties.AbstractPropertiesComponent;
@@ -73,6 +74,9 @@ public class DynamicComponentList extends AbstractPropertiesComponent {
 	}
 
 	boolean fieldMatch(ContentContext ctx, String name, String value) {
+		if (value == null) {
+			return true;
+		}
 
 		String filterType = properties.getProperty(name + FILTER_TYPE_SUFFIX, CONTAINS);
 		String filter = properties.getProperty(name + FILTER_SUFFIX, "");
@@ -116,7 +120,10 @@ public class DynamicComponentList extends AbstractPropertiesComponent {
 			boolean display = true;
 			List<Field> fields = container.getFields(ctx);
 			for (Field field : fields) {
-				if (!fieldMatch(ctx, field.getName(), field.getValue())) {
+				if (!fieldMatch(ctx, field.getName(),field.getValue(new Locale(ctx.getRequestContentLanguage())))) {
+					/*System.out.println("");
+					System.out.println("***** DynamicComponentList.getViewXHTMLCode : field.getName() = "+field.getName()); //TODO: remove debug trace
+					System.out.println("***** DynamicComponentList.getViewXHTMLCode : field.getValue() = "+field.getValue()); //TODO: remove debug trace*/
 					display = false;
 				}
 			}

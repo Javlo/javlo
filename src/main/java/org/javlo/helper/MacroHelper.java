@@ -232,9 +232,10 @@ public class MacroHelper {
 	 * @param pageName
 	 *            the name of the new page
 	 * @return the new page of the page with the same name
+	 * @store store the result in the content repository if true.
 	 * @throws Exception
 	 */
-	public static final MenuElement addPageIfNotExist(ContentContext ctx, MenuElement parentPage, String pageName, boolean top) throws Exception {
+	public static final MenuElement addPageIfNotExist(ContentContext ctx, MenuElement parentPage, String pageName, boolean top, boolean store) throws Exception {
 		ContentService content = ContentService.createContent(ctx.getRequest());
 		MenuElement nav = content.getNavigation(ctx);
 
@@ -254,8 +255,10 @@ public class MacroHelper {
 			} else {
 				parentPage.addChildMenuElementAutoPriority(newPage);
 			}
-			PersistenceService persistenceService = PersistenceService.getInstance(globalContext);
-			persistenceService.store(ctx);
+			if (store) {
+				PersistenceService persistenceService = PersistenceService.getInstance(globalContext);
+				persistenceService.store(ctx);
+			}
 			ctx.setPath(newPage.getPath());
 
 			NavigationService navigationService = NavigationService.getInstance(globalContext, ctx.getRequest().getSession());
@@ -310,10 +313,11 @@ public class MacroHelper {
 	 * @param parentPage
 	 * @param subPage
 	 * @param top
+	 * @parem store store the data on the repository if true.
 	 * @return
 	 * @throws Exception
 	 */
-	public static final MenuElement addPageIfNotExistWithoutMessage(ContentContext ctx, MenuElement parentPage, MenuElement subPage, boolean top) throws Exception {
+	public static final MenuElement addPageIfNotExistWithoutMessage(ContentContext ctx, MenuElement parentPage, MenuElement subPage, boolean top, boolean store) throws Exception {
 
 		String parentPath = parentPage.getPath();
 		String subPath = subPage.getPath();
@@ -324,7 +328,7 @@ public class MacroHelper {
 		subPath = subPath.replaceFirst("^/+", "");
 		String[] parts = subPath.split("/");
 		for (String pageName : parts) {
-			parentPage = addPageIfNotExist(ctx, parentPage, pageName, top);
+			parentPage = addPageIfNotExist(ctx, parentPage, pageName, top, store);
 		}
 
 		return parentPage;

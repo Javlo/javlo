@@ -62,6 +62,7 @@
 </div>
 
 <div class="action">
+    <a href="${info.currentURL}?webaction=deletePage&page=${page.id}" class="action-button warning needconfirm" title="${i18n.edit['global.delete']}"><span>${i18n.edit['global.delete']}</span></a>
 	<input type="submit" value="${i18n.edit['global.ok']}" />
 </div>
 

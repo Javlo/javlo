@@ -590,7 +590,12 @@ public class Edit extends AbstractModuleAction {
 			IContentVisualComponent elem = content.getComponent(ctx, compId);
 			if (StringHelper.isTrue(requestService.getParameter("id-" + elem.getId(), "false"))) {
 				elem.performConfig(ctx);
-				elem.performEdit(ctx);
+				String rawValue = requestService.getParameter("raw_value_"+elem.getId(), null);
+				if (rawValue != null && !rawValue.equals(elem.getValue(ctx))) {
+					elem.setValue(rawValue);
+				} else {
+					elem.performEdit(ctx);
+				}				
 				if (elem.isNeedRefresh() && ctx.isAjax()) {					
 					updateComponent(ctx, currentModule, elem.getId(), null);
 				}
@@ -880,6 +885,9 @@ public class Edit extends AbstractModuleAction {
 
 		menuElement = content.getNavigation(ctx).searchChildFromId(id);
 		String path = menuElement.getPath();
+		if (menuElement.getParent() == null) {
+			return i18nAccess.getText("action.remove.can-not-delete");
+		}
 
 		String newPath = menuElement.getParent().getPath();
 

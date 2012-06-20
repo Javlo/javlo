@@ -302,7 +302,7 @@ public class Field implements Cloneable {
 	 * @return
 	 * @throws Exception 
 	 */
-	protected String getDisplayValue(ContentContext ctx, Locale locale) throws Exception {		
+	public String getDisplayValue(ContentContext ctx, Locale locale) throws Exception {		
 		if (getTranslation() != null) {			
 			String key = createKey("value");
 			if (getCurrentLocale() != null) {
@@ -324,6 +324,21 @@ public class Field implements Cloneable {
 
 	public String getFieldSuffix(ContentContext ctx) {
 		return properties.getProperty("field." + getUnicName() + ".suffix", "");
+	}
+	
+	/**
+	 * try to return value with locale and return default value if not.
+	 * @param locale
+	 * @return
+	 */
+	public String getValue(Locale locale) {
+		setCurrentLocale(locale);
+		if (getValue() != null) {
+			return getValue();
+		} else {
+			setCurrentLocale(null);
+			return getValue();
+		}
 	}
 
 	public String getValue() {
@@ -353,8 +368,9 @@ public class Field implements Cloneable {
 		String key = createKey("value");
 		if (getCurrentLocale() != null) {
 			key = createKey("value-"+getCurrentLocale());
-		}
-		properties.setProperty(key, value);
+		}		
+		properties.setProperty(key, StringHelper.neverNull(value));
+		
 	}
 
 	public void setLabelValue(String value) {

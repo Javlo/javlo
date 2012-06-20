@@ -72,6 +72,10 @@ public class NotificationService {
 		public String getTimeLabel() {
 			return StringHelper.renderTime(getCreationDate());
 		}
+		
+		public String getSortableTimeLabel() {
+			return StringHelper.renderSortableTime(getCreationDate());
+		}
 	}
 
 	public static final class NotificationContainer {
@@ -179,6 +183,20 @@ public class NotificationService {
 					markAsRead.add(new WeakReference<NotificationService.Notification>(notif));
 				}
 			}
+			if (size == maxSize) {
+				break;
+			}
+		}
+		return outNotif;
+	}
+
+	public List<NotificationContainer> getNotifications(int maxSize) {
+		cleanList();
+		List<NotificationContainer> outNotif = new LinkedList<NotificationContainer>();
+		int size = 0;
+		for (Notification notif : notifications) {
+			size++;
+			outNotif.add(new NotificationContainer(notif, isAllReadyReaded(notif, notif.getUserId()), notif.getUserId()));
 			if (size == maxSize) {
 				break;
 			}

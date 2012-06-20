@@ -46,7 +46,7 @@ public class CreateMonthHereMacro extends AbstractMacro {
 			String pageName = MonthChildrenLink.createMonthPageName(currentPage.getName(), cal.getTime());
 
 			if (content.getNavigation(ctx).searchChildFromName(pageName) == null) {
-				MenuElement monthPage = MacroHelper.addPageIfNotExist(ctx, currentPage, pageName, true);
+				MenuElement monthPage = MacroHelper.addPageIfNotExist(ctx, currentPage, pageName, true, false);
 				
 				List<MenuElement> children = currentPage.getChildMenuElementsList();
 				for (MenuElement child : children) {
@@ -95,9 +95,9 @@ public class CreateMonthHereMacro extends AbstractMacro {
 				
 			}
 
-			GlobalContext globalContext = GlobalContext.getInstance(ctx.getRequest());
+			/*GlobalContext globalContext = GlobalContext.getInstance(ctx.getRequest());
 			PersistenceService persistenceService = PersistenceService.getInstance(globalContext);
-			persistenceService.store(ctx);
+			persistenceService.store(ctx);*/
 			
 		}
 

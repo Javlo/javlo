@@ -17,7 +17,7 @@ public class FieldTextList extends FieldLargeText {
 	 * @return
 	 */
 	@Override
-	protected String getDisplayValue(ContentContext ctx, Locale locale) {
+	public String getDisplayValue(ContentContext ctx, Locale locale) {
 		return XHTMLHelper.textToXHTML(getValue());
 	}
 	

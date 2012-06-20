@@ -36,7 +36,7 @@ public class FieldEnormousText extends Field {
 	 * @throws Exception 
 	 */
 	@Override
-	protected String getDisplayValue(ContentContext ctx, Locale locale) throws Exception {
+	public String getDisplayValue(ContentContext ctx, Locale locale) throws Exception {
 		return XHTMLHelper.textToXHTML(super.getDisplayValue(ctx, locale));
 	}
 	

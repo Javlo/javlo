@@ -12,7 +12,7 @@ import org.javlo.helper.StringHelper;
 import org.javlo.helper.XHTMLHelper;
 import org.javlo.i18n.I18nAccess;
 import org.javlo.service.ReverseLinkService;
-import org.javlo.utils.SufixPreffix;
+import org.javlo.utils.SuffixPrefix;
 
 /**
  * @author pvandermaesen
@@ -27,7 +27,7 @@ public class Description extends AbstractVisualComponent {
 	}
 
 	@Override
-	public List<SufixPreffix> getMarkerList(ContentContext ctx) {
+	public List<SuffixPrefix> getMarkerList(ContentContext ctx) {
 		return getItalicAndStrongLanguageMarkerList(ctx);
 	}
 

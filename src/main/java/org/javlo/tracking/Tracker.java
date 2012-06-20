@@ -194,7 +194,7 @@ public class Tracker {
 	 * 
 	 * @param statCtx
 	 *            statistic context
-	 * @return a map day (Calendar) is the key count of click is the value
+	 * @return a map hours (Calendar) is the key count of click is the value
 	 * @throws DAOException
 	 */
 	public Map<Integer, Integer> getPagesByHour(StatContext statCtx) {

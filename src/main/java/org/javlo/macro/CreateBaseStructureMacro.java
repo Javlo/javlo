@@ -38,19 +38,19 @@ public class CreateBaseStructureMacro extends AbstractMacro {
 		
 		MenuElement currentPage = ctx.getCurrentPage();
 		
-		MenuElement page = MacroHelper.addPageIfNotExist(ctx, currentPage, "home", false);
+		MenuElement page = MacroHelper.addPageIfNotExist(ctx, currentPage, "home", false, false);
 		addBaseContent(ctx, page);
-		page = MacroHelper.addPageIfNotExist(ctx, currentPage, "whoiswho", false);
+		page = MacroHelper.addPageIfNotExist(ctx, currentPage, "whoiswho", false, false);
 		addBaseContent(ctx, page);
-		page = MacroHelper.addPageIfNotExist(ctx, currentPage, "news", false);
+		page = MacroHelper.addPageIfNotExist(ctx, currentPage, "news", false, false);
 		addBaseContent(ctx, page);
-		page = MacroHelper.addPageIfNotExist(ctx, currentPage, "contact", false);
+		page = MacroHelper.addPageIfNotExist(ctx, currentPage, "contact", false, false);
 		addBaseContent(ctx, page);
-		page = MacroHelper.addPageIfNotExist(ctx, currentPage, "partners", false);
+		page = MacroHelper.addPageIfNotExist(ctx, currentPage, "partners", false, false);
 		addBaseContent(ctx, page);
-		page = MacroHelper.addPageIfNotExist(ctx, currentPage, "disclaimer", false);
+		page = MacroHelper.addPageIfNotExist(ctx, currentPage, "disclaimer", false, false);
 		addBaseContent(ctx, page);
-		page = MacroHelper.addPageIfNotExist(ctx, currentPage, "sitemap", false);
+		page = MacroHelper.addPageIfNotExist(ctx, currentPage, "sitemap", false, false);
 		addBaseContent(ctx, page);
 		
 		GlobalContext globalContext = GlobalContext.getInstance(ctx.getRequest());

@@ -92,6 +92,7 @@ public class MenuElement implements Serializable {
 		private List<PageBean> children = new LinkedList<PageBean>();
 		private List<PageBean> realChildren = new LinkedList<PageBean>();
 		private String name = null;
+		private String id = null;
 		private String latestEditor;
 		private String creationDate;
 		private String modificationDate;
@@ -178,6 +179,12 @@ public class MenuElement implements Serializable {
 		}
 		public void setLastSelected(boolean lastSelected) {
 			this.lastSelected = lastSelected;
+		}
+		public String getId() {
+			return id;
+		}
+		public void setId(String id) {
+			this.id = id;
 		}
 		
 	}
@@ -2026,6 +2033,7 @@ public class MenuElement implements Serializable {
 		pageBean.setCreationDate(StringHelper.renderShortDate(ctx, getCreationDate()));
 		pageBean.setModificationDate(StringHelper.renderShortDate(ctx, getModificationDate()));
 		pageBean.setName(getName());
+		pageBean.setId(getId());
 		pageBean.setTemplateId(getTemplateId());
 		pageBean.setSelected(isSelected(ctx));
 		pageBean.setLastSelected(isLastSelected(ctx));

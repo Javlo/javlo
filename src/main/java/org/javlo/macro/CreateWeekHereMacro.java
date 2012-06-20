@@ -46,7 +46,7 @@ public class CreateWeekHereMacro extends AbstractMacro {
 			String pageName = WeekChildrenLink.createWeekPageName(currentPage.getName(), cal.getTime());
 
 			if (content.getNavigation(ctx).searchChildFromName(pageName) == null) {
-				MenuElement weekPage = MacroHelper.addPageIfNotExist(ctx, currentPage, pageName, true);
+				MenuElement weekPage = MacroHelper.addPageIfNotExist(ctx, currentPage, pageName, true, false);
 				weekPage.setVisible(false);
 
 				GlobalContext globalContext = GlobalContext.getInstance(ctx.getRequest());

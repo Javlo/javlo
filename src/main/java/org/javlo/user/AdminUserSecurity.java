@@ -210,7 +210,7 @@ public class AdminUserSecurity implements Serializable {
 	 * @param user
 	 * @return
 	 */
-	public boolean isAdmin(User user) {
+	public boolean isAdmin(User user) {		
 		return haveRight(user, FULL_CONTROL_ROLE, ADMIN_USER_ROLE);
 	}
 

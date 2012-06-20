@@ -56,7 +56,7 @@ import org.javlo.navigation.MenuElement;
 import org.javlo.service.ContentService;
 import org.javlo.service.RequestService;
 import org.javlo.service.ReverseLinkService;
-import org.javlo.utils.SufixPreffix;
+import org.javlo.utils.SuffixPrefix;
 import org.javlo.ztatic.StaticInfo;
 
 /**
@@ -1124,13 +1124,13 @@ public class XHTMLHelper {
 		PrintWriter out = new PrintWriter(writer);
 		if (inComp.getMarkerList(ctx) != null) {
 			out.println("<span class=\"select-style\"> | ");
-			List<SufixPreffix> sufixList = inComp.getMarkerList(ctx);
+			List<SuffixPrefix> sufixList = inComp.getMarkerList(ctx);
 			String markerId = "marker-" + inComp.getId();
 			out.print("<select id=\"" + markerId + "\">");
 			out.print("<option value=\"\">" + i18nAccess.getText("component.marker.select") + "</option>");
-			for (SufixPreffix sufixPreffix : sufixList) {
-				String preffix = StringUtils.replace(sufixPreffix.getPreffix(), "\"", "&quot;");
-				String sufix = StringUtils.replace(sufixPreffix.getSufix(), "\"", "&quot;");
+			for (SuffixPrefix sufixPreffix : sufixList) {
+				String preffix = StringUtils.replace(sufixPreffix.getPrefix(), "\"", "&quot;");
+				String sufix = StringUtils.replace(sufixPreffix.getSuffix(), "\"", "&quot;");
 				out.print("<option value=\"" + preffix + "|" + sufix + "\">");
 				out.print(sufixPreffix.getName());
 				out.println("</option>");

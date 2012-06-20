@@ -316,6 +316,17 @@ ul,li {
 		15px 12px transparent;
 }
 
+.tabmenu ul li.dashboard a span {
+	background: url("../images/icons/small/white/home.png") no-repeat scroll
+		15px 12px transparent;
+}
+
+.tabmenu ul li.dashboard.current a span {
+	background: url("../images/icons/small/black/home.png") no-repeat scroll
+		15px 12px transparent;
+}
+
+
 .tabmenu ul li.template  a span {
 	background: url("../images/icons/small/white/document.png") no-repeat
 		scroll 15px 12px transparent;

@@ -39,7 +39,7 @@ public class FieldLargeText extends Field {
 	 * @return
 	 */
 	@Override
-	protected String getDisplayValue(ContentContext ctx, Locale locale) throws Exception {
+	public String getDisplayValue(ContentContext ctx, Locale locale) throws Exception {
 		return XHTMLHelper.textToXHTML(super.getDisplayValue(ctx, locale));
 	}
 	

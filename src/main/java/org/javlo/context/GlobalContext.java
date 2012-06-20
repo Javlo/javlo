@@ -130,7 +130,7 @@ public class GlobalContext implements Serializable {
 	 */
 	protected static Logger logger = Logger.getLogger(GlobalContext.class.getName());
 
-	private static final String KEY = GlobalContext.class.getName();
+	private static final String KEY = "globalContext";
 
 	public static final String LICENCE_BASE = "base";
 
@@ -163,10 +163,10 @@ public class GlobalContext implements Serializable {
 	public static GlobalContext getDefaultContext(HttpServletRequest request) throws IOException, ConfigurationException {
 		return getRealInstance(request, StaticConfig.getInstance(request.getSession()).getDefaultContext(), false);
 	}
-	
+
 	public static GlobalContext getSessionInstance(HttpSession session) {
-		String contextKey = (String)session.getAttribute(KEY);		
-		return (GlobalContext)session.getServletContext().getAttribute(contextKey);
+		String contextKey = (String) session.getAttribute(KEY);
+		return (GlobalContext) session.getServletContext().getAttribute(contextKey);
 	}
 
 	public static GlobalContext getInstance(HttpServletRequest request) {
@@ -204,9 +204,9 @@ public class GlobalContext implements Serializable {
 				contextURI = globalContext.getContextKey();
 			}
 			request.setAttribute(KEY, globalContext);
-			
+
 			request.getSession().setAttribute(KEY, contextURI); // mark global context in session.
-			
+
 			return globalContext;
 		} catch (ConfigurationException e) {
 			e.printStackTrace();
@@ -261,7 +261,7 @@ public class GlobalContext implements Serializable {
 		Configuration cacheConfig;
 		File ehCacheFile = null;
 		if (staticConfig.getEHCacheConfigFile() == null || !(new File(staticConfig.getEHCacheConfigFile()).exists())) {
-			logger.info("load default ehcache config from : "+EHCACHE_FILE);
+			logger.info("load default ehcache config from : " + EHCACHE_FILE);
 			InputStream inConfig = application.getResourceAsStream(EHCACHE_FILE);
 			if (inConfig != null) {
 				cacheConfig = ConfigurationSource.getConfigurationSource(inConfig).createConfiguration();
@@ -275,7 +275,7 @@ public class GlobalContext implements Serializable {
 			cacheConfig = ConfigurationSource.getConfigurationSource(ehCacheFile).createConfiguration();
 		}
 		cacheConfig.setName(getContextKey());
-		cacheManager = new CacheManager(cacheConfig);		
+		cacheManager = new CacheManager(cacheConfig);
 		if (cacheManager == null) {
 			logger.severe("error on init ehCache width : " + ehCacheFile);
 			cacheManager = new CacheManager();
@@ -484,15 +484,24 @@ public class GlobalContext implements Serializable {
 
 	private boolean stopStoreThread = false;
 
-	public long accountSize() {
-		File file = new File(getDataFolder());
-		if (file.exists()) {
-			return FileUtils.sizeOfDirectory(file);
-		} else {
-			return -1;
+	private Long accountSize = null;
+	
+	public long getAccountSize() {
+		if (accountSize == null) {
+			File file = new File(getDataFolder());
+			if (file.exists()) {
+				accountSize = FileUtils.sizeOfDirectory(file);
+			} else {
+				return -1;
+			}
 		}
+		return accountSize;
 	}
-
+	
+	public String getAccountSizeLabel() {
+		return StringHelper.renderSize(getAccountSize());
+	}
+	
 	public void addPrincipal(User principal) {
 		synchronized (allUsers) {
 			allUsers.put(principal.getName(), new WeakReference<User>(principal));
@@ -572,7 +581,7 @@ public class GlobalContext implements Serializable {
 
 			// ServletContextWeakReference gcc = ServletContextWeakReference.getInstance(application);
 			synchronized (staticConfig.getContextFolder()) {
-				//cacheManager.removalAll();
+				// cacheManager.removalAll();
 				application.removeAttribute(contextKey);
 			}
 
@@ -592,7 +601,7 @@ public class GlobalContext implements Serializable {
 	@Override
 	protected void finalize() throws Throwable {
 		if (cacheManager != null) {
-			 cacheManager.shutdown();
+			cacheManager.shutdown();
 		}
 		stopStoreThread = true;
 		super.finalize();
@@ -676,7 +685,7 @@ public class GlobalContext implements Serializable {
 		}
 		return cache;
 	}
-	
+
 	public List<String> getComponents() {
 		List<String> components = new LinkedList<String>();
 		String componentRaw = properties.getString("components", "");
@@ -685,8 +694,8 @@ public class GlobalContext implements Serializable {
 
 		return components;
 	}
-	
-	public List<String> getUsersAccess() {		
+
+	public List<String> getUsersAccess() {
 		String usersRaw = properties.getString("users", null);
 		if (usersRaw == null) {
 			return Collections.EMPTY_LIST;
@@ -1696,7 +1705,7 @@ public class GlobalContext implements Serializable {
 			save();
 		}
 	}
-	
+
 	public void setUsersAccess(List<String> users) {
 		synchronized (properties) {
 			properties.setProperty("users", StringHelper.collectionToString(users));
@@ -2229,18 +2238,18 @@ public class GlobalContext implements Serializable {
 			return Arrays.asList(tp.split(";"));
 		}
 	}
-	
+
 	public String getTemplatePluginConfig() {
 		return properties.getString("template.plugins.config", null);
 	}
-	
+
 	public void setTemplatePlugin(Collection<String> top) {
 		synchronized (properties) {
 			properties.setProperty("template.plugins", StringHelper.collectionToString(top, ";"));
 			save();
 		}
 	}
-	
+
 	public void setTemplatePluginConfig(String config) {
 		synchronized (properties) {
 			properties.setProperty("template.plugins.config", config);

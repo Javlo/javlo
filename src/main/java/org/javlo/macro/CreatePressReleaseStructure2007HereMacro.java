@@ -47,7 +47,7 @@ public class CreatePressReleaseStructure2007HereMacro extends AbstractMacro {
 			Calendar cal = GregorianCalendar.getInstance();
 			cal.setTime(startDate);
 
-			MenuElement yearPage = MacroHelper.addPageIfNotExist(ctx, currentPage, currentPage.getName()+"-" + getYear(), true);
+			MenuElement yearPage = MacroHelper.addPageIfNotExist(ctx, currentPage, currentPage.getName()+"-" + getYear(), true, false);
 			yearPage.setVisible(true);
 			boolean lastMounth = false;
 			while (!lastMounth) {
@@ -70,9 +70,6 @@ public class CreatePressReleaseStructure2007HereMacro extends AbstractMacro {
 				if (cal.get(Calendar.MONTH) == 11) {
 					lastMounth = true;
 				}
-
-				// MenuElement newPage = MacroHelper.addPage(ctx,
-				// mounthPage.getName(), "pr-"+year+"-"+englishMonthShort+"-");
 
 			}
 
