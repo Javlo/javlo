@@ -94,7 +94,7 @@ public class ImportDocumentMacro extends AbstractMacro {
 		if (file.isDirectory() || StringHelper.isHTML(file.getName())) {
 			String pageName = StringHelper.createFileName(StringHelper.getFileNameWithoutExtension(file.getName()));
 			if (currentPage.searchChildFromName(pageName) == null) {
-				MenuElement newPage = MacroHelper.addPageIfNotExist(ctx, currentPage, pageName, false);
+				MenuElement newPage = MacroHelper.addPageIfNotExist(ctx, currentPage, pageName, false, false);
 				if (file.isFile()) {
 					String content = ResourceHelper.getFileContent(file);
 					TagDescription[] tags = XMLManipulationHelper.searchAllTag(content, false);

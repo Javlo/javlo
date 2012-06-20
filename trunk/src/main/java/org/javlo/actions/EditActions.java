@@ -2615,7 +2615,12 @@ public class EditActions {
 					IContentVisualComponent elem = contentList.next(ctx);
 					if (StringHelper.isTrue(requestService.getParameter("id-" + elem.getId(), "false"))) {
 						elem.performConfig(ctx);
-						elem.performEdit(ctx);						
+						String rawValue = requestService.getParameter("raw_value_"+elem.getId(), null);
+						if (rawValue != null && !rawValue.equals(elem.getValue(ctx))) {
+							elem.setValue(rawValue);
+						} else {
+							elem.performEdit(ctx);
+						}
 					}
 					needRefresh = needRefresh || elem.isNeedRefresh();
 

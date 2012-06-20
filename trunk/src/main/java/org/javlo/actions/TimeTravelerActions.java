@@ -56,7 +56,7 @@ public class TimeTravelerActions implements IAction {
 		ContentService content = ContentService.createContent(request);
 
 		MenuElement currentPageTime = timeCtx.getCurrentPage();
-		MenuElement currentPageEdit = MacroHelper.addPageIfNotExistWithoutMessage(editCtx, content.getNavigation(editCtx), currentPageTime, false);
+		MenuElement currentPageEdit = MacroHelper.addPageIfNotExistWithoutMessage(editCtx, content.getNavigation(editCtx), currentPageTime, false, false);
 
 		MacroHelper.deleteLocalContent(currentPageEdit, editCtx);
 

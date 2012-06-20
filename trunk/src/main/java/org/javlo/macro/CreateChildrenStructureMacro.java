@@ -2,7 +2,8 @@ package org.javlo.macro;
 
 import java.io.BufferedReader;
 import java.io.File;
-import java.io.FileReader;
+import java.io.FileInputStream;
+import java.io.InputStreamReader;
 import java.util.Map;
 import java.util.logging.Logger;
 
@@ -13,6 +14,7 @@ import org.javlo.helper.StringHelper;
 import org.javlo.message.GenericMessage;
 import org.javlo.message.MessageRepository;
 import org.javlo.navigation.MenuElement;
+import org.javlo.service.PersistenceService;
 import org.javlo.template.Template;
 
 /**
@@ -64,8 +66,7 @@ public class CreateChildrenStructureMacro extends AbstractMacro {
 				return null;
 			}
 			
-			BufferedReader reader = new BufferedReader(new FileReader(structureFile));
-			
+			BufferedReader reader = new BufferedReader(new InputStreamReader(new FileInputStream(structureFile), ContentContext.CHARACTER_ENCODING));			
 			MenuElement page = currentPage;
 			String line = reader.readLine();
 			while (line != null) {
@@ -102,14 +103,14 @@ public class CreateChildrenStructureMacro extends AbstractMacro {
 					line = line.replace("[random]", StringHelper.getRandomId());
 					line = line.replace("[root]", currentPage.getName());
 					logger.info("create page : "+line);
-					page = MacroHelper.addPageIfNotExist(ctx, parent, line, false);
+					page = MacroHelper.addPageIfNotExist(ctx, parent, line, false, false);
 				}
 				line = reader.readLine();				
 			}
 			reader.close();
 			
-			//PersistenceService persistenceService = PersistenceService.getInstance(globalContext);
-			//persistenceService.store(ctx);
+			PersistenceService persistenceService = PersistenceService.getInstance(globalContext);
+			persistenceService.store(ctx);
 
 		}
 		

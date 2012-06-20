@@ -57,7 +57,7 @@ import org.javlo.navigation.MenuElement;
 import org.javlo.rendering.Device;
 import org.javlo.service.RequestService;
 import org.javlo.utils.DebugListening;
-import org.javlo.utils.SufixPreffix;
+import org.javlo.utils.SuffixPrefix;
 
 /**
  * @author pvanderm
@@ -643,8 +643,8 @@ public abstract class AbstractVisualComponent implements IContentVisualComponent
 		return "_renderer_title_" + getId();
 	}
 
-	public List<SufixPreffix> getItalicAndStrongLanguageMarkerList(ContentContext ctx) {
-		List<SufixPreffix> out = new LinkedList<SufixPreffix>();
+	public List<SuffixPrefix> getItalicAndStrongLanguageMarkerList(ContentContext ctx) {
+		List<SuffixPrefix> out = new LinkedList<SuffixPrefix>();
 
 		I18nAccess i18nAccess = null;
 		try {
@@ -652,16 +652,16 @@ public abstract class AbstractVisualComponent implements IContentVisualComponent
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
-		SufixPreffix sufixPreffix = new SufixPreffix("<em>", "</em>", i18nAccess.getText("component.marker.italic"));
+		SuffixPrefix sufixPreffix = new SuffixPrefix("<em>", "</em>", i18nAccess.getText("component.marker.italic"));
 		out.add(sufixPreffix);
-		sufixPreffix = new SufixPreffix("<strong>", "</strong>", i18nAccess.getText("component.marker.strong"));
+		sufixPreffix = new SuffixPrefix("<strong>", "</strong>", i18nAccess.getText("component.marker.strong"));
 		out.add(sufixPreffix);
 
 		GlobalContext globalContext = GlobalContext.getInstance(ctx.getRequest());
 		Collection<String> lgs = globalContext.getContentLanguages();
 		for (String lg : lgs) {
 			Locale locale = new Locale(lg);
-			sufixPreffix = new SufixPreffix("<span lang=\"" + locale.getLanguage() + "\">", "</span>", locale.getDisplayLanguage(new Locale(ctx.getRequestContentLanguage())));
+			sufixPreffix = new SuffixPrefix("<span lang=\"" + locale.getLanguage() + "\">", "</span>", locale.getDisplayLanguage(new Locale(ctx.getRequestContentLanguage())));
 			out.add(sufixPreffix);
 		}
 		return out;
@@ -691,7 +691,7 @@ public abstract class AbstractVisualComponent implements IContentVisualComponent
 	}
 
 	@Override
-	public List<SufixPreffix> getMarkerList(ContentContext ctx) {
+	public List<SuffixPrefix> getMarkerList(ContentContext ctx) {
 		return null;
 	}
 
@@ -740,8 +740,8 @@ public abstract class AbstractVisualComponent implements IContentVisualComponent
 		return previousComponent;
 	}
 
-	public List<SufixPreffix> getQuotationLanguageMarkerList(ContentContext ctx) {
-		List<SufixPreffix> out = new LinkedList<SufixPreffix>();
+	public List<SuffixPrefix> getQuotationLanguageMarkerList(ContentContext ctx) {
+		List<SuffixPrefix> out = new LinkedList<SuffixPrefix>();
 
 		I18nAccess i18nAccess = null;
 		try {
@@ -749,14 +749,14 @@ public abstract class AbstractVisualComponent implements IContentVisualComponent
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
-		SufixPreffix sufixPreffix = new SufixPreffix("<q>", "</q>", i18nAccess.getText("component.marker.quotation"));
+		SuffixPrefix sufixPreffix = new SuffixPrefix("<q>", "</q>", i18nAccess.getText("component.marker.quotation"));
 		out.add(sufixPreffix);
 
 		GlobalContext globalContext = GlobalContext.getInstance(ctx.getRequest());
 		Collection<String> lgs = globalContext.getContentLanguages();
 		for (String lg : lgs) {
 			Locale locale = new Locale(lg);
-			sufixPreffix = new SufixPreffix("<span lang=\"" + locale.getLanguage() + "\">", "</span>", locale.getDisplayLanguage(new Locale(ctx.getRequestContentLanguage())));
+			sufixPreffix = new SuffixPrefix("<span lang=\"" + locale.getLanguage() + "\">", "</span>", locale.getDisplayLanguage(new Locale(ctx.getRequestContentLanguage())));
 			out.add(sufixPreffix);
 		}
 		return out;
@@ -1254,7 +1254,7 @@ public abstract class AbstractVisualComponent implements IContentVisualComponent
 	 *            the text to be insered
 	 */
 	@Override
-	public void insert(String text) {
+	public void insert(String text) {		
 		setValue(text);
 	}
 
@@ -1477,7 +1477,7 @@ public abstract class AbstractVisualComponent implements IContentVisualComponent
 		}
 	}
 
-	public final void refresh(HttpServletRequest request, HttpServletResponse response) throws Exception {
+	public final void performUpdate(HttpServletRequest request, HttpServletResponse response) throws Exception {
 		ContentContext ctx = ContentContext.getContentContext(request, response);
 		performEdit(ctx);
 	}
@@ -1596,7 +1596,10 @@ public abstract class AbstractVisualComponent implements IContentVisualComponent
 
 	@Override
 	public void setValue(String inContent) {
-		componentBean.setValue(StringHelper.escapeWordChar(inContent));
+		if (!inContent.equals(componentBean.getValue())) {			
+			componentBean.setValue(StringHelper.escapeWordChar(inContent));
+			setModify();
+		}
 	}
 
 	/**

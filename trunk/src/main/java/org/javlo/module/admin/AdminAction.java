@@ -92,7 +92,7 @@ public class AdminAction extends AbstractModuleAction {
 			setEditability(globalContext.isEditable());
 			setDefaultTemplate(globalContext.getDefaultTemplate());
 
-			setSize(StringHelper.renderSize(globalContext.accountSize()));
+			setSize(StringHelper.renderSize(globalContext.getAccountSize()));
 			setGlobalTitle(globalContext.getGlobalTitle());
 			setDefaultLanguage(globalContext.getDefaultLanguage());
 			setLanguages(StringHelper.collectionToString(globalContext.getLanguages(), ";"));

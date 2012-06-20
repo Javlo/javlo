@@ -8,33 +8,33 @@
 	<packaging>war</packaging>
 	<name>Javlo 2</name>
 	<url>http://www.javlo.org/</url>
-    <inceptionYear>2012</inceptionYear>
-    	
+	<inceptionYear>2012</inceptionYear>
+
 	<description>
 		Javlo is a easy to use and deploy website content management system. Javlo helps content managers worldwide to create and maintain beautiful websites fast and efficiently.
 		The browser based user interface features configurable editors for structured content with well defined fields.
 		A sophisticated template engine enforces a structured layout, W3C standard compliance and accessibility features for all content.
 	 </description>
-	 
-	 <developers>
-        <developer>
-            <name>Patrick Vandermaesen</name>
-            <id>pvandermaesen</id>
-            <email>pvandermaesen#a@T#noctis.d0t.be</email>
-        </developer>
 
-        <developer>
-            <name>Philippe Le Marchand</name>
-            <id>plemarchand</id>
-            <email>plemarchand#a@T#noctis.d0t.be</email>
-        </developer>
-        
-        <developer>
-            <name>Benoit Dumont de Chassart</name>
-            <id>bdumont</id>
-            <email>bdumont#a@T#noctis.d0t.be</email>
-        </developer>
-    </developers>
+	<developers>
+		<developer>
+			<name>Patrick Vandermaesen</name>
+			<id>pvandermaesen</id>
+			<email>pvandermaesen#a@T#noctis.d0t.be</email>
+		</developer>
+
+		<developer>
+			<name>Philippe Le Marchand</name>
+			<id>plemarchand</id>
+			<email>plemarchand#a@T#noctis.d0t.be</email>
+		</developer>
+
+		<developer>
+			<name>Benoit Dumont de Chassart</name>
+			<id>bdumont</id>
+			<email>bdumont#a@T#noctis.d0t.be</email>
+		</developer>
+	</developers>
 
 	<distributionManagement>
 		<site>
@@ -237,8 +237,15 @@
 			<version>1.2</version>
 		</dependency>
 		
+		<!-- MySQL database driver -->
+		<dependency>
+			<groupId>mysql</groupId>
+			<artifactId>mysql-connector-java</artifactId>
+			<version>5.1.9</version>
+		</dependency>
+
 	</dependencies>
-	
+
 	<repositories>
 		<repository>
 	        <id>com.springsource.repository.bundles.external</id>
@@ -263,7 +270,14 @@
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-war-plugin</artifactId>
 				<version>2.2</version>
+
 			</plugin>
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-war-plugin</artifactId>
+				<version>2.1.1</version>
+			</plugin>
+
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-javadoc-plugin</artifactId>

@@ -10,7 +10,7 @@ import org.javlo.context.ContentContext;
 import org.javlo.context.GlobalContext;
 import org.javlo.helper.XHTMLHelper;
 import org.javlo.service.ReverseLinkService;
-import org.javlo.utils.SufixPreffix;
+import org.javlo.utils.SuffixPrefix;
 
 
 /**
@@ -92,7 +92,7 @@ public class Paragraph extends AbstractVisualComponent {
 	}
 
 	@Override
-	public List<SufixPreffix> getMarkerList(ContentContext ctx) {
+	public List<SuffixPrefix> getMarkerList(ContentContext ctx) {
 		return getItalicAndStrongLanguageMarkerList(ctx);
 	}
 

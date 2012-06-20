@@ -20,22 +20,30 @@ public class ImportDataBase extends AbstractMacro {
 
 	static final String SQL_ALL_GENERAL = "select distinct general.*, country.name country, trans_en.description desc_en, trans_fr.description desc_fr " + "from general,general_has_country, country, general_translation trans_en, general_translation trans_fr " + "where general.environment_id=\"LIVE\" and general.id = general_has_country.general_id and country.id = general_has_country.country_id and " + "trans_fr.language=\"fr\" and trans_fr.general_id=general.id and trans_en.language=\"en\" and trans_en.general_id=general.id;";
 
-	static final String SQL_ALL_TECHNICAL = "select distinct technical.*, technical_has_type.type_id type, country.name country, trans_en.description desc_en, trans_fr.description desc_fr from technical,technical_has_country, technical_has_type, country, technical_translation trans_en, technical_translation trans_fr where technical.environment_id='LIVE' and technical.id = technical_has_country.technical_id and country.id = technical_has_country.country_id and trans_fr.language='fr' and trans_fr.technical_id=technical.id and trans_en.language='en' and trans_en.technical_id=technical.id and technical_has_type.technical_id=technical.id;";
+	// static final String SQL_ALL_TECHNICAL = "select distinct technical.*, technical_has_type.type_id type, country.name country, trans_en.description desc_en, trans_fr.description desc_fr from technical,technical_has_country, technical_has_type, country, technical_translation trans_en, technical_translation trans_fr where technical.environment_id='LIVE' and technical.id = technical_has_country.technical_id and country.id = technical_has_country.country_id and trans_fr.language='fr' and trans_fr.technical_id=technical.id and trans_en.language='en' and trans_en.technical_id=technical.id and technical_has_type.technical_id=technical.id;";
 
 	static final String SQL_ALL_TECHNICAL_FR = "select distinct technical.*, technical_translation.*, technical_has_type.type_id type, technical_type.name, country.name country from technical, technical_translation, technical_type, technical_has_type, technical_has_country, country where technical_translation.language='fr' and technical_translation.technical_id=technical.id and technical_type.id = technical_has_type.type_id and technical_has_type.technical_id = technical.id and technical.environment_id = 'live' and technical.id = technical_has_country.technical_id and country.id = technical_has_country.country_id";
-
 	static final String SQL_ALL_TECHNICAL_EN = SQL_ALL_TECHNICAL_FR.replace("'fr'", "'en'");
+	static final Map<String, String> technicalTypes = new HashMap<String, String>();
+
+	static final String SQL_JURIDIQUE_FR = "select distinct juridique.*, juridique_translation.*, juridique_has_type.type_id type, juridique_type.name, country.name country from juridique, juridique_translation, juridique_type, juridique_has_type, juridique_has_country, country where juridique_translation.language='fr' and juridique_translation.juridique_id=juridique.id and juridique_type.id = juridique_has_type.type_id and juridique_has_type.juridique_id = juridique.id and juridique.environment_id = 'live' and juridique.id = juridique_has_country.juridique_id and country.id = juridique_has_country.country_id";
+	static final String SQL_JURIDIQUE_EN = SQL_JURIDIQUE_FR.replace("'fr'", "'en'");
+	static final Map<String, String> juriTypes = new HashMap<String, String>();
+
+	static final String SQL_BANK_FR = "select distinct bank.*, bank_translation.*, bank_has_type.type_id type, type.name, country.name country from bank, bank_translation, type, bank_has_type, bank_has_country, country where bank_translation.language='fr' and bank_translation.bank_id=bank.id and type.id = bank_has_type.type_id and bank_has_type.bank_id = bank.id and bank.environment_id = 'live' and bank.id = bank_has_country.bank_id and country.id = bank_has_country.country_id";
+	static final String SQL_BANK_EN = SQL_BANK_FR.replace("'fr'", "'en'");
+	static final Map<String, String> bankTypes = new HashMap<String, String>();
 
 	static final Map<String, String> countries = new HashMap<String, String>();
 
-	static final Map<String, String> technicalTypes = new HashMap<String, String>();
+
 
 	@Override
 	public String getName() {
 		return "import-database";
 	}
 
-	protected void importItem(ContentContext ctx, MenuElement currentPage, Map<String, DynamicComponent> compCache, ResultSet rs, String lg) throws Exception {
+	protected void importItem(ContentContext ctx, MenuElement currentPage, Map<String, DynamicComponent> compCache, ResultSet rs, Map<String,String> types, String componentType, String lg) throws Exception {
 		String name = rs.getString("name");
 
 		ContentService content = ContentService.createContent(ctx.getRequest());
@@ -46,21 +54,21 @@ public class ImportDataBase extends AbstractMacro {
 				type = compCache.get(name).getField(ctx, "type").getValue();
 			}
 			if (type == null) {
-				type ="";
-			}			
+				type = "";
+			}
 			String dbType = rs.getString("type");
-			if (technicalTypes.get(dbType) == null) {
-				System.out.println("**** WARNING : type not found : "+dbType);
+			if (types.get(dbType) == null) {
+				System.out.println("**** WARNING : type not found : " + dbType);
 			} else {
-				if (!type.contains(technicalTypes.get(dbType))) {
-					compCache.get(name).getField(ctx, "type").setValue(type + ';' + technicalTypes.get(dbType));
+				if (!type.contains(types.get(dbType))) {
+					compCache.get(name).getField(ctx, "type").setValue(type + ';' + types.get(dbType));
 				}
 			}
 
 			Field descField = compCache.get(name).getField(ctx, "description");
 			descField.setCurrentLocale(new Locale(lg));
 			descField.setValue(rs.getString("description"));
-			
+
 			Field titleField = compCache.get(name).getField(ctx, "title");
 			titleField.setCurrentLocale(new Locale(lg));
 			titleField.setValue(rs.getString("title"));
@@ -68,18 +76,18 @@ public class ImportDataBase extends AbstractMacro {
 			compCache.get(name).storeProperties();
 			compCache.get(name).setModify();
 		} else {
-			String parentId = MacroHelper.addContent(ctx.getRequestContentLanguage(), currentPage, "0", "technical", "");
+			String parentId = MacroHelper.addContent(ctx.getRequestContentLanguage(), currentPage, "0", componentType, "");
 			DynamicComponent comp = (DynamicComponent) content.getComponent(ctx, parentId);
-			
+
 			comp.getField(ctx, "title").setValue(name);
 			comp.getField(ctx, "web").setValue(rs.getString("website"));
 			comp.getField(ctx, "phone").setValue(rs.getString("phone"));
 			comp.getField(ctx, "email").setValue(rs.getString("email"));
 			comp.getField(ctx, "address").setValue(rs.getString("address").replace("<p>&nbsp;</p>", ""));
 
-			String ctr = rs.getString("country");			
+			String ctr = rs.getString("country");
 			String javloCtr = countries.get(ctr);
-			System.out.println("**** CREATE TECHNICAL : "+name+" (ctr="+ctr+" - javloCtr="+javloCtr+") ****");
+			System.out.println("**** CREATE "+componentType+" : " + name + " (ctr=" + ctr + " - javloCtr=" + javloCtr + ") ****");
 			if (javloCtr == null) {
 				System.out.println("*** WARNING : bad country : " + ctr);
 			} else {
@@ -87,7 +95,7 @@ public class ImportDataBase extends AbstractMacro {
 			}
 
 			String type = rs.getString("type");
-			String javloType = technicalTypes.get(type);
+			String javloType = types.get(type);
 			if (javloType == null) {
 				System.out.println("*** WARNING : bad type : " + type);
 			} else {
@@ -108,21 +116,20 @@ public class ImportDataBase extends AbstractMacro {
 	@Override
 	public String perform(ContentContext ctx, Map<String, Object> params) throws Exception {
 
-		
-		countries.put("Algï¿½rie", "algeria");
-		countries.put("Bï¿½nin", "benin");
+		countries.put("Algérie", "algeria");
+		countries.put("Bénin", "benin");
 		countries.put("Burundi", "burundi");
-		countries.put("Rï¿½publique Dï¿½mocratique du Congo", "drc");
+		countries.put("République Démocratique du Congo", "drc");
 		countries.put("Maroc", "marocco");
 		countries.put("Mozambique", "mozambique");
 		countries.put("Mali", "mali");
 		countries.put("Niger", "niger");
 		countries.put("Rwanda", "rwanda");
-		countries.put("Sï¿½nï¿½gal", "senegal");
+		countries.put("Sénégal", "senegal");
 		countries.put("Afrique du Sud", "south-africa");
 		countries.put("Tanzanie", "tanzania");
 		countries.put("Ouganda", "uganda");
-		
+
 		technicalTypes.put("1", "agroali");
 		technicalTypes.put("2", "assurance");
 		technicalTypes.put("3", "automob");
@@ -140,6 +147,21 @@ public class ImportDataBase extends AbstractMacro {
 		technicalTypes.put("15", "trans");
 		technicalTypes.put("16", "tourism");
 		technicalTypes.put("17", "agri");
+		
+		juriTypes.put("1", "lawyers");
+		juriTypes.put("2", "notaries");
+		
+		bankTypes.put("1","investmentloan"); 
+		bankTypes.put("2","leasing"); 
+		bankTypes.put("3","discountcredit"); 
+		bankTypes.put("4","guarantees"); 
+		bankTypes.put("5","cashcredit"); 
+		bankTypes.put("6","straightloan"); 
+		bankTypes.put("8","factoring"); 
+		bankTypes.put("9","venturecapital");
+		bankTypes.put("10","insuranceimportexport");
+		bankTypes.put("11","quasicapital");
+		bankTypes.put("12","smallloans");
 
 		/** import general **/
 		Connection conn = getConnection();
@@ -148,11 +170,11 @@ public class ImportDataBase extends AbstractMacro {
 		ResultSet rs = readDataBase(conn, SQL_ALL_GENERAL);
 
 		ContentService content = ContentService.createContent(ctx.getRequest());
-		
-		MenuElement dataPage = MacroHelper.addPageIfNotExist(ctx, content.getNavigation(ctx), "data", false);
 
-		//MenuElement currentPage = content.getNavigation(ctx).searchChildFromName("general");
-		MenuElement currentPage = MacroHelper.addPageIfNotExist(ctx, dataPage, "general", true);
+		MenuElement dataPage = MacroHelper.addPageIfNotExist(ctx, content.getNavigation(ctx), "data", false, false);
+
+		// MenuElement currentPage = content.getNavigation(ctx).searchChildFromName("general");
+		MenuElement currentPage = MacroHelper.addPageIfNotExist(ctx, dataPage, "general", true, false);
 
 		String parentId = "0";
 		while (rs.next()) {
@@ -184,19 +206,55 @@ public class ImportDataBase extends AbstractMacro {
 
 		// IMPORT TECHNICAL
 
-		currentPage = currentPage = MacroHelper.addPageIfNotExist(ctx, dataPage, "technical", true);
+		currentPage = currentPage = MacroHelper.addPageIfNotExist(ctx, dataPage, "technical", true, false);
 
 		Map<String, DynamicComponent> compCache = new HashMap<String, DynamicComponent>();
 
 		rs = readDataBase(conn, SQL_ALL_TECHNICAL_FR);
 		while (rs.next()) {
-			importItem(ctx, currentPage, compCache, rs, "fr");
+			importItem(ctx, currentPage, compCache, rs, technicalTypes, "technical", "fr");
 		}
 		rs.close();
 
 		rs = readDataBase(conn, SQL_ALL_TECHNICAL_EN);
 		while (rs.next()) {
-			importItem(ctx, currentPage, compCache, rs, "en");
+			importItem(ctx, currentPage, compCache, rs, technicalTypes, "technical", "en");
+		}
+		rs.close();
+
+		// IMPORT JURIDIQUE
+
+		currentPage = currentPage = MacroHelper.addPageIfNotExist(ctx, dataPage, "juridique", true, false);
+
+		compCache = new HashMap<String, DynamicComponent>();
+
+		rs = readDataBase(conn, SQL_JURIDIQUE_FR);
+		while (rs.next()) {
+			importItem(ctx, currentPage, compCache, rs, juriTypes, "juridique", "fr");
+		}
+		rs.close();
+
+		rs = readDataBase(conn, SQL_JURIDIQUE_EN);
+		while (rs.next()) {
+			importItem(ctx, currentPage, compCache, rs,  juriTypes, "juridique", "en");
+		}
+		rs.close();
+
+		// IMPORT BANK
+
+		currentPage = currentPage = MacroHelper.addPageIfNotExist(ctx, dataPage, "bank", true, false);
+
+		compCache = new HashMap<String, DynamicComponent>();
+
+		rs = readDataBase(conn, SQL_BANK_FR);
+		while (rs.next()) {
+			importItem(ctx, currentPage, compCache, rs, bankTypes, "bank", "fr");
+		}
+		rs.close();
+
+		rs = readDataBase(conn, SQL_BANK_EN);
+		while (rs.next()) {
+			importItem(ctx, currentPage, compCache, rs, bankTypes, "bank", "en");
 		}
 		rs.close();
 

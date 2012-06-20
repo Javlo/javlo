@@ -43,7 +43,7 @@ public class CreatePressReleaseTodayHereMacro extends AbstractMacro {
 			String englishMonth = MacroHelper.getDisplayName(cal, Calendar.MONTH, MacroHelper.CALENDAR_LONG, Locale.ENGLISH);
 			String englishMonthShort = MacroHelper.getDisplayName(cal, Calendar.MONTH, MacroHelper.CALENDAR_SHORT, Locale.ENGLISH);
 
-			MenuElement yearPage = MacroHelper.addPageIfNotExist(ctx, currentPage, currentPage.getName()+"-" + year, true);
+			MenuElement yearPage = MacroHelper.addPageIfNotExist(ctx, currentPage, currentPage.getName()+"-" + year, true, false);
 			MenuElement mountPage = MacroHelper.addPageIfNotExist(ctx, yearPage.getName(), currentPage.getName() + "-" + year + "-" + englishMonth, true);
 			MenuElement newPage = MacroHelper.addPage(ctx, mountPage.getName(), currentPage.getName() + "-" + year + "-" + englishMonthShort + "-", true);
 			newPage.setVisible(true);

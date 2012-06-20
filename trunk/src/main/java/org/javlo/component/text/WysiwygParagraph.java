@@ -9,7 +9,7 @@ import org.javlo.context.ContentContext;
 import org.javlo.context.GlobalContext;
 import org.javlo.service.RequestService;
 import org.javlo.service.ReverseLinkService;
-import org.javlo.utils.SufixPreffix;
+import org.javlo.utils.SuffixPrefix;
 
 /**
  * @author pvandermaesen
@@ -30,7 +30,7 @@ public class WysiwygParagraph extends Paragraph {
 	}
 
 	@Override
-	public List<SufixPreffix> getMarkerList(ContentContext ctx) {
+	public List<SuffixPrefix> getMarkerList(ContentContext ctx) {
 		return null;
 	}
 

@@ -7,6 +7,13 @@ import java.util.LinkedList;
 import java.util.Map;
 import java.util.Set;
 
+/**
+ * map with item stay a specified time inside.
+ * @author Patrick Vandermaesen
+ *
+ * @param <K>
+ * @param <V>
+ */
 public class TimeMap<K, V> implements Map<K, V> {
 
 	private final Map<K, V> internalMap = new HashMap<K, V>();

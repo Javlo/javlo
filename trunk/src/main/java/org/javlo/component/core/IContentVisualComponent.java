@@ -15,7 +15,7 @@ import org.javlo.context.ContentContext;
 import org.javlo.exception.RessourceNotFoundException;
 import org.javlo.message.GenericMessage;
 import org.javlo.navigation.MenuElement;
-import org.javlo.utils.SufixPreffix;
+import org.javlo.utils.SuffixPrefix;
 
 
 /**
@@ -286,7 +286,7 @@ public interface IContentVisualComponent  {
     /**
      * return the title of the style choice.
      */
-    public List<SufixPreffix> getMarkerList(ContentContext ctx);
+    public List<SuffixPrefix> getMarkerList(ContentContext ctx);
 
     /**
      * get the current style of the component.

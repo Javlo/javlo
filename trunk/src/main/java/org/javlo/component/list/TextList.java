@@ -9,7 +9,7 @@ import org.javlo.component.text.Paragraph;
 import org.javlo.context.ContentContext;
 import org.javlo.context.GlobalContext;
 import org.javlo.helper.StringHelper;
-import org.javlo.utils.SufixPreffix;
+import org.javlo.utils.SuffixPrefix;
 
 
 /**
@@ -46,7 +46,7 @@ public class TextList extends Paragraph {
 	}
 	
 	@Override
-	public List<SufixPreffix> getMarkerList(ContentContext ctx) {
+	public List<SuffixPrefix> getMarkerList(ContentContext ctx) {
 		return getQuotationLanguageMarkerList(ctx);
 	}
 	

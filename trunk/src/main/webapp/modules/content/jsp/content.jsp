@@ -1,3 +1,4 @@
+<%@page import="org.javlo.user.AdminUserSecurity"%>
 <%@page contentType="text/html"
         import="
         java.util.Stack,
@@ -24,6 +25,8 @@ ContentContext ctx = ContentContext.getContentContext ( request, response );
 GlobalContext globalContext = GlobalContext.getInstance(request);
 ContentService content = ContentService.getInstance(globalContext);
 EditContext editContext = EditContext.getInstance(globalContext, request.getSession());
+
+boolean admin = AdminUserSecurity.getInstance().isAdmin(editContext.getEditUser());
 
 int openCount = 0;
 int totalComp = 0;
@@ -103,7 +106,7 @@ for (int i=0; i<components.length; i++) {
 	String inputSuffix = "-"+comp.getId();
 	String helpText = componentContext.getHelpHTML(ctx, comp);
 %>
- <div id="comp-<%=comp.getId()%>">
+ <div id="comp-<%=comp.getId()%>" class="<%=comp.getType()%>">
  <input type="hidden" name="components" value="<%=comp.getId()%>" />
  <div class="tabs component">  	  
       <ul> 
@@ -111,6 +114,7 @@ for (int i=0; i<components.length; i++) {
           <li><a href="#tab1<%=inputSuffix%>">${i18n.edit["global.content"]}</a></li>
           <li><a href="#tab2<%=inputSuffix%>">${i18n.edit["global.config"]}</a></li>          
           <%if (helpText != null) {%><li><a href="#tab3<%=inputSuffix%>">${i18n.edit["global.help"]}</a></li><%}%>
+          <%if (admin) {%><li><a href="#tab4<%=inputSuffix%>">raw</a></li><%}%>
       </ul>
       <div class="header-action">
       	<a class="delete ajax" title="${i18n.edit['global.delete']}" href="${info.currentURL}?webaction=delete&id=<%=comp.getId()%>"></a>
@@ -131,6 +135,9 @@ for (int i=0; i<components.length; i++) {
       <%if (helpText != null) {%>
       <div id="tab3<%=inputSuffix%>" class="help">
       	<%=helpText%>
+      </div><%}%><%if (admin) {%>
+      <div id="tab4<%=inputSuffix%>" class="help">
+      	<textarea rows="5" cols="10" name="raw_value_<%=comp.getId()%>"><%=comp.getValue(ctx)%></textarea>
       </div><%}%>
       <input type="hidden" name="id-<%=comp.getId()%>" value="true" /> 
   </div><%

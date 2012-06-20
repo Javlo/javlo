@@ -17,7 +17,7 @@ public class FieldList extends Field {
 	}
 
 	@Override
-	protected String getDisplayValue(ContentContext ctx, Locale locale) throws Exception {
+	public String getDisplayValue(ContentContext ctx, Locale locale) throws Exception {
 		return getList(ctx, getListName(), locale).get(getValue());
 	}
 

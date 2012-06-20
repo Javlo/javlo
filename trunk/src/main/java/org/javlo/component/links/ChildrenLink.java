@@ -413,10 +413,10 @@ public class ChildrenLink extends AbstractVisualComponent implements IImageTitle
 		if (requestService.getParameter("comp-" + getId(), null) == null) { // this component is not in edit form
 			return;
 		}
-		String value = "";
+		String newValue = "";
 		boolean modify = false;
 		if (requestService.getParameter(getInputNameDescription(), null) != null) {
-			value = DESCRIPTION;
+			newValue = DESCRIPTION;
 			if (!isDescription()) {
 				modify = true;
 			}
@@ -424,15 +424,15 @@ public class ChildrenLink extends AbstractVisualComponent implements IImageTitle
 			modify = true;
 		}
 		if (requestService.getParameter(getInputNameLabel(), null) != null) {
-			value = value + DATA_SEPARATOR + LABEL;
+			newValue = newValue + DATA_SEPARATOR + LABEL;
 			if (!isLabelListed()) {
 				modify = true;
 			}
-		} else if (isImage()) {
+		} else if (isLabelListed()) {
 			modify = true;
 		}
 		if (requestService.getParameter(getInputNameImage(), null) != null) {
-			value = value + DATA_SEPARATOR + IMAGE;
+			newValue = newValue + DATA_SEPARATOR + IMAGE;
 			if (!isImage()) {
 				modify = true;
 			}
@@ -441,7 +441,7 @@ public class ChildrenLink extends AbstractVisualComponent implements IImageTitle
 		}
 		boolean lockParentPage = false;
 		if (requestService.getParameter(getInputLockParentPage(), null) != null) {
-			value = value + DATA_SEPARATOR + LOCK_PARENT_PAGE;
+			newValue = newValue + DATA_SEPARATOR + LOCK_PARENT_PAGE;
 			lockParentPage = true;
 			if (!isLockParentPage()) {
 				modify = true;
@@ -451,9 +451,9 @@ public class ChildrenLink extends AbstractVisualComponent implements IImageTitle
 		}
 		if (requestService.getParameter(getInputNameCombo(), null) != null) {
 			if (!lockParentPage) {
-				value = LABEL + DATA_SEPARATOR + COMBO;
+				newValue = LABEL + DATA_SEPARATOR + COMBO;
 			} else {
-				value = LABEL + DATA_SEPARATOR + COMBO + DATA_SEPARATOR + LOCK_PARENT_PAGE;
+				newValue = LABEL + DATA_SEPARATOR + COMBO + DATA_SEPARATOR + LOCK_PARENT_PAGE;
 			}
 			if (!isCombo() || isDescription() || isImage() || !isLabel()) {
 				modify = true;
@@ -462,13 +462,13 @@ public class ChildrenLink extends AbstractVisualComponent implements IImageTitle
 			modify = true;
 		}
 		String rendererTitle = requestService.getParameter(getInputNameRendererTitle(), "");
-		value = rendererTitle + DATA_SEPARATOR + value;
+		newValue = rendererTitle + DATA_SEPARATOR + newValue;
 		if (!getRendererTitle().equals(rendererTitle)) {
 			modify = true;
 			setModify();
 		}
 		String renderer = requestService.getParameter(getInputNameRenderer(), "");
-		value = renderer + DATA_SEPARATOR + value;
+		newValue = renderer + DATA_SEPARATOR + newValue;
 		if (getRenderer(ctx) != null) {
 			if (!getRenderer(ctx).equals(renderer)) {			
 				modify = true;
@@ -476,7 +476,7 @@ public class ChildrenLink extends AbstractVisualComponent implements IImageTitle
 			}		
 		}		
 		if (modify) {
-			setValue(value);
+			setValue(newValue);
 			setModify();
 		}
 	}
@@ -493,13 +493,6 @@ public class ChildrenLink extends AbstractVisualComponent implements IImageTitle
 		} catch (Exception e) {
 			return null;
 		}
-	}
-	
-	public static void main(String[] args) {
-		String value = ",titre,description,label";
-		
-		System.out.println("*** 0 : "+value.split(",")[0]);
-		System.out.println("*** 1 : "+value.split(",")[1]);
 	}
 
 }

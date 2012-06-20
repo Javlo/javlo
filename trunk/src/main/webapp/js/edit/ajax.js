@@ -5,21 +5,18 @@ jQuery(document).ready(function() {
 		ajaxRequest(jQuery(this).attr('href'));	
 	});	
 	jQuery('form.ajax').live("submit", function(event) {
-		var form = jQuery(this);
-		console.log("size : "+form.find("input[type='file']").length);
+		var form = jQuery(this);		
 		var ajaxSubmit = true;
-		jQuery.each(form.find("input[type='file']"), function() {
-			console.log('input file : '+jQuery(this).val());
+		jQuery.each(form.find("input[type='file']"), function() {			
 			if (jQuery(this).val().length > 0) {			
 				ajaxSubmit = false;				
 			}
 		});
-		if (ajaxSubmit) {
-			console.log("not upload");
+		if (ajaxSubmit) {			
 			event.preventDefault();
 			jQuery("#ajax-loader").addClass("active");
-			var queryString = jQuery(this).attr("action")+'?'+jQuery(this).formSerialize(); 
-			ajaxRequest(queryString);
+			var queryString = jQuery(this).attr("action"); 
+			ajaxRequest(queryString, this);
 			return false;
 		} else {
 			console.log("upload");
@@ -29,11 +26,17 @@ jQuery(document).ready(function() {
 	jQuery(document).trigger("ajaxUpdate");
 });
 
-function ajaxRequest(url) {
-	url = url.replace("/edit/", "/ajax/");	
+function ajaxRequest(url, form) {
+	url = url.replace("/edit/", "/ajax/");
+	var data=null;
+	if (form != null) {
+		data = jQuery(form).serialize();
+	}	
 	jQuery.ajax({
 		url : url,
 		cache : false,
+		data : data,
+		type : "post",
 		dataType : "json"
 	}).done(function(jsonObj) {			
 		jQuery.each(jsonObj.zone, function(xhtmlId, xhtml) {				

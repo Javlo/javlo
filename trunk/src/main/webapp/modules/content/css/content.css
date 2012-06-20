@@ -148,3 +148,7 @@ ul.menu {
 	float: left;	
 }
 
+.dynamic-component-list select, .dynamic-component-list input {
+	width: auto;
+}
+
