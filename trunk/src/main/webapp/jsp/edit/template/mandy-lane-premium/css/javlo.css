@@ -453,6 +453,7 @@ ul,li {
 
 .sidebox, .mainbox {
 	position: relative;
+	margin-bottom: 20px;
 }
 
 .close-component a {

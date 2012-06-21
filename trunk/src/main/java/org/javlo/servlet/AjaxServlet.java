@@ -1,6 +1,9 @@
 package org.javlo.servlet;
 
 import java.io.StringWriter;
+import java.util.Collections;
+import java.util.LinkedList;
+import java.util.List;
 import java.util.logging.Logger;
 
 import javax.servlet.ServletException;
@@ -47,28 +50,33 @@ public class AjaxServlet extends HttpServlet {
 			GlobalContext globalContext = GlobalContext.getInstance(ctx.getRequest());
 			EditContext editCtx = EditContext.getInstance(globalContext, request.getSession());
 			InfoBean.updateInfoBean(ctx);
-			
+
 			String action = ServletHelper.execAction(ctx);
 			logger.info("exec action : " + action);
 
 			ServletHelper.prepareModule(ctx);
 
 			JSONObject outMap = new JSONObject();
-
-			String msgXhtml = ServletHelper.executeJSP(ctx, editCtx.getMessageTemplate());
-			ctx.addAjaxInsideZone( "message-container", msgXhtml);
-			
-			int unreadNotification = NotificationService.getInstance(globalContext).getUnreadNotificationSize(editCtx.getUserPrincipal().getName(), 99);
-			ctx.addAjaxInsideZone("notification-count", ""+unreadNotification);
-			
 			StringWriter strWriter = new StringWriter();
 
-			outMap.put("insideZone", ctx.getAjaxInsideZone());
-			outMap.put("zone", ctx.getAjaxZone());
-			outMap.write(strWriter);
-			
+			if (ctx.getAjaxMap() == null) {
+				String msgXhtml = ServletHelper.executeJSP(ctx, editCtx.getMessageTemplate());
+				ctx.addAjaxInsideZone("message-container", msgXhtml);
+				int unreadNotification = NotificationService.getInstance(globalContext).getUnreadNotificationSize(editCtx.getUserPrincipal().getName(), 99);
+				ctx.addAjaxInsideZone("notification-count", "" + unreadNotification);
+				outMap.put("insideZone", ctx.getAjaxInsideZone());
+				outMap.put("zone", ctx.getAjaxZone());
+				outMap.write(strWriter);
+			} else {
+				for (Object key : ctx.getAjaxMap().keySet()) {					
+					outMap.put(""+key, ctx.getAjaxMap().get(key));					
+				}
+				outMap.write(strWriter);
+			}
+			strWriter.flush();
 			response.setContentType("application/json");
-			response.getWriter().write(strWriter.toString());
+			String jsonResult = strWriter.toString();
+			response.getWriter().write(jsonResult);
 			response.flushBuffer();
 
 		} catch (Throwable t) {

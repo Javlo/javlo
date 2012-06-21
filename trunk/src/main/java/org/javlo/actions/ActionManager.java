@@ -65,7 +65,7 @@ public class ActionManager {
 		return start.toUpperCase() + end.toLowerCase();
 	}
 
-	public static IAction getAction(HttpServletRequest request, String group) throws IOException, ClassNotFoundException, InstantiationException, IllegalAccessException, ModuleException {
+	private static IAction getAction(HttpServletRequest request, String group) throws IOException, ClassNotFoundException, InstantiationException, IllegalAccessException, ModuleException {
 		IAction outAction = getActionModule(request, group);
 		if (outAction == null) {
 			outAction = getActionComponent(request, group);
@@ -248,6 +248,7 @@ public class ActionManager {
 				logger.fine(message);
 			}
 		}
+		logger.warning("action '"+actionName+"' message : "+message);
 		return message;
 	}
 

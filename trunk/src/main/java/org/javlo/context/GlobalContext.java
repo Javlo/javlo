@@ -1128,6 +1128,15 @@ public class GlobalContext implements Serializable {
 		}
 		return StringHelper.parseTime(dateStr);
 	}
+	
+	public String getPublishDateLabel() {
+		try {
+			return StringHelper.renderTime(getPublishDate());
+		} catch (ParseException e) {
+			e.printStackTrace();
+			return "?";
+		}
+	}
 
 	public int getRank() {
 		long currentRank;
@@ -2074,6 +2083,20 @@ public class GlobalContext implements Serializable {
 			save();
 		}
 	}
+	
+	public void setLatestPublisher(String userName) {
+		synchronized (properties) {
+			properties.setProperty("publish-user",userName);
+			save();
+		}
+	}
+	
+	public String getLatestPublisher() {
+		synchronized (properties) {
+			return properties.getString("publish-user", "?");			
+		}
+	}
+
 
 	public void setRAWContentLanguages(String languages) {
 		properties.setProperty("content-languages", languages);

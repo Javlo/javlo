@@ -135,22 +135,34 @@ public class LangHelper {
 
 	public static class MapEntry {
 		private final String name;
-		private final String value;
+		private final Object value;
 
-		public MapEntry(String name, String value) {
+		public MapEntry(String name, Object value) {
 			this.name = name;
 			this.value = value;
 		}
 	}
 	
-	public static MapEntry entry(String key, String value) {
+	public static MapEntry entry(String key, Object value) {
 		return new MapEntry(key,value);
 	}
 
-	public static Map<String, String> obj(MapEntry... props) {
-		Map<String, String> out = new LinkedHashMap<String, String>();
+	public static Map<String, Object> obj(MapEntry... props) {
+		Map<String, Object> out = new LinkedHashMap<String, Object>();
 		for (MapEntry prop : props) {
 			out.put(prop.name, prop.value);
+		}
+		return out;
+	}
+	
+	public static Map<String, String> objStr(MapEntry... props) {
+		Map<String, String> out = new LinkedHashMap<String, String>();
+		for (MapEntry prop : props) {
+			if (prop.value != null) {
+				out.put(prop.name, ""+prop.value);
+			} else {
+				out.put(prop.name, null);
+			}
 		}
 		return out;
 	}
