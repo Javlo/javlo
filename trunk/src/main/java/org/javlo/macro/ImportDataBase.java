@@ -116,16 +116,16 @@ public class ImportDataBase extends AbstractMacro {
 	@Override
 	public String perform(ContentContext ctx, Map<String, Object> params) throws Exception {
 
-		countries.put("Algérie", "algeria");
-		countries.put("Bénin", "benin");
+		countries.put("AlgÃ©rie", "algeria");
+		countries.put("BÃ©nin", "benin");
 		countries.put("Burundi", "burundi");
-		countries.put("République Démocratique du Congo", "drc");
+		countries.put("RÃ©publique DÃ©mocratique du Congo", "drc");
 		countries.put("Maroc", "marocco");
 		countries.put("Mozambique", "mozambique");
 		countries.put("Mali", "mali");
 		countries.put("Niger", "niger");
 		countries.put("Rwanda", "rwanda");
-		countries.put("Sénégal", "senegal");
+		countries.put("SÃ©nÃ©gal", "senegal");
 		countries.put("Afrique du Sud", "south-africa");
 		countries.put("Tanzanie", "tanzania");
 		countries.put("Ouganda", "uganda");
