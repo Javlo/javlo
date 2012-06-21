@@ -33,7 +33,6 @@
 <script type="text/javascript" src="/jsp/edit/global/dynamic_js.jsp"></script>
 <script type="text/javascript" src="${info.editTemplateURL}/js/plugins/jquery.validate.min.js"></script>
 <script type="text/javascript" src="${info.editTemplateURL}/js/plugins/jquery.colorbox-min.js"></script>
-<script type="text/javascript" src="${info.editTemplateURL}/js/plugins/jquery.flot.min.js"></script>
 <script type="text/javascript" src="${info.editTemplateURL}/js/plugins/jquery.jgrowl.js"></script>
 <script type="text/javascript" src="${info.editTemplateURL}/js/plugins/jquery.dataTables.min.js"></script>
 <script type="text/javascript" src="${info.editTemplateURL}/js/plugins/jquery.form.js"></script>

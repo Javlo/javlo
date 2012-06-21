@@ -279,6 +279,8 @@ public class ContentContext {
 	private User currentUser = null;
 	private User currentEditUser = null;
 
+	private Map<? extends Object, ? extends Object> ajaxMap = null;
+
 	
 
 	public ContentContext(ContentContext ctx) {
@@ -874,6 +876,14 @@ public class ContentContext {
 	 */
 	public void addAjaxZone(String id, String xhtml) {
 		ajaxZone.put(id, xhtml);
+	}
+	
+	public void setAjaxMap(Map<? extends Object, ? extends Object> ajaxMap) {
+		this.ajaxMap = ajaxMap;
+	}
+	
+	public Map<? extends Object, ? extends Object> getAjaxMap() {
+		return ajaxMap;
 	}
 	
 }

@@ -552,7 +552,7 @@ public class Tracker {
 
 	public Track[] getViewClickTracks(Date from, Date to) {
 
-		String key = "getViewClickTracks_" + StringHelper.renderDate(from) + "_" + StringHelper.renderDate(to);
+		String key = "getViewClickTracks_" + StringHelper.renderDate(from) + "_" + StringHelper.renderDate(to);		
 		Track[] trackers;
 		synchronized (cache) {
 			trackers = (Track[]) cache.get(key);

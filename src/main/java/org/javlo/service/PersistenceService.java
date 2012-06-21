@@ -51,10 +51,9 @@ import org.javlo.navigation.MenuElement;
 import org.javlo.service.exception.ServiceException;
 import org.javlo.servlet.zip.ZipManagement;
 import org.javlo.tracking.Track;
-import org.javlo.ztatic.StaticInfo;
-
 import org.javlo.xml.NodeXML;
 import org.javlo.xml.XMLFactory;
+import org.javlo.ztatic.StaticInfo;
 
 public class PersistenceService {
 
@@ -288,7 +287,7 @@ public class PersistenceService {
 		if (!file.exists()) {
 			return null;
 		}
-		logger.info("create track reader : " + file);
+		logger.fine("create track reader : " + file);
 		Reader outReader = new FileReader(file);
 		return outReader;
 	}
@@ -692,7 +691,7 @@ public class PersistenceService {
 		Calendar tmpCal = GregorianCalendar.getInstance();
 
 		Calendar minimum = GregorianCalendar.getInstance();
-		minimum.set(2005, 1, 1);
+		minimum.set(2008, 1, 1);
 		Calendar maximum = GregorianCalendar.getInstance();
 		maximum.setTime(new Date());
 
@@ -711,7 +710,7 @@ public class PersistenceService {
 
 		int countTrack = 0;
 
-		logger.info("load track from:" + StringHelper.renderTime(from) + " to:" + StringHelper.renderTime(to) + " only view:" + onlyViewClick + " only resource:" + onlyResource);
+		logger.fine("load track from:" + StringHelper.renderTime(from) + " to:" + StringHelper.renderTime(to) + " only view:" + onlyViewClick + " only resource:" + onlyResource);
 
 		tmpCal.setTime(calFrom.getTime());
 
@@ -753,22 +752,34 @@ public class PersistenceService {
 									if (!track.getPath().startsWith("/view/") && !track.getPath().startsWith("/preview/") && !track.getPath().startsWith("/edit/") && !track.getPath().startsWith("/ajax/")) {
 										if (track.getUserAgent() == null || !track.getUserAgent().toLowerCase().contains("bot")) {
 											track.setPath(URLHelper.removeTemplateFromRessourceURL(track.getPath()));
-											outCol.add(track);
-											countTrack++;
+											Calendar trackCal = Calendar.getInstance();
+											trackCal.setTimeInMillis(track.getTime());
+											if (calFrom.before(trackCal) && calTo.after(trackCal)) {										
+												outCol.add(track);
+												countTrack++;
+											}
 										}
 									}
 								} else if (!onlyViewClick) {
 									if (track.getUserAgent() == null || !track.getUserAgent().toLowerCase().contains("bot")) {
-										outCol.add(track);
-										countTrack++;
+										Calendar trackCal = Calendar.getInstance();
+										trackCal.setTimeInMillis(track.getTime());
+										if (calFrom.before(trackCal) && calTo.after(trackCal)) {										
+											outCol.add(track);
+											countTrack++;
+										}
 									}
 								} else {
 									if ((track.getAction() == null) || (track.getAction().equals(Track.UNDEFINED_ACTION))) {
 										if (track.getPath() != null && track.getPath().contains("/view")) {
 											if (track.getUserAgent() == null || !track.getUserAgent().toLowerCase().contains("bot")) {
 												track.setPath(StringHelper.getFileNameWithoutExtension(track.getPath()));
-												outCol.add(track);
-												countTrack++;
+												Calendar trackCal = Calendar.getInstance();
+												trackCal.setTimeInMillis(track.getTime());
+												if (calFrom.before(trackCal) && calTo.after(trackCal)) {										
+													outCol.add(track);
+													countTrack++;
+												}
 											}
 										}
 									}
@@ -800,7 +811,7 @@ public class PersistenceService {
 			System.out.println("*****************************************");
 		}
 
-		logger.info("track loaded : " + countTrack + " on " + countLine + " lines.");
+		logger.fine("track loaded : " + countTrack + " on " + countLine + " lines.");
 
 		Track[] tracks = new Track[outCol.size()];
 		outCol.toArray(tracks);

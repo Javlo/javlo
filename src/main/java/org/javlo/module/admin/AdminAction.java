@@ -363,7 +363,7 @@ public class AdminAction extends AbstractModuleAction {
 				}
 				request.setAttribute("templates", selectedTemplate);
 				
-				Map<String,String> params = LangHelper.obj(LangHelper.entry("webaction","changeRenderer"), LangHelper.entry("list", "allmtemplates"));
+				Map<String,String> params = LangHelper.objStr(LangHelper.entry("webaction","changeRenderer"), LangHelper.entry("list", "allmtemplates"));
 				
 				request.setAttribute("linkUrl", URLHelper.createInterModuleURL(ctx, ctx.getPath(), "template", params));
 

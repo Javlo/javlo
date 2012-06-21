@@ -11,3 +11,13 @@ span.label {
 	width: 150px;
 	font-weight: bold;
 }
+
+.pie {
+    height: 250px;
+    width: auto;
+}
+
+.charge {
+    height: 250px;
+    width: auto;
+}
