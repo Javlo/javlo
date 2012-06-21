@@ -97,4 +97,10 @@ public class PortletRequestContextImpl extends PortletContextImpl implements Por
 	public Map<String, String[]> getPublicParameterMap() {
 		return Collections.emptyMap();
 	}
+
+	@Override
+	public Object getAttribute(String name, ServletRequest servletRequest) {
+		//TODO : check this method, I have fo this only for compilation.
+		return servletRequest.getAttribute(name);
+	}
 }
