@@ -19,6 +19,7 @@ import org.javlo.module.core.ModulesContext;
 import org.javlo.service.NotificationService;
 import org.javlo.service.RequestService;
 import org.javlo.service.exception.ServiceException;
+import org.javlo.tracking.Track;
 import org.javlo.tracking.Tracker;
 
 public class DashboardAction extends AbstractModuleAction {
@@ -60,9 +61,19 @@ public class DashboardAction extends AbstractModuleAction {
 			Map<Object, Object> ajaxMap = new Hashtable<Object, Object>();
 			Calendar start = Calendar.getInstance();
 			Calendar end = Calendar.getInstance();
+			start.add(Calendar.HOUR, -1);
+			Track[] trackers = tracker.getTracks(start.getTime(), end.getTime());;
+			start.setTime(end.getTime()); // reset start date
 			for (int i = 0; i < 10*6*60; i++) { // 10Sec * 6 = 1min * 60 = 1u
-				start.add(Calendar.SECOND, -10);				
-				int charge = tracker.getTracks(start.getTime(), end.getTime()).length;
+				start.add(Calendar.SECOND, -10);
+				int charge = 0; 
+				for (Track track : trackers) {
+					Calendar trackCal = Calendar.getInstance();
+					trackCal.setTimeInMillis(track.getTime());
+					if (trackCal.after(start) && trackCal.before(end)) {
+						charge++;
+					}
+				}
 				ajaxMap.put(new Integer(i*10), charge);				
 				end.setTime(start.getTime());
 			}
