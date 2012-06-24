@@ -13,9 +13,15 @@ import org.javlo.module.core.Module;
 import org.javlo.module.core.ModuleException;
 import org.javlo.module.core.ModulesContext;
 import org.javlo.service.RequestService;
+import org.javlo.user.AdminUserSecurity;
 import org.javlo.user.User;
 
 public abstract class AbstractModuleAction implements IModuleAction {
+	
+	protected static boolean isLightInterface(ContentContext ctx) {
+		AdminUserSecurity userSecurity = AdminUserSecurity.getInstance();
+		return userSecurity.haveRole(ctx.getCurrentEditUser(), AdminUserSecurity.LIGHT_INTERFACE_ROLE);
+	}
 
 	@Override
 	public String prepare(ContentContext ctx, ModulesContext modulesContext) throws Exception {
@@ -24,6 +30,9 @@ public abstract class AbstractModuleAction implements IModuleAction {
 		I18nAccess i18nAccess = I18nAccess.getInstance(ctx.getRequest());
 		if (i18nAccess.getCurrentModule().equals(modulesContext.getCurrentModule())) {
 			i18nAccess.setCurrentModule(globalContext, modulesContext.getCurrentModule());			
+		}
+		if (isLightInterface(ctx)) {
+			ctx.getRequest().setAttribute("lightInterface", "true");
 		}
 		return null;
 	}

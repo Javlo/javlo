@@ -34,6 +34,7 @@ import org.javlo.module.core.ModulesContext;
 import org.javlo.module.file.FileModuleContext;
 import org.javlo.module.template.remote.IRemoteResourcesFactory;
 import org.javlo.module.template.remote.RemoteTemplateFactoryManager;
+import org.javlo.navigation.MenuElement;
 import org.javlo.remote.IRemoteResource;
 import org.javlo.service.RequestService;
 import org.javlo.servlet.zip.ZipManagement;
@@ -318,4 +319,19 @@ public class TemplateAction extends AbstractModuleAction {
 		messageRepository.setGlobalMessageAndNotification(ctx, new GenericMessage(i18nAccess.getText("template.message.commited", new String[][] { { "name", requestService.getParameter("name", null) } }), GenericMessage.INFO));
 		return null;
 	}
+	
+	public static String performChangeFromPreview(RequestService rs, ContentContext ctx, Module currentModule, MessageRepository messageRepository, I18nAccess i18nAccess) {				
+		return null;
+	}
+	
+	public static String performSelectTemplate(RequestService rs, ContentContext ctx, MenuElement currentPage, MessageRepository messageRepository, I18nAccess i18nAccess) {
+		String templateName = rs.getParameter("name", null);		
+		currentPage.setTemplateName(templateName);
+	    if (rs.getParameter("previewEdit", null) != null) {
+	    	System.out.println("***** TemplateAction.performSelectTemplate : preview"); //TODO: remove debug trace
+	    	ctx.getRequest().setAttribute("closeFrame", "true");
+	    }
+		return null;
+	}
+	
 }

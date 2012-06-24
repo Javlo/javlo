@@ -474,8 +474,16 @@
 	background-image: url('../../images/icons/del_page.png');
 }
 
-#preview_command .pc_command #pc_edit_mode_button {
+#preview_command #pc_edit_mode_button {
 	background-image: url('../../images/icons/edit.png');
+	float: right;
+	margin 2px 2px 0 0;
+	font-size: 0;
+	font-size: 0px;
+	border: 0 none;
+	background-repeat: none;
+	width: 16px;
+	height: 16px;
 }
 
 #preview_command .pc_command #tc_replace_current_page_button {

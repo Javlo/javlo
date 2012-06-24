@@ -1022,7 +1022,8 @@ public class StringHelper {
 		return res;
 	}
 
-	public static boolean isTrue(String bool) {
+	public static boolean isTrue(Object inBool) {
+		String bool = (String)inBool;
 		boolean res = false;
 		if (bool != null) {
 			bool = bool.trim();

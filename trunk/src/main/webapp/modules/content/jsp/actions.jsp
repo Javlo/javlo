@@ -1,7 +1,7 @@
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
 <%@ taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions" %>
 
-<c:if test="${(not userInterfaceContext.componentsList || not empty param.previewEdit) && empty param.noinsert}">
+<c:if test="${(not userInterfaceContext.componentsList || not empty param.previewEdit) && empty param.noinsert && empty lightInterface}">
 <c:set var="componentsList" value="true" />
 <div class="special last"> <!-- components -->
 <form id="form-component-list" action="${info.currentURL}" method="post" class="js-submit ajax">
@@ -65,7 +65,7 @@
 
 <c:if test="${not empty param.button_publish and empty param.previewEdit}"><a class="action-button publish" href="${info.currentURL}?webaction=publish"><span>${i18n.edit['command.publish']}</span></a></c:if>
 <c:if test="${not empty param.button_save}"><a class="action-button save" href="#save" onclick="jQuery('#button-content-submit').click(); return false;"><span>${i18n.edit['action.update']}</span></a></c:if>
-<c:if test="${not empty param.button_copy}"><a class="action-button copy ajax" href="${info.currentURL}?webaction=copyPage"><span>${i18n.edit['action.copy-page']}</span></a></c:if>
+<c:if test="${not empty param.button_copy and empty lightInterface}"><a class="action-button copy ajax" href="${info.currentURL}?webaction=copyPage"><span>${i18n.edit['action.copy-page']}</span></a></c:if>
 
 <c:if test="${not empty param.button_delete_page and empty param.previewEdit}"><a class="action-button delete-page needconfirm" href="${info.currentURL}?webaction=deletePage&page=${info.pageID}"><span>${i18n.edit['edit.action.delete-page']}</span></a></c:if>
 

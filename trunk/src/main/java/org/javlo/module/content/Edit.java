@@ -64,7 +64,7 @@ import org.javlo.user.AdminUserSecurity;
 import org.javlo.user.IUserFactory;
 
 public class Edit extends AbstractModuleAction {
-
+	
 	private static void prepareUpdateInsertLine(ContentContext ctx) throws Exception {
 		GlobalContext globalContext = GlobalContext.getInstance(ctx.getRequest());
 		EditContext editContext = EditContext.getInstance(globalContext, ctx.getRequest().getSession());
@@ -377,13 +377,15 @@ public class Edit extends AbstractModuleAction {
 
 	@Override
 	public String prepare(ContentContext ctx, ModulesContext modulesContext) throws Exception {
+		
+		String msg = super.prepare(ctx, modulesContext);
 
 		HttpServletRequest request = ctx.getRequest();
 
 		GlobalContext globalContext = GlobalContext.getInstance(ctx.getRequest());
 
 		Module currentModule = modulesContext.getCurrentModule();
-
+		
 		/** set the principal renderer **/
 		ContentModuleContext modCtx = (ContentModuleContext)LangHelper.smartInstance(request, ctx.getResponse(), ContentModuleContext.class);
 		if (request.getParameter("query") == null) {
@@ -443,8 +445,13 @@ public class Edit extends AbstractModuleAction {
 		/** download **/
 		ctx.getRequest().setAttribute("downloadAll", URLHelper.createStaticURL(ctx, "/zip/" + globalContext.getContextKey() + ".zip"));
 		ctx.getRequest().setAttribute("download", URLHelper.createStaticURL(ctx, "/zip/" + globalContext.getContextKey() + "_xml.zip?filter=xml"));
+		
+		if (isLightInterface(ctx)) {
+			currentModule.setSidebar(false);
+			currentModule.removeNavigation("persistence");
+		}
 
-		return null;
+		return msg;
 	}
 
 	@Override

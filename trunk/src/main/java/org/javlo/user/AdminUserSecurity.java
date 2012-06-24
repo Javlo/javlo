@@ -7,13 +7,9 @@ import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 
-import javax.servlet.ServletContext;
-
 public class AdminUserSecurity implements Serializable {
 
 	private static final long serialVersionUID = 1L;
-
-	private static String SESSION_KEY = AdminUserSecurity.class.getName();
 
 	public static String ALL_USER_ROLE = "all-user";
 
@@ -25,7 +21,7 @@ public class AdminUserSecurity implements Serializable {
 
 	public static String MACRO_ROLE = "macro";
 
-	public static String LIGHT_INTERAFACE_ROLE = "light-interface";
+	public static String LIGHT_INTERFACE_ROLE = "light-interface";
 
 	public static String VALIDATION_ROLE = "validation";
 
