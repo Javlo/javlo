@@ -3029,7 +3029,7 @@ public class MenuElement implements Serializable {
 	}
 
 	public void setTemplateName(String inTemplate) {
-		templateId = inTemplate;
+		templateId = inTemplate;		
 	}
 
 	/**

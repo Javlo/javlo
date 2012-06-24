@@ -45,7 +45,7 @@
 }
 
 #preview_command .pc_command #pc_edit_button {
-	background-image: url('../images/icons/small/black/document.png');
+	background-image: url('../images/icons/small/black/edit.png');
 }
 
 #preview_command .pc_command #pc_edit_button.pc_edit_true {
@@ -62,4 +62,13 @@
 
 #preview_command .pc_command #pc_edit_mode_button {
 	background-image: url('../images/icons/small/black/edit.png');
+}
+
+#preview_command .pc_command #pc_change_template {
+	background-image: url('../images/icons/small/black/document.png');
+}
+
+
+#preview_command #pc_edit_mode_button {
+	background-image: url('../images/icons/small/white/popin.png');
 }

@@ -20,6 +20,10 @@ ul.menu {
 	margin-left: 20px;
 }
 
+.light .component {
+	margin-bottom: 10px;
+}
+
 .component input, .component textarea, .component select {
 	width: 60%;
 }

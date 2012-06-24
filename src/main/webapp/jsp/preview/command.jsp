@@ -12,7 +12,7 @@ ContentContext editCtx = new ContentContext(ctx);
 editCtx.setRenderMode(ContentContext.EDIT_MODE);
 %>
 <div id="preview_command" lang="${info.editLanguage}" class="edit-${not empty currentUser}">
-	<div class="pc_header">${i18n.edit["preview.command"]}</div>
+	<div class="pc_header">${i18n.edit["preview.command"]}<a id="pc_edit_mode_button" href="<%=URLHelper.createURL(editCtx)%>?module=content">X</a></div>
 	<div class="pc_body">
 			<c:if test="${not empty currentUser}">
 			<form id="pc_logout_form" action="${info.currentURL}" method="post">
@@ -34,9 +34,9 @@ editCtx.setRenderMode(ContentContext.EDIT_MODE);
 							</c:if>
 						</div>
 					</form>
-					<form id="pc_form" action="<%=URLHelper.createURL(editCtx)%>?module=content" method="post">
+					<form id="change_template_form" action="<%=URLHelper.createURL(editCtx)%>?module=template&webaction=changeFromPreview&previewEdit=true" method="post">
 						<div class="pc_line">							
-							<input id="pc_edit_mode_button" type="submit" value="${i18n.edit['preview.label.edit-mode']}" title="${i18n.edit['preview.label.edit-mode']}" class="pc_edit_true" />
+							<input id="pc_change_template" type="submit" value="${i18n.edit['preview.label.choose-template']}" title="${i18n.edit['preview.label.choose-template']}" class="pc_edit_true" />
 						</div>
 					</form>
 					<form id="pc_publish_form" action="${info.currentURL}" method="post">

@@ -243,6 +243,7 @@ public class Module {
 	private boolean search;
 	private int order;
 	private Set<String> roles;
+	private Set<String> excludeRoles;
 	private Map<String, String> config;
 
 	private File configFile;
@@ -294,6 +295,12 @@ public class Module {
 			roles = new HashSet<String>();
 			roles.addAll(StringHelper.stringToCollection(rolesRaw, ";"));
 		}
+		rolesRaw = config.get("security.exclude-roles");
+		if (rolesRaw != null) {
+			excludeRoles = new HashSet<String>();
+			excludeRoles.addAll(StringHelper.stringToCollection(rolesRaw, ";"));
+		}
+
 
 		title = config.get("title." + locale.getLanguage());
 		if (title == null) {
@@ -540,7 +547,17 @@ public class Module {
 	public Collection<Box> getNavigation() {
 		return navigation;
 	}
+	
+	public boolean removeNavigation(String name) {
+		Box box = getBox(name);
+		if (box != null) {
+			boxes.remove(name);
+			return navigation.remove(box);
+		}
+		return false;
+	}
 
+	
 	public IModuleAction getAction() {
 		return action;
 	}
@@ -712,6 +729,10 @@ public class Module {
 		return roles;
 	}
 
+	public Set<String> getExcludeRoles() {
+		return excludeRoles;
+	}
+	
 	public String getVersion() {
 		return StringHelper.neverNull(config.get("version"), "?");
 	}
@@ -729,11 +750,22 @@ public class Module {
 				return false;
 			}
 			if (getRoles() == null) {
-				return true;
+				haveRight = true;
 			} else {
-				return user.validForRoles(getRoles());
+				haveRight =  user.validForRoles(getRoles());
 			}
 		}
+		if (haveRight) {
+			if (getExcludeRoles() == null) {
+				haveRight = true;
+			} else {
+				Set<String> workingRoles = new HashSet<String>();
+				workingRoles.addAll(getExcludeRoles());		
+				workingRoles.retainAll(user.getRoles());
+				haveRight = workingRoles.size() == 0;
+			}			
+		}
+		return haveRight;
 	}
 
 	@Override
@@ -741,3 +773,4 @@ public class Module {
 		return getClass().getName() + ' ' + getName();
 	}
 }
+

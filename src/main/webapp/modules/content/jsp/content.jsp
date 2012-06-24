@@ -66,7 +66,7 @@ if (components.length > 0 && components[0].getPreviousComponent() != null) {
 }
 /*** rendering ***/
 
-if (!StringHelper.isTrue(request.getParameter("noinsert"))) {
+if (!StringHelper.isTrue(request.getParameter("noinsert")) && !StringHelper.isTrue(request.getAttribute("lightInterface"))) {
 %>
 
 <div class="insert-line" id="insert-line-<%=previousId%>">
@@ -141,7 +141,7 @@ for (int i=0; i<components.length; i++) {
       </div><%}%>
       <input type="hidden" name="id-<%=comp.getId()%>" value="true" /> 
   </div><%
-  if (!StringHelper.isTrue(request.getParameter("noinsert"))) {%>  
+  if (!StringHelper.isTrue(request.getParameter("noinsert")) && !StringHelper.isTrue(request.getAttribute("lightInterface"))) {%>  
   <div class="insert-line" id="insert-line-<%=comp.getId()%>">
 	<a class="action-button ajax" href="${info.currentURL}?webaction=insert&previous=<%=comp.getId()%>&type=<%=currentTypeComponent.getType()%>"><%=insertHere%></a><%
 	if (pastePageHere != null) {

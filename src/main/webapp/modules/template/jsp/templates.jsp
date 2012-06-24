@@ -6,7 +6,29 @@
 <c:forEach var="template" items="${templates}">
     <li class="${template.valid?'valid':'unvalid'}">
         <div class="thumb">
-            <img src="${template.previewUrl}" alt="${template.name}" />
+        	<c:if test="${empty param.previewEdit}">
+            	<img src="${template.previewUrl}" alt="${template.name}" />
+            </c:if>
+            <c:if test="${not empty param.previewEdit}">
+            	<a href="${info.currentURL}?webaction=selectTemplate&name=${template.name}&previewEdit=true">
+            	<img src="${template.previewUrl}" alt="${template.name}" />
+           		<div class="info">
+				   <p>
+                   <label>${i18n.edit['global.name']}:</label>
+                   <span>${template.name}</span>
+	               </p>	             
+	               <p>
+	                   <label>${i18n.edit['global.author']}:</label>
+	                   <span>${template.authors}</span>
+	               </p>
+	               <p>
+	                   <label>${i18n.edit['template.creation-date']}:</label>
+	                   <span>${template.creationDate}</span>
+	               </p>
+	            </div>
+	            </a>
+            </c:if>
+            <c:if test="${empty param.previewEdit}">
             <div class="info">
                 <p>
                     <label>${i18n.edit['global.name']}:</label>
@@ -39,6 +61,7 @@
                     </c:if>
                 </p>                
             </div><!--info-->
+            </c:if>
         </div><!--thumb-->
  	</li>
  	</c:forEach>
