@@ -9,6 +9,7 @@ import java.util.regex.Pattern;
 import javax.servlet.http.HttpServletRequest;
 
 import org.javlo.config.StaticConfig;
+import org.javlo.helper.NetHelper;
 import org.javlo.helper.StringHelper;
 
 public class Device implements Serializable {
@@ -133,7 +134,7 @@ public class Device implements Serializable {
 	}
 	
 	public boolean isHuman() {
-		return !getUserAgent().contains("robo");
+		return !NetHelper.isUserAgentRobot(getUserAgent());
 	}
 
 	public void unforeceDefault() {

@@ -12,7 +12,7 @@ span.label {
 	font-weight: bold;
 }
 
-.pie {
+.pie, .week {
     height: 250px;
     width: auto;
 }

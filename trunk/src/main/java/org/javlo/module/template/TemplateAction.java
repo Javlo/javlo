@@ -327,8 +327,7 @@ public class TemplateAction extends AbstractModuleAction {
 	public static String performSelectTemplate(RequestService rs, ContentContext ctx, MenuElement currentPage, MessageRepository messageRepository, I18nAccess i18nAccess) {
 		String templateName = rs.getParameter("name", null);		
 		currentPage.setTemplateName(templateName);
-	    if (rs.getParameter("previewEdit", null) != null) {
-	    	System.out.println("***** TemplateAction.performSelectTemplate : preview"); //TODO: remove debug trace
+	    if (rs.getParameter("previewEdit", null) != null) {	    	
 	    	ctx.getRequest().setAttribute("closeFrame", "true");
 	    }
 		return null;

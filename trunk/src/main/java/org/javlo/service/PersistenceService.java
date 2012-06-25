@@ -797,9 +797,9 @@ public class PersistenceService {
 				e.printStackTrace();
 			}
 
-			tmpCal.roll(Calendar.DAY_OF_YEAR, true);
+			tmpCal.add(Calendar.DAY_OF_YEAR, 1);
 			if (tmpCal.before(calFrom)) {
-				tmpCal.roll(Calendar.YEAR, true);
+				tmpCal.add(Calendar.YEAR, 1);
 			}
 			calFrom.setTime(tmpCal.getTime());
 		}

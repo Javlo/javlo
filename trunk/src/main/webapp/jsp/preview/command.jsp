@@ -34,7 +34,7 @@ editCtx.setRenderMode(ContentContext.EDIT_MODE);
 							</c:if>
 						</div>
 					</form>
-					<form id="change_template_form" action="<%=URLHelper.createURL(editCtx)%>?module=template&webaction=changeFromPreview&previewEdit=true" method="post">
+					<form id="change_template_form" action="<%=URLHelper.createURL(editCtx)%>?module=template&webaction=template.changeFromPreview&previewEdit=true" method="post">
 						<div class="pc_line">							
 							<input id="pc_change_template" type="submit" value="${i18n.edit['preview.label.choose-template']}" title="${i18n.edit['preview.label.choose-template']}" class="pc_edit_true" />
 						</div>
