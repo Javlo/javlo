@@ -100,8 +100,7 @@ public class DashboardAction extends AbstractModuleAction {
 				if (!sessionIdFound.contains(tracks[i].getSessionId())) {
 					if (!NetHelper.isUserAgentRobot(tracks[i].getUserAgent())) {
 						cal.setTimeInMillis(tracks[i].getTime());
-						Integer key = new Integer(end.get(Calendar.DAY_OF_YEAR)) - new Integer(cal.get(Calendar.DAY_OF_YEAR));
-						System.out.println("***** DashboardAction.performReadTracker : key= "+key); //TODO: remove debug trace
+						Integer key = new Integer(end.get(Calendar.DAY_OF_YEAR)) - new Integer(cal.get(Calendar.DAY_OF_YEAR));						
 						Integer clicks = (Integer) ajaxMap.get(key);
 						if (clicks == null) {
 							clicks = new Integer(0);
