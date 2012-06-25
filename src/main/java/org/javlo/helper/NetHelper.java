@@ -156,6 +156,10 @@ public class NetHelper {
 
 		return null;
 	}
+	
+	public static boolean isUserAgentRobot(String userAgent) {
+		return userAgent.contains("robo");
+	}
 
 	public static List<String> extractImage(URL inURL, String content) {
 		List<String> urlList = new LinkedList<String>();

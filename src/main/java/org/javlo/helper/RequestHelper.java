@@ -88,6 +88,13 @@ public class RequestHelper {
 		cokkie.setPath(path);
 		response.addCookie(cokkie);
 	}
+	
+	public static void setCookieValue(HttpServletResponse response, String key, String value, int expiry) {
+		Cookie cokkie = new Cookie(key, value);
+		cokkie.setMaxAge(expiry);
+		response.addCookie(cokkie);
+	}
+
 
 	public static void setCookieValue(HttpServletResponse response, String key, String value) {
 		Cookie cokkie = new Cookie(key, value);

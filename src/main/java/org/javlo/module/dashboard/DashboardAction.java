@@ -3,6 +3,8 @@ package org.javlo.module.dashboard;
 import java.util.Calendar;
 import java.util.Hashtable;
 import java.util.LinkedHashMap;
+import java.util.LinkedList;
+import java.util.List;
 import java.util.Map;
 
 import javax.servlet.http.HttpServletRequest;
@@ -13,6 +15,8 @@ import org.javlo.context.ContentContext;
 import org.javlo.context.GlobalContext;
 import org.javlo.context.StatContext;
 import org.javlo.helper.LangHelper;
+import org.javlo.helper.NetHelper;
+import org.javlo.helper.TimeHelper;
 import org.javlo.i18n.I18nAccess;
 import org.javlo.message.MessageRepository;
 import org.javlo.module.core.ModulesContext;
@@ -76,6 +80,38 @@ public class DashboardAction extends AbstractModuleAction {
 				}
 				ajaxMap.put(new Integer(i*10), charge);				
 				end.setTime(start.getTime());
+			}
+			ctx.setAjaxMap(ajaxMap);
+		}  else if (type.equals("week")) {
+			Map<Object, Object> ajaxMap = new Hashtable<Object, Object>();
+			Calendar start = Calendar.getInstance();
+			Calendar end = Calendar.getInstance();
+			Calendar cal = Calendar.getInstance();
+			 
+			start.add(Calendar.WEEK_OF_YEAR, -1);
+			start = TimeHelper.convertRemoveAfterDay(start);
+			end = TimeHelper.convertRemoveAfterDay(end);
+			end.add(Calendar.MILLISECOND, -1);
+			
+			Track[] tracks = tracker.getTracks(start.getTime(), end.getTime());
+			List<String> sessionIdFound = new LinkedList<String>();
+
+			for (int i = 1; i < tracks.length - 1; i++) {
+				if (!sessionIdFound.contains(tracks[i].getSessionId())) {
+					if (!NetHelper.isUserAgentRobot(tracks[i].getUserAgent())) {
+						cal.setTimeInMillis(tracks[i].getTime());
+						Integer key = new Integer(end.get(Calendar.DAY_OF_YEAR)) - new Integer(cal.get(Calendar.DAY_OF_YEAR));
+						System.out.println("***** DashboardAction.performReadTracker : key= "+key); //TODO: remove debug trace
+						Integer clicks = (Integer) ajaxMap.get(key);
+						if (clicks == null) {
+							clicks = new Integer(0);
+						}
+						clicks = new Integer(clicks.intValue() + 1);
+						ajaxMap.put(key, clicks);
+					}
+					sessionIdFound.add(tracks[i].getSessionId());
+					
+				}
 			}
 			ctx.setAjaxMap(ajaxMap);
 		} else {

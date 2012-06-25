@@ -637,7 +637,7 @@ public class Edit extends AbstractModuleAction {
 		NavigationService navigationService = NavigationService.getInstance(globalContext, ctx.getRequest().getSession());
 		navigationService.clearPage(ctx);
 
-		return null;
+		return message;
 	}
 
 	public static final String performChangeMode(HttpSession session, RequestService requestService, ContentModuleContext modCtx) {		
