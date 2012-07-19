@@ -58,10 +58,9 @@
 <legend>${i18n.edit['admin.form.config']}</legend>
 
 <div class="line">		
-	<label for="users-access">${i18n.edit['admin.email']}</label>
-	<textarea id="users-access" name="users-access">${currentContext.usersAccess}</textarea>	
+	<label for="administrator">${i18n.edit['admin.adminitrator']}</label>
+	<input type="text" id="administrator" name="administrator" value="${currentContext.administrator}" />	
 </div>
-
 
 <div class="line">		
 	<label for="alias">${i18n.edit['admin.form.alias']}</label>	
