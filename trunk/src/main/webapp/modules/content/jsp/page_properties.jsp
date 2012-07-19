@@ -38,7 +38,7 @@
 
 <div class="line">
 	<label for="page_visible">${i18n.edit['item.visible']}</label>
-	<input type="checkbox" id="page_visible"  ${page.info.visible?'checked="checked"':''} />
+	<input type="checkbox" id="page_visible" name="view" ${page.info.visible?'checked="checked"':''} value="true" />
 </div>
 
 <div class="line">

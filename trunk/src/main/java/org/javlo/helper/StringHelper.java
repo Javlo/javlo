@@ -7,9 +7,11 @@ import java.awt.Color;
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
 import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStreamReader;
+import java.io.PrintStream;
 import java.io.StringReader;
 import java.io.StringWriter;
 import java.io.UnsupportedEncodingException;
@@ -48,6 +50,7 @@ import org.apache.commons.lang.RandomStringUtils;
 import org.apache.commons.lang.StringUtils;
 import org.javlo.context.ContentContext;
 import org.javlo.context.GlobalContext;
+import org.javlo.helper.Comparator.StringComparator;
 import org.javlo.i18n.I18nAccess;
 
 /**
@@ -59,7 +62,7 @@ public class StringHelper {
 	 * create a static logger.
 	 */
 	protected static Logger logger = Logger.getLogger(StringHelper.class.getName());
-	
+
 	public static final String SOMETHING = "st";
 
 	public static final String REQUEST_KEY_FORM_VALID = "__form_request_valid__";
@@ -96,13 +99,13 @@ public class StringHelper {
 		return arrayToString(array, DEFAULT_SEPARATOR);
 	}
 
-	public static String arrayToString(String[] array, String inSep) {
+	public static String arrayToString(Object[] array, String inSep) {
 		if (array == null) {
 			return null;
 		}
 		StringBuffer out = new StringBuffer();
 		String sep = "";
-		for (String element : array) {
+		for (Object element : array) {
 			out.append(sep + element);
 			sep = inSep;
 		}
@@ -244,7 +247,7 @@ public class StringHelper {
 		}
 		return CRres.toString();
 	}
-	
+
 	public static String createASCIIString(String text) {
 		return createCleanName(text, "azertyuiopqsdfghjklmwxcvbnAZERTYUIOPQSDFGHJKLMWXCVBN,._- ", '_');
 	}
@@ -332,7 +335,7 @@ public class StringHelper {
 					break;
 				case '\u0161':
 					res.append('s');
-					break;					
+					break;
 				case '\u00dd':
 				case '\u00de':
 				case '\u0178':
@@ -538,7 +541,7 @@ public class StringHelper {
 		return "" + codeLength + 'a' + footer + outData;
 	}
 
-	public synchronized static String encryptPassword(String plaintext) {		
+	public synchronized static String encryptPassword(String plaintext) {
 		MessageDigest md = null;
 		try {
 			md = MessageDigest.getInstance("SHA"); // step 2
@@ -551,7 +554,7 @@ public class StringHelper {
 			e.printStackTrace();
 		}
 
-		byte raw[] = md.digest(); // step 4		
+		byte raw[] = md.digest(); // step 4
 		String hash = Base64.encodeBase64String(raw); // step 5
 		return hash.trim(); // step 6
 	}
@@ -914,7 +917,7 @@ public class StringHelper {
 		res = res || ext.equalsIgnoreCase("asp");
 		return res;
 	}
-	
+
 	public static final boolean isProperties(String fileName) {
 		String ext = getFileExtension(fileName);
 		boolean res = ext.equalsIgnoreCase("properties");
@@ -1023,7 +1026,7 @@ public class StringHelper {
 	}
 
 	public static boolean isTrue(Object inBool) {
-		String bool = (String)inBool;
+		String bool = (String) inBool;
 		boolean res = false;
 		if (bool != null) {
 			bool = bool.trim();
@@ -1043,7 +1046,7 @@ public class StringHelper {
 		}
 		return res;
 	}
-	
+
 	public static boolean isTrue(String bool, boolean defaultValue) {
 		if (bool == null) {
 			return defaultValue;
@@ -1051,7 +1054,6 @@ public class StringHelper {
 			return isTrue(bool);
 		}
 	}
-
 
 	// TODO: create a better method
 	public static boolean isURL(String url) {
@@ -1189,7 +1191,7 @@ public class StringHelper {
 		if (inDate.trim().length() == 0) {
 			return null;
 		}
-		Date outDate = null; 
+		Date outDate = null;
 		try {
 			outDate = StringHelper.parseDate(inDate, "dd/MM/yyyy HH:mm:ss");
 		} catch (ParseException e1) {
@@ -1385,7 +1387,7 @@ public class StringHelper {
 		Locale locale;
 		GlobalContext globalContext = GlobalContext.getInstance(ctx.getRequest());
 		if (ctx.getRenderMode() == ContentContext.EDIT_MODE) {
-			dateFormatString = i18nAccess.getText("date.short", (String) null);			
+			dateFormatString = i18nAccess.getText("date.short", (String) null);
 			if (dateFormatString == null && globalContext.getShortDateFormat().trim().length() > 0) {
 				dateFormatString = globalContext.getShortDateFormat();
 			}
@@ -1427,7 +1429,7 @@ public class StringHelper {
 		return format.format(date);
 
 	}
-	
+
 	public static String renderSortableDate(Date date) {
 		if (date == null) {
 			return null;
@@ -2170,10 +2172,10 @@ public class StringHelper {
 	public static boolean isEmpty(String value) {
 		return (value == null || value.trim().length() == 0);
 	}
-	
+
 	/**
-	 * extract a subtext from a text.
-	 * sample : Hi patrick how are you ?, extr
+	 * extract a subtext from a text. sample : Hi patrick how are you ?, extr
+	 * 
 	 * @param text
 	 * @param prefix
 	 * @param suffix
@@ -2183,12 +2185,12 @@ public class StringHelper {
 		List<String> items = new LinkedList<String>();
 		int startIndex = text.indexOf(prefix);
 		int endIndex = text.indexOf(suffix);
-		while (startIndex > -1 && endIndex > startIndex+prefix.length()) {
-			String item = text.substring(startIndex+prefix.length(), endIndex);
+		while (startIndex > -1 && endIndex > startIndex + prefix.length()) {
+			String item = text.substring(startIndex + prefix.length(), endIndex);
 			if (!items.contains(item)) {
-				items.add(item);				
-			}			
-			text = text.substring(endIndex+suffix.length());			
+				items.add(item);
+			}
+			text = text.substring(endIndex + suffix.length());
 			startIndex = text.indexOf(prefix);
 			endIndex = text.indexOf(suffix);
 		}
@@ -2205,6 +2207,33 @@ public class StringHelper {
 			}
 		}
 		return outList;
+	}
+
+	/**
+	 * sort line of a text
+	 */
+	public static String sortText(String text) {
+		BufferedReader sr = new BufferedReader(new StringReader(text));
+		List<String> lines = new LinkedList<String>();
+		String line;
+		try {
+			line = sr.readLine();
+			while (line != null) {
+				lines.add(line);
+				line = sr.readLine();
+			}
+		} catch (IOException e) {
+
+			e.printStackTrace();
+		}
+		Collections.sort(lines, new StringComparator());
+		ByteArrayOutputStream outStream = new ByteArrayOutputStream();
+		PrintStream out = new PrintStream(outStream);
+		for (String sortedLine : lines) {
+			out.println(sortedLine);
+		}
+		out.close();
+		return new String(outStream.toByteArray());
 	}
 
 }

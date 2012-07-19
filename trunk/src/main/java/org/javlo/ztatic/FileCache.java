@@ -11,7 +11,6 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import java.io.Serializable;
 import java.util.Collection;
-import java.util.Date;
 import java.util.logging.Logger;
 
 import javax.servlet.ServletContext;
@@ -32,7 +31,7 @@ public class FileCache {
 	private static Logger logger = Logger.getLogger(FileCache.class.getName());
 
 	private static final String KEY = FileCache.class.getName();
-	private static final String BASE_DIR = "/WEB-INF/.files_cache";
+	public static final String BASE_DIR = "/temp";
 
 	ServletContext application = null;
 
@@ -61,8 +60,8 @@ public class FileCache {
 		}
 		return fc;
 	}
-
-	private File getFileName(String key, String fileName) {
+	
+	public String getRelativeFilePath(String key, String fileName) {
 		fileName = fileName.replace('\\', '/');
 		String cacheFileName = BASE_DIR + '/' + key;
 		if (fileName.startsWith("/")) {
@@ -70,7 +69,11 @@ public class FileCache {
 		} else {
 			cacheFileName = cacheFileName + '/' + fileName;
 		}
-		return new File(application.getRealPath(cacheFileName));
+		return cacheFileName;
+	}
+
+	public File getFileName(String key, String fileName) {
+		return new File(application.getRealPath(getRelativeFilePath(key, fileName)));
 	}
 
 	/**
@@ -158,24 +161,6 @@ public class FileCache {
 		}
 		OutputStream out = new FileOutputStream(file);
 		return out;
-	}
-
-	/**
-	 * get a file in the cache, return null if file is'nt in the cache.
-	 * 
-	 * @param key
-	 *            the key of caching
-	 * @param fileName
-	 *            the file name
-	 * @return a existing file or null.
-	 */
-	public File getFile(String key, String fileName) {
-		File file = getFileName(key, fileName);
-		if (!file.exists()) {
-			return null;
-		} else {
-			return file;
-		}
 	}
 
 	/**

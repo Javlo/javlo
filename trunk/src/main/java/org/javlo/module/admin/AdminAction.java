@@ -36,7 +36,6 @@ import org.javlo.message.MessageRepository;
 import org.javlo.module.core.Module;
 import org.javlo.module.core.ModuleException;
 import org.javlo.module.core.ModulesContext;
-import org.javlo.module.template.TemplateContext;
 import org.javlo.navigation.PageConfiguration;
 import org.javlo.service.ContentService;
 import org.javlo.service.RequestService;
@@ -67,6 +66,10 @@ public class AdminAction extends AbstractModuleAction {
 		private String size;
 		private String folder;
 		private String usersAccess;
+		private String googleAnalyticsUACCT;
+		private String tags;
+		private String blockPassword;
+
 		private int countUser;
 		private boolean view;
 		private boolean edit;
@@ -97,6 +100,10 @@ public class AdminAction extends AbstractModuleAction {
 			setDefaultLanguage(globalContext.getDefaultLanguage());
 			setLanguages(StringHelper.collectionToString(globalContext.getLanguages(), ";"));
 			setContentLanguages(StringHelper.collectionToString(globalContext.getContentLanguages(), ";"));
+
+			setGoogleAnalyticsUACCT(globalContext.getGoogleAnalyticsUACCT());
+			setTags(globalContext.getRAWTags());
+			setBlockPassword(globalContext.getBlockPassword());
 
 			ByteArrayOutputStream outStream = new ByteArrayOutputStream();
 			PrintStream out = new PrintStream(outStream);
@@ -272,6 +279,30 @@ public class AdminAction extends AbstractModuleAction {
 			this.usersAccess = usersAccess;
 		}
 
+		public String getGoogleAnalyticsUACCT() {
+			return googleAnalyticsUACCT;
+		}
+
+		public void setGoogleAnalyticsUACCT(String googleAnalyticsUACCT) {
+			this.googleAnalyticsUACCT = googleAnalyticsUACCT;
+		}
+
+		public String getTags() {
+			return tags;
+		}
+
+		public void setTags(String tags) {
+			this.tags = tags;
+		}
+
+		public String getBlockPassword() {
+			return blockPassword;
+		}
+
+		public void setBlockPassword(String blockPassword) {
+			this.blockPassword = blockPassword;
+		}
+
 	}
 
 	@Override
@@ -314,13 +345,13 @@ public class AdminAction extends AbstractModuleAction {
 			GlobalContext currentGlobalContext;
 			if (currentContextKey != null) {
 				request.setAttribute("context", currentContextKey);
-				currentGlobalContext = GlobalContext.getRealInstance(request, currentContextKey);				
+				currentGlobalContext = GlobalContext.getRealInstance(request, currentContextKey);
 			} else {
-				currentGlobalContext = (GlobalContext)request.getAttribute("prepareContext");
+				currentGlobalContext = (GlobalContext) request.getAttribute("prepareContext");
 				request.setAttribute("context", currentGlobalContext.getContextKey());
 			}
 			request.setAttribute("currentContext", new GlobalContextBean(currentGlobalContext, request.getSession()));
-			if (currentGlobalContext != null) {				
+			if (currentGlobalContext != null) {
 				List<Template> templates = TemplateFactory.getAllDiskTemplates(request.getSession().getServletContext());
 				Collections.sort(templates);
 
@@ -362,9 +393,9 @@ public class AdminAction extends AbstractModuleAction {
 					}
 				}
 				request.setAttribute("templates", selectedTemplate);
-				
-				Map<String,String> params = LangHelper.objStr(LangHelper.entry("webaction","changeRenderer"), LangHelper.entry("list", "allmtemplates"));
-				
+
+				Map<String, String> params = LangHelper.objStr(LangHelper.entry("webaction", "changeRenderer"), LangHelper.entry("list", "allmtemplates"));
+
 				request.setAttribute("linkUrl", URLHelper.createInterModuleURL(ctx, ctx.getPath(), "template", params));
 
 				params = new HashMap<String, String>();
@@ -431,11 +462,11 @@ public class AdminAction extends AbstractModuleAction {
 		/*
 		 * AdminUserSecurity adminUserSecurity = AdminUserSecurity.getInstance(); if (adminUserSecurity.isAdmin(user)) { return true; }
 		 */
-		
+
 		if (user == null) {
 			return false;
 		}
-		
+
 		try {
 			Collection<GlobalContext> allContext = GlobalContextFactory.getAllGlobalContext(session);
 			for (GlobalContext globalContext : allContext) {
@@ -467,13 +498,13 @@ public class AdminAction extends AbstractModuleAction {
 			currentModule.restoreToolsRenderer();
 			currentModule.clearBreadcrump();
 			currentModule.pushBreadcrumb(new Module.HtmlLink(URLHelper.createURL(ctx), i18nAccess.getText("global.home"), ""));
-		} else {			
+		} else {
 			String currentContextKey = requestService.getParameter("context", null);
 			if (currentContextKey != null) {
 
-				GlobalContext currentGlobalContext;				
-				currentGlobalContext = GlobalContext.getRealInstance(ctx.getRequest(), currentContextKey);				
-				
+				GlobalContext currentGlobalContext;
+				currentGlobalContext = GlobalContext.getRealInstance(ctx.getRequest(), currentContextKey);
+
 				if (currentGlobalContext != null) {
 					checkRight(ctx, currentGlobalContext);
 					currentGlobalContext.setGlobalTitle(requestService.getParameter("global-title", null));
@@ -481,6 +512,7 @@ public class AdminAction extends AbstractModuleAction {
 					currentGlobalContext.setDefaultTemplate(requestService.getParameter("default-template", null));
 					currentGlobalContext.setRAWLanguages(requestService.getParameter("languages", null));
 					currentGlobalContext.setRAWContentLanguages(requestService.getParameter("content-languages", null));
+					currentGlobalContext.setRAWTags(requestService.getParameter("tags", null));
 
 					String usersAccess = requestService.getParameter("users-access", "");
 					if (usersAccess.trim().length() > 0) {
@@ -489,6 +521,8 @@ public class AdminAction extends AbstractModuleAction {
 
 					String defaultLanguage = requestService.getParameter("default-languages", null);
 					currentGlobalContext.setDefaultLanguages(defaultLanguage);
+
+					currentGlobalContext.setGoogleAnalyticsUACCT(requestService.getParameter("google-ana", ""));
 
 					/** security **/
 					String userFacotryClass = requestService.getParameter("user-factory", null);
@@ -508,6 +542,8 @@ public class AdminAction extends AbstractModuleAction {
 						e.printStackTrace();
 						messageRepository.setGlobalMessage(new GenericMessage(e.getMessage(), GenericMessage.ERROR));
 					}
+					
+					currentGlobalContext.setBlockPassword(requestService.getParameter("block-password", ""));
 
 					/** template plugin **/
 					String templatePluginConfig = requestService.getParameter("template-plugin-config", "");
@@ -533,8 +569,8 @@ public class AdminAction extends AbstractModuleAction {
 						TemplateFactory.cleanRenderer(ctx, currentGlobalContext.getTemplates(), false, true);
 						// TemplateFactory.cleanRenderer(ctx, currentGlobalContext.getMailingTemplates(), true, true);
 					}
-					
-					PageConfiguration.getInstance(currentGlobalContext).loadTemplate(currentGlobalContext); // reload templates					
+
+					PageConfiguration.getInstance(currentGlobalContext).loadTemplate(currentGlobalContext); // reload templates
 
 					messageRepository.setGlobalMessage(new GenericMessage(i18nAccess.getText("admin.message.context-updated"), GenericMessage.INFO));
 				} else {
@@ -716,17 +752,45 @@ public class AdminAction extends AbstractModuleAction {
 		}
 		return null;
 	}
-	
-	public static String performRemoveSite(RequestService rs, ContentContext ctx, MessageRepository messageRepository, I18nAccess i18nAccess) throws ConfigurationException, IOException {		
+
+	public static String performRemoveSite(RequestService rs, ContentContext ctx, MessageRepository messageRepository, I18nAccess i18nAccess) throws ConfigurationException, IOException {
 		String siteName = rs.getParameter("removed-context", null);
 		if (siteName == null) {
 			return "bad request structure, need 'context' param.";
 		}
 		GlobalContext globalContext = GlobalContext.getInstance(ctx.getRequest(), siteName);
 		if (globalContext == null) {
-			return "site not found : "+siteName;
-		}		
-		globalContext.delete(ctx.getRequest().getSession().getServletContext());		
-		return  null;
+			return "site not found : " + siteName;
+		}
+		globalContext.delete(ctx.getRequest().getSession().getServletContext());
+		return null;
+	}
+
+	public static String performBlockView(RequestService rs, ContentContext ctx, MessageRepository messageRepository, I18nAccess i18nAccess) throws ConfigurationException, IOException {
+		String siteName = rs.getParameter("context", null);
+		if (siteName == null) {
+			return "bad request structure, need 'context' param.";
+		}
+		GlobalContext currentGlobalContext = GlobalContext.getRealInstance(ctx.getRequest(), siteName);
+		if (currentGlobalContext != null) {
+			currentGlobalContext.setView(!currentGlobalContext.isView());
+		} else {
+			return "context not found : " + siteName;
+		}
+		return null;
+	}
+	
+	public static String performBlockEdit(RequestService rs, ContentContext ctx, MessageRepository messageRepository, I18nAccess i18nAccess) throws ConfigurationException, IOException {
+		String siteName = rs.getParameter("context", null);
+		if (siteName == null) {
+			return "bad request structure, need 'context' param.";
+		}
+		GlobalContext currentGlobalContext = GlobalContext.getRealInstance(ctx.getRequest(), siteName);
+		if (currentGlobalContext != null) {
+			currentGlobalContext.setEditable(!currentGlobalContext.isEditable());
+		} else {
+			return "context not found : " + siteName;
+		}
+		return null;
 	}
 };

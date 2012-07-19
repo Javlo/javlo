@@ -1002,7 +1002,7 @@ public class StaticConfig extends Observable {
 	}
 
 	public boolean isPasswordEncryt() {
-		return properties.getBoolean("security.encrypt-password", false);
+		return properties.getBoolean("security.encrypt-password", true);
 	}
 
 	public boolean isRequestWrapper() {

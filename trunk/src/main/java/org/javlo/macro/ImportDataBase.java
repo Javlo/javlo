@@ -18,7 +18,7 @@ import org.javlo.service.ContentService;
 
 public class ImportDataBase extends AbstractMacro {
 
-	static final String SQL_ALL_GENERAL = "select distinct general.*, country.name country, trans_en.description desc_en, trans_fr.description desc_fr " + "from general,general_has_country, country, general_translation trans_en, general_translation trans_fr " + "where general.environment_id=\"LIVE\" and general.id = general_has_country.general_id and country.id = general_has_country.country_id and " + "trans_fr.language=\"fr\" and trans_fr.general_id=general.id and trans_en.language=\"en\" and trans_en.general_id=general.id;";
+	static final String SQL_ALL_GENERAL = "select distinct general.*, country.name country, trans_en.description desc_en, trans_fr.description desc_fr, trans_fr.access access " + "from general,general_has_country, country, general_translation trans_en, general_translation trans_fr " + "where general.environment_id=\"LIVE\" and general.id = general_has_country.general_id and country.id = general_has_country.country_id and " + "trans_fr.language=\"fr\" and trans_fr.general_id=general.id and trans_en.language=\"en\" and trans_en.general_id=general.id;";
 
 	// static final String SQL_ALL_TECHNICAL = "select distinct technical.*, technical_has_type.type_id type, country.name country, trans_en.description desc_en, trans_fr.description desc_fr from technical,technical_has_country, technical_has_type, country, technical_translation trans_en, technical_translation trans_fr where technical.environment_id='LIVE' and technical.id = technical_has_country.technical_id and country.id = technical_has_country.country_id and trans_fr.language='fr' and trans_fr.technical_id=technical.id and trans_en.language='en' and trans_en.technical_id=technical.id and technical_has_type.technical_id=technical.id;";
 
@@ -83,6 +83,7 @@ public class ImportDataBase extends AbstractMacro {
 			comp.getField(ctx, "web").setValue(rs.getString("website"));
 			comp.getField(ctx, "phone").setValue(rs.getString("phone"));
 			comp.getField(ctx, "email").setValue(rs.getString("email"));
+			comp.getField(ctx, "access").setValue(rs.getString("access"));
 			comp.getField(ctx, "address").setValue(rs.getString("address").replace("<p>&nbsp;</p>", ""));
 
 			String ctr = rs.getString("country");
@@ -191,6 +192,7 @@ public class ImportDataBase extends AbstractMacro {
 			comp.getField(ctx, "phone").setValue(rs.getString("phone"));
 			comp.getField(ctx, "email").setValue(rs.getString("email"));
 			comp.getField(ctx, "countries").setValue(countries.get(rs.getString("country")));
+			comp.getField(ctx, "access").setValue(rs.getString("access"));
 
 			Field descField = comp.getField(ctx, "description");
 			descField.setCurrentLocale(Locale.FRENCH);

@@ -118,6 +118,13 @@ public class Field implements Cloneable {
 		public boolean isWrapped() {
 			return Field.this.isWrapped();
 		}
+		public String getURL() {
+			if (Field.this instanceof FieldFile) {
+				return ((FieldFile)Field.this).getURL(ctx);
+			} else {
+				return null;
+			}
+		}
 
 	}
 

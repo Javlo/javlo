@@ -3072,6 +3072,7 @@ public class MenuElement implements Serializable {
 	 * @param b
 	 */
 	public void setVisible(boolean b) {
+		releaseCache();
 		visible = b;
 	}
 

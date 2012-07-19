@@ -18,7 +18,7 @@ org.javlo.component.text.Description
 org.javlo.component.text.Paragraph
 org.javlo.component.text.XHTML
 org.javlo.component.text.WysiwygParagraph
-org.javlo.component.list.TextList
+org.javlo.component.list.FreeTextList
 
 --content.title.links
 
@@ -52,6 +52,7 @@ org.javlo.component.meta.Category
 org.javlo.component.gadget.CountAccess
 org.javlo.component.gadget.CountTool
 org.javlo.component.form.FormMailingComponent
+org.javlo.component.form.GenericForm
 
 --content.title.special
 

@@ -1186,6 +1186,11 @@ public class PageReferenceComponent extends ComplexPropertiesLink implements IAc
 	public boolean isContentCachable(ContentContext ctx) {
 		return StringHelper.isTrue(getConfig(ctx).getProperty("config.cache", null), true);
 	}
+	
+	@Override
+	public boolean isContentCachableByQuery(ContentContext ctx) {
+		return StringHelper.isTrue(getConfig(ctx).getProperty("config.cache-query", null), true);
+	}
 
 	@Override
 	public boolean isContentTimeCachable(ContentContext ctx) {

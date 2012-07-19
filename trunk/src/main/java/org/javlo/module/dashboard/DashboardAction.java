@@ -54,10 +54,10 @@ public class DashboardAction extends AbstractModuleAction {
 
 		if (type.equals("languages")) {
 			Map<String, Map<String, Object>> ajaxMap = new LinkedHashMap<String, Map<String, Object>>();
-			Map<String, Integer> languages = tracker.getLanguage(statCtx);
+			Map<String, Integer> languages = tracker.getLanguage(statCtx);			
 			int i = 0;
-			for (String lang : languages.keySet()) {
-				ajaxMap.put("" + i, LangHelper.obj(new LangHelper.MapEntry("label", lang), new LangHelper.MapEntry("data", languages.get(lang))));
+			for (String lang : languages.keySet()) {				
+				ajaxMap.put("" + i, LangHelper.obj(new LangHelper.MapEntry("label", lang),new LangHelper.MapEntry("data", languages.get(lang)) ));
 				i++;
 			}
 			ctx.setAjaxMap(ajaxMap);
@@ -84,6 +84,9 @@ public class DashboardAction extends AbstractModuleAction {
 			ctx.setAjaxMap(ajaxMap);
 		}  else if (type.equals("week")) {
 			Map<Object, Object> ajaxMap = new Hashtable<Object, Object>();
+			for (int i=1; i<8;i++) {
+				ajaxMap.put(new Integer(i), new Integer(0));
+			}
 			Calendar start = Calendar.getInstance();
 			Calendar end = Calendar.getInstance();
 			Calendar cal = Calendar.getInstance();
@@ -102,9 +105,9 @@ public class DashboardAction extends AbstractModuleAction {
 						cal.setTimeInMillis(tracks[i].getTime());
 						Integer key = new Integer(end.get(Calendar.DAY_OF_YEAR)) - new Integer(cal.get(Calendar.DAY_OF_YEAR));						
 						Integer clicks = (Integer) ajaxMap.get(key);
-						if (clicks == null) {
+						/*if (clicks == null) {
 							clicks = new Integer(0);
-						}
+						}*/
 						clicks = new Integer(clicks.intValue() + 1);
 						ajaxMap.put(key, clicks);
 					}

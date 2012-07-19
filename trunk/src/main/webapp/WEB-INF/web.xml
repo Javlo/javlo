@@ -228,5 +228,17 @@
 		<url-pattern>/class/*</url-pattern>
 	</servlet-mapping>
 	
+		<servlet>
+        <servlet-name>captcha</servlet-name>
+        <servlet-class>org.javlo.servlet.ImageCaptchaServlet</servlet-class>
+        <load-on-startup>0</load-on-startup>
+    </servlet>
+
+	<servlet-mapping>
+        <servlet-name>captcha</servlet-name>
+        <url-pattern>/captcha.jpg</url-pattern>
+    </servlet-mapping>
+	
+	
 	
 </web-app>

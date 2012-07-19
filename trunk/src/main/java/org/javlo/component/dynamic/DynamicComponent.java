@@ -448,7 +448,7 @@ public class DynamicComponent extends AbstractVisualComponent implements IStatic
 	public void performEdit(ContentContext ctx) throws Exception {
 
 		java.util.List<Field> fieldsName = getFields(ctx);
-
+		
 		for (Field field : fieldsName) {
 
 			Collection<Locale> languages;
@@ -461,7 +461,8 @@ public class DynamicComponent extends AbstractVisualComponent implements IStatic
 
 			for (Locale locale : languages) {				
 				field.setCurrentLocale(locale);
-				if (field.process(ctx.getRequest())) {
+				boolean modify = field.process(ctx.getRequest());
+				if (modify) {
 					setModify();
 					if (field.isNeedRefresh()) {
 						setNeedRefresh(true);
@@ -470,7 +471,15 @@ public class DynamicComponent extends AbstractVisualComponent implements IStatic
 			}
 		}
 
-		storeProperties();
+		if (isModify()) {
+			storeProperties();
+		}
+	}
+	
+	@Override
+	public void setValue(String inContent) {
+		super.setValue(inContent);
+		reloadProperties();
 	}
 
 	@Override

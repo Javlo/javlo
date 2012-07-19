@@ -36,6 +36,8 @@ public class InternalLink extends ComplexPropertiesLink implements IInternalLink
 	 * create a static logger.
 	 */
 	protected static Logger logger = Logger.getLogger(InternalLink.class.getName());
+	
+	private static final String HIDDEN = "hidden";
 
 	private static final String TITLE = "title";
 
@@ -188,34 +190,39 @@ public class InternalLink extends ComplexPropertiesLink implements IInternalLink
 			String titleCreation = i18nAccess.getText(pf + TITLE_DESCRIPTION);
 			String titleImageDescription = i18nAccess.getText(pf + TITLE_IMAGE_DESCRIPTION);
 			String image = i18nAccess.getText(pf + IMAGE);
-			return new String[] { title, titleImage, titleCreation, titleImageDescription, image };
+			return new String[] { title, titleImage, titleCreation, titleImageDescription, image, i18nAccess.getText("global.hidden") };
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
-		return new String[] { TITLE, TITLE_IMAGE, TITLE_DESCRIPTION, TITLE_IMAGE_DESCRIPTION, IMAGE };
+		return new String[] { TITLE, TITLE_IMAGE, TITLE_DESCRIPTION, TITLE_IMAGE_DESCRIPTION, IMAGE, HIDDEN };
 	}
 
 	@Override
 	public String[] getStyleList(ContentContext ctx) {
-		return new String[] { TITLE, TITLE_IMAGE, TITLE_DESCRIPTION, TITLE_IMAGE_DESCRIPTION, IMAGE };
+		return new String[] { TITLE, TITLE_IMAGE, TITLE_DESCRIPTION, TITLE_IMAGE_DESCRIPTION, IMAGE, HIDDEN };
 	}
 
 	@Override
 	public String getType() {
 		return TYPE;
 	}
-
+	
 	/**
 	 * @see org.javlo.itf.IContentVisualComponent#getXHTMLCode()
 	 */
 	@Override
 	public String getViewXHTMLCode(ContentContext ctx) throws Exception {
 
-		StringBuffer res = new StringBuffer();
 		String style = getStyle(ctx);
 		if (style == null) {
 			style = TITLE;
 		}
+		
+		if (style.contains(HIDDEN)) {
+			return "";
+		}
+		
+		StringBuffer res = new StringBuffer();
 
 		String linkId = properties.getProperty(LINK_KEY, "/");
 

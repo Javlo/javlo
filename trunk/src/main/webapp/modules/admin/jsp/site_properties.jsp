@@ -58,6 +58,12 @@
 <legend>${i18n.edit['admin.form.config']}</legend>
 
 <div class="line">		
+	<label for="users-access">${i18n.edit['admin.email']}</label>
+	<textarea id="users-access" name="users-access">${currentContext.usersAccess}</textarea>	
+</div>
+
+
+<div class="line">		
 	<label for="alias">${i18n.edit['admin.form.alias']}</label>	
 	<select id="alias" name="alias">
 		<option value="">&nbsp;</option>
@@ -82,6 +88,16 @@
 	<input type="text" id="content-languages" name="content-languages" value="${currentContext.contentLanguages}" />	
 </div>
 
+<div class="line">		
+	<label for="google-ana">${i18n.edit['admin.title.google-ana']}</label>
+	<input type="text" id="google-ana" name="google-ana" value="${currentContext.googleAnalyticsUACCT}" />	
+</div>
+
+<div class="line">		
+	<label for="tags">${i18n.edit['admin.title.tags']}</label>
+	<input type="text" id="tags" name="tags" value="${currentContext.tags}" />	
+</div>
+
 </fieldset>
 
 <fieldset>
@@ -95,6 +111,11 @@
 <div class="line">		
 	<label for="admin-user-factory">${i18n.edit['admin.form.admin-user-factory']}</label>
 	<input type="text" id="admin-user-factory" name="admin-user-factory" value="${currentContext.adminUserFactoryClassName}" />	
+</div>
+
+<div class="line">		
+	<label for="block-password">${i18n.edit['admin.form.block-password']}</label>
+	<input type="text" id="block-password" name="block-password" value="${currentContext.blockPassword}" />	
 </div>
 
 <div class="line">		

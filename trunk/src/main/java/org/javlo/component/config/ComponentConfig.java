@@ -1,5 +1,6 @@
 package org.javlo.component.config;
 
+import java.io.ByteArrayOutputStream;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.util.Collections;
@@ -10,6 +11,7 @@ import java.util.Map;
 import java.util.Properties;
 import java.util.logging.Logger;
 
+import org.apache.commons.configuration.ConfigurationException;
 import org.apache.commons.configuration.PropertiesConfiguration;
 import org.javlo.context.ContentContext;
 import org.javlo.context.GlobalContext;
@@ -60,6 +62,18 @@ public class ComponentConfig {
 	private static final String KEY = ComponentConfig.class.getName();
 
 	private ComponentConfig() {
+	}
+	
+	public String getRAWConfig(ContentContext ctx, Template currentTemplate, String type) {
+		ByteArrayOutputStream out = new ByteArrayOutputStream();
+		try {
+			if (properties != null) {
+				properties.save(out);
+			}
+		} catch (ConfigurationException e) {
+			e.printStackTrace();
+		}
+		return new String(out.toByteArray());
 	}
 
 	private ComponentConfig(ContentContext ctx, Template currentTemplate, String type) {
