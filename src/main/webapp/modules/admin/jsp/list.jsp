@@ -38,7 +38,7 @@
      <td class="con0">
      	<c:if test="${context.view eq 'true'}">
      	<a href="${info.currentURL}?webaction=releaseContent&view=true&context=${context.key}"><span class="icone_true">true</span></a>
-     	</c:if>
+     	</c:if> 
      	<c:if test="${context.view eq 'false'}">
      	<span class="icone_false">false</span>
      	</c:if>
@@ -50,8 +50,8 @@
      	<span class="icone_false">false</span>
      	</c:if>
      </td>
-     <td class="con1"><span class="icone_${context.visibility}">${context.visibility}</span></td>
-     <td class="con0"><span class="icone_${context.editability}">${context.editability}</span></td>
+     <td class="con1"><a href="${info.currentURL}?webaction=blockView&context=${context.key}"><span class="icone_${context.visibility}">${context.visibility}</span></a></td>
+     <td class="con0"><a href="${info.currentURL}?webaction=blockEdit&context=${context.key}"><span class="icone_${context.editability}">${context.editability}</span></a></td>
      <td class="con1">
      	<form id="form-change-site" action="${info.currentURL}" method="post" class="array-form">
      		<div>

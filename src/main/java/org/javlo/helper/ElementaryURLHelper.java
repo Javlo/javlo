@@ -13,12 +13,14 @@ import org.javlo.config.StaticConfig;
 import org.javlo.context.ContentContext;
 import org.javlo.context.EditContext;
 import org.javlo.context.GlobalContext;
+import org.javlo.image.ImageHelper;
 import org.javlo.mailing.MailingContext;
 import org.javlo.navigation.IURLFactory;
 import org.javlo.navigation.MenuElement;
 import org.javlo.navigation.PageConfiguration;
 import org.javlo.service.ContentService;
 import org.javlo.template.Template;
+import org.javlo.ztatic.FileCache;
 
 /**
  * countain the method with efficient body for URLHelper.
@@ -85,23 +87,25 @@ public abstract class ElementaryURLHelper {
 			return url = url + "?" + name + '=' + value;
 		}
 	}
-	
+
 	/**
 	 * add get attribute to a url.
-	 * @param params a list of string represent param and value. (sp: name=patrick). 
+	 * 
+	 * @param params
+	 *            a list of string represent param and value. (sp: name=patrick).
 	 * @return a url with new params
 	 */
-	public static String addAllParams(String url, String...params) {
+	public static String addAllParams(String url, String... params) {
 		char sep = '?';
-		if (url.contains("?")) {			
+		if (url.contains("?")) {
 			sep = '&';
 		}
 		String allParam = "";
 		for (String param : params) {
-			allParam = allParam+sep+param;
-			sep='&';
+			allParam = allParam + sep + param;
+			sep = '&';
 		}
-		return url+allParam;
+		return url + allParam;
 	}
 
 	public static final String addSpecialRightCode(GlobalContext globalContext, HttpSession session, String url) {
@@ -109,7 +113,7 @@ public abstract class ElementaryURLHelper {
 		Code specialRightCode = (Code) session.getAttribute(SPACIAL_RIGHT_CODE_KEY);
 		if (specialRightCode == null) {
 			specialRightCode = new Code(StringHelper.getRandomId().replace('=', '*'));
-			session.setAttribute(SPACIAL_RIGHT_CODE_KEY, specialRightCode);			
+			session.setAttribute(SPACIAL_RIGHT_CODE_KEY, specialRightCode);
 			globalContext.addSpecialAccessCode(specialRightCode);
 		}
 
@@ -209,12 +213,11 @@ public abstract class ElementaryURLHelper {
 		if (!ctx.isAbsoluteURL()) {
 			url = ctx.getResponse().encodeURL(newUri);
 		}
-		
+
 		// force mode for ajax request
 		if (ajax) {
-			url = URLHelper.addParam(url, ContentContext.FORCE_MODE_PARAMETER_NAME, ""+ctx.getRenderMode());
+			url = URLHelper.addParam(url, ContentContext.FORCE_MODE_PARAMETER_NAME, "" + ctx.getRenderMode());
 		}
-			
 
 		return url;
 	}
@@ -236,7 +239,6 @@ public abstract class ElementaryURLHelper {
 		return workingURL;
 	}
 
-	
 	protected static String createStaticURL(ContentContext ctx, MenuElement referencePage, String inUrl, boolean withPathPrefix) {
 		ContentContext newCtx = ctx;
 		if (referencePage != null && referencePage.isRemote()) {
@@ -257,13 +259,13 @@ public abstract class ElementaryURLHelper {
 				}
 			}
 		}
-		
+
 		String url = inUrl;
 		if (withPathPrefix) {
 			String pathPrefix = getPathPrefix(ctx.getRequest());
 			url = ElementaryURLHelper.mergePath(pathPrefix, inUrl);
 		}
-		
+
 		if (newCtx.isAbsoluteURL()) {
 			if (!url.startsWith("/")) {
 				url = url + '/';
@@ -345,11 +347,23 @@ public abstract class ElementaryURLHelper {
 			return null;
 		}
 		url = url.replace('\\', '/');
+		
+		GlobalContext globalContext = GlobalContext.getInstance(ctx.getRequest());
+
+		String deviceCode = "no-device";
+		if (ctx.getDevice() != null) {
+			deviceCode = ctx.getDevice().getCode();
+		}
+		String key = ImageHelper.createSpecialDirectory(filter, ctx.getArea(), deviceCode, ctx.getCurrentTemplate());
+		FileCache fc = FileCache.getInstance(ctx.getRequest().getSession().getServletContext());		
+		if (!globalContext.getImageViewFilter().contains(filter) && fc.getFileName(key, url).exists() ) {
+			return URLHelper.createStaticURL(ctx, fc.getRelativeFilePath(key, url));
+		}
 
 		ContentService.createContent(ctx.getRequest());
 		MenuElement elem = ctx.getCurrentPage();
 
-		GlobalContext globalContext = GlobalContext.getInstance(ctx.getRequest());
+		
 		PageConfiguration pageConfig = PageConfiguration.getInstance(globalContext);
 		Template template = pageConfig.getCurrentTemplate(ctx, elem);
 
@@ -364,8 +378,12 @@ public abstract class ElementaryURLHelper {
 				}
 			}
 			url = createTransformURL(ctx, referencePage, url, filter, templateName);
-		} else {
-			url = ElementaryURLHelper.mergePath(TRANSFORM + '/' + filter, url);
+		} else {			
+			if (filter.equals("template")) {
+				url = ElementaryURLHelper.mergePath(TRANSFORM + '/' + filter, url);
+			} else {
+				url = ElementaryURLHelper.mergePath(TRANSFORM + '/' + filter + '/' + ctx.getArea(), url);
+			}
 			url = createStaticURL(ctx, referencePage, url, true);
 		}
 		return url;
@@ -376,8 +394,8 @@ public abstract class ElementaryURLHelper {
 			return null;
 		}
 		url = url.replace('\\', '/');
-		if (templateName != null) {
-			url = ElementaryURLHelper.mergePath(TRANSFORM + '/' + filter + '/' + templateName, url);
+		if (templateName != null) {			
+			url = ElementaryURLHelper.mergePath(TRANSFORM + '/' + filter  + '/' + templateName + '/' + ctx.getArea(), url);
 		} else {
 			url = ElementaryURLHelper.mergePath(TRANSFORM + '/' + filter, url);
 		}
@@ -396,7 +414,7 @@ public abstract class ElementaryURLHelper {
 	}
 
 	protected static String createURL(ContentContext ctx, GlobalContext globalContext, String uri, boolean ajax, boolean forceTemplate, boolean withPathPrefix) {
-				
+
 		if (uri == null) {
 			return "";
 		}
@@ -472,7 +490,7 @@ public abstract class ElementaryURLHelper {
 	public static String getIconeURL(ContentContext ctx, String icone) {
 		return ElementaryURLHelper.createStaticURL(ctx, "/images/icones/" + icone);
 	}
-	
+
 	public static String getPathPrefix(HttpServletRequest request) {
 		GlobalContext globalContext = GlobalContext.getInstance(request);
 		return getPathPrefix(globalContext, request);
@@ -485,8 +503,8 @@ public abstract class ElementaryURLHelper {
 	 * @return
 	 */
 	public static String getPathPrefix(GlobalContext globalContext, HttpServletRequest request) {
-		String CACHE_KEY = "javlo-path-prefix-"+globalContext.getContextKey();
-		String res = (String) request.getAttribute(CACHE_KEY);		
+		String CACHE_KEY = "javlo-path-prefix-" + globalContext.getContextKey();
+		String res = (String) request.getAttribute(CACHE_KEY);
 		if (res == null) {
 			String requestPrefix = request.getContextPath();
 			res = globalContext.getPathPrefix();

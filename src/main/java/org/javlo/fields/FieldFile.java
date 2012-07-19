@@ -253,6 +253,11 @@ public class FieldFile extends Field implements IStaticContainer {
 	public String getType() {
 		return "file";
 	}
+	
+	public String getURL(ContentContext ctx) {
+		String relativePath = URLHelper.mergePath(getFileTypeFolder(), getCurrentFolder());		
+		return URLHelper.createResourceURL(ctx, URLHelper.mergePath(relativePath, getCurrentFile()));
+	}
 
 	@Override
 	public boolean process(HttpServletRequest request) {
@@ -269,9 +274,12 @@ public class FieldFile extends Field implements IStaticContainer {
 		if (newFolderName.trim().length() > 0) {
 			File newFolder = new File(URLHelper.mergePath(getFileDirectory(), newFolderName));
 			newFolder.mkdir();
-			setCurrentFolder(newFolderName);
-			setCurrentFile("");
-			modify = true;
+			if (!getCurrentFolder().equals(newFolderName)) {
+				setCurrentFolder(newFolderName);
+				setCurrentFile("");
+				modify = true;
+				setNeedRefresh(true);
+			}			
 		} else if (!getCurrentFolder().equals(folder)) {
 			setCurrentFolder(folder);
 			if (getFileList().iterator().hasNext()) {

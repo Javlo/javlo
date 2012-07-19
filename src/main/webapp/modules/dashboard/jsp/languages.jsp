@@ -15,7 +15,8 @@ jQuery.ajax({
 }).done(function(jsonObj) {	
 	var data = [];
 	jQuery.each(jsonObj, function(i, v) {				
-			data[i] = v;	
+			data[i] = v;
+			console.log(""+i+" = "+v);
 		});	
 	jQuery.plot(jQuery("#piechart"), data, {
 			series: {

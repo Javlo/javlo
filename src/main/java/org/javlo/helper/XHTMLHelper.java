@@ -1828,7 +1828,7 @@ public class XHTMLHelper {
 			writer.newLine();
 			writer.write("<input type=\"hidden\" name=\"webaction\" value=\"view.language\" />");
 			writer.newLine();
-			writer.write(renderOnlySelectLangue(ctx, selectId, currentLg, null, autoChange));
+			writer.write(renderOnlySelectLangue(ctx, selectId, null, currentLg, autoChange));
 			if (autoChange) {
 				writer.write("<input id=\"" + inputId + "\" class=\"submit\" type=\"submit\" value=\"" + i18nAccess.getViewText("global.ok") + "\" />");
 				writer.write("<script type=\"text/javascript\">document.getElementById('select_language_submit').style.visibility = 'hidden'; document.getElementById('select_language_submit').style.width = 0;</script>");

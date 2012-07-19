@@ -279,7 +279,8 @@ public class ImageTransformServlet extends HttpServlet {
 			if (ctx.getDevice() != null) {
 				deviceCode = ctx.getDevice().getCode();
 			}
-			OutputStream outImage = fc.saveFile(ImageHelper.createSpecialDirectory(filter, area, deviceCode, template), imageName);
+			String dir = ImageHelper.createSpecialDirectory(filter, area, deviceCode, template);
+			OutputStream outImage = fc.saveFile(dir, imageName);
 
 			try {
 				String fileExtension = config.getFileExtension(ctx.getDevice(), filter, area);
@@ -376,8 +377,8 @@ public class ImageTransformServlet extends HttpServlet {
 		String imageName = pathInfo;
 		imageName = imageName.replace('\\', '/');
 
-		logger.finest("apply fitler on image : " + imageName);		
-		
+		logger.finest("apply fitler on image : " + imageName);	
+			
 		try {
 			String filter = "default";
 			String area = null;
@@ -393,6 +394,15 @@ public class ImageTransformServlet extends HttpServlet {
 						mailing = true;
 						templateId = templateId.substring(MailingContext.MAILING_TEMPLATE_PREFIX.length());
 					}
+
+					/** AREA **/
+					if (!filter.startsWith("template")) {
+						pathInfo = pathInfo.substring(slachIndex + 1);
+						slachIndex = pathInfo.indexOf('/');
+						area = pathInfo.substring(0, slachIndex);
+						pathInfo = pathInfo.substring(slachIndex);
+					}
+
 					try {
 						if (!Template.EDIT_TEMPLATE_CODE.equals(templateId)) {
 							template = Template.getApplicationInstance(request.getSession().getServletContext(), ctx, templateId, mailing);
@@ -400,22 +410,15 @@ public class ImageTransformServlet extends HttpServlet {
 					} catch (Exception e) {
 						e.printStackTrace();
 					}
-
-					/** AREA **/
-					if (!filter.startsWith("template")) {
-						pathInfo = pathInfo.substring(slachIndex + 1);
-						slachIndex = pathInfo.indexOf('/');
-						area = pathInfo.substring(0, slachIndex);
-					}
-
+					
 					// pathInfo = pathInfo.substring(slachIndex + 1);
 
-					imageName = pathInfo.substring(slachIndex);
+					imageName = pathInfo;
 				} catch (NumberFormatException e1) {
 					e1.printStackTrace();
 				}
 			}
-
+			
 			// org.javlo.helper.Logger.stepCount("transform", "template");
 			
 			StaticInfo staticInfo = null;
@@ -464,11 +467,11 @@ public class ImageTransformServlet extends HttpServlet {
 				/** * LOCALISE IMAGE ** */
 				// TODO: this version of template detection need better
 				// method
-				String baseFolder = URLHelper.mergePath(dataFolder, staticConfig.getStaticFolder()); //TODO: with javlo 1.4 it seem we do'nt need static folder ????
+				//String baseFolder = URLHelper.mergePath(dataFolder, staticConfig.getStaticFolder()); //TODO: with javlo 1.4 it seem we do'nt need static folder ????
+				String baseFolder = dataFolder; //TODO: with javlo 1.4 it seem we do'nt need static folder ????
 				if (filter.startsWith("template")) {
 					baseFolder = getServletContext().getRealPath("");
-					//filter = "template";
-				}				
+				}	
 				
 				String realFile = URLHelper.mergePath(baseFolder,imageName);
 				
@@ -494,6 +497,18 @@ public class ImageTransformServlet extends HttpServlet {
 				}
 
 				InputStream fileStream = loadFileFromDisk(imageName, filter, area, ctx.getDevice(), template, imageFile.lastModified());
+				String deviceCode = "no-device";
+				if (ctx.getDevice() != null) {
+					deviceCode = ctx.getDevice().getCode();
+				}
+				
+				FileCache fc = FileCache.getInstance(getServletContext());
+				String key = ImageHelper.createSpecialDirectory(filter, area, deviceCode, template);
+				if (fc.getFileName(key, imageName).exists()) {
+					response.sendRedirect(URLHelper.createStaticURL(ctx, fc.getRelativeFilePath(key, imageName)));
+					return;
+				}
+				
 				if ((fileStream != null)) {
 					try {
 						ResourceHelper.writeStreamToStream(fileStream, out);

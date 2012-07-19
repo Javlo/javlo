@@ -76,7 +76,7 @@ public class AccessServlet extends HttpServlet {
 	 */
 	public static Logger logger = Logger.getLogger(AccessServlet.class.getName());
 
-	public static final String VERSION = "2.0.0.1";
+	public static final String VERSION = "2.0.0.2";
 
 	@Override
 	public void destroy() {
@@ -214,21 +214,42 @@ public class AccessServlet extends HttpServlet {
 				out.close();
 				return;
 			}
-			
+
 			I18nAccess i18nAccess = I18nAccess.getInstance(globalContext, request.getSession());
 
 			i18nAccess.requestInit(ctx);
 
-			/* **************** */
-			/* LOGIN EDIT/ADMIN */
-			/* **************** */
+			/* ******** */
+			/* SECURITY */
+			/* ******** */
 
 			if (request.getServletPath().equals("/edit") || request.getServletPath().equals("/preview")) {
 				if (!globalContext.isEditable()) {
 					InfoBean.updateInfoBean(ctx);
-					response.setContentType("text/html; charset=" + ContentContext.CHARACTER_ENCODING);					
-					ServletHelper.includeBlocked(request, response);					
+					response.setContentType("text/html; charset=" + ContentContext.CHARACTER_ENCODING);
+					request.setAttribute("edit", "true");
+					ServletHelper.includeBlocked(request, response);
 					return;
+				}
+			}
+
+			if (ctx.getRenderMode() == ContentContext.VIEW_MODE) {
+				if (!globalContext.isView()) {
+					String sessionKey = "__unlock_content__";
+					String pwd = request.getParameter("block-password");
+					if (pwd != null && pwd.trim().length() > 0) { // unlock with special pwd
+						if (pwd.equals(globalContext.getBlockPassword())) {
+							request.getSession().setAttribute(sessionKey, "true");
+						} else {
+							Thread.sleep(5000); // if bad password wait 5 sec
+						}
+					}
+					if (request.getSession().getAttribute(sessionKey) == null) {
+						InfoBean.updateInfoBean(ctx);
+						response.setContentType("text/html; charset=" + ContentContext.CHARACTER_ENCODING);
+						ServletHelper.includeBlocked(request, response);
+						return;
+					}
 				}
 			}
 
@@ -315,7 +336,7 @@ public class AccessServlet extends HttpServlet {
 				i18nAccess.setCurrentModule(globalContext, moduleContext.getCurrentModule());
 			}
 			if (requestService.getParameter("module", null) != null && requestService.getParameter("from-module", null) == null) {
-				moduleContext.setFromModule((Module)null);
+				moduleContext.setFromModule((Module) null);
 			}
 			if (requestService.getParameter("from-module", null) != null) {
 				Module fromModule = moduleContext.searchModule(requestService.getParameter("from-module", null));
@@ -576,7 +597,7 @@ public class AccessServlet extends HttpServlet {
 			} catch (Throwable t) {
 
 				t.printStackTrace();
-				
+
 				response.setStatus(503);
 
 				Writer out = response.getWriter();
@@ -630,7 +651,7 @@ public class AccessServlet extends HttpServlet {
 		out.println("**** ABST COMP LOG LVL :  " + staticConfig.getAbstractComponentLogLevel());
 		out.println("**** BACKUP EXCL. PAT. :  " + staticConfig.getBackupExcludePatterns());
 		out.println("**** BACKUP INCL. PAT. :  " + staticConfig.getBackupIncludePatterns());
-		out.println("**** HARD USERS        :  " + StringHelper.collectionToString(staticConfig.getEditUsers().keySet(),","));
+		out.println("**** HARD USERS        :  " + StringHelper.collectionToString(staticConfig.getEditUsers().keySet(), ","));
 		out.println("**** TOTAL MEMORY      :  " + runtime.totalMemory() + " (" + runtime.totalMemory() / 1024 + " KB)" + " (" + runtime.totalMemory() / 1024 / 1024 + " MB)");
 		out.println("**** FREE MEMORY       :  " + runtime.freeMemory() + " (" + runtime.freeMemory() / 1024 + " KB)" + " (" + runtime.freeMemory() / 1024 / 1024 + " MB)");
 		out.println("**** THREAD ****");

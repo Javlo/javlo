@@ -1,6 +1,8 @@
+<%@page import="org.javlo.context.GlobalContext"%>
 <%
 response.setStatus(503);
 response.flushBuffer();
+GlobalContext globalContext = GlobalContext.getInstance(request);
 %>
 <%@page contentType="text/html"%>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
@@ -13,7 +15,16 @@ response.flushBuffer();
 </head>
 <body id="blocked" lang="en">
 <div id="main">
-<p><a href="http://www.javlo.org">javlo</a></p>
+
+<c:if test="${empty edit}">
+<%if (globalContext.getBlockPassword() != null && globalContext.getBlockPassword().trim().length() > 0) {%>
+<form class="loginbox" id="form-block" method="post">
+<input class="password" type="password" name="block-password" />
+</form>
+<%}%>
+</c:if>
+
+<p><a href="http://www.javlo.org">javlo.org</a></p>
 </div>
 </body>
 </html>

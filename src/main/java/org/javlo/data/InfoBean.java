@@ -94,6 +94,8 @@ public class InfoBean {
 			info.pagePath.add(0,page.getPageBean(ctx));
 		}
 		
+		info.setCaptchaURL(URLHelper.createStaticURL(ctx,  "/captcha.jpg"));
+		
 		EditContext editContext = EditContext.getInstance(globalContext, ctx.getRequest().getSession());
 		info.setEditTemplateURL(editContext.getEditTemplateFolder());
 
@@ -124,6 +126,7 @@ public class InfoBean {
 	private String date;
 	private String time;
 	private String templateFolder = "";
+	private String captchaURL;
 	private Collection<String> contentLanguages;
 	private Collection<String> languages;
 	private MenuElement.PageBean page = null;
@@ -383,5 +386,13 @@ public class InfoBean {
 
 	public void setStaticRootURL(String staticROOTURL) {
 		this.staticRootURL = staticROOTURL;
+	}
+
+	public String getCaptchaURL() {
+		return captchaURL;
+	}
+
+	public void setCaptchaURL(String captchaURL) {
+		this.captchaURL = captchaURL;
 	}
 }

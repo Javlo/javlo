@@ -1194,13 +1194,21 @@ public class GlobalContext implements Serializable {
 
 	public List<String> getTags() {
 		synchronized (properties) {
-			String tagsRaw = properties.getString("tags", null);
+			String tagsRaw = getRAWTags();
 			if (tagsRaw == null || tagsRaw.trim().length() == 0) {
 				return Collections.emptyList();
 			}
-			List<String> outTags = new LinkedList<String>(Arrays.asList(StringHelper.stringToArray(tagsRaw)));
+			List<String> outTags = new LinkedList<String>(Arrays.asList(StringHelper.stringToArray(tagsRaw, ",")));
 			return outTags;
 		}
+	}
+	
+	public String getRAWTags() {
+		return properties.getString("tags", "");
+	}
+	
+	public void setRAWTags(String tags) {
+		properties.setProperty("tags", tags);
 	}
 
 	public Template.TemplateData getTemplateData() {
@@ -1581,7 +1589,7 @@ public class GlobalContext implements Serializable {
 		userFactory = null;
 	}
 
-	public void save() {
+	public void save() {		
 		try {
 			synchronized (properties) {
 				if (getFolder() != null && getFolder().trim().length() > 0) {
@@ -2276,6 +2284,17 @@ public class GlobalContext implements Serializable {
 	public void setTemplatePluginConfig(String config) {
 		synchronized (properties) {
 			properties.setProperty("template.plugins.config", config);
+			save();
+		}
+	}
+	
+	public String getBlockPassword() {
+		return properties.getString("security.block-password", null);
+	}
+	
+	public void setBlockPassword(String pwd) {
+		synchronized (properties) {
+			properties.setProperty("security.block-password", pwd);
 			save();
 		}
 	}

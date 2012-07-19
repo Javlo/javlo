@@ -24,8 +24,6 @@ import org.javlo.navigation.PageConfiguration;
 import org.javlo.service.ContentService;
 import org.javlo.template.Template;
 
-
-
 /**
  * @author pvanderm
  */
@@ -52,7 +50,7 @@ public class ComponentFactory {
 
 	/**
 	 * return request scope component (add template component)
-	 *
+	 * 
 	 * @param request
 	 * @return list of application component + template components
 	 * @throws Exception
@@ -69,7 +67,7 @@ public class ComponentFactory {
 			PageConfiguration pageConfig = PageConfiguration.getInstance(globalContext);
 			template = pageConfig.getCurrentTemplate(ctx, page);
 			if (template != null) {
-				/* load dynamic component */				
+				/* load dynamic component */
 				List<Properties> propertiesClasses = template.getDynamicComponentsProperties(globalContext);
 				if (propertiesClasses.size() > 0) {
 					array.add(new MetaTitle("content.title.template"));
@@ -95,14 +93,15 @@ public class ComponentFactory {
 		return components;
 
 	}
-	
+
 	public static final void updateComponentsLogLevel(ServletContext application, Level level) throws Exception {
 
-		logger.info("update components logger level : "+level);
+		logger.info("update components logger level : " + level);
 
 		String[] classes = ConfigHelper.getComponentsClasses(application);
 		for (String clazz : classes) {
-			Class comp = null;;
+			Class comp = null;
+			;
 			try {
 				comp = Class.forName(clazz);
 				Field fields[] = comp.getDeclaredFields();
@@ -113,18 +112,18 @@ public class ComponentFactory {
 						if (field.getType().isAssignableFrom(Logger.class)) {
 							Object loggerInstance = field.get(null);
 							((Logger) loggerInstance).setLevel(level);
-							logger.info("update logger for : "+comp);
+							logger.info("update logger for : " + comp);
 						}
 						field.setAccessible(fieldAccess);
 					}
 				}
 			} catch (Exception e) {
-				//e.printStackTrace();
+				// e.printStackTrace();
 			}
 		}
 	}
 
-	public static IContentVisualComponent[] getComponents(GlobalContext globalContext) throws IOException, ClassNotFoundException, InstantiationException, IllegalAccessException {		
+	public static IContentVisualComponent[] getComponents(GlobalContext globalContext) throws IOException, ClassNotFoundException, InstantiationException, IllegalAccessException {
 		String key = getKey(globalContext.getContextKey());
 		IContentVisualComponent[] components = (IContentVisualComponent[]) globalContext.getServletContext().getAttribute(key);
 
@@ -281,15 +280,17 @@ public class ComponentFactory {
 		IContentVisualComponent[] components = getComponents(ctx);
 		AbstractVisualComponent component = null;
 		for (int i = 0; i < components.length; i++) {
-			if (components[i].getType().equals(bean.getType())) {
-				IContentVisualComponent newComp = components[i].newInstance(bean, ctx);
-				component = (AbstractVisualComponent) newComp;
-				component.setPage(inPage);
-				
-				// if component type matches and is selected for this site, keep it
-				// if component not in site selection, return the last match -> continue looping
-				if (selectedComponents.contains(component.getClass().getName())) {
-					break;
+			if (components[i] != null && bean != null) {
+				if (components[i].getType().equals(bean.getType())) {
+					IContentVisualComponent newComp = components[i].newInstance(bean, ctx);
+					component = (AbstractVisualComponent) newComp;
+					component.setPage(inPage);
+
+					// if component type matches and is selected for this site, keep it
+					// if component not in site selection, return the last match -> continue looping
+					if (selectedComponents.contains(component.getClass().getName())) {
+						break;
+					}
 				}
 			}
 		}
