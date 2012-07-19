@@ -513,6 +513,7 @@ public class AdminAction extends AbstractModuleAction {
 					currentGlobalContext.setRAWLanguages(requestService.getParameter("languages", null));
 					currentGlobalContext.setRAWContentLanguages(requestService.getParameter("content-languages", null));
 					currentGlobalContext.setRAWTags(requestService.getParameter("tags", null));
+					currentGlobalContext.setAdministrator(requestService.getParameter("administrator", ""));
 
 					String usersAccess = requestService.getParameter("users-access", "");
 					if (usersAccess.trim().length() > 0) {
