@@ -30,7 +30,6 @@ import org.apache.commons.lang.StringUtils;
 import org.javlo.config.StaticConfig;
 import org.javlo.context.ContentContext;
 import org.javlo.context.GlobalContext;
-import org.javlo.exception.RessourceNotFoundException;
 import org.javlo.helper.LangHelper;
 import org.javlo.helper.ResourceHelper;
 import org.javlo.helper.StringHelper;
@@ -296,7 +295,8 @@ public class JavloELFinder extends ELFinder {
 		List<ELFile> addedFiles = new LinkedList<ELFile>();
 		if (folder != null && folder.getFile().exists()) {
 			for (FileItem fileItem : filesItem) {
-				File newFile = new File(URLHelper.mergePath(folder.getFile().getAbsolutePath(), fileItem.getName()));
+				String newFileName = StringHelper.createFileName(fileItem.getName());
+				File newFile = new File(URLHelper.mergePath(folder.getFile().getAbsolutePath(), newFileName));
 				InputStream in = fileItem.getInputStream();
 				try {
 					// if (!StringHelper.getFileExtension(newFile.getName()).toLowerCase().equals("zip")) {
