@@ -273,7 +273,7 @@ public class FieldFile extends Field implements IStaticContainer {
 
 		if (newFolderName.trim().length() > 0) {
 			File newFolder = new File(URLHelper.mergePath(getFileDirectory(), newFolderName));
-			newFolder.mkdir();
+			newFolder.mkdirs();
 			if (!getCurrentFolder().equals(newFolderName)) {
 				setCurrentFolder(newFolderName);
 				setCurrentFile("");
@@ -322,6 +322,7 @@ public class FieldFile extends Field implements IStaticContainer {
 								ResourceHelper.closeResource(in);
 							}
 						}
+						modify = true;
 					}
 				}
 				setCurrentFile(newFileName);

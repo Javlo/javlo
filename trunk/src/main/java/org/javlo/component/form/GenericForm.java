@@ -101,11 +101,13 @@ public class GenericForm extends AbstractVisualComponent implements IAction {
 			request.setAttribute("msg", msg);
 			request.setAttribute("error_captcha", "true");
 			return null;
+		} else {
+			CaptchaService.getInstance(request.getSession()).setCurrentCaptchaCode("");
 		}
 		
 		ByteArrayOutputStream outStream = new ByteArrayOutputStream();
 		PrintStream out = new PrintStream(outStream);
-		
+		 
 		GlobalContext globalContext = GlobalContext.getInstance(ctx.getRequest());
 		
 		String subject = "GenericForm submit : "+globalContext.getGlobalTitle();
@@ -125,9 +127,9 @@ public class GenericForm extends AbstractVisualComponent implements IAction {
 		out.println("");
 		
 		out.close();
-		String mailContent =  new String(outStream.toByteArray());
+		String mailContent =  StringHelper.sortText(new String(outStream.toByteArray()));
 		
-		logger.info("mail content : "+StringHelper.sortText(mailContent));
+		logger.info("mail content : "+mailContent);
 		
 		MailingManager mailingManager = MailingManager.getInstance(globalContext.getStaticConfig());
 		InternetAddress adminEmail = new InternetAddress(globalContext.getAdministratorEmail());

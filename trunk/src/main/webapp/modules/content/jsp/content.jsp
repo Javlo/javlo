@@ -137,7 +137,7 @@ for (int i=0; i<components.length; i++) {
       	<%=helpText%>
       </div><%}%><%if (admin) {%>
       <div id="tab4<%=inputSuffix%>" class="help">
-      	<textarea rows="5" cols="10" name="raw_value_<%=comp.getId()%>"><%=comp.getValue(ctx)%></textarea>
+      	<textarea rows="5" cols="10" id="raw_value_<%=comp.getId()%>" name="" onchange="var item=jQuery('#raw_value_<%=comp.getId()%>'); item.attr('name', item.attr('id'));"><%=comp.getValue(ctx)%></textarea>
       </div><%}%>
       <input type="hidden" name="id-<%=comp.getId()%>" value="true" /> 
   </div><%
