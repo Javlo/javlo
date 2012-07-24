@@ -124,6 +124,17 @@
 
 </fieldset>
 
+<fieldset class="macros">
+<legend>${i18n.edit['admin.title.macros']}</legend>
+<c:forEach var="macro" items="${macros}">
+	<div class="inline">
+		<input type="checkbox" id="${macro}" name="${macro}" ${not empty selectedMacros[macro]?'checked="checked"':''}/>
+		<c:set var="i18nKey" value="macro.${macro}" />
+		<label for="${macro}">${not empty i18n.edit[i18nKey]?i18n.edit[i18nKey]:macro}</label>		
+	</div>
+</c:forEach>
+</fieldset>
+
 <fieldset class="templates-list">
 <legend>${i18n.edit['admin.title.template-linked']}</legend>
 
@@ -175,7 +186,7 @@
 <legend>${i18n.edit['admin.title.template-plugin']}</legend>
 <c:forEach var="plugin" items="${templatePlugins}">
 	<div class="inline">
-		<input type="checkbox" id="${plugin.id}" name="${plugin.id}" ${not empty selectedTemplatePlugins[plugin.id]?'checked="cheched"':''}/>
+		<input type="checkbox" id="${plugin.id}" name="${plugin.id}" ${not empty selectedTemplatePlugins[plugin.id]?'checked="checked"':''}/>
 		<label for="${plugin.id}">${plugin.label} - ${plugin.version}</label>		
 	</div>
 </c:forEach>
@@ -184,7 +195,6 @@
 <legend>${i18n.edit['admin.title.template-plugin-config']}</legend>
 <textarea rows="10" cols="10" name="template-plugin-config">${templatePluginConfig}</textarea>
 </fieldset>
-
 </fieldset>
 
 <div class="action">

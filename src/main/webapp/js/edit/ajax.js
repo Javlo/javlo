@@ -19,7 +19,6 @@ jQuery(document).ready(function() {
 			ajaxRequest(queryString, this);
 			return false;
 		} else {
-			console.log("upload");
 			return true;
 		}
 	});
@@ -39,11 +38,17 @@ function ajaxRequest(url, form) {
 		type : "post",
 		dataType : "json"
 	}).done(function(jsonObj) {			
-		jQuery.each(jsonObj.zone, function(xhtmlId, xhtml) {				
-			jQuery("#" + xhtmlId).replaceWith(xhtml);	
+		jQuery.each(jsonObj.zone, function(xhtmlId, xhtml) {
+			var item = jQuery("#" + xhtmlId);
+			if (item != null) {
+				jQuery("#" + xhtmlId).replaceWith(xhtml);
+			}
 		});
-		jQuery.each(jsonObj.insideZone, function(xhtmlId, xhtml) {				
-			jQuery("#" + xhtmlId).html(xhtml);	
+		jQuery.each(jsonObj.insideZone, function(xhtmlId, xhtml) {
+			var item = jQuery("#" + xhtmlId);
+			if (item != null) {
+				item.html(xhtml);	
+			}
 		});
 		jQuery(document).trigger("ajaxUpdate");
 		jQuery("#ajax-loader").removeClass("active");

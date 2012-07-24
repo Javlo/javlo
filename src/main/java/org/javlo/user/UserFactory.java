@@ -11,7 +11,6 @@ import java.io.InputStream;
 import java.io.Serializable;
 import java.util.Arrays;
 import java.util.Collection;
-import java.util.Collections;
 import java.util.Date;
 import java.util.HashSet;
 import java.util.LinkedList;
@@ -22,6 +21,7 @@ import java.util.Set;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 
+import org.apache.commons.configuration.ConfigurationException;
 import org.javlo.config.StaticConfig;
 import org.javlo.context.EditContext;
 import org.javlo.context.GlobalContext;
@@ -134,7 +134,10 @@ public class UserFactory implements IUserFactory, Serializable {
 		if (user != null && editCtx.getEditUser(user.getLogin()) != null) {
 			user.getUserInfo().addRoles(new HashSet(Arrays.asList(new String[] { AdminUserSecurity.GENERAL_ADMIN, AdminUserSecurity.FULL_CONTROL_ROLE })));
 		}
-		request.getSession().setAttribute(SESSION_KEY, user);
+		if (user != null) {
+			user.setContext(globalContext.getContextKey());
+			request.getSession().setAttribute(SESSION_KEY, user);
+		}
 		return user;
 	}
 
@@ -205,7 +208,25 @@ public class UserFactory implements IUserFactory, Serializable {
 	 */
 	@Override
 	public User getCurrentUser(HttpSession session) {
-		return (User) session.getAttribute(SESSION_KEY);
+		User user = (User) session.getAttribute(SESSION_KEY);
+		String globalContextKey = GlobalContext.getSessionContextKey(session);
+		if (globalContextKey != null && user != null) {
+			if (user.getContext().equals(globalContextKey)) {
+				return user;
+			} else {
+				if (AdminUserSecurity.getInstance().isGod(user)) {
+					return user;
+				}
+				try {
+					EditContext.getInstance(GlobalContext.getInstance(session, globalContextKey), session).setEditUser(null);					
+				} catch (Exception e) {
+					e.printStackTrace();
+				}
+				session.removeAttribute(SESSION_KEY);
+				return null;
+			}
+		}		
+		return user;
 	}
 
 	protected String getFileName() {
@@ -376,7 +397,11 @@ public class UserFactory implements IUserFactory, Serializable {
 		if (user != null && editCtx.getEditUser(user.getLogin()) != null) {
 			user.getUserInfo().addRoles((new HashSet(Arrays.asList(new String[] { AdminUserSecurity.GENERAL_ADMIN, AdminUserSecurity.FULL_CONTROL_ROLE }))));
 		}
-		request.getSession().setAttribute(SESSION_KEY, user);
+		
+		if (user != null) {
+			user.setContext(globalContext.getContextKey());
+			request.getSession().setAttribute(SESSION_KEY, user);
+		}
 
 		return user;
 	}

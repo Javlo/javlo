@@ -2,6 +2,7 @@ package org.javlo.user;
 
 import java.io.Serializable;
 import java.util.Arrays;
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
@@ -208,6 +209,15 @@ public class AdminUserSecurity implements Serializable {
 	 */
 	public boolean isAdmin(User user) {		
 		return haveRight(user, FULL_CONTROL_ROLE, ADMIN_USER_ROLE);
+	}
+	
+	/**
+	 * return true if user have no restriction on all website
+	 * @param user
+	 * @return
+	 */
+	public boolean isGod(User user) {		
+		return user.getRoles().contains(GENERAL_ADMIN);
 	}
 
 }

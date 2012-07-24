@@ -217,7 +217,7 @@ public class AdminAction implements IAction {
 
 		if (contextID != null) {
 
-			GlobalContext globalContext = GlobalContext.getInstance(request, contextID);
+			GlobalContext globalContext = GlobalContext.getInstance(request.getSession(), contextID);
 			EditContext editCtx = EditContext.getInstance(globalContext, request.getSession());
 			AdminUserSecurity security = AdminUserSecurity.getInstance();
 			if (!security.haveRight(editCtx.getEditUser(), AdminUserSecurity.FULL_CONTROL_ROLE)) {
@@ -232,7 +232,7 @@ public class AdminAction implements IAction {
 					currentSelection.add(comp);
 				}
 			} else {
-				globalContext = GlobalContext.getInstance(request, contextID);
+				globalContext = GlobalContext.getInstance(request.getSession(), contextID);
 				String[] componentsListed = requestService.getParameterValues("component-listed", new String[0]);
 				for (String element : componentsListed) {
 					if (requestService.getParameter(element, null) != null) {
@@ -286,7 +286,7 @@ public class AdminAction implements IAction {
 		RequestService requestService = RequestService.getInstance(request);
 		String siteName = requestService.getParameter("site-name", null);
 		if (siteName != null && siteName.length() > 0 && PatternHelper.HOST_PATTERN.matcher(siteName).matches()) {
-			GlobalContext globalContext = GlobalContext.getInstance(request, siteName);
+			GlobalContext globalContext = GlobalContext.getInstance(request.getSession(), siteName);
 			globalContext.setDefaultTemplate(requestService.getParameter("default-template", globalContext.getDefaultTemplate()));
 			globalContext.setAdministrator(requestService.getParameter("admin", globalContext.getAdministrator()));
 			globalContext.setPassword(requestService.getParameter("password", null));
@@ -318,7 +318,7 @@ public class AdminAction implements IAction {
 		String contextID = requestService.getParameter("context", null);
 		String templateId = requestService.getParameter("template-id", null);
 		if ((contextID != null) && (templateId != null)) {
-			GlobalContext globalContext = GlobalContext.getRealInstance(request, contextID);
+			GlobalContext globalContext = GlobalContext.getRealInstance(request.getSession(), contextID);
 			globalContext.setDefaultTemplate(templateId);
 			PageConfiguration pageCfg = PageConfiguration.getInstance(globalContext);
 			pageCfg.loadTemplate(globalContext);
@@ -341,7 +341,7 @@ public class AdminAction implements IAction {
 		String contextId = requestService.getParameter("context", null);
 		if (contextId != null) {
 			try {
-				GlobalContext ctx = GlobalContext.getRealInstance(request, contextId);
+				GlobalContext ctx = GlobalContext.getRealInstance(request.getSession(), contextId);
 				ctx.delete(request.getSession().getServletContext());
 			} catch (Exception e) {
 				e.printStackTrace();
@@ -382,7 +382,7 @@ public class AdminAction implements IAction {
 
 		String contextName = requestService.getParameter("context", null);
 		if (contextName != null) {
-			GlobalContext ctx = GlobalContext.getRealInstance(request, contextName);
+			GlobalContext ctx = GlobalContext.getRealInstance(request.getSession(), contextName);
 			if (ctx != null) {
 				ctx.setEditable(!ctx.isEditable());
 			}
@@ -460,7 +460,7 @@ public class AdminAction implements IAction {
 
 		boolean adminMode = false;
 		if (contextID != null) { // admin mode
-			globalContext = GlobalContext.getRealInstance(request, contextID);
+			globalContext = GlobalContext.getRealInstance(request.getSession(), contextID);
 			adminMode = true;
 		} else { // edit mode
 			globalContext = GlobalContext.getInstance(request);
@@ -1000,7 +1000,7 @@ public class AdminAction implements IAction {
 		String contextID = requestService.getParameter("context", null);
 		String templateId = requestService.getParameter("template-id", null);
 		if ((contextID != null) && (templateId != null)) {
-			GlobalContext globalContext = GlobalContext.getRealInstance(request, contextID);
+			GlobalContext globalContext = GlobalContext.getRealInstance(request.getSession(), contextID);
 			AdminContext adminCtx = AdminContext.getInstance(request.getSession());
 			List<String> templatesSelected;
 			if (adminCtx.getTemplateType() == AdminContext.MAILING_TEMPLATE) {
@@ -1278,7 +1278,7 @@ public class AdminAction implements IAction {
 
 		String contextName = requestService.getParameter("context", null);
 		if (contextName != null) {
-			GlobalContext ctx = GlobalContext.getRealInstance(request, contextName);
+			GlobalContext ctx = GlobalContext.getRealInstance(request.getSession(), contextName);
 			if (ctx != null) {
 				ctx.setVisible(!ctx.isVisible());
 			}

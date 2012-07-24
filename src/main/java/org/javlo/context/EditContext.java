@@ -392,7 +392,7 @@ public class EditContext implements Serializable {
 		// editUser=outUser;
 		if (outUser != null) {
 			UserInfo ui = new UserInfo();
-			ui.setLogin(outUser.getName());
+			ui.setLogin(outUser.getName());			
 			ui.setRoles(new HashSet<String>( Arrays.asList(new String[] { AdminUserSecurity.GENERAL_ADMIN, AdminUserSecurity.FULL_CONTROL_ROLE })));
 			editUser = new User(ui);
 			editUser.setId(outUser.getName());
@@ -421,7 +421,7 @@ public class EditContext implements Serializable {
 		// editUser=outUser;
 		if (outUser != null) {
 			UserInfo ui = new UserInfo();
-			ui.setLogin(outUser.getName());
+			ui.setLogin(outUser.getName());			
 			ui.setRoles(new HashSet<String>( Arrays.asList(new String[] { AdminUserSecurity.GENERAL_ADMIN, AdminUserSecurity.FULL_CONTROL_ROLE })));
 			editUser = new User(ui);
 			editUser.setId(outUser.getName());
