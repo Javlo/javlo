@@ -19,6 +19,7 @@ org.javlo.component.text.Paragraph
 org.javlo.component.text.XHTML
 org.javlo.component.text.WysiwygParagraph
 org.javlo.component.list.FreeTextList
+org.javlo.component.meta.LocationComponent
 
 --content.title.links
 

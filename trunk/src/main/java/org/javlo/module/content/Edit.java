@@ -314,19 +314,21 @@ public class Edit extends AbstractModuleAction {
 		for (int i = 0; i < components.length - 1; i++) { // remove title without component
 			if (!components[i].isMetaTitle() || !components[i + 1].isMetaTitle()) { // if next component is title too so the component group is empty
 				IContentVisualComponent comp = components[i];
-				ComponentWrapper compWrapper = new ComponentWrapper(comp.getType(), comp.getComponentLabel(ctx, globalContext.getEditLanguage()), comp.getValue(ctx), comp.isMetaTitle());
-				if (components[i].isMetaTitle()) {
-					titleWrapper = compWrapper;
-				}
-				if (comp.getType().equals(editCtx.getActiveType())) {
-					compWrapper.setSelected(true);
-					if (titleWrapper != null) {
-						{
-							titleWrapper.setSelected(true);
+				if (comp.isMetaTitle() || globalContext.getComponents().contains(comp.getClass().getName())) {
+					ComponentWrapper compWrapper = new ComponentWrapper(comp.getType(), comp.getComponentLabel(ctx, globalContext.getEditLanguage()), comp.getValue(ctx), comp.isMetaTitle());
+					if (components[i].isMetaTitle()) {
+						titleWrapper = compWrapper;
+					}
+					if (comp.getType().equals(editCtx.getActiveType())) {
+						compWrapper.setSelected(true);
+						if (titleWrapper != null) {
+							{
+								titleWrapper.setSelected(true);
+							}
 						}
 					}
+					comps.add(compWrapper);
 				}
-				comps.add(compWrapper);
 			}
 		}
 		if (!components[components.length - 1].isMetaTitle()) {
@@ -342,7 +344,23 @@ public class Edit extends AbstractModuleAction {
 				}
 			}
 		}
-		ctx.getRequest().setAttribute("components", comps);
+		
+		
+		List<ComponentWrapper> listWithoutEmptyTitle = new LinkedList<Edit.ComponentWrapper>();
+		ComponentWrapper title = null;
+		for (ComponentWrapper comp : comps) {
+			if (comp.isMetaTitle()) {
+				title = comp;
+			} else {
+				if (title != null) {
+					listWithoutEmptyTitle.add(title);
+					title = null;
+				}
+				listWithoutEmptyTitle.add(comp);
+			}
+		}
+		
+		ctx.getRequest().setAttribute("components", listWithoutEmptyTitle);
 
 		Module currentModule = ModulesContext.getInstance(ctx.getRequest().getSession(), globalContext).getCurrentModule();
 		Box componentBox = currentModule.getBox("components");
@@ -508,9 +526,9 @@ public class Edit extends AbstractModuleAction {
 				Box componentBox = currentModule.getBox("components");
 				if (componentBox != null) {
 					loadComponentList(ctx);
-					componentBox.update(ctx);
-					prepareUpdateInsertLine(ctx);
+					componentBox.update(ctx);					
 				}
+				prepareUpdateInsertLine(ctx);
 			}
 		} else {
 			message = "Fatal error : type not found";
@@ -644,7 +662,7 @@ public class Edit extends AbstractModuleAction {
 			}
 		}
 
-			return message;
+		return message;
 	}
 
 	public static final String performChangeMode(HttpSession session, RequestService requestService, ContentModuleContext modCtx) {

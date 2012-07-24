@@ -31,6 +31,8 @@ import org.javlo.helper.PatternHelper;
 import org.javlo.helper.StringHelper;
 import org.javlo.helper.URLHelper;
 import org.javlo.i18n.I18nAccess;
+import org.javlo.macro.IMacro;
+import org.javlo.macro.MacroFactory;
 import org.javlo.message.GenericMessage;
 import org.javlo.message.MessageRepository;
 import org.javlo.module.core.Module;
@@ -326,8 +328,10 @@ public class AdminAction extends AbstractModuleAction {
 		Collection<GlobalContextBean> ctxAllBean = new LinkedList<GlobalContextBean>();
 		Collection<GlobalContext> allContext = GlobalContextFactory.getAllGlobalContext(request.getSession());
 		for (GlobalContext context : allContext) {
-			if (adminUserSecurity.isAdmin(ctx.getCurrentEditUser()) || context.getUsersAccess().contains(ctx.getCurrentEditUser().getLogin())) {
-				ctxAllBean.add(new GlobalContextBean(context, ctx.getRequest().getSession()));
+			if (ctx.getCurrentEditUser() != null) {
+				if (adminUserSecurity.isAdmin(ctx.getCurrentEditUser()) || context.getUsersAccess().contains(ctx.getCurrentEditUser().getLogin())) {
+					ctxAllBean.add(new GlobalContextBean(context, ctx.getRequest().getSession()));
+				}
 			}
 		}
 
@@ -345,7 +349,7 @@ public class AdminAction extends AbstractModuleAction {
 			GlobalContext currentGlobalContext;
 			if (currentContextKey != null) {
 				request.setAttribute("context", currentContextKey);
-				currentGlobalContext = GlobalContext.getRealInstance(request, currentContextKey);
+				currentGlobalContext = GlobalContext.getRealInstance(request.getSession(), currentContextKey);
 			} else {
 				currentGlobalContext = (GlobalContext) request.getAttribute("prepareContext");
 				request.setAttribute("context", currentGlobalContext.getContextKey());
@@ -403,6 +407,19 @@ public class AdminAction extends AbstractModuleAction {
 				params.put("context", currentGlobalContext.getContextKey());
 				String backUrl = URLHelper.createModuleURL(ctx, ctx.getPath(), currentModule.getName(), params);
 				currentModule.setBackUrl(backUrl);
+
+				/** macro **/
+				MacroFactory macroFactory = MacroFactory.getInstance(currentGlobalContext.getStaticConfig());
+				Collection<String> macrosName = new LinkedList<String>();
+				for (IMacro macro : macroFactory.getMacros()) {
+					macrosName.add(macro.getName());
+				}
+				request.setAttribute("macros", macrosName);
+				Map<String, String> selectedMacros = new HashMap<String, String>();
+				for (String selected : currentGlobalContext.getMacros()) {
+					selectedMacros.put(selected, StringHelper.SOMETHING);
+				}
+				request.setAttribute("selectedMacros", selectedMacros);
 
 				/** template plugin **/
 				ctx.getRequest().setAttribute("templatePlugins", TemplatePluginFactory.getInstance(application).getAllTemplatePlugin());
@@ -503,7 +520,7 @@ public class AdminAction extends AbstractModuleAction {
 			if (currentContextKey != null) {
 
 				GlobalContext currentGlobalContext;
-				currentGlobalContext = GlobalContext.getRealInstance(ctx.getRequest(), currentContextKey);
+				currentGlobalContext = GlobalContext.getRealInstance(ctx.getRequest().getSession(), currentContextKey);
 
 				if (currentGlobalContext != null) {
 					checkRight(ctx, currentGlobalContext);
@@ -543,8 +560,18 @@ public class AdminAction extends AbstractModuleAction {
 						e.printStackTrace();
 						messageRepository.setGlobalMessage(new GenericMessage(e.getMessage(), GenericMessage.ERROR));
 					}
-					
+
 					currentGlobalContext.setBlockPassword(requestService.getParameter("block-password", ""));
+
+					/** macro **/
+					MacroFactory macroFactory = MacroFactory.getInstance(currentGlobalContext.getStaticConfig());
+					List<String> macros = new LinkedList<String>();
+					for (IMacro macro : macroFactory.getMacros()) {
+						if (requestService.getParameter(macro.getName(), null) != null) {
+							macros.add(macro.getName());
+						}
+					}
+					currentGlobalContext.setMacros(macros);
 
 					/** template plugin **/
 					String templatePluginConfig = requestService.getParameter("template-plugin-config", "");
@@ -590,7 +617,7 @@ public class AdminAction extends AbstractModuleAction {
 		} else {
 			String contextName = requestService.getParameter("context", null);
 			if (contextName != null) {
-				GlobalContext currentGlobalContext = GlobalContext.getRealInstance(request, contextName);
+				GlobalContext currentGlobalContext = GlobalContext.getRealInstance(request.getSession(), contextName);
 				checkRight(ctx, currentGlobalContext);
 				if (globalContext != null) {
 					ContentService content = ContentService.getInstance(currentGlobalContext);
@@ -618,7 +645,7 @@ public class AdminAction extends AbstractModuleAction {
 		} else {
 			String currentContextKey = requestService.getParameter("context", null);
 			if (currentContextKey != null) {
-				GlobalContext currentGlobalContext = GlobalContext.getRealInstance(request, currentContextKey);
+				GlobalContext currentGlobalContext = GlobalContext.getRealInstance(request.getSession(), currentContextKey);
 				if (currentGlobalContext != null) {
 					checkRight(ctx, currentGlobalContext);
 					IContentVisualComponent[] componentsType = ComponentFactory.getComponents(currentGlobalContext);
@@ -650,7 +677,7 @@ public class AdminAction extends AbstractModuleAction {
 		} else {
 			String currentContextKey = requestService.getParameter("context", null);
 			if (currentContextKey != null) {
-				GlobalContext currentGlobalContext = GlobalContext.getRealInstance(request, currentContextKey);
+				GlobalContext currentGlobalContext = GlobalContext.getRealInstance(request.getSession(), currentContextKey);
 				if (currentGlobalContext != null) {
 					checkRight(ctx, currentGlobalContext);
 					List<String> modules = new LinkedList<String>();
@@ -686,7 +713,7 @@ public class AdminAction extends AbstractModuleAction {
 		String msg = null;
 		String currentContextKey = requestService.getParameter("context", null);
 		if (currentContextKey != null) {
-			GlobalContext currentGlobalContext = GlobalContext.getRealInstance(ctx.getRequest(), currentContextKey);
+			GlobalContext currentGlobalContext = GlobalContext.getRealInstance(ctx.getRequest().getSession(), currentContextKey);
 			if (currentGlobalContext != null) {
 				checkRight(ctx, currentGlobalContext);
 				String templateName = requestService.getParameter("template", null);
@@ -710,7 +737,7 @@ public class AdminAction extends AbstractModuleAction {
 		String msg = null;
 		String currentContextKey = requestService.getParameter("context", null);
 		if (currentContextKey != null) {
-			GlobalContext currentGlobalContext = GlobalContext.getRealInstance(ctx.getRequest(), currentContextKey);
+			GlobalContext currentGlobalContext = GlobalContext.getRealInstance(ctx.getRequest().getSession(), currentContextKey);
 			if (currentGlobalContext != null) {
 				checkRight(ctx, currentGlobalContext);
 				String templateName = requestService.getParameter("template", null);
@@ -742,7 +769,7 @@ public class AdminAction extends AbstractModuleAction {
 
 		if (PatternHelper.ALPHANNUM_NOSPACE_PATTERN.matcher(siteName).matches()) {
 			if (siteName != null && siteName.length() > 0) {
-				GlobalContext globalContext = GlobalContext.getInstance(ctx.getRequest(), siteName);
+				GlobalContext globalContext = GlobalContext.getInstance(ctx.getRequest().getSession(), siteName);
 				globalContext.setUsersAccess(Arrays.asList(ctx.getCurrentEditUser().getLogin()));
 				messageRepository.setGlobalMessage(new GenericMessage(i18nAccess.getText("admin.message.new-site-create"), GenericMessage.INFO));
 				editGlobalContext(ctx.getRequest(), currentModule, globalContext);
@@ -759,7 +786,7 @@ public class AdminAction extends AbstractModuleAction {
 		if (siteName == null) {
 			return "bad request structure, need 'context' param.";
 		}
-		GlobalContext globalContext = GlobalContext.getInstance(ctx.getRequest(), siteName);
+		GlobalContext globalContext = GlobalContext.getInstance(ctx.getRequest().getSession(), siteName);
 		if (globalContext == null) {
 			return "site not found : " + siteName;
 		}
@@ -772,7 +799,7 @@ public class AdminAction extends AbstractModuleAction {
 		if (siteName == null) {
 			return "bad request structure, need 'context' param.";
 		}
-		GlobalContext currentGlobalContext = GlobalContext.getRealInstance(ctx.getRequest(), siteName);
+		GlobalContext currentGlobalContext = GlobalContext.getRealInstance(ctx.getRequest().getSession(), siteName);
 		if (currentGlobalContext != null) {
 			currentGlobalContext.setView(!currentGlobalContext.isView());
 		} else {
@@ -780,13 +807,13 @@ public class AdminAction extends AbstractModuleAction {
 		}
 		return null;
 	}
-	
+
 	public static String performBlockEdit(RequestService rs, ContentContext ctx, MessageRepository messageRepository, I18nAccess i18nAccess) throws ConfigurationException, IOException {
 		String siteName = rs.getParameter("context", null);
 		if (siteName == null) {
 			return "bad request structure, need 'context' param.";
 		}
-		GlobalContext currentGlobalContext = GlobalContext.getRealInstance(ctx.getRequest(), siteName);
+		GlobalContext currentGlobalContext = GlobalContext.getRealInstance(ctx.getRequest().getSession(), siteName);
 		if (currentGlobalContext != null) {
 			currentGlobalContext.setEditable(!currentGlobalContext.isEditable());
 		} else {

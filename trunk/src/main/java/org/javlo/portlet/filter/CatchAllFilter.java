@@ -105,7 +105,7 @@ public class CatchAllFilter implements Filter {
 
 			IUserFactory fact = UserFactory.createUserFactory(globalContext, httpRequest.getSession());
 			if (fact.getCurrentUser(((HttpServletRequest) request).getSession()) == null) {
-
+				
 				String loginType = requestService.getParameter("login-type", null);
 
 				if ((loginType == null || !loginType.equals("adminlogin")) && logoutUser == null) {
@@ -138,6 +138,7 @@ public class CatchAllFilter implements Filter {
 
 			/** EDIT LOGIN **/
 			if (fact.getCurrentUser(((HttpServletRequest) request).getSession()) == null) {
+				
 				/* AUTO LOGIN */
 				String autoLoginId = RequestHelper.getCookieValue(httpRequest, "javlo_login_id");
 				String autoLoginUser = null;
@@ -241,7 +242,7 @@ public class CatchAllFilter implements Filter {
 				if (StringHelper.isTrue(requestService.getParameter("__check_context", "true"))) {
 					String contextURI = ContentManager.getContextName(httpRequest);
 					if (GlobalContext.isExist(httpRequest, contextURI)) {
-						globalContext = GlobalContext.getInstance(httpRequest, contextURI);
+						globalContext = GlobalContext.getInstance(httpRequest.getSession(), contextURI);
 						globalContext.setPathPrefix(contextURI);
 						String newURI = httpRequest.getServletPath();
 						httpRequest.getRequestURI();
@@ -264,7 +265,7 @@ public class CatchAllFilter implements Filter {
 					globalContext = GlobalContext.getInstance(httpRequest);
 				}
 				if (globalContext == null) {
-					globalContext = GlobalContext.getInstance(httpRequest, host);
+					globalContext = GlobalContext.getInstance(httpRequest.getSession(), host);
 					hostDefineSite = true;
 				}
 			}

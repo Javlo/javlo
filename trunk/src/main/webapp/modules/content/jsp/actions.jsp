@@ -13,7 +13,7 @@
 <select name="type" class="with-title">
 <c:forEach var="comp" items="${components}">
 <c:if test="${comp.metaTitle}">${closeAccordion}
-<option disabled="disabled" class="title">${comp.label}</option>
+<option disabled="disabled" class="title">${i18n.edit[comp.value]}</option>
 </c:if>
 <c:if test="${not comp.metaTitle}">
 <option ${comp.selected?' selected="selected"':''} value="${comp.type}">${comp.label}</option>

@@ -20,6 +20,7 @@ public class User implements Principal {
 
 	String login;
 	String password;
+	private String context;
 	Set<String> roles = new HashSet<String>();
 	IUserInfo userInfo;
 
@@ -114,6 +115,14 @@ public class User implements Principal {
 	@Override
 	public String toString() {
 		return getName();
+	}
+
+	public String getContext() {
+		return context;
+	}
+
+	public void setContext(String context) {
+		this.context = context;
 	}
 
 }

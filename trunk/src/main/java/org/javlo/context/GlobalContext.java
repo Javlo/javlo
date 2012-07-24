@@ -160,8 +160,8 @@ public class GlobalContext implements Serializable {
 		}
 	}
 
-	public static GlobalContext getDefaultContext(HttpServletRequest request) throws IOException, ConfigurationException {
-		return getRealInstance(request, StaticConfig.getInstance(request.getSession()).getDefaultContext(), false);
+	public static GlobalContext getDefaultContext(HttpSession session) throws IOException, ConfigurationException {
+		return getRealInstance(session, StaticConfig.getInstance(session).getDefaultContext(), false);
 	}
 
 	public static GlobalContext getSessionInstance(HttpSession session) {
@@ -177,18 +177,18 @@ public class GlobalContext implements Serializable {
 				StaticConfig staticConfig = StaticConfig.getInstance(request.getSession().getServletContext());
 				if (staticConfig.isHostDefineSite()) {
 					String host = ServletHelper.getSiteKey(request);
-					globalContext = GlobalContext.getInstance(request, host);
+					globalContext = GlobalContext.getInstance(request.getSession(), host);
 					contextURI = host;
 				} else {
 					RequestService requestService = RequestService.getInstance(request);
 					if (StringHelper.isTrue(requestService.getParameter("__check_context", "true"))) {
 						contextURI = ContentManager.getContextName(request);
 						if (GlobalContext.isExist(request, contextURI)) {
-							globalContext = GlobalContext.getInstance(request, contextURI);
+							globalContext = GlobalContext.getInstance(request.getSession(), contextURI);
 							globalContext.setPathPrefix(contextURI);
 						} else {
 							String host = ServletHelper.getSiteKey(request);
-							globalContext = GlobalContext.getInstance(request, host);
+							globalContext = GlobalContext.getInstance(request.getSession(), host);
 							contextURI = host;
 							if (globalContext == null) {
 								logger.severe("error GlobalContext not found : " + request.getRequestURI());
@@ -215,17 +215,32 @@ public class GlobalContext implements Serializable {
 		}
 		return null;
 	}
+	
+	public static GlobalContext getSessionContext(HttpSession session) {
+		String contextKey = (String)session.getAttribute(KEY);
+		try {
+			return GlobalContext.getInstance(session, contextKey);
+		} catch (Exception e) {
+			e.printStackTrace();
+			return null;
+		}
+	}
+	
+	public static String getSessionContextKey(HttpSession session) {
+		return (String)session.getAttribute(KEY);
+	}
 
-	public static GlobalContext getInstance(HttpServletRequest request, String contextKey) throws IOException, ConfigurationException {
-		GlobalContext newInstance = getRealInstance(request, contextKey);
+
+	public static GlobalContext getInstance(HttpSession session, String contextKey) throws IOException, ConfigurationException {
+		GlobalContext newInstance = getRealInstance(session, contextKey);
 		String alias = newInstance.getAliasOf();
 		if (alias.trim().length() > 0) {
 			String newContextKey = StringHelper.stringToFileName(alias);
 			if (!newContextKey.equals(contextKey)) {
-				newInstance = getRealInstance(request, alias);
+				newInstance = getRealInstance(session, alias);
 			}
 		}
-		request.getSession().setAttribute(KEY, newInstance);
+		session.setAttribute(KEY, newInstance.getContextKey());
 		return newInstance;
 	}
 
@@ -283,16 +298,16 @@ public class GlobalContext implements Serializable {
 		cacheManager.setName(getContextKey());
 	}
 
-	public static GlobalContext getRealInstance(HttpServletRequest request, String contextKey) throws IOException, ConfigurationException {
-		return getRealInstance(request, contextKey, true);
+	public static GlobalContext getRealInstance(HttpSession session, String contextKey) throws IOException, ConfigurationException {
+		return getRealInstance(session, contextKey, true);
 	}
 
-	private static GlobalContext getRealInstance(HttpServletRequest request, String contextKey, boolean copyDefaultContext) throws IOException, ConfigurationException {
+	private static GlobalContext getRealInstance(HttpSession session, String contextKey, boolean copyDefaultContext) throws IOException, ConfigurationException {
 
 		contextKey = StringHelper.stringToFileName(contextKey);
 
-		HttpSession session = request.getSession();
-		StaticConfig staticConfig = StaticConfig.getInstance(request.getSession().getServletContext());
+		
+		StaticConfig staticConfig = StaticConfig.getInstance(session.getServletContext());
 
 		synchronized (LOCK_GLOBAL_CONTEXT_LOAD) {
 			// ServletContextWeakReference gcc = ServletContextWeakReference.getInstance(session.getServletContext());
@@ -315,7 +330,7 @@ public class GlobalContext implements Serializable {
 					newInstance.creation = true;
 				}
 				if (copyDefaultContext) {
-					GlobalContext defaultContext = getDefaultContext(request);
+					GlobalContext defaultContext = getDefaultContext(session);
 
 					newInstance.contextFile.createNewFile();
 					synchronized (newInstance.properties) {
@@ -383,7 +398,7 @@ public class GlobalContext implements Serializable {
 			}
 
 			session.getServletContext().setAttribute(contextKey, newInstance);
-			request.getSession().setAttribute(KEY, newInstance);
+			session.setAttribute(KEY, newInstance);
 
 			synchronized (newInstance.properties) {
 				newInstance.properties.setProperty("access-date", StringHelper.renderTime(new Date()));
