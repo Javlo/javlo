@@ -978,7 +978,7 @@ public class StaticConfig extends Observable {
 	}
 
 	public boolean isHostDefineSite() {
-		return properties.getBoolean("url.host-define-site", true);
+		return properties.getBoolean("url.host-define-site", false);
 	}
 
 	public boolean isRandomDataFoder() {

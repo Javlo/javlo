@@ -21,7 +21,6 @@ import java.util.Set;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 
-import org.apache.commons.configuration.ConfigurationException;
 import org.javlo.config.StaticConfig;
 import org.javlo.context.EditContext;
 import org.javlo.context.GlobalContext;
