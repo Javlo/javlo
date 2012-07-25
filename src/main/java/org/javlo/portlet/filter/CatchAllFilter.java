@@ -59,25 +59,8 @@ public class CatchAllFilter implements Filter {
 
 			GlobalContext globalContext = GlobalContext.getInstance(httpRequest);
 
-			// ContentContext ctx = ContentContext.getContentContext(httpRequest, httpResponse);
-
 			I18nAccess i18nAccess = I18nAccess.getInstance(globalContext, httpRequest.getSession());
 			RequestService requestService = RequestService.getInstance(httpRequest);
-
-			/*String loginId = requestService.getParameter(RemoteLoginService.PARAM_NAME, null);
-			if (loginId != null) {
-				logger.fine("try a remote login with id : " + loginId);
-				RemoteLoginService remoteLoginService = RemoteLoginService.getInstance(httpRequest.getSession().getServletContext());
-				User user = remoteLoginService.login(loginId);
-				if (user != null) {
-					IUserFactory fact = AdminUserFactory.createUserFactory(globalContext, httpRequest.getSession());
-					fact.setCurrentUser(httpRequest.getSession(), user);
-					EditContext editCtx = EditContext.getInstance(globalContext, httpRequest.getSession());
-					editCtx.setEditUser(user);
-					// next.doFilter(httpRequest, response);
-					return;
-				}
-			}*/
 
 			Principal logoutUser = null;
 
@@ -97,7 +80,6 @@ public class CatchAllFilter implements Filter {
 				}
 				httpRequest.getSession().invalidate();
 				httpRequest.getSession(true);
-				// next.doFilter(httpRequest, response);
 				return;
 			}
 
@@ -203,6 +185,11 @@ public class CatchAllFilter implements Filter {
 		} catch (Exception e) {
 			throw new ServletException(e);
 		}
+		
+		
+		
+		
+		
 	}
 
 	@Override

@@ -120,6 +120,7 @@ public class MessageRepository {
 		}
 		
 		NotificationService notifService = NotificationService.getInstance(GlobalContext.getInstance(request));
+		System.out.println("***** MessageRepository.setGlobalMessageAndNotification : ctx.getCurrentUserId() = "+ctx.getCurrentUserId()); //TODO: remove debug trace
 		notifService.addNotification(globalMessage.getMessage(), globalMessage.getType(), ctx.getCurrentUserId());
 		
 	}

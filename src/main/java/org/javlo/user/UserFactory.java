@@ -156,8 +156,6 @@ public class UserFactory implements IUserFactory, Serializable {
 		ui.setRoles(roles);
 
 		User user = new User(ui);
-		user.setId(login);
-
 		return user;
 	}
 

@@ -16,6 +16,7 @@ import org.javlo.context.GlobalContext;
 import org.javlo.context.StatContext;
 import org.javlo.helper.LangHelper;
 import org.javlo.helper.NetHelper;
+import org.javlo.helper.StringHelper;
 import org.javlo.helper.TimeHelper;
 import org.javlo.i18n.I18nAccess;
 import org.javlo.message.MessageRepository;
@@ -67,8 +68,14 @@ public class DashboardAction extends AbstractModuleAction {
 			Calendar end = Calendar.getInstance();
 			start.add(Calendar.HOUR, -1);
 			Track[] trackers = tracker.getTracks(start.getTime(), end.getTime());;
-			start.setTime(end.getTime()); // reset start date
-			for (int i = 0; i < 10*6*60; i++) { // 10Sec * 6 = 1min * 60 = 1u
+			start.setTime(end.getTime()); // reset start date			
+			
+			Calendar endRange = Calendar.getInstance();
+			endRange.add(Calendar.HOUR, -1);
+			
+			int i=0;
+			while (endRange.before(start)) { // 10Sec * 6 = 1min * 60 = 1u
+				i++;
 				start.add(Calendar.SECOND, -10);
 				int charge = 0; 
 				for (Track track : trackers) {
@@ -78,9 +85,9 @@ public class DashboardAction extends AbstractModuleAction {
 						charge++;
 					}
 				}
-				ajaxMap.put(new Integer(i*10), charge);				
+				ajaxMap.put(new Integer(i*100), charge);				
 				end.setTime(start.getTime());
-			}
+			}			
 			ctx.setAjaxMap(ajaxMap);
 		}  else if (type.equals("week")) {
 			Map<Object, Object> ajaxMap = new Hashtable<Object, Object>();
