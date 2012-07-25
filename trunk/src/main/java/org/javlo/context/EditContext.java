@@ -394,8 +394,7 @@ public class EditContext implements Serializable {
 			UserInfo ui = new UserInfo();
 			ui.setLogin(outUser.getName());			
 			ui.setRoles(new HashSet<String>( Arrays.asList(new String[] { AdminUserSecurity.GENERAL_ADMIN, AdminUserSecurity.FULL_CONTROL_ROLE })));
-			editUser = new User(ui);
-			editUser.setId(outUser.getName());
+			editUser = new User(ui);			
 		}
 		return outUser != null;
 	}
@@ -407,24 +406,12 @@ public class EditContext implements Serializable {
 	 * @return true if user is logged.
 	 */
 	public boolean hardAutoLogin(String inUser) {
-		User outUser = getEditUser(inUser);
-		/*if ((outUser != null && globalContext != null)) {
-			boolean found = false;
-			for (Principal principal : globalContext.getAllPrincipals()) {
-				if (principal != null && principal.getName() != null) {
-					if (principal.getName().equals(inUser)) {
-						found = true;
-					}
-				}
-			}
-		}*/
-		// editUser=outUser;
+		User outUser = getEditUser(inUser);		
 		if (outUser != null) {
 			UserInfo ui = new UserInfo();
 			ui.setLogin(outUser.getName());			
 			ui.setRoles(new HashSet<String>( Arrays.asList(new String[] { AdminUserSecurity.GENERAL_ADMIN, AdminUserSecurity.FULL_CONTROL_ROLE })));
-			editUser = new User(ui);
-			editUser.setId(outUser.getName());
+			editUser = new User(ui);			
 		}
 		return outUser != null;
 	}

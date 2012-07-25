@@ -79,7 +79,7 @@ public class ContentContext {
 	public static ContentContext getContentContext(HttpServletRequest request, HttpServletResponse response) throws Exception {
 		ContentContext ctx = (ContentContext) request.getAttribute(CONTEXT_REQUEST_KEY);
 		try {
-			if (ctx == null) {
+			if (ctx == null) {				
 				ctx = createContentContext(request, response);
 				if (ctx.getRenderMode() != ContentContext.EDIT_MODE && ctx.getRenderMode() != ContentContext.ADMIN_MODE) {
 					ContentService content = ContentService.getInstance(GlobalContext.getInstance(request));
@@ -109,13 +109,7 @@ public class ContentContext {
 						}
 					}
 				}
-				/** set user **/
-				GlobalContext globalContext = GlobalContext.getInstance(ctx.getRequest());
-				IUserFactory fact = UserFactory.createUserFactory(globalContext, ctx.getRequest().getSession());
-				ctx.currentUser = fact.getCurrentUser(request.getSession());
-				fact = AdminUserFactory.createUserFactory(globalContext, ctx.getRequest().getSession());					
-				ctx.setCurrentEditUser(fact.getCurrentUser(request.getSession()));
-				ctx.storeInRequest(request);
+				ctx.setUser();
 			} else {
 				ctx.setRequest(request);
 				ctx.setResponse(response);
@@ -126,6 +120,16 @@ public class ContentContext {
 		}
 
 		return ctx;
+	}
+
+	public void setUser() {
+		/** set user **/
+		GlobalContext globalContext = GlobalContext.getInstance(getRequest());
+		IUserFactory fact = UserFactory.createUserFactory(globalContext, getRequest().getSession());
+		currentUser = fact.getCurrentUser(request.getSession());
+		fact = AdminUserFactory.createUserFactory(globalContext, getRequest().getSession());		
+		setCurrentEditUser(fact.getCurrentUser(request.getSession()));
+		storeInRequest(request);
 	}
 
 	/**
@@ -146,7 +150,7 @@ public class ContentContext {
 	private static void init(ContentContext ctx, HttpServletRequest request, HttpServletResponse response) {
 
 		try {
-			
+
 			RequestService requestService = RequestService.getInstance(request);
 			String forcedMode = requestService.getParameter(FORCE_MODE_PARAMETER_NAME, null);
 			if (forcedMode != null) {
@@ -168,7 +172,7 @@ public class ContentContext {
 					ctx.renderMode = TIME_MODE;
 				}
 			}
-			
+
 			ctx.setRequest(request);
 			ctx.setResponse(response);
 			ctx.setPath(ContentManager.getPath(request));
@@ -183,8 +187,6 @@ public class ContentContext {
 			// TODO : optimise this with option in global context
 
 			GlobalContext globalContext = GlobalContext.getInstance(ctx.getRequest());
-
-		
 
 			if (contentLg == null) {
 				contentLg = lg;
@@ -272,16 +274,14 @@ public class ContentContext {
 
 	private ContentContext() {
 	}
-	
-	private Map<String,String> ajaxInsideZone = new HashMap<String, String>();
+
+	private Map<String, String> ajaxInsideZone = new HashMap<String, String>();
 	private Map<String, String> ajaxZone = new HashMap<String, String>();;
-	
+
 	private User currentUser = null;
 	private User currentEditUser = null;
 
 	private Map<? extends Object, ? extends Object> ajaxMap = null;
-
-	
 
 	public ContentContext(ContentContext ctx) {
 		path = ctx.getPath();
@@ -337,13 +337,13 @@ public class ContentContext {
 		outContext.setArea(null);
 		return outContext;
 	}
-	
+
 	public ContentContext getContextWithArea(String area) {
 		ContentContext outContext = new ContentContext(this);
 		outContext.setArea(area);
 		return outContext;
 	}
-	
+
 	public ContentContext getContextWithOtherRenderMode(int mode) {
 		ContentContext outContext = new ContentContext(this);
 		outContext.setRenderMode(mode);
@@ -387,7 +387,7 @@ public class ContentContext {
 		}
 		return null;
 	}
-	
+
 	public ContentContext getContextForAbsoluteURL() {
 		ContentContext outCtx = new ContentContext(this);
 		outCtx.setAbsoluteURL(true);
@@ -438,7 +438,7 @@ public class ContentContext {
 		MenuElement root = ContentService.getInstance(globalContext).getNavigation(this);
 		if (getPath().equals("/") || this.getPath().equals('/' + ElementaryURLHelper.ROOT_FILE_NAME)) {
 			return root;
-		} else {			
+		} else {
 			MenuElement elem = globalContext.getPage(this, getPath());
 			setCurrentPageCached(elem);
 			return elem;
@@ -827,63 +827,72 @@ public class ContentContext {
 		return currentEditUser;
 	}
 
-	public void setCurrentEditUser(User currentEditUser) {
+	public void setCurrentEditUser(User currentEditUser) {		
 		this.currentEditUser = currentEditUser;
 	}
-	
+
 	/**
-	 * get the current user id.  That can be the edit user or the view user.
+	 * get the current user id. That can be the edit user or the view user.
+	 * 
 	 * @return
 	 */
 	public String getCurrentUserId() {
 		if (getCurrentEditUser() != null) {
-			return getCurrentEditUser().getId();
+			return getCurrentEditUser().getLogin();
 		} else if (getCurrentUser() != null) {
-			return getCurrentUser().getId();
+			return getCurrentUser().getLogin();
 		}
 		return null;
 	}
-	
+
 	/**
 	 * get Ajax zone that will be updated.
+	 * 
 	 * @return a map with html id as key and xhtml as value.
 	 */
 	public Map<String, String> getAjaxInsideZone() {
 		return ajaxInsideZone;
 	}
-	
+
 	/**
 	 * add a ajax zone for update.
-	 * @param id a xhtml id
-	 * @param xhtml the new content of the zone
+	 * 
+	 * @param id
+	 *            a xhtml id
+	 * @param xhtml
+	 *            the new content of the zone
 	 */
 	public void addAjaxInsideZone(String id, String xhtml) {
 		ajaxInsideZone.put(id, xhtml);
 	}
-	
+
 	/**
 	 * get Ajax zone that will be updated.
+	 * 
 	 * @return a map with html id as key and xhtml as value.
 	 */
 	public Map<String, String> getAjaxZone() {
 		return ajaxZone;
 	}
-	
+
 	/**
 	 * add a ajax zone for update.
-	 * @param id a xhtml id
-	 * @param xhtml the new content of the zone
+	 * 
+	 * @param id
+	 *            a xhtml id
+	 * @param xhtml
+	 *            the new content of the zone
 	 */
 	public void addAjaxZone(String id, String xhtml) {
 		ajaxZone.put(id, xhtml);
 	}
-	
+
 	public void setAjaxMap(Map<? extends Object, ? extends Object> ajaxMap) {
 		this.ajaxMap = ajaxMap;
 	}
-	
+
 	public Map<? extends Object, ? extends Object> getAjaxMap() {
 		return ajaxMap;
 	}
-	
+
 }

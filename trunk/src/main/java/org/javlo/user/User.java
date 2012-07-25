@@ -7,16 +7,11 @@ import java.security.Principal;
 import java.util.Arrays;
 import java.util.HashSet;
 import java.util.Set;
-import java.util.TreeSet;
-
-import org.javlo.helper.StringHelper;
 
 /**
  * @author pvandermaesen
  */
 public class User implements Principal {
-
-	String id=null;
 
 	String login;
 	String password;
@@ -92,21 +87,7 @@ public class User implements Principal {
 		roles=info.getRoles();
 		userInfo = info;
 	}
-
-	/**
-	 * @return
-	 */
-	public String getId() {
-		return id;
-	}
-
-	/**
-	 * @param string
-	 */
-	public void setId(String string) {
-		id = string;
-	}
-
+	
 	@Override
 	public String getName() {
 		return getLogin();
