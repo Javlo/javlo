@@ -1,5 +1,6 @@
-<%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
-<%@ taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions" %>
+<%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" 
+%><%@ taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions" 
+%><%@ taglib uri="/WEB-INF/javlo.tld" prefix="jv" %>
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml">
 <head>
@@ -14,7 +15,7 @@
 
 <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
 <title>Javlo : ${currentModule.title}</title>
-<link rel="stylesheet" media="screen" href="/css/edit/components.css" />
+<link rel="stylesheet" media="screen" href="<jv:url value='/css/edit/components.css' />" />
 <link rel="stylesheet" media="screen" href="${info.editTemplateURL}/css/style.css" />
 <link rel="stylesheet" media="screen" href="${info.editTemplateURL}/css/javlo.css" />
 <!--[if IE 9]>
@@ -32,7 +33,7 @@
 <script type="text/javascript" src="${info.editTemplateURL}/js/plugins/jquery-1.7.2.min.js"></script>
 <script type="text/javascript" src="${info.editTemplateURL}/js/plugins/jquery-ui-1.8.20.custom.min.js"></script>
 <script type="text/javascript" src="${info.editTemplateURL}/js/plugins/jquery.alerts.js"></script>
-<script type="text/javascript" src="/jsp/edit/global/dynamic_js.jsp"></script>
+<script type="text/javascript" src="<jv:url value='/jsp/edit/global/dynamic_js.jsp' />"></script>
 <script type="text/javascript" src="${info.editTemplateURL}/js/plugins/jquery.validate.min.js"></script>
 <script type="text/javascript" src="${info.editTemplateURL}/js/plugins/jquery.colorbox-min.js"></script>
 <script type="text/javascript" src="${info.editTemplateURL}/js/plugins/jquery.jgrowl.js"></script>
@@ -40,19 +41,19 @@
 <script type="text/javascript" src="${info.editTemplateURL}/js/plugins/jquery.form.js"></script>
 <script type="text/javascript" src="${info.editTemplateURL}/js/javlo/core.js"></script>
 <script type="text/javascript" src="${info.editTemplateURL}/js/custom/gallery.js"></script>
-<script type="text/javascript" src="/js/edit/ajax.js"></script>
-<script type="text/javascript" src="/js/edit/core.js"></script>
+<script type="text/javascript" src="<jv:url value='/js/edit/ajax.js' />"></script>
+<script type="text/javascript" src="<jv:url value='/js/edit/core.js' />"></script>
 <script type="text/javascript" src="${info.editTemplateURL}/js/javlo/core.js"></script>
 <c:if test="${not info.editLanguage eq 'en'}"><script type="text/javascript" src="${info.editTemplateURL}/js/plugins/jquery.ui.datepicker-${info.editLanguage}.js"></script></c:if>
 <script type="text/javascript" src="${info.editTemplateURL}/js/custom/general.js"></script>
 
 
 <c:forEach var="css" items="${currentModule.CSS}">
-<link rel="stylesheet" href="<c:url value='${css}' />"/>
+<link rel="stylesheet" href="${css}"/>
 </c:forEach>
 
 <c:forEach var="js" items="${currentModule.JS}">
-<script type="text/javascript" src="<c:url value='${js}' />"></script>
+<script type="text/javascript" src="${js}"></script>
 </c:forEach>
 
 </head>

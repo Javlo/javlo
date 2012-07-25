@@ -2,6 +2,7 @@ package org.javlo.servlet;
 
 import java.io.File;
 import java.io.FileInputStream;
+import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
@@ -65,7 +66,26 @@ public class ResourceServlet extends HttpServlet {
 	 * get the text and the picture and build a button
 	 */
 	protected void processRequest(HttpServletRequest request, HttpServletResponse response) throws ServletException {
-		
+
+		if (request.getServletPath().equals("/favicon.ico")) {
+			GlobalContext globalContext = GlobalContext.getSessionContext(request.getSession());
+			if (globalContext != null) {
+				String filePath = URLHelper.mergePath(globalContext.getStaticConfig().getStaticFolder(), request.getServletPath());
+				String finalName = URLHelper.mergePath(globalContext.getDataFolder(), filePath);
+				InputStream fileStream;
+				try {
+					fileStream = new FileInputStream(new File(finalName));
+					if ((fileStream != null)) {
+						ResourceHelper.writeStreamToStream(fileStream, response.getOutputStream());
+					}
+				} catch (Exception e) {
+					e.printStackTrace();
+					throw new ServletException(e);
+				}
+			}
+			return;
+		}
+
 		servletRun++;
 
 		OutputStream out = null;
@@ -109,25 +129,22 @@ public class ResourceServlet extends HttpServlet {
 		try {
 			String pathInfo;
 			String dataFolder = globalContext.getDataFolder();
-			if (request.getServletPath().equals("/favicon.ico")) {
-				pathInfo = URLHelper.mergePath(staticConfig.getStaticFolder(), request.getServletPath());
-			} else {
-				pathInfo = request.getPathInfo().substring(1);
-				
-				if (pathInfo.startsWith(staticConfig.getShareDataFolderKey())) {
-					pathInfo = pathInfo.substring(staticConfig.getShareDataFolderKey().length() + 1);
-					dataFolder = staticConfig.getShareDataFolder();
-				} else if (pathInfo.startsWith(URLHelper.TEMPLATE_RESOURCE_PREFIX)) {
-					pathInfo = pathInfo.substring(URLHelper.TEMPLATE_RESOURCE_PREFIX.length() + 1);
-					dataFolder = staticConfig.getTemplateFolder();
-				}
-				pathInfo = pathInfo.replace('\\', '/'); // for windows server
+
+			pathInfo = request.getPathInfo().substring(1);
+
+			if (pathInfo.startsWith(staticConfig.getShareDataFolderKey())) {
+				pathInfo = pathInfo.substring(staticConfig.getShareDataFolderKey().length() + 1);
+				dataFolder = staticConfig.getShareDataFolder();
+			} else if (pathInfo.startsWith(URLHelper.TEMPLATE_RESOURCE_PREFIX)) {
+				pathInfo = pathInfo.substring(URLHelper.TEMPLATE_RESOURCE_PREFIX.length() + 1);
+				dataFolder = staticConfig.getTemplateFolder();
 			}
-			
+			pathInfo = pathInfo.replace('\\', '/'); // for windows server
+
 			String ressourceURI = pathInfo;
 			ressourceURI = ressourceURI.replace('\\', '/');
 
-			logger.fine("load static ressource : " + ressourceURI);			
+			logger.fine("load static ressource : " + ressourceURI);
 
 			response.setContentType(ResourceHelper.getFileExtensionToManType(StringHelper.getFileExtension(ressourceURI)));
 			if (!pathInfo.equals(FILE_INFO)) {

@@ -53,7 +53,7 @@
 	</licenses>
 
 	<properties>
-	  <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 	</properties>
 
 	<dependencies>
@@ -115,7 +115,7 @@
 		</dependency>
 
 		<!-- /PORTLET -->
-		
+
 		<dependency>
 			<groupId>com.github.cage</groupId>
 			<artifactId>cage</artifactId>
@@ -242,7 +242,7 @@
 			<artifactId>displaytag</artifactId>
 			<version>1.2</version>
 		</dependency>
-		
+
 		<!-- MySQL database driver -->
 		<dependency>
 			<groupId>mysql</groupId>
@@ -250,15 +250,27 @@
 			<version>5.1.9</version>
 		</dependency>
 
+		<dependency>
+			<groupId>javax.servlet.jsp</groupId>
+			<artifactId>jsp-api</artifactId>
+			<version>2.2</version>
+		</dependency>
+
+		<dependency>
+			<groupId>jstl</groupId>
+			<artifactId>jstl</artifactId>
+			<version>1.2</version>
+		</dependency>
+
 	</dependencies>
 
 	<repositories>
 		<repository>
-	        <id>com.springsource.repository.bundles.external</id>
-	        <name>SpringSource Enterprise Bundle Repository - External Bundle Releases</name>
-	        <url>http://repository.springsource.com/maven/bundles/external</url>
-	    </repository>
-    </repositories>
+			<id>com.springsource.repository.bundles.external</id>
+			<name>SpringSource Enterprise Bundle Repository - External Bundle Releases</name>
+			<url>http://repository.springsource.com/maven/bundles/external</url>
+		</repository>
+	</repositories>
 
 	<!-- scm> <connection>:pserver:ananymous@cvs.noctis.be:/var/cvs/javlo</connection> 
 		<tag>HEAD</tag> </scm> -->
@@ -277,7 +289,7 @@
 				<artifactId>maven-war-plugin</artifactId>
 				<version>2.2</version>
 			</plugin>
-		
+
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-javadoc-plugin</artifactId>
