@@ -58,7 +58,7 @@ public class UserFactory implements IUserFactory, Serializable {
 	protected List<IUserInfo> userInfoList = null; // TODO: create a external
 	// application scope class
 
-	static final String SESSION_KEY = "currentUser";
+	public static final String SESSION_KEY = "currentUser";
 
 	// private StaticConfig staticConfig = null;
 
@@ -204,7 +204,7 @@ public class UserFactory implements IUserFactory, Serializable {
 	 * @see org.javlo.user.IUserFactory#getCurrentUser()
 	 */
 	@Override
-	public User getCurrentUser(HttpSession session) {
+	/**public User getCurrentUser(HttpSession session) {
 		User user = (User) session.getAttribute(SESSION_KEY);
 		String globalContextKey = GlobalContext.getSessionContextKey(session);
 		if (globalContextKey != null && user != null) {
@@ -219,10 +219,16 @@ public class UserFactory implements IUserFactory, Serializable {
 				} catch (Exception e) {
 					e.printStackTrace();
 				}
+				logger.info("remove user '"+user.getLogin()+"' context does'nt match.");
 				session.removeAttribute(SESSION_KEY);
 				return null;
 			}
 		}		
+		return user;
+	}**/
+	
+	public User getCurrentUser(HttpSession session) {
+		User user = (User) session.getAttribute(SESSION_KEY);		
 		return user;
 	}
 

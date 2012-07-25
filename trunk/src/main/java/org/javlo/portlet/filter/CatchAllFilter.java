@@ -21,6 +21,7 @@ import org.javlo.actions.MailingActions;
 import org.javlo.config.StaticConfig;
 import org.javlo.context.ContentContext;
 import org.javlo.context.ContentManager;
+import org.javlo.context.EditContext;
 import org.javlo.context.GlobalContext;
 import org.javlo.helper.NetHelper;
 import org.javlo.helper.RequestHelper;
@@ -35,6 +36,7 @@ import org.javlo.module.core.ModulesContext;
 import org.javlo.service.DataToIDService;
 import org.javlo.service.RequestService;
 import org.javlo.user.AdminUserFactory;
+import org.javlo.user.AdminUserSecurity;
 import org.javlo.user.IUserFactory;
 import org.javlo.user.User;
 import org.javlo.user.UserFactory;
@@ -86,6 +88,22 @@ public class CatchAllFilter implements Filter {
 			/** STANDARD LOGIN **/
 
 			IUserFactory fact = UserFactory.createUserFactory(globalContext, httpRequest.getSession());
+			User user = fact.getCurrentUser(((HttpServletRequest) request).getSession());
+			if (user != null) {
+				if (!user.getContext().equals(globalContext.getContextKey())) {
+					if (!AdminUserSecurity.getInstance().isGod(user)) {
+					try {
+						EditContext.getInstance(GlobalContext.getInstance(((HttpServletRequest) request).getSession(), globalContext.getContextKey()), ((HttpServletRequest) request).getSession()).setEditUser(null);					
+					} catch (Exception e) {
+						e.printStackTrace();
+					}
+					logger.info("remove user '"+user.getLogin()+"' context does'nt match.");
+					((HttpServletRequest) request).getSession().removeAttribute(UserFactory.SESSION_KEY);
+					}
+
+				}
+			}
+			
 			if (fact.getCurrentUser(((HttpServletRequest) request).getSession()) == null) {
 				
 				String loginType = requestService.getParameter("login-type", null);

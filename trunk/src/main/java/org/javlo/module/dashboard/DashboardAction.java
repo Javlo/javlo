@@ -16,7 +16,6 @@ import org.javlo.context.GlobalContext;
 import org.javlo.context.StatContext;
 import org.javlo.helper.LangHelper;
 import org.javlo.helper.NetHelper;
-import org.javlo.helper.StringHelper;
 import org.javlo.helper.TimeHelper;
 import org.javlo.i18n.I18nAccess;
 import org.javlo.message.MessageRepository;
@@ -74,7 +73,7 @@ public class DashboardAction extends AbstractModuleAction {
 			endRange.add(Calendar.HOUR, -1);
 			
 			int i=0;
-			while (endRange.before(start)) { // 10Sec * 6 = 1min * 60 = 1u
+			while (endRange.before(start)) {
 				i++;
 				start.add(Calendar.SECOND, -10);
 				int charge = 0; 
@@ -84,7 +83,7 @@ public class DashboardAction extends AbstractModuleAction {
 					if (trackCal.after(start) && trackCal.before(end)) {
 						charge++;
 					}
-				}
+				}				
 				ajaxMap.put(new Integer(i*100), charge);				
 				end.setTime(start.getTime());
 			}			

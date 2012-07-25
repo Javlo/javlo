@@ -199,13 +199,12 @@ public class GlobalContext implements Serializable {
 						logger.severe("error GlobalContext undefined : " + request.getRequestURI());
 						return null;
 					}
-				}
+				}				
+				request.getSession().setAttribute(KEY, contextURI); // mark global context in session.
 			} else {
 				contextURI = globalContext.getContextKey();
 			}
 			request.setAttribute(KEY, globalContext);
-
-			request.getSession().setAttribute(KEY, contextURI); // mark global context in session.
 
 			return globalContext;
 		} catch (ConfigurationException e) {
@@ -1298,8 +1297,7 @@ public class GlobalContext implements Serializable {
 	}
 
 	public IUserFactory getUserFactory(HttpSession session) throws SecurityException, NoSuchMethodException, ClassNotFoundException, IllegalArgumentException, InstantiationException, IllegalAccessException, InvocationTargetException {
-		if (userFactory == null) {
-			System.out.println("***** GlobalContext.getUserFactory : CREATE USER FACTORY"); //TODO: remove debug trace
+		if (userFactory == null) {			
 			Constructor<IUserFactory> construct = getUserFactoryClass().getConstructor();
 			userFactory = construct.newInstance();
 			userFactory.init(this, session);
