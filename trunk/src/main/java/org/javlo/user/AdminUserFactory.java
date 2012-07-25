@@ -23,20 +23,18 @@ public class AdminUserFactory extends UserFactory {
 
 	private String dataFolder = null;
 
-	public static AdminUserFactory createUserFactory(GlobalContext globalContext, HttpSession session) {		
-		AdminUserFactory res = (AdminUserFactory) session.getAttribute(globalContext.getAdminUserFactoryClassName());
-		if (res == null) {
-			try {
-				res = globalContext.getAdminUserFactory(session);
-				logger.info("create userFactory : "+res.getClass().getName());
-			} catch (Exception e) {
-				logger.severe(e.getMessage());
-				e.printStackTrace();
-			}
-			res.dataFolder = globalContext.getDataFolder();
-			res.init(globalContext, session);
-			session.setAttribute(globalContext.getAdminUserFactoryClassName(), res);
+	public static AdminUserFactory createUserFactory(GlobalContext globalContext, HttpSession session) {
+		AdminUserFactory res = null;
+		try {
+			res = globalContext.getAdminUserFactory(session);
+			logger.info("create userFactory : " + res.getClass().getName());
+		} catch (Exception e) {
+			logger.severe(e.getMessage());
+			e.printStackTrace();
 		}
+		res.dataFolder = globalContext.getDataFolder();
+		res.init(globalContext, session);
+		session.setAttribute(globalContext.getAdminUserFactoryClassName(), res);
 		return res;
 	}
 
@@ -46,7 +44,7 @@ public class AdminUserFactory extends UserFactory {
 		if (res == null) {
 			try {
 				res = staticConfig.getAdminUserFactory(globalContext, session);
-				logger.info("create userFactory : "+res.getClass().getName());
+				logger.info("create userFactory : " + res.getClass().getName());
 			} catch (Exception e) {
 				logger.severe(e.getMessage());
 				e.printStackTrace();
@@ -68,14 +66,14 @@ public class AdminUserFactory extends UserFactory {
 		GlobalContext globalContext = GlobalContext.getInstance(request);
 		EditContext editContext = EditContext.getInstance(globalContext, request.getSession());
 		editContext.setEditUser(outUser);
-		
+
 		/** reload module **/
 		try {
 			ModulesContext.getInstance(request.getSession(), globalContext).loadModule(request.getSession(), globalContext);
 		} catch (ModuleException e) {
 			e.printStackTrace();
 		}
-		
+
 		return outUser;
 	}
 
@@ -88,13 +86,9 @@ public class AdminUserFactory extends UserFactory {
 		return outUser;
 	}
 
-	/*@Override
-	public User login(GlobalContext globalContext, String login, String password) {
-		User outUser = super.login(globalContext, login, password);
-		EditContext editContext = EditContext.getInstance(session);
-		editContext.setEditUser(outUser);
-		return outUser;
-	}*/
+	/*
+	 * @Override public User login(GlobalContext globalContext, String login, String password) { User outUser = super.login(globalContext, login, password); EditContext editContext = EditContext.getInstance(session); editContext.setEditUser(outUser); return outUser; }
+	 */
 
 	@Override
 	public Set<String> getAllRoles(GlobalContext globalContext, HttpSession session) {

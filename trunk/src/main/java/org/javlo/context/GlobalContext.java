@@ -142,7 +142,7 @@ public class GlobalContext implements Serializable {
 
 	public static final List<String> BASIC_MODULES = Arrays.asList(new String[] { "admin", "content", "file" });
 
-	public GlobalContext() {
+	public GlobalContext() {		
 		properties.setDelimiterParsingDisabled(true);
 		StorePropertyThread storePropertyThread = new StorePropertyThread(this);
 		storePropertyThread.start();
@@ -303,9 +303,7 @@ public class GlobalContext implements Serializable {
 	}
 
 	private static GlobalContext getRealInstance(HttpSession session, String contextKey, boolean copyDefaultContext) throws IOException, ConfigurationException {
-
 		contextKey = StringHelper.stringToFileName(contextKey);
-
 		
 		StaticConfig staticConfig = StaticConfig.getInstance(session.getServletContext());
 
@@ -1301,6 +1299,7 @@ public class GlobalContext implements Serializable {
 
 	public IUserFactory getUserFactory(HttpSession session) throws SecurityException, NoSuchMethodException, ClassNotFoundException, IllegalArgumentException, InstantiationException, IllegalAccessException, InvocationTargetException {
 		if (userFactory == null) {
+			System.out.println("***** GlobalContext.getUserFactory : CREATE USER FACTORY"); //TODO: remove debug trace
 			Constructor<IUserFactory> construct = getUserFactoryClass().getConstructor();
 			userFactory = construct.newInstance();
 			userFactory.init(this, session);
