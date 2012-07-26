@@ -1,7 +1,6 @@
 package org.javlo.module.content;
 
 import java.io.IOException;
-import java.io.InputStream;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.Date;
@@ -15,7 +14,6 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
-import org.apache.commons.fileupload.FileItem;
 import org.javlo.actions.AbstractModuleAction;
 import org.javlo.component.core.ComponentBean;
 import org.javlo.component.core.ComponentContext;
@@ -32,7 +30,6 @@ import org.javlo.context.UserInterfaceContext;
 import org.javlo.helper.DebugHelper;
 import org.javlo.helper.LangHelper;
 import org.javlo.helper.NavigationHelper;
-import org.javlo.helper.ResourceHelper;
 import org.javlo.helper.ServletHelper;
 import org.javlo.helper.StringHelper;
 import org.javlo.helper.URLHelper;
@@ -56,7 +53,6 @@ import org.javlo.service.PersistenceService;
 import org.javlo.service.PublishListener;
 import org.javlo.service.RequestService;
 import org.javlo.service.syncro.SynchroThread;
-import org.javlo.servlet.zip.ZipManagement;
 import org.javlo.template.Template;
 import org.javlo.template.TemplateFactory;
 import org.javlo.thread.AbstractThread;
@@ -254,7 +250,7 @@ public class Edit extends AbstractModuleAction {
 	 * @return true if user have all right for modify the current page
 	 * @throws Exception
 	 */
-	private static boolean checkPageSecurity(ContentContext ctx) throws Exception {
+	public static boolean checkPageSecurity(ContentContext ctx) throws Exception {
 		AdminUserSecurity adminUserSecurity = AdminUserSecurity.getInstance();
 		GlobalContext globalContext = GlobalContext.getInstance(ctx.getRequest());
 		IUserFactory adminUserFactory = AdminUserFactory.createUserFactory(globalContext, ctx.getRequest().getSession());
@@ -463,9 +459,6 @@ public class Edit extends AbstractModuleAction {
 			request.setAttribute("templateImageUrl", templateImageURL);
 		}
 
-		/** download **/
-		ctx.getRequest().setAttribute("downloadAll", URLHelper.createStaticURL(ctx, "/zip/" + globalContext.getContextKey() + ".zip"));
-		ctx.getRequest().setAttribute("download", URLHelper.createStaticURL(ctx, "/zip/" + globalContext.getContextKey() + "_xml.zip?filter=xml"));
 
 		if (isLightInterface(ctx)) {
 			currentModule.setSidebar(false);
@@ -946,34 +939,6 @@ public class Edit extends AbstractModuleAction {
 		navigationService.clearPage(ctx);
 
 		return message;
-	}
-
-	public static String performUpload(RequestService requestService, HttpServletRequest request, HttpServletResponse response, ContentContext ctx, ContentService content, I18nAccess i18nAccess) {
-
-		Collection<FileItem> fileItems = requestService.getAllFileItem();
-
-		for (FileItem item : fileItems) {
-			try {
-				if (StringHelper.getFileExtension(item.getName()).equalsIgnoreCase("zip")) {
-					InputStream in = item.getInputStream();
-					try {
-						ZipManagement.uploadZipFile(request, response, in);
-					} finally {
-						ResourceHelper.closeResource(in);
-					}
-
-					content.releasePreviewNav(ctx);
-
-					String msg = i18nAccess.getText("edit.message.uploaded");
-					MessageRepository.getInstance(ctx).setGlobalMessageAndNotification(ctx, new GenericMessage(msg, GenericMessage.INFO));
-
-				}
-			} catch (Exception e) {
-				e.printStackTrace();
-				return e.getMessage();
-			}
-		}
-		return null;
 	}
 
 	public static final String performPreviewedit(EditContext editCtx) {

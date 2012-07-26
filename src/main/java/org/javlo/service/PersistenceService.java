@@ -56,6 +56,38 @@ import org.javlo.xml.XMLFactory;
 import org.javlo.ztatic.StaticInfo;
 
 public class PersistenceService {
+	
+	
+	public static final class PersistenceBean {
+		private int version;
+		private String date;
+		private String type;
+		
+		public PersistenceBean(int version, String date, String type) {
+			this.version = version;
+			this.date = date;
+			this.type = type;
+		}
+		public int getVersion() {
+			return version;
+		}
+		public void setVersion(int version) {
+			this.version = version;
+		}
+		public String getDate() {
+			return date;
+		}
+		public void setDate(String date) {
+			this.date = date;
+		}
+		public String getType() {
+			return type;
+		}
+		public void setType(String type) {
+			this.type = type;
+		}
+		
+	}
 
 	private static class BackupViewFileFilter implements FileFilter {
 
@@ -65,6 +97,21 @@ public class PersistenceService {
 		public boolean accept(File pathname) {
 			boolean out = false;
 			if (pathname.getName().startsWith("content_2") && !pathname.getName().equals("content_2.xml")) {
+				out = true;
+			}
+			return out;
+		}
+
+	}
+	
+	private static class BackupPreviewFileFilter implements FileFilter {
+
+		public static final BackupPreviewFileFilter instance = new BackupPreviewFileFilter();
+
+		@Override
+		public boolean accept(File pathname) {
+			boolean out = false;
+			if (pathname.getName().startsWith("content_3")) {
 				out = true;
 			}
 			return out;
@@ -204,6 +251,35 @@ public class PersistenceService {
 		correctFile(currentView);
 		// }
 
+	}
+	
+	public List<PersistenceBean> getPersistences() {
+		List<PersistenceBean> outList = new LinkedList<PersistenceService.PersistenceBean>();
+		
+		/** search published element **/
+		File[] backupView = new File(getBackupDirectory()).listFiles(BackupViewFileFilter.instance);
+		if (backupView != null) {
+			for (File zip : backupView) {
+				String timeCode = zip.getName().replaceAll("content_" + ContentContext.VIEW_MODE + ".", "").replaceAll(".xml", "").replaceAll(".zip", "");
+				try {
+					Date publishTime = StringHelper.parseSecondFileTime(timeCode);
+					outList.add(new PersistenceBean(0, StringHelper.renderSortableTime(publishTime), "published"));
+				} catch (ParseException e) {
+					logger.warning(e.getMessage());
+				}
+			}
+		}
+		
+		/** search preview elements **/
+		File[] backupPreview = new File(getDirectory()).listFiles(BackupPreviewFileFilter.instance);
+		if (backupPreview != null) {
+			for (File file : backupPreview) {
+				String version = file.getName().replaceAll("content_" + ContentContext.PREVIEW_MODE + ".", "").replaceAll(".xml", "").replaceAll(".zip", "");									
+				outList.add(new PersistenceBean(Integer.parseInt(version), StringHelper.renderSortableTime(new Date(file.lastModified())), "preview"));				
+			}
+		}
+		
+		return outList;
 	}
 
 	private void correctFile(File file) {

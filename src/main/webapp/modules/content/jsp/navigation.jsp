@@ -13,7 +13,7 @@
 	<li class="add-page">
 		<form id="form-add-page" action="${info.currentURL}" method="post">
 			<div>
-			<input type="hidden" name="webaction" value="addPage" />
+			<input type="hidden" name="webaction" value="edit.addPage" />
 			<input type="text" class="label-inside label" name="name" value="${i18n.edit['navigation.add-page']}..." />
 			<input type="submit" value="${i18n.edit['global.ok']}" />
 			</div>
