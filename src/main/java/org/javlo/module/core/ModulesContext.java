@@ -14,6 +14,7 @@ import org.javlo.context.GlobalContext;
 import org.javlo.context.UserInterfaceContext;
 import org.javlo.helper.URLHelper;
 import org.javlo.i18n.I18nAccess;
+import org.javlo.service.ContentService;
 import org.javlo.user.AdminUserFactory;
 import org.javlo.user.IUserFactory;
 
@@ -69,7 +70,7 @@ public class ModulesContext {
 						try {
 							String webappRoot = session.getServletContext().getRealPath("/");
 							String moduleRoot = dir.getAbsolutePath().replace(webappRoot, "/");
-							Module module = new Module(configFile, new Locale(globalContext.getEditLanguage()), moduleRoot);
+							Module module = new Module(configFile, new Locale(globalContext.getEditLanguage()), moduleRoot, globalContext.getPathPrefix());
 
 							if (module.haveRight(session, userFactory.getCurrentUser(session)) && globalContext.getModules().contains(module.getName())) {
 								modules.add(module);
