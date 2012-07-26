@@ -249,14 +249,16 @@ public class Module {
 	private File configFile;
 	private Locale locale;
 	private String modulePath;
+	private String URIPrefix;
 
 	private String description = "?";
 
-	public Module(File configFile, Locale locale, String modulePath) throws IOException {
+	public Module(File configFile, Locale locale, String modulePath, String URIPrefix) throws IOException {
 
 		this.configFile = configFile;
 		this.locale = locale;
 		this.modulePath = modulePath;
+		this.URIPrefix = URIPrefix;
 
 		loadModule();
 
@@ -313,14 +315,14 @@ public class Module {
 		}
 
 		moduleRoot = configFile.getParentFile();
-
+		
 		/* css */
 		File cssFolder = new File(URLHelper.mergePath(moduleRoot.getAbsolutePath(), CSS_FOLDER));
 		if (cssFolder.isDirectory()) {
 			File[] cssFiles = cssFolder.listFiles();
 			for (File file : cssFiles) {
-				if (file.isFile() && StringHelper.getFileExtension(file.getName()).equalsIgnoreCase("css")) {
-					cssURI.add(ModulesContext.MODULES_FOLDER + '/' + getName() + '/' + CSS_FOLDER + '/' + file.getName());
+				if (file.isFile() && StringHelper.getFileExtension(file.getName()).equalsIgnoreCase("css")) {					
+					cssURI.add(URLHelper.mergePath("/", URIPrefix, ModulesContext.MODULES_FOLDER + '/' + getName() + '/' + CSS_FOLDER + '/' + file.getName()));
 				}
 			}
 		}
@@ -331,12 +333,12 @@ public class Module {
 			File[] jspFiles = jsFolder.listFiles();
 			for (File file : jspFiles) {
 				if (file.isFile() && StringHelper.getFileExtension(file.getName()).equalsIgnoreCase("js")) {
-					jsURI.add(ModulesContext.MODULES_FOLDER + '/' + getName() + '/' + JS_FOLDER + '/' + file.getName());
+					jsURI.add(URLHelper.mergePath("/",URIPrefix,ModulesContext.MODULES_FOLDER + '/' + getName() + '/' + JS_FOLDER + '/' + file.getName()));
 				}
 			}
 			for (int i = 0; i < 100; i++) {
 				if (config.get("js.import." + i) != null) {
-					jsURI.add(ModulesContext.MODULES_FOLDER + '/' + getName() + config.get("js.import." + i));
+					jsURI.add(URLHelper.mergePath("/",URIPrefix,ModulesContext.MODULES_FOLDER + '/' + getName() + config.get("js.import." + i)));
 				}
 			}
 		}

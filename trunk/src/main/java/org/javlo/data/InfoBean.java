@@ -97,7 +97,7 @@ public class InfoBean {
 		info.setCaptchaURL(URLHelper.createStaticURL(ctx,  "/captcha.jpg"));
 		
 		EditContext editContext = EditContext.getInstance(globalContext, ctx.getRequest().getSession());
-		info.setEditTemplateURL(editContext.getEditTemplateFolder());
+		info.setEditTemplateURL(URLHelper.createStaticURL(ctx, editContext.getEditTemplateFolder()));
 
 		return info;
 	}
