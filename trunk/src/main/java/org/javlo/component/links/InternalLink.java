@@ -356,7 +356,7 @@ public class InternalLink extends ComplexPropertiesLink implements IInternalLink
 
 					setModify();
 					properties.setProperty(LINK_KEY, idLink);
-					properties.setProperty(LABEL_KEY, label);
+					properties.setProperty(LABEL_KEY, label.replace("\"", "&quot;"));
 				}
 				String reverseLinkValue = requestService.getParameter(getReverseLinkName(), null);
 				if (reverseLinkValue != null && !properties.getProperty(REVERSE_LINK_KEY, "").equals(reverseLinkValue)) {

@@ -1574,7 +1574,7 @@ public class XHTMLHelper {
 		out.print(name);
 		out.print("\"");
 		out.print(" value=\"");
-		out.print(value);
+		out.print(value.replace("\"", "&quot;"));
 		out.print("\"");
 		for (String[] attribute : attributes) {
 			out.print(" ");

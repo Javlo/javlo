@@ -185,6 +185,7 @@ public class ExternalLink extends ComplexPropertiesLink implements IReverseLinkC
 		String label = requestService.getParameter(getLinkLabelName(), null);
 		String link = requestService.getParameter(getLinkName(), "");
 		String reverseLinkName = requestService.getParameter(getReverseLinkName(), ReverseLinkService.NONE);
+		
 		if (label != null) {
 			if (link != null) {
 				setModify();

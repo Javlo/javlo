@@ -89,19 +89,25 @@ public class CatchAllFilter implements Filter {
 
 			IUserFactory fact = UserFactory.createUserFactory(globalContext, httpRequest.getSession());
 			User user = fact.getCurrentUser(((HttpServletRequest) request).getSession());
+			EditContext editContext = EditContext.getInstance(GlobalContext.getInstance(((HttpServletRequest) request).getSession(), globalContext.getContextKey()), ((HttpServletRequest) request).getSession());
 			if (user != null) {
 				if (!user.getContext().equals(globalContext.getContextKey())) {
 					if (!AdminUserSecurity.getInstance().isGod(user)) {
 					try {
-						EditContext.getInstance(GlobalContext.getInstance(((HttpServletRequest) request).getSession(), globalContext.getContextKey()), ((HttpServletRequest) request).getSession()).setEditUser(null);					
+						editContext.setEditUser(null);
+						logger.info("remove user '"+user.getLogin()+"' context does'nt match.");
+						user = null;
 					} catch (Exception e) {
 						e.printStackTrace();
-					}
-					logger.info("remove user '"+user.getLogin()+"' context does'nt match.");
-					((HttpServletRequest) request).getSession().removeAttribute(UserFactory.SESSION_KEY);
+					}					
+					//((HttpServletRequest) request).getSession().removeAttribute(UserFactory.SESSION_KEY);
 					}
 
 				}
+			}
+			
+			if (user != null && editContext.getEditUser() == null) {
+				editContext.setEditUser(user);
 			}
 			
 			if (fact.getCurrentUser(((HttpServletRequest) request).getSession()) == null) {
