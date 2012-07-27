@@ -187,16 +187,6 @@
 		<url-pattern>/mailing/*</url-pattern>
 	</servlet-mapping>
 
-	<servlet>
-		<servlet-name>IMServlet</servlet-name>
-		<servlet-class>org.javlo.servlet.IMServlet</servlet-class>
-		<load-on-startup>1</load-on-startup>
-	</servlet>
-	<servlet-mapping>
-		<servlet-name>IMServlet</servlet-name>
-		<url-pattern>/im/*</url-pattern>
-	</servlet-mapping>
-	
 	<!-- REMOTE -->
 	<servlet>
 		<servlet-name>RemoteResourceServlet</servlet-name>

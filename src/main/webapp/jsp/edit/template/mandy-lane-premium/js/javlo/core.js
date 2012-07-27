@@ -68,3 +68,69 @@ function updateLayout() {
 	changeFooter();
 }
 
+//IM
+var IM_QUERY_UNREAD_COUNT_TIME_INTERVAL = 10000;
+var IM_QUERY_NEW_MESSAGES_TIME_INTERVAL = 2000;
+var MAX_SCROLL_HEIGHT = 99999999;
+var imInProgress = false;
+var imTimeout = null;
+jQuery(".im-form").live("submit", function(e) {
+	e.preventDefault();
+	queryIM(true);
+});
+jQuery(function(){
+	queryIM();
+});
+function onIMLoad() { // Called from im.jsp
+	jQuery("a.messagenotify .count").text(0).toggle(false);
+	jQuery(".im-messages").scrollTop(MAX_SCROLL_HEIGHT);
+}
+function queryIM(submitted) {
+	if (imInProgress) {
+		return;
+	}
+	imInProgress = true;
+	if (imTimeout) {
+		clearTimeout(imTimeout);
+		imTimeout = null;
+	}
+	var form = jQuery(".im-form");
+	var imNotify = jQuery(".messagenotify");
+	var url = imNotify.attr('href');
+	var datas;
+	if (submitted) {
+		datas = form.serializeArray();
+	} else {
+		datas = {
+			lastMessageId : form.find("[name=lastMessageId]").val() || -1
+		};
+	}
+	jQuery.ajax({
+		type : 'POST',
+		url : url,
+		data : datas,
+		dataType : 'html',
+		success : function(data) {
+			var dom = jQuery("<div/>").html(data);
+			var newMessages = dom.find(".im-messages li");
+			jQuery(".im-messages").append(newMessages).scrollTop(MAX_SCROLL_HEIGHT);
+			var form = jQuery(".im-form");
+			if(form.length == 0) {
+				jQuery("a.messagenotify .count").text(newMessages.length)
+					.toggle(newMessages.length > 0);
+			} else {
+				if (submitted) {
+					form.find("[name=message]").val("");
+				}
+				form.find("[name=lastMessageId]").val(dom.find("[name=lastMessageId]").val());
+				var receiver = form.find(".im-form [name=receiver]");
+				var receiverValue = receiver.val();
+				receiver.children().remove();
+				receiver.append(dom.find("[name=receiver] option"));
+				receiver.val(receiverValue);
+			}
+			imInProgress = false;
+			imTimeout = setTimeout(queryIM, (form.length == 0 ? IM_QUERY_UNREAD_COUNT_TIME_INTERVAL : IM_QUERY_NEW_MESSAGES_TIME_INTERVAL));
+		}
+	});
+}
