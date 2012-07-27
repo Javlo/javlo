@@ -14,6 +14,7 @@ import java.io.OutputStream;
 import java.io.PrintStream;
 import java.io.UnsupportedEncodingException;
 import java.nio.charset.Charset;
+import java.util.Collection;
 import java.util.StringTokenizer;
 
 import org.javlo.context.ContentContext;
@@ -182,6 +183,10 @@ public class CSVFactory {
 	public void exportRowCSV(OutputStream outStream, String[] row) {
 		exportRowCSV(outStream, STANDARD_SEPARATOR, row);
 	}
+	
+	public void exportRowCSV(OutputStream outStream, Collection<String> row) {
+		exportRowCSV(outStream, STANDARD_SEPARATOR, row);
+	}
 
 	public void exportRowCSV(OutputStream outStream, String separator, String[] row) {
 
@@ -204,6 +209,26 @@ public class CSVFactory {
 			}
 			out.println();
 
+		}
+	}
+	
+	public void exportRowCSV(OutputStream outStream, String separator, Collection<String> row) {
+		synchronized (lock) {
+			PrintStream out = new PrintStream(outStream);
+			String sep = "";
+			String line = "";
+			for (String item : row) {				
+				if (item == null) {
+					item = "\"\"";
+				} else {
+					item = "\"" + replace(item, "\"", "\"\"") + "\"";
+				}
+				out.print(sep);
+				out.print(item);
+				line = line + sep + item;
+				sep = separator;
+			}
+			out.println();
 		}
 	}
 
