@@ -98,10 +98,22 @@
     <div class="tabmenu">
     	<ul>
     	    <c:forEach var="module" items="${modules}">
-        	<li class="module ${module.name} ${module.name == currentModule.name?'current':''} ${module.name == fromModule.name?'from':''}">        		
-        		<a href="${info.currentURL}?module=${module.name}"><span>${module.title}</span></a>
-        		${module.name == currentModule.name?'<div id="ajax-loader"></div>':''}
-        	</li>
+    	    <c:if test="${empty module.parent}">
+	        	<li class="module ${module.name} ${module.name == currentModule.name || module.name == currentModule.parent?'current':''} ${module.name == fromModule.name?'from':''}">        		
+	        		<a href="${info.currentURL}?module=${module.name}"><span>${module.title}</span></a>	        		
+	        		${module.name == currentModule.name?'<div id="ajax-loader"></div>':''}
+	        		<c:if test="${currentModule.name != module.name && module.name == currentModule.parent}">
+	        			<span class="subname">${currentModule.title}</span>
+	        		</c:if>
+	        		<c:if test="${fn:length(module.children) > 0}">
+	        		<ul class="subnav">
+	        			<c:forEach var="submodule" items="${module.children}">
+							<li><a href="${info.currentURL}?module=${submodule.name}"><span>${submodule.title}</span></a></li>
+						</c:forEach>
+					</ul>
+	        		</c:if>
+	        	</li>
+        	</c:if>
         	</c:forEach>            	
         </ul>
     </div><!-- tabmenu -->
