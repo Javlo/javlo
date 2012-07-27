@@ -21,6 +21,7 @@ import org.javlo.component.core.ComponentFactory;
 import org.javlo.component.core.ContentElementList;
 import org.javlo.component.core.IContentComponentsList;
 import org.javlo.component.core.IContentVisualComponent;
+import org.javlo.component.dynamic.DynamicComponent;
 import org.javlo.config.StaticConfig;
 import org.javlo.context.ContentContext;
 import org.javlo.context.ContextException;
@@ -309,8 +310,8 @@ public class Edit extends AbstractModuleAction {
 		ComponentWrapper titleWrapper = null;
 		for (int i = 0; i < components.length - 1; i++) { // remove title without component
 			if (!components[i].isMetaTitle() || !components[i + 1].isMetaTitle()) { // if next component is title too so the component group is empty
-				IContentVisualComponent comp = components[i];
-				if (comp.isMetaTitle() || globalContext.getComponents().contains(comp.getClass().getName())) {
+				IContentVisualComponent comp = components[i];				
+				if (comp.isMetaTitle() || globalContext.getComponents().contains(comp.getClass().getName()) || comp instanceof DynamicComponent) {
 					ComponentWrapper compWrapper = new ComponentWrapper(comp.getType(), comp.getComponentLabel(ctx, globalContext.getEditLanguage()), comp.getValue(ctx), comp.isMetaTitle());
 					if (components[i].isMetaTitle()) {
 						titleWrapper = compWrapper;
@@ -329,7 +330,7 @@ public class Edit extends AbstractModuleAction {
 		}
 		if (!components[components.length - 1].isMetaTitle()) {
 			IContentVisualComponent comp = components[components.length - 1];
-			ComponentWrapper compWrapper = new ComponentWrapper(comp.getType(), comp.getComponentLabel(ctx, globalContext.getEditLanguage()), comp.getValue(ctx), comp.isMetaTitle());
+			ComponentWrapper compWrapper = new ComponentWrapper(comp.getType(), comp.getComponentLabel(ctx, globalContext.getEditLanguage()), comp.getValue(ctx), comp.isMetaTitle());			
 			comps.add(compWrapper);
 			if (comp.getType().equals(editCtx.getActiveType())) {
 				compWrapper.setSelected(true);
@@ -341,10 +342,9 @@ public class Edit extends AbstractModuleAction {
 			}
 		}
 		
-		
 		List<ComponentWrapper> listWithoutEmptyTitle = new LinkedList<Edit.ComponentWrapper>();
 		ComponentWrapper title = null;
-		for (ComponentWrapper comp : comps) {
+		for (ComponentWrapper comp : comps) {			
 			if (comp.isMetaTitle()) {
 				title = comp;
 			} else {

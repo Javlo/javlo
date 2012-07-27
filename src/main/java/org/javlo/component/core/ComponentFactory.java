@@ -76,13 +76,13 @@ public class ComponentFactory {
 				}
 				for (Properties properties : propertiesClasses) {
 					logger.fine("load dynamic component : " + properties.getProperty("component.type") + " [total:" + array.size() + "]");
-					DynamicComponent comp = new DynamicComponent();
+					DynamicComponent comp = new DynamicComponent();					
 					Properties newProp = new Properties();
 					newProp.putAll(properties);
 					comp.setProperties(newProp);
-					comp.setConfigProperties(properties);
+					comp.setConfigProperties(properties);					
 					array.add(comp);
-					comp.setValid(true);
+					comp.setValid(true);					
 				}
 			} else {
 				logger.warning("no template found for page : " + page.getName());
