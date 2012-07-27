@@ -305,7 +305,7 @@ h2.prize {
 
 /***TOP HEADER (all page)***/
 .header,.topheader {
-	min-width: 980px;
+	 min-width: 1240px;
 }
 
 .headerspace {
@@ -407,7 +407,7 @@ h2.prize {
 }
 
 .dropbox {
-	width: 250px;
+	width: 400px;
 	min-height: 100px;
 	background: #fcfcfc;
 	position: absolute;
@@ -887,7 +887,7 @@ h2.prize {
 /***MAIN CONTENT (dashboard.html)***/
 .maincontent {
 	margin-left: 220px;
-	min-width: 1028px;
+	min-width: 1240px;
 	position: relative;
 	color: #333;
 }

@@ -286,6 +286,10 @@ ul,li {
 	vertical-align: text-top;	
 }
 
+.tabmenu {
+	z-index: 10;
+}
+
 .tabmenu ul li.module {
 	position: relative;	
 }
