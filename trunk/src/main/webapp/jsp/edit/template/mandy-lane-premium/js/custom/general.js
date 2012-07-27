@@ -23,8 +23,8 @@ jQuery(document).ready(function(){
 	/**
 	 * Message Notify Drop Down
 	**/
-	jQuery('.messagenotify .wrap, .alertnotify .wrap').click(function(){
-		var t = jQuery(this).parent();
+	jQuery('.messagenotify, .alertnotify').click(function(){
+		var t = jQuery(this);
 		var url = t.attr('href');
 		if(t.hasClass('showmsg')) {
 			t.removeClass('showmsg');
@@ -53,7 +53,8 @@ jQuery(document).ready(function(){
 	
 	jQuery(document).click(function(event) {
 		var msglist = jQuery('.dropbox');
-		if(!jQuery(event.target).is('.dropbox')) {
+		var t = jQuery(event.target);
+		if(!t.is(".dropbox") && t.parents('.dropbox').length == 0) {
 			if(msglist.is(":visible")) {
 				msglist.prev().removeClass('showmsg');
 				msglist.prev().find('.thicon').removeClass('thiconhover');

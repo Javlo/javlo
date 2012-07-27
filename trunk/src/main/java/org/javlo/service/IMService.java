@@ -41,6 +41,7 @@ public class IMService {
 	private Map<Long, IMItem> messages = new TimeMap<Long, IMItem>(4 * 60 * 60); //4H
 	private long lastMessageId = 0;
 	private Map<String, String> userColors = new HashMap<String, String>();
+	private Map<String, Long> userLastReadMessageId = new HashMap<String, Long>();
 	private int userColorIndex = 0;
 
 	private IMService() {
@@ -85,6 +86,7 @@ public class IMService {
 			return lastMessageId;
 		}
 	}
+
 	public String getUserColor(String username) {
 		String out = userColors.get(username);
 		if (out == null) {
@@ -92,6 +94,14 @@ public class IMService {
 			userColors.put(username, out);
 		}
 		return out;
+	}
+
+	public Long getLastReadMessageId(String username) {
+		return userLastReadMessageId.get(username);
+	}
+
+	public void setLastReadMessageId(String username, Long lastReadMessageId) {
+		userLastReadMessageId.put(username, lastReadMessageId);
 	}
 
 	public class IMItem {
