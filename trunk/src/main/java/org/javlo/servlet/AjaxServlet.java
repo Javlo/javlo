@@ -1,9 +1,6 @@
 package org.javlo.servlet;
 
 import java.io.StringWriter;
-import java.util.Collections;
-import java.util.LinkedList;
-import java.util.List;
 import java.util.logging.Logger;
 
 import javax.servlet.ServletException;

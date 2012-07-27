@@ -286,6 +286,17 @@ ul,li {
 	vertical-align: text-top;	
 }
 
+.tabmenu ul li.module {
+	position: relative;	
+}
+
+.tabmenu ul li.module .subname {
+	position: absolute;
+	right: 16px;
+	top: 20px;
+	font-size: 0.9em;
+}
+
 .tabmenu ul li.module a span {
 	background: url("../images/icons/small/white/star.png") no-repeat scroll
 		15px 12px transparent;
@@ -299,6 +310,10 @@ ul,li {
 .tabmenu ul li.module.from a {
 	background: none repeat scroll 0 0 transparent;
 	color: #eeeeee;
+}
+
+.tabmenu ul ul.subnav li a span, .tabmenu ul li.current ul.subnav li a span {
+	background: none;
 }
 
 .tabmenu ul li.module.current a span {

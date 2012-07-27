@@ -7,6 +7,7 @@ import java.util.Collection;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.LinkedList;
+import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 import java.util.Properties;
@@ -241,6 +242,8 @@ public class Module {
 	private String backUrl = null;
 	private Stack<HtmlLink> breadcrumbLinks;
 	private boolean search;
+	private String parent;
+	private List<Module> children = new LinkedList<Module>();
 	private int order;
 	private Set<String> roles;
 	private Set<String> excludeRoles;
@@ -288,6 +291,7 @@ public class Module {
 		name = config.get("name");
 		breadcrumb = StringHelper.isTrue(config.get("breadcrumb"));
 		search = StringHelper.isTrue(config.get("search"));
+		setParent(config.get("parent"));
 
 		order = Integer.parseInt(StringHelper.neverNull(config.get("order"), "100"));
 
@@ -773,6 +777,22 @@ public class Module {
 	@Override
 	public String toString() {
 		return getClass().getName() + ' ' + getName();
+	}
+
+	public String getParent() {
+		return parent;
+	}
+
+	public void setParent(String parent) {
+		this.parent = parent;
+	}
+
+	public List<Module> getChildren() {
+		return children;
+	}
+
+	public void addChild(Module module) {
+		this.children.add(module);
 	}
 }
 

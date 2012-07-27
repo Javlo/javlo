@@ -4,7 +4,11 @@ import java.io.File;
 import java.io.IOException;
 import java.util.Collection;
 import java.util.Comparator;
+import java.util.HashMap;
+import java.util.LinkedList;
+import java.util.List;
 import java.util.Locale;
+import java.util.Map;
 import java.util.TreeSet;
 import java.util.logging.Logger;
 
@@ -14,7 +18,6 @@ import org.javlo.context.GlobalContext;
 import org.javlo.context.UserInterfaceContext;
 import org.javlo.helper.URLHelper;
 import org.javlo.i18n.I18nAccess;
-import org.javlo.service.ContentService;
 import org.javlo.user.AdminUserFactory;
 import org.javlo.user.IUserFactory;
 
@@ -54,13 +57,16 @@ public class ModulesContext {
 	public void loadModule(HttpSession session, GlobalContext globalContext) throws ModuleException {
 		IUserFactory userFactory = AdminUserFactory.createUserFactory(globalContext, session);
 		File modulesFolder = new File(session.getServletContext().getRealPath(MODULES_FOLDER));
+
+		List<Module> localModules = new LinkedList<Module>();
+
 		siteKey = globalContext.getContextKey();
 		if (!modulesFolder.exists()) {
 			logger.severe("no modules defined.");
 		} else {
 			File[] allModulesFolder = modulesFolder.listFiles();
 
-			modules.clear();
+			localModules.clear();
 			allModules.clear();
 
 			for (File dir : allModulesFolder) {
@@ -73,7 +79,7 @@ public class ModulesContext {
 							Module module = new Module(configFile, new Locale(globalContext.getEditLanguage()), moduleRoot, globalContext.getPathPrefix());
 
 							if (module.haveRight(session, userFactory.getCurrentUser(session)) && globalContext.getModules().contains(module.getName())) {
-								modules.add(module);
+								localModules.add(module);
 							}
 
 							allModules.add(module);
@@ -86,23 +92,42 @@ public class ModulesContext {
 					}
 				}
 			}
-			
+
 			if (allModules.size() == 0) {
 				throw new ModuleException("javlo need at least one module.");
 			}
-			
-			if (modules.size() == 0) { // if no module defined >>>> add admin and user module for config javlo.
-				logger.warning("no module defined for : "+globalContext.getContextKey());
+
+			if (localModules.size() == 0) { // if no module defined >>>> add admin and user module for config javlo.
+				logger.warning("no module defined for : " + globalContext.getContextKey());
 				for (Module module : allModules) {
 					if (module.getName().equals("admin") || module.getName().equals("user")) {
-						modules.add(module);
+						localModules.add(module);
 					}
 				}
 			}
-			
-			if (modules.size() == 0) { // if 
+
+			if (localModules.size() == 0) { // if
 				logger.severe("module admin or user not found, all module had selected.");
-				modules.addAll(allModules);
+				localModules.addAll(allModules);
+			}
+		}
+
+		Map<String, Module> modulesMap = new HashMap<String, Module>();
+		for (Module module : localModules) {
+			if (module.getParent() == null) {
+				modulesMap.put(module.getName(), module);
+			}
+		}
+		synchronized (modules) {
+			modules.clear();
+			for (Module module : localModules) {
+				modules.add(module);
+				Module parent = modulesMap.get(module.getParent());
+				if (parent != null) {
+					parent.addChild(module);
+				} else {
+					logger.warning("parent not found : " + module.getParent());
+				}
 			}
 		}
 	}
@@ -114,16 +139,16 @@ public class ModulesContext {
 			session.setAttribute(KEY, outContext);
 			I18nAccess i18nAccess;
 			try {
-				UserInterfaceContext uic = UserInterfaceContext.getInstance(session, globalContext);				
+				UserInterfaceContext uic = UserInterfaceContext.getInstance(session, globalContext);
 				if (uic.getCurrentModule() != null) {
 					outContext.setCurrentModule(uic.getCurrentModule());
 				}
 				i18nAccess = I18nAccess.getInstance(globalContext, session);
 				i18nAccess.setCurrentModule(globalContext, outContext.getCurrentModule());
-			} catch (Exception e) {				
+			} catch (Exception e) {
 				e.printStackTrace();
 				throw new ModuleException(e.getMessage());
-			}			
+			}
 		}
 		return outContext;
 	}
