@@ -58,6 +58,8 @@ public class FieldExternalLink extends Field {
 			if (!link.startsWith("/") && GlobalContext.getInstance(ctx.getRequest()).isOpenExernalLinkAsPopup(link)) {
 				target = " target=\"_blank\"";
 			}
+			
+			label = XHTMLHelper.replaceJSTLData(ctx, label);
 			out.println("<a href=\"" + link + "\""+target+">" + label + "</a>");
 			out.println("</span>");
 		}
