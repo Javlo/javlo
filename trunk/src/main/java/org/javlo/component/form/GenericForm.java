@@ -112,27 +112,10 @@ public class GenericForm extends AbstractVisualComponent implements IAction {
 		synchronized (LOCK) {
 			OutputStream out = null;
 			try {
-				List<String> head = new LinkedList<String>(data.keySet());
-				Collections.sort(head);
 				File file = getFile(ctx);
-				
-				if (!file.exists()) {
-					file.getParentFile().mkdirs();
-					file.createNewFile();
-					logger.info("create file : "+file);					
-					out = new FileOutputStream(file);
-					CSVFactory csvFactory = new CSVFactory(file);
-					csvFactory.exportRowCSV(out, head);
-				} else {
-					out = new FileOutputStream(file, true);
-				}
-
-				List<String> values = new LinkedList<String>();
-				for (String title : head) {
-					values.add(data.get(title));
-				}
-				CSVFactory csvFactory = new CSVFactory(file);
-				csvFactory.exportRowCSV(out, values);
+				List<Map<String,String>> newData = CSVFactory.loadContentAsMap(file);
+				newData.add(data);
+				CSVFactory.storeContentAsMap(file, newData);
 			} finally {
 				if (out != null) {
 					out.close();

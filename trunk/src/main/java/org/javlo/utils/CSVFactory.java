@@ -1,5 +1,5 @@
 /*
- * Created on 20-f�vr.-2004
+ * Created on 20-fevr.-2004
  */
 package org.javlo.utils;
 
@@ -7,6 +7,8 @@ import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
@@ -15,12 +17,19 @@ import java.io.PrintStream;
 import java.io.UnsupportedEncodingException;
 import java.nio.charset.Charset;
 import java.util.Collection;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.Map;
 import java.util.StringTokenizer;
 
 import org.javlo.context.ContentContext;
 import org.javlo.helper.ResourceHelper;
 import org.javlo.helper.StringHelper;
 
+import com.Ostermiller.util.CSVParser;
+import com.Ostermiller.util.CSVPrinter;
 import com.Ostermiller.util.ExcelCSVParser;
 
 /**
@@ -183,7 +192,7 @@ public class CSVFactory {
 	public void exportRowCSV(OutputStream outStream, String[] row) {
 		exportRowCSV(outStream, STANDARD_SEPARATOR, row);
 	}
-	
+
 	public void exportRowCSV(OutputStream outStream, Collection<String> row) {
 		exportRowCSV(outStream, STANDARD_SEPARATOR, row);
 	}
@@ -211,13 +220,13 @@ public class CSVFactory {
 
 		}
 	}
-	
+
 	public void exportRowCSV(OutputStream outStream, String separator, Collection<String> row) {
 		synchronized (lock) {
 			PrintStream out = new PrintStream(outStream);
 			String sep = "";
 			String line = "";
-			for (String item : row) {				
+			for (String item : row) {
 				if (item == null) {
 					item = "\"\"";
 				} else {
@@ -229,38 +238,6 @@ public class CSVFactory {
 				sep = separator;
 			}
 			out.println();
-		}
-	}
-
-	public static void main(String[] args) {
-		ByteArrayOutputStream outStream = new ByteArrayOutputStream();
-		PrintStream out = new PrintStream(outStream);
-		out.println("patrick; \"catherine;amour;sexe\"; alexi; barbara");
-		out.println("Jacques; \"bernad\"\"ette\"; Albert; Goergette");
-		out.print("Arnaud; Anne; St�phanie; Nicolas ");
-		InputStream inStream = new ByteArrayInputStream(outStream.toByteArray());
-		CSVFactory fact = null;
-		try {
-			fact = new CSVFactory(";", inStream);
-
-			InputStream in = new FileInputStream("c:/trans/dc-users-excel.txt");
-			try {
-				fact = new CSVFactory(in, null, Charset.forName("utf-16"));
-			} finally {
-				ResourceHelper.closeResource(in);
-			}
-
-		} catch (IOException e) {
-			e.printStackTrace();
-		}
-
-		String[][] a = fact.getArray();
-		for (int x = 0; x < a.length; x++) {
-			for (int y = 0; y < a[x].length; y++) {
-				System.out.print(a[x][y]);
-				System.out.print("	");
-			}
-			System.out.println("");
 		}
 	}
 
@@ -295,4 +272,105 @@ public class CSVFactory {
 		return searchCSVSep(csvContent);
 	}
 
+	public String[] readHeads(File file) throws IOException {
+		InputStream in = null;
+		try {
+			in = new FileInputStream(file);
+			return readHeads(in);
+		} finally {
+			if (in != null) {
+				ResourceHelper.closeResource(in);
+			}
+		}
+	}
+
+	public String[] readHeads(InputStream in) throws IOException {
+		CSVParser csvParser = new CSVParser(in);
+		return csvParser.getLine();
+	}
+
+	public static List<Map<String, String>>  loadContentAsMap(File file) throws IOException {
+		InputStream in = null;
+		try {
+			in = new FileInputStream(file);
+			return loadContentAsMap(in);
+		} finally {
+			if (in != null) {
+				ResourceHelper.closeResource(in);
+			}
+		}
+	}
+
+	public static List<Map<String, String>> loadContentAsMap(InputStream in) throws IOException {
+		List<Map<String, String>> outMaps = new LinkedList<Map<String, String>>();
+		CSVParser csvParser = new CSVParser(in);
+		String[][] content = csvParser.getAllValues();
+		if (content.length == 0) {
+			return Collections.EMPTY_LIST;
+		}
+		for (int i = 1; i < content.length; i++) {
+			Map<String, String> line = new HashMap<String, String>();
+			for (int j = 0; j < content[i].length; j++) {
+				line.put(content[0][j], content[i][j]);
+			}
+			outMaps.add(line);
+		}
+		return outMaps;
+	}
+
+	public static void storeContentAsMap(File file, List<Map<String, String>> content) throws IOException {
+		OutputStream out = null;
+		try {
+			out = new FileOutputStream(file);
+			storeContentAsMap(out, content);
+		} finally {
+			if (out != null) {
+				ResourceHelper.closeResource(out);
+			}
+		}
+	}
+
+	public static void storeContentAsMap(OutputStream out, List<Map<String, String>> content) throws IOException {
+		if (content.size() == 0) {
+			return;
+		}
+		List<String> keys = new LinkedList<String>();
+		for (Map<String, String> map : content) {
+			for (String key : map.keySet()) {
+				if (!keys.contains(key)) {
+					keys.add(key);
+				}
+			}
+		}
+
+		Collections.sort(keys);
+		String[][] rawContent = new String[content.size()+1][keys.size()];
+		for (int j = 0; j < rawContent[0].length; j++) {
+			rawContent[0][j] = keys.get(j);
+		}
+		for (int i = 1; i < rawContent.length; i++) {
+			for (int j = 0; j < rawContent[i].length; j++) {
+				rawContent[i][j] = StringHelper.neverNull(content.get(i - 1).get(rawContent[0][j]));
+			}
+		}
+
+		CSVPrinter printer = new CSVPrinter(out);
+		printer.setAlwaysQuote(true);
+		printer.writeln(rawContent);
+	}
+
+	public static void main(String[] args) {
+		try {
+			File file = new File("c:/trans/test.csv");
+			List<Map<String, String>> data = loadContentAsMap(file);
+			Map<String,String> newLine = new HashMap<String, String>();
+			newLine.put("key1.2", "new value 1.2" );
+			newLine.put("lastname", "Vandermaesen");
+			data.add(newLine);			
+			storeContentAsMap(file, data);
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+	}
 }
