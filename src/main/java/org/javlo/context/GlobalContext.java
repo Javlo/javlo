@@ -142,7 +142,7 @@ public class GlobalContext implements Serializable {
 
 	public static final List<String> BASIC_MODULES = Arrays.asList(new String[] { "admin", "content", "file" });
 
-	public GlobalContext() {		
+	public GlobalContext() {
 		properties.setDelimiterParsingDisabled(true);
 		StorePropertyThread storePropertyThread = new StorePropertyThread(this);
 		storePropertyThread.start();
@@ -199,7 +199,7 @@ public class GlobalContext implements Serializable {
 						logger.severe("error GlobalContext undefined : " + request.getRequestURI());
 						return null;
 					}
-				}				
+				}
 				request.getSession().setAttribute(KEY, contextURI); // mark global context in session.
 			} else {
 				contextURI = globalContext.getContextKey();
@@ -214,9 +214,9 @@ public class GlobalContext implements Serializable {
 		}
 		return null;
 	}
-	
+
 	public static GlobalContext getSessionContext(HttpSession session) {
-		String contextKey = (String)session.getAttribute(KEY);
+		String contextKey = (String) session.getAttribute(KEY);
 		try {
 			return GlobalContext.getInstance(session, contextKey);
 		} catch (Exception e) {
@@ -224,11 +224,10 @@ public class GlobalContext implements Serializable {
 			return null;
 		}
 	}
-	
-	public static String getSessionContextKey(HttpSession session) {
-		return (String)session.getAttribute(KEY);
-	}
 
+	public static String getSessionContextKey(HttpSession session) {
+		return (String) session.getAttribute(KEY);
+	}
 
 	public static GlobalContext getInstance(HttpSession session, String contextKey) throws IOException, ConfigurationException {
 		GlobalContext newInstance = getRealInstance(session, contextKey);
@@ -303,7 +302,7 @@ public class GlobalContext implements Serializable {
 
 	private static GlobalContext getRealInstance(HttpSession session, String contextKey, boolean copyDefaultContext) throws IOException, ConfigurationException {
 		contextKey = StringHelper.stringToFileName(contextKey);
-		
+
 		StaticConfig staticConfig = StaticConfig.getInstance(session.getServletContext());
 
 		synchronized (LOCK_GLOBAL_CONTEXT_LOAD) {
@@ -497,7 +496,7 @@ public class GlobalContext implements Serializable {
 	private boolean stopStoreThread = false;
 
 	private Long accountSize = null;
-	
+
 	public long getAccountSize() {
 		if (accountSize == null) {
 			File file = new File(getDataFolder());
@@ -509,11 +508,11 @@ public class GlobalContext implements Serializable {
 		}
 		return accountSize;
 	}
-	
+
 	public String getAccountSizeLabel() {
 		return StringHelper.renderSize(getAccountSize());
 	}
-	
+
 	public void addPrincipal(User principal) {
 		synchronized (allUsers) {
 			allUsers.put(principal.getName(), new WeakReference<User>(principal));
@@ -1140,7 +1139,7 @@ public class GlobalContext implements Serializable {
 		}
 		return StringHelper.parseTime(dateStr);
 	}
-	
+
 	public String getPublishDateLabel() {
 		try {
 			return StringHelper.renderTime(getPublishDate());
@@ -1214,11 +1213,11 @@ public class GlobalContext implements Serializable {
 			return outTags;
 		}
 	}
-	
+
 	public String getRAWTags() {
 		return properties.getString("tags", "");
 	}
-	
+
 	public void setRAWTags(String tags) {
 		properties.setProperty("tags", tags);
 	}
@@ -1297,7 +1296,7 @@ public class GlobalContext implements Serializable {
 	}
 
 	public IUserFactory getUserFactory(HttpSession session) throws SecurityException, NoSuchMethodException, ClassNotFoundException, IllegalArgumentException, InstantiationException, IllegalAccessException, InvocationTargetException {
-		if (userFactory == null) {			
+		if (userFactory == null) {
 			Constructor<IUserFactory> construct = getUserFactoryClass().getConstructor();
 			userFactory = construct.newInstance();
 			userFactory.init(this, session);
@@ -1355,20 +1354,18 @@ public class GlobalContext implements Serializable {
 		return outLg;
 	}
 
-	private void initDataFile() {
+	public synchronized void initDataFile() {
 		if (dataProperties == null) {
 			dataProperties = new Properties();
 		}
-		synchronized (dataProperties) {
-			InputStream in = null;
-			try {
-				in = new FileInputStream(getDataFile());
-				dataProperties.load(in);
-			} catch (IOException e) {
-				e.printStackTrace();
-			} finally {
-				ResourceHelper.closeResource(in);
-			}
+		InputStream in = null;
+		try {
+			in = new FileInputStream(getDataFile());
+			dataProperties.load(in);
+		} catch (IOException e) {
+			e.printStackTrace();
+		} finally {
+			ResourceHelper.closeResource(in);
 		}
 	}
 
@@ -1601,7 +1598,7 @@ public class GlobalContext implements Serializable {
 		userFactory = null;
 	}
 
-	public void save() {		
+	public void save() {
 		try {
 			synchronized (properties) {
 				if (getFolder() != null && getFolder().trim().length() > 0) {
@@ -2103,20 +2100,19 @@ public class GlobalContext implements Serializable {
 			save();
 		}
 	}
-	
+
 	public void setLatestPublisher(String userName) {
 		synchronized (properties) {
-			properties.setProperty("publish-user",userName);
+			properties.setProperty("publish-user", userName);
 			save();
 		}
 	}
-	
+
 	public String getLatestPublisher() {
 		synchronized (properties) {
-			return properties.getString("publish-user", "?");			
+			return properties.getString("publish-user", "?");
 		}
 	}
-
 
 	public void setRAWContentLanguages(String languages) {
 		properties.setProperty("content-languages", languages);
@@ -2299,11 +2295,11 @@ public class GlobalContext implements Serializable {
 			save();
 		}
 	}
-	
+
 	public String getBlockPassword() {
 		return properties.getString("security.block-password", null);
 	}
-	
+
 	public void setBlockPassword(String pwd) {
 		synchronized (properties) {
 			properties.setProperty("security.block-password", pwd);
