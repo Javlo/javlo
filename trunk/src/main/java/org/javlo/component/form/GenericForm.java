@@ -2,15 +2,12 @@ package org.javlo.component.form;
 
 import java.io.ByteArrayOutputStream;
 import java.io.File;
-import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.io.PrintStream;
 import java.io.StringReader;
 import java.util.Collection;
-import java.util.Collections;
 import java.util.HashMap;
-import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.Properties;
@@ -63,7 +60,7 @@ public class GenericForm extends AbstractVisualComponent implements IAction {
 	@Override
 	public void prepareView(ContentContext ctx) throws Exception {
 		super.prepareView(ctx);
-		ctx.getRequest().setAttribute("ci18n", getTranslation());
+		ctx.getRequest().setAttribute("ci18n", getTranslation(false));
 	}
 
 	@Override
@@ -86,8 +83,8 @@ public class GenericForm extends AbstractVisualComponent implements IAction {
 		return true;
 	}
 
-	public Properties getTranslation() {
-		if (bundle == null) {
+	public Properties getTranslation(boolean reload) {
+		if (bundle == null || reload) {
 			bundle = new Properties();
 			try {
 				bundle.load(new StringReader(getValue()));
@@ -101,8 +98,8 @@ public class GenericForm extends AbstractVisualComponent implements IAction {
 	protected File getFile(ContentContext ctx) throws IOException {
 		GlobalContext globalContext = GlobalContext.getInstance(ctx.getRequest());
 		String fileName = "df-" + getId() + ".csv";
-		if (getTranslation().get("filename") != null) {
-			fileName = getTranslation().getProperty("filename");
+		if (getTranslation(false).get("filename") != null) {
+			fileName = getTranslation(false).getProperty("filename");
 		}
 		File file = new File(URLHelper.mergePath(globalContext.getDataFolder(), globalContext.getStaticConfig().getStaticFolder(), "dynamic-form-result", fileName));		
 		return file;
@@ -123,6 +120,12 @@ public class GenericForm extends AbstractVisualComponent implements IAction {
 			}
 		}
 	}
+	
+	@Override
+	public void performEdit(ContentContext ctx) throws Exception {	
+		super.performEdit(ctx);
+		getTranslation(true);
+	}
 
 	public static final String performSubmit(HttpServletRequest request, HttpServletResponse response) throws Exception {
 		RequestService requestService = RequestService.getInstance(request);
@@ -133,7 +136,7 @@ public class GenericForm extends AbstractVisualComponent implements IAction {
 		/** check captcha **/
 		String captcha = requestService.getParameter("captcha", null);
 		if (captcha == null || !CaptchaService.getInstance(request.getSession()).getCurrentCaptchaCode().equals(captcha)) {
-			GenericMessage msg = new GenericMessage(comp.getTranslation().getProperty("error.captcha"), GenericMessage.ERROR);
+			GenericMessage msg = new GenericMessage(comp.getTranslation(false).getProperty("error.captcha"), GenericMessage.ERROR);
 			request.setAttribute("msg", msg);
 			request.setAttribute("error_captcha", "true");
 			return null;
@@ -177,10 +180,10 @@ public class GenericForm extends AbstractVisualComponent implements IAction {
 		InternetAddress bccEmail = new InternetAddress("p@noctis.be");
 		mailingManager.sendMail(adminEmail, adminEmail, bccEmail, subject, mailContent, false);
 
-		GenericMessage msg = new GenericMessage(comp.getTranslation().getProperty("message.thanks"), GenericMessage.INFO);
+		GenericMessage msg = new GenericMessage(comp.getTranslation(false).getProperty("message.thanks"), GenericMessage.INFO);
 		request.setAttribute("msg", msg);
 		request.setAttribute("valid", "true");
-
+		
 		return null;
 	}
 }

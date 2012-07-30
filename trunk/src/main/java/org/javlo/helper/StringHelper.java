@@ -249,7 +249,7 @@ public class StringHelper {
 	}
 
 	public static String createASCIIString(String text) {
-		return createCleanName(text, "azertyuiopqsdfghjklmwxcvbnAZERTYUIOPQSDFGHJKLMWXCVBN,._- ", '_');
+		return createCleanName(text, "azertyuiopqsdfghjklmwxcvbnAZERTYUIOPQSDFGHJKLMWXCVBN0123456789,._- ", '_');
 	}
 
 	private static String createCleanName(String fileName, String acceptableCharacters, char defaultReplaceChar) {
@@ -1095,9 +1095,9 @@ public class StringHelper {
 
 	public static void main(String[] args) {
 
-		System.out.println("***** www.google.com = " + getFileExtension("www.google.com"));
-		System.out.println("***** http://www.foobar.com/yu.mp4?epbox&epbox[width]=640&epbox[height]=480 = " + getFileExtension("http://www.foobar.com/yu.mp4?epbox&epbox[width]=640&epbox[height]=480"));
-		System.out.println("***** http://www.youtube.com/watch?v=TVe7_nZhAKk&epbox&epbox[width]=640&epbox[height]=480&ext=.mp4 = " + getFileExtension("http://www.youtube.com/watch?v=TVe7_nZhAKk&epbox&epbox[width]=640&epbox[height]=480&ext=.mp4"));
+		String text = "q1\nq2\nq4\nd\nq3\nad\naa";
+		text = sortText(text);
+		System.out.println(text);
 
 	}
 
