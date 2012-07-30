@@ -39,7 +39,7 @@
 jQuery(document).ready(function() {
 	jQuery('#notifications').dataTable( {
 		 "sPaginationType": "full_numbers",
-		 "aaSorting": [[ 1, "desc" ]],
+		 "aaSorting": [[ 0, "desc" ]],
 		 "aoColumns": [
 		               null,
 		               null,
