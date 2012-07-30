@@ -101,7 +101,11 @@ public class GenericForm extends AbstractVisualComponent implements IAction {
 		if (getTranslation(false).get("filename") != null) {
 			fileName = getTranslation(false).getProperty("filename");
 		}
-		File file = new File(URLHelper.mergePath(globalContext.getDataFolder(), globalContext.getStaticConfig().getStaticFolder(), "dynamic-form-result", fileName));		
+		File file = new File(URLHelper.mergePath(globalContext.getDataFolder(), globalContext.getStaticConfig().getStaticFolder(), "dynamic-form-result", fileName));
+		if (!file.exists()) {
+			file.getParentFile().mkdirs();
+			file.createNewFile();
+		}
 		return file;
 	}
 
