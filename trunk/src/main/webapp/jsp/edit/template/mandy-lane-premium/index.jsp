@@ -18,6 +18,7 @@
 <link rel="stylesheet" media="screen" href="<jv:url value='/css/edit/components.css' />" />
 <link rel="stylesheet" media="screen" href="${info.editTemplateURL}/css/style.css" />
 <link rel="stylesheet" media="screen" href="${info.editTemplateURL}/css/javlo.css" />
+<link rel="stylesheet" media="screen" href="${info.editTemplateURL}/css/plugins/colorbox.css" />
 <!--[if IE 9]>
     <link rel="stylesheet" media="screen" href="${info.editTemplateURL}/css/ie9.css"/>
 <![endif]-->
