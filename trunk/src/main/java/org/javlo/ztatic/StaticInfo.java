@@ -607,7 +607,12 @@ public class StaticInfo {
 	 */
 	public int getFocusZoneX(ContentContext ctx) {
 		ContentService content = ContentService.createContent(ctx.getRequest());
-		String kzx = content.getAttribute(ctx.getContextWithOtherRenderMode(ContentContext.EDIT_MODE), getKey("focus-zone-x"), "" + DEFAULT_FOCUS_X);
+		
+		ContentContext editCtx = ctx.getContextWithOtherRenderMode(ContentContext.EDIT_MODE);		
+		if (!content.isNavigationLoaded(editCtx)) {
+			editCtx = ctx;
+		}		
+		String kzx = content.getAttribute(editCtx, getKey("focus-zone-x"), "" + DEFAULT_FOCUS_X);
 		return Integer.parseInt(kzx);
 	}
 
@@ -619,7 +624,11 @@ public class StaticInfo {
 	 */
 	public int getFocusZoneY(ContentContext ctx) {
 		ContentService content = ContentService.createContent(ctx.getRequest());
-		String kzy = content.getAttribute(ctx.getContextWithOtherRenderMode(ContentContext.EDIT_MODE), getKey("focus-zone-y"), "" + DEFAULT_FOCUS_Y);
+		ContentContext editCtx = ctx.getContextWithOtherRenderMode(ContentContext.EDIT_MODE);		
+		if (!content.isNavigationLoaded(editCtx)) {
+			editCtx = ctx;
+		}
+		String kzy = content.getAttribute(editCtx, getKey("focus-zone-y"), "" + DEFAULT_FOCUS_Y);
 		return Integer.parseInt(kzy);
 	}
 

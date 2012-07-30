@@ -350,6 +350,22 @@ public class ContentService {
 		}
 		return res;
 	}
+	
+	/**
+	 * check if navigation was allready loaded for a specific render mode.
+	 */
+	public boolean isNavigationLoaded(ContentContext ctx) {		
+		synchronized (LOCK_LOAD_NAVIGATION) {			
+			if (ctx.getRenderMode() == ContentContext.TIME_MODE) {
+				return timeTravelerNav != null;
+			} else if (!ctx.isAsViewMode() || (!isView)) {
+				return previewNav != null;
+			} else {
+				return viewNav != null;
+			}
+		}		
+	}
+
 
 	public MenuElement getTimeTravelerNav() {
 		return timeTravelerNav;
