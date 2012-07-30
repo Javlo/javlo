@@ -116,9 +116,17 @@ public class StaticInfo {
 					return 1 * changeOrder;
 				} else {
 					if (uri1Info.getDate(ctx).equals(uri2Info.getDate(ctx))) {
-						return changeOrder;
+						return 0;
 					} else {
-						return uri1Info.getDate(ctx).compareTo(uri2Info.getDate(ctx)) * changeOrder;
+						Calendar cal1 = Calendar.getInstance();
+						cal1.setTime(uri1Info.getDate(ctx));
+						Calendar cal2 = Calendar.getInstance();
+						cal2.setTime(uri2Info.getDate(ctx));
+						if (cal1.compareTo(cal2) > 0) {
+							return -1;
+						} else {
+							return 1;
+						}
 					}
 				}
 			} catch (Exception e) {
@@ -282,7 +290,7 @@ public class StaticInfo {
 
 	/**
 	 * instance of static info sur shared file
-	 *
+	 * 
 	 * @param ctx
 	 * @param inStaticURL
 	 * @return
@@ -324,13 +332,13 @@ public class StaticInfo {
 		}
 		if (inStaticURL.startsWith("/static")) {
 			inStaticURL = inStaticURL.replaceFirst("/static", "");
-		}  
-		
+		}
+
 		HttpServletRequest request = ctx.getRequest();
-		
+
 		StaticInfo outStaticInfo = (StaticInfo) request.getAttribute(inStaticURL);
 
-		if (outStaticInfo == null) {			
+		if (outStaticInfo == null) {
 			StaticInfo staticInfo = new StaticInfo();
 			staticInfo.staticURL = inStaticURL;
 
@@ -353,7 +361,7 @@ public class StaticInfo {
 			File file = new File(realPath);
 			if (!file.exists()) {
 				GlobalContext globalContext = GlobalContext.getInstance(request);
-				logger.warning("could not instancied ressource because file does'nt exist : " + file+" context name : "+globalContext.getContextKey());
+				logger.warning("could not instancied ressource because file does'nt exist : " + file + " context name : " + globalContext.getContextKey());
 			} else if (file.isDirectory()) {
 				if (!staticInfo.staticURL.endsWith("/")) {
 					staticInfo.staticURL = staticInfo.staticURL + '/';
@@ -363,7 +371,7 @@ public class StaticInfo {
 			staticInfo.size = file.length();
 
 			outStaticInfo = staticInfo;
-			//globalContext.setAttribute(inStaticURL, outStaticInfo);
+			// globalContext.setAttribute(inStaticURL, outStaticInfo);
 			request.setAttribute(inStaticURL, outStaticInfo);
 		}
 
@@ -489,7 +497,7 @@ public class StaticInfo {
 	public String getManualTitle(ContentContext ctx) {
 		ContentService content = ContentService.createContent(ctx.getRequest());
 		String key = getKey("title-" + ctx.getRequestContentLanguage());
-		String title = content.getAttribute(ctx, key, "");		
+		String title = content.getAttribute(ctx, key, "");
 		return title;
 		// return properties.getString("title-" + ctx.getRequestContentLanguage(), "");
 	}
@@ -532,23 +540,23 @@ public class StaticInfo {
 	public void setDate(ContentContext ctx, Date date) {
 		ContentService content = ContentService.createContent(ctx.getRequest());
 		if (date == null) {
-			content.removeAttribute(ctx,  getKey("date"));
-		}  else {
+			content.removeAttribute(ctx, getKey("date"));
+		} else {
 			content.setAttribute(ctx, getKey("date"), StringHelper.renderTime(date));
 		}
-		
+
 	}
 
 	public String getResource(ContentContext ctx) {
 		ContentService content = ContentService.createContent(ctx.getRequest());
-		return content.getAttribute(ctx, getKey("resource"), "");		
+		return content.getAttribute(ctx, getKey("resource"), "");
 	}
 
 	public void setResource(ContentContext ctx, String resource) {
 		ContentService content = ContentService.createContent(ctx.getRequest());
 		content.setAttribute(ctx, getKey("resource"), resource);
 	}
-	
+
 	public void setEmptyDate(ContentContext ctx) {
 		ContentService content = ContentService.createContent(ctx.getRequest());
 		content.setAttribute(ctx, getKey("date"), "");
@@ -592,7 +600,8 @@ public class StaticInfo {
 	}
 
 	/**
-	 * return the focus point of a image.  Return always the focus point of edit mode (problem with image cache).
+	 * return the focus point of a image. Return always the focus point of edit mode (problem with image cache).
+	 * 
 	 * @param ctx
 	 * @return
 	 */
@@ -601,9 +610,10 @@ public class StaticInfo {
 		String kzx = content.getAttribute(ctx.getContextWithOtherRenderMode(ContentContext.EDIT_MODE), getKey("focus-zone-x"), "" + DEFAULT_FOCUS_X);
 		return Integer.parseInt(kzx);
 	}
-	
+
 	/**
-	 * return the focus point of a image.  Return always the focus point of edit mode (problem with image cache).
+	 * return the focus point of a image. Return always the focus point of edit mode (problem with image cache).
+	 * 
 	 * @param ctx
 	 * @return
 	 */
@@ -624,30 +634,32 @@ public class StaticInfo {
 	}
 
 	/**
-	 * change the focus point on a image. 
+	 * change the focus point on a image.
+	 * 
 	 * @param ctx
 	 * @param focusZoneX
 	 */
 	public void setFocusZoneX(ContentContext ctx, int focusZoneX) {
-		ContentService content = ContentService.createContent(ctx.getRequest());		
+		ContentService content = ContentService.createContent(ctx.getRequest());
 		if (focusZoneX == DEFAULT_FOCUS_X) {
-			content.removeAttribute(ctx, getKey("focus-zone-x"));						
+			content.removeAttribute(ctx, getKey("focus-zone-x"));
 		} else {
-			content.setAttribute(ctx, getKey("focus-zone-x"), "" + focusZoneX);						
+			content.setAttribute(ctx, getKey("focus-zone-x"), "" + focusZoneX);
 		}
 	}
 
 	/**
 	 * change the focus point on a image.
+	 * 
 	 * @param ctx
 	 * @param focusZoneY
 	 */
 	public void setFocusZoneY(ContentContext ctx, int focusZoneY) {
-		ContentService content = ContentService.createContent(ctx.getRequest());		
+		ContentService content = ContentService.createContent(ctx.getRequest());
 		if (focusZoneY == DEFAULT_FOCUS_Y) {
-			content.removeAttribute(ctx, getKey("focus-zone-y"));			
+			content.removeAttribute(ctx, getKey("focus-zone-y"));
 		} else {
-			content.setAttribute(ctx, getKey("focus-zone-y"), "" + focusZoneY);			
+			content.setAttribute(ctx, getKey("focus-zone-y"), "" + focusZoneY);
 		}
 	}
 
@@ -656,12 +668,12 @@ public class StaticInfo {
 	}
 
 	public MenuElement getLinkedPage(ContentContext ctx) {
-		if (getLinkedPageId(ctx) != null && linkedPage == null) {			
+		if (getLinkedPageId(ctx) != null && linkedPage == null) {
 			try {
 				GlobalContext globalContext = GlobalContext.getInstance(ctx.getRequest());
 				NavigationService navigationService = NavigationService.getInstance(globalContext, ctx.getRequest().getSession());
-				linkedPage =  navigationService.getPage(ctx, getLinkedPageId(ctx));
-				//linkedPage = content.getNavigation(ctx).searchChildFromId(getLinkedPageId(ctx));
+				linkedPage = navigationService.getPage(ctx, getLinkedPageId(ctx));
+				// linkedPage = content.getNavigation(ctx).searchChildFromId(getLinkedPageId(ctx));
 			} catch (Exception e) {
 				e.printStackTrace();
 			}
