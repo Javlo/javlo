@@ -149,7 +149,7 @@ public class PersistenceService {
 			dir = new File(instance.getTrackingDirectory());
 			dir.mkdirs();
 			try {
-				instance.loadState();
+				instance.loadVersion();
 			} catch (IOException e) {
 				throw new ServiceException(e.getMessage());
 			}
@@ -668,7 +668,7 @@ public class PersistenceService {
 
 	public MenuElement load(ContentContext ctx, int renderMode, Map<String, String> contentAttributeMap, Date timeTravelDate) throws Exception {
 
-		loadState();
+		loadVersion();
 
 		logger.info("load version : " + version + " in mode : " + renderMode);
 
@@ -745,7 +745,12 @@ public class PersistenceService {
 		return root;
 	}
 
-	public void loadState() throws IOException {
+	/**
+	 * load current version of preview content.
+	 * @return the current version
+	 * @throws IOException
+	 */
+	public int loadVersion() throws IOException {
 		synchronized (version) {
 			File propFile = new File(getDirectory() + '/' + stateFile);
 			if (propFile.exists()) {
@@ -758,6 +763,7 @@ public class PersistenceService {
 				version = 1;
 			}
 		}
+		return version;
 	}
 
 	public Track[] loadTracks(Date from, Date to, boolean onlyViewClick, boolean onlyResource) {
@@ -907,9 +913,25 @@ public class PersistenceService {
 	public void redo() {
 		if (canRedo()) {
 			version++;
-			saveState();
+			saveVersion();
 		}
 	}
+	
+	/**
+	 * set preview version for next loading.
+	 * @param version a content version
+	 * @return true if version has changed and false if this version doens'nt exist.
+	 */
+	public boolean setVersion(int version) {
+		if (versionExist(version)) {
+			this.version = version;
+			saveVersion();
+			return true;
+		} else {
+			return false;
+		}
+	}
+
 
 	private void releaseTrackReader(Reader reader) throws IOException {
 		reader.close();
@@ -919,7 +941,7 @@ public class PersistenceService {
 		writer.close();
 	}
 
-	protected void saveState() {
+	protected void saveVersion() {
 		try {
 			File propFile = new File(getDirectory() + '/' + stateFile);
 			if (!propFile.exists()) {
@@ -976,7 +998,7 @@ public class PersistenceService {
 	public void store(InputStream in) throws Exception {
 		// synchronized (MenuElement.LOCK_ACCESS) {
 		version++;
-		saveState();
+		saveVersion();
 		File file = new File(getDirectory() + "/content_" + ContentContext.PREVIEW_MODE + '_' + version + ".xml");
 		if (!file.exists()) {
 			file.createNewFile();
@@ -1065,7 +1087,7 @@ public class PersistenceService {
 			if (file.exists()) {
 				file.delete();
 			}
-			saveState();
+			saveVersion();
 		}
 	}
 

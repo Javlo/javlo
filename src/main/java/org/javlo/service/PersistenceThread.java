@@ -134,7 +134,7 @@ public class PersistenceThread extends Thread {
 					fileStream.close();
 				}
 				persistenceService.version++;
-				persistenceService.saveState();
+				persistenceService.saveVersion();
 				persistenceService.cleanFile();
 			} else {
 				File file = new File(persistenceService.getDirectory() + "/content_" + renderMode + ".xml");
