@@ -170,14 +170,15 @@ public class GenericForm extends AbstractVisualComponent implements IAction {
 				}
 				result.put(key, finalValue);
 			}
-		}
-		comp.storeResult(ctx, result);
+		}		
 		out.println("");
 
 		out.close();
 		String mailContent = StringHelper.sortText(new String(outStream.toByteArray()));
 
 		logger.info("mail content : " + mailContent);
+		
+		comp.storeResult(ctx, result);
 
 		MailingManager mailingManager = MailingManager.getInstance(globalContext.getStaticConfig());
 		InternetAddress adminEmail = new InternetAddress(globalContext.getAdministratorEmail());
@@ -187,6 +188,8 @@ public class GenericForm extends AbstractVisualComponent implements IAction {
 		GenericMessage msg = new GenericMessage(comp.getTranslation(false).getProperty("message.thanks"), GenericMessage.INFO);
 		request.setAttribute("msg", msg);
 		request.setAttribute("valid", "true");
+		
+		
 		
 		return null;
 	}

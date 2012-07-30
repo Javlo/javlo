@@ -305,8 +305,8 @@ public class CSVFactory {
 		List<Map<String, String>> outMaps = new LinkedList<Map<String, String>>();
 		CSVParser csvParser = new CSVParser(in);
 		String[][] content = csvParser.getAllValues();
-		if (content.length == 0) {
-			return Collections.EMPTY_LIST;
+		if (content == null || content.length == 0) {
+			return new LinkedList<Map<String, String>>();
 		}
 		for (int i = 1; i < content.length; i++) {
 			Map<String, String> line = new HashMap<String, String>();
