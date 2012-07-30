@@ -47,7 +47,7 @@ public class ContentService {
 			logger.info("refresh context : " + globalContext.getContextKey());
 			ContentService content = ContentService.getInstance(globalContext);
 			content.releaseAll(ctx, globalContext);
-			PersistenceService.getInstance(globalContext).loadState();
+			PersistenceService.getInstance(globalContext).loadVersion();
 		}
 		TemplateFactory.clearTemplate(ctx.getRequest().getSession().getServletContext());
 		TemplateFactory.cleanAllRenderer(ctx, true, false);
@@ -58,7 +58,7 @@ public class ContentService {
 		logger.info("refresh context, content and template");
 		ContentService content = ContentService.getInstance(globalContext);
 		content.releaseAll(ctx, globalContext);
-		PersistenceService.getInstance(globalContext).loadState();
+		PersistenceService.getInstance(globalContext).loadVersion();
 		TemplateFactory.clearTemplate(ctx.getRequest().getSession().getServletContext());
 		TemplateFactory.cleanAllRenderer(ctx, true, false);
 		TemplateFactory.cleanAllRenderer(ctx, false, false);
