@@ -79,8 +79,6 @@ public class ContentService {
 
 	private MenuElement timeTravelerNav = null;
 
-	private boolean isView = true;
-
 	static final String CONTENT_KEY = "__dc_content__";
 
 	private final Map<String, WeakReference<IContentVisualComponent>> components = new Hashtable<String, WeakReference<IContentVisualComponent>>();
@@ -108,10 +106,7 @@ public class ContentService {
 			if (globalContext != null) {
 				globalContext.setAttribute(ContentService.class.getName(), content);
 			}
-		}
-		if (globalContext != null) {
-			content.isView = globalContext.isView();
-		}
+		}		
 		return content;
 	}
 
@@ -200,7 +195,14 @@ public class ContentService {
 	public String getAttribute(ContentContext ctx, String key) {
 		if (ctx.getRenderMode() == ContentContext.VIEW_MODE) {
 			if (viewGlobalMap == null) {
-				return null;
+				try {
+					getNavigation(ctx);
+					if (viewGlobalMap == null) {						
+						return null;
+					}
+				} catch (Exception e) {
+					e.printStackTrace();
+				}				
 			}
 			return viewGlobalMap.get(key);
 		} else if (ctx.getRenderMode() == ContentContext.TIME_MODE) {
@@ -326,7 +328,7 @@ public class ContentService {
 					timeTravelerGlobalMap = contentAttributeMap;
 				}
 				res = timeTravelerNav;
-			} else if (!ctx.isAsViewMode() || (!isView)) {
+			} else if (!ctx.isAsViewMode()) {
 				if (previewNav == null) {
 					PersistenceService persistenceService = PersistenceService.getInstance(globalContext);
 					logger.info("reload preview navigation");
@@ -336,7 +338,7 @@ public class ContentService {
 				}
 				res = previewNav;
 			} else {
-				if (viewNav == null) {
+				if (viewNav == null) {					
 					PersistenceService persistenceService = PersistenceService.getInstance(globalContext);
 					Map<String, String> contentAttributeMap = new HashMap<String, String>();
 					viewNav = persistenceService.load(ctx, ContentContext.VIEW_MODE, contentAttributeMap, null);
@@ -358,7 +360,7 @@ public class ContentService {
 		synchronized (LOCK_LOAD_NAVIGATION) {			
 			if (ctx.getRenderMode() == ContentContext.TIME_MODE) {
 				return timeTravelerNav != null;
-			} else if (!ctx.isAsViewMode() || (!isView)) {
+			} else if (!ctx.isAsViewMode()) {
 				return previewNav != null;
 			} else {
 				return viewNav != null;
@@ -433,7 +435,7 @@ public class ContentService {
 				}
 			}
 		}
-		synchronized (LOCK_LOAD_NAVIGATION) {
+		synchronized (LOCK_LOAD_NAVIGATION) {			
 			viewNav = newViewNav;
 			viewGlobalMap = contentAttributeMap;
 		}
