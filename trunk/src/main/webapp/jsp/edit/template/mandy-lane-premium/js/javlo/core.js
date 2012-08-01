@@ -51,6 +51,12 @@ jQuery(document).bind("ajaxUpdate",function () {
 		return false;
 	});
 	
+	var notifCount = jQuery("#notification-count");
+	if(notifCount.text() == "0") {
+		notifCount.hide();
+	} else {
+		notifCount.show();
+	}
 });
 
 function fullHeight() {
@@ -78,12 +84,18 @@ jQuery(".im-form").live("submit", function(e) {
 	e.preventDefault();
 	queryIM(true);
 });
+jQuery(".im-messages .user").live("click", function(e) {
+	e.preventDefault();
+	jQuery(".im-form [name=receiver]").val(jQuery(this).text());
+});
 jQuery(function(){
 	queryIM();
 });
 function onIMLoad() { // Called from im.jsp
-	jQuery("a.messagenotify .count").text(0).toggle(false);
-	jQuery(".im-messages").scrollTop(MAX_SCROLL_HEIGHT);
+	if (!imInProgress) {
+		jQuery("a.messagenotify .count").text(0).toggle(false);
+		jQuery(".im-messages").scrollTop(MAX_SCROLL_HEIGHT);
+	}
 }
 function queryIM(submitted) {
 	if (imInProgress) {
@@ -113,7 +125,9 @@ function queryIM(submitted) {
 		success : function(data) {
 			var dom = jQuery("<div/>").html(data);
 			var newMessages = dom.find(".im-messages li");
-			jQuery(".im-messages").append(newMessages).scrollTop(MAX_SCROLL_HEIGHT);
+			if(newMessages.length > 0) {
+				jQuery(".im-messages").append(newMessages).scrollTop(MAX_SCROLL_HEIGHT);
+			}
 			var form = jQuery(".im-form");
 			if(form.length == 0) {
 				jQuery("a.messagenotify .count").text(newMessages.length)
@@ -123,7 +137,7 @@ function queryIM(submitted) {
 					form.find("[name=message]").val("");
 				}
 				form.find("[name=lastMessageId]").val(dom.find("[name=lastMessageId]").val());
-				var receiver = form.find(".im-form [name=receiver]");
+				var receiver = form.find("[name=receiver]");
 				var receiverValue = receiver.val();
 				receiver.children().remove();
 				receiver.append(dom.find("[name=receiver] option"));

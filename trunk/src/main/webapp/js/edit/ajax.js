@@ -50,6 +50,7 @@ function ajaxRequest(url, form) {
 				item.html(xhtml);	
 			}
 		});
+		jQuery(form).trigger("ajaxUpdate");
 		jQuery(document).trigger("ajaxUpdate");
 		jQuery("#ajax-loader").removeClass("active");
 	});	
