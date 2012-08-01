@@ -45,8 +45,8 @@ String typeName = StringHelper.getFirstNotNull( currentTypeComponent.getComponen
 String insertHere = i18nAccess.getText("content.insert-here", new String[][] {{"type",typeName}});
 
 String pastePageHere = null;
-if (editContext.getContextForCopy() != null) {
-	pastePageHere = i18nAccess.getText("content.paste-here", new String[][] { { "page", editContext.getContextForCopy().getCurrentPage().getName() } });
+if (editContext.getContextForCopy(ctx) != null) {
+	pastePageHere = i18nAccess.getText("content.paste-here", new String[][] { { "page", editContext.getContextForCopy(ctx).getCurrentPage().getName() } });
 	request.setAttribute("cleanClipBoard","true");
 }
 

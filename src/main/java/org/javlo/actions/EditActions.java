@@ -1796,7 +1796,7 @@ public class EditActions {
 		}
 
 		EditContext editCtx = EditContext.getInstance(globalContext, request.getSession());
-		ContentContext newCtx = editCtx.getContextForCopy();
+		ContentContext newCtx = editCtx.getContextForCopy(ctx);
 		newCtx.setRequest(request);
 		newCtx.setResponse(response);
 
@@ -1841,7 +1841,7 @@ public class EditActions {
 		}
 
 		EditContext editCtx = EditContext.getInstance(globalContext, request.getSession());
-		ContentContext newCtx = editCtx.getContextForCopy();
+		ContentContext newCtx = editCtx.getContextForCopy(ctx);
 		newCtx.setRequest(request);
 		newCtx.setResponse(response);
 

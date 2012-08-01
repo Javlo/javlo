@@ -91,20 +91,20 @@ public class EditContext implements Serializable {
 
 	String defaultViewLanguage = null;
 
-	static final HashSet<String> adminUserRoles = new HashSet<String> (Arrays.asList(new String[] { AdminUserSecurity.FULL_CONTROL_ROLE, AdminUserSecurity.CONTENT_ROLE, AdminUserSecurity.REMOVE_STATIC_ROLE, AdminUserSecurity.NAVIGATION_ROLE, AdminUserSecurity.ADD_NAVIGATION_ROLE, AdminUserSecurity.USER_ROLE, AdminUserSecurity.ADMIN_USER_ROLE, AdminUserSecurity.STATISTICS_ROLE, AdminUserSecurity.PUBLISHER_ROLE, AdminUserSecurity.MAILING_ROLE, AdminUserSecurity.MACRO_ROLE, AdminUserSecurity.WEBDESGIN_ROLE, AdminUserSecurity.LIGHT_INTERFACE_ROLE, AdminUserSecurity.SYNCHRO_CLIENT, AdminUserSecurity.SYNCHRO_ADMIN, AdminUserSecurity.SYNCHRO_SERVER }));
+	static final HashSet<String> adminUserRoles = new HashSet<String>(Arrays.asList(new String[] { AdminUserSecurity.FULL_CONTROL_ROLE, AdminUserSecurity.CONTENT_ROLE, AdminUserSecurity.REMOVE_STATIC_ROLE, AdminUserSecurity.NAVIGATION_ROLE, AdminUserSecurity.ADD_NAVIGATION_ROLE, AdminUserSecurity.USER_ROLE, AdminUserSecurity.ADMIN_USER_ROLE, AdminUserSecurity.STATISTICS_ROLE, AdminUserSecurity.PUBLISHER_ROLE, AdminUserSecurity.MAILING_ROLE, AdminUserSecurity.MACRO_ROLE, AdminUserSecurity.WEBDESGIN_ROLE, AdminUserSecurity.LIGHT_INTERFACE_ROLE, AdminUserSecurity.SYNCHRO_CLIENT, AdminUserSecurity.SYNCHRO_ADMIN, AdminUserSecurity.SYNCHRO_SERVER }));
 
-	Set<String> userRolesDefault = new HashSet<String>( Arrays.asList(new String[] { "guest" }) );
+	Set<String> userRolesDefault = new HashSet<String>(Arrays.asList(new String[] { "guest" }));
 
 	Set<String> licence = new HashSet<String>();
-	
+
 	private String editTemplateFolder = "/jsp/edit/template/mandy-lane-premium";
 
 	String editTemplate = "index.jsp";
-	
+
 	String messageTemplate = "message.jsp";
-	
+
 	String boxTemplate = "box.jsp";
-	
+
 	String breadcrumbsTemplate = "breadcrumbs.jsp";
 
 	String loginRenderer = "login.jsp";
@@ -177,7 +177,7 @@ public class EditContext implements Serializable {
 
 		String userRolesDefaultRaw = staticProps.getProperty(USER_ROLES_DEFAULT_KEY);
 		if (userRolesDefaultRaw != null) {
-			userRolesDefault =  new HashSet<String>( Arrays.asList(userRolesDefaultRaw.split(USER_ROLES_SEPARATOR)));
+			userRolesDefault = new HashSet<String>(Arrays.asList(userRolesDefaultRaw.split(USER_ROLES_SEPARATOR)));
 		}
 
 		String defaultEditTemplate = staticProps.getProperty(EDIT_TEMPLATE_KEY);
@@ -265,8 +265,14 @@ public class EditContext implements Serializable {
 	/**
 	 * @return
 	 */
-	public ContentContext getContextForCopy() {
-		return contextForCopy;
+	public ContentContext getContextForCopy(ContentContext ctx) {
+		if (contextForCopy == null) {
+			return null;
+		} else {
+			contextForCopy.setRequest(ctx.getRequest());
+			contextForCopy.setResponse(ctx.getResponse());
+			return contextForCopy;
+		}
 	}
 
 	/**
@@ -278,7 +284,7 @@ public class EditContext implements Serializable {
 		} else {
 			contextForCopy = new ContentContext(ctx);
 			try {
-				contextForCopy.getCurrentPage();  // put page in cache
+				contextForCopy.getCurrentPage(); // put page in cache
 			} catch (Exception e) {
 				contextForCopy = null;
 				e.printStackTrace();
@@ -365,7 +371,7 @@ public class EditContext implements Serializable {
 	 * @return true if user is logged.
 	 */
 	public boolean hardLogin(String inUser, String inPassword) {
-		
+
 		String pwd = inPassword;
 		if (staticConfig.isPasswordEncryt()) {
 			pwd = StringHelper.encryptPassword(pwd);
@@ -383,7 +389,7 @@ public class EditContext implements Serializable {
 					}
 				}
 			}
-			if (!found && pwd != null) {				
+			if (!found && pwd != null) {
 				if (!pwd.equals(outUser.getPassword())) {
 					outUser = null;
 				}
@@ -392,9 +398,9 @@ public class EditContext implements Serializable {
 		// editUser=outUser;
 		if (outUser != null) {
 			UserInfo ui = new UserInfo();
-			ui.setLogin(outUser.getName());			
-			ui.setRoles(new HashSet<String>( Arrays.asList(new String[] { AdminUserSecurity.GENERAL_ADMIN, AdminUserSecurity.FULL_CONTROL_ROLE })));
-			editUser = new User(ui);			
+			ui.setLogin(outUser.getName());
+			ui.setRoles(new HashSet<String>(Arrays.asList(new String[] { AdminUserSecurity.GENERAL_ADMIN, AdminUserSecurity.FULL_CONTROL_ROLE })));
+			editUser = new User(ui);
 		}
 		return outUser != null;
 	}
@@ -406,12 +412,12 @@ public class EditContext implements Serializable {
 	 * @return true if user is logged.
 	 */
 	public boolean hardAutoLogin(String inUser) {
-		User outUser = getEditUser(inUser);		
+		User outUser = getEditUser(inUser);
 		if (outUser != null) {
 			UserInfo ui = new UserInfo();
-			ui.setLogin(outUser.getName());			
-			ui.setRoles(new HashSet<String>( Arrays.asList(new String[] { AdminUserSecurity.GENERAL_ADMIN, AdminUserSecurity.FULL_CONTROL_ROLE })));
-			editUser = new User(ui);			
+			ui.setLogin(outUser.getName());
+			ui.setRoles(new HashSet<String>(Arrays.asList(new String[] { AdminUserSecurity.GENERAL_ADMIN, AdminUserSecurity.FULL_CONTROL_ROLE })));
+			editUser = new User(ui);
 		}
 		return outUser != null;
 	}
@@ -434,17 +440,17 @@ public class EditContext implements Serializable {
 	public String getEditTemplate() {
 		return URLHelper.mergePath(getEditTemplateFolder(), editTemplate);
 	}
-	
+
 	public String getMessageTemplate() {
 		return URLHelper.mergePath(getEditTemplateFolder(), messageTemplate);
 	}
-	
+
 	public String getBoxTemplate() {
 		return URLHelper.mergePath(getEditTemplateFolder(), boxTemplate);
 	}
-	
+
 	public String getBreadcrumbsTemplate() {
-		return URLHelper.mergePath(getEditTemplateFolder(), breadcrumbsTemplate);		
+		return URLHelper.mergePath(getEditTemplateFolder(), breadcrumbsTemplate);
 	}
 
 	public void setMessageTemplate(String messageTemplate) {

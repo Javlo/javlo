@@ -77,8 +77,8 @@ public class Edit extends AbstractModuleAction {
 		String insertHere = i18nAccess.getText("content.insert-here", new String[][] { { "type", typeName } });
 
 		String pastePageHere = null;
-		if (editContext.getContextForCopy() != null) {
-			pastePageHere = i18nAccess.getText("content.paste-here", new String[][] { { "page", editContext.getContextForCopy().getCurrentPage().getName() } });
+		if (editContext.getContextForCopy(ctx) != null) {
+			pastePageHere = i18nAccess.getText("content.paste-here", new String[][] { { "page", editContext.getContextForCopy(ctx).getCurrentPage().getName() } });
 		}
 
 		String pasteHere = null;
@@ -1020,7 +1020,7 @@ public class Edit extends AbstractModuleAction {
 			return null;
 		}
 
-		ContentContext newCtx = editCtx.getContextForCopy();
+		ContentContext newCtx = editCtx.getContextForCopy(ctx);
 		newCtx.setRequest(ctx.getRequest());
 		newCtx.setResponse(ctx.getResponse());
 
