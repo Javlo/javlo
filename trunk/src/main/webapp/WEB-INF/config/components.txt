@@ -40,6 +40,7 @@ org.javlo.component.image.GlobalImage
 org.javlo.component.multimedia.Multimedia
 org.javlo.component.multimedia.Video
 org.javlo.component.multimedia.AllImagesGallery
+org.javlo.component.multimedia.VideoContentMultimedia
 
 --content.title.container
 
