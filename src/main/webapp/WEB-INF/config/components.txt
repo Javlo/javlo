@@ -32,6 +32,7 @@ org.javlo.component.links.ChangeLanguageLink
 org.javlo.component.links.ChangeLanguageMenu
 org.javlo.component.links.SiteMap
 org.javlo.component.links.Breadcrumb
+org.javlo.component.file.GenericFile
 
 --content.title.graphic
 
