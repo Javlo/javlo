@@ -139,6 +139,8 @@ public class VideoContentMultimedia extends Multimedia {
 		resource.setShortDate(StringHelper.renderDate(resource.getDate(), globalContext.getShortDateFormat()));
 		resource.setMediumDate(StringHelper.renderDate(resource.getDate(), globalContext.getMediumDateFormat()));
 		resource.setFullDate(StringHelper.renderDate(resource.getDate(), globalContext.getFullDateFormat()));
+		
+		System.out.println("***** VideoContentMultimedia.createResource : video.getURL(ctx) = "+video.getURL(ctx)); //TODO: remove debug trace
 
 		resource.setURL(video.getURL(ctx));
 		resource.setLanguage(video.getBean(ctx).getLanguage());

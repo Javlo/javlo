@@ -482,6 +482,14 @@ public class ContentService {
 		 * ContentService content = ContentService.getInstance(globalContext); content.loadViewNav(ctx);
 		 */
 	}
+	
+	public void releaseAllNav(ContentContext ctx, GlobalContext globalContext) throws Exception {
+		globalContext.releaseAllCache();
+		clearComponentCache();
+		viewNav = null;
+		previewNav = null;
+	}
+
 
 	public void removeAttribute(ContentContext ctx, String key) {
 		if (ctx.getRenderMode() == ContentContext.VIEW_MODE) {

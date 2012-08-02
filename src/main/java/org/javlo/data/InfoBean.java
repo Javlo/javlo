@@ -17,6 +17,7 @@ import org.javlo.message.MessageRepository;
 import org.javlo.navigation.MenuElement;
 import org.javlo.rendering.Device;
 import org.javlo.service.ContentService;
+import org.javlo.service.PersistenceService;
 import org.javlo.servlet.AccessServlet;
 import org.javlo.user.User;
 import org.javlo.user.UserFactory;
@@ -60,7 +61,9 @@ public class InfoBean {
 		info.setCurrentAbsoluteURL(URLHelper.createURL(lCtx));
 		info.setHomeAbsoluteURL(URLHelper.createURL(lCtx, "/"));
 		info.setPageName(currentPage.getName());
+		
 		GlobalContext globalContext = GlobalContext.getInstance(ctx.getRequest());
+		info.setPreviewVersion(PersistenceService.getInstance(globalContext).getVersion());
 		User currentUser = UserFactory.createUserFactory(globalContext, ctx.getRequest().getSession()).getCurrentUser(ctx.getRequest().getSession());
 		if (currentUser != null) {
 			info.setUserName(currentUser.getLogin());
@@ -127,6 +130,7 @@ public class InfoBean {
 	private String time;
 	private String templateFolder = "";
 	private String captchaURL;
+	private int previewVersion = -1;
 	private Collection<String> contentLanguages;
 	private Collection<String> languages;
 	private MenuElement.PageBean page = null;
@@ -394,5 +398,13 @@ public class InfoBean {
 
 	public void setCaptchaURL(String captchaURL) {
 		this.captchaURL = captchaURL;
+	}
+
+	public int getPreviewVersion() {
+		return previewVersion;
+	}
+
+	public void setPreviewVersion(int previewVersion) {
+		this.previewVersion = previewVersion;
 	}
 }

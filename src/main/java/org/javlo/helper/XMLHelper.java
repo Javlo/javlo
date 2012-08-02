@@ -155,7 +155,6 @@ public class XMLHelper {
 	}
 
 	static void insertXMLContent(PrintWriter out, MenuElement page, String defaultLg) throws Exception {
-
 		ComponentBean[] beans = page.getAllLocalContentBean();
 		for (int j = 0; j < beans.length; j++) {
 
@@ -342,11 +341,7 @@ public class XMLHelper {
 		PrintWriter out = new PrintWriter(inOut, true);
 
 		out.println("<?xml version=\"1.0\" encoding=\"" + ContentContext.CHARACTER_ENCODING + "\"?>");
-		if (renderMode == ContentContext.VIEW_MODE) {
-			out.println("<content cmsversion=\"" + AccessServlet.VERSION + "\" version=\"" + version + "\">");
-		} else {
-			out.println("<content cmsversion=\"" + AccessServlet.VERSION + "\">");
-		}
+		out.println("<content cmsversion=\"" + AccessServlet.VERSION + "\" version=\"" + version + "\">");		
 		insertXMLPage(out, new MenuElement[] { menu }, defaultLg);
 		insertMap(out, contentMap, PersistenceService.GLOBAL_MAP_NAME);
 		out.println("</content>");

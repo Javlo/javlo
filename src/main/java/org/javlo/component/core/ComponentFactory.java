@@ -285,9 +285,6 @@ public class ComponentFactory {
 					IContentVisualComponent newComp = components[i].newInstance(bean, ctx);
 					component = (AbstractVisualComponent) newComp;
 					component.setPage(inPage);
-
-					// if component type matches and is selected for this site, keep it
-					// if component not in site selection, return the last match -> continue looping
 					if (selectedComponents.contains(component.getClass().getName())) {
 						break;
 					}

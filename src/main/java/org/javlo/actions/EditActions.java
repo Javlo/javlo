@@ -1265,8 +1265,6 @@ public class EditActions {
 					while (contentList.hasNext(ctx)) {
 						IContentVisualComponent component = contentList.next(ctx);
 						if (component.getType().equals(type)) {
-							// String i18nType = i18nAccess.getText("content." +
-							// type);							
 							String i18nType = StringHelper.getFirstNotNull(comp.getComponentLabel(ctx,globalContext.getEditLanguage()), i18nAccess.getText("content." + type));
 							message = i18nAccess.getText("action.add.error.unique", new String[][] { { "type", i18nType } });
 							MessageRepository.getInstance(ctx).setGlobalMessage(new GenericMessage(message, GenericMessage.ERROR));
@@ -1914,8 +1912,6 @@ public class EditActions {
 			PersistenceService persistenceService = PersistenceService.getInstance(globalContext);
 
 			if (!globalContext.isPortail()) {
-				// content.setViewNav(content.getNavigation(ctx));
-				// persistenceService.store(ctx, ContentContext.VIEW_MODE);
 				persistenceService.publishPreviewFile(ctx);
 			} else {
 				ContentContext viewCtx = new ContentContext(ctx);
@@ -1929,22 +1925,12 @@ public class EditActions {
 			globalContext.setPublishDate(new Date());
 
 			content.releaseViewNav(ctx, globalContext);
-			// structure than previewNav
-
-			// TrackingProperties prop = TrackingProperties.getInstance(request.getSession().getServletContext());
-			// prop.setPublisher(editCtx.getUserPrincipal().getName());
-			// prop.setPublishDate(new Date());
-
+			
 			I18nAccess i18nAccess = I18nAccess.getInstance(globalContext, request.getSession());
 			String msg = i18nAccess.getText("content.published");
 			MessageRepository.getInstance(ctx).setGlobalMessage(new GenericMessage(msg, GenericMessage.INFO));
 
-			/*
-			 * try { AbstractThread threadTest = AbstractThread.createInstance(StaticConfig.getInstance(request.getSession().getServletContext()).getThreadFolder(), ThreadTest.class); threadTest.store(); } catch (IOException e) { e.printStackTrace(); }
-			 */
-
 			performSynchro(request, response);
-
 			
 			NavigationService navigationService = NavigationService.getInstance(globalContext, request.getSession());
 			navigationService.clearAllPage();

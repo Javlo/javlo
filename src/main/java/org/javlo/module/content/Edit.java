@@ -310,7 +310,7 @@ public class Edit extends AbstractModuleAction {
 		ComponentWrapper titleWrapper = null;
 		for (int i = 0; i < components.length - 1; i++) { // remove title without component
 			if (!components[i].isMetaTitle() || !components[i + 1].isMetaTitle()) { // if next component is title too so the component group is empty
-				IContentVisualComponent comp = components[i];				
+				IContentVisualComponent comp = components[i];
 				if (comp.isMetaTitle() || globalContext.getComponents().contains(comp.getClass().getName()) || comp instanceof DynamicComponent) {
 					ComponentWrapper compWrapper = new ComponentWrapper(comp.getType(), comp.getComponentLabel(ctx, globalContext.getEditLanguage()), comp.getValue(ctx), comp.isMetaTitle());
 					if (components[i].isMetaTitle()) {
@@ -330,7 +330,7 @@ public class Edit extends AbstractModuleAction {
 		}
 		if (!components[components.length - 1].isMetaTitle()) {
 			IContentVisualComponent comp = components[components.length - 1];
-			ComponentWrapper compWrapper = new ComponentWrapper(comp.getType(), comp.getComponentLabel(ctx, globalContext.getEditLanguage()), comp.getValue(ctx), comp.isMetaTitle());			
+			ComponentWrapper compWrapper = new ComponentWrapper(comp.getType(), comp.getComponentLabel(ctx, globalContext.getEditLanguage()), comp.getValue(ctx), comp.isMetaTitle());
 			comps.add(compWrapper);
 			if (comp.getType().equals(editCtx.getActiveType())) {
 				compWrapper.setSelected(true);
@@ -341,10 +341,10 @@ public class Edit extends AbstractModuleAction {
 				}
 			}
 		}
-		
+
 		List<ComponentWrapper> listWithoutEmptyTitle = new LinkedList<Edit.ComponentWrapper>();
 		ComponentWrapper title = null;
-		for (ComponentWrapper comp : comps) {			
+		for (ComponentWrapper comp : comps) {
 			if (comp.isMetaTitle()) {
 				title = comp;
 			} else {
@@ -355,7 +355,7 @@ public class Edit extends AbstractModuleAction {
 				listWithoutEmptyTitle.add(comp);
 			}
 		}
-		
+
 		ctx.getRequest().setAttribute("components", listWithoutEmptyTitle);
 
 		Module currentModule = ModulesContext.getInstance(ctx.getRequest().getSession(), globalContext).getCurrentModule();
@@ -459,7 +459,6 @@ public class Edit extends AbstractModuleAction {
 			request.setAttribute("templateImageUrl", templateImageURL);
 		}
 
-
 		if (isLightInterface(ctx)) {
 			currentModule.setSidebar(false);
 			currentModule.removeNavigation("persistence");
@@ -519,7 +518,7 @@ public class Edit extends AbstractModuleAction {
 				Box componentBox = currentModule.getBox("components");
 				if (componentBox != null) {
 					loadComponentList(ctx);
-					componentBox.update(ctx);					
+					componentBox.update(ctx);
 				}
 				prepareUpdateInsertLine(ctx);
 			}
@@ -603,8 +602,6 @@ public class Edit extends AbstractModuleAction {
 		// IContentComponentsList contentList = currentPage.getAllContent(ctx);
 		List<String> components = requestService.getParameterListValues("components", Collections.EMPTY_LIST);
 
-		boolean modif = false;
-
 		// boolean needRefresh = false;
 
 		for (String compId : components) {
@@ -626,7 +623,6 @@ public class Edit extends AbstractModuleAction {
 			}
 
 			if (elem.isModify()) {
-				modif = true;
 				elem.stored();
 			}
 			if (message == null) {
@@ -635,24 +631,20 @@ public class Edit extends AbstractModuleAction {
 		}
 
 		// ctx.setNeedRefresh(needRefresh);
-		if (modif) {
-			modifPage(ctx);
-			if (adminUserFactory.getCurrentUser(ctx.getRequest().getSession()) != null) {
-				content.setAttribute(ctx, "user.update", adminUserFactory.getCurrentUser(ctx.getRequest().getSession()).getLogin());
-			}
-			PersistenceService.getInstance(globalContext).store(ctx);
+		modifPage(ctx);
+		if (adminUserFactory.getCurrentUser(ctx.getRequest().getSession()) != null) {
+			content.setAttribute(ctx, "user.update", adminUserFactory.getCurrentUser(ctx.getRequest().getSession()).getLogin());
 		}
+		PersistenceService.getInstance(globalContext).store(ctx);
 
 		if (message == null) {
-			if (modif) {
-				NavigationService navigationService = NavigationService.getInstance(globalContext, ctx.getRequest().getSession());
-				navigationService.clearPage(ctx);
+			NavigationService navigationService = NavigationService.getInstance(globalContext, ctx.getRequest().getSession());
+			navigationService.clearPage(ctx);
 
-				messageRepository.setGlobalMessageAndNotification(ctx, new GenericMessage(i18nAccess.getText("action.updated"), GenericMessage.INFO));
-				autoPublish(ctx.getRequest(), ctx.getResponse());
-			} else {
-				messageRepository.setGlobalMessageAndNotification(ctx, new GenericMessage(i18nAccess.getText("action.not-updated"), GenericMessage.ALERT));
-			}
+			messageRepository.setGlobalMessageAndNotification(ctx, new GenericMessage(i18nAccess.getText("action.updated"), GenericMessage.INFO));
+			autoPublish(ctx.getRequest(), ctx.getResponse());
+		} else {
+			messageRepository.setGlobalMessageAndNotification(ctx, new GenericMessage(i18nAccess.getText("action.not-updated"), GenericMessage.ALERT));
 		}
 
 		return message;
@@ -842,7 +834,7 @@ public class Edit extends AbstractModuleAction {
 			globalContext.setPublishDate(new Date());
 			globalContext.setLatestPublisher(ctx.getCurrentEditUser().getLogin());
 
-			content.releaseViewNav(ctx, globalContext);
+			content.releaseAllNav(ctx, globalContext);
 
 			String msg = i18nAccess.getText("content.published");
 			MessageRepository.getInstance(ctx).setGlobalMessage(new GenericMessage(msg, GenericMessage.INFO));
@@ -880,8 +872,6 @@ public class Edit extends AbstractModuleAction {
 				msg = i18nAccess.getText("action.publish.error.same-url", new String[][] { { "url", dblURL } });
 				MessageRepository.getInstance(ctx).setGlobalMessage(new GenericMessage(msg, GenericMessage.ALERT));
 			}
-
-			content.clearComponentCache();
 
 			// trick for PortletManager to clear view data, but should be generalized in some PublishManager
 			Collection<PublishListener> listeners = (Collection<PublishListener>) request.getSession().getServletContext().getAttribute(PublishListener.class.getName());

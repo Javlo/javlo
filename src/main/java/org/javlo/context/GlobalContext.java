@@ -1502,7 +1502,7 @@ public class GlobalContext implements Serializable {
 	}
 
 	public boolean isTags() {
-		return properties.getBoolean("is-tags", false);
+		return getTags().size() > 0;
 	}
 
 	public boolean isTemplateFilter() {

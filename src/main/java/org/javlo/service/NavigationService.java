@@ -52,6 +52,12 @@ public class NavigationService {
 			previewPageCache.removeAll();
 		}
 	}
+	
+	public void clearAllViewPage() {
+		synchronized (KEY) {
+			viewPageCache.removeAll();			
+		}
+	}
 
 	public void clearPage(ContentContext ctx) {
 		synchronized (KEY) {
