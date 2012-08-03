@@ -17,3 +17,7 @@
 .aim-messages [data-user] {
 	cursor: pointer;
 }
+
+.aim-form input {
+	width:  80%;
+}
