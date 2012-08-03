@@ -133,16 +133,21 @@ public class GlobalImage extends FilterImage {
 		if (isMeta()) {
 			finalCode.append("<fieldset>");
 			finalCode.append("<legend>"+i18nAccess.getText("global.metadata")+"</legend>");
-			finalCode.append("<div class=\"line-inline\">");
+			finalCode.append("<div class=\"line\">");
 			finalCode.append("<label for=\""+getInputNameDate()+"\">"+i18nAccess.getText("global.date")+" : </label>");
 			finalCode.append("<input type=\"text\" name=\""+getInputNameDate()+"\" value=\""+StringHelper.neverNull(StringHelper.renderTime(getDate()))+"\" />");
+			finalCode.append("</div><div class=\"line\">");
 			finalCode.append("<label for=\""+getInputNameLocation()+"\">"+i18nAccess.getText("global.location")+" : </label>");
 			finalCode.append("<input type=\"text\" name=\""+getInputNameLocation()+"\" value=\""+getLocation()+"\" />");
+			finalCode.append("</div><div class=\"line\">");
 			finalCode.append("<label for=\""+getInputNameTitle()+"\">"+i18nAccess.getText("global.title")+" : </label>");
 			finalCode.append("<input type=\"text\" name=\""+getInputNameTitle()+"\" value=\""+getTitle()+"\" />");
+			finalCode.append("</div>");
 			if (getTranslatableResources(ctx).size() > 0) {
+				finalCode.append("<div class=\"line\">");
 				finalCode.append("<label for=\""+getInputNameTranslation()+"\">"+i18nAccess.getText("content.resource.translationof")+" : </label>");
 				finalCode.append(XHTMLHelper.getDropDownFromMap(getInputNameTranslation(), getTranslatableResources(ctx), getTranslatedID(), "" , true));
+				finalCode.append("</div>");
 			}
 			finalCode.append("</div>");
 			finalCode.append("</fieldset>");
@@ -235,16 +240,16 @@ public class GlobalImage extends FilterImage {
 			finalCode.append("<div class=\"line\"><label for=\"" + getFileXHTMLInputName() +"\">"+getImageUploadTitle(ctx)+" : </label>");
 			finalCode.append("<input name=\"" + getFileXHTMLInputName() + "\" type=\"file\"/></div>");			
 		}
-
 		
 		if (isDecorationImage()) {
 			finalCode.append("<div class=\"line deco-image\">");
-			finalCode.append(getImageDecorativeTitle(ctx));
-			finalCode.append("<br /><input name=\"" + getDecoImageFileXHTMLInputName() + "\" type=\"file\"/><br/>");
+			finalCode.append("<label for=\""+getDecoImageFileXHTMLInputName()+"\">"+getImageDecorativeTitle(ctx)+" :</label>");
+			finalCode.append("<input  id=\"" + getDecoImageFileXHTMLInputName() + "\" name=\"" + getDecoImageFileXHTMLInputName() + "\" type=\"file\"/>");
+			finalCode.append("</div><div class=\"line\">");
 			
 			fileList = getFileList(getFileDirectory(ctx), getDecorationFilter());
 			if (fileList.length > 0) {
-				finalCode.append("<label style=\"float: left; width: 80px; height: 16px;\" for=\"" + getDecoImageXHTMLInputName() + "\">");
+				finalCode.append("<label for=\"" + getDecoImageXHTMLInputName() + "\">");
 				finalCode.append(getImageDecorativeTitle(ctx));
 				finalCode.append("</label>");
 
