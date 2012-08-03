@@ -26,9 +26,11 @@ var REFRESH_LOG_INTERVAL = 2000;
 		}
 		if(!jQuery(".log-pause input").attr('checked')) {
 			jQuery("#log-next-lines [type=submit]").click();
+			jQuery("#wait").show();
 		} else {
 			timeout = setTimeout(refreshLogs, REFRESH_LOG_INTERVAL);
-		}
+			jQuery("#wait").hide();
+		}		
 	}
 	
 	jQuery(function() {

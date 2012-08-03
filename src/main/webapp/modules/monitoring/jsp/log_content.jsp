@@ -35,5 +35,6 @@
 	</form>
 	<script type="text/javascript">
 	jQuery("#log-next-lines").hide();
-	</script>
+	</script>	
 </div>
+

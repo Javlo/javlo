@@ -9,3 +9,12 @@
 .log-text {
 	white-space: pre-wrap;
 }
+
+#wait {
+	text-align: center; 
+}
+
+#wait span {
+	display: inline-block;
+	position: relative;
+}
