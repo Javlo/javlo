@@ -277,11 +277,9 @@ public class FileAction extends AbstractModuleAction {
 						}
 					}
 				}
-
-				PersistenceService.getInstance(globalContext).store(ctx);
-				messageRepository.setGlobalMessageAndNotification(ctx, new GenericMessage(i18nAccess.getText("file.message.updatemeta"), GenericMessage.INFO));
-
 			}
+			PersistenceService.getInstance(globalContext).store(ctx);
+			messageRepository.setGlobalMessageAndNotification(ctx, new GenericMessage(i18nAccess.getText("file.message.updatemeta"), GenericMessage.INFO));
 		} else {
 			return "folder not found : " + folder;
 		}
