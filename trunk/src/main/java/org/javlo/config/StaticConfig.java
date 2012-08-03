@@ -1098,7 +1098,7 @@ public class StaticConfig extends Observable {
 	}
 
 	public String getLogFile() {
-		return properties.getString("log.file", "../../tomcat/logs/catalina.out");
+		return properties.getString("log.file", "../../logs/catalina.out");
 	}
 
 }

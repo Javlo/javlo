@@ -73,7 +73,7 @@ public class LogService {
 		File logFile;
 		logFile = new File(application.getRealPath(path));
 		if (!logFile.exists()) {
-			lines.put(lastLineId++, new LogLine(Level.SEVERE.getName(), "Log file not found: " + path));
+			lines.put(lastLineId++, new LogLine(Level.SEVERE.getName(), "Log file not found: " + logFile));
 			return;
 		}
 
