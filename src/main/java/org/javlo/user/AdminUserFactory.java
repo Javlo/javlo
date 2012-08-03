@@ -27,7 +27,7 @@ public class AdminUserFactory extends UserFactory {
 		AdminUserFactory res = null;
 		try {
 			res = globalContext.getAdminUserFactory(session);
-			logger.info("create userFactory : " + res.getClass().getName());
+			logger.fine("create userFactory : " + res.getClass().getName());
 		} catch (Exception e) {
 			logger.severe(e.getMessage());
 			e.printStackTrace();
