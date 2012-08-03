@@ -15,8 +15,10 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.OutputStream;
+import java.io.RandomAccessFile;
 import java.io.Reader;
 import java.net.URL;
+import java.nio.charset.Charset;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
@@ -1008,4 +1010,35 @@ public class ResourceHelper {
 		}
 		return null;
 	}
+
+	public static String readLine(RandomAccessFile file, Charset cs) throws IOException {
+		ByteArrayOutputStream lineBytes = new ByteArrayOutputStream();
+		int b = -1;
+		boolean eol = false;
+		while (!eol) {
+			switch (b = file.read()) {
+			case -1:
+			case '\n':
+				eol = true;
+				break;
+			case '\r':
+				eol = true;
+				long cur = file.getFilePointer();
+				if ((file.read()) != '\n') {
+					file.seek(cur);
+				}
+				break;
+			default:
+				lineBytes.write(b);
+				break;
+			}
+		}
+	
+		byte[] bytes = lineBytes.toByteArray();
+		if (b == -1) {
+			return null;
+		}
+		return new String(bytes, cs);
+	}
+
 }

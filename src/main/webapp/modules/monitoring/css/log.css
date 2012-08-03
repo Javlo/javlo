@@ -1,0 +1,11 @@
+.log-pause {
+	display: none;
+}
+.log-content {
+	height: 500px;
+	overflow: auto;	
+}
+
+.log-text {
+	white-space: pre-wrap;
+}
