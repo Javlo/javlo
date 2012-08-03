@@ -49,7 +49,7 @@ public class Tracker {
 
 	PersistenceService persistenceService = null;
 
-	private TimeMap<String, Object> cache = new TimeMap<String, Object>(60 * 5); // 5 minutes cache
+	//private TimeMap<String, Object> cache = new TimeMap<String, Object>(60 * 5); // 5 minutes cache
 
 	private static final String TRACKER_KEY = "tracker_key";
 
@@ -64,7 +64,7 @@ public class Tracker {
 	}
 	
 	public void clearCache() {
-		cache.clear();
+		//cache.clear();
 	}
 
 	public static void trace(HttpServletRequest request, HttpServletResponse response) throws Exception {
@@ -242,7 +242,8 @@ public class Tracker {
 	private synchronized String[][] getPagesTracking(Date from, Date to, String parentPath) {
 
 		String key = "" + from.getTime() + " " + to.getTime();
-		String[][] content = (String[][]) cache.get(key);
+		//String[][] content = (String[][]) cache.get(key);
+		String[][] content = null;
 		if (content != null) {
 			return content;
 		}
@@ -293,7 +294,7 @@ public class Tracker {
 		String[][] res = new String[collection.size()][];
 		collection.toArray(res);
 
-		cache.put(key, res);
+		//cache.put(key, res);
 
 		return res;
 	}
@@ -378,10 +379,11 @@ public class Tracker {
 	 */
 	private synchronized Collection<Track> getResourceTracking(Date from, Date to, String parentPath) {
 		Collection<Track> collection;
-		synchronized (cache) {
+		//synchronized (cache) {
 			String key = "resource_" + from.getTime() + " " + to.getTime();
 			logger.finest("create Tracker info : " + key);
-			Collection<Track> content = (Collection<Track>) cache.get(key);
+			Collection<Track> content = null;
+			//Collection<Track> content = (Collection<Track>) cache.get(key);
 			if (content != null) {
 				return content;
 			}
@@ -390,9 +392,9 @@ public class Tracker {
 			for (Track track : tracks) {
 				collection.add(track);
 			}
-			cache.put(key, collection);
-			cache.clearCache();
-		}
+			//cache.put(key, collection);
+			//cache.clearCache();
+		//}
 		return collection;
 	}
 
@@ -557,14 +559,14 @@ public class Tracker {
 	public Track[] getViewClickTracks(Date from, Date to) {
 
 		String key = "getViewClickTracks_" + StringHelper.renderDate(from) + "_" + StringHelper.renderDate(to);		
-		Track[] trackers;
-		synchronized (cache) {
-			trackers = (Track[]) cache.get(key);
+		Track[] trackers = null;
+		//synchronized (cache) {
+			//trackers = (Track[]) cache.get(key);
 			if (trackers == null) {
 				trackers = persistenceService.loadTracks(from, to, true, false);
-				cache.put(key, trackers);
+				//cache.put(key, trackers);
 			}
-		}
+		//}
 		return trackers;
 	}
 
