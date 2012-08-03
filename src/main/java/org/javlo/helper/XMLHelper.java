@@ -154,7 +154,7 @@ public class XMLHelper {
 		}
 	}
 
-	static void insertXMLContent(PrintWriter out, MenuElement page, String defaultLg) throws Exception {
+	static void insertXMLContent(PrintWriter out, MenuElement page, String defaultLg) throws Exception {		
 		ComponentBean[] beans = page.getAllLocalContentBean();
 		for (int j = 0; j < beans.length; j++) {
 

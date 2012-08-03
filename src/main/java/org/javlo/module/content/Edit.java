@@ -833,8 +833,8 @@ public class Edit extends AbstractModuleAction {
 
 			globalContext.setPublishDate(new Date());
 			globalContext.setLatestPublisher(ctx.getCurrentEditUser().getLogin());
-
-			content.releaseAllNav(ctx, globalContext);
+			
+			content.releaseViewNav(ctx, globalContext);
 
 			String msg = i18nAccess.getText("content.published");
 			MessageRepository.getInstance(ctx).setGlobalMessage(new GenericMessage(msg, GenericMessage.INFO));
@@ -842,7 +842,7 @@ public class Edit extends AbstractModuleAction {
 			performSynchro(application, staticConfig, globalContext);
 
 			NavigationService navigationService = NavigationService.getInstance(globalContext, request.getSession());
-			navigationService.clearAllPage();
+			navigationService.clearAllViewPage();
 
 			// clean component list when publish
 			ComponentFactory.cleanComponentList(request.getSession().getServletContext(), globalContext);
