@@ -2929,7 +2929,6 @@ public class MenuElement implements Serializable {
 	public void setContent(ComponentBean[] newContent) {
 		synchronized (getLock()) {
 			componentBean = newContent;
-
 			releaseCache();
 		}
 	}

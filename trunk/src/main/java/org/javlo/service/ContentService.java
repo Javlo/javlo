@@ -89,7 +89,7 @@ public class ContentService {
 
 	private Map<String, String> timeTravelerGlobalMap;
 
-	private static final Object LOCK_LOAD_NAVIGATION = new Object();
+	public static final Object LOCK_LOAD_NAVIGATION = new Object();
 
 	@Deprecated
 	public static ContentService createContent(HttpServletRequest request) {
@@ -231,7 +231,7 @@ public class ContentService {
 		if (id == null) {
 			return null;
 		}
-		WeakReference<IContentVisualComponent> ref = components.get(id);
+		WeakReference<IContentVisualComponent> ref = components.get(id+ctx.getRenderMode());
 		IContentVisualComponent component = null;
 		if (ref != null) {
 			component = ref.get();
@@ -243,7 +243,7 @@ public class ContentService {
 		if (id == null) {
 			return null;
 		}
-		WeakReference<IContentVisualComponent> ref = components.get(id);
+		WeakReference<IContentVisualComponent> ref = components.get(id+ctx.getRenderMode());
 		IContentVisualComponent component = null;
 		if (ref != null) {
 			component = ref.get();
@@ -251,11 +251,11 @@ public class ContentService {
 		if (component == null) {
 			component = searchComponent(ctx, getNavigation(ctx), id);
 			if (component != null) {
-				components.put(id, new WeakReference<IContentVisualComponent>(component));
+				components.put(id+ctx.getRenderMode(), new WeakReference<IContentVisualComponent>(component));
 			}
 		}
 		if (component == null) {
-			components.remove(id);
+			components.remove(id+ctx.getRenderMode());
 		}
 		return component;
 	}
@@ -264,7 +264,7 @@ public class ContentService {
 		if (id == null) {
 			return null;
 		}
-		WeakReference<IContentVisualComponent> ref = components.get(id);
+		WeakReference<IContentVisualComponent> ref = components.get(id+ctx.getRenderMode());
 		IContentVisualComponent component = null;
 		if (ref != null) {
 			component = ref.get();
@@ -277,11 +277,11 @@ public class ContentService {
 			localContext.setRequestContentLanguage(languages.next());
 			component = searchComponent(localContext, getNavigation(localContext), id);
 			if (component != null) {
-				components.put(id, new WeakReference<IContentVisualComponent>(component));
+				components.put(id+ctx.getRenderMode(), new WeakReference<IContentVisualComponent>(component));
 			}
 		}
 		if (component == null) {
-			components.remove(id);
+			components.remove(id+ctx.getRenderMode());
 		}
 		return component;
 	}
@@ -483,14 +483,6 @@ public class ContentService {
 		 */
 	}
 	
-	public void releaseAllNav(ContentContext ctx, GlobalContext globalContext) throws Exception {
-		globalContext.releaseAllCache();
-		clearComponentCache();
-		viewNav = null;
-		previewNav = null;
-	}
-
-
 	public void removeAttribute(ContentContext ctx, String key) {
 		if (ctx.getRenderMode() == ContentContext.VIEW_MODE) {
 			if (viewGlobalMap == null) {
@@ -508,10 +500,6 @@ public class ContentService {
 			}
 			previewGlobalMap.remove(key);
 		}
-	}
-
-	public void removeComponentFromCache(String id) {
-		components.remove(id);
 	}
 
 	public synchronized void renameKeys(String oldKeyPrefix, String newKeyPrefix) {

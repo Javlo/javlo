@@ -56,37 +56,42 @@ import org.javlo.xml.XMLFactory;
 import org.javlo.ztatic.StaticInfo;
 
 public class PersistenceService {
-	
-	
+
 	public static final class PersistenceBean {
 		private int version;
 		private String date;
 		private String type;
-		
+
 		public PersistenceBean(int version, String date, String type) {
 			this.version = version;
 			this.date = date;
 			this.type = type;
 		}
+
 		public int getVersion() {
 			return version;
 		}
+
 		public void setVersion(int version) {
 			this.version = version;
 		}
+
 		public String getDate() {
 			return date;
 		}
+
 		public void setDate(String date) {
 			this.date = date;
 		}
+
 		public String getType() {
 			return type;
 		}
+
 		public void setType(String type) {
 			this.type = type;
 		}
-		
+
 	}
 
 	private static class BackupViewFileFilter implements FileFilter {
@@ -103,7 +108,7 @@ public class PersistenceService {
 		}
 
 	}
-	
+
 	private static class BackupPreviewFileFilter implements FileFilter {
 
 		public static final BackupPreviewFileFilter instance = new BackupPreviewFileFilter();
@@ -138,8 +143,8 @@ public class PersistenceService {
 
 	private static int UNDO_DEPTH = 16;
 
-	public static final PersistenceService getInstance(GlobalContext globalContext) throws ServiceException {		
-		PersistenceService instance = (PersistenceService)globalContext.getAttribute(getKey(globalContext));
+	public static final PersistenceService getInstance(GlobalContext globalContext) throws ServiceException {
+		PersistenceService instance = (PersistenceService) globalContext.getAttribute(getKey(globalContext));
 		if (instance == null) {
 			instance = new PersistenceService();
 			globalContext.setAttribute(getKey(globalContext), instance);
@@ -252,10 +257,10 @@ public class PersistenceService {
 		// }
 
 	}
-	
+
 	public List<PersistenceBean> getPersistences() {
 		List<PersistenceBean> outList = new LinkedList<PersistenceService.PersistenceBean>();
-		
+
 		/** search published element **/
 		File[] backupView = new File(getBackupDirectory()).listFiles(BackupViewFileFilter.instance);
 		if (backupView != null) {
@@ -269,16 +274,16 @@ public class PersistenceService {
 				}
 			}
 		}
-		
+
 		/** search preview elements **/
 		File[] backupPreview = new File(getDirectory()).listFiles(BackupPreviewFileFilter.instance);
 		if (backupPreview != null) {
 			for (File file : backupPreview) {
-				String version = file.getName().replaceAll("content_" + ContentContext.PREVIEW_MODE + ".", "").replaceAll(".xml", "").replaceAll(".zip", "");									
-				outList.add(new PersistenceBean(Integer.parseInt(version), StringHelper.renderSortableTime(new Date(file.lastModified())), "preview"));				
+				String version = file.getName().replaceAll("content_" + ContentContext.PREVIEW_MODE + ".", "").replaceAll(".xml", "").replaceAll(".zip", "");
+				outList.add(new PersistenceBean(Integer.parseInt(version), StringHelper.renderSortableTime(new Date(file.lastModified())), "preview"));
 			}
 		}
-		
+
 		return outList;
 	}
 
@@ -288,7 +293,7 @@ public class PersistenceService {
 
 		int read;
 		InputStream in = null;
-		try {		
+		try {
 			in = new FileInputStream(file);
 			StringBuffer outFile = new StringBuffer();
 			read = in.read();
@@ -305,7 +310,7 @@ public class PersistenceService {
 				buf.put(("" + character).getBytes());
 				charset.decode(buf);
 				read = in.read();
-			}			
+			}
 			if (error) {
 				logger.info("error found in : " + file + " try to write a correct version.");
 				FileUtils.writeStringToFile(file, outFile.toString());
@@ -551,11 +556,11 @@ public class PersistenceService {
 		return page;
 	}
 
-	public MenuElement load(ContentContext ctx, Map<String,String> contentAttributeMap) throws Exception {
+	public MenuElement load(ContentContext ctx, Map<String, String> contentAttributeMap) throws Exception {
 		return load(ctx, ContentContext.PREVIEW_MODE, contentAttributeMap, null);
 	}
 
-	private MenuElement load(ContentContext ctx, InputStream in, Map<String,String> contentAttributeMap, int renderMode) throws ServiceException {
+	private MenuElement load(ContentContext ctx, InputStream in, Map<String, String> contentAttributeMap, int renderMode) throws ServiceException {
 		GlobalContext globalContext = GlobalContext.getInstance(ctx.getRequest());
 		MenuElement root = MenuElement.getInstance(globalContext);
 
@@ -650,7 +655,7 @@ public class PersistenceService {
 			NodeXML properties = firstNode.getChild("properties");
 			if (properties != null && properties.getAttributeValue("name", "").equals("global")) {
 				NodeXML property = properties.getChild("property");
-				//Content content = Content.createContent(ctx.getRequest());
+				// Content content = Content.createContent(ctx.getRequest());
 				while (property != null) {
 					contentAttributeMap.put(property.getAttributeValue("key"), property.getContent());
 					property = property.getNext("property");
@@ -668,85 +673,89 @@ public class PersistenceService {
 
 	public MenuElement load(ContentContext ctx, int renderMode, Map<String, String> contentAttributeMap, Date timeTravelDate) throws Exception {
 
-		loadVersion();
+		synchronized (PersistenceThread.LOCK) {
 
-		logger.info("load version : " + version + " in mode : " + renderMode);
+			loadVersion();
 
-		if (renderMode == ContentContext.ADMIN_MODE) {
-			renderMode = ContentContext.EDIT_MODE;
-		}
+			logger.info("load version : " + version + " in mode : " + renderMode);
 
-		MenuElement root;
-		InputStream in = null, in2 = null;
-		try {
+			if (renderMode == ContentContext.ADMIN_MODE) {
+				renderMode = ContentContext.EDIT_MODE;
+			}
 
-			if (timeTravelDate != null) {
-				// An other render mode than VIEW_MODE is not supported with a timeTravelDate.
-				Map<File, Date> backups = getBackupFiles();
-				long minDiff = Long.MAX_VALUE;
-				Entry<File, Date> minBackup = null;
-				for (Entry<File, Date> backup : backups.entrySet()) {
-					long diff = backup.getValue().getTime() - timeTravelDate.getTime();
-					if (diff > 0 && diff < minDiff) {
-						minDiff = diff;
-						minBackup = backup;
-					}
-				}
-				if (minBackup != null) {
-					in2 = new FileInputStream(minBackup.getKey());
-					ZipInputStream zip = new ZipInputStream(in2);
-					ZipEntry entry = zip.getNextEntry();
-					while (entry != null) {
-						if (ResourceHelper.getFile(entry.getName()).equals("content_" + ContentContext.VIEW_MODE + ".xml")) {
-							in = zip;
-							break;
+			MenuElement root;
+			InputStream in = null, in2 = null;
+			try {
+
+				if (timeTravelDate != null) {
+					// An other render mode than VIEW_MODE is not supported with a timeTravelDate.
+					Map<File, Date> backups = getBackupFiles();
+					long minDiff = Long.MAX_VALUE;
+					Entry<File, Date> minBackup = null;
+					for (Entry<File, Date> backup : backups.entrySet()) {
+						long diff = backup.getValue().getTime() - timeTravelDate.getTime();
+						if (diff > 0 && diff < minDiff) {
+							minDiff = diff;
+							minBackup = backup;
 						}
-						entry = zip.getNextEntry();
+					}
+					if (minBackup != null) {
+						in2 = new FileInputStream(minBackup.getKey());
+						ZipInputStream zip = new ZipInputStream(in2);
+						ZipEntry entry = zip.getNextEntry();
+						while (entry != null) {
+							if (ResourceHelper.getFile(entry.getName()).equals("content_" + ContentContext.VIEW_MODE + ".xml")) {
+								in = zip;
+								break;
+							}
+							entry = zip.getNextEntry();
+						}
 					}
 				}
-			}
-			if (in == null) {
-				File file;
-				if (renderMode == ContentContext.PREVIEW_MODE) {
-					file = new File(getDirectory() + "/content_" + renderMode + '_' + version + ".xml");
+				if (in == null) {
+					File file;
+					if (renderMode == ContentContext.PREVIEW_MODE) {
+						file = new File(getDirectory() + "/content_" + renderMode + '_' + version + ".xml");
+					} else {
+						file = new File(getDirectory() + "/content_" + renderMode + ".xml");
+					}
+					if (file.exists()) {
+						in = new FileInputStream(file);
+					}
+				}
+
+				if (in == null) {
+					root = MenuElement.getInstance(globalContext);
+					root.setName("root");
+					root.setVisible(true);
+					root.setPriority(1);
+					root.setId("0");
+					/*
+					 * file.createNewFile(); BufferedWriter out = new BufferedWriter(new FileWriter(file)); out.write("<content version=\"" + version + "\"><page id=\"0\" name=\"root\" priority=\"1\" visible=\"true\" userRoles=\"\" /></content>" ); out.close();
+					 */
 				} else {
-					file = new File(getDirectory() + "/content_" + renderMode + ".xml");
+					root = load(ctx, in, contentAttributeMap, renderMode);
+
+					/** load linked content **/
+					MenuElement[] children = root.getAllChilds();
+					root.updateLinkedData(ctx);
+					for (MenuElement page : children) {
+						page.updateLinkedData(ctx);
+					}
 				}
-				if (file.exists()) {
-					in = new FileInputStream(file);
-				}
+
+			} finally {
+				ResourceHelper.closeResource(in);
+				ResourceHelper.closeResource(in2);
 			}
 
-			if (in == null) {
-				root = MenuElement.getInstance(globalContext);
-				root.setName("root");
-				root.setVisible(true);
-				root.setPriority(1);
-				root.setId("0");
-				/*
-				 * file.createNewFile(); BufferedWriter out = new BufferedWriter(new FileWriter(file)); out.write("<content version=\"" + version + "\"><page id=\"0\" name=\"root\" priority=\"1\" visible=\"true\" userRoles=\"\" /></content>" ); out.close();
-				 */
-			} else {
-				root = load(ctx, in, contentAttributeMap, renderMode);
-
-				/** load linked content **/
-				MenuElement[] children = root.getAllChilds();
-				root.updateLinkedData(ctx);
-				for (MenuElement page : children) {
-					page.updateLinkedData(ctx);
-				}
-			}
-
-		} finally {
-			ResourceHelper.closeResource(in);
-			ResourceHelper.closeResource(in2);
+			return root;
 		}
-
-		return root;
 	}
 
 	/**
 	 * load current version of preview content.
+	 * 
 	 * @return the current version
 	 * @throws IOException
 	 */
@@ -836,7 +845,7 @@ public class PersistenceService {
 											track.setPath(URLHelper.removeTemplateFromRessourceURL(track.getPath()));
 											Calendar trackCal = Calendar.getInstance();
 											trackCal.setTimeInMillis(track.getTime());
-											if (calFrom.before(trackCal) && calTo.after(trackCal)) {										
+											if (calFrom.before(trackCal) && calTo.after(trackCal)) {
 												outCol.add(track);
 												countTrack++;
 											}
@@ -846,7 +855,7 @@ public class PersistenceService {
 									if (track.getUserAgent() == null || !track.getUserAgent().toLowerCase().contains("bot")) {
 										Calendar trackCal = Calendar.getInstance();
 										trackCal.setTimeInMillis(track.getTime());
-										if (calFrom.before(trackCal) && calTo.after(trackCal)) {										
+										if (calFrom.before(trackCal) && calTo.after(trackCal)) {
 											outCol.add(track);
 											countTrack++;
 										}
@@ -858,7 +867,7 @@ public class PersistenceService {
 												track.setPath(StringHelper.getFileNameWithoutExtension(track.getPath()));
 												Calendar trackCal = Calendar.getInstance();
 												trackCal.setTimeInMillis(track.getTime());
-												if (calFrom.before(trackCal) && calTo.after(trackCal)) {										
+												if (calFrom.before(trackCal) && calTo.after(trackCal)) {
 													outCol.add(track);
 													countTrack++;
 												}
@@ -916,10 +925,12 @@ public class PersistenceService {
 			saveVersion();
 		}
 	}
-	
+
 	/**
 	 * set preview version for next loading.
-	 * @param version a content version
+	 * 
+	 * @param version
+	 *            a content version
 	 * @return true if version has changed and false if this version doens'nt exist.
 	 */
 	public boolean setVersion(int version) {
@@ -931,7 +942,6 @@ public class PersistenceService {
 			return false;
 		}
 	}
-
 
 	private void releaseTrackReader(Reader reader) throws IOException {
 		reader.close();
