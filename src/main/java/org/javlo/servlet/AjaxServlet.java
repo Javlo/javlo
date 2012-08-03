@@ -53,7 +53,9 @@ public class AjaxServlet extends HttpServlet {
 			InfoBean.updateInfoBean(ctx);
 
 			String action = ServletHelper.execAction(ctx);
-			logger.info("exec action : " + action);
+			if (action != null) {
+				logger.info("exec action : " + action);
+			}
 
 			ServletHelper.prepareModule(ctx);
 
