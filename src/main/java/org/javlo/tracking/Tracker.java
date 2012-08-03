@@ -62,6 +62,10 @@ public class Tracker {
 		}
 		return tracker;
 	}
+	
+	public void clearCache() {
+		cache.clear();
+	}
 
 	public static void trace(HttpServletRequest request, HttpServletResponse response) throws Exception {
 		GlobalContext globalContext = GlobalContext.getInstance(request);
