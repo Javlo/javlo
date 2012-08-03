@@ -11,7 +11,6 @@ import java.util.List;
 import java.util.Map;
 
 import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpSession;
 
 import org.apache.commons.configuration.ConfigurationException;
 import org.javlo.actions.AbstractModuleAction;
@@ -22,13 +21,11 @@ import org.javlo.helper.ServletHelper;
 import org.javlo.helper.StringHelper;
 import org.javlo.helper.XHTMLHelper;
 import org.javlo.module.core.Module;
-import org.javlo.module.core.ModuleException;
 import org.javlo.module.core.ModulesContext;
 import org.javlo.service.IMService;
 import org.javlo.service.IMService.IMItem;
 import org.javlo.service.RequestService;
 import org.javlo.user.AdminUserSecurity;
-import org.javlo.user.User;
 import org.springframework.util.StringUtils;
 
 public class CommunictationAction extends AbstractModuleAction {
@@ -108,40 +105,6 @@ public class CommunictationAction extends AbstractModuleAction {
 		}
 
 		return msg;
-	}
-
-	@Override
-	public Boolean haveRight(HttpSession session, User user) throws ModuleException {
-		/*
-		 * AdminUserSecurity adminUserSecurity = AdminUserSecurity.getInstance(); if (adminUserSecurity.isAdmin(user)) { return true; }
-		 */
-
-		if (user == null) {
-			return false;
-		}
-
-		try {
-			Collection<GlobalContext> allContext = GlobalContextFactory.getAllGlobalContext(session);
-			for (GlobalContext globalContext : allContext) {
-				if (globalContext.getUsersAccess().contains(user.getLogin())) {
-					return true;
-				}
-			}
-		} catch (Exception e) {
-			throw new ModuleException(e.getMessage());
-		}
-		return null;
-	}
-
-	public static void checkRight(ContentContext ctx, GlobalContext globalContext) throws org.javlo.user.exception.JavloSecurityException {
-		User user = ctx.getCurrentEditUser();
-		AdminUserSecurity adminUserSecurity = AdminUserSecurity.getInstance();
-		if (adminUserSecurity.isAdmin(user)) {
-			return;
-		}
-		if (!globalContext.getUsersAccess().contains(user.getLogin())) {
-			throw new org.javlo.user.exception.JavloSecurityException("You have no sufisant right.");
-		}
 	}
 
 	public static String performSendAIM(RequestService rs, ContentContext ctx, HttpServletRequest request, Module currentModule) throws ConfigurationException, IOException {

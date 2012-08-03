@@ -1097,4 +1097,8 @@ public class StaticConfig extends Observable {
 		return properties.getString("market.server.name", "javlo.org");
 	}
 
+	public String getLogFile() {
+		return properties.getString("log.file", "../../tomcat/logs/catalina.out");
+	}
+
 }
