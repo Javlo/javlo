@@ -44,7 +44,7 @@ public class AdminUserFactory extends UserFactory {
 		if (res == null) {
 			try {
 				res = staticConfig.getAdminUserFactory(globalContext, session);
-				logger.info("create userFactory : " + res.getClass().getName());
+				logger.fine("create userFactory : " + res.getClass().getName());
 			} catch (Exception e) {
 				logger.severe(e.getMessage());
 				e.printStackTrace();
