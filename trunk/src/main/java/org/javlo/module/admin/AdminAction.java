@@ -40,11 +40,13 @@ import org.javlo.module.core.ModuleException;
 import org.javlo.module.core.ModulesContext;
 import org.javlo.navigation.PageConfiguration;
 import org.javlo.service.ContentService;
+import org.javlo.service.LogService;
 import org.javlo.service.RequestService;
 import org.javlo.template.Template;
 import org.javlo.template.TemplateFactory;
 import org.javlo.template.TemplatePlugin;
 import org.javlo.template.TemplatePluginFactory;
+import org.javlo.tracking.Tracker;
 import org.javlo.user.AdminUserSecurity;
 import org.javlo.user.User;
 import org.javlo.user.exception.JavloSecurityException;
@@ -701,11 +703,13 @@ public class AdminAction extends AbstractModuleAction {
 		return msg;
 	}
 
-	public static final String performClearCache(HttpServletRequest request, ContentContext ctx, MessageRepository messageRepository, I18nAccess i18nAccess, FileCache fileCache) throws Exception {
+	public static final String performClearCache(HttpServletRequest request, GlobalContext globalContext, HttpSession session, ContentContext ctx, MessageRepository messageRepository, I18nAccess i18nAccess, FileCache fileCache) throws Exception {
 		ContentService.clearAllContextCache(ctx);
 		fileCache.clear();
 		System.gc();
 		messageRepository.setGlobalMessageAndNotification(ctx, new GenericMessage(i18nAccess.getText("admin.message.clear cache"), GenericMessage.INFO));
+		Tracker.getTracker(globalContext, session);
+		LogService.getInstance(session).clear();
 		return null;
 	}
 
