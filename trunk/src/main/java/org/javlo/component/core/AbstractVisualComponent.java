@@ -208,6 +208,9 @@ public abstract class AbstractVisualComponent implements IContentVisualComponent
 	}
 
 	protected String executeJSP(ContentContext ctx, String jsp) throws ServletException, IOException {
+		if (jsp == null) {
+			return "no jsp found : "+getClass();
+		}
 		ctx.getRequest().setAttribute(COMPONENT_KEY, this);
 		String url = jsp;
 		if (!url.startsWith("/")) {
