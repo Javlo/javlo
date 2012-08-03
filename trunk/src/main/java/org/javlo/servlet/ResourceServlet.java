@@ -74,9 +74,15 @@ public class ResourceServlet extends HttpServlet {
 				String finalName = URLHelper.mergePath(globalContext.getDataFolder(), filePath);
 				InputStream fileStream;
 				try {
-					fileStream = new FileInputStream(new File(finalName));
-					if ((fileStream != null)) {
-						ResourceHelper.writeStreamToStream(fileStream, response.getOutputStream());
+					File file = new File(finalName);
+					if (file.exists()) {
+						fileStream = new FileInputStream(new File(finalName));
+						if ((fileStream != null)) {
+							ResourceHelper.writeStreamToStream(fileStream, response.getOutputStream());
+						}
+					} else {
+						response.setStatus(404, "favicon not found.");
+						return;
 					}
 				} catch (Exception e) {
 					e.printStackTrace();
