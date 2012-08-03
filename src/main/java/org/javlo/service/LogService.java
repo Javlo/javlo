@@ -70,7 +70,8 @@ public class LogService {
 	private synchronized void updateHistory() {
 		StaticConfig staticConfig = StaticConfig.getInstance(application);
 		String path = staticConfig.getLogFile();
-		File logFile = new File(path);
+		File logFile;
+		logFile = new File(application.getRealPath(path));
 		if (!logFile.exists()) {
 			lines.put(lastLineId++, new LogLine(Level.SEVERE.getName(), "Log file not found: " + path));
 			return;
