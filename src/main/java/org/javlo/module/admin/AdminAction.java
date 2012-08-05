@@ -73,6 +73,7 @@ public class AdminAction extends AbstractModuleAction {
 		private String googleAnalyticsUACCT;
 		private String tags;
 		private String blockPassword;
+		private String homepage;
 
 		private int countUser;
 		private boolean view;
@@ -104,6 +105,7 @@ public class AdminAction extends AbstractModuleAction {
 			setDefaultLanguage(globalContext.getDefaultLanguage());
 			setLanguages(StringHelper.collectionToString(globalContext.getLanguages(), ";"));
 			setContentLanguages(StringHelper.collectionToString(globalContext.getContentLanguages(), ";"));
+			setHomepage(globalContext.getHomePage());
 
 			setGoogleAnalyticsUACCT(globalContext.getGoogleAnalyticsUACCT());
 			setTags(globalContext.getRAWTags());
@@ -305,6 +307,14 @@ public class AdminAction extends AbstractModuleAction {
 
 		public void setBlockPassword(String blockPassword) {
 			this.blockPassword = blockPassword;
+		}
+
+		public String getHomepage() {
+			return homepage;
+		}
+
+		public void setHomepage(String homepage) {
+			this.homepage = homepage;
 		}
 
 	}
@@ -533,6 +543,7 @@ public class AdminAction extends AbstractModuleAction {
 					currentGlobalContext.setRAWContentLanguages(requestService.getParameter("content-languages", null));
 					currentGlobalContext.setRAWTags(requestService.getParameter("tags", null));
 					currentGlobalContext.setAdministrator(requestService.getParameter("administrator", ""));
+					currentGlobalContext.setHomePage(requestService.getParameter("homepage", ""));
 
 					String usersAccess = requestService.getParameter("users-access", "");
 					if (usersAccess.trim().length() > 0) {
