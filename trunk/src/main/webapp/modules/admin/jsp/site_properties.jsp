@@ -84,7 +84,12 @@
 
 <div class="line">		
 	<label for="content-languages">${i18n.edit['admin.form.content-languages']}</label>
-	<input type="text" id="content-languages" name="content-languages" value="${currentContext.contentLanguages}" />	
+	<input type="text" id="content-languages" name="content-languages" value="${currentContext.contentLanguages}" />
+</div>
+
+<div class="line">		
+	<label for="homepage">${i18n.edit['admin.form.homepage']}</label>
+	<input type="text" id="homepage" name="homepage" value="${currentContext.homepage}" />	
 </div>
 
 <div class="line">		
