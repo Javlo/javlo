@@ -88,6 +88,11 @@
 </div>
 
 <div class="line">		
+	<label for="switch-default-language">${i18n.edit['admin.form.switch-default-language']}</label>
+	<input type="checkbox" id="switch-default-language" name="switch-default-language" ${currentContext.autoSwitchToDefaultLanguage?'checked="checked"':""}" />
+</div>
+
+<div class="line">		
 	<label for="homepage">${i18n.edit['admin.form.homepage']}</label>
 	<input type="text" id="homepage" name="homepage" value="${currentContext.homepage}" />	
 </div>

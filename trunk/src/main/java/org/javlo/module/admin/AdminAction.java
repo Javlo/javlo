@@ -74,6 +74,7 @@ public class AdminAction extends AbstractModuleAction {
 		private String tags;
 		private String blockPassword;
 		private String homepage;
+		private boolean autoSwitchToDefaultLanguage;
 
 		private int countUser;
 		private boolean view;
@@ -104,6 +105,7 @@ public class AdminAction extends AbstractModuleAction {
 			setGlobalTitle(globalContext.getGlobalTitle());
 			setDefaultLanguage(globalContext.getDefaultLanguage());
 			setLanguages(StringHelper.collectionToString(globalContext.getLanguages(), ";"));
+			setAutoSwitchToDefaultLanguage(globalContext.isAutoSwitchToDefaultLanguage());
 			setContentLanguages(StringHelper.collectionToString(globalContext.getContentLanguages(), ";"));
 			setHomepage(globalContext.getHomePage());
 
@@ -315,6 +317,14 @@ public class AdminAction extends AbstractModuleAction {
 
 		public void setHomepage(String homepage) {
 			this.homepage = homepage;
+		}
+
+		public boolean isAutoSwitchToDefaultLanguage() {
+			return autoSwitchToDefaultLanguage;
+		}
+
+		public void setAutoSwitchToDefaultLanguage(boolean autoSwitchToDefaultLanguage) {
+			this.autoSwitchToDefaultLanguage = autoSwitchToDefaultLanguage;
 		}
 
 	}
@@ -541,6 +551,7 @@ public class AdminAction extends AbstractModuleAction {
 					currentGlobalContext.setDefaultTemplate(requestService.getParameter("default-template", null));
 					currentGlobalContext.setRAWLanguages(requestService.getParameter("languages", null));
 					currentGlobalContext.setRAWContentLanguages(requestService.getParameter("content-languages", null));
+					currentGlobalContext.setAutoSwitchToDefaultLanguage(requestService.getParameter("switch-default-language", null) != null);
 					currentGlobalContext.setRAWTags(requestService.getParameter("tags", null));
 					currentGlobalContext.setAdministrator(requestService.getParameter("administrator", ""));
 					currentGlobalContext.setHomePage(requestService.getParameter("homepage", ""));
