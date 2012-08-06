@@ -1,5 +1,6 @@
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c"
 %><%@ taglib uri="http://java.sun.com/jsp/jstl/functions" prefix="fn"%>
+<c:set var="buffer" value="" />
 <c:forEach var="line" items="${logLines}" varStatus="status">
 	<c:set var="buffer">
 		<c:choose>
@@ -19,7 +20,7 @@
 				<c:set var="notificationClass" value="notification msginfo" />
 			</c:otherwise>
 		</c:choose>
-		<div class="${notificationClass}">
+		<div class="log-line ${notificationClass}">
 			<pre class="log-text"><c:out value="${line.text}" escapeXml="true" /></pre>
 		</div>
 	</c:set>
@@ -31,10 +32,7 @@
 	<c:out value="${buffer}" escapeXml="false" />
 	<form class="ajax" action="${info.currentURL}" method="post">
 		<input type="hidden" name="lastLine" value="${logLastLine - 1}" />
-		<input class="ajax" type="submit" value="Refresh logs" />
+		<input class="ajax" type="submit" value="${i18n.edit['monitoring.log.refresh']}" />
 	</form>
-	<script type="text/javascript">
-	jQuery("#log-next-lines").hide();
-	</script>	
 </div>
 

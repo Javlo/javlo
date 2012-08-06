@@ -1,20 +1,25 @@
-.log-pause {
+.log-js-only {
 	display: none;
 }
+
 .log-content {
+	margin-top: 20px;
 	height: 500px;
-	overflow: auto;	
+	border: 1px solid #CCCCCC;
+	border-radius: 3px 3px 3px 3px;
+	overflow: auto;
+	padding: 0 5px;
 }
 
 .log-text {
 	white-space: pre-wrap;
 }
 
-#wait {
+#log-wait {
 	text-align: center; 
 }
 
-#wait span {
+#log-wait span {
 	display: inline-block;
 	position: relative;
 }

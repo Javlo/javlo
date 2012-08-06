@@ -20,6 +20,14 @@ table th {
 	color: #aaaaaa;
 	font-style: italic;
 }
+::-webkit-input-placeholder {
+	color: #aaaaaa;
+	font-style: italic;
+}
+:-moz-placeholder {
+	color: #aaaaaa;
+	font-style: italic;
+}
 
 fieldset {
 	margin: 4px 0;
@@ -589,6 +597,39 @@ ul,li {
 .action-button.delete:hover span {
 	padding-left: 26px;
 	background: url("../images/icons/small/white/trash.png") no-repeat
+		scroll 5px;
+}
+
+.action-button.refresh span {
+	padding-left: 26px;
+	background: url("../images/icons/small/black/refresh.png") no-repeat
+		scroll 5px;
+}
+.action-button.refresh:hover span {
+	padding-left: 26px;
+	background: url("../images/icons/small/white/refresh.png") no-repeat
+		scroll 5px;
+}
+
+.action-button.play-pause span {
+	padding-left: 26px;
+	background: url("../images/icons/small/black/pause.png") no-repeat
+		scroll 5px;
+}
+.action-button.play-pause:hover span {
+	padding-left: 26px;
+	background: url("../images/icons/small/white/play.png") no-repeat
+		scroll 5px;
+}
+
+.action-button.play-pause.active span {
+	padding-left: 26px;
+	background: url("../images/icons/small/black/play.png") no-repeat
+		scroll 5px;
+}
+.action-button.play-pause.active:hover span {
+	padding-left: 26px;
+	background: url("../images/icons/small/white/pause.png") no-repeat
 		scroll 5px;
 }
 

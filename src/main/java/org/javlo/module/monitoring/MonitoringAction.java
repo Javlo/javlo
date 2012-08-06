@@ -35,8 +35,18 @@ public class MonitoringAction extends AbstractModuleAction {
 			lastLine = StringHelper.safeParseLong(request.getParameter("lastLine"), null);
 		}
 
+//		if (StringHelper.isTrue(request.getParameter("addRandomLogs"), false)) {
+//			Level[] levels = {Level.SEVERE, Level.WARNING, Level.INFO, Level.FINE};
+//			LogService logService = LogService.getInstance(request.getSession());
+//			int max = (int) (Math.random() * 2);
+//			for (int i = 0; i < max; i++) {
+//				Level level = levels[(int) (Math.random() * levels.length)];
+//				logService.addLine(level, level.getLocalizedName() + " - " + StringHelper.getRandomString((int) (Math.random() * 500)));
+//			}
+//		}
+
 		List<LogLine> logLines = new LinkedList<LogLine>();
-		LogService.getInstance(request.getSession()).fillLineList(lastLine, logLines);
+		lastLine = LogService.getInstance(request.getSession()).fillLineList(lastLine, logLines);
 
 		request.setAttribute("logLines", logLines);
 		request.setAttribute("logLastLine", lastLine);
