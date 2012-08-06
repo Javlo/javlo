@@ -73,7 +73,7 @@ public class LogService {
 		File logFile;
 		logFile = new File(application.getRealPath(path));
 		if (!logFile.exists()) {
-			lines.put(lastLineId++, new LogLine(Level.SEVERE.getName(), "Log file not found: " + logFile));
+			addLine(Level.SEVERE, "Log file not found: " + logFile);
 			return;
 		}
 
@@ -135,8 +135,8 @@ public class LogService {
 		//TODO Remove old lines
 	}
 
-	private void addLine(Level level, String text) {
-		lines.put(lastLineId++, new LogLine(level == null ? null : level.getName(), text));
+	public void addLine(Level level, String text) {
+		lines.put(++lastLineId, new LogLine(level == null ? null : level.getName(), text));
 	}
 
 	public static class LogLine {
