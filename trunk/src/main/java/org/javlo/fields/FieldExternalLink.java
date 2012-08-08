@@ -12,9 +12,11 @@ import org.javlo.helper.PatternHelper;
 import org.javlo.helper.StringHelper;
 import org.javlo.helper.URLHelper;
 import org.javlo.helper.XHTMLHelper;
+import org.javlo.navigation.MenuElement;
+import org.javlo.service.ContentService;
 import org.javlo.service.RequestService;
 
-public class FieldExternalLink extends Field {
+public class FieldExternalLink extends MetaField {
 
 	protected String getLabelLabel() {
 		return getI18nAccess().getText("global.label");
@@ -167,6 +169,22 @@ public class FieldExternalLink extends Field {
 	@Override
 	public boolean isContentCachable() {		
 		return getCurrentLink() == null || !getCurrentLink().trim().startsWith("/");
+	}
+	
+	@Override
+	public boolean isPublished(ContentContext ctx) {
+		String link = getCurrentLink().trim();
+		if (link.startsWith("/")) { // relative link
+			try {
+				link = XHTMLHelper.replaceJSTLData(ctx, link);
+				MenuElement page = ContentService.getInstance(GlobalContext.getInstance(ctx.getRequest())).getNavigation(ctx).searchRealChild(ctx, link);
+				return page != null && page.isRealContent(ctx);
+			} catch (Exception ex) {
+				ex.printStackTrace();
+				return false;
+			}
+		}
+		return true;
 	}
 
 }
