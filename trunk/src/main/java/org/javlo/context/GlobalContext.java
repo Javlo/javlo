@@ -1777,6 +1777,7 @@ public class GlobalContext implements Serializable {
 				OutputStream out = null;
 				try {
 					out = new FileOutputStream(getDataFile());
+					logger.info("store data for : "+getContextKey()+" size:"+dataProperties.size());
 					dataProperties.store(out, getContextKey());
 				} catch (Exception e) {
 					e.printStackTrace();

@@ -114,7 +114,7 @@ public class GenericForm extends AbstractVisualComponent implements IAction {
 			OutputStream out = null;
 			try {
 				File file = getFile(ctx);
-				List<Map<String,String>> newData = CSVFactory.loadContentAsMap(file);
+				List<Map<String, String>> newData = CSVFactory.loadContentAsMap(file);
 				newData.add(data);
 				CSVFactory.storeContentAsMap(file, newData);
 			} finally {
@@ -124,14 +124,26 @@ public class GenericForm extends AbstractVisualComponent implements IAction {
 			}
 		}
 	}
-	
+
 	@Override
-	public void performEdit(ContentContext ctx) throws Exception {	
+	public void performEdit(ContentContext ctx) throws Exception {
 		super.performEdit(ctx);
 		getTranslation(true);
 	}
 
-	public static final String performSubmit(HttpServletRequest request, HttpServletResponse response) throws Exception {
+	protected boolean isCaptcha() {
+		return true;
+	}
+
+	protected boolean isSendEmail() {
+		return true;
+	}
+
+	protected boolean isStorage() {
+		return true;
+	}
+
+	public static String performSubmit(HttpServletRequest request, HttpServletResponse response) throws Exception {
 		RequestService requestService = RequestService.getInstance(request);
 		ContentContext ctx = ContentContext.getContentContext(request, response);
 		ContentService content = ContentService.createContent(request);
@@ -139,13 +151,16 @@ public class GenericForm extends AbstractVisualComponent implements IAction {
 
 		/** check captcha **/
 		String captcha = requestService.getParameter("captcha", null);
-		if (captcha == null || !CaptchaService.getInstance(request.getSession()).getCurrentCaptchaCode().equals(captcha)) {
-			GenericMessage msg = new GenericMessage(comp.getTranslation(false).getProperty("error.captcha"), GenericMessage.ERROR);
-			request.setAttribute("msg", msg);
-			request.setAttribute("error_captcha", "true");
-			return null;
-		} else {
-			CaptchaService.getInstance(request.getSession()).setCurrentCaptchaCode("");
+
+		if (comp.isCaptcha()) {
+			if (captcha == null || !CaptchaService.getInstance(request.getSession()).getCurrentCaptchaCode().equals(captcha)) {
+				GenericMessage msg = new GenericMessage(comp.getTranslation(false).getProperty("error.captcha"), GenericMessage.ERROR);
+				request.setAttribute("msg", msg);
+				request.setAttribute("error_captcha", "true");
+				return null;
+			} else {
+				CaptchaService.getInstance(request.getSession()).setCurrentCaptchaCode("");
+			}
 		}
 
 		ByteArrayOutputStream outStream = new ByteArrayOutputStream();
@@ -170,27 +185,29 @@ public class GenericForm extends AbstractVisualComponent implements IAction {
 				}
 				result.put(key, finalValue);
 			}
-		}		
+		}
 		out.println("");
 
 		out.close();
 		String mailContent = StringHelper.sortText(new String(outStream.toByteArray()));
 
 		logger.info("mail content : " + mailContent);
-		
-		comp.storeResult(ctx, result);
 
-		MailingManager mailingManager = MailingManager.getInstance(globalContext.getStaticConfig());
-		InternetAddress adminEmail = new InternetAddress(globalContext.getAdministratorEmail());
-		InternetAddress bccEmail = new InternetAddress("p@noctis.be");
-		mailingManager.sendMail(adminEmail, adminEmail, bccEmail, subject, mailContent, false);
+		if (comp.isStorage()) {
+			comp.storeResult(ctx, result);
+		}
+
+		if (comp.isSendEmail()) {
+			MailingManager mailingManager = MailingManager.getInstance(globalContext.getStaticConfig());
+			InternetAddress adminEmail = new InternetAddress(globalContext.getAdministratorEmail());
+			InternetAddress bccEmail = new InternetAddress("p@noctis.be");
+			mailingManager.sendMail(adminEmail, adminEmail, bccEmail, subject, mailContent, false);
+		}
 
 		GenericMessage msg = new GenericMessage(comp.getTranslation(false).getProperty("message.thanks"), GenericMessage.INFO);
 		request.setAttribute("msg", msg);
 		request.setAttribute("valid", "true");
-		
-		
-		
+
 		return null;
 	}
 }
