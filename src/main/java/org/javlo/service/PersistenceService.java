@@ -47,6 +47,8 @@ import org.javlo.helper.DebugHelper.StructureException;
 import org.javlo.helper.ResourceHelper;
 import org.javlo.helper.StringHelper;
 import org.javlo.helper.URLHelper;
+import org.javlo.message.GenericMessage;
+import org.javlo.message.MessageRepository;
 import org.javlo.navigation.MenuElement;
 import org.javlo.service.exception.ServiceException;
 import org.javlo.servlet.zip.ZipManagement;
@@ -664,7 +666,11 @@ public class PersistenceService {
 
 		} catch (Exception e) {
 			e.printStackTrace();
-			throw new ServiceException(e.getMessage());
+			MessageRepository.getInstance(ctx).setGlobalMessageAndNotification(ctx, new GenericMessage("error XML parsing : "+e.getMessage(), GenericMessage.ERROR));
+			root.setId("0");
+			root.setName("root");
+			root.setPriority(10);
+			root.setVisible(true);
 		}
 
 		return root;

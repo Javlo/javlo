@@ -1,12 +1,11 @@
 /*
- * Created on 20-f�vr.-2004
+ * Created on 20-fevr.-2004
  */
 package org.javlo.user;
 
 import java.io.Serializable;
 import java.lang.reflect.Method;
 import java.text.ParseException;
-import java.util.Arrays;
 import java.util.Collection;
 import java.util.Date;
 import java.util.HashSet;

@@ -19,6 +19,7 @@ import org.javlo.rendering.Device;
 import org.javlo.service.ContentService;
 import org.javlo.service.PersistenceService;
 import org.javlo.servlet.AccessServlet;
+import org.javlo.user.IUserFactory;
 import org.javlo.user.User;
 import org.javlo.user.UserFactory;
 
@@ -64,7 +65,8 @@ public class InfoBean {
 		
 		GlobalContext globalContext = GlobalContext.getInstance(ctx.getRequest());
 		info.setPreviewVersion(PersistenceService.getInstance(globalContext).getVersion());
-		User currentUser = UserFactory.createUserFactory(globalContext, ctx.getRequest().getSession()).getCurrentUser(ctx.getRequest().getSession());
+		IUserFactory userFactory = UserFactory.createUserFactory(globalContext, ctx.getRequest().getSession());
+		User currentUser = userFactory.getCurrentUser(ctx.getRequest().getSession());
 		if (currentUser != null) {
 			info.setUserName(currentUser.getLogin());
 		}
@@ -80,6 +82,8 @@ public class InfoBean {
 		info.setLanguage(ctx.getLanguage());		
 		info.setDate(StringHelper.renderDate(currentPage.getContentDateNeverNull(ctx), globalContext.getShortDateFormat()));
 		info.setTime(StringHelper.renderTime(ctx, currentPage.getContentDateNeverNull(ctx)));
+		info.setRoles(userFactory.getAllRoles(globalContext, ctx.getRequest().getSession()));
+		
 		info.device = ctx.getDevice();
 		ctx.getRequest().setAttribute(REQUEST_KEY, info);
 
@@ -130,9 +134,11 @@ public class InfoBean {
 	private String time;
 	private String templateFolder = "";
 	private String captchaURL;
+	 
 	private int previewVersion = -1;
 	private Collection<String> contentLanguages;
 	private Collection<String> languages;
+	private Collection<String> roles;
 	private MenuElement.PageBean page = null;
 	private MenuElement.PageBean root = null;
 	private List<MenuElement.PageBean> pagePath = new LinkedList<MenuElement.PageBean>();
@@ -406,5 +412,13 @@ public class InfoBean {
 
 	public void setPreviewVersion(int previewVersion) {
 		this.previewVersion = previewVersion;
+	}
+
+	public Collection<String> getRoles() {
+		return roles;
+	}
+
+	public void setRoles(Collection<String> roles) {
+		this.roles = roles;
 	}
 }

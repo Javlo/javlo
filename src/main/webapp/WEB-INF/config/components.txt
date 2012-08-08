@@ -53,7 +53,7 @@ org.javlo.component.meta.Tags
 org.javlo.component.meta.Category
 org.javlo.component.gadget.CountAccess
 org.javlo.component.gadget.CountTool
-org.javlo.component.form.FormMailingComponent
+org.javlo.component.form.Contact
 org.javlo.component.form.GenericForm
 
 --content.title.special
@@ -62,4 +62,5 @@ org.javlo.component.layout.ContentSeparation
 org.javlo.component.meta.ForceRealContent
 org.javlo.component.meta.NotSearchPage
 org.javlo.component.form.SearchResultComponent
+org.javlo.component.form.GenericFormForRegistering
 
