@@ -20,6 +20,7 @@ public class FieldFactory {
 												 new FieldInternalLink(),
 												 new FieldEmail(),
 												 new FieldTextList(),
+												 new FieldBoolean(),
 												 new Heading("h1"),
 												 new Heading("h2"),
 												 new Heading("h3"),

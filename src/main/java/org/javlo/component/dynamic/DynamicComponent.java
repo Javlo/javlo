@@ -135,6 +135,15 @@ public class DynamicComponent extends AbstractVisualComponent implements IStatic
 
 		Collection<Field> fields = getFields(ctx);
 
+		for (Field field : fields) {
+			if (field instanceof MetaField) {
+				MetaField mField = (MetaField) field;
+				if (!mField.isPublished(ctx)) {
+					return "";
+				}
+			}
+		}
+
 		if (asList) {
 			if (getListRenderer() != null) {
 				for (Field field : fields) {
@@ -163,15 +172,6 @@ public class DynamicComponent extends AbstractVisualComponent implements IStatic
 		for (Field field : fields) {
 			if (!field.validate()) {
 				allValid = false;
-			}
-		}
-
-		for (Field field : fields) {
-			if (field instanceof MetaField) {
-				MetaField mField = (MetaField) field;
-				if (!mField.isPublished(ctx)) {
-					return "";
-				}
 			}
 		}
 
