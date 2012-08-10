@@ -846,7 +846,7 @@ public class Template implements Comparable<Template> {
 		return StringHelper.stringToCollection(categoriesRaw, ",");
 	}
 
-	private final List<File> getComponentFile(GlobalContext globalContext) throws IOException {
+	protected List<File> getComponentFile(GlobalContext globalContext) throws IOException {
 		String templateFolder = getWorkTemplateFolder();
 		if (isMailing()) {
 			templateFolder = getWorkMailingTemplateFolder();

@@ -197,6 +197,12 @@ public class DefaultTemplate extends Template {
 	public Properties getI18nProperties(GlobalContext globalContext, Locale locale) throws IOException {
 		return I18nAccess.FAKE_I18N_FILE;
 	}
+	
+	@Override
+	protected List<File> getComponentFile(GlobalContext globalContext) throws IOException {
+		return Collections.EMPTY_LIST;
+	}
+	
 
 	@Override
 	@SuppressWarnings("unchecked")
