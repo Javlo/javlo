@@ -9,6 +9,7 @@ import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
@@ -74,6 +75,7 @@ public class AdminAction extends AbstractModuleAction {
 		private String tags;
 		private String blockPassword;
 		private String homepage;
+		private String userRoles;
 		private boolean autoSwitchToDefaultLanguage;
 
 		private int countUser;
@@ -108,6 +110,8 @@ public class AdminAction extends AbstractModuleAction {
 			setAutoSwitchToDefaultLanguage(globalContext.isAutoSwitchToDefaultLanguage());
 			setContentLanguages(StringHelper.collectionToString(globalContext.getContentLanguages(), ";"));
 			setHomepage(globalContext.getHomePage());
+			
+			setUserRoles(StringHelper.collectionToString(globalContext.getUserRoles(), ","));
 
 			setGoogleAnalyticsUACCT(globalContext.getGoogleAnalyticsUACCT());
 			setTags(globalContext.getRAWTags());
@@ -325,6 +329,14 @@ public class AdminAction extends AbstractModuleAction {
 
 		public void setAutoSwitchToDefaultLanguage(boolean autoSwitchToDefaultLanguage) {
 			this.autoSwitchToDefaultLanguage = autoSwitchToDefaultLanguage;
+		}
+
+		public String getUserRoles() {
+			return userRoles;
+		}
+
+		public void setUserRoles(String userRoles) {
+			this.userRoles = userRoles;
 		}
 
 	}
@@ -554,7 +566,8 @@ public class AdminAction extends AbstractModuleAction {
 					currentGlobalContext.setAutoSwitchToDefaultLanguage(requestService.getParameter("switch-default-language", null) != null);
 					currentGlobalContext.setRAWTags(requestService.getParameter("tags", null));
 					currentGlobalContext.setAdministrator(requestService.getParameter("administrator", ""));
-					currentGlobalContext.setHomePage(requestService.getParameter("homepage", ""));
+					currentGlobalContext.setHomePage(requestService.getParameter("homepage", ""));					
+					currentGlobalContext.setUserRoles(new HashSet<String>(StringHelper.stringToCollection(requestService.getParameter("user-roles", ""), ",")));
 
 					String usersAccess = requestService.getParameter("users-access", "");
 					if (usersAccess.trim().length() > 0) {

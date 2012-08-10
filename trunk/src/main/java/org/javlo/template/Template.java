@@ -546,7 +546,7 @@ public class Template implements Comparable<Template> {
 
 	private File dir = null;
 
-	private StaticConfig config;
+	protected StaticConfig config;
 	
 	private ServletContext application;
 
