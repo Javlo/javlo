@@ -6,6 +6,8 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.Date;
 import java.util.List;
+import java.util.Locale;
+import java.util.Properties;
 import java.util.logging.Logger;
 
 import org.apache.commons.configuration.ConfigurationException;
@@ -15,6 +17,7 @@ import org.javlo.context.ContentContext;
 import org.javlo.context.GlobalContext;
 import org.javlo.helper.URLHelper;
 import org.javlo.helper.XMLManipulationHelper.BadXMLException;
+import org.javlo.i18n.I18nAccess;
 import org.javlo.rendering.Device;
 import org.javlo.template.Template;
 
@@ -188,6 +191,11 @@ public class DefaultTemplate extends Template {
 	@Override
 	public boolean isPDFFile() {
 		return false;
+	}
+	
+	@Override
+	public Properties getI18nProperties(GlobalContext globalContext, Locale locale) throws IOException {
+		return I18nAccess.FAKE_I18N_FILE;
 	}
 
 	@Override

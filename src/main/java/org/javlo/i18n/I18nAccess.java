@@ -56,6 +56,8 @@ public class I18nAccess implements Serializable {
 	static final String SESSION_KEY = "i18n";
 
 	static final String I18N_COUNTRIES_FILE_NAME = "/WEB-INF/i18n/countries_";
+	
+	public static final Properties FAKE_I18N_FILE = new Properties();
 
 	// static final String I18N_EDIT_FILE_NAME = "/WEB-INF/i18n/edit_";
 
