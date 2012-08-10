@@ -89,12 +89,13 @@ public class DefaultTemplate extends Template {
 
 	@Override
 	public boolean isTemplateInWebapp(ContentContext ctx) throws IOException {
-		GlobalContext globalContext = GlobalContext.getInstance(ctx.getRequest());
+		/*GlobalContext globalContext = GlobalContext.getInstance(ctx.getRequest());
 		File templateTgt = new File(URLHelper.mergePath(getWorkTemplateFolder(), getFolder(globalContext)));
 		if (isMailing()) {
 			templateTgt = new File(URLHelper.mergePath(getWorkMailingTemplateFolder(), getFolder(globalContext)));
 		}
-		return templateTgt.exists();
+		return templateTgt.exists();*/
+		return true;
 	}
 
 	public String getRendererFile() {
