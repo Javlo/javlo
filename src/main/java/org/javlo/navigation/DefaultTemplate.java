@@ -28,8 +28,6 @@ public class DefaultTemplate extends Template {
 	 */
 	protected static Logger logger = java.util.logging.Logger.getLogger(DefaultTemplate.class.getName());
 
-	private StaticConfig config;
-
 	private boolean mailing = false;
 
 	@Override

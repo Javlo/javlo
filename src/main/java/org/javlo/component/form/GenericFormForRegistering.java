@@ -21,6 +21,9 @@ public class GenericFormForRegistering extends GenericForm {
 	}
 	
 	public static String performSubmit(HttpServletRequest request, HttpServletResponse response) throws Exception {
+		
+		System.out.println("***** GenericFormForRegistering.performSubmit : START"); //TODO: remove debug trace
+		
 		String msg = GenericForm.performSubmit(request, response);
 		
 		ContentContext ctx = ContentContext.getContentContext(request, response);
@@ -37,6 +40,10 @@ public class GenericFormForRegistering extends GenericForm {
 		}		
 		((UserInfo)userInfo).setAllValues(requestMap);
 		
+		if (userInfo.getLogin() == null || userInfo.getLogin().trim().length() == 0) {
+			userInfo.setLogin(userInfo.getEmail());
+		}
+		
 		userFactory.addUserInfo(userInfo);
 		
 		return msg;
@@ -45,5 +52,10 @@ public class GenericFormForRegistering extends GenericForm {
 	@Override
 	public String getType() {	
 		return "generic-form-for-registering";
+	}
+	
+	@Override
+	public String getActionGroupName() {
+		return "gform-registering";
 	}
 }
