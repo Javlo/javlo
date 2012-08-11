@@ -119,7 +119,7 @@ public class ServletHelper {
 		}
 
 		NotificationService notifService = NotificationService.getInstance(globalContext);
-		ctx.getRequest().setAttribute("notificationSize", notifService.getUnreadNotificationSize(ctx.getCurrentUserId(), 9));
+		ctx.getRequest().setAttribute("notificationSize", notifService.getUnreadNotificationSize(ctx.getCurrentUserId(), 99));
 
 		String errorMsg = moduleContext.getCurrentModule().getAction().prepare(ctx, moduleContext);
 		if (errorMsg != null) {
