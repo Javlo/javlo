@@ -95,18 +95,17 @@ public class GlobalContext implements Serializable {
 		public void run() {
 
 			while (!globalContext.stopStoreThread) {
-				synchronized (globalContext) {
-					if (globalContext.needStoreData) {
-						globalContext.needStoreData = false;
-						globalContext.saveData();
-					}
+				if (globalContext.needStoreData) {
+					globalContext.needStoreData = false;
+					globalContext.saveData();
+				}
+				try {
+					Thread.sleep(SLEEP_BETWEEN_STORAGE);
+				} catch (InterruptedException e) {
+					e.printStackTrace();
 				}
 			}
-			try {
-				Thread.sleep(SLEEP_BETWEEN_STORAGE);
-			} catch (InterruptedException e) {
-				e.printStackTrace();
-			}
+
 		}
 
 	}
