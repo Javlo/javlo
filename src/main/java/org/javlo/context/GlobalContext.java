@@ -83,7 +83,7 @@ public class GlobalContext implements Serializable {
 
 	private class StorePropertyThread extends Thread {
 
-		private static final int SLEEP_BETWEEN_STORAGE = 3000;
+		private static final int SLEEP_BETWEEN_STORAGE = 10 * 1000; // 10 sec
 
 		GlobalContext globalContext = null;
 
@@ -93,16 +93,19 @@ public class GlobalContext implements Serializable {
 
 		@Override
 		public void run() {
+
 			while (!globalContext.stopStoreThread) {
-				if (globalContext.needStoreData) {
-					globalContext.needStoreData = false;
-					globalContext.saveData();
+				synchronized (globalContext) {
+					if (globalContext.needStoreData) {
+						globalContext.needStoreData = false;
+						globalContext.saveData();
+					}
 				}
-				try {
-					Thread.sleep(SLEEP_BETWEEN_STORAGE);
-				} catch (InterruptedException e) {
-					e.printStackTrace();
-				}
+			}
+			try {
+				Thread.sleep(SLEEP_BETWEEN_STORAGE);
+			} catch (InterruptedException e) {
+				e.printStackTrace();
 			}
 		}
 
@@ -1777,7 +1780,7 @@ public class GlobalContext implements Serializable {
 				OutputStream out = null;
 				try {
 					out = new FileOutputStream(getDataFile());
-					logger.info("store data for : "+getContextKey()+" size:"+dataProperties.size());
+					logger.info("store data for : " + getContextKey() + " size:" + dataProperties.size());
 					dataProperties.store(out, getContextKey());
 				} catch (Exception e) {
 					e.printStackTrace();
