@@ -55,6 +55,8 @@ public class XMLServlet extends HttpServlet {
 			Writer out = response.getWriter();
 
 			String uri = request.getPathInfo();
+			
+			System.out.println("***** XMLServlet.process : uri = "+uri); //TODO: remove debug trace
 
 			String[] uriSplited = uri.split("/");
 			if (uriSplited.length < 4) {
@@ -74,6 +76,8 @@ public class XMLServlet extends HttpServlet {
 				}
 
 				Template template = TemplateFactory.getTemplates(getServletContext()).get(templateName);
+				
+				System.out.println("***** XMLServlet.process : format = "+format); //TODO: remove debug trace
 
 				if (format.toLowerCase().equals("rss")) {
 
@@ -94,6 +98,8 @@ public class XMLServlet extends HttpServlet {
 
 					List<MenuElement> rssPages = content.getNavigation(ctx).getAllChildsWithComponentType(ctx, RSSRegistration.TYPE);
 					List<MenuElement> pages = new ArrayList<MenuElement>(rssPages);
+					
+					System.out.println("***** XMLServlet.process : page with rss found : "+rssPages.size()); //TODO: remove debug trace
 
 					Date latestDate = new Date(0);
 					Iterator<MenuElement> iter = pages.iterator();
@@ -131,7 +137,7 @@ public class XMLServlet extends HttpServlet {
 					if (rss != null) {
 						out.write("<?xml-stylesheet type=\"text/css\" href=\"" + rss + "\"?>");
 					}
-
+					
 					out.write("<rss version=\"2.0\">");
 					out.write("<channel>");
 					out.write("<title>" + globalContext.getGlobalTitle() + " - " + channel + "</title>");
@@ -181,6 +187,8 @@ public class XMLServlet extends HttpServlet {
 
 					out.write("</channel>");
 					out.write("</rss>");
+					
+					System.out.println("***** XMLServlet.process : END RSS"); //TODO: remove debug trace
 				} else {
 					response.setContentType("application/xhtml+xml");
 					out.write("<?xml version=\"1.0\" encoding=\"" + ContentContext.CHARACTER_ENCODING + "\"?>");
