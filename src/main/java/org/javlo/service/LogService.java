@@ -33,7 +33,7 @@ public class LogService {
 	}
 
 	private final ServletContext application;
-	private Map<Long, LogLine> lines = new TimeMap<Long, LogLine>(4 * 60 * 60); //4H
+	private Map<Long, LogLine> lines = new TimeMap<Long, LogLine>(1 * 60 * 60); //1H
 	private long lastLineId = 0;
 	private long filePointer = Long.MAX_VALUE;
 
