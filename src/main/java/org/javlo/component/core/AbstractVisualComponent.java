@@ -44,7 +44,6 @@ import org.javlo.context.EditContext;
 import org.javlo.context.GlobalContext;
 import org.javlo.exception.RessourceNotFoundException;
 import org.javlo.helper.ConfigHelper;
-import org.javlo.helper.Jsp2String;
 import org.javlo.helper.ResourceHelper;
 import org.javlo.helper.ServletHelper;
 import org.javlo.helper.StringHelper;
@@ -481,6 +480,13 @@ public abstract class AbstractVisualComponent implements IContentVisualComponent
 			setRepeat(isRepeat);
 			setModify();
 		}
+		
+		boolean isList = requestService.getParameter("inlist-" + getId(), null) != null;
+		if (isListable() && isList != isList(ctx)) {
+			setList(isList);
+			setModify();
+		}
+
 
 		/** renderer **/
 		String renderer = requestService.getParameter(getInputNameRenderer(), null);

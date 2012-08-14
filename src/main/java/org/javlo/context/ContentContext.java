@@ -72,7 +72,7 @@ public class ContentContext {
 		return ctx;
 	}
 
-	public static ContentContext getAdminContentContext(HttpServletRequest request, HttpServletResponse response) throws Exception {
+	public static ContentContext getNewContentContext(HttpServletRequest request, HttpServletResponse response) throws Exception {
 		return createContentContext(request, response);
 	}
 
