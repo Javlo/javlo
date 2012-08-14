@@ -79,7 +79,7 @@ public class JavloELFinder extends ELFinder {
 	@Override
 	public void process(Writer out, HttpServletRequest request, HttpServletResponse response) throws Exception {
 		List<ELVolume> volumes = getVolumes();
-		ContentContext ctx = ContentContext.getAdminContentContext(request, response);
+		ContentContext ctx = ContentContext.getNewContentContext(request, response);
 		for (ELVolume elVolume : volumes) {
 			RootJavloELFile root = (RootJavloELFile) elVolume.getRoot();
 			root.setContentContext(ctx);
