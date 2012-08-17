@@ -1100,5 +1100,9 @@ public class StaticConfig extends Observable {
 	public String getLogFile() {
 		return properties.getString("log.file", "../../logs/catalina.out");
 	}
+	
+	public String getSiteEmail() {
+		return properties.getString("site.email", "webmaster@javlo.org");
+	}
 
 }
