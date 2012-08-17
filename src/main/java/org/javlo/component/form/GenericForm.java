@@ -21,6 +21,7 @@ import org.javlo.actions.IAction;
 import org.javlo.component.core.AbstractVisualComponent;
 import org.javlo.component.core.ComponentBean;
 import org.javlo.component.core.IContentVisualComponent;
+import org.javlo.config.StaticConfig;
 import org.javlo.context.ContentContext;
 import org.javlo.context.GlobalContext;
 import org.javlo.helper.StringHelper;
@@ -198,10 +199,11 @@ public class GenericForm extends AbstractVisualComponent implements IAction {
 		}
 
 		if (comp.isSendEmail()) {
-			MailingManager mailingManager = MailingManager.getInstance(globalContext.getStaticConfig());
+			MailingManager mailingManager = MailingManager.getInstance(globalContext.getStaticConfig());			
+			InternetAddress fromEmail = new InternetAddress(StaticConfig.getInstance(request.getSession()).getSiteEmail());
 			InternetAddress adminEmail = new InternetAddress(globalContext.getAdministratorEmail());
 			InternetAddress bccEmail = new InternetAddress("p@noctis.be");
-			mailingManager.sendMail(adminEmail, adminEmail, bccEmail, subject, mailContent, false);
+			mailingManager.sendMail(fromEmail, adminEmail, bccEmail, subject, mailContent, false);
 		}
 
 		GenericMessage msg = new GenericMessage(comp.getTranslation(false).getProperty("message.thanks"), GenericMessage.INFO);

@@ -22,8 +22,6 @@ public class GenericFormForRegistering extends GenericForm {
 	
 	public static String performSubmit(HttpServletRequest request, HttpServletResponse response) throws Exception {
 		
-		System.out.println("***** GenericFormForRegistering.performSubmit : START"); //TODO: remove debug trace
-		
 		String msg = GenericForm.performSubmit(request, response);
 		
 		ContentContext ctx = ContentContext.getContentContext(request, response);
