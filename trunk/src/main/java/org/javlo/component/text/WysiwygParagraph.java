@@ -5,6 +5,7 @@ package org.javlo.component.text;
 
 import java.util.List;
 
+import org.javlo.component.core.AbstractVisualComponent;
 import org.javlo.context.ContentContext;
 import org.javlo.context.GlobalContext;
 import org.javlo.service.RequestService;
@@ -14,7 +15,7 @@ import org.javlo.utils.SuffixPrefix;
 /**
  * @author pvandermaesen
  */
-public class WysiwygParagraph extends Paragraph {
+public class WysiwygParagraph extends AbstractVisualComponent {
 
 	@Override
 	protected String getEditXHTMLCode(ContentContext ctx) throws Exception {
@@ -43,7 +44,7 @@ public class WysiwygParagraph extends Paragraph {
 	public String getViewXHTMLCode(ContentContext ctx) throws Exception {
 		GlobalContext globalContext = GlobalContext.getInstance(ctx.getRequest());
 		ReverseLinkService reverserLinkService = ReverseLinkService.getInstance(globalContext);
-		return reverserLinkService.replaceLink(ctx, getContent(ctx));
+		return reverserLinkService.replaceLink(ctx, getValue());
 	}
 
 	@Override

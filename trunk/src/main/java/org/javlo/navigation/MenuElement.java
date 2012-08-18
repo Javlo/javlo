@@ -63,11 +63,10 @@ import org.javlo.service.PersistenceService;
 import org.javlo.service.exception.ServiceException;
 import org.javlo.service.resource.Resource;
 import org.javlo.utils.TimeRange;
-import org.javlo.ztatic.IStaticContainer;
-import org.javlo.ztatic.StaticInfo;
-
 import org.javlo.xml.NodeXML;
 import org.javlo.xml.XMLFactory;
+import org.javlo.ztatic.IStaticContainer;
+import org.javlo.ztatic.StaticInfo;
 
 /**
  * @author pvanderm
@@ -88,7 +87,7 @@ public class MenuElement implements Serializable {
 		private String url;
 		private String path;
 		private boolean selected = false;		
-		private boolean lastSelected = false;
+		private boolean lastSelected = false;		
 		private List<PageBean> children = new LinkedList<PageBean>();
 		private List<PageBean> realChildren = new LinkedList<PageBean>();
 		private String name = null;
@@ -185,8 +184,7 @@ public class MenuElement implements Serializable {
 		}
 		public void setId(String id) {
 			this.id = id;
-		}
-		
+		}		
 	}
 
 	/**
@@ -2037,6 +2035,9 @@ public class MenuElement implements Serializable {
 		pageBean.setTemplateId(getTemplateId());
 		pageBean.setSelected(isSelected(ctx));
 		pageBean.setLastSelected(isLastSelected(ctx));
+		/*if (getParent() != null) {
+			pageBean.parent = getParent().getPageBean(ctx);
+		}*/
 		List<MenuElement> children = getChildMenuElementsList();
 		for (MenuElement child : children) {
 			pageBean.addChild(child.getPageBean(ctx));

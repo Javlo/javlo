@@ -58,6 +58,7 @@ org.javlo.component.gadget.CountAccess
 org.javlo.component.gadget.CountTool
 org.javlo.component.form.Contact
 org.javlo.component.form.GenericForm
+org.javlo.component.list.FAQComponent
 
 --content.title.special
 
