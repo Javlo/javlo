@@ -21,8 +21,7 @@ public class LinkToRenderer extends Link {
 	public LinkToRenderer(String label, String name, String renderer) {
 		super("?webaction=changeRenderer&page="+name, label, label);
 		this.renderer = renderer;
-		this.name = name;
-		
+		this.name = name;		
 	}	
 	public LinkToRenderer(String label, String name, String renderer, Map params) {
 		super("?webaction=changeRenderer&page="+name, label, label);		

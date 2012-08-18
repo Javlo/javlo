@@ -41,6 +41,9 @@ public class InfoBean {
 		InfoBean info = new InfoBean();
 		MenuElement currentPage = ctx.getCurrentPage();
 		info.setPage(currentPage.getPageBean(ctx));		
+		if (currentPage.getParent() != null) {
+			info.setParent(currentPage.getParent().getPageBean(ctx));
+		}
 		ContentService content = ContentService.createContent(ctx.getRequest());
 		info.setRoot(content.getNavigation(ctx).getPageBean(ctx));
 		info.setPageTitle(currentPage.getTitle(ctx));
@@ -140,6 +143,7 @@ public class InfoBean {
 	private Collection<String> languages;
 	private Collection<String> roles;
 	private MenuElement.PageBean page = null;
+	private MenuElement.PageBean parent = null;
 	private MenuElement.PageBean root = null;
 	private List<MenuElement.PageBean> pagePath = new LinkedList<MenuElement.PageBean>();
 	
@@ -420,5 +424,13 @@ public class InfoBean {
 
 	public void setRoles(Collection<String> roles) {
 		this.roles = roles;
+	}
+
+	public MenuElement.PageBean getParent() {
+		return parent;
+	}
+
+	public void setParent(MenuElement.PageBean parent) {
+		this.parent = parent;
 	}
 }

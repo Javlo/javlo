@@ -766,6 +766,11 @@ h2.prize {
 	border-bottom: 1px solid #a6c0de;
 }
 
+.leftmenu li li.current a {
+	border-left: 1px solid #a6c0de;
+}
+
+
 .leftmenu li a.form {
 	background-image: url(../images/icons/form.png);
 	background-repeat: no-repeat;
