@@ -280,7 +280,7 @@ public class ComponentFactory {
 		IContentVisualComponent[] components = getComponents(ctx);
 		AbstractVisualComponent component = null;
 		for (int i = 0; i < components.length; i++) {
-			if (components[i] != null && bean != null) {
+			if (components[i] != null && bean != null && components[i].getType() != null) {
 				if (components[i].getType().equals(bean.getType())) {
 					IContentVisualComponent newComp = components[i].newInstance(bean, ctx);
 					component = (AbstractVisualComponent) newComp;
