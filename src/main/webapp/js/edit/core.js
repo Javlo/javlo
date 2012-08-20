@@ -90,7 +90,7 @@ jQuery.fn.extend({
 			shadowContainer.addClass("shadow-input-container");
 			shadowContainer.hide();
 			parent.before(shadowContainer);
-			parent.find(":input").each(function() {
+			parent.find(":checkbox, :radio, :text, select").each(function() {
 				var input = jQuery(this);
 				var shadowInput = input.clone(false);
 				shadowInput.addClass("shadow-input-clone");
@@ -99,7 +99,7 @@ jQuery.fn.extend({
 				input.addClass("shadow-input-target");
 				input.removeAttr("name");
 				var refreshShadow = function(e) {
-					if (input.is("[type=checkbox]") || input.is("[type=radio]")) {
+					if (input.is(":checkbox, :radio")) {
 						shadowInput.prop("checked", input.prop("checked"));
 					//TODO } else if (input.is("select[multiple=multiple]")) {
 					} else {
