@@ -81,3 +81,39 @@ jQuery(document).ready(function() {
 	});
 	
 });
+
+jQuery.fn.extend({
+	shadowInputs : function() {
+		this.each(function() {
+			var parent = jQuery(this);
+			var shadowContainer = jQuery("<div></div>");
+			shadowContainer.addClass("shadow-input-container");
+			shadowContainer.hide();
+			parent.before(shadowContainer);
+			parent.find(":input").each(function() {
+				var input = jQuery(this);
+				var shadowInput = input.clone(false);
+				shadowInput.addClass("shadow-input-clone");
+				shadowInput.removeAttr("id");
+				shadowInput.appendTo(shadowContainer);
+				input.addClass("shadow-input-target");
+				input.removeAttr("name");
+				var refreshShadow = function(e) {
+					if (input.is("[type=checkbox]") || input.is("[type=radio]")) {
+						shadowInput.prop("checked", input.prop("checked"));
+					//TODO } else if (input.is("select[multiple=multiple]")) {
+					} else {
+						shadowInput.val(input.val());
+					}
+				};
+				input.click(refreshShadow);
+				input.change(refreshShadow);
+				input.keypress(refreshShadow);
+				input.keydown(refreshShadow);
+				input.keyup(refreshShadow);
+			});
+			
+		});
+		return this;
+	}
+});
