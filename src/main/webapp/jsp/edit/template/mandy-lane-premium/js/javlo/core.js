@@ -116,6 +116,10 @@ function queryIM(submitted) {
 	var form = jQuery(".im-form");
 	var imNotify = jQuery(".messagenotify");
 	var url = imNotify.attr('href');
+	if (url == null) {
+		//Link not present, so the chat is disabled
+		return;
+	}
 	var datas;
 	if (submitted) {
 		datas = form.serializeArray();
