@@ -61,7 +61,7 @@
 
 <script type="text/javascript">
 jQuery(document).ready(function() {
-	jQuery('#sitelist').dataTable( {
+	jQuery('#sitelist').shadowInputs().dataTable( {
 		 "sPaginationType": "full_numbers",
 		 "aaSorting": [[ 2, "desc" ]],
 		 "aoColumns": [
