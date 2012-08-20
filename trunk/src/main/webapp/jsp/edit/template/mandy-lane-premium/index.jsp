@@ -40,6 +40,7 @@
 <script type="text/javascript" src="${info.editTemplateURL}/js/plugins/jquery.jgrowl.js"></script>
 <script type="text/javascript" src="${info.editTemplateURL}/js/plugins/jquery.dataTables.min.js"></script>
 <script type="text/javascript" src="${info.editTemplateURL}/js/plugins/jquery.form.js"></script>
+<script type="text/javascript" src="${info.editTemplateURL}/js/plugins/jquery.elastic.source.js"></script>
 <script type="text/javascript" src="${info.editTemplateURL}/js/javlo/core.js"></script>
 <script type="text/javascript" src="${info.editTemplateURL}/js/custom/gallery.js"></script>
 <script type="text/javascript" src="<jv:url value='/js/edit/ajax.js' />"></script>

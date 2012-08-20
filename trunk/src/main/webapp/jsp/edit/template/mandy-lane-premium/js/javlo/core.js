@@ -57,6 +57,13 @@ jQuery(document).bind("ajaxUpdate",function () {
 	} else {
 		notifCount.show();
 	}
+	
+	var touchedAutogrow = "touched-autogrow"
+	jQuery(".autogrow")
+		.not("."+touchedAutogrow)
+		.addClass(touchedAutogrow)
+		.css("resize", "none")
+		.elastic();
 });
 
 function fullHeight() {

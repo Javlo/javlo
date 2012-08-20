@@ -23,10 +23,12 @@ import org.javlo.actions.AbstractModuleAction;
 import org.javlo.component.core.ComponentFactory;
 import org.javlo.component.core.IContentVisualComponent;
 import org.javlo.component.core.MetaTitle;
+import org.javlo.config.StaticConfig;
 import org.javlo.context.ContentContext;
 import org.javlo.context.EditContext;
 import org.javlo.context.GlobalContext;
 import org.javlo.context.GlobalContextFactory;
+import org.javlo.helper.DebugHelper;
 import org.javlo.helper.LangHelper;
 import org.javlo.helper.PatternHelper;
 import org.javlo.helper.StringHelper;
@@ -471,6 +473,9 @@ public class AdminAction extends AbstractModuleAction {
 				currentModule.restoreRenderer();
 				currentModule.restoreToolsRenderer();
 			}
+		} else if (request.getAttribute("config_content") != null) {
+			currentModule.setRenderer("/jsp/config.jsp");
+			currentModule.setToolsRenderer(null);
 		} else {
 			currentModule.restoreRenderer();
 			currentModule.restoreToolsRenderer();
@@ -859,6 +864,35 @@ public class AdminAction extends AbstractModuleAction {
 			return "context not found : " + siteName;
 		}
 		return null;
+	}
+
+	public static final String performEditStaticConfig(HttpServletRequest request, RequestService requestService, ContentContext ctx, Module currentModule, StaticConfig staticConfig) throws FileNotFoundException, IOException, NoSuchMethodException, ClassNotFoundException, IllegalArgumentException,
+			InstantiationException,
+			IllegalAccessException, InvocationTargetException {
+		request.setAttribute("config_content", staticConfig.getAllProperties());
+		String uri = request.getRequestURI();
+		currentModule.pushBreadcrumb(new Module.HtmlLink(uri, I18nAccess.getInstance(request).getText("admin.edit-static-config"), ""));
+		return null;
+	}
+
+	public static String performUpdateStaticConfig(RequestService requestService, HttpServletRequest request, ContentContext ctx, MessageRepository messageRepository, I18nAccess i18nAccess, Module currentModule, StaticConfig staticConfig) throws Exception {
+		String msg = null;
+		if (requestService.getParameter("back", null) != null) {
+			currentModule.restoreRenderer();
+			currentModule.restoreToolsRenderer();
+			//currentModule.clearBreadcrump();
+			//currentModule.pushBreadcrumb(new Module.HtmlLink(URLHelper.createURL(ctx), i18nAccess.getText("global.home"), ""));
+		} else {
+			String newContent = requestService.getParameter("config_content", null);
+			if (newContent != null) {
+				request.setAttribute("config_content", newContent);
+				staticConfig.storeAllProperties(newContent);
+				messageRepository.setGlobalMessage(new GenericMessage(i18nAccess.getText("admin.message.static-config-update"), GenericMessage.INFO));
+
+				DebugHelper.updateLoggerLevel(request.getSession().getServletContext());
+			}
+		}
+		return msg;
 	}
 
 }
