@@ -28,7 +28,7 @@ public abstract class AbstractModuleAction implements IModuleAction {
 		getModuleContext(ctx.getRequest().getSession(), modulesContext.getCurrentModule()); // load module context
 		GlobalContext globalContext = GlobalContext.getInstance(ctx.getRequest());
 		I18nAccess i18nAccess = I18nAccess.getInstance(ctx.getRequest());
-		if (i18nAccess.getCurrentModule().equals(modulesContext.getCurrentModule())) {
+		if (i18nAccess.getCurrentModule() == null || i18nAccess.getCurrentModule().equals(modulesContext.getCurrentModule())) {
 			i18nAccess.setCurrentModule(globalContext, modulesContext.getCurrentModule());			
 		}
 		if (isLightInterface(ctx)) {

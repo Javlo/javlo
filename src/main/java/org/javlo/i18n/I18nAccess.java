@@ -121,7 +121,7 @@ public class I18nAccess implements Serializable {
 	 */
 	public static final I18nAccess getInstance(GlobalContext globalContext, HttpSession session) throws FileNotFoundException, IOException {
 		I18nAccess i18nAccess = (I18nAccess) session.getAttribute(SESSION_KEY);
-		if (i18nAccess == null) {
+		if (i18nAccess == null || !i18nAccess.getContextKey().equals(globalContext.getContextKey())) {
 			i18nAccess = new I18nAccess(globalContext);
 			session.setAttribute(SESSION_KEY, i18nAccess);
 		}
@@ -166,6 +166,8 @@ public class I18nAccess implements Serializable {
 	private I18nResource i18nResource = null;
 
 	private Module currentModule;
+	
+	private String contextKey;
 
 	public void setCurrentModule(GlobalContext globalContext, Module currentModule) throws IOException {
 		if (!currentModule.equals(this.currentModule)) {
@@ -183,6 +185,7 @@ public class I18nAccess implements Serializable {
 		servletContext = globalContext.getServletContext();
 		PropertiesConfiguration.setDelimiter((char) 0);
 		i18nResource = I18nResource.getInstance(globalContext);
+		contextKey = globalContext.getContextKey();
 	};
 
 	public void changeViewLanguage(ContentContext ctx) throws ServiceException, Exception {
@@ -544,6 +547,14 @@ public class I18nAccess implements Serializable {
 				templateView = template.getI18nProperties(globalContext, new Locale(ctx.getLanguage()));
 			}
 		}
+	}
+
+	public String getContextKey() {
+		return contextKey;
+	}
+
+	public void setContextKey(String contextKey) {
+		this.contextKey = contextKey;
 	}
 
 }

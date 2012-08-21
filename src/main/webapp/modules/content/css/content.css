@@ -160,3 +160,22 @@ ul.menu {
 	text-align: center;
 }
 
+.navigation .parent a {	
+	margin-left: 15px;
+	padding-left: 10px;	
+	background-image: url("images/back.png");
+    background-position: 0 center;
+    background-repeat: no-repeat;
+}
+
+li.line {
+	width: 160px;
+	display: inline-block;
+}
+
+.component li.line label {
+    float: none;
+    width: auto;
+    display: inline-block;
+    margin-left: 10px;
+}
