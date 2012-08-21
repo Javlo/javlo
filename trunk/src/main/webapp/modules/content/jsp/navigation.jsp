@@ -6,7 +6,10 @@
 	<c:set var="page" value="${info.parent}" />
 </c:if>
 
-<ul class="navigation">	
+<ul class="navigation">
+	<c:if test="${not empty info.parent && page.url eq info.currentURL}">
+		<li class="parent"><a href="${info.parent.url}">${info.parent.info.title}</a></li>
+	</c:if>
 	<li class="${page.url eq info.currentURL?'current ':''}">	
 		<a class="editor" title="parent page" href="<c:url value="${page.url}" />">${page.info.title}</a>
 	</li>

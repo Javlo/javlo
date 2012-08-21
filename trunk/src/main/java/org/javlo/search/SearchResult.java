@@ -15,8 +15,6 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.logging.Logger;
 
-import javax.servlet.http.HttpServletRequest;
-
 import org.apache.commons.lang.StringUtils;
 import org.javlo.component.core.ContentElementList;
 import org.javlo.component.core.IContentVisualComponent;
@@ -64,6 +62,13 @@ public class SearchResult {
 			return -o1.getDate().compareTo(o2.getDate());
 		}
 
+	}
+	
+	public class PriorityComporator implements Comparator<SearchElement> {
+		@Override
+		public int compare(SearchElement o1, SearchElement o2) {
+			return - (o1.getPriority() - o2.getPriority());
+		}
 	}
 
 	public static class SearchElement {
@@ -287,6 +292,8 @@ public class SearchResult {
 	public List<SearchElement> getSearchResult() {
 		if (SORT_DATE.equals(getSort())) {
 			Collections.sort(result, new DateComporator());
+		} else if (SORT_RELEVANCE.equals(getSort())) {
+			Collections.sort(result, new PriorityComporator());
 		}
 		return result;
 	}
