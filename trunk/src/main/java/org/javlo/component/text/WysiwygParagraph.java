@@ -58,5 +58,10 @@ public class WysiwygParagraph extends AbstractVisualComponent {
 		String content = requestService.getParameter(getContentName(), "");		
 		super.performEdit(ctx);
 	}
+	
+	@Override
+	public boolean isRealContent(ContentContext ctx) {
+		return getValue().trim().length() > 0;
+	}
 
 }

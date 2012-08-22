@@ -52,17 +52,19 @@ public class CreateChildrenStructureMacro extends AbstractMacro {
 		return "create-children-site-structure-here";
 	}
 	
-	public String perform(ContentContext ctx, Map<String, Object> params) throws Exception {
+	public String perform(ContentContext inCtx, Map<String, Object> params) throws Exception {
 		
-		MenuElement currentPage = ctx.getCurrentPage();
+		ContentContext localCtx = new ContentContext(inCtx);
 		
-		Template template = ctx.getCurrentTemplate();
+		MenuElement currentPage = localCtx.getCurrentPage();
+		
+		Template template = localCtx.getCurrentTemplate();
 		if (template != null) {
-			GlobalContext globalContext = GlobalContext.getInstance(ctx.getRequest());
+			GlobalContext globalContext = GlobalContext.getInstance(localCtx.getRequest());
 			File structureFile = template.getMacroFile(globalContext, STRUCTURE_FILE_NAME);
 			if (!structureFile.exists()) {
 				String msg = "file not found "+STRUCTURE_FILE_NAME+" in template : "+template.getName();
-				MessageRepository.getInstance(ctx).setGlobalMessage(new GenericMessage(msg, GenericMessage.ERROR));
+				MessageRepository.getInstance(localCtx).setGlobalMessage(new GenericMessage(msg, GenericMessage.ERROR));
 				return null;
 			}
 			
@@ -77,24 +79,24 @@ public class CreateChildrenStructureMacro extends AbstractMacro {
 				} else if (line.startsWith("<")) {
 					if (page == currentPage) {
 						String msg = "bad structure in file "+STRUCTURE_FILE_NAME+" you can ask the parent of the current page. (use '<' only after '>').";
-						MessageRepository.getInstance(ctx).setGlobalMessage(new GenericMessage(msg, GenericMessage.ERROR));
+						MessageRepository.getInstance(localCtx).setGlobalMessage(new GenericMessage(msg, GenericMessage.ERROR));
 						return null;						
 					}
 					parent = page.getParent().getParent();
 				} else if (line.startsWith("=")) {
 					parent = page.getParent();
 				} else if (line.toLowerCase().startsWith("c:")) {					
-					line = line.substring(2);					
+					line = line.substring(2);
 					line = line.replace("[parent]", parent.getName());
 					line = line.replace("[random]", StringHelper.getRandomId());
 					line = line.replace("[root]", currentPage.getName());
 					line = line.replace("[CR]","\r\n");
 					logger.info("create content : "+line);
-					MacroHelper.insertContent(ctx, page, line);
+					MacroHelper.insertContent(localCtx, page, line);
 					parent = null;
 				} else {
 					String msg = "bad structure in file "+STRUCTURE_FILE_NAME+" all lines must start with : '>','<','=' or 'c:'.";
-					MessageRepository.getInstance(ctx).setGlobalMessage(new GenericMessage(msg, GenericMessage.ERROR));
+					MessageRepository.getInstance(localCtx).setGlobalMessage(new GenericMessage(msg, GenericMessage.ERROR));
 					return null;
 				}
 				if (parent != null) {
@@ -103,14 +105,14 @@ public class CreateChildrenStructureMacro extends AbstractMacro {
 					line = line.replace("[random]", StringHelper.getRandomId());
 					line = line.replace("[root]", currentPage.getName());
 					logger.info("create page : "+line);
-					page = MacroHelper.addPageIfNotExist(ctx, parent, line, false, false);
+					page = MacroHelper.addPageIfNotExist(localCtx, parent, line, false, false);
 				}
 				line = reader.readLine();				
 			}
 			reader.close();
 			
 			PersistenceService persistenceService = PersistenceService.getInstance(globalContext);
-			persistenceService.store(ctx);
+			persistenceService.store(localCtx);
 
 		}
 		
