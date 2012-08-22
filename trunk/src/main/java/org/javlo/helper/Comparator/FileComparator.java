@@ -11,7 +11,7 @@ import java.util.Comparator;
  *
  * This class is used for sort a array of File. 
  */
-public class FileComparator implements Comparator {
+public class FileComparator implements Comparator<File> {
 	
 	public static final int NAME = 1;
 	public static final int LASTMODIFIED = 2;
@@ -28,9 +28,7 @@ public class FileComparator implements Comparator {
 	/**
 	 * compare two array of Comparable
 	 */
-	public int compare(Object inFile1, Object inFile2) {
-		File file1 = (File)inFile1;
-		File file2 = (File)inFile2;
+	public int compare(File file1, File file2) {
 		switch (sortType) {
 		case NAME:
 			if (ascending) {

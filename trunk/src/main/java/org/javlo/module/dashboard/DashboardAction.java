@@ -1,11 +1,13 @@
 package org.javlo.module.dashboard;
 
 import java.util.Calendar;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.Hashtable;
-import java.util.LinkedHashMap;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
+import java.util.Map.Entry;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
@@ -15,8 +17,11 @@ import org.javlo.context.ContentContext;
 import org.javlo.context.GlobalContext;
 import org.javlo.context.StatContext;
 import org.javlo.helper.LangHelper;
+import org.javlo.helper.LangHelper.ListBuilder;
+import org.javlo.helper.LangHelper.ObjectBuilder;
 import org.javlo.helper.NetHelper;
 import org.javlo.helper.TimeHelper;
+import org.javlo.helper.URLHelper;
 import org.javlo.i18n.I18nAccess;
 import org.javlo.message.MessageRepository;
 import org.javlo.module.core.ModulesContext;
@@ -53,14 +58,48 @@ public class DashboardAction extends AbstractModuleAction {
 		StatContext statCtx = StatContext.getInstance(request);
 
 		if (type.equals("languages")) {
-			Map<String, Map<String, Object>> ajaxMap = new LinkedHashMap<String, Map<String, Object>>();
-			Map<String, Integer> languages = tracker.getLanguage(statCtx);			
-			int i = 0;
-			for (String lang : languages.keySet()) {				
-				ajaxMap.put("" + i, LangHelper.obj(new LangHelper.MapEntry("label", lang),new LangHelper.MapEntry("data", languages.get(lang)) ));
-				i++;
+			ObjectBuilder ajaxMap = LangHelper.object();
+			List<Entry<String, Integer>> languages = new LinkedList<Map.Entry<String, Integer>>(tracker.getLanguage(statCtx).entrySet());
+			Collections.sort(languages, new Comparator<Entry<String, Integer>>() {
+				@Override
+				public int compare(Entry<String, Integer> o1, Entry<String, Integer> o2) {
+					return o1.getValue().compareTo(o2.getValue());
+				}
+			});
+			ListBuilder datas = ajaxMap.list("datas");
+			ListBuilder labels = ajaxMap.list("labels");
+			for (Entry<String, Integer> lang : languages) {
+				labels.add(lang.getKey());
+				datas.add(lang.getValue());
 			}
-			ctx.setAjaxMap(ajaxMap);
+			ctx.setAjaxMap(ajaxMap.getMap());
+		} else if (type.equals("referer")) {
+			ObjectBuilder ajaxMap = LangHelper.object();
+			List<Entry<String, Integer>> referers = new LinkedList<Entry<String, Integer>>(tracker.getReferer(statCtx).entrySet());
+			String currentHost = URLHelper.extractHost(request.getRequestURL().toString());
+			Collections.sort(referers, new Comparator<Entry<String, Integer>>() {
+				@Override
+				public int compare(Entry<String, Integer> o1, Entry<String, Integer> o2) {
+					return -o1.getValue().compareTo(o2.getValue());
+				}
+			});
+			int otherCount = 0;
+			ListBuilder datas = ajaxMap.list("datas");
+			for (Entry<String, Integer> referer : referers) {
+				if (!referer.getKey().equals(currentHost) && !referer.getKey().equals("unknown")) {
+					if (datas.getList().size() < 10) {
+						datas.addList()
+								.add(referer.getKey())
+								.add(referer.getValue());
+					} else {
+						otherCount += referer.getValue();
+					}
+				}
+			}
+			if (otherCount > 0) {
+				datas.addList().add("other").add(otherCount);
+			}
+			ctx.setAjaxMap(ajaxMap.getMap());
 		} else if (type.equals("charge")) {
 			Map<Object, Object> ajaxMap = new Hashtable<Object, Object>();
 			Calendar start = Calendar.getInstance();

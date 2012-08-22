@@ -1,6 +1,8 @@
 package org.javlo.helper;
 
 import java.util.LinkedHashMap;
+import java.util.LinkedList;
+import java.util.List;
 import java.util.Map;
 
 import javax.servlet.ServletContext;
@@ -165,6 +167,68 @@ public class LangHelper {
 			}
 		}
 		return out;
+	}
+
+	public static ObjectBuilder object() {
+		return new ObjectBuilder();
+	}
+
+	public static ListBuilder list() {
+		return new ListBuilder();
+	}
+
+	public static class ObjectBuilder {
+
+		Map<String, Object> map = new LinkedHashMap<String, Object>();
+
+		public ObjectBuilder prop(String name, Object value) {
+			map.put(name, value);
+			return this;
+		}
+
+		public ObjectBuilder child(String name) {
+			ObjectBuilder child = new ObjectBuilder();
+			prop(name, child.getMap());
+			return child;
+		}
+
+		public ListBuilder list(String name) {
+			ListBuilder child = new ListBuilder();
+			prop(name, child.getList());
+			return child;
+		}
+
+		public Map<String, Object> getMap() {
+			return map;
+		}
+
+	}
+
+	public static class ListBuilder {
+
+		List<Object> list = new LinkedList<Object>();
+
+		public ListBuilder add(Object value) {
+			list.add(value);
+			return this;
+		}
+
+		public ObjectBuilder addObject() {
+			ObjectBuilder item = new ObjectBuilder();
+			add(item.getMap());
+			return item;
+		}
+
+		public ListBuilder addList() {
+			ListBuilder item = new ListBuilder();
+			add(item.getList());
+			return item;
+		}
+
+		public List<Object> getList() {
+			return list;
+		}
+
 	}
 
 }

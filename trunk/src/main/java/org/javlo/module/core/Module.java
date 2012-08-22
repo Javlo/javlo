@@ -3,6 +3,7 @@ package org.javlo.module.core;
 import java.io.File;
 import java.io.FileReader;
 import java.io.IOException;
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -23,6 +24,7 @@ import org.javlo.context.GlobalContext;
 import org.javlo.helper.AjaxHelper;
 import org.javlo.helper.StringHelper;
 import org.javlo.helper.URLHelper;
+import org.javlo.helper.Comparator.FileComparator;
 import org.javlo.user.User;
 import org.javlo.utils.ReadOnlyPropertiesMap;
 
@@ -324,6 +326,7 @@ public class Module {
 		File cssFolder = new File(URLHelper.mergePath(moduleRoot.getAbsolutePath(), CSS_FOLDER));
 		if (cssFolder.isDirectory()) {
 			File[] cssFiles = cssFolder.listFiles();
+			Arrays.sort(cssFiles, new FileComparator(FileComparator.NAME, true));
 			for (File file : cssFiles) {
 				if (file.isFile() && StringHelper.getFileExtension(file.getName()).equalsIgnoreCase("css")) {					
 					cssURI.add(URLHelper.mergePath("/", URIPrefix, ModulesContext.MODULES_FOLDER + '/' + getName() + '/' + CSS_FOLDER + '/' + file.getName()));
@@ -335,6 +338,7 @@ public class Module {
 		File jsFolder = new File(URLHelper.mergePath(moduleRoot.getAbsolutePath(), JS_FOLDER));
 		if (jsFolder.isDirectory()) {
 			File[] jspFiles = jsFolder.listFiles();
+			Arrays.sort(jspFiles, new FileComparator(FileComparator.NAME, true));
 			for (File file : jspFiles) {
 				if (file.isFile() && StringHelper.getFileExtension(file.getName()).equalsIgnoreCase("js")) {
 					jsURI.add(URLHelper.mergePath("/",URIPrefix,ModulesContext.MODULES_FOLDER + '/' + getName() + '/' + JS_FOLDER + '/' + file.getName()));
