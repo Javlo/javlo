@@ -759,6 +759,11 @@ public class URLHelper extends ElementaryURLHelper {
 			}
 		}
 
+		int indPort = outName.lastIndexOf(':');
+		if (indPort >= 0) {
+			outName = outName.substring(0, indPort);
+		}
+
 		return outName;
 	}
 

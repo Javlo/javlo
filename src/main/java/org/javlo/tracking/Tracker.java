@@ -37,7 +37,6 @@ import org.javlo.servlet.ImageTransformServlet;
 import org.javlo.user.IUserFactory;
 import org.javlo.user.User;
 import org.javlo.user.UserFactory;
-import org.javlo.utils.TimeMap;
 import org.javlo.ztatic.StaticInfo;
 
 /**
@@ -326,38 +325,28 @@ public class Tracker {
 	}
 
 	/**
-	 * get the referer [0]:name [1]:count
+	 * get the referer count by name
 	 */
-	public String[][] getReferer(StatContext statCtx) {
+	public Map<String, Integer> getReferer(StatContext statCtx) {
 
 		Track[] tracks = getViewClickTracks(statCtx.getFrom(), statCtx.getTo());
-		Map<String, Integer> referer = new TreeMap<String, Integer>();
+		Map<String, Integer> referers = new TreeMap<String, Integer>();
 		for (Track track : tracks) {
-			String refererName = URLHelper.extractName(track.getRefered());
-			if (refererName.trim().length() > 0) {
-				Integer c = referer.get(refererName);
-				if (c == null) {
-					c = new Integer(0);
-				}
-				referer.put(refererName, new Integer(c.intValue() + 1));
+			String referer = track.getRefered();
+			if (referer.equals("null")) {
+				referer = "";
 			}
+			referer = URLHelper.extractHost(referer);
+			if (referer.trim().isEmpty()) {
+				referer = "unknown";
+			}
+			Integer c = referers.get(referer);
+			if (c == null) {
+				c = new Integer(0);
+			}
+			referers.put(referer, new Integer(c.intValue() + 1));
 		}
-		Collection<String[]> collection = new LinkedList<String[]>();
-		for (String refererName : referer.keySet()) {
-			boolean acceptedPath = true;
-			if (refererName.contains("localhost")) {
-				acceptedPath = false;
-			}
-			if (acceptedPath) {
-				String[] ref = new String[2];
-				ref[0] = refererName;
-				ref[1] = "" + referer.get(refererName);
-				collection.add(ref);
-			}
-		}
-		String[][] res = new String[collection.size()][];
-		collection.toArray(res);
-		return res;
+		return referers;
 	}
 
 	public int getResourcePathCountAccess(Date from, Date to, String path) {
