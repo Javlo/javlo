@@ -12,6 +12,7 @@ import java.util.Locale;
 
 import javax.servlet.http.HttpSession;
 
+import org.apache.commons.lang.StringUtils;
 import org.javlo.component.core.ComponentBean;
 import org.javlo.component.core.ContentElementList;
 import org.javlo.component.core.IContentVisualComponent;
@@ -536,7 +537,20 @@ public class MacroHelper {
 			if (splitItem.length > 1) {
 				value = splitItem[1].trim();
 			}
-			contentId = addContent(ctx.getRequestContentLanguage(), page, contentId, type, value);
+			String area =  ComponentBean.DEFAULT_AREA;
+			if (type.contains("(")) {
+				area = StringUtils.split(type, "(")[0];
+				type = StringUtils.split(type, "(")[1];
+				if (type.endsWith(")")) {
+					type = type.substring(0, type.length()-1);
+				}
+			}
+			String style = null;
+			if (type.contains("|")) {			
+				style = StringUtils.split(type, "|")[1];
+				type = StringUtils.split(type, "|")[0];					
+			}
+			contentId = addContent(ctx.getRequestContentLanguage(), page, contentId, type, style, area, value);
 		}
 	}
 
@@ -583,6 +597,28 @@ public class MacroHelper {
 
 	public static void setCurrentMacroDate(HttpSession session, Date date) {
 		session.setAttribute(MACRO_DATE_KEY, date);
+	}
+	
+	public static void main(String[] args) {
+		String type = "sidebar(page-reference)";
+		
+		String area =  ComponentBean.DEFAULT_AREA;
+		if (type.contains("(")) {
+			area = StringUtils.split(type, "(")[0];
+			type = StringUtils.split(type, "(")[1];
+			if (type.endsWith(")")) {
+				type = type.substring(0, type.length()-1);
+			}
+		}
+		String style = null;
+		if (type.contains("|")) {			
+			style = StringUtils.split(type, "|")[1];
+			type = StringUtils.split(type, "|")[0];					
+		}
+		
+		System.out.println("***** MacroHelper.main : type = "+type); //TODO: remove debug trace
+		System.out.println("***** MacroHelper.main : area = "+area); //TODO: remove debug trace
+		System.out.println("***** MacroHelper.main : style = "+style); //TODO: remove debug trace
 	}
 
 }

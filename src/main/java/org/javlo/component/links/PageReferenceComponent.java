@@ -1146,7 +1146,7 @@ public class PageReferenceComponent extends ComplexPropertiesLink implements IAc
 							}
 							pageBeans.add(PageBean.getInstance(lgCtx, page, this));
 						}
-					}
+					} 
 				}
 			}
 		}

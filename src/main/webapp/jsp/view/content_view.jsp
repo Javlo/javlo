@@ -23,6 +23,7 @@
 ContentContext ctx = ContentContext.getContentContext ( request, response );
 GlobalContext globalContext = GlobalContext.getInstance(request);
 PageConfiguration pageConfig = PageConfiguration.getInstance(globalContext);
+boolean pageEmpty = true;
 
 if (ctx.getRenderMode() == ContentContext.PREVIEW_MODE) {
 	%>
@@ -94,6 +95,7 @@ if ( !access ) {
 	}
 	boolean inContainer = false;
 	while (elems.hasNext(ctx)) {
+		pageEmpty = false;
 		elem = elems.next(ctx);
 		elem.clearReplacement();
 		elem.replaceAllInContent(replacement);
@@ -149,7 +151,7 @@ if ( !access ) {
 	}
 }
 
-%><div class="content_clear"><span>&nbsp;</span></div> <!-- end of float elems --><%
+if (!pageEmpty) {%><div class="content_clear"><span>&nbsp;</span></div> <!-- end of float elems --><%}
 }
 currentPage.endRendering(ctx);
 } /* end else getSpecialContentRenderer() */
