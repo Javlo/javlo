@@ -42,6 +42,16 @@
 </div>
 
 <div class="line">
+	<label for="page_visible">${i18n.edit['item.reference-language']}</label>	
+	<select id="reference-language" name="reference-language">
+		<option value="">${i18n.edit['global.auto']}</option>
+		<c:forEach var="lang" items="${info.contentLanguages}">
+		<option value="${lang}" ${page.info.referenceLanguage?'selected="selected"':''} >${lang}</option>
+		</c:forEach>
+	</select>
+</div>
+
+<div class="line">
 	<label>${i18n.edit['item.path']}</label>
 	<span>${page.path}</span>
 </div>

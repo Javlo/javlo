@@ -121,9 +121,6 @@ public class DynamicComponentList extends AbstractPropertiesComponent {
 			List<Field> fields = container.getFields(ctx);
 			for (Field field : fields) {
 				if (!fieldMatch(ctx, field.getName(),field.getValue(new Locale(ctx.getRequestContentLanguage())))) {
-					/*System.out.println("");
-					System.out.println("***** DynamicComponentList.getViewXHTMLCode : field.getName() = "+field.getName()); //TODO: remove debug trace
-					System.out.println("***** DynamicComponentList.getViewXHTMLCode : field.getValue() = "+field.getValue()); //TODO: remove debug trace*/
 					display = false;
 				}
 			}

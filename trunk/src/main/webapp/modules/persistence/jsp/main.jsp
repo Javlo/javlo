@@ -21,7 +21,15 @@
      <td class="con0">${persistence.date}</td>
      <td class="con1">${persistence.version}</td>
      <td class="con0">${persistence.type}</td>
-     <td class="con1">&nbsp;</td>             
+     <td class="con1"><c:if test="${persistence.type eq 'preview'}">
+     	<form id="restore-${persistence.version}" method="post">
+     		<div class="line action">
+     			<input type="hidden" name="webaction" value="restore" />
+     			<input type="hidden" name="version" value="${persistence.version}" />
+     			<input type="submit" class="warning needconfirm" value="${i18n.edit['persistence.title.restore']}" />
+     		</div>
+     	</form>
+     </c:if></td>             
  </tr>
  </c:forEach>
 </tbody>
