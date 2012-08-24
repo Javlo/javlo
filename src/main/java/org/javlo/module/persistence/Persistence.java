@@ -26,6 +26,7 @@ import org.javlo.navigation.MenuElement;
 import org.javlo.service.ContentService;
 import org.javlo.service.PersistenceService;
 import org.javlo.service.RequestService;
+import org.javlo.service.exception.ServiceException;
 import org.javlo.service.resource.Resource;
 import org.javlo.servlet.zip.ZipManagement;
 import org.javlo.xml.NodeXML;
@@ -137,6 +138,22 @@ public class Persistence extends AbstractModuleAction {
 		} else {
 			return "bad parameters : need 'import-url'.";
 		}
+		return null;
+	}
+	
+	public static String performRestore(RequestService rs, ContentContext ctx, ContentService content, GlobalContext globalContext, MessageRepository messageRepository, I18nAccess i18nAccess) throws Exception {
+		String newServiceStr = rs.getParameter("version", null);
+		if (newServiceStr == null) {
+			return "bad request structure : need 'version' parameter.";
+		}
+		int newVersion = Integer.parseInt(newServiceStr);
+		PersistenceService persistenceService = PersistenceService.getInstance(globalContext);
+		persistenceService.setVersion(newVersion);
+		
+		content.releasePreviewNav(ctx);		
+		
+		MessageRepository.getInstance(ctx).setGlobalMessageAndNotification(ctx,new GenericMessage(i18nAccess.getText("persistence.message.new-version", new String[][] {{"version",""+newVersion}}), GenericMessage.INFO));
+		
 		return null;
 	}
 

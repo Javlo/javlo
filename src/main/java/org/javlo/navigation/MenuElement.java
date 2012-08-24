@@ -222,6 +222,7 @@ public class MenuElement implements Serializable {
 		Boolean notInSearch = null;
 		int depth = 0;		
 		public boolean visible = false;
+		String referenceLanguage = null;
 		
 		public boolean isVisible() {
 			return visible;
@@ -385,6 +386,12 @@ public class MenuElement implements Serializable {
 		public void setNotInSearch(Boolean notInSearch) {
 			this.notInSearch = notInSearch;
 		}
+		public String getReferenceLanguage() {
+			return referenceLanguage;
+		}
+		public void setReferenceLanguage(String referenceLangugae) {
+			this.referenceLanguage = referenceLangugae;
+		}
 		
 		
 	};
@@ -528,6 +535,8 @@ public class MenuElement implements Serializable {
 	private String linkedURL = "";
 
 	private boolean https = false;
+	
+	private String referenceLanguage = null;
 
 	/**
 	 * protect page localy if there are linked with other website.
@@ -2021,6 +2030,7 @@ public class MenuElement implements Serializable {
 			pageDescription.title = getTitle(ctx);
 			pageDescription.depth = getDepth();
 			pageDescription.visible  = isVisible();
+			pageDescription.referenceLanguage = getReferenceLanguage();
 		
 		}
 		PageBean pageBean = new PageBean();
@@ -3167,6 +3177,14 @@ public class MenuElement implements Serializable {
 		}
 		
 		return desc.notInSearch;
+	}
+
+	public String getReferenceLanguage() {
+		return referenceLanguage;
+	}
+
+	public void setReferenceLanguage(String referenceLanguage) {
+		this.referenceLanguage = referenceLanguage;
 	}
 
 }
