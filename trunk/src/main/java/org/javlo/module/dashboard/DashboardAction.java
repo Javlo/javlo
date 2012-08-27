@@ -1,8 +1,11 @@
 package org.javlo.module.dashboard;
 
+import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Collections;
 import java.util.Comparator;
+import java.util.Date;
+import java.util.HashMap;
 import java.util.Hashtable;
 import java.util.LinkedList;
 import java.util.List;
@@ -161,6 +164,49 @@ public class DashboardAction extends AbstractModuleAction {
 				}
 			}
 			ctx.setAjaxMap(ajaxMap);
+		} else if (type.equals("visits")) {
+			ObjectBuilder ajaxMap = LangHelper.object();
+			Calendar start = Calendar.getInstance();
+			Calendar end = Calendar.getInstance();
+			Calendar cal = Calendar.getInstance();
+
+			start.add(Calendar.MONTH, -1);
+			end.add(Calendar.MILLISECOND, -1);
+
+			Map<String, Integer> clicksByHour = new HashMap<String, Integer>();
+			SimpleDateFormat sdf = new SimpleDateFormat("M/d/yyyy HH");
+			cal.setTime(start.getTime());
+			while (cal.before(end)) {
+				clicksByHour.put(sdf.format(cal.getTime()), 0);
+				cal.add(Calendar.HOUR_OF_DAY, 1);
+			}
+
+			Track[] tracks = tracker.getTracks(start.getTime(), end.getTime());
+			List<String> sessionIdFound = new LinkedList<String>();
+
+			for (int i = 1; i < tracks.length - 1; i++) {
+				if (!sessionIdFound.contains(tracks[i].getSessionId())) {
+					if (!NetHelper.isUserAgentRobot(tracks[i].getUserAgent())) {
+						Date time = new Date(tracks[i].getTime());
+						String key = sdf.format(time);
+						Integer clicks = (Integer) clicksByHour.get(key);
+						if (clicks == null) {
+							clicks = new Integer(0);
+						}
+						clicks = new Integer(clicks.intValue() + 1);
+						clicksByHour.put(key, clicks);
+					}
+					sessionIdFound.add(tracks[i].getSessionId());
+
+				}
+			}
+			ListBuilder datas = ajaxMap.list("datas");
+			for (Entry<String, Integer> hour : clicksByHour.entrySet()) {
+				datas.addList()
+						.add(hour.getKey() + ":00:00")
+						.add(hour.getValue());
+			}
+			ctx.setAjaxMap(ajaxMap.getMap());
 		} else {
 			return "bad type : " + type;
 		}
