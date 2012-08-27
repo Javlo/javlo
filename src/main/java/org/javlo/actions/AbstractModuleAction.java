@@ -10,6 +10,8 @@ import org.javlo.context.GlobalContext;
 import org.javlo.i18n.I18nAccess;
 import org.javlo.module.core.AbstractModuleContext;
 import org.javlo.module.core.Module;
+import org.javlo.module.core.Module.Box;
+import org.javlo.module.core.Module.BoxStep;
 import org.javlo.module.core.ModuleException;
 import org.javlo.module.core.ModulesContext;
 import org.javlo.service.RequestService;
@@ -61,7 +63,38 @@ public abstract class AbstractModuleAction implements IModuleAction {
 		}		
 		return "page not found : "+page;
 	}
-	
+
+	public String performWizard(ContentContext ctx, RequestService rs, Module currentModule, AbstractModuleContext moduleContext) throws Exception {
+		String boxName = rs.getParameter("box", null);
+		if (boxName == null) {
+			return "bad request structure: need 'box' parameter.";
+		}
+		Box b = currentModule.getBox(boxName);
+		if (b.getSteps() == null) {
+			return "the box '" + boxName + "' don't have wizard steps.";
+		}
+		boolean doNext = null != rs.getParameter("next", null);
+		boolean doPrevious = null != rs.getParameter("previous", null);
+		int step = moduleContext.getWizardStep(boxName);
+		if (doNext) {
+			step++;
+		} else if (doPrevious) {
+			step--;
+		}
+		step = Math.max(step, 1);
+		step = Math.min(step, b.getSteps().size());
+		moduleContext.setWizardStep(boxName, step);
+		BoxStep s = b.getSteps().get(step - 1);
+		b.setTitle(s.getTitle());
+		b.setRenderer(s.getRenderer());
+
+		if (ctx.isAjax()) {
+			b.update(ctx);
+		}
+		
+		return null;
+	}
+
 	@Override
 	public Boolean haveRight(HttpSession session, User user) throws ModuleException {
 		return null;
