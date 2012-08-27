@@ -144,6 +144,11 @@ public class Module {
 	public class Box {
 
 		private Box(String title, String renderer, boolean action) {
+			this(title, renderer, action, null);
+		}
+
+		private Box(String title, String renderer, boolean action, List<BoxStep> stepList) {
+			this.steps = stepList;
 			this.title = StringHelper.neverNull(title);
 			this.defaultTitle = this.title;
 			this.renderer = URLHelper.mergePath(path, renderer);
@@ -156,6 +161,7 @@ public class Module {
 		protected String renderer;
 		protected String id;
 		protected boolean action;
+		protected List<BoxStep> steps;
 
 		public String getTitle() {
 			return title;
@@ -207,6 +213,43 @@ public class Module {
 		public Module getModule() {
 			return Module.this;
 		}
+		
+		public List<BoxStep> getSteps() {
+			return steps;
+		}
+		
+	}
+
+	public class BoxStep {
+
+		private BoxStep(String title, String renderer) {
+			this.title = StringHelper.neverNull(title);
+			this.renderer = renderer;
+		}
+
+		protected String title;
+		protected String renderer;
+
+		public String getTitle() {
+			return title;
+		}
+
+		public String getRenderer() {
+			return renderer;
+		}
+
+		public void setTitle(String title) {
+			this.title = title;
+		}
+
+		public void setRenderer(String renderer) {
+			if (renderer != null) {
+				this.renderer = URLHelper.mergePath(path, renderer);
+			} else {
+				this.renderer = null;
+			}
+		}
+
 	}
 
 	private class NavigationBox extends Box {
@@ -410,44 +453,10 @@ public class Module {
 		}
 
 		/* box */
-		for (int i = 1; i < 100; i++) {
-			String boxBaseKey = "box.main." + i;
-			String renderer = config.get(boxBaseKey + ".renderer");
-
-			if (renderer != null) {
-				String boxTitle = config.get(boxBaseKey + ".title." + locale.getLanguage());
-				if (boxTitle == null) {
-					boxTitle = config.get(boxBaseKey + ".title");
-				}
-				Box box = new Box(boxTitle, renderer, StringHelper.isTrue(config.get(boxBaseKey + ".action")));
-				mainBoxes.add(box);
-				if (config.get(boxBaseKey + ".name") != null) {
-					boxes.put(config.get(boxBaseKey + ".name"), box);
-				}
-			} else {
-				break;
-			}
-		}
-
+		loadBoxes("box.main.", mainBoxes);
 		defaultMainBoxes = new LinkedList<Module.Box>(mainBoxes);
-		for (int i = 1; i < 100; i++) {
-			String boxBaseKey = "box.side." + i;
-			String renderer = config.get(boxBaseKey + ".renderer");
-			if (renderer != null) {
-				sidebar = true;
-				String boxTitle = config.get(boxBaseKey + ".title." + locale.getLanguage());
-				if (boxTitle == null) {
-					boxTitle = config.get(boxBaseKey + ".title");
-				}
-				Box box = new Box(boxTitle, renderer, StringHelper.isTrue(config.get(boxBaseKey + ".action")));
-				sideBoxes.add(box);
-				if (config.get(boxBaseKey + ".name") != null) {
-					boxes.put(config.get(boxBaseKey + ".name"), box);
-				}
-			} else {
-				break;
-			}
-		}
+		loadBoxes("box.side.", sideBoxes);
+		sidebar = sideBoxes.size() > 0;
 		defaultSideBoxes = new LinkedList<Module.Box>(sideBoxes);
 		defaultBoxes = new HashMap<String, Box>(boxes);
 
@@ -458,6 +467,50 @@ public class Module {
 				action = (IModuleAction) Class.forName(actionName).newInstance();
 			} catch (Exception e) {
 				e.printStackTrace();
+			}
+		}
+	}
+
+	private void loadBoxes(String prefix, Collection<Box> boxList) {
+		for (int i = 1; i < 100; i++) {
+			String boxBaseKey = prefix + i;
+			String renderer = config.get(boxBaseKey + ".renderer");
+			String stepRenderer = config.get(boxBaseKey + ".step1.renderer");
+
+			if (renderer != null || stepRenderer != null) {
+				List<BoxStep> stepList = new LinkedList<BoxStep>();
+				String boxTitle;
+				if (renderer != null) {
+					boxTitle = config.get(boxBaseKey + ".title." + locale.getLanguage());
+					if (boxTitle == null) {
+						boxTitle = config.get(boxBaseKey + ".title");
+					}
+				} else {
+					for (int j = 1; i < 100; j++) {
+						String stepBaseKey = boxBaseKey + ".step" + j;
+						stepRenderer = config.get(stepBaseKey + ".renderer");
+
+						if (stepRenderer != null) {
+							String stepTitle = config.get(stepBaseKey + ".title." + locale.getLanguage());
+							if (stepTitle == null) {
+								stepTitle = config.get(stepBaseKey + ".title");
+							}
+							stepList.add(new BoxStep(stepTitle, stepRenderer));
+						} else {
+							break;
+						}
+					}
+					BoxStep first = stepList.get(0);
+					renderer = first.getRenderer();
+					boxTitle = first.getTitle();
+				}
+				Box box = new Box(boxTitle, renderer, StringHelper.isTrue(config.get(boxBaseKey + ".action")), stepList);
+				boxList.add(box);
+				if (config.get(boxBaseKey + ".name") != null) {
+					boxes.put(config.get(boxBaseKey + ".name"), box);
+				}
+			} else {
+				break;
 			}
 		}
 	}

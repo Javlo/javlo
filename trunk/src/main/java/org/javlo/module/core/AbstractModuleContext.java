@@ -2,8 +2,10 @@ package org.javlo.module.core;
 
 import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Map;
 import java.util.logging.Logger;
 
 import javax.servlet.http.HttpSession;
@@ -29,6 +31,7 @@ public abstract class AbstractModuleContext {
 	protected GlobalContext globalContext;
 	private String currentLink;
 	private String renderer;
+	private Map<String, Integer> wizardStep = new HashMap<String, Integer>();
 
 	public static final AbstractModuleContext getInstance(HttpSession session, GlobalContext globalContext, Module module, Class<? extends AbstractModuleContext> implementationClass) throws FileNotFoundException, IOException, InstantiationException, IllegalAccessException {
 		final String KEY = implementationClass.getName() + '_' + globalContext.getContextKey();
@@ -116,6 +119,18 @@ public abstract class AbstractModuleContext {
 	
 	public void setRenderer(String renderer) {
 		this.renderer = renderer;
+	}
+
+	public int getWizardStep(String boxName) {
+		Integer out = wizardStep.get(boxName);
+		if (out == null) {
+			out = 1;
+		}
+		return out;
+	}
+
+	public void setWizardStep(String boxName, Integer wizardStep) {
+		this.wizardStep.put(boxName, wizardStep);
 	}
 
 }
