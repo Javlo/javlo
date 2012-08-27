@@ -1,7 +1,7 @@
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/functions" prefix="fn" %>
 <div class="content">
-<div id="visits-chart" class="pie" style="height: ${100 + (10 * fn:length(info.contentLanguages))}px;"></div>
+<div id="visits-chart" class="pie" style="height: 300px;"></div>
 </div>
 <script type="text/javascript">
 var url = "${info.currentURL}".replace("/edit/", "/ajax/")+"?webaction=dashboard.readTracker&type=visits";
