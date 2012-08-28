@@ -144,6 +144,7 @@ public class DynamicComponentList extends AbstractPropertiesComponent {
 	IFieldContainer getFieldContainer(ContentContext ctx) throws Exception {
 		GlobalContext globalContext = GlobalContext.getInstance(ctx.getRequest());
 		DynamicComponentService service = DynamicComponentService.getInstance(globalContext);
+		
 		ContentService content = ContentService.createContent(ctx.getRequest());
 		List<IFieldContainer> containers = service.getFieldContainers(ctx, content.getNavigation(ctx), getSelectedType());
 		if (containers.size() > 0) {
@@ -176,7 +177,7 @@ public class DynamicComponentList extends AbstractPropertiesComponent {
 	}
 
 	@Override
-	public boolean isRealContent(ContentContext ctx) {
+	public boolean isRealContent(ContentContext ctx) {		
 		if (realContent == null) {
 			try {
 				getViewXHTMLCode(ctx);
@@ -192,6 +193,9 @@ public class DynamicComponentList extends AbstractPropertiesComponent {
 	public boolean isContentCachable(ContentContext ctx) {
 		try {
 			IFieldContainer containers = getFieldContainer(ctx);
+			if (containers == null) {
+				return false;
+			}
 			List<Field> fields = containers.getFields(ctx);
 			for (Field field : fields) {
 				if (ctx.getRequest().getParameter(field.getName()) != null) {

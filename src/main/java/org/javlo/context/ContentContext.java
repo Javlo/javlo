@@ -380,7 +380,7 @@ public class ContentContext {
 			for (String lg : lgs) {
 				lgCtx.setLanguage(lg);
 				lgCtx.setRequestContentLanguage(lg);
-				if (getCurrentPage().isRealContent(lgCtx)) {
+				if (page.isRealContent(lgCtx)) {
 					return lgCtx;
 				}
 			}
