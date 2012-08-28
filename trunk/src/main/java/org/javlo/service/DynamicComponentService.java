@@ -34,21 +34,25 @@ public class DynamicComponentService {
 	}
 
 	public List<IFieldContainer> getFieldContainers(ContentContext ctx, MenuElement page, String fieldType) throws Exception {
-		MenuElement[] children = page.getAllChilds();
-		List<IFieldContainer> outContainer = new LinkedList<IFieldContainer>();
-		for (MenuElement child : children) {
-			ContentContext ctxWithContent = ctx.getContextWithContent(page);
-			if (ctxWithContent != null) {
-				List<IContentVisualComponent> content = child.getContentByType(ctxWithContent, fieldType);
-				for (IContentVisualComponent item : content) {
-					if (item instanceof IFieldContainer) {
-						outContainer.add((IFieldContainer) item);
-					} else {
-						throw new ServiceException("component : " + fieldType + " is not a IFieldContainer.");
+		String REQUEST_KEY = page.getPath() + "__TYPE__" + fieldType;
+		List<IFieldContainer> outContainer = (List<IFieldContainer>)ctx.getRequest().getAttribute(REQUEST_KEY);
+		if (outContainer == null) {			
+			MenuElement[] children = page.getAllChilds();
+			outContainer = new LinkedList<IFieldContainer>();
+			for (MenuElement child : children) {
+				ContentContext ctxWithContent = ctx.getContextWithContent(child);
+				if (ctxWithContent != null) {
+					List<IContentVisualComponent> content = child.getContentByType(ctxWithContent, fieldType);
+					for (IContentVisualComponent item : content) {
+						if (item instanceof IFieldContainer) {
+							outContainer.add((IFieldContainer) item);
+						} else {
+							throw new ServiceException("component : " + fieldType + " is not a IFieldContainer.");
+						}
 					}
 				}
 			}
-		}
+			ctx.getRequest().setAttribute(REQUEST_KEY, outContainer);			
 		return outContainer;
 	}
 
@@ -68,12 +72,15 @@ public class DynamicComponentService {
 		}
 
 		for (MenuElement child : children) {
-			content = child.getContent(noAreaCtx);
-			while (content.hasNext(noAreaCtx)) {
-				IContentVisualComponent comp = content.next(noAreaCtx);
-				if (comp instanceof DynamicComponent) {
-					if (!outContainer.contains(comp.getType())) {
-						outContainer.add(comp.getType());
+			ContentContext contextWithContent = noAreaCtx.getContextWithContent(child);
+			if (contextWithContent != null) { // if content exist in any language
+				content = child.getContent(contextWithContent);
+				while (content.hasNext(contextWithContent)) {
+					IContentVisualComponent comp = content.next(contextWithContent);
+					if (comp instanceof DynamicComponent) {
+						if (!outContainer.contains(comp.getType())) {
+							outContainer.add(comp.getType());
+						}
 					}
 				}
 			}

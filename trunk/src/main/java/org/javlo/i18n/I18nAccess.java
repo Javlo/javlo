@@ -56,7 +56,7 @@ public class I18nAccess implements Serializable {
 	static final String SESSION_KEY = "i18n";
 
 	static final String I18N_COUNTRIES_FILE_NAME = "/WEB-INF/i18n/countries_";
-	
+
 	public static final Properties FAKE_I18N_FILE = new Properties();
 
 	// static final String I18N_EDIT_FILE_NAME = "/WEB-INF/i18n/edit_";
@@ -166,7 +166,7 @@ public class I18nAccess implements Serializable {
 	private I18nResource i18nResource = null;
 
 	private Module currentModule;
-	
+
 	private String contextKey;
 
 	public void setCurrentModule(GlobalContext globalContext, Module currentModule) throws IOException {
@@ -176,7 +176,7 @@ public class I18nAccess implements Serializable {
 			propEditMap = null;
 		}
 	}
-	
+
 	public Module getCurrentModule() {
 		return currentModule;
 	}
@@ -421,8 +421,10 @@ public class I18nAccess implements Serializable {
 				text = templateView.getProperty(key);
 			}
 			if (text == null) {
-				synchronized (propView) {
-					text = propView.getString(key);
+				if (propView != null) {
+					synchronized (propView) {
+						text = propView.getString(key);
+					}
 				}
 			}
 		}
