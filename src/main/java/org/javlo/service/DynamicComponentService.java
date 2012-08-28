@@ -52,7 +52,8 @@ public class DynamicComponentService {
 					}
 				}
 			}
-			ctx.getRequest().setAttribute(REQUEST_KEY, outContainer);			
+			ctx.getRequest().setAttribute(REQUEST_KEY, outContainer);
+		}
 		return outContainer;
 	}
 
