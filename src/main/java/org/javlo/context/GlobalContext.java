@@ -1210,7 +1210,7 @@ public class GlobalContext implements Serializable {
 			String tagsRaw = getRAWTags();
 			if (tagsRaw == null || tagsRaw.trim().length() == 0) {
 				return Collections.emptyList();
-			}
+			}			
 			List<String> outTags = new LinkedList<String>(Arrays.asList(StringHelper.stringToArray(tagsRaw, ",")));
 			return outTags;
 		}

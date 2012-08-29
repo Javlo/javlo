@@ -7,6 +7,7 @@ GlobalContext globalContext = GlobalContext.getInstance(request);
 NotificationService notifService = NotificationService.getInstance(globalContext);						
 ContentContext ctx = ContentContext.getContentContext(request, response);
 request.setAttribute("notifications", notifService.getNotifications(ctx.getCurrentUserId() , 9, true));
+notifService.getNotifications(ctx.getCurrentUserId() , 9999999, true); // mark all as read
 %>
 <div class="messagelist">
     <h4>Notifications</h4>
