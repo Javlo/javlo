@@ -176,6 +176,7 @@ public class GenericForm extends AbstractVisualComponent implements IAction {
 		Map<String, String> result = new HashMap<String, String>();
 		result.put("registration time", StringHelper.renderSortableTime(new Date()));
 		result.put("local addr", request.getLocalAddr());
+		result.put("remote addr", request.getRemoteAddr());
 		Collection<String> keys = params.keySet();
 		for (String key : keys) {
 			if (!key.equals("webaction") && !key.equals("comp_id") && !key.equals("captcha")) {

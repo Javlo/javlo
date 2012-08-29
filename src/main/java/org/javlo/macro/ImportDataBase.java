@@ -269,7 +269,7 @@ public class ImportDataBase extends AbstractMacro {
 		// This will load the MySQL driver, each DB has its own driver
 		Class.forName("com.mysql.jdbc.Driver");
 		// Setup the connection with the DB
-		return DriverManager.getConnection("jdbc:mysql://localhost/abeo2?user=root");
+		return DriverManager.getConnection("jdbc:mysql://localhost/abeo3?user=root");
 	}
 
 	ResultSet readDataBase(Connection connect, String sql) throws Exception {

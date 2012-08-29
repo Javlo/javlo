@@ -242,7 +242,7 @@ public class I18nAccess implements Serializable {
 		if (displayKey) {
 			return key;
 		}
-		String text = "[KEY NULL : " + key + "]";
+		String text = null;
 		if (key != null && propContentView != null) {
 			synchronized (propContentView) {
 				text = propContentView.getString(key);
