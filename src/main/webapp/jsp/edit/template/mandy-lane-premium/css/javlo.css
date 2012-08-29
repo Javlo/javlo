@@ -1067,3 +1067,7 @@ body.previewEdit {
     color: #333333;
     height: 20px;
 }
+
+fieldset .one_half {
+	width: 46%;
+}

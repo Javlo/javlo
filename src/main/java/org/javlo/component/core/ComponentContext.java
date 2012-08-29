@@ -86,9 +86,12 @@ public class ComponentContext {
 			logger.info("load help for component helpCacheKey : "+helpCacheKey );
 			try {
 				xhtml = NetHelper.readPage(fullURL, false);
+				if (xhtml != null && xhtml.trim().length() > 0) {
+					xhtml = "<div class=\"help-link\"><a title=\"help : "+comp.getType()+"\" target=\"_blank\" href=\""+fullURL+"\">"+fullURL+"</a></div>"+xhtml;
+				}
 			} catch (Exception e) {
 				logger.warning(e.getMessage());
-			}
+			}			
 			getHelpCache(globalContext).put(helpCacheKey, StringHelper.neverNull(xhtml));			
 		}
 		if (xhtml != null && xhtml.trim().length() == 0) {

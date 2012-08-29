@@ -970,8 +970,8 @@ public class GlobalContext implements Serializable {
 		return properties.getString("google.uacct", "");
 	}
 
-	public String getHelpURL() {
-		return properties.getString("help-url", "http://help.javlo.org/javlo2/");
+	public String getHelpURL() {	
+		return properties.getString("help-url", staticConfig.getHelpURL());
 	}
 
 	public String getHomePage() {

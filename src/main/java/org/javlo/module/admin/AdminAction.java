@@ -5,6 +5,7 @@ import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.PrintStream;
 import java.lang.reflect.InvocationTargetException;
+import java.text.SimpleDateFormat;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
@@ -80,6 +81,10 @@ public class AdminAction extends AbstractModuleAction {
 		private String userRoles;
 		private boolean autoSwitchToDefaultLanguage;
 
+		private String shortDateFormat;
+		private String mediumDateFormat;
+		private String fullDateFormat;
+
 		private int countUser;
 		private boolean view;
 		private boolean edit;
@@ -104,6 +109,10 @@ public class AdminAction extends AbstractModuleAction {
 			setVisibility(globalContext.isView());
 			setEditability(globalContext.isEditable());
 			setDefaultTemplate(globalContext.getDefaultTemplate());
+			
+			setShortDateFormat(globalContext.getShortDateFormat());
+			setMediumDateFormat(globalContext.getMediumDateFormat());
+			setFullDateFormat(globalContext.getFullDateFormat());
 
 			setSize(StringHelper.renderSize(globalContext.getAccountSize()));
 			setGlobalTitle(globalContext.getGlobalTitle());
@@ -112,7 +121,7 @@ public class AdminAction extends AbstractModuleAction {
 			setAutoSwitchToDefaultLanguage(globalContext.isAutoSwitchToDefaultLanguage());
 			setContentLanguages(StringHelper.collectionToString(globalContext.getContentLanguages(), ";"));
 			setHomepage(globalContext.getHomePage());
-			
+
 			setUserRoles(StringHelper.collectionToString(globalContext.getUserRoles(), ","));
 
 			setGoogleAnalyticsUACCT(globalContext.getGoogleAnalyticsUACCT());
@@ -339,6 +348,30 @@ public class AdminAction extends AbstractModuleAction {
 
 		public void setUserRoles(String userRoles) {
 			this.userRoles = userRoles;
+		}
+
+		public String getShortDateFormat() {
+			return shortDateFormat;
+		}
+
+		public void setShortDateFormat(String shortDateFormat) {
+			this.shortDateFormat = shortDateFormat;
+		}
+
+		public String getMediumDateFormat() {
+			return mediumDateFormat;
+		}
+
+		public void setMediumDateFormat(String mediumDateFormat) {
+			this.mediumDateFormat = mediumDateFormat;
+		}
+
+		public String getFullDateFormat() {
+			return fullDateFormat;
+		}
+
+		public void setFullDateFormat(String fullDateFormat) {
+			this.fullDateFormat = fullDateFormat;
 		}
 
 	}
@@ -571,9 +604,39 @@ public class AdminAction extends AbstractModuleAction {
 					currentGlobalContext.setAutoSwitchToDefaultLanguage(requestService.getParameter("switch-default-language", null) != null);
 					currentGlobalContext.setRAWTags(requestService.getParameter("tags", null));
 					currentGlobalContext.setAdministrator(requestService.getParameter("administrator", ""));
-					currentGlobalContext.setHomePage(requestService.getParameter("homepage", ""));					
+					currentGlobalContext.setHomePage(requestService.getParameter("homepage", ""));
 					currentGlobalContext.setUserRoles(new HashSet<String>(StringHelper.stringToCollection(requestService.getParameter("user-roles", ""), ",")));
-
+					
+					String dateFormat = requestService.getParameter("short-date", null);
+					if (dateFormat != null) {
+						try {
+							new SimpleDateFormat(dateFormat);
+							currentGlobalContext.setShortDateFormat(dateFormat);
+						} catch (Exception e) {
+							messageRepository.setGlobalMessage(new GenericMessage(i18nAccess.getText("admin.message.bad-date-format")+dateFormat, GenericMessage.ERROR));							
+						}						
+					}
+					
+					dateFormat = requestService.getParameter("medium-date", null);
+					if (dateFormat != null) {
+						try {
+							new SimpleDateFormat(dateFormat);
+							currentGlobalContext.setMediumDateFormat(dateFormat);
+						} catch (Exception e) {
+							messageRepository.setGlobalMessage(new GenericMessage(i18nAccess.getText("admin.message.bad-date-format")+dateFormat, GenericMessage.ERROR));							
+						}						
+					}
+					
+					dateFormat = requestService.getParameter("full-date", null);
+					if (dateFormat != null) {
+						try {
+							new SimpleDateFormat(dateFormat);
+							currentGlobalContext.setFullDateFormat(dateFormat);
+						} catch (Exception e) {
+							messageRepository.setGlobalMessage(new GenericMessage(i18nAccess.getText("admin.message.bad-date-format")+dateFormat, GenericMessage.ERROR));							
+						}						
+					}
+					
 					String usersAccess = requestService.getParameter("users-access", "");
 					if (usersAccess.trim().length() > 0) {
 						currentGlobalContext.setUsersAccess(StringHelper.textToList(usersAccess));
@@ -866,9 +929,7 @@ public class AdminAction extends AbstractModuleAction {
 		return null;
 	}
 
-	public static final String performEditStaticConfig(HttpServletRequest request, RequestService requestService, ContentContext ctx, Module currentModule, StaticConfig staticConfig) throws FileNotFoundException, IOException, NoSuchMethodException, ClassNotFoundException, IllegalArgumentException,
-			InstantiationException,
-			IllegalAccessException, InvocationTargetException {
+	public static final String performEditStaticConfig(HttpServletRequest request, RequestService requestService, ContentContext ctx, Module currentModule, StaticConfig staticConfig) throws FileNotFoundException, IOException, NoSuchMethodException, ClassNotFoundException, IllegalArgumentException, InstantiationException, IllegalAccessException, InvocationTargetException {
 		request.setAttribute("config_content", staticConfig.getAllProperties());
 		String uri = request.getRequestURI();
 		currentModule.pushBreadcrumb(new Module.HtmlLink(uri, I18nAccess.getInstance(request).getText("admin.edit-static-config"), ""));
@@ -880,8 +941,8 @@ public class AdminAction extends AbstractModuleAction {
 		if (requestService.getParameter("back", null) != null) {
 			currentModule.restoreRenderer();
 			currentModule.restoreToolsRenderer();
-			//currentModule.clearBreadcrump();
-			//currentModule.pushBreadcrumb(new Module.HtmlLink(URLHelper.createURL(ctx), i18nAccess.getText("global.home"), ""));
+			// currentModule.clearBreadcrump();
+			// currentModule.pushBreadcrumb(new Module.HtmlLink(URLHelper.createURL(ctx), i18nAccess.getText("global.home"), ""));
 		} else {
 			String newContent = requestService.getParameter("config_content", null);
 			if (newContent != null) {

@@ -1104,5 +1104,9 @@ public class StaticConfig extends Observable {
 	public String getSiteEmail() {
 		return properties.getString("site.email", "webmaster@javlo.org");
 	}
+	
+	public String getHelpURL() {
+		return properties.getString("site.help-url", "http://help.javlo.org/javlo2/" );
+	}
 
 }
