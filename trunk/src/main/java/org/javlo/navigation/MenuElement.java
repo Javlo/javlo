@@ -2027,7 +2027,7 @@ public class MenuElement implements Serializable {
 			pageDescription.pageTitle = getPageTitle(ctx);			
 			pageDescription.subTitle = getSubTitle(ctx);
 			pageDescription.tags = getTags(ctx);
-			pageDescription.title = getTitle(ctx);
+			pageDescription.title = getTitle(ctx);			
 			pageDescription.depth = getDepth();
 			pageDescription.visible  = isVisible();
 			pageDescription.referenceLanguage = getReferenceLanguage();
