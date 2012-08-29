@@ -32,6 +32,7 @@
 <fieldset>
 <legend>${i18n.edit['admin.form.info']}</legend>
 
+<div class="one_half">
 <div class="line">
 	<label>${i18n.edit['global.name']}</label>
 	<span>${currentContext.key}</span>
@@ -41,7 +42,9 @@
 	<label>${i18n.edit['admin.title.folder']}</label>
 	<span>${currentContext.folder}</span>
 </div>
+</div>
 
+<div class="one_half">
 <div class="line">
 	<label>${i18n.edit['admin.form.size']}</label>
 	<span>${currentContext.size}</span>
@@ -51,12 +54,14 @@
 	<label for="global-title">${i18n.edit['admin.form.global-title']}</label>
 	<input type="text" id="global-title" name="global-title" value="${currentContext.globalTitle}" />	
 </div>
+</div>
 
 </fieldset>
 
 <fieldset>
 <legend>${i18n.edit['admin.form.config']}</legend>
 
+<div class="one_half">
 <div class="line">		
 	<label for="administrator">${i18n.edit['admin.adminitrator']}</label>
 	<input type="text" id="administrator" name="administrator" value="${currentContext.administrator}" />	
@@ -91,7 +96,9 @@
 	<label for="switch-default-language">${i18n.edit['admin.form.switch-default-language']}</label>
 	<input type="checkbox" id="switch-default-language" name="switch-default-language" ${currentContext.autoSwitchToDefaultLanguage?'checked="checked"':""}" />
 </div>
+</div>
 
+<div class="one_half">
 <div class="line">		
 	<label for="homepage">${i18n.edit['admin.form.homepage']}</label>
 	<input type="text" id="homepage" name="homepage" value="${currentContext.homepage}" />	
@@ -107,11 +114,28 @@
 	<input type="text" id="tags" name="tags" value="${currentContext.tags}" />	
 </div>
 
+<div class="line">		
+	<label for="short-date">${i18n.edit['admin.title.short-date']}</label>
+	<input type="text" id="short-date" name="short-date" value="${currentContext.shortDateFormat}" />	
+</div>
+
+<div class="line">		
+	<label for="medium-date">${i18n.edit['admin.title.medium-date']}</label>
+	<input type="text" id="medium-date" name="medium-date" value="${currentContext.mediumDateFormat}" />	
+</div>
+
+<div class="line">		
+	<label for="full-date">${i18n.edit['admin.title.full-date']}</label>
+	<input type="text" id="full-date" name="full-date" value="${currentContext.fullDateFormat}" />	
+</div>
+
+</div>
 </fieldset>
 
 <fieldset>
 <legend>${i18n.edit['global.security']}</legend>
 
+<div class="one_half">
 <div class="line">		
 	<label for="user-factory">${i18n.edit['admin.form.user-factory']}</label>
 	<input type="text" id="user-factory" name="user-factory" value="${currentContext.userFactoryClassName}" />	
@@ -131,10 +155,13 @@
 	<label for="block-password">${i18n.edit['admin.form.block-password']}</label>
 	<input type="text" id="block-password" name="block-password" value="${currentContext.blockPassword}" />	
 </div>
+</div>
 
+<div class="one_half">
 <div class="line">		
 	<label for="users-access">${i18n.edit['admin.form.users-access']}</label>
 	<textarea id="users-access" name="users-access">${currentContext.usersAccess}</textarea>	
+</div>
 </div>
 
 </fieldset>

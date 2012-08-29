@@ -37,6 +37,7 @@ org.javlo.component.files.GenericFile
 org.javlo.component.links.RSSRegistration
 org.javlo.component.links.RSSLink
 org.javlo.component.links.RSSReader
+org.javlo.component.links.MirrorComponent
 
 --content.title.graphic
 

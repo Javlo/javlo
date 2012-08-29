@@ -606,7 +606,7 @@ public abstract class AbstractVisualComponent implements IContentVisualComponent
 	@Override
 	public final String getHelpURL(ContentContext ctx, String lang) {
 		if (ctx.getRenderMode() == ContentContext.PAGE_MODE) {
-			return getBaseHelpURL(ctx) + "/page/" + lang + getHelpURI(ctx);
+			return URLHelper.mergePath(getBaseHelpURL(ctx),"/page/",lang,getHelpURI(ctx));
 		} else {
 			String url = URLHelper.mergePath(getBaseHelpURL(ctx), lang, getHelpURI(ctx));
 			System.out.println("*********************************************************************************************************");

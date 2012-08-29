@@ -14,6 +14,7 @@ import org.javlo.component.core.ComponentBean;
 import org.javlo.component.core.IContentVisualComponent;
 import org.javlo.context.ContentContext;
 import org.javlo.helper.StringHelper;
+import org.javlo.helper.URLHelper;
 import org.javlo.i18n.I18nAccess;
 import org.javlo.navigation.MenuElement;
 import org.javlo.service.ClipBoard;
@@ -65,11 +66,11 @@ public class MirrorComponent extends AbstractVisualComponent {
 		if (comp != null && !comp.getId().equals(getId())) {
 			String[][] params = new String[][] { { "type", comp.getType() }, { "language", comp.getLanguage() } };
 			String label = i18nAccess.getText("content.mirror.link", params);
-			out.println("<input type=\"submit\" value=\"" + label + "\" onclick=\"$('" + getCurrentInputName() + "').value='" + comp.getId() + "'\" />");
+			out.println("<input type=\"submit\" value=\"" + label + "\" onclick=\"jQuery('#" + getCurrentInputName() + "').val('" + comp.getId() + "');\" />");
 		}
 
 		if (currentComp != null) {
-			out.println("&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;" + i18nAccess.getText("content.mirror.type") + currentComp.getType());
+			out.println("&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;" + i18nAccess.getText("content.mirror.type") + currentComp.getType()+" (<a href=\""+URLHelper.createURL(ctx, currentComp.getPage())+"\">"+currentComp.getPage().getPath()+"</a>)");
 		}
 		out.println("</div>");
 		out.close();
@@ -206,6 +207,7 @@ public class MirrorComponent extends AbstractVisualComponent {
 			if (!newLink.equals(getMirrorComponentId())) {
 				setMirrorComponentId(newLink);
 				setModify();
+				setNeedRefresh(true);
 			}
 		}
 	}
