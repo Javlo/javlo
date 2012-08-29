@@ -1082,7 +1082,7 @@ public class StaticConfig extends Observable {
 	}
 
 	public String getDefaultJSDateFormat() {
-		return properties.getString("default-date-format", "d/m/yy");
+		return properties.getString("default-date-format", "d/M/yy");
 	}
 	
 	public String getMarketURL() {

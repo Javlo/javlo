@@ -462,10 +462,10 @@ public abstract class AbstractVisualComponent implements IContentVisualComponent
 		}
 
 		if (getConfig(ctx).getRenderes().size() > 0) {
-			out.println("<div class=\"line\">");
-			out.println("<label for=\"renderer-" + getId() + "\">" + getRendererTitle() + "</label>");
+			out.println(getSelectRendererXHTML(ctx));
+			/*out.println("<label for=\"renderer-" + getId() + "\">" + getRendererTitle() + "</label>");
 			out.println(XHTMLHelper.getInputOneSelect("style-" + getId(), getConfig(ctx).getRenderes(), getRenderer(ctx)));
-			out.println("</div>");
+			out.println("</div>");*/
 		}
 
 		out.close();
@@ -490,6 +490,7 @@ public abstract class AbstractVisualComponent implements IContentVisualComponent
 
 		/** renderer **/
 		String renderer = requestService.getParameter(getInputNameRenderer(), null);
+		System.out.println("***** AbstractVisualComponent.performConfig : renderer = "+renderer); //TODO: remove debug trace
 		if (renderer != null) {
 			if (!renderer.equals(getRenderer(ctx))) {
 				setRenderer(ctx, renderer);
@@ -1227,23 +1228,6 @@ public abstract class AbstractVisualComponent implements IContentVisualComponent
 			}
 		}
 		return out;
-	}
-
-	protected void renderRendererSelection(ContentContext ctx, PrintStream out) throws Exception {
-		Map<String, String> renderers = getConfig(ctx).getRenderes();
-		I18nAccess i18nAccess = I18nAccess.getInstance(ctx.getRequest());
-		if (renderers.size() > 1) {
-			out.println("<fieldset class=\"display\">");
-			out.println("<legend>" + i18nAccess.getText("content.choose-renderer") + "</legend><div class=\"line\">");
-
-			out.println("<div class=\"line\">");
-			for (Map.Entry<String, String> entry : renderers.entrySet()) {
-				out.println(XHTMLHelper.getRadio(getDisplayAsInputName(), entry.getKey(), getDisplayType()));
-				out.println("<label for=\"" + entry.getKey() + "\">" + entry.getKey() + "</label></div>");
-			}
-			out.println("</fieldset>");
-
-		}
 	}
 
 	protected void includePage(ContentContext ctx, String jsp) throws ServletException, IOException {

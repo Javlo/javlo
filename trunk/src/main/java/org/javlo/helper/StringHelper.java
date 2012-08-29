@@ -1402,11 +1402,12 @@ public class StringHelper {
 
 		DateFormat dateFormat;
 		if (dateFormatString != null) {
-			try {
+			try {				
 				dateFormat = new SimpleDateFormat(dateFormatString, locale);
 				return dateFormat.format(date);
-			} catch (Throwable t) {
-				logger.warning(t.getMessage());
+			} catch (Throwable t) {				
+				logger.warning(t.getMessage()+ "   (context:"+globalContext.getContextKey()+')');
+				t.printStackTrace();
 			}
 		}
 

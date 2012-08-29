@@ -72,13 +72,14 @@ import org.javlo.ztatic.StaticInfo;
  * @author pvanderm
  */
 public class MenuElement implements Serializable {
-	
+
 	private static final long serialVersionUID = 1L;
 
 	/**
 	 * bean for the page, can be use in JSTL.
+	 * 
 	 * @author Patrick Vandermaesen
-	 *
+	 * 
 	 */
 	public static class PageBean implements Serializable {
 		private static final long serialVersionUID = 1L;
@@ -86,8 +87,8 @@ public class MenuElement implements Serializable {
 		private PageDescription info;
 		private String url;
 		private String path;
-		private boolean selected = false;		
-		private boolean lastSelected = false;		
+		private boolean selected = false;
+		private boolean lastSelected = false;
 		private List<PageBean> children = new LinkedList<PageBean>();
 		private List<PageBean> realChildren = new LinkedList<PageBean>();
 		private String name = null;
@@ -96,101 +97,129 @@ public class MenuElement implements Serializable {
 		private String creationDate;
 		private String modificationDate;
 		private String templateId = null;
-		
+
 		public PageDescription getInfo() {
 			return info;
 		}
+
 		public void setInfo(PageDescription info) {
 			this.info = info;
 		}
+
 		public List<PageBean> getChildren() {
 			return children;
 		}
+
 		public void addChild(PageBean child) {
 			children.add(child);
 			if (child.getInfo().isRealContent() && child.getInfo().isVisible()) {
 				addRealChildren(child);
 			}
-		}		
+		}
+
 		public void clearChildren() {
 			children.clear();
 		}
+
 		public String getUrl() {
 			return url;
 		}
+
 		public void setUrl(String url) {
 			this.url = url;
 		}
+
 		public boolean isSelected() {
 			return selected;
 		}
+
 		public void setSelected(boolean selected) {
 			this.selected = selected;
 		}
+
 		/**
 		 * get the list of children with isRealContent() and isVisible() is true.
+		 * 
 		 * @return
 		 */
 		public List<PageBean> getRealChildren() {
 			return realChildren;
 		}
+
 		private void addRealChildren(PageBean child) {
 			this.realChildren.add(child);
 		}
+
 		public String getName() {
 			return name;
 		}
+
 		public void setName(String name) {
 			this.name = name;
 		}
+
 		public String getPath() {
 			return path;
 		}
+
 		public void setPath(String path) {
 			this.path = path;
 		}
+
 		public String getLatestEditor() {
 			return latestEditor;
 		}
+
 		public void setLatestEditor(String latestEditor) {
 			this.latestEditor = latestEditor;
 		}
+
 		public String getCreationDate() {
 			return creationDate;
 		}
+
 		public void setCreationDate(String creationDate) {
 			this.creationDate = creationDate;
 		}
+
 		public String getModificationDate() {
 			return modificationDate;
 		}
+
 		public void setModificationDate(String modificationDate) {
 			this.modificationDate = modificationDate;
 		}
+
 		public String getTemplateId() {
 			return templateId;
 		}
+
 		public void setTemplateId(String template) {
 			this.templateId = template;
 		}
+
 		public boolean isLastSelected() {
 			return lastSelected;
 		}
+
 		public void setLastSelected(boolean lastSelected) {
 			this.lastSelected = lastSelected;
 		}
+
 		public String getId() {
 			return id;
 		}
+
 		public void setId(String id) {
 			this.id = id;
-		}		
+		}
 	}
 
 	/**
 	 * the description bean of the page, use for cache and JSTL.
+	 * 
 	 * @author Patrick Vandermaesen
-	 *
+	 * 
 	 */
 	public class PageDescription implements Serializable {
 
@@ -220,184 +249,237 @@ public class MenuElement implements Serializable {
 		TimeRange timeRange = null;
 		Boolean contentDateVisible = null;
 		Boolean notInSearch = null;
-		int depth = 0;		
+		int depth = 0;
 		public boolean visible = false;
 		String referenceLanguage = null;
-		
+
 		public boolean isVisible() {
 			return visible;
 		}
+
 		public void setVisible(boolean visible) {
 			this.visible = visible;
 		}
+
 		public int getDepth() {
 			return depth;
 		}
+
 		public void setDepth(int depth) {
 			this.depth = depth;
 		}
+
 		public String getTitle() {
 			return title;
 		}
+
 		public void setTitle(String title) {
 			this.title = title;
 		}
+
 		public String getSubTitle() {
 			return subTitle;
 		}
+
 		public void setSubTitle(String subTitle) {
 			this.subTitle = subTitle;
 		}
+
 		public String getPageTitle() {
 			return pageTitle;
 		}
+
 		public void setPageTitle(String pageTitle) {
 			this.pageTitle = pageTitle;
 		}
+
 		public IImageTitle getImageLink() {
 			return imageLink;
 		}
+
 		public void setImageLink(IImageTitle imageLink) {
 			this.imageLink = imageLink;
 		}
+
 		public String getLinkOn() {
 			return linkOn;
 		}
+
 		public void setLinkOn(String linkOn) {
 			this.linkOn = linkOn;
 		}
+
 		public Collection<IImageTitle> getImages() {
 			return images;
 		}
+
 		public void setImages(Collection<IImageTitle> images) {
 			this.images = images;
 		}
+
 		public String getDescription() {
 			return description;
 		}
+
 		public void setDescription(String description) {
 			this.description = description;
 		}
+
 		public String getMetaDescription() {
 			return metaDescription;
 		}
+
 		public void setMetaDescription(String metaDescription) {
 			this.metaDescription = metaDescription;
 		}
+
 		public String getKeywords() {
 			return keywords;
 		}
+
 		public void setKeywords(String keywords) {
 			this.keywords = keywords;
 		}
+
 		public String getGlobalTitle() {
 			return globalTitle;
 		}
+
 		public void setGlobalTitle(String globalTitle) {
 			this.globalTitle = globalTitle;
 		}
+
 		public Date getContentDate() {
 			return contentDate;
 		}
+
 		public void setContentDate(Date contentDate) {
 			this.contentDate = contentDate;
 		}
+
 		public Boolean isEmpty() {
 			return empty;
 		}
+
 		public void setEmpty(Boolean isEmpty) {
 			this.empty = isEmpty;
 		}
+
 		public boolean isRealContent() {
 			if (realContent == null) {
 				return false;
 			}
 			return realContent;
 		}
+
 		public boolean isRealContentNull() {
 			return realContent == null;
 		}
+
 		public void setIsRealContent(Boolean isRealContent) {
 			this.realContent = isRealContent;
 		}
+
 		public String getLabel() {
 			return label;
 		}
+
 		public void setLabel(String label) {
 			this.label = label;
 		}
+
 		public String getLocation() {
 			return location;
 		}
+
 		public void setLocation(String location) {
 			this.location = location;
 		}
+
 		public String getCategory() {
 			return category;
 		}
+
 		public void setCategory(String category) {
 			this.category = category;
 		}
+
 		public Double getPageRank() {
 			return pageRank;
 		}
+
 		public void setPageRank(Double pageRank) {
 			this.pageRank = pageRank;
 		}
+
 		public List<String> getTags() {
 			return tags;
 		}
+
 		public void setTags(List<String> tags) {
 			this.tags = tags;
 		}
+
 		public Collection<String> getResources() {
 			return resources;
 		}
+
 		public void setResources(Collection<String> resources) {
 			this.resources = resources;
 		}
+
 		public String getHeaderContent() {
 			return headerContent;
 		}
+
 		public void setHeaderContent(String headerContent) {
 			this.headerContent = headerContent;
 		}
+
 		public List<String> getGroupID() {
 			return groupID;
 		}
+
 		public void setGroupID(List<String> groupID) {
 			this.groupID = groupID;
 		}
+
 		public TimeRange getTimeRange() {
 			return timeRange;
 		}
+
 		public void setTimeRange(TimeRange timeRange) {
 			this.timeRange = timeRange;
 		}
+
 		public Boolean getIsContentDateVisible() {
 			return contentDateVisible;
 		}
+
 		public void setIsContentDateVisible(Boolean isContentDateVisible) {
 			this.contentDateVisible = isContentDateVisible;
 		}
+
 		public Boolean getNotInSearch() {
 			return notInSearch;
 		}
+
 		public void setNotInSearch(Boolean notInSearch) {
 			this.notInSearch = notInSearch;
 		}
+
 		public String getReferenceLanguage() {
 			return referenceLanguage;
 		}
+
 		public void setReferenceLanguage(String referenceLangugae) {
 			this.referenceLanguage = referenceLangugae;
 		}
-		
-		
+
 	};
 
 	static int textCut = 18;
-	
+
 	// public static final String LOCK_ACCESS = "";
 
 	public static MenuElement getInstance(GlobalContext globalContext) {
@@ -535,7 +617,7 @@ public class MenuElement implements Serializable {
 	private String linkedURL = "";
 
 	private boolean https = false;
-	
+
 	private String referenceLanguage = null;
 
 	/**
@@ -1065,15 +1147,15 @@ public class MenuElement implements Serializable {
 
 		PageDescription desc = getPageDescriptionCached(ctx.getRequestContentLanguage());
 
-		if (desc.category != null) {			
+		if (desc.category != null) {
 			return desc.category;
 		}
 		String res = "";
 		ContentContext newCtx = new ContentContext(ctx);
 		newCtx.setArea(null);
 		IContentComponentsList contentList = getContent(newCtx);
-		while (contentList.hasNext(newCtx)) {			
-			IContentVisualComponent elem = contentList.next(newCtx);			
+		while (contentList.hasNext(newCtx)) {
+			IContentVisualComponent elem = contentList.next(newCtx);
 			if (elem.getType().equals(Category.TYPE)) {
 				res = res + elem.getValue(newCtx);
 			}
@@ -1990,67 +2072,75 @@ public class MenuElement implements Serializable {
 		}
 		return outDesc;
 	}
-	
-	PageDescription getPageBeanCached(String lg) {		
-		String key = getCacheKey("bean-"+lg);
+
+	PageDescription getPageBeanCached(String lg) {
+		String key = getCacheKey("bean-" + lg);
 		Element element = cache.get(key);
 		PageDescription outDesc;
 		if (element == null) {
-			outDesc = new PageDescription(); 
+			outDesc = new PageDescription();
 			cache.put(new Element(key, outDesc));
 		} else {
 			outDesc = (PageDescription) element.getValue();
 		}
 		return outDesc;
 	}
-	
+
 	public PageBean getPageBean(ContentContext ctx) throws Exception {
-		PageDescription pageDescription = getPageBeanCached(ctx.getLanguage());		
-		if (pageDescription.getTitle() == null) {
-			pageDescription.category = getCategory(ctx);
-			pageDescription.contentDate = getContentDate(ctx);
-			pageDescription.description = getDescription(ctx);
-			pageDescription.globalTitle = getGlobalTitle(ctx);
-			pageDescription.groupID = getGroupID(ctx);
-			pageDescription.headerContent = getHeaderContent(ctx);
-			pageDescription.images = getImages(ctx);
-			pageDescription.contentDateVisible = isContentDateVisible(ctx);
-			pageDescription.empty = isEmpty(ctx);
-			pageDescription.realContent = isRealContent(ctx);
-			pageDescription.keywords = getKeywords(ctx);
-			pageDescription.label = getLabel(ctx);
-			pageDescription.linkOn = getLinkOn(ctx);
-			pageDescription.location = getLocation(ctx);
-			pageDescription.metaDescription = getMetaDescription(ctx);
-			pageDescription.notInSearch = notInSearch(ctx);
-			pageDescription.pageRank = getPageRank(ctx);
-			pageDescription.pageTitle = getPageTitle(ctx);			
-			pageDescription.subTitle = getSubTitle(ctx);
-			pageDescription.tags = getTags(ctx);
-			pageDescription.title = getTitle(ctx);			
-			pageDescription.depth = getDepth();
-			pageDescription.visible  = isVisible();
-			pageDescription.referenceLanguage = getReferenceLanguage();
 		
-		}
-		PageBean pageBean = new PageBean();
-		pageBean.setInfo(pageDescription);
-		pageBean.setUrl(URLHelper.createURL(ctx, this));
-		pageBean.setPath(getPath());
-		pageBean.setLatestEditor(getLatestEditor());
-		pageBean.setCreationDate(StringHelper.renderShortDate(ctx, getCreationDate()));
-		pageBean.setModificationDate(StringHelper.renderShortDate(ctx, getModificationDate()));
-		pageBean.setName(getName());
-		pageBean.setId(getId());
-		pageBean.setTemplateId(getTemplateId());
-		pageBean.setSelected(isSelected(ctx));
-		pageBean.setLastSelected(isLastSelected(ctx));
-		/*if (getParent() != null) {
-			pageBean.parent = getParent().getPageBean(ctx);
-		}*/
-		List<MenuElement> children = getChildMenuElementsList();
-		for (MenuElement child : children) {
-			pageBean.addChild(child.getPageBean(ctx));
+		String requestKey = getPath()+'_'+ctx.getRequestContentLanguage()+"_"+ctx.getLanguage();
+
+		PageBean pageBean = (PageBean)ctx.getRequest().getAttribute(requestKey);
+
+		if (pageBean == null) {
+
+			PageDescription pageDescription = getPageBeanCached(ctx.getLanguage());
+			if (pageDescription.getTitle() == null) {
+				pageDescription.category = getCategory(ctx);
+				pageDescription.contentDate = getContentDate(ctx);
+				pageDescription.description = getDescription(ctx);
+				pageDescription.globalTitle = getGlobalTitle(ctx);
+				pageDescription.groupID = getGroupID(ctx);
+				pageDescription.headerContent = getHeaderContent(ctx);
+				pageDescription.images = getImages(ctx);
+				pageDescription.contentDateVisible = isContentDateVisible(ctx);
+				pageDescription.empty = isEmpty(ctx);
+				pageDescription.realContent = isRealContent(ctx);
+				pageDescription.keywords = getKeywords(ctx);
+				pageDescription.label = getLabel(ctx);
+				pageDescription.linkOn = getLinkOn(ctx);
+				pageDescription.location = getLocation(ctx);
+				pageDescription.metaDescription = getMetaDescription(ctx);
+				pageDescription.notInSearch = notInSearch(ctx);
+				pageDescription.pageRank = getPageRank(ctx);
+				pageDescription.pageTitle = getPageTitle(ctx);
+				pageDescription.subTitle = getSubTitle(ctx);
+				pageDescription.tags = getTags(ctx);
+				pageDescription.title = getTitle(ctx);
+				pageDescription.depth = getDepth();
+				pageDescription.visible = isVisible();
+				pageDescription.referenceLanguage = getReferenceLanguage();
+			}
+			pageBean = new PageBean();
+			pageBean.setInfo(pageDescription);
+			pageBean.setUrl(URLHelper.createURL(ctx, this));
+			pageBean.setPath(getPath());
+			pageBean.setLatestEditor(getLatestEditor());
+			pageBean.setCreationDate(StringHelper.renderShortDate(ctx, getCreationDate()));
+			pageBean.setModificationDate(StringHelper.renderShortDate(ctx, getModificationDate()));
+			pageBean.setName(getName());
+			pageBean.setId(getId());
+			pageBean.setTemplateId(getTemplateId());
+			pageBean.setSelected(isSelected(ctx));
+			pageBean.setLastSelected(isLastSelected(ctx));
+			/*
+			 * if (getParent() != null) { pageBean.parent = getParent().getPageBean(ctx); }
+			 */
+			List<MenuElement> children = getChildMenuElementsList();
+			for (MenuElement child : children) {
+				pageBean.addChild(child.getPageBean(ctx));
+			}			
+			ctx.getRequest().setAttribute(requestKey, pageBean);
 		}
 		return pageBean;
 	}
@@ -2236,7 +2326,7 @@ public class MenuElement implements Serializable {
 	public String getSubTitle(ContentContext ctx) throws Exception {
 
 		ContentContext newCtx = new ContentContext(ctx);
-		
+
 		PageDescription desc = getPageDescriptionCached(newCtx.getRequestContentLanguage());
 
 		if (desc.subTitle != null) {
@@ -2294,7 +2384,7 @@ public class MenuElement implements Serializable {
 		desc.tags = outTags;
 		return desc.tags;
 	}
-	
+
 	public String getTemplateId() {
 		return templateId;
 	}
@@ -2540,7 +2630,7 @@ public class MenuElement implements Serializable {
 		if (desc.contentDateVisible != null) {
 			return desc.contentDateVisible;
 		}
-		desc.contentDateVisible = true;		
+		desc.contentDateVisible = true;
 		GlobalContext globalContext = GlobalContext.getInstance(ctx.getRequest());
 		Iterator<String> defaultLgs = globalContext.getDefaultLanguages().iterator();
 		ContentContext localContext = new ContentContext(ctx);
@@ -2548,7 +2638,7 @@ public class MenuElement implements Serializable {
 			localContext.setRequestContentLanguage(defaultLgs.next());
 		}
 		if (!isEmpty(localContext)) {
-			ContentElementList contentList = getAllContent(localContext); // search date in all area			
+			ContentElementList contentList = getAllContent(localContext); // search date in all area
 			while (contentList.hasNext(ctx)) {
 				IContentVisualComponent comp = contentList.next(ctx);
 				if (comp.getType() == DateComponent.TYPE) {
@@ -2557,7 +2647,7 @@ public class MenuElement implements Serializable {
 					}
 				}
 			}
-		}		
+		}
 		return desc.contentDateVisible;
 	}
 
@@ -3039,7 +3129,7 @@ public class MenuElement implements Serializable {
 	}
 
 	public void setTemplateName(String inTemplate) {
-		templateId = inTemplate;		
+		templateId = inTemplate;
 	}
 
 	/**
@@ -3053,7 +3143,7 @@ public class MenuElement implements Serializable {
 	 * @param strings
 	 */
 	public void setUserRoles(Set<String> roles) {
-		userRoles = roles;		
+		userRoles = roles;
 	}
 
 	public void setValid(boolean valid) {
@@ -3168,14 +3258,14 @@ public class MenuElement implements Serializable {
 		if (desc.notInSearch != null) {
 			return desc.notInSearch;
 		}
-		
+
 		desc.notInSearch = false;
 		ContentContext noAreaCtx = new ContentContext(ctx);
 		noAreaCtx.setArea(null);
 		if (getContentByType(noAreaCtx, NotSearchPage.TYPE).size() > 0) {
 			desc.notInSearch = true;
 		}
-		
+
 		return desc.notInSearch;
 	}
 
