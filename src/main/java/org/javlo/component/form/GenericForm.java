@@ -7,6 +7,7 @@ import java.io.OutputStream;
 import java.io.PrintStream;
 import java.io.StringReader;
 import java.util.Collection;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -173,6 +174,8 @@ public class GenericForm extends AbstractVisualComponent implements IAction {
 
 		Map<String, Object> params = request.getParameterMap();
 		Map<String, String> result = new HashMap<String, String>();
+		result.put("registration time", StringHelper.renderSortableTime(new Date()));
+		result.put("local addr", request.getLocalAddr());
 		Collection<String> keys = params.keySet();
 		for (String key : keys) {
 			if (!key.equals("webaction") && !key.equals("comp_id") && !key.equals("captcha")) {
