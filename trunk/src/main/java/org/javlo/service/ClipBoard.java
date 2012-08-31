@@ -6,7 +6,6 @@ package org.javlo.service;
 import javax.servlet.http.HttpServletRequest;
 
 import org.javlo.component.core.ComponentBean;
-import org.javlo.component.core.IContentVisualComponent;
 import org.javlo.context.ContentContext;
 
 

@@ -597,6 +597,10 @@ public class GlobalContext implements Serializable {
 				// cacheManager.removalAll();
 				application.removeAttribute(contextKey);
 			}
+			
+			if (cacheManager != null) {
+				cacheManager.shutdown();
+			}
 
 		} catch (IOException e) {
 			e.printStackTrace();

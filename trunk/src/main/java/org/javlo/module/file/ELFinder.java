@@ -284,11 +284,11 @@ public abstract class ELFinder {
 		if (target == null) {
 			ELVolume volume = getVolumes().iterator().next();
 			target = volume.getRoot();
-		}
+		}		
 		response.put("cwd", printFile(target));
 		response.put("options", printOptions(target));
 		List<ELFile> files = new LinkedList<ELFile>();
-		files.addAll(target.getChildren());
+		files.addAll(target.getChildren());		
 		if (tree) {
 			files.addAll(getVolumeFiles());
 			ELFile parent = target.getParentFile();
@@ -296,13 +296,11 @@ public abstract class ELFinder {
 				files.addAll(parent.getChildren());
 				parent = parent.getParentFile();
 			}
-		}
-		
-		response.put("files", printFiles(files));
+		}		
+		response.put("files", printFiles(files));		
 		if (init) {
 			extend(response, prop("api", PROTOCOL_VERSION), prop("uplMaxSize", "512M"));
-		}
-		
+		}		
 		changeFolder(target);
 	}
 	
@@ -373,8 +371,8 @@ public abstract class ELFinder {
 			extend(out, prop("dirs", toInt(childDirectories.size() > 0)));
 		} else if (StringHelper.isImage(file.getFile().getName())) {
 			try {
-				BufferedImage img = ImageIO.read(file.getFile());
-				extend(out, prop("dim", "" + img.getWidth() + 'x' + img.getHeight()));
+				/*BufferedImage img = ImageIO.read(file.getFile());
+				extend(out, prop("dim", "" + img.getWidth() + 'x' + img.getHeight()));*/
 			} catch (Throwable e) {
 				logger.warning(e.getMessage());
 			}
@@ -405,8 +403,8 @@ public abstract class ELFinder {
 	}
 
 	protected List<Object> printFiles(List<ELFile> files) {
-		List<Object> out = new ArrayList<Object>();
-		Collections.sort(files, ELFile.FILE_NAME_COMPARATOR);
+		List<Object> out = new ArrayList<Object>();		
+		Collections.sort(files, ELFile.FILE_NAME_COMPARATOR);		
 		for (ELFile file : files) {
 			out.add(printFile(file));
 		}
