@@ -12,7 +12,7 @@ ul.menu {
     background-repeat: no-repeat;
 }
 
-.navigation li.add-page {
+.navigation li.add-page, .navigation li.insert-page {
 	margin-left: 20px;
 }
 
@@ -174,4 +174,10 @@ li.line {
     width: auto;
     display: inline-block;
     margin-left: 10px;
+}
+
+
+.insert-page input[type='submit'] {
+    background: url("images/icon_arrow_3.png") no-repeat scroll 5px -31px #FFFFFF;
+    padding-left: 26px;
 }

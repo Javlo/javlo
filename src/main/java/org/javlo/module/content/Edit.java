@@ -1094,5 +1094,28 @@ public class Edit extends AbstractModuleAction {
 		clipboard.clear();
 		return null;
 	}
+	
+	public static String performInsertPage(RequestService rs, ContentContext ctx, MessageRepository messageRepository, ContentService content, EditContext editContext, PersistenceService persistenceService, I18nAccess i18nAccess) throws Exception {
+		String path = editContext.getContextForCopy(ctx).getPath();
+		MenuElement pageToBeMoved = content.getNavigation(ctx).searchChild(ctx,path);
+		if (pageToBeMoved == null) {
+			return "page not found : "+path;
+		}
+		if ((pageToBeMoved != null) && (pageToBeMoved.getParent() != null)) {			
+			MenuElement newParent = null;
+			MenuElement[] elems = pageToBeMoved.getParent().getChildMenuElements();
+			for (int i = 0; i < elems.length - 1; i++) {
+				if (elems[i].equals(pageToBeMoved)) {
+					newParent = elems[i + 1];
+				}
+			}
+			pageToBeMoved.moveToParent(ctx.getCurrentPage());
+			persistenceService.store(ctx);			
+			String[][] balises = { { "path", path }, { "new-path", pageToBeMoved.getPath() } };
+			String msg = i18nAccess.getText("navigation.move", balises);
+			MessageRepository.getInstance(ctx).setGlobalMessage(new GenericMessage(msg, GenericMessage.INFO));
+		}
+		return null;
+	}
 
 }

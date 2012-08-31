@@ -105,6 +105,12 @@ public class InfoBean {
 		}
 		
 		info.setCaptchaURL(URLHelper.createStaticURL(ctx,  "/captcha.jpg"));
+		ContentContext copyCtx = EditContext.getInstance(globalContext, ctx.getRequest().getSession()).getContextForCopy(ctx);
+		if (copyCtx != null) {
+			if (!ctx.getPath().startsWith(copyCtx.getPath())) {
+				info.setCopiedPath(copyCtx.getPath());
+			}
+		}
 		
 		EditContext editContext = EditContext.getInstance(globalContext, ctx.getRequest().getSession());
 		info.setEditTemplateURL(URLHelper.createStaticURL(ctx, editContext.getEditTemplateFolder()));
@@ -137,6 +143,7 @@ public class InfoBean {
 	private String time;
 	private String templateFolder = "";
 	private String captchaURL;
+	private String copiedPath;
 	 
 	private int previewVersion = -1;
 	private Collection<String> contentLanguages;
@@ -432,5 +439,13 @@ public class InfoBean {
 
 	public void setParent(MenuElement.PageBean parent) {
 		this.parent = parent;
+	}
+
+	public String getCopiedPath() {
+		return copiedPath;
+	}
+
+	public void setCopiedPath(String copiedPath) {
+		this.copiedPath = copiedPath;
 	}
 }

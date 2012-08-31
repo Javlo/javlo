@@ -27,5 +27,15 @@
 			<input type="submit" value="${i18n.edit['global.ok']}" />
 			</div>
 		</form>
+	</li>	
+	<c:if test="${not empty info.copiedPath && currentModule.name eq 'content'}">
+	<li class="insert-page">
+		<form id="form-insert-page" action="${info.currentURL}" method="post">
+			<div>
+			<input type="hidden" name="webaction" value="edit.insertPage" />			
+			<input type="submit" name="name" value="${i18n.edit['navigation.insert-page']}" />			
+			</div>
+		</form>
 	</li>
+	</c:if>
 </ul>
