@@ -70,6 +70,7 @@ public class Module {
 		private String url;
 		private String legend;
 		private String title;
+		private Collection<HtmlLink> children = new LinkedList<Module.HtmlLink>();
 
 		public HtmlLink(String url, String legend, String title) {
 			this.url = url;
@@ -105,6 +106,14 @@ public class Module {
 		public boolean equals(Object obj) {
 			HtmlLink otherLink = (HtmlLink) obj;
 			return otherLink.getUrl().equals(getUrl()) && otherLink.getLegend().equals(getLegend());
+		}
+
+		public Collection<HtmlLink> getChildren() {
+			return children;
+		}
+
+		public void setChildren(Collection<HtmlLink> children) {
+			this.children = children;
 		}
 	}
 

@@ -947,6 +947,50 @@ h2.prize {
 	margin-right: 10px;
 }
 
+.breadcrumbs .children {
+	width: 20px;
+	height: 28px;
+	display: inline-block;
+	position: absolute;
+	margin-left: -22px;
+	
+	background: url('../images/arrow.png') no-repeat 1px 12px #ffffff;
+}
+
+.breadcrumbs .children.open {
+	background: url('../images/arrow.png') no-repeat 1px -31px #ffffff;
+}
+
+.breadcrumbs .children .container a {
+	background: none;
+}
+
+.breadcrumbs .children .container {
+	
+	padding: 3px 10px;
+	
+	position: relative;
+	display: none;
+	position: absolute;	
+	z-index: 5;
+	
+	min-height: 100px;
+	background: #fcfcfc;
+	position: absolute;
+	
+	top: 29px;
+	left: -1px;
+	border: 1px solid #333;	
+	-moz-box-shadow: 3px 3px 2px #333;
+	-webkit-box-shadow: 3px 3px 2px #333;
+	box-shadow: 3px 3px 2px #333;
+	-moz-border-radius: 0 3px 3px 3px;
+}
+
+.breadcrumbs .children .selected {
+	font-weight: bold;
+}
+
 .breadcrumbs a:hover {
 	text-decoration: none;
 }

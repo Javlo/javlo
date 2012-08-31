@@ -58,6 +58,8 @@ jQuery(document).bind("ajaxUpdate",function () {
 		notifCount.show();
 	}
 	
+	breadcrumb();
+	
 	var touchedAutogrow = "touched-autogrow"
 	jQuery(".autogrow")
 		.not("."+touchedAutogrow)
@@ -103,6 +105,18 @@ function onIMLoad() { // Called from im.jsp
 		jQuery("a.messagenotify .count").text(0).toggle(false);
 		jQuery(".im-messages").scrollTop(MAX_SCROLL_HEIGHT);
 	}
+}
+function breadcrumb() {	
+	jQuery(".breadcrumbs .children").mouseover(function() {		
+		var item = jQuery(this);		
+		item.find(".container").css("display", "block");
+		item.addClass("open");
+	});
+	jQuery(".breadcrumbs .children").mouseout(function() {
+		var item = jQuery(this);
+		item.find(".container").css("display", "none");
+		item.removeClass("open");
+	});
 }
 function queryIM(submitted) {
 	if (imInProgress) {
