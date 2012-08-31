@@ -1,6 +1,6 @@
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
 <%@ taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions" %>
-&nbsp;
+
 <c:if test="${fn:length(page.children) gt 0}">
 <c:if test="${page.info.depth >= start}"> 
 <ul class="menu">	
