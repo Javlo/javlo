@@ -948,7 +948,7 @@ h2.prize {
 }
 
 .breadcrumbs .children {
-	width: 20px;
+	min-width: 20px;
 	height: 28px;
 	display: inline-block;
 	position: absolute;
@@ -962,15 +962,28 @@ h2.prize {
 }
 
 .breadcrumbs .children .container a {
+	margin: 0;
 	background: none;
+	display: block;
+	white-space:nowrap;
+	padding: 5px 10px;		 
 }
 
+.breadcrumbs .children .container a:hover {
+	background: url("../images/bgbutton4.png") repeat-x scroll left top transparent;
+}
+
+.breadcrumbs .children li {
+	padding: 0;
+}
+
+
 .breadcrumbs .children .container {
-	
-	padding: 3px 10px;
-	
-	position: relative;
 	display: none;
+
+	padding: 0;
+	
+	position: relative;	
 	position: absolute;	
 	z-index: 5;
 	
