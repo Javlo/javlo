@@ -46,6 +46,7 @@ import org.javlo.helper.DebugHelper;
 import org.javlo.helper.DebugHelper.StructureException;
 import org.javlo.helper.ResourceHelper;
 import org.javlo.helper.StringHelper;
+import org.javlo.helper.TimeHelper;
 import org.javlo.helper.URLHelper;
 import org.javlo.message.GenericMessage;
 import org.javlo.message.MessageRepository;
@@ -895,6 +896,7 @@ public class PersistenceService {
 			}
 
 			tmpCal.add(Calendar.DAY_OF_YEAR, 1);
+			tmpCal = TimeHelper.convertRemoveAfterDay(tmpCal);
 			if (tmpCal.before(calFrom)) {
 				tmpCal.add(Calendar.YEAR, 1);
 			}

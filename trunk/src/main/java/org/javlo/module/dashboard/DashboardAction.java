@@ -23,6 +23,7 @@ import org.javlo.helper.LangHelper;
 import org.javlo.helper.LangHelper.ListBuilder;
 import org.javlo.helper.LangHelper.ObjectBuilder;
 import org.javlo.helper.NetHelper;
+import org.javlo.helper.StringHelper;
 import org.javlo.helper.TimeHelper;
 import org.javlo.helper.URLHelper;
 import org.javlo.i18n.I18nAccess;
@@ -35,6 +36,10 @@ import org.javlo.tracking.Track;
 import org.javlo.tracking.Tracker;
 
 public class DashboardAction extends AbstractModuleAction {
+	
+	public static void main(String[] args) {
+		System.out.println("***** DashboardAction.main : time = "+StringHelper.renderTime(new Date(Long.parseLong("1345208695440")))); //TODO: remove debug trace
+	}
 
 	@Override
 	public String getActionGroupName() {
@@ -181,23 +186,22 @@ public class DashboardAction extends AbstractModuleAction {
 				cal.add(Calendar.HOUR_OF_DAY, 1);
 			}
 
-			Track[] tracks = tracker.getTracks(start.getTime(), end.getTime());
+			Track[] tracks = tracker.getViewClickTracks(start.getTime(), end.getTime());
 			List<String> sessionIdFound = new LinkedList<String>();
-
+			
 			for (int i = 1; i < tracks.length - 1; i++) {
 				if (!sessionIdFound.contains(tracks[i].getSessionId())) {
 					if (!NetHelper.isUserAgentRobot(tracks[i].getUserAgent())) {
 						Date time = new Date(tracks[i].getTime());
 						String key = sdf.format(time);
 						Integer clicks = (Integer) clicksByHour.get(key);
-						if (clicks == null) {
+						if (clicks == null) {							
 							clicks = new Integer(0);
 						}
 						clicks = new Integer(clicks.intValue() + 1);
 						clicksByHour.put(key, clicks);
 					}
 					sessionIdFound.add(tracks[i].getSessionId());
-
 				}
 			}
 			ListBuilder datas = ajaxMap.list("datas");
@@ -213,4 +217,6 @@ public class DashboardAction extends AbstractModuleAction {
 
 		return null;
 	}
+	
+	
 }
