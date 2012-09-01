@@ -33,7 +33,7 @@ public class Description extends AbstractVisualComponent {
 
 	@Override
 	public String getPrefixViewXHTMLCode(ContentContext ctx) {
-		if (!isDisplayHTML(ctx)) {
+		if (!isNotDisplayHTML(ctx)) {
 			return "<p " + getSpecialPreviewCssClass(ctx, getType() + " " + getStyle(ctx)) + getSpecialPreviewCssId(ctx) + " >";
 		} else {
 			return "";
@@ -66,7 +66,7 @@ public class Description extends AbstractVisualComponent {
 
 	@Override
 	public String getSufixViewXHTMLCode(ContentContext ctx) {
-		if (!isDisplayHTML(ctx)) {
+		if (!isNotDisplayHTML(ctx)) {
 			return "</p>";
 		} else {
 			return "";
@@ -89,7 +89,7 @@ public class Description extends AbstractVisualComponent {
 	public String getViewXHTMLCode(ContentContext ctx) throws Exception {
 		StringBuffer finalCode = new StringBuffer();
 		String content = applyReplacement(getValue());
-		if (!isDisplayHTML(ctx)) {
+		if (!isNotDisplayHTML(ctx)) {
 			GlobalContext globalContext = GlobalContext.getInstance(ctx.getRequest());
 			ReverseLinkService reverserLinkService = ReverseLinkService.getInstance(globalContext);
 			content = reverserLinkService.replaceLink(ctx, content);
@@ -100,8 +100,13 @@ public class Description extends AbstractVisualComponent {
 		return finalCode.toString();
 	}
 
-	private boolean isDisplayHTML(ContentContext ctx) {
+	private boolean isNotDisplayHTML(ContentContext ctx) {
 		return StringHelper.neverNull(getStyle(ctx)).equals("hidden");
+	}
+	
+	@Override
+	public boolean isRealContent(ContentContext ctx) {
+		return !isNotDisplayHTML(ctx) && getValue().length() > 0;
 	}
 
 }

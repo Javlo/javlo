@@ -536,6 +536,8 @@ public class PersistenceService {
 		page.setCreator(creator);
 		page.setModificationDate(modificationDate);
 		page.setLatestEditor(latestEditor);
+		
+		page.setBreakRepeat(StringHelper.isTrue(pageXML.getAttributeValue("breakrepeat", "false")));
 
 		String[] virtualParent = StringHelper.stringToArray(pageXML.getAttributeValue("vparent", ""));
 		vparentPreparation.put(page, virtualParent);
@@ -593,6 +595,7 @@ public class PersistenceService {
 				root.setBlocked(StringHelper.isTrue(page.getAttributeValue("blocked", "false")));
 				root.setBlocker(page.getAttributeValue("blocker", ""));
 				root.setLinkedURL(page.getAttributeValue("linked-url", ""));
+				root.setBreakRepeat(StringHelper.isTrue(page.getAttributeValue("breakrepeat", "false")));				
 
 				String[] editorRoles = StringHelper.stringToArray(page.getAttributeValue("editor-roles", ""), "#");
 				if (editorRoles != null) {
@@ -1120,3 +1123,4 @@ public class PersistenceService {
 		return file.exists();
 	}
 }
+

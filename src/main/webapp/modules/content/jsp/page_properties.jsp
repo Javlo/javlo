@@ -42,13 +42,8 @@
 </div>
 
 <div class="line">
-	<label for="page_visible">${i18n.edit['item.reference-language']}</label>	
-	<select id="reference-language" name="reference-language">
-		<option value="">${i18n.edit['global.auto']}</option>
-		<c:forEach var="lang" items="${info.contentLanguages}">
-		<option value="${lang}" ${page.info.referenceLanguage?'selected="selected"':''} >${lang}</option>
-		</c:forEach>
-	</select>
+	<label for="break_repeat">${i18n.edit['item.break-repeat']}</label>
+	<input type="checkbox" id="break_repeat" name="break_repeat" ${page.info.breakRepeat?'checked="checked"':''} value="true" />
 </div>
 
 <div class="line">
