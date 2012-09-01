@@ -252,6 +252,7 @@ public class MenuElement implements Serializable {
 		int depth = 0;
 		public boolean visible = false;
 		String referenceLanguage = null;
+		boolean breakRepeat;
 
 		public boolean isVisible() {
 			return visible;
@@ -476,6 +477,14 @@ public class MenuElement implements Serializable {
 			this.referenceLanguage = referenceLangugae;
 		}
 
+		public boolean isBreakRepeat() {
+			return breakRepeat;
+		}
+
+		public void setBreakRepeat(boolean breakRepeat) {
+			this.breakRepeat = breakRepeat;
+		}
+
 	};
 
 	static int textCut = 18;
@@ -624,6 +633,8 @@ public class MenuElement implements Serializable {
 	 * protect page localy if there are linked with other website.
 	 */
 	private boolean remote = false;
+	
+	private boolean breakRepeat = false;
 
 	// private final Map<String, PageDescription> pageInfinityCache = new HashMap<String, PageDescription>();
 
@@ -853,7 +864,7 @@ public class MenuElement implements Serializable {
 
 	private void addRepeatContent(ContentElementList list, ContentContext ctx) throws Exception {
 
-		if (getParent() != null) {
+		if (getParent() != null && !isBreakRepeat()) {
 			getParent().addRepeatContent(list, ctx);
 		}
 		ContentElementList currentList = getLocalContent(ctx);
@@ -1291,8 +1302,10 @@ public class MenuElement implements Serializable {
 
 		ContentElementList elemList = new ContentElementList(getLocalContent(ctx));
 
-		if ((getParent() != null) && (ctx.getRenderMode() != ContentContext.EDIT_MODE)) {
-			getParent().addRepeatContent(elemList, ctx);
+		if (!isBreakRepeat()) {
+			if ((getParent() != null) && (ctx.getRenderMode() != ContentContext.EDIT_MODE)) {
+				getParent().addRepeatContent(elemList, ctx);
+			}
 		}
 
 		elemList.initialize(ctx);
@@ -2119,6 +2132,7 @@ public class MenuElement implements Serializable {
 				pageDescription.title = getTitle(ctx);
 				pageDescription.depth = getDepth();
 				pageDescription.visible = isVisible();
+				pageDescription.breakRepeat = isBreakRepeat();
 				pageDescription.referenceLanguage = getReferenceLanguage();
 			}
 			pageBean = new PageBean();
@@ -3275,6 +3289,15 @@ public class MenuElement implements Serializable {
 
 	public void setReferenceLanguage(String referenceLanguage) {
 		this.referenceLanguage = referenceLanguage;
+	}
+
+	public boolean isBreakRepeat() {
+		return breakRepeat;
+	}
+
+	public void setBreakRepeat(boolean breakRepeat) {
+		releaseCache();
+		this.breakRepeat = breakRepeat;
 	}
 
 }

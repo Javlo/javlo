@@ -45,7 +45,7 @@ public class RepeatContainer extends AbstractVisualComponent {
 	
 	@Override
 	public boolean isRepeatable() {
-		return false;
+		return true;
 	}
 	
 	public boolean isBlockRepeat(ContentContext ctx) {		

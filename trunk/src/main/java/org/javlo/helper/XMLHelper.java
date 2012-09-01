@@ -273,6 +273,11 @@ public class XMLHelper {
 				out.print("\" visible=\"");
 				out.print(visible);
 			}
+			if (page.isBreakRepeat()) {
+				out.print("\" breakrepeat=\"");
+				out.print(page.isBreakRepeat());
+			}
+			
 			if (page.isHttps())
 				if (validationDate != null && validationDate.trim().length() > 0) {
 					out.print("\" https=\"");

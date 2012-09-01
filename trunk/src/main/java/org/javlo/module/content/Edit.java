@@ -687,8 +687,15 @@ public class Edit extends AbstractModuleAction {
 					modify = true;
 				}
 			}
+			
 			if (page.isVisible() != isView) {
 				page.setVisible(isView);
+				modify = true;
+			}
+			
+			boolean isBreakRepeat = requestService.getParameter("break_repeat", null) != null;			
+			if (page.isBreakRepeat() != isBreakRepeat) {
+				page.setBreakRepeat(isBreakRepeat);
 				modify = true;
 			}
 
