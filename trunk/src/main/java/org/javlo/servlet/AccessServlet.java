@@ -1,6 +1,7 @@
 package org.javlo.servlet;
 
 import java.io.File;
+import java.io.IOException;
 import java.io.OutputStreamWriter;
 import java.io.PrintStream;
 import java.io.PrintWriter;
@@ -19,6 +20,7 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import org.apache.commons.io.FileUtils;
 import org.javlo.component.core.ComponentBean;
 import org.javlo.component.core.IContentComponentsList;
 import org.javlo.component.core.IContentVisualComponent;
@@ -154,6 +156,18 @@ public class AccessServlet extends HttpServlet {
 		}
 
 		MultiReadRequestWrapper.clearTempDir(getServletContext());
+
+		File defaultTemplateFolder = new File(URLHelper.mergePath(staticConfig.getTemplateFolder(), Template.DEFAULT_TEMPLATE_FOLDER));
+		if (!defaultTemplateFolder.exists()) {
+			defaultTemplateFolder.getParentFile().mkdirs();
+			logger.info("import default template.");
+			try {
+				FileUtils.copyDirectory(new File(getServletContext().getRealPath("/WEB-INF/template/" + Template.DEFAULT_TEMPLATE_FOLDER)), defaultTemplateFolder);
+			} catch (IOException e) {
+				e.printStackTrace();
+			}
+		}
+
 	}
 
 	public void process(HttpServletRequest request, HttpServletResponse response) throws ServletException {

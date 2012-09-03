@@ -123,7 +123,7 @@ public class GlobalContext implements Serializable {
 
 	private IURLFactory urlFactory = null;
 
-	private Map<String, MenuElement> viewPages = new HashMap<String, MenuElement>();
+	private final Map<String, MenuElement> viewPages = new HashMap<String, MenuElement>();
 
 	private ServletContext application;
 
@@ -597,7 +597,7 @@ public class GlobalContext implements Serializable {
 				// cacheManager.removalAll();
 				application.removeAttribute(contextKey);
 			}
-			
+
 			if (cacheManager != null) {
 				cacheManager.shutdown();
 			}
@@ -974,7 +974,7 @@ public class GlobalContext implements Serializable {
 		return properties.getString("google.uacct", "");
 	}
 
-	public String getHelpURL() {	
+	public String getHelpURL() {
 		return properties.getString("help-url", staticConfig.getHelpURL());
 	}
 
@@ -1214,7 +1214,7 @@ public class GlobalContext implements Serializable {
 			String tagsRaw = getRAWTags();
 			if (tagsRaw == null || tagsRaw.trim().length() == 0) {
 				return Collections.emptyList();
-			}			
+			}
 			List<String> outTags = new LinkedList<String>(Arrays.asList(StringHelper.stringToArray(tagsRaw, ",")));
 			return outTags;
 		}

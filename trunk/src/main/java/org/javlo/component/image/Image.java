@@ -1,13 +1,7 @@
 package org.javlo.component.image;
 
-import java.io.ByteArrayOutputStream;
-import java.io.IOException;
-import java.io.PrintStream;
 import java.io.PrintWriter;
 import java.io.StringWriter;
-
-import javax.servlet.ServletContext;
-import javax.servlet.ServletException;
 
 import org.javlo.component.core.ComponentBean;
 import org.javlo.component.core.IPreviewable;
@@ -20,13 +14,19 @@ import org.javlo.i18n.I18nAccess;
 import org.javlo.image.ImageConfig;
 import org.javlo.ztatic.StaticInfo;
 
-public class Image extends AbstractFileComponent implements IImageTitle, IPreviewable  {
+/**
+ * simple image without filter.
+ * 
+ * @author Patrick Vandermaesen
+ * 
+ */
+public class Image extends AbstractFileComponent implements IImageTitle, IPreviewable {
 
 	@Override
 	public String[] getStyleList(ContentContext ctx) {
 		return new String[] { "image-left", "image-right", "image-center" };
 	}
-	
+
 	@Override
 	public String[] getStyleLabelList(ContentContext ctx) {
 		String left = "left";
@@ -43,23 +43,22 @@ public class Image extends AbstractFileComponent implements IImageTitle, IPrevie
 		return new String[] { left, right, center };
 	}
 
-
 	@Override
 	public String getStyleTitle(ContentContext ctx) {
 		return "position";
 	}
-	
+
 	public String getCSSClassName(ContentContext ctx) {
-		return getStyle(ctx)+' '+getType();
+		return getStyle(ctx) + ' ' + getType();
 	}
-	
+
 	protected ImageConfig config = null;
 
 	@Override
 	public void init(ComponentBean bean, ContentContext ctx) throws Exception {
 		super.init(bean, ctx);
 		GlobalContext globalContext = GlobalContext.getInstance(ctx.getRequest());
-		//Warning : with javlo 1.4 this line has use a other ImageConfig from component.config package, check if regression	
+		// Warning : with javlo 1.4 this line has use a other ImageConfig from component.config package, check if regression
 		config = ImageConfig.getInstance(globalContext, ctx.getRequest().getSession(), ctx.getCurrentTemplate());
 	}
 
@@ -118,7 +117,7 @@ public class Image extends AbstractFileComponent implements IImageTitle, IPrevie
 	}
 
 	@Override
-	public String getPreviewCode(ContentContext ctx, int maxDisplayedImage) throws Exception {		
+	public String getPreviewCode(ContentContext ctx, int maxDisplayedImage) throws Exception {
 		StringWriter res = new StringWriter();
 		PrintWriter out = new PrintWriter(res);
 
@@ -126,8 +125,8 @@ public class Image extends AbstractFileComponent implements IImageTitle, IPrevie
 		String currentFileLink = URLHelper.mergePath(getDirSelected(), getFileName());
 		GlobalContext globalContext = GlobalContext.getInstance(ctx.getRequest());
 		out.println("<div class=\"image-selected\">");
-		out.println("<img src=\""+ URLHelper.createTransformURL(ctx, getPage(), getImageURL(ctx, getFileName()), "thumbnails")+"\" />");
-		out.println("<div class=\"name\">"+getFileName()+"</div>");
+		out.println("<img src=\"" + URLHelper.createTransformURL(ctx, getPage(), getImageURL(ctx, getFileName()), "thumbnails") + "\" />");
+		out.println("<div class=\"name\">" + getFileName() + "</div>");
 		out.println("</div><div class=\"image-list\">");
 		for (int i = 0; i < images.length; i++) {
 			if ((images[i] != null) && (images[i].trim().length() > 0)) {
@@ -141,7 +140,7 @@ public class Image extends AbstractFileComponent implements IImageTitle, IPrevie
 				}
 				String realURL = URLHelper.createResourceURL(ctx, getPage(), '/' + getImageURL(ctx, images[i])) + "?CRC32=" + staticInfo.getCRC32();
 				String previewURL = URLHelper.createTransformURL(ctx, getPage(), getImageURL(ctx, images[i]), "preview") + "?CRC32=" + staticInfo.getCRC32();
-				String url = URLHelper.createTransformURL(ctx, getPage(), getImageURL(ctx, images[i]), getConfig(ctx).getProperty("thumbnails-filter", "thumbnails") ) + "?CRC32=" + staticInfo.getCRC32();
+				String url = URLHelper.createTransformURL(ctx, getPage(), getImageURL(ctx, images[i]), getConfig(ctx).getProperty("thumbnails-filter", "thumbnails")) + "?CRC32=" + staticInfo.getCRC32();
 				String id = "image_name_select__" + getId();
 				if (i < maxDisplayedImage || isSelectedImage) {
 					out.print("<div " + selected + ">");
@@ -149,7 +148,7 @@ public class Image extends AbstractFileComponent implements IImageTitle, IPrevie
 					if (globalContext.isImagePreview()) {
 						onMouseOver = " onMouseOver=\"previewImage('" + previewURL + "')\" onMouseOut=\"previewClear()\"";
 					}
-					out.print("<a href=\"#\" onclick=\"jQuery('#"+id+"').val('" + images[i] + "');jQuery('#"+id+"').trigger('change');" + getJSOnChange(ctx) + "\"><img name=\"" + getImageImgName() + "\"" + onMouseOver + " src=\"");
+					out.print("<a href=\"#\" onclick=\"jQuery('#" + id + "').val('" + images[i] + "');jQuery('#" + id + "').trigger('change');" + getJSOnChange(ctx) + "\"><img name=\"" + getImageImgName() + "\"" + onMouseOver + " src=\"");
 					out.print(url);
 					out.print("\" alt=\"\"></a><br />");
 					out.print("<div class=\"name\"><a href=\"" + realURL + "\">" + images[i] + "</a></div>");
@@ -158,11 +157,11 @@ public class Image extends AbstractFileComponent implements IImageTitle, IPrevie
 			}
 		}
 		out.println("</div>");
-		
-		//TODO : create this javascrit method with a other mecanism
-		/*out.println("<script language=\"javascript\">");
-		out.println("autoScroll.delay(250);");
-		out.println("</script>");*/
+
+		// TODO : create this javascrit method with a other mecanism
+		/*
+		 * out.println("<script language=\"javascript\">"); out.println("autoScroll.delay(250);"); out.println("</script>");
+		 */
 		out.close();
 		return res.toString();
 	}
@@ -194,6 +193,7 @@ public class Image extends AbstractFileComponent implements IImageTitle, IPrevie
 	/*
 	 * @see org.javlo.itf.IContentVisualComponent#getType()
 	 */
+	@Override
 	public String getType() {
 		return "image";
 	}
@@ -203,10 +203,11 @@ public class Image extends AbstractFileComponent implements IImageTitle, IPrevie
 		return GRAPHIC_COLOR;
 	}
 
+	@Override
 	public String getImageURL(ContentContext ctx) {
 		return getImageURL(ctx, getFileName());
 	}
-	
+
 	public String getImageURL(ContentContext ctx, String fileLink) {
 		StaticConfig staticConfig = StaticConfig.getInstance(ctx.getRequest().getSession());
 		return URLHelper.mergePath(staticConfig.getImageFolder(), URLHelper.mergePath(getDirSelected(), fileLink));
@@ -229,10 +230,12 @@ public class Image extends AbstractFileComponent implements IImageTitle, IPrevie
 		}
 	}
 
+	@Override
 	public String getImageDescription(ContentContext ctx) {
 		return getStaticLabel(ctx);
 	}
 
+	@Override
 	public boolean isImageValid(ContentContext ctx) {
 		return getValue().trim().length() > 0;
 	}

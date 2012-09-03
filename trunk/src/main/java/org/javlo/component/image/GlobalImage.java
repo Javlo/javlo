@@ -397,7 +397,7 @@ public class GlobalImage extends FilterImage {
 		}
 		return null;
 	}
-
+	
 	protected String getLinkXHTMLInputName() {
 		return "_link_name_" + getId();
 	}

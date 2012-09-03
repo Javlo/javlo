@@ -12,7 +12,7 @@ import org.javlo.navigation.MenuElement.PageBean;
 import org.javlo.service.ContentService;
 
 /**
- * component for genrate a menu
+ * component for generate a menu
  * <h4>JSTL variable : </h4>
  * <ul>
  * <li>{@link PageBean} page : root page of menu. See {@link #getRootPage}.</li>

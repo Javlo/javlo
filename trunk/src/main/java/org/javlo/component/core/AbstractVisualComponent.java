@@ -58,15 +58,15 @@ import org.javlo.service.RequestService;
 import org.javlo.utils.DebugListening;
 import org.javlo.utils.SuffixPrefix;
 
-/** 
- * This class is the first class for component.
- * <h4>JSTL variable : </h4>
+/**
+ * This class is the first class for component. <h4>JSTL variable :</h4>
  * <ul>
  * <li>{@link String} compid : the id of the components. See {@link #getId()}</li>
  * <li>{@link String} value : the raw value of the component. See {@link #getValue()}</li>
  * <li>{@link String} type : the component type. See {@link #getType()}</li>
  * <li>{@link String} style : the style selected for the component. See {@link #getStyle(ContentContext)}</li>
  * </ul>
+ * 
  * @author pvanderm
  */
 public abstract class AbstractVisualComponent implements IContentVisualComponent {
@@ -216,7 +216,7 @@ public abstract class AbstractVisualComponent implements IContentVisualComponent
 
 	protected String executeJSP(ContentContext ctx, String jsp) throws ServletException, IOException {
 		if (jsp == null) {
-			return "no jsp found : "+getClass();
+			return "no jsp found : " + getClass();
 		}
 		ctx.getRequest().setAttribute(COMPONENT_KEY, this);
 		String url = jsp;
@@ -315,6 +315,7 @@ public abstract class AbstractVisualComponent implements IContentVisualComponent
 		return getType();
 	}
 
+	@Override
 	public ComponentConfig getConfig(ContentContext ctx) {
 		if ((ctx == null) || (ctx.getRequest() == null) || ((ctx.getRequest().getSession() == null))) {
 			return ComponentConfig.getInstance();
@@ -437,6 +438,7 @@ public abstract class AbstractVisualComponent implements IContentVisualComponent
 		return finalCode.toString();
 	}
 
+	@Override
 	public String getXHTMLConfig(ContentContext ctx) throws Exception {
 		ByteArrayOutputStream outStream = new ByteArrayOutputStream();
 		PrintStream out = new PrintStream(outStream);
@@ -471,15 +473,16 @@ public abstract class AbstractVisualComponent implements IContentVisualComponent
 
 		if (getConfig(ctx).getRenderes().size() > 0) {
 			out.println(getSelectRendererXHTML(ctx));
-			/*out.println("<label for=\"renderer-" + getId() + "\">" + getRendererTitle() + "</label>");
-			out.println(XHTMLHelper.getInputOneSelect("style-" + getId(), getConfig(ctx).getRenderes(), getRenderer(ctx)));
-			out.println("</div>");*/
+			/*
+			 * out.println("<label for=\"renderer-" + getId() + "\">" + getRendererTitle() + "</label>"); out.println(XHTMLHelper.getInputOneSelect("style-" + getId(), getConfig(ctx).getRenderes(), getRenderer(ctx))); out.println("</div>");
+			 */
 		}
 
 		out.close();
 		return new String(outStream.toByteArray());
 	}
 
+	@Override
 	public String performConfig(ContentContext ctx) throws Exception {
 		RequestService requestService = RequestService.getInstance(ctx.getRequest());
 
@@ -488,17 +491,16 @@ public abstract class AbstractVisualComponent implements IContentVisualComponent
 			setRepeat(isRepeat);
 			setModify();
 		}
-		
+
 		boolean isList = requestService.getParameter("inlist-" + getId(), null) != null;
 		if (isListable() && isList != isList(ctx)) {
 			setList(isList);
 			setModify();
 		}
 
-
 		/** renderer **/
 		String renderer = requestService.getParameter(getInputNameRenderer(), null);
-		System.out.println("***** AbstractVisualComponent.performConfig : renderer = "+renderer); //TODO: remove debug trace
+		System.out.println("***** AbstractVisualComponent.performConfig : renderer = " + renderer); // TODO: remove debug trace
 		if (renderer != null) {
 			if (!renderer.equals(getRenderer(ctx))) {
 				setRenderer(ctx, renderer);
@@ -615,7 +617,7 @@ public abstract class AbstractVisualComponent implements IContentVisualComponent
 	@Override
 	public final String getHelpURL(ContentContext ctx, String lang) {
 		if (ctx.getRenderMode() == ContentContext.PAGE_MODE) {
-			return URLHelper.mergePath(getBaseHelpURL(ctx),"/page/",lang,getHelpURI(ctx));
+			return URLHelper.mergePath(getBaseHelpURL(ctx), "/page/", lang, getHelpURI(ctx));
 		} else {
 			String url = URLHelper.mergePath(getBaseHelpURL(ctx), lang, getHelpURI(ctx));
 			System.out.println("*********************************************************************************************************");
@@ -750,7 +752,7 @@ public abstract class AbstractVisualComponent implements IContentVisualComponent
 		if (getPreviousComponent() == null || !getPreviousComponent().isList(ctx) || !getPreviousComponent().getType().equals(getType())) {
 			style = style + " first";
 		}
-		
+
 		if (!componentBean.isList()) {
 			return "<div " + getSpecialPreviewCssClass(ctx, style + ' ' + getType()) + getSpecialPreviewCssId(ctx) + " >";
 		} else {
@@ -916,12 +918,12 @@ public abstract class AbstractVisualComponent implements IContentVisualComponent
 				componentBean.setStyle(getStyleList(ctx)[0]);
 			}
 		}
-		String style = componentBean.getStyle(); 
+		String style = componentBean.getStyle();
 		if (isRepeat()) {
 			style = style + " repeat";
 			try {
 				if (getPage().equals(ctx.getCurrentPage())) {
-					style = style+ " first-repeat";
+					style = style + " first-repeat";
 				}
 			} catch (Exception e) {
 				e.printStackTrace();
@@ -930,6 +932,7 @@ public abstract class AbstractVisualComponent implements IContentVisualComponent
 		return style;
 	}
 
+	@Override
 	public String getStyleLabel(ContentContext ctx) {
 		String[] styles = getStyleList(ctx);
 		for (int i = 0; i < styles.length; i++) {
@@ -940,6 +943,7 @@ public abstract class AbstractVisualComponent implements IContentVisualComponent
 		return "";
 	}
 
+	@Override
 	public void setRenderer(ContentContext ctx, String renderer) {
 		componentBean.setRenderer(renderer);
 	}
@@ -1086,7 +1090,7 @@ public abstract class AbstractVisualComponent implements IContentVisualComponent
 		return text;
 	}
 
-	public String getViewXHTMLCode(ContentContext ctx) throws Exception {
+	protected String executeCurrentRenderer(ContentContext ctx) throws ServletException, IOException {
 		if (getRenderer(ctx) != null) {
 			ctx.getRequest().setAttribute(COMPONENT_KEY, this);
 			String url = getRenderer(ctx);
@@ -1096,10 +1100,23 @@ public abstract class AbstractVisualComponent implements IContentVisualComponent
 			logger.fine("execute view jsp in '" + getType() + "' : " + url);
 			return ServletHelper.executeJSP(ctx, url);
 		} else {
-			return getValue();
+			return null;
 		}
 	}
 
+	private String renderViewXHTMLCode(ContentContext ctx) throws Exception {
+		if (getRenderer(ctx) != null) {
+			return executeCurrentRenderer(ctx);
+		} else {
+			return getViewXHTMLCode(ctx);
+		}
+	}
+
+	public String getViewXHTMLCode(ContentContext ctx) throws Exception {
+		return getValue();
+	}
+
+	@Override
 	public int getWordCount(ContentContext ctx) {
 		String value = getValue();
 		if (value != null) {
@@ -1162,7 +1179,7 @@ public abstract class AbstractVisualComponent implements IContentVisualComponent
 					synchronized (lockContent) {
 						long beforeTime = System.currentTimeMillis();
 						prepareView(ctx);
-						setContentCache(ctx, getViewXHTMLCode(ctx));
+						setContentCache(ctx, renderViewXHTMLCode(ctx));
 						logger.fine("render content cache '" + getType() + "' : " + (System.currentTimeMillis() - beforeTime) / 1000 + " sec.");
 					}
 					return getContentCache(ctx);
@@ -1172,13 +1189,13 @@ public abstract class AbstractVisualComponent implements IContentVisualComponent
 						synchronized (lockContentTime) {
 							long beforeTime = System.currentTimeMillis();
 							prepareView(ctx);
-							content = getViewXHTMLCode(ctx);
+							content = renderViewXHTMLCode(ctx);
 							logger.fine("render content time cache '" + getType() + "' : " + (System.currentTimeMillis() - beforeTime) / 1000 + " sec.");
 							setContentTimeCache(ctx, content);
 						}
 					} else {
 						prepareView(ctx);
-						content = getViewXHTMLCode(ctx);
+						content = renderViewXHTMLCode(ctx);
 					}
 					return content;
 				}
@@ -1654,6 +1671,7 @@ public abstract class AbstractVisualComponent implements IContentVisualComponent
 		return false;
 	}
 
+	@Override
 	public String getClassName() {
 		return getClass().getName();
 	}
@@ -1685,7 +1703,9 @@ public abstract class AbstractVisualComponent implements IContentVisualComponent
 	// generate compilation error : use for refactoring
 
 	/*
-	 * protected final boolean isDefaultValue() {return false;} protected final String getHelpURL(String lang) {return null;} //TODO: remove after refactoring protected final boolean isEmpty() {return false;}//TODO: remove after refactoring; protected final boolean isVisible (int format ){return false;}//TODO: remove after refactoring; protected final List<SufixPreffix> getMarkerList() {return null;}//TODO: remove after refactoring; protected final String getSufixViewXHTMLCode() {return null;}//TODO: remove after refactoring; protected final String getPrefixViewXHTMLCode() {return null;}//TODO: remove after refactoring; protected final boolean isHidden(){return false;}//TODO: remove after refactoring; protected final String getFirstPrefix(){return null;}//TODO: remove after refactoring; protected final String getViewXHTMLCode() throws Exception {return null;}//TODO: remove after refactoring; protected final String getEditXHTMLCode() throws Exception {return null;}//TODO: remove after refactoring; protected final boolean needJavaScript(){return false;}//TODO: remove after refactoring; protected final String[] getStyleLabelList() {return null;}//TODO: remove after refactoring; protected final String getImageLinkTitle() {return null;}//TODO: remove after refactoring; protected final String[] getStyleList() {return null;}//TODO: remove after refactoring; protected final String getStyleTitle() {return null;}//TODO: remove after refactoring; protected final boolean isList(){return false;}//TODO: remove after refactoring; protected final boolean isContentCachable(){return false;}//TODO: remove after refactoring; protected final String getLastSufix() {return null;}//TODO: remove after refactoring; protected final String getCSSClassName() {return null;}//TODO: remove after refactoring; protected final Collection<String> getExternalResources() {return null;}//TODO: remove after refactoring; protected final int getTitleLevel() {return 1;}//TODO: remove after refactoring; protected final boolean isImageValid() {return false;}//TODO: remove after refactoring; protected final String getHeaderContent(){return null;}//TODO: remove after refactoring; protected final String getImageUploadTitle(){return null;}//TODO: remove after refactoring; protected final String getImageChangeTitle() {return null;}//TODO: remove after refactoring; protected final String getDeleteTitle(){return null;}//TODO: remove after refactoring; protected final String createFileURL(String inURL){return null;}//TODO: remove after refactoring; protected final String getFileDirectory(){return null;}//TODO: remove after refactoring;
+	 * protected final boolean isDefaultValue() {return false;} protected final String getHelpURL(String lang) {return null;} //TODO: remove after refactoring protected final boolean isEmpty() {return false;}//TODO: remove after refactoring; protected final boolean isVisible (int format ){return false;}//TODO: remove after refactoring; protected final List<SufixPreffix> getMarkerList() {return null;}//TODO: remove after refactoring; protected final String getSufixViewXHTMLCode() {return null;}//TODO: remove after refactoring; protected final String getPrefixViewXHTMLCode() {return null;}//TODO: remove after refactoring; protected final boolean isHidden(){return false;}//TODO: remove after refactoring; protected final String getFirstPrefix(){return null;}//TODO: remove after refactoring; protected final String getViewXHTMLCode() throws Exception {return null;}//TODO: remove after refactoring; protected final String getEditXHTMLCode() throws Exception {return null;}//TODO: remove after
+	 * refactoring; protected final boolean needJavaScript(){return false;}//TODO: remove after refactoring; protected final String[] getStyleLabelList() {return null;}//TODO: remove after refactoring; protected final String getImageLinkTitle() {return null;}//TODO: remove after refactoring; protected final String[] getStyleList() {return null;}//TODO: remove after refactoring; protected final String getStyleTitle() {return null;}//TODO: remove after refactoring; protected final boolean isList(){return false;}//TODO: remove after refactoring; protected final boolean isContentCachable(){return false;}//TODO: remove after refactoring; protected final String getLastSufix() {return null;}//TODO: remove after refactoring; protected final String getCSSClassName() {return null;}//TODO: remove after refactoring; protected final Collection<String> getExternalResources() {return null;}//TODO: remove after refactoring; protected final int getTitleLevel() {return 1;}//TODO: remove after
+	 * refactoring; protected final boolean isImageValid() {return false;}//TODO: remove after refactoring; protected final String getHeaderContent(){return null;}//TODO: remove after refactoring; protected final String getImageUploadTitle(){return null;}//TODO: remove after refactoring; protected final String getImageChangeTitle() {return null;}//TODO: remove after refactoring; protected final String getDeleteTitle(){return null;}//TODO: remove after refactoring; protected final String createFileURL(String inURL){return null;}//TODO: remove after refactoring; protected final String getFileDirectory(){return null;}//TODO: remove after refactoring;
 	 */
 
 }

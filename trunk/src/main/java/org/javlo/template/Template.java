@@ -50,6 +50,8 @@ import org.javlo.service.exception.ServiceException;
 
 public class Template implements Comparable<Template> {
 
+	public static final String DEFAULT_TEMPLATE_FOLDER = "default";
+
 	private static class TemplateComparator implements Comparator<Template> {
 
 		@Override
@@ -229,7 +231,7 @@ public class Template implements Comparable<Template> {
 		String creationDate;
 		String downloadURL;
 		List<String> ids;
-		Map<String,String> areaMap;
+		Map<String, String> areaMap;
 		List<String> areas;
 		boolean valid;
 		String imageURL;
@@ -237,19 +239,20 @@ public class Template implements Comparable<Template> {
 		String authors;
 		String description;
 		String licence;
-		Date date;	
+		Date date;
 		String id = StringHelper.getRandomId();
 		boolean mailing;
 		String category;
 		String version;
 		String deployId = StringHelper.getRandomId();
 		String type;
-		
-		public TemplateBean(){};
 
-		public TemplateBean(ContentContext ctx, Template template) throws Exception {			
+		public TemplateBean() {
+		};
+
+		public TemplateBean(ContentContext ctx, Template template) throws Exception {
 			StaticConfig staticConfig = StaticConfig.getInstance(ctx.getRequest().getSession());
-			
+
 			name = template.getName();
 			previewURL = URLHelper.createTransformStaticTemplateURL(ctx, template, "template", template.getVisualFile());
 			viewURL = URLHelper.createTransformStaticTemplateURL(ctx, template, "template_view", template.getVisualFile());
@@ -257,7 +260,7 @@ public class Template implements Comparable<Template> {
 			HTMLFile = template.getHTMLFile(ctx.getDevice());
 			creationDate = StringHelper.renderDate(template.getCreationDate(), staticConfig.getDefaultDateFormat());
 			downloadURL = "/folder/template/" + template.getName() + ".zip";
-				
+
 			ContentContext remoteCtx = ctx.getContextForAbsoluteURL();
 			downloadURL = URLHelper.createStaticURL(remoteCtx, downloadURL);
 			ids = template.getHTMLIDS();
@@ -265,12 +268,12 @@ public class Template implements Comparable<Template> {
 			areas = template.getAreas();
 			Collections.sort(areas);
 			areaMap = template.getAreasMap();
-			valid = template.isValid();			
+			valid = template.isValid();
 			try {
-				imageURL = URLHelper.createTransformStaticTemplateURL(remoteCtx, template, "template", template.getVisualFile())+"?deployId="+template.getDeployId();
+				imageURL = URLHelper.createTransformStaticTemplateURL(remoteCtx, template, "template", template.getVisualFile()) + "?deployId=" + template.getDeployId();
 			} catch (Exception e) {
-				e.printStackTrace();				
-			}			
+				e.printStackTrace();
+			}
 			try {
 				url = URLHelper.createStaticTemplateURL(remoteCtx, template, template.getHTMLFile(null));
 			} catch (Exception e) {
@@ -280,7 +283,7 @@ public class Template implements Comparable<Template> {
 			authors = template.getAuthors();
 			description = template.getDescription(ctx.getLanguage());
 			licence = template.getLicenceFile();
-			date = template.getCreationDate();			
+			date = template.getCreationDate();
 			version = template.getVersion();
 			deployId = template.getDeployId();
 			type = IRemoteResource.TYPE_TEMPLATE;
@@ -307,31 +310,32 @@ public class Template implements Comparable<Template> {
 			return creationDate;
 		}
 
+		@Override
 		public String getDownloadURL() {
-			return downloadURL;			
+			return downloadURL;
 		}
-		
+
 		public Collection<String> getHTMLIDS() {
-			
+
 			return ids;
 		}
-		
-		public Collection<String> getAreas() {			
+
+		public Collection<String> getAreas() {
 			return areas;
 		}
-		
-		public Map<String,String> getAreasMap() {
+
+		public Map<String, String> getAreasMap() {
 			return areaMap;
 		}
-		
+
 		public boolean isValid() {
 			return valid;
 		}
-		
+
 		public boolean isMailing() {
 			return mailing;
 		}
-		
+
 		public String getDeployId() {
 			return deployId;
 		};
@@ -410,12 +414,12 @@ public class Template implements Comparable<Template> {
 		public void setDate(Date date) {
 			this.date = date;
 		}
-		
+
 		@Override
-		public String getType() {		
+		public String getType() {
 			return type;
 		}
-		
+
 		public void setType(String type) {
 			this.type = type;
 		}
@@ -439,7 +443,7 @@ public class Template implements Comparable<Template> {
 		public void setCategory(String category) {
 			this.category = category;
 		}
-		
+
 		@Override
 		public String getDateAsString() {
 			return StringHelper.renderDate(getDate());
@@ -453,7 +457,7 @@ public class Template implements Comparable<Template> {
 		@Override
 		public void setVersion(String version) {
 			this.version = version;
-		}	
+		}
 	}
 
 	public static class TemplateDateComparator implements Comparator<Template> {
@@ -535,24 +539,24 @@ public class Template implements Comparable<Template> {
 		System.out.println("**** link color : " + data.getLink());
 	}
 
-	private PropertiesConfiguration properties = new PropertiesConfiguration();
+	private final PropertiesConfiguration properties = new PropertiesConfiguration();
 
-	private PropertiesConfiguration privateProperties = new PropertiesConfiguration();
+	private final PropertiesConfiguration privateProperties = new PropertiesConfiguration();
 
 	private File dir = null;
 
 	protected StaticConfig config;
-	
+
 	private final String buildId = StringHelper.getRandomId();
 
 	private boolean jsp = false;
 
 	private static Template emptyTemplate = null;
-	
+
 	private String deployId = StringHelper.getRandomId();
 
 	public static Template getApplicationInstance(ServletContext application, ContentContext ctx, String templateDir) throws ConfigurationException, IOException {
-		
+
 		Template outTemplate = null;
 		if (templateDir == null) {
 			// logger.severe("templateDir is null");
@@ -577,7 +581,7 @@ public class Template implements Comparable<Template> {
 			if (outTemplate.isAlternativeTemplate(ctx)) {
 				outTemplate = outTemplate.getAlternativeTemplate(StaticConfig.getInstance(application), ctx);
 			}
-		}		
+		}
 		return outTemplate;
 	}
 
@@ -596,7 +600,7 @@ public class Template implements Comparable<Template> {
 		if ((templateDir == null) || templateDir.trim().length() == 0) {
 			return getEmptyInstance();
 		}
-		Template template = new Template();		
+		Template template = new Template();
 		String templateFolder = URLHelper.mergePath(config.getTemplateFolder(), templateDir);
 
 		template.dir = new File(templateFolder);
@@ -681,7 +685,7 @@ public class Template implements Comparable<Template> {
 		return messages;
 	}
 
-	public void clearRenderer(ContentContext ctx) {	
+	public void clearRenderer(ContentContext ctx) {
 		String templateFolder = config.getTemplateFolder();
 		File templateSrc = new File(URLHelper.mergePath(templateFolder, getSourceFolder()));
 		if (templateSrc.exists()) {
@@ -758,9 +762,9 @@ public class Template implements Comparable<Template> {
 		}
 		return areas;
 	}
-	
-	public Map<String,String> getAreasMap() {
-		Map<String,String> areas = new HashMap<String, String>();
+
+	public Map<String, String> getAreasMap() {
+		Map<String, String> areas = new HashMap<String, String>();
 		Iterator<String> keys = properties.getKeys();
 		while (keys.hasNext()) {
 			String key = keys.next();
@@ -770,18 +774,9 @@ public class Template implements Comparable<Template> {
 		}
 		return areas;
 	}
-	
+
 	public void setArea(String area, String id) {
-		properties.setProperty(XMLManipulationHelper.AREA_PREFIX+area, id);
-		try {
-			properties.save();
-		} catch (ConfigurationException e) {
-			e.printStackTrace();
-		}
-	}
-	
-	public void deleteArea(String area) {
-		properties.clearProperty(XMLManipulationHelper.AREA_PREFIX+area);		
+		properties.setProperty(XMLManipulationHelper.AREA_PREFIX + area, id);
 		try {
 			properties.save();
 		} catch (ConfigurationException e) {
@@ -789,6 +784,14 @@ public class Template implements Comparable<Template> {
 		}
 	}
 
+	public void deleteArea(String area) {
+		properties.clearProperty(XMLManipulationHelper.AREA_PREFIX + area);
+		try {
+			properties.save();
+		} catch (ConfigurationException e) {
+			e.printStackTrace();
+		}
+	}
 
 	/**
 	 * this area is display if specialrendere is defined
@@ -967,7 +970,7 @@ public class Template implements Comparable<Template> {
 		}
 		return renderer;
 	}
-	
+
 	public String getVersion() {
 		return properties.getString("version", "?");
 	}
@@ -1237,7 +1240,7 @@ public class Template implements Comparable<Template> {
 			}
 			List<String> resources = new LinkedList<String>();
 			TemplatePluginFactory templatePluginFactory = TemplatePluginFactory.getInstance(globalContext.getServletContext());
-			List<String> ids = new LinkedList<String>();						
+			List<String> ids = new LinkedList<String>();
 			int depth = XMLManipulationHelper.convertHTMLtoTemplate(globalContext, HTMLFile, jspFile, getMap(), getAreas(), resources, templatePluginFactory.getAllTemplatePlugin(globalContext.getTemplatePlugin()), ids, isMailing());
 			setHTMLIDS(ids);
 			setDepth(depth);
@@ -1443,7 +1446,7 @@ public class Template implements Comparable<Template> {
 	public String getVisualFile() {
 		return properties.getString("file.visual", getParent().getVisualFile());
 	}
-	
+
 	public String getVisualPDFile() {
 		return properties.getString("file.pdf", getParent().getVisualPDFile());
 	}
@@ -1647,7 +1650,7 @@ public class Template implements Comparable<Template> {
 			}
 		}
 	}
-	
+
 	public void setDepth(int depth) {
 		privateProperties.setProperty("depth", depth);
 		try {
@@ -1751,7 +1754,7 @@ public class Template implements Comparable<Template> {
 			return super.equals(obj);
 		}
 	}
-	
+
 	public void setHTMLIDS(Collection<String> ids) {
 		privateProperties.setProperty("html.ids", StringHelper.collectionToString(ids, ","));
 		try {
@@ -1760,20 +1763,18 @@ public class Template implements Comparable<Template> {
 			e.printStackTrace();
 		}
 	}
-	
+
 	public List<String> getHTMLIDS() {
 		String htmlIds = privateProperties.getString("html.ids");
 		if (htmlIds == null) {
 			return Collections.EMPTY_LIST;
 		}
-		List<String> ids = StringHelper.stringToCollection(htmlIds, ",");		
-		return ids;		
+		List<String> ids = StringHelper.stringToCollection(htmlIds, ",");
+		return ids;
 	}
 
 	public String getDeployId() {
 		return deployId;
 	}
-
-
 
 }

@@ -621,7 +621,7 @@ public class StaticConfig extends Observable {
 	}
 
 	public String getLocalTemplateFolder() {
-		String path = properties.getString("template-folder", "/template");		
+		String path = properties.getString("template-folder", "/template");
 		return path;
 	}
 
@@ -1084,15 +1084,15 @@ public class StaticConfig extends Observable {
 	public String getDefaultJSDateFormat() {
 		return properties.getString("default-date-format", "d/M/yy");
 	}
-	
+
 	public String getMarketURL() {
 		return properties.getString("market.url", "http://market.javlo.org/market/");
 	}
-	
+
 	public ServletContext getServletContext() {
 		return application;
 	}
-	
+
 	public String getMarketServerName() {
 		return properties.getString("market.server.name", "javlo.org");
 	}
@@ -1100,13 +1100,17 @@ public class StaticConfig extends Observable {
 	public String getLogFile() {
 		return properties.getString("log.file", "../../logs/catalina.out");
 	}
-	
+
 	public String getSiteEmail() {
 		return properties.getString("site.email", "webmaster@javlo.org");
 	}
-	
+
 	public String getHelpURL() {
-		return properties.getString("site.help-url", "http://help.javlo.org/javlo2/" );
+		return properties.getString("site.help-url", "http://help.javlo.org/javlo2/");
+	}
+
+	public boolean isDefaultTemplateImported() {
+		return properties.getBoolean("template.default-imported", true);
 	}
 
 }
