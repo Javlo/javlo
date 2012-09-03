@@ -12,6 +12,7 @@ import org.javlo.context.ContentContext;
 import org.javlo.context.EditContext;
 import org.javlo.context.GlobalContext;
 import org.javlo.data.InfoBean;
+import org.javlo.helper.AjaxHelper;
 import org.javlo.helper.ServletHelper;
 import org.javlo.service.NotificationService;
 import org.javlo.tracking.Tracker;
@@ -69,6 +70,7 @@ public class AjaxServlet extends HttpServlet {
 					int unreadNotification = NotificationService.getInstance(globalContext).getUnreadNotificationSize(editCtx.getUserPrincipal().getName(), 99);
 					ctx.addAjaxInsideZone("notification-count", "" + unreadNotification);
 				}
+				AjaxHelper.render(ctx, ctx.getAjaxInsideZone(), ctx.getScheduledAjaxInsideZone());
 				outMap.put("insideZone", ctx.getAjaxInsideZone());
 				outMap.put("zone", ctx.getAjaxZone());
 				outMap.write(strWriter);

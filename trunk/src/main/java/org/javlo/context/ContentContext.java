@@ -18,6 +18,7 @@ import javax.servlet.http.HttpServletResponse;
 
 import org.javlo.component.core.ComponentBean;
 import org.javlo.config.StaticConfig;
+import org.javlo.helper.AjaxHelper.ScheduledRender;
 import org.javlo.helper.ElementaryURLHelper;
 import org.javlo.navigation.IURLFactory;
 import org.javlo.navigation.MenuElement;
@@ -276,6 +277,7 @@ public class ContentContext {
 	}
 
 	private Map<String, String> ajaxInsideZone = new HashMap<String, String>();
+	private Map<String, ScheduledRender> scheduledAjaxInsideZone = new HashMap<String, ScheduledRender>();
 	private Map<String, String> ajaxZone = new HashMap<String, String>();;
 
 	private User currentUser = null;
@@ -854,6 +856,10 @@ public class ContentContext {
 		return ajaxInsideZone;
 	}
 
+	public Map<String, ScheduledRender> getScheduledAjaxInsideZone() {
+		return scheduledAjaxInsideZone;
+	}
+
 	/**
 	 * add a ajax zone for update.
 	 * 
@@ -864,6 +870,18 @@ public class ContentContext {
 	 */
 	public void addAjaxInsideZone(String id, String xhtml) {
 		ajaxInsideZone.put(id, xhtml);
+	}
+
+	/**
+	 * Schedule an ajax zone for update. The uri will be called after the prepare() of the current module actions. 
+	 * 
+	 * @param id
+	 *            a xhtml id
+	 * @param xhtml
+	 *            the new content of the zone
+	 */
+	public void scheduleAjaxInsideZone(String id, String uri, Map<String, Object> attributes) {
+		scheduledAjaxInsideZone.put(id, new ScheduledRender(uri, attributes));
 	}
 
 	/**

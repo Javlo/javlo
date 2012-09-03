@@ -152,25 +152,31 @@ public class Module {
 
 	public class Box {
 
-		private Box(String title, String renderer, boolean action) {
-			this(title, renderer, action, null);
+		private Box(String name, String title, String renderer, boolean action) {
+			this(name, title, renderer, action, null);
 		}
 
-		private Box(String title, String renderer, boolean action, List<BoxStep> stepList) {
-			this.steps = stepList;
+		private Box(String name, String title, String renderer, boolean action, List<BoxStep> stepList) {
+			this.name = name;
 			this.title = StringHelper.neverNull(title);
 			this.defaultTitle = this.title;
 			this.renderer = URLHelper.mergePath(path, renderer);
 			this.action = action;
+			this.steps = stepList;
 			id = "box-" + StringHelper.getRandomId();
 		}
 
+		protected String name;
 		protected String title;
 		protected String defaultTitle;
 		protected String renderer;
 		protected String id;
 		protected boolean action;
 		protected List<BoxStep> steps;
+
+		public String getName() {
+			return name;
+		}
 
 		public String getTitle() {
 			return title;
@@ -215,7 +221,7 @@ public class Module {
 		 * @throws IOException
 		 * @throws ServletException
 		 */
-		public void update(ContentContext ctx) throws ServletException, IOException {
+		public void update(ContentContext ctx) {
 			AjaxHelper.updateBox(ctx, this);
 		}
 
@@ -262,8 +268,8 @@ public class Module {
 	}
 
 	private class NavigationBox extends Box {
-		private NavigationBox(String title, boolean action) {
-			super(title, "/", action);
+		private NavigationBox(String name, String title, boolean action) {
+			super(name, title, "/", action);
 			this.renderer = "/jsp/edit/modules/navigation.jsp";
 		}
 	}
@@ -439,7 +445,8 @@ public class Module {
 		for (int i = 1; i < 100; i++) {
 			String navigationBaseKey = "navigation." + i;
 
-			if (config.get(navigationBaseKey + ".name") != null) {
+			String boxName = config.get(navigationBaseKey + ".name");
+			if (boxName != null) {
 				String renderer = config.get(navigationBaseKey + ".renderer");
 
 				String boxTitle = config.get(navigationBaseKey + ".title." + locale.getLanguage());
@@ -448,14 +455,12 @@ public class Module {
 				}
 				Box box;
 				if (renderer == null) {
-					box = new NavigationBox(boxTitle, StringHelper.isTrue(config.get(navigationBaseKey + ".action")));
+					box = new NavigationBox(boxName, boxTitle, StringHelper.isTrue(config.get(navigationBaseKey + ".action")));
 				} else {
-					box = new Box(boxTitle, renderer, StringHelper.isTrue(config.get(navigationBaseKey + ".action")));
+					box = new Box(boxName, boxTitle, renderer, StringHelper.isTrue(config.get(navigationBaseKey + ".action")));
 				}
 				navigation.add(box);
-				if (config.get(navigationBaseKey + ".name") != null) {
-					boxes.put(config.get(navigationBaseKey + ".name"), box);
-				}
+				boxes.put(boxName, box);
 			} else {
 				break;
 			}
@@ -489,6 +494,7 @@ public class Module {
 			if (renderer != null || stepRenderer != null) {
 				List<BoxStep> stepList = new LinkedList<BoxStep>();
 				String boxTitle;
+				String boxName = config.get(boxBaseKey + ".name");
 				if (renderer != null) {
 					boxTitle = config.get(boxBaseKey + ".title." + locale.getLanguage());
 					if (boxTitle == null) {
@@ -513,10 +519,10 @@ public class Module {
 					renderer = first.getRenderer();
 					boxTitle = first.getTitle();
 				}
-				Box box = new Box(boxTitle, renderer, StringHelper.isTrue(config.get(boxBaseKey + ".action")), stepList);
+				Box box = new Box(boxName, boxTitle, renderer, StringHelper.isTrue(config.get(boxBaseKey + ".action")), stepList);
 				boxList.add(box);
-				if (config.get(boxBaseKey + ".name") != null) {
-					boxes.put(config.get(boxBaseKey + ".name"), box);
+				if (boxName != null) {
+					boxes.put(boxName, box);
 				}
 			} else {
 				break;
@@ -707,7 +713,7 @@ public class Module {
 	}
 
 	public synchronized Box createMainBox(String name, String title, String renderer, boolean action) {
-		Box box = new Box(title, renderer, action);
+		Box box = new Box(name, title, renderer, action);
 		mainBoxes.add(box);
 		if (name != null) {
 			boxes.put(name, box);
@@ -728,7 +734,7 @@ public class Module {
 		if (getBox(name) != null) {
 			return null;
 		}
-		Box box = new Box(title, renderer, action);
+		Box box = new Box(name, title, renderer, action);
 		sideBoxes.add(box);
 		if (name != null) {
 			boxes.put(name, box);
@@ -860,5 +866,10 @@ public class Module {
 	public void addChild(Module module) {
 		this.children.add(module);
 	}
+
+	public void updateMainRenderer(ContentContext ctx) throws ServletException, IOException {
+		AjaxHelper.updateMainRenderer(ctx, this);
+	}
+
 }
 
