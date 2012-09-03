@@ -23,6 +23,7 @@ import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
 import org.javlo.actions.IAction;
+import org.javlo.component.core.AbstractVisualComponent;
 import org.javlo.component.core.ComplexPropertiesLink;
 import org.javlo.component.core.ComponentBean;
 import org.javlo.component.image.IImageTitle;
@@ -45,6 +46,15 @@ import org.javlo.service.NavigationService;
 import org.javlo.service.RequestService;
 
 /**
+ * list of links to a subset of pages.
+ * <h4>JSTL variable : </h4>
+ * <ul>
+ * <li>inherited from {@link AbstractVisualComponent}</li>
+ * <li>{@link PageStatus} pagesStatus : root page of menu. See {@link #getRootPage}.</li>
+ * <li>{@link PageBean} pages : list of pages selected to display.</li>
+ * <li>{@link String} title : title of the page list. See {@link #getContentTitle}</li>  
+ * <li>{@link PageReferenceComponent} comp : current component.</li>
+ * </ul>
  * @author pvandermaesen
  */
 public class PageReferenceComponent extends ComplexPropertiesLink implements IAction {

@@ -50,6 +50,14 @@ import org.javlo.ztatic.IStaticContainer;
 import org.javlo.ztatic.StaticInfo;
 
 /**
+ * Abstract component for access to a file (file,image...) <h4>JSTL variable :</h4>
+ * <ul>
+ * <li>inherited from {@link AbstractVisualComponent}</li>
+ * <li>{@link String} url : url to resource.</li>
+ * <li>{@link String} description : description of the resource.</li>
+ * <li>{@link String} label : label defined by contributor.</li>
+ * </ul>
+ * 
  * @author pvandermaesen
  */
 public abstract class AbstractFileComponent extends AbstractVisualComponent implements IStaticContainer {
@@ -121,6 +129,17 @@ public abstract class AbstractFileComponent extends AbstractVisualComponent impl
 
 	protected boolean expandZip() {
 		return false;
+	}
+
+	@Override
+	public void prepareView(ContentContext ctx) throws Exception {
+		super.prepareView(ctx);
+		StaticConfig staticConfig = StaticConfig.getInstance(ctx.getRequest().getSession());
+		String fileLink = URLHelper.mergePath(getDirSelected(), getFileName());
+		String url = URLHelper.createResourceURL(ctx, getPage(), staticConfig.getImageFolder() + '/' + fileLink).replace('\\', '/');
+		ctx.getRequest().setAttribute("url", url);
+		ctx.getRequest().setAttribute("descritpion", getDescription());
+		ctx.getRequest().setAttribute("label", getLabel());
 	}
 
 	/**
@@ -263,15 +282,15 @@ public abstract class AbstractFileComponent extends AbstractVisualComponent impl
 			System.arraycopy(fileList, 0, fileListBlanck, 1, fileList.length);
 
 			finalCode.append(XHTMLHelper.getInputOneSelect(getSelectXHTMLInputName(), fileListBlanck, getFileName(), getJSOnChange(ctx), true));
-			
+
 			if (ctx.getRenderMode() == ContentContext.EDIT_MODE) {
 				if (isLinkToStatic()) {
-					
+
 					Map<String, String> filesParams = new HashMap<String, String>();
 					filesParams.put("path", URLHelper.mergePath("/", getRelativeFileDirectory(ctx), getDirSelected()));
-					String staticURL = URLHelper.createModuleURL(ctx, ctx.getPath(), "file", filesParams); 
-					
-					finalCode.append("&nbsp;<a class=\"" + IContentVisualComponent.EDIT_ACTION_CSS_CLASS + "\" href=\""+staticURL+"\" >");
+					String staticURL = URLHelper.createModuleURL(ctx, ctx.getPath(), "file", filesParams);
+
+					finalCode.append("&nbsp;<a class=\"" + IContentVisualComponent.EDIT_ACTION_CSS_CLASS + "\" href=\"" + staticURL + "\" >");
 					finalCode.append(i18nAccess.getText("content.goto-static"));
 					finalCode.append("</a>");
 				}
@@ -312,11 +331,11 @@ public abstract class AbstractFileComponent extends AbstractVisualComponent impl
 	protected String[] getFileList(String directory) {
 		return getFileList(directory, null);
 	}
-	
+
 	protected FilenameFilter getFileFilter() {
 		return null;
 	}
-	
+
 	protected FilenameFilter getDecorationFilter() {
 		return null;
 	}
@@ -354,11 +373,11 @@ public abstract class AbstractFileComponent extends AbstractVisualComponent impl
 	protected String getFileXHTMLInputName() {
 		return "selection" + ID_SEPARATOR + getId();
 	}
-	
+
 	protected String getDecoImageXHTMLInputName() {
 		return "image_deco_" + ID_SEPARATOR + getId();
 	}
-	
+
 	protected String getDecoImageFileXHTMLInputName() {
 		return "image_deco_file_" + ID_SEPARATOR + getId();
 	}
@@ -377,17 +396,16 @@ public abstract class AbstractFileComponent extends AbstractVisualComponent impl
 		I18nAccess i18nAccess = I18nAccess.getInstance(ctx.getRequest());
 		return i18nAccess.getText("action.add-image.add");
 	}
-	
+
 	protected String getImageDecorativeTitle(ContentContext ctx) throws FileNotFoundException, IOException {
 		I18nAccess i18nAccess = I18nAccess.getInstance(ctx.getRequest());
 		return i18nAccess.getText("action.add-image.add");
 	}
 
-
 	public String getJSOnChange(ContentContext ctx) {
-//		String ajaxURL = URLHelper.createAjaxURL(ctx);
-//		String formRef = "document.forms['content_update']";
-//		return "updateComponent(" + formRef + ",'" + ajaxURL + "'); reloadComponent('" + getId() + "','" + ajaxURL + "');";
+		// String ajaxURL = URLHelper.createAjaxURL(ctx);
+		// String formRef = "document.forms['content_update']";
+		// return "updateComponent(" + formRef + ",'" + ajaxURL + "'); reloadComponent('" + getId() + "','" + ajaxURL + "');";
 		return "jQuery(this.form).trigger('submit')";
 	}
 
@@ -588,7 +606,7 @@ public abstract class AbstractFileComponent extends AbstractVisualComponent impl
 					}
 				}
 			}
-			
+
 			if (isModify()) {
 				setNeedRefresh(true);
 			}
@@ -722,7 +740,7 @@ public abstract class AbstractFileComponent extends AbstractVisualComponent impl
 				String newFileName = null;
 				if (filter.accept(file, item.getName()) && expandZip()) {
 					newFileName = item.getName();
-					expandZip(ctx, new ZipInputStream(item.getInputStream())); //TODO: who close this stream ?
+					expandZip(ctx, new ZipInputStream(item.getInputStream())); // TODO: who close this stream ?
 				} else {
 					newFileName = saveItem(ctx, item);
 				}

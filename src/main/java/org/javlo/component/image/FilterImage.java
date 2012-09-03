@@ -4,6 +4,7 @@
 package org.javlo.component.image;
 
 import org.javlo.component.core.ComponentBean;
+import org.javlo.component.files.AbstractFileComponent;
 import org.javlo.config.StaticConfig;
 import org.javlo.context.ContentContext;
 import org.javlo.helper.StringHelper;
@@ -11,6 +12,12 @@ import org.javlo.helper.URLHelper;
 import org.javlo.i18n.I18nAccess;
 
 /**
+ * <h4>JSTL variable :</h4>
+ * <ul>
+ * <li>inherited from {@link AbstractFileComponent}</li>
+ * <li>{@link String} previewURL : url of preview image.</li>
+ * </ul>
+ * 
  * @author pvandermaesen
  */
 public abstract class FilterImage extends Image {
@@ -52,7 +59,7 @@ public abstract class FilterImage extends Image {
 	public String getCSSClassName(ContentContext ctx) {
 		return getStyle(ctx);
 	}
-	
+
 	/**
 	 * true if we can click on image for open in big resolution
 	 * 
@@ -62,24 +69,33 @@ public abstract class FilterImage extends Image {
 		return true;
 	}
 
+	@Override
+	public void prepareView(ContentContext ctx) throws Exception {
+		super.prepareView(ctx);
+		String fileLink = URLHelper.mergePath(getDirSelected(), getFileName());
+		StaticConfig staticConfig = StaticConfig.getInstance(ctx.getRequest().getSession());
+		String thumbURL = URLHelper.createTransformURL(ctx, getPage(), staticConfig.getImageFolder() + '/' + fileLink, getFilter(ctx)).replace('\\', '/');
+		ctx.getRequest().setAttribute("previewURL", thumbURL);
+	}
+
 	/**
 	 * @see org.javlo.itf.IContentVisualComponent#getXHTMLCode()
 	 */
 	@Override
 	public String getViewXHTMLCode(ContentContext ctx) throws Exception {
 		StringBuffer res = new StringBuffer();
-		
+
 		String label = getLabel();
 		if (label.trim().length() == 0) {
 			label = getDescription();
 		}
-		
+
 		if (!isEmpty(ctx)) {
 			String fileLink = URLHelper.mergePath(getDirSelected(), getFileName());
 			StaticConfig staticConfig = StaticConfig.getInstance(ctx.getRequest().getSession());
 			String thumbURL = URLHelper.createTransformURL(ctx, getPage(), staticConfig.getImageFolder() + '/' + fileLink, getFilter(ctx)).replace('\\', '/');
 			String url = URLHelper.createResourceURL(ctx, getPage(), staticConfig.getImageFolder() + '/' + fileLink).replace('\\', '/');
-			res.append("<div "+getSpecialPreviewCssClass(ctx, getCSSClassName(ctx) + " "+getFilter(ctx))+getSpecialPreviewCssId(ctx)+">");
+			res.append("<div " + getSpecialPreviewCssClass(ctx, getCSSClassName(ctx) + " " + getFilter(ctx)) + getSpecialPreviewCssId(ctx) + ">");
 			res.append("<div class=\"labeled-image\">");
 			if (isClickable()) {
 				res.append("<a href=\"");
