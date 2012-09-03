@@ -11,7 +11,6 @@ import org.apache.commons.configuration.ConfigurationException;
 import org.javlo.context.ContentContext;
 import org.javlo.context.EditContext;
 import org.javlo.context.GlobalContext;
-import org.javlo.mailing.MailingContext;
 import org.javlo.service.exception.ServiceException;
 import org.javlo.template.Template;
 import org.javlo.template.TemplateFactory;

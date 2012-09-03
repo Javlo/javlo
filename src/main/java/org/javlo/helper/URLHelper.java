@@ -16,8 +16,8 @@ import org.apache.commons.io.FileUtils;
 import org.javlo.config.StaticConfig;
 import org.javlo.context.ContentContext;
 import org.javlo.context.GlobalContext;
-import org.javlo.mailing.MailingContext;
 import org.javlo.module.core.ModulesContext;
+import org.javlo.module.mailing.MailingModuleContext;
 import org.javlo.navigation.MenuElement;
 import org.javlo.navigation.PageConfiguration;
 import org.javlo.service.ContentService;
@@ -285,7 +285,7 @@ public class URLHelper extends ElementaryURLHelper {
 		Template template = null;
 		GlobalContext globalContext = GlobalContext.getInstance(ctx.getRequest());
 		if (ctx.getRenderMode() == ContentContext.PAGE_MODE) {
-			MailingContext mailingCtx = MailingContext.getInstance(ctx.getRequest().getSession());
+			MailingModuleContext mailingCtx = MailingModuleContext.getInstance(ctx.getRequest());
 			RequestService requestService = RequestService.getInstance(ctx.getRequest());
 			String templateID = requestService.getParameter("template", null);
 			if (templateID == null) {

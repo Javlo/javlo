@@ -42,7 +42,6 @@ import org.javlo.helper.URLHelper;
 import org.javlo.helper.XMLManipulationHelper;
 import org.javlo.helper.XMLManipulationHelper.BadXMLException;
 import org.javlo.i18n.I18nAccess;
-import org.javlo.mailing.MailingContext;
 import org.javlo.message.GenericMessage;
 import org.javlo.navigation.DefaultTemplate;
 import org.javlo.remote.IRemoteResource;
@@ -1239,7 +1238,7 @@ public class Template implements Comparable<Template> {
 			List<String> resources = new LinkedList<String>();
 			TemplatePluginFactory templatePluginFactory = TemplatePluginFactory.getInstance(globalContext.getServletContext());
 			List<String> ids = new LinkedList<String>();						
-			int depth = XMLManipulationHelper.convertHTMLtoTemplate(globalContext, HTMLFile, jspFile, getMap(), getAreas(), resources, templatePluginFactory.getAllTemplatePlugin(globalContext.getTemplatePlugin()), ids, _isMailing());
+			int depth = XMLManipulationHelper.convertHTMLtoTemplate(globalContext, HTMLFile, jspFile, getMap(), getAreas(), resources, templatePluginFactory.getAllTemplatePlugin(globalContext.getTemplatePlugin()), ids, isMailing());
 			setHTMLIDS(ids);
 			setDepth(depth);
 		}
@@ -1560,7 +1559,7 @@ public class Template implements Comparable<Template> {
 		return getLinkEmail(lg).exists();
 	}
 
-	public boolean _isMailing() {
+	public boolean isMailing() {
 		return properties.getBoolean("mailing", false);
 	}
 

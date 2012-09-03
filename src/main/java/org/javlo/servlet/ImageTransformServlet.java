@@ -27,7 +27,6 @@ import org.javlo.helper.URLHelper;
 import org.javlo.image.ImageConfig;
 import org.javlo.image.ImageEngine;
 import org.javlo.image.ImageHelper;
-import org.javlo.mailing.MailingContext;
 import org.javlo.rendering.Device;
 import org.javlo.template.Template;
 import org.javlo.tracking.Track;

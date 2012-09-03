@@ -11,7 +11,7 @@ import javax.servlet.http.HttpServletResponse;
 import org.javlo.context.ContentContext;
 import org.javlo.context.GlobalContext;
 import org.javlo.helper.RequestHelper;
-import org.javlo.mailing.MailingContext;
+import org.javlo.module.mailing.MailingModuleContext;
 import org.javlo.navigation.PageConfiguration;
 import org.javlo.service.RequestService;
 import org.javlo.template.Template;
@@ -58,7 +58,7 @@ public class ContentOnlyServlet extends HttpServlet {
             ctx.setRenderMode(ContentContext.PAGE_MODE); // todo: check how we can remove this line.
 
             ctx.setAbsoluteURL(true);
-            MailingContext mailingCtx = MailingContext.getInstance(request.getSession());
+			MailingModuleContext mailingCtx = MailingModuleContext.getInstance(request);
             GlobalContext globalContext = GlobalContext.getInstance(request);
             PageConfiguration pageConfiguration = PageConfiguration.getInstance(globalContext);
             RequestService requestService = RequestService.getInstance(request);
