@@ -4,6 +4,32 @@ jQuery(document).ready(function() {
 		jQuery("#ajax-loader").addClass("active");				
 		ajaxRequest(jQuery(this).attr('href'));	
 	});	
+	var AJAX_SUBMIT_SHADOW_DATA = "_AjaxSubmitShadow"
+	jQuery('form.ajax :submit').live("click", function(event) {
+		var submit = jQuery(this);
+		if (submit.attr("name") != null) {
+			var shadow = submit.data(AJAX_SUBMIT_SHADOW_DATA);
+			if (shadow == null) {
+				shadow = jQuery("<input/>");
+				submit.data(AJAX_SUBMIT_SHADOW_DATA, shadow);
+				shadow.attr("type", "hidden");
+				shadow.insertAfter(submit);
+			}
+			shadow.attr("name", submit.attr("name"));
+			shadow.val(submit.val());
+			submit.removeAttr("name");
+		}
+	});
+	jQuery('form.ajax :submit').live("blur", function(event) {
+		var submit = jQuery(this);
+		var shadow = submit.data(AJAX_SUBMIT_SHADOW_DATA);
+		if (shadow != null) {
+			if (shadow.attr("name") != null) {
+				submit.attr("name", shadow.attr("name"));
+				shadow.removeAttr("name");
+			}
+		}
+	});
 	jQuery('form.ajax').live("submit", function(event) {
 		var form = jQuery(this);		
 		var ajaxSubmit = true;
