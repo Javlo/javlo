@@ -8,8 +8,20 @@ import java.util.List;
 import org.javlo.component.properties.AbstractPropertiesComponent;
 import org.javlo.context.ContentContext;
 import org.javlo.navigation.MenuElement;
+import org.javlo.navigation.MenuElement.PageBean;
 import org.javlo.service.ContentService;
 
+/**
+ * component for genrate a menu
+ * <h4>JSTL variable : </h4>
+ * <ul>
+ * <li>{@link PageBean} page : root page of menu. See {@link #getRootPage}.</li>
+ * <li>{@link Integer} start : first depth. See {@link #getStartLevel}</li>
+ * <li>{@link Integer} end : last depth. See {@link #getEndLevel}</li>  
+ * </ul>
+ * @author Patrick Vandermaesen
+ *
+ */
 public class Menu extends AbstractPropertiesComponent {
 
 	public static final String TYPE = "menu";
@@ -45,6 +57,10 @@ public class Menu extends AbstractPropertiesComponent {
 		return startLevel;
 	}
 	
+	/**
+	 * return of the root page setted by user.
+	 * @return
+	 */
 	String getRootPage() {
 		return getFieldValue(ROOT_PAGE, "");
 	}

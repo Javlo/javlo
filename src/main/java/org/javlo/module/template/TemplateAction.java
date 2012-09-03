@@ -291,11 +291,7 @@ public class TemplateAction extends AbstractModuleAction {
 		Template template = TemplateFactory.getDiskTemplate(session.getServletContext(), requestService.getParameter("name", null), StringHelper.isTrue(requestService.getParameter("mailing", null)));
 		if (template == null) {
 			Collection<Template> templates;
-			if (StringHelper.isTrue(requestService.getParameter("mailing", null))) {
-				templates = TemplateFactory.getAllDiskMaillingTemplates(session.getServletContext());
-			} else {
-				templates = TemplateFactory.getAllDiskTemplates(session.getServletContext());
-			}
+			templates = TemplateFactory.getAllDiskTemplates(session.getServletContext());
 			for (Template template2 : templates) {
 				template2.setValid(true);
 			}

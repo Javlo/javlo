@@ -13,11 +13,9 @@ import java.util.logging.Logger;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import org.javlo.admin.AdminAction;
 import org.javlo.component.core.ComponentFactory;
 import org.javlo.context.ContentContext;
 import org.javlo.context.GlobalContext;
-import org.javlo.ecom.EcomActions;
 import org.javlo.helper.LangHelper;
 import org.javlo.helper.StringHelper;
 import org.javlo.i18n.I18nAccess;
@@ -131,9 +129,9 @@ public class ActionManager {
 	private static IAction[] getSpecialActionGroup() {
 		IAction[] outActionGroup = new IAction[6];
 		outActionGroup[0] = new SearchActions();
-		outActionGroup[1] = new MailingActions();
-		outActionGroup[2] = new AdminAction();
-		outActionGroup[3] = new EcomActions();
+		//outActionGroup[1] = new MailingActions();
+		//outActionGroup[2] = new AdminAction();
+		//outActionGroup[3] = new EcomActions();
 		outActionGroup[4] = new ViewActions();
 		outActionGroup[5] = new TimeTravelerActions();
 		return outActionGroup;

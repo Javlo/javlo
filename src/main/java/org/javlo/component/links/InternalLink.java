@@ -7,7 +7,6 @@ import java.io.PrintWriter;
 import java.io.StringWriter;
 import java.util.logging.Logger;
 
-import org.javlo.actions.MailingActions;
 import org.javlo.component.core.ComplexPropertiesLink;
 import org.javlo.component.core.ComponentBean;
 import org.javlo.component.core.IInternalLink;
@@ -21,6 +20,7 @@ import org.javlo.helper.URLHelper;
 import org.javlo.helper.XHTMLHelper;
 import org.javlo.i18n.I18nAccess;
 import org.javlo.message.GenericMessage;
+import org.javlo.module.mailing.Mailing;
 import org.javlo.navigation.MenuElement;
 import org.javlo.service.ContentService;
 import org.javlo.service.NavigationService;
@@ -250,9 +250,9 @@ public class InternalLink extends ComplexPropertiesLink implements IInternalLink
 				viewCtx.setRenderMode(ContentContext.VIEW_MODE);
 				url = URLHelper.createURL(viewCtx, link);
 				if (getParam().trim().length() == 0) {
-					res.append(StringHelper.toXMLAttribute(url) + "?" + MailingActions.MAILING_FEEDBACK_PARAM_NAME + "=##data##");
+					res.append(StringHelper.toXMLAttribute(url) + "?" + Mailing.MAILING_FEEDBACK_PARAM_NAME + "=##data##");
 				} else {
-					res.append(StringHelper.toXMLAttribute(url) + getParam() + "&" + MailingActions.MAILING_FEEDBACK_PARAM_NAME + "=##data##");
+					res.append(StringHelper.toXMLAttribute(url) + getParam() + "&" + Mailing.MAILING_FEEDBACK_PARAM_NAME + "=##data##");
 				}
 			}
 			res.append("\">");
@@ -271,9 +271,9 @@ public class InternalLink extends ComplexPropertiesLink implements IInternalLink
 					viewCtx.setRenderMode(ContentContext.VIEW_MODE);
 					url = URLHelper.createURL(viewCtx, link);
 					if (getParam().trim().length() == 0) {
-						res.append(url + "?" + MailingActions.MAILING_FEEDBACK_PARAM_NAME + "=##data##");
+						res.append(url + "?" + Mailing.MAILING_FEEDBACK_PARAM_NAME + "=##data##");
 					} else {
-						res.append(url + getParam() + "&" + MailingActions.MAILING_FEEDBACK_PARAM_NAME + "=##data##");
+						res.append(url + getParam() + "&" + Mailing.MAILING_FEEDBACK_PARAM_NAME + "=##data##");
 					}
 				}
 				res.append("\">");

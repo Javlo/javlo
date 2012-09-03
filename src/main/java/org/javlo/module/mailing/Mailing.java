@@ -16,6 +16,8 @@ import org.javlo.module.core.ModulesContext;
 import org.javlo.service.RequestService;
 
 public class Mailing extends AbstractModuleAction {
+	
+	public static final String MAILING_FEEDBACK_PARAM_NAME = "_mfb";
 
 	private static Logger logger = Logger.getLogger(Mailing.class.getName());
 

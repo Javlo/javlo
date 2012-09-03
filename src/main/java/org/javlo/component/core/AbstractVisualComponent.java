@@ -58,7 +58,15 @@ import org.javlo.service.RequestService;
 import org.javlo.utils.DebugListening;
 import org.javlo.utils.SuffixPrefix;
 
-/**
+/** 
+ * This class is the first class for component.
+ * <h4>JSTL variable : </h4>
+ * <ul>
+ * <li>{@link String} compid : the id of the components. See {@link #getId()}</li>
+ * <li>{@link String} value : the raw value of the component. See {@link #getValue()}</li>
+ * <li>{@link String} type : the component type. See {@link #getType()}</li>
+ * <li>{@link String} style : the style selected for the component. See {@link #getStyle(ContentContext)}</li>
+ * </ul>
  * @author pvanderm
  */
 public abstract class AbstractVisualComponent implements IContentVisualComponent {

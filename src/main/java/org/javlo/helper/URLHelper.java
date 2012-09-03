@@ -295,7 +295,7 @@ public class URLHelper extends ElementaryURLHelper {
 					templateID = pageConfiguration.getMailingTemplates().iterator().next().getId();
 				}
 			}
-			template = Template.getApplicationInstance(ctx.getRequest().getSession().getServletContext(), ctx, templateID, true);
+			template = Template.getApplicationInstance(ctx.getRequest().getSession().getServletContext(), ctx, templateID);
 		}
 
 		//ContentService.createContent(ctx.getRequest());
@@ -308,12 +308,8 @@ public class URLHelper extends ElementaryURLHelper {
 		String templateFolder;
 
 		template = template.getFinalTemplate(ctx);
-
-		if (template.isMailing()) {
-			templateFolder = template.getLocalWorkMailingTemplateFolder();
-		} else {
-			templateFolder = template.getLocalWorkTemplateFolder();
-		}
+		templateFolder = template.getLocalWorkTemplateFolder();
+		
 		String templateFullPath = URLHelper.mergePath(templateFolder, template.getFolder(globalContext));
 
 		if (url == null) {
@@ -339,11 +335,7 @@ public class URLHelper extends ElementaryURLHelper {
 
 		Template template = ctx.getCurrentTemplate();
 
-		if (template.isMailing()) {
-			templateFolder = template.getLocalWorkMailingTemplateFolder();
-		} else {
-			templateFolder = template.getLocalWorkTemplateFolder();
-		}
+		templateFolder = template.getLocalWorkTemplateFolder();
 		String templateFullPath = URLHelper.mergePath(templateFolder, template.getFolder(globalContext), pluginFolder);
 
 		if (url == null) {
@@ -366,14 +358,10 @@ public class URLHelper extends ElementaryURLHelper {
 			;
 		}
 		if (template.getFolder(globalContext) == null) {
-			template = Template.getApplicationInstance(ctx.getRequest().getSession().getServletContext(), ctx, globalContext.getDefaultTemplate(), template.isMailing());
+			template = Template.getApplicationInstance(ctx.getRequest().getSession().getServletContext(), ctx, globalContext.getDefaultTemplate());
 		}
 		String templateFullPath;
-		if (template.isMailing()) {
-			templateFullPath = URLHelper.mergePath(template.getLocalWorkMailingTemplateFolder(), template.getFolder(globalContext));
-		} else {
-			templateFullPath = URLHelper.mergePath(template.getLocalWorkTemplateFolder(), template.getFolder(globalContext));
-		}
+		templateFullPath = URLHelper.mergePath(template.getLocalWorkTemplateFolder(), template.getFolder(globalContext));
 
 		if (url == null) {
 			return null;
@@ -390,14 +378,10 @@ public class URLHelper extends ElementaryURLHelper {
 			;
 		}
 		if (template.getFolder(globalContext) == null) {
-			template = Template.getApplicationInstance(ctx.getRequest().getSession().getServletContext(), ctx, globalContext.getDefaultTemplate(), template.isMailing());
+			template = Template.getApplicationInstance(ctx.getRequest().getSession().getServletContext(), ctx, globalContext.getDefaultTemplate());
 		}
 		String templateFullPath;
-		if (template.isMailing()) {
-			templateFullPath = URLHelper.mergePath(template.getLocalWorkMailingTemplateFolder(), template.getFolder(globalContext)); // TODO Check why it was null before globalContext
-		} else {
-			templateFullPath = URLHelper.mergePath(template.getLocalWorkTemplateFolder(), template.getFolder(globalContext)); // TODO Check why it was null before globalContext
-		}
+		templateFullPath = URLHelper.mergePath(template.getLocalWorkTemplateFolder(), template.getFolder(globalContext)); // TODO Check why it was null before globalContext
 
 		if (url == null) {
 			return null;
@@ -436,14 +420,11 @@ public class URLHelper extends ElementaryURLHelper {
 			template = TemplateFactory.getTemplates(ctx.getRequest().getSession().getServletContext()).get(elem.getTemplateId());
 		}
 		if (template.getFolder(globalContext) == null) {
-			template = Template.getApplicationInstance(ctx.getRequest().getSession().getServletContext(), ctx, globalContext.getDefaultTemplate(), template.isMailing());
+			template = Template.getApplicationInstance(ctx.getRequest().getSession().getServletContext(), ctx, globalContext.getDefaultTemplate());
 		}
 		String templateFolder;
-		if (template.isMailing()) {
-			templateFolder = template.getLocalWorkMailingTemplateFolder();
-		} else {
-			templateFolder = template.getLocalWorkTemplateFolder();
-		}
+		templateFolder = template.getLocalWorkTemplateFolder();
+			
 		if (ctx.getRenderMode() == ContentContext.ADMIN_MODE) {
 			globalContext = null;
 		}
@@ -649,14 +630,11 @@ public class URLHelper extends ElementaryURLHelper {
 			template = TemplateFactory.getTemplates(ctx.getRequest().getSession().getServletContext()).get(elem.getTemplateId());
 		}
 		if (template.getFolder(globalContext) == null) {
-			template = Template.getApplicationInstance(ctx.getRequest().getSession().getServletContext(), ctx, globalContext.getDefaultTemplate(), template.isMailing());
+			template = Template.getApplicationInstance(ctx.getRequest().getSession().getServletContext(), ctx, globalContext.getDefaultTemplate());
 		}
 		String templateFolder;
-		if (template.isMailing()) {
-			templateFolder = template.getLocalWorkMailingTemplateFolder();
-		} else {
-			templateFolder = template.getLocalWorkTemplateFolder();
-		}
+		templateFolder = template.getLocalWorkTemplateFolder();
+		
 		String templateFullPath = URLHelper.mergePath(templateFolder, template.getFolder(null));
 
 		String url = template.getVisualFile();

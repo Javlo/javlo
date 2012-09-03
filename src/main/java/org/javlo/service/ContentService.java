@@ -50,8 +50,7 @@ public class ContentService {
 			PersistenceService.getInstance(globalContext).loadVersion();
 		}
 		TemplateFactory.clearTemplate(ctx.getRequest().getSession().getServletContext());
-		TemplateFactory.cleanAllRenderer(ctx, true, false);
-		TemplateFactory.cleanAllRenderer(ctx, false, false);
+		TemplateFactory.cleanAllRenderer(ctx, false);		
 	}
 
 	public static void clearAllCache(ContentContext ctx, GlobalContext globalContext) throws Exception {
@@ -60,8 +59,7 @@ public class ContentService {
 		content.releaseAll(ctx, globalContext);
 		PersistenceService.getInstance(globalContext).loadVersion();
 		TemplateFactory.clearTemplate(ctx.getRequest().getSession().getServletContext());
-		TemplateFactory.cleanAllRenderer(ctx, true, false);
-		TemplateFactory.cleanAllRenderer(ctx, false, false);
+		TemplateFactory.cleanAllRenderer(ctx, false);		
 		content.loadViewNav(ctx); // reload the content
 	}
 

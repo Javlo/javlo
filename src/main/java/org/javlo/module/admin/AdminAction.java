@@ -699,8 +699,7 @@ public class AdminAction extends AbstractModuleAction {
 					}
 
 					if (importTemplate) {
-						TemplateFactory.cleanRenderer(ctx, currentGlobalContext.getTemplates(), false, true);
-						// TemplateFactory.cleanRenderer(ctx, currentGlobalContext.getMailingTemplates(), true, true);
+						TemplateFactory.cleanRenderer(ctx, currentGlobalContext.getTemplates(), true);
 					}
 
 					PageConfiguration.getInstance(currentGlobalContext).loadTemplate(currentGlobalContext); // reload templates
