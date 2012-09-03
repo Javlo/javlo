@@ -9,10 +9,9 @@ import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import org.javlo.actions.MailingActions;
 import org.javlo.context.ContentContext;
 import org.javlo.mailing.FeedBackMailingBean;
-import org.javlo.mailing.Mailing;
+import org.javlo.module.mailing.Mailing;
 import org.javlo.service.DataToIDService;
 import org.javlo.service.RequestService;
 
@@ -27,7 +26,7 @@ public class RequestHelper {
 	public static final void traceMailingFeedBack(ContentContext ctx) {
 		ServletContext application = ctx.getRequest().getSession().getServletContext();
 		RequestService requestService = RequestService.getInstance(ctx.getRequest());
-		String mfb = requestService.getParameter(MailingActions.MAILING_FEEDBACK_PARAM_NAME, null);
+		String mfb = requestService.getParameter(Mailing.MAILING_FEEDBACK_PARAM_NAME, null);
 		if (mfb != null) {
 			DataToIDService serv = DataToIDService.getInstance(application);
 			Map<String, String> params = StringHelper.uriParamToMap(serv.getData(mfb));
@@ -41,7 +40,7 @@ public class RequestHelper {
 				}
 			}
 			if (id != null) {
-				Mailing mailing = new Mailing();
+				org.javlo.mailing.Mailing mailing = new org.javlo.mailing.Mailing();
 				try {
 					if (mailing.isExist(application, id)) {
 						mailing.setId(application, id);

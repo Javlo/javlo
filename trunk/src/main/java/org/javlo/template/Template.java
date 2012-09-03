@@ -257,11 +257,8 @@ public class Template implements Comparable<Template> {
 			HTMLURL = URLHelper.createStaticTemplateURL(ctx, template, template.getHTMLFile(null));
 			HTMLFile = template.getHTMLFile(ctx.getDevice());
 			creationDate = StringHelper.renderDate(template.getCreationDate(), staticConfig.getDefaultDateFormat());
-			if (template.isMailing()) {
-				downloadURL = "/folder/mailing-template/" + template.getName() + ".zip";
-			} else {
-				downloadURL = "/folder/template/" + template.getName() + ".zip";
-			}
+			downloadURL = "/folder/template/" + template.getName() + ".zip";
+				
 			ContentContext remoteCtx = ctx.getContextForAbsoluteURL();
 			downloadURL = URLHelper.createStaticURL(remoteCtx, downloadURL);
 			ids = template.getHTMLIDS();
@@ -284,8 +281,7 @@ public class Template implements Comparable<Template> {
 			authors = template.getAuthors();
 			description = template.getDescription(ctx.getLanguage());
 			licence = template.getLicenceFile();
-			date = template.getCreationDate();
-			mailing = template.isMailing();
+			date = template.getCreationDate();			
 			version = template.getVersion();
 			deployId = template.getDeployId();
 			type = IRemoteResource.TYPE_TEMPLATE;
@@ -548,11 +544,7 @@ public class Template implements Comparable<Template> {
 
 	protected StaticConfig config;
 	
-	private ServletContext application;
-
 	private final String buildId = StringHelper.getRandomId();
-
-	private boolean mailing = false;
 
 	private boolean jsp = false;
 
@@ -560,7 +552,7 @@ public class Template implements Comparable<Template> {
 	
 	private String deployId = StringHelper.getRandomId();
 
-	public static Template getApplicationInstance(ServletContext application, ContentContext ctx, String templateDir, boolean mailing) throws ConfigurationException, IOException {
+	public static Template getApplicationInstance(ServletContext application, ContentContext ctx, String templateDir) throws ConfigurationException, IOException {
 		
 		Template outTemplate = null;
 		if (templateDir == null) {
@@ -568,13 +560,9 @@ public class Template implements Comparable<Template> {
 			return null;
 		}
 
-		if (mailing) {
-			outTemplate = TemplateFactory.getMailingTemplates(application).get(templateDir);
-		} else {
-			outTemplate = TemplateFactory.getTemplates(application).get(templateDir);
-		}
+		outTemplate = TemplateFactory.getTemplates(application).get(templateDir);
 		if (outTemplate == null) {
-			return getInstance(StaticConfig.getInstance(application), ctx, templateDir, mailing);
+			return getInstance(StaticConfig.getInstance(application), ctx, templateDir);
 		}
 
 		if (!outTemplate.isTemplateInWebapp(ctx)) {
@@ -601,20 +589,16 @@ public class Template implements Comparable<Template> {
 		return emptyTemplate;
 	}
 
-	public static Template getInstance(StaticConfig config, ContentContext ctx, String templateDir, boolean mailing) throws ConfigurationException, IOException {
-		return getInstance(config, ctx, templateDir, mailing, true);
+	public static Template getInstance(StaticConfig config, ContentContext ctx, String templateDir) throws ConfigurationException, IOException {
+		return getInstance(config, ctx, templateDir, true);
 	}
 
-	private static Template getInstance(StaticConfig config, ContentContext ctx, String templateDir, boolean mailing, boolean alternativeTemplate) throws ConfigurationException, IOException {
+	private static Template getInstance(StaticConfig config, ContentContext ctx, String templateDir, boolean alternativeTemplate) throws ConfigurationException, IOException {
 		if ((templateDir == null) || templateDir.trim().length() == 0) {
 			return getEmptyInstance();
 		}
 		Template template = new Template();		
 		String templateFolder = URLHelper.mergePath(config.getTemplateFolder(), templateDir);
-		if (mailing) {
-			template.setMailing(true);
-			templateFolder = URLHelper.mergePath(config.getMailingTemplateFolder(), templateDir);
-		}
 
 		template.dir = new File(templateFolder);
 		template.config = config;
@@ -679,9 +663,6 @@ public class Template implements Comparable<Template> {
 	public List<GenericMessage> checkRenderer(GlobalContext globalContext, I18nAccess i18nAccess) throws IOException, BadXMLException {
 		String templateFolder = config.getTemplateFolder();
 
-		if (isMailing()) {
-			templateFolder = config.getMailingTemplateFolder();
-		}
 		File HTMLFile = new File(URLHelper.mergePath(URLHelper.mergePath(templateFolder, getSourceFolder()), getHTMLFile(null)));
 
 		List<GenericMessage> messages = new LinkedList<GenericMessage>();
@@ -703,9 +684,6 @@ public class Template implements Comparable<Template> {
 
 	public void clearRenderer(ContentContext ctx) {	
 		String templateFolder = config.getTemplateFolder();
-		if (isMailing()) {
-			templateFolder = config.getMailingTemplateFolder();
-		}
 		File templateSrc = new File(URLHelper.mergePath(templateFolder, getSourceFolder()));
 		if (templateSrc.exists()) {
 			try {
@@ -757,7 +735,7 @@ public class Template implements Comparable<Template> {
 		Template aTemplate = this;
 		String alternativeTemplate = getAlternativeTemplateName();
 		if (alternativeTemplate != null) {
-			aTemplate = Template.getInstance(config, ctx, alternativeTemplate, isMailing(), false);
+			aTemplate = Template.getInstance(config, ctx, alternativeTemplate, false);
 		}
 		return aTemplate;
 	}
@@ -848,9 +826,6 @@ public class Template implements Comparable<Template> {
 
 	protected List<File> getComponentFile(GlobalContext globalContext) throws IOException {
 		String templateFolder = getWorkTemplateFolder();
-		if (isMailing()) {
-			templateFolder = getWorkMailingTemplateFolder();
-		}
 
 		String path = URLHelper.mergePath(URLHelper.mergePath(templateFolder, getFolder(globalContext)), DYNAMIC_COMPONENTS_PROPERTIES_FOLDER);
 		File dynCompDir = new File(path);
@@ -863,9 +838,6 @@ public class Template implements Comparable<Template> {
 
 	public Properties getConfigComponentFile(GlobalContext globalContext, String type) throws IOException {
 		String templateFolder = getWorkTemplateFolder();
-		if (isMailing()) {
-			templateFolder = getWorkMailingTemplateFolder();
-		}
 		String path = URLHelper.mergePath(URLHelper.mergePath(templateFolder, getFolder(globalContext)), CONFIG_COMPONENTS_PROPERTIES_FOLDER, type + ".properties");
 		File configFile = new File(path);
 		if (configFile.exists()) {
@@ -1108,9 +1080,6 @@ public class Template implements Comparable<Template> {
 
 	public File getLinkEmail(String lg) {
 		String templateFolder = config.getTemplateFolder();
-		if (isMailing()) {
-			templateFolder = config.getMailingTemplateFolder();
-		}
 		File linkEmailFile = new File(URLHelper.mergePath(URLHelper.mergePath(templateFolder, getSourceFolder()), getLinkEmailFileName(lg)));
 		return linkEmailFile;
 
@@ -1123,9 +1092,6 @@ public class Template implements Comparable<Template> {
 
 	private String getLocalTemplateTargetFolder(GlobalContext globalContext) {
 		String templateTgt = URLHelper.mergePath(getLocalWorkTemplateFolder(), getFolder(globalContext));
-		if (isMailing()) {
-			templateTgt = URLHelper.mergePath(getLocalWorkMailingTemplateFolder(), getFolder(globalContext));
-		}
 		return templateTgt;
 	}
 
@@ -1139,9 +1105,6 @@ public class Template implements Comparable<Template> {
 
 	public final File getMacroFile(GlobalContext globalContext, String fileName) throws IOException {
 		String templateFolder = getWorkTemplateFolder();
-		if (isMailing()) {
-			templateFolder = getWorkMailingTemplateFolder();
-		}
 		String path = URLHelper.mergePath(URLHelper.mergePath(templateFolder, getFolder(globalContext)), MACRO_FOLDER, fileName);
 		File macroFile = new File(path);
 		return macroFile;
@@ -1149,9 +1112,6 @@ public class Template implements Comparable<Template> {
 
 	private final List<File> getMacroFile(GlobalContext globalContext) throws IOException {
 		String templateFolder = getWorkTemplateFolder();
-		if (isMailing()) {
-			templateFolder = getWorkMailingTemplateFolder();
-		}
 
 		String path = URLHelper.mergePath(URLHelper.mergePath(templateFolder, getFolder(globalContext)), MACRO_FOLDER);
 		File dynCompDir = new File(path);
@@ -1252,7 +1212,7 @@ public class Template implements Comparable<Template> {
 		Template parent = null;
 		String parentId = getParentName();
 		if (parentId != null && !parentId.equals(getName())) {
-			parent = Template.getInstance(config, ctx, parentId, isMailing(), false);
+			parent = Template.getInstance(config, ctx, parentId, false);
 		}
 		return parent;
 	}
@@ -1279,7 +1239,7 @@ public class Template implements Comparable<Template> {
 			List<String> resources = new LinkedList<String>();
 			TemplatePluginFactory templatePluginFactory = TemplatePluginFactory.getInstance(globalContext.getServletContext());
 			List<String> ids = new LinkedList<String>();						
-			int depth = XMLManipulationHelper.convertHTMLtoTemplate(globalContext, HTMLFile, jspFile, getMap(), getAreas(), resources, templatePluginFactory.getAllTemplatePlugin(globalContext.getTemplatePlugin()), ids, isMailing());
+			int depth = XMLManipulationHelper.convertHTMLtoTemplate(globalContext, HTMLFile, jspFile, getMap(), getAreas(), resources, templatePluginFactory.getAllTemplatePlugin(globalContext.getTemplatePlugin()), ids, _isMailing());
 			setHTMLIDS(ids);
 			setDepth(depth);
 		}
@@ -1469,17 +1429,11 @@ public class Template implements Comparable<Template> {
 			return null;
 		}
 		String templateFolder = config.getTemplateFolder();
-		if (isMailing()) {
-			templateFolder = config.getMailingTemplateFolder();
-		}
 		return URLHelper.mergePath(templateFolder, getSourceFolder());
 	}
 
 	private String getTemplateTargetFolder(GlobalContext globalContext) {
 		String templateTgt = URLHelper.mergePath(getWorkTemplateFolder(), getFolder(globalContext));
-		if (isMailing()) {
-			templateTgt = URLHelper.mergePath(getWorkMailingTemplateFolder(), getFolder(globalContext));
-		}
 		return templateTgt;
 	}
 
@@ -1510,9 +1464,6 @@ public class Template implements Comparable<Template> {
 			globalContext = GlobalContext.getInstance(ctx.getRequest());
 		}
 		String templateFolder = config.getTemplateFolder();
-		if (isMailing()) {
-			templateFolder = config.getMailingTemplateFolder();
-		}
 		File templateSrc = new File(URLHelper.mergePath(templateFolder, getSourceFolder()));
 		if (templateSrc.exists()) {
 
@@ -1532,9 +1483,6 @@ public class Template implements Comparable<Template> {
 			getParent().importTemplateInWebapp(ctx, globalContext, templateTarget);
 		}
 		String templateFolder = config.getTemplateFolder();
-		if (isMailing()) {
-			templateFolder = config.getMailingTemplateFolder();
-		}
 		File templateSrc = new File(URLHelper.mergePath(templateFolder, getSourceFolder()));
 		if (templateSrc.exists()) {
 			logger.info("copy parent template from '" + templateSrc + "' to '" + templateTarget + "'");
@@ -1570,9 +1518,6 @@ public class Template implements Comparable<Template> {
 							String newLogoURL;
 							try {
 								String templateName = getName();
-								if (isMailing() && templateName != null) {
-									templateName = MailingContext.MAILING_TEMPLATE_PREFIX + templateName;
-								}
 								newLogoURL = URLHelper.createTransformURL(absoluteURLCtx, null, URLHelper.mergePath(staticConfig.getStaticFolder(), newLogo), "logo", templateName);
 
 							} catch (Exception e) {
@@ -1607,9 +1552,6 @@ public class Template implements Comparable<Template> {
 		String htmlFile = getHTMLFile(null);
 
 		String templateFolder = config.getTemplateFolder();
-		if (isMailing()) {
-			templateFolder = config.getMailingTemplateFolder();
-		}
 		File indexFile = new File(URLHelper.mergePath(URLHelper.mergePath(templateFolder, getSourceFolder()), htmlFile));
 		return indexFile.exists();
 	}
@@ -1618,8 +1560,8 @@ public class Template implements Comparable<Template> {
 		return getLinkEmail(lg).exists();
 	}
 
-	public boolean isMailing() {
-		return mailing;
+	public boolean _isMailing() {
+		return properties.getBoolean("mailing", false);
 	}
 
 	public boolean isNavigationArea(String area) {
@@ -1638,9 +1580,6 @@ public class Template implements Comparable<Template> {
 		String pdfFilStr = getVisualPDFile();
 
 		String templateFolder = config.getTemplateFolder();
-		if (isMailing()) {
-			templateFolder = config.getMailingTemplateFolder();
-		}
 		File pdfFile = new File(URLHelper.mergePath(URLHelper.mergePath(templateFolder, getSourceFolder()), pdfFilStr));
 		return pdfFile.exists();
 	}
@@ -1665,9 +1604,6 @@ public class Template implements Comparable<Template> {
 			globalContext = GlobalContext.getInstance(ctx.getRequest());
 		}
 		File templateTgt = new File(URLHelper.mergePath(getWorkTemplateFolder(), getFolder(globalContext)));
-		if (isMailing()) {
-			templateTgt = new File(URLHelper.mergePath(getWorkMailingTemplateFolder(), getFolder(globalContext)));
-		}
 		return templateTgt.exists();
 	}
 
@@ -1712,7 +1648,7 @@ public class Template implements Comparable<Template> {
 			}
 		}
 	}
-
+	
 	public void setDepth(int depth) {
 		privateProperties.setProperty("depth", depth);
 		try {
@@ -1731,10 +1667,6 @@ public class Template implements Comparable<Template> {
 				e.printStackTrace();
 			}
 		}
-	}
-
-	public void setMailing(boolean mailing) {
-		this.mailing = mailing;
 	}
 
 	public void setOwner(String owner) {

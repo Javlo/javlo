@@ -331,9 +331,6 @@ public abstract class ElementaryURLHelper {
 				templateName = Template.EDIT_TEMPLATE_CODE;
 			} else {
 				templateName = template.getId();
-				if (template.isMailing()) {
-					templateName = MailingContext.MAILING_TEMPLATE_PREFIX + templateName;
-				}
 			}
 			url = ElementaryURLHelper.mergePath(TRANSFORM + '/' + ctx.getRequestContentLanguage() + '/' + templateName, url);
 		} else {
@@ -374,9 +371,6 @@ public abstract class ElementaryURLHelper {
 				templateName = Template.EDIT_TEMPLATE_CODE;
 			} else {
 				templateName = template.getId();
-				if (template.isMailing()) {
-					templateName = MailingContext.MAILING_TEMPLATE_PREFIX + templateName;
-				}
 			}
 			url = createTransformURL(ctx, referencePage, url, filter, templateName);
 		} else {			

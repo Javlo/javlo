@@ -19,7 +19,6 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import org.javlo.actions.EditActions;
 import org.javlo.component.core.ComponentBean;
 import org.javlo.component.core.IContentComponentsList;
 import org.javlo.component.core.IContentVisualComponent;
@@ -491,9 +490,9 @@ public class AccessServlet extends HttpServlet {
 					}
 				}
 
-				/** *** */
+				/* **** */
 				/* EDIT */
-				/** *** */
+				/* **** */
 
 				if (request.getServletPath().equals("/edit")) {
 					EditContext editCtx = EditContext.getInstance(globalContext, request.getSession());
@@ -504,21 +503,19 @@ public class AccessServlet extends HttpServlet {
 						getServletContext().getRequestDispatcher(editCtx.getAjaxRenderer()).include(request, response);
 						editCtx.setAjaxRenderer(null);
 					} else {
-						if ((template == null) || (!template.exist())) {
-							EditActions.performChoosetemplate(request, response);
-						} else {
-							if (!template.getAreas().contains(ctx.getArea())) {
-								editCtx.setCurrentArea(ComponentBean.DEFAULT_AREA);
-								ctx.setArea(ComponentBean.DEFAULT_AREA);
-							}
+
+						if (!template.getAreas().contains(ctx.getArea())) {
+							editCtx.setCurrentArea(ComponentBean.DEFAULT_AREA);
+							ctx.setArea(ComponentBean.DEFAULT_AREA);
 						}
+
 						ctx.setCurrentTemplate(template);
 
 						response.setContentType("text/html; charset=" + ContentContext.CHARACTER_ENCODING);
 
-						/***********************/
-						/******* MODULES *******/
-						/***********************/
+						/* ********************* */
+						/* ****** MODULES ****** */
+						/* ********************* */
 						ServletHelper.prepareModule(ctx);
 						getServletContext().getRequestDispatcher(editCtx.getEditTemplate()).include(request, response);
 					}

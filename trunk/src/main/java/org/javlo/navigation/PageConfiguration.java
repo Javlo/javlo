@@ -45,22 +45,14 @@ public class PageConfiguration {
 
 		Template template = null;
 
-		boolean mailing = false;
-		if (ctx.getRenderMode() == ContentContext.PAGE_MODE) {
-			mailing = true;
-		}
 		String forceTemplate = ctx.getRequest().getParameter(FORCE_TEMPLATE_PARAM_NAME);
 		GlobalContext globalContext = GlobalContext.getInstance(ctx.getRequest());
 		if (forceTemplate != null) {
 			logger.info("force template : " + forceTemplate);
-			template = Template.getApplicationInstance(ctx.getRequest().getSession().getServletContext(), ctx, forceTemplate, mailing);
+			template = Template.getApplicationInstance(ctx.getRequest().getSession().getServletContext(), ctx, forceTemplate);
 		}
 		if (template == null) {
 			template = TemplateFactory.getTemplates(ctx.getRequest().getSession().getServletContext()).get(elem.getTemplateId());
-			if (mailing) {
-				MailingContext mailingContext = MailingContext.getInstance(ctx.getRequest().getSession());
-				template = TemplateFactory.getMailingTemplates(ctx.getRequest().getSession().getServletContext()).get(mailingContext.getCurrentTemplate());
-			}
 			if (template == null || !template.exist()) {
 				while (elem.getParent() != null && ((template == null) || (!template.exist()) || (template.getRendererFullName(ctx) == null))) {
 					elem = elem.getParent();
@@ -72,7 +64,7 @@ public class PageConfiguration {
 		if ((template == null) || !template.exist()) {
 
 			if (globalContext.getDefaultTemplate() != null) {
-				template = Template.getApplicationInstance(ctx.getRequest().getSession().getServletContext(), ctx, globalContext.getDefaultTemplate(), mailing);
+				template = Template.getApplicationInstance(ctx.getRequest().getSession().getServletContext(), ctx, globalContext.getDefaultTemplate());
 			}
 		}
 		if (template != null && ctx.getSpecialContentRenderer() != null) {
@@ -179,15 +171,6 @@ public class PageConfiguration {
 					templates.add(template);
 				}
 			}
-
-			allTemplates = TemplateFactory.getAllMaillingTemplates(globalContext.getServletContext());
-			mailingTemplates = new LinkedList<Template>();
-			for (Template templateMailing : allTemplates) {
-				if (globalContext.getMailingTemplates().contains(templateMailing.getId())) {
-					mailingTemplates.add(templateMailing);
-				}
-			}
-
 		}
 	}
 }

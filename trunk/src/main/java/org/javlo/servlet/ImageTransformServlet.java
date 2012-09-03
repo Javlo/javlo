@@ -390,10 +390,6 @@ public class ImageTransformServlet extends HttpServlet {
 					pathInfo = pathInfo.substring(slachIndex + 1);
 					slachIndex = pathInfo.indexOf('/');
 					String templateId = pathInfo.substring(0, slachIndex);
-					if (templateId.startsWith(MailingContext.MAILING_TEMPLATE_PREFIX)) {
-						mailing = true;
-						templateId = templateId.substring(MailingContext.MAILING_TEMPLATE_PREFIX.length());
-					}
 
 					/** AREA **/
 					if (!filter.startsWith("template")) {
@@ -405,7 +401,7 @@ public class ImageTransformServlet extends HttpServlet {
 
 					try {
 						if (!Template.EDIT_TEMPLATE_CODE.equals(templateId)) {
-							template = Template.getApplicationInstance(request.getSession().getServletContext(), ctx, templateId, mailing);
+							template = Template.getApplicationInstance(request.getSession().getServletContext(), ctx, templateId);
 						}
 					} catch (Exception e) {
 						e.printStackTrace();

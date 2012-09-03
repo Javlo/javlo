@@ -78,7 +78,7 @@ public class ContentOnlyServlet extends HttpServlet {
             	}
             }
 
-            Template template = Template.getApplicationInstance(request.getSession().getServletContext(), ctx, templateID, true);
+            Template template = Template.getApplicationInstance(request.getSession().getServletContext(), ctx, templateID);
             getServletContext().getRequestDispatcher(template.getRendererFullName(ctx)).include(request, response);
 
        } catch (Exception e) {

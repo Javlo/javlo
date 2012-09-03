@@ -55,8 +55,6 @@ public class MailingContext {
 	public static final String HOME_RENDERER = "/jsp/mailing/choose_template.jsp";
 	public static final String HOME_COMMAND_RENDERER = "/jsp/mailing/choose_template_categories.jsp";
 
-	public static final String MAILING_TEMPLATE_PREFIX = "mailing_";
-
 	private String commandRenderer = HOME_COMMAND_RENDERER;
 	private String renderer = HOME_RENDERER;
 	private boolean displayStep = true;

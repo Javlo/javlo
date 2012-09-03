@@ -39,8 +39,8 @@ public class TemplateFactory {
 
 	public static List<String> TEMPLATE_COLOR_AMBIANCE = Arrays.asList(new String[] { "none", "black", "white", "gray", "red", "green", "blue", "orange", "yellow", "purple", "pink", "brun" });
 
-	public static void cleanAllRenderer(ContentContext ctx, boolean mailing, boolean secure) throws IOException {
-		cleanRenderer(ctx, null, mailing, secure);
+	public static void cleanAllRenderer(ContentContext ctx, boolean secure) throws IOException {
+		cleanRenderer(ctx, null, secure);
 
 	}
 
@@ -55,7 +55,7 @@ public class TemplateFactory {
 	 * @param secure
 	 * @throws IOException
 	 */
-	public static void cleanRenderer(ContentContext ctx, Collection<String> inTemplates, boolean mailing, boolean secure) throws IOException {
+	public static void cleanRenderer(ContentContext ctx, Collection<String> inTemplates, boolean secure) throws IOException {
 		GlobalContext globalContext = GlobalContext.getInstance(ctx.getRequest());
 		EditContext editCtx = EditContext.getInstance(globalContext, ctx.getRequest().getSession());
 		AdminUserSecurity security = AdminUserSecurity.getInstance();
@@ -66,11 +66,7 @@ public class TemplateFactory {
 		}
 
 		Collection<Template> templates;
-		if (mailing) {
-			templates = getAllMaillingTemplates(ctx.getRequest().getSession().getServletContext());
-		} else {
-			templates = getAllTemplates(ctx.getRequest().getSession().getServletContext());
-		}
+		templates = getAllTemplates(ctx.getRequest().getSession().getServletContext());
 
 		for (Template template : templates) {
 			if (inTemplates == null || inTemplates.contains(template.getId())) {
@@ -96,8 +92,8 @@ public class TemplateFactory {
 		return authors;
 	}
 
-	public static Collection<String> getAllCategories(ServletContext application, boolean mailling) throws IOException {
-		return getAllCategories(application, null, mailling);
+	public static Collection<String> getAllCategories(ServletContext application) throws IOException {
+		return getAllCategories(application, null);
 	}
 
 	/**
@@ -109,13 +105,10 @@ public class TemplateFactory {
 	 * @return
 	 * @throws IOException
 	 */
-	public static Collection<String> getAllCategories(ServletContext application, User user, boolean mailling) throws IOException {
+	public static Collection<String> getAllCategories(ServletContext application, User user ) throws IOException {
 		Collection<Template> templates;
-		if (mailling) {
-			templates = getAllMaillingTemplates(application);
-		} else {
-			templates = getAllTemplates(application);
-		}
+		templates = getAllTemplates(application);
+		
 		Collection<String> categories = new TreeSet<String>();
 		for (Template template : templates) {
 			if (user == null || template.visibleForRoles(user.getRoles())) {
@@ -123,25 +116,6 @@ public class TemplateFactory {
 			}
 		}
 		return categories;
-	}
-
-	/**
-	 * get templates from disk without cache.
-	 * 
-	 * @param application
-	 * @return
-	 * @throws IOException
-	 */
-	public static Collection<Template> getAllDiskMaillingTemplates(ServletContext application) throws IOException {
-		List<Template> outList = new LinkedList(getMailingTemplates(application).values());
-		Collections.sort(outList, Template.TemplateDateComparator.instance);
-		return outList;
-	}
-
-	public static Collection<Template> getAllMaillingTemplates(ServletContext application) throws IOException {
-		List<Template> outList = new LinkedList(getMailingTemplates(application).values());
-		Collections.sort(outList, Template.TemplateDateComparator.instance);
-		return outList;
 	}
 
 	public static List<String> getAllSources(ServletContext application) throws IOException {
@@ -207,43 +181,6 @@ public class TemplateFactory {
 	}
 
 	/**
-	 * get mailing templates from disk, without cache.
-	 * 
-	 * @param application
-	 * @return
-	 * @throws IOException
-	 */
-	public static Map<String, Template> getDiskMailingTemplates(ServletContext application) throws IOException {
-		StaticConfig staticConfig = StaticConfig.getInstance(application);
-		File templateFolder = new File(staticConfig.getMailingTemplateFolder());
-		File[] allTemplateFile = templateFolder.listFiles(new VisibleDirectoryFilter());
-		Map<String, Template> outTemplate = new HashMap<String, Template>();
-		if (allTemplateFile != null) {
-			for (File element : allTemplateFile) {
-				try {
-					Template template = Template.getInstance(staticConfig, null, element.getName(), true);
-					template.setMailing(true);
-					outTemplate.put(template.getId(), template);
-					logger.fine("load mailing template : " + template.getId());
-				} catch (ConfigurationException e) {
-					e.printStackTrace();
-				}
-			}
-		}
-
-		return outTemplate;
-	}
-
-	public static Map<String, Template> getMailingTemplates(ServletContext application) throws IOException {
-		Map<String, Template> outTemplate = (Map<String, Template>) application.getAttribute(MAILING_TEMPLATE_KEY);
-		if (outTemplate == null) {
-			outTemplate = getDiskMailingTemplates(application);
-			application.setAttribute(MAILING_TEMPLATE_KEY, outTemplate);
-		}
-		return outTemplate;
-	}
-
-	/**
 	 * get template from disk.
 	 * 
 	 * @param application
@@ -260,7 +197,7 @@ public class TemplateFactory {
 		Map<String, Template> outTemplates = new HashMap<String, Template>();
 		for (File element : allTemplateFile) {
 			try {
-				Template template = Template.getInstance(staticConfig, null, element.getName(), false);
+				Template template = Template.getInstance(staticConfig, null, element.getName());
 				outTemplates.put(template.getId(), template);
 				logger.fine("load template : " + template.getId());
 			} catch (ConfigurationException e) {
@@ -298,11 +235,8 @@ public class TemplateFactory {
 		Template template = null;
 		if (templateName != null) {
 			Map<String, Template> allTemplates;
-			if (mailing) {
-				allTemplates = TemplateFactory.getDiskMailingTemplates(application);
-			} else {
-				allTemplates = TemplateFactory.getDiskTemplates(application);
-			}
+			allTemplates = TemplateFactory.getDiskTemplates(application);
+
 			template = allTemplates.get(templateName);
 		}
 		return template;
@@ -327,21 +261,8 @@ public class TemplateFactory {
 		return outTemplate;
 	}
 
-	public static boolean isMailingTemplateExist(ServletContext application, String templateID) throws IOException {
-		Collection<Template> templates = getAllMaillingTemplates(application);
-		for (Template template : templates) {
-			if (template.getId().equals(templateID)) {
-				return true;
-			}
-		}
-		return false;
-	}
-
 	public static boolean isTemplateExistOnDisk(ServletContext application, String templateID, boolean mailing) throws IOException {
 		Collection<Template> templates = getAllDiskTemplates(application);
-		if (mailing) {
-			templates = getAllDiskMaillingTemplates(application);
-		}
 		for (Template template : templates) {
 			if (template.getId().equals(templateID)) {
 				return true;

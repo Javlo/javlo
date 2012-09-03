@@ -26,9 +26,6 @@ public class AdminContext {
 	
 	private static final String SESSION_KEY = AdminContext.class.getName();
 	
-	public static final int WEB_TEMPLATE = 1;
-	public static final int MAILING_TEMPLATE = 2;
-	
 	/**
 	 * create a static logger.
 	 */
@@ -39,8 +36,6 @@ public class AdminContext {
 	private String renderer = "global.jsp";
 	
 	static final String[][] views = { { ""+0, "global" }, { ""+1, "template" }, { ""+2, "component" }, { ""+3, "static" }, { ""+4, "config" } };
-	
-	private int templateType = WEB_TEMPLATE;
 	
 	private String fileToEdit = null;
 	
@@ -86,14 +81,6 @@ public class AdminContext {
 
 	public void setRenderer(String renderer) {
 		this.renderer = renderer;
-	}
-
-	public int getTemplateType() {
-		return templateType;
-	}
-
-	public void setTemplateType(int templateType) {
-		this.templateType = templateType;
 	}
 
 	public String getFileToEdit() {
