@@ -318,7 +318,11 @@ public class CSVFactory {
 
 	public static List<String> loadTitle(InputStream in) throws IOException {
 		CSVParser csvParser = new CSVParser(in);
-		return Arrays.asList(csvParser.getLine());
+		String[] line = csvParser.getLine();
+		if (line == null) {
+			return Collections.EMPTY_LIST;
+		}
+		return Arrays.asList(line);
 	}
 
 	public static List<Map<String, String>> loadContentAsMap(InputStream in) throws IOException {
