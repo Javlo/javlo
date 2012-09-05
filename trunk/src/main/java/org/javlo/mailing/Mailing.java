@@ -6,7 +6,9 @@ import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.InputStreamReader;
 import java.io.OutputStreamWriter;
+import java.io.PrintWriter;
 import java.text.ParseException;
 import java.util.Collection;
 import java.util.Collections;
@@ -14,9 +16,12 @@ import java.util.Comparator;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Iterator;
+import java.util.LinkedHashSet;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
+import java.util.Properties;
+import java.util.Set;
 import java.util.logging.Logger;
 
 import javax.mail.internet.AddressException;
@@ -52,6 +57,8 @@ public class Mailing {
 
 	private static final String CONFIG_FILE = "mailing.properties";
 
+	private static final String SENT_FILE = "sent.properties";
+
 	public static final String DATA_TOKEN_UNSUBSCRIBE = "unsubscribe";
 
 	public static final String DATA_TOKEN_UNSUBSCRIBE_URL = "unsubscribe-url";
@@ -62,7 +69,9 @@ public class Mailing {
 
 	public static final String DATA_TOKEN_UNSUBSCRIBE_POST = "unsubscribe-port";
 
-	private Iterator currentReceiver = null;
+	private Iterator<InternetAddress> currentReceiver = null;
+
+	private PrintWriter sentOut = null;
 
 	/**
 	 * create a static logger.
@@ -71,7 +80,7 @@ public class Mailing {
 
 	private InternetAddress from;
 
-	private final PropertiesConfiguration receivers = new PropertiesConfiguration();
+	private Set<InternetAddress> receivers;
 
 	private InternetAddress notif;
 
@@ -106,6 +115,8 @@ public class Mailing {
 	private File dir = null;
 
 	private File oldDir = null;
+
+	private File loadedDir;
 
 	private Date date = null;
 
@@ -146,7 +157,9 @@ public class Mailing {
 
 	public void setNotif(InternetAddress notif) {
 		this.notif = notif;
-		receivers.addProperty(notif.toUnicodeString().toString(), ""); // send
+		if (!getReceivers().contains(notif)) {// send a sample mail to notif
+			getReceivers().add(notif);
+		}
 	}
 
 	public String getSubject() {
@@ -157,14 +170,8 @@ public class Mailing {
 		this.subject = subject;
 	}
 
-	public void setReceivers(InternetAddress[] to) {
-		for (InternetAddress element : to) {
-			if (element != null) {
-				if (PatternHelper.MAIL_PATTERN.matcher(element.getAddress()).matches()) {
-					receivers.addProperty(element.toUnicodeString().toString(), "");
-				}
-			}
-		}
+	public void setReceivers(Set<InternetAddress> receivers) {
+		this.receivers = new LinkedHashSet<InternetAddress>(receivers);
 	}
 
 	public void addReceivers(Collection<String> to) {
@@ -173,23 +180,18 @@ public class Mailing {
 				if (PatternHelper.MAIL_PATTERN.matcher(internetAddress).matches()) {
 					try {
 						InternetAddress add = new InternetAddress(internetAddress);
-						receivers.addProperty(add.toUnicodeString().toString(), "");
+						if (!receivers.contains(add)) {
+							receivers.add(add);
+						}
 					} catch (AddressException e) {
 					}
-
 				}
 			}
 		}
 	}
 
 	public int getReceiversSize() {
-		Iterator keys = receivers.getKeys();
-		int outReceiversCount = 0;
-		while (keys.hasNext()) {
-			outReceiversCount++;
-			keys.next();
-		}
-		return outReceiversCount;
+		return receivers.size();
 	}
 
 	public void setRoles(String[] inRoles) {
@@ -223,18 +225,20 @@ public class Mailing {
 
 	public void load(ServletContext application, String inID) throws IOException, ConfigurationException {
 		setId(application, inID);
+		loadedDir = new File(dir.getAbsolutePath());
 		File contentFile = new File(dir.getAbsolutePath() + '/' + CONTENT_FILE);
 		if (!contentFile.exists()) {
 			return;
 		}
 		File receiversFile = new File(dir.getAbsolutePath() + '/' + RECEIVERS_FILE);
-		receivers.setFile(receiversFile);
-		try {
-			receivers.load();
-		} catch (Exception e2) {
-			logger.warning("count not send mailing, file not found : " + receivers.getFile());
+		receivers = new LinkedHashSet<InternetAddress>();
+		for (String line : FileUtils.readLines(receiversFile, ContentContext.CHARACTER_ENCODING)) {
+			try {
+				receivers.add(new InternetAddress(line));
+			} catch (Exception ex) {
+				ex.printStackTrace();
+			}
 		}
-		receivers.setAutoSave(true);
 		PropertiesConfiguration config = new PropertiesConfiguration();
 		File configFile = new File(dir.getAbsolutePath() + '/' + CONFIG_FILE);
 		InputStream in = new FileInputStream(configFile);
@@ -269,9 +273,11 @@ public class Mailing {
 			setSend(config.getBoolean("send", true));
 			// content = RessourceHelper.loadStringFromFile(contentFile);
 			content = FileUtils.readFileToString(contentFile, encoding);
-			/*
-			 * System.out.println("************ mailing content ***********"); System.out.println(content); System.out.println("**************************************");
-			 */
+
+			// System.out.println("************ mailing content ***********");
+			// System.out.println(content);
+			// System.out.println("**************************************");
+
 		} catch (RuntimeException e1) {
 			logger.warning(e1.getMessage());
 		}
@@ -289,6 +295,25 @@ public class Mailing {
 		logger.finest("load mailing subject : " + subject);
 	}
 
+	Map<String, String> loadSent() throws IOException {
+		Map<String, String> out = new HashMap<String, String>();
+		File sentFile = new File(loadedDir.getAbsolutePath() + '/' + SENT_FILE);
+		if (sentFile.exists()) {
+			Properties sentProperties = new Properties();
+			FileInputStream in = null;
+			try {
+				in = new FileInputStream(sentFile);
+				sentProperties.load(new InputStreamReader(in, ContentContext.CHARSET_DEFAULT));
+			} finally {
+				ResourceHelper.safeClose(in);
+			}
+			for (String key : sentProperties.stringPropertyNames()) {
+				out.put(key, sentProperties.getProperty(key));
+			}
+		}
+		return out;
+	}
+
 	public void store(ServletContext application) throws IOException, ConfigurationException {
 
 		setId(application, getId());
@@ -302,16 +327,18 @@ public class Mailing {
 		File contentFile = new File(dir.getAbsolutePath() + '/' + CONTENT_FILE);
 		ResourceHelper.writeStringToFile(contentFile, content, ContentContext.CHARACTER_ENCODING);
 		File receiversFile = new File(dir.getAbsolutePath() + '/' + RECEIVERS_FILE);
-		ResourceHelper.writePropertiesToFile(receivers, receiversFile);
-		receivers.setFile(receiversFile);
-		receivers.setAutoSave(true);
+		Collection<String> lines = new LinkedList<String>();
+		for (InternetAddress receiver : receivers) {
+			lines.add(receiver.toUnicodeString());
+		}
+		FileUtils.writeLines(receiversFile, lines);
 
 		PropertiesConfiguration config = new PropertiesConfiguration();
 		File configFile = new File(dir.getAbsolutePath() + '/' + CONFIG_FILE);
 		config.setProperty("subject", subject);
 		config.setProperty("language", language);
-		config.setProperty("sender", from.toUnicodeString().toString());
-		config.setProperty("notif", notif.toUnicodeString().toString());
+		config.setProperty("sender", from.toUnicodeString());
+		config.setProperty("notif", notif.toUnicodeString());
 		config.setProperty("send", new Boolean(isSend()));
 		config.setProperty("roles", StringHelper.arrayToString(roles));
 		config.setProperty("encoding", encoding);
@@ -343,6 +370,7 @@ public class Mailing {
 		File targetDir = new File(staticConfig.getMailingHistoryFolder() + '/' + id + '/');
 		FileUtils.copyDirectory(sourceDir, targetDir);
 		FileUtils.deleteDirectory(sourceDir);
+		loadedDir = targetDir;
 	}
 
 	@Override
@@ -350,42 +378,50 @@ public class Mailing {
 		return "id:" + id + " - subject:" + subject + " - from:" + from + " - notif:" + notif + " - valid:" + isValid() + " - send:" + isSend();
 	}
 
-	/** * MAILING CODE ** */
+	/* ** MAILING CODE ** */
 
-	public void startMailing() {
+	public void onStartMailing() throws IOException {
 		synchronized (receivers) {
-			Collection newList = new LinkedList();
-			Iterator it = receivers.getKeys();
-			while (it.hasNext()) {
-				String element = (String) it.next();
-				newList.add(element);
+			Map<String, String> sent = loadSent();
+			List<InternetAddress> newList = new LinkedList<InternetAddress>();
+			for (InternetAddress receiver : receivers) {
+				if (!sent.containsKey(getSentKey(receiver))) {
+					newList.add(receiver);
+				}
 			}
 			currentReceiver = newList.iterator();
+			File sentFile = new File(loadedDir.getAbsolutePath() + '/' + SENT_FILE);
+			sentOut = new PrintWriter(new OutputStreamWriter(FileUtils.openOutputStream(sentFile, true), ContentContext.CHARSET_DEFAULT));
+		}
+	}
+
+	public String getSentKey(InternetAddress key) {
+		return key.getAddress().toLowerCase();
+	}
+
+	public void onMailSent(InternetAddress to) throws IOException {
+		synchronized (sentOut) {
+			String key = getSentKey(to);
+			String value = StringHelper.renderSortableTime(new Date());
+			String line = StringHelper.escapeProperty(key, true, true) + "=" + StringHelper.escapeProperty(value, false, true);
+			sentOut.println(line);
+			sentOut.flush();
 		}
 	}
 
 	public InternetAddress getNextReceiver() {
-		synchronized (receivers) {
-			InternetAddress outAddress = null;
-			while ((outAddress == null) && (currentReceiver.hasNext())) {
-				String key = (String) currentReceiver.next();
-				if (receivers.getString(key, "-").trim().length() == 0) { // addresse
-					// not
-					// yet
-					// send
-					try {
-						outAddress = new InternetAddress(key);
-						receivers.setProperty(key, StringHelper.renderSortableTime(new Date()));
-					} catch (AddressException e) {
-						logger.warning("address not identified : " + outAddress);
-					}
-				}
-			}
-			if (outAddress == null) {
-				setSend(true);
-			}
-			return outAddress;
+		InternetAddress outAddress = null;
+		while ((outAddress == null) && (currentReceiver.hasNext())) {
+			outAddress = currentReceiver.next();
 		}
+		if (outAddress == null) {
+			setSend(true);
+		}
+		return outAddress;
+	}
+
+	public void onEndMailing() {
+		ResourceHelper.safeClose(sentOut);
 	}
 
 	public boolean isSend() {
@@ -396,7 +432,10 @@ public class Mailing {
 		this.send = send;
 	}
 
-	public PropertiesConfiguration getReceivers() {
+	public Set<InternetAddress> getReceivers() {
+		if (receivers == null) {
+			receivers = new LinkedHashSet<InternetAddress>();
+		}
 		return receivers;
 	}
 
