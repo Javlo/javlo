@@ -1068,20 +1068,12 @@ public class PageReferenceComponent extends ComplexPropertiesLink implements IAc
 		return getDisplayType();
 	}
 
-	@Override
-	/**
-	 * render a list of links to pages.
-	 * exposed in request attributes : "pagesStatus","pages","title","comp".
+	/*
+	 * @Override /** render a list of links to pages. exposed in request attributes : "pagesStatus","pages","title","comp".
 	 */
-	public String getViewXHTMLCode(ContentContext ctx) throws Exception {
-		String renderer;
-		if (getDisplayType() == null) {
-			renderer = getConfig(ctx).getRenderes().values().iterator().next();
-		} else {
-			renderer = getConfig(ctx).getRenderes().get(getDisplayType());
-		}
-		return executeJSP(ctx, renderer);
-	}
+	/*
+	 * public String getViewXHTMLCode(ContentContext ctx) throws Exception { String renderer; if (getDisplayType() == null) { renderer = getConfig(ctx).getRenderes().values().iterator().next(); } else { renderer = getConfig(ctx).getRenderes().get(getDisplayType()); } return executeJSP(ctx, renderer); }
+	 */
 
 	protected String getWidthEmptyPageInputName() {
 		return "width-empty-page-" + getId();

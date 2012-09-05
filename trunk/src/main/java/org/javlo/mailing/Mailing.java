@@ -33,7 +33,6 @@ import org.javlo.helper.ResourceHelper;
 import org.javlo.helper.StringHelper;
 import org.javlo.utils.CSVFactory;
 
-
 public class Mailing {
 
 	public static class MailingDateSorting implements Comparator<Mailing> {
@@ -72,7 +71,7 @@ public class Mailing {
 
 	private InternetAddress from;
 
-	private PropertiesConfiguration receivers = new PropertiesConfiguration();
+	private final PropertiesConfiguration receivers = new PropertiesConfiguration();
 
 	private InternetAddress notif;
 
@@ -94,7 +93,7 @@ public class Mailing {
 
 	private boolean send = false;
 
-	private Map<String, String> data = new HashMap<String, String>();
+	private final Map<String, String> data = new HashMap<String, String>();
 
 	private String unsubscribeURL = null;
 
@@ -148,11 +147,6 @@ public class Mailing {
 	public void setNotif(InternetAddress notif) {
 		this.notif = notif;
 		receivers.addProperty(notif.toUnicodeString().toString(), ""); // send
-		// a
-		// sample
-		// mail
-		// to
-		// notif
 	}
 
 	public String getSubject() {
@@ -164,10 +158,10 @@ public class Mailing {
 	}
 
 	public void setReceivers(InternetAddress[] to) {
-		for (int i = 0; i < to.length; i++) {
-			if (to[i] != null) {
-				if (PatternHelper.MAIL_PATTERN.matcher(to[i].getAddress()).matches()) {
-					receivers.addProperty(to[i].toUnicodeString().toString(), "");
+		for (InternetAddress element : to) {
+			if (element != null) {
+				if (PatternHelper.MAIL_PATTERN.matcher(element.getAddress()).matches()) {
+					receivers.addProperty(element.toUnicodeString().toString(), "");
 				}
 			}
 		}
@@ -276,9 +270,7 @@ public class Mailing {
 			// content = RessourceHelper.loadStringFromFile(contentFile);
 			content = FileUtils.readFileToString(contentFile, encoding);
 			/*
-			 * System.out.println("************ mailing content ***********");
-			 * System.out.println(content);
-			 * System.out.println("**************************************");
+			 * System.out.println("************ mailing content ***********"); System.out.println(content); System.out.println("**************************************");
 			 */
 		} catch (RuntimeException e1) {
 			logger.warning(e1.getMessage());
@@ -355,7 +347,7 @@ public class Mailing {
 
 	@Override
 	public String toString() {
-		return "id:" + id + " - subject:" + subject + " - from:" + from + " - notif:" + notif+ " - valid:" + isValid()+ " - send:" + isSend();
+		return "id:" + id + " - subject:" + subject + " - from:" + from + " - notif:" + notif + " - valid:" + isValid() + " - send:" + isSend();
 	}
 
 	/** * MAILING CODE ** */
@@ -383,7 +375,7 @@ public class Mailing {
 					// send
 					try {
 						outAddress = new InternetAddress(key);
-						receivers.setProperty(key, new Date());
+						receivers.setProperty(key, StringHelper.renderSortableTime(new Date()));
 					} catch (AddressException e) {
 						logger.warning("address not identified : " + outAddress);
 					}
@@ -492,12 +484,12 @@ public class Mailing {
 		if (!file.exists()) {
 			return Collections.emptyList();
 		}
-		CSVFactory fact = new CSVFactory(file,",");
+		CSVFactory fact = new CSVFactory(file, ",");
 		List<FeedBackMailingBean> outFB = new LinkedList<FeedBackMailingBean>();
 		String[][] data = fact.getArray();
-		for (int i = 0; i < data.length; i++) {
+		for (String[] element : data) {
 			FeedBackMailingBean bean = new FeedBackMailingBean();
-			bean.fromArray(data[i]);
+			bean.fromArray(element);
 			outFB.add(bean);
 		}
 		return outFB;
