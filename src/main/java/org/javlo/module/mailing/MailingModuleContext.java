@@ -207,7 +207,7 @@ public class MailingModuleContext extends AbstractModuleContext {
 
 		Mailing m = new Mailing();
 		m.setFrom(new InternetAddress(sender));
-		m.setReceivers(allRecipients.toArray(new InternetAddress[allRecipients.size()]));
+		m.setReceivers(allRecipients);
 		m.setSubject(subject);
 		m.setAdminEmail(globalContext.getAdministratorEmail());
 		m.setNotif(new InternetAddress(reportTo));

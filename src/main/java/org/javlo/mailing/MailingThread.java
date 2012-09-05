@@ -5,7 +5,6 @@ import java.io.IOException;
 import java.io.PrintWriter;
 import java.util.Collection;
 import java.util.Date;
-import java.util.Iterator;
 import java.util.Map;
 import java.util.logging.Logger;
 
@@ -18,7 +17,6 @@ import org.javlo.config.StaticConfig;
 import org.javlo.helper.ResourceHelper;
 import org.javlo.helper.StringHelper;
 import org.javlo.service.DataToIDService;
-
 
 public class MailingThread extends Thread {
 
@@ -47,7 +45,7 @@ public class MailingThread extends Thread {
 		return MailingFactory.getInstance(application).getMailingList();
 	}
 
-	public void sendReport(Mailing mailing) {
+	public void sendReport(Mailing mailing) throws IOException {
 		ByteArrayOutputStream mailBody = new ByteArrayOutputStream();
 		PrintWriter mailOut = new PrintWriter(mailBody);
 		mailOut.println("MAILING REPORT");
@@ -61,15 +59,15 @@ public class MailingThread extends Thread {
 		mailOut.println("receivers detail :");
 		mailOut.println("");
 
-		Iterator receivers = mailing.getReceivers().getKeys();
-		while (receivers.hasNext()) {
-			String key = (String) receivers.next();
-			if (("" + mailing.getReceivers().getProperty(key)).trim().length() < 1) {
-				mailOut.println(key + " : not sent.");
-			} else if (("" + mailing.getReceivers().getProperty(key)).trim().toLowerCase().indexOf("unsubscribe") >= 1) {
-				mailOut.println(key + " : not sent - " + mailing.getReceivers().getProperty(key));
+		Map<String, String> sent = mailing.loadSent();
+		for (InternetAddress recevier : mailing.getReceivers()) {
+			String data = sent.get(mailing.getSentKey(recevier));
+			if (StringHelper.isEmpty(data)) {
+				mailOut.println("" + recevier + " : not sent.");
+			} else if (data.toLowerCase().indexOf("unsubscribe") >= 1) {
+				mailOut.println("" + recevier + " : not sent - " + data);
 			} else {
-				mailOut.println(key + " : sent at " + mailing.getReceivers().getProperty(key));
+				mailOut.println("" + recevier + " : sent at " + data);
 			}
 		}
 		mailOut.close();
@@ -98,22 +96,27 @@ public class MailingThread extends Thread {
 		return content;
 	}
 
-	public void sendMailing(Mailing mailing) {
-		mailing.startMailing();
-		InternetAddress to = mailing.getNextReceiver();
+	public void sendMailing(Mailing mailing) throws IOException {
+		try {
+			mailing.onStartMailing();
+			InternetAddress to = mailing.getNextReceiver();
 
-		MailingManager mailingManager = MailingManager.getInstance(StaticConfig.getInstance(application));
+			MailingManager mailingManager = MailingManager.getInstance(StaticConfig.getInstance(application));
 
-		while (to != null) {
-			DataToIDService dataToID = DataToIDService.getInstance(application);
-			String data = "mailing=" + mailing.getId() + "&to=" + to;
-			mailing.addData("data", dataToID.setData(data));
-			mailing.addData("roles", StringHelper.arrayToString(mailing.getRoles(), ";"));
+			while (to != null) {
+				DataToIDService dataToID = DataToIDService.getInstance(application);
+				String data = "mailing=" + mailing.getId() + "&to=" + to;
+				mailing.addData("data", dataToID.setData(data));
+				mailing.addData("roles", StringHelper.arrayToString(mailing.getRoles(), ";"));
 
-			String content = extractContent(mailing);
+				String content = extractContent(mailing);
 
-			mailingManager.sendMail(mailing.getFrom(), to, (InternetAddress) null, mailing.getSubject(), content, true);
-			to = mailing.getNextReceiver();
+				mailingManager.sendMail(mailing.getFrom(), to, (InternetAddress) null, mailing.getSubject(), content, true);
+				mailing.onMailSent(to);
+				to = mailing.getNextReceiver();
+			}
+		} finally {
+			mailing.onEndMailing();
 		}
 	}
 
