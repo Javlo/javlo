@@ -64,7 +64,7 @@ public class MailingAction extends AbstractModuleAction {
 		switch (mailingContext.getWizardStep(SEND_WIZARD_BOX)) {
 		case 1:
 			Collection<Template> allTemplate = TemplateFactory.getAllDiskTemplates(ctx.getRequest().getSession().getServletContext());
-			Collection<String> contextTemplates = globalContext.getTemplates();
+			Collection<String> contextTemplates = globalContext.getTemplatesNames();
 
 			List<Template.TemplateBean> templates = new LinkedList<Template.TemplateBean>();
 			for (Template template : allTemplate) {
