@@ -9,6 +9,11 @@
 		<div>
 			${confirmMessage}
 		</div>
+		<ul>
+			<c:forEach var="email" items="${mailing.allRecipients}">
+				<li><c:out value="${email}" escapeXml="true" /></li>
+			</c:forEach>
+		</ul>
 		<div>
 			<input type="submit" name="previous" value="Previous" />
 			<input type="submit" name="send" value="Send" />

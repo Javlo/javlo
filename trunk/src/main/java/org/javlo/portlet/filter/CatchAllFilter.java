@@ -32,7 +32,7 @@ import org.javlo.i18n.I18nAccess;
 import org.javlo.message.GenericMessage;
 import org.javlo.message.MessageRepository;
 import org.javlo.module.core.ModulesContext;
-import org.javlo.module.mailing.Mailing;
+import org.javlo.module.mailing.MailingAction;
 import org.javlo.service.DataToIDService;
 import org.javlo.service.RequestService;
 import org.javlo.user.AdminUserFactory;
@@ -313,8 +313,8 @@ public class CatchAllFilter implements Filter {
 				String decryptedData = StringSecurityUtil.decode(cryptedData, staticConfig.getSecretKey());
 				request.setAttribute(StringSecurityUtil.REQUEST_ATT_FOR_SECURITY_FORWARD, "true");
 				String url = ((HttpServletRequest) request).getRequestURI();
-				if (request.getAttribute(Mailing.MAILING_FEEDBACK_PARAM_NAME) != null) {
-					url = URLHelper.addParam(url, Mailing.MAILING_FEEDBACK_PARAM_NAME, "" + request.getAttribute(Mailing.MAILING_FEEDBACK_PARAM_NAME));
+				if (request.getAttribute(MailingAction.MAILING_FEEDBACK_PARAM_NAME) != null) {
+					url = URLHelper.addParam(url, MailingAction.MAILING_FEEDBACK_PARAM_NAME, "" + request.getAttribute(MailingAction.MAILING_FEEDBACK_PARAM_NAME));
 				}
 				httpRequest.getRequestDispatcher(url + decryptedData).forward(httpRequest, response);
 			} catch (Exception e) {

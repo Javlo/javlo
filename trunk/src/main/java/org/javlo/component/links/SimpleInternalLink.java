@@ -18,7 +18,7 @@ import org.javlo.helper.URLHelper;
 import org.javlo.helper.XHTMLHelper;
 import org.javlo.i18n.I18nAccess;
 import org.javlo.message.GenericMessage;
-import org.javlo.module.mailing.Mailing;
+import org.javlo.module.mailing.MailingAction;
 import org.javlo.navigation.MenuElement;
 import org.javlo.service.ContentService;
 import org.javlo.service.NavigationService;
@@ -85,9 +85,9 @@ public class SimpleInternalLink extends ComplexPropertiesLink implements IIntern
 				viewCtx.setRenderMode(ContentContext.VIEW_MODE);
 				url = URLHelper.createURL(viewCtx, link);
 				if (getParam().trim().length() == 0) {
-					res.append(StringHelper.toXMLAttribute(url) + "?" + Mailing.MAILING_FEEDBACK_PARAM_NAME + "=##data##");
+					res.append(StringHelper.toXMLAttribute(url) + "?" + MailingAction.MAILING_FEEDBACK_PARAM_NAME + "=##data##");
 				} else {
-					res.append(StringHelper.toXMLAttribute(url) + getParam() + "&" + Mailing.MAILING_FEEDBACK_PARAM_NAME + "=##data##");
+					res.append(StringHelper.toXMLAttribute(url) + getParam() + "&" + MailingAction.MAILING_FEEDBACK_PARAM_NAME + "=##data##");
 				}
 			}
 			res.append("\">");

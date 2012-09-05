@@ -16,7 +16,6 @@ import org.javlo.helper.URLHelper;
 import org.javlo.i18n.I18nAccess;
 import org.javlo.message.GenericMessage;
 import org.javlo.message.MessageRepository;
-import org.javlo.module.content.ContentModuleContext;
 import org.javlo.module.core.AbstractModuleContext;
 import org.javlo.module.core.Module;
 import org.javlo.module.core.ModulesContext;
@@ -26,11 +25,13 @@ import org.javlo.template.TemplateFactory;
 import org.javlo.user.IUserFactory;
 import org.javlo.user.UserFactory;
 
-public class Mailing extends AbstractModuleAction {
+public class MailingAction extends AbstractModuleAction {
 
 	public static final String MAILING_FEEDBACK_PARAM_NAME = "_mfb";
 
-	private static Logger logger = Logger.getLogger(Mailing.class.getName());
+	private static Logger logger = Logger.getLogger(MailingAction.class.getName());
+
+	public static final String SEND_WIZARD_BOX = "sendwizard";
 
 	@Override
 	public String getActionGroupName() {
@@ -59,7 +60,8 @@ public class Mailing extends AbstractModuleAction {
 		request.setAttribute("previewURL", URLHelper.createURL(ctx.getContextWithOtherRenderMode(ContentContext.PAGE_MODE)));
 
 		MailingModuleContext mailingContext = MailingModuleContext.getInstance(request);
-		switch (mailingContext.getWizardStep(MailingModuleContext.SEND_WIZARD_BOX)) {
+		request.setAttribute("mailing", mailingContext);
+		switch (mailingContext.getWizardStep(SEND_WIZARD_BOX)) {
 		case 1:
 			Collection<Template> allTemplate = TemplateFactory.getAllDiskTemplates(ctx.getRequest().getSession().getServletContext());
 			Collection<String> contextTemplates = globalContext.getTemplates();
@@ -80,28 +82,23 @@ public class Mailing extends AbstractModuleAction {
 			request.setAttribute("templates", templates);
 			break;
 		case 2:
-			request.setAttribute("mailing", mailingContext);
+			if (mailingContext.getReportTo() == null) {
+				mailingContext.setReportTo(globalContext.getAdministratorEmail());
+			}
 			IUserFactory userFactory = UserFactory.createUserFactory(request);
 			Set<String> roles = userFactory.getAllRoles(globalContext, session);
 			request.setAttribute("groups", roles);
 			break;
 		case 3:
-			request.setAttribute("mailing", mailingContext);
-			int count = 20; //TODO Compute total recipients count
-			String confirmMessage = i18nAccess.getText("mailing.message.confirm", new String[][] { { "count", "" + count } });
+			String confirmMessage = i18nAccess.getText("mailing.message.confirm", new String[][] { { "count", "" + mailingContext.getAllRecipients().size() } });
 			request.setAttribute("confirmMessage", confirmMessage);
 			break;
 		}
 		return msg;
 	}
 
-	public static final String performChangeMode(HttpSession session, RequestService requestService, ContentModuleContext modCtx) {
-		modCtx.setMode(Integer.parseInt(requestService.getParameter("mode", "" + ContentModuleContext.EDIT_MODE)));
-		return null;
-	}
-
 	public String performWizard(ContentContext ctx, GlobalContext globalContext, HttpServletRequest request, RequestService rs, Module currentModule, MailingModuleContext mailingContext, I18nAccess i18nAccess) throws Exception {
-		switch (mailingContext.getWizardStep(MailingModuleContext.SEND_WIZARD_BOX)) {
+		switch (mailingContext.getWizardStep(SEND_WIZARD_BOX)) {
 		case 1:
 			if (mailingContext.getCurrentTemplate() == null) {
 				String msg = i18nAccess.getText("mailing.message.no-template-selected");
@@ -116,21 +113,24 @@ public class Mailing extends AbstractModuleAction {
 			mailingContext.setGroups(rs.getParameterListValues("groups", new LinkedList<String>()));
 			mailingContext.setRecipients(rs.getParameter("recipients", null));
 			mailingContext.setTestMailing(rs.getParameter("test-mailing", null) != null);
-			//TODO Validate
+			boolean isValid = mailingContext.validate(ctx);
 			if (ctx.isAjax()) {
-				currentModule.getBox(MailingModuleContext.SEND_WIZARD_BOX).update(ctx);
+				currentModule.getBox(SEND_WIZARD_BOX).update(ctx);
+			}
+			if (!isValid) {
+				return null;
 			}
 			break;
 		case 3:
 			if (rs.getParameter("send", null) != null) {
-				//TODO Send
+				mailingContext.sendMailing(ctx);
 				String msg = i18nAccess.getText("mailing.message.sent");
-				MessageRepository.getInstance(ctx).setGlobalMessageAndNotification(ctx, new GenericMessage(msg, GenericMessage.INFO));
+				MessageRepository.getInstance(ctx).setGlobalMessageAndNotification(ctx, new GenericMessage(msg, GenericMessage.SUCCESS));
 				mailingContext.reset();
+				mailingContext.setWizardStep(SEND_WIZARD_BOX, null);
 				if (ctx.isAjax()) {
-					currentModule.getBox(MailingModuleContext.SEND_WIZARD_BOX).update(ctx);
+					currentModule.getBox(SEND_WIZARD_BOX).update(ctx);
 				}
-				return null;
 			}
 			break;
 		}
@@ -140,7 +140,7 @@ public class Mailing extends AbstractModuleAction {
 	public String performSelectMailingTemplate(ContentContext ctx, RequestService rs, Module currentModule, MailingModuleContext mailingContext) throws Exception {
 		mailingContext.setCurrentTemplate(rs.getParameter("name", null));
 		if (ctx.isAjax()) {
-			currentModule.getBox(MailingModuleContext.SEND_WIZARD_BOX).update(ctx);
+			currentModule.getBox(SEND_WIZARD_BOX).update(ctx);
 			currentModule.updateMainRenderer(ctx);
 		}
 		return null;

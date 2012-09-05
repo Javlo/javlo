@@ -11,7 +11,7 @@ import javax.servlet.http.HttpServletResponse;
 
 import org.javlo.context.ContentContext;
 import org.javlo.mailing.FeedBackMailingBean;
-import org.javlo.module.mailing.Mailing;
+import org.javlo.module.mailing.MailingAction;
 import org.javlo.service.DataToIDService;
 import org.javlo.service.RequestService;
 
@@ -26,7 +26,7 @@ public class RequestHelper {
 	public static final void traceMailingFeedBack(ContentContext ctx) {
 		ServletContext application = ctx.getRequest().getSession().getServletContext();
 		RequestService requestService = RequestService.getInstance(ctx.getRequest());
-		String mfb = requestService.getParameter(Mailing.MAILING_FEEDBACK_PARAM_NAME, null);
+		String mfb = requestService.getParameter(MailingAction.MAILING_FEEDBACK_PARAM_NAME, null);
 		if (mfb != null) {
 			DataToIDService serv = DataToIDService.getInstance(application);
 			Map<String, String> params = StringHelper.uriParamToMap(serv.getData(mfb));

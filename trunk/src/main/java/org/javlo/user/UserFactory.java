@@ -266,7 +266,7 @@ public class UserFactory implements IUserFactory, Serializable {
 		List<IUserInfo> outUserList = new LinkedList<IUserInfo>();
 		List<IUserInfo> allUserInfo = getUserInfoList();
 		for (IUserInfo element : allUserInfo) {
-			Set<String> userRoles = element.getRoles();
+			Set<String> userRoles = new HashSet<String>(element.getRoles());
 			userRoles.retainAll(roles);
 			if (userRoles.size() > 0) {
 				outUserList.add(element);

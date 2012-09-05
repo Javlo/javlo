@@ -70,6 +70,9 @@ public abstract class AbstractModuleAction implements IModuleAction {
 			return "bad request structure: need 'box' parameter.";
 		}
 		Box b = currentModule.getBox(boxName);
+		if (b == null) {
+			return "the box '" + boxName + "' is not found.";
+		}
 		if (b.getSteps() == null) {
 			return "the box '" + boxName + "' don't have wizard steps.";
 		}
@@ -91,7 +94,7 @@ public abstract class AbstractModuleAction implements IModuleAction {
 		if (ctx.isAjax()) {
 			b.update(ctx);
 		}
-		
+
 		return null;
 	}
 

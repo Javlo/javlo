@@ -17,7 +17,7 @@ import org.javlo.helper.StringHelper;
 import org.javlo.helper.URLHelper;
 import org.javlo.helper.XHTMLHelper;
 import org.javlo.i18n.I18nAccess;
-import org.javlo.module.mailing.Mailing;
+import org.javlo.module.mailing.MailingAction;
 import org.javlo.service.ReverseLinkService;
 
 /**
@@ -170,7 +170,7 @@ public class GenericFile extends AbstractFileComponent implements IReverseLinkCo
 			} else {
 				ContentContext viewCtx = new ContentContext(ctx);
 				viewCtx.setRenderMode(ContentContext.VIEW_MODE);
-				res.append(StringHelper.toXMLAttribute(url) + "?" + Mailing.MAILING_FEEDBACK_PARAM_NAME + "=##data##");
+				res.append(StringHelper.toXMLAttribute(url) + "?" + MailingAction.MAILING_FEEDBACK_PARAM_NAME + "=##data##");
 			}
 			res.append("\">");
 			if (XHTMLHelper.getFileIcone(ctx, getFileName()).length() > 0) {
