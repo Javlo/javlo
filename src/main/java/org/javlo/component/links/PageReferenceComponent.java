@@ -46,15 +46,15 @@ import org.javlo.service.NavigationService;
 import org.javlo.service.RequestService;
 
 /**
- * list of links to a subset of pages.
- * <h4>JSTL variable : </h4>
+ * list of links to a subset of pages. <h4>JSTL variable :</h4>
  * <ul>
  * <li>inherited from {@link AbstractVisualComponent}</li>
  * <li>{@link PageStatus} pagesStatus : root page of menu. See {@link #getRootPage}.</li>
  * <li>{@link PageBean} pages : list of pages selected to display.</li>
- * <li>{@link String} title : title of the page list. See {@link #getContentTitle}</li>  
+ * <li>{@link String} title : title of the page list. See {@link #getContentTitle}</li>
  * <li>{@link PageReferenceComponent} comp : current component.</li>
  * </ul>
+ * 
  * @author pvandermaesen
  */
 public class PageReferenceComponent extends ComplexPropertiesLink implements IAction {
@@ -283,10 +283,10 @@ public class PageReferenceComponent extends ComplexPropertiesLink implements IAc
 		private boolean realContent = false;
 		private boolean visible = false;
 		private Collection<Link> links = new LinkedList<Link>();
-		private Collection<Image> images = new LinkedList<Image>();
+		private final Collection<Image> images = new LinkedList<Image>();
 
 		private Collection<String> tags = new LinkedList<String>();
-		private Collection<String> tagsLabel = new LinkedList<String>();
+		private final Collection<String> tagsLabel = new LinkedList<String>();
 
 		public String getAttTitle() {
 			return attTitle;
@@ -680,6 +680,7 @@ public class PageReferenceComponent extends ComplexPropertiesLink implements IAc
 		return "default-selected-" + getId();
 	}
 
+	@Override
 	protected String getDisplayAsInputName() {
 		return "display-as-" + getId();
 	}
@@ -1063,12 +1064,104 @@ public class PageReferenceComponent extends ComplexPropertiesLink implements IAc
 	}
 
 	@Override
+	protected String getCurrentRenderer(ContentContext ctx) {
+		return getDisplayType();
+	}
+
+	@Override
 	/**
 	 * render a list of links to pages.
 	 * exposed in request attributes : "pagesStatus","pages","title","comp".
 	 */
 	public String getViewXHTMLCode(ContentContext ctx) throws Exception {
+		String renderer;
+		if (getDisplayType() == null) {
+			renderer = getConfig(ctx).getRenderes().values().iterator().next();
+		} else {
+			renderer = getConfig(ctx).getRenderes().get(getDisplayType());
+		}
+		return executeJSP(ctx, renderer);
+	}
 
+	protected String getWidthEmptyPageInputName() {
+		return "width-empty-page-" + getId();
+	}
+
+	@Override
+	public void init(ComponentBean bean, ContentContext newContext) throws Exception {
+		super.init(bean, newContext);
+		if (getValue().trim().length() > 0) {
+			properties.load(stringToStream(getValue()));
+		}
+	}
+
+	@Override
+	public boolean isContentCachable(ContentContext ctx) {
+		return StringHelper.isTrue(getConfig(ctx).getProperty("config.cache", null), true);
+	}
+
+	@Override
+	public boolean isContentCachableByQuery(ContentContext ctx) {
+		return StringHelper.isTrue(getConfig(ctx).getProperty("config.cache-query", null), true);
+	}
+
+	@Override
+	public boolean isContentTimeCachable(ContentContext ctx) {
+		return StringHelper.isTrue(getConfig(ctx).getProperty("config.time-cache", null), true);
+	}
+
+	private boolean isCreationOrder() {
+		return getOrder().equals("creation");
+	}
+
+	private boolean isDateOrder() {
+		return getOrder().equals("date");
+	}
+
+	private boolean isNoOrder() {
+		return getOrder().equals("no-order");
+	}
+
+	private boolean isDefaultSelected() {
+		return StringHelper.isTrue(properties.getProperty(DEFAULT_SELECTED_PROP_KEY, "false"));
+	}
+
+	protected boolean isDisplayAsLgList() {
+		return getDisplayType().equals(TYPE_LG_LIST);
+	}
+
+	private boolean isDisplayAsSlideShow() {
+		return getDisplayType().equals(TYPE_SLIDE_SHOW);
+	}
+
+	protected boolean isLightList() {
+		return getDisplayType().equals(TYPE_LIGHT_LIST);
+	}
+
+	private boolean isPopularityOrder() {
+		return getOrder().equals("popularity");
+	}
+
+	protected boolean isReverseOrder() {
+		return StringHelper.isTrue(properties.getProperty(CHANGE_ORDER_KEY, "false"));
+	}
+
+	private boolean isVisitOrder() {
+		return getOrder().equals("visit");
+	}
+
+	private boolean isWidthEmptyPage() {
+		return StringHelper.isTrue(properties.getProperty(WIDTH_EMPTY_PAGE_PROP_KEY, "false"));
+	}
+
+	@Override
+	public boolean needJavaScript(ContentContext ctx) {
+		return isDisplayAsSlideShow();
+	}
+
+	@Override
+	public void prepareView(ContentContext ctx) throws Exception {
+		super.prepareView(ctx);
 		Calendar backDate = getBackDate(ctx);
 
 		ContentService content = ContentService.createContent(ctx.getRequest());
@@ -1156,7 +1249,7 @@ public class PageReferenceComponent extends ComplexPropertiesLink implements IAc
 							}
 							pageBeans.add(PageBean.getInstance(lgCtx, page, this));
 						}
-					} 
+					}
 				}
 			}
 		}
@@ -1167,93 +1260,7 @@ public class PageReferenceComponent extends ComplexPropertiesLink implements IAc
 		ctx.getRequest().setAttribute("pages", pageBeans);
 		ctx.getRequest().setAttribute("title", getContentTitle());
 		ctx.getRequest().setAttribute("comp", this);
-		String renderer;
-		if (getDisplayType() == null) {
-			renderer = getConfig(ctx).getRenderes().values().iterator().next();
-		} else {
-			renderer = getConfig(ctx).getRenderes().get(getDisplayType());
-		}
-		logger.info("render page reference with " + pageBeans.size() + " pages width renderer : " + renderer);
-
 		ctx.getRequest().setAttribute("tags", globalContext.getTags());
-
-		return executeJSP(ctx, renderer);
-	}
-
-	protected String getWidthEmptyPageInputName() {
-		return "width-empty-page-" + getId();
-	}
-
-	@Override
-	public void init(ComponentBean bean, ContentContext newContext) throws Exception {
-		super.init(bean, newContext);
-		if (getValue().trim().length() > 0) {
-			properties.load(stringToStream(getValue()));
-		}
-	}
-
-	@Override
-	public boolean isContentCachable(ContentContext ctx) {
-		return StringHelper.isTrue(getConfig(ctx).getProperty("config.cache", null), true);
-	}
-	
-	@Override
-	public boolean isContentCachableByQuery(ContentContext ctx) {
-		return StringHelper.isTrue(getConfig(ctx).getProperty("config.cache-query", null), true);
-	}
-
-	@Override
-	public boolean isContentTimeCachable(ContentContext ctx) {
-		return StringHelper.isTrue(getConfig(ctx).getProperty("config.time-cache", null), true);
-	}
-
-	private boolean isCreationOrder() {
-		return getOrder().equals("creation");
-	}
-
-	private boolean isDateOrder() {
-		return getOrder().equals("date");
-	}
-
-	private boolean isNoOrder() {
-		return getOrder().equals("no-order");
-	}
-
-	private boolean isDefaultSelected() {
-		return StringHelper.isTrue(properties.getProperty(DEFAULT_SELECTED_PROP_KEY, "false"));
-	}
-
-	protected boolean isDisplayAsLgList() {
-		return getDisplayType().equals(TYPE_LG_LIST);
-	}
-
-	private boolean isDisplayAsSlideShow() {
-		return getDisplayType().equals(TYPE_SLIDE_SHOW);
-	}
-
-	protected boolean isLightList() {
-		return getDisplayType().equals(TYPE_LIGHT_LIST);
-	}
-
-	private boolean isPopularityOrder() {
-		return getOrder().equals("popularity");
-	}
-
-	protected boolean isReverseOrder() {
-		return StringHelper.isTrue(properties.getProperty(CHANGE_ORDER_KEY, "false"));
-	}
-
-	private boolean isVisitOrder() {
-		return getOrder().equals("visit");
-	}
-
-	private boolean isWidthEmptyPage() {
-		return StringHelper.isTrue(properties.getProperty(WIDTH_EMPTY_PAGE_PROP_KEY, "false"));
-	}
-
-	@Override
-	public boolean needJavaScript(ContentContext ctx) {
-		return isDisplayAsSlideShow();
 	}
 
 	private void popularitySorting(ContentContext ctx, List<MenuElement> pages, int pertinentPageToBeSort) throws Exception {

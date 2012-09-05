@@ -90,6 +90,16 @@
                     </span>
                 </a>
             </li>
+            <c:if test="${not empty info.privateHelpURL}">
+            <li class="note">
+                <a href="${info.privateHelpURL}" target="_blanck">
+                    <span class="wrap">
+                        <span class="thicon helpicon"></span>
+                        <span class="count" style="display: none;">0</span>
+                    </span>
+                </a>
+            </li>
+            </c:if>
         </ul>
     </div><!-- topheader -->
     

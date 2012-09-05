@@ -96,13 +96,15 @@
 	<label for="switch-default-language">${i18n.edit['admin.form.switch-default-language']}</label>
 	<input type="checkbox" id="switch-default-language" name="switch-default-language" ${currentContext.autoSwitchToDefaultLanguage?'checked="checked"':""}" />
 </div>
-</div>
 
-<div class="one_half">
 <div class="line">		
 	<label for="homepage">${i18n.edit['admin.form.homepage']}</label>
 	<input type="text" id="homepage" name="homepage" value="${currentContext.homepage}" />	
 </div>
+
+</div>
+
+<div class="one_half">
 
 <div class="line">		
 	<label for="google-ana">${i18n.edit['admin.title.google-ana']}</label>
@@ -127,6 +129,16 @@
 <div class="line">		
 	<label for="full-date">${i18n.edit['admin.title.full-date']}</label>
 	<input type="text" id="full-date" name="full-date" value="${currentContext.fullDateFormat}" />	
+</div>
+
+<div class="line">		
+	<label for="help-url">${i18n.edit['admin.title.help-url']}</label>
+	<input type="text" id="help-url" name="help-url" value="${currentContext.helpURL}" />	
+</div>
+
+<div class="line">		
+	<label for="private-help-url">${i18n.edit['admin.title.private-help-url']}</label>
+	<input type="text" id="private-help-url" name="private-help-url" value="${currentContext.privateHelpURL}" />	
 </div>
 
 </div>
