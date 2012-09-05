@@ -85,6 +85,9 @@ public class AdminAction extends AbstractModuleAction {
 		private String mediumDateFormat;
 		private String fullDateFormat;
 
+		private String helpURL;
+		private String privateHelpURL;
+
 		private int countUser;
 		private boolean view;
 		private boolean edit;
@@ -109,10 +112,13 @@ public class AdminAction extends AbstractModuleAction {
 			setVisibility(globalContext.isView());
 			setEditability(globalContext.isEditable());
 			setDefaultTemplate(globalContext.getDefaultTemplate());
-			
+
 			setShortDateFormat(globalContext.getShortDateFormat());
 			setMediumDateFormat(globalContext.getMediumDateFormat());
 			setFullDateFormat(globalContext.getFullDateFormat());
+
+			setHelpURL(globalContext.getHelpURL());
+			setPrivateHelpURL(globalContext.getPrivateHelpURL());
 
 			setSize(StringHelper.renderSize(globalContext.getAccountSize()));
 			setGlobalTitle(globalContext.getGlobalTitle());
@@ -374,6 +380,22 @@ public class AdminAction extends AbstractModuleAction {
 			this.fullDateFormat = fullDateFormat;
 		}
 
+		public String getHelpURL() {
+			return helpURL;
+		}
+
+		public void setHelpURL(String helpURL) {
+			this.helpURL = helpURL;
+		}
+
+		public String getPrivateHelpURL() {
+			return privateHelpURL;
+		}
+
+		public void setPrivateHelpURL(String privateHelpURL) {
+			this.privateHelpURL = privateHelpURL;
+		}
+
 	}
 
 	@Override
@@ -606,37 +628,39 @@ public class AdminAction extends AbstractModuleAction {
 					currentGlobalContext.setAdministrator(requestService.getParameter("administrator", ""));
 					currentGlobalContext.setHomePage(requestService.getParameter("homepage", ""));
 					currentGlobalContext.setUserRoles(new HashSet<String>(StringHelper.stringToCollection(requestService.getParameter("user-roles", ""), ",")));
-					
+					currentGlobalContext.setHelpURL(requestService.getParameter("help-url", ""));
+					currentGlobalContext.setPrivateHelpURL(requestService.getParameter("private-help-url", ""));
+
 					String dateFormat = requestService.getParameter("short-date", null);
 					if (dateFormat != null) {
 						try {
 							new SimpleDateFormat(dateFormat);
 							currentGlobalContext.setShortDateFormat(dateFormat);
 						} catch (Exception e) {
-							messageRepository.setGlobalMessage(new GenericMessage(i18nAccess.getText("admin.message.bad-date-format")+dateFormat, GenericMessage.ERROR));							
-						}						
+							messageRepository.setGlobalMessage(new GenericMessage(i18nAccess.getText("admin.message.bad-date-format") + dateFormat, GenericMessage.ERROR));
+						}
 					}
-					
+
 					dateFormat = requestService.getParameter("medium-date", null);
 					if (dateFormat != null) {
 						try {
 							new SimpleDateFormat(dateFormat);
 							currentGlobalContext.setMediumDateFormat(dateFormat);
 						} catch (Exception e) {
-							messageRepository.setGlobalMessage(new GenericMessage(i18nAccess.getText("admin.message.bad-date-format")+dateFormat, GenericMessage.ERROR));							
-						}						
+							messageRepository.setGlobalMessage(new GenericMessage(i18nAccess.getText("admin.message.bad-date-format") + dateFormat, GenericMessage.ERROR));
+						}
 					}
-					
+
 					dateFormat = requestService.getParameter("full-date", null);
 					if (dateFormat != null) {
 						try {
 							new SimpleDateFormat(dateFormat);
 							currentGlobalContext.setFullDateFormat(dateFormat);
 						} catch (Exception e) {
-							messageRepository.setGlobalMessage(new GenericMessage(i18nAccess.getText("admin.message.bad-date-format")+dateFormat, GenericMessage.ERROR));							
-						}						
+							messageRepository.setGlobalMessage(new GenericMessage(i18nAccess.getText("admin.message.bad-date-format") + dateFormat, GenericMessage.ERROR));
+						}
 					}
-					
+
 					String usersAccess = requestService.getParameter("users-access", "");
 					if (usersAccess.trim().length() > 0) {
 						currentGlobalContext.setUsersAccess(StringHelper.textToList(usersAccess));
@@ -940,8 +964,6 @@ public class AdminAction extends AbstractModuleAction {
 		if (requestService.getParameter("back", null) != null) {
 			currentModule.restoreRenderer();
 			currentModule.restoreToolsRenderer();
-			// currentModule.clearBreadcrump();
-			// currentModule.pushBreadcrumb(new Module.HtmlLink(URLHelper.createURL(ctx), i18nAccess.getText("global.home"), ""));
 		} else {
 			String newContent = requestService.getParameter("config_content", null);
 			if (newContent != null) {

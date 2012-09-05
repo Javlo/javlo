@@ -331,6 +331,16 @@ h2.prize {
 	background-image: url(../images/icons/notification.png);
 }
 
+.topheader .helpicon {
+	position: absolute;
+	top: 5px;
+	left: 6px;
+	width: 16px;
+	height: 16px;
+	background-image: url(../images/jicons/icon_bulb.png);
+}
+
+
 .topheader .msgicon,.topheader .infoicon {
 	background-repeat: no-repeat;
 	background-position: 0 0;

@@ -978,6 +978,15 @@ public class GlobalContext implements Serializable {
 		return properties.getString("help-url", staticConfig.getHelpURL());
 	}
 
+	/**
+	 * return help url with specific information over the site.
+	 * 
+	 * @return
+	 */
+	public String getPrivateHelpURL() {
+		return properties.getString("private-help-url", null);
+	}
+
 	public String getHomePage() {
 		return properties.getString("homepage", "");
 	}
@@ -1920,6 +1929,13 @@ public class GlobalContext implements Serializable {
 	public void setHelpURL(String helpURL) {
 		synchronized (properties) {
 			properties.setProperty("help-url", helpURL);
+			save();
+		}
+	}
+
+	public void setPrivateHelpURL(String helpURL) {
+		synchronized (properties) {
+			properties.setProperty("private-help-url", helpURL);
 			save();
 		}
 	}

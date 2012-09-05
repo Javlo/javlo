@@ -70,7 +70,6 @@ public class LangHelper {
 	 *         <li>String : the query parameter (when user make a search)</li>
 	 *         </ul>
 	 * @throws Exception
-	 * @throws
 	 */
 	public static Object smartInstance(HttpServletRequest request, HttpServletResponse response, Class c) throws Exception {
 		if (c.equals(HttpServletRequest.class)) {
@@ -144,9 +143,9 @@ public class LangHelper {
 			this.value = value;
 		}
 	}
-	
+
 	public static MapEntry entry(String key, Object value) {
-		return new MapEntry(key,value);
+		return new MapEntry(key, value);
 	}
 
 	public static Map<String, Object> obj(MapEntry... props) {
@@ -156,12 +155,12 @@ public class LangHelper {
 		}
 		return out;
 	}
-	
+
 	public static Map<String, String> objStr(MapEntry... props) {
 		Map<String, String> out = new LinkedHashMap<String, String>();
 		for (MapEntry prop : props) {
 			if (prop.value != null) {
-				out.put(prop.name, ""+prop.value);
+				out.put(prop.name, "" + prop.value);
 			} else {
 				out.put(prop.name, null);
 			}

@@ -16,6 +16,7 @@ public class GenericMessage {
 	public static final int ERROR = 1;
 	public static final int ALERT = 2;
 	public static final int INFO = 3;
+	public static final int SUCCESS = 5;
 	public static final int HELP = 4;
 
 	int type;
@@ -54,7 +55,7 @@ public class GenericMessage {
 	public int getType() {
 		return type;
 	}
-	
+
 	public static String getTypeLabel(int type) {
 		switch (type) {
 		case ERROR:
@@ -68,6 +69,9 @@ public class GenericMessage {
 
 		case ALERT:
 			return "alert";
+
+		case SUCCESS:
+			return "success";
 
 		default:
 			return null;

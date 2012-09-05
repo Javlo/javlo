@@ -37,10 +37,10 @@ public class InfoBean {
 	 * @param ctx
 	 * @throws Exception
 	 */
-	public static InfoBean updateInfoBean(ContentContext ctx) throws Exception {		
+	public static InfoBean updateInfoBean(ContentContext ctx) throws Exception {
 		InfoBean info = new InfoBean();
 		MenuElement currentPage = ctx.getCurrentPage();
-		info.setPage(currentPage.getPageBean(ctx));		
+		info.setPage(currentPage.getPageBean(ctx));
 		if (currentPage.getParent() != null) {
 			info.setParent(currentPage.getParent().getPageBean(ctx));
 		}
@@ -58,15 +58,16 @@ public class InfoBean {
 			info.setParentPageTitle(currentPage.getParent().getTitle(ctx));
 			info.setParentPageURL(URLHelper.createURL(ctx, currentPage.getParent().getPath()));
 		}
-		info.setCurrentURL(URLHelper.createURL(ctx));		
+		info.setCurrentURL(URLHelper.createURL(ctx));
 		info.setStaticRootURL(URLHelper.createStaticURL(ctx, "/"));
 		ContentContext lCtx = new ContentContext(ctx);
 		lCtx.setAbsoluteURL(true);
 		info.setCurrentAbsoluteURL(URLHelper.createURL(lCtx));
 		info.setHomeAbsoluteURL(URLHelper.createURL(lCtx, "/"));
 		info.setPageName(currentPage.getName());
-		
+
 		GlobalContext globalContext = GlobalContext.getInstance(ctx.getRequest());
+		info.setPrivateHelpURL(globalContext.getPrivateHelpURL());
 		info.setPreviewVersion(PersistenceService.getInstance(globalContext).getVersion());
 		IUserFactory userFactory = UserFactory.createUserFactory(globalContext, ctx.getRequest().getSession());
 		User currentUser = userFactory.getCurrentUser(ctx.getRequest().getSession());
@@ -74,44 +75,42 @@ public class InfoBean {
 			info.setUserName(currentUser.getLogin());
 		}
 		info.setContentLanguage(ctx.getRequestContentLanguage());
-		/*if (ctx.getRenderMode() != ContentContext.EDIT_MODE) {
-			info.setContentLanguage(ctx.getRequestContentLanguage());
-		} else {
-			info.setContentLanguage(globalContext.getEditLanguage());
-		}*/
+		/*
+		 * if (ctx.getRenderMode() != ContentContext.EDIT_MODE) { info.setContentLanguage(ctx.getRequestContentLanguage()); } else { info.setContentLanguage(globalContext.getEditLanguage()); }
+		 */
 		info.setEditLanguage(globalContext.getEditLanguage());
 		info.setContentLanguages(globalContext.getContentLanguages());
 		info.setLanguages(globalContext.getLanguages());
-		info.setLanguage(ctx.getLanguage());		
+		info.setLanguage(ctx.getLanguage());
 		info.setDate(StringHelper.renderDate(currentPage.getContentDateNeverNull(ctx), globalContext.getShortDateFormat()));
 		info.setTime(StringHelper.renderTime(ctx, currentPage.getContentDateNeverNull(ctx)));
 		info.setRoles(userFactory.getAllRoles(globalContext, ctx.getRequest().getSession()));
-		
+
 		info.device = ctx.getDevice();
 		ctx.getRequest().setAttribute(REQUEST_KEY, info);
 
 		if (ctx.getCurrentTemplate() != null) {
 			info.setTemplateFolder(ctx.getCurrentTemplate().getFolder(globalContext));
-			info.setAbsoluteTemplateFolder(URLHelper.createStaticTemplateURL(ctx,"/"));
+			info.setAbsoluteTemplateFolder(URLHelper.createStaticTemplateURL(ctx, "/"));
 		}
 
 		MessageRepository messageRepository = MessageRepository.getInstance(ctx);
 		info.globalMessage = messageRepository.getGlobalMessage();
-		
+
 		MenuElement page = ctx.getCurrentPage();
 		while (page.getParent() != null) {
 			page = page.getParent();
-			info.pagePath.add(0,page.getPageBean(ctx));
+			info.pagePath.add(0, page.getPageBean(ctx));
 		}
-		
-		info.setCaptchaURL(URLHelper.createStaticURL(ctx,  "/captcha.jpg"));
+
+		info.setCaptchaURL(URLHelper.createStaticURL(ctx, "/captcha.jpg"));
 		ContentContext copyCtx = EditContext.getInstance(globalContext, ctx.getRequest().getSession()).getContextForCopy(ctx);
 		if (copyCtx != null) {
 			if (!ctx.getPath().startsWith(copyCtx.getPath())) {
 				info.setCopiedPath(copyCtx.getPath());
 			}
 		}
-		
+
 		EditContext editContext = EditContext.getInstance(globalContext, ctx.getRequest().getSession());
 		info.setEditTemplateURL(URLHelper.createStaticURL(ctx, editContext.getEditTemplateFolder()));
 
@@ -144,7 +143,8 @@ public class InfoBean {
 	private String templateFolder = "";
 	private String captchaURL;
 	private String copiedPath;
-	 
+	private String privateHelpURL;
+
 	private int previewVersion = -1;
 	private Collection<String> contentLanguages;
 	private Collection<String> languages;
@@ -152,11 +152,11 @@ public class InfoBean {
 	private MenuElement.PageBean page = null;
 	private MenuElement.PageBean parent = null;
 	private MenuElement.PageBean root = null;
-	private List<MenuElement.PageBean> pagePath = new LinkedList<MenuElement.PageBean>();
-	
+	private final List<MenuElement.PageBean> pagePath = new LinkedList<MenuElement.PageBean>();
+
 	private GenericMessage globalMessage;
 
-	private String encoding = ContentContext.CHARACTER_ENCODING;
+	private final String encoding = ContentContext.CHARACTER_ENCODING;
 	private String absoluteTemplateFolder;
 
 	public String getCurrentAbsoluteURL() {
@@ -370,9 +370,11 @@ public class InfoBean {
 	public void setRoot(MenuElement.PageBean root) {
 		this.root = root;
 	}
+
 	public List<MenuElement.PageBean> getPagePath() {
 		return pagePath;
 	}
+
 	public String getVersion() {
 		return AccessServlet.VERSION;
 	}
@@ -380,13 +382,13 @@ public class InfoBean {
 	public Collection<String> getContentLanguages() {
 		return contentLanguages;
 	}
-	
+
 	public Collection<String> getLanguages() {
 		return languages;
 	}
-	
+
 	private void setLanguages(Set<String> inLanguages) {
-		this.languages = inLanguages;		
+		this.languages = inLanguages;
 	}
 
 	public void setContentLanguages(Collection<String> contentLanguages) {
@@ -447,5 +449,13 @@ public class InfoBean {
 
 	public void setCopiedPath(String copiedPath) {
 		this.copiedPath = copiedPath;
+	}
+
+	public String getPrivateHelpURL() {
+		return privateHelpURL;
+	}
+
+	public void setPrivateHelpURL(String privateHelpURL) {
+		this.privateHelpURL = privateHelpURL;
 	}
 }
