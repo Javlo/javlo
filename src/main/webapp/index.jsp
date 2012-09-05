@@ -6,7 +6,6 @@
 %><%@page import="org.javlo.context.GlobalContext"
 %><%@page import="org.javlo.i18n.I18nAccess"
 %><%@page import="org.javlo.template.Template"
-%><%@page import="org.javlo.navigation.PageConfiguration"
 %><%@page import="org.javlo.context.ContentContext,org.javlo.config.StaticConfig"
 %><%@page import="org.javlo.service.ContentService"%><%
 
@@ -38,7 +37,7 @@ ctx.setLanguage(lg);
 i18nAccess.changeViewLanguage(ctx);
 
 ContentService content = ContentService.getInstance(globalContext);
-Template template = PageConfiguration.getInstance(globalContext).getCurrentTemplate(ctx,content.getNavigation(ctx));
+Template template = ctx.getCurrentTemplate();
 if ((template != null)&&(template.getHomeRenderer(globalContext) != null)) {
 %><jsp:include page="<%=template.getHomeRendererFullName(globalContext)%>"></jsp:include><%	
 } else {

@@ -116,9 +116,20 @@ public class GenericForm extends AbstractVisualComponent implements IAction {
 			OutputStream out = null;
 			try {
 				File file = getFile(ctx);
-				List<Map<String, String>> newData = CSVFactory.loadContentAsMap(file);
-				newData.add(data);
-				CSVFactory.storeContentAsMap(file, newData);
+				Collection<String> titles = CSVFactory.loadTitle(file);
+				boolean newTitleFound = false;
+				for (String newTitle : data.keySet()) {
+					if (!titles.contains(newTitle)) {
+						newTitleFound = true;
+					}
+				}
+				if (newTitleFound) {
+					List<Map<String, String>> newData = CSVFactory.loadContentAsMap(file);
+					newData.add(data);
+					CSVFactory.storeContentAsMap(file, newData);
+				} else {
+					CSVFactory.appendContentAsMap(file, data);
+				}
 			} finally {
 				if (out != null) {
 					out.close();
@@ -177,6 +188,7 @@ public class GenericForm extends AbstractVisualComponent implements IAction {
 		result.put("registration time", StringHelper.renderSortableTime(new Date()));
 		result.put("local addr", request.getLocalAddr());
 		result.put("remote addr", request.getRemoteAddr());
+		result.put("X-Forwarded-For", request.getHeader("X-Forwarded-For"));
 		Collection<String> keys = params.keySet();
 		for (String key : keys) {
 			if (!key.equals("webaction") && !key.equals("comp_id") && !key.equals("captcha")) {
@@ -203,7 +215,7 @@ public class GenericForm extends AbstractVisualComponent implements IAction {
 		}
 
 		if (comp.isSendEmail()) {
-			MailingManager mailingManager = MailingManager.getInstance(globalContext.getStaticConfig());			
+			MailingManager mailingManager = MailingManager.getInstance(globalContext.getStaticConfig());
 			InternetAddress fromEmail = new InternetAddress(StaticConfig.getInstance(request.getSession()).getSiteEmail());
 			InternetAddress adminEmail = new InternetAddress(globalContext.getAdministratorEmail());
 			InternetAddress bccEmail = new InternetAddress("p@noctis.be");

@@ -44,7 +44,6 @@ import org.javlo.module.core.ModulesContext;
 import org.javlo.module.file.FileModuleContext;
 import org.javlo.navigation.IURLFactory;
 import org.javlo.navigation.MenuElement;
-import org.javlo.navigation.PageConfiguration;
 import org.javlo.search.SearchResult;
 import org.javlo.search.SearchResult.SearchElement;
 import org.javlo.service.ClipBoard;
@@ -442,9 +441,8 @@ public class Edit extends AbstractModuleAction {
 		 */
 
 		/** page properties **/
-		PageConfiguration pageConfig = PageConfiguration.getInstance(globalContext);
 		EditContext editCtx = EditContext.getInstance(globalContext, ctx.getRequest().getSession());
-		List<Template> templates = pageConfig.getContextTemplates(editCtx);
+		List<Template> templates = ctx.getCurrentTemplates();
 		Collections.sort(templates);
 
 		if (ctx.getCurrentTemplate() != null) {
@@ -655,7 +653,7 @@ public class Edit extends AbstractModuleAction {
 		return null;
 	}
 
-	public static final String performPageProperties(ServletContext application, GlobalContext globalContext, ContentContext ctx, ContentService content, EditContext editCtx, PageConfiguration pageConfig, RequestService requestService, I18nAccess i18nAccess, MessageRepository messageRepository) throws Exception {
+	public static final String performPageProperties(ServletContext application, GlobalContext globalContext, ContentContext ctx, ContentService content, EditContext editCtx, RequestService requestService, I18nAccess i18nAccess, MessageRepository messageRepository) throws Exception {
 
 		if (!canModifyCurrentPage(ctx) || !checkPageSecurity(ctx)) {
 			messageRepository.setGlobalMessageAndNotification(ctx, new GenericMessage(i18nAccess.getText("action.block"), GenericMessage.ERROR));
@@ -687,13 +685,13 @@ public class Edit extends AbstractModuleAction {
 					modify = true;
 				}
 			}
-			
+
 			if (page.isVisible() != isView) {
 				page.setVisible(isView);
 				modify = true;
 			}
-			
-			boolean isBreakRepeat = requestService.getParameter("break_repeat", null) != null;			
+
+			boolean isBreakRepeat = requestService.getParameter("break_repeat", null) != null;
 			if (page.isBreakRepeat() != isBreakRepeat) {
 				page.setBreakRepeat(isBreakRepeat);
 				modify = true;
@@ -703,8 +701,9 @@ public class Edit extends AbstractModuleAction {
 			if (templateName != null) {
 				if (templateName.length() > 1) {
 					Template template = TemplateFactory.getDiskTemplates(application).get(templateName);
-					if (template != null && pageConfig.getContextTemplates(editCtx).contains(template)) {
+					if (template != null && ctx.getCurrentTemplates().contains(template)) { // TODO: check this test
 						page.setTemplateName(template.getName());
+						ctx.setCurrentTemplate(null); // reset current template
 						modify = true;
 					} else {
 						return "template not found : " + templateName;
@@ -795,7 +794,7 @@ public class Edit extends AbstractModuleAction {
 		return message;
 	}
 
-	public static final String performChangeArea(ContentContext ctx, RequestService requestService, EditContext editContext, I18nAccess i18nAccess, MessageRepository messageRepository) {
+	public static final String performChangeArea(ContentContext ctx, RequestService requestService, EditContext editContext, I18nAccess i18nAccess, MessageRepository messageRepository) throws Exception {
 		String area = requestService.getParameter("area", null);
 		if (area == null) {
 			return "bad request structure : need 'area' parameter";
@@ -840,7 +839,7 @@ public class Edit extends AbstractModuleAction {
 
 			globalContext.setPublishDate(new Date());
 			globalContext.setLatestPublisher(ctx.getCurrentEditUser().getLogin());
-			
+
 			content.releaseViewNav(ctx, globalContext);
 
 			String msg = i18nAccess.getText("content.published");
@@ -1101,14 +1100,14 @@ public class Edit extends AbstractModuleAction {
 		clipboard.clear();
 		return null;
 	}
-	
+
 	public static String performInsertPage(RequestService rs, ContentContext ctx, MessageRepository messageRepository, ContentService content, EditContext editContext, PersistenceService persistenceService, I18nAccess i18nAccess) throws Exception {
 		String path = editContext.getContextForCopy(ctx).getPath();
-		MenuElement pageToBeMoved = content.getNavigation(ctx).searchChild(ctx,path);
+		MenuElement pageToBeMoved = content.getNavigation(ctx).searchChild(ctx, path);
 		if (pageToBeMoved == null) {
-			return "page not found : "+path;
+			return "page not found : " + path;
 		}
-		if ((pageToBeMoved != null) && (pageToBeMoved.getParent() != null)) {			
+		if ((pageToBeMoved != null) && (pageToBeMoved.getParent() != null)) {
 			MenuElement newParent = null;
 			MenuElement[] elems = pageToBeMoved.getParent().getChildMenuElements();
 			for (int i = 0; i < elems.length - 1; i++) {
@@ -1117,7 +1116,7 @@ public class Edit extends AbstractModuleAction {
 				}
 			}
 			pageToBeMoved.moveToParent(ctx.getCurrentPage());
-			persistenceService.store(ctx);			
+			persistenceService.store(ctx);
 			String[][] balises = { { "path", path }, { "new-path", pageToBeMoved.getPath() } };
 			String msg = i18nAccess.getText("navigation.move", balises);
 			MessageRepository.getInstance(ctx).setGlobalMessage(new GenericMessage(msg, GenericMessage.INFO));

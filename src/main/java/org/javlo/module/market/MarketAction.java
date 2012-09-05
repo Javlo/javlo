@@ -22,7 +22,6 @@ import org.javlo.message.MessageRepository;
 import org.javlo.module.core.AbstractModuleContext;
 import org.javlo.module.core.Module;
 import org.javlo.module.core.ModulesContext;
-import org.javlo.navigation.PageConfiguration;
 import org.javlo.remote.IRemoteResource;
 import org.javlo.remote.LocalResourceFactory;
 import org.javlo.remote.RemoteResourceFactory;
@@ -144,7 +143,6 @@ public class MarketAction extends AbstractModuleAction {
 				}
 				newTemplate.getRenderer(ctx); // deploy template
 				globalContext.addTemplate(newTemplate.getName(), false);
-				PageConfiguration.getInstance(globalContext).loadTemplate(globalContext);
 				imported = true;
 			} catch (Exception e) {
 				e.printStackTrace();

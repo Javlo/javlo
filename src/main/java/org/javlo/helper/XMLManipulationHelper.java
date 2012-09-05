@@ -434,12 +434,12 @@ public class XMLManipulationHelper {
 				/* link - StyleSheet */
 				if (tags[i].getName().equalsIgnoreCase("link")) {
 					String hrefValue = attributes.get("href");
-					
+
 					if ((hrefValue != null) && (!StringHelper.isURL(hrefValue))) {
-						String newLinkGeneratorIf = "<%if (!XHTMLHelper.allReadyInsered(ctx, \""+hrefValue+"\")) {%>";
+						String newLinkGeneratorIf = "<%if (!XHTMLHelper.allReadyInsered(ctx, \"" + hrefValue + "\")) {%>";
 						ressources.add(hrefValue);
 						attributes.put("href", "<%=URLHelper.createStaticTemplateURL(ctx,\"/" + hrefValue + "\", \"" + templateVersion + "\")%>");
-						remplacement.addReplacement(tags[i].getOpenStart(), tags[i].getOpenEnd() + 1, newLinkGeneratorIf+tags[i].toString()+"<%}%>");					
+						remplacement.addReplacement(tags[i].getOpenStart(), tags[i].getOpenEnd() + 1, newLinkGeneratorIf + tags[i].toString() + "<%}%>");
 					}
 				}
 
@@ -572,13 +572,13 @@ public class XMLManipulationHelper {
 				if ((srcValue != null) && (!StringHelper.isURL(srcValue))) {
 					ressources.add(srcValue);
 					if (tags[i].getName().equalsIgnoreCase("script")) {
-						String newLinkGeneratorIf = "<%if (!XHTMLHelper.allReadyInsered(ctx, \""+srcValue+"\")) {%>";
+						String newLinkGeneratorIf = "<%if (!XHTMLHelper.allReadyInsered(ctx, \"" + srcValue + "\")) {%>";
 						attributes.put("src", "<%=URLHelper.createStaticTemplateURL(ctx,\"/" + srcValue + "\")%>");
-						remplacement.addReplacement(tags[i].getOpenStart(), tags[i].getOpenEnd() + 1, newLinkGeneratorIf+tags[i].toString()+"<%}%>");
+						remplacement.addReplacement(tags[i].getOpenStart(), tags[i].getOpenEnd() + 1, newLinkGeneratorIf + tags[i].toString() + "<%}%>");
 					} else {
 						attributes.put("src", "<%=URLHelper.createStaticTemplateURL(ctx,\"/" + srcValue + "\")%>");
 						remplacement.addReplacement(tags[i].getOpenStart(), tags[i].getOpenEnd() + 1, tags[i].toString());
-					}					
+					}
 				}
 
 				/* flash resource access */
@@ -887,8 +887,6 @@ public class XMLManipulationHelper {
 		out.append("		org.javlo.context.EditContext,");
 		out.newLine();
 		out.append("		org.javlo.helper.XHTMLHelper,");
-		out.newLine();
-		out.append("		org.javlo.navigation.PageConfiguration,");
 		out.newLine();
 		out.append("		org.javlo.message.MessageRepository,");
 		out.newLine();

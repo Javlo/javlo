@@ -16,7 +16,6 @@ import org.javlo.context.GlobalContext;
 import org.javlo.image.ImageHelper;
 import org.javlo.navigation.IURLFactory;
 import org.javlo.navigation.MenuElement;
-import org.javlo.navigation.PageConfiguration;
 import org.javlo.service.ContentService;
 import org.javlo.template.Template;
 import org.javlo.ztatic.FileCache;
@@ -320,8 +319,7 @@ public abstract class ElementaryURLHelper {
 		MenuElement elem = ctx.getCurrentPage();
 
 		GlobalContext globalContext = GlobalContext.getInstance(ctx.getRequest());
-		PageConfiguration pageConfig = PageConfiguration.getInstance(globalContext);
-		Template template = pageConfig.getCurrentTemplate(ctx, elem);
+		Template template = ctx.getCurrentTemplate();
 
 		if (template != null) {
 			String templateName;
@@ -343,7 +341,7 @@ public abstract class ElementaryURLHelper {
 			return null;
 		}
 		url = url.replace('\\', '/');
-		
+
 		GlobalContext globalContext = GlobalContext.getInstance(ctx.getRequest());
 
 		String deviceCode = "no-device";
@@ -351,17 +349,15 @@ public abstract class ElementaryURLHelper {
 			deviceCode = ctx.getDevice().getCode();
 		}
 		String key = ImageHelper.createSpecialDirectory(filter, ctx.getArea(), deviceCode, ctx.getCurrentTemplate());
-		FileCache fc = FileCache.getInstance(ctx.getRequest().getSession().getServletContext());		
-		if (!globalContext.getImageViewFilter().contains(filter) && fc.getFileName(key, url).exists() ) {
+		FileCache fc = FileCache.getInstance(ctx.getRequest().getSession().getServletContext());
+		if (!globalContext.getImageViewFilter().contains(filter) && fc.getFileName(key, url).exists()) {
 			return URLHelper.createStaticURL(ctx, fc.getRelativeFilePath(key, url));
 		}
 
 		ContentService.createContent(ctx.getRequest());
 		MenuElement elem = ctx.getCurrentPage();
 
-		
-		PageConfiguration pageConfig = PageConfiguration.getInstance(globalContext);
-		Template template = pageConfig.getCurrentTemplate(ctx, elem);
+		Template template = ctx.getCurrentTemplate();
 
 		if (template != null) {
 			String templateName;
@@ -371,7 +367,7 @@ public abstract class ElementaryURLHelper {
 				templateName = template.getId();
 			}
 			url = createTransformURL(ctx, referencePage, url, filter, templateName);
-		} else {			
+		} else {
 			if (filter.equals("template")) {
 				url = ElementaryURLHelper.mergePath(TRANSFORM + '/' + filter, url);
 			} else {
@@ -387,8 +383,8 @@ public abstract class ElementaryURLHelper {
 			return null;
 		}
 		url = url.replace('\\', '/');
-		if (templateName != null) {			
-			url = ElementaryURLHelper.mergePath(TRANSFORM + '/' + filter  + '/' + templateName + '/' + ctx.getArea(), url);
+		if (templateName != null) {
+			url = ElementaryURLHelper.mergePath(TRANSFORM + '/' + filter + '/' + templateName + '/' + ctx.getArea(), url);
 		} else {
 			url = ElementaryURLHelper.mergePath(TRANSFORM + '/' + filter, url);
 		}
@@ -447,10 +443,10 @@ public abstract class ElementaryURLHelper {
 		url = url + params;
 
 		if (forceTemplate) {
-			if (ctx.getRequest().getParameter(PageConfiguration.FORCE_TEMPLATE_PARAM_NAME) != null) {
+			if (ctx.getRequest().getParameter(Template.FORCE_TEMPLATE_PARAM_NAME) != null) {
 				if ((ctx.getRenderMode() != ContentContext.EDIT_MODE) && (ctx.getRenderMode() != ContentContext.ADMIN_MODE)) {
-					if (!url.contains(PageConfiguration.FORCE_TEMPLATE_PARAM_NAME)) {
-						url = addParam(url, PageConfiguration.FORCE_TEMPLATE_PARAM_NAME, ctx.getRequest().getParameter(PageConfiguration.FORCE_TEMPLATE_PARAM_NAME));
+					if (!url.contains(Template.FORCE_TEMPLATE_PARAM_NAME)) {
+						url = addParam(url, Template.FORCE_TEMPLATE_PARAM_NAME, ctx.getRequest().getParameter(Template.FORCE_TEMPLATE_PARAM_NAME));
 					}
 				}
 			}

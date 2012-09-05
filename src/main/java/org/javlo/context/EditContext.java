@@ -51,10 +51,6 @@ public class EditContext implements Serializable {
 
 	public static final int DATA_VIEW = 7;
 
-	public static final int WEB_TEMPLATE = 1;
-
-	public static final int MAILING_TEMPLATE = 2;
-
 	static final String STATIC_DIR_KEY = "static_directory";
 
 	static final String IMAGES_DIR_KEY = "images_directory";
@@ -141,8 +137,6 @@ public class EditContext implements Serializable {
 
 	private GlobalContext globalContext = null;
 
-	private int templateType = WEB_TEMPLATE;
-
 	private boolean mailing = false;
 
 	private String mainRenderer = null;
@@ -197,9 +191,9 @@ public class EditContext implements Serializable {
 		String rawLicence = staticProps.getProperty(LICENCE_KEY);
 		if ((rawLicence != null) && (rawLicence.trim().length() > 0)) {
 			String[] arrayLicence = rawLicence.split(",");
-			for (int i = 0; i < arrayLicence.length; i++) {
-				licence.add(arrayLicence[i]);
-				logger.fine("licence found : " + arrayLicence[i]);
+			for (String element : arrayLicence) {
+				licence.add(element);
+				logger.fine("licence found : " + element);
 			}
 
 		}
@@ -503,14 +497,6 @@ public class EditContext implements Serializable {
 
 	public String getUserStaticDirectory() {
 		return userStaticDirectory;
-	}
-
-	public int getTemplateType() {
-		return templateType;
-	}
-
-	public void setTemplateType(int templateType) {
-		this.templateType = templateType;
 	}
 
 	public boolean isMailing() {

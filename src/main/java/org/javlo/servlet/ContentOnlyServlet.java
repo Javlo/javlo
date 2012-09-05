@@ -9,13 +9,10 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import org.javlo.context.ContentContext;
-import org.javlo.context.GlobalContext;
 import org.javlo.helper.RequestHelper;
 import org.javlo.module.mailing.MailingModuleContext;
-import org.javlo.navigation.PageConfiguration;
 import org.javlo.service.RequestService;
 import org.javlo.template.Template;
-
 
 public class ContentOnlyServlet extends HttpServlet {
 
@@ -28,61 +25,59 @@ public class ContentOnlyServlet extends HttpServlet {
 	 */
 	protected static Logger logger = Logger.getLogger(ContentOnlyServlet.class.getName());
 
-    @Override
+	@Override
 	public void init() throws ServletException {
-        super.init();
-    }
+		super.init();
+	}
 
-    @Override
+	@Override
 	public void destroy() {
-        super.destroy();
-    }
+		super.destroy();
+	}
 
-    @Override
+	@Override
 	protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException {
-        process(request, response);
-    }
+		process(request, response);
+	}
 
-    @Override
+	@Override
 	protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException {
-        process(request, response);
-    }
+		process(request, response);
+	}
 
-    private void process(HttpServletRequest request, HttpServletResponse response) throws ServletException {
-        try {
-            response.setContentType("text/html");
-            ContentContext ctx = ContentContext.getContentContext(request, response);
+	private void process(HttpServletRequest request, HttpServletResponse response) throws ServletException {
+		try {
+			response.setContentType("text/html");
+			ContentContext ctx = ContentContext.getContentContext(request, response);
 
 			RequestHelper.traceMailingFeedBack(ctx);
 
-            ctx.setRenderMode(ContentContext.PAGE_MODE); // todo: check how we can remove this line.
+			ctx.setRenderMode(ContentContext.PAGE_MODE); // todo: check how we can remove this line.
 
-            ctx.setAbsoluteURL(true);
+			ctx.setAbsoluteURL(true);
 			MailingModuleContext mailingCtx = MailingModuleContext.getInstance(request);
-            GlobalContext globalContext = GlobalContext.getInstance(request);
-            PageConfiguration pageConfiguration = PageConfiguration.getInstance(globalContext);
-            RequestService requestService = RequestService.getInstance(request);
-            String templateID = requestService.getParameter(TEMPLATE_PARAM_NAME, null);
+			RequestService requestService = RequestService.getInstance(request);
+			String templateID = requestService.getParameter(TEMPLATE_PARAM_NAME, null);
 
-            if (templateID == null) {
-            	templateID = mailingCtx.getCurrentTemplate();
-            	if (templateID == null) {
-            		Iterator<Template> ite = pageConfiguration.getMailingTemplates().iterator();
-            		Template t = ite.next();
-            		while (!t.isValid()&&ite.hasNext()) {
-            			t = ite.next();
-            		}
-            		if (t != null) {
-            			templateID = t.getId();
-            		}
-            	}
-            }
+			if (templateID == null) {
+				templateID = mailingCtx.getCurrentTemplate();
+				if (templateID == null) {
+					Iterator<Template> ite = ctx.getCurrentTemplates().iterator();
+					Template t = ite.next();
+					while (!t.isValid() && ite.hasNext() && !t.isMailing()) {
+						t = ite.next();
+					}
+					if (t != null) {
+						templateID = t.getId();
+					}
+				}
+			}
 
-            Template template = Template.getApplicationInstance(request.getSession().getServletContext(), ctx, templateID);
-            getServletContext().getRequestDispatcher(template.getRendererFullName(ctx)).include(request, response);
+			Template template = Template.getApplicationInstance(request.getSession().getServletContext(), ctx, templateID);
+			getServletContext().getRequestDispatcher(template.getRendererFullName(ctx)).include(request, response);
 
-       } catch (Exception e) {
-            e.printStackTrace();
-        }
-    }
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+	}
 }

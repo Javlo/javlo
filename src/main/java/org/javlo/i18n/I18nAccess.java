@@ -32,7 +32,6 @@ import org.javlo.helper.ResourceHelper;
 import org.javlo.helper.StringHelper;
 import org.javlo.module.core.Module;
 import org.javlo.module.core.ModulesContext;
-import org.javlo.navigation.PageConfiguration;
 import org.javlo.service.RequestService;
 import org.javlo.service.exception.ServiceException;
 import org.javlo.template.Template;
@@ -145,7 +144,7 @@ public class I18nAccess implements Serializable {
 
 	private Map<String, String> propViewMap = null;
 
-	private Object lockViewMap = new Object();
+	private final Object lockViewMap = new Object();
 
 	private Map<String, String> propEditMap = null;
 
@@ -159,7 +158,7 @@ public class I18nAccess implements Serializable {
 
 	private Map<String, String> helpMap = null;
 
-	private Map<String, Properties> componentsPath = new HashMap<String, Properties>();
+	private final Map<String, Properties> componentsPath = new HashMap<String, Properties>();
 
 	private boolean displayKey = false;
 
@@ -544,8 +543,7 @@ public class I18nAccess implements Serializable {
 	private void updateTemplate(ContentContext ctx) throws ConfigurationException, IOException, ServiceException, Exception {
 		if (ctx.getLanguage() != null) {
 			GlobalContext globalContext = GlobalContext.getInstance(ctx.getRequest());
-			PageConfiguration pageConfig = PageConfiguration.getInstance(globalContext);
-			Template template = pageConfig.getCurrentTemplate(ctx, ctx.getCurrentPage());
+			Template template = ctx.getCurrentTemplate();
 			if (template != null) {
 				template = template.getFinalTemplate(ctx);
 				templateView = template.getI18nProperties(globalContext, new Locale(ctx.getLanguage()));

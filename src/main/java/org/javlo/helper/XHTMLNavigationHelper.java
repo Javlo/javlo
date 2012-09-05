@@ -12,7 +12,6 @@ import org.javlo.context.ContentContext;
 import org.javlo.context.GlobalContext;
 import org.javlo.i18n.I18nAccess;
 import org.javlo.navigation.MenuElement;
-import org.javlo.navigation.PageConfiguration;
 import org.javlo.service.ContentService;
 import org.javlo.service.NavigationService;
 import org.javlo.template.Template;
@@ -42,7 +41,7 @@ public class XHTMLNavigationHelper {
 		}
 
 		while (!endWhile) {
-			String url = URLHelper.createURL(ctx, currentPage );
+			String url = URLHelper.createURL(ctx, currentPage);
 			String label = currentPage.getLabel(ctx);
 
 			currentPage = currentPage.getParent();
@@ -94,7 +93,7 @@ public class XHTMLNavigationHelper {
 		boolean firstBcl = true;
 		String cssClass = "";
 		while (!currentPage.equals(root)) {
-			String url = URLHelper.createURL(ctx, currentPage );
+			String url = URLHelper.createURL(ctx, currentPage);
 			String label = currentPage.getLabel(ctx);
 
 			currentPage = currentPage.getParent();
@@ -334,11 +333,9 @@ public class XHTMLNavigationHelper {
 			if (print) {
 				out.println("<ul>");
 			}
-			
-			GlobalContext globalContext = GlobalContext.getInstance(ctx.getRequest());
-			PageConfiguration pageConfig = PageConfiguration.getInstance(globalContext);
+
 			MenuElement currentPage = ctx.getCurrentPage();
-			Template currentTemplate = pageConfig.getCurrentTemplate(ctx, currentPage);
+			Template currentTemplate = ctx.getCurrentTemplate();
 
 			if (print && selectableBetween) {
 				out.print("<li id=\"page_" + menu.getName() + "\"><div class=\"selection\"><input type=\"submit\" value=\"" + i18nAccess.getText("global.move-here", new String[][] { { "item", currentPage.getLabel(ctx) } }) + "\" name=\"P_" + menu.getId() + "\"/></div></li>");
@@ -431,7 +428,7 @@ public class XHTMLNavigationHelper {
 					String fullTitleHTML = "";
 					if (!title.equals(visualCode)) {
 						fullTitleHTML = " title=\"" + title + "\"";
-					}					
+					}
 					out.print(selectedStrIn + "<a " + selected + " href=\"" + URLHelper.createURL(ctx, elems[i]) + "\" " + fullTitleHTML + " " + att + "><span><span>" + visualCode + "</span></span></a>");
 					if (selectableBetween) {
 						out.print("<div class=\"selection\">" + selectedStrBetween + "</div>");

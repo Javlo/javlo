@@ -42,7 +42,6 @@ import org.javlo.message.MessageRepository;
 import org.javlo.module.core.Module;
 import org.javlo.module.core.ModuleException;
 import org.javlo.module.core.ModulesContext;
-import org.javlo.navigation.PageConfiguration;
 import org.javlo.service.ContentService;
 import org.javlo.service.LogService;
 import org.javlo.service.RequestService;
@@ -473,7 +472,7 @@ public class AdminAction extends AbstractModuleAction {
 				request.setAttribute("allModules", moduleContext.getAllModules());
 				request.setAttribute("currentModules", currentGlobalContext.getModules());
 
-				List<String> templatesName = currentGlobalContext.getTemplates();
+				List<String> templatesName = currentGlobalContext.getTemplatesNames();
 				List<Template.TemplateBean> selectedTemplate = new LinkedList<Template.TemplateBean>();
 				for (String name : templatesName) {
 					Template template = TemplateFactory.getDiskTemplate(request.getSession().getServletContext(), name, false);
@@ -723,11 +722,8 @@ public class AdminAction extends AbstractModuleAction {
 					}
 
 					if (importTemplate) {
-						TemplateFactory.cleanRenderer(ctx, currentGlobalContext.getTemplates(), true);
+						TemplateFactory.cleanRenderer(ctx, currentGlobalContext.getTemplatesNames(), true);
 					}
-
-					PageConfiguration.getInstance(currentGlobalContext).loadTemplate(currentGlobalContext); // reload templates
-
 					messageRepository.setGlobalMessage(new GenericMessage(i18nAccess.getText("admin.message.context-updated"), GenericMessage.INFO));
 				} else {
 					msg = "context not found : " + currentContextKey;
@@ -850,7 +846,6 @@ public class AdminAction extends AbstractModuleAction {
 				if (templateName != null) {
 					currentGlobalContext.addTemplate(templateName, StringHelper.isTrue(requestService.getParameter("mailing", null)));
 					messageRepository.setGlobalMessageAndNotification(ctx, new GenericMessage(i18nAccess.getText("admin.message.linked-template") + ' ' + templateName, GenericMessage.INFO));
-					PageConfiguration.getInstance(currentGlobalContext).loadTemplate(currentGlobalContext); // reload templates
 				} else {
 					return "bad request structure : need 'template' as parameter";
 				}
@@ -874,7 +869,6 @@ public class AdminAction extends AbstractModuleAction {
 				if (templateName != null) {
 					currentGlobalContext.removeTemplate(templateName, StringHelper.isTrue(requestService.getParameter("mailing", null)));
 					messageRepository.setGlobalMessageAndNotification(ctx, new GenericMessage(i18nAccess.getText("admin.message.unlinked-template") + ' ' + templateName, GenericMessage.INFO));
-					PageConfiguration.getInstance(currentGlobalContext).loadTemplate(currentGlobalContext); // reload templates
 				} else {
 					return "bad request structure : need 'template' as parameter";
 				}

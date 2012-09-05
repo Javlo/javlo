@@ -3,6 +3,7 @@
  */
 package org.javlo.context;
 
+import java.io.IOException;
 import java.net.URL;
 import java.nio.charset.Charset;
 import java.util.Collection;
@@ -26,6 +27,7 @@ import org.javlo.rendering.Device;
 import org.javlo.service.ContentService;
 import org.javlo.service.RequestService;
 import org.javlo.template.Template;
+import org.javlo.template.TemplateFactory;
 import org.javlo.user.AdminUserFactory;
 import org.javlo.user.IUserFactory;
 import org.javlo.user.User;
@@ -80,7 +82,7 @@ public class ContentContext {
 	public static ContentContext getContentContext(HttpServletRequest request, HttpServletResponse response) throws Exception {
 		ContentContext ctx = (ContentContext) request.getAttribute(CONTEXT_REQUEST_KEY);
 		try {
-			if (ctx == null) {				
+			if (ctx == null) {
 				ctx = createContentContext(request, response);
 				if (ctx.getRenderMode() != ContentContext.EDIT_MODE && ctx.getRenderMode() != ContentContext.ADMIN_MODE) {
 					ContentService content = ContentService.getInstance(GlobalContext.getInstance(request));
@@ -128,7 +130,7 @@ public class ContentContext {
 		GlobalContext globalContext = GlobalContext.getInstance(getRequest());
 		IUserFactory fact = UserFactory.createUserFactory(globalContext, getRequest().getSession());
 		currentUser = fact.getCurrentUser(request.getSession());
-		fact = AdminUserFactory.createUserFactory(globalContext, getRequest().getSession());		
+		fact = AdminUserFactory.createUserFactory(globalContext, getRequest().getSession());
 		setCurrentEditUser(fact.getCurrentUser(request.getSession()));
 		storeInRequest(request);
 	}
@@ -276,9 +278,9 @@ public class ContentContext {
 	private ContentContext() {
 	}
 
-	private Map<String, String> ajaxInsideZone = new HashMap<String, String>();
-	private Map<String, ScheduledRender> scheduledAjaxInsideZone = new HashMap<String, ScheduledRender>();
-	private Map<String, String> ajaxZone = new HashMap<String, String>();;
+	private final Map<String, String> ajaxInsideZone = new HashMap<String, String>();
+	private final Map<String, ScheduledRender> scheduledAjaxInsideZone = new HashMap<String, ScheduledRender>();
+	private final Map<String, String> ajaxZone = new HashMap<String, String>();;
 
 	private User currentUser = null;
 	private User currentEditUser = null;
@@ -297,7 +299,6 @@ public class ContentContext {
 		setAbsoluteURL(ctx.isAbsoluteURL);
 		setHostName(ctx.getHostName());
 		setHostPort(ctx.getHostPort());
-		setCurrentTemplate(ctx.getCurrentTemplate());
 
 		viewPrefix = ctx.viewPrefix;
 		urlFactory = ctx.urlFactory;
@@ -451,7 +452,54 @@ public class ContentContext {
 		return currentPageCached;
 	}
 
-	public Template getCurrentTemplate() {
+	public Template getCurrentTemplate() throws Exception {
+
+		if (currentTemplate == null) {
+			Template template = null;
+
+			if (getRenderMode() == ContentContext.PAGE_MODE) {
+				mailing = true;
+			}
+			String forceTemplate = getRequest().getParameter(Template.FORCE_TEMPLATE_PARAM_NAME);
+			GlobalContext globalContext = GlobalContext.getInstance(getRequest());
+			if (forceTemplate != null) {
+				logger.info("force template : " + forceTemplate);
+				template = Template.getApplicationInstance(getRequest().getSession().getServletContext(), this, forceTemplate);
+			}
+			if (template == null) {
+				MenuElement elem = getCurrentPage();
+				template = TemplateFactory.getTemplates(getRequest().getSession().getServletContext()).get(elem.getTemplateId());
+				if (template == null || !template.exist()) {
+
+					while (elem.getParent() != null && ((template == null) || (!template.exist()) || (template.getRendererFullName(this) == null))) {
+						elem = elem.getParent();
+						template = TemplateFactory.getTemplates(getRequest().getSession().getServletContext()).get(elem.getTemplateId());
+					}
+				}
+			}
+
+			if ((template == null) || !template.exist()) {
+
+				if (globalContext.getDefaultTemplate() != null) {
+					template = Template.getApplicationInstance(getRequest().getSession().getServletContext(), this, globalContext.getDefaultTemplate());
+				}
+			}
+			if (template != null && getSpecialContentRenderer() != null) {
+				if (template.getSpecialRendererTemplate() != null) {
+					Template newTemplate = TemplateFactory.getTemplates(getRequest().getSession().getServletContext()).get(template.getSpecialRendererTemplate());
+					if (newTemplate != null) {
+						template = newTemplate;
+					}
+				}
+			}
+
+			if (template != null && !template.isTemplateInWebapp(this)) {
+				template.importTemplateInWebapp(this);
+			}
+
+			currentTemplate = template;
+		}
+
 		return currentTemplate;
 	}
 
@@ -506,10 +554,16 @@ public class ContentContext {
 		if (requestContentLanguage == null) {
 			return getContentLanguage();
 		} else {
-			if (getCurrentTemplate() != null) {
-				if (getCurrentTemplate() != null && getCurrentTemplate().isNavigationArea(getArea())) {
-					return getLanguage();
-				}
+			try {
+				/*
+				 * if (getCurrentTemplate() != null) { if (getCurrentTemplate() != null && getCurrentTemplate().isNavigationArea(getArea())) {
+				 */
+				return getLanguage();
+				/*
+				 * } }
+				 */
+			} catch (Exception e) {
+				e.printStackTrace();
 			}
 			return requestContentLanguage;
 		}
@@ -686,9 +740,9 @@ public class ContentContext {
 		this.currentPageCached = currentPageCached;
 	}
 
-	public void setCurrentTemplate(Template currentTemplate) {
-		this.currentTemplate = currentTemplate;
-	}
+	/*
+	 * public void setCurrentTemplate(Template currentTemplate) { this.currentTemplate = currentTemplate; }
+	 */
 
 	public void setDevice(Device device) {
 		this.device = device;
@@ -829,7 +883,7 @@ public class ContentContext {
 		return currentEditUser;
 	}
 
-	public void setCurrentEditUser(User currentEditUser) {		
+	public void setCurrentEditUser(User currentEditUser) {
 		this.currentEditUser = currentEditUser;
 	}
 
@@ -873,7 +927,7 @@ public class ContentContext {
 	}
 
 	/**
-	 * Schedule an ajax zone for update. The uri will be called after the prepare() of the current module actions. 
+	 * Schedule an ajax zone for update. The uri will be called after the prepare() of the current module actions.
 	 * 
 	 * @param id
 	 *            a xhtml id
@@ -913,4 +967,25 @@ public class ContentContext {
 		return ajaxMap;
 	}
 
+	public List<Template> getCurrentTemplates() throws IOException {
+		String KEY = "__current_templates___";
+		List<Template> outTemplates = (List<Template>) request.getAttribute(KEY);
+		if (outTemplates == null) {
+			outTemplates = new LinkedList<Template>();
+			GlobalContext globalContext = GlobalContext.getInstance(request);
+			Collection<String> templatesNames = globalContext.getTemplatesNames();
+			Collection<Template> templates = TemplateFactory.getAllDiskTemplates(request.getSession().getServletContext());
+			for (Template template : templates) {
+				if (templatesNames.contains(template.getName())) {
+					outTemplates.add(template);
+				}
+			}
+			request.setAttribute(KEY, outTemplates);
+		}
+		return outTemplates;
+	}
+
+	public void setCurrentTemplate(Template template) {
+		this.currentTemplate = template;
+	}
 }
