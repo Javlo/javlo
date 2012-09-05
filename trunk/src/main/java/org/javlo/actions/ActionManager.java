@@ -127,13 +127,13 @@ public class ActionManager {
 	 * @return a list of IAction implementation
 	 */
 	private static IAction[] getSpecialActionGroup() {
-		IAction[] outActionGroup = new IAction[6];
+		IAction[] outActionGroup = new IAction[3];
 		outActionGroup[0] = new SearchActions();
-		//outActionGroup[1] = new MailingActions();
-		//outActionGroup[2] = new AdminAction();
-		//outActionGroup[3] = new EcomActions();
-		outActionGroup[4] = new ViewActions();
-		outActionGroup[5] = new TimeTravelerActions();
+		// outActionGroup[1] = new MailingActions();
+		// outActionGroup[2] = new AdminAction();
+		// outActionGroup[3] = new EcomActions();
+		outActionGroup[1] = new ViewActions();
+		outActionGroup[2] = new TimeTravelerActions();
 		return outActionGroup;
 	}
 
@@ -180,13 +180,13 @@ public class ActionManager {
 				message = t.getMessage();
 				logger.warning(message);
 			} else {
+				t.printStackTrace();
 				if (t.getCause().getMessage() != null) {
 					message = "error in action '" + actionName + "' : " + t.getCause().getMessage();
 				} else {
 					message = "error in action '" + actionName + "' contact administrator, current time : " + StringHelper.renderTime(new Date());
 				}
 				logger.severe(message);
-				t.printStackTrace();
 			}
 		}
 
@@ -246,7 +246,7 @@ public class ActionManager {
 				logger.fine(message);
 			}
 		}
-		logger.warning("action '"+actionName+"' message : "+message);
+		logger.warning("action '" + actionName + "' message : " + message);
 		return message;
 	}
 
