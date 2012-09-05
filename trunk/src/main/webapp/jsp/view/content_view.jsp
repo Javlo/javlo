@@ -16,13 +16,11 @@
 		org.javlo.user.UserFactory,
 		org.javlo.user.IUserFactory,
 		org.javlo.user.AdminUserSecurity,
-		org.javlo.component.core.ComponentBean,
-		org.javlo.navigation.PageConfiguration,		
+		org.javlo.component.core.ComponentBean,				
 		org.javlo.helper.URLHelper"
 %><%
 ContentContext ctx = ContentContext.getContentContext ( request, response );
 GlobalContext globalContext = GlobalContext.getInstance(request);
-PageConfiguration pageConfig = PageConfiguration.getInstance(globalContext);
 boolean pageEmpty = true;
 
 if (ctx.getRenderMode() == ContentContext.PREVIEW_MODE) {
@@ -52,7 +50,7 @@ if ( ctx.getSpecialContentRenderer() != null && area.equals(ComponentBean.DEFAUL
 } else {
 MenuElement currentPage = ctx.getCurrentPage();
 
-Template template = pageConfig.getCurrentTemplate(ctx, currentPage);
+Template template = ctx.getCurrentTemplate();
 
 if ( (ctx.getSpecialContentRenderer() == null || !area.equals(ComponentBean.DEFAULT_AREA) ) || template.getAreasForceDisplay().contains(area)) { // display only if page contains only repeat content (supose it is teaser)
 

@@ -20,7 +20,6 @@ import org.javlo.context.ContentContext;
 import org.javlo.context.GlobalContext;
 import org.javlo.helper.ConfigHelper;
 import org.javlo.navigation.MenuElement;
-import org.javlo.navigation.PageConfiguration;
 import org.javlo.service.ContentService;
 import org.javlo.template.Template;
 
@@ -64,8 +63,7 @@ public class ComponentFactory {
 		MenuElement page = content.getNavigation(ctx).getNoErrorFreeCurrentPage(ctx);
 		Template template = null;
 		if (page != null) {
-			PageConfiguration pageConfig = PageConfiguration.getInstance(globalContext);
-			template = pageConfig.getCurrentTemplate(ctx, page);
+			template = ctx.getCurrentTemplate();
 			if (template != null) {
 				/* load dynamic component */
 				List<Properties> propertiesClasses = template.getDynamicComponentsProperties(globalContext);
@@ -76,13 +74,13 @@ public class ComponentFactory {
 				}
 				for (Properties properties : propertiesClasses) {
 					logger.fine("load dynamic component : " + properties.getProperty("component.type") + " [total:" + array.size() + "]");
-					DynamicComponent comp = new DynamicComponent();					
+					DynamicComponent comp = new DynamicComponent();
 					Properties newProp = new Properties();
 					newProp.putAll(properties);
 					comp.setProperties(newProp);
-					comp.setConfigProperties(properties);					
+					comp.setConfigProperties(properties);
 					array.add(comp);
-					comp.setValid(true);					
+					comp.setValid(true);
 				}
 			} else {
 				logger.warning("no template found for page : " + page.getName());
@@ -131,16 +129,16 @@ public class ComponentFactory {
 			ArrayList<AbstractVisualComponent> array = new ArrayList<AbstractVisualComponent>();
 			String[] classes = ConfigHelper.getComponentsClasses(globalContext.getServletContext());
 			List<String> selectedComponent = globalContext.getComponents();
-			for (int i = 0; i < classes.length; i++) {
+			for (String classe : classes) {
 
-				logger.fine("load component : " + classes[i]);
+				logger.fine("load component : " + classe);
 
-				if (classes[i].startsWith("--")) {
-					array.add(new MetaTitle(classes[i].substring(2).trim()));
+				if (classe.startsWith("--")) {
+					array.add(new MetaTitle(classe.substring(2).trim()));
 				} else {
 					try {
 
-						String className = classes[i];
+						String className = classe;
 						boolean visible = true;
 						boolean hidden = false;
 						if (className.startsWith(".")) {
@@ -203,15 +201,15 @@ public class ComponentFactory {
 		ArrayList<AbstractVisualComponent> array = new ArrayList<AbstractVisualComponent>();
 		String[] classes = ConfigHelper.getDefaultComponentsClasses(application);
 		IContentVisualComponent[] components = null;
-		for (int i = 0; i < classes.length; i++) {
+		for (String classe : classes) {
 
-			logger.fine("load default component : " + classes[i]);
+			logger.fine("load default component : " + classe);
 
-			if (classes[i].startsWith("--")) {
-				array.add(new MetaTitle(classes[i].substring(2).trim()));
+			if (classe.startsWith("--")) {
+				array.add(new MetaTitle(classe.substring(2).trim()));
 			} else {
 				try {
-					String className = classes[i];
+					String className = classe;
 					boolean visible = true;
 					boolean hidden = false;
 
@@ -250,9 +248,9 @@ public class ComponentFactory {
 		IContentVisualComponent outComponent = null;
 		try {
 			IContentVisualComponent[] components = getComponents(ctx);
-			for (int i = 0; i < components.length; i++) {
-				if ((components[i].getType().equals(type))) {
-					outComponent = components[i];
+			for (IContentVisualComponent component : components) {
+				if ((component.getType().equals(type))) {
+					outComponent = component;
 				}
 			}
 		} catch (IOException e) {
@@ -279,10 +277,10 @@ public class ComponentFactory {
 
 		IContentVisualComponent[] components = getComponents(ctx);
 		AbstractVisualComponent component = null;
-		for (int i = 0; i < components.length; i++) {
-			if (components[i] != null && bean != null && components[i].getType() != null) {
-				if (components[i].getType().equals(bean.getType())) {
-					IContentVisualComponent newComp = components[i].newInstance(bean, ctx);
+		for (IContentVisualComponent component2 : components) {
+			if (component2 != null && bean != null && component2.getType() != null) {
+				if (component2.getType().equals(bean.getType())) {
+					IContentVisualComponent newComp = component2.newInstance(bean, ctx);
 					component = (AbstractVisualComponent) newComp;
 					component.setPage(inPage);
 					if (selectedComponents.contains(component.getClass().getName())) {

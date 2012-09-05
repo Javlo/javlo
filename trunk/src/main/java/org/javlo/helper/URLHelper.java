@@ -19,7 +19,6 @@ import org.javlo.context.GlobalContext;
 import org.javlo.module.core.ModulesContext;
 import org.javlo.module.mailing.MailingModuleContext;
 import org.javlo.navigation.MenuElement;
-import org.javlo.navigation.PageConfiguration;
 import org.javlo.service.ContentService;
 import org.javlo.service.NavigationService;
 import org.javlo.service.RequestService;
@@ -34,7 +33,7 @@ public class URLHelper extends ElementaryURLHelper {
 	public static String REQUEST_MANAGER_PARAMATER_KEY = "req_man";
 
 	public static String VFS_SERVLET_NAME = "vfs";
-	
+
 	public static String TEMPLATE_RESOURCE_PREFIX = "__tpl__";
 
 	public static String cleanPath(String path, boolean trimStartSeparator) {
@@ -200,9 +199,7 @@ public class URLHelper extends ElementaryURLHelper {
 		MenuElement elem = content.getNavigation(ctx).getNoErrorFreeCurrentPage(ctx);
 		Template template = null;
 		if (elem != null) {
-			GlobalContext globalContext = GlobalContext.getInstance(ctx.getRequest());
-			PageConfiguration pageConfig = PageConfiguration.getInstance(globalContext);
-			template = pageConfig.getCurrentTemplate(ctx, elem).getFinalTemplate(ctx);
+			template = ctx.getCurrentTemplate().getFinalTemplate(ctx);
 			ctx.setCurrentTemplate(template);
 		}
 
@@ -258,14 +255,14 @@ public class URLHelper extends ElementaryURLHelper {
 		url = URLHelper.mergePath(RESOURCE, url);
 		return createStaticURL(ctx, url);
 	}
-	
+
 	public static String createTemplateResourceURL(ContentContext ctx, String url) {
 
 		if (url == null) {
 			return null;
 		}
 		url = url.replace('\\', '/');
-		url = URLHelper.mergePath(TEMPLATE_RESOURCE_PREFIX, url);		
+		url = URLHelper.mergePath(TEMPLATE_RESOURCE_PREFIX, url);
 		return createResourceURL(ctx, url);
 	}
 
@@ -291,25 +288,27 @@ public class URLHelper extends ElementaryURLHelper {
 			if (templateID == null) {
 				templateID = mailingCtx.getCurrentTemplate();
 				if (templateID == null) {
-					PageConfiguration pageConfiguration = PageConfiguration.getInstance(globalContext);
-					templateID = pageConfiguration.getMailingTemplates().iterator().next().getId();
+					for (Template mtemplate : ctx.getCurrentTemplates()) {
+						if (mtemplate.isMailing()) {
+							templateID = mtemplate.getId();
+						}
+					}
 				}
 			}
 			template = Template.getApplicationInstance(ctx.getRequest().getSession().getServletContext(), ctx, templateID);
 		}
 
-		//ContentService.createContent(ctx.getRequest());
+		// ContentService.createContent(ctx.getRequest());
 		MenuElement elem = ctx.getCurrentPage();
 
 		if (template == null) {
-			PageConfiguration pageConfig = PageConfiguration.getInstance(globalContext);
-			template = pageConfig.getCurrentTemplate(ctx, elem);
+			template = ctx.getCurrentTemplate();
 		}
 		String templateFolder;
 
 		template = template.getFinalTemplate(ctx);
 		templateFolder = template.getLocalWorkTemplateFolder();
-		
+
 		String templateFullPath = URLHelper.mergePath(templateFolder, template.getFolder(globalContext));
 
 		if (url == null) {
@@ -322,15 +321,15 @@ public class URLHelper extends ElementaryURLHelper {
 		return createStaticURL(ctx, null, URLHelper.mergePath(templateFullPath, url), widthPath);
 		// return createStaticURL(ctx, URLHelper.mergePath(templateFullPath, url));
 	}
-	
+
 	public static String createStaticTemplatePluginURL(ContentContext ctx, String url, String pluginFolder) throws Exception {
-		
+
 		if (URLHelper.isAbsoluteURL(url)) {
 			return url;
 		}
-		
+
 		GlobalContext globalContext = GlobalContext.getInstance(ctx.getRequest());
-		
+
 		String templateFolder;
 
 		Template template = ctx.getCurrentTemplate();
@@ -342,8 +341,8 @@ public class URLHelper extends ElementaryURLHelper {
 			return null;
 		}
 		url = url.replace('\\', '/');
-		
-		return createStaticURL(ctx, null, URLHelper.mergePath(templateFullPath, url), true);		
+
+		return createStaticURL(ctx, null, URLHelper.mergePath(templateFullPath, url), true);
 	}
 
 	public static String createStaticURL(ContentContext ctx, MenuElement referencePage, String inUrl) {
@@ -424,7 +423,7 @@ public class URLHelper extends ElementaryURLHelper {
 		}
 		String templateFolder;
 		templateFolder = template.getLocalWorkTemplateFolder();
-			
+
 		if (ctx.getRenderMode() == ContentContext.ADMIN_MODE) {
 			globalContext = null;
 		}
@@ -437,7 +436,7 @@ public class URLHelper extends ElementaryURLHelper {
 		url = URLHelper.mergePath(TRANSFORM + '/' + filter + '/' + templateFullPath, url);
 		return createStaticURL(ctx, url);
 	}
-	
+
 	public static String createURL(ContentContext ctx) {
 		return createURL(ctx, ctx.getPath());
 	}
@@ -634,7 +633,7 @@ public class URLHelper extends ElementaryURLHelper {
 		}
 		String templateFolder;
 		templateFolder = template.getLocalWorkTemplateFolder();
-		
+
 		String templateFullPath = URLHelper.mergePath(templateFolder, template.getFolder(null));
 
 		String url = template.getVisualFile();
@@ -790,32 +789,34 @@ public class URLHelper extends ElementaryURLHelper {
 			return null;
 		}
 	}
-	
+
 	/**
 	 * create a special URL to call a other module.
+	 * 
 	 * @param url
 	 * @param moduleName
 	 * @return
-	 * @throws Exception 
+	 * @throws Exception
 	 */
 	public static String createInterModuleURL(ContentContext ctx, String url, String moduleName) throws Exception {
 		return createInterModuleURL(ctx, url, moduleName, null);
 	}
-	
+
 	/**
 	 * create a special URL to call a other module.
+	 * 
 	 * @param url
 	 * @param moduleName
 	 * @return
-	 * @throws Exception 
+	 * @throws Exception
 	 */
-	public static String createInterModuleURL(ContentContext ctx, String url, String moduleName, Map<String,String> inParams) throws Exception {
+	public static String createInterModuleURL(ContentContext ctx, String url, String moduleName, Map<String, String> inParams) throws Exception {
 		GlobalContext globalContext = GlobalContext.getInstance(ctx.getRequest());
 		ModulesContext moduleContext = ModulesContext.getInstance(ctx.getRequest().getSession(), globalContext);
 		return createInterModuleURL(ctx, url, moduleName, moduleContext.getCurrentModule().getName(), inParams);
 	}
-	
-	public static String createInterModuleURL(ContentContext ctx, String url, String moduleName, String fromModule, Map<String,String> inParams) throws Exception {
+
+	public static String createInterModuleURL(ContentContext ctx, String url, String moduleName, String fromModule, Map<String, String> inParams) throws Exception {
 		Map<String, String> params = new HashMap<String, String>();
 		if (inParams != null) {
 			params.putAll(inParams);
@@ -824,7 +825,7 @@ public class URLHelper extends ElementaryURLHelper {
 		params.put("module", moduleName);
 		return createURL(ctx, url, params);
 	}
-	
+
 	/**
 	 * create a special URL to activate a module.
 	 */
@@ -832,15 +833,14 @@ public class URLHelper extends ElementaryURLHelper {
 		return createModuleURL(ctx, url, moduleName, null);
 	}
 
-	
 	/**
 	 * create a special URL to activate a module.
 	 */
-	public static String createModuleURL(ContentContext ctx, String url, String moduleName, Map<String,String> inParams) {
+	public static String createModuleURL(ContentContext ctx, String url, String moduleName, Map<String, String> inParams) {
 		Map<String, String> params = new HashMap<String, String>();
 		if (inParams != null) {
 			params.putAll(inParams);
-		}						
+		}
 		params.put("module", moduleName);
 		return createURL(ctx, url, params);
 	}

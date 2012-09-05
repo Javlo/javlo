@@ -3,19 +3,22 @@
  */
 package org.javlo.utils;
 
+import java.io.BufferedWriter;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileInputStream;
-import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
+import java.io.FileWriter;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.OutputStream;
 import java.io.PrintStream;
 import java.io.UnsupportedEncodingException;
+import java.io.Writer;
 import java.nio.charset.Charset;
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
@@ -163,11 +166,11 @@ public class CSVFactory {
 			PrintStream out = new PrintStream(outStream, false, ContentContext.CHARACTER_ENCODING);
 			synchronized (lock) {
 
-				for (int c = 0; c < array.length; c++) {
+				for (String[] element : array) {
 					String sep = "";
 					String line = "";
-					for (int l = 0; l < array[c].length; l++) {
-						String elem = array[c][l];
+					for (String element2 : element) {
+						String elem = element2;
 						if (elem == null) {
 							elem = "\"\"";
 						} else {
@@ -204,8 +207,8 @@ public class CSVFactory {
 			PrintStream out = new PrintStream(outStream);
 			String sep = "";
 			String line = "";
-			for (int l = 0; l < row.length; l++) {
-				String elem = row[l];
+			for (String element : row) {
+				String elem = element;
 				if (elem == null) {
 					elem = "\"\"";
 				} else {
@@ -289,7 +292,7 @@ public class CSVFactory {
 		return csvParser.getLine();
 	}
 
-	public static List<Map<String, String>>  loadContentAsMap(File file) throws IOException {
+	public static List<Map<String, String>> loadContentAsMap(File file) throws IOException {
 		InputStream in = null;
 		try {
 			in = new FileInputStream(file);
@@ -299,6 +302,23 @@ public class CSVFactory {
 				ResourceHelper.closeResource(in);
 			}
 		}
+	}
+
+	public static List<String> loadTitle(File file) throws IOException {
+		InputStream in = null;
+		try {
+			in = new FileInputStream(file);
+			return loadTitle(in);
+		} finally {
+			if (in != null) {
+				ResourceHelper.closeResource(in);
+			}
+		}
+	}
+
+	public static List<String> loadTitle(InputStream in) throws IOException {
+		CSVParser csvParser = new CSVParser(in);
+		return Arrays.asList(csvParser.getLine());
 	}
 
 	public static List<Map<String, String>> loadContentAsMap(InputStream in) throws IOException {
@@ -344,7 +364,7 @@ public class CSVFactory {
 		}
 
 		Collections.sort(keys);
-		String[][] rawContent = new String[content.size()+1][keys.size()];
+		String[][] rawContent = new String[content.size() + 1][keys.size()];
 		for (int j = 0; j < rawContent[0].length; j++) {
 			rawContent[0][j] = keys.get(j);
 		}
@@ -359,14 +379,45 @@ public class CSVFactory {
 		printer.writeln(rawContent);
 	}
 
+	public static void appendContentAsMap(File file, Map<String, String> content) throws IOException {
+		if (content.size() == 0) {
+			return;
+		}
+		List<String> titles = loadTitle(file);
+
+		Collections.sort(titles);
+		String[] rawContent = new String[titles.size()];
+		for (int i = 1; i < titles.size(); i++) {
+			rawContent[i] = StringHelper.neverNull(content.get(titles.get(i)));
+		}
+
+		BufferedWriter out = null;
+		Writer fstream = null;
+		try {
+			fstream = new FileWriter(file, true);
+			out = new BufferedWriter(fstream);
+			CSVPrinter printer = new CSVPrinter(out);
+			printer.setAlwaysQuote(true);
+			printer.writeln(rawContent);
+		} catch (Exception e) {
+			e.printStackTrace();
+		} finally {
+			if (out != null) {
+				out.close();
+			}
+			fstream.close();
+		}
+
+	}
+
 	public static void main(String[] args) {
 		try {
 			File file = new File("c:/trans/test.csv");
 			List<Map<String, String>> data = loadContentAsMap(file);
-			Map<String,String> newLine = new HashMap<String, String>();
-			newLine.put("key1.2", "new value 1.2" );
+			Map<String, String> newLine = new HashMap<String, String>();
+			newLine.put("key1.2", "new value 1.2");
 			newLine.put("lastname", "Vandermaesen");
-			data.add(newLine);			
+			data.add(newLine);
 			storeContentAsMap(file, data);
 		} catch (IOException e) {
 			// TODO Auto-generated catch block

@@ -21,7 +21,7 @@ import org.javlo.helper.URLHelper;
 import org.javlo.template.Template;
 
 public class ComponentConfig {
-	
+
 	private String templateBuildId = null;
 
 	/**
@@ -36,21 +36,27 @@ public class ComponentConfig {
 
 	public static ComponentConfig getInstance(ContentContext ctx, String type) {
 		GlobalContext globalContext = GlobalContext.getInstance(ctx.getRequest());
-		Template currentTemplate = ctx.getCurrentTemplate();
-		String templateId = "no_template";
-		if (currentTemplate != null) {
-			templateId = currentTemplate.getId();
-		}
-		String key = KEY + '-' + templateId + '-' + type;
-		ComponentConfig outCfg = (ComponentConfig) globalContext.getAttribute(key);
-		if (outCfg == null) {			
-			outCfg = new ComponentConfig(ctx, currentTemplate, type);
-			globalContext.setAttribute(key, outCfg);
-		} else if (currentTemplate != null) {
-			if (!currentTemplate.getBuildId().equals(outCfg.templateBuildId)) {
+		Template currentTemplate;
+		ComponentConfig outCfg = null;
+		try {
+			currentTemplate = ctx.getCurrentTemplate();
+			String templateId = "no_template";
+			if (currentTemplate != null) {
+				templateId = currentTemplate.getId();
+			}
+			String key = KEY + '-' + templateId + '-' + type;
+			outCfg = (ComponentConfig) globalContext.getAttribute(key);
+			if (outCfg == null) {
 				outCfg = new ComponentConfig(ctx, currentTemplate, type);
 				globalContext.setAttribute(key, outCfg);
+			} else if (currentTemplate != null) {
+				if (!currentTemplate.getBuildId().equals(outCfg.templateBuildId)) {
+					outCfg = new ComponentConfig(ctx, currentTemplate, type);
+					globalContext.setAttribute(key, outCfg);
+				}
 			}
+		} catch (Exception e) {
+			e.printStackTrace();
 		}
 		return outCfg;
 	}
@@ -63,7 +69,7 @@ public class ComponentConfig {
 
 	private ComponentConfig() {
 	}
-	
+
 	public String getRAWConfig(ContentContext ctx, Template currentTemplate, String type) {
 		ByteArrayOutputStream out = new ByteArrayOutputStream();
 		try {
@@ -79,10 +85,10 @@ public class ComponentConfig {
 	private ComponentConfig(ContentContext ctx, Template currentTemplate, String type) {
 
 		String file = CONFIG_DIR + '/' + type + ".properties";
-		
+
 		InputStream in = ctx.getRequest().getSession().getServletContext().getResourceAsStream(file);
 		if (in == null) {
-			logger.fine("config file for '" + type + "' not found : " + file);			
+			logger.fine("config file for '" + type + "' not found : " + file);
 		} else {
 			try {
 				properties = new PropertiesConfiguration();
@@ -93,33 +99,33 @@ public class ComponentConfig {
 				ResourceHelper.closeResource(in);
 			}
 		}
-		
+
 		try {
 			if (currentTemplate != null) {
 				templateBuildId = currentTemplate.getBuildId();
 				Properties templateProp = currentTemplate.getConfigComponentFile(GlobalContext.getInstance(ctx.getRequest()), type);
-				logger.info("create component template config : "+currentTemplate.getName());
+				logger.info("create component template config : " + currentTemplate.getName());
 				if (templateProp != null) {
 					Enumeration<Object> keys = templateProp.keys();
 					if (properties == null) {
 						properties = new PropertiesConfiguration();
-					}					
+					}
 					while (keys.hasMoreElements()) {
-						String key = ""+keys.nextElement();
+						String key = "" + keys.nextElement();
 						if (key.startsWith("renderer.")) {
-							String renderer = URLHelper.createStaticTemplateURLWithoutContext(ctx, currentTemplate, ""+templateProp.get(key));
-							if (properties.containsKey(key)) {								
+							String renderer = URLHelper.createStaticTemplateURLWithoutContext(ctx, currentTemplate, "" + templateProp.get(key));
+							if (properties.containsKey(key)) {
 								properties.clearProperty(key);
 							}
 							properties.addProperty("" + key, renderer);
 						} else {
-							if (properties.containsKey(key)) {								
+							if (properties.containsKey(key)) {
 								properties.clearProperty(key);
 							}
 							properties.addProperty("" + key, templateProp.get(key));
 						}
 					}
-				}				
+				}
 			}
 		} catch (Exception e) {
 			e.printStackTrace();
@@ -148,7 +154,7 @@ public class ComponentConfig {
 		while (keys.hasNext()) {
 			String key = (String) keys.next();
 			if (key.startsWith("renderer.")) {
-				String value = (String) properties.getProperty(key);				
+				String value = (String) properties.getProperty(key);
 				key = key.replaceFirst("renderer.", "");
 				outRenderers.put(key, value);
 			}

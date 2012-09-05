@@ -22,7 +22,6 @@ import org.javlo.module.core.AbstractModuleContext;
 import org.javlo.module.core.Module;
 import org.javlo.module.core.ModulesContext;
 import org.javlo.navigation.MenuElement;
-import org.javlo.navigation.PageConfiguration;
 import org.javlo.service.ClipBoard;
 import org.javlo.service.ContentService;
 import org.javlo.service.PersistenceService;
@@ -106,8 +105,6 @@ public class LangHelper {
 			return AdminUserFactory.createUserFactory(GlobalContext.getInstance(request), request.getSession());
 		} else if (c.equals(AdminUserSecurity.class)) {
 			return AdminUserSecurity.getInstance();
-		} else if (c.equals(PageConfiguration.class)) {
-			return PageConfiguration.getInstance(GlobalContext.getInstance(request));
 		} else if (c.equals(ModulesContext.class)) {
 			return ModulesContext.getInstance(request.getSession(), GlobalContext.getInstance(request));
 		} else if (c.equals(Module.class)) {

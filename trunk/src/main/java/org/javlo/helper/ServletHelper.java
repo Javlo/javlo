@@ -1,7 +1,6 @@
 package org.javlo.helper;
 
 import java.io.IOException;
-import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.LinkedList;
@@ -21,7 +20,6 @@ import org.javlo.message.GenericMessage;
 import org.javlo.message.MessageRepository;
 import org.javlo.module.core.ModulesContext;
 import org.javlo.navigation.MenuElement;
-import org.javlo.navigation.PageConfiguration;
 import org.javlo.service.ContentService;
 import org.javlo.service.NotificationService;
 import org.javlo.service.RequestService;
@@ -51,11 +49,6 @@ public class ServletHelper {
 			MenuElement elem = content.getNavigation(ctx).getNoErrorFreeCurrentPage(ctx);
 			if (elem != null) {
 				Template template = null;
-				PageConfiguration pageConfig = PageConfiguration.getInstance(globalContext);
-				if (pageConfig.getCurrentTemplate(ctx, elem) != null) {
-					template = pageConfig.getCurrentTemplate(ctx, elem).getFinalTemplate(ctx);
-					ctx.setCurrentTemplate(template);
-				}
 			}
 		}
 
@@ -63,14 +56,14 @@ public class ServletHelper {
 		if (globalContext.isSpacialAccessCode(new Code(requestService.getParameter(URLHelper.SPACIAL_RIGHT_CODE_KEY, "no-code")))) {
 			specialRightON = true;
 		}
-		
+
 		List<String> actions = new LinkedList<String>();
 		List<String> actionsKey = new LinkedList<String>();
 		Map<String, String[]> params = requestService.getParameterMap();
-		
+
 		Collection<String> keys = params.keySet();
-		for (String key : keys) {			
-			if (key.startsWith("webaction")) {				
+		for (String key : keys) {
+			if (key.startsWith("webaction")) {
 				actionsKey.add(key);
 			}
 		}
@@ -81,15 +74,15 @@ public class ServletHelper {
 			}
 		} else {
 			actions.addAll(requestService.getParameterListValues("webaction", Collections.EMPTY_LIST));
-		}		
+		}
 
-		//String[] actions = requestService.getParameterValues("webaction", null);
-		
+		// String[] actions = requestService.getParameterValues("webaction", null);
+
 		if (actions.size() == 0) {
 			return null;
 		}
-		
-		for (String action : actions) {			
+
+		for (String action : actions) {
 			EditContext editCtx = EditContext.getInstance(globalContext, ctx.getRequest().getSession());
 			if ((ctx.getRequest().getServletPath().equals("/edit") || ctx.getRequest().getServletPath().equals("/admin")) && (editCtx.getUserPrincipal() == null && !specialRightON)) {
 				logger.warning("block action : '" + action + "' because user is not logged.");

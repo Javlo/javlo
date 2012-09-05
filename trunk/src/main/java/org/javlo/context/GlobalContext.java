@@ -367,7 +367,7 @@ public class GlobalContext implements Serializable {
 							newInstance.setRAWLanguages(defaultContext.getRAWLanguages());
 							newInstance.setReversedLink(defaultContext.isReversedLink());
 							newInstance.setTemplateFilter(defaultContext.isTemplateFilter());
-							newInstance.setTemplates(defaultContext.getTemplates());
+							newInstance.setTemplatesNames(defaultContext.getTemplatesNames());
 							newInstance.setUserManagement(defaultContext.isUserManagement());
 							newInstance.setViewBar(defaultContext.isViewBar());
 							newInstance.setVirtualPaternity(defaultContext.isVirtualPaternity());
@@ -542,14 +542,14 @@ public class GlobalContext implements Serializable {
 			if (mailing) {
 				templates = getMailingTemplates();
 			} else {
-				templates = getTemplates();
+				templates = getTemplatesNames();
 			}
 			if (!templates.contains(templateId)) {
 				templates.add(templateId);
 				if (mailing) {
 					setMailingTemplates(templates);
 				} else {
-					setTemplates(templates);
+					setTemplatesNames(templates);
 				}
 			}
 		}
@@ -561,14 +561,14 @@ public class GlobalContext implements Serializable {
 			if (mailing) {
 				templates = getMailingTemplates();
 			} else {
-				templates = getTemplates();
+				templates = getTemplatesNames();
 			}
 			if (templates.contains(templateId)) {
 				templates.remove(templateId);
 				if (mailing) {
 					setMailingTemplates(templates);
 				} else {
-					setTemplates(templates);
+					setTemplatesNames(templates);
 				}
 			}
 		}
@@ -1250,7 +1250,7 @@ public class GlobalContext implements Serializable {
 		return templateData;
 	}
 
-	public List<String> getTemplates() {
+	public List<String> getTemplatesNames() {
 		List<String> templates = new LinkedList<String>();
 		String templatesRaw = properties.getString("templates", "");
 		templates.addAll(StringHelper.stringToCollection(templatesRaw));
@@ -2186,7 +2186,7 @@ public class GlobalContext implements Serializable {
 		}
 	}
 
-	public void setTemplates(List<String> components) {
+	public void setTemplatesNames(List<String> components) {
 		synchronized (properties) {
 			properties.setProperty("templates", StringHelper.collectionToString(components));
 			save();
