@@ -25,6 +25,7 @@ import org.javlo.component.core.IContentVisualComponent;
 import org.javlo.config.StaticConfig;
 import org.javlo.context.ContentContext;
 import org.javlo.context.GlobalContext;
+import org.javlo.helper.ResourceHelper;
 import org.javlo.helper.StringHelper;
 import org.javlo.helper.URLHelper;
 import org.javlo.mailing.MailingManager;
@@ -131,9 +132,7 @@ public class GenericForm extends AbstractVisualComponent implements IAction {
 					CSVFactory.appendContentAsMap(file, data);
 				}
 			} finally {
-				if (out != null) {
-					out.close();
-				}
+				ResourceHelper.closeResource(out);
 			}
 		}
 	}
@@ -185,10 +184,10 @@ public class GenericForm extends AbstractVisualComponent implements IAction {
 
 		Map<String, Object> params = request.getParameterMap();
 		Map<String, String> result = new HashMap<String, String>();
-		result.put("registration time", StringHelper.renderSortableTime(new Date()));
-		result.put("local addr", request.getLocalAddr());
-		result.put("remote addr", request.getRemoteAddr());
-		result.put("X-Forwarded-For", request.getHeader("X-Forwarded-For"));
+		result.put("__registration time", StringHelper.renderSortableTime(new Date()));
+		result.put("__local addr", request.getLocalAddr());
+		result.put("__remote addr", request.getRemoteAddr());
+		result.put("__X-Forwarded-For", request.getHeader("X-Forwarded-For"));
 		Collection<String> keys = params.keySet();
 		for (String key : keys) {
 			if (!key.equals("webaction") && !key.equals("comp_id") && !key.equals("captcha")) {
