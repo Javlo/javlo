@@ -2,17 +2,32 @@ package org.javlo.module.mailing;
 
 import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.io.UnsupportedEncodingException;
+import java.util.LinkedHashSet;
 import java.util.List;
+import java.util.Set;
 
+import javax.mail.internet.AddressException;
+import javax.mail.internet.InternetAddress;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 
 import org.javlo.bean.LinkToRenderer;
+import org.javlo.context.ContentContext;
 import org.javlo.context.GlobalContext;
+import org.javlo.helper.NetHelper;
+import org.javlo.helper.StringHelper;
+import org.javlo.helper.URLHelper;
+import org.javlo.mailing.Mailing;
+import org.javlo.message.GenericMessage;
+import org.javlo.message.MessageRepository;
 import org.javlo.module.core.AbstractModuleContext;
 import org.javlo.module.core.Module;
 import org.javlo.module.core.ModuleException;
 import org.javlo.module.core.ModulesContext;
+import org.javlo.user.IUserFactory;
+import org.javlo.user.IUserInfo;
+import org.javlo.user.UserFactory;
 
 public class MailingModuleContext extends AbstractModuleContext {
 
@@ -32,7 +47,7 @@ public class MailingModuleContext extends AbstractModuleContext {
 	private List<String> groups;
 	private String recipients;
 	private boolean isTestMailing;
-	static final String SEND_WIZARD_BOX = "sendwizard";
+	private Set<InternetAddress> allRecipients = new LinkedHashSet<InternetAddress>();
 
 	@Override
 	public List<LinkToRenderer> getNavigation() {
@@ -104,6 +119,75 @@ public class MailingModuleContext extends AbstractModuleContext {
 		this.isTestMailing = isTest;
 	}
 
+	public Set<InternetAddress> getAllRecipients() {
+		return allRecipients;
+	}
+
+	public void setAllRecipients(Set<InternetAddress> allRecipients) {
+		this.allRecipients = allRecipients;
+	}
+
+	public boolean validate(ContentContext ctx) {
+		try {
+			HttpServletRequest request = ctx.getRequest();
+			GlobalContext globalContext = GlobalContext.getInstance(request);
+			IUserFactory userFactory = UserFactory.createUserFactory(globalContext, request.getSession());
+
+			if (sender == null || (sender = sender.trim()).isEmpty()) {
+				String msg = i18nAccess.getText("mailing.message.sender.mandatory");
+				MessageRepository.getInstance(ctx).setGlobalMessageAndNotification(ctx, new GenericMessage(msg, GenericMessage.ALERT));
+				return false;
+			}
+			if (!StringHelper.isMail(sender)) {
+				String msg = i18nAccess.getText("mailing.message.sender.not-valid");
+				MessageRepository.getInstance(ctx).setGlobalMessageAndNotification(ctx, new GenericMessage(msg, GenericMessage.ALERT));
+				return false;
+			}
+			if (subject == null || (subject = subject.trim()).isEmpty()) {
+				String msg = i18nAccess.getText("mailing.message.subject.mandatory");
+				MessageRepository.getInstance(ctx).setGlobalMessageAndNotification(ctx, new GenericMessage(msg, GenericMessage.ALERT));
+				return false;
+			}
+			if (reportTo == null || (reportTo = reportTo.trim()).isEmpty()) {
+				String msg = i18nAccess.getText("mailing.message.report-to.mandatory");
+				MessageRepository.getInstance(ctx).setGlobalMessageAndNotification(ctx, new GenericMessage(msg, GenericMessage.ALERT));
+				return false;
+			}
+			if (!StringHelper.isMail(reportTo)) {
+				String msg = i18nAccess.getText("mailing.message.report-to.not-valid");
+				MessageRepository.getInstance(ctx).setGlobalMessageAndNotification(ctx, new GenericMessage(msg, GenericMessage.ALERT));
+				return false;
+			}
+			allRecipients.clear();
+			if (groups != null) {
+				for (String group : groups) {
+					List<IUserInfo> users = userFactory.getUserInfoForRoles(new String[] { group });
+					for (IUserInfo user : users) {
+						if (!StringHelper.isEmpty(user.getEmail())) {
+							InternetAddress email = new InternetAddress(user.getEmail(), StringHelper.neverNull(user.getFirstName()) + " " + StringHelper.neverNull(user.getLastName()));
+							if (!allRecipients.contains(email)) {
+								allRecipients.add(email);
+							}
+						}
+					}
+				}
+			}
+			if (recipients != null) {
+				for (String fullEmail : StringHelper.searchEmail(recipients)) {
+					InternetAddress email = new InternetAddress(fullEmail);
+					if (!allRecipients.contains(email)) {
+						allRecipients.add(email);
+					}
+				}
+			}
+			return true;
+		} catch (UnsupportedEncodingException ex) {
+			throw new RuntimeException(ex);
+		} catch (AddressException ex) {
+			throw new RuntimeException(ex);
+		}
+	}
+
 	public void reset() {
 		sender = null;
 		subject = null;
@@ -111,7 +195,25 @@ public class MailingModuleContext extends AbstractModuleContext {
 		groups = null;
 		recipients = null;
 		isTestMailing = false;
-		setWizardStep(SEND_WIZARD_BOX, null);
+		allRecipients.clear();
+	}
+
+	public void sendMailing(ContentContext ctx) throws Exception {
+		ContentContext pageCtx = ctx.getContextWithOtherRenderMode(ContentContext.PAGE_MODE);
+		pageCtx.setAbsoluteURL(true);
+		String url = URLHelper.createURL(pageCtx) + ";jsessionid=" + ctx.getRequest().getRequestedSessionId();
+
+		GlobalContext globalContext = GlobalContext.getInstance(ctx.getRequest());
+
+		Mailing m = new Mailing();
+		m.setFrom(new InternetAddress(sender));
+		m.setReceivers(allRecipients.toArray(new InternetAddress[allRecipients.size()]));
+		m.setSubject(subject);
+		m.setAdminEmail(globalContext.getAdministratorEmail());
+		m.setNotif(new InternetAddress(reportTo));
+		m.setContent(NetHelper.readPage(url, true));
+		m.setHtml(true);
+		m.store(ctx.getRequest().getSession().getServletContext());
 	}
 
 }
