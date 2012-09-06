@@ -4,7 +4,7 @@
 <div id="visits-chart" class="pie" style="height: 300px;"></div>
 </div>
 <script type="text/javascript">
-var url = "${info.currentURL}".replace("/edit/", "/ajax/")+"?webaction=dashboard.readTracker&type=visits";
+var url = "${info.currentURL}".replace("/edit", "/ajax")+"?webaction=dashboard.readTracker&type=visits";
 jQuery.ajax({
 	url : url,
 	cache : false,		

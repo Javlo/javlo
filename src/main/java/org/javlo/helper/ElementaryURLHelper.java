@@ -14,6 +14,8 @@ import org.javlo.context.ContentContext;
 import org.javlo.context.EditContext;
 import org.javlo.context.GlobalContext;
 import org.javlo.image.ImageHelper;
+import org.javlo.module.core.Module;
+import org.javlo.module.core.ModulesContext;
 import org.javlo.navigation.IURLFactory;
 import org.javlo.navigation.MenuElement;
 import org.javlo.service.ContentService;
@@ -176,7 +178,17 @@ public abstract class ElementaryURLHelper {
 
 		// String mode = "/view/";
 		if (ctx.getRenderMode() == ContentContext.EDIT_MODE) {
-			mode = "/edit/";
+			Module currentModule = null;
+			try {
+				currentModule = ModulesContext.getInstance(ctx.getRequest().getSession(), globalContext).getCurrentModule();
+			} catch (Exception e) {
+				e.printStackTrace();
+			}
+			if (currentModule == null || ctx.getCurrentEditUser() == null) {
+				mode = "/edit/";
+			} else {
+				mode = "/edit-" + currentModule.getName() + "/";
+			}
 		} else if (ctx.getRenderMode() == ContentContext.PREVIEW_MODE) {
 			mode = "/preview/";
 		} else if (ctx.getRenderMode() == ContentContext.PAGE_MODE) {

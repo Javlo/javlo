@@ -4,7 +4,7 @@
 <div id="languages-chart" class="pie" style="height: ${100 + (10 * fn:length(info.contentLanguages))}px;"></div>
 </div>
 <script type="text/javascript">
-var url = "${info.currentURL}".replace("/edit/", "/ajax/")+"?webaction=dashboard.readTracker&type=languages";
+var url = "${info.currentURL}".replace("/edit", "/ajax")+"?webaction=dashboard.readTracker&type=languages";
 jQuery.ajax({
 	url : url,
 	cache : false,		

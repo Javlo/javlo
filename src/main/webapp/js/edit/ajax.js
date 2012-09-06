@@ -15,7 +15,7 @@ jQuery(document).ready(function() {
 				shadow.attr("type", "hidden");
 				shadow.insertAfter(submit);
 			}
-			shadow.attr("name", submit.attr("name"));
+			shadow.attr("name", submit.attr("name"));ca
 			shadow.val(submit.val());
 			submit.removeAttr("name");
 		}
@@ -52,7 +52,11 @@ jQuery(document).ready(function() {
 });
 
 function ajaxRequest(url, form) {
-	url = url.replace("/edit/", "/ajax/");
+	if (url.indexOf("/edit-")>=0) {
+		url = url.replace("/edit-", "/ajax-");
+	} else {
+		url = url.replace("/edit/", "/ajax/");
+	}	
 	var data=null;
 	if (form != null) {
 		data = jQuery(form).serialize();

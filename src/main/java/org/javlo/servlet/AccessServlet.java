@@ -568,7 +568,6 @@ public class AccessServlet extends HttpServlet {
 							logger.warning("bad path : " + path);
 						}
 						if ((template == null) || (!template.exist()) || (template.getRendererFullName(ctx) == null)) {
-							String msg = i18nAccess.getText("command.admin.block.no-template");
 							infoBean.setContentLanguage(ctx.getContentLanguage());
 							infoBean.setLanguage(ctx.getLanguage());
 							ServletHelper.includeBlocked(request, response);

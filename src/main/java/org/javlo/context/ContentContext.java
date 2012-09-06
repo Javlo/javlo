@@ -105,6 +105,7 @@ public class ContentContext {
 									if (!content.contentExistForContext(ctx)) {
 										if ((menu != null) && (menu.getChildMenuElements()[0].getChildMenuElements().length > 0)) {
 											ctx.setPath(menu.getChildMenuElements()[0].getChildMenuElements()[0].getPath());
+
 										}
 									}
 								}
@@ -662,6 +663,7 @@ public class ContentContext {
 
 	protected void resestCache() {
 		setCurrentPageCached(null);
+		setCurrentTemplate(null);
 		contentExistForContext = null;
 	}
 

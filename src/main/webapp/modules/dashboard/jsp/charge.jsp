@@ -7,7 +7,7 @@ jQuery(document).ready(function () {
 	
 var updateInterval = 10000;
 
-var url = "${info.currentURL}".replace("/edit/", "/ajax/")+"?webaction=dashboard.readTracker&type=charge";
+var url = "${info.currentURL}".replace("/edit", "/ajax")+"?webaction=dashboard.readTracker&type=charge";
 
 function update() {
 	jQuery.ajax({
