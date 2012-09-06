@@ -3,7 +3,7 @@
 <div id="weekchart" class="week"></div>
 </div>
 <script type="text/javascript">
-var url = "${info.currentURL}".replace("/edit/", "/ajax/")+"?webaction=dashboard.readTracker&type=week";
+var url = "${info.currentURL}".replace("/edit", "/ajax")+"?webaction=dashboard.readTracker&type=week";
 jQuery.ajax({
 	url : url,
 	cache : false,		

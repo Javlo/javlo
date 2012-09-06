@@ -93,25 +93,25 @@ public class CatchAllFilter implements Filter {
 			if (user != null) {
 				if (!user.getContext().equals(globalContext.getContextKey())) {
 					if (!AdminUserSecurity.getInstance().isGod(user)) {
-					try {
-						editContext.setEditUser(null);
-						logger.info("remove user '"+user.getLogin()+"' context does'nt match.");
-						user = null;
-					} catch (Exception e) {
-						e.printStackTrace();
-					}					
-					//((HttpServletRequest) request).getSession().removeAttribute(UserFactory.SESSION_KEY);
+						try {
+							editContext.setEditUser(null);
+							logger.info("remove user '" + user.getLogin() + "' context does'nt match.");
+							user = null;
+						} catch (Exception e) {
+							e.printStackTrace();
+						}
+						// ((HttpServletRequest) request).getSession().removeAttribute(UserFactory.SESSION_KEY);
 					}
 
 				}
 			}
-			
+
 			if (user != null && editContext.getEditUser() == null) {
 				editContext.setEditUser(user);
 			}
-			
+
 			if (fact.getCurrentUser(((HttpServletRequest) request).getSession()) == null) {
-				
+
 				String loginType = requestService.getParameter("login-type", null);
 
 				if ((loginType == null || !loginType.equals("adminlogin")) && logoutUser == null) {
@@ -123,15 +123,15 @@ public class CatchAllFilter implements Filter {
 							if (request.getParameter("autologin") != null) {
 								DataToIDService service = DataToIDService.getInstance(httpRequest.getSession().getServletContext());
 								String codeId = service.setData(login, IUserFactory.AUTO_LOGIN_AGE_SEC * 1000);
-								//RequestHelper.setCookieValue(httpResponse, "javlo_login_id", codeId, IUserFactory.AUTO_LOGIN_AGE_SEC);								
-								String pathPrefix = URLHelper.getPathPrefix((HttpServletRequest)request);
-								RequestHelper.setCookieValue(httpResponse, "javlo_login_id", codeId, IUserFactory.AUTO_LOGIN_AGE_SEC, URLHelper.mergePath(pathPrefix,"/edit"));
-								RequestHelper.setCookieValue(httpResponse, "javlo_login_id", codeId, IUserFactory.AUTO_LOGIN_AGE_SEC, URLHelper.mergePath(pathPrefix,"/preview"));
+								// RequestHelper.setCookieValue(httpResponse, "javlo_login_id", codeId, IUserFactory.AUTO_LOGIN_AGE_SEC);
+								String pathPrefix = URLHelper.getPathPrefix((HttpServletRequest) request);
+								RequestHelper.setCookieValue(httpResponse, "javlo_login_id", codeId, IUserFactory.AUTO_LOGIN_AGE_SEC, URLHelper.mergePath(pathPrefix, "/edit"));
+								RequestHelper.setCookieValue(httpResponse, "javlo_login_id", codeId, IUserFactory.AUTO_LOGIN_AGE_SEC, URLHelper.mergePath(pathPrefix, "/preview"));
 							}
 
 							if (login == null && httpRequest.getUserPrincipal() != null) {
 								login = httpRequest.getUserPrincipal().getName();
-							}							
+							}
 							fact.login(httpRequest, login, request.getParameter("j_password"));
 							ModulesContext.getInstance(httpRequest.getSession(), globalContext).loadModule(httpRequest.getSession(), globalContext);
 						}
@@ -139,12 +139,12 @@ public class CatchAllFilter implements Filter {
 				}
 				fact.getCurrentUser(((HttpServletRequest) request).getSession());
 			}
-			
+
 			boolean newUser = false;
 
 			/** EDIT LOGIN **/
 			if (fact.getCurrentUser(((HttpServletRequest) request).getSession()) == null) {
-				
+
 				/* AUTO LOGIN */
 				String autoLoginId = RequestHelper.getCookieValue(httpRequest, "javlo_login_id");
 				String autoLoginUser = null;
@@ -175,23 +175,23 @@ public class CatchAllFilter implements Filter {
 
 			if (request.getParameter("edit-login") != null || (httpRequest.getUserPrincipal() != null && logoutUser == null)) {
 				String login = request.getParameter("j_username");
-				
+
 				if (login == null && httpRequest.getUserPrincipal() != null) {
 					login = httpRequest.getUserPrincipal().getName();
 				}
 				AdminUserFactory adminFactory = AdminUserFactory.createUserFactory(globalContext, httpRequest.getSession());
 				User editUser = adminFactory.login(httpRequest, login, request.getParameter("j_password"));
-				
+
 				if (editUser != null) {
 					if (request.getParameter("autologin") != null) {
 						DataToIDService service = DataToIDService.getInstance(httpRequest.getSession().getServletContext());
 						String codeId = service.setData(login, ((long) IUserFactory.AUTO_LOGIN_AGE_SEC) * 1000);
-						//RequestHelper.setCookieValue(httpResponse, "javlo_login_id", codeId, IUserFactory.AUTO_LOGIN_AGE_SEC);
-						String pathPrefix = URLHelper.getPathPrefix((HttpServletRequest)request);
-						RequestHelper.setCookieValue(httpResponse, "javlo_login_id", codeId, IUserFactory.AUTO_LOGIN_AGE_SEC, URLHelper.mergePath(pathPrefix,"/edit"));
-						RequestHelper.setCookieValue(httpResponse, "javlo_login_id", codeId, IUserFactory.AUTO_LOGIN_AGE_SEC, URLHelper.mergePath(pathPrefix,"/preview"));
+						// RequestHelper.setCookieValue(httpResponse, "javlo_login_id", codeId, IUserFactory.AUTO_LOGIN_AGE_SEC);
+						String pathPrefix = URLHelper.getPathPrefix((HttpServletRequest) request);
+						RequestHelper.setCookieValue(httpResponse, "javlo_login_id", codeId, IUserFactory.AUTO_LOGIN_AGE_SEC, URLHelper.mergePath(pathPrefix, "/edit"));
+						RequestHelper.setCookieValue(httpResponse, "javlo_login_id", codeId, IUserFactory.AUTO_LOGIN_AGE_SEC, URLHelper.mergePath(pathPrefix, "/preview"));
 					}
-					globalContext.addPrincipal(editUser);					
+					globalContext.addPrincipal(editUser);
 					globalContext.eventLogin(editUser.getLogin());
 					newUser = true;
 
@@ -202,18 +202,14 @@ public class CatchAllFilter implements Filter {
 				}
 
 			}
-			
-			if (newUser) {				
+
+			if (newUser) {
 				ModulesContext.getInstance(httpRequest.getSession(), globalContext).loadModule(httpRequest.getSession(), globalContext);
 			}
 		} catch (Exception e) {
 			throw new ServletException(e);
 		}
-		
-		
-		
-		
-		
+
 	}
 
 	@Override
@@ -303,6 +299,59 @@ public class CatchAllFilter implements Filter {
 
 		doLoginFilter(request, response);
 
+		// forward edit without module
+		String editURI = uri;
+		if (editURI.startsWith('/' + globalContext.getContextKey())) {
+			editURI = editURI.substring(globalContext.getContextKey().length() + 1);
+		}
+		if (editURI.startsWith("/edit-")) {
+			editURI = editURI.substring("/edit-".length());
+			String module = editURI;
+			if (editURI.contains("/")) {
+				module = module.substring(0, module.indexOf('/'));
+				editURI = editURI.substring(editURI.indexOf('/'));
+			}
+			if (module.length() > 0) {
+				editURI = "/edit" + editURI;
+				String baseURI = editURI;
+				String query = httpRequest.getQueryString();
+				if (query != null) {
+					editURI = editURI + '?' + query;
+				}
+				if (query == null || !query.contains("module=")) {
+					editURI = URLHelper.addParam(editURI, "module", module);
+				}
+				if (query != null && query.contains("edit-logout")) {
+					((HttpServletResponse) response).sendRedirect(baseURI);
+					return;
+				} else {
+					// ((HttpServletResponse) response).sendRedirect(editURI);
+					httpRequest.getRequestDispatcher(editURI).forward(request, response);
+					return;
+				}
+			}
+		} else if (editURI.startsWith("/ajax-")) {
+			editURI = uri.substring("/ajax-".length());
+			String module = editURI;
+			if (editURI.contains("/")) {
+				module = module.substring(0, module.indexOf('/'));
+				editURI = editURI.substring(editURI.indexOf('/'));
+			}
+			if (module.length() > 0) {
+				editURI = "/ajax" + editURI;
+				String query = httpRequest.getQueryString();
+				if (query != null) {
+					editURI = editURI + '?' + query;
+				}
+				if (query == null || !query.contains("module=")) {
+					editURI = URLHelper.addParam(editURI, "module", module);
+				}
+				// ((HttpServletResponse) response).sendRedirect(editURI);
+				httpRequest.getRequestDispatcher(editURI).forward(request, response);
+				return;
+			}
+		}
+
 		/*************/
 		/**** URL ****/
 		/*************/
@@ -339,34 +388,34 @@ public class CatchAllFilter implements Filter {
 					if (sep == '/' || sep == '-') {
 						String lg = viewURI.substring(1, 3).toLowerCase();
 						if (globalContext.getContentLanguages().contains(lg)) {
-							String newPath = "/view" + viewURI;							
+							String newPath = "/view" + viewURI;
 							httpRequest.getRequestDispatcher(newPath).forward(httpRequest, response);
 							return;
 						}
 					}
 				}
 			}
-			
-			 if (request.getParameter("webaction") != null && request.getParameter("webaction").equals("view.language")) {
-					try {
-						ContentContext ctx = ContentContext.getContentContext((HttpServletRequest) request, (HttpServletResponse) response);
-						String lang = request.getParameter("lg");
-						if (lang != null) {
-							if (globalContext.getLanguages().contains(lang)) {
-								ctx.setLanguage(lang);
-								ctx.setContentLanguage(lang);
-								ctx.setRequestContentLanguage(null);
-								ctx.setCookieLanguage(lang);
-							}
-							String newURL = URLHelper.createURL(ctx);
-							NetHelper.sendRedirectPermanently((HttpServletResponse) response, newURL);
-						}
 
-					} catch (Exception e) {
-						// TODO Auto-generated catch block
-						e.printStackTrace();
+			if (request.getParameter("webaction") != null && request.getParameter("webaction").equals("view.language")) {
+				try {
+					ContentContext ctx = ContentContext.getContentContext((HttpServletRequest) request, (HttpServletResponse) response);
+					String lang = request.getParameter("lg");
+					if (lang != null) {
+						if (globalContext.getLanguages().contains(lang)) {
+							ctx.setLanguage(lang);
+							ctx.setContentLanguage(lang);
+							ctx.setRequestContentLanguage(null);
+							ctx.setCookieLanguage(lang);
+						}
+						String newURL = URLHelper.createURL(ctx);
+						NetHelper.sendRedirectPermanently((HttpServletResponse) response, newURL);
 					}
-			 }
+
+				} catch (Exception e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
+			}
 
 			initElements(request, response);
 
