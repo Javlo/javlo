@@ -165,7 +165,7 @@ public class GenericForm extends AbstractVisualComponent implements IAction {
 		String captcha = requestService.getParameter("captcha", null);
 
 		if (comp.isCaptcha()) {
-			if (captcha == null || !CaptchaService.getInstance(request.getSession()).getCurrentCaptchaCode().equals(captcha)) {
+			if (captcha == null || CaptchaService.getInstance(request.getSession()).getCurrentCaptchaCode() == null || !CaptchaService.getInstance(request.getSession()).getCurrentCaptchaCode().equals(captcha)) {
 				GenericMessage msg = new GenericMessage(comp.getTranslation(false).getProperty("error.captcha"), GenericMessage.ERROR);
 				request.setAttribute("msg", msg);
 				request.setAttribute("error_captcha", "true");
