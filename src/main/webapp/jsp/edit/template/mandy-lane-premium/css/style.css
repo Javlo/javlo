@@ -957,6 +957,10 @@ h2.prize {
 	margin-right: 10px;
 }
 
+.breadcrumbs a.selected {
+	background: none;
+}
+
 .breadcrumbs .children {
 	min-width: 20px;
 	height: 30px;
@@ -964,7 +968,7 @@ h2.prize {
 	position: absolute;
 	margin-left: -22px;
 	
-	background: url('../images/arrow.png') no-repeat 1px 12px #ffffff;
+	background: url('../images/arrow.png') no-repeat 1px 11px #ffffff;
 }
 
 .breadcrumbs .children.open {
@@ -997,7 +1001,7 @@ h2.prize {
 	position: absolute;	
 	z-index: 5;
 	
-	min-height: 100px;
+	/*min-height: 100px;*/
 	background: #fcfcfc;
 	position: absolute;
 	
