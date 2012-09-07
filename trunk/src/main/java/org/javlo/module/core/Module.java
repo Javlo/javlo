@@ -5,6 +5,7 @@ import java.io.FileReader;
 import java.io.IOException;
 import java.util.Arrays;
 import java.util.Collection;
+import java.util.Comparator;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.LinkedList;
@@ -67,15 +68,34 @@ public class Module {
 	private static final EmptyAction emptyAction = new EmptyAction();
 
 	public static class HtmlLink {
+
+		public static class SortOnLegend implements Comparator<HtmlLink> {
+
+			@Override
+			public int compare(HtmlLink o1, HtmlLink o2) {
+				return o1.getLegend().compareTo(o2.getLegend());
+			}
+
+		}
+
 		private String url;
 		private String legend;
 		private String title;
+		private boolean selected;
 		private Collection<HtmlLink> children = new LinkedList<Module.HtmlLink>();
 
 		public HtmlLink(String url, String legend, String title) {
 			this.url = url;
 			this.legend = legend;
 			this.title = title;
+		}
+
+		public HtmlLink(String url, String legend, String title, boolean selected, Collection<HtmlLink> children) {
+			this.url = url;
+			this.legend = legend;
+			this.title = title;
+			this.selected = selected;
+			this.children = children;
 		}
 
 		public String getUrl() {
@@ -115,6 +135,15 @@ public class Module {
 		public void setChildren(Collection<HtmlLink> children) {
 			this.children = children;
 		}
+
+		public boolean isSelected() {
+			return selected;
+		}
+
+		public void setSelected(boolean selected) {
+			this.selected = selected;
+		}
+
 	}
 
 	public class Link {
@@ -124,9 +153,9 @@ public class Module {
 			this.style = style;
 		}
 
-		private String params;
-		private String label;
-		private String style;
+		private final String params;
+		private final String label;
+		private final String style;
 		private boolean active;
 
 		public String getParams() {
@@ -228,11 +257,11 @@ public class Module {
 		public Module getModule() {
 			return Module.this;
 		}
-		
+
 		public List<BoxStep> getSteps() {
 			return steps;
 		}
-		
+
 	}
 
 	public class BoxStep {
@@ -293,8 +322,8 @@ public class Module {
 	private String toolsRenderer = null;
 	private String defaultToolsRenderer = null;
 	private IModuleAction action = emptyAction;
-	private Collection<String> cssURI = new LinkedList<String>();
-	private Collection<String> jsURI = new LinkedList<String>();
+	private final Collection<String> cssURI = new LinkedList<String>();
+	private final Collection<String> jsURI = new LinkedList<String>();
 	private String renderer;
 	private String defaultRenderer;
 	private Map<String, Box> boxes = new HashMap<String, Box>();
@@ -303,16 +332,16 @@ public class Module {
 	private Stack<HtmlLink> breadcrumbLinks;
 	private boolean search;
 	private String parent;
-	private List<Module> children = new LinkedList<Module>();
+	private final List<Module> children = new LinkedList<Module>();
 	private int order;
 	private Set<String> roles;
 	private Set<String> excludeRoles;
 	private Map<String, String> config;
 
-	private File configFile;
-	private Locale locale;
-	private String modulePath;
-	private String URIPrefix;
+	private final File configFile;
+	private final Locale locale;
+	private final String modulePath;
+	private final String URIPrefix;
 
 	private String description = "?";
 
@@ -367,7 +396,6 @@ public class Module {
 			excludeRoles.addAll(StringHelper.stringToCollection(rolesRaw, ";"));
 		}
 
-
 		title = config.get("title." + locale.getLanguage());
 		if (title == null) {
 			title = config.get("title");
@@ -379,14 +407,14 @@ public class Module {
 		}
 
 		moduleRoot = configFile.getParentFile();
-		
+
 		/* css */
 		File cssFolder = new File(URLHelper.mergePath(moduleRoot.getAbsolutePath(), CSS_FOLDER));
 		if (cssFolder.isDirectory()) {
 			File[] cssFiles = cssFolder.listFiles();
 			Arrays.sort(cssFiles, new FileComparator(FileComparator.NAME, true));
 			for (File file : cssFiles) {
-				if (file.isFile() && StringHelper.getFileExtension(file.getName()).equalsIgnoreCase("css")) {					
+				if (file.isFile() && StringHelper.getFileExtension(file.getName()).equalsIgnoreCase("css")) {
 					cssURI.add(URLHelper.mergePath("/", URIPrefix, ModulesContext.MODULES_FOLDER + '/' + getName() + '/' + CSS_FOLDER + '/' + file.getName()));
 				}
 			}
@@ -399,12 +427,12 @@ public class Module {
 			Arrays.sort(jspFiles, new FileComparator(FileComparator.NAME, true));
 			for (File file : jspFiles) {
 				if (file.isFile() && StringHelper.getFileExtension(file.getName()).equalsIgnoreCase("js")) {
-					jsURI.add(URLHelper.mergePath("/",URIPrefix,ModulesContext.MODULES_FOLDER + '/' + getName() + '/' + JS_FOLDER + '/' + file.getName()));
+					jsURI.add(URLHelper.mergePath("/", URIPrefix, ModulesContext.MODULES_FOLDER + '/' + getName() + '/' + JS_FOLDER + '/' + file.getName()));
 				}
 			}
 			for (int i = 0; i < 100; i++) {
 				if (config.get("js.import." + i) != null) {
-					jsURI.add(URLHelper.mergePath("/",URIPrefix,ModulesContext.MODULES_FOLDER + '/' + getName() + config.get("js.import." + i)));
+					jsURI.add(URLHelper.mergePath("/", URIPrefix, ModulesContext.MODULES_FOLDER + '/' + getName() + config.get("js.import." + i)));
 				}
 			}
 		}
@@ -625,7 +653,7 @@ public class Module {
 	public Collection<Box> getNavigation() {
 		return navigation;
 	}
-	
+
 	public boolean removeNavigation(String name) {
 		Box box = getBox(name);
 		if (box != null) {
@@ -635,7 +663,6 @@ public class Module {
 		return false;
 	}
 
-	
 	public IModuleAction getAction() {
 		return action;
 	}
@@ -810,7 +837,7 @@ public class Module {
 	public Set<String> getExcludeRoles() {
 		return excludeRoles;
 	}
-	
+
 	public String getVersion() {
 		return StringHelper.neverNull(config.get("version"), "?");
 	}
@@ -830,7 +857,7 @@ public class Module {
 			if (getRoles() == null) {
 				haveRight = true;
 			} else {
-				haveRight =  user.validForRoles(getRoles());
+				haveRight = user.validForRoles(getRoles());
 			}
 		}
 		if (haveRight) {
@@ -838,10 +865,10 @@ public class Module {
 				haveRight = true;
 			} else {
 				Set<String> workingRoles = new HashSet<String>();
-				workingRoles.addAll(getExcludeRoles());		
+				workingRoles.addAll(getExcludeRoles());
 				workingRoles.retainAll(user.getRoles());
 				haveRight = workingRoles.size() == 0;
-			}			
+			}
 		}
 		return haveRight;
 	}
@@ -872,4 +899,3 @@ public class Module {
 	}
 
 }
-
