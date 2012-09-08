@@ -304,7 +304,6 @@ public class CatchAllFilter implements Filter {
 		/*****************/
 
 		String editURI = uri;
-		System.out.println("***** CatchAllFilter.doFilter : editURI = " + editURI); // TODO: remove debug trace
 		if (editURI.startsWith('/' + globalContext.getContextKey())) {
 			editURI = editURI.substring(globalContext.getContextKey().length() + 1);
 		}
@@ -350,7 +349,6 @@ public class CatchAllFilter implements Filter {
 				if (query == null || !query.contains("module=")) {
 					editURI = URLHelper.addParam(editURI, "module", module);
 				}
-				System.out.println("***** CatchAllFilter.doFilter : editURI = " + editURI); // TODO: remove debug trace
 				// ((HttpServletResponse) response).sendRedirect(editURI);
 				httpRequest.getRequestDispatcher(editURI).forward(request, response);
 				return;
