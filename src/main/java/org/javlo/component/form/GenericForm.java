@@ -189,6 +189,7 @@ public class GenericForm extends AbstractVisualComponent implements IAction {
 		result.put("__remote addr", request.getRemoteAddr());
 		result.put("__X-Forwarded-For", request.getHeader("x-forwarded-for"));
 		result.put("__X-Real-IP", request.getHeader("x-real-ip"));
+		result.put("__referer", request.getHeader("referer"));
 		Collection<String> keys = params.keySet();
 		for (String key : keys) {
 			if (!key.equals("webaction") && !key.equals("comp_id") && !key.equals("captcha")) {
