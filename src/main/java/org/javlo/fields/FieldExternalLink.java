@@ -30,16 +30,18 @@ public class FieldExternalLink extends MetaField {
 		return getName() + "-link-" + getId();
 	}
 
+	@Override
 	public String getInputLabelName() {
 		return getName() + "-label-" + getId();
 	}
 
+	@Override
 	public String getViewXHTMLCode(ContentContext ctx) throws Exception {
 		StringWriter writer = new StringWriter();
 		PrintWriter out = new PrintWriter(writer);
-		
+
 		String displayStr = StringHelper.neverNull(getCurrentLink());
-		if (displayStr.trim().length() == 0 || !isViewDisplayed()) {			
+		if (displayStr.trim().length() == 0 || !isViewDisplayed()) {
 			return "";
 		}
 
@@ -47,11 +49,11 @@ public class FieldExternalLink extends MetaField {
 		if (label.trim().length() == 0) {
 			label = getCurrentLink();
 		}
-		
+
 		String link = getCurrentLink().trim();
 		if (link.startsWith("/")) { // relative link
 			link = XHTMLHelper.replaceJSTLData(ctx, link);
-			link = URLHelper.createURL(ctx, link);			
+			link = URLHelper.createURL(ctx, link);
 		}
 
 		if (label.trim().length() > 0) {
@@ -60,9 +62,9 @@ public class FieldExternalLink extends MetaField {
 			if (!link.startsWith("/") && GlobalContext.getInstance(ctx.getRequest()).isOpenExernalLinkAsPopup(link)) {
 				target = " target=\"_blank\"";
 			}
-			
+
 			label = XHTMLHelper.replaceJSTLData(ctx, label);
-			out.println("<a href=\"" + link + "\""+target+">" + label + "</a>");
+			out.println("<a href=\"" + link + "\"" + target + ">" + label + "</a>");
 			out.println("</span>");
 		}
 
@@ -70,6 +72,7 @@ public class FieldExternalLink extends MetaField {
 		return writer.toString();
 	}
 
+	@Override
 	public String getEditXHTMLCode(ContentContext ctx) throws Exception {
 		StringWriter writer = new StringWriter();
 		PrintWriter out = new PrintWriter(writer);
@@ -111,7 +114,7 @@ public class FieldExternalLink extends MetaField {
 		}
 
 		String newLink = requestService.getParameter(getInputLinkName(), "");
-		if (!newLink.equals(getCurrentLink())) {			
+		if (!newLink.equals(getCurrentLink())) {
 			if (!newLink.trim().startsWith("/") && !PatternHelper.EXTERNAL_LINK_PATTERN.matcher(newLink).matches()) {
 				if (getCurrentLinkErrorMessage().trim().length() == 0) {
 					setNeedRefresh(true);
@@ -131,6 +134,7 @@ public class FieldExternalLink extends MetaField {
 		return modify;
 	}
 
+	@Override
 	public String getType() {
 		return "external-link";
 	}
@@ -160,17 +164,17 @@ public class FieldExternalLink extends MetaField {
 	protected void setCurrentLabel(String label) {
 		properties.setProperty("field." + getUnicName() + ".value.label", label);
 	}
-	
+
 	@Override
 	public boolean isPertinent() {
 		return getCurrentLink() != null && getCurrentLink().trim().length() > 0;
 	}
-	
+
 	@Override
-	public boolean isContentCachable() {		
+	public boolean isContentCachable() {
 		return getCurrentLink() == null || !getCurrentLink().trim().startsWith("/");
 	}
-	
+
 	@Override
 	public boolean isPublished(ContentContext ctx) {
 		String link = getCurrentLink().trim();

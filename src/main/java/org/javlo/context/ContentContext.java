@@ -443,9 +443,15 @@ public class ContentContext {
 		if (getPath().equals("/") || this.getPath().equals('/' + ElementaryURLHelper.ROOT_FILE_NAME)) {
 			return root;
 		} else {
-			MenuElement elem = globalContext.getPage(this, getPath());
-			setCurrentPageCached(elem);
-			return elem;
+			if (getPath().trim().length() > 0) {
+				MenuElement elem = globalContext.getPage(this, getPath());
+				if (elem != null) {
+					setCurrentPageCached(elem);
+				}
+				return elem;
+			} else {
+				return null;
+			}
 		}
 	};
 

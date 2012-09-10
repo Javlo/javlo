@@ -314,6 +314,7 @@ public class CatchAllFilter implements Filter {
 				module = module.substring(0, module.indexOf('/'));
 				editURI = editURI.substring(editURI.indexOf('/'));
 			}
+
 			if (module.length() > 0) {
 				editURI = "/edit" + editURI;
 				String baseURI = editURI;
@@ -334,7 +335,7 @@ public class CatchAllFilter implements Filter {
 				}
 			}
 		} else if (editURI.startsWith("/ajax-")) {
-			editURI = uri.substring("/ajax-".length());
+			editURI = editURI.substring("/ajax-".length());
 			String module = editURI;
 			if (editURI.contains("/")) {
 				module = module.substring(0, module.indexOf('/'));
@@ -415,7 +416,6 @@ public class CatchAllFilter implements Filter {
 					}
 
 				} catch (Exception e) {
-					// TODO Auto-generated catch block
 					e.printStackTrace();
 				}
 			}

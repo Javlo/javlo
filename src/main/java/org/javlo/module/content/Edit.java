@@ -542,6 +542,12 @@ public class Edit extends AbstractModuleAction {
 			updateComponent(ctx, currentModule, newId, previousId);
 		}
 
+		MenuElement page = ctx.getCurrentPage();
+		System.out.println("");
+		System.out.println("***** Edit.performInsert : path = " + page.getPath()); // TODO: remove debug trace
+		System.out.println("***** Edit.performInsert : content size : " + page.getContent().length); // TODO: remove debug trace
+		System.out.println("");
+
 		String msg = i18nAccess.getText("action.component.created", new String[][] { { "type", type } });
 		messageRepository.setGlobalMessageAndNotification(ctx, new GenericMessage(msg, GenericMessage.INFO));
 
