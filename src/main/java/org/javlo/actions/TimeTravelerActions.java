@@ -17,7 +17,6 @@ import org.javlo.navigation.MenuElement;
 import org.javlo.service.ContentService;
 import org.javlo.service.PersistenceService;
 
-
 public class TimeTravelerActions implements IAction {
 
 	/**
@@ -35,15 +34,20 @@ public class TimeTravelerActions implements IAction {
 		ContentService content = ContentService.createContent(request);
 		Date travelTime = null;
 		try {
-			travelTime = new SimpleDateFormat("dd/MM/yy HH:mm").parse(request.getParameter("date"));
+			travelTime = new SimpleDateFormat("dd/MM/yy HH:mm:ss").parse(request.getParameter("date"));
 		} catch (Exception ex) {
 			try {
-				travelTime = new SimpleDateFormat("dd/MM/yy").parse(request.getParameter("date"));
+				travelTime = new SimpleDateFormat("dd/MM/yy HH:mm").parse(request.getParameter("date"));
 			} catch (Exception ex2) {
+				try {
+					travelTime = new SimpleDateFormat("dd/MM/yy").parse(request.getParameter("date"));
+				} catch (Exception ex3) {
+				}
 			}
 		}
 		globalContext.getTimeTravelerContext().setTravelTime(travelTime);
 		content.releaseTimeTravelerNav();
+		content.getNavigation(ctx);
 		return null;
 	}
 

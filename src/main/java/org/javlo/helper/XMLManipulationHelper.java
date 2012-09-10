@@ -827,7 +827,7 @@ public class XMLManipulationHelper {
 		StringWriter outString = new StringWriter();
 		BufferedWriter out = new BufferedWriter(outString);
 
-		out.append("<%if (ctx.getRenderMode() == ContentContext.PREVIEW_MODE) {");
+		out.append("<%if (ctx.getRenderMode() == ContentContext.PREVIEW_MODE || ctx.getRenderMode() == ContentContext.TIME_MODE) {");
 		out.newLine();
 		out.append("EditContext editCtx = EditContext.getInstance(globalContext, request.getSession());%>");
 		out.newLine();
