@@ -21,6 +21,7 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.Date;
 import java.util.GregorianCalendar;
 import java.util.HashMap;
@@ -345,6 +346,13 @@ public class PersistenceService {
 				}
 			}
 		}
+		return out;
+	}
+
+	public List<Date> getBackupDates() {
+		Map<File, Date> backups = getBackupFiles();
+		List<Date> out = new LinkedList<Date>(backups.values());
+		Collections.sort(out, Collections.reverseOrder());
 		return out;
 	}
 
@@ -700,11 +708,11 @@ public class PersistenceService {
 				if (timeTravelDate != null) {
 					// An other render mode than VIEW_MODE is not supported with a timeTravelDate.
 					Map<File, Date> backups = getBackupFiles();
-					long minDiff = Long.MAX_VALUE;
+					long minDiff = Long.MIN_VALUE;
 					Entry<File, Date> minBackup = null;
 					for (Entry<File, Date> backup : backups.entrySet()) {
 						long diff = backup.getValue().getTime() - timeTravelDate.getTime();
-						if (diff > 0 && diff < minDiff) {
+						if (diff <= 0 && diff > minDiff) {
 							minDiff = diff;
 							minBackup = backup;
 						}

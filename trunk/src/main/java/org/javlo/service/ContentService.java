@@ -6,6 +6,7 @@ package org.javlo.service;
 import java.lang.ref.WeakReference;
 import java.util.Collection;
 import java.util.Collections;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.Hashtable;
 import java.util.Iterator;
@@ -50,7 +51,7 @@ public class ContentService {
 			PersistenceService.getInstance(globalContext).loadVersion();
 		}
 		TemplateFactory.clearTemplate(ctx.getRequest().getSession().getServletContext());
-		TemplateFactory.cleanAllRenderer(ctx, false);		
+		TemplateFactory.cleanAllRenderer(ctx, false);
 	}
 
 	public static void clearAllCache(ContentContext ctx, GlobalContext globalContext) throws Exception {
@@ -59,7 +60,7 @@ public class ContentService {
 		content.releaseAll(ctx, globalContext);
 		PersistenceService.getInstance(globalContext).loadVersion();
 		TemplateFactory.clearTemplate(ctx.getRequest().getSession().getServletContext());
-		TemplateFactory.cleanAllRenderer(ctx, false);		
+		TemplateFactory.cleanAllRenderer(ctx, false);
 		content.loadViewNav(ctx); // reload the content
 	}
 
@@ -104,7 +105,7 @@ public class ContentService {
 			if (globalContext != null) {
 				globalContext.setAttribute(ContentService.class.getName(), content);
 			}
-		}		
+		}
 		return content;
 	}
 
@@ -195,12 +196,12 @@ public class ContentService {
 			if (viewGlobalMap == null) {
 				try {
 					getNavigation(ctx);
-					if (viewGlobalMap == null) {						
+					if (viewGlobalMap == null) {
 						return null;
 					}
 				} catch (Exception e) {
 					e.printStackTrace();
-				}				
+				}
 			}
 			return viewGlobalMap.get(key);
 		} else if (ctx.getRenderMode() == ContentContext.TIME_MODE) {
@@ -229,7 +230,7 @@ public class ContentService {
 		if (id == null) {
 			return null;
 		}
-		WeakReference<IContentVisualComponent> ref = components.get(id+ctx.getRenderMode());
+		WeakReference<IContentVisualComponent> ref = components.get(id + ctx.getRenderMode());
 		IContentVisualComponent component = null;
 		if (ref != null) {
 			component = ref.get();
@@ -241,7 +242,7 @@ public class ContentService {
 		if (id == null) {
 			return null;
 		}
-		WeakReference<IContentVisualComponent> ref = components.get(id+ctx.getRenderMode());
+		WeakReference<IContentVisualComponent> ref = components.get(id + ctx.getRenderMode());
 		IContentVisualComponent component = null;
 		if (ref != null) {
 			component = ref.get();
@@ -249,11 +250,11 @@ public class ContentService {
 		if (component == null) {
 			component = searchComponent(ctx, getNavigation(ctx), id);
 			if (component != null) {
-				components.put(id+ctx.getRenderMode(), new WeakReference<IContentVisualComponent>(component));
+				components.put(id + ctx.getRenderMode(), new WeakReference<IContentVisualComponent>(component));
 			}
 		}
 		if (component == null) {
-			components.remove(id+ctx.getRenderMode());
+			components.remove(id + ctx.getRenderMode());
 		}
 		return component;
 	}
@@ -262,7 +263,7 @@ public class ContentService {
 		if (id == null) {
 			return null;
 		}
-		WeakReference<IContentVisualComponent> ref = components.get(id+ctx.getRenderMode());
+		WeakReference<IContentVisualComponent> ref = components.get(id + ctx.getRenderMode());
 		IContentVisualComponent component = null;
 		if (ref != null) {
 			component = ref.get();
@@ -275,11 +276,11 @@ public class ContentService {
 			localContext.setRequestContentLanguage(languages.next());
 			component = searchComponent(localContext, getNavigation(localContext), id);
 			if (component != null) {
-				components.put(id+ctx.getRenderMode(), new WeakReference<IContentVisualComponent>(component));
+				components.put(id + ctx.getRenderMode(), new WeakReference<IContentVisualComponent>(component));
 			}
 		}
 		if (component == null) {
-			components.remove(id+ctx.getRenderMode());
+			components.remove(id + ctx.getRenderMode());
 		}
 		return component;
 	}
@@ -320,9 +321,13 @@ public class ContentService {
 			GlobalContext globalContext = GlobalContext.getInstance(ctx.getRequest());
 			if (ctx.getRenderMode() == ContentContext.TIME_MODE && globalContext.getTimeTravelerContext().getTravelTime() != null) {
 				if (timeTravelerNav == null) {
+					Date timeTravelDate = globalContext.getTimeTravelerContext().getTravelTime();
+					if (timeTravelDate != null && timeTravelDate.after(globalContext.getPublishDate())) {
+						timeTravelDate = null;
+					}
 					PersistenceService persistenceService = PersistenceService.getInstance(globalContext);
 					Map<String, String> contentAttributeMap = new HashMap<String, String>();
-					timeTravelerNav = persistenceService.load(ctx, ContentContext.VIEW_MODE, contentAttributeMap, globalContext.getTimeTravelerContext().getTravelTime());
+					timeTravelerNav = persistenceService.load(ctx, ContentContext.VIEW_MODE, contentAttributeMap, timeTravelDate);
 					timeTravelerGlobalMap = contentAttributeMap;
 				}
 				res = timeTravelerNav;
@@ -336,7 +341,7 @@ public class ContentService {
 				}
 				res = previewNav;
 			} else {
-				if (viewNav == null) {					
+				if (viewNav == null) {
 					PersistenceService persistenceService = PersistenceService.getInstance(globalContext);
 					Map<String, String> contentAttributeMap = new HashMap<String, String>();
 					viewNav = persistenceService.load(ctx, ContentContext.VIEW_MODE, contentAttributeMap, null);
@@ -350,12 +355,12 @@ public class ContentService {
 		}
 		return res;
 	}
-	
+
 	/**
 	 * check if navigation was allready loaded for a specific render mode.
 	 */
-	public boolean isNavigationLoaded(ContentContext ctx) {		
-		synchronized (LOCK_LOAD_NAVIGATION) {			
+	public boolean isNavigationLoaded(ContentContext ctx) {
+		synchronized (LOCK_LOAD_NAVIGATION) {
 			if (ctx.getRenderMode() == ContentContext.TIME_MODE) {
 				return timeTravelerNav != null;
 			} else if (!ctx.isAsViewMode()) {
@@ -363,9 +368,8 @@ public class ContentService {
 			} else {
 				return viewNav != null;
 			}
-		}		
+		}
 	}
-
 
 	public MenuElement getTimeTravelerNav() {
 		return timeTravelerNav;
@@ -433,7 +437,7 @@ public class ContentService {
 				}
 			}
 		}
-		synchronized (LOCK_LOAD_NAVIGATION) {			
+		synchronized (LOCK_LOAD_NAVIGATION) {
 			viewNav = newViewNav;
 			viewGlobalMap = contentAttributeMap;
 		}
@@ -480,7 +484,7 @@ public class ContentService {
 		 * ContentService content = ContentService.getInstance(globalContext); content.loadViewNav(ctx);
 		 */
 	}
-	
+
 	public void removeAttribute(ContentContext ctx, String key) {
 		if (ctx.getRenderMode() == ContentContext.VIEW_MODE) {
 			if (viewGlobalMap == null) {
