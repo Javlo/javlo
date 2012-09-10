@@ -213,20 +213,22 @@ public class FileAction extends AbstractModuleAction {
 				File currentDir = new File(URLHelper.mergePath(globalContext.getDataFolder(), currentPath));
 				File[] children = currentDir.listFiles(new DirectoryFilter());
 				List<HtmlLink> childrenLinks = new LinkedList<Module.HtmlLink>();
-				for (File file : children) {
-					String childPath = URLHelper.mergePath(currentPath, file.getName());
-					String childURL;
-					filesParams = new HashMap<String, String>();
-					filesParams.put("path", childPath);
-					if (rs.getParameter("changeRoot", null) != null) {
-						filesParams.put("changeRoot", "true");
+				if (children != null) {
+					for (File file : children) {
+						String childPath = URLHelper.mergePath(currentPath, file.getName());
+						String childURL;
+						filesParams = new HashMap<String, String>();
+						filesParams.put("path", childPath);
+						if (rs.getParameter("changeRoot", null) != null) {
+							filesParams.put("changeRoot", "true");
+						}
+						if (moduleContext.getFromModule() != null) {
+							childURL = URLHelper.createInterModuleURL(ctx, ctx.getPath(), FileModuleContext.MODULE_NAME, moduleContext.getFromModule().getName(), filesParams);
+						} else {
+							childURL = URLHelper.createModuleURL(ctx, ctx.getPath(), FileModuleContext.MODULE_NAME, filesParams);
+						}
+						childrenLinks.add(new HtmlLink(childURL, file.getName(), file.getName()));
 					}
-					if (moduleContext.getFromModule() != null) {
-						childURL = URLHelper.createInterModuleURL(ctx, ctx.getPath(), FileModuleContext.MODULE_NAME, moduleContext.getFromModule().getName(), filesParams);
-					} else {
-						childURL = URLHelper.createModuleURL(ctx, ctx.getPath(), FileModuleContext.MODULE_NAME, filesParams);
-					}
-					childrenLinks.add(new HtmlLink(childURL, file.getName(), file.getName()));
 				}
 				Collections.sort(childrenLinks, new HtmlLink.SortOnLegend());
 				currentModule.pushBreadcrumb(new HtmlLink(staticURL, path, path, i == pathItems.length - 1, childrenLinks));
