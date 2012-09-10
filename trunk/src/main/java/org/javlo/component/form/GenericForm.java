@@ -3,7 +3,6 @@ package org.javlo.component.form;
 import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.IOException;
-import java.io.OutputStream;
 import java.io.PrintStream;
 import java.io.StringReader;
 import java.util.Collection;
@@ -25,7 +24,6 @@ import org.javlo.component.core.IContentVisualComponent;
 import org.javlo.config.StaticConfig;
 import org.javlo.context.ContentContext;
 import org.javlo.context.GlobalContext;
-import org.javlo.helper.ResourceHelper;
 import org.javlo.helper.StringHelper;
 import org.javlo.helper.URLHelper;
 import org.javlo.mailing.MailingManager;
@@ -114,25 +112,20 @@ public class GenericForm extends AbstractVisualComponent implements IAction {
 
 	protected void storeResult(ContentContext ctx, Map<String, String> data) throws IOException {
 		synchronized (LOCK) {
-			OutputStream out = null;
-			try {
-				File file = getFile(ctx);
-				Collection<String> titles = CSVFactory.loadTitle(file);
-				boolean newTitleFound = false;
-				for (String newTitle : data.keySet()) {
-					if (!titles.contains(newTitle)) {
-						newTitleFound = true;
-					}
+			File file = getFile(ctx);
+			Collection<String> titles = CSVFactory.loadTitle(file);
+			boolean newTitleFound = false;
+			for (String newTitle : data.keySet()) {
+				if (!titles.contains(newTitle)) {
+					newTitleFound = true;
 				}
-				if (newTitleFound) {
-					List<Map<String, String>> newData = CSVFactory.loadContentAsMap(file);
-					newData.add(data);
-					CSVFactory.storeContentAsMap(file, newData);
-				} else {
-					CSVFactory.appendContentAsMap(file, data);
-				}
-			} finally {
-				ResourceHelper.closeResource(out);
+			}
+			if (newTitleFound) {
+				List<Map<String, String>> newData = CSVFactory.loadContentAsMap(file);
+				newData.add(data);
+				CSVFactory.storeContentAsMap(file, newData);
+			} else {
+				CSVFactory.appendContentAsMap(file, data);
 			}
 		}
 	}

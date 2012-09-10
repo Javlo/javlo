@@ -500,7 +500,6 @@ public abstract class AbstractVisualComponent implements IContentVisualComponent
 
 		/** renderer **/
 		String renderer = requestService.getParameter(getInputNameRenderer(), null);
-		System.out.println("***** AbstractVisualComponent.performConfig : renderer = " + renderer); // TODO: remove debug trace
 		if (renderer != null) {
 			if (!renderer.equals(getRenderer(ctx))) {
 				setRenderer(ctx, renderer);

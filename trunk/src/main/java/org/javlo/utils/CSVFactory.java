@@ -348,9 +348,7 @@ public class CSVFactory {
 			out = new FileOutputStream(file);
 			storeContentAsMap(out, content);
 		} finally {
-			if (out != null) {
-				ResourceHelper.closeResource(out);
-			}
+			ResourceHelper.closeResource(out);
 		}
 	}
 
