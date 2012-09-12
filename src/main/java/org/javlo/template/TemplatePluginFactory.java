@@ -2,19 +2,16 @@ package org.javlo.template;
 
 import java.io.File;
 import java.io.IOException;
-import java.io.StringReader;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.LinkedList;
 import java.util.List;
-import java.util.Properties;
 import java.util.logging.Logger;
 
 import javax.servlet.ServletContext;
 
 import org.javlo.config.StaticConfig;
 import org.javlo.filter.DirectoryFilter;
-import org.javlo.helper.URLHelper;
 
 public class TemplatePluginFactory {
 
@@ -68,7 +65,8 @@ public class TemplatePluginFactory {
 		}
 		List<TemplatePlugin> allTemplatePlungin = new LinkedList<TemplatePlugin>();
 		for (String id : ids) {
-			allTemplatePlungin.add(getTemplatePlugin(id));
+			TemplatePlugin tp = getTemplatePlugin(id);
+			allTemplatePlungin.add(tp);
 		}
 		return allTemplatePlungin;
 	}

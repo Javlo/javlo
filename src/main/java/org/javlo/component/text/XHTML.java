@@ -5,7 +5,6 @@ package org.javlo.component.text;
 
 import java.io.PrintWriter;
 import java.io.StringWriter;
-import java.util.Collection;
 
 import org.javlo.component.core.AbstractVisualComponent;
 import org.javlo.context.ContentContext;
@@ -15,7 +14,6 @@ import org.javlo.helper.URLHelper;
 import org.javlo.helper.XHTMLHelper;
 import org.javlo.helper.XMLManipulationHelper;
 import org.javlo.helper.XMLManipulationHelper.TagDescription;
-import org.javlo.service.RequestService;
 
 /**
  * @author pvandermaesen

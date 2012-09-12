@@ -14,22 +14,26 @@ import org.javlo.helper.StringHelper;
 
 public class Device implements Serializable {
 
+	public static final String FORCE_DEVICE_PARAMETER_NAME = "force-device-code";
+
 	private static Logger logger = Logger.getLogger(Device.class.getName());
 
 	public static final Device getDevice(HttpServletRequest request) {
 		Device currentDevice = (Device) request.getSession().getAttribute(Device.class.getCanonicalName());
-		if (currentDevice != null) {
-			return currentDevice;
-		} else {
+		if (currentDevice == null) {
 			StaticConfig staticConfig = StaticConfig.getInstance(request.getSession());
 			String userAgent = request.getHeader("User-Agent");
-			Device device = new Device();
-			device.devices = staticConfig.getDevices();
-			device.setUserAgent(userAgent);
-			request.getSession().setAttribute(Device.class.getCanonicalName(), device);
-			logger.info("Create new device : '" + device.getCode() + "' userAgent : " + userAgent);
-			return device;
+			currentDevice = new Device();
+			currentDevice.devices = staticConfig.getDevices();
+			currentDevice.setUserAgent(userAgent);
+			request.getSession().setAttribute(Device.class.getCanonicalName(), currentDevice);
+			logger.info("Create new device : '" + currentDevice.getCode() + "' userAgent : " + userAgent);
 		}
+		String forcedCode = request.getParameter(FORCE_DEVICE_PARAMETER_NAME);
+		if (forcedCode != null) {
+			currentDevice.setForcedCode(forcedCode);
+		}
+		return currentDevice;
 	}
 
 	public static void main(String[] args) {
@@ -64,6 +68,10 @@ public class Device implements Serializable {
 	 */
 	public void forceDefault() {
 		forcedCode = DEFAULT_DEVICE;
+	}
+
+	public void setForcedCode(String forcedCode) {
+		this.forcedCode = forcedCode;
 	}
 
 	public String getCode() {
@@ -132,12 +140,12 @@ public class Device implements Serializable {
 	public String toString() {
 		return getLabel();
 	}
-	
+
 	public boolean isHuman() {
 		return !NetHelper.isUserAgentRobot(getUserAgent());
 	}
 
-	public void unforeceDefault() {
+	public void unforceDefault() {
 		forcedCode = null;
 	}
 

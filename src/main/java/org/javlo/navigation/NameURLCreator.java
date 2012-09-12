@@ -6,7 +6,9 @@ import org.javlo.component.core.IContentVisualComponent;
 import org.javlo.component.navigation.PageURL;
 import org.javlo.context.ContentContext;
 
-public class NameURLCreator implements IURLFactory {
+public class NameURLCreator extends AbstractURLFactory {
+
+	public static final NameURLCreator instance = new NameURLCreator();
 
 	@Override
 	public String createURL(ContentContext ctx, MenuElement currentPage) throws Exception {
@@ -18,7 +20,6 @@ public class NameURLCreator implements IURLFactory {
 			return ((PageURL) comps.iterator().next()).getValue();
 		}
 
-		return '/'+currentPage.getName();
+		return '/' + currentPage.getParent().getName() + '/' + currentPage.getName();
 	}
-
 }

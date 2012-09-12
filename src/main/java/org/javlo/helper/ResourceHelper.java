@@ -1002,7 +1002,7 @@ public class ResourceHelper {
 		String templatePath = globalContext.getStaticConfig().getTemplateFolder().replace('\\', '/');
 
 		if (filePath.startsWith(templatePath)) {
-			filePath = filePath.replaceFirst(templatePath, "");			
+			filePath = filePath.replaceFirst(templatePath, "");
 			if (filePath.startsWith("/")) {
 				filePath = filePath.substring(1);
 			}
@@ -1033,7 +1033,7 @@ public class ResourceHelper {
 				break;
 			}
 		}
-	
+
 		byte[] bytes = lineBytes.toByteArray();
 		if (b == -1) {
 			return null;

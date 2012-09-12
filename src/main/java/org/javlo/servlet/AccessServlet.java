@@ -1,7 +1,9 @@
 package org.javlo.servlet;
 
+import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
+import java.io.OutputStream;
 import java.io.OutputStreamWriter;
 import java.io.PrintStream;
 import java.io.PrintWriter;
@@ -11,7 +13,9 @@ import java.lang.management.ThreadMXBean;
 import java.net.URL;
 import java.text.DecimalFormat;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.Iterator;
+import java.util.Map;
 import java.util.logging.Logger;
 
 import javax.portlet.WindowState;
@@ -47,6 +51,7 @@ import org.javlo.module.core.ModulesContext;
 import org.javlo.navigation.MenuElement;
 import org.javlo.portlet.PortletWindowImpl;
 import org.javlo.portlet.filter.MultiReadRequestWrapper;
+import org.javlo.rendering.Device;
 import org.javlo.service.ContentService;
 import org.javlo.service.RequestService;
 import org.javlo.service.remote.RemoteMessage;
@@ -60,6 +65,9 @@ import org.javlo.tracking.Tracker;
 import org.javlo.user.IUserFactory;
 import org.javlo.user.UserFactory;
 import org.javlo.utils.DebugListening;
+import org.xhtmlrenderer.pdf.ITextRenderer;
+import org.xhtmlrenderer.swing.Java2DRenderer;
+import org.xhtmlrenderer.util.FSImageWriter;
 
 public class AccessServlet extends HttpServlet {
 
@@ -339,25 +347,26 @@ public class AccessServlet extends HttpServlet {
 
 			localLogger.startCount("execute action");
 
-			/*** update module status before action ***/
-			ModulesContext moduleContext = ModulesContext.getInstance(request.getSession(), globalContext);
-			if (requestService.getParameter("module", null) != null) {
-				UserInterfaceContext uic = UserInterfaceContext.getInstance(request.getSession(), globalContext);
-				uic.setCurrentModule(requestService.getParameter("module", null));
-				moduleContext.setCurrentModule(requestService.getParameter("module", null));
-				i18nAccess.setCurrentModule(globalContext, moduleContext.getCurrentModule());
-			}
-			if (requestService.getParameter("module", null) != null && requestService.getParameter("from-module", null) == null) {
-				moduleContext.setFromModule((Module) null);
-			}
-			if (requestService.getParameter("from-module", null) != null) {
-				Module fromModule = moduleContext.searchModule(requestService.getParameter("from-module", null));
-				if (fromModule != null) {
-					moduleContext.setFromModule(fromModule);
-				}
-			}
-
 			if (ctx.getRenderMode() == ContentContext.EDIT_MODE) {
+
+				/*** update module status before action ***/
+				ModulesContext moduleContext = ModulesContext.getInstance(request.getSession(), globalContext);
+				if (requestService.getParameter("module", null) != null) {
+					UserInterfaceContext uic = UserInterfaceContext.getInstance(request.getSession(), globalContext);
+					uic.setCurrentModule(requestService.getParameter("module", null));
+					moduleContext.setCurrentModule(requestService.getParameter("module", null));
+					i18nAccess.setCurrentModule(globalContext, moduleContext.getCurrentModule());
+				}
+				if (requestService.getParameter("module", null) != null && requestService.getParameter("from-module", null) == null) {
+					moduleContext.setFromModule((Module) null);
+				}
+				if (requestService.getParameter("from-module", null) != null) {
+					Module fromModule = moduleContext.searchModule(requestService.getParameter("from-module", null));
+					if (fromModule != null) {
+						moduleContext.setFromModule(fromModule);
+					}
+				}
+
 				EditContext editCtx = EditContext.getInstance(globalContext, request.getSession());
 				ctx.setArea(editCtx.getCurrentArea());
 			}
@@ -540,13 +549,6 @@ public class AccessServlet extends HttpServlet {
 						request.setAttribute("editPreview", editCtx.isEditPreview());
 					}
 
-					boolean renderXML = false;
-					if (request.getPathInfo() != null) {
-						if (StringHelper.getFileExtension(request.getPathInfo()).equalsIgnoreCase("xml")) {
-							renderXML = true;
-						}
-					}
-
 					/* user management - old login.jsp still used ? (plm) */
 					if (requestService.getParameter("__logout", null) != null) {
 						IUserFactory userFactory = UserFactory.createUserFactory(globalContext, request.getSession());
@@ -563,7 +565,55 @@ public class AccessServlet extends HttpServlet {
 
 					String path = ctx.getPath();
 
-					if (!renderXML) {
+					if (ctx.getFormat().equalsIgnoreCase("xml")) {
+						response.setContentType("text/xml; charset=" + ContentContext.CHARACTER_ENCODING);
+						Writer out = response.getWriter();
+						out.write(XMLHelper.getPageXML(ctx, elem));
+					} else if (ctx.getFormat().equalsIgnoreCase("png") || ctx.getFormat().equalsIgnoreCase("jpg")) {
+						String fileFormat = ctx.getFormat().toLowerCase();
+						response.setContentType("image/" + fileFormat + ";");
+						OutputStream out = response.getOutputStream();
+						ContentContext viewCtx = ctx.getContextWithOtherRenderMode(ContentContext.VIEW_MODE);
+						viewCtx.setAbsoluteURL(true);
+						String url;
+						if (request.getParameter(Template.FORCE_TEMPLATE_PARAM_NAME) != null) {
+							Map<String, String> params = new HashMap<String, String>();
+							params.put(Template.FORCE_TEMPLATE_PARAM_NAME, request.getParameter(Template.FORCE_TEMPLATE_PARAM_NAME));
+							url = URLHelper.createURL(viewCtx, params);
+						} else {
+							url = URLHelper.createURL(viewCtx);
+						}
+
+						int width = 1280;
+						String widthParam = request.getParameter("width");
+						if (widthParam != null) {
+							width = Integer.parseInt(widthParam);
+						}
+
+						Java2DRenderer renderer = new Java2DRenderer(url, width);
+						BufferedImage img = renderer.getImage();
+						FSImageWriter imageWriter = new FSImageWriter();
+						imageWriter.write(img, out);
+
+					} else if (ctx.getFormat().equalsIgnoreCase("pdf")) {
+						response.setContentType("application/pdf;");
+						OutputStream out = response.getOutputStream();
+						ContentContext viewCtx = ctx.getContextWithOtherRenderMode(ContentContext.VIEW_MODE);
+						viewCtx.setAbsoluteURL(true);
+
+						Map<String, String> params = new HashMap<String, String>();
+						params.put(Device.FORCE_DEVICE_PARAMETER_NAME, "pdf");
+						params.put(ContentContext.FORCE_ABSOLUTE_URL, "true");
+						if (request.getParameter(Template.FORCE_TEMPLATE_PARAM_NAME) != null) {
+							params.put(Template.FORCE_TEMPLATE_PARAM_NAME, request.getParameter(Template.FORCE_TEMPLATE_PARAM_NAME));
+						}
+						String url = URLHelper.createURL(viewCtx, params);
+
+						ITextRenderer pdfRenderer = new ITextRenderer();
+						pdfRenderer.setDocument(url);
+						pdfRenderer.layout();
+						pdfRenderer.createPDF(out);
+					} else {
 						if (elem == null) {
 							logger.warning("bad path : " + path);
 						}
@@ -588,10 +638,6 @@ public class AccessServlet extends HttpServlet {
 							String jspPath = template.getRendererFullName(ctx);
 							getServletContext().getRequestDispatcher(jspPath).include(request, response);
 						}
-					} else {
-						response.setContentType("text/xml; charset=" + ContentContext.CHARACTER_ENCODING);
-						Writer out = response.getWriter();
-						out.write(XMLHelper.getPageXML(ctx, elem));
 					}
 					localLogger.endCount("content", "include content");
 

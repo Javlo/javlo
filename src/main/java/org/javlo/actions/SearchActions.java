@@ -14,9 +14,7 @@ import javax.servlet.http.HttpServletResponse;
 import org.javlo.component.form.SearchResultComponent;
 import org.javlo.context.ContentContext;
 import org.javlo.helper.StringHelper;
-import org.javlo.navigation.MenuElement;
 import org.javlo.search.SearchResult;
-import org.javlo.service.ContentService;
 import org.javlo.service.RequestService;
 import org.javlo.template.TemplateSearchContext;
 

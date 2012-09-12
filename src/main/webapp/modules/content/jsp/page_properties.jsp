@@ -67,7 +67,9 @@
 </div>
 
 <div class="action">
-    <a href="${info.currentURL}?webaction=deletePage&page=${page.id}" class="action-button warning needconfirm" title="${i18n.edit['global.delete']}"><span>${i18n.edit['global.delete']}</span></a>
+	<c:if test="${not empty info.parentPageURL}">
+    <a href="${info.parentPageURL}?webaction=deletePage&page=${page.id}" class="action-button warning needconfirm" title="${i18n.edit['global.delete']}"><span>${i18n.edit['global.delete']}</span></a>
+    </c:if>
 	<input type="submit" value="${i18n.edit['global.ok']}" />
 </div>
 

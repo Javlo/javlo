@@ -7,11 +7,6 @@ import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
 import org.w3c.dom.Text;
-/*
- * NodeXML.java
- *
- * Created on October 18, 2000, 11:06 AM
- */
 
 //TODO Adding javadoc could be helpfull.
 /**
