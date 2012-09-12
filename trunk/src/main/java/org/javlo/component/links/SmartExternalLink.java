@@ -21,7 +21,6 @@ import org.javlo.component.core.ComplexPropertiesLink;
 import org.javlo.component.core.ComponentBean;
 import org.javlo.component.core.IReverseLinkComponent;
 import org.javlo.component.image.IImageTitle;
-import org.javlo.component.links.SmartExternalLink.UndateInfo;
 import org.javlo.config.StaticConfig;
 import org.javlo.context.ContentContext;
 import org.javlo.context.GlobalContext;

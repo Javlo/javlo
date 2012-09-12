@@ -140,14 +140,14 @@
 		</dependency>
 
 		<dependency>
-			<groupId>poi</groupId>
-			<artifactId>poi</artifactId>
-			<version>2.5.1-final-20040804</version>
+			<groupId>org.apache.poi</groupId>
+			<artifactId>poi-scratchpad</artifactId>
+			<version>3.8</version>
 		</dependency>
 
 		<dependency>
 			<groupId>org.apache.poi</groupId>
-			<artifactId>poi-scratchpad</artifactId>
+			<artifactId>poi</artifactId>
 			<version>3.1-FINAL</version>
 		</dependency>
 
@@ -224,6 +224,7 @@
 				</exclusion>
 			</exclusions>
 		</dependency>
+
 		<dependency>
 			<groupId>org.apache.httpcomponents</groupId>
 			<artifactId>httpmime</artifactId>
@@ -255,7 +256,24 @@
 			<version>2.2</version>
 		</dependency>
 
-		
+		<dependency>
+			<groupId>com.lowagie</groupId>
+			<artifactId>itext</artifactId>
+			<version>2.1.7</version>
+		</dependency>
+
+		<dependency>
+			<groupId>org.xhtmlrenderer</groupId>
+			<artifactId>flying-saucer-core</artifactId>
+			<version>9.0.1</version>
+		</dependency>
+
+		<dependency>
+			<groupId>org.xhtmlrenderer</groupId>
+			<artifactId>flying-saucer-pdf</artifactId>
+			<version>9.0.1</version>
+		</dependency>
+
 	</dependencies>
 
 	<repositories>

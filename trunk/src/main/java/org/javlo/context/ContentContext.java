@@ -21,6 +21,7 @@ import org.javlo.component.core.ComponentBean;
 import org.javlo.config.StaticConfig;
 import org.javlo.helper.AjaxHelper.ScheduledRender;
 import org.javlo.helper.ElementaryURLHelper;
+import org.javlo.helper.StringHelper;
 import org.javlo.navigation.IURLFactory;
 import org.javlo.navigation.MenuElement;
 import org.javlo.rendering.Device;
@@ -55,6 +56,8 @@ public class ContentContext {
 	public static final String FORWARD_PATH_REQUEST_KEY = "forward-path";
 
 	public static final String FORCE_MODE_PARAMETER_NAME = "_render-mode";
+
+	public static final String FORCE_ABSOLUTE_URL = "_absolute-url";
 
 	public static String CHARACTER_ENCODING = "UTF-8";
 
@@ -213,6 +216,9 @@ public class ContentContext {
 
 			ctx.urlFactory = globalContext.getURLFactory(ctx);
 			ctx.dmzServerInter = globalContext.getDMZServerInter();
+			if (request.getParameter(FORCE_ABSOLUTE_URL) != null) {
+				ctx.setAbsoluteURL(StringHelper.isTrue(request.getParameter(FORCE_ABSOLUTE_URL)));
+			}
 		} catch (RuntimeException e) {
 			e.printStackTrace();
 		}
@@ -275,6 +281,8 @@ public class ContentContext {
 	private Device device = null;
 
 	private String protocol = null;
+
+	private String format = null;
 
 	private ContentContext() {
 	}
@@ -450,7 +458,7 @@ public class ContentContext {
 				}
 				return elem;
 			} else {
-				return null;
+				return root;
 			}
 		}
 	};
@@ -991,6 +999,36 @@ public class ContentContext {
 			request.setAttribute(KEY, outTemplates);
 		}
 		return outTemplates;
+	}
+
+	/**
+	 * check if mode is assimilable to view mode.
+	 * 
+	 * @return true if mode use "view" data. (page, time...)
+	 */
+	public boolean isLikeViewRenderMode() {
+		return getRenderMode() == VIEW_MODE || getRenderMode() == PAGE_MODE || getRenderMode() == TIME_MODE;
+	}
+
+	/**
+	 * check if mode is assimilable to edit mode.
+	 * 
+	 * @return true if mode use "edit" data. (preview)
+	 */
+	public boolean isLikeEditRenderMode() {
+		return getRenderMode() == EDIT_MODE || getRenderMode() == PREVIEW_MODE;
+	}
+
+	public String getFormat() {
+		if (format == null) {
+			GlobalContext globalContext = GlobalContext.getInstance(getRequest());
+			if (isLikeViewRenderMode() && globalContext.getURLFactory(this) != null) {
+				format = globalContext.getURLFactory(this).getFormat(request.getRequestURI());
+			} else {
+				format = StringHelper.getFileExtension(request.getRequestURI());
+			}
+		}
+		return format;
 	}
 
 	public void setCurrentTemplate(Template template) {

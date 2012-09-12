@@ -2294,7 +2294,7 @@ public class GlobalContext implements Serializable {
 
 	public List<String> getTemplatePlugin() {
 		String tp = properties.getString("template.plugins", null);
-		if (tp == null) {
+		if (tp == null || tp.trim().length() == 0) {
 			return Collections.EMPTY_LIST;
 		} else {
 			return Arrays.asList(tp.split(";"));

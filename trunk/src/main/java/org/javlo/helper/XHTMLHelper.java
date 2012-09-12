@@ -1691,7 +1691,7 @@ public class XHTMLHelper {
 	}
 
 	public static String renderHeaderResourceInsertion(ContentContext ctx, String resource) {
-		if (!allReadyInsered(ctx, resource)) {			
+		if (!allReadyInsered(ctx, resource)) {
 			if (StringHelper.getFileExtension(resource).equalsIgnoreCase("css")) {
 				return "<link rel=\"stylesheet\" type=\"text/css\" href=\"" + URLHelper.createStaticURL(ctx, resource) + "\" />";
 			} else if (StringHelper.getFileExtension(resource).equalsIgnoreCase("js")) {
@@ -1700,10 +1700,10 @@ public class XHTMLHelper {
 				return "<!-- resource type not identified : " + resource + " -->";
 			}
 		} else {
-			return "<!-- resource allready insered : "+resource+" -->";
+			return "<!-- resource allready insered : " + resource + " -->";
 		}
 	}
-	
+
 	public static String renderLanguage(ContentContext ctx) {
 		GlobalContext globalContext = GlobalContext.getInstance(ctx.getRequest());
 		Set<String> languages;
@@ -1864,13 +1864,13 @@ public class XHTMLHelper {
 		return writer.toString();
 	}
 
-	public static String replaceJSTLData(ContentContext ctx, String xhtml) throws IllegalAccessException, InvocationTargetException, NoSuchMethodException {		
-		Collection<String> params = StringHelper.extractItem(xhtml, "${param.", "}");		
+	public static String replaceJSTLData(ContentContext ctx, String xhtml) throws IllegalAccessException, InvocationTargetException, NoSuchMethodException {
+		Collection<String> params = StringHelper.extractItem(xhtml, "${param.", "}");
 		RequestService requestService = RequestService.getInstance(ctx.getRequest());
-		for (String param : params) {		
-			xhtml = xhtml.replace("${param."+param+"}", requestService.getParameter(param, ""));
+		for (String param : params) {
+			xhtml = xhtml.replace("${param." + param + "}", requestService.getParameter(param, ""));
 		}
-		
+
 		InfoBean infoBean = InfoBean.getCurrentInfoBean(ctx.getRequest());
 		Map<String, Object> properties = BeanUtils.describe(infoBean);
 		for (String key : properties.keySet()) {
@@ -1951,7 +1951,7 @@ public class XHTMLHelper {
 			out.close();
 		}
 
-		return new String(outStream.toByteArray()).replaceAll("  ", "&nbsp;&nbsp;");
+		return new String(outStream.toByteArray()).replaceAll("&", "&amp;").replaceAll("  ", "&nbsp;&nbsp;");
 	}
 
 	public static String textToXHTMLP(String text) {
@@ -1993,7 +1993,7 @@ public class XHTMLHelper {
 		return new String(outStream.toByteArray());
 
 	}
-	
+
 	private XHTMLHelper() {
 	}
 }

@@ -576,7 +576,7 @@ public class Template implements Comparable<Template> {
 
 		outTemplate.parent = outTemplate.getParent(StaticConfig.getInstance(application), ctx);
 		if (outTemplate.parent == null) { // parent must be never null
-			outTemplate.parent = getEmptyInstance();
+			outTemplate.parent = DefaultTemplate.INSTANCE;
 		}
 
 		if (ctx != null) {
@@ -587,20 +587,13 @@ public class Template implements Comparable<Template> {
 		return outTemplate;
 	}
 
-	public static Template getEmptyInstance() throws ConfigurationException {
-		if (emptyTemplate == null) {
-			emptyTemplate = new DefaultTemplate();
-		}
-		return emptyTemplate;
-	}
-
 	public static Template getInstance(StaticConfig config, ContentContext ctx, String templateDir) throws ConfigurationException, IOException {
 		return getInstance(config, ctx, templateDir, true);
 	}
 
 	private static Template getInstance(StaticConfig config, ContentContext ctx, String templateDir, boolean alternativeTemplate) throws ConfigurationException, IOException {
 		if ((templateDir == null) || templateDir.trim().length() == 0) {
-			return getEmptyInstance();
+			return DefaultTemplate.INSTANCE;
 		}
 		Template template = new Template();
 		String templateFolder = URLHelper.mergePath(config.getTemplateFolder(), templateDir);
@@ -639,7 +632,7 @@ public class Template implements Comparable<Template> {
 
 		template.parent = template.getParent(config, ctx);
 		if (template.parent == null) { // parent must be never null
-			template.parent = getEmptyInstance();
+			template.parent = DefaultTemplate.INSTANCE;
 		}
 
 		if (alternativeTemplate && ctx != null) {
@@ -1202,12 +1195,7 @@ public class Template implements Comparable<Template> {
 
 	public Template getParent() {
 		if (parent == null || parent.getName().equals(getName())) {
-			try {
-				return getEmptyInstance();
-			} catch (ConfigurationException e) {
-				e.printStackTrace();
-				return null;
-			}
+			return DefaultTemplate.INSTANCE;
 		}
 		return parent;
 	}
@@ -1277,10 +1265,6 @@ public class Template implements Comparable<Template> {
 			throw new ServiceException("renderer not found on template : " + getName() + " (parent:" + getParent() + ")");
 		}
 		return URLHelper.mergePath(getLocalTemplateTargetFolder(globalContext), renderer);
-
-		/*
-		 * if (dir == null) { logger.warning("no valid dir : " + dir); return null; } String templateFolder; if (isMailing()) { templateFolder = getLocalWorkMailingTemplateFolder(); } else { templateFolder = getLocalWorkTemplateFolder(); } String renderer = null; try { renderer = getRenderer(); } catch (Exception e) { e.printStackTrace(); } return URLHelper.mergePath(URLHelper.mergePath(templateFolder, getFolder()), renderer);
-		 */
 	}
 
 	public List<String> getResources() {

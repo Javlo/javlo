@@ -288,9 +288,13 @@ public class URLHelper extends ElementaryURLHelper {
 			if (templateID == null) {
 				templateID = mailingCtx.getCurrentTemplate();
 				if (templateID == null) {
-					for (Template mtemplate : ctx.getCurrentTemplates()) {
-						if (mtemplate.isMailing()) {
-							templateID = mtemplate.getId();
+					if (ctx.getCurrentTemplate() != null) {
+						templateID = ctx.getCurrentTemplate().getId();
+					} else {
+						for (Template mtemplate : ctx.getCurrentTemplates()) {
+							if (mtemplate.isMailing()) {
+								templateID = mtemplate.getId();
+							}
 						}
 					}
 				}

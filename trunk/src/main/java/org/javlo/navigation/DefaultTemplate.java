@@ -21,8 +21,9 @@ import org.javlo.i18n.I18nAccess;
 import org.javlo.rendering.Device;
 import org.javlo.template.Template;
 
-
 public class DefaultTemplate extends Template {
+
+	public static final Template INSTANCE = new DefaultTemplate();
 
 	public static final String NAME = "__adam";
 
@@ -31,7 +32,7 @@ public class DefaultTemplate extends Template {
 	 */
 	protected static Logger logger = java.util.logging.Logger.getLogger(DefaultTemplate.class.getName());
 
-	private boolean mailing = false;
+	private final boolean mailing = false;
 
 	@Override
 	public String getName() {
@@ -92,12 +93,9 @@ public class DefaultTemplate extends Template {
 
 	@Override
 	public boolean isTemplateInWebapp(ContentContext ctx) throws IOException {
-		/*GlobalContext globalContext = GlobalContext.getInstance(ctx.getRequest());
-		File templateTgt = new File(URLHelper.mergePath(getWorkTemplateFolder(), getFolder(globalContext)));
-		if (isMailing()) {
-			templateTgt = new File(URLHelper.mergePath(getWorkMailingTemplateFolder(), getFolder(globalContext)));
-		}
-		return templateTgt.exists();*/
+		/*
+		 * GlobalContext globalContext = GlobalContext.getInstance(ctx.getRequest()); File templateTgt = new File(URLHelper.mergePath(getWorkTemplateFolder(), getFolder(globalContext))); if (isMailing()) { templateTgt = new File(URLHelper.mergePath(getWorkMailingTemplateFolder(), getFolder(globalContext))); } return templateTgt.exists();
+		 */
 		return true;
 	}
 
@@ -192,17 +190,16 @@ public class DefaultTemplate extends Template {
 	public boolean isPDFFile() {
 		return false;
 	}
-	
+
 	@Override
 	public Properties getI18nProperties(GlobalContext globalContext, Locale locale) throws IOException {
 		return I18nAccess.FAKE_I18N_FILE;
 	}
-	
+
 	@Override
 	protected List<File> getComponentFile(GlobalContext globalContext) throws IOException {
 		return Collections.EMPTY_LIST;
 	}
-	
 
 	@Override
 	@SuppressWarnings("unchecked")
@@ -212,7 +209,7 @@ public class DefaultTemplate extends Template {
 
 	/**
 	 * this area is display if specialrendere is defined
-	 *
+	 * 
 	 * @return
 	 */
 	@Override

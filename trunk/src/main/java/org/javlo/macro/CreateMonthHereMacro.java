@@ -22,7 +22,6 @@ import org.javlo.message.GenericMessage;
 import org.javlo.message.MessageRepository;
 import org.javlo.navigation.MenuElement;
 import org.javlo.service.ContentService;
-import org.javlo.service.PersistenceService;
 
 public class CreateMonthHereMacro extends AbstractMacro {
 

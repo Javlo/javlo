@@ -59,21 +59,30 @@ public class ContentOnlyServlet extends HttpServlet {
 			RequestService requestService = RequestService.getInstance(request);
 			String templateID = requestService.getParameter(TEMPLATE_PARAM_NAME, null);
 
+			Template template = null;
+
 			if (templateID == null) {
 				templateID = mailingCtx.getCurrentTemplate();
 				if (templateID == null) {
-					Iterator<Template> ite = ctx.getCurrentTemplates().iterator();
-					Template t = ite.next();
-					while (!t.isValid() && ite.hasNext() && !t.isMailing()) {
-						t = ite.next();
-					}
-					if (t != null) {
-						templateID = t.getId();
+					if (ctx.getCurrentTemplate() != null) {
+						template = ctx.getCurrentTemplate();
+					} else {
+						Iterator<Template> ite = ctx.getCurrentTemplates().iterator();
+						Template t = ite.next();
+						while (!t.isValid() && ite.hasNext() && !t.isMailing()) {
+							t = ite.next();
+						}
+						if (t != null) {
+							templateID = ctx.getCurrentTemplates().iterator().next().getId();
+						}
 					}
 				}
 			}
 
-			Template template = Template.getApplicationInstance(request.getSession().getServletContext(), ctx, templateID);
+			if (templateID != null) {
+				template = Template.getApplicationInstance(request.getSession().getServletContext(), ctx, templateID);
+			}
+
 			getServletContext().getRequestDispatcher(template.getRendererFullName(ctx)).include(request, response);
 
 		} catch (Exception e) {
