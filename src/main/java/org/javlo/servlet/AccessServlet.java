@@ -677,6 +677,7 @@ public class AccessServlet extends HttpServlet {
 		out.println("****");
 		out.println("**** Current Time      :  " + StringHelper.renderTime(new Date()));
 		out.println("**** Server info       :  " + getServletContext().getServerInfo());
+		out.println("**** JAVA_HOME         :  " + System.getenv("JAVA_HOME"));
 		out.println("**** System encoding   :  " + System.getProperty("file.encoding"));
 		out.println("**** CMS encoding      :  " + ContentContext.CHARACTER_ENCODING);
 		/*

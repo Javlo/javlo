@@ -71,7 +71,7 @@ public abstract class ElementaryURLHelper {
 
 	static final String FEEDBACK = "/feedback";
 
-	public static final String URL_SUFFIX = ".html";
+	// public static final String URL_SUFFIX = ".html";
 
 	public static final String ROOT_FILE_NAME = "index";
 
@@ -156,7 +156,7 @@ public abstract class ElementaryURLHelper {
 					uri = uri.substring(0, uri.lastIndexOf("."));
 					// MenuElement page = globalContext.getPageByPath(ctx, uri);
 					MenuElement page = globalContext.getPage(ctx, uri);
-					uri = urlCreator.createURL(ctx, page) + URL_SUFFIX;
+					uri = urlCreator.createURL(ctx, page);
 				} catch (Exception e) {
 					e.printStackTrace();
 				}
@@ -348,7 +348,7 @@ public abstract class ElementaryURLHelper {
 		return createStaticURL(ctx, url);
 	}
 
-	public static String createTransformURL(ContentContext ctx, MenuElement referencePage, String url, String filter) throws Exception {
+	public static String createTransformURL(ContentContext ctx, MenuElement referencePage, Template template, String url, String filter) throws Exception {
 		if (url == null) {
 			return null;
 		}
@@ -360,16 +360,13 @@ public abstract class ElementaryURLHelper {
 		if (ctx.getDevice() != null) {
 			deviceCode = ctx.getDevice().getCode();
 		}
-		String key = ImageHelper.createSpecialDirectory(filter, ctx.getArea(), deviceCode, ctx.getCurrentTemplate());
+		String key = ImageHelper.createSpecialDirectory(filter, ctx.getArea(), deviceCode, template);
 		FileCache fc = FileCache.getInstance(ctx.getRequest().getSession().getServletContext());
 		if (!globalContext.getImageViewFilter().contains(filter) && fc.getFileName(key, url).exists()) {
 			return URLHelper.createStaticURL(ctx, fc.getRelativeFilePath(key, url));
 		}
 
 		ContentService.createContent(ctx.getRequest());
-		MenuElement elem = ctx.getCurrentPage();
-
-		Template template = ctx.getCurrentTemplate();
 
 		if (template != null) {
 			String templateName;
@@ -388,6 +385,10 @@ public abstract class ElementaryURLHelper {
 			url = createStaticURL(ctx, referencePage, url, true);
 		}
 		return url;
+	}
+
+	public static String createTransformURL(ContentContext ctx, MenuElement referencePage, String url, String filter) throws Exception {
+		return createTransformURL(ctx, referencePage, ctx.getCurrentTemplate(), url, filter);
 	}
 
 	public static String createTransformURL(ContentContext ctx, MenuElement referencePage, String url, String filter, String templateName) throws Exception {
@@ -431,11 +432,13 @@ public abstract class ElementaryURLHelper {
 		uri = splitURI[0];
 		String params = totalURI.substring(uri.length());
 
-		if (!uri.endsWith(URL_SUFFIX)) {
+		String urlSuffix = '.' + ctx.getFormat();
+
+		if (!uri.endsWith(urlSuffix)) {
 			if (uri.endsWith("/")) {
-				uri = uri + ROOT_FILE_NAME + URL_SUFFIX;
+				uri = uri + ROOT_FILE_NAME + urlSuffix;
 			} else {
-				uri = uri + URL_SUFFIX;
+				uri = uri + urlSuffix;
 			}
 		}
 		String url = createNoProtocolURL(ctx, globalContext, uri, ajax, withPathPrefix);

@@ -319,6 +319,13 @@ public class URLHelper extends ElementaryURLHelper {
 			return null;
 		}
 		url = url.replace('\\', '/');
+
+		if (ctx.isResourceGZip()) {
+			if (url.toLowerCase().endsWith(".css") || url.toLowerCase().endsWith(".js")) {
+				url = url + '.' + Template.GZ_FILE_EXT;
+			}
+		}
+
 		if (templateVersion != null) {
 			url = URLHelper.addParam(url, "template-id", templateVersion);
 		}

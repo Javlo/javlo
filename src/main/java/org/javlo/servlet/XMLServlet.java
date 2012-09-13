@@ -6,6 +6,7 @@ import java.util.Date;
 import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.logging.Logger;
 
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
@@ -17,6 +18,7 @@ import org.javlo.component.core.IContentVisualComponent;
 import org.javlo.component.links.RSSRegistration;
 import org.javlo.context.ContentContext;
 import org.javlo.context.GlobalContext;
+import org.javlo.helper.ServletHelper;
 import org.javlo.helper.StringHelper;
 import org.javlo.helper.URLHelper;
 import org.javlo.navigation.MenuElement;
@@ -27,6 +29,8 @@ import org.javlo.tracking.Track;
 import org.javlo.tracking.Tracker;
 
 public class XMLServlet extends HttpServlet {
+
+	private static Logger logger = Logger.getLogger(XMLServlet.class.getName());
 
 	private static final long serialVersionUID = 1L;
 
@@ -50,7 +54,25 @@ public class XMLServlet extends HttpServlet {
 		process(request, response);
 	}
 
+	protected String executeRSSCurrentRenderer(ContentContext ctx, Template template, String imageURL, String largeImageURL, String imageDescription, String text) throws Exception {
+		String renderer = template.getRSSRendererFullName(ctx);
+		if (renderer != null) {
+			logger.fine("execute RSS renderer : '" + renderer);
+
+			ctx.getRequest().setAttribute("imageURL", imageURL);
+			ctx.getRequest().setAttribute("largeImageURL", largeImageURL);
+			ctx.getRequest().setAttribute("imageDescription", imageDescription);
+			ctx.getRequest().setAttribute("text", text);
+
+			return ServletHelper.executeJSP(ctx, renderer);
+		} else {
+			String imageHTML = "<a href=\"" + largeImageURL + "\"><img src=\"" + imageURL + "\" alt=\"" + imageDescription + "\" /></a>";
+			return "<![CDATA[ " + imageHTML + text + "]]>";
+		}
+	}
+
 	private void process(HttpServletRequest request, HttpServletResponse response) throws ServletException {
+
 		try {
 			Writer out = response.getWriter();
 
@@ -77,10 +99,10 @@ public class XMLServlet extends HttpServlet {
 
 				if (format.toLowerCase().equals("rss")) {
 
-					response.setContentType("application/rss+xml");
+					response.setContentType("application/xhtml+xml");
 
 					GlobalContext globalContext = GlobalContext.getInstance(request);
-					ContentContext ctx = ContentContext.getContentContext(request, response);
+					ContentContext ctx = ContentContext.getNewContentContext(request, response);
 					ctx.setAbsoluteURL(true);
 					ctx.setLanguage(lang);
 					ContentService content = ContentService.createContent(request);
@@ -163,16 +185,23 @@ public class XMLServlet extends HttpServlet {
 								if (allChannel || (pageChannel.contains(channel)) || (channel.equals("all"))) {
 									out.write("<item>");
 									out.write("<title><![CDATA[ " + page.getTitle(ctx) + "]]> </title>");
-									String imageHTML = "";
+
+									String imageURL = null;
+									String largeImageURL = null;
+									String imageDescription = null;
 									if (page.getImage(ctx) != null) {
-										String imageURL = URLHelper.createTransformURL(ctx, page, page.getImage(ctx).getImageURL(ctx), "rss");
-										String bigImageURL = URLHelper.createTransformURL(ctx, page, page.getImage(ctx).getImageURL(ctx), "thumb-view");
-										imageHTML = "<a href=\"" + bigImageURL + "\"><img src=\"" + imageURL + "\" alt=\"" + page.getImage(ctx).getImageDescription(ctx) + "\" /></a>";
+										imageURL = URLHelper.createTransformURL(ctx, page, template, page.getImage(ctx).getImageURL(ctx), "rss");
+										largeImageURL = URLHelper.createTransformURL(ctx, page, template, page.getImage(ctx).getImageURL(ctx), "thumb-view");
+										imageDescription = page.getImage(ctx).getImageDescription(ctx);
 									}
-									out.write("<description><![CDATA[ " + imageHTML + page.getDescription(ctx) + "]]> </description>");
+									out.write("<description>" + executeRSSCurrentRenderer(ctx, template, imageURL, largeImageURL, imageDescription, page.getDescription(ctx)) + "</description>");
+									if (template.isPDFRenderer()) {
+										String pdfLink = URLHelper.createURL(ctx.getContextWithOtherFormat("pdf"), page.getPath());
+										out.write("<enclosure url=\"" + pdfLink + "\" type=\"application/pdf\" />");
+									}
 									out.write("<authors>" + page.getCreator() + "</authors>");
 									out.write("<pubDate>" + StringHelper.renderDateAsRFC822String(page.getModificationDate()) + "</pubDate>");
-									out.write("<link><![CDATA[ " + URLHelper.createURL(ctx, page.getPath()) + "]]> </link>");
+									out.write("<link><![CDATA[ " + URLHelper.createURL(ctx.getContextWithOtherFormat("html"), page.getPath()) + "]]> </link>");
 									out.write("</item>");
 								}
 							}
@@ -185,10 +214,8 @@ public class XMLServlet extends HttpServlet {
 					response.setContentType("application/xhtml+xml");
 					out.write("<?xml version=\"1.0\" encoding=\"" + ContentContext.CHARACTER_ENCODING + "\"?>");
 					out.write("<xml><error>format not found : " + format + "</xml>");
-
 				}
 			}
-			out.flush();
 		} catch (Exception e) {
 			e.printStackTrace();
 		}

@@ -34,7 +34,7 @@ public class TitleURLCreator extends AbstractURLFactory {
 			url = '/' + url;
 		}
 
-		return url;
+		return url + '.' + ctx.getFormat();
 	}
 
 }

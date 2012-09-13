@@ -3,6 +3,7 @@
  */
 package org.javlo.servlet.zip;
 
+import java.io.BufferedInputStream;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
@@ -11,6 +12,7 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import java.util.Set;
 import java.util.logging.Logger;
+import java.util.zip.GZIPOutputStream;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipInputStream;
 import java.util.zip.ZipOutputStream;
@@ -53,14 +55,14 @@ public class ZipManagement {
 		}
 
 		File[] files = ResourceHelper.getFileList(sourceDir, request);
-		for (int i = 0; i < files.length; i++) {
-			String name = targetDir + files[i].getName();
+		for (File file2 : files) {
+			String name = targetDir + file2.getName();
 
 			if (excludes != null && URLHelper.contains(excludes, name, true)) {
 				continue;
 			}
-			if (files[i].isDirectory()) {
-				zipDirectory(out, name, sourceDir + '/' + files[i].getName(), request, excludes, includes);
+			if (file2.isDirectory()) {
+				zipDirectory(out, name, sourceDir + '/' + file2.getName(), request, excludes, includes);
 			} else {
 				if (includes != null && !URLHelper.contains(includes, name, true)) {
 					continue;
@@ -68,7 +70,7 @@ public class ZipManagement {
 				ZipEntry entry = new ZipEntry(name);
 				out.putNextEntry(entry);
 				try {
-					FileInputStream file = new FileInputStream(files[i]);
+					FileInputStream file = new FileInputStream(file2);
 
 					try {
 						int size = ResourceHelper.writeStreamToStream(file, out);
@@ -85,6 +87,10 @@ public class ZipManagement {
 		}
 	}
 
+	public static void zipFile(File zipFile, File inFile) throws IOException {
+		zipFile(zipFile, inFile, inFile.getParentFile());
+	}
+
 	public static void zipFile(File zipFile, File inFile, File refDir) throws IOException {
 		if (!zipFile.exists()) {
 			zipFile.createNewFile();
@@ -98,11 +104,31 @@ public class ZipManagement {
 		out.close();
 	}
 
+	public static void gzipFile(File outFilename, File inFile) throws IOException {
+		FileOutputStream fos = new FileOutputStream(outFilename);
+		GZIPOutputStream gzos = new GZIPOutputStream(fos);
+		FileInputStream fin = new FileInputStream(inFile);
+		BufferedInputStream in = new BufferedInputStream(fin);
+
+		try {
+			byte[] buffer = new byte[1024];
+			int i;
+			while ((i = in.read(buffer)) >= 0) {
+				gzos.write(buffer, 0, i);
+			}
+		} finally {
+			ResourceHelper.closeResource(in);
+			ResourceHelper.closeResource(fin);
+			ResourceHelper.closeResource(gzos);
+			ResourceHelper.closeResource(fos);
+		}
+	}
+
 	public static void zipFile(ZipOutputStream out, File inFile, File refDir) throws IOException {
 		if (inFile.isDirectory()) {
 			File[] files = inFile.listFiles();
-			for (int i = 0; i < files.length; i++) {
-				zipFile(out, files[i], refDir);
+			for (File file : files) {
+				zipFile(out, file, refDir);
 			}
 		} else {
 			String inPath = inFile.getAbsolutePath().replace('\\', '/');

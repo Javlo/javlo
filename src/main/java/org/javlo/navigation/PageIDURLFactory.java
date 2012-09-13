@@ -9,7 +9,7 @@ public class PageIDURLFactory extends AbstractURLFactory {
 		if (currentPage.getParent() == null) {
 			return "/";
 		}
-		return '/' + currentPage.getId();
+		return '/' + currentPage.getId() + '.' + ctx.getFormat();
 	}
 
 }

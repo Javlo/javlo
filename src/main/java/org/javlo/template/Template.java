@@ -47,6 +47,7 @@ import org.javlo.navigation.DefaultTemplate;
 import org.javlo.remote.IRemoteResource;
 import org.javlo.rendering.Device;
 import org.javlo.service.exception.ServiceException;
+import org.javlo.servlet.zip.ZipManagement;
 
 public class Template implements Comparable<Template> {
 
@@ -534,6 +535,8 @@ public class Template implements Comparable<Template> {
 	private static final String RESOURCES_DIR = "resources";
 
 	public static final String PLUGIN_FOLDER = "plugins";
+
+	public static final String GZ_FILE_EXT = "httpgz";
 
 	public static void main(String[] args) {
 		TemplateData data = new TemplateData("FFFFFF;000000;787878;787878;FFFFFF;55AA55;5555AA;http://localhost:8080;logo.png");
@@ -1238,6 +1241,32 @@ public class Template implements Comparable<Template> {
 		return renderer;
 	}
 
+	protected String getRSSRendererFile() {
+		String renderer = properties.getString("renderer.rss", getParent().getRSSRendererFile());
+		return renderer;
+	}
+
+	public String getRSSRendererFullName(ContentContext ctx) throws ServiceException {
+		GlobalContext globalContext = null;
+		if (ctx != null) {
+			globalContext = GlobalContext.getInstance(ctx.getRequest());
+		}
+		if (dir == null) {
+			logger.warning("no valid dir : " + dir);
+			return null;
+		}
+		String renderer = null;
+		try {
+			renderer = getRSSRendererFile();
+		} catch (Exception e) {
+			throw new ServiceException(e.getMessage());
+		}
+		if (renderer == null) {
+			return null;
+		}
+		return URLHelper.mergePath(getLocalTemplateTargetFolder(globalContext), renderer);
+	}
+
 	protected String getRendererFile(Device device) {
 		String renderer = properties.getString("renderer", getParent().getRendererFile(device));
 		if (device != null && !device.isDefault()) {
@@ -1524,6 +1553,10 @@ public class Template implements Comparable<Template> {
 						ResourceHelper.filteredFileCopyEscapeScriplet(file, targetFile, map);
 					} else {
 						ResourceHelper.filteredFileCopy(file, targetFile, map);
+						if (targetFile.getName().toLowerCase().endsWith(".css") || targetFile.getName().toLowerCase().endsWith(".js")) {
+							File gzTargetFile = new File(targetFile.getAbsoluteFile().getAbsolutePath() + "." + GZ_FILE_EXT);
+							ZipManagement.gzipFile(gzTargetFile, targetFile);
+						}
 					}
 				}
 			}
@@ -1761,6 +1794,24 @@ public class Template implements Comparable<Template> {
 
 	public String getDeployId() {
 		return deployId;
+	}
+
+	/**
+	 * return true if this template contains a renderer for PDF.
+	 * 
+	 * @return true if PDF renderer defined.
+	 */
+	public boolean isPDFRenderer() {
+		return properties.getString("html.pdf") != null;
+	}
+
+	/**
+	 * return true if resources can be compressed by CMS (css, js).
+	 * 
+	 * @return true by default or the value of "resources.compress" property.
+	 */
+	public boolean isCompressResources() {
+		return properties.getBoolean("resources.compress", true);
 	}
 
 }

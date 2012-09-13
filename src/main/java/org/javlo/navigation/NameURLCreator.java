@@ -20,6 +20,6 @@ public class NameURLCreator extends AbstractURLFactory {
 			return ((PageURL) comps.iterator().next()).getValue();
 		}
 
-		return '/' + currentPage.getParent().getName() + '/' + currentPage.getName();
+		return '/' + currentPage.getParent().getName() + '/' + currentPage.getName() + '.' + ctx.getFormat();
 	}
 }
