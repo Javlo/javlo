@@ -576,13 +576,12 @@ public class AccessServlet extends HttpServlet {
 						ContentContext viewCtx = ctx.getContextWithOtherRenderMode(ContentContext.VIEW_MODE);
 						viewCtx.setAbsoluteURL(true);
 						String url;
+						Map<String, String> params = new HashMap<String, String>();
+						params.put(Device.FORCE_DEVICE_PARAMETER_NAME, "image");
 						if (request.getParameter(Template.FORCE_TEMPLATE_PARAM_NAME) != null) {
-							Map<String, String> params = new HashMap<String, String>();
 							params.put(Template.FORCE_TEMPLATE_PARAM_NAME, request.getParameter(Template.FORCE_TEMPLATE_PARAM_NAME));
-							url = URLHelper.createURL(viewCtx, params);
-						} else {
-							url = URLHelper.createURL(viewCtx);
 						}
+						url = URLHelper.createURL(viewCtx, params);
 
 						int width = 1280;
 						String widthParam = request.getParameter("width");
