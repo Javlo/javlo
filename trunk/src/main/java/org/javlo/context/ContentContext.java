@@ -108,7 +108,6 @@ public class ContentContext {
 									if (!content.contentExistForContext(ctx)) {
 										if ((menu != null) && (menu.getChildMenuElements()[0].getChildMenuElements().length > 0)) {
 											ctx.setPath(menu.getChildMenuElements()[0].getChildMenuElements()[0].getPath());
-
 										}
 									}
 								}
@@ -350,6 +349,12 @@ public class ContentContext {
 		return outContext;
 	}
 
+	public ContentContext getContextWithOtherFormat(String format) {
+		ContentContext outContext = new ContentContext(this);
+		outContext.setFormat(format);
+		return outContext;
+	}
+
 	public ContentContext getContextWithArea(String area) {
 		ContentContext outContext = new ContentContext(this);
 		outContext.setArea(area);
@@ -452,7 +457,7 @@ public class ContentContext {
 			return root;
 		} else {
 			if (getPath().trim().length() > 0) {
-				MenuElement elem = globalContext.getPage(this, getPath());
+				MenuElement elem = globalContext.getPageIfExist(this, getPath());
 				if (elem != null) {
 					setCurrentPageCached(elem);
 				}
@@ -483,12 +488,14 @@ public class ContentContext {
 			}
 			if (template == null) {
 				MenuElement elem = getCurrentPage();
-				template = TemplateFactory.getTemplates(getRequest().getSession().getServletContext()).get(elem.getTemplateId());
-				if (template == null || !template.exist()) {
+				if (elem != null) {
+					template = TemplateFactory.getTemplates(getRequest().getSession().getServletContext()).get(elem.getTemplateId());
+					if (template == null || !template.exist()) {
 
-					while (elem.getParent() != null && ((template == null) || (!template.exist()) || (template.getRendererFullName(this) == null))) {
-						elem = elem.getParent();
-						template = TemplateFactory.getTemplates(getRequest().getSession().getServletContext()).get(elem.getTemplateId());
+						while (elem.getParent() != null && ((template == null) || (!template.exist()) || (template.getRendererFullName(this) == null))) {
+							elem = elem.getParent();
+							template = TemplateFactory.getTemplates(getRequest().getSession().getServletContext()).get(elem.getTemplateId());
+						}
 					}
 				}
 			}
@@ -1019,6 +1026,11 @@ public class ContentContext {
 		return getRenderMode() == EDIT_MODE || getRenderMode() == PREVIEW_MODE;
 	}
 
+	/**
+	 * get the page format.
+	 * 
+	 * @return sample : pdf, html, png...
+	 */
 	public String getFormat() {
 		if (format == null) {
 			GlobalContext globalContext = GlobalContext.getInstance(getRequest());
@@ -1031,7 +1043,34 @@ public class ContentContext {
 		return format;
 	}
 
+	/**
+	 * force format
+	 * 
+	 * @param format
+	 *            sample : pdf, html, png...
+	 */
+	public void setFormat(String format) {
+		this.format = format;
+	}
+
 	public void setCurrentTemplate(Template template) {
 		this.currentTemplate = template;
+	}
+
+	/**
+	 * return true if link can be linked to gzip
+	 * 
+	 * @throws Exception
+	 */
+	public boolean isResourceGZip() throws Exception {
+		boolean outValue = false;
+		if (getCurrentTemplate() != null) {
+			outValue = getCurrentTemplate().isCompressResources();
+		}
+		String acceptEncoding = request.getHeader("Accept-Encoding");
+		if (acceptEncoding != null) {
+			outValue = outValue && acceptEncoding.toLowerCase().contains("gzip");
+		}
+		return outValue;
 	}
 }

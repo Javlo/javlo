@@ -19,17 +19,16 @@ import org.apache.commons.io.FileCleaningTracker;
 import org.javlo.context.ContentContext;
 import org.javlo.portlet.filter.MultiReadRequestWrapper;
 
-
 public class RequestService {
-	
+
 	FileCleaningTracker tracker = new FileCleaningTracker();
 
 	private static final String KEY = RequestService.class.getName();
 
-	private Map<String, String[]> parameters = new HashMap<String, String[]>();
+	private final Map<String, String[]> parameters = new HashMap<String, String[]>();
 
-	private Map<String, FileItem[]> fileItems = new HashMap<String, FileItem[]>();
-	
+	private final Map<String, FileItem[]> fileItems = new HashMap<String, FileItem[]>();
+
 	private HttpServletRequest request;
 
 	// todo: use this method for optimisation.
@@ -46,16 +45,16 @@ public class RequestService {
 
 	@SuppressWarnings("unchecked")
 	public static RequestService getInstance(HttpServletRequest request) {
-		
+
 		try {
 			request.setCharacterEncoding(ContentContext.CHARACTER_ENCODING);
 		} catch (UnsupportedEncodingException e2) {
 			e2.printStackTrace();
 		}
-		
+
 		RequestService instance = (RequestService) request.getAttribute(KEY);
 		if (instance == null) {
-			instance = new RequestService();			
+			instance = new RequestService();
 			request.setAttribute(KEY, instance);
 
 			try {
@@ -63,11 +62,11 @@ public class RequestService {
 			} catch (RuntimeException e1) {
 				// TODO Auto-generated catch block
 				System.out.println(e1.getMessage());
-				//e1.printStackTrace();
+				// e1.printStackTrace();
 			}
 			boolean isMultipart = ServletFileUpload.isMultipartContent(request);
 			if (isMultipart) {
-				DiskFileItemFactory factory = new DiskFileItemFactory();				
+				DiskFileItemFactory factory = new DiskFileItemFactory();
 				ServletFileUpload upload = new ServletFileUpload(factory);
 				upload.setFileSizeMax(MultiReadRequestWrapper.MAX_UPLOAD_SIZE);
 				List<FileItem> items = null;
@@ -79,7 +78,7 @@ public class RequestService {
 				}
 				if (items != null) {
 					for (FileItem item : items) {
-						if (item.isFormField()) {							
+						if (item.isFormField()) {
 							String[] values = instance.parameters.get(item.getFieldName());
 							if (values == null) {
 								try {
@@ -107,14 +106,14 @@ public class RequestService {
 								fileItems = list.toArray(fileItems);
 							}
 							instance.fileItems.put(item.getFieldName(), fileItems);
-							instance.parameters.put(item.getFieldName(), new String[] {item.getName()});
+							instance.parameters.put(item.getFieldName(), new String[] { item.getName() });
 						}
 					}
 				}
 				factory.setFileCleaningTracker(instance.tracker);
 			}
 		}
-		
+
 		instance.request = request;
 		return instance;
 	}
@@ -135,9 +134,9 @@ public class RequestService {
 		}
 		return res;
 	}
-	
+
 	public List<String> getParameterListValues(String key, List<String> defaultValue) {
-		String[] res = parameters.get(key);		
+		String[] res = parameters.get(key);
 		if (res == null) {
 			return defaultValue;
 		} else {
@@ -146,7 +145,7 @@ public class RequestService {
 				outList.add(param);
 			}
 			return outList;
-		}		
+		}
 	}
 
 	public Map<String, String[]> getParameterMap() {
@@ -170,8 +169,8 @@ public class RequestService {
 		Collection<FileItem> res = new LinkedList<FileItem>();
 		Collection<FileItem[]> fileItemArray = fileItems.values();
 		for (FileItem[] items : fileItemArray) {
-			for (int i = 0; i < items.length; i++) {
-				res.add(items[i]);
+			for (FileItem item : items) {
+				res.add(item);
 			}
 		}
 		return res;
@@ -202,7 +201,7 @@ public class RequestService {
 			return value.toString();
 		}
 	}
-	
+
 	public static String getURI(HttpServletRequest request) {
 		String contextPath = request.getContextPath();
 		String uri = request.getRequestURI();
@@ -211,7 +210,7 @@ public class RequestService {
 		}
 		return uri;
 	}
-	
+
 	public HttpServletRequest getRequest() {
 		return request;
 	}

@@ -12,6 +12,7 @@ import java.util.Collections;
 import java.util.LinkedList;
 import java.util.List;
 
+import org.javlo.component.core.AbstractVisualComponent;
 import org.javlo.component.core.ComplexPropertiesLink;
 import org.javlo.component.core.ComponentBean;
 import org.javlo.context.ContentContext;
@@ -22,6 +23,12 @@ import org.javlo.navigation.MenuElement;
 import org.javlo.service.RequestService;
 
 /**
+ * list of tags of the current page. <h4>JSTL variable :</h4>
+ * <ul>
+ * <li>inherited from {@link AbstractVisualComponent}</li>
+ * <li>{@link String} tags : list of tags. See {@link MenuElement#getTags}</li> *
+ * </ul>
+ * 
  * @author pvandermaesen
  */
 public class Tags extends ComplexPropertiesLink {
@@ -87,6 +94,14 @@ public class Tags extends ComplexPropertiesLink {
 		return TYPE;
 	}
 
+	@Override
+	public void prepareView(ContentContext ctx) throws Exception {
+		super.prepareView(ctx);
+		if (ctx.getCurrentPage() != null) {
+			ctx.getRequest().setAttribute("tags", ctx.getCurrentPage().getTags(ctx));
+		}
+	}
+
 	/**
 	 * @see org.javlo.itf.IContentVisualComponent#getXHTMLCode()
 	 */
@@ -114,7 +129,7 @@ public class Tags extends ComplexPropertiesLink {
 				trad = i18nAccess.getViewText("tag." + tag, tag);
 				i18nAccess.changeViewLanguage(lgCtx);
 			}
-			out.println("<span class=\"" + tag + "\">" + trad);
+			out.println("<span class=\"" + tag + "\">" + trad + "</span>");
 			out.println("</div>");
 			isFirst = false;
 		}

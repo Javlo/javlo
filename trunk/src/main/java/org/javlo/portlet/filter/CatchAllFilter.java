@@ -24,6 +24,7 @@ import org.javlo.context.EditContext;
 import org.javlo.context.GlobalContext;
 import org.javlo.helper.NetHelper;
 import org.javlo.helper.RequestHelper;
+import org.javlo.helper.ResourceHelper;
 import org.javlo.helper.ServletHelper;
 import org.javlo.helper.StringHelper;
 import org.javlo.helper.StringSecurityUtil;
@@ -35,6 +36,7 @@ import org.javlo.module.core.ModulesContext;
 import org.javlo.module.mailing.MailingAction;
 import org.javlo.service.DataToIDService;
 import org.javlo.service.RequestService;
+import org.javlo.template.Template;
 import org.javlo.user.AdminUserFactory;
 import org.javlo.user.AdminUserSecurity;
 import org.javlo.user.IUserFactory;
@@ -231,6 +233,12 @@ public class CatchAllFilter implements Filter {
 		}
 
 		String uri = RequestService.getURI(httpRequest);
+
+		if (uri.endsWith(Template.GZ_FILE_EXT)) {
+			String realFile = uri.substring(0, uri.length() - ('.' + Template.GZ_FILE_EXT).length());
+			((HttpServletResponse) response).setHeader("Content-Encoding", "gzip");
+			((HttpServletResponse) response).setHeader("Content-Type", ResourceHelper.getFileExtensionToManType(StringHelper.getFileExtension(realFile)));
+		}
 
 		String host = ServletHelper.getSiteKey(httpRequest);
 		StaticConfig staticConfig = StaticConfig.getInstance(servletContext);

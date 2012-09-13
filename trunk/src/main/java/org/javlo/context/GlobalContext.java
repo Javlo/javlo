@@ -1102,6 +1102,23 @@ public class GlobalContext implements Serializable {
 	}
 
 	public MenuElement getPage(ContentContext ctx, String url) throws Exception {
+		MenuElement elem = getPageIfExist(ctx, url);
+		if (elem == null) {
+			if (ctx.isPageRequest() && ctx.getPath().equals(url)) {
+				logger.info("page not found : " + url + " (ctx=" + ctx + ')');
+				ctx.getResponse().setStatus(HttpServletResponse.SC_NOT_FOUND, "page not found : " + url);
+				// throw new Exception();
+			}
+			MenuElement root = ContentService.createContent(ctx.getRequest()).getNavigation(ctx);
+			elem = root.searchChildFromName("404");
+			if (elem == null) {
+				elem = root;
+			}
+		}
+		return elem;
+	}
+
+	public MenuElement getPageIfExist(ContentContext ctx, String url) throws Exception {
 		IURLFactory urlCreator = getURLFactory(ctx);
 		if (ctx.getRenderMode() == ContentContext.VIEW_MODE && urlCreator != null) {
 			synchronized (viewPages) {
@@ -1128,18 +1145,7 @@ public class GlobalContext implements Serializable {
 			return root;
 		} else {
 			Collection<MenuElement> pastNode = new LinkedList<MenuElement>();
-			MenuElement elem = MenuElement.searchChild(root, ctx, url, pastNode);
-			if (elem == null) {
-				if (ctx.isPageRequest() && ctx.getPath().equals(url)) {
-					logger.info("page not found : " + url + " (ctx=" + ctx + ')');
-					ctx.getResponse().setStatus(HttpServletResponse.SC_NOT_FOUND, "page not found : " + url);
-				}
-				elem = root.searchChildFromName("404");
-				if (elem == null) {
-					elem = root;
-				}
-			}
-			return elem;
+			return MenuElement.searchChild(root, ctx, url, pastNode);
 		}
 	}
 

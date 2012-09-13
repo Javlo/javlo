@@ -145,7 +145,11 @@ public class ContentService {
 	 */
 	public boolean contentExistForContext(ContentContext ctx) throws Exception {
 		if (ctx.contentExistForContext == null) {
-			ctx.contentExistForContext = !ctx.getCurrentPage().isEmpty(ctx, ComponentBean.DEFAULT_AREA);
+			if (ctx.getCurrentPage() != null) {
+				ctx.contentExistForContext = !ctx.getCurrentPage().isEmpty(ctx, ComponentBean.DEFAULT_AREA);
+			} else {
+				ctx.contentExistForContext = false;
+			}
 		}
 		return ctx.contentExistForContext;
 	}
@@ -451,7 +455,9 @@ public class ContentService {
 
 	/**
 	 * release the preview nav.
-	 * @param ctx if null context will not be updated (and content not reloaded now).
+	 * 
+	 * @param ctx
+	 *            if null context will not be updated (and content not reloaded now).
 	 * @throws Exception
 	 */
 	public void releasePreviewNav(ContentContext ctx) throws Exception {

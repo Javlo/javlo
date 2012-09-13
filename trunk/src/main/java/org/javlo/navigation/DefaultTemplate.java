@@ -304,4 +304,9 @@ public class DefaultTemplate extends Template {
 		return null;
 	}
 
+	@Override
+	protected String getRSSRendererFile() {
+		return null;
+	}
+
 }

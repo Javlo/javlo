@@ -41,7 +41,7 @@ public class DefaultLanguageTitleURLCreator extends AbstractURLFactory {
 			url = '/' + url;
 		}
 
-		return url;
+		return url + '.' + ctx.getFormat();
 	}
 
 }
