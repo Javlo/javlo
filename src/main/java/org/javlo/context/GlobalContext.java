@@ -125,6 +125,8 @@ public class GlobalContext implements Serializable {
 
 	private final Map<String, MenuElement> viewPages = new HashMap<String, MenuElement>();
 
+	private final Map<String, FrontCacheBean> frontCache = new HashMap<String, FrontCacheBean>();
+
 	private ServletContext application;
 
 	/**
@@ -1572,6 +1574,7 @@ public class GlobalContext implements Serializable {
 			cacheManager.getCache(name).removeAll();
 		}
 		viewPages.clear();
+		frontCache.clear();
 		try {
 			ReverseLinkService.getInstance(this).clearCache();
 		} catch (ServiceException e) {
@@ -2333,6 +2336,57 @@ public class GlobalContext implements Serializable {
 		synchronized (properties) {
 			properties.setProperty("security.block-password", pwd);
 			save();
+		}
+	}
+
+	public static final class FrontCacheBean {
+		private long creationTime = -1;
+		private String data = null;
+
+		public FrontCacheBean(String data) {
+			this.creationTime = System.currentTimeMillis();
+			this.data = data;
+		}
+
+		public long getCreationTime() {
+			return creationTime;
+		}
+
+		public void setCreationTime(long creationTime) {
+			this.creationTime = creationTime;
+		}
+
+		public String getData() {
+			return data;
+		}
+
+		public void setData(String data) {
+			this.data = data;
+		}
+
+		@Override
+		public String toString() {
+			return data;
+		}
+	}
+
+	public Map<String, FrontCacheBean> getFrontCache() {
+		return frontCache;
+	}
+
+	/**
+	 * put item in front cache.
+	 * 
+	 * @param key
+	 *            the key of item
+	 * @param value
+	 *            the value of item. If null item is removed.
+	 */
+	public void putItemInFrontCache(String key, String value) {
+		if (value != null) {
+			frontCache.put(key, new FrontCacheBean(value));
+		} else {
+			frontCache.remove(key);
 		}
 	}
 

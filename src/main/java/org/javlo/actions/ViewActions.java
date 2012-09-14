@@ -87,6 +87,17 @@ public class ViewActions implements IAction {
 		return null;
 	}
 
+	public static String performFrontCache(HttpServletRequest request, HttpServletResponse response) throws Exception {
+		ContentContext ctx = ContentContext.getContentContext(request, response);
+		GlobalContext globalContext = GlobalContext.getInstance(ctx.getRequest());
+		String key = request.getParameter("key");
+		String value = request.getParameter("value");
+		if (key != null) {
+			globalContext.putItemInFrontCache(key, value);
+		}
+		return null;
+	}
+
 	public static String performForcedefaultdevice(HttpServletRequest request, HttpServletResponse response) throws Exception {
 		Device device = Device.getDevice(request);
 		device.forceDefault();

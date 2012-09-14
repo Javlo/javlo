@@ -198,6 +198,7 @@ public class AccessServlet extends HttpServlet {
 			}
 
 			GlobalContext globalContext = GlobalContext.getInstance(request);
+			request.setAttribute("frontCache", globalContext.getFrontCache());
 
 			if (FIRST_REQUEST) {
 				synchronized (FIRST_REQUEST) {
