@@ -50,7 +50,6 @@ import org.javlo.config.StaticConfig;
 import org.javlo.context.ContentContext;
 import org.javlo.context.ContentManager;
 import org.javlo.context.GlobalContext;
-import org.javlo.helper.ElementaryURLHelper;
 import org.javlo.helper.Logger;
 import org.javlo.helper.NavigationHelper;
 import org.javlo.helper.ResourceHelper;
@@ -89,8 +88,8 @@ public class MenuElement implements Serializable {
 		private String path;
 		private boolean selected = false;
 		private boolean lastSelected = false;
-		private List<PageBean> children = new LinkedList<PageBean>();
-		private List<PageBean> realChildren = new LinkedList<PageBean>();
+		private final List<PageBean> children = new LinkedList<PageBean>();
+		private final List<PageBean> realChildren = new LinkedList<PageBean>();
 		private String name = null;
 		private String id = null;
 		private String latestEditor;
@@ -487,10 +486,6 @@ public class MenuElement implements Serializable {
 
 	};
 
-	static int textCut = 18;
-
-	// public static final String LOCK_ACCESS = "";
-
 	public static MenuElement getInstance(GlobalContext globalContext) {
 		MenuElement outMenuElement = new MenuElement();
 		outMenuElement.cache = globalContext.getCache("navigation");
@@ -499,6 +494,10 @@ public class MenuElement implements Serializable {
 	}
 
 	public static MenuElement searchChild(MenuElement elem, ContentContext ctx, String path, Collection<MenuElement> pastNode) throws Exception {
+		// check if this is the path to homepage
+		if (elem.getParent() == null && ('/' + elem.getName()).equals(path)) {
+			return elem;
+		}
 		if (pastNode.contains(elem)) {
 			return null;
 		} else {
@@ -633,7 +632,7 @@ public class MenuElement implements Serializable {
 	 * protect page localy if there are linked with other website.
 	 */
 	private boolean remote = false;
-	
+
 	private boolean breakRepeat = false;
 
 	// private final Map<String, PageDescription> pageInfinityCache = new HashMap<String, PageDescription>();
@@ -644,11 +643,11 @@ public class MenuElement implements Serializable {
 
 	private final Map<String, String> replacement = new HashMap<String, String>();
 
-	private Collection<String> compToBeDeleted = new LinkedList<String>();
+	private final Collection<String> compToBeDeleted = new LinkedList<String>();
 
-	private Map<String, ComponentBean> contentToBeAdded = new HashMap<String, ComponentBean>(); // key is parent component id
+	private final Map<String, ComponentBean> contentToBeAdded = new HashMap<String, ComponentBean>(); // key is parent component id
 
-	private Set<String> editGroups = new HashSet<String>();
+	private final Set<String> editGroups = new HashSet<String>();
 
 	private Date latestUpdateLinkedData = null;
 
@@ -1847,9 +1846,6 @@ public class MenuElement implements Serializable {
 			if ((res.trim().length() == 0) && (name != null)) {
 				res = name;
 			}
-			if (StringHelper.htmlSize(res) > getTextCut()) {
-				res = StringHelper.cutEndXHTML(res.trim(), getTextCut()).trim() + "...";
-			}
 		}
 		return res;
 	}
@@ -2041,7 +2037,7 @@ public class MenuElement implements Serializable {
 	}
 
 	public MenuElement getNoErrorFreeCurrentPage(ContentContext ctx) throws Exception {
-		if (ctx.getPath().equals("/") || ctx.getPath().equals('/' + ElementaryURLHelper.ROOT_FILE_NAME)) {
+		if (ctx.getPath().equals("/")) {
 			return this;
 		} else {
 
@@ -2100,10 +2096,10 @@ public class MenuElement implements Serializable {
 	}
 
 	public PageBean getPageBean(ContentContext ctx) throws Exception {
-		
-		String requestKey = getPath()+'_'+ctx.getRequestContentLanguage()+"_"+ctx.getLanguage();
 
-		PageBean pageBean = (PageBean)ctx.getRequest().getAttribute(requestKey);
+		String requestKey = getPath() + '_' + ctx.getRequestContentLanguage() + "_" + ctx.getLanguage();
+
+		PageBean pageBean = (PageBean) ctx.getRequest().getAttribute(requestKey);
 
 		if (pageBean == null) {
 
@@ -2153,7 +2149,7 @@ public class MenuElement implements Serializable {
 			List<MenuElement> children = getChildMenuElementsList();
 			for (MenuElement child : children) {
 				pageBean.addChild(child.getPageBean(ctx));
-			}			
+			}
 			ctx.getRequest().setAttribute(requestKey, pageBean);
 		}
 		return pageBean;
@@ -2234,11 +2230,7 @@ public class MenuElement implements Serializable {
 				if (parent != null) {
 					return parent.getPath() + '/' + getName();
 				} else {
-					if (getParent() == null) {
-						return "";
-					} else {
-						return getName();
-					}
+					return "";
 				}
 			}
 		} catch (Exception e) {
@@ -2404,13 +2396,6 @@ public class MenuElement implements Serializable {
 	}
 
 	/**
-	 * @return
-	 */
-	public int getTextCut() {
-		return textCut;
-	}
-
-	/**
 	 * get the time range found in the content.
 	 * 
 	 * @return
@@ -2507,9 +2492,6 @@ public class MenuElement implements Serializable {
 	 */
 	private String getVirtualPathRec(ContentContext ctx, int c) {
 		try {
-			if (parent == null) {
-				return "";
-			}
 			if (parent == this && c > 1000) {
 				GlobalContext globalContext = GlobalContext.getInstance(ctx.getRequest());
 				logger.severe("recursive vpath in :" + getPath() + "  context : " + globalContext.getContextKey());
@@ -3144,13 +3126,6 @@ public class MenuElement implements Serializable {
 
 	public void setTemplateName(String inTemplate) {
 		templateId = inTemplate;
-	}
-
-	/**
-	 * @param i
-	 */
-	public void setTextCut(int i) {
-		textCut = i;
 	}
 
 	/**

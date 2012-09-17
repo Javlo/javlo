@@ -15,8 +15,8 @@ import org.javlo.ztatic.StaticInfo;
 
 public class JavloELFile extends ELFile {
 
-	private File file;
-	private ELFile parent;
+	private final File file;
+	private final ELFile parent;
 
 	public JavloELFile(ELVolume volume, File file, ELFile parent) {
 		super(volume);
@@ -24,10 +24,12 @@ public class JavloELFile extends ELFile {
 		this.parent = parent;
 	}
 
+	@Override
 	public File getFile() {
 		return file;
 	}
 
+	@Override
 	public List<ELFile> getChildren() {
 		List<ELFile> children = new ArrayList<ELFile>();
 		File[] array = file.listFiles();
@@ -44,6 +46,7 @@ public class JavloELFile extends ELFile {
 		return false;
 	}
 
+	@Override
 	public JavloELFile getParentFile() {
 		if (isRoot()) {
 			return null;
@@ -60,16 +63,17 @@ public class JavloELFile extends ELFile {
 		return StaticInfo.getInstance(getContentContext(), file);
 	}
 
+	@Override
 	public String getURL() {
 		if (getContentContext() != null) {
 			try {
 				StaticInfo info = StaticInfo.getInstance(getContentContext(), file);
-				GlobalContext globalContext = GlobalContext.getSessionInstance(getContentContext().getRequest().getSession());				
+				GlobalContext globalContext = GlobalContext.getSessionInstance(getContentContext().getRequest().getSession());
 				if (!ResourceHelper.isTemplateFile(globalContext, file)) {
-					String url = URLHelper.createResourceURL(getContentContext(), '/' + globalContext.getStaticConfig().getStaticFolder() + info.getStaticURL());					
+					String url = URLHelper.createResourceURL(getContentContext(), '/' + globalContext.getStaticConfig().getStaticFolder() + info.getStaticURL());
 					return url;
-				} else {					
-					String url = URLHelper.createTemplateResourceURL(getContentContext(), '/' + globalContext.getStaticConfig().getStaticFolder() + info.getStaticURL());					
+				} else {
+					String url = URLHelper.createTemplateResourceURL(getContentContext(), '/' + globalContext.getStaticConfig().getStaticFolder() + info.getStaticURL());
 					return url;
 				}
 			} catch (Exception e) {
@@ -79,18 +83,22 @@ public class JavloELFile extends ELFile {
 		return null;
 	}
 
+	@Override
 	public String getThumbnailURL() {
 		if (getContentContext() != null && StringHelper.isImage(file.getName())) {
 			try {
 				StaticInfo info = StaticInfo.getInstance(getContentContext(), file);
 				GlobalContext globalContext = GlobalContext.getSessionInstance(getContentContext().getRequest().getSession());
 				if (!ResourceHelper.isTemplateFile(globalContext, file)) {
-					return URLHelper.createTransformURL(getContentContext(), globalContext.getStaticConfig().getStaticFolder() + info.getStaticURL(), "icone") + "?ts=" + file.lastModified();
+					String url = URLHelper.createTransformURL(getContentContext().getContextWithOtherRenderMode(ContentContext.EDIT_MODE), globalContext.getStaticConfig().getStaticFolder() + info.getStaticURL(), "icone") + "?ts=" + file.lastModified();
+					System.out.println("***** JavloELFile.getThumbnailURL : 1.url = " + url); // TODO: remove debug trace
+					return url;
 				} else {
 					String templateName = ResourceHelper.extractTemplateName(globalContext, file);
 					Template template = TemplateFactory.getDiskTemplate(getContentContext().getRequest().getSession().getServletContext(), templateName);
-					if (template != null) {						
-						String url = URLHelper.createTransformStaticTemplateURL(getContentContext(), template, "template", info.getStaticURL().replaceFirst('/'+templateName, ""))+ "?ts=" + file.lastModified();
+					if (template != null) {
+						String url = URLHelper.createTransformStaticTemplateURL(getContentContext().getContextWithOtherRenderMode(ContentContext.EDIT_MODE), template, "template", info.getStaticURL().replaceFirst('/' + templateName, "")) + "?ts=" + file.lastModified();
+						System.out.println("***** JavloELFile.getThumbnailURL : 2.url = " + url); // TODO: remove debug trace
 						return url;
 					} else {
 						return null;

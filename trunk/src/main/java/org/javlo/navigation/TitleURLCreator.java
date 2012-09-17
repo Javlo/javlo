@@ -17,14 +17,18 @@ public class TitleURLCreator extends AbstractURLFactory {
 
 	@Override
 	public String createURL(ContentContext ctx, MenuElement currentPage) throws Exception {
-		if (currentPage.getParent() == null) {
-			return "/";
+
+		if (currentPage == null) {
+			return "";
 		}
-		Collection<IContentVisualComponent> comps = currentPage.getContentByType(ctx, PageURL.TYPE);
+
+		ContentContext freeCtx = ctx.getFreeContentContext();
+
+		Collection<IContentVisualComponent> comps = currentPage.getContentByType(freeCtx, PageURL.TYPE);
 		if (comps.size() > 0) {
 			return ((PageURL) comps.iterator().next()).getValue();
 		}
-		String title = currentPage.getTitle(ctx);
+		String title = currentPage.getTitle(freeCtx);
 		String path = URLEncoder.encode(StringHelper.createI18NURL(title), ContentContext.CHARACTER_ENCODING);
 
 		String url = path;

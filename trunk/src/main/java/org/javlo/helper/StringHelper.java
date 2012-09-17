@@ -383,7 +383,7 @@ public class StringHelper {
 	}
 
 	public static String createI18NURL(String value) {
-		return createCleanName(value, EU_ACCEPTABLE_CHAR, '-');
+		return createCleanName(value, EU_ACCEPTABLE_CHAR, '-').replace("--", "-");
 	}
 
 	/**
@@ -1402,11 +1402,11 @@ public class StringHelper {
 
 		DateFormat dateFormat;
 		if (dateFormatString != null) {
-			try {				
+			try {
 				dateFormat = new SimpleDateFormat(dateFormatString, locale);
 				return dateFormat.format(date);
-			} catch (Throwable t) {				
-				logger.warning(t.getMessage()+ "   (context:"+globalContext.getContextKey()+')');
+			} catch (Throwable t) {
+				logger.warning(t.getMessage() + "   (context:" + globalContext.getContextKey() + ')');
 				t.printStackTrace();
 			}
 		}
@@ -2239,14 +2239,13 @@ public class StringHelper {
 
 	/**
 	 * Method copied from the private method java.util.Properties#saveConvert(...)
+	 * 
 	 * @param theString
 	 * @param escapeSpace
 	 * @param escapeUnicode
 	 * @return
 	 */
-	public static String escapeProperty(String theString,
-			boolean escapeSpace,
-			boolean escapeUnicode) {
+	public static String escapeProperty(String theString, boolean escapeSpace, boolean escapeUnicode) {
 		int len = theString.length();
 		int bufLen = len * 2;
 		if (bufLen < 0) {
@@ -2311,8 +2310,7 @@ public class StringHelper {
 		}
 		return outBuffer.toString();
 	}
-	private static final char[] hexDigit = {
-			'0', '1', '2', '3', '4', '5', '6', '7', '8', '9', 'A', 'B', 'C', 'D', 'E', 'F'
-	};
+
+	private static final char[] hexDigit = { '0', '1', '2', '3', '4', '5', '6', '7', '8', '9', 'A', 'B', 'C', 'D', 'E', 'F' };
 
 }

@@ -77,6 +77,7 @@ public class AdminAction extends AbstractModuleAction {
 		private String tags;
 		private String blockPassword;
 		private String homepage;
+		private String urlFactory;
 		private String userRoles;
 		private boolean autoSwitchToDefaultLanguage;
 
@@ -126,6 +127,7 @@ public class AdminAction extends AbstractModuleAction {
 			setAutoSwitchToDefaultLanguage(globalContext.isAutoSwitchToDefaultLanguage());
 			setContentLanguages(StringHelper.collectionToString(globalContext.getContentLanguages(), ";"));
 			setHomepage(globalContext.getHomePage());
+			setUrlFactory(globalContext.getURLFactoryClass());
 
 			setUserRoles(StringHelper.collectionToString(globalContext.getUserRoles(), ","));
 
@@ -395,6 +397,14 @@ public class AdminAction extends AbstractModuleAction {
 			this.privateHelpURL = privateHelpURL;
 		}
 
+		public String getUrlFactory() {
+			return urlFactory;
+		}
+
+		public void setUrlFactory(String urlFactory) {
+			this.urlFactory = urlFactory;
+		}
+
 	}
 
 	@Override
@@ -626,6 +636,12 @@ public class AdminAction extends AbstractModuleAction {
 					currentGlobalContext.setRAWTags(requestService.getParameter("tags", null));
 					currentGlobalContext.setAdministrator(requestService.getParameter("administrator", ""));
 					currentGlobalContext.setHomePage(requestService.getParameter("homepage", ""));
+					try {
+						currentGlobalContext.setURLFactory(requestService.getParameter("urlfactory", ""));
+					} catch (Exception e1) {
+						messageRepository.setGlobalMessage(new GenericMessage(e1.getMessage(), GenericMessage.ERROR));
+						e1.printStackTrace();
+					}
 					currentGlobalContext.setUserRoles(new HashSet<String>(StringHelper.stringToCollection(requestService.getParameter("user-roles", ""), ",")));
 					currentGlobalContext.setHelpURL(requestService.getParameter("help-url", ""));
 					currentGlobalContext.setPrivateHelpURL(requestService.getParameter("private-help-url", ""));

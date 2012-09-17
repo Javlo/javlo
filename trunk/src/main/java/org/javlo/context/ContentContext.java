@@ -20,8 +20,8 @@ import javax.servlet.http.HttpServletResponse;
 import org.javlo.component.core.ComponentBean;
 import org.javlo.config.StaticConfig;
 import org.javlo.helper.AjaxHelper.ScheduledRender;
-import org.javlo.helper.ElementaryURLHelper;
 import org.javlo.helper.StringHelper;
+import org.javlo.helper.URLHelper;
 import org.javlo.navigation.IURLFactory;
 import org.javlo.navigation.MenuElement;
 import org.javlo.rendering.Device;
@@ -72,21 +72,32 @@ public class ContentContext {
 
 	public static String CONTEXT_REQUEST_KEY = "contentContext";
 
-	private static ContentContext createContentContext(HttpServletRequest request, HttpServletResponse response) {
+	private static ContentContext createContentContext(HttpServletRequest request, HttpServletResponse response, boolean free) {
 		ContentContext ctx = new ContentContext();
+		ctx.setFree(free);
 		init(ctx, request, response);
 		return ctx;
 	}
 
-	public static ContentContext getNewContentContext(HttpServletRequest request, HttpServletResponse response) throws Exception {
-		return createContentContext(request, response);
+	/**
+	 * return free content ctx, context not linked to a specific page, use in imagetransform servlet or something like that.
+	 * 
+	 * @param request
+	 * @param response
+	 * @return
+	 * @throws Exception
+	 */
+	public static ContentContext getFreeContentContext(HttpServletRequest request, HttpServletResponse response) throws Exception {
+		ContentContext freeCtx = createContentContext(request, response, true);
+		return freeCtx;
 	}
 
 	public static ContentContext getContentContext(HttpServletRequest request, HttpServletResponse response) throws Exception {
 		ContentContext ctx = (ContentContext) request.getAttribute(CONTEXT_REQUEST_KEY);
 		try {
 			if (ctx == null) {
-				ctx = createContentContext(request, response);
+				ctx = createContentContext(request, response, false);
+				ctx.setFree(false);
 				if (ctx.getRenderMode() != ContentContext.EDIT_MODE && ctx.getRenderMode() != ContentContext.ADMIN_MODE) {
 					ContentService content = ContentService.getInstance(GlobalContext.getInstance(request));
 					if (!content.contentExistForContext(ctx)) {
@@ -99,9 +110,7 @@ public class ContentContext {
 						if (!editPreview) {
 							MenuElement menu = content.getNavigation(ctx);
 							if (menu != null) {
-								if (!ContentManager.isRootPath(ctx.path)) {
-									menu = menu.searchChild(ctx);
-								}
+								menu = menu.searchChild(ctx);
 								if ((menu != null) && (menu.getChildMenuElements().length > 0)) {
 									// TODO: clean this system with a recursive system
 									ctx.setPath(menu.getChildMenuElements()[0].getPath());
@@ -283,6 +292,8 @@ public class ContentContext {
 
 	private String format = null;
 
+	private boolean free = false;
+
 	private ContentContext() {
 	}
 
@@ -315,6 +326,7 @@ public class ContentContext {
 		pageRequest = ctx.pageRequest;
 		currentUser = ctx.currentUser;
 		currentEditUser = ctx.currentEditUser;
+		free = ctx.free;
 	}
 
 	public String getArea() {
@@ -328,6 +340,12 @@ public class ContentContext {
 	@Deprecated
 	public String getContentLanguage() {
 		return contentLanguage;
+	}
+
+	public ContentContext getFreeContentContext() {
+		ContentContext newCtx = new ContentContext(this);
+		newCtx.setFree(true);
+		return newCtx;
 	}
 
 	public List<ContentContext> getContextForAllLanguage() {
@@ -453,7 +471,7 @@ public class ContentContext {
 		}
 		GlobalContext globalContext = GlobalContext.getInstance(request);
 		MenuElement root = ContentService.getInstance(globalContext).getNavigation(this);
-		if (getPath().equals("/") || this.getPath().equals('/' + ElementaryURLHelper.ROOT_FILE_NAME)) {
+		if (getPath().equals("/")) {
 			return root;
 		} else {
 			if (getPath().trim().length() > 0) {
@@ -473,6 +491,10 @@ public class ContentContext {
 	}
 
 	public Template getCurrentTemplate() throws Exception {
+
+		if (isFree()) {
+			return null;
+		}
 
 		if (currentTemplate == null) {
 			Template template = null;
@@ -1040,7 +1062,11 @@ public class ContentContext {
 				format = StringHelper.getFileExtension(request.getRequestURI());
 			}
 		}
-		return format;
+		if (format == null || format.trim().length() == 0) {
+			return "html";
+		} else {
+			return format;
+		}
 	}
 
 	/**
@@ -1072,5 +1098,29 @@ public class ContentContext {
 			outValue = outValue && acceptEncoding.toLowerCase().contains("gzip");
 		}
 		return outValue;
+	}
+
+	public boolean isFree() {
+		return free;
+	}
+
+	public void setFree(boolean free) {
+		this.free = free;
+	}
+
+	public String getHomePageURL() {
+		GlobalContext globalContext = GlobalContext.getInstance(getRequest());
+		if (globalContext.getHomePage().length() > 0) {
+			return globalContext.getHomePage();
+		} else {
+			MenuElement rootPage;
+			try {
+				rootPage = ContentService.getInstance(globalContext).getNavigation(this);
+			} catch (Exception e) {
+				e.printStackTrace();
+				return "";
+			}
+			return URLHelper.createURL(this, rootPage);
+		}
 	}
 }

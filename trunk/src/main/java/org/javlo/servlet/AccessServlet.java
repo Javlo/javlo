@@ -576,6 +576,7 @@ public class AccessServlet extends HttpServlet {
 						OutputStream out = response.getOutputStream();
 						ContentContext viewCtx = ctx.getContextWithOtherRenderMode(ContentContext.VIEW_MODE);
 						viewCtx.setAbsoluteURL(true);
+						viewCtx.setFormat("html");
 						String url;
 						Map<String, String> params = new HashMap<String, String>();
 						params.put(Device.FORCE_DEVICE_PARAMETER_NAME, "image");
@@ -596,17 +597,21 @@ public class AccessServlet extends HttpServlet {
 						imageWriter.write(img, out);
 
 					} else if (ctx.getFormat().equalsIgnoreCase("pdf")) {
+
 						response.setContentType("application/pdf;");
 						OutputStream out = response.getOutputStream();
 						ContentContext viewCtx = ctx.getContextWithOtherRenderMode(ContentContext.VIEW_MODE);
 						viewCtx.setAbsoluteURL(true);
+						viewCtx.setFormat("html");
 
 						Map<String, String> params = new HashMap<String, String>();
 						params.put(Device.FORCE_DEVICE_PARAMETER_NAME, "pdf");
 						params.put(ContentContext.FORCE_ABSOLUTE_URL, "true");
+
 						if (request.getParameter(Template.FORCE_TEMPLATE_PARAM_NAME) != null) {
 							params.put(Template.FORCE_TEMPLATE_PARAM_NAME, request.getParameter(Template.FORCE_TEMPLATE_PARAM_NAME));
 						}
+
 						String url = URLHelper.createURL(viewCtx, params);
 
 						ITextRenderer pdfRenderer = new ITextRenderer();

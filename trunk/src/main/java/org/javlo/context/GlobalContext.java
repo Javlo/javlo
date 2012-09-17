@@ -1132,22 +1132,33 @@ public class GlobalContext implements Serializable {
 						MenuElement[] children = ContentService.createContent(ctx.getRequest()).getNavigation(lgCtx).getAllChilds();
 						for (MenuElement menuElement : children) {
 							String pageURL = urlCreator.createURL(lgCtx, menuElement);
-							viewPages.put(pageURL, menuElement);
+							String pageKeyURL = urlCreator.createURLKey(pageURL);
+							viewPages.put(pageKeyURL, menuElement);
 						}
 					}
 				}
 			}
-			MenuElement page = viewPages.get(url);
+		}
+		if (ctx.getRenderMode() == ContentContext.VIEW_MODE) {
+			String keyURL = url;
+			if (urlCreator != null) {
+				keyURL = urlCreator.createURLKey(url);
+			}
+			MenuElement page = viewPages.get(keyURL);
 			if (page != null) {
 				return page;
 			}
 		}
 		MenuElement root = ContentService.createContent(ctx.getRequest()).getNavigation(ctx);
-		if (ctx.getPath().equals("/") || ctx.getPath().equals('/' + ElementaryURLHelper.ROOT_FILE_NAME)) {
+		if (url.equals("/")) {
 			return root;
 		} else {
 			Collection<MenuElement> pastNode = new LinkedList<MenuElement>();
-			return MenuElement.searchChild(root, ctx, url, pastNode);
+			MenuElement page = MenuElement.searchChild(root, ctx, url, pastNode);
+			if (page != null && ctx.getRenderMode() == ContentContext.VIEW_MODE) {
+				viewPages.put(url, page);
+			}
+			return page;
 		}
 	}
 
