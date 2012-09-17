@@ -39,34 +39,40 @@ public class InfoBean {
 	 */
 	public static InfoBean updateInfoBean(ContentContext ctx) throws Exception {
 		InfoBean info = new InfoBean();
-		MenuElement currentPage = ctx.getCurrentPage();
-		info.setPage(currentPage.getPageBean(ctx));
-		if (currentPage.getParent() != null) {
-			info.setParent(currentPage.getParent().getPageBean(ctx));
+		GlobalContext globalContext = GlobalContext.getInstance(ctx.getRequest());
+
+		if (ctx.getCurrentPage() != null) {
+			MenuElement currentPage = ctx.getCurrentPage();
+			info.setPage(currentPage.getPageBean(ctx));
+			if (currentPage.getParent() != null) {
+				info.setParent(currentPage.getParent().getPageBean(ctx));
+			}
+			ContentService content = ContentService.createContent(ctx.getRequest());
+			info.setRoot(content.getNavigation(ctx).getPageBean(ctx));
+			info.setPageTitle(currentPage.getTitle(ctx));
+			info.setPageSubTitle(currentPage.getSubTitle(ctx));
+			info.setPageID(currentPage.getId());
+			info.setPageDescription(currentPage.getDescription(ctx));
+			info.setPageMetaDescription(currentPage.getMetaDescription(ctx));
+			info.setPageCategory(currentPage.getCategory(ctx));
+			info.setGlobalTitle(currentPage.getGlobalTitle(ctx));
+			if (currentPage.getParent() != null) {
+				info.setParentPageName(currentPage.getParent().getName());
+				info.setParentPageTitle(currentPage.getParent().getTitle(ctx));
+				info.setParentPageURL(URLHelper.createURL(ctx, currentPage.getParent().getPath()));
+			}
+			info.setPageName(currentPage.getName());
+			info.setDate(StringHelper.renderDate(currentPage.getContentDateNeverNull(ctx), globalContext.getShortDateFormat()));
+			info.setTime(StringHelper.renderTime(ctx, currentPage.getContentDateNeverNull(ctx)));
 		}
-		ContentService content = ContentService.createContent(ctx.getRequest());
-		info.setRoot(content.getNavigation(ctx).getPageBean(ctx));
-		info.setPageTitle(currentPage.getTitle(ctx));
-		info.setPageSubTitle(currentPage.getSubTitle(ctx));
-		info.setPageID(currentPage.getId());
-		info.setPageDescription(currentPage.getDescription(ctx));
-		info.setPageMetaDescription(currentPage.getMetaDescription(ctx));
-		info.setPageCategory(currentPage.getCategory(ctx));
-		info.setGlobalTitle(currentPage.getGlobalTitle(ctx));
-		if (currentPage.getParent() != null) {
-			info.setParentPageName(currentPage.getParent().getName());
-			info.setParentPageTitle(currentPage.getParent().getTitle(ctx));
-			info.setParentPageURL(URLHelper.createURL(ctx, currentPage.getParent().getPath()));
-		}
+
 		info.setCurrentURL(URLHelper.createURL(ctx));
 		info.setStaticRootURL(URLHelper.createStaticURL(ctx, "/"));
 		ContentContext lCtx = new ContentContext(ctx);
 		lCtx.setAbsoluteURL(true);
 		info.setCurrentAbsoluteURL(URLHelper.createURL(lCtx));
 		info.setHomeAbsoluteURL(URLHelper.createURL(lCtx, "/"));
-		info.setPageName(currentPage.getName());
 
-		GlobalContext globalContext = GlobalContext.getInstance(ctx.getRequest());
 		info.setPrivateHelpURL(globalContext.getPrivateHelpURL());
 		info.setPreviewVersion(PersistenceService.getInstance(globalContext).getVersion());
 		IUserFactory userFactory = UserFactory.createUserFactory(globalContext, ctx.getRequest().getSession());
@@ -82,8 +88,6 @@ public class InfoBean {
 		info.setContentLanguages(globalContext.getContentLanguages());
 		info.setLanguages(globalContext.getLanguages());
 		info.setLanguage(ctx.getLanguage());
-		info.setDate(StringHelper.renderDate(currentPage.getContentDateNeverNull(ctx), globalContext.getShortDateFormat()));
-		info.setTime(StringHelper.renderTime(ctx, currentPage.getContentDateNeverNull(ctx)));
 		info.setRoles(userFactory.getAllRoles(globalContext, ctx.getRequest().getSession()));
 
 		info.device = ctx.getDevice();
