@@ -1307,7 +1307,7 @@ public class GlobalContext implements Serializable {
 			return urlFactory;
 		} else {
 			String urlClass = properties.getString("url-factory", null);
-			if (urlClass != null) {
+			if (urlClass != null && urlClass.trim().length() > 0) {
 				try {
 					urlFactory = ((Class<IURLFactory>) Class.forName(urlClass)).newInstance();
 				} catch (Exception e) {
