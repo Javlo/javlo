@@ -254,7 +254,7 @@ public class AccessServlet extends HttpServlet {
 				}
 			}
 
-			if (ctx.getRenderMode() == ContentContext.VIEW_MODE) {
+			if (ctx.getRenderMode() == ContentContext.VIEW_MODE || ctx.getRenderMode() == ContentContext.PREVIEW_MODE || ctx.getRenderMode() == ContentContext.TIME_MODE || ctx.getRenderMode() == ContentContext.PAGE_MODE || ctx.getRenderMode() == ContentContext.MAILING_MODE) {
 				if (!globalContext.isView()) {
 					String sessionKey = "__unlock_content__";
 					String pwd = request.getParameter("block-password");

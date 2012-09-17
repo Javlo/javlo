@@ -15,11 +15,10 @@ public class TitleURLCreator extends AbstractURLFactory {
 		return false;
 	}
 
-	@Override
-	public String createURL(ContentContext ctx, MenuElement currentPage) throws Exception {
+	protected String createURLWithoutExt(ContentContext ctx, MenuElement currentPage) throws Exception {
 
 		if (currentPage == null) {
-			return "";
+			return "/";
 		}
 
 		ContentContext freeCtx = ctx.getFreeContentContext();
@@ -33,12 +32,17 @@ public class TitleURLCreator extends AbstractURLFactory {
 
 		String url = path;
 		if (isWithParent()) {
-			url = ElementaryURLHelper.mergePath(createURL(ctx, currentPage.getParent()), path);
+			url = ElementaryURLHelper.mergePath(createURLWithoutExt(ctx, currentPage.getParent()), path);
 		} else {
 			url = '/' + url;
 		}
 
-		return url + '.' + ctx.getFormat();
+		return url;
+	}
+
+	@Override
+	public String createURL(ContentContext ctx, MenuElement currentPage) throws Exception {
+		return createURLWithoutExt(ctx, currentPage) + '.' + ctx.getFormat();
 	}
 
 }

@@ -26,14 +26,17 @@ import org.javlo.service.PersistenceService;
 
 public class CreateWeekHereMacro extends AbstractMacro {
 
+	@Override
 	public String getName() {
 		return "create-week-here";
 	}
 
+	@Override
 	public String perform(ContentContext ctx, Map<String, Object> params) throws Exception {
 
 		ContentService content = ContentService.createContent(ctx.getRequest());
-		MenuElement currentPage = ctx.getCurrentPage();;
+		MenuElement currentPage = ctx.getCurrentPage();
+		;
 
 		if (currentPage.getParent() == null) {
 			I18nAccess i18nAccess = I18nAccess.getInstance(ctx.getRequest());
@@ -65,7 +68,7 @@ public class CreateWeekHereMacro extends AbstractMacro {
 						parentId = MacroHelper.addContent(lg, weekPage, parentId, FreeTextList.TYPE, null, "");
 					}
 				} else {
-					createPageStructure(ctx, weekPage, weekStructure);
+					createPageStructure(ctx, weekPage, weekStructure, false);
 				}
 			}
 
@@ -76,21 +79,21 @@ public class CreateWeekHereMacro extends AbstractMacro {
 
 		return null;
 	}
-	
+
 	public static void main(String[] args) {
 		Calendar cal = Calendar.getInstance();
 		try {
 			cal.setTime(StringHelper.parseDate("02/09/2009"));
-			System.out.println("*** cal 1 = "+StringHelper.renderDate(cal.getTime()));
-			System.out.println("*** cal 2 = "+StringHelper.renderDate(TimeHelper.toStartWeek(cal.getTime())));
+			System.out.println("*** cal 1 = " + StringHelper.renderDate(cal.getTime()));
+			System.out.println("*** cal 2 = " + StringHelper.renderDate(TimeHelper.toStartWeek(cal.getTime())));
 
 		} catch (ParseException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-		
+
 	}
-	
+
 	@Override
 	public boolean isAdmin() {
 		return false;

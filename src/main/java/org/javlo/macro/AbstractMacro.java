@@ -10,8 +10,11 @@ import java.util.Set;
 
 import org.javlo.component.core.ContentElementList;
 import org.javlo.component.core.IContentVisualComponent;
+import org.javlo.component.title.SubTitle;
+import org.javlo.component.title.Title;
 import org.javlo.context.ContentContext;
 import org.javlo.context.GlobalContext;
+import org.javlo.helper.LoremIpsumGenerator;
 import org.javlo.helper.MacroHelper;
 import org.javlo.helper.StringHelper;
 import org.javlo.navigation.MenuElement;
@@ -24,11 +27,11 @@ public abstract class AbstractMacro implements IMacro {
 		return getName();
 	}
 
-	public void createPageStructure(ContentContext ctx, MenuElement page, Map componentsType) throws Exception {
+	public void createPageStructure(ContentContext ctx, MenuElement page, Map componentsType, boolean fakeContent) throws Exception {
 		GlobalContext globalContext = GlobalContext.getInstance(ctx.getRequest());
 		Collection<String> lgs = globalContext.getContentLanguages();
-		if (!StringHelper.isTrue(""+componentsType.get("all-languages"))) {
-			lgs = Arrays.asList(new String[] {ctx.getRequestContentLanguage()});
+		if (!StringHelper.isTrue("" + componentsType.get("all-languages"))) {
+			lgs = Arrays.asList(new String[] { ctx.getRequestContentLanguage() });
 		}
 
 		for (String lg : lgs) {
@@ -39,15 +42,26 @@ public abstract class AbstractMacro implements IMacro {
 			Collections.sort(keys);
 			for (String compName : keys) {
 				if (compName.contains(".") && !compName.endsWith(".style") && !compName.endsWith(".list") && !compName.endsWith(".area")) {
-					String style = (String)componentsType.get(compName+".style");					
-					boolean asList = StringHelper.isTrue((String)componentsType.get(compName+".list"));
-					String area = (String)componentsType.get(compName+".area");
-					parentId = MacroHelper.addContent(lg, page, parentId, StringHelper.split(compName, ".")[1], style, area, (String)componentsType.get(compName), asList);
+					String style = (String) componentsType.get(compName + ".style");
+					boolean asList = StringHelper.isTrue(componentsType.get(compName + ".list"));
+					String area = (String) componentsType.get(compName + ".area");
+
+					String type = StringHelper.split(compName, ".")[1];
+
+					String value = (String) componentsType.get(compName);
+					if (fakeContent) {
+						if (type.equals(Title.TYPE) || type.equals(SubTitle.TYPE)) {
+							value = LoremIpsumGenerator.getParagraph(3, false, true);
+						} else {
+							value = LoremIpsumGenerator.getParagraph(50, false, true);
+						}
+					}
+					parentId = MacroHelper.addContent(lg, page, parentId, type, style, area, value, asList);
 				}
 			}
 		}
 	}
-	
+
 	public List<IContentVisualComponent> getAllComponent(ContentContext ctx) throws Exception {
 		List<IContentVisualComponent> outList = new LinkedList<IContentVisualComponent>();
 		MenuElement root = ContentService.createContent(ctx.getRequest()).getNavigation(ctx);
@@ -65,7 +79,7 @@ public abstract class AbstractMacro implements IMacro {
 		}
 		return outList;
 	}
-	
+
 	@Override
 	public boolean isAdmin() {
 		return true;

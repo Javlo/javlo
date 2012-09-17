@@ -253,7 +253,7 @@ public class StringHelper {
 	}
 
 	private static String createCleanName(String fileName, String acceptableCharacters, char defaultReplaceChar) {
-		// fileName = removeAccents(fileName);
+		fileName = fileName.trim();
 
 		StringBuffer res = new StringBuffer();
 

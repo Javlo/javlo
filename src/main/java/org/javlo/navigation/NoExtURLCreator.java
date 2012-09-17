@@ -13,7 +13,7 @@ import org.javlo.helper.StringHelper;
 public class NoExtURLCreator implements IURLFactory {
 
 	private static String getParentPath(MenuElement page) {
-		if (page == null || page.getParent() != null) {
+		if (page != null && page.getParent() != null) {
 			return getParentPath(page.getParent()) + '/' + page.getName();
 		} else {
 			return "";
