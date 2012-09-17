@@ -91,14 +91,12 @@ public class JavloELFile extends ELFile {
 				GlobalContext globalContext = GlobalContext.getSessionInstance(getContentContext().getRequest().getSession());
 				if (!ResourceHelper.isTemplateFile(globalContext, file)) {
 					String url = URLHelper.createTransformURL(getContentContext().getContextWithOtherRenderMode(ContentContext.EDIT_MODE), globalContext.getStaticConfig().getStaticFolder() + info.getStaticURL(), "icone") + "?ts=" + file.lastModified();
-					System.out.println("***** JavloELFile.getThumbnailURL : 1.url = " + url); // TODO: remove debug trace
 					return url;
 				} else {
 					String templateName = ResourceHelper.extractTemplateName(globalContext, file);
 					Template template = TemplateFactory.getDiskTemplate(getContentContext().getRequest().getSession().getServletContext(), templateName);
 					if (template != null) {
 						String url = URLHelper.createTransformStaticTemplateURL(getContentContext().getContextWithOtherRenderMode(ContentContext.EDIT_MODE), template, "template", info.getStaticURL().replaceFirst('/' + templateName, "")) + "?ts=" + file.lastModified();
-						System.out.println("***** JavloELFile.getThumbnailURL : 2.url = " + url); // TODO: remove debug trace
 						return url;
 					} else {
 						return null;
