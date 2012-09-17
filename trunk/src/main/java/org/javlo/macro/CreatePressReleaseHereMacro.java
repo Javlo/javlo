@@ -15,23 +15,25 @@ import org.javlo.component.title.Title;
 import org.javlo.context.ContentContext;
 import org.javlo.context.GlobalContext;
 import org.javlo.helper.MacroHelper;
+import org.javlo.helper.StringHelper;
 import org.javlo.i18n.I18nAccess;
 import org.javlo.message.GenericMessage;
 import org.javlo.message.MessageRepository;
 import org.javlo.navigation.MenuElement;
 import org.javlo.service.PersistenceService;
 
-
 public class CreatePressReleaseHereMacro extends AbstractMacro {
 
+	@Override
 	public String getName() {
 		return "create-press-release-here";
 	}
-	
+
 	public String getPageStructureName() {
 		return "press-release";
 	}
 
+	@Override
 	public String perform(ContentContext ctx, Map<String, Object> params) throws Exception {
 		MenuElement currentPage = ctx.getCurrentPage();
 		MenuElement monthPage = currentPage;
@@ -56,11 +58,11 @@ public class CreatePressReleaseHereMacro extends AbstractMacro {
 			}
 			if (year != null && mount != null) {
 				MenuElement[] children = currentPage.getChildMenuElements();
-				
+
 				int maxNumber = 0;
 				for (MenuElement child : children) {
 					splittedName = child.getName().split("-");
-					
+
 					try {
 						int currentNumber = Integer.parseInt(splittedName[splittedName.length - 1]);
 						if (currentNumber > maxNumber) {
@@ -70,19 +72,18 @@ public class CreatePressReleaseHereMacro extends AbstractMacro {
 					}
 				}
 				maxNumber = maxNumber + 1;
-				MenuElement newPage = MacroHelper.addPageIfNotExist(ctx, monthPage.getName(), groupPage.getName() + "-" + year + "-" + mount + "-" + maxNumber,
-						true);
+				MenuElement newPage = MacroHelper.addPageIfNotExist(ctx, monthPage.getName(), groupPage.getName() + "-" + year + "-" + mount + "-" + maxNumber, true);
 				newPage.setVisible(true);
 
 				GlobalContext globalContext = GlobalContext.getInstance(ctx.getRequest());
 
 				Calendar cal = GregorianCalendar.getInstance();
 				cal.setTime(new Date());
-				
+
 				Properties pressReleaseStructure = ctx.getCurrentTemplate().getMacroProperties(globalContext, getPageStructureName());
 				if (pressReleaseStructure == null) {
 					Collection<String> lgs = globalContext.getContentLanguages();
-					for (String lg : lgs) {						
+					for (String lg : lgs) {
 						String parentId = "0";
 						parentId = MacroHelper.addContent(lg, newPage, parentId, DateComponent.TYPE, "");
 						parentId = MacroHelper.addContent(lg, newPage, parentId, Title.TYPE, "");
@@ -91,8 +92,8 @@ public class CreatePressReleaseHereMacro extends AbstractMacro {
 						parentId = MacroHelper.addContent(lg, newPage, parentId, Paragraph.TYPE, "");
 					}
 				} else {
-					createPageStructure(ctx, newPage, pressReleaseStructure);
-				}			
+					createPageStructure(ctx, newPage, pressReleaseStructure, StringHelper.isTrue(pressReleaseStructure.get("fake-content")));
+				}
 
 				PersistenceService persistenceService = PersistenceService.getInstance(globalContext);
 				persistenceService.store(ctx);
@@ -109,7 +110,7 @@ public class CreatePressReleaseHereMacro extends AbstractMacro {
 
 		return null;
 	}
-	
+
 	@Override
 	public boolean isAdmin() {
 		return false;

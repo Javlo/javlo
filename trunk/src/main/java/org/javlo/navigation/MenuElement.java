@@ -1028,13 +1028,15 @@ public class MenuElement implements Serializable {
 
 	public ContentElementList getAllContent(ContentContext ctx) throws Exception {
 
-		ContentElementList elemList = new ContentElementList(getAllLocalContent(ctx));
+		ContentContext ctxPage = ctx.getContextOnPage(this);
 
-		if ((getParent() != null) && (ctx.getRenderMode() != ContentContext.EDIT_MODE)) {
-			getParent().addAllRepeatContent(elemList, ctx);
+		ContentElementList elemList = new ContentElementList(getAllLocalContent(ctxPage));
+
+		if ((getParent() != null) && (ctxPage.getRenderMode() != ContentContext.EDIT_MODE)) {
+			getParent().addAllRepeatContent(elemList, ctxPage);
 		}
 
-		elemList.initialize(ctx);
+		elemList.initialize(ctxPage);
 
 		return elemList;
 	}
@@ -1299,15 +1301,16 @@ public class MenuElement implements Serializable {
 	 */
 	public ContentElementList getContent(ContentContext ctx) throws Exception {
 
-		ContentElementList elemList = new ContentElementList(getLocalContent(ctx));
+		ContentContext pageCtx = ctx.getContextOnPage(this);
+		ContentElementList elemList = new ContentElementList(getLocalContent(pageCtx));
 
 		if (!isBreakRepeat()) {
 			if ((getParent() != null) && (ctx.getRenderMode() != ContentContext.EDIT_MODE)) {
-				getParent().addRepeatContent(elemList, ctx);
+				getParent().addRepeatContent(elemList, pageCtx);
 			}
 		}
 
-		elemList.initialize(ctx);
+		elemList.initialize(pageCtx);
 
 		return elemList;
 	}

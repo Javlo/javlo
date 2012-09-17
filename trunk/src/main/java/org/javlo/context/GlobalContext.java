@@ -1109,7 +1109,6 @@ public class GlobalContext implements Serializable {
 			if (ctx.isPageRequest() && ctx.getPath().equals(url)) {
 				logger.info("page not found : " + url + " (ctx=" + ctx + ')');
 				ctx.getResponse().setStatus(HttpServletResponse.SC_NOT_FOUND, "page not found : " + url);
-				// throw new Exception();
 			}
 			MenuElement root = ContentService.createContent(ctx.getRequest()).getNavigation(ctx);
 			elem = root.searchChildFromName("404");

@@ -423,6 +423,17 @@ public class ContentContext {
 		return null;
 	}
 
+	public ContentContext getContextOnPage(MenuElement page) throws Exception {
+		if (getPath().equals(page.getPath())) {
+			return this;
+		} else {
+			ContentContext outCtx = new ContentContext(this);
+			outCtx.setPath(page.getPath());
+			outCtx.setCurrentPageCached(page);
+			return outCtx;
+		}
+	}
+
 	public ContentContext getContextForAbsoluteURL() {
 		ContentContext outCtx = new ContentContext(this);
 		outCtx.setAbsoluteURL(true);

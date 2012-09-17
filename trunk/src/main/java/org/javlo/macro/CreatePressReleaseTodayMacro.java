@@ -20,20 +20,22 @@ import org.javlo.navigation.MenuElement;
 import org.javlo.service.PersistenceService;
 
 public class CreatePressReleaseTodayMacro extends AbstractMacro {
-	
+
 	/**
 	 * create a static logger.
 	 */
 	protected static Logger logger = Logger.getLogger(CreatePressReleaseTodayMacro.class.getName());
 
+	@Override
 	public String getName() {
 		return "create-press-release-today";
 	}
-	
+
 	public String getPageStructureName() {
 		return "press-release";
 	}
 
+	@Override
 	public String perform(ContentContext ctx, Map<String, Object> params) throws Exception {
 
 		Calendar cal = GregorianCalendar.getInstance();
@@ -54,7 +56,7 @@ public class CreatePressReleaseTodayMacro extends AbstractMacro {
 		Properties pressReleaseStructure = ctx.getCurrentTemplate().getMacroProperties(globalContext, getPageStructureName());
 		if (pressReleaseStructure == null) {
 			for (String lg : lgs) {
-				logger.info("no '"+getPageStructureName()+"' page structure found in template : "+ctx.getCurrentTemplate().getName() );
+				logger.info("no '" + getPageStructureName() + "' page structure found in template : " + ctx.getCurrentTemplate().getName());
 				String parentId = "0";
 				parentId = MacroHelper.addContent(lg, newPage, parentId, DateComponent.TYPE, "");
 				parentId = MacroHelper.addContent(lg, newPage, parentId, Title.TYPE, "");
@@ -63,7 +65,7 @@ public class CreatePressReleaseTodayMacro extends AbstractMacro {
 				parentId = MacroHelper.addContent(lg, newPage, parentId, Paragraph.TYPE, "");
 			}
 		} else {
-			createPageStructure(ctx, newPage, pressReleaseStructure);
+			createPageStructure(ctx, newPage, pressReleaseStructure, false);
 		}
 
 		PersistenceService persistenceService = PersistenceService.getInstance(globalContext);
@@ -71,7 +73,7 @@ public class CreatePressReleaseTodayMacro extends AbstractMacro {
 
 		return null;
 	}
-	
+
 	@Override
 	public boolean isAdmin() {
 		return false;
