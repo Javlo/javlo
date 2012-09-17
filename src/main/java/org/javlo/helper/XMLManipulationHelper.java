@@ -931,7 +931,6 @@ public class XMLManipulationHelper {
 
 		out.append("%>");
 		out.newLine();
-		out.append("<%@ taglib uri=\"http://displaytag.sf.net\" prefix=\"display\" %>");
 		out.close();
 
 		return outString.toString();
