@@ -9,7 +9,6 @@ import javax.servlet.http.HttpServletRequest;
 
 import org.javlo.config.StaticConfig;
 import org.javlo.helper.StringHelper;
-import org.javlo.helper.URLHelper;
 import org.javlo.i18n.I18nAccess;
 import org.javlo.navigation.MenuElement;
 import org.javlo.service.ContentService;
@@ -100,7 +99,7 @@ public class ContentManager {
 
 		String lg = "";
 
-		String realPath =  RequestService.getURI(request);
+		String realPath = RequestService.getURI(request);
 
 		GlobalContext.getInstance(request);
 
@@ -364,10 +363,6 @@ public class ContentManager {
 			}
 		}
 		return res;
-	}
-
-	public static boolean isRootPath(String path) {
-		return path.equals("/") || path.equals('/' + URLHelper.ROOT_FILE_NAME);
 	}
 
 	public static boolean isTime(HttpServletRequest request) {

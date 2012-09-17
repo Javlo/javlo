@@ -355,7 +355,6 @@ public class ContentService {
 			}
 			DebugHelper.checkAssert(res == null, "the return of getNavigation can be never null.");
 			StaticConfig staticConfig = StaticConfig.getInstance(ctx.getRequest().getSession());
-			res.setTextCut(staticConfig.getMaxMenuTitleSize());
 		}
 		return res;
 	}

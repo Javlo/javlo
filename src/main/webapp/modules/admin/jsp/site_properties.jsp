@@ -102,6 +102,12 @@
 	<input type="text" id="homepage" name="homepage" value="${currentContext.homepage}" />	
 </div>
 
+<div class="line">		
+	<label for="urlfactory">${i18n.edit['admin.form.urlfactory']}</label>
+	<input type="text" id="urlfactory" name="urlfactory" value="${currentContext.urlFactory}" />	
+</div>
+
+
 </div>
 
 <div class="one_half">

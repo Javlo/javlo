@@ -543,10 +543,12 @@ public class I18nAccess implements Serializable {
 	private void updateTemplate(ContentContext ctx) throws ConfigurationException, IOException, ServiceException, Exception {
 		if (ctx.getLanguage() != null) {
 			GlobalContext globalContext = GlobalContext.getInstance(ctx.getRequest());
-			Template template = ctx.getCurrentTemplate();
-			if (template != null) {
-				template = template.getFinalTemplate(ctx);
-				templateView = template.getI18nProperties(globalContext, new Locale(ctx.getLanguage()));
+			if (!ctx.isFree()) {
+				Template template = ctx.getCurrentTemplate();
+				if (template != null) {
+					template = template.getFinalTemplate(ctx);
+					templateView = template.getI18nProperties(globalContext, new Locale(ctx.getLanguage()));
+				}
 			}
 		}
 	}

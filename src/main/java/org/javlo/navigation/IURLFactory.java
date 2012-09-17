@@ -5,6 +5,14 @@ import org.javlo.context.ContentContext;
 public interface IURLFactory {
 
 	/**
+	 * transform url to a unic string represent information (sp. : without extension).
+	 * 
+	 * @param url
+	 * @return
+	 */
+	public String createURLKey(String url);
+
+	/**
 	 * create url to a page.
 	 * 
 	 * @param ctx

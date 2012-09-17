@@ -147,7 +147,7 @@ public class ImageTransformServlet extends HttpServlet {
 		}
 
 		// org.javlo.helper.Logger.stepCount("transform", "start - transformation - 1");
-		
+
 		BufferedImage img = ImageIO.read(imageFile);
 
 		// org.javlo.helper.Logger.stepCount("transform", "start - transformation - 2 (src image size : "+img.getWidth()+","+img.getHeight()+")");
@@ -291,12 +291,12 @@ public class ImageTransformServlet extends HttpServlet {
 				if (!"png".equals(fileExtension) && !"gif".equals(fileExtension)) {
 					img = ImageEngine.removeAlpha(img);
 				}
-				/*if ("jpg".equals(fileExtension)) {
-					ImageEngine.compressJpegFile(img, outImage, 0.9);
-				} else {*/
-					// fileExtension never null for now, see ImageConfig
-					ImageIO.write(img, fileExtension, outImage);
-				/*}*/
+				/*
+				 * if ("jpg".equals(fileExtension)) { ImageEngine.compressJpegFile(img, outImage, 0.9); } else {
+				 */
+				// fileExtension never null for now, see ImageConfig
+				ImageIO.write(img, fileExtension, outImage);
+				/* } */
 			} finally {
 				outImage.close();
 			}
@@ -341,9 +341,7 @@ public class ImageTransformServlet extends HttpServlet {
 		servletRun++;
 
 		StaticConfig staticConfig = StaticConfig.getInstance(request.getSession());
-		ContentContext ctx = ContentContext.getContentContext(request, response);
-
-		boolean mailing = false;
+		ContentContext ctx = ContentContext.getFreeContentContext(request, response);
 
 		OutputStream out = null;
 
@@ -376,8 +374,8 @@ public class ImageTransformServlet extends HttpServlet {
 		String imageName = pathInfo;
 		imageName = imageName.replace('\\', '/');
 
-		logger.finest("apply fitler on image : " + imageName);	
-			
+		logger.finest("apply fitler on image : " + imageName);
+
 		try {
 			String filter = "default";
 			String area = null;
@@ -405,7 +403,7 @@ public class ImageTransformServlet extends HttpServlet {
 					} catch (Exception e) {
 						e.printStackTrace();
 					}
-					
+
 					// pathInfo = pathInfo.substring(slachIndex + 1);
 
 					imageName = pathInfo;
@@ -413,9 +411,9 @@ public class ImageTransformServlet extends HttpServlet {
 					e1.printStackTrace();
 				}
 			}
-			
+
 			// org.javlo.helper.Logger.stepCount("transform", "template");
-			
+
 			StaticInfo staticInfo = null;
 			if (imageName.substring(1).startsWith(staticConfig.getShareDataFolderKey())) {
 				imageName = imageName.substring(staticConfig.getShareDataFolderKey().length() + 2);
@@ -462,14 +460,14 @@ public class ImageTransformServlet extends HttpServlet {
 				/** * LOCALISE IMAGE ** */
 				// TODO: this version of template detection need better
 				// method
-				//String baseFolder = URLHelper.mergePath(dataFolder, staticConfig.getStaticFolder()); //TODO: with javlo 1.4 it seem we do'nt need static folder ????
-				String baseFolder = dataFolder; //TODO: with javlo 1.4 it seem we do'nt need static folder ????
+				// String baseFolder = URLHelper.mergePath(dataFolder, staticConfig.getStaticFolder()); //TODO: with javlo 1.4 it seem we do'nt need static folder ????
+				String baseFolder = dataFolder; // TODO: with javlo 1.4 it seem we do'nt need static folder ????
 				if (filter.startsWith("template")) {
 					baseFolder = getServletContext().getRealPath("");
-				}	
-				
-				String realFile = URLHelper.mergePath(baseFolder,imageName);
-				
+				}
+
+				String realFile = URLHelper.mergePath(baseFolder, imageName);
+
 				File imageFile = new File(realFile);
 
 				if (returnImageDescription) {
@@ -496,14 +494,14 @@ public class ImageTransformServlet extends HttpServlet {
 				if (ctx.getDevice() != null) {
 					deviceCode = ctx.getDevice().getCode();
 				}
-				
+
 				FileCache fc = FileCache.getInstance(getServletContext());
 				String key = ImageHelper.createSpecialDirectory(filter, area, deviceCode, template);
 				if (fc.getFileName(key, imageName).exists()) {
 					response.sendRedirect(URLHelper.createStaticURL(ctx, fc.getRelativeFilePath(key, imageName)));
 					return;
 				}
-				
+
 				if ((fileStream != null)) {
 					try {
 						ResourceHelper.writeStreamToStream(fileStream, out);
@@ -525,7 +523,7 @@ public class ImageTransformServlet extends HttpServlet {
 
 					/*********************/
 
-					if ((fileStream != null)) {
+					if (fileStream != null) {
 						try {
 							ResourceHelper.writeStreamToStream(fileStream, out);
 						} finally {

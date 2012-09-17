@@ -543,10 +543,6 @@ public class Edit extends AbstractModuleAction {
 		}
 
 		MenuElement page = ctx.getCurrentPage();
-		System.out.println("");
-		System.out.println("***** Edit.performInsert : path = " + page.getPath()); // TODO: remove debug trace
-		System.out.println("***** Edit.performInsert : content size : " + page.getContent().length); // TODO: remove debug trace
-		System.out.println("");
 
 		String msg = i18nAccess.getText("action.component.created", new String[][] { { "type", type } });
 		messageRepository.setGlobalMessageAndNotification(ctx, new GenericMessage(msg, GenericMessage.INFO));
@@ -709,7 +705,6 @@ public class Edit extends AbstractModuleAction {
 					Template template = TemplateFactory.getDiskTemplates(application).get(templateName);
 					if (template != null && ctx.getCurrentTemplates().contains(template)) { // TODO: check this test
 						page.setTemplateName(template.getName());
-						ctx.setCurrentTemplate(null); // reset current template
 						modify = true;
 					} else {
 						return "template not found : " + templateName;
@@ -717,7 +712,7 @@ public class Edit extends AbstractModuleAction {
 				} else {
 					page.setTemplateName(null); // inherited
 				}
-
+				ctx.setCurrentTemplate(null); // reset current template
 			}
 			if (errorMessage != null) {
 				messageRepository.setGlobalMessageAndNotification(ctx, new GenericMessage(errorMessage, GenericMessage.ERROR));

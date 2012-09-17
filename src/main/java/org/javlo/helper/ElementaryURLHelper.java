@@ -73,8 +73,6 @@ public abstract class ElementaryURLHelper {
 
 	// public static final String URL_SUFFIX = ".html";
 
-	public static final String ROOT_FILE_NAME = "index";
-
 	public static final String SPACIAL_RIGHT_CODE_KEY = "special-right-code";
 
 	/**
@@ -154,7 +152,6 @@ public abstract class ElementaryURLHelper {
 			if (urlCreator != null) {
 				try {
 					uri = uri.substring(0, uri.lastIndexOf("."));
-					// MenuElement page = globalContext.getPageByPath(ctx, uri);
 					MenuElement page = globalContext.getPage(ctx, uri);
 					uri = urlCreator.createURL(ctx, page);
 				} catch (Exception e) {
@@ -368,7 +365,7 @@ public abstract class ElementaryURLHelper {
 
 		ContentService.createContent(ctx.getRequest());
 
-		if (template != null) {
+		if (template != null || ctx.getRenderMode() == ContentContext.EDIT_MODE) { // TODO: check the second part of the test.
 			String templateName;
 			if (ctx.getRenderMode() == ContentContext.EDIT_MODE) {
 				templateName = Template.EDIT_TEMPLATE_CODE;
@@ -436,7 +433,11 @@ public abstract class ElementaryURLHelper {
 
 		if (!uri.endsWith(urlSuffix)) {
 			if (uri.endsWith("/")) {
-				uri = uri + ROOT_FILE_NAME + urlSuffix;
+				try {
+					uri = uri + ContentService.getInstance(globalContext).getNavigation(ctx).getName() + urlSuffix;
+				} catch (Exception e) {
+					e.printStackTrace();
+				}
 			} else {
 				uri = uri + urlSuffix;
 			}

@@ -397,7 +397,7 @@ public class CatchAllFilter implements Filter {
 					if (viewURI.length() > 3) {
 						sep = viewURI.charAt(3);
 					}
-					if (sep == '/' || sep == '-') {
+					if (sep == '/' || sep == '-' || sep == '?' || viewURI.length() == 3) {
 						String lg = viewURI.substring(1, 3).toLowerCase();
 						if (globalContext.getContentLanguages().contains(lg)) {
 							String newPath = "/view" + viewURI;

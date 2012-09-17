@@ -102,7 +102,7 @@ public class XMLServlet extends HttpServlet {
 					response.setContentType("application/xhtml+xml");
 
 					GlobalContext globalContext = GlobalContext.getInstance(request);
-					ContentContext ctx = ContentContext.getNewContentContext(request, response);
+					ContentContext ctx = ContentContext.getFreeContentContext(request, response);
 					ctx.setAbsoluteURL(true);
 					ctx.setLanguage(lang);
 					ContentService content = ContentService.createContent(request);
