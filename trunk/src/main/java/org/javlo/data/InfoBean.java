@@ -64,6 +64,12 @@ public class InfoBean {
 			info.setPageName(currentPage.getName());
 			info.setDate(StringHelper.renderDate(currentPage.getContentDateNeverNull(ctx), globalContext.getShortDateFormat()));
 			info.setTime(StringHelper.renderTime(ctx, currentPage.getContentDateNeverNull(ctx)));
+
+			while (currentPage.getParent() != null) {
+				currentPage = currentPage.getParent();
+				info.pagePath.add(0, currentPage.getPageBean(ctx));
+			}
+
 		}
 
 		info.setCurrentURL(URLHelper.createURL(ctx));
@@ -100,12 +106,6 @@ public class InfoBean {
 
 		MessageRepository messageRepository = MessageRepository.getInstance(ctx);
 		info.globalMessage = messageRepository.getGlobalMessage();
-
-		MenuElement page = ctx.getCurrentPage();
-		while (page.getParent() != null) {
-			page = page.getParent();
-			info.pagePath.add(0, page.getPageBean(ctx));
-		}
 
 		info.setCaptchaURL(URLHelper.createStaticURL(ctx, "/captcha.jpg"));
 		ContentContext copyCtx = EditContext.getInstance(globalContext, ctx.getRequest().getSession()).getContextForCopy(ctx);
