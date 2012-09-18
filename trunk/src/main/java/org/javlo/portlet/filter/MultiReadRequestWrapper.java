@@ -24,15 +24,14 @@ public class MultiReadRequestWrapper extends javax.servlet.http.HttpServletReque
 	public static final long MAX_UPLOAD_SIZE = 2l * 1024l * 1024l * 1024l; // 2 giga max size
 	private static final String TEMP_FILE_PREFIX = "temp-file-8938404834";
 
-	
 	private static class TempFileFilter implements FilenameFilter {
 
+		@Override
 		public boolean accept(File dir, String name) {
 			return name.startsWith(TEMP_FILE_PREFIX);
 		}
 	}
 
-	
 	public MultiReadRequestWrapper(HttpServletRequest request) {
 		super(request);
 	}
@@ -56,8 +55,7 @@ public class MultiReadRequestWrapper extends javax.servlet.http.HttpServletReque
 	File tempFile = null;
 
 	/**
-	 * makes the ServletInputStream content available for several parsing by
-	 * copying its content in a file buffer
+	 * makes the ServletInputStream content available for several parsing by copying its content in a file buffer
 	 */
 	@Override
 	public ServletInputStream getInputStream() throws IOException {
@@ -102,13 +100,12 @@ public class MultiReadRequestWrapper extends javax.servlet.http.HttpServletReque
 		super.finalize();
 	}
 
-	
 	private class ServletInputStreamDelegate extends ServletInputStream {
 
 		protected final Logger logger = Logger.getLogger(ServletInputStreamDelegate.class.getName());
 
 		private final InputStream is;
-		private int size = 0;
+		private long size = 0;
 
 		public ServletInputStreamDelegate(InputStream is) throws FileNotFoundException {
 			this.is = is;

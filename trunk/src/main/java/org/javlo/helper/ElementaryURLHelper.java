@@ -36,6 +36,9 @@ public abstract class ElementaryURLHelper {
 
 		@Override
 		public boolean equals(Object obj) {
+			if (obj == null) {
+				return false;
+			}
 			return getCode().equals(((Code) (obj)).getCode());
 		}
 

@@ -208,6 +208,7 @@ public class Multimedia extends TimeRangeComponent implements IImageTitle {
 		}
 	}
 
+	@Override
 	protected String getDisplayAsInputName() {
 		return "display-as-" + getId();
 	}
@@ -226,12 +227,6 @@ public class Multimedia extends TimeRangeComponent implements IImageTitle {
 
 	@Override
 	protected String getEditXHTMLCode(ContentContext ctx) throws Exception {
-
-		Date date = getStartDate();
-		if (date == null) {
-			date = new Date();
-		}
-
 		I18nAccess i18nAccess = I18nAccess.getInstance(ctx.getRequest());
 
 		StringWriter writer = new StringWriter();
@@ -254,7 +249,7 @@ public class Multimedia extends TimeRangeComponent implements IImageTitle {
 		out.println("<input id=\"contentdate\" style=\"width: 120px;\" type=\"text\" id=\"" + getInputStartDateName() + "\" name=\"" + getInputStartDateName() + "\" value=\"" + StringHelper.renderDateWithDefaultValue(getStartDate(), "") + "\"/> - ");
 		out.println("<input style=\"width: 120px;\" type=\"text\" id=\"" + getInputEndDateName() + "\" name=\"" + getInputEndDateName() + "\" value=\"" + StringHelper.renderDateWithDefaultValue(getEndDate(), "") + "\"/>");
 		out.println("<div class=\"line\">");
-		out.println("<label for=\""+getInputMaxListSizeName()+"\">"+i18nAccess.getText("content.multimedia-gallery.list-size")+"</label>");
+		out.println("<label for=\"" + getInputMaxListSizeName() + "\">" + i18nAccess.getText("content.multimedia-gallery.list-size") + "</label>");
 		out.println(" : <input style=\"width: 120px;\" type=\"text\" id=\"" + getInputMaxListSizeName() + "\" name=\"" + getInputMaxListSizeName() + "\" value=\"" + getMaxListSize() + "\"/>");
 		out.println("</div>");
 

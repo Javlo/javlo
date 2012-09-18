@@ -1323,7 +1323,7 @@ public class PageReferenceComponent extends ComplexPropertiesLink implements IAc
 			}
 
 			String firstPageNumber = requestService.getParameter(getFirstPageNumberInputName(), "1");
-			if (!firstPageNumber.equals(getFirstPageNumber())) {
+			if (!firstPageNumber.equals("" + getFirstPageNumber())) {
 				setFirstPageNumber(firstPageNumber);
 				setModify();
 			}

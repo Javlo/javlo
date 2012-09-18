@@ -1151,10 +1151,7 @@ public class Template implements Comparable<Template> {
 	}
 
 	public File getMailJsp(ContentContext ctx, String mailName) throws Exception {
-		GlobalContext globalContext = null;
-		if (ctx != null) {
-			globalContext = GlobalContext.getInstance(ctx.getRequest());
-		}
+		GlobalContext globalContext = GlobalContext.getInstance(ctx.getRequest());
 		File htmlFile = new File(URLHelper.mergePath(getFolder(globalContext), MAIL_FOLDER) + mailName + '-' + ctx.getContentLanguage() + ".html");
 		File jspFile = new File(URLHelper.mergePath(getFolder(globalContext), MAIL_FOLDER) + mailName + '-' + ctx.getContentLanguage() + ".jsp");
 		if (!htmlFile.exists()) {
@@ -1239,6 +1236,14 @@ public class Template implements Comparable<Template> {
 			setDepth(depth);
 		}
 		return renderer;
+	}
+
+	public synchronized String getRenderer(ContentContext ctx, String file) throws Exception {
+		String renderer = properties.getString("renderer." + file, getParent().getRenderer(ctx, file));
+		if (renderer == null) {
+			return null;
+		}
+		return URLHelper.createStaticTemplateURLWithoutContext(ctx, this, renderer);
 	}
 
 	protected String getRSSRendererFile() {
@@ -1335,7 +1340,7 @@ public class Template implements Comparable<Template> {
 		if (renderer == null) {
 			return null;
 		}
-		return URLHelper.createStaticTemplateURLWithoutContext(ctx, ctx.getCurrentTemplate(), renderer);
+		return URLHelper.createStaticTemplateURLWithoutContext(ctx, ctx.getCurrentTemplate(), renderer); // not this ?
 	}
 
 	public String getSelectedClass() {

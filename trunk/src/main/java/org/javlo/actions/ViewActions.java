@@ -92,8 +92,10 @@ public class ViewActions implements IAction {
 		GlobalContext globalContext = GlobalContext.getInstance(ctx.getRequest());
 		String key = request.getParameter("key");
 		String value = request.getParameter("value");
-		if (key != null) {
-			globalContext.putItemInFrontCache(key, value);
+		String renderer = request.getParameter("renderer");
+		if (key != null && value != null) {
+			value = value.replace("<", "&lt;").replace(">", "&gt;");
+			globalContext.putItemInFrontCache(ctx, key, value, renderer);
 		}
 		return null;
 	}

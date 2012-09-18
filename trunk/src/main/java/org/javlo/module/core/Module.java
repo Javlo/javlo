@@ -124,6 +124,9 @@ public class Module {
 
 		@Override
 		public boolean equals(Object obj) {
+			if (obj == null) {
+				return false;
+			}
 			HtmlLink otherLink = (HtmlLink) obj;
 			return otherLink.getUrl().equals(getUrl()) && otherLink.getLegend().equals(getLegend());
 		}

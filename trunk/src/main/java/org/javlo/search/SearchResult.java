@@ -5,6 +5,7 @@ package org.javlo.search;
 
 import java.io.ByteArrayOutputStream;
 import java.io.PrintStream;
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
@@ -63,19 +64,19 @@ public class SearchResult {
 		}
 
 	}
-	
+
 	public class PriorityComporator implements Comparator<SearchElement> {
 		@Override
 		public int compare(SearchElement o1, SearchElement o2) {
-			return - (o1.getPriority() - o2.getPriority());
+			return -(o1.getPriority() - o2.getPriority());
 		}
 	}
 
-	public static class SearchElement {
+	public static class SearchElement implements Serializable {
 
 		public static class Component {
-			private IContentVisualComponent comp;
-			private SearchResult searchResult;
+			private final IContentVisualComponent comp;
+			private final SearchResult searchResult;
 
 			public Component(SearchResult searchResult, IContentVisualComponent comp) {
 				this.comp = comp;
@@ -312,7 +313,7 @@ public class SearchResult {
 					searchText = inSearchText;
 					int searchLevel = 0;
 					List<Component> componentsRenderer = new LinkedList<Component>();
-					
+
 					while (elemList.hasNext(ctxWithContent)) {
 						IContentVisualComponent cpt = elemList.next(ctxWithContent);
 
@@ -327,14 +328,14 @@ public class SearchResult {
 						}
 					}
 					if (searchLevel != 0) {
-						addResult(ctx, page, inSearchText, page.getName(), page.getFullLabel(ctxWithContent), URLHelper.createURL(ctxWithContent, page.getPath()), page.getDescription(ctxWithContent), searchLevel, componentsRenderer);						
+						addResult(ctx, page, inSearchText, page.getName(), page.getFullLabel(ctxWithContent), URLHelper.createURL(ctxWithContent, page.getPath()), page.getDescription(ctxWithContent), searchLevel, componentsRenderer);
 					}
 				}
 			}
 		}
 		MenuElement[] children = page.getChildMenuElements();
-		for (int i = 0; i < children.length; i++) {
-			searchInPage(children[i], ctx, groupId, inSearchText, componentType);
+		for (MenuElement element : children) {
+			searchInPage(element, ctx, groupId, inSearchText, componentType);
 		}
 	}
 
@@ -359,8 +360,8 @@ public class SearchResult {
 			}
 		}
 		MenuElement[] children = page.getChildMenuElements();
-		for (int i = 0; i < children.length; i++) {
-			searchComponentInPage(children[i], ctx, componentType);
+		for (MenuElement element : children) {
+			searchComponentInPage(element, ctx, componentType);
 		}
 	}
 

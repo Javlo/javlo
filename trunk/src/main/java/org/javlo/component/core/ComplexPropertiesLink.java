@@ -31,7 +31,8 @@ public abstract class ComplexPropertiesLink extends AbstractVisualComponent {
 	public String getLinkLabelName() {
 		return "label" + ID_SEPARATOR + getId();
 	}
-	
+
+	@Override
 	public void setValue(String inContent) {
 		super.setValue(inContent);
 		reloadProperties();
@@ -46,7 +47,7 @@ public abstract class ComplexPropertiesLink extends AbstractVisualComponent {
 				e.printStackTrace();
 			}
 			String res = new String(out.toByteArray());
-			setValue(res);			
+			setValue(res);
 		}
 	}
 
@@ -73,21 +74,21 @@ public abstract class ComplexPropertiesLink extends AbstractVisualComponent {
 		properties.setProperty(key, value);
 		storeProperties();
 	}
-	
+
 	@Override
 	public boolean equals(Object obj) {
 		if (!(obj instanceof ComplexPropertiesLink)) {
 			return false;
 		}
-		ComplexPropertiesLink comp = (ComplexPropertiesLink)obj;
-		
+		ComplexPropertiesLink comp = (ComplexPropertiesLink) obj;
+
 		boolean eq = getComponentBean().getStyle().equals(comp.getComponentBean().getStyle());
 		eq = eq && getComponentBean().isList() == comp.getComponentBean().isList();
 		eq = eq && getComponentBean().isRepeat() == comp.getComponentBean().isRepeat();
 		eq = eq && getComponentBean().getLanguage().equals(comp.getComponentBean().getLanguage());
-		eq = eq && getComponentBean().equals(comp.getComponentBean().getLanguage());
+		eq = eq && getComponentBean().getValue().equals(comp.getComponentBean().getValue());
 		eq = properties.equals(comp.properties);
-		
+
 		return eq;
 	}
 

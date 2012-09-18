@@ -269,7 +269,7 @@ public class MacroHelper {
 			String msg = i18nAccess.getText("action.add.new-page", new String[][] { { "path", pageName } });
 			MessageRepository.getInstance(ctx).setGlobalMessage(new GenericMessage(msg, GenericMessage.INFO));
 		} else {
-			String msg = "page not found : " + parentPage.getName();
+			String msg = "page not found.";
 			MessageRepository.getInstance(ctx).setGlobalMessage(new GenericMessage(msg, GenericMessage.ERROR));
 		}
 
@@ -518,16 +518,22 @@ public class MacroHelper {
 	public static final String getXHTMLMacroSelection(ContentContext ctx) throws FileNotFoundException, IOException {
 		return getXHTMLMacroSelection(ctx, true);
 	}
-	
+
 	/**
-	 * add content to a page. 
-	 * @param ctx Current Context
-	 * @param page page with new content
-	 * @param content the content formated in a string.<br /> format: [TYPE]:content;[TYPE]:content.<br /> sample : title:first title;subtitle;paragraph:lorem
-	 * @throws Exception 
-	 *
+	 * add content to a page.
+	 * 
+	 * @param ctx
+	 *            Current Context
+	 * @param page
+	 *            page with new content
+	 * @param content
+	 *            the content formated in a string.<br />
+	 *            format: [TYPE]:content;[TYPE]:content.<br />
+	 *            sample : title:first title;subtitle;paragraph:lorem
+	 * @throws Exception
+	 * 
 	 */
-	public static void insertContent (ContentContext ctx, MenuElement page, String content) throws Exception {
+	public static void insertContent(ContentContext ctx, MenuElement page, String content) throws Exception {
 		String[] allContent = content.split(";");
 		String contentId = "0";
 		for (String item : allContent) {
@@ -537,18 +543,18 @@ public class MacroHelper {
 			if (splitItem.length > 1) {
 				value = splitItem[1].trim();
 			}
-			String area =  ComponentBean.DEFAULT_AREA;
+			String area = ComponentBean.DEFAULT_AREA;
 			if (type.contains("(")) {
 				area = StringUtils.split(type, "(")[0];
 				type = StringUtils.split(type, "(")[1];
 				if (type.endsWith(")")) {
-					type = type.substring(0, type.length()-1);
+					type = type.substring(0, type.length() - 1);
 				}
 			}
 			String style = null;
-			if (type.contains("|")) {			
+			if (type.contains("|")) {
 				style = StringUtils.split(type, "|")[1];
-				type = StringUtils.split(type, "|")[0];					
+				type = StringUtils.split(type, "|")[0];
 			}
 			contentId = addContent(ctx.getRequestContentLanguage(), page, contentId, type, style, area, value);
 		}
@@ -598,27 +604,27 @@ public class MacroHelper {
 	public static void setCurrentMacroDate(HttpSession session, Date date) {
 		session.setAttribute(MACRO_DATE_KEY, date);
 	}
-	
+
 	public static void main(String[] args) {
 		String type = "sidebar(page-reference)";
-		
-		String area =  ComponentBean.DEFAULT_AREA;
+
+		String area = ComponentBean.DEFAULT_AREA;
 		if (type.contains("(")) {
 			area = StringUtils.split(type, "(")[0];
 			type = StringUtils.split(type, "(")[1];
 			if (type.endsWith(")")) {
-				type = type.substring(0, type.length()-1);
+				type = type.substring(0, type.length() - 1);
 			}
 		}
 		String style = null;
-		if (type.contains("|")) {			
+		if (type.contains("|")) {
 			style = StringUtils.split(type, "|")[1];
-			type = StringUtils.split(type, "|")[0];					
+			type = StringUtils.split(type, "|")[0];
 		}
-		
-		System.out.println("***** MacroHelper.main : type = "+type); //TODO: remove debug trace
-		System.out.println("***** MacroHelper.main : area = "+area); //TODO: remove debug trace
-		System.out.println("***** MacroHelper.main : style = "+style); //TODO: remove debug trace
+
+		System.out.println("***** MacroHelper.main : type = " + type); // TODO: remove debug trace
+		System.out.println("***** MacroHelper.main : area = " + area); // TODO: remove debug trace
+		System.out.println("***** MacroHelper.main : style = " + style); // TODO: remove debug trace
 	}
 
 }

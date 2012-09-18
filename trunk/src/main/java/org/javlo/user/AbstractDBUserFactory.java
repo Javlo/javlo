@@ -108,7 +108,7 @@ public abstract class AbstractDBUserFactory extends UserFactory {
 	public List<IUserInfo> getUserInfoList() {
 
 		if (userInfoList == null) {
-			userInfoList = allUsers;			
+			userInfoList = allUsers;
 		}
 
 		return userInfoList;
@@ -126,10 +126,8 @@ public abstract class AbstractDBUserFactory extends UserFactory {
 			try {
 				connection = getConnection(globalContext);
 				Statement stte = connection.createStatement();
-				synchronized (allUsers) {
-					allUsers = statementToUserInfoList(stte);
-					logger.info("load : " + allUsers.size() + " users.");
-				}
+				allUsers = statementToUserInfoList(stte);
+				logger.info("load : " + allUsers.size() + " users.");
 			} catch (Exception e) {
 				e.printStackTrace();
 			} finally {

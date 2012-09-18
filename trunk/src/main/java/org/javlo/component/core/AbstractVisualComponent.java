@@ -170,13 +170,12 @@ public abstract class AbstractVisualComponent implements IContentVisualComponent
 	 */
 	@Override
 	protected Object clone() throws CloneNotSupportedException {
-		IContentVisualComponent res = null;
 		try {
-			res = this.getClass().newInstance();
+			return this.getClass().newInstance();
 		} catch (Exception e) {
 			e.printStackTrace();
+			throw new CloneNotSupportedException(e.getMessage());
 		}
-		return res;
 	}
 
 	protected int countLine() {
@@ -300,10 +299,11 @@ public abstract class AbstractVisualComponent implements IContentVisualComponent
 		I18nAccess i18nAccess = null;
 		try {
 			i18nAccess = I18nAccess.getInstance(globalContext, ctx.getRequest().getSession());
+			return i18nAccess.getText("content." + getType(), getType());
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
-		return i18nAccess.getText("content." + getType(), getType());
+		return null;
 	}
 
 	/**
@@ -675,6 +675,7 @@ public abstract class AbstractVisualComponent implements IContentVisualComponent
 			i18nAccess = I18nAccess.getInstance(ctx.getRequest());
 		} catch (Exception e) {
 			e.printStackTrace();
+			return null;
 		}
 		SuffixPrefix sufixPreffix = new SuffixPrefix("<em>", "</em>", i18nAccess.getText("component.marker.italic"));
 		out.add(sufixPreffix);
@@ -772,6 +773,7 @@ public abstract class AbstractVisualComponent implements IContentVisualComponent
 			i18nAccess = I18nAccess.getInstance(ctx.getRequest());
 		} catch (Exception e) {
 			e.printStackTrace();
+			return null;
 		}
 		SuffixPrefix sufixPreffix = new SuffixPrefix("<q>", "</q>", i18nAccess.getText("component.marker.quotation"));
 		out.add(sufixPreffix);

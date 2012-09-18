@@ -198,7 +198,6 @@ public class AccessServlet extends HttpServlet {
 			}
 
 			GlobalContext globalContext = GlobalContext.getInstance(request);
-			request.setAttribute("frontCache", globalContext.getFrontCache());
 
 			if (FIRST_REQUEST) {
 				synchronized (FIRST_REQUEST) {
@@ -218,6 +217,7 @@ public class AccessServlet extends HttpServlet {
 			}
 
 			ContentContext ctx = ContentContext.getContentContext(request, response);
+			request.setAttribute("frontCache", globalContext.getFrontCache(ctx));
 
 			logger.fine(requestLabel + " : first ContentContext " + df.format((double) (System.currentTimeMillis() - startTime) / (double) 1000) + " sec.");
 			logger.fine("device : " + ctx.getDevice());
@@ -377,7 +377,9 @@ public class AccessServlet extends HttpServlet {
 				logger.fine(requestLabel + " : action " + df.format((double) (System.currentTimeMillis() - startTime) / (double) 1000) + " sec.");
 
 				ContentService content = ContentService.getInstance(globalContext);
-				ctx.getCurrentPage().updateLinkedData(ctx);
+				if (ctx.getCurrentPage() != null) {
+					ctx.getCurrentPage().updateLinkedData(ctx);
+				}
 				MenuElement elem = content.getNavigation(ctx).getNoErrorFreeCurrentPage(ctx);
 				/** INIT TEMPLATE **/
 				if (ctx.getCurrentTemplate() == null || action != null) { // action can change the template
@@ -481,30 +483,32 @@ public class AccessServlet extends HttpServlet {
 				String portletId = requestService.getParameter("javlo-portlet-id", null);
 				if (portletId != null) {
 					MenuElement currentPage = ctx.getCurrentPage();
-					IContentComponentsList contentList = currentPage.getAllContent(ctx);
-					while (contentList.hasNext(ctx)) {
-						IContentVisualComponent comp = contentList.next(ctx);
-						if (comp instanceof AbstractPortletWrapperComponent) {
-							AbstractPortletWrapperComponent portlet = (AbstractPortletWrapperComponent) comp;
-							if (portletId.equals(portlet.getId())) {
+					if (currentPage != null) {
+						IContentComponentsList contentList = currentPage.getAllContent(ctx);
+						while (contentList.hasNext(ctx)) {
+							IContentVisualComponent comp = contentList.next(ctx);
+							if (comp instanceof AbstractPortletWrapperComponent) {
+								AbstractPortletWrapperComponent portlet = (AbstractPortletWrapperComponent) comp;
+								if (portletId.equals(portlet.getId())) {
 
-								// serves a static resource within a portlet, whatever the mode
-								if (requestService.getParameter("javlo-portlet-resource", null) != null) {
-									portlet.renderPortletResource(ctx);
-									return;
-								} else if (request.getServletPath().equals("/edit")) {
-
-									// render a specific portlet maximized (edit mode only) - plm
-									// TODO: maximized in view
-									PortletWindowImpl pw = portlet.getPortletWindow(ctx);
-
-									// TODO: maximized in edit ?
-									if (WindowState.MAXIMIZED.equals(pw.getWindowState())) {
-										request.setAttribute("portlet", portlet);
-										response.setContentType("text/html; charset=" + ContentContext.CHARACTER_ENCODING);
-										getServletContext().getRequestDispatcher("/jsp/edit/template/portlet_max_edit.jsp").include(request, response);
-
+									// serves a static resource within a portlet, whatever the mode
+									if (requestService.getParameter("javlo-portlet-resource", null) != null) {
+										portlet.renderPortletResource(ctx);
 										return;
+									} else if (request.getServletPath().equals("/edit")) {
+
+										// render a specific portlet maximized (edit mode only) - plm
+										// TODO: maximized in view
+										PortletWindowImpl pw = portlet.getPortletWindow(ctx);
+
+										// TODO: maximized in edit ?
+										if (WindowState.MAXIMIZED.equals(pw.getWindowState())) {
+											request.setAttribute("portlet", portlet);
+											response.setContentType("text/html; charset=" + ContentContext.CHARACTER_ENCODING);
+											getServletContext().getRequestDispatcher("/jsp/edit/template/portlet_max_edit.jsp").include(request, response);
+
+											return;
+										}
 									}
 								}
 							}

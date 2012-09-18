@@ -462,6 +462,12 @@ public class Edit extends AbstractModuleAction {
 			currentModule.removeNavigation("persistence");
 		}
 
+		if (ctx.getCurrentPage() == null) {
+			I18nAccess i18nAccess = I18nAccess.getInstance(ctx.getRequest());
+			MessageRepository messageRepository = MessageRepository.getInstance(ctx);
+			messageRepository.setGlobalMessageAndNotification(ctx, new GenericMessage(i18nAccess.getText("edit.message.no-content"), GenericMessage.ERROR));
+		}
+
 		return msg;
 	}
 

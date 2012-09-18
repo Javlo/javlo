@@ -70,6 +70,7 @@ import org.javlo.template.Template;
 import org.javlo.user.AdminUserFactory;
 import org.javlo.user.IUserFactory;
 import org.javlo.user.User;
+import org.javlo.utils.SmartMap;
 import org.javlo.utils.TimeMap;
 import org.javlo.ztatic.StaticInfo;
 
@@ -125,7 +126,7 @@ public class GlobalContext implements Serializable {
 
 	private final Map<String, MenuElement> viewPages = new HashMap<String, MenuElement>();
 
-	private final Map<String, FrontCacheBean> frontCache = new HashMap<String, FrontCacheBean>();
+	private final SmartMap frontCache = new SmartMap();
 
 	private ServletContext application;
 
@@ -1192,7 +1193,7 @@ public class GlobalContext implements Serializable {
 		if (votes == 0) {
 			return 0;
 		} else {
-			return Math.round(currentRank / votes);
+			return Math.round((float) currentRank / (float) votes);
 		}
 	}
 
@@ -2352,10 +2353,12 @@ public class GlobalContext implements Serializable {
 	public static final class FrontCacheBean {
 		private long creationTime = -1;
 		private String data = null;
+		private String renderer = null;
 
-		public FrontCacheBean(String data) {
+		public FrontCacheBean(String data, String renderer) {
 			this.creationTime = System.currentTimeMillis();
 			this.data = data;
+			this.setRenderer(renderer);
 		}
 
 		public long getCreationTime() {
@@ -2378,10 +2381,18 @@ public class GlobalContext implements Serializable {
 		public String toString() {
 			return data;
 		}
+
+		public String getRenderer() {
+			return renderer;
+		}
+
+		public void setRenderer(String renderer) {
+			this.renderer = renderer;
+		}
 	}
 
-	public Map<String, FrontCacheBean> getFrontCache() {
-		return frontCache;
+	public Map getFrontCache(ContentContext ctx) {
+		return new SmartMap(ctx, frontCache);
 	}
 
 	/**
@@ -2392,9 +2403,16 @@ public class GlobalContext implements Serializable {
 	 * @param value
 	 *            the value of item. If null item is removed.
 	 */
-	public void putItemInFrontCache(String key, String value) {
+	public void putItemInFrontCache(ContentContext ctx, String key, String value, String rendererKey) {
 		if (value != null) {
-			frontCache.put(key, new FrontCacheBean(value));
+			try {
+				String renderer = ctx.getCurrentTemplate().getRenderer(ctx, rendererKey);
+				System.out.println("***** GlobalContext.putItemInFrontCache : renderer = " + renderer); // TODO: remove debug trace
+				frontCache.put(key, new SmartMap.JspSmartValue(renderer, value));
+			} catch (Exception e) {
+				e.printStackTrace();
+			}
+
 		} else {
 			frontCache.remove(key);
 		}

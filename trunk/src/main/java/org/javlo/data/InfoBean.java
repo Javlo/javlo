@@ -70,6 +70,9 @@ public class InfoBean {
 				info.pagePath.add(0, currentPage.getPageBean(ctx));
 			}
 
+		} else {
+			ContentService content = ContentService.createContent(ctx.getRequest());
+			info.setPage(content.getNavigation(ctx).getPageBean(ctx));
 		}
 
 		info.setCurrentURL(URLHelper.createURL(ctx));

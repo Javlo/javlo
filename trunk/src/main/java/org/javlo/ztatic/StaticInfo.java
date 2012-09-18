@@ -142,7 +142,7 @@ public class StaticInfo {
 		ContentContext ctx;
 		boolean ascending = true;
 
-		private Map<File, Integer> fileAccess = new HashMap<File, Integer>();
+		private final Map<File, Integer> fileAccess = new HashMap<File, Integer>();
 
 		public StaticFileSortByAccess(ContentContext inCtx, boolean inAscending) {
 			ctx = inCtx;
@@ -171,7 +171,7 @@ public class StaticInfo {
 					fileAccess.put(file2, access2);
 				}
 
-				if (access1 == access2) {
+				if (access1.intValue() == access2.intValue()) {
 					return changeOrder;
 				} else {
 					return (access1 - access2) * changeOrder;
@@ -607,11 +607,11 @@ public class StaticInfo {
 	 */
 	public int getFocusZoneX(ContentContext ctx) {
 		ContentService content = ContentService.createContent(ctx.getRequest());
-		
-		ContentContext editCtx = ctx.getContextWithOtherRenderMode(ContentContext.EDIT_MODE);		
+
+		ContentContext editCtx = ctx.getContextWithOtherRenderMode(ContentContext.EDIT_MODE);
 		if (!content.isNavigationLoaded(editCtx)) {
 			editCtx = ctx;
-		}		
+		}
 		String kzx = content.getAttribute(editCtx, getKey("focus-zone-x"), "" + DEFAULT_FOCUS_X);
 		return Integer.parseInt(kzx);
 	}
@@ -624,7 +624,7 @@ public class StaticInfo {
 	 */
 	public int getFocusZoneY(ContentContext ctx) {
 		ContentService content = ContentService.createContent(ctx.getRequest());
-		ContentContext editCtx = ctx.getContextWithOtherRenderMode(ContentContext.EDIT_MODE);		
+		ContentContext editCtx = ctx.getContextWithOtherRenderMode(ContentContext.EDIT_MODE);
 		if (!content.isNavigationLoaded(editCtx)) {
 			editCtx = ctx;
 		}

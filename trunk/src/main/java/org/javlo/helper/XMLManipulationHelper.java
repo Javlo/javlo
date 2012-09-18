@@ -103,6 +103,9 @@ public class XMLManipulationHelper {
 
 		@Override
 		public boolean equals(Object obj) {
+			if (obj == null) {
+				return false;
+			}
 			TagDescription otherTag = (TagDescription) obj;
 			return getOpenStart() == otherTag.getOpenStart();
 		}
