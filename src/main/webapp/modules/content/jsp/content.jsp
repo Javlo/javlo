@@ -22,6 +22,11 @@
 	    org.javlo.component.core.IContentComponentsList"
 %><%
 ContentContext ctx = ContentContext.getContentContext ( request, response );
+
+if (ctx.getCurrentPage() == null) {	
+	return;
+}
+
 GlobalContext globalContext = GlobalContext.getInstance(request);
 ContentService content = ContentService.getInstance(globalContext);
 EditContext editContext = EditContext.getInstance(globalContext, request.getSession());

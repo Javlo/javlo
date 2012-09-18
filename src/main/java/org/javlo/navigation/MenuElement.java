@@ -2785,6 +2785,9 @@ public class MenuElement implements Serializable {
 
 	public boolean isSelected(ContentContext ctx) throws Exception {
 		MenuElement page = ctx.getCurrentPage();
+		if (page == null) {
+			return false;
+		}
 		if (this.getId().equals(page.getId())) {
 			return true;
 		}

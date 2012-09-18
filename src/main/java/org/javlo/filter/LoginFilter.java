@@ -49,7 +49,6 @@ public class LoginFilter implements Filter {
 			HttpServletRequest httpRequest = (HttpServletRequest) request;
 			HttpServletResponse httpResponse = (HttpServletResponse) response;
 
-			request.getServerName().toLowerCase();
 			GlobalContext globalContext = GlobalContext.getInstance(httpRequest);
 
 			// ContentContext ctx = ContentContext.getContentContext(httpRequest, httpResponse);
@@ -58,19 +57,9 @@ public class LoginFilter implements Filter {
 			RequestService requestService = RequestService.getInstance(httpRequest);
 
 			String loginId = requestService.getParameter(RemoteLoginService.PARAM_NAME, null);
-			/*if (loginId != null) {
-				logger.fine("try a remote login with id : " + loginId);
-				RemoteLoginService remoteLoginService = RemoteLoginService.getInstance(httpRequest.getSession().getServletContext());
-				User user = remoteLoginService.login(loginId);
-				if (user != null) {
-					IUserFactory fact = AdminUserFactory.createUserFactory(globalContext, httpRequest.getSession());
-					fact.setCurrentUser(httpRequest.getSession(), user);
-					EditContext editCtx = EditContext.getInstance(globalContext, httpRequest.getSession());
-					editCtx.setEditUser(user);
-					next.doFilter(httpRequest, response);
-					return;
-				}
-			}*/
+			/*
+			 * if (loginId != null) { logger.fine("try a remote login with id : " + loginId); RemoteLoginService remoteLoginService = RemoteLoginService.getInstance(httpRequest.getSession().getServletContext()); User user = remoteLoginService.login(loginId); if (user != null) { IUserFactory fact = AdminUserFactory.createUserFactory(globalContext, httpRequest.getSession()); fact.setCurrentUser(httpRequest.getSession(), user); EditContext editCtx = EditContext.getInstance(globalContext, httpRequest.getSession()); editCtx.setEditUser(user); next.doFilter(httpRequest, response); return; } }
+			 */
 
 			Principal logoutUser = null;
 

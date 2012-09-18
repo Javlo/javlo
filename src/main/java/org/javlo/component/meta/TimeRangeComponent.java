@@ -32,17 +32,17 @@ public class TimeRangeComponent extends DateComponent {
 	public String getType() {
 		return TYPE;
 	}
-	
+
 	@Override
-	protected void init() throws RessourceNotFoundException {	
+	protected void init() throws RessourceNotFoundException {
 		super.init();
 		if (getEndDate() == null && initDate) {
 			Calendar calStart = GregorianCalendar.getInstance();
 			Calendar calEnd = GregorianCalendar.getInstance();
 			calEnd.roll(Calendar.WEEK_OF_YEAR, true);
-			String value = StringHelper.renderTime(calStart.getTime())+VALUE_SEPARATOR+StringHelper.renderTime(calEnd.getTime());
+			String value = StringHelper.renderTime(calStart.getTime()) + VALUE_SEPARATOR + StringHelper.renderTime(calEnd.getTime());
 			setValue(value);
-		}		
+		}
 	}
 
 	public String getInputStartDateName() {
@@ -52,15 +52,9 @@ public class TimeRangeComponent extends DateComponent {
 	public String getInputEndDateName() {
 		return "__" + getId() + ID_SEPARATOR + "end-start";
 	}
-	
+
 	@Override
 	protected String getEditXHTMLCode(ContentContext ctx) throws Exception {
-
-		Date date = getStartDate();
-		if (date == null) {
-			date = new Date();
-		}
-
 		StringBuffer finalCode = new StringBuffer();
 		finalCode.append(getSpecialInputTag());
 		finalCode.append("<input id=\"contentdate\" style=\"width: 120px;\" type=\"text\" id=\"" + getInputStartDateName() + "\" name=\"" + getInputStartDateName() + "\" value=\"" + StringHelper.renderDateWithDefaultValue(getStartDate(), "") + "\"/> - ");
@@ -71,10 +65,10 @@ public class TimeRangeComponent extends DateComponent {
 	public Date getStartDate() {
 		Date date = null;
 		try {
-			String dateStr = getValue().split(VALUE_SEPARATOR)[0];			
+			String dateStr = getValue().split(VALUE_SEPARATOR)[0];
 			date = StringHelper.parseTime(dateStr);
 		} catch (Throwable t) {
-			//logger.warning(t.getMessage());
+			// logger.warning(t.getMessage());
 		}
 		return date;
 	}
@@ -82,21 +76,21 @@ public class TimeRangeComponent extends DateComponent {
 	public Date getEndDate() {
 		Date date = null;
 		try {
-			String dateStr = getValue().split(VALUE_SEPARATOR)[1];		
+			String dateStr = getValue().split(VALUE_SEPARATOR)[1];
 			date = StringHelper.parseTime(dateStr);
 		} catch (Throwable t) {
-			//logger.warning(t.getMessage());
+			// logger.warning(t.getMessage());
 		}
 		return date;
 	}
 
 	@Override
 	public String getPrefixViewXHTMLCode(ContentContext ctx) {
-		
+
 		if (getConfig(ctx).getProperty("prefix", null) != null) {
 			return getConfig(ctx).getProperty("prefix", null);
 		}
-		
+
 		return "<div " + getSpecialPreviewCssClass(ctx, getStyle(ctx) + " " + getType()) + getSpecialPreviewCssId(ctx) + ">";
 	}
 
@@ -111,7 +105,7 @@ public class TimeRangeComponent extends DateComponent {
 	@Override
 	public String getViewXHTMLCode(ContentContext ctx) throws Exception {
 		if (getStartDate() != null && getEndDate() != null) {
-			return renderDate(ctx, getStartDate())+" - "+renderDate(ctx, getEndDate());
+			return renderDate(ctx, getStartDate()) + " - " + renderDate(ctx, getEndDate());
 		} else {
 			return "";
 		}
@@ -160,11 +154,11 @@ public class TimeRangeComponent extends DateComponent {
 				setNeedRefresh(true);
 			}
 
-			String dateStr = StringHelper.renderTime(startDate) + '-' + StringHelper.renderTime(endDate);			
+			String dateStr = StringHelper.renderTime(startDate) + '-' + StringHelper.renderTime(endDate);
 			if (!dateStr.equals(getValue())) {
 				setValue(dateStr);
 				setModify();
-			}			
+			}
 		}
 	}
 

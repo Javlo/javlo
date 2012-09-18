@@ -19,8 +19,8 @@ public class ComponentBean {
 	boolean list = false;
 	String language;
 	String renderer;
-	
-		boolean repeat = false;
+
+	boolean repeat = false;
 	boolean modify = false;
 
 	String area = DEFAULT_AREA;
@@ -51,6 +51,9 @@ public class ComponentBean {
 	 */
 	@Override
 	public boolean equals(Object obj) {
+		if (obj == null) {
+			return false;
+		}
 		ComponentBean bean = (ComponentBean) obj;
 		return bean.id.equals(id) && bean.language.equals(language) && bean.type.equals(type) && bean.value.equals(value) && (bean.repeat == repeat) && (bean.area.equals(area));
 	}
@@ -105,7 +108,7 @@ public class ComponentBean {
 	public boolean isRepeat() {
 		return repeat;
 	}
-	
+
 	public String getRenderer() {
 		return renderer;
 	}

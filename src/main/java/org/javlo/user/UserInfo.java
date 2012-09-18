@@ -45,7 +45,7 @@ public class UserInfo implements Comparable<IUserInfo>, IUserInfo, Serializable 
 	private String phone = "";
 	private String info = "";
 	private String[] preferredLanguage = new String[0];
-	private  Set<String> roles = new HashSet<String>();
+	private Set<String> roles = new HashSet<String>();
 	private Date creationDate = new Date();
 	private Date modificationDate = new Date();
 
@@ -209,20 +209,20 @@ public class UserInfo implements Comparable<IUserInfo>, IUserInfo, Serializable 
 		if (roles == null) {
 			roles = new HashSet<String>();
 		}
+		Set<String> newRoles = new HashSet<String>();
 		synchronized (roles) {
 			Set<String> rolesList = new HashSet<String>();
 			rolesList.addAll(roles);
 			rolesList.addAll(strings);
-			Set<String> newRoles = new HashSet<String>();
 			newRoles.addAll(rolesList);
-			roles = newRoles;
 		}
+		roles = newRoles;
 	}
 
 	public void setRolesRaw(String rolesRaw) {
 		if (rolesRaw != null) {
 			if (rolesRaw.trim().length() > 0) {
-				roles = new HashSet<String>(StringHelper.stringToCollection(rolesRaw,""+ROLES_SEPARATOR));
+				roles = new HashSet<String>(StringHelper.stringToCollection(rolesRaw, "" + ROLES_SEPARATOR));
 			}
 		}
 	}
@@ -235,10 +235,10 @@ public class UserInfo implements Comparable<IUserInfo>, IUserInfo, Serializable 
 		boolean rolesFound = false;
 		boolean preferredLanguageFound = false;
 
-		for (int i = 0; i < methods.length; i++) {
-			if (methods[i].getName().startsWith("get")) {
-				if (methods[i].getReturnType().equals(String.class) || methods[i].getReturnType().equals(Date.class)) {
-					String name = methods[i].getName().substring(3);
+		for (Method method : methods) {
+			if (method.getName().startsWith("get")) {
+				if (method.getReturnType().equals(String.class) || method.getReturnType().equals(Date.class)) {
+					String name = method.getName().substring(3);
 					if (name.equals("RolesRaw")) {
 						rolesFound = true;
 					}
@@ -358,10 +358,12 @@ public class UserInfo implements Comparable<IUserInfo>, IUserInfo, Serializable 
 		setLogin(id);
 	}
 
+	@Override
 	public String getInfo() {
 		return info;
 	}
 
+	@Override
 	public void setInfo(String info) {
 		this.info = info;
 	}
@@ -423,12 +425,13 @@ public class UserInfo implements Comparable<IUserInfo>, IUserInfo, Serializable 
 		if (roles == null) {
 			roles = new HashSet<String>();
 		}
+		Set<String> newRoles;
 		synchronized (roles) {
 			Set<String> rolesList = new HashSet<String>();
 			rolesList.addAll(roles);
 			rolesList.removeAll(strings);
-			Set<String> newRoles = new HashSet<String>(rolesList);
-			roles = newRoles;
+			newRoles = new HashSet<String>(rolesList);
 		}
+		roles = newRoles;
 	}
 }

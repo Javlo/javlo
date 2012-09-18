@@ -37,7 +37,7 @@ public class MailingThread extends Thread {
 
 	/**
 	 * return the list of mailing id stored in this webapps.
-	 *
+	 * 
 	 * @throws IOException
 	 * @throws ConfigurationException
 	 */
@@ -131,32 +131,30 @@ public class MailingThread extends Thread {
 					} catch (InterruptedException e) {
 						logger.warning(e.getMessage());
 					}
-					synchronized (application) {
-						synchronized (ResourceHelper.SYNCHRO_RESSOURCE) {
-							Mailing[] mailing = getMailingList();
-							if (mailing.length > 0) {
-								for (int i = 0; i < mailing.length; i++) {
-									boolean itsTime = true;
-									if (mailing[i].getSendDate() != null) {
-										Date currentDate = new Date();
-										if (currentDate.getTime() < mailing[i].getSendDate().getTime()) {
-											itsTime = false;
-										}
+					synchronized (ResourceHelper.SYNCHRO_RESSOURCE) {
+						Mailing[] mailing = getMailingList();
+						if (mailing.length > 0) {
+							for (int i = 0; i < mailing.length; i++) {
+								boolean itsTime = true;
+								if (mailing[i].getSendDate() != null) {
+									Date currentDate = new Date();
+									if (currentDate.getTime() < mailing[i].getSendDate().getTime()) {
+										itsTime = false;
 									}
-									if (itsTime) {
-										if (!mailing[i].isSend()&&mailing[i].isValid()) {
-											if (!mailing[i].isExistInHistory(application, mailing[i].getId())) {
-												sendMailing(mailing[i]);
-												mailing[i].store(application);
-												sendReport(mailing[i]);
-											} else {
-												logger.severe("MailingThread have try to send a mailing founded in the history : "+mailing[i]);
-											}
+								}
+								if (itsTime) {
+									if (!mailing[i].isSend() && mailing[i].isValid()) {
+										if (!mailing[i].isExistInHistory(application, mailing[i].getId())) {
+											sendMailing(mailing[i]);
+											mailing[i].store(application);
+											sendReport(mailing[i]);
 										} else {
-											logger.info("mailing not send : "+mailing[i]);
+											logger.severe("MailingThread have try to send a mailing founded in the history : " + mailing[i]);
 										}
-										mailing[i].close(application);
+									} else {
+										logger.info("mailing not send : " + mailing[i]);
 									}
+									mailing[i].close(application);
 								}
 							}
 						}
@@ -164,15 +162,15 @@ public class MailingThread extends Thread {
 				} catch (Throwable t) {
 					t.printStackTrace();
 					try {
-						Thread.sleep(1000);
+						Thread.sleep(500);
 					} catch (InterruptedException e) {
 						e.printStackTrace();
 					}
 				}
 			}
 			Mailing[] mailing = getMailingList();
-			for (int i = 0; i < mailing.length; i++) {
-				mailing[i].store(application);
+			for (Mailing element : mailing) {
+				element.store(application);
 			}
 		} catch (ConfigurationException e) {
 			logger.severe(e.getMessage());

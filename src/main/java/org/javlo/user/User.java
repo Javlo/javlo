@@ -3,6 +3,7 @@
  */
 package org.javlo.user;
 
+import java.io.Serializable;
 import java.security.Principal;
 import java.util.Arrays;
 import java.util.HashSet;
@@ -11,7 +12,7 @@ import java.util.Set;
 /**
  * @author pvandermaesen
  */
-public class User implements Principal {
+public class User implements Principal, Serializable {
 
 	String login;
 	String password;
@@ -19,9 +20,9 @@ public class User implements Principal {
 	Set<String> roles = new HashSet<String>();
 	IUserInfo userInfo;
 
-	public User(){ // user only for debug
-		login="debug1";
-		password="";
+	public User() { // user only for debug
+		login = "debug1";
+		password = "";
 		userInfo = new UserInfo();
 	};
 
@@ -29,7 +30,7 @@ public class User implements Principal {
 		setUserInfo(newUserInfo);
 	}
 
-	public User(String newLogin, String newPassword ) {
+	public User(String newLogin, String newPassword) {
 		login = newLogin;
 		password = newPassword;
 	}
@@ -61,12 +62,12 @@ public class User implements Principal {
 		return roles;
 	}
 
-	public boolean validForRoles ( Set<String> rolesSet ) {
-		if (AdminUserSecurity.getInstance().isAdmin(this)) {			
+	public boolean validForRoles(Set<String> rolesSet) {
+		if (AdminUserSecurity.getInstance().isAdmin(this)) {
 			return true;
 		}
 		Set<String> workingRoles = new HashSet<String>();
-		workingRoles.addAll(rolesSet);		
+		workingRoles.addAll(rolesSet);
 		workingRoles.retainAll(getRoles());
 		return workingRoles.size() > 0;
 	}
@@ -82,12 +83,12 @@ public class User implements Principal {
 	 * @param info
 	 */
 	public void setUserInfo(IUserInfo info) {
-		login=info.getLogin();
-		password=info.getPassword();
-		roles=info.getRoles();
+		login = info.getLogin();
+		password = info.getPassword();
+		roles = info.getRoles();
 		userInfo = info;
 	}
-	
+
 	@Override
 	public String getName() {
 		return getLogin();

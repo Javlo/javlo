@@ -123,7 +123,7 @@ public class StaticInfoFile {
 		ContentContext ctx;
 		boolean ascending = true;
 
-		private Map<File, Integer> fileAccess = new HashMap<File, Integer>();
+		private final Map<File, Integer> fileAccess = new HashMap<File, Integer>();
 
 		public StaticFileSortByAccess(ContentContext inCtx, boolean inAscending) {
 			ctx = inCtx;
@@ -152,7 +152,7 @@ public class StaticInfoFile {
 					fileAccess.put(file2, access2);
 				}
 
-				if (access1 == access2) {
+				if (access1.intValue() == access2.intValue()) {
 					return changeOrder;
 				} else {
 					return (access1 - access2) * changeOrder;
@@ -346,10 +346,9 @@ public class StaticInfoFile {
 				MenuElement linkedPage = content.getNavigation(ctx).searchChildFromId(staticInfo.getLinkedPageId());
 				if (linkedPage != null) {
 					staticInfo.setLinkedPage(linkedPage);
-					/*staticInfo.linkedDate = linkedPage.getContentDate(ctx);
-					staticInfo.linkedTitle = linkedPage.getTitle(ctx);
-					staticInfo.linkedDescription = linkedPage.getDescription(ctx);
-					staticInfo.setLinkedLocation(linkedPage.getLocation(ctx));*/
+					/*
+					 * staticInfo.linkedDate = linkedPage.getContentDate(ctx); staticInfo.linkedTitle = linkedPage.getTitle(ctx); staticInfo.linkedDescription = linkedPage.getDescription(ctx); staticInfo.setLinkedLocation(linkedPage.getLocation(ctx));
+					 */
 				} /*
 				 * else { try to decoment this, but problem when download in view mode in imageTransformServlet the content loader is not preview so to new page can not be found. staticInfo.setLinkedPageId(null); }
 				 */
@@ -363,7 +362,7 @@ public class StaticInfoFile {
 			staticInfo.setResource(inStaticURL);
 		}
 
-		staticInfo.staticURL = inStaticURL;		
+		staticInfo.staticURL = inStaticURL;
 
 		if (staticInfo.getDate(ctx) == null && staticInfo.isEmptyDate()) {
 			Date lastModifiedDate = new Date(staticInfo.getFile().lastModified());
@@ -402,17 +401,17 @@ public class StaticInfoFile {
 
 		GlobalContext globalContext = GlobalContext.getInstance(ctx.getRequest());
 		Iterator<String> defaultLg = globalContext.getDefaultLanguages().iterator();
-		
+
 		ContentContext pertientContext = new ContentContext(ctx);
-		
+
 		while (!isPertinent(pertientContext) && defaultLg.hasNext()) {
 			pertientContext.setRequestContentLanguage(defaultLg.next());
 		}
-		
+
 		if (!isPertinent(pertientContext)) {
 			pertientContext = ctx;
 		}
-		
+
 		String title = getTitle(pertientContext);
 		if (title != null && title.trim().length() > 0) {
 			if ((title.trim().charAt(title.trim().length() - 1) == '.')) {
@@ -619,7 +618,7 @@ public class StaticInfoFile {
 		return linkedPage;
 	}
 
-	public Date getLinkedDate(ContentContext ctx) {		
+	public Date getLinkedDate(ContentContext ctx) {
 		if (getLinkedPage() != null) {
 			if (linkedDate == null) {
 				try {
@@ -643,7 +642,7 @@ public class StaticInfoFile {
 			if (linkedTitle == null) {
 				try {
 					linkedTitle = getLinkedPage().getTitle(ctx);
-				} catch (Exception e) {					
+				} catch (Exception e) {
 					e.printStackTrace();
 				}
 			}
@@ -697,7 +696,7 @@ public class StaticInfoFile {
 
 	public boolean isPertinent(ContentContext ctx) {
 		boolean outPertinent = getManualTitle(ctx).length() > 0 || getManualDescription(ctx).length() > 0 || getManualLocation(ctx).length() > 0;
-		
+
 		return outPertinent;
 
 	}

@@ -32,6 +32,7 @@ import org.javlo.template.Template;
 
 /**
  * Standard image component.
+ * 
  * @author pvandermaesen
  */
 public class GlobalImage extends FilterImage {
@@ -46,7 +47,7 @@ public class GlobalImage extends FilterImage {
 	static final String FILE_NAME_KEY_OVER = "file-name-over";
 
 	static final String IMAGE_FILTER = "image-filter";
-	
+
 	static final String DATE = "date";
 
 	static final String LINK_KEY = "link";
@@ -59,7 +60,7 @@ public class GlobalImage extends FilterImage {
 	private static final int MAX_PICTURE = 12;
 
 	private static final String LOCATION = "location";
-	
+
 	private static final String TITLE = "title";
 
 	private GenericMessage msg;
@@ -79,27 +80,27 @@ public class GlobalImage extends FilterImage {
 	public String getCSSClassName(ContentContext ctx) {
 		return getType();
 	}
-	
+
 	protected boolean isImageFilter() {
 		return true;
 	}
-	
+
 	protected boolean isDecorationImage() {
 		return false;
 	}
-	
-	protected Map<String,String> getTranslatableResources(ContentContext ctx) throws Exception {
+
+	protected Map<String, String> getTranslatableResources(ContentContext ctx) throws Exception {
 		return Collections.EMPTY_MAP;
 	}
-	
+
 	public String getTranslatedID() {
 		return properties.getProperty("translated", null);
 	}
-	
+
 	public void setTranslatedID(String id) {
 		properties.setProperty("translated", id);
 	}
-	
+
 	protected boolean isDisplayAllBouton() {
 		return false;
 	}
@@ -127,26 +128,26 @@ public class GlobalImage extends FilterImage {
 		String[][] params = { { "rows", "1" } };
 		finalCode.append(XHTMLHelper.getTextArea(getLabelXHTMLInputName(), getLabel(), params));
 		finalCode.append("<br />");
-		
+
 		I18nAccess i18nAccess = I18nAccess.getInstance(ctx.getRequest());
-		
+
 		if (isMeta()) {
 			finalCode.append("<fieldset>");
-			finalCode.append("<legend>"+i18nAccess.getText("global.metadata")+"</legend>");
+			finalCode.append("<legend>" + i18nAccess.getText("global.metadata") + "</legend>");
 			finalCode.append("<div class=\"line\">");
-			finalCode.append("<label for=\""+getInputNameDate()+"\">"+i18nAccess.getText("global.date")+" : </label>");
-			finalCode.append("<input type=\"text\" name=\""+getInputNameDate()+"\" value=\""+StringHelper.neverNull(StringHelper.renderTime(getDate()))+"\" />");
+			finalCode.append("<label for=\"" + getInputNameDate() + "\">" + i18nAccess.getText("global.date") + " : </label>");
+			finalCode.append("<input type=\"text\" name=\"" + getInputNameDate() + "\" value=\"" + StringHelper.neverNull(StringHelper.renderTime(getDate())) + "\" />");
 			finalCode.append("</div><div class=\"line\">");
-			finalCode.append("<label for=\""+getInputNameLocation()+"\">"+i18nAccess.getText("global.location")+" : </label>");
-			finalCode.append("<input type=\"text\" name=\""+getInputNameLocation()+"\" value=\""+getLocation()+"\" />");
+			finalCode.append("<label for=\"" + getInputNameLocation() + "\">" + i18nAccess.getText("global.location") + " : </label>");
+			finalCode.append("<input type=\"text\" name=\"" + getInputNameLocation() + "\" value=\"" + getLocation() + "\" />");
 			finalCode.append("</div><div class=\"line\">");
-			finalCode.append("<label for=\""+getInputNameTitle()+"\">"+i18nAccess.getText("global.title")+" : </label>");
-			finalCode.append("<input type=\"text\" name=\""+getInputNameTitle()+"\" value=\""+getTitle()+"\" />");
+			finalCode.append("<label for=\"" + getInputNameTitle() + "\">" + i18nAccess.getText("global.title") + " : </label>");
+			finalCode.append("<input type=\"text\" name=\"" + getInputNameTitle() + "\" value=\"" + getTitle() + "\" />");
 			finalCode.append("</div>");
 			if (getTranslatableResources(ctx).size() > 0) {
 				finalCode.append("<div class=\"line\">");
-				finalCode.append("<label for=\""+getInputNameTranslation()+"\">"+i18nAccess.getText("content.resource.translationof")+" : </label>");
-				finalCode.append(XHTMLHelper.getDropDownFromMap(getInputNameTranslation(), getTranslatableResources(ctx), getTranslatedID(), "" , true));
+				finalCode.append("<label for=\"" + getInputNameTranslation() + "\">" + i18nAccess.getText("content.resource.translationof") + " : </label>");
+				finalCode.append(XHTMLHelper.getDropDownFromMap(getInputNameTranslation(), getTranslatableResources(ctx), getTranslatedID(), "", true));
 				finalCode.append("</div>");
 			}
 			finalCode.append("</div>");
@@ -160,7 +161,7 @@ public class GlobalImage extends FilterImage {
 		finalCode.append("<div style=\"margin-top: 5px; margin-bottom: 5px;\"><label style=\"float: left; width: 160px; height: 16px;\" for=\"new_dir_" + getId() + "\">");
 		finalCode.append(getNewDirLabelTitle(ctx));
 		finalCode.append(" : </label><input id=\"new_dir_" + getId() + "\" name=\"" + getNewDirInputName() + "\" type=\"text\"/></div>");
-		
+
 		if ((getDirList(getFileDirectory(ctx)) != null) && (getDirList(getFileDirectory(ctx)).length > 0)) {
 			finalCode.append("<div style=\"margin-top: 5px; margin-bottom: 5px;\"><label style=\"float: left; width: 160px; height: 16px;\" for=\"" + getDirInputName() + "\">");
 			finalCode.append(getDirLabelTitle(ctx));
@@ -172,14 +173,14 @@ public class GlobalImage extends FilterImage {
 				dirsCol.add(dir);
 			}
 			finalCode.append(XHTMLHelper.getInputOneSelect(getDirInputName(), dirsCol, getDirSelected(), getJSOnChange(ctx), true));
-			
+
 			Map<String, String> filesParams = new HashMap<String, String>();
 			filesParams.put("path", URLHelper.mergePath("/", getRelativeFileDirectory(ctx), getDirSelected()));
 			filesParams.put("webaction", "changeRenderer");
 			filesParams.put("page", "meta");
-			String staticURL = URLHelper.createModuleURL(ctx, ctx.getPath(), "file", filesParams); 
-			
-			finalCode.append("<a class=\"" + EDIT_ACTION_CSS_CLASS + "\" href=\""+staticURL+"\">&nbsp;");
+			String staticURL = URLHelper.createModuleURL(ctx, ctx.getPath(), "file", filesParams);
+
+			finalCode.append("<a class=\"" + EDIT_ACTION_CSS_CLASS + "\" href=\"" + staticURL + "\">&nbsp;");
 			finalCode.append(i18nAccess.getText("content.goto-static"));
 			finalCode.append("</a>");
 			finalCode.append("</div>");
@@ -189,7 +190,7 @@ public class GlobalImage extends FilterImage {
 		Template currentTemplate = ctx.getCurrentTemplate();
 		if (currentTemplate != null && isImageFilter()) {
 			finalCode.append("<div style=\"margin-top: 5px; margin-bottom: 5px;\"><label style=\"float: left; width: 160px; height: 16px;\" for=\"filter-" + getImageFilterInputName() + "\">");
-			
+
 			finalCode.append(i18nAccess.getText("content.global-image.image-filter"));
 			finalCode.append(" : </label>");
 
@@ -211,12 +212,11 @@ public class GlobalImage extends FilterImage {
 		} else {
 			logger.severe("template null in GlobalImage");
 		}
-		
+
 		String[] fileList = getFileList(getFileDirectory(ctx), getFileFilter());
 		if (fileList.length > 0) {
-			
-			finalCode.append("<div class=\"line\"><label for=\"" + getSelectXHTMLInputName() +"\">"+getImageChangeTitle(ctx)+" : </label>");
 
+			finalCode.append("<div class=\"line\"><label for=\"" + getSelectXHTMLInputName() + "\">" + getImageChangeTitle(ctx) + " : </label>");
 
 			String[] fileListBlanck = new String[fileList.length + 1];
 			fileListBlanck[0] = "";
@@ -225,7 +225,7 @@ public class GlobalImage extends FilterImage {
 			finalCode.append(XHTMLHelper.getInputOneSelect(getSelectXHTMLInputName(), fileListBlanck, getFileName(), getJSOnChange(ctx), true));
 			finalCode.append("</div>");
 
-			if (fileList.length > MAX_PICTURE && isDisplayAllBouton() ) {
+			if (fileList.length > MAX_PICTURE && isDisplayAllBouton()) {
 				finalCode.append("<div class=\"line\">");
 				Map<String, String> ajaxParams = new HashMap<String, String>();
 				ajaxParams.put("webaction", "showallpreview");
@@ -235,18 +235,18 @@ public class GlobalImage extends FilterImage {
 				finalCode.append("</div>");
 			}
 		}
-		
+
 		if (canUpload()) {
-			finalCode.append("<div class=\"line\"><label for=\"" + getFileXHTMLInputName() +"\">"+getImageUploadTitle(ctx)+" : </label>");
-			finalCode.append("<input name=\"" + getFileXHTMLInputName() + "\" type=\"file\"/></div>");			
+			finalCode.append("<div class=\"line\"><label for=\"" + getFileXHTMLInputName() + "\">" + getImageUploadTitle(ctx) + " : </label>");
+			finalCode.append("<input name=\"" + getFileXHTMLInputName() + "\" type=\"file\"/></div>");
 		}
-		
+
 		if (isDecorationImage()) {
 			finalCode.append("<div class=\"line deco-image\">");
-			finalCode.append("<label for=\""+getDecoImageFileXHTMLInputName()+"\">"+getImageDecorativeTitle(ctx)+" :</label>");
+			finalCode.append("<label for=\"" + getDecoImageFileXHTMLInputName() + "\">" + getImageDecorativeTitle(ctx) + " :</label>");
 			finalCode.append("<input  id=\"" + getDecoImageFileXHTMLInputName() + "\" name=\"" + getDecoImageFileXHTMLInputName() + "\" type=\"file\"/>");
 			finalCode.append("</div><div class=\"line\">");
-			
+
 			fileList = getFileList(getFileDirectory(ctx), getDecorationFilter());
 			if (fileList.length > 0) {
 				finalCode.append("<label for=\"" + getDecoImageXHTMLInputName() + "\">");
@@ -289,43 +289,43 @@ public class GlobalImage extends FilterImage {
 	}
 
 	public String getTitle() {
-		return properties.getProperty(TITLE,"");
+		return properties.getProperty(TITLE, "");
 	}
-	
+
 	private void setTitle(String title) {
-		properties.setProperty(TITLE,title);
+		properties.setProperty(TITLE, title);
 	}
 
 	private String getInputNameTitle() {
-		return "title_"+getId();
+		return "title_" + getId();
 	}
-	
+
 	private String getInputNameTranslation() {
-		return "translation_"+getId();
+		return "translation_" + getId();
 	}
 
 	public String getLocation() {
-		return properties.getProperty(LOCATION,"");
+		return properties.getProperty(LOCATION, "");
 	}
-	
+
 	private void setLocation(String location) {
-		properties.setProperty(LOCATION,location);
+		properties.setProperty(LOCATION, location);
 	}
 
 	private String getInputNameLocation() {
-		return "location_"+getId();
+		return "location_" + getId();
 	}
 
 	public Date getDate() throws ParseException {
-		return StringHelper.parseDateOrTime(properties.getProperty(DATE,""));
+		return StringHelper.parseDateOrTime(properties.getProperty(DATE, ""));
 	}
-	
+
 	protected void setDate(String date) {
 		properties.setProperty(DATE, date);
 	}
 
 	private String getInputNameDate() {
-		return "date_"+getId();
+		return "date_" + getId();
 	}
 
 	protected boolean isMeta() {
@@ -377,9 +377,9 @@ public class GlobalImage extends FilterImage {
 	public String getLink() {
 		return properties.getProperty(LINK_KEY, "");
 	}
-	
+
 	public String getURL(ContentContext ctx) {
-		if (getLink() != null ||  getLink().trim().length() > 0) {
+		if (getLink() != null || getLink().trim().length() > 0) {
 			return getLink();
 		} else if (getFileName() != null) {
 			String fileLink = getImageURL(ctx, getFileName());
@@ -387,7 +387,7 @@ public class GlobalImage extends FilterImage {
 		}
 		return null;
 	}
-	
+
 	public String getPreviewURL(ContentContext ctx) throws Exception {
 		if (getLink() != null) {
 			return getLink();
@@ -397,7 +397,7 @@ public class GlobalImage extends FilterImage {
 		}
 		return null;
 	}
-	
+
 	protected String getLinkXHTMLInputName() {
 		return "_link_name_" + getId();
 	}
@@ -479,24 +479,24 @@ public class GlobalImage extends FilterImage {
 					String cssLinkClass = "";
 					String linkType = StringHelper.getPathType(getLink(), "");
 					if (linkType.length() > 0) {
-						cssLinkClass = " class=\""+linkType+"\"";
+						cssLinkClass = " class=\"" + linkType + "\"";
 					}
 
 					if (!getLink().contains("/")) { // considered as page name
-						res.append("<a" + cssLinkClass + " rel=\""+getConfig(ctx).getProperty("rel", "shadowbox")+"\" href=\"" + URLHelper.createURLFromPageName(ctx, getLink().replace(".html", "")) + "\">");
+						res.append("<a" + cssLinkClass + " rel=\"" + getConfig(ctx).getProperty("rel", "shadowbox") + "\" href=\"" + URLHelper.createURLFromPageName(ctx, getLink().replace(".html", "")) + "\">");
 					} else {
 						String target = "";
 						GlobalContext globalContext = GlobalContext.getInstance(ctx.getRequest());
 						if (globalContext.isOpenExernalLinkAsPopup(getLink())) {
 							target = "target=\"_blank\" ";
 						}
-						res.append("<a" + cssLinkClass + ' ' + target + "href=\"" + XHTMLHelper.escapeXHTML(getLink()) + "\" title=\""+StringHelper.removeTag(getStaticLabel(ctx))+"\" rel=\""+getConfig(ctx).getProperty("rel", "shadowbox")+"\">");
+						res.append("<a" + cssLinkClass + ' ' + target + "href=\"" + XHTMLHelper.escapeXHTML(getLink()) + "\" title=\"" + StringHelper.removeTag(getStaticLabel(ctx)) + "\" rel=\"" + getConfig(ctx).getProperty("rel", "shadowbox") + "\">");
 					}
 					openLink = true;
 				}
 			} else {
 				if (getConfig(ctx).isClickable()) {
-					res.append("<a class=\"no-link\" href=\"" + viewURL + getConfig(ctx).getProperty("comp.link.suffix", "") + "\" rel=\""+getConfig(ctx).getProperty("rel", "shadowbox")+"\" title=\"" + StringHelper.removeTag(getStaticLabel(ctx)) + "\">");
+					res.append("<a class=\"no-link\" href=\"" + viewURL + getConfig(ctx).getProperty("comp.link.suffix", "") + "\" rel=\"" + getConfig(ctx).getProperty("rel", "shadowbox") + "\" title=\"" + StringHelper.removeTag(getStaticLabel(ctx)) + "\">");
 					openLink = true;
 				}
 			}
@@ -514,7 +514,7 @@ public class GlobalImage extends FilterImage {
 				res.append("</a>");
 			}
 
-			if ( StringHelper.CR2BR(getLabel()).trim().length() > 0) {
+			if (StringHelper.CR2BR(getLabel()).trim().length() > 0) {
 				res.append("<div class=\"label\">" + StringHelper.CR2BR(getLabel()) + "</div>");
 			}
 
@@ -553,7 +553,7 @@ public class GlobalImage extends FilterImage {
 		String location = requestService.getParameter(getInputNameLocation(), null);
 		String title = requestService.getParameter(getInputNameTitle(), null);
 		String translationOf = requestService.getParameter(getInputNameTranslation(), null);
-		
+
 		if (title != null) {
 			if (!title.equals(getTitle())) {
 				setTitle(title);
@@ -576,15 +576,15 @@ public class GlobalImage extends FilterImage {
 			}
 		}
 		if (date != null) {
-			if (!date.equals(getDate())) {
-				try {
-					StringHelper.parseDateOrTime(date);
+			try {
+				Date currentDate = StringHelper.parseDateOrTime(date);
+				if (!currentDate.equals(getDate())) {
 					setDate(date);
 					storeProperties();
 					setModify();
-				} catch (Exception e) {
-					logger.warning("unvalid date : "+date);
 				}
+			} catch (Exception e) {
+				logger.warning("unvalid date : " + date);
 			}
 		}
 		if (location != null) {
@@ -608,7 +608,7 @@ public class GlobalImage extends FilterImage {
 				storeProperties();
 			}
 		}
-		
+
 		super.performEdit(ctx);
 
 	}
@@ -620,15 +620,14 @@ public class GlobalImage extends FilterImage {
 	public void setLink(String link) {
 		properties.setProperty(LINK_KEY, link);
 	}
-	
-	public void setDecorationImage(String image) {	
+
+	public void setDecorationImage(String image) {
 		properties.setProperty("deco_image", image);
 	}
-	
+
 	public String getDecorationImage() {
 		return properties.getProperty("deco_image");
 	}
-
 
 	@Override
 	public void setMessage(GenericMessage inMsg) {
@@ -641,8 +640,8 @@ public class GlobalImage extends FilterImage {
 		for (FileItem item : itemsName) {
 			if (item.getFieldName().equals(getFileXHTMLInputName())) {
 				String newFileName = null;
-				newFileName = saveItem(ctx, item);				
-				if ((newFileName != null) && (newFileName.trim().length() > 0)) {					
+				newFileName = saveItem(ctx, item);
+				if ((newFileName != null) && (newFileName.trim().length() > 0)) {
 					properties.setProperty(FILE_NAME_KEY, newFileName);
 					setModify();
 				}
@@ -656,7 +655,7 @@ public class GlobalImage extends FilterImage {
 			} else if (item.getFieldName().equals(getDecoImageFileXHTMLInputName())) {
 				String newFileName = null;
 				newFileName = saveItem(ctx, item);
-				if ((newFileName != null) && (newFileName.trim().length() > 0)) {					
+				if ((newFileName != null) && (newFileName.trim().length() > 0)) {
 					setDecorationImage(newFileName);
 					setModify();
 				}
@@ -666,7 +665,7 @@ public class GlobalImage extends FilterImage {
 			storeProperties();
 		}
 	}
-	
+
 	@Override
 	public String getImageLinkURL(ContentContext ctx) {
 		return getLink();

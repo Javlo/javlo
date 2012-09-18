@@ -83,7 +83,7 @@ public class DynamicComponent extends AbstractVisualComponent implements IStatic
 
 	protected void reloadProperties() {
 		try {
-			if (properties != null) {				
+			if (properties != null) {
 				properties.load(stringToStream(getValue()));
 			}
 		} catch (IOException e) {
@@ -192,7 +192,7 @@ public class DynamicComponent extends AbstractVisualComponent implements IStatic
 		String firstFiledClass = " first-field";
 		for (Field field : fields) {
 			if (field != null) {
-				
+
 				if (field.getTranslation() != null) {
 					field.setCurrentLocale(new Locale(ctx.getRequestContentLanguage()));
 				}
@@ -215,10 +215,6 @@ public class DynamicComponent extends AbstractVisualComponent implements IStatic
 						firstFiledClass = "";
 					}
 				}
-			} else {
-				out.println("<div class=\"line\">");
-				out.println("field not found : " + field.getName());
-				out.println("</div>");
 			}
 		}
 		if (isWrapped()) {
@@ -230,6 +226,7 @@ public class DynamicComponent extends AbstractVisualComponent implements IStatic
 		return writer.toString();
 	}
 
+	@Override
 	public java.util.List<String> getFieldsNames() {
 		java.util.List<String> outFields = new LinkedList<String>();
 		Collection keys = properties.keySet();
@@ -248,6 +245,7 @@ public class DynamicComponent extends AbstractVisualComponent implements IStatic
 		return outFields;
 	}
 
+	@Override
 	public java.util.List<Field> getFields(ContentContext ctx) throws FileNotFoundException, IOException {
 
 		StaticConfig staticConfig = StaticConfig.getInstance(ctx.getRequest().getSession());
@@ -280,6 +278,7 @@ public class DynamicComponent extends AbstractVisualComponent implements IStatic
 		return outFields;
 	}
 
+	@Override
 	public Field getField(ContentContext ctx, String name) throws FileNotFoundException, IOException {
 		java.util.List<Field> fields = getFields(ctx);
 		for (Field field : fields) {
@@ -290,6 +289,7 @@ public class DynamicComponent extends AbstractVisualComponent implements IStatic
 		return null;
 	}
 
+	@Override
 	public String getFieldValue(ContentContext ctx, String name) throws FileNotFoundException, IOException {
 		Field field = getField(ctx, name);
 		if (field != null) {
@@ -322,6 +322,7 @@ public class DynamicComponent extends AbstractVisualComponent implements IStatic
 		return properties.getProperty("component.list-renderer", null);
 	}
 
+	@Override
 	public Map<String, String> getList(String listName, Locale locale) {
 		Map<String, String> res = new HashMap<String, String>();
 		for (int i = 0; i < 9999; i++) {
@@ -346,6 +347,7 @@ public class DynamicComponent extends AbstractVisualComponent implements IStatic
 		return res;
 	}
 
+	@Override
 	public Map<String, String> getList(String listName) {
 		Map<String, String> res = new HashMap<String, String>();
 		for (int i = 0; i < 9999; i++) {
@@ -417,10 +419,6 @@ public class DynamicComponent extends AbstractVisualComponent implements IStatic
 				if (field.getTranslation() != null) {
 					out.println("</fieldset>");
 				}
-			} else {
-				out.println("<div class=\"line\">");
-				out.println("field not found : " + field.getType());
-				out.println("</div>");
 			}
 		}
 		out.println("</div>");
@@ -443,12 +441,12 @@ public class DynamicComponent extends AbstractVisualComponent implements IStatic
 		String res = new String(out.toByteArray());
 		setValue(res);
 	}
- 
+
 	@Override
 	public void performEdit(ContentContext ctx) throws Exception {
 
 		java.util.List<Field> fieldsName = getFields(ctx);
-		
+
 		for (Field field : fieldsName) {
 
 			Collection<Locale> languages;
@@ -459,7 +457,7 @@ public class DynamicComponent extends AbstractVisualComponent implements IStatic
 				languages = field.getTranslation();
 			}
 
-			for (Locale locale : languages) {				
+			for (Locale locale : languages) {
 				field.setCurrentLocale(locale);
 				boolean modify = field.process(ctx.getRequest());
 				if (modify) {
@@ -475,7 +473,7 @@ public class DynamicComponent extends AbstractVisualComponent implements IStatic
 			storeProperties();
 		}
 	}
-	
+
 	@Override
 	public void setValue(String inContent) {
 		super.setValue(inContent);
@@ -617,12 +615,10 @@ public class DynamicComponent extends AbstractVisualComponent implements IStatic
 	public String getLabel(ContentContext ctx) {
 		return properties.getProperty("component.label-" + ctx.getRequestContentLanguage(), properties.getProperty("component.label", properties.getProperty("component.type")));
 	}
-	
+
 	@Override
 	public boolean isContentTimeCachable(ContentContext ctx) {
 		return false;
 	}
-	
-	
 
 }

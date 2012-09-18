@@ -83,12 +83,12 @@ public class DebugListening {
 				out.println("");
 				if (t != null) {
 					out.println("message : " + t.getMessage());
+					t.printStackTrace(out);
 				} else {
 					out.println("message : NO STACK TRACE.");
 				}
 				out.println("");
 				out.println("STACK TRACE : ");
-				t.printStackTrace(out);
 				out.close();
 
 				if (SEND_ERROR_MAIL) {

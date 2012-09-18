@@ -26,7 +26,6 @@ import org.javlo.context.GlobalContext;
 import org.javlo.mailing.MailingManager;
 import org.javlo.ztatic.FileCache;
 
-
 public class NetHelper {
 
 	/**
@@ -51,7 +50,7 @@ public class NetHelper {
 
 	/**
 	 * read a page a put content in a String.
-	 *
+	 * 
 	 * @param url
 	 *            a valid URL
 	 * @return code returned by the http request on the URL.
@@ -67,10 +66,10 @@ public class NetHelper {
 
 		InputStream in = null;
 		try {
-			URLConnection conn = url.openConnection();			
+			URLConnection conn = url.openConnection();
 			if (url.getProtocol().equalsIgnoreCase("http") || url.getProtocol().equalsIgnoreCase("https")) {
-				HttpURLConnection httpConn = (HttpURLConnection)conn;
-				if (httpConn.getResponseCode() != HttpURLConnection.HTTP_OK) {					
+				HttpURLConnection httpConn = (HttpURLConnection) conn;
+				if (httpConn.getResponseCode() != HttpURLConnection.HTTP_OK) {
 					return null;
 				}
 			}
@@ -85,11 +84,12 @@ public class NetHelper {
 			return new String(out.toByteArray(), ContentContext.CHARACTER_ENCODING);
 		}
 	}
-	
+
 	/**
 	 * read a page a put content in a Stream.
-	 *
-	 * @param out the output stream, it receive the url inputstream           
+	 * 
+	 * @param out
+	 *            the output stream, it receive the url inputstream
 	 * @return code returned by the http request on the URL.
 	 * @throws IOException
 	 */
@@ -105,7 +105,7 @@ public class NetHelper {
 
 	/**
 	 * extract the title of a web page.
-	 *
+	 * 
 	 * @param url
 	 * @return the title of the page.
 	 * @throws Exception
@@ -116,7 +116,7 @@ public class NetHelper {
 
 	/**
 	 * extract the title of a web page.
-	 *
+	 * 
 	 * @param url
 	 * @return the title of the page.
 	 */
@@ -135,7 +135,7 @@ public class NetHelper {
 
 	/**
 	 * extract the title of a web page.
-	 *
+	 * 
 	 * @param url
 	 * @return the title of the page.
 	 */
@@ -156,7 +156,7 @@ public class NetHelper {
 
 		return null;
 	}
-	
+
 	public static boolean isUserAgentRobot(String userAgent) {
 		return userAgent.contains("robo");
 	}
@@ -258,7 +258,7 @@ public class NetHelper {
 
 	/**
 	 * analyse a page and retreive a image
-	 *
+	 * 
 	 * @param url
 	 *            the url of the page
 	 * @param content
@@ -273,7 +273,7 @@ public class NetHelper {
 
 	/**
 	 * analyse a page and retreive a image
-	 *
+	 * 
 	 * @parem staticConfig pass the config (for call from a Thread )
 	 * @param url
 	 *            the url of the page
@@ -281,8 +281,7 @@ public class NetHelper {
 	 *            the content
 	 * @return the uri to the local file
 	 */
-	public static String getLocalCopyOfPageImage(String cacheFolder, String dataFolder, URL pageURL, URL imageURL, String content, CRC32 crc32, boolean preferVertical,
-			boolean needVertical) {
+	public static String getLocalCopyOfPageImage(String cacheFolder, String dataFolder, URL pageURL, URL imageURL, String content, CRC32 crc32, boolean preferVertical, boolean needVertical) {
 		if (needVertical) {
 			preferVertical = true;
 		}
@@ -340,10 +339,10 @@ public class NetHelper {
 					BufferedImage img = ImageIO.read(new ByteArrayInputStream(imgBuffer.toByteArray()));
 					int readImageSize = img.getWidth() * img.getHeight();
 
-					//DEBUG
-					/*File imgDir = new File("/tmp/tmp-images");
-					imgDir.mkdirs();
-					ImageIO.write(img, "jpg", new File("/tmp/tmp-images/img_"+StringHelper.getRandomId()+".jpg"));*/
+					// DEBUG
+					/*
+					 * File imgDir = new File("/tmp/tmp-images"); imgDir.mkdirs(); ImageIO.write(img, "jpg", new File("/tmp/tmp-images/img_"+StringHelper.getRandomId()+".jpg"));
+					 */
 
 					if ((float) img.getWidth() / (float) img.getHeight() > 0.40) { // no
 						// banner
@@ -412,7 +411,7 @@ public class NetHelper {
 			}
 			return null;
 		} else {
-			logger.warning("image not found for url : "+pageURL);
+			logger.warning("image not found for url : " + pageURL);
 			return null;
 		}
 	}
@@ -434,6 +433,7 @@ public class NetHelper {
 
 	public static List<URL> getLinks(String content, String inURL) {
 		List<URL> urlList = new LinkedList<URL>();
+		List<String> urlStrList = new LinkedList<String>();
 
 		int hrefIndex = content.toLowerCase().indexOf("href=\"") + "href=\"".length();
 		while (hrefIndex >= "href=\"".length()) {
@@ -444,9 +444,10 @@ public class NetHelper {
 					url = URLHelper.mergePath(URLHelper.extractPath(inURL.toString()), url);
 				}
 				if (!url.contains(">")) {
-					if (!urlList.contains(url)) {
+					if (!urlStrList.contains(url)) {
 						try {
 							URL newURL = new URL(url);
+							urlStrList.add(url);
 							urlList.add(newURL);
 						} catch (MalformedURLException e) {
 							// if URL malformed she is not added in the list
@@ -462,6 +463,7 @@ public class NetHelper {
 
 	public static List<URL> getExternalLinks(String content) {
 		List<URL> urlList = new LinkedList<URL>();
+		List<String> urlStrList = new LinkedList<String>();
 
 		int hrefIndex = content.toLowerCase().indexOf("href=\"") + "href=\"".length();
 		while (hrefIndex >= "href=\"".length()) {
@@ -470,9 +472,10 @@ public class NetHelper {
 				String url = content.substring(hrefIndex, closeLink);
 				if (URLHelper.isAbsoluteURL(url)) {
 					if (!url.contains(">")) {
-						if (!urlList.contains(url)) {
+						if (!urlStrList.contains(url)) {
 							try {
 								URL newURL = new URL(url);
+								urlStrList.add(url);
 								urlList.add(newURL);
 							} catch (MalformedURLException e) {
 								// if URL malformed she is not added in the list

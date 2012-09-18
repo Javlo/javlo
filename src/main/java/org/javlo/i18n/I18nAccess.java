@@ -263,7 +263,7 @@ public class I18nAccess implements Serializable {
 				return countries;
 			}
 		} finally {
-			stream.close();
+			ResourceHelper.closeResource(stream);
 		}
 		logger.warning("file : " + fileName + " not found.");
 		return Collections.emptyMap();

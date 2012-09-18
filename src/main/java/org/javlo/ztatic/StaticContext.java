@@ -1,6 +1,7 @@
 package org.javlo.ztatic;
 
 import java.io.File;
+import java.io.Serializable;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -9,9 +10,8 @@ import javax.servlet.http.HttpSession;
 import org.javlo.context.ContentContext;
 import org.javlo.helper.ResourceHelper;
 
+public class StaticContext implements Serializable {
 
-public class StaticContext {
-	
 	private static final String KEY = StaticContext.class.getName();
 
 	public static final int THUMBNAILS_SIZE = 100;
@@ -25,16 +25,16 @@ public class StaticContext {
 	HttpSession session = null;
 
 	private StaticContext(HttpSession inSession, int mode) {
-		inSession.setAttribute(KEY+mode, this);
+		inSession.setAttribute(KEY + mode, this);
 		session = inSession;
 	}
-	
+
 	public static final StaticContext getInstance(HttpSession inSession) {
 		return getInstance(inSession, ContentContext.EDIT_MODE);
 	}
 
 	public static final StaticContext getInstance(HttpSession inSession, int mode) {
-		StaticContext stCtx = (StaticContext) inSession.getAttribute(KEY+mode);
+		StaticContext stCtx = (StaticContext) inSession.getAttribute(KEY + mode);
 		if (stCtx == null) {
 			stCtx = new StaticContext(inSession, mode);
 		}

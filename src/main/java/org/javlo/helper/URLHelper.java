@@ -201,11 +201,10 @@ public class URLHelper extends ElementaryURLHelper {
 		if (elem != null) {
 			template = ctx.getCurrentTemplate().getFinalTemplate(ctx);
 			ctx.setCurrentTemplate(template);
+			String uri = "/xml/" + ctx.getContentLanguage() + '/' + template.getName() + "/rss/" + channel + ".xml";
+			return createStaticURL(ctx, uri);
 		}
-
-		String uri = "/xml/" + ctx.getContentLanguage() + '/' + template.getName() + "/rss/" + channel + ".xml";
-
-		return createStaticURL(ctx, uri);
+		return null;
 	}
 
 	public static String createServletWrapperURL(ContentContext ctx, String url, String paramName) {

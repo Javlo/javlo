@@ -87,6 +87,11 @@ public class DefaultTemplate extends Template {
 	}
 
 	@Override
+	public synchronized String getRenderer(ContentContext ctx, String file) throws IOException, BadXMLException {
+		return null;
+	}
+
+	@Override
 	public String getHTMLFile(Device device) {
 		return "index.html";
 	}

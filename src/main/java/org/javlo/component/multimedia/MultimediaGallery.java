@@ -64,7 +64,7 @@ public class MultimediaGallery extends TimeRangeComponent {
 
 		/** Videos **/
 		for (String lg : langs) {
-			File videoDir = new File(getFileVideoDirectory(ctx, lg));			
+			File videoDir = new File(getFileVideoDirectory(ctx, lg));
 			if (videoDir.exists()) {
 				File[] filesLg = videoDir.listFiles(new VideoOrURLFileFilter());
 				for (File file : filesLg) {
@@ -120,12 +120,6 @@ public class MultimediaGallery extends TimeRangeComponent {
 
 	@Override
 	protected String getEditXHTMLCode(ContentContext ctx) throws Exception {
-
-		Date date = getStartDate();
-		if (date == null) {
-			date = new Date();
-		}
-
 		I18nAccess i18nAccess = I18nAccess.getInstance(ctx.getRequest());
 
 		StringWriter writer = new StringWriter();
@@ -333,9 +327,9 @@ public class MultimediaGallery extends TimeRangeComponent {
 		int index = 0;
 
 		Collection<File> mulFiles = getAllMultimediaFiles(ctx);
-		
+
 		if (mulFiles.size() == 0) {
-			logger.warning("no multimedia files found in : "+getPage().getPath()+" ["+getType()+"]");
+			logger.warning("no multimedia files found in : " + getPage().getPath() + " [" + getType() + "]");
 			return "";
 		}
 
@@ -473,7 +467,7 @@ public class MultimediaGallery extends TimeRangeComponent {
 							}
 						}
 					}
-					
+
 				}
 				out.println("<div class=\"end-sequence\"><span></span></div>");
 				out.println("</div>");

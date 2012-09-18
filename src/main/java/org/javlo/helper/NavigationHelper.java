@@ -27,8 +27,6 @@ import org.javlo.service.ContentService;
 import org.javlo.service.PersistenceService;
 import org.javlo.xml.NodeXML;
 
-
-
 public class NavigationHelper {
 
 	public static final boolean canMoveDown(MenuElement elem) {
@@ -166,7 +164,6 @@ public class NavigationHelper {
 	public static MenuElement firstSelectionElement(ContentContext ctx) throws Exception {
 		GlobalContext globalContext = GlobalContext.getInstance(ctx.getRequest());
 		MenuElement root = ContentService.getInstance(globalContext).getNavigation(ctx);
-		ctx.getPath().trim();
 		MenuElement currentPage = root.searchChild(ctx);
 		if ((currentPage == null) || (currentPage.getParent() == null)) {
 			return null;
