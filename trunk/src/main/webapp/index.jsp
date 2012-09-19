@@ -41,21 +41,7 @@ Template template = ctx.getCurrentTemplate();
 if ((template != null)&&(template.getHomeRenderer(globalContext) != null)) {
 %><jsp:include page="<%=template.getHomeRendererFullName(globalContext)%>"></jsp:include><%	
 } else {
-	StaticConfig staticConfig = StaticConfig.getInstance(request.getSession());
-	String pathPrefix = StringHelper.neverNull(URLHelper.getPathPrefix(request));
-	
-
-	String viewPrefix = "";
-	if (staticConfig.isViewPrefix()) {
-		viewPrefix = "/view";
-	}
-	
-	String url = pathPrefix+viewPrefix+'/'+lg+"/index.html";
-	if (globalContext.getHomePage() != null && globalContext.getHomePage().trim().length() > 0) {		
-		url = pathPrefix+viewPrefix+'/'+lg+globalContext.getHomePage()+".html";
-	}	
-	NetHelper.sendRedirectPermanently(response, url);
-	
-	
+	String url = URLHelper.createURL(ctx);
+	NetHelper.sendRedirectPermanently(response, URLHelper.createURL(ctx));	
 	%><a href="<%=url%>"><%=url%></a><%
 }%>
