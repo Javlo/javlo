@@ -37,6 +37,7 @@ import javax.servlet.http.HttpServletRequest;
 
 import org.apache.commons.beanutils.BeanUtils;
 import org.apache.commons.configuration.ConfigurationException;
+import org.apache.commons.lang.StringEscapeUtils;
 import org.apache.commons.lang.StringUtils;
 import org.javlo.component.core.ComponentFactory;
 import org.javlo.component.core.IContentVisualComponent;
@@ -182,12 +183,7 @@ public class XHTMLHelper {
 		if (xhtml == null) {
 			return "";
 		}
-		String outNoXHTML = xhtml;
-		outNoXHTML = outNoXHTML.replace("&", "&amp;");
-		outNoXHTML = outNoXHTML.replace("<", "&lt;");
-		outNoXHTML = outNoXHTML.replace(">", "&gt;");
-		outNoXHTML = outNoXHTML.replace("\"", "&quot;");
-		return outNoXHTML;
+		return StringEscapeUtils.escapeHtml(xhtml);
 	}
 
 	public static String extractBody(String xhtml) {
@@ -1951,7 +1947,8 @@ public class XHTMLHelper {
 			out.close();
 		}
 
-		return new String(outStream.toByteArray()).replaceAll("&", "&amp;").replaceAll("  ", "&nbsp;&nbsp;");
+		String content = new String(outStream.toByteArray());
+		return content.replaceAll("  ", "&nbsp;&nbsp;");
 	}
 
 	public static String textToXHTMLP(String text) {

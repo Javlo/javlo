@@ -47,6 +47,7 @@ import java.util.logging.Logger;
 import org.apache.commons.codec.binary.Base64;
 import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.lang.RandomStringUtils;
+import org.apache.commons.lang.StringEscapeUtils;
 import org.apache.commons.lang.StringUtils;
 import org.javlo.context.ContentContext;
 import org.javlo.context.GlobalContext;
@@ -1095,9 +1096,12 @@ public class StringHelper {
 
 	public static void main(String[] args) {
 
-		String text = "q1\nq2\nq4\nd\nq3\nad\naa";
-		text = sortText(text);
-		System.out.println(text);
+		String source = "The less than sign (<) and ampersand (&) must &nbsp; be escaped <b>before</b> éà using them in HTML";
+		String escaped = StringEscapeUtils.escapeHtml(source);
+		String escapedLight = StringEscapeUtils.escapeXml(source);
+
+		System.out.println("escaped = " + escaped);
+		System.out.println("escapedLight = " + escapedLight);
 
 	}
 
