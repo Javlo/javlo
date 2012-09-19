@@ -9,6 +9,12 @@ import org.javlo.context.ContentContext;
 import org.javlo.helper.ElementaryURLHelper;
 import org.javlo.helper.StringHelper;
 
+/**
+ * create url based on the title of the page.
+ * 
+ * @author Patrick Vandermaesen
+ * 
+ */
 public class TitleURLCreator extends AbstractURLFactory {
 
 	protected boolean isWithParent() {
