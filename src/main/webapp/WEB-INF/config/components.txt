@@ -67,6 +67,7 @@ org.javlo.component.list.FAQComponent
 org.javlo.component.layout.ContentSeparation
 org.javlo.component.meta.ForceRealContent
 org.javlo.component.meta.NotSearchPage
+org.javlo.component.meta.Keywords
 org.javlo.component.form.SearchResultComponent
 org.javlo.component.form.GenericFormForRegistering
 
