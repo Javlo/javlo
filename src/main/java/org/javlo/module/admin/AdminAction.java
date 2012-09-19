@@ -68,6 +68,7 @@ public class AdminAction extends AbstractModuleAction {
 		private String defaultTemplate;
 		private String globalTitle;
 		private String defaultLanguage;
+		private String defaultLanguages;
 		private String languages;
 		private String contentLanguages;
 		private String size;
@@ -123,6 +124,7 @@ public class AdminAction extends AbstractModuleAction {
 			setSize(StringHelper.renderSize(globalContext.getAccountSize()));
 			setGlobalTitle(globalContext.getGlobalTitle());
 			setDefaultLanguage(globalContext.getDefaultLanguage());
+			setDefaultLanguages(globalContext.getDefaultLanguagesRAW());
 			setLanguages(StringHelper.collectionToString(globalContext.getLanguages(), ";"));
 			setAutoSwitchToDefaultLanguage(globalContext.isAutoSwitchToDefaultLanguage());
 			setContentLanguages(StringHelper.collectionToString(globalContext.getContentLanguages(), ";"));
@@ -403,6 +405,14 @@ public class AdminAction extends AbstractModuleAction {
 
 		public void setUrlFactory(String urlFactory) {
 			this.urlFactory = urlFactory;
+		}
+
+		public String getDefaultLanguages() {
+			return defaultLanguages;
+		}
+
+		public void setDefaultLanguages(String defaultLanguages) {
+			this.defaultLanguages = defaultLanguages;
 		}
 
 	}

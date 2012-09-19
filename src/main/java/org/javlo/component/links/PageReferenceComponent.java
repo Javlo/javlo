@@ -832,7 +832,7 @@ public class PageReferenceComponent extends ComplexPropertiesLink implements IAc
 			ContentContext newCtx = new ContentContext(ctx);
 			newCtx.setArea(null);
 			ContentContext lgCtx = ctx;
-			if (GlobalContext.getInstance(ctx.getRequest()).isAutoSwitchToFirstLanguage()) {
+			if (GlobalContext.getInstance(ctx.getRequest()).isAutoSwitchToDefaultLanguage()) {
 				lgCtx = allChildren[i].getContentContextWithContent(ctx);
 			}
 			if (filterPage(lgCtx, allChildren[i]) && (allChildren[i].getContentDateNeverNull(ctx).after(backDate.getTime()))) {
@@ -1228,7 +1228,7 @@ public class PageReferenceComponent extends ComplexPropertiesLink implements IAc
 		int realContentSize = 0;
 		for (MenuElement page : pages) {
 			ContentContext lgCtx = ctx;
-			if (GlobalContext.getInstance(ctx.getRequest()).isAutoSwitchToFirstLanguage()) {
+			if (GlobalContext.getInstance(ctx.getRequest()).isAutoSwitchToDefaultLanguage()) {
 				lgCtx = page.getContentContextWithContent(ctx);
 			}
 			if (filterPage(lgCtx, page)) {
@@ -1236,7 +1236,7 @@ public class PageReferenceComponent extends ComplexPropertiesLink implements IAc
 					if ((page.isRealContentAnyLanguage(lgCtx) || isWidthEmptyPage()) && page.getContentDateNeverNull(lgCtx).after(backDate.getTime())) {
 						countPage++;
 						if (countPage >= firstPageNumber && countPage <= lastPageNumber) {
-							if (page.isRealContent(ctx)) {
+							if (page.isRealContent(lgCtx)) {
 								realContentSize++;
 							}
 							pageBeans.add(PageBean.getInstance(lgCtx, page, this));

@@ -79,7 +79,7 @@
 
 <div class="line">		
 	<label for="default-languages">${i18n.edit['admin.form.language']}</label>
-	<input type="text" id="default-languages" name="default-languages" value="${currentContext.defaultLanguage}" />	
+	<input type="text" id="default-languages" name="default-languages" value="${currentContext.defaultLanguages}" />	
 </div>
 
 <div class="line">		

@@ -208,7 +208,7 @@ public class ContentContext {
 				ctx.setContentLanguage(contentLg);
 			} else {
 				if (ctx.renderMode != EDIT_MODE) {
-					if (globalContext.isAutoSwitchToFirstLanguage()) {
+					if (globalContext.isAutoSwitchToDefaultLanguage()) {
 						ctx.setRequestContentLanguage(contentLg);
 						ctx.setContentLanguage(lg);
 					} else {
@@ -610,13 +610,11 @@ public class ContentContext {
 			return getContentLanguage();
 		} else {
 			try {
-				/*
-				 * if (getCurrentTemplate() != null) { if (getCurrentTemplate() != null && getCurrentTemplate().isNavigationArea(getArea())) {
-				 */
-				return getLanguage();
-				/*
-				 * } }
-				 */
+				if (getCurrentTemplate() != null) {
+					if (getCurrentTemplate() != null && getCurrentTemplate().isNavigationArea(getArea())) {
+						return getLanguage();
+					}
+				}
 			} catch (Exception e) {
 				e.printStackTrace();
 			}

@@ -1370,7 +1370,7 @@ public class MenuElement implements Serializable {
 	 */
 	public ContentContext getContentContextWithContent(ContentContext ctx) throws Exception {
 		GlobalContext globalContext = GlobalContext.getInstance(ctx.getRequest());
-		if (!globalContext.isAutoSwitchToDefaultLanguage() && !globalContext.isAutoSwitchToFirstLanguage()) {
+		if (!globalContext.isAutoSwitchToDefaultLanguage()) {
 			return ctx;
 		}
 		if (isRealContent(ctx)) {
@@ -1390,7 +1390,7 @@ public class MenuElement implements Serializable {
 					}
 				}
 			}
-			if (globalContext.isAutoSwitchToFirstLanguage()) {
+			if (globalContext.isAutoSwitchToDefaultLanguage()) {
 				Collection<String> languages = globalContext.getContentLanguages();
 				for (String lg : languages) {
 					/*
@@ -2761,9 +2761,9 @@ public class MenuElement implements Serializable {
 		GlobalContext globalContext = GlobalContext.getInstance(ctx.getRequest());
 		Collection<String> lgs = globalContext.getContentLanguages();
 		ContentContext lgContext = new ContentContext(ctx);
+		lgContext.setArea(null); // remove the area
 		for (String lg : lgs) {
 			lgContext.setRequestContentLanguage(lg);
-			lgContext.setArea(null); // remove the area
 			if (isRealContent(lgContext)) {
 				return true;
 			}
