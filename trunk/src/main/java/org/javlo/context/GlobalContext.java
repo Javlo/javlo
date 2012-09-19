@@ -873,7 +873,7 @@ public class GlobalContext implements Serializable {
 	}
 
 	public Set<String> getDefaultLanguages() {
-		String lgRAW = properties.getString("default.language", getLanguages().iterator().next());
+		String lgRAW = getDefaultLanguagesRAW();
 		if (lgRAW == null) {
 			return Collections.emptySet();
 		}
@@ -882,6 +882,10 @@ public class GlobalContext implements Serializable {
 			outLg.add(lg);
 		}
 		return outLg;
+	}
+
+	public String getDefaultLanguagesRAW() {
+		return properties.getString("default.language", getLanguages().iterator().next());
 	}
 
 	public String getDefaultTemplate() {
@@ -1409,10 +1413,6 @@ public class GlobalContext implements Serializable {
 
 	public boolean isAutoSwitchToDefaultLanguage() {
 		return properties.getBoolean("autoswitch-to-default-languages", false);
-	}
-
-	public boolean isAutoSwitchToFirstLanguage() {
-		return properties.getBoolean("autoswitch-to-first-languages", true);
 	}
 
 	public boolean isChangeLicence() {
@@ -2227,7 +2227,7 @@ public class GlobalContext implements Serializable {
 
 	public void setURLFactory(String className) throws InstantiationException, IllegalAccessException, ClassNotFoundException {
 		properties.setProperty("url-factory", className);
-		if (className != null) {
+		if (className != null && className.trim().length() > 0) {
 			urlFactory = (IURLFactory) (Class.forName(className).newInstance());
 		} else {
 			urlFactory = null;
