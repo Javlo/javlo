@@ -307,17 +307,17 @@ public class ContentContext {
 	private Map<? extends Object, ? extends Object> ajaxMap = null;
 
 	public ContentContext(ContentContext ctx) {
-		path = ctx.getPath();
-		language = ctx.getLanguage();
-		contentLanguage = ctx.getContentLanguage();
-		requestContentLanguage = ctx.getRequestContentLanguage();
+		path = ctx.path;
+		language = ctx.language;
+		contentLanguage = ctx.contentLanguage;
+		requestContentLanguage = ctx.requestContentLanguage;
 		setRequest(ctx.getRequest());
 		setResponse(ctx.getResponse());
-		renderMode = ctx.getRenderMode();
-		area = ctx.getArea();
+		renderMode = ctx.renderMode;
+		area = ctx.area;
 		setAbsoluteURL(ctx.isAbsoluteURL);
-		setHostName(ctx.getHostName());
-		setHostPort(ctx.getHostPort());
+		setHostName(ctx.hostName);
+		setHostPort(ctx.hostPort);
 
 		viewPrefix = ctx.viewPrefix;
 		urlFactory = ctx.urlFactory;
