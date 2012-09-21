@@ -520,30 +520,31 @@ public class XMLManipulationHelper {
 						out.println("");
 						out.println("<!-- template plugins -->");
 						for (TemplatePlugin plugin : templatePlugins) {
-							String headHTML = plugin.getHTMLHead(globalContext);
-							TagDescription[] pluginTags = searchAllTag(headHTML, false);
-							for (TagDescription tag : pluginTags) {
-								String resource = null;
-								if (tag.getAttributes().get("src") != null) {
-									resource = new File(tag.getAttributes().get("src")).getName(); // for js take only the name of js file.
-									tag.getAttributes().put("src", "<%=URLHelper.createStaticTemplatePluginURL(ctx, \"" + tag.getAttributes().get("src") + "\", \"" + plugin.getFolder() + "\")%>");
+							if (plugin != null) {
+								String headHTML = plugin.getHTMLHead(globalContext);
+								TagDescription[] pluginTags = searchAllTag(headHTML, false);
+								for (TagDescription tag : pluginTags) {
+									String resource = null;
+									if (tag.getAttributes().get("src") != null) {
+										resource = new File(tag.getAttributes().get("src")).getName(); // for js take only the name of js file.
+										tag.getAttributes().put("src", "<%=URLHelper.createStaticTemplatePluginURL(ctx, \"" + tag.getAttributes().get("src") + "\", \"" + plugin.getFolder() + "\")%>");
+									}
+									if (tag.getAttributes().get("href") != null) {
+										resource = tag.getAttributes().get("href");
+										tag.getAttributes().put("href", "<%=URLHelper.createStaticTemplatePluginURL(ctx, \"" + tag.getAttributes().get("href") + "\", \"" + plugin.getFolder() + "\")%>");
+									}
+									String inside = tag.getInside(headHTML);
+									if (tag.getName().equalsIgnoreCase("link")) { // auto close link tag
+										inside = null;
+									}
+									String outHead = tag.render(inside);
+									if (resource != null) {
+										outHead = "<%if (!XHTMLHelper.allReadyInsered(ctx,\"" + resource + "\")) { %>" + outHead + "<%} else {%><!-- resource allready insered: " + resource + " --><%}%>";
+									}
+									String homeRendercode = "<%=URLHelper.createStaticTemplatePluginURL(ctx, \"/\", \"" + plugin.getFolder() + "\")%>";
+									outHead = outHead.replace(TemplatePlugin.HOME_KEY, homeRendercode);
+									out.println(outHead);
 								}
-								if (tag.getAttributes().get("href") != null) {
-									resource = tag.getAttributes().get("href");
-									tag.getAttributes().put("href", "<%=URLHelper.createStaticTemplatePluginURL(ctx, \"" + tag.getAttributes().get("href") + "\", \"" + plugin.getFolder() + "\")%>");
-								}
-								String inside = tag.getInside(headHTML);
-								if (tag.getName().equalsIgnoreCase("link")) { // auto close link tag
-									inside = null;
-								}
-								String outHead = tag.render(inside);
-								if (resource != null) {
-									outHead = "<%if (!XHTMLHelper.allReadyInsered(ctx,\"" + resource + "\")) { %>" + outHead + "<%} else {%><!-- resource allready insered: " + resource + " --><%}%>";
-								}
-								String homeRendercode = "<%=URLHelper.createStaticTemplatePluginURL(ctx, \"/\", \"" + plugin.getFolder() + "\")%>";
-								outHead = outHead.replace(TemplatePlugin.HOME_KEY, homeRendercode);
-								out.println(outHead);
-
 							}
 						}
 						out.println("<!-- end template plugins -->");
