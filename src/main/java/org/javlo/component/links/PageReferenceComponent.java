@@ -23,6 +23,7 @@ import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
 import org.javlo.actions.IAction;
+import org.javlo.bean.Link;
 import org.javlo.component.core.AbstractVisualComponent;
 import org.javlo.component.core.ComplexPropertiesLink;
 import org.javlo.component.core.ComponentBean;
@@ -129,27 +130,6 @@ public class PageReferenceComponent extends ComplexPropertiesLink implements IAc
 
 		}
 
-		public static class Link {
-			String title;
-			String url;
-
-			public String getTitle() {
-				return title;
-			}
-
-			public String getUrl() {
-				return url;
-			}
-
-			public void setTitle(String title) {
-				this.title = title;
-			}
-
-			public void setUrl(String url) {
-				this.url = url;
-			}
-		}
-
 		private static PageBean getInstance(ContentContext ctx, MenuElement page, PageReferenceComponent comp) throws Exception {
 
 			GlobalContext globalContext = GlobalContext.getInstance(ctx.getRequest());
@@ -239,15 +219,15 @@ public class PageReferenceComponent extends ComplexPropertiesLink implements IAc
 				bean.getImages().add(imageBean);
 			}
 
+			bean.staticResources = page.getStaticResources(realContentCtx);
+
 			Collection<String> lgs = globalContext.getContentLanguages();
 			for (String lg : lgs) {
 				ContentContext lgCtx = new ContentContext(ctx);
 				lgCtx.setRequestContentLanguage(lg);
 				lgCtx.setContentLanguage(lg);
 				if (!page.isEmpty(lgCtx)) {
-					Link link = new Link();
-					link.setTitle(lg);
-					link.setUrl(URLHelper.createURL(lgCtx, page.getPath()));
+					Link link = new Link(URLHelper.createURL(lgCtx, page.getPath()), lg);
 					bean.links.add(link);
 				}
 			}
@@ -283,6 +263,7 @@ public class PageReferenceComponent extends ComplexPropertiesLink implements IAc
 		private boolean realContent = false;
 		private boolean visible = false;
 		private Collection<Link> links = new LinkedList<Link>();
+		private Collection<Link> staticResources = new LinkedList<Link>();
 		private final Collection<Image> images = new LinkedList<Image>();
 
 		private Collection<String> tags = new LinkedList<String>();
@@ -448,6 +429,10 @@ public class PageReferenceComponent extends ComplexPropertiesLink implements IAc
 
 		public void setVisible(boolean visible) {
 			this.visible = visible;
+		}
+
+		public Collection<Link> getStaticResources() {
+			return staticResources;
 		}
 
 	}

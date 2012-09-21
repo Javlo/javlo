@@ -23,6 +23,7 @@ import net.sf.ehcache.Cache;
 import net.sf.ehcache.Element;
 
 import org.apache.commons.lang.StringUtils;
+import org.javlo.bean.Link;
 import org.javlo.comparator.MenuElementPriorityComparator;
 import org.javlo.component.core.AbstractVisualComponent;
 import org.javlo.component.core.ComponentBean;
@@ -230,6 +231,7 @@ public class MenuElement implements Serializable {
 		IImageTitle imageLink = null;
 		String linkOn = null;
 		Collection<IImageTitle> images = null;
+		Collection<Link> staticResources = null;
 		String description = null;
 		String metaDescription = null;
 		String keywords = null;
@@ -242,7 +244,7 @@ public class MenuElement implements Serializable {
 		String category = null;
 		Double pageRank = null;
 		List<String> tags = null;
-		Collection<String> resources = null;
+		Collection<String> needdedResources = null;
 		String headerContent = null;
 		List<String> groupID = null;
 		TimeRange timeRange = null;
@@ -255,6 +257,10 @@ public class MenuElement implements Serializable {
 
 		public boolean isVisible() {
 			return visible;
+		}
+
+		public Collection<Link> getStaticResources() {
+			return staticResources;
 		}
 
 		public void setVisible(boolean visible) {
@@ -420,12 +426,12 @@ public class MenuElement implements Serializable {
 			this.tags = tags;
 		}
 
-		public Collection<String> getResources() {
-			return resources;
+		public Collection<String> getNeeddedResources() {
+			return needdedResources;
 		}
 
-		public void setResources(Collection<String> resources) {
-			this.resources = resources;
+		public void setNeeddedResources(Collection<String> resources) {
+			this.needdedResources = resources;
 		}
 
 		public String getHeaderContent() {
@@ -1515,7 +1521,7 @@ public class MenuElement implements Serializable {
 
 	public Collection<String> getExternalResources(ContentContext ctx) throws Exception {
 		PageDescription desc = getPageDescriptionCached(ctx.getRequestContentLanguage());
-		if (desc.resources == null) {
+		if (desc.needdedResources == null) {
 			Collection<String> outResources = new LinkedList<String>();
 			ContentElementList content = getAllContent(ctx);
 			while (content.hasNext(ctx)) {
@@ -1532,9 +1538,9 @@ public class MenuElement implements Serializable {
 				}
 				// outResources.addAll(comp.getExternalResources());
 			}
-			desc.resources = outResources;
+			desc.needdedResources = outResources;
 		}
-		return desc.resources;
+		return desc.needdedResources;
 	}
 
 	/**
@@ -1795,14 +1801,33 @@ public class MenuElement implements Serializable {
 				IImageTitle imageComp = (IImageTitle) elem;
 				if (imageComp.isImageValid(ctx)) {
 					res.add(new ImageTitleBean(imageComp.getImageDescription(ctx), imageComp.getImageURL(ctx), imageComp.getImageLinkURL(ctx)));
-					// desc.imageLink = new WeakReference<IImageTitle>(res);
-					// desc.imageLink = new ImageTitleBean(res.getImageDescription(ctx), res.getImageURL(ctx));
-					// return res;
 				}
 			}
 		}
 		desc.images = res;
 		return desc.images;
+	}
+
+	public Collection<Link> getStaticResources(ContentContext ctx) throws Exception {
+		PageDescription desc = getPageDescriptionCached(ctx.getRequestContentLanguage());
+		Collection<Link> res = null;
+		if (desc.staticResources != null) {
+			res = desc.staticResources;
+		}
+		if (res != null) {
+			return res;
+		}
+		res = new LinkedList<Link>();
+		IContentComponentsList contentList = getAllContent(ctx);
+		while (contentList.hasNext(ctx)) {
+			IContentVisualComponent elem = contentList.next(ctx);
+			if (!(elem instanceof IImageTitle) && (elem instanceof IStaticContainer) && (!elem.isEmpty(ctx)) && (!elem.isRepeat())) {
+				IStaticContainer resourcesContainer = (IStaticContainer) elem;
+				res.addAll(resourcesContainer.getAllResourcesLinks(ctx));
+			}
+		}
+		desc.staticResources = res;
+		return desc.staticResources;
 	}
 
 	public String getKeywords(ContentContext ctx) throws Exception {
@@ -2115,6 +2140,7 @@ public class MenuElement implements Serializable {
 				pageDescription.groupID = getGroupID(ctx);
 				pageDescription.headerContent = getHeaderContent(ctx);
 				pageDescription.images = getImages(ctx);
+				pageDescription.staticResources = getStaticResources(ctx);
 				pageDescription.contentDateVisible = isContentDateVisible(ctx);
 				pageDescription.empty = isEmpty(ctx);
 				pageDescription.realContent = isRealContent(ctx);

@@ -7,7 +7,7 @@ import java.util.List;
 
 import javax.servlet.http.HttpSession;
 
-import org.javlo.bean.Link;
+import org.javlo.bean.ParentLink;
 import org.javlo.context.GlobalContext;
 import org.javlo.i18n.I18nAccess;
 import org.javlo.module.core.Module;
@@ -17,8 +17,8 @@ public class TemplateContext {
 	public static final String NAME = "template";
 	
 	private static final String KEY = "templateContext";	
-	public static Link MY_TEMPLATES_LINK = null;
-	public static Link ALL_TEMPLATES_LINK = null;
+	public static ParentLink MY_TEMPLATES_LINK = null;
+	public static ParentLink ALL_TEMPLATES_LINK = null;
 	private I18nAccess i18nAccess = null;	
 	private String currentLink;
 	
@@ -29,15 +29,15 @@ public class TemplateContext {
 		if (outCtx == null) {
 			outCtx = new TemplateContext();
 			outCtx.i18nAccess = I18nAccess.getInstance(globalContext, session);			
-			TemplateContext.MY_TEMPLATES_LINK = new Link("mytemplates", outCtx.i18nAccess.getText("template.renderer.home"));
-			TemplateContext.ALL_TEMPLATES_LINK = new Link("allmtemplates", outCtx.i18nAccess.getText("template.renderer.all"));
+			TemplateContext.MY_TEMPLATES_LINK = new ParentLink("mytemplates", outCtx.i18nAccess.getText("template.renderer.home"));
+			TemplateContext.ALL_TEMPLATES_LINK = new ParentLink("allmtemplates", outCtx.i18nAccess.getText("template.renderer.all"));
 			session.setAttribute(KEY, outCtx);
 		}
 		return outCtx;
 	}
 	
-	public List<Link> getLocalNavigation() {
-		List<Link> outRenderers = new LinkedList<Link>();		
+	public List<ParentLink> getLocalNavigation() {
+		List<ParentLink> outRenderers = new LinkedList<ParentLink>();		
 		outRenderers.add(MY_TEMPLATES_LINK);		
 		outRenderers.add(ALL_TEMPLATES_LINK);
 		return outRenderers;

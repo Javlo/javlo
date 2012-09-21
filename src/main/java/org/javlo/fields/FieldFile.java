@@ -1,7 +1,6 @@
 package org.javlo.fields;
 
 import java.io.File;
-import java.io.FilenameFilter;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.PrintWriter;
@@ -17,6 +16,7 @@ import java.util.Locale;
 import javax.servlet.http.HttpServletRequest;
 
 import org.apache.commons.fileupload.FileItem;
+import org.javlo.bean.Link;
 import org.javlo.config.StaticConfig;
 import org.javlo.context.ContentContext;
 import org.javlo.context.GlobalContext;
@@ -90,13 +90,13 @@ public class FieldFile extends Field implements IStaticContainer {
 		List<String> list = new ArrayList<String>();
 		list.add("");
 		if (dir.exists()) {
-			File[] files = dir.listFiles((FilenameFilter)new DirectoryFilter());
+			File[] files = dir.listFiles(new DirectoryFilter());
 
 			Comparator fileComparator = new FileComparator(FileComparator.NAME, true);
 			Arrays.sort(files, fileComparator);
 
-			for (int i = 0; i < files.length; i++) {
-				list.add(files[i].getName());
+			for (File file : files) {
+				list.add(file.getName());
 			}
 		}
 		return list;
@@ -219,7 +219,7 @@ public class FieldFile extends Field implements IStaticContainer {
 	protected boolean isWithLink() {
 		return false;
 	}
-	
+
 	@Override
 	public boolean isPertinent() {
 		return getCurrentFile() != null || getCurrentFile().length() > 0;
@@ -253,9 +253,9 @@ public class FieldFile extends Field implements IStaticContainer {
 	public String getType() {
 		return "file";
 	}
-	
+
 	public String getURL(ContentContext ctx) {
-		String relativePath = URLHelper.mergePath(getFileTypeFolder(), getCurrentFolder());		
+		String relativePath = URLHelper.mergePath(getFileTypeFolder(), getCurrentFolder());
 		return URLHelper.createResourceURL(ctx, URLHelper.mergePath(relativePath, getCurrentFile()));
 	}
 
@@ -279,7 +279,7 @@ public class FieldFile extends Field implements IStaticContainer {
 				setCurrentFile("");
 				modify = true;
 				setNeedRefresh(true);
-			}			
+			}
 		} else if (!getCurrentFolder().equals(folder)) {
 			setCurrentFolder(folder);
 			if (getFileList().iterator().hasNext()) {
@@ -376,7 +376,7 @@ public class FieldFile extends Field implements IStaticContainer {
 	protected void setCurrentLabel(String label) {
 		properties.setProperty("field." + getUnicName() + ".value.label", label);
 	}
-	
+
 	protected String getFileURL(ContentContext ctx, String fileLink) {
 		return URLHelper.mergePath(getFileTypeFolder(), getCurrentFolder(), fileLink);
 	}
@@ -408,7 +408,7 @@ public class FieldFile extends Field implements IStaticContainer {
 		}
 		return outList;
 	}
-	
+
 	@Override
 	public boolean renameResource(ContentContext ctx, File oldName, File newName) {
 		if (oldName.equals(newName)) {
@@ -428,6 +428,16 @@ public class FieldFile extends Field implements IStaticContainer {
 		} else {
 			return false;
 		}
+	}
+
+	@Override
+	public Collection<Link> getAllResourcesLinks(ContentContext ctx) {
+		Collection<Link> outList = new LinkedList<Link>();
+		if (getCurrentFile() != null && getCurrentFile().trim().length() > 0) {
+			String fileURI = getFileURL(ctx, getCurrentFile());
+			outList.add(new Link(fileURI, getLabel(new Locale(ctx.getRequestContentLanguage()))));
+		}
+		return outList;
 	}
 
 }

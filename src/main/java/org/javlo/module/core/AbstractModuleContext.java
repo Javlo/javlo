@@ -10,7 +10,7 @@ import java.util.logging.Logger;
 
 import javax.servlet.http.HttpSession;
 
-import org.javlo.bean.Link;
+import org.javlo.bean.ParentLink;
 import org.javlo.bean.LinkToRenderer;
 import org.javlo.context.GlobalContext;
 import org.javlo.i18n.I18nAccess;
@@ -68,7 +68,7 @@ public abstract class AbstractModuleContext {
 	private static void createFlatNavigation(List<LinkToRenderer> outList, LinkToRenderer link) {
 		outList.add(link);
 		if (link.getChildren() != null) {
-			for (Link linkToRenderer : link.getChildren()) {
+			for (ParentLink linkToRenderer : link.getChildren()) {
 				createFlatNavigation(outList, (LinkToRenderer) linkToRenderer);
 			}
 		}

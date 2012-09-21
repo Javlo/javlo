@@ -923,7 +923,7 @@ public abstract class AbstractVisualComponent implements IContentVisualComponent
 		if (isRepeat()) {
 			style = style + " repeat";
 			try {
-				if (getPage().equals(ctx.getCurrentPage())) {
+				if (getPage() != null && getPage().equals(ctx.getCurrentPage())) {
 					style = style + " first-repeat";
 				}
 			} catch (Exception e) {

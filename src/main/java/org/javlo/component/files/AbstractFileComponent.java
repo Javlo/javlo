@@ -22,6 +22,7 @@ import java.util.zip.ZipEntry;
 import java.util.zip.ZipInputStream;
 
 import org.apache.commons.fileupload.FileItem;
+import org.javlo.bean.Link;
 import org.javlo.component.core.AbstractVisualComponent;
 import org.javlo.component.core.ComponentBean;
 import org.javlo.component.core.IContentVisualComponent;
@@ -161,6 +162,21 @@ public abstract class AbstractFileComponent extends AbstractVisualComponent impl
 			Resource resource = new Resource();
 			resource.setUri(fileURI);
 			outList.add(resource);
+		}
+		return outList;
+	}
+
+	@Override
+	public Collection<Link> getAllResourcesLinks(ContentContext ctx) {
+		Collection<Link> outList = new LinkedList<Link>();
+		if (getFileName() != null && getFileName().trim().length() > 0) {
+			String desc = getDescription();
+			if (desc == null || desc.trim().length() == 0) {
+				desc = getFileName();
+			}
+			String url = URLHelper.createResourceURL(ctx, getFileURL(ctx, getFileName()));
+			Link link = new Link(url, desc);
+			outList.add(link);
 		}
 		return outList;
 	}
@@ -367,7 +383,7 @@ public abstract class AbstractFileComponent extends AbstractVisualComponent impl
 	}
 
 	protected String getFileURL(ContentContext ctx, String fileLink) {
-		return ElementaryURLHelper.mergePath(getRelativeFileDirectory(ctx), ElementaryURLHelper.mergePath(getDirSelected(), fileLink));
+		return URLHelper.mergePath("/", getRelativeFileDirectory(ctx), ElementaryURLHelper.mergePath(getDirSelected(), fileLink));
 	}
 
 	protected String getFileXHTMLInputName() {
