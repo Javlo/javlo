@@ -1087,7 +1087,7 @@ public class Edit extends AbstractModuleAction {
 		if (comp == null) {
 			return "nothing to paste.";
 		}
-		String newId = content.createContent(ctx, previous, comp.getType(), comp.getValue());
+		String newId = content.createContent(ctx, previous, comp.getType(), comp.getValue(), comp.isRepeat());
 		if (ctx.isAjax()) {
 			updateComponent(ctx, currentModule, newId, previous);
 		}
