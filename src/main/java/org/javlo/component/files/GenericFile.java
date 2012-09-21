@@ -15,7 +15,6 @@ import org.javlo.context.GlobalContext;
 import org.javlo.helper.ElementaryURLHelper;
 import org.javlo.helper.StringHelper;
 import org.javlo.helper.URLHelper;
-import org.javlo.helper.XHTMLHelper;
 import org.javlo.i18n.I18nAccess;
 import org.javlo.module.mailing.MailingAction;
 import org.javlo.service.ReverseLinkService;
@@ -157,7 +156,7 @@ public class GenericFile extends AbstractFileComponent implements IReverseLinkCo
 			if (getStyle(ctx).equals(SHADOW_STYLE)) {
 				rel = "rel=\"shadowbox\" ";
 			}
-			
+
 			GlobalContext globalContext = GlobalContext.getInstance(ctx.getRequest());
 			String openAsPopup = "";
 			if (globalContext.isOpenFileAsPopup()) {
@@ -173,9 +172,9 @@ public class GenericFile extends AbstractFileComponent implements IReverseLinkCo
 				res.append(StringHelper.toXMLAttribute(url) + "?" + MailingAction.MAILING_FEEDBACK_PARAM_NAME + "=##data##");
 			}
 			res.append("\">");
-			if (XHTMLHelper.getFileIcone(ctx, getFileName()).length() > 0) {
-				res.append(XHTMLHelper.getFileIcone(ctx, getFileName()) + "&nbsp;");
-			}
+			/*
+			 * if (XHTMLHelper.getFileIcone(ctx, getFileName()).length() > 0) { res.append(XHTMLHelper.getFileIcone(ctx, getFileName()) + "&nbsp;"); }
+			 */
 			if (getLabel().trim().length() == 0) {
 				res.append(getFileName());
 			} else {
@@ -183,9 +182,9 @@ public class GenericFile extends AbstractFileComponent implements IReverseLinkCo
 			}
 			String fullName = ElementaryURLHelper.mergePath(getDirSelected(), getFileName());
 			fullName = ElementaryURLHelper.mergePath(staticConfig.getFileFolder(), fullName);
-			
+
 			fullName = ElementaryURLHelper.mergePath(globalContext.getDataFolder(), fullName);
-			res.append(" (" + StringHelper.getFileSize(fullName) + ")</a>");
+			res.append(" <span class=\"info\">(<span class=\"file-type\">" + StringHelper.getFileExtension(getFileName()) + "</span> <span class=\"info\">" + StringHelper.getFileSize(fullName) + "</span>)</span></a>");
 			if ((getDescription().trim().length() > 0) && (ctx.getRenderMode() != ContentContext.EDIT_MODE)) { /*
 																												 * not set description when EDIT_MODE ( see getPreviewCode ( ) method
 																												 */
@@ -226,9 +225,9 @@ public class GenericFile extends AbstractFileComponent implements IReverseLinkCo
 	public boolean needJavaScript(ContentContext ctx) {
 		return getStyle(ctx).equals(SHADOW_STYLE);
 	}
-	
+
 	@Override
-	public boolean isRealContent(ContentContext ctx) {	
+	public boolean isRealContent(ContentContext ctx) {
 		return getValue().trim().length() > 0;
 	}
 

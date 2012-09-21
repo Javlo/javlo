@@ -180,6 +180,20 @@ public class ContentService {
 		return id;
 	}
 
+	public String createContent(ContentContext ctx, String parentId, String type, String content, boolean repeat) throws Exception {
+		if (content == null) {
+			content = "";
+		}
+		String id = StringHelper.getRandomId();
+		ComponentBean bean = new ComponentBean(id, type, content, ctx.getContentLanguage(), repeat);
+		GlobalContext globalContext = GlobalContext.getInstance(ctx.getRequest());
+		EditContext editCtx = EditContext.getInstance(globalContext, ctx.getRequest().getSession());
+		bean.setArea(editCtx.getCurrentArea());
+		MenuElement elem = ctx.getCurrentPage();
+		elem.addContent(parentId, bean);
+		return id;
+	}
+
 	public synchronized void deleteKeys(String prefix) {
 		if (previewGlobalMap != null) {
 			Collection<String> keys = previewGlobalMap.keySet();
