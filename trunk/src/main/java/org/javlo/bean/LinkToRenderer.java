@@ -8,7 +8,7 @@ import java.util.Map;
  * @author Patrick Vandermaesen
  *
  */
-public class LinkToRenderer extends Link {
+public class LinkToRenderer extends ParentLink {
 	
 	protected String renderer;
 	protected String name;	

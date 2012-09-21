@@ -19,6 +19,7 @@ import java.util.Map;
 import java.util.Properties;
 import java.util.logging.Logger;
 
+import org.javlo.bean.Link;
 import org.javlo.component.core.AbstractVisualComponent;
 import org.javlo.component.core.ComponentBean;
 import org.javlo.component.core.IContentVisualComponent;
@@ -619,6 +620,21 @@ public class DynamicComponent extends AbstractVisualComponent implements IStatic
 	@Override
 	public boolean isContentTimeCachable(ContentContext ctx) {
 		return false;
+	}
+
+	@Override
+	public Collection<Link> getAllResourcesLinks(ContentContext ctx) {
+		Collection<Link> outResources = new LinkedList<Link>();
+		try {
+			for (Field field : getFields(ctx)) {
+				if (field instanceof IStaticContainer) {
+					outResources.addAll(((IStaticContainer) field).getAllResourcesLinks(ctx));
+				}
+			}
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		return outResources;
 	}
 
 }
