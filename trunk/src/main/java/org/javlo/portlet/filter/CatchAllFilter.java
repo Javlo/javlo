@@ -389,6 +389,8 @@ public class CatchAllFilter implements Filter {
 			/**** ADD VIEW ****/
 			/******************/
 
+			System.out.println("***** CatchAllFilter.doFilter : forwardURI = " + forwardURI); // TODO: remove debug trace
+
 			if (!staticConfig.isViewPrefix()) {
 				String viewURI = uri;
 				if (forwardURI != null) {
