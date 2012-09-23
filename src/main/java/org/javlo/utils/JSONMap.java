@@ -8,11 +8,10 @@ import java.util.LinkedList;
 import java.util.Map;
 import java.util.Set;
 
+import org.apache.commons.lang.NotImplementedException;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
-
-import sun.reflect.generics.reflectiveObjects.NotImplementedException;
 
 public class JSONMap implements Map<String, Object> {
 

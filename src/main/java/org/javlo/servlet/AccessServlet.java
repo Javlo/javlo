@@ -65,6 +65,7 @@ import org.javlo.tracking.Tracker;
 import org.javlo.user.IUserFactory;
 import org.javlo.user.UserFactory;
 import org.javlo.utils.DebugListening;
+import org.javlo.utils.ImageIOLeakTest;
 import org.xhtmlrenderer.pdf.ITextRenderer;
 import org.xhtmlrenderer.swing.Java2DRenderer;
 import org.xhtmlrenderer.util.FSImageWriter;
@@ -124,6 +125,20 @@ public class AccessServlet extends HttpServlet {
 	@Override
 	public void init() throws ServletException {
 		super.init();
+
+		System.out.println("********************");
+		System.out.println("*** IO LEAK TEST ***");
+		System.out.println("********************");
+
+		try {
+			ImageIOLeakTest.test(getServletContext());
+		} catch (IOException e2) {
+			e2.printStackTrace();
+		}
+
+		System.out.println("*********************");
+		System.out.println("*** /IO LEAK TEST ***");
+		System.out.println("*********************");
 
 		try {
 			DebugHelper.updateLoggerLevel(getServletContext());
