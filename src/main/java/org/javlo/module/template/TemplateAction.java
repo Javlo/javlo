@@ -59,13 +59,13 @@ public class TemplateAction extends AbstractModuleAction {
 		Collection<Template> allTemplate = TemplateFactory.getAllDiskTemplates(ctx.getRequest().getSession().getServletContext());
 		Collection<String> contextTemplates = globalContext.getTemplatesNames();
 
-		Collection<Template.TemplateBean> templates = new LinkedList<Template.TemplateBean>();		
+		Collection<Template.TemplateBean> templates = new LinkedList<Template.TemplateBean>();
 		if (templateContext.getCurrentLink().equals(TemplateContext.MY_TEMPLATES_LINK.getUrl())) {
 			ctx.getRequest().setAttribute("nobrowse", "true");
 		}
 		for (Template template : allTemplate) {
 			if (!template.isTemplateInWebapp(ctx)) {
-				template.importTemplateInWebapp(ctx);
+				template.importTemplateInWebapp(StaticConfig.getInstance(ctx.getRequest().getSession().getServletContext()), ctx);
 			}
 			if (!templateContext.getCurrentLink().equals(TemplateContext.MY_TEMPLATES_LINK.getUrl()) || contextTemplates.contains(template.getName())) {
 				templates.add(new Template.TemplateBean(ctx, template));
@@ -105,7 +105,7 @@ public class TemplateAction extends AbstractModuleAction {
 		ctx.getRequest().setAttribute("fileURL", URLHelper.createInterModuleURL(ctx, ctx.getPath(), FileModuleContext.MODULE_NAME, params));
 
 		/** choose template if we come from admin module **/
-		if (moduleContext.getFromModule() != null && moduleContext.getFromModule().getName().equals("admin")) {			
+		if (moduleContext.getFromModule() != null && moduleContext.getFromModule().getName().equals("admin")) {
 			ctx.getRequest().setAttribute("selectUrl", moduleContext.getFromModule().getBackUrl());
 		}
 
@@ -315,18 +315,18 @@ public class TemplateAction extends AbstractModuleAction {
 		messageRepository.setGlobalMessageAndNotification(ctx, new GenericMessage(i18nAccess.getText("template.message.commited", new String[][] { { "name", requestService.getParameter("name", null) } }), GenericMessage.INFO));
 		return null;
 	}
-	
-	public static String performChangeFromPreview(RequestService rs, ContentContext ctx, Module currentModule, MessageRepository messageRepository, I18nAccess i18nAccess) {				
+
+	public static String performChangeFromPreview(RequestService rs, ContentContext ctx, Module currentModule, MessageRepository messageRepository, I18nAccess i18nAccess) {
 		return null;
 	}
-	
+
 	public static String performSelectTemplate(RequestService rs, ContentContext ctx, MenuElement currentPage, MessageRepository messageRepository, I18nAccess i18nAccess) {
-		String templateName = rs.getParameter("name", null);		
+		String templateName = rs.getParameter("name", null);
 		currentPage.setTemplateName(templateName);
-	    if (rs.getParameter("previewEdit", null) != null) {	    	
-	    	ctx.getRequest().setAttribute("closeFrame", "true");
-	    }
+		if (rs.getParameter("previewEdit", null) != null) {
+			ctx.getRequest().setAttribute("closeFrame", "true");
+		}
 		return null;
 	}
-	
+
 }
