@@ -221,11 +221,10 @@ public class CatchAllFilter implements Filter {
 	@Override
 	public void doFilter(ServletRequest request, ServletResponse response, FilterChain next) throws IOException, ServletException {
 
-		System.out.println("***** CatchAllFilter.doFilter : request.getRequestURI() = " + request.getRequestURI()); // TODO: remove debug trace
-
 		logger.fine("start catch all servelt.");
 
 		HttpServletRequest httpRequest = (HttpServletRequest) request;
+		System.out.println("***** CatchAllFilter.doFilter : httpRequest.getRequestURI() = " + httpRequest.getRequestURI()); // TODO: remove debug trace
 		ServletContext servletContext = httpRequest.getSession().getServletContext();
 
 		if (request.getParameter(ContentContext.FORWARD_PATH_REQUEST_KEY) != null) {
