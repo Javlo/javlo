@@ -549,7 +549,7 @@ public class ContentContext {
 			}
 
 			if (template != null && !template.isTemplateInWebapp(this)) {
-				template.importTemplateInWebapp(this);
+				template.importTemplateInWebapp(globalContext.getStaticConfig(), this);
 			}
 
 			currentTemplate = template;

@@ -10,6 +10,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 
 import org.javlo.actions.AbstractModuleAction;
+import org.javlo.config.StaticConfig;
 import org.javlo.context.ContentContext;
 import org.javlo.context.GlobalContext;
 import org.javlo.helper.URLHelper;
@@ -70,7 +71,7 @@ public class MailingAction extends AbstractModuleAction {
 			for (Template template : allTemplate) {
 				if (template.isMailing() && contextTemplates.contains(template.getName())) {
 					if (!template.isTemplateInWebapp(ctx)) {
-						template.importTemplateInWebapp(ctx);
+						template.importTemplateInWebapp(StaticConfig.getInstance(ctx.getRequest().getSession().getServletContext()), ctx);
 					}
 					templates.add(new Template.TemplateBean(ctx, template));
 				}

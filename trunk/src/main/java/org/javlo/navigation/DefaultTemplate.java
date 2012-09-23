@@ -295,12 +295,12 @@ public class DefaultTemplate extends Template {
 	}
 
 	@Override
-	public void importTemplateInWebapp(ContentContext ctx) throws IOException {
+	public void importTemplateInWebapp(StaticConfig config, ContentContext ctx) throws IOException {
 		return;
 	}
 
 	@Override
-	protected void importTemplateInWebapp(ContentContext ctx, GlobalContext globalContext, File templateTarget) throws IOException {
+	protected void importTemplateInWebapp(StaticConfig config, ContentContext ctx, GlobalContext globalContext, File templateTarget) throws IOException {
 		return;
 	}
 

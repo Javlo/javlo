@@ -35,8 +35,6 @@ public class TemplateFactory {
 
 	private static final String TEMPLATE_KEY = "wcms-templates";
 
-	private static final String MAILING_TEMPLATE_KEY = "wcms-mailing-templates";
-
 	public static List<String> TEMPLATE_COLOR_AMBIANCE = Arrays.asList(new String[] { "none", "black", "white", "gray", "red", "green", "blue", "orange", "yellow", "purple", "pink", "brun" });
 
 	public static void cleanAllRenderer(ContentContext ctx, boolean secure) throws IOException {
@@ -78,7 +76,6 @@ public class TemplateFactory {
 
 	public static void clearTemplate(ServletContext application) {
 		application.removeAttribute(TEMPLATE_KEY);
-		application.removeAttribute(MAILING_TEMPLATE_KEY);
 	}
 
 	public static List<String> getAllAuthors(ServletContext application) throws IOException {
@@ -105,10 +102,10 @@ public class TemplateFactory {
 	 * @return
 	 * @throws IOException
 	 */
-	public static Collection<String> getAllCategories(ServletContext application, User user ) throws IOException {
+	public static Collection<String> getAllCategories(ServletContext application, User user) throws IOException {
 		Collection<Template> templates;
 		templates = getAllTemplates(application);
-		
+
 		Collection<String> categories = new TreeSet<String>();
 		for (Template template : templates) {
 			if (user == null || template.visibleForRoles(user.getRoles())) {
@@ -206,7 +203,7 @@ public class TemplateFactory {
 		}
 		return outTemplates;
 	}
-	
+
 	/**
 	 * get template from disk.
 	 * 
@@ -215,11 +212,11 @@ public class TemplateFactory {
 	 * @throws IOException
 	 */
 	public static Template createDiskTemplates(ServletContext application, String name) throws IOException {
-		StaticConfig staticConfig = StaticConfig.getInstance(application);		
+		StaticConfig staticConfig = StaticConfig.getInstance(application);
 		File templateFolder = new File(URLHelper.mergePath(staticConfig.getTemplateFolder(), StringHelper.createFileName(name)));
 		if (templateFolder.exists()) {
 			return null;
-		}		
+		}
 		File defaultTemplate = new File(staticConfig.getDefaultTemplateFolder());
 		if (defaultTemplate.exists()) {
 			FileUtils.copyDirectory(defaultTemplate, templateFolder);

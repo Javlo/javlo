@@ -574,7 +574,7 @@ public class Template implements Comparable<Template> {
 		}
 
 		if (!outTemplate.isTemplateInWebapp(ctx)) {
-			outTemplate.importTemplateInWebapp(ctx);
+			outTemplate.importTemplateInWebapp(StaticConfig.getInstance(application), ctx);
 		}
 
 		outTemplate.parent = outTemplate.getParent(StaticConfig.getInstance(application), ctx);
@@ -605,7 +605,7 @@ public class Template implements Comparable<Template> {
 		template.config = config;
 
 		if (!template.isTemplateInWebapp(ctx)) {
-			template.importTemplateInWebapp(ctx);
+			template.importTemplateInWebapp(config, ctx);
 		}
 
 		File configFile = new File(URLHelper.mergePath(templateFolder, CONFIG_FILE));
@@ -694,7 +694,7 @@ public class Template implements Comparable<Template> {
 			}
 		}
 		try {
-			importTemplateInWebapp(ctx);
+			importTemplateInWebapp(config.getInstance(ctx.getRequest().getSession().getServletContext()), ctx);
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
@@ -1222,7 +1222,7 @@ public class Template implements Comparable<Template> {
 		File jspFile = new File(jspPath);
 
 		if (!jspFile.exists()) {
-			importTemplateInWebapp(ctx);
+			importTemplateInWebapp(globalContext.getStaticConfig(), ctx);
 			File HTMLFile = new File(URLHelper.mergePath(getTemplateTargetFolder(globalContext), getHTMLFile(ctx.getDevice())));
 			logger.info(jspFile + " not found, try to generate from " + HTMLFile);
 			if (!HTMLFile.exists()) {
@@ -1479,7 +1479,7 @@ public class Template implements Comparable<Template> {
 		return config.getRealPath(getLocalWorkTemplateFolder());
 	}
 
-	public void importTemplateInWebapp(ContentContext ctx) throws IOException {
+	public void importTemplateInWebapp(StaticConfig config, ContentContext ctx) throws IOException {
 
 		GlobalContext globalContext = null;
 		if (ctx != null && ctx.getRenderMode() != ContentContext.ADMIN_MODE) {
@@ -1494,15 +1494,15 @@ public class Template implements Comparable<Template> {
 			logger.info("copy template from '" + templateSrc + "' to '" + templateTgt + "'");
 
 			FileUtils.deleteDirectory(templateTgt);
-			importTemplateInWebapp(ctx, globalContext, templateTgt);
+			importTemplateInWebapp(config, ctx, globalContext, templateTgt);
 		} else {
 			logger.severe("folder not found : " + templateSrc);
 		}
 	}
 
-	protected void importTemplateInWebapp(ContentContext ctx, GlobalContext globalContext, File templateTarget) throws IOException {
+	protected void importTemplateInWebapp(StaticConfig config, ContentContext ctx, GlobalContext globalContext, File templateTarget) throws IOException {
 		if (isParent()) {
-			getParent().importTemplateInWebapp(ctx, globalContext, templateTarget);
+			getParent().importTemplateInWebapp(config, ctx, globalContext, templateTarget);
 		}
 		String templateFolder = config.getTemplateFolder();
 		File templateSrc = new File(URLHelper.mergePath(templateFolder, getSourceFolder()));
@@ -1567,6 +1567,9 @@ public class Template implements Comparable<Template> {
 			}
 		}
 		deployId = StringHelper.getRandomId();
+		if (config != null) {
+			TemplateFactory.clearTemplate(config.getServletContext());
+		}
 	}
 
 	public boolean isAlternativeTemplate(ContentContext ctx) {
