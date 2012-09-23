@@ -401,6 +401,7 @@ public class CatchAllFilter implements Filter {
 						String lg = viewURI.substring(1, 3).toLowerCase();
 						if (globalContext.getContentLanguages().contains(lg)) {
 							String newPath = "/view" + viewURI;
+							System.out.println("***** CatchAllFilter.doFilter : newPath = " + newPath); // TODO: remove debug trace
 							httpRequest.getRequestDispatcher(newPath).forward(httpRequest, response);
 							return;
 						}
