@@ -224,7 +224,6 @@ public class CatchAllFilter implements Filter {
 		logger.fine("start catch all servelt.");
 
 		HttpServletRequest httpRequest = (HttpServletRequest) request;
-		System.out.println("***** CatchAllFilter.doFilter : httpRequest.getRequestURI() = " + httpRequest.getRequestURI()); // TODO: remove debug trace
 		ServletContext servletContext = httpRequest.getSession().getServletContext();
 
 		if (request.getParameter(ContentContext.FORWARD_PATH_REQUEST_KEY) != null) {
@@ -388,8 +387,6 @@ public class CatchAllFilter implements Filter {
 			/**** ADD VIEW ****/
 			/******************/
 
-			System.out.println("***** CatchAllFilter.doFilter : forwardURI = " + forwardURI); // TODO: remove debug trace
-
 			if (!staticConfig.isViewPrefix()) {
 				String viewURI = uri;
 				if (forwardURI != null) {
@@ -404,7 +401,6 @@ public class CatchAllFilter implements Filter {
 						String lg = viewURI.substring(1, 3).toLowerCase();
 						if (globalContext.getContentLanguages().contains(lg)) {
 							String newPath = "/view" + viewURI;
-							System.out.println("***** CatchAllFilter.doFilter : newPath = " + newPath); // TODO: remove debug trace
 							httpRequest.getRequestDispatcher(newPath).forward(httpRequest, response);
 							return;
 						}
