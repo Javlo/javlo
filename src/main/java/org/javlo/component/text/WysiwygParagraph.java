@@ -26,7 +26,7 @@ public class WysiwygParagraph extends AbstractVisualComponent {
 		finalCode.append(" rows=\"" + 30 + "\">");
 		finalCode.append(getValue());
 		finalCode.append("</textarea>");
-		finalCode.append("<script type=\"text/javascript\">loadWysiwyg('#"+getContentName()+"');</script>");
+		finalCode.append("<script type=\"text/javascript\">loadWysiwyg('#" + getContentName() + "');</script>");
 		return finalCode.toString();
 	}
 
@@ -51,14 +51,14 @@ public class WysiwygParagraph extends AbstractVisualComponent {
 	public boolean isExtractable() {
 		return false;
 	}
-	
+
 	@Override
 	public void performEdit(ContentContext ctx) throws Exception {
 		RequestService requestService = RequestService.getInstance(ctx.getRequest());
-		String content = requestService.getParameter(getContentName(), "");		
+		String content = requestService.getParameter(getContentName(), "");
 		super.performEdit(ctx);
 	}
-	
+
 	@Override
 	public boolean isRealContent(ContentContext ctx) {
 		return getValue().trim().length() > 0;

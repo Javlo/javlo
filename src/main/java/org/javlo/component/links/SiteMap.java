@@ -20,7 +20,6 @@ import org.javlo.navigation.MenuElement;
 import org.javlo.navigation.RootMenuElement;
 import org.javlo.service.ContentService;
 
-
 /**
  * @author pvandermaesen
  */
@@ -35,8 +34,7 @@ public class SiteMap extends AbstractVisualComponent {
 	public String[] getStyleLabelList(ContentContext ctx) {
 		try {
 			I18nAccess i18n = I18nAccess.getInstance(ctx.getRequest());
-			return new String[] { i18n.getText("content.web-map.only-visible"), i18n.getText("content.web-map.all"), i18n.getText("content.web-map.children"),
-					i18n.getText("content.web-map.children-visible"), i18n.getText("content.web-map.virtual-children") };
+			return new String[] { i18n.getText("content.web-map.only-visible"), i18n.getText("content.web-map.all"), i18n.getText("content.web-map.children"), i18n.getText("content.web-map.children-visible"), i18n.getText("content.web-map.virtual-children") };
 		} catch (FileNotFoundException e) {
 			e.printStackTrace();
 		} catch (IOException e) {
@@ -69,9 +67,13 @@ public class SiteMap extends AbstractVisualComponent {
 		out.print("<li class=\"webmap-");
 		out.print(depth);
 		out.println("\">");
-		out.print("<a href=\"");
-		out.print(URLHelper.createURL(ctx, menu.getPath()));
-		out.print("\"> ");
+		if (menu.isRealContent(ctx)) {
+			out.print("<a href=\"");
+			out.print(URLHelper.createURL(ctx, menu.getPath()));
+			out.print("\"> ");
+		} else {
+			out.print("<span class=\"no-link\">");
+		}
 		if (menu instanceof RootMenuElement) {
 			I18nAccess i18nAccess = I18nAccess.getInstance(ctx.getRequest());
 			String home = i18nAccess.getContentViewText("global.home");
@@ -79,7 +81,11 @@ public class SiteMap extends AbstractVisualComponent {
 		} else {
 			out.print(menu.getFullLabel(ctx));
 		}
-		out.print("</a>");
+		if (menu.isRealContent(ctx)) {
+			out.print("</a>");
+		} else {
+			out.print("</span>");
+		}
 		String description = menu.getDescription(ctx);
 		if ((description != null) && (description.trim().length() > 0)) {
 			out.print("<span> : ");
@@ -96,7 +102,7 @@ public class SiteMap extends AbstractVisualComponent {
 			if ((showAll || (childs[i].isVisible(ctx) || showVisible) && !pastNode.contains(childs[i]))) {
 				depth++;
 				if (depth < 50) {
-					recNav(ctx, childs[i], out, showVisible, virtual, pastNode, calldepth+1);
+					recNav(ctx, childs[i], out, showVisible, virtual, pastNode, calldepth + 1);
 				}
 				depth--;
 			}
@@ -145,9 +151,9 @@ public class SiteMap extends AbstractVisualComponent {
 				virtual = true;
 			}
 		}
-		for (int i = 0; i < childs.length; i++) {
-			if (showAll || (childs[i].isVisible(ctx) || showVisible)) {
-				recNav(ctx, childs[i], out, showVisible, virtual, new LinkedList<MenuElement>(), 1);
+		for (MenuElement child : childs) {
+			if (showAll || (child.isVisible(ctx) || showVisible)) {
+				recNav(ctx, child, out, showVisible, virtual, new LinkedList<MenuElement>(), 1);
 			}
 		}
 		out.println("</ul></div>");
@@ -171,8 +177,9 @@ public class SiteMap extends AbstractVisualComponent {
 	private String getCorrectValue() {
 		String outValue = "99";
 		try {
-			outValue = ""+Integer.parseInt(getValue());
-		} catch (Throwable t) {}
+			outValue = "" + Integer.parseInt(getValue());
+		} catch (Throwable t) {
+		}
 		return outValue;
 	}
 
@@ -182,11 +189,11 @@ public class SiteMap extends AbstractVisualComponent {
 		PrintWriter out = new PrintWriter(writer);
 		I18nAccess i18nAccess = I18nAccess.getInstance(ctx.getRequest());
 
-		out.print("<label for=\""+getContentName()+"\">");
+		out.print("<label for=\"" + getContentName() + "\">");
 		out.print(i18nAccess.getText("content.web-map.depth"));
 		out.println("</label>");
 
-		out.println("<input type=\"text\" id=\""+getContentName()+"\" name=\""+getContentName()+"\" value=\""+getCorrectValue()+"\" />");
+		out.println("<input type=\"text\" id=\"" + getContentName() + "\" name=\"" + getContentName() + "\" value=\"" + getCorrectValue() + "\" />");
 
 		out.close();
 		return writer.toString();
