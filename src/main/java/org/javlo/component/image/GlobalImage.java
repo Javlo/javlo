@@ -378,6 +378,7 @@ public class GlobalImage extends FilterImage {
 		return properties.getProperty(LINK_KEY, "");
 	}
 
+	@Override
 	public String getURL(ContentContext ctx) {
 		if (getLink() != null || getLink().trim().length() > 0) {
 			return getLink();

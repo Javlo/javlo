@@ -132,13 +132,16 @@ public abstract class AbstractFileComponent extends AbstractVisualComponent impl
 		return false;
 	}
 
+	protected String getURL(ContentContext ctx) {
+		StaticConfig staticConfig = StaticConfig.getInstance(ctx.getRequest().getSession());
+		String fileLink = URLHelper.mergePath(getDirSelected(), getFileName());
+		return URLHelper.createResourceURL(ctx, getPage(), staticConfig.getImageFolder() + '/' + fileLink).replace('\\', '/');
+	}
+
 	@Override
 	public void prepareView(ContentContext ctx) throws Exception {
 		super.prepareView(ctx);
-		StaticConfig staticConfig = StaticConfig.getInstance(ctx.getRequest().getSession());
-		String fileLink = URLHelper.mergePath(getDirSelected(), getFileName());
-		String url = URLHelper.createResourceURL(ctx, getPage(), staticConfig.getImageFolder() + '/' + fileLink).replace('\\', '/');
-		ctx.getRequest().setAttribute("url", url);
+		ctx.getRequest().setAttribute("url", getURL(ctx));
 		ctx.getRequest().setAttribute("descritpion", getDescription());
 		ctx.getRequest().setAttribute("label", getLabel());
 	}
