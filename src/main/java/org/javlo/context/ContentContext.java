@@ -1098,6 +1098,11 @@ public class ContentContext {
 	 * @throws Exception
 	 */
 	public boolean isResourceGZip() throws Exception {
+
+		if (!isAsViewMode()) {
+			return false;
+		}
+
 		boolean outValue = false;
 		if (getCurrentTemplate() != null) {
 			outValue = getCurrentTemplate().isCompressResources();
