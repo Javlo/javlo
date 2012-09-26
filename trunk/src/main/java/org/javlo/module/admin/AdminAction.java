@@ -81,6 +81,7 @@ public class AdminAction extends AbstractModuleAction {
 		private String urlFactory;
 		private String userRoles;
 		private boolean autoSwitchToDefaultLanguage;
+		private boolean extendMenu;
 
 		private String shortDateFormat;
 		private String mediumDateFormat;
@@ -113,6 +114,7 @@ public class AdminAction extends AbstractModuleAction {
 			setVisibility(globalContext.isView());
 			setEditability(globalContext.isEditable());
 			setDefaultTemplate(globalContext.getDefaultTemplate());
+			setExtendMenu(globalContext.isExtendMenu());
 
 			setShortDateFormat(globalContext.getShortDateFormat());
 			setMediumDateFormat(globalContext.getMediumDateFormat());
@@ -415,6 +417,14 @@ public class AdminAction extends AbstractModuleAction {
 			this.defaultLanguages = defaultLanguages;
 		}
 
+		public boolean isExtendMenu() {
+			return extendMenu;
+		}
+
+		public void setExtendMenu(boolean extendMenu) {
+			this.extendMenu = extendMenu;
+		}
+
 	}
 
 	@Override
@@ -693,6 +703,8 @@ public class AdminAction extends AbstractModuleAction {
 
 					String defaultLanguage = requestService.getParameter("default-languages", null);
 					currentGlobalContext.setDefaultLanguages(defaultLanguage);
+
+					currentGlobalContext.setExtendMenu(requestService.getParameter("extend-menu", null) != null);
 
 					currentGlobalContext.setGoogleAnalyticsUACCT(requestService.getParameter("google-ana", ""));
 

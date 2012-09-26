@@ -98,6 +98,21 @@
 </div>
 
 <div class="line">		
+	<label for="tags">${i18n.edit['admin.title.tags']}</label>
+	<input type="text" id="tags" name="tags" value="${currentContext.tags}" />	
+</div>
+
+<div class="line">		
+	<label for="google-ana">${i18n.edit['admin.title.google-ana']}</label>
+	<input type="text" id="google-ana" name="google-ana" value="${currentContext.googleAnalyticsUACCT}" />	
+</div>
+
+
+</div>
+
+<div class="one_half">
+
+<div class="line">		
 	<label for="homepage">${i18n.edit['admin.form.homepage']}</label>
 	<input type="text" id="homepage" name="homepage" value="${currentContext.homepage}" />	
 </div>
@@ -107,20 +122,11 @@
 	<input type="text" id="urlfactory" name="urlfactory" value="${currentContext.urlFactory}" />	
 </div>
 
-
-</div>
-
-<div class="one_half">
-
 <div class="line">		
-	<label for="google-ana">${i18n.edit['admin.title.google-ana']}</label>
-	<input type="text" id="google-ana" name="google-ana" value="${currentContext.googleAnalyticsUACCT}" />	
+	<label for="extend-menu">${i18n.edit['admin.form.extend-menu']}</label>
+	<input type="checkbox" id="extend-menu" name="extend-menu" ${currentContext.extendMenu?'checked="checked"':""}" />	
 </div>
 
-<div class="line">		
-	<label for="tags">${i18n.edit['admin.title.tags']}</label>
-	<input type="text" id="tags" name="tags" value="${currentContext.tags}" />	
-</div>
 
 <div class="line">		
 	<label for="short-date">${i18n.edit['admin.title.short-date']}</label>

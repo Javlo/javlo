@@ -1,5 +1,11 @@
 jQuery(document).ready(function(){	
-	jQuery("#preview_command").draggable({ handle: ".pc_header" });	
+	try {
+		jQuery("#preview_command").draggable({ handle: ".pc_header" });
+	} catch (err) {
+		if(typeof console != 'undefined') {
+			console.log("error on : "+err);
+		}
+	}
 	jQuery(".editable-component").click(function() {
 		var elems = jQuery(this);		
 		var editURL = editPreviewURL+"&comp_id="+elems.attr("id");

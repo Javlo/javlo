@@ -617,7 +617,6 @@ public class XMLManipulationHelper {
 				remplacement.addReplacement(urlIndex + 4, closeIndex, newURL);
 				urlIndex = content.indexOf("url(", closeIndex);
 			}
-
 			String newContent = getJSPHeader() + remplacement.start(content);
 
 			// replace meta data
@@ -932,9 +931,7 @@ public class XMLManipulationHelper {
 		out.newLine();
 		out.append("AdminUserSecurity security = AdminUserSecurity.getInstance();");
 		out.newLine();
-
 		out.append("%>");
-		out.newLine();
 		out.close();
 
 		return outString.toString();
