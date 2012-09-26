@@ -18,7 +18,7 @@
 %><%@ taglib uri="http://displaytag.sf.net" prefix="display" %><%
 ContentContext ctx = new ContentContext ( ContentContext.getContentContext ( request, response ) ); /* local context */
 GlobalContext globalContext = GlobalContext.getInstance(request);
-SearchResult status = SearchResult.getInstance( request.getSession() );
+SearchResult status = SearchResult.getInstance( ctx );
 I18nAccess i18nAccess = I18nAccess.getInstance(globalContext, request.getSession());
 
 Collection<SearchResult.SearchElement> result = status.getSearchResultCollection();
