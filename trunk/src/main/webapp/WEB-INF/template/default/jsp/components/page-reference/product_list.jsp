@@ -19,6 +19,9 @@
 			<div class="body">
 			<span class="date">${page.date}</span>
 			<a title="${page.title}" href="${page.url}">${page.title}</a>			
+			<c:if test="${not empty page.description}">
+				<p class="description">${page.description}</p>
+			</c:if>
 			</div>								
 			
 		</li>
