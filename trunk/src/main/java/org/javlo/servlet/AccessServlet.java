@@ -544,13 +544,13 @@ public class AccessServlet extends HttpServlet {
 						getServletContext().getRequestDispatcher(editCtx.getAjaxRenderer()).include(request, response);
 						editCtx.setAjaxRenderer(null);
 					} else {
-
-						if (!template.getAreas().contains(ctx.getArea())) {
-							editCtx.setCurrentArea(ComponentBean.DEFAULT_AREA);
-							ctx.setArea(ComponentBean.DEFAULT_AREA);
+						if (template != null) {
+							if (!template.getAreas().contains(ctx.getArea())) {
+								editCtx.setCurrentArea(ComponentBean.DEFAULT_AREA);
+								ctx.setArea(ComponentBean.DEFAULT_AREA);
+							}
+							ctx.setCurrentTemplate(template);
 						}
-
-						ctx.setCurrentTemplate(template);
 
 						response.setContentType("text/html; charset=" + ContentContext.CHARACTER_ENCODING);
 
