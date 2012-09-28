@@ -55,11 +55,13 @@ public class Video extends GlobalImage implements IAction {
 		}
 
 	}
-	
+
+	@Override
 	protected FilenameFilter getFileFilter() {
 		return new ResourceHelper.VideoFilenameFilter();
 	}
-	
+
+	@Override
 	protected FilenameFilter getDecorationFilter() {
 		return new ResourceHelper.ImageFilenameFilter();
 	}
@@ -108,7 +110,7 @@ public class Video extends GlobalImage implements IAction {
 	public String getType() {
 		return TYPE;
 	}
-	
+
 	@Override
 	protected boolean isDisplayAllBouton() {
 		return false;
@@ -129,10 +131,12 @@ public class Video extends GlobalImage implements IAction {
 		return URLHelper.createResourceURL(ctx, getPage(), staticConfig.getVideoFolder() + '/' + url);
 	}
 
+	@Override
 	protected boolean isImageFilter() {
 		return false;
 	}
 
+	@Override
 	protected String getImageUploadTitle(ContentContext ctx) throws FileNotFoundException, IOException {
 		I18nAccess i18nAccess = I18nAccess.getInstance(ctx.getRequest());
 		return i18nAccess.getText("action.add-video.add");
@@ -157,7 +161,7 @@ public class Video extends GlobalImage implements IAction {
 	}
 
 	@Override
-	public String getImageURL(ContentContext ctx, String fileLink) {
+	public String getResourceURL(ContentContext ctx, String fileLink) {
 		StaticConfig staticConfig = StaticConfig.getInstance(ctx.getRequest().getSession());
 		return URLHelper.mergePath(staticConfig.getVideoFolder(), URLHelper.mergePath(getDirSelected(), fileLink));
 	}
@@ -165,7 +169,7 @@ public class Video extends GlobalImage implements IAction {
 	@Override
 	public String getPreviewURL(ContentContext ctx) throws Exception {
 		if (getDecorationImage() != null && getDecorationImage().trim().length() > 1) {
-			String imageLink = getImageURL(ctx, getDecorationImage());
+			String imageLink = getResourceURL(ctx, getDecorationImage());
 			return URLHelper.createTransformURL(ctx, imageLink, getConfig(ctx).getProperty("image.filter", "video"));
 		} else if (getLink() != null && getLink().toLowerCase().contains("youtube")) {
 			String videoCode = URLHelper.extractParameterFromURL(getLink()).get("v");
@@ -194,11 +198,11 @@ public class Video extends GlobalImage implements IAction {
 		}
 		return null;
 	}
-	
+
 	@Override
 	protected Map<String, String> getTranslatableResources(ContentContext ctx) throws Exception {
 		Collection<Video> videos = getAllVideoOnPage(ctx);
-		Map<String,String> outResourceList = new HashMap<String, String>();
+		Map<String, String> outResourceList = new HashMap<String, String>();
 		for (Video video : videos) {
 			if (video.getResourceLabel() != null) {
 				outResourceList.put(video.getId(), video.getResourceLabel());
@@ -206,24 +210,24 @@ public class Video extends GlobalImage implements IAction {
 		}
 		return outResourceList;
 	}
-	
+
 	public Collection<Video> getAllVideoOnPage(ContentContext ctx) throws Exception {
 		List<Video> comps = new LinkedList<Video>();
 		ContentContext noAreaCtx = new ContentContext(ctx);
 		noAreaCtx.setArea(null);
 		GlobalContext globalContext = GlobalContext.getInstance(ctx.getRequest());
 		noAreaCtx.setRequestContentLanguage(globalContext.getDefaultLanguages().iterator().next());
-		ContentElementList content = getCurrentPage(ctx,true).getContent(noAreaCtx);
+		ContentElementList content = getCurrentPage(ctx, true).getContent(noAreaCtx);
 		while (content.hasNext(noAreaCtx)) {
 			IContentVisualComponent comp = content.next(noAreaCtx);
 			if (comp instanceof Video) {
 				comps.add((Video) comp);
 			}
 		}
-		//Collections.sort(comps, new Video.OrderVideo());
+		// Collections.sort(comps, new Video.OrderVideo());
 		return comps;
 	}
-	
+
 	private String getResourceLabel() {
 		if (getFileName() != null && getFileName().trim().length() > 0) {
 			return getFileName();
@@ -231,6 +235,11 @@ public class Video extends GlobalImage implements IAction {
 			return getLink();
 		}
 		return null;
+	}
+
+	@Override
+	protected String getDefaultFilter() {
+		return "video";
 	}
 
 	public String renderInline(ContentContext ctx, String width, String height, boolean preview) throws Exception {
@@ -251,7 +260,7 @@ public class Video extends GlobalImage implements IAction {
 		}
 		if (renderAsLink) {
 			if (getFileName() != null && getFileName().trim().length() > 0) {
-				String fileLink = getImageURL(ctx, getFileName());
+				String fileLink = getResourceURL(ctx, getFileName());
 				ctx.getRequest().setAttribute("url", URLHelper.createResourceURL(ctx, getPage(), fileLink).replace('\\', '/'));
 			} else {
 				ctx.getRequest().setAttribute("url", getLink());
@@ -260,7 +269,7 @@ public class Video extends GlobalImage implements IAction {
 			ctx.getRequest().setAttribute("type", ResourceHelper.getFileExtensionToManType(StringHelper.getFileExtension(getFileName())));
 			ctx.getRequest().setAttribute("label", getLabel());
 			if (getDecorationImage() != null && getDecorationImage().trim().length() > 0) {
-				String imageLink = getImageURL(ctx, getDecorationImage());
+				String imageLink = getResourceURL(ctx, getDecorationImage());
 				ctx.getRequest().setAttribute("image", URLHelper.createTransformURL(ctx, imageLink, imageFilter));
 			}
 			ctx.getRequest().setAttribute("width", StringHelper.neverNull(width, getConfig(ctx).getProperty("link.width", "420")));
@@ -272,12 +281,12 @@ public class Video extends GlobalImage implements IAction {
 			return executeJSP(ctx, renderer);
 		} else {
 			if (getFileName() != null && getFileName().trim().length() > 0) {
-				String fileLink = getImageURL(ctx, getFileName());
+				String fileLink = getResourceURL(ctx, getFileName());
 				ctx.getRequest().setAttribute("file", URLHelper.createResourceURL(ctx, getPage(), fileLink).replace('\\', '/'));
 				ctx.getRequest().setAttribute("url", URLHelper.createResourceURL(ctx, getPage(), fileLink).replace('\\', '/'));
 				ctx.getRequest().setAttribute("type", ResourceHelper.getFileExtensionToManType(StringHelper.getFileExtension(getFileName())));
 				if (getDecorationImage() != null && getDecorationImage().trim().length() > 0) {
-					String imageLink = getImageURL(ctx, getDecorationImage());
+					String imageLink = getResourceURL(ctx, getDecorationImage());
 					ctx.getRequest().setAttribute("image", URLHelper.createTransformURL(ctx, imageLink, imageFilter));
 				}
 				ctx.getRequest().setAttribute("width", StringHelper.neverNull(width, getConfig(ctx).getProperty("local.width", "420")));
@@ -317,6 +326,7 @@ public class Video extends GlobalImage implements IAction {
 		return true;
 	}
 
+	@Override
 	protected boolean isDecorationImage() {
 		return true;
 	}
@@ -331,9 +341,19 @@ public class Video extends GlobalImage implements IAction {
 		return false;
 	}
 
+	@Override
 	protected String getImageChangeTitle(ContentContext ctx) throws FileNotFoundException, IOException {
 		I18nAccess i18nAccess = I18nAccess.getInstance(ctx.getRequest());
 		return i18nAccess.getText("content.video.label");
+	}
+
+	@Override
+	protected String renderViewXHTMLCode(ContentContext ctx) throws Exception {
+		if (getRenderer(ctx) != null && getStyle(ctx).equals(LINK)) {
+			return executeCurrentRenderer(ctx);
+		} else {
+			return getViewXHTMLCode(ctx);
+		}
 	}
 
 	public int getAccess(ContentContext ctx, int days) throws NumberFormatException, IOException {
@@ -356,12 +376,10 @@ public class Video extends GlobalImage implements IAction {
 		}
 	}
 
-	
-
 	public static final String performAccess(HttpServletRequest request, HttpServletResponse response) throws Exception {
 		RequestService requestService = RequestService.getInstance(request);
 		String compId = requestService.getParameter("comp-id", null);
-		if (compId != null) {  
+		if (compId != null) {
 			ContentContext ctx = ContentContext.getContentContext(request, response);
 			ContentService content = ContentService.createContent(ctx.getRequest());
 			IContentVisualComponent comp = content.getComponent(ctx, compId);
@@ -371,21 +389,21 @@ public class Video extends GlobalImage implements IAction {
 		}
 		return null;
 	}
-	
+
 	@Override
 	public Collection<String> getExternalResources(ContentContext ctx) {
 		Collection<String> resources = new LinkedList<String>();
 		resources.add("/js/freefw/ajax.js");
 		return resources;
 	}
-	
-	public String getImageURL(ContentContext ctx) {
-		return getImageURL(ctx, getDecorationImage());
+
+	@Override
+	public String getResourceURL(ContentContext ctx) {
+		return getResourceURL(ctx, getDecorationImage());
 	}
-	
+
 	@Override
 	public String getActionGroupName() {
 		return "video";
 	}
 }
-

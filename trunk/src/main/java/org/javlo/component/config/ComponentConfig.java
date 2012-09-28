@@ -156,6 +156,8 @@ public class ComponentConfig {
 			if (key.startsWith("renderer.")) {
 				String value = (String) properties.getProperty(key);
 				key = key.replaceFirst("renderer.", "");
+				System.out.println("***** ComponentConfig.getRenderes : key = " + key); // TODO: remove debug trace
+				System.out.println("***** ComponentConfig.getRenderes : value = " + value); // TODO: remove debug trace
 				outRenderers.put(key, value);
 			}
 		}

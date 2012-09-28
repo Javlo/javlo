@@ -105,6 +105,21 @@ public class GlobalImage extends FilterImage {
 		return false;
 	}
 
+	protected String getDefaultFilter() {
+		return "standard";
+	}
+
+	@Override
+	public void prepareView(ContentContext ctx) throws Exception {
+		super.prepareView(ctx);
+		if (getDecorationImage() != null && getDecorationImage().trim().length() > 0) {
+			String imageLink = getResourceURL(ctx, getDecorationImage());
+			String imageFilter = getConfig(ctx).getProperty("image.filter", getDefaultFilter());
+			ctx.getRequest().setAttribute("image", URLHelper.createTransformURL(ctx, imageLink, imageFilter));
+		}
+
+	}
+
 	@Override
 	protected String getEditXHTMLCode(ContentContext ctx) throws Exception {
 
@@ -380,10 +395,10 @@ public class GlobalImage extends FilterImage {
 
 	@Override
 	public String getURL(ContentContext ctx) {
-		if (getLink() != null || getLink().trim().length() > 0) {
+		if (getLink() != null && getLink().trim().length() > 0) {
 			return getLink();
 		} else if (getFileName() != null) {
-			String fileLink = getImageURL(ctx, getFileName());
+			String fileLink = getResourceURL(ctx, getFileName());
 			return URLHelper.createResourceURL(ctx, getPage(), fileLink).replace('\\', '/');
 		}
 		return null;
@@ -393,7 +408,7 @@ public class GlobalImage extends FilterImage {
 		if (getLink() != null) {
 			return getLink();
 		} else if (getFileName() != null) {
-			String fileLink = getImageURL(ctx, getFileName());
+			String fileLink = getResourceURL(ctx, getFileName());
 			return URLHelper.createTransformURL(ctx, getPage(), fileLink, "thumb-view").replace('\\', '/');
 		}
 		return null;
@@ -462,7 +477,7 @@ public class GlobalImage extends FilterImage {
 		}
 		StringBuffer res = new StringBuffer();
 		if ((getValue() != null) && (getValue().trim().length() > 0)) {
-			String fileLink = getImageURL(ctx, getFileName());
+			String fileLink = getResourceURL(ctx, getFileName());
 
 			String thumbURL;
 			if (RAW_FILTER.equals(filter)) {

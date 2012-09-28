@@ -125,7 +125,7 @@ public class Image extends AbstractFileComponent implements IImageTitle, IPrevie
 		String currentFileLink = URLHelper.mergePath(getDirSelected(), getFileName());
 		GlobalContext globalContext = GlobalContext.getInstance(ctx.getRequest());
 		out.println("<div class=\"image-selected\">");
-		out.println("<img src=\"" + URLHelper.createTransformURL(ctx, getPage(), getImageURL(ctx, getFileName()), "thumbnails") + "\" />");
+		out.println("<img src=\"" + URLHelper.createTransformURL(ctx, getPage(), getResourceURL(ctx, getFileName()), "thumbnails") + "\" />");
 		out.println("<div class=\"name\">" + getFileName() + "</div>");
 		out.println("</div><div class=\"image-list\">");
 		for (int i = 0; i < images.length; i++) {
@@ -138,9 +138,9 @@ public class Image extends AbstractFileComponent implements IImageTitle, IPrevie
 					selected = " class=\"preview-image selected\"";
 					isSelectedImage = true;
 				}
-				String realURL = URLHelper.createResourceURL(ctx, getPage(), '/' + getImageURL(ctx, images[i])) + "?CRC32=" + staticInfo.getCRC32();
-				String previewURL = URLHelper.createTransformURL(ctx, getPage(), getImageURL(ctx, images[i]), "preview") + "?CRC32=" + staticInfo.getCRC32();
-				String url = URLHelper.createTransformURL(ctx, getPage(), getImageURL(ctx, images[i]), getConfig(ctx).getProperty("thumbnails-filter", "thumbnails")) + "?CRC32=" + staticInfo.getCRC32();
+				String realURL = URLHelper.createResourceURL(ctx, getPage(), '/' + getResourceURL(ctx, images[i])) + "?CRC32=" + staticInfo.getCRC32();
+				String previewURL = URLHelper.createTransformURL(ctx, getPage(), getResourceURL(ctx, images[i]), "preview") + "?CRC32=" + staticInfo.getCRC32();
+				String url = URLHelper.createTransformURL(ctx, getPage(), getResourceURL(ctx, images[i]), getConfig(ctx).getProperty("thumbnails-filter", "thumbnails")) + "?CRC32=" + staticInfo.getCRC32();
 				String id = "image_name_select__" + getId();
 				if (i < maxDisplayedImage || isSelectedImage) {
 					out.print("<div " + selected + ">");
@@ -204,11 +204,11 @@ public class Image extends AbstractFileComponent implements IImageTitle, IPrevie
 	}
 
 	@Override
-	public String getImageURL(ContentContext ctx) {
-		return getImageURL(ctx, getFileName());
+	public String getResourceURL(ContentContext ctx) {
+		return getResourceURL(ctx, getFileName());
 	}
 
-	public String getImageURL(ContentContext ctx, String fileLink) {
+	public String getResourceURL(ContentContext ctx, String fileLink) {
 		StaticConfig staticConfig = StaticConfig.getInstance(ctx.getRequest().getSession());
 		return URLHelper.mergePath(staticConfig.getImageFolder(), URLHelper.mergePath(getDirSelected(), fileLink));
 	}

@@ -141,7 +141,8 @@ public abstract class AbstractFileComponent extends AbstractVisualComponent impl
 	@Override
 	public void prepareView(ContentContext ctx) throws Exception {
 		super.prepareView(ctx);
-		ctx.getRequest().setAttribute("url", getURL(ctx));
+		String url = getURL(ctx);
+		ctx.getRequest().setAttribute("url", url);
 		ctx.getRequest().setAttribute("descritpion", getDescription());
 		ctx.getRequest().setAttribute("label", getLabel());
 	}

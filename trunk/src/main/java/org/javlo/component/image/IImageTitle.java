@@ -10,7 +10,7 @@ public interface IImageTitle extends Serializable {
 
 	public String getImageDescription(ContentContext ctx);
 
-	public String getImageURL(ContentContext ctx);
+	public String getResourceURL(ContentContext ctx);
 	
 	public String getImageLinkURL(ContentContext ctx);
 

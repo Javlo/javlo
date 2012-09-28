@@ -678,7 +678,7 @@ public class XMLManipulationHelper {
 		StringWriter writer = new StringWriter();
 		PrintWriter out = new PrintWriter(writer);
 		out.println("<%if (currentPage.getImage(ctx) != null && globalContext.isFirstImage()) {");
-		out.print("%><img id=\"_first-image\" src=\"<%=URLHelper.createTransformURL(ctx, currentPage.getImage(ctx).getImageURL(ctx), \"standard\")%>\" alt=\"<%=currentPage.getImage(ctx).getImageDescription(ctx)%>\" />");
+		out.print("%><img id=\"_first-image\" src=\"<%=URLHelper.createTransformURL(ctx, currentPage.getImage(ctx).getResourceURL(ctx), \"standard\")%>\" alt=\"<%=currentPage.getImage(ctx).getImageDescription(ctx)%>\" />");
 		out.println("<%}%>");
 		out.close();
 		return writer.toString();

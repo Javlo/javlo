@@ -435,7 +435,7 @@ public class SmartExternalLink extends ComplexPropertiesLink implements IReverse
 	}
 
 	@Override
-	public String getImageURL(ContentContext ctx) {
+	public String getResourceURL(ContentContext ctx) {
 		try {
 			loadData(ctx);
 		} catch (IOException e) {
