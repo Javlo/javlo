@@ -192,17 +192,17 @@ public class PageReferenceComponent extends ComplexPropertiesLink implements IAc
 			}
 			IImageTitle image = page.getImage(ctx);
 			if (image != null) {
-				bean.imagePath = image.getImageURL(ctx);
-				bean.imageURL = URLHelper.createTransformURL(ctx, page, image.getImageURL(ctx), filter);
-				bean.viewImageURL = URLHelper.createTransformURL(ctx, page, image.getImageURL(ctx), "thumb-view");
+				bean.imagePath = image.getResourceURL(ctx);
+				bean.imageURL = URLHelper.createTransformURL(ctx, page, image.getResourceURL(ctx), filter);
+				bean.viewImageURL = URLHelper.createTransformURL(ctx, page, image.getResourceURL(ctx), "thumb-view");
 				bean.imageDescription = XHTMLHelper.stringToAttribute(image.getImageDescription(ctx));
 			}
 			Collection<IImageTitle> images = page.getImages(ctx);
 
 			for (IImageTitle imageItem : images) {
-				String imagePath = imageItem.getImageURL(ctx);
-				String imageURL = URLHelper.createTransformURL(ctx, page, imageItem.getImageURL(ctx), filter);
-				String viewImageURL = URLHelper.createTransformURL(ctx, page, imageItem.getImageURL(ctx), "thumb-view");
+				String imagePath = imageItem.getResourceURL(ctx);
+				String imageURL = URLHelper.createTransformURL(ctx, page, imageItem.getResourceURL(ctx), filter);
+				String viewImageURL = URLHelper.createTransformURL(ctx, page, imageItem.getResourceURL(ctx), "thumb-view");
 				String imageDescription = XHTMLHelper.stringToAttribute(imageItem.getImageDescription(ctx));
 				String cssClass = "";
 				String linkURL = imageItem.getImageLinkURL(ctx);

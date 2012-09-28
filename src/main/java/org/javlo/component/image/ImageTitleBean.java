@@ -18,7 +18,7 @@ public class ImageTitleBean implements IImageTitle {
 	public ImageTitleBean(ContentContext ctx, IImageTitle imageTitle) {
 		super();
 		this.imageDescription = imageTitle.getImageDescription(ctx);
-		this.imageURL = imageTitle.getImageURL(ctx);
+		this.imageURL = imageTitle.getResourceURL(ctx);
 		this.imageLink = imageTitle.getImageLinkURL(ctx);
 	}
 	
@@ -28,7 +28,7 @@ public class ImageTitleBean implements IImageTitle {
 	}
 	
 	@Override
-	public String getImageURL(ContentContext ctx) {
+	public String getResourceURL(ContentContext ctx) {
 		return imageURL;
 	}
 

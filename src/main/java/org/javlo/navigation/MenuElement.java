@@ -1776,7 +1776,7 @@ public class MenuElement implements Serializable {
 				if (imageComp.isImageValid(ctx)) {
 					res = imageComp;
 					// desc.imageLink = new WeakReference<IImageTitle>(res);
-					desc.imageLink = new ImageTitleBean(res.getImageDescription(ctx), res.getImageURL(ctx), res.getImageLinkURL(ctx));
+					desc.imageLink = new ImageTitleBean(res.getImageDescription(ctx), res.getResourceURL(ctx), res.getImageLinkURL(ctx));
 					return res;
 				}
 			}
@@ -1800,7 +1800,7 @@ public class MenuElement implements Serializable {
 			if ((elem instanceof IImageTitle) && (!elem.isEmpty(ctx)) && (!elem.isRepeat())) {
 				IImageTitle imageComp = (IImageTitle) elem;
 				if (imageComp.isImageValid(ctx)) {
-					res.add(new ImageTitleBean(imageComp.getImageDescription(ctx), imageComp.getImageURL(ctx), imageComp.getImageLinkURL(ctx)));
+					res.add(new ImageTitleBean(imageComp.getImageDescription(ctx), imageComp.getResourceURL(ctx), imageComp.getImageLinkURL(ctx)));
 				}
 			}
 		}

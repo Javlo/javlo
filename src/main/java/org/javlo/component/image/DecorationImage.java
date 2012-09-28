@@ -40,7 +40,7 @@ public class DecorationImage extends GlobalImage {
 	}
 	
 	@Override
-	public String getImageURL(ContentContext ctx, String fileLink) {
+	public String getResourceURL(ContentContext ctx, String fileLink) {
 		StaticConfig staticConfig = StaticConfig.getInstance(ctx.getRequest().getSession());
 		String imageFolder = URLHelper.mergePath(staticConfig.getShareDataFolderKey(), staticConfig.getShareImageFolder());
 		return URLHelper.mergePath(imageFolder, URLHelper.mergePath(getDirSelected(), fileLink));		

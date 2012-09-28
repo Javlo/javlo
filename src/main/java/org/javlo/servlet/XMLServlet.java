@@ -190,8 +190,8 @@ public class XMLServlet extends HttpServlet {
 									String largeImageURL = null;
 									String imageDescription = null;
 									if (page.getImage(ctx) != null) {
-										imageURL = URLHelper.createTransformURL(ctx, page, template, page.getImage(ctx).getImageURL(ctx), "rss");
-										largeImageURL = URLHelper.createTransformURL(ctx, page, template, page.getImage(ctx).getImageURL(ctx), "thumb-view");
+										imageURL = URLHelper.createTransformURL(ctx, page, template, page.getImage(ctx).getResourceURL(ctx), "rss");
+										largeImageURL = URLHelper.createTransformURL(ctx, page, template, page.getImage(ctx).getResourceURL(ctx), "thumb-view");
 										imageDescription = page.getImage(ctx).getImageDescription(ctx);
 									}
 									out.write("<description>" + executeRSSCurrentRenderer(ctx, template, imageURL, largeImageURL, imageDescription, page.getDescription(ctx)) + "</description>");

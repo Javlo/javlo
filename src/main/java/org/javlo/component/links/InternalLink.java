@@ -278,7 +278,7 @@ public class InternalLink extends ComplexPropertiesLink implements IInternalLink
 				}
 				res.append("\">");
 				if (child.getImage(ctx) != null) {
-					res.append("<img src=\"" + ElementaryURLHelper.createTransformURL(ctx, child, child.getImage(ctx).getImageURL(ctx), "internal-link") + "\" alt=\"" + child.getImage(ctx).getImageDescription(ctx) + "\" />");
+					res.append("<img src=\"" + ElementaryURLHelper.createTransformURL(ctx, child, child.getImage(ctx).getResourceURL(ctx), "internal-link") + "\" alt=\"" + child.getImage(ctx).getImageDescription(ctx) + "\" />");
 				}
 				res.append("</a>");
 			}

@@ -612,23 +612,17 @@ public class Edit extends AbstractModuleAction {
 		// boolean needRefresh = false;
 
 		for (String compId : components) {
-
-			System.out.println("***** Edit.performSave : compId = " + compId); // TODO: remove debug trace
-
 			IContentVisualComponent elem = content.getComponent(ctx, compId);
 			if (StringHelper.isTrue(requestService.getParameter("id-" + elem.getId(), "false"))) {
 				elem.performConfig(ctx);
 				elem.performEdit(ctx);
 				if (!elem.isModify()) { // if elem not modified check modification via rawvalue
-					System.out.println("***** Edit.performSave : not modify"); // TODO: remove debug trace
 					String rawValue = requestService.getParameter("raw_value_" + elem.getId(), null);
 					if (rawValue != null && !rawValue.equals(elem.getValue(ctx))) {
 						logger.info("raw value modification for " + elem.getType());
 						elem.setValue(rawValue);
 						elem.setNeedRefresh(true);
 					}
-				} else {
-					System.out.println("***** Edit.performSave : modify"); // TODO: remove debug trace
 				}
 				if (elem.isNeedRefresh() && ctx.isAjax()) {
 					updateComponent(ctx, currentModule, elem.getId(), null);

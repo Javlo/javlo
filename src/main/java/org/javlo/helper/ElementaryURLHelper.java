@@ -206,15 +206,15 @@ public abstract class ElementaryURLHelper {
 
 		if (ctx.getContentLanguage().equals(ctx.getLanguage())) {
 			if (withPathPrefix) {
-				newUri = getPathPrefix(globalContext, request) + mode + ctx.getLanguage() + uri;
+				newUri = URLHelper.mergePath(getPathPrefix(globalContext, request), mode, ctx.getLanguage(), uri);
 			} else {
-				newUri = mode + ctx.getLanguage() + uri;
+				newUri = URLHelper.mergePath(mode, ctx.getLanguage(), uri);
 			}
 		} else {
 			if (withPathPrefix) {
-				newUri = getPathPrefix(globalContext, request) + mode + ctx.getLanguage() + '-' + ctx.getContentLanguage() + uri;
+				newUri = URLHelper.mergePath(getPathPrefix(globalContext, request), mode, ctx.getLanguage() + '-' + ctx.getContentLanguage(), uri);
 			} else {
-				newUri = mode + ctx.getLanguage() + '-' + ctx.getContentLanguage() + uri;
+				newUri = URLHelper.mergePath(mode, ctx.getLanguage() + '-' + ctx.getContentLanguage(), uri);
 			}
 		}
 

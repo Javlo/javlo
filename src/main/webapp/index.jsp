@@ -41,7 +41,8 @@ Template template = ctx.getCurrentTemplate();
 if ((template != null)&&(template.getHomeRenderer(globalContext) != null)) {
 %><jsp:include page="<%=template.getHomeRendererFullName(globalContext)%>"></jsp:include><%	
 } else {
+	ctx.setFormat("html");
 	String url = URLHelper.createURL(ctx);
-	NetHelper.sendRedirectPermanently(response, URLHelper.createURL(ctx));	
+	NetHelper.sendRedirectPermanently(response, url);	
 	%><a href="<%=url%>"><%=url%></a><%
 }%>

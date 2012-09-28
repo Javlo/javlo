@@ -644,7 +644,7 @@ public class Multimedia extends TimeRangeComponent implements IImageTitle {
 	}
 
 	@Override
-	public String getImageURL(ContentContext ctx) {
+	public String getResourceURL(ContentContext ctx) {
 		try {
 			return getFirstRessource(ctx).getPreviewURL();
 		} catch (Exception e) {

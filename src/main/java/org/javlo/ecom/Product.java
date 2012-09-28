@@ -84,7 +84,7 @@ public class Product {
 	public void setImage(ContentContext ctx, IImageTitle image) {
 		this.image = new ImageTitleBean(ctx, image);
 		try {
-			this.imageURL = URLHelper.createTransformURL(ctx, ctx.getCurrentPage(), image.getImageURL(ctx), "basket");
+			this.imageURL = URLHelper.createTransformURL(ctx, ctx.getCurrentPage(), image.getResourceURL(ctx), "basket");
 		} catch (Exception e) {
 			e.printStackTrace();
 		}

@@ -185,9 +185,9 @@ public class ChildrenLink extends AbstractVisualComponent implements IImageTitle
 		return getChildImageComponent(ctx);
 	}
 
-	public String getImageURL(ContentContext ctx) {
+	public String getResourceURL(ContentContext ctx) {
 		try {
-			return getImageTitleChild(ctx).getImageURL(ctx);
+			return getImageTitleChild(ctx).getResourceURL(ctx);
 		} catch (Exception e) {
 			return null;
 		}
@@ -337,7 +337,7 @@ public class ChildrenLink extends AbstractVisualComponent implements IImageTitle
 						if ((isImage() && (children[i].getImage(ctx) != null)) || (isDescription() && children[i].getDescription(ctx).trim().length() > 0)) {
 							out.println("<span class=\"body\">");
 							if (isImage() && (children[i].getImage(ctx) != null)) {
-								String imgURL = children[i].getImage(ctx).getImageURL(ctx);
+								String imgURL = children[i].getImage(ctx).getResourceURL(ctx);
 								String imgDesc = children[i].getImage(ctx).getImageDescription(ctx);
 								out.print("<span class=\"image\">");
 								out.print("<img src=\"" + URLHelper.createTransformURL(ctx, children[i], imgURL, "list") + "\" alt=\"" + imgDesc + "\" />");

@@ -362,9 +362,9 @@ public class XHTMLNavigationHelper {
 				if (print) {
 					String visualCode = elems[i].getLabel(ctx);
 					if (image && (elems[i].getImage(ctx) != null)) {
-						String imageURL = URLHelper.createTransformURL(ctx, elems[i].getImage(ctx).getImageURL(ctx), "menu");
+						String imageURL = URLHelper.createTransformURL(ctx, elems[i].getImage(ctx).getResourceURL(ctx), "menu");
 						String imageDescription = elems[i].getImage(ctx).getImageDescription(ctx);
-						String imageUnselectedURL = URLHelper.createTransformURL(ctx, elems[i].getImage(ctx).getImageURL(ctx), currentTemplate.getUnSelectedClass());
+						String imageUnselectedURL = URLHelper.createTransformURL(ctx, elems[i].getImage(ctx).getResourceURL(ctx), currentTemplate.getUnSelectedClass());
 
 						String url = imageUnselectedURL;
 						if (elems[i].isSelected(ctx)) {
