@@ -31,7 +31,11 @@ import org.javlo.service.RequestService;
 import org.javlo.template.Template;
 
 /**
- * Standard image component.
+ * standard image component. <h4>JSTL variable :</h4>
+ * <ul>
+ * <li>inherited from {@link FilterImage}</li>
+ * <li>{@link String} image : url of image.</li>
+ * </ul>
  * 
  * @author pvandermaesen
  */

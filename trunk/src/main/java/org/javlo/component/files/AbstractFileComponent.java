@@ -57,6 +57,7 @@ import org.javlo.ztatic.StaticInfo;
  * <li>{@link String} url : url to resource.</li>
  * <li>{@link String} description : description of the resource.</li>
  * <li>{@link String} label : label defined by contributor.</li>
+ * <li>{@link StaticInfo} resource : static info of resource.</li>
  * </ul>
  * 
  * @author pvandermaesen
@@ -144,7 +145,13 @@ public abstract class AbstractFileComponent extends AbstractVisualComponent impl
 		String url = getURL(ctx);
 		ctx.getRequest().setAttribute("url", url);
 		ctx.getRequest().setAttribute("descritpion", getDescription());
-		ctx.getRequest().setAttribute("label", getLabel());
+		StaticInfo staticInfo = getStaticInfo(ctx);
+		if (getLabel() != null && getLabel().length() > 0) {
+			ctx.getRequest().setAttribute("label", getLabel());
+		} else if (staticInfo != null) {
+			ctx.getRequest().setAttribute("label", staticInfo.getTitle(ctx));
+		}
+		ctx.getRequest().setAttribute("resource", staticInfo);
 	}
 
 	/**
