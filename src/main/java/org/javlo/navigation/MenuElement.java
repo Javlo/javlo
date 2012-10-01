@@ -213,6 +213,7 @@ public class MenuElement implements Serializable {
 		public void setId(String id) {
 			this.id = id;
 		}
+
 	}
 
 	/**
@@ -254,6 +255,7 @@ public class MenuElement implements Serializable {
 		public boolean visible = false;
 		String referenceLanguage = null;
 		boolean breakRepeat;
+		int priority;
 
 		public boolean isVisible() {
 			return visible;
@@ -285,6 +287,10 @@ public class MenuElement implements Serializable {
 
 		public String getSubTitle() {
 			return subTitle;
+		}
+
+		public int getPriority() {
+			return priority;
 		}
 
 		public void setSubTitle(String subTitle) {
@@ -2159,6 +2165,7 @@ public class MenuElement implements Serializable {
 				pageDescription.visible = isVisible();
 				pageDescription.breakRepeat = isBreakRepeat();
 				pageDescription.referenceLanguage = getReferenceLanguage();
+				pageDescription.priority = getPriority();
 			}
 			pageBean = new PageBean();
 			pageBean.setInfo(pageDescription);
@@ -3136,6 +3143,7 @@ public class MenuElement implements Serializable {
 	public void setPriority(int newPriority) {
 		synchronized (getLock()) {
 			priority = newPriority;
+			releaseCache();
 			if (getParent() != null) {
 				getParent().sortChild();
 			}
