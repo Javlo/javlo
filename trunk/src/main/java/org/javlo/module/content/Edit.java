@@ -999,7 +999,7 @@ public class Edit extends AbstractModuleAction {
 			}
 			page.setPriority(pagePrevious.getPriority() + 1);
 		}
-		NavigationHelper.changeStepPriority(page.getParent().getAllChilds(), 10);
+		NavigationHelper.changeStepPriority(page.getParent().getChildMenuElements(), 10);
 
 		PersistenceService persistenceService = PersistenceService.getInstance(globalContext);
 		persistenceService.store(ctx);
