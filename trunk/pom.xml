@@ -274,6 +274,23 @@
 			<version>9.0.1</version>
 		</dependency>
 
+		<dependency>
+			<groupId>jjil.core</groupId>
+			<artifactId>jjil</artifactId>			
+			<version>0.1</version>
+			<scope>system</scope>
+			<systemPath>${project.basedir}/src/main/lib/JJILCore.jar</systemPath>
+		</dependency>
+
+		<dependency>
+			<groupId>jjil.algorithm</groupId>
+			<artifactId>jjil</artifactId>			
+			<version>0.1</version>
+			<scope>system</scope>
+			<systemPath>${project.basedir}/src/main/lib/JJIL-J2SE.jar</systemPath>
+		</dependency>
+
+
 	</dependencies>
 
 	<repositories>
@@ -378,6 +395,22 @@
 									<resource>
 										<directory>src/main/config</directory>
 										<filtering>true</filtering>
+									</resource>
+								</resources>
+							</configuration>
+						</execution>
+						<execution>
+							<id>deploy local lib</id>
+							<phase>process-resources</phase>
+							<goals>
+								<goal>copy-resources</goal>
+							</goals>
+							<configuration>
+								<outputDirectory>${project.build.directory}/${project.build.finalName}/WEB-INF/lib</outputDirectory>
+								<resources>
+									<resource>
+										<directory>src/main/lib</directory>
+										<filtering>false</filtering>
 									</resource>
 								</resources>
 							</configuration>
