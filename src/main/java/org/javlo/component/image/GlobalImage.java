@@ -39,7 +39,7 @@ import org.javlo.template.Template;
  * 
  * @author pvandermaesen
  */
-public class GlobalImage extends FilterImage {
+public class GlobalImage extends Image {
 
 	/**
 	 * create a static logger.
@@ -215,7 +215,6 @@ public class GlobalImage extends FilterImage {
 
 			List<String> filters = new ArrayList<String>();
 			filters.add(RAW_FILTER);
-			filters.add(HIDDEN_FILTER);
 			filters.addAll(currentTemplate.getImageFilters());
 
 			String[][] filtersArray = new String[filters.size()][2];
@@ -368,7 +367,6 @@ public class GlobalImage extends FilterImage {
 		return "image_name_over" + ID_SEPARATOR + getId();
 	}
 
-	@Override
 	protected String getFilter(ContentContext ctx) {
 		GlobalContext globalContext = GlobalContext.getInstance(ctx.getRequest());
 		return properties.getProperty(IMAGE_FILTER, globalContext.getDefaultImageFilter());
@@ -434,40 +432,6 @@ public class GlobalImage extends FilterImage {
 
 	String getSelectXHTMLInputNameOver() {
 		return "image_name_select_over" + ID_SEPARATOR + getId();
-	}
-
-	@Override
-	public String[] getStyleLabelList(ContentContext ctx) {
-		String left = "left";
-		String right = "right";
-		String center = "center";
-		try {
-			I18nAccess i18n = I18nAccess.getInstance(ctx.getRequest());
-			left = i18n.getText("global.left");
-			right = i18n.getText("global.right");
-			center = i18n.getText("global.center");
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
-		return new String[] { left, right, center };
-	}
-
-	@Override
-	public String[] getStyleList(ContentContext ctx) {
-		return new String[] { "image-left", "image-right", "image-center" };
-	}
-
-	@Override
-	public String getStyleTitle(ContentContext ctx) {
-		return "position";
-	}
-
-	/*
-	 * @see org.javlo.itf.IContentVisualComponent#getType()
-	 */
-	@Override
-	public String getType() {
-		return TYPE;
 	}
 
 	/**

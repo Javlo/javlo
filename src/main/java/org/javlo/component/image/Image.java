@@ -24,7 +24,7 @@ public class Image extends AbstractFileComponent implements IImageTitle, IPrevie
 
 	@Override
 	public String[] getStyleList(ContentContext ctx) {
-		return new String[] { "image-left", "image-right", "image-center" };
+		return new String[] { "image-left", "image-right", "image-center", HIDDEN };
 	}
 
 	@Override
@@ -32,15 +32,17 @@ public class Image extends AbstractFileComponent implements IImageTitle, IPrevie
 		String left = "left";
 		String right = "right";
 		String center = "center";
+		String hidden = "hidden";
 		try {
 			I18nAccess i18n = I18nAccess.getInstance(ctx.getRequest());
 			left = i18n.getText("global.left");
 			right = i18n.getText("global.right");
 			center = i18n.getText("global.center");
+			hidden = i18n.getText("global.hidden");
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
-		return new String[] { left, right, center };
+		return new String[] { left, right, center, hidden };
 	}
 
 	@Override

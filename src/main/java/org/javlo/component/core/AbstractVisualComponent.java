@@ -83,6 +83,8 @@ public abstract class AbstractVisualComponent implements IContentVisualComponent
 
 	protected static final String VALUE_SEPARATOR = "-";
 
+	protected static final String HIDDEN = "hidden";
+
 	public static final String getComponentId(HttpServletRequest request) {
 		return (String) request.getAttribute(COMP_ID_REQUEST_PARAM);
 	}
@@ -1106,6 +1108,9 @@ public abstract class AbstractVisualComponent implements IContentVisualComponent
 	}
 
 	protected String renderViewXHTMLCode(ContentContext ctx) throws Exception {
+		if (HIDDEN.equals(getStyle(ctx))) {
+			return "";
+		}
 		if (getRenderer(ctx) != null) {
 			return executeCurrentRenderer(ctx);
 		} else {
