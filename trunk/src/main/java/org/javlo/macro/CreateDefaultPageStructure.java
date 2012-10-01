@@ -6,7 +6,7 @@ import java.util.Date;
 import java.util.GregorianCalendar;
 import java.util.Map;
 
-import org.javlo.component.image.StandardImage;
+import org.javlo.component.image.GlobalImage;
 import org.javlo.component.text.Description;
 import org.javlo.component.text.Paragraph;
 import org.javlo.component.title.Title;
@@ -16,13 +16,14 @@ import org.javlo.helper.MacroHelper;
 import org.javlo.navigation.MenuElement;
 import org.javlo.service.PersistenceService;
 
-
 public class CreateDefaultPageStructure extends AbstractMacro {
 
+	@Override
 	public String getName() {
 		return "create-default-page-structure";
 	}
 
+	@Override
 	public String perform(ContentContext ctx, Map<String, Object> params) throws Exception {
 
 		MenuElement currentPage = ctx.getCurrentPage();
@@ -39,10 +40,10 @@ public class CreateDefaultPageStructure extends AbstractMacro {
 				ContentContext lgCtx = new ContentContext(ctx);
 				lgCtx.setLanguage(lg);
 				if (currentPage.getContent(lgCtx).size(ctx) == 0) {
-					//parentId = MacroHelper.addContent(lg, currentPage, parentId, DateComponent.TYPE, "");
+					// parentId = MacroHelper.addContent(lg, currentPage, parentId, DateComponent.TYPE, "");
 					parentId = MacroHelper.addContent(lg, currentPage, parentId, Title.TYPE, "");
 					parentId = MacroHelper.addContent(lg, currentPage, parentId, Description.TYPE, "");
-					parentId = MacroHelper.addContent(lg, currentPage, parentId, StandardImage.TYPE, "");
+					parentId = MacroHelper.addContent(lg, currentPage, parentId, GlobalImage.TYPE, "");
 					parentId = MacroHelper.addContent(lg, currentPage, parentId, Paragraph.TYPE, "");
 				}
 			}
