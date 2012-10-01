@@ -1,5 +1,6 @@
 package org.javlo.ztatic;
 
+import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
 import java.io.PrintWriter;
@@ -14,6 +15,7 @@ import java.util.Iterator;
 import java.util.Map;
 import java.util.logging.Logger;
 
+import javax.imageio.ImageIO;
 import javax.servlet.http.HttpServletRequest;
 
 import org.apache.commons.configuration.ConfigurationException;
@@ -30,6 +32,7 @@ import org.javlo.service.ContentService;
 import org.javlo.service.NavigationService;
 import org.javlo.service.PersistenceService;
 import org.javlo.service.exception.ServiceException;
+import org.javlo.ztatic.InitInterest.Point;
 
 public class StaticInfo {
 
@@ -612,6 +615,26 @@ public class StaticInfo {
 		if (!content.isNavigationLoaded(editCtx)) {
 			editCtx = ctx;
 		}
+		if (content.getAttribute(editCtx, getKey("focus-zone-x"), null) == null) {
+			if (StringHelper.isImage(getFile().getName())) {
+				try {
+					BufferedImage img = ImageIO.read(getFile());
+					Point point = InitInterest.getPointOfInterest(img);
+					if (point != null) {
+						int focusX = (point.getX() * 1000) / img.getWidth();
+						int focusY = (point.getY() * 1000) / img.getHeight();
+
+						content.setAttribute(editCtx, getKey("focus-zone-x"), "" + focusX);
+						content.setAttribute(editCtx, getKey("focus-zone-y"), "" + focusY);
+					} else {
+						content.setAttribute(editCtx, getKey("focus-zone-x"), "" + DEFAULT_FOCUS_X);
+						content.setAttribute(editCtx, getKey("focus-zone-y"), "" + DEFAULT_FOCUS_Y);
+					}
+				} catch (Exception e) {
+					e.printStackTrace();
+				}
+			}
+		}
 		String kzx = content.getAttribute(editCtx, getKey("focus-zone-x"), "" + DEFAULT_FOCUS_X);
 		return Integer.parseInt(kzx);
 	}
@@ -627,6 +650,9 @@ public class StaticInfo {
 		ContentContext editCtx = ctx.getContextWithOtherRenderMode(ContentContext.EDIT_MODE);
 		if (!content.isNavigationLoaded(editCtx)) {
 			editCtx = ctx;
+		}
+		if (content.getAttribute(editCtx, getKey("focus-zone-x"), null) == null) {
+			getFocusZoneX(editCtx); // generate default value
 		}
 		String kzy = content.getAttribute(editCtx, getKey("focus-zone-y"), "" + DEFAULT_FOCUS_Y);
 		return Integer.parseInt(kzy);
