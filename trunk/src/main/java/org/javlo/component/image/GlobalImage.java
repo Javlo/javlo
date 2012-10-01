@@ -75,6 +75,11 @@ public class GlobalImage extends Image {
 	}
 
 	@Override
+	public String getType() {
+		return TYPE;
+	}
+
+	@Override
 	public String createFileURL(ContentContext ctx, String url) {
 		StaticConfig staticConfig = StaticConfig.getInstance(ctx.getRequest().getSession());
 		return URLHelper.createResourceURL(ctx, getPage(), staticConfig.getImageFolder() + '/' + url);
@@ -121,7 +126,7 @@ public class GlobalImage extends Image {
 			String imageFilter = getConfig(ctx).getProperty("image.filter", getDefaultFilter());
 			ctx.getRequest().setAttribute("image", URLHelper.createTransformURL(ctx, imageLink, imageFilter));
 		}
-
+		ctx.getRequest().setAttribute("previewURL", URLHelper.createTransformURL(ctx, getPage(), getResourceURL(ctx, getFileName()), getFilter(ctx)));
 	}
 
 	@Override
