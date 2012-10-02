@@ -460,15 +460,16 @@ public class Multimedia extends TimeRangeComponent implements IImageTitle {
 	}
 
 	@Override
-	public String getViewXHTMLCode(ContentContext ctx) throws Exception {
-
+	public void prepareView(ContentContext ctx) throws Exception {
+		super.prepareView(ctx);
 		GlobalContext globalContext = GlobalContext.getInstance(ctx.getRequest());
 
 		int index = 0;
 
 		Collection<File> mulFiles = getAllMultimediaFiles(ctx);
 		if (mulFiles.size() == 0) {
-			return "<span class=\"empty\">no files.</span>";
+			ctx.getRequest().setAttribute("resources", Collections.EMPTY_LIST);
+			return;
 		}
 
 		List<MultimediaResource> allResource = new LinkedList<MultimediaResource>();
@@ -542,8 +543,6 @@ public class Multimedia extends TimeRangeComponent implements IImageTitle {
 		}
 
 		ctx.getRequest().setAttribute("resources", allResource);
-
-		return executeJSP(ctx, getRenderer(ctx));
 	}
 
 	@Override
