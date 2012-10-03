@@ -409,6 +409,7 @@ public class Edit extends AbstractModuleAction {
 			currentModule.setBreadcrumb(true);
 			currentModule.setSidebar(true);
 			UserInterfaceContext userIterfaceContext = UserInterfaceContext.getInstance(ctx.getRequest().getSession(), globalContext);
+			ctx.getRequest().setAttribute("userInterfaceContext", userIterfaceContext);
 			if (!userIterfaceContext.isComponentsList()) {
 				currentModule.clearAllBoxes();
 			}
