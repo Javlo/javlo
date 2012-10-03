@@ -1,4 +1,4 @@
-package org.javlo.filter;
+package org.javlo.servlet.filter;
 
 import java.io.IOException;
 

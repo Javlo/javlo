@@ -11,11 +11,20 @@
 
 	<filter>
 		<filter-name>CharsetFilter</filter-name>
-		<filter-class>org.javlo.filter.CharsetFilter</filter-class>
+		<filter-class>org.javlo.servlet.filter.CharsetFilter</filter-class>
 	</filter>
 	<filter-mapping>
 		<filter-name>CharsetFilter</filter-name>
 		<url-pattern>/*</url-pattern>
+	</filter-mapping>
+	
+	<filter>
+		<filter-name>JSPFilter</filter-name>
+		<filter-class>org.javlo.servlet.filter.JSPFilter</filter-class>
+	</filter>
+	<filter-mapping>
+		<filter-name>JSPFilter</filter-name>
+		<url-pattern>*.jsp</url-pattern>
 	</filter-mapping>
 	
 	<filter>

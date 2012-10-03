@@ -536,6 +536,12 @@ public class AccessServlet extends HttpServlet {
 				/* **** */
 
 				if (request.getServletPath().equals("/edit")) {
+
+					/* ********************* */
+					/* ****** MODULES ****** */
+					/* ********************* */
+					ServletHelper.prepareModule(ctx);
+
 					EditContext editCtx = EditContext.getInstance(globalContext, request.getSession());
 					ctx.setArea(editCtx.getCurrentArea());
 					if (editCtx.getAjaxRenderer() != null) {
@@ -554,10 +560,6 @@ public class AccessServlet extends HttpServlet {
 
 						response.setContentType("text/html; charset=" + ContentContext.CHARACTER_ENCODING);
 
-						/* ********************* */
-						/* ****** MODULES ****** */
-						/* ********************* */
-						ServletHelper.prepareModule(ctx);
 						getServletContext().getRequestDispatcher(editCtx.getEditTemplate()).include(request, response);
 					}
 					localLogger.endCount("edit", "include edit");

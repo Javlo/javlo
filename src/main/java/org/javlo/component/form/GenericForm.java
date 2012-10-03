@@ -55,13 +55,13 @@ public class GenericForm extends AbstractVisualComponent implements IAction {
 	}
 
 	protected boolean isCaptcha(ContentContext ctx) {
-		return StringHelper.isTrue(getConfig(ctx).getProperty("captcha", "true"));
+		return StringHelper.isTrue(getLocalConfig(false).getProperty("captcha", "" + isCaptcha()));
 	}
 
 	@Override
 	public void prepareView(ContentContext ctx) throws Exception {
 		super.prepareView(ctx);
-		ctx.getRequest().setAttribute("ci18n", getTranslation(false));
+		ctx.getRequest().setAttribute("ci18n", getLocalConfig(false));
 	}
 
 	@Override
@@ -84,7 +84,7 @@ public class GenericForm extends AbstractVisualComponent implements IAction {
 		return true;
 	}
 
-	public Properties getTranslation(boolean reload) {
+	public Properties getLocalConfig(boolean reload) {
 		if (bundle == null || reload) {
 			bundle = new Properties();
 			try {
@@ -99,8 +99,8 @@ public class GenericForm extends AbstractVisualComponent implements IAction {
 	protected File getFile(ContentContext ctx) throws IOException {
 		GlobalContext globalContext = GlobalContext.getInstance(ctx.getRequest());
 		String fileName = "df-" + getId() + ".csv";
-		if (getTranslation(false).get("filename") != null) {
-			fileName = getTranslation(false).getProperty("filename");
+		if (getLocalConfig(false).get("filename") != null) {
+			fileName = getLocalConfig(false).getProperty("filename");
 		}
 		File file = new File(URLHelper.mergePath(globalContext.getDataFolder(), globalContext.getStaticConfig().getStaticFolder(), "dynamic-form-result", fileName));
 		if (!file.exists()) {
@@ -133,7 +133,7 @@ public class GenericForm extends AbstractVisualComponent implements IAction {
 	@Override
 	public void performEdit(ContentContext ctx) throws Exception {
 		super.performEdit(ctx);
-		getTranslation(true);
+		getLocalConfig(true);
 	}
 
 	protected boolean isCaptcha() {
@@ -149,6 +149,7 @@ public class GenericForm extends AbstractVisualComponent implements IAction {
 	}
 
 	public static String performSubmit(HttpServletRequest request, HttpServletResponse response) throws Exception {
+
 		RequestService requestService = RequestService.getInstance(request);
 		ContentContext ctx = ContentContext.getContentContext(request, response);
 		ContentService content = ContentService.createContent(request);
@@ -159,7 +160,8 @@ public class GenericForm extends AbstractVisualComponent implements IAction {
 
 		if (comp.isCaptcha(ctx)) {
 			if (captcha == null || CaptchaService.getInstance(request.getSession()).getCurrentCaptchaCode() == null || !CaptchaService.getInstance(request.getSession()).getCurrentCaptchaCode().equals(captcha)) {
-				GenericMessage msg = new GenericMessage(comp.getTranslation(false).getProperty("error.captcha"), GenericMessage.ERROR);
+				GenericMessage msg = new GenericMessage(comp.getLocalConfig(false).getProperty("error.captcha", "bad captcha."), GenericMessage.ERROR);
+
 				request.setAttribute("msg", msg);
 				request.setAttribute("error_captcha", "true");
 				return null;
@@ -216,7 +218,7 @@ public class GenericForm extends AbstractVisualComponent implements IAction {
 			mailingManager.sendMail(fromEmail, adminEmail, bccEmail, subject, mailContent, false);
 		}
 
-		GenericMessage msg = new GenericMessage(comp.getTranslation(false).getProperty("message.thanks"), GenericMessage.INFO);
+		GenericMessage msg = new GenericMessage(comp.getLocalConfig(false).getProperty("message.thanks"), GenericMessage.INFO);
 		request.setAttribute("msg", msg);
 		request.setAttribute("valid", "true");
 
