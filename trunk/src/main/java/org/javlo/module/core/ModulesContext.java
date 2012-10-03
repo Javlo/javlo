@@ -133,10 +133,10 @@ public class ModulesContext {
 	}
 
 	public static final ModulesContext getInstance(HttpSession session, GlobalContext globalContext) throws ModuleException {
-		ModulesContext outContext = (ModulesContext) session.getAttribute(KEY);
+		ModulesContext outContext = (ModulesContext) globalContext.getSessionAttribute(session, KEY);
 		if (outContext == null || !outContext.siteKey.equals(globalContext.getContextKey())) {
 			outContext = new ModulesContext(session, globalContext);
-			session.setAttribute(KEY, outContext);
+			globalContext.setSessionAttribute(session, KEY, outContext);
 			I18nAccess i18nAccess;
 			try {
 				UserInterfaceContext uic = UserInterfaceContext.getInstance(session, globalContext);

@@ -1,9 +1,13 @@
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
 <%@ taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions" %>
-<c:if test="${not empty modulesContext.currentModule.breadcrumbTitle}">
-	<span class="title">${modulesContext.currentModule.breadcrumbTitle}</span>
+
+<c:if test="${not empty currentModule.breadcrumbTitle}">
+	<span class="title">${currentModule.breadcrumbTitle}
+	
+	
+	</span>
 </c:if>
-<c:if test="${empty modulesContext.currentModule.breadcrumbList}">
+<c:if test="${empty currentModule.breadcrumbList}">
 	<c:forEach var="page" items="${info.pagePath}">
 		<c:set var="link" value='<a href="${page.url}">' />
 		${empty param.previewEdit?link:'<span class="title">'}${page.info.title}${empty param.previewEdit?'</a>':'</span>'}		
@@ -13,6 +17,7 @@
 				<ul>
 				<c:forEach var="child" items="${page.children}">
 					<li ${child.selected?'class="selected"':''}><a href="${child.url}">${child.info.title}</a></li>
+					
 				</c:forEach>
 				</ul>
 			</div>
@@ -32,8 +37,8 @@
 			</div>
 			</c:if>
 </c:if>
-<c:if test="${not empty modulesContext.currentModule.breadcrumbList}">
-	<c:forEach var="link" items="${modulesContext.currentModule.breadcrumbList}" varStatus="status">	
+<c:if test="${not empty currentModule.breadcrumbList}">
+	<c:forEach var="link" items="${currentModule.breadcrumbList}" varStatus="status">	
 		<a ${link.selected?'class="selected"':''} href="${link.url}" title="${link.title}">${link.legend}</a>
 		<c:if test="${fn:length(link.children) > 1 || (status.last && fn:length(link.children) > 0)}">
 			<div class="children">

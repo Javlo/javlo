@@ -10,8 +10,8 @@ import java.util.logging.Logger;
 
 import javax.servlet.http.HttpSession;
 
-import org.javlo.bean.ParentLink;
 import org.javlo.bean.LinkToRenderer;
+import org.javlo.bean.ParentLink;
 import org.javlo.context.GlobalContext;
 import org.javlo.i18n.I18nAccess;
 
@@ -31,31 +31,26 @@ public abstract class AbstractModuleContext {
 	protected GlobalContext globalContext;
 	private String currentLink;
 	private String renderer;
-	private Map<String, Integer> wizardStep = new HashMap<String, Integer>();
+	private final Map<String, Integer> wizardStep = new HashMap<String, Integer>();
 
 	public static final AbstractModuleContext getInstance(HttpSession session, GlobalContext globalContext, Module module, Class<? extends AbstractModuleContext> implementationClass) throws FileNotFoundException, IOException, InstantiationException, IllegalAccessException {
-		final String KEY = implementationClass.getName() + '_' + globalContext.getContextKey();
-		Object context = session.getAttribute(KEY);
+		Object context = globalContext.getSessionAttribute(session, implementationClass.getName());
 		if (context == null) {
 			AbstractModuleContext outCtx = implementationClass.newInstance();
 			outCtx.i18nAccess = I18nAccess.getInstance(globalContext, session);
 			outCtx.module = module;
 			outCtx.globalContext = globalContext;
 			outCtx.init();
-			session.setAttribute(KEY, outCtx);
+			globalContext.setSessionAttribute(session, implementationClass.getName(), outCtx);
 			context = outCtx;
 		}
-		session.setAttribute(getKey(), context);
+		session.setAttribute(KEY, context);
 		return (AbstractModuleContext) context;
 	}
 
 	public static final AbstractModuleContext getCurrentInstance(HttpSession session) {
-		AbstractModuleContext outContext = (AbstractModuleContext) session.getAttribute(getKey());
+		AbstractModuleContext outContext = (AbstractModuleContext) session.getAttribute(KEY);
 		return outContext;
-	}
-
-	protected static String getKey() {
-		return KEY;
 	}
 
 	/**
@@ -108,7 +103,7 @@ public abstract class AbstractModuleContext {
 	 * @param renderer
 	 *            link to a jsp file.
 	 */
-	public void setRendererFromNavigation(String renderer) {		
+	public void setRendererFromNavigation(String renderer) {
 		module.setRenderer(renderer);
 		this.renderer = renderer;
 	}
@@ -116,7 +111,7 @@ public abstract class AbstractModuleContext {
 	public String getRenderer() {
 		return renderer;
 	}
-	
+
 	public void setRenderer(String renderer) {
 		this.renderer = renderer;
 	}

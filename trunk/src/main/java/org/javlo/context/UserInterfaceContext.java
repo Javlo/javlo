@@ -27,8 +27,8 @@ public class UserInterfaceContext {
 	private static final UserInterfaceContext FAKE_INSTACE = new UserInterfaceContext();
 
 	public static final UserInterfaceContext getInstance(HttpSession session, GlobalContext globalContext) {
-		UserInterfaceContext instance = (UserInterfaceContext) session.getAttribute(KEY);
-		
+		UserInterfaceContext instance = (UserInterfaceContext) globalContext.getSessionAttribute(session, KEY);
+
 		if (instance == null) {
 			AdminUserFactory userFact = AdminUserFactory.createUserFactory(globalContext, session);
 			User user = userFact.getCurrentUser(session);
@@ -39,9 +39,9 @@ public class UserInterfaceContext {
 			instance = new UserInterfaceContext();
 			instance.session = session;
 			instance.globalContext = globalContext;
-			session.setAttribute(KEY, instance);
 
-			
+			globalContext.setSessionAttribute(session, KEY, instance);
+
 			if (userFact.getUser(user.getLogin()) != null) { // not god user, so storable user
 				IUserInfo ui = user.getUserInfo();
 				instance.fromString(ui.getInfo());
@@ -50,6 +50,7 @@ public class UserInterfaceContext {
 		return instance;
 	}
 
+	@Override
 	public String toString() {
 		return "" + isComponentsList() + ';' + StringHelper.neverNull(getCurrentModule());
 	}

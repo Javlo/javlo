@@ -2418,6 +2418,16 @@ public class GlobalContext implements Serializable {
 		}
 	}
 
+	public Object getSessionAttribute(HttpSession session, String key) {
+		String sessionKey = getContextKey() + "___" + key;
+		return session.getAttribute(sessionKey);
+	}
+
+	public void setSessionAttribute(HttpSession session, String key, Object value) {
+		String sessionKey = getContextKey() + "___" + key;
+		session.setAttribute(sessionKey, value);
+	}
+
 	public void writeInfo(PrintStream out) {
 		out.println("****************************************************************");
 		out.println("****************************************************************");
