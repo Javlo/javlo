@@ -33,7 +33,7 @@ public class CreateMonthHereMacro extends AbstractMacro {
 	@Override
 	public String perform(ContentContext ctx, Map<String, Object> params) throws Exception {
 
-		ContentService content = ContentService.createContent(ctx.getRequest());
+		ContentService content = ContentService.getInstance(ctx.getRequest());
 		MenuElement currentPage = ctx.getCurrentPage();
 
 		if (currentPage.getParent() == null) {

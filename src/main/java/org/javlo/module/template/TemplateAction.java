@@ -75,6 +75,8 @@ public class TemplateAction extends AbstractModuleAction {
 
 		Map<String, String> params = new HashMap<String, String>();
 		String templateName = requestService.getParameter("name", null);
+		System.out.println("***** TemplateAction.prepare : templateName = " + templateName); // TODO: remove debug trace
+
 		if (templateName != null) {
 			Template template = TemplateFactory.getDiskTemplate(ctx.getRequest().getSession().getServletContext(), templateName, StringHelper.isTrue(ctx.getRequest().getParameter("mailing")));
 			if (template == null) {

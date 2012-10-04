@@ -22,7 +22,7 @@ public class CreateExternalNewsMacro extends AbstractMacro {
 	public String perform(ContentContext ctx, Map<String, Object> params) throws Exception {
 		
 		ComponentContext compCtx = ComponentContext.getInstance(ctx.getRequest());
-		ContentService content = ContentService.createContent(ctx.getRequest());
+		ContentService content = ContentService.getInstance(ctx.getRequest());
 		
 		MenuElement newPage = MacroHelper.addPage(ctx, "news", "external-news-", true);
 		

@@ -18,7 +18,7 @@ public class ImageAfterDescriptionChildrenMacro extends ImageAfterDescriptionMac
 	@Override
 	public String perform(ContentContext ctx, Map<String, Object> params) throws Exception {
 
-		ContentService.createContent(ctx.getRequest());
+		ContentService.getInstance(ctx.getRequest());
 		MenuElement currentPage = ctx.getCurrentPage();
 		imageUnderDescritpion(ctx, currentPage);
 

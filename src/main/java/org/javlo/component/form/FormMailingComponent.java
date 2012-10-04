@@ -263,7 +263,7 @@ public class FormMailingComponent extends AbstractVisualComponent implements IAc
 		I18nAccess i18nAccess = I18nAccess.getInstance(globalContext, request.getSession());
 		MessageRepository messageRepository = MessageRepository.getInstance(ctx);
 
-		FormMailingComponent comp = (FormMailingComponent) ContentService.createContent(request).getComponent(ctx, compId);
+		FormMailingComponent comp = (FormMailingComponent) ContentService.getInstance(request).getComponent(ctx, compId);
 
 		String confirmEmail = comp.getConfirmEmail();
 		if (confirmEmail != null && request.getParameter("direct") == null) {

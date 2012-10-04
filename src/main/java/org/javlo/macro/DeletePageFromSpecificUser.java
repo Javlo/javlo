@@ -20,7 +20,7 @@ public class DeletePageFromSpecificUser extends AbstractMacro {
 
 	public String perform(ContentContext ctx, Map<String, Object> params) throws Exception {
 
-		ContentService content = ContentService.createContent(ctx.getRequest());
+		ContentService content = ContentService.getInstance(ctx.getRequest());
 		GlobalContext globalContext = GlobalContext.getInstance(ctx.getRequest());
 		NavigationService service = NavigationService.getInstance(globalContext, ctx.getRequest().getSession());
 		

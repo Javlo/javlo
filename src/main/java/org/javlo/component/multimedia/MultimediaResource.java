@@ -1,8 +1,12 @@
 package org.javlo.component.multimedia;
 
+import java.util.Collections;
 import java.util.Date;
 import java.util.LinkedList;
 import java.util.List;
+
+import org.javlo.context.ContentContext;
+import org.javlo.helper.StringHelper;
 
 public class MultimediaResource {
 	private String URL;
@@ -20,7 +24,8 @@ public class MultimediaResource {
 	private String location;
 	private String language;
 	private String accessURL;
-	private List<MultimediaResource> translation = new LinkedList<MultimediaResource>();
+	private final List<MultimediaResource> translation = new LinkedList<MultimediaResource>();
+	private List<String> tags;
 
 	public void addTranslation(MultimediaResource resource) {
 		this.translation.add(resource);
@@ -150,4 +155,24 @@ public class MultimediaResource {
 		URL = uRL;
 	}
 
+	public List<String> getTags() {
+		if (tags == null) {
+			return Collections.EMPTY_LIST;
+		}
+		return tags;
+	}
+
+	public void setTags(List<String> tags) {
+		this.tags = tags;
+	}
+
+	public void renderDate(ContentContext ctx) {
+		try {
+			setShortDate(StringHelper.renderShortDate(ctx, getDate()));
+			setMediumDate(StringHelper.renderMediumDate(ctx, getDate()));
+			setFullDate(StringHelper.renderFullDate(ctx, getDate()));
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+	}
 }

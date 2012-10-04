@@ -47,7 +47,7 @@ public class InfoBean {
 			if (currentPage.getParent() != null) {
 				info.setParent(currentPage.getParent().getPageBean(ctx));
 			}
-			ContentService content = ContentService.createContent(ctx.getRequest());
+			ContentService content = ContentService.getInstance(ctx.getRequest());
 			info.setRoot(content.getNavigation(ctx).getPageBean(ctx));
 			info.setPageTitle(currentPage.getTitle(ctx));
 			info.setPageSubTitle(currentPage.getSubTitle(ctx));
@@ -71,7 +71,7 @@ public class InfoBean {
 			}
 
 		} else {
-			ContentService content = ContentService.createContent(ctx.getRequest());
+			ContentService content = ContentService.getInstance(ctx.getRequest());
 			info.setPage(content.getNavigation(ctx).getPageBean(ctx));
 		}
 

@@ -342,7 +342,7 @@ public class StaticInfoFile {
 			staticInfo.size = file.length();
 
 			if (staticInfo.getLinkedPage() == null && staticInfo.getLinkedPageId() != null) {
-				ContentService content = ContentService.createContent(ctx.getRequest());
+				ContentService content = ContentService.getInstance(ctx.getRequest());
 				MenuElement linkedPage = content.getNavigation(ctx).searchChildFromId(staticInfo.getLinkedPageId());
 				if (linkedPage != null) {
 					staticInfo.setLinkedPage(linkedPage);

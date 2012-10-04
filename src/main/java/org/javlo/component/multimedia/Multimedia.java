@@ -3,11 +3,13 @@ package org.javlo.component.multimedia;
 import java.io.File;
 import java.io.PrintWriter;
 import java.io.StringWriter;
+import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.Date;
 import java.util.GregorianCalendar;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.LinkedList;
@@ -15,6 +17,8 @@ import java.util.List;
 import java.util.Map;
 
 import org.apache.commons.io.FilenameUtils;
+import org.javlo.component.core.IContentVisualComponent;
+import org.javlo.component.core.IVideo;
 import org.javlo.component.image.IImageTitle;
 import org.javlo.component.meta.TimeRangeComponent;
 import org.javlo.config.StaticConfig;
@@ -30,6 +34,7 @@ import org.javlo.helper.filefilter.ImageFileFilter;
 import org.javlo.helper.filefilter.SoundFileFilter;
 import org.javlo.helper.filefilter.VideoOrURLFileFilter;
 import org.javlo.i18n.I18nAccess;
+import org.javlo.service.ContentService;
 import org.javlo.service.RequestService;
 import org.javlo.ztatic.StaticInfo;
 
@@ -53,6 +58,16 @@ public class Multimedia extends TimeRangeComponent implements IImageTitle {
 	private static final String EMBED = "embed";
 
 	protected boolean acceptStaticInfo(ContentContext ctx, StaticInfo info, int index) {
+
+		Collection<String> tags = getTags();
+		if (tags.size() > 0) {
+			tags = new HashSet<String>(tags);
+			tags.retainAll(info.getTags(ctx));
+			if (tags.size() == 0) {
+				return false;
+			}
+		}
+
 		Calendar currentDate = GregorianCalendar.getInstance();
 		if (info.getDate(ctx) != null) {
 			currentDate.setTime(info.getDate(ctx));
@@ -88,6 +103,55 @@ public class Multimedia extends TimeRangeComponent implements IImageTitle {
 		return (info.isShared(ctx) || !isDisplayOnlyShared()) && afterAccept && beforeAccept && index < getMaxListSize();
 	}
 
+	protected boolean acceptResource(ContentContext ctx, MultimediaResource info, int index) {
+
+		Collection<String> tags = getTags();
+		if (tags.size() > 0) {
+			tags = new HashSet<String>(tags);
+			tags.retainAll(info.getTags());
+			if (tags.size() == 0) {
+				return false;
+			}
+		}
+
+		Calendar currentDate = GregorianCalendar.getInstance();
+		if (info.getDate() != null) {
+			currentDate.setTime(info.getDate());
+		} else {
+			return true;
+		}
+
+		Calendar startDate = GregorianCalendar.getInstance();
+		if (getStartDate() == null) {
+			startDate = null;
+		} else {
+			startDate.setTime(getStartDate());
+		}
+		Calendar endDate = GregorianCalendar.getInstance();
+		if (getEndDate() == null) {
+			endDate = null;
+		} else {
+			endDate.setTime(getEndDate());
+		}
+
+		boolean afterAccept = true;
+		if (startDate != null && !currentDate.after(startDate)) {
+			afterAccept = false;
+		}
+
+		boolean beforeAccept = true;
+		if (endDate != null && !currentDate.before(endDate)) {
+			beforeAccept = false;
+		}
+
+		if (info.getDate() == null && (startDate != null || endDate != null)) {
+			afterAccept = false;
+			beforeAccept = false; // not necessary, just more "clean" :-)
+		}
+
+		return afterAccept && beforeAccept && index < getMaxListSize();
+	}
+
 	protected boolean displayEmbed(ContentContext ctx) {
 		return getStyle(ctx).equals(ALL) || getStyle(ctx).equals(EMBED);
 	}
@@ -109,26 +173,51 @@ public class Multimedia extends TimeRangeComponent implements IImageTitle {
 		return true;
 	}
 
+	protected String getImageFilter(ContentContext ctx) {
+		return getConfig(ctx).getProperty("image-filter", "thumbnails");
+	}
+
+	protected List<MultimediaResource> getContentVideo(ContentContext ctx) throws Exception {
+		ContentService content = ContentService.getInstance(ctx.getRequest());
+		List<MultimediaResource> outResources = new LinkedList<MultimediaResource>();
+		List<IContentVisualComponent> allComps = content.getAllContent(ctx);
+		for (IContentVisualComponent comp : allComps) {
+			if (comp instanceof IVideo) {
+				IVideo video = (IVideo) comp;
+				if (video.isShared(ctx)) {
+					MultimediaResource resource = new MultimediaResource();
+					resource.setURL(video.getURL(ctx));
+					resource.setDescription(video.getImageDescription(ctx));
+					resource.setPreviewURL(video.getPreviewURL(ctx, getImageFilter(ctx)));
+					resource.setDate(video.getDate(ctx));
+					resource.renderDate(ctx);
+					resource.setLocation(video.getLocation(ctx));
+					resource.setCssClass(video.getCssClass(ctx));
+					resource.setTitle(video.getTitle(ctx));
+					resource.setTags(video.getTags(ctx));
+					outResources.add(resource);
+				}
+			}
+		}
+		return outResources;
+	}
+
 	public Collection<File> getAllMultimediaFiles(ContentContext ctx) {
 		List<File> files = new LinkedList<File>();
 		Collection<String> filesName = new HashSet<String>();
-		GlobalContext globalContext = GlobalContext.getInstance(ctx.getRequest());
-		Collection<String> langs = globalContext.getContentLanguages();
 
 		/** Images **/
 		File imageDir = null;
 		if (displayImage(ctx)) {
-			for (String lg : langs) {
-				File newImageDir = new File(getFilesDirectory(ctx));
-				if (imageDir == null || !newImageDir.equals(imageDir)) {
-					imageDir = newImageDir;
-					if (imageDir.exists()) {
-						Collection<File> filesLg = ResourceHelper.getAllFiles(imageDir, new ImageFileFilter());
-						for (File file : filesLg) {
-							if (!filesName.contains(file.getName())) {
-								filesName.add(file.getName());
-								files.add(file);
-							}
+			File newImageDir = new File(getFilesDirectory(ctx));
+			if (imageDir == null || !newImageDir.equals(imageDir)) {
+				imageDir = newImageDir;
+				if (imageDir.exists()) {
+					Collection<File> filesLg = ResourceHelper.getAllFiles(imageDir, new ImageFileFilter());
+					for (File file : filesLg) {
+						if (!filesName.contains(file.getName())) {
+							filesName.add(file.getName());
+							files.add(file);
 						}
 					}
 				}
@@ -137,15 +226,13 @@ public class Multimedia extends TimeRangeComponent implements IImageTitle {
 
 		/** Videos **/
 		if (displayVideo(ctx)) {
-			for (String lg : langs) {
-				File videoDir = new File(getFilesDirectory(ctx));
-				if (videoDir.exists()) {
-					File[] filesLg = videoDir.listFiles(new VideoOrURLFileFilter());
-					for (File file : filesLg) {
-						if (!filesName.contains(file.getName())) {
-							filesName.add(file.getName());
-							files.add(file);
-						}
+			File videoDir = new File(getFilesDirectory(ctx));
+			if (videoDir.exists()) {
+				Collection<File> filesLg = ResourceHelper.getAllFiles(videoDir, new VideoOrURLFileFilter());
+				for (File file : filesLg) {
+					if (!filesName.contains(file.getName())) {
+						filesName.add(file.getName());
+						files.add(file);
 					}
 				}
 			}
@@ -153,15 +240,13 @@ public class Multimedia extends TimeRangeComponent implements IImageTitle {
 
 		/** Sounds **/
 		if (displaySound(ctx)) {
-			for (String lg : langs) {
-				File soundDir = new File(getFilesDirectory(ctx));
-				if (soundDir.exists()) {
-					File[] filesLg = soundDir.listFiles(new SoundFileFilter());
-					for (File file : filesLg) {
-						if (!filesName.contains(file.getName())) {
-							filesName.add(file.getName());
-							files.add(file);
-						}
+			File soundDir = new File(getFilesDirectory(ctx));
+			if (soundDir.exists()) {
+				Collection<File> filesLg = ResourceHelper.getAllFiles(soundDir, new SoundFileFilter());
+				for (File file : filesLg) {
+					if (!filesName.contains(file.getName())) {
+						filesName.add(file.getName());
+						files.add(file);
 					}
 				}
 			}
@@ -169,15 +254,13 @@ public class Multimedia extends TimeRangeComponent implements IImageTitle {
 
 		/** Embed **/
 		if (displayEmbed(ctx)) {
-			for (String lg : langs) {
-				File embedDir = new File(getFilesDirectory(ctx));
-				if (embedDir.exists()) {
-					File[] filesLg = embedDir.listFiles(new HTMLFileFilter());
-					for (File file : filesLg) {
-						if (!filesName.contains(file.getName())) {
-							filesName.add(file.getName());
-							files.add(file);
-						}
+			File embedDir = new File(getFilesDirectory(ctx));
+			if (embedDir.exists()) {
+				Collection<File> filesLg = ResourceHelper.getAllFiles(embedDir, new HTMLFileFilter());
+				for (File file : filesLg) {
+					if (!filesName.contains(file.getName())) {
+						filesName.add(file.getName());
+						files.add(file);
 					}
 				}
 			}
@@ -228,6 +311,7 @@ public class Multimedia extends TimeRangeComponent implements IImageTitle {
 	@Override
 	protected String getEditXHTMLCode(ContentContext ctx) throws Exception {
 		I18nAccess i18nAccess = I18nAccess.getInstance(ctx.getRequest());
+		GlobalContext globalContext = GlobalContext.getInstance(ctx.getRequest());
 
 		StringWriter writer = new StringWriter();
 		PrintWriter out = new PrintWriter(writer);
@@ -274,6 +358,22 @@ public class Multimedia extends TimeRangeComponent implements IImageTitle {
 			out.println("<label for=\"" + getInputNameOrderByAccess() + "\"> order by access.</label>");
 			out.println("</div>");
 
+		}
+
+		/* tags */
+		Collection<String> tags = globalContext.getTags();
+		Collection<String> selectedTags = getTags();
+		if (tags.size() > 0) {
+			out.println("<fieldset class=\"tags\">");
+			out.println("<legend>" + i18nAccess.getText("global.tags") + "</legend>");
+			for (String tag : tags) {
+				String checked = "";
+				if (selectedTags.contains(tag)) {
+					checked = " checked=\"checked\"";
+				}
+				out.println("<span class=\"line-inline\"><input type=\"checkbox\" id=\"" + getInputTag(tag) + "\" name=\"" + getInputTag(tag) + "\"" + checked + " /><label for=\"" + getInputTag(tag) + "\">" + tag + "</label></span>");
+			}
+			out.println("</fieldset>");
 		}
 
 		out.close();
@@ -343,6 +443,16 @@ public class Multimedia extends TimeRangeComponent implements IImageTitle {
 		return maxListSize;
 	}
 
+	public List<String> getTags() {
+		String[] data = getValue().split(VALUE_SEPARATOR);
+		if (data.length > 5) {
+			String rawTags = data[5];
+			return StringHelper.stringToCollection(rawTags);
+		} else {
+			return Collections.EMPTY_LIST;
+		}
+	}
+
 	protected String getMultimediaFilePath(ContentContext ctx, String lg, File file) {
 		return URLHelper.mergePath(getFilesDirectory(ctx), file.getName());
 	}
@@ -354,17 +464,9 @@ public class Multimedia extends TimeRangeComponent implements IImageTitle {
 	}
 
 	protected String getMultimediaFileURL(ContentContext ctx, String lg, File file) {
-		if (StringHelper.isVideo(file.getName()) || StringHelper.isURLFile(file.getName())) {
-			return URLHelper.mergePath(getRelativeFileDirectory(ctx), URLHelper.mergePath(STATIC_VIDEO_FOLDER + '/' + lg, file.getName()));
-		} else if (StringHelper.isSound(file.getName())) {
-			return URLHelper.mergePath(getRelativeFileDirectory(ctx), URLHelper.mergePath(STATIC_SOUND_FOLDER + '/' + lg, file.getName()));
-		} else if (StringHelper.isImage(file.getName())) {
-			GlobalContext globalContext = GlobalContext.getInstance(ctx.getRequest());
-			String relativeFileName = file.getAbsolutePath().replace(globalContext.getDataFolder(), "");
-			return relativeFileName;
-		} else {
-			return URLHelper.mergePath(getRelativeFileDirectory(ctx), URLHelper.mergePath(STATIC_EMBED_FOLDER + '/' + lg, file.getName()));
-		}
+		GlobalContext globalContext = GlobalContext.getInstance(ctx.getRequest());
+		String relativeFileName = file.getAbsolutePath().replace(globalContext.getDataFolder(), "");
+		return relativeFileName;
 	}
 
 	protected String getPreviewFilter(File file) {
@@ -472,7 +574,8 @@ public class Multimedia extends TimeRangeComponent implements IImageTitle {
 			return;
 		}
 
-		List<MultimediaResource> allResource = new LinkedList<MultimediaResource>();
+		List<MultimediaResource> allResource = new ArrayList<MultimediaResource>();
+		Map<String, MultimediaResource> allURL = new HashMap<String, MultimediaResource>();
 
 		for (File file : mulFiles) {
 
@@ -518,6 +621,13 @@ public class Multimedia extends TimeRangeComponent implements IImageTitle {
 					} else {
 						previewURL = URLHelper.createTransformURLWithoutCountAccess(lgCtx, getImageFilePath(ctx, fileName), getPreviewFilter(file));
 					}
+				} else if (StringHelper.isVideo(file.getName())) {
+					String imageName = StringHelper.getFileNameWithoutExtension(fileName) + ".jpg";
+					if (isCountAccess(ctx)) {
+						previewURL = URLHelper.createTransformURL(lgCtx, getPage(), getImageFilePath(ctx, imageName), getPreviewFilter(file));
+					} else {
+						previewURL = URLHelper.createTransformURLWithoutCountAccess(lgCtx, getImageFilePath(ctx, imageName), getPreviewFilter(file));
+					}
 				} else {
 					previewURL = URLHelper.createTransformURL(lgCtx, getPage(), getImageFilePath(ctx, fileName), getTransformFilter(file));
 				}
@@ -531,6 +641,9 @@ public class Multimedia extends TimeRangeComponent implements IImageTitle {
 				resource.setMediumDate(StringHelper.renderDate(resource.getDate(), globalContext.getMediumDateFormat()));
 				resource.setFullDate(StringHelper.renderDate(resource.getDate(), globalContext.getFullDateFormat()));
 				resource.setURL(multimediaURL);
+				resource.setTags(info.getTags(lgCtx));
+
+				allURL.put(resource.getURL(), resource);
 
 				resource.setPreviewURL(previewURL);
 
@@ -539,6 +652,18 @@ public class Multimedia extends TimeRangeComponent implements IImageTitle {
 					resource.setIndex(index);
 					allResource.add(resource);
 				}
+			}
+		}
+
+		List<MultimediaResource> contentVideos = getContentVideo(ctx);
+		for (MultimediaResource resource : contentVideos) {
+			if (acceptResource(ctx, resource, index)) {
+				if (allURL.get(resource.getURL()) != null) { // equals and hash is overidded on MultimediaResource -> two "equals" resource can be different (sample : a static resource and a component resource linked with same file).
+					allResource.remove(allURL.get(resource.getURL()));
+				} else {
+					index++;
+				}
+				allResource.add(resource);
 			}
 		}
 
@@ -621,7 +746,17 @@ public class Multimedia extends TimeRangeComponent implements IImageTitle {
 			if (newDisplayType == null) {
 				newDisplayType = "";
 			}
-			String multimediaInfo = StringHelper.neverNull(StringHelper.renderTime(startDate)) + VALUE_SEPARATOR + StringHelper.neverNull(StringHelper.renderTime(endDate)) + VALUE_SEPARATOR + newListSizeDate + VALUE_SEPARATOR + folder + VALUE_SEPARATOR + newDisplayType;
+
+			/* tags */
+			GlobalContext globalContext = GlobalContext.getInstance(ctx.getRequest());
+			List<String> selectedTags = new LinkedList<>();
+			for (String tag : globalContext.getTags()) {
+				if (requestService.getParameter(getInputTag(tag), null) != null) {
+					selectedTags.add(tag);
+				}
+			}
+
+			String multimediaInfo = StringHelper.neverNull(StringHelper.renderTime(startDate)) + VALUE_SEPARATOR + StringHelper.neverNull(StringHelper.renderTime(endDate)) + VALUE_SEPARATOR + newListSizeDate + VALUE_SEPARATOR + folder + VALUE_SEPARATOR + newDisplayType + VALUE_SEPARATOR + StringHelper.collectionToString(selectedTags);
 			if (isOrderByAcess) {
 				multimediaInfo = multimediaInfo + VALUE_SEPARATOR + ORDER_BY_ACCESS;
 			}

@@ -43,7 +43,7 @@ public class SiteMapServlet extends HttpServlet {
 
 			response.setContentType("text/xml");
 			ContentContext ctx = ContentContext.getContentContext(request, response);
-			ContentService content = ContentService.createContent(request);
+			ContentService content = ContentService.getInstance(request);
 			MenuElement root = content.getNavigation(ctx);
 			String siteMap = XMLHelper.getSiteMap(ctx, root);
 			response.getOutputStream().write(siteMap.getBytes());

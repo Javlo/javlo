@@ -909,7 +909,7 @@ public class XMLManipulationHelper {
 		out.newLine();
 		out.append("ContentContext ctx = ContentContext.getContentContext(request, response);");
 		out.newLine();
-		out.append("ContentService content = ContentService.createContent(request);");
+		out.append("ContentService content = ContentService.getInstance(request);");
 		out.newLine();
 		out.append("GlobalContext globalContext = GlobalContext.getInstance(request); ");
 		out.newLine();

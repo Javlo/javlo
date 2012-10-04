@@ -45,6 +45,7 @@ public class FileAction extends AbstractModuleAction {
 	public static class FileBean {
 		ContentContext ctx;
 		StaticInfo staticInfo;
+		Map<String, String> tags;
 
 		public FileBean(ContentContext ctx, StaticInfo staticInfo) {
 			this.ctx = ctx;
@@ -113,6 +114,20 @@ public class FileAction extends AbstractModuleAction {
 			return ResourceHelper.getFileExtensionToManType(StringHelper.getFileExtension(getName()));
 		}
 
+		public Map<String, String> getTags() {
+			if (tags == null) {
+				tags = new HashMap<>();
+				for (String tag : staticInfo.getTags(ctx)) {
+					tags.put(tag, tag);
+				}
+			}
+			return tags;
+		}
+
+		public boolean isShared() {
+			return staticInfo.isShared(ctx);
+		}
+
 	}
 
 	@Override
@@ -130,6 +145,9 @@ public class FileAction extends AbstractModuleAction {
 		String msg = super.prepare(ctx, modulesContext);
 		FileModuleContext fileModuleContext = (FileModuleContext) LangHelper.smartInstance(ctx.getRequest(), ctx.getResponse(), FileModuleContext.class);
 		GlobalContext globalContext = GlobalContext.getInstance(ctx.getRequest());
+
+		ctx.getRequest().setAttribute("currentModule", modulesContext.getCurrentModule());
+		ctx.getRequest().setAttribute("tags", globalContext.getTags());
 
 		if (ctx.getRequest().getParameter("path") != null) {
 			fileModuleContext.setPath(ctx.getRequest().getParameter("path"));
@@ -289,6 +307,9 @@ public class FileAction extends AbstractModuleAction {
 				if (location != null) {
 					staticInfo.setLocation(ctx, location);
 				}
+				boolean shared = rs.getParameter("shared-" + fileBean.getId(), null) != null;
+				staticInfo.setShared(ctx, shared);
+
 				String date = rs.getParameter("date-" + fileBean.getId(), null);
 				if (date != null) {
 					if (date.trim().length() == 0) {
@@ -305,6 +326,16 @@ public class FileAction extends AbstractModuleAction {
 						}
 					}
 				}
+
+				/* tags */
+				Collection<String> tags = globalContext.getTags();
+				for (String tag : tags) {
+					if (rs.getParameter("tag_" + tag + '_' + fileBean.getId(), null) != null) {
+						staticInfo.addTag(ctx, tag);
+					} else {
+						staticInfo.removeTag(ctx, tag);
+					}
+				}
 			}
 			PersistenceService.getInstance(globalContext).store(ctx);
 			messageRepository.setGlobalMessageAndNotification(ctx, new GenericMessage(i18nAccess.getText("file.message.updatemeta"), GenericMessage.INFO));
@@ -313,5 +344,4 @@ public class FileAction extends AbstractModuleAction {
 		}
 		return null;
 	}
-
 }

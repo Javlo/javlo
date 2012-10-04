@@ -327,7 +327,7 @@ public abstract class ElementaryURLHelper {
 		url = url + ".html";
 		url = url.replace('\\', '/');
 
-		ContentService.createContent(ctx.getRequest());
+		ContentService.getInstance(ctx.getRequest());
 		MenuElement elem = ctx.getCurrentPage();
 
 		GlobalContext globalContext = GlobalContext.getInstance(ctx.getRequest());
@@ -366,7 +366,7 @@ public abstract class ElementaryURLHelper {
 			return URLHelper.createStaticURL(ctx, fc.getRelativeFilePath(key, url));
 		}
 
-		ContentService.createContent(ctx.getRequest());
+		ContentService.getInstance(ctx.getRequest());
 
 		if (template != null || ctx.getRenderMode() == ContentContext.EDIT_MODE) { // TODO: check the second part of the test.
 			String templateName;
@@ -551,6 +551,25 @@ public abstract class ElementaryURLHelper {
 		System.out.println("*** 3. " + mergePath("/test/dc", "/path3?lavie=moi"));
 		System.out.println("*** 4. " + mergePath("/test/dc?ceci=test", "/path3?moi=patrick"));
 
+		System.out.println("**** remove param : test.html?test=test = " + removeParam("test.html?test=test"));
+		System.out.println("**** remove param : test.html = " + removeParam("test.html"));
+
+	}
+
+	/**
+	 * remove param. test.html?p=1 >> test.html
+	 * 
+	 * @param url
+	 * @return
+	 */
+	public static final String removeParam(String url) {
+		if (url == null) {
+			return null;
+		} else if (!url.contains("?")) {
+			return url;
+		} else {
+			return url.substring(0, url.indexOf('?'));
+		}
 	}
 
 	/**

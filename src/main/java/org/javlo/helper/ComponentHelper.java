@@ -74,14 +74,14 @@ public class ComponentHelper {
 		String compId = requestService.getParameter(paramName, null);
 		IContentVisualComponent comp = null;
 		if (compId != null) {
-			ContentService content = ContentService.createContent(ctx.getRequest());
+			ContentService content = ContentService.getInstance(ctx.getRequest());
 			comp = content.getComponent(ctx, compId);
 		}
 		return comp;
 	}
 
 	static public String getInternalLinkEdition(ContentContext ctx, String linkName, String linkIdStr) {
-		ContentService content = ContentService.createContent(ctx.getRequest());
+		ContentService content = ContentService.getInstance(ctx.getRequest());
 
 		StringWriter writer = new StringWriter();
 		PrintWriter out = new PrintWriter(writer);
@@ -135,7 +135,7 @@ public class ComponentHelper {
 	 */
 	static public String getInternalLinkFromId(ContentContext ctx, String linkId, String label) throws Exception {
 
-		ContentService content = ContentService.createContent(ctx.getRequest());
+		ContentService content = ContentService.getInstance(ctx.getRequest());
 		MenuElement nav = content.getNavigation(ctx);
 
 		MenuElement child = nav.searchChildFromId(linkId);

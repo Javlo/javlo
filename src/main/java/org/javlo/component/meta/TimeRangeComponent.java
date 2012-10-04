@@ -49,6 +49,10 @@ public class TimeRangeComponent extends DateComponent {
 		return "__" + getId() + ID_SEPARATOR + "start-date";
 	}
 
+	public String getInputTag(String tag) {
+		return "__" + getId() + ID_SEPARATOR + tag;
+	}
+
 	public String getInputEndDateName() {
 		return "__" + getId() + ID_SEPARATOR + "end-start";
 	}

@@ -1523,6 +1523,24 @@ public class StringHelper {
 		return dateFormat.format(date);
 	}
 
+	public static String renderFullDate(ContentContext ctx, Date date) {
+
+		if (date == null) {
+			return "";
+		}
+
+		GlobalContext globalContext = GlobalContext.getInstance(ctx.getRequest());
+		DateFormat dateFormat;
+		String manualDateFormat = globalContext.getFullDateFormat();
+		if (manualDateFormat != null && manualDateFormat.trim().length() > 0) {
+			dateFormat = new SimpleDateFormat(manualDateFormat);
+		} else {
+			dateFormat = DateFormat.getDateInstance(DateFormat.FULL, new Locale(ctx.getContextRequestLanguage()));
+		}
+
+		return dateFormat.format(date);
+	}
+
 	public static String renderNumber(int n, int size) {
 		NumberFormat nf = NumberFormat.getInstance();
 		nf.setMinimumIntegerDigits(size);
@@ -1841,7 +1859,7 @@ public class StringHelper {
 		return outArray;
 	}
 
-	public static Collection<String> stringToCollection(String str) {
+	public static List<String> stringToCollection(String str) {
 		if (str == null) {
 			return null;
 		}

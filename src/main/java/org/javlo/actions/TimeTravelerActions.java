@@ -31,7 +31,7 @@ public class TimeTravelerActions implements IAction {
 	public static String performSettraveltime(HttpServletRequest request, HttpServletResponse response) throws Exception {
 		ContentContext ctx = ContentContext.getContentContext(request, response);
 		GlobalContext globalContext = GlobalContext.getInstance(request);
-		ContentService content = ContentService.createContent(request);
+		ContentService content = ContentService.getInstance(request);
 		Date travelTime = null;
 		try {
 			travelTime = new SimpleDateFormat("dd/MM/yy HH:mm:ss").parse(request.getParameter("date"));
@@ -57,7 +57,7 @@ public class TimeTravelerActions implements IAction {
 		timeCtx.setRenderMode(ContentContext.TIME_MODE);
 		ContentContext editCtx = new ContentContext(ctx);
 		editCtx.setRenderMode(ContentContext.EDIT_MODE);
-		ContentService content = ContentService.createContent(request);
+		ContentService content = ContentService.getInstance(request);
 
 		MenuElement currentPageTime = timeCtx.getCurrentPage();
 		MenuElement currentPageEdit = MacroHelper.addPageIfNotExistWithoutMessage(editCtx, content.getNavigation(editCtx), currentPageTime, false, false);

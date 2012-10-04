@@ -682,7 +682,7 @@ public class PageReferenceComponent extends ComplexPropertiesLink implements IAc
 
 		Calendar backDate = getBackDate(ctx);
 
-		ContentService content = ContentService.createContent(ctx.getRequest());
+		ContentService content = ContentService.getInstance(ctx.getRequest());
 		MenuElement menu = content.getNavigation(ctx);
 
 		ByteArrayOutputStream outStream = new ByteArrayOutputStream();
@@ -1141,7 +1141,7 @@ public class PageReferenceComponent extends ComplexPropertiesLink implements IAc
 		super.prepareView(ctx);
 		Calendar backDate = getBackDate(ctx);
 
-		ContentService content = ContentService.createContent(ctx.getRequest());
+		ContentService content = ContentService.getInstance(ctx.getRequest());
 		MenuElement menu = content.getNavigation(ctx);
 		MenuElement[] allChildren = menu.getAllChilds();
 
@@ -1266,7 +1266,7 @@ public class PageReferenceComponent extends ComplexPropertiesLink implements IAc
 		RequestService requestService = RequestService.getInstance(ctx.getRequest());
 
 		if (requestService.getParameter(getCompInputName(), null) != null) {
-			ContentService content = ContentService.createContent(ctx.getRequest());
+			ContentService content = ContentService.getInstance(ctx.getRequest());
 			MenuElement menu = content.getNavigation(ctx);
 			MenuElement[] allChildren = menu.getAllChilds();
 			String pagesSelected = "";
@@ -1444,7 +1444,7 @@ public class PageReferenceComponent extends ComplexPropertiesLink implements IAc
 
 	@Override
 	public boolean isRealContent(ContentContext ctx) {
-		ContentService content = ContentService.createContent(ctx.getRequest());
+		ContentService content = ContentService.getInstance(ctx.getRequest());
 		try {
 			MenuElement menu = content.getNavigation(ctx);
 			MenuElement[] allChildren = menu.getAllChilds();

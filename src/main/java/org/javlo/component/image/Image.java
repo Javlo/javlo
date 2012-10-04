@@ -1,10 +1,14 @@
 package org.javlo.component.image;
 
+import java.io.File;
 import java.io.PrintWriter;
 import java.io.StringWriter;
+import java.util.Date;
+import java.util.List;
 
 import org.javlo.component.core.ComponentBean;
 import org.javlo.component.core.IPreviewable;
+import org.javlo.component.core.IStaticResource;
 import org.javlo.component.files.AbstractFileComponent;
 import org.javlo.config.StaticConfig;
 import org.javlo.context.ContentContext;
@@ -20,7 +24,7 @@ import org.javlo.ztatic.StaticInfo;
  * @author Patrick Vandermaesen
  * 
  */
-public class Image extends AbstractFileComponent implements IImageTitle, IPreviewable {
+public class Image extends AbstractFileComponent implements IImageTitle, IPreviewable, IStaticResource {
 
 	@Override
 	public String[] getStyleList(ContentContext ctx) {
@@ -216,6 +220,19 @@ public class Image extends AbstractFileComponent implements IImageTitle, IPrevie
 	}
 
 	@Override
+	public String getTitle(ContentContext ctx) {
+		String title = getLabel();
+		if (title == null || title.trim().length() == 0) {
+			try {
+				title = StaticInfo.getInstance(ctx, new File(getFileDirectory(ctx))).getTitle(ctx);
+			} catch (Exception e) {
+				e.printStackTrace();
+			}
+		}
+		return title;
+	}
+
+	@Override
 	public String getHelpURI(ContentContext ctx) {
 		return "/components/image.html";
 	}
@@ -247,4 +264,98 @@ public class Image extends AbstractFileComponent implements IImageTitle, IPrevie
 		return null;
 	}
 
+	@Override
+	public String getLanguage(ContentContext ctx) {
+		return getComponentBean().getLanguage();
+	}
+
+	@Override
+	public Date getDate(ContentContext ctx) {
+		StaticInfo staticInfo;
+		try {
+			staticInfo = StaticInfo.getInstance(ctx, getFile(ctx));
+		} catch (Exception e) {
+			e.printStackTrace();
+			return null;
+		}
+		return staticInfo.getDate(ctx);
+	}
+
+	@Override
+	public String getLocation(ContentContext ctx) {
+		StaticInfo staticInfo;
+		try {
+			staticInfo = StaticInfo.getInstance(ctx, getFile(ctx));
+		} catch (Exception e) {
+			e.printStackTrace();
+			return null;
+		}
+		return staticInfo.getLocation(ctx);
+	}
+
+	@Override
+	public String getURL(ContentContext ctx) {
+		StaticConfig staticConfig = StaticConfig.getInstance(ctx.getRequest().getSession());
+		String fileLink = URLHelper.mergePath(getDirSelected(), getFileName());
+		String url = URLHelper.createResourceURL(ctx, getPage(), staticConfig.getImageFolder() + '/' + fileLink).replace('\\', '/');
+		return url;
+	}
+
+	@Override
+	public String getCssClass(ContentContext ctx) {
+		return getType();
+	}
+
+	@Override
+	public String getDescription(ContentContext ctx) {
+		StaticInfo staticInfo;
+		try {
+			staticInfo = StaticInfo.getInstance(ctx, getFile(ctx));
+		} catch (Exception e) {
+			e.printStackTrace();
+			return null;
+		}
+		return staticInfo.getDescription(ctx);
+	}
+
+	@Override
+	public File getFile(ContentContext ctx) {
+		return new File(URLHelper.mergePath(getFileDirectory(ctx), getDirSelected(), getFileName()));
+	}
+
+	@Override
+	public boolean isShared(ContentContext ctx) {
+		StaticInfo staticInfo;
+		try {
+			staticInfo = StaticInfo.getInstance(ctx, getFile(ctx));
+		} catch (Exception e) {
+			e.printStackTrace();
+			return false;
+		}
+		return staticInfo.isShared(ctx);
+	}
+
+	@Override
+	public List<String> getTags(ContentContext ctx) {
+		StaticInfo staticInfo;
+		try {
+			staticInfo = StaticInfo.getInstance(ctx, getFile(ctx));
+		} catch (Exception e) {
+			e.printStackTrace();
+			return null;
+		}
+		return staticInfo.getTags(ctx);
+	}
+
+	@Override
+	public String getPreviewURL(ContentContext ctx, String filter) {
+		String fileLink = URLHelper.mergePath(getDirSelected(), getFileName());
+		String url = null;
+		try {
+			url = URLHelper.createTransformURL(ctx, getPage(), getResourceURL(ctx, fileLink), filter);
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		return url;
+	}
 }

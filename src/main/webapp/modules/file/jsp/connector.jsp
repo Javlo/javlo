@@ -1,3 +1,4 @@
+<%@page import="org.javlo.module.core.ModulesContext"%>
 <%@page import="
 java.util.Map,
 java.util.HashMap,
@@ -31,7 +32,7 @@ String root;
 if (request.getParameter("changeRoot") == null) {
 	root = URLHelper.mergePath(globalContext.getDataFolder(), globalContext.getStaticConfig().getStaticFolder());
 } else {
-	root = ((FileModuleContext)FileModuleContext.getCurrentInstance(session)).getRoot();
+	root = ((FileModuleContext)FileModuleContext.getInstance(session, globalContext, ModulesContext.getInstance(session, globalContext).getCurrentModule(), FileModuleContext.class)).getRoot();
 }
 getELFinder(session, root).process(out, request, response);
 %>

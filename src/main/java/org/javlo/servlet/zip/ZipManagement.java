@@ -207,7 +207,7 @@ public class ZipManagement {
 		}
 		zipIn.close();
 
-		ContentService.createContent(request).releaseAll(ContentContext.getContentContext(request, response), globalContext);
+		ContentService.getInstance(request).releaseAll(ContentContext.getContentContext(request, response), globalContext);
 	}
 
 	public static void uploadZipTemplate(ContentContext ctx, InputStream in, String templateId, boolean mailing) throws Exception {

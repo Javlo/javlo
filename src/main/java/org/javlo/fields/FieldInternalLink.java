@@ -38,7 +38,7 @@ public class FieldInternalLink extends Field {
 		out.println("<div class=\"line\">");
 		out.println("<label for=\"" + getInputLinkName() + "\">" + getLinkLabel() + " : </label>");
 
-		ContentService content = ContentService.createContent(ctx.getRequest());
+		ContentService content = ContentService.getInstance(ctx.getRequest());
 		out.println(XHTMLNavigationHelper.renderComboNavigation(ctx, content.getNavigation(ctx), getInputLinkName(), getCurrentLink()));
 
 		// out.println("<input id=\"" + getInputLinkName() + "\" name=\"" +

@@ -49,7 +49,7 @@ public class DynamicComponentList extends AbstractPropertiesComponent {
 		ByteArrayOutputStream outStream = new ByteArrayOutputStream();
 		PrintStream out = new PrintStream(outStream);
 
-		ContentService content = ContentService.createContent(ctx.getRequest());
+		ContentService content = ContentService.getInstance(ctx.getRequest());
 		List<String> container = service.getAllType(ctx, content.getNavigation(ctx));
 
 		out.println(XHTMLHelper.getInputOneSelect(createKeyWithField("type"), container, getSelectedType()));
@@ -112,7 +112,7 @@ public class DynamicComponentList extends AbstractPropertiesComponent {
 		ByteArrayOutputStream outStream = new ByteArrayOutputStream();
 		PrintStream out = new PrintStream(outStream);
 
-		ContentService content = ContentService.createContent(ctx.getRequest());
+		ContentService content = ContentService.getInstance(ctx.getRequest());
 		GlobalContext globalContext = GlobalContext.getInstance(ctx.getRequest());
 		DynamicComponentService service = DynamicComponentService.getInstance(globalContext);
 		List<IFieldContainer> containers = service.getFieldContainers(ctx, content.getNavigation(ctx), getSelectedType());
@@ -145,7 +145,7 @@ public class DynamicComponentList extends AbstractPropertiesComponent {
 		GlobalContext globalContext = GlobalContext.getInstance(ctx.getRequest());
 		DynamicComponentService service = DynamicComponentService.getInstance(globalContext);
 		
-		ContentService content = ContentService.createContent(ctx.getRequest());
+		ContentService content = ContentService.getInstance(ctx.getRequest());
 		List<IFieldContainer> containers = service.getFieldContainers(ctx, content.getNavigation(ctx), getSelectedType());
 		if (containers.size() > 0) {
 			return containers.iterator().next();

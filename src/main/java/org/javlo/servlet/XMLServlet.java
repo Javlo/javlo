@@ -105,7 +105,7 @@ public class XMLServlet extends HttpServlet {
 					ContentContext ctx = ContentContext.getFreeContentContext(request, response);
 					ctx.setAbsoluteURL(true);
 					ctx.setLanguage(lang);
-					ContentService content = ContentService.createContent(request);
+					ContentService content = ContentService.getInstance(request);
 
 					/* tracking */
 					Tracker tracker = Tracker.getTracker(globalContext, request.getSession());

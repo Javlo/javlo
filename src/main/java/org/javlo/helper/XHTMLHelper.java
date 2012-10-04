@@ -1624,7 +1624,7 @@ public class XHTMLHelper {
 				} else {
 					cssClass = cssClass + "\"";
 				}
-				ContentService content = ContentService.createContent(ctx.getRequest());
+				ContentService content = ContentService.getInstance(ctx.getRequest());
 				try {
 					String lgcode = "";
 					if (!lg.equals(ctx.getLanguage())) {

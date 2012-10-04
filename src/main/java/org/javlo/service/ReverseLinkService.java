@@ -157,7 +157,7 @@ public class ReverseLinkService {
 
 	public String replaceLink(ContentContext ctx, String contentValue) throws Exception {
 
-		ContentService content = ContentService.createContent(ctx.getRequest());
+		ContentService content = ContentService.getInstance(ctx.getRequest());
 		MenuElement root = content.getNavigation(ctx);
 		MenuElement currentPage = ctx.getCurrentPage();
 		List<String> texts = getAllTextName(ctx, root);
