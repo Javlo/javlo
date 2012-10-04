@@ -59,7 +59,7 @@ public class ComponentFactory {
 		IContentVisualComponent[] components = getComponents(globalContext);
 		ArrayList<IContentVisualComponent> array = new ArrayList<IContentVisualComponent>();
 		array.addAll(Arrays.asList(components));
-		ContentService content = ContentService.createContent(ctx.getRequest());
+		ContentService content = ContentService.getInstance(ctx.getRequest());
 		MenuElement page = content.getNavigation(ctx).getNoErrorFreeCurrentPage(ctx);
 		Template template = null;
 		if (page != null) {
@@ -305,7 +305,7 @@ public class ComponentFactory {
 	 */
 
 	public static List<ComponentBean> getContentByType(ContentContext ctx, String type) throws Exception {
-		ContentService content = ContentService.createContent(ctx.getRequest());
+		ContentService content = ContentService.getInstance(ctx.getRequest());
 		MenuElement rootPage = content.getNavigation(ctx);
 		List<ComponentBean> outComp = new LinkedList<ComponentBean>();
 		MenuElement[] pages = rootPage.getAllChilds();
@@ -321,7 +321,7 @@ public class ComponentFactory {
 	}
 
 	public static List<IContentVisualComponent> getAllComonentFromContext(ContentContext ctx) throws Exception {
-		ContentService content = ContentService.createContent(ctx.getRequest());
+		ContentService content = ContentService.getInstance(ctx.getRequest());
 		MenuElement rootPage = content.getNavigation(ctx);
 		List<IContentVisualComponent> outComp = new LinkedList<IContentVisualComponent>();
 		MenuElement[] pages = rootPage.getAllChilds();

@@ -58,7 +58,7 @@ public class InternalLink extends ComplexPropertiesLink implements IInternalLink
 	@Override
 	protected String getEditXHTMLCode(ContentContext ctx) throws Exception {
 
-		ContentService content = ContentService.createContent(ctx.getRequest());
+		ContentService content = ContentService.getInstance(ctx.getRequest());
 
 		StringWriter writer = new StringWriter();
 		PrintWriter out = new PrintWriter(writer);
@@ -329,7 +329,7 @@ public class InternalLink extends ComplexPropertiesLink implements IInternalLink
 	@Override
 	public void performEdit(ContentContext ctx) {
 
-		ContentService content = ContentService.createContent(ctx.getRequest());
+		ContentService content = ContentService.getInstance(ctx.getRequest());
 
 		RequestService requestService = RequestService.getInstance(ctx.getRequest());
 

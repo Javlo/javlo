@@ -46,7 +46,7 @@ public class ImportDataBase extends AbstractMacro {
 	protected void importItem(ContentContext ctx, MenuElement currentPage, Map<String, DynamicComponent> compCache, ResultSet rs, Map<String,String> types, String componentType, String lg) throws Exception {
 		String name = rs.getString("name");
 
-		ContentService content = ContentService.createContent(ctx.getRequest());
+		ContentService content = ContentService.getInstance(ctx.getRequest());
 
 		if (compCache.get(name) != null) {
 			String type = "";
@@ -170,7 +170,7 @@ public class ImportDataBase extends AbstractMacro {
 		// IMPORT GENERAL
 		ResultSet rs = readDataBase(conn, SQL_ALL_GENERAL);
 
-		ContentService content = ContentService.createContent(ctx.getRequest());
+		ContentService content = ContentService.getInstance(ctx.getRequest());
 
 		MenuElement dataPage = MacroHelper.addPageIfNotExist(ctx, content.getNavigation(ctx), "data", false, false);
 

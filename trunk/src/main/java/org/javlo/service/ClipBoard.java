@@ -52,7 +52,7 @@ public class ClipBoard {
 		}
 		
 		if (copied instanceof ComponentBean) {
-			ContentService content = ContentService.createContent(ctx.getRequest());
+			ContentService content = ContentService.getInstance(ctx.getRequest());
 			return (ComponentBean)copied;
 		} else {
 			return null;

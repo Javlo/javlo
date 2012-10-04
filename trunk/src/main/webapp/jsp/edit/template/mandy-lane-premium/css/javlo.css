@@ -1023,7 +1023,16 @@ body.previewEdit {
 
 .form-list .line textarea {
 	width: 158px;
-	height: 100px;
+	height: 85px;
+}
+
+.form-list fieldset {
+	padding: 3px 6px;
+}
+
+.form-list fieldset label {
+	display: inline-block;
+	margin: 0 6px 0 3px;
 }
 
 .form-list .line input {

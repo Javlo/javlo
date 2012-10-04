@@ -195,7 +195,7 @@ public class MacroHelper {
 	 * @throws Exception
 	 */
 	public synchronized static final MenuElement addPage(ContentContext ctx, String parentName, String pagePrefix, boolean top) throws Exception {
-		ContentService content = ContentService.createContent(ctx.getRequest());
+		ContentService content = ContentService.getInstance(ctx.getRequest());
 		MenuElement nav = content.getNavigation(ctx);
 
 		MenuElement newPage = nav.searchChildFromName(parentName);
@@ -237,7 +237,7 @@ public class MacroHelper {
 	 * @throws Exception
 	 */
 	public static final MenuElement addPageIfNotExist(ContentContext ctx, MenuElement parentPage, String pageName, boolean top, boolean store) throws Exception {
-		ContentService content = ContentService.createContent(ctx.getRequest());
+		ContentService content = ContentService.getInstance(ctx.getRequest());
 		MenuElement nav = content.getNavigation(ctx);
 
 		MenuElement newPage = nav.searchChildFromName(pageName);
@@ -288,7 +288,7 @@ public class MacroHelper {
 	 * @throws Exception
 	 */
 	public static final MenuElement addPageIfNotExist(ContentContext ctx, String parentName, String pageName, boolean top) throws Exception {
-		ContentService content = ContentService.createContent(ctx.getRequest());
+		ContentService content = ContentService.getInstance(ctx.getRequest());
 		MenuElement nav = content.getNavigation(ctx);
 
 		MenuElement parentPage = nav.searchChildFromName(parentName);
@@ -352,7 +352,7 @@ public class MacroHelper {
 			throw new IllegalArgumentException("page name can not be null or empty");
 		}
 
-		ContentService content = ContentService.createContent(ctx.getRequest());
+		ContentService content = ContentService.getInstance(ctx.getRequest());
 		MenuElement nav = content.getNavigation(ctx);
 
 		MenuElement newPage = nav.searchChildFromName(pageName);
@@ -441,7 +441,7 @@ public class MacroHelper {
 	 */
 	public static MenuElement createPathIfNotExist(ContentContext ctx, String path) throws Exception {
 		String[] pagesName = path.split("/");
-		ContentService content = ContentService.createContent(ctx.getRequest());
+		ContentService content = ContentService.getInstance(ctx.getRequest());
 		MenuElement parent = content.getNavigation(ctx);
 
 		for (String pageName : pagesName) {

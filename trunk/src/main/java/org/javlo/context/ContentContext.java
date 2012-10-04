@@ -1114,10 +1114,21 @@ public class ContentContext {
 		return outValue;
 	}
 
+	/**
+	 * no need template and link to page context.
+	 * 
+	 * @return
+	 */
 	public boolean isFree() {
 		return free;
 	}
 
+	/**
+	 * no need template and link to page context.
+	 * 
+	 * @param tree
+	 * @return
+	 */
 	public void setFree(boolean free) {
 		this.free = free;
 	}

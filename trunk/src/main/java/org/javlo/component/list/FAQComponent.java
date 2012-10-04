@@ -165,7 +165,8 @@ public class FAQComponent extends AbstractVisualComponent {
 	}
 
 	@Override
-	public String getViewXHTMLCode(ContentContext ctx) throws Exception {
+	public void prepareView(ContentContext ctx) throws Exception {
+		super.prepareView(ctx);
 		List<FAQItem> items = new LinkedList<FAQItem>();
 		Title firstTitle = null;
 		if (getValue().contains("faq.")) { // Old style: remove this alternative if no more needed
@@ -213,8 +214,6 @@ public class FAQComponent extends AbstractVisualComponent {
 		}
 		ctx.getRequest().setAttribute("firstTitle", firstTitle);
 		ctx.getRequest().setAttribute("items", items);
-		// return XHTMLHelper.autoLink(executeJSP(ctx, getRenderer(ctx)));
-		return executeJSP(ctx, getRenderer(ctx));
 	}
 
 	@Override

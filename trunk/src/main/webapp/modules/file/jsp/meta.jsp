@@ -1,4 +1,5 @@
-<%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
+<%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c"
+%><%@ taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions" %>
 <div id="meta-edit" class="form-list">
 
 <form id="form-meta" action="${info.currentURL}" method="post">
@@ -39,7 +40,19 @@
 			<label for="date-${file.id}">${i18n.edit["field.date"]}</label>
 			<input type="text" id="date-${file.id}" name="date-${file.id}" value="${file.date}" />
 		</div>
-		
+		<div class="line">
+			<label for="shared-${file.id}">${i18n.edit["field.shared"]}</label>
+			<input type="checkbox" id="shared-${file.id}" name="shared-${file.id}" ${file.shared?'checked="checked"':''} />
+		</div>				
+						
+		<c:if test="${fn:length(tags) > 0}">
+		<fieldset class="tags">
+		<legend>${i18n.edit["field.tags"]}</legend>
+		    <c:forEach var="tag" items="${tags}">		    	
+				<span><input type="checkbox" id="tag_${tag}_${file.id}" name="tag_${tag}_${file.id}" ${not empty file.tags[tag]?'checked="checked"':''}/><label for="tag_${tag}_${file.id}">${tag}</label></span>
+			</c:forEach>
+		</fieldset>
+		</c:if>
 		</div>
 	</li>
 </c:forEach>

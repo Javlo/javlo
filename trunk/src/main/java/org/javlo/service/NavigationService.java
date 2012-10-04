@@ -85,7 +85,7 @@ public class NavigationService {
 			}
 			if (cache.getSize() == 0) { // init cache
 				logger.info("reload page cache. (mode:" + ctx.getRenderMode() + ')');
-				ContentService content = ContentService.createContent(ctx.getRequest());
+				ContentService content = ContentService.getInstance(ctx.getRequest());
 				MenuElement root = content.getNavigation(ctx);
 				cache.put(new Element(root.getName(), root));
 				cache.put(new Element(root.getId(), root));
@@ -105,7 +105,7 @@ public class NavigationService {
 			if (outElem != null) {
 				return (MenuElement) outElem.getValue();
 			} else {
-				ContentService content = ContentService.createContent(ctx.getRequest());
+				ContentService content = ContentService.getInstance(ctx.getRequest());
 				MenuElement root = content.getNavigation(ctx);
 				MenuElement[] pageChildren = root.getAllChilds();
 				for (MenuElement childpage : pageChildren) {

@@ -43,7 +43,7 @@ public class RSSLink extends ComplexPropertiesLink {
 	@Override
 	protected String getEditXHTMLCode(ContentContext ctx) throws Exception {
 
-		ContentService content = ContentService.createContent(ctx.getRequest());
+		ContentService content = ContentService.getInstance(ctx.getRequest());
 
 		StringWriter writer = new StringWriter();
 		PrintWriter out = new PrintWriter(writer);

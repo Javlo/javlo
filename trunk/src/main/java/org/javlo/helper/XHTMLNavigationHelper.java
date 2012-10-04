@@ -26,7 +26,7 @@ public class XHTMLNavigationHelper {
 
 		String outBreadcrumb = new String();
 
-		MenuElement root = ContentService.createContent(ctx.getRequest()).getNavigation(ctx);
+		MenuElement root = ContentService.getInstance(ctx.getRequest()).getNavigation(ctx);
 		MenuElement currentPage = root.searchChild(ctx);
 		if (currentPage == null) {
 			currentPage = root;
@@ -85,7 +85,7 @@ public class XHTMLNavigationHelper {
 
 		String outBreadcrumb = new String();
 
-		MenuElement root = ContentService.createContent(ctx.getRequest()).getNavigation(ctx);
+		MenuElement root = ContentService.getInstance(ctx.getRequest()).getNavigation(ctx);
 		MenuElement currentPage = root.searchChild(ctx);
 		if (currentPage == null) {
 			return "";
@@ -285,17 +285,17 @@ public class XHTMLNavigationHelper {
 	}
 
 	public static String renderImageMenu(ContentContext ctx, int fromDepth, int toDepth) throws Exception {
-		ContentService content = ContentService.createContent(ctx.getRequest());
+		ContentService content = ContentService.getInstance(ctx.getRequest());
 		return renderMenu(ctx, content.getNavigation(ctx), fromDepth, toDepth, true, 0, false, true, true, false, false, null, null);
 	}
 
 	public static String renderMenu(ContentContext ctx, int fromDepth, int toDepth) throws Exception {
-		ContentService content = ContentService.createContent(ctx.getRequest());
+		ContentService content = ContentService.getInstance(ctx.getRequest());
 		return renderMenu(ctx, content.getNavigation(ctx), fromDepth, toDepth, true, 0, false, false, true, false, false, null, null);
 	}
 
 	public static String renderMenu(ContentContext ctx, int fromDepth, int toDepth, boolean extended) throws Exception {
-		ContentService content = ContentService.createContent(ctx.getRequest());
+		ContentService content = ContentService.getInstance(ctx.getRequest());
 		return renderMenu(ctx, content.getNavigation(ctx), fromDepth, toDepth, true, 0, extended, false, true, false, false, null, null);
 	}
 

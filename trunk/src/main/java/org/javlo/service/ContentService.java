@@ -11,6 +11,7 @@ import java.util.HashMap;
 import java.util.Hashtable;
 import java.util.Iterator;
 import java.util.LinkedList;
+import java.util.List;
 import java.util.Map;
 import java.util.logging.Logger;
 
@@ -90,8 +91,7 @@ public class ContentService {
 
 	public static final Object LOCK_LOAD_NAVIGATION = new Object();
 
-	@Deprecated
-	public static ContentService createContent(HttpServletRequest request) {
+	public static ContentService getInstance(HttpServletRequest request) {
 		return getInstance(GlobalContext.getInstance(request));
 	}
 
@@ -562,6 +562,33 @@ public class ContentService {
 
 	public void setCachedComponent(IContentVisualComponent comp) throws Exception {
 		components.put(comp.getId(), new WeakReference<IContentVisualComponent>(comp));
+	}
+
+	public List<IContentVisualComponent> getAllContent(ContentContext ctx) throws Exception {
+		String KEY = "__ALL_CONTENT__" + ctx.getRenderMode() + "__" + ctx.getRequestContentLanguage() + "__" + ctx.getArea();
+		List<IContentVisualComponent> outList = (List<IContentVisualComponent>) ctx.getRequest().getAttribute(KEY);
+		if (outList == null) {
+			outList = new LinkedList<IContentVisualComponent>();
+
+			ContentContext freeCtx = ctx.getContextWithArea(null);
+			freeCtx.setFree(true);
+			MenuElement page = getNavigation(freeCtx);
+			ContentElementList content = page.getAllContent(freeCtx);
+			while (content.hasNext(freeCtx)) {
+				outList.add(content.next(freeCtx));
+			}
+			MenuElement[] children = page.getAllChilds();
+			for (MenuElement child : children) {
+				content = child.getAllContent(freeCtx);
+				while (content.hasNext(freeCtx)) {
+					outList.add(content.next(freeCtx));
+				}
+			}
+
+			outList = Collections.unmodifiableList(outList);
+			ctx.getRequest().setAttribute(KEY, outList);
+		}
+		return outList;
 	}
 
 	public void setPreviewNav(MenuElement previewNav) {

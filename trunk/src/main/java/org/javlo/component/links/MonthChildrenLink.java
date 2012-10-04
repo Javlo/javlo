@@ -63,7 +63,7 @@ public class MonthChildrenLink extends AbstractVisualComponent implements IActio
 			}
 			try {
 				Date date = StringHelper.parseDate(week);
-				MenuElement rootPage = ContentService.createContent(request).getNavigation(ctx);
+				MenuElement rootPage = ContentService.getInstance(request).getNavigation(ctx);
 
 				MenuElement currentPage = rootPage.searchChildFromId(parent);
 				if (currentPage == null) {
@@ -105,7 +105,7 @@ public class MonthChildrenLink extends AbstractVisualComponent implements IActio
 	}
 
 	protected Collection<MenuElement> getTargetPages(ContentContext ctx) throws Exception {
-		ContentService.createContent(ctx.getRequest());
+		ContentService.getInstance(ctx.getRequest());
 		MenuElement currentPage = ctx.getCurrentPage();
 		while (currentPage.getChildMenuElementsList().size() == 0 && currentPage.getParent() != null) {
 			currentPage = currentPage.getParent();

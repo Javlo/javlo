@@ -225,7 +225,7 @@ public class ContentManager {
 	public static String getValidPath(ContentContext ctx, String path) throws Exception {
 		String res = path;
 
-		ContentService content = ContentService.createContent(ctx.getRequest());
+		ContentService content = ContentService.getInstance(ctx.getRequest());
 		MenuElement elem = content.getNavigation(ctx);
 		if (elem.searchChild(ctx) == null) {
 			res = "/";

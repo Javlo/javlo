@@ -152,7 +152,7 @@ public class GenericForm extends AbstractVisualComponent implements IAction {
 
 		RequestService requestService = RequestService.getInstance(request);
 		ContentContext ctx = ContentContext.getContentContext(request, response);
-		ContentService content = ContentService.createContent(request);
+		ContentService content = ContentService.getInstance(request);
 		GenericForm comp = (GenericForm) content.getComponent(ctx, requestService.getParameter("comp_id", null));
 
 		/** check captcha **/

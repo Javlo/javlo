@@ -25,6 +25,7 @@ import javax.servlet.http.HttpServletResponse;
 import org.javlo.actions.IAction;
 import org.javlo.component.core.ContentElementList;
 import org.javlo.component.core.IContentVisualComponent;
+import org.javlo.component.core.IVideo;
 import org.javlo.component.image.GlobalImage;
 import org.javlo.config.StaticConfig;
 import org.javlo.context.ContentContext;
@@ -41,7 +42,7 @@ import org.javlo.service.resource.Resource;
 /**
  * @author pvandermaesen
  */
-public class Video extends GlobalImage implements IAction {
+public class Video extends GlobalImage implements IAction, IVideo {
 
 	public static class OrderVideo implements Comparator<Video> {
 
@@ -242,10 +243,28 @@ public class Video extends GlobalImage implements IAction {
 		return "video";
 	}
 
+	protected String getImageFilter(ContentContext ctx) {
+		return getConfig(ctx).getProperty("image.filter", "video");
+	}
+
+	@Override
+	public String getURL(ContentContext ctx) {
+		if (getLink() != null && getLink().trim().length() > 0) {
+			return getLink();
+		} else {
+			if (getFileName() != null && getFileName().trim().length() > 0) {
+				String fileLink = getResourceURL(ctx, getFileName());
+				return URLHelper.createResourceURL(ctx, getPage(), fileLink).replace('\\', '/');
+			} else {
+				return null;
+			}
+		}
+	}
+
 	public String renderInline(ContentContext ctx, String width, String height, boolean preview) throws Exception {
 
 		String link = getLink();
-		String imageFilter = getConfig(ctx).getProperty("image.filter", "video");
+		String imageFilter = getImageFilter(ctx);
 		if (preview) {
 			imageFilter = "thumbnails";
 		}
@@ -381,7 +400,7 @@ public class Video extends GlobalImage implements IAction {
 		String compId = requestService.getParameter("comp-id", null);
 		if (compId != null) {
 			ContentContext ctx = ContentContext.getContentContext(request, response);
-			ContentService content = ContentService.createContent(ctx.getRequest());
+			ContentService content = ContentService.getInstance(ctx.getRequest());
 			IContentVisualComponent comp = content.getComponent(ctx, compId);
 			if (comp != null && comp instanceof Video) {
 				((Video) comp).addOneAccess(ctx);
@@ -395,6 +414,18 @@ public class Video extends GlobalImage implements IAction {
 		Collection<String> resources = new LinkedList<String>();
 		resources.add("/js/freefw/ajax.js");
 		return resources;
+	}
+
+	@Override
+	public String getPreviewURL(ContentContext ctx, String filter) {
+		String imageFilter = getImageFilter(ctx);
+		String imageLink = getResourceURL(ctx, getDecorationImage());
+		try {
+			return URLHelper.createTransformURL(ctx, imageLink, imageFilter);
+		} catch (Exception e) {
+			e.printStackTrace();
+			return null;
+		}
 	}
 
 	@Override

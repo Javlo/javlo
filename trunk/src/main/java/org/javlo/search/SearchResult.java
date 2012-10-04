@@ -372,7 +372,7 @@ public class SearchResult {
 		}
 		synchronized (result) { // if two browser with the same session
 			cleanResult();
-			ContentService content = ContentService.createContent(ctx.getRequest());
+			ContentService content = ContentService.getInstance(ctx.getRequest());
 			MenuElement nav = content.getNavigation(ctx);
 
 			searchInPage(nav, ctx, groupId, searchText, comps);
@@ -397,7 +397,7 @@ public class SearchResult {
 		}
 		synchronized (result) { // if two browser with the same session
 			cleanResult();
-			ContentService content = ContentService.createContent(ctx.getRequest());
+			ContentService content = ContentService.getInstance(ctx.getRequest());
 			MenuElement nav = content.getNavigation(ctx);
 
 			searchComponentInPage(nav, ctx, componentType);

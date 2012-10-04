@@ -51,7 +51,7 @@ public class XMLHelper {
 			}
 		}
 		out.println("</resources>");
-		ContentService content = ContentService.createContent(ctx.getRequest());
+		ContentService content = ContentService.getInstance(ctx.getRequest());
 		insertMap(out, content.getGlobalMap(ctx), PersistenceService.GLOBAL_MAP_NAME);
 		out.println("</export>");
 
@@ -104,7 +104,7 @@ public class XMLHelper {
 	}
 
 	public static String getXMLContent(ContentContext ctx, int version) throws Exception {
-		ContentService content = ContentService.createContent(ctx.getRequest());
+		ContentService content = ContentService.getInstance(ctx.getRequest());
 		GlobalContext globalContext = GlobalContext.getInstance(ctx.getRequest());
 		String defaultLg = globalContext.getDefaultLanguages().iterator().next();
 		if (!globalContext.getLanguages().contains(defaultLg)) {

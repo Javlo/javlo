@@ -116,7 +116,7 @@ public class WeekChildrenLink extends AbstractVisualComponent implements IAction
 			}
 			try {
 				Date date = StringHelper.parseDate(week);				
-				MenuElement rootPage = ContentService.createContent(request).getNavigation(ctx);
+				MenuElement rootPage = ContentService.getInstance(request).getNavigation(ctx);
 				
 				MenuElement currentPage = null;//rootPage.searchChildFromId(parent);
 				if (currentPage == null) {

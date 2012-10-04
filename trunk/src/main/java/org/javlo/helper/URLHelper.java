@@ -195,7 +195,7 @@ public class URLHelper extends ElementaryURLHelper {
 			channel = "all";
 		}
 
-		ContentService content = ContentService.createContent(ctx.getRequest());
+		ContentService content = ContentService.getInstance(ctx.getRequest());
 		MenuElement elem = content.getNavigation(ctx).getNoErrorFreeCurrentPage(ctx);
 		Template template = null;
 		if (elem != null) {

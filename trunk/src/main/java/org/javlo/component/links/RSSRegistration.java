@@ -75,7 +75,7 @@ public class RSSRegistration extends AbstractPropertiesComponent {
 		finalCode.append("&nbsp;&nbsp;&nbsp;<label for=\"" + getChannelsName() + "\">");
 		finalCode.append(i18nAccess.getText("component.rss.channel-available")+" : ");
 		finalCode.append("</label>");
-		ContentService content = ContentService.createContent(ctx.getRequest());
+		ContentService content = ContentService.getInstance(ctx.getRequest());
 		List<String> channelsList = NavigationHelper.getAllRSSChannels(ctx, content.getNavigation(ctx));
 		String[] channels = new String[channelsList.size()];
 		channelsList.toArray(channels);

@@ -1115,7 +1115,7 @@ public class GlobalContext implements Serializable {
 				logger.info("page not found : " + url + " (ctx=" + ctx + ')');
 				ctx.getResponse().setStatus(HttpServletResponse.SC_NOT_FOUND, "page not found : " + url);
 			}
-			MenuElement root = ContentService.createContent(ctx.getRequest()).getNavigation(ctx);
+			MenuElement root = ContentService.getInstance(ctx.getRequest()).getNavigation(ctx);
 			elem = root.searchChildFromName("404");
 			if (elem == null) {
 				elem = root;
@@ -1133,7 +1133,7 @@ public class GlobalContext implements Serializable {
 					Collection<String> lgs = getContentLanguages();
 					for (String lg : lgs) {
 						lgCtx.setRequestContentLanguage(lg);
-						MenuElement[] children = ContentService.createContent(ctx.getRequest()).getNavigation(lgCtx).getAllChilds();
+						MenuElement[] children = ContentService.getInstance(ctx.getRequest()).getNavigation(lgCtx).getAllChilds();
 						for (MenuElement menuElement : children) {
 							String pageURL = urlCreator.createURL(lgCtx, menuElement);
 							String pageKeyURL = urlCreator.createURLKey(pageURL);
@@ -1153,7 +1153,7 @@ public class GlobalContext implements Serializable {
 				return page;
 			}
 		}
-		MenuElement root = ContentService.createContent(ctx.getRequest()).getNavigation(ctx);
+		MenuElement root = ContentService.getInstance(ctx.getRequest()).getNavigation(ctx);
 		if (url.equals("/")) {
 			return root;
 		} else {
@@ -2407,7 +2407,6 @@ public class GlobalContext implements Serializable {
 		if (value != null) {
 			try {
 				String renderer = ctx.getCurrentTemplate().getRenderer(ctx, rendererKey);
-				System.out.println("***** GlobalContext.putItemInFrontCache : renderer = " + renderer); // TODO: remove debug trace
 				frontCache.put(key, new SmartMap.JspSmartValue(renderer, value));
 			} catch (Exception e) {
 				e.printStackTrace();

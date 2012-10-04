@@ -120,7 +120,7 @@ public class SiteMap extends AbstractVisualComponent {
 	@Override
 	public String getViewXHTMLCode(ContentContext ctx) throws Exception {
 
-		ContentService content = ContentService.createContent(ctx.getRequest());
+		ContentService content = ContentService.getInstance(ctx.getRequest());
 		MenuElement menu = content.getNavigation(ctx);
 
 		ByteArrayOutputStream outStream = new ByteArrayOutputStream();

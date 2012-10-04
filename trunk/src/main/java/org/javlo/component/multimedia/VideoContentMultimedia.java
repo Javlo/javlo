@@ -66,7 +66,7 @@ public class VideoContentMultimedia extends Multimedia {
 		}
 
 		private Video video;
-		private List<Video> translation = new LinkedList<Video>();
+		private final List<Video> translation = new LinkedList<Video>();
 
 		public void addTranslation(Video video) {
 			translation.add(video);
@@ -139,8 +139,6 @@ public class VideoContentMultimedia extends Multimedia {
 		resource.setShortDate(StringHelper.renderDate(resource.getDate(), globalContext.getShortDateFormat()));
 		resource.setMediumDate(StringHelper.renderDate(resource.getDate(), globalContext.getMediumDateFormat()));
 		resource.setFullDate(StringHelper.renderDate(resource.getDate(), globalContext.getFullDateFormat()));
-		
-		System.out.println("***** VideoContentMultimedia.createResource : video.getURL(ctx) = "+video.getURL(ctx)); //TODO: remove debug trace
 
 		resource.setURL(video.getURL(ctx));
 		resource.setLanguage(video.getBean(ctx).getLanguage());
@@ -236,7 +234,7 @@ public class VideoContentMultimedia extends Multimedia {
 	}
 
 	MenuElement getRootPage(ContentContext ctx) throws Exception {
-		ContentService content = ContentService.createContent(ctx.getRequest());
+		ContentService content = ContentService.getInstance(ctx.getRequest());
 		MenuElement root = content.getNavigation(ctx);
 		return root;
 	}

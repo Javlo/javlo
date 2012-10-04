@@ -34,7 +34,7 @@ public class MirrorComponent extends AbstractVisualComponent {
 	protected static Logger logger = Logger.getLogger(MirrorComponent.class.getName());
 
 	private void deleteMySelf(ContentContext ctx) throws Exception {
-		ContentService.createContent(ctx.getRequest());
+		ContentService.getInstance(ctx.getRequest());
 		MenuElement elem = ctx.getCurrentPage();
 		elem.removeContent(ctx, getId());
 		logger.warning("delete miror component url : " + getId());
@@ -107,7 +107,7 @@ public class MirrorComponent extends AbstractVisualComponent {
 
 	protected IContentVisualComponent getMirrorComponent(ContentContext ctx) throws Exception {
 		String compId = getMirrorComponentId();
-		ContentService content = ContentService.createContent(ctx.getRequest());
+		ContentService content = ContentService.getInstance(ctx.getRequest());
 		return content.getComponentAllLanguage(ctx, compId);
 	}
 

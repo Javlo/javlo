@@ -531,7 +531,7 @@ public class UserRegistrationComponent extends AbstractVisualComponent implement
 		String compId = requestService.getParameter(COMP_ID_REQUEST_PARAM, null);
 
 		ContentContext ctx = ContentContext.getContentContext(request, response);
-		UserRegistrationComponent comp = (UserRegistrationComponent) ContentService.createContent(request).getComponent(ctx, compId);
+		UserRegistrationComponent comp = (UserRegistrationComponent) ContentService.getInstance(request).getComponent(ctx, compId);
 		GlobalContext globalContext = GlobalContext.getInstance(request);
 		I18nAccess i18nAccess = I18nAccess.getInstance(globalContext, request.getSession());
 		MessageRepository messageRepository = MessageRepository.getInstance(ctx);
