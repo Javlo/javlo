@@ -623,17 +623,19 @@ public class StaticInfo {
 		if (content.getAttribute(editCtx, getKey("focus-zone-x"), null) == null) {
 			if (StringHelper.isImage(getFile().getName())) {
 				try {
-					BufferedImage img = ImageIO.read(getFile());
-					Point point = InitInterest.getPointOfInterest(img);
-					if (point != null) {
-						int focusX = (point.getX() * 1000) / img.getWidth();
-						int focusY = (point.getY() * 1000) / img.getHeight();
+					if (getFile().exists()) {
+						BufferedImage img = ImageIO.read(getFile());
+						Point point = InitInterest.getPointOfInterest(img);
+						if (point != null) {
+							int focusX = (point.getX() * 1000) / img.getWidth();
+							int focusY = (point.getY() * 1000) / img.getHeight();
 
-						content.setAttribute(editCtx, getKey("focus-zone-x"), "" + focusX);
-						content.setAttribute(editCtx, getKey("focus-zone-y"), "" + focusY);
-					} else {
-						content.setAttribute(editCtx, getKey("focus-zone-x"), "" + DEFAULT_FOCUS_X);
-						content.setAttribute(editCtx, getKey("focus-zone-y"), "" + DEFAULT_FOCUS_Y);
+							content.setAttribute(editCtx, getKey("focus-zone-x"), "" + focusX);
+							content.setAttribute(editCtx, getKey("focus-zone-y"), "" + focusY);
+						} else {
+							content.setAttribute(editCtx, getKey("focus-zone-x"), "" + DEFAULT_FOCUS_X);
+							content.setAttribute(editCtx, getKey("focus-zone-y"), "" + DEFAULT_FOCUS_Y);
+						}
 					}
 				} catch (Exception e) {
 					e.printStackTrace();

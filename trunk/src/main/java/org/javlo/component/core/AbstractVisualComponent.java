@@ -746,7 +746,7 @@ public abstract class AbstractVisualComponent implements IContentVisualComponent
 
 		String style = getStyle(ctx);
 		if (style != null) {
-			style = style + " ";
+			style = style + ' ';
 		} else {
 			style = "";
 		}
@@ -756,9 +756,9 @@ public abstract class AbstractVisualComponent implements IContentVisualComponent
 		}
 
 		if (!componentBean.isList()) {
-			return "<div " + getSpecialPreviewCssClass(ctx, style + ' ' + getType()) + getSpecialPreviewCssId(ctx) + " >";
+			return "<div " + getSpecialPreviewCssClass(ctx, style + getType()) + getSpecialPreviewCssId(ctx) + " >";
 		} else {
-			return "<li" + getSpecialPreviewCssClass(ctx, style + ' ' + getType()) + getSpecialPreviewCssId(ctx) + " >";
+			return "<li" + getSpecialPreviewCssClass(ctx, style + getType()) + getSpecialPreviewCssId(ctx) + " >";
 		}
 	}
 
@@ -922,8 +922,13 @@ public abstract class AbstractVisualComponent implements IContentVisualComponent
 			}
 		}
 		String style = componentBean.getStyle();
+		if (style == null) {
+			style = "";
+		} else {
+			style = style + ' ';
+		}
 		if (isRepeat()) {
-			style = style + " repeat";
+			style = style + "repeat";
 			try {
 				if (getPage() != null && getPage().equals(ctx.getCurrentPage())) {
 					style = style + " first-repeat";

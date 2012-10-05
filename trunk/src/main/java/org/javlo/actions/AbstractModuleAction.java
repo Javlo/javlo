@@ -19,7 +19,7 @@ import org.javlo.user.AdminUserSecurity;
 import org.javlo.user.User;
 
 public abstract class AbstractModuleAction implements IModuleAction {
-	
+
 	protected static boolean isLightInterface(ContentContext ctx) {
 		AdminUserSecurity userSecurity = AdminUserSecurity.getInstance();
 		return userSecurity.haveRole(ctx.getCurrentEditUser(), AdminUserSecurity.LIGHT_INTERFACE_ROLE);
@@ -31,37 +31,37 @@ public abstract class AbstractModuleAction implements IModuleAction {
 		GlobalContext globalContext = GlobalContext.getInstance(ctx.getRequest());
 		I18nAccess i18nAccess = I18nAccess.getInstance(ctx.getRequest());
 		if (i18nAccess.getCurrentModule() == null || i18nAccess.getCurrentModule().equals(modulesContext.getCurrentModule())) {
-			i18nAccess.setCurrentModule(globalContext, modulesContext.getCurrentModule());			
+			i18nAccess.setCurrentModule(globalContext, modulesContext.getCurrentModule());
 		}
 		if (isLightInterface(ctx)) {
 			ctx.getRequest().setAttribute("lightInterface", "true");
 		}
 		return null;
 	}
-	
+
 	@Override
-	public String performSearch(ContentContext ctx, ModulesContext moduleContext, String query) throws Exception {	
+	public String performSearch(ContentContext ctx, ModulesContext moduleContext, String query) throws Exception {
 		throw new UnsupportedOperationException();
 	}
-	
+
 	public AbstractModuleContext getModuleContext(HttpSession session, Module module) throws Exception {
-		return null; 
+		return null;
 	}
-	
-	public String performChangeRenderer( RequestService rs, Module currentModule ) throws Exception {		
+
+	public String performChangeRenderer(RequestService rs, Module currentModule) throws Exception {
 		String page = rs.getParameter("page", null);
 		if (page == null) {
 			return "bad request structure : need 'page' parameter.";
 		}
-		List<LinkToRenderer> links = getModuleContext(rs.getRequest().getSession(), currentModule).getFlatNavigation();		
-		for (LinkToRenderer linkToRenderer : links) {		
-			if (page.equals(linkToRenderer.getName())) {				
+		List<LinkToRenderer> links = getModuleContext(rs.getRequest().getSession(), currentModule).getFlatNavigation();
+		for (LinkToRenderer linkToRenderer : links) {
+			if (page.equals(linkToRenderer.getName())) {
 				getModuleContext(rs.getRequest().getSession(), currentModule).setCurrentLink(linkToRenderer.getName());
 				getModuleContext(rs.getRequest().getSession(), currentModule).setRendererFromNavigation(linkToRenderer.getRenderer());
 				return null;
 			}
-		}		
-		return "page not found : "+page;
+		}
+		return "page not found : " + page;
 	}
 
 	public String performWizard(ContentContext ctx, RequestService rs, Module currentModule, AbstractModuleContext moduleContext) throws Exception {

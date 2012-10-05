@@ -57,7 +57,7 @@ public class UserAction extends AbstractModuleAction {
 			if (userContext.getMode().equals(UserModuleContext.VIEW_MY_SELF)) {
 				Module currentModule = moduleContext.getCurrentModule();
 				currentModule.setToolsRenderer(null);
-				currentModule.setRenderer("/jsp/edit.jsp");				
+				currentModule.setRenderer("/jsp/edit.jsp");
 				user = userFactory.getUser(userFactory.getCurrentUser(ctx.getRequest().getSession()).getLogin());
 			}
 
@@ -107,7 +107,7 @@ public class UserAction extends AbstractModuleAction {
 			if (user == null) {
 				return "user not found : " + requestService.getParameter("user", null);
 			}
-			
+
 			IUserInfo userInfo = user.getUserInfo();
 			String pwd = user.getPassword();
 
@@ -126,12 +126,12 @@ public class UserAction extends AbstractModuleAction {
 				Set<String> newRoles = new HashSet<String>();
 				Set<String> allRoles = userFactory.getAllRoles(globalContext, session);
 				for (String role : allRoles) {
-					if (requestService.getParameter(role, null) != null) {
+					if (requestService.getParameter("role-" + role, null) != null) {
 						newRoles.add(role);
 					}
 				}
 				IUserInfo ui = user.getUserInfo();
-				if (adminUserSecurity.haveRight(adminUserFactory.getCurrentUser(ctx.getRequest().getSession()), AdminUserSecurity.ADMIN_USER_ROLE, AdminUserSecurity.GENERAL_ADMIN)) {				
+				if (adminUserSecurity.haveRight(adminUserFactory.getCurrentUser(ctx.getRequest().getSession()), AdminUserSecurity.ADMIN_USER_ROLE, AdminUserSecurity.GENERAL_ADMIN)) {
 					ui.setRoles(newRoles);
 					userFactory.updateUserInfo(ui);
 				} else {
