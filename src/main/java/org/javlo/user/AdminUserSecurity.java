@@ -2,6 +2,7 @@ package org.javlo.user;
 
 import java.io.Serializable;
 import java.util.Arrays;
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
@@ -10,8 +11,6 @@ import java.util.Set;
 public class AdminUserSecurity implements Serializable {
 
 	private static final long serialVersionUID = 1L;
-
-	public static String ALL_USER_ROLE = "all-user";
 
 	public static String GENERAL_ADMIN = "god";
 
@@ -25,11 +24,7 @@ public class AdminUserSecurity implements Serializable {
 
 	public static String VALIDATION_ROLE = "validation";
 
-	public static String REMOVE_STATIC_ROLE = "remove-file";
-
 	public static String NAVIGATION_ROLE = "navigation";
-
-	public static String ADD_NAVIGATION_ROLE = "add-navigation";
 
 	public static String USER_ROLE = "user";
 
@@ -45,29 +40,11 @@ public class AdminUserSecurity implements Serializable {
 
 	public static String SYNCHRO_SERVER = "sync-server";
 
-	public static String MAILING_ROLE = "mailing";
-
-	public static String WEBDESGIN_ROLE = "webdesign";
-
-	public static String SPECIAL_RIGHT_USER = "user";
-
-	public static String SPECIAL_RIGHT_ADMIN_USER = "admin-user";
-
-	public static String SPECIAL_RIGHT_STATISTICS = "stat";
-
-	public static String SPECIAL_RIGHT_NAVIGATION = "navigation";
-
-	public static String SPECIAL_RIGHT_ADD_NAVIGATION = "add-navigation";
-
-	public static String SPECIAL_RIGHT_PUBLISHER = "publisher";
-
-	private Map<String, Set<String>> rights = new HashMap<String, Set<String>>();
+	private final Map<String, Set<String>> rights = new HashMap<String, Set<String>>();
 
 	private AdminUserSecurity() {
 
 		String[] allUserRightArray = { "adminlogin" };
-		Set<String> allUserSet = new HashSet<String>(Arrays.asList(allUserRightArray));
-		rights.put(ALL_USER_ROLE, allUserSet);
 
 		/* CONTENT RIGHT */
 		String[] contentRights = { "delete", "changeview", "changetype", "remove", "copy", "paste", "insert", "update", "blockpage", "visible", "copypagestructure", "pastepage", "updateone", "macro", "insertmsg", "selectarea", "mkdir", "persistenceopen", "cancelcopy", "savemetastaticfile", "previewedit" };
@@ -84,49 +61,31 @@ public class AdminUserSecurity implements Serializable {
 		Set<String> validationSet = new HashSet<String>(Arrays.asList(validationRights));
 		rights.put(VALIDATION_ROLE, validationSet);
 
-		/* REMOVE STATIC RIGHT */
-		String[] removeStaticRights = { "rmdir", "deletestaticfile" };
-		Set<String> removeStatSet = new HashSet<String>(Arrays.asList(removeStaticRights));
-		rights.put(REMOVE_STATIC_ROLE, removeStatSet);
-
-		/* NAVIGATION RIGHT */
-		String[] navigationRights = { SPECIAL_RIGHT_NAVIGATION, "changeview", "itemclose", "repeat", "unrepeat", "changename", "visible", "movepreview", "priority", "userroles", "menuopen", "menuclose", "removenav", "link", "addnav", "addnavfirst", "moveup", "movedown", "movetoparent", "movetochild" };
-		Set<String> navigationSet = new HashSet<String>(Arrays.asList(navigationRights));
-		rights.put(NAVIGATION_ROLE, navigationSet);
-
-		/* ADD NAVIGATION RIGHT */
-		String[] addNavigationRights = { SPECIAL_RIGHT_ADD_NAVIGATION, "itemopen", "changeview", "itemclose", "userroles", "menuopen", "menuclose", "link", "addnav", "insertpage" };
-		Set<String> addNavigationSet = new HashSet<String>(Arrays.asList(addNavigationRights));
-		rights.put(ADD_NAVIGATION_ROLE, addNavigationSet);
-
-		/* USER RIGHT */
-		String[] userRights = { SPECIAL_RIGHT_USER, "adduser", "changeview", "uploadusers", "userfilter", "changeuserroles", "deleteuser" };
-		Set<String> userSet = new HashSet<String>(Arrays.asList(userRights));
-		rights.put(USER_ROLE, userSet);
-
-		/* ADMIN USER RIGHT */
-		String[] adminUserRights = { SPECIAL_RIGHT_ADMIN_USER, "adduser", "changeview", "uploadusers", "userfilter", "changeuserroles", "deleteuser" };
-		Set<String> adminUser = new HashSet<String>(Arrays.asList(adminUserRights));
-		rights.put(ADMIN_USER_ROLE, adminUser);
-
-		/* STAT USER RIGHT */
-		String[] statRights = { SPECIAL_RIGHT_STATISTICS, "changeview", "statselect" };
-		Set<String> statSet = new HashSet<String>(Arrays.asList(statRights));
-		rights.put(STATISTICS_ROLE, statSet);
-
-		/* PUBLISH USER RIGHT */
-		String[] publishRights = { SPECIAL_RIGHT_PUBLISHER, "publish", "changeview" };
-		Set<String> publishSet = new HashSet<String>(Arrays.asList(publishRights));
-		rights.put(PUBLISHER_ROLE, publishSet);
 	}
-	
+
 	private static AdminUserSecurity instance;
 
 	public static final AdminUserSecurity getInstance() {
 		if (instance == null) {
-			instance = new AdminUserSecurity();			
+			instance = new AdminUserSecurity();
 		}
 		return instance;
+	}
+
+	/**
+	 * return true if user have one of all right. TODO: method not tested.
+	 * 
+	 * @param user
+	 * @param right
+	 * @return
+	 */
+	public boolean haveRight(User user, Collection<String> rights) {
+		for (String right : rights) {
+			if (haveRight(user, right)) {
+				return true;
+			}
+		}
+		return false;
 	}
 
 	/**
@@ -152,13 +111,10 @@ public class AdminUserSecurity implements Serializable {
 					}
 				}
 			}
-			if (rights.get(ALL_USER_ROLE).contains(right.toLowerCase())) {
-				return true;
-			}
 		}
 		return false;
 	}
-	
+
 	/**
 	 * check right (admin have all right)
 	 * 
@@ -166,7 +122,7 @@ public class AdminUserSecurity implements Serializable {
 	 * @param right
 	 * @return
 	 */
-	public boolean haveAllRight(User user, String... inRights) {		
+	public boolean haveAllRight(User user, String... inRights) {
 		for (String right : inRights) {
 			if (user != null) {
 				Set<String> roles = user.getRoles();
@@ -181,9 +137,6 @@ public class AdminUserSecurity implements Serializable {
 						}
 					}
 				}
-			}
-			if (rights.get(ALL_USER_ROLE).contains(right.toLowerCase())) {
-				return true;
 			}
 		}
 		return false;
@@ -200,22 +153,24 @@ public class AdminUserSecurity implements Serializable {
 		}
 		return false;
 	}
-	
+
 	/**
 	 * return true if user have no restriction
+	 * 
 	 * @param user
 	 * @return
 	 */
-	public boolean isAdmin(User user) {		
+	public boolean isAdmin(User user) {
 		return haveRight(user, FULL_CONTROL_ROLE, ADMIN_USER_ROLE);
 	}
-	
+
 	/**
 	 * return true if user have no restriction on all website
+	 * 
 	 * @param user
 	 * @return
 	 */
-	public boolean isGod(User user) {		
+	public boolean isGod(User user) {
 		return user.getRoles().contains(GENERAL_ADMIN);
 	}
 

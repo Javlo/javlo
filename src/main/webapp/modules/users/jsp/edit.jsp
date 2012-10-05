@@ -34,8 +34,8 @@
    		 <c:set var="contains" value="true" />
  		 </c:if>
 	</c:forEach>
-	<input type="checkbox" id="${role}" name="${role}" <c:if test="${contains}">checked="checked"</c:if> />
-	<label for="${role}">${role}</label>
+	<input type="checkbox" id="role-${role}" name="role-${role}" <c:if test="${contains}">checked="checked"</c:if> />
+	<label for="role-${role}">${role}</label>
 </div>
 
 </c:forEach>

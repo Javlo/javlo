@@ -23,6 +23,7 @@ import org.javlo.context.GlobalContext;
 import org.javlo.filter.VisibleDirectoryFilter;
 import org.javlo.helper.StringHelper;
 import org.javlo.helper.URLHelper;
+import org.javlo.navigation.DefaultTemplate;
 import org.javlo.user.AdminUserSecurity;
 import org.javlo.user.User;
 
@@ -126,9 +127,38 @@ public class TemplateFactory {
 		return sources;
 	}
 
-	public static Collection<Template> getAllTemplates(ServletContext application) throws IOException {
+	public static List<Template> getAllTemplates(ServletContext application) throws IOException {
 		List<Template> outList = new LinkedList(getTemplates(application).values());
 		Collections.sort(outList, Template.TemplateDateComparator.instance);
+		return outList;
+	}
+
+	private static void getTemplateChildren(List<Template> outList, ServletContext application, Template template) throws IOException {
+		if (template != DefaultTemplate.INSTANCE) {
+			return;
+		}
+		List<Template> templates = getAllTemplates(application);
+		for (Template tpl : templates) {
+			if (tpl.getParent() != null && tpl.getParent().getId() != null && tpl.getParent().getId().equals(template.getId())) {
+				if (!outList.contains(tpl)) {
+					outList.add(tpl);
+					getTemplateChildren(outList, application, tpl);
+				}
+			}
+		}
+	}
+
+	public static Collection<Template> getTemplateChildren(ServletContext application, Template template) throws IOException {
+		List<Template> outList = new LinkedList<Template>();
+		List<Template> templates = getAllTemplates(application);
+		for (Template tpl : templates) {
+			if (tpl.getParent() != null && tpl.getParent().getId() != null && tpl.getParent().getId().equals(template.getId())) {
+				if (!outList.contains(tpl)) {
+					outList.add(tpl);
+					getTemplateChildren(outList, application, tpl);
+				}
+			}
+		}
 		return outList;
 	}
 

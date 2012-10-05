@@ -4,6 +4,7 @@
 <c:if test="${not empty templateFactory && empty param.viewAll}"><a class="action-button valid-all" href="${info.currentURL}?viewAll=true&list=${link.url}"><span>${i18n.edit['template.action.view-all']}</span></a></c:if>
 <c:if test="${not empty param.name}">
    <a class="action-button" href="${info.currentURL}?webaction=commit&name=${currentTemplate.name}"><span>${i18n.edit['template.action.commit']}</span></a>
+   <a class="action-button" href="${info.currentURL}?webaction=commitChildren&name=${currentTemplate.name}"><span>${i18n.edit['template.action.commit-children']}</span></a>
    <a class="action-button more" href="${fileURL}&name=${currentTemplate.name}"><span>${i18n.edit['template.action.browse']}...</span></a>   
 </c:if>
 <c:if test="${empty param.name and empty nobrowse}">

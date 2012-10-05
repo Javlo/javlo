@@ -75,7 +75,6 @@ public class TemplateAction extends AbstractModuleAction {
 
 		Map<String, String> params = new HashMap<String, String>();
 		String templateName = requestService.getParameter("name", null);
-		System.out.println("***** TemplateAction.prepare : templateName = " + templateName); // TODO: remove debug trace
 
 		if (templateName != null) {
 			Template template = TemplateFactory.getDiskTemplate(ctx.getRequest().getSession().getServletContext(), templateName, StringHelper.isTrue(ctx.getRequest().getParameter("mailing")));
@@ -314,6 +313,17 @@ public class TemplateAction extends AbstractModuleAction {
 	public String performCommit(RequestService requestService, ServletContext application, ContentContext ctx, MessageRepository messageRepository, I18nAccess i18nAccess) throws IOException {
 		Template template = TemplateFactory.getDiskTemplate(application, requestService.getParameter("name", null), StringHelper.isTrue(requestService.getParameter("mailing", null)));
 		template.clearRenderer(ctx);
+		messageRepository.setGlobalMessageAndNotification(ctx, new GenericMessage(i18nAccess.getText("template.message.commited", new String[][] { { "name", requestService.getParameter("name", null) } }), GenericMessage.INFO));
+		return null;
+	}
+
+	public String performCommitChildren(RequestService requestService, ServletContext application, ContentContext ctx, MessageRepository messageRepository, I18nAccess i18nAccess) throws IOException {
+		Template template = TemplateFactory.getDiskTemplate(application, requestService.getParameter("name", null), StringHelper.isTrue(requestService.getParameter("mailing", null)));
+		template.clearRenderer(ctx);
+		Collection<Template> children = TemplateFactory.getTemplateChildren(application, template);
+		for (Template child : children) {
+			child.clearRenderer(ctx);
+		}
 		messageRepository.setGlobalMessageAndNotification(ctx, new GenericMessage(i18nAccess.getText("template.message.commited", new String[][] { { "name", requestService.getParameter("name", null) } }), GenericMessage.INFO));
 		return null;
 	}
