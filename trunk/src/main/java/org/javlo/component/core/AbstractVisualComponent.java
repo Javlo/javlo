@@ -469,7 +469,7 @@ public abstract class AbstractVisualComponent implements IContentVisualComponent
 			}
 			out.println("<div class=\"line\">");
 			out.println("<label for=\"style-" + getId() + "\">" + getStyleTitle(ctx) + "</label>");
-			out.println(XHTMLHelper.getInputOneSelect("style-" + getId(), styles, stylesLabel, getStyle(ctx), null));
+			out.println(XHTMLHelper.getInputOneSelect("style-" + getId(), styles, stylesLabel, getStyle(), null));
 			out.println("</div>");
 		}
 
@@ -912,6 +912,10 @@ public abstract class AbstractVisualComponent implements IContentVisualComponent
 		} else {
 			return "";
 		}
+	}
+
+	public String getStyle() {
+		return componentBean.getStyle();
 	}
 
 	@Override

@@ -24,7 +24,7 @@
 		</c:if>		
 	</c:forEach>
 	<a class="selected" href="${info.currentURL}">${info.pageTitle}</a>
-		<c:if test="${fn:length(info.page.children) > 1}">
+		<c:if test="${fn:length(info.page.children) > 0}">
 			<div class="children">
 			<div class="container">
 				<ul>
