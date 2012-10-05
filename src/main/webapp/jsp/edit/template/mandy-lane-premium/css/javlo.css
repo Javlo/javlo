@@ -409,6 +409,20 @@ ul,li {
 	margin-right: 10px;
 }
 
+.breadcrumbs .children .container a {
+	padding-left: 16px;
+}
+
+.breadcrumbs .children .container .selected a {
+	font-weight: none;
+	background: url("../images/selected.png") no-repeat 6px 11px;
+}
+
+.breadcrumbs .children .real-content a {
+	font-weight: bold;
+}
+
+
 #tools {
 	box-shadow: 1px 1px 0 #F3F3F3;
 	background: url("../images/icons/tools.png") no-repeat scroll 10px 9px

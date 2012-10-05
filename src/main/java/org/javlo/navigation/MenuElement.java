@@ -97,6 +97,7 @@ public class MenuElement implements Serializable {
 		private String creationDate;
 		private String modificationDate;
 		private String templateId = null;
+		private boolean realContent = false;
 
 		public PageDescription getInfo() {
 			return info;
@@ -212,6 +213,14 @@ public class MenuElement implements Serializable {
 
 		public void setId(String id) {
 			this.id = id;
+		}
+
+		public void setRealContent(boolean realContent) {
+			this.realContent = realContent;
+		}
+
+		public boolean isRealContent() {
+			return realContent;
 		}
 
 	}
@@ -2170,6 +2179,7 @@ public class MenuElement implements Serializable {
 			pageBean = new PageBean();
 			pageBean.setInfo(pageDescription);
 			pageBean.setUrl(URLHelper.createURL(ctx, this));
+			pageBean.setRealContent(isRealContent(ctx));
 			pageBean.setPath(getPath());
 			pageBean.setLatestEditor(getLatestEditor());
 			pageBean.setCreationDate(StringHelper.renderShortDate(ctx, getCreationDate()));

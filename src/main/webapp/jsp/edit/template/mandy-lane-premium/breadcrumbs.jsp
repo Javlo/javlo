@@ -11,21 +11,20 @@
 	<c:forEach var="page" items="${info.pagePath}">
 		<c:set var="link" value='<a href="${page.url}">' />
 		${empty param.previewEdit?link:'<span class="title">'}${page.info.title}${empty param.previewEdit?'</a>':'</span>'}		
-			<c:if test="${fn:length(page.children) > 1}">
+		<c:if test="${fn:length(page.children) > 1}">
 			<div class="children">
 			<div class="container">
 				<ul>
 				<c:forEach var="child" items="${page.children}">
-					<li ${child.selected?'class="selected"':''}><a href="${child.url}">${child.info.title}</a></li>
-					
+					<li class="${child.selected?'selected':''} ${child.realContent?'real-content':''}"><a href="${child.url}">${child.info.title}</a></li>
 				</c:forEach>
 				</ul>
 			</div>
 			</div>
-			</c:if>		
+		</c:if>		
 	</c:forEach>
 	<a class="selected" href="${info.currentURL}">${info.pageTitle}</a>
-	<c:if test="${fn:length(info.page.children) > 1}">
+		<c:if test="${fn:length(info.page.children) > 1}">
 			<div class="children">
 			<div class="container">
 				<ul>
@@ -35,7 +34,7 @@
 				</ul>
 			</div>
 			</div>
-			</c:if>
+		</c:if>
 </c:if>
 <c:if test="${not empty currentModule.breadcrumbList}">
 	<c:forEach var="link" items="${currentModule.breadcrumbList}" varStatus="status">	
