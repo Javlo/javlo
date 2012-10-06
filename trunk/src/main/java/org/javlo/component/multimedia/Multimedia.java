@@ -59,6 +59,8 @@ public class Multimedia extends TimeRangeComponent implements IImageTitle {
 
 	protected boolean acceptStaticInfo(ContentContext ctx, StaticInfo info, int index) {
 
+		System.out.println("***** Multimedia.acceptStaticInfo : info file : " + info.getFile()); // TODO: remove debug trace
+
 		Collection<String> tags = getTags();
 		if (tags.size() > 0) {
 			tags = new HashSet<String>(tags);
@@ -153,19 +155,19 @@ public class Multimedia extends TimeRangeComponent implements IImageTitle {
 	}
 
 	protected boolean displayEmbed(ContentContext ctx) {
-		return getStyle(ctx).equals(ALL) || getStyle(ctx).equals(EMBED);
+		return getStyle().equals(ALL) || getStyle().equals(EMBED);
 	}
 
 	protected boolean displayImage(ContentContext ctx) {
-		return getStyle(ctx).equals(ALL) || getStyle(ctx).equals(IMAGE);
+		return getStyle().equals(ALL) || getStyle().equals(IMAGE);
 	}
 
 	protected boolean displaySound(ContentContext ctx) {
-		return getStyle(ctx).equals(ALL) || getStyle(ctx).equals(SOUND);
+		return getStyle().equals(ALL) || getStyle().equals(SOUND);
 	}
 
 	protected boolean displayVideo(ContentContext ctx) {
-		return getStyle(ctx).equals(ALL) || getStyle(ctx).equals(VIDEO);
+		return getStyle().equals(ALL) || getStyle().equals(VIDEO);
 	}
 
 	@Override
@@ -570,6 +572,7 @@ public class Multimedia extends TimeRangeComponent implements IImageTitle {
 
 		Collection<File> mulFiles = getAllMultimediaFiles(ctx);
 		if (mulFiles.size() == 0) {
+			logger.warning("no multimedia resources found.");
 			ctx.getRequest().setAttribute("resources", Collections.EMPTY_LIST);
 			return;
 		}
