@@ -941,7 +941,7 @@ public abstract class AbstractVisualComponent implements IContentVisualComponent
 				e.printStackTrace();
 			}
 		}
-		return style;
+		return style.trim();
 	}
 
 	@Override
