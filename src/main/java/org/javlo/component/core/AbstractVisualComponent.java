@@ -752,7 +752,7 @@ public abstract class AbstractVisualComponent implements IContentVisualComponent
 		}
 
 		if (getPreviousComponent() == null || !getPreviousComponent().isList(ctx) || !getPreviousComponent().getType().equals(getType())) {
-			style = style + " first";
+			style = style + " first ";
 		}
 
 		if (!componentBean.isList()) {
