@@ -968,11 +968,11 @@ h2.prize {
 	position: absolute;
 	margin-left: -22px;
 	
-	background: url('../images/arrow.png') no-repeat 1px 11px #ffffff;
+	background: url('../images/arrow.png') no-repeat 1px 11px #F7F7F7;
 }
 
 .breadcrumbs .children.open {
-	background: url('../images/arrow.png') no-repeat 1px -31px #ffffff;
+	background: url('../images/arrow.png') no-repeat 1px -31px #F7F7F7;
 }
 
 .breadcrumbs .children .container a {
