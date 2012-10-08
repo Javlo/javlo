@@ -127,8 +127,8 @@ public class MailingAction extends AbstractModuleAction {
 				mailingContext.sendMailing(ctx);
 				String msg = i18nAccess.getText("mailing.message.sent");
 				MessageRepository.getInstance(ctx).setGlobalMessageAndNotification(ctx, new GenericMessage(msg, GenericMessage.SUCCESS));
-				//mailingContext.reset();
-				//mailingContext.setWizardStep(SEND_WIZARD_BOX, null);
+				mailingContext.reset();
+				mailingContext.setWizardStep(SEND_WIZARD_BOX, null);
 				if (ctx.isAjax()) {
 					currentModule.getBox(SEND_WIZARD_BOX).update(ctx);
 				}
