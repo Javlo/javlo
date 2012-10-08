@@ -12,6 +12,8 @@ import javax.imageio.ImageReader;
 import javax.imageio.stream.ImageInputStream;
 import javax.servlet.ServletContext;
 
+import org.javlo.helper.ResourceHelper;
+
 public class ImageIOLeakTest {
 
 	public static void main(String[] args) {
@@ -45,7 +47,9 @@ public class ImageIOLeakTest {
 		int height = 0;
 		int width = 0;
 		for (int i = 0; i < iterations; i++) {
-			try (ImageInputStream iis = ImageIO.createImageInputStream(file)) {
+			ImageInputStream iis = null;
+			try {
+				iis = ImageIO.createImageInputStream(file);
 				Iterator<ImageReader> iter = ImageIO.getImageReaders(iis);
 				if (iter.hasNext()) {
 					ImageReader reader = null;
@@ -60,11 +64,21 @@ public class ImageIOLeakTest {
 						}
 					}
 				}
+			} finally {
+				if (iis != null) {
+					try {
+						iis.close();
+					} catch (Exception ignored) {
+						// Ignore
+					}
+				}
 			}
 		}
 		String mmapFile = "/proc/" + processId + "/maps";
 		System.out.println("Examining " + mmapFile + " for leaks.");
-		try (BufferedReader in = new BufferedReader(new FileReader(mmapFile))) {
+		BufferedReader in = null;
+		try {
+			in = new BufferedReader(new FileReader(mmapFile));
 			int totalMMaps = 0;
 			int markedAsDeleted = 0;
 			String ln = in.readLine();
@@ -80,6 +94,8 @@ public class ImageIOLeakTest {
 			System.out.println("Total mmaps is " + totalMMaps);
 			System.out.println("(deleted) mmaps is " + markedAsDeleted);
 			System.out.println("difference is " + (totalMMaps - markedAsDeleted));
+		} finally {
+			ResourceHelper.safeClose(in);
 		}
 	}
 }
