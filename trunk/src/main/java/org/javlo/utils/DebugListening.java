@@ -13,7 +13,7 @@ import javax.servlet.http.HttpSession;
 import org.javlo.config.StaticConfig;
 import org.javlo.context.GlobalContext;
 import org.javlo.helper.StringHelper;
-import org.javlo.mailing.MailingManager;
+import org.javlo.mailing.MailService;
 import org.javlo.user.AdminUserFactory;
 import org.javlo.user.IUserFactory;
 
@@ -92,9 +92,9 @@ public class DebugListening {
 				out.close();
 
 				if (SEND_ERROR_MAIL) {
-					MailingManager mailing = MailingManager.getInstance(staticConfig);
+					MailService mailService = MailService.getInstance(staticConfig);
 
-					mailing.sendMail(new InternetAddress(staticConfig.getErrorMailReport()), new InternetAddress(staticConfig.getErrorMailReport()), (InternetAddress) null, subject, new String(arrayOut.toByteArray()), false);
+					mailService.sendMail(new InternetAddress(staticConfig.getErrorMailReport()), new InternetAddress(staticConfig.getErrorMailReport()), subject, new String(arrayOut.toByteArray()), false);
 
 					logger.warning("SEND ERROR TO ADMINISTRATOR");
 				}
@@ -129,9 +129,9 @@ public class DebugListening {
 			try {
 				String subject = "wcms error report : " + staticConfig.getInstanceId();
 
-				MailingManager mailing = MailingManager.getInstance(staticConfig);
+				MailService mailService = MailService.getInstance(staticConfig);
 
-				mailing.sendMail(new InternetAddress(staticConfig.getErrorMailReport()), new InternetAddress(staticConfig.getErrorMailReport()), (InternetAddress) null, subject, message, false);
+				mailService.sendMail(new InternetAddress(staticConfig.getErrorMailReport()), new InternetAddress(staticConfig.getErrorMailReport()), subject, message, false);
 
 			} catch (Exception e) {
 				e.printStackTrace();

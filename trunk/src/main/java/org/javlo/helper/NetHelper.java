@@ -16,14 +16,13 @@ import java.util.List;
 import java.util.zip.CRC32;
 
 import javax.imageio.ImageIO;
-import javax.mail.internet.AddressException;
 import javax.mail.internet.InternetAddress;
 import javax.servlet.http.HttpServletResponse;
 
 import org.javlo.config.StaticConfig;
 import org.javlo.context.ContentContext;
 import org.javlo.context.GlobalContext;
-import org.javlo.mailing.MailingManager;
+import org.javlo.mailing.MailService;
 import org.javlo.ztatic.FileCache;
 
 public class NetHelper {
@@ -493,10 +492,10 @@ public class NetHelper {
 	public static void sendMailToAdministrator(ContentContext ctx, String subject, String content) {
 		GlobalContext globalContext = GlobalContext.getInstance(ctx.getRequest());
 		StaticConfig staticConfig = StaticConfig.getInstance(ctx.getRequest().getSession());
-		MailingManager mailing = MailingManager.getInstance(staticConfig);
+		MailService mailService = MailService.getInstance(staticConfig);
 		try {
-			mailing.sendMail(new InternetAddress(globalContext.getAdministratorEmail()), new InternetAddress(globalContext.getAdministratorEmail()), (InternetAddress) null, subject, content, false);
-		} catch (AddressException e) {
+			mailService.sendMail(new InternetAddress(globalContext.getAdministratorEmail()), new InternetAddress(globalContext.getAdministratorEmail()), subject, content, false);
+		} catch (Exception e) {
 			e.printStackTrace();
 		}
 	}

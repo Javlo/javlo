@@ -5,6 +5,8 @@ import java.io.IOException;
 import java.io.PrintWriter;
 import java.util.Collection;
 import java.util.Date;
+import java.util.LinkedList;
+import java.util.List;
 import java.util.Map;
 import java.util.logging.Logger;
 
@@ -72,17 +74,22 @@ public class MailingThread extends Thread {
 		}
 		mailOut.close();
 
-		MailingManager mailingManager = MailingManager.getInstance(StaticConfig.getInstance(application));
+		MailService mailService = MailService.getInstance(StaticConfig.getInstance(application));
 		String content = new String(mailBody.toByteArray());
-		InternetAddress bcc = null;
+		List<InternetAddress> bcc = new LinkedList<InternetAddress>();
 		if (mailing.getAdminEmail() != null) {
 			try {
-				bcc = new InternetAddress(mailing.getAdminEmail());
+				bcc.add(new InternetAddress(mailing.getAdminEmail()));
 			} catch (AddressException e) {
 				e.printStackTrace();
 			}
 		}
-		mailingManager.sendMail(mailing.getFrom(), mailing.getNotif(), bcc, "report mailing : " + mailing.getSubject(), content, false);
+		try {
+			mailService.sendMail(mailing.getFrom(), mailing.getNotif(), bcc, "report mailing : " + mailing.getSubject(), content, false);
+		} catch (Exception ex) {
+			// TODO Auto-generated catch block
+			ex.printStackTrace();
+		}
 
 		logger.info("report mailing sent to : " + mailing.getNotif() + " for mailing : " + mailing);
 	}
@@ -96,12 +103,12 @@ public class MailingThread extends Thread {
 		return content;
 	}
 
-	public void sendMailing(Mailing mailing) throws IOException {
+	public void sendMailing(Mailing mailing) throws IOException, InterruptedException {
 		try {
 			mailing.onStartMailing();
 			InternetAddress to = mailing.getNextReceiver();
 
-			MailingManager mailingManager = MailingManager.getInstance(StaticConfig.getInstance(application));
+			MailService mailingManager = MailService.getInstance(StaticConfig.getInstance(application));
 
 			while (to != null) {
 				DataToIDService dataToID = DataToIDService.getInstance(application);
@@ -111,8 +118,14 @@ public class MailingThread extends Thread {
 
 				String content = extractContent(mailing);
 
-				mailingManager.sendMail(mailing.getFrom(), to, (InternetAddress) null, mailing.getSubject(), content, true);
+				try {
+					mailingManager.sendMail(mailing.getFrom(), to, mailing.getSubject(), content, true);
+				} catch (Exception ex) {
+					// TODO Auto-generated catch block
+					ex.printStackTrace();
+				}
 				mailing.onMailSent(to);
+				Thread.sleep(20);
 				to = mailing.getNextReceiver();
 			}
 		} finally {

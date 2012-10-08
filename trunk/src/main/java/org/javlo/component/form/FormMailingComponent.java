@@ -29,7 +29,7 @@ import org.javlo.helper.StringSecurityUtil;
 import org.javlo.helper.URLHelper;
 import org.javlo.helper.XHTMLHelper;
 import org.javlo.i18n.I18nAccess;
-import org.javlo.mailing.MailingManager;
+import org.javlo.mailing.MailService;
 import org.javlo.message.GenericMessage;
 import org.javlo.message.MessageRepository;
 import org.javlo.service.ContentService;
@@ -287,8 +287,8 @@ public class FormMailingComponent extends AbstractVisualComponent implements IAc
 			// DEBUG = FileUtils.writeStringToFile(new File ("/tmp/mail.html"),
 			// confirmEmail);
 
-			MailingManager mailingManager = MailingManager.getInstance(staticConfig);			
-			mailingManager.sendMail(new InternetAddress(globalContext.getAdministratorEmail()), new InternetAddress(email), (InternetAddress) null, comp.getEmailSubject(), confirmEmail, true);
+			MailService mailService = MailService.getInstance(staticConfig);			
+			mailService.sendMail(new InternetAddress(globalContext.getAdministratorEmail()), new InternetAddress(email), comp.getEmailSubject(), confirmEmail, true);
 
 			GenericMessage msg = new GenericMessage(i18nAccess.getContentViewText("user.error.email-send"), GenericMessage.INFO);
 			messageRepository.setGlobalMessage(msg);
