@@ -1272,14 +1272,6 @@ public class PageReferenceComponent extends ComplexPropertiesLink implements IAc
 			}
 		}
 
-		PagesStatus pagesStatus = new PagesStatus(countPage, realContentSize);
-
-		ctx.getRequest().setAttribute("pagesStatus", pagesStatus);
-		ctx.getRequest().setAttribute("pages", pageBeans);
-		ctx.getRequest().setAttribute("title", getContentTitle());
-		ctx.getRequest().setAttribute("comp", this);
-		ctx.getRequest().setAttribute("tags", globalContext.getTags());
-
 		if (isDisplayFirstPage() && firstPage != null && ctx.getRequest().getParameter("_wcms_content_path") == null) {
 			String path = firstPage.getPath();
 			String pageRendered = executeJSP(ctx, Edit.CONTENT_RENDERER + "?_wcms_content_path=" + path);
@@ -1287,6 +1279,14 @@ public class PageReferenceComponent extends ComplexPropertiesLink implements IAc
 		} else {
 			ctx.getRequest().removeAttribute("firstPage");
 		}
+
+		PagesStatus pagesStatus = new PagesStatus(countPage, realContentSize);
+
+		ctx.getRequest().setAttribute("pagesStatus", pagesStatus);
+		ctx.getRequest().setAttribute("pages", pageBeans);
+		ctx.getRequest().setAttribute("title", getContentTitle());
+		ctx.getRequest().setAttribute("comp", this);
+		ctx.getRequest().setAttribute("tags", globalContext.getTags());
 
 	}
 
