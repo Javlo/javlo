@@ -908,7 +908,7 @@ public class StaticInfo {
 
 	public void addTag(ContentContext ctx, String tag) {
 		if (tags == null || tags == Collections.EMPTY_LIST) {
-			tags = new LinkedList<>();
+			tags = new LinkedList<String>();
 		}
 		if (!tags.contains(tag)) {
 			tags.add(tag);
@@ -918,7 +918,7 @@ public class StaticInfo {
 
 	public void removeTag(ContentContext ctx, String tag) {
 		if (tags == null || tags == Collections.EMPTY_LIST) {
-			tags = new LinkedList<>();
+			tags = new LinkedList<String>();
 		}
 		if (tags.contains(tag)) {
 			tags.remove(tag);
