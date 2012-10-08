@@ -9,6 +9,7 @@ import java.io.PrintWriter;
 import java.io.StringWriter;
 import java.util.Date;
 import java.util.HashSet;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Set;
 import java.util.logging.Logger;
@@ -32,7 +33,7 @@ import org.javlo.helper.StringSecurityUtil;
 import org.javlo.helper.URLHelper;
 import org.javlo.helper.XHTMLHelper;
 import org.javlo.i18n.I18nAccess;
-import org.javlo.mailing.MailingManager;
+import org.javlo.mailing.MailService;
 import org.javlo.message.GenericMessage;
 import org.javlo.message.MessageRepository;
 import org.javlo.service.ContentService;
@@ -619,7 +620,7 @@ public class UserRegistrationComponent extends AbstractVisualComponent implement
 				confirmEmail = confirmEmail.replace("##lastname##", lastName);
 			}
 
-			InternetAddress bcc = null;
+			List<InternetAddress> bcc = new LinkedList<InternetAddress>();
 			if (comment != null && comment.length() > 0) {
 				StringWriter sw = new StringWriter();
 				PrintWriter out = new PrintWriter(sw);
@@ -632,17 +633,19 @@ public class UserRegistrationComponent extends AbstractVisualComponent implement
 				
 				out.close();
 				confirmEmail = sw.toString();
-				bcc = new InternetAddress(globalContext.getAdministratorEmail());
+				bcc.add(new InternetAddress(globalContext.getAdministratorEmail()));
 			}
 			// DEBUG = FileUtils.writeStringToFile(new File ("/tmp/mail.html"),
 			// confirmEmail);
 
-			MailingManager mailingManager = MailingManager.getInstance(staticConfig);			
-			if (!mailingManager.sendMail(new InternetAddress(globalContext.getAdministratorEmail()), new InternetAddress(email), bcc, comp.getEmailSubject(), confirmEmail, true)) {
-				GenericMessage msg = new GenericMessage(i18nAccess.getContentViewText("contact.technical-error"), GenericMessage.ERROR);
-				messageRepository.setGlobalMessage(msg);
-			} else {
+			MailService mailService = MailService.getInstance(staticConfig);
+			try {
+				mailService.sendMail(new InternetAddress(globalContext.getAdministratorEmail()), new InternetAddress(email), bcc, comp.getEmailSubject(), confirmEmail, true);
 				GenericMessage msg = new GenericMessage(i18nAccess.getContentViewText("user.error.email-send"), GenericMessage.INFO);
+				messageRepository.setGlobalMessage(msg);
+			} catch (Exception ex) {
+				ex.printStackTrace();
+				GenericMessage msg = new GenericMessage(i18nAccess.getContentViewText("contact.technical-error"), GenericMessage.ERROR);
 				messageRepository.setGlobalMessage(msg);
 			}
 

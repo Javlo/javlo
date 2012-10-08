@@ -34,7 +34,7 @@ import java.util.TreeSet;
 import java.util.WeakHashMap;
 import java.util.logging.Logger;
 
-import javax.mail.internet.AddressException;
+import javax.mail.MessagingException;
 import javax.mail.internet.InternetAddress;
 import javax.servlet.ServletContext;
 import javax.servlet.http.HttpServletRequest;
@@ -59,7 +59,7 @@ import org.javlo.helper.ResourceHelper;
 import org.javlo.helper.ServletHelper;
 import org.javlo.helper.StringHelper;
 import org.javlo.helper.URLHelper;
-import org.javlo.mailing.MailingManager;
+import org.javlo.mailing.MailService;
 import org.javlo.navigation.IURLFactory;
 import org.javlo.navigation.MenuElement;
 import org.javlo.service.ContentService;
@@ -1648,9 +1648,9 @@ public class GlobalContext implements Serializable {
 		}
 	}
 
-	public void sendMailToAdministrator(String subjet, String body) throws AddressException {
-		MailingManager mailingManager = MailingManager.getInstance(staticConfig);
-		mailingManager.sendMail(new InternetAddress(getAdministratorEmail()), new InternetAddress(getAdministratorEmail()), (InternetAddress) null, subjet, body, false);
+	public void sendMailToAdministrator(String subjet, String body) throws MessagingException {
+		MailService mailService = MailService.getInstance(staticConfig);
+		mailService.sendMail(new InternetAddress(getAdministratorEmail()), new InternetAddress(getAdministratorEmail()), subjet, body, false);
 	}
 
 	public void setAdministrator(String admin) {

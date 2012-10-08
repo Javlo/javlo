@@ -8,7 +8,7 @@ import java.io.StringWriter;
 import java.util.LinkedList;
 import java.util.List;
 
-import javax.mail.internet.AddressException;
+import javax.mail.MessagingException;
 import javax.mail.internet.InternetAddress;
 import javax.servlet.ServletContext;
 import javax.servlet.http.HttpServletRequest;
@@ -25,7 +25,7 @@ import org.javlo.helper.PatternHelper;
 import org.javlo.helper.StringHelper;
 import org.javlo.helper.URLHelper;
 import org.javlo.i18n.I18nAccess;
-import org.javlo.mailing.MailingManager;
+import org.javlo.mailing.MailService;
 import org.javlo.message.GenericMessage;
 import org.javlo.message.MessageRepository;
 import org.javlo.service.RequestService;
@@ -273,16 +273,16 @@ public class Contact extends AbstractVisualComponent implements ICSS, IAction {
 					out.println("    " + field + " = " + info);
 				}
 			}
-			MailingManager mm = MailingManager.getInstance(StaticConfig.getInstance(request.getSession()));
+			MailService mailService = MailService.getInstance(StaticConfig.getInstance(request.getSession()));
 			try {
 				InternetAddress to = new InternetAddress(targetMail);
 				InternetAddress from = new InternetAddress(globalContext.getAdministratorEmail());
 				out.close();
-				mm.sendMail(from, to, (InternetAddress) null, title, res.toString(), false);
+				mailService.sendMail(from, to, title, res.toString(), false);
 				MessageRepository messageRepository = MessageRepository.getInstance(ctx);
 				GenericMessage genericMessage = new GenericMessage("contact.send-ok", GenericMessage.INFO);
 				messageRepository.setGlobalMessage(genericMessage);
-			} catch (AddressException e) {
+			} catch (MessagingException e) {
 				MessageRepository messageRepository = MessageRepository.getInstance(ctx);
 				GenericMessage genericMessage = new GenericMessage("contact.technical-error", GenericMessage.ERROR);
 				messageRepository.setGlobalMessage(genericMessage);

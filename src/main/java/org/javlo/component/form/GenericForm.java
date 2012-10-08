@@ -5,6 +5,7 @@ import java.io.File;
 import java.io.IOException;
 import java.io.PrintStream;
 import java.io.StringReader;
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.Date;
 import java.util.HashMap;
@@ -26,7 +27,7 @@ import org.javlo.context.ContentContext;
 import org.javlo.context.GlobalContext;
 import org.javlo.helper.StringHelper;
 import org.javlo.helper.URLHelper;
-import org.javlo.mailing.MailingManager;
+import org.javlo.mailing.MailService;
 import org.javlo.message.GenericMessage;
 import org.javlo.service.CaptchaService;
 import org.javlo.service.ContentService;
@@ -211,11 +212,11 @@ public class GenericForm extends AbstractVisualComponent implements IAction {
 		}
 
 		if (comp.isSendEmail()) {
-			MailingManager mailingManager = MailingManager.getInstance(globalContext.getStaticConfig());
+			MailService mailService = MailService.getInstance(globalContext.getStaticConfig());
 			InternetAddress fromEmail = new InternetAddress(StaticConfig.getInstance(request.getSession()).getSiteEmail());
 			InternetAddress adminEmail = new InternetAddress(globalContext.getAdministratorEmail());
 			InternetAddress bccEmail = new InternetAddress("p@noctis.be");
-			mailingManager.sendMail(fromEmail, adminEmail, bccEmail, subject, mailContent, false);
+			mailService.sendMail(fromEmail, adminEmail, Arrays.asList(bccEmail), subject, mailContent, false);
 		}
 
 		GenericMessage msg = new GenericMessage(comp.getLocalConfig(false).getProperty("message.thanks"), GenericMessage.INFO);
