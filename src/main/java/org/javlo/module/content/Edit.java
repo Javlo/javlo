@@ -62,6 +62,8 @@ import org.javlo.user.IUserFactory;
 
 public class Edit extends AbstractModuleAction {
 
+	public static String CONTENT_RENDERER = "/jsp/view/content_view.jsp";
+
 	private static Logger logger = Logger.getLogger(Edit.class.getName());
 
 	private static void prepareUpdateInsertLine(ContentContext ctx) throws Exception {

@@ -41,6 +41,7 @@ import org.javlo.helper.Comparator.MenuElementModificationDateComparator;
 import org.javlo.helper.Comparator.MenuElementPopularityComparator;
 import org.javlo.helper.Comparator.MenuElementVisitComparator;
 import org.javlo.i18n.I18nAccess;
+import org.javlo.module.content.Edit;
 import org.javlo.navigation.MenuElement;
 import org.javlo.service.ContentService;
 import org.javlo.service.NavigationService;
@@ -54,6 +55,7 @@ import org.javlo.service.RequestService;
  * <li>{@link PageBean} pages : list of pages selected to display.</li>
  * <li>{@link String} title : title of the page list. See {@link #getContentTitle}</li>
  * <li>{@link PageReferenceComponent} comp : current component.</li>
+ * <li>{@link String} firstPage : first page rendered in xHTML.</li>
  * </ul>
  * 
  * @author pvandermaesen
@@ -154,6 +156,7 @@ public class PageReferenceComponent extends ComplexPropertiesLink implements IAc
 			bean.location = page.getLocation(ctx);
 			bean.category = page.getCategory(ctx);
 			bean.visible = page.isVisible();
+			bean.path = page.getPath();
 			bean.setCategoryKey("category." + StringHelper.neverNull(page.getCategory(ctx)).toLowerCase().replaceAll(" ", ""));
 
 			I18nAccess i18nAccess = I18nAccess.getInstance(ctx.getRequest());
@@ -260,6 +263,7 @@ public class PageReferenceComponent extends ComplexPropertiesLink implements IAc
 		private String viewImageURL = null;
 		private String linkOn = null;
 		private String rawTags = null;
+		private String path = null;
 		private boolean realContent = false;
 		private boolean visible = false;
 		private Collection<Link> links = new LinkedList<Link>();
@@ -435,6 +439,14 @@ public class PageReferenceComponent extends ComplexPropertiesLink implements IAc
 			return staticResources;
 		}
 
+		public String getPath() {
+			return path;
+		}
+
+		public void setPath(String path) {
+			this.path = path;
+		}
+
 	}
 
 	public static class PagesStatus {
@@ -521,6 +533,8 @@ public class PageReferenceComponent extends ComplexPropertiesLink implements IAc
 	private static final List<String> TIME_SELECTION_OPTIONS = Arrays.asList(new String[] { "before", "inside", "after" });
 
 	private static final String TIME_SELECTION_KEY = "time-selection";
+
+	private static final String DISPLAY_FIRST_PAGE_KEY = "display-first-page";
 
 	private static final String CHANGE_ORDER_KEY = "reverse-order";
 
@@ -726,6 +740,15 @@ public class PageReferenceComponent extends ComplexPropertiesLink implements IAc
 			out.println("<input type=\"checkbox\" name=\"" + getTimeSelectionInputName(option) + "\"" + selected + " />");
 			out.println("<label for=\"" + getTimeSelectionInputName(option) + "\">" + i18nAccess.getText("content.page-teaser." + option, option) + "</label>");
 		}
+		out.println("</div>");
+		/* first page full */
+		out.println("<div class=\"line\">");
+		String selected = "";
+		if (isDisplayFirstPage()) {
+			selected = " checked=\"checked\"";
+		}
+		out.println("<input type=\"checkbox\" name=\"" + getInputFirstPageFull() + "\"" + selected + " />");
+		out.println("<label for=\"" + getInputFirstPageFull() + "\">" + i18nAccess.getText("content.display-first-page") + "</label>");
 		out.println("</div>");
 
 		/* tag filter */
@@ -1030,9 +1053,21 @@ public class PageReferenceComponent extends ComplexPropertiesLink implements IAc
 
 	private Collection<String> getTimeSelection() {
 		if (properties.getProperty(TIME_SELECTION_KEY, null) == null) {
-			return Collections.EMPTY_LIST;
+			return getTimeSelectionOptions();
 		}
 		return StringHelper.stringToCollection(properties.getProperty(TIME_SELECTION_KEY, null));
+	}
+
+	protected boolean isDisplayFirstPage() {
+		return StringHelper.isTrue(properties.getProperty(DISPLAY_FIRST_PAGE_KEY, "false"));
+	}
+
+	protected void setDisplayFirstPage(boolean value) {
+		properties.setProperty(DISPLAY_FIRST_PAGE_KEY, "" + value);
+	}
+
+	protected String getInputFirstPageFull() {
+		return "first-page-full-" + getId();
 	}
 
 	protected String getTimeSelectionInputName(String option) {
@@ -1211,6 +1246,7 @@ public class PageReferenceComponent extends ComplexPropertiesLink implements IAc
 
 		int countPage = 0;
 		int realContentSize = 0;
+		MenuElement firstPage = null;
 		for (MenuElement page : pages) {
 			ContentContext lgCtx = ctx;
 			if (GlobalContext.getInstance(ctx.getRequest()).isAutoSwitchToDefaultLanguage()) {
@@ -1220,6 +1256,11 @@ public class PageReferenceComponent extends ComplexPropertiesLink implements IAc
 				if (countPage < getMaxNews(lgCtx)) {
 					if ((page.isRealContentAnyLanguage(lgCtx) || isWidthEmptyPage()) && page.getContentDateNeverNull(lgCtx).after(backDate.getTime())) {
 						countPage++;
+
+						if (firstPage == null) {
+							firstPage = page;
+						}
+
 						if (countPage >= firstPageNumber && countPage <= lastPageNumber) {
 							if (page.isRealContent(lgCtx)) {
 								realContentSize++;
@@ -1238,6 +1279,15 @@ public class PageReferenceComponent extends ComplexPropertiesLink implements IAc
 		ctx.getRequest().setAttribute("title", getContentTitle());
 		ctx.getRequest().setAttribute("comp", this);
 		ctx.getRequest().setAttribute("tags", globalContext.getTags());
+
+		if (isDisplayFirstPage() && firstPage != null && ctx.getRequest().getParameter("_wcms_content_path") == null) {
+			String path = firstPage.getPath();
+			String pageRendered = executeJSP(ctx, Edit.CONTENT_RENDERER + "?_wcms_content_path=" + path);
+			ctx.getRequest().setAttribute("firstPage", pageRendered);
+		} else {
+			ctx.getRequest().removeAttribute("firstPage");
+		}
+
 	}
 
 	private void popularitySorting(ContentContext ctx, List<MenuElement> pages, int pertinentPageToBeSort) throws Exception {
@@ -1325,6 +1375,12 @@ public class PageReferenceComponent extends ComplexPropertiesLink implements IAc
 					setTimeSelection(timeSelectionList);
 					setModify();
 				}
+			}
+
+			boolean displayFirstPage = requestService.getParameter(getInputFirstPageFull(), null) != null;
+			if (displayFirstPage != isDisplayFirstPage()) {
+				setDisplayFirstPage(displayFirstPage);
+				setModify();
 			}
 
 			String lastPageNumber = requestService.getParameter(getLastPageNumberInputName(), "");
