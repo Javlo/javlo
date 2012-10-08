@@ -122,6 +122,7 @@ ul.menu {
 .components .line {
 	margin-bottom: 3px;
 	min-height: 24px;
+	overflow: hidden;
 }
 
 .component .line label {
