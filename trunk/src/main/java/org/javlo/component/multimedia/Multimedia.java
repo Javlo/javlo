@@ -752,7 +752,7 @@ public class Multimedia extends TimeRangeComponent implements IImageTitle {
 
 			/* tags */
 			GlobalContext globalContext = GlobalContext.getInstance(ctx.getRequest());
-			List<String> selectedTags = new LinkedList<>();
+			List<String> selectedTags = new LinkedList<String>();
 			for (String tag : globalContext.getTags()) {
 				if (requestService.getParameter(getInputTag(tag), null) != null) {
 					selectedTags.add(tag);

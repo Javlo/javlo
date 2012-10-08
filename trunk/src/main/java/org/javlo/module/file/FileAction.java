@@ -116,7 +116,7 @@ public class FileAction extends AbstractModuleAction {
 
 		public Map<String, String> getTags() {
 			if (tags == null) {
-				tags = new HashMap<>();
+				tags = new HashMap<String, String>();
 				for (String tag : staticInfo.getTags(ctx)) {
 					tags.put(tag, tag);
 				}
