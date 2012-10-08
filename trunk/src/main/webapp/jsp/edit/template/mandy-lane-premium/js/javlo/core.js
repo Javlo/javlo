@@ -107,15 +107,27 @@ function onIMLoad() { // Called from im.jsp
 	}
 }
 function breadcrumb() {	
-	jQuery(".breadcrumbs .children").mouseover(function() {		
+	jQuery(".breadcrumbs .children").mouseover(function() {
 		var item = jQuery(this);		
-		item.find(".container").css("display", "block");
+		var closeTimeout = item.data("closeTimeout");
+		if (closeTimeout) {
+			clearTimeout(closeTimeout);
+			item.data("closeTimeout", closeTimeout = null);
+		}
+		item.find(".container").show(100);
 		item.addClass("open");
 	});
 	jQuery(".breadcrumbs .children").mouseout(function() {
-		var item = jQuery(this);
-		item.find(".container").css("display", "none");
-		item.removeClass("open");
+		var item = jQuery(this);		
+		var closeTimeout = item.data("closeTimeout");
+		if (closeTimeout) {
+			clearTimeout(closeTimeout);
+		}
+		item.data("closeTimeout", closeTimeout = setTimeout(function() {
+			item.find(".container").hide(100);
+			item.removeClass("open");
+			item.data("closeTimeout", closeTimeout = null);
+		}, 400));
 	});
 }
 function queryIM(submitted) {
