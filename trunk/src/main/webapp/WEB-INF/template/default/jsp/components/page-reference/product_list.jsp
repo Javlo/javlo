@@ -9,6 +9,7 @@
 	<c:if test="${not empty title}">
 		<h2>${title}</h2>
 	</c:if>
+
 	<ul class="products">
 		<c:forEach items="${pages}" var="page" varStatus="status">
 			<c:set var="image" value="${null}" />
