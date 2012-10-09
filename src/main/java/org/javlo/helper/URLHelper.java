@@ -120,11 +120,7 @@ public class URLHelper extends ElementaryURLHelper {
 	}
 
 	public static String createGeneralResourceURL(ContentContext ctx, String url) {
-		if (ctx.getRenderMode() == ContentContext.ADMIN_MODE) {
-			return createStaticSharedResourceURL(ctx, url);
-		} else {
-			return createStaticResourceURL(ctx, url);
-		}
+		return createStaticResourceURL(ctx, url);
 	}
 
 	/**
@@ -434,9 +430,6 @@ public class URLHelper extends ElementaryURLHelper {
 		String templateFolder;
 		templateFolder = template.getLocalWorkTemplateFolder();
 
-		if (ctx.getRenderMode() == ContentContext.ADMIN_MODE) {
-			globalContext = null;
-		}
 		String templateFullPath = URLHelper.mergePath(templateFolder, template.getFolder(globalContext));
 
 		if (url == null) {

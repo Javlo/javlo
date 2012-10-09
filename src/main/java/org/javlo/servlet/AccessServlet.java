@@ -409,7 +409,7 @@ public class AccessServlet extends HttpServlet {
 				}
 				Template template = ctx.getCurrentTemplate();
 
-				if ((ctx.getRenderMode() != ContentContext.ADMIN_MODE) && (ctx.getRenderMode() != ContentContext.EDIT_MODE)) {
+				if (ctx.getRenderMode() != ContentContext.EDIT_MODE) {
 					/*** CHECK CONTENT AVAIBILITY ***/
 					boolean checkContentAviability = true;
 					if (ctx.getRenderMode() == ContentContext.PREVIEW_MODE) {

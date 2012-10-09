@@ -544,7 +544,7 @@ public class PersistenceService {
 		page.setCreator(creator);
 		page.setModificationDate(modificationDate);
 		page.setLatestEditor(latestEditor);
-		
+
 		page.setBreakRepeat(StringHelper.isTrue(pageXML.getAttributeValue("breakrepeat", "false")));
 
 		String[] virtualParent = StringHelper.stringToArray(pageXML.getAttributeValue("vparent", ""));
@@ -603,7 +603,7 @@ public class PersistenceService {
 				root.setBlocked(StringHelper.isTrue(page.getAttributeValue("blocked", "false")));
 				root.setBlocker(page.getAttributeValue("blocker", ""));
 				root.setLinkedURL(page.getAttributeValue("linked-url", ""));
-				root.setBreakRepeat(StringHelper.isTrue(page.getAttributeValue("breakrepeat", "false")));				
+				root.setBreakRepeat(StringHelper.isTrue(page.getAttributeValue("breakrepeat", "false")));
 
 				String[] editorRoles = StringHelper.stringToArray(page.getAttributeValue("editor-roles", ""), "#");
 				if (editorRoles != null) {
@@ -678,7 +678,7 @@ public class PersistenceService {
 
 		} catch (Exception e) {
 			e.printStackTrace();
-			MessageRepository.getInstance(ctx).setGlobalMessageAndNotification(ctx, new GenericMessage("error XML parsing : "+e.getMessage(), GenericMessage.ERROR));
+			MessageRepository.getInstance(ctx).setGlobalMessageAndNotification(ctx, new GenericMessage("error XML parsing : " + e.getMessage(), GenericMessage.ERROR));
 			root.setId("0");
 			root.setName("root");
 			root.setPriority(10);
@@ -696,10 +696,6 @@ public class PersistenceService {
 			loadVersion();
 
 			logger.info("load version : " + version + " in mode : " + renderMode);
-
-			if (renderMode == ContentContext.ADMIN_MODE) {
-				renderMode = ContentContext.EDIT_MODE;
-			}
 
 			MenuElement root;
 			InputStream in = null, in2 = null;
@@ -1131,4 +1127,3 @@ public class PersistenceService {
 		return file.exists();
 	}
 }
-

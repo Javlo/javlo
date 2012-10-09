@@ -240,21 +240,6 @@ public class StaticInfoFile {
 		properties.setAutoSave(false);
 	}
 
-	/**
-	 * instance of static info sur shared file
-	 * 
-	 * @param ctx
-	 * @param inStaticURL
-	 * @return
-	 * @throws ConfigurationException
-	 * @throws IOException
-	 */
-	public static StaticInfoFile getShareInstance(ContentContext ctx, String inStaticURL) throws Exception {
-		ContentContext adminCtx = new ContentContext(ctx);
-		adminCtx.setRenderMode(ContentContext.ADMIN_MODE);
-		return getInstance(adminCtx, inStaticURL);
-	}
-
 	protected static File getPropertiesFileNameFromResourceFile(ContentContext ctx, File file) {
 		GlobalContext globalContext = GlobalContext.getInstance(ctx.getRequest());
 		StaticConfig staticConfig = StaticConfig.getInstance(ctx.getRequest().getSession().getServletContext());
@@ -264,9 +249,6 @@ public class StaticInfoFile {
 		relURL = relURL.replace('\\', '/').replaceAll("//", "/").trim();
 
 		String dataFolder = globalContext.getDataFolder();
-		if (ctx.getRenderMode() == ContentContext.ADMIN_MODE) {
-			dataFolder = staticConfig.getShareDataFolder();
-		}
 
 		String path = URLHelper.mergePath(dataFolder, _STATIC_INFO_DIR);
 		String realPathProperties = URLHelper.mergePath(path, relURL) + ".properties";
@@ -280,9 +262,6 @@ public class StaticInfoFile {
 		String fullURL = file.getPath();
 
 		String fullStaticFolder = URLHelper.mergePath(globalContext.getDataFolder(), staticConfig.getStaticFolder());
-		if (ctx.getRenderMode() == ContentContext.ADMIN_MODE) {
-			fullStaticFolder = staticConfig.getShareDataFolder();
-		}
 
 		String relURL = fullURL.replace(fullStaticFolder, "");
 
@@ -307,9 +286,7 @@ public class StaticInfoFile {
 		ServletContext application = ctx.getRequest().getSession().getServletContext();
 
 		int renderMode = 0;
-		if (ctx.getRenderMode() == ContentContext.ADMIN_MODE) {
-			renderMode = 1;
-		}
+
 		String key = KEY + inStaticURL + "_" + renderMode + "_" + globalContext.getContextKey();
 		StaticInfoFile staticInfo = (StaticInfoFile) globalContext.getAttribute(key);
 		if (staticInfo == null) {
@@ -321,20 +298,12 @@ public class StaticInfoFile {
 			// weak
 			// ref
 			// lost
-			if (ctx.getRenderMode() == ContentContext.ADMIN_MODE) {
-				staticInfo.dataFolder = staticConfig.getShareDataFolder();
-			} else {
-				staticInfo.dataFolder = globalContext.getDataFolder();
-			}
+			staticInfo.dataFolder = globalContext.getDataFolder();
+
 			staticInfo.loadProperties(application, inStaticURL);
 
 			/* load real file */
-			String realPath;
-			if (ctx.getRenderMode() == ContentContext.ADMIN_MODE) {
-				realPath = staticConfig.getShareDataFolder();
-			} else {
-				realPath = URLHelper.mergePath(globalContext.getDataFolder(), staticConfig.getStaticFolder());
-			}
+			String realPath = URLHelper.mergePath(globalContext.getDataFolder(), staticConfig.getStaticFolder());
 			realPath = URLHelper.mergePath(realPath, inStaticURL);
 
 			File file = new File(realPath);

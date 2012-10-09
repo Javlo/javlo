@@ -41,8 +41,6 @@ public class ContentContext {
 
 	public static final int EDIT_MODE = 1;
 
-	public static final int ADMIN_MODE = 5;
-
 	public static final int VIEW_MODE = 2;
 
 	public static final int PREVIEW_MODE = 3;
@@ -98,7 +96,7 @@ public class ContentContext {
 			if (ctx == null) {
 				ctx = createContentContext(request, response, false);
 				ctx.setFree(false);
-				if (ctx.getRenderMode() != ContentContext.EDIT_MODE && ctx.getRenderMode() != ContentContext.ADMIN_MODE) {
+				if (ctx.getRenderMode() != ContentContext.EDIT_MODE) {
 					ContentService content = ContentService.getInstance(GlobalContext.getInstance(request));
 					if (!content.contentExistForContext(ctx)) {
 						boolean editPreview = false;
@@ -176,9 +174,6 @@ public class ContentContext {
 				}
 				if (ContentManager.isPreview(request)) {
 					ctx.renderMode = PREVIEW_MODE;
-				}
-				if (ContentManager.isAdmin(request)) {
-					ctx.renderMode = ADMIN_MODE;
 				}
 				if (ContentManager.isMailing(request)) {
 					ctx.renderMode = MAILING_MODE;
@@ -391,7 +386,7 @@ public class ContentContext {
 	 * @return
 	 */
 	public String getContextLanguage() {
-		if (getRenderMode() == ContentContext.EDIT_MODE || getRenderMode() == ContentContext.ADMIN_MODE) {
+		if (getRenderMode() == ContentContext.EDIT_MODE) {
 			GlobalContext globalContext = GlobalContext.getInstance(getRequest());
 			return globalContext.getEditLanguage();
 		} else {
@@ -446,7 +441,7 @@ public class ContentContext {
 	 * @return
 	 */
 	public String getContextRequestLanguage() {
-		if (getRenderMode() == ContentContext.EDIT_MODE || getRenderMode() == ContentContext.ADMIN_MODE) {
+		if (getRenderMode() == ContentContext.EDIT_MODE) {
 			GlobalContext globalContext = GlobalContext.getInstance(getRequest());
 			return globalContext.getEditLanguage();
 		} else {

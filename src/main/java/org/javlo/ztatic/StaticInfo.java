@@ -306,9 +306,7 @@ public class StaticInfo {
 	 * @throws IOException
 	 */
 	public static StaticInfo getShareInstance(ContentContext ctx, String inStaticURL) throws Exception {
-		ContentContext adminCtx = new ContentContext(ctx);
-		adminCtx.setRenderMode(ContentContext.ADMIN_MODE);
-		return getInstance(adminCtx, inStaticURL);
+		return getInstance(ctx, inStaticURL);
 	}
 
 	private String getKey(String key) {
@@ -324,9 +322,6 @@ public class StaticInfo {
 		String fullStaticFolder = URLHelper.mergePath(globalContext.getDataFolder(), staticConfig.getStaticFolder());
 		if (ResourceHelper.isTemplateFile(globalContext, file)) {
 			fullStaticFolder = staticConfig.getTemplateFolder();
-		}
-		if (ctx.getRenderMode() == ContentContext.ADMIN_MODE) {
-			fullStaticFolder = staticConfig.getShareDataFolder();
 		}
 
 		String relURL = fullURL.replace(fullStaticFolder, "");
@@ -357,18 +352,12 @@ public class StaticInfo {
 
 			/* load real file */
 
-			String realPath;
-			if (ctx.getRenderMode() == ContentContext.ADMIN_MODE) {
-				realPath = staticConfig.getShareDataFolder();
-			} else {
-				GlobalContext globalContext = GlobalContext.getInstance(request);
-				realPath = URLHelper.mergePath(globalContext.getDataFolder(), staticConfig.getStaticFolder());
-			}
+			GlobalContext globalContext = GlobalContext.getInstance(request);
+			String realPath = URLHelper.mergePath(globalContext.getDataFolder(), staticConfig.getStaticFolder());
 			realPath = URLHelper.mergePath(realPath, inStaticURL);
 
 			File file = new File(realPath);
 			if (!file.exists()) {
-				GlobalContext globalContext = GlobalContext.getInstance(request);
 				logger.warning("could not instancied ressource because file does'nt exist : " + file + " context name : " + globalContext.getContextKey());
 			} else if (file.isDirectory()) {
 				if (!staticInfo.staticURL.endsWith("/")) {
