@@ -134,7 +134,11 @@ public class CatchAllFilter implements Filter {
 							if (login == null && httpRequest.getUserPrincipal() != null) {
 								login = httpRequest.getUserPrincipal().getName();
 							}
-							fact.login(httpRequest, login, request.getParameter("j_password"));
+							if (fact.login(httpRequest, login, request.getParameter("j_password")) == null) {
+								String msg = i18nAccess.getText("user.error.msg");
+								MessageRepository messageRepository = MessageRepository.getInstance(((HttpServletRequest) request));
+								messageRepository.setGlobalMessage(new GenericMessage(msg, GenericMessage.ERROR));
+							}
 							ModulesContext.getInstance(httpRequest.getSession(), globalContext).loadModule(httpRequest.getSession(), globalContext);
 						}
 					}
@@ -163,16 +167,21 @@ public class CatchAllFilter implements Filter {
 						newUser = true;
 					}
 				}
-				if (ContentManager.isEdit((HttpServletRequest) request) || ContentManager.isPreview((HttpServletRequest) request)) {
-					if (autoLoginUser != null) {
-						IUserFactory adminFactory = AdminUserFactory.createUserFactory(globalContext, httpRequest.getSession());
-						User principalUser = adminFactory.autoLogin(httpRequest, autoLoginUser);
-						if (principalUser != null) {
+				// if (ContentManager.isEdit((HttpServletRequest) request) || ContentManager.isPreview((HttpServletRequest) request)) {
+				if (autoLoginUser != null) {
+					IUserFactory adminFactory = AdminUserFactory.createUserFactory(globalContext, httpRequest.getSession());
+					User principalUser = adminFactory.autoLogin(httpRequest, autoLoginUser);
+					if (principalUser != null) {
+						globalContext.addPrincipal(principalUser);
+						newUser = true;
+						if (request.getParameter("edit-login") != null) {
+							adminFactory.autoLogin(httpRequest, principalUser.getLogin());
 							globalContext.addPrincipal(principalUser);
-							newUser = true;
+							globalContext.eventLogin(principalUser.getLogin());
 						}
 					}
 				}
+				// }
 			}
 
 			if (request.getParameter("edit-login") != null || (httpRequest.getUserPrincipal() != null && logoutUser == null)) {
@@ -201,8 +210,10 @@ public class CatchAllFilter implements Filter {
 
 				} else {
 					logger.info(login + " fail to login.");
+					String msg = i18nAccess.getText("user.error.msg");
+					MessageRepository messageRepository = MessageRepository.getInstance(((HttpServletRequest) request));
+					messageRepository.setGlobalMessage(new GenericMessage(msg, GenericMessage.ERROR));
 				}
-
 			}
 
 			if (newUser) {
@@ -333,6 +344,7 @@ public class CatchAllFilter implements Filter {
 				if (query == null || !query.contains("module=")) {
 					editURI = URLHelper.addParam(editURI, "module", module);
 				}
+
 				if (query != null && query.contains("edit-logout")) {
 					((HttpServletResponse) response).sendRedirect(baseURI);
 					return;
@@ -341,6 +353,14 @@ public class CatchAllFilter implements Filter {
 					httpRequest.getRequestDispatcher(editURI).forward(request, response);
 					return;
 				}
+
+				/*
+				 * if (query != null && query.contains("edit-logout")) { ((HttpServletResponse) response).sendRedirect(baseURI); return; } else {
+				 */
+				// ((HttpServletResponse) response).sendRedirect(editURI);
+				// httpRequest.getRequestDispatcher(editURI).forward(request, response);
+				// return;
+				/* } */
 			}
 		} else if (editURI.startsWith("/ajax-")) {
 			editURI = editURI.substring("/ajax-".length());
@@ -408,8 +428,9 @@ public class CatchAllFilter implements Filter {
 				}
 			}
 
-			if (request.getParameter("webaction") != null && request.getParameter("webaction").equals("view.language")) {
-				try {
+			try {
+
+				if (request.getParameter("webaction") != null && request.getParameter("webaction").equals("view.language")) {
 					ContentContext ctx = ContentContext.getContentContext((HttpServletRequest) request, (HttpServletResponse) response);
 					String lang = request.getParameter("lg");
 					if (lang != null) {
@@ -422,41 +443,41 @@ public class CatchAllFilter implements Filter {
 						String newURL = URLHelper.createURL(ctx);
 						NetHelper.sendRedirectPermanently((HttpServletResponse) response, newURL);
 					}
-
-				} catch (Exception e) {
-					e.printStackTrace();
 				}
-			}
 
-			initElements(request, response);
+				initElements(request, response);
 
-			globalContext = GlobalContext.getInstance(httpRequest);
+				globalContext = GlobalContext.getInstance(httpRequest);
 
-			if (!ContentManager.isEdit(httpRequest, !hostDefineSite) && !ContentManager.isAdmin(httpRequest, !hostDefineSite) && !ContentManager.isPreview(httpRequest, !hostDefineSite)) {
-				Map<String, String> uriAlias = globalContext.getURIAlias();
-				Collection<Map.Entry<String, String>> entries = uriAlias.entrySet();
-				for (Map.Entry<String, String> entry : entries) {
-					if (uri.length() > 0) {
-						String pattern1 = entry.getKey();
-						String pattern2 = entry.getValue();
-						if (!pattern1.contains("*")) {
-							if (uri.equals(pattern1)) {
-								// ((HttpServletResponse) response).setStatus(HttpServletResponse.SC_MOVED_PERMANENTLY);
-								// ((HttpServletResponse) response).sendRedirect(pattern2);
-								NetHelper.sendRedirectPermanently((HttpServletResponse) response, pattern2);
-								return;
-							}
-						} else {
-							String newURL = StringHelper.convertString(pattern1, pattern2, uri);
-							if (!newURL.equals(uri)) {
-								// ((HttpServletResponse) response).setStatus(HttpServletResponse.SC_MOVED_PERMANENTLY);
-								// ((HttpServletResponse) response).sendRedirect(newURL);
-								NetHelper.sendRedirectPermanently((HttpServletResponse) response, newURL);
-								return;
+				if (!ContentManager.isEdit(httpRequest, !hostDefineSite) && !ContentManager.isPreview(httpRequest, !hostDefineSite)) {
+					Map<String, String> uriAlias = globalContext.getURIAlias();
+					Collection<Map.Entry<String, String>> entries = uriAlias.entrySet();
+					for (Map.Entry<String, String> entry : entries) {
+						if (uri.length() > 0) {
+							String pattern1 = entry.getKey();
+							String pattern2 = entry.getValue();
+							if (!pattern1.contains("*")) {
+								if (uri.equals(pattern1)) {
+									// ((HttpServletResponse) response).setStatus(HttpServletResponse.SC_MOVED_PERMANENTLY);
+									// ((HttpServletResponse) response).sendRedirect(pattern2);
+									NetHelper.sendRedirectPermanently((HttpServletResponse) response, pattern2);
+									return;
+								}
+							} else {
+								String newURL = StringHelper.convertString(pattern1, pattern2, uri);
+								if (!newURL.equals(uri)) {
+									// ((HttpServletResponse) response).setStatus(HttpServletResponse.SC_MOVED_PERMANENTLY);
+									// ((HttpServletResponse) response).sendRedirect(newURL);
+									NetHelper.sendRedirectPermanently((HttpServletResponse) response, newURL);
+									return;
+								}
 							}
 						}
 					}
 				}
+
+			} catch (Exception e) {
+				e.printStackTrace();
 			}
 
 			if (httpRequest.getUserPrincipal() != null) {

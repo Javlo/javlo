@@ -1482,9 +1482,6 @@ public class Template implements Comparable<Template> {
 	public void importTemplateInWebapp(StaticConfig config, ContentContext ctx) throws IOException {
 
 		GlobalContext globalContext = null;
-		if (ctx != null && ctx.getRenderMode() != ContentContext.ADMIN_MODE) {
-			globalContext = GlobalContext.getInstance(ctx.getRequest());
-		}
 		String templateFolder = config.getTemplateFolder();
 		File templateSrc = new File(URLHelper.mergePath(templateFolder, getSourceFolder()));
 		if (templateSrc.exists()) {
@@ -1629,9 +1626,6 @@ public class Template implements Comparable<Template> {
 
 	public boolean isTemplateInWebapp(ContentContext ctx) throws IOException {
 		GlobalContext globalContext = null;
-		if (ctx != null && ctx.getRenderMode() != ContentContext.ADMIN_MODE) {
-			globalContext = GlobalContext.getInstance(ctx.getRequest());
-		}
 		File templateTgt = new File(URLHelper.mergePath(getWorkTemplateFolder(), getFolder(globalContext)));
 		return templateTgt.exists();
 	}

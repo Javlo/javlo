@@ -27,8 +27,9 @@
 	<img src="${info.editTemplateURL}/images/logo.png" alt="Logo Javlo" />
 </div><!--loginlogo-->
 
-<div class="notification notifyError loginNotify">Invalid username or password. (Type anything)</div>
-
+<c:if test="${not empty info.globalMessage && not empty info.globalMessage.message}">
+    	<div class="notification notifyError loginNotify">${info.globalMessage}</div>
+</c:if>
 <form id="loginform" action="${info.currentURL}" method="post">
 <div class="loginbox">
 	<div class="loginbox_inner">
@@ -39,6 +40,7 @@
             <input class="password" id="j_password" type="password" name="j_password"  />
             <button name="submit" class="submit" >Login</button>
         </div><!--loginbox_content-->
+        
     </div><!--loginbox_inner-->
 </div><!--loginbox-->
 

@@ -14,7 +14,6 @@ import java.util.Iterator;
 import java.util.Map;
 import java.util.logging.Logger;
 
-import org.apache.commons.configuration.ConfigurationException;
 import org.apache.commons.io.FileUtils;
 import org.javlo.config.StaticConfig;
 import org.javlo.context.ContentContext;
@@ -228,21 +227,6 @@ public class StaticInfoContent {
 
 	private File file;
 
-	/**
-	 * instance of static info sur shared file
-	 * 
-	 * @param ctx
-	 * @param inStaticURL
-	 * @return
-	 * @throws ConfigurationException
-	 * @throws IOException
-	 */
-	public static StaticInfoContent getShareInstance(ContentContext ctx, String inStaticURL) throws Exception {
-		ContentContext adminCtx = new ContentContext(ctx);
-		adminCtx.setRenderMode(ContentContext.ADMIN_MODE);
-		return getInstance(adminCtx, inStaticURL);
-	}
-
 	private String getKey(String key) {
 		return KEY + staticURL + '-' + key;
 	}
@@ -252,12 +236,7 @@ public class StaticInfoContent {
 		GlobalContext globalContext = GlobalContext.getInstance(ctx.getRequest());
 
 		String fullURL = file.getPath();
-
 		String fullStaticFolder = URLHelper.mergePath(globalContext.getDataFolder(), staticConfig.getStaticFolder());
-		if (ctx.getRenderMode() == ContentContext.ADMIN_MODE) {
-			fullStaticFolder = staticConfig.getShareDataFolder();
-		}
-
 		String relURL = fullURL.replace(fullStaticFolder, "");
 
 		return getInstance(ctx, relURL);

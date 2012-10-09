@@ -19,11 +19,8 @@ import org.javlo.helper.ElementaryURLHelper.Code;
 import org.javlo.message.GenericMessage;
 import org.javlo.message.MessageRepository;
 import org.javlo.module.core.ModulesContext;
-import org.javlo.navigation.MenuElement;
-import org.javlo.service.ContentService;
 import org.javlo.service.NotificationService;
 import org.javlo.service.RequestService;
-import org.javlo.template.Template;
 
 public class ServletHelper {
 
@@ -43,14 +40,6 @@ public class ServletHelper {
 		/** INIT TEMPLATE **/
 
 		GlobalContext globalContext = GlobalContext.getInstance(ctx.getRequest());
-
-		if (ctx.getRenderMode() != ContentContext.ADMIN_MODE) {
-			ContentService content = ContentService.getInstance(globalContext);
-			MenuElement elem = content.getNavigation(ctx).getNoErrorFreeCurrentPage(ctx);
-			if (elem != null) {
-				Template template = null;
-			}
-		}
 
 		boolean specialRightON = false;
 		if (globalContext.isSpacialAccessCode(new Code(requestService.getParameter(URLHelper.SPACIAL_RIGHT_CODE_KEY, "no-code")))) {

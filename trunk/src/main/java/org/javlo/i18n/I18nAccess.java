@@ -324,7 +324,7 @@ public class I18nAccess implements Serializable {
 		if (displayKey) {
 			return key;
 		}
-		if ((ctx.getRenderMode() == ContentContext.ADMIN_MODE) || (ctx.getRenderMode() == ContentContext.EDIT_MODE)) {
+		if (ctx.getRenderMode() == ContentContext.EDIT_MODE) {
 			return getText(key);
 		} else {
 			return getContentViewText(key);

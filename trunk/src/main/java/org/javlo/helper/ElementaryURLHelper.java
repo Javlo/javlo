@@ -193,8 +193,6 @@ public abstract class ElementaryURLHelper {
 			mode = "/preview/";
 		} else if (ctx.getRenderMode() == ContentContext.PAGE_MODE) {
 			mode = "/page/";
-		} else if (ctx.getRenderMode() == ContentContext.ADMIN_MODE) {
-			mode = "/admin/";
 		} else if (ctx.getRenderMode() == ContentContext.MAILING_MODE) {
 			mode = "/mailing/";
 		} else if (ctx.getRenderMode() == ContentContext.TIME_MODE) {
@@ -463,7 +461,7 @@ public abstract class ElementaryURLHelper {
 
 		if (forceTemplate) {
 			if (ctx.getRequest().getParameter(Template.FORCE_TEMPLATE_PARAM_NAME) != null) {
-				if ((ctx.getRenderMode() != ContentContext.EDIT_MODE) && (ctx.getRenderMode() != ContentContext.ADMIN_MODE)) {
+				if ((ctx.getRenderMode() != ContentContext.EDIT_MODE)) {
 					if (!url.contains(Template.FORCE_TEMPLATE_PARAM_NAME)) {
 						url = addParam(url, Template.FORCE_TEMPLATE_PARAM_NAME, ctx.getRequest().getParameter(Template.FORCE_TEMPLATE_PARAM_NAME));
 					}

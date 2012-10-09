@@ -245,31 +245,6 @@ public class ContentManager {
 		return res;
 	}
 
-	public static boolean isAdmin(HttpServletRequest request) {
-		return isAdmin(request, false);
-	}
-
-	public static boolean isAdmin(HttpServletRequest request, boolean uriPrefixed) {
-		boolean res = false;
-		String realPath = request.getServletPath();
-		if (realPath != null) {
-			StringTokenizer pathTokens = new StringTokenizer(realPath, "/");
-			if (uriPrefixed) {
-				pathTokens.nextToken();
-			}
-			/*
-			 * if (URLHelper.getPathPrefix(request).length() > 0) { pathTokens.nextToken(); } GlobalContext globalContext = GlobalContext.getInstance(request); if (!StringHelper.isEmpty(globalContext.getPathPrefix())) { pathTokens.nextToken(); }
-			 */
-			if (pathTokens.hasMoreTokens()) {
-				String nextToken = pathTokens.nextToken();
-				if (nextToken.equals("admin")) {
-					res = true;
-				}
-			}
-		}
-		return res;
-	}
-
 	public static boolean isAdmin(String path) {
 		boolean res = false;
 		if (path != null) {
