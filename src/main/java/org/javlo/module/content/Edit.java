@@ -7,6 +7,7 @@ import java.util.Date;
 import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Set;
 import java.util.logging.Logger;
 
 import javax.servlet.ServletContext;
@@ -28,6 +29,7 @@ import org.javlo.context.ContextException;
 import org.javlo.context.EditContext;
 import org.javlo.context.GlobalContext;
 import org.javlo.context.UserInterfaceContext;
+import org.javlo.data.InfoBean;
 import org.javlo.helper.DebugHelper;
 import org.javlo.helper.LangHelper;
 import org.javlo.helper.NavigationHelper;
@@ -709,6 +711,22 @@ public class Edit extends AbstractModuleAction {
 				modify = true;
 			}
 
+			/** roles **/
+			InfoBean infoBean = InfoBean.getCurrentInfoBean(ctx);
+			Set<String> userRoles = new HashSet<String>();
+			for (String role : infoBean.getRoles()) {
+				if (requestService.getParameter("user-" + role, null) != null) {
+					userRoles.add(role);
+				}
+			}
+			page.setUserRoles(userRoles);
+			page.clearEditorGroups();
+			for (String role : infoBean.getAdminRoles()) {
+				if (requestService.getParameter("admin-" + role, null) != null) {
+					page.addEditorRoles(role);
+				}
+			}
+
 			String templateName = requestService.getParameter("template", null);
 			if (templateName != null) {
 				if (templateName.length() > 1) {
@@ -733,6 +751,11 @@ public class Edit extends AbstractModuleAction {
 				}
 			}
 		}
+
+		page.clearPageBean(ctx);
+
+		PersistenceService.getInstance(globalContext).store(ctx);
+
 		return null;
 	}
 

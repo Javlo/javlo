@@ -43,6 +43,7 @@ public class UserInfo implements Comparable<IUserInfo>, IUserInfo, Serializable 
 	private String city = "";
 	private String country = "";
 	private String phone = "";
+	private String mobile = "";
 	private String info = "";
 	private String[] preferredLanguage = new String[0];
 	private Set<String> roles = new HashSet<String>();
@@ -433,5 +434,13 @@ public class UserInfo implements Comparable<IUserInfo>, IUserInfo, Serializable 
 			newRoles = new HashSet<String>(rolesList);
 		}
 		roles = newRoles;
+	}
+
+	public String getMobile() {
+		return mobile;
+	}
+
+	public void setMobile(String mobile) {
+		this.mobile = mobile;
 	}
 }

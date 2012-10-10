@@ -42,7 +42,6 @@ if (path!=null) {
 }
 
 AdminUserSecurity security = AdminUserSecurity.getInstance();
-//GlobalContext globalContext = GlobalContext.getInstance(request); EditContext editCtx = EditContext.getInstance(globalContext, request.getSession());
 
 if ( ctx.getSpecialContentRenderer() != null && area.equals(ComponentBean.DEFAULT_AREA)) {
 	%>
@@ -57,36 +56,8 @@ if ( (ctx.getSpecialContentRenderer() == null || !area.equals(ComponentBean.DEFA
 Map<String, String> replacement = currentPage.getReplacement();
 
 IContentComponentsList elems = currentPage.getContent(ctx);
-//String[] userRoles = editCtx.getUserRoles();
-
-boolean access = true;
-//if ( userRoles.length > 0 ) {
-	if ( currentPage.getUserRoles().size() > 0 ) {
-		IUserFactory userFactory = UserFactory.createUserFactory(globalContext, request.getSession());
-		User user = userFactory.getCurrentUser(request.getSession());
-		if ( user == null ) {
-			access=false;
-		} else {
-			access=user.validForRoles(currentPage.getUserRoles());
-		}
-	}
-//}
-
-/*if ((ctx.getRenderMode() == ContentContext.PREVIEW_MODE)&&(security.haveRight((User)editCtx.getUserPrincipal(), "update"))) {
-	ctx.setRenderMode(ContentContext.EDIT_MODE);	
-	ctx.setRenderMode(ContentContext.PREVIEW_MODE);
-}*/
-
 IContentVisualComponent elem = null;
 
-if ( !access ) {
-	if (request.getAttribute("insert_only_one_login") == null) {
-		request.setAttribute("insert_only_one_login", "anything");
-		%><jsp:include page="/jsp/view/login.jsp" flush="true"/><%		
-	} else {
-		%>&nbsp;<%
-	}
-} else {
 	boolean languageChange = !ctx.getContentLanguage().equals(ctx.getLanguage()); 
 	if (languageChange) {
 		%><div lang="<%=ctx.getContentLanguage()%>"><%
@@ -147,9 +118,9 @@ if ( !access ) {
 	if (languageChange) {
 		%></div><%
 	}
-}
 
-if (!pageEmpty) {%><div class="content_clear"><span>&nbsp;</span></div> <!-- end of float elems --><%}
+
+if (!pageEmpty) {%><div class="content_clear"><span>&nbsp;</span></div><%}
 }
 currentPage.endRendering(ctx);
 } /* end else getSpecialContentRenderer() */

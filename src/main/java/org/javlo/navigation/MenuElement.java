@@ -62,6 +62,7 @@ import org.javlo.message.MessageRepository;
 import org.javlo.service.PersistenceService;
 import org.javlo.service.exception.ServiceException;
 import org.javlo.service.resource.Resource;
+import org.javlo.utils.CollectionAsMap;
 import org.javlo.utils.TimeRange;
 import org.javlo.xml.NodeXML;
 import org.javlo.xml.XMLFactory;
@@ -98,6 +99,8 @@ public class MenuElement implements Serializable {
 		private String modificationDate;
 		private String templateId = null;
 		private boolean realContent = false;
+		private Map<String, String> roles = new HashMap<String, String>();
+		private Map<String, String> adminRoles = new HashMap<String, String>();
 
 		public PageDescription getInfo() {
 			return info;
@@ -221,6 +224,22 @@ public class MenuElement implements Serializable {
 
 		public boolean isRealContent() {
 			return realContent;
+		}
+
+		public Map<String, String> getRoles() {
+			return roles;
+		}
+
+		public void setRoles(Map<String, String> roles) {
+			this.roles = roles;
+		}
+
+		public Map<String, String> getAdminRoles() {
+			return adminRoles;
+		}
+
+		public void setAdminRoles(Map<String, String> adminRoles) {
+			this.adminRoles = adminRoles;
 		}
 
 	}
@@ -2138,6 +2157,11 @@ public class MenuElement implements Serializable {
 		return outDesc;
 	}
 
+	public void clearPageBean(ContentContext ctx) {
+		String requestKey = getPath() + '_' + ctx.getRequestContentLanguage() + "_" + ctx.getLanguage();
+		ctx.getRequest().removeAttribute(requestKey);
+	}
+
 	public PageBean getPageBean(ContentContext ctx) throws Exception {
 
 		String requestKey = getPath() + '_' + ctx.getRequestContentLanguage() + "_" + ctx.getLanguage();
@@ -2189,6 +2213,10 @@ public class MenuElement implements Serializable {
 			pageBean.setTemplateId(getTemplateId());
 			pageBean.setSelected(isSelected(ctx));
 			pageBean.setLastSelected(isLastSelected(ctx));
+
+			pageBean.setRoles(new CollectionAsMap<String>(getUserRoles()));
+			pageBean.setAdminRoles(new CollectionAsMap<String>(getEditorRoles()));
+
 			/*
 			 * if (getParent() != null) { pageBean.parent = getParent().getPageBean(ctx); }
 			 */

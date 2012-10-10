@@ -66,6 +66,34 @@
 	<span>${page.modificationDate}</span>
 </div>
 
+<div class="roles">
+<c:if test="${fn:length(info.adminRoles) > 0}">
+<div class="one_half">
+	<fieldset>
+	<legend>${i18n.edit['item.title.admin-roles']}</legend>
+	<c:forEach var="role" items="${info.adminRoles }">
+		<div class="inline">		
+		<label for="admin-${role}">${role}</label><input type="checkbox" name="admin-${role}" id="admin-${role}" ${not empty page.adminRoles[role]?'checked="checked"':''} />
+		</div> 
+	</c:forEach>
+	</fieldset>
+</div>
+</c:if>
+
+<c:if test="${fn:length(info.roles) > 0}">
+<div class="one_half">
+	<fieldset>
+	<legend>${i18n.edit['item.title.view-roles']}</legend>	
+	<c:forEach var="role" items="${info.roles}">
+		<div class="inline">
+		<label for="user-${role}">${role}</label><input type="checkbox" name="user-${role}" id="user-${role}" ${not empty page.roles[role]?'checked="checked"':''} />
+		</div>
+	</c:forEach>	
+	</fieldset>
+</div>
+</c:if>
+</div>
+
 <div class="action">
 	<c:if test="${not empty info.parentPageURL}">
     <a href="${info.parentPageURL}?webaction=deletePage&page=${page.id}" class="action-button warning needconfirm" title="${i18n.edit['global.delete']}"><span>${i18n.edit['global.delete']}</span></a>

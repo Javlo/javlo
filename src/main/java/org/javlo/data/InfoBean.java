@@ -31,6 +31,14 @@ public class InfoBean {
 		return (InfoBean) request.getAttribute(REQUEST_KEY);
 	}
 
+	public static InfoBean getCurrentInfoBean(ContentContext ctx) throws Exception {
+		InfoBean ib = getCurrentInfoBean(ctx.getRequest());
+		if (ib == null) {
+			ib = updateInfoBean(ctx);
+		}
+		return ib;
+	}
+
 	/**
 	 * create info bean in request (key=info) for jstp call in template.
 	 * 
@@ -98,6 +106,7 @@ public class InfoBean {
 		info.setLanguages(globalContext.getLanguages());
 		info.setLanguage(ctx.getLanguage());
 		info.setRoles(userFactory.getAllRoles(globalContext, ctx.getRequest().getSession()));
+		info.setAdminRoles(globalContext.getAdminUserRoles());
 
 		info.device = ctx.getDevice();
 		ctx.getRequest().setAttribute(REQUEST_KEY, info);
@@ -156,6 +165,7 @@ public class InfoBean {
 	private Collection<String> contentLanguages;
 	private Collection<String> languages;
 	private Collection<String> roles;
+	private Collection<String> adminRoles;
 	private MenuElement.PageBean page = null;
 	private MenuElement.PageBean parent = null;
 	private MenuElement.PageBean root = null;
@@ -464,5 +474,13 @@ public class InfoBean {
 
 	public void setPrivateHelpURL(String privateHelpURL) {
 		this.privateHelpURL = privateHelpURL;
+	}
+
+	public Collection<String> getAdminRoles() {
+		return adminRoles;
+	}
+
+	public void setAdminRoles(Collection<String> userRoles) {
+		this.adminRoles = userRoles;
 	}
 }

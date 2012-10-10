@@ -80,6 +80,7 @@ public class AdminAction extends AbstractModuleAction {
 		private String homepage;
 		private String urlFactory;
 		private String userRoles;
+		private String adminUserRoles;
 		private boolean autoSwitchToDefaultLanguage;
 		private boolean extendMenu;
 
@@ -134,6 +135,7 @@ public class AdminAction extends AbstractModuleAction {
 			setUrlFactory(globalContext.getURLFactoryClass());
 
 			setUserRoles(StringHelper.collectionToString(globalContext.getUserRoles(), ","));
+			setAdminUserRoles(StringHelper.collectionToString(globalContext.getAdminUserRoles(), ","));
 
 			setGoogleAnalyticsUACCT(globalContext.getGoogleAnalyticsUACCT());
 			setTags(globalContext.getRAWTags());
@@ -425,6 +427,14 @@ public class AdminAction extends AbstractModuleAction {
 			this.extendMenu = extendMenu;
 		}
 
+		public String getAdminUserRoles() {
+			return adminUserRoles;
+		}
+
+		public void setAdminUserRoles(String adminUserRoles) {
+			this.adminUserRoles = adminUserRoles;
+		}
+
 	}
 
 	@Override
@@ -662,7 +672,10 @@ public class AdminAction extends AbstractModuleAction {
 						messageRepository.setGlobalMessage(new GenericMessage(e1.getMessage(), GenericMessage.ERROR));
 						e1.printStackTrace();
 					}
+
 					currentGlobalContext.setUserRoles(new HashSet<String>(StringHelper.stringToCollection(requestService.getParameter("user-roles", ""), ",")));
+					currentGlobalContext.setAdminUserRoles(new HashSet<String>(StringHelper.stringToCollection(requestService.getParameter("admin-user-roles", ""), ",")));
+
 					currentGlobalContext.setHelpURL(requestService.getParameter("help-url", ""));
 					currentGlobalContext.setPrivateHelpURL(requestService.getParameter("private-help-url", ""));
 

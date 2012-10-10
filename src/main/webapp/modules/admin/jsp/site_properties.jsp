@@ -176,6 +176,11 @@
 </div>
 
 <div class="line">		
+	<label for="admin-user-roles">${i18n.edit['admin.form.admin-user-roles']}</label>
+	<input type="text" id="admin-user-roles" name="admin-user-roles" value="${currentContext.adminUserRoles}" />	
+</div>
+
+<div class="line">		
 	<label for="block-password">${i18n.edit['admin.form.block-password']}</label>
 	<input type="text" id="block-password" name="block-password" value="${currentContext.blockPassword}" />	
 </div>
