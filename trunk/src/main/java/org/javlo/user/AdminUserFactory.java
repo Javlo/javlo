@@ -96,4 +96,9 @@ public class AdminUserFactory extends UserFactory {
 		return ctx.getAdminUserRoles();
 	}
 
+	@Override
+	public UserInfo createUserInfos() {
+		return new AdminUserInfo();
+	}
+
 }

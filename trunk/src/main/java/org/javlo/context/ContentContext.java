@@ -484,6 +484,9 @@ public class ContentContext {
 				MenuElement elem = globalContext.getPageIfExist(this, getPath());
 				if (elem != null) {
 					setCurrentPageCached(elem);
+				} else {
+					elem = root;
+					setPath(root.getPath());
 				}
 				return elem;
 			} else {

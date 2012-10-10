@@ -57,7 +57,7 @@ public class UserAction extends AbstractModuleAction {
 			if (userContext.getMode().equals(UserModuleContext.VIEW_MY_SELF)) {
 				Module currentModule = moduleContext.getCurrentModule();
 				currentModule.setToolsRenderer(null);
-				currentModule.setRenderer("/jsp/edit.jsp");
+				currentModule.setRenderer("/jsp/edit_current.jsp");
 				user = userFactory.getUser(userFactory.getCurrentUser(ctx.getRequest().getSession()).getLogin());
 			}
 

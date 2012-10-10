@@ -14,8 +14,10 @@ import java.net.URL;
 import java.text.DecimalFormat;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Iterator;
 import java.util.Map;
+import java.util.Set;
 import java.util.logging.Logger;
 
 import javax.portlet.WindowState;
@@ -62,8 +64,6 @@ import org.javlo.template.TemplateFactory;
 import org.javlo.thread.AbstractThread;
 import org.javlo.thread.ThreadManager;
 import org.javlo.tracking.Tracker;
-import org.javlo.user.IUserFactory;
-import org.javlo.user.UserFactory;
 import org.javlo.utils.DebugListening;
 import org.javlo.utils.ImageIOLeakTest;
 import org.xhtmlrenderer.pdf.ITextRenderer;
@@ -571,15 +571,6 @@ public class AccessServlet extends HttpServlet {
 						request.setAttribute("editPreview", editCtx.isEditPreview());
 					}
 
-					/* user management - old login.jsp still used ? (plm) */
-					if (requestService.getParameter("__logout", null) != null) {
-						IUserFactory userFactory = UserFactory.createUserFactory(globalContext, request.getSession());
-						userFactory.logout(ctx.getRequest().getSession());
-						if (globalContext.getAllPrincipals().size() == 0) {
-							content.releasePreviewNav(ctx);
-						}
-					}
-
 					if (!globalContext.isVisible()) {
 						ServletHelper.includeBlocked(request, response);
 						return;
@@ -588,10 +579,13 @@ public class AccessServlet extends HttpServlet {
 					String path = ctx.getPath();
 
 					if (ctx.getFormat().equalsIgnoreCase("xml")) {
+
 						response.setContentType("text/xml; charset=" + ContentContext.CHARACTER_ENCODING);
 						Writer out = response.getWriter();
 						out.write(XMLHelper.getPageXML(ctx, elem));
+
 					} else if (ctx.getFormat().equalsIgnoreCase("png") || ctx.getFormat().equalsIgnoreCase("jpg")) {
+
 						String fileFormat = ctx.getFormat().toLowerCase();
 						response.setContentType("image/" + fileFormat + ";");
 						OutputStream out = response.getOutputStream();
@@ -639,7 +633,9 @@ public class AccessServlet extends HttpServlet {
 						pdfRenderer.setDocument(url);
 						pdfRenderer.layout();
 						pdfRenderer.createPDF(out);
+
 					} else {
+
 						if (elem == null) {
 							logger.warning("bad path : " + path);
 						}
@@ -656,6 +652,20 @@ public class AccessServlet extends HttpServlet {
 								Template specialTemplate = TemplateFactory.getTemplates(getServletContext()).get(template.getSpecialRendererTemplate());
 								if (specialTemplate != null) {
 									template = specialTemplate;
+								}
+							}
+
+							/** check page securised **/
+
+							if (ctx.getCurrentPage().getUserRoles().size() > 0) {
+								if (ctx.getCurrentUser() == null) {
+									ctx.setSpecialContentRenderer("/jsp/view/login.jsp");
+								} else {
+									Set<String> roles = new HashSet<String>(ctx.getCurrentUser().getRoles());
+									roles.retainAll(ctx.getCurrentPage().getUserRoles());
+									if (roles.size() == 0) {
+										ctx.setSpecialContentRenderer("/jsp/view/login.jsp");
+									}
 								}
 							}
 

@@ -54,7 +54,7 @@ public class UserFactory implements IUserFactory, Serializable {
 	public static final String USER_FACTORY_KEY = "_user_factory_";
 
 	private String userInfoFile = null;
-	
+
 	protected List<IUserInfo> userInfoList = null; // TODO: create a external
 	// application scope class
 
@@ -70,7 +70,7 @@ public class UserFactory implements IUserFactory, Serializable {
 			e.printStackTrace();
 		}
 		if (res == null) {
-			res = new UserFactory();			
+			res = new UserFactory();
 		}
 		res.init(globalContext, session);
 		return res;
@@ -185,7 +185,7 @@ public class UserFactory implements IUserFactory, Serializable {
 					tobeDeleted = user;
 				}
 			}
-			
+
 			if (tobeDeleted != null) {
 				userInfoList.remove(tobeDeleted);
 			}
@@ -194,8 +194,8 @@ public class UserFactory implements IUserFactory, Serializable {
 
 	@Override
 	public Set<String> getAllRoles(GlobalContext globalContext, HttpSession session) {
-		EditContext ctx = EditContext.getInstance(globalContext, session);
-		return ctx.getUserRoles();
+		EditContext editContext = EditContext.getInstance(globalContext, session);
+		return editContext.getUserRoles();
 	}
 
 	/*
@@ -226,9 +226,8 @@ public class UserFactory implements IUserFactory, Serializable {
 		}		
 		return user;
 	}**/
-	
 	public User getCurrentUser(HttpSession session) {
-		User user = (User) session.getAttribute(SESSION_KEY);		
+		User user = (User) session.getAttribute(SESSION_KEY);
 		return user;
 	}
 
@@ -243,8 +242,8 @@ public class UserFactory implements IUserFactory, Serializable {
 	 */
 	@Override
 	public User getUser(String login) {
-		List<IUserInfo> users = getUserInfoList();	
-		for (IUserInfo user : users) {		
+		List<IUserInfo> users = getUserInfoList();
+		for (IUserInfo user : users) {
 			if (user.getLogin().equals(login)) {
 				return new User(user);
 			}
@@ -287,8 +286,8 @@ public class UserFactory implements IUserFactory, Serializable {
 			if (userInfoList == null) {
 				String userInfoPath = getFileName();
 				File userInfoFile = new File(userInfoPath);
-				
-				if (!userInfoFile.exists()) {					
+
+				if (!userInfoFile.exists()) {
 					logger.fine(userInfoFile.getPath() + " not found.");
 					return new LinkedList<IUserInfo>();
 				} else {
@@ -301,20 +300,20 @@ public class UserFactory implements IUserFactory, Serializable {
 							ResourceHelper.closeResource(in);
 						}
 						String[][] csvArray = fact.getArray();
-						//IUserInfo[] arrayUserInfoList = new IUserInfo[csvArray.length - 1];
+						// IUserInfo[] arrayUserInfoList = new IUserInfo[csvArray.length - 1];
 						userInfoList = new LinkedList<IUserInfo>();
 						for (int i = 1; i < csvArray.length; i++) {
 							IUserInfo newUserInfo = createUserInfos();
 							Map<String, String> values = JavaHelper.createMap(csvArray[0], csvArray[i]);
-							BeanHelper.copy(values, newUserInfo );
+							BeanHelper.copy(values, newUserInfo);
 							userInfoList.add(newUserInfo);
 						}
 					} catch (Exception e) {
 						Logger.log(e);
-						userInfoList =  new LinkedList<IUserInfo>();
+						userInfoList = new LinkedList<IUserInfo>();
 					}
 				}
-			}			
+			}
 			return userInfoList;
 		}
 	}
@@ -325,7 +324,7 @@ public class UserFactory implements IUserFactory, Serializable {
 	 * @see org.javlo.user.IUserFactory#getUserInfos(java.lang.String)
 	 */
 	@Override
-	public IUserInfo getUserInfos(String id) {		
+	public IUserInfo getUserInfos(String id) {
 		Collection<IUserInfo> userInfoList = getUserInfoList();
 		synchronized (lock) {
 			for (IUserInfo userInfo : userInfoList) {
@@ -341,7 +340,7 @@ public class UserFactory implements IUserFactory, Serializable {
 	public void init(GlobalContext globalContext, HttpSession newSession) {
 		dataFolder = globalContext.getDataFolder();
 		StaticConfig staticConfig = StaticConfig.getInstance(newSession.getServletContext());
-		userInfoFile = staticConfig.getUserInfoFile();		
+		userInfoFile = staticConfig.getUserInfoFile();
 	}
 
 	/*
@@ -400,7 +399,7 @@ public class UserFactory implements IUserFactory, Serializable {
 		if (user != null && editCtx.getEditUser(user.getLogin()) != null) {
 			user.getUserInfo().addRoles((new HashSet(Arrays.asList(new String[] { AdminUserSecurity.GENERAL_ADMIN, AdminUserSecurity.FULL_CONTROL_ROLE }))));
 		}
-		
+
 		if (user != null) {
 			user.setContext(globalContext.getContextKey());
 			request.getSession().setAttribute(SESSION_KEY, user);
@@ -436,7 +435,7 @@ public class UserFactory implements IUserFactory, Serializable {
 					e.printStackTrace();
 				}
 			} else {
-				Collection<String> currentRoles = currentUserInfo.getRoles();				
+				Collection<String> currentRoles = currentUserInfo.getRoles();
 				List<String> rolesList = new LinkedList<String>();
 				rolesList.addAll(userInfo.getRoles());
 				for (String role : currentRoles) {
@@ -480,7 +479,7 @@ public class UserFactory implements IUserFactory, Serializable {
 		}
 	}
 
-	private void unlockStore()  throws IOException {
+	private void unlockStore() throws IOException {
 
 		List<IUserInfo> userInfoList = getUserInfoList();
 
@@ -491,17 +490,17 @@ public class UserFactory implements IUserFactory, Serializable {
 		String[][] csvArray = new String[userInfoList.size() + 1][];
 
 		csvArray[0] = createUserInfos().getAllLabels();
-		
+
 		for (int i = 0; i < userInfoList.size(); i++) {
 			String[] values = userInfoList.get(i).getAllValues();
-			csvArray[i+1] = values;
+			csvArray[i + 1] = values;
 		}
 
 		String userInfoPath = getFileName();
 		File userInfoFile = new File(userInfoPath);
 		if (!userInfoFile.exists()) {
 			userInfoFile.getParentFile().mkdirs();
-			Logger.log(Logger.WARNING, userInfoFile.getPath() + " not found.");			
+			Logger.log(Logger.WARNING, userInfoFile.getPath() + " not found.");
 		}
 		FileOutputStream out = null;
 		try {
@@ -536,7 +535,7 @@ public class UserFactory implements IUserFactory, Serializable {
 			IUserInfo currentUserInfo = user.getUserInfo();
 			try {
 				if (currentUserInfo != null) {
-					BeanHelper.copy(userInfo, currentUserInfo);				
+					BeanHelper.copy(userInfo, currentUserInfo);
 				}
 				unlockStore();
 			} catch (Exception e) {
