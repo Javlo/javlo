@@ -199,3 +199,14 @@ li.line {
 .roles .one_half {
     width: 46%;
 }
+
+#content-edit .box {
+	border: 0 none;
+}
+
+.component-container {
+	margin-left: 4px;
+	border-left: 4px #dddddd solid;
+	padding-left: 4px;
+	border-radius: 2px 2px 2px 2px;
+}
