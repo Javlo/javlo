@@ -26,8 +26,7 @@
 <legend>${i18n.edit['user.roles']}</legend>
 <c:forEach var="role" items="${roles}">
 
-<div class="inline">
-	
+<div class="inline">	
 	<c:set var="contains" value="false" />
 	<c:forEach var="userRole" items="${user.roles}">
  		 <c:if test="${userRole eq role}">
