@@ -256,14 +256,26 @@ public class Edit extends AbstractModuleAction {
 	 * @throws Exception
 	 */
 	public static boolean checkPageSecurity(ContentContext ctx) throws Exception {
+		return checkPageSecurity(ctx, ctx.getCurrentPage());
+	}
+
+	/**
+	 * 
+	 * check is user have all right for modify a specific page.
+	 * 
+	 * @param ctx
+	 * @param page
+	 * @return true if current user can modfify the page.
+	 * @throws Exception
+	 */
+	public static boolean checkPageSecurity(ContentContext ctx, MenuElement page) throws Exception {
 		AdminUserSecurity adminUserSecurity = AdminUserSecurity.getInstance();
 		GlobalContext globalContext = GlobalContext.getInstance(ctx.getRequest());
 		IUserFactory adminUserFactory = AdminUserFactory.createUserFactory(globalContext, ctx.getRequest().getSession());
 		ContentService.getInstance(globalContext);
-		MenuElement currentPage = ctx.getCurrentPage();
-		if (currentPage.getEditorRoles().size() > 0) {
+		if (page.getEditorRoles().size() > 0) {
 			if (!adminUserSecurity.haveRight(adminUserFactory.getCurrentUser(ctx.getRequest().getSession()), AdminUserSecurity.FULL_CONTROL_ROLE)) {
-				if (!adminUserFactory.getCurrentUser(ctx.getRequest().getSession()).validForRoles(currentPage.getEditorRoles())) {
+				if (!adminUserFactory.getCurrentUser(ctx.getRequest().getSession()).validForRoles(page.getEditorRoles())) {
 					MessageRepository messageRepository = MessageRepository.getInstance(ctx);
 					I18nAccess i18nAccess = I18nAccess.getInstance(ctx.getRequest());
 					messageRepository.setGlobalMessageAndNotification(ctx, new GenericMessage(i18nAccess.getText("action.security.noright-onpage"), GenericMessage.ERROR));
@@ -373,7 +385,7 @@ public class Edit extends AbstractModuleAction {
 	}
 
 	/**
-	 * check security on the current page
+	 * check if the currentPage is blocked.
 	 * 
 	 * @param ctx
 	 * @return
@@ -386,6 +398,26 @@ public class Edit extends AbstractModuleAction {
 
 		if (currentPage.isBlocked()) {
 			if (!currentPage.getBlocker().equals(adminUserFactory.getCurrentUser(ctx.getRequest().getSession()).getName())) {
+				return false;
+			}
+		}
+		return true;
+	}
+
+	/**
+	 * check if a specific page is blocked
+	 * 
+	 * @param ctx
+	 * @param page
+	 * @return
+	 * @throws Exception
+	 */
+	private static boolean canModifyCurrentPage(ContentContext ctx, MenuElement page) throws Exception {
+		GlobalContext globalContext = GlobalContext.getInstance(ctx.getRequest());
+		IUserFactory adminUserFactory = AdminUserFactory.createUserFactory(globalContext, ctx.getRequest().getSession());
+
+		if (page.isBlocked()) {
+			if (!page.getBlocker().equals(adminUserFactory.getCurrentUser(ctx.getRequest().getSession()).getName())) {
 				return false;
 			}
 		}
@@ -567,10 +599,12 @@ public class Edit extends AbstractModuleAction {
 		return null;
 	}
 
-	public static final String performDelete(ContentContext ctx, HttpServletRequest request, HttpServletResponse response, I18nAccess i18nAccess) throws Exception {
-		if (!canModifyCurrentPage(ctx)) {
-			return i18nAccess.getText("action.block");
+	public static final String performDelete(ContentContext ctx, HttpServletRequest request, HttpServletResponse response, I18nAccess i18nAccess, MessageRepository messageRepository) throws Exception {
+		if (!canModifyCurrentPage(ctx) || !checkPageSecurity(ctx)) {
+			messageRepository.setGlobalMessageAndNotification(ctx, new GenericMessage(i18nAccess.getText("action.block"), GenericMessage.ERROR));
+			return null;
 		}
+
 		String id = request.getParameter("id");
 		if (id != null) {
 			ClipBoard clipBoard = ClipBoard.getInstance(request);
@@ -999,6 +1033,7 @@ public class Edit extends AbstractModuleAction {
 	}
 
 	public static String performMovePage(RequestService rs, ContentContext ctx, GlobalContext globalContext, ContentService content, I18nAccess i18nAccess, MessageRepository messageRepository) throws Exception {
+
 		String pageName = rs.getParameter("page", null);
 		String pagePreviousName = rs.getParameter("previous", null);
 		if (pageName == null || pagePreviousName == null) {
@@ -1014,6 +1049,12 @@ public class Edit extends AbstractModuleAction {
 			}
 		}
 		MenuElement page = content.getNavigation(ctx).searchChildFromName(pageName);
+
+		if (!canModifyCurrentPage(ctx, page) || !checkPageSecurity(ctx, page)) {
+			messageRepository.setGlobalMessageAndNotification(ctx, new GenericMessage(i18nAccess.getText("action.block"), GenericMessage.ERROR));
+			return null;
+		}
+
 		if (page == null) {
 			return "page not found : " + pageName;
 		}
@@ -1046,7 +1087,8 @@ public class Edit extends AbstractModuleAction {
 	public static String performPastePage(RequestService rs, ContentContext ctx, GlobalContext globalContext, EditContext editCtx, ContentService content, MessageRepository messageRepository, I18nAccess i18nAccess) throws Exception {
 		String msg = null;
 
-		if (!checkPageSecurity(ctx)) {
+		if (!canModifyCurrentPage(ctx) || !checkPageSecurity(ctx)) {
+			messageRepository.setGlobalMessageAndNotification(ctx, new GenericMessage(i18nAccess.getText("action.block"), GenericMessage.ERROR));
 			return null;
 		}
 
@@ -1106,6 +1148,12 @@ public class Edit extends AbstractModuleAction {
 	}
 
 	public static String performPasteComp(RequestService rs, ContentContext ctx, ContentService content, ClipBoard clipboard, Module currentModule, PersistenceService persistenceService, MessageRepository messageRepository, I18nAccess i18nAccess) throws Exception {
+
+		if (!canModifyCurrentPage(ctx) || !checkPageSecurity(ctx)) {
+			messageRepository.setGlobalMessageAndNotification(ctx, new GenericMessage(i18nAccess.getText("action.block"), GenericMessage.ERROR));
+			return null;
+		}
+
 		String previous = rs.getParameter("previous", null);
 		if (previous == null) {
 			return "bad request structure : need 'previous' parameter.";

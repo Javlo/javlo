@@ -641,9 +641,6 @@ public class GlobalContext implements Serializable {
 			return Collections.emptySet();
 		}
 		String[] roles = StringHelper.stringToArray(roleRaw);
-		for (int i = 0; i < roles.length; i++) {
-			roles[i] = '[' + roles[i] + ']';
-		}
 		Set<String> outRole = new HashSet<String>(Arrays.asList(roles));
 		return outRole;
 	}
