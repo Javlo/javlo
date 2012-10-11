@@ -110,7 +110,10 @@ for (int i=0; i<components.length; i++) {
 	totalComp++;
 	String inputSuffix = "-"+comp.getId();
 	String helpText = componentContext.getHelpHTML(ctx, comp);
-%>
+	if (comp instanceof IContainer && ((IContainer)comp).isOpen(ctx)) {
+	     %><%=((IContainer)comp).getOpenCode(ctx)%><%
+	
+}%>
  <div id="comp-<%=comp.getId()%>" class="<%=comp.getType()%>">
  <input type="hidden" name="components" value="<%=comp.getId()%>" />
  <div class="tabs component">  	  
@@ -157,7 +160,11 @@ for (int i=0; i<components.length; i++) {
 	}%>
   </div>
  </div><%
- }%>
+ }
+ if (comp instanceof IContainer && !((IContainer)comp).isOpen(ctx)) {
+    %><%=((IContainer)comp).getCloseCode(ctx)%><%
+
+}%>
  <div class="new-component-container" id="comp-child-<%=comp.getId()%>"></div><%
   if (totalComp > 40 && request.getParameter("display-all") == null) {
   %>
@@ -165,7 +172,8 @@ for (int i=0; i<components.length; i++) {
 	<a class="action-button" href="${info.currentURL}?display-all=true">${i18n.edit["edit.message.display-all-components"]}</a>
   </div><%
   i = components.length; // break  
-  }
+}
+
   %>  
 <%}
 %>
