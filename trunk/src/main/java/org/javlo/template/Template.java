@@ -1214,12 +1214,15 @@ public class Template implements Comparable<Template> {
 	}
 
 	public synchronized String getRenderer(ContentContext ctx) throws IOException, BadXMLException {
+		
 		String renderer = getRendererFile(ctx.getDevice());
 
 		GlobalContext globalContext = GlobalContext.getInstance(ctx.getRequest());
 
 		String jspPath = URLHelper.mergePath(getTemplateTargetFolder(globalContext), renderer);
 		File jspFile = new File(jspPath);
+		
+		System.out.println("***** Template.getRenderer : jspFile.exists() = "+jspFile.exists()); //TODO: remove debug trace
 
 		if (!jspFile.exists()) {
 			importTemplateInWebapp(globalContext.getStaticConfig(), ctx);
@@ -1479,9 +1482,11 @@ public class Template implements Comparable<Template> {
 		return config.getRealPath(getLocalWorkTemplateFolder());
 	}
 
-	public void importTemplateInWebapp(StaticConfig config, ContentContext ctx) throws IOException {
-
+	public void importTemplateInWebapp(StaticConfig config, ContentContext ctx) throws IOException {		
 		GlobalContext globalContext = null;
+		if (ctx != null) {
+			globalContext = GlobalContext.getInstance(ctx.getRequest());
+		}
 		String templateFolder = config.getTemplateFolder();
 		File templateSrc = new File(URLHelper.mergePath(templateFolder, getSourceFolder()));
 		if (templateSrc.exists()) {

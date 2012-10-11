@@ -126,20 +126,6 @@ public class AccessServlet extends HttpServlet {
 	public void init() throws ServletException {
 		super.init();
 
-		System.out.println("********************");
-		System.out.println("*** IO LEAK TEST ***");
-		System.out.println("********************");
-
-		try {
-			ImageIOLeakTest.test(getServletContext());
-		} catch (IOException e2) {
-			e2.printStackTrace();
-		}
-
-		System.out.println("*********************");
-		System.out.println("*** /IO LEAK TEST ***");
-		System.out.println("*********************");
-
 		try {
 			DebugHelper.updateLoggerLevel(getServletContext());
 		} catch (Exception e1) {
