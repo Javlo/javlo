@@ -208,4 +208,40 @@ public class UserAction extends AbstractModuleAction {
 
 	}
 
+	public static String performChangePassword(RequestService rs, ContentContext ctx, GlobalContext globalContext, HttpSession session, StaticConfig staticConfig, MessageRepository messageRepository, I18nAccess i18nAccess) {
+		String pwd = rs.getParameter("password", null);
+		String newPwd = rs.getParameter("newpassword", null);
+
+		UserModuleContext userContext = UserModuleContext.getInstance(ctx.getRequest());
+		IUserFactory userFactory = userContext.getUserFactory(ctx);
+		User user = userFactory.getCurrentUser(session);
+
+		if (staticConfig.isPasswordEncryt()) {
+			pwd = StringHelper.encryptPassword(pwd);
+		}
+
+		if (user.getPassword().equals(pwd)) {
+			if (newPwd == null || newPwd.length() < 4) {
+				messageRepository.setGlobalMessage(new GenericMessage(i18nAccess.getText("user.message.password-to-short"), GenericMessage.ERROR));
+			} else {
+				IUserInfo ui = user.getUserInfo();
+				if (staticConfig.isPasswordEncryt()) {
+					newPwd = StringHelper.encryptPassword(newPwd);
+				}
+				ui.setPassword(newPwd);
+				try {
+					userFactory.updateUserInfo(ui);
+					userFactory.store();
+					messageRepository.setGlobalMessage(new GenericMessage(i18nAccess.getText("user.message.ok-change-password"), GenericMessage.INFO));
+				} catch (IOException e) {
+					e.printStackTrace();
+					return e.getMessage();
+				}
+			}
+		} else {
+			messageRepository.setGlobalMessage(new GenericMessage(i18nAccess.getText("user.message.bad-password"), GenericMessage.ERROR));
+		}
+
+		return null;
+	}
 }

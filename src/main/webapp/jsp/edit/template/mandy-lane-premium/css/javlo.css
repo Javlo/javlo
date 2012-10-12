@@ -113,6 +113,11 @@ a.popup span {
 	min-height: 36px;
 }
 
+.standard-form .line .action {
+	float: right;
+	margin: 3px 20px 0 0;
+}
+
 .standard-form .inline {
 	display: inline-block;
 	margin-top: 10px;
@@ -1091,6 +1096,6 @@ body.previewEdit {
     height: 20px;
 }
 
-fieldset .one_half {
+.one_half {
 	width: 46%;
 }
