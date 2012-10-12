@@ -267,6 +267,13 @@ public class ImageTransformServlet extends HttpServlet {
 			}
 		}
 
+		/** align on grid **/
+		int newWidth = ImageConfig.alignToGrid(img.getWidth(), config.getGridWidth(ctx.getDevice(), filter, area));
+		int newHeight = ImageConfig.alignToGrid(img.getHeight(), config.getGridHeight(ctx.getDevice(), filter, area));
+		if (newWidth != img.getWidth() || newHeight != img.getHeight()) {
+			img = ImageEngine.resize(img, newWidth, newHeight, true, false, 0, 0, 0, 0, null, staticInfo.getFocusZoneX(ctx), staticInfo.getFocusZoneY(ctx), config.isFocusZone(ctx.getDevice(), filter, area));
+		}
+
 		// org.javlo.helper.Logger.stepCount("transform", "start - transformation - 7");
 
 		if (img == null) {
@@ -291,12 +298,7 @@ public class ImageTransformServlet extends HttpServlet {
 				if (!"png".equals(fileExtension) && !"gif".equals(fileExtension)) {
 					img = ImageEngine.removeAlpha(img);
 				}
-				/*
-				 * if ("jpg".equals(fileExtension)) { ImageEngine.compressJpegFile(img, outImage, 0.9); } else {
-				 */
-				// fileExtension never null for now, see ImageConfig
 				ImageIO.write(img, fileExtension, outImage);
-				/* } */
 			} finally {
 				outImage.close();
 			}
