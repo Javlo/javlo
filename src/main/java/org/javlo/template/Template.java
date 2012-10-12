@@ -1221,8 +1221,6 @@ public class Template implements Comparable<Template> {
 
 		String jspPath = URLHelper.mergePath(getTemplateTargetFolder(globalContext), renderer);
 		File jspFile = new File(jspPath);
-		
-		System.out.println("***** Template.getRenderer : jspFile.exists() = "+jspFile.exists()); //TODO: remove debug trace
 
 		if (!jspFile.exists()) {
 			importTemplateInWebapp(globalContext.getStaticConfig(), ctx);

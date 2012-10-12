@@ -42,7 +42,7 @@ public class ImageConfig {
 		} else {
 			try {
 				properties.load(new InputStreamReader(in));
-			} catch (Exception e) {				  	
+			} catch (Exception e) {
 				logger.warning("config file for thumbnails can not be loaded (msg: " + e.getMessage() + ")");
 			} finally {
 				ResourceHelper.closeResource(in);
@@ -55,7 +55,7 @@ public class ImageConfig {
 		} else {
 			try {
 				properties.load(new InputStreamReader(in));
-			} catch (Exception e) {				
+			} catch (Exception e) {
 				logger.warning("config file for thumbnails can not be loaded (msg: " + e.getMessage() + ")");
 			} finally {
 				ResourceHelper.closeResource(in);
@@ -149,6 +149,40 @@ public class ImageConfig {
 		}
 	}
 
+	public static int alignToGrid(int size, int grid) {
+		if (grid > 0) {
+			return size - size % grid;
+		} else {
+			return size;
+		}
+	}
+
+	public int getGridWidth(Device device, String filter, String area) {
+		if (device != null) {
+
+			String key = getKey(device, filter, area, "grid-width");
+
+			int deviceWith = properties.getInt(key, -1);
+			if (deviceWith != -1) {
+				return deviceWith;
+			}
+		}
+		return properties.getInt(filter + ".grid-width", -1);
+	}
+
+	public int getGridHeight(Device device, String filter, String area) {
+		if (device != null) {
+
+			String key = getKey(device, filter, area, "grid-height");
+
+			int deviceWith = properties.getInt(key, -1);
+			if (deviceWith != -1) {
+				return deviceWith;
+			}
+		}
+		return properties.getInt(filter + ".grid-height", -1);
+	}
+
 	public int getWidth(Device device, String filter, String area) {
 		if (device != null) {
 
@@ -164,7 +198,7 @@ public class ImageConfig {
 
 	public int getMaxWidth(Device device, String filter, String area) {
 		String key = getKey(device, filter, area, "max-width");
-		return  properties.getInt(key, -1);		
+		return properties.getInt(key, -1);
 	}
 
 	public int getHeight(Device device, String filter, String area) {
@@ -181,27 +215,27 @@ public class ImageConfig {
 
 	public int getMaxHeight(Device device, String filter, String area) {
 		String key = getKey(device, filter, area, "max-height");
-		return  properties.getInt(key, -1);
+		return properties.getInt(key, -1);
 	}
 
 	public int getMarginLeft(Device device, String filter, String area) {
 		String key = getKey(device, filter, area, "margin-left");
-		return  properties.getInt(key, 0);
+		return properties.getInt(key, 0);
 	}
 
 	public int getMarginRigth(Device device, String filter, String area) {
 		String key = getKey(device, filter, area, "margin-right");
-		return  properties.getInt(key, 0);
+		return properties.getInt(key, 0);
 	}
 
 	public int getMarginTop(Device device, String filter, String area) {
 		String key = getKey(device, filter, area, "margin-top");
-		return  properties.getInt(key, 0);
+		return properties.getInt(key, 0);
 	}
 
 	public int getMarginBottom(Device device, String filter, String area) {
 		String key = getKey(device, filter, area, "margin-bottom");
-		return  properties.getInt(key, 0);
+		return properties.getInt(key, 0);
 	}
 
 	public String getFileExtension(Device device, String filter, String area) {

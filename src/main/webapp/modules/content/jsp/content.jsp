@@ -44,6 +44,8 @@ I18nAccess i18nAccess = I18nAccess.getInstance ( globalContext, request.getSessi
 
 ClipBoard clipBoard = ClipBoard.getInstance(request);
 
+Stack<String> closeContainerStack = new Stack<String>();
+
 IContentVisualComponent currentTypeComponent = ComponentFactory.getComponentWithType(ctx, editContext.getActiveType());
 
 String typeName = StringHelper.getFirstNotNull( currentTypeComponent.getComponentLabel(ctx,globalContext.getEditLanguage()), i18nAccess.getText ( "content."+currentTypeComponent.getType()));
@@ -111,9 +113,10 @@ for (int i=0; i<components.length; i++) {
 	String inputSuffix = "-"+comp.getId();
 	String helpText = componentContext.getHelpHTML(ctx, comp);
 	if (comp instanceof IContainer && ((IContainer)comp).isOpen(ctx)) {
+		closeContainerStack.push(((IContainer)comp).getCloseCode(ctx));
 	     %><%=((IContainer)comp).getOpenCode(ctx)%><%
 	
-}%>
+	}%>
  <div id="comp-<%=comp.getId()%>" class="<%=comp.getType()%>">
  <input type="hidden" name="components" value="<%=comp.getId()%>" />
  <div class="tabs component">  	  
@@ -161,10 +164,12 @@ for (int i=0; i<components.length; i++) {
   </div>
  </div><%
  }
- if (comp instanceof IContainer && !((IContainer)comp).isOpen(ctx)) {
+ if (comp instanceof IContainer && !((IContainer)comp).isOpen(ctx) && closeContainerStack.size() > 0) {
+	 closeContainerStack.pop();
     %><%=((IContainer)comp).getCloseCode(ctx)%><%
 
-}%>
+}
+%>
  <div class="new-component-container" id="comp-child-<%=comp.getId()%>"></div><%
   if (totalComp > 40 && request.getParameter("display-all") == null) {
   %>
@@ -176,4 +181,7 @@ for (int i=0; i<components.length; i++) {
 
   %>  
 <%}
+for(String closeCode : closeContainerStack) {
+	%><%=closeCode%><%
+}
 %>
