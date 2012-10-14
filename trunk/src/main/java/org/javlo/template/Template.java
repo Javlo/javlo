@@ -1214,7 +1214,7 @@ public class Template implements Comparable<Template> {
 	}
 
 	public synchronized String getRenderer(ContentContext ctx) throws IOException, BadXMLException {
-		
+
 		String renderer = getRendererFile(ctx.getDevice());
 
 		GlobalContext globalContext = GlobalContext.getInstance(ctx.getRequest());
@@ -1480,7 +1480,7 @@ public class Template implements Comparable<Template> {
 		return config.getRealPath(getLocalWorkTemplateFolder());
 	}
 
-	public void importTemplateInWebapp(StaticConfig config, ContentContext ctx) throws IOException {		
+	public void importTemplateInWebapp(StaticConfig config, ContentContext ctx) throws IOException {
 		GlobalContext globalContext = null;
 		if (ctx != null) {
 			globalContext = GlobalContext.getInstance(ctx.getRequest());
@@ -1629,6 +1629,9 @@ public class Template implements Comparable<Template> {
 
 	public boolean isTemplateInWebapp(ContentContext ctx) throws IOException {
 		GlobalContext globalContext = null;
+		if (ctx != null) {
+			globalContext = GlobalContext.getInstance(ctx.getRequest());
+		}
 		File templateTgt = new File(URLHelper.mergePath(getWorkTemplateFolder(), getFolder(globalContext)));
 		return templateTgt.exists();
 	}
