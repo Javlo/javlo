@@ -99,6 +99,29 @@ public class UserAction extends AbstractModuleAction {
 		return null;
 	}
 
+	public String performUpdateCurrent(ContentContext ctx, GlobalContext globalContext, RequestService requestService, StaticConfig staticConfig, AdminUserSecurity adminUserSecurity, AdminUserFactory adminUserFactory, HttpSession session, Module currentModule, I18nAccess i18nAccess, MessageRepository messageRepository) {
+		if (requestService.getParameter("ok", null) != null) {
+			UserModuleContext userContext = UserModuleContext.getInstance(ctx.getRequest());
+			IUserFactory userFactory = userContext.getUserFactory(ctx);
+			User user = userFactory.getUser(requestService.getParameter("user", null));
+			if (user == null) {
+				return "user not found : " + requestService.getParameter("user", null);
+			}
+			IUserInfo userInfo = user.getUserInfo();
+			try {
+				BeanHelper.copy(new RequestParameterMap(ctx.getRequest()), userInfo);
+				userFactory.updateUserInfo(userInfo);
+			} catch (Exception e) {
+				e.printStackTrace();
+				return e.getMessage();
+			}
+
+			messageRepository.setGlobalMessageAndNotification(ctx, new GenericMessage(i18nAccess.getText("user.message.updated", new String[][] { { "user", user.getLogin() } }), GenericMessage.INFO));
+		}
+
+		return null;
+	}
+
 	public String performUpdate(ContentContext ctx, GlobalContext globalContext, RequestService requestService, StaticConfig staticConfig, AdminUserSecurity adminUserSecurity, AdminUserFactory adminUserFactory, HttpSession session, Module currentModule, I18nAccess i18nAccess, MessageRepository messageRepository) {
 		if (requestService.getParameter("ok", null) != null) {
 			UserModuleContext userContext = UserModuleContext.getInstance(ctx.getRequest());
@@ -121,7 +144,6 @@ public class UserAction extends AbstractModuleAction {
 				}
 
 				userFactory.updateUserInfo(userInfo);
-				userFactory.store();
 
 				Set<String> newRoles = new HashSet<String>();
 				Set<String> allRoles = userFactory.getAllRoles(globalContext, session);

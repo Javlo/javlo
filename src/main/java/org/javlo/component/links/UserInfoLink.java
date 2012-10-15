@@ -41,6 +41,37 @@ public class UserInfoLink extends AbstractVisualComponent {
 	}
 
 	@Override
+	public void prepareView(ContentContext ctx) throws Exception {
+		StringWriter writer = new StringWriter();
+		PrintWriter out = new PrintWriter(writer);
+
+		GlobalContext globalContext = GlobalContext.getInstance(ctx.getRequest());
+
+		List<String> selectedUser = getUserIds();
+
+		IUserFactory userFact = AdminUserFactory.createUserFactory(globalContext, ctx.getRequest().getSession());
+		List<IUserInfo> users = userFact.getUserInfoList();
+		List<IUserInfo> finalUsers = new LinkedList<IUserInfo>();
+		for (IUserInfo user : users) {
+			String userName = user.getLogin();
+			out.println("<span class=\"line-inline\">");
+			String checked = "";
+			String inputName = getId(userName);
+			if (selectedUser.contains(user.getLogin())) {
+				finalUsers.add(user);
+			}
+			out.println("<input type=\"checkbox\" name=\"" + inputName + "\" id=\"" + getId(userName) + "\"" + checked + " />");
+			out.println("<label for=\"" + getId(userName) + "\">" + userName + "</label>");
+			out.println("</span>");
+		}
+
+		ctx.getRequest().setAttribute("users", finalUsers);
+
+		out.close();
+
+	}
+
+	@Override
 	protected String getEditXHTMLCode(ContentContext ctx) throws Exception {
 		StringWriter writer = new StringWriter();
 		PrintWriter out = new PrintWriter(writer);
@@ -94,12 +125,6 @@ public class UserInfoLink extends AbstractVisualComponent {
 			setValue(value);
 			setModify();
 		}
-
-	}
-
-	@Override
-	public void prepareView(ContentContext ctx) throws Exception {
-		super.prepareView(ctx);
 
 	}
 

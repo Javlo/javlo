@@ -59,8 +59,6 @@ public class Multimedia extends TimeRangeComponent implements IImageTitle {
 
 	protected boolean acceptStaticInfo(ContentContext ctx, StaticInfo info, int index) {
 
-		System.out.println("***** Multimedia.acceptStaticInfo : info file : " + info.getFile()); // TODO: remove debug trace
-
 		Collection<String> tags = getTags();
 		if (tags.size() > 0) {
 			tags = new HashSet<String>(tags);

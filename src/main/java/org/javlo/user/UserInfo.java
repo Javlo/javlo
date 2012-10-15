@@ -38,6 +38,7 @@ public class UserInfo implements Comparable<IUserInfo>, IUserInfo, Serializable 
 	private String lastName = "";
 	private String email = "";
 	private String organization = "";
+	private String function = "";
 	private String address = "";
 	private String postCode = "";
 	private String city = "";
@@ -442,5 +443,13 @@ public class UserInfo implements Comparable<IUserInfo>, IUserInfo, Serializable 
 
 	public void setMobile(String mobile) {
 		this.mobile = mobile;
+	}
+
+	public String getFunction() {
+		return function;
+	}
+
+	public void setFunction(String function) {
+		this.function = function;
 	}
 }
