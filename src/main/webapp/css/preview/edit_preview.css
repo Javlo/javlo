@@ -487,6 +487,10 @@
 }
 
 #preview_command .pc_command #tc_replace_current_page_button {
+	background-image: url('../../images/icons/copy.png');
+}
+
+#preview_command .pc_command #tc_replace_current_page_and_children_button {
 	background-image: url('../../images/icons/add_page.png');
 }
 

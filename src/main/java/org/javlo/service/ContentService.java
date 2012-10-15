@@ -486,11 +486,15 @@ public class ContentService {
 		}
 	}
 
-	public void releaseTimeTravelerNav() {
+	public void releaseTimeTravelerNav(ContentContext ctx) throws Exception {
 		clearComponentCache();
 		setTimeTravelerNav(null);
 		if (this.timeTravelerGlobalMap != null) {
 			this.timeTravelerGlobalMap.clear();
+		}
+		if (ctx != null) {
+			ctx.setCurrentPageCached(null);
+			InfoBean.updateInfoBean(ctx);
 		}
 	}
 
