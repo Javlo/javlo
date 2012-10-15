@@ -32,7 +32,7 @@
 <form id="form-edit-user" class="standard-form" action="${info.currentURL}" method="post">
 
 <div>
-	<input type="hidden" name="webaction" value="update" />
+	<input type="hidden" name="webaction" value="updateCurrent" />
 	<input type="hidden" name="user" value="${user.name}" />
 </div>
 
@@ -58,7 +58,11 @@
 	<div class="line">
 		<label for="organization">organization</label>
 		<input type="text" id="organization" name="organization" value="${userInfoMap["organization"]}" /> 
-	</div>	
+	</div>
+	<div class="line">
+		<label for="function">function</label>
+		<input type="text" id="function" name="function" value="${userInfoMap["function"]}" /> 
+	</div>
 	<div class="line">
 		<label for="phone">phone</label>
 		<input type="text" id="phone" name="phone" value="${userInfoMap["phone"]}" /> 
@@ -91,7 +95,7 @@
 	</div>
 	<div class="line">
 		<label for="info">info</label>
-		<textarea id="info" name="info">${userInfoMap["phone"]}</textarea>
+		<textarea id="info" name="info">${userInfoMap["info"]}</textarea>
 	</div>
 </div>
 </fieldset>

@@ -93,8 +93,10 @@ public class UserInterfaceContext {
 	}
 
 	public void setCurrentModule(String context) throws IOException {
-		this.currentModule = context;
-		store();
+		if (!this.currentModule.equals(context)) {
+			this.currentModule = context;
+			store();
+		}
 	}
 
 }

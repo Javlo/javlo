@@ -53,7 +53,6 @@ public class UserModuleContext {
 		}
 
 		if (adminUserSecurity.isGod(adminUserFactory.getCurrentUser(session))) {
-			System.out.println("***** UserModuleContext.getInstance : GOD"); // TODO: remove debug trace
 			userContext.modes.remove(VIEW_MY_SELF);
 			if (userContext.mode.equals(VIEW_MY_SELF)) {
 				userContext.mode = ADMIN_USERS_LIST;
