@@ -20,7 +20,7 @@ editCtx.setRenderMode(ContentContext.EDIT_MODE);
 ContentService content = ContentService.getInstance(globalContext);
 %>
 <div id="preview_command" lang="${info.editLanguage}" class="edit-${not empty currentUser}">
-	<div class="pc_header">${i18n.edit["preview.command"]}</div>
+	<div class="pc_header">${i18n.edit["time.command"]}</div>
 	<div class="pc_body">
 		<c:if test="${not empty currentUser}">
 			<form id="pc_logout_form" action="${info.currentURL}" method="post">
@@ -29,79 +29,84 @@ ContentService content = ContentService.getInstance(globalContext);
 				</div>
 			</form>
 			<fieldset class="pc_command">
-				<legend>${i18n.edit['global.command']}</legend>
 				<div class="pc_form_line">
 					<form id="pc_form" action="${info.currentURL}" method="post">
 						<div class="pc_line">
 							<input type="hidden" name="webaction" value="time.replacecurrentpage" />
-							<input id="tc_replace_current_page_button" type="submit" title="replace current page in edit" class="pc_edit_true" />
+							<input id="tc_replace_current_page_button" type="submit" title="${i18n.edit['time.action.replace-current-page']}" class="pc_edit_true" />
+						</div>
+					</form>
+					<form id="pc_form" action="${info.currentURL}" method="post">
+						<div class="pc_line">
+							<input type="hidden" name="webaction" value="time.ReplaceCurrentPageAndChildren" />
+							<input id="tc_replace_current_page_and_children_button" type="submit" title="${i18n.edit['time.action.replace-current-page-and-children']}" class="pc_edit_true" />
 						</div>
 					</form>
 				</div>
 			</fieldset>
 			<fieldset>
-				<legend>status in preview</legend>
-				<div class="pc_line">
-					The page is <%
+				<legend>${i18n.edit["time.label.status"]}</legend>
+				<div class="pc_line"><%
 					MenuElement timePage = ctx.getCurrentPage();
 					String path = timePage.getPath();
 					MenuElement viewPage = content.getNavigation(editCtx).searchChild(editCtx, path);
+					String statusKey = "time.status";
 					if (viewPage == null) {
-						%>deleted<%
+						statusKey += ".deleted";
 					} else {
 						boolean metadataEquals = timePage.isMetadataEquals(viewPage);
 						boolean contentEquals = timePage.isContentEquals(viewPage);
 						boolean childrenEquals = timePage.isChildrenEquals(viewPage);
 						if (metadataEquals && contentEquals && childrenEquals) {
-							%>the same<%
+							statusKey += ".same";
 						} else {
-							%>different (<%
-							if (metadataEquals) {
-								%>metadata<%
+							statusKey += ".different.on";
+							if (!metadataEquals) {
+								statusKey += "-metadata";
 							}
-							if (contentEquals) {
-								if (metadataEquals) {
-									%>, <%
-								}
-								%>content<%
+							if (!contentEquals) {
+								statusKey += "-content";
 							}
-							if (childrenEquals) {
-								if (metadataEquals || contentEquals) {
-									%>, <%
-								}
-								%>children<%
+							if (!childrenEquals) {
+								statusKey += "-children";
 							}
-							%>)<%
 						}
 					}
-					%>
+					pageContext.setAttribute("statusKey", statusKey);
+					%>${i18n.edit[statusKey]}
 				</div>
 			</fieldset>
 			<form action="${info.currentURL}" method="post">
 				<fieldset>
-					<legend>set travel time</legend>
+					<legend>${i18n.edit["time.label.set-travel-time"]}</legend>
 					<div class="pc_line">
 						<input type="hidden" name="webaction" value="time.settraveltime" />
-						<input type="text" name="date" value="<%= StringHelper.renderDate(globalContext.getTimeTravelerContext().getTravelTime()==null ? new Date() : globalContext.getTimeTravelerContext().getTravelTime(), "dd/MM/yy HH:mm:ss") %>" />
-						<input type="submit" value="set" />
+						<input type="text" name="date" value="<%= globalContext.getTimeTravelerContext().getTravelTime()==null ? "" : 
+							StringHelper.renderDate(globalContext.getTimeTravelerContext().getTravelTime(), "dd/MM/yy HH:mm:ss") %>" />
+						<input type="submit" value="${i18n.edit['time.action.set']}" />
+						<input type="submit" name="previous" value="${i18n.edit['time.action.previous']}" />
+						<input type="submit" name="next" value="${i18n.edit['time.action.next']}" />
 					</div>
 				</fieldset>
 			</form>
 			<form action="${info.currentURL}" method="post">
 				<fieldset>
-					<legend>set travel time</legend>
+					<legend>${i18n.edit["time.label.set-travel-time"]}</legend>
 					<div class="pc_line">
 						<input type="hidden" name="webaction" value="time.settraveltime" />
 						<select name="date">
-							<option value=""><%=StringHelper.renderDate(globalContext.getPublishDate(), "dd/MM/yy HH:mm:ss")%>-current</option>
+							<option value=""><%=StringHelper.renderDate(globalContext.getPublishDate(), "dd/MM/yy HH:mm:ss")%></option>
 						<%
 						List<Date> dates = PersistenceService.getInstance(globalContext).getBackupDates();
 						for (Date date : dates) {
-							%><option value="<%=StringHelper.renderDate(date, "dd/MM/yy HH:mm:ss")%>"><%=StringHelper.renderDate(date, "dd/MM/yy HH:mm:ss")%></option><%
+							%><option <%if (date.equals(globalContext.getTimeTravelerContext().getTravelTime())) {%>selected="selected"<%}
+								%> value="<%=StringHelper.renderDate(date, "dd/MM/yy HH:mm:ss")%>"><%=StringHelper.renderDate(date, "dd/MM/yy HH:mm:ss")%></option><%
 						}
 						%>
 						</select>
-						<input type="submit" value="set" />
+						<input type="submit" value="${i18n.edit['time.action.set']}" />
+						<input type="submit" name="previous" value="${i18n.edit['time.action.previous']}" />
+						<input type="submit" name="next" value="${i18n.edit['time.action.next']}" />
 					</div>
 				</fieldset>
 			</form>
