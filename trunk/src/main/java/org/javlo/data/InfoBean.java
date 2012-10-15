@@ -101,7 +101,7 @@ public class InfoBean {
 		/*
 		 * if (ctx.getRenderMode() != ContentContext.EDIT_MODE) { info.setContentLanguage(ctx.getRequestContentLanguage()); } else { info.setContentLanguage(globalContext.getEditLanguage()); }
 		 */
-		info.setEditLanguage(globalContext.getEditLanguage());
+		info.setEditLanguage(globalContext.getEditLanguage(ctx.getRequest().getSession()));
 		info.setContentLanguages(globalContext.getContentLanguages());
 		info.setLanguages(globalContext.getLanguages());
 		info.setLanguage(ctx.getLanguage());

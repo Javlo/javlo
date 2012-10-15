@@ -13,10 +13,12 @@ import org.apache.commons.lang.NotImplementedException;
 
 public class ReadOnlyPropertiesConfigurationMap implements Map<String, String> {
 
-	private PropertiesConfiguration prop;
+	private final PropertiesConfiguration prop;
+	private boolean displayKey = false;
 
-	public ReadOnlyPropertiesConfigurationMap(PropertiesConfiguration inProp) {
-		prop = inProp;
+	public ReadOnlyPropertiesConfigurationMap(PropertiesConfiguration inProp, boolean displayKey) {
+		this.prop = inProp;
+		this.displayKey = displayKey;
 	}
 
 	@Override
@@ -26,7 +28,7 @@ public class ReadOnlyPropertiesConfigurationMap implements Map<String, String> {
 
 	@Override
 	public boolean containsKey(Object key) {
-		return prop.containsKey((String)key);
+		return prop.containsKey((String) key);
 	}
 
 	@Override
@@ -42,18 +44,22 @@ public class ReadOnlyPropertiesConfigurationMap implements Map<String, String> {
 
 	@Override
 	public Set<java.util.Map.Entry<String, String>> entrySet() {
-		Map<String, String> outMap = new HashMap<String,String>();
+		Map<String, String> outMap = new HashMap<String, String>();
 		Iterator<String> keys = prop.getKeys();
 		while (keys.hasNext()) {
 			String key = keys.next();
-			outMap.put(key, prop.getString(key));
+			outMap.put(key, get(key));
 		}
 		return outMap.entrySet();
 	}
 
 	@Override
 	public String get(Object key) {
-		return prop.getString((String)key);
+		if (displayKey) {
+			return (String) key;
+		} else {
+			return prop.getString((String) key);
+		}
 	}
 
 	@Override
@@ -66,7 +72,7 @@ public class ReadOnlyPropertiesConfigurationMap implements Map<String, String> {
 		Set<String> outKeys = new HashSet<String>();
 		Iterator<String> keys = prop.getKeys();
 		while (keys.hasNext()) {
-			outKeys.add(keys.next());			
+			outKeys.add(keys.next());
 		}
 		return outKeys;
 	}
@@ -107,6 +113,5 @@ public class ReadOnlyPropertiesConfigurationMap implements Map<String, String> {
 		}
 		return outValues;
 	}
-
 
 }

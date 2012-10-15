@@ -158,7 +158,7 @@ public class FieldFile extends Field implements IStaticContainer {
 		PrintWriter out = new PrintWriter(writer);
 
 		out.println("<fieldset>");
-		out.println("<legend>" + getLabel(new Locale(globalContext.getEditLanguage())) + "</legend>");
+		out.println("<legend>" + getLabel(new Locale(globalContext.getEditLanguage(ctx.getRequest().getSession()))) + "</legend>");
 		out.println("<div class=\"commands\">");
 
 		out.println("<div class=\"line\">");

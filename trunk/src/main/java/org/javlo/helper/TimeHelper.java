@@ -18,7 +18,7 @@ public class TimeHelper {
 
 	/**
 	 * set the date at the first day of the week.
-	 *
+	 * 
 	 * @param date
 	 * @return
 	 */
@@ -83,7 +83,7 @@ public class TimeHelper {
 
 	/**
 	 * check id a date in between two other date, but date in range.
-	 *
+	 * 
 	 * @param date
 	 * @param start
 	 * @param end
@@ -113,21 +113,21 @@ public class TimeHelper {
 		outCal.set(Calendar.HOUR, cal.get(Calendar.HOUR));
 		return outCal;
 	}
-	
+
 	public static Calendar convertRemoveAfterDay(Calendar cal) {
 		Calendar outCal = Calendar.getInstance();
 		outCal.setTimeInMillis(0);
 		outCal.set(Calendar.YEAR, cal.get(Calendar.YEAR));
 		outCal.set(Calendar.MONTH, cal.get(Calendar.MONTH));
-		outCal.set(Calendar.DAY_OF_MONTH, cal.get(Calendar.DAY_OF_MONTH));		
+		outCal.set(Calendar.DAY_OF_MONTH, cal.get(Calendar.DAY_OF_MONTH));
 		return outCal;
 	}
 
-
 	/**
 	 * return the date format defined in the system, depend of rendering mode, globalContext config or default java config.
-	 *
-	 * @param ctx current content
+	 * 
+	 * @param ctx
+	 *            current content
 	 * @return
 	 * @throws IOException
 	 * @throws FileNotFoundException
@@ -142,7 +142,7 @@ public class TimeHelper {
 		Locale locale;
 		if (ctx.getRenderMode() == ContentContext.EDIT_MODE) {
 			dateFormatString = i18nAccess.getText("date.full", (String) null);
-			locale = new Locale(globalContext.getEditLanguage());
+			locale = new Locale(globalContext.getEditLanguage(ctx.getRequest().getSession()));
 		} else {
 			dateFormatString = i18nAccess.getContentViewText("date.full", (String) null);
 			locale = new Locale(ctx.getRequestContentLanguage());
@@ -186,8 +186,8 @@ public class TimeHelper {
 		Calendar cal = Calendar.getInstance();
 		cal.roll(Calendar.YEAR, false);
 
-		System.out.println("** remove after minute : "+convertRemoveAfterMinutes(Calendar.getInstance()).getTime());
-		System.out.println("** remove after hour : "+convertRemoveAfterHour(Calendar.getInstance()).getTime());
+		System.out.println("** remove after minute : " + convertRemoveAfterMinutes(Calendar.getInstance()).getTime());
+		System.out.println("** remove after hour : " + convertRemoveAfterHour(Calendar.getInstance()).getTime());
 
 		System.out.println("** date     : " + StringHelper.renderTime(date));
 		System.out.println("** date 1   : " + StringHelper.renderTime(date1));

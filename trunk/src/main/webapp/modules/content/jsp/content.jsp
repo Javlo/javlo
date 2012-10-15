@@ -48,7 +48,7 @@ Stack<String> closeContainerStack = new Stack<String>();
 
 IContentVisualComponent currentTypeComponent = ComponentFactory.getComponentWithType(ctx, editContext.getActiveType());
 
-String typeName = StringHelper.getFirstNotNull( currentTypeComponent.getComponentLabel(ctx,globalContext.getEditLanguage()), i18nAccess.getText ( "content."+currentTypeComponent.getType()));
+String typeName = StringHelper.getFirstNotNull( currentTypeComponent.getComponentLabel(ctx,globalContext.getEditLanguage(request.getSession())), i18nAccess.getText ( "content."+currentTypeComponent.getType()));
 String insertHere = i18nAccess.getText("content.insert-here", new String[][] {{"type",typeName}});
 
 String pastePageHere = null;
@@ -121,7 +121,7 @@ for (int i=0; i<components.length; i++) {
  <input type="hidden" name="components" value="<%=comp.getId()%>" />
  <div class="tabs component">  	  
       <ul> 
-      	  <li class="title"><span style="color: #<%=comp.getHexColor()%>"><%=comp.getComponentLabel(ctx, globalContext.getEditLanguage()) %></span></li>	
+      	  <li class="title"><span style="color: #<%=comp.getHexColor()%>"><%=comp.getComponentLabel(ctx, globalContext.getEditLanguage(request.getSession())) %></span></li>	
           <li><a href="#tab1<%=inputSuffix%>">${i18n.edit["global.content"]}</a></li>
           <li><a href="#tab2<%=inputSuffix%>">${i18n.edit["global.config"]}</a></li>          
           <%if (helpText != null) {%><li><a href="#tab3<%=inputSuffix%>">${i18n.edit["global.help"]}</a></li><%}%>

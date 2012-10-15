@@ -76,7 +76,7 @@ public class Edit extends AbstractModuleAction {
 
 		IContentVisualComponent currentTypeComponent = ComponentFactory.getComponentWithType(ctx, editContext.getActiveType());
 
-		String typeName = StringHelper.getFirstNotNull(currentTypeComponent.getComponentLabel(ctx, globalContext.getEditLanguage()), i18nAccess.getText("content." + currentTypeComponent.getType()));
+		String typeName = StringHelper.getFirstNotNull(currentTypeComponent.getComponentLabel(ctx, globalContext.getEditLanguage(ctx.getRequest().getSession())), i18nAccess.getText("content." + currentTypeComponent.getType()));
 		String insertHere = i18nAccess.getText("content.insert-here", new String[][] { { "type", typeName } });
 
 		String pastePageHere = null;
@@ -328,7 +328,7 @@ public class Edit extends AbstractModuleAction {
 			if (!components[i].isMetaTitle() || !components[i + 1].isMetaTitle()) { // if next component is title too so the component group is empty
 				IContentVisualComponent comp = components[i];
 				if (comp.isMetaTitle() || globalContext.getComponents().contains(comp.getClass().getName()) || comp instanceof DynamicComponent) {
-					ComponentWrapper compWrapper = new ComponentWrapper(comp.getType(), comp.getComponentLabel(ctx, globalContext.getEditLanguage()), comp.getValue(ctx), comp.isMetaTitle());
+					ComponentWrapper compWrapper = new ComponentWrapper(comp.getType(), comp.getComponentLabel(ctx, globalContext.getEditLanguage(ctx.getRequest().getSession())), comp.getValue(ctx), comp.isMetaTitle());
 					if (components[i].isMetaTitle()) {
 						titleWrapper = compWrapper;
 					}
@@ -346,7 +346,7 @@ public class Edit extends AbstractModuleAction {
 		}
 		if (!components[components.length - 1].isMetaTitle()) {
 			IContentVisualComponent comp = components[components.length - 1];
-			ComponentWrapper compWrapper = new ComponentWrapper(comp.getType(), comp.getComponentLabel(ctx, globalContext.getEditLanguage()), comp.getValue(ctx), comp.isMetaTitle());
+			ComponentWrapper compWrapper = new ComponentWrapper(comp.getType(), comp.getComponentLabel(ctx, globalContext.getEditLanguage(ctx.getRequest().getSession())), comp.getValue(ctx), comp.isMetaTitle());
 			comps.add(compWrapper);
 			if (comp.getType().equals(editCtx.getActiveType())) {
 				compWrapper.setSelected(true);
@@ -379,7 +379,7 @@ public class Edit extends AbstractModuleAction {
 		if (componentBox != null) {
 			I18nAccess i18nAccess = I18nAccess.getInstance(ctx.getRequest());
 			IContentVisualComponent comp = ComponentFactory.getComponentWithType(ctx, editCtx.getActiveType());
-			componentBox.setTitle(i18nAccess.getText("components.title", new String[][] { { "component", comp.getComponentLabel(ctx, globalContext.getEditLanguage()) } }));
+			componentBox.setTitle(i18nAccess.getText("components.title", new String[][] { { "component", comp.getComponentLabel(ctx, globalContext.getEditLanguage(ctx.getRequest().getSession())) } }));
 		}
 		// }
 	}

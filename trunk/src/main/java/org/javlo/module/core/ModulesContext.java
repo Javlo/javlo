@@ -76,7 +76,7 @@ public class ModulesContext {
 						try {
 							String webappRoot = session.getServletContext().getRealPath("/");
 							String moduleRoot = dir.getAbsolutePath().replace(webappRoot, "/");
-							Module module = new Module(configFile, new Locale(globalContext.getEditLanguage()), moduleRoot, globalContext.getPathPrefix());
+							Module module = new Module(configFile, new Locale(globalContext.getEditLanguage(session)), moduleRoot, globalContext.getPathPrefix());
 
 							if (module.haveRight(session, userFactory.getCurrentUser(session)) && globalContext.getModules().contains(module.getName())) {
 								localModules.add(module);
@@ -144,7 +144,7 @@ public class ModulesContext {
 					outContext.setCurrentModule(uic.getCurrentModule());
 				}
 				i18nAccess = I18nAccess.getInstance(globalContext, session);
-				i18nAccess.setCurrentModule(globalContext, outContext.getCurrentModule());
+				i18nAccess.setCurrentModule(globalContext, session, outContext.getCurrentModule());
 			} catch (Exception e) {
 				e.printStackTrace();
 				throw new ModuleException(e.getMessage());

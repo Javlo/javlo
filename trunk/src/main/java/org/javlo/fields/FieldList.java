@@ -21,6 +21,7 @@ public class FieldList extends Field {
 		return getList(ctx, getListName(), locale).get(getValue());
 	}
 
+	@Override
 	public String getEditXHTMLCode(ContentContext ctx) throws Exception {
 		if (getListName() == null) {
 			return "list not found !";
@@ -33,13 +34,13 @@ public class FieldList extends Field {
 
 		out.println("<div class=\"line\">");
 		out.println(getEditLabelCode());
-		out.println("	<label for=\"" + getInputName() + "\">" + getLabel(new Locale(globalContext.getEditLanguage())) + " : </label>");
+		out.println("	<label for=\"" + getInputName() + "\">" + getLabel(new Locale(globalContext.getEditLanguage(ctx.getRequest().getSession()))) + " : </label>");
 		out.println("	<select id=\"" + getInputName() + "\" name=\"" + getInputName() + "\" value=\"" + StringHelper.neverNull(getValue()) + "\">");
 		Collection<Map.Entry<String, String>> valuesCol = getList(ctx, getListName(), new Locale(ctx.getContextLanguage())).entrySet();
-		//Collection<Map.Entry<String, String>> values = new TreeSet(new JavaHelper.MapEntriesSortOnValue());
+		// Collection<Map.Entry<String, String>> values = new TreeSet(new JavaHelper.MapEntriesSortOnValue());
 		Collection<Map.Entry<String, String>> values = valuesCol;
-		//values.addAll(valuesCol);
-		
+		// values.addAll(valuesCol);
+
 		for (Map.Entry<String, String> value : values) {
 			String selected = "";
 			if (getValue() != null) {
@@ -64,6 +65,7 @@ public class FieldList extends Field {
 		return writer.toString();
 	}
 
+	@Override
 	public String getType() {
 		return "list-one";
 	}

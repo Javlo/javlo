@@ -8,6 +8,7 @@ import java.security.Principal;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Map;
 import java.util.Properties;
 import java.util.Set;
@@ -35,7 +36,7 @@ public class EditContext implements Serializable {
 	 */
 	protected static Logger logger = Logger.getLogger(EditContext.class.getName());
 
-	private static final String[] EDIT_LANGUAGE = { "en", "fr" };
+	private static final List<String> EDIT_LANGUAGE = Arrays.asList(new String[] { "en", "fr" });
 
 	public static final int CONTENT_VIEW = 1;
 
@@ -557,7 +558,7 @@ public class EditContext implements Serializable {
 		this.currentArea = currentArea;
 	}
 
-	public String[] getEditLanguages() {
+	public List<String> getEditLanguages() {
 		return EDIT_LANGUAGE;
 	}
 

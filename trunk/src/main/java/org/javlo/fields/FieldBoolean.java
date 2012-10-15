@@ -27,7 +27,7 @@ public class FieldBoolean extends Field {
 
 		out.println("<div class=\"line\">");
 		out.println(getEditLabelCode());
-		out.println("	<label for=\"" + getInputName() + "\">" + getLabel(new Locale(globalContext.getEditLanguage())) + " : </label>");
+		out.println("	<label for=\"" + getInputName() + "\">" + getLabel(new Locale(globalContext.getEditLanguage(ctx.getRequest().getSession()))) + " : </label>");
 		String readOnlyHTML = "";
 		String checkedHTML = "";
 		if (isReadOnly()) {
@@ -49,7 +49,7 @@ public class FieldBoolean extends Field {
 	@Override
 	public boolean process(HttpServletRequest request) {
 		boolean modify = super.process(request);
-		if(!modify) {
+		if (!modify) {
 			RequestService requestService = RequestService.getInstance(request);
 			String value = requestService.getParameter(getInputName(), null);
 			if (value == null) {

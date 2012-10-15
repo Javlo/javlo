@@ -357,7 +357,7 @@ public class AccessServlet extends HttpServlet {
 					UserInterfaceContext uic = UserInterfaceContext.getInstance(request.getSession(), globalContext);
 					uic.setCurrentModule(requestService.getParameter("module", null));
 					moduleContext.setCurrentModule(requestService.getParameter("module", null));
-					i18nAccess.setCurrentModule(globalContext, moduleContext.getCurrentModule());
+					i18nAccess.setCurrentModule(globalContext, ctx.getRequest().getSession(), moduleContext.getCurrentModule());
 				}
 				if (requestService.getParameter("module", null) != null && requestService.getParameter("from-module", null) == null) {
 					moduleContext.setFromModule((Module) null);

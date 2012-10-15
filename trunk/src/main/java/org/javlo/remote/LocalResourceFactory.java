@@ -35,7 +35,7 @@ public class LocalResourceFactory extends AbstractResourceFactory {
 
 	private GlobalContext globalContext;
 
-	private Map<String, RemoteResourceList> remoteResourcesCache = new HashMap<String, RemoteResourceList>();
+	private final Map<String, RemoteResourceList> remoteResourcesCache = new HashMap<String, RemoteResourceList>();
 	private List<String> typesCache;
 	private Map<String, List<String>> categoriesCache;
 	private RemoteResourceList localeResources = null;
@@ -159,7 +159,7 @@ public class LocalResourceFactory extends AbstractResourceFactory {
 					if (comp instanceof MetaTitle) {
 						currentCategory = i18nAccess.getText(comp.getValue(ctx));
 					} else {
-						IRemoteResource bean = getRemoteBean(comp, new Locale(globalContext.getEditLanguage()));
+						IRemoteResource bean = getRemoteBean(comp, new Locale(globalContext.getEditLanguage(ctx.getRequest().getSession())));
 						bean.setCategory(currentCategory);
 						if (category == null || URLEncoder.encode(currentCategory, ContentContext.CHARACTER_ENCODING).equals(category)) {
 							localeResourcesForProxy.getList().add(bean);

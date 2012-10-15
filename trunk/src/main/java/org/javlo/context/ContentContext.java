@@ -388,7 +388,7 @@ public class ContentContext {
 	public String getContextLanguage() {
 		if (getRenderMode() == ContentContext.EDIT_MODE) {
 			GlobalContext globalContext = GlobalContext.getInstance(getRequest());
-			return globalContext.getEditLanguage();
+			return globalContext.getEditLanguage(getRequest().getSession());
 		} else {
 			return getLanguage();
 		}
@@ -443,7 +443,7 @@ public class ContentContext {
 	public String getContextRequestLanguage() {
 		if (getRenderMode() == ContentContext.EDIT_MODE) {
 			GlobalContext globalContext = GlobalContext.getInstance(getRequest());
-			return globalContext.getEditLanguage();
+			return globalContext.getEditLanguage(getRequest().getSession());
 		} else {
 			return getRequestContentLanguage();
 		}
