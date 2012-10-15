@@ -30,7 +30,7 @@ public class LanguageCopy extends AbstractPropertiesComponent {
 	}
 
 	static final List<String> FIELDS = Arrays.asList(new String[] { REF_LG_FIELD, REF_TYPE_FIELD });
-	
+
 	@Override
 	public List<String> getFields(ContentContext ctx) {
 		return FIELDS;
@@ -45,6 +45,7 @@ public class LanguageCopy extends AbstractPropertiesComponent {
 		return createKeyWithField(REF_LG_FIELD);
 	}
 
+	@Override
 	public String getTypeInputName() {
 		return createKeyWithField(REF_TYPE_FIELD);
 	}
@@ -104,7 +105,7 @@ public class LanguageCopy extends AbstractPropertiesComponent {
 	public String getSufixViewXHTMLCode(ContentContext ctx) {
 		return "";
 	}
-	
+
 	@Override
 	protected String getEditXHTMLCode(ContentContext ctx) throws Exception {
 		ByteArrayOutputStream outStream = new ByteArrayOutputStream();
@@ -136,14 +137,14 @@ public class LanguageCopy extends AbstractPropertiesComponent {
 				compTypeList.add(comp.getType());
 				componentList.add(comp);
 			}
-		}		
+		}
 		String[][] compsLabel = new String[compTypeList.size()][];
 		int i = 0;
-		for (IContentVisualComponent comp: componentList) {
+		for (IContentVisualComponent comp : componentList) {
 			compsLabel[i] = new String[2];
 			compsLabel[i][0] = comp.getType();
-			//compsLabel[i][1] = i18nAccess.getText("content." + comp.getType(), comp.getType());
-			compsLabel[i][1] = comp.getComponentLabel(ctx,globalContext.getEditLanguage());
+			// compsLabel[i][1] = i18nAccess.getText("content." + comp.getType(), comp.getType());
+			compsLabel[i][1] = comp.getComponentLabel(ctx, globalContext.getEditLanguage(ctx.getRequest().getSession()));
 			i++;
 		}
 		out.println(XHTMLHelper.getInputOneSelect(getTypeInputName(), compsLabel, getRefType()));

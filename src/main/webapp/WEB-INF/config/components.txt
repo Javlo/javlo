@@ -20,6 +20,7 @@ org.javlo.component.text.Paragraph
 org.javlo.component.text.XHTML
 org.javlo.component.text.WysiwygParagraph
 org.javlo.component.list.FreeTextList
+org.javlo.component.text.ContactText
 
 --content.title.links
 
@@ -39,6 +40,7 @@ org.javlo.component.links.RSSLink
 org.javlo.component.links.RSSReader
 org.javlo.component.links.MirrorComponent
 org.javlo.component.links.PageMirrorComponent
+org.javlo.component.links.UserInfoLink
 
 --content.title.graphic
 

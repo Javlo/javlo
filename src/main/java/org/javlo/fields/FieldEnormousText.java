@@ -9,7 +9,6 @@ import org.javlo.context.GlobalContext;
 import org.javlo.helper.StringHelper;
 import org.javlo.helper.XHTMLHelper;
 
-
 public class FieldEnormousText extends Field {
 
 	@Override
@@ -19,7 +18,7 @@ public class FieldEnormousText extends Field {
 		GlobalContext globalContext = GlobalContext.getInstance(ctx.getRequest());
 
 		out.println("<div class=\"line\">");
-		out.println("<label for=\"" + getInputName() + "\">" + getLabel(new Locale(globalContext.getEditLanguage())) + " : </label>");
+		out.println("<label for=\"" + getInputName() + "\">" + getLabel(new Locale(globalContext.getEditLanguage(ctx.getRequest().getSession()))) + " : </label>");
 		out.print("<textarea rows=\"30\" id=\"" + getInputName() + "\" name=\"" + getInputName() + "\">");
 		out.print(StringHelper.neverNull(getValue()));
 		out.println("</textarea>");
@@ -28,21 +27,22 @@ public class FieldEnormousText extends Field {
 		out.close();
 		return writer.toString();
 	}
-	
+
 	/**
 	 * return the value "displayable"
+	 * 
 	 * @param locale
 	 * @return
-	 * @throws Exception 
+	 * @throws Exception
 	 */
 	@Override
 	public String getDisplayValue(ContentContext ctx, Locale locale) throws Exception {
 		return XHTMLHelper.textToXHTML(super.getDisplayValue(ctx, locale));
 	}
-	
+
+	@Override
 	public String getType() {
 		return "large-text";
 	}
 
 }
-

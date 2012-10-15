@@ -50,7 +50,7 @@ public class Field implements Cloneable {
 		public String getValue() {
 			return Field.this.getValue();
 		}
-		
+
 		public String getDisplayValue() throws Exception {
 			return getDisplayValue(ctx);
 		}
@@ -118,9 +118,10 @@ public class Field implements Cloneable {
 		public boolean isWrapped() {
 			return Field.this.isWrapped();
 		}
+
 		public String getURL() {
 			if (Field.this instanceof FieldFile) {
-				return ((FieldFile)Field.this).getURL(ctx);
+				return ((FieldFile) Field.this).getURL(ctx);
 			} else {
 				return null;
 			}
@@ -143,12 +144,13 @@ public class Field implements Cloneable {
 	protected transient I18nAccess i18nAccess;
 	private boolean needRefresh = false;
 	private Map<String, String> keyValue = null;
-	private Locale currentLocale = null; 
+	private Locale currentLocale = null;
 
 	/**
 	 * Filed can only be create with FieldFactory
 	 */
-	Field() {};
+	Field() {
+	};
 
 	public Field newInstance() {
 		Field newInstance;
@@ -170,15 +172,15 @@ public class Field implements Cloneable {
 			return keyValue;
 		}
 		keyValue = new LinkedHashMap<String, String>();
-		
-		String path = properties.getProperty("list." + listName + ".path");		
+
+		String path = properties.getProperty("list." + listName + ".path");
 		if (path != null) {
 			GlobalContext globalContext = GlobalContext.getInstance(ctx.getRequest());
 			MenuElement page = globalContext.getPage(ctx, path);
 			if (page != null) {
 				MenuElement[] children = page.getChildMenuElements();
 				for (MenuElement child : children) {
-					keyValue.put(child.getName(), child.getTitle(ctx));					
+					keyValue.put(child.getName(), child.getTitle(ctx));
 				}
 			}
 		} else {
@@ -227,7 +229,7 @@ public class Field implements Cloneable {
 		if (isLabelEditable()) {
 			out.println("	<div class=\"edit-label\">");
 			out.println("		<label for=\"" + getInputLabelName() + "\">label : </label>");
-			out.println("		<input id=\"" + getInputLabelName() + "\" name=\"" + getInputLabelName() + "\" value=\"" + StringHelper.neverNull(getUserLabel(new Locale(globalContext.getEditLanguage()))) + "\" />");
+			out.println("		<input id=\"" + getInputLabelName() + "\" name=\"" + getInputLabelName() + "\" value=\"" + StringHelper.neverNull(getUserLabel()) + "\" />");
 			out.println("   </div>");
 		}
 		out.close();
@@ -242,7 +244,7 @@ public class Field implements Cloneable {
 
 		out.println("<div class=\"line\">");
 		out.println(getEditLabelCode());
-		out.println("	<label for=\"" + getInputName() + "\">" + getLabel(new Locale(globalContext.getEditLanguage())) + " : </label>");
+		out.println("	<label for=\"" + getInputName() + "\">" + getLabel(new Locale(globalContext.getEditLanguage(ctx.getRequest().getSession()))) + " : </label>");
 		String readOnlyHTML = "";
 		if (isReadOnly()) {
 			readOnlyHTML = " readonly=\"readonly\"";
@@ -270,7 +272,7 @@ public class Field implements Cloneable {
 	public String getViewXHTMLCode(ContentContext ctx) throws Exception {
 		StringWriter writer = new StringWriter();
 		PrintWriter out = new PrintWriter(writer);
-		
+
 		String displayStr = StringHelper.neverNull(getDisplayValue(ctx, new Locale(ctx.getContextLanguage())));
 		if (!isPertinent() || displayStr.trim().length() == 0 || !isViewDisplayed()) {
 			return "";
@@ -289,15 +291,15 @@ public class Field implements Cloneable {
 		out.close();
 		return writer.toString();
 	}
-	
+
 	public String getViewListXHTMLCode(ContentContext ctx) throws Exception {
 		return getViewXHTMLCode(ctx);
 	}
-	
+
 	public boolean isDiplayedInList(ContentContext ctx) {
 		return StringHelper.isTrue(properties.getProperty("field." + getUnicName() + ".list", "true"));
 	}
-	
+
 	public List<String> getDefaultLanguages() {
 		return Arrays.asList(properties.getProperty("component.default-languages", "").split(","));
 	}
@@ -307,34 +309,35 @@ public class Field implements Cloneable {
 	 * 
 	 * @param locale
 	 * @return
-	 * @throws Exception 
+	 * @throws Exception
 	 */
-	public String getDisplayValue(ContentContext ctx, Locale locale) throws Exception {		
-		if (getTranslation() != null) {			
+	public String getDisplayValue(ContentContext ctx, Locale locale) throws Exception {
+		if (getTranslation() != null) {
 			String key = createKey("value");
 			if (getCurrentLocale() != null) {
-				Locale currentLocale = getCurrentLocale();				
-				Iterator<String> langs = getDefaultLanguages().iterator();				
+				Locale currentLocale = getCurrentLocale();
+				Iterator<String> langs = getDefaultLanguages().iterator();
 				while ((getValue() == null || getValue().trim().length() == 0) && langs.hasNext()) {
-					String lg = langs.next();					
+					String lg = langs.next();
 					setCurrentLocale(new Locale(lg));
-				}				
-				String value = getValue();				
+				}
+				String value = getValue();
 				setCurrentLocale(currentLocale);
 				return value;
-			} else {				
+			} else {
 				return properties.getProperty(key);
 			}
-		} 
+		}
 		return getValue();
 	}
 
 	public String getFieldSuffix(ContentContext ctx) {
 		return properties.getProperty("field." + getUnicName() + ".suffix", "");
 	}
-	
+
 	/**
 	 * try to return value with locale and return default value if not.
+	 * 
 	 * @param locale
 	 * @return
 	 */
@@ -351,7 +354,7 @@ public class Field implements Cloneable {
 	public String getValue() {
 		String key = createKey("value");
 		if (getCurrentLocale() != null) {
-			key = createKey("value-"+getCurrentLocale());
+			key = createKey("value-" + getCurrentLocale());
 		}
 		return properties.getProperty(key);
 	}
@@ -374,10 +377,10 @@ public class Field implements Cloneable {
 	public void setValue(String value) {
 		String key = createKey("value");
 		if (getCurrentLocale() != null) {
-			key = createKey("value-"+getCurrentLocale());
-		}		
+			key = createKey("value-" + getCurrentLocale());
+		}
 		properties.setProperty(key, StringHelper.neverNull(value));
-		
+
 	}
 
 	public void setLabelValue(String value) {
@@ -403,21 +406,21 @@ public class Field implements Cloneable {
 	public boolean isViewDisplayed() {
 		return StringHelper.isTrue(properties.getProperty("field." + getUnicName() + ".displayed", "true"));
 	}
-	
+
 	public boolean isPertinent() {
 		String value = getValue();
 		if (getTranslation() != null) {
 			if (getCurrentLocale() != null) {
-				Locale currentLocale = getCurrentLocale();				
+				Locale currentLocale = getCurrentLocale();
 				Iterator<String> langs = getDefaultLanguages().iterator();
 				while ((getValue() == null || getValue().trim().length() == 0) && langs.hasNext()) {
 					setCurrentLocale(new Locale(langs.next()));
 				}
 				value = getValue();
 				setCurrentLocale(currentLocale);
-			} 
+			}
 		}
-		
+
 		return value != null && value.length() > 0;
 	}
 
@@ -490,7 +493,7 @@ public class Field implements Cloneable {
 	 * @param request
 	 * @return true if the field is modified.
 	 */
-	public boolean process(HttpServletRequest request) {		
+	public boolean process(HttpServletRequest request) {
 		RequestService requestService = RequestService.getInstance(request);
 		String value = requestService.getParameter(getInputName(), null);
 		String label = requestService.getParameter(getInputLabelName(), null);
@@ -595,25 +598,25 @@ public class Field implements Cloneable {
 	}
 
 	protected FieldBean newFieldBean(ContentContext ctx) {
-		return new FieldBean(ctx);		
+		return new FieldBean(ctx);
 	}
-	
+
 	protected String createKey(String suffix) {
 		return "field." + getUnicName() + '.' + suffix;
 	}
-	
-	public final List<Locale> getTranslation() {		
+
+	public final List<Locale> getTranslation() {
 		String key = createKey("translation");
-		String rawTranslation = properties.getProperty(key);		
+		String rawTranslation = properties.getProperty(key);
 		if (rawTranslation == null) {
 			return null;
 		}
 		List<Locale> outLocale = new LinkedList<Locale>();
 		String[] translations = rawTranslation.split(",");
-		for (String lg : translations) {			 
+		for (String lg : translations) {
 			outLocale.add(new Locale(lg));
 		}
-		return outLocale;		
+		return outLocale;
 	}
 
 	public Locale getCurrentLocale() {
@@ -623,7 +626,7 @@ public class Field implements Cloneable {
 	public void setCurrentLocale(Locale currentLocale) {
 		this.currentLocale = currentLocale;
 	}
-	
+
 	public boolean isContentCachable() {
 		return true;
 	}

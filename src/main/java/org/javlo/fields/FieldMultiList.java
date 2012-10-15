@@ -24,6 +24,7 @@ public class FieldMultiList extends Field {
 		return getList(ctx, getListName(), locale).get(getValue());
 	}
 
+	@Override
 	public String getEditXHTMLCode(ContentContext ctx) throws Exception {
 		if (getListName() == null) {
 			return "list not found !";
@@ -36,7 +37,7 @@ public class FieldMultiList extends Field {
 
 		out.println("<div class=\"line\">");
 		out.println(getEditLabelCode());
-		out.println("	<label for=\"" + getInputName() + "\">" + getLabel(new Locale(globalContext.getEditLanguage())) + " : </label>");
+		out.println("	<label for=\"" + getInputName() + "\">" + getLabel(new Locale(globalContext.getEditLanguage(ctx.getRequest().getSession()))) + " : </label>");
 		out.println("	<select multiple=\"multiple\" id=\"" + getInputName() + "\" name=\"" + getInputName() + "\" value=\"" + StringHelper.neverNull(getValue()) + "\">");
 		Collection<Map.Entry<String, String>> valuesCol = getList(ctx, getListName(), new Locale(ctx.getContextLanguage())).entrySet();
 		Collection<Map.Entry<String, String>> values = valuesCol;
@@ -65,6 +66,7 @@ public class FieldMultiList extends Field {
 		return writer.toString();
 	}
 
+	@Override
 	public String getType() {
 		return "list-multi";
 	}
@@ -75,6 +77,7 @@ public class FieldMultiList extends Field {
 	 * @param request
 	 * @return true if the field is modified.
 	 */
+	@Override
 	public boolean process(HttpServletRequest request) {
 		RequestService requestService = RequestService.getInstance(request);
 		String[] values = requestService.getParameterValues(getInputName(), null);

@@ -917,8 +917,20 @@ public class GlobalContext implements Serializable {
 		return "en";
 	}
 
-	public String getEditLanguage() {
-		return properties.getString("edit.language", getDefaultEditLanguage());
+	public String getEditLanguage(HttpSession session) {
+		String lg = properties.getString("edit.language", getDefaultEditLanguage());
+		AdminUserFactory userFact = AdminUserFactory.createAdminUserFactory(this, session);
+		User user = userFact.getCurrentUser(session);
+		if (user != null && user.getUserInfo().getPreferredLanguage().length > 0) {
+			EditContext editContext = EditContext.getInstance(this, session);
+			for (String userLg : user.getUserInfo().getPreferredLanguage()) {
+				if (editContext.getEditLanguages().contains(userLg)) {
+					return userLg;
+				}
+			}
+			return lg;
+		}
+		return lg;
 	}
 
 	public AdminUserFactory getAdminUserFactory(HttpSession session) throws SecurityException, NoSuchMethodException, ClassNotFoundException, IllegalArgumentException, InstantiationException, IllegalAccessException, InvocationTargetException {

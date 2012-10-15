@@ -9,7 +9,6 @@ import org.javlo.context.GlobalContext;
 import org.javlo.helper.StringHelper;
 import org.javlo.helper.XHTMLHelper;
 
-
 public class FieldLargeText extends Field {
 
 	@Override
@@ -18,13 +17,13 @@ public class FieldLargeText extends Field {
 		PrintWriter out = new PrintWriter(writer);
 		GlobalContext globalContext = GlobalContext.getInstance(ctx.getRequest());
 
-		out.println("<div class=\"line "+getType()+"\">");
-		out.println("<label for=\"" + getInputName() + "\">" + getLabel(new Locale(globalContext.getEditLanguage())) + " : </label>");
+		out.println("<div class=\"line " + getType() + "\">");
+		out.println("<label for=\"" + getInputName() + "\">" + getLabel(new Locale(globalContext.getEditLanguage(ctx.getRequest().getSession()))) + " : </label>");
 		String readOnlyHTML = "";
 		if (isReadOnly()) {
 			readOnlyHTML = " readonly=\"readonly\"";
 		}
-		out.print("<textarea"+readOnlyHTML+" id=\"" + getInputName() + "\" name=\"" + getInputName() + "\">");
+		out.print("<textarea" + readOnlyHTML + " id=\"" + getInputName() + "\" name=\"" + getInputName() + "\">");
 		out.print(StringHelper.neverNull(getValue()));
 		out.println("</textarea>");
 		out.println("</div>");
@@ -32,9 +31,10 @@ public class FieldLargeText extends Field {
 		out.close();
 		return writer.toString();
 	}
-	
+
 	/**
 	 * return the value "displayable"
+	 * 
 	 * @param locale
 	 * @return
 	 */
@@ -42,10 +42,10 @@ public class FieldLargeText extends Field {
 	public String getDisplayValue(ContentContext ctx, Locale locale) throws Exception {
 		return XHTMLHelper.textToXHTML(super.getDisplayValue(ctx, locale));
 	}
-	
+
+	@Override
 	public String getType() {
 		return "large-text";
 	}
 
 }
-
