@@ -92,6 +92,9 @@ public class InfoBean {
 
 		info.setPrivateHelpURL(globalContext.getPrivateHelpURL());
 		info.setPreviewVersion(PersistenceService.getInstance(globalContext).getVersion());
+
+		info.setOpenExternalLinkAsPopup(globalContext.isOpenExternalLinkAsPopup());
+
 		IUserFactory userFactory = UserFactory.createUserFactory(globalContext, ctx.getRequest().getSession());
 		User currentUser = userFactory.getCurrentUser(ctx.getRequest().getSession());
 		if (currentUser != null) {
@@ -160,6 +163,7 @@ public class InfoBean {
 	private String captchaURL;
 	private String copiedPath;
 	private String privateHelpURL;
+	private boolean openExternalLinkAsPopup;
 
 	private int previewVersion = -1;
 	private Collection<String> contentLanguages;
@@ -482,5 +486,13 @@ public class InfoBean {
 
 	public void setAdminRoles(Collection<String> userRoles) {
 		this.adminRoles = userRoles;
+	}
+
+	public boolean isOpenExternalLinkAsPopup() {
+		return openExternalLinkAsPopup;
+	}
+
+	public void setOpenExternalLinkAsPopup(boolean openExernalLinkAsPopup) {
+		this.openExternalLinkAsPopup = openExernalLinkAsPopup;
 	}
 }

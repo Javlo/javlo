@@ -108,7 +108,7 @@ IContentVisualComponent elem = null;
 				if (columnContext.isWithTable()) {
 					%></td></tr></table><%
 				} else {
-					%></div><div class="content_clear">&nbsp;</div><%
+					%></div><%
 				}
 			}
 
@@ -118,9 +118,6 @@ IContentVisualComponent elem = null;
 	if (languageChange) {
 		%></div><%
 	}
-
-
-if (!pageEmpty) {%><div class="content_clear"><span>&nbsp;</span></div><%}
 }
 currentPage.endRendering(ctx);
 } /* end else getSpecialContentRenderer() */

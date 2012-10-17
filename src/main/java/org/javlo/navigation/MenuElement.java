@@ -1951,7 +1951,7 @@ public class MenuElement implements Serializable {
 			IContentComponentsList contentList = getAllContent(newCtx);
 			while (contentList.hasNext(newCtx)) {
 				IContentVisualComponent elem = contentList.next(newCtx);
-				if (elem instanceof ILink) {
+				if (elem instanceof ILink && !elem.isRepeat()) {
 					res = ((ILink) elem).getURL(newCtx);
 				}
 			}
