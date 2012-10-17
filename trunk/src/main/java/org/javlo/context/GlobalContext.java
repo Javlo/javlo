@@ -375,7 +375,7 @@ public class GlobalContext implements Serializable {
 							newInstance.setViewBar(defaultContext.isViewBar());
 							newInstance.setVirtualPaternity(defaultContext.isVirtualPaternity());
 							newInstance.setAutoSwitchToDefaultLanguage(defaultContext.isAutoSwitchToDefaultLanguage());
-							newInstance.setOpenFileAsPopup(defaultContext.isOpenExernalLinkAsPopup());
+							newInstance.setOpenFileAsPopup(defaultContext.isOpenExternalLinkAsPopup());
 							newInstance.setNoPopupDomainRAW(defaultContext.getNoPopupDomainRAW());
 
 							String defaultContentFolder = defaultContext.getDataFolder();
@@ -1492,13 +1492,13 @@ public class GlobalContext implements Serializable {
 		return properties.getBoolean("new-page.visible", true);
 	}
 
-	public boolean isOpenExernalLinkAsPopup() {
+	public boolean isOpenExternalLinkAsPopup() {
 		return properties.getBoolean("is-popup", false);
 	}
 
 	public boolean isOpenExernalLinkAsPopup(String url) {
 
-		if (!isOpenExernalLinkAsPopup()) {
+		if (!isOpenExternalLinkAsPopup()) {
 			return false;
 		}
 		String domain = URLHelper.extractHost(url).toLowerCase();
