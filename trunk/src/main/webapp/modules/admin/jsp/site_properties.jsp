@@ -107,6 +107,20 @@
 	<input type="text" id="google-ana" name="google-ana" value="${currentContext.googleAnalyticsUACCT}" />	
 </div>
 
+<div class="line">		
+	<label for="short-date">${i18n.edit['admin.title.short-date']}</label>
+	<input type="text" id="short-date" name="short-date" value="${currentContext.shortDateFormat}" />	
+</div>
+
+<div class="line">		
+	<label for="medium-date">${i18n.edit['admin.title.medium-date']}</label>
+	<input type="text" id="medium-date" name="medium-date" value="${currentContext.mediumDateFormat}" />	
+</div>
+
+<div class="line">		
+	<label for="full-date">${i18n.edit['admin.title.full-date']}</label>
+	<input type="text" id="full-date" name="full-date" value="${currentContext.fullDateFormat}" />	
+</div>
 
 </div>
 
@@ -123,24 +137,23 @@
 </div>
 
 <div class="line">		
+	<label for="nopup-domain">${i18n.edit['admin.form-popup-domain']}</label>
+	<input type="text" id="nopup-domain" name="nopup-domain" value="${currentContext.noPopupDomain}" />	
+</div>
+
+<div class="line">		
+	<label for="link-as-popup">${i18n.edit['admin.form.external-link-popup']}</label>
+	<input type="checkbox" id="link-as-popup" name="link-as-popup" ${currentContext.openExternalLinkAsPopup?'checked="checked"':""}" />	
+</div>
+
+<div class="line">		
+	<label for="file-as-popup">${i18n.edit['admin.form.file-popup']}</label>
+	<input type="checkbox" id="file-as-popup" name="file-as-popup" ${currentContext.openFileAsPopup?'checked="checked"':""}" />	
+</div>
+
+<div class="line">		
 	<label for="extend-menu">${i18n.edit['admin.form.extend-menu']}</label>
 	<input type="checkbox" id="extend-menu" name="extend-menu" ${currentContext.extendMenu?'checked="checked"':""}" />	
-</div>
-
-
-<div class="line">		
-	<label for="short-date">${i18n.edit['admin.title.short-date']}</label>
-	<input type="text" id="short-date" name="short-date" value="${currentContext.shortDateFormat}" />	
-</div>
-
-<div class="line">		
-	<label for="medium-date">${i18n.edit['admin.title.medium-date']}</label>
-	<input type="text" id="medium-date" name="medium-date" value="${currentContext.mediumDateFormat}" />	
-</div>
-
-<div class="line">		
-	<label for="full-date">${i18n.edit['admin.title.full-date']}</label>
-	<input type="text" id="full-date" name="full-date" value="${currentContext.fullDateFormat}" />	
 </div>
 
 <div class="line">		

@@ -83,6 +83,9 @@ public class AdminAction extends AbstractModuleAction {
 		private String adminUserRoles;
 		private boolean autoSwitchToDefaultLanguage;
 		private boolean extendMenu;
+		private boolean openExternalLinkAsPopup = false;
+		private boolean openFileAsPopup = false;
+		private String noPopupDomain;
 
 		private String shortDateFormat;
 		private String mediumDateFormat;
@@ -140,6 +143,10 @@ public class AdminAction extends AbstractModuleAction {
 			setGoogleAnalyticsUACCT(globalContext.getGoogleAnalyticsUACCT());
 			setTags(globalContext.getRAWTags());
 			setBlockPassword(globalContext.getBlockPassword());
+
+			setOpenFileAsPopup(globalContext.isOpenFileAsPopup());
+			setOpenExternalLinkAsPopup(globalContext.isOpenExternalLinkAsPopup());
+			setNoPopupDomain(globalContext.getNoPopupDomainRAW());
 
 			ByteArrayOutputStream outStream = new ByteArrayOutputStream();
 			PrintStream out = new PrintStream(outStream);
@@ -435,6 +442,30 @@ public class AdminAction extends AbstractModuleAction {
 			this.adminUserRoles = adminUserRoles;
 		}
 
+		public boolean isOpenExternalLinkAsPopup() {
+			return openExternalLinkAsPopup;
+		}
+
+		public void setOpenExternalLinkAsPopup(boolean openLinkAsPopup) {
+			this.openExternalLinkAsPopup = openLinkAsPopup;
+		}
+
+		public boolean isOpenFileAsPopup() {
+			return openFileAsPopup;
+		}
+
+		public void setOpenFileAsPopup(boolean openFileAsPopup) {
+			this.openFileAsPopup = openFileAsPopup;
+		}
+
+		public String getNoPopupDomain() {
+			return noPopupDomain;
+		}
+
+		public void setNoPopupDomain(String noPopupDomain) {
+			this.noPopupDomain = noPopupDomain;
+		}
+
 	}
 
 	@Override
@@ -678,6 +709,10 @@ public class AdminAction extends AbstractModuleAction {
 
 					currentGlobalContext.setHelpURL(requestService.getParameter("help-url", ""));
 					currentGlobalContext.setPrivateHelpURL(requestService.getParameter("private-help-url", ""));
+
+					currentGlobalContext.setOpenExernalLinkAsPopup(requestService.getParameter("link-as-popup", null) != null);
+					currentGlobalContext.setOpenFileAsPopup(requestService.getParameter("file-as-popup", null) != null);
+					currentGlobalContext.setNoPopupDomainRAW(requestService.getParameter("nopup-domain", ""));
 
 					String dateFormat = requestService.getParameter("short-date", null);
 					if (dateFormat != null) {
