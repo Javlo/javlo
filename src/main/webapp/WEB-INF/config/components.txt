@@ -68,6 +68,7 @@ org.javlo.component.list.FAQComponent
 --content.title.special
 
 org.javlo.component.layout.ContentSeparation
+org.javlo.component.layout.Space
 org.javlo.component.meta.ForceRealContent
 org.javlo.component.meta.NotSearchPage
 org.javlo.component.meta.Keywords

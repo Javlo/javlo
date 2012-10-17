@@ -16,6 +16,7 @@ import org.javlo.context.GlobalContext;
 import org.javlo.helper.URLHelper;
 import org.javlo.i18n.I18nAccess;
 import org.javlo.image.ImageConfig;
+import org.javlo.module.file.FileAction;
 import org.javlo.ztatic.StaticInfo;
 
 /**
@@ -111,9 +112,11 @@ public class Image extends AbstractFileComponent implements IImageTitle, IPrevie
 	protected String getPreviewCode(ContentContext ctx) throws Exception {
 		StringWriter res = new StringWriter();
 		PrintWriter out = new PrintWriter(res);
+
 		out.println("<div id=\"" + getPreviewZoneId() + "\" class=\"list-container\" style=\"height: 220px; overflow: scroll; text-align: center;\">");
 		out.println(getPreviewCode(ctx, getMaxPreviewImages()));
 		out.println("</div>");
+
 		out.close();
 		return res.toString();
 	}
@@ -131,7 +134,18 @@ public class Image extends AbstractFileComponent implements IImageTitle, IPrevie
 		String currentFileLink = URLHelper.mergePath(getDirSelected(), getFileName());
 		GlobalContext globalContext = GlobalContext.getInstance(ctx.getRequest());
 		out.println("<div class=\"image-selected\">");
-		out.println("<img src=\"" + URLHelper.createTransformURL(ctx, getPage(), getResourceURL(ctx, getFileName()), "thumbnails") + "\" />");
+
+		FileAction.FileBean file = new FileAction.FileBean(ctx, getFile(ctx));
+		out.println("<div class=\"focus-zone\">");
+		out.println("<div id=\"" + getPreviewZoneId() + "\" class=\"list-container\">");
+		out.println("<img src=\"" + URLHelper.createTransformURL(ctx, getPage(), getResourceURL(ctx, getFileName()), "list") + "\" />&nbsp;");
+		out.println("<div class=\"focus-point\">x</div>");
+		out.println("<input class=\"posx\" type=\"hidden\" name=\"posx-" + file.getId() + "\" value=\"" + file.getFocusZoneX() + "\" />");
+		out.println("<input class=\"posy\" type=\"hidden\" name=\"posy-" + file.getId() + "\" value=\"" + file.getFocusZoneY() + "\" />");
+		out.println("<input class=\"path\" type=\"hidden\" name=\"image_path-" + file.getId() + "\" value=\"" + URLHelper.mergePath(getRelativeFileDirectory(ctx), getDirSelected()) + "\" />");
+		out.println("</div></div>");
+		out.println("<script type=\"text/javascript\">initFocusPoint();</script>");
+
 		out.println("<div class=\"name\">" + getFileName() + "</div>");
 		out.println("</div><div class=\"image-list\">");
 		for (int i = 0; i < images.length; i++) {
@@ -154,9 +168,9 @@ public class Image extends AbstractFileComponent implements IImageTitle, IPrevie
 					if (globalContext.isImagePreview()) {
 						onMouseOver = " onMouseOver=\"previewImage('" + previewURL + "')\" onMouseOut=\"previewClear()\"";
 					}
-					out.print("<a href=\"#\" onclick=\"jQuery('#" + id + "').val('" + images[i] + "');jQuery('#" + id + "').trigger('change');" + getJSOnChange(ctx) + "\"><img name=\"" + getImageImgName() + "\"" + onMouseOver + " src=\"");
+					out.print("<a class=\"image\" href=\"#\" onclick=\"jQuery('#" + id + "').val('" + images[i] + "');jQuery('#" + id + "').trigger('change');" + getJSOnChange(ctx) + "\"><img name=\"" + getImageImgName() + "\"" + onMouseOver + " src=\"");
 					out.print(url);
-					out.print("\" alt=\"\"></a><br />");
+					out.print("\" alt=\"\">&nbsp;</a>");
 					out.print("<div class=\"name\"><a href=\"" + realURL + "\">" + images[i] + "</a></div>");
 					out.print("</div>");
 				}
