@@ -34,7 +34,7 @@ public abstract class AbstractModuleContext {
 	private final Map<String, Integer> wizardStep = new HashMap<String, Integer>();
 
 	public static final AbstractModuleContext getInstance(HttpSession session, GlobalContext globalContext, Module module, Class<? extends AbstractModuleContext> implementationClass) throws FileNotFoundException, IOException, InstantiationException, IllegalAccessException {
-		Object context = globalContext.getSessionAttribute(session, implementationClass.getName());
+		AbstractModuleContext context = (AbstractModuleContext) globalContext.getSessionAttribute(session, implementationClass.getName());
 		if (context == null) {
 			AbstractModuleContext outCtx = implementationClass.newInstance();
 			outCtx.i18nAccess = I18nAccess.getInstance(globalContext, session);
@@ -44,8 +44,12 @@ public abstract class AbstractModuleContext {
 			globalContext.setSessionAttribute(session, implementationClass.getName(), outCtx);
 			context = outCtx;
 		}
+
+		context.i18nAccess = I18nAccess.getInstance(globalContext, session);
+		context.module = module;
+
 		session.setAttribute(KEY, context);
-		return (AbstractModuleContext) context;
+		return context;
 	}
 
 	public static final AbstractModuleContext getCurrentInstance(HttpSession session) {

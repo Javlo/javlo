@@ -47,6 +47,15 @@ public class FileAction extends AbstractModuleAction {
 		StaticInfo staticInfo;
 		Map<String, String> tags;
 
+		public FileBean(ContentContext ctx, File file) {
+			this.ctx = ctx;
+			try {
+				this.staticInfo = StaticInfo.getInstance(ctx, file);
+			} catch (Exception e) {
+				e.printStackTrace();
+			}
+		}
+
 		public FileBean(ContentContext ctx, StaticInfo staticInfo) {
 			this.ctx = ctx;
 			this.staticInfo = staticInfo;
@@ -262,7 +271,8 @@ public class FileAction extends AbstractModuleAction {
 	}
 
 	public String performUpdateFocus(RequestService rs, ContentContext ctx, GlobalContext globalContext, FileModuleContext fileModuleContext, I18nAccess i18nAccess, MessageRepository messageRepository) throws Exception {
-		File folder = new File(URLHelper.mergePath(globalContext.getDataFolder(), fileModuleContext.getPath()));
+		String path = rs.getParameter("image_path", fileModuleContext.getPath());
+		File folder = new File(URLHelper.mergePath(globalContext.getDataFolder(), path));
 		if (folder.exists()) {
 			for (File file : folder.listFiles((FileFilter) FileFileFilter.FILE)) {
 				StaticInfo staticInfo = StaticInfo.getInstance(ctx, file);
@@ -279,7 +289,6 @@ public class FileAction extends AbstractModuleAction {
 
 					FileCache fileCache = FileCache.getInstance(ctx.getRequest().getSession().getServletContext());
 					fileCache.delete(file.getName());
-
 				}
 			}
 		} else {
