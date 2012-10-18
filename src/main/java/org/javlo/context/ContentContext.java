@@ -402,20 +402,46 @@ public class ContentContext {
 	 */
 	public ContentContext getContextWithContent(MenuElement page) throws Exception {
 		if (page.isRealContent(this)) {
-			return this;
+			return getContextOnPage(page);
 		} else {
 			ContentContext lgCtx = new ContentContext(this);
 			GlobalContext globalContext = GlobalContext.getInstance(getRequest());
-			Collection<String> lgs = globalContext.getDefaultLanguages();
+			Collection<String> lgs = globalContext.getLanguages();
 			for (String lg : lgs) {
 				lgCtx.setLanguage(lg);
+				lgCtx.setContentLanguage(lg);
 				lgCtx.setRequestContentLanguage(lg);
 				if (page.isRealContent(lgCtx)) {
-					return lgCtx;
+					return lgCtx.getContextOnPage(page);
 				}
 			}
 		}
 		return null;
+	}
+
+	/**
+	 * return a context with language (if exist), it can be change the language (and only this) of the current context). this method use only the default language list.
+	 * 
+	 * @return null if no content found.
+	 * @throws Exception
+	 */
+	public ContentContext getContextWithContentNeverNull(MenuElement page) throws Exception {
+		if (page.isRealContent(this)) {
+			return new ContentContext(this);
+		} else {
+			ContentContext lgCtx = new ContentContext(this);
+			GlobalContext globalContext = GlobalContext.getInstance(getRequest());
+			Collection<String> lgs = globalContext.getLanguages();
+			for (String lg : lgs) {
+				lgCtx.setLanguage(lg);
+				lgCtx.setContentLanguage(lg);
+				lgCtx.setRequestContentLanguage(lg);
+				if (page.isRealContent(lgCtx)) {
+					return lgCtx.getContextOnPage(page);
+				}
+			}
+		}
+		return getContextOnPage(page);
 	}
 
 	public ContentContext getContextOnPage(MenuElement page) throws Exception {

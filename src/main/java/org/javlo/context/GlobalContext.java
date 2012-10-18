@@ -502,6 +502,8 @@ public class GlobalContext implements Serializable {
 
 	private Long accountSize = null;
 
+	private String dataFolder = null;
+
 	public long getAccountSize() {
 		if (accountSize == null) {
 			File file = new File(getDataFolder());
@@ -810,31 +812,22 @@ public class GlobalContext implements Serializable {
 	}
 
 	public String getDataFolder() {
-
-		// TODO : check why this line of code is needed.
-
-		/*
-		 * if (globalContext.isAdminMode()) { return application.getRealPath(""); }
-		 */
-
-		String folder = staticConfig.getAllDataFolder();
-
-		if (getFolder() != null) {
-			// folder = properties.getString("context-folder",
-			// URLHelper.mergePath(folder, getFolder()));
-			folder = ElementaryURLHelper.mergePath(folder, getFolder());
-		}
-
-		try {
-			File folderFile = new File(folder);
-			folder = folderFile.getCanonicalPath();
-			if (!folderFile.exists()) {
-				folderFile.mkdirs();
+		if (dataFolder == null) {
+			dataFolder = staticConfig.getAllDataFolder();
+			if (getFolder() != null) {
+				dataFolder = ElementaryURLHelper.mergePath(dataFolder, getFolder());
 			}
-		} catch (IOException e) {
-			logger.warning(e.getMessage());
+			try {
+				File folderFile = new File(dataFolder);
+				dataFolder = folderFile.getCanonicalPath();
+				if (!folderFile.exists()) {
+					folderFile.mkdirs();
+				}
+			} catch (IOException e) {
+				logger.warning(e.getMessage());
+			}
 		}
-		return folder;
+		return dataFolder;
 	}
 
 	public String getDBDriver() {
@@ -1600,6 +1593,8 @@ public class GlobalContext implements Serializable {
 		} catch (ServiceException e) {
 			e.printStackTrace();
 		}
+
+		dataFolder = null;
 	}
 
 	public void reload() {
@@ -1926,6 +1921,7 @@ public class GlobalContext implements Serializable {
 
 	public void setFolder(String folder) {
 		properties.setProperty("folder", folder);
+		dataFolder = null;
 		save();
 	}
 
