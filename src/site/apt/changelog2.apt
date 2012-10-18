@@ -4,3 +4,8 @@ change log
 
  * alpha version online. 
 
+* 2.0.0.8 [18/10/2012]
+
+ * Cache abstraction
+ 
+ * PageBean and infoBean transform as smart bean.  

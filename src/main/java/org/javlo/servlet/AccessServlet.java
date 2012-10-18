@@ -65,7 +65,6 @@ import org.javlo.thread.AbstractThread;
 import org.javlo.thread.ThreadManager;
 import org.javlo.tracking.Tracker;
 import org.javlo.utils.DebugListening;
-import org.javlo.utils.ImageIOLeakTest;
 import org.xhtmlrenderer.pdf.ITextRenderer;
 import org.xhtmlrenderer.swing.Java2DRenderer;
 import org.xhtmlrenderer.util.FSImageWriter;
@@ -85,7 +84,7 @@ public class AccessServlet extends HttpServlet {
 	 */
 	public static Logger logger = Logger.getLogger(AccessServlet.class.getName());
 
-	public static final String VERSION = "2.0.0.7";
+	public static final String VERSION = "2.0.0.8";
 
 	@Override
 	public void destroy() {
@@ -626,8 +625,6 @@ public class AccessServlet extends HttpServlet {
 							logger.warning("bad path : " + path);
 						}
 						if ((template == null) || (!template.exist()) || (template.getRendererFullName(ctx) == null)) {
-							infoBean.setContentLanguage(ctx.getContentLanguage());
-							infoBean.setLanguage(ctx.getLanguage());
 							ServletHelper.includeBlocked(request, response);
 						} else {
 							if (ctx.getRenderMode() == ContentContext.VIEW_MODE) {
@@ -702,9 +699,6 @@ public class AccessServlet extends HttpServlet {
 		out.println("**** JAVA_HOME         :  " + System.getenv("JAVA_HOME"));
 		out.println("**** System encoding   :  " + System.getProperty("file.encoding"));
 		out.println("**** CMS encoding      :  " + ContentContext.CHARACTER_ENCODING);
-		/*
-		 * out.println(""); out.println("**** ENV           :  "); Map<String,String> env = System.getenv(); for (Map.Entry<String, String> entry : env.entrySet()) { out.println(entry.getKey()+" : " + entry.getValue()); } out.println("");
-		 */
 		out.println("**** VERSION           :  " + VERSION);
 		out.println("**** ENV               :  " + staticConfig.getEnv());
 		out.println("**** STATIC CONFIG DIR :  " + staticConfig.getStaticConfigLocalisation());
@@ -729,6 +723,7 @@ public class AccessServlet extends HttpServlet {
 		out.println("**** BACKUP EXCL. PAT. :  " + staticConfig.getBackupExcludePatterns());
 		out.println("**** BACKUP INCL. PAT. :  " + staticConfig.getBackupIncludePatterns());
 		out.println("**** HARD USERS        :  " + StringHelper.collectionToString(staticConfig.getEditUsers().keySet(), ","));
+		out.println("**** USE EHCACHE       :  " + staticConfig.useEhCache());
 		out.println("**** TOTAL MEMORY      :  " + runtime.totalMemory() + " (" + runtime.totalMemory() / 1024 + " KB)" + " (" + runtime.totalMemory() / 1024 / 1024 + " MB)");
 		out.println("**** FREE MEMORY       :  " + runtime.freeMemory() + " (" + runtime.freeMemory() / 1024 + " KB)" + " (" + runtime.freeMemory() / 1024 / 1024 + " MB)");
 		out.println("**** THREAD ****");

@@ -7,9 +7,7 @@ import java.util.logging.Logger;
 
 import javax.servlet.ServletContext;
 
-import net.sf.ehcache.Cache;
-import net.sf.ehcache.Element;
-
+import org.javlo.cache.ICache;
 import org.javlo.context.GlobalContext;
 import org.javlo.module.template.remote.freecsstemplates.FreeCSSTemplateFactory;
 import org.javlo.ztatic.FileCache;
@@ -40,7 +38,7 @@ public class RemoteTemplateFactoryManager {
 	}
 
 	public IRemoteResourcesFactory getRemoteTemplateFactory(GlobalContext globalContext, String name) throws Exception {
-		Cache cache = globalContext.getCache("remote-template");
+		ICache cache = globalContext.getCache("remote-template");
 		if (cache == null) {
 			logger.severe("cache 'remote-template' not found.");
 			return null;
@@ -50,15 +48,15 @@ public class RemoteTemplateFactoryManager {
 			FileCache fileCache = FileCache.getInstance(globalContext.getServletContext());
 			outFactory = (IRemoteResourcesFactory) fileCache.loadBean(name);
 			if (outFactory == null) {
-				if (FreeCSSTemplateFactory.NAME.equals(name)) {					
+				if (FreeCSSTemplateFactory.NAME.equals(name)) {
 					outFactory = new FreeCSSTemplateFactory();
 					outFactory.refresh();
-					cache.put(new Element(outFactory.getName(), outFactory));					
+					cache.put(outFactory.getName(), outFactory);
 					fileCache.storeBean(outFactory.getName(), outFactory);
 				}
 			}
-		} else {			
-			outFactory = (IRemoteResourcesFactory) cache.get(name).getValue();
+		} else {
+			outFactory = (IRemoteResourcesFactory) cache.get(name);
 		}
 
 		return outFactory;

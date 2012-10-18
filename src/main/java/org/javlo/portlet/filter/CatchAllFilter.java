@@ -336,7 +336,7 @@ public class CatchAllFilter implements Filter {
 
 			if (module.length() > 0) {
 				editURI = "/edit" + editURI;
-				String baseURI = editURI;
+				// String baseURI = editURI;
 				String query = httpRequest.getQueryString();
 				if (query != null) {
 					editURI = editURI + '?' + query;
@@ -346,10 +346,9 @@ public class CatchAllFilter implements Filter {
 				}
 
 				if (query != null && query.contains("edit-logout")) {
-					((HttpServletResponse) response).sendRedirect(baseURI);
+					((HttpServletResponse) response).sendRedirect(editURI);
 					return;
 				} else {
-					// ((HttpServletResponse) response).sendRedirect(editURI);
 					httpRequest.getRequestDispatcher(editURI).forward(request, response);
 					return;
 				}

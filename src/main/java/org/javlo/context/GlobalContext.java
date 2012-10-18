@@ -51,6 +51,9 @@ import org.apache.commons.configuration.PropertiesConfiguration;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.lang.StringUtils;
+import org.javlo.cache.ICache;
+import org.javlo.cache.MapCache;
+import org.javlo.cache.ehCache.EHCacheWrapper;
 import org.javlo.component.core.AbstractVisualComponent;
 import org.javlo.config.StaticConfig;
 import org.javlo.helper.ElementaryURLHelper;
@@ -121,6 +124,8 @@ public class GlobalContext implements Serializable {
 	}
 
 	private CacheManager cacheManager;
+
+	private final Map<String, ICache> cacheMaps = new HashMap<String, ICache>();
 
 	private IURLFactory urlFactory = null;
 
@@ -276,29 +281,31 @@ public class GlobalContext implements Serializable {
 	}
 
 	private void initCacheManager() throws IOException {
-		Configuration cacheConfig;
-		File ehCacheFile = null;
-		if (staticConfig.getEHCacheConfigFile() == null || !(new File(staticConfig.getEHCacheConfigFile()).exists())) {
-			logger.info("load default ehcache config from : " + EHCACHE_FILE);
-			InputStream inConfig = application.getResourceAsStream(EHCACHE_FILE);
-			if (inConfig != null) {
-				cacheConfig = ConfigurationSource.getConfigurationSource(inConfig).createConfiguration();
-				inConfig.close();
+		if (staticConfig.useEhCache()) {
+			Configuration cacheConfig;
+			File ehCacheFile = null;
+			if (staticConfig.getEHCacheConfigFile() == null || !(new File(staticConfig.getEHCacheConfigFile()).exists())) {
+				logger.info("load default ehcache config from : " + EHCACHE_FILE);
+				InputStream inConfig = application.getResourceAsStream(EHCACHE_FILE);
+				if (inConfig != null) {
+					cacheConfig = ConfigurationSource.getConfigurationSource(inConfig).createConfiguration();
+					inConfig.close();
+				} else {
+					throw new FileNotFoundException("ehcache config file not found : " + EHCACHE_FILE);
+				}
 			} else {
-				throw new FileNotFoundException("ehcache config file not found : " + EHCACHE_FILE);
+				ehCacheFile = new File(staticConfig.getEHCacheConfigFile());
+				logger.info("load ehcache config from : " + ehCacheFile);
+				cacheConfig = ConfigurationSource.getConfigurationSource(ehCacheFile).createConfiguration();
 			}
-		} else {
-			ehCacheFile = new File(staticConfig.getEHCacheConfigFile());
-			logger.info("load ehcache config from : " + ehCacheFile);
-			cacheConfig = ConfigurationSource.getConfigurationSource(ehCacheFile).createConfiguration();
+			cacheConfig.setName(getContextKey());
+			cacheManager = new CacheManager(cacheConfig);
+			if (cacheManager == null) {
+				logger.severe("error on init ehCache width : " + ehCacheFile);
+				cacheManager = new CacheManager();
+			}
+			cacheManager.setName(getContextKey());
 		}
-		cacheConfig.setName(getContextKey());
-		cacheManager = new CacheManager(cacheConfig);
-		if (cacheManager == null) {
-			logger.severe("error on init ehCache width : " + ehCacheFile);
-			cacheManager = new CacheManager();
-		}
-		cacheManager.setName(getContextKey());
 	}
 
 	public static GlobalContext getRealInstance(HttpSession session, String contextKey) throws IOException, ConfigurationException {
@@ -607,6 +614,7 @@ public class GlobalContext implements Serializable {
 				cacheManager.shutdown();
 			}
 
+			stopStoreThread = true;
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
@@ -687,7 +695,24 @@ public class GlobalContext implements Serializable {
 		return attributes.get(key);
 	}
 
-	public Cache getCache(String cacheName) {
+	public ICache getCache(String cacheName) {
+		if (staticConfig.useEhCache()) {
+			return getEhCacheCache(cacheName);
+		} else {
+			return getMapCache(cacheName);
+		}
+	}
+
+	private synchronized ICache getMapCache(String cacheName) {
+		ICache cache = cacheMaps.get(cacheName);
+		if (cache == null) {
+			cache = new MapCache(new HashMap());
+			cacheMaps.put(cacheName, cache);
+		}
+		return cache;
+	}
+
+	private synchronized ICache getEhCacheCache(String cacheName) {
 		Cache cache = cacheManager.getCache(cacheName);
 		if (cache == null) {
 			synchronized (cacheManager) {
@@ -702,7 +727,7 @@ public class GlobalContext implements Serializable {
 				}
 			}
 		}
-		return cache;
+		return new EHCacheWrapper(cache);
 	}
 
 	public List<String> getComponents() {
@@ -1582,10 +1607,15 @@ public class GlobalContext implements Serializable {
 	}
 
 	public void releaseAllCache() {
-		String[] names = cacheManager.getCacheNames();
-		for (String name : names) {
-			cacheManager.getCache(name).removeAll();
+		if (cacheManager != null) {
+			String[] names = cacheManager.getCacheNames();
+			for (String name : names) {
+				cacheManager.getCache(name).removeAll();
+			}
 		}
+
+		cacheMaps.clear();
+
 		viewPages.clear();
 		frontCache.clear();
 		try {

@@ -44,13 +44,15 @@ public class AjaxServlet extends HttpServlet {
 
 	private void process(HttpServletRequest request, HttpServletResponse response) throws ServletException {
 		try {
+
 			ContentContext ctx = ContentContext.getContentContext(request, response);
-			
+
 			Tracker.trace(request, response);
-			
+
 			ctx.setAjax(true);
 			GlobalContext globalContext = GlobalContext.getInstance(ctx.getRequest());
 			EditContext editCtx = EditContext.getInstance(globalContext, request.getSession());
+
 			InfoBean.updateInfoBean(ctx);
 
 			String action = ServletHelper.execAction(ctx);
@@ -75,8 +77,8 @@ public class AjaxServlet extends HttpServlet {
 				outMap.put("zone", ctx.getAjaxZone());
 				outMap.write(strWriter);
 			} else {
-				for (Object key : ctx.getAjaxMap().keySet()) {					
-					outMap.put(""+key, ctx.getAjaxMap().get(key));					
+				for (Object key : ctx.getAjaxMap().keySet()) {
+					outMap.put("" + key, ctx.getAjaxMap().get(key));
 				}
 				outMap.write(strWriter);
 			}
