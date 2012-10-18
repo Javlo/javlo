@@ -1265,7 +1265,9 @@ public class PageReferenceComponent extends ComplexPropertiesLink implements IAc
 							if (page.isRealContent(lgCtx)) {
 								realContentSize++;
 							}
-							pageBeans.add(PageBean.getInstance(lgCtx, page, this));
+							if (page.isRealContent(lgCtx) || isWidthEmptyPage()) {
+								pageBeans.add(PageBean.getInstance(lgCtx, page, this));
+							}
 						}
 					}
 				}
