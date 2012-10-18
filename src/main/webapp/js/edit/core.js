@@ -29,7 +29,7 @@ initFocusPoint = function() {
 			point.parent().find(".posx").val(focusRealX);
 			point.parent().find(".posy").val(focusRealY);
 			var path = "";
-			if (!point.parent().find(".path").val() == 'undefined') {
+			if (!(point.parent().find(".path").val() == 'undefined')) {
 				path = "&image_path="+point.parent().find(".path").val();
 			}
 			var url = point.closest("form").attr("action");
@@ -128,3 +128,15 @@ jQuery.fn.extend({
 		return this;
 	}
 });
+
+filter = function(filterStr,selector) {
+	jQuery(selector).removeClass("hidden");
+	jQuery(selector).filter(function() {
+		item = jQuery(this);		
+		if (item.text().toLowerCase().indexOf(filterStr.toLowerCase()) >= 0) {			
+			return false;
+		} else {			
+			return true;
+		}
+	}).addClass("hidden");
+}

@@ -16,6 +16,10 @@ table th {
 	font-weight: bold;
 }
 
+.hidden {
+	display: none;
+}
+
 .label-inside.label {
 	color: #aaaaaa;
 	font-style: italic;
