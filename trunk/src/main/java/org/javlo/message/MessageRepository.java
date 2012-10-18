@@ -13,27 +13,24 @@ import javax.servlet.http.HttpServletRequest;
 import org.apache.commons.configuration.ConfigurationException;
 import org.javlo.context.ContentContext;
 import org.javlo.context.GlobalContext;
-import org.javlo.data.InfoBean;
 import org.javlo.i18n.I18nMessage;
 import org.javlo.service.NotificationService;
 
-
 /**
  * contain the list of message.
+ * 
  * @author pvandermaesen
  */
 public class MessageRepository {
 
 	public static final String KEY = MessageRepository.class.getName();
 
-	private Collection<GenericMessage> messagesWithoutKey = new LinkedList<GenericMessage>();
-	private Map<String, GenericMessage> messagesWithKey = new HashMap<String, GenericMessage>();
+	private final Collection<GenericMessage> messagesWithoutKey = new LinkedList<GenericMessage>();
+	private final Map<String, GenericMessage> messagesWithKey = new HashMap<String, GenericMessage>();
 
-	private HttpServletRequest request;
-	
+	private final HttpServletRequest request;
+
 	private GenericMessage globalMessage = GenericMessage.EMPTY_MESSAGE;
-
-	private InfoBean infoBean = null;
 
 	/**
 	 * create a static logger.
@@ -43,18 +40,17 @@ public class MessageRepository {
 	private MessageRepository(HttpServletRequest request) {
 		this.request = request;
 	}
-	
+
 	public static final MessageRepository getInstance(ContentContext inCtx) {
 		return getInstance(inCtx.getRequest());
 	}
 
 	public static final MessageRepository getInstance(HttpServletRequest request) {
 		MessageRepository outRep = (MessageRepository) request.getAttribute(KEY);
-		if (outRep==null) {
+		if (outRep == null) {
 			outRep = new MessageRepository(request);
 			request.setAttribute(KEY, outRep);
 		}
-		outRep.infoBean = InfoBean.getCurrentInfoBean(request);
 		return outRep;
 	}
 
@@ -62,7 +58,7 @@ public class MessageRepository {
 		if (msg.getKey() == null) {
 			messagesWithoutKey.add(msg);
 		} else {
-			messagesWithKey.put(msg.getKey(), msg );
+			messagesWithKey.put(msg.getKey(), msg);
 		}
 	}
 
@@ -82,7 +78,7 @@ public class MessageRepository {
 	}
 
 	public I18nMessage getI18nMessage(String key) throws FileNotFoundException, IOException, ConfigurationException {
-		return new I18nMessage (getMessage(key), request);
+		return new I18nMessage(getMessage(key), request);
 	}
 
 	public GenericMessage getGlobalMessage() {
@@ -90,45 +86,39 @@ public class MessageRepository {
 	}
 
 	/**
-	 * set a new global message.
-	 * if the type of the current message is more important or equal the new message is ignored.
-	 * @param globalMessage a global message
+	 * set a new global message. if the type of the current message is more important or equal the new message is ignored.
+	 * 
+	 * @param globalMessage
+	 *            a global message
 	 */
 	public void setGlobalMessage(GenericMessage globalMessage) {
 		if (this.globalMessage != null) {
 			if (this.globalMessage.getType() > globalMessage.getType()) {
 				this.globalMessage = globalMessage;
-				if (infoBean != null) {
-					infoBean.setGlobalMessage(globalMessage);
-				}
 			}
-		}		
-	}	
+		}
+	}
+
 	/**
-	 * set a new global message.
-	 * if the type of the current message is more important or equal the new message is ignored.
-	 * @param globalMessage a global message
+	 * set a new global message. if the type of the current message is more important or equal the new message is ignored.
+	 * 
+	 * @param globalMessage
+	 *            a global message
 	 */
 	public void setGlobalMessageAndNotification(ContentContext ctx, GenericMessage globalMessage) {
 		if (this.globalMessage != null) {
 			if (this.globalMessage.getType() > globalMessage.getType()) {
 				this.globalMessage = globalMessage;
-				if (infoBean != null) {
-					infoBean.setGlobalMessage(globalMessage);
-				}
 			}
 		}
-		
-		NotificationService notifService = NotificationService.getInstance(GlobalContext.getInstance(request));		
+
+		NotificationService notifService = NotificationService.getInstance(GlobalContext.getInstance(request));
 		notifService.addNotification(globalMessage.getMessage(), globalMessage.getType(), ctx.getCurrentUserId());
-		
+
 	}
-	
+
 	public void clearGlobalMessage() {
 		this.globalMessage = GenericMessage.EMPTY_MESSAGE;
-		if (infoBean != null) {
-			infoBean.setGlobalMessage(GenericMessage.EMPTY_MESSAGE);
-		}
 	}
 
 	public boolean haveMessages() {
@@ -138,7 +128,5 @@ public class MessageRepository {
 	public boolean haveGlobalMessage() {
 		return globalMessage != GenericMessage.EMPTY_MESSAGE;
 	}
-
-
 
 }

@@ -19,11 +19,9 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-import net.sf.ehcache.Cache;
-import net.sf.ehcache.Element;
-
 import org.apache.commons.lang.StringUtils;
 import org.javlo.bean.Link;
+import org.javlo.cache.ICache;
 import org.javlo.comparator.MenuElementPriorityComparator;
 import org.javlo.component.core.AbstractVisualComponent;
 import org.javlo.component.core.ComponentBean;
@@ -85,60 +83,38 @@ public class MenuElement implements Serializable {
 	public static class PageBean implements Serializable {
 		private static final long serialVersionUID = 1L;
 
-		private PageDescription info;
-		private String url;
-		private String path;
-		private boolean selected = false;
-		private boolean lastSelected = false;
-		private final List<PageBean> children = new LinkedList<PageBean>();
-		private final List<PageBean> realChildren = new LinkedList<PageBean>();
-		private String name = null;
-		private String id = null;
-		private String latestEditor;
-		private String creationDate;
-		private String modificationDate;
-		private String templateId = null;
-		private boolean realContent = false;
-		private Map<String, String> roles = new HashMap<String, String>();
-		private Map<String, String> adminRoles = new HashMap<String, String>();
+		/*
+		 * private PageDescription info; private String url; private String path; private boolean selected = false; private boolean lastSelected = false; private final List<PageBean> children = new LinkedList<PageBean>(); private final List<PageBean> realChildren = new LinkedList<PageBean>(); private String name = null; private String id = null; private String latestEditor; private String creationDate; private String modificationDate; private String templateId = null; private boolean realContent = false; private Map<String, String> roles = new HashMap<String, String>(); private Map<String, String> adminRoles = new HashMap<String, String>();
+		 */
+
+		public PageBean(ContentContext ctx, MenuElement page) {
+			this.ctx = ctx;
+			this.page = page;
+		}
+
+		private final MenuElement page;
+		private final ContentContext ctx;
 
 		public PageDescription getInfo() {
-			return info;
-		}
-
-		public void setInfo(PageDescription info) {
-			this.info = info;
-		}
-
-		public List<PageBean> getChildren() {
-			return children;
-		}
-
-		public void addChild(PageBean child) {
-			children.add(child);
-			if (child.getInfo().isRealContent() && child.getInfo().isVisible()) {
-				addRealChildren(child);
+			try {
+				return page.getPageDescription(ctx);
+			} catch (Exception e) {
+				e.printStackTrace();
+				return null;
 			}
 		}
 
-		public void clearChildren() {
-			children.clear();
-		}
-
 		public String getUrl() {
-			return url;
-		}
-
-		public void setUrl(String url) {
-			this.url = url;
+			return URLHelper.createURL(ctx, page);
 		}
 
 		public boolean isSelected() {
-			return selected;
-		}
-
-		public void setSelected(boolean selected) {
-			this.selected = selected;
+			try {
+				return page.isSelected(ctx);
+			} catch (Exception e) {
+				e.printStackTrace();
+				return false;
+			}
 		}
 
 		/**
@@ -147,99 +123,86 @@ public class MenuElement implements Serializable {
 		 * @return
 		 */
 		public List<PageBean> getRealChildren() {
+			List<PageBean> realChildren = new LinkedList<PageBean>();
+			List<MenuElement> children = page.getChildMenuElementsList();
+			for (MenuElement child : children) {
+				try {
+					if (child.isRealContent(ctx) && child.isVisible(ctx)) {
+						realChildren.add(child.getPageBean(ctx));
+					}
+				} catch (Exception e) {
+					e.printStackTrace();
+				}
+			}
 			return realChildren;
 		}
 
-		private void addRealChildren(PageBean child) {
-			this.realChildren.add(child);
+		/**
+		 * get the list of children with isRealContent() and isVisible() is true.
+		 * 
+		 * @return
+		 */
+		public List<PageBean> getChildren() {
+			List<PageBean> childrenBean = new LinkedList<PageBean>();
+			List<MenuElement> children = page.getChildMenuElementsList();
+			for (MenuElement child : children) {
+				try {
+					childrenBean.add(child.getPageBean(ctx));
+				} catch (Exception e) {
+					e.printStackTrace();
+				}
+			}
+			return childrenBean;
 		}
 
 		public String getName() {
-			return name;
-		}
-
-		public void setName(String name) {
-			this.name = name;
+			return page.getName();
 		}
 
 		public String getPath() {
-			return path;
-		}
-
-		public void setPath(String path) {
-			this.path = path;
+			return page.getPath();
 		}
 
 		public String getLatestEditor() {
-			return latestEditor;
-		}
-
-		public void setLatestEditor(String latestEditor) {
-			this.latestEditor = latestEditor;
-		}
-
-		public String getCreationDate() {
-			return creationDate;
-		}
-
-		public void setCreationDate(String creationDate) {
-			this.creationDate = creationDate;
+			return page.getLatestEditor();
 		}
 
 		public String getModificationDate() {
-			return modificationDate;
-		}
-
-		public void setModificationDate(String modificationDate) {
-			this.modificationDate = modificationDate;
+			try {
+				return StringHelper.renderShortDate(ctx, page.getCreationDate());
+			} catch (Exception e) {
+				e.printStackTrace();
+				return null;
+			}
 		}
 
 		public String getTemplateId() {
-			return templateId;
-		}
-
-		public void setTemplateId(String template) {
-			this.templateId = template;
+			return page.getTemplateId();
 		}
 
 		public boolean isLastSelected() {
-			return lastSelected;
-		}
-
-		public void setLastSelected(boolean lastSelected) {
-			this.lastSelected = lastSelected;
+			return page.isLastSelected(ctx);
 		}
 
 		public String getId() {
-			return id;
-		}
-
-		public void setId(String id) {
-			this.id = id;
-		}
-
-		public void setRealContent(boolean realContent) {
-			this.realContent = realContent;
+			return page.getId();
 		}
 
 		public boolean isRealContent() {
-			return realContent;
+			try {
+				return page.isRealContent(ctx);
+			} catch (Exception e) {
+				e.printStackTrace();
+				return false;
+			}
 		}
 
 		public Map<String, String> getRoles() {
-			return roles;
-		}
-
-		public void setRoles(Map<String, String> roles) {
-			this.roles = roles;
+			return new CollectionAsMap<String>(page.getUserRoles());
 		}
 
 		public Map<String, String> getAdminRoles() {
-			return adminRoles;
-		}
-
-		public void setAdminRoles(Map<String, String> adminRoles) {
-			this.adminRoles = adminRoles;
+			return new CollectionAsMap<String>(page.getEditorRoles());
 		}
 
 	}
@@ -526,6 +489,40 @@ public class MenuElement implements Serializable {
 
 	};
 
+	protected PageDescription getPageDescription(ContentContext ctx) throws Exception {
+		PageDescription pageDescription = getPageBeanCached(ctx.getLanguage());
+		if (pageDescription.getTitle() == null) {
+			pageDescription.category = getCategory(ctx);
+			pageDescription.contentDate = getContentDate(ctx);
+			pageDescription.description = getDescription(ctx);
+			pageDescription.globalTitle = getGlobalTitle(ctx);
+			pageDescription.groupID = getGroupID(ctx);
+			pageDescription.headerContent = getHeaderContent(ctx);
+			pageDescription.images = getImages(ctx);
+			pageDescription.staticResources = getStaticResources(ctx);
+			pageDescription.contentDateVisible = isContentDateVisible(ctx);
+			pageDescription.empty = isEmpty(ctx);
+			pageDescription.realContent = isRealContent(ctx);
+			pageDescription.keywords = getKeywords(ctx);
+			pageDescription.label = getLabel(ctx);
+			pageDescription.linkOn = getLinkOn(ctx);
+			pageDescription.location = getLocation(ctx);
+			pageDescription.metaDescription = getMetaDescription(ctx);
+			pageDescription.notInSearch = notInSearch(ctx);
+			pageDescription.pageRank = getPageRank(ctx);
+			pageDescription.pageTitle = getPageTitle(ctx);
+			pageDescription.subTitle = getSubTitle(ctx);
+			pageDescription.tags = getTags(ctx);
+			pageDescription.title = getTitle(ctx);
+			pageDescription.depth = getDepth();
+			pageDescription.visible = isVisible();
+			pageDescription.breakRepeat = isBreakRepeat();
+			pageDescription.referenceLanguage = getReferenceLanguage();
+			pageDescription.priority = getPriority();
+		}
+		return pageDescription;
+	}
+
 	public static MenuElement getInstance(GlobalContext globalContext) {
 		MenuElement outMenuElement = new MenuElement();
 		outMenuElement.cache = globalContext.getCache("navigation");
@@ -677,7 +674,7 @@ public class MenuElement implements Serializable {
 
 	// private final Map<String, PageDescription> pageInfinityCache = new HashMap<String, PageDescription>();
 
-	protected Cache cache;
+	protected ICache cache;
 
 	// private final TimeMap<String, Object> pageTimeCache = new TimeMap<String, Object>(60 * (int) Math.round(((Math.random() + 1) * 60))); // cache between 1u and 2u, all cache can not be updated at the same time
 
@@ -2133,26 +2130,20 @@ public class MenuElement implements Serializable {
 
 	PageDescription getPageDescriptionCached(String lg) {
 		String key = getCacheKey(lg);
-		Element element = cache.get(key);
-		PageDescription outDesc;
-		if (element == null) {
+		PageDescription outDesc = (PageDescription) cache.get(key);
+		if (outDesc == null) {
 			outDesc = new PageDescription();
-			cache.put(new Element(key, outDesc));
-		} else {
-			outDesc = (PageDescription) element.getValue();
+			cache.put(key, outDesc);
 		}
 		return outDesc;
 	}
 
 	PageDescription getPageBeanCached(String lg) {
 		String key = getCacheKey("bean-" + lg);
-		Element element = cache.get(key);
-		PageDescription outDesc;
-		if (element == null) {
+		PageDescription outDesc = (PageDescription) cache.get(key);
+		if (outDesc == null) {
 			outDesc = new PageDescription();
-			cache.put(new Element(key, outDesc));
-		} else {
-			outDesc = (PageDescription) element.getValue();
+			cache.put(key, outDesc);
 		}
 		return outDesc;
 	}
@@ -2163,67 +2154,10 @@ public class MenuElement implements Serializable {
 	}
 
 	public PageBean getPageBean(ContentContext ctx) throws Exception {
-
 		String requestKey = getPath() + '_' + ctx.getRequestContentLanguage() + "_" + ctx.getLanguage();
-
 		PageBean pageBean = (PageBean) ctx.getRequest().getAttribute(requestKey);
-
 		if (pageBean == null) {
-
-			PageDescription pageDescription = getPageBeanCached(ctx.getLanguage());
-			if (pageDescription.getTitle() == null) {
-				pageDescription.category = getCategory(ctx);
-				pageDescription.contentDate = getContentDate(ctx);
-				pageDescription.description = getDescription(ctx);
-				pageDescription.globalTitle = getGlobalTitle(ctx);
-				pageDescription.groupID = getGroupID(ctx);
-				pageDescription.headerContent = getHeaderContent(ctx);
-				pageDescription.images = getImages(ctx);
-				pageDescription.staticResources = getStaticResources(ctx);
-				pageDescription.contentDateVisible = isContentDateVisible(ctx);
-				pageDescription.empty = isEmpty(ctx);
-				pageDescription.realContent = isRealContent(ctx);
-				pageDescription.keywords = getKeywords(ctx);
-				pageDescription.label = getLabel(ctx);
-				pageDescription.linkOn = getLinkOn(ctx);
-				pageDescription.location = getLocation(ctx);
-				pageDescription.metaDescription = getMetaDescription(ctx);
-				pageDescription.notInSearch = notInSearch(ctx);
-				pageDescription.pageRank = getPageRank(ctx);
-				pageDescription.pageTitle = getPageTitle(ctx);
-				pageDescription.subTitle = getSubTitle(ctx);
-				pageDescription.tags = getTags(ctx);
-				pageDescription.title = getTitle(ctx);
-				pageDescription.depth = getDepth();
-				pageDescription.visible = isVisible();
-				pageDescription.breakRepeat = isBreakRepeat();
-				pageDescription.referenceLanguage = getReferenceLanguage();
-				pageDescription.priority = getPriority();
-			}
-			pageBean = new PageBean();
-			pageBean.setInfo(pageDescription);
-			pageBean.setUrl(URLHelper.createURL(ctx, this));
-			pageBean.setRealContent(isRealContent(ctx));
-			pageBean.setPath(getPath());
-			pageBean.setLatestEditor(getLatestEditor());
-			pageBean.setCreationDate(StringHelper.renderShortDate(ctx, getCreationDate()));
-			pageBean.setModificationDate(StringHelper.renderShortDate(ctx, getModificationDate()));
-			pageBean.setName(getName());
-			pageBean.setId(getId());
-			pageBean.setTemplateId(getTemplateId());
-			pageBean.setSelected(isSelected(ctx));
-			pageBean.setLastSelected(isLastSelected(ctx));
-
-			pageBean.setRoles(new CollectionAsMap<String>(getUserRoles()));
-			pageBean.setAdminRoles(new CollectionAsMap<String>(getEditorRoles()));
-
-			/*
-			 * if (getParent() != null) { pageBean.parent = getParent().getPageBean(ctx); }
-			 */
-			List<MenuElement> children = getChildMenuElementsList();
-			for (MenuElement child : children) {
-				pageBean.addChild(child.getPageBean(ctx));
-			}
+			pageBean = new PageBean(ctx, this);
 			ctx.getRequest().setAttribute(requestKey, pageBean);
 		}
 		return pageBean;

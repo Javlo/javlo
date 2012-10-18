@@ -33,11 +33,9 @@ import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import net.sf.ehcache.Cache;
-import net.sf.ehcache.Element;
-
 import org.apache.commons.lang.StringEscapeUtils;
 import org.apache.commons.lang.StringUtils;
+import org.javlo.cache.ICache;
 import org.javlo.component.config.ComponentConfig;
 import org.javlo.context.ContentContext;
 import org.javlo.context.EditContext;
@@ -327,12 +325,8 @@ public abstract class AbstractVisualComponent implements IContentVisualComponent
 
 	public String getContentCache(ContentContext ctx) {
 		GlobalContext globalContext = GlobalContext.getInstance(ctx.getRequest());
-		Cache cache = globalContext.getCache(CACHE_NAME);
-		Element elem = cache.get(getContentCacheKey(ctx));
-		if (elem == null) {
-			return null;
-		}
-		return (String) elem.getValue();
+		ICache cache = globalContext.getCache(CACHE_NAME);
+		return (String) cache.get(getContentCacheKey(ctx));
 	}
 
 	private String getContentCacheKey(ContentContext ctx) {
@@ -359,12 +353,8 @@ public abstract class AbstractVisualComponent implements IContentVisualComponent
 
 	public String getContentTimeCache(ContentContext ctx) {
 		GlobalContext globalContext = GlobalContext.getInstance(ctx.getRequest());
-		Cache cache = globalContext.getCache(TIME_CACHE_NAME);
-		Element elem = cache.get(getContentCacheKey(ctx));
-		if (elem == null) {
-			return null;
-		}
-		return (String) elem.getValue();
+		ICache cache = globalContext.getCache(TIME_CACHE_NAME);
+		return (String) cache.get(getContentCacheKey(ctx));
 	}
 
 	/**
@@ -1567,14 +1557,14 @@ public abstract class AbstractVisualComponent implements IContentVisualComponent
 
 	public void setContentCache(ContentContext ctx, String contentCache) {
 		GlobalContext globalContext = GlobalContext.getInstance(ctx.getRequest());
-		Cache cache = globalContext.getCache(CACHE_NAME);
-		cache.put(new Element(getContentCacheKey(ctx), contentCache));
+		ICache cache = globalContext.getCache(CACHE_NAME);
+		cache.put(getContentCacheKey(ctx), contentCache);
 	}
 
 	public void setContentTimeCache(ContentContext ctx, String contentCache) {
 		GlobalContext globalContext = GlobalContext.getInstance(ctx.getRequest());
-		Cache cache = globalContext.getCache(TIME_CACHE_NAME);
-		cache.put(new Element(getContentCacheKey(ctx), contentCache));
+		ICache cache = globalContext.getCache(TIME_CACHE_NAME);
+		cache.put(getContentCacheKey(ctx), contentCache);
 	}
 
 	public void setHidden(boolean hidden) {

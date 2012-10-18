@@ -1113,4 +1113,8 @@ public class StaticConfig extends Observable {
 		return properties.getBoolean("template.default-imported", true);
 	}
 
+	public boolean useEhCache() {
+		return properties.getBoolean("ehcache-active", true);
+	}
+
 }

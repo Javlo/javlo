@@ -5,9 +5,7 @@ import java.util.logging.Logger;
 
 import javax.servlet.http.HttpSession;
 
-import net.sf.ehcache.Cache;
-import net.sf.ehcache.Element;
-
+import org.javlo.cache.ICache;
 import org.javlo.context.ContentContext;
 import org.javlo.context.GlobalContext;
 import org.javlo.navigation.MenuElement;
@@ -22,7 +20,7 @@ public class NavigationService {
 
 	private static final String KEY = NavigationService.class.getName();
 
-	public static NavigationService getInstance(GlobalContext globalContext, HttpSession session) throws ServiceException {		
+	public static NavigationService getInstance(GlobalContext globalContext, HttpSession session) throws ServiceException {
 		NavigationService service = (NavigationService) globalContext.getAttribute(KEY);
 		if (service == null) {
 			service = new NavigationService();
@@ -40,11 +38,11 @@ public class NavigationService {
 
 	private PersistenceService persistenceService;
 
-	private Cache viewPageCache = null;
+	private ICache viewPageCache = null;
 
 	// private Cache previewPageCache = null;
 
-	private Cache previewPageCache = null;
+	private ICache previewPageCache = null;
 
 	public void clearAllPage() {
 		synchronized (KEY) {
@@ -52,10 +50,10 @@ public class NavigationService {
 			previewPageCache.removeAll();
 		}
 	}
-	
+
 	public void clearAllViewPage() {
 		synchronized (KEY) {
-			viewPageCache.removeAll();			
+			viewPageCache.removeAll();
 		}
 	}
 
@@ -77,7 +75,7 @@ public class NavigationService {
 
 	public MenuElement getPage(ContentContext ctx, String pageKey) throws Exception {
 		synchronized (KEY) {
-			Cache cache;
+			ICache cache;
 			if (ctx.getRenderMode() == ContentContext.VIEW_MODE) {
 				cache = viewPageCache;
 			} else {
@@ -87,36 +85,36 @@ public class NavigationService {
 				logger.info("reload page cache. (mode:" + ctx.getRenderMode() + ')');
 				ContentService content = ContentService.getInstance(ctx.getRequest());
 				MenuElement root = content.getNavigation(ctx);
-				cache.put(new Element(root.getName(), root));
-				cache.put(new Element(root.getId(), root));
-				cache.put(new Element(root.getPath(), root));
+				cache.put(root.getName(), root);
+				cache.put(root.getId(), root);
+				cache.put(root.getPath(), root);
 				MenuElement[] pageChildren = root.getAllChilds();
 				for (MenuElement childpage : pageChildren) {
-					cache.put(new Element(childpage.getName(), childpage));
-					cache.put(new Element(childpage.getId(), childpage));
-					cache.put(new Element(childpage.getPath(), childpage));
+					cache.put(childpage.getName(), childpage);
+					cache.put(childpage.getId(), childpage);
+					cache.put(childpage.getPath(), childpage);
 					List<String> vPaths = childpage.getAllVirtualPath();
 					for (String vPath : vPaths) {
-						cache.put(new Element(vPath, childpage));
+						cache.put(vPath, childpage);
 					}
 				}
 			}
-			Element outElem = cache.get(pageKey);
-			if (outElem != null) {
-				return (MenuElement) outElem.getValue();
+			MenuElement menuElement = (MenuElement) cache.get(pageKey);
+			if (menuElement != null) {
+				return menuElement;
 			} else {
 				ContentService content = ContentService.getInstance(ctx.getRequest());
 				MenuElement root = content.getNavigation(ctx);
 				MenuElement[] pageChildren = root.getAllChilds();
 				for (MenuElement childpage : pageChildren) {
 					if (childpage.getName().equals(pageKey) || childpage.getId().equals(pageKey) || childpage.getPath().equals(pageKey)) {
-						cache.put(new Element(childpage.getName(), childpage));
-						cache.put(new Element(childpage.getId(), childpage));
-						cache.put(new Element(childpage.getPath(), childpage));
+						cache.put(childpage.getName(), childpage);
+						cache.put(childpage.getId(), childpage);
+						cache.put(childpage.getPath(), childpage);
 						List<String> vPaths = childpage.getAllVirtualPath();
 						for (String vPath : vPaths) {
-							cache.put(new Element(vPath, childpage));
-						}		
+							cache.put(vPath, childpage);
+						}
 						return childpage;
 					}
 				}
