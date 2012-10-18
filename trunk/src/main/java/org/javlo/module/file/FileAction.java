@@ -291,10 +291,10 @@ public class FileAction extends AbstractModuleAction {
 					fileCache.delete(file.getName());
 				}
 			}
+			return null;
 		} else {
 			return "folder not found : " + folder;
 		}
-		return null;
 	}
 
 	public String performUpdateMeta(RequestService rs, ContentContext ctx, GlobalContext globalContext, FileModuleContext fileModuleContext, I18nAccess i18nAccess, MessageRepository messageRepository) throws Exception {

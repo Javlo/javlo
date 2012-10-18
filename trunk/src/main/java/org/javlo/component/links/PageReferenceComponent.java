@@ -813,7 +813,7 @@ public class PageReferenceComponent extends ComplexPropertiesLink implements IAc
 		String tableID = "table-" + getId();
 		out.println("<div class=\"line\" style=\"margin-left: 5px;\">");
 		out.println("<label for=\"" + filterID + "\">" + i18nAccess.getText("global.filter") + " : </label>");
-		out.println("<input type=\"text\" onkeyup=\"filter($ES('." + tableID + " .filtered'), this.value);\"/>");
+		out.println("<input type=\"text\" onkeyup=\"filter(this.value, '." + tableID + " .filtered');\"/>");
 		out.println("</div>");
 
 		out.print("<div class=\"page-list-container\"><table class=\"");

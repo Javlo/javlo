@@ -41,8 +41,12 @@
 	vertical-align: middle;
 }
 
-
 .component .preview-image.selected {
 	font-weight: bold;
 	border: 1px #aa0000 solid;
+}
+
+.page-list-container {
+	height: 360px;
+	overflow: auto;
 }
