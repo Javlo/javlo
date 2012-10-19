@@ -15,7 +15,6 @@ import org.javlo.i18n.I18nAccess;
 import org.javlo.service.ContentService;
 import org.javlo.service.RequestService;
 
-
 /**
  * @author pvandermaesen
  */
@@ -28,13 +27,13 @@ public class RSSRegistration extends AbstractPropertiesComponent {
 
 	public String getChannel() {
 		String channel = getFieldValue(CHANNEL_KEY);
-		
+
 		// to retrieve old version value
 		if (channel == null || channel.length() == 0) {
 			String value = getValue();
 			if (value != null && value.length() > 0 && !value.contains("#")) {
 				channel = value;
-				
+
 				setFieldValue(CHANNEL_KEY, channel);
 				storeProperties();
 				setModify();
@@ -42,7 +41,7 @@ public class RSSRegistration extends AbstractPropertiesComponent {
 		}
 		return channel;
 	}
-	
+
 	public boolean isHideInvisible() {
 		return Boolean.valueOf(getFieldValue(HIDE_INVISIBLE_KEY));
 	}
@@ -64,31 +63,33 @@ public class RSSRegistration extends AbstractPropertiesComponent {
 		StringBuffer finalCode = new StringBuffer();
 		finalCode.append(getSpecialInputTag());
 
+		finalCode.append("<div class=\"line\">");
 		finalCode.append("<label for=\"" + getChannelName() + "\">");
 		I18nAccess i18nAccess = I18nAccess.getInstance(ctx.getRequest());
-		finalCode.append(i18nAccess.getText("component.rss.channel")+" : ");
+		finalCode.append(i18nAccess.getText("component.rss.channel") + " : ");
 		finalCode.append("</label>");
 		finalCode.append("<input id=\"" + getChannelName() + "\" name=\"" + getChannelName() + "\" value=\"");
 		finalCode.append(getChannel());
-		finalCode.append("\" />");
+		finalCode.append("\" /></div>");
 
-		finalCode.append("&nbsp;&nbsp;&nbsp;<label for=\"" + getChannelsName() + "\">");
-		finalCode.append(i18nAccess.getText("component.rss.channel-available")+" : ");
+		finalCode.append("<div class=\"line\">");
+		finalCode.append("<label for=\"" + getChannelsName() + "\">");
+		finalCode.append(i18nAccess.getText("component.rss.channel-available") + " : ");
 		finalCode.append("</label>");
 		ContentService content = ContentService.getInstance(ctx.getRequest());
 		List<String> channelsList = NavigationHelper.getAllRSSChannels(ctx, content.getNavigation(ctx));
 		String[] channels = new String[channelsList.size()];
 		channelsList.toArray(channels);
-		finalCode.append(XHTMLHelper.getInputOneSelect(getChannelsName(), channels, channels, getChannel(), "$('"+getChannelName()+"').setProperty('value',$('"+getChannelsName()+"').getProperty('value'));"));
+		finalCode.append(XHTMLHelper.getInputOneSelect(getChannelsName(), channels, channels, getChannel(), "jQuery('#" + getChannelName() + "').val(jQuery('" + getChannelsName() + "').val());"));
 
-		finalCode.append("&nbsp;&nbsp;&nbsp;<label for=\"" + getHideInvisibleName() + "\">");
-		finalCode.append(i18nAccess.getText("component.rss.hide-invisible")+" : ");
+		finalCode.append("</div><div class=\"line\"><label for=\"" + getHideInvisibleName() + "\">");
+		finalCode.append(i18nAccess.getText("component.rss.hide-invisible") + " : ");
 		finalCode.append("</label>");
 		finalCode.append("<input type=\"checkbox\" id=\"" + getHideInvisibleName() + "\" name=\"" + getHideInvisibleName() + "\" value=\"true\"");
 		if (isHideInvisible()) {
 			finalCode.append(" checked=\"checked\"");
 		}
-		finalCode.append("\" />");
+		finalCode.append("\" /></div>");
 
 		return finalCode.toString();
 	}
@@ -100,7 +101,7 @@ public class RSSRegistration extends AbstractPropertiesComponent {
 
 	/**
 	 * get the XHTML input field name for the channels
-	 *
+	 * 
 	 * @return a XHTML input field name.
 	 */
 	public String getChannelName() {
@@ -144,14 +145,13 @@ public class RSSRegistration extends AbstractPropertiesComponent {
 		}
 	}
 
-	// useless, actually, or maybe for a call to super for raw data...	
+	// useless, actually, or maybe for a call to super for raw data...
 	static final List<String> FIELDS = Arrays.asList(new String[] { CHANNEL_KEY, HIDE_INVISIBLE_KEY });
-	
+
 	@Override
 	public List<String> getFields(ContentContext ctx) throws Exception {
 		return FIELDS;
 	}
-
 
 	@Override
 	public String getHeader() {

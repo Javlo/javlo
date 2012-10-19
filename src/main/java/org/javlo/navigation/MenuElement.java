@@ -1,5 +1,6 @@
 package org.javlo.navigation;
 
+import java.io.ByteArrayInputStream;
 import java.io.InputStream;
 import java.io.PrintWriter;
 import java.io.Serializable;
@@ -51,10 +52,11 @@ import org.javlo.context.ContentManager;
 import org.javlo.context.GlobalContext;
 import org.javlo.helper.Logger;
 import org.javlo.helper.NavigationHelper;
-import org.javlo.helper.ResourceHelper;
+import org.javlo.helper.NetHelper;
 import org.javlo.helper.StringHelper;
 import org.javlo.helper.URLHelper;
 import org.javlo.helper.XHTMLHelper;
+import org.javlo.helper.XMLManipulationHelper;
 import org.javlo.message.GenericMessage;
 import org.javlo.message.MessageRepository;
 import org.javlo.service.PersistenceService;
@@ -3192,7 +3194,6 @@ public class MenuElement implements Serializable {
 	}
 
 	public void updateLinkedData(ContentContext ctx) {
-		InputStream in = null;
 		try {
 			if (getLinkedURL().trim().length() == 0) {
 				if (isRemote()) {
@@ -3214,24 +3215,47 @@ public class MenuElement implements Serializable {
 			String XMLURL = StringHelper.changeFileExtension(getLinkedURL(), "xml");
 
 			URL url = new URL(XMLURL);
-			in = url.openStream();
 
-			NodeXML node = XMLFactory.getFirstNode(in);
-			NodeXML pageNode = node.getChild("page");
-			if (pageNode != null) {
-				clearPage();
-				GlobalContext globalContext = GlobalContext.getInstance(ctx.getRequest());
-				PersistenceService persistenceService = PersistenceService.getInstance(globalContext);
-				NavigationHelper.importPage(ctx, persistenceService, pageNode, this, ctx.getLanguage(), true);
+			String xml = NetHelper.readPage(url);
+
+			if (xml != null) {
+
+				try {
+
+					xml = xml.trim();
+					if (xml.length() > 5 && xml.substring(0, 5).toLowerCase().startsWith("<?xml")) {
+
+						XMLManipulationHelper.searchAllTag(xml, true);
+
+						InputStream inStr = new ByteArrayInputStream(xml.getBytes());
+						NodeXML node = XMLFactory.getFirstNode(inStr);
+						inStr.close();
+
+						NodeXML pageNode = node.getChild("page");
+						if (pageNode != null) {
+							clearPage();
+							GlobalContext globalContext = GlobalContext.getInstance(ctx.getRequest());
+							PersistenceService persistenceService = PersistenceService.getInstance(globalContext);
+							NavigationHelper.importPage(ctx, persistenceService, pageNode, this, ctx.getLanguage(), true);
+						}
+
+					} else {
+						logger.severe("bad external link (xml don't start with '<?xml') : " + XMLURL + "   page:" + getPath());
+					}
+
+				} catch (Exception e) {
+					logger.severe(e.getMessage());
+					logger.severe("bad external link : " + XMLURL + "   page:" + getPath());
+				}
+
 			}
+
 		} catch (Exception e) {
 			setRemote(false);
 			logger.warning("can not update page : " + getPath() + " with linked url : " + getLinkedURL());
 			e.printStackTrace();
 			MessageRepository messageRepository = MessageRepository.getInstance(ctx);
 			messageRepository.setGlobalMessage(new GenericMessage(e.getMessage(), GenericMessage.ERROR));
-		} finally {
-			ResourceHelper.closeResource(in);
 		}
 	}
 

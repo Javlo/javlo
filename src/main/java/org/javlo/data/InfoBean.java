@@ -269,4 +269,26 @@ public class InfoBean {
 		return globalContext.isOpenExternalLinkAsPopup();
 	}
 
+	public String getTemplateFolder() {
+		try {
+			if (ctx.getCurrentTemplate() != null) {
+				return ctx.getCurrentTemplate().getFolder(globalContext);
+			}
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		return null;
+	}
+
+	public String getAbsoluteTemplateFolder() {
+		try {
+			if (ctx.getCurrentTemplate() != null) {
+				return URLHelper.createStaticTemplateURL(ctx, "/");
+			}
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		return null;
+	}
+
 }
