@@ -8,4 +8,6 @@ change log
 
  * Cache abstraction
  
- * PageBean and infoBean transform as smart bean.  
+ * PageBean and infoBean transform as smart bean.
+ 
+ * short url  
