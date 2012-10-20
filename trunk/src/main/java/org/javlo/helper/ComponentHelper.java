@@ -95,7 +95,7 @@ public class ComponentHelper {
 			out.println(linkTitle + " : ");
 			out.println("<select name=\"" + linkName + "\">");
 			MenuElement elem = content.getNavigation(ctx);
-			MenuElement[] values = elem.getAllChilds();
+			MenuElement[] values = elem.getAllChildren();
 			String currentLink = null;
 			for (MenuElement value : values) {
 				if (linkIdStr.equals(value.getId())) {

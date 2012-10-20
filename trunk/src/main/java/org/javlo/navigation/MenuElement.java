@@ -171,6 +171,15 @@ public class MenuElement implements Serializable {
 
 		public String getModificationDate() {
 			try {
+				return StringHelper.renderShortDate(ctx, page.getModificationDate());
+			} catch (Exception e) {
+				e.printStackTrace();
+				return null;
+			}
+		}
+
+		public String getCreationDate() {
+			try {
 				return StringHelper.renderShortDate(ctx, page.getCreationDate());
 			} catch (Exception e) {
 				e.printStackTrace();
@@ -207,6 +216,18 @@ public class MenuElement implements Serializable {
 			return new CollectionAsMap<String>(page.getEditorRoles());
 		}
 
+		public String getShortURL() {
+			try {
+				return page.getShortURL();
+			} catch (Exception e) {
+				e.printStackTrace();
+				return null;
+			}
+		}
+
+		public boolean isAllreadyShortURL() {
+			return page.isShortURL();
+		}
 	}
 
 	/**
@@ -489,7 +510,9 @@ public class MenuElement implements Serializable {
 			this.breakRepeat = breakRepeat;
 		}
 
-	};
+	}
+
+	private GlobalContext globalContext;;
 
 	protected PageDescription getPageDescription(ContentContext ctx) throws Exception {
 		PageDescription pageDescription = getPageBeanCached(ctx.getLanguage());
@@ -529,6 +552,7 @@ public class MenuElement implements Serializable {
 		MenuElement outMenuElement = new MenuElement();
 		outMenuElement.cache = globalContext.getCache("navigation");
 		outMenuElement.cache.removeAll();
+		outMenuElement.globalContext = globalContext;
 		return outMenuElement;
 	}
 
@@ -560,12 +584,12 @@ public class MenuElement implements Serializable {
 
 	static MenuElement searchChildFromId(MenuElement elem, String id) {
 		MenuElement res = null;
-		MenuElement[] childs = elem.getChildMenuElements();
-		for (int i = 0; (i < childs.length) && (res == null); i++) {
-			if (childs[i].getId().equals(id)) {
-				return childs[i];
+		MenuElement[] children = elem.getChildMenuElements();
+		for (int i = 0; (i < children.length) && (res == null); i++) {
+			if (children[i].getId().equals(id)) {
+				return children[i];
 			} else {
-				res = searchChildFromId(childs[i], id);
+				res = searchChildFromId(children[i], id);
 			}
 		}
 		return res;
@@ -573,12 +597,12 @@ public class MenuElement implements Serializable {
 
 	static MenuElement searchChildFromName(MenuElement elem, String name) {
 		MenuElement res = null;
-		MenuElement[] childs = elem.getChildMenuElements();
-		for (int i = 0; (i < childs.length) && (res == null); i++) {
-			if (childs[i].getName().equals(name)) {
-				res = childs[i];
+		MenuElement[] children = elem.getChildMenuElements();
+		for (int i = 0; (i < children.length) && (res == null); i++) {
+			if (children[i].getName().equals(name)) {
+				res = children[i];
 			} else {
-				res = searchChildFromName(childs[i], name);
+				res = searchChildFromName(children[i], name);
 			}
 		}
 		return res;
@@ -691,6 +715,8 @@ public class MenuElement implements Serializable {
 	private Date latestUpdateLinkedData = null;
 
 	public static java.util.logging.Logger logger = java.util.logging.Logger.getLogger(MenuElement.class.getName());
+
+	private String shortURL = null;
 
 	protected MenuElement() {
 	}
@@ -1054,14 +1080,14 @@ public class MenuElement implements Serializable {
 		return "clk__" + getPath() + "__" + StringHelper.renderDate(date, "yyyy-MM-dd");
 	}
 
-	public MenuElement[] getAllChilds() throws Exception {
+	public MenuElement[] getAllChildren() throws Exception {
 		ArrayList<MenuElement> list = getChildElementRecursive(this, 0);
 		MenuElement[] res = new MenuElement[list.size()];
 		list.toArray(res);
 		return res;
 	}
 
-	public List<MenuElement> getAllChildsWithComponentType(ContentContext ctx, String type) throws Exception {
+	public List<MenuElement> getAllChildrenWithComponentType(ContentContext ctx, String type) throws Exception {
 		return getChildElementRecursive(ctx, this, type, 0);
 	}
 
@@ -1223,8 +1249,8 @@ public class MenuElement implements Serializable {
 		if (elem.countComponentInCtx(ctx, type) > 0) {
 			result.add(elem);
 		}
-		MenuElement[] childs = elem.getChildMenuElements();
-		for (MenuElement child : childs) {
+		MenuElement[] children = elem.getChildMenuElements();
+		for (MenuElement child : children) {
 			result.addAll(getChildElementRecursive(ctx, child, type, deph + 1));
 		}
 		return result;
@@ -1233,8 +1259,8 @@ public class MenuElement implements Serializable {
 	ArrayList<MenuElement> getChildElementRecursive(MenuElement elem, int deph) throws Exception {
 		ArrayList<MenuElement> result = new ArrayList<MenuElement>();
 		result.add(elem);
-		MenuElement[] childs = elem.getChildMenuElements();
-		for (MenuElement child : childs) {
+		MenuElement[] children = elem.getChildMenuElements();
+		for (MenuElement child : children) {
 			result.addAll(getChildElementRecursive(child, deph + 1));
 		}
 		return result;
@@ -1256,8 +1282,8 @@ public class MenuElement implements Serializable {
 	ArrayList<String> getChildListRecursive(MenuElement elem, int deph) throws Exception {
 		ArrayList<String> result = new ArrayList<String>();
 		result.add(elem.getPath());
-		MenuElement[] childs = elem.getChildMenuElements();
-		for (MenuElement child : childs) {
+		MenuElement[] children = elem.getChildMenuElements();
+		for (MenuElement child : children) {
 			result.addAll(getChildListRecursive(child, deph + 1));
 		}
 		return result;
@@ -1266,7 +1292,7 @@ public class MenuElement implements Serializable {
 	/**
 	 * get the child list of the current element.
 	 * 
-	 * @return a array of childs.
+	 * @return a array of children.
 	 */
 	public MenuElement[] getChildMenuElements() {
 		MenuElement[] res = new MenuElement[childMenuElements.size()];
@@ -1285,7 +1311,7 @@ public class MenuElement implements Serializable {
 	/**
 	 * get the child list of the current element.
 	 * 
-	 * @return a list of childs.
+	 * @return a list of children.
 	 */
 	public List<MenuElement> getChildMenuElementsList() {
 		return childMenuElements;
@@ -2311,7 +2337,7 @@ public class MenuElement implements Serializable {
 	}
 
 	/**
-	 * return the depth of the selection. sample: if the first selected element have childs and sedond not the depth is 2.
+	 * return the depth of the selection. sample: if the first selected element have children and sedond not the depth is 2.
 	 * 
 	 * @return a depth
 	 * @throws Exception
@@ -2531,7 +2557,7 @@ public class MenuElement implements Serializable {
 	/**
 	 * get the child list of the current element.
 	 * 
-	 * @return a array of childs.
+	 * @return a array of children.
 	 * @throws Exception
 	 */
 	public MenuElement[] getVisibleChildMenuElements(ContentContext ctx) throws Exception {
@@ -2833,7 +2859,7 @@ public class MenuElement implements Serializable {
 				}
 			}
 
-			MenuElement[] children = this.getAllChilds();
+			MenuElement[] children = this.getAllChildren();
 			for (MenuElement child : children) {
 				content = child.getContent(ctx);
 				while (content.hasNext(contentAreaCtx)) {
@@ -3266,7 +3292,7 @@ public class MenuElement implements Serializable {
 	 * @throws Exception
 	 */
 	public int validAllChildren() throws Exception {
-		MenuElement[] children = getAllChilds();
+		MenuElement[] children = getAllChildren();
 		int outValided = 0;
 		for (int i = 0; i < children.length; i++) {
 			if (!children[i].isValid()) {
@@ -3309,6 +3335,32 @@ public class MenuElement implements Serializable {
 	public void setBreakRepeat(boolean breakRepeat) {
 		releaseCache();
 		this.breakRepeat = breakRepeat;
+	}
+
+	public boolean isShortURL() {
+		return shortURL != null;
+	}
+
+	public String getShortURL() throws Exception {
+		if (shortURL == null) {
+			HashSet<String> shortURLs = new HashSet<String>();
+			MenuElement root = getRoot();
+			if (root.isShortURL()) {
+				shortURLs.add(root.getShortURL());
+			}
+			MenuElement[] children = root.getAllChildren();
+			for (MenuElement child : children) {
+				if (child.isShortURL()) {
+					shortURLs.add(child.getShortURL().substring(1));
+				}
+			}
+			this.shortURL = 'U' + StringHelper.createKey(globalContext.getStaticConfig().getShortURLSize(), shortURLs);
+		}
+		return shortURL;
+	}
+
+	public void setShortURL(String shortURL) {
+		this.shortURL = shortURL;
 	}
 
 }

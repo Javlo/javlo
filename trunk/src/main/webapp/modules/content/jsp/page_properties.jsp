@@ -47,6 +47,17 @@
 </div>
 
 <div class="line">
+	<label>${i18n.edit['item.short-url']}</label>
+	<c:if test="${!page.allreadyShortURL}">
+		<input type="submit" id="shorturl-url-creator" name="shorturl" value="${i18n.edit['edit.action.short-url']}" />
+	</c:if>
+	<c:if test="${page.allreadyShortURL}">
+		<span><a href="${info.shortURL}">${page.shortURL}</a></span>
+	</c:if>
+</div>
+
+
+<div class="line">
 	<label>${i18n.edit['item.path']}</label>
 	<span>${page.path}</span>
 </div>
@@ -95,8 +106,8 @@
 </div>
 
 <div class="action">
-	<c:if test="${not empty info.parentPageURL}">
-    <a href="${info.parentPageURL}?webaction=deletePage&page=${page.id}" class="action-button warning needconfirm" title="${i18n.edit['global.delete']}"><span>${i18n.edit['global.delete']}</span></a>
+	<c:if test="${not empty info.parent}">
+    <a href="${info.parent.url}?webaction=deletePage&page=${page.id}" class="action-button warning needconfirm" title="${i18n.edit['global.delete']}"><span>${i18n.edit['global.delete']}</span></a>
     </c:if>
 	<input type="submit" value="${i18n.edit['global.ok']}" />
 </div>

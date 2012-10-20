@@ -75,6 +75,8 @@ public class ContentService {
 
 	private MenuElement viewNav = null;
 
+	private Map<String, MenuElement> shortURLMap = null;
+
 	private MenuElement previewNav = null;
 
 	private MenuElement timeTravelerNav = null;
@@ -396,7 +398,7 @@ public class ContentService {
 		String KEY = "__word_count_" + ctx.getRequestContentLanguage();
 		HttpSession session = ctx.getRequest().getSession();
 		if (session.getAttribute(KEY) == null) {
-			MenuElement[] allPages = getNavigation(ctx).getAllChilds();
+			MenuElement[] allPages = getNavigation(ctx).getAllChildren();
 			int wordCount = 0;
 			for (MenuElement child : allPages) {
 				ContentElementList content = child.getContent(ctx);
@@ -439,7 +441,7 @@ public class ContentService {
 
 		StaticConfig staticConfig = StaticConfig.getInstance(ctx.getRequest().getSession());
 		int depth = staticConfig.getPublishLoadingDepth();
-		MenuElement[] children = newViewNav.getAllChilds();
+		MenuElement[] children = newViewNav.getAllChildren();
 		ContentContext viewCtx = new ContentContext(ctx);
 		Collection<String> lgs = globalContext.getLanguages();
 		for (String lg : lgs) {
@@ -502,10 +504,7 @@ public class ContentService {
 		globalContext.releaseAllCache();
 		clearComponentCache();
 		viewNav = null;
-
-		/*
-		 * ContentService content = ContentService.getInstance(globalContext); content.loadViewNav(ctx);
-		 */
+		shortURLMap = null;
 	}
 
 	public void removeAttribute(ContentContext ctx, String key) {
@@ -581,7 +580,7 @@ public class ContentService {
 			while (content.hasNext(freeCtx)) {
 				outList.add(content.next(freeCtx));
 			}
-			MenuElement[] children = page.getAllChilds();
+			MenuElement[] children = page.getAllChildren();
 			for (MenuElement child : children) {
 				content = child.getAllContent(freeCtx);
 				while (content.hasNext(freeCtx)) {
@@ -609,5 +608,25 @@ public class ContentService {
 
 	public boolean isPreviewNav() {
 		return previewNav != null;
+	}
+
+	public MenuElement getPageWithShortURL(ContentContext ctx, String shortURL) throws Exception {
+		if (ctx.isAsViewMode()) {
+			if (shortURLMap == null) {
+				shortURLMap = new HashMap<String, MenuElement>();
+				MenuElement root = getNavigation(ctx);
+				if (root.isShortURL()) {
+					shortURLMap.put(root.getShortURL(), root);
+				}
+				for (MenuElement child : root.getAllChildren()) {
+					if (child.isShortURL()) {
+						shortURLMap.put(child.getShortURL(), child);
+					}
+				}
+			}
+			return shortURLMap.get(shortURL);
+		} else {
+			return null;
+		}
 	}
 }

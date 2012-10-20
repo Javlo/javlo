@@ -308,7 +308,7 @@ public class ComponentFactory {
 		ContentService content = ContentService.getInstance(ctx.getRequest());
 		MenuElement rootPage = content.getNavigation(ctx);
 		List<ComponentBean> outComp = new LinkedList<ComponentBean>();
-		MenuElement[] pages = rootPage.getAllChilds();
+		MenuElement[] pages = rootPage.getAllChildren();
 		for (MenuElement page : pages) {
 			ComponentBean[] comps = page.getContent();
 			for (ComponentBean comp : comps) {
@@ -324,7 +324,7 @@ public class ComponentFactory {
 		ContentService content = ContentService.getInstance(ctx.getRequest());
 		MenuElement rootPage = content.getNavigation(ctx);
 		List<IContentVisualComponent> outComp = new LinkedList<IContentVisualComponent>();
-		MenuElement[] pages = rootPage.getAllChilds();
+		MenuElement[] pages = rootPage.getAllChildren();
 		for (MenuElement page : pages) {
 			ContentElementList comps = page.getAllContent(ctx);
 			while (comps.hasNext(ctx)) {

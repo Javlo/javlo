@@ -66,7 +66,10 @@ public class XMLServlet extends HttpServlet {
 
 			return ServletHelper.executeJSP(ctx, renderer);
 		} else {
-			String imageHTML = "<a href=\"" + largeImageURL + "\"><img src=\"" + imageURL + "\" alt=\"" + imageDescription + "\" /></a>";
+			String imageHTML = "";
+			if (imageURL != null) {
+				imageHTML = "<a href=\"" + largeImageURL + "\"><img src=\"" + imageURL + "\" alt=\"" + imageDescription + "\" /></a>";
+			}
 			return "<![CDATA[ " + imageHTML + text + "]]>";
 		}
 	}
@@ -114,7 +117,7 @@ public class XMLServlet extends HttpServlet {
 					track.setSessionId(request.getSession().getId());
 					tracker.addTrack(track);
 
-					List<MenuElement> rssPages = content.getNavigation(ctx).getAllChildsWithComponentType(ctx, RSSRegistration.TYPE);
+					List<MenuElement> rssPages = content.getNavigation(ctx).getAllChildrenWithComponentType(ctx, RSSRegistration.TYPE);
 					List<MenuElement> pages = new ArrayList<MenuElement>(rssPages);
 
 					Date latestDate = new Date(0);
@@ -176,7 +179,7 @@ public class XMLServlet extends HttpServlet {
 									if (comp.getValue(ctx).trim().length() == 0) {
 										allChannel = true;
 									} else {
-										pageChannel.add(comp.getValue(ctx));
+										pageChannel.add(((RSSRegistration) comp).getChannel());
 									}
 								}
 							}

@@ -739,6 +739,10 @@ public class Edit extends AbstractModuleAction {
 				modify = true;
 			}
 
+			if (requestService.getParameter("shorturl", null) != null) {
+				page.getShortURL(); // create short url
+			}
+
 			boolean isBreakRepeat = requestService.getParameter("break_repeat", null) != null;
 			if (page.isBreakRepeat() != isBreakRepeat) {
 				page.setBreakRepeat(isBreakRepeat);
@@ -930,7 +934,7 @@ public class Edit extends AbstractModuleAction {
 			if (urlFactory != null) {
 				for (String lg : lgs) {
 					lgCtx.setRequestContentLanguage(lg);
-					MenuElement[] children = ContentService.getInstance(globalContext).getNavigation(lgCtx).getAllChilds();
+					MenuElement[] children = ContentService.getInstance(globalContext).getNavigation(lgCtx).getAllChildren();
 					for (MenuElement menuElement : children) {
 						String url = lgCtx.getRequestContentLanguage() + urlFactory.createURL(lgCtx, menuElement);
 						if (urls.contains(url)) {

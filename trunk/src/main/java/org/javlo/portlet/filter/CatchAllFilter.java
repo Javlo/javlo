@@ -34,6 +34,8 @@ import org.javlo.message.GenericMessage;
 import org.javlo.message.MessageRepository;
 import org.javlo.module.core.ModulesContext;
 import org.javlo.module.mailing.MailingAction;
+import org.javlo.navigation.MenuElement;
+import org.javlo.service.ContentService;
 import org.javlo.service.DataToIDService;
 import org.javlo.service.RequestService;
 import org.javlo.template.Template;
@@ -326,6 +328,7 @@ public class CatchAllFilter implements Filter {
 		if (editURI.startsWith('/' + globalContext.getContextKey())) {
 			editURI = editURI.substring(globalContext.getContextKey().length() + 1);
 		}
+
 		if (editURI.startsWith("/edit-")) {
 			editURI = editURI.substring("/edit-".length());
 			String module = editURI;
@@ -403,6 +406,35 @@ public class CatchAllFilter implements Filter {
 		} else {
 
 			/******************/
+			/**** SHORT URL ***/
+			/******************/
+
+			String shortURI = uri;
+			if (shortURI.startsWith('/' + globalContext.getContextKey())) {
+				shortURI = shortURI.substring(globalContext.getContextKey().length() + 2);
+			}
+
+			if (shortURI.length() == globalContext.getStaticConfig().getShortURLSize() + 1 && shortURI.startsWith("U")) {
+				ContentContext ctx = null;
+				try {
+					ctx = ContentContext.getContentContext((HttpServletRequest) request, (HttpServletResponse) response);
+					if (ctx.isAsViewMode()) {
+						ContentService content = ContentService.getInstance(globalContext);
+						MenuElement page = content.getPageWithShortURL(ctx, shortURI);
+						if (page != null) {
+							String newURL = URLHelper.createURL(ctx, page);
+							NetHelper.sendRedirectPermanently((HttpServletResponse) response, newURL);
+							return;
+						}
+
+					}
+				} catch (Exception e1) {
+					e1.printStackTrace();
+				}
+
+			}
+
+			/******************/
 			/**** ADD VIEW ****/
 			/******************/
 
@@ -430,9 +462,9 @@ public class CatchAllFilter implements Filter {
 			try {
 
 				if (request.getParameter("webaction") != null && request.getParameter("webaction").equals("view.language")) {
-					ContentContext ctx = ContentContext.getContentContext((HttpServletRequest) request, (HttpServletResponse) response);
 					String lang = request.getParameter("lg");
 					if (lang != null) {
+						ContentContext ctx = ContentContext.getContentContext((HttpServletRequest) request, (HttpServletResponse) response);
 						if (globalContext.getLanguages().contains(lang)) {
 							ctx.setLanguage(lang);
 							ctx.setContentLanguage(lang);

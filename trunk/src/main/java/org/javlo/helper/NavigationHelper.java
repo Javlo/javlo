@@ -176,7 +176,7 @@ public class NavigationHelper {
 
 	public static List<String> getAllRSSChannels(ContentContext ctx, MenuElement page) throws Exception {
 		List<String> pageChannel = getRSSChannels(ctx, page);
-		MenuElement[] children = page.getAllChilds();
+		MenuElement[] children = page.getAllChildren();
 		for (MenuElement menuElement : children) {
 			List<String> allChildrenChannels = getRSSChannels(ctx, menuElement);
 			for (String channel : allChildrenChannels) {

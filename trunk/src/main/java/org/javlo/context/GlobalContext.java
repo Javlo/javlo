@@ -1160,7 +1160,7 @@ public class GlobalContext implements Serializable {
 					Collection<String> lgs = getContentLanguages();
 					for (String lg : lgs) {
 						lgCtx.setRequestContentLanguage(lg);
-						MenuElement[] children = ContentService.getInstance(ctx.getRequest()).getNavigation(lgCtx).getAllChilds();
+						MenuElement[] children = ContentService.getInstance(ctx.getRequest()).getNavigation(lgCtx).getAllChildren();
 						for (MenuElement menuElement : children) {
 							String pageURL = urlCreator.createURL(lgCtx, menuElement);
 							String pageKeyURL = urlCreator.createURLKey(pageURL);
