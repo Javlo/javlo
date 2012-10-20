@@ -23,7 +23,7 @@ public class ImageAfterDescriptionChildrenMacro extends ImageAfterDescriptionMac
 		imageUnderDescritpion(ctx, currentPage);
 
 		int imageMoved = 0;
-		MenuElement[] children = currentPage.getAllChilds();
+		MenuElement[] children = currentPage.getAllChildren();
 		for (MenuElement child : children) {
 			if (imageUnderDescritpion(ctx, child)) {
 				imageMoved++;

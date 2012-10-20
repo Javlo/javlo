@@ -39,7 +39,7 @@ public class MergeDynamicComponent extends AbstractMacro {
 			ctxLg.setContentLanguage(lg);
 			ctxLg.setRequestContentLanguage(lg);
 			ctxLg.setArea(null);
-			MenuElement[] pages = content.getNavigation(ctxLg).getAllChilds();
+			MenuElement[] pages = content.getNavigation(ctxLg).getAllChildren();
 			for (MenuElement page : pages) {
 				ContentElementList comps = page.getContent(ctxLg);
 				while (comps.hasNext(ctxLg)) {

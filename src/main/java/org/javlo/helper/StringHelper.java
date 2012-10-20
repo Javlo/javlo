@@ -47,7 +47,6 @@ import java.util.logging.Logger;
 import org.apache.commons.codec.binary.Base64;
 import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.lang.RandomStringUtils;
-import org.apache.commons.lang.StringEscapeUtils;
 import org.apache.commons.lang.StringUtils;
 import org.javlo.context.ContentContext;
 import org.javlo.context.GlobalContext;
@@ -84,9 +83,11 @@ public class StringHelper {
 
 	public static SimpleDateFormat RFC822DATEFORMAT = new SimpleDateFormat("EEE', 'dd' 'MMM' 'yyyy' 'HH:mm:ss' 'Z", Locale.US);
 
-	private static final String EU_ACCEPTABLE_CHAR = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPPQRSTUVWXYZ0123456789-_.\u0443\u0435\u0438\u0448\u0449\u043a\u0441\u0434\u0437\u0446\u044c\u044f\u0430\u043e\u0436\u0433\u0442\u043d\u0432\u043c\u0447\u044e\u0439\u044a\u044d\u0444\u0445\u043f\u0440\u043b\u0431\u044b\u0423\u0415\u0418\u0428\u0429\u041a\u0421\u0414\u0417\u0426\u042c\u042f\u0410\u041e\u0416\u0413\u0422\u041d\u0412\u041c\u0427\u042e\u0419\u042a\u042d\u0424\u0425\u041f\u0420\u041b\u0411\u03c2\u03b5\u03c1\u03c4\u03c5\u03b8\u03b9\u03bf\u03c0\u03b1\u03c3\u03b4\u03c6\u03b3\u03b7\u03be\u03ba\u03bb\u03b6\u03c7\u03c8\u03c9\u03b2\u03bd\u03bc\u0395\u03a1\u03a4\u03a5\u0398\u0399\u039f\u03a0\u0391\u03a3\u03a6\u0393\u0397\u039e\u039a\u039b\u0396\u03a7\u03a8\u03a9\u0392\u039d\u039c";
+	private static final String EU_ACCEPTABLE_CHAR = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789-_.\u0443\u0435\u0438\u0448\u0449\u043a\u0441\u0434\u0437\u0446\u044c\u044f\u0430\u043e\u0436\u0433\u0442\u043d\u0432\u043c\u0447\u044e\u0439\u044a\u044d\u0444\u0445\u043f\u0440\u043b\u0431\u044b\u0423\u0415\u0418\u0428\u0429\u041a\u0421\u0414\u0417\u0426\u042c\u042f\u0410\u041e\u0416\u0413\u0422\u041d\u0412\u041c\u0427\u042e\u0419\u042a\u042d\u0424\u0425\u041f\u0420\u041b\u0411\u03c2\u03b5\u03c1\u03c4\u03c5\u03b8\u03b9\u03bf\u03c0\u03b1\u03c3\u03b4\u03c6\u03b3\u03b7\u03be\u03ba\u03bb\u03b6\u03c7\u03c8\u03c9\u03b2\u03bd\u03bc\u0395\u03a1\u03a4\u03a5\u0398\u0399\u039f\u03a0\u0391\u03a3\u03a6\u0393\u0397\u039e\u039a\u039b\u0396\u03a7\u03a8\u03a9\u0392\u039d\u039c";
 
-	private static final String ISO_ACCEPTABLE_CHAR = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPPQRSTUVWXYZ0123456789-_.";
+	private static final String ISO_ACCEPTABLE_CHAR = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789-_.";
+
+	private static final String KEY_ACCEPTABLE_CHAR = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";
 
 	private static long previousRandomId = System.currentTimeMillis();
 
@@ -1096,12 +1097,20 @@ public class StringHelper {
 
 	public static void main(String[] args) {
 
-		String source = "The less than sign (<) and ampersand (&) must &nbsp; be escaped <b>before</b> éà using them in HTML";
-		String escaped = StringEscapeUtils.escapeHtml(source);
-		String escapedLight = StringEscapeUtils.escapeXml(source);
+		Set<String> keys = new HashSet<String>();
 
-		System.out.println("escaped = " + escaped);
-		System.out.println("escapedLight = " + escapedLight);
+		for (int i = 0; i < 20000; i++) {
+			String key = createKey(2, keys);
+			if (key == null) {
+				System.out.println("i=" + i);
+				System.out.println("t=" + KEY_ACCEPTABLE_CHAR.length() * KEY_ACCEPTABLE_CHAR.length());
+				break;
+			}
+			keys.add(key);
+			System.out.println("*** key = " + key);
+		}
+
+		System.out.println("t=" + KEY_ACCEPTABLE_CHAR.length() * KEY_ACCEPTABLE_CHAR.length() * KEY_ACCEPTABLE_CHAR.length());
 
 	}
 
@@ -2257,6 +2266,49 @@ public class StringHelper {
 		}
 		out.close();
 		return new String(outStream.toByteArray());
+	}
+
+	private static boolean incrementArray(int[] array, int i, int max) {
+		if (array[i] + 1 > max) {
+			if (i == array.length - 1) {
+				return false;
+			}
+			array[i] = 0;
+			return incrementArray(array, i + 1, max);
+		} else {
+			array[i] = array[i] + 1;
+			return true;
+		}
+	}
+
+	/**
+	 * create a new unic key.
+	 * 
+	 * @param length
+	 *            the length of the key.
+	 * @param keys
+	 *            set of keys allready exist
+	 * @return null if all keys are in keys set
+	 */
+	public static String createKey(int length, Set<String> keys) {
+		char[] newKey = new char[length];
+		int[] position = new int[length];
+		boolean found = false;
+		String key = null;
+		while (!found) {
+			for (int i = 0; i < length; i++) {
+				newKey[i] = KEY_ACCEPTABLE_CHAR.charAt(position[i]);
+			}
+			key = new String(newKey);
+			if (keys.contains(key)) {
+				if (!incrementArray(position, 0, KEY_ACCEPTABLE_CHAR.length() - 1)) {
+					return null;
+				}
+			} else {
+				found = true;
+			}
+		}
+		return key;
 	}
 
 	/**

@@ -37,7 +37,7 @@ public class DynamicComponentService {
 		String REQUEST_KEY = page.getPath() + "__TYPE__" + fieldType;
 		List<IFieldContainer> outContainer = (List<IFieldContainer>)ctx.getRequest().getAttribute(REQUEST_KEY);
 		if (outContainer == null) {			
-			MenuElement[] children = page.getAllChilds();
+			MenuElement[] children = page.getAllChildren();
 			outContainer = new LinkedList<IFieldContainer>();
 			for (MenuElement child : children) {
 				ContentContext ctxWithContent = ctx.getContextWithContent(child);
@@ -58,7 +58,7 @@ public class DynamicComponentService {
 	}
 
 	public List<String> getAllType(ContentContext ctx, MenuElement page) throws Exception {
-		MenuElement[] children = page.getAllChilds();
+		MenuElement[] children = page.getAllChildren();
 		List<String> outContainer = new LinkedList<String>();
 
 		ContentContext noAreaCtx = ctx.getContextWithoutArea();

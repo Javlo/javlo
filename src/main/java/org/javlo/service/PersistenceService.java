@@ -545,6 +545,8 @@ public class PersistenceService {
 		page.setModificationDate(modificationDate);
 		page.setLatestEditor(latestEditor);
 
+		page.setShortURL(pageXML.getAttributeValue("shorturl", null));
+
 		page.setBreakRepeat(StringHelper.isTrue(pageXML.getAttributeValue("breakrepeat", "false")));
 
 		String[] virtualParent = StringHelper.stringToArray(pageXML.getAttributeValue("vparent", ""));
@@ -604,6 +606,7 @@ public class PersistenceService {
 				root.setBlocker(page.getAttributeValue("blocker", ""));
 				root.setLinkedURL(page.getAttributeValue("linked-url", ""));
 				root.setBreakRepeat(StringHelper.isTrue(page.getAttributeValue("breakrepeat", "false")));
+				root.setShortURL(page.getAttributeValue("shorturl", null));
 
 				String[] editorRoles = StringHelper.stringToArray(page.getAttributeValue("editor-roles", ""), "#");
 				if (editorRoles != null) {
@@ -751,11 +754,9 @@ public class PersistenceService {
 					root = load(ctx, in, contentAttributeMap, renderMode);
 
 					/** load linked content **/
-					MenuElement[] children = root.getAllChilds();
-					root.updateLinkedData(ctx);
-					for (MenuElement page : children) {
-						page.updateLinkedData(ctx);
-					}
+					/*
+					 * MenuElement[] children = root.getAllChilds(); root.updateLinkedData(ctx); for (MenuElement page : children) { page.updateLinkedData(ctx); }
+					 */
 				}
 
 			} finally {

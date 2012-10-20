@@ -88,7 +88,7 @@ public class NavigationService {
 				cache.put(root.getName(), root);
 				cache.put(root.getId(), root);
 				cache.put(root.getPath(), root);
-				MenuElement[] pageChildren = root.getAllChilds();
+				MenuElement[] pageChildren = root.getAllChildren();
 				for (MenuElement childpage : pageChildren) {
 					cache.put(childpage.getName(), childpage);
 					cache.put(childpage.getId(), childpage);
@@ -105,7 +105,7 @@ public class NavigationService {
 			} else {
 				ContentService content = ContentService.getInstance(ctx.getRequest());
 				MenuElement root = content.getNavigation(ctx);
-				MenuElement[] pageChildren = root.getAllChilds();
+				MenuElement[] pageChildren = root.getAllChildren();
 				for (MenuElement childpage : pageChildren) {
 					if (childpage.getName().equals(pageKey) || childpage.getId().equals(pageKey) || childpage.getPath().equals(pageKey)) {
 						cache.put(childpage.getName(), childpage);

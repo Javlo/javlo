@@ -133,7 +133,7 @@ public class ContactText extends AbstractVisualComponent {
 				contactCache = new Hashtable<String, String>();
 				ContentService content = ContentService.getInstance(ctx.getRequest());
 				MenuElement rootPage = content.getNavigation(ctx);
-				MenuElement[] children = rootPage.getAllChilds();
+				MenuElement[] children = rootPage.getAllChildren();
 				for (MenuElement page : children) {
 					List<IContentVisualComponent> comps = page.getContentByType(ctx, getType());
 					for (IContentVisualComponent comp : comps) {
@@ -160,7 +160,7 @@ public class ContactText extends AbstractVisualComponent {
 			Map<String, String> contactCache = getContactCache(ctx);
 			ContentService content = ContentService.getInstance(ctx.getRequest());
 			MenuElement rootPage = content.getNavigation(ctx);
-			MenuElement[] children = rootPage.getAllChilds();
+			MenuElement[] children = rootPage.getAllChildren();
 			for (MenuElement page : children) {
 				List<IContentVisualComponent> comps = page.getContentByType(ctx, getType());
 				for (IContentVisualComponent comp : comps) {

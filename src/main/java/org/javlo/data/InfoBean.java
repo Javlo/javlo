@@ -291,4 +291,13 @@ public class InfoBean {
 		return null;
 	}
 
+	public String getShortURL() {
+		try {
+			return URLHelper.createStaticURL(ctx, ctx.getCurrentPage().getShortURL());
+		} catch (Exception e) {
+			e.printStackTrace();
+			return null;
+		}
+	}
+
 }

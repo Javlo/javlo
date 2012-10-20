@@ -37,7 +37,7 @@ public class DefaultLgExpandMacro extends AbstractMacro {
 	@Override
 	public String perform(ContentContext ctx, Map<String, Object> params) throws Exception {
 		MenuElement root = ContentService.getInstance(ctx.getRequest()).getNavigation(ctx);
-		MenuElement[] children = root.getAllChilds();
+		MenuElement[] children = root.getAllChildren();
 		GlobalContext globalContext = GlobalContext.getInstance(ctx.getRequest());
 
 		ContentContext defaultLgContext = new ContentContext(ctx);

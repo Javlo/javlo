@@ -114,7 +114,7 @@ public class PersistenceThread extends Thread {
 			return;
 		}
 		// don't save empty site
-		if ((menuElement.getAllChilds().length > 0) || (menuElement.getContent().length > 0)) {
+		if ((menuElement.getAllChildren().length > 0) || (menuElement.getContent().length > 0)) {
 
 			int localVersion = persistenceService.version;
 

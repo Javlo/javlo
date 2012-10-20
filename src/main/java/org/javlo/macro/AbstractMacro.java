@@ -65,7 +65,7 @@ public abstract class AbstractMacro implements IMacro {
 	public List<IContentVisualComponent> getAllComponent(ContentContext ctx) throws Exception {
 		List<IContentVisualComponent> outList = new LinkedList<IContentVisualComponent>();
 		MenuElement root = ContentService.getInstance(ctx.getRequest()).getNavigation(ctx);
-		MenuElement[] children = root.getAllChilds();
+		MenuElement[] children = root.getAllChildren();
 		ContentContext noAreaCtx = new ContentContext(ctx);
 		noAreaCtx.setArea(null);
 		for (MenuElement child : children) {

@@ -13,6 +13,7 @@ public class MultimediaResource {
 	private String previewURL;
 	private String path;
 	private String description;
+	private String fullDescription;
 	private String shortDate;
 	private String mediumDate;
 	private String fullDate;
@@ -174,5 +175,13 @@ public class MultimediaResource {
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
+	}
+
+	public String getFullDescription() {
+		return fullDescription;
+	}
+
+	public void setFullDescription(String fullDescription) {
+		this.fullDescription = fullDescription;
 	}
 }

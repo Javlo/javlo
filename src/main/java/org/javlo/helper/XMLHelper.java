@@ -75,7 +75,7 @@ public class XMLHelper {
 
 		out.println("<?xml version=\"1.0\" encoding=\"UTF-8\"?>");
 		out.println("<urlset xmlns=\"http://www.sitemaps.org/schemas/sitemap/0.9\">");
-		MenuElement[] children = root.getAllChilds();
+		MenuElement[] children = root.getAllChildren();
 		for (MenuElement element : children) {
 			for (String lg : lgs) {
 				ContentContext lgCtx = new ContentContext(ctx);
@@ -154,7 +154,7 @@ public class XMLHelper {
 		}
 	}
 
-	static void insertXMLContent(PrintWriter out, MenuElement page, String defaultLg) throws Exception {		
+	static void insertXMLContent(PrintWriter out, MenuElement page, String defaultLg) throws Exception {
 		ComponentBean[] beans = page.getAllLocalContentBean();
 		for (int j = 0; j < beans.length; j++) {
 
@@ -195,7 +195,7 @@ public class XMLHelper {
 			}
 			if (beans[j].getRenderer() != null) {
 				out.print("\" renderer=\"");
-				out.print(beans[j].getRenderer());				
+				out.print(beans[j].getRenderer());
 			}
 			out.print("\" >");
 			out.print("<![CDATA[");
@@ -277,7 +277,7 @@ public class XMLHelper {
 				out.print("\" breakrepeat=\"");
 				out.print(page.isBreakRepeat());
 			}
-			
+
 			if (page.isHttps())
 				if (validationDate != null && validationDate.trim().length() > 0) {
 					out.print("\" https=\"");
@@ -313,6 +313,10 @@ public class XMLHelper {
 				out.print("\" vparent=\"");
 				out.print(StringHelper.toXMLAttribute(StringHelper.collectionToString(parentId)));
 			}
+			if (page.isShortURL()) {
+				out.print("\" shorturl=\"");
+				out.print(StringHelper.toXMLAttribute(page.getShortURL()));
+			}
 
 			if (rolesRaw.toString().trim().length() > 0) {
 				out.print("\" userRoles=\"");
@@ -346,7 +350,7 @@ public class XMLHelper {
 		PrintWriter out = new PrintWriter(inOut, true);
 
 		out.println("<?xml version=\"1.0\" encoding=\"" + ContentContext.CHARACTER_ENCODING + "\"?>");
-		out.println("<content cmsversion=\"" + AccessServlet.VERSION + "\" version=\"" + version + "\">");		
+		out.println("<content cmsversion=\"" + AccessServlet.VERSION + "\" version=\"" + version + "\">");
 		insertXMLPage(out, new MenuElement[] { menu }, defaultLg);
 		insertMap(out, contentMap, PersistenceService.GLOBAL_MAP_NAME);
 		out.println("</content>");

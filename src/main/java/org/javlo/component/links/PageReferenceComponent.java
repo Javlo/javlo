@@ -827,7 +827,7 @@ public class PageReferenceComponent extends ComplexPropertiesLink implements IAc
 		if (basePage != null) {
 			menu = basePage;
 		}
-		MenuElement[] allChildren = menu.getAllChilds();
+		MenuElement[] allChildren = menu.getAllChildren();
 		Arrays.sort(allChildren, new MenuElementModificationDateComparator(true));
 		Set<String> currentSelection = getPagesId(ctx, allChildren);
 
@@ -1178,7 +1178,7 @@ public class PageReferenceComponent extends ComplexPropertiesLink implements IAc
 
 		ContentService content = ContentService.getInstance(ctx.getRequest());
 		MenuElement menu = content.getNavigation(ctx);
-		MenuElement[] allChildren = menu.getAllChilds();
+		MenuElement[] allChildren = menu.getAllChildren();
 
 		ByteArrayOutputStream outStream = new ByteArrayOutputStream();
 		new PrintStream(outStream);
@@ -1320,7 +1320,7 @@ public class PageReferenceComponent extends ComplexPropertiesLink implements IAc
 		if (requestService.getParameter(getCompInputName(), null) != null) {
 			ContentService content = ContentService.getInstance(ctx.getRequest());
 			MenuElement menu = content.getNavigation(ctx);
-			MenuElement[] allChildren = menu.getAllChilds();
+			MenuElement[] allChildren = menu.getAllChildren();
 			String pagesSelected = "";
 			String separation = "";
 			for (MenuElement element : allChildren) {
@@ -1505,7 +1505,7 @@ public class PageReferenceComponent extends ComplexPropertiesLink implements IAc
 		ContentService content = ContentService.getInstance(ctx.getRequest());
 		try {
 			MenuElement menu = content.getNavigation(ctx);
-			MenuElement[] allChildren = menu.getAllChilds();
+			MenuElement[] allChildren = menu.getAllChildren();
 			return getPagesId(ctx, allChildren).size() > 0;
 		} catch (Exception e) {
 			e.printStackTrace();

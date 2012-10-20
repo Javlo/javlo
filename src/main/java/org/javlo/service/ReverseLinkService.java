@@ -94,7 +94,7 @@ public class ReverseLinkService {
 		synchronized (lock) {
 			if (reversedLinkCache == null) {
 				reversedLinkCache = new HashMap<String, MenuElement>();
-				MenuElement[] children = elem.getAllChilds();
+				MenuElement[] children = elem.getAllChildren();
 				for (MenuElement element : children) {
 					String[] linkNames = StringHelper.readLines(element.getReversedLink());
 					for (String linkName : linkNames) {
@@ -114,7 +114,7 @@ public class ReverseLinkService {
 			if ((reversedLinkComponentCache == null) || (!reversedLinkComponentCacheLang.equals(ctx.getRequestContentLanguage()))) {
 				reversedLinkComponentCacheLang = ctx.getRequestContentLanguage();
 				reversedLinkComponentCache = new HashMap<String, ComponentPage>();
-				MenuElement[] children = elem.getAllChilds();
+				MenuElement[] children = elem.getAllChildren();
 				for (MenuElement element : children) {
 					ContentElementList content = element.getLocalContentCopy(ctx);
 
