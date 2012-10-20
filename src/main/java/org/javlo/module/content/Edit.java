@@ -740,7 +740,12 @@ public class Edit extends AbstractModuleAction {
 			}
 
 			if (requestService.getParameter("shorturl", null) != null) {
-				page.getShortURL(); // create short url
+				if (!page.isShortURL()) {
+					page.getShortURL(); // create short url
+					messageRepository.setGlobalMessageAndNotification(ctx, new GenericMessage(i18nAccess.getText("edit.message.shorturl"), GenericMessage.ALERT));
+				} else {
+					return "this page have allready short url.";
+				}
 			}
 
 			boolean isBreakRepeat = requestService.getParameter("break_repeat", null) != null;
