@@ -29,7 +29,7 @@ initFocusPoint = function() {
 			point.parent().find(".posx").val(focusRealX);
 			point.parent().find(".posy").val(focusRealY);
 			var path = "";
-			if (!(point.parent().find(".path").val() == 'undefined')) {
+			if (point.parent().find(".path").length > 0) {
 				path = "&image_path="+point.parent().find(".path").val();
 			}
 			var url = point.closest("form").attr("action");
