@@ -411,7 +411,11 @@ public class CatchAllFilter implements Filter {
 
 			String shortURI = uri;
 			if (shortURI.startsWith('/' + globalContext.getContextKey())) {
-				shortURI = shortURI.substring(globalContext.getContextKey().length() + 2);
+				if (shortURI.length() > globalContext.getContextKey().length() + 2) {
+					shortURI = shortURI.substring(globalContext.getContextKey().length() + 2);
+				} else {
+					shortURI = "";
+				}
 			}
 
 			if (shortURI.length() == globalContext.getStaticConfig().getShortURLSize() + 1 && shortURI.startsWith("U")) {
