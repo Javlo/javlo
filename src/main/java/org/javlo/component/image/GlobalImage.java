@@ -50,7 +50,7 @@ public class GlobalImage extends Image {
 
 	static final String FILE_NAME_KEY_OVER = "file-name-over";
 
-	static final String IMAGE_FILTER = "image-filter";
+	public static final String IMAGE_FILTER = "image-filter";
 
 	static final String DATE = "date";
 
@@ -602,7 +602,7 @@ public class GlobalImage extends Image {
 
 	}
 
-	private void setFilter(String filter) {
+	public void setFilter(String filter) {
 		properties.setProperty(IMAGE_FILTER, filter);
 	}
 

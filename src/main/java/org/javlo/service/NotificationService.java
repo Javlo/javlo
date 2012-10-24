@@ -13,6 +13,8 @@ import org.javlo.utils.MapCollectionWrapper;
 
 public class NotificationService {
 
+	private static final String USER_SYSTEM = "SYSTEM";
+
 	public static final class Notification {
 		private String message;
 		private String url;
@@ -72,7 +74,7 @@ public class NotificationService {
 		public String getTimeLabel() {
 			return StringHelper.renderTime(getCreationDate());
 		}
-		
+
 		public String getSortableTimeLabel() {
 			return StringHelper.renderSortableTime(getCreationDate());
 		}
@@ -176,7 +178,7 @@ public class NotificationService {
 		List<NotificationContainer> outNotif = new LinkedList<NotificationContainer>();
 		int size = 0;
 		for (Notification notif : notifications) {
-			if (notif.getUserId() == null || notif.getUserId().equals(userId)) {
+			if (notif.getUserId() == null || notif.getUserId().equals(userId) || notif.getUserId().equals(USER_SYSTEM)) {
 				size++;
 				outNotif.add(new NotificationContainer(notif, isAllReadyReaded(notif, userId), userId));
 				if (markRead) {
@@ -217,6 +219,10 @@ public class NotificationService {
 
 	public void addNotification(String message, int type, String userId) {
 		addNotification(message, null, type, userId);
+	}
+
+	public void addSystemNotification(String message, int type) {
+		addNotification(message, null, type, USER_SYSTEM);
 	}
 
 	/**
