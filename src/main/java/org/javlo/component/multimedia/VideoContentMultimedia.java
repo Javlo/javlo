@@ -88,6 +88,7 @@ public class VideoContentMultimedia extends Multimedia {
 
 	public static final String TYPE = "videos-multimedia";
 
+	@Override
 	protected boolean acceptResource(ContentContext ctx, MultimediaResource resource, int index) {
 		Calendar currentDate = GregorianCalendar.getInstance();
 		if (resource.getDate() != null) {
@@ -226,13 +227,6 @@ public class VideoContentMultimedia extends Multimedia {
 		return comps;
 	}
 
-	@Override
-	public Collection<String> getExternalResources(ContentContext ctx) {
-		Collection<String> resources = new LinkedList<String>();
-		resources.add("/js/freefw/ajax.js");
-		return resources;
-	}
-
 	MenuElement getRootPage(ContentContext ctx) throws Exception {
 		ContentService content = ContentService.getInstance(ctx.getRequest());
 		MenuElement root = content.getNavigation(ctx);
@@ -245,8 +239,8 @@ public class VideoContentMultimedia extends Multimedia {
 	}
 
 	@Override
-	public String getViewXHTMLCode(ContentContext ctx) throws Exception {
-
+	public void prepareView(ContentContext ctx) throws Exception {
+		super.prepareView(ctx);
 		int index = 0;
 
 		List<MultimediaResource> allResource = new LinkedList<MultimediaResource>();
@@ -274,8 +268,6 @@ public class VideoContentMultimedia extends Multimedia {
 
 		ctx.getRequest().setAttribute("size", index);
 		ctx.getRequest().setAttribute("resources", allResource);
-
-		return executeJSP(ctx, getRenderer(ctx));
 	}
 
 	@Override
