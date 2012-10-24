@@ -22,6 +22,7 @@ org.javlo.component.text.XHTML
 org.javlo.component.text.WysiwygParagraph
 org.javlo.component.list.FreeTextList
 org.javlo.component.text.ContactText
+ec.ep.europarl.adagio.wcms.component.QuoteBox
 
 --content.title.links
 
@@ -75,4 +76,8 @@ org.javlo.component.meta.NotSearchPage
 org.javlo.component.meta.Keywords
 org.javlo.component.form.SearchResultComponent
 org.javlo.component.form.GenericFormForRegistering
+ec.ep.europarl.adagio.wcms.component.GenericFormPortlet
+ec.ep.europarl.adagio.wcms.component.QuizPollPortlet
+ec.ep.europarl.adagio.wcms.component.CYPRegisterPortlet
+ec.ep.europarl.adagio.wcms.component.EPPJWizardPortlet
 
