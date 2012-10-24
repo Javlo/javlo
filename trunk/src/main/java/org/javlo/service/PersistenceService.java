@@ -61,12 +61,12 @@ import org.javlo.ztatic.StaticInfo;
 
 public class PersistenceService {
 
-	public static final class PersistenceBean {
+	public static final class MetaPersistenceBean {
 		private int version;
 		private String date;
 		private String type;
 
-		public PersistenceBean(int version, String date, String type) {
+		public MetaPersistenceBean(int version, String date, String type) {
 			this.version = version;
 			this.date = date;
 			this.type = type;
@@ -96,6 +96,36 @@ public class PersistenceService {
 			this.type = type;
 		}
 
+	}
+
+	public static class LoadingBean {
+		private int version;
+		private String cmsVersion;
+		private MenuElement root;
+
+		public int getVersion() {
+			return version;
+		}
+
+		public void setVersion(int version) {
+			this.version = version;
+		}
+
+		public String getCmsVersion() {
+			return cmsVersion;
+		}
+
+		public void setCmsVersion(String cmsVersion) {
+			this.cmsVersion = cmsVersion;
+		}
+
+		public MenuElement getRoot() {
+			return root;
+		}
+
+		public void setRoot(MenuElement root) {
+			this.root = root;
+		}
 	}
 
 	private static class BackupViewFileFilter implements FileFilter {
@@ -262,8 +292,8 @@ public class PersistenceService {
 
 	}
 
-	public List<PersistenceBean> getPersistences() {
-		List<PersistenceBean> outList = new LinkedList<PersistenceService.PersistenceBean>();
+	public List<MetaPersistenceBean> getPersistences() {
+		List<MetaPersistenceBean> outList = new LinkedList<PersistenceService.MetaPersistenceBean>();
 
 		/** search published element **/
 		File[] backupView = new File(getBackupDirectory()).listFiles(BackupViewFileFilter.instance);
@@ -272,7 +302,7 @@ public class PersistenceService {
 				String timeCode = zip.getName().replaceAll("content_" + ContentContext.VIEW_MODE + ".", "").replaceAll(".xml", "").replaceAll(".zip", "");
 				try {
 					Date publishTime = StringHelper.parseSecondFileTime(timeCode);
-					outList.add(new PersistenceBean(0, StringHelper.renderSortableTime(publishTime), "published"));
+					outList.add(new MetaPersistenceBean(0, StringHelper.renderSortableTime(publishTime), "published"));
 				} catch (ParseException e) {
 					logger.warning(e.getMessage());
 				}
@@ -284,7 +314,7 @@ public class PersistenceService {
 		if (backupPreview != null) {
 			for (File file : backupPreview) {
 				String version = file.getName().replaceAll("content_" + ContentContext.PREVIEW_MODE + ".", "").replaceAll(".xml", "").replaceAll(".zip", "");
-				outList.add(new PersistenceBean(Integer.parseInt(version), StringHelper.renderSortableTime(new Date(file.lastModified())), "preview"));
+				outList.add(new MetaPersistenceBean(Integer.parseInt(version), StringHelper.renderSortableTime(new Date(file.lastModified())), "preview"));
 			}
 		}
 
@@ -575,16 +605,21 @@ public class PersistenceService {
 		return load(ctx, ContentContext.PREVIEW_MODE, contentAttributeMap, null);
 	}
 
-	private MenuElement load(ContentContext ctx, InputStream in, Map<String, String> contentAttributeMap, int renderMode) throws ServiceException {
+	private LoadingBean load(ContentContext ctx, InputStream in, Map<String, String> contentAttributeMap, int renderMode) throws ServiceException {
 		GlobalContext globalContext = GlobalContext.getInstance(ctx.getRequest());
 		MenuElement root = MenuElement.getInstance(globalContext);
 
 		root.setValid(true);
 
+		LoadingBean outBean = new LoadingBean();
+
 		try {
 			NodeXML firstNode = XMLFactory.getFirstNode(in);
 
 			NodeXML page = firstNode.getChild("page");
+
+			outBean.setCmsVersion(firstNode.getAttributeValue("cmsversion"));
+			outBean.setVersion(Integer.parseInt(firstNode.getAttributeValue("version", "-1")));
 
 			if (page != null) {
 
@@ -688,7 +723,9 @@ public class PersistenceService {
 			root.setVisible(true);
 		}
 
-		return root;
+		outBean.setRoot(root);
+
+		return outBean;
 
 	}
 
@@ -751,7 +788,9 @@ public class PersistenceService {
 					 * file.createNewFile(); BufferedWriter out = new BufferedWriter(new FileWriter(file)); out.write("<content version=\"" + version + "\"><page id=\"0\" name=\"root\" priority=\"1\" visible=\"true\" userRoles=\"\" /></content>" ); out.close();
 					 */
 				} else {
-					root = load(ctx, in, contentAttributeMap, renderMode);
+					LoadingBean loadBean = load(ctx, in, contentAttributeMap, renderMode);
+					root = loadBean.getRoot();
+					ConvertToCurrentVersion.convert(ctx, loadBean);
 
 					/** load linked content **/
 					/*

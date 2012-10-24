@@ -523,9 +523,14 @@ public class AdminAction extends AbstractModuleAction {
 				Template defaultTemplate = TemplateFactory.getDiskTemplate(request.getSession().getServletContext(), currentGlobalContext.getDefaultTemplate());
 
 				if (defaultTemplate != null) {
-					defaultTemplate.importTemplateInWebapp(StaticConfig.getInstance(ctx.getRequest().getSession().getServletContext()), ctx);
-					String templateImageURL = URLHelper.createTransformStaticTemplateURL(ctx, defaultTemplate, "template", defaultTemplate.getVisualFile());
-					request.setAttribute("templateImageUrl", templateImageURL);
+					try {
+						defaultTemplate.importTemplateInWebapp(StaticConfig.getInstance(ctx.getRequest().getSession().getServletContext()), ctx);
+						String templateImageURL = URLHelper.createTransformStaticTemplateURL(ctx, defaultTemplate, "template", defaultTemplate.getVisualFile());
+						request.setAttribute("templateImageUrl", templateImageURL);
+					} catch (Exception e) {
+						e.printStackTrace();
+						MessageRepository.getInstance(ctx).setGlobalMessageAndNotification(ctx, new GenericMessage(e.getMessage(), GenericMessage.ERROR));
+					}
 				}
 				/*** component list ***/
 				List<String> currentComponents = null;
