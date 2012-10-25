@@ -21,6 +21,7 @@ import org.javlo.component.core.ContentElementList;
 import org.javlo.component.core.IContentVisualComponent;
 import org.javlo.context.ContentContext;
 import org.javlo.context.GlobalContext;
+import org.javlo.helper.NavigationHelper;
 import org.javlo.helper.StringHelper;
 import org.javlo.helper.URLHelper;
 import org.javlo.i18n.I18nAccess;
@@ -299,9 +300,15 @@ public class SearchResult {
 		return result;
 	}
 
-	private void searchInPage(MenuElement page, ContentContext ctx, String groupId, String inSearchText, Collection<String> componentType) throws Exception {
+	private void searchInPage(MenuElement page, ContentContext ctx, String groupId, String inSearchText, Collection<String> componentType, MenuElement rootPage) throws Exception {
 
-		if (!page.notInSearch(ctx) || (componentType != null && componentType.size() > 0)) {
+		SearchFilter searchFilter = SearchFilter.getInstance(ctx.getRequest().getSession());
+		boolean tagOK = true;
+		if (searchFilter.getTag() != null && !page.getTags(ctx).contains(searchFilter.getTag())) {
+			tagOK = false;
+		}
+
+		if ((!page.notInSearch(ctx) || (componentType != null && componentType.size() > 0)) && (rootPage == null || NavigationHelper.isParent(page, rootPage)) && tagOK) {
 
 			if (groupId == null || groupId.trim().length() == 0 || page.getGroupID(ctx).contains(groupId)) {
 
@@ -335,7 +342,7 @@ public class SearchResult {
 		}
 		MenuElement[] children = page.getChildMenuElements();
 		for (MenuElement element : children) {
-			searchInPage(element, ctx, groupId, inSearchText, componentType);
+			searchInPage(element, ctx, groupId, inSearchText, componentType, rootPage);
 		}
 	}
 
@@ -370,12 +377,20 @@ public class SearchResult {
 		if (sort != null) {
 			setSort(sort);
 		}
+
+		SearchFilter searchFilter = SearchFilter.getInstance(ctx.getRequest().getSession());
+		MenuElement rootSearch = null;
+		if (searchFilter.getRootPageName() != null) {
+			GlobalContext globalContext = GlobalContext.getInstance(ctx.getRequest());
+			rootSearch = ContentService.getInstance(globalContext).getNavigation(ctx).searchChildFromName(searchFilter.getRootPageName());
+		}
+
 		synchronized (result) { // if two browser with the same session
 			cleanResult();
 			ContentService content = ContentService.getInstance(ctx.getRequest());
 			MenuElement nav = content.getNavigation(ctx);
 
-			searchInPage(nav, ctx, groupId, searchText, comps);
+			searchInPage(nav, ctx, groupId, searchText, comps, rootSearch);
 
 			Iterator<SearchElement> results = result.iterator();
 			while (results.hasNext()) {

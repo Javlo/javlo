@@ -1428,4 +1428,9 @@ public class PageReferenceComponent extends ComplexPropertiesLink implements IAc
 		return "page-links";
 	}
 
+	@Override
+	public int getSearchLevel() {
+		return 0;
+	}
+
 }

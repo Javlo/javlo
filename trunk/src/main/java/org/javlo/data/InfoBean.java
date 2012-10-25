@@ -300,4 +300,8 @@ public class InfoBean {
 		}
 	}
 
+	public Collection<String> getTags() {
+		return globalContext.getTags();
+	}
+
 }

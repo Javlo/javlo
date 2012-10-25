@@ -1,6 +1,6 @@
 /** 
-* Created on Aug 13, 2003
-*/
+ * Created on Aug 13, 2003
+ */
 package org.javlo.actions;
 
 import java.text.ParseException;
@@ -14,17 +14,16 @@ import javax.servlet.http.HttpServletResponse;
 import org.javlo.component.form.SearchResultComponent;
 import org.javlo.context.ContentContext;
 import org.javlo.helper.StringHelper;
+import org.javlo.search.SearchFilter;
 import org.javlo.search.SearchResult;
 import org.javlo.service.RequestService;
 import org.javlo.template.TemplateSearchContext;
 
-
 /**
- * @author pvandermaesen
- * list of actions for search in cms.
+ * @author pvandermaesen list of actions for search in cms.
  */
 public class SearchActions implements IAction {
-	
+
 	/**
 	 * create a static logger.
 	 */
@@ -32,34 +31,33 @@ public class SearchActions implements IAction {
 
 	public static String performSearch(HttpServletRequest request, HttpServletResponse response) {
 		String msg = null;
-		
+
 		try {
 			RequestService requestService = RequestService.getInstance(request);
 
-			String searchStr = requestService.getParameter("keywords",requestService.getParameter("q",null));
+			String searchStr = requestService.getParameter("keywords", requestService.getParameter("q", null));
 			List<String> componentList = requestService.getParameterListValues("comps", null);
-			String groupId = requestService.getParameter("search-group",null);
-			String sort = requestService.getParameter("sort",null);
-			
-			logger.info("search action : "+searchStr);
-			
+			String groupId = requestService.getParameter("search-group", null);
+			String sort = requestService.getParameter("sort", null);
+
+			SearchFilter searchFilter = SearchFilter.getInstance(request.getSession());
+			searchFilter.setRootPageName(requestService.getParameter("root", null));
+			searchFilter.setTag(requestService.getParameter("tag", null));
+
+			logger.info("search action : " + searchStr);
+
 			if (searchStr != null) {
 				if (searchStr.length() > 0) {
 					ContentContext ctx = ContentContext.getContentContext(request, response);
-					
 					if (ctx.getCurrentPage().getContentByType(ctx.getContextWithoutArea(), SearchResultComponent.TYPE).size() == 0) {
 						ctx.setSpecialContentRenderer("/jsp/view/search/search_result.jsp");
-						
 						if (ctx.getCurrentTemplate() != null && ctx.getCurrentTemplate().getSearchRenderer(ctx) != null) {
 							ctx.setSpecialContentRenderer(ctx.getCurrentTemplate().getSearchRenderer(ctx));
-						}						
+						}
 					}
-
 					SearchResult search = SearchResult.getInstance(ctx);
 					search.search(ctx, groupId, searchStr, sort, componentList);
-					
 					ctx.getRequest().getSession().setAttribute("searchList", search.getSearchResult());
-					
 				} else {
 					msg = "error search strign not defined";
 				}
@@ -72,10 +70,10 @@ public class SearchActions implements IAction {
 
 		return msg;
 	}
-	
+
 	public static String performTemplate(HttpServletRequest request, HttpServletResponse response) throws Exception {
 		RequestService requestService = RequestService.getInstance(request);
-		
+
 		TemplateSearchContext tempCtx = TemplateSearchContext.getInstance(request.getSession());
 		tempCtx.setAuthors(requestService.getParameter("authors", ""));
 		tempCtx.setSource(requestService.getParameter("source", ""));
@@ -98,6 +96,7 @@ public class SearchActions implements IAction {
 		return null;
 	}
 
+	@Override
 	public String getActionGroupName() {
 		return "search";
 	}

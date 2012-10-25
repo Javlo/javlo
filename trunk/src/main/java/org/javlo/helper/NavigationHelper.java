@@ -334,4 +334,24 @@ public class NavigationHelper {
 		return pageList;
 	}
 
+	/**
+	 * check if a page is a parent of a other page.
+	 * 
+	 * @param page
+	 *            a page with parent
+	 * @param parent
+	 *            the suposed parent page
+	 * @return
+	 */
+	public static boolean isParent(MenuElement page, MenuElement parent) {
+		MenuElement directParent = page.getParent();
+		while (directParent != null) {
+			if (directParent.getId().equals(parent.getId())) {
+				return true;
+			}
+			directParent = directParent.getParent();
+		}
+		return false;
+	}
+
 }
