@@ -5,6 +5,7 @@
 		<h2>${title}</h2>
 	</c:if>
 	
+<div class="carousel-wrapper">
 <div class="carousel">
     <ul class="slides">	
 	<c:forEach items="${pages}" var="page" varStatus="status">
@@ -19,15 +20,15 @@
 		<c:if test="${info.openExternalLinkAsPopup}">
 			<c:set var="target" value=" target=\"_blank\"" />
 		</c:if>
-	</c:if>
-	
+	</c:if>	
 	<c:if test="${not empty image}">
 	<li class="slide">
 		<a href="${url}" title="${page.title}"${target}>
-		<figure><img src="${image.url}" alt="${image.description}"><figcaption>${page.title}</figcaption></figure>
+		<figure><img src="${fn:replace(image.url,'reference-list','carousel')}" alt="${image.description}"><figcaption>${page.title}</figcaption></figure>
 		</a>		
 	</li>
 	</c:if>
 	</c:forEach>
 	</ul>
+</div>
 </div>

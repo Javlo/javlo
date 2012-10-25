@@ -9,7 +9,6 @@
 		org.javlo.user.User,
 		org.javlo.context.EditContext,
 		org.javlo.helper.XHTMLHelper,
-		org.javlo.navigation.PageConfiguration,
 		org.javlo.message.MessageRepository,
 		org.javlo.user.AdminUserSecurity,
 		org.javlo.navigation.MenuElement,
@@ -19,7 +18,7 @@
 <%@taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core"%>
 <%
 ContentContext ctx = ContentContext.getContentContext(request, response);
-ContentService content = ContentService.createContent(request);
+ContentService content = ContentService.getInstance(request);
 GlobalContext globalContext = GlobalContext.getInstance(request); 
 MenuElement currentPage = ctx.getCurrentPage();
 InfoBean infoBean = InfoBean.getCurrentInfoBean(request);
@@ -29,10 +28,8 @@ String pageName = currentPage.getName();
 String globalTitle = currentPage.getGlobalTitle(ctx);if (globalTitle == null) {	globalTitle = globalContext.getGlobalTitle();}
 I18nAccess i18nAccess = I18nAccess.getInstance(request);
 AdminUserSecurity security = AdminUserSecurity.getInstance();
-%>
-<%@ taglib uri="http://displaytag.sf.net" prefix="display" %><!doctype html>
-<html lang="en">
-
+%><!doctype html>
+<html>
 <head><script type="text/javascript">
 <!--
 var sLanguage = '<%=ctx.getRequestContentLanguage()%>';
@@ -52,40 +49,15 @@ var server = '<%=URLHelper.createStaticURL(ctx, "/")%>';
 <%=XHTMLHelper.renderHeaderResourceInsertion(ctx, "/css/lib/colorbox/colorbox.css")%>
 <%}%><%for (String uri : currentPage.getExternalResources(ctx)) {%>
 <%=XHTMLHelper.renderHeaderResourceInsertion(ctx, uri)%><%}%>
-	<meta charset="utf-8" />
-	<title>The representative organisation of persons with disabilities in Europe - <%=currentTitle%></title>
-	<meta name="viewport" content="width=device-width, initial-scale=1.0" />	
-	<!-- Grid styles for IE -->
-	<!--[if lt IE 9]><%if (!XHTMLHelper.allReadyInsered(ctx, "css/ie.css")) {%><link rel="stylesheet" type="text/css" media="all" href="<%=URLHelper.createStaticTemplateURL(ctx,"/css/ie.css", "134678298573296807310")%>" /><%}%><![endif]-->
-	<%if (!XHTMLHelper.allReadyInsered(ctx, "css/reset.css")) {%><link rel="stylesheet" type="text/css" media="all" href="<%=URLHelper.createStaticTemplateURL(ctx,"/css/reset.css", "134678298573296807310")%>" /><%}%>
-	<%if (!XHTMLHelper.allReadyInsered(ctx, "style.css")) {%><link rel="stylesheet" type="text/css" media="screen" href="<%=URLHelper.createStaticTemplateURL(ctx,"/style.css", "134678298573296807310")%>" /><%}%>    
-    <%if (!XHTMLHelper.allReadyInsered(ctx, "css/prettyPhoto.css")) {%><link rel="stylesheet" type="text/css" media="screen" href="<%=URLHelper.createStaticTemplateURL(ctx,"/css/prettyPhoto.css", "134678298573296807310")%>" /><%}%>
-	<%if (!XHTMLHelper.allReadyInsered(ctx, "css/slider.css")) {%><link rel="stylesheet" type="text/css" media="all" href="<%=URLHelper.createStaticTemplateURL(ctx,"/css/slider.css", "134678298573296807310")%>" /><%}%>
-	<%if (!XHTMLHelper.allReadyInsered(ctx, "css/flexslider.css")) {%><link rel="stylesheet" type="text/css" media="screen" href="<%=URLHelper.createStaticTemplateURL(ctx,"/css/flexslider.css", "134678298573296807310")%>" /><%}%>    
-    <%if (!XHTMLHelper.allReadyInsered(ctx, "css/responsive.css")) {%><link rel="stylesheet" type="text/css" media="all" href="<%=URLHelper.createStaticTemplateURL(ctx,"/css/responsive.css", "134678298573296807310")%>" /><%}%>
-    
-    <!-- Favicons
-	================================================== -->
-	<%if (!XHTMLHelper.allReadyInsered(ctx, "images/favicon.ico")) {%><link rel="shortcut icon" href="<%=URLHelper.createStaticTemplateURL(ctx,"/images/favicon.ico", "134678298573296807310")%>" /><%}%>
-	<%if (!XHTMLHelper.allReadyInsered(ctx, "images/apple-touch-icon.png")) {%><link rel="apple-touch-icon" href="<%=URLHelper.createStaticTemplateURL(ctx,"/images/apple-touch-icon.png", "134678298573296807310")%>" /><%}%>
-	<%if (!XHTMLHelper.allReadyInsered(ctx, "images/apple-touch-icon-72x72.png")) {%><link sizes="72x72" rel="apple-touch-icon" href="<%=URLHelper.createStaticTemplateURL(ctx,"/images/apple-touch-icon-72x72.png", "134678298573296807310")%>" /><%}%> 
-	<%if (!XHTMLHelper.allReadyInsered(ctx, "images/apple-touch-icon-114x114.png")) {%><link sizes="114x114" rel="apple-touch-icon" href="<%=URLHelper.createStaticTemplateURL(ctx,"/images/apple-touch-icon-114x114.png", "134678298573296807310")%>" /><%}%>
-    
-    <!-- script
-	================================================== -->
-    <%if (!XHTMLHelper.allReadyInsered(ctx, "js/jquery-1.7.1.min.js")) {%><script src="<%=URLHelper.createStaticTemplateURL(ctx,"/js/jquery-1.7.1.min.js")%>" type="text/javascript"><%}%></script>
-    <%if (!XHTMLHelper.allReadyInsered(ctx, "js/jquery.prettyPhoto.js")) {%><script src="<%=URLHelper.createStaticTemplateURL(ctx,"/js/jquery.prettyPhoto.js")%>" type="text/javascript"><%}%></script>
-    <%if (!XHTMLHelper.allReadyInsered(ctx, "js/jflickrfeed.min.js")) {%><script src="<%=URLHelper.createStaticTemplateURL(ctx,"/js/jflickrfeed.min.js")%>" type="text/javascript"><%}%></script>
-    <%if (!XHTMLHelper.allReadyInsered(ctx, "js/jquery.cslider.js")) {%><script src="<%=URLHelper.createStaticTemplateURL(ctx,"/js/jquery.cslider.js")%>" type="text/javascript"><%}%></script>
-    <%if (!XHTMLHelper.allReadyInsered(ctx, "js/modernizr.custom.28468.js")) {%><script src="<%=URLHelper.createStaticTemplateURL(ctx,"/js/modernizr.custom.28468.js")%>" type="text/javascript"><%}%></script>	
-    <%if (!XHTMLHelper.allReadyInsered(ctx, "js/jquery.easing.1.3.js")) {%><script src="<%=URLHelper.createStaticTemplateURL(ctx,"/js/jquery.easing.1.3.js")%>" type="text/javascript"><%}%></script>
-    <%if (!XHTMLHelper.allReadyInsered(ctx, "js/jquery.carouFredSel-5.6.2.js")) {%><script src="<%=URLHelper.createStaticTemplateURL(ctx,"/js/jquery.carouFredSel-5.6.2.js")%>" type="text/javascript"><%}%></script>
-	<%if (!XHTMLHelper.allReadyInsered(ctx, "js/jquery.flexslider.js")) {%><script src="<%=URLHelper.createStaticTemplateURL(ctx,"/js/jquery.flexslider.js")%>" type="text/javascript"><%}%></script>
-    <%if (!XHTMLHelper.allReadyInsered(ctx, "js/custom.js")) {%><script src="<%=URLHelper.createStaticTemplateURL(ctx,"/js/custom.js")%>" type="text/javascript"><%}%></script>
-	<%if (!XHTMLHelper.allReadyInsered(ctx, "js/css3-mediaqueries.js")) {%><script src="<%=URLHelper.createStaticTemplateURL(ctx,"/js/css3-mediaqueries.js")%>" type="text/javascript"><%}%></script>
-	<!--[if lt IE 9]>
-		<script src="http://html5shim.googlecode.com/svn/trunk/html5.js"></script>
-	<![endif]--><%if (ctx.getRenderMode() == ContentContext.PREVIEW_MODE) {
+<meta charset="utf-8"/>
+<meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1"/>
+<meta name="viewport" content="width=device-width, initial-scale=1"/><!-- Adding "maximum-scale=1" fixes the Mobile Safari auto-zoom bug: http://filamentgroup.com/examples/iosScaleBug/ -->
+<title>Europarl Galaxy - <%=currentTitle%></title>
+
+
+<!--[if lt IE 9]><script src="http://html5shim.googlecode.com/svn/trunk/html5.js"></script><![endif]-->
+<%if (!XHTMLHelper.allReadyInsered(ctx, "js/epbox/epbox.css")) {%><link rel="stylesheet" type="text/css" href="<%=URLHelper.createStaticTemplateURL(ctx,"/js/epbox/epbox.css", "135090227768448074493")%>" /><%}%>
+<%if (!XHTMLHelper.allReadyInsered(ctx, "css/default.css")) {%><link rel="stylesheet" type="text/css" href="<%=URLHelper.createStaticTemplateURL(ctx,"/css/default.css", "135090227768448074493")%>" /><%}%><%if (ctx.getRenderMode() == ContentContext.PREVIEW_MODE || ctx.getRenderMode() == ContentContext.TIME_MODE) {
 EditContext editCtx = EditContext.getInstance(globalContext, request.getSession());%>
 <%=(ctx.isInteractiveMode() ? "<link rel=\"stylesheet\" type=\"text/css\" href=\""+URLHelper.createStaticURL(ctx,"/css/preview/edit_preview.css")+"\"></link>" : "")  %>
 <%=(ctx.isInteractiveMode() ? "<link rel=\"stylesheet\" type=\"text/css\" href=\""+editCtx.getEditTemplateFolder()+"/css/edit_preview.css"+"\"></link>" : "")  %>
@@ -99,13 +71,11 @@ var editPreviewURL = "<%=URLHelper.createURL(ctx.getContextWithOtherRenderMode(C
 </script><%}%><%}%>
 <%if (currentPage.getHeaderContent(ctx) != null) {%><%=currentPage.getHeaderContent(ctx)%><%}%>
 <!-- template plugins -->
-<%if (!XHTMLHelper.allReadyInsered(ctx,"jquery.js")) { %><script src="<%=URLHelper.createStaticTemplatePluginURL(ctx, "http://ajax.googleapis.com/ajax/libs/jquery/1/jquery.js", "plugins/galleria__1_2_7")%>"></script><%} else {%><!-- resource allready insered: jquery.js --><%}%>
-<%if (!XHTMLHelper.allReadyInsered(ctx,"galleria-1.2.7.min.js")) { %><script src="<%=URLHelper.createStaticTemplatePluginURL(ctx, "galleria-1.2.7.min.js", "plugins/galleria__1_2_7")%>"></script><%} else {%><!-- resource allready insered: galleria-1.2.7.min.js --><%}%>
-<style type="text/css">.thumbnails { height: 450px; }</style>
-<script>Galleria.loadTheme('<%=URLHelper.createStaticTemplatePluginURL(ctx, "/", "plugins/galleria__1_2_7")%>themes/classic/galleria.classic.min.js'); Galleria.run('.thumbnails');</script>
+<%if (!XHTMLHelper.allReadyInsered(ctx,"css/javlo_basic.css")) { %><link charset="utf-8" rel="stylesheet" type="text/css" media="screen" href="<%=URLHelper.createStaticTemplatePluginURL(ctx, "css/javlo_basic.css", "plugins/javlo_basic_style__1_1")%>" /><%} else {%><!-- resource allready insered: css/javlo_basic.css --><%}%>
 <!-- end template plugins -->
 </head>
-<body id="sub-page"><%if (ctx.isInteractiveMode() && ctx.getRenderMode() == ContentContext.PREVIEW_MODE) {%>
+	
+<body lang="${info.language}"><%if (ctx.isInteractiveMode() && ctx.getRenderMode() == ContentContext.PREVIEW_MODE) {%>
 <jsp:include page="/jsp/preview/command.jsp" />
 <%MessageRepository messageRepository = MessageRepository.getInstance(ctx);
    if (messageRepository.getGlobalMessage().getMessage().trim().length() > 0) {%>
@@ -124,157 +94,201 @@ var editPreviewURL = "<%=URLHelper.createURL(ctx.getContextWithOtherRenderMode(C
 </div><%}%>
 <%}%>
 <div style="position: absolute; top: -100px;" id="jv_escape_menu">
-<ul><li><a href="#main-menu"><%=i18nAccess.getViewText("wai.to_content")%></a></li></ul>
+<ul><li><a href="#content"><%=i18nAccess.getViewText("wai.to_content")%></a></li></ul>
 </div>
 <%if (currentPage.getImage(ctx) != null && globalContext.isFirstImage()) {
-%><img id="_first-image" src="<%=URLHelper.createTransformURL(ctx, currentPage.getImage(ctx).getImageURL(ctx), "standard")%>" alt="<%=currentPage.getImage(ctx).getImageDescription(ctx)%>" /><%}%>
+%><img id="_first-image" src="<%=URLHelper.createTransformURL(ctx, currentPage.getImage(ctx).getResourceURL(ctx), "standard")%>" alt="<%=currentPage.getImage(ctx).getImageDescription(ctx)%>" /><%}%>
 
-<header id="header">
-	<div id="header-outer">
-		<div class="wrapper clearfix">
-			<div id="logo-image">
-				<a href="<%=URLHelper.createURLCheckLg(ctx,"index.html")%>"><img alt="logo" src="<%=URLHelper.createStaticTemplateURL(ctx,"/placeholders/logo-european-disability-fo.gif")%>" /></a>
-			</div><!--end:logo-image-->		       
-			<%if ( XHTMLNavigationHelper.menuExist(ctx,1) ) {%><nav id="main-menu" class="clearfix"><jsp:include page="/jsp/view/content_view.jsp?area=content" /></nav><!--end:main-menu-->
-		</div><!--end:wrapper-->
-	</div><!--header-outer-->
-</header>
-<div id="main-content">
-	<div id="bottom-bg">	
-		<div class="outter">
-			<div class="wrapper">        
-				<div class="container">
-					<div class="three-forth">
-						<section class="clearfix">
-							<header id="breadcrumb"><jsp:include page="/jsp/view/content_view.jsp?area=breadcrumb" /></header>
-							<div id="content" class="post-item clearfix">
-								<div class="post-meta">
-									<div class="entry-date">
-										<p>21</p>
-										<span>Mar, 2010</span>
-									</div><!--end:entry-date-->
-									<a class="entry-author" href="#">John Smith</a>									
-									<div class="social-share clearfix">
-										<div class="social-share-button clearfix">
-											<!--Begin  twitter-->
-											<div class="social-share-twitter">
-												<script src="http://platform.twitter.com/widgets.js" type="text/javascript"></script>
-												<a href="http://twitter.com/share" class="twitter-share-button">Tweet</a>
-											</div><!--twitter-share-->											
-											
-										</div><!--social-share-button-->
-									</div><!--social-share-->
-								</div><!--end:post-sidebar-->
-								<article class="post-content">
-									<h5 class="entry-title"><a href="#">We Appreciate Any Kind of Feedback (Standard Post)</a></h5>
-									<span class="entry-category">Tag:&nbsp;</span><a class="entry-category" href="#">Photography,&nbsp;</a><a class="entry-category" href="#">Wordpress,&nbsp;</a><a class="entry-category" href="#">Website</a>
-									<img alt="" class="thumbnails" src="<%=URLHelper.createStaticTemplateURL(ctx,"/images/enablemap.jpg")%>" />
-									<p>Raw denim you probably haven't heard of them jean shorts Austin. Nesciunt tofu stumptown aliqua, retro synth master cleanse. Mustache cliche tempor, williamsburg carles vegan helvetica. Reprehenderit butcher retro keffiyeh dreamcatcher synth. Cosby sweater eu banh mi, qui irure terry richardson ex squid. Aliquip placeat salvia cillum iphone. Seitan aliquip quis cardigan american apparel, butcher voluptate nisi qui.</p>
-									 <br />
-									 <blockquote>
-										<span>Montes primis. Ultrices netus augue. Ridiculus 	Hac conubia quisque morbi sit suspendisse interdum class curae; magnis vehicula rhoncus consectetuer bibendum nullam ante leo. Nisi consequat vulputate sem mi. Curabitur duis risus nam quisque dictumst mauris purus mi mi blandit arcu odio felis euismod dignissim lectus rhoncus ultrices. Commodo sodales mus.</span>
-									</blockquote>
-									<br />
-									<p>Bibendum proin risus. Feugiat duis tincidunt mus inceptos ante elementum posuere odio et ullamcorper, morbi duis. Torquent risus quisque est. Vulputate nec conubia vel massa.</p>
-									<p>Montes primis. Ultrices netus augue. Ridiculus Hac conubia quisque morbi sit suspendisse interdum class curae; magnis vehicula rhoncus consectetuer bibendum nullam ante leo. Nisi consequat vulputate sem mi. Curabitur duis risus nam quisque dictumst mauris purus mi mi blandit arcu odio felis euismod dignissim lectus rhoncus ultrices. Commodo sodales mus.</p>
-									<p>Interdum dictumst cras per sit nibh rutrum. Gravida interdum, iaculis luctus rhoncus praesent rutrum platea justo montes blandit porttitor consectetuer libero sociosqu tempus ac. Etiam ornare malesuada donec gravida id torquent Dolor aliquam pede, commodo ligula taciti commodo congue, ultrices. Conubia aliquam euismod leo parturient proin.</p>
-								
-								</article><!--end:post-content-->
-								<div class="clear"></div>
-							</div><!--end:post-item-->                  
-						</section>
-						
-						
-						
-					</div><!--end:three-forth-->
-					<div id="right-sidebar" class="one-forth last"><jsp:include page="/jsp/view/content_view.jsp?area=sidebar" /></div><!--end:right-sidebar-->
-					<div class="clear"></div>
-				</div><!--end:container--> 
-			</div><!--end:wrapper-->
-		</div><!--end:outter-->
-	</div><!--bottom-bg-->
-</div><!--end:main-content-->     
-<div id="page-botom">
-	<div class="outter">
+<div class="container">
+	<header>
+		<div id="languages" class="languages"><jsp:include page="/jsp/view/content_view.jsp?area=languages" /></div>
+		<nav>
+			<div class="quicklinks">
+				<ul>
+				<li><a href="http://www.europarl.europa.eu/news/en/">News</a></li>
+				<li><a href="http://www.europarl.europa.eu/aboutparliament/en/">About Parliament</a></li>
+				<li><a href="http://www.europarl.europa.eu/meps/en/search.html">MEPs</a></li>
+				<li><a href="http://www.europarl.europa.eu/plenary/en/home.html">Plenary</a></li>
+				<li><a href="http://www.europarl.europa.eu/committees/en/home.html">Committees</a></li>
+				<li><a href="http://www.europarl.europa.eu/delegations/en/home.html">Delegations</a></li>
+				<li><a href="http://europarltv.europa.eu/en">EPTV</a></li>
+				<li class="revealer">
+					<a href="#quicklinks-more">More</a>
+					<ul class="hidden">
+					<li>European Parliament
+						<ul>
+						<li><a href="http://www.europarl.europa.eu/meps/en/search.html">MEPs</a></li>
+						<li><a href="http://www.europarl.europa.eu/aboutparliament/en/007f2537e0/Political-groups.html">Political groups</a></li>
+						<li><a href="http://www.europarl.europa.eu/sed/plenary.do?language=en">S&eacute;ance en direct</a></li>
+						<li><a href="http://audiovisual.europarl.europa.eu/" rel="external">Audiovisual website</a></li>
+						<li><a href="http://europa.eu/lisbon_treaty/index_en.htm" rel="external">EUROPA - Treaty of Lisbon</a></li>
+						<li><a href="http://www.europarl.europa.eu/aboutparliament/en/002398d833/Sakharov-Prize-for-Freedom-of-Thought.html">Sakharov Prize</a></li>
+						</ul>
+					</li>
+					<li>Other links
+						<ul>
+						<li><a href="http://europa.eu/ey2012/ey2012.jsp?langId=en" target="_blank">European Year for Active Ageing</a></li>
+						<li><a href="http://europa.eu/index_en.htm" target="_blank">EUROPA</a></li>
+						<li><a href="http://www.eu2012.dk/" target="_blank">eu2012.dk</a></li>
+						</ul>
+					</li>
+					<li>A-Z
+						<ul>
+						<li><a href="http://www.europarl.europa.eu/portal/en/a-z">Complete website list</a></li>
+						</ul>
+					</li>
+					</ul>
+				</li>
+				</ul>
+			</div>
+		</nav>
+		<div class="logo">
+			<a lang="en" href="http://www.europarl.europa.eu/portal/en" title="Go back to the Europarl portal">European Parliament</a>
+               <span>/</span>
+			<a title="Return to homepage" href="<%=URLHelper.createURLCheckLg(ctx,"/the-president/en/index.html")%>" lang="en">The President</a>
+		</div>
+		
+		<form id="search-form" action="<%=URLHelper.createURL(ctx,"")%>" method="get">
+		<div>
+			<input name="keywords" value="<%=i18nAccess.getViewText("search.title")%>" class="keywords" onfocus="if (this.value == '<%=i18nAccess.getViewText("search.title")%>'){this.value='';}" type="text" accesskey="4" /><input type="hidden" name="webaction" value="search.search" />
+			<input type="hidden" value="search.search" name="webaction" />
+			<input type="submit" lang="en" value="go" class="submit" />
+		</div>
+        </form>
+		<nav>
+			<%if ( XHTMLNavigationHelper.menuExist(ctx,1) ) {%><div id="nav" class="nav"><jsp:include page="/jsp/view/content_view.jsp?area=nav" /></div>
+			<%if ( XHTMLNavigationHelper.menuExist(ctx,2) ) {%><div id="subnav" class="subnav"><jsp:include page="/jsp/view/content_view.jsp?area=subnav" /></div>
+		</nav>
+	</header>
+	<div class="highlight">
+	</div>
+	<div class="main">
+		<div id="content" class="content"><jsp:include page="/jsp/view/content_view.jsp?area=content" /></div>
+		<aside>
+			<div class="side" id="contextzone"><jsp:include page="/jsp/view/content_view.jsp?area=contextzone" /></div>
+		</aside>
+	</div>
+	<footer>
 		<div class="wrapper">
-			<div id="footer-sidebar">
-				<div class="one-forth">
-					<aside class="widget">
-						<h3 class="widget-title">About</h3>
-						<div class="text-widget">
-							<p>Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud</p>
-							<ul class="social-links clearfix">
-								<li class="follow-us">Follow Us</li>
-								<li class="gplus-icon">
-									<a target="_blank" title="Google+" href="#">
-										<img alt="" src="<%=URLHelper.createStaticTemplateURL(ctx,"/images/icons/gplus-icon.png")%>" />                        
-									</a>
-								</li>
-								<li class="facebook-icon">
-									<a target="_blank" title="Facebook" class="facebook" href="#">
-										<img alt="" src="<%=URLHelper.createStaticTemplateURL(ctx,"/images/icons/facebook-icon.png")%>" />
-									</a>
-								</li>
-								<li class="twitter-icon">
-									<a target="_blank" title="Twitter" class="twitter" href="#">
-										<img alt="" src="<%=URLHelper.createStaticTemplateURL(ctx,"/images/icons/twitter-icon.png")%>" />                        
-									</a>
-								</li>
-								<li class="rss-icon">
-									<a target="_blank" title="RSS" href="#">
-										<img alt="" src="<%=URLHelper.createStaticTemplateURL(ctx,"/images/icons/rss-icon.png")%>" />                        
-									</a>
-								</li>
-							</ul><!--end:social-links-->
-						</div><!--end:text-widget-->
-					</aside><!--end:widget-->
-				</div><!--one-forth-->
-				<div class="one-forth">	
-					<aside class="widget">
-							<h3 class="widget-title">Latest News</h3>
-							<ul class="latest-news">
-								<li>
-									<span class="entry-date">23 July, 2012</span>
-									<a href="#">Who made dummy text?</a>
-								</li>
-								<li>
-									<span class="entry-date">23 July, 2012</span>
-									<a href="#">Limbaugh: Does 'Dark Knight Rises' have it</a>
-								</li>
-							</ul>
-						</aside><!--end:widget-->
-				</div><!--one-forth-->	
-				<div class="one-forth">	
-					<aside class=" widget">
-						<h3 class="widget-title">Newsletter</h3>
-						<div class="newsletter">
-							<p>Enter your email address below to receive updates each time we publish</p>
-							<form>
-								<input type="text" value="Your email" name="email" class="email" maxlength="100" onFocus="if(this.value==this.defaultValue)this.value='';" onBlur="if(this.value=='')this.value=this.defaultValue;" />
-								<input type="submit" value="Submit" class="submit-newsletter" />
-							</form>    
-						</div><!--end:newsletter-->
-					</aside><!--end:widget-->
-				</div><!--one-forth-->
-				<div class="one-forth last">	
-					<aside class="widget">
-						<h3 class="widget-title">Latest Tweets</h3>
-						<!-- begin [Tweets List] -->
-							<ul id="twitter_update_list" class="twitter-ul"><li></li></ul>
-							<script  src="http://twitter.com/javascripts/blogger.js" type="text/javascript"></script>
-							<script src="http://twitter.com/statuses/user_timeline/envato.json?callback=twitterCallback2&amp;count=1" type="text/javascript"></script>
-						<!-- end [Tweets List] -->
-					</aside><!--end:widget-->
-				</div><!--one-forth-->
-				<div class="clear"></div>        	
-			</div><!--end:footer-sidebar-->
-		</div><!--end:wrapper-->
-	</div><!--end:outter-->
-	<footer id="footer" class="wrapper clearfix">
-		<p id="copyright">Copyright &copy; 2012 KopaTheme. All Rights Reserved</p>            
-		<a id="scroll-to-top" href="#top">Back to top</a>
+			<div class="logo">
+				<a lang="en" href="http://www.europarl.europa.eu/portal/en" title="Go back to the Europarl portal">European Parliament</a>
+	               <span>/</span>
+				<a title="Return to homepage" href="<%=URLHelper.createURLCheckLg(ctx,"/the-president/en/index.html")%>" lang="en">The President</a>
+			</div>
+			<div class="tools">
+				<ul>
+	            <li><a rel="external" href="<%=URLHelper.createURLCheckLg(ctx,"/the-president/xml/en/president_model/rss/all.xml")%>">RSS</a></li>
+	            <li><a href="#print">Print</a></li>
+	            <li><a href="http://www.europarl.europa.eu/portal/en/legal-notice">Legal notice</a></li>
+	            <li><a href="http://www.europarl.europa.eu/portal/en/accessibility">Wai AA- WCAG 2.0</a></li>
+	            <li class="mobile"><a href="http://m.europarl.europa.eu/EPMobile/home.htm?language=en" title="Open in a new window" rel="external">European Parliament <span>mobile</span></a></li>
+	            </ul>
+	        </div>
+        </div>
+        <nav>
+           	<div class="quicklinks" id="quicklinks-more">
+            	<ul>
+            	<li>European Parliament
+                    <ul>                                
+                    <li><a href="http://www.europarl.europa.eu/meps/en/search.html">MEPs</a></li>
+                    <li><a href="http://www.europarl.europa.eu/aboutparliament/en/007f2537e0/Political-groups.html">Political groups</a></li>                                                                        
+                    <li><a href="http://www.europarl.europa.eu/sed/plenary.do?language=en">S&eacute;ance en direct</a></li>
+                    <li><a href="http://audiovisual.europarl.europa.eu/" target="_blank">Audiovisual website</a></li>
+                    <li><a href="http://europa.eu/lisbon_treaty/index_en.htm" target="_blank">EUROPA - Treaty of Lisbon</a></li>
+                    <li><a href="http://www.europarl.europa.eu/aboutparliament/en/002398d833/Sakharov-Prize-for-Freedom-of-Thought.html">Sakharov Prize</a></li>
+                    </ul>
+                   </li>
+                   <li>Other links
+                   	<ul>
+                       <li><a href="http://europa.eu/ey2012/ey2012.jsp?langId=en" target="_blank">European Year for Active Ageing</a></li>
+                       <li><a href="http://europa.eu/index_en.htm" target="_blank">EUROPA</a></li>                                    
+                       <li><a href="http://www.eu2012.dk/" target="_blank">eu2012.dk</a></li>                                    
+           	        </ul>
+           	    </li>
+           	    </ul>
+               </div>
+            <div class="galaxynav">
+            	<ul>
+            	<li>News
+            		<ul>
+				    <li><a href="http://www.europarl.europa.eu/en/headlines/">Headlines</a></li>
+				    <li><a href="http://www.europarl.europa.eu/en/pressroom/">Press service</a></li>
+				    <li><a href="http://www.europarl.europa.eu/news/archive/search.do?language=en">Press archives</a></li>
+					</ul>
+				</li>
+				<li>About Parliament
+					<ul>
+				    <li><a href="http://www.europarl.europa.eu/aboutparliament/en/at-your-service/">At your service</a></li>
+				    <li><a href="http://www.europarl.europa.eu/aboutparliament/en/powers-and-functions/">Power and functions</a></li>
+				    <li><a href="http://www.europarl.europa.eu/aboutparliament/en/organisation-and-work/">Organisation and work</a></li>
+				    <li><a href="http://www.europarl.europa.eu/aboutparliament/en/in-the-past/">In the past</a></li>                                                
+					</ul>
+				</li>
+				</ul>
+				
+				<ul>
+				<li>MEPs
+					<ul>
+				    <li><a href="http://www.europarl.europa.eu/meps/en/search.html">Search</a></li>
+				    <li><a href="http://www.europarl.europa.eu/meps/en/full-list.html">Full list</a></li>
+				    <li><a href="http://www.europarl.europa.eu/meps/en/incoming-outgoing.html">Incoming/outgoing</a></li>
+				    <li><a href="http://www.europarl.europa.eu/meps/en/assistants.html">Assistants</a></li>
+					</ul>
+				</li>
+				<li>Plenary
+					<ul>                                    
+				    <li><a href="http://www.europarl.europa.eu/plenary/en/home.html">Plenary sitting</a></li>
+				    <li><a href="http://www.europarl.europa.eu/plenary/en/parliament-positions.html">Ordinary legislative procedure</a></li>
+				    <li><a href="http://www.europarl.europa.eu/plenary/en/introduction-budgetary-procedure.html">Budgetary procedure</a></li>
+				    <li><a href="http://www.europarl.europa.eu/plenary/en/parliamentary-questions.html">Questions and declarations</a></li>
+				    <li><a href="http://www.europarl.europa.eu/plenary/en/meetings-search.html">Calendar</a></li>
+					</ul>
+				</li>
+				</ul>
+				
+				<ul>
+				<li>Committees
+					<ul>
+                    <li><a href="http://www.europarl.europa.eu/committees/en/home.html">Overview</a></li>
+                    <li><a href="http://www.europarl.europa.eu/committees/en/full-list.html">Committee webpages</a></li>
+                    <li><a href="http://www.europarl.europa.eu/parlArchives/comArch.do?language=en">Archives</a></li>
+                	</ul>
+                </li>
+                <li>Delegations
+                	<ul>
+                    <li><a href="http://www.europarl.europa.eu/delegations/en/home.html">Delegations</a></li>
+                    <li><a href="http://www.europarl.europa.eu/delegations/delegations/en/meetings-search.html">Calendar</a></li>
+                    <li><a href="http://www.europarl.europa.eu/parlArchives/delArch.do?language=en">Archives</a></li>
+                	</ul>
+                </li>
+                </ul>
+                
+                <ul>
+                <li>EP TV
+                    <ul>
+                    <li><a href="http://europarltv.europa.eu/en/home">Home</a></li>
+                    <li><a href="http://europarltv.europa.eu/en/channels">Channels</a></li>
+                    <li><a href="http://europarltv.europa.eu/en/themes">Themes</a></li>
+                    <li><a href="http://europarltv.europa.eu/en/about-europarltv">About EuroparlTV</a></li>
+                    </ul>
+                </li>
+                <li>A-Z
+                    <ul>
+                    <li><a href="http://www.europarl.europa.eu/portal/en/a-z">Complete website list</a></li>
+                    </ul> 
+                </li>
+                </ul>
+            </div>
+    	</nav>
 	</footer>
-</div><!--page-bottom-->
+</div>
+
+<script src="http://ajax.googleapis.com/ajax/libs/jquery/1.7.2/jquery.min.js"></script>
+<%if (!XHTMLHelper.allReadyInsered(ctx, "/js/default.js")) {%><script src="<%=URLHelper.createStaticTemplateURL(ctx,"//js/default.js")%>"><%}%></script>
+<%if (!XHTMLHelper.allReadyInsered(ctx, "/js/epbox/epbox.js")) {%><script src="<%=URLHelper.createStaticTemplateURL(ctx,"//js/epbox/epbox.js")%>"><%}%></script>
+<script>new EPBoxController('${info.language}');</script>
+<script src="https://graph.facebook.com/martinschulz.ep/feed?limit=10&amp;access_token=349993518364549|mZox06-j8i322t2dHQSrm7_rLe0&amp;callback=putFacebookContent" type="text/javascript"></script>
+<script src="http://twitter.com/status/user_timeline/martinschulz.json?count=10&amp;callback=putTwitterContent" type="text/javascript"></script>
 <script type="text/javascript">
 var _gaq = _gaq || [];
 _gaq.push(['_setAccount', '<%=globalContext.getGoogleAnalyticsUACCT()%>']);
