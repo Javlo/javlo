@@ -13,14 +13,12 @@ import org.javlo.config.StaticConfig;
 import org.javlo.context.ContentContext;
 import org.javlo.context.EditContext;
 import org.javlo.context.GlobalContext;
-import org.javlo.image.ImageHelper;
 import org.javlo.module.core.Module;
 import org.javlo.module.core.ModulesContext;
 import org.javlo.navigation.IURLFactory;
 import org.javlo.navigation.MenuElement;
 import org.javlo.service.ContentService;
 import org.javlo.template.Template;
-import org.javlo.ztatic.FileCache;
 
 /**
  * countain the method with efficient body for URLHelper.
@@ -358,11 +356,11 @@ public abstract class ElementaryURLHelper {
 		if (ctx.getDevice() != null) {
 			deviceCode = ctx.getDevice().getCode();
 		}
-		String key = ImageHelper.createSpecialDirectory(filter, ctx.getArea(), deviceCode, template);
-		FileCache fc = FileCache.getInstance(ctx.getRequest().getSession().getServletContext());
-		if (!globalContext.getImageViewFilter().contains(filter) && fc.getFileName(key, url).exists()) {
-			return URLHelper.createStaticURL(ctx, fc.getRelativeFilePath(key, url));
-		}
+		/*
+		 * String key = ImageHelper.createSpecialDirectory(filter, ctx.getArea(), deviceCode, template);
+		 * 
+		 * FileCache fc = FileCache.getInstance(ctx.getRequest().getSession().getServletContext()); if (!globalContext.getImageViewFilter().contains(filter) && fc.getFileName(key, url).exists()) { return URLHelper.createStaticURL(ctx, fc.getRelativeFilePath(key, url)); }
+		 */
 
 		ContentService.getInstance(ctx.getRequest());
 

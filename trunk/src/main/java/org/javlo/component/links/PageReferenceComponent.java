@@ -13,7 +13,6 @@ import java.util.Date;
 import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
-import java.util.Map;
 import java.util.Set;
 import java.util.TreeSet;
 import java.util.logging.Logger;
@@ -189,10 +188,8 @@ public class PageReferenceComponent extends ComplexPropertiesLink implements IAc
 			}
 			bean.url = URLHelper.createURL(ctx, page.getPath());
 
-			String filter = "reference-list";
-			if (comp.getConfig(ctx).getProperty("filter-image", null) != null && comp.getDisplayType() != null) {
-				filter = comp.getDisplayType();
-			}
+			String filter = comp.getConfig(ctx).getProperty("filter-image", "reference-list");
+
 			IImageTitle image = page.getImage(ctx);
 			if (image != null) {
 				bean.imagePath = image.getResourceURL(ctx);
@@ -478,21 +475,11 @@ public class PageReferenceComponent extends ComplexPropertiesLink implements IAc
 
 	public static final String TYPE = "page-reference";
 
-	private static final String TYPE_PROP_KEY = "type";
-
 	private static final String PAGE_REF_PROP_KEY = "page-ref";
 
 	private static final String PAGE_START_PROP_KEY = "page-start";
 
 	private static final String PAGE_END_PROP_KEY = "page-end";
-
-	private static final String TYPE_DEFAULT = "default";
-
-	private static final String TYPE_SLIDE_SHOW = "slide-show";
-
-	private static final String TYPE_LIGHT_LIST = "light-list";
-
-	private static final String TYPE_LG_LIST = "lg-list";
 
 	private static final String ORDER_KEY = "order";
 
@@ -684,10 +671,6 @@ public class PageReferenceComponent extends ComplexPropertiesLink implements IAc
 		return "display-as-" + getId();
 	}
 
-	private String getDisplayType() {
-		return properties.getProperty(TYPE_PROP_KEY, TYPE_DEFAULT);
-	}
-
 	/**
 	 * @see org.javlo.itf.IContentVisualComponent#getXHTMLCode()
 	 */
@@ -797,15 +780,6 @@ public class PageReferenceComponent extends ComplexPropertiesLink implements IAc
 		out.println("<input type=\"text\" id=\"" + getInputNameTitle() + "\" name=\"" + getInputNameTitle() + "\" value=\"" + getContentTitle() + "\"  />");
 		out.println("</div>");
 
-		out.println("<div class=\"line\">");
-		/* display as slide show */
-
-		Map<String, String> renderers = getConfig(ctx).getRenderes();
-		for (Map.Entry<String, String> entry : renderers.entrySet()) {
-			out.println(XHTMLHelper.getRadio(getDisplayAsInputName(), entry.getKey(), getDisplayType()));
-			out.println("<label for=\"" + entry.getKey() + "\">" + entry.getKey() + "</label></div><div class=\"line\">");
-		}
-
 		out.println("</fieldset>");
 
 		/* array filter */
@@ -862,24 +836,6 @@ public class PageReferenceComponent extends ComplexPropertiesLink implements IAc
 
 		out.println("</tr></table></div>");
 		return new String(outStream.toByteArray());
-	}
-
-	@Override
-	public Collection<String> getExternalResources(ContentContext ctx) {
-		if (isDisplayAsLgList()) {
-			Collection<String> resources = new LinkedList<String>();
-			resources.add("/js/mootools.js");
-			resources.add("/js/global.js");
-			resources.add("/js/shadowbox/src/adapter/shadowbox-base.js");
-			resources.add("/js/shadowbox/src/shadowbox.js");
-			resources.add("/js/shadowboxOptions.js");
-			resources.add("/js/onLoadFunctions.js");
-			resources.add("");
-			resources.add("");
-			return resources;
-		} else {
-			return super.getExternalResources(ctx);
-		}
 	}
 
 	private int getFirstPageNumber() {
@@ -980,9 +936,6 @@ public class PageReferenceComponent extends ComplexPropertiesLink implements IAc
 		}
 
 		String specialClass = "";
-		if (isLightList()) {
-			specialClass = " light";
-		}
 		if (isDateOrder()) {
 			specialClass = " date-order" + specialClass;
 		} else if (isCreationOrder()) {
@@ -992,11 +945,7 @@ public class PageReferenceComponent extends ComplexPropertiesLink implements IAc
 		} else if (isPopularityOrder()) {
 			specialClass = " popularity-order" + specialClass;
 		}
-		if (isDisplayAsSlideShow()) {
-			return "<div class=\"news-slideshow-group" + specialClass + "\">";
-		} else {
-			return "<div class=\"new-page-group" + specialClass + "\">";
-		}
+		return "<div class=\"page-reference" + specialClass + "\">";
 	}
 
 	protected String getReverseOrderInput() {
@@ -1083,18 +1032,6 @@ public class PageReferenceComponent extends ComplexPropertiesLink implements IAc
 		return TYPE;
 	}
 
-	@Override
-	protected String getCurrentRenderer(ContentContext ctx) {
-		return getDisplayType();
-	}
-
-	/*
-	 * @Override /** render a list of links to pages. exposed in request attributes : "pagesStatus","pages","title","comp".
-	 */
-	/*
-	 * public String getViewXHTMLCode(ContentContext ctx) throws Exception { String renderer; if (getDisplayType() == null) { renderer = getConfig(ctx).getRenderes().values().iterator().next(); } else { renderer = getConfig(ctx).getRenderes().get(getDisplayType()); } return executeJSP(ctx, renderer); }
-	 */
-
 	protected String getWidthEmptyPageInputName() {
 		return "width-empty-page-" + getId();
 	}
@@ -1138,18 +1075,6 @@ public class PageReferenceComponent extends ComplexPropertiesLink implements IAc
 		return StringHelper.isTrue(properties.getProperty(DEFAULT_SELECTED_PROP_KEY, "false"));
 	}
 
-	protected boolean isDisplayAsLgList() {
-		return getDisplayType().equals(TYPE_LG_LIST);
-	}
-
-	private boolean isDisplayAsSlideShow() {
-		return getDisplayType().equals(TYPE_SLIDE_SHOW);
-	}
-
-	protected boolean isLightList() {
-		return getDisplayType().equals(TYPE_LIGHT_LIST);
-	}
-
 	private boolean isPopularityOrder() {
 		return getOrder().equals("popularity");
 	}
@@ -1164,11 +1089,6 @@ public class PageReferenceComponent extends ComplexPropertiesLink implements IAc
 
 	private boolean isWidthEmptyPage() {
 		return StringHelper.isTrue(properties.getProperty(WIDTH_EMPTY_PAGE_PROP_KEY, "false"));
-	}
-
-	@Override
-	public boolean needJavaScript(ContentContext ctx) {
-		return isDisplayAsSlideShow();
 	}
 
 	@Override
@@ -1406,12 +1326,6 @@ public class PageReferenceComponent extends ComplexPropertiesLink implements IAc
 			}
 			setWidthPageEmpty(withEmptyPage);
 
-			String currentType = requestService.getParameter(getDisplayAsInputName(), TYPE_DEFAULT);
-			if (!getDisplayType().equals(currentType)) {
-				setModify();
-			}
-			setDisplayType(currentType);
-
 			String basePage = requestService.getParameter(getParentNodeInputName(), "/");
 			if (!basePage.equals(getParentNode())) {
 				setNeedRefresh(true);
@@ -1430,10 +1344,6 @@ public class PageReferenceComponent extends ComplexPropertiesLink implements IAc
 
 	private void setDefaultSelected(boolean selected) {
 		properties.setProperty(DEFAULT_SELECTED_PROP_KEY, "" + selected);
-	}
-
-	private void setDisplayType(String type) {
-		properties.setProperty(TYPE_PROP_KEY, type);
 	}
 
 	private void setFirstPageNumber(String firstPage) {

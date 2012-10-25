@@ -34,18 +34,27 @@ public class ConvertToCurrentVersion {
 				for (ComponentBean bean : beans) {
 					if (bean.getType().equals("page-links")) {
 						bean.setType(PageReferenceComponent.TYPE);
+						if (bean.getValue().contains("slide-show")) {
+							bean.setRenderer("carousel");
+						} else {
+							bean.setRenderer("products");
+						}
+						bean.setModify(true);
 						pageLinkConvertion++;
 					}
 					if (lBean.getCmsVersion().startsWith("1") && bean.getType().equals("video")) {
 						pageVideoConvertion++;
 						bean.setType(XHTML.TYPE);
+						bean.setModify(true);
 					}
 					if (lBean.getCmsVersion().startsWith("1") && bean.getType().equals("banner")) {
 						pageBannerConvertion++;
 						bean.setType(GlobalImage.TYPE);
 						bean.setValue(bean.getValue() + "\n" + GlobalImage.IMAGE_FILTER + "=banner");
+						bean.setModify(true);
 					}
 				}
+
 			}
 
 			if (pageLinkConvertion > 0) {
