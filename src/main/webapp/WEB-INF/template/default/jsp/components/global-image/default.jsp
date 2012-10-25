@@ -4,8 +4,8 @@
 <img src="${previewURL}" alt="${not empty label?label:description}" />
 </c:when>
 <c:otherwise>
-<a rel="shadowbox" class="${type}" href="${url}">
-	<img src="${previewURL}" alt="${not empty label?label:description}" />
+<a rel="shadowbox" class="${type}" href="${url}" title="${not empty label?label:description}">
+	<img src="${previewURL}" alt="${not empty description?description:label}" />
 </a>
 </c:otherwise>
 </c:choose>
