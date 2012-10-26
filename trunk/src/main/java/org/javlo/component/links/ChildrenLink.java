@@ -64,11 +64,11 @@ public class ChildrenLink extends AbstractVisualComponent implements IImageTitle
 		public String getFullLabel() throws Exception {
 			return child.getFullLabel(ctx);
 		}
-		
+
 		public String getChildSubTitle() throws Exception {
 			return child.getSubTitle(ctx);
 		}
-		
+
 		public String getSubTitle() throws Exception {
 			return currentPage.getSubTitle(ctx);
 		}
@@ -94,10 +94,10 @@ public class ChildrenLink extends AbstractVisualComponent implements IImageTitle
 	public int getComplexityLevel() {
 		return COMPLEXITY_STANDARD;
 	}
-	
+
 	@Override
 	protected String getRendererTitle() {
-		String[] values = getValue().split(""+DATA_SEPARATOR);
+		String[] values = getValue().split("" + DATA_SEPARATOR);
 		if (values.length > 1) {
 			return values[1];
 		} else {
@@ -107,12 +107,17 @@ public class ChildrenLink extends AbstractVisualComponent implements IImageTitle
 
 	@Override
 	protected String getCurrentRenderer(ContentContext ctx) {
-		String[] values = getValue().split(""+DATA_SEPARATOR);
-		if (values.length > 0) {
-			return values[0];
+		if (super.getCurrentRenderer(ctx) != null) {
+			return super.getCurrentRenderer(ctx);
 		} else {
-			return "";
-		}		
+			String[] values = getValue().split("" + DATA_SEPARATOR);
+			if (values.length > 0) {
+				setRenderer(ctx, values[0]);
+				return values[0];
+			} else {
+				return "";
+			}
+		}
 	}
 
 	@Override
@@ -120,7 +125,7 @@ public class ChildrenLink extends AbstractVisualComponent implements IImageTitle
 		ByteArrayOutputStream outStream = new ByteArrayOutputStream();
 		PrintStream out = new PrintStream(outStream);
 
-		out.println(getSelectRendererXHTML(ctx));
+		// out.println(getSelectRendererXHTML(ctx));
 
 		I18nAccess i18n = I18nAccess.getInstance(ctx.getRequest());
 		out.println("<input type=\"hidden\" name=\"comp-" + getId() + "\" value=\"true\" />");
@@ -146,6 +151,7 @@ public class ChildrenLink extends AbstractVisualComponent implements IImageTitle
 		return LINK_COLOR;
 	}
 
+	@Override
 	public String getImageDescription(ContentContext ctx) {
 		try {
 			return getImageTitleChild(ctx).getImageDescription(ctx);
@@ -185,6 +191,7 @@ public class ChildrenLink extends AbstractVisualComponent implements IImageTitle
 		return getChildImageComponent(ctx);
 	}
 
+	@Override
 	public String getResourceURL(ContentContext ctx) {
 		try {
 			return getImageTitleChild(ctx).getResourceURL(ctx);
@@ -194,25 +201,25 @@ public class ChildrenLink extends AbstractVisualComponent implements IImageTitle
 	}
 
 	public String getInputLockParentPage() {
-		return "_lock_parent_page"+getId();
+		return "_lock_parent_page" + getId();
 	}
 
 	public String getInputNameCombo() {
-		return "combo_"+getId();
+		return "combo_" + getId();
 	}
 
 	public String getInputNameDescription() {
-		return "description_"+getId();
+		return "description_" + getId();
 	}
 
 	public String getInputNameImage() {
-		return "image_"+getId();
+		return "image_" + getId();
 	}
 
 	public String getInputNameLabel() {
-		return "label_"+getId();
+		return "label_" + getId();
 	}
-	
+
 	@Override
 	public String[] getStyleLabelList(ContentContext ctx) {
 		try {
@@ -243,8 +250,44 @@ public class ChildrenLink extends AbstractVisualComponent implements IImageTitle
 		return i18n.getText("content.children-list.style-title");
 	}
 
+	@Override
 	public String getType() {
 		return "children-link";
+	}
+
+	@Override
+	public void prepareView(ContentContext ctx) throws Exception {
+		super.prepareView(ctx);
+		MenuElement currentPage = ctx.getCurrentPage();
+		MenuElement parentPage = currentPage;
+		if (isLockParentPage()) {
+			parentPage = getPage();
+		}
+
+		boolean showAll = false;
+		boolean showOnlyNotVisible = false;
+
+		if (getStyle(ctx) != null) {
+			showAll = getStyle(ctx).equalsIgnoreCase("all");
+			showOnlyNotVisible = getStyle(ctx).equalsIgnoreCase("not-visible");
+			if (showOnlyNotVisible) {
+				showAll = true;
+			}
+		}
+		MenuElement[] children = parentPage.getChildMenuElementsWithVirtual(ctx, false, false);
+		String renderer = getRenderer(ctx);
+		if (renderer != null) {
+			List<ChildLinkBean> childrenList = new LinkedList<ChildLinkBean>();
+			for (int i = 0; i < children.length; i++) {
+				if (!children[i].isVisible(ctx) || !showOnlyNotVisible || showAll) {
+					ChildLinkBean bean = new ChildLinkBean(ctx, children[i], currentPage);
+					childrenList.add(bean);
+				}
+			}
+			ctx.getRequest().setAttribute("title", getRendererTitle());
+			ctx.getRequest().setAttribute("children", childrenList);
+			ctx.getRequest().setAttribute("currentPageUrl", URLHelper.createURL(ctx));
+		}
 	}
 
 	/**
@@ -279,21 +322,6 @@ public class ChildrenLink extends AbstractVisualComponent implements IImageTitle
 			}
 		}
 
-		String renderer = getRenderer(ctx);
-		if (renderer != null) {
-			List<ChildLinkBean> childrenList = new LinkedList<ChildLinkBean>();
-			for (int i = 0; i < children.length; i++) {
-				if (!children[i].isVisible(ctx) || !showOnlyNotVisible) {
-					ChildLinkBean bean = new ChildLinkBean(ctx, children[i], currentPage);
-					childrenList.add(bean);
-				}
-			}
-			ctx.getRequest().setAttribute("title", getRendererTitle());
-			ctx.getRequest().setAttribute("children", childrenList);
-			ctx.getRequest().setAttribute("currentPageUrl", URLHelper.createURL(ctx));
-			return executeJSP(ctx, renderer);
-		}
-
 		if (displayChildren) {
 			out.print("<div " + getSpecialPreviewCssClass(ctx, getStyle(ctx) + " " + getType()) + getSpecialPreviewCssId(ctx) + " >");
 			if (isCombo()) {
@@ -314,11 +342,11 @@ public class ChildrenLink extends AbstractVisualComponent implements IImageTitle
 				out.println("<ul>");
 				for (int i = 0; i < children.length; i++) {
 					if ((!children[i].isVisible(ctx) || !showOnlyNotVisible) && children[i].isRealContent(ctx)) {
-						if (children[i].equals(currentPage)) {							
-							out.print("<li class=\"current-page "+ctx.getCurrentTemplate().getSelectedClass()+"\">");
+						if (children[i].equals(currentPage)) {
+							out.print("<li class=\"current-page " + ctx.getCurrentTemplate().getSelectedClass() + "\">");
 						} else {
-							if (children[i].isSelected(ctx)) {								
-								out.print("<li class=\""+ctx.getCurrentTemplate().getSelectedClass()+"\">");
+							if (children[i].isSelected(ctx)) {
+								out.print("<li class=\"" + ctx.getCurrentTemplate().getSelectedClass() + "\">");
 							} else {
 								out.print("<li>");
 							}
@@ -391,6 +419,7 @@ public class ChildrenLink extends AbstractVisualComponent implements IImageTitle
 		return getValue().contains(IMAGE);
 	}
 
+	@Override
 	public boolean isImageValid(ContentContext ctx) {
 		try {
 			return getImageTitleChild(ctx) != null;
@@ -470,11 +499,11 @@ public class ChildrenLink extends AbstractVisualComponent implements IImageTitle
 		String renderer = requestService.getParameter(getInputNameRenderer(), "");
 		newValue = renderer + DATA_SEPARATOR + newValue;
 		if (getRenderer(ctx) != null) {
-			if (!getRenderer(ctx).equals(renderer)) {			
+			if (!getRenderer(ctx).equals(renderer)) {
 				modify = true;
 				setModify();
-			}		
-		}		
+			}
+		}
 		if (modify) {
 			setValue(newValue);
 			setModify();
