@@ -296,18 +296,6 @@ public class Multimedia extends TimeRangeComponent implements IImageTitle {
 		return "display-as-" + getId();
 	}
 
-	private String getDisplayType() {
-		String[] values = getValue().split(VALUE_SEPARATOR);
-		String out = null;
-		if (values.length >= 5) {
-			out = values[4];
-			if (out.isEmpty()) {
-				out = null;
-			}
-		}
-		return out;
-	}
-
 	@Override
 	protected String getEditXHTMLCode(ContentContext ctx) throws Exception {
 		I18nAccess i18nAccess = I18nAccess.getInstance(ctx.getRequest());
@@ -339,16 +327,6 @@ public class Multimedia extends TimeRangeComponent implements IImageTitle {
 
 		Map<String, String> renderers = getConfig(ctx).getRenderes();
 		if (renderers.size() > 1) {
-			out.println("<fieldset class=\"display\">");
-			out.println("<legend>" + i18nAccess.getText("content.page-teaser.display-type") + "</legend><div class=\"line\">");
-
-			out.println("<div class=\"line\">");
-			for (Map.Entry<String, String> entry : renderers.entrySet()) {
-				out.println(XHTMLHelper.getRadio(getDisplayAsInputName(), entry.getKey(), getDisplayType()));
-				out.println("<label for=\"" + entry.getKey() + "\">" + entry.getKey() + "</label></div><div class=\"line\">");
-			}
-			out.println("</fieldset>");
-
 			out.println("<div class=\"line\">");
 			out.print("<input type=\"checkbox\" name=\"" + getInputNameOrderByAccess() + "\" id=\"" + getInputNameOrderByAccess() + "\" ");
 			if (isOrderByAccess(ctx)) {
@@ -476,22 +454,6 @@ public class Multimedia extends TimeRangeComponent implements IImageTitle {
 	protected String getRelativeFileDirectory(ContentContext ctx) {
 		StaticConfig staticConfig = StaticConfig.getInstance(ctx.getRequest().getSession());
 		return staticConfig.getStaticFolder();
-	}
-
-	@Override
-	public String getRenderer(ContentContext ctx) {
-		String displayType = getDisplayType();
-		Map<String, String> renderers = getConfig(ctx).getRenderes();
-		String renderer = null;
-		if (renderers.size() == 1) {
-			renderer = renderers.values().iterator().next();
-		} else if (renderers.size() > 0 && displayType != null) {
-			renderer = renderers.get(displayType);
-		}
-		if (renderer == null) {
-			renderer = "multimedia.jsp";
-		}
-		return renderer;
 	}
 
 	@Override
