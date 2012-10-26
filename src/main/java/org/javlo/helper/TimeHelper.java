@@ -33,6 +33,9 @@ public class TimeHelper {
 	 * check if date is after other date, if the day is the same it is ok.
 	 */
 	public static boolean isAfterOrEqualForDay(Date date, Date ref) {
+		if (ref == null) {
+			return true;
+		}
 		Calendar calDate = Calendar.getInstance();
 		calDate.setTime(date);
 		Calendar calRef = Calendar.getInstance();
@@ -51,6 +54,9 @@ public class TimeHelper {
 	 * check if date is after other date, if the day is the same it is ok.
 	 */
 	public static boolean isBeforeOrEqualForDay(Date date, Date ref) {
+		if (ref == null) {
+			return true;
+		}
 		Calendar calDate = Calendar.getInstance();
 		calDate.setTime(date);
 		Calendar calRef = Calendar.getInstance();

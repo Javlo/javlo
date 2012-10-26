@@ -1,36 +1,55 @@
 package org.javlo.search;
 
-import javax.servlet.http.HttpSession;
+import java.util.Date;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.Map;
+
+import org.javlo.context.ContentContext;
+import org.javlo.context.GlobalContext;
+import org.javlo.helper.StringHelper;
+import org.javlo.helper.TimeHelper;
+import org.javlo.utils.CollectionAsMap;
 
 public class SearchFilter {
 
-	public static final SearchFilter getInstance(HttpSession session) {
-		String key = "searchFilter";
-		SearchFilter filter = (SearchFilter) session.getAttribute(key);
+	GlobalContext globalContext;
+
+	private static final String KEY = "searchFilter";
+
+	public static final SearchFilter getInstance(ContentContext ctx) {
+		SearchFilter filter = (SearchFilter) ctx.getRequest().getSession().getAttribute(KEY);
 		if (filter == null) {
 			filter = new SearchFilter();
-			session.setAttribute(key, filter);
+			ctx.getRequest().getSession().setAttribute(KEY, filter);
 		}
+		filter.globalContext = GlobalContext.getInstance(ctx.getRequest());
 		return filter;
 	}
 
-	private String rootPageName;
+	private final List<String> rootPageName = new LinkedList<String>();
 
 	private String tag;
 
-	private String mount;
+	private Date startDate = null;
 
-	public String getRootPageName() {
-		return rootPageName;
+	private Date endDate = null;
+
+	public void reset(ContentContext ctx) {
+		ctx.getRequest().getSession().setAttribute(KEY, new SearchFilter());
 	}
 
-	public void setRootPageName(String inRootPageName) {
+	public void clearRootPages() {
+		rootPageName.clear();
+	}
+
+	public Map<String, String> getRootPageName() {
+		return new CollectionAsMap<String>(rootPageName);
+	}
+
+	public void addRootPageName(String inRootPageName) {
 		if (inRootPageName != null) {
-			if (inRootPageName.trim().length() == 0) {
-				this.rootPageName = null;
-			} else {
-				this.rootPageName = inRootPageName;
-			}
+			this.rootPageName.add(inRootPageName);
 		}
 	}
 
@@ -48,12 +67,37 @@ public class SearchFilter {
 		}
 	}
 
-	public String getMount() {
-		return mount;
+	public Date getStartDate() {
+		return startDate;
 	}
 
-	public void setMount(String mount) {
-		this.mount = mount;
+	public void setStartDate(Date startDate) {
+		this.startDate = startDate;
 	}
 
+	public Date getEndDate() {
+		return endDate;
+	}
+
+	public void setEndDate(Date endDate) {
+		this.endDate = endDate;
+	}
+
+	public String getStartDateStr() {
+		return StringHelper.renderDate(getStartDate(), globalContext.getShortDateFormat());
+	}
+
+	public String getEndDateStr() {
+		return StringHelper.renderDate(getEndDate(), globalContext.getShortDateFormat());
+	}
+
+	/**
+	 * return true if date in between start date and end date
+	 * 
+	 * @param date
+	 * @return
+	 */
+	public boolean isInside(Date date) {
+		return TimeHelper.betweenInDay(date, getStartDate(), getEndDate());
+	}
 }

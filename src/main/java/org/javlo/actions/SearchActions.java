@@ -4,6 +4,7 @@
 package org.javlo.actions;
 
 import java.text.ParseException;
+import java.util.Collection;
 import java.util.Date;
 import java.util.List;
 import java.util.logging.Logger;
@@ -33,6 +34,7 @@ public class SearchActions implements IAction {
 		String msg = null;
 
 		try {
+			ContentContext ctx = ContentContext.getContentContext(request, response);
 			RequestService requestService = RequestService.getInstance(request);
 
 			String searchStr = requestService.getParameter("keywords", requestService.getParameter("q", null));
@@ -40,15 +42,36 @@ public class SearchActions implements IAction {
 			String groupId = requestService.getParameter("search-group", null);
 			String sort = requestService.getParameter("sort", null);
 
-			SearchFilter searchFilter = SearchFilter.getInstance(request.getSession());
-			searchFilter.setRootPageName(requestService.getParameter("root", null));
+			SearchFilter searchFilter = SearchFilter.getInstance(ctx);
+
+			Collection<String> keys = requestService.getParameterMap().keySet();
+			for (String key : keys) { // reset only if at least one element is selected, it can be "all"
+				if (key.startsWith("root")) {
+					searchFilter.clearRootPages();
+				}
+			}
+			for (String key : keys) {
+				if (key.startsWith("root-")) {
+					searchFilter.addRootPageName(requestService.getParameter(key, null));
+				}
+			}
+			if (requestService.getParameter("root", null) != null) { // all selected
+				searchFilter.clearRootPages();
+			}
+
+			if (requestService.getParameter("reset", null) != null) { // all selected
+				searchFilter.reset(ctx);
+			}
+
+			searchFilter.setStartDate(StringHelper.smartParseDate(requestService.getParameter("startdate", null)));
+			searchFilter.setEndDate(StringHelper.smartParseDate(requestService.getParameter("enddate", null)));
+
 			searchFilter.setTag(requestService.getParameter("tag", null));
 
 			logger.info("search action : " + searchStr);
 
 			if (searchStr != null) {
 				if (searchStr.length() > 0) {
-					ContentContext ctx = ContentContext.getContentContext(request, response);
 					if (ctx.getCurrentPage().getContentByType(ctx.getContextWithoutArea(), SearchResultComponent.TYPE).size() == 0) {
 						ctx.setSpecialContentRenderer("/jsp/view/search/search_result.jsp");
 						if (ctx.getCurrentTemplate() != null && ctx.getCurrentTemplate().getSearchRenderer(ctx) != null) {

@@ -354,4 +354,24 @@ public class NavigationHelper {
 		return false;
 	}
 
+	/**
+	 * check if pages are parent of a other page.
+	 * 
+	 * @param page
+	 *            a page with parent
+	 * @param parent
+	 *            the suposed parent page
+	 * @return
+	 */
+	public static boolean isParent(MenuElement page, List<MenuElement> parents) {
+		if (parents.size() == 0) {
+			return true;
+		}
+		for (MenuElement parent : parents) {
+			if (isParent(page, parent)) {
+				return true;
+			}
+		}
+		return false;
+	}
 }
