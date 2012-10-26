@@ -300,15 +300,15 @@ public class SearchResult {
 		return result;
 	}
 
-	private void searchInPage(MenuElement page, ContentContext ctx, String groupId, String inSearchText, Collection<String> componentType, MenuElement rootPage) throws Exception {
+	private void searchInPage(MenuElement page, ContentContext ctx, String groupId, String inSearchText, Collection<String> componentType, List<MenuElement> rootPage) throws Exception {
 
-		SearchFilter searchFilter = SearchFilter.getInstance(ctx.getRequest().getSession());
+		SearchFilter searchFilter = SearchFilter.getInstance(ctx);
 		boolean tagOK = true;
 		if (searchFilter.getTag() != null && !page.getTags(ctx).contains(searchFilter.getTag())) {
 			tagOK = false;
 		}
 
-		if ((!page.notInSearch(ctx) || (componentType != null && componentType.size() > 0)) && (rootPage == null || NavigationHelper.isParent(page, rootPage)) && tagOK) {
+		if ((!page.notInSearch(ctx) || (componentType != null && componentType.size() > 0)) && (rootPage == null || NavigationHelper.isParent(page, rootPage)) && tagOK && searchFilter.isInside(page.getContentDateNeverNull(ctx))) {
 
 			if (groupId == null || groupId.trim().length() == 0 || page.getGroupID(ctx).contains(groupId)) {
 
@@ -378,11 +378,16 @@ public class SearchResult {
 			setSort(sort);
 		}
 
-		SearchFilter searchFilter = SearchFilter.getInstance(ctx.getRequest().getSession());
-		MenuElement rootSearch = null;
+		SearchFilter searchFilter = SearchFilter.getInstance(ctx);
+		List<MenuElement> rootsSearch = new LinkedList<MenuElement>();
 		if (searchFilter.getRootPageName() != null) {
 			GlobalContext globalContext = GlobalContext.getInstance(ctx.getRequest());
-			rootSearch = ContentService.getInstance(globalContext).getNavigation(ctx).searchChildFromName(searchFilter.getRootPageName());
+			for (String pageName : searchFilter.getRootPageName().keySet()) {
+				MenuElement rootSearch = ContentService.getInstance(globalContext).getNavigation(ctx).searchChildFromName(pageName);
+				if (rootSearch != null) {
+					rootsSearch.add(rootSearch);
+				}
+			}
 		}
 
 		synchronized (result) { // if two browser with the same session
@@ -390,7 +395,7 @@ public class SearchResult {
 			ContentService content = ContentService.getInstance(ctx.getRequest());
 			MenuElement nav = content.getNavigation(ctx);
 
-			searchInPage(nav, ctx, groupId, searchText, comps, rootSearch);
+			searchInPage(nav, ctx, groupId, searchText, comps, rootsSearch);
 
 			Iterator<SearchElement> results = result.iterator();
 			while (results.hasNext()) {

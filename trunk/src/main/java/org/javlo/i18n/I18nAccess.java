@@ -7,11 +7,15 @@ import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.Serializable;
+import java.text.SimpleDateFormat;
+import java.util.Calendar;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.Hashtable;
 import java.util.Iterator;
+import java.util.LinkedList;
+import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 import java.util.Properties;
@@ -561,4 +565,15 @@ public class I18nAccess implements Serializable {
 		this.contextKey = contextKey;
 	}
 
+	public Collection<String> getMonths() {
+		List<String> months = new LinkedList<String>();
+		Calendar cal = Calendar.getInstance(new Locale(viewLg));
+		cal.set(2000, 0, 1);
+		SimpleDateFormat format = new SimpleDateFormat("MMM");
+		for (int i = 0; i < 12; i++) {
+			months.add(format.format(cal.getTime()));
+			cal.roll(Calendar.MONTH, true);
+		}
+		return months;
+	}
 }

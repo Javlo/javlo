@@ -1192,6 +1192,59 @@ public class StringHelper {
 		return parseDate(inDate, "dd/MM/yyyy");
 	}
 
+	public static Date parseDate(String inDate, char sep) throws ParseException {
+		Date outDate = null;
+		try {
+			outDate = StringHelper.parseDate(inDate, "dd" + sep + "MM" + sep + "yyyy");
+		} catch (ParseException e) {
+			try {
+				outDate = StringHelper.parseDate(inDate, "dd" + sep + "MM" + sep + "yy");
+			} catch (ParseException e1) {
+			}
+		}
+		return outDate;
+	}
+
+	public static Date smartParseDate(String inDate) {
+		Date outDate = null;
+		if (inDate == null) {
+			return null;
+		}
+		inDate = inDate.trim();
+		if (inDate.length() == 0) {
+			return null;
+		} else {
+			if (inDate.contains("/")) {
+				try {
+					outDate = parseDate(inDate, '/');
+				} catch (ParseException e) {
+				}
+			} else if (inDate.contains(":")) {
+				try {
+					outDate = parseDate(inDate, ':');
+				} catch (ParseException e) {
+				}
+			} else if (inDate.contains("-")) {
+				try {
+					outDate = parseDate(inDate, '-');
+				} catch (ParseException e) {
+				}
+			} else if (inDate.contains(" ")) {
+				try {
+					outDate = parseDate(inDate, ' ');
+				} catch (ParseException e) {
+				}
+			}
+		}
+		if (outDate == null) {
+			try {
+				outDate = parseDate(inDate, "yyyy-MM-dd");
+			} catch (ParseException e) {
+			}
+		}
+		return outDate;
+	}
+
 	public static Date parseDate(String inDate, String pattern) throws ParseException {
 		if (inDate == null) {
 			return null;
@@ -1438,6 +1491,9 @@ public class StringHelper {
 	public static String renderDate(Date date, String pattern) {
 		if (date == null) {
 			return null;
+		}
+		if (pattern == null) {
+			return renderDate(date);
 		}
 		SimpleDateFormat format = new SimpleDateFormat(pattern);
 		return format.format(date);
