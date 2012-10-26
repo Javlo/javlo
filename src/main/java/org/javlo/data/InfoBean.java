@@ -304,4 +304,30 @@ public class InfoBean {
 		return globalContext.getTags();
 	}
 
+	/**
+	 * return the name of the first level page active. "root" if current page in root.
+	 * 
+	 * @return
+	 * @throws Exception
+	 */
+	public String getSection() {
+		MenuElement page;
+		try {
+			page = ctx.getCurrentPage();
+		} catch (Exception e) {
+			return "page-not-found";
+		}
+		if (page == null) {
+			return "page-not-found";
+		}
+		if (page.getParent() == null) {
+			return "root";
+		} else {
+			while (page.getParent().getParent() != null) {
+				page = page.getParent();
+			}
+		}
+		return page.getName();
+	}
+
 }
