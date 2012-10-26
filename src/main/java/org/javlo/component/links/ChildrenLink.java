@@ -267,20 +267,17 @@ public class ChildrenLink extends AbstractVisualComponent implements IImageTitle
 		boolean showAll = false;
 		boolean showOnlyNotVisible = false;
 
-		if (getStyle(ctx) != null) {
-			showAll = getStyle(ctx).equalsIgnoreCase("all");
-			showOnlyNotVisible = getStyle(ctx).equalsIgnoreCase("not-visible");
-			if (showOnlyNotVisible) {
-				showAll = true;
-			}
+		if (getStyle() != null) {
+			showAll = getStyle().equalsIgnoreCase("all");
+			showOnlyNotVisible = getStyle().equalsIgnoreCase("not-visible");
 		}
 		MenuElement[] children = parentPage.getChildMenuElementsWithVirtual(ctx, false, false);
 		String renderer = getRenderer(ctx);
 		if (renderer != null) {
 			List<ChildLinkBean> childrenList = new LinkedList<ChildLinkBean>();
-			for (int i = 0; i < children.length; i++) {
-				if (!children[i].isVisible(ctx) || !showOnlyNotVisible || showAll) {
-					ChildLinkBean bean = new ChildLinkBean(ctx, children[i], currentPage);
+			for (MenuElement element : children) {
+				if ((element.isVisible(ctx) ^ showOnlyNotVisible) || showAll) {
+					ChildLinkBean bean = new ChildLinkBean(ctx, element, currentPage);
 					childrenList.add(bean);
 				}
 			}
