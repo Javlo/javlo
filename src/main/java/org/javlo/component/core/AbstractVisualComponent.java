@@ -463,8 +463,6 @@ public abstract class AbstractVisualComponent implements IContentVisualComponent
 			out.println("</div>");
 		}
 
-		System.out.println("***** AbstractVisualComponent.getXHTMLConfig : " + getType() + " - " + getConfig(ctx).getRenderes().size()); // TODO: remove debug trace
-
 		if (getConfig(ctx).getRenderes().size() > 0) {
 			out.println(getSelectRendererXHTML(ctx));
 			/*
