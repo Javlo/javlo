@@ -66,6 +66,8 @@ org.javlo.component.gadget.CountTool
 org.javlo.component.form.Contact
 org.javlo.component.form.GenericForm
 org.javlo.component.list.FAQComponent
+org.javlo.component.web2.ReactionComponent
+
 
 --content.title.special
 
