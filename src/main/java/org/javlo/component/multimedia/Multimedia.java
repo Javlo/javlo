@@ -619,7 +619,7 @@ public class Multimedia extends TimeRangeComponent implements IImageTitle {
 			}
 		}
 
-		if (getStyle().equals(ALL) || getStyle().equals(VIDEO)) {
+		if (displayVideo(ctx)) {
 			List<MultimediaResource> contentVideos = getContentVideo(ctx);
 			for (MultimediaResource resource : contentVideos) {
 				if (acceptResource(ctx, resource, index)) {
