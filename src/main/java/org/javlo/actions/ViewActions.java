@@ -111,6 +111,7 @@ public class ViewActions implements IAction {
 	public static String performPagination(HttpServletRequest request, HttpServletResponse response) throws Exception {
 		String page = request.getParameter("page");
 		String contextKey = request.getParameter("key");
+
 		if (page == null || contextKey == null) {
 			return "bad parameters strucuture : page and key is required.";
 		}

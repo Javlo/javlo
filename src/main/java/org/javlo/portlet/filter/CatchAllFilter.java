@@ -400,6 +400,7 @@ public class CatchAllFilter implements Filter {
 					url = URLHelper.addParam(url, MailingAction.MAILING_FEEDBACK_PARAM_NAME, "" + request.getAttribute(MailingAction.MAILING_FEEDBACK_PARAM_NAME));
 				}
 				httpRequest.getRequestDispatcher(url + decryptedData).forward(httpRequest, response);
+				return;
 			} catch (Exception e) {
 				e.printStackTrace();
 			}
@@ -477,6 +478,7 @@ public class CatchAllFilter implements Filter {
 						}
 						String newURL = URLHelper.createURL(ctx);
 						NetHelper.sendRedirectPermanently((HttpServletResponse) response, newURL);
+						return;
 					}
 				}
 
@@ -493,16 +495,12 @@ public class CatchAllFilter implements Filter {
 							String pattern2 = entry.getValue();
 							if (!pattern1.contains("*")) {
 								if (uri.equals(pattern1)) {
-									// ((HttpServletResponse) response).setStatus(HttpServletResponse.SC_MOVED_PERMANENTLY);
-									// ((HttpServletResponse) response).sendRedirect(pattern2);
 									NetHelper.sendRedirectPermanently((HttpServletResponse) response, pattern2);
 									return;
 								}
 							} else {
 								String newURL = StringHelper.convertString(pattern1, pattern2, uri);
 								if (!newURL.equals(uri)) {
-									// ((HttpServletResponse) response).setStatus(HttpServletResponse.SC_MOVED_PERMANENTLY);
-									// ((HttpServletResponse) response).sendRedirect(newURL);
 									NetHelper.sendRedirectPermanently((HttpServletResponse) response, newURL);
 									return;
 								}
