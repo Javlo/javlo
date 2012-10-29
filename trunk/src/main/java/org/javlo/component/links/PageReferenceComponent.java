@@ -30,6 +30,7 @@ import org.javlo.component.image.IImageTitle;
 import org.javlo.component.meta.Tags;
 import org.javlo.context.ContentContext;
 import org.javlo.context.GlobalContext;
+import org.javlo.helper.PaginationContext;
 import org.javlo.helper.StringHelper;
 import org.javlo.helper.URLHelper;
 import org.javlo.helper.XHTMLHelper;
@@ -1046,7 +1047,7 @@ public class PageReferenceComponent extends ComplexPropertiesLink implements IAc
 
 	@Override
 	public boolean isContentCachable(ContentContext ctx) {
-		return StringHelper.isTrue(getConfig(ctx).getProperty("config.cache", null), true);
+		return StringHelper.isTrue(getConfig(ctx).getProperty("config.cache", null), false);
 	}
 
 	@Override
@@ -1056,7 +1057,7 @@ public class PageReferenceComponent extends ComplexPropertiesLink implements IAc
 
 	@Override
 	public boolean isContentTimeCachable(ContentContext ctx) {
-		return StringHelper.isTrue(getConfig(ctx).getProperty("config.time-cache", null), true);
+		return StringHelper.isTrue(getConfig(ctx).getProperty("config.time-cache", null), false);
 	}
 
 	private boolean isCreationOrder() {
@@ -1089,6 +1090,15 @@ public class PageReferenceComponent extends ComplexPropertiesLink implements IAc
 
 	private boolean isWidthEmptyPage() {
 		return StringHelper.isTrue(properties.getProperty(WIDTH_EMPTY_PAGE_PROP_KEY, "false"));
+	}
+
+	public int getPageSize(ContentContext ctx) {
+		String size = getConfig(ctx).getProperty("page.size", null);
+		if (size == null) {
+			return 10; // default value
+		} else {
+			return Integer.parseInt(size);
+		}
 	}
 
 	@Override
@@ -1134,7 +1144,6 @@ public class PageReferenceComponent extends ComplexPropertiesLink implements IAc
 					ascending = true;
 				}
 				pages.add(page);
-
 			} else {
 				logger.warning("page not found : " + pageId);
 			}
@@ -1167,6 +1176,10 @@ public class PageReferenceComponent extends ComplexPropertiesLink implements IAc
 		int countPage = 0;
 		int realContentSize = 0;
 		MenuElement firstPage = null;
+
+		String tagFilter = ctx.getRequest().getParameter("tag");
+		String catFilter = ctx.getRequest().getParameter("category");
+
 		for (MenuElement page : pages) {
 			ContentContext lgCtx = ctx;
 			if (GlobalContext.getInstance(ctx.getRequest()).isAutoSwitchToDefaultLanguage()) {
@@ -1186,7 +1199,11 @@ public class PageReferenceComponent extends ComplexPropertiesLink implements IAc
 								realContentSize++;
 							}
 							if (page.isRealContent(lgCtx) || isWidthEmptyPage()) {
-								pageBeans.add(PageBean.getInstance(lgCtx, page, this));
+								if (tagFilter == null || tagFilter.trim().length() == 0 || page.getTags(lgCtx).contains(tagFilter)) {
+									if (catFilter == null || catFilter.trim().length() == 0 || page.getCategory(lgCtx).equals(catFilter)) {
+										pageBeans.add(PageBean.getInstance(lgCtx, page, this));
+									}
+								}
 							}
 						}
 					}
@@ -1203,7 +1220,9 @@ public class PageReferenceComponent extends ComplexPropertiesLink implements IAc
 		}
 
 		PagesStatus pagesStatus = new PagesStatus(countPage, realContentSize);
+		PaginationContext pagination = PaginationContext.getInstance(ctx.getRequest().getSession(), getId(), pageBeans.size(), getPageSize(ctx));
 
+		ctx.getRequest().setAttribute("pagination", pagination);
 		ctx.getRequest().setAttribute("pagesStatus", pagesStatus);
 		ctx.getRequest().setAttribute("pages", pageBeans);
 		ctx.getRequest().setAttribute("title", getContentTitle());
