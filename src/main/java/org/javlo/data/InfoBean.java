@@ -18,6 +18,7 @@ import org.javlo.rendering.Device;
 import org.javlo.service.PersistenceService;
 import org.javlo.service.exception.ServiceException;
 import org.javlo.servlet.AccessServlet;
+import org.javlo.template.Template;
 import org.javlo.user.IUserFactory;
 import org.javlo.user.UserFactory;
 
@@ -328,6 +329,14 @@ public class InfoBean {
 			}
 		}
 		return page.getName();
+	}
+
+	public Template getTemplate() {
+		try {
+			return ctx.getCurrentTemplate();
+		} catch (Exception e) {
+			return null;
+		}
 	}
 
 }
