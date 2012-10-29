@@ -181,6 +181,8 @@ public class AccessServlet extends HttpServlet {
 
 		try {
 
+			logger.fine("uri : " + request.getRequestURI()); // TODO: remove debug trace
+
 			StaticConfig staticConfig = StaticConfig.getInstance(getServletContext());
 
 			/** init log **/

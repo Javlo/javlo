@@ -10,6 +10,15 @@
 		</c:if>
 	</c:if>
 	
+	<c:if test="${!display}">
+	<div class="item hidden">
+		<a href="${resource.URL}?epbox&amp;gallery=${resource.relation}" title="${resource.title} - ${resource.location} - ${resource.shortDate}" rel="${resource.relation}" onclick="sendAction('${resource.accessURL}');" lang="en">
+			download
+		</a>
+	</div>	
+	</c:if>
+	
+	
 	<c:if test="${display}">
 	<div class="item">
 			<div class="preview ${resource.cssClass}">
