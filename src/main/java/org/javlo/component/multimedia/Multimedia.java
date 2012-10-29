@@ -619,15 +619,17 @@ public class Multimedia extends TimeRangeComponent implements IImageTitle {
 			}
 		}
 
-		List<MultimediaResource> contentVideos = getContentVideo(ctx);
-		for (MultimediaResource resource : contentVideos) {
-			if (acceptResource(ctx, resource, index)) {
-				if (allURL.get(resource.getURL()) != null) { // equals and hash is overidded on MultimediaResource -> two "equals" resource can be different (sample : a static resource and a component resource linked with same file).
-					allResource.remove(allURL.get(resource.getURL()));
-				} else {
-					index++;
+		if (getStyle().equals(ALL) || getStyle().equals(VIDEO)) {
+			List<MultimediaResource> contentVideos = getContentVideo(ctx);
+			for (MultimediaResource resource : contentVideos) {
+				if (acceptResource(ctx, resource, index)) {
+					if (allURL.get(resource.getURL()) != null) { // equals and hash is overidded on MultimediaResource -> two "equals" resource can be different (sample : a static resource and a component resource linked with same file).
+						allResource.remove(allURL.get(resource.getURL()));
+					} else {
+						index++;
+					}
+					allResource.add(resource);
 				}
-				allResource.add(resource);
 			}
 		}
 
