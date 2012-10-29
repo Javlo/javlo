@@ -11,6 +11,7 @@ import javax.servlet.http.HttpServletResponse;
 import org.javlo.config.StaticConfig;
 import org.javlo.context.ContentContext;
 import org.javlo.context.GlobalContext;
+import org.javlo.helper.PaginationContext;
 import org.javlo.helper.URLHelper;
 import org.javlo.i18n.I18nAccess;
 import org.javlo.rendering.Device;
@@ -104,6 +105,21 @@ public class ViewActions implements IAction {
 		Device device = Device.getDevice(request);
 		device.forceDefault();
 		logger.info("force default device : " + device.getCode());
+		return null;
+	}
+
+	public static String performPagination(HttpServletRequest request, HttpServletResponse response) throws Exception {
+		String page = request.getParameter("page");
+		String contextKey = request.getParameter("key");
+		if (page == null || contextKey == null) {
+			return "bad parameters strucuture : page and key is required.";
+		}
+		PaginationContext paginationContext = PaginationContext.getInstance(request.getSession(), contextKey);
+		if (paginationContext != null) {
+			paginationContext.setPage(Integer.parseInt(page));
+		} else {
+			return "pagination context not found : " + contextKey;
+		}
 		return null;
 	}
 

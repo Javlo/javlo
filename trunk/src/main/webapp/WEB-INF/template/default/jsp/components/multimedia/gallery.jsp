@@ -2,6 +2,15 @@
 <%@ taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions" %>
 <div class="multimedia">
 	<c:forEach var="resource" items="${resources}" varStatus="status">
+	
+	<c:set var="display" value="false" />
+	<c:if test="${status.index > (pagination.page-1)*pagination.pageSize || pagination.pageSize == 0}">
+		<c:if test="${status.index <= (pagination.page)*pagination.pageSize || pagination.pageSize == 0}">
+			<c:set var="display" value="true" />
+		</c:if>
+	</c:if>
+	
+	<c:if test="${display}">
 	<div class="item">
 			<div class="preview ${resource.cssClass}">
 				<a href="${resource.URL}?epbox&amp;gallery=${resource.relation}" title="${resource.title} - ${resource.location} - ${resource.shortDate}" rel="${resource.relation}" onclick="sendAction('${resource.accessURL}');">
@@ -43,6 +52,9 @@
 					</div>
 				</li>
 			</ul>
-		</div>		
+		</div>
+		</c:if>		
 	</c:forEach>
 	</div>
+	<jsp:include page="../../pagination.jsp"></jsp:include>
+	

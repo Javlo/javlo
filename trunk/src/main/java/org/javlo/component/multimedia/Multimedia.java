@@ -25,6 +25,7 @@ import org.javlo.config.StaticConfig;
 import org.javlo.context.ContentContext;
 import org.javlo.context.GlobalContext;
 import org.javlo.exception.RessourceNotFoundException;
+import org.javlo.helper.PaginationContext;
 import org.javlo.helper.ResourceHelper;
 import org.javlo.helper.StringHelper;
 import org.javlo.helper.URLHelper;
@@ -325,6 +326,11 @@ public class Multimedia extends TimeRangeComponent implements IImageTitle {
 		out.println(" : <input style=\"width: 120px;\" type=\"text\" id=\"" + getInputMaxListSizeName() + "\" name=\"" + getInputMaxListSizeName() + "\" value=\"" + getMaxListSize() + "\"/>");
 		out.println("</div>");
 
+		out.println("<div class=\"line\">");
+		out.println("<label for=\"" + getInputPageSizeName() + "\">" + i18nAccess.getText("content.multimedia-gallery.page-size") + "</label>");
+		out.println(" : <input style=\"width: 120px;\" type=\"text\" id=\"" + getInputPageSizeName() + "\" name=\"" + getInputPageSizeName() + "\" value=\"" + getPageSize() + "\"/>");
+		out.println("</div>");
+
 		Map<String, String> renderers = getConfig(ctx).getRenderes();
 		if (renderers.size() > 1) {
 			out.println("<div class=\"line\">");
@@ -402,6 +408,10 @@ public class Multimedia extends TimeRangeComponent implements IImageTitle {
 		return "__" + getId() + ID_SEPARATOR + "list-size";
 	}
 
+	public String getInputPageSizeName() {
+		return "__" + getId() + ID_SEPARATOR + "page-size";
+	}
+
 	protected String getInputNameOrderByAccess() {
 		return "order_by_access_" + getId();
 	}
@@ -414,11 +424,29 @@ public class Multimedia extends TimeRangeComponent implements IImageTitle {
 		int maxListSize = 16;
 		try {
 			String maxListSizeStr = getValue().split(VALUE_SEPARATOR)[2];
-			maxListSize = Integer.parseInt(maxListSizeStr);
+			if (maxListSizeStr.contains(",")) {
+				maxListSize = Integer.parseInt(maxListSizeStr.split(",")[1]);
+			} else {
+				maxListSize = Integer.parseInt(maxListSizeStr);
+			}
 		} catch (Throwable t) {
 			logger.warning(t.getMessage());
 		}
 		return maxListSize;
+	}
+
+	public int getPageSize() {
+		int pageSize = 0;
+		try {
+			String pageSizeStr = getValue().split(VALUE_SEPARATOR)[2];
+			if (pageSizeStr.contains(",")) {
+				pageSize = Integer.parseInt(pageSizeStr.split(",")[0]);
+			}
+		} catch (Throwable t) {
+			logger.warning(t.getMessage());
+		}
+		return pageSize;
+
 	}
 
 	public List<String> getTags() {
@@ -633,6 +661,9 @@ public class Multimedia extends TimeRangeComponent implements IImageTitle {
 			}
 		}
 
+		PaginationContext pagination = PaginationContext.getInstance(ctx.getRequest().getSession(), getId(), allResource.size(), getPageSize());
+
+		ctx.getRequest().setAttribute("pagination", pagination);
 		ctx.getRequest().setAttribute("resources", allResource);
 	}
 
@@ -701,6 +732,7 @@ public class Multimedia extends TimeRangeComponent implements IImageTitle {
 		String newStartDate = requestService.getParameter(getInputStartDateName(), null);
 		String newEndDate = requestService.getParameter(getInputEndDateName(), null);
 		String newListSizeDate = requestService.getParameter(getInputMaxListSizeName(), null);
+		String newPageSize = requestService.getParameter(getInputPageSizeName(), null);
 		String newDisplayType = requestService.getParameter(getDisplayAsInputName(), null);
 
 		if (newStartDate != null && newEndDate != null && newListSizeDate != null) {
@@ -722,7 +754,7 @@ public class Multimedia extends TimeRangeComponent implements IImageTitle {
 				}
 			}
 
-			String multimediaInfo = StringHelper.neverNull(StringHelper.renderTime(startDate)) + VALUE_SEPARATOR + StringHelper.neverNull(StringHelper.renderTime(endDate)) + VALUE_SEPARATOR + newListSizeDate + VALUE_SEPARATOR + folder + VALUE_SEPARATOR + newDisplayType + VALUE_SEPARATOR + StringHelper.collectionToString(selectedTags);
+			String multimediaInfo = StringHelper.neverNull(StringHelper.renderTime(startDate)) + VALUE_SEPARATOR + StringHelper.neverNull(StringHelper.renderTime(endDate)) + VALUE_SEPARATOR + newPageSize + ',' + newListSizeDate + VALUE_SEPARATOR + folder + VALUE_SEPARATOR + newDisplayType + VALUE_SEPARATOR + StringHelper.collectionToString(selectedTags);
 			if (isOrderByAcess) {
 				multimediaInfo = multimediaInfo + VALUE_SEPARATOR + ORDER_BY_ACCESS;
 			}
