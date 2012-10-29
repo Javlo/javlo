@@ -262,6 +262,7 @@ public class MenuElement implements Serializable {
 		Collection<String> needdedResources = null;
 		String headerContent = null;
 		List<String> groupID = null;
+		List<String> childrenCategories = null;
 		TimeRange timeRange = null;
 		Boolean contentDateVisible = null;
 		Boolean notInSearch = null;
@@ -510,6 +511,10 @@ public class MenuElement implements Serializable {
 			this.breakRepeat = breakRepeat;
 		}
 
+		public List<String> getChildrenCategories() {
+			return childrenCategories;
+		}
+
 	}
 
 	private GlobalContext globalContext;;
@@ -544,6 +549,7 @@ public class MenuElement implements Serializable {
 			pageDescription.breakRepeat = isBreakRepeat();
 			pageDescription.referenceLanguage = getReferenceLanguage();
 			pageDescription.priority = getPriority();
+			pageDescription.childrenCategories = getChildrenCategories(ctx);
 		}
 		return pageDescription;
 	}
@@ -1234,7 +1240,7 @@ public class MenuElement implements Serializable {
 		while (contentList.hasNext(newCtx)) {
 			IContentVisualComponent elem = contentList.next(newCtx);
 			if (elem.getType().equals(Category.TYPE)) {
-				res = res + elem.getValue(newCtx);
+				res = elem.getValue(newCtx);
 			}
 		}
 		desc.category = StringUtils.replace(res, "\"", "&quot;");
@@ -1760,6 +1766,29 @@ public class MenuElement implements Serializable {
 		desc.groupID = outGroupID;
 
 		return desc.groupID;
+	}
+
+	public List<String> getChildrenCategories(ContentContext ctx) throws Exception {
+
+		PageDescription desc = getPageDescriptionCached(ctx.getRequestContentLanguage());
+
+		if (desc.childrenCategories != null) {
+			return desc.childrenCategories;
+		}
+
+		List<String> categories = new LinkedList<String>();
+
+		MenuElement[] children = getAllChildren();
+		for (MenuElement child : children) {
+			String cat = child.getCategory(ctx);
+			if (cat != null && cat.trim().length() > 0 && !categories.contains(cat)) {
+				categories.add(cat);
+			}
+		}
+
+		desc.childrenCategories = categories;
+
+		return desc.childrenCategories;
 	}
 
 	public String getHeaderContent(ContentContext ctx) throws Exception {
