@@ -1,18 +1,21 @@
 <%@page contentType="text/html"
         import="
-        org.javlo.ContentManager,
-        org.javlo.ContentContext,
+        org.javlo.context.ContentManager,
+        org.javlo.context.ContentContext,
         org.javlo.helper.URLHelper,
         org.javlo.helper.XHTMLHelper,
-        org.javlo.component.AbstractVisualComponent,
-        org.javlo.component.FormComponent,
+        org.javlo.component.core.AbstractVisualComponent,
+        org.javlo.component.form.FormComponent,        
         org.javlo.user.IUserFactory,
         org.javlo.user.UserFactory,
         org.javlo.message.MessageRepository"
 %><%
 ContentContext ctx = ContentContext.getContentContext ( request, response );
-IUserFactory fact = UserFactory.createUserFactory (request.getSession());
+IUserFactory fact = UserFactory.createUserFactory (request);
 MessageRepository messages = MessageRepository.getInstance(ctx);
+
+FormComponent formComponent = (FormComponent)request.getAttribute("comp");
+
 if (false) {
 %><%if (messages.haveGlobalMessage()) {%><div class="message"><p class="<%=messages.getGlobalMessage().getTypeLabel()%>"><%=messages.getGlobalMessage()%></p></div><%}%>
 <div id="form">
