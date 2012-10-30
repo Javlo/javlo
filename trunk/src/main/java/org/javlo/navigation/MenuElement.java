@@ -1001,8 +1001,15 @@ public class MenuElement implements Serializable {
 	public int countComponentInCtx(ContentContext ctx, String inComponentType) throws Exception {
 		int c = 0;
 		ContentElementList content = getAllContent(ctx);
-		while (content.hasNext(ctx)) {
-			IContentVisualComponent cpnt = content.next(ctx);
+		ContentContext lgCtx = ctx;
+		if (globalContext.isAutoSwitchToDefaultLanguage() && !this.isRealContent(ctx)) {
+			lgCtx = ctx.getContextWithContent(this);
+			if (lgCtx == null) {
+				lgCtx = ctx;
+			}
+		}
+		while (content.hasNext(lgCtx)) {
+			IContentVisualComponent cpnt = content.next(lgCtx);
 			if (cpnt.getType().equals(inComponentType)) {
 				c++;
 			}
@@ -1698,15 +1705,10 @@ public class MenuElement implements Serializable {
 			if ((desc.label.trim().length() == 0) && (name != null)) {
 				GlobalContext globalContext = GlobalContext.getInstance(ctx.getRequest());
 				if (globalContext.isAutoSwitchToDefaultLanguage()) {
-					ContentContext defaultLgCtx = new ContentContext(newCtx);
-
-					Iterator<String> defaultLg = globalContext.getDefaultLanguages().iterator();
-					while (desc.label.trim().length() == 0 && defaultLg.hasNext()) {
-						String lg = defaultLg.next();
-						defaultLgCtx.setLanguage(lg);
+					ContentContext defaultLgCtx = newCtx.getContextWithContent(this);
+					if (defaultLgCtx != null) {
 						desc.label = getContent(defaultLgCtx).getLabel();
 					}
-
 					if ((desc.label.trim().length() == 0) && (name != null)) {
 						desc.label = name;
 					}

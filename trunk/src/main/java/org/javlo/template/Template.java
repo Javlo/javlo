@@ -1822,4 +1822,8 @@ public class Template implements Comparable<Template> {
 		return properties.getBoolean("resources.compress", true);
 	}
 
+	public String getRSSImageURL() {
+		return properties.getString("rss.image-url", null);
+	}
+
 }
