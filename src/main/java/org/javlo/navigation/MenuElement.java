@@ -2998,8 +2998,6 @@ public class MenuElement implements Serializable {
 				if (!componentBean[i].getId().equals(id)) {
 					if (!delete) {
 						outList.add(componentBean[i]);
-					} else if ((comp != null) && (comp.isContainer())) {
-						delete = false;
 					}
 				} else {
 					if (comp != null) {
@@ -3008,9 +3006,6 @@ public class MenuElement implements Serializable {
 
 						comp.delete(ctx);
 						type = comp.getType();
-						if (comp.isContainer()) {
-							delete = true;
-						}
 					}
 				}
 			}

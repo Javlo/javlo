@@ -390,7 +390,7 @@ public class RSSReader extends ComplexPropertiesLink {
 
 	
 	@Override
-	public String getSufixViewXHTMLCode(ContentContext ctx) {
+	public String getSuffixViewXHTMLCode(ContentContext ctx) {
 		return "</div>";
 	}
 

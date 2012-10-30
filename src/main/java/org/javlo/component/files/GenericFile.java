@@ -123,8 +123,8 @@ public class GenericFile extends AbstractFileComponent implements IReverseLinkCo
 	}
 
 	@Override
-	public String getSufixViewXHTMLCode(ContentContext ctx) {
-		return "</div>" + super.getSufixViewXHTMLCode(ctx);
+	public String getSuffixViewXHTMLCode(ContentContext ctx) {
+		return "</div>" + super.getSuffixViewXHTMLCode(ctx);
 	}
 
 	/*

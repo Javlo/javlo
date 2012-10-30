@@ -13,18 +13,18 @@ public class Box extends AbstractVisualComponent implements IContainer {
 
 	private static final String TYPE = "box";
 
-	private String getCloseBoxInputName() {
+	protected String getCloseBoxInputName() {
 		return "close_box_" + getId();
 	}
 
-	private String getCSSClass(ContentContext ctx) {
+	protected String getCSSClass(ContentContext ctx) {
 		if (getStyle(ctx) == null || getStyle(ctx).trim().length() == 0) {
 			return "box";
 		} else {
 			return "box " + getStyle(ctx);
 		}
 	}
-	
+
 	@Override
 	public String[] getStyleList(ContentContext ctx) {
 		if (isOpen(ctx)) {
@@ -71,7 +71,7 @@ public class Box extends AbstractVisualComponent implements IContainer {
 		return new String(outStream.toByteArray());
 	}
 
-	private String getTag() {
+	protected String getTag() {
 		return "div";
 	}
 
@@ -86,7 +86,7 @@ public class Box extends AbstractVisualComponent implements IContainer {
 	}
 
 	@Override
-	public String getSufixViewXHTMLCode(ContentContext ctx) {
+	public String getSuffixViewXHTMLCode(ContentContext ctx) {
 		return "";
 	}
 
@@ -101,13 +101,13 @@ public class Box extends AbstractVisualComponent implements IContainer {
 	@Override
 	public String getViewXHTMLCode(ContentContext ctx) throws Exception {
 		if (!isCloseBox()) {
-			return '<' + getTag() + " class=\"" + getCSSClass(ctx) + "\">" + getInternalPrefix(ctx);
+			return getOpenCode(ctx) + getInternalPrefix(ctx);
 		} else {
-			return getInternalSuffix(ctx) + "</" + getTag() + '>';
+			return getInternalSuffix(ctx) + getCloseCode(ctx);
 		}
 	}
 
-	private boolean isCloseBox() {
+	protected boolean isCloseBox() {
 		return StringHelper.isTrue(getValue());
 	}
 
@@ -124,20 +124,12 @@ public class Box extends AbstractVisualComponent implements IContainer {
 
 	@Override
 	public String getOpenCode(ContentContext ctx) {
-		if (isOpen(ctx)) {
-			return OPEN_CONTAINER_CODE;
-		} else {
-			return "";
-		}
+		return '<' + getTag() + " class=\"" + getCSSClass(ctx) + "\">";
 	}
 
 	@Override
 	public String getCloseCode(ContentContext ctx) {
-		if (isOpen(ctx)) {
-			return "";
-		} else {
-			return CLOSE_CONTAINER_CODE;
-		}
+		return "</" + getTag() + '>';
 	}
 
 	@Override

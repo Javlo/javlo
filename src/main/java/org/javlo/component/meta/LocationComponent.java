@@ -41,7 +41,7 @@ public class LocationComponent extends AbstractVisualComponent {
 	}
 
 	@Override
-	public String getSufixViewXHTMLCode(ContentContext ctx) {
+	public String getSuffixViewXHTMLCode(ContentContext ctx) {
 		return "<span class=\"separator\"> - </span></div>";
 	}
 

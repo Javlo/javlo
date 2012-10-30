@@ -109,11 +109,11 @@ public class ExternalLink extends ComplexPropertiesLink implements IReverseLinkC
 	}
 
 	@Override
-	public String getSufixViewXHTMLCode(ContentContext ctx) {
+	public String getSuffixViewXHTMLCode(ContentContext ctx) {
 		if (isHidden(ctx)) {
 			return "";
 		}
-		return "</div>" + super.getSufixViewXHTMLCode(ctx);
+		return "</div>" + super.getSuffixViewXHTMLCode(ctx);
 	}
 
 	public String getReverseLinkName() {

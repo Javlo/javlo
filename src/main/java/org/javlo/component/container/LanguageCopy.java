@@ -90,7 +90,7 @@ public class LanguageCopy extends AbstractPropertiesComponent {
 		for (IContentVisualComponent comp : comps) {
 			out.println(comp.getPrefixViewXHTMLCode(refContext));
 			out.println(comp.getXHTMLCode(refContext));
-			out.println(comp.getSufixViewXHTMLCode(refContext));
+			out.println(comp.getSuffixViewXHTMLCode(refContext));
 		}
 		out.close();
 		return new String(outStream.toByteArray());
@@ -102,7 +102,7 @@ public class LanguageCopy extends AbstractPropertiesComponent {
 	}
 
 	@Override
-	public String getSufixViewXHTMLCode(ContentContext ctx) {
+	public String getSuffixViewXHTMLCode(ContentContext ctx) {
 		return "";
 	}
 

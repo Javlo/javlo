@@ -65,7 +65,7 @@ public class Description extends AbstractVisualComponent {
 	}
 
 	@Override
-	public String getSufixViewXHTMLCode(ContentContext ctx) {
+	public String getSuffixViewXHTMLCode(ContentContext ctx) {
 		if (!isNotDisplayHTML(ctx)) {
 			return "</p>";
 		} else {

@@ -127,12 +127,12 @@ public class MirrorComponent extends AbstractVisualComponent {
 	}
 
 	@Override
-	public String getSufixViewXHTMLCode(ContentContext ctx) {
+	public String getSuffixViewXHTMLCode(ContentContext ctx) {
 		IContentVisualComponent comp;
 		try {
 			comp = getMirrorComponent(ctx);
 			if (comp != null) {
-				return comp.getSufixViewXHTMLCode(ctx);
+				return comp.getSuffixViewXHTMLCode(ctx);
 			}
 		} catch (Exception e) {
 			e.printStackTrace();

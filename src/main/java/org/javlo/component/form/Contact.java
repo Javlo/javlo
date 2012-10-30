@@ -42,7 +42,7 @@ public class Contact extends AbstractVisualComponent implements ICSS, IAction {
 	}
 
 	@Override
-	public String getSufixViewXHTMLCode(ContentContext ctx) {
+	public String getSuffixViewXHTMLCode(ContentContext ctx) {
 		return "</div>";
 	}
 

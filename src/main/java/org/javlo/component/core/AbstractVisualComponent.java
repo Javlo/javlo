@@ -992,7 +992,7 @@ public abstract class AbstractVisualComponent implements IContentVisualComponent
 	}
 
 	@Override
-	public String getSufixViewXHTMLCode(ContentContext ctx) {
+	public String getSuffixViewXHTMLCode(ContentContext ctx) {
 
 		if (getConfig(ctx).getProperty("suffix", null) != null) {
 			return getConfig(ctx).getProperty("suffix", null);
@@ -1293,11 +1293,6 @@ public abstract class AbstractVisualComponent implements IContentVisualComponent
 	@Override
 	public void insert(String text) {
 		setValue(text);
-	}
-
-	@Override
-	public boolean isContainer() {
-		return false;
 	}
 
 	@Override

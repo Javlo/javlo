@@ -57,6 +57,7 @@ org.javlo.component.multimedia.VideoContentMultimedia
 org.javlo.component.container.Box
 org.javlo.component.container.RepeatContainer
 org.javlo.component.container.DynamicComponentList
+org.javlo.component.container.TextDirection
 
 --content.title.web2
 org.javlo.component.meta.Tags

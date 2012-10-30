@@ -74,8 +74,8 @@ public class Tags extends ComplexPropertiesLink {
 	}
 
 	@Override
-	public String getSufixViewXHTMLCode(ContentContext ctx) {
-		return "</div>" + super.getSufixViewXHTMLCode(ctx);
+	public String getSuffixViewXHTMLCode(ContentContext ctx) {
+		return "</div>" + super.getSuffixViewXHTMLCode(ctx);
 	}
 
 	public List<String> getTags() {
