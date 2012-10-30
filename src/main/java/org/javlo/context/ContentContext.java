@@ -854,6 +854,12 @@ public class ContentContext {
 		resestCache();
 	}
 
+	public void setAllLangauge(String lg) {
+		setLanguage(lg);
+		setContentLanguage(lg);
+		setRequestContentLanguage(lg);
+	}
+
 	public void setNeedRefresh(boolean needRefresh) {
 		this.needRefresh = needRefresh;
 	}

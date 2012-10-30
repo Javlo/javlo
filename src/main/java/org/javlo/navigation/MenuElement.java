@@ -1433,6 +1433,22 @@ public class MenuElement implements Serializable {
 		return outComp;
 	}
 
+	public List<IContentVisualComponent> getContentByImplementation(ContentContext ctx, Class clazz) throws Exception {
+
+		List<IContentVisualComponent> outComp = new LinkedList<IContentVisualComponent>();
+
+		ContentElementList content = getAllContent(ctx);
+		while (content.hasNext(ctx)) {
+			IContentVisualComponent comp = content.next(ctx);
+			if (clazz.isInstance(comp)) {
+				outComp.add(comp);
+			}
+		}
+		content.initialize(ctx);
+
+		return outComp;
+	}
+
 	/**
 	 * return a language with content. If there are content in current language, it is returned.
 	 * 

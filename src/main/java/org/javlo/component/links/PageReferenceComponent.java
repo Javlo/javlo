@@ -1042,6 +1042,10 @@ public class PageReferenceComponent extends ComplexPropertiesLink implements IAc
 		super.init(bean, newContext);
 		if (getValue().trim().length() > 0) {
 			properties.load(stringToStream(getValue()));
+			if (properties.getProperty("type") != null) {
+				setRenderer(newContext, properties.getProperty("type"));
+				properties.remove("type");
+			}
 		}
 	}
 
