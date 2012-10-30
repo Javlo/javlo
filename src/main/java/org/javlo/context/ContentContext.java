@@ -61,7 +61,7 @@ public class ContentContext {
 
 	public static Charset CHARSET_DEFAULT = Charset.forName(CHARACTER_ENCODING);
 
-	public static String PRODUCT_NAME = "WCMS";
+	public static String PRODUCT_NAME = "Javlo 2";
 
 	/**
 	 * create a static logger.
@@ -408,9 +408,7 @@ public class ContentContext {
 			GlobalContext globalContext = GlobalContext.getInstance(getRequest());
 			Collection<String> lgs = globalContext.getLanguages();
 			for (String lg : lgs) {
-				lgCtx.setLanguage(lg);
-				lgCtx.setContentLanguage(lg);
-				lgCtx.setRequestContentLanguage(lg);
+				lgCtx.setAllLanguage(lg);
 				if (page.isRealContent(lgCtx)) {
 					return lgCtx.getContextOnPage(page);
 				}

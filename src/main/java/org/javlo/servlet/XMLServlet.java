@@ -16,6 +16,7 @@ import javax.servlet.http.HttpServletResponse;
 import org.javlo.component.core.ContentElementList;
 import org.javlo.component.core.IContentVisualComponent;
 import org.javlo.component.links.RSSRegistration;
+import org.javlo.config.StaticConfig;
 import org.javlo.context.ContentContext;
 import org.javlo.context.GlobalContext;
 import org.javlo.helper.ServletHelper;
@@ -55,7 +56,10 @@ public class XMLServlet extends HttpServlet {
 	}
 
 	protected String executeRSSCurrentRenderer(ContentContext ctx, Template template, String imageURL, String largeImageURL, String imageDescription, String text) throws Exception {
-		String renderer = template.getRSSRendererFullName(ctx);
+		String renderer = null;
+		if (template != null) {
+			renderer = template.getRSSRendererFullName(ctx);
+		}
 		if (renderer != null) {
 			logger.fine("execute RSS renderer : '" + renderer);
 
@@ -106,6 +110,11 @@ public class XMLServlet extends HttpServlet {
 
 					GlobalContext globalContext = GlobalContext.getInstance(request);
 					ContentContext ctx = ContentContext.getFreeContentContext(request, response);
+					if (template != null && !template.isTemplateInWebapp(ctx)) {
+						StaticConfig staticConfig = StaticConfig.getInstance(ctx.getRequest().getSession());
+						template.importTemplateInWebapp(staticConfig, ctx);
+					}
+
 					ctx.setAbsoluteURL(true);
 					ctx.setLanguage(lang);
 					ContentService content = ContentService.getInstance(request);
@@ -124,13 +133,20 @@ public class XMLServlet extends HttpServlet {
 					Iterator<MenuElement> iter = pages.iterator();
 					while (iter.hasNext()) {
 						MenuElement page = iter.next();
-						if (!page.isRealContent(ctx)) {
+						ContentContext lgCtx = ctx;
+						if (globalContext.isAutoSwitchToDefaultLanguage() && !page.isRealContent(ctx)) {
+							lgCtx = ctx.getContextWithContent(page);
+							if (lgCtx == null) {
+								lgCtx = ctx;
+							}
+						}
+						if (!page.isRealContent(lgCtx)) {
 							iter.remove();
 							break;
 						} else {
-							ContentElementList compList = page.getAllContent(ctx);
-							while (compList.hasNext(ctx)) {
-								IContentVisualComponent comp = compList.next(ctx);
+							ContentElementList compList = page.getAllContent(lgCtx);
+							while (compList.hasNext(lgCtx)) {
+								IContentVisualComponent comp = compList.next(lgCtx);
 								if (comp instanceof RSSRegistration) {
 									RSSRegistration rss = (RSSRegistration) comp;
 									if (rss.isHideInvisible() && !page.isVisible()) {
@@ -165,18 +181,32 @@ public class XMLServlet extends HttpServlet {
 					out.write("<language>" + lang + "</language>");
 					out.write("<pubDate>" + StringHelper.renderDateAsRFC822String(latestDate) + "</pubDate>");
 					out.write("<generator>" + ContentContext.PRODUCT_NAME + "</generator>");
+					if (template != null && template.getRSSImageURL() != null) {
+						out.write("<image>");
+						out.write("<title>" + globalContext.getGlobalTitle() + " - " + channel + "</title>");
+						out.write("<url>" + template.getRSSImageURL() + "</url>");
+						out.write("</image>");
+
+					}
 
 					for (MenuElement page : pages) {
-						if (page.isRealContent(ctx)) {
-							ContentElementList contentList = page.getAllContent(ctx);
+						ContentContext lgCtx = ctx;
+						if (globalContext.isAutoSwitchToDefaultLanguage() && !page.isRealContent(ctx)) {
+							lgCtx = ctx.getContextWithContent(page);
+							if (lgCtx == null) {
+								lgCtx = ctx;
+							}
+						}
+						if (page.isRealContent(lgCtx)) {
+							ContentElementList contentList = page.getAllContent(lgCtx);
 							List<String> pageChannel = new LinkedList<String>();
 							boolean allChannel = false;
 							boolean componentRSSFound = false;
-							while (contentList.hasNext(ctx)) {
-								IContentVisualComponent comp = contentList.next(ctx);
+							while (contentList.hasNext(lgCtx)) {
+								IContentVisualComponent comp = contentList.next(lgCtx);
 								if (comp.getType().equals(RSSRegistration.TYPE)) {
 									componentRSSFound = true;
-									if (comp.getValue(ctx).trim().length() == 0) {
+									if (comp.getValue(lgCtx).trim().length() == 0) {
 										allChannel = true;
 									} else {
 										pageChannel.add(((RSSRegistration) comp).getChannel());
@@ -187,24 +217,24 @@ public class XMLServlet extends HttpServlet {
 							if (componentRSSFound) {
 								if (allChannel || (pageChannel.contains(channel)) || (channel.equals("all"))) {
 									out.write("<item>");
-									out.write("<title><![CDATA[ " + page.getTitle(ctx) + "]]> </title>");
+									out.write("<title><![CDATA[ " + page.getTitle(lgCtx) + "]]> </title>");
 
 									String imageURL = null;
 									String largeImageURL = null;
 									String imageDescription = null;
-									if (page.getImage(ctx) != null) {
-										imageURL = URLHelper.createTransformURL(ctx, page, template, page.getImage(ctx).getResourceURL(ctx), "rss");
-										largeImageURL = URLHelper.createTransformURL(ctx, page, template, page.getImage(ctx).getResourceURL(ctx), "thumb-view");
-										imageDescription = page.getImage(ctx).getImageDescription(ctx);
+									if (page.getImage(lgCtx) != null) {
+										imageURL = URLHelper.createTransformURL(lgCtx, page, template, page.getImage(lgCtx).getResourceURL(lgCtx), "rss");
+										largeImageURL = URLHelper.createTransformURL(lgCtx, page, template, page.getImage(lgCtx).getResourceURL(lgCtx), "thumb-view");
+										imageDescription = page.getImage(lgCtx).getImageDescription(lgCtx);
 									}
-									out.write("<description>" + executeRSSCurrentRenderer(ctx, template, imageURL, largeImageURL, imageDescription, page.getDescription(ctx)) + "</description>");
-									if (template.isPDFRenderer()) {
-										String pdfLink = URLHelper.createURL(ctx.getContextWithOtherFormat("pdf"), page.getPath());
+									out.write("<description>" + executeRSSCurrentRenderer(lgCtx, template, imageURL, largeImageURL, imageDescription, page.getDescription(lgCtx)) + "</description>");
+									if (template != null && template.isPDFRenderer()) {
+										String pdfLink = URLHelper.createURL(lgCtx.getContextWithOtherFormat("pdf"), page.getPath());
 										out.write("<enclosure url=\"" + pdfLink + "\" type=\"application/pdf\" />");
 									}
 									out.write("<authors>" + page.getCreator() + "</authors>");
 									out.write("<pubDate>" + StringHelper.renderDateAsRFC822String(page.getModificationDate()) + "</pubDate>");
-									out.write("<link><![CDATA[ " + URLHelper.createURL(ctx.getContextWithOtherFormat("html"), page.getPath()) + "]]> </link>");
+									out.write("<link><![CDATA[ " + URLHelper.createURL(lgCtx.getContextWithOtherFormat("html"), page.getPath()) + "]]> </link>");
 									out.write("</item>");
 								}
 							}

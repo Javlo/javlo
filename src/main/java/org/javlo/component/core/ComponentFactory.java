@@ -83,7 +83,7 @@ public class ComponentFactory {
 					comp.setValid(true);
 				}
 			} else {
-				logger.warning("no template found for page : " + page.getName());
+				logger.fine("no template found for page : " + page.getName());
 			}
 		}
 		components = new IContentVisualComponent[array.size()];
