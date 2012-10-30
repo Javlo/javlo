@@ -55,7 +55,7 @@ public class XHTML extends AbstractVisualComponent {
 	}
 
 	@Override
-	public String getSufixViewXHTMLCode(ContentContext ctx) {
+	public String getSuffixViewXHTMLCode(ContentContext ctx) {
 		return "";
 	}
 

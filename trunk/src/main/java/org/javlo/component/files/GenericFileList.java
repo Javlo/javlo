@@ -21,7 +21,7 @@ public class GenericFileList extends GenericFile {
 	}
 
 	@Override
-	public String getSufixViewXHTMLCode(ContentContext ctx) {
+	public String getSuffixViewXHTMLCode(ContentContext ctx) {
 		return "</li>";
 	}
 

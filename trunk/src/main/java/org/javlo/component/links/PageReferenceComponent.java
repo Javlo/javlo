@@ -986,7 +986,7 @@ public class PageReferenceComponent extends ComplexPropertiesLink implements IAc
 	}
 
 	@Override
-	public String getSufixViewXHTMLCode(ContentContext ctx) {
+	public String getSuffixViewXHTMLCode(ContentContext ctx) {
 		if (getConfig(ctx).getProperty("suffix", null) != null) {
 			return getConfig(ctx).getProperty("suffix", null);
 		}

@@ -17,15 +17,13 @@ import org.javlo.message.GenericMessage;
 import org.javlo.navigation.MenuElement;
 import org.javlo.utils.SuffixPrefix;
 
-
 /**
  * @author pvandermaesen
- *
+ * 
  */
-public interface IContentVisualComponent  {
+public interface IContentVisualComponent {
 
 	public static final String ID_SEPARATOR = "__";
-
 
 	static public String VIEW_DEFINITION_REQUEST_ID = "view_definition_dc";
 
@@ -35,51 +33,55 @@ public interface IContentVisualComponent  {
 
 	static public int SEARCH_LEVEL_NONE = 0;
 	static public int SEARCH_LEVEL_LOW = 1;
-    static public int SEARCH_LEVEL_MIDDLE = 2;
-    static public int SEARCH_LEVEL_HIGH = 3;
+	static public int SEARCH_LEVEL_MIDDLE = 2;
+	static public int SEARCH_LEVEL_HIGH = 3;
 
-    static public int COMPLEXITY_EASY = 1;
-    static public int COMPLEXITY_STANDARD = 2;
-    static public int COMPLEXITY_ADMIN = 3;
+	static public int COMPLEXITY_EASY = 1;
+	static public int COMPLEXITY_STANDARD = 2;
+	static public int COMPLEXITY_ADMIN = 3;
 
-    /* default values for colors */
-    static public String DEFAULT_COLOR = "CB9F00";
-    static public String TEXT_COLOR = "656565";
-    static public String LINK_COLOR = "0000FF";
-    static public String TITLE_COLOR = "990000";
-    static public String GRAPHIC_COLOR = "676700";
-    static public String ECOM_COLOR = "dd3333";
-    static public String DYN_COMP_COLOR = "66aaaa";
-    static public String WEB2_COLOR = "aa66aa";
-    
-    /**
-     * get the configuration of the component.
-     * from project or from template.
-     * @param ctx
-     * @return
-     */
-    public ComponentConfig getConfig(ContentContext ctx);
+	/* default values for colors */
+	static public String DEFAULT_COLOR = "CB9F00";
+	static public String TEXT_COLOR = "656565";
+	static public String LINK_COLOR = "0000FF";
+	static public String TITLE_COLOR = "990000";
+	static public String GRAPHIC_COLOR = "676700";
+	static public String ECOM_COLOR = "dd3333";
+	static public String DYN_COMP_COLOR = "66aaaa";
+	static public String WEB2_COLOR = "aa66aa";
 
-    /**
-     * action call when update the content page.
-     * @throws Exception
-     */
-    public void performEdit(ContentContext ctx) throws Exception; //TODO: change name with "perform"
+	/**
+	 * get the configuration of the component. from project or from template.
+	 * 
+	 * @param ctx
+	 * @return
+	 */
+	public ComponentConfig getConfig(ContentContext ctx);
+
+	/**
+	 * action call when update the content page.
+	 * 
+	 * @throws Exception
+	 */
+	public void performEdit(ContentContext ctx) throws Exception; // TODO: change name with "perform"
 
 	/**
 	 * the code for view the element in XHTML environment.
+	 * 
 	 * @return
 	 */
-	public String getXHTMLCode(ContentContext ctx) throws Exception ;
-	
+	public String getXHTMLCode(ContentContext ctx) throws Exception;
+
 	/**
 	 * xhtml code for config the component
+	 * 
 	 * @return
 	 */
-	public String getXHTMLConfig(ContentContext ctx) throws Exception ;
-	
+	public String getXHTMLConfig(ContentContext ctx) throws Exception;
+
 	/**
 	 * action to manage the config, call when global content form is saved.
+	 * 
 	 * @param ctx
 	 * @return
 	 * @throws Exception
@@ -88,50 +90,55 @@ public interface IContentVisualComponent  {
 
 	/**
 	 * get the value of the content without any rendering.
-     * @pararm ctx current contentcontext
+	 * 
+	 * @pararm ctx current contentcontext
 	 * @return content in a text format.
 	 */
 	public String getValue(ContentContext ctx);
 
-
 	/**
 	 * set the content without rendering
+	 * 
 	 * @param inContent
 	 */
-	 public void setValue(String inContent);
+	public void setValue(String inContent);
 
 	/**
 	 * the language of the element.
+	 * 
 	 * @return
 	 */
-	//public String getLanguage();
-
+	// public String getLanguage();
 
 	/**
 	 * return the type of the element.
+	 * 
 	 * @return the type of the element.
 	 */
 	public String getType();
 
 	/**
 	 * return the label of the element.
-	 * @param lg language of the label
+	 * 
+	 * @param lg
+	 *            language of the label
 	 * @return the label of the element.
 	 */
 	public String getComponentLabel(ContentContext ctx, String lg);
 
-
 	/**
-	 * get the level of the title (1,2,3...).  return 0 if the component is not a title
+	 * get the level of the title (1,2,3...). return 0 if the component is not a title
+	 * 
 	 * @return the level of the title, 0 if the component is not a title.
 	 */
 	public int getTitleLevel(ContentContext ctx);
 
 	/**
 	 * check if this element is visible in the format.
+	 * 
 	 * @return true if elment visible, false else
 	 */
-	public boolean isVisible (ContentContext ctx);
+	public boolean isVisible(ContentContext ctx);
 
 	/**
 	 * return a unique id for the coponent
@@ -140,15 +147,20 @@ public interface IContentVisualComponent  {
 
 	/**
 	 * return a error message if content is not correct.
+	 * 
 	 * @return a error message, null if no error.
 	 */
 	public String getErrorMessage();
 
 	/**
 	 * init the component, do that before all using.
-	 * @param newContent the content of the component
-	 * @param newId the id of the component
-	 * @param newCtx the context of the content manager.
+	 * 
+	 * @param newContent
+	 *            the content of the component
+	 * @param newId
+	 *            the id of the component
+	 * @param newCtx
+	 *            the context of the content manager.
 	 */
 	public IContentVisualComponent newInstance(ComponentBean bean, ContentContext newCtx) throws Exception;
 
@@ -159,25 +171,30 @@ public interface IContentVisualComponent  {
 
 	/**
 	 * return true if the component must be unique on a page
+	 * 
 	 * @return
 	 */
 	public boolean isUnique();
 
 	/**
 	 * check if the component content pertinent content. Some component as title is never pertinent.
+	 * 
 	 * @return true if component don't content pertinent content
 	 */
 	public boolean isEmpty(ContentContext ctx);
-	
+
 	/**
 	 * return true if component is considered as realContent and the page that contain the component is also considered as real content.
-	 * @param ctx current context
+	 * 
+	 * @param ctx
+	 *            current context
 	 * @return
 	 */
 	public boolean isRealContent(ContentContext ctx);
 
 	/**
 	 * return true if value is never modified.
+	 * 
 	 * @return true if value contain default value.
 	 */
 	public boolean isDefaultValue(ContentContext ctx);
@@ -189,7 +206,9 @@ public interface IContentVisualComponent  {
 
 	/**
 	 * get a internationalized text, in the languague of the view.
-	 * @param key the key of the text
+	 * 
+	 * @param key
+	 *            the key of the text
 	 * @return the text in the current language
 	 * @throws RessourceNotFoundException
 	 */
@@ -197,425 +216,474 @@ public interface IContentVisualComponent  {
 
 	/**
 	 * get a internationalized text, in the languague of the edition.
-	 * @param key the key of the text
+	 * 
+	 * @param key
+	 *            the key of the text
 	 * @return the text in the current language
 	 */
 	public String getEditText(ContentContext ctx, String key);
 
 	/**
 	 * return a error message in current view language
-	 * @param key the of the error message
+	 * 
+	 * @param key
+	 *            the of the error message
 	 * @return a error message in current view language
 	 * @throws RessourceNotFoundException
 	 */
-	public String getErrorMessage ( String fieldName ) throws RessourceNotFoundException;
+	public String getErrorMessage(String fieldName) throws RessourceNotFoundException;
 
 	/**
 	 * get <b>a copy</b> of the content of the component
+	 * 
 	 * @return a bean
 	 */
 	public ComponentBean getBean(ContentContext ctx);
 
 	/**
 	 * get the internal data
+	 * 
 	 * @return
 	 */
 	public ComponentBean getComponentBean();
 
 	/**
 	 * return a string representation of the component
+	 * 
 	 * @author pvandermaesen
 	 */
 	public String getTextLabel();
 
 	/**
 	 * return a string representation of the component with complete title
+	 * 
 	 * @return
 	 */
 	public String getTextTitle();
 
 	public boolean isRepeat();
 
-	public void setRepeat ( boolean newRepeat );
+	public void setRepeat(boolean newRepeat);
 
 	/**
-	 * return true if this component is the label of the page.
-	 * this label is set in the navigation
+	 * return true if this component is the label of the page. this label is set in the navigation
+	 * 
 	 * @return a boolean, true if the component is the label of the page
 	 */
 	public boolean isLabel();
 
-    /**
-     * return the java script code called when global form is submited.
-     * @return java script code.
-     */
-    public String getJSOnSubmit();
+	/**
+	 * return the java script code called when global form is submited.
+	 * 
+	 * @return java script code.
+	 */
+	public String getJSOnSubmit();
 
-    /**
-     * return a text represent the content of the component.
-     * sample all the content :-)
-     * @return a text represent the content of the component for the search module
-     */
-    public String getTextForSearch();
+	/**
+	 * return a text represent the content of the component. sample all the content :-)
+	 * 
+	 * @return a text represent the content of the component for the search module
+	 */
+	public String getTextForSearch();
 
-    /**
-     * return the level of the component is a search.
-     * @return 1-LOW   2-MIDDLE    3-HIGH
-     */
-    public int getSearchLevel();
+	/**
+	 * return the level of the component is a search.
+	 * 
+	 * @return 1-LOW 2-MIDDLE 3-HIGH
+	 */
+	public int getSearchLevel();
 
-    /* STYLE */
+	/* STYLE */
 
-    /**
-     * return the title of the style choice.
-     */
-    public String getStyleTitle(ContentContext ctx);
+	/**
+	 * return the title of the style choice.
+	 */
+	public String getStyleTitle(ContentContext ctx);
 
-    /**
-     * get the list of style possible for this component.
-     * @return a list of string represent a style.
-     */
-    public String[] getStyleList(ContentContext ctx);
+	/**
+	 * get the list of style possible for this component.
+	 * 
+	 * @return a list of string represent a style.
+	 */
+	public String[] getStyleList(ContentContext ctx);
 
-    /**
-     * return a list of label define the style.
-     * @return a list of label.
-     */
-    public String[] getStyleLabelList(ContentContext ctx);
+	/**
+	 * return a list of label define the style.
+	 * 
+	 * @return a list of label.
+	 */
+	public String[] getStyleLabelList(ContentContext ctx);
 
-    /**
-     * return the title of the style choice.
-     */
-    public List<SuffixPrefix> getMarkerList(ContentContext ctx);
+	/**
+	 * return the title of the style choice.
+	 */
+	public List<SuffixPrefix> getMarkerList(ContentContext ctx);
 
-    /**
-     * get the current style of the component.
-     * @return the current style.
-     */
-    public String getStyle(ContentContext ctx);
-    
-    /**
-     * get the label of the current style
-     * @param ctx
-     * @return
-     */
-    public String getStyleLabel(ContentContext ctx);
+	/**
+	 * get the current style of the component.
+	 * 
+	 * @return the current style.
+	 */
+	public String getStyle(ContentContext ctx);
 
-    /**
-     * set the current style of the component.
-     * @param inStyle new style
-     */
-    public void setStyle(ContentContext ctx, String inStyle);
-    
-    /**
-     * set the current renderer for the component view.
-     * @param a key to a renderer (defined in config file of the component)
-     */
-    public void setRenderer(ContentContext ctx, String renderer);
-    
-    /**
-     * get the current renderer for the component view.
-     * @param a key to a renderer (defined in config file of the component)
-     */
+	/**
+	 * get the label of the current style
+	 * 
+	 * @param ctx
+	 * @return
+	 */
+	public String getStyleLabel(ContentContext ctx);
 
-    public String getRenderer(ContentContext ctx);
+	/**
+	 * set the current style of the component.
+	 * 
+	 * @param inStyle
+	 *            new style
+	 */
+	public void setStyle(ContentContext ctx, String inStyle);
 
-    /**
-     * code for prefix the view XHTML code.
-     * @return XHTML code.
-     */
-    public String getPrefixViewXHTMLCode(ContentContext ctx);
-    
-    /**
-     * get the input name of the renderer.
-     * @return
-     */
-    public String getInputNameRenderer();
+	/**
+	 * set the current renderer for the component view.
+	 * 
+	 * @param a
+	 *            key to a renderer (defined in config file of the component)
+	 */
+	public void setRenderer(ContentContext ctx, String renderer);
 
-    /**
-     * code for sufix the view XHTML code.
-     * @return XHTML code.
-     */
-    public String getSufixViewXHTMLCode(ContentContext ctx);
+	/**
+	 * get the current renderer for the component view.
+	 * 
+	 * @param a
+	 *            key to a renderer (defined in config file of the component)
+	 */
 
-    /**
-     * return the name if the content field (textarea...)
-     * @return
-     */
-    public String getContentName();
+	public String getRenderer(ContentContext ctx);
 
-    /**
-     * check if the component can countain other 'inline' component.
-     * @return true if the component is a container.
-     */
-    public boolean isContainer();
+	/**
+	 * code for prefix the view XHTML code.
+	 * 
+	 * @return XHTML code.
+	 */
+	public String getPrefixViewXHTMLCode(ContentContext ctx);
 
-    /**
-     * check if the component can be inserd inline.
-     * @return true if component is a inline component. (text, link, image)...
-     */
-    public boolean isInline();
+	/**
+	 * get the input name of the renderer.
+	 * 
+	 * @return
+	 */
+	public String getInputNameRenderer();
 
-    /**
-     * get the next component on the page.
-     * if null this is the last component.
-     * @return a component.
-     */
-    public IContentVisualComponent next();
+	/**
+	 * code for sufix the view XHTML code.
+	 * 
+	 * @return XHTML code.
+	 */
+	public String getSuffixViewXHTMLCode(ContentContext ctx);
 
-    /**
-     * get the next component on the page.
-     * if null this is the last component.
-     * @return a component.
-     */
-    public IContentVisualComponent previous();
+	/**
+	 * return the name if the content field (textarea...)
+	 * 
+	 * @return
+	 */
+	public String getContentName();
 
-    /**
-     * change the previous component
-     * @param nextComponent
-     */
-    public void setNextComponent(IContentVisualComponent nextComponent);
+	/**
+	 * check if the component can be inserd inline.
+	 * 
+	 * @return true if component is a inline component. (text, link, image)...
+	 */
+	public boolean isInline();
 
-    /**
-     * change the previous component
-     * @param nextComponent
-     */
-    public void setPreviousComponent(IContentVisualComponent nextComponent);
+	/**
+	 * get the next component on the page. if null this is the last component.
+	 * 
+	 * @return a component.
+	 */
+	public IContentVisualComponent next();
 
-    /**
-     * get the prefix must be insered before a list of the current component (warning: one element is a list)
-     * #return XHTML code of prefix
-     */
-    public String getFirstPrefix(ContentContext ctx);
+	/**
+	 * get the next component on the page. if null this is the last component.
+	 * 
+	 * @return a component.
+	 */
+	public IContentVisualComponent previous();
 
-    /**
-     * get the sufix before must be insered after a list of the current component.
-     * @return XHTML code of sufix.
-     */
-    public String getLastSufix(ContentContext ctx);
+	/**
+	 * change the previous component
+	 * 
+	 * @param nextComponent
+	 */
+	public void setNextComponent(IContentVisualComponent nextComponent);
 
-    /**
-     * get the exadecimal color for representation of the component.
-     * @return a exadecimal color (sample : a5b499)
-     */
-    public String getHexColor();
+	/**
+	 * change the previous component
+	 * 
+	 * @param nextComponent
+	 */
+	public void setPreviousComponent(IContentVisualComponent nextComponent);
 
-    /**
-     * get a message for the component.
-     * @return a generic message (error, info, warning, help), null if no message.
-     */
-    public GenericMessage getMessage();
+	/**
+	 * get the prefix must be insered before a list of the current component (warning: one element is a list) #return XHTML code of prefix
+	 */
+	public String getFirstPrefix(ContentContext ctx);
 
-    /**
-     * you can check if it is possible to extract the selection of the component in a other component.
-     * @return true if content is extractable
-     */
-    public boolean isExtractable();
+	/**
+	 * get the sufix before must be insered after a list of the current component.
+	 * 
+	 * @return XHTML code of sufix.
+	 */
+	public String getLastSufix(ContentContext ctx);
 
-    /**
-     * you can insert a text in this component
-     * @return true if a text is insertable
-     */
-    public boolean isInsertable();
+	/**
+	 * get the exadecimal color for representation of the component.
+	 * 
+	 * @return a exadecimal color (sample : a5b499)
+	 */
+	public String getHexColor();
 
-    /**
-     * you display the composant as a list (if you want)
-     * @return true if a text is listable
-     */
-    public boolean isListable();
+	/**
+	 * get a message for the component.
+	 * 
+	 * @return a generic message (error, info, warning, help), null if no message.
+	 */
+	public GenericMessage getMessage();
 
-    /**
-     * insert a text in the component
-     * @param text the text to be insered
-     */
-    public void insert (String text);
+	/**
+	 * you can check if it is possible to extract the selection of the component in a other component.
+	 * 
+	 * @return true if content is extractable
+	 */
+	public boolean isExtractable();
 
-    /**
-     * true if the component is in a list
-     * @return true if component is in a list
-     */
-    public boolean isList(ContentContext ctx);
+	/**
+	 * you can insert a text in this component
+	 * 
+	 * @return true if a text is insertable
+	 */
+	public boolean isInsertable();
+
+	/**
+	 * you display the composant as a list (if you want)
+	 * 
+	 * @return true if a text is listable
+	 */
+	public boolean isListable();
+
+	/**
+	 * insert a text in the component
+	 * 
+	 * @param text
+	 *            the text to be insered
+	 */
+	public void insert(String text);
+
+	/**
+	 * true if the component is in a list
+	 * 
+	 * @return true if component is in a list
+	 */
+	public boolean isList(ContentContext ctx);
 
 	/**
 	 * put the component is a list
-	 * @param inList true for put in a list, false for remove from a list
+	 * 
+	 * @param inList
+	 *            true for put in a list, false for remove from a list
 	 */
-    public void setList(boolean inList);
+	public void setList(boolean inList);
 
+	/**
+	 * return true if the modifition of the component need a refresh of the edit page (ajax).
+	 */
+	public boolean isNeedRefresh();
 
-    /**
-     * return true if the modifition of the component need a refresh of the edit page (ajax).
-     */
-    public boolean isNeedRefresh();
+	public boolean isVisible();
 
-    public boolean isVisible();
+	public boolean isRepeatable();
 
-    public boolean isRepeatable();
+	public void setValid(boolean inVisible);
 
-    public void setValid(boolean inVisible);
+	/**
+	 * get the area where the component must be rendered
+	 * 
+	 * @return a area name
+	 */
+	public String getArea();
 
-    /**
-     * get the area where the component must be rendered
-     * @return a area name
-     */
-    public String getArea();
+	/**
+	 * a url to descripe the usage of the component
+	 * 
+	 * @param lang
+	 *            the langage of the edit interface
+	 * @return url to a help page or null if no help page defined
+	 */
+	public String getHelpURL(ContentContext ctx, String lang);
 
-    /**
-     * a url to descripe the usage of the component
-     *  @param lang the langage of the edit interface
-     * @return url to a help page or null if no help page defined
-     */
-    public String getHelpURL(ContentContext ctx, String lang);
+	/**
+	 * if you set true the page is refresh after update
+	 * 
+	 * @param needRefresh
+	 */
+	public void setNeedRefresh(boolean needRefresh);
 
-    /**
-     * if you set true the page is refresh after update
-     * @param needRefresh
-     */
-    public void setNeedRefresh(boolean needRefresh);
+	/**
+	 * reset the view data.
+	 * 
+	 * @throws IOException
+	 */
+	public void resetViewData(ContentContext ctx) throws IOException;
 
+	/**
+	 * replace a content in visual element
+	 * 
+	 * @param source
+	 *            the source element (sample. : test)
+	 * @param target
+	 *            the target element (sample. : -- test --)
+	 */
+	public void replaceInContent(String source, String target);
 
-    /**
-     * reset the view data.
-     * @throws IOException
-     */
-    public void resetViewData(ContentContext ctx) throws IOException;
+	/**
+	 * add a list of remplacement key, value
+	 * 
+	 * @param replacement
+	 */
+	public void replaceAllInContent(Map<String, String> replacement);
 
+	/**
+	 * clear remplacement values
+	 */
+	public void clearReplacement();
 
-    /**
-     * replace a content in visual element
-     * @param source the source element (sample. : test)
-     * @param target the target element (sample. : -- test --)
-     */
-    public void replaceInContent(String source, String target);
+	/**
+	 * return the complexity level of the component.
+	 * 
+	 * @return see contant
+	 */
+	public int getComplexityLevel();
 
-    /**
-     * add a list of remplacement key, value
-     * @param replacement
-     */
-    public void replaceAllInContent(Map<String, String> replacement);
+	/**
+	 * true if component marked as hidden (in components.txt the class name start with '.')
+	 * 
+	 * @return
+	 */
+	public boolean isHidden(ContentContext ctx);
 
-    /**
-     * clear remplacement values
-     */
-    public void clearReplacement();
+	/**
+	 * get the page contains the component
+	 * 
+	 * @return a page of the navigation
+	 */
+	public MenuElement getPage();
 
-    /**
-     * return the complexity level of the component.
-     * @return see contant
-     */
-    public int getComplexityLevel();
+	/**
+	 * this method is called when component is deleted.
+	 */
+	public void delete(ContentContext ctx);
 
-    /**
-     * true if component marked as hidden (in components.txt the class name start with '.')
-     * @return
-     */
-    public boolean isHidden(ContentContext ctx);
+	/**
+	 * return the next component in the page sequence.
+	 * 
+	 * @return
+	 */
+	public IContentVisualComponent getNextComponent();
 
-    /**
-     * get the page contains the component
-     * @return a page of the navigation
-     */
-    public MenuElement getPage();
+	/**
+	 * return the previous component in the page sequence.
+	 * 
+	 * @return
+	 */
+	public IContentVisualComponent getPreviousComponent();
 
-    /**
-     * this method is called when component is deleted.
-     */
-    public void delete(ContentContext ctx);
+	/**
+	 * return true if component is in the first repeat sequence of the page.
+	 * 
+	 * @return
+	 */
+	public boolean isFirstRepeated();
 
-    /**
-     * return the next component in the page sequence.
-     * @return
-     */
-    public IContentVisualComponent getNextComponent();
+	/**
+	 * return the external resources needed from component as css, javascript...
+	 * 
+	 * @return a list of URI to external resources
+	 */
+	public Collection<String> getExternalResources(ContentContext ctx);
 
-    /**
-     * return the previous component in the page sequence.
-     * @return
-     */
-    public IContentVisualComponent getPreviousComponent();
+	/**
+	 * return the part of header needed for this component
+	 * 
+	 * @return
+	 */
+	public String getHeaderContent(ContentContext ctx);
 
-    /**
-     * return true if component is in the first repeat sequence of the page.
-     * @return
-     */
-    public boolean isFirstRepeated();
-
-    /**
-     * return the external resources needed from component as css, javascript...
-     * @return a list of URI to external resources
-     */
-    public Collection<String> getExternalResources(ContentContext ctx);
-
-    /**
-     * return the part of header needed for this component
-     * @return
-     */
-    public String getHeaderContent(ContentContext ctx);
-
-    /**
-     * return the part of header needed for this component
-     * @return
-     */
-    public boolean isContentCachable(ContentContext ctx);
+	/**
+	 * return the part of header needed for this component
+	 * 
+	 * @return
+	 */
+	public boolean isContentCachable(ContentContext ctx);
 
 	/**
 	 * load special data file.
+	 * 
 	 * @param ctx
 	 * @throws IOException
 	 */
-    public void loadViewData(ContentContext ctx) throws IOException;
+	public void loadViewData(ContentContext ctx) throws IOException;
 
-    /**
-     * get i18n keys for edition
-     * @param ctx
-     * @return a list of i18n keys.
-     */
-    public List<String> getI18nEditableKeys(ContentContext ctx);
-    
-    /**
-     * get a unic key of the component.  User special for DynamicComponent.
-     */
-    public String getKey();
-    
-    /**
-     * count the word in the content.
-     * @return
-     */
-    public int getWordCount(ContentContext ctx);
-    
-    /**
-     * return true is this component is a title of a group of component.
-     * @return
-     */
-    public boolean isMetaTitle();
-    
-    /**
-     * return the name of the class (use for JSTL)
-     * @return
-     */
-    public String getClassName();
-    
-    /**
-     * return the version of the component : A.B.C
-     * A : major version, no compatibility with the older data
-     * B : new function but compatibilty with older data
-     * C : bug correction
-     * @return ? if version undefined.
-     */
-    public String getVersion();
-    
-    /**
-     * a description of the component;
-     * @return
-     */
-    public String getDescription(Locale local);
-    
-    /**
-     * authors of the component
-     * @return
-     */
-    public String getAuthors();
-    
-    
+	/**
+	 * get i18n keys for edition
+	 * 
+	 * @param ctx
+	 * @return a list of i18n keys.
+	 */
+	public List<String> getI18nEditableKeys(ContentContext ctx);
+
+	/**
+	 * get a unic key of the component. User special for DynamicComponent.
+	 */
+	public String getKey();
+
+	/**
+	 * count the word in the content.
+	 * 
+	 * @return
+	 */
+	public int getWordCount(ContentContext ctx);
+
+	/**
+	 * return true is this component is a title of a group of component.
+	 * 
+	 * @return
+	 */
+	public boolean isMetaTitle();
+
+	/**
+	 * return the name of the class (use for JSTL)
+	 * 
+	 * @return
+	 */
+	public String getClassName();
+
+	/**
+	 * return the version of the component : A.B.C A : major version, no compatibility with the older data B : new function but compatibilty with older data C : bug correction
+	 * 
+	 * @return ? if version undefined.
+	 */
+	public String getVersion();
+
+	/**
+	 * a description of the component;
+	 * 
+	 * @return
+	 */
+	public String getDescription(Locale local);
+
+	/**
+	 * authors of the component
+	 * 
+	 * @return
+	 */
+	public String getAuthors();
 
 }

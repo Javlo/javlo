@@ -98,7 +98,7 @@ public class SearchResult {
 					e.printStackTrace();
 					return null;
 				}
-				out.println(comp.getSufixViewXHTMLCode(searchResult.getContentContext()));
+				out.println(comp.getSuffixViewXHTMLCode(searchResult.getContentContext()));
 				out.close();
 				return new String(outStream.toByteArray());
 			}

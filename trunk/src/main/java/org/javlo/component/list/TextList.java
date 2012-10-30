@@ -30,7 +30,7 @@ public class TextList extends Paragraph {
 	}
 
 	@Override
-	public String getSufixViewXHTMLCode(ContentContext ctx) {
+	public String getSuffixViewXHTMLCode(ContentContext ctx) {
 		return "";
 	}
 	

@@ -1,6 +1,7 @@
 <%@page contentType="text/html"
         import="
         java.util.Map,
+        java.util.Stack,
         org.javlo.helper.StringHelper,        
         org.javlo.context.ContentContext,
         org.javlo.context.EditContext,
@@ -11,6 +12,7 @@
 		org.javlo.component.core.IContentComponentsList,
 		org.javlo.component.core.IContentVisualComponent,
 		org.javlo.component.column.ColumnContext,
+		org.javlo.component.container.IContainer,
 		org.javlo.context.GlobalContext,
 		org.javlo.user.User,
 		org.javlo.user.UserFactory,
@@ -50,6 +52,7 @@ if ( ctx.getSpecialContentRenderer() != null && area.equals(ComponentBean.DEFAUL
 MenuElement currentPage = ctx.getCurrentPage();
 
 Template template = ctx.getCurrentTemplate();
+Stack<IContainer> containers = new Stack<IContainer>();
 
 if ( (ctx.getSpecialContentRenderer() == null || !area.equals(ComponentBean.DEFAULT_AREA) ) || template.getAreasForceDisplay().contains(area)) { // display only if page contains only repeat content (supose it is teaser)
 
@@ -62,46 +65,39 @@ IContentVisualComponent elem = null;
 	if (languageChange) {
 		%><div lang="<%=ctx.getContentLanguage()%>"><%
 	}
-	boolean inContainer = false;
+	
 	while (elems.hasNext(ctx)) {
 		pageEmpty = false;
 		elem = elems.next(ctx);
 		elem.clearReplacement();
 		elem.replaceAllInContent(replacement);
-		if (!elem.isContainer()) {%><%}
+	
 		out.flush(); /* needed for jsp include */
 		
 		String savedValue = elem.getValue(ctx);
 		String value = elem.getValue(ctx);
 		
-		String keyword = request.getParameter("keyword");		
 		savedValue = elem.getValue(ctx);
 		value = elem.getValue(ctx);
 		
-		String XHTMLCode = elem.getXHTMLCode(ctx);
-		if (!elem.isContainer()) {
-			if (!inContainer) {
-				XHTMLCode = elem.getPrefixViewXHTMLCode(ctx)+XHTMLCode+elem.getSufixViewXHTMLCode(ctx);
-			}%>
-<%=elems.getPrefixXHTMLCode(ctx)%>
-<%=XHTMLCode%>
-<%=elems.getSufixXHTMLCode(ctx)%><%
-		} else {
-			if (inContainer) {
-				inContainer = false;
-				%>
-<%=elem.getSufixViewXHTMLCode(ctx)%>
-<%=elems.getSufixXHTMLCode(ctx)%><%
+		if (elem instanceof IContainer) {
+			IContainer container = (IContainer)elem;
+			if (container.isOpen(ctx)) {
+				containers.push(container);
 			} else {
-				inContainer = true;
-				%>
-<%=elems.getPrefixXHTMLCode(ctx)%>
-<%=elem.getPrefixViewXHTMLCode(ctx)%><%
+				if (!containers.empty()) {
+					containers.pop();
+				}
 			}
 		}
+		
+		%>
+<%=elems.getPrefixXHTMLCode(ctx)%>
+<%=elem.getPrefixViewXHTMLCode(ctx)%>
+<%=elem.getXHTMLCode(ctx)%>
+<%=elem.getSuffixViewXHTMLCode(ctx)%>
+<%=elems.getSufixXHTMLCode(ctx)%><%		
 		elem.setValue(savedValue);
-
-		/* close column sequence */
 		if (elem.next() == null) {
 			ColumnContext columnContext = ColumnContext.getInstance(request);
 			if (columnContext.isOpen()) {
@@ -110,10 +106,12 @@ IContentVisualComponent elem = null;
 				} else {
 					%></div><%
 				}
-			}
-
+			}			
+			
 		}
-
+	}
+	while (!containers.empty()) {
+		%><%=containers.pop().getCloseCode(ctx)%><%
 	}
 	if (languageChange) {
 		%></div><%

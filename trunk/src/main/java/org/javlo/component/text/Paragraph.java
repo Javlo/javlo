@@ -37,7 +37,7 @@ public class Paragraph extends AbstractVisualComponent {
 	}
 
 	@Override
-	public String getSufixViewXHTMLCode(ContentContext ctx) {
+	public String getSuffixViewXHTMLCode(ContentContext ctx) {
 		return "</p>";
 	}
 

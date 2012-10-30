@@ -134,11 +134,11 @@ public class RSSLink extends ComplexPropertiesLink {
 	}
 
 	@Override
-	public String getSufixViewXHTMLCode(ContentContext ctx) {
+	public String getSuffixViewXHTMLCode(ContentContext ctx) {
 		if (getStyle(ctx).equals(NOT_VISIBLE)) {
 			return "";
 		}
-		return "</div>" + super.getSufixViewXHTMLCode(ctx);
+		return "</div>" + super.getSuffixViewXHTMLCode(ctx);
 	}
 
 	@Override
