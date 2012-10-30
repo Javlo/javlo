@@ -109,18 +109,21 @@ public class DynamicComponentList extends AbstractPropertiesComponent {
 		if (fieldContainer == null) {
 			return "";
 		}
+
 		ByteArrayOutputStream outStream = new ByteArrayOutputStream();
 		PrintStream out = new PrintStream(outStream);
 
 		ContentService content = ContentService.getInstance(ctx.getRequest());
 		GlobalContext globalContext = GlobalContext.getInstance(ctx.getRequest());
 		DynamicComponentService service = DynamicComponentService.getInstance(globalContext);
+
 		List<IFieldContainer> containers = service.getFieldContainers(ctx, content.getNavigation(ctx), getSelectedType());
+
 		for (IFieldContainer container : containers) {
 			boolean display = true;
 			List<Field> fields = container.getFields(ctx);
 			for (Field field : fields) {
-				if (!fieldMatch(ctx, field.getName(),field.getValue(new Locale(ctx.getRequestContentLanguage())))) {
+				if (!fieldMatch(ctx, field.getName(), field.getValue(new Locale(ctx.getRequestContentLanguage())))) {
 					display = false;
 				}
 			}
@@ -144,7 +147,7 @@ public class DynamicComponentList extends AbstractPropertiesComponent {
 	IFieldContainer getFieldContainer(ContentContext ctx) throws Exception {
 		GlobalContext globalContext = GlobalContext.getInstance(ctx.getRequest());
 		DynamicComponentService service = DynamicComponentService.getInstance(globalContext);
-		
+
 		ContentService content = ContentService.getInstance(ctx.getRequest());
 		List<IFieldContainer> containers = service.getFieldContainers(ctx, content.getNavigation(ctx), getSelectedType());
 		if (containers.size() > 0) {
@@ -177,7 +180,7 @@ public class DynamicComponentList extends AbstractPropertiesComponent {
 	}
 
 	@Override
-	public boolean isRealContent(ContentContext ctx) {		
+	public boolean isRealContent(ContentContext ctx) {
 		if (realContent == null) {
 			try {
 				getViewXHTMLCode(ctx);

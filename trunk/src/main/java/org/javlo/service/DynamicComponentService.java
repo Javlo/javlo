@@ -1,5 +1,6 @@
 package org.javlo.service;
 
+import java.util.Collection;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -33,14 +34,28 @@ public class DynamicComponentService {
 		return outService;
 	}
 
+	private ContentContext getContentContextWithContent(ContentContext ctx, MenuElement page) throws Exception {
+		GlobalContext globalContext = GlobalContext.getInstance(ctx.getRequest());
+		ContentContext lgCtx = new ContentContext(ctx);
+		Collection<String> languages = globalContext.getContentLanguages();
+		for (String lg : languages) {
+			lgCtx.setAllLanguage(lg);
+			if (page.getContentByImplementation(lgCtx, DynamicComponent.class).size() > 0) {
+				return lgCtx;
+			}
+		}
+		return null;
+	}
+
 	public List<IFieldContainer> getFieldContainers(ContentContext ctx, MenuElement page, String fieldType) throws Exception {
 		String REQUEST_KEY = page.getPath() + "__TYPE__" + fieldType;
-		List<IFieldContainer> outContainer = (List<IFieldContainer>)ctx.getRequest().getAttribute(REQUEST_KEY);
-		if (outContainer == null) {			
+		List<IFieldContainer> outContainer = (List<IFieldContainer>) ctx.getRequest().getAttribute(REQUEST_KEY);
+		if (outContainer == null) {
 			MenuElement[] children = page.getAllChildren();
 			outContainer = new LinkedList<IFieldContainer>();
+
 			for (MenuElement child : children) {
-				ContentContext ctxWithContent = ctx.getContextWithContent(child);
+				ContentContext ctxWithContent = getContentContextWithContent(ctx, child);
 				if (ctxWithContent != null) {
 					List<IContentVisualComponent> content = child.getContentByType(ctxWithContent, fieldType);
 					for (IContentVisualComponent item : content) {
