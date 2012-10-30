@@ -13,9 +13,9 @@
 	<label for="firstname">${ci18n['field.firstname']}</label>
 	<input id="firstname" name="firstname" value="${param.firstname}" />
 </div>
-<div class="line">
-	<label for="email">${ci18n['field.email']}</label>
-	<input id="email" name="email" value="${param.email}" />
+<div class="line${not empty errorFiles['Email']?' error':''}">
+	<label for="email">${ci18n['field.email']}*</label>
+	<input id="email" name="Email" value="${param.email}" />
 </div>
 <div class="line">
 	<label for="company">${ci18n['field.company']}</label>
@@ -27,7 +27,7 @@
 </div>
 
 <fieldset>				
-<legend>${ci18n['field.captcha']}*</legend>			
+	<legend>${ci18n['field.captcha']}*</legend>			
 	<div class="captcha ${not empty param.webaction && empty param.captcha || not empty error_captcha?'error':''}">
 	<label for="captcha"><img src="${info.captchaURL}" alt="captcha" /></label>
 		<input type="text" id="captcha" name="captcha" value="" />

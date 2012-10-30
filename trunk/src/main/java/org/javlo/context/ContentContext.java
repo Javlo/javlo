@@ -548,7 +548,6 @@ public class ContentContext {
 				if (elem != null) {
 					template = TemplateFactory.getTemplates(getRequest().getSession().getServletContext()).get(elem.getTemplateId());
 					if (template == null || !template.exist()) {
-
 						while (elem.getParent() != null && ((template == null) || (!template.exist()) || (template.getRendererFullName(this) == null))) {
 							elem = elem.getParent();
 							template = TemplateFactory.getTemplates(getRequest().getSession().getServletContext()).get(elem.getTemplateId());

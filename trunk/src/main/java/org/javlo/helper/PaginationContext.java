@@ -34,9 +34,12 @@ public class PaginationContext {
 	}
 
 	public static PaginationContext getInstance(HttpSession session, String key, int countElement, int elemByPage) throws ServiceException {
-		int maxPage = countElement / elemByPage;
-		if (countElement % elemByPage != 0) {
-			maxPage = maxPage + 1;
+		int maxPage = 1;
+		if (elemByPage > 0) {
+			maxPage = countElement / elemByPage;
+			if (countElement % elemByPage != 0) {
+				maxPage = maxPage + 1;
+			}
 		}
 		PaginationContext service = (PaginationContext) session.getAttribute(key);
 		if (service == null) {
