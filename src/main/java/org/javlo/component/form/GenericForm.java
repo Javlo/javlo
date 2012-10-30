@@ -9,6 +9,7 @@ import java.util.Arrays;
 import java.util.Collection;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.Properties;
@@ -33,7 +34,29 @@ import org.javlo.service.CaptchaService;
 import org.javlo.service.ContentService;
 import org.javlo.service.RequestService;
 import org.javlo.utils.CSVFactory;
+import org.javlo.utils.CollectionAsMap;
 
+/**
+ * store html form in csv file and send email with parameters. For use this component you need to create a renderer with a html form. this form need at least two field : <code>
+ * &lt;input type=&quot;hidden&quot; name=&quot;webaction&quot; value=&quot;gform-registering.submit&quot; /&gt;<br/>&lt;input type=&quot;hidden&quot; name=&quot;comp_id&quot; value=&quot;${comp.id}&quot; /&gt; </code>. You can define required field with uppercase letter : "Firstname" > requierd, "firstname" > not requiered. for use captacha you need to tag : <code>&lt;img src=&quot;${info.captchaURL}&quot; alt=&quot;captcha&quot; /&gt;&lt;/label&gt;<br/>&lt;input type=&quot;text&quot; id=&quot;captcha&quot; name=&quot;captcha&quot; value=&quot;&quot; /&gt;</code> <h4>JSTL variable :</h4>
+ * <ul>
+ * <li>inherited from {@link AbstractVisualComponent}</li>
+ * <li>{@link String} msg : message to display.</li>
+ * <li>{@link Map} errorFields: field with error.</li>
+ * <li>{@link String} valid: contains true if form is valid.</li>
+ * </ul>
+ * <h4>keys for message and config can be use in content</h4>
+ * <ul>
+ * <li>captcha : true for use captacha</li>
+ * <li>error.required : error message if requiered field is'nt filled.</li>
+ * <li>error.captcha : message if catacha value is'nt correct.</li>
+ * <li>message.thanks : confirmation message.</li>
+ * <li>field.fake : name of fake field.</li>
+ * <li>
+ * 
+ * @author Patrick Vandermaesen
+ * 
+ */
 public class GenericForm extends AbstractVisualComponent implements IAction {
 
 	private static Logger logger = Logger.getLogger(GenericForm.class.getName());
@@ -180,17 +203,33 @@ public class GenericForm extends AbstractVisualComponent implements IAction {
 
 		Map<String, Object> params = request.getParameterMap();
 		Map<String, String> result = new HashMap<String, String>();
+		List<String> errorFields = new LinkedList<String>();
 		result.put("__registration time", StringHelper.renderSortableTime(new Date()));
 		result.put("__local addr", request.getLocalAddr());
 		result.put("__remote addr", request.getRemoteAddr());
 		result.put("__X-Forwarded-For", request.getHeader("x-forwarded-for"));
 		result.put("__X-Real-IP", request.getHeader("x-real-ip"));
 		result.put("__referer", request.getHeader("referer"));
+
+		String fakeField = comp.getLocalConfig(false).getProperty("field.fake", "fake");
+		boolean fakeFilled = false;
+
 		Collection<String> keys = params.keySet();
 		for (String key : keys) {
 			if (!key.equals("webaction") && !key.equals("comp_id") && !key.equals("captcha")) {
 				Object value = params.get(key);
 				String finalValue = "" + params.get(key);
+
+				if (key.equals(fakeField) && finalValue.trim().length() > 0) {
+					fakeFilled = true;
+				}
+
+				if (finalValue.trim().length() > 0 && StringHelper.containsUppercase(finalValue)) { // needed field
+					errorFields.add(key);
+					GenericMessage msg = new GenericMessage(comp.getLocalConfig(false).getProperty("error.required", "please could you fill all required fields.."), GenericMessage.ERROR);
+					request.setAttribute("msg", msg);
+				}
+
 				if (value instanceof Object[]) {
 					finalValue = StringHelper.arrayToString((Object[]) params.get(key), ",");
 					out.println(key + '=' + finalValue);
@@ -201,27 +240,35 @@ public class GenericForm extends AbstractVisualComponent implements IAction {
 			}
 		}
 		out.println("");
-
 		out.close();
-		String mailContent = StringHelper.sortText(new String(outStream.toByteArray()));
 
-		logger.info("mail content : " + mailContent);
-
-		if (comp.isStorage()) {
-			comp.storeResult(ctx, result);
+		if (fakeFilled) {
+			logger.warning("spam detected fake field filled : " + comp.getPage().getPath());
 		}
 
-		if (comp.isSendEmail()) {
-			MailService mailService = MailService.getInstance(globalContext.getStaticConfig());
-			InternetAddress fromEmail = new InternetAddress(StaticConfig.getInstance(request.getSession()).getSiteEmail());
-			InternetAddress adminEmail = new InternetAddress(globalContext.getAdministratorEmail());
-			InternetAddress bccEmail = new InternetAddress("p@noctis.be");
-			mailService.sendMail(fromEmail, adminEmail, Arrays.asList(bccEmail), subject, mailContent, false);
-		}
+		if (errorFields.size() == 0) {
+			String mailContent = StringHelper.sortText(new String(outStream.toByteArray()));
 
-		GenericMessage msg = new GenericMessage(comp.getLocalConfig(false).getProperty("message.thanks"), GenericMessage.INFO);
-		request.setAttribute("msg", msg);
-		request.setAttribute("valid", "true");
+			logger.info("mail content : " + mailContent);
+
+			if (comp.isStorage()) {
+				comp.storeResult(ctx, result);
+			}
+
+			if (comp.isSendEmail() && !fakeFilled) {
+				MailService mailService = MailService.getInstance(globalContext.getStaticConfig());
+				InternetAddress fromEmail = new InternetAddress(StaticConfig.getInstance(request.getSession()).getSiteEmail());
+				InternetAddress adminEmail = new InternetAddress(globalContext.getAdministratorEmail());
+				InternetAddress bccEmail = new InternetAddress("p@noctis.be");
+				mailService.sendMail(fromEmail, adminEmail, Arrays.asList(bccEmail), subject, mailContent, false);
+			}
+
+			GenericMessage msg = new GenericMessage(comp.getLocalConfig(false).getProperty("message.thanks"), GenericMessage.INFO);
+			request.setAttribute("msg", msg);
+			request.setAttribute("valid", "true");
+		} else {
+			request.setAttribute("errorFields", new CollectionAsMap<String>(errorFields));
+		}
 
 		return null;
 	}

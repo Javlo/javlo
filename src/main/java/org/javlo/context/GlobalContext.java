@@ -240,6 +240,9 @@ public class GlobalContext implements Serializable {
 	}
 
 	public static GlobalContext getInstance(HttpSession session, String contextKey) throws IOException, ConfigurationException {
+		if (contextKey == null) {
+			return null;
+		}
 		GlobalContext newInstance = getRealInstance(session, contextKey);
 		String alias = newInstance.getAliasOf();
 		if (alias.trim().length() > 0) {
@@ -337,21 +340,22 @@ public class GlobalContext implements Serializable {
 					newInstance.contextFile.getParentFile().mkdirs();
 					newInstance.creation = true;
 				}
-				if (copyDefaultContext) {
-					GlobalContext defaultContext = getDefaultContext(session);
+				newInstance.contextFile.createNewFile();
 
-					newInstance.contextFile.createNewFile();
-					synchronized (newInstance.properties) {
-						newInstance.properties.load(newInstance.contextFile);
-						newInstance.properties.setProperty("creation-date", StringHelper.renderTime(new Date()));
-						if (staticConfig.isRandomDataFoder()) {
-							newInstance.properties.setProperty("folder", "data-" + StringHelper.getRandomId());
-						} else {
-							newInstance.properties.setProperty("folder", "data-" + contextKey);
-						}
-						String password = "" + (1000 + Math.round(Math.random() * 8999));
-						newInstance.setPassword(password);
-						newInstance.setFirstPassword(password);
+				synchronized (newInstance.properties) {
+					newInstance.properties.load(newInstance.contextFile);
+					newInstance.properties.setProperty("creation-date", StringHelper.renderTime(new Date()));
+					if (staticConfig.isRandomDataFoder()) {
+						newInstance.properties.setProperty("folder", "data-" + StringHelper.getRandomId());
+					} else {
+						newInstance.properties.setProperty("folder", "data-" + contextKey);
+					}
+					String password = "" + (1000 + Math.round(Math.random() * 8999));
+					newInstance.setPassword(password);
+					newInstance.setFirstPassword(password);
+
+					if (copyDefaultContext) {
+						GlobalContext defaultContext = getDefaultContext(session);
 
 						if (defaultContext.isValid()) {
 							newInstance.setAdministrator(defaultContext.getAdministrator());
@@ -396,7 +400,6 @@ public class GlobalContext implements Serializable {
 								}
 							}
 						}
-
 					}
 				}
 			} else {

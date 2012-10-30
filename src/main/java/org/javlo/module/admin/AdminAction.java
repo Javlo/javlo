@@ -631,7 +631,7 @@ public class AdminAction extends AbstractModuleAction {
 			editGlobalContext(request, currentModule, null);
 		} else if (requestService.getParameter("components", null) != null) {
 			currentModule.setRenderer("/jsp/components.jsp");
-			currentModule.setToolsRenderer(null);
+			currentModule.setToolsRenderer("/jsp/components_actions.jsp");
 			String uri = request.getRequestURI();
 			currentModule.pushBreadcrumb(new Module.HtmlLink(uri, I18nAccess.getInstance(request).getText("command.admin.components") + " : " + request.getParameter("context"), ""));
 		} else if (requestService.getParameter("modules", null) != null) {
@@ -1044,7 +1044,12 @@ public class AdminAction extends AbstractModuleAction {
 		return null;
 	}
 
-	public static String performUpdateStaticConfig(RequestService requestService, HttpServletRequest request, ContentContext ctx, MessageRepository messageRepository, I18nAccess i18nAccess, Module currentModule, StaticConfig staticConfig) throws Exception {
+	public static String performUpdateStaticConfig(RequestService requestService, HttpServletRequest request, User user, ContentContext ctx, MessageRepository messageRepository, I18nAccess i18nAccess, Module currentModule, StaticConfig staticConfig) throws Exception {
+
+		if (!AdminUserSecurity.getInstance().isAdmin(user)) {
+			return "Security exception.";
+		}
+
 		String msg = null;
 		if (requestService.getParameter("back", null) != null) {
 			currentModule.restoreRenderer();
@@ -1062,4 +1067,18 @@ public class AdminAction extends AbstractModuleAction {
 		return msg;
 	}
 
+	public static String performComponentsDefault(RequestService rs, ContentContext ctx, HttpSession session, MessageRepository messageRepository, I18nAccess i18nAccess) throws ConfigurationException, IOException {
+		GlobalContext defaultSite = GlobalContext.getDefaultContext(session);
+		if (defaultSite != null) {
+			GlobalContext currentContext = GlobalContext.getInstance(session, rs.getParameter("context", null));
+			if (currentContext == null) {
+				return "context not found.";
+			} else {
+				currentContext.setComponents(new LinkedList<String>(defaultSite.getComponents()));
+			}
+		} else {
+			return "default web site not found.";
+		}
+		return null;
+	}
 }

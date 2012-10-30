@@ -1097,20 +1097,10 @@ public class StringHelper {
 
 	public static void main(String[] args) {
 
-		Set<String> keys = new HashSet<String>();
+		String text = "";
 
-		for (int i = 0; i < 20000; i++) {
-			String key = createKey(2, keys);
-			if (key == null) {
-				System.out.println("i=" + i);
-				System.out.println("t=" + KEY_ACCEPTABLE_CHAR.length() * KEY_ACCEPTABLE_CHAR.length());
-				break;
-			}
-			keys.add(key);
-			System.out.println("*** key = " + key);
-		}
-
-		System.out.println("t=" + KEY_ACCEPTABLE_CHAR.length() * KEY_ACCEPTABLE_CHAR.length() * KEY_ACCEPTABLE_CHAR.length());
+		System.out.println("text = " + text);
+		System.out.println("clean text = " + text);
 
 	}
 
@@ -2365,6 +2355,30 @@ public class StringHelper {
 			}
 		}
 		return key;
+	}
+
+	public String cleanString(String text) {
+		try {
+			return java.net.URLDecoder.decode(text, ContentContext.CHARACTER_ENCODING);
+		} catch (UnsupportedEncodingException e) {
+			e.printStackTrace();
+			return text;
+		}
+	}
+
+	/**
+	 * check if a text contains uppercase char. test > false, Test > true, TEST > true
+	 * 
+	 * @param text
+	 * @return
+	 */
+	public static boolean containsUppercase(String text) {
+		for (int i = 0; i < text.length(); i++) {
+			if (StringUtils.isAllUpperCase("" + text.charAt(i))) {
+				return true;
+			}
+		}
+		return false;
 	}
 
 	/**
