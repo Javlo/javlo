@@ -141,30 +141,30 @@ public class SimpleInternalLink extends ComplexPropertiesLink implements IIntern
 			String labelTitle = i18nAccess.getText("component.link.label");
 			String reverseLinkLabel = i18nAccess.getText("component.link.reverse");
 
-			out.println("<table class=\"edit\"><tr><td style=\"text-align: center;\" width=\"33%\">");
-
 			String reverseLink = properties.getProperty(REVERSE_LINK_KEY, null);
 			if (reverseLink == null) {
 				reverseLink = "none";
 			}
+			out.println("<div class=\"line\">");
 			out.println("<label for=\"" + getReverseLinkName() + "\">" + reverseLinkLabel + " : </label>");
 			out.println(XHTMLHelper.getReverlinkSelectType(ctx, getReverseLinkName(), reverseLink));
 
-			out.println("</td><td style=\"text-align: center;\" width=\"33%\">");
+			out.println("</div>");
+			out.println("<div class=\"line\">");
 
-			out.println(linkTitle + " : ");
-			out.println("<select name=\"" + getLinkName() + "\">");
+			out.println("<label for=\"" + getLinkName() + "\">" + linkTitle + " : </label>");
+			out.println("<select id=\"" + getLinkName() + "\" name=\"" + getLinkName() + "\">");
 			MenuElement elem = content.getNavigation(ctx);
 			String[] values = elem.getChildList();
 			String currentLink = null;
-			for (int i = 0; i < values.length; i++) {
-				if (link.equals(values[i])) {
-					currentLink = values[i];
-					out.println("<option selected=\"selected\" value=\"" + values[i] + "\">");
+			for (String value : values) {
+				if (link.equals(value)) {
+					currentLink = value;
+					out.println("<option selected=\"selected\" value=\"" + value + "\">");
 				} else {
-					out.println("<option value=\"" + values[i] + "\">");
+					out.println("<option value=\"" + value + "\">");
 				}
-				out.println(values[i]);
+				out.println(value);
 				out.println("</option>");
 			}
 			out.println("</select>");
@@ -176,11 +176,12 @@ public class SimpleInternalLink extends ComplexPropertiesLink implements IIntern
 			} else {
 				setMessage(new GenericMessage(i18nAccess.getText("component.message.help.choose_link"), GenericMessage.HELP));
 			}
-			out.println("</td><td style=\"text-align: center;\" align=\"center\">");
-			out.print(labelTitle);
-			out.print(" : ");
+			out.println("</div>");
+			out.println("<div class=\"line\">");
+
+			out.println("<label for=\"" + getLinkLabelName() + "\">" + labelTitle + " : </label>");
 			out.println(XHTMLHelper.getTextInput(getLinkLabelName(), label));
-			out.println("</td></tr></table>");
+			out.println("</div>");
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
@@ -223,10 +224,10 @@ public class SimpleInternalLink extends ComplexPropertiesLink implements IIntern
 
 					setModify();
 					properties.setProperty(LINK_KEY, idLink);
-					properties.setProperty(LABEL_KEY, label);					
+					properties.setProperty(LABEL_KEY, label);
 				}
 				String reverseLinkValue = requestService.getParameter(getReverseLinkName(), null);
-				if (reverseLinkValue != null && !properties.getProperty(REVERSE_LINK_KEY, "").equals(reverseLinkValue)) {					
+				if (reverseLinkValue != null && !properties.getProperty(REVERSE_LINK_KEY, "").equals(reverseLinkValue)) {
 					properties.setProperty(REVERSE_LINK_KEY, reverseLinkValue);
 					setModify();
 					GlobalContext globalContext = GlobalContext.getInstance(ctx.getRequest());
@@ -251,7 +252,7 @@ public class SimpleInternalLink extends ComplexPropertiesLink implements IIntern
 	public boolean isListable() {
 		return true;
 	}
-	
+
 	@Override
 	public String getHelpURI(ContentContext ctx) {
 		return "/components/internlink.html";
@@ -296,7 +297,7 @@ public class SimpleInternalLink extends ComplexPropertiesLink implements IIntern
 	public boolean isOnlyFirstOccurrence() {
 		return properties.getProperty(REVERSE_LINK_KEY, "none").equals(ReverseLinkService.ONLY_FIRST);
 	}
-	
+
 	@Override
 	public boolean isOnlyThisPage() {
 		return properties.getProperty(REVERSE_LINK_KEY, "none").equals(ReverseLinkService.ONLY_THIS_PAGE);
