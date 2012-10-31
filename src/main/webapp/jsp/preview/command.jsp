@@ -69,9 +69,9 @@ editCtx.setRenderMode(ContentContext.EDIT_MODE);
 				<form id="children_list" action="${info.currentURL}" method="post">
 					<fieldset>
 						<legend>${i18n.edit['content.navigation']}</legend>
-						<c:if test="${not empty info.parentPageURL}">
+						<c:if test="${not empty info.parent.url}">
 							<div class="pc_parent_link">
-								<a href="${info.parentPageURL}">[..]</a>
+								<a href="${info.parent.url}">[..]</a>
 							</div>
 						</c:if>							
 						<div class="pc_menu">
