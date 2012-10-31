@@ -129,12 +129,17 @@ public class XMLServlet extends HttpServlet {
 					List<MenuElement> rssPages = content.getNavigation(ctx).getAllChildrenWithComponentType(ctx, RSSRegistration.TYPE);
 					List<MenuElement> pages = new ArrayList<MenuElement>(rssPages);
 
+					boolean autoSwitchLanguage = globalContext.isAutoSwitchToDefaultLanguage();
+					if (request.getParameter("auto-switch-language") != null) {
+						autoSwitchLanguage = StringHelper.isTrue(request.getParameter("auto-switch-language"));
+					}
+
 					Date latestDate = new Date(0);
 					Iterator<MenuElement> iter = pages.iterator();
 					while (iter.hasNext()) {
 						MenuElement page = iter.next();
 						ContentContext lgCtx = ctx;
-						if (globalContext.isAutoSwitchToDefaultLanguage() && !page.isRealContent(ctx)) {
+						if (autoSwitchLanguage && !page.isRealContent(ctx)) {
 							lgCtx = ctx.getContextWithContent(page);
 							if (lgCtx == null) {
 								lgCtx = ctx;
@@ -191,7 +196,7 @@ public class XMLServlet extends HttpServlet {
 
 					for (MenuElement page : pages) {
 						ContentContext lgCtx = ctx;
-						if (globalContext.isAutoSwitchToDefaultLanguage() && !page.isRealContent(ctx)) {
+						if (autoSwitchLanguage && !page.isRealContent(ctx)) {
 							lgCtx = ctx.getContextWithContent(page);
 							if (lgCtx == null) {
 								lgCtx = ctx;
