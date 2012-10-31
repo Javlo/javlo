@@ -54,7 +54,9 @@ import org.javlo.user.UserFactory;
  */
 public class ReactionComponent extends DynamicComponent implements IAction {
 
-	private static class Reaction {
+	public static String TYPE = "reaction";
+
+	public static class Reaction {
 
 		public static class OrderCreation implements Comparator<Reaction> {
 
@@ -81,7 +83,7 @@ public class ReactionComponent extends DynamicComponent implements IAction {
 
 		private String id = StringHelper.getRandomId();
 		private String title = "";
-		private String author = "";
+		private String authors = "";
 		private String text = "";
 		private String email = "";
 		private boolean valid = false;
@@ -92,7 +94,7 @@ public class ReactionComponent extends DynamicComponent implements IAction {
 			if (contentArray.length > 6) {
 				id = contentArray[0];
 				setTitle(contentArray[1]);
-				setAuthor(contentArray[2]);
+				setAuthors(contentArray[2]);
 				setText(contentArray[3]);
 				setEmail(contentArray[4]);
 				try {
@@ -106,8 +108,8 @@ public class ReactionComponent extends DynamicComponent implements IAction {
 			}
 		}
 
-		public String getAuthor() {
-			return author;
+		public String getAuthors() {
+			return authors;
 		}
 
 		public Date getDate() {
@@ -134,8 +136,8 @@ public class ReactionComponent extends DynamicComponent implements IAction {
 			return valid;
 		}
 
-		public void setAuthor(String author) {
-			this.author = author;
+		public void setAuthors(String author) {
+			this.authors = author;
 		}
 
 		public void setDate(Date date) {
@@ -160,9 +162,12 @@ public class ReactionComponent extends DynamicComponent implements IAction {
 
 		@Override
 		public String toString() {
-			return getId() + '|' + getTitle() + '|' + getAuthor() + '|' + getText() + '|' + getEmail() + '|' + StringHelper.renderSortableTime(getDate()) + '|' + isValid();
+			return getId() + '|' + getTitle() + '|' + getAuthors() + '|' + getText() + '|' + getEmail() + '|' + StringHelper.renderSortableTime(getDate()) + '|' + isValid();
 		}
 
+		public String getDisplayableDate() {
+			return StringHelper.renderSortableTime((getDate()));
+		}
 	}
 
 	private static final String REACTIONS_PREFIX = "reactions-";
@@ -208,7 +213,7 @@ public class ReactionComponent extends DynamicComponent implements IAction {
 					}
 				} else if (field.getName().equals("nickname")) {
 					if ((field.getValue() != null) && (field.getValue().trim().length() > 0)) {
-						reaction.setAuthor(field.getValue());
+						reaction.setAuthors(field.getValue());
 						validReaction = true;
 					} else {
 						logger.warning("no nickname in reaction");
@@ -267,7 +272,7 @@ public class ReactionComponent extends DynamicComponent implements IAction {
 			out.println("new comment add on context : " + globalContext.getContextKey());
 			out.println("");
 			out.println("title : " + reaction.getTitle());
-			out.println("author : " + reaction.getAuthor());
+			out.println("author : " + reaction.getAuthors());
 			out.println("text :");
 			out.println(reaction.getText());
 			out.println("");
@@ -325,7 +330,7 @@ public class ReactionComponent extends DynamicComponent implements IAction {
 		int i = 0;
 		for (Reaction reaction : reactions) {
 			reactionId[i] = reaction.getId();
-			reactionTitle[i] = "[" + StringHelper.renderSortableTime(reaction.getDate()) + "] - " + reaction.getTitle() + " - [" + reaction.getAuthor() + "]";
+			reactionTitle[i] = "[" + StringHelper.renderSortableTime(reaction.getDate()) + "] - " + reaction.getTitle() + " - [" + reaction.getAuthors() + "]";
 			i++;
 		}
 
@@ -349,7 +354,7 @@ public class ReactionComponent extends DynamicComponent implements IAction {
 			out.println("</div>");
 			out.println("<div class=\"line\"><b>");
 			out.print(i18nAccess.getText("global.author") + " : </b>");
-			out.println(reaction.getAuthor());
+			out.println(reaction.getAuthors());
 			out.println("</div>");
 			out.println("<div class=\"line\"><b>");
 			out.print(i18nAccess.getText("global.content") + " : </b>");
@@ -419,7 +424,7 @@ public class ReactionComponent extends DynamicComponent implements IAction {
 		return getClass().getName();
 	}
 
-	private Collection<Reaction> getReactions(ContentContext ctx) {
+	public Collection<Reaction> getReactions(ContentContext ctx) {
 		Collection<Reaction> outReactions = null;
 		try {
 			loadViewData(ctx);
@@ -443,7 +448,7 @@ public class ReactionComponent extends DynamicComponent implements IAction {
 
 	@Override
 	public String getType() {
-		return "reaction";
+		return TYPE;
 	}
 
 	protected java.util.List<Field> getViewFields(ContentContext ctx) throws FileNotFoundException, IOException {
@@ -498,7 +503,7 @@ public class ReactionComponent extends DynamicComponent implements IAction {
 				out.println("</span>");
 
 				out.println("<span class=\"author\">");
-				out.println(StringHelper.removeTag(reaction.getAuthor()));
+				out.println(StringHelper.removeTag(reaction.getAuthors()));
 				out.println("</span>");
 
 				if (isWithTitle()) {
@@ -590,7 +595,7 @@ public class ReactionComponent extends DynamicComponent implements IAction {
 			}
 			if (reactionToBeDeleted.size() > 0) {
 				for (Reaction reaction : reactionToBeDeleted) {
-					getViewData(ctx).remove(REACTIONS_PREFIX + reaction.getId());
+					deleteReaction(ctx, reaction.getId());
 				}
 				storeViewData(ctx);
 				setNeedRefresh(true);
@@ -604,6 +609,21 @@ public class ReactionComponent extends DynamicComponent implements IAction {
 			}
 		}
 		storeProperties();
+	}
+
+	public void deleteReaction(ContentContext ctx, String id) throws IOException {
+		getViewData(ctx).remove(REACTIONS_PREFIX + id);
+		storeViewData(ctx);
+	}
+
+	public void validReaction(ContentContext ctx, String id) throws IOException {
+		Collection<Reaction> reactions = getReactions(ctx);
+		for (Reaction reaction : reactions) {
+			if (reaction.getId().equals(id)) {
+				reaction.setValid(true);
+				setReactions(ctx, reactions);
+			}
+		}
 	}
 
 	private void setReactions(ContentContext ctx, Collection<Reaction> reactions) throws IOException {

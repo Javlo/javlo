@@ -225,6 +225,10 @@ public class MenuElement implements Serializable {
 			}
 		}
 
+		public String getViewURL() {
+			return URLHelper.createURL(ctx.getContextWithOtherRenderMode(ContentContext.VIEW_MODE), page);
+		}
+
 		public boolean isAllreadyShortURL() {
 			return page.isShortURL();
 		}
