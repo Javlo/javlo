@@ -12,11 +12,6 @@ table th {
 	text-align: left;
 }
 
-table th:hover {
-	border-left: 1px #111111 solid;
-	border-right: 1px #111111 solid;
-}
-
 .selected {
 	font-weight: bold;
 }

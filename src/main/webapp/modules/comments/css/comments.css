@@ -1,0 +1,28 @@
+a.valid {
+	font-size: 0;
+	background-image: url('../img/check.png');
+	display: inline-block;
+	height: 16px;
+	width: 16px;
+}
+
+a.delete {
+	font-size: 0;
+	background-image: url('../img/close.png');
+	display: inline-block;
+	height: 16px;
+	width: 16px;
+}
+
+.comments .actions {
+	display: inline-block;
+	width: 36px;
+}
+
+.comments .valid {
+	font-style: italic;
+}
+
+.authors .title {
+	font-weight: bold;
+}
