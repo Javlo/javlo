@@ -30,6 +30,7 @@ import org.javlo.component.core.ComponentFactory;
 import org.javlo.component.core.ContentElementList;
 import org.javlo.component.core.IContentComponentsList;
 import org.javlo.component.core.IContentVisualComponent;
+import org.javlo.component.core.IDate;
 import org.javlo.component.core.ILink;
 import org.javlo.component.core.IPageRank;
 import org.javlo.component.dynamic.DynamicComponent;
@@ -1414,10 +1415,11 @@ public class MenuElement implements Serializable {
 		ContentElementList content = getBestLanguageContent(noAreaCtx);
 		while (content.hasNext(noAreaCtx)) {
 			IContentVisualComponent comp = content.next(noAreaCtx);
-			if (comp.getType().equals(DateComponent.TYPE)) {
-				DateComponent dateComp = (DateComponent) comp;
-				currentDate = dateComp.getDate();
-			} else if (currentDate != null) {
+			if (comp instanceof IDate) {
+				IDate dateComp = (IDate) comp;
+				currentDate = dateComp.getDate(ctx);
+			}
+			if (currentDate != null) {
 				if (outContentByDate.get(currentDate) == null) {
 					outContentByDate.put(currentDate, new LinkedList<IContentVisualComponent>());
 				}

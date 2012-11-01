@@ -605,6 +605,18 @@ public class Field implements Cloneable {
 		return "field." + getUnicName() + '.' + suffix;
 	}
 
+	public String getMetaData(String inKey) {
+		String key = createKey(inKey);
+		String localKey = null;
+		if (getCurrentLocale() != null) {
+			localKey = createKey(inKey + '-' + getCurrentLocale());
+		}
+		if (localKey != null && properties.get(localKey) != null) {
+			return properties.getProperty(localKey);
+		}
+		return properties.getProperty(key);
+	}
+
 	public final List<Locale> getTranslation() {
 		String key = createKey("translation");
 		String rawTranslation = properties.getProperty(key);

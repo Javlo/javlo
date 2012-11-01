@@ -9,17 +9,17 @@ import java.text.ParseException;
 import java.util.Date;
 
 import org.javlo.component.core.AbstractVisualComponent;
+import org.javlo.component.core.IDate;
 import org.javlo.context.ContentContext;
 import org.javlo.exception.RessourceNotFoundException;
 import org.javlo.helper.StringHelper;
 import org.javlo.i18n.I18nAccess;
 import org.javlo.service.RequestService;
 
-
 /**
  * @author pvandermaesen
  */
-public class DateComponent extends AbstractVisualComponent {
+public class DateComponent extends AbstractVisualComponent implements IDate {
 
 	public static final String TYPE = "date";
 
@@ -31,7 +31,7 @@ public class DateComponent extends AbstractVisualComponent {
 
 	private static final String SHORT_DATE_WIDTH_DAY = "short-date-width-day";
 
-	private static  final String VISIBLE_DATE_TYPE = "visible-date";
+	private static final String VISIBLE_DATE_TYPE = "visible-date";
 
 	private final String VISIBLE_TIME_TYPE = "visible-time";
 
@@ -51,13 +51,7 @@ public class DateComponent extends AbstractVisualComponent {
 	public String[] getStyleLabelList(ContentContext ctx) {
 		try {
 			I18nAccess i18n = I18nAccess.getInstance(ctx.getRequest());
-			return new String[] { i18n.getText("content.date.userfriendly-date"),
-								  i18n.getText("content.date.medium-date"),
-								  i18n.getText("content.date.short-date"),
-								  i18n.getText("content.date.short-date-width-day"),
-								  i18n.getText("content.date.visible-date"),
-								  i18n.getText("content.date.visible-time"),
-								  i18n.getText("global.hidden") };
+			return new String[] { i18n.getText("content.date.userfriendly-date"), i18n.getText("content.date.medium-date"), i18n.getText("content.date.short-date"), i18n.getText("content.date.short-date-width-day"), i18n.getText("content.date.visible-date"), i18n.getText("content.date.visible-time"), i18n.getText("global.hidden") };
 		} catch (FileNotFoundException e) {
 			e.printStackTrace();
 		} catch (IOException e) {
@@ -77,7 +71,7 @@ public class DateComponent extends AbstractVisualComponent {
 		}
 		return "";
 	}
-	
+
 	protected boolean initDate = true;
 
 	@Override
@@ -106,10 +100,8 @@ public class DateComponent extends AbstractVisualComponent {
 
 		StringBuffer finalCode = new StringBuffer();
 		finalCode.append(getSpecialInputTag());
-		finalCode.append("<input id=\"contentdate\" style=\"width: 120px;\" type=\"text\" id=\"" + getInputDateName() + "\" name=\"" + getInputDateName() + "\" value=\"" + StringHelper.renderDate(date)
-				+ "\"/>");
-		finalCode.append("<input style=\"margin-left: 30px;width: 120px;\" type=\"text\" id=\"" + getInputTimeName() + "\" name=\"" + getInputTimeName() + "\" value=\"" + StringHelper.renderOnlyTime(date)
-				+ "\"/>");
+		finalCode.append("<input id=\"contentdate\" style=\"width: 120px;\" type=\"text\" id=\"" + getInputDateName() + "\" name=\"" + getInputDateName() + "\" value=\"" + StringHelper.renderDate(date) + "\"/>");
+		finalCode.append("<input style=\"margin-left: 30px;width: 120px;\" type=\"text\" id=\"" + getInputTimeName() + "\" name=\"" + getInputTimeName() + "\" value=\"" + StringHelper.renderOnlyTime(date) + "\"/>");
 		return finalCode.toString();
 	}
 
@@ -142,7 +134,7 @@ public class DateComponent extends AbstractVisualComponent {
 
 	protected String renderDate(ContentContext ctx, Date date) throws FileNotFoundException, IOException {
 		if (getStyle(ctx).equals(USER_FRIENDLY_DATE_TYPE)) {
-			return StringHelper.renderUserFriendlyDate(ctx,date);
+			return StringHelper.renderUserFriendlyDate(ctx, date);
 		} else if (getStyle(ctx).equals(MEDIUM_DATE_TYPE)) {
 			return StringHelper.renderMediumDate(ctx, date);
 		} else if (getStyle(ctx).equals(SHORT_DATE_TYPE)) {
@@ -188,12 +180,17 @@ public class DateComponent extends AbstractVisualComponent {
 		String newDate = requestService.getParameter(getInputDateName(), null);
 		String newTime = requestService.getParameter(getInputTimeName(), null);
 		if (newDate != null && newTime != null) {
-			String dateStr = newDate+' '+newTime;
+			String dateStr = newDate + ' ' + newTime;
 			if (!dateStr.equals(StringHelper.renderTime(getDate()))) {
 				setValue(dateStr);
 				setModify();
 			}
 		}
+	}
+
+	@Override
+	public Date getDate(ContentContext ctx) {
+		return getDate();
 	}
 
 }

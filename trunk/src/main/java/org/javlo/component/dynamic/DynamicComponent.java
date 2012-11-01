@@ -12,6 +12,7 @@ import java.io.StringWriter;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.Comparator;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.Locale;
@@ -23,6 +24,7 @@ import org.javlo.bean.Link;
 import org.javlo.component.core.AbstractVisualComponent;
 import org.javlo.component.core.ComponentBean;
 import org.javlo.component.core.IContentVisualComponent;
+import org.javlo.component.core.IDate;
 import org.javlo.config.StaticConfig;
 import org.javlo.context.ContentContext;
 import org.javlo.context.GlobalContext;
@@ -39,7 +41,7 @@ import org.javlo.ztatic.IStaticContainer;
 /**
  * @author pvandermaesen
  */
-public class DynamicComponent extends AbstractVisualComponent implements IStaticContainer, IFieldContainer {
+public class DynamicComponent extends AbstractVisualComponent implements IStaticContainer, IFieldContainer, IDate {
 
 	public static final String HIDDEN = "hidden";
 
@@ -635,6 +637,22 @@ public class DynamicComponent extends AbstractVisualComponent implements IStatic
 			e.printStackTrace();
 		}
 		return outResources;
+	}
+
+	@Override
+	public Date getDate(ContentContext ctx) {
+		try {
+			for (Field field : getFields(ctx)) {
+				if (field instanceof IDate) {
+					return ((IDate) field).getDate(ctx);
+				}
+			}
+		} catch (FileNotFoundException e) {
+			e.printStackTrace();
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+		return null;
 	}
 
 }

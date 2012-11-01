@@ -1192,21 +1192,21 @@ public class PageReferenceComponent extends ComplexPropertiesLink implements IAc
 			if (filterPage(lgCtx, page)) {
 				if (countPage < getMaxNews(lgCtx)) {
 					if ((page.isRealContentAnyLanguage(lgCtx) || isWidthEmptyPage()) && page.getContentDateNeverNull(lgCtx).after(backDate.getTime())) {
-						countPage++;
 
 						if (firstPage == null) {
 							firstPage = page;
 						}
 
-						if (countPage >= firstPageNumber && countPage <= lastPageNumber) {
-							if (page.isRealContent(lgCtx)) {
-								realContentSize++;
-							}
-							if (page.isRealContent(lgCtx) || isWidthEmptyPage()) {
-								if (tagFilter == null || tagFilter.trim().length() == 0 || page.getTags(lgCtx).contains(tagFilter)) {
-									if (catFilter == null || catFilter.trim().length() == 0 || page.getCategory(lgCtx).equals(catFilter)) {
+						if (page.isRealContent(lgCtx)) {
+							realContentSize++;
+						}
+						if (page.isRealContent(lgCtx) || isWidthEmptyPage()) {
+							if (tagFilter == null || tagFilter.trim().length() == 0 || page.getTags(lgCtx).contains(tagFilter)) {
+								if (catFilter == null || catFilter.trim().length() == 0 || page.getCategory(lgCtx).equals(catFilter)) {
+									if (countPage >= firstPageNumber && countPage <= lastPageNumber) {
 										pageBeans.add(PageBean.getInstance(lgCtx, page, this));
 									}
+									countPage++;
 								}
 							}
 						}
