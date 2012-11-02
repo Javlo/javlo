@@ -219,6 +219,7 @@ public class AccessServlet extends HttpServlet {
 			}
 
 			ContentContext ctx = ContentContext.getContentContext(request, response);
+			ctx.getCurrentTemplate();
 			request.setAttribute("frontCache", globalContext.getFrontCache(ctx));
 
 			logger.fine(requestLabel + " : first ContentContext " + df.format((double) (System.currentTimeMillis() - startTime) / (double) 1000) + " sec.");
