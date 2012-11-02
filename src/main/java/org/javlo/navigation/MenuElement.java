@@ -2280,7 +2280,7 @@ public class MenuElement implements Serializable {
 
 	public String getPageTitle(ContentContext ctx) throws Exception {
 
-		ContentContext newCtx = new ContentContext(ctx);
+		ContentContext newCtx = ctx.getFreeContentContext();
 		newCtx.setArea(null); // warning : check if the method is needed.
 
 		PageDescription desc = getPageDescriptionCached(newCtx.getRequestContentLanguage());
@@ -2296,7 +2296,7 @@ public class MenuElement implements Serializable {
 				desc.pageTitle = name;
 			}
 		}
-		return desc.title;
+		return desc.pageTitle;
 	}
 
 	/**
