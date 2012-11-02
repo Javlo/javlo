@@ -476,6 +476,8 @@ public class AdminAction extends AbstractModuleAction {
 	@Override
 	public String prepare(ContentContext ctx, ModulesContext moduleContext) throws Exception {
 
+		super.prepare(ctx, moduleContext);
+
 		HttpServletRequest request = ctx.getRequest();
 		ServletContext application = request.getSession().getServletContext();
 
