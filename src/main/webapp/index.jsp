@@ -43,6 +43,6 @@ if ((template != null)&&(template.getHomeRenderer(globalContext) != null)) {
 } else {
 	ctx.setFormat("html");
 	String url = URLHelper.createURL(ctx);	
-	response.sendRedirect(url)
+	response.sendRedirect(url);
 	%><a href="<%=url%>"><%=url%></a><%
 }%>
