@@ -225,7 +225,7 @@ public class ContentElementList implements IContentComponentsList {
 		Iterator elems = contentElements.iterator();
 		while (elems.hasNext()) {
 			IContentVisualComponent comp = (IContentVisualComponent) elems.next();
-			if (comp.getType().equals(PageTitle.TYPE)) {
+			if (comp instanceof PageTitle) {
 				res = comp.getTextTitle();
 				if (res == null) {
 					res = "";
@@ -234,7 +234,7 @@ public class ContentElementList implements IContentComponentsList {
 			}
 		}
 		if (res == null) {
-			return getTitle();
+			return getLabel();
 		}
 		return res;
 	}

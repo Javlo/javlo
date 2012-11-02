@@ -33,7 +33,7 @@ public class NoExtURLCreator implements IURLFactory {
 		ContentContext lgCtx = ctx;
 		if (fromDefaultLanguage()) {
 			GlobalContext globalContext = GlobalContext.getInstance(ctx.getRequest());
-			lgCtx = new ContentContext(ctx);
+			lgCtx = ctx.getFreeContentContext();
 			lgCtx.setLanguage(globalContext.getDefaultLanguage());
 			lgCtx.setRequestContentLanguage(globalContext.getDefaultLanguage());
 		}
