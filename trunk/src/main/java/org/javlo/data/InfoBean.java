@@ -19,6 +19,7 @@ import org.javlo.service.PersistenceService;
 import org.javlo.service.exception.ServiceException;
 import org.javlo.servlet.AccessServlet;
 import org.javlo.template.Template;
+import org.javlo.user.AdminUserSecurity;
 import org.javlo.user.IUserFactory;
 import org.javlo.user.UserFactory;
 
@@ -337,6 +338,14 @@ public class InfoBean {
 		} catch (Exception e) {
 			return null;
 		}
+	}
+
+	public boolean isGod() {
+		return AdminUserSecurity.getInstance().isGod(ctx.getCurrentUser());
+	}
+
+	public boolean isAdmin() {
+		return AdminUserSecurity.getInstance().isAdmin(ctx.getCurrentUser());
 	}
 
 }

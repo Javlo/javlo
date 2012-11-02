@@ -80,7 +80,7 @@ public class CatchAllFilter implements Filter {
 					globalContext.logout(logoutUser);
 
 					if (httpRequest.getUserPrincipal() != null) {
-						httpResponse.sendRedirect("/");
+						httpResponse.sendRedirect("" + httpRequest.getRequestURL());
 						return;
 					}
 				}
@@ -349,7 +349,7 @@ public class CatchAllFilter implements Filter {
 				}
 
 				if (query != null && query.contains("edit-logout")) {
-					((HttpServletResponse) response).sendRedirect(editURI);
+					((HttpServletResponse) response).sendRedirect("" + httpRequest.getRequestURL());
 					return;
 				} else {
 					httpRequest.getRequestDispatcher(editURI).forward(request, response);
