@@ -863,6 +863,10 @@ ul,li {
 	display: block;
 }
 
+#log-wait #ajax-loader.active {
+	display: inline-block;
+}
+
 /**** search ****/
 #search-result h1 {
 	margin: 0 0 20px 0;
