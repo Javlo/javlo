@@ -418,10 +418,12 @@ public class Video extends GlobalImage implements IAction, IVideo {
 
 	@Override
 	public String getPreviewURL(ContentContext ctx, String filter) {
-		String imageFilter = getImageFilter(ctx);
+		if (filter == null) {
+			filter = getImageFilter(ctx);
+		}
 		String imageLink = getResourceURL(ctx, getDecorationImage());
 		try {
-			return URLHelper.createTransformURL(ctx, imageLink, imageFilter);
+			return URLHelper.createTransformURL(ctx, imageLink, filter);
 		} catch (Exception e) {
 			e.printStackTrace();
 			return null;

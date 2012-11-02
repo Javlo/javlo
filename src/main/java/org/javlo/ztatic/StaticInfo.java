@@ -50,6 +50,46 @@ public class StaticInfo {
 	 */
 	protected static Logger logger = Logger.getLogger(StaticInfo.class.getName());
 
+	public static final class StaticInfoBean {
+		private final ContentContext ctx;
+		private final StaticInfo staticInfo;
+
+		public StaticInfoBean(ContentContext ctx, StaticInfo staticInfo) {
+			this.ctx = ctx;
+			this.staticInfo = staticInfo;
+		}
+
+		public String getTitle() {
+			return staticInfo.getTitle(ctx);
+		}
+
+		public String getDescription() {
+			return staticInfo.getDescription(ctx);
+		}
+
+		public String getLocation() {
+			return staticInfo.getLocation(ctx);
+		}
+
+		public String getShortDate() {
+			try {
+				return StringHelper.renderShortDate(ctx, staticInfo.getDate(ctx));
+			} catch (Exception e) {
+				e.printStackTrace();
+			}
+			return null;
+		}
+
+		public String getFullDate() {
+			try {
+				return StringHelper.renderFullDate(ctx, staticInfo.getDate(ctx));
+			} catch (Exception e) {
+				e.printStackTrace();
+			}
+			return null;
+		}
+	}
+
 	public static class StaticSort implements Comparator<String> {
 
 		ContentContext ctx;
@@ -358,7 +398,7 @@ public class StaticInfo {
 
 			File file = new File(realPath);
 			if (!file.exists()) {
-				logger.warning("could not instancied ressource because file does'nt exist : " + file + " context name : " + globalContext.getContextKey());
+				logger.fine("could not instancied ressource because file does'nt exist : " + file + " context name : " + globalContext.getContextKey());
 			} else if (file.isDirectory()) {
 				if (!staticInfo.staticURL.endsWith("/")) {
 					staticInfo.staticURL = staticInfo.staticURL + '/';

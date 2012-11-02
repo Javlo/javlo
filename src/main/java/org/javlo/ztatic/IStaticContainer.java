@@ -41,4 +41,12 @@ public interface IStaticContainer {
 	 */
 	public Collection<Link> getAllResourcesLinks(ContentContext ctx);
 
+	/**
+	 * return indice of popularity
+	 * 
+	 * @param ctx
+	 * @return
+	 */
+	public int getPopularity(ContentContext ctx);
+
 }

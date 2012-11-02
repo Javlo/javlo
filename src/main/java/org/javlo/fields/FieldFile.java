@@ -30,6 +30,7 @@ import org.javlo.helper.Comparator.FileComparator;
 import org.javlo.service.RequestService;
 import org.javlo.service.resource.Resource;
 import org.javlo.ztatic.IStaticContainer;
+import org.javlo.ztatic.StaticInfo;
 
 public class FieldFile extends Field implements IStaticContainer {
 
@@ -438,6 +439,19 @@ public class FieldFile extends Field implements IStaticContainer {
 			outList.add(new Link(fileURI, getLabel(new Locale(ctx.getRequestContentLanguage()))));
 		}
 		return outList;
+	}
+
+	@Override
+	public int getPopularity(ContentContext ctx) {
+		StaticInfo staticInfo;
+		try {
+			staticInfo = StaticInfo.getInstance(ctx, getCurrentFile());
+			if (staticInfo != null) {
+				return staticInfo.getAccessFromSomeDays(ctx);
+			}
+		} catch (Exception e) {
+		}
+		return 0;
 	}
 
 }

@@ -3,6 +3,7 @@
  */
 package org.javlo.component.files;
 
+import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.PrintWriter;
@@ -18,6 +19,7 @@ import org.javlo.helper.URLHelper;
 import org.javlo.i18n.I18nAccess;
 import org.javlo.module.mailing.MailingAction;
 import org.javlo.service.ReverseLinkService;
+import org.javlo.ztatic.StaticInfo;
 
 /**
  * @author pvandermaesen
@@ -115,6 +117,15 @@ public class GenericFile extends AbstractFileComponent implements IReverseLinkCo
 			e.printStackTrace();
 		}
 		return getStyleList(ctx);
+	}
+
+	public File getFile(ContentContext ctx) {
+		StaticConfig staticConfig = StaticConfig.getInstance(ctx.getRequest().getSession());
+		GlobalContext globalContext = GlobalContext.getInstance(ctx.getRequest());
+		String fullName = ElementaryURLHelper.mergePath(getDirSelected(), getFileName());
+		fullName = ElementaryURLHelper.mergePath(staticConfig.getFileFolder(), fullName);
+		fullName = ElementaryURLHelper.mergePath(globalContext.getDataFolder(), fullName);
+		return new File(fullName);
 	}
 
 	@Override
@@ -229,6 +240,19 @@ public class GenericFile extends AbstractFileComponent implements IReverseLinkCo
 	@Override
 	public boolean isRealContent(ContentContext ctx) {
 		return getValue().trim().length() > 0;
+	}
+
+	@Override
+	public int getPopularity(ContentContext ctx) {
+		StaticInfo staticInfo;
+		try {
+			staticInfo = StaticInfo.getInstance(ctx, getFile(ctx));
+			if (staticInfo != null) {
+				return staticInfo.getAccessFromSomeDays(ctx);
+			}
+		} catch (Exception e) {
+		}
+		return 0;
 	}
 
 }

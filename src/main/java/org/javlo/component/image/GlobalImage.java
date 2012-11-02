@@ -33,7 +33,7 @@ import org.javlo.template.Template;
 /**
  * standard image component. <h4>JSTL variable :</h4>
  * <ul>
- * <li>inherited from {@link FilterImage}</li>
+ * <li>inherited from {@link Image}</li>
  * <li>{@link String} image : url of image.</li>
  * </ul>
  * 
@@ -127,6 +127,8 @@ public class GlobalImage extends Image {
 			ctx.getRequest().setAttribute("image", URLHelper.createTransformURL(ctx, imageLink, imageFilter));
 		}
 		ctx.getRequest().setAttribute("previewURL", URLHelper.createTransformURL(ctx, getPage(), getResourceURL(ctx, getFileName()), getFilter(ctx)));
+		ctx.getRequest().setAttribute("media", this);
+		ctx.getRequest().setAttribute("shortDate", StringHelper.renderShortDate(ctx, getDate()));
 	}
 
 	@Override
@@ -313,6 +315,40 @@ public class GlobalImage extends Image {
 
 	public String getTitle() {
 		return properties.getProperty(TITLE, "");
+	}
+
+	@Override
+	public String getTitle(ContentContext ctx) {
+		String title = getTitle();
+		if (title.trim().length() == 0) {
+			return super.getTitle(ctx);
+		} else {
+			return title;
+		}
+	}
+
+	@Override
+	public String getLocation(ContentContext ctx) {
+		String location = getLocation();
+		if (location.trim().length() == 0) {
+			return super.getLocation(ctx);
+		} else {
+			return location;
+		}
+	}
+
+	@Override
+	public Date getDate(ContentContext ctx) {
+		Date date = null;
+		try {
+			date = getDate();
+		} catch (ParseException e) {
+		}
+		if (date == null) {
+			return super.getDate(ctx);
+		} else {
+			return date;
+		}
 	}
 
 	private void setTitle(String title) {

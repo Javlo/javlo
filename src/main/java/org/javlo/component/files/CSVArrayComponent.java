@@ -169,6 +169,7 @@ public class CSVArrayComponent extends AbstractFileComponent {
 		return "style";
 	}
 
+	@Override
 	public String getType() {
 		return "csv-array";
 	}
@@ -298,6 +299,11 @@ public class CSVArrayComponent extends AbstractFileComponent {
 			content = "&nbsp;";
 		}
 		return content;
+	}
+
+	@Override
+	public int getPopularity(ContentContext ctx) {
+		return 0;
 	}
 
 }
