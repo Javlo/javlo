@@ -216,4 +216,9 @@ public class VFSFile extends AbstractFileComponent implements IReverseLinkCompon
 		return properties.getProperty(REVERSE_LINK_KEY, "none").equals(ReverseLinkService.ONLY_THIS_PAGE);
 	}
 
+	@Override
+	public int getPopularity(ContentContext ctx) {
+		return 0;
+	}
+
 }

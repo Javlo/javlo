@@ -655,4 +655,18 @@ public class DynamicComponent extends AbstractVisualComponent implements IStatic
 		return null;
 	}
 
+	@Override
+	public int getPopularity(ContentContext ctx) {
+		try {
+			for (Field field : getFields(ctx)) {
+				if (field instanceof IStaticContainer) {
+					return ((IStaticContainer) field).getPopularity(ctx);
+				}
+			}
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		return 0;
+	}
+
 }

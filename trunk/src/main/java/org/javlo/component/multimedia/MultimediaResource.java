@@ -1,6 +1,7 @@
 package org.javlo.component.multimedia;
 
 import java.util.Collections;
+import java.util.Comparator;
 import java.util.Date;
 import java.util.LinkedList;
 import java.util.List;
@@ -9,6 +10,59 @@ import org.javlo.context.ContentContext;
 import org.javlo.helper.StringHelper;
 
 public class MultimediaResource {
+
+	public static class SortByDate implements Comparator<MultimediaResource> {
+
+		boolean reverse = false;
+
+		public SortByDate(boolean reverse) {
+			this.reverse = reverse;
+		}
+
+		@Override
+		public int compare(MultimediaResource o1, MultimediaResource o2) {
+			int out = 0;
+			if (o1.getDate() != null || o2.getDate() != null) {
+
+				if (o1.getDate() == null) {
+					out = 1;
+				} else if (o2.getDate() == null) {
+					out = -1;
+				} else if (o1.getDate().equals(o2.getDate())) {
+					out = o2.getIndex() - o1.getIndex();
+				} else {
+					out = o1.getDate().compareTo(o2.getDate());
+				}
+			}
+			if (reverse) {
+				return out;
+			} else {
+				return -out;
+			}
+		}
+
+	}
+
+	public static class SortByIndex implements Comparator<MultimediaResource> {
+
+		boolean reverse = false;
+
+		public SortByIndex(boolean reverse) {
+			this.reverse = reverse;
+		}
+
+		@Override
+		public int compare(MultimediaResource o1, MultimediaResource o2) {
+			if (reverse) {
+				return o2.getIndex() - o1.getIndex();
+			} else {
+				return -(o2.getIndex() - o1.getIndex());
+
+			}
+		}
+
+	}
+
 	private String URL;
 	private String previewURL;
 	private String path;

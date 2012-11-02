@@ -89,7 +89,7 @@ public class VideoContentMultimedia extends Multimedia {
 	public static final String TYPE = "videos-multimedia";
 
 	@Override
-	protected boolean acceptResource(ContentContext ctx, MultimediaResource resource, int index) {
+	protected boolean acceptResource(ContentContext ctx, MultimediaResource resource) {
 		Calendar currentDate = GregorianCalendar.getInstance();
 		if (resource.getDate() != null) {
 			currentDate.setTime(resource.getDate());
@@ -122,7 +122,7 @@ public class VideoContentMultimedia extends Multimedia {
 			beforeAccept = false; // not necessary, just more "clean" :-)
 		}
 
-		return afterAccept && beforeAccept && index < getMaxListSize();
+		return afterAccept && beforeAccept;
 	}
 
 	private MultimediaResource createResource(ContentContext ctx, Video video) throws Exception {
@@ -259,7 +259,7 @@ public class VideoContentMultimedia extends Multimedia {
 
 			if (isRenderInfo(ctx)) {
 				resource.setIndex(index);
-				if (acceptResource(ctx, resource, index)) {
+				if (acceptResource(ctx, resource)) {
 					index++;
 					allResource.add(resource);
 				}

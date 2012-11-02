@@ -104,6 +104,16 @@ public class Image extends AbstractFileComponent implements IImageTitle, IPrevie
 	}
 
 	@Override
+	public void prepareView(ContentContext ctx) throws Exception {
+		super.prepareView(ctx);
+		StaticInfo staticInfo = getStaticInfo(ctx);
+		if (staticInfo != null) {
+			ctx.getRequest().setAttribute("file", new StaticInfo.StaticInfoBean(ctx, staticInfo));
+		}
+
+	}
+
+	@Override
 	protected String getCSSType() {
 		return "image";
 	}
@@ -371,5 +381,18 @@ public class Image extends AbstractFileComponent implements IImageTitle, IPrevie
 			e.printStackTrace();
 		}
 		return url;
+	}
+
+	@Override
+	public int getPopularity(ContentContext ctx) {
+		StaticInfo staticInfo = getStaticInfo(ctx);
+		if (staticInfo != null) {
+			try {
+				return staticInfo.getAccessFromSomeDays(ctx);
+			} catch (Exception e) {
+				e.printStackTrace();
+			}
+		}
+		return 0;
 	}
 }
