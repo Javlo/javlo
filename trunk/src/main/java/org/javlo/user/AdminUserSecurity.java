@@ -161,6 +161,9 @@ public class AdminUserSecurity implements Serializable {
 	 * @return
 	 */
 	public boolean isAdmin(User user) {
+		if (user == null) {
+			return false;
+		}
 		return haveRight(user, FULL_CONTROL_ROLE, ADMIN_USER_ROLE);
 	}
 
@@ -171,6 +174,9 @@ public class AdminUserSecurity implements Serializable {
 	 * @return
 	 */
 	public boolean isGod(User user) {
+		if (user == null) {
+			return false;
+		}
 		return user.getRoles().contains(GENERAL_ADMIN);
 	}
 

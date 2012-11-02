@@ -2056,7 +2056,9 @@ public class MenuElement implements Serializable {
 			 */
 			localContentElementList = new ContentElementList(componentBean, ctx, this, false);
 
-			contentElementListMap.put(ctx.getRequestContentLanguage(), localContentElementList);
+			if (!ctx.isFree()) { // no reference to template >>> some component can be absent
+				contentElementListMap.put(ctx.getRequestContentLanguage(), localContentElementList);
+			}
 
 			logger.fine("update local content  - # component : " + localContentElementList.size(ctx) + " (ctx:" + ctx + ")");
 		}
@@ -2280,7 +2282,7 @@ public class MenuElement implements Serializable {
 
 	public String getPageTitle(ContentContext ctx) throws Exception {
 
-		ContentContext newCtx = ctx.getFreeContentContext();
+		ContentContext newCtx = new ContentContext(ctx);
 		newCtx.setArea(null); // warning : check if the method is needed.
 
 		PageDescription desc = getPageDescriptionCached(newCtx.getRequestContentLanguage());
