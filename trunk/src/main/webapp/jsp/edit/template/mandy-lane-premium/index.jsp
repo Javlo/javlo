@@ -75,6 +75,9 @@
     <div class="topheader">
         <ul class="notebutton">
             <li class="note">
+                <div class="im-wizz-message" style="display: none;" title="${i18n.edit['im.title']}">
+                    ${i18n.edit['im.message.wizz']}
+                </div>
                 <a href="${info.editTemplateURL}/im.jsp" class="messagenotify">
                     <span class="wrap">
                         <span class="thicon msgicon"></span>
