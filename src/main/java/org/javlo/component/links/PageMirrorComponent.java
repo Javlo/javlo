@@ -65,7 +65,7 @@ public class PageMirrorComponent extends AbstractVisualComponent {
 			if (copiedPage != null && !copiedPage.getPath().equals(ctx.getPath())) {
 				String[][] params = new String[][] { { "path", copiedPage.getPath() } };
 				String label = i18nAccess.getText("content.mirror-page.link", params);
-				out.println("<input type=\"submit\" value=\"" + label + "\" onclick=\"$('" + getCurrentInputName() + "').value='" + copiedPage.getId() + "'\" />");
+				out.println("<input type=\"submit\" value=\"" + label + "\" onclick=\"jQuery('#" + getCurrentInputName() + "').val('" + copiedPage.getId() + "');\" />");
 			}
 		}
 		if (currentPage != null) {
@@ -148,6 +148,7 @@ public class PageMirrorComponent extends AbstractVisualComponent {
 			if (!newPage.equals(getValue())) {
 				setValue(newPage);
 				setModify();
+				setNeedRefresh(true);
 			}
 		}
 	}
