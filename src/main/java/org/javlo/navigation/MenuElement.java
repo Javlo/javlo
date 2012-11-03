@@ -1418,6 +1418,15 @@ public class MenuElement implements Serializable {
 			if (comp instanceof IDate) {
 				IDate dateComp = (IDate) comp;
 				currentDate = dateComp.getDate(ctx);
+				if (dateComp instanceof DynamicComponent) {
+					if (currentDate != null) {
+						if (outContentByDate.get(currentDate) == null) {
+							outContentByDate.put(currentDate, new LinkedList<IContentVisualComponent>());
+						}
+						outContentByDate.get(currentDate).add(comp);
+					}
+					currentDate = null;
+				}
 			}
 			if (currentDate != null) {
 				if (outContentByDate.get(currentDate) == null) {

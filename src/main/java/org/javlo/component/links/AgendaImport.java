@@ -23,8 +23,10 @@ import java.util.logging.Logger;
 
 import org.javlo.component.core.AbstractVisualComponent;
 import org.javlo.component.core.IContentVisualComponent;
+import org.javlo.component.dynamic.DynamicComponent;
 import org.javlo.component.meta.LocationComponent;
 import org.javlo.context.ContentContext;
+import org.javlo.fields.Field;
 import org.javlo.helper.StringHelper;
 import org.javlo.helper.TimeHelper;
 import org.javlo.i18n.I18nAccess;
@@ -208,6 +210,13 @@ public class AgendaImport extends AbstractVisualComponent {
 						if (contentVisualComponent instanceof LocationComponent) {
 							ctx.getRequest().setAttribute("location", contentVisualComponent.getValue(ctx));
 						} else {
+							if (contentVisualComponent instanceof DynamicComponent) {
+								DynamicComponent dynComp = (DynamicComponent) contentVisualComponent;
+								Field location = dynComp.getField(ctx, "location");
+								if (location != null) {
+									ctx.getRequest().setAttribute("location", location.getValue());
+								}
+							}
 							out.println(contentVisualComponent.getXHTMLCode(ctx));
 						}
 

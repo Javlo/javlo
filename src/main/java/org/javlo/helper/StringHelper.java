@@ -1999,6 +1999,7 @@ public class StringHelper {
 			writer.write("<" + firstTag + ">");
 			boolean firstPass = true;
 			int cd = 0;
+			String cssClass = " class=\"first\"";
 			while (rawLine != null) {
 				if (depth == cd) {
 					if (!firstPass) {
@@ -2035,7 +2036,12 @@ public class StringHelper {
 					content = line;
 				}
 
-				writer.write("<li>");
+				String nextLine = read.readLine();
+				if (nextLine == null) {
+					cssClass = " class=\"last\"";
+				}
+				writer.write("<li" + cssClass + ">");
+				cssClass = "";
 				if (title.trim().length() > 0) {
 					writer.write("<strong class=\"title\">");
 					writer.write(title);
@@ -2049,7 +2055,7 @@ public class StringHelper {
 				}
 				writer.write("</span>");
 
-				rawLine = read.readLine();
+				rawLine = nextLine;
 				if (rawLine != null) {
 					line = removeFirstChar(rawLine, subListChar);
 					depth = rawLine.length() - line.length();
