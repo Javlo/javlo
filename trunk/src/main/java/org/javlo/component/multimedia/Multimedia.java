@@ -699,7 +699,7 @@ public class Multimedia extends TimeRangeComponent implements IImageTitle {
 
 		int max = getMaxListSize();
 		ctx.getRequest().setAttribute("pagination", pagination);
-		ctx.getRequest().setAttribute("resources", allResource.subList(0, max - 1));
+		ctx.getRequest().setAttribute("resources", allResource.subList(0, max));
 	}
 
 	@Override

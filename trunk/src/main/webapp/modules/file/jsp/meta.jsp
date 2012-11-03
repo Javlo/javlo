@@ -38,7 +38,7 @@
 		</div>
 		<div class="line">
 			<label for="date-${file.id}">${i18n.edit["field.date"]}</label>
-			<input type="text" id="date-${file.id}" name="date-${file.id}" value="${file.date}" />
+			<input type="text" id="date-${file.id}" name="date-${file.id}" value="${file.manualDate}" />
 		</div>
 		<div class="line">
 			<label for="shared-${file.id}">${i18n.edit["field.shared"]}</label>

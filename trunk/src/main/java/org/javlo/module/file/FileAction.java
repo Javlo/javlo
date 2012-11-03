@@ -99,6 +99,10 @@ public class FileAction extends AbstractModuleAction {
 			return StringHelper.renderTime(staticInfo.getDate(ctx));
 		}
 
+		public String getManualDate() {
+			return StringHelper.renderTime(staticInfo.getManualDate(ctx));
+		}
+
 		public String getTitle() {
 			return staticInfo.getTitle(ctx);
 		}
