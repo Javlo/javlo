@@ -54,27 +54,35 @@ request.setAttribute("users", users);
 InfoBean.updateInfoBean(ctx);
 %>
 <div class="messagelist">
-	<h4>Instant messaging</h4>
+	<h4>${i18n.edit['im.title']}</h4>
 	<ul class="im-messages" style="min-height: 50px; max-height: 200px; overflow: auto;">
 		<c:forEach var="message" items="${messages}">
-			<li>
+			<li class="im-message ${message.wizz?'im-wizz':''}">
 				<span class="user" style="color: ${users[message.fromUser].color};">${message.fromUser}</span>
-				<small>${message.message}</small>
+				<c:if test="${(not empty message.receiverUser) && (message.receiverUser != '_ALL')}">
+					<small class="to" data-user="${message.receiverUser}" style="color: ${users[message.receiverUser].color};">
+						${message.receiverUser} >
+					</small>
+				</c:if>
+				<small>
+					${message.message}
+					</small>
 			</li>
 		</c:forEach>
 	</ul>
 	<form action="${info.editTemplateURL}/im.jsp" class="im-form">
 		<input type="hidden" name="lastMessageId" value="${lastMessageId}" />
 		<select name="receiver">
-			<option value="">-All users-</option>
+			<option value="">-${i18n.edit['im.label.all-users']}-</option>
 			<c:forEach var="entry" items="${users}">
 				<c:if test="${entry.key != currentUser}">
 					<option style="color: ${entry.value.color};" value="${entry.value.username}">${entry.value.username}</option>
 				</c:if>
 			</c:forEach>
 		</select>
-		<input name="message" type="text" placeholder="Message" />
-		<%--<input type="submit" value="Send" />--%>
+		<input name="message" type="text" placeholder="${i18n.edit['im.label.message']}" />
+		<input type="submit" value="${i18n.edit['im.action.send']}" />
+		<input id="im-send-wizz" type="button" value="${i18n.edit['im.action.send-wizz']}" />
 	</form>
 </div>
 <script>

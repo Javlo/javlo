@@ -83,29 +83,6 @@ function updateLayout() {
 	changeFooter();
 }
 
-//IM
-var IM_QUERY_UNREAD_COUNT_TIME_INTERVAL = 10000;
-var IM_QUERY_NEW_MESSAGES_TIME_INTERVAL = 2000;
-var MAX_SCROLL_HEIGHT = 99999999;
-var imInProgress = false;
-var imTimeout = null;
-jQuery(".im-form").live("submit", function(e) {
-	e.preventDefault();
-	queryIM(true);
-});
-jQuery(".im-messages .user").live("click", function(e) {
-	e.preventDefault();
-	jQuery(".im-form [name=receiver]").val(jQuery(this).text());
-});
-jQuery(function(){
-	queryIM();
-});
-function onIMLoad() { // Called from im.jsp
-	if (!imInProgress) {
-		jQuery("a.messagenotify .count").text(0).toggle(false);
-		jQuery(".im-messages").scrollTop(MAX_SCROLL_HEIGHT);
-	}
-}
 function breadcrumb() {	
 	jQuery(".breadcrumbs .children").mouseover(function() {
 		var item = jQuery(this);		
@@ -130,7 +107,36 @@ function breadcrumb() {
 		}, 400));
 	});
 }
-function queryIM(submitted) {
+
+//IM
+var IM_QUERY_UNREAD_COUNT_TIME_INTERVAL = 10000;
+var IM_QUERY_NEW_MESSAGES_TIME_INTERVAL = 2000;
+var MAX_SCROLL_HEIGHT = 99999999;
+var imInProgress = false;
+var imTimeout = null;
+jQuery(".im-form").live("submit", function(e) {
+	e.preventDefault();
+	queryIM(true);
+});
+jQuery(".im-messages .user").live("click", function(e) {
+	e.preventDefault();
+	jQuery(".im-form [name=receiver]").val(jQuery(this).text());
+});
+jQuery("#im-send-wizz").live("click", function(e) {
+	e.preventDefault();
+	queryIM(false, "*");
+});
+
+jQuery(function(){
+	queryIM();
+});
+function onIMLoad() { // Called from im.jsp
+	if (!imInProgress) {
+		jQuery("a.messagenotify .count").text(0).toggle(false);
+		jQuery(".im-messages").scrollTop(MAX_SCROLL_HEIGHT);
+	}
+}
+function queryIM(submitted, manualMessage) {
 	if (imInProgress) {
 		return;
 	}
@@ -147,11 +153,21 @@ function queryIM(submitted) {
 		return;
 	}
 	var datas;
-	if (submitted) {
-		datas = form.serializeArray();
+	var queryUnreadNumber = (form.length == 0);
+	if (submitted || manualMessage != null) {
+		datas = {
+			lastMessageId : form.find("[name=lastMessageId]").val(),
+			receiver : form.find("[name=receiver]").val(),
+			message : manualMessage || form.find("[name=message]").val()
+		};
+		datas
+	} else if(queryUnreadNumber) {
+		datas = {
+			lastMessageId : -1
+		};
 	} else {
 		datas = {
-			lastMessageId : form.find("[name=lastMessageId]").val() || -1
+			lastMessageId : form.find("[name=lastMessageId]").val()
 		};
 	}
 	jQuery.ajax({
@@ -166,9 +182,14 @@ function queryIM(submitted) {
 				jQuery(".im-messages").append(newMessages).scrollTop(MAX_SCROLL_HEIGHT);
 			}
 			var form = jQuery(".im-form");
-			if(form.length == 0) {
+			var queryUnreadNumber = (form.length == 0)
+			if (queryUnreadNumber) {
 				jQuery("a.messagenotify .count").text(newMessages.length)
 					.toggle(newMessages.length > 0);
+				if (newMessages.is(".im-wizz")) {
+					msg = jQuery(".im-wizz-message");
+					jAlert(msg.text(), msg.attr("title"));
+				}
 			} else {
 				if (submitted) {
 					form.find("[name=message]").val("");
@@ -179,9 +200,13 @@ function queryIM(submitted) {
 				receiver.children().remove();
 				receiver.append(dom.find("[name=receiver] option"));
 				receiver.val(receiverValue);
+				if(queryUnreadNumber) {
+					
+				}
 			}
 			imInProgress = false;
 			imTimeout = setTimeout(queryIM, (form.length == 0 ? IM_QUERY_UNREAD_COUNT_TIME_INTERVAL : IM_QUERY_NEW_MESSAGES_TIME_INTERVAL));
 		}
 	});
 }
+

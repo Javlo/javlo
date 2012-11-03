@@ -2,9 +2,11 @@ package org.javlo.service;
 
 import java.util.Collections;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.NoSuchElementException;
+import java.util.Set;
 
 import javax.servlet.http.HttpSession;
 
@@ -17,6 +19,7 @@ public class IMService {
 	private static final String IM_SERVICE_ATTRIBUTE_NAME = IMService.class.getName();
 	public static final String ALL_SITES = "_ALL";
 	public static final String ALL_USERS = "_ALL";
+	private static final String WIZZ_MESSAGE = "*";
 
 	public static IMService getInstance(HttpSession session) {
 		IMService instance = (IMService) session.getServletContext().getAttribute(IM_SERVICE_ATTRIBUTE_NAME);
@@ -31,6 +34,7 @@ public class IMService {
 	private long lastMessageId = 0;
 	private Map<String, String> userColors = new HashMap<String, String>();
 	private Map<String, Long> userLastReadMessageId = new HashMap<String, Long>();
+	private Map<String, Set<Long>> userReceivedMessageIds = new HashMap<String, Set<Long>>();
 	private int userColorIndex = 0;
 
 	private IMService() {
@@ -42,7 +46,8 @@ public class IMService {
 			if (receiverUser == null) {
 				receiverUser = ALL_USERS;
 			}
-			messages.put(++lastMessageId, new IMItem(fromSite, fromUser, receiverSite, receiverUser, message));
+			IMItem item = new IMItem(++lastMessageId, fromSite, fromUser, receiverSite, receiverUser, message, message.equals(WIZZ_MESSAGE));
+			messages.put(item.getId(), item);
 		}
 	}
 
@@ -57,14 +62,29 @@ public class IMService {
 		} else {
 			currentId++;
 		}
+		String userKey = site + "::" + username;
+		Set<Long> receivedIds = userReceivedMessageIds.get(userKey);
+		if (receivedIds == null) {
+			receivedIds = new HashSet<Long>();
+			userReceivedMessageIds.put(userKey, receivedIds);
+			receivedIds.addAll(messages.keySet());
+		}
 		boolean allSite = site.equals(ALL_SITES);
 		for (; currentId <= currentLastMessageId; currentId++) {
 			IMItem item = messages.get(currentId);
 			if (item != null) {
+				boolean currentUserIsSender = item.getFromSite().equals(site) && item.getFromUser().equals(username);
 				if (allSite
 						|| item.getReceiverSite().equals(ALL_SITES)
 						|| (item.getReceiverSite().equals(site) && (item.getReceiverUser().equals(username) || item.getReceiverUser().equals(ALL_USERS)))
-						|| (item.getFromSite().equals(site) && item.getFromUser().equals(username))) {
+						|| (currentUserIsSender)) {
+					boolean isWizz = item.isWizz();
+					isWizz = isWizz && !currentUserIsSender;
+					isWizz = isWizz && !receivedIds.contains(item.getId());
+					receivedIds.add(item.getId());
+					if (!Boolean.valueOf(item.isWizz()).equals(isWizz)) {
+						item = new IMItem(item.getId(), item.getFromSite(), item.getFromUser(), item.getReceiverSite(), item.getReceiverUser(), item.getMessage(), isWizz);
+					}
 					list.add(item);
 				}
 			}
@@ -94,19 +114,27 @@ public class IMService {
 
 	public static class IMItem {
 
-		private String fromSite;
-		private String fromUser;
-		private String receiverSite;
-		private String receiverUser;
-		private String message;
+		private final long id;
+		private final String fromSite;
+		private final String fromUser;
+		private final String receiverSite;
+		private final String receiverUser;
+		private final String message;
+		private final boolean wizz;
 
-		public IMItem(String fromSite, String fromUser, String receiverSite, String receiverUser, String message) {
+		public IMItem(long id, String fromSite, String fromUser, String receiverSite, String receiverUser, String message, boolean wizz) {
 			super();
+			this.id = id;
 			this.fromSite = fromSite;
 			this.fromUser = fromUser;
 			this.receiverSite = receiverSite;
 			this.receiverUser = receiverUser;
 			this.message = message;
+			this.wizz = wizz;
+		}
+
+		public long getId() {
+			return id;
 		}
 
 		public String getFromSite() {
@@ -127,6 +155,10 @@ public class IMService {
 
 		public String getMessage() {
 			return message;
+		}
+
+		public boolean isWizz() {
+			return wizz;
 		}
 
 	}
