@@ -170,12 +170,21 @@ public class DashboardAction extends AbstractModuleAction {
 			}
 			ctx.setAjaxMap(ajaxMap);
 		} else if (type.equals("visits")) {
+			String rangeStr = request.getParameter("range");
+			int range = Calendar.WEEK_OF_MONTH;
+			if(rangeStr == null || rangeStr.equals("WEEK")) {
+				range = Calendar.WEEK_OF_MONTH;
+			} else if (rangeStr.equals("MONTH")) {
+				range = Calendar.MONTH;
+			} else if (rangeStr.equals("YEAR")) {
+				range = Calendar.YEAR;
+			}
 			ObjectBuilder ajaxMap = LangHelper.object();
 			Calendar start = Calendar.getInstance();
 			Calendar end = Calendar.getInstance();
 			Calendar cal = Calendar.getInstance();
 
-			start.add(Calendar.MONTH, -1);
+			start.add(range, -1);
 			end.add(Calendar.MILLISECOND, -1);
 
 			Map<String, Integer> clicksByHour = new HashMap<String, Integer>();
