@@ -14,9 +14,11 @@ import javax.servlet.http.HttpServletResponse;
 
 import org.javlo.component.form.SearchResultComponent;
 import org.javlo.context.ContentContext;
+import org.javlo.helper.PaginationContext;
 import org.javlo.helper.StringHelper;
 import org.javlo.search.SearchFilter;
 import org.javlo.search.SearchResult;
+import org.javlo.search.SearchResult.SearchElement;
 import org.javlo.service.RequestService;
 import org.javlo.template.TemplateSearchContext;
 
@@ -80,7 +82,9 @@ public class SearchActions implements IAction {
 					}
 					SearchResult search = SearchResult.getInstance(ctx);
 					search.search(ctx, groupId, searchStr, sort, componentList);
-					ctx.getRequest().getSession().setAttribute("searchList", search.getSearchResult());
+					List<SearchElement> result = search.getSearchResult();
+					ctx.getRequest().getSession().setAttribute("searchList", result);
+					PaginationContext.getInstance(ctx.getRequest().getSession(), "pagination", result.size(), 10);
 				} else {
 					msg = "error search strign not defined";
 				}
