@@ -714,6 +714,16 @@ public class Multimedia extends TimeRangeComponent implements IImageTitle {
 	}
 
 	@Override
+	public boolean isContentCachable(ContentContext ctx) {
+		return !isOrderByAccess(ctx);
+	}
+
+	@Override
+	public boolean isContentTimeCachable(ContentContext ctx) {
+		return isOrderByAccess(ctx);
+	}
+
+	@Override
 	public boolean isContentCachableByQuery(ContentContext ctx) {
 		return !isRepeat();
 	}
