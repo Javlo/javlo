@@ -466,8 +466,8 @@ public class XMLManipulationHelper {
 								if ((tagDescription.getAttributes().get("type") != null) && (tagDescription.getAttributes().get("type").equalsIgnoreCase("text"))) {
 									tagDescription.getAttributes().put("name", "keywords");
 									tagDescription.getAttributes().put("accesskey", "4");
-									tagDescription.getAttributes().put("value", "<%=i18nAccess.getViewText(\"search.title\")%>");
-									tagDescription.getAttributes().put("onfocus", "if (this.value == '<%=i18nAccess.getViewText(\"search.title\")%>'){this.value='';}");
+									// tagDescription.getAttributes().put("value", "<%=i18nAccess.getViewText(\"search.title\")%>");
+									// tagDescription.getAttributes().put("onfocus", "if (this.value == '<%=i18nAccess.getViewText(\"search.title\")%>'){this.value='';}");
 									remplacement.addReplacement(tagDescription.getOpenStart(), tagDescription.getCloseEnd() + 1, tagDescription.render(null));
 									remplacement.addReplacement(tagDescription.getOpenEnd() + 1, tagDescription.getOpenEnd() + 1, searchInput);
 								}
