@@ -697,7 +697,7 @@ public class Multimedia extends TimeRangeComponent implements IImageTitle {
 			Collections.sort(allResource, new MultimediaResource.SortByDate(false));
 		}
 
-		int max = getMaxListSize();
+		int max = Math.min(getMaxListSize(), allResource.size());
 		ctx.getRequest().setAttribute("pagination", pagination);
 		ctx.getRequest().setAttribute("resources", allResource.subList(0, max));
 	}

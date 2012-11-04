@@ -652,7 +652,7 @@ public class Edit extends AbstractModuleAction {
 
 		for (String compId : components) {
 			IContentVisualComponent elem = content.getComponent(ctx, compId);
-			if (StringHelper.isTrue(requestService.getParameter("id-" + elem.getId(), "false"))) {
+			if (elem != null && StringHelper.isTrue(requestService.getParameter("id-" + elem.getId(), "false"))) {
 				elem.performConfig(ctx);
 				elem.performEdit(ctx);
 				if (!elem.isModify()) { // if elem not modified check modification via rawvalue
