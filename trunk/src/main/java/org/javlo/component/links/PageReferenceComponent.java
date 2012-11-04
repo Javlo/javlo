@@ -15,7 +15,6 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Set;
 import java.util.TreeSet;
-import java.util.logging.Level;
 import java.util.logging.Logger;
 
 import javax.servlet.http.HttpServletRequest;
@@ -1108,9 +1107,6 @@ public class PageReferenceComponent extends ComplexPropertiesLink implements IAc
 
 	@Override
 	public void prepareView(ContentContext ctx) throws Exception {
-		if (logger.isLoggable(Level.FINE)) {
-			logger.fine("reload:" + getType() + " page:" + getPage().getPath());
-		}
 		super.prepareView(ctx);
 		Calendar backDate = getBackDate(ctx);
 
