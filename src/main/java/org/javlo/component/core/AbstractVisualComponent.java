@@ -16,6 +16,7 @@ import java.io.PrintStream;
 import java.io.PrintWriter;
 import java.io.StringReader;
 import java.io.StringWriter;
+import java.util.Calendar;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
@@ -26,6 +27,7 @@ import java.util.Map;
 import java.util.Properties;
 import java.util.Set;
 import java.util.TreeSet;
+import java.util.logging.Level;
 import java.util.logging.Logger;
 
 import javax.servlet.ServletContext;
@@ -78,6 +80,8 @@ public abstract class AbstractVisualComponent implements IContentVisualComponent
 	private static final String CACHE_NAME = "component";
 
 	public static final String TIME_CACHE_NAME = "component-time";
+
+	private static final String TIME_KEY_PREFIX = "_TIME_CRT_";
 
 	protected static final String VALUE_SEPARATOR = "-";
 
@@ -323,10 +327,25 @@ public abstract class AbstractVisualComponent implements IContentVisualComponent
 		return ComponentConfig.getInstance(ctx, getType());
 	}
 
-	public String getContentCache(ContentContext ctx) {
+	public String getContentTimeCache(ContentContext ctx) {
 		GlobalContext globalContext = GlobalContext.getInstance(ctx.getRequest());
-		ICache cache = globalContext.getCache(CACHE_NAME);
-		return (String) cache.get(getContentCacheKey(ctx));
+		ICache cache = globalContext.getCache(TIME_CACHE_NAME);
+
+		String contentKey = getContentCacheKey(ctx);
+		String timeKey = TIME_KEY_PREFIX + contentKey;
+		Long creationTime = (Long) cache.get(timeKey);
+		if (creationTime != null) {
+			Calendar currentTime = Calendar.getInstance();
+			Calendar creationCal = Calendar.getInstance();
+			creationCal.setTimeInMillis(creationTime);
+			currentTime.add(Calendar.SECOND, -getTimeCache(ctx));
+			if (currentTime.after(creationCal)) {
+				cache.removeItem(contentKey);
+				cache.removeItem(timeKey);
+				return null;
+			}
+		}
+		return (String) cache.get(contentKey);
 	}
 
 	private String getContentCacheKey(ContentContext ctx) {
@@ -351,9 +370,9 @@ public abstract class AbstractVisualComponent implements IContentVisualComponent
 		return "data__" + getId();
 	}
 
-	public String getContentTimeCache(ContentContext ctx) {
+	public String getContentCache(ContentContext ctx) {
 		GlobalContext globalContext = GlobalContext.getInstance(ctx.getRequest());
-		ICache cache = globalContext.getCache(TIME_CACHE_NAME);
+		ICache cache = globalContext.getCache(CACHE_NAME);
 		return (String) cache.get(getContentCacheKey(ctx));
 	}
 
@@ -1221,6 +1240,9 @@ public abstract class AbstractVisualComponent implements IContentVisualComponent
 	 * @throws Exception
 	 */
 	public void prepareView(ContentContext ctx) throws Exception {
+		if (logger.isLoggable(Level.FINE)) {
+			logger.fine("load : " + getType() + " on : " + URLHelper.createURL(ctx));
+		}
 		ctx.getRequest().setAttribute("style", getStyle(ctx));
 		ctx.getRequest().setAttribute("value", getValue());
 		ctx.getRequest().setAttribute("type", getType());
@@ -1559,7 +1581,10 @@ public abstract class AbstractVisualComponent implements IContentVisualComponent
 	public void setContentTimeCache(ContentContext ctx, String contentCache) {
 		GlobalContext globalContext = GlobalContext.getInstance(ctx.getRequest());
 		ICache cache = globalContext.getCache(TIME_CACHE_NAME);
-		cache.put(getContentCacheKey(ctx), contentCache);
+		String contentKey = getContentCacheKey(ctx);
+		String timeKey = TIME_KEY_PREFIX + contentKey;
+		cache.put(contentKey, contentCache);
+		cache.put(timeKey, new Long(System.currentTimeMillis()));
 	}
 
 	public void setHidden(boolean hidden) {
@@ -1698,6 +1723,14 @@ public abstract class AbstractVisualComponent implements IContentVisualComponent
 	@Override
 	public String getAuthors() {
 		return "";
+	}
+
+	private int getTimeCache(ContentContext ctx) {
+		String contentTimeCache = getConfig(ctx).getProperty("cache.time", null);
+		if (contentTimeCache == null) {
+			return 60 * 60; // default 1u
+		}
+		return Integer.parseInt(contentTimeCache);
 	}
 
 	// generate compilation error : use for refactoring
