@@ -111,6 +111,9 @@ public class SearchResult {
 		String searchRequest;
 		Date date = null;
 		String dateString = "";
+		String shortDate = "";
+		String mediumDate = "";
+		String fullDate = "";
 		String path = null;
 		int priority = 0;
 		int maxPriority = 0;
@@ -231,6 +234,31 @@ public class SearchResult {
 		public List<Component> getComponents() {
 			return components;
 		}
+
+		public String getShortDate() {
+			return shortDate;
+		}
+
+		public void setShortDate(String shortDate) {
+			this.shortDate = shortDate;
+		}
+
+		public String getMediumDate() {
+			return mediumDate;
+		}
+
+		public void setMediumDate(String mediumDate) {
+			this.mediumDate = mediumDate;
+		}
+
+		public String getFullDate() {
+			return fullDate;
+		}
+
+		public void setFullDate(String longDate) {
+			this.fullDate = longDate;
+		}
+
 	}
 
 	private SearchResult() {
@@ -269,6 +297,9 @@ public class SearchResult {
 				Date date = page.getContentDateNeverNull(ctx);
 				rst.setDate(date);
 				rst.setDateString(StringHelper.renderSortableDate(date));
+				rst.setShortDate(StringHelper.renderShortDate(ctx, date));
+				rst.setFullDate(StringHelper.renderFullDate(ctx, date));
+				rst.setMediumDate(StringHelper.renderMediumDate(ctx, date));
 			} else {
 				logger.warning("date not found on : " + page.getPath());
 			}
