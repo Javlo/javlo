@@ -69,6 +69,12 @@ public class InfoBean {
 		return URLHelper.createURL(ctx);
 	}
 
+	public String getPDFURL() {
+		ContentContext pdfCtx = new ContentContext(ctx);
+		pdfCtx.setFormat("pdf");
+		return URLHelper.createURL(pdfCtx);
+	}
+
 	public String getDate() {
 		try {
 			return StringHelper.renderDate(currentPage.getContentDateNeverNull(ctx), globalContext.getShortDateFormat());

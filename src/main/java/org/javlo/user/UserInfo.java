@@ -387,10 +387,12 @@ public class UserInfo implements Comparable<IUserInfo>, IUserInfo, Serializable 
 	}
 
 	public void setCreationDate(String dateStr) {
-		try {
-			this.creationDate = StringHelper.parseTime(dateStr);
-		} catch (ParseException e) {
-			e.printStackTrace();
+		if (dateStr != null && dateStr.trim().length() > 0) {
+			try {
+				this.creationDate = StringHelper.parseTime(dateStr);
+			} catch (ParseException e) {
+				e.printStackTrace();
+			}
 		}
 	}
 
