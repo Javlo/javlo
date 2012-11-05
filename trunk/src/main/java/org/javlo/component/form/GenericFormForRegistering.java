@@ -8,6 +8,9 @@ import javax.servlet.http.HttpServletResponse;
 
 import org.javlo.context.ContentContext;
 import org.javlo.context.GlobalContext;
+import org.javlo.message.GenericMessage;
+import org.javlo.service.ContentService;
+import org.javlo.service.RequestService;
 import org.javlo.user.IUserFactory;
 import org.javlo.user.IUserInfo;
 import org.javlo.user.UserFactory;
@@ -21,14 +24,16 @@ public class GenericFormForRegistering extends GenericForm {
 		return false;
 	}
 
-	public static String performSubmit(HttpServletRequest request, HttpServletResponse response) {
+	public static String performSubmit(HttpServletRequest request, HttpServletResponse response) throws Exception {
 
 		String msg = null;
 		String email = "?";
+		ContentContext ctx = ContentContext.getContentContext(request, response);
+		RequestService requestService = RequestService.getInstance(request);
+		ContentService content = ContentService.getInstance(request);
 		try {
 			msg = GenericForm.performSubmit(request, response);
 
-			ContentContext ctx = ContentContext.getContentContext(request, response);
 			GlobalContext globalContext = GlobalContext.getInstance(ctx.getRequest());
 			IUserFactory userFactory = UserFactory.createUserFactory(globalContext, request.getSession());
 
@@ -52,6 +57,9 @@ public class GenericFormForRegistering extends GenericForm {
 		} catch (UserAllreadyExistException e) {
 			request.removeAttribute("valid");
 			request.setAttribute("userExist", email);
+			GenericForm comp = (GenericForm) content.getComponent(ctx, requestService.getParameter("comp_id", null));
+			request.setAttribute("msg", new GenericMessage(comp.getLocalConfig(false).getProperty("message.user-allready-exist"), GenericMessage.ERROR));
+			request.setAttribute("error", e.getMessage());
 			e.printStackTrace();
 		} catch (Exception e) {
 			request.removeAttribute("valid");
