@@ -9,7 +9,7 @@ import javax.servlet.http.HttpServletResponse;
 import org.javlo.actions.IAction;
 import org.javlo.component.core.AbstractVisualComponent;
 import org.javlo.context.ContentContext;
-import org.javlo.exception.RessourceNotFoundException;
+import org.javlo.exception.ResourceNotFoundException;
 import org.javlo.helper.Logger;
 import org.javlo.i18n.I18nAccess;
 import org.javlo.message.GenericMessage;
@@ -67,7 +67,7 @@ public abstract class FormComponent extends AbstractVisualComponent implements I
 		return "not editable component.";
 	}
 
-	public String getErrorMessage(ContentContext ctx, String fieldName) throws RessourceNotFoundException {
+	public String getErrorMessage(ContentContext ctx, String fieldName) throws ResourceNotFoundException {
 		String msg = getForm(ctx).getErrorMessage(fieldName);
 		if ((msg == null) || (msg.trim().length() == 0)) {
 			msg = "&nbsp;";
@@ -82,7 +82,7 @@ public abstract class FormComponent extends AbstractVisualComponent implements I
 	/**
 	 * @see org.javlo.itf.IContentVisualComponent#getViewText(java.lang.String)
 	 */
-	public String getFormViewText(ContentContext ctx, String key) throws RessourceNotFoundException {
+	public String getFormViewText(ContentContext ctx, String key) throws ResourceNotFoundException {
 		I18nAccess i18n = null;
 		String res = "ERROR I18N ACCESS.";
 		try {
@@ -94,7 +94,7 @@ public abstract class FormComponent extends AbstractVisualComponent implements I
 		return res;
 	}
 
-	public String getHelpMessage(ContentContext ctx, String fieldName) throws RessourceNotFoundException {
+	public String getHelpMessage(ContentContext ctx, String fieldName) throws ResourceNotFoundException {
 		String msg = getForm(ctx).getHelpMessage(fieldName);
 		if ((msg == null) || (msg.trim().length() == 0)) {
 			msg = "&nbsp;";
@@ -104,7 +104,7 @@ public abstract class FormComponent extends AbstractVisualComponent implements I
 		return msg;
 	}
 
-	public GenericMessage getI18nMessage(ContentContext ctx, String fieldName) throws RessourceNotFoundException {
+	public GenericMessage getI18nMessage(ContentContext ctx, String fieldName) throws ResourceNotFoundException {
 		GenericMessage msg = getMessage(ctx, fieldName);
 		if (msg != null) {
 			msg = new GenericMessage(getViewText(ctx, msg.getMessage()), msg.getType());
@@ -120,7 +120,7 @@ public abstract class FormComponent extends AbstractVisualComponent implements I
 			String i18nMsg;
 			try {
 				i18nMsg = getViewText(ctx, msg.getMessage());
-			} catch (RessourceNotFoundException e) {
+			} catch (ResourceNotFoundException e) {
 				i18nMsg = "[key: " + msg.getMessage() + "] fatal error : " + e.getMessage();
 			}
 			return new GenericMessage(i18nMsg, msg.getType());

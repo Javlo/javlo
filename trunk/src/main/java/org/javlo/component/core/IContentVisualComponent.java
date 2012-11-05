@@ -12,7 +12,7 @@ import java.util.Map;
 
 import org.javlo.component.config.ComponentConfig;
 import org.javlo.context.ContentContext;
-import org.javlo.exception.RessourceNotFoundException;
+import org.javlo.exception.ResourceNotFoundException;
 import org.javlo.message.GenericMessage;
 import org.javlo.navigation.MenuElement;
 import org.javlo.utils.SuffixPrefix;
@@ -210,9 +210,9 @@ public interface IContentVisualComponent {
 	 * @param key
 	 *            the key of the text
 	 * @return the text in the current language
-	 * @throws RessourceNotFoundException
+	 * @throws ResourceNotFoundException
 	 */
-	public String getViewText(ContentContext ctx, String key) throws RessourceNotFoundException;
+	public String getViewText(ContentContext ctx, String key) throws ResourceNotFoundException;
 
 	/**
 	 * get a internationalized text, in the languague of the edition.
@@ -229,9 +229,9 @@ public interface IContentVisualComponent {
 	 * @param key
 	 *            the of the error message
 	 * @return a error message in current view language
-	 * @throws RessourceNotFoundException
+	 * @throws ResourceNotFoundException
 	 */
-	public String getErrorMessage(String fieldName) throws RessourceNotFoundException;
+	public String getErrorMessage(String fieldName) throws ResourceNotFoundException;
 
 	/**
 	 * get <b>a copy</b> of the content of the component

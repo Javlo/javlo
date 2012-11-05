@@ -14,7 +14,7 @@ import java.util.List;
 import org.javlo.component.core.AbstractVisualComponent;
 import org.javlo.component.image.IImageTitle;
 import org.javlo.context.ContentContext;
-import org.javlo.exception.RessourceNotFoundException;
+import org.javlo.exception.ResourceNotFoundException;
 import org.javlo.helper.StringHelper;
 import org.javlo.helper.URLHelper;
 import org.javlo.helper.XHTMLHelper;
@@ -392,7 +392,7 @@ public class ChildrenLink extends AbstractVisualComponent implements IImageTitle
 	}
 
 	@Override
-	protected void init() throws RessourceNotFoundException {
+	protected void init() throws ResourceNotFoundException {
 		if (getValue() == null) {
 			setValue(LABEL);
 		}

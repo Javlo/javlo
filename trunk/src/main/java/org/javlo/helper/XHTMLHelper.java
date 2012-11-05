@@ -46,7 +46,7 @@ import org.javlo.context.ContentContext;
 import org.javlo.context.EditContext;
 import org.javlo.context.GlobalContext;
 import org.javlo.data.InfoBean;
-import org.javlo.exception.RessourceNotFoundException;
+import org.javlo.exception.ResourceNotFoundException;
 import org.javlo.helper.XMLManipulationHelper.BadXMLException;
 import org.javlo.helper.XMLManipulationHelper.TagDescription;
 import org.javlo.helper.Comparator.DoubleArrayComparator;
@@ -206,7 +206,7 @@ public class XHTMLHelper {
 		}
 	}
 
-	public static String getCheckbox(ContentContext ctx, String field, FormComponent formComponent) throws RessourceNotFoundException {
+	public static String getCheckbox(ContentContext ctx, String field, FormComponent formComponent) throws ResourceNotFoundException {
 
 		StringWriter res = new StringWriter();
 		PrintWriter out = new PrintWriter(res);
@@ -229,7 +229,7 @@ public class XHTMLHelper {
 		return res.toString();
 	}
 
-	public static String getCheckbox(String field, boolean value) throws RessourceNotFoundException {
+	public static String getCheckbox(String field, boolean value) throws ResourceNotFoundException {
 
 		StringWriter res = new StringWriter();
 		PrintWriter out = new PrintWriter(res);
@@ -1139,7 +1139,7 @@ public class XHTMLHelper {
 		return writer.toString();
 	}
 
-	public static String getRadio(String field, String radioValue, String value) throws RessourceNotFoundException {
+	public static String getRadio(String field, String radioValue, String value) throws ResourceNotFoundException {
 
 		StringWriter res = new StringWriter();
 		PrintWriter out = new PrintWriter(res);
@@ -1229,7 +1229,7 @@ public class XHTMLHelper {
 		return getInputOneSelect(inputName, typeSelect, currentValue);
 	}
 
-	public static String getRowCheckbox(ContentContext ctx, String field, String label, String value, GenericMessage message) throws RessourceNotFoundException {
+	public static String getRowCheckbox(ContentContext ctx, String field, String label, String value, GenericMessage message) throws ResourceNotFoundException {
 
 		StringWriter res = new StringWriter();
 		PrintWriter out = new PrintWriter(res);
@@ -1255,7 +1255,7 @@ public class XHTMLHelper {
 		return res.toString();
 	}
 
-	public static String getRowInput(ContentContext ctx, String field, FormComponent formComponent) throws FileNotFoundException, RessourceNotFoundException, IOException {
+	public static String getRowInput(ContentContext ctx, String field, FormComponent formComponent) throws FileNotFoundException, ResourceNotFoundException, IOException {
 
 		return getRowInput(ctx, field, formComponent, "text");
 	}
@@ -1267,11 +1267,11 @@ public class XHTMLHelper {
 	 * @param inputType
 	 *            if equals to "checkbox", it actually calls getRowCheckbox(...)
 	 * @return
-	 * @throws RessourceNotFoundException
+	 * @throws ResourceNotFoundException
 	 * @throws FileNotFoundException
 	 * @throws IOException
 	 */
-	public static String getRowInput(ContentContext ctx, String field, FormComponent formComponent, String inputType) throws RessourceNotFoundException, FileNotFoundException, IOException {
+	public static String getRowInput(ContentContext ctx, String field, FormComponent formComponent, String inputType) throws ResourceNotFoundException, FileNotFoundException, IOException {
 
 		String result;
 		String label = formComponent.getViewText(ctx, "form." + field);
@@ -1286,7 +1286,7 @@ public class XHTMLHelper {
 		return result;
 	}
 
-	public static String getRowInput(ContentContext ctx, String field, FormComponent formComponent, String[][] content) throws RessourceNotFoundException, FileNotFoundException, IOException {
+	public static String getRowInput(ContentContext ctx, String field, FormComponent formComponent, String[][] content) throws ResourceNotFoundException, FileNotFoundException, IOException {
 
 		// ByteArrayOutputStream outStream = new ByteArrayOutputStream();
 		// PrintWriter out = new PrintWriter(outStream);
@@ -1296,15 +1296,15 @@ public class XHTMLHelper {
 		return getRowInput(ctx, field, label, value, message, content);
 	}
 
-	public static String getRowInput(ContentContext ctx, String field, String value, GenericMessage message) throws RessourceNotFoundException {
+	public static String getRowInput(ContentContext ctx, String field, String value, GenericMessage message) throws ResourceNotFoundException {
 		return getRowInput(ctx, field, field, value, message, "text");
 	}
 
-	public static String getRowInput(ContentContext ctx, String field, String value, String message) throws RessourceNotFoundException {
+	public static String getRowInput(ContentContext ctx, String field, String value, String message) throws ResourceNotFoundException {
 		return getRowInput(ctx, field, field, value, new GenericMessage(message, GenericMessage.ERROR), "text");
 	}
 
-	public static String getRowInput(ContentContext ctx, String field, String label, String value, GenericMessage message, String type) throws RessourceNotFoundException {
+	public static String getRowInput(ContentContext ctx, String field, String label, String value, GenericMessage message, String type) throws ResourceNotFoundException {
 
 		ByteArrayOutputStream outStream = new ByteArrayOutputStream();
 		PrintWriter out = new PrintWriter(outStream);
@@ -1356,7 +1356,7 @@ public class XHTMLHelper {
 
 	}
 
-	public static String getRowInputOneSelect(ContentContext ctx, String field, String[] content, FormComponent formComponent) throws RessourceNotFoundException {
+	public static String getRowInputOneSelect(ContentContext ctx, String field, String[] content, FormComponent formComponent) throws ResourceNotFoundException {
 
 		StringWriter res = new StringWriter();
 		PrintWriter out = new PrintWriter(res);
@@ -1389,12 +1389,12 @@ public class XHTMLHelper {
 		return res.toString();
 	}
 
-	public static String getRowPassword(ContentContext ctx, String field, FormComponent formComponent) throws FileNotFoundException, RessourceNotFoundException, IOException {
+	public static String getRowPassword(ContentContext ctx, String field, FormComponent formComponent) throws FileNotFoundException, ResourceNotFoundException, IOException {
 
 		return getRowInput(ctx, field, formComponent, "password");
 	}
 
-	public static String getRowTextArea(ContentContext ctx, FormComponent formComponent, String field) throws RessourceNotFoundException {
+	public static String getRowTextArea(ContentContext ctx, FormComponent formComponent, String field) throws ResourceNotFoundException {
 
 		// TODO use getActionGroupName() instead of "form"
 		String label = formComponent.getViewText(ctx, "form." + field);

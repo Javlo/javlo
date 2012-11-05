@@ -23,7 +23,7 @@ import org.javlo.component.meta.TimeRangeComponent;
 import org.javlo.config.StaticConfig;
 import org.javlo.context.ContentContext;
 import org.javlo.context.GlobalContext;
-import org.javlo.exception.RessourceNotFoundException;
+import org.javlo.exception.ResourceNotFoundException;
 import org.javlo.helper.PaginationContext;
 import org.javlo.helper.ResourceHelper;
 import org.javlo.helper.StringHelper;
@@ -195,6 +195,10 @@ public class Multimedia extends TimeRangeComponent implements IImageTitle {
 		return ctx;
 	}
 
+	private boolean contentVideoOnlyShared(ContentContext ctx) {
+		return StringHelper.isTrue(getConfig(ctx).getProperty("only-shared", null));
+	}
+
 	protected List<MultimediaResource> getContentVideo(ContentContext ctx) throws Exception {
 		ContentService content = ContentService.getInstance(ctx.getRequest());
 		List<MultimediaResource> outResources = new LinkedList<MultimediaResource>();
@@ -202,7 +206,7 @@ public class Multimedia extends TimeRangeComponent implements IImageTitle {
 		for (IContentVisualComponent comp : allComps) {
 			if (comp instanceof IVideo) {
 				IVideo video = (IVideo) comp;
-				if (video.isShared(ctx)) {
+				if (video.isShared(ctx) && contentVideoOnlyShared(ctx)) {
 					MultimediaResource resource = new MultimediaResource();
 					ContentContext lgCtx = getValidVideoCtx(ctx, video);
 					resource.setURL(video.getURL(lgCtx));
@@ -538,7 +542,7 @@ public class Multimedia extends TimeRangeComponent implements IImageTitle {
 		return TYPE;
 	}
 
-	protected MultimediaResource getFirstRessource(ContentContext ctx) throws Exception {
+	protected MultimediaResource getFirstResource(ContentContext ctx) throws Exception {
 		Collection<File> mulFiles = getAllMultimediaFiles(ctx);
 		if (mulFiles.size() == 0) {
 			return null;
@@ -708,7 +712,7 @@ public class Multimedia extends TimeRangeComponent implements IImageTitle {
 	}
 
 	@Override
-	protected void init() throws RessourceNotFoundException {
+	protected void init() throws ResourceNotFoundException {
 		initDate = false;
 		super.init();
 	}
@@ -813,7 +817,7 @@ public class Multimedia extends TimeRangeComponent implements IImageTitle {
 	@Override
 	public String getImageDescription(ContentContext ctx) {
 		try {
-			return getFirstRessource(ctx).getDescription();
+			return getFirstResource(ctx).getDescription();
 		} catch (Exception e) {
 			e.printStackTrace();
 			return "";
@@ -823,7 +827,7 @@ public class Multimedia extends TimeRangeComponent implements IImageTitle {
 	@Override
 	public String getResourceURL(ContentContext ctx) {
 		try {
-			return getFirstRessource(ctx).getPreviewURL();
+			return getFirstResource(ctx).getPreviewURL();
 		} catch (Exception e) {
 			e.printStackTrace();
 			return "";
@@ -833,7 +837,7 @@ public class Multimedia extends TimeRangeComponent implements IImageTitle {
 	@Override
 	public String getImageLinkURL(ContentContext ctx) {
 		try {
-			return getFirstRessource(ctx).getURL();
+			return getFirstResource(ctx).getURL();
 		} catch (Exception e) {
 			e.printStackTrace();
 			return "";
@@ -843,7 +847,7 @@ public class Multimedia extends TimeRangeComponent implements IImageTitle {
 	@Override
 	public boolean isImageValid(ContentContext ctx) {
 		try {
-			return getFirstRessource(ctx) != null;
+			return getFirstResource(ctx) != null;
 		} catch (Exception e) {
 			return false;
 		}

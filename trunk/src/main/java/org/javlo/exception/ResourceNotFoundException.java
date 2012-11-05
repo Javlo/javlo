@@ -7,13 +7,13 @@ package org.javlo.exception;
  * @author pvandermaesen
  * Exception when a ressource can not be found.
  */
-public class RessourceNotFoundException extends Exception {
+public class ResourceNotFoundException extends Exception {
 
-	public RessourceNotFoundException(Throwable cause) {
+	public ResourceNotFoundException(Throwable cause) {
 		super(cause);
 	}
 
-	public RessourceNotFoundException(String msg) {
+	public ResourceNotFoundException(String msg) {
 		super(msg);
 	}
 }

@@ -11,7 +11,7 @@ import java.util.Date;
 import org.javlo.component.core.AbstractVisualComponent;
 import org.javlo.component.core.IDate;
 import org.javlo.context.ContentContext;
-import org.javlo.exception.RessourceNotFoundException;
+import org.javlo.exception.ResourceNotFoundException;
 import org.javlo.helper.StringHelper;
 import org.javlo.i18n.I18nAccess;
 import org.javlo.service.RequestService;
@@ -75,7 +75,7 @@ public class DateComponent extends AbstractVisualComponent implements IDate {
 	protected boolean initDate = true;
 
 	@Override
-	protected void init() throws RessourceNotFoundException {
+	protected void init() throws ResourceNotFoundException {
 		super.init();
 		if (getDate() == null && initDate) {
 			setDate(new Date());

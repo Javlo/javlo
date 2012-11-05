@@ -10,7 +10,7 @@ import java.util.GregorianCalendar;
 import java.util.logging.Logger;
 
 import org.javlo.context.ContentContext;
-import org.javlo.exception.RessourceNotFoundException;
+import org.javlo.exception.ResourceNotFoundException;
 import org.javlo.helper.StringHelper;
 import org.javlo.service.RequestService;
 
@@ -34,7 +34,7 @@ public class TimeRangeComponent extends DateComponent {
 	}
 
 	@Override
-	protected void init() throws RessourceNotFoundException {
+	protected void init() throws ResourceNotFoundException {
 		super.init();
 		if (getEndDate() == null && initDate) {
 			Calendar calStart = GregorianCalendar.getInstance();
