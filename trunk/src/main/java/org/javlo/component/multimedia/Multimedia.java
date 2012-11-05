@@ -206,7 +206,7 @@ public class Multimedia extends TimeRangeComponent implements IImageTitle {
 		for (IContentVisualComponent comp : allComps) {
 			if (comp instanceof IVideo) {
 				IVideo video = (IVideo) comp;
-				if (video.isShared(ctx) && contentVideoOnlyShared(ctx)) {
+				if (video.isShared(ctx) || !contentVideoOnlyShared(ctx)) {
 					MultimediaResource resource = new MultimediaResource();
 					ContentContext lgCtx = getValidVideoCtx(ctx, video);
 					resource.setURL(video.getURL(lgCtx));
