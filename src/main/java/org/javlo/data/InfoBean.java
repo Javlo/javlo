@@ -117,6 +117,10 @@ public class InfoBean {
 		return ctx.getContentLanguage();
 	}
 
+	public String getRequestContentLanguage() {
+		return ctx.getRequestContentLanguage();
+	}
+
 	public String getLanguage() {
 		return ctx.getLanguage();
 	}
