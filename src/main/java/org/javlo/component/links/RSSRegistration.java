@@ -8,7 +8,7 @@ import java.util.List;
 
 import org.javlo.component.properties.AbstractPropertiesComponent;
 import org.javlo.context.ContentContext;
-import org.javlo.exception.RessourceNotFoundException;
+import org.javlo.exception.ResourceNotFoundException;
 import org.javlo.helper.NavigationHelper;
 import org.javlo.helper.XHTMLHelper;
 import org.javlo.i18n.I18nAccess;
@@ -55,7 +55,7 @@ public class RSSRegistration extends AbstractPropertiesComponent {
 	}
 
 	@Override
-	protected void init() throws RessourceNotFoundException {
+	protected void init() throws ResourceNotFoundException {
 	}
 
 	@Override

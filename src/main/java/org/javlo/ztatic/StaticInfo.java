@@ -60,15 +60,15 @@ public class StaticInfo {
 		}
 
 		public String getTitle() {
-			return staticInfo.getTitle(ctx);
+			return staticInfo.getManualTitle(ctx);
 		}
 
 		public String getDescription() {
-			return staticInfo.getDescription(ctx);
+			return staticInfo.getManualDescription(ctx);
 		}
 
 		public String getLocation() {
-			return staticInfo.getLocation(ctx);
+			return staticInfo.getManualLocation(ctx);
 		}
 
 		public String getShortDate() {

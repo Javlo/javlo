@@ -47,7 +47,7 @@ import org.javlo.config.StaticConfig;
 import org.javlo.context.ContentContext;
 import org.javlo.context.EditContext;
 import org.javlo.context.GlobalContext;
-import org.javlo.exception.RessourceNotFoundException;
+import org.javlo.exception.ResourceNotFoundException;
 import org.javlo.filter.DirectoryFilter;
 import org.javlo.helper.Comparator.FileComparator;
 import org.javlo.service.resource.Resource;
@@ -417,11 +417,11 @@ public class ResourceHelper {
 		return formatChecksum(crc32);
 	}
 
-	public static final InputStream getConfigFile(ServletContext servletContext, String fileName) throws RessourceNotFoundException {
+	public static final InputStream getConfigFile(ServletContext servletContext, String fileName) throws ResourceNotFoundException {
 		String ressourceName = CONFIG_DIR + "/" + fileName;
 		InputStream in = servletContext.getResourceAsStream(ressourceName);
 		if (in == null) {
-			throw new RessourceNotFoundException("ressource not found : " + ressourceName);
+			throw new ResourceNotFoundException("ressource not found : " + ressourceName);
 		}
 		return in;
 	}

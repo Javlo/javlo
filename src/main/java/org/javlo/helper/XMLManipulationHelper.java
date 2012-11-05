@@ -251,7 +251,7 @@ public class XMLManipulationHelper {
 	 *            if jsp null no file is create -> just for test the HTML structure
 	 * @param options
 	 * @param areas
-	 * @param ressources
+	 * @param resources
 	 * @param messages
 	 *            contains the message for the final user
 	 * @partam ids, fill the list with html is found on convertion
@@ -260,12 +260,12 @@ public class XMLManipulationHelper {
 	 * @throws IOException
 	 * @throws BadXMLException
 	 */
-	private static int convertHTMLtoJSP(GlobalContext globalContext, I18nAccess i18nAccess, File htmlFile, File jspFile, Map<String, String> options, List<String> areas, List<String> ressources, List<TemplatePlugin> templatePlugins, List<GenericMessage> messages, List<String> ids, boolean isMail) throws IOException {
+	private static int convertHTMLtoJSP(GlobalContext globalContext, I18nAccess i18nAccess, File htmlFile, File jspFile, Map<String, String> options, List<String> areas, List<String> resources, List<TemplatePlugin> templatePlugins, List<GenericMessage> messages, List<String> ids, boolean isMail) throws IOException {
 
 		String templateVersion = StringHelper.getRandomId();
 
-		if (ressources == null) {
-			ressources = new LinkedList<String>();
+		if (resources == null) {
+			resources = new LinkedList<String>();
 		}
 		if (messages == null) {
 			messages = new LinkedList<GenericMessage>();
@@ -440,7 +440,7 @@ public class XMLManipulationHelper {
 
 					if ((hrefValue != null) && (!StringHelper.isURL(hrefValue))) {
 						String newLinkGeneratorIf = "<%if (!XHTMLHelper.allReadyInsered(ctx, \"" + hrefValue + "\")) {%>";
-						ressources.add(hrefValue);
+						resources.add(hrefValue);
 						attributes.put("href", "<%=URLHelper.createStaticTemplateURL(ctx,\"/" + hrefValue + "\", \"" + templateVersion + "\")%>");
 						remplacement.addReplacement(tags[i].getOpenStart(), tags[i].getOpenEnd() + 1, newLinkGeneratorIf + tags[i].toString() + "<%}%>");
 					}
@@ -574,7 +574,7 @@ public class XMLManipulationHelper {
 				/* resource */
 				String srcValue = attributes.get("src");
 				if ((srcValue != null) && (!StringHelper.isURL(srcValue))) {
-					ressources.add(srcValue);
+					resources.add(srcValue);
 					if (tags[i].getName().equalsIgnoreCase("script")) {
 						String newLinkGeneratorIf = "<%if (!XHTMLHelper.allReadyInsered(ctx, \"" + srcValue + "\")) {%>";
 						attributes.put("src", "<%=URLHelper.createStaticTemplateURL(ctx,\"/" + srcValue + "\")%>");
@@ -612,7 +612,7 @@ public class XMLManipulationHelper {
 				if (url.startsWith("'")) {
 					url = url.substring(1, url.length() - 1);
 				}
-				ressources.add(url);
+				resources.add(url);
 				String newURL = "'<%=URLHelper.createStaticTemplateURL(ctx,\"" + url + "\")%>'";
 				remplacement.addReplacement(urlIndex + 4, closeIndex, newURL);
 				urlIndex = content.indexOf("url(", closeIndex);
@@ -666,12 +666,12 @@ public class XMLManipulationHelper {
 		return convertHTMLtoJSP(null, null, htmlFile, jspFile, Collections.EMPTY_MAP, Collections.EMPTY_LIST, Collections.EMPTY_LIST, Collections.EMPTY_LIST, null, null, true);
 	}
 
-	public static int convertHTMLtoTemplate(GlobalContext globalContext, File htmlFile, File jspFile, Map<String, String> tagsID, List<String> areas, List<String> ressources, List<TemplatePlugin> templatePlugins, List<String> ids, boolean isMailing) throws IOException, BadXMLException {
-		return convertHTMLtoJSP(globalContext, null, htmlFile, jspFile, tagsID, areas, ressources, templatePlugins, null, ids, isMailing);
+	public static int convertHTMLtoTemplate(GlobalContext globalContext, File htmlFile, File jspFile, Map<String, String> tagsID, List<String> areas, List<String> resources, List<TemplatePlugin> templatePlugins, List<String> ids, boolean isMailing) throws IOException, BadXMLException {
+		return convertHTMLtoJSP(globalContext, null, htmlFile, jspFile, tagsID, areas, resources, templatePlugins, null, ids, isMailing);
 	}
 
-	public static int convertHTMLtoTemplate(GlobalContext globalContext, I18nAccess i18nAccess, File htmlFile, File jspFile, Map<String, String> tagsID, List<String> areas, List<String> ressources, List<TemplatePlugin> templatePlugins, List<GenericMessage> messages) throws IOException, BadXMLException {
-		return convertHTMLtoJSP(globalContext, i18nAccess, htmlFile, jspFile, tagsID, areas, ressources, templatePlugins, messages, null, false);
+	public static int convertHTMLtoTemplate(GlobalContext globalContext, I18nAccess i18nAccess, File htmlFile, File jspFile, Map<String, String> tagsID, List<String> areas, List<String> resources, List<TemplatePlugin> templatePlugins, List<GenericMessage> messages) throws IOException, BadXMLException {
+		return convertHTMLtoJSP(globalContext, i18nAccess, htmlFile, jspFile, tagsID, areas, resources, templatePlugins, messages, null, false);
 	}
 
 	private static String getAfterBodyCode() throws IOException {

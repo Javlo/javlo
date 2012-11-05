@@ -32,7 +32,7 @@ import org.javlo.component.dynamic.DynamicComponent;
 import org.javlo.config.StaticConfig;
 import org.javlo.context.ContentContext;
 import org.javlo.context.GlobalContext;
-import org.javlo.exception.RessourceNotFoundException;
+import org.javlo.exception.ResourceNotFoundException;
 import org.javlo.fields.Field;
 import org.javlo.fields.FieldFactory;
 import org.javlo.helper.NavigationHelper;
@@ -554,7 +554,7 @@ public class ReactionComponent extends DynamicComponent implements IAction {
 	}
 
 	@Override
-	protected void init() throws RessourceNotFoundException {
+	protected void init() throws ResourceNotFoundException {
 		super.init();
 		setProperties(new Properties());
 	}

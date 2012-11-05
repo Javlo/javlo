@@ -42,7 +42,7 @@ import org.javlo.component.config.ComponentConfig;
 import org.javlo.context.ContentContext;
 import org.javlo.context.EditContext;
 import org.javlo.context.GlobalContext;
-import org.javlo.exception.RessourceNotFoundException;
+import org.javlo.exception.ResourceNotFoundException;
 import org.javlo.helper.ConfigHelper;
 import org.javlo.helper.ResourceHelper;
 import org.javlo.helper.ServletHelper;
@@ -566,7 +566,7 @@ public abstract class AbstractVisualComponent implements IContentVisualComponent
 	}
 
 	@Override
-	public String getErrorMessage(String fieldName) throws RessourceNotFoundException {
+	public String getErrorMessage(String fieldName) throws ResourceNotFoundException {
 		return "no error message defined.";
 	}
 
@@ -1080,7 +1080,7 @@ public abstract class AbstractVisualComponent implements IContentVisualComponent
 	}
 
 	@Override
-	public String getViewText(ContentContext ctx, String key) throws RessourceNotFoundException {
+	public String getViewText(ContentContext ctx, String key) throws ResourceNotFoundException {
 
 		Properties i18n = i18nView.get(ctx.getRequestContentLanguage());
 		if (i18n == null) {
@@ -1090,7 +1090,7 @@ public abstract class AbstractVisualComponent implements IContentVisualComponent
 			InputStream in = null;
 			try {
 				in = ConfigHelper.getComponentConfigRessourceAsStream(srvCtx, getComponentPath(), fileName);
-			} catch (RessourceNotFoundException e) {
+			} catch (ResourceNotFoundException e) {
 				// ressource can not be found.
 				e.printStackTrace();
 				logger.severe(e.getMessage());
@@ -1100,7 +1100,7 @@ public abstract class AbstractVisualComponent implements IContentVisualComponent
 					i18n.load(in);
 					i18nView.put(ctx.getRequestContentLanguage(), i18n);
 				} catch (Exception e) {
-					throw new RessourceNotFoundException("can not load the ressource : " + fileName);
+					throw new ResourceNotFoundException("can not load the ressource : " + fileName);
 				}
 			}
 		}
@@ -1295,7 +1295,7 @@ public abstract class AbstractVisualComponent implements IContentVisualComponent
 		}
 	}
 
-	protected void init() throws RessourceNotFoundException {
+	protected void init() throws ResourceNotFoundException {
 		// loadViewData();
 		msg = null;
 	}

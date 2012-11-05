@@ -18,7 +18,7 @@ import java.util.logging.Logger;
 
 import javax.servlet.ServletContext;
 
-import org.javlo.exception.RessourceNotFoundException;
+import org.javlo.exception.ResourceNotFoundException;
 import org.javlo.filter.PropertiesFilter;
 
 /**
@@ -82,12 +82,12 @@ public class ConfigHelper {
 		reader.close();
 	}
 
-	public static final InputStream getComponentConfigRessourceAsStream(ServletContext servletContext, String type, String fileName) throws RessourceNotFoundException {
+	public static final InputStream getComponentConfigRessourceAsStream(ServletContext servletContext, String type, String fileName) throws ResourceNotFoundException {
 
 		String ressourceName = CONFIG_COMPONENT_DIR + "/" + type + fileName;
 		InputStream in = servletContext.getResourceAsStream(ressourceName);
 		if (in == null) {
-			throw new RessourceNotFoundException("ressource not found : " + ressourceName);
+			throw new ResourceNotFoundException("ressource not found : " + ressourceName);
 		} else {
 			logger.fine("load ressource : " + ressourceName);
 		}
