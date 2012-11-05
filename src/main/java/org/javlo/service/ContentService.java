@@ -112,19 +112,30 @@ public class ContentService {
 	}
 
 	private static IContentVisualComponent searchComponent(ContentContext ctx, MenuElement page, String id) throws Exception {
-		ContentElementList content = page.getAllContent(ctx); /* --TRACE-- 23 juil. 2009 13:20:26 */// TODO: remove trace);
-
-		while (content.hasNext(ctx)) {
-			IContentVisualComponent elem = content.next(ctx);
+		ContentContext noAreaCtx = ctx.getContextWithoutArea();
+		ContentContext ctxWithContent = noAreaCtx.getContextWithContent(page);
+		if (ctxWithContent == null) {
+			ctxWithContent = noAreaCtx;
+		}
+		ContentElementList content = page.getAllContent(ctxWithContent);
+		while (content.hasNext(ctxWithContent)) {
+			IContentVisualComponent elem = content.next(ctxWithContent);
 			if (elem.getId().equals(id)) {
 				return elem;
 			}
 		}
-		Collection<MenuElement> children = page.getChildMenuElementsList();
+		MenuElement[] children = page.getAllChildren();
 		for (MenuElement menuElement : children) {
-			IContentVisualComponent comp = searchComponent(ctx, menuElement, id);
-			if (comp != null) {
-				return comp;
+			ctxWithContent = noAreaCtx.getContextWithContent(menuElement);
+			if (ctxWithContent == null) {
+				ctxWithContent = noAreaCtx;
+			}
+			content = menuElement.getAllContent(ctxWithContent);
+			while (content.hasNext(ctxWithContent)) {
+				IContentVisualComponent elem = content.next(ctxWithContent);
+				if (elem.getId().equals(id)) {
+					return elem;
+				}
 			}
 		}
 		return null;
@@ -271,6 +282,7 @@ public class ContentService {
 		}
 		if (component == null) {
 			component = searchComponent(ctx, getNavigation(ctx), id);
+			System.out.println("***** ContentService.getComponent : component = " + component); // TODO: remove debug trace
 			if (component != null) {
 				components.put(id + ctx.getRenderMode(), new WeakReference<IContentVisualComponent>(component));
 			}
