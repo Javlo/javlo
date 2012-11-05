@@ -218,13 +218,15 @@ public class GenericForm extends AbstractVisualComponent implements IAction {
 		for (String key : keys) {
 			if (!key.equals("webaction") && !key.equals("comp_id") && !key.equals("captcha")) {
 				Object value = params.get(key);
-				String finalValue = "" + params.get(key);
+				String finalValue = requestService.getParameter(key, "");
 
 				if (key.equals(fakeField) && finalValue.trim().length() > 0) {
 					fakeFilled = true;
 				}
 
-				if (finalValue.trim().length() > 0 && StringHelper.containsUppercase(key)) { // needed field
+				System.out.println("***** GenericForm.performSubmit : finalValue = " + finalValue); // TODO: remove debug trace
+
+				if (finalValue.trim().length() == 0 && StringHelper.containsUppercase(key)) { // needed field
 					errorFields.add(key);
 					GenericMessage msg = new GenericMessage(comp.getLocalConfig(false).getProperty("error.required", "please could you fill all required fields."), GenericMessage.ERROR);
 					request.setAttribute("msg", msg);

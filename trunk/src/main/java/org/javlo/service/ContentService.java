@@ -282,7 +282,6 @@ public class ContentService {
 		}
 		if (component == null) {
 			component = searchComponent(ctx, getNavigation(ctx), id);
-			System.out.println("***** ContentService.getComponent : component = " + component); // TODO: remove debug trace
 			if (component != null) {
 				components.put(id + ctx.getRenderMode(), new WeakReference<IContentVisualComponent>(component));
 			}

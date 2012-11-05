@@ -59,6 +59,7 @@ public class XHTML extends AbstractVisualComponent {
 		return "";
 	}
 
+	@Override
 	public String getType() {
 		return TYPE;
 	}
@@ -66,7 +67,7 @@ public class XHTML extends AbstractVisualComponent {
 	@Override
 	public String getViewXHTMLCode(ContentContext ctx) throws Exception {
 
-		String outContent = XHTMLHelper.replaceJSTLData(ctx, getValue());
+		String outContent = getValue();
 
 		TagDescription[] tags = XMLManipulationHelper.searchAllTag(outContent, false);
 		StringRemplacementHelper remplacement = new StringRemplacementHelper();
@@ -83,7 +84,7 @@ public class XHTML extends AbstractVisualComponent {
 							}
 							hrefValue = URLHelper.createRSSURL(ctx, channel);
 							tag.getAttributes().put("href", hrefValue);
-						} else if ((hrefValue != null) && (!StringHelper.isURL(hrefValue)) && (!StringHelper.isMailURL(hrefValue))) {
+						} else if ((hrefValue != null) && (!StringHelper.isURL(hrefValue)) && (!StringHelper.isMailURL(hrefValue)) && !hrefValue.contains("${")) {
 							hrefValue = URLHelper.createURLCheckLg(ctx, hrefValue);
 							tag.getAttributes().put("href", hrefValue);
 						}
@@ -92,8 +93,10 @@ public class XHTML extends AbstractVisualComponent {
 				}
 			}
 		}
-		
-		return remplacement.start(outContent);
+
+		outContent = remplacement.start(outContent);
+
+		return XHTMLHelper.replaceJSTLData(ctx, outContent);
 	}
 
 	@Override

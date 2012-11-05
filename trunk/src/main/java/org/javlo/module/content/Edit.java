@@ -920,7 +920,7 @@ public class Edit extends AbstractModuleAction {
 			content.releaseViewNav(ctx, globalContext);
 
 			String msg = i18nAccess.getText("content.published");
-			MessageRepository.getInstance(ctx).setGlobalMessage(new GenericMessage(msg, GenericMessage.INFO));
+			MessageRepository.getInstance(ctx).setGlobalMessageAndNotification(ctx, new GenericMessage(msg, GenericMessage.INFO));
 
 			performSynchro(application, staticConfig, globalContext);
 
@@ -953,7 +953,7 @@ public class Edit extends AbstractModuleAction {
 
 			if (dblURL != null) {
 				msg = i18nAccess.getText("action.publish.error.same-url", new String[][] { { "url", dblURL } });
-				MessageRepository.getInstance(ctx).setGlobalMessage(new GenericMessage(msg, GenericMessage.ALERT));
+				MessageRepository.getInstance(ctx).setGlobalMessageAndNotification(ctx, new GenericMessage(msg, GenericMessage.ALERT));
 			}
 
 			// trick for PortletManager to clear view data, but should be generalized in some PublishManager
