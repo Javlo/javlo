@@ -117,18 +117,35 @@ public class ContentService {
 		if (ctxWithContent == null) {
 			ctxWithContent = noAreaCtx;
 		}
-		ContentElementList content = page.getAllContent(ctxWithContent);
+		/** search on current language **/
+		ContentElementList content = page.getAllContent(noAreaCtx);
+		while (content.hasNext(noAreaCtx)) {
+			IContentVisualComponent elem = content.next(noAreaCtx);
+			if (elem.getId().equals(id)) {
+				return elem;
+			}
+		}
+		/** search on content with real content **/
+		content = page.getAllContent(ctxWithContent);
 		while (content.hasNext(ctxWithContent)) {
 			IContentVisualComponent elem = content.next(ctxWithContent);
 			if (elem.getId().equals(id)) {
 				return elem;
 			}
 		}
+
 		MenuElement[] children = page.getAllChildren();
 		for (MenuElement menuElement : children) {
 			ctxWithContent = noAreaCtx.getContextWithContent(menuElement);
 			if (ctxWithContent == null) {
 				ctxWithContent = noAreaCtx;
+			}
+			content = menuElement.getAllContent(noAreaCtx);
+			while (content.hasNext(noAreaCtx)) {
+				IContentVisualComponent elem = content.next(noAreaCtx);
+				if (elem.getId().equals(id)) {
+					return elem;
+				}
 			}
 			content = menuElement.getAllContent(ctxWithContent);
 			while (content.hasNext(ctxWithContent)) {

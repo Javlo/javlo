@@ -668,6 +668,11 @@ public class Edit extends AbstractModuleAction {
 				}
 			}
 
+			if (elem == null) {
+				logger.severe("fatal error : component not found : " + compId + " (" + ctx + ')');
+				return "fatal error : component not found : " + compId;
+			}
+
 			if (elem.isModify()) {
 				elem.stored();
 			}
