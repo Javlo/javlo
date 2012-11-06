@@ -233,9 +233,7 @@ public class ContentElementList implements IContentComponentsList {
 				return res;
 			}
 		}
-		if (res == null) {
-			return getLabel();
-		}
+
 		return res;
 	}
 

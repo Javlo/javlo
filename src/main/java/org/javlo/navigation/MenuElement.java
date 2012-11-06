@@ -233,6 +233,24 @@ public class MenuElement implements Serializable {
 		public boolean isAllreadyShortURL() {
 			return page.isShortURL();
 		}
+
+		public String getForcedPageTitle() {
+			try {
+				return page.getForcedPageTitle(ctx);
+			} catch (Exception e) {
+				e.printStackTrace();
+				return null;
+			}
+		}
+
+		public String getPageTitle() {
+			try {
+				return page.getPageTitle(ctx);
+			} catch (Exception e) {
+				e.printStackTrace();
+				return null;
+			}
+		}
 	}
 
 	/**
@@ -248,6 +266,7 @@ public class MenuElement implements Serializable {
 		String title = null;
 		String subTitle = null;
 		String pageTitle = null;
+		String forcedPageTitle = null;
 		IImageTitle imageLink = null;
 		String linkOn = null;
 		Collection<IImageTitle> images = null;
@@ -546,6 +565,7 @@ public class MenuElement implements Serializable {
 			pageDescription.notInSearch = notInSearch(ctx);
 			pageDescription.pageRank = getPageRank(ctx);
 			pageDescription.pageTitle = getPageTitle(ctx);
+			pageDescription.forcedPageTitle = getForcedPageTitle(ctx);
 			pageDescription.subTitle = getSubTitle(ctx);
 			pageDescription.tags = getTags(ctx);
 			pageDescription.title = getTitle(ctx);
@@ -2289,6 +2309,31 @@ public class MenuElement implements Serializable {
 		return desc.pageRank;
 	}
 
+	/**
+	 * get the title of the page define in the content, empty string if no title defined.
+	 * 
+	 * @param ctx
+	 * @return
+	 * @throws Exception
+	 */
+	public String getForcedPageTitle(ContentContext ctx) throws Exception {
+		ContentContext newCtx = new ContentContext(ctx);
+		newCtx.setArea(null); // warning : check if the method is needed.
+
+		PageDescription desc = getPageDescriptionCached(newCtx.getRequestContentLanguage());
+
+		if (desc.forcedPageTitle != null) {
+			return desc.forcedPageTitle;
+		}
+
+		desc.forcedPageTitle = getContent(newCtx).getPageTitle();
+		if (desc.forcedPageTitle == null) {
+			desc.forcedPageTitle = "";
+		}
+
+		return desc.pageTitle;
+	}
+
 	public String getPageTitle(ContentContext ctx) throws Exception {
 
 		ContentContext newCtx = new ContentContext(ctx);
@@ -2300,12 +2345,10 @@ public class MenuElement implements Serializable {
 			return desc.pageTitle;
 		}
 
-		desc.pageTitle = getContent(newCtx).getPageTitle();
+		desc.pageTitle = getForcedPageTitle(newCtx);
 
-		if (desc.pageTitle != null) {
-			if ((desc.pageTitle.trim().length() == 0) && (name != null)) {
-				desc.pageTitle = name;
-			}
+		if (desc.pageTitle == null || desc.pageTitle.trim().length() == 0) {
+			desc.pageTitle = getLabel(ctx);
 		}
 		return desc.pageTitle;
 	}
