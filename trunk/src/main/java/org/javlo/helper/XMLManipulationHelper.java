@@ -917,7 +917,7 @@ public class XMLManipulationHelper {
 		out.newLine();
 		out.append("InfoBean infoBean = InfoBean.getCurrentInfoBean(request);");
 		out.newLine();
-		out.append("String currentTitle = currentPage.getContent(ctx).getPageTitle();");
+		out.append("String currentTitle = currentPage.getPageTitle(ctx);");
 		out.newLine();
 		out.append("String pageName = currentPage.getName();");
 		out.newLine();
