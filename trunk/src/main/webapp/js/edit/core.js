@@ -112,7 +112,6 @@ jQuery.fn.extend({
 				var refreshShadow = function(e) {
 					if (input.is(":checkbox, :radio")) {
 						shadowInput.prop("checked", input.prop("checked"));
-					//TODO } else if (input.is("select[multiple=multiple]")) {
 					} else {
 						shadowInput.val(input.val());
 					}
@@ -139,4 +138,16 @@ filter = function(filterStr,selector) {
 			return true;
 		}
 	}).addClass("hidden");
+}
+
+scrollToCenter = function(container, target) {
+     jQuery(container).animate({    	 
+         scrollTop: ((jQuery(target).offset().top+jQuery(container).scrollTop()) - jQuery(container).offset().top) - (jQuery(container).height()/2 + jQuery(target).height()/2) 
+     }, 500);	
+}
+
+scrollToFirstQuarter = function(container, target) {
+	jQuery(container).animate({    	 
+        scrollTop: ((jQuery(target).offset().top+jQuery(container).scrollTop()) - jQuery(container).offset().top) - (jQuery(container).height()/4 + jQuery(target).height()/2) 
+    }, 500);	
 }

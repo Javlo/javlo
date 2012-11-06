@@ -20,6 +20,26 @@ ul.menu {
 	margin-bottom: 10px;
 }
 
+.component .component-title {
+	display: block;
+	float: left;
+	padding: 6px 16px;
+	border-right: 1px solid #CCCCCC;
+	z-index: 10;	
+}
+
+.component.tabs ul { /* for place a not selectable title before jquery ui tabs */
+	position: static;
+}
+
+.new .component {
+	box-shadow: 3px 3px 3px #999999;
+}
+
+.ui-tabs-nav {
+	position: inherit;
+}
+
 .component input, .component textarea, .component select {
 	width: 60%;
 }

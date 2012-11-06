@@ -77,12 +77,12 @@ if (!StringHelper.isTrue(request.getParameter("noinsert")) && !StringHelper.isTr
 %>
 
 <div class="insert-line" id="insert-line-<%=previousId%>">
-	<a class="action-button ajax" href="${info.currentURL}?webaction=insert&previous=<%=previousId%>&type=<%=currentTypeComponent.getType()%>"><%=insertHere%></a><%
+	<a class="action-button ajax" onclick="scrollToFirstQuarter(jQuery('#content-edit'),this);" href="${info.currentURL}?webaction=insert&previous=<%=previousId%>&type=<%=currentTypeComponent.getType()%>"><%=insertHere%></a><%
 	if (pastePageHere != null) {
-	%><a class="action-button" href="${info.currentURL}?webaction=pastePage&previous=<%=previousId%>"><%=pastePageHere%></a><%
+	%><a class="action-button" onclick="scrollToFirstQuarter(jQuery('#content-edit'),this);" href="${info.currentURL}?webaction=pastePage&previous=<%=previousId%>"><%=pastePageHere%></a><%
 	}
 	if (pasteHere != null) {
-	%><a class="action-button ajax" href="${info.currentURL}?webaction=pasteComp&previous=<%=previousId%>"><%=pasteHere%></a><%
+	%><a class="action-button ajax" onclick="scrollToFirstQuarter(jQuery('#content-edit'),this);" href="${info.currentURL}?webaction=pasteComp&previous=<%=previousId%>"><%=pasteHere%></a><%
 	}%>
 </div>
 <div id="comp-child-<%=previousId%>"></div>
@@ -117,11 +117,11 @@ for (int i=0; i<components.length; i++) {
 	     %><%=((IContainer)comp).getOpenCode(ctx)%><%
 	
 	}%>
- <div id="comp-<%=comp.getId()%>" class="<%=comp.getType()%>">
+ <div id="comp-<%=comp.getId()%>" class="<%=comp.getType()%><%if (components.length==1) {%> new<%}%>">
  <input type="hidden" name="components" value="<%=comp.getId()%>" />
- <div class="tabs component">  	  
-      <ul> 
-      	  <li class="title"><span style="color: #<%=comp.getHexColor()%>"><%=comp.getComponentLabel(ctx, globalContext.getEditLanguage(request.getSession())) %></span></li>	
+ <div class="tabs component">
+ 	  <div class="component-title"><a style="color: #<%=comp.getHexColor()%>" href="#" onclick="scrollToFirstQuarter(jQuery('#content-edit'),this); return false;"><%=comp.getComponentLabel(ctx, globalContext.getEditLanguage(request.getSession())) %></a></div>  	  
+      <ul>      	  	
           <li><a href="#tab1<%=inputSuffix%>">${i18n.edit["global.content"]}</a></li>
           <li><a href="#tab2<%=inputSuffix%>">${i18n.edit["global.config"]}</a></li>          
           <%if (helpText != null) {%><li><a href="#tab3<%=inputSuffix%>">${i18n.edit["global.help"]}</a></li><%}%>
@@ -154,12 +154,12 @@ for (int i=0; i<components.length; i++) {
   </div><%
   if (!StringHelper.isTrue(request.getParameter("noinsert")) && !StringHelper.isTrue(request.getAttribute("lightInterface"))) {%>  
   <div class="insert-line" id="insert-line-<%=comp.getId()%>">
-	<a class="action-button ajax" href="${info.currentURL}?webaction=insert&previous=<%=comp.getId()%>&type=<%=currentTypeComponent.getType()%>"><%=insertHere%></a><%
+	<a class="action-button ajax" onclick="scrollToFirstQuarter(jQuery('#content-edit'),this);" href="${info.currentURL}?webaction=insert&previous=<%=comp.getId()%>&type=<%=currentTypeComponent.getType()%>"><%=insertHere%></a><%
 	if (pastePageHere != null) {
-	%><a class="action-button" href="${info.currentURL}?webaction=pastePage&previous=<%=comp.getId()%>"><%=pastePageHere%></a><%
+	%><a class="action-button" onclick="scrollToFirstQuarter(jQuery('#content-edit'),this);" href="${info.currentURL}?webaction=pastePage&previous=<%=comp.getId()%>"><%=pastePageHere%></a><%
 	}
 	if (pasteHere != null) {
-	%><a class="action-button ajax" href="${info.currentURL}?webaction=pasteComp&previous=<%=comp.getId()%>"><%=pasteHere%></a><%
+	%><a class="action-button ajax" onclick="scrollToFirstQuarter(jQuery('#content-edit'),this);" href="${info.currentURL}?webaction=pasteComp&previous=<%=comp.getId()%>"><%=pasteHere%></a><%
 	}%>
   </div>
  </div><%
