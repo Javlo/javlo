@@ -144,7 +144,7 @@ public abstract class ElementaryURLHelper {
 		return workingURL;
 	}
 
-	protected static final String createNoProtocolURL(ContentContext ctx, GlobalContext globalContext, String uri, boolean ajax, boolean withPathPrefix) {
+	protected static final String createNoProtocolURL(ContentContext ctx, GlobalContext globalContext, String uri, boolean ajax, boolean withPathPrefix, boolean widthEncodeURL) {
 		String newUri;
 		HttpServletRequest request = ctx.getRequest();
 
@@ -216,7 +216,7 @@ public abstract class ElementaryURLHelper {
 
 		String url = newUri;
 
-		if (!ctx.isAbsoluteURL()) {
+		if (!ctx.isAbsoluteURL() && widthEncodeURL) {
 			url = ctx.getResponse().encodeURL(newUri);
 		}
 
@@ -231,7 +231,7 @@ public abstract class ElementaryURLHelper {
 	public static final String createSSLURL(String uri, ContentContext ctx) {
 
 		GlobalContext globalContext = GlobalContext.getInstance(ctx.getRequest());
-		String sslURL = createNoProtocolURL(ctx, globalContext, uri, false, true);
+		String sslURL = createNoProtocolURL(ctx, globalContext, uri, false, true, true);
 		if (ctx.getRequest().getProtocol().toLowerCase().indexOf("http:") != -1) {
 			String host = ctx.getRequest().getServerName();
 			sslURL = "https://" + host + ':' + HTTPS_PORT + sslURL;
@@ -411,7 +411,7 @@ public abstract class ElementaryURLHelper {
 
 	}
 
-	protected static String createURL(ContentContext ctx, GlobalContext globalContext, String uri, boolean ajax, boolean forceTemplate, boolean withPathPrefix) {
+	protected static String createURL(ContentContext ctx, GlobalContext globalContext, String uri, boolean ajax, boolean forceTemplate, boolean withPathPrefix, boolean widthEncodeURL) {
 
 		if (uri == null) {
 			return "";
@@ -441,7 +441,7 @@ public abstract class ElementaryURLHelper {
 				uri = uri + urlSuffix;
 			}
 		}
-		String url = createNoProtocolURL(ctx, globalContext, uri, ajax, withPathPrefix);
+		String url = createNoProtocolURL(ctx, globalContext, uri, ajax, withPathPrefix, widthEncodeURL);
 
 		if (ctx.isAbsoluteURL()) {
 			if (ctx.getDMZServerInter() == null) {

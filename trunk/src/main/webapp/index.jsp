@@ -42,7 +42,7 @@ if ((template != null)&&(template.getHomeRenderer(globalContext) != null)) {
 %><jsp:include page="<%=template.getHomeRendererFullName(globalContext)%>"></jsp:include><%	
 } else {
 	ctx.setFormat("html");
-	String url = URLHelper.createURL(ctx);	
+	String url = URLHelper.createURLWithtoutEncodeURL(ctx, ctx.getPath());	
 	response.sendRedirect(url);
 	%><a href="<%=url%>"><%=url%></a><%
 }%>

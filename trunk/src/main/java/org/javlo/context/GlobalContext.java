@@ -243,6 +243,7 @@ public class GlobalContext implements Serializable {
 		if (contextKey == null) {
 			return null;
 		}
+		contextKey = contextKey.toLowerCase();
 		GlobalContext newInstance = getRealInstance(session, contextKey);
 		String alias = newInstance.getAliasOf();
 		if (alias.trim().length() > 0) {

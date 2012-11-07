@@ -65,7 +65,7 @@ public class URLHelper extends ElementaryURLHelper {
 
 	public static String createAjaxURL(ContentContext ctx) {
 		GlobalContext globalContext = GlobalContext.getInstance(ctx.getRequest());
-		return createURL(ctx, globalContext, ctx.getPath(), true, true, true);
+		return createURL(ctx, globalContext, ctx.getPath(), true, true, true, true);
 	}
 
 	public static String createAjaxURL(ContentContext ctx, Map params) {
@@ -74,7 +74,7 @@ public class URLHelper extends ElementaryURLHelper {
 
 	public static String createAjaxURL(ContentContext ctx, String path) {
 		GlobalContext globalContext = GlobalContext.getInstance(ctx.getRequest());
-		return createURL(ctx, globalContext, path, true, true, true);
+		return createURL(ctx, globalContext, path, true, true, true, true);
 	}
 
 	public static String createAjaxURL(ContentContext ctx, String path, Map params) {
@@ -475,11 +475,16 @@ public class URLHelper extends ElementaryURLHelper {
 	 */
 	public static String createURL(ContentContext ctx, String uri) {
 		GlobalContext globalContext = GlobalContext.getInstance(ctx.getRequest());
-		return createURL(ctx, globalContext, uri, false, false, true);
+		return createURL(ctx, globalContext, uri, false, false, true, true);
+	}
+
+	public static String createURLWithtoutEncodeURL(ContentContext ctx, String uri) {
+		GlobalContext globalContext = GlobalContext.getInstance(ctx.getRequest());
+		return createURL(ctx, globalContext, uri, false, false, true, false);
 	}
 
 	public static String createURL(ContentContext ctx, GlobalContext globalContext, String uri) {
-		return createURL(ctx, globalContext, uri, false, false, true);
+		return createURL(ctx, globalContext, uri, false, false, true, true);
 	}
 
 	public static String createURL(ContentContext ctx, String path, Map params) {
@@ -573,7 +578,7 @@ public class URLHelper extends ElementaryURLHelper {
 
 	public static String createURLNoForceTemplate(ContentContext ctx) {
 		GlobalContext globalContext = GlobalContext.getInstance(ctx.getRequest());
-		return createURL(ctx, globalContext, ctx.getPath(), false, false, true);
+		return createURL(ctx, globalContext, ctx.getPath(), false, false, true, true);
 	}
 
 	/**
@@ -587,7 +592,7 @@ public class URLHelper extends ElementaryURLHelper {
 	 */
 	public static String createURLNoPathPrefix(ContentContext ctx, String uri) {
 		GlobalContext globalContext = GlobalContext.getInstance(ctx.getRequest());
-		return createURL(ctx, globalContext, uri, false, false, false);
+		return createURL(ctx, globalContext, uri, false, false, false, true);
 	}
 
 	/**
