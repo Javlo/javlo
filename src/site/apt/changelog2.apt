@@ -17,3 +17,11 @@ change log
 * 2.0.0.9 [24/10/2012]
 
  * page-reference : user default renderer mecanisms
+ 
+* 2.0.0.10 [08/11/2012]
+
+ * work list of MenuElement as List in place of Array
+ 
+ * jalvo work without portlet lib
+ 
+ * preview edition work with template with absolute reference to jQuery lib
