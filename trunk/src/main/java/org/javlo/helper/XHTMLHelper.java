@@ -497,7 +497,7 @@ public class XHTMLHelper {
 
 		}
 
-		MenuElement[] childs = elem.getChildMenuElements();
+		Collection<MenuElement> childs = elem.getChildMenuElements();
 		for (MenuElement child : childs) {
 			result.append(getHTMLChildListRecursive(child, selectionPath, startTag, startSelectedTag, endTag, depth, true));
 		}

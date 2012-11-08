@@ -101,7 +101,11 @@ public class ComponentFactory {
 			Class comp = null;
 			;
 			try {
-				comp = Class.forName(clazz);
+				try {
+					comp = Class.forName(clazz);
+				} catch (Throwable e) {
+					logger.warning(e.getMessage());
+				}
 				Field fields[] = comp.getDeclaredFields();
 				for (Field field : fields) {
 					synchronized (field) {
@@ -152,7 +156,15 @@ public class ComponentFactory {
 						}
 
 						Class c = ComponentFactory.class.getClassLoader().loadClass(className);
-						AbstractVisualComponent comp = (AbstractVisualComponent) c.newInstance();
+						AbstractVisualComponent comp;
+						try {
+							comp = (AbstractVisualComponent) c.newInstance();
+						} catch (Throwable t) {
+							t.printStackTrace();
+							ComponentBean bean = new ComponentBean();
+							bean.setValue(t.getMessage());
+							comp = new Unknown(null, bean);
+						}
 
 						comp.setValid(visible);
 						comp.setHidden(hidden);

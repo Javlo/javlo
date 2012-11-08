@@ -349,6 +349,10 @@ public class InfoBean {
 			return null;
 		}
 	}
+	
+	public String getPathPrefix() {
+		return URLHelper.getPathPrefix(ctx.getRequest());
+	}
 
 	public boolean isGod() {
 		return AdminUserSecurity.getInstance().isGod(ctx.getCurrentUser());

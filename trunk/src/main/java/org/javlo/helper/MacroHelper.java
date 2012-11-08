@@ -6,6 +6,7 @@ import java.io.PrintWriter;
 import java.io.StringWriter;
 import java.text.DateFormatSymbols;
 import java.util.Calendar;
+import java.util.Collection;
 import java.util.Date;
 import java.util.List;
 import java.util.Locale;
@@ -201,7 +202,7 @@ public class MacroHelper {
 		MenuElement newPage = nav.searchChildFromName(parentName);
 
 		if (newPage != null) {
-			MenuElement[] allPages = newPage.getChildMenuElements();
+			Collection<MenuElement> allPages = newPage.getChildMenuElements();
 			int maxNumber = 0;
 			for (MenuElement menuElement : allPages) {
 				String numberStr = menuElement.getName().substring(pagePrefix.length());

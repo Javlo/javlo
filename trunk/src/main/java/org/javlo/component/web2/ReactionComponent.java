@@ -238,10 +238,13 @@ public class ReactionComponent extends DynamicComponent implements IAction {
 				}
 			}
 			MessageRepository messageRepository = MessageRepository.getInstance(ctx);
-			I18nAccess i18nAccess = I18nAccess.getInstance(ctx.getRequest());
+			I18nAccess i18nAccess = I18nAccess.getInstance(ctx);
 			if (validReaction) {
 				if (!reactionComp.addReaction(ctx, reaction)) {
 					messageRepository.setGlobalMessage(new GenericMessage(i18nAccess.getViewText("reaction.added"), GenericMessage.INFO));
+				} else {
+					System.out.println("***** ReactionComponent.performAdd : MSG = " + i18nAccess.getViewText("reaction.added-novalidation")); // TODO: remove debug trace
+					messageRepository.setGlobalMessage(new GenericMessage(i18nAccess.getViewText("reaction.added-novalidation"), GenericMessage.INFO));
 				}
 			} else {
 				logger.warning("unvalid reaction.");
@@ -334,7 +337,8 @@ public class ReactionComponent extends DynamicComponent implements IAction {
 			i++;
 		}
 
-		I18nAccess i18nAccess = I18nAccess.getInstance(ctx.getRequest());
+		GlobalContext globalContext = GlobalContext.getInstance(ctx.getRequest());
+		I18nAccess i18nAccess = I18nAccess.getInstance(globalContext, ctx.getRequest().getSession());
 		out.println("<fieldset>");
 		out.print("<legend>");
 		out.println(i18nAccess.getText("global.comment"));
@@ -457,7 +461,7 @@ public class ReactionComponent extends DynamicComponent implements IAction {
 
 			StaticConfig staticConfig = StaticConfig.getInstance(ctx.getRequest().getSession());
 			GlobalContext globalContext = GlobalContext.getInstance(ctx.getRequest());
-			I18nAccess i18nAccess = I18nAccess.getInstance(globalContext, ctx.getRequest().getSession());
+			I18nAccess i18nAccess = I18nAccess.getInstance(ctx.getRequest());
 
 			if (isWithTitle()) {
 				viewField.add(FieldFactory.getField(this, staticConfig, globalContext, i18nAccess, getProperties(), i18nAccess.getContentViewText("global.title"), "title", "text", getId()));
@@ -488,23 +492,31 @@ public class ReactionComponent extends DynamicComponent implements IAction {
 		StringWriter writer = new StringWriter();
 		PrintWriter out = new PrintWriter(writer);
 
-		out.println("<div class=\"" + getType() + "\">");
+		String id = "react-" + getId();
+
+		out.println("<div id=\"" + id + "\" class=\"" + getType() + "\">");
 
 		I18nAccess i18nAccess = I18nAccess.getInstance(ctx.getRequest());
 
 		Collection<Reaction> reactions = getReactions(ctx);
-		out.println("<div class=\"list\">");
+
+		MessageRepository messageRepository = MessageRepository.getInstance(ctx);
+		if (messageRepository.getGlobalMessage() != null) {
+			out.println("<div class=\"message\">");
+			out.println("<div class=\"" + messageRepository.getGlobalMessage().getTypeLabel() + "\">" + messageRepository.getGlobalMessage().getMessage() + "</div>");
+			out.println("</div>");
+		}
+
+		int i = 0;
+		out.println("<ul>");
 		for (Reaction reaction : reactions) {
 			if (reaction.isValid()) {
-				out.println("<div class=\"comment-entry\"><div class=\"metapost\">");
+				i++;
+				out.println("<li id=\"message-" + i + "\" class=\"comment-entry\">");
 
-				out.println("<span class=\first date\">");
-				out.println(StringHelper.renderTime(reaction.getDate()));
-				out.println("</span>");
-
-				out.println("<span class=\"author\">");
+				out.println("<div class=\"metapost\"><span class=\"authors\">");
 				out.println(StringHelper.removeTag(reaction.getAuthors()));
-				out.println("</span>");
+				out.println("</span></div>");
 
 				if (isWithTitle()) {
 					out.println("<span class=\"title\">");
@@ -512,21 +524,20 @@ public class ReactionComponent extends DynamicComponent implements IAction {
 					out.println("</span>");
 				}
 
-				out.println("</div><div class=\"text\">");
+				out.println("<div class=\"text\">");
 				out.println(XHTMLHelper.textToXHTML(StringHelper.removeTag(reaction.getText())));
 				out.println("</div>");
-				out.println("</div>");
+
+				out.println("<div class=\"metapost\"><span class=\"first date\">");
+				out.println(StringHelper.renderTime(reaction.getDate()));
+				out.println("</span></div>");
+
+				out.println("</li>");
 			}
 		}
-		out.println("</div>");
+		out.println("</ul>");
 		out.println("<div class=\"reaction-form\">");
-		MessageRepository messageRepository = MessageRepository.getInstance(ctx);
-		if (messageRepository.getGlobalMessage() != null) {
-			out.println("<div class=\"message\">");
-			out.println("<div class=\"" + messageRepository.getGlobalMessage().getTypeLabel() + "\">" + messageRepository.getGlobalMessage().getMessage() + "</div>");
-			out.println("</div>");
-		}
-		out.println("<form id=\"reaction-" + getId() + "\" method=\"post\" action=\"" + URLHelper.createURL(ctx) + "\" class=\"big_form\" >");
+		out.println("<form id=\"reaction-" + getId() + "\" method=\"post\" action=\"" + URLHelper.createURL(ctx) + "#" + id + "\" class=\"big_form\" >");
 		out.println("<input type=\"hidden\" name=\"webaction\" value=\"reaction.add\" />");
 		out.println("<input type=\"hidden\" name=\"comp\" value=\"" + getId() + "\" />");
 		Collection<Field> fields = getViewFields(ctx);
@@ -545,7 +556,7 @@ public class ReactionComponent extends DynamicComponent implements IAction {
 		out.println("<input id=\"info-" + getId() + "\" type=\"text\" name=\"fdata\" value=\"\" />");
 		out.println("</div>");
 
-		out.println("<input class=\"button light\" type=\"submit\" name=\"ok\" value=\"" + i18nAccess.getText("global.ok") + "\" />");
+		out.println("<input class=\"button light\" type=\"submit\" name=\"ok\" value=\"" + i18nAccess.getViewText("global.send") + "\" />");
 		out.println("</form>");
 		out.println("</div>");
 		out.println("</div>");
@@ -638,4 +649,13 @@ public class ReactionComponent extends DynamicComponent implements IAction {
 		return "reaction";
 	}
 
+	@Override
+	public boolean isContentCachable(ContentContext ctx) {
+		return false;
+	}
+
+	@Override
+	public boolean isContentTimeCachable(ContentContext ctx) {
+		return false;
+	}
 }

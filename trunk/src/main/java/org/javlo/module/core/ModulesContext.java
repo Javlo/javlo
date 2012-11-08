@@ -29,7 +29,7 @@ public class ModulesContext {
 		public int compare(Module m1, Module m2) {
 			// TODO Auto-generated method stub
 			if (m1.getOrder() == m2.getOrder()) {
-				return 1;
+				return m1.getName().compareTo(m2.getName());
 			}
 			return m1.getOrder() - m2.getOrder();
 		}

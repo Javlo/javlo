@@ -946,7 +946,7 @@ public class PageReferenceComponent extends ComplexPropertiesLink implements IAc
 		} else if (isPopularityOrder()) {
 			specialClass = " popularity-order" + specialClass;
 		}
-		return "<div class=\"page-reference" + specialClass + "\">";
+		return "<div " + getSpecialPreviewCssClass(ctx, "page-reference" + specialClass) + getSpecialPreviewCssId(ctx) + ">";
 	}
 
 	protected String getReverseOrderInput() {

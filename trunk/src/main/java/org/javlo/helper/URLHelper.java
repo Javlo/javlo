@@ -7,6 +7,7 @@ import java.io.File;
 import java.io.IOException;
 import java.util.HashMap;
 import java.util.Iterator;
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
@@ -766,10 +767,10 @@ public class URLHelper extends ElementaryURLHelper {
 	public static String getMoveChildURL(ContentContext ctx, MenuElement elem) {
 		if ((elem != null) && (elem.getParent() != null)) {
 			MenuElement newParent = null;
-			MenuElement[] elems = elem.getParent().getChildMenuElements();
-			for (int i = 0; i < elems.length - 1; i++) {
-				if (elems[i].equals(elem)) {
-					newParent = elems[i + 1];
+			List<MenuElement> elems = elem.getParent().getChildMenuElements();
+			for (int i = 0; i < elems.size() - 1; i++) {
+				if (elems.get(i).equals(elem)) {
+					newParent = elems.get(i + 1);
 				}
 			}
 			if (newParent != null) {

@@ -626,15 +626,13 @@ public abstract class AbstractVisualComponent implements IContentVisualComponent
 
 	@Override
 	public final String getHelpURL(ContentContext ctx, String lang) {
+		if (getBaseHelpURL(ctx) == null || getBaseHelpURL(ctx).trim().length() == 0) {
+			return null;
+		}
 		if (ctx.getRenderMode() == ContentContext.PAGE_MODE) {
 			return URLHelper.mergePath(getBaseHelpURL(ctx), "/page/", lang, getHelpURI(ctx));
 		} else {
 			String url = URLHelper.mergePath(getBaseHelpURL(ctx), lang, getHelpURI(ctx));
-			System.out.println("*********************************************************************************************************");
-			System.out.println("*********************************************************************************************************");
-			System.out.println("***** AbstractVisualComponent.getHelpURL : type=" + getType() + "  help url = " + url); // TODO: remove debug trace
-			System.out.println("*********************************************************************************************************");
-			System.out.println("*********************************************************************************************************");
 			return url;
 		}
 
@@ -894,18 +892,7 @@ public abstract class AbstractVisualComponent implements IContentVisualComponent
 			GlobalContext globalContext = GlobalContext.getInstance(ctx.getRequest());
 			EditContext editCtx = EditContext.getInstance(globalContext, ctx.getRequest().getSession());
 			if (editCtx.isEditPreview()) {
-				MenuElement currentPage;
-				try {
-					currentPage = ctx.getCurrentPage();
-					// f (currentPage.equals(getPage())) { // not edit component is
-					// repeated and user is
-					// not on the definition
-					// page
-					return " class=\"editable-component" + currentClass + "\"";
-					// }
-				} catch (Exception e) {
-					e.printStackTrace();
-				}
+				return " class=\"editable-component" + currentClass + "\"";
 			}
 		}
 		if (currentClass != null && currentClass.trim().length() > 0) {

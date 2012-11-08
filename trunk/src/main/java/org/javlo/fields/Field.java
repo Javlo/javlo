@@ -3,6 +3,7 @@ package org.javlo.fields;
 import java.io.PrintWriter;
 import java.io.StringWriter;
 import java.util.Arrays;
+import java.util.Collection;
 import java.util.Iterator;
 import java.util.LinkedHashMap;
 import java.util.LinkedList;
@@ -178,7 +179,7 @@ public class Field implements Cloneable {
 			GlobalContext globalContext = GlobalContext.getInstance(ctx.getRequest());
 			MenuElement page = globalContext.getPage(ctx, path);
 			if (page != null) {
-				MenuElement[] children = page.getChildMenuElements();
+				Collection<MenuElement> children = page.getChildMenuElements();
 				for (MenuElement child : children) {
 					keyValue.put(child.getName(), child.getTitle(ctx));
 				}

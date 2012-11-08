@@ -161,13 +161,13 @@ public class XHTMLNavigationHelper {
 		if (currentPage.getDepth() < level - 1) {
 			return false;
 		} else if (currentPage.getDepth() < level) {
-			if (currentPage.getChildMenuElements(ctx, true).length > 0) {
+			if (currentPage.getChildMenuElements(ctx, true).size() > 0) {
 				return true;
 			} else {
 				return false;
 			}
 		} else if (currentPage.getDepth() == level && currentPage.getParent() != null) {
-			if (currentPage.getParent().getChildMenuElements(ctx, true).length == 0) {
+			if (currentPage.getParent().getChildMenuElements(ctx, true).size() == 0) {
 				return false;
 			}
 		}
@@ -246,7 +246,7 @@ public class XHTMLNavigationHelper {
 		if (menu == null) {
 			out.println("ERROR: " + parentId + " not found in navigation structure.");
 		} else {
-			MenuElement[] elems;
+			Collection<MenuElement> elems;
 			if (onlyVisible) {
 				elems = menu.getVisibleChildMenuElements(ctx);
 			} else {
@@ -255,7 +255,7 @@ public class XHTMLNavigationHelper {
 
 			String firstClass = "first ";
 			out.println("<ul>");
-			if (moveIcon && elems.length > 0) {
+			if (moveIcon && elems.size() > 0) {
 				out.println("<li class=\"insert-here page-not-selected first\"><input type=\"submit\" name=\"page_0\" value=\"insert-here\" /></li>");
 			}
 			for (MenuElement elem : elems) {
@@ -317,14 +317,14 @@ public class XHTMLNavigationHelper {
 		if (menu == null) {
 			return "";
 		} else {
-			MenuElement[] elems;
+			Collection<MenuElement> elems;
 			if (withVirtual) {
 				elems = menu.getChildMenuElementsWithVirtual(ctx, onlyVisible, false);
 			} else {
 				elems = menu.getChildMenuElements(ctx, onlyVisible);
 			}
 
-			if (elems.length == 0 && !selectableBetween) {
+			if (elems.size() == 0 && !selectableBetween) {
 				return "";
 			}
 
@@ -341,12 +341,13 @@ public class XHTMLNavigationHelper {
 				out.print("<li id=\"page_" + menu.getName() + "\"><div class=\"selection\"><input type=\"submit\" value=\"" + i18nAccess.getText("global.move-here", new String[][] { { "item", currentPage.getLabel(ctx) } }) + "\" name=\"P_" + menu.getId() + "\"/></div></li>");
 			}
 
-			for (int i = 0; i < elems.length; i++) {
+			int i = 0;
+			for (MenuElement page : elems) {
 				String selected = "";
-				String cssClass = elems[i].getName().toLowerCase();
-				if (elems[i].isSelected(ctx)) {
+				String cssClass = page.getName().toLowerCase();
+				if (page.isSelected(ctx)) {
 					String cssClassSelected = currentTemplate.getSelectedClass();
-					if (elems[i].isLastSelected(ctx)) {
+					if (page.isLastSelected(ctx)) {
 						cssClassSelected = (cssClassSelected + " " + currentTemplate.getLastSelectedClass()).trim();
 					}
 					selected = "class=\"" + cssClassSelected + "\"";
@@ -355,19 +356,19 @@ public class XHTMLNavigationHelper {
 
 				if (i == 0) {
 					cssClass = cssClass + " first";
-				} else if (i == elems.length - 1) {
+				} else if (i == elems.size() - 1) {
 					cssClass = cssClass + " last";
 				}
 				String att = "";
 				if (print) {
-					String visualCode = elems[i].getLabel(ctx);
-					if (image && (elems[i].getImage(ctx) != null)) {
-						String imageURL = URLHelper.createTransformURL(ctx, elems[i].getImage(ctx).getResourceURL(ctx), "menu");
-						String imageDescription = elems[i].getImage(ctx).getImageDescription(ctx);
-						String imageUnselectedURL = URLHelper.createTransformURL(ctx, elems[i].getImage(ctx).getResourceURL(ctx), currentTemplate.getUnSelectedClass());
+					String visualCode = page.getLabel(ctx);
+					if (image && (page.getImage(ctx) != null)) {
+						String imageURL = URLHelper.createTransformURL(ctx, page.getImage(ctx).getResourceURL(ctx), "menu");
+						String imageDescription = page.getImage(ctx).getImageDescription(ctx);
+						String imageUnselectedURL = URLHelper.createTransformURL(ctx, page.getImage(ctx).getResourceURL(ctx), currentTemplate.getUnSelectedClass());
 
 						String url = imageUnselectedURL;
-						if (elems[i].isSelected(ctx)) {
+						if (page.isSelected(ctx)) {
 							url = imageURL;
 						}
 
@@ -376,7 +377,7 @@ public class XHTMLNavigationHelper {
 
 						att = "onMouseover=\"" + startJS + "'" + imageURL + "'\" onMouseout=\"" + startJS + "'" + url + "'\"";
 
-						visualCode = "<img src=\"" + url + "\" alt=\"" + imageDescription + "\" name=\"" + imgName + "\" class=\"autoMouseOver\" /><span class=\"text\">" + elems[i].getLabel(ctx) + "</span>";
+						visualCode = "<img src=\"" + url + "\" alt=\"" + imageDescription + "\" name=\"" + imgName + "\" class=\"autoMouseOver\" /><span class=\"text\">" + page.getLabel(ctx) + "</span>";
 					}
 					String selectedStrIn = "";
 					String selectedStrBetween = "";
@@ -385,64 +386,64 @@ public class XHTMLNavigationHelper {
 					String type = null;
 					if (selecteableItem) {
 						if (values != null) {
-							if (values.contains(elems[i])) {
+							if (values.contains(page)) {
 								checked = " checked=\"checked\"";
 							}
 							type = "checkbox";
 						} else if (value != null) {
-							if (value.equals(elems[i])) {
+							if (value.equals(page)) {
 								checked = " checked=\"checked\"";
 							}
 							type = "radio";
 						}
-						selectedStrIn = "<input type=\"" + type + "\" name=\"parent\" value=\"" + elems[i].getId() + "\"" + checked + "/> ";
+						selectedStrIn = "<input type=\"" + type + "\" name=\"parent\" value=\"" + page.getId() + "\"" + checked + "/> ";
 					}
 					if (selectableBetween) {
 						type = "radio";
 						if (values != null) {
-							if (values.contains(elems[i])) {
+							if (values.contains(page)) {
 								checked = " checked=\"checked\"";
 							}
 							type = "checkbox";
 						} else if (value != null) {
-							if (value.equals(elems[i])) {
+							if (value.equals(page)) {
 								checked = " checked=\"checked\"";
 								inputDisabled = " disabled=\"disabled\"";
 							}
 						}
 						String disabled = "";
-						if (elems[i].equals(currentPage)) {
+						if (page.equals(currentPage)) {
 							disabled = " disabled=\"disabled\"";
 						}
-						selectedStrBetween = "<input" + disabled + " type=\"submit\" name=\"N_" + elems[i].getId() + "\"" + checked + inputDisabled + " value=\"" + i18nAccess.getText("global.move-here", new String[][] { { "item", currentPage.getLabel(ctx) } }) + "\"/>";
+						selectedStrBetween = "<input" + disabled + " type=\"submit\" name=\"N_" + page.getId() + "\"" + checked + inputDisabled + " value=\"" + i18nAccess.getText("global.move-here", new String[][] { { "item", currentPage.getLabel(ctx) } }) + "\"/>";
 					}
 
-					if (elems[i].getChildMenuElements(ctx, true).length > 0) {
+					if (page.getChildMenuElements(ctx, true).size() > 0) {
 						cssClass = cssClass + " have-children";
 					}
 
 					out.println("<li class=\"" + cssClass + "\">");
 
-					String title = elems[i].getTitle(ctx);
+					String title = page.getTitle(ctx);
 					title = StringHelper.removeTag(title);
 					String fullTitleHTML = "";
 					if (!title.equals(visualCode)) {
 						fullTitleHTML = " title=\"" + title + "\"";
 					}
-					out.print(selectedStrIn + "<a " + selected + " href=\"" + URLHelper.createURL(ctx, elems[i]) + "\" " + fullTitleHTML + " " + att + "><span><span>" + visualCode + "</span></span></a>");
+					out.print(selectedStrIn + "<a " + selected + " href=\"" + URLHelper.createURL(ctx, page) + "\" " + fullTitleHTML + " " + att + "><span><span>" + visualCode + "</span></span></a>");
 					if (selectableBetween) {
 						out.print("<div class=\"selection\">" + selectedStrBetween + "</div>");
 					}
 
 				}
 
-				if (elems.length > 0) {
+				if (elems.size() > 0) {
 					if (depth < toDepth) {
 						/*
 						 * if (print) { out.println("<li>"); }
 						 */
-						if (elems[i].isSelected(ctx) || (extended && print)) {
-							out.print(renderMenu(ctx, elems[i], fromDepth, toDepth, onlyVisible, depth + 1, extended, image, withVirtual, selecteableItem, selectableBetween, values, value));
+						if (page.isSelected(ctx) || (extended && print)) {
+							out.print(renderMenu(ctx, page, fromDepth, toDepth, onlyVisible, depth + 1, extended, image, withVirtual, selecteableItem, selectableBetween, values, value));
 						}
 						/*
 						 * if (print) { out.println("</li>"); }
@@ -452,6 +453,7 @@ public class XHTMLNavigationHelper {
 				if (print) {
 					out.print("</li>");
 				}
+				i++;
 			}
 			if (print) {
 				out.println("</ul>");

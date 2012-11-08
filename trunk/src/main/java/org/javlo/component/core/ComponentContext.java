@@ -82,7 +82,12 @@ public class ComponentContext {
 
 	public String getHelpHTML(ContentContext ctx, IContentVisualComponent comp) {
 		GlobalContext globalContext = GlobalContext.getInstance(ctx.getRequest());
-		String fullURL = comp.getHelpURL(ctx.getContextWithOtherRenderMode(ContentContext.PAGE_MODE), globalContext.getEditLanguage(ctx.getRequest().getSession())) + "?force-template=notemplate";
+		String fullURL = comp.getHelpURL(ctx.getContextWithOtherRenderMode(ContentContext.PAGE_MODE), globalContext.getEditLanguage(ctx.getRequest().getSession()));
+		if (fullURL == null) {
+			return null;
+		} else {
+			fullURL = fullURL + "?force-template=notemplate";
+		}
 		String helpCacheKey = comp.getType() + '-' + globalContext.getEditLanguage(ctx.getRequest().getSession());
 		String xhtml = getHelpCache(globalContext).get(helpCacheKey);
 		if (xhtml == null) {
@@ -102,5 +107,4 @@ public class ComponentContext {
 		}
 		return xhtml;
 	}
-
 }

@@ -1204,13 +1204,6 @@ public class Edit extends AbstractModuleAction {
 			return "page not found : " + path;
 		}
 		if ((pageToBeMoved != null) && (pageToBeMoved.getParent() != null)) {
-			MenuElement newParent = null;
-			MenuElement[] elems = pageToBeMoved.getParent().getChildMenuElements();
-			for (int i = 0; i < elems.length - 1; i++) {
-				if (elems[i].equals(pageToBeMoved)) {
-					newParent = elems[i + 1];
-				}
-			}
 			pageToBeMoved.moveToParent(ctx.getCurrentPage());
 			persistenceService.store(ctx);
 			String[][] balises = { { "path", path }, { "new-path", pageToBeMoved.getPath() } };

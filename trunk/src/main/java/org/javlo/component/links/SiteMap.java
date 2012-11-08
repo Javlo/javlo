@@ -11,6 +11,7 @@ import java.io.PrintWriter;
 import java.io.StringWriter;
 import java.util.Collection;
 import java.util.LinkedList;
+import java.util.List;
 
 import org.javlo.component.core.AbstractVisualComponent;
 import org.javlo.context.ContentContext;
@@ -57,7 +58,7 @@ public class SiteMap extends AbstractVisualComponent {
 			return;
 		}
 
-		MenuElement[] childs;
+		List<MenuElement> childs;
 
 		if (virtual) {
 			childs = menu.getChildMenuElementsWithVirtual(ctx, false, false);
@@ -95,19 +96,19 @@ public class SiteMap extends AbstractVisualComponent {
 
 		boolean showAll = getStyle(ctx).equalsIgnoreCase("all");
 		pastNode.add(menu);
-		if (childs.length > 0) {
+		if (childs.size() > 0) {
 			out.println("<ul>");
 		}
-		for (int i = 0; i < childs.length; i++) {
-			if ((showAll || (childs[i].isVisible(ctx) || showVisible) && !pastNode.contains(childs[i]))) {
+		for (MenuElement page : childs) {
+			if ((showAll || (page.isVisible(ctx) || showVisible) && !pastNode.contains(page))) {
 				depth++;
 				if (depth < 50) {
-					recNav(ctx, childs[i], out, showVisible, virtual, pastNode, calldepth + 1);
+					recNav(ctx, page, out, showVisible, virtual, pastNode, calldepth + 1);
 				}
 				depth--;
 			}
 		}
-		if (childs.length > 0) {
+		if (childs.size() > 0) {
 			out.println("</ul>");
 		}
 		pastNode.remove(menu);
@@ -129,7 +130,7 @@ public class SiteMap extends AbstractVisualComponent {
 		out.print("<div class=\"");
 		out.print("webmap");
 		out.println("\"><ul>");
-		MenuElement[] childs = menu.getChildMenuElements(ctx, false);
+		Collection<MenuElement> childs = menu.getChildMenuElements(ctx, false);
 		boolean showAll = false;
 		boolean showVisible = false;
 		boolean virtual = false;

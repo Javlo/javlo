@@ -7,6 +7,7 @@ import java.io.ByteArrayOutputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.PrintStream;
+import java.util.Collection;
 import java.util.Date;
 import java.util.LinkedList;
 import java.util.List;
@@ -177,11 +178,11 @@ public class ChildrenLink extends AbstractVisualComponent implements IImageTitle
 			}
 		}
 
-		MenuElement[] children = currentPage.getChildMenuElementsWithVirtual(ctx, !showAll, false);
-		for (int i = 0; i < children.length; i++) {
-			if (!children[i].isVisible(ctx) || !showOnlyNotVisible) {
-				if (children[i].getImage(ctx) != null) {
-					setChildImageComponent(ctx, children[i].getImage(ctx));
+		Collection<MenuElement> children = currentPage.getChildMenuElementsWithVirtual(ctx, !showAll, false);
+		for (MenuElement page : children) {
+			if (!page.isVisible(ctx) || !showOnlyNotVisible) {
+				if (page.getImage(ctx) != null) {
+					setChildImageComponent(ctx, page.getImage(ctx));
 					if (getChildImageComponent(ctx).isImageValid(ctx)) {
 						return getChildImageComponent(ctx);
 					}
@@ -271,7 +272,7 @@ public class ChildrenLink extends AbstractVisualComponent implements IImageTitle
 			showAll = getStyle().equalsIgnoreCase("all");
 			showOnlyNotVisible = getStyle().equalsIgnoreCase("not-visible");
 		}
-		MenuElement[] children = parentPage.getChildMenuElementsWithVirtual(ctx, false, false);
+		Collection<MenuElement> children = parentPage.getChildMenuElementsWithVirtual(ctx, false, false);
 		String renderer = getRenderer(ctx);
 		if (renderer != null) {
 			List<ChildLinkBean> childrenList = new LinkedList<ChildLinkBean>();
@@ -312,7 +313,7 @@ public class ChildrenLink extends AbstractVisualComponent implements IImageTitle
 				showAll = true;
 			}
 		}
-		MenuElement[] children = parentPage.getChildMenuElementsWithVirtual(ctx, !showAll, false);
+		Collection<MenuElement> children = parentPage.getChildMenuElementsWithVirtual(ctx, !showAll, false);
 		for (MenuElement menuElement : children) {
 			if (!menuElement.isVisible(ctx) || !showOnlyNotVisible) {
 				displayChildren = true;
@@ -324,10 +325,10 @@ public class ChildrenLink extends AbstractVisualComponent implements IImageTitle
 			if (isCombo()) {
 				out.println("<form id=\"select_page\" action=\"" + URLHelper.createURL(ctx) + "\" method=\"get\">");
 				out.println("<select name=\"" + ContentContext.FORWARD_PATH_REQUEST_KEY + "\">");
-				for (int i = 0; i < children.length; i++) {
-					if (!children[i].isVisible(ctx) || !showOnlyNotVisible) {
-						out.print("<option value=\"" + URLHelper.createURL(ctx, children[i].getPath()) + "\">");
-						out.print(children[i].getFullLabel(ctx));
+				for (MenuElement page : children) {
+					if (!page.isVisible(ctx) || !showOnlyNotVisible) {
+						out.print("<option value=\"" + URLHelper.createURL(ctx, page.getPath()) + "\">");
+						out.print(page.getFullLabel(ctx));
 						out.println("</option>");
 					}
 				}
@@ -337,40 +338,40 @@ public class ChildrenLink extends AbstractVisualComponent implements IImageTitle
 				out.println("</form>");
 			} else {
 				out.println("<ul>");
-				for (int i = 0; i < children.length; i++) {
-					if ((!children[i].isVisible(ctx) || !showOnlyNotVisible) && children[i].isRealContent(ctx)) {
-						if (children[i].equals(currentPage)) {
+				for (MenuElement page : children) {
+					if ((!page.isVisible(ctx) || !showOnlyNotVisible) && page.isRealContent(ctx)) {
+						if (page.equals(currentPage)) {
 							out.print("<li class=\"current-page " + ctx.getCurrentTemplate().getSelectedClass() + "\">");
 						} else {
-							if (children[i].isSelected(ctx)) {
+							if (page.isSelected(ctx)) {
 								out.print("<li class=\"" + ctx.getCurrentTemplate().getSelectedClass() + "\">");
 							} else {
 								out.print("<li>");
 							}
 						}
-						if (children[i].getContentDate(ctx) != null) {
-							out.print("<span class=\"date\">" + StringHelper.renderUserFriendlyDate(ctx, children[i].getContentDate(ctx)) + "</span>");
+						if (page.getContentDate(ctx) != null) {
+							out.print("<span class=\"date\">" + StringHelper.renderUserFriendlyDate(ctx, page.getContentDate(ctx)) + "</span>");
 						}
-						out.print("<a href=\"" + URLHelper.createURL(ctx, children[i].getVirtualPath(ctx)) + "\">");
+						out.print("<a href=\"" + URLHelper.createURL(ctx, page.getVirtualPath(ctx)) + "\">");
 						if (isLabelListed()) {
 							String sep = "";
-							if (isDescription() && children[i].getDescription(ctx).trim().length() > 0) {
+							if (isDescription() && page.getDescription(ctx).trim().length() > 0) {
 								sep = " : ";
 							}
-							out.print("<span class=\"label\">" + children[i].getFullLabel(ctx) + sep + "</span>");
+							out.print("<span class=\"label\">" + page.getFullLabel(ctx) + sep + "</span>");
 						}
-						if ((isImage() && (children[i].getImage(ctx) != null)) || (isDescription() && children[i].getDescription(ctx).trim().length() > 0)) {
+						if ((isImage() && (page.getImage(ctx) != null)) || (isDescription() && page.getDescription(ctx).trim().length() > 0)) {
 							out.println("<span class=\"body\">");
-							if (isImage() && (children[i].getImage(ctx) != null)) {
-								String imgURL = children[i].getImage(ctx).getResourceURL(ctx);
-								String imgDesc = children[i].getImage(ctx).getImageDescription(ctx);
+							if (isImage() && (page.getImage(ctx) != null)) {
+								String imgURL = page.getImage(ctx).getResourceURL(ctx);
+								String imgDesc = page.getImage(ctx).getImageDescription(ctx);
 								out.print("<span class=\"image\">");
-								out.print("<img src=\"" + URLHelper.createTransformURL(ctx, children[i], imgURL, "list") + "\" alt=\"" + imgDesc + "\" />");
+								out.print("<img src=\"" + URLHelper.createTransformURL(ctx, page, imgURL, "list") + "\" alt=\"" + imgDesc + "\" />");
 								out.print("</span>");
 							}
 
-							if (isDescription() && children[i].getDescription(ctx).trim().length() > 0) {
-								out.print("<span class=\"description\">" + children[i].getDescription(ctx) + "</span>");
+							if (isDescription() && page.getDescription(ctx).trim().length() > 0) {
+								out.print("<span class=\"description\">" + page.getDescription(ctx) + "</span>");
 							}
 							out.println("<span class=\"end-body\"></span></span>");
 						}

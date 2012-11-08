@@ -4,11 +4,6 @@
 	xsi:schemaLocation="http://java.sun.com/xml/ns/javaee http://java.sun.com/xml/ns/javaee/web-app_2_5.xsd"
 	version="2.5">
 
-	<!-- manage session live cycle  -->
-	<listener>
-		<listener-class>org.javlo.user.SessionListener</listener-class>
-	</listener>
-
 	<filter>
 		<filter-name>CharsetFilter</filter-name>
 		<filter-class>org.javlo.servlet.filter.CharsetFilter</filter-class>
