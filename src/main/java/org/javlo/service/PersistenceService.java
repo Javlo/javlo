@@ -314,7 +314,14 @@ public class PersistenceService {
 		if (backupPreview != null) {
 			for (File file : backupPreview) {
 				String version = file.getName().replaceAll("content_" + ContentContext.PREVIEW_MODE + ".", "").replaceAll(".xml", "").replaceAll(".zip", "");
-				outList.add(new MetaPersistenceBean(Integer.parseInt(version), StringHelper.renderSortableTime(new Date(file.lastModified())), "preview"));
+				int versionInteger = -1;
+				try {
+					versionInteger = Integer.parseInt(version);
+				} catch (NumberFormatException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
+				outList.add(new MetaPersistenceBean(versionInteger, StringHelper.renderSortableTime(new Date(file.lastModified())), "preview"));
 			}
 		}
 

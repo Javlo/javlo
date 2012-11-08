@@ -92,7 +92,7 @@ public class TimeRangeComponent extends DateComponent {
 	public String getPrefixViewXHTMLCode(ContentContext ctx) {
 
 		if (getConfig(ctx).getProperty("prefix", null) != null) {
-			return getConfig(ctx).getProperty("prefix", null);
+			return getConfig(ctx).getProperty("prefix", null) + "<div " + getSpecialPreviewCssClass(ctx, "") + getSpecialPreviewCssId(ctx) + ">";
 		}
 
 		return "<div " + getSpecialPreviewCssClass(ctx, getStyle(ctx) + " " + getType()) + getSpecialPreviewCssId(ctx) + ">";
@@ -101,7 +101,7 @@ public class TimeRangeComponent extends DateComponent {
 	@Override
 	public String getSuffixViewXHTMLCode(ContentContext ctx) {
 		if (getConfig(ctx).getProperty("suffix", null) != null) {
-			return getConfig(ctx).getProperty("suffix", null);
+			return "</div>" + getConfig(ctx).getProperty("suffix", null);
 		}
 		return "</div>";
 	}

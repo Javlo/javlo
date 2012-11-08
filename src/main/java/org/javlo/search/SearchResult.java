@@ -371,7 +371,7 @@ public class SearchResult {
 				}
 			}
 		}
-		MenuElement[] children = page.getChildMenuElements();
+		Collection<MenuElement> children = page.getChildMenuElements();
 		for (MenuElement element : children) {
 			searchInPage(element, ctx, groupId, inSearchText, componentType, rootPage);
 		}
@@ -397,7 +397,7 @@ public class SearchResult {
 				}
 			}
 		}
-		MenuElement[] children = page.getChildMenuElements();
+		Collection<MenuElement> children = page.getChildMenuElements();
 		for (MenuElement element : children) {
 			searchComponentInPage(element, ctx, componentType);
 		}

@@ -1,5 +1,6 @@
 package org.javlo.service;
 
+import java.util.Collection;
 import java.util.List;
 import java.util.logging.Logger;
 
@@ -133,7 +134,7 @@ public class NavigationService {
 	}
 
 	private void removeNavigationRec(MenuElement elem) throws Exception {
-		MenuElement[] children = elem.getChildMenuElements();
+		Collection<MenuElement> children = elem.getChildMenuElements();
 		for (MenuElement element : children) {
 			removeNavigationRec(element);
 		}

@@ -7,6 +7,7 @@ import java.io.PrintWriter;
 import java.io.StringWriter;
 import java.io.Writer;
 import java.text.SimpleDateFormat;
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.HashSet;
 import java.util.LinkedList;
@@ -36,7 +37,7 @@ public class XMLHelper {
 		out.println("<?xml version=\"1.0\" encoding=\"" + ContentContext.CHARACTER_ENCODING + "\"?>");
 		out.println("<export key=\"" + globalContext.getContextKey() + "\" path=\"" + page.getPath() + "\">");
 		Collection<MenuElement> allCreatePage = new LinkedList<MenuElement>();
-		insertXMLPage(out, allCreatePage, new MenuElement[] { page }, ctx.getContentLanguage(), true);
+		insertXMLPage(out, allCreatePage, Arrays.asList(new MenuElement[] { page }), ctx.getContentLanguage(), true);
 		ContentContext absoluteURLCtx = new ContentContext(ctx);
 		absoluteURLCtx.setAbsoluteURL(true);
 		out.println("<resources url=\"" + URLHelper.createResourceURL(absoluteURLCtx, page, "/") + "\">");
@@ -131,7 +132,7 @@ public class XMLHelper {
 		} else {
 			out.println("<content>");
 		}
-		insertXMLPage(out, new MenuElement[] { menu }, defaultLg);
+		insertXMLPage(out, Arrays.asList(new MenuElement[] { menu }), defaultLg);
 		out.println("</content>");
 		out.close();
 
@@ -205,7 +206,7 @@ public class XMLHelper {
 		}
 	}
 
-	static void insertXMLPage(PrintWriter out, Collection<MenuElement> pageList, MenuElement[] pages, String defaultLg, boolean recu) throws Exception {
+	static void insertXMLPage(PrintWriter out, Collection<MenuElement> pageList, Collection<MenuElement> pages, String defaultLg, boolean recu) throws Exception {
 
 		for (MenuElement page : pages) {
 			if (pageList != null) {
@@ -335,7 +336,7 @@ public class XMLHelper {
 		}
 	}
 
-	static void insertXMLPage(PrintWriter out, MenuElement[] pages, String defaultLg) throws Exception {
+	static void insertXMLPage(PrintWriter out, Collection<MenuElement> pages, String defaultLg) throws Exception {
 		insertXMLPage(out, null, pages, defaultLg, true);
 	}
 
@@ -351,7 +352,7 @@ public class XMLHelper {
 
 		out.println("<?xml version=\"1.0\" encoding=\"" + ContentContext.CHARACTER_ENCODING + "\"?>");
 		out.println("<content cmsversion=\"" + AccessServlet.VERSION + "\" version=\"" + version + "\">");
-		insertXMLPage(out, new MenuElement[] { menu }, defaultLg);
+		insertXMLPage(out, Arrays.asList(new MenuElement[] { menu }), defaultLg);
 		insertMap(out, contentMap, PersistenceService.GLOBAL_MAP_NAME);
 		out.println("</content>");
 		out.close();

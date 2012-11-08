@@ -57,7 +57,7 @@ public class CreatePressReleaseHereMacro extends AbstractMacro {
 				year = null;
 			}
 			if (year != null && mount != null) {
-				MenuElement[] children = currentPage.getChildMenuElements();
+				Collection<MenuElement> children = currentPage.getChildMenuElements();
 
 				int maxNumber = 0;
 				for (MenuElement child : children) {

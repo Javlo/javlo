@@ -82,7 +82,7 @@ public class XMLManipulationHelper {
 	/*
 	 * private static String getGoogleAnalyticsCode() throws IOException {
 	 * 
-	 * StringWriter outString = new StringWriter(); BufferedWriter out = new BufferedWriter(outString);out.append( "<%if ((globalContext.getGoogleAnalyticsUACCT().trim().length() > 3)&&(ctx.getRenderMode() == ContentContext.VIEW_MODE)) {%>" );out.append( "<script src=\"http://www.google-analytics.com/urchin.js\" type=\"text/javascript\">" ); out.newLine(); out.append("</script>"); out.newLine(); out.append("<script type=\"text/javascript\">"); out.newLine(); out.append("_uacct = \"<%=globalContext.getGoogleAnalyticsUACCT()%>\";"); out.newLine(); out.append("urchinTracker();"); out.newLine(); out.append("</script>"); out.newLine(); out.append("<%}%>"); out.newLine(); out.close();
+	 * StringWriter outString = new StringWriter(); BufferedWriter out = new BufferedWriter(outString);out.append( "<%if ((globalContext.getGoogleAnalyticsUACCT().trim().length() > 3)&&(ctx.getRenderMode() == ContentContext.VIEW_MODE)) {%>" );out.append( " src=\"http://www.google-analytics.com/urchin.js\" type=\"text/javascript\">" ); out.newLine(); out.append("</script>"); out.newLine(); out.append("<script type=\"text/javascript\">"); out.newLine(); out.append("_uacct = \"<%=globalContext.getGoogleAnalyticsUACCT()%>\";"); out.newLine(); out.append("urchinTracker();"); out.newLine(); out.append("</script>"); out.newLine(); out.append("<%}%>"); out.newLine(); out.close();
 	 * 
 	 * return outString.toString(); }
 	 */
@@ -573,11 +573,13 @@ public class XMLManipulationHelper {
 
 				/* resource */
 				String srcValue = attributes.get("src");
-				if ((srcValue != null) && (!StringHelper.isURL(srcValue))) {
+				if ((srcValue != null)) {
 					resources.add(srcValue);
 					if (tags[i].getName().equalsIgnoreCase("script")) {
 						String newLinkGeneratorIf = "<%if (!XHTMLHelper.allReadyInsered(ctx, \"" + srcValue + "\")) {%>";
-						attributes.put("src", "<%=URLHelper.createStaticTemplateURL(ctx,\"/" + srcValue + "\")%>");
+						if (!StringHelper.isURL(srcValue)) {
+							attributes.put("src", "<%=URLHelper.createStaticTemplateURL(ctx,\"/" + srcValue + "\")%>");
+						}
 						remplacement.addReplacement(tags[i].getOpenStart(), tags[i].getOpenEnd() + 1, newLinkGeneratorIf + tags[i].toString() + "<%}%>");
 					} else {
 						attributes.put("src", "<%=URLHelper.createStaticTemplateURL(ctx,\"/" + srcValue + "\")%>");

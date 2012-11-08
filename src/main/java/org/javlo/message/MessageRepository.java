@@ -96,6 +96,8 @@ public class MessageRepository {
 			if (this.globalMessage.getType() > globalMessage.getType()) {
 				this.globalMessage = globalMessage;
 			}
+		} else {
+			this.globalMessage = globalMessage;
 		}
 	}
 

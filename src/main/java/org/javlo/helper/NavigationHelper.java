@@ -33,7 +33,7 @@ public class NavigationHelper {
 		if (elem.getParent() == null) {
 			return false;
 		} else {
-			if (elem.getParent().getChildMenuElements()[elem.getParent().getChildMenuElements().length - 1].equals(elem)) {
+			if (elem.getParent().getChildMenuElements().get(elem.getParent().getChildMenuElements().size() - 1).equals(elem)) {
 				return false;
 			} else {
 				return true;
@@ -57,7 +57,7 @@ public class NavigationHelper {
 		if (elem.getParent() == null) {
 			return false;
 		} else {
-			if (elem.getParent().getChildMenuElements()[0].equals(elem)) {
+			if (elem.getParent().getChildMenuElements().iterator().next().equals(elem)) {
 				return false;
 			} else {
 				return true;
@@ -125,12 +125,12 @@ public class NavigationHelper {
 			allreadyFound.add(elem);
 		}
 		int countValidChild = 0;
-		MenuElement[] children = elem.getChildMenuElements();
-		for (int i = 0; i < children.length; i++) {
-			if (!children[i].isValid() && !children[i].isBlocked()) {
+		Collection<MenuElement> children = elem.getChildMenuElements();
+		for (MenuElement menuElement : children) {
+			if (!menuElement.isValid() && !menuElement.isBlocked()) {
 				countValidChild++;
 			}
-			countValidChild = countValidChild + countUnvalidChildren(children[i]);
+			countValidChild = countValidChild + countUnvalidChildren(menuElement);
 		}
 		return countValidChild;
 	}
@@ -252,7 +252,7 @@ public class NavigationHelper {
 
 		if (srcRoot.isValid()) {
 			copyElement(ctx, srcRoot, targetRoot);
-			MenuElement[] children = srcRoot.getChildMenuElements();
+			Collection<MenuElement> children = srcRoot.getChildMenuElements();
 			for (MenuElement element : children) {
 				MenuElement oldVersion = targetRoot.searchChildFromId(element.getId());
 				if (oldVersion == null) {
@@ -268,7 +268,7 @@ public class NavigationHelper {
 				// mode (preview).
 
 			}
-			MenuElement[] targetChildren = targetRoot.getChildMenuElements();
+			Collection<MenuElement> targetChildren = targetRoot.getChildMenuElements();
 			for (MenuElement element : targetChildren) {
 				MenuElement srcChild = srcRoot.searchChildFromId(element.getId());
 				if ((srcChild == null) || (!srcChild.getParent().getId().equals(targetRoot.getId()))) {
@@ -312,7 +312,7 @@ public class NavigationHelper {
 				}
 			}
 		}
-		MenuElement[] children = currentElem.getChildMenuElements();
+		Collection<MenuElement> children = currentElem.getChildMenuElements();
 		for (MenuElement element : children) {
 			searchLinkTo(ctx, pageList, element, target);
 		}

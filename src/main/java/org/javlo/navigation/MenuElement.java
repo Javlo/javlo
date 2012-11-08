@@ -75,6 +75,8 @@ import org.javlo.ztatic.StaticInfo;
  */
 public class MenuElement implements Serializable {
 
+	private static final String NO_LANG = "no-lang";
+
 	private static final long serialVersionUID = 1L;
 
 	/**
@@ -615,12 +617,12 @@ public class MenuElement implements Serializable {
 
 	static MenuElement searchChildFromId(MenuElement elem, String id) {
 		MenuElement res = null;
-		MenuElement[] children = elem.getChildMenuElements();
-		for (int i = 0; (i < children.length) && (res == null); i++) {
-			if (children[i].getId().equals(id)) {
-				return children[i];
+		List<MenuElement> children = elem.getChildMenuElements();
+		for (int i = 0; (i < children.size()) && (res == null); i++) {
+			if (children.get(i).getId().equals(id)) {
+				return children.get(i);
 			} else {
-				res = searchChildFromId(children[i], id);
+				res = searchChildFromId(children.get(i), id);
 			}
 		}
 		return res;
@@ -628,12 +630,12 @@ public class MenuElement implements Serializable {
 
 	static MenuElement searchChildFromName(MenuElement elem, String name) {
 		MenuElement res = null;
-		MenuElement[] children = elem.getChildMenuElements();
-		for (int i = 0; (i < children.length) && (res == null); i++) {
-			if (children[i].getName().equals(name)) {
-				res = children[i];
+		List<MenuElement> children = elem.getChildMenuElements();
+		for (int i = 0; (i < children.size()) && (res == null); i++) {
+			if (children.get(i).getName().equals(name)) {
+				res = children.get(i);
 			} else {
-				res = searchChildFromName(children[i], name);
+				res = searchChildFromName(children.get(i), name);
 			}
 		}
 		return res;
@@ -1091,7 +1093,7 @@ public class MenuElement implements Serializable {
 		if (!isMetadataEquals(elem)) {
 			res = false;
 		} else {
-			if (elem.getChildMenuElements().length != getChildMenuElements().length) {
+			if (elem.getChildMenuElements().size() != getChildMenuElements().size()) {
 				res = false;
 			} else {
 				if (!isContentEquals(elem)) {
@@ -1287,7 +1289,7 @@ public class MenuElement implements Serializable {
 		if (elem.countComponentInCtx(ctx, type) > 0) {
 			result.add(elem);
 		}
-		MenuElement[] children = elem.getChildMenuElements();
+		Collection<MenuElement> children = elem.getChildMenuElements();
 		for (MenuElement child : children) {
 			result.addAll(getChildElementRecursive(ctx, child, type, deph + 1));
 		}
@@ -1297,7 +1299,7 @@ public class MenuElement implements Serializable {
 	ArrayList<MenuElement> getChildElementRecursive(MenuElement elem, int deph) throws Exception {
 		ArrayList<MenuElement> result = new ArrayList<MenuElement>();
 		result.add(elem);
-		MenuElement[] children = elem.getChildMenuElements();
+		Collection<MenuElement> children = elem.getChildMenuElements();
 		for (MenuElement child : children) {
 			result.addAll(getChildElementRecursive(child, deph + 1));
 		}
@@ -1320,7 +1322,7 @@ public class MenuElement implements Serializable {
 	ArrayList<String> getChildListRecursive(MenuElement elem, int deph) throws Exception {
 		ArrayList<String> result = new ArrayList<String>();
 		result.add(elem.getPath());
-		MenuElement[] children = elem.getChildMenuElements();
+		Collection<MenuElement> children = elem.getChildMenuElements();
 		for (MenuElement child : children) {
 			result.addAll(getChildListRecursive(child, deph + 1));
 		}
@@ -1332,13 +1334,11 @@ public class MenuElement implements Serializable {
 	 * 
 	 * @return a array of children.
 	 */
-	public MenuElement[] getChildMenuElements() {
-		MenuElement[] res = new MenuElement[childMenuElements.size()];
-		childMenuElements.toArray(res);
-		return res;
+	public List<MenuElement> getChildMenuElements() {
+		return childMenuElements;
 	}
 
-	public MenuElement[] getChildMenuElements(ContentContext ctx, boolean visible) throws Exception {
+	public List<MenuElement> getChildMenuElements(ContentContext ctx, boolean visible) throws Exception {
 		if (visible) {
 			return getVisibleChildMenuElements(ctx);
 		} else {
@@ -1363,30 +1363,26 @@ public class MenuElement implements Serializable {
 		}
 	}
 
-	public MenuElement[] getChildMenuElementsWithVirtual(ContentContext ctx, boolean onlyVisible, boolean virtualBefore) throws Exception {
-
+	public List<MenuElement> getChildMenuElementsWithVirtual(ContentContext ctx, boolean onlyVisible, boolean virtualBefore) throws Exception {
 		List<MenuElement> allChild = new LinkedList<MenuElement>();
 		if (virtualBefore) {
 			allChild.addAll(getVirtualChild(ctx, onlyVisible));
-			allChild.addAll(Arrays.asList(getChildMenuElements(ctx, onlyVisible)));
+			allChild.addAll(getChildMenuElements(ctx, onlyVisible));
 		} else {
-			allChild.addAll(Arrays.asList(getChildMenuElements(ctx, onlyVisible)));
+			allChild.addAll(getChildMenuElements(ctx, onlyVisible));
 			allChild.addAll(getVirtualChild(ctx, onlyVisible));
 		}
-		MenuElement[] res = new MenuElement[allChild.size()];
-		allChild.toArray(res);
-		return res;
+		return allChild;
 	}
 
 	public List<MenuElement> getChildMenuElementsWithVirtualList(ContentContext ctx, boolean visible, boolean virtualBefore) throws Exception {
-
 		List<MenuElement> allChild = new LinkedList<MenuElement>();
 		if (virtualBefore) {
 			allChild.addAll(getChildMenuElementsList(ctx, visible));
 			allChild.addAll(getVirtualChild(ctx, visible));
 		} else {
 			allChild.addAll(getVirtualChild(ctx, visible));
-			allChild.addAll(Arrays.asList(getChildMenuElements(ctx, visible)));
+			allChild.addAll(getChildMenuElements(ctx, visible));
 		}
 		return allChild;
 	}
@@ -2183,8 +2179,7 @@ public class MenuElement implements Serializable {
 	}
 
 	public String getName() {
-		String res = name;
-		return res;
+		return name;
 	}
 
 	/**
@@ -2196,7 +2191,7 @@ public class MenuElement implements Serializable {
 		if (getParent() == null) {
 			return null;
 		}
-		MenuElement[] children = getParent().getChildMenuElements();
+		Collection<MenuElement> children = getParent().getChildMenuElements();
 		MenuElement elem = null;
 		for (MenuElement child : children) {
 			if (elem != null && elem.equals(this)) {
@@ -2392,7 +2387,7 @@ public class MenuElement implements Serializable {
 		if (getParent() == null) {
 			return null;
 		}
-		MenuElement[] children = getParent().getChildMenuElements();
+		Collection<MenuElement> children = getParent().getChildMenuElements();
 		MenuElement brother = null;
 		for (MenuElement child : children) {
 			if (child.equals(this)) {
@@ -2667,7 +2662,7 @@ public class MenuElement implements Serializable {
 	 * @return a array of children.
 	 * @throws Exception
 	 */
-	public MenuElement[] getVisibleChildMenuElements(ContentContext ctx) throws Exception {
+	public List<MenuElement> getVisibleChildMenuElements(ContentContext ctx) throws Exception {
 		ArrayList<MenuElement> resObj = new ArrayList<MenuElement>();
 		for (MenuElement element : childMenuElements) {
 			if (element.isVisible(ctx)) {
@@ -2690,9 +2685,7 @@ public class MenuElement implements Serializable {
 				}
 			}
 		}
-		MenuElement[] res = new MenuElement[resObj.size()];
-		resObj.toArray(res);
-		return res;
+		return resObj;
 	}
 
 	public List<MenuElement> getVisibleChildMenuElementsList(ContentContext ctx) throws Exception {
@@ -2760,7 +2753,7 @@ public class MenuElement implements Serializable {
 		if (elem == null) {
 			return false;
 		}
-		return Arrays.equals(getChildMenuElements(), elem.getChildMenuElements());
+		return getChildMenuElements().equals(elem.getChildMenuElements());
 	}
 
 	// TODO: change this method with a method in the component, it return is date if visible of not.
@@ -2841,7 +2834,7 @@ public class MenuElement implements Serializable {
 	}
 
 	public boolean isHaveVisibleChild(ContentContext ctx) throws Exception {
-		return getVisibleChildMenuElements(ctx).length > 0;
+		return getVisibleChildMenuElements(ctx).size() > 0;
 	}
 
 	public boolean isHttps() {
