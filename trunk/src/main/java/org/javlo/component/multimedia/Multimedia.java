@@ -16,6 +16,7 @@ import java.util.List;
 import java.util.Map;
 
 import org.apache.commons.io.FilenameUtils;
+import org.javlo.component.core.ContentElementList;
 import org.javlo.component.core.IContentVisualComponent;
 import org.javlo.component.core.IVideo;
 import org.javlo.component.image.IImageTitle;
@@ -34,6 +35,7 @@ import org.javlo.helper.filefilter.ImageFileFilter;
 import org.javlo.helper.filefilter.SoundFileFilter;
 import org.javlo.helper.filefilter.VideoOrURLFileFilter;
 import org.javlo.i18n.I18nAccess;
+import org.javlo.navigation.MenuElement;
 import org.javlo.service.ContentService;
 import org.javlo.service.RequestService;
 import org.javlo.ztatic.StaticInfo;
@@ -199,31 +201,63 @@ public class Multimedia extends TimeRangeComponent implements IImageTitle {
 		return StringHelper.isTrue(getConfig(ctx).getProperty("only-shared", null));
 	}
 
+	protected MultimediaResource createResource(ContentContext ctx, IVideo video) {
+		MultimediaResource resource = new MultimediaResource();
+		ContentContext lgCtx = getValidVideoCtx(ctx, video);
+		resource.setURL(video.getURL(lgCtx));
+		resource.setDescription(video.getImageDescription(lgCtx));
+		resource.setPreviewURL(video.getPreviewURL(ctx, getImageFilter(lgCtx)));
+		resource.setDate(video.getDate(lgCtx));
+		resource.renderDate(lgCtx);
+		resource.setLocation(video.getLocation(lgCtx));
+		resource.setCssClass(video.getCssClass(lgCtx));
+		resource.setTitle(video.getTitle(lgCtx));
+		resource.setTags(video.getTags(lgCtx));
+		resource.setIndex(video.getPopularity(lgCtx));
+		resource.setLanguage(lgCtx.getRequestContentLanguage());
+		return resource;
+	}
+
 	protected List<MultimediaResource> getContentVideo(ContentContext ctx) throws Exception {
 		ContentService content = ContentService.getInstance(ctx.getRequest());
 		List<MultimediaResource> outResources = new LinkedList<MultimediaResource>();
-		List<IContentVisualComponent> allComps = content.getAllContent(ctx);
-		for (IContentVisualComponent comp : allComps) {
+		ContentContext freeCtx = ctx.getContextWithArea(null);
+		freeCtx.setFree(true);
+		MenuElement page = content.getNavigation(freeCtx);
+		ContentContext lgCtx = freeCtx.getContextWithContent(page);
+		if (lgCtx == null) {
+			lgCtx = freeCtx;
+		}
+		ContentElementList comps = page.getAllContent(lgCtx);
+		while (comps.hasNext(lgCtx)) {
+			IContentVisualComponent comp = comps.next(lgCtx);
 			if (comp instanceof IVideo) {
 				IVideo video = (IVideo) comp;
-				if (video.isShared(ctx) || !contentVideoOnlyShared(ctx)) {
-					MultimediaResource resource = new MultimediaResource();
-					ContentContext lgCtx = getValidVideoCtx(ctx, video);
-					resource.setURL(video.getURL(lgCtx));
-					resource.setDescription(video.getImageDescription(lgCtx));
-					resource.setPreviewURL(video.getPreviewURL(ctx, getImageFilter(lgCtx)));
-					resource.setDate(video.getDate(lgCtx));
-					resource.renderDate(lgCtx);
-					resource.setLocation(video.getLocation(lgCtx));
-					resource.setCssClass(video.getCssClass(lgCtx));
-					resource.setTitle(video.getTitle(lgCtx));
-					resource.setTags(video.getTags(lgCtx));
-					resource.setIndex(video.getPopularity(lgCtx));
-					resource.setLanguage(lgCtx.getRequestContentLanguage());
+				if (video.isShared(lgCtx) || !contentVideoOnlyShared(lgCtx)) {
+					MultimediaResource resource = createResource(ctx, video);
 					outResources.add(resource);
 				}
 			}
 		}
+		MenuElement[] children = page.getAllChildren();
+		for (MenuElement child : children) {
+			lgCtx = freeCtx.getContextWithContent(child);
+			if (lgCtx == null) {
+				lgCtx = freeCtx;
+			}
+			comps = child.getAllContent(lgCtx);
+			while (comps.hasNext(lgCtx)) {
+				IContentVisualComponent comp = comps.next(lgCtx);
+				if (comp instanceof IVideo) {
+					IVideo video = (IVideo) comp;
+					if (video.isShared(lgCtx) || !contentVideoOnlyShared(lgCtx)) {
+						MultimediaResource resource = createResource(ctx, video);
+						outResources.add(resource);
+					}
+				}
+			}
+		}
+
 		return outResources;
 	}
 
