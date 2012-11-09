@@ -52,6 +52,17 @@ public class SimpleInternalLink extends ComplexPropertiesLink implements IIntern
 		return true;
 	}
 
+	@Override
+	protected String getTag(ContentContext ctx) {
+		String style = getStyle();
+		for (int i = 2; i < 7; i++) {
+			if (style.toLowerCase().contains("h" + i)) {
+				return "h" + i;
+			}
+		}
+		return super.getTag(ctx);
+	}
+
 	/**
 	 * @see org.javlo.itf.IContentVisualComponent#getXHTMLCode()
 	 */

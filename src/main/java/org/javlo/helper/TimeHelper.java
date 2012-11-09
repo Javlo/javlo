@@ -126,6 +126,13 @@ public class TimeHelper {
 		outCal.set(Calendar.YEAR, cal.get(Calendar.YEAR));
 		outCal.set(Calendar.MONTH, cal.get(Calendar.MONTH));
 		outCal.set(Calendar.DAY_OF_MONTH, cal.get(Calendar.DAY_OF_MONTH));
+		outCal.set(Calendar.HOUR, 0);
+		return outCal;
+	}
+
+	public static Calendar convertRemoveAfterMonth(Calendar cal) {
+		Calendar outCal = Calendar.getInstance();
+		outCal.set(cal.get(Calendar.YEAR), cal.get(Calendar.MONTH), 1, 0, 0, 0);
 		return outCal;
 	}
 
@@ -181,33 +188,9 @@ public class TimeHelper {
 	}
 
 	public static void main(String[] args) {
-		Date date = new Date();
-		try {
-			Thread.sleep(4000);
-		} catch (InterruptedException e) {
-			e.printStackTrace();
-		}
-		Date date1 = new Date();
-
-		Calendar cal = Calendar.getInstance();
-		cal.roll(Calendar.YEAR, false);
-
-		System.out.println("** remove after minute : " + convertRemoveAfterMinutes(Calendar.getInstance()).getTime());
-		System.out.println("** remove after hour : " + convertRemoveAfterHour(Calendar.getInstance()).getTime());
-
-		System.out.println("** date     : " + StringHelper.renderTime(date));
-		System.out.println("** date 1   : " + StringHelper.renderTime(date1));
-		System.out.println("** cal      : " + StringHelper.renderTime(cal.getTime()));
-
-		System.out.println("** after    : " + isAfterOrEqualForDay(date, date1));
-		System.out.println("** before   : " + isBeforeOrEqualForDay(date, date1));
-		System.out.println("** after  c : " + isAfterOrEqualForDay(date, cal.getTime()));
-		System.out.println("** before c : " + isBeforeOrEqualForDay(date, cal.getTime()));
-		System.out.println("** equal 1 : " + isEqualForDay(date, date1));
-		System.out.println("** equal c : " + isEqualForDay(date, cal.getTime()));
-
-		System.out.println("** betweenInDay c - d : " + betweenInDay(date, cal.getTime(), date1));
-		System.out.println("** betweenInDay d - c : " + betweenInDay(date, date1, cal.getTime()));
+		Calendar outCal = Calendar.getInstance();
+		outCal.set(Calendar.DAY_OF_MONTH, 1);
+		System.out.println("***** TimeHelper.main : " + StringHelper.renderDate(outCal.getTime())); // TODO: remove debug trace
 
 	}
 }
