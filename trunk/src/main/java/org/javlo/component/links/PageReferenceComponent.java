@@ -1238,11 +1238,12 @@ public class PageReferenceComponent extends ComplexPropertiesLink implements IAc
 										allMonths.add(cal);
 										allMonthsKeys.add(key);
 									}
+
 									if (monthFilter == null || TimeHelper.betweenInDay(page.getContentDateNeverNull(lgCtx), startDate.getTime(), endDate.getTime())) {
+										countPage++;
 										if (countPage >= firstPageNumber && countPage <= lastPageNumber) {
 											pageBeans.add(PageBean.getInstance(lgCtx, page, this));
 										}
-										countPage++;
 									}
 								}
 							}
