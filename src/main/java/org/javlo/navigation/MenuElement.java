@@ -1278,6 +1278,7 @@ public class MenuElement implements Serializable {
 			}
 		}
 		desc.category = StringUtils.replace(res, "\"", "&quot;");
+
 		return desc.category;
 	}
 

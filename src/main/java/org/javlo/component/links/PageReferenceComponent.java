@@ -1204,6 +1204,8 @@ public class PageReferenceComponent extends ComplexPropertiesLink implements IAc
 			endDate = TimeHelper.convertRemoveAfterMonth(endDate);
 			endDate.add(Calendar.MONTH, 1);
 			endDate.add(Calendar.MILLISECOND, -1);
+		} else {
+			monthFilter = null;
 		}
 
 		Collection<Calendar> allMonths = new LinkedList<Calendar>();
