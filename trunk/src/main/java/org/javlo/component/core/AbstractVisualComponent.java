@@ -478,7 +478,7 @@ public abstract class AbstractVisualComponent implements IContentVisualComponent
 			}
 			out.println("<div class=\"line\">");
 			out.println("<label for=\"style-" + getId() + "\">" + getStyleTitle(ctx) + "</label>");
-			out.println(XHTMLHelper.getInputOneSelect("style-" + getId(), styles, stylesLabel, getStyle(), null));
+			out.println(XHTMLHelper.getInputOneSelect("style-" + getId(), styles, stylesLabel, getStyle(), null, false));
 			out.println("</div>");
 		}
 
@@ -744,6 +744,10 @@ public abstract class AbstractVisualComponent implements IContentVisualComponent
 		return page;
 	}
 
+	protected String getTag(ContentContext ctx) {
+		return getConfig(ctx).getProperty("tag", "div");
+	}
+
 	@Override
 	public String getPrefixViewXHTMLCode(ContentContext ctx) {
 
@@ -763,7 +767,7 @@ public abstract class AbstractVisualComponent implements IContentVisualComponent
 		}
 
 		if (!componentBean.isList()) {
-			return "<div " + getSpecialPreviewCssClass(ctx, style + getType()) + getSpecialPreviewCssId(ctx) + " >";
+			return "<" + getTag(ctx) + " " + getSpecialPreviewCssClass(ctx, style + getType()) + getSpecialPreviewCssId(ctx) + " >";
 		} else {
 			return "<li" + getSpecialPreviewCssClass(ctx, style + getType()) + getSpecialPreviewCssId(ctx) + " >";
 		}
@@ -1005,7 +1009,7 @@ public abstract class AbstractVisualComponent implements IContentVisualComponent
 		}
 
 		if (!componentBean.isList()) {
-			return "</div>";
+			return "</" + getTag(ctx) + ">";
 		} else {
 			return "</li>";
 		}

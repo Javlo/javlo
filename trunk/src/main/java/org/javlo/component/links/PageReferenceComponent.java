@@ -5,14 +5,17 @@ package org.javlo.component.links;
 
 import java.io.ByteArrayOutputStream;
 import java.io.PrintStream;
+import java.text.SimpleDateFormat;
 import java.util.Arrays;
 import java.util.Calendar;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.Date;
+import java.util.HashSet;
 import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Locale;
 import java.util.Set;
 import java.util.TreeSet;
 import java.util.logging.Logger;
@@ -32,6 +35,7 @@ import org.javlo.context.ContentContext;
 import org.javlo.context.GlobalContext;
 import org.javlo.helper.PaginationContext;
 import org.javlo.helper.StringHelper;
+import org.javlo.helper.TimeHelper;
 import org.javlo.helper.URLHelper;
 import org.javlo.helper.XHTMLHelper;
 import org.javlo.helper.XHTMLNavigationHelper;
@@ -61,6 +65,8 @@ import org.javlo.service.RequestService;
  * @author pvandermaesen
  */
 public class PageReferenceComponent extends ComplexPropertiesLink implements IAction {
+
+	public static final String MOUNT_FORMAT = "MMMM yyyy";
 
 	public static class PageBean {
 
@@ -1110,6 +1116,8 @@ public class PageReferenceComponent extends ComplexPropertiesLink implements IAc
 		super.prepareView(ctx);
 		Calendar backDate = getBackDate(ctx);
 
+		SimpleDateFormat format = new SimpleDateFormat(MOUNT_FORMAT, new Locale(ctx.getRequestContentLanguage()));
+
 		ContentService content = ContentService.getInstance(ctx.getRequest());
 		MenuElement menu = content.getNavigation(ctx);
 		MenuElement[] allChildren = menu.getAllChildren();
@@ -1183,6 +1191,23 @@ public class PageReferenceComponent extends ComplexPropertiesLink implements IAc
 
 		String tagFilter = ctx.getRequest().getParameter("tag");
 		String catFilter = ctx.getRequest().getParameter("category");
+		String monthFilter = ctx.getRequest().getParameter("month");
+		Calendar startDate = null;
+		Calendar endDate = null;
+		if (monthFilter != null && monthFilter.trim().length() > 0) {
+			startDate = Calendar.getInstance();
+			endDate = Calendar.getInstance();
+			Date mount = format.parse(monthFilter);
+			startDate.setTime(mount);
+			endDate.setTime(mount);
+			startDate = TimeHelper.convertRemoveAfterMonth(startDate);
+			endDate = TimeHelper.convertRemoveAfterMonth(endDate);
+			endDate.add(Calendar.MONTH, 1);
+			endDate.add(Calendar.MILLISECOND, -1);
+		}
+
+		Collection<Calendar> allMonths = new LinkedList<Calendar>();
+		Collection<String> allMonthsKeys = new HashSet<String>();
 
 		for (MenuElement page : pages) {
 			ContentContext lgCtx = ctx;
@@ -1203,10 +1228,20 @@ public class PageReferenceComponent extends ComplexPropertiesLink implements IAc
 						if (page.isRealContent(lgCtx) || isWidthEmptyPage()) {
 							if (tagFilter == null || tagFilter.trim().length() == 0 || page.getTags(lgCtx).contains(tagFilter)) {
 								if (catFilter == null || catFilter.trim().length() == 0 || page.getCategory(lgCtx).equals(catFilter)) {
-									if (countPage >= firstPageNumber && countPage <= lastPageNumber) {
-										pageBeans.add(PageBean.getInstance(lgCtx, page, this));
+									Calendar cal = Calendar.getInstance();
+									cal.setTime(page.getContentDateNeverNull(lgCtx));
+									cal = TimeHelper.convertRemoveAfterMonth(cal);
+									String key = ("" + cal.get(Calendar.YEAR)) + cal.get(Calendar.MONTH);
+									if (!allMonthsKeys.contains(key)) {
+										allMonths.add(cal);
+										allMonthsKeys.add(key);
 									}
-									countPage++;
+									if (monthFilter == null || TimeHelper.betweenInDay(page.getContentDateNeverNull(lgCtx), startDate.getTime(), endDate.getTime())) {
+										if (countPage >= firstPageNumber && countPage <= lastPageNumber) {
+											pageBeans.add(PageBean.getInstance(lgCtx, page, this));
+										}
+										countPage++;
+									}
 								}
 							}
 						}
@@ -1226,13 +1261,31 @@ public class PageReferenceComponent extends ComplexPropertiesLink implements IAc
 		PagesStatus pagesStatus = new PagesStatus(countPage, realContentSize);
 		PaginationContext pagination = PaginationContext.getInstance(ctx.getRequest().getSession(), getId(), pageBeans.size(), getPageSize(ctx));
 
+		List<String> months = new LinkedList<String>();
+		for (Calendar calendar : allMonths) {
+			months.add(format.format(calendar.getTime()));
+		}
+
 		ctx.getRequest().setAttribute("pagination", pagination);
 		ctx.getRequest().setAttribute("pagesStatus", pagesStatus);
 		ctx.getRequest().setAttribute("pages", pageBeans);
 		ctx.getRequest().setAttribute("title", getContentTitle());
 		ctx.getRequest().setAttribute("comp", this);
+		ctx.getRequest().setAttribute("months", months);
 		ctx.getRequest().setAttribute("tags", globalContext.getTags());
 
+	}
+
+	public static void main(String[] args) {
+		Date mount = new Date();
+		Calendar endDate = Calendar.getInstance();
+		endDate.setTime(mount);
+		System.out.println("***** PageReferenceComponent.main : 0 = " + StringHelper.renderTime(endDate.getTime())); // TODO: remove debug trace
+		endDate = TimeHelper.convertRemoveAfterMonth(endDate);
+		System.out.println("***** PageReferenceComponent.main : 1 = " + StringHelper.renderTime(endDate.getTime())); // TODO: remove debug trace
+		endDate.add(Calendar.MONTH, 1);
+		endDate.add(Calendar.SECOND, -1);
+		System.out.println("***** PageReferenceComponent.main : 2 = " + StringHelper.renderTime(endDate.getTime())); // TODO: remove debug trace
 	}
 
 	private void popularitySorting(ContentContext ctx, List<MenuElement> pages, int pertinentPageToBeSort) throws Exception {
