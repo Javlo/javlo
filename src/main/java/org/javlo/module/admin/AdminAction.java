@@ -618,19 +618,19 @@ public class AdminAction extends AbstractModuleAction {
 		return msg;
 	}
 
-	public static final void editGlobalContext(HttpServletRequest request, Module currentModule, GlobalContext globalContext) throws FileNotFoundException, IOException, NoSuchMethodException, ClassNotFoundException, IllegalArgumentException, InstantiationException, IllegalAccessException, InvocationTargetException {
+	public static final void editGlobalContext(ContentContext ctx, Module currentModule, GlobalContext globalContext) throws FileNotFoundException, IOException, NoSuchMethodException, ClassNotFoundException, IllegalArgumentException, InstantiationException, IllegalAccessException, InvocationTargetException {
 		if (globalContext != null) {
-			request.setAttribute("prepareContext", globalContext);
+			ctx.getRequest().setAttribute("prepareContext", globalContext);
 		}
 		currentModule.setRenderer("/jsp/site_properties.jsp");
 		currentModule.setToolsRenderer(null);
-		String uri = request.getRequestURI();
-		currentModule.pushBreadcrumb(new Module.HtmlLink(uri, I18nAccess.getInstance(request).getText("global.change") + " : " + request.getParameter("context"), ""));
+		String uri = URLHelper.createURL(ctx);
+		currentModule.pushBreadcrumb(new Module.HtmlLink(null, I18nAccess.getInstance(ctx.getRequest()).getText("global.change") + " : " + ctx.getRequest().getParameter("context"), ""));
 	}
 
-	public static final String performChangeSite(HttpServletRequest request, RequestService requestService, ContentContext ctx, Module currentModule) throws FileNotFoundException, IOException, NoSuchMethodException, ClassNotFoundException, IllegalArgumentException, InstantiationException, IllegalAccessException, InvocationTargetException {
+	public static final String performChangeSite(HttpServletRequest request,RequestService requestService, ContentContext ctx, Module currentModule) throws FileNotFoundException, IOException, NoSuchMethodException, ClassNotFoundException, IllegalArgumentException, InstantiationException, IllegalAccessException, InvocationTargetException {
 		if (requestService.getParameter("change", null) != null) {
-			editGlobalContext(request, currentModule, null);
+			editGlobalContext(ctx, currentModule, null);
 		} else if (requestService.getParameter("components", null) != null) {
 			currentModule.setRenderer("/jsp/components.jsp");
 			currentModule.setToolsRenderer("/jsp/components_actions.jsp");
@@ -989,7 +989,7 @@ public class AdminAction extends AbstractModuleAction {
 				GlobalContext globalContext = GlobalContext.getInstance(ctx.getRequest().getSession(), siteName);
 				globalContext.setUsersAccess(Arrays.asList(ctx.getCurrentEditUser().getLogin()));
 				messageRepository.setGlobalMessage(new GenericMessage(i18nAccess.getText("admin.message.new-site-create"), GenericMessage.INFO));
-				editGlobalContext(ctx.getRequest(), currentModule, globalContext);
+				editGlobalContext(ctx, currentModule, globalContext);
 			}
 		} else {
 			logger.warning("bad site name : " + siteName);

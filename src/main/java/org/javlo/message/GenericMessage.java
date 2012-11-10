@@ -22,6 +22,7 @@ public class GenericMessage {
 	int type;
 	String message = null;
 	String key = null;
+	String URL = null;
 
 	public static final GenericMessage EMPTY_MESSAGE = new GenericMessage("", null, Integer.MAX_VALUE);
 
@@ -29,10 +30,20 @@ public class GenericMessage {
 		this(msg, null, newType);
 	}
 
+	public GenericMessage(String msg, int newType, String url) {
+		this(msg, null, newType, url);
+	}
+
 	public GenericMessage(String msg, String inKey, int newType) {
+		this(msg, inKey, newType, null);
+	}
+
+	public GenericMessage(String msg, String inKey, int newType, String inURL) {
 		message = msg;
 		key = inKey;
 		type = newType;
+		URL = inURL;
+
 	}
 
 	public String getKey() {
@@ -80,6 +91,10 @@ public class GenericMessage {
 
 	public String getTypeLabel() {
 		return getTypeLabel(type);
+	}
+
+	public String getURL() {
+		return URL;
 	}
 
 	/**

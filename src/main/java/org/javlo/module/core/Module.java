@@ -128,6 +128,9 @@ public class Module {
 				return false;
 			}
 			HtmlLink otherLink = (HtmlLink) obj;
+			if (otherLink.getUrl() == null || getUrl() == null) {
+				return otherLink.getUrl() == getUrl();
+			}
 			return otherLink.getUrl().equals(getUrl()) && otherLink.getLegend().equals(getLegend());
 		}
 

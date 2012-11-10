@@ -116,7 +116,7 @@ public class NetHelper {
 	/**
 	 * extract the title of a web page.
 	 * 
-	 * @param url
+	 * @param URL
 	 * @return the title of the page.
 	 */
 	public static String getPageTitle(String content) {
@@ -135,7 +135,7 @@ public class NetHelper {
 	/**
 	 * extract the title of a web page.
 	 * 
-	 * @param url
+	 * @param URL
 	 * @return the title of the page.
 	 */
 	public static String getPageDescription(String content) {
@@ -258,7 +258,7 @@ public class NetHelper {
 	/**
 	 * analyse a page and retreive a image
 	 * 
-	 * @param url
+	 * @param URL
 	 *            the url of the page
 	 * @param content
 	 *            the content
@@ -274,7 +274,7 @@ public class NetHelper {
 	 * analyse a page and retreive a image
 	 * 
 	 * @parem staticConfig pass the config (for call from a Thread )
-	 * @param url
+	 * @param URL
 	 *            the url of the page
 	 * @param content
 	 *            the content

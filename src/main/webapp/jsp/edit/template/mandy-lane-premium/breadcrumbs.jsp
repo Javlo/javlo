@@ -38,13 +38,19 @@
 </c:if>
 <c:if test="${not empty currentModule.breadcrumbList}">
 	<c:forEach var="link" items="${currentModule.breadcrumbList}" varStatus="status">	
-		<a ${link.selected?'class="selected"':''} href="${link.url}" title="${link.title}">${link.legend}</a>
+		<c:if test="${not empty link.url}">	
+		<a ${link.selected?'class="selected"':''} href="${link.url}" title="${link.title}">
+		</c:if>
+		${link.legend}
+		<c:if test="${not empty link.url}">
+			</a>
+		</c:if>
 		<c:if test="${fn:length(link.children) > 1 || (status.last && fn:length(link.children) > 0)}">
 			<div class="children">
 			<div class="container">
 				<ul>
 				<c:forEach var="child" items="${link.children}">
-					<li><a href="${child.url}" title="${child.title}">${child.legend}</a></li>
+					<li><c:if test="${not empty child.url}"><a href="${child.url}" title="${child.title}"></c:if>${child.legend}<c:if test="${not empty child.url}"></a></c:if></li>
 				</c:forEach>
 				</ul>
 			</div>

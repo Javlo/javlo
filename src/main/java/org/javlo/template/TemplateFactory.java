@@ -24,6 +24,7 @@ import org.javlo.filter.VisibleDirectoryFilter;
 import org.javlo.helper.StringHelper;
 import org.javlo.helper.URLHelper;
 import org.javlo.navigation.DefaultTemplate;
+import org.javlo.navigation.MenuElement;
 import org.javlo.user.AdminUserSecurity;
 import org.javlo.user.User;
 
@@ -296,6 +297,20 @@ public class TemplateFactory {
 			}
 		}
 		return false;
+	}
+
+	public static Template getTemplate(ContentContext ctx, MenuElement elem) throws Exception {
+		Template template = null;
+		if (elem != null) {
+			template = getTemplates(ctx.getRequest().getSession().getServletContext()).get(elem.getTemplateId());
+			if (template == null || !template.exist()) {
+				while (elem.getParent() != null && ((template == null) || (!template.exist()) || (template.getRendererFullName(ctx) == null))) {
+					elem = elem.getParent();
+					template = TemplateFactory.getTemplates(ctx.getRequest().getSession().getServletContext()).get(elem.getTemplateId());
+				}
+			}
+		}
+		return template;
 	}
 
 }
