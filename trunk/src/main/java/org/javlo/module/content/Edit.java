@@ -506,6 +506,27 @@ public class Edit extends AbstractModuleAction {
 			messageRepository.setGlobalMessageAndNotification(ctx, new GenericMessage(i18nAccess.getText("edit.message.no-content"), GenericMessage.ERROR));
 		}
 
+		/** check area **/
+		String badArea = "";
+		String sep = "";
+		ComponentBean[] content = ctx.getCurrentPage().getContent();
+		for (ComponentBean componentBean : content) {
+			Collection<String> areas = ctx.getCurrentTemplate().getAreas();
+			if (!areas.contains(componentBean.getArea())) {
+				if (!badArea.contains(componentBean.getArea())) {
+					badArea = badArea + sep + componentBean.getArea();
+					sep = ",";
+				}
+			}
+		}
+		if (badArea.length() > 0) {
+			I18nAccess i18nAccess = I18nAccess.getInstance(ctx.getRequest());
+			MessageRepository messageRepository = MessageRepository.getInstance(ctx);
+			ContentContext absCtx = ctx.getContextForAbsoluteURL();
+			String url = URLHelper.createURL(absCtx);
+			messageRepository.setGlobalMessageAndNotification(ctx, new GenericMessage(i18nAccess.getText("edit.message.bad-area") + " \"" + badArea + "\"", GenericMessage.ALERT, url));
+		}
+
 		return msg;
 	}
 

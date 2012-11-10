@@ -542,16 +542,7 @@ public class ContentContext {
 				template = Template.getApplicationInstance(getRequest().getSession().getServletContext(), this, forceTemplate);
 			}
 			if (template == null) {
-				MenuElement elem = getCurrentPage();
-				if (elem != null) {
-					template = TemplateFactory.getTemplates(getRequest().getSession().getServletContext()).get(elem.getTemplateId());
-					if (template == null || !template.exist()) {
-						while (elem.getParent() != null && ((template == null) || (!template.exist()) || (template.getRendererFullName(this) == null))) {
-							elem = elem.getParent();
-							template = TemplateFactory.getTemplates(getRequest().getSession().getServletContext()).get(elem.getTemplateId());
-						}
-					}
-				}
+				template = TemplateFactory.getTemplate(this, getCurrentPage());
 			}
 
 			if ((template == null) || !template.exist()) {

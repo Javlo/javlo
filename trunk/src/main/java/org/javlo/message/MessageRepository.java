@@ -115,7 +115,7 @@ public class MessageRepository {
 		}
 
 		NotificationService notifService = NotificationService.getInstance(GlobalContext.getInstance(request));
-		notifService.addNotification(globalMessage.getMessage(), globalMessage.getType(), ctx.getCurrentUserId());
+		notifService.addNotification(globalMessage.getMessage(), globalMessage.getURL(), globalMessage.getType(), ctx.getCurrentUserId());
 
 	}
 
