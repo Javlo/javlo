@@ -618,6 +618,7 @@ public class AccessServlet extends HttpServlet {
 						String url = URLHelper.createURL(viewCtx, params);
 
 						ITextRenderer pdfRenderer = new ITextRenderer();
+						logger.info("create PDF : " + url);
 						pdfRenderer.setDocument(url);
 						pdfRenderer.layout();
 						pdfRenderer.createPDF(out);
