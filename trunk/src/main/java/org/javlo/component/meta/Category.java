@@ -83,22 +83,23 @@ public class Category extends AbstractVisualComponent {
 		return "</div>";
 	}
 
+	@Override
 	public String getType() {
 		return TYPE;
 	}
 
 	@Override
 	public String getViewXHTMLCode(ContentContext ctx) throws Exception {
-		if (YES.equals(getStyle(ctx))) {
+		if (YES.equals(getStyle())) {
 			I18nAccess i18nAccess = I18nAccess.getInstance(ctx.getRequest());
 			ContentContext lgCtx = new ContentContext(ctx);
 			lgCtx.setLanguage(ctx.getRequestContentLanguage());
 			i18nAccess.changeViewLanguage(lgCtx);
-			String txt = i18nAccess.getViewText("category." + getValue().toLowerCase().replaceAll(" ", ""), (String)null);
+			String txt = i18nAccess.getViewText("category." + getValue().toLowerCase().replaceAll(" ", ""), (String) null);
 			i18nAccess.changeViewLanguage(ctx);
 			if (txt == null) {
 				txt = i18nAccess.getViewText("category." + getValue().toLowerCase().replaceAll(" ", ""), getValue());
-			}			
+			}
 			return txt;
 		} else {
 			return super.getViewXHTMLCode(ctx);
