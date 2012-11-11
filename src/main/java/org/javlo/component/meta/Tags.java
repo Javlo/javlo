@@ -129,9 +129,9 @@ public class Tags extends ComplexPropertiesLink {
 				trad = i18nAccess.getViewText("tag." + tag, tag);
 				i18nAccess.changeViewLanguage(lgCtx);
 			}
-			out.println("<span class=\""+tag+" tag" + (isFirst ? " first" : "") + "\">");
+			out.println(sep+"<span class=\""+tag+" tag" + (isFirst ? " first" : "") + "\">");
 			out.println(trad);
-			out.println("</span>"+sep);
+			out.println("</span>");
 			sep = "<span class=\"sep\">-</span>";
 			isFirst = false;
 		}
