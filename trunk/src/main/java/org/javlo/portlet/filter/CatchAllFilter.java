@@ -427,7 +427,7 @@ public class CatchAllFilter implements Filter {
 						ContentService content = ContentService.getInstance(globalContext);
 						MenuElement page = content.getPageWithShortURL(ctx, shortURI);
 						if (page != null) {
-							String newURL = URLHelper.createURL(ctx, page);
+							String newURL = URLHelper.createURLWithtoutEncodeURL(ctx, page.getPath());
 							NetHelper.sendRedirectPermanently((HttpServletResponse) response, newURL);
 							return;
 						}
