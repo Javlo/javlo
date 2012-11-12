@@ -26,8 +26,7 @@ GlobalContext globalContext = GlobalContext.getInstance(request);
 boolean pageEmpty = true;
 
 if (ctx.getRenderMode() == ContentContext.PREVIEW_MODE) {
-	%>
-<div id="one-component-edit"></div><%
+	%><div id="one-component-edit"></div><%
 }
 
 String area = request.getParameter("area");
@@ -42,6 +41,8 @@ String path = request.getParameter("_wcms_content_path");
 if (path!=null) {
 	ctx.setPath(path);
 }
+
+Boolean removeRepeat = StringHelper.isTrue(request.getParameter("_no-repeat"));
 
 AdminUserSecurity security = AdminUserSecurity.getInstance();
 
@@ -69,52 +70,54 @@ IContentVisualComponent elem = null;
 	while (elems.hasNext(ctx)) {
 		pageEmpty = false;
 		elem = elems.next(ctx);
-		elem.clearReplacement();
-		elem.replaceAllInContent(replacement);
-	
-		out.flush(); /* needed for jsp include */
+		if (!(removeRepeat && elem.isRepeat() && !elem.getPage().equals(currentPage))) {
+			elem.clearReplacement();
+			elem.replaceAllInContent(replacement);
 		
-		String savedValue = elem.getValue(ctx);
-		String value = elem.getValue(ctx);
-		
-		savedValue = elem.getValue(ctx);
-		value = elem.getValue(ctx);
-		
-		if (elem instanceof IContainer) {
-			IContainer container = (IContainer)elem;
-			if (container.isOpen(ctx)) {
-				containers.push(container);
-			} else {
-				if (!containers.empty()) {
-					containers.pop();
+			out.flush(); /* needed for jsp include */
+			
+			String savedValue = elem.getValue(ctx);
+			String value = elem.getValue(ctx);
+			
+			savedValue = elem.getValue(ctx);
+			value = elem.getValue(ctx);
+			
+			if (elem instanceof IContainer) {
+				IContainer container = (IContainer)elem;
+				if (container.isOpen(ctx)) {
+					containers.push(container);
+				} else {
+					if (!containers.empty()) {
+						containers.pop();
+					}
 				}
 			}
-		}
-		
-		%>
-<%=elems.getPrefixXHTMLCode(ctx)%>
-<%=elem.getPrefixViewXHTMLCode(ctx)%>
+			
+			%>
+<%=elems.getPrefixXHTMLCode(ctx)
+%><%=elem.getPrefixViewXHTMLCode(ctx)%>
 <%=elem.getXHTMLCode(ctx)%>
 <%=elem.getSuffixViewXHTMLCode(ctx)%>
 <%=elems.getSufixXHTMLCode(ctx)%><%		
-		elem.setValue(savedValue);
-		if (elem.next() == null) {
-			ColumnContext columnContext = ColumnContext.getInstance(request);
-			if (columnContext.isOpen()) {
-				if (columnContext.isWithTable()) {
-					%></td></tr></table><%
-				} else {
-					%></div><%
-				}
-			}			
-			
+			elem.setValue(savedValue);
+			if (elem.next() == null) {
+				ColumnContext columnContext = ColumnContext.getInstance(request);
+				if (columnContext.isOpen()) {
+					if (columnContext.isWithTable()) {
+						%></td></tr></table><%
+					} else {
+						%></div><%
+					}
+				}			
+				
+			}
 		}
-	}
-	while (!containers.empty()) {
-		%><%=containers.pop().getCloseCode(ctx)%><%
-	}
-	if (languageChange) {
-		%></div><%
+		while (!containers.empty()) {
+			%><%=containers.pop().getCloseCode(ctx)%><%
+		}
+		if (languageChange) {
+			%></div><%
+		}
 	}
 }
 currentPage.endRendering(ctx);

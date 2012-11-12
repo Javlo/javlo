@@ -28,6 +28,12 @@ public class PageMirrorComponent extends AbstractVisualComponent {
 
 	public static final String TYPE = "mirror-page";
 
+	private static final String WITH_REPEAT = "repeat";
+
+	private static final String WITHOUT_REPEAT = "no-repeat";
+
+	private static final String[] STYLES = new String[] { WITHOUT_REPEAT, WITH_REPEAT };
+
 	/**
 	 * create a static logger.
 	 */
@@ -41,6 +47,11 @@ public class PageMirrorComponent extends AbstractVisualComponent {
 
 	public String getCurrentInputName() {
 		return "linked-comp-" + getId();
+	}
+
+	@Override
+	public String[] getStyleList(ContentContext ctx) {
+		return STYLES;
 	}
 
 	@Override
@@ -122,7 +133,11 @@ public class PageMirrorComponent extends AbstractVisualComponent {
 		MenuElement page = getMirrorPage(ctx);
 		if (page != null) {
 			if (ctx.getSpecialContentRenderer() == null && ctx.getRequest().getParameter("_wcms_content_path") == null) {
-				return executeJSP(ctx, Edit.CONTENT_RENDERER + "?_wcms_content_path=" + page.getPath());
+				String suffix = "";
+				if (getStyle().equals(WITHOUT_REPEAT)) {
+					suffix = "&_no-repeat=true";
+				}
+				return executeJSP(ctx, Edit.CONTENT_RENDERER + "?_wcms_content_path=" + page.getPath() + suffix);
 			}
 		} else {
 			deleteMySelf(ctx);
