@@ -615,19 +615,6 @@ public class MenuElement implements Serializable {
 		return res;
 	}
 
-	static MenuElement searchChildFromId(MenuElement elem, String id) {
-		MenuElement res = null;
-		List<MenuElement> children = elem.getChildMenuElements();
-		for (int i = 0; (i < children.size()) && (res == null); i++) {
-			if (children.get(i).getId().equals(id)) {
-				return children.get(i);
-			} else {
-				res = searchChildFromId(children.get(i), id);
-			}
-		}
-		return res;
-	}
-
 	static MenuElement searchChildFromName(MenuElement elem, String name) {
 		MenuElement res = null;
 		List<MenuElement> children = elem.getChildMenuElements();
@@ -3114,8 +3101,17 @@ public class MenuElement implements Serializable {
 		if ((id == null) || (id.equals("0"))) {
 			return this;
 		} else {
-			return searchChildFromId(this, id);
+			try {
+				for (MenuElement child : getAllChildren()) {
+					if (child.getId().equals(id)) {
+						return child;
+					}
+				}
+			} catch (Exception e) {
+				e.printStackTrace();
+			}
 		}
+		return null;
 	}
 
 	/**
