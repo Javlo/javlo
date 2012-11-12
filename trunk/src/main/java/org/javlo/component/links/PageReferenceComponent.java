@@ -1189,23 +1189,29 @@ public class PageReferenceComponent extends ComplexPropertiesLink implements IAc
 		int realContentSize = 0;
 		MenuElement firstPage = null;
 
-		String tagFilter = ctx.getRequest().getParameter("tag");
-		String catFilter = ctx.getRequest().getParameter("category");
-		String monthFilter = ctx.getRequest().getParameter("month");
+		String tagFilter = null;
 		Calendar startDate = null;
 		Calendar endDate = null;
-		if (monthFilter != null && monthFilter.trim().length() > 0) {
-			startDate = Calendar.getInstance();
-			endDate = Calendar.getInstance();
-			Date mount = format.parse(monthFilter);
-			startDate.setTime(mount);
-			endDate.setTime(mount);
-			startDate = TimeHelper.convertRemoveAfterMonth(startDate);
-			endDate = TimeHelper.convertRemoveAfterMonth(endDate);
-			endDate.add(Calendar.MONTH, 1);
-			endDate.add(Calendar.MILLISECOND, -1);
-		} else {
-			monthFilter = null;
+		String catFilter = null;
+		String monthFilter = null;
+
+		if (ctx.getRequest().getParameter("comp_id") == null || ctx.getRequest().getParameter("comp_id").equals(getId())) {
+			tagFilter = ctx.getRequest().getParameter("tag");
+			catFilter = ctx.getRequest().getParameter("category");
+			monthFilter = ctx.getRequest().getParameter("month");
+			if (monthFilter != null && monthFilter.trim().length() > 0) {
+				startDate = Calendar.getInstance();
+				endDate = Calendar.getInstance();
+				Date mount = format.parse(monthFilter);
+				startDate.setTime(mount);
+				endDate.setTime(mount);
+				startDate = TimeHelper.convertRemoveAfterMonth(startDate);
+				endDate = TimeHelper.convertRemoveAfterMonth(endDate);
+				endDate.add(Calendar.MONTH, 1);
+				endDate.add(Calendar.MILLISECOND, -1);
+			} else {
+				monthFilter = null;
+			}
 		}
 
 		Collection<Calendar> allMonths = new LinkedList<Calendar>();
@@ -1233,7 +1239,7 @@ public class PageReferenceComponent extends ComplexPropertiesLink implements IAc
 									Calendar cal = Calendar.getInstance();
 									cal.setTime(page.getContentDateNeverNull(lgCtx));
 									cal = TimeHelper.convertRemoveAfterMonth(cal);
-									String key = ("" + cal.get(Calendar.YEAR)) + cal.get(Calendar.MONTH);
+									String key = ("" + cal.get(Calendar.YEAR)) + '-' + cal.get(Calendar.MONTH);
 									if (!allMonthsKeys.contains(key)) {
 										allMonths.add(cal);
 										allMonthsKeys.add(key);

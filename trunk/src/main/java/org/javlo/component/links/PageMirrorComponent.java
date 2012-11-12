@@ -132,7 +132,7 @@ public class PageMirrorComponent extends AbstractVisualComponent {
 	public String getViewXHTMLCode(ContentContext ctx) throws Exception {
 		MenuElement page = getMirrorPage(ctx);
 		if (page != null) {
-			if (ctx.getSpecialContentRenderer() == null && ctx.getRequest().getParameter("_wcms_content_path") == null) {
+			if (ctx.getSpecialContentRenderer() == null) {
 				String suffix = "";
 				if (getStyle().equals(WITHOUT_REPEAT)) {
 					suffix = "&_no-repeat=true";
