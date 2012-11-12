@@ -271,13 +271,7 @@ public class Mailing {
 				}
 			}
 			setSend(config.getBoolean("send", true));
-			// content = RessourceHelper.loadStringFromFile(contentFile);
 			content = FileUtils.readFileToString(contentFile, encoding);
-
-			// System.out.println("************ mailing content ***********");
-			// System.out.println(content);
-			// System.out.println("**************************************");
-
 		} catch (RuntimeException e1) {
 			logger.warning(e1.getMessage());
 		}

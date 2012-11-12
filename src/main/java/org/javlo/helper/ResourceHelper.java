@@ -69,7 +69,7 @@ public class ResourceHelper {
 	 */
 	protected static java.util.logging.Logger logger = java.util.logging.Logger.getLogger(ResourceHelper.class.getName());
 
-	public static Object SYNCHRO_RESSOURCE = new Object();
+	public static Object SYNCHRO_RESOURCE = new Object();
 
 	static final String CONFIG_DIR = "/WEB-INF/config";
 
@@ -229,7 +229,7 @@ public class ResourceHelper {
 	 *            a full path
 	 * @return retrun a relative path (sample: /var/data/static/test.png -> /test.png)
 	 */
-	public static String extractRessourceDir(StaticConfig staticConfig, GlobalContext globalContext, String fullPath) {
+	public static String extractResourceDir(StaticConfig staticConfig, GlobalContext globalContext, String fullPath) {
 		String realPath = URLHelper.mergePath(globalContext.getDataFolder(), staticConfig.getStaticFolder());
 
 		realPath = ResourceHelper.getLinuxPath(realPath);
@@ -418,10 +418,10 @@ public class ResourceHelper {
 	}
 
 	public static final InputStream getConfigFile(ServletContext servletContext, String fileName) throws ResourceNotFoundException {
-		String ressourceName = CONFIG_DIR + "/" + fileName;
-		InputStream in = servletContext.getResourceAsStream(ressourceName);
+		String resourceName = CONFIG_DIR + "/" + fileName;
+		InputStream in = servletContext.getResourceAsStream(resourceName);
 		if (in == null) {
-			throw new ResourceNotFoundException("ressource not found : " + ressourceName);
+			throw new ResourceNotFoundException("resource not found : " + resourceName);
 		}
 		return in;
 	}
@@ -629,8 +629,8 @@ public class ResourceHelper {
 		return outFiles;
 	}
 
-	public static final InputStream getStaticComponentRessource(ServletContext application, String componentType, String ressource) throws FileNotFoundException {
-		String fullName = STATIC_COMPONENT_DIR + "/" + componentType + "/" + ressource;
+	public static final InputStream getStaticComponentResource(ServletContext application, String componentType, String resource) throws FileNotFoundException {
+		String fullName = STATIC_COMPONENT_DIR + "/" + componentType + "/" + resource;
 		InputStream res = application.getResourceAsStream(fullName);
 		if (res == null) {
 			throw new FileNotFoundException("file not found : " + fullName);

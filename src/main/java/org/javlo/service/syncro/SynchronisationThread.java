@@ -6,7 +6,6 @@ import org.javlo.config.StaticConfig;
 import org.javlo.context.GlobalContext;
 import org.javlo.thread.AbstractThread;
 
-
 @Deprecated
 public class SynchronisationThread extends AbstractThread {
 
@@ -136,27 +135,24 @@ public class SynchronisationThread extends AbstractThread {
 	public void run() {
 		try {
 			if (getTemplateFolder() != null) {
-				SynchronisationService synchroService = SynchronisationService.getInstanceForTemplate(new URL(getServerURL()), getProxyHost(), getProxyPort(),
-						getSynchroCode(), getTemplateFolder());
-				synchroService.syncroRessource();
+				SynchronisationService synchroService = SynchronisationService.getInstanceForTemplate(new URL(getServerURL()), getProxyHost(), getProxyPort(), getSynchroCode(), getTemplateFolder());
+				synchroService.syncroResource();
 			}
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
 		try {
 			if (getMailingTemplateFolder() != null) {
-				SynchronisationService synchroService = SynchronisationService.getInstanceForMailingTemplate(new URL(getServerURL()), getProxyHost(),
-						getProxyPort(), getSynchroCode(), getMailingTemplateFolder());
-				synchroService.syncroRessource();
+				SynchronisationService synchroService = SynchronisationService.getInstanceForMailingTemplate(new URL(getServerURL()), getProxyHost(), getProxyPort(), getSynchroCode(), getMailingTemplateFolder());
+				synchroService.syncroResource();
 			}
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
 		try {
 			if (getDataCtxFolder() != null) {
-				SynchronisationService synchroService = SynchronisationService.getInstance(new URL(getServerURL()), getProxyHost(), getProxyPort(),
-						getSynchroCode(), getDataCtxFolder());
-				synchroService.syncroRessource();
+				SynchronisationService synchroService = SynchronisationService.getInstance(new URL(getServerURL()), getProxyHost(), getProxyPort(), getSynchroCode(), getDataCtxFolder());
+				synchroService.syncroResource();
 				synchroService.pushContext(getContext());
 			}
 		} catch (Exception e) {
@@ -164,27 +160,24 @@ public class SynchronisationThread extends AbstractThread {
 		}
 		try {
 			if (getMailingHistoryFolder() != null) {
-				SynchronisationService synchroService = SynchronisationService.getInstanceForMailingHistory(new URL(getServerURL()), getProxyHost(),
-						getProxyPort(), getSynchroCode(), getMailingHistoryFolder());
-				synchroService.syncroRessource();
+				SynchronisationService synchroService = SynchronisationService.getInstanceForMailingHistory(new URL(getServerURL()), getProxyHost(), getProxyPort(), getSynchroCode(), getMailingHistoryFolder());
+				synchroService.syncroResource();
 			}
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
 		try {
 			if (getMailingFolder() != null) {
-				SynchronisationService synchroService = SynchronisationService.getInstanceForMailing(new URL(getServerURL()), getProxyHost(), getProxyPort(),
-						getSynchroCode(), getMailingFolder());
-				synchroService.syncroRessource();
+				SynchronisationService synchroService = SynchronisationService.getInstanceForMailing(new URL(getServerURL()), getProxyHost(), getProxyPort(), getSynchroCode(), getMailingFolder());
+				synchroService.syncroResource();
 			}
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
 		try {
 			if (getShareFolder() != null) {
-				SynchronisationService synchroService = SynchronisationService.getInstanceForShareFiles(new URL(getServerURL()), getProxyHost(),
-						getProxyPort(), getSynchroCode(), getShareFolder());
-				synchroService.syncroRessource();
+				SynchronisationService synchroService = SynchronisationService.getInstanceForShareFiles(new URL(getServerURL()), getProxyHost(), getProxyPort(), getSynchroCode(), getShareFolder());
+				synchroService.syncroResource();
 			}
 		} catch (Exception e) {
 			e.printStackTrace();

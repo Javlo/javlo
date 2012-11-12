@@ -699,10 +699,6 @@ public class StaticInfoFile {
 		}
 	}
 
-	/*
-	 * public int getAccessFromSomeDays(ContentContext ctx) throws Exception { final String KEY = "mount-access"; Integer outCount = (Integer) cache.get(KEY); if (outCount == null) { StaticConfig staticConfig = StaticConfig.getInstance(ctx.getRequest().getSession()); outCount = Tracker.getTracker(ctx.getRequest().getSession()).getRessourceCountAccess(ctx, staticConfig.getLastAccessStatic(), this); cache.put(KEY, outCount); } return outCount; }
-	 */
-
 	public int getAccessFromSomeDays(ContentContext ctx) throws Exception {
 		StaticConfig staticConfig = StaticConfig.getInstance(ctx.getRequest().getSession());
 		Calendar cal = Calendar.getInstance();

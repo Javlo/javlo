@@ -82,14 +82,14 @@ public class ConfigHelper {
 		reader.close();
 	}
 
-	public static final InputStream getComponentConfigRessourceAsStream(ServletContext servletContext, String type, String fileName) throws ResourceNotFoundException {
+	public static final InputStream getComponentConfigResourceAsStream(ServletContext servletContext, String type, String fileName) throws ResourceNotFoundException {
 
-		String ressourceName = CONFIG_COMPONENT_DIR + "/" + type + fileName;
-		InputStream in = servletContext.getResourceAsStream(ressourceName);
+		String resourceName = CONFIG_COMPONENT_DIR + "/" + type + fileName;
+		InputStream in = servletContext.getResourceAsStream(resourceName);
 		if (in == null) {
-			throw new ResourceNotFoundException("ressource not found : " + ressourceName);
+			throw new ResourceNotFoundException("resource not found : " + resourceName);
 		} else {
-			logger.fine("load ressource : " + ressourceName);
+			logger.fine("load resource : " + resourceName);
 		}
 		return in;
 	}

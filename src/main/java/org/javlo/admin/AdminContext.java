@@ -41,7 +41,7 @@ public class AdminContext {
 	
 	private String URIFileToEdit = null;
 	
-	private String activeRessource = null;
+	private String activeResource = null;
 
 	private AdminContext(HttpSession session) {
 	};
@@ -141,12 +141,12 @@ public class AdminContext {
 		}
 	}
 
-	public String getActiveRessource() {
-		return activeRessource;
+	public String getActiveResource() {
+		return activeResource;
 	}
 
-	public void setActiveRessource(String activeRessource) {
-		this.activeRessource = activeRessource;
+	public void setActiveResource(String activeResource) {
+		this.activeResource = activeResource;
 	}
 
 	public void setURIFileToEdit(String uRIFileToEdit) {

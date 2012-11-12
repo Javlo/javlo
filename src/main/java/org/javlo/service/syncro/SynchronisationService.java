@@ -28,7 +28,6 @@ import org.javlo.helper.URLHelper;
 import org.javlo.servlet.SynchronisationServlet;
 import org.javlo.utils.DebugListening;
 
-
 @Deprecated
 public class SynchronisationService {
 
@@ -37,7 +36,7 @@ public class SynchronisationService {
 	 */
 	public static Logger logger = Logger.getLogger(SynchronisationService.class.getName());
 
-	private static final String RESSOURCES_DESCRIPTION_URI = "/synchro/";
+	private static final String RESOURCES_DESCRIPTION_URI = "/synchro/";
 
 	private URL serverURL = null;
 
@@ -57,7 +56,7 @@ public class SynchronisationService {
 
 	private boolean refreshDMZContent = false;
 
-	private boolean uploadPreviewFile = true;
+	private final boolean uploadPreviewFile = true;
 
 	private String proxyHost = null;
 
@@ -65,7 +64,7 @@ public class SynchronisationService {
 
 	private String getURL() {
 		String outURL = "" + serverURL;
-		outURL = URLHelper.mergePath(outURL, RESSOURCES_DESCRIPTION_URI);
+		outURL = URLHelper.mergePath(outURL, RESOURCES_DESCRIPTION_URI);
 		outURL = URLHelper.mergePath(outURL, URI_PREFIX);
 		outURL = URLHelper.addParam(outURL, SynchronisationServlet.SHYNCRO_CODE_PARAM_NAME, synchroCode);
 		return outURL;
@@ -271,8 +270,7 @@ public class SynchronisationService {
 			ResourceHelper.writeStreamToFile(in, localFile);
 			String localChecksum = ResourceHelper.computeChecksum(localFile);
 			if (!ResourceHelper.checksumEquals(localChecksum, fileInfo.getChecksum())) {
-				logger.warning("Download error : '" + fileInfo.getPath() + "' not same checksum [size source:" + fileInfo.getSize() + " size target:"
-						+ localFile.length() + "]");
+				logger.warning("Download error : '" + fileInfo.getPath() + "' not same checksum [size source:" + fileInfo.getSize() + " size target:" + localFile.length() + "]");
 				errorReport.println("Download error : '" + fileInfo.getPath() + "' not same checksum");
 				localFile.delete();
 				return false;
@@ -321,17 +319,18 @@ public class SynchronisationService {
 
 	public void pushContext(String context) {
 
-		//System.out.println("******** context **********");
-		//System.out.println(context);
-		//System.out.println("***************************");
+		// System.out.println("******** context **********");
+		// System.out.println(context);
+		// System.out.println("***************************");
 
 		sendCommand("context", context);
 	}
 
-	public void syncroRessource() throws IOException {
-		syncroRessource(null);
+	public void syncroResource() throws IOException {
+		syncroResource(null);
 	}
-	public String syncroRessource(String previousResult) throws IOException {
+
+	public String syncroResource(String previousResult) throws IOException {
 
 		if (serverURL == null) {
 			throw new NullPointerException("serverURL is null");
@@ -350,20 +349,20 @@ public class SynchronisationService {
 			out.println("serverURL : " + serverURL);
 			out.println("");
 
-			//Load structure from the previous sync
+			// Load structure from the previous sync
 			Properties savedProp = null;
 			if (previousResult != null) {
 				savedProp = new Properties();
 				savedProp.load(new StringReader(previousResult));
 			}
 
-			//Load structure from the distant folder (DMZ)
+			// Load structure from the distant folder (DMZ)
 			URL workURL = new URL(URLHelper.mergePath(getURL(), SynchronisationServlet.FILE_INFO));
 			previousResult = ResourceHelper.downloadResourceAsString(workURL);
 			Properties dmzProp = new Properties();
 			dmzProp.load(new StringReader(previousResult));
 
-			//Load structure from the locale folder
+			// Load structure from the locale folder
 			Properties intraProp = new Properties();
 			String intraPropertyContent = FileStructureFactory.getInstance(baseFolderFile).fileTreeToProperties();
 			ByteArrayInputStream in = new ByteArrayInputStream(intraPropertyContent.getBytes());
@@ -372,7 +371,7 @@ public class SynchronisationService {
 
 			Enumeration<Object> keys;
 
-			//Browsing intra structure 
+			// Browsing intra structure
 			keys = intraProp.keys();
 			while (keys.hasMoreElements()) {
 				String intraKey = (String) keys.nextElement();
@@ -381,7 +380,7 @@ public class SynchronisationService {
 				FileInfo intraFileInfo = new FileInfo(intraFileInfoStr);
 				FileInfo dmzFileInfo = null;
 				if (dmzProp.get(intraKey) == null) {
-					//Intra = Exist + DMZ = Unknown > push 
+					// Intra = Exist + DMZ = Unknown > push
 					if (!pushFile(intraFileInfo, out)) {
 						noError = false;
 					}
@@ -390,54 +389,54 @@ public class SynchronisationService {
 					if (dmzFileInfo.isDeleted()) {
 						File realFile = new File(baseFolderFile, intraFileInfo.getPath());
 						if (savedProp == null) {
-							//Intra = Exist, DMZ = Deleted, Saved = Unknown > delete 
+							// Intra = Exist, DMZ = Deleted, Saved = Unknown > delete
 							realFile.delete();
 						} else {
 							String savedFileInfoStr = savedProp.getProperty(intraKey);
 							if (savedFileInfoStr == null) {
-								//Intra = Exist, DMZ = Deleted, Saved = Unknown > delete 
+								// Intra = Exist, DMZ = Deleted, Saved = Unknown > delete
 								realFile.delete();
 							} else {
 								FileInfo savedFileInfo = new FileInfo(savedProp.getProperty(intraKey));
 								if (savedFileInfo.isDeleted()) {
-									//Intra = Exist, DMZ = Deleted, Saved = Deleted > push 
+									// Intra = Exist, DMZ = Deleted, Saved = Deleted > push
 									if (!pushFile(intraFileInfo, out)) {
 										noError = false;
 									}
 								} else {
-									//Intra = Exist, DMZ = Deleted, Saved = Exist > delete 
+									// Intra = Exist, DMZ = Deleted, Saved = Exist > delete
 									realFile.delete();
 								}
 							}
 						}
 					} else {
-						//Intra = Exist, DMZ = Exist ... 
+						// Intra = Exist, DMZ = Exist ...
 						if (!ResourceHelper.checksumEquals(dmzFileInfo.getChecksum(), intraFileInfo.getChecksum())) {
-							//... Intra or DMZ = Modified ...
+							// ... Intra or DMZ = Modified ...
 							FileInfo savedFileInfo = null;
 							if (savedProp != null) {
 								savedFileInfo = new FileInfo(savedProp.getProperty(intraKey));
 							}
-							if (/*downloadFromDMZ ||*/(savedFileInfo != null && ResourceHelper.checksumEquals(savedFileInfo.getChecksum(), intraFileInfo.getChecksum()))) {
-								//... Saved = Intra > DMZ = Newer > download
+							if (/* downloadFromDMZ || */(savedFileInfo != null && ResourceHelper.checksumEquals(savedFileInfo.getChecksum(), intraFileInfo.getChecksum()))) {
+								// ... Saved = Intra > DMZ = Newer > download
 								File realFile = new File(baseFolderFile, intraFileInfo.getPath());
 								if (!downloadFile(dmzFileInfo, realFile, out)) {
 									noError = false;
 								}
-							} else if (/*pushOnDMZ ||*/(savedFileInfo != null && ResourceHelper.checksumEquals(savedFileInfo.getChecksum(), dmzFileInfo.getChecksum()))) {
-								//... Saved = DMZ > Intra = Newer > push
+							} else if (/* pushOnDMZ || */(savedFileInfo != null && ResourceHelper.checksumEquals(savedFileInfo.getChecksum(), dmzFileInfo.getChecksum()))) {
+								// ... Saved = DMZ > Intra = Newer > push
 								if (!pushFile(intraFileInfo, out)) {
 									noError = false;
 								}
 							} else {
-								//... Both modified > CONFLICT
+								// ... Both modified > CONFLICT
 								if ((intraFileInfo.getModificationDate() > dmzFileInfo.getModificationDate())) {
-									//... Intra = Newer > push
+									// ... Intra = Newer > push
 									if (!pushFile(intraFileInfo, out)) {
 										noError = false;
 									}
 								} else {
-									//... DMZ = Newer > download
+									// ... DMZ = Newer > download
 									File realFile = new File(baseFolderFile, intraFileInfo.getPath());
 									if (!downloadFile(dmzFileInfo, realFile, out)) {
 										noError = false;
@@ -449,7 +448,7 @@ public class SynchronisationService {
 				}
 			}
 
-			//Browsing DMZ structure 
+			// Browsing DMZ structure
 			keys = dmzProp.keys();
 			while (keys.hasMoreElements()) {
 				String dmzKey = (String) keys.nextElement();
@@ -458,7 +457,7 @@ public class SynchronisationService {
 				FileInfo dmzFileInfo = new FileInfo(dmzFileInfoStr);
 				if (intraProp.get(dmzKey) == null) {
 					if (!dmzFileInfo.isDeleted()) {
-						//DMZ = Exist, Intra = Unknown > download (or delete)
+						// DMZ = Exist, Intra = Unknown > download (or delete)
 						File realFile = new File(baseFolderFile, dmzFileInfo.getPath());
 						if (deleteDMZItNotFoundIntra) {
 							deleteFile(dmzFileInfo, out);
@@ -467,7 +466,7 @@ public class SynchronisationService {
 						}
 					}
 				} else {
-					//Intra = Exist, DMZ = Exist > The process is already done in the first loop.
+					// Intra = Exist, DMZ = Exist > The process is already done in the first loop.
 				}
 			}
 

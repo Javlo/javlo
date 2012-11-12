@@ -895,7 +895,7 @@ public class URLHelper extends ElementaryURLHelper {
 		return path.replace(" ", "%20");
 	}
 
-	public static String removeTemplateFromRessourceURL(String url) {
+	public static String removeTemplateFromResourceURL(String url) {
 		String[] splitURL = url.split("/");
 		if (splitURL.length > 3) {
 			StringBuffer outURL = new StringBuffer();

@@ -55,7 +55,7 @@ public class SynchronisationServlet extends HttpServlet {
 
 	public static final String SHYNCRO_CODE_PARAM_NAME = "synchro-code";
 
-	public static final String PUSH_RESSOURCES_DESCRIPTION_URI = "/synchro";
+	public static final String PUSH_RESOURCES_DESCRIPTION_URI = "/synchro";
 
 	private static final Logger logger = Logger.getLogger(SynchronisationServlet.class.getName());
 

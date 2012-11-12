@@ -420,7 +420,7 @@ public class GlobalContext implements Serializable {
 
 			newInstance.writeInfo(System.out);
 
-			// TODO : init ressource Id
+			// TODO : init resource Id
 
 			return newInstance;
 		}
@@ -491,9 +491,9 @@ public class GlobalContext implements Serializable {
 
 	private final transient Map<Code, WeakReference<Code>> specialAccessCode = new WeakHashMap<Code, WeakReference<Code>>();
 
-	private final Map<String, String> ressourcePathToId = new HashMap<String, String>();
+	private final Map<String, String> resourcePathToId = new HashMap<String, String>();
 
-	private final Map<String, String> ressourceIdToPath = new HashMap<String, String>();
+	private final Map<String, String> resourceIdToPath = new HashMap<String, String>();
 
 	private final Map<Object, Object> attributes = new HashMap<Object, Object>();
 
@@ -1251,12 +1251,12 @@ public class GlobalContext implements Serializable {
 		return resources;
 	}
 
-	public String getRessourceId(String path) {
-		return ressourcePathToId.get(path);
+	public String getResourceId(String path) {
+		return resourcePathToId.get(path);
 	}
 
-	public String getRessourcePath(String id) {
-		return ressourceIdToPath.get(id);
+	public String getResourcePath(String id) {
+		return resourceIdToPath.get(id);
 
 	}
 

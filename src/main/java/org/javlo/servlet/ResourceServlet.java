@@ -146,14 +146,14 @@ public class ResourceServlet extends HttpServlet {
 			}
 			pathInfo = pathInfo.replace('\\', '/'); // for windows server
 
-			String ressourceURI = pathInfo;
-			ressourceURI = ressourceURI.replace('\\', '/');
+			String resourceURI = pathInfo;
+			resourceURI = resourceURI.replace('\\', '/');
 
-			logger.fine("load static ressource : " + ressourceURI);
+			logger.fine("load static resource : " + resourceURI);
 
-			response.setContentType(ResourceHelper.getFileExtensionToManType(StringHelper.getFileExtension(ressourceURI)));
+			response.setContentType(ResourceHelper.getFileExtensionToManType(StringHelper.getFileExtension(resourceURI)));
 			if (!pathInfo.equals(FILE_INFO)) {
-				File file = new File(URLHelper.mergePath(dataFolder, ressourceURI));
+				File file = new File(URLHelper.mergePath(dataFolder, resourceURI));
 				if (file.exists()) {
 					response.setContentLength((int) file.length());
 					StaticInfo.getInstance(ctx, file).addAccess(ctx);
@@ -164,13 +164,13 @@ public class ResourceServlet extends HttpServlet {
 			}
 			out = response.getOutputStream();
 
-			if (ressourceURI != null) {
+			if (resourceURI != null) {
 				if (pathInfo.equals(FILE_INFO)) {
 					String fileTreeProperties = FileStructureFactory.getInstance(new File(dataFolder)).fileTreeToProperties();
 					out.write(fileTreeProperties.getBytes());
 				} else {
 
-					String finalName = URLHelper.mergePath(dataFolder, ressourceURI);
+					String finalName = URLHelper.mergePath(dataFolder, resourceURI);
 
 					fileStream = new FileInputStream(new File(finalName));
 

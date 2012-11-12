@@ -740,7 +740,7 @@ public class ContentContext {
 	}
 
 	/**
-	 * return if the current request is for a page access and not a ressource (jsp, img, js...)
+	 * return if the current request is for a page access and not a resource (jsp, img, js...)
 	 * 
 	 * @return
 	 */
