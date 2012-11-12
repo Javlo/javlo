@@ -289,7 +289,7 @@ public class XMLManipulationHelper {
 			// read = in.read();
 			// }
 			// } finally {
-			// RessourceHelper.closeResource(in);
+			// ResourceHelper.closeResource(in);
 			// }
 			// String content = contentBuffered.toString();
 

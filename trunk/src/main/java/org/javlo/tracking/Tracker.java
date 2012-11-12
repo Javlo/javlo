@@ -110,8 +110,8 @@ public class Tracker {
 		Track[] tracjs = getTracks(from, to, null);
 		int c = 0;
 		for (Track track : tracjs) {
-			String trackPathNoTemplate = URLHelper.removeTemplateFromRessourceURL(track.getPath());
-			if (trackPathNoTemplate.endsWith(URLHelper.removeTemplateFromRessourceURL(path))) {
+			String trackPathNoTemplate = URLHelper.removeTemplateFromResourceURL(track.getPath());
+			if (trackPathNoTemplate.endsWith(URLHelper.removeTemplateFromResourceURL(path))) {
 				c++;
 			}
 		}
@@ -352,7 +352,7 @@ public class Tracker {
 	public int getResourcePathCountAccess(Date from, Date to, String path) {
 		Collection<Track> tracks = getResourceTracking(from, to, null);
 		int c = 0;
-		path = URLHelper.removeTemplateFromRessourceURL(path);
+		path = URLHelper.removeTemplateFromResourceURL(path);
 		for (Track track : tracks) {
 			if (track.getPath().equals(path)) {
 				c++;
@@ -391,7 +391,7 @@ public class Tracker {
 		return persistenceService.loadTracks(from, to, false, true);
 	}
 
-	public int getRessourceCountAccess(ContentContext ctx, int dayFromHere, StaticInfo staticInfo) throws Exception {
+	public int getResourceCountAccess(ContentContext ctx, int dayFromHere, StaticInfo staticInfo) throws Exception {
 		ContentContext viewCtx = new ContentContext(ctx);
 		viewCtx.setRenderMode(ContentContext.VIEW_MODE);
 		GlobalContext globalContext = GlobalContext.getInstance(ctx.getRequest());

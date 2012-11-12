@@ -102,7 +102,7 @@ public abstract class AbstractFileComponent extends AbstractVisualComponent impl
 
 		StaticConfig staticConfig = StaticConfig.getInstance(ctx.getRequest().getSession());
 		GlobalContext globalContext = GlobalContext.getInstance(ctx.getRequest());
-		uri = ResourceHelper.extractRessourceDir(staticConfig, globalContext, uri);
+		uri = ResourceHelper.extractResourceDir(staticConfig, globalContext, uri);
 
 		/* clean path */
 		inURI = inURI.replace('\\', '/').replaceAll("//", "/");

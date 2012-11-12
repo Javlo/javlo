@@ -72,16 +72,16 @@ public class VFSServlet extends HttpServlet {
 							pathInfo = pathInfo.substring(staticConfig.getShareDataFolderKey().length() + 1);
 							dataFolder = staticConfig.getShareDataFolder();
 						}
-						String ressourceURI = pathInfo;
-						ressourceURI = ressourceURI.replace('\\', '/');
-						logger.info("read : " + ressourceURI + " in : " + zipFileName);
+						String resourceURI = pathInfo;
+						resourceURI = resourceURI.replace('\\', '/');
+						logger.info("read : " + resourceURI + " in : " + zipFileName);
 						FileSystemManager fsManager = VFS.getManager();
 						FileObject file = fsManager.resolveFile(StringHelper.getFileExtension(zipFileName) + ":" + zipFile.getAbsolutePath());
-						file = file.resolveFile('/' + ressourceURI);
+						file = file.resolveFile('/' + resourceURI);
 						in = file.getContent().getInputStream();
 						out = response.getOutputStream();
 
-						response.setContentType(ResourceHelper.getFileExtensionToManType(StringHelper.getFileExtension(ressourceURI)));
+						response.setContentType(ResourceHelper.getFileExtensionToManType(StringHelper.getFileExtension(resourceURI)));
 						ResourceHelper.writeStreamToStream(in, out);
 					}
 				}

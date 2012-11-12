@@ -4,8 +4,7 @@
 package org.javlo.exception;
 
 /**
- * @author pvandermaesen
- * Exception when a ressource can not be found.
+ * @author pvandermaesen Exception when a resource can not be found.
  */
 public class ResourceNotFoundException extends Exception {
 

@@ -212,7 +212,7 @@ public class I18nAccess implements Serializable {
 				String fileName = "/i18n/" + AbstractVisualComponent.I18N_FILE.replaceAll("\\[lg\\]", editLg);
 				prop = new Properties();
 				componentsPath.put(componentPath, prop);
-				in = ConfigHelper.getComponentConfigRessourceAsStream(servletContext, componentPath, fileName);
+				in = ConfigHelper.getComponentConfigResourceAsStream(servletContext, componentPath, fileName);
 				if (in != null) {
 					prop.load(in);
 				}

@@ -667,11 +667,11 @@ public class Template implements Comparable<Template> {
 		File HTMLFile = new File(URLHelper.mergePath(URLHelper.mergePath(templateFolder, getSourceFolder()), getHTMLFile(null)));
 
 		List<GenericMessage> messages = new LinkedList<GenericMessage>();
-		List<String> ressources = new LinkedList<String>();
+		List<String> resources = new LinkedList<String>();
 
 		try {
 			TemplatePluginFactory templatePluginFactory = TemplatePluginFactory.getInstance(globalContext.getServletContext());
-			XMLManipulationHelper.convertHTMLtoTemplate(globalContext, i18nAccess, HTMLFile, null, getMap(), getAreas(), ressources, templatePluginFactory.getAllTemplatePlugin(globalContext.getTemplatePlugin()), messages);
+			XMLManipulationHelper.convertHTMLtoTemplate(globalContext, i18nAccess, HTMLFile, null, getMap(), getAreas(), resources, templatePluginFactory.getAllTemplatePlugin(globalContext.getTemplatePlugin()), messages);
 		} catch (Throwable t) {
 			messages.add(new GenericMessage(t.getMessage(), GenericMessage.ERROR));
 		}
@@ -1303,14 +1303,14 @@ public class Template implements Comparable<Template> {
 	}
 
 	public List<String> getResources() {
-		List<String> outRessources = new ArrayList<String>();
+		List<String> outResources = new ArrayList<String>();
 		Collection<File> allFiles = FileUtils.listFiles(dir, null, true);
 		for (File file : allFiles) {
 			if (!file.getName().equals(PRIVATE_CONFIG_FILE) && !file.getName().endsWith("~")) {
-				outRessources.add(file.getAbsolutePath().replace(dir.getAbsolutePath(), ""));
+				outResources.add(file.getAbsolutePath().replace(dir.getAbsolutePath(), ""));
 			}
 		}
-		return outRessources;
+		return outResources;
 	}
 
 	/**

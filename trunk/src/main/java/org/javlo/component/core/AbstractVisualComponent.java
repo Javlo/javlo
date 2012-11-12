@@ -277,7 +277,7 @@ public abstract class AbstractVisualComponent implements IContentVisualComponent
 	}
 
 	protected String getComponentCSS(ServletContext application, String css) throws ServletException, IOException {
-		InputStream stream = ResourceHelper.getStaticComponentRessource(application, getComponentPath(), css);
+		InputStream stream = ResourceHelper.getStaticComponentResource(application, getComponentPath(), css);
 
 		try {
 			StringWriter strWriter = new StringWriter();
@@ -1080,9 +1080,9 @@ public abstract class AbstractVisualComponent implements IContentVisualComponent
 			ServletContext srvCtx = ctx.getRequest().getSession().getServletContext();
 			InputStream in = null;
 			try {
-				in = ConfigHelper.getComponentConfigRessourceAsStream(srvCtx, getComponentPath(), fileName);
+				in = ConfigHelper.getComponentConfigResourceAsStream(srvCtx, getComponentPath(), fileName);
 			} catch (ResourceNotFoundException e) {
-				// ressource can not be found.
+				// resource can not be found.
 				e.printStackTrace();
 				logger.severe(e.getMessage());
 			}
@@ -1091,7 +1091,7 @@ public abstract class AbstractVisualComponent implements IContentVisualComponent
 					i18n.load(in);
 					i18nView.put(ctx.getRequestContentLanguage(), i18n);
 				} catch (Exception e) {
-					throw new ResourceNotFoundException("can not load the ressource : " + fileName);
+					throw new ResourceNotFoundException("can not load the resource : " + fileName);
 				}
 			}
 		}

@@ -144,7 +144,7 @@ public class MailingThread extends Thread {
 					} catch (InterruptedException e) {
 						logger.warning(e.getMessage());
 					}
-					synchronized (ResourceHelper.SYNCHRO_RESSOURCE) {
+					synchronized (ResourceHelper.SYNCHRO_RESOURCE) {
 						Mailing[] mailing = getMailingList();
 						if (mailing.length > 0) {
 							for (int i = 0; i < mailing.length; i++) {

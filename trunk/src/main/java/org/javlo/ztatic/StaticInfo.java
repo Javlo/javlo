@@ -398,7 +398,7 @@ public class StaticInfo {
 
 			File file = new File(realPath);
 			if (!file.exists()) {
-				logger.fine("could not instancied ressource because file does'nt exist : " + file + " context name : " + globalContext.getContextKey());
+				logger.fine("could not instancied resource because file does'nt exist : " + file + " context name : " + globalContext.getContextKey());
 			} else if (file.isDirectory()) {
 				if (!staticInfo.staticURL.endsWith("/")) {
 					staticInfo.staticURL = staticInfo.staticURL + '/';
@@ -862,10 +862,6 @@ public class StaticInfo {
 		StaticInfo newStaticInfo = StaticInfo.getInstance(ctx, newFile);
 		content.renameKeys(getKey(""), newStaticInfo.getKey(""));
 	}
-
-	/*
-	 * public int getAccessFromSomeDays(ContentContext ctx) throws Exception { final String KEY = "mount-access"; Integer outCount = (Integer) cache.get(KEY); if (outCount == null) { StaticConfig staticConfig = StaticConfig.getInstance(ctx.getRequest().getSession()); outCount = Tracker.getTracker(ctx.getRequest().getSession()).getRessourceCountAccess(ctx, staticConfig.getLastAccessStatic(), this); cache.put(KEY, outCount); } return outCount; }
-	 */
 
 	public int getAccessFromSomeDays(ContentContext ctx) throws Exception {
 		StaticConfig staticConfig = StaticConfig.getInstance(ctx.getRequest().getSession());

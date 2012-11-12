@@ -903,7 +903,7 @@ public class PersistenceService {
 								if (onlyResource) {
 									if (!track.getPath().startsWith("/view/") && !track.getPath().startsWith("/preview/") && !track.getPath().startsWith("/edit/") && !track.getPath().startsWith("/ajax/")) {
 										if (track.getUserAgent() == null || !track.getUserAgent().toLowerCase().contains("bot")) {
-											track.setPath(URLHelper.removeTemplateFromRessourceURL(track.getPath()));
+											track.setPath(URLHelper.removeTemplateFromResourceURL(track.getPath()));
 											Calendar trackCal = Calendar.getInstance();
 											trackCal.setTimeInMillis(track.getTime());
 											if (calFrom.before(trackCal) && calTo.after(trackCal)) {
