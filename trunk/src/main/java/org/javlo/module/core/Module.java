@@ -421,7 +421,8 @@ public class Module {
 			Arrays.sort(cssFiles, new FileComparator(FileComparator.NAME, true));
 			for (File file : cssFiles) {
 				if (file.isFile() && StringHelper.getFileExtension(file.getName()).equalsIgnoreCase("css")) {
-					cssURI.add(URLHelper.mergePath("/", URIPrefix, ModulesContext.MODULES_FOLDER + '/' + getName() + '/' + CSS_FOLDER + '/' + file.getName()));
+					String url = URLHelper.mergePath("/", URIPrefix, ModulesContext.MODULES_FOLDER + '/' + getName() + '/' + CSS_FOLDER + '/' + file.getName());
+					cssURI.add(url);
 				}
 			}
 		}
