@@ -50,11 +50,11 @@
 
 
 <c:forEach var="css" items="${currentModule.CSS}">
-<link rel="stylesheet" href="${css}"/>
+<link rel="stylesheet" href="${info.staticRootURL}/${css}"/>
 </c:forEach>
 
 <c:forEach var="js" items="${currentModule.JS}">
-<script type="text/javascript" src="${js}"></script>
+<script type="text/javascript" src="${info.staticRootURL}/${js}"></script>
 </c:forEach>
 
 </head>

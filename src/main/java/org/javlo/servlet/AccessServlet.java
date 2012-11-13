@@ -611,7 +611,7 @@ public class AccessServlet extends HttpServlet {
 						params.put(Device.FORCE_DEVICE_PARAMETER_NAME, "pdf");
 						params.put(ContentContext.FORCE_ABSOLUTE_URL, "true");
 						if (!globalContext.isView() && globalContext.getBlockPassword() != null) {
-							params.put("block-password", globalContext.getBlockPassword());							
+							params.put("block-password", globalContext.getBlockPassword());
 						}
 
 						if (request.getParameter(Template.FORCE_TEMPLATE_PARAM_NAME) != null) {
