@@ -31,14 +31,14 @@ jQuery(document).ready(function() {
 
 				// current directory file menu
 				files  : [
-					'getfile', '|','open','|', 'download', '|', 'copy', 'cut', 'paste', 'duplicate', '|',
+					'getfile', '|','open','|', 'copy', 'cut', 'paste', 'duplicate', '|',
 					'rm', '|', 'edit', 'rename', 'resize', '|', 'archive', 'extract', '|', 'info'
 				]
 			},
 		toolbar : [
 		   		['back', 'forward'],
  		   		['mkdir', 'mkfile', 'upload'],
-		   		['open', 'download', 'getfile'],
+		   		['open', 'getfile'],
 		   		['info'],
 		   		/*['quicklook'],*/
 		   		['copy', 'cut', 'paste'],
@@ -49,6 +49,19 @@ jQuery(document).ready(function() {
 		   		['view'],
 		   		['help']
 		   	] },
+	   	contextmenu : {
+	   		// navbarfolder menu
+	   		navbar : ['open', '|', 'copy', 'cut', 'paste', 'duplicate', '|', 'rm', '|', 'info'],
+
+	   		// current directory menu
+	   		cwd    : ['reload', 'back', '|', 'upload', 'mkdir', 'mkfile', 'paste', '|', 'info'],
+
+	   		// current directory file menu
+	   		files  : [
+	   			'getfile', '|','open', '|', 'copy', 'cut', 'paste', 'duplicate', '|',
+	   			'rm', '|', 'edit', 'rename', 'resize', '|', 'archive', 'extract', '|', 'info'
+	   		]
+	   	},
 		commandsOptions : {
 		    edit : {
 		      editors : [

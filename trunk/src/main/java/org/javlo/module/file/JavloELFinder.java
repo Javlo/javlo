@@ -47,12 +47,12 @@ public class JavloELFinder extends ELFinder {
 
 	private Map<String, String> MIME_TYPES;
 
-	private List<ELVolume> volumes;
+	private final List<ELVolume> volumes;
 
-	private Map<ELFile, String> fileToHash = new HashMap<ELFile, String>();
-	private Map<String, ELFile> hashToFile = new HashMap<String, ELFile>();
+	private final Map<ELFile, String> fileToHash = new HashMap<ELFile, String>();
+	private final Map<String, ELFile> hashToFile = new HashMap<String, ELFile>();
 
-	private ServletContext application;
+	private final ServletContext application;
 
 	public JavloELFinder(String rootPath, ServletContext application) {
 		super();
@@ -167,6 +167,7 @@ public class JavloELFinder extends ELFinder {
 		}
 	}
 
+	@Override
 	protected void createDir(String folderId, String fileName, Map<String, Object> response) {
 		JavloELFile folder = (JavloELFile) hashToFile(folderId);
 		File newFile = new File(URLHelper.mergePath(folder.getFile().getAbsolutePath(), fileName));
@@ -188,7 +189,7 @@ public class JavloELFinder extends ELFinder {
 				if (file.getFile().isDirectory()) {
 					FileUtils.copyDirectory(file.getFile(), newFile);
 
-					// check fodler ???
+					// check folder ???
 
 					JavloELFile newELFile = new JavloELFile(file.getVolume(), newFile, file.getParentFile());
 					addedFiles.add(newELFile);
@@ -241,9 +242,9 @@ public class JavloELFinder extends ELFinder {
 		}
 		apiResponse.put("added", printFiles(addedFiles));
 	}
-	
+
 	private static void compressFilesRecu(ZipOutputStream out, String root, File file) throws IOException {
-		String zipName = StringUtils.removeStart(file.getAbsolutePath(),root);		
+		String zipName = StringUtils.removeStart(file.getAbsolutePath(), root);
 		if (file.isFile()) {
 			ZipEntry entry = new ZipEntry(zipName);
 			out.putNextEntry(entry);
@@ -280,7 +281,7 @@ public class JavloELFinder extends ELFinder {
 
 			for (String fileHash : files) {
 				ELFile elfile = hashToFile(fileHash);
-				compressFilesRecu(out, firstFile.getParentFile().getFile().getAbsolutePath(), elfile.getFile());				
+				compressFilesRecu(out, firstFile.getParentFile().getFile().getAbsolutePath(), elfile.getFile());
 			}
 		} finally {
 			ResourceHelper.closeResource(out);

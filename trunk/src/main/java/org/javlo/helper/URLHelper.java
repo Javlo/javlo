@@ -14,6 +14,7 @@ import java.util.Set;
 import javax.servlet.http.HttpServletRequest;
 
 import org.apache.commons.io.FileUtils;
+import org.apache.commons.lang.StringUtils;
 import org.javlo.config.StaticConfig;
 import org.javlo.context.ContentContext;
 import org.javlo.context.GlobalContext;
@@ -175,6 +176,13 @@ public class URLHelper extends ElementaryURLHelper {
 		} else {
 			return createStaticURL(ctx, currentPage, RESOURCE + '/' + url);
 		}
+	}
+
+	public static String createResourceURL(ContentContext ctx, File file) {
+		GlobalContext globalContext = GlobalContext.getInstance(ctx.getRequest());
+		String url = file.getAbsolutePath();
+		url = StringUtils.removeStart(url, globalContext.getDataFolder());
+		return createResourceURL(ctx, url);
 	}
 
 	public static String createResourceURL(ContentContext ctx, String url) {

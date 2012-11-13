@@ -134,7 +134,9 @@ for (int i=0; i<components.length; i++) {
       <div class="header-info">
       	<%if (comp.isRepeat()) {%><span class="repeat" title="${i18n.edit['content.repeat']}"></span><%}
       	if (comp.isList(ctx)) {%><span class="inlist" title="${i18n.edit['component.inlist']}"></span><%}
-      	if (comp.getStyle(ctx) != null && comp.getStyle(ctx).trim().length() > 0) {%><span class="style" title="<%=comp.getStyleTitle(ctx)%>"><%=comp.getStyleLabel(ctx)%></span><%}
+      	if (comp.getStyle(ctx) != null && comp.getStyle(ctx).trim().length() > 0) {%><span class="style" title="<%=comp.getStyleTitle(ctx)%>"><%=comp.getStyleLabel(ctx)%></span><%}      	
+      	if (comp.getCurrentRenderer(ctx) != null && comp.getCurrentRenderer(ctx).trim().length() > 0) {      		
+      	%><%if (comp.getStyle(ctx) != null && comp.getStyle(ctx).trim().length() > 0) {%><span class="sep">-</span><%}%><span class="renderer" title="<%=comp.getCurrentRenderer(ctx)%>"><%=comp.getCurrentRenderer(ctx)%></span><%}
       	%>
       </div>
       <div id="tab1<%=inputSuffix%>">

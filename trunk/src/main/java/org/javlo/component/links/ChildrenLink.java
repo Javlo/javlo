@@ -107,7 +107,7 @@ public class ChildrenLink extends AbstractVisualComponent implements IImageTitle
 	}
 
 	@Override
-	protected String getCurrentRenderer(ContentContext ctx) {
+	public String getCurrentRenderer(ContentContext ctx) {
 		if (super.getCurrentRenderer(ctx) != null) {
 			return super.getCurrentRenderer(ctx);
 		} else {

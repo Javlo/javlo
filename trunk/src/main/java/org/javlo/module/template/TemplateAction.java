@@ -85,7 +85,6 @@ public class TemplateAction extends AbstractModuleAction {
 			} else {
 				ctx.getRequest().setAttribute("currentTemplate", new Template.TemplateBean(ctx, template));
 				params.put("name", templateName);
-
 				FileModuleContext fileModuleContext = FileModuleContext.getInstance(ctx.getRequest());
 				fileModuleContext.clear();
 				fileModuleContext.setRoot(template.getTemplateRealPath());

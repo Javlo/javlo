@@ -180,11 +180,11 @@ public class FileAction extends AbstractModuleAction {
 				LinkToRenderer lnk = fileModuleContext.getHomeLink();
 				fileModuleContext.getNavigation().add(lnk);
 				fileModuleContext.setCurrentLink(lnk.getName());
-				if (ctx.getRequest().getParameter("name") == null) {
-					modulesContext.getCurrentModule().setToolsRenderer(null);
-				} else {
-					modulesContext.getCurrentModule().setToolsRenderer("/jsp/actions.jsp");
-				}
+				/*
+				 * if (ctx.getRequest().getParameter("name") == null) { modulesContext.getCurrentModule().setToolsRenderer(null); } else {
+				 */
+				modulesContext.getCurrentModule().setToolsRenderer("/jsp/actions.jsp");
+				/* } */
 			}
 		}
 
@@ -222,6 +222,7 @@ public class FileAction extends AbstractModuleAction {
 
 		String[] pathItems = URLHelper.cleanPath(fileModuleContext.getPath(), true).split("/");
 		String currentPath = "/";
+
 		for (int i = 0; i < pathItems.length; i++) {
 			String path = pathItems[i];
 			if (path.trim().length() > 0) {
@@ -231,6 +232,9 @@ public class FileAction extends AbstractModuleAction {
 				filesParams.put("path", currentPath);
 				if (rs.getParameter("changeRoot", null) != null) {
 					filesParams.put("changeRoot", "true");
+				}
+				if (rs.getParameter("name", null) != null) {
+					filesParams.put("name", rs.getParameter("name", null));
 				}
 				String staticURL;
 				if (moduleContext.getFromModule() != null) {
@@ -252,6 +256,9 @@ public class FileAction extends AbstractModuleAction {
 						filesParams.put("path", childPath);
 						if (rs.getParameter("changeRoot", null) != null) {
 							filesParams.put("changeRoot", "true");
+						}
+						if (rs.getParameter("name", null) != null) {
+							filesParams.put("name", rs.getParameter("name", null));
 						}
 						if (moduleContext.getFromModule() != null) {
 							childURL = URLHelper.createInterModuleURL(ctx, ctx.getPath(), FileModuleContext.MODULE_NAME, moduleContext.getFromModule().getName(), filesParams);
