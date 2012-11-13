@@ -69,9 +69,9 @@ public abstract class ELFinder {
 			} else if ("upload".equals(command)) {
 				uploadFile(rs.getParameter("target", null), rs.getFileItemMap().get("upload[]"), rs.getParameter("name", null), apiResponse);
 			} else if ("archive".equals(command)) {
-				compressFiles( rs.getParameterValues("targets[]",null), rs.getParameter("type", null), apiResponse);
+				compressFiles(rs.getParameterValues("targets[]", null), rs.getParameter("type", null), apiResponse);
 			} else if ("extract".equals(command)) {
-				extractFile(rs.getParameter("target", null),apiResponse);
+				extractFile(rs.getParameter("target", null), apiResponse);
 			} else if ("resize".equals(command)) {
 				String mode = rs.getParameter("mode", null);
 				String target = rs.getParameter("target", null);
@@ -82,10 +82,10 @@ public abstract class ELFinder {
 				transformFile(target, mode, width, height, x, y, apiResponse);
 			} else if ("paste".equals(command)) {
 				pasteFiles(rs.getParameter("src", null), rs.getParameter("dst", null), rs.getParameterValues("targets[]", null), StringHelper.isTrue(rs.getParameter("cut", "false")), apiResponse);
-			} 
+			}
 			if (request.getSession().getAttribute("ELPath") != null) {
 				apiResponse.clear();
-				init(""+request.getSession().getAttribute("ELPath"), apiResponse);
+				init("" + request.getSession().getAttribute("ELPath"), apiResponse);
 				request.getSession().removeAttribute("ELPath");
 			}
 		} catch (ELFinderException elEx) {
@@ -101,7 +101,7 @@ public abstract class ELFinder {
 
 	}
 
-	private void init(String inFolder, Map<String, Object> apiResponse) {		
+	private void init(String inFolder, Map<String, Object> apiResponse) {
 		String[] folders = inFolder.split("/");
 		if (folders.length > 1) {
 			String volName = folders[1];
@@ -117,8 +117,8 @@ public abstract class ELFinder {
 						if (file.getFile().getName().equals(folders[i])) {
 							currentFile = file;
 						}
-					}					
-				}				
+					}
+				}
 			}
 			if (currentFile != null) {
 				open(true, currentFile, true, apiResponse);
@@ -150,9 +150,9 @@ public abstract class ELFinder {
 	protected abstract ELFile createELFile(ELFile parent, File file);
 
 	protected abstract void uploadFile(String folderHash, FileItem[] filesItem, String parameter, Map<String, Object> apiResponse) throws Exception;
-	
-	protected abstract void extractFile(String fileHash,Map<String, Object> apiResponse) throws Exception;
-	
+
+	protected abstract void extractFile(String fileHash, Map<String, Object> apiResponse) throws Exception;
+
 	protected abstract void compressFiles(String[] files, String type, Map<String, Object> apiResponse) throws Exception;
 
 	protected abstract void renameFile(String fileHash, String name, Map<String, Object> apiResponse) throws ELFinderException, Exception;
@@ -217,7 +217,7 @@ public abstract class ELFinder {
 	}
 
 	private void updateFile(String content, String fileHash, Map<String, Object> apiResponse) throws IOException {
-		ELFile file = (ELFile) hashToFile(fileHash);
+		ELFile file = hashToFile(fileHash);
 		if (file.getFile().exists()) {
 			if (content != null) {
 				ResourceHelper.writeStringToFile(file.getFile(), content);
@@ -279,15 +279,15 @@ public abstract class ELFinder {
 		return defaultValue;
 	}
 
-	public void open(boolean init, ELFile target, boolean tree, Map<String, Object> response) {		
+	public void open(boolean init, ELFile target, boolean tree, Map<String, Object> response) {
 		if (target == null) {
 			ELVolume volume = getVolumes().iterator().next();
 			target = volume.getRoot();
-		}		
+		}
 		response.put("cwd", printFile(target));
 		response.put("options", printOptions(target));
 		List<ELFile> files = new LinkedList<ELFile>();
-		files.addAll(target.getChildren());		
+		files.addAll(target.getChildren());
 		if (tree) {
 			files.addAll(getVolumeFiles());
 			ELFile parent = target.getParentFile();
@@ -295,14 +295,14 @@ public abstract class ELFinder {
 				files.addAll(parent.getChildren());
 				parent = parent.getParentFile();
 			}
-		}		
-		response.put("files", printFiles(files));		
+		}
+		response.put("files", printFiles(files));
 		if (init) {
 			extend(response, prop("api", PROTOCOL_VERSION), prop("uplMaxSize", "512M"));
-		}		
+		}
 		changeFolder(target);
 	}
-	
+
 	protected abstract void changeFolder(ELFile file);
 
 	protected abstract List<ELVolume> getVolumes();
@@ -370,8 +370,9 @@ public abstract class ELFinder {
 			extend(out, prop("dirs", toInt(childDirectories.size() > 0)));
 		} else if (StringHelper.isImage(file.getFile().getName())) {
 			try {
-				/*BufferedImage img = ImageIO.read(file.getFile());
-				extend(out, prop("dim", "" + img.getWidth() + 'x' + img.getHeight()));*/
+				/*
+				 * BufferedImage img = ImageIO.read(file.getFile()); extend(out, prop("dim", "" + img.getWidth() + 'x' + img.getHeight()));
+				 */
 			} catch (Throwable e) {
 				logger.warning(e.getMessage());
 			}
@@ -392,9 +393,8 @@ public abstract class ELFinder {
 		if (file.getParentFile() != null) {
 			path = file.getParentFile().getPath();
 			url = file.getVolume().getRoot().getURL();
-		} 
-		return obj(
-				prop("path", path),// (String) Current folder path
+		}
+		return obj(prop("path", path),// (String) Current folder path
 				prop("url", url),// (String) Current folder URL
 				prop("tmbURL", file.getThumbnailURL()),// (String) Thumbnails folder URL
 				prop("separator", "/"), prop("disabled", array()), // (Array) List of commands not allowed (disabled) on this volume
@@ -402,8 +402,8 @@ public abstract class ELFinder {
 	}
 
 	protected List<Object> printFiles(List<ELFile> files) {
-		List<Object> out = new ArrayList<Object>();		
-		Collections.sort(files, ELFile.FILE_NAME_COMPARATOR);		
+		List<Object> out = new ArrayList<Object>();
+		Collections.sort(files, ELFile.FILE_NAME_COMPARATOR);
 		for (ELFile file : files) {
 			out.add(printFile(file));
 		}

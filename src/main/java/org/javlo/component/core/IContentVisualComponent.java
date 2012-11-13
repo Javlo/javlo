@@ -360,6 +360,14 @@ public interface IContentVisualComponent {
 	public String getRenderer(ContentContext ctx);
 
 	/**
+	 * return the name of the renderer.
+	 * 
+	 * @param ctx
+	 * @return
+	 */
+	public String getCurrentRenderer(ContentContext ctx);
+
+	/**
 	 * code for prefix the view XHTML code.
 	 * 
 	 * @return XHTML code.

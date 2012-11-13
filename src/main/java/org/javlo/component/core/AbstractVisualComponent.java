@@ -392,7 +392,8 @@ public abstract class AbstractVisualComponent implements IContentVisualComponent
 		}
 	}
 
-	protected String getCurrentRenderer(ContentContext ctx) {
+	@Override
+	public String getCurrentRenderer(ContentContext ctx) {
 		if (getBean(ctx).getRenderer() == null && getConfig(ctx).getRenderes().size() > 0) {
 			return getConfig(ctx).getRenderes().keySet().iterator().next();
 		} else {
@@ -501,12 +502,14 @@ public abstract class AbstractVisualComponent implements IContentVisualComponent
 		if (isRepeat != isRepeat()) {
 			setRepeat(isRepeat);
 			setModify();
+			setNeedRefresh(true);
 		}
 
 		boolean isList = requestService.getParameter("inlist-" + getId(), null) != null;
 		if (isListable() && isList != isList(ctx)) {
 			setList(isList);
 			setModify();
+			setNeedRefresh(true);
 		}
 
 		/** renderer **/
@@ -515,6 +518,7 @@ public abstract class AbstractVisualComponent implements IContentVisualComponent
 			if (!renderer.equals(getRenderer(ctx))) {
 				setRenderer(ctx, renderer);
 				setModify();
+				setNeedRefresh(true);
 			}
 		}
 
@@ -523,6 +527,7 @@ public abstract class AbstractVisualComponent implements IContentVisualComponent
 		if (newStyle != null && !newStyle.equals(getStyle(ctx))) {
 			setStyle(ctx, newStyle);
 			setModify();
+			setNeedRefresh(true);
 		}
 
 		/** in list **/
@@ -531,6 +536,7 @@ public abstract class AbstractVisualComponent implements IContentVisualComponent
 			if (newInlist != isList(ctx)) {
 				setList(newInlist);
 				setModify();
+				setNeedRefresh(true);
 			}
 		}
 
@@ -948,8 +954,13 @@ public abstract class AbstractVisualComponent implements IContentVisualComponent
 	public String getStyleLabel(ContentContext ctx) {
 		String[] styles = getStyleList(ctx);
 		for (int i = 0; i < styles.length; i++) {
-			if (styles[i].equals(getStyle(ctx))) {
-				return getStyleLabelList(ctx)[i];
+			if (styles[i].equals(getStyle())) {
+				String style = getStyleLabelList(ctx)[i];
+				if (style == null || style.trim().length() == 0) {
+					return getStyle();
+				} else {
+					return style;
+				}
 			}
 		}
 		return "";

@@ -896,9 +896,7 @@ public class ResourceHelper {
 			out = new FileOutputStream(file);
 			countByte = writeStreamToStream(in, out);
 		} finally {
-			if (out != null) {
-				out.close();
-			}
+			ResourceHelper.closeResource(out);
 		}
 
 		return countByte;
