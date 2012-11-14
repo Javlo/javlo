@@ -35,6 +35,7 @@ import org.javlo.helper.ElementaryURLHelper;
 import org.javlo.helper.PatternHelper;
 import org.javlo.helper.ResourceHelper;
 import org.javlo.helper.StringHelper;
+import org.javlo.helper.URLHelper;
 import org.javlo.macro.IMacro;
 import org.javlo.servlet.AccessServlet;
 import org.javlo.user.AdminUserFactory;
@@ -244,6 +245,10 @@ public class StaticConfig extends Observable {
 			folder = application.getRealPath(folder);
 		}
 		return folder;
+	}
+
+	public String getExternalComponentFolder() {
+		return URLHelper.mergePath(getAllDataFolder(), properties.getString("external-components-folder", "external-components"));
 	}
 
 	public Level getAllLogLevel() {
