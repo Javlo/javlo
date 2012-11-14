@@ -3,6 +3,7 @@
  */
 package org.javlo.component.core;
 
+import java.io.File;
 import java.io.IOException;
 import java.lang.reflect.Field;
 import java.util.ArrayList;
@@ -206,32 +207,36 @@ public class ComponentFactory {
 			FileSystemManager vfsManager = VFS.getManager();
 			List<String> jarClasses = new LinkedList<String>();
 			List<FileObject> jarFiles = new LinkedList<FileObject>();
-			FileObject rootFolder = vfsManager.resolveFile(globalContext.getServletContext().getRealPath("WEB-INF/components"));
-			for (FileObject fo : rootFolder.getChildren()) {
-				if (vfsManager.canCreateFileSystem(fo)) {
-					FileObject jarRoot = vfsManager.createFileSystem(fo);
-					FileObject[] classFiles = jarRoot.findFiles(new FileSelector() {
-						@Override
-						public boolean traverseDescendents(FileSelectInfo fileInfo) throws Exception {
-							return true;
-						}
+			File externalComponentFolder = new File(globalContext.getStaticConfig().getExternalComponentFolder());
 
-						@Override
-						public boolean includeFile(FileSelectInfo fileInfo) throws Exception {
-							return fileInfo.getFile().getType() == FileType.FILE
-									&& "class".equalsIgnoreCase(fileInfo.getFile().getName().getExtension());
-						}
-					});
-					if (classFiles != null && classFiles.length > 0) {
-						jarFiles.add(fo);
-						for (FileObject classFile : classFiles) {
-							String name = classFile.getName().getPathDecoded();
-							name = name.replaceFirst("^/", "").replaceFirst("\\.class$", "").replace('/', '.');
-							jarClasses.add(name);
+			if (externalComponentFolder.exists() && externalComponentFolder.isDirectory()) {
+				FileObject rootFolder = vfsManager.resolveFile(externalComponentFolder.getAbsolutePath());
+				for (FileObject fo : rootFolder.getChildren()) {
+					if (vfsManager.canCreateFileSystem(fo)) {
+						FileObject jarRoot = vfsManager.createFileSystem(fo);
+						FileObject[] classFiles = jarRoot.findFiles(new FileSelector() {
+							@Override
+							public boolean traverseDescendents(FileSelectInfo fileInfo) throws Exception {
+								return true;
+							}
+
+							@Override
+							public boolean includeFile(FileSelectInfo fileInfo) throws Exception {
+								return fileInfo.getFile().getType() == FileType.FILE && "class".equalsIgnoreCase(fileInfo.getFile().getName().getExtension());
+							}
+						});
+						if (classFiles != null && classFiles.length > 0) {
+							jarFiles.add(fo);
+							for (FileObject classFile : classFiles) {
+								String name = classFile.getName().getPathDecoded();
+								name = name.replaceFirst("^/", "").replaceFirst("\\.class$", "").replace('/', '.');
+								jarClasses.add(name);
+							}
 						}
 					}
 				}
 			}
+
 			if (!jarFiles.isEmpty()) {
 				VFSClassLoader componentsClassLoader = new VFSClassLoader(jarFiles.toArray(new FileObject[jarFiles.size()]), vfsManager, AbstractVisualComponent.class.getClassLoader());
 				for (String jarClass : jarClasses) {
@@ -255,6 +260,7 @@ public class ComponentFactory {
 		return components;
 
 	}
+
 	public static IContentVisualComponent[] getDefaultComponents(ServletContext application) throws IOException, ClassNotFoundException, InstantiationException, IllegalAccessException {
 		ArrayList<AbstractVisualComponent> array = new ArrayList<AbstractVisualComponent>();
 		String[] classes = ConfigHelper.getDefaultComponentsClasses(application);
