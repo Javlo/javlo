@@ -421,7 +421,7 @@ public class Module {
 			Arrays.sort(cssFiles, new FileComparator(FileComparator.NAME, true));
 			for (File file : cssFiles) {
 				if (file.isFile() && StringHelper.getFileExtension(file.getName()).equalsIgnoreCase("css")) {
-					String url = URLHelper.mergePath("/", URIPrefix, ModulesContext.MODULES_FOLDER + '/' + getName() + '/' + CSS_FOLDER + '/' + file.getName());
+					String url = URLHelper.mergePath("/", ModulesContext.MODULES_FOLDER + '/' + getName() + '/' + CSS_FOLDER + '/' + file.getName());
 					cssURI.add(url);
 				}
 			}
@@ -434,12 +434,12 @@ public class Module {
 			Arrays.sort(jspFiles, new FileComparator(FileComparator.NAME, true));
 			for (File file : jspFiles) {
 				if (file.isFile() && StringHelper.getFileExtension(file.getName()).equalsIgnoreCase("js")) {
-					jsURI.add(URLHelper.mergePath("/", URIPrefix, ModulesContext.MODULES_FOLDER + '/' + getName() + '/' + JS_FOLDER + '/' + file.getName()));
+					jsURI.add(URLHelper.mergePath("/", ModulesContext.MODULES_FOLDER + '/' + getName() + '/' + JS_FOLDER + '/' + file.getName()));
 				}
 			}
 			for (int i = 0; i < 100; i++) {
 				if (config.get("js.import." + i) != null) {
-					jsURI.add(URLHelper.mergePath("/", URIPrefix, ModulesContext.MODULES_FOLDER + '/' + getName() + config.get("js.import." + i)));
+					jsURI.add(URLHelper.mergePath("/", ModulesContext.MODULES_FOLDER + '/' + getName() + config.get("js.import." + i)));
 				}
 			}
 		}

@@ -146,13 +146,6 @@ public interface IContentVisualComponent {
 	public String getId();
 
 	/**
-	 * return a error message if content is not correct.
-	 * 
-	 * @return a error message, null if no error.
-	 */
-	public String getErrorMessage();
-
-	/**
 	 * init the component, do that before all using.
 	 * 
 	 * @param newContent

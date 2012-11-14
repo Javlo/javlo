@@ -11,6 +11,8 @@ import org.javlo.context.ContentContext;
 import org.javlo.context.GlobalContext;
 import org.javlo.helper.NetHelper;
 import org.javlo.helper.StringHelper;
+import org.javlo.helper.URLHelper;
+import org.javlo.helper.XHTMLHelper;
 import org.javlo.utils.TimeMap;
 
 public class ComponentContext {
@@ -83,6 +85,7 @@ public class ComponentContext {
 	public String getHelpHTML(ContentContext ctx, IContentVisualComponent comp) {
 		GlobalContext globalContext = GlobalContext.getInstance(ctx.getRequest());
 		String fullURL = comp.getHelpURL(ctx.getContextWithOtherRenderMode(ContentContext.PAGE_MODE), globalContext.getEditLanguage(ctx.getRequest().getSession()));
+		String url = fullURL;
 		if (fullURL == null) {
 			return null;
 		} else {
@@ -91,11 +94,13 @@ public class ComponentContext {
 		String helpCacheKey = comp.getType() + '-' + globalContext.getEditLanguage(ctx.getRequest().getSession());
 		String xhtml = getHelpCache(globalContext).get(helpCacheKey);
 		if (xhtml == null) {
-			logger.info("load help for component helpCacheKey : " + helpCacheKey);
+			logger.info("load help for component fullURL : " + fullURL);
 			try {
 				xhtml = NetHelper.readPage(fullURL, false);
 				if (xhtml != null && xhtml.trim().length() > 0) {
-					xhtml = "<div class=\"help-link\"><a title=\"help : " + comp.getType() + "\" target=\"_blank\" href=\"" + fullURL + "\">" + fullURL + "</a></div>" + xhtml;
+					xhtml = XHTMLHelper.extractBody(xhtml);
+					url = URLHelper.changeMode(url, "");
+					xhtml = "<div class=\"help-link\"><a title=\"help : " + comp.getType() + "\" target=\"_blank\" href=\"" + url + "\">" + url + "</a></div>" + xhtml;
 				}
 			} catch (Exception e) {
 				logger.warning(e.getMessage());

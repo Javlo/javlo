@@ -14,7 +14,7 @@
             <name>value</name>
             <required>true</required>
             <description>the URI</description>
-            <rtexprvalue>false</rtexprvalue>
+            <rtexprvalue>true</rtexprvalue>
         </attribute>
     </tag>
 </taglib>

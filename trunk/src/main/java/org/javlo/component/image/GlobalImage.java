@@ -31,7 +31,7 @@ import org.javlo.service.RequestService;
 import org.javlo.template.Template;
 
 /**
- * standard image component. <h4>JSTL variable :</h4>
+ * standard image component. <h4>exposed variable :</h4>
  * <ul>
  * <li>inherited from {@link Image}</li>
  * <li>{@link String} image : url of image.</li>

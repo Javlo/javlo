@@ -7,15 +7,15 @@ import org.javlo.component.core.AbstractVisualComponent;
 import org.javlo.context.ContentContext;
 
 /**
- * @author pvandermaesen 
+ * @author pvandermaesen
  */
 public class RepeatContainer extends AbstractVisualComponent {
-	
+
 	private static final String REPEAT = "repeat";
-	
+
 	@Override
 	public String[] getStyleList(ContentContext ctx) {
-		return new String[] {REPEAT,"block repeat"};
+		return new String[] { REPEAT, "block repeat" };
 	}
 
 	/**
@@ -26,6 +26,7 @@ public class RepeatContainer extends AbstractVisualComponent {
 		return "";
 	}
 
+	@Override
 	public String getType() {
 		return "repeat-container";
 	}
@@ -34,26 +35,26 @@ public class RepeatContainer extends AbstractVisualComponent {
 	 * @see org.javlo.itf.IContentVisualComponent#getEditXHTMLCode()
 	 */
 	@Override
-	public String getEditXHTMLCode(ContentContext ctx) {		
+	public String getEditXHTMLCode(ContentContext ctx) {
 		return "<hr />";
 	}
-	
+
 	@Override
 	public boolean isUnique() {
 		return true;
 	}
-	
+
 	@Override
 	public boolean isRepeatable() {
 		return true;
 	}
-	
-	public boolean isBlockRepeat(ContentContext ctx) {		
-		if (getArea().equals(ctx.getArea())) {			
-			return componentBean.getStyle() != null && !componentBean.getStyle().equals(REPEAT);
+
+	public boolean isBlockRepeat(ContentContext ctx) {
+		if (getArea().equals(ctx.getArea())) {
+			return getComponentBean().getStyle() != null && !getComponentBean().getStyle().equals(REPEAT);
 		} else {
 			return false;
 		}
 	}
-	
+
 }

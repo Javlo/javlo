@@ -16,6 +16,7 @@ import java.io.PrintStream;
 import java.io.PrintWriter;
 import java.io.StringReader;
 import java.io.StringWriter;
+import java.net.MalformedURLException;
 import java.util.Calendar;
 import java.util.Collection;
 import java.util.Collections;
@@ -25,8 +26,6 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 import java.util.Properties;
-import java.util.Set;
-import java.util.TreeSet;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -59,7 +58,7 @@ import org.javlo.utils.DebugListening;
 import org.javlo.utils.SuffixPrefix;
 
 /**
- * This class is the first class for component. <h4>JSTL variable :</h4>
+ * This class is the first class for component. <h4>exposed variables :</h4>
  * <ul>
  * <li>{@link String} compid : the id of the components. See {@link #getId()}</li>
  * <li>{@link String} value : the raw value of the component. See {@link #getValue()}</li>
@@ -87,6 +86,32 @@ public abstract class AbstractVisualComponent implements IContentVisualComponent
 
 	protected static final String HIDDEN = "hidden";
 
+	private final Map<String, Properties> i18nView = new HashMap<String, Properties>();
+
+	private ComponentBean componentBean = new ComponentBean();
+
+	private GenericMessage msg;
+
+	private IContentVisualComponent nextComponent = null;
+
+	private IContentVisualComponent previousComponent = null;
+
+	private boolean needRefresh = false;
+
+	private boolean visible = false;
+
+	private boolean hidden = false;
+
+	private final Map<String, String> replacement = new HashMap<String, String>();
+
+	private Properties viewData = null;
+
+	private final Object lockContent = new Object();
+
+	private final Object lockContentTime = new Object();
+
+	private MenuElement page = null;
+
 	public static final String getComponentId(HttpServletRequest request) {
 		return (String) request.getAttribute(COMP_ID_REQUEST_PARAM);
 	}
@@ -102,53 +127,6 @@ public abstract class AbstractVisualComponent implements IContentVisualComponent
 		IContentVisualComponent res = (IContentVisualComponent) request.getAttribute(COMPONENT_KEY);
 		return res;
 	}
-
-	private final Map<String, Properties> i18nView = new HashMap<String, Properties>();
-
-	// protected ContentContext ctx;
-
-	protected String errorMessage = null;
-
-	protected ComponentBean componentBean = new ComponentBean();
-
-	// protected boolean modify = false;
-
-	Set formatSupported = new TreeSet();
-
-	ServletContext servletContext;
-
-	private GenericMessage msg;
-
-	private IContentVisualComponent nextComponent = null;
-
-	private IContentVisualComponent previousComponent = null;
-
-	private boolean needRefresh = false;
-
-	private boolean visible = false;
-
-	private boolean hidden = false;
-
-	// private String contentCache = null;
-
-	private final Map<String, String> replacement = new HashMap<String, String>();
-
-	protected Properties viewData = null;
-
-	// private Map<String, String> contentCache = new HashMap<String, String>();
-
-	// protected TimeMap<String, String> viewTimeCache = new TimeMap<String, String>(2 * 60 * 60); // 120 minutes cache
-
-	// protected TimeMap<String, Object> shortTimeCache = new TimeMap<String, Object>(60); // 60 sec cache
-
-	private final Object lockContent = new Object();
-
-	private final Object lockContentTime = new Object();
-
-	/**
-	 *
-	 */
-	private MenuElement page = null;
 
 	protected String applyReplacement(String content) {
 		Map<String, String> remp = getRemplacement();
@@ -250,7 +228,8 @@ public abstract class AbstractVisualComponent implements IContentVisualComponent
 
 	protected String getBaseHelpURL(ContentContext ctx) {
 		GlobalContext globalContext = GlobalContext.getInstance(ctx.getRequest());
-		return globalContext.getHelpURL();
+		String helpURL = globalContext.getHelpURL().replace("${language}", globalContext.getEditLanguage(ctx.getRequest().getSession()));
+		return helpURL;
 	}
 
 	/**
@@ -567,11 +546,6 @@ public abstract class AbstractVisualComponent implements IContentVisualComponent
 	}
 
 	@Override
-	public String getErrorMessage() {
-		return errorMessage;
-	}
-
-	@Override
 	public String getErrorMessage(String fieldName) throws ResourceNotFoundException {
 		return "no error message defined.";
 	}
@@ -635,11 +609,14 @@ public abstract class AbstractVisualComponent implements IContentVisualComponent
 		if (getBaseHelpURL(ctx) == null || getBaseHelpURL(ctx).trim().length() == 0) {
 			return null;
 		}
-		if (ctx.getRenderMode() == ContentContext.PAGE_MODE) {
-			return URLHelper.mergePath(getBaseHelpURL(ctx), "/page/", lang, getHelpURI(ctx));
-		} else {
-			String url = URLHelper.mergePath(getBaseHelpURL(ctx), lang, getHelpURI(ctx));
-			return url;
+
+		String baseURL;
+		try {
+			baseURL = URLHelper.changeMode(getBaseHelpURL(ctx), "page");
+			return URLHelper.mergePath(baseURL, getHelpURI(ctx));
+		} catch (MalformedURLException e) {
+			e.printStackTrace();
+			return null;
 		}
 
 	}

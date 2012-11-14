@@ -52,7 +52,7 @@ import org.javlo.service.NavigationService;
 import org.javlo.service.RequestService;
 
 /**
- * list of links to a subset of pages. <h4>JSTL variable :</h4>
+ * list of links to a subset of pages. <h4>exposed variable :</h4>
  * <ul>
  * <li>inherited from {@link AbstractVisualComponent}</li>
  * <li>{@link PageStatus} pagesStatus : root page of menu. See {@link #getRootPage}.</li>
@@ -779,15 +779,10 @@ public class PageReferenceComponent extends ComplexPropertiesLink implements IAc
 
 		out.println("</fieldset>");
 
-		out.println("<fieldset class=\"display\">");
-		out.println("<legend>" + i18nAccess.getText("content.page-teaser.display-type") + "</legend><div class=\"line\">");
-
 		out.println("<div class=\"line\">");
 		out.println("<label for=\"" + getInputNameTitle() + "\">" + i18nAccess.getText("global.title") + " : </label>");
 		out.println("<input type=\"text\" id=\"" + getInputNameTitle() + "\" name=\"" + getInputNameTitle() + "\" value=\"" + getContentTitle() + "\"  />");
 		out.println("</div>");
-
-		out.println("</fieldset>");
 
 		/* array filter */
 		String filterID = "filter-" + getId();

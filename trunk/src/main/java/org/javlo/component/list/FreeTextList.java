@@ -90,7 +90,7 @@ public class FreeTextList extends Paragraph {
 		value = applyReplacement(value);
 		value = StringHelper.textToList(value, sep, getStyle(ctx), true, globalContext);
 
-		return "<div " + getSpecialPreviewCssClass(ctx, getStyle(ctx)+' '+getType()) + getSpecialPreviewCssId(ctx) + ">" + value + "</div>";
+		return "<div " + getSpecialPreviewCssClass(ctx, getStyle(ctx) + ' ' + getType()) + getSpecialPreviewCssId(ctx) + ">" + value + "</div>";
 	}
 
 	@Override
@@ -124,7 +124,7 @@ public class FreeTextList extends Paragraph {
 		finalCode.append("<input id=\"" + getSeparatorInputName() + "\" name=\"" + getSeparatorInputName() + "\" value=\"" + getSeparatorValue() + "\" />");
 		finalCode.append("</div>");
 		finalCode.append("<textarea id=\"" + getContentName() + "\" name=\"" + getContentName() + "\"");
-		finalCode.append(" rows=\"" + (countLine() + 1) + "\" onkeyup=\"javascript:resizeTextArea($('" + getContentName() + "'));\">");
+		finalCode.append(" rows=\"" + (countLine() + 1) + "\">");
 		String value = getValue();
 		if (getSeparatorValue().length() > 0) {
 			value = value.substring(3);
@@ -148,17 +148,16 @@ public class FreeTextList extends Paragraph {
 			if (sepValue.length() > 0) {
 				newContent = '{' + sepValue + '}' + newContent;
 			}
-			if (!componentBean.getValue().equals(newContent)) {
-				componentBean.setValue(newContent);
+			if (!getComponentBean().getValue().equals(newContent)) {
+				getComponentBean().setValue(newContent);
 				setModify();
 			}
 		}
 	}
-	
+
 	@Override
 	public List<SuffixPrefix> getMarkerList(ContentContext ctx) {
 		return getItalicAndStrongLanguageMarkerList(ctx);
 	}
-	
 
 }

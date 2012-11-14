@@ -51,7 +51,7 @@ import org.javlo.ztatic.IStaticContainer;
 import org.javlo.ztatic.StaticInfo;
 
 /**
- * Abstract component for access to a file (file,image...) <h4>JSTL variable :</h4>
+ * Abstract component for access to a file (file,image...) <h4>exposed variable :</h4>
  * <ul>
  * <li>inherited from {@link AbstractVisualComponent}</li>
  * <li>{@link String} url : url to resource.</li>
