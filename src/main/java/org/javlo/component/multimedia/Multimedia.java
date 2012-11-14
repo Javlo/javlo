@@ -16,6 +16,7 @@ import java.util.List;
 import java.util.Map;
 
 import org.apache.commons.io.FilenameUtils;
+import org.javlo.component.core.AbstractVisualComponent;
 import org.javlo.component.core.ContentElementList;
 import org.javlo.component.core.IContentVisualComponent;
 import org.javlo.component.core.IVideo;
@@ -40,6 +41,16 @@ import org.javlo.service.ContentService;
 import org.javlo.service.RequestService;
 import org.javlo.ztatic.StaticInfo;
 
+/**
+ * standard image component. <h4>exposed variable :</h4>
+ * <ul>
+ * <li>inherited from {@link AbstractVisualComponent}</li>
+ * <li>{@link PaginationContext} pagination : pagination context.</li>
+ * <li>{@link MultimediaResource} resources : list of resources to be displayed.</li>
+ * </ul>
+ * 
+ * @author pvandermaesen
+ */
 public class Multimedia extends TimeRangeComponent implements IImageTitle {
 
 	public static final String TYPE = "multimedia";

@@ -697,9 +697,6 @@ public class Edit extends AbstractModuleAction {
 			if (elem.isModify()) {
 				elem.stored();
 			}
-			if (message == null) {
-				message = elem.getErrorMessage();
-			}
 		}
 
 		// ctx.setNeedRefresh(needRefresh);

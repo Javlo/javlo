@@ -46,7 +46,6 @@ public class ContentElementList implements IContentComponentsList {
 
 		language = ctx.getRequestContentLanguage();
 
-		// area = ctx.getArea();
 		this.allArea = allArea;
 		page = inPage;
 
@@ -54,7 +53,6 @@ public class ContentElementList implements IContentComponentsList {
 
 		IContentVisualComponent previousComponent = null;
 		for (ComponentBean bean : beans) {
-			// Logger.startCount("load component");
 			assert bean != null;
 			assert bean.getLanguage() != null;
 			assert ctx != null;
@@ -62,21 +60,13 @@ public class ContentElementList implements IContentComponentsList {
 			String lg = ctx.getRequestContentLanguage();
 
 			if (bean.getLanguage().equals(lg)) {
-				// Logger.stepCount("load component", "load comp step 1");
 				IContentVisualComponent comp = content.getCachedComponent(ctx, bean.getId());
-				// Logger.stepCount("load component", "load comp step 2");
-				// IContentVisualComponent comp = null;
-
-				if (comp == null /* || comp.getComponentBean() != bean */) {
+				if (comp == null) {
 					comp = ComponentFactory.createComponent(ctx, bean, inPage, previousComponent, null);
 					content.setCachedComponent(comp);
 				}
-				// Logger.stepCount("load component", "load comp step 3 comp type = "+comp.getType());
 				previousComponent = comp;
-				// if (comp.isVisible(ctx)) { // this is allready checked in the isVisible method
 				contentElements.add(comp);
-				// }
-				// Logger.endCount("load component", "load comp step 4");
 			}
 		}
 	};

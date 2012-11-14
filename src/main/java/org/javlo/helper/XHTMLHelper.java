@@ -186,16 +186,6 @@ public class XHTMLHelper {
 		return StringEscapeUtils.escapeHtml(xhtml);
 	}
 
-	public static String extractBody(String xhtml) {
-		int startBody = xhtml.toLowerCase().indexOf("<body>");
-		int endBody = xhtml.toLowerCase().indexOf("</body>");
-		if ((startBody < 0) || (endBody < 0) || (endBody < startBody)) {
-			return null;
-		} else {
-			return xhtml.substring(startBody + 7, endBody);
-		}
-	}
-
 	public static String extractTitle(String xhtml) {
 		int startTitle = xhtml.toLowerCase().indexOf("<title>");
 		int endTitle = xhtml.toLowerCase().indexOf("</title>");
@@ -1584,9 +1574,9 @@ public class XHTMLHelper {
 	}
 
 	public static void main(String[] args) {
-		String text = "\ncoucou \n\n\n\n c'est moi \n\n comment vas \ntu ?";
+		String text = "\ncoucou \n\n\n\n c'est moi \n\n <BODy class=\"test\">comment</body> vas \ntu ?";
 		System.out.println("*** text = " + text);
-		System.out.println("*** html = " + textToXHTML(text));
+		System.out.println("*** body = " + extractBody(text));
 	}
 
 	public static String removeTag(String html, String tag) throws BadXMLException {
@@ -1988,6 +1978,20 @@ public class XHTMLHelper {
 		}
 		out.close();
 		return new String(outStream.toByteArray());
+
+	}
+
+	public static String extractBody(String content) {
+		String lowerContent = content.toLowerCase();
+		int startBody = lowerContent.indexOf("<body");
+		if (startBody >= 0) {
+			startBody = lowerContent.indexOf(">", startBody + 3);
+			int endBody = lowerContent.indexOf("</body");
+			if (startBody >= 0 && endBody >= startBody) {
+				return content.substring(startBody + 1, endBody);
+			}
+		}
+		return content;
 
 	}
 

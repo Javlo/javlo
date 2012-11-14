@@ -5,6 +5,8 @@ package org.javlo.helper;
 
 import java.io.File;
 import java.io.IOException;
+import java.net.MalformedURLException;
+import java.net.URL;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
@@ -880,17 +882,6 @@ public class URLHelper extends ElementaryURLHelper {
 		return urlLC.startsWith("http://") || urlLC.startsWith("https://") || urlLC.startsWith("ftp://") || urlLC.startsWith("file://");
 	}
 
-	public static void main(String[] args) {
-		// System.out.println("merge path = " + mergePath("/tools/", "poeple", "/genre"));
-		System.out.println("merge path = " + mergePath(new String[] { "/tools/", "poeple", "/genre" }));
-		System.out.println("*** extract host : " + extractHost("http://www.europarl.europa.eu/president"));
-		System.out.println("*** extract host : " + extractHost("http://www.noctis.eu/president"));
-		System.out.println("*** extract host : " + extractHost("www.europarl.europa.eu"));
-		System.out.println("*** extract host : " + extractHost("noctis.be/test"));
-		System.out.println("*** extract host : " + extractHost("noctis.be?test"));
-		System.out.println("*** extract host : " + extractHost("noctis.be#test"));
-	}
-
 	public static String mergePath(String... paths) {
 		String outPath = "";
 		for (String path : paths) {
@@ -918,6 +909,40 @@ public class URLHelper extends ElementaryURLHelper {
 			return url;
 		}
 
+	}
+
+	public static final String changeMode(String inURL, String mode) throws MalformedURLException {
+		URL url = new URL(inURL);
+
+		String path = url.getPath();
+		String[] pathItems = StringUtils.splitByWholeSeparator(path, "/");
+		if (pathItems.length > 1 && pathItems[0].length() == 2) {
+			path = URLHelper.mergePath(mode, path);
+		} else {
+			path = mode;
+			for (int i = 0; i < pathItems.length - 1; i++) {
+				path = URLHelper.mergePath(path, pathItems[i + 1]);
+			}
+		}
+		if (url.getQuery() != null) {
+			path = path + '?' + url.getQuery();
+		}
+		String port = "";
+		if (url.getPort() >= 0 && url.getPort() != 80) {
+			port = ":" + url.getPort();
+		}
+
+		return url.getProtocol() + "://" + url.getHost() + port + '/' + path;
+
+	}
+
+	public static void main(String[] args) {
+		try {
+			System.out.println("changeMode : " + changeMode("http://www.javlo.org/en/help/test.html?test=test", "page"));
+		} catch (MalformedURLException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 	}
 
 }

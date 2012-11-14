@@ -71,6 +71,16 @@ a.popup span {
 	background-repeat: no-repeat;
 }
 
+.help-link a {
+	background-image: url("../images/icons/popup.png");
+	background-position: right;
+	background-repeat: no-repeat;
+	width: 16px;
+	height: 16px;
+	font-size: 0;
+	float: right;	
+}
+
 .mainBox {
 	margin-top: 20px;
 }
