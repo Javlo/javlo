@@ -1,6 +1,6 @@
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c"
 %><%@ taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions" %>
-<div id="meta-edit" class="form-list">
+<div id="meta-edit" class="form-list full-height">
 
 <form id="form-meta" action="${info.currentURL}" method="post">
 
