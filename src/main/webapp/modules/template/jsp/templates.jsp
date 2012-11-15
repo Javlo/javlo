@@ -1,6 +1,6 @@
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
 <%@ taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions" %>
-<div id="gallery" class="gallery main-template">
+<div id="gallery" class="gallery main-template full-height">
 <div id="gridview" class="thumbview">
 <ul>
 <c:forEach var="template" items="${templates}">
