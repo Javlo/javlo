@@ -1,0 +1,234 @@
+ul.menu {
+	margin-left: 16px;
+}
+
+.children {
+	margin-left: 32px;
+}
+
+.navigation li a.editor {
+    background-image: url("images/page.png");
+    background-position: 7px center;
+    background-repeat: no-repeat;
+}
+
+.navigation li.add-page, .navigation li.insert-page {
+	margin-left: 20px;
+}
+
+.light .component {
+	margin-bottom: 10px;
+}
+
+.component .component-title {
+	display: block;
+	float: left;
+	padding: 6px 16px;
+	border-right: 1px solid #CCCCCC;
+	z-index: 10;	
+}
+
+.component.tabs ul { /* for place a not selectable title before jquery ui tabs */
+	position: static;
+}
+
+.new .component {
+	box-shadow: 3px 3px 3px #999999;
+}
+
+.ui-tabs-nav {
+	position: inherit;
+}
+
+.component input, .component textarea, .component select {
+	width: 60%;
+}
+
+.line-inline input {
+	margin-right: 20px;
+	width: auto;
+}
+
+.line-inline label {
+	display: inline-block;
+	width: 160px;	
+}
+
+.component input[type="radio"], .component input[type="checkbox"] {
+	width: auto;
+} 
+
+#content-edit input[type=submit], #content-edit input[type=button] {
+	width: auto;
+}
+
+/** components **/
+
+/*** css for design component in edit mode ***/
+
+#content-edit {		
+	padding-right: 2px;
+}
+
+#content-edit select {
+	padding: 0;
+}
+
+.component .header {
+	padding: 1px;	
+}
+
+.component .header div {
+	display: inline-block;
+	
+}
+
+.component table {
+	width: 100%;
+	border-collapse: collapse;
+}
+
+.component td {
+	width: 50%;
+	padding: 3px;
+}
+
+.page-list td {
+	width: auto;
+}
+
+.component .content {
+    -moz-border-bottom-colors: none;
+    -moz-border-image: none;
+    -moz-border-left-colors: none;
+    -moz-border-right-colors: none;
+    -moz-border-top-colors: none;
+    background: none repeat scroll 0 0 #FCFCFC;
+    border-color: -moz-use-text-color #CCCCCC #CCCCCC;
+    border-right: 1px solid #CCCCCC;
+    border-style: none solid solid;
+    border-width: 0 1px 1px;
+    color: #666666;
+    overflow: hidden;
+    padding: 5px;
+}
+
+.component textarea {
+	width: 96%;	
+}
+
+.component .line textarea {
+	width: auto;	
+}
+
+
+.component .help h1, .component .help .hd {
+	display: none;
+}
+
+.component .help {
+	padding-left: 32px;
+}
+
+.component .help h2, .component .help h3 {
+	margin-top: 16px;
+	margin-left: -16px;
+}
+
+.component .full-width {
+	width: 99%;
+}
+
+.components .line {
+	margin-bottom: 3px;
+	min-height: 24px;
+	overflow: hidden;
+}
+
+.component .line label {
+	float: left;
+	width: 160px;
+}
+
+.dynamic-component .line textarea {
+	width: 96%;
+}
+
+.component .mceToolbar table {
+	width: auto;
+}
+
+.component .mceToolbar td {
+	width: 20px;
+}
+
+/*** images ***/
+
+.component .preview-image {
+	margin: 2px;
+	float: left;	
+}
+
+.dynamic-component-list select, .dynamic-component-list input {
+	width: auto;
+}
+
+.dynamic-component .preview {
+	text-align: center;
+}
+
+.navigation .parent a {	
+	margin-left: 15px;
+	padding-left: 10px;	
+	background-image: url("images/back.png");
+    background-position: 0 center;
+    background-repeat: no-repeat;
+}
+
+li.line {
+	width: 160px;
+	display: inline-block;
+}
+
+.component li.line label {
+    float: none;
+    width: auto;
+    display: inline-block;
+    margin-left: 10px;
+}
+
+
+.insert-page input[type='submit'] {
+    background: url("images/icon_arrow_3.png") no-repeat scroll 5px -31px #FFFFFF;
+    padding-left: 26px;
+}
+
+.roles .inline label {
+	width: auto;
+}
+
+.roles {
+	overflow: hidden;	
+}
+
+.roles input {
+	display: inline-block;
+	margin: 0 30px 0 10px;		
+}
+
+.roles .one_half {
+    width: 46%;
+}
+
+#content-edit .box {
+	border: 0 none;
+	margin-bottom: 0;
+	box-shadow: none;
+}
+
+.component-container {
+	margin-left: 4px;
+	border-left: 4px #dddddd solid;
+	padding-left: 4px;
+	border-radius: 2px 2px 2px 2px;
+}

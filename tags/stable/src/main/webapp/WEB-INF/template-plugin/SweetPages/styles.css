@@ -1,0 +1,27 @@
+.swControls{
+	text-align: center;
+	margin-top:10px;
+}
+
+a.swShowPage{
+	background-color:#333333;
+	display: inline-block;
+	height:12px;
+	margin:4px 3px;
+	text-indent:-9999px;
+	width:12px;	
+	-moz-border-radius:7px;
+	-webkit-border-radius:7px;
+	border-radius:7px;
+}
+
+a.swShowPage:hover,
+a.swShowPage.active{
+	background-color:#eeeeee;
+	-moz-box-shadow:0 0 7px #777777 inset;
+	box-shadow:0 0 7px #777777 inset;
+}
+
+.swContainer {
+	overflow: hidden;
+}
