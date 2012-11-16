@@ -32,6 +32,7 @@ import org.javlo.helper.URLHelper;
 import org.javlo.i18n.I18nAccess;
 import org.javlo.message.GenericMessage;
 import org.javlo.message.MessageRepository;
+import org.javlo.module.core.ModuleException;
 import org.javlo.module.core.ModulesContext;
 import org.javlo.module.mailing.MailingAction;
 import org.javlo.navigation.MenuElement;
@@ -329,29 +330,37 @@ public class CatchAllFilter implements Filter {
 			editURI = editURI.substring(globalContext.getContextKey().length() + 1);
 		}
 
-		if (editURI.startsWith("/edit-")) {
+		if (editURI.startsWith("/edit-") || editURI.startsWith("/ajax-") ) {
 			editURI = editURI.substring("/edit-".length());
 			String module = editURI;
 			if (editURI.contains("/")) {
 				module = module.substring(0, module.indexOf('/'));
 				editURI = editURI.substring(editURI.indexOf('/'));
 			}
-
 			if (module.length() > 0) {
 				editURI = "/edit" + editURI;
+				if (editURI.startsWith("/ajax-")) {
+					editURI = "/ajax" + editURI;
+				}
 				// String baseURI = editURI;
 				String query = httpRequest.getQueryString();
 				if (query != null) {
 					editURI = editURI + '?' + query;
 				}
 				if (query == null || !query.contains("module=")) {
-					editURI = URLHelper.addParam(editURI, "module", module);
+					//editURI = URLHelper.addParam(editURI, "module", module);
+					try {
+						ModulesContext.getInstance(httpRequest.getSession(), GlobalContext.getInstance(httpRequest)).setCurrentModule(module);
+					} catch (ModuleException e) {
+						e.printStackTrace();
+					}
 				}
 
 				if (query != null && query.contains("edit-logout")) {
 					((HttpServletResponse) response).sendRedirect("" + httpRequest.getRequestURL());
 					return;
 				} else {
+					
 					httpRequest.getRequestDispatcher(editURI).forward(request, response);
 					return;
 				}

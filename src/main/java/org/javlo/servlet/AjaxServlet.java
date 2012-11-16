@@ -14,6 +14,7 @@ import org.javlo.context.GlobalContext;
 import org.javlo.data.InfoBean;
 import org.javlo.helper.AjaxHelper;
 import org.javlo.helper.ServletHelper;
+import org.javlo.module.core.ModulesContext;
 import org.javlo.service.NotificationService;
 import org.javlo.tracking.Tracker;
 import org.json.JSONObject;
@@ -52,6 +53,11 @@ public class AjaxServlet extends HttpServlet {
 			ctx.setAjax(true);
 			GlobalContext globalContext = GlobalContext.getInstance(ctx.getRequest());
 			EditContext editCtx = EditContext.getInstance(globalContext, request.getSession());
+			
+			/*** update module status before action ***/
+			ModulesContext moduleContext = ModulesContext.getInstance(request.getSession(), globalContext);
+			moduleContext.initContext(request, response);
+
 
 			InfoBean.updateInfoBean(ctx);
 

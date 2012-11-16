@@ -224,8 +224,6 @@ public class GenericForm extends AbstractVisualComponent implements IAction {
 					fakeFilled = true;
 				}
 
-				System.out.println("***** GenericForm.performSubmit : finalValue = " + finalValue); // TODO: remove debug trace
-
 				if (finalValue.trim().length() == 0 && StringHelper.containsUppercase(key)) { // needed field
 					errorFields.add(key);
 					GenericMessage msg = new GenericMessage(comp.getLocalConfig(false).getProperty("error.required", "please could you fill all required fields."), GenericMessage.ERROR);

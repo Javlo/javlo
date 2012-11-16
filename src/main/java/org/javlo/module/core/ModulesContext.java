@@ -12,12 +12,16 @@ import java.util.Map;
 import java.util.TreeSet;
 import java.util.logging.Logger;
 
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
+import org.javlo.context.ContentContext;
 import org.javlo.context.GlobalContext;
 import org.javlo.context.UserInterfaceContext;
 import org.javlo.helper.URLHelper;
 import org.javlo.i18n.I18nAccess;
+import org.javlo.service.RequestService;
 import org.javlo.user.AdminUserFactory;
 import org.javlo.user.IUserFactory;
 
@@ -208,6 +212,29 @@ public class ModulesContext {
 
 	public void setFromModule(String moduleName) {
 		setFromModule(searchModule(moduleName));
+	}
+	
+	public void initContext (HttpServletRequest request, HttpServletResponse response) throws Exception {
+		RequestService requestService = RequestService.getInstance(request);
+		
+		ContentContext ctx = ContentContext.getContentContext(request, response);
+		GlobalContext globalContext = GlobalContext.getInstance(ctx.getRequest());
+		if (requestService.getParameter("module", null) != null) {
+			UserInterfaceContext uic = UserInterfaceContext.getInstance(request.getSession(), globalContext);
+			uic.setCurrentModule(requestService.getParameter("module", null));
+			setCurrentModule(requestService.getParameter("module", null));
+			I18nAccess i18nAccess = I18nAccess.getInstance(request);
+			i18nAccess.setCurrentModule(globalContext, ctx.getRequest().getSession(), getCurrentModule());
+		}
+		if (requestService.getParameter("module", null) != null && requestService.getParameter("from-module", null) == null) {
+			setFromModule((Module) null);
+		}
+		if (requestService.getParameter("from-module", null) != null) {
+			Module fromModule = searchModule(requestService.getParameter("from-module", null));
+			if (fromModule != null) {
+				setFromModule(fromModule);
+			}
+		}
 	}
 
 }
