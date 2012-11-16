@@ -1131,3 +1131,69 @@ body.previewEdit {
 .one_half {
 	width: 46%;
 }
+
+.download.file a {
+	margin-top: 86px;	
+	background-image: url('../images/filemanager/icons-big.png');
+	background-repeat: no-repeat;
+	background-position: center top;	
+	width: 220px;
+	height: 48px;
+	
+}
+
+.download.pdf a {
+	background-position: center -450px;
+}
+
+.download.doc a, .download.xls a, .download.ppt a, .download.pub a {
+	background-position: center -500px;
+}
+
+.download.html a, .download.htm a {
+	background-position: center -550px;
+}
+
+.download.css a {
+	background-position: center -600px;
+}
+
+.download.js a {
+	background-position: center -650px;
+}
+
+.download.txt a, .download.properties a, .download.csv a {
+	background-position: center -200px;
+}
+
+.download.bat a, .download.sh a {
+	background-position: center -150px;
+}
+
+.download.mp3 a, .download.wav a {
+	background-position: center -300px;
+}
+
+.download.mp4 a, .download.avi a, .download.mkv a, .download.mov a, .download.mpeg a, .download.mpg a {
+	background-position: center -350px;
+}
+
+.directory .download.file a {
+	background-position: center -50px;	
+}
+
+.download.xml a {
+	background-position: center -1000px;	
+}
+
+.download.zip a {
+	background-position: center -1050px;	
+}
+
+.download.rar a {
+	background-position: center -1200px;	
+}
+
+.download.swf a {
+	background-position: center -1250px;	
+}

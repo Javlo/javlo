@@ -8,7 +8,7 @@
 
 <ul>
 <c:forEach var="file" items="${files}">
-	<li>
+	<li class="${file.directory?'directory':'file'}">
 		<div class="title"><span><a href="${file.URL}">${file.name}</a></span><span class="size">${file.size}</span><span class="last">${file.manType}</span></div>
 		<div class="body">
 		<c:if test="${file.image}">		
