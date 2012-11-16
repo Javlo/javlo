@@ -62,7 +62,6 @@
 <body class="bodygrey ${not empty param.previewEdit?'previewEdit':''}">
 
 <c:if test="${empty param.previewEdit}">
-<div class="headerspace"></div>
 <div class="header">
 	
     <c:if test="${currentModule.search}">
@@ -104,6 +103,7 @@
             </li>
             </c:if>
         </ul>
+        <a href="${info.currentViewURL}"><h1>${info.globalTitle}</h1></a>
     </div><!-- topheader -->
     
     <!-- logo -->

@@ -68,6 +68,14 @@ public class InfoBean {
 	public String getCurrentURL() {
 		return URLHelper.createURL(ctx);
 	}
+	
+	public String getCurrentViewURL() {
+		return URLHelper.createURL(ctx.getContextWithOtherRenderMode(ContentContext.VIEW_MODE).getFreeContentContext());
+	}
+	
+	public String getCurrentPreviewURL() {
+		return URLHelper.createURL(ctx.getContextWithOtherRenderMode(ContentContext.PREVIEW_MODE).getFreeContentContext());
+	}
 
 	public String getPDFURL() {
 		ContentContext pdfCtx = new ContentContext(ctx);

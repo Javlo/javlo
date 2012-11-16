@@ -355,21 +355,7 @@ public class AccessServlet extends HttpServlet {
 
 				/*** update module status before action ***/
 				ModulesContext moduleContext = ModulesContext.getInstance(request.getSession(), globalContext);
-				if (requestService.getParameter("module", null) != null) {
-					UserInterfaceContext uic = UserInterfaceContext.getInstance(request.getSession(), globalContext);
-					uic.setCurrentModule(requestService.getParameter("module", null));
-					moduleContext.setCurrentModule(requestService.getParameter("module", null));
-					i18nAccess.setCurrentModule(globalContext, ctx.getRequest().getSession(), moduleContext.getCurrentModule());
-				}
-				if (requestService.getParameter("module", null) != null && requestService.getParameter("from-module", null) == null) {
-					moduleContext.setFromModule((Module) null);
-				}
-				if (requestService.getParameter("from-module", null) != null) {
-					Module fromModule = moduleContext.searchModule(requestService.getParameter("from-module", null));
-					if (fromModule != null) {
-						moduleContext.setFromModule(fromModule);
-					}
-				}
+				moduleContext.initContext(request, response);
 
 				EditContext editCtx = EditContext.getInstance(globalContext, request.getSession());
 				ctx.setArea(editCtx.getCurrentArea());
@@ -412,7 +398,6 @@ public class AccessServlet extends HttpServlet {
 								Iterator<String> defaultLgs = globalContext.getDefaultLanguages().iterator();
 								while (!content.contentExistForContext(newCtx) && defaultLgs.hasNext()) {
 									String lg = defaultLgs.next();
-									// newCtx.setContentLanguage(lg);
 									newCtx.setRequestContentLanguage(lg);
 								}
 							}
