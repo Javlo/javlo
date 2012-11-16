@@ -19,6 +19,7 @@ import org.javlo.bean.LinkToRenderer;
 import org.javlo.context.ContentContext;
 import org.javlo.context.EditContext;
 import org.javlo.context.GlobalContext;
+import org.javlo.data.InfoBean;
 import org.javlo.filter.DirectoryFilter;
 import org.javlo.helper.LangHelper;
 import org.javlo.helper.ResourceHelper;
@@ -63,7 +64,18 @@ public class FileAction extends AbstractModuleAction {
 
 		public String getURL() {
 			GlobalContext globalContext = GlobalContext.getInstance(ctx.getRequest());
-			return URLHelper.createResourceURL(ctx, '/' + globalContext.getStaticConfig().getStaticFolder() + staticInfo.getStaticURL());
+			if (!isDirectory()) {
+				return URLHelper.createResourceURL(ctx, '/' + globalContext.getStaticConfig().getStaticFolder() + staticInfo.getStaticURL());
+			} else {
+				String currentURL;
+				try {
+					currentURL = InfoBean.getCurrentInfoBean(ctx).getCurrentURL();
+					return currentURL + "?path=/" + URLHelper.mergePath(globalContext.getStaticConfig().getStaticFolder(), staticInfo.getStaticURL());
+				} catch (Exception e) {
+					e.printStackTrace();
+				}
+				return null;
+			}
 		}
 
 		public boolean isImage() {
@@ -71,7 +83,11 @@ public class FileAction extends AbstractModuleAction {
 		}
 
 		public String getType() {
-			return getManType().replace('/', '_');
+			if (isDirectory()) {
+				return "directory";
+			} else {
+				return StringHelper.getFileExtension(getName()).toLowerCase();
+			}
 		}
 
 		public String getThumbURL() throws Exception {
@@ -141,6 +157,10 @@ public class FileAction extends AbstractModuleAction {
 			return staticInfo.isShared(ctx);
 		}
 
+		public boolean isDirectory() {
+			return staticInfo.getFile().isDirectory();
+		}
+
 	}
 
 	@Override
@@ -194,6 +214,9 @@ public class FileAction extends AbstractModuleAction {
 			File folder = new File(URLHelper.mergePath(globalContext.getDataFolder(), fileModuleContext.getPath()));
 			if (folder.exists()) {
 				Collection<FileBean> allFileInfo = new LinkedList<FileBean>();
+				for (File file : folder.listFiles(new DirectoryFilter())) {
+					allFileInfo.add(new FileBean(ctx, StaticInfo.getInstance(ctx, file)));
+				}
 				for (File file : folder.listFiles((FileFilter) FileFileFilter.FILE)) {
 					allFileInfo.add(new FileBean(ctx, StaticInfo.getInstance(ctx, file)));
 				}
@@ -311,7 +334,7 @@ public class FileAction extends AbstractModuleAction {
 	public String performUpdateMeta(RequestService rs, ContentContext ctx, GlobalContext globalContext, FileModuleContext fileModuleContext, I18nAccess i18nAccess, MessageRepository messageRepository) throws Exception {
 		File folder = new File(URLHelper.mergePath(globalContext.getDataFolder(), fileModuleContext.getPath()));
 		if (folder.exists()) {
-			for (File file : folder.listFiles((FileFilter) FileFileFilter.FILE)) {
+			for (File file : folder.listFiles()) {
 				StaticInfo staticInfo = StaticInfo.getInstance(ctx, file);
 				FileBean fileBean = new FileBean(ctx, staticInfo);
 
