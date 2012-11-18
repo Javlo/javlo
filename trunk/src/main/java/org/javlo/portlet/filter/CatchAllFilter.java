@@ -331,6 +331,7 @@ public class CatchAllFilter implements Filter {
 		}
 
 		if (editURI.startsWith("/edit-") || editURI.startsWith("/ajax-") ) {
+			String prefix = editURI.substring(0,5);
 			editURI = editURI.substring("/edit-".length());
 			String module = editURI;
 			if (editURI.contains("/")) {
@@ -338,10 +339,7 @@ public class CatchAllFilter implements Filter {
 				editURI = editURI.substring(editURI.indexOf('/'));
 			}
 			if (module.length() > 0) {
-				editURI = "/edit" + editURI;
-				if (editURI.startsWith("/ajax-")) {
-					editURI = "/ajax" + editURI;
-				}
+				editURI = prefix + editURI;
 				// String baseURI = editURI;
 				String query = httpRequest.getQueryString();
 				if (query != null) {
@@ -359,8 +357,7 @@ public class CatchAllFilter implements Filter {
 				if (query != null && query.contains("edit-logout")) {
 					((HttpServletResponse) response).sendRedirect("" + httpRequest.getRequestURL());
 					return;
-				} else {
-					
+				} else {					
 					httpRequest.getRequestDispatcher(editURI).forward(request, response);
 					return;
 				}

@@ -618,7 +618,7 @@ public class StaticConfig extends Observable {
 	}
 
 	public String getLocalTempDir() {
-		String path = properties.getString("temp-folder", "WEB-INF/tmp");
+		String path = properties.getString("temp-folder", null );
 		if (path != null) {
 			path = replaceFolderVariable(path);
 		}

@@ -950,4 +950,12 @@ public class StaticInfo {
 			storeTags(ctx);
 		}
 	}
+
+	public StaticInfo getDirecotry(ContentContext ctx) throws Exception {
+		if (getFile().exists()) {
+			return StaticInfo.getInstance(ctx, getFile().getParentFile());
+		} else {
+			return null;
+		}
+	}
 }
