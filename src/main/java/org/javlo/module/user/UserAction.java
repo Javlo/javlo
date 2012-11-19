@@ -19,6 +19,7 @@ import org.javlo.context.GlobalContext;
 import org.javlo.helper.BeanHelper;
 import org.javlo.helper.RequestParameterMap;
 import org.javlo.helper.StringHelper;
+import org.javlo.helper.URLHelper;
 import org.javlo.i18n.I18nAccess;
 import org.javlo.message.GenericMessage;
 import org.javlo.message.MessageRepository;
@@ -46,12 +47,12 @@ public class UserAction extends AbstractModuleAction {
 		RequestService requestService = RequestService.getInstance(ctx.getRequest());
 
 		ctx.getRequest().setAttribute("users", userContext.getUserFactory(ctx).getUserInfoList());
+		GlobalContext globalContext = GlobalContext.getInstance(ctx.getRequest());
 
 		if ((requestService.getParameter("user", null) == null || requestService.getParameter("back", null) != null) && !userContext.getMode().equals(UserModuleContext.VIEW_MY_SELF)) {
 			moduleContext.getCurrentModule().restoreAll();
 		} else {
 			IUserFactory userFactory = userContext.getUserFactory(ctx);
-			GlobalContext globalContext = GlobalContext.getInstance(ctx.getRequest());
 			User user = userFactory.getUser(requestService.getParameter("user", null));
 
 			if (userContext.getMode().equals(UserModuleContext.VIEW_MY_SELF)) {
@@ -75,7 +76,16 @@ public class UserAction extends AbstractModuleAction {
 			List<String> roles = new LinkedList<String>(userFactory.getAllRoles(globalContext, ctx.getRequest().getSession()));
 			Collections.sort(roles);
 			ctx.getRequest().setAttribute("roles", roles);
+		}
 
+		if (!userContext.getMode().equals(UserModuleContext.VIEW_MY_SELF)) {
+			String CSVLink = URLHelper.createStaticURL(ctx, "/users-list/" + globalContext.getContextKey() + "-users.csv");
+			if (userContext.getMode().equals(UserModuleContext.ADMIN_USERS_LIST)) {
+				CSVLink = URLHelper.createStaticURL(ctx, "/users-admin-list/" + globalContext.getContextKey() + "-users.csv");
+				CSVLink = CSVLink + "?admin=true";
+			}
+			ctx.getRequest().setAttribute("CSVLink", CSVLink);
+			ctx.getRequest().setAttribute("CSVName", URLHelper.extractFileName(CSVLink));
 		}
 
 		return super.prepare(ctx, moduleContext);
