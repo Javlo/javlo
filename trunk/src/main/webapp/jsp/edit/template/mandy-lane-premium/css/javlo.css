@@ -279,12 +279,17 @@ ul,li {
 		transparent;
 	border: 1px solid #CCCCCC;
 	display: inline-block;
-	padding: 2px 5px;
 	box-shadow: 1px 1px 0 #F7F7F7;
 	border-radius: 3px 3px 3px 3px;
 	color: #333333;
 	margin: 2px 2px;
 	padding: 2px 5px;
+}
+
+#tools .link {
+	display: inline-block;
+	margin: 2px 2px;
+	padding: 2px 5px;	
 }
 
 .action-button:hover {

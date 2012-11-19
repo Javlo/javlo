@@ -14,6 +14,7 @@ import org.javlo.helper.BeanHelper;
 import org.javlo.helper.StringHelper;
 import org.javlo.service.RequestService;
 import org.javlo.user.AdminUserFactory;
+import org.javlo.user.AdminUserSecurity;
 import org.javlo.user.IUserFactory;
 import org.javlo.user.IUserInfo;
 import org.javlo.user.User;
@@ -53,12 +54,21 @@ public class UserListServlet extends HttpServlet {
         		
         		// TODO: check role
         		if (user != null) {
-                	//boolean admin = request.getPathInfo() != null && request.getPathInfo().contains("admin");
-                	boolean admin = editContext.getCurrentView() == EditContext.ADMIN_USER_VIEW;
-
+        			
+        			RequestService requestService = RequestService.getInstance(request);
+        			
+        			boolean admin = requestService.getParameter("admin", null) != null;
+        			
+            		if (!AdminUserSecurity.getInstance().haveRight(user, AdminUserSecurity.USER_ROLE) && !AdminUserSecurity.getInstance().haveRight(user, AdminUserSecurity.ADMIN_USER_ROLE)) {
+            			throw new ServletException("user:"+user.getLogin()+" have no suffisant right.");
+            		}
+            		
+            		if (!AdminUserSecurity.getInstance().haveRight(user, AdminUserSecurity.ADMIN_USER_ROLE) && admin) {
+            			throw new ServletException("user:"+user.getLogin()+" have no suffisant right for download admin user list.");
+            		}
+        			
                     boolean filtered = false;
-
-                    RequestService requestService = RequestService.getInstance(request);
+                    
                     String filteredString = requestService.getParameter("filtered", "false");
                     filtered = StringHelper.isTrue(filteredString);
 

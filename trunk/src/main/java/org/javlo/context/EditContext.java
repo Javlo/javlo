@@ -116,8 +116,6 @@ public class EditContext implements Serializable {
 
 	UserEditFilter adminUserEditFilter = new UserEditFilter();
 
-	int currentView = CONTENT_VIEW;
-
 	boolean editPreview = false;
 
 	// int menuCut = 18;
@@ -303,22 +301,8 @@ public class EditContext implements Serializable {
 	/**
 	 * @return
 	 */
-	public int getCurrentView() {
-		return currentView;
-	}
-
-	/**
-	 * @return
-	 */
 	public int getCurrentAdminView() {
 		return 1;
-	}
-
-	/**
-	 * @param i
-	 */
-	public void setCurrentView(int i) {
-		currentView = i;
 	}
 
 	/**

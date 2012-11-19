@@ -774,6 +774,16 @@ public class URLHelper extends ElementaryURLHelper {
 		return "";
 	}
 
+	public static String extractFileName(String path) {
+		File file = new File(path);
+		String outName = file.getName();
+		int endNameIndex = outName.indexOf('?');
+		if (endNameIndex >= 0) {
+			outName = outName.substring(0, endNameIndex);
+		}
+		return outName;
+	}
+
 	public static String getMoveChildURL(ContentContext ctx, MenuElement elem) {
 		if ((elem != null) && (elem.getParent() != null)) {
 			MenuElement newParent = null;
