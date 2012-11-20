@@ -68,11 +68,11 @@ public class InfoBean {
 	public String getCurrentURL() {
 		return URLHelper.createURL(ctx);
 	}
-	
+
 	public String getCurrentViewURL() {
 		return URLHelper.createURL(ctx.getContextWithOtherRenderMode(ContentContext.VIEW_MODE).getFreeContentContext());
 	}
-	
+
 	public String getCurrentPreviewURL() {
 		return URLHelper.createURL(ctx.getContextWithOtherRenderMode(ContentContext.PREVIEW_MODE).getFreeContentContext());
 	}
@@ -357,7 +357,7 @@ public class InfoBean {
 			return null;
 		}
 	}
-	
+
 	public String getPathPrefix() {
 		return URLHelper.getPathPrefix(ctx.getRequest());
 	}
@@ -368,6 +368,10 @@ public class InfoBean {
 
 	public boolean isAdmin() {
 		return AdminUserSecurity.getInstance().isAdmin(ctx.getCurrentUser());
+	}
+
+	public String getPath() {
+		return ctx.getPath();
 	}
 
 }

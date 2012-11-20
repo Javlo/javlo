@@ -212,6 +212,7 @@ public class GenericForm extends AbstractVisualComponent implements IAction {
 		result.put("__referer", request.getHeader("referer"));
 
 		String fakeField = comp.getLocalConfig(false).getProperty("field.fake", "fake");
+		boolean withXHTML = StringHelper.isTrue(comp.getLocalConfig(false).getProperty("field.xhtml", null));
 		boolean fakeFilled = false;
 
 		Collection<String> keys = params.keySet();
@@ -221,6 +222,8 @@ public class GenericForm extends AbstractVisualComponent implements IAction {
 				String finalValue = requestService.getParameter(key, "");
 
 				if (key.equals(fakeField) && finalValue.trim().length() > 0) {
+					fakeFilled = true;
+				} else if (!withXHTML && (finalValue.toLowerCase().contains("</a>") || finalValue.toLowerCase().contains("</div>"))) {
 					fakeFilled = true;
 				}
 

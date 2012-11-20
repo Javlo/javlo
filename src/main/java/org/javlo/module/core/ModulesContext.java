@@ -176,7 +176,12 @@ public class ModulesContext {
 		return currentModule;
 	}
 
+	public boolean isCurrentModule() {
+		return currentModule != null;
+	}
+
 	public void setCurrentModule(String moduleName) {
+		setCurrentModule((Module) null);
 		for (Module module : modules) {
 			if (module.getName().equals(moduleName)) {
 				setCurrentModule(module);
@@ -213,10 +218,10 @@ public class ModulesContext {
 	public void setFromModule(String moduleName) {
 		setFromModule(searchModule(moduleName));
 	}
-	
-	public void initContext (HttpServletRequest request, HttpServletResponse response) throws Exception {
+
+	public void initContext(HttpServletRequest request, HttpServletResponse response) throws Exception {
 		RequestService requestService = RequestService.getInstance(request);
-		
+
 		ContentContext ctx = ContentContext.getContentContext(request, response);
 		GlobalContext globalContext = GlobalContext.getInstance(ctx.getRequest());
 		if (requestService.getParameter("module", null) != null) {

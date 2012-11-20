@@ -332,6 +332,7 @@ public class Module {
 	private final Collection<String> jsURI = new LinkedList<String>();
 	private String renderer;
 	private String defaultRenderer;
+	private String viewRenderer;
 	private Map<String, Box> boxes = new HashMap<String, Box>();
 	private Map<String, Box> defaultBoxes;
 	private String backUrl = null;
@@ -449,6 +450,12 @@ public class Module {
 		if (renderer != null) {
 			renderer = URLHelper.mergePath(path, renderer);
 			defaultRenderer = renderer;
+		}
+
+		/* view renderer */
+		viewRenderer = config.get("view.renderer");
+		if (viewRenderer != null) {
+			viewRenderer = URLHelper.mergePath(path, viewRenderer);
 		}
 
 		/* tools */
@@ -858,19 +865,23 @@ public class Module {
 		if (haveRight != null) {
 			return haveRight;
 		} else {
-			if (user == null) {
-				return false;
-			}
 			if (getRoles() == null) {
 				haveRight = true;
 			} else {
-				haveRight = user.validForRoles(getRoles());
+				if (user == null) {
+					return false;
+				} else {
+					haveRight = user.validForRoles(getRoles());
+				}
 			}
 		}
 		if (haveRight) {
 			if (getExcludeRoles() == null) {
 				haveRight = true;
 			} else {
+				if (user == null) {
+					return false;
+				}
 				Set<String> workingRoles = new HashSet<String>();
 				workingRoles.addAll(getExcludeRoles());
 				workingRoles.retainAll(user.getRoles());
@@ -903,6 +914,14 @@ public class Module {
 
 	public void updateMainRenderer(ContentContext ctx) throws ServletException, IOException {
 		AjaxHelper.updateMainRenderer(ctx, this);
+	}
+
+	public String getViewRenderer() {
+		return viewRenderer;
+	}
+
+	public void setViewRenderer(String viewRenderer) {
+		this.viewRenderer = viewRenderer;
 	}
 
 }

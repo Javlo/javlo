@@ -103,6 +103,8 @@ public class StaticConfig extends Observable {
 
 	private Map<String, String> devices = null;
 
+	public static final List<String> BASIC_MODULES = Arrays.asList(new String[] { "admin", "content", "file" });
+
 	private StaticConfig(ServletContext application) {
 		this.application = application;
 		try {
@@ -618,7 +620,7 @@ public class StaticConfig extends Observable {
 	}
 
 	public String getLocalTempDir() {
-		String path = properties.getString("temp-folder", null );
+		String path = properties.getString("temp-folder", null);
 		if (path != null) {
 			path = replaceFolderVariable(path);
 		}
@@ -1124,6 +1126,15 @@ public class StaticConfig extends Observable {
 
 	public int getShortURLSize() {
 		return properties.getInt("url.short.size", 3);
+	}
+
+	public List<String> getBasicModules() {
+		String basicModules = properties.getString("modules", null);
+		if (basicModules == null) {
+			return BASIC_MODULES;
+		} else {
+			return StringHelper.stringToCollection(basicModules, ",");
+		}
 	}
 
 }

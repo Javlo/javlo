@@ -204,6 +204,16 @@
 	</servlet-mapping>
 	
 	<servlet>
+		<servlet-name>ModuleServlet</servlet-name>
+		<servlet-class>org.javlo.servlet.ModuleServlet</servlet-class>
+		<load-on-startup>1</load-on-startup>
+	</servlet>
+	<servlet-mapping>
+		<servlet-name>ModuleServlet</servlet-name>
+		<url-pattern>/module/*</url-pattern>
+	</servlet-mapping>
+	
+	<servlet>
 		<servlet-name>ClassServlet</servlet-name>
 		<servlet-class>org.javlo.servlet.ClassServlet</servlet-class>
 		<load-on-startup>1</load-on-startup>
