@@ -49,10 +49,14 @@ public class UserAction extends AbstractModuleAction {
 		ctx.getRequest().setAttribute("users", userContext.getUserFactory(ctx).getUserInfoList());
 		GlobalContext globalContext = GlobalContext.getInstance(ctx.getRequest());
 
+		IUserFactory userFactory = userContext.getUserFactory(ctx);
+		if (userFactory.getCurrentUser(ctx.getRequest().getSession()) == null) {
+			return null;
+		}
+
 		if ((requestService.getParameter("user", null) == null || requestService.getParameter("back", null) != null) && !userContext.getMode().equals(UserModuleContext.VIEW_MY_SELF)) {
 			moduleContext.getCurrentModule().restoreAll();
 		} else {
-			IUserFactory userFactory = userContext.getUserFactory(ctx);
 			User user = userFactory.getUser(requestService.getParameter("user", null));
 
 			if (userContext.getMode().equals(UserModuleContext.VIEW_MY_SELF)) {

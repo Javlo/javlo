@@ -150,8 +150,6 @@ public class GlobalContext implements Serializable {
 
 	public static final String LOGO_FILE_NAME = "dynamic_template/logo.png";
 
-	public static final List<String> BASIC_MODULES = Arrays.asList(new String[] { "admin", "content", "file" });
-
 	public GlobalContext() {
 		properties.setDelimiterParsingDisabled(true);
 		StorePropertyThread storePropertyThread = new StorePropertyThread(this);
@@ -758,7 +756,7 @@ public class GlobalContext implements Serializable {
 		List<String> modules = new LinkedList<String>();
 		String modulesRaw = properties.getString("modules", null);
 		if (modulesRaw == null) {
-			return BASIC_MODULES;
+			return staticConfig.getBasicModules();
 		}
 		modules.addAll(StringHelper.stringToCollection(modulesRaw));
 		modules.remove(""); // remove empty string
