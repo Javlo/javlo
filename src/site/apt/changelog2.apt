@@ -25,3 +25,7 @@ change log
  * jalvo work without portlet lib
  
  * preview edition work with template with absolute reference to jQuery lib
+ 
+ * can desactivated preview mode
+ 
+* 2.0.0.11 [23/11/2012]
