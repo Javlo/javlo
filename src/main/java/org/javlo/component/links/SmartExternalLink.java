@@ -854,9 +854,4 @@ public class SmartExternalLink extends ComplexPropertiesLink implements IReverse
 		return null;
 	}
 
-	@Override
-	public boolean isContentTimeCachable(ContentContext ctx) {
-		return true;
-	}
-
 }
