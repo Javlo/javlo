@@ -83,6 +83,7 @@ public class AdminAction extends AbstractModuleAction {
 		private String adminUserRoles;
 		private boolean autoSwitchToDefaultLanguage;
 		private boolean extendMenu;
+		private boolean previewMode;
 		private boolean openExternalLinkAsPopup = false;
 		private boolean openFileAsPopup = false;
 		private String noPopupDomain;
@@ -119,6 +120,7 @@ public class AdminAction extends AbstractModuleAction {
 			setEditability(globalContext.isEditable());
 			setDefaultTemplate(globalContext.getDefaultTemplate());
 			setExtendMenu(globalContext.isExtendMenu());
+			setPreviewMode(globalContext.isPreviewMode());
 
 			setShortDateFormat(globalContext.getShortDateFormat());
 			setMediumDateFormat(globalContext.getMediumDateFormat());
@@ -466,6 +468,14 @@ public class AdminAction extends AbstractModuleAction {
 			this.noPopupDomain = noPopupDomain;
 		}
 
+		public boolean isPreviewMode() {
+			return previewMode;
+		}
+
+		public void setPreviewMode(boolean previewMode) {
+			this.previewMode = previewMode;
+		}
+
 	}
 
 	@Override
@@ -628,7 +638,7 @@ public class AdminAction extends AbstractModuleAction {
 		currentModule.pushBreadcrumb(new Module.HtmlLink(null, I18nAccess.getInstance(ctx.getRequest()).getText("global.change") + " : " + ctx.getRequest().getParameter("context"), ""));
 	}
 
-	public static final String performChangeSite(HttpServletRequest request,RequestService requestService, ContentContext ctx, Module currentModule) throws FileNotFoundException, IOException, NoSuchMethodException, ClassNotFoundException, IllegalArgumentException, InstantiationException, IllegalAccessException, InvocationTargetException {
+	public static final String performChangeSite(HttpServletRequest request, RequestService requestService, ContentContext ctx, Module currentModule) throws FileNotFoundException, IOException, NoSuchMethodException, ClassNotFoundException, IllegalArgumentException, InstantiationException, IllegalAccessException, InvocationTargetException {
 		if (requestService.getParameter("change", null) != null) {
 			editGlobalContext(ctx, currentModule, null);
 		} else if (requestService.getParameter("components", null) != null) {
@@ -720,6 +730,8 @@ public class AdminAction extends AbstractModuleAction {
 					currentGlobalContext.setOpenExernalLinkAsPopup(requestService.getParameter("link-as-popup", null) != null);
 					currentGlobalContext.setOpenFileAsPopup(requestService.getParameter("file-as-popup", null) != null);
 					currentGlobalContext.setNoPopupDomainRAW(requestService.getParameter("nopup-domain", ""));
+
+					currentGlobalContext.setPreviewMode(requestService.getParameter("preview-mode", null) != null);
 
 					String dateFormat = requestService.getParameter("short-date", null);
 					if (dateFormat != null) {

@@ -61,7 +61,7 @@ public class NavigationService {
 	public void clearPage(ContentContext ctx) {
 		synchronized (KEY) {
 			GlobalContext globalContext = GlobalContext.getInstance(ctx.getRequest());
-			if (!globalContext.isView()) {
+			if (!globalContext.isPreviewMode()) {
 				viewPageCache.removeAll();
 				previewPageCache.removeAll();
 			} else {

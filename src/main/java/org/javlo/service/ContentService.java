@@ -73,7 +73,7 @@ public class ContentService {
 		System.out.println("*** weakTest 2 : " + weakTest.get());
 	}
 
-	private MenuElement viewNav = null;
+	private MenuElement _viewNav = null;
 
 	private Map<String, MenuElement> shortURLMap = null;
 
@@ -91,10 +91,26 @@ public class ContentService {
 
 	private Map<String, String> timeTravelerGlobalMap;
 
+	private boolean previewMode = true;
+
 	public static final Object LOCK_LOAD_NAVIGATION = new Object();
 
 	public static ContentService getInstance(HttpServletRequest request) {
 		return getInstance(GlobalContext.getInstance(request));
+	}
+
+	public MenuElement getViewNav() {
+		if (previewMode) {
+			return _viewNav;
+		} else {
+			return previewNav;
+		}
+	}
+
+	public void setViewNav(MenuElement nav) {
+		if (previewMode) {
+			_viewNav = nav;
+		}
 	}
 
 	public static ContentService getInstance(GlobalContext globalContext) {
@@ -108,6 +124,7 @@ public class ContentService {
 				globalContext.setAttribute(ContentService.class.getName(), content);
 			}
 		}
+		content.previewMode = globalContext.isPreviewMode();
 		return content;
 	}
 
@@ -381,7 +398,7 @@ public class ContentService {
 					timeTravelerGlobalMap = contentAttributeMap;
 				}
 				res = timeTravelerNav;
-			} else if (!ctx.isAsViewMode()) {
+			} else if (!ctx.isAsViewMode() || !previewMode) {
 				if (previewNav == null) {
 					PersistenceService persistenceService = PersistenceService.getInstance(globalContext);
 					logger.info("reload preview navigation");
@@ -391,13 +408,13 @@ public class ContentService {
 				}
 				res = previewNav;
 			} else {
-				if (viewNav == null) {
+				if (getViewNav() == null) {
 					PersistenceService persistenceService = PersistenceService.getInstance(globalContext);
 					Map<String, String> contentAttributeMap = new HashMap<String, String>();
-					viewNav = persistenceService.load(ctx, ContentContext.VIEW_MODE, contentAttributeMap, null);
+					setViewNav(persistenceService.load(ctx, ContentContext.VIEW_MODE, contentAttributeMap, null));
 					viewGlobalMap = contentAttributeMap;
 				}
-				res = viewNav;
+				res = getViewNav();
 			}
 			DebugHelper.checkAssert(res == null, "the return of getNavigation can be never null.");
 			StaticConfig staticConfig = StaticConfig.getInstance(ctx.getRequest().getSession());
@@ -415,7 +432,7 @@ public class ContentService {
 			} else if (!ctx.isAsViewMode()) {
 				return previewNav != null;
 			} else {
-				return viewNav != null;
+				return getViewNav() != null;
 			}
 		}
 	}
@@ -448,13 +465,13 @@ public class ContentService {
 	 */
 	public boolean isModified() {
 		boolean res;
-		if (viewNav == null) {
+		if (getViewNav() == null) {
 			res = false;
 		} else {
 			if (previewNav == null) {
 				res = true;
 			} else {
-				res = !viewNav.equals(previewNav);
+				res = !getViewNav().equals(previewNav);
 			}
 		}
 		return res;
@@ -487,7 +504,7 @@ public class ContentService {
 			}
 		}
 		synchronized (LOCK_LOAD_NAVIGATION) {
-			viewNav = newViewNav;
+			setViewNav(newViewNav);
 			viewGlobalMap = contentAttributeMap;
 		}
 	}
@@ -533,7 +550,7 @@ public class ContentService {
 	public void releaseViewNav(ContentContext ctx, GlobalContext globalContext) throws Exception {
 		globalContext.releaseAllCache();
 		clearComponentCache();
-		viewNav = null;
+		setViewNav(null);
 		shortURLMap = null;
 	}
 
@@ -633,7 +650,7 @@ public class ContentService {
 	}
 
 	public boolean isViewNav() {
-		return viewNav != null;
+		return getViewNav() != null;
 	}
 
 	public boolean isPreviewNav() {

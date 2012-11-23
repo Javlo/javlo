@@ -15,7 +15,6 @@ import org.javlo.module.mailing.MailingAction;
 import org.javlo.service.DataToIDService;
 import org.javlo.service.RequestService;
 
-
 public class RequestHelper {
 
 	public static final String CRYPTED_PARAM_NAME = "cparam";
@@ -61,9 +60,11 @@ public class RequestHelper {
 
 	public static boolean isCookie(HttpServletRequest request, String key, String value) {
 		Cookie[] cookies = request.getCookies();
-		for (Cookie cookie : cookies) {
-			if (cookie.getName().equals(key) && cookie.getValue().equals(value)) {
-				return true;
+		if (cookies != null) {
+			for (Cookie cookie : cookies) {
+				if (cookie.getName().equals(key) && cookie.getValue().equals(value)) {
+					return true;
+				}
 			}
 		}
 		return false;
@@ -87,18 +88,16 @@ public class RequestHelper {
 		cokkie.setPath(path);
 		response.addCookie(cokkie);
 	}
-	
+
 	public static void setCookieValue(HttpServletResponse response, String key, String value, int expiry) {
 		Cookie cokkie = new Cookie(key, value);
 		cokkie.setMaxAge(expiry);
 		response.addCookie(cokkie);
 	}
 
-
 	public static void setCookieValue(HttpServletResponse response, String key, String value) {
 		Cookie cokkie = new Cookie(key, value);
 		response.addCookie(cokkie);
 	}
-
 
 }
