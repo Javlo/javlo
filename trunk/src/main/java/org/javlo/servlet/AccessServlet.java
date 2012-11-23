@@ -35,7 +35,6 @@ import org.javlo.config.StaticConfig;
 import org.javlo.context.ContentContext;
 import org.javlo.context.EditContext;
 import org.javlo.context.GlobalContext;
-import org.javlo.context.UserInterfaceContext;
 import org.javlo.data.InfoBean;
 import org.javlo.helper.DebugHelper;
 import org.javlo.helper.RequestHelper;
@@ -48,7 +47,6 @@ import org.javlo.mailing.MailingThread;
 import org.javlo.message.GenericMessage;
 import org.javlo.message.MessageRepository;
 import org.javlo.message.PopupMessage;
-import org.javlo.module.core.Module;
 import org.javlo.module.core.ModulesContext;
 import org.javlo.navigation.MenuElement;
 import org.javlo.portlet.PortletWindowImpl;
@@ -84,7 +82,7 @@ public class AccessServlet extends HttpServlet {
 	 */
 	public static Logger logger = Logger.getLogger(AccessServlet.class.getName());
 
-	public static final String VERSION = "2.0.0.10";
+	public static final String VERSION = "2.0.0.11";
 
 	@Override
 	public void destroy() {
