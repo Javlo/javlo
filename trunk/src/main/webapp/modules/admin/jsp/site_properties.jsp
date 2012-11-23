@@ -157,6 +157,11 @@
 </div>
 
 <div class="line">		
+	<label for="preview-mode">${i18n.edit['admin.form.preview-mode']}</label>
+	<input type="checkbox" id="preview-mode" name="preview-mode" ${currentContext.previewMode?'checked="checked"':""}" />	
+</div>
+
+<div class="line">		
 	<label for="help-url">${i18n.edit['admin.title.help-url']}</label>
 	<input type="text" id="help-url" name="help-url" value="${currentContext.helpURL}" />	
 </div>

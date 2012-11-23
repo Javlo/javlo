@@ -476,11 +476,6 @@ public class SmartExternalLink extends ComplexPropertiesLink implements IReverse
 		return properties.getProperty(LINK_KEY, "");
 	}
 
-	@Override
-	public String getPrefixViewXHTMLCode(ContentContext ctx) {
-		return "";
-	}
-
 	public String getReverseLinkName() {
 		return getId() + ID_SEPARATOR + "reverse-lnk";
 	}
@@ -493,11 +488,6 @@ public class SmartExternalLink extends ComplexPropertiesLink implements IReverse
 	@Override
 	public String[] getStyleList(ContentContext ctx) {
 		return new String[] { STYLE_NORMAL, STYLE_PRIORITY, STYLE_UNVISIBLE };
-	}
-
-	@Override
-	public String getSuffixViewXHTMLCode(ContentContext ctx) {
-		return "";
 	}
 
 	public String getTitle(ContentContext ctx) throws IOException {

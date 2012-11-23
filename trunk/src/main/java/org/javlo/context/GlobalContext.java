@@ -2387,6 +2387,20 @@ public class GlobalContext implements Serializable {
 		}
 	}
 
+	/**
+	 * if true, there are two version of content : preview and view.
+	 * 
+	 * @return
+	 */
+	public boolean isPreviewMode() {
+		return properties.getBoolean("mode.preview", true);
+	}
+
+	public void setPreviewMode(boolean preview) {
+		properties.setProperty("mode.preview", preview);
+		save();
+	}
+
 	public static final class FrontCacheBean {
 		private long creationTime = -1;
 		private String data = null;

@@ -122,6 +122,8 @@ public class SmartExternalLinkImportation extends AbstractVisualComponent {
 	private void importLinks(ContentContext ctx) throws Exception {
 		MenuElement currentPage = ctx.getCurrentPage();
 
+		ContentContext PreviewCtx = ctx.getContextWithOtherRenderMode(ContentContext.PREVIEW_MODE);
+
 		ComponentBean[] components = currentPage.getContent();
 		ComponentBean comp = null;
 		String parentId = "0";
@@ -149,7 +151,6 @@ public class SmartExternalLinkImportation extends AbstractVisualComponent {
 			String pageContent = getValue();
 			List<URL> extLinks = NetHelper.getExternalLinks(pageContent);
 			for (URL url : extLinks) {
-				// String compId = MacroHelper.addContent(ctx.getLanguage(), currentPage, parentId, SmartExternalLink.TYPE, getStyle(ctx), SmartExternalLink.LINK_KEY + "=" + url);
 				parentId = currentPage.prepareAddContent(ctx.getRequestContentLanguage(), parentId, SmartExternalLink.TYPE, getStyle(ctx), ComplexPropertiesLink.LINK_KEY + "=" + url);
 				countImport++;
 			}
@@ -161,7 +162,6 @@ public class SmartExternalLinkImportation extends AbstractVisualComponent {
 				String pageContent = NetHelper.readPage(new URL(link));
 				List<URL> extLinks = NetHelper.getExternalLinks(pageContent);
 				for (URL url : extLinks) {
-					// String compId = MacroHelper.addContent(ctx.getLanguage(), currentPage, parentId, SmartExternalLink.TYPE, getStyle(ctx), SmartExternalLink.LINK_KEY + "=" + url);
 					parentId = currentPage.prepareAddContent(ctx.getRequestContentLanguage(), parentId, SmartExternalLink.TYPE, getStyle(ctx), ComplexPropertiesLink.LINK_KEY + "=" + url);
 				}
 				link = read.readLine();

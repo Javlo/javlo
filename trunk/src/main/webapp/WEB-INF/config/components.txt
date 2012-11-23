@@ -45,6 +45,8 @@ org.javlo.component.links.PageMirrorComponent
 org.javlo.component.links.UserInfoLink
 org.javlo.component.links.AgendaImport
 org.javlo.component.links.SubtitleLink
+org.javlo.component.links.SmartExternalLink
+org.javlo.component.links.SmartExternalLinkImportation
 
 --content.title.graphic
 
@@ -70,6 +72,7 @@ org.javlo.component.form.Contact
 org.javlo.component.form.GenericForm
 org.javlo.component.list.FAQComponent
 org.javlo.component.web2.ReactionComponent
+org.javlo.component.web2.PageRank
 org.javlo.component.form.FormMailingComponent
 
 
@@ -80,6 +83,7 @@ org.javlo.component.layout.Space
 org.javlo.component.meta.ForceRealContent
 org.javlo.component.meta.NotSearchPage
 org.javlo.component.meta.Keywords
+org.javlo.component.meta.PageWeight
 org.javlo.component.form.SearchResultComponent
 org.javlo.component.form.GenericFormForRegistering
 ec.ep.europarl.adagio.wcms.component.GenericFormPortlet

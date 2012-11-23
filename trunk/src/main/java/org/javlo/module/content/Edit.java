@@ -449,21 +449,27 @@ public class Edit extends AbstractModuleAction {
 			if (!userIterfaceContext.isComponentsList()) {
 				currentModule.clearAllBoxes();
 			}
+
+			String publish = "";
+			if (globalContext.isPreviewMode()) {
+				publish = "&button_publish=true";
+			}
+
 			switch (modCtx.getMode()) {
 			case ContentModuleContext.PREVIEW_MODE:
-				currentModule.setToolsRenderer("/jsp/actions.jsp?button_edit=true&button_page=true&button_publish=true");
+				currentModule.setToolsRenderer("/jsp/actions.jsp?button_edit=true&button_page=true" + publish);
 				request.setAttribute("previewURL", URLHelper.createURL(ctx.getContextWithOtherRenderMode(ContentContext.PREVIEW_MODE)));
 				currentModule.setRenderer("/jsp/preview.jsp");
 				currentModule.setBreadcrumbTitle(I18nAccess.getInstance(ctx.getRequest()).getText("content.preview"));
 				break;
 			case ContentModuleContext.PAGE_MODE:
-				currentModule.setToolsRenderer("/jsp/actions.jsp?button_edit=true&button_preview=true&button_publish=true&button_delete_page=true");
+				currentModule.setToolsRenderer("/jsp/actions.jsp?button_edit=true&button_preview=true&button_delete_page=true" + publish);
 				request.setAttribute("page", ctx.getCurrentPage().getPageBean(ctx));
 				currentModule.setRenderer("/jsp/page_properties.jsp");
 				currentModule.setBreadcrumbTitle(I18nAccess.getInstance(ctx.getRequest()).getText("item.title"));
 				break;
 			default:
-				currentModule.setToolsRenderer("/jsp/actions.jsp?button_preview=true&button_page=true&button_save=true&button_copy=true&button_publish=true&languages=true&areas=true");
+				currentModule.setToolsRenderer("/jsp/actions.jsp?button_preview=true&button_page=true&button_save=true&button_copy=true&languages=true&areas=true" + publish);
 				currentModule.setRenderer("/jsp/content_wrapper.jsp");
 				currentModule.setBreadcrumbTitle(I18nAccess.getInstance(ctx.getRequest()).getText("content.mode.content"));
 				break;
