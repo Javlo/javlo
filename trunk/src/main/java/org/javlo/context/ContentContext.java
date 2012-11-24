@@ -841,7 +841,12 @@ public class ContentContext {
 	 * @param lg
 	 */
 	public void setLanguage(String lg) {
-		language = lg;
+		if (GlobalContext.getInstance(request).getContentLanguages().contains(lg)) {
+			language = lg;
+		} else {
+			logger.warning("language not available : " + lg);
+			language = GlobalContext.getInstance(request).getDefaultLanguage();
+		}
 		resestCache();
 	}
 
