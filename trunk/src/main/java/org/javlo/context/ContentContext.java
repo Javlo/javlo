@@ -291,6 +291,10 @@ public class ContentContext {
 
 	private boolean free = false;
 
+	private Collection<String> availableLanguages = null;
+
+	private Collection<String> availableContentLanguages = null;
+
 	private ContentContext() {
 	}
 
@@ -777,8 +781,19 @@ public class ContentContext {
 		this.array = array;
 	}
 
-	public void setContentLanguage(String contentLanguage) {
-		this.contentLanguage = contentLanguage;
+	public void setContentLanguage(String lg) {
+		if (contentLanguage != null && contentLanguage.equals(lg)) {
+			return;
+		}
+		if (availableContentLanguages == null) {
+			availableContentLanguages = GlobalContext.getInstance(request).getContentLanguages();
+		}
+		if (availableContentLanguages.contains(lg)) {
+			contentLanguage = lg;
+		} else {
+			logger.warning("content language not available : " + lg);
+			contentLanguage = getLanguage();
+		}
 		resestCache();
 	}
 
@@ -841,7 +856,13 @@ public class ContentContext {
 	 * @param lg
 	 */
 	public void setLanguage(String lg) {
-		if (GlobalContext.getInstance(request).getContentLanguages().contains(lg)) {
+		if (language != null && language.equals(lg)) {
+			return;
+		}
+		if (availableLanguages == null) {
+			availableLanguages = GlobalContext.getInstance(request).getLanguages();
+		}
+		if (availableLanguages.contains(lg)) {
 			language = lg;
 		} else {
 			logger.warning("language not available : " + lg);
@@ -893,8 +914,19 @@ public class ContentContext {
 		this.request = request;
 	}
 
-	public void setRequestContentLanguage(String requestContentLanguage) {
-		this.requestContentLanguage = requestContentLanguage;
+	public void setRequestContentLanguage(String lg) {
+		if (requestContentLanguage != null && requestContentLanguage.equals(lg)) {
+			return;
+		}
+		if (availableContentLanguages == null) {
+			availableContentLanguages = GlobalContext.getInstance(request).getContentLanguages();
+		}
+		if (availableContentLanguages.contains(lg)) {
+			requestContentLanguage = lg;
+		} else {
+			logger.warning("request content language not available : " + lg);
+			requestContentLanguage = getLanguage();
+		}
 		resestCache();
 	}
 
