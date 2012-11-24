@@ -321,13 +321,21 @@ public class ChildrenLink extends AbstractVisualComponent implements IImageTitle
 		}
 
 		if (displayChildren) {
-			out.print("<div " + getSpecialPreviewCssClass(ctx, getStyle(ctx) + " " + getType()) + getSpecialPreviewCssId(ctx) + " >");
+			String select = "";
+			if (isCombo()) {
+				select = " select";
+			}
+			out.print("<div " + getSpecialPreviewCssClass(ctx, getStyle(ctx) + " " + getType() + select) + getSpecialPreviewCssId(ctx) + " >");
 			if (isCombo()) {
 				out.println("<form id=\"select_page\" action=\"" + URLHelper.createURL(ctx) + "\" method=\"get\">");
 				out.println("<select name=\"" + ContentContext.FORWARD_PATH_REQUEST_KEY + "\">");
 				for (MenuElement page : children) {
 					if (!page.isVisible(ctx) || !showOnlyNotVisible) {
-						out.print("<option value=\"" + URLHelper.createURL(ctx, page.getPath()) + "\">");
+						String selected = "";
+						if (ctx.getCurrentPage().getId().equals(page.getId())) {
+							selected = " selected=\"selected\"";
+						}
+						out.print("<option value=\"" + URLHelper.createURL(ctx, page.getPath()) + "\"" + selected + " >");
 						out.print(page.getFullLabel(ctx));
 						out.println("</option>");
 					}
