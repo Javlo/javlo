@@ -332,8 +332,12 @@ public class ChildrenLink extends AbstractVisualComponent implements IImageTitle
 				for (MenuElement page : children) {
 					if (!page.isVisible(ctx) || !showOnlyNotVisible) {
 						String selected = "";
-						if (ctx.getCurrentPage().getId().equals(page.getId())) {
-							selected = " selected=\"selected\"";
+						MenuElement selectedPage = ctx.getCurrentPage();
+						while (selectedPage != null) {
+							if (selectedPage.getId().equals(page.getId())) {
+								selected = " selected=\"selected\"";
+							}
+							selectedPage = selectedPage.getParent();
 						}
 						out.print("<option value=\"" + URLHelper.createURL(ctx, page.getPath()) + "\"" + selected + " >");
 						out.print(page.getFullLabel(ctx));

@@ -191,7 +191,7 @@ public class GlobalContext implements Serializable {
 					RequestService requestService = RequestService.getInstance(request);
 					if (StringHelper.isTrue(requestService.getParameter("__check_context", "true"))) {
 						contextURI = ContentManager.getContextName(request);
-						if (GlobalContext.isExist(request, contextURI)) {
+						if (contextURI.trim().length() > 0 && GlobalContext.isExist(request, contextURI)) {
 							globalContext = GlobalContext.getInstance(request.getSession(), contextURI);
 							globalContext.setPathPrefix(contextURI);
 						} else {
