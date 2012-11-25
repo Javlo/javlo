@@ -159,11 +159,10 @@ public class ContentElementList implements IContentComponentsList {
 	}
 
 	IContentVisualComponent getElement(int elemPos) {
-		Object[] array = contentElements.toArray();
-		if ((elemPos >= array.length) || (elemPos < 0)) {
+		if ((elemPos >= contentElements.size()) || (elemPos < 0)) {
 			return null;
 		} else {
-			return (IContentVisualComponent) array[elemPos];
+			return contentElements.get(elemPos);
 		}
 	}
 
