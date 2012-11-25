@@ -21,7 +21,7 @@ if (lg == null) {
 
 if (lg.trim().length() == 0) {
 	if (globalContext != null) {
-		lg = globalContext.getDefaultLanguages().iterator().next();
+		lg = globalContext.getDefaultLanguage();
 	}
 }
 
