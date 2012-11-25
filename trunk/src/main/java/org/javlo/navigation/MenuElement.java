@@ -253,6 +253,15 @@ public class MenuElement implements Serializable {
 				return null;
 			}
 		}
+
+		public int getLastAccess() {
+			try {
+				return page.getLastAccess(ctx);
+			} catch (ServiceException e) {
+				e.printStackTrace();
+				return -1;
+			}
+		}
 	}
 
 	/**
@@ -942,6 +951,7 @@ public class MenuElement implements Serializable {
 				componentBean = workBean;
 			}
 		}
+		setModificationDate(new Date());
 		releaseCache();
 		return true;
 	}
