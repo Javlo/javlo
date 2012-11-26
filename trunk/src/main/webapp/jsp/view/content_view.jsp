@@ -36,6 +36,7 @@ if (area != null) {
 	ctx.setArea(ComponentBean.DEFAULT_AREA);
 	area=ComponentBean.DEFAULT_AREA;
 }
+request.setAttribute("area", area);
 
 String path = request.getParameter("_wcms_content_path");
 if (path!=null) {
@@ -111,13 +112,13 @@ IContentVisualComponent elem = null;
 				}			
 				
 			}
-		}
-		while (!containers.empty()) {
-			%><%=containers.pop().getCloseCode(ctx)%><%
-		}
-		if (languageChange) {
-			%></div><%
-		}
+		}	
+	}
+	while (!containers.empty()) {
+		%><%=containers.pop().getCloseCode(ctx)%><%
+	}
+	if (languageChange) {
+		%></div><%
 	}
 }
 currentPage.endRendering(ctx);
