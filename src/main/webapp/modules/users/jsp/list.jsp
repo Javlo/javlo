@@ -28,7 +28,7 @@
 					<tr class="gradeX">
 						<td class="con0"><input type="checkbox" name="${user.login}" /> </td>
 						<td class="con1"><a
-							href="<c:url value="${info.currentURL}?webaction=edit&user=${user.login}"/>">${user.login}</a></td>
+							href="${info.currentURL}?webaction=edit&user=${user.login}">${user.login}</a></td>
 						<td class="con0"><c:out value="${user.firstName}" default="" /></td>
 						<td class="con1">${user.lastName}</td>
 						<td class="con0"><a href="mailto:${user.email}">${user.email}</a></td>
