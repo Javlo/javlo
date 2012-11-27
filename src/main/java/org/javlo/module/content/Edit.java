@@ -379,7 +379,11 @@ public class Edit extends AbstractModuleAction {
 		if (componentBox != null) {
 			I18nAccess i18nAccess = I18nAccess.getInstance(ctx.getRequest());
 			IContentVisualComponent comp = ComponentFactory.getComponentWithType(ctx, editCtx.getActiveType());
-			componentBox.setTitle(i18nAccess.getText("components.title", new String[][] { { "component", comp.getComponentLabel(ctx, globalContext.getEditLanguage(ctx.getRequest().getSession())) } }));
+			if (comp != null) {
+				componentBox.setTitle(i18nAccess.getText("components.title", new String[][] { { "component", comp.getComponentLabel(ctx, globalContext.getEditLanguage(ctx.getRequest().getSession())) } }));
+			} else {
+				componentBox.setTitle(i18nAccess.getText("components.title", new String[][] { { "component", "?" } }));
+			}
 		}
 		// }
 	}

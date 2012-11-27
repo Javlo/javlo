@@ -946,13 +946,25 @@ public class URLHelper extends ElementaryURLHelper {
 
 	}
 
-	public static void main(String[] args) {
-		try {
-			System.out.println("changeMode : " + changeMode("http://www.javlo.org/en/help/test.html?test=test", "page"));
-		} catch (MalformedURLException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+	/**
+	 * get the parent url of a url. sample: http://www.javlo.org/static/images/visual.png >> http://www.javlo.org/static/images
+	 * 
+	 * @param url
+	 * @return a url to a folder.
+	 */
+	public static String getParentURL(String url) {
+		if (url.contains("?")) {
+			url = url.substring(0, url.lastIndexOf('?'));
 		}
+		if (!url.contains("/")) {
+			return "";
+		} else {
+			return url.substring(0, url.lastIndexOf('/'));
+		}
+	}
+
+	public static void main(String[] args) {
+		System.out.println("parent url : " + getParentURL("test.png"));
 	}
 
 }

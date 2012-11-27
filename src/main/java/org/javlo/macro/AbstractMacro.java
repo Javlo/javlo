@@ -81,6 +81,11 @@ public abstract class AbstractMacro implements IMacro {
 	}
 
 	@Override
+	public String getRenderer() {
+		return null;
+	}
+
+	@Override
 	public boolean isAdmin() {
 		return true;
 	}
