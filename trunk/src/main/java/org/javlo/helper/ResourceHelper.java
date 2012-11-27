@@ -50,6 +50,9 @@ import org.javlo.context.GlobalContext;
 import org.javlo.exception.ResourceNotFoundException;
 import org.javlo.filter.DirectoryFilter;
 import org.javlo.helper.Comparator.FileComparator;
+import org.javlo.module.core.Module;
+import org.javlo.module.core.ModuleException;
+import org.javlo.module.core.ModulesContext;
 import org.javlo.service.resource.Resource;
 import org.javlo.user.IUserFactory;
 import org.javlo.user.UserFactory;
@@ -1037,6 +1040,12 @@ public class ResourceHelper {
 			return null;
 		}
 		return new String(bytes, cs);
+	}
+
+	public static String createModulePath(ContentContext ctx, String path) throws ModuleException, Exception {
+		Module currentModule = ModulesContext.getInstance(ctx.getRequest().getSession(), GlobalContext.getInstance(ctx.getRequest())).getCurrentModule();
+		String insideModulePath = URLHelper.mergePath("/modules", currentModule.getName(), path);
+		return insideModulePath;
 	}
 
 }

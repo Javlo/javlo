@@ -1552,12 +1552,20 @@ public abstract class AbstractVisualComponent implements IContentVisualComponent
 	}
 
 	public void setContentCache(ContentContext ctx, String contentCache) {
+		if (contentCache.contains(";jsessionid=")) {
+			logger.warning("couldn't put content with jsession id in cache on : " + getPage().getPath() + " - comp:" + getType());
+			return;
+		}
 		GlobalContext globalContext = GlobalContext.getInstance(ctx.getRequest());
 		ICache cache = globalContext.getCache(CACHE_NAME);
 		cache.put(getContentCacheKey(ctx), contentCache);
 	}
 
 	public void setContentTimeCache(ContentContext ctx, String contentCache) {
+		if (contentCache.contains(";jsessionid=")) {
+			logger.warning("couldn't put content with jsession id in cache on : " + getPage().getPath() + " - comp:" + getType());
+			return;
+		}
 		GlobalContext globalContext = GlobalContext.getInstance(ctx.getRequest());
 		ICache cache = globalContext.getCache(TIME_CACHE_NAME);
 		String contentKey = getContentCacheKey(ctx);

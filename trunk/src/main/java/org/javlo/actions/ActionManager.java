@@ -14,11 +14,14 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import org.javlo.component.core.ComponentFactory;
+import org.javlo.config.StaticConfig;
 import org.javlo.context.ContentContext;
 import org.javlo.context.GlobalContext;
 import org.javlo.helper.LangHelper;
 import org.javlo.helper.StringHelper;
 import org.javlo.i18n.I18nAccess;
+import org.javlo.macro.IMacro;
+import org.javlo.macro.MacroFactory;
 import org.javlo.message.GenericMessage;
 import org.javlo.message.MessageRepository;
 import org.javlo.module.core.Module;
@@ -55,6 +58,9 @@ public class ActionManager {
 	}
 
 	static final String formatActionName(String name) {
+		if (name == null || name.length() == 0) {
+			return "";
+		}
 		String start = name.substring(0, 1);
 		String end = "";
 		if (name.length() > 1) {
@@ -67,6 +73,9 @@ public class ActionManager {
 		IAction outAction = getActionModule(request, group);
 		if (outAction == null) {
 			outAction = getActionComponent(request, group);
+		}
+		if (outAction == null) {
+			outAction = getActionMacro(request, group);
 		}
 		return outAction;
 	}
@@ -107,6 +116,19 @@ public class ActionManager {
 		}
 
 		return action;
+	}
+
+	public static IAction getActionMacro(HttpServletRequest request, String group) throws IOException, ClassNotFoundException, InstantiationException, IllegalAccessException {
+		StaticConfig staticConfig = StaticConfig.getInstance(request.getSession());
+		for (IMacro macro : MacroFactory.getInstance(staticConfig).getMacros()) {
+			if (macro instanceof IAction) {
+				IAction action = (IAction) macro;
+				if (action.getActionGroupName().equals(group)) {
+					return action;
+				}
+			}
+		}
+		return null;
 	}
 
 	public static String getActionGroup(String actionName) {

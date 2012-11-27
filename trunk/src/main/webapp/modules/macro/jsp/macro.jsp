@@ -3,6 +3,7 @@
 <div class="content">
 <ul id="macro">
 <c:forEach var="macro" items="${macros}">
+<c:if test="${empty macro.renderer}">
 <li>
 	<form id="exec-${macro.name}" action="${info.currentURL}" method="post">
 		<div>
@@ -12,7 +13,7 @@
 		</div>
 	</form>
 </li>
-
+</c:if>
 </c:forEach>
 </ul>
 </div>

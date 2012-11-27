@@ -4,3 +4,16 @@
 	margin: 10px;
 	display:inline-block;
 }
+
+.cancel {
+	float: right;
+}
+
+.macro-interface {
+	margin-right: 80px;
+}
+
+.macro-interface fieldset {
+	margin: 0;
+}
+

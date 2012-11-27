@@ -23,6 +23,7 @@ import org.javlo.config.StaticConfig;
 import org.javlo.context.ContentContext;
 import org.javlo.context.GlobalContext;
 import org.javlo.mailing.MailService;
+import org.javlo.utils.MapCollectionWrapper;
 import org.javlo.ztatic.FileCache;
 
 public class NetHelper {
@@ -268,6 +269,30 @@ public class NetHelper {
 		StaticConfig staticConfig = StaticConfig.getInstance(ctx.getRequest().getSession());
 		GlobalContext globalContext = GlobalContext.getInstance(ctx.getRequest());
 		return getLocalCopyOfPageImage(staticConfig.getCacheFolder(), globalContext.getDataFolder(), inURL, null, content, crc32, preferVertical, needVertical);
+	}
+
+	public static List<URL> extractMostSimilarLinks(URL url) throws Exception {
+		String content = readPage(url);
+		List<String> allLinks = extractExternalURL(url, content);
+
+		MapCollectionWrapper<String, URL> urlByParentFolder = new MapCollectionWrapper<String, URL>();
+		for (String link : allLinks) {
+			urlByParentFolder.add(URLHelper.getParentURL(link), new URL(link));
+		}
+		// search the biggest url with the same parent folder.
+		int biggestList = 1;
+		String biggestKey = null;
+		for (String key : urlByParentFolder.keySet()) {
+			if (urlByParentFolder.get(key).size() > biggestList) {
+				biggestList = urlByParentFolder.get(key).size();
+				biggestKey = key;
+			}
+		}
+		if (biggestKey == null) {
+			return null;
+		} else {
+			return urlByParentFolder.get(biggestKey);
+		}
 	}
 
 	/**
