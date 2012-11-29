@@ -87,7 +87,7 @@ public class XMLServlet extends HttpServlet {
 
 			String[] uriSplited = uri.split("/");
 			if (uriSplited.length < 4) {
-				response.setContentType("application/xhtml+xml");
+				response.setContentType("text/xml");
 				out.write("<?xml version=\"1.0\" encoding=\"" + ContentContext.CHARACTER_ENCODING + "\"?>");
 				out.write("<xml><error>malformed URL use : xml/[lang]/[format]/[group]</error></xml>");
 			} else {
@@ -106,7 +106,7 @@ public class XMLServlet extends HttpServlet {
 
 				if (format.toLowerCase().equals("rss")) {
 
-					response.setContentType("application/xhtml+xml");
+					response.setContentType("text/xml");
 
 					GlobalContext globalContext = GlobalContext.getInstance(request);
 					ContentContext ctx = ContentContext.getFreeContentContext(request, response);
@@ -249,7 +249,7 @@ public class XMLServlet extends HttpServlet {
 					out.write("</channel>");
 					out.write("</rss>");
 				} else {
-					response.setContentType("application/xhtml+xml");
+					response.setContentType("text/xml");
 					out.write("<?xml version=\"1.0\" encoding=\"" + ContentContext.CHARACTER_ENCODING + "\"?>");
 					out.write("<xml><error>format not found : " + format + "</xml>");
 				}
