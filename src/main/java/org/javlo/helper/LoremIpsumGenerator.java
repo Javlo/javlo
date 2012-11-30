@@ -9,7 +9,7 @@ public class LoremIpsumGenerator {
 	public static final String getParagraph(int word, boolean startWithLorem, boolean punctuation) {
 		StringBuffer outParagraph = new StringBuffer();
 
-		int countWord = 1;
+		int countWord = 0;
 		int LoremPos = 0;
 		if (!startWithLorem) {
 			LoremPos = (int) Math.round(Math.random() * LoremIpsum.length() - 1);
@@ -38,8 +38,6 @@ public class LoremIpsumGenerator {
 	}
 
 	public static void main(String[] args) {
-		System.out.println("**** test 4 word = " + getParagraph(4, false, false));
-		System.out.println("**** test 12 word = " + getParagraph(12, true, true));
-		System.out.println("**** test 12 word = " + getParagraph(12, true, false));
+		System.out.println(getParagraph(50, true, true));
 	}
 }
