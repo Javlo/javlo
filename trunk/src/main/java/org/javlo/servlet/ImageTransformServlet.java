@@ -472,6 +472,12 @@ public class ImageTransformServlet extends HttpServlet {
 
 				File imageFile = new File(realFile);
 
+				if (!imageFile.exists() || imageFile.isDirectory()) {
+					logger.warning("file not found : " + imageFile);
+					response.setStatus(HttpServletResponse.SC_NOT_FOUND);
+					return;
+				}
+
 				if (returnImageDescription) {
 					StaticInfo info = StaticInfo.getInstance(ctx, imageFile);
 					response.setContentType("text/html");
@@ -538,9 +544,11 @@ public class ImageTransformServlet extends HttpServlet {
 		} catch (IOException e) {
 			e.printStackTrace();
 			logger.warning("problem with : " + imageName + " (" + e.getMessage() + ')');
+			response.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
 		} catch (Exception e) {
 			e.printStackTrace();
 			logger.warning(e.getMessage());
+			response.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
 		} finally {
 			try {
 				if (out != null) {

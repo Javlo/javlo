@@ -120,7 +120,7 @@ public class ServletHelper {
 			ctx.getRequest().getRequestDispatcher(url).include(ctx.getRequest(), jsp2String);
 			return jsp2String.toString();
 		} catch (Exception e) {
-			e.printStackTrace();
+			// e.printStackTrace();
 			logger.severe(e.getMessage());
 			return null;
 		}

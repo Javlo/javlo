@@ -30,6 +30,7 @@ import org.javlo.context.EditContext;
 import org.javlo.context.GlobalContext;
 import org.javlo.context.UserInterfaceContext;
 import org.javlo.data.InfoBean;
+import org.javlo.helper.ComponentHelper;
 import org.javlo.helper.DebugHelper;
 import org.javlo.helper.LangHelper;
 import org.javlo.helper.NavigationHelper;
@@ -586,6 +587,7 @@ public class Edit extends AbstractModuleAction {
 			MessageRepository.getInstance(ctx).setGlobalMessage(new GenericMessage(msg, GenericMessage.INFO));
 
 			if (requestService.getParameter("comp_id", null) != null) {
+				prepareUpdateInsertLine(ctx);
 				return performEditpreview(requestService, ctx, componentContext, ContentService.getInstance(globalContext), ModulesContext.getInstance(ctx.getRequest().getSession(), globalContext), modCtx);
 			} else {
 				Box componentBox = currentModule.getBox("components");
@@ -1213,6 +1215,39 @@ public class Edit extends AbstractModuleAction {
 		messageRepository.setGlobalMessageAndNotification(ctx, new GenericMessage(msg, GenericMessage.INFO));
 
 		persistenceService.store(ctx);
+		modifPage(ctx);
+		autoPublish(ctx.getRequest(), ctx.getResponse());
+
+		return null;
+	}
+
+	public static String performMoveComponent(RequestService rs, ContentContext ctx, ContentService content, ClipBoard clipboard, Module currentModule, PersistenceService persistenceService, MessageRepository messageRepository, I18nAccess i18nAccess) throws Exception {
+
+		if (!canModifyCurrentPage(ctx) || !checkPageSecurity(ctx)) {
+			messageRepository.setGlobalMessageAndNotification(ctx, new GenericMessage(i18nAccess.getText("action.block"), GenericMessage.ERROR));
+			return null;
+		}
+
+		String previous = rs.getParameter("previous", null);
+		String compId = rs.getParameter("comp-id", null);
+		if (previous == null || compId == null) {
+			return "bad request structure : need 'previous' and 'comp-id' as parameters.";
+		}
+		IContentVisualComponent comp = content.getComponent(ctx, compId);
+		IContentVisualComponent newPrevious = content.getComponent(ctx, previous);
+		if (comp == null) {
+			return "component not found.";
+		}
+		ComponentHelper.moveComponent(ctx, comp, newPrevious);
+
+		if (ctx.isAjax()) {
+			updateComponent(ctx, currentModule, comp.getId(), previous);
+		}
+
+		String msg = i18nAccess.getText("action.component.moved", new String[][] { { "type", comp.getType() } });
+		messageRepository.setGlobalMessageAndNotification(ctx, new GenericMessage(msg, GenericMessage.INFO));
+
+		// persistenceService.store(ctx);
 		modifPage(ctx);
 		autoPublish(ctx.getRequest(), ctx.getResponse());
 

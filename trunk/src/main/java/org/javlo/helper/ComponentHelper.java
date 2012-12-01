@@ -48,17 +48,9 @@ public class ComponentHelper {
 		return outURL;
 	}
 
-	/*public static final boolean DisplayTitle(IContentVisualComponent[] comps, int i) {
-		if (i >= comps.length) {
-			return false;
-		}
-		for (int j = i + 1; (j < comps.length) && !(comps[j] instanceof SpecialTitle); j++) {
-			if (comps[j].isVisible()) {
-				return true;
-			}
-		}
-		return false;
-	}*/
+	/*
+	 * public static final boolean DisplayTitle(IContentVisualComponent[] comps, int i) { if (i >= comps.length) { return false; } for (int j = i + 1; (j < comps.length) && !(comps[j] instanceof SpecialTitle); j++) { if (comps[j].isVisible()) { return true; } } return false; }
+	 */
 
 	/**
 	 * get a component with the id in the request.
@@ -153,4 +145,12 @@ public class ComponentHelper {
 		return res.toString();
 	}
 
+	public static void moveComponent(ContentContext ctx, IContentVisualComponent comp, IContentVisualComponent newPrevious) {
+		comp.getPage().removeContent(ctx, comp.getId());
+		if (newPrevious != null) {
+			newPrevious.getPage().addContent(newPrevious.getId(), comp.getComponentBean());
+		} else {
+			comp.getPage().addContent("0", comp.getComponentBean());
+		}
+	}
 }

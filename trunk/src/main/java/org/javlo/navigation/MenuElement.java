@@ -855,6 +855,7 @@ public class MenuElement implements Serializable {
 						j++;
 						newBean[j] = bean;
 						parentFound = true;
+						bean.setArea(newBean[j].getArea());
 					} else {
 						newBean[j] = element;
 					}

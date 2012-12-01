@@ -328,6 +328,7 @@ public class ContentContext {
 		currentUser = ctx.currentUser;
 		currentEditUser = ctx.currentEditUser;
 		free = ctx.free;
+		device = ctx.getDevice();
 	}
 
 	public String getArea() {
@@ -885,9 +886,14 @@ public class ContentContext {
 	 * @param string
 	 *            a logical path
 	 */
-	public void setPath(String string) {
-		path = string;
-		resestCache();
+	public void setPath(String newPath) {
+		if (!newPath.equals(path)) {
+			if (newPath.contains(";jsessionid=")) {
+				newPath = newPath.substring(0, newPath.indexOf(";jsessionid="));
+			}
+			path = newPath;
+			resestCache();
+		}
 	}
 
 	/**
@@ -1205,4 +1211,11 @@ public class ContentContext {
 			return URLHelper.createURL(this, rootPage);
 		}
 	}
+
+	public static void main(String[] args) {
+		String newPath = "http://www.noctis.be/test/view.html;jsessionid=sdlfqjmdlsfj";
+		newPath = newPath.substring(0, newPath.indexOf(";jsessionid="));
+		System.out.println(newPath);
+	}
+
 }
