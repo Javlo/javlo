@@ -29,6 +29,10 @@ if (ctx.getRenderMode() == ContentContext.PREVIEW_MODE) {
 	%><div id="one-component-edit"></div><%
 }
 
+if (ctx.getRenderMode() == ContentContext.PREVIEW_MODE) {
+	%><div id="comp_0" class="free-edit-zone editable-component"><span>&nbsp;</span></div><%
+}
+
 String area = request.getParameter("area");
 if (area != null) {
 	ctx.setArea(area);

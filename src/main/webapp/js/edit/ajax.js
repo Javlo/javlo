@@ -5,7 +5,7 @@ jQuery(document).ready(function() {
 		ajaxRequest(jQuery(this).attr('href'));	
 	});	
 	var AJAX_SUBMIT_SHADOW_DATA = "_AjaxSubmitShadow"
-	jQuery('form.ajax :submit').live("click", function(event) {
+	jQuery('form.ajax :submit').live("click", function(event) {		
 		var submit = jQuery(this);
 		if (submit.attr("name") != null) {
 			var shadow = submit.data(AJAX_SUBMIT_SHADOW_DATA);
@@ -31,6 +31,7 @@ jQuery(document).ready(function() {
 		}
 	});
 	jQuery('form.ajax').live("submit", function(event) {
+		console.log("ajax form");
 		var form = jQuery(this);		
 		var ajaxSubmit = true;
 		jQuery.each(form.find("input[type='file']"), function() {			

@@ -634,3 +634,32 @@
 .pc_command legend {
 	color: #000000;
 }
+
+.free-edit-zone {
+	height: 12px;
+}
+
+#preview-layer, #droppable-layer {
+	position: absolute;
+	top: 0;
+	left: 0;
+	width: 0;
+	height: 0;
+	overflow: hidden;	
+	font-size: 0;
+	border-radius: 3px 3px 3px 3px;
+	box-shadow: 0px 0px 7px #999;
+	z-index: 100000;	
+}
+
+#preview-layer span, #droppable-layer span {
+	display: block;
+	background-color: #E3364A;
+	opacity: .30;
+	height: 9999px;	
+}
+
+
+#droppable-layer span {	
+	background-color: #36E34A;
+}

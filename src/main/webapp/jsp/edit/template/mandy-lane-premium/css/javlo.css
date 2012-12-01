@@ -1202,3 +1202,7 @@ body.previewEdit {
 .download.swf a {
 	background-position: center -1250px;	
 }
+
+.component-list li {
+	line-height: 16px;
+}

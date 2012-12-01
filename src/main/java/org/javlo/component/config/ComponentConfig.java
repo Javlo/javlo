@@ -113,7 +113,9 @@ public class ComponentConfig {
 					while (keys.hasMoreElements()) {
 						String key = "" + keys.nextElement();
 						if (key.startsWith("renderer.")) {
-							String renderer = URLHelper.createStaticTemplateURLWithoutContext(ctx, currentTemplate, "" + templateProp.get(key));
+							ContentContext notAbstCtx = new ContentContext(ctx);
+							notAbstCtx.setAbsoluteURL(false);
+							String renderer = URLHelper.createStaticTemplateURLWithoutContext(notAbstCtx, currentTemplate, "" + templateProp.get(key));
 							if (properties.containsKey(key)) {
 								properties.clearProperty(key);
 							}

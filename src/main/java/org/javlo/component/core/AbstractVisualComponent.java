@@ -1091,13 +1091,13 @@ public abstract class AbstractVisualComponent implements IContentVisualComponent
 	}
 
 	protected String executeCurrentRenderer(ContentContext ctx) throws ServletException, IOException {
-		if (getRenderer(ctx) != null) {
+		String url = getRenderer(ctx);
+		if (url != null) {
 			ctx.getRequest().setAttribute(COMPONENT_KEY, this);
-			String url = getRenderer(ctx);
 			if (!url.startsWith("/")) {
 				url = URLHelper.createJSPComponentURL(ctx.getRequest(), url, getComponentPath());
 			}
-			logger.fine("execute view jsp in '" + getType() + "' : " + url);
+			logger.info("execute view jsp in '" + getType() + "' : " + url);
 			return ServletHelper.executeJSP(ctx, url);
 		} else {
 			return null;
@@ -1552,6 +1552,9 @@ public abstract class AbstractVisualComponent implements IContentVisualComponent
 	}
 
 	public void setContentCache(ContentContext ctx, String contentCache) {
+		if (contentCache == null) {
+			return;
+		}
 		if (contentCache.contains(";jsessionid=")) {
 			logger.warning("couldn't put content with jsession id in cache on : " + getPage().getPath() + " - comp:" + getType());
 			return;
@@ -1562,6 +1565,9 @@ public abstract class AbstractVisualComponent implements IContentVisualComponent
 	}
 
 	public void setContentTimeCache(ContentContext ctx, String contentCache) {
+		if (contentCache == null) {
+			return;
+		}
 		if (contentCache.contains(";jsessionid=")) {
 			logger.warning("couldn't put content with jsession id in cache on : " + getPage().getPath() + " - comp:" + getType());
 			return;
