@@ -2332,6 +2332,7 @@ public class MenuElement implements Serializable {
 
 		ContentContext newCtx = new ContentContext(ctx);
 		newCtx.setArea(null); // warning : check if the method is needed.
+		newCtx.setFree(true);
 
 		PageDescription desc = getPageDescriptionCached(newCtx.getRequestContentLanguage());
 
@@ -2342,7 +2343,7 @@ public class MenuElement implements Serializable {
 		desc.pageTitle = getForcedPageTitle(newCtx);
 
 		if (desc.pageTitle == null || desc.pageTitle.trim().length() == 0) {
-			desc.pageTitle = getLabel(ctx);
+			desc.pageTitle = getLabel(newCtx);
 		}
 		return desc.pageTitle;
 	}

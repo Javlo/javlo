@@ -373,5 +373,9 @@ public class InfoBean {
 	public String getPath() {
 		return ctx.getPath();
 	}
+	
+	public boolean isPreview() {
+		return ctx.getRenderMode() == ContentContext.PREVIEW_MODE;
+	}
 
 }

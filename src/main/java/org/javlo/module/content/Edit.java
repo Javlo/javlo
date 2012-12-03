@@ -7,6 +7,7 @@ import java.util.Date;
 import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 import java.util.logging.Logger;
 
@@ -139,6 +140,33 @@ public class Edit extends AbstractModuleAction {
 		} else {
 			ctx.addAjaxZone("comp-" + newId, newComponentXHTML);
 		}
+	}
+
+	/**
+	 * update component
+	 * 
+	 * @param ctx
+	 * @param currentModule
+	 * @param newId
+	 *            the id of the component
+	 * @param previousId
+	 *            the id, null for update and previous component for insert.
+	 * @throws Exception
+	 */
+	private static void updatePreviewComponent(ContentContext ctx, Module currentModule, String newId, String previousId) throws Exception {
+		ComponentContext compCtx = ComponentContext.getInstance(ctx.getRequest());
+		GlobalContext globalContext = GlobalContext.getInstance(ctx.getRequest());
+		ContentService content = ContentService.getInstance(globalContext);
+		IContentVisualComponent comp = content.getComponent(ctx, newId);
+		compCtx.addNewComponent(comp); // prepare ajax rendering
+		ctx.getRequest().setAttribute("specific-comp", comp);
+		String componentRenderer = "/jsp/view/content_view.jsp";
+		int mode = ctx.getRenderMode();
+		ctx.setRenderMode(ContentContext.PREVIEW_MODE);
+		String newComponentXHTML = ServletHelper.executeJSP(ctx, componentRenderer);
+		ctx.setRenderMode(mode);
+		compCtx.clearComponents();
+		ctx.addAjaxZone("cp_" + newId, newComponentXHTML);
 	}
 
 	private static boolean nameExist(String name, ContentContext ctx, ContentService content) throws Exception {
@@ -728,6 +756,10 @@ public class Edit extends AbstractModuleAction {
 			messageRepository.setGlobalMessageAndNotification(ctx, new GenericMessage(i18nAccess.getText("action.not-updated"), GenericMessage.ALERT));
 		}
 
+		if (requestService.getParameter("save", null) != null && StringHelper.isTrue((requestService.getParameter("previewEdit", null)))) {
+			ctx.getRequest().setAttribute("closeFrame", "true"); // close edit preview popup
+		}
+
 		return message;
 	}
 
@@ -1230,18 +1262,27 @@ public class Edit extends AbstractModuleAction {
 
 		String previous = rs.getParameter("previous", null);
 		String compId = rs.getParameter("comp-id", null);
-		if (previous == null || compId == null) {
-			return "bad request structure : need 'previous' and 'comp-id' as parameters.";
+		String areaId = rs.getParameter("area", null);
+		if (previous == null || compId == null || areaId == null) {
+			return "bad request structure : need 'previous', 'comp-id' and 'area' as parameters.";
 		}
 		IContentVisualComponent comp = content.getComponent(ctx, compId);
 		IContentVisualComponent newPrevious = content.getComponent(ctx, previous);
 		if (comp == null) {
 			return "component not found.";
 		}
-		ComponentHelper.moveComponent(ctx, comp, newPrevious);
+
+		String area = null;
+		for (Map.Entry<String, String> templateArea : ctx.getCurrentTemplate().getAreasMap().entrySet()) {
+			if (templateArea.getValue().equals(areaId)) {
+				area = templateArea.getKey();
+			}
+		}
+
+		ComponentHelper.moveComponent(ctx, comp, newPrevious, area);
 
 		if (ctx.isAjax()) {
-			updateComponent(ctx, currentModule, comp.getId(), previous);
+			updatePreviewComponent(ctx, currentModule, comp.getId(), previous);
 		}
 
 		String msg = i18nAccess.getText("action.component.moved", new String[][] { { "type", comp.getType() } });
