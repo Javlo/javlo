@@ -663,3 +663,14 @@
 #droppable-layer span {	
 	background-color: #36E34A;
 }
+
+.free-edit-zone {
+	display: none;
+}
+
+.free-edit-zone.droppable {
+	display: block;
+	border-radius: 3px 3px 3px 3px;
+	background-color: #364AE3;
+	opacity: .30;
+}

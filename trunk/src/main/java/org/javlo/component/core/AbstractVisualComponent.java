@@ -878,8 +878,12 @@ public abstract class AbstractVisualComponent implements IContentVisualComponent
 		if (ctx.getRenderMode() == ContentContext.PREVIEW_MODE) {
 			GlobalContext globalContext = GlobalContext.getInstance(ctx.getRequest());
 			EditContext editCtx = EditContext.getInstance(globalContext, ctx.getRequest().getSession());
-			if (editCtx.isEditPreview()) {
-				return " class=\"editable-component" + currentClass + "\"";
+			try {
+				if (editCtx.isEditPreview() && (!isRepeat() || getPage().equals(ctx.getCurrentPage()))) {
+					return " class=\"editable-component" + currentClass + "\"";
+				}
+			} catch (Exception e) {
+				e.printStackTrace();
 			}
 		}
 		if (currentClass != null && currentClass.trim().length() > 0) {

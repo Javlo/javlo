@@ -33,7 +33,12 @@ initFocusPoint = function() {
 				path = "&image_path="+point.parent().find(".path").val();
 			}
 			var url = point.closest("form").attr("action");
-			url = url + "?webaction=file.updateFocus&"+point.parent().find(".posx").attr("name")+"="+focusRealX+"&"+point.parent().find(".posy").attr("name")+"="+focusRealY+path;
+			if (url.indexOf("?") >= 0) {
+				url = url + "&";
+			} else {
+				url = url + "?";
+			}
+			url = url + "webaction=file.updateFocus&"+point.parent().find(".posx").attr("name")+"="+focusRealX+"&"+point.parent().find(".posy").attr("name")+"="+focusRealY+path;
 			ajaxRequest(url)
 		});
 	});

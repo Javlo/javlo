@@ -25,13 +25,17 @@ ContentContext ctx = ContentContext.getContentContext ( request, response );
 GlobalContext globalContext = GlobalContext.getInstance(request);
 boolean pageEmpty = true;
 
-if (ctx.getRenderMode() == ContentContext.PREVIEW_MODE) {
+IContentVisualComponent specificComp = (IContentVisualComponent)request.getAttribute("specific-comp");
+
+if (ctx.getRenderMode() == ContentContext.PREVIEW_MODE && specificComp == null) {
 	%><div id="one-component-edit"></div><%
 }
 
-if (ctx.getRenderMode() == ContentContext.PREVIEW_MODE) {
+if (ctx.getRenderMode() == ContentContext.PREVIEW_MODE && specificComp == null) {
 	%><div id="comp_0" class="free-edit-zone editable-component"><span>&nbsp;</span></div><%
 }
+
+
 
 String area = request.getParameter("area");
 if (area != null) {
@@ -39,6 +43,10 @@ if (area != null) {
 } else {
 	ctx.setArea(ComponentBean.DEFAULT_AREA);
 	area=ComponentBean.DEFAULT_AREA;
+}
+if (specificComp != null) {
+	area = specificComp.getArea();
+	ctx.setArea(area);
 }
 request.setAttribute("area", area);
 
@@ -64,7 +72,10 @@ if ( (ctx.getSpecialContentRenderer() == null || !area.equals(ComponentBean.DEFA
 
 Map<String, String> replacement = currentPage.getReplacement();
 
-IContentComponentsList elems = currentPage.getContent(ctx);
+IContentComponentsList elems = null;
+if (specificComp == null) {
+	elems = currentPage.getContent(ctx);
+}
 IContentVisualComponent elem = null;
 
 	boolean languageChange = !ctx.getContentLanguage().equals(ctx.getLanguage()); 
@@ -72,9 +83,14 @@ IContentVisualComponent elem = null;
 		%><div lang="<%=ctx.getContentLanguage()%>"><%
 	}
 	
-	while (elems.hasNext(ctx)) {
+	while (specificComp != null || (elems != null && elems.hasNext(ctx))) {
 		pageEmpty = false;
-		elem = elems.next(ctx);
+		if (specificComp == null) {
+			elem = elems.next(ctx);
+		} else {
+			elem = specificComp;
+			specificComp = null;
+		}
 		if (!(removeRepeat && elem.isRepeat() && !elem.getPage().equals(currentPage))) {
 			elem.clearReplacement();
 			elem.replaceAllInContent(replacement);
@@ -99,11 +115,12 @@ IContentVisualComponent elem = null;
 			}
 			
 			%>
-<%=elems.getPrefixXHTMLCode(ctx)
-%><%=elem.getPrefixViewXHTMLCode(ctx)%>
+<%if (elems != null) {%><%=elems.getPrefixXHTMLCode(ctx)
+%><%}%><%=elem.getPrefixViewXHTMLCode(ctx)%>
 <%=elem.getXHTMLCode(ctx)%>
 <%=elem.getSuffixViewXHTMLCode(ctx)%>
-<%=elems.getSufixXHTMLCode(ctx)%><%		
+<%if (elems != null) {%><%=elems.getSufixXHTMLCode(ctx)
+%><%}%><%		
 			elem.setValue(savedValue);
 			if (elem.next() == null) {
 				ColumnContext columnContext = ColumnContext.getInstance(request);

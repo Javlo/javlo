@@ -5,7 +5,7 @@
 <html xmlns="http://www.w3.org/1999/xhtml">
 <head>
 
-<c:if test="${not empty param.closeFrame or not empty closeFrame}">
+<c:if test="${not empty param.closeFrame || not empty closeFrame}">
 <script type="text/javascript">
     if (top.location.href != null) {
 		top.location.href=top.location.href; // close iframe and refresh parent frame

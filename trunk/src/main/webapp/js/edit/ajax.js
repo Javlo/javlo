@@ -57,6 +57,11 @@ function ajaxRequest(url, form) {
 		url = url.replace("/edit-", "/ajax-");
 	} else {
 		url = url.replace("/edit/", "/ajax/");
+		if (url.indexOf("/preview-")>=0) {
+			url = url.replace("/preview-", "/ajax-");
+		} else {
+			url = url.replace("/preview/", "/ajax/");
+		}
 	}	
 	var data=null;
 	if (form != null) {
@@ -84,6 +89,9 @@ function ajaxRequest(url, form) {
 		jQuery(form).trigger("ajaxUpdate");
 		jQuery(document).trigger("ajaxUpdate");
 		jQuery("#ajax-loader").removeClass("active");
+		if (jQuery.isFunction(initPreview)) {
+			initPreview();
+		}
 	});	
 }
 
