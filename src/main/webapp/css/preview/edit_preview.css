@@ -636,7 +636,7 @@
 }
 
 .free-edit-zone {
-	height: 12px;
+	height: 24px;
 }
 
 #preview-layer, #droppable-layer {
@@ -652,16 +652,25 @@
 	z-index: 100000;	
 }
 
-#preview-layer span, #droppable-layer span {
-	display: block;
-	background-color: #E3364A;
+#preview-layer.ui-draggable-dragging {
+	border: 4px #E3364A solid;
 	opacity: .30;
-	height: 9999px;	
 }
 
+#preview-layer.ui-draggable-dragging span {
+	background-color: transparent;
+}
+
+#preview-layer span, #droppable-layer span {
+	display: block;	
+	background-color: #E3364A;
+	height: 9999px;
+	opacity: .30;
+}
 
 #droppable-layer span {	
-	background-color: #36E34A;
+	background-color: #36E34A;	
+	border: none;	
 }
 
 .free-edit-zone {

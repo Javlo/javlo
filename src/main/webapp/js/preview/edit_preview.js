@@ -43,6 +43,7 @@ jQuery(document).ready(function() {
 
 layerOver = function(item) {
 	var layer = jQuery("#preview-layer");
+	var insideLayer = jQuery("#preview-layer span");
 	if (item == null) {
 		// layer.fadeOut(10);
 		layer.css("z-index", -1);
@@ -146,17 +147,13 @@ initPreview = function() {
 			var layer = jQuery("#preview-layer");
 			
 			jQuery(".free-edit-zone").addClass("droppable");
-			
-			/*layer.animate({
-				"height" : 0
-			}, 10);*/
 		},
 		stop : function(event, ui) {
 			console.log("drop");
 			var dropLayer = jQuery("#droppable-layer");
 			dropLayer.css("top", "-9999px");
 			dragging = false;
-			jQuery(".free-edit-zone").removeClass("droppable");
+			jQuery(".free-edit-zone").removeClass("droppable");			
 		}		
 	});
 }
