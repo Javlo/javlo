@@ -89,7 +89,7 @@ function ajaxRequest(url, form) {
 		jQuery(form).trigger("ajaxUpdate");
 		jQuery(document).trigger("ajaxUpdate");
 		jQuery("#ajax-loader").removeClass("active");
-		if (jQuery.isFunction(initPreview)) {
+		if (jQuery.type(initPreview) !== "undefined") {
 			initPreview();
 		}
 	});	
