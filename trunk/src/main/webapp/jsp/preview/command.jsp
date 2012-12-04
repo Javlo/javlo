@@ -106,6 +106,7 @@ editCtx.setRenderMode(ContentContext.EDIT_MODE);
 				</form>
 			</c:if>
 	</div>
+	<a id="preview-delete-zone" href="#" class="hidden">&nbsp;</a>
 	<div class="pc_footer">
 	</div>
 </div>

@@ -1,3 +1,7 @@
+#preview_command .hidden {
+	display: none;
+}
+
 #one-component-edit {
 	font-size: 11px;
 }
