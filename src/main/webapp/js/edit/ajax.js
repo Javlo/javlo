@@ -15,7 +15,7 @@ jQuery(document).ready(function() {
 				shadow.attr("type", "hidden");
 				shadow.insertAfter(submit);
 			}
-			shadow.attr("name", submit.attr("name"));ca
+			shadow.attr("name", submit.attr("name"));
 			shadow.val(submit.val());
 			submit.removeAttr("name");
 		}
