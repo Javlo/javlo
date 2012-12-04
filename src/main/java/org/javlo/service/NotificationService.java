@@ -136,8 +136,10 @@ public class NotificationService {
 	}
 
 	public void clearList() {
-		notifications = new LinkedList<Notification>();
-		allReadyReaded = new MapCollectionWrapper<String, WeakReference<Notification>>();
+		synchronized (notifications) {
+			notifications = new LinkedList<Notification>();
+			allReadyReaded = new MapCollectionWrapper<String, WeakReference<Notification>>();
+		}
 	}
 
 	private void cleanList() {
@@ -177,16 +179,18 @@ public class NotificationService {
 		List<WeakReference<Notification>> markAsRead = allReadyReaded.get(userId);
 		List<NotificationContainer> outNotif = new LinkedList<NotificationContainer>();
 		int size = 0;
-		for (Notification notif : notifications) {
-			if (notif.getUserId() == null || notif.getUserId().equals(userId) || notif.getUserId().equals(USER_SYSTEM)) {
-				size++;
-				outNotif.add(new NotificationContainer(notif, isAllReadyReaded(notif, userId), userId));
-				if (markRead) {
-					markAsRead.add(new WeakReference<NotificationService.Notification>(notif));
+		synchronized (notifications) {
+			for (Notification notif : notifications) {
+				if (notif.getUserId() == null || notif.getUserId().equals(userId) || notif.getUserId().equals(USER_SYSTEM)) {
+					size++;
+					outNotif.add(new NotificationContainer(notif, isAllReadyReaded(notif, userId), userId));
+					if (markRead) {
+						markAsRead.add(new WeakReference<NotificationService.Notification>(notif));
+					}
 				}
-			}
-			if (size == maxSize) {
-				break;
+				if (size == maxSize) {
+					break;
+				}
 			}
 		}
 		return outNotif;
@@ -196,11 +200,13 @@ public class NotificationService {
 		cleanList();
 		List<NotificationContainer> outNotif = new LinkedList<NotificationContainer>();
 		int size = 0;
-		for (Notification notif : notifications) {
-			size++;
-			outNotif.add(new NotificationContainer(notif, isAllReadyReaded(notif, notif.getUserId()), notif.getUserId()));
-			if (size == maxSize) {
-				break;
+		synchronized (notifications) {
+			for (Notification notif : notifications) {
+				size++;
+				outNotif.add(new NotificationContainer(notif, isAllReadyReaded(notif, notif.getUserId()), notif.getUserId()));
+				if (size == maxSize) {
+					break;
+				}
 			}
 		}
 		return outNotif;
@@ -244,7 +250,9 @@ public class NotificationService {
 		notif.setCreationDate(new Date());
 		notif.setType(type);
 		notif.setUserId(userId);
-		notifications.add(0, notif);
+		synchronized (notifications) {
+			notifications.add(0, notif);
+		}
 	}
 
 }
