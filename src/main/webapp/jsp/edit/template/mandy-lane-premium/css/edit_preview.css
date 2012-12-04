@@ -72,3 +72,21 @@
 #preview_command #pc_edit_mode_button {
 	background-image: url('../images/icons/small/white/popin.png');
 }
+
+ #preview_command #preview-delete-zone {
+    display: block;
+ 	width: 170px;
+ 	height: 180px;
+ 	margin: 5px;
+ 	background-image: url('../images/icons/big-trash.png');
+ 	background-repeat: no-repeat;
+ 	background-position: center center;
+ }
+ 
+ #preview_command #preview-delete-zone.hidden {
+ 	display: none;
+ }
+ 
+ #preview_command #preview-delete-zone:hover {
+	background-image: url('../images/icons/big-trash-hover.png');
+}

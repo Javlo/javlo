@@ -63,7 +63,6 @@ layerOver = function(item) {
 		layer.css("left", comp.offset().left);
 		layer.css("width", comp.width());
 		layer.css("height", comp.height());
-
 		layer.data("subItem", comp);
 	}
 }
@@ -96,24 +95,34 @@ initPreview = function() {
 		}
 		return false;
 	});
-
-	jQuery(".editable-component").droppable({
+	
+	jQuery(".editable-component, #preview-delete-zone").droppable({
 		cursor : 'move',
 		tolerance:'pointer',
 		drop : function(event, ui) {
 			var layer = jQuery("#preview-layer");
 			var comp = layer.data("subItem");
 			if (jQuery(comp).attr('id') != jQuery(this).attr("id")) {
-				jQuery(comp).insertAfter(jQuery(this));
+				
 
 				layerOver(comp);
 
-				var previewId = jQuery(this).attr("id").replace("cp_", "");
 				var compId = jQuery(comp).attr("id").replace("cp_", "");
-				var area = jQuery(comp).parent().attr("id");
-				var ajaxMove = currentURL + "?webaction=edit.moveComponent&comp-id=" + compId + "&previous=" + previewId+"&area="+area;
+				if (jQuery(this).attr("id") == "preview-delete-zone") {
+					var ajaxURL = currentURL + "?webaction=edit.delete&id=" + compId;
+					jQuery(comp).remove();
+				} else {
+					jQuery(comp).insertAfter(jQuery(this));
+					var previewId = jQuery(this).attr("id").replace("cp_", "");					
+					var area = jQuery(comp).parent().attr("id");
+					if (area == undefined) { // change language div
+						area = jQuery(comp).parent().parent().attr("id");
+					}
+					var ajaxURL = currentURL + "?webaction=edit.moveComponent&comp-id=" + compId + "&previous=" + previewId+"&area="+area;
+				}
 
-				ajaxRequest(ajaxMove);
+				ajaxRequest(ajaxURL);
+				
 			}
 
 		},
@@ -139,7 +148,8 @@ initPreview = function() {
 	});
 
 	dragging = false;
-
+	
+	
 	jQuery("#preview-layer").draggable({
 		cursor : "move",
 		start : function(event, ui) {
@@ -147,13 +157,19 @@ initPreview = function() {
 			var layer = jQuery("#preview-layer");
 			
 			jQuery(".free-edit-zone").addClass("droppable");
+			jQuery("#preview-delete-zone").removeClass("hidden");
+			jQuery("#preview_command .pc_body").addClass("hidden");
+			
+			
 		},
 		stop : function(event, ui) {
 			console.log("drop");
 			var dropLayer = jQuery("#droppable-layer");
 			dropLayer.css("top", "-9999px");
 			dragging = false;
-			jQuery(".free-edit-zone").removeClass("droppable");			
+			jQuery(".free-edit-zone").removeClass("droppable");
+			jQuery("#preview_command .pc_body").removeClass("hidden");
+			jQuery("#preview-delete-zone").addClass("hidden");
 		}		
 	});
 }
