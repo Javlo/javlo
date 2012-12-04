@@ -45,6 +45,7 @@ import org.javlo.ztatic.StaticInfo;
  * standard image component. <h4>exposed variable :</h4>
  * <ul>
  * <li>inherited from {@link AbstractVisualComponent}</li>
+ * <li>{@link String} title : the title.</li>
  * <li>{@link PaginationContext} pagination : pagination context.</li>
  * <li>{@link MultimediaResource} resources : list of resources to be displayed.</li>
  * </ul>
@@ -385,6 +386,12 @@ public class Multimedia extends TimeRangeComponent implements IImageTitle {
 				folderSelection.add(file.getAbsolutePath().replace('\\', '/').replaceFirst(baseDir, ""));
 			}
 		}
+
+		out.println("<div class=\"line\">");
+		out.println("<label for=\"" + getInputTitle() + "\">" + i18nAccess.getText("global.title") + "</label>");
+		out.println(" : <input style=\"width: 120px;\" type=\"text\" id=\"" + getInputTitle() + "\" name=\"" + getInputTitle() + "\" value=\"" + getTitle() + "\"/>");
+		out.println("</div>");
+
 		if (isFolder()) {
 			out.println(XHTMLHelper.getInputOneSelect(getInputBaseFolderName(), folderSelection, getCurrentRootFolder()));
 		}
@@ -481,6 +488,10 @@ public class Multimedia extends TimeRangeComponent implements IImageTitle {
 		return "__" + getId() + ID_SEPARATOR + "page-size";
 	}
 
+	public String getInputTitle() {
+		return "__" + getId() + ID_SEPARATOR + "title";
+	}
+
 	protected String getInputNameOrderByAccess() {
 		return "order_by_access_" + getId();
 	}
@@ -525,6 +536,15 @@ public class Multimedia extends TimeRangeComponent implements IImageTitle {
 			return StringHelper.stringToCollection(rawTags);
 		} else {
 			return Collections.EMPTY_LIST;
+		}
+	}
+
+	public String getTitle() {
+		String[] data = getValue().split(VALUE_SEPARATOR);
+		if (data.length > 6) {
+			return data[6];
+		} else {
+			return "";
 		}
 	}
 
@@ -747,6 +767,7 @@ public class Multimedia extends TimeRangeComponent implements IImageTitle {
 		}
 
 		int max = Math.min(getMaxListSize(), allResource.size());
+		ctx.getRequest().setAttribute("title", getTitle());
 		ctx.getRequest().setAttribute("pagination", pagination);
 		ctx.getRequest().setAttribute("resources", allResource.subList(0, max));
 	}
@@ -828,6 +849,7 @@ public class Multimedia extends TimeRangeComponent implements IImageTitle {
 		String newListSizeDate = requestService.getParameter(getInputMaxListSizeName(), null);
 		String newPageSize = requestService.getParameter(getInputPageSizeName(), null);
 		String newDisplayType = requestService.getParameter(getDisplayAsInputName(), null);
+		String title = requestService.getParameter(getInputTitle(), null);
 
 		if (newStartDate != null && newEndDate != null && newListSizeDate != null) {
 
@@ -848,7 +870,7 @@ public class Multimedia extends TimeRangeComponent implements IImageTitle {
 				}
 			}
 
-			String multimediaInfo = StringHelper.neverNull(StringHelper.renderTime(startDate)) + VALUE_SEPARATOR + StringHelper.neverNull(StringHelper.renderTime(endDate)) + VALUE_SEPARATOR + newPageSize + ',' + newListSizeDate + VALUE_SEPARATOR + folder + VALUE_SEPARATOR + newDisplayType + VALUE_SEPARATOR + StringHelper.collectionToString(selectedTags);
+			String multimediaInfo = StringHelper.neverNull(StringHelper.renderTime(startDate)) + VALUE_SEPARATOR + StringHelper.neverNull(StringHelper.renderTime(endDate)) + VALUE_SEPARATOR + newPageSize + ',' + newListSizeDate + VALUE_SEPARATOR + folder + VALUE_SEPARATOR + newDisplayType + VALUE_SEPARATOR + StringHelper.collectionToString(selectedTags) + VALUE_SEPARATOR + title;
 			if (isOrderByAcess) {
 				multimediaInfo = multimediaInfo + VALUE_SEPARATOR + ORDER_BY_ACCESS;
 			}
