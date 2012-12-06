@@ -1,7 +1,7 @@
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
 <div id="content-edit" class="full-height ${not empty lightInterface?'light':''}">
 <c:set var="previewParams" value="?webaction=editPreview&_closeFrame=true&previewEdit=true&comp_id=${param.comp_id}" />
-	<form id="form-content" class="components ${empty param.previewEdit?'ajax':''}" action="${info.currentURL}${not empty param.previewEdit?previewParams:''}" enctype="multipart/form-data" method="post">
+	<form id="form-content" class="components ${empty param.previewEdit?'ajax':''}" action="${info.currentURL}${not empty param.previewEdit?'?previewEdit=true':''}" enctype="multipart/form-data" method="post">
 		<input type="hidden" name="webaction" value="edit.save" />
 		<jsp:include page="content.jsp${not empty param.previewEdit?'?firstLine=true':''}" />
 		<div class="insert-line">

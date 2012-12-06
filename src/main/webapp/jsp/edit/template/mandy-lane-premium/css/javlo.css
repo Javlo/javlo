@@ -52,11 +52,13 @@ fieldset {
 
 .with-title option {
 	padding-left: 8px;
+	color: #006699;
 }
 
 .with-title option.title {
 	font-weight: bold;
 	padding-left: 2px;
+	color: #cccccc;
 }
 
 
