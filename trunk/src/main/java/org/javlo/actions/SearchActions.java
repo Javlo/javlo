@@ -40,6 +40,9 @@ public class SearchActions implements IAction {
 			RequestService requestService = RequestService.getInstance(request);
 
 			String searchStr = requestService.getParameter("keywords", requestService.getParameter("q", null));
+
+			logger.info("search on : " + searchStr);
+
 			List<String> componentList = requestService.getParameterListValues("comps", null);
 			String groupId = requestService.getParameter("search-group", null);
 			String sort = requestService.getParameter("sort", null);

@@ -73,18 +73,27 @@ function ajaxRequest(url, form) {
 		data : data,
 		type : "post",
 		dataType : "json"
-	}).done(function(jsonObj) {			
+	}).done(function(jsonObj) {		
 		jQuery.each(jsonObj.zone, function(xhtmlId, xhtml) {
-			var item = jQuery("#" + xhtmlId);
+			var item = jQuery("#" + xhtmlId);			
 			if (item != null) {
 				jQuery("#" + xhtmlId).replaceWith(xhtml);
+			} else {
+				if (console) {
+					console.log("warning : component "+xhtmlId+" not found for zone.");
+				}
 			}
 		});
 		jQuery.each(jsonObj.insideZone, function(xhtmlId, xhtml) {
 			var item = jQuery("#" + xhtmlId);
 			if (item != null) {
 				item.html(xhtml);	
+			} else {
+				if (console) {
+					console.log("warning : component "+xhtmlId+" not found for insideZone.");
+				}
 			}
+
 		});
 		jQuery(form).trigger("ajaxUpdate");
 		jQuery(document).trigger("ajaxUpdate");

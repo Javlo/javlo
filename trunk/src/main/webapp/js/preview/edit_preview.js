@@ -34,8 +34,8 @@ jQuery(document).ready(function() {
 			href : editURL + param,
 			opacity : 0.6,
 			iframe : true,
-			width : "80%",
-			height : "80%"
+			width : "95%",
+			height : "95%"
 		});
 		return false;
 	});
@@ -83,8 +83,8 @@ initPreview = function() {
 			href : editURL + param,
 			opacity : 0.6,
 			iframe : true,
-			width : "80%",
-			height : "80%"
+			width : "95%",
+			height : "95%"
 		});
 		return false;
 	});
@@ -115,8 +115,14 @@ initPreview = function() {
 					jQuery(comp).insertAfter(jQuery(this));
 					var previewId = jQuery(this).attr("id").replace("cp_", "");					
 					var area = jQuery(comp).parent().attr("id");
-					if (area == undefined) { // change language div
+					if (area == undefined) { // change language div or container
 						area = jQuery(comp).parent().parent().attr("id");
+					}
+					if (area == undefined) { // container + language
+						area = jQuery(comp).parent().parent().parent().attr("id");
+					}
+					if (area == undefined) { // container + container + language
+						area = jQuery(comp).parent().parent().parent().parent().attr("id");
 					}
 					var ajaxURL = currentURL + "?webaction=edit.moveComponent&comp-id=" + compId + "&previous=" + previewId+"&area="+area;
 				}

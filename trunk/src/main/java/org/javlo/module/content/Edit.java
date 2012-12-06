@@ -100,7 +100,7 @@ public class Edit extends AbstractModuleAction {
 		}
 		ctx.addAjaxInsideZone("insert-line-0", insertXHTML);
 
-		ContentContext areaCtx = ctx.getContextWithArea(editContext.getCurrentArea());
+		ContentContext areaCtx = ctx.getContextWithArea(null);
 
 		IContentComponentsList elems = ctx.getCurrentPage().getContent(areaCtx);
 		while (elems.hasNext(areaCtx)) {
@@ -552,7 +552,7 @@ public class Edit extends AbstractModuleAction {
 		for (ComponentBean componentBean : content) {
 			Collection<String> areas = ctx.getCurrentTemplate().getAreas();
 			if (!areas.contains(componentBean.getArea())) {
-				if (!badArea.contains(componentBean.getArea())) {
+				if (badArea != null && !badArea.contains(componentBean.getArea())) {
 					badArea = badArea + sep + componentBean.getArea();
 					sep = ",";
 				}
@@ -616,7 +616,7 @@ public class Edit extends AbstractModuleAction {
 
 			if (requestService.getParameter("comp_id", null) != null) {
 				prepareUpdateInsertLine(ctx);
-				return performEditpreview(requestService, ctx, componentContext, ContentService.getInstance(globalContext), ModulesContext.getInstance(ctx.getRequest().getSession(), globalContext), modCtx);
+				return performEditpreview(requestService, ctx, componentContext, editCtx, ContentService.getInstance(globalContext), ModulesContext.getInstance(ctx.getRequest().getSession(), globalContext), modCtx);
 			} else {
 				Box componentBox = currentModule.getBox("components");
 				if (componentBox != null) {
@@ -646,8 +646,6 @@ public class Edit extends AbstractModuleAction {
 		if (ctx.isAjax()) {
 			updateComponent(ctx, currentModule, newId, previousId);
 		}
-
-		MenuElement page = ctx.getCurrentPage();
 
 		String msg = i18nAccess.getText("action.component.created", new String[][] { { "type", type } });
 		messageRepository.setGlobalMessageAndNotification(ctx, new GenericMessage(msg, GenericMessage.INFO));
@@ -697,7 +695,7 @@ public class Edit extends AbstractModuleAction {
 		return null;
 	}
 
-	public static final String performSave(ContentContext ctx, GlobalContext globalContext, ContentService content, RequestService requestService, I18nAccess i18nAccess, MessageRepository messageRepository, Module currentModule, AdminUserFactory adminUserFactory) throws Exception {
+	public static final String performSave(ContentContext ctx, GlobalContext globalContext, ContentService content, ComponentContext componentContext, RequestService requestService, I18nAccess i18nAccess, MessageRepository messageRepository, Module currentModule, AdminUserFactory adminUserFactory) throws Exception {
 
 		if (!canModifyCurrentPage(ctx) || !checkPageSecurity(ctx)) {
 			messageRepository.setGlobalMessageAndNotification(ctx, new GenericMessage(i18nAccess.getText("action.block"), GenericMessage.ERROR));
@@ -716,6 +714,9 @@ public class Edit extends AbstractModuleAction {
 			if (elem != null && StringHelper.isTrue(requestService.getParameter("id-" + elem.getId(), "false"))) {
 				elem.performConfig(ctx);
 				elem.performEdit(ctx);
+				if (StringHelper.isTrue(requestService.getParameter("previewEdit", null))) {
+					componentContext.addNewComponent(elem);
+				}
 				if (!elem.isModify()) { // if elem not modified check modification via rawvalue
 					String rawValue = requestService.getParameter("raw_value_" + elem.getId(), null);
 					if (rawValue != null && !rawValue.equals(elem.getValue(ctx))) {
@@ -1086,15 +1087,22 @@ public class Edit extends AbstractModuleAction {
 		return null;
 	}
 
-	public static String performEditpreview(RequestService requestService, ContentContext ctx, ComponentContext componentContext, ContentService content, ModulesContext moduleContext, ContentModuleContext modCtx) throws Exception {
+	public static String performEditpreview(RequestService requestService, ContentContext ctx, ComponentContext componentContext, EditContext editContext, ContentService content, ModulesContext moduleContext, ContentModuleContext modCtx) throws Exception {
 		moduleContext.searchModule("content").restoreAll();
 		performChangeMode(ctx.getRequest().getSession(), requestService, modCtx);
-		String compId = requestService.getParameter("comp_id", null).substring(3);
-		IContentVisualComponent comp = content.getComponent(ctx, compId);
-		if (comp == null) {
-			return "component not found : " + compId;
+		String[] compsId = requestService.getParameterValues("comp_id", null);
+		if (compsId != null) {
+			for (String compId : compsId) {
+				compId = compId.substring(3);
+				IContentVisualComponent comp = content.getComponent(ctx, compId);
+				if (comp == null) {
+					return "component not found : " + compId;
+				} else {
+					editContext.setCurrentArea(comp.getArea());
+				}
+				componentContext.addNewComponent(comp);
+			}
 		}
-		componentContext.addNewComponent(comp);
 		return null;
 	}
 
