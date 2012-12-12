@@ -1266,13 +1266,17 @@ public class MenuElement implements Serializable {
 			return desc.category;
 		}
 		String res = "";
-		ContentContext newCtx = new ContentContext(ctx);
-		newCtx.setArea(null);
-		IContentComponentsList contentList = getContent(newCtx);
-		while (contentList.hasNext(newCtx)) {
-			IContentVisualComponent elem = contentList.next(newCtx);
+		ContentContext noAreaCtx = ctx.getContextWithoutArea();
+
+		if (noAreaCtx.getRenderMode() == ContentContext.EDIT_MODE) {
+			noAreaCtx.setRenderMode(ContentContext.PREVIEW_MODE); // get info for preview mode (with repeat elements)
+		}
+
+		IContentComponentsList contentList = getContent(noAreaCtx);
+		while (contentList.hasNext(noAreaCtx)) {
+			IContentVisualComponent elem = contentList.next(noAreaCtx);
 			if (elem.getType().equals(Category.TYPE)) {
-				res = elem.getValue(newCtx);
+				res = elem.getValue(noAreaCtx);
 			}
 		}
 		desc.category = StringUtils.replace(res, "\"", "&quot;");
@@ -1622,6 +1626,11 @@ public class MenuElement implements Serializable {
 		String res = "";
 		ContentContext newCtx = new ContentContext(ctx);
 		newCtx.setArea(null);
+
+		if (newCtx.getRenderMode() == ContentContext.EDIT_MODE) {
+			newCtx.setRenderMode(ContentContext.PREVIEW_MODE); // get info for preview mode (with repeat elements)
+		}
+
 		IContentComponentsList contentList = getAllContent(newCtx);
 		while (contentList.hasNext(newCtx)) {
 			IContentVisualComponent elem = contentList.next(newCtx);
@@ -2497,6 +2506,11 @@ public class MenuElement implements Serializable {
 
 		ContentContext lgDefaultCtx = new ContentContext(ctx);
 		lgDefaultCtx.setArea(null);
+
+		if (lgDefaultCtx.getRenderMode() == ContentContext.EDIT_MODE) {
+			lgDefaultCtx.setRenderMode(ContentContext.PREVIEW_MODE); // get info for preview mode (with repeat elements)
+		}
+
 		GlobalContext globalContext = GlobalContext.getInstance(ctx.getRequest());
 		Iterator<String> defaultLg = globalContext.getDefaultLanguages().iterator();
 
