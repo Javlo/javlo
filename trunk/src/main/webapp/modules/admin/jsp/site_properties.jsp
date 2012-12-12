@@ -171,6 +171,11 @@
 	<input type="text" id="private-help-url" name="private-help-url" value="${currentContext.privateHelpURL}" />	
 </div>
 
+<div class="line">		
+	<label for="uri-alias">${i18n.edit['admin.form.uri-alias']}</label>
+	<textarea id="uri-alias" name="uri-alias">${currentContext.URIAlias}</textarea>	
+</div>
+
 </div>
 </fieldset>
 

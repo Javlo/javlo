@@ -330,8 +330,8 @@ public class CatchAllFilter implements Filter {
 			editURI = editURI.substring(globalContext.getContextKey().length() + 1);
 		}
 
-		if (editURI.startsWith("/edit-") || editURI.startsWith("/ajax-") ) {
-			String prefix = editURI.substring(0,5);
+		if (editURI.startsWith("/edit-") || editURI.startsWith("/ajax-")) {
+			String prefix = editURI.substring(0, 5);
 			editURI = editURI.substring("/edit-".length());
 			String module = editURI;
 			if (editURI.contains("/")) {
@@ -346,7 +346,7 @@ public class CatchAllFilter implements Filter {
 					editURI = editURI + '?' + query;
 				}
 				if (query == null || !query.contains("module=")) {
-					//editURI = URLHelper.addParam(editURI, "module", module);
+					// editURI = URLHelper.addParam(editURI, "module", module);
 					try {
 						ModulesContext.getInstance(httpRequest.getSession(), GlobalContext.getInstance(httpRequest)).setCurrentModule(module);
 					} catch (ModuleException e) {
@@ -357,7 +357,7 @@ public class CatchAllFilter implements Filter {
 				if (query != null && query.contains("edit-logout")) {
 					((HttpServletResponse) response).sendRedirect("" + httpRequest.getRequestURL());
 					return;
-				} else {					
+				} else {
 					httpRequest.getRequestDispatcher(editURI).forward(request, response);
 					return;
 				}
@@ -496,17 +496,23 @@ public class CatchAllFilter implements Filter {
 					Map<String, String> uriAlias = globalContext.getURIAlias();
 					Collection<Map.Entry<String, String>> entries = uriAlias.entrySet();
 					for (Map.Entry<String, String> entry : entries) {
-						if (uri.length() > 0) {
+						String cmsURI = uri;
+						if (globalContext.getPathPrefix() != null && globalContext.getPathPrefix().length() > 0) {
+							cmsURI = cmsURI.replaceFirst("/" + globalContext.getPathPrefix(), "");
+						}
+						if (cmsURI.length() > 0) {
 							String pattern1 = entry.getKey();
 							String pattern2 = entry.getValue();
 							if (!pattern1.contains("*")) {
-								if (uri.equals(pattern1)) {
+								if (cmsURI.equals(pattern1)) {
+									pattern2 = URLHelper.mergePath("/", globalContext.getPathPrefix(), pattern2);
 									NetHelper.sendRedirectPermanently((HttpServletResponse) response, pattern2);
 									return;
 								}
 							} else {
-								String newURL = StringHelper.convertString(pattern1, pattern2, uri);
-								if (!newURL.equals(uri)) {
+								String newURL = StringHelper.convertString(pattern1, pattern2, cmsURI);
+								if (!newURL.equals(cmsURI)) {
+									newURL = URLHelper.mergePath("/", globalContext.getPathPrefix(), newURL);
 									NetHelper.sendRedirectPermanently((HttpServletResponse) response, newURL);
 									return;
 								}

@@ -1,8 +1,10 @@
 package org.javlo.module.admin;
 
+import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.io.InputStream;
 import java.io.PrintStream;
 import java.lang.reflect.InvocationTargetException;
 import java.text.SimpleDateFormat;
@@ -14,6 +16,7 @@ import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
+import java.util.Properties;
 
 import javax.servlet.ServletContext;
 import javax.servlet.http.HttpServletRequest;
@@ -87,6 +90,7 @@ public class AdminAction extends AbstractModuleAction {
 		private boolean openExternalLinkAsPopup = false;
 		private boolean openFileAsPopup = false;
 		private String noPopupDomain;
+		private String URIAlias;
 
 		private String shortDateFormat;
 		private String mediumDateFormat;
@@ -146,11 +150,21 @@ public class AdminAction extends AbstractModuleAction {
 			setTags(globalContext.getRAWTags());
 			setBlockPassword(globalContext.getBlockPassword());
 
+			Properties properties = new Properties();
+			properties.putAll(globalContext.getURIAlias());
+			ByteArrayOutputStream outStream = new ByteArrayOutputStream();
+			try {
+				properties.store(outStream, null);
+			} catch (IOException e) {
+				e.printStackTrace();
+			}
+			setURIAlias(new String(outStream.toByteArray()));
+
 			setOpenFileAsPopup(globalContext.isOpenFileAsPopup());
 			setOpenExternalLinkAsPopup(globalContext.isOpenExternalLinkAsPopup());
 			setNoPopupDomain(globalContext.getNoPopupDomainRAW());
 
-			ByteArrayOutputStream outStream = new ByteArrayOutputStream();
+			outStream = new ByteArrayOutputStream();
 			PrintStream out = new PrintStream(outStream);
 			List<String> usersAccess = globalContext.getUsersAccess();
 			for (String userName : usersAccess) {
@@ -476,6 +490,14 @@ public class AdminAction extends AbstractModuleAction {
 			this.previewMode = previewMode;
 		}
 
+		public String getURIAlias() {
+			return URIAlias;
+		}
+
+		public void setURIAlias(String uRIAlias) {
+			URIAlias = uRIAlias;
+		}
+
 	}
 
 	@Override
@@ -719,6 +741,17 @@ public class AdminAction extends AbstractModuleAction {
 					} catch (Exception e1) {
 						messageRepository.setGlobalMessage(new GenericMessage(e1.getMessage(), GenericMessage.ERROR));
 						e1.printStackTrace();
+					}
+
+					String uriAlias = requestService.getParameter("uri-alias", null);
+					if (uriAlias != null) {
+						Properties properties = new Properties();
+						InputStream in = new ByteArrayInputStream(uriAlias.getBytes());
+						properties.load(in);
+						in.close();
+						currentGlobalContext.setAliasURI(properties);
+					} else {
+						return "uri-alias parameter not found.";
 					}
 
 					currentGlobalContext.setUserRoles(new HashSet<String>(StringHelper.stringToCollection(requestService.getParameter("user-roles", ""), ",")));
