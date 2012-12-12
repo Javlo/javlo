@@ -1,3 +1,11 @@
+/* empêche la sélection */
+[draggable] {
+    -moz-user-select: none;
+    -khtml-user-select: none;
+    -webkit-user-select: none;
+    user-select: none;
+}
+
 #preview_command .hidden {
 	display: none;
 }

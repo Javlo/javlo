@@ -63,9 +63,9 @@
 <c:if test="${not empty param.button_preview and empty param.previewEdit}"><a class="action-button more preview" href="${info.currentURL}?webaction=changeMode&mode=2"><span>${i18n.edit['command.preview']}</span></a></c:if>
 <c:if test="${not empty param.button_page and empty param.previewEdit}"><a class="action-button more page" href="${info.currentURL}?webaction=changeMode&mode=3"><span>${i18n.edit['item.title']}</span></a></c:if>
 
-<c:if test="${not empty param.button_publish and empty param.previewEdit}"><a class="action-button publish" href="${info.currentURL}?webaction=publish"><span>${i18n.edit['command.publish']}</span></a></c:if>
+<c:if test="${not empty param.button_publish and empty param.previewEdit}"><a class="action-button publish ajax" href="${info.currentURL}?webaction=publish"><span>${i18n.edit['command.publish']}</span></a></c:if>
 <c:if test="${not empty param.button_save}"><a class="action-button save" href="#save" onclick="jQuery('#button-content-submit').click(); return false;"><span>${i18n.edit['action.update']}</span></a></c:if>
-<c:if test="${not empty param.button_copy and empty lightInterface}"><a class="action-button copy" href="${info.currentURL}?webaction=copyPage"><span>${i18n.edit['action.copy-page']}</span></a></c:if>
+<c:if test="${not empty param.button_copy and empty lightInterface}"><a class="action-button copy ajax" href="${info.currentURL}?webaction=copyPage${not empty param.previewEdit?'&webaction=editPreview&PreviewEdit=true':''}"><span>${i18n.edit['action.copy-page']}</span></a></c:if>
 
 <c:if test="${not empty param.button_delete_page and empty param.previewEdit}"><a class="action-button delete-page needconfirm" href="${info.currentURL}?webaction=deletePage&page=${info.pageID}"><span>${i18n.edit['edit.action.delete-page']}</span></a></c:if>
 

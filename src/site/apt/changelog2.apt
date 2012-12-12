@@ -29,3 +29,11 @@ change log
  * can desactivated preview mode
  
 * 2.0.0.11 [23/11/2012]
+
+ * preview move component
+ 
+ * some optimisation (reduce File access)
+ 
+ * Always close stream in ImageTransformServlet
+ 
+* 2.0.0.12 [12/12/2012]

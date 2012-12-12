@@ -12,7 +12,7 @@
 			<input id="button-content-submit" type="submit" class="action-button" value="${saveItem}"  name="save"/>
 		</div>
 	</form>
-	<c:if test="${not empty cleanClipBoard}">
+	<c:if test="${not empty cleanClipBoard && not empty editPreview}">
 		<form id="form-clear-clipboard" action="${info.currentURL}" method="post">
 		<input type="hidden" name="webaction" value="clearClipboard" />
 		<div class="insert-line">

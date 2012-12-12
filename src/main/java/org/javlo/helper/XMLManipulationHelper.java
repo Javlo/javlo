@@ -811,9 +811,15 @@ public class XMLManipulationHelper {
 		out.newLine();
 		out.append("<%=XHTMLHelper.renderHeaderResourceInsertion(ctx, \"/js/lib/jquery-ui-1.8.20.custom.min.js\")%>");
 		out.newLine();
+		out.append("<%EditContext editCtx = EditContext.getInstance(globalContext, request.getSession());%>");
+		out.newLine();
+		out.append("<%if (editCtx.isEditPreview()) {%>");
+		out.newLine();	
 		out.append("<%=XHTMLHelper.renderHeaderResourceInsertion(ctx, \"/js/lib/jquery.colorbox-min.js\")%>");
 		out.newLine();
 		out.append("<%=XHTMLHelper.renderHeaderResourceInsertion(ctx, \"/css/lib/colorbox/colorbox.css\")%>");
+		out.newLine();
+		out.append("<%  }%>");
 		out.newLine();
 		out.append("<%}%>");
 

@@ -63,40 +63,46 @@ public class ComponentFactory {
 	 * @throws Exception
 	 */
 	public static IContentVisualComponent[] getComponents(ContentContext ctx) throws Exception {
-		GlobalContext globalContext = GlobalContext.getInstance(ctx.getRequest());
-		IContentVisualComponent[] components = getComponents(globalContext);
-		ArrayList<IContentVisualComponent> array = new ArrayList<IContentVisualComponent>();
-		array.addAll(Arrays.asList(components));
-		ContentService content = ContentService.getInstance(ctx.getRequest());
-		MenuElement page = content.getNavigation(ctx).getNoErrorFreeCurrentPage(ctx);
-		Template template = null;
-		if (page != null) {
-			template = ctx.getCurrentTemplate();
-			if (template != null) {
-				/* load dynamic component */
-				List<Properties> propertiesClasses = template.getDynamicComponentsProperties(globalContext);
-				if (propertiesClasses.size() > 0) {
-					array.add(new MetaTitle("content.title.template"));
+		String key = "__components_request_key";
+		IContentVisualComponent[] outComp = (IContentVisualComponent[]) ctx.getRequest().getAttribute(key);
+		if (outComp == null) {
+			GlobalContext globalContext = GlobalContext.getInstance(ctx.getRequest());
+			IContentVisualComponent[] components = getComponents(globalContext);
+			ArrayList<IContentVisualComponent> array = new ArrayList<IContentVisualComponent>();
+			array.addAll(Arrays.asList(components));
+			ContentService content = ContentService.getInstance(ctx.getRequest());
+			MenuElement page = content.getNavigation(ctx).getNoErrorFreeCurrentPage(ctx);
+			Template template = null;
+			if (page != null) {
+				template = ctx.getCurrentTemplate();
+				if (template != null) {
+					/* load dynamic component */
+					List<Properties> propertiesClasses = template.getDynamicComponentsProperties(globalContext);
+					if (propertiesClasses.size() > 0) {
+						array.add(new MetaTitle("content.title.template"));
+					} else {
+						logger.fine("no business component found in template : " + template.getName());
+					}
+					for (Properties properties : propertiesClasses) {
+						logger.fine("load dynamic component : " + properties.getProperty("component.type") + " [total:" + array.size() + "]");
+						DynamicComponent comp = new DynamicComponent();
+						Properties newProp = new Properties();
+						newProp.putAll(properties);
+						comp.setProperties(newProp);
+						comp.setConfigProperties(properties);
+						array.add(comp);
+						comp.setValid(true);
+					}
 				} else {
-					logger.fine("no business component found in template : " + template.getName());
+					logger.fine("no template found for page : " + page.getName());
 				}
-				for (Properties properties : propertiesClasses) {
-					logger.fine("load dynamic component : " + properties.getProperty("component.type") + " [total:" + array.size() + "]");
-					DynamicComponent comp = new DynamicComponent();
-					Properties newProp = new Properties();
-					newProp.putAll(properties);
-					comp.setProperties(newProp);
-					comp.setConfigProperties(properties);
-					array.add(comp);
-					comp.setValid(true);
-				}
-			} else {
-				logger.fine("no template found for page : " + page.getName());
 			}
+			components = new IContentVisualComponent[array.size()];
+			array.toArray(components);
+			outComp = components;
+			ctx.getRequest().setAttribute(key, outComp);
 		}
-		components = new IContentVisualComponent[array.size()];
-		array.toArray(components);
-		return components;
+		return outComp;
 
 	}
 

@@ -17,12 +17,14 @@ import java.util.Collections;
 import java.util.Comparator;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 import java.util.Properties;
+import java.util.Set;
 import java.util.logging.Logger;
 
 import javax.servlet.ServletContext;
@@ -560,6 +562,10 @@ public class Template implements Comparable<Template> {
 
 	private String deployId = StringHelper.getRandomId();
 
+	private List<Properties> dynamicsComponents = null;
+
+	private final Set<String> contextWithTemplateImported = new HashSet<String>();
+
 	public static Template getApplicationInstance(ServletContext application, ContentContext ctx, String templateDir) throws ConfigurationException, IOException {
 
 		Template outTemplate = null;
@@ -698,6 +704,8 @@ public class Template implements Comparable<Template> {
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
+		dynamicsComponents = null;
+		contextWithTemplateImported.clear();
 	}
 
 	public void delete() {
@@ -877,22 +885,24 @@ public class Template implements Comparable<Template> {
 	}
 
 	public final List<Properties> getDynamicComponentsProperties(GlobalContext globalContext) throws IOException {
-
-		List<File> files = getComponentFile(globalContext);
-		List<Properties> outProperties = new LinkedList<Properties>();
-		for (File file : files) {
-			Properties prop = new Properties();
-			InputStream in = new FileInputStream(file);
-			Reader inReader = new InputStreamReader(in, ContentContext.CHARACTER_ENCODING);
-			try {
-				prop.load(inReader);
-			} finally {
-				ResourceHelper.closeResource(in);
-				ResourceHelper.closeResource(inReader);
+		if (dynamicsComponents == null) {
+			List<File> files = getComponentFile(globalContext);
+			List<Properties> outProperties = new LinkedList<Properties>();
+			for (File file : files) {
+				Properties prop = new Properties();
+				InputStream in = new FileInputStream(file);
+				Reader inReader = new InputStreamReader(in, ContentContext.CHARACTER_ENCODING);
+				try {
+					prop.load(inReader);
+				} finally {
+					ResourceHelper.closeResource(in);
+					ResourceHelper.closeResource(inReader);
+				}
+				outProperties.add(prop);
 			}
-			outProperties.add(prop);
+			dynamicsComponents = outProperties;
 		}
-		return outProperties;
+		return dynamicsComponents;
 	}
 
 	public List<String> getEmailLinkFileList() {
@@ -1570,6 +1580,7 @@ public class Template implements Comparable<Template> {
 		if (config != null) {
 			TemplateFactory.clearTemplate(config.getServletContext());
 		}
+
 	}
 
 	public boolean isAlternativeTemplate(ContentContext ctx) {
@@ -1628,12 +1639,20 @@ public class Template implements Comparable<Template> {
 	}
 
 	public boolean isTemplateInWebapp(ContentContext ctx) throws IOException {
+
 		GlobalContext globalContext = null;
 		if (ctx != null) {
 			globalContext = GlobalContext.getInstance(ctx.getRequest());
+			if (contextWithTemplateImported.contains(globalContext.getContextKey())) {
+				return true;
+			}
 		}
 		File templateTgt = new File(URLHelper.mergePath(getWorkTemplateFolder(), getFolder(globalContext)));
+		if (templateTgt.exists() && globalContext != null) {
+			contextWithTemplateImported.add(globalContext.getContextKey());
+		}
 		return templateTgt.exists();
+
 	}
 
 	public boolean isValid() {
@@ -1652,6 +1671,8 @@ public class Template implements Comparable<Template> {
 				e.printStackTrace();
 			}
 		}
+		dynamicsComponents = null;
+		contextWithTemplateImported.clear();
 	}
 
 	public void setAuthors(String name) {
