@@ -82,7 +82,7 @@ public class AccessServlet extends HttpServlet {
 	 */
 	public static Logger logger = Logger.getLogger(AccessServlet.class.getName());
 
-	public static final String VERSION = "2.0.0.11";
+	public static final String VERSION = "2.0.0.12";
 
 	@Override
 	public void destroy() {

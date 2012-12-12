@@ -2478,6 +2478,11 @@ public class GlobalContext implements Serializable {
 		session.setAttribute(sessionKey, value);
 	}
 
+	public boolean isTemplateInWebapp(Template template) throws IOException {
+		File templateTgt = new File(URLHelper.mergePath(template.getWorkTemplateFolder(), template.getFolder(this)));
+		return templateTgt.exists();
+	}
+
 	public void writeInfo(PrintStream out) {
 		out.println("****************************************************************");
 		out.println("****************************************************************");

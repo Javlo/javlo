@@ -497,7 +497,6 @@ public class ImageTransformServlet extends HttpServlet {
 					return;
 				}
 
-				InputStream fileStream = loadFileFromDisk(imageName, filter, area, ctx.getDevice(), template, imageFile.lastModified());
 				String deviceCode = "no-device";
 				if (ctx.getDevice() != null) {
 					deviceCode = ctx.getDevice().getCode();
@@ -510,6 +509,7 @@ public class ImageTransformServlet extends HttpServlet {
 					return;
 				}
 
+				InputStream fileStream = loadFileFromDisk(imageName, filter, area, ctx.getDevice(), template, imageFile.lastModified());
 				if ((fileStream != null)) {
 					try {
 						ResourceHelper.writeStreamToStream(fileStream, out);

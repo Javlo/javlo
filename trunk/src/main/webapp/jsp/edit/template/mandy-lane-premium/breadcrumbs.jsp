@@ -11,7 +11,7 @@
 	<c:forEach var="page" items="${info.pagePath}">
 		<c:set var="link" value='<a href="${page.url}">' />
 		${empty param.previewEdit?link:'<span class="title">'}${page.info.title}${empty param.previewEdit?'</a>':'</span>'}		
-		<c:if test="${fn:length(page.children) > 1}">
+		<c:if test="${fn:length(page.children) > 1 && empty param.previewEdit}">
 			<div class="children">
 			<div class="container">
 				<ul>
@@ -23,8 +23,11 @@
 			</div>
 		</c:if>		
 	</c:forEach>
-	<a class="selected" href="${info.currentURL}">${info.pageTitle}</a>
-		<c:if test="${fn:length(info.page.children) > 0}">
+	<c:set var="link" value='<a class="selected" href="${info.currentURL}">' />
+	${empty param.previewEdit?link:'<span class="title">'}
+	${info.pageTitle}
+	${empty param.previewEdit?'</a>':'</span>'}
+		<c:if test="${fn:length(info.page.children) > 0 && empty param.previewEdit}">
 			<div class="children">
 			<div class="container">
 				<ul>

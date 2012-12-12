@@ -68,6 +68,8 @@ public class StaticConfig extends Observable {
 
 	private static final String KEY = StaticConfig.class.getName();
 
+	private static final String HOME = System.getProperty("user.home");
+
 	/**
 	 * @Deprecated use getInstance (ServletContext application)
 	 */
@@ -1052,7 +1054,7 @@ public class StaticConfig extends Observable {
 	}
 
 	private String replaceFolderVariable(String folder) {
-		folder = folder.replace("$HOME", System.getProperty("user.home"));
+		folder = folder.replace("$HOME", HOME);
 		return folder;
 	}
 
