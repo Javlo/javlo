@@ -65,6 +65,7 @@ public class ComponentFactory {
 	public static IContentVisualComponent[] getComponents(ContentContext ctx) throws Exception {
 		String key = "__components_request_key";
 		IContentVisualComponent[] outComp = (IContentVisualComponent[]) ctx.getRequest().getAttribute(key);
+		Template template = null;
 		if (outComp == null) {
 			GlobalContext globalContext = GlobalContext.getInstance(ctx.getRequest());
 			IContentVisualComponent[] components = getComponents(globalContext);
@@ -72,7 +73,6 @@ public class ComponentFactory {
 			array.addAll(Arrays.asList(components));
 			ContentService content = ContentService.getInstance(ctx.getRequest());
 			MenuElement page = content.getNavigation(ctx).getNoErrorFreeCurrentPage(ctx);
-			Template template = null;
 			if (page != null) {
 				template = ctx.getCurrentTemplate();
 				if (template != null) {
@@ -100,8 +100,11 @@ public class ComponentFactory {
 			components = new IContentVisualComponent[array.size()];
 			array.toArray(components);
 			outComp = components;
-			ctx.getRequest().setAttribute(key, outComp);
+			if (template != null) { // don't cache if no template
+				ctx.getRequest().setAttribute(key, outComp);
+			}
 		}
+
 		return outComp;
 
 	}
