@@ -221,3 +221,7 @@ function doNothing(evt) {
 	evt.stopPropagation();
 	evt.preventDefault();
 }
+
+function hidePreviewMessage() {
+	jQuery("#pc_message").remove();
+}

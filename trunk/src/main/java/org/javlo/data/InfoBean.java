@@ -373,9 +373,18 @@ public class InfoBean {
 	public String getPath() {
 		return ctx.getPath();
 	}
-	
+
 	public boolean isPreview() {
 		return ctx.getRenderMode() == ContentContext.PREVIEW_MODE;
+	}
+
+	public String getPublishDate() {
+		try {
+			return StringHelper.renderShortDate(ctx, globalContext.getPublishDate());
+		} catch (Exception e) {
+			e.printStackTrace();
+			return null;
+		}
 	}
 
 }
