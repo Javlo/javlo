@@ -342,6 +342,7 @@ public class Module {
 	private final List<Module> children = new LinkedList<Module>();
 	private int order;
 	private Set<String> roles;
+	private List<String> needed;
 	private Set<String> excludeRoles;
 	private Map<String, String> config;
 
@@ -401,6 +402,12 @@ public class Module {
 		if (rolesRaw != null) {
 			excludeRoles = new HashSet<String>();
 			excludeRoles.addAll(StringHelper.stringToCollection(rolesRaw, ";"));
+		}
+
+		/** needed module **/
+		String neededModuleRAW = config.get("module.needed");
+		if (neededModuleRAW != null) {
+			setNeeded(StringHelper.stringToCollection(neededModuleRAW, ";"));
 		}
 
 		title = config.get("title." + locale.getLanguage());
@@ -922,6 +929,14 @@ public class Module {
 
 	public void setViewRenderer(String viewRenderer) {
 		this.viewRenderer = viewRenderer;
+	}
+
+	public List<String> getNeeded() {
+		return needed;
+	}
+
+	public void setNeeded(List<String> needed) {
+		this.needed = needed;
 	}
 
 }

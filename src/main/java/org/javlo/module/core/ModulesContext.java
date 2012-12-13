@@ -97,6 +97,27 @@ public class ModulesContext {
 				}
 			}
 
+			// load module needed
+			List<Module> neededModules = new LinkedList<Module>();
+			for (Module module : localModules) {
+				Collection<String> neededModulesName = module.getNeeded();
+				if (neededModulesName != null) {
+					for (String needed : neededModulesName) {
+						for (Module mod : allModules) {
+							if (mod.getName().equals(needed)) {
+								neededModules.add(mod);
+							}
+						}
+					}
+				}
+			}
+
+			for (Module module : neededModules) {
+				if (!localModules.contains(module)) {
+					localModules.add(module);
+				}
+			}
+
 			if (allModules.size() == 0) {
 				throw new ModuleException("javlo need at least one module.");
 			}
@@ -126,11 +147,13 @@ public class ModulesContext {
 			modules.clear();
 			for (Module module : localModules) {
 				modules.add(module);
-				Module parent = modulesMap.get(module.getParent());
-				if (parent != null) {
-					parent.addChild(module);
-				} else {
-					logger.warning("parent not found : " + module.getParent());
+				if (module.getParent() != null) {
+					Module parent = modulesMap.get(module.getParent());
+					if (parent != null) {
+						parent.addChild(module);
+					} else {
+						logger.warning("parent not found : " + module.getParent());
+					}
 				}
 			}
 		}

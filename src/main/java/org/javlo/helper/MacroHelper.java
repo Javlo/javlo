@@ -573,11 +573,11 @@ public class MacroHelper {
 		I18nAccess i18nAccess = I18nAccess.getInstance(globalContext, ctx.getRequest().getSession());
 		for (String name : macroName) {
 			IMacro macro = factory.getMacro(name);
-			if (macro != null && (adminMode || !macro.isAdmin())) {
+			if (macro != null && macro.getRenderer() == null && (adminMode || !macro.isAdmin())) {
 				macroFound = true;
 				out.println("<div class=\"macro\">");
 				out.println("<form id=\"form-macro-" + name + "\" method=\"post\" action=\"" + URLHelper.createURL(ctx) + "\">");
-				out.println("<input type=\"hidden\" name=\"webaction\" value=\"macro\" />");
+				out.println("<input type=\"hidden\" name=\"webaction\" value=\"macro.executeMacro\" />");
 				out.println("<input type=\"submit\" name=\"macro-" + name + "\" value=\"" + i18nAccess.getText("macro.name." + name, name) + "\" />");
 				out.println("</form>");
 				out.println("</div>");
