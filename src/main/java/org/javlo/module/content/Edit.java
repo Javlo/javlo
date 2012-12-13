@@ -545,6 +545,12 @@ public class Edit extends AbstractModuleAction {
 			messageRepository.setGlobalMessageAndNotification(ctx, new GenericMessage(i18nAccess.getText("edit.message.no-content"), GenericMessage.ERROR));
 		}
 
+		if (ctx.getCurrentTemplate() == null) {
+			MessageRepository messageRepository = MessageRepository.getInstance(ctx);
+			messageRepository.setGlobalMessageAndNotification(ctx, new GenericMessage("no template found on this page.", GenericMessage.ALERT));
+			return null;
+		}
+
 		/** check area **/
 		String badArea = "";
 		String sep = "";
