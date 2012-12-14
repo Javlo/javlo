@@ -1132,10 +1132,10 @@ public class Template implements Comparable<Template> {
 		return Arrays.asList(propertiesFile);
 	}
 
-	public Properties getMacroProperties(GlobalContext globalContext, String macro_key) throws IOException {
+	public Properties getMacroProperties(GlobalContext globalContext, String macroKey) throws IOException {
 		List<File> macroFiles = getMacroFile(globalContext);
 		for (File pFile : macroFiles) {
-			if (pFile.getName().equals(macro_key + ".properties")) {
+			if (pFile.getName().equals(macroKey + ".properties")) {
 				Properties prop = new Properties();
 				InputStream in = new FileInputStream(pFile);
 				try {

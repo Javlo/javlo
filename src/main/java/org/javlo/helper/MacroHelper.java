@@ -22,8 +22,9 @@ import org.javlo.context.ContentContext;
 import org.javlo.context.EditContext;
 import org.javlo.context.GlobalContext;
 import org.javlo.i18n.I18nAccess;
-import org.javlo.macro.IMacro;
-import org.javlo.macro.MacroFactory;
+import org.javlo.macro.core.IInteractiveMacro;
+import org.javlo.macro.core.IMacro;
+import org.javlo.macro.core.MacroFactory;
 import org.javlo.message.GenericMessage;
 import org.javlo.message.MessageRepository;
 import org.javlo.navigation.MenuElement;
@@ -573,7 +574,7 @@ public class MacroHelper {
 		I18nAccess i18nAccess = I18nAccess.getInstance(globalContext, ctx.getRequest().getSession());
 		for (String name : macroName) {
 			IMacro macro = factory.getMacro(name);
-			if (macro != null && macro.getRenderer() == null && (adminMode || !macro.isAdmin())) {
+			if (macro != null && !(macro instanceof IInteractiveMacro) && (adminMode || !macro.isAdmin())) {
 				macroFound = true;
 				out.println("<div class=\"macro\">");
 				out.println("<form id=\"form-macro-" + name + "\" method=\"post\" action=\"" + URLHelper.createURL(ctx) + "\">");

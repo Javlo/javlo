@@ -1,10 +1,41 @@
-package org.javlo.macro;
+package org.javlo.macro.core;
 
 import java.util.Arrays;
 import java.util.LinkedList;
 import java.util.List;
 
 import org.javlo.config.StaticConfig;
+import org.javlo.macro.CleanResourceNameMacro;
+import org.javlo.macro.CopyLanguageStructureHereMacro;
+import org.javlo.macro.CopyLanguageStructureMacro;
+import org.javlo.macro.CreateBaseStructureMacro;
+import org.javlo.macro.CreateChildrenStructureMacro;
+import org.javlo.macro.CreateDefaultPageStructure;
+import org.javlo.macro.CreateExternalNewsMacro;
+import org.javlo.macro.CreateMonthHereMacro;
+import org.javlo.macro.CreateMonthStructureMacro;
+import org.javlo.macro.CreatePressReleaseHereMacro;
+import org.javlo.macro.CreatePressReleaseTodayHereMacro;
+import org.javlo.macro.CreatePressReleaseTodayMacro;
+import org.javlo.macro.CreateWeekHereMacro;
+import org.javlo.macro.CurrentLgExpandMacro;
+import org.javlo.macro.DeleteChildren;
+import org.javlo.macro.DeleteChildrenAndContent;
+import org.javlo.macro.DeletePageFromSpecificUser;
+import org.javlo.macro.DeleteSmartExternalLinkMacro;
+import org.javlo.macro.EncryptPasswordComponent;
+import org.javlo.macro.ImageAfterDescriptionChildrenMacro;
+import org.javlo.macro.ImageAfterDescriptionMacro;
+import org.javlo.macro.ImportDataBase;
+import org.javlo.macro.ImportDefaultLanguageMacro;
+import org.javlo.macro.ImportGalleryMacro;
+import org.javlo.macro.ImportHTMLPageMacro;
+import org.javlo.macro.IncreaseSubtitleLevelMacro;
+import org.javlo.macro.MergeDynamicComponent;
+import org.javlo.macro.NoClickableImageMacro;
+import org.javlo.macro.PasteCopiedElementInAllLanguageMacro;
+import org.javlo.macro.ReduceSubtitleLevelMacro;
+import org.javlo.macro.deleteComponentInBadArea;
 
 public class MacroFactory {
 

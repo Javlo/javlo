@@ -17,6 +17,7 @@ import org.javlo.context.GlobalContext;
 import org.javlo.helper.LoremIpsumGenerator;
 import org.javlo.helper.MacroHelper;
 import org.javlo.helper.StringHelper;
+import org.javlo.macro.core.IMacro;
 import org.javlo.navigation.MenuElement;
 import org.javlo.service.ContentService;
 
@@ -78,11 +79,6 @@ public abstract class AbstractMacro implements IMacro {
 			}
 		}
 		return outList;
-	}
-
-	@Override
-	public String getRenderer() {
-		return null;
 	}
 
 	@Override

@@ -26,25 +26,11 @@ public class XMLFactory {
 	 * get the root node from an input stream (grh)
 	 */
 	public static NodeXML getFirstNode(InputStream isXML) throws Exception {
-		try {
-			DocumentBuilderFactory docBuilderFactory = DocumentBuilderFactory.newInstance();
-			docBuilderFactory.setNamespaceAware(true);
-			DocumentBuilder docBuilder = docBuilderFactory.newDocumentBuilder();
-			Document doc = docBuilder.parse(new InputSource(isXML));
-			return new NodeXML(doc);
-
-			/* return new NodeXML(doc.getDocumentElement()); */
-		} catch (ParserConfigurationException e) {
-			throw new Exception("cannot get DocumentBuilder : " + e.getMessage());
-		} catch (SAXException e) {
-			e.printStackTrace();
-			throw new Exception("cannot parse XML : " + e.getMessage());
-		} finally {
-			try {
-				isXML.close();
-			} catch (Exception e) {
-			}
-		}
+		DocumentBuilderFactory docBuilderFactory = DocumentBuilderFactory.newInstance();
+		docBuilderFactory.setNamespaceAware(true);
+		DocumentBuilder docBuilder = docBuilderFactory.newDocumentBuilder();
+		Document doc = docBuilder.parse(new InputSource(isXML));
+		return new NodeXML(doc);
 	}
 
 	/**

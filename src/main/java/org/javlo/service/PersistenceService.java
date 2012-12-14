@@ -2,6 +2,7 @@ package org.javlo.service;
 
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
+import java.io.ByteArrayInputStream;
 import java.io.File;
 import java.io.FileFilter;
 import java.io.FileInputStream;
@@ -58,6 +59,7 @@ import org.javlo.tracking.Track;
 import org.javlo.xml.NodeXML;
 import org.javlo.xml.XMLFactory;
 import org.javlo.ztatic.StaticInfo;
+import org.xml.sax.SAXParseException;
 
 public class PersistenceService {
 
@@ -721,9 +723,15 @@ public class PersistenceService {
 				}
 			}
 
-		} catch (Exception e) {
+		} catch (SAXParseException e) {			
 			e.printStackTrace();
-			MessageRepository.getInstance(ctx).setGlobalMessageAndNotification(ctx, new GenericMessage("error XML parsing : " + e.getMessage(), GenericMessage.ERROR));
+			MessageRepository.getInstance(ctx).setGlobalMessageAndNotification(ctx, new GenericMessage("error XML parsing (line:"+e.getLineNumber()+" col:"+e.getColumnNumber()+"): " + e.getMessage(), GenericMessage.ERROR));
+			root.setId("0");
+			root.setName("root");
+			root.setPriority(10);
+			root.setVisible(true);
+		} catch (Exception e) {
+			MessageRepository.getInstance(ctx).setGlobalMessageAndNotification(ctx, new GenericMessage("error XML loading : " + e.getMessage(), GenericMessage.ERROR));
 			root.setId("0");
 			root.setName("root");
 			root.setPriority(10);
