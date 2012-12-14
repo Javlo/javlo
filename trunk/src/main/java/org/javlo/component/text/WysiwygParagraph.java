@@ -17,6 +17,8 @@ import org.javlo.utils.SuffixPrefix;
  */
 public class WysiwygParagraph extends AbstractVisualComponent {
 
+	public static final String TYPE = "wysiwyg-paragraph";
+
 	@Override
 	protected String getEditXHTMLCode(ContentContext ctx) throws Exception {
 		StringBuffer finalCode = new StringBuffer();
@@ -37,7 +39,7 @@ public class WysiwygParagraph extends AbstractVisualComponent {
 
 	@Override
 	public String getType() {
-		return "wysiwyg-paragraph";
+		return TYPE;
 	}
 
 	@Override

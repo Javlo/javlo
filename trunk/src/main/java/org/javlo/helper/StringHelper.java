@@ -730,6 +730,9 @@ public class StringHelper {
 	 * @return a file name
 	 */
 	public static String getFileNameFromPath(String path) {
+		if (path.contains("?")) {
+			path = path.substring(0, path.indexOf('?'));
+		}
 		String outExt = path;
 		path = path.replace('\\', '/');
 		int dotIndex = path.lastIndexOf('/');

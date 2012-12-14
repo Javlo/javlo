@@ -445,6 +445,37 @@ public class CatchAllFilter implements Filter {
 
 			}
 
+			globalContext = GlobalContext.getInstance(httpRequest);
+
+			if (!ContentManager.isEdit(httpRequest, !hostDefineSite) && !ContentManager.isPreview(httpRequest, !hostDefineSite)) {
+				Map<String, String> uriAlias = globalContext.getURIAlias();
+				Collection<Map.Entry<String, String>> entries = uriAlias.entrySet();
+				for (Map.Entry<String, String> entry : entries) {
+					String cmsURI = uri;
+					if (globalContext.getPathPrefix() != null && globalContext.getPathPrefix().length() > 0) {
+						cmsURI = cmsURI.replaceFirst("/" + globalContext.getPathPrefix(), "");
+					}
+					if (cmsURI.length() > 0) {
+						String pattern1 = entry.getKey();
+						String pattern2 = entry.getValue();
+						if (!pattern1.contains("*")) {
+							if (cmsURI.equals(pattern1)) {
+								pattern2 = URLHelper.mergePath("/", globalContext.getPathPrefix(), pattern2);
+								NetHelper.sendRedirectPermanently((HttpServletResponse) response, pattern2);
+								return;
+							}
+						} else {
+							String newURL = StringHelper.convertString(pattern1, pattern2, cmsURI);
+							if (!newURL.equals(cmsURI)) {
+								newURL = URLHelper.mergePath("/", globalContext.getPathPrefix(), newURL);
+								NetHelper.sendRedirectPermanently((HttpServletResponse) response, newURL);
+								return;
+							}
+						}
+					}
+				}
+			}
+
 			/******************/
 			/**** ADD VIEW ****/
 			/******************/
@@ -489,37 +520,6 @@ public class CatchAllFilter implements Filter {
 				}
 
 				initElements(request, response);
-
-				globalContext = GlobalContext.getInstance(httpRequest);
-
-				if (!ContentManager.isEdit(httpRequest, !hostDefineSite) && !ContentManager.isPreview(httpRequest, !hostDefineSite)) {
-					Map<String, String> uriAlias = globalContext.getURIAlias();
-					Collection<Map.Entry<String, String>> entries = uriAlias.entrySet();
-					for (Map.Entry<String, String> entry : entries) {
-						String cmsURI = uri;
-						if (globalContext.getPathPrefix() != null && globalContext.getPathPrefix().length() > 0) {
-							cmsURI = cmsURI.replaceFirst("/" + globalContext.getPathPrefix(), "");
-						}
-						if (cmsURI.length() > 0) {
-							String pattern1 = entry.getKey();
-							String pattern2 = entry.getValue();
-							if (!pattern1.contains("*")) {
-								if (cmsURI.equals(pattern1)) {
-									pattern2 = URLHelper.mergePath("/", globalContext.getPathPrefix(), pattern2);
-									NetHelper.sendRedirectPermanently((HttpServletResponse) response, pattern2);
-									return;
-								}
-							} else {
-								String newURL = StringHelper.convertString(pattern1, pattern2, cmsURI);
-								if (!newURL.equals(cmsURI)) {
-									newURL = URLHelper.mergePath("/", globalContext.getPathPrefix(), newURL);
-									NetHelper.sendRedirectPermanently((HttpServletResponse) response, newURL);
-									return;
-								}
-							}
-						}
-					}
-				}
 
 			} catch (Exception e) {
 				e.printStackTrace();
