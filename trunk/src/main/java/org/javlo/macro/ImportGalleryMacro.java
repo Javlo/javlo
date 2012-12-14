@@ -16,11 +16,12 @@ import org.javlo.helper.ResourceHelper;
 import org.javlo.helper.StringHelper;
 import org.javlo.helper.URLHelper;
 import org.javlo.i18n.I18nAccess;
+import org.javlo.macro.core.IInteractiveMacro;
 import org.javlo.message.GenericMessage;
 import org.javlo.message.MessageRepository;
 import org.javlo.service.RequestService;
 
-public class ImportGalleryMacro implements IMacro, IAction {
+public class ImportGalleryMacro implements IInteractiveMacro, IAction {
 
 	private static Logger logger = Logger.getLogger(ImportGalleryMacro.class.getName());
 
@@ -102,6 +103,12 @@ public class ImportGalleryMacro implements IMacro, IAction {
 				ctx.getRequest().setAttribute("browse", browseURL + "&path=" + relativeFolder + "&page=meta&webaction=changerenderer");
 			}
 		}
+		return null;
+	}
+
+	@Override
+	public String prepare(ContentContext ctx) {
+		// TODO Auto-generated method stub
 		return null;
 	}
 }

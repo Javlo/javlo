@@ -8,7 +8,7 @@ import javax.servlet.http.HttpServletRequest;
 
 import org.javlo.bean.LinkToRenderer;
 import org.javlo.context.GlobalContext;
-import org.javlo.macro.IMacro;
+import org.javlo.macro.core.IMacro;
 import org.javlo.module.core.AbstractModuleContext;
 import org.javlo.module.core.Module;
 import org.javlo.module.core.ModuleException;

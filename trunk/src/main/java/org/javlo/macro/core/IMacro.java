@@ -1,4 +1,4 @@
-package org.javlo.macro;
+package org.javlo.macro.core;
 
 import java.util.Map;
 
@@ -17,11 +17,6 @@ public interface IMacro {
 	 */
 	public boolean isAdmin();
 
-	/**
-	 * get the renderer for interactive macro (return null if macro is'nt interactive)
-	 * 
-	 * @return
-	 */
-	public String getRenderer();
+	
 
 }

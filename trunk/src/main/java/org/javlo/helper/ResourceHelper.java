@@ -3,6 +3,7 @@
  */
 package org.javlo.helper;
 
+import java.io.BufferedReader;
 import java.io.ByteArrayOutputStream;
 import java.io.Closeable;
 import java.io.File;
@@ -722,21 +723,26 @@ public class ResourceHelper {
 		in.close();
 		return properties;
 	}
-
-	public static final String loadStringFromFile(File file) throws IOException {
+	
+	public static final String loadStringFromStream(InputStream in, Charset encoding) throws IOException {
 		StringBuffer outContent = new StringBuffer();
-		InputStream in = new FileInputStream(file);
-		Reader reader = new InputStreamReader(in, ContentContext.CHARSET_DEFAULT);
+		BufferedReader reader = new BufferedReader(new InputStreamReader(in, encoding));
 		try {
-			int read = reader.read();
-			while (read >= 0) {
-				outContent.append((char) read);
-				read = reader.read();
+			String line = reader.readLine();
+			while (line != null) {
+				outContent.append(line);
+				line = reader.readLine();
 			}
 		} finally {
-			ResourceHelper.closeResource(in);
+			ResourceHelper.closeResource(reader);
 		}
 		return outContent.toString();
+	}
+
+	public static final String loadStringFromFile(File file) throws IOException {
+		InputStream in = new FileInputStream(file);
+		String content = loadStringFromStream(in, ContentContext.CHARSET_DEFAULT);
+		return content;
 	}
 
 	public static void main2(String[] args) {

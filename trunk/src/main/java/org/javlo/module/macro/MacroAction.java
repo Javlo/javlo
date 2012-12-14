@@ -12,8 +12,9 @@ import org.javlo.context.ContentContext;
 import org.javlo.context.GlobalContext;
 import org.javlo.helper.ResourceHelper;
 import org.javlo.i18n.I18nAccess;
-import org.javlo.macro.IMacro;
-import org.javlo.macro.MacroFactory;
+import org.javlo.macro.core.IInteractiveMacro;
+import org.javlo.macro.core.IMacro;
+import org.javlo.macro.core.MacroFactory;
 import org.javlo.message.MessageRepository;
 import org.javlo.module.core.ModuleException;
 import org.javlo.module.core.ModulesContext;
@@ -38,20 +39,44 @@ public class MacroAction extends AbstractModuleAction {
 		Collection<IMacro> macros = macroFactory.getMacros();
 		for (IMacro macro : macros) {
 			if (globalContext.getMacros().contains(macro.getName())) {
-				allMacros.add(macro);
+				if (!(macro instanceof IInteractiveMacro)) {
+					allMacros.add(macro);
+				}
 			}
 		}
+		
+		List<IMacro> alliMacros = new LinkedList<IMacro>();
+		for (IMacro macro : macros) {
+			if (globalContext.getMacros().contains(macro.getName())) {
+				if (macro instanceof IInteractiveMacro) {
+					alliMacros.add(macro);
+				}
+			}
+		}
+		
+		String outMsg = null;
 
 		if (macroContext.getActiveMacro() != null) {
 			ctx.getRequest().setAttribute("macro", macroContext.getActiveMacro());
-			String macroRenderer = macroContext.getActiveMacro().getRenderer();
+			if (macroContext.getActiveMacro() instanceof IInteractiveMacro) {
+				IInteractiveMacro iMacro = (IInteractiveMacro)macroContext.getActiveMacro();
+				outMsg = iMacro.prepare(ctx);
+			String macroRenderer = iMacro.getRenderer();
 			macroRenderer = ResourceHelper.createModulePath(ctx, macroRenderer);
 			ctx.getRequest().setAttribute("macroRenderer", macroRenderer);
+			}
 		}
 
 		ctx.getRequest().setAttribute("macros", allMacros);
+		ctx.getRequest().setAttribute("imacros", alliMacros);
+		
+		String parentMsg = super.prepare(ctx, moduleContext);
 
-		return super.prepare(ctx, moduleContext);
+		if (parentMsg == null) {
+			return outMsg;
+		} else {
+			return parentMsg;
+		}
 	}
 
 	public static final String performExecuteMacro(RequestService requestService, StaticConfig staticConfig, ContentContext ctx) throws Exception {

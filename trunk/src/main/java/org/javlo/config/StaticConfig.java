@@ -36,7 +36,7 @@ import org.javlo.helper.PatternHelper;
 import org.javlo.helper.ResourceHelper;
 import org.javlo.helper.StringHelper;
 import org.javlo.helper.URLHelper;
-import org.javlo.macro.IMacro;
+import org.javlo.macro.core.IMacro;
 import org.javlo.servlet.AccessServlet;
 import org.javlo.user.AdminUserFactory;
 import org.javlo.user.IUserFactory;
