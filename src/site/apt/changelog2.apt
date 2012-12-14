@@ -37,3 +37,5 @@ change log
  * Always close stream in ImageTransformServlet
  
 * 2.0.0.12 [12/12/2012]
+
+ * display error position if parsing error on content + interactive macro interface + import remote html page macro
