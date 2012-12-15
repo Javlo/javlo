@@ -53,13 +53,9 @@ public class ContentElementList implements IContentComponentsList {
 
 		IContentVisualComponent previousComponent = null;
 		for (ComponentBean bean : beans) {
-			assert bean != null;
-			assert bean.getLanguage() != null;
-			assert ctx != null;
-
 			String lg = ctx.getRequestContentLanguage();
 
-			if (bean.getLanguage().equals(lg)) {
+			if (bean != null && bean.getLanguage() != null && bean.getLanguage().equals(lg)) {
 				IContentVisualComponent comp = content.getCachedComponent(ctx, bean.getId());
 				if (comp == null) {
 					comp = ComponentFactory.createComponent(ctx, bean, inPage, previousComponent, null);
