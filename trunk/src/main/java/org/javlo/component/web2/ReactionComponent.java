@@ -23,6 +23,7 @@ import javax.mail.internet.AddressException;
 import javax.mail.internet.InternetAddress;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import javax.servlet.http.HttpSession;
 
 import org.apache.commons.lang.StringUtils;
 import org.javlo.actions.IAction;
@@ -243,7 +244,6 @@ public class ReactionComponent extends DynamicComponent implements IAction {
 				if (!reactionComp.addReaction(ctx, reaction)) {
 					messageRepository.setGlobalMessage(new GenericMessage(i18nAccess.getViewText("reaction.added"), GenericMessage.INFO));
 				} else {
-					System.out.println("***** ReactionComponent.performAdd : MSG = " + i18nAccess.getViewText("reaction.added-novalidation")); // TODO: remove debug trace
 					messageRepository.setGlobalMessage(new GenericMessage(i18nAccess.getViewText("reaction.added-novalidation"), GenericMessage.INFO));
 				}
 			} else {
@@ -254,8 +254,6 @@ public class ReactionComponent extends DynamicComponent implements IAction {
 
 		return null;
 	}
-
-	List<Field> viewField = null;
 
 	/**
 	 * create a static logger.
@@ -455,29 +453,38 @@ public class ReactionComponent extends DynamicComponent implements IAction {
 		return TYPE;
 	}
 
-	protected java.util.List<Field> getViewFields(ContentContext ctx) throws FileNotFoundException, IOException {
-		if (viewField == null) {
-			viewField = new LinkedList<Field>();
+	private List<Field> getViewField(HttpSession session) {
+		final String sessionKey = "view-field-" + getId();
+		List<Field> outViewField = (List<Field>) session.getAttribute(sessionKey);
+		if (outViewField == null) {
+			outViewField = new LinkedList<Field>();
+			session.setAttribute(sessionKey, outViewField);
+		}
+		return outViewField;
+	}
 
+	protected java.util.List<Field> getViewFields(ContentContext ctx) throws FileNotFoundException, IOException {
+		List<Field> viewField = getViewField(ctx.getRequest().getSession());
+		if (viewField.size() == 0) {
 			StaticConfig staticConfig = StaticConfig.getInstance(ctx.getRequest().getSession());
 			GlobalContext globalContext = GlobalContext.getInstance(ctx.getRequest());
 			I18nAccess i18nAccess = I18nAccess.getInstance(ctx.getRequest());
 
 			if (isWithTitle()) {
-				viewField.add(FieldFactory.getField(this, staticConfig, globalContext, i18nAccess, getProperties(), i18nAccess.getContentViewText("global.title"), "title", "text", getId()));
+				viewField.add(FieldFactory.getField(this, staticConfig, globalContext, i18nAccess, null, i18nAccess.getContentViewText("global.title"), "title", "text", getId()));
 			}
 
 			IUserFactory userFactory = UserFactory.createUserFactory(globalContext, ctx.getRequest().getSession());
 			if (userFactory.getCurrentUser(ctx.getRequest().getSession()) != null) {
-				getProperties().setProperty("field.nickname.value", userFactory.getCurrentUser(ctx.getRequest().getSession()).getLogin());
-				Field field = FieldFactory.getField(this, staticConfig, globalContext, i18nAccess, getProperties(), i18nAccess.getContentViewText("global.nickname"), "nickname", "text", getId());
+				// getProperties().setProperty("field.nickname.value", userFactory.getCurrentUser(ctx.getRequest().getSession()).getLogin());
+				Field field = FieldFactory.getField(this, staticConfig, globalContext, i18nAccess, null, i18nAccess.getContentViewText("global.nickname"), "nickname", "text", getId());
 				// field.setReadOnly(true);
 				viewField.add(field);
 			} else {
-				viewField.add(FieldFactory.getField(this, staticConfig, globalContext, i18nAccess, getProperties(), i18nAccess.getContentViewText("global.nickname"), "nickname", "text", getId()));
+				viewField.add(FieldFactory.getField(this, staticConfig, globalContext, i18nAccess, null, i18nAccess.getContentViewText("global.nickname"), "nickname", "text", getId()));
 			}
 
-			viewField.add(FieldFactory.getField(this, staticConfig, globalContext, i18nAccess, getProperties(), i18nAccess.getContentViewText("global.text"), "text", "large-text", getId()));
+			viewField.add(FieldFactory.getField(this, staticConfig, globalContext, i18nAccess, null, i18nAccess.getContentViewText("global.text"), "text", "large-text", getId()));
 
 			Collections.sort(viewField, new FieldOrderComparator());
 		}
