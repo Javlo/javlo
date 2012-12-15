@@ -16,8 +16,8 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.OutputStream;
+import java.io.PrintStream;
 import java.io.RandomAccessFile;
-import java.io.Reader;
 import java.net.URL;
 import java.nio.charset.Charset;
 import java.util.ArrayList;
@@ -723,20 +723,24 @@ public class ResourceHelper {
 		in.close();
 		return properties;
 	}
-	
+
 	public static final String loadStringFromStream(InputStream in, Charset encoding) throws IOException {
-		StringBuffer outContent = new StringBuffer();
+		ByteArrayOutputStream outStream = new ByteArrayOutputStream();
+		PrintStream out = new PrintStream(outStream);
+
 		BufferedReader reader = new BufferedReader(new InputStreamReader(in, encoding));
 		try {
 			String line = reader.readLine();
 			while (line != null) {
-				outContent.append(line);
+				out.println(line);
 				line = reader.readLine();
 			}
 		} finally {
 			ResourceHelper.closeResource(reader);
 		}
-		return outContent.toString();
+
+		out.close();
+		return new String(outStream.toByteArray());
 	}
 
 	public static final String loadStringFromFile(File file) throws IOException {
