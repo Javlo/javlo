@@ -759,6 +759,10 @@ public class StaticConfig extends Observable {
 		return properties.getInt("publish.loading.depth", 2);
 	}
 
+	public int getCaptchaSize() {
+		return properties.getInt("security.captcha.size", 4);
+	}
+
 	public String getRealPath(String path) {
 		return application.getRealPath(path);
 	}

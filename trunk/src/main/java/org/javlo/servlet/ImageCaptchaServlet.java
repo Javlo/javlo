@@ -9,12 +9,42 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import org.javlo.config.StaticConfig;
+import org.javlo.helper.StringHelper;
 import org.javlo.service.CaptchaService;
 
 import com.github.cage.Cage;
-import com.github.cage.YCage;
+import com.github.cage.IGenerator;
 
 public class ImageCaptchaServlet extends HttpServlet {
+
+	private static class JCage extends Cage {
+
+		private IGenerator generator = new JGenerator();
+
+		private JCage(int size) {
+			JGenerator jGenerator = new JGenerator();
+			jGenerator.size = size;
+			generator = jGenerator;
+		}
+
+		private static class JGenerator implements IGenerator<String> {
+
+			private int size = 4;
+
+			@Override
+			public String next() {
+				return StringHelper.getRandomString(size, "0123456789abefhklrstwxyz");
+			}
+
+		}
+
+		@Override
+		public IGenerator<String> getTokenGenerator() {
+			return generator;
+		}
+
+	}
 
 	private static final long serialVersionUID = 1L;
 
@@ -34,7 +64,8 @@ public class ImageCaptchaServlet extends HttpServlet {
 		response.setContentType("image/jpeg");
 
 		ServletOutputStream responseOutputStream = response.getOutputStream();
-		Cage cage = new YCage();
+		StaticConfig staticConfig = StaticConfig.getInstance(request.getSession().getServletContext());
+		Cage cage = new JCage(staticConfig.getCaptchaSize());
 		String token = cage.getTokenGenerator().next();
 		CaptchaService.getInstance(request.getSession()).setCurrentCaptchaCode(token);
 		cage.draw(token, responseOutputStream);

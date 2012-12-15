@@ -836,6 +836,15 @@ public class StringHelper {
 		return res.toString();
 	}
 
+	public static String getRandomString(int lenght, String acceptedChars) {
+		StringBuffer res = new StringBuffer();
+		for (int i = 0; i < lenght; i++) {
+			char newChar = acceptedChars.charAt((int) Math.round(Math.random() * (acceptedChars.length() - 1)));
+			res.append(newChar);
+		}
+		return res.toString();
+	}
+
 	public static String html2txt(String text) {
 		String res = text;
 		for (String[] element : TXT2HTML) {
@@ -1102,21 +1111,18 @@ public class StringHelper {
 	public static void main(String[] args) {
 
 		String text = "";
-		
+
 		String xml;
 		try {
-			
+
 			xml = ResourceHelper.loadStringFromFile(new File("c:/trans/test.xml"));
-			
+
 			System.out.println(xml);
 
-			
 		} catch (Exception e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
-		} 
-		
-
+		}
 
 	}
 
@@ -2476,45 +2482,44 @@ public class StringHelper {
 		}
 		return outBuffer.toString();
 	}
-	
+
 	public static boolean validUTF8(byte[] input) {
-		  int i = 0;
-		  // Check for BOM
-		  if (input.length >= 3 && (input[0] & 0xFF) == 0xEF
-		    && (input[1] & 0xFF) == 0xBB & (input[2] & 0xFF) == 0xBF) {
-		   i = 3;
-		  }
+		int i = 0;
+		// Check for BOM
+		if (input.length >= 3 && (input[0] & 0xFF) == 0xEF && (input[1] & 0xFF) == 0xBB & (input[2] & 0xFF) == 0xBF) {
+			i = 3;
+		}
 
-		  int end;
-		  for (int j = input.length; i < j; ++i) {
-		   int octet = input[i];
-		   if ((octet & 0x80) == 0) {
-		    continue; // ASCII
-		   }
+		int end;
+		for (int j = input.length; i < j; ++i) {
+			int octet = input[i];
+			if ((octet & 0x80) == 0) {
+				continue; // ASCII
+			}
 
-		   // Check for UTF-8 leading byte
-		   if ((octet & 0xE0) == 0xC0) {
-		    end = i + 1;
-		   } else if ((octet & 0xF0) == 0xE0) {
-		    end = i + 2;
-		   } else if ((octet & 0xF8) == 0xF0) {
-		    end = i + 3;
-		   } else {
-		    // Java only supports BMP so 3 is max
-		    return false;
-		   }
+			// Check for UTF-8 leading byte
+			if ((octet & 0xE0) == 0xC0) {
+				end = i + 1;
+			} else if ((octet & 0xF0) == 0xE0) {
+				end = i + 2;
+			} else if ((octet & 0xF8) == 0xF0) {
+				end = i + 3;
+			} else {
+				// Java only supports BMP so 3 is max
+				return false;
+			}
 
-		   while (i < end) {
-		    i++;
-		    octet = input[i];
-		    if ((octet & 0xC0) != 0x80) {
-		     // Not a valid trailing byte
-		     return false;
-		    }
-		   }
-		  }
-		  return true;
-		 }
+			while (i < end) {
+				i++;
+				octet = input[i];
+				if ((octet & 0xC0) != 0x80) {
+					// Not a valid trailing byte
+					return false;
+				}
+			}
+		}
+		return true;
+	}
 
 	private static final char[] hexDigit = { '0', '1', '2', '3', '4', '5', '6', '7', '8', '9', 'A', 'B', 'C', 'D', 'E', 'F' };
 
