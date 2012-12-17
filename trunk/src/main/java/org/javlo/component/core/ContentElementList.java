@@ -280,6 +280,14 @@ public class ContentElementList implements IContentComponentsList {
 	}
 
 	public String getTitle() {
+		return getTitle(true);
+	}
+
+	public String getLocalTitle() {
+		return getTitle(false);
+	}
+
+	private String getTitle(boolean repeat) {
 
 		String res = "";
 		Iterator elems = contentElements.iterator();
@@ -292,14 +300,16 @@ public class ContentElementList implements IContentComponentsList {
 				}
 			}
 		}
-		if (res.length() == 0) { // if no element not repeat search with repeat element
-			elems = contentElements.iterator();
-			while (elems.hasNext() && res.length() == 0) {
-				IContentVisualComponent comp = (IContentVisualComponent) elems.next();
-				if (comp.isLabel()) {
-					res = comp.getTextTitle();
-					if (res == null) {
-						res = "";
+		if (repeat) {
+			if (res.length() == 0) { // if no element not repeat search with repeat element
+				elems = contentElements.iterator();
+				while (elems.hasNext() && res.length() == 0) {
+					IContentVisualComponent comp = (IContentVisualComponent) elems.next();
+					if (comp.isLabel()) {
+						res = comp.getTextTitle();
+						if (res == null) {
+							res = "";
+						}
 					}
 				}
 			}
@@ -309,11 +319,13 @@ public class ContentElementList implements IContentComponentsList {
 			while (elems.hasNext()) {
 				IContentVisualComponent comp = (IContentVisualComponent) elems.next();
 				if (comp.getType().equals(PageTitle.TYPE)) {
-					res = comp.getTextTitle();
-					if (res == null) {
-						res = "";
+					if (repeat || !comp.isRepeat()) {
+						res = comp.getTextTitle();
+						if (res == null) {
+							res = "";
+						}
+						return res;
 					}
-					return res;
 				}
 
 			}

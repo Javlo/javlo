@@ -33,7 +33,7 @@ public class TitleURLCreator extends AbstractURLFactory {
 		if (comps.size() > 0) {
 			return ((PageURL) comps.iterator().next()).getValue();
 		}
-		String title = currentPage.getTitle(freeCtx);
+		String title = currentPage.getLocalTitle(freeCtx);
 		String path = URLEncoder.encode(StringHelper.createI18NURL(title), ContentContext.CHARACTER_ENCODING);
 
 		String url = path;
