@@ -18,6 +18,7 @@ import java.util.HashSet;
 import java.util.Iterator;
 import java.util.Map;
 import java.util.Set;
+import java.util.logging.Level;
 import java.util.logging.Logger;
 
 import javax.portlet.WindowState;
@@ -220,8 +221,10 @@ public class AccessServlet extends HttpServlet {
 			ctx.getCurrentTemplate();
 			request.setAttribute("frontCache", globalContext.getFrontCache(ctx));
 
-			logger.fine(requestLabel + " : first ContentContext " + df.format((double) (System.currentTimeMillis() - startTime) / (double) 1000) + " sec.");
-			logger.fine("device : " + ctx.getDevice());
+			if (logger.isLoggable(Level.FINE)) {
+				logger.fine(requestLabel + " : first ContentContext " + df.format((double) (System.currentTimeMillis() - startTime) / (double) 1000) + " sec.");
+				logger.fine("device : " + ctx.getDevice());
+			}
 
 			/** get info from system to browser **/
 			if (request != null && request.getPathInfo() != null && request.getPathInfo().endsWith("info.txt")) {
@@ -289,7 +292,9 @@ public class AccessServlet extends HttpServlet {
 
 			RequestHelper.traceMailingFeedBack(ctx);
 
-			logger.fine(requestLabel + " : i18nAccess.requestInit(ctx) " + df.format((double) (System.currentTimeMillis() - startTime) / (double) 1000) + " sec.");
+			if (logger.isLoggable(Level.FINE)) {
+				logger.fine(requestLabel + " : i18nAccess.requestInit(ctx) " + df.format((double) (System.currentTimeMillis() - startTime) / (double) 1000) + " sec.");
+			}
 
 			/* ********************** */
 			/* CHECK SYSTEM INTEGRITY */
@@ -361,7 +366,9 @@ public class AccessServlet extends HttpServlet {
 
 			try {
 				String action = ServletHelper.execAction(ctx);
-				logger.fine(requestLabel + " : action " + df.format((double) (System.currentTimeMillis() - startTime) / (double) 1000) + " sec.");
+				if (logger.isLoggable(Level.FINE)) {
+					logger.fine(requestLabel + " : action " + df.format((double) (System.currentTimeMillis() - startTime) / (double) 1000) + " sec.");
+				}
 
 				ContentService content = ContentService.getInstance(globalContext);
 				if (ctx.getCurrentPage() != null) {
@@ -410,7 +417,9 @@ public class AccessServlet extends HttpServlet {
 					}
 				}
 
-				logger.fine(requestLabel + " : content integrity " + df.format((double) (System.currentTimeMillis() - startTime) / (double) 1000) + " sec.");
+				if (logger.isLoggable(Level.FINE)) {
+					logger.fine(requestLabel + " : content integrity " + df.format((double) (System.currentTimeMillis() - startTime) / (double) 1000) + " sec.");
+				}
 
 				localLogger.endCount("execute action", "execute action = " + action);
 
@@ -456,11 +465,15 @@ public class AccessServlet extends HttpServlet {
 				// }
 				localLogger.endCount("tracking", "tracking user");
 
-				logger.fine(requestLabel + " : tracking " + df.format((double) (System.currentTimeMillis() - startTime) / (double) 1000) + " sec.");
+				if (logger.isLoggable(Level.FINE)) {
+					logger.fine(requestLabel + " : tracking " + df.format((double) (System.currentTimeMillis() - startTime) / (double) 1000) + " sec.");
+				}
 
 				InfoBean infoBean = InfoBean.updateInfoBean(ctx);
 
-				logger.fine(requestLabel + " : InfoBean " + df.format((double) (System.currentTimeMillis() - startTime) / (double) 1000) + " sec.");
+				if (logger.isLoggable(Level.FINE)) {
+					logger.fine(requestLabel + " : InfoBean " + df.format((double) (System.currentTimeMillis() - startTime) / (double) 1000) + " sec.");
+				}
 
 				/***********/
 				/* PORTLET */
@@ -650,12 +663,14 @@ public class AccessServlet extends HttpServlet {
 					}
 					localLogger.endCount("content", "include content");
 
-					logger.fine(requestLabel + " : render " + df.format((double) (System.currentTimeMillis() - startTime) / (double) 1000) + " sec.");
+					if (logger.isLoggable(Level.FINE)) {
+						logger.fine(requestLabel + " : render " + df.format((double) (System.currentTimeMillis() - startTime) / (double) 1000) + " sec.");
+					}
 				}
 
-				// if (staticConfig.isAccessLogger()) {
-				logger.fine(requestLabel + " : all process method " + df.format((double) (System.currentTimeMillis() - startTime) / (double) 1000) + " sec.");
-				// }
+				if (logger.isLoggable(Level.FINE)) {
+					logger.fine(requestLabel + " : all process method " + df.format((double) (System.currentTimeMillis() - startTime) / (double) 1000) + " sec.");
+				}
 
 			} catch (Throwable t) {
 
