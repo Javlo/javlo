@@ -27,7 +27,7 @@ public class Device implements Serializable {
 			currentDevice.devices = staticConfig.getDevices();
 			currentDevice.setUserAgent(userAgent);
 			request.getSession().setAttribute(Device.class.getCanonicalName(), currentDevice);
-			logger.info("Create new device : '" + currentDevice.getCode() + "' userAgent : " + userAgent);
+			logger.fine("Create new device : '" + currentDevice.getCode() + "' userAgent : " + userAgent);
 		}
 		String forcedCode = request.getParameter(FORCE_DEVICE_PARAMETER_NAME);
 		if (forcedCode != null) {

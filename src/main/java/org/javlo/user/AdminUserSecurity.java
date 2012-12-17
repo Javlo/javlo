@@ -177,6 +177,11 @@ public class AdminUserSecurity implements Serializable {
 		if (user == null) {
 			return false;
 		}
+		Collection<String> roles = user.getRoles();
+		for (String role : roles) {
+			System.out.println("*** role : "+role);
+		}
+		System.out.println("***** AdminUserSecurity.isGod : user.getRoles().contains(GENERAL_ADMIN) = "+user.getRoles().contains(GENERAL_ADMIN)); //TODO: remove debug trace
 		return user.getRoles().contains(GENERAL_ADMIN);
 	}
 

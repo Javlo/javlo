@@ -53,6 +53,7 @@ import org.javlo.template.TemplateFactory;
 import org.javlo.template.TemplatePlugin;
 import org.javlo.template.TemplatePluginFactory;
 import org.javlo.tracking.Tracker;
+import org.javlo.user.AdminUserFactory;
 import org.javlo.user.AdminUserSecurity;
 import org.javlo.user.User;
 import org.javlo.user.exception.JavloSecurityException;
@@ -1091,10 +1092,9 @@ public class AdminAction extends AbstractModuleAction {
 		return null;
 	}
 
-	public static String performUpdateStaticConfig(RequestService requestService, HttpServletRequest request, User user, ContentContext ctx, MessageRepository messageRepository, I18nAccess i18nAccess, Module currentModule, StaticConfig staticConfig) throws Exception {
-
-		if (!AdminUserSecurity.getInstance().isAdmin(user)) {
-			return "Security exception.";
+	public static String performUpdateStaticConfig(RequestService requestService, HttpServletRequest request, HttpSession session, ContentContext ctx, AdminUserFactory adminUserFactory, MessageRepository messageRepository, I18nAccess i18nAccess, Module currentModule, StaticConfig staticConfig) throws Exception {
+		if (!AdminUserSecurity.getInstance().isGod((adminUserFactory.getCurrentUser(session)))) {
+			return "Security error.";
 		}
 
 		String msg = null;
