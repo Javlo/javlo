@@ -275,6 +275,7 @@ public class MenuElement implements Serializable {
 		private static final long serialVersionUID = 1L;
 
 		String title = null;
+		String localTitle = null;
 		String subTitle = null;
 		String pageTitle = null;
 		String forcedPageTitle = null;
@@ -329,6 +330,14 @@ public class MenuElement implements Serializable {
 
 		public String getTitle() {
 			return title;
+		}
+
+		public String getLocalTitle() {
+			return localTitle;
+		}
+
+		public void setLocalTitle(String localTitle) {
+			this.localTitle = localTitle;
 		}
 
 		public void setTitle(String title) {
@@ -580,6 +589,7 @@ public class MenuElement implements Serializable {
 			pageDescription.subTitle = getSubTitle(ctx);
 			pageDescription.tags = getTags(ctx);
 			pageDescription.title = getTitle(ctx);
+			pageDescription.localTitle = getLocalTitle(ctx);
 			pageDescription.depth = getDepth();
 			pageDescription.visible = isVisible();
 			pageDescription.breakRepeat = isBreakRepeat();
@@ -2592,6 +2602,34 @@ public class MenuElement implements Serializable {
 			}
 		}
 		return desc.title;
+	}
+
+	/**
+	 * get title withtout repeat content
+	 * 
+	 * @param ctx
+	 * @return
+	 * @throws Exception
+	 */
+	public String getLocalTitle(ContentContext ctx) throws Exception {
+
+		ContentContext newCtx = new ContentContext(ctx);
+		newCtx.setArea(null); // warning : check if the method is needed.
+
+		PageDescription desc = getPageDescriptionCached(newCtx.getRequestContentLanguage());
+
+		if (desc.localTitle != null) {
+			return desc.localTitle;
+		}
+
+		desc.localTitle = getContent(newCtx).getLocalTitle();
+
+		if (desc.localTitle != null) {
+			if ((desc.localTitle.trim().length() == 0) && (name != null)) {
+				desc.localTitle = name;
+			}
+		}
+		return desc.localTitle;
 	}
 
 	/**
