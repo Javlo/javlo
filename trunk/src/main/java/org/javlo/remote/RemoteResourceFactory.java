@@ -62,6 +62,7 @@ public class RemoteResourceFactory extends AbstractResourceFactory {
 		String key = type + '-' + category;
 		RemoteResourceList remoteResources = remoteResourcesCache.get(key);
 		if (remoteResources == null) {
+			System.out.println("***** RemoteResourceFactory.getResources : key = "+key); //TODO: remove debug trace
 			remoteResources = (RemoteResourceList) loadURI('/' + URLEncoder.encode(type,ContentContext.CHARACTER_ENCODING) + '/' + URLEncoder.encode(category,ContentContext.CHARACTER_ENCODING) + ".xml");
 			remoteResourcesCache.put(key, remoteResources);			
 		}

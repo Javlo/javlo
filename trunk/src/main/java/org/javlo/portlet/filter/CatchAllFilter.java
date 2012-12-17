@@ -267,7 +267,7 @@ public class CatchAllFilter implements Filter {
 		boolean hostDefineSite = staticConfig.isHostDefineSite();
 		RequestService requestService = RequestService.getInstance(httpRequest);
 		try {
-			if (!staticConfig.isHostDefineSite()) {
+			if (!hostDefineSite) {
 				if (StringHelper.isTrue(requestService.getParameter("__check_context", "true"))) {
 					String contextURI = ContentManager.getContextName(httpRequest);
 					if (GlobalContext.isExist(httpRequest, contextURI)) {
@@ -281,7 +281,7 @@ public class CatchAllFilter implements Filter {
 						}
 						newURI = URLHelper.addParam(newURI, "__check_context", "false");
 
-						newURI = ((HttpServletResponse) response).encodeURL(newURI);
+						// newURI = ((HttpServletResponse) response).encodeURL(newURI);
 
 						forwardURI = newURI;
 					}
@@ -455,7 +455,7 @@ public class CatchAllFilter implements Filter {
 					if (globalContext.getPathPrefix() != null && globalContext.getPathPrefix().length() > 0) {
 						cmsURI = cmsURI.replaceFirst("/" + globalContext.getPathPrefix(), "");
 					}
-					if (cmsURI.length() > 0) {
+					if (cmsURI.length() > 1) {
 						String pattern1 = entry.getKey();
 						String pattern2 = entry.getValue();
 						if (!pattern1.contains("*")) {
