@@ -37,6 +37,7 @@ import org.javlo.module.core.ModulesContext;
 import org.javlo.module.mailing.MailingAction;
 import org.javlo.navigation.MenuElement;
 import org.javlo.service.ContentService;
+import org.javlo.service.CountService;
 import org.javlo.service.DataToIDService;
 import org.javlo.service.RequestService;
 import org.javlo.template.Template;
@@ -239,6 +240,8 @@ public class CatchAllFilter implements Filter {
 
 		HttpServletRequest httpRequest = (HttpServletRequest) request;
 		ServletContext servletContext = httpRequest.getSession().getServletContext();
+
+		CountService.getInstance(servletContext).touch();
 
 		if (request.getParameter(ContentContext.FORWARD_PATH_REQUEST_KEY) != null) {
 			String forwardURL = request.getParameter(ContentContext.FORWARD_PATH_REQUEST_KEY);
