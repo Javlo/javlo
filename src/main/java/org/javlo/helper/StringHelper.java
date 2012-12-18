@@ -98,7 +98,7 @@ public class StringHelper {
 		return FilenameUtils.removeExtension(fileName) + sufix + "." + FilenameUtils.getExtension(fileName);
 	}
 
-	public static String arrayToString(String[] array) {
+	public static String arrayToString(Object[] array) {
 		return arrayToString(array, DEFAULT_SEPARATOR);
 	}
 
