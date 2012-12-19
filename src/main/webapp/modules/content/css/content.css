@@ -44,14 +44,25 @@ ul.menu {
 	width: 60%;
 }
 
+.line-inline {
+	padding: 0 15px;
+	display: inline-block;
+	line-height: 18px;
+	overflow: hidden;
+}
+
 .line-inline input {
-	margin-right: 20px;
+	margin: 0 5px 0 0;
+}
+
+.line-inline label+input {
+	margin: 0 0 0 5px;
 	width: auto;
 }
 
 .line-inline label {
 	display: inline-block;
-	width: 160px;	
+	width: auto;	
 }
 
 .component input[type="radio"], .component input[type="checkbox"] {
