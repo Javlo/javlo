@@ -830,6 +830,13 @@ public class GlobalContext implements Serializable {
 		return dataProperties.getProperty(key);
 	}
 
+	public synchronized Collection<Object> getDataKeys() {
+		if (dataProperties == null) {
+			initDataFile();
+		}
+		return dataProperties.keySet();
+	}
+
 	private File getDataFile() throws IOException {
 		File file = new File(ElementaryURLHelper.mergePath(getDataFolder(), "context_data.properties"));
 		if (!file.exists()) {
