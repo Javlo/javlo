@@ -57,6 +57,7 @@ import org.javlo.service.ContentService;
 import org.javlo.service.RequestService;
 import org.javlo.service.remote.RemoteMessage;
 import org.javlo.service.remote.RemoteMessageService;
+import org.javlo.service.social.SocialService;
 import org.javlo.service.syncro.SynchroThread;
 import org.javlo.template.Template;
 import org.javlo.template.TemplateFactory;
@@ -547,7 +548,10 @@ public class AccessServlet extends HttpServlet {
 						getServletContext().getRequestDispatcher(editCtx.getEditTemplate()).include(request, response);
 					}
 					localLogger.endCount("edit", "include edit");
-				} else {
+				} else { // view
+
+					request.setAttribute("social", SocialService.getInstance(globalContext));
+
 					localLogger.startCount("content");
 
 					if (request.getServletPath().equals("/preview")) {
