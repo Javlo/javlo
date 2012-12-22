@@ -39,3 +39,7 @@ change log
 * 2.0.0.12 [12/12/2012]
 
  * display error position if parsing error on content + interactive macro interface + import remote html page macro
+ 
+ * images transform at the same time.
+ 
+* 2.0.0.13 [22/12/2012]
