@@ -1544,6 +1544,12 @@ public class StringHelper {
 		return renderDate(date, "dd/MM/yyyy");
 	}
 
+	public static final String renderTimeInSecond(long time) {
+		long sec = time / 1000;
+		long dec = (time - sec * 1000) / 100;
+		return "" + sec + '.' + dec;
+	}
+
 	public static String renderDouble(double value, int precision) {
 		return renderDouble(value, precision, ',');
 	}

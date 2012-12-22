@@ -7,8 +7,10 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.util.Arrays;
+import java.util.Map;
 import java.util.Set;
 import java.util.TreeSet;
+import java.util.concurrent.ConcurrentHashMap;
 import java.util.logging.Logger;
 
 import javax.imageio.ImageIO;
@@ -70,7 +72,7 @@ public class ImageTransformServlet extends HttpServlet {
 
 	public static final String VIEW_PICTURE_ACTION = "view picture";
 
-	private static final Object LOCK = new Object();
+	private static final Map<String, Object> fileTransforming = new ConcurrentHashMap<String, Object>();
 
 	private final String cacheDir = "_dc";
 
@@ -521,11 +523,33 @@ public class ImageTransformServlet extends HttpServlet {
 
 					/*** TRANSFORM IMAGE ***/
 
-					synchronized (LOCK) { // TODO: test if this synchronisation is ok
+					long size = imageFile.length();
+					boolean foundInSet = false;
+					synchronized (fileTransforming) {
+						if (fileTransforming.get(imageFile.getAbsolutePath()) != null) {
+							foundInSet = true;
+						} else {
+							fileTransforming.put(imageFile.getAbsolutePath(), new Object());
+						}
+					}
+
+					if (!foundInSet) {
 						fileStream = loadFileFromDisk(imageName, filter, area, ctx.getDevice(), template, imageFile.lastModified());
 						if ((fileStream == null)) {
-							imageTransform(ctx, ImageConfig.getNewInstance(globalContext, request.getSession(), template), staticInfo, filter, area, template, realFile, imageFile, imageName);
+							long currentTime = System.currentTimeMillis();
+							synchronized (fileTransforming.get(imageFile.getAbsolutePath())) {
+								imageTransform(ctx, ImageConfig.getNewInstance(globalContext, request.getSession(), template), staticInfo, filter, area, template, realFile, imageFile, imageName);
+							}
+							logger.info("transform image (" + StringHelper.renderSize(size) + ") : '" + imageName + "' in site '" + globalContext.getContextKey() + "' page : " + ctx.getRequestContentLanguage() + ctx.getPath() + " time : " + StringHelper.renderTimeInSecond(System.currentTimeMillis() - currentTime) + " sec.");
 							fileStream = loadFileFromDisk(imageName, filter, area, ctx.getDevice(), template, imageFile.lastModified());
+						}
+						fileTransforming.remove(imageFile.getAbsolutePath());
+					} else {
+						synchronized (fileTransforming.get(imageFile.getAbsolutePath())) {
+							fileStream = loadFileFromDisk(imageName, filter, area, ctx.getDevice(), template, imageFile.lastModified());
+							if (fileStream == null) {
+								logger.severe("problem on loading from cache : " + imageFile);
+							}
 						}
 					}
 
