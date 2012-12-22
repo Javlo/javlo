@@ -20,7 +20,7 @@ import org.javlo.navigation.MenuElement;
 import org.javlo.servlet.zip.ZipManagement;
 
 public class PersistenceThread extends Thread {
-	
+
 	public static final Object LOCK = new Object();
 
 	private static Logger logger = Logger.getLogger(PersistenceThread.class.getName());
@@ -29,7 +29,7 @@ public class PersistenceThread extends Thread {
 
 	private Map<String, String> globalContentMap;
 
-	private Collection<File> folderToSave = new LinkedList<File>();
+	private final Collection<File> folderToSave = new LinkedList<File>();
 
 	private String dataFolder = "";
 
