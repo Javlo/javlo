@@ -182,9 +182,9 @@ function initDropFile() {
 				});				
 				jQuery(document).trigger("ajaxUpdate");
 				jQuery("#ajax-loader").removeClass("active");
+				initDropFile();
 				try {
-					initPreview();
-					initDropFile();
+					initPreview();					
 				} catch (ex) {
 					if (console) {
 						console.log(ex);
