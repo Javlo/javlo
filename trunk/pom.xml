@@ -272,19 +272,15 @@
 		</dependency>
 
 		<dependency>
-			<groupId>jjil.core</groupId>
-			<artifactId>jjil</artifactId>
-			<version>0.1</version>
-			<scope>system</scope>
-			<systemPath>${project.basedir}/src/main/lib/JJILCore.jar</systemPath>
+			<groupId>jjil</groupId>
+			<artifactId>jjil.core</artifactId>
+			<version>0.1</version>			
 		</dependency>
 
 		<dependency>
-			<groupId>jjil.algorithm</groupId>
-			<artifactId>jjil</artifactId>
+			<groupId>jjil</groupId>
+			<artifactId>jjil.algorithm</artifactId>
 			<version>0.1</version>
-			<scope>system</scope>
-			<systemPath>${project.basedir}/src/main/lib/JJIL-J2SE.jar</systemPath>
 		</dependency>
 
 
@@ -295,6 +291,11 @@
 			<id>com.springsource.repository.bundles.external</id>
 			<name>SpringSource Enterprise Bundle Repository - External Bundle Releases</name>
 			<url>http://repository.springsource.com/maven/bundles/external</url>
+		</repository>
+		<repository>
+			<id>be.noctis</id>
+			<name>noctis</name>
+			<url>http://mvn.noctis.be</url>
 		</repository>
 	</repositories>
 
