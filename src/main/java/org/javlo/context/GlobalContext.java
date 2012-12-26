@@ -97,7 +97,6 @@ public class GlobalContext implements Serializable {
 
 		@Override
 		public void run() {
-
 			while (!globalContext.stopStoreThread) {
 				if (globalContext.needStoreData) {
 					globalContext.needStoreData = false;
