@@ -210,7 +210,7 @@ public abstract class AbstractFileComponent extends AbstractVisualComponent impl
 	}
 
 	protected String getDirInputName() {
-		return getId() + ID_SEPARATOR + "dir_name";
+		return "dir_name" + ID_SEPARATOR + getId();
 	}
 
 	protected String getDirLabelTitle(ContentContext ctx) throws FileNotFoundException, IOException {
@@ -760,6 +760,7 @@ public abstract class AbstractFileComponent extends AbstractVisualComponent impl
 
 	protected void uploadFiles(ContentContext ctx, RequestService service) throws Exception {
 		Collection<FileItem> items = service.getAllFileItem();
+		logger.info("upload " + items.size() + " files.");
 		for (FileItem item : items) {
 			if (item.getFieldName().equals(getFileXHTMLInputName())) {
 				File file = new File(item.getName());

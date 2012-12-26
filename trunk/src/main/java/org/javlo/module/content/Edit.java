@@ -719,7 +719,7 @@ public class Edit extends AbstractModuleAction {
 
 		for (String compId : components) {
 			IContentVisualComponent elem = content.getComponent(ctx, compId);
-			if (elem != null && StringHelper.isTrue(requestService.getParameter("id-" + elem.getId(), "false"))) {
+			if (elem != null && StringHelper.isTrue(requestService.getParameter("id-" + elem.getId(), null))) {
 				elem.performConfig(ctx);
 				elem.performEdit(ctx);
 				if (StringHelper.isTrue(requestService.getParameter("previewEdit", null))) {

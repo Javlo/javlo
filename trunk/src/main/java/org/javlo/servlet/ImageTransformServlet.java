@@ -540,7 +540,7 @@ public class ImageTransformServlet extends HttpServlet {
 							synchronized (fileTransforming.get(imageFile.getAbsolutePath())) {
 								imageTransform(ctx, ImageConfig.getNewInstance(globalContext, request.getSession(), template), staticInfo, filter, area, template, realFile, imageFile, imageName);
 							}
-							logger.info("transform image (" + StringHelper.renderSize(size) + ") : '" + imageName + "' in site '" + globalContext.getContextKey() + "' page : " + ctx.getRequestContentLanguage() + ctx.getPath() + " time : " + StringHelper.renderTimeInSecond(System.currentTimeMillis() - currentTime) + " sec.");
+							logger.info("transform image (" + StringHelper.renderSize(size) + ") : '" + imageName + "' in site '" + globalContext.getContextKey() + "' page : " + ctx.getRequestContentLanguage() + ctx.getPath() + " time : " + StringHelper.renderTimeInSecond(System.currentTimeMillis() - currentTime) + " sec.  #transformation:" + fileTransforming.size());
 							fileStream = loadFileFromDisk(imageName, filter, area, ctx.getDevice(), template, imageFile.lastModified());
 						}
 						fileTransforming.remove(imageFile.getAbsolutePath());

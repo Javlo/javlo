@@ -44,6 +44,9 @@ public class AjaxServlet extends HttpServlet {
 	}
 
 	private void process(HttpServletRequest request, HttpServletResponse response) throws ServletException {
+
+		System.out.println("***** AjaxServlet.process : request = " + request); // TODO: remove debug trace
+		System.out.println("***** AjaxServlet.process : response = " + response); // TODO: remove debug trace
 		try {
 
 			ContentContext ctx = ContentContext.getContentContext(request, response);
@@ -53,11 +56,10 @@ public class AjaxServlet extends HttpServlet {
 			ctx.setAjax(true);
 			GlobalContext globalContext = GlobalContext.getInstance(ctx.getRequest());
 			EditContext editCtx = EditContext.getInstance(globalContext, request.getSession());
-			
+
 			/*** update module status before action ***/
 			ModulesContext moduleContext = ModulesContext.getInstance(request.getSession(), globalContext);
 			moduleContext.initContext(request, response);
-
 
 			InfoBean.updateInfoBean(ctx);
 

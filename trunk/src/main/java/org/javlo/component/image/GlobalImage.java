@@ -569,7 +569,6 @@ public class GlobalImage extends Image {
 
 	@Override
 	public void performEdit(ContentContext ctx) throws Exception {
-
 		RequestService requestService = RequestService.getInstance(ctx.getRequest());
 		String link = requestService.getParameter(getLinkXHTMLInputName(), null);
 		String filter = requestService.getParameter(getImageFilterInputName(), null);
@@ -662,7 +661,11 @@ public class GlobalImage extends Image {
 	@Override
 	protected void uploadFiles(ContentContext ctx, RequestService requestService) throws Exception {
 		Collection<FileItem> itemsName = requestService.getAllFileItem();
+
+		logger.info("upload " + itemsName.size() + " files.");
+
 		for (FileItem item : itemsName) {
+			setNeedRefresh(true);
 			if (item.getFieldName().equals(getFileXHTMLInputName())) {
 				String newFileName = null;
 				newFileName = saveItem(ctx, item);

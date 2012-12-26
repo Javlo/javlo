@@ -4,7 +4,9 @@ import java.io.File;
 import java.io.PrintWriter;
 import java.io.StringWriter;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import org.javlo.component.core.ComponentBean;
 import org.javlo.component.core.IPreviewable;
@@ -147,7 +149,17 @@ public class Image extends AbstractFileComponent implements IImageTitle, IPrevie
 
 		FileAction.FileBean file = new FileAction.FileBean(ctx, getFile(ctx));
 		out.println("<div class=\"focus-zone\">");
-		out.println("<div id=\"" + getPreviewZoneId() + "\" class=\"list-container\">");
+
+		Map<String, String> params = new HashMap<String, String>();
+		params.put("webaction", "edit.save");
+		params.put("components", getId());
+		params.put("id-" + getId(), "true");
+		params.put(getFileXHTMLInputName(), "file.png"); // fake file name
+		params.put(getDirInputName(), getDirSelected()); // fake file name
+
+		String uploadURL = URLHelper.createURL(ctx, params);
+
+		out.println("<div class=\"drop-files\" data-fieldname=\"" + getFileXHTMLInputName() + "\" data-url=\"" + uploadURL + "\" id=\"" + getPreviewZoneId() + "\" class=\"list-container\">");
 		out.println("<img src=\"" + URLHelper.createTransformURL(ctx, getPage(), getResourceURL(ctx, getFileName()), "list") + "\" />&nbsp;");
 		out.println("<div class=\"focus-point\">x</div>");
 		out.println("<input class=\"posx\" type=\"hidden\" name=\"posx-" + file.getId() + "\" value=\"" + file.getFocusZoneX() + "\" />");

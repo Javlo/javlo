@@ -809,12 +809,12 @@ public class XMLManipulationHelper {
 		out.newLine();
 		out.append("<%=XHTMLHelper.renderHeaderResourceInsertion(ctx, \"/js/lib/jquery-1.7.2.min.js\")%>");
 		out.newLine();
-		out.append("<%=XHTMLHelper.renderHeaderResourceInsertion(ctx, \"/js/lib/jquery-ui-1.8.20.custom.min.js\")%>");
+		out.append("<%=XHTMLHelper.renderHeaderResourceInsertion(ctx, \"/js/lib/jquery-ui-1.9.2.custom.min.js\")%>");
 		out.newLine();
 		out.append("<%EditContext editCtx = EditContext.getInstance(globalContext, request.getSession());%>");
 		out.newLine();
 		out.append("<%if (editCtx.isEditPreview()) {%>");
-		out.newLine();	
+		out.newLine();
 		out.append("<%=XHTMLHelper.renderHeaderResourceInsertion(ctx, \"/js/lib/jquery.colorbox-min.js\")%>");
 		out.newLine();
 		out.append("<%=XHTMLHelper.renderHeaderResourceInsertion(ctx, \"/css/lib/colorbox/colorbox.css\")%>");

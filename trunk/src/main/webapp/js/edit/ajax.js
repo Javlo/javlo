@@ -49,6 +49,10 @@ jQuery(document).ready(function() {
 			return true;
 		}
 	});
+	
+	initDropFile();
+	
+	
 	jQuery(document).trigger("ajaxUpdate");
 });
 
@@ -107,5 +111,96 @@ function ajaxRequest(url, form) {
 		}
 	});	
 }
+
+function initDropFile() {
+	jQuery.event.props.push('dataTransfer');
+	jQuery(".drop-files").on('dragover', function(e) {
+		doNothing(e);
+	});
+	jQuery(".drop-files").on('dragenter', function(e) {
+		doNothing(e);	});
+	jQuery(".drop-files").on('drop', function(e) {		
+		doNothing(e);
+		
+		var url  = jQuery(this).data("url");		
+		if (url.indexOf("/edit-")>=0) {
+			url = url.replace("/edit-", "/ajax-");
+		} else {
+			url = url.replace("/edit/", "/ajax/");
+			if (url.indexOf("/preview-")>=0) {
+				url = url.replace("/preview-", "/ajax-");
+			} else {
+				url = url.replace("/preview/", "/ajax/");
+			}
+		}	
+		var fieldName = jQuery(this).data("fieldname");
+		
+		jQuery.each( e.dataTransfer.files, function(index, file) {
+			
+			var fd=new FormData;
+			fd.append(fieldName,file); 
+			
+			jQuery("#ajax-loader").addClass("active");
+			
+			/*jQuery.ajax({
+				url: url,
+				type: 'post',
+				data: fd,
+				processData: false,
+				contentType: false
+			});*/
+			
+			jQuery.ajax({
+				url : url,
+				cache : false,
+				data: fd,
+				type : "post",
+				dataType : "json",
+				processData: false,
+				contentType: false
+			}).done(function(jsonObj) {		
+				jQuery.each(jsonObj.zone, function(xhtmlId, xhtml) {
+					var item = jQuery("#" + xhtmlId);			
+					if (item != null) {
+						jQuery("#" + xhtmlId).replaceWith(xhtml);
+					} else {
+						if (console) {
+							console.log("warning : component "+xhtmlId+" not found for zone.");
+						}
+					}
+				});
+				jQuery.each(jsonObj.insideZone, function(xhtmlId, xhtml) {
+					var item = jQuery("#" + xhtmlId);
+					if (item != null) {
+						item.html(xhtml);	
+					} else {
+						if (console) {
+							console.log("warning : component "+xhtmlId+" not found for insideZone.");
+						}
+					}
+
+				});				
+				jQuery(document).trigger("ajaxUpdate");
+				jQuery("#ajax-loader").removeClass("active");
+				try {
+					initPreview();
+					initDropFile();
+				} catch (ex) {
+					if (console) {
+						console.log(ex);
+					}
+				}
+			});
+			
+		});
+		 
+	});
+}
+
+function doNothing(evt) {
+	evt.stopPropagation();
+	evt.preventDefault();
+}
+
 
 
