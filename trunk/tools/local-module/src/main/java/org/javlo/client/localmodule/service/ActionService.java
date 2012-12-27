@@ -1,7 +1,5 @@
 package org.javlo.client.localmodule.service;
 
-import java.awt.Desktop;
-import java.net.URI;
 import java.util.logging.Logger;
 
 import javax.swing.JOptionPane;
@@ -31,21 +29,21 @@ public class ActionService {
 	}
 
 	public void openWebInterface() {
-		try {
-			String remoteLoginId = ServiceFactory.getInstance().getHttpClient().retrieveRemoteLoginId();
-			Desktop.getDesktop().browse(new URI(config.getServerURL() + "/edit/?webaction=changeview&view=4&login_id=" + remoteLoginId));
-		} catch (Exception ex) {
-			tray.displayErrorMessage(i18n.get("error.on-browse"), ex, true);
-		}
+//		try {
+//			String remoteLoginId = ServiceFactory.getInstance().getHttpClient().retrieveRemoteLoginId();
+//			Desktop.getDesktop().browse(new URI(config.getServerURL() + "/edit/?webaction=changeview&view=4&login_id=" + remoteLoginId));
+//		} catch (Exception ex) {
+//			tray.displayErrorMessage(i18n.get("error.on-browse"), ex, true);
+//		}
 	}
 
 	public void editMetadata() {
-		try {
-			String remoteLoginId = ServiceFactory.getInstance().getHttpClient().retrieveRemoteLoginId();
-			Desktop.getDesktop().browse(new URI(config.getServerURL() + "/edit/?webaction=changeview&view=4&dir=___nomt___&login_id=" + remoteLoginId));
-		} catch (Exception ex) {
-			tray.displayErrorMessage(i18n.get("error.on-browse"), ex, true);
-		}
+//		try {
+//			String remoteLoginId = ServiceFactory.getInstance().getHttpClient().retrieveRemoteLoginId();
+//			Desktop.getDesktop().browse(new URI(config.getServerURL() + "/edit/?webaction=changeview&view=4&dir=___nomt___&login_id=" + remoteLoginId));
+//		} catch (Exception ex) {
+//			tray.displayErrorMessage(i18n.get("error.on-browse"), ex, true);
+//		}
 	}
 
 	public void showAbout() {
@@ -57,11 +55,11 @@ public class ActionService {
 	}
 
 	public void openFolder() {
-		try {
-			Desktop.getDesktop().open(config.getLocalFolderFile());
-		} catch (Exception ex) {
-			tray.displayErrorMessage(i18n.get("error.on-open-folder"), ex, true);
-		}
+//		try {
+//			Desktop.getDesktop().open(config.getLocalFolderFile());
+//		} catch (Exception ex) {
+//			tray.displayErrorMessage(i18n.get("error.on-open-folder"), ex, true);
+//		}
 	}
 
 	public void startSynchro() {

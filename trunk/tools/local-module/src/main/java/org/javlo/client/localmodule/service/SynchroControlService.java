@@ -88,7 +88,7 @@ public class SynchroControlService {
 				while (!stopping) {
 					//Get the service
 					synchronized (factory.getConfig().lock) {
-						File localFolder = factory.getConfig().getLocalFolderFile();
+						File localFolder = null; //= factory.getConfig().getLocalFolderFile();
 						String key = factory.getHttpClient().getServerURL().toString() + "|" + localFolder.getAbsolutePath();
 
 						if (ss == null || lastKey == null || !key.equals(lastKey)) {
@@ -100,7 +100,7 @@ public class SynchroControlService {
 						}
 					}
 					//Use the service
-					ss.setLocalName(factory.getConfig().getComputerName());
+					ss.setLocalName(null); //factory.getConfig().getComputerName());
 					factory.getTray().onSyncroStateChange(true);
 					ss.synchronize();
 					factory.getTray().onSyncroStateChange(false);
