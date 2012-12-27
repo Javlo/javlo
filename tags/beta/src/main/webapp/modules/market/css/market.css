@@ -1,0 +1,29 @@
+.remote-resource {
+	margin-top: 20px;
+}
+
+.main-remote .thumbview .info {
+	height: 230px;
+}
+
+.main-template .unvalid .thumb {
+	border: 1px solid #CC0000;
+	opacity : 0.8;
+}
+
+.main-template .unvalid .thumb img {
+	opacity : 0.8;
+}
+
+.remote-preview {
+	text-align: center;
+}
+
+.remote-preview .actions {
+	margin-top: 10px;
+}
+
+.actions {
+	text-align: right;
+}
+
