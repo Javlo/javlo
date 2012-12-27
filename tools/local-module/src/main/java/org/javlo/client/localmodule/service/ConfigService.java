@@ -2,23 +2,23 @@ package org.javlo.client.localmodule.service;
 
 import java.io.File;
 import java.io.IOException;
-import java.net.InetAddress;
 import java.net.URL;
-import java.net.UnknownHostException;
-import java.text.SimpleDateFormat;
-import java.util.Date;
+import java.util.Iterator;
+import java.util.LinkedList;
+import java.util.List;
 import java.util.logging.Logger;
 
 import org.apache.commons.configuration.ConfigurationException;
 import org.apache.commons.configuration.PropertiesConfiguration;
+import org.javlo.client.localmodule.model.ServerConfig;
 import org.javlo.helper.StringHelper;
 
 public class ConfigService {
 
 	private static final Logger logger = Logger.getLogger(ConfigService.class.getName());
 
-	private static final String FILE_NAME = "${user.home}${file.separator}.javlo-localfolder.properties";
-	public static final String DEFAULT_FOLDER = "${user.home}${file.separator}javlo-localfolder";
+	private static final String FILE_NAME = "${user.home}${file.separator}.javlo-localmodule.properties";
+	public static final String DEFAULT_FOLDER = "${user.home}${file.separator}javlo-localmodule";
 
 	private static ConfigService instance;
 	public static ConfigService getInstance() {
@@ -40,7 +40,7 @@ public class ConfigService {
 	public void init() throws IOException, ConfigurationException {
 		synchronized (lock) {
 			File file = new File(StringHelper.expandSystemProperties(FILE_NAME));
-			logger.info("load localfolder config : " + file);
+			logger.info("load local-module config : " + file);
 			if (!file.exists()) {
 				if (!file.getParentFile().exists()) {
 					file.getParentFile().mkdirs();
@@ -62,100 +62,129 @@ public class ConfigService {
 
 	public void save() throws ConfigurationException {
 		synchronized (lock) {
-			String saved = null;
-			if (!isStorePassword()) {
-				saved = getPassword();
-				setPassword(null);
-			}
+//			String saved = null;
+//			if (!isStorePassword()) {
+//				saved = getPassword();
+//				setPassword(null);
+//			}
 			properties.save();
-			if (saved != null) {
-				setPassword(saved);
+//			if (saved != null) {
+//				setPassword(saved);
+//			}
+		}
+	}
+
+//	public String getComputerName() {
+//		synchronized (lock) {
+//			String out = properties.getString("local.computerName", null);
+//			if (out == null) {
+//				try {
+//					out = InetAddress.getLocalHost().getHostName();
+//				} catch (UnknownHostException ex) {
+//					out = new SimpleDateFormat("'Computer'D-sSSS").format(new Date());
+//				}
+//			}
+//			return out;
+//		}
+//	}
+//	public void setComputerName(String computerName) {
+//		synchronized (lock) {
+//			properties.setProperty("local.computerName", computerName);
+//		}
+//	}
+
+//	public File getLocalFolderFile() {
+//		File out = new File(getLocalFolder());
+//		out.mkdirs();
+//		return out;
+//	}
+//	public String getLocalFolder() {
+//		synchronized (lock) {
+//			return properties.getString("local.folder");
+//		}
+//	}
+//	public void setLocalFolder(String localFolder) {
+//		synchronized (lock) {
+//			properties.setProperty("local.folder", localFolder);
+//		}
+//	}
+
+	public ServerConfig[] getServers() {
+		List<ServerConfig> servers = new LinkedList<ServerConfig>();
+		int i = 0;
+		while (true) {
+			String base = "server." + i + ".";
+			String serverURL = properties.getString(base + "url");
+			if (serverURL == null) {
+				break;
 			}
+			ServerConfig server = new ServerConfig();
+			server.setServerURL(serverURL);
+			servers.add(server);
+			i++;
+		}
+		return servers.toArray(new ServerConfig[servers.size()]);
+	}
+
+	public void setServers(ServerConfig[] servers) {
+		for (Iterator<String> iterator = properties.getKeys("server"); iterator.hasNext();) {
+			properties.clearProperty(iterator.next());
+		}
+		int i = 0;
+		for (ServerConfig server : servers) {
+			String base = "server." + i + ".";
+			properties.setProperty(base + "url", server.getServerURL());
+			i++;
 		}
 	}
 
-	public String getComputerName() {
-		synchronized (lock) {
-			String out = properties.getString("local.computerName", null);
-			if (out == null) {
-				try {
-					out = InetAddress.getLocalHost().getHostName();
-				} catch (UnknownHostException ex) {
-					out = new SimpleDateFormat("'Computer'D-sSSS").format(new Date());
-				}
-			}
-			return out;
-		}
-	}
-	public void setComputerName(String computerName) {
-		synchronized (lock) {
-			properties.setProperty("local.computerName", computerName);
-		}
-	}
-
-	public File getLocalFolderFile() {
-		File out = new File(getLocalFolder());
-		out.mkdirs();
-		return out;
-	}
-	public String getLocalFolder() {
-		synchronized (lock) {
-			return properties.getString("local.folder");
-		}
-	}
-	public void setLocalFolder(String localFolder) {
-		synchronized (lock) {
-			properties.setProperty("local.folder", localFolder);
-		}
-	}
-
-	public String getServerURL() {
-		synchronized (lock) {
-			return properties.getString("server.url");
-		}
-	}
-	public void setServerURL(String serverURL) {
-		synchronized (lock) {
-			properties.setProperty("server.url", serverURL);
-		}
-	}
-
-	public String getUsername() {
-		synchronized (lock) {
-			String out = properties.getString("server.username");
-			if (out == null) {
-				out = System.getProperty("user.name");
-			}
-			return out;
-		}
-	}
-	public void setUsername(String username) {
-		synchronized (lock) {
-			properties.setProperty("server.username", username);
-		}
-	}
-
-	public boolean isStorePassword() {
-		synchronized (lock) {
-			return properties.getBoolean("server.store-password", false);
-		}
-	}
-	public void setStorePassword(boolean password) {
-		synchronized (lock) {
-			properties.setProperty("server.store-password", password);
-		}
-	}
-
-	public String getPassword() {
-		synchronized (lock) {
-			return properties.getString("server.password");
-		}
-	}
-	public void setPassword(String password) {
-		synchronized (lock) {
-			properties.setProperty("server.password", password);
-		}
-	}
+//	public String getServerURL() {
+//		synchronized (lock) {
+//			return properties.getString("server.url");
+//		}
+//	}
+//	public void setServerURL(String serverURL) {
+//		synchronized (lock) {
+//			properties.setProperty("server.url", serverURL);
+//		}
+//	}
+//
+//	public String getUsername() {
+//		synchronized (lock) {
+//			String out = properties.getString("server.username");
+//			if (out == null) {
+//				out = System.getProperty("user.name");
+//			}
+//			return out;
+//		}
+//	}
+//	public void setUsername(String username) {
+//		synchronized (lock) {
+//			properties.setProperty("server.username", username);
+//		}
+//	}
+//
+//	public boolean isStorePassword() {
+//		synchronized (lock) {
+//			return properties.getBoolean("server.store-password", false);
+//		}
+//	}
+//	public void setStorePassword(boolean password) {
+//		synchronized (lock) {
+//			properties.setProperty("server.store-password", password);
+//		}
+//	}
+//
+//	public String getPassword() {
+//		synchronized (lock) {
+//			return properties.getString("server.password");
+//		}
+//	}
+//	public void setPassword(String password) {
+//		synchronized (lock) {
+//			properties.setProperty("server.password", password);
+//		}
+//	}
 
 	public String getProxyHost() {
 		synchronized (lock) {
@@ -223,16 +252,17 @@ public class ConfigService {
 	public boolean isValid() {
 		synchronized (lock) {
 			return true //
-					&& getComputerName() != null //
-					&& checkLocalFolder(getLocalFolder()) //
-					&& checkServerURL(getServerURL()) //
-					&& getUsername() != null //
-					&& getPassword() != null //
+			&& getServers().length > 0 //
+//					&& getComputerName() != null //
+//					&& checkLocalFolder(getLocalFolder()) //
+//					&& checkServerURL(getServerURL()) //
+//					&& getUsername() != null //
+//					&& getPassword() != null //
 			;
 		}
 	}
 
-	public boolean checkLocalFolder(String localFolder) {
+	public static boolean checkLocalFolder(String localFolder) {
 		if (localFolder == null)
 			return false;
 		File lf = new File(localFolder);
@@ -244,7 +274,7 @@ public class ConfigService {
 		}
 	}
 
-	public boolean checkServerURL(String serverURL) {
+	public static boolean checkServerURL(String serverURL) {
 		if (serverURL == null) {
 			return false;
 		}

@@ -41,9 +41,9 @@ public class ServiceFactory {
 	}
 
 	public HttpClientService getHttpClient() {
-		httpClient.setServerURL(getConfig().getServerURL());
-		httpClient.setUsername(getConfig().getUsername());
-		httpClient.setPassword(getConfig().getPassword());
+//		httpClient.setServerURL(getConfig().getServerURL());
+//		httpClient.setUsername(getConfig().getUsername());
+//		httpClient.setPassword(getConfig().getPassword());
 		httpClient.setProxyHost(getConfig().getProxyHost());
 		httpClient.setProxyPort(getConfig().getProxyPort());
 		return httpClient;

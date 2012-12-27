@@ -4,7 +4,7 @@
   <Properties>
     <Property name="defaultCloseOperation" type="int" value="0"/>
     <Property name="title" type="java.lang.String" editor="org.netbeans.modules.i18n.form.FormI18nStringEditor">
-      <ResourceString bundle="local-folder.properties" key="config.title" replaceFormat="i18n.get(&quot;{key}&quot;)"/>
+      <ResourceString bundle="local-module.properties" key="config.title" replaceFormat="i18n.get(&quot;{key}&quot;)"/>
     </Property>
     <Property name="iconImages" type="java.util.List" editor="org.netbeans.modules.form.ComponentChooserEditor">
       <ComponentRef name="null"/>
@@ -33,17 +33,12 @@
     <DimensionLayout dim="0">
       <Group type="103" groupAlignment="0" attributes="0">
           <Component id="pnlButton" alignment="1" max="32767" attributes="0"/>
-          <Group type="102" alignment="1" attributes="0">
+          <Group type="102" attributes="0">
               <EmptySpace max="-2" attributes="0"/>
-              <Group type="103" groupAlignment="1" attributes="0">
-                  <Component id="pnlServer" alignment="0" max="32767" attributes="0"/>
+              <Group type="103" groupAlignment="0" attributes="0">
                   <Component id="pnlLocal" alignment="0" max="32767" attributes="0"/>
+                  <Component id="pnlProxy" alignment="0" max="32767" attributes="0"/>
               </Group>
-              <EmptySpace max="-2" attributes="0"/>
-          </Group>
-          <Group type="102" alignment="0" attributes="0">
-              <EmptySpace max="-2" attributes="0"/>
-              <Component id="pnlProxy" max="32767" attributes="0"/>
               <EmptySpace max="-2" attributes="0"/>
           </Group>
       </Group>
@@ -52,9 +47,7 @@
       <Group type="103" groupAlignment="0" attributes="0">
           <Group type="102" alignment="0" attributes="0">
               <EmptySpace max="-2" attributes="0"/>
-              <Component id="pnlLocal" min="-2" pref="82" max="-2" attributes="0"/>
-              <EmptySpace max="-2" attributes="0"/>
-              <Component id="pnlServer" min="-2" max="-2" attributes="0"/>
+              <Component id="pnlLocal" min="-2" max="-2" attributes="0"/>
               <EmptySpace max="-2" attributes="0"/>
               <Component id="pnlProxy" min="-2" max="-2" attributes="0"/>
               <EmptySpace max="32767" attributes="0"/>
@@ -69,7 +62,7 @@
         <Property name="border" type="javax.swing.border.Border" editor="org.netbeans.modules.form.editors2.BorderEditor">
           <Border info="org.netbeans.modules.form.compat2.border.TitledBorderInfo">
             <TitledBorder title="Local">
-              <ResourceString PropertyName="titleX" bundle="local-folder.properties" key="config.local" replaceFormat="i18n.get(&quot;{key}&quot;)"/>
+              <ResourceString PropertyName="titleX" bundle="local-module.properties" key="config.local" replaceFormat="i18n.get(&quot;{key}&quot;)"/>
             </TitledBorder>
           </Border>
         </Property>
@@ -80,164 +73,93 @@
           <Group type="103" groupAlignment="0" attributes="0">
               <Group type="102" attributes="0">
                   <EmptySpace max="-2" attributes="0"/>
-                  <Group type="103" groupAlignment="0" attributes="0">
-                      <Component id="lblComputerName" alignment="0" min="-2" max="-2" attributes="0"/>
-                      <Component id="lblLocalFolder" alignment="0" min="-2" max="-2" attributes="0"/>
-                  </Group>
-                  <EmptySpace type="separate" max="-2" attributes="0"/>
-                  <Group type="103" groupAlignment="1" attributes="0">
-                      <Group type="102" attributes="0">
-                          <Component id="txtLocalFolder" pref="191" max="32767" attributes="0"/>
-                          <EmptySpace max="-2" attributes="0"/>
-                          <Component id="btnLocalBrowse" min="-2" max="-2" attributes="0"/>
-                      </Group>
-                      <Component id="txtComputerName" pref="242" max="32767" attributes="0"/>
-                  </Group>
+                  <Component id="lblServers" min="-2" max="-2" attributes="0"/>
+                  <EmptySpace type="unrelated" max="-2" attributes="0"/>
+                  <Component id="sclServers" min="-2" pref="285" max="-2" attributes="0"/>
                   <EmptySpace max="-2" attributes="0"/>
+                  <Group type="103" groupAlignment="0" attributes="0">
+                      <Component id="btnAddServer" alignment="0" min="-2" pref="80" max="-2" attributes="0"/>
+                      <Component id="btnRemoveServer" min="-2" pref="80" max="-2" attributes="0"/>
+                      <Component id="btnEditServer" min="-2" pref="80" max="-2" attributes="0"/>
+                  </Group>
+                  <EmptySpace max="32767" attributes="0"/>
               </Group>
           </Group>
         </DimensionLayout>
         <DimensionLayout dim="1">
           <Group type="103" groupAlignment="0" attributes="0">
-              <Group type="102" alignment="0" attributes="0">
-                  <Group type="103" groupAlignment="3" attributes="0">
-                      <Component id="lblComputerName" alignment="3" min="-2" max="-2" attributes="0"/>
-                      <Component id="txtComputerName" alignment="3" min="-2" max="-2" attributes="0"/>
+              <Group type="102" attributes="0">
+                  <Group type="103" groupAlignment="0" attributes="0">
+                      <Component id="sclServers" pref="174" max="32767" attributes="0"/>
+                      <Group type="102" attributes="0">
+                          <Group type="103" groupAlignment="0" attributes="0">
+                              <Component id="lblServers" min="-2" max="-2" attributes="0"/>
+                              <Component id="btnAddServer" alignment="0" min="-2" max="-2" attributes="0"/>
+                          </Group>
+                          <EmptySpace max="-2" attributes="0"/>
+                          <Component id="btnEditServer" min="-2" max="-2" attributes="0"/>
+                          <EmptySpace max="-2" attributes="0"/>
+                          <Component id="btnRemoveServer" min="-2" max="-2" attributes="0"/>
+                          <EmptySpace min="0" pref="0" max="32767" attributes="0"/>
+                      </Group>
                   </Group>
                   <EmptySpace max="-2" attributes="0"/>
-                  <Group type="103" groupAlignment="3" attributes="0">
-                      <Component id="lblLocalFolder" alignment="3" min="-2" max="-2" attributes="0"/>
-                      <Component id="txtLocalFolder" alignment="3" min="-2" max="-2" attributes="0"/>
-                      <Component id="btnLocalBrowse" alignment="3" min="-2" max="-2" attributes="0"/>
-                  </Group>
-                  <EmptySpace pref="6" max="32767" attributes="0"/>
               </Group>
           </Group>
         </DimensionLayout>
       </Layout>
       <SubComponents>
-        <Component class="javax.swing.JLabel" name="lblComputerName">
+        <Component class="javax.swing.JLabel" name="lblServers">
           <Properties>
             <Property name="text" type="java.lang.String" editor="org.netbeans.modules.i18n.form.FormI18nStringEditor">
-              <ResourceString bundle="local-folder.properties" key="config.computer-name" replaceFormat="i18n.get(&quot;{key}&quot;)"/>
+              <ResourceString bundle="local-module.properties" key="config.servers" replaceFormat="i18n.get(&quot;{key}&quot;)"/>
             </Property>
           </Properties>
         </Component>
-        <Component class="javax.swing.JTextField" name="txtComputerName">
-        </Component>
-        <Component class="javax.swing.JLabel" name="lblLocalFolder">
+        <Container class="javax.swing.JScrollPane" name="sclServers">
+          <AuxValues>
+            <AuxValue name="autoScrollPane" type="java.lang.Boolean" value="true"/>
+          </AuxValues>
+
+          <Layout class="org.netbeans.modules.form.compat2.layouts.support.JScrollPaneSupportLayout"/>
+          <SubComponents>
+            <Component class="javax.swing.JList" name="lstServers">
+              <Properties>
+                <Property name="model" type="javax.swing.ListModel" editor="org.netbeans.modules.form.editors2.ListModelEditor">
+                  <StringArray count="0"/>
+                </Property>
+              </Properties>
+            </Component>
+          </SubComponents>
+        </Container>
+        <Component class="javax.swing.JButton" name="btnAddServer">
           <Properties>
             <Property name="text" type="java.lang.String" editor="org.netbeans.modules.i18n.form.FormI18nStringEditor">
-              <ResourceString bundle="local-folder.properties" key="config.local-folder" replaceFormat="i18n.get(&quot;{key}&quot;)"/>
+              <ResourceString bundle="local-module.properties" key="config.action.add-server" replaceFormat="i18n.get(&quot;{key}&quot;)"/>
             </Property>
-          </Properties>
-        </Component>
-        <Component class="javax.swing.JTextField" name="txtLocalFolder">
-          <Properties>
-            <Property name="editable" type="boolean" value="false"/>
-          </Properties>
-        </Component>
-        <Component class="javax.swing.JButton" name="btnLocalBrowse">
-          <Properties>
-            <Property name="text" type="java.lang.String" value="..."/>
           </Properties>
           <Events>
-            <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="btnLocalBrowseActionPerformed"/>
+            <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="btnAddServerActionPerformed"/>
           </Events>
         </Component>
-      </SubComponents>
-    </Container>
-    <Container class="javax.swing.JPanel" name="pnlServer">
-      <Properties>
-        <Property name="border" type="javax.swing.border.Border" editor="org.netbeans.modules.form.editors2.BorderEditor">
-          <Border info="org.netbeans.modules.form.compat2.border.TitledBorderInfo">
-            <TitledBorder title="Javlo Server">
-              <ResourceString PropertyName="titleX" bundle="local-folder.properties" key="config.server" replaceFormat="i18n.get(&quot;{key}&quot;)"/>
-            </TitledBorder>
-          </Border>
-        </Property>
-      </Properties>
-
-      <Layout>
-        <DimensionLayout dim="0">
-          <Group type="103" groupAlignment="0" attributes="0">
-              <Group type="102" alignment="0" attributes="0">
-                  <EmptySpace max="-2" attributes="0"/>
-                  <Group type="103" groupAlignment="0" attributes="0">
-                      <Component id="lblServerURL" alignment="0" min="-2" max="-2" attributes="0"/>
-                      <Component id="lblUsername" alignment="0" min="-2" max="-2" attributes="0"/>
-                      <Component id="lblPassword" alignment="0" min="-2" max="-2" attributes="0"/>
-                  </Group>
-                  <EmptySpace type="separate" max="-2" attributes="0"/>
-                  <Group type="103" groupAlignment="0" attributes="0">
-                      <Component id="chkStorePassword" alignment="0" min="-2" max="-2" attributes="0"/>
-                      <Component id="txtPassword" alignment="0" pref="264" max="32767" attributes="0"/>
-                      <Component id="txtServerURL" alignment="1" pref="264" max="32767" attributes="1"/>
-                      <Component id="txtUsername" alignment="1" pref="264" max="32767" attributes="1"/>
-                  </Group>
-                  <EmptySpace max="-2" attributes="0"/>
-              </Group>
-          </Group>
-        </DimensionLayout>
-        <DimensionLayout dim="1">
-          <Group type="103" groupAlignment="0" attributes="0">
-              <Group type="102" alignment="0" attributes="0">
-                  <Group type="103" groupAlignment="3" attributes="0">
-                      <Component id="lblServerURL" alignment="3" min="-2" max="-2" attributes="0"/>
-                      <Component id="txtServerURL" alignment="3" min="-2" max="-2" attributes="0"/>
-                  </Group>
-                  <EmptySpace max="-2" attributes="0"/>
-                  <Group type="103" groupAlignment="3" attributes="0">
-                      <Component id="txtUsername" alignment="3" min="-2" max="-2" attributes="0"/>
-                      <Component id="lblUsername" alignment="3" min="-2" max="-2" attributes="0"/>
-                  </Group>
-                  <EmptySpace max="-2" attributes="0"/>
-                  <Group type="103" groupAlignment="3" attributes="0">
-                      <Component id="txtPassword" alignment="3" min="-2" max="-2" attributes="0"/>
-                      <Component id="lblPassword" alignment="3" min="-2" max="-2" attributes="0"/>
-                  </Group>
-                  <EmptySpace max="-2" attributes="0"/>
-                  <Component id="chkStorePassword" min="-2" max="-2" attributes="0"/>
-              </Group>
-          </Group>
-        </DimensionLayout>
-      </Layout>
-      <SubComponents>
-        <Component class="javax.swing.JLabel" name="lblServerURL">
+        <Component class="javax.swing.JButton" name="btnEditServer">
           <Properties>
             <Property name="text" type="java.lang.String" editor="org.netbeans.modules.i18n.form.FormI18nStringEditor">
-              <ResourceString bundle="local-folder.properties" key="config.server-url" replaceFormat="i18n.get(&quot;{key}&quot;)"/>
-            </Property>
-          </Properties>
-        </Component>
-        <Component class="javax.swing.JTextField" name="txtServerURL">
-        </Component>
-        <Component class="javax.swing.JLabel" name="lblUsername">
-          <Properties>
-            <Property name="text" type="java.lang.String" editor="org.netbeans.modules.i18n.form.FormI18nStringEditor">
-              <ResourceString bundle="local-folder.properties" key="config.username" replaceFormat="i18n.get(&quot;{key}&quot;)"/>
-            </Property>
-          </Properties>
-        </Component>
-        <Component class="javax.swing.JTextField" name="txtUsername">
-        </Component>
-        <Component class="javax.swing.JLabel" name="lblPassword">
-          <Properties>
-            <Property name="text" type="java.lang.String" editor="org.netbeans.modules.i18n.form.FormI18nStringEditor">
-              <ResourceString bundle="local-folder.properties" key="config.password" replaceFormat="i18n.get(&quot;{key}&quot;)"/>
-            </Property>
-          </Properties>
-        </Component>
-        <Component class="javax.swing.JPasswordField" name="txtPassword">
-        </Component>
-        <Component class="javax.swing.JCheckBox" name="chkStorePassword">
-          <Properties>
-            <Property name="text" type="java.lang.String" editor="org.netbeans.modules.i18n.form.FormI18nStringEditor">
-              <ResourceString bundle="local-folder.properties" key="config.store-password" replaceFormat="i18n.get(&quot;{key}&quot;)"/>
+              <ResourceString bundle="local-module.properties" key="config.action.edit-server" replaceFormat="i18n.get(&quot;{key}&quot;)"/>
             </Property>
           </Properties>
           <Events>
-            <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="chkStorePasswordActionPerformed"/>
+            <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="btnEditServerActionPerformed"/>
+          </Events>
+        </Component>
+        <Component class="javax.swing.JButton" name="btnRemoveServer">
+          <Properties>
+            <Property name="text" type="java.lang.String" editor="org.netbeans.modules.i18n.form.FormI18nStringEditor">
+              <ResourceString bundle="local-module.properties" key="config.action.remove-server" replaceFormat="i18n.get(&quot;{key}&quot;)"/>
+            </Property>
+          </Properties>
+          <Events>
+            <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="btnRemoveServerActionPerformed"/>
           </Events>
         </Component>
       </SubComponents>
@@ -247,7 +169,7 @@
         <Property name="border" type="javax.swing.border.Border" editor="org.netbeans.modules.form.editors2.BorderEditor">
           <Border info="org.netbeans.modules.form.compat2.border.TitledBorderInfo">
             <TitledBorder title="HTTP Proxy (leave blank if not used)">
-              <ResourceString PropertyName="titleX" bundle="local-folder.properties" key="config.proxy" replaceFormat="i18n.get(&quot;{key}&quot;)"/>
+              <ResourceString PropertyName="titleX" bundle="local-module.properties" key="config.proxy" replaceFormat="i18n.get(&quot;{key}&quot;)"/>
             </TitledBorder>
           </Border>
         </Property>
@@ -267,9 +189,9 @@
                   <EmptySpace type="separate" max="-2" attributes="0"/>
                   <Group type="103" groupAlignment="0" attributes="0">
                       <Component id="txtProxyPort" min="-2" pref="165" max="-2" attributes="0"/>
-                      <Component id="txtProxyHost" alignment="0" pref="270" max="32767" attributes="0"/>
-                      <Component id="txtProxyUsername" alignment="1" pref="270" max="32767" attributes="0"/>
-                      <Component id="txtProxyPassword" alignment="1" pref="270" max="32767" attributes="0"/>
+                      <Component id="txtProxyHost" alignment="0" max="32767" attributes="0"/>
+                      <Component id="txtProxyUsername" alignment="1" max="32767" attributes="0"/>
+                      <Component id="txtProxyPassword" alignment="1" max="32767" attributes="0"/>
                   </Group>
                   <EmptySpace max="-2" attributes="0"/>
               </Group>
@@ -310,7 +232,7 @@
         <Component class="javax.swing.JLabel" name="lblProxyHost">
           <Properties>
             <Property name="text" type="java.lang.String" editor="org.netbeans.modules.i18n.form.FormI18nStringEditor">
-              <ResourceString bundle="local-folder.properties" key="config.proxy-host" replaceFormat="i18n.get(&quot;{key}&quot;)"/>
+              <ResourceString bundle="local-module.properties" key="config.proxy-host" replaceFormat="i18n.get(&quot;{key}&quot;)"/>
             </Property>
           </Properties>
         </Component>
@@ -319,7 +241,7 @@
         <Component class="javax.swing.JLabel" name="lblProxyPort">
           <Properties>
             <Property name="text" type="java.lang.String" editor="org.netbeans.modules.i18n.form.FormI18nStringEditor">
-              <ResourceString bundle="local-folder.properties" key="config.proxy-port" replaceFormat="i18n.get(&quot;{key}&quot;)"/>
+              <ResourceString bundle="local-module.properties" key="config.proxy-port" replaceFormat="i18n.get(&quot;{key}&quot;)"/>
             </Property>
           </Properties>
         </Component>
@@ -328,7 +250,7 @@
         <Component class="javax.swing.JLabel" name="lblProxyUsername">
           <Properties>
             <Property name="text" type="java.lang.String" editor="org.netbeans.modules.i18n.form.FormI18nStringEditor">
-              <ResourceString bundle="local-folder.properties" key="config.proxy-username" replaceFormat="i18n.get(&quot;{key}&quot;)"/>
+              <ResourceString bundle="local-module.properties" key="config.proxy-username" replaceFormat="i18n.get(&quot;{key}&quot;)"/>
             </Property>
           </Properties>
         </Component>
@@ -337,7 +259,7 @@
         <Component class="javax.swing.JLabel" name="lblProxyPassword">
           <Properties>
             <Property name="text" type="java.lang.String" editor="org.netbeans.modules.i18n.form.FormI18nStringEditor">
-              <ResourceString bundle="local-folder.properties" key="config.proxy-password" replaceFormat="i18n.get(&quot;{key}&quot;)"/>
+              <ResourceString bundle="local-module.properties" key="config.proxy-password" replaceFormat="i18n.get(&quot;{key}&quot;)"/>
             </Property>
           </Properties>
         </Component>
@@ -351,7 +273,7 @@
         <DimensionLayout dim="0">
           <Group type="103" groupAlignment="0" attributes="0">
               <Group type="102" alignment="1" attributes="0">
-                  <EmptySpace pref="212" max="32767" attributes="0"/>
+                  <EmptySpace max="32767" attributes="0"/>
                   <Component id="btnOK" min="-2" pref="80" max="-2" attributes="0"/>
                   <EmptySpace max="-2" attributes="0"/>
                   <Component id="btnCancel" min="-2" pref="80" max="-2" attributes="0"/>
@@ -375,7 +297,7 @@
         <Component class="javax.swing.JButton" name="btnOK">
           <Properties>
             <Property name="text" type="java.lang.String" editor="org.netbeans.modules.i18n.form.FormI18nStringEditor">
-              <ResourceString bundle="local-folder.properties" key="dialog.ok" replaceFormat="i18n.get(&quot;{key}&quot;)"/>
+              <ResourceString bundle="local-module.properties" key="dialog.ok" replaceFormat="i18n.get(&quot;{key}&quot;)"/>
             </Property>
           </Properties>
           <Events>
@@ -385,7 +307,7 @@
         <Component class="javax.swing.JButton" name="btnCancel">
           <Properties>
             <Property name="text" type="java.lang.String" editor="org.netbeans.modules.i18n.form.FormI18nStringEditor">
-              <ResourceString bundle="local-folder.properties" key="dialog.cancel" replaceFormat="i18n.get(&quot;{key}&quot;)"/>
+              <ResourceString bundle="local-module.properties" key="dialog.cancel" replaceFormat="i18n.get(&quot;{key}&quot;)"/>
             </Property>
           </Properties>
           <Events>
