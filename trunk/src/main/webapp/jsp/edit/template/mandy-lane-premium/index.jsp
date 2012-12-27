@@ -138,7 +138,10 @@
         	<h3>${currentUser.name}</h3>
             <small>${currentUser.userInfo.email}&nbsp;</small>
             <p>
-            	<a href="${info.currentURL}?module=users&webaction=user.ChangeMode&mode=myself">${i18n.edit["global.account-setting"]}</a> <a href="${info.currentURL}?edit-logout=logout">${i18n.edit["global.logout"]}</a>
+            	<c:if test="${info.accountSettings}">
+            	<a class="account" href="${info.currentURL}?module=users&webaction=user.ChangeMode&mode=myself">${i18n.edit["global.account-setting"]}</a>
+            	</c:if>
+            	<a href="${info.currentURL}?edit-logout=logout">${i18n.edit["global.logout"]}</a>
             </p>
         </div><!-- info -->
     </div><!-- accountinfo -->

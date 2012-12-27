@@ -1,5 +1,8 @@
 package org.javlo.user;
 
+import java.util.Arrays;
+import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 import java.util.logging.Logger;
 
@@ -21,12 +24,17 @@ public class AdminUserFactory extends UserFactory {
 
 	private static final String ADMIN_USER_INFO_FILE = "/users/admin/edit-users-list.csv";
 
+	private static final Set<String> MASTER_ROLES = new HashSet<String>(Arrays.asList(new String[] { AdminUserSecurity.MASTER }));
+
 	private String dataFolder = null;
+
+	private boolean master = false;
 
 	public static AdminUserFactory createUserFactory(GlobalContext globalContext, HttpSession session) {
 		AdminUserFactory res = null;
 		try {
 			res = globalContext.getAdminUserFactory(session);
+			res.master = globalContext.isMaster();
 			logger.fine("create userFactory : " + res.getClass().getName());
 		} catch (Exception e) {
 			logger.severe(e.getMessage());
@@ -58,6 +66,20 @@ public class AdminUserFactory extends UserFactory {
 	@Override
 	protected String getFileName() {
 		return URLHelper.mergePath(dataFolder, ADMIN_USER_INFO_FILE);
+	}
+
+	@Override
+	public User getUser(String login) {
+		List<IUserInfo> users = getUserInfoList();
+		for (IUserInfo user : users) {
+			if (user.getLogin().equals(login)) {
+				if (master) {
+					user.addRoles(MASTER_ROLES);
+				}
+				return new User(user);
+			}
+		}
+		return null;
 	}
 
 	@Override

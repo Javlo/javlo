@@ -57,6 +57,13 @@ public class UserModuleContext {
 			if (userContext.mode.equals(VIEW_MY_SELF)) {
 				userContext.mode = ADMIN_USERS_LIST;
 			}
+		} else if (!globalContext.isMaster()) {
+			if (adminUserSecurity.isMaster(adminUserFactory.getCurrentUser(session))) {
+				userContext.modes.remove(VIEW_MY_SELF);
+				if (userContext.mode.equals(VIEW_MY_SELF)) {
+					userContext.mode = ADMIN_USERS_LIST;
+				}
+			}
 		}
 
 		return userContext;

@@ -45,8 +45,6 @@ public class AjaxServlet extends HttpServlet {
 
 	private void process(HttpServletRequest request, HttpServletResponse response) throws ServletException {
 
-		System.out.println("***** AjaxServlet.process : request = " + request); // TODO: remove debug trace
-		System.out.println("***** AjaxServlet.process : response = " + response); // TODO: remove debug trace
 		try {
 
 			ContentContext ctx = ContentContext.getContentContext(request, response);
@@ -83,6 +81,9 @@ public class AjaxServlet extends HttpServlet {
 				AjaxHelper.render(ctx, ctx.getAjaxInsideZone(), ctx.getScheduledAjaxInsideZone());
 				outMap.put("insideZone", ctx.getAjaxInsideZone());
 				outMap.put("zone", ctx.getAjaxZone());
+				if (ctx.getAjaxData().size() > 0) {
+					outMap.put("data", ctx.getAjaxData());
+				}
 				outMap.write(strWriter);
 			} else {
 				for (Object key : ctx.getAjaxMap().keySet()) {

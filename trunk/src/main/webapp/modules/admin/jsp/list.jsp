@@ -28,8 +28,8 @@
 </colgroup>
 <tbody> 
  <c:forEach var="context" items="${contextList}">
- <tr class="gradeX">
-     <td class="con0"><a href="${info.currentURL}?webaction=changesite&change=true&context=${context.key}">${context.key}</a></td>
+ <tr class="gradeX${context.master?' master':''}">
+     <td class="con0 name"><a href="${info.currentURL}?webaction=changesite&change=true&context=${context.key}">${context.key}</a></td>
      <td class="con1">${context.administrator}</td>
      <td class="con0">${context.aliasOf}</td>
      <td class="con1">${context.creationDate}</td>

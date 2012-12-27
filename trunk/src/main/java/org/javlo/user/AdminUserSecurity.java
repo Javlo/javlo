@@ -40,6 +40,8 @@ public class AdminUserSecurity implements Serializable {
 
 	public static String SYNCHRO_SERVER = "sync-server";
 
+	public static String MASTER = "master";
+
 	private final Map<String, Set<String>> rights = new HashMap<String, Set<String>>();
 
 	private AdminUserSecurity() {
@@ -177,8 +179,14 @@ public class AdminUserSecurity implements Serializable {
 		if (user == null) {
 			return false;
 		}
-		Collection<String> roles = user.getRoles();
 		return user.getRoles().contains(GENERAL_ADMIN);
+	}
+
+	public boolean isMaster(User user) {
+		if (user == null) {
+			return false;
+		}
+		return user.getRoles().contains(MASTER);
 	}
 
 }

@@ -9,7 +9,9 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.logging.Logger;
 
+import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 
 import org.javlo.actions.AbstractModuleAction;
@@ -31,9 +33,12 @@ import org.javlo.user.AdminUserSecurity;
 import org.javlo.user.IUserFactory;
 import org.javlo.user.IUserInfo;
 import org.javlo.user.User;
+import org.javlo.user.UserFactory;
 import org.javlo.user.exception.UserAllreadyExistException;
 
 public class UserAction extends AbstractModuleAction {
+
+	private static Logger logger = Logger.getLogger(UserAction.class.getName());
 
 	@Override
 	public String getActionGroupName() {
@@ -114,7 +119,7 @@ public class UserAction extends AbstractModuleAction {
 	}
 
 	public String performUpdateCurrent(ContentContext ctx, GlobalContext globalContext, RequestService requestService, StaticConfig staticConfig, AdminUserSecurity adminUserSecurity, AdminUserFactory adminUserFactory, HttpSession session, Module currentModule, I18nAccess i18nAccess, MessageRepository messageRepository) {
-		if (requestService.getParameter("ok", null) != null) {
+		if (requestService.getParameter("ok", null) != null || requestService.getParameter("token", null) != null || requestService.getParameter("notoken", null) != null) {
 			UserModuleContext userContext = UserModuleContext.getInstance(ctx.getRequest());
 			IUserFactory userFactory = userContext.getUserFactory(ctx);
 			User user = userFactory.getUser(requestService.getParameter("user", null));
@@ -123,7 +128,16 @@ public class UserAction extends AbstractModuleAction {
 			}
 			IUserInfo userInfo = user.getUserInfo();
 			try {
+
 				BeanHelper.copy(new RequestParameterMap(ctx.getRequest()), userInfo);
+				if (requestService.getParameter("token", null) != null) {
+					logger.info("token reset for : " + userInfo.getLogin());
+					userInfo.setToken(StringHelper.getNewToken());
+				}
+				if (requestService.getParameter("notoken", null) != null) {
+					logger.info("remove token for : " + userInfo.getLogin());
+					userInfo.setToken("");
+				}
 				userFactory.updateUserInfo(userInfo);
 			} catch (Exception e) {
 				e.printStackTrace();
@@ -280,4 +294,19 @@ public class UserAction extends AbstractModuleAction {
 
 		return null;
 	}
+
+	public static String performToken(HttpServletRequest request, ContentContext ctx, GlobalContext globalContext, HttpSession session) {
+		UserFactory factory = AdminUserFactory.createAdminUserFactory(globalContext, session);
+		User user = factory.getCurrentUser(session);
+		if (user == null) {
+			return "user not found.";
+		} else {
+			if (user.getUserInfo().getToken() == null || user.getUserInfo().getToken().trim().length() == 0) {
+				user.getUserInfo().setToken(StringHelper.getRandomIdBase64());
+			}
+			ctx.addAjaxData("token", user.getUserInfo().getToken());
+		}
+		return null;
+	}
+
 }

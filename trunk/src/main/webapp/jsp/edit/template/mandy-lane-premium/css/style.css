@@ -551,7 +551,7 @@ h2.prize {
 	text-decoration: underline;
 }
 
-.accountinfo p a:first-child {
+.accountinfo p a.account {
 	margin-right: 5px;
 	border-right: 1px solid #666;
 	padding-right: 7px;
