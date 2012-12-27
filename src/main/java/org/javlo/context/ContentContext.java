@@ -299,6 +299,7 @@ public class ContentContext {
 	}
 
 	private final Map<String, String> ajaxInsideZone = new HashMap<String, String>();
+	private final Map<String, String> ajaxData = new HashMap<String, String>();
 	private final Map<String, ScheduledRender> scheduledAjaxInsideZone = new HashMap<String, ScheduledRender>();
 	private final Map<String, String> ajaxZone = new HashMap<String, String>();;
 
@@ -1027,8 +1028,29 @@ public class ContentContext {
 		return ajaxInsideZone;
 	}
 
+	/**
+	 * get Ajax data map.
+	 * 
+	 * @return a map with html id as key and xhtml as value.
+	 */
+	public Map<String, String> getAjaxData() {
+		return ajaxData;
+	}
+
 	public Map<String, ScheduledRender> getScheduledAjaxInsideZone() {
 		return scheduledAjaxInsideZone;
+	}
+
+	/**
+	 * add a ajax zone for update.
+	 * 
+	 * @param id
+	 *            a xhtml id
+	 * @param xhtml
+	 *            the new content of the zone
+	 */
+	public void addAjaxData(String key, String value) {
+		ajaxData.put(key, value);
 	}
 
 	/**

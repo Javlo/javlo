@@ -168,6 +168,17 @@ a.popup span {
 	width: 220px;
 }
 
+.standard-form input[type=submit] {
+	width: auto;
+	line-height: 28px;
+	vertical-align: middle;
+}
+
+.standard-form span.value {
+	line-height: 28px;
+	vertical-align: middle;
+}
+
 #sitelist_wrapper input,#sitelist_wrapper select {
 	width: auto;
 	vertical-align: baseline;

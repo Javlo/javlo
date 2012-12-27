@@ -368,6 +368,17 @@ public class UserFactory implements IUserFactory, Serializable {
 		boolean passwordEqual = false;
 		StaticConfig staticConfig = StaticConfig.getInstance(request.getSession());
 
+		if (user == null && !globalContext.isMaster()) { // check if user is in master globalContext
+			IUserFactory masterUserFactory;
+			try {
+				masterUserFactory = AdminUserFactory.createUserFactory(GlobalContext.getMasterContext(request.getSession()), request.getSession());
+				user = masterUserFactory.getUser(login);
+				UserFactory.createUserFactory(globalContext, request.getSession()); // reset the "real" user factory
+			} catch (Exception e) {
+				e.printStackTrace();
+			}
+		}
+
 		if (user != null) {
 			if (staticConfig.isPasswordEncryt()) {
 				if (user.getPassword() != null) {

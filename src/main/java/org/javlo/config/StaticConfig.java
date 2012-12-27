@@ -364,6 +364,10 @@ public class StaticConfig extends Observable {
 	public String getDefaultContext() {
 		return properties.getString("default-context", "default.javlo.org");
 	}
+	
+	public String getMasterContext() {
+		return properties.getString("master-context", "admin");
+	}
 
 	public String getDefaultImage() {
 		return properties.getString("image.default", "default.png");

@@ -19,8 +19,10 @@ import org.javlo.service.PersistenceService;
 import org.javlo.service.exception.ServiceException;
 import org.javlo.servlet.AccessServlet;
 import org.javlo.template.Template;
+import org.javlo.user.AdminUserFactory;
 import org.javlo.user.AdminUserSecurity;
 import org.javlo.user.IUserFactory;
+import org.javlo.user.User;
 import org.javlo.user.UserFactory;
 
 public class InfoBean {
@@ -387,4 +389,15 @@ public class InfoBean {
 		}
 	}
 
+	public boolean isAccountSettings() {
+		User user = AdminUserFactory.createUserFactory(ctx.getRequest()).getCurrentUser(ctx.getRequest().getSession());
+		if ((!globalContext.isMaster() && AdminUserSecurity.getInstance().isMaster(user))) {
+			return false;
+		} else if (AdminUserSecurity.getInstance().isGod(user)) {
+			return false;
+		} else {
+			return true;
+		}
+
+	}
 }

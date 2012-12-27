@@ -89,9 +89,21 @@
 		<label for="country">country</label>
 		<input type="text" id="country" name="country" value="${userInfoMap["country"]}" /> 
 	</div>
-		<div class="line">
+	<div class="line">
 		<label for="preferredLanguageRaw">preferred Language</label>
 		<input type="text" id="preferredLanguageRaw" name="preferredLanguageRaw" value="${userInfoMap["preferredLanguageRaw"]}" /> 
+	</div>
+	<div class="line">
+		<label for="token">token</label>
+		<c:if test="${fn:length(userInfoMap['token']) > 0}">
+			<a href="${info.homeAbsoluteURL}?token=${userInfoMap['token']}">
+			<span id="token" class="value">${userInfoMap['token']}</span>
+			</a>
+		</c:if>
+		<input class="action-button" type="submit" name="token" value="${i18n.edit['global.reset']}" /> 
+		<c:if test="${fn:length(userInfoMap['token']) > 0}">
+			<input class="action-button" type="submit" name="notoken" value="${i18n.edit['global.delete']}" />
+		</c:if>
 	</div>
 	<div class="line">
 		<label for="info">info</label>

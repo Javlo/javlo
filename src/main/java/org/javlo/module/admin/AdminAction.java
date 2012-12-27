@@ -92,6 +92,7 @@ public class AdminAction extends AbstractModuleAction {
 		private boolean openFileAsPopup = false;
 		private String noPopupDomain;
 		private String URIAlias;
+		private boolean master = false;
 
 		private String shortDateFormat;
 		private String mediumDateFormat;
@@ -150,6 +151,8 @@ public class AdminAction extends AbstractModuleAction {
 			setGoogleAnalyticsUACCT(globalContext.getGoogleAnalyticsUACCT());
 			setTags(globalContext.getRAWTags());
 			setBlockPassword(globalContext.getBlockPassword());
+
+			setMaster(globalContext.isMaster());
 
 			Properties properties = new Properties();
 			properties.putAll(globalContext.getURIAlias());
@@ -499,6 +502,14 @@ public class AdminAction extends AbstractModuleAction {
 			URIAlias = uRIAlias;
 		}
 
+		public boolean isMaster() {
+			return master;
+		}
+
+		public void setMaster(boolean master) {
+			this.master = master;
+		}
+
 	}
 
 	@Override
@@ -519,35 +530,47 @@ public class AdminAction extends AbstractModuleAction {
 		String msg = "";
 		viewCtx.setRenderMode(ContentContext.VIEW_MODE);
 
-		AdminUserSecurity adminUserSecurity = AdminUserSecurity.getInstance();
-
-		Collection<GlobalContextBean> ctxAllBean = new LinkedList<GlobalContextBean>();
-		Collection<GlobalContext> allContext = GlobalContextFactory.getAllGlobalContext(request.getSession());
-		for (GlobalContext context : allContext) {
-			if (ctx.getCurrentEditUser() != null) {
-				if (adminUserSecurity.isAdmin(ctx.getCurrentEditUser()) || context.getUsersAccess().contains(ctx.getCurrentEditUser().getLogin())) {
-					ctxAllBean.add(new GlobalContextBean(context, ctx.getRequest().getSession()));
-				}
-			}
-		}
-
-		request.setAttribute("contextList", ctxAllBean);
-
-		/* breadcrumb */
-		if (currentModule.getBreadcrumbList() == null || currentModule.getBreadcrumbList().size() == 0) {
-			currentModule.pushBreadcrumb(new Module.HtmlLink(URLHelper.createURL(ctx), I18nAccess.getInstance(request).getText("global.home"), ""));
-		}
-
 		/*** current context ***/
 
-		String currentContextKey = request.getParameter("context");
-		if (currentContextKey != null || request.getAttribute("prepareContext") != null) {
+		GlobalContext globalContext = GlobalContext.getInstance(ctx.getRequest());
+		if (!globalContext.isMaster()) {
+			editGlobalContext(ctx, currentModule, globalContext);
+			currentModule.setBreadcrumb(false);
+		} else {
+			AdminUserSecurity adminUserSecurity = AdminUserSecurity.getInstance();
+
+			/* breadcrumb */
+			if (currentModule.getBreadcrumbList() == null || currentModule.getBreadcrumbList().size() == 0) {
+				currentModule.pushBreadcrumb(new Module.HtmlLink(URLHelper.createURL(ctx), I18nAccess.getInstance(request).getText("global.home"), ""));
+			}
+
+			Collection<GlobalContextBean> ctxAllBean = new LinkedList<GlobalContextBean>();
+			Collection<GlobalContext> allContext = GlobalContextFactory.getAllGlobalContext(request.getSession());
+			for (GlobalContext context : allContext) {
+				if (ctx.getCurrentEditUser() != null) {
+					if (adminUserSecurity.isAdmin(ctx.getCurrentEditUser()) || context.getUsersAccess().contains(ctx.getCurrentEditUser().getLogin())) {
+						ctxAllBean.add(new GlobalContextBean(context, ctx.getRequest().getSession()));
+					}
+				}
+			}
+
+			request.setAttribute("contextList", ctxAllBean);
+		}
+
+		String currentContextValue = null;
+		if (globalContext.isMaster()) {
+			currentContextValue = request.getParameter("context");
+		}
+		if (currentContextValue != null || request.getAttribute("prepareContext") != null || !globalContext.isMaster()) {
 			GlobalContext currentGlobalContext;
-			if (currentContextKey != null) {
-				request.setAttribute("context", currentContextKey);
-				currentGlobalContext = GlobalContext.getRealInstance(request.getSession(), currentContextKey);
-			} else {
+			if (currentContextValue != null) {
+				request.setAttribute("context", currentContextValue);
+				currentGlobalContext = GlobalContext.getRealInstance(request.getSession(), currentContextValue);
+			} else if (globalContext.isMaster()) {
 				currentGlobalContext = (GlobalContext) request.getAttribute("prepareContext");
+				request.setAttribute("context", currentGlobalContext.getContextKey());
+			} else {
+				currentGlobalContext = globalContext;
 				request.setAttribute("context", currentGlobalContext.getContextKey());
 			}
 			request.setAttribute("currentContext", new GlobalContextBean(currentGlobalContext, request.getSession()));
@@ -634,7 +657,7 @@ public class AdminAction extends AbstractModuleAction {
 				ctx.getRequest().setAttribute("templatePluginConfig", currentGlobalContext.getTemplatePluginConfig());
 
 			} else {
-				msg = "bad context : " + currentContextKey;
+				msg = "bad context : " + currentContextValue;
 				currentModule.restoreRenderer();
 				currentModule.restoreToolsRenderer();
 			}
@@ -657,7 +680,6 @@ public class AdminAction extends AbstractModuleAction {
 		}
 		currentModule.setRenderer("/jsp/site_properties.jsp");
 		currentModule.setToolsRenderer(null);
-		String uri = URLHelper.createURL(ctx);
 		currentModule.pushBreadcrumb(new Module.HtmlLink(null, I18nAccess.getInstance(ctx.getRequest()).getText("global.change") + " : " + ctx.getRequest().getParameter("context"), ""));
 	}
 
@@ -1030,7 +1052,7 @@ public class AdminAction extends AbstractModuleAction {
 			messageRepository.setGlobalMessage(new GenericMessage(i18nAccess.getText("admin.message.site-exist"), GenericMessage.ERROR));
 		}
 
-		if (PatternHelper.ALPHANNUM_NOSPACE_PATTERN.matcher(siteName).matches()) {
+		if (PatternHelper.HOST_PATTERN.matcher(siteName).matches()) {
 			if (siteName != null && siteName.length() > 0) {
 				GlobalContext globalContext = GlobalContext.getInstance(ctx.getRequest().getSession(), siteName);
 				globalContext.setUsersAccess(Arrays.asList(ctx.getCurrentEditUser().getLogin()));
