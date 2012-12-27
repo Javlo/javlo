@@ -214,12 +214,6 @@
 		</dependency>
 
 		<dependency>
-			<groupId>org.htmlparser</groupId>
-			<artifactId>htmlparser</artifactId>
-			<version>2.1</version>
-		</dependency>
-
-		<dependency>
 			<groupId>commons-httpclient</groupId>
 			<artifactId>commons-httpclient</artifactId>
 			<version>3.1</version>
@@ -241,6 +235,12 @@
 			<groupId>org.ostermiller</groupId>
 			<artifactId>utils</artifactId>
 			<version>1.07.00</version>
+		</dependency>
+
+		<dependency>
+			<groupId>displaytag</groupId>
+			<artifactId>displaytag</artifactId>
+			<version>1.2</version>
 		</dependency>
 
 		<!-- MySQL database driver -->
@@ -276,15 +276,19 @@
 		</dependency>
 
 		<dependency>
-			<groupId>jjil</groupId>
-			<artifactId>jjil.core</artifactId>
-			<version>0.1</version>			
+			<groupId>jjil.core</groupId>
+			<artifactId>jjil</artifactId>			
+			<version>0.1</version>
+			<scope>system</scope>
+			<systemPath>${project.basedir}/src/main/lib/JJILCore.jar</systemPath>
 		</dependency>
 
 		<dependency>
-			<groupId>jjil</groupId>
-			<artifactId>jjil.algorithm</artifactId>
+			<groupId>jjil.algorithm</groupId>
+			<artifactId>jjil</artifactId>			
 			<version>0.1</version>
+			<scope>system</scope>
+			<systemPath>${project.basedir}/src/main/lib/JJIL-J2SE.jar</systemPath>
 		</dependency>
 
 
@@ -295,11 +299,6 @@
 			<id>com.springsource.repository.bundles.external</id>
 			<name>SpringSource Enterprise Bundle Repository - External Bundle Releases</name>
 			<url>http://repository.springsource.com/maven/bundles/external</url>
-		</repository>
-		<repository>
-			<id>be.noctis</id>
-			<name>noctis</name>
-			<url>http://mvn.noctis.be</url>
 		</repository>
 	</repositories>
 
@@ -413,6 +412,8 @@
 							</configuration>
 						</execution>
 					</executions>
+
+
 				</plugin>
 			</plugins>
 		</pluginManagement>

@@ -171,6 +171,10 @@ public class GlobalContext implements Serializable {
 		return getRealInstance(session, StaticConfig.getInstance(session).getDefaultContext(), false);
 	}
 
+	public static GlobalContext getMasterContext(HttpSession session) throws IOException, ConfigurationException {
+		return getRealInstance(session, StaticConfig.getInstance(session).getMasterContext(), true);
+	}
+
 	public static GlobalContext getSessionInstance(HttpSession session) {
 		String contextKey = (String) session.getAttribute(KEY);
 		return (GlobalContext) session.getServletContext().getAttribute(contextKey);
@@ -2400,6 +2404,10 @@ public class GlobalContext implements Serializable {
 	 */
 	public boolean isPreviewMode() {
 		return properties.getBoolean("mode.preview", true);
+	}
+
+	public boolean isMaster() {
+		return staticConfig.getMasterContext().equals(getContextKey());
 	}
 
 	public void setPreviewMode(boolean preview) {

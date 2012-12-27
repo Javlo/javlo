@@ -92,6 +92,7 @@ public class AdminAction extends AbstractModuleAction {
 		private boolean openFileAsPopup = false;
 		private String noPopupDomain;
 		private String URIAlias;
+		private boolean master = false;
 
 		private String shortDateFormat;
 		private String mediumDateFormat;
@@ -150,6 +151,8 @@ public class AdminAction extends AbstractModuleAction {
 			setGoogleAnalyticsUACCT(globalContext.getGoogleAnalyticsUACCT());
 			setTags(globalContext.getRAWTags());
 			setBlockPassword(globalContext.getBlockPassword());
+
+			setMaster(globalContext.isMaster());
 
 			Properties properties = new Properties();
 			properties.putAll(globalContext.getURIAlias());
@@ -497,6 +500,14 @@ public class AdminAction extends AbstractModuleAction {
 
 		public void setURIAlias(String uRIAlias) {
 			URIAlias = uRIAlias;
+		}
+
+		public boolean isMaster() {
+			return master;
+		}
+
+		public void setMaster(boolean master) {
+			this.master = master;
 		}
 
 	}
