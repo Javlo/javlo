@@ -490,7 +490,12 @@ public class XMLManipulationHelper {
 								attributes.put("href", hrefValue);
 								remplacement.addReplacement(tags[i].getOpenStart(), tags[i].getOpenEnd() + 1, tags[i].toString());
 							} else if ((hrefValue != null) && (!StringHelper.isURL(hrefValue)) && (!StringHelper.isMailURL(hrefValue))) {
-								attributes.put("href", "<%=URLHelper.createURLCheckLg(ctx,\"" + hrefValue + "\")%>");
+								if (hrefValue.startsWith("/")) {
+									attributes.put("href", "<%=URLHelper.createURLCheckLg(ctx,\"" + hrefValue + "\")%>");
+								} else {
+									attributes.put("href", "<%=URLHelper.createStaticTemplateURL(ctx,\"" + hrefValue + "\")%>");
+								}
+
 								remplacement.addReplacement(tags[i].getOpenStart(), tags[i].getOpenEnd() + 1, tags[i].toString());
 							}
 						}
