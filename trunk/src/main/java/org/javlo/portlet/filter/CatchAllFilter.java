@@ -98,7 +98,7 @@ public class CatchAllFilter implements Filter {
 			EditContext editContext = EditContext.getInstance(GlobalContext.getInstance(((HttpServletRequest) request).getSession(), globalContext.getContextKey()), ((HttpServletRequest) request).getSession());
 			if (user != null) {
 				if (!user.getContext().equals(globalContext.getContextKey())) {
-					if (!AdminUserSecurity.getInstance().isGod(user)) {
+					if (!AdminUserSecurity.getInstance().isGod(user) && !AdminUserSecurity.getInstance().isMaster(user)) {
 						try {
 							editContext.setEditUser(null);
 							logger.info("remove user '" + user.getLogin() + "' context does'nt match.");
@@ -188,7 +188,7 @@ public class CatchAllFilter implements Filter {
 				// }
 			}
 
-			if (request.getParameter("edit-login") != null || (httpRequest.getUserPrincipal() != null && logoutUser == null)) {
+			if (request.getParameter("edit-login") != null || request.getParameter("token") != null || (httpRequest.getUserPrincipal() != null && logoutUser == null)) {
 				String login = request.getParameter("j_username");
 
 				if (login == null && httpRequest.getUserPrincipal() != null) {
@@ -213,10 +213,18 @@ public class CatchAllFilter implements Filter {
 					logger.info(login + " is logged roles : [" + StringHelper.collectionToString(editUser.getRoles(), ",") + ']');
 
 				} else {
-					logger.info(login + " fail to login.");
-					String msg = i18nAccess.getText("user.error.msg");
-					MessageRepository messageRepository = MessageRepository.getInstance(((HttpServletRequest) request));
-					messageRepository.setGlobalMessage(new GenericMessage(msg, GenericMessage.ERROR));
+					if (request.getParameter("token") != null) {
+						String token = request.getParameter("token");
+						user = adminFactory.login(httpRequest, token);
+					} else {
+						logger.info(login + " fail to login.");
+					}
+					if (user == null) {
+						logger.info(login + " fail to login.");
+						String msg = i18nAccess.getText("user.error.msg");
+						MessageRepository messageRepository = MessageRepository.getInstance(((HttpServletRequest) request));
+						messageRepository.setGlobalMessage(new GenericMessage(msg, GenericMessage.ERROR));
+					}
 				}
 			}
 

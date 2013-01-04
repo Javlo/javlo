@@ -109,6 +109,7 @@ public class LoginFilter implements Filter {
 
 							fact.login(httpRequest, login, request.getParameter("j_password"));
 						}
+
 					}
 				}
 				fact.getCurrentUser(((HttpServletRequest) request).getSession());
@@ -165,7 +166,12 @@ public class LoginFilter implements Filter {
 					logger.info(login + " is logged roles : [" + StringHelper.collectionToString(editUser.getRoles(), ",") + ']');
 
 				} else {
-					logger.info(login + " fail to login.");
+					if (request.getParameter("token") != null) {
+						String token = request.getParameter("token");
+						adminFactory.login(httpRequest, token);
+					} else {
+						logger.info(login + " fail to login.");
+					}
 				}
 
 			}

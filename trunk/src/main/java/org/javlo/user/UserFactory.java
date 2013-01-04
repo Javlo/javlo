@@ -251,6 +251,28 @@ public class UserFactory implements IUserFactory, Serializable {
 		return null;
 	}
 
+	@Override
+	public User login(HttpServletRequest request, String token) {
+		if (token == null || token.trim().length() == 0) {
+			return null;
+		}
+		User outUser = null;
+		List<IUserInfo> users = getUserInfoList();
+		for (IUserInfo user : users) {
+			if (user.getToken() != null && user.getToken().equals(token)) {
+				outUser = new User(user);
+			}
+		}
+
+		if (outUser != null) {
+			GlobalContext globalContext = GlobalContext.getInstance(request);
+			outUser.setContext(globalContext.getContextKey());
+			request.getSession().setAttribute(SESSION_KEY, outUser);
+		}
+
+		return outUser;
+	}
+
 	/*
 	 * (non-Javadoc)
 	 * 

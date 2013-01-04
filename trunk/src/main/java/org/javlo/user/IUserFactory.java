@@ -10,16 +10,17 @@ import javax.servlet.http.HttpSession;
 import org.javlo.context.GlobalContext;
 import org.javlo.user.exception.UserAllreadyExistException;
 
-
 public interface IUserFactory {
 
-	public static final int AUTO_LOGIN_AGE_SEC = 6*60*60*24*30; // 6 month for autologin live cycle
+	public static final int AUTO_LOGIN_AGE_SEC = 6 * 60 * 60 * 24 * 30; // 6 month for autologin live cycle
 
 	public abstract User getUser(String login);
 
 	public abstract User autoLogin(HttpServletRequest request, String login);
 
 	public abstract User login(HttpServletRequest request, String login, String password);
+
+	public abstract User login(HttpServletRequest request, String token);
 
 	public abstract void logout(HttpSession session);
 
@@ -55,8 +56,9 @@ public interface IUserFactory {
 
 	/**
 	 * check if the user system use standard storage system of wcms
+	 * 
 	 * @return true if standard system is used, false else a external system is used.
 	 */
-	public abstract boolean isStandardStorage();	
-	
+	public abstract boolean isStandardStorage();
+
 }

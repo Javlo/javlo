@@ -123,4 +123,39 @@ public class AdminUserFactory extends UserFactory {
 		return new AdminUserInfo();
 	}
 
+	@Override
+	public User login(HttpServletRequest request, String token) {
+		User outUser = super.login(request, token);
+
+		if (outUser == null && !master) {
+			IUserFactory masterUserFactory;
+			try {
+				masterUserFactory = AdminUserFactory.createUserFactory(GlobalContext.getMasterContext(request.getSession()), request.getSession());
+				outUser = masterUserFactory.login(request, token);
+				UserFactory.createUserFactory(GlobalContext.getInstance(request), request.getSession()); // reset the "real" user factory
+			} catch (Exception e) {
+				e.printStackTrace();
+			}
+		}
+
+		if (outUser != null) {
+			GlobalContext globalContext = GlobalContext.getInstance(request);
+			outUser.setContext(globalContext.getContextKey());
+			request.getSession().setAttribute(SESSION_KEY, outUser);
+		}
+
+		GlobalContext globalContext = GlobalContext.getInstance(request);
+		EditContext editContext = EditContext.getInstance(globalContext, request.getSession());
+		editContext.setEditUser(outUser);
+
+		/** reload module **/
+		try {
+			ModulesContext.getInstance(request.getSession(), globalContext).loadModule(request.getSession(), globalContext);
+		} catch (ModuleException e) {
+			e.printStackTrace();
+		}
+
+		return outUser;
+	}
+
 }
