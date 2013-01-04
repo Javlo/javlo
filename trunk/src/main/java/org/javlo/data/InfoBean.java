@@ -400,4 +400,8 @@ public class InfoBean {
 		}
 
 	}
+
+	public boolean isNewSession() {
+		return ctx.getRequest().getSession().isNew();
+	}
 }
