@@ -552,6 +552,17 @@ public class I18nAccess implements Serializable {
 				if (template != null) {
 					template = template.getFinalTemplate(ctx);
 					templateView = template.getI18nProperties(globalContext, new Locale(ctx.getLanguage()));
+					Template parent = template.getParent();
+					while (parent != null) {
+						Properties parentView = parent.getI18nProperties(globalContext, new Locale(ctx.getLanguage()));
+						if (parentView != null) {
+							if (templateView != null) {
+								parentView.putAll(templateView);
+							}
+							templateView = parentView;
+						}
+						parent = parent.getParent();
+					}
 				}
 			}
 		}
