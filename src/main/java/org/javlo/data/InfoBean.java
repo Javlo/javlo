@@ -404,4 +404,18 @@ public class InfoBean {
 	public boolean isNewSession() {
 		return ctx.getRequest().getSession().isNew();
 	}
+	
+	/**
+	 * this method return true at the first call for current session and false afer.
+	 * @return
+	 */
+	public boolean isFirstCallForSession() {
+		String KEY = "firscall_"+InfoBean.class.getCanonicalName();
+		if (ctx.getRequest().getSession().getAttribute(KEY) != null) {
+			return false;
+		} else {
+			ctx.getRequest().getSession().setAttribute(KEY, true);
+			return true;
+		}		
+	}
 }
