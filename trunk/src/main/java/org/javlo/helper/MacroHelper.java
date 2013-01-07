@@ -5,18 +5,33 @@ import java.io.IOException;
 import java.io.PrintWriter;
 import java.io.StringWriter;
 import java.text.DateFormatSymbols;
+import java.text.SimpleDateFormat;
+import java.util.Arrays;
 import java.util.Calendar;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.Date;
+import java.util.GregorianCalendar;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Locale;
+import java.util.Map;
+import java.util.Properties;
+import java.util.Set;
 
 import javax.servlet.http.HttpSession;
 
 import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang.math.NumberUtils;
 import org.javlo.component.core.ComponentBean;
 import org.javlo.component.core.ContentElementList;
 import org.javlo.component.core.IContentVisualComponent;
+import org.javlo.component.image.GlobalImage;
+import org.javlo.component.meta.DateComponent;
+import org.javlo.component.text.Description;
+import org.javlo.component.text.Paragraph;
+import org.javlo.component.title.SubTitle;
+import org.javlo.component.title.Title;
 import org.javlo.config.StaticConfig;
 import org.javlo.context.ContentContext;
 import org.javlo.context.EditContext;
@@ -33,6 +48,8 @@ import org.javlo.service.NavigationService;
 import org.javlo.service.PersistenceService;
 
 public class MacroHelper {
+
+	private static java.util.logging.Logger logger = java.util.logging.Logger.getLogger(MacroHelper.class.getName());
 
 	public static String MACRO_DATE_KEY = "__macro_key__";
 
@@ -605,6 +622,192 @@ public class MacroHelper {
 
 	public static void setCurrentMacroDate(HttpSession session, Date date) {
 		session.setAttribute(MACRO_DATE_KEY, date);
+	}
+
+	public static MenuElement createArticlePageName(ContentContext ctx, MenuElement monthPage) throws Exception {
+		if ((monthPage != null) && (monthPage.getParent() != null) && (monthPage.getParent().getParent() != null)) {
+			MenuElement groupPage = monthPage.getParent().getParent();
+			String[] splittedName = monthPage.getName().split("-");
+			String year = null;
+			String mount = null;
+			if (splittedName.length >= 2) {
+				year = splittedName[splittedName.length - 2];
+				mount = splittedName[splittedName.length - 1];
+			}
+			try {
+				Integer.parseInt(year);
+			} catch (Throwable t) {
+				year = null;
+			}
+			if (year != null && mount != null) {
+				Collection<MenuElement> children = monthPage.getChildMenuElements();
+
+				int maxNumber = 0;
+				for (MenuElement child : children) {
+					splittedName = child.getName().split("-");
+
+					try {
+						int currentNumber = Integer.parseInt(splittedName[splittedName.length - 1]);
+						if (currentNumber > maxNumber) {
+							maxNumber = currentNumber;
+						}
+					} catch (NumberFormatException e) {
+					}
+				}
+				maxNumber = maxNumber + 1;
+				MenuElement newPage = MacroHelper.addPageIfNotExist(ctx, monthPage.getName(), groupPage.getName() + "-" + year + "-" + mount + "-" + maxNumber, true);
+				newPage.setVisible(true);
+
+				return newPage;
+
+			} else {
+				I18nAccess i18nAccess = I18nAccess.getInstance(ctx.getRequest());
+				String msg = i18nAccess.getText("action.add.new-news-today");
+				MessageRepository.getInstance(ctx).setGlobalMessage(new GenericMessage(msg, GenericMessage.ERROR));
+			}
+		} else {
+			I18nAccess i18nAccess = I18nAccess.getInstance(ctx.getRequest());
+			String msg = i18nAccess.getText("action.add.new-news-today");
+			MessageRepository.getInstance(ctx).setGlobalMessage(new GenericMessage(msg, GenericMessage.ERROR));
+		}
+
+		return null;
+	}
+
+	/**
+	 * return a list of page with only year as children.
+	 * 
+	 * @param ctx
+	 * @return
+	 * @throws Exception
+	 */
+	public static List<MenuElement> searchArticleRoot(ContentContext ctx) throws Exception {
+		List<MenuElement> outPages = new LinkedList<MenuElement>();
+		MenuElement root = ContentService.getInstance(ctx.getRequest()).getNavigation(ctx);
+		for (MenuElement page : root.getAllChildren()) {
+			if (page.getChildMenuElements().size() > 0) {
+				boolean isArticleRoot = true;
+				for (MenuElement child : page.getChildMenuElements()) {
+					int index = child.getName().lastIndexOf('-');
+					String year = child.getName();
+					if (index > 0) {
+						year = child.getName().substring(index + 1, child.getName().length());
+					}
+					if (year.length() != 4) {
+						isArticleRoot = false;
+					} else {
+						if (!NumberUtils.isNumber(year)) {
+							isArticleRoot = false;
+						}
+					}
+				}
+				if (isArticleRoot) {
+					outPages.add(page);
+				}
+			}
+		}
+		return outPages;
+	}
+
+	public static void createPageStructure(ContentContext ctx, MenuElement page, Map componentsType, boolean fakeContent) throws Exception {
+		GlobalContext globalContext = GlobalContext.getInstance(ctx.getRequest());
+		Collection<String> lgs = globalContext.getContentLanguages();
+		if (!StringHelper.isTrue("" + componentsType.get("all-languages"))) {
+			lgs = Arrays.asList(new String[] { ctx.getRequestContentLanguage() });
+		}
+
+		for (String lg : lgs) {
+			String parentId = "0";
+			Set<String> keysSet = componentsType.keySet();
+			List<String> keys = new LinkedList<String>();
+			keys.addAll(keysSet);
+			Collections.sort(keys);
+			for (String compName : keys) {
+				if (compName.contains(".") && !compName.endsWith(".style") && !compName.endsWith(".list") && !compName.endsWith(".area")) {
+					String style = (String) componentsType.get(compName + ".style");
+					boolean asList = StringHelper.isTrue(componentsType.get(compName + ".list"));
+					String area = (String) componentsType.get(compName + ".area");
+
+					String type = StringHelper.split(compName, ".")[1];
+
+					String value = (String) componentsType.get(compName);
+					if (fakeContent) {
+						if (type.equals(Title.TYPE) || type.equals(SubTitle.TYPE)) {
+							value = LoremIpsumGenerator.getParagraph(3, false, true);
+						} else {
+							value = LoremIpsumGenerator.getParagraph(50, false, true);
+						}
+					}
+					parentId = MacroHelper.addContent(lg, page, parentId, type, style, area, value, asList);
+				}
+			}
+		}
+	}
+
+	public static void addContentInPage(ContentContext ctx, MenuElement newPage, String pageStructureName) throws IOException, Exception {
+		newPage.setVisible(true);
+
+		GlobalContext globalContext = GlobalContext.getInstance(ctx.getRequest());
+
+		Calendar cal = GregorianCalendar.getInstance();
+		cal.setTime(new Date());
+
+		Properties pressReleaseStructure = ctx.getCurrentTemplate().getMacroProperties(globalContext, pageStructureName);
+		if (pressReleaseStructure == null) {
+			logger.warning("file not found : " + pageStructureName);
+			Collection<String> lgs = globalContext.getContentLanguages();
+			for (String lg : lgs) {
+				String parentId = "0";
+				parentId = MacroHelper.addContent(lg, newPage, parentId, DateComponent.TYPE, "");
+				parentId = MacroHelper.addContent(lg, newPage, parentId, Title.TYPE, "");
+				parentId = MacroHelper.addContent(lg, newPage, parentId, Description.TYPE, "");
+				parentId = MacroHelper.addContent(lg, newPage, parentId, GlobalImage.TYPE, "");
+				parentId = MacroHelper.addContent(lg, newPage, parentId, Paragraph.TYPE, "");
+			}
+		} else {
+			MacroHelper.createPageStructure(ctx, newPage, pressReleaseStructure, StringHelper.isTrue(pressReleaseStructure.get("fake-content")));
+		}
+
+		PersistenceService persistenceService = PersistenceService.getInstance(globalContext);
+		persistenceService.store(ctx);
+	}
+
+	public static String getMonthPageName(ContentContext ctx, String yearPageName, Date date) {
+
+		Calendar cal = GregorianCalendar.getInstance();
+		cal.setTime(date);
+
+		GlobalContext globalContext = GlobalContext.getInstance(ctx.getRequest());
+
+		String monthName = MacroHelper.getDisplayName(cal, Calendar.MONTH, MacroHelper.CALENDAR_LONG, new Locale(globalContext.getDefaultLanguage()));
+		monthName = StringHelper.createFileName(monthName); // remove special char
+
+		return yearPageName + "-" + monthName;
+	}
+
+	public static void createMonthStructure(ContentContext ctx, MenuElement yearPage) throws Exception {
+
+		Calendar cal = GregorianCalendar.getInstance();
+		cal.set(Calendar.MONTH, 11);
+
+		boolean lastMounth = false;
+		GlobalContext globalContext = GlobalContext.getInstance(ctx.getRequest());
+		while (!lastMounth) {
+			Collection<String> lgs = globalContext.getContentLanguages();
+			MenuElement mounthPage = MacroHelper.addPageIfNotExist(ctx, yearPage.getName(), getMonthPageName(ctx, yearPage.getName(), cal.getTime()), false);
+			if (mounthPage.getContent().length == 0) {
+				mounthPage.setVisible(true);
+				for (String lg : lgs) {
+					SimpleDateFormat mounthFormatDate = new SimpleDateFormat("MMMMMMMMMMMMMM", new Locale(lg));
+					String mounthName = mounthFormatDate.format(cal.getTime());
+					MacroHelper.addContent(lg, mounthPage, "0", Title.TYPE, mounthName);
+				}
+			}
+			cal.roll(Calendar.MONTH, false);
+			if (cal.get(Calendar.MONTH) == 11) {
+				lastMounth = true;
+			}
+		}
 	}
 
 	public static void main(String[] args) {

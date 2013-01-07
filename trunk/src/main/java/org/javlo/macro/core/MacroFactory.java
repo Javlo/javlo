@@ -8,6 +8,7 @@ import org.javlo.config.StaticConfig;
 import org.javlo.macro.CleanResourceNameMacro;
 import org.javlo.macro.CopyLanguageStructureHereMacro;
 import org.javlo.macro.CopyLanguageStructureMacro;
+import org.javlo.macro.CreateArticle;
 import org.javlo.macro.CreateBaseStructureMacro;
 import org.javlo.macro.CreateChildrenStructureMacro;
 import org.javlo.macro.CreateDefaultPageStructure;
@@ -41,7 +42,7 @@ public class MacroFactory {
 
 	private final List<IMacro> macros = new LinkedList<IMacro>();
 
-	private static final List<IMacro> defaultMacros = Arrays.asList(new IMacro[] { new ImportHTMLPageMacro(), new ImportGalleryMacro(), new CreateDefaultPageStructure(), new CreatePressReleaseTodayMacro(), new CreatePressReleaseHereMacro(), new CreateExternalNewsMacro(), new CreateWeekHereMacro(), new CreateMonthHereMacro(), new CreatePressReleaseTodayHereMacro(), new CreateMonthStructureMacro(), new CreateBaseStructureMacro(), new CreateChildrenStructureMacro(), new DeletePageFromSpecificUser(), new MergeDynamicComponent(), new ReduceSubtitleLevelMacro(), new IncreaseSubtitleLevelMacro(), new CleanResourceNameMacro(), new CopyLanguageStructureMacro(), new CopyLanguageStructureHereMacro(), new ImportDefaultLanguageMacro(), new DeleteSmartExternalLinkMacro(), new ImageAfterDescriptionMacro(), new ImageAfterDescriptionChildrenMacro(), new NoClickableImageMacro(), new CurrentLgExpandMacro(), new EncryptPasswordComponent(), new PasteCopiedElementInAllLanguageMacro(),
+	private static final List<IMacro> defaultMacros = Arrays.asList(new IMacro[] { new CreateArticle(), new ImportHTMLPageMacro(), new ImportGalleryMacro(), new CreateDefaultPageStructure(), new CreatePressReleaseTodayMacro(), new CreatePressReleaseHereMacro(), new CreateExternalNewsMacro(), new CreateWeekHereMacro(), new CreateMonthHereMacro(), new CreatePressReleaseTodayHereMacro(), new CreateMonthStructureMacro(), new CreateBaseStructureMacro(), new CreateChildrenStructureMacro(), new DeletePageFromSpecificUser(), new MergeDynamicComponent(), new ReduceSubtitleLevelMacro(), new IncreaseSubtitleLevelMacro(), new CleanResourceNameMacro(), new CopyLanguageStructureMacro(), new CopyLanguageStructureHereMacro(), new ImportDefaultLanguageMacro(), new DeleteSmartExternalLinkMacro(), new ImageAfterDescriptionMacro(), new ImageAfterDescriptionChildrenMacro(), new NoClickableImageMacro(), new CurrentLgExpandMacro(), new EncryptPasswordComponent(), new PasteCopiedElementInAllLanguageMacro(),
 			new ImportDataBase(), new DeleteChildren(), new DeleteChildrenAndContent(), new deleteComponentInBadArea() });
 
 	private static MacroFactory instance = null;

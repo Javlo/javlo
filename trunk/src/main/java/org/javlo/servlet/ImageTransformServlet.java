@@ -380,6 +380,8 @@ public class ImageTransformServlet extends HttpServlet {
 
 		logger.finest("apply fitler on image : " + imageName);
 
+		String imageKey = null;
+
 		try {
 			String filter = "default";
 			String area = null;
@@ -523,13 +525,19 @@ public class ImageTransformServlet extends HttpServlet {
 
 					/*** TRANSFORM IMAGE ***/
 
+					String templateId = "no-template";
+					if (template != null) {
+						templateId = template.getId();
+					}
+					imageKey = imageFile.getAbsolutePath() + '_' + filter + '_' + area + '_' + ctx.getDevice() + '_' + templateId;
+
 					long size = imageFile.length();
 					boolean foundInSet = false;
 					synchronized (fileTransforming) {
-						if (fileTransforming.get(imageFile.getAbsolutePath()) != null) {
+						if (fileTransforming.get(imageKey) != null) {
 							foundInSet = true;
 						} else {
-							fileTransforming.put(imageFile.getAbsolutePath(), new Object());
+							fileTransforming.put(imageKey, new Object());
 						}
 					}
 
@@ -537,15 +545,16 @@ public class ImageTransformServlet extends HttpServlet {
 						fileStream = loadFileFromDisk(imageName, filter, area, ctx.getDevice(), template, imageFile.lastModified());
 						if ((fileStream == null)) {
 							long currentTime = System.currentTimeMillis();
-							synchronized (fileTransforming.get(imageFile.getAbsolutePath())) {
+							synchronized (fileTransforming.get(imageKey)) {
 								imageTransform(ctx, ImageConfig.getNewInstance(globalContext, request.getSession(), template), staticInfo, filter, area, template, realFile, imageFile, imageName);
 							}
 							logger.info("transform image (" + StringHelper.renderSize(size) + ") : '" + imageName + "' in site '" + globalContext.getContextKey() + "' page : " + ctx.getRequestContentLanguage() + ctx.getPath() + " time : " + StringHelper.renderTimeInSecond(System.currentTimeMillis() - currentTime) + " sec.  #transformation:" + fileTransforming.size());
 							fileStream = loadFileFromDisk(imageName, filter, area, ctx.getDevice(), template, imageFile.lastModified());
 						}
-						fileTransforming.remove(imageFile.getAbsolutePath());
+						fileTransforming.remove(imageKey);
+						imageKey = null;
 					} else {
-						synchronized (fileTransforming.get(imageFile.getAbsolutePath())) {
+						synchronized (fileTransforming.get(imageKey)) {
 							fileStream = loadFileFromDisk(imageName, filter, area, ctx.getDevice(), template, imageFile.lastModified());
 							if (fileStream == null) {
 								logger.severe("problem on loading from cache : " + imageFile);
@@ -574,6 +583,9 @@ public class ImageTransformServlet extends HttpServlet {
 			logger.warning(e.getMessage());
 			response.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
 		} finally {
+			if (imageKey != null) {
+				fileTransforming.remove(imageKey);
+			}
 			try {
 				if (out != null) {
 					out.close();

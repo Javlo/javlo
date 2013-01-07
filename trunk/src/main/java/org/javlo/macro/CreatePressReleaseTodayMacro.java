@@ -65,7 +65,7 @@ public class CreatePressReleaseTodayMacro extends AbstractMacro {
 				parentId = MacroHelper.addContent(lg, newPage, parentId, Paragraph.TYPE, "");
 			}
 		} else {
-			createPageStructure(ctx, newPage, pressReleaseStructure, false);
+			MacroHelper.createPageStructure(ctx, newPage, pressReleaseStructure, false);
 		}
 
 		PersistenceService persistenceService = PersistenceService.getInstance(globalContext);
