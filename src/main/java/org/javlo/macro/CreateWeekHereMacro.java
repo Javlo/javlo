@@ -68,7 +68,7 @@ public class CreateWeekHereMacro extends AbstractMacro {
 						parentId = MacroHelper.addContent(lg, weekPage, parentId, FreeTextList.TYPE, null, "");
 					}
 				} else {
-					createPageStructure(ctx, weekPage, weekStructure, false);
+					MacroHelper.createPageStructure(ctx, weekPage, weekStructure, false);
 				}
 			}
 

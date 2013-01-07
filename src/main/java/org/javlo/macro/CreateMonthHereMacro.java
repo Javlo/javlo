@@ -90,7 +90,7 @@ public class CreateMonthHereMacro extends AbstractMacro {
 						parentId = MacroHelper.addContent(lg, monthPage, parentId, Title.TYPE, null, title);
 					}
 				} else {
-					createPageStructure(ctx, monthPage, monthStructure, false);
+					MacroHelper.createPageStructure(ctx, monthPage, monthStructure, false);
 				}
 
 			}
