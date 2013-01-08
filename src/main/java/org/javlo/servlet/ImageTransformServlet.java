@@ -7,6 +7,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.util.Arrays;
+import java.util.Date;
 import java.util.Map;
 import java.util.Set;
 import java.util.TreeSet;
@@ -51,6 +52,65 @@ import com.jhlabs.image.GrayscaleFilter;
  */
 public class ImageTransformServlet extends HttpServlet {
 
+	public static final class ImageTransforming {
+		private final File file;
+		private long startTime;
+		private String context;
+		private long fileSize;
+
+		public ImageTransforming(ContentContext ctx, File image) {
+			startTime = System.currentTimeMillis();
+			file = image;
+			GlobalContext globalContext = GlobalContext.getInstance(ctx.getRequest());
+			context = globalContext.getContextKey();
+			fileSize = image.length();
+		}
+
+		public String getName() {
+			return file.getName();
+		}
+
+		public String getPath() {
+			return file.getAbsolutePath();
+		}
+
+		public long getStartTime() {
+			return startTime;
+		}
+
+		public void setStartTime(long startTime) {
+			this.startTime = startTime;
+		}
+
+		public String getStartTimeText() {
+			return StringHelper.renderTime(new Date(startTime));
+		}
+
+		public String getTransformTimeText() {
+			return StringHelper.renderTimeInSecond(System.currentTimeMillis() - startTime);
+		}
+
+		public String getContext() {
+			return context;
+		}
+
+		public void setContext(String context) {
+			this.context = context;
+		}
+
+		public long getFileSize() {
+			return fileSize;
+		}
+
+		public void setFileSize(long fileSize) {
+			this.fileSize = fileSize;
+		}
+
+		public String getFileSizeText() {
+			return StringHelper.renderSize(fileSize);
+		}
+	}
+
 	private static final long serialVersionUID = 1L;
 
 	// private static final Object LOCK = new Object();
@@ -72,9 +132,15 @@ public class ImageTransformServlet extends HttpServlet {
 
 	public static final String VIEW_PICTURE_ACTION = "view picture";
 
-	private static final Map<String, Object> fileTransforming = new ConcurrentHashMap<String, Object>();
+	private static final Map<String, Object> imageTransforming = new ConcurrentHashMap<String, Object>();
 
 	private final String cacheDir = "_dc";
+
+	@Override
+	public void init() throws ServletException {
+		super.init();
+		getServletContext().setAttribute("imagesTransforming", imageTransforming);
+	}
 
 	/**
 	 * @see javax.servlet.http.HttpServlet#doGet(HttpServletRequest, HttpServletResponse)
@@ -533,11 +599,11 @@ public class ImageTransformServlet extends HttpServlet {
 
 					long size = imageFile.length();
 					boolean foundInSet = false;
-					synchronized (fileTransforming) {
-						if (fileTransforming.get(imageKey) != null) {
+					synchronized (imageTransforming) {
+						if (imageTransforming.get(imageKey) != null) {
 							foundInSet = true;
 						} else {
-							fileTransforming.put(imageKey, new Object());
+							imageTransforming.put(imageKey, new ImageTransforming(ctx, imageFile));
 						}
 					}
 
@@ -545,16 +611,16 @@ public class ImageTransformServlet extends HttpServlet {
 						fileStream = loadFileFromDisk(imageName, filter, area, ctx.getDevice(), template, imageFile.lastModified());
 						if ((fileStream == null)) {
 							long currentTime = System.currentTimeMillis();
-							synchronized (fileTransforming.get(imageKey)) {
+							synchronized (imageTransforming.get(imageKey)) {
 								imageTransform(ctx, ImageConfig.getNewInstance(globalContext, request.getSession(), template), staticInfo, filter, area, template, realFile, imageFile, imageName);
 							}
-							logger.info("transform image (" + StringHelper.renderSize(size) + ") : '" + imageName + "' in site '" + globalContext.getContextKey() + "' page : " + ctx.getRequestContentLanguage() + ctx.getPath() + " time : " + StringHelper.renderTimeInSecond(System.currentTimeMillis() - currentTime) + " sec.  #transformation:" + fileTransforming.size());
+							logger.info("transform image (" + StringHelper.renderSize(size) + ") : '" + imageName + "' in site '" + globalContext.getContextKey() + "' page : " + ctx.getRequestContentLanguage() + ctx.getPath() + " time : " + StringHelper.renderTimeInSecond(System.currentTimeMillis() - currentTime) + " sec.  #transformation:" + imageTransforming.size());
 							fileStream = loadFileFromDisk(imageName, filter, area, ctx.getDevice(), template, imageFile.lastModified());
 						}
-						fileTransforming.remove(imageKey);
+						imageTransforming.remove(imageKey);
 						imageKey = null;
 					} else {
-						synchronized (fileTransforming.get(imageKey)) {
+						synchronized (imageTransforming.get(imageKey)) {
 							fileStream = loadFileFromDisk(imageName, filter, area, ctx.getDevice(), template, imageFile.lastModified());
 							if (fileStream == null) {
 								logger.severe("problem on loading from cache : " + imageFile);
@@ -584,7 +650,7 @@ public class ImageTransformServlet extends HttpServlet {
 			response.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
 		} finally {
 			if (imageKey != null) {
-				fileTransforming.remove(imageKey);
+				imageTransforming.remove(imageKey);
 			}
 			try {
 				if (out != null) {
