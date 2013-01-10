@@ -96,7 +96,7 @@
 	<div class="line">
 		<label for="token">token</label>
 		<c:if test="${fn:length(userInfoMap['token']) > 0}">
-			<a href="${info.homeAbsoluteURL}?token=${userInfoMap['token']}">
+			<a href="${info.homeAbsoluteURL}?j_token=${userInfoMap['token']}">
 			<span id="token" class="value">${userInfoMap['token']}</span>
 			</a>
 		</c:if>

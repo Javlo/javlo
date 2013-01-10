@@ -764,7 +764,11 @@ public class Template implements Comparable<Template> {
 			}
 		}
 		if (areas.size() == 0) {
-			areas.add(ComponentBean.DEFAULT_AREA);
+			if (getParent() == null) {
+				areas.add(ComponentBean.DEFAULT_AREA);
+			} else {
+				return getParent().getAreas();
+			}
 		}
 		return areas;
 	}
@@ -776,6 +780,11 @@ public class Template implements Comparable<Template> {
 			String key = keys.next();
 			if (key.startsWith(XMLManipulationHelper.AREA_PREFIX) && !key.endsWith(".navigation")) {
 				areas.put(key.substring(XMLManipulationHelper.AREA_PREFIX.length()), properties.getString(key));
+			}
+		}
+		if (areas.size() == 0) {
+			if (getParent() != null) {
+				return getParent().getAreasMap();
 			}
 		}
 		return areas;
