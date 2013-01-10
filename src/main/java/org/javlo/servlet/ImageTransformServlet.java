@@ -599,12 +599,28 @@ public class ImageTransformServlet extends HttpServlet {
 
 					long size = imageFile.length();
 					boolean foundInSet = false;
-					synchronized (imageTransforming) {
-						if (imageTransforming.get(imageKey) != null) {
-							foundInSet = true;
-						} else {
-							imageTransforming.put(imageKey, new ImageTransforming(ctx, imageFile));
+
+					// synchronized (imageTransforming) {
+					// if (imageTransforming.get(imageKey) != null) {
+					// foundInSet = true;
+					// } else {
+					// imageTransforming.put(imageKey, new ImageTransforming(ctx, imageFile));
+					// }
+					// }
+
+					if (imageTransforming.get(imageKey) != null) {
+						foundInSet = true;
+					} else {
+						if (imageTransforming.size() > 10) {
+							logger.warning("too much images in transformation. Waiting...");
+							Thread.sleep(5000);
+							if (imageTransforming.size() > 10) {
+								logger.severe("too much images in transformation eject image transform : " + imageKey);
+								response.setStatus(HttpServletResponse.SC_SERVICE_UNAVAILABLE);
+								return;
+							}
 						}
+						imageTransforming.put(imageKey, new ImageTransforming(ctx, imageFile));
 					}
 
 					if (!foundInSet) {
