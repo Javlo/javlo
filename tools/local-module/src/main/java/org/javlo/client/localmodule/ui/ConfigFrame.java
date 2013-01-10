@@ -10,6 +10,7 @@ import javax.swing.JOptionPane;
 import org.javlo.client.localmodule.model.ServerConfig;
 import org.javlo.client.localmodule.service.ConfigService;
 import org.javlo.client.localmodule.service.I18nService;
+import org.javlo.client.localmodule.service.IMClientService;
 import org.javlo.helper.StringHelper;
 
 /**
@@ -112,7 +113,7 @@ public class ConfigFrame extends javax.swing.JDialog {
 			config.setProxyPassword(StringHelper.trimAndNullify(new String(txtProxyPassword.getPassword())));
 			try {
 				config.save();
-				//SynchroControlService.getInstance().start();
+				IMClientService.getInstance().start();
 				return true;
 			} catch (Exception ex) {
 				try {

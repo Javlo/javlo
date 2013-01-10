@@ -1,4 +1,4 @@
-package org.javlo.module.communictation;
+package org.javlo.module.communication;
 
 import java.io.IOException;
 import java.security.Principal;
@@ -28,13 +28,13 @@ import org.javlo.service.RequestService;
 import org.javlo.user.AdminUserSecurity;
 import org.springframework.util.StringUtils;
 
-public class CommunictationAction extends AbstractModuleAction {
+public class CommunicationAction extends AbstractModuleAction {
 
-	private static java.util.logging.Logger logger = java.util.logging.Logger.getLogger(CommunictationAction.class.getName());
+	private static java.util.logging.Logger logger = java.util.logging.Logger.getLogger(CommunicationAction.class.getName());
 
 	@Override
 	public String getActionGroupName() {
-		return "communictation";
+		return "communication";
 	}
 
 	@Override
@@ -105,6 +105,17 @@ public class CommunictationAction extends AbstractModuleAction {
 		}
 
 		return msg;
+	}
+
+	public static String performRefreshAIM(RequestService rs, ContentContext ctx, HttpServletRequest request, Module currentModule) throws ConfigurationException, IOException {
+		String currentUser = ctx.getCurrentUserId();
+//		request.getAttribute("sites");
+//		request.getAttribute("aimCurrentUser");
+//		request.getAttribute("aimLastMessageId");
+//		request.getAttribute("aimMessages");
+//		request.getAttribute("aimUsersBySite");
+		ctx.getAjaxData().put("aimCurrentUser", currentUser);
+		return null;
 	}
 
 	public static String performSendAIM(RequestService rs, ContentContext ctx, HttpServletRequest request, Module currentModule) throws ConfigurationException, IOException {
