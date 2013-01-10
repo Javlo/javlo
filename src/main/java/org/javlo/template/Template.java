@@ -826,6 +826,11 @@ public class Template implements Comparable<Template> {
 				}
 			}
 		}
+		if (areas.size() == 0) {
+			if (getParent() != null) {
+				return getParent().getAreasForceDisplay();
+			}
+		}
 		return areas;
 	}
 
@@ -1197,6 +1202,15 @@ public class Template implements Comparable<Template> {
 			String key = keys.next();
 			out.put(key, properties.getString(key));
 		}
+
+		if (getParent() != null) {
+			for (Map.Entry<String, String> parentEntry : getParent().getMap().entrySet()) {
+				if (!out.containsKey(parentEntry.getKey())) {
+					out.put(parentEntry.getKey(), parentEntry.getValue());
+				}
+			}
+		}
+
 		return out;
 	}
 
