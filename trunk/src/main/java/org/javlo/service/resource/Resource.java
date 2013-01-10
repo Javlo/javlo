@@ -1,10 +1,10 @@
 package org.javlo.service.resource;
 
 public class Resource {
-	
+
 	private String id;
 	private String uri;
-	
+
 	public String getUri() {
 		return uri;
 	}
@@ -16,17 +16,17 @@ public class Resource {
 	public String getId() {
 		return id;
 	}
-	
+
 	public void setId(String id) {
 		this.id = id;
 	}
-	
+
 	@Override
 	public boolean equals(Object obj) {
 		if (!(obj instanceof Resource)) {
 			return super.equals(obj);
 		} else {
-			Resource otherResource = (Resource)obj;
+			Resource otherResource = (Resource) obj;
 			if (otherResource.getUri() != null) {
 				if (!otherResource.getUri().equals(getUri())) {
 					return false;
@@ -46,6 +46,15 @@ public class Resource {
 				}
 			}
 			return true;
+		}
+	}
+
+	@Override
+	public int hashCode() {
+		if (getUri() == null) {
+			return super.hashCode();
+		} else {
+			return getUri().hashCode();
 		}
 	}
 
