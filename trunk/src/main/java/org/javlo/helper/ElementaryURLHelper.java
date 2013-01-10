@@ -216,7 +216,7 @@ public abstract class ElementaryURLHelper {
 
 		String url = newUri;
 
-		if (!ctx.isAbsoluteURL() && widthEncodeURL) {
+		if (!ctx.isAbsoluteURL() && widthEncodeURL && ctx.getDevice().isHuman()) {
 			url = ctx.getResponse().encodeURL(newUri);
 		}
 
