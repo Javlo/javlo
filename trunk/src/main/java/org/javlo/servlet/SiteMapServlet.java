@@ -11,35 +11,38 @@ import org.javlo.helper.XMLHelper;
 import org.javlo.navigation.MenuElement;
 import org.javlo.service.ContentService;
 
-
 public class SiteMapServlet extends HttpServlet {
 
 	private static final long serialVersionUID = 1L;
 
+	@Override
 	public void init() throws ServletException {
 		super.init();
 	}
 
+	@Override
 	public void destroy() {
 		super.destroy();
 	}
 
+	@Override
 	protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException {
 		process(request, response);
 	}
 
+	@Override
 	protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException {
 		process(request, response);
 	}
 
 	private void process(HttpServletRequest request, HttpServletResponse response) throws ServletException {
 		try {
-			
+
 			String host = request.getServerName();
 			if (!GlobalContext.isExist(request, host) && request.getParameter("yes") == null) {
 				getServletContext().getRequestDispatcher("/jsp/error/creation.jsp").include(request, response);
 				return;
-			}		
+			}
 
 			response.setContentType("text/xml");
 			ContentContext ctx = ContentContext.getContentContext(request, response);
@@ -48,7 +51,6 @@ public class SiteMapServlet extends HttpServlet {
 			String siteMap = XMLHelper.getSiteMap(ctx, root);
 			response.getOutputStream().write(siteMap.getBytes());
 			response.getOutputStream().flush();
-			
 
 		} catch (Exception e) {
 			e.printStackTrace();
