@@ -330,6 +330,7 @@ public class ContentContext {
 		currentEditUser = ctx.currentEditUser;
 		free = ctx.free;
 		device = ctx.getDevice();
+		format = ctx.format;
 	}
 
 	public String getArea() {
