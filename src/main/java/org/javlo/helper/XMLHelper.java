@@ -83,6 +83,7 @@ public class XMLHelper {
 				lgCtx.setLanguage(lg);
 				lgCtx.setContentLanguage(lg);
 				lgCtx.setRequestContentLanguage(lg);
+				lgCtx.setFormat("html");
 				if (!element.notInSearch(lgCtx)) {
 					out.println("<url>");
 					out.println("<loc>" + URLHelper.createAbsoluteViewURL(lgCtx, element.getPath()) + "</loc>");
