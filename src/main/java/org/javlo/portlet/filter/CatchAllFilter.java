@@ -188,7 +188,7 @@ public class CatchAllFilter implements Filter {
 				// }
 			}
 
-			if (request.getParameter("edit-login") != null || request.getParameter("token") != null || (httpRequest.getUserPrincipal() != null && logoutUser == null)) {
+			if (request.getParameter("edit-login") != null || request.getParameter("j_token") != null || (httpRequest.getUserPrincipal() != null && logoutUser == null)) {
 				String login = request.getParameter("j_username");
 
 				if (login == null && httpRequest.getUserPrincipal() != null) {
@@ -213,8 +213,8 @@ public class CatchAllFilter implements Filter {
 					logger.info(login + " is logged roles : [" + StringHelper.collectionToString(editUser.getRoles(), ",") + ']');
 
 				} else {
-					if (request.getParameter("token") != null) {
-						String token = request.getParameter("token");
+					String token = request.getParameter("j_token");
+					if (token != null) {
 						user = adminFactory.login(httpRequest, token);
 					} else {
 						logger.info(login + " fail to login.");

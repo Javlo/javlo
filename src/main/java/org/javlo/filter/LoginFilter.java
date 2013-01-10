@@ -166,8 +166,8 @@ public class LoginFilter implements Filter {
 					logger.info(login + " is logged roles : [" + StringHelper.collectionToString(editUser.getRoles(), ",") + ']');
 
 				} else {
-					if (request.getParameter("token") != null) {
-						String token = request.getParameter("token");
+					String token = request.getParameter("j_token");
+					if (token != null) {
 						adminFactory.login(httpRequest, token);
 					} else {
 						logger.info(login + " fail to login.");
