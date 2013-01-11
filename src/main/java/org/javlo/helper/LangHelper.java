@@ -28,6 +28,7 @@ import org.javlo.service.PersistenceService;
 import org.javlo.service.RequestService;
 import org.javlo.user.AdminUserFactory;
 import org.javlo.user.AdminUserSecurity;
+import org.javlo.user.User;
 import org.javlo.user.UserFactory;
 import org.javlo.ztatic.FileCache;
 import org.javlo.ztatic.StaticContext;
@@ -64,6 +65,7 @@ public class LangHelper {
 	 *         <li>UserInterfaceContext</li>
 	 *         <li>ClipBoard</li>
 	 *         <li>PersistenceService</li>
+	 *         <li>User</li>
 	 *         <li>AbstractModuleContext : return the current module context</li>
 	 *         <li>? extends AbstractModuleContext : instanciate a abstract module</li>>
 	 *         <li>String : the query parameter (when user make a search)</li>
@@ -127,6 +129,8 @@ public class LangHelper {
 			return AbstractModuleContext.getCurrentInstance(request.getSession());
 		} else if (AbstractModuleContext.class.isAssignableFrom(c)) {
 			return AbstractModuleContext.getInstance(request.getSession(), GlobalContext.getInstance(request), ModulesContext.getInstance(request.getSession(), GlobalContext.getInstance(request)).getCurrentModule(), c);
+		} else if (c.equals(User.class)) {
+			return EditContext.getInstance(GlobalContext.getInstance(request), request.getSession()).getEditUser();
 		}
 		return null;
 	}

@@ -60,7 +60,7 @@ public class FileCache {
 		}
 		return fc;
 	}
-	
+
 	public String getRelativeFilePath(String key, String fileName) {
 		fileName = fileName.replace('\\', '/');
 		String cacheFileName = BASE_DIR + '/' + key;
@@ -175,7 +175,7 @@ public class FileCache {
 	 */
 	public InputStream getFileInputStream(String key, String fileName, long latestModificationDate) throws FileNotFoundException {
 		File file = getFileName(key, fileName);
-		
+
 		if (latestModificationDate > file.lastModified()) {
 			return null;
 		}
@@ -224,8 +224,13 @@ public class FileCache {
 		}
 	}
 
-	public void clear() {
-		File cacheDir = new File(application.getRealPath(BASE_DIR));
+	public void clear(String context) {
+		File cacheDir;
+		if (context != null) {
+			cacheDir = new File(URLHelper.mergePath(application.getRealPath(BASE_DIR), context));
+		} else {
+			cacheDir = new File(application.getRealPath(BASE_DIR));
+		}
 		try {
 			FileUtils.deleteDirectory(cacheDir);
 		} catch (IOException e) {
@@ -240,6 +245,10 @@ public class FileCache {
 		}
 
 		cacheDir.mkdirs();
+	}
+
+	public void clear() {
+		clear(null);
 	}
 
 	public void storeBean(String key, Serializable obj) throws IOException {
@@ -262,12 +271,12 @@ public class FileCache {
 	public Serializable loadBean(String key) throws ClassNotFoundException, IOException {
 		String fileName = StringHelper.createFileName(key) + ".serial.xml";
 		File file = new File(URLHelper.mergePath(application.getRealPath(BASE_DIR), fileName));
-		if (!file.exists()) {			
+		if (!file.exists()) {
 			return null;
 		}
 		XMLDecoder decorder = new XMLDecoder(new FileInputStream(file));
 		try {
-			logger.fine("load bean : "+file);
+			logger.fine("load bean : " + file);
 			return (Serializable) decorder.readObject();
 		} finally {
 			decorder.close();

@@ -885,6 +885,11 @@ ul,li {
 }
 
 /*** admin ***/
+
+.site-properties {
+	margin-top: 20px;
+}
+
 .site-properties fieldset,.site-properties .action {
 	margin-right: 290px;
 }

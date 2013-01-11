@@ -663,7 +663,7 @@ public class AdminAction extends AbstractModuleAction {
 			}
 		} else if (request.getAttribute("config_content") != null) {
 			currentModule.setRenderer("/jsp/config.jsp");
-			currentModule.setToolsRenderer(null);
+			// currentModule.setToolsRenderer(null);
 		} else {
 			currentModule.restoreRenderer();
 			currentModule.restoreToolsRenderer();
@@ -679,7 +679,7 @@ public class AdminAction extends AbstractModuleAction {
 			ctx.getRequest().setAttribute("prepareContext", globalContext);
 		}
 		currentModule.setRenderer("/jsp/site_properties.jsp");
-		currentModule.setToolsRenderer(null);
+		// currentModule.setToolsRenderer(null);
 		currentModule.pushBreadcrumb(new Module.HtmlLink(null, I18nAccess.getInstance(ctx.getRequest()).getText("global.change") + " : " + ctx.getRequest().getParameter("context"), ""));
 	}
 
@@ -986,13 +986,30 @@ public class AdminAction extends AbstractModuleAction {
 		return msg;
 	}
 
-	public static final String performClearCache(HttpServletRequest request, GlobalContext globalContext, HttpSession session, ContentContext ctx, MessageRepository messageRepository, I18nAccess i18nAccess, FileCache fileCache) throws Exception {
-		ContentService.clearAllContextCache(ctx);
-		fileCache.clear();
-		System.gc();
+	public static final String performClearCache(HttpServletRequest request, GlobalContext globalContext, HttpSession session, User user, ContentContext ctx, MessageRepository messageRepository, I18nAccess i18nAccess, FileCache fileCache) throws Exception {
+
+		if (!AdminUserSecurity.getInstance().isMaster(user) && !AdminUserSecurity.getInstance().isGod(user) && !AdminUserSecurity.getInstance().isAdmin(user)) {
+			return "1.security error !";
+		}
+
+		String currentContextKey = request.getParameter("context");
+		if (currentContextKey == null) { // param context is used only for check the type of call, but you can clear only current context
+			ContentService.clearAllContextCache(ctx);
+			fileCache.clear();
+		} else {
+
+			if (!AdminUserSecurity.getInstance().isMaster(user) && !AdminUserSecurity.getInstance().isGod(user)) {
+				return "2.security error !";
+			}
+
+			fileCache.clear(globalContext.getContextKey());
+			ContentService.clearCache(ctx, globalContext);
+		}
 		messageRepository.setGlobalMessageAndNotification(ctx, new GenericMessage(i18nAccess.getText("admin.message.clear cache"), GenericMessage.INFO));
 		Tracker.getTracker(globalContext, session);
 		LogService.getInstance(session).clear();
+
+		System.gc();
 		return null;
 	}
 

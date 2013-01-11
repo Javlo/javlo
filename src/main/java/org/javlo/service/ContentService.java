@@ -55,6 +55,13 @@ public class ContentService {
 		TemplateFactory.cleanAllRenderer(ctx, false);
 	}
 
+	public static void clearCache(ContentContext ctx, GlobalContext globalContext) throws Exception {
+		logger.info("refresh context : " + globalContext.getContextKey());
+		ContentService content = ContentService.getInstance(globalContext);
+		content.releaseAll(ctx, globalContext);
+		PersistenceService.getInstance(globalContext).loadVersion();
+	}
+
 	public static void clearAllCache(ContentContext ctx, GlobalContext globalContext) throws Exception {
 		logger.info("refresh context, content and template");
 		ContentService content = ContentService.getInstance(globalContext);
