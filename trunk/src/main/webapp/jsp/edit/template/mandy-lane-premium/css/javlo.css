@@ -21,6 +21,10 @@ h1 {
 	color: #cccccc;
 }
 
+#popup_title {
+	float: none;
+}
+
 .selected {
 	font-weight: bold;
 }
