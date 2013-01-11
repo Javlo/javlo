@@ -58,11 +58,12 @@ public class ImageHelper {
 		return createSpecialDirectory(width, 0);
 	}
 
-	public static String createSpecialDirectory(String filter, String area, String deviceCode, Template template) {
+	public static String createSpecialDirectory(String context, String filter, String area, String deviceCode, Template template) {
+		context = StringHelper.createFileName(context);
 		if (template == null) {
-			return deviceCode + '/' + filter + '/' + area + '/'  + Template.EDIT_TEMPLATE_CODE;
+			return context + '/' + filter + '/' + deviceCode + '/' + area + '/' + Template.EDIT_TEMPLATE_CODE;
 		} else {
-			return deviceCode + '/' + filter + '/' + area + '/'+ template.getId();
+			return context + '/' + filter + '/' + deviceCode + '/' + area + '/' + template.getId();
 		}
 	}
 
