@@ -1,6 +1,5 @@
 package org.javlo.macro;
 
-import java.util.Collection;
 import java.util.Map;
 
 import org.javlo.component.core.ComponentBean;
@@ -17,7 +16,7 @@ public class deleteComponentInBadArea extends AbstractMacro {
 	public String getName() {
 		return "delete-component-in-bad-area";
 	}
-	
+
 	protected int deleteComponentInBadArea(ContentContext ctx, MenuElement page) {
 		ComponentBean[] beans = page.getContent();
 		Template template = null;
@@ -41,16 +40,14 @@ public class deleteComponentInBadArea extends AbstractMacro {
 	@Override
 	public String perform(ContentContext ctx, Map<String, Object> params) throws Exception {
 		GlobalContext globalContext = GlobalContext.getInstance(ctx.getRequest());
-		ContentService content  = ContentService.getInstance(globalContext);
+		ContentService content = ContentService.getInstance(globalContext);
 		MenuElement root = content.getNavigation(ctx);
 		deleteComponentInBadArea(ctx, root);
 		int countDeleted = 0;
 		for (MenuElement child : root.getAllChildren()) {
 			countDeleted = countDeleted + deleteComponentInBadArea(ctx, child);
-		}		
-		return "components deleted : "+countDeleted;
+		}
+		return "components deleted : " + countDeleted;
 	}
-	
-	
 
 }
