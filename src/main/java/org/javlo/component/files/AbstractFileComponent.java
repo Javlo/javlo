@@ -374,7 +374,11 @@ public abstract class AbstractFileComponent extends AbstractVisualComponent impl
 			File[] files = dir.listFiles(filter);
 
 			Comparator fileComparator = new FileComparator(FileComparator.LASTMODIFIED, true);
-			Arrays.sort(files, fileComparator);
+			try {
+				Arrays.sort(files, fileComparator);
+			} catch (Throwable t) {
+				t.printStackTrace();
+			}
 
 			ArrayList list = new ArrayList();
 			for (File file : files) {
