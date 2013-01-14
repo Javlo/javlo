@@ -34,7 +34,7 @@ public class ImageCaptchaServlet extends HttpServlet {
 
 			@Override
 			public String next() {
-				return StringHelper.getRandomString(size, "0123456789abefhklrstwxyz");
+				return StringHelper.getRandomString(size, "0123456789abefhkrswxyz");
 			}
 
 		}
