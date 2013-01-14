@@ -32,13 +32,17 @@ public class FileComparator implements Comparator<File> {
 	public int compare(File file1, File file2) {
 		switch (sortType) {
 		case NAME:
+			int diff = file1.getName().compareTo(file2.getName());
+			if (diff == 0) {
+				diff = 1;
+			}
 			if (ascending) {
-				return file1.getName().compareTo(file2.getName());
+				return diff;
 			} else {
-				return -(file1.getName().compareTo(file2.getName()));
+				return -diff;
 			}
 		case LASTMODIFIED:
-			int diff = (int) (file1.lastModified() - file2.lastModified());
+			diff = (int) (file1.lastModified() - file2.lastModified());
 			if (diff == 0) {
 				diff = 1;
 			}
@@ -60,7 +64,7 @@ public class FileComparator implements Comparator<File> {
 				}
 			}
 		default:
-			return file1.getName().compareTo(file1.getName());
+			return file1.compareTo(file2);
 		}
 	}
 }
