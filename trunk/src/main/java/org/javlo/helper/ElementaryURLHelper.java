@@ -455,7 +455,11 @@ public abstract class ElementaryURLHelper {
 			}
 		}
 
-		url = url + params;
+		if (url.contains("?")) {
+			url = url + params.replace('?', '&');
+		} else {
+			url = url + params;
+		}
 
 		if (forceTemplate) {
 			if (ctx.getRequest().getParameter(Template.FORCE_TEMPLATE_PARAM_NAME) != null) {

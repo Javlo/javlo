@@ -8,6 +8,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import org.javlo.actions.IAction;
 import org.javlo.component.core.ComponentBean;
 import org.javlo.component.core.IPreviewable;
 import org.javlo.component.core.IStaticResource;
@@ -18,7 +19,10 @@ import org.javlo.context.GlobalContext;
 import org.javlo.helper.URLHelper;
 import org.javlo.i18n.I18nAccess;
 import org.javlo.image.ImageConfig;
+import org.javlo.message.MessageRepository;
 import org.javlo.module.file.FileAction;
+import org.javlo.service.ContentService;
+import org.javlo.service.RequestService;
 import org.javlo.ztatic.StaticInfo;
 
 /**
@@ -27,7 +31,7 @@ import org.javlo.ztatic.StaticInfo;
  * @author Patrick Vandermaesen
  * 
  */
-public class Image extends AbstractFileComponent implements IImageTitle, IPreviewable, IStaticResource {
+public class Image extends AbstractFileComponent implements IImageTitle, IPreviewable, IStaticResource, IAction {
 
 	@Override
 	public String[] getStyleList(ContentContext ctx) {
@@ -139,6 +143,10 @@ public class Image extends AbstractFileComponent implements IImageTitle, IPrevie
 
 	@Override
 	public String getPreviewCode(ContentContext ctx, int maxDisplayedImage) throws Exception {
+		return getPreviewCode(ctx, maxDisplayedImage, false);
+	}
+
+	public String getPreviewCode(ContentContext ctx, int maxDisplayedImage, boolean imageList) throws Exception {
 		StringWriter res = new StringWriter();
 		PrintWriter out = new PrintWriter(res);
 
@@ -168,37 +176,48 @@ public class Image extends AbstractFileComponent implements IImageTitle, IPrevie
 		out.println("</div></div>");
 		out.println("<script type=\"text/javascript\">initFocusPoint();</script>");
 
-		out.println("<div class=\"name\">" + getFileName() + "</div>");
-		out.println("</div><div class=\"image-list\">");
-		for (int i = 0; i < images.length; i++) {
-			if ((images[i] != null) && (images[i].trim().length() > 0)) {
-				StaticInfo staticInfo = StaticInfo.getInstance(ctx, getFileURL(ctx, images[i]));
-				String fileLink = URLHelper.mergePath(getDirSelected(), images[i]);
-				String selected = "class=\"preview-image\"";
-				boolean isSelectedImage = false;
-				if (fileLink.equals(currentFileLink)) {
-					selected = " class=\"preview-image selected\"";
-					isSelectedImage = true;
-				}
-				String realURL = URLHelper.createResourceURL(ctx, getPage(), '/' + getResourceURL(ctx, images[i])) + "?CRC32=" + staticInfo.getCRC32();
-				String previewURL = URLHelper.createTransformURL(ctx, getPage(), getResourceURL(ctx, images[i]), "preview") + "?CRC32=" + staticInfo.getCRC32();
-				String url = URLHelper.createTransformURL(ctx, getPage(), getResourceURL(ctx, images[i]), getConfig(ctx).getProperty("thumbnails-filter", "thumbnails")) + "?CRC32=" + staticInfo.getCRC32();
-				String id = "image_name_select__" + getId();
-				if (i < maxDisplayedImage || isSelectedImage) {
-					out.print("<div " + selected + ">");
-					String onMouseOver = "";
-					if (globalContext.isImagePreview()) {
-						onMouseOver = " onMouseOver=\"previewImage('" + previewURL + "')\" onMouseOut=\"previewClear()\"";
+		if (imageList) {
+			out.println("<div class=\"name\">" + getFileName() + "</div>");
+			out.println("</div><div class=\"image-list\">");
+			for (int i = 0; i < images.length; i++) {
+				if ((images[i] != null) && (images[i].trim().length() > 0)) {
+					StaticInfo staticInfo = StaticInfo.getInstance(ctx, getFileURL(ctx, images[i]));
+					String fileLink = URLHelper.mergePath(getDirSelected(), images[i]);
+					String selected = "class=\"preview-image\"";
+					boolean isSelectedImage = false;
+					if (fileLink.equals(currentFileLink)) {
+						selected = " class=\"preview-image selected\"";
+						isSelectedImage = true;
 					}
-					out.print("<a class=\"image\" href=\"#\" onclick=\"jQuery('#" + id + "').val('" + images[i] + "');jQuery('#" + id + "').trigger('change');" + getJSOnChange(ctx) + "\"><img name=\"" + getImageImgName() + "\"" + onMouseOver + " src=\"");
-					out.print(url);
-					out.print("\" alt=\"\">&nbsp;</a>");
-					out.print("<div class=\"name\"><a href=\"" + realURL + "\">" + images[i] + "</a></div>");
-					out.print("</div>");
+					String realURL = URLHelper.createResourceURL(ctx, getPage(), '/' + getResourceURL(ctx, images[i])) + "?CRC32=" + staticInfo.getCRC32();
+					String previewURL = URLHelper.createTransformURL(ctx, getPage(), getResourceURL(ctx, images[i]), "preview") + "?CRC32=" + staticInfo.getCRC32();
+					String url = URLHelper.createTransformURL(ctx, getPage(), getResourceURL(ctx, images[i]), getConfig(ctx).getProperty("thumbnails-filter", "thumbnails")) + "?CRC32=" + staticInfo.getCRC32();
+					String id = "image_name_select__" + getId();
+					if (i < maxDisplayedImage || isSelectedImage) {
+						out.print("<div " + selected + ">");
+						String onMouseOver = "";
+						if (globalContext.isImagePreview()) {
+							onMouseOver = " onMouseOver=\"previewImage('" + previewURL + "')\" onMouseOut=\"previewClear()\"";
+						}
+						out.print("<a class=\"image\" href=\"#\" onclick=\"jQuery('#" + id + "').val('" + images[i] + "');jQuery('#" + id + "').trigger('change');" + getJSOnChange(ctx) + "\"><img name=\"" + getImageImgName() + "\"" + onMouseOver + " src=\"");
+						out.print(url);
+						out.print("\" alt=\"\">&nbsp;</a>");
+						out.print("<div class=\"name\"><a href=\"" + realURL + "\">" + images[i] + "</a></div>");
+						out.print("</div>");
+					}
 				}
 			}
+			out.println("</div>");
+		} else {
+			params = new HashMap<String, String>();
+			params.put("webaction", "image.loadImages");
+			params.put("comp_id", getId());
+			String ajaxURL = URLHelper.createAjaxURL(ctx, params);
+			out.println("<div class=\"action\">");
+			I18nAccess i18nAccess = I18nAccess.getInstance(ctx.getRequest());
+			out.println("<a class=\"action-button ajax\" href=\"" + ajaxURL + "\">" + i18nAccess.getText("content.image.load") + "</a>");
+			out.println("</div>");
 		}
-		out.println("</div>");
 
 		// TODO : create this javascrit method with a other mecanism
 		/*
@@ -406,5 +425,22 @@ public class Image extends AbstractFileComponent implements IImageTitle, IPrevie
 			}
 		}
 		return 0;
+	}
+
+	@Override
+	public String getActionGroupName() {
+		return "image";
+	}
+
+	public static String performLoadImages(RequestService rs, ContentContext ctx, MessageRepository messageRepository, I18nAccess i18nAccess) throws Exception {
+		String compId = rs.getParameter("comp_id", null);
+		if (compId != null) {
+			Image comp = (Image) ContentService.getInstance(ctx.getRequest()).getComponent(ctx, compId);
+			String previewCode = comp.getPreviewCode(ctx, comp.getMaxPreviewImages(), true);
+			ctx.addAjaxInsideZone(comp.getPreviewZoneId(), previewCode);
+			return null;
+		}
+		return "error on request structure.";
+
 	}
 }
