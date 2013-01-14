@@ -376,7 +376,7 @@ public abstract class AbstractFileComponent extends AbstractVisualComponent impl
 			Comparator fileComparator = new FileComparator(FileComparator.LASTMODIFIED, true);
 			try {
 				Arrays.sort(files, fileComparator);
-			} catch (Throwable t) {
+			} catch (Throwable t) { // TODO: try to remove this.
 				t.printStackTrace();
 			}
 

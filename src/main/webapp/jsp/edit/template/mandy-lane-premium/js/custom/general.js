@@ -148,6 +148,4 @@ function changeFooter() {
 	}
 }
 
-
-
 jQuery(window).resize(changeFooter);
