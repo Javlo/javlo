@@ -2,7 +2,7 @@
 <c:if test="${info.god}">
 <a class="action-button more edit-static-config" href="${info.currentURL}?webaction=EditStaticConfig"><span>${i18n.edit['admin.edit-static-config']}</span></a>
 </c:if>
-<c:if test="${not empty context}">
+<c:if test="${empty context}">
 <div class="special">
 	<form id="form-create-site" action="${info.currentURL}" method="post">
 		<input type="hidden" name="webaction" value="createSite" />
