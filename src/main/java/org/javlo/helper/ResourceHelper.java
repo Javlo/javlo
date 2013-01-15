@@ -147,20 +147,20 @@ public class ResourceHelper {
 	public static void downloadResource(String localDir, String baseURL, Collection<Resource> resources) throws IOException {
 		for (Resource resource : resources) {
 			URL url = new URL(URLHelper.mergePath(baseURL, resource.getUri()));
-			InputStream in = null;
-			try {
-				in = url.openStream();
-				File localFile = new File(URLHelper.mergePath(localDir, resource.getUri()));
-				if (!localFile.exists()) {
+			File localFile = new File(URLHelper.mergePath(localDir, resource.getUri()));
+			if (!localFile.exists()) {
+				InputStream in = null;
+				try {
+					in = url.openStream();
 					ResourceHelper.writeStreamToFile(in, localFile);
 					logger.info("download resource : " + url + " in " + localFile);
-				} else {
-					logger.warning("download url error : file allready exist in local : " + localFile);
+				} finally {
+					if (in != null) {
+						in.close();
+					}
 				}
-			} finally {
-				if (in != null) {
-					in.close();
-				}
+			} else {
+				logger.warning("download url error : file allready exist in local : " + localFile);
 			}
 
 		}
