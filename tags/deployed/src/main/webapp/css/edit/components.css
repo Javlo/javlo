@@ -1,0 +1,52 @@
+.component .list-container .image-selected {	
+	padding: 2px;
+	border-bottom: 1px #777777 solid;
+	margin: 2px;
+	
+	text-align: center;
+	vertical-align: middle;
+		
+	
+	font-size: 1px;	
+	overflow: hidden;	
+}
+
+.component .list-container .image-selected .name {
+	font-size: 11px;
+}
+
+.component .list-container .image-selected .focus-zone {
+	display: inline-block;
+	overflow: hidden;
+	line-height: 155px;
+}
+
+.component .list-container .image-selected img {
+	display: inline;
+	vertical-align: middle;	
+}
+
+.component .preview-image a.image {
+	display: block;
+	text-align: center;
+	vertical-align: middle;
+	line-height: 150px;
+	height: 150px;
+	width: 152px;
+	font-size: 1px;	
+}
+
+.component .preview-image a img {
+	display: inline;
+	vertical-align: middle;
+}
+
+.component .preview-image.selected {
+	font-weight: bold;
+	border: 1px #aa0000 solid;
+}
+
+.page-list-container {
+	height: 300px;
+	overflow: auto;
+}

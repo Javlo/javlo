@@ -1,0 +1,23 @@
+# line start with '--' is the title of the group, the value is a i18n key
+# line start with '.' is a hidden component (not in the list but can render content if exist in content)
+
+# GLOBAL COMPONENTS
+
+--content.title.title
+
+org.javlo.component.Title
+
+--content.title.text
+
+org.javlo.component.Description
+org.javlo.component.Paragraph
+
+--content.title.links
+
+org.javlo.component.ExternalLink
+org.javlo.component.InternalLink
+
+--content.title.graphic
+
+org.javlo.component.image.GlobalImage
+

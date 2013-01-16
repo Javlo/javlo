@@ -1,0 +1,30 @@
+.main-template, .remote-template {
+	margin-top: 20px;
+}
+
+.main-template .thumbview .info {
+	height: 230px;
+}
+
+#form-edit-template {
+	margin-right: 290px;
+}
+
+.main-template .unvalid .thumb {
+	border: 1px solid #CC0000;
+	opacity : 0.8;
+}
+
+.main-template .unvalid .thumb img {
+	opacity : 0.8;
+}
+
+.template-preview {
+	text-align: center;
+}
+
+.template-preview .actions {
+	margin-top: 10px;
+}
+
+

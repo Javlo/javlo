@@ -1,0 +1,92 @@
+#preview_command .pc_header {
+	margin: -1px -1px 0 -1px;
+    background: url("../images/tabmenubg.png") repeat-x scroll left top #4B6592;
+    border: 1px solid #DDDDDD;
+    padding: 10px;
+    color: #ffffff;
+    font-size: 12px;
+    font-weight: normal;
+    text-shadow: 1px 1px #4B6592;
+    text-transform: uppercase;
+}
+
+#preview_command input, #preview_command select, #preview_command textarea, #preview_command button {
+    border: 1px solid #CCCCCC;
+    border-radius: 3px 3px 3px 3px;    
+
+    padding: 3px;
+    
+    background: none repeat scroll 0 0 #FCFCFC;
+    
+    font-family: DroidSansRegular,"Lucida Sans Unicode","Lucida Grande",sans-serif;
+    font-size: 12px;
+    outline: medium none;
+}
+
+#preview_command input[type=submit] {
+	background: url("../images/bgbutton4.png") repeat-x scroll left top transparent;
+    border: 1px solid #CCCCCC;
+    border-radius: 3px 3px 3px 3px;
+    box-shadow: 1px 1px 0 #F7F7F7;
+    color: #333333;
+    display: inline-block;
+    margin: 2px;
+    padding: 2px 5px;
+}
+
+
+#preview_command input[type=submit]:hover { 
+ 	background: url("../images/buttonbg3.png") repeat-x scroll left top	transparent;	
+	color: #FFFFFF;	
+}
+
+#preview_command .pc_line input {
+	border: 0 none;
+}
+
+#preview_command .pc_command #pc_edit_button {
+	background-image: url('../images/icons/small/black/edit.png');
+}
+
+#preview_command .pc_command #pc_edit_button.pc_edit_true {
+	background-image: url('../images/icons/404.png');
+}
+
+#preview_command .pc_command #pc_publish_button {
+	background-image: url('../images/icons/small/black/publish.png');
+}
+
+#preview_command .pc_command #pc_del_page_button {
+	background-image: url('../images/icons/small/black/trash.png');
+}
+
+#preview_command .pc_command #pc_edit_mode_button {
+	background-image: url('../images/icons/small/black/edit.png');
+}
+
+#preview_command .pc_command #pc_change_template {
+	background-image: url('../images/icons/small/black/document.png');
+}
+
+
+#preview_command #pc_edit_mode_button {
+	background-image: url('../images/icons/small/white/popin.png');
+}
+
+ #preview_command #preview-delete-zone {
+    display: block;
+ 	width: 170px;
+ 	height: 180px;
+ 	margin: 5px;
+ 	background-image: url('../images/icons/big-trash.png');
+ 	background-repeat: no-repeat;
+ 	background-position: center center;
+ }
+ 
+ #preview_command #preview-delete-zone.hidden {
+ 	display: none;
+ }
+ 
+ #preview_command #preview-delete-zone:hover {
+	background-image: url('../images/icons/big-trash-hover.png');
+}

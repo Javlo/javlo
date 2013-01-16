@@ -1,0 +1,278 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<title>Dashboard | Mandy Lane - Premium Admin Template</title>
+<link rel="stylesheet" media="screen" href="css/style.css" />
+
+<!--[if IE 9]>
+    <link rel="stylesheet" media="screen" href="css/ie9.css"/>
+<![endif]-->
+
+<!--[if IE 8]>
+    <link rel="stylesheet" media="screen" href="css/ie8.css"/>
+<![endif]-->
+
+<!--[if IE 7]>
+    <link rel="stylesheet" media="screen" href="css/ie7.css"/>
+<![endif]-->
+
+<script type="text/javascript" src="js/plugins/jquery-1.7.min.js"></script>
+<script type="text/javascript" src="js/plugins/jquery-ui-1.8.16.custom.min.js"></script>
+<script type="text/javascript" src="js/plugins/jquery.validate.min.js"></script>
+<script type="text/javascript" src="js/plugins/jquery.colorbox-min.js"></script>
+<script type="text/javascript" src="js/custom/general.js"></script>
+<script type="text/javascript">
+jQuery(document).ready(function(){
+	
+	//////////// FORM VALIDATION /////////////////
+	jQuery("#form").validate({
+		rules: {
+			name: "required",
+			email: {
+				required: true,
+				email: true,
+			},
+			occupation: "required"
+		},
+		messages: {
+			name: "Please enter your name",
+			email: "Please enter a valid email address",
+			occupation: "Please select your occupation"
+		}
+	});
+
+});	
+</script>
+</head>
+
+<body class="bodygrey">
+
+<div class="headerspace"></div>
+
+<div class="header">
+	
+    <form id="search" action="" method="post">
+    	<input type="text" name="keyword" /> <button class="searchbutton"></button>
+    </form>
+    
+    <div class="topheader">
+        <ul>
+            <li class="note">
+                <a href="pages/message.html" class="messagenotify">
+                    <span class="wrap">
+                        <span class="thicon msgicon"></span>
+                        <span class="count">1</span>
+                    </span>
+                </a>
+            </li>
+            <li class="note">
+            	<a href="pages/info.html" class="alertnotify">
+                	<span class="wrap">
+                    	<span class="thicon infoicon"></span>
+                        <span class="count">5</span>
+                    </span>
+                </a>
+            </li>
+        </ul><!--horMenu-->
+    </div><!--topheader-->
+
+
+    <!--logo-->
+	<a href=""><img src="images/logo2.png" alt="Logo" /></a>
+    
+    <div class="tabmenu">
+    	<ul>
+        	<li><a href="dashboard.html" class="dashboard"><span>Dashboard</span></a></li>
+            <li><a href="elements.html" class="elements"><span>Elements</span></a>
+            	<ul class="subnav">
+                	<li><a href=""><span>Sub Menu One</span></a></li>
+                    <li><a href=""><span>Sub Menu Two</span></a></li>
+                    <li><a href=""><span>Sub Menu Three</span></a></li>
+                </ul>
+            </li>
+            <li><a href="reports.html" class="reports"><span>Reports</span></a></li>
+            <li><a href="users.html" class="users"><span>Users</span></a></li>
+        </ul>
+    </div><!--tabmenu-->
+    
+    <div class="accountinfo">
+    	<img src="images/avatar.png" alt="Avatar" />
+        <div class="info">
+        	<h3>John Doe</h3>
+            <small>youremail@domain.com</small>
+            <p>
+            	<a href="">Account Settings</a> <a href="index.html">Logout</a>
+            </p>
+        </div><!--info-->
+    </div><!--accountinfo-->
+</div><!--header-->
+
+
+<div class="sidebar">
+	<div id="accordion">
+        <h3 class="open">Main Navigation</h3>
+        <div class="content" style="display: block;">
+        	<ul class="leftmenu">
+            	<li><a href="dashboard.html" class="home">General</a></li>
+                <li class="current"><a href="forms.html" class="form">Form Styling</a></li>
+                <li><a href="tables.html" class="table">Table Styling</a></li>
+                <li><a href="gallery.html" class="gallery">Image Gallery</a></li>
+                <li><a href="grid.html" class="grid">Grid Styling</a></li>
+                <li><a href="calendar.html" class="calendar">Calendar</a></li>
+                <li><a href="buttons.html" class="buttons">Buttons &amp; Icons</a></li>
+                <li><a href="editor.html" class="editor">WYSIWYG Editor</a></li>
+                <li><a href="filemanager.html" class="file">File Manager</a></li>
+                <li><a href="invoice.html" class="form">Invoice</a></li>
+                <li><a href="404.html" class="error">404 Page</a></li>
+            </ul>
+        </div>
+        <h3 class="open">Custom Text</h3>
+        <div class="content" style="display: block;">Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. </div>
+	</div>
+	
+</div><!--leftmenu-->
+
+
+<div class="maincontent">
+	
+    <div class="breadcrumbs">
+    	<a href="dashboard.html">Dashboard</a>
+        <span>Form Styling</span>
+    </div><!-- breadcrumbs -->
+
+    <div class="left">
+    
+    	<h1 class="pageTitle">Form Styling</h1>
+    	
+        <form action="" method="post">
+        
+        	<div class="form_default">
+                <fieldset>
+                    <legend>Default form</legend>
+                    
+                    <p>
+                    	<label for="name">Name</label>
+                        <input type="text" name="name"  class="sf" />
+                    </p>
+                    
+                    <p>
+                    	<label for="email">Email</label>
+                        <input type="text" name="email"  class="sf" />
+                    </p>
+                    
+                    <p>
+                    	<label for="location">Location</label>
+                        <textarea name="location" class="mf" cols="" rows=""></textarea>
+                    </p>
+                    
+                    <p>
+                    	<label for="gender" class="nopadding">Gender</label>
+                        <input type="radio" name="gender" value="0" /> Male &nbsp;&nbsp;&nbsp;&nbsp; <input type="radio" name="gender" value="1" /> Female
+                    </p>
+                    
+                    <p>
+                    	<label for="language" class="nopadding">Language</label>
+                        <input type="checkbox" name="language[]" value="0" /> English &nbsp;&nbsp;&nbsp;&nbsp; 
+                        <input type="checkbox" name="language[]" value="1" /> Mandarin &nbsp;&nbsp;&nbsp;&nbsp; 
+                        <input type="checkbox" name="language[]" value="1" /> German
+                    </p>
+                    
+                    <p>
+                    	<label for="occupation">Occupation</label>
+                        <select name="occupation">
+                          <option>Choose One</option>
+                          <option value="0">Web Designer</option>
+                          <option value="1">Web Developer</option>
+                          <option value="2">Software Engineer</option>
+                          <option value="3">Application Engineer</option>
+                          <option value="4">Programmer</option>
+                          <option value="5">Analyst</option>
+                        		
+                        </select>
+                    </p>
+                    
+                    <p>
+                    	<button>Submit</button>
+                    </p>
+                    
+                </fieldset>
+            </div><!--form-->
+            
+        
+        </form>
+        
+        <br />
+        
+		<form id="form" action="" method="post">
+        
+        	<div class="form_default">
+                <fieldset>
+                    <legend>Default form with validation</legend>
+                    
+                    <p>
+                    	<label for="name">Name</label>
+                        <input type="text" name="name"  id="name" class="sf" />
+                    </p>
+                    
+                    <p>
+                    	<label for="email">Email</label>
+                        <input type="text" name="email"  id="email" class="sf" />
+                    </p>
+                    
+                    <p>
+                    	<label for="location">Location</label>
+                        <textarea name="location" class="mf" cols="" rows=""></textarea>
+                    </p>
+                    
+                    <p>
+                    	<label for="gender" class="nopadding">Gender</label>
+                        <input type="radio" name="gender" value="0" /> Male &nbsp;&nbsp;&nbsp;&nbsp; <input type="radio" name="gender" value="1" /> Female
+                    </p>
+                    
+                    <p>
+                    	<label for="language" class="nopadding">Language</label>
+                        <input type="checkbox" name="language[]" value="0" /> English &nbsp;&nbsp;&nbsp;&nbsp; 
+                        <input type="checkbox" name="language[]" value="1" /> Mandarin &nbsp;&nbsp;&nbsp;&nbsp; 
+                        <input type="checkbox" name="language[]" value="1" /> German
+                    </p>
+                    
+                    <p>
+                    	<label for="occupation">Occupation</label>
+                        <select name="occupation" id="occupation">
+                          <option value="">Choose One</option>
+                          <option value="0">Web Designer</option>
+                          <option value="1">Web Developer</option>
+                          <option value="2">Software Engineer</option>
+                          <option value="3">Application Engineer</option>
+                          <option value="4">Programmer</option>
+                          <option value="5">Analyst</option>
+                        		
+                        </select>
+                    </p>
+                    
+                    <p>
+                    	<button>Submit</button>
+                    </p>
+                    
+                </fieldset>
+            </div><!--form-->
+            
+        
+        </form>
+        
+    </div><!--fullpage-->
+    
+    <br clear="all" />
+    
+</div><!--maincontent-->
+
+<br />
+<div class="footer footer_float">
+	<div class="footerinner">
+    	&copy; 2011. Mandy Lane Premium Template. All Rights Reserved.
+    </div><!-- footerinner -->
+</div><!-- footer -->
+
+</body>
+</html>
