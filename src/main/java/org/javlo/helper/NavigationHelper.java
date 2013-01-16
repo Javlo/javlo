@@ -1,8 +1,6 @@
 package org.javlo.helper;
 
-import java.io.IOException;
 import java.lang.reflect.InvocationTargetException;
-import java.sql.SQLException;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
@@ -11,7 +9,6 @@ import java.util.LinkedList;
 import java.util.List;
 
 import org.apache.commons.beanutils.BeanUtils;
-import org.apache.commons.configuration.ConfigurationException;
 import org.javlo.comparator.MenuElementPriorityComparator;
 import org.javlo.component.core.ComponentBean;
 import org.javlo.component.core.ComponentFactory;
@@ -21,13 +18,15 @@ import org.javlo.component.core.IInternalLink;
 import org.javlo.component.links.RSSRegistration;
 import org.javlo.context.ContentContext;
 import org.javlo.context.GlobalContext;
-import org.javlo.helper.DebugHelper.StructureException;
 import org.javlo.navigation.MenuElement;
 import org.javlo.service.ContentService;
+import org.javlo.service.ConvertToCurrentVersion;
 import org.javlo.service.PersistenceService;
 import org.javlo.xml.NodeXML;
 
 public class NavigationHelper {
+
+	private static java.util.logging.Logger logger = java.util.logging.Logger.getLogger(NavigationHelper.class.getName());
 
 	public static final boolean canMoveDown(MenuElement elem) {
 		if (elem.getParent() == null) {
@@ -222,14 +221,38 @@ public class NavigationHelper {
 		return pageChannel;
 	}
 
-	public static final void importPage(ContentContext ctx, PersistenceService persistenceService, NodeXML pageNode, MenuElement currentPage, String lang, boolean readOnly) throws StructureException, ConfigurationException, SQLException, IOException {
+	public static final void importPage(ContentContext ctx, PersistenceService persistenceService, NodeXML pageNode, MenuElement currentPage, String lang, boolean readOnly) throws Exception {
+
+		NodeXML parent = pageNode;
+		if (parent != null && parent.getParent() != null) {
+			while (parent.getParent().getParent() != null) {
+				parent = parent.getParent();
+			}
+		}
+		String version = parent.getAttributeValue("version", "1.0");
+
 		persistenceService.insertContent(pageNode, currentPage, lang);
+		for (ComponentBean data : currentPage.getAllLocalContentBean()) {
+			ConvertToCurrentVersion.convert(ctx, data, version);
+		}
 		NodeXML child = pageNode.getChild("page");
+
+		logger.info("import page version : " + version);
+
 		while (child != null) {
 			String pageName = child.getAttributeValue("name");
 			if (pageName != null) {
 				GlobalContext globalContext = GlobalContext.getInstance(ctx.getRequest());
 				MenuElement newPage = persistenceService.insertPage(globalContext, child, currentPage, new HashMap<MenuElement, String[]>(), lang);
+				try {
+					for (ComponentBean data : newPage.getAllLocalContentBean()) {
+						ConvertToCurrentVersion.convert(ctx, data, version);
+					}
+					newPage.releaseCache();
+				} catch (Exception e) {
+					e.printStackTrace();
+				}
+
 				newPage.setRemote(readOnly);
 			}
 			child = child.getNext("page");

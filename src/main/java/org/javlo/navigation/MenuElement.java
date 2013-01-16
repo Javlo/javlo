@@ -3225,6 +3225,12 @@ public class MenuElement implements Serializable {
 		}
 	}
 
+	public void setContentStayCache(ComponentBean[] newContent) {
+		synchronized (getLock()) {
+			componentBean = newContent;
+		}
+	}
+
 	public void setCreationDate(Date createDate) {
 		creationDate = createDate;
 	}
