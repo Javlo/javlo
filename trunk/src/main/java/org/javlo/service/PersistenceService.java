@@ -2,7 +2,6 @@ package org.javlo.service;
 
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
-import java.io.ByteArrayInputStream;
 import java.io.File;
 import java.io.FileFilter;
 import java.io.FileInputStream;
@@ -456,7 +455,6 @@ public class PersistenceService {
 		List<ComponentBean> contentList = new LinkedList<ComponentBean>();
 
 		while (contentNode != null) {
-
 			String id = contentNode.getAttributeValue("id");
 			DebugHelper.checkStructure(id == null, "no id defined in a component.");
 			String type = contentNode.getAttributeValue("type");
@@ -610,10 +608,6 @@ public class PersistenceService {
 		return page;
 	}
 
-	public MenuElement load(ContentContext ctx, Map<String, String> contentAttributeMap) throws Exception {
-		return load(ctx, ContentContext.PREVIEW_MODE, contentAttributeMap, null);
-	}
-
 	private LoadingBean load(ContentContext ctx, InputStream in, Map<String, String> contentAttributeMap, int renderMode) throws ServiceException {
 		GlobalContext globalContext = GlobalContext.getInstance(ctx.getRequest());
 		MenuElement root = MenuElement.getInstance(globalContext);
@@ -723,9 +717,9 @@ public class PersistenceService {
 				}
 			}
 
-		} catch (SAXParseException e) {			
+		} catch (SAXParseException e) {
 			e.printStackTrace();
-			MessageRepository.getInstance(ctx).setGlobalMessageAndNotification(ctx, new GenericMessage("error XML parsing (line:"+e.getLineNumber()+" col:"+e.getColumnNumber()+"): " + e.getMessage(), GenericMessage.ERROR));
+			MessageRepository.getInstance(ctx).setGlobalMessageAndNotification(ctx, new GenericMessage("error XML parsing (line:" + e.getLineNumber() + " col:" + e.getColumnNumber() + "): " + e.getMessage(), GenericMessage.ERROR));
 			root.setId("0");
 			root.setName("root");
 			root.setPriority(10);

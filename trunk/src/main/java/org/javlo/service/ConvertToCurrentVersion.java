@@ -16,6 +16,34 @@ public class ConvertToCurrentVersion {
 
 	private static Logger logger = Logger.getLogger(ConvertToCurrentVersion.class.getName());
 
+	public static int convert(ContentContext ctx, ComponentBean bean, String version) {
+		System.out.println("***** ConvertToCurrentVersion.convert : version = " + version); // TODO: remove debug trace
+		int convertion = 0;
+		if (bean.getType().equals("page-links")) {
+			bean.setType(PageReferenceComponent.TYPE);
+			if (bean.getValue().contains("slide-show")) {
+				bean.setRenderer("carousel");
+			} else {
+				bean.setRenderer("products");
+			}
+			bean.setModify(true);
+			convertion++;
+		}
+		if (version.startsWith("1") && bean.getType().equals("video")) {
+			convertion++;
+			bean.setType(XHTML.TYPE);
+			bean.setModify(true);
+		}
+		if (version.startsWith("1") && bean.getType().equals("banner")) {
+			System.out.println("***** ConvertToCurrentVersion.convert : banner found."); // TODO: remove debug trace
+			convertion++;
+			bean.setType(GlobalImage.TYPE);
+			bean.setValue(bean.getValue() + "\n" + GlobalImage.IMAGE_FILTER + "=banner");
+			bean.setModify(true);
+		}
+		return convertion;
+	}
+
 	public static void convert(ContentContext ctx, LoadingBean lBean) {
 		GlobalContext globalContext = GlobalContext.getInstance(ctx.getRequest());
 		NotificationService notificationService = NotificationService.getInstance(globalContext);
@@ -25,52 +53,18 @@ public class ConvertToCurrentVersion {
 		try {
 			children = root.getAllChildren();
 
-			int pageLinkConvertion = 0;
-			int pageVideoConvertion = 0;
-			int pageBannerConvertion = 0;
+			int convertion = 0;
 
 			for (MenuElement child : children) {
 				ComponentBean[] beans = child.getContent();
 				for (ComponentBean bean : beans) {
-					if (bean.getType().equals("page-links")) {
-						bean.setType(PageReferenceComponent.TYPE);
-						if (bean.getValue().contains("slide-show")) {
-							bean.setRenderer("carousel");
-						} else {
-							bean.setRenderer("products");
-						}
-						bean.setModify(true);
-						pageLinkConvertion++;
-					}
-					if (lBean.getCmsVersion().startsWith("1") && bean.getType().equals("video")) {
-						pageVideoConvertion++;
-						bean.setType(XHTML.TYPE);
-						bean.setModify(true);
-					}
-					if (lBean.getCmsVersion().startsWith("1") && bean.getType().equals("banner")) {
-						pageBannerConvertion++;
-						bean.setType(GlobalImage.TYPE);
-						bean.setValue(bean.getValue() + "\n" + GlobalImage.IMAGE_FILTER + "=banner");
-						bean.setModify(true);
-					}
+					convertion += convert(ctx, bean, lBean.getCmsVersion());
 				}
 
 			}
 
-			if (pageLinkConvertion > 0) {
-				String msg = "page-links converted (mode:" + ctx.getRenderMode() + ") : " + pageLinkConvertion;
-				notificationService.addSystemNotification(msg, GenericMessage.INFO);
-				logger.info(msg);
-			}
-
-			if (pageVideoConvertion > 0) {
-				String msg = "videos converted (mode:" + ctx.getRenderMode() + ") : " + pageVideoConvertion;
-				notificationService.addSystemNotification(msg, GenericMessage.INFO);
-				logger.info(msg);
-			}
-
-			if (pageBannerConvertion > 0) {
-				String msg = "banner converted (mode:" + ctx.getRenderMode() + ") : " + pageBannerConvertion;
+			if (convertion > 0) {
+				String msg = "component converted (mode:" + ctx.getRenderMode() + ") : " + convertion;
 				notificationService.addSystemNotification(msg, GenericMessage.INFO);
 				logger.info(msg);
 			}

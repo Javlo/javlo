@@ -47,6 +47,9 @@ org.javlo.component.links.AgendaImport
 org.javlo.component.links.SubtitleLink
 org.javlo.component.links.SmartExternalLink
 org.javlo.component.links.SmartExternalLinkImportation
+org.javlo.component.links.SmartExternalLinkImportation
+org.javlo.component.links.AnchorComponent
+org.javlo.component.links.AnchorLink
 
 --content.title.graphic
 
@@ -54,7 +57,6 @@ org.javlo.component.image.GlobalImage
 org.javlo.component.multimedia.Multimedia
 org.javlo.component.multimedia.Video
 org.javlo.component.multimedia.AllImagesGallery
-org.javlo.component.multimedia.VideoContentMultimedia
 
 --content.title.container
 
@@ -64,6 +66,7 @@ org.javlo.component.container.DynamicComponentList
 org.javlo.component.container.TextDirection
 
 --content.title.web2
+
 org.javlo.component.meta.Tags
 org.javlo.component.meta.Category
 org.javlo.component.gadget.CountAccess
@@ -74,7 +77,6 @@ org.javlo.component.list.FAQComponent
 org.javlo.component.web2.ReactionComponent
 org.javlo.component.web2.PageRank
 org.javlo.component.form.FormMailingComponent
-
 
 --content.title.special
 
