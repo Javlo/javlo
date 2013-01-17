@@ -1,6 +1,5 @@
 package org.javlo.service.social;
 
-import java.net.URL;
 import java.util.Map;
 
 public interface ISocialNetwork {
@@ -15,7 +14,7 @@ public interface ISocialNetwork {
 
 	public void setToken(String token);
 
-	public URL getURL();
+	public String getURL();
 
 	public void setURL(String url);
 
