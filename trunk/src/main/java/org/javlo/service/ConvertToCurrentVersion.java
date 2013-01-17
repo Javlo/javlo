@@ -17,7 +17,6 @@ public class ConvertToCurrentVersion {
 	private static Logger logger = Logger.getLogger(ConvertToCurrentVersion.class.getName());
 
 	public static int convert(ContentContext ctx, ComponentBean bean, String version) {
-		System.out.println("***** ConvertToCurrentVersion.convert : version = " + version); // TODO: remove debug trace
 		int convertion = 0;
 		if (bean.getType().equals("page-links")) {
 			bean.setType(PageReferenceComponent.TYPE);
@@ -35,7 +34,6 @@ public class ConvertToCurrentVersion {
 			bean.setModify(true);
 		}
 		if (version.startsWith("1") && bean.getType().equals("banner")) {
-			System.out.println("***** ConvertToCurrentVersion.convert : banner found."); // TODO: remove debug trace
 			convertion++;
 			bean.setType(GlobalImage.TYPE);
 			bean.setValue(bean.getValue() + "\n" + GlobalImage.IMAGE_FILTER + "=banner");
