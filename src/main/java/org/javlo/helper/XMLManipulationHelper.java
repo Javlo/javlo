@@ -438,7 +438,7 @@ public class XMLManipulationHelper {
 				if (tags[i].getName().equalsIgnoreCase("link")) {
 					String hrefValue = attributes.get("href");
 
-					if ((hrefValue != null) && (!StringHelper.isURL(hrefValue))) {
+					if ((hrefValue != null) && (!StringHelper.isURL(hrefValue)) && !hrefValue.toLowerCase().startsWith("https")) { // don't modify https because it is external api as facebook and not library
 						String newLinkGeneratorIf = "<%if (!XHTMLHelper.allReadyInsered(ctx, \"" + hrefValue + "\")) {%>";
 						resources.add(hrefValue);
 						attributes.put("href", "<%=URLHelper.createStaticTemplateURL(ctx,\"/" + hrefValue + "\", \"" + templateVersion + "\")%>");
@@ -543,7 +543,7 @@ public class XMLManipulationHelper {
 										inside = null;
 									}
 									String outHead = tag.render(inside);
-									if (resource != null) {
+									if (resource != null && resource.toLowerCase().startsWith("https")) {
 										outHead = "<%if (!XHTMLHelper.allReadyInsered(ctx,\"" + resource + "\")) { %>" + outHead + "<%} else {%><!-- resource allready insered: " + resource + " --><%}%>";
 									}
 									String homeRendercode = "<%=URLHelper.createStaticTemplatePluginURL(ctx, \"/\", \"" + plugin.getFolder() + "\")%>";
@@ -581,11 +581,13 @@ public class XMLManipulationHelper {
 				if ((srcValue != null)) {
 					resources.add(srcValue);
 					if (tags[i].getName().equalsIgnoreCase("script")) {
-						String newLinkGeneratorIf = "<%if (!XHTMLHelper.allReadyInsered(ctx, \"" + srcValue + "\")) {%>";
-						if (!StringHelper.isURL(srcValue)) {
-							attributes.put("src", "<%=URLHelper.createStaticTemplateURL(ctx,\"/" + srcValue + "\")%>");
+						if (!srcValue.toLowerCase().startsWith("https")) {
+							String newLinkGeneratorIf = "<%if (!XHTMLHelper.allReadyInsered(ctx, \"" + srcValue + "\")) {%>";
+							if (!StringHelper.isURL(srcValue)) {
+								attributes.put("src", "<%=URLHelper.createStaticTemplateURL(ctx,\"/" + srcValue + "\")%>");
+							}
+							remplacement.addReplacement(tags[i].getOpenStart(), tags[i].getOpenEnd() + 1, newLinkGeneratorIf + tags[i].toString() + "<%}%>");
 						}
-						remplacement.addReplacement(tags[i].getOpenStart(), tags[i].getOpenEnd() + 1, newLinkGeneratorIf + tags[i].toString() + "<%}%>");
 					} else {
 						attributes.put("src", "<%=URLHelper.createStaticTemplateURL(ctx,\"/" + srcValue + "\")%>");
 						remplacement.addReplacement(tags[i].getOpenStart(), tags[i].getOpenEnd() + 1, tags[i].toString());

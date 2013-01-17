@@ -1,7 +1,5 @@
 package org.javlo.service.social;
 
-import java.net.MalformedURLException;
-import java.net.URL;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -24,15 +22,8 @@ public abstract class AbstractSocialNetwork implements ISocialNetwork {
 	}
 
 	@Override
-	public URL getURL() {
-		if (data.get("url") != null && data.get("url").trim().length() > 0) {
-			try {
-				return new URL(data.get(URL));
-			} catch (MalformedURLException e) {
-				e.printStackTrace();
-			}
-		}
-		return null;
+	public String getURL() {
+		return data.get("url");
 	}
 
 	@Override
