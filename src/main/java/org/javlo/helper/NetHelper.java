@@ -459,11 +459,13 @@ public class NetHelper {
 		List<URL> urlList = new LinkedList<URL>();
 		List<String> urlStrList = new LinkedList<String>();
 
-		int hrefIndex = content.toLowerCase().indexOf("href=\"") + "href=\"".length();
+		String lowerContext = content.toLowerCase();
+
+		int hrefIndex = lowerContext.indexOf("href=\"") + "href=\"".length();
 		while (hrefIndex >= "href=\"".length()) {
-			int closeLink = content.indexOf("\"", hrefIndex + 1);
+			int closeLink = lowerContext.indexOf("\"", hrefIndex + 1);
 			if (closeLink >= 0) {
-				String url = content.substring(hrefIndex, closeLink);
+				String url = lowerContext.substring(hrefIndex, closeLink);
 				if (!URLHelper.isAbsoluteURL(url)) {
 					url = URLHelper.mergePath(URLHelper.extractPath(inURL.toString()), url);
 				}
@@ -479,7 +481,7 @@ public class NetHelper {
 					}
 				}
 			}
-			hrefIndex = content.toLowerCase().indexOf("href=\"", hrefIndex) + "href=\"".length();
+			hrefIndex = lowerContext.indexOf("href=\"", hrefIndex) + "href=\"".length();
 		}
 
 		return urlList;
