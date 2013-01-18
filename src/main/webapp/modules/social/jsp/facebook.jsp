@@ -8,7 +8,13 @@
 		<div class="line">
 			<label for="client_id">client id</label>
 			<input type="text" name="client_id" id="client_id" value="${network.clientId}" />
-		</div>		
+		</div>
+		<c:if test="${empty network.clientId}">
+		<div class="line">
+			<label for="fb_link">create client id</label>
+			<a class="action-button" id="fb_link" href="https://developers.facebook.com/apps" target="_blank">facebook</a>
+		</div>
+		</c:if>				
 		<div class="line">
 			<label for="client_secret">client secret</label>
 			<input type="text" name="client_secret" id="client_secret" value="${network.clientSecret}" />
