@@ -364,7 +364,7 @@ public class StaticConfig extends Observable {
 	public String getDefaultContext() {
 		return properties.getString("default-context", "default.javlo.org");
 	}
-	
+
 	public String getMasterContext() {
 		return properties.getString("master-context", "admin");
 	}
@@ -1145,6 +1145,10 @@ public class StaticConfig extends Observable {
 		} else {
 			return StringHelper.stringToCollection(basicModules, ",");
 		}
+	}
+
+	public long getTransformingSize() {
+		return properties.getLong("transforming.size", 4);
 	}
 
 }

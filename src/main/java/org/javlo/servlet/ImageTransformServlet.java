@@ -612,10 +612,10 @@ public class ImageTransformServlet extends HttpServlet {
 					if (imageTransforming.get(imageKey) != null) {
 						foundInSet = true;
 					} else {
-						if (imageTransforming.size() > 10) {
+						if (imageTransforming.size() > staticConfig.getTransformingSize()) {
 							logger.warning("too much images in transformation. Waiting...");
 							Thread.sleep(5000);
-							if (imageTransforming.size() > 10) {
+							if (imageTransforming.size() > staticConfig.getTransformingSize()) {
 								logger.severe("too much images in transformation eject image transform : " + imageKey);
 								response.setStatus(HttpServletResponse.SC_SERVICE_UNAVAILABLE);
 								return;

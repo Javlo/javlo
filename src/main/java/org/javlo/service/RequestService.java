@@ -148,7 +148,18 @@ public class RequestService {
 		}
 	}
 
-	public Map<String, String[]> getParameterMap() {
+	public Map<String, String> getParameterMap() {
+		Map<String, String> outMap = new HashMap<String, String>();
+
+		for (Map.Entry<String, String[]> entry : parameters.entrySet()) {
+			if (entry.getValue().length > 0)
+				outMap.put(entry.getKey(), entry.getValue()[0]);
+		}
+
+		return outMap;
+	}
+
+	public Map<String, String[]> getParametersMap() {
 		return Collections.unmodifiableMap(parameters);
 	}
 

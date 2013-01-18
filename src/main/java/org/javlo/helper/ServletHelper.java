@@ -48,7 +48,7 @@ public class ServletHelper {
 
 		List<String> actions = new LinkedList<String>();
 		List<String> actionsKey = new LinkedList<String>();
-		Map<String, String[]> params = requestService.getParameterMap();
+		Map<String, String[]> params = requestService.getParametersMap();
 
 		Collection<String> keys = params.keySet();
 		for (String key : keys) {

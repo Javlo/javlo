@@ -435,6 +435,22 @@ public class Module {
 			}
 		}
 
+		String externalCSS = config.get("css.external");
+
+		if (externalCSS != null) {
+			cssFolder = new File(URLHelper.mergePath(moduleRoot.getAbsolutePath(), externalCSS));
+			if (cssFolder.isDirectory()) {
+				File[] cssFiles = cssFolder.listFiles();
+				Arrays.sort(cssFiles, new FileComparator(FileComparator.NAME, true));
+				for (File file : cssFiles) {
+					if (file.isFile() && StringHelper.getFileExtension(file.getName()).equalsIgnoreCase("css")) {
+						String url = URLHelper.mergePath("/", ModulesContext.MODULES_FOLDER + '/' + getName() + '/' + externalCSS + '/' + file.getName());
+						cssURI.add(url);
+					}
+				}
+			}
+		}
+
 		/* js */
 		File jsFolder = new File(URLHelper.mergePath(moduleRoot.getAbsolutePath(), JS_FOLDER));
 		if (jsFolder.isDirectory()) {
@@ -446,8 +462,29 @@ public class Module {
 				}
 			}
 			for (int i = 0; i < 100; i++) {
-				if (config.get("js.import." + i) != null) {
-					jsURI.add(URLHelper.mergePath("/", ModulesContext.MODULES_FOLDER + '/' + getName() + config.get("js.import." + i)));
+				String jsURL = config.get("js.import." + i);
+				if (jsURL != null) {
+					if (StringHelper.isURL(jsURL)) {
+						jsURI.add(jsURL);
+					} else {
+						jsURI.add(URLHelper.mergePath("/", ModulesContext.MODULES_FOLDER + '/' + getName() + jsURL));
+					}
+				}
+			}
+		}
+
+		String externalJS = config.get("js.external");
+
+		if (externalCSS != null) {
+			cssFolder = new File(URLHelper.mergePath(moduleRoot.getAbsolutePath(), externalJS));
+			if (cssFolder.isDirectory()) {
+				File[] cssFiles = cssFolder.listFiles();
+				Arrays.sort(cssFiles, new FileComparator(FileComparator.NAME, true));
+				for (File file : cssFiles) {
+					if (file.isFile() && StringHelper.getFileExtension(file.getName()).equalsIgnoreCase("js")) {
+						String url = URLHelper.mergePath("/", ModulesContext.MODULES_FOLDER + '/' + getName() + '/' + externalJS + '/' + file.getName());
+						cssURI.add(url);
+					}
 				}
 			}
 		}

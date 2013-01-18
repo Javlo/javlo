@@ -43,9 +43,7 @@ public class SocialAction extends AbstractModuleAction {
 		if (network == null) {
 			return "network '" + name + "' not found.";
 		} else {
-			network.setToken(rs.getParameter("token", null));
-			network.setURL(rs.getParameter("url", null));
-			network.setLogin(rs.getParameter("login", null));
+			network.update(rs.getParameterMap());
 		}
 		socialService.store();
 

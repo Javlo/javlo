@@ -24,12 +24,12 @@ public class RequestParameterMap implements Map<String, Object> {
 
 	@Override
 	public boolean containsKey(Object key) {
-		return requestService.getParameterMap().containsKey(key);
+		return requestService.getParametersMap().containsKey(key);
 	}
 
 	@Override
 	public boolean containsValue(Object value) {
-		for (Object valuesObj : requestService.getParameterMap().values()) {
+		for (Object valuesObj : requestService.getParametersMap().values()) {
 			String[] values = (String[]) valuesObj;
 			if (values.length > 0) {
 				return values[0].equals(values);
@@ -57,12 +57,12 @@ public class RequestParameterMap implements Map<String, Object> {
 
 	@Override
 	public boolean isEmpty() {
-		return requestService.getParameterMap().isEmpty();
+		return requestService.getParametersMap().isEmpty();
 	}
 
 	@Override
 	public Set<String> keySet() {
-		return requestService.getParameterMap().keySet();
+		return requestService.getParametersMap().keySet();
 	}
 
 	@Override
@@ -82,13 +82,13 @@ public class RequestParameterMap implements Map<String, Object> {
 
 	@Override
 	public int size() {
-		return requestService.getParameterMap().size();
+		return requestService.getParametersMap().size();
 	}
 
 	@Override
 	public Collection<Object> values() {
 		Collection<Object> outValues = new LinkedList<Object>();
-		for (Object valuesObj : requestService.getParameterMap().values()) {
+		for (Object valuesObj : requestService.getParametersMap().values()) {
 			Object[] values = (Object[]) valuesObj;
 			if (values.length > 0) {
 				outValues.add(values[0]);

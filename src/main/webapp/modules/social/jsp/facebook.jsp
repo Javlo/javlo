@@ -4,25 +4,29 @@
 	<fieldset>
 		<legend>${network.name}</legend>
 		<input type="hidden" name="webaction" value="updateNetwork" />
-		<input type="hidden" name="name" value="${network.name}" />
-		<div class="line">
-			<label for="login">login</label>
-			<input type="text" name="login" id="login" value="${network.login}" />
-		</div>
+		<input type="hidden" name="name" value="${network.name}" />		
 		<div class="line">
 			<label for="token">token</label>
 			<input type="text" name="token" id="token" value="${network.token}" />
 		</div>
 		<div class="line">
+			<label for="client_id">client id</label>
+			<input type="text" name="client_id" id="client_id" value="${network.clientId}" />
+		</div>		
+		<div class="line">
+			<label for="client_secret">client secret</label>
+			<input type="text" name="client_secret" id="client_secret" value="${network.clientSecret}" />
+		</div>
+		<div class="line">
 			<label for="url">url</label>
 			<input type="text" name="url" id="url" value="${network.URL}" />
-		</div>		
+		</div>
 		<div class="line" style="display:none;" id="loginFB">
 			<label for="fb">activation</label>
 			<input id="fb" type="button" onclick="goLogin()" value="Facebook login" />
 		</div>	
 		<div class="action">			
-			<input type="submit" name="ok" value="${i18n.view["global.ok"]}" />
+			<input type="submit" name="ok" value="${i18n.view['global.ok']}" />
 			<div style="display:none;" id="loginFB">
 			<input type="button" onclick="goLogin()" value="Facebook login" />
 			</div>
@@ -85,6 +89,11 @@
 		var uid = response.authResponse.userID;
 		var accessToken = response.authResponse.accessToken;
 		document.getElementById('token').value = accessToken;
+		
+		<c:if test="${not empty network.clientId && not empty network.clientSecret}">
+			alert("clientSecret : ${network.clientSecret}");
+		</c:if>
+		
 		// enregistre en ajax les data
 		// appel la liste des pages générées l'utilisateur		
 		// la liste des pages

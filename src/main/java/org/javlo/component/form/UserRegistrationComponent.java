@@ -74,7 +74,7 @@ public class UserRegistrationComponent extends AbstractVisualComponent implement
 	}
 
 	/**
-	 *
+	 * 
 	 * @see org.javlo.component.AbstractVisualComponent#init(java.lang.String, java.lang.String, org.javlo.ContentContext)
 	 */
 	@Override
@@ -236,7 +236,6 @@ public class UserRegistrationComponent extends AbstractVisualComponent implement
 			return false;
 		}
 	}
-
 
 	public boolean isNeedFree() {
 		try {
@@ -624,13 +623,13 @@ public class UserRegistrationComponent extends AbstractVisualComponent implement
 			if (comment != null && comment.length() > 0) {
 				StringWriter sw = new StringWriter();
 				PrintWriter out = new PrintWriter(sw);
-				
+
 				out.println(confirmEmail);
 				out.println();
-				
+
 				out.println(i18nAccess.getViewText("form.comment"));
 				out.println(comment);
-				
+
 				out.close();
 				confirmEmail = sw.toString();
 				bcc.add(new InternetAddress(globalContext.getAdministratorEmail()));
@@ -640,7 +639,7 @@ public class UserRegistrationComponent extends AbstractVisualComponent implement
 
 			MailService mailService = MailService.getInstance(staticConfig);
 			try {
-				mailService.sendMail(new InternetAddress(globalContext.getAdministratorEmail()), new InternetAddress(email), bcc, comp.getEmailSubject(), confirmEmail, true);
+				mailService.sendMail(null, new InternetAddress(globalContext.getAdministratorEmail()), new InternetAddress(email), bcc, comp.getEmailSubject(), confirmEmail, true);
 				GenericMessage msg = new GenericMessage(i18nAccess.getContentViewText("user.error.email-send"), GenericMessage.INFO);
 				messageRepository.setGlobalMessage(msg);
 			} catch (Exception ex) {
@@ -759,7 +758,6 @@ public class UserRegistrationComponent extends AbstractVisualComponent implement
 				out.close();
 				NetHelper.sendMailToAdministrator(ctx, "registration on " + globalContext.getContextKey() + " : " + firstName + " " + lastName, new String(outStream.toByteArray()));
 
-
 				if (!messageRepository.haveGlobalMessage() && !storeUser) {
 					comp.needForm = false;
 					request.setAttribute(StringHelper.REQUEST_KEY_FORM_VALID, "true");
@@ -783,7 +781,7 @@ public class UserRegistrationComponent extends AbstractVisualComponent implement
 	public String getActionGroupName() {
 		return "registration";
 	}
-	
+
 	@Override
 	public boolean isRealContent(ContentContext ctx) {
 		return true;
