@@ -407,7 +407,7 @@ public class ChildrenLink extends AbstractVisualComponent implements IImageTitle
 	@Override
 	protected void init() throws ResourceNotFoundException {
 
-		if (!isLabel() && !isDescription() && !isImage()) {
+		if (!isLabel() && !isDescription() && !isImage() && !isCombo()) {
 			setValue(LABEL);
 		}
 
