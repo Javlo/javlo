@@ -3,6 +3,8 @@ package org.javlo.service.social;
 import java.util.HashMap;
 import java.util.Map;
 
+import org.javlo.helper.StringHelper;
+
 public abstract class AbstractSocialNetwork implements ISocialNetwork {
 
 	protected final Map<String, String> data = new HashMap<String, String>();
@@ -13,17 +15,17 @@ public abstract class AbstractSocialNetwork implements ISocialNetwork {
 
 	@Override
 	public String getToken() {
-		return data.get(TOKEN);
+		return StringHelper.neverNull(data.get(TOKEN));
 	}
 
 	@Override
 	public String getLogin() {
-		return data.get(LOGIN);
+		return StringHelper.neverNull(data.get(LOGIN));
 	}
 
 	@Override
 	public String getURL() {
-		return data.get("url");
+		return StringHelper.neverNull(data.get(URL));
 	}
 
 	@Override
@@ -53,9 +55,9 @@ public abstract class AbstractSocialNetwork implements ISocialNetwork {
 
 	@Override
 	public void update(Map map) {
-		setURL("" + map.get("url"));
-		setToken("" + map.get("token"));
-		setLogin("" + map.get("login"));
+		setURL(StringHelper.neverNull(map.get("url")));
+		setToken(StringHelper.neverNull(map.get("token")));
+		setLogin(StringHelper.neverNull(map.get("login")));
 	}
 
 }
