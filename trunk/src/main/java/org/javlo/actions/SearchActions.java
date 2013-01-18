@@ -49,7 +49,7 @@ public class SearchActions implements IAction {
 
 			SearchFilter searchFilter = SearchFilter.getInstance(ctx);
 
-			Collection<String> keys = requestService.getParameterMap().keySet();
+			Collection<String> keys = requestService.getParametersMap().keySet();
 			for (String key : keys) { // reset only if at least one element is selected, it can be "all"
 				if (key.startsWith("root")) {
 					searchFilter.clearRootPages();

@@ -22,4 +22,9 @@ public interface ISocialNetwork {
 
 	public void set(String key, String value);
 
+	/**
+	 * update value with a map.
+	 */
+	public void update(Map map);
+
 }

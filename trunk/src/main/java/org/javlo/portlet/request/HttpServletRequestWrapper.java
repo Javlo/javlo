@@ -32,7 +32,7 @@ public class HttpServletRequestWrapper extends javax.servlet.http.HttpServletReq
 	@Override
 	public Map getParameterMap() {
 		Map parametersShort = new HashMap<String,String>();
-		Map parametersFull = requestService.getParameterMap();
+		Map parametersFull = requestService.getParametersMap();
 		for (Object paramObj : parametersFull.keySet()) {
 			String paramName = (String) paramObj;
 			if (paramName.endsWith(this.suffix)) {

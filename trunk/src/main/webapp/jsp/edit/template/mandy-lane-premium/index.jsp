@@ -49,11 +49,11 @@
 <script type="text/javascript" src="${info.editTemplateURL}/js/custom/general.js"></script>
 
 
-<c:forEach var="css" items="${currentModule.CSS}">
+<!-- module '${currentModule.name}' CSS --><c:forEach var="css" items="${currentModule.CSS}">
 <link rel="stylesheet" href="<jv:url value='${css}' />"/>
 </c:forEach>
 
-<c:forEach var="js" items="${currentModule.JS}">
+<!-- module '${currentModule.name}' JS --><c:forEach var="js" items="${currentModule.JS}">
 <script type="text/javascript" src="<jv:url value='${js}' />"></script>
 </c:forEach>
 

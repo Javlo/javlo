@@ -1,5 +1,5 @@
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
-<c:if test="${info.god}">
+<c:if test="${info.god && empty context}">
 <a class="action-button more edit-static-config" href="${info.currentURL}?webaction=EditStaticConfig"><span>${i18n.edit['admin.edit-static-config']}</span></a>
 </c:if>
 <c:if test="${empty context}">

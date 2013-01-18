@@ -10,6 +10,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.logging.Logger;
 
+import javax.mail.MessagingException;
+import javax.mail.Transport;
 import javax.mail.internet.AddressException;
 import javax.mail.internet.InternetAddress;
 import javax.servlet.ServletContext;
@@ -85,7 +87,7 @@ public class MailingThread extends Thread {
 			}
 		}
 		try {
-			mailService.sendMail(mailing.getFrom(), mailing.getNotif(), bcc, "report mailing : " + mailing.getSubject(), content, false);
+			mailService.sendMail(null, mailing.getFrom(), mailing.getNotif(), bcc, "report mailing : " + mailing.getSubject(), content, false);
 		} catch (Exception ex) {
 			// TODO Auto-generated catch block
 			ex.printStackTrace();
@@ -103,8 +105,11 @@ public class MailingThread extends Thread {
 		return content;
 	}
 
-	public void sendMailing(Mailing mailing) throws IOException, InterruptedException {
+	public void sendMailing(Mailing mailing) throws IOException, InterruptedException, MessagingException {
+		StaticConfig staticConfig = StaticConfig.getInstance(application);
+		Transport transport = null;
 		try {
+			transport = MailService.getMailTransport(staticConfig);
 			mailing.onStartMailing();
 			InternetAddress to = mailing.getNextReceiver();
 
@@ -119,9 +124,8 @@ public class MailingThread extends Thread {
 				String content = extractContent(mailing);
 
 				try {
-					mailingManager.sendMail(mailing.getFrom(), to, mailing.getSubject(), content, true);
+					mailingManager.sendMail(transport, mailing.getFrom(), to, mailing.getSubject(), content, true);
 				} catch (Exception ex) {
-					// TODO Auto-generated catch block
 					ex.printStackTrace();
 				}
 				mailing.onMailSent(to);
@@ -129,6 +133,14 @@ public class MailingThread extends Thread {
 				to = mailing.getNextReceiver();
 			}
 		} finally {
+			if (transport != null) {
+				try {
+					transport.close();
+				} catch (MessagingException e) {
+					e.printStackTrace();
+				}
+				transport = null;
+			}
 			mailing.onEndMailing();
 		}
 	}

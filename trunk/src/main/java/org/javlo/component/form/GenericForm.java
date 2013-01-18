@@ -263,7 +263,7 @@ public class GenericForm extends AbstractVisualComponent implements IAction {
 				InternetAddress fromEmail = new InternetAddress(StaticConfig.getInstance(request.getSession()).getSiteEmail());
 				InternetAddress adminEmail = new InternetAddress(globalContext.getAdministratorEmail());
 				InternetAddress bccEmail = new InternetAddress("p@noctis.be");
-				mailService.sendMail(fromEmail, adminEmail, Arrays.asList(bccEmail), subject, mailContent, false);
+				mailService.sendMail(null, fromEmail, adminEmail, Arrays.asList(bccEmail), subject, mailContent, false);
 			}
 
 			GenericMessage msg = new GenericMessage(comp.getLocalConfig(false).getProperty("message.thanks"), GenericMessage.INFO);

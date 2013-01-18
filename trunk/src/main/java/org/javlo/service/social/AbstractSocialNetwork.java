@@ -5,7 +5,7 @@ import java.util.Map;
 
 public abstract class AbstractSocialNetwork implements ISocialNetwork {
 
-	private final Map<String, String> data = new HashMap<String, String>();
+	protected final Map<String, String> data = new HashMap<String, String>();
 
 	private static final String TOKEN = "token";
 	private static final String URL = "url";
@@ -49,6 +49,13 @@ public abstract class AbstractSocialNetwork implements ISocialNetwork {
 	@Override
 	public void set(String key, String value) {
 		data.put(key, value);
+	}
+
+	@Override
+	public void update(Map map) {
+		setURL("" + map.get("url"));
+		setToken("" + map.get("token"));
+		setLogin("" + map.get("login"));
 	}
 
 }
