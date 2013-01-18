@@ -115,7 +115,7 @@
     	    <c:if test="${empty module.parent}">
 	        	<li class="module ${module.name} ${module.name == currentModule.name || module.name == currentModule.parent?'current':''} ${module.name == fromModule.name?'from':''}">        		
 	        		<a href="${info.currentURL}?module=${module.name}"><span>${module.title}</span></a>	        		
-	        		${module.name == currentModule.name?'<div id="ajax-loader"></div>':''}
+	        		${module.name == currentModule.name || module.name == currentModule.parent?'<div id="ajax-loader"></div>':''}
 	        		<c:if test="${currentModule.name != module.name && module.name == currentModule.parent}">
 	        			<span class="subname">${currentModule.title}</span>
 	        		</c:if>
