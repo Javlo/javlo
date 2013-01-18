@@ -1,6 +1,6 @@
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/functions" prefix="fn" %>
-<form class="standard-form" action="${info.currentURL}" method="post">
+<form id="facebook-form" class="standard-form" action="${info.currentURL}" method="post">
 	<fieldset>
 		<legend>${network.name}</legend>
 		<input type="hidden" name="webaction" value="updateNetwork" />
@@ -95,21 +95,22 @@
 		document.getElementById('token').value = accessToken;
 		
 		<c:if test="${not empty network.clientId && not empty network.clientSecret}">
-			jQuery("#ajax-loader").addClass("active");
+			jQuery("#ajax-loader").addClass("active");			
 			jQuery.ajax({
-				url : "https://graph.facebook.com/me/accounts?access_token=${network.token}",
+				url : "https://graph.facebook.com/me/accounts?access_token="+accessToken,
 				cache : false,				
 				type : "get",
 				dataType : "json"
 			}).done(function(jsonObj) {
 				jQuery("#ajax-loader").removeClass("active");
 				var currentURL = jQuery("#url").val(); 
-				var selectHTML = '<select id="url" name="url">';				
+				var selectHTML = '<select id="url" name="url" onchange="document.getElementById(\'facebook-form\').submit();">';				
 				jsonObj['data'].forEach(function(item) {
 					if (item['name'] != null) {
 						var selected = "";
 						if (currentURL == "/"+item['id']) {
 							selected = ' selected="selected"';
+							document.getElementById('token').value = item['access_token'];
 						}
 						selectHTML = selectHTML+'<option'+selected+' value="/'+item['id']+'">'+item['name']+'</option>';
 					}
