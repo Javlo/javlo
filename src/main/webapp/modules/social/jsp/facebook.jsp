@@ -101,7 +101,19 @@
 		document.getElementById('token').value = accessToken;
 		
 		<c:if test="${not empty network.clientId && not empty network.clientSecret}">
-			jQuery("#ajax-loader").addClass("active");			
+			jQuery("#ajax-loader").addClass("active");
+			
+			// transform short live token to long live token
+			jQuery.ajax({
+				url : "https://graph.facebook.com/oauth/access_token?client_id=${network.clientId}&client_secret=${network.clientSecret}&grant_type=fb_exchange_token&fb_exchange_token="+accessToken,
+				cache : false,				
+				type : "get"				
+			}).done(function(data) {				
+				var longToken = getParam(data, "access_token");					
+				document.getElementById('token').value = longToken;
+			});
+			
+			// load page list 
 			jQuery.ajax({
 				url : "https://graph.facebook.com/me/accounts?access_token="+accessToken,
 				cache : false,				
@@ -116,7 +128,7 @@
 						var selected = "";
 						if (currentURL == "/"+item['id']) {
 							selected = ' selected="selected"';
-							document.getElementById('token').value = item['access_token'];
+							//document.getElementById('token').value = item['access_token'];
 						}
 						selectHTML = selectHTML+'<option'+selected+' value="/'+item['id']+'">'+item['name']+'</option>';
 					}

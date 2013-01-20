@@ -156,3 +156,18 @@ scrollToFirstQuarter = function(container, target) {
         scrollTop: ((jQuery(target).offset().top+jQuery(container).scrollTop()) - jQuery(container).offset().top) - (jQuery(container).height()/4 + jQuery(target).height()/2) 
     }, 500);	
 }
+
+function getParam( url, name )
+{
+  if (url.indexOf("?") < 0) {
+     url='?'+url;
+  }
+  name = name.replace(/[\[]/,"\\\[").replace(/[\]]/,"\\\]");
+  var regexS = "[\\?&]"+name+"=([^&#]*)";
+  var regex = new RegExp( regexS );
+  var results = regex.exec( url );
+  if( results == null )
+    return "";
+  else
+    return results[1];
+}
