@@ -6,7 +6,9 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-import org.javlo.component.core.ComponentBean;
+import org.javlo.component.core.ContentElementList;
+import org.javlo.component.core.IContentVisualComponent;
+import org.javlo.component.dynamic.DynamicComponent;
 import org.javlo.context.ContentContext;
 import org.javlo.navigation.MenuElement;
 
@@ -19,17 +21,24 @@ public class DeleteSameComponent extends AbstractMacro {
 
 	protected int deleteComponentInBadArea(ContentContext ctx, MenuElement page) throws Exception {
 
-		Set<String> allValue = new HashSet<String>();
+		Set<Integer> allValue = new HashSet<Integer>();
 		List<String> tobeDeleted = new LinkedList<String>();
 
-		ComponentBean[] beans = page.getContent();
-		for (ComponentBean comp : beans) {
-			if (allValue.contains(comp.getValue())) {
-				tobeDeleted.add(comp.getId());
-			} else {
-				String value = comp.getValue().trim();
-				if (value.length() > 0) {
-					allValue.add(value);
+		ContentContext noAreaCtx = ctx.getContextWithArea(null);
+		ContentElementList content = page.getContent(noAreaCtx);
+		while (content.hasNext(noAreaCtx)) {
+			IContentVisualComponent comp = content.next(noAreaCtx);
+
+			int code = comp.getValue(ctx).hashCode();
+			if (comp instanceof DynamicComponent) {
+				code = ((DynamicComponent) comp).contentHashCode();
+			}
+
+			if (!comp.isEmpty(ctx)) {
+				if (allValue.contains(code)) {
+					tobeDeleted.add(comp.getId());
+				} else {
+					allValue.add(code);
 				}
 			}
 		}

@@ -15,6 +15,7 @@ import java.util.Comparator;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.LinkedList;
+import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 import java.util.Properties;
@@ -669,4 +670,16 @@ public class DynamicComponent extends AbstractVisualComponent implements IStatic
 		return 0;
 	}
 
+	public int contentHashCode() {
+		StringBuffer value = new StringBuffer();
+		List<String> keys = new LinkedList(properties.keySet());
+		Collections.sort(keys);
+		for (String key : keys) {
+			value.append(key);
+			value.append("=");
+			value.append(properties.get(key));
+			value.append('/');
+		}
+		return value.toString().hashCode();
+	}
 }

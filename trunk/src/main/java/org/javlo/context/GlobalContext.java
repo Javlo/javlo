@@ -63,6 +63,8 @@ import org.javlo.helper.ServletHelper;
 import org.javlo.helper.StringHelper;
 import org.javlo.helper.URLHelper;
 import org.javlo.mailing.MailService;
+import org.javlo.module.core.ModuleException;
+import org.javlo.module.core.ModulesContext;
 import org.javlo.navigation.IURLFactory;
 import org.javlo.navigation.MenuElement;
 import org.javlo.service.ContentService;
@@ -419,7 +421,7 @@ public class GlobalContext implements Serializable {
 
 			newInstance.initCacheManager();
 
-			newInstance.writeInfo(System.out);
+			newInstance.writeInfo(session, System.out);
 
 			// TODO : init resource Id
 
@@ -2497,7 +2499,7 @@ public class GlobalContext implements Serializable {
 		return templateTgt.exists();
 	}
 
-	public void writeInfo(PrintStream out) {
+	public void writeInfo(HttpSession session, PrintStream out) {
 		out.println("****************************************************************");
 		out.println("****************************************************************");
 		out.println("****");
@@ -2507,6 +2509,12 @@ public class GlobalContext implements Serializable {
 		out.println("**** Alias of           :  " + getAliasOf());
 		out.println("**** User Factory       :  " + getUserFactoryClassName());
 		out.println("**** Admin User Factory :  " + getAdminUserFactoryClassName());
+		try {
+			out.println("**** Modules            :  " + StringHelper.collectionToString(ModulesContext.getInstance(session, this).getAllModules(), ", "));
+		} catch (ModuleException e) {
+			out.println("**** Error load Modules :  " + e.getMessage());
+			e.printStackTrace();
+		}
 		out.println("**** # attributes       :  " + attributes.size());
 		out.println("**** # time attributes  :  " + timeAttributes.size());
 		out.println("**** # cached pages     :  " + viewPages.size());
