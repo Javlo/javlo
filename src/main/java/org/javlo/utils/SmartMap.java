@@ -9,7 +9,6 @@ import java.util.Set;
 import org.javlo.context.ContentContext;
 import org.javlo.helper.ServletHelper;
 import org.javlo.utils.SmartMap.SmartValue;
-import org.json.JSONObject;
 
 public class SmartMap implements Map<String, SmartValue> {
 
@@ -38,9 +37,8 @@ public class SmartMap implements Map<String, SmartValue> {
 		@Override
 		public String getValue() {
 			try {
-				JSONObject jsonObj = new JSONObject(this.jsonObj);
-				Map map = new JSONMap(jsonObj);
-				getContentContext().getRequest().setAttribute("obj", map);
+				Object o = JSONMap.parse(jsonObj);
+				getContentContext().getRequest().setAttribute("obj", o);
 				return ServletHelper.executeJSP(getContentContext(), renderer);
 			} catch (Exception e) {
 				e.printStackTrace();

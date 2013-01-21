@@ -299,7 +299,7 @@ public class ContentContext {
 	}
 
 	private final Map<String, String> ajaxInsideZone = new HashMap<String, String>();
-	private final Map<String, String> ajaxData = new HashMap<String, String>();
+	private final Map<String, Object> ajaxData = new HashMap<String, Object>();
 	private final Map<String, ScheduledRender> scheduledAjaxInsideZone = new HashMap<String, ScheduledRender>();
 	private final Map<String, String> ajaxZone = new HashMap<String, String>();;
 
@@ -1034,7 +1034,7 @@ public class ContentContext {
 	 * 
 	 * @return a map with html id as key and xhtml as value.
 	 */
-	public Map<String, String> getAjaxData() {
+	public Map<String, Object> getAjaxData() {
 		return ajaxData;
 	}
 

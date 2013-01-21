@@ -9,6 +9,8 @@ import org.apache.http.impl.client.DefaultHttpClient;
 import org.javlo.client.localmodule.ui.ClientTray;
 import org.javlo.service.syncro.HttpClientService;
 
+import com.google.gson.Gson;
+
 public class ServiceFactory {
 
 	private static ServiceFactory instance;
@@ -23,6 +25,7 @@ public class ServiceFactory {
 
 	private HttpClientService httpClient = new HttpClientService();
 	private DefaultHttpClient rawHttpClient;
+	private Gson json = new Gson();
 
 	private ServiceFactory() {
 	}
@@ -79,6 +82,10 @@ public class ServiceFactory {
 			}
 		}
 		return rawHttpClient;
+	}
+
+	public Gson getJson() {
+		return json;
 	}
 
 }

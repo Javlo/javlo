@@ -107,14 +107,62 @@ public class CommunicationAction extends AbstractModuleAction {
 		return msg;
 	}
 
-	public static String performRefreshAIM(RequestService rs, ContentContext ctx, HttpServletRequest request, Module currentModule) throws ConfigurationException, IOException {
+	public static String performRemoteRefreshAIM(RequestService rs, ContentContext ctx, HttpServletRequest request, Module currentModule) throws ConfigurationException, IOException {
+
+		String currentSite = IMService.ALL_SITES;
 		String currentUser = ctx.getCurrentUserId();
-//		request.getAttribute("sites");
-//		request.getAttribute("aimCurrentUser");
-//		request.getAttribute("aimLastMessageId");
-//		request.getAttribute("aimMessages");
-//		request.getAttribute("aimUsersBySite");
-		ctx.getAjaxData().put("aimCurrentUser", currentUser);
+
+		Long lastMessageId = null;
+		if (ctx.isAjax()) {
+			lastMessageId = StringHelper.safeParseLong(request.getParameter("lastMessageId"), null);
+		}
+
+		IMService imService = IMService.getInstance(request.getSession());
+
+		List<IMItem> messages = new ArrayList<IMItem>();
+		lastMessageId = imService.fillMessageList(currentSite, currentUser, lastMessageId, messages);
+
+		AdminUserSecurity adminUserSecurity = AdminUserSecurity.getInstance();
+
+		Collection<String> sites = new LinkedList<String>();
+		Collection<GlobalContext> allContext = GlobalContextFactory.getAllGlobalContext(request.getSession());
+		for (GlobalContext context : allContext) {
+			if (ctx.getCurrentEditUser() != null) {
+				if (adminUserSecurity.isAdmin(ctx.getCurrentEditUser()) || context.getUsersAccess().contains(ctx.getCurrentEditUser().getLogin())) {
+					if (context.getAliasOf() == null || context.getAliasOf().trim().isEmpty()) {
+						sites.add(context.getContextKey());
+					}
+				}
+			}
+		}
+
+		Map<String, Map<String, IMUser>> usersBySite = new LinkedHashMap<String, Map<String, IMUser>>();
+		for (GlobalContext context : allContext) {
+			if (ctx.getCurrentEditUser() != null) {
+				if (adminUserSecurity.isAdmin(ctx.getCurrentEditUser()) || context.getUsersAccess().contains(ctx.getCurrentEditUser().getLogin())) {
+					Map<String, IMUser> users = new LinkedHashMap<String, IMUser>();
+					List<Principal> list = context.getAllPrincipals();
+					for (Principal principal : list) {
+						IMUser user = new IMUser();
+						user.setSite(context.getContextKey());
+						user.setUsername(principal.getName());
+						user.setColor(imService.getUserColor(currentSite, principal.getName()));
+						users.put(principal.getName(), user);
+					}
+					usersBySite.put(context.getContextKey(), users);
+				}
+			}
+		}
+
+
+		IMData data = new IMData();
+		data.setSites(sites);
+		data.setCurrentUser(currentUser);
+		data.setLastMessageId(lastMessageId);
+		data.setMessages(messages);
+		data.setUsersBySite(usersBySite);
+
+		ctx.getAjaxData().put("aimData", data);
 		return null;
 	}
 

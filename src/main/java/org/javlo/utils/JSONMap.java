@@ -1,19 +1,47 @@
 package org.javlo.utils;
 
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
-import java.util.HashSet;
-import java.util.Iterator;
+import java.util.LinkedHashSet;
 import java.util.LinkedList;
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
 import org.apache.commons.lang.NotImplementedException;
-import org.json.JSONArray;
-import org.json.JSONException;
-import org.json.JSONObject;
+
+import com.google.gson.Gson;
+import com.google.gson.JsonArray;
+import com.google.gson.JsonElement;
+import com.google.gson.JsonObject;
 
 public class JSONMap implements Map<String, Object> {
+
+	private static final Gson JSON = new Gson();
+
+	public static Object parse(String jsonStr) {
+		return transform(JSON.fromJson(jsonStr, JsonElement.class));
+	}
+
+	public static Object transform(JsonElement element) {
+		if (element.isJsonNull()) {
+			return null;
+		} else if (element.isJsonPrimitive()) {
+			return JSON.fromJson(element, Object.class);
+		} else if (element.isJsonObject()) {
+			return new JSONMap(element.getAsJsonObject());
+		} else if (element.isJsonArray()) {
+			JsonArray array = element.getAsJsonArray();
+			List<Object> outCol = new ArrayList<Object>();
+			for (int i = 0; i < array.size(); i++) {
+				outCol.add(transform(array.get(i)));
+			}
+			return outCol;
+		} else {
+			throw new IllegalStateException("Unmanaged case, fail to parse JSON string: " + element);
+		}
+	}
 
 	public static class JSONMapEntry implements java.util.Map.Entry<String, Object> {
 
@@ -49,30 +77,26 @@ public class JSONMap implements Map<String, Object> {
 
 	}
 
-	private JSONObject obj;
+	private JsonObject object;
 
-	public JSONMap(JSONObject obj) {
-		this.obj = obj;
+	public JSONMap(JsonObject object) {
+		object.getClass(); //Assert not null
+		this.object = object;
 	}
 
 	@Override
 	public int size() {
-		return obj.length();
+		return object.entrySet().size();
 	}
 
 	@Override
 	public boolean isEmpty() {
-		return obj.length() == 0;
+		return size() == 0;
 	}
 
 	@Override
 	public boolean containsKey(Object key) {
-		try {
-			return obj.get("" + key) != null;
-		} catch (JSONException e) {
-			e.printStackTrace();
-			return false;
-		}
+		return object.has("" + key);
 	}
 
 	@Override
@@ -80,80 +104,40 @@ public class JSONMap implements Map<String, Object> {
 		throw new NotImplementedException();
 	}
 
-	private Object transform(Object obj) throws JSONException {
-		if (obj instanceof JSONObject) {
-			return new JSONMap((JSONObject) obj);
-		} else if (obj instanceof JSONArray) {
-			Collection outCol = new LinkedList();
-			Set<String> keys = new HashSet<String>();
-			JSONArray jsonArray = (JSONArray) obj;
-			for (int i = 0; i < jsonArray.length(); i++) {
-				outCol.add(transform(jsonArray.get(i)));
-			}
-			return outCol;
-		} else {
-			return obj;
-		}
-	}
-
 	@Override
 	public Object get(Object key) {
-		try {
-			JSONObject jsonObj = obj.getJSONObject("" + key);
-			if (jsonObj != null) {
-				return transform(jsonObj);
-			}
-		} catch (JSONException e) {
-		}
-		try {
-			JSONArray jsonArray = obj.getJSONArray("" + key);
-			if (jsonArray != null) {
-				return transform(jsonArray);
-			}
-		} catch (JSONException e) {
-		}
-		try {
-			return obj.get("" + key);
-		} catch (JSONException e) {
-			return null;
-		}
+		return transform(object.get("" + key));
 	}
 
 	@Override
 	public Object put(String key, Object value) {
-		try {
-			obj.put(key, value);
-			return value;
-		} catch (JSONException e) {
-			e.printStackTrace();
-			return null;
-		}
+		Object o = remove(key);
+		object.add("" + key, JSON.toJsonTree(value));
+		return o;
 	}
 
 	@Override
 	public Object remove(Object key) {
-		return obj.remove("" + key);
+		return transform(object.remove("" + key));
 	}
 
 	@Override
 	public void putAll(Map<? extends String, ? extends Object> m) {
-		Collection<? extends String> keys = m.keySet();
-		for (String key : keys) {
-			put(key, m.get(key));
+		for (Entry<? extends String, ? extends Object> entry : m.entrySet()) {
+			put(entry.getKey(), entry.getValue());
 		}
 	}
 
 	@Override
 	public void clear() {
-		obj = new JSONObject();
+		object = new JsonObject();
 	}
 
 	@Override
 	public Set<String> keySet() {
-		Set<String> keys = new HashSet<String>();
-		Iterator objKeys = obj.keys();
-		while (objKeys.hasNext()) {
-			keys.add("" + objKeys.next());
+		Set<String> keys = new LinkedHashSet<String>();
+		for (Entry<String, JsonElement> entry : object.entrySet()) {
+			keys.add("" + entry.getKey());
 		}
 		return keys;
 	}
@@ -161,48 +145,38 @@ public class JSONMap implements Map<String, Object> {
 	@Override
 	public Collection<Object> values() {
 		Collection<Object> outValues = new LinkedList<Object>();
-		Iterator objKeys = obj.keys();
-		while (objKeys.hasNext()) {
-			outValues.add(get(objKeys.next()));
+		for (Entry<String, JsonElement> entry : object.entrySet()) {
+			outValues.add(transform(entry.getValue()));
 		}
 		return outValues;
 	}
 
 	@Override
 	public Set<java.util.Map.Entry<String, Object>> entrySet() {
-		Set<java.util.Map.Entry<String, Object>> outSet = new HashSet<Map.Entry<String, Object>>();
-		Iterator objKeys = obj.keys();
-		while (objKeys.hasNext()) {
-			String key = "" + objKeys.next();
-			java.util.Map.Entry<String, Object> entry = new JSONMapEntry(key, get(key));
+		Set<java.util.Map.Entry<String, Object>> outSet = new LinkedHashSet<Map.Entry<String, Object>>();
+		for (Entry<String, JsonElement> entry : object.entrySet()) {
+			outSet.add(new JSONMapEntry(entry.getKey(), transform(entry.getValue())));
 		}
-
 		return outSet;
 	}
 
 	public static void main(String[] args) {
-		try {
-			Map test = new HashMap();
-			Map[] maps = new Map[2];
-			maps[0] = new HashMap();
-			maps[1] = new HashMap();
+		Map test = new HashMap();
+		Map[] maps = new Map[2];
+		maps[0] = new HashMap();
+		maps[1] = new HashMap();
 
-			maps[0].put("url", "http://123fetiche.com/photos/MetArt-35-203//002.jpg");
-			maps[1].put("url", "http://123fetiche.com/photos/MetArt-35-203//004.jpg");
-			test.put("images", maps);
-			JSONObject testObj = new JSONObject(test);
-			System.out.println("test : " + testObj);
+		maps[0].put("url", "http://123fetiche.com/photos/MetArt-35-203//002.jpg");
+		maps[1].put("url", "http://123fetiche.com/photos/MetArt-35-203//004.jpg");
+		test.put("images", maps);
 
-			String objStr = "" + testObj;
+		String objStr = JSON.toJson(test);
+		System.out.println("test : " + objStr);
 
-			// {"images":{"url1":"url 2","url":"url 1"}}
 
-			JSONObject obj = new JSONObject("{'images':[{'url':'http://123fetiche.com/photos/MetArt-35-203//004.jpg'},{'url':'http://123fetiche.com/photos/MetArt-35-203//004.jpg'}]}");
-			System.out.println("***** JSONMap.main : images = " + obj.get("images").getClass()); // TODO: remove debug trace
-			System.out.println("***** JSONMap.main : images = " + obj.getJSONObject("images").getClass()); // TODO: remove debug trace
-		} catch (JSONException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
+		// {"images":{"url1":"url 2","url":"url 1"}}
+
+		JSONMap obj = (JSONMap) parse("{'images':[{'url':'http://123fetiche.com/photos/MetArt-35-203//004.jpg'},{'url':'http://123fetiche.com/photos/MetArt-35-203//004.jpg'}]}");
+		System.out.println("***** JSONMap.main : images = " + obj.get("images").getClass()); // TODO: remove debug trace
 	}
 }
