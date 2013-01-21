@@ -12,6 +12,10 @@ import org.apache.http.client.methods.HttpGet;
 import org.apache.http.util.EntityUtils;
 import org.javlo.client.localmodule.model.ServerConfig;
 import org.javlo.helper.URLHelper;
+import org.javlo.module.communication.IMData;
+
+import com.google.gson.Gson;
+import com.google.gson.JsonElement;
 
 public class IMClientService {
 	private static final Logger logger = Logger.getLogger(IMClientService.class.getName());
@@ -118,22 +122,34 @@ public class IMClientService {
 
 	private void refreshIMStatus(ServerConfig server, HttpClient httpClient) {
 		try {
-			String url = server.getServerURL() + "&webaction=communication.RefreshAIM";
+			String url = server.getServerURL() + "&webaction=communication.RemoteRefreshAIM";
 			url = URLHelper.changeMode(url, "ajax");
 			System.out.println(url);
 			HttpGet httpget = new HttpGet(url);
 			HttpResponse response = httpClient.execute(httpget);
 			HttpEntity entity = response.getEntity();
 
-			System.out.println(response.getStatusLine());
-			if (entity != null) {
-				System.out.println("Response content length: " + entity.getContentLength());
+			if (response.getStatusLine().getStatusCode() == 200) {
+				String content = EntityUtils.toString(entity);
+
+				Gson j = factory.getJson();
+
+				JsonElement ajaxMap = j.fromJson(content, JsonElement.class);
+				JsonElement aimDataJson = ajaxMap.getAsJsonObject().getAsJsonObject("data").get("aimData");
+
+				IMData aimData = j.fromJson(aimDataJson, IMData.class);
+				System.out.println(aimData.getCurrentUser());
+				for (String site : aimData.getSites()) {
+					System.out.println("  " + site);
+				}
 			}
-			System.out.println(EntityUtils.toString(entity));
 		} catch (ClientProtocolException ex) {
 			// TODO Auto-generated catch block
 			ex.printStackTrace();
 		} catch (IOException ex) {
+			// TODO Auto-generated catch block
+			ex.printStackTrace();
+		} catch (Exception ex) {
 			// TODO Auto-generated catch block
 			ex.printStackTrace();
 		}
