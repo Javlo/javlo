@@ -235,7 +235,7 @@ public class AccessServlet extends HttpServlet {
 				PrintStream out = new PrintStream(response.getOutputStream());
 				writeInfo(out);
 				out.println("");
-				globalContext.writeInfo(out);
+				globalContext.writeInfo(request.getSession(), out);
 				out.println("");
 				ContentService content = ContentService.getInstance(globalContext);
 				out.println("latest update by : " + content.getAttribute(ctx, "user.update"));

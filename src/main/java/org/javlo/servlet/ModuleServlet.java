@@ -51,15 +51,17 @@ public class ModuleServlet extends HttpServlet {
 			}
 
 			ServletHelper.prepareModule(ctx);
-			String moduleName = null;
+			String moduleName = request.getParameter("module");
 			String path = request.getPathInfo();
-			if (path != null) {
-				path = path.trim();
-				if (path.startsWith("/")) {
-					path = path.substring(1);
+			if (path != null || moduleName != null) {
+				if (moduleName == null) {
+					path = path.trim();
+					if (path.startsWith("/")) {
+						path = path.substring(1);
+					}
+					moduleName = path;
 				}
-				moduleName = path;
-				if (path.contains("/")) {
+				if (path != null && path.contains("/")) {
 					moduleName = path.substring(0, path.indexOf("/"));
 					ctx.setPath(path.substring(path.indexOf("/")));
 				} else {
