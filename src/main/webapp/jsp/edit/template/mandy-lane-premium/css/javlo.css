@@ -138,6 +138,10 @@ a.popup span {
 	padding: 20px 15px;
 }
 
+.maincontent_inner {
+    margin-bottom: 40px;
+}
+
 .standard-form .line {
 	min-height: 36px;
 }

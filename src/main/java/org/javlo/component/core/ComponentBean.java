@@ -12,18 +12,19 @@ public class ComponentBean {
 
 	public static final String DEFAULT_AREA = "content";
 
-	String id;
-	String type;
-	String value;
-	String style;
-	boolean list = false;
-	String language;
-	String renderer;
+	private String id;
+	private String type;
+	private String value;
+	private String style;
+	private boolean list = false;
+	private String language;
+	private String renderer;
+	private String authors = "";
 
-	boolean repeat = false;
-	boolean modify = false;
+	private boolean repeat = false;
+	private boolean modify = false;
 
-	String area = DEFAULT_AREA;
+	private String area = DEFAULT_AREA;
 
 	public ComponentBean() {
 		id = "";
@@ -148,6 +149,14 @@ public class ComponentBean {
 
 	public void setValue(String value) {
 		this.value = StringHelper.escapeWordChar(value);
+	}
+
+	public String getAuthors() {
+		return authors;
+	}
+
+	public void setAuthors(String authors) {
+		this.authors = authors;
 	}
 
 }

@@ -1719,7 +1719,7 @@ public abstract class AbstractVisualComponent implements IContentVisualComponent
 
 	@Override
 	public String getAuthors() {
-		return "";
+		return getComponentBean().getAuthors();
 	}
 
 	private int getTimeCache(ContentContext ctx) {

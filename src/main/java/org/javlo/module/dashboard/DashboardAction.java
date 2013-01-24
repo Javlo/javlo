@@ -2,6 +2,7 @@ package org.javlo.module.dashboard;
 
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
+import java.util.Collection;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.Date;
@@ -16,6 +17,8 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 
 import org.javlo.actions.AbstractModuleAction;
+import org.javlo.component.core.DebugNote;
+import org.javlo.component.core.IContentVisualComponent;
 import org.javlo.context.ContentContext;
 import org.javlo.context.GlobalContext;
 import org.javlo.context.StatContext;
@@ -29,16 +32,75 @@ import org.javlo.helper.URLHelper;
 import org.javlo.i18n.I18nAccess;
 import org.javlo.message.MessageRepository;
 import org.javlo.module.core.ModulesContext;
+import org.javlo.navigation.MenuElement.PageBean;
+import org.javlo.service.ContentService;
 import org.javlo.service.NotificationService;
 import org.javlo.service.RequestService;
-import org.javlo.service.exception.ServiceException;
 import org.javlo.tracking.Track;
 import org.javlo.tracking.Tracker;
 
 public class DashboardAction extends AbstractModuleAction {
-	
+
+	public static class DebugNoteBean {
+		private String message;
+		private String authors;
+		private String area;
+		private String url;
+		private PageBean page;
+
+		public DebugNoteBean(String message, String authors, String area, String pageURL, PageBean page) {
+			super();
+			this.message = message;
+			this.authors = authors;
+			this.area = area;
+			this.url = pageURL;
+			this.page = page;
+		}
+
+		public String getMessage() {
+			return message;
+		}
+
+		public void setMessage(String message) {
+			this.message = message;
+		}
+
+		public String getAuthors() {
+			return authors;
+		}
+
+		public void setAuthors(String authors) {
+			this.authors = authors;
+		}
+
+		public String getArea() {
+			return area;
+		}
+
+		public void setArea(String area) {
+			this.area = area;
+		}
+
+		public String getUrl() {
+			return url;
+		}
+
+		public void setUrl(String pageURL) {
+			this.url = pageURL;
+		}
+
+		public PageBean getPage() {
+			return page;
+		}
+
+		public void setPage(PageBean page) {
+			this.page = page;
+		}
+
+	}
+
 	public static void main(String[] args) {
-		System.out.println("***** DashboardAction.main : time = "+StringHelper.renderTime(new Date(Long.parseLong("1345208695440")))); //TODO: remove debug trace
+		System.out.println("***** DashboardAction.main : time = " + StringHelper.renderTime(new Date(Long.parseLong("1345208695440")))); // TODO: remove debug trace
 	}
 
 	@Override
@@ -54,10 +116,24 @@ public class DashboardAction extends AbstractModuleAction {
 		NotificationService notificationService = NotificationService.getInstance(globalContext);
 		ctx.getRequest().setAttribute("notification", notificationService.getNotifications(9999));
 
+		/* debug notes */
+		ContentService content = ContentService.getInstance(ctx.getRequest());
+		List<IContentVisualComponent> components = content.getAllContent(ctx);
+		Collection<DebugNoteBean> debugNoteList = new LinkedList<DebugNoteBean>();
+		for (IContentVisualComponent comp : components) {
+			if (comp.getType() == DebugNote.TYPE) {
+				Map<String, String> params = new HashMap<String, String>();
+				params.put("module", "content");
+				String url = URLHelper.createURL(ctx, comp.getPage().getPath(), params);
+				debugNoteList.add(new DebugNoteBean(comp.getValue(ctx), comp.getAuthors(), comp.getArea(), url, comp.getPage().getPageBean(ctx)));
+			}
+		}
+		ctx.getRequest().setAttribute("debugNotes", debugNoteList);
+
 		return msg;
 	}
 
-	public static String performReadTracker(RequestService rs, ContentContext ctx, MessageRepository messageRepository, I18nAccess i18nAccess, GlobalContext globalContext, HttpSession session, HttpServletRequest request) throws ServiceException {
+	public static String performReadTracker(RequestService rs, ContentContext ctx, MessageRepository messageRepository, I18nAccess i18nAccess, GlobalContext globalContext, HttpSession session, HttpServletRequest request) throws Exception {
 		String type = rs.getParameter("type", null);
 		if (type == null) {
 			return "bad request structure : need 'type' as parameter";
@@ -96,9 +172,7 @@ public class DashboardAction extends AbstractModuleAction {
 			for (Entry<String, Integer> referer : referers) {
 				if (!referer.getKey().equals(currentHost) && !referer.getKey().equals("unknown")) {
 					if (datas.getList().size() < 10) {
-						datas.addList()
-								.add(referer.getKey())
-								.add(referer.getValue());
+						datas.addList().add(referer.getKey()).add(referer.getValue());
 					} else {
 						otherCount += referer.getValue();
 					}
@@ -113,42 +187,43 @@ public class DashboardAction extends AbstractModuleAction {
 			Calendar start = Calendar.getInstance();
 			Calendar end = Calendar.getInstance();
 			start.add(Calendar.HOUR, -1);
-			Track[] trackers = tracker.getTracks(start.getTime(), end.getTime());;
-			start.setTime(end.getTime()); // reset start date			
-			
+			Track[] trackers = tracker.getTracks(start.getTime(), end.getTime());
+			;
+			start.setTime(end.getTime()); // reset start date
+
 			Calendar endRange = Calendar.getInstance();
 			endRange.add(Calendar.HOUR, -1);
-			
-			int i=0;
+
+			int i = 0;
 			while (endRange.before(start)) {
 				i++;
 				start.add(Calendar.SECOND, -10);
-				int charge = 0; 
+				int charge = 0;
 				for (Track track : trackers) {
 					Calendar trackCal = Calendar.getInstance();
 					trackCal.setTimeInMillis(track.getTime());
 					if (trackCal.after(start) && trackCal.before(end)) {
 						charge++;
 					}
-				}				
-				ajaxMap.put(new Integer(i*100), charge);				
+				}
+				ajaxMap.put(new Integer(i * 100), charge);
 				end.setTime(start.getTime());
-			}			
+			}
 			ctx.setAjaxMap(ajaxMap);
-		}  else if (type.equals("week")) {
+		} else if (type.equals("week")) {
 			Map<Object, Object> ajaxMap = new Hashtable<Object, Object>();
-			for (int i=1; i<8;i++) {
+			for (int i = 1; i < 8; i++) {
 				ajaxMap.put(new Integer(i), new Integer(0));
 			}
 			Calendar start = Calendar.getInstance();
 			Calendar end = Calendar.getInstance();
 			Calendar cal = Calendar.getInstance();
-			 
+
 			start.add(Calendar.WEEK_OF_YEAR, -1);
 			start = TimeHelper.convertRemoveAfterDay(start);
 			end = TimeHelper.convertRemoveAfterDay(end);
 			end.add(Calendar.MILLISECOND, -1);
-			
+
 			Track[] tracks = tracker.getTracks(start.getTime(), end.getTime());
 			List<String> sessionIdFound = new LinkedList<String>();
 
@@ -156,23 +231,23 @@ public class DashboardAction extends AbstractModuleAction {
 				if (!sessionIdFound.contains(tracks[i].getSessionId())) {
 					if (!NetHelper.isUserAgentRobot(tracks[i].getUserAgent())) {
 						cal.setTimeInMillis(tracks[i].getTime());
-						Integer key = new Integer(end.get(Calendar.DAY_OF_YEAR)) - new Integer(cal.get(Calendar.DAY_OF_YEAR));						
+						Integer key = new Integer(end.get(Calendar.DAY_OF_YEAR)) - new Integer(cal.get(Calendar.DAY_OF_YEAR));
 						Integer clicks = (Integer) ajaxMap.get(key);
-						/*if (clicks == null) {
-							clicks = new Integer(0);
-						}*/
+						/*
+						 * if (clicks == null) { clicks = new Integer(0); }
+						 */
 						clicks = new Integer(clicks.intValue() + 1);
 						ajaxMap.put(key, clicks);
 					}
 					sessionIdFound.add(tracks[i].getSessionId());
-					
+
 				}
 			}
 			ctx.setAjaxMap(ajaxMap);
 		} else if (type.equals("visits")) {
 			String rangeStr = request.getParameter("range");
 			int range = Calendar.WEEK_OF_MONTH;
-			if(rangeStr == null || rangeStr.equals("WEEK")) {
+			if (rangeStr == null || rangeStr.equals("WEEK")) {
 				range = Calendar.WEEK_OF_MONTH;
 			} else if (rangeStr.equals("MONTH")) {
 				range = Calendar.MONTH;
@@ -197,14 +272,14 @@ public class DashboardAction extends AbstractModuleAction {
 
 			Track[] tracks = tracker.getViewClickTracks(start.getTime(), end.getTime());
 			List<String> sessionIdFound = new LinkedList<String>();
-			
+
 			for (int i = 1; i < tracks.length - 1; i++) {
 				if (!sessionIdFound.contains(tracks[i].getSessionId())) {
 					if (!NetHelper.isUserAgentRobot(tracks[i].getUserAgent())) {
 						Date time = new Date(tracks[i].getTime());
 						String key = sdf.format(time);
-						Integer clicks = (Integer) clicksByHour.get(key);
-						if (clicks == null) {							
+						Integer clicks = clicksByHour.get(key);
+						if (clicks == null) {
 							clicks = new Integer(0);
 						}
 						clicks = new Integer(clicks.intValue() + 1);
@@ -215,10 +290,9 @@ public class DashboardAction extends AbstractModuleAction {
 			}
 			ListBuilder datas = ajaxMap.list("datas");
 			for (Entry<String, Integer> hour : clicksByHour.entrySet()) {
-				datas.addList()
-						.add(hour.getKey() + ":00:00")
-						.add(hour.getValue());
+				datas.addList().add(hour.getKey() + ":00:00").add(hour.getValue());
 			}
+
 			ctx.setAjaxMap(ajaxMap.getMap());
 		} else {
 			return "bad type : " + type;
@@ -226,6 +300,4 @@ public class DashboardAction extends AbstractModuleAction {
 
 		return null;
 	}
-	
-	
 }

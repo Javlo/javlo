@@ -1,22 +1,24 @@
 /*
  * Created on 19-sept.-2003 
  */
-package org.javlo.component.text;
+package org.javlo.component.core;
 
 import org.javlo.context.ContentContext;
 
 /**
- * @author pvandermaesen 
+ * @author pvandermaesen
  */
-public class DebugNote extends Paragraph {
-	
+public class DebugNote extends AbstractVisualComponent {
+
+	public static final String TYPE = "debug-note";
+
 	@Override
 	public String getPrefixViewXHTMLCode(ContentContext ctx) {
 		if (ctx.getRenderMode() == ContentContext.PREVIEW_MODE) {
-			return "<div "+getSpecialPreviewCssClass(ctx, getStyle(ctx)+" "+getType())+getSpecialPreviewCssId(ctx)+" >";
+			return "<div " + getSpecialPreviewCssClass(ctx, getStyle(ctx) + " " + getType()) + getSpecialPreviewCssId(ctx) + " >";
 		} else {
 			return "";
-		}		
+		}
 	}
 
 	@Override
@@ -27,12 +29,12 @@ public class DebugNote extends Paragraph {
 			return "";
 		}
 	}
-	
+
 	@Override
 	public String getType() {
-		return "debug-note";
+		return TYPE;
 	}
-	
+
 	@Override
 	public String getViewXHTMLCode(ContentContext ctx) throws Exception {
 		if (ctx.getRenderMode() == ContentContext.PREVIEW_MODE) {
@@ -41,12 +43,12 @@ public class DebugNote extends Paragraph {
 			return "";
 		}
 	}
-	
+
 	@Override
 	public boolean isEmpty(ContentContext ctx) {
 		return ctx.getRenderMode() != ContentContext.PREVIEW_MODE;
 	}
-	
+
 	@Override
 	public String getHexColor() {
 		return DEFAULT_COLOR;
