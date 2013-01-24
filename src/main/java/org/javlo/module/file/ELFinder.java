@@ -134,12 +134,18 @@ public abstract class ELFinder {
 			ELFile oldFile = hashToFile(file);
 			File newFile = new File(URLHelper.mergePath(dstFolder.getFile().getAbsolutePath(), oldFile.getFile().getName()));
 			if (!newFile.exists()) {
-				ELFile newELFile = createELFile(dstFolder, newFile);
-				ResourceHelper.writeFileToFile(oldFile.getFile(), newFile);
-				addedFiles.add(newELFile);
-				if (cut) {
-					oldFile.getFile().delete();
-					removeFiles.add(oldFile);
+				if (newFile.isFile()) {
+					ELFile newELFile = createELFile(dstFolder, newFile);
+					ResourceHelper.writeFileToFile(oldFile.getFile(), newFile);
+					addedFiles.add(newELFile);
+					if (cut) {
+						oldFile.getFile().delete();
+						removeFiles.add(oldFile);
+					}
+				} else {
+					FileUtils.moveDirectory(oldFile.getFile(), newFile);
+					ELFile newELFile = createELFile(dstFolder, newFile);
+					addedFiles.add(newELFile);
 				}
 			}
 		}
