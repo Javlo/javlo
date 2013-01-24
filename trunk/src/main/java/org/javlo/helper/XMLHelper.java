@@ -183,10 +183,13 @@ public class XMLHelper {
 				out.print("\" area=\"");
 				out.print(beans[j].getArea());
 			}
-			// if (!language.equals(defaultLg)) {
+
 			out.print("\" language=\"");
 			out.print(language);
-			// }
+
+			out.print("\" authors=\"");
+			out.print(StringHelper.neverNull(beans[j].getAuthors()));
+
 			if (style != null && style.length() > 0) {
 				out.print("\" style=\"");
 				out.print(StringHelper.toXMLAttribute(style));

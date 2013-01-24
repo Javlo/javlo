@@ -467,6 +467,7 @@ public class PersistenceService {
 			if (strRepeat != null) {
 				isRepeat = StringHelper.isTrue(strRepeat);
 			}
+			String authors = contentNode.getAttributeValue("authors", null);
 
 			String parent = parentMap.get(lg);
 			if (parent == null) {
@@ -485,6 +486,7 @@ public class PersistenceService {
 			bean.setList(StringHelper.isTrue(inlist));
 			bean.setArea(contentNode.getAttributeValue("area", ComponentBean.DEFAULT_AREA));
 			bean.setRenderer(renderer);
+			bean.setAuthors(authors);
 			contentList.add(bean);
 
 			/*

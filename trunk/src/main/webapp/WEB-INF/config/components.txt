@@ -22,7 +22,9 @@ org.javlo.component.text.XHTML
 org.javlo.component.text.WysiwygParagraph
 org.javlo.component.list.FreeTextList
 org.javlo.component.text.ContactText
+org.javlo.component.core.DebugNote
 ec.ep.europarl.adagio.wcms.component.QuoteBox
+
 
 --content.title.links
 
@@ -64,7 +66,8 @@ org.javlo.component.container.Box
 org.javlo.component.container.RepeatContainer
 org.javlo.component.container.DynamicComponentList
 org.javlo.component.container.TextDirection
-org.javlo.component.portlet.PortletWrapperComponent
+org.javlo.component.files.CSVArrayComponent
+org.javlo.component.portfileslet.PortletWrapperComponent
 
 --content.title.web2
 

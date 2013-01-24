@@ -230,6 +230,7 @@ public class ContentService {
 		GlobalContext globalContext = GlobalContext.getInstance(ctx.getRequest());
 		EditContext editCtx = EditContext.getInstance(globalContext, ctx.getRequest().getSession());
 		bean.setArea(editCtx.getCurrentArea());
+		bean.setAuthors(ctx.getCurrentEditUser().getLogin());
 		MenuElement elem = ctx.getCurrentPage();
 		elem.addContent(parentId, bean);
 		return id;

@@ -3,8 +3,8 @@ package org.javlo.macro;
 import java.util.Collection;
 import java.util.Map;
 
+import org.javlo.component.core.DebugNote;
 import org.javlo.component.image.GlobalImage;
-import org.javlo.component.text.DebugNote;
 import org.javlo.component.text.Description;
 import org.javlo.component.text.Paragraph;
 import org.javlo.component.title.Title;
