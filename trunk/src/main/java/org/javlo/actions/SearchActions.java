@@ -70,7 +70,6 @@ public class SearchActions implements IAction {
 
 			searchFilter.setStartDate(StringHelper.smartParseDate(requestService.getParameter("startdate", null)));
 			searchFilter.setEndDate(StringHelper.smartParseDate(requestService.getParameter("enddate", null)));
-
 			searchFilter.setTag(requestService.getParameter("tag", null));
 
 			logger.info("search action : " + searchStr);
