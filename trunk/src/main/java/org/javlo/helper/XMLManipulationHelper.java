@@ -543,11 +543,12 @@ public class XMLManipulationHelper {
 										inside = null;
 									}
 									String outHead = tag.render(inside);
-									if (resource != null && resource.toLowerCase().startsWith("https")) {
+									if (resource != null && !resource.toLowerCase().startsWith("https")) {
 										outHead = "<%if (!XHTMLHelper.allReadyInsered(ctx,\"" + resource + "\")) { %>" + outHead + "<%} else {%><!-- resource allready insered: " + resource + " --><%}%>";
 									}
 									String homeRendercode = "<%=URLHelper.createStaticTemplatePluginURL(ctx, \"/\", \"" + plugin.getFolder() + "\")%>";
 									outHead = outHead.replace(TemplatePlugin.HOME_KEY, homeRendercode);
+
 									out.println(outHead);
 								}
 							}
