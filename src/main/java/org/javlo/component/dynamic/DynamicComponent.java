@@ -682,4 +682,15 @@ public class DynamicComponent extends AbstractVisualComponent implements IStatic
 		}
 		return value.toString().hashCode();
 	}
+
+	@Override
+	public String getTextForSearch() {
+		StringBuffer outText = new StringBuffer();
+		for (Object key : properties.keySet()) {
+			outText.append(properties.get(key));
+			outText.append(' ');
+		}
+		return outText.toString();
+	}
+
 }

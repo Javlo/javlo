@@ -352,12 +352,16 @@ public class SearchResult {
 					int searchLevel = 0;
 					List<Component> componentsRenderer = new LinkedList<Component>();
 
+					String searchText = StringHelper.createFileName(inSearchText).toLowerCase();
+
 					while (elemList.hasNext(ctxWithContent)) {
 						IContentVisualComponent cpt = elemList.next(ctxWithContent);
 
 						if (componentType == null || componentType.contains(cpt.getType())) {
 							if (cpt.getSearchLevel() > 0) {
-								int cptSearchLevel = StringUtils.countMatches(cpt.getTextForSearch().toLowerCase(), inSearchText.toLowerCase()) * cpt.getSearchLevel();
+								String compSearchText = StringHelper.createFileName(cpt.getTextForSearch()).toLowerCase();
+
+								int cptSearchLevel = StringUtils.countMatches(compSearchText, searchText) * cpt.getSearchLevel();
 								searchLevel = searchLevel + cptSearchLevel;
 								if (cptSearchLevel > 0 && componentType != null) {
 									componentsRenderer.add(new Component(this, cpt));
