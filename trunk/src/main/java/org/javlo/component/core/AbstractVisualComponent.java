@@ -1101,7 +1101,7 @@ public abstract class AbstractVisualComponent implements IContentVisualComponent
 			if (!url.startsWith("/")) {
 				url = URLHelper.createJSPComponentURL(ctx.getRequest(), url, getComponentPath());
 			}
-			logger.info("execute view jsp in '" + getType() + "' : " + url);
+			logger.fine("execute view jsp in '" + getType() + "' : " + url);
 			return ServletHelper.executeJSP(ctx, url);
 		} else {
 			return null;

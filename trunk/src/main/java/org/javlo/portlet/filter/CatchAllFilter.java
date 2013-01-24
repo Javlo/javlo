@@ -130,7 +130,7 @@ public class CatchAllFilter implements Filter {
 								DataToIDService service = DataToIDService.getInstance(httpRequest.getSession().getServletContext());
 								String codeId = service.setData(login, IUserFactory.AUTO_LOGIN_AGE_SEC * 1000);
 								// RequestHelper.setCookieValue(httpResponse, "javlo_login_id", codeId, IUserFactory.AUTO_LOGIN_AGE_SEC);
-								String pathPrefix = URLHelper.getPathPrefix((HttpServletRequest) request);
+								String pathPrefix = ContentContext.getPathPrefix((HttpServletRequest) request);
 								RequestHelper.setCookieValue(httpResponse, "javlo_login_id", codeId, IUserFactory.AUTO_LOGIN_AGE_SEC, URLHelper.mergePath(pathPrefix, "/edit"));
 								RequestHelper.setCookieValue(httpResponse, "javlo_login_id", codeId, IUserFactory.AUTO_LOGIN_AGE_SEC, URLHelper.mergePath(pathPrefix, "/preview"));
 							}
@@ -202,7 +202,7 @@ public class CatchAllFilter implements Filter {
 						DataToIDService service = DataToIDService.getInstance(httpRequest.getSession().getServletContext());
 						String codeId = service.setData(login, ((long) IUserFactory.AUTO_LOGIN_AGE_SEC) * 1000);
 						// RequestHelper.setCookieValue(httpResponse, "javlo_login_id", codeId, IUserFactory.AUTO_LOGIN_AGE_SEC);
-						String pathPrefix = URLHelper.getPathPrefix((HttpServletRequest) request);
+						String pathPrefix = ContentContext.getPathPrefix((HttpServletRequest) request);
 						RequestHelper.setCookieValue(httpResponse, "javlo_login_id", codeId, IUserFactory.AUTO_LOGIN_AGE_SEC, URLHelper.mergePath(pathPrefix, "/edit"));
 						RequestHelper.setCookieValue(httpResponse, "javlo_login_id", codeId, IUserFactory.AUTO_LOGIN_AGE_SEC, URLHelper.mergePath(pathPrefix, "/preview"));
 					}
@@ -277,11 +277,13 @@ public class CatchAllFilter implements Filter {
 		String forwardURI = null;
 		boolean hostDefineSite = staticConfig.isHostDefineSite();
 		RequestService requestService = RequestService.getInstance(httpRequest);
+		ContentContext.setHostDefineSite((HttpServletRequest) request, true);
 		try {
 			if (!hostDefineSite) {
 				if (StringHelper.isTrue(requestService.getParameter("__check_context", "true"))) {
 					String contextURI = ContentManager.getContextName(httpRequest);
 					if (GlobalContext.isExist(httpRequest, contextURI)) {
+						ContentContext.setHostDefineSite((HttpServletRequest) request, false);
 						globalContext = GlobalContext.getInstance(httpRequest.getSession(), contextURI);
 						globalContext.setPathPrefix(contextURI);
 						String newURI = httpRequest.getServletPath();
@@ -463,22 +465,22 @@ public class CatchAllFilter implements Filter {
 				Collection<Map.Entry<String, String>> entries = uriAlias.entrySet();
 				for (Map.Entry<String, String> entry : entries) {
 					String cmsURI = uri;
-					if (globalContext.getPathPrefix() != null && globalContext.getPathPrefix().length() > 0) {
-						cmsURI = cmsURI.replaceFirst("/" + globalContext.getPathPrefix(), "");
+					if (ContentContext.getPathPrefix((HttpServletRequest) request) != null && ContentContext.getPathPrefix((HttpServletRequest) request).length() > 0) {
+						cmsURI = cmsURI.replaceFirst("/" + ContentContext.getPathPrefix((HttpServletRequest) request), "");
 					}
 					if (cmsURI.length() > 1) {
 						String pattern1 = entry.getKey();
 						String pattern2 = entry.getValue();
 						if (!pattern1.contains("*")) {
 							if (cmsURI.equals(pattern1)) {
-								pattern2 = URLHelper.mergePath("/", globalContext.getPathPrefix(), pattern2);
+								pattern2 = URLHelper.mergePath("/", ContentContext.getPathPrefix((HttpServletRequest) request), pattern2);
 								NetHelper.sendRedirectPermanently((HttpServletResponse) response, pattern2);
 								return;
 							}
 						} else {
 							String newURL = StringHelper.convertString(pattern1, pattern2, cmsURI);
 							if (!newURL.equals(cmsURI)) {
-								newURL = URLHelper.mergePath("/", globalContext.getPathPrefix(), newURL);
+								newURL = URLHelper.mergePath("/", ContentContext.getPathPrefix((HttpServletRequest) request), newURL);
 								NetHelper.sendRedirectPermanently((HttpServletResponse) response, newURL);
 								return;
 							}

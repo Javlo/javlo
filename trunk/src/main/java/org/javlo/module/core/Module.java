@@ -965,7 +965,11 @@ public class Module {
 	}
 
 	public void setViewRenderer(String viewRenderer) {
-		this.viewRenderer = viewRenderer;
+		if (viewRenderer != null) {
+			this.viewRenderer = URLHelper.mergePath(path, viewRenderer);
+		} else {
+			this.viewRenderer = null;
+		}
 	}
 
 	public List<String> getNeeded() {

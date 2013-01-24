@@ -39,6 +39,8 @@ import org.javlo.user.UserFactory;
  */
 public class ContentContext {
 
+	private static final String HOST_DEFINED_SITE = "host-defined-site";
+
 	public static final int EDIT_MODE = 1;
 
 	public static final int VIEW_MODE = 2;
@@ -96,8 +98,7 @@ public class ContentContext {
 		ContentContext ctx = (ContentContext) request.getAttribute(CONTEXT_REQUEST_KEY);
 		try {
 			if (ctx == null) {
-				ctx = createContentContext(request, response, false);
-				ctx.setFree(false);
+				ctx = createContentContext(request, response, true);
 				if (ctx.getRenderMode() != ContentContext.EDIT_MODE) {
 					ContentService content = ContentService.getInstance(GlobalContext.getInstance(request));
 					if (!content.contentExistForContext(ctx)) {
@@ -125,6 +126,7 @@ public class ContentContext {
 					}
 				}
 				ctx.setUser();
+				ctx.setFree(false);
 			} else {
 				ctx.setRequest(request);
 				ctx.setResponse(response);
@@ -188,6 +190,7 @@ public class ContentContext {
 			ctx.setRequest(request);
 			ctx.setResponse(response);
 			ctx.setPath(ContentManager.getPath(request));
+
 			String lg = ContentManager.getLanguage(ctx);
 			ctx.setLanguage(lg);
 			String contentLg = ContentManager.getContentLanguage(ctx);
@@ -1239,6 +1242,42 @@ public class ContentContext {
 		String newPath = "http://www.noctis.be/test/view.html;jsessionid=sdlfqjmdlsfj";
 		newPath = newPath.substring(0, newPath.indexOf(";jsessionid="));
 		System.out.println(newPath);
+	}
+
+	public String getPathPrefix() {
+		if (isHostDefineSite()) {
+			return "";
+		}
+		GlobalContext globalContext = GlobalContext.getInstance(getRequest());
+		return globalContext.getPathPrefix();
+	}
+
+	public static String getPathPrefix(HttpServletRequest request) {
+		if (isHostDefineSite(request)) {
+			return "";
+		}
+		GlobalContext globalContext = GlobalContext.getInstance(request);
+		return globalContext.getPathPrefix();
+	}
+
+	public boolean isHostDefineSite() {
+		return isHostDefineSite(request);
+	}
+
+	public static boolean isHostDefineSite(HttpServletRequest request) {
+		return StringHelper.isTrue(request.getParameter(HOST_DEFINED_SITE));
+	}
+
+	public static void setHostDefineSite(HttpServletRequest request, boolean hostDefineSite) {
+		if (hostDefineSite) {
+			request.setAttribute(HOST_DEFINED_SITE, "true");
+		} else {
+			request.removeAttribute(HOST_DEFINED_SITE);
+		}
+	}
+
+	public void release() {
+		request.removeAttribute(CONTEXT_REQUEST_KEY);
 	}
 
 }

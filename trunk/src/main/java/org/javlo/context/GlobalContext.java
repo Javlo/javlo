@@ -1189,6 +1189,7 @@ public class GlobalContext implements Serializable {
 			if (urlCreator != null) {
 				keyURL = urlCreator.createURLKey(url);
 			}
+
 			MenuElement page = viewPages.get(keyURL);
 			if (page != null) {
 				return page;
@@ -1200,6 +1201,7 @@ public class GlobalContext implements Serializable {
 		} else {
 			Collection<MenuElement> pastNode = new LinkedList<MenuElement>();
 			MenuElement page = MenuElement.searchChild(root, ctx, url, pastNode);
+
 			if (page != null && ctx.getRenderMode() == ContentContext.VIEW_MODE) {
 				viewPages.put(url, page);
 			}

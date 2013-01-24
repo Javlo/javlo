@@ -13,8 +13,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-import javax.servlet.http.HttpServletRequest;
-
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.lang.StringUtils;
 import org.javlo.config.StaticConfig;
@@ -125,15 +123,6 @@ public class URLHelper extends ElementaryURLHelper {
 
 	public static String createGeneralResourceURL(ContentContext ctx, String url) {
 		return createStaticResourceURL(ctx, url);
-	}
-
-	/**
-	 * @deprecated use createStaticURL (ContentContext, url), and use editContext for image directory
-	 */
-	@Deprecated
-	public static String createImageURL(HttpServletRequest request, String url) {
-		StaticConfig staticConfig = StaticConfig.getInstance(request.getSession());
-		return getPathPrefix(request) + staticConfig.getImageFolder() + '/' + url;
 	}
 
 	public static String createOtherLanguageURL(ContentContext ctx, String lg) {
@@ -517,6 +506,27 @@ public class URLHelper extends ElementaryURLHelper {
 			sep = '&';
 		}
 		return createURL(ctx, finalURL.toString());
+	}
+
+	public static String createStaticURL(ContentContext ctx, String path, Map params) {
+		StringBuffer finalURL = new StringBuffer();
+		finalURL.append(path);
+		char sep = '?';
+		if (path.indexOf('?') >= 0) {
+			sep = '&';
+		}
+		Iterator keys = params.keySet().iterator();
+		while (keys.hasNext()) {
+			String key = (String) keys.next();
+			String value = (String) params.get(key);
+
+			finalURL.append(sep);
+			finalURL.append(key);
+			finalURL.append('=');
+			finalURL.append(value);
+			sep = '&';
+		}
+		return createStaticURL(ctx, finalURL.toString());
 	}
 
 	/**
