@@ -179,32 +179,32 @@ public class Image extends AbstractFileComponent implements IImageTitle, IPrevie
 		if (imageList) {
 			out.println("<div class=\"name\">" + getFileName() + "</div>");
 			out.println("</div><div class=\"image-list\">");
-			for (int i = 0; i < images.length; i++) {
-				if ((images[i] != null) && (images[i].trim().length() > 0)) {
-					StaticInfo staticInfo = StaticInfo.getInstance(ctx, getFileURL(ctx, images[i]));
-					String fileLink = URLHelper.mergePath(getDirSelected(), images[i]);
+			for (String image : images) {
+				if ((image != null) && (image.trim().length() > 0)) {
+					StaticInfo staticInfo = StaticInfo.getInstance(ctx, getFileURL(ctx, image));
+					String fileLink = URLHelper.mergePath(getDirSelected(), image);
 					String selected = "class=\"preview-image\"";
 					boolean isSelectedImage = false;
 					if (fileLink.equals(currentFileLink)) {
 						selected = " class=\"preview-image selected\"";
 						isSelectedImage = true;
 					}
-					String realURL = URLHelper.createResourceURL(ctx, getPage(), '/' + getResourceURL(ctx, images[i])) + "?CRC32=" + staticInfo.getCRC32();
-					String previewURL = URLHelper.createTransformURL(ctx, getPage(), getResourceURL(ctx, images[i]), "preview") + "?CRC32=" + staticInfo.getCRC32();
-					String url = URLHelper.createTransformURL(ctx, getPage(), getResourceURL(ctx, images[i]), getConfig(ctx).getProperty("thumbnails-filter", "thumbnails")) + "?CRC32=" + staticInfo.getCRC32();
+					String realURL = URLHelper.createResourceURL(ctx, getPage(), '/' + getResourceURL(ctx, image)) + "?CRC32=" + staticInfo.getCRC32();
+					String previewURL = URLHelper.createTransformURL(ctx, getPage(), getResourceURL(ctx, image), "preview") + "?CRC32=" + staticInfo.getCRC32();
+					String url = URLHelper.createTransformURL(ctx, getPage(), getResourceURL(ctx, image), getConfig(ctx).getProperty("thumbnails-filter", "thumbnails")) + "?CRC32=" + staticInfo.getCRC32();
 					String id = "image_name_select__" + getId();
-					if (i < maxDisplayedImage || isSelectedImage) {
-						out.print("<div " + selected + ">");
-						String onMouseOver = "";
-						if (globalContext.isImagePreview()) {
-							onMouseOver = " onMouseOver=\"previewImage('" + previewURL + "')\" onMouseOut=\"previewClear()\"";
-						}
-						out.print("<a class=\"image\" href=\"#\" onclick=\"jQuery('#" + id + "').val('" + images[i] + "');jQuery('#" + id + "').trigger('change');" + getJSOnChange(ctx) + "\"><img name=\"" + getImageImgName() + "\"" + onMouseOver + " src=\"");
-						out.print(url);
-						out.print("\" alt=\"\">&nbsp;</a>");
-						out.print("<div class=\"name\"><a href=\"" + realURL + "\">" + images[i] + "</a></div>");
-						out.print("</div>");
+					// if (i < maxDisplayedImage || isSelectedImage) {
+					out.print("<div " + selected + ">");
+					String onMouseOver = "";
+					if (globalContext.isImagePreview()) {
+						onMouseOver = " onMouseOver=\"previewImage('" + previewURL + "')\" onMouseOut=\"previewClear()\"";
 					}
+					out.print("<a class=\"image\" href=\"#\" onclick=\"jQuery('#" + id + "').val('" + image + "');jQuery('#" + id + "').trigger('change');" + getJSOnChange(ctx) + "\"><img name=\"" + getImageImgName() + "\"" + onMouseOver + " src=\"");
+					out.print(url);
+					out.print("\" alt=\"\">&nbsp;</a>");
+					out.print("<div class=\"name\"><a href=\"" + realURL + "\">" + image + "</a></div>");
+					out.print("</div>");
+					// }
 				}
 			}
 			out.println("</div>");
