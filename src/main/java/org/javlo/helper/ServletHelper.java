@@ -76,10 +76,9 @@ public class ServletHelper {
 			if ((ctx.getRequest().getServletPath().equals("/edit") || ctx.getRequest().getServletPath().equals("/admin")) && (editCtx.getUserPrincipal() == null && !specialRightON)) {
 				logger.warning("block action : '" + action + "' because user is not logged.");
 			} else {
-				String newMessage = null;
-				newMessage = ActionManager.perform(action, ctx.getRequest(), ctx.getResponse());
+				String newMessage = ActionManager.perform(action, ctx.getRequest(), ctx.getResponse());
 				if (newMessage != null) {
-					ctx.getRequest().setAttribute("message", newMessage);
+					ctx.getRequest().setAttribute("message", new GenericMessage(newMessage, GenericMessage.ERROR));
 				}
 			}
 		}

@@ -194,6 +194,7 @@ public class ActionManager {
 					}
 				}
 				message = invokeAction(request, response, action, actionName);
+				logger.info("executed action : '" + actionName + "' return : " + message);
 			} else {
 				message = "actions class not found : " + action;
 				logger.severe(message);

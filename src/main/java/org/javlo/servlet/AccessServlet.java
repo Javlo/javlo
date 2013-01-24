@@ -84,7 +84,7 @@ public class AccessServlet extends HttpServlet {
 	 */
 	public static Logger logger = Logger.getLogger(AccessServlet.class.getName());
 
-	public static final String VERSION = "2.0.0.13";
+	public static final String VERSION = "2.0.0.14";
 
 	@Override
 	public void destroy() {
@@ -221,6 +221,7 @@ public class AccessServlet extends HttpServlet {
 			}
 
 			ContentContext ctx = ContentContext.getContentContext(request, response);
+
 			ctx.getCurrentTemplate();
 			request.setAttribute("frontCache", globalContext.getFrontCache(ctx));
 

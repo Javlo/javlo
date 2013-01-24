@@ -113,10 +113,8 @@ public class MessageRepository {
 				this.globalMessage = globalMessage;
 			}
 		}
-
 		NotificationService notifService = NotificationService.getInstance(GlobalContext.getInstance(request));
 		notifService.addNotification(globalMessage.getMessage(), globalMessage.getURL(), globalMessage.getType(), ctx.getCurrentUserId());
-
 	}
 
 	public void clearGlobalMessage() {

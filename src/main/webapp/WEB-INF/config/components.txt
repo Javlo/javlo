@@ -64,6 +64,7 @@ org.javlo.component.container.Box
 org.javlo.component.container.RepeatContainer
 org.javlo.component.container.DynamicComponentList
 org.javlo.component.container.TextDirection
+org.javlo.component.portlet.PortletWrapperComponent
 
 --content.title.web2
 

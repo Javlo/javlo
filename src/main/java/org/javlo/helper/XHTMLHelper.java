@@ -33,7 +33,6 @@ import java.util.Set;
 import java.util.TreeSet;
 
 import javax.servlet.ServletContext;
-import javax.servlet.http.HttpServletRequest;
 
 import org.apache.commons.beanutils.BeanUtils;
 import org.apache.commons.configuration.ConfigurationException;
@@ -346,14 +345,14 @@ public class XHTMLHelper {
 
 	}
 
-	public static String getErrorMessage(HttpServletRequest request, String field, GenericMessage message) {
+	public static String getErrorMessage(ContentContext ctx, String field, GenericMessage message) {
 		StringWriter res = new StringWriter();
 		PrintWriter out = new PrintWriter(res);
 
 		if (message != null) {
-			String imageURL = URLHelper.createStaticURL(request, "/images/error.gif");
+			String imageURL = URLHelper.createStaticURL(ctx, "/images/error.gif");
 			if (message.getType() != GenericMessage.ERROR) {
-				imageURL = URLHelper.createStaticURL(request, "/images/valid.gif");
+				imageURL = URLHelper.createStaticURL(ctx, "/images/valid.gif");
 			}
 			String msg = message.getMessage();
 
@@ -980,11 +979,11 @@ public class XHTMLHelper {
 		return getInputOneSelectInternal(name, name, newContent, value, null, js, null, false);
 	}
 
-	public static String getIntegerInput(String form, String name, int min, int max, String jsOnChange, HttpServletRequest request) {
-		return getIntegerInput(form, name, min, max, jsOnChange, new String[0][0], request);
+	public static String getIntegerInput(ContentContext ctx, String form, String name, int min, int max, String jsOnChange) {
+		return getIntegerInput(ctx, form, name, min, max, jsOnChange, new String[0][0]);
 	}
 
-	public static String getIntegerInput(String form, String name, int min, int max, String jsOnChange, String[][] attributes, HttpServletRequest request) {
+	public static String getIntegerInput(ContentContext ctx, String form, String name, int min, int max, String jsOnChange, String[][] attributes) {
 		StringWriter res = new StringWriter();
 		PrintWriter out = new PrintWriter(res);
 
@@ -1008,8 +1007,8 @@ public class XHTMLHelper {
 
 		out.print("</td><td style=\"width: 55px; padding: 0px; padding-left: 1px; margin:0px;\">");
 
-		String lessImg = URLHelper.createStaticURL(request, "/images/button_less.gif");
-		String lessImgOn = URLHelper.createStaticURL(request, "/images/button_less_on.gif");
+		String lessImg = URLHelper.createStaticURL(ctx, "/images/button_less.gif");
+		String lessImgOn = URLHelper.createStaticURL(ctx, "/images/button_less_on.gif");
 
 		StringBuffer js = new StringBuffer();
 
@@ -1022,8 +1021,8 @@ public class XHTMLHelper {
 
 		String buttonLess = getImageLink("-", lessImg, lessImgOn, "javascript:;", js.toString());
 
-		String moreImg = URLHelper.createStaticURL(request, "/images/button_more.gif");
-		String moreImgOn = URLHelper.createStaticURL(request, "/images/button_more_on.gif");
+		String moreImg = URLHelper.createStaticURL(ctx, "/images/button_more.gif");
+		String moreImgOn = URLHelper.createStaticURL(ctx, "/images/button_more_on.gif");
 
 		js = new StringBuffer();
 
@@ -1237,7 +1236,7 @@ public class XHTMLHelper {
 		out.println("\"/>&nbsp;" + label + "</td>");
 		out.print("<td class=\"error-message\">");
 
-		out.print(getErrorMessage(ctx.getRequest(), field, message));
+		out.print(getErrorMessage(ctx, field, message));
 
 		out.println("</td>");
 
@@ -1317,7 +1316,7 @@ public class XHTMLHelper {
 		out.println("\"/></td>");
 		out.print("<td class=\"error-message\">");
 
-		out.print(getErrorMessage(ctx.getRequest(), field, message));
+		out.print(getErrorMessage(ctx, field, message));
 
 		out.println("</td>");
 		out.flush();
@@ -1337,7 +1336,7 @@ public class XHTMLHelper {
 		out.println("</td>");
 		out.print("<td class=\"error-message\">");
 
-		out.print(getErrorMessage(ctx.getRequest(), field, message));
+		out.print(getErrorMessage(ctx, field, message));
 
 		out.println("</td>");
 		out.flush();
@@ -1371,7 +1370,7 @@ public class XHTMLHelper {
 		out.println("</td>");
 		out.print("<td class=\"error-message\">");
 
-		out.print(getErrorMessage(ctx.getRequest(), field, formComponent.getMessage(ctx, field)));
+		out.print(getErrorMessage(ctx, field, formComponent.getMessage(ctx, field)));
 
 		out.print("</td>");
 
@@ -1402,7 +1401,7 @@ public class XHTMLHelper {
 
 		out.print("<td class=\"error-message\">");
 
-		out.print(getErrorMessage(ctx.getRequest(), field, formComponent.getMessage(ctx, field)));
+		out.print(getErrorMessage(ctx, field, formComponent.getMessage(ctx, field)));
 
 		out.println("</td>");
 

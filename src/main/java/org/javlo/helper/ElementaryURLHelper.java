@@ -202,13 +202,13 @@ public abstract class ElementaryURLHelper {
 
 		if (ctx.getContentLanguage().equals(ctx.getLanguage())) {
 			if (withPathPrefix) {
-				newUri = URLHelper.mergePath(getPathPrefix(globalContext, request), mode, ctx.getLanguage(), uri);
+				newUri = URLHelper.mergePath(getPathPrefix(ctx), mode, ctx.getLanguage(), uri);
 			} else {
 				newUri = URLHelper.mergePath(mode, ctx.getLanguage(), uri);
 			}
 		} else {
 			if (withPathPrefix) {
-				newUri = URLHelper.mergePath(getPathPrefix(globalContext, request), mode, ctx.getLanguage() + '-' + ctx.getContentLanguage(), uri);
+				newUri = URLHelper.mergePath(getPathPrefix(ctx), mode, ctx.getLanguage() + '-' + ctx.getContentLanguage(), uri);
 			} else {
 				newUri = URLHelper.mergePath(mode, ctx.getLanguage() + '-' + ctx.getContentLanguage(), uri);
 			}
@@ -268,7 +268,7 @@ public abstract class ElementaryURLHelper {
 
 		String url = inUrl;
 		if (withPathPrefix) {
-			String pathPrefix = getPathPrefix(ctx.getRequest());
+			String pathPrefix = getPathPrefix(ctx);
 			url = ElementaryURLHelper.mergePath(pathPrefix, inUrl);
 		}
 
@@ -290,21 +290,10 @@ public abstract class ElementaryURLHelper {
 		return createStaticURL(ctx, null, inUrl, true);
 	}
 
-	/**
-	 * @deprecated use createStaticURL with the ContentContext
-	 * @param request
-	 * @param url
-	 * @return
-	 */
-	@Deprecated
-	public static String createStaticURL(HttpServletRequest request, String url) {
-		return getPathPrefix(request) + url;
-	}
-
-	public static String createTeaserURL(HttpServletRequest request, String url) {
-		GlobalContext globalContext = GlobalContext.getInstance(request);
-		EditContext editCtx = EditContext.getInstance(globalContext, request.getSession());
-		return getPathPrefix(request) + editCtx.getTeasersDirectory() + '/' + url;
+	public static String createTeaserURL(ContentContext ctx, String url) {
+		GlobalContext globalContext = GlobalContext.getInstance(ctx.getRequest());
+		EditContext editCtx = EditContext.getInstance(globalContext, ctx.getRequest().getSession());
+		return getPathPrefix(ctx) + editCtx.getTeasersDirectory() + '/' + url;
 	}
 
 	public static String createThumbURL(ContentContext ctx, String url, int width, boolean ts) {
@@ -324,9 +313,6 @@ public abstract class ElementaryURLHelper {
 		url = url.replace('\\', '/');
 
 		ContentService.getInstance(ctx.getRequest());
-		MenuElement elem = ctx.getCurrentPage();
-
-		GlobalContext globalContext = GlobalContext.getInstance(ctx.getRequest());
 		Template template = ctx.getCurrentTemplate();
 
 		if (template != null) {
@@ -349,18 +335,6 @@ public abstract class ElementaryURLHelper {
 			return null;
 		}
 		url = url.replace('\\', '/');
-
-		GlobalContext globalContext = GlobalContext.getInstance(ctx.getRequest());
-
-		String deviceCode = "no-device";
-		if (ctx.getDevice() != null) {
-			deviceCode = ctx.getDevice().getCode();
-		}
-		/*
-		 * String key = ImageHelper.createSpecialDirectory(filter, ctx.getArea(), deviceCode, template);
-		 * 
-		 * FileCache fc = FileCache.getInstance(ctx.getRequest().getSession().getServletContext()); if (!globalContext.getImageViewFilter().contains(filter) && fc.getFileName(key, url).exists()) { return URLHelper.createStaticURL(ctx, fc.getRelativeFilePath(key, url)); }
-		 */
 
 		ContentService.getInstance(ctx.getRequest());
 
@@ -499,34 +473,30 @@ public abstract class ElementaryURLHelper {
 		return ElementaryURLHelper.createStaticURL(ctx, "/images/icones/" + icone);
 	}
 
-	public static String getPathPrefix(HttpServletRequest request) {
-		GlobalContext globalContext = GlobalContext.getInstance(request);
-		return getPathPrefix(globalContext, request);
-	}
-
 	/**
 	 * return the path path prefix defined in ServletContext
 	 * 
 	 * @param request
 	 * @return
 	 */
-	public static String getPathPrefix(GlobalContext globalContext, HttpServletRequest request) {
+	public static String getPathPrefix(ContentContext ctx) {
+		GlobalContext globalContext = GlobalContext.getInstance(ctx.getRequest());
 		String CACHE_KEY = "javlo-path-prefix-" + globalContext.getContextKey();
-		String res = (String) request.getAttribute(CACHE_KEY);
+		String res = (String) ctx.getRequest().getAttribute(CACHE_KEY);
 		if (res == null) {
-			String requestPrefix = request.getContextPath();
-			res = globalContext.getPathPrefix();
+			String requestPrefix = ctx.getRequest().getContextPath();
+			res = ctx.getPathPrefix();
 			if (res == null) {
 				res = requestPrefix;
 			} else {
-				StaticConfig staticConfig = StaticConfig.getInstance(request.getSession());
+				StaticConfig staticConfig = StaticConfig.getInstance(ctx.getRequest().getSession());
 				if (staticConfig.isURIWithContext()) {
 					res = URLHelper.mergePath("/", requestPrefix, res);
 				} else {
 					res = URLHelper.mergePath("/", res);
 				}
 			}
-			request.setAttribute(CACHE_KEY, res);
+			ctx.getRequest().setAttribute(CACHE_KEY, res);
 		}
 		return res;
 	}
