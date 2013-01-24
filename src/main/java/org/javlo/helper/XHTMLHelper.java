@@ -1665,8 +1665,10 @@ public class XHTMLHelper {
 	public static boolean allReadyInsered(ContentContext ctx, String resource) {
 		if (resource.contains("jquery-1") || resource.contains("jquery-2") || resource.contains("jquery.min")) {
 			resource = "_jquery-library_";
+		} else if (resource.contains("jquery-ui")) {
+			resource = "_jquery-ui_";
 		}
-		String attKey = "_hri_" + resource;
+		String attKey = "_ari_" + resource;
 		if (ctx.getRequest().getAttribute(attKey) != null) {
 			return true;
 		} else {
