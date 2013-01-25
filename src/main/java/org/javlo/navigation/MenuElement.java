@@ -102,7 +102,7 @@ public class MenuElement implements Serializable {
 
 		public PageDescription getInfo() {
 			try {
-				return page.getPageDescription(ctx);
+				return page.getSmartPageDescription(ctx);
 			} catch (Exception e) {
 				e.printStackTrace();
 				return null;
@@ -279,7 +279,6 @@ public class MenuElement implements Serializable {
 		String subTitle = null;
 		String pageTitle = null;
 		String forcedPageTitle = null;
-		IImageTitle imageLink = null;
 		String linkOn = null;
 		Collection<IImageTitle> images = null;
 		Collection<Link> staticResources = null;
@@ -295,7 +294,6 @@ public class MenuElement implements Serializable {
 		String category = null;
 		Double pageRank = null;
 		List<String> tags = null;
-		Collection<String> needdedResources = null;
 		String headerContent = null;
 		List<String> groupID = null;
 		List<String> childrenCategories = null;
@@ -307,6 +305,10 @@ public class MenuElement implements Serializable {
 		String referenceLanguage = null;
 		boolean breakRepeat;
 		int priority;
+
+		public ImageTitleBean imageLink;
+
+		public Collection<String> needdedResources = null;
 
 		public boolean isVisible() {
 			return visible;
@@ -362,14 +364,6 @@ public class MenuElement implements Serializable {
 
 		public void setPageTitle(String pageTitle) {
 			this.pageTitle = pageTitle;
-		}
-
-		public IImageTitle getImageLink() {
-			return imageLink;
-		}
-
-		public void setImageLink(IImageTitle imageLink) {
-			this.imageLink = imageLink;
 		}
 
 		public String getLinkOn() {
@@ -491,14 +485,6 @@ public class MenuElement implements Serializable {
 			this.tags = tags;
 		}
 
-		public Collection<String> getNeeddedResources() {
-			return needdedResources;
-		}
-
-		public void setNeeddedResources(Collection<String> resources) {
-			this.needdedResources = resources;
-		}
-
 		public String getHeaderContent() {
 			return headerContent;
 		}
@@ -523,20 +509,12 @@ public class MenuElement implements Serializable {
 			this.timeRange = timeRange;
 		}
 
-		public Boolean getIsContentDateVisible() {
+		public Boolean isContentDateVisible() {
 			return contentDateVisible;
 		}
 
-		public void setIsContentDateVisible(Boolean isContentDateVisible) {
+		public void setContentDateVisible(Boolean isContentDateVisible) {
 			this.contentDateVisible = isContentDateVisible;
-		}
-
-		public Boolean getNotInSearch() {
-			return notInSearch;
-		}
-
-		public void setNotInSearch(Boolean notInSearch) {
-			this.notInSearch = notInSearch;
 		}
 
 		public String getReferenceLanguage() {
@@ -557,6 +535,298 @@ public class MenuElement implements Serializable {
 
 		public List<String> getChildrenCategories() {
 			return childrenCategories;
+		}
+
+	}
+
+	public class SmartPageDescription extends PageDescription {
+
+		ContentContext ctx;
+		MenuElement page;
+
+		private SmartPageDescription(ContentContext ctx, MenuElement page) {
+			this.ctx = ctx;
+			this.page = page;
+		}
+
+		@Override
+		public boolean isVisible() {
+			try {
+				return page.isVisible();
+			} catch (Exception e) {
+				logger.warning(e.getMessage());
+				return false;
+			}
+		}
+
+		@Override
+		public Collection<Link> getStaticResources() {
+			try {
+				return page.getStaticResources(ctx);
+			} catch (Exception e) {
+				logger.warning(e.getMessage());
+				return null;
+			}
+		}
+
+		@Override
+		public int getDepth() {
+			return page.getDepth();
+		}
+
+		@Override
+		public String getTitle() {
+			try {
+				return page.getTitle(ctx);
+			} catch (Exception e) {
+				logger.warning(e.getMessage());
+				return null;
+			}
+		}
+
+		@Override
+		public String getLocalTitle() {
+			try {
+				return page.getLocalTitle(ctx);
+			} catch (Exception e) {
+				logger.warning(e.getMessage());
+				return null;
+			}
+		}
+
+		@Override
+		public String getSubTitle() {
+			try {
+				return page.getSubTitle(ctx);
+			} catch (Exception e) {
+				logger.warning(e.getMessage());
+				return null;
+			}
+		}
+
+		@Override
+		public int getPriority() {
+			return page.getPriority();
+		}
+
+		@Override
+		public String getPageTitle() {
+			try {
+				return page.getPageTitle(ctx);
+			} catch (Exception e) {
+				logger.warning(e.getMessage());
+				return null;
+			}
+		}
+
+		@Override
+		public String getLinkOn() {
+			try {
+				return page.getLinkOn(ctx);
+			} catch (Exception e) {
+				logger.warning(e.getMessage());
+				return null;
+			}
+		}
+
+		@Override
+		public Collection<IImageTitle> getImages() {
+			try {
+				return page.getImages(ctx);
+			} catch (Exception e) {
+				logger.warning(e.getMessage());
+				return null;
+			}
+		}
+
+		@Override
+		public String getDescription() {
+			try {
+				return page.getDescription(ctx);
+			} catch (Exception e) {
+				logger.warning(e.getMessage());
+				return null;
+			}
+		}
+
+		@Override
+		public String getMetaDescription() {
+			try {
+				return page.getMetaDescription(ctx);
+			} catch (Exception e) {
+				logger.warning(e.getMessage());
+				return null;
+			}
+		}
+
+		@Override
+		public String getKeywords() {
+			try {
+				return page.getKeywords(ctx);
+			} catch (Exception e) {
+				logger.warning(e.getMessage());
+				return null;
+			}
+		}
+
+		@Override
+		public String getGlobalTitle() {
+			try {
+				return page.getGlobalTitle(ctx);
+			} catch (Exception e) {
+				logger.warning(e.getMessage());
+				return null;
+			}
+		}
+
+		@Override
+		public Date getContentDate() {
+			try {
+				return page.getContentDate(ctx);
+			} catch (Exception e) {
+				logger.warning(e.getMessage());
+				return null;
+			}
+		}
+
+		@Override
+		public Boolean isEmpty() {
+			try {
+				return page.isEmpty(ctx);
+			} catch (Exception e) {
+				logger.warning(e.getMessage());
+				return null;
+			}
+		}
+
+		@Override
+		public boolean isRealContent() {
+			try {
+				return page.isRealContent(ctx);
+			} catch (Exception e) {
+				logger.warning(e.getMessage());
+				return false;
+			}
+		}
+
+		@Override
+		public boolean isRealContentNull() {
+			try {
+				return page.isRealContent(ctx);
+			} catch (Exception e) {
+				logger.warning(e.getMessage());
+				return false;
+			}
+		}
+
+		@Override
+		public String getLabel() {
+			try {
+				return page.getLabel(ctx);
+			} catch (Exception e) {
+				logger.warning(e.getMessage());
+				return null;
+			}
+		}
+
+		@Override
+		public String getLocation() {
+			try {
+				return page.getLocation(ctx);
+			} catch (Exception e) {
+				logger.warning(e.getMessage());
+				return null;
+			}
+		}
+
+		@Override
+		public String getCategory() {
+			try {
+				return page.getCategory(ctx);
+			} catch (Exception e) {
+				logger.warning(e.getMessage());
+				return null;
+			}
+		}
+
+		@Override
+		public Double getPageRank() {
+			try {
+				return page.getPageRank(ctx);
+			} catch (Exception e) {
+				logger.warning(e.getMessage());
+				return null;
+			}
+		}
+
+		@Override
+		public List<String> getTags() {
+			try {
+				return page.getTags(ctx);
+			} catch (Exception e) {
+				logger.warning(e.getMessage());
+				return null;
+			}
+		}
+
+		@Override
+		public String getHeaderContent() {
+			try {
+				return page.getHeaderContent(ctx);
+			} catch (Exception e) {
+				logger.warning(e.getMessage());
+				return null;
+			}
+		}
+
+		@Override
+		public List<String> getGroupID() {
+			try {
+				return page.getGroupID(ctx);
+			} catch (Exception e) {
+				logger.warning(e.getMessage());
+				return null;
+			}
+		}
+
+		@Override
+		public TimeRange getTimeRange() {
+			try {
+				return page.getTimeRange(ctx);
+			} catch (Exception e) {
+				logger.warning(e.getMessage());
+				return null;
+			}
+		}
+
+		@Override
+		public Boolean isContentDateVisible() {
+			try {
+				return page.isContentDateVisible(ctx);
+			} catch (Exception e) {
+				logger.warning(e.getMessage());
+				return null;
+			}
+		}
+
+		@Override
+		public String getReferenceLanguage() {
+			return page.getReferenceLanguage();
+		}
+
+		@Override
+		public boolean isBreakRepeat() {
+			return page.isBreakRepeat();
+		}
+
+		@Override
+		public List<String> getChildrenCategories() {
+			try {
+				return page.getChildrenCategories(ctx);
+			} catch (Exception e) {
+				logger.warning(e.getMessage());
+				return null;
+			}
 		}
 
 	}
@@ -598,6 +868,10 @@ public class MenuElement implements Serializable {
 			pageDescription.childrenCategories = getChildrenCategories(ctx);
 		}
 		return pageDescription;
+	}
+
+	public PageDescription getSmartPageDescription(ContentContext ctx) {
+		return new SmartPageDescription(ctx, this);
 	}
 
 	public static MenuElement getInstance(GlobalContext globalContext) {
