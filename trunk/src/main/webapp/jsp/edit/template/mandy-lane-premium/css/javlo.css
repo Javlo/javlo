@@ -69,6 +69,7 @@ fieldset {
 
 .full-height {
 	overflow: auto;
+	margin-bottom: -15px;
 }
 
 a.button {
