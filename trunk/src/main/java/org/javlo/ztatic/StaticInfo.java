@@ -322,6 +322,8 @@ public class StaticInfo {
 
 	private Date linkedDate;
 
+	private Date fileDate = null;
+
 	private String linkedTitle;
 
 	private String linkedDescription;
@@ -549,15 +551,12 @@ public class StaticInfo {
 	public Date getManualDate(ContentContext ctx) {
 		ContentService content = ContentService.getInstance(ctx.getRequest());
 		String dateStr = content.getAttribute(ctx, getKey("date"), null);
-		// String dateStr = properties.getString("date", null);
-
 		if (dateStr != null) {
 			try {
 				return StringHelper.parseTime(dateStr);
 			} catch (ParseException e) {
 			}
 		}
-
 		return null;
 	}
 
@@ -567,7 +566,7 @@ public class StaticInfo {
 		} else {
 			Date linkedDate = getLinkedDate(ctx);
 			if (linkedDate == null) {
-				return new Date(getFile().lastModified());
+				return getFileDate();
 			} else {
 				return linkedDate;
 			}
@@ -581,7 +580,6 @@ public class StaticInfo {
 		} else {
 			content.setAttribute(ctx, getKey("date"), StringHelper.renderTime(date));
 		}
-
 	}
 
 	public String getResource(ContentContext ctx) {
@@ -765,6 +763,13 @@ public class StaticInfo {
 		} else {
 			return null;
 		}
+	}
+
+	public Date getFileDate() {
+		if (fileDate == null) {
+			fileDate = new Date(getFile().lastModified());
+		}
+		return fileDate;
 	}
 
 	public void setLinkedDate(Date linkedDate) {
