@@ -26,3 +26,7 @@ a.delete {
 .authors .title {
 	font-weight: bold;
 }
+
+.page li {
+	margin-left: 35px;
+}

@@ -11,7 +11,7 @@
 		<c:forEach var="commentGroup" items="${comments}">
 		<div class="page${commentGroup.needValidation?' unvalid':' valid'}">
 			<a target="_blanck" href="${commentGroup.page.viewURL}">${commentGroup.page.info.title}</a> - ${commentGroup.countUnvalid} / ${fn:length(commentGroup.comments)}
-			<ul class="comments">
+			<ul class="page">
 			<c:forEach var="comment" items="${commentGroup.comments}">
 				<li class="${!comment.valid?'unvalid':'valid'}">
 					<span class="actions">
@@ -36,7 +36,7 @@
 		<c:forEach var="commentGroup" items="${comments}">
 		<li class="page${commentGroup.needValidation?' unvalid':' valid'}">
 			<a target="_blanck" href="${commentGroup.page.viewURL}">${commentGroup.page.info.title}</a> - ${commentGroup.countUnvalid} / ${fn:length(commentGroup.comments)}
-			<ul class="comments">
+			<ul class="page">
 			<c:forEach var="comment" items="${commentGroup.deletedComments}">
 				<li class="${!comment.valid?'unvalid':'valid'}">
 					<span class="date">${comment.displayableDate}</span> - <span class="authors"><a href="mailto:${comment.email}">${comment.authors}</a></span> - <span class="title">${comment.title}</span> - <span class="text">${comment.text}</span>
