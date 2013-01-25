@@ -30,6 +30,7 @@ import org.javlo.helper.ConfigHelper;
 import org.javlo.navigation.MenuElement;
 import org.javlo.service.ContentService;
 import org.javlo.template.Template;
+import org.javlo.template.TemplateFactory;
 
 /**
  * @author pvanderm
@@ -62,19 +63,17 @@ public class ComponentFactory {
 	 * @return list of application component + template components
 	 * @throws Exception
 	 */
-	public static IContentVisualComponent[] getComponents(ContentContext ctx) throws Exception {
-		String key = "__components_request_key";
+	public static IContentVisualComponent[] getComponents(ContentContext ctx, MenuElement page) throws Exception {
+		String key = "__components_request_key_" + page.getId() + '_' + ctx.getRenderMode();
 		IContentVisualComponent[] outComp = (IContentVisualComponent[]) ctx.getRequest().getAttribute(key);
-		Template template = null;
 		if (outComp == null) {
+			Template template = null;
 			GlobalContext globalContext = GlobalContext.getInstance(ctx.getRequest());
 			IContentVisualComponent[] components = getComponents(globalContext);
 			ArrayList<IContentVisualComponent> array = new ArrayList<IContentVisualComponent>();
 			array.addAll(Arrays.asList(components));
-			ContentService content = ContentService.getInstance(ctx.getRequest());
-			MenuElement page = content.getNavigation(ctx).getNoErrorFreeCurrentPage(ctx);
 			if (page != null) {
-				template = ctx.getCurrentTemplate();
+				template = TemplateFactory.getTemplate(ctx, page);
 				if (template != null) {
 					/* load dynamic component */
 					List<Properties> propertiesClasses = template.getDynamicComponentsProperties(globalContext);
@@ -100,9 +99,9 @@ public class ComponentFactory {
 			components = new IContentVisualComponent[array.size()];
 			array.toArray(components);
 			outComp = components;
-			if (template != null) { // don't cache if no template
-				ctx.getRequest().setAttribute(key, outComp);
-			}
+			// if (template != null) { // don't cache if no template
+			ctx.getRequest().setAttribute(key, outComp);
+			// }
 		}
 
 		return outComp;
@@ -320,7 +319,7 @@ public class ComponentFactory {
 	public static IContentVisualComponent getComponentWithType(ContentContext ctx, String type) {
 		IContentVisualComponent outComponent = null;
 		try {
-			IContentVisualComponent[] components = getComponents(ctx);
+			IContentVisualComponent[] components = getComponents(ctx, ctx.getCurrentPage());
 			for (IContentVisualComponent component : components) {
 				if ((component.getType().equals(type))) {
 					outComponent = component;
@@ -348,7 +347,7 @@ public class ComponentFactory {
 		GlobalContext globalContext = GlobalContext.getInstance(ctx.getRequest());
 		List<String> selectedComponents = globalContext.getComponents();
 
-		IContentVisualComponent[] components = getComponents(ctx);
+		IContentVisualComponent[] components = getComponents(ctx, inPage);
 		AbstractVisualComponent component = null;
 		for (IContentVisualComponent component2 : components) {
 			if (component2 != null && bean != null && component2.getType() != null) {

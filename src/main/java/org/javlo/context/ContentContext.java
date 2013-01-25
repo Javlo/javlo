@@ -95,38 +95,26 @@ public class ContentContext {
 	}
 
 	public static ContentContext getContentContext(HttpServletRequest request, HttpServletResponse response) throws Exception {
+		return getContentContext(request, response, true);
+	}
+
+	/**
+	 * 
+	 * @param request
+	 * @param response
+	 * @param correctPath
+	 *            true for search real page and construct new path with this page.
+	 * @return
+	 * @throws Exception
+	 */
+	public static ContentContext getContentContext(HttpServletRequest request, HttpServletResponse response, boolean correctPath) throws Exception {
 		ContentContext ctx = (ContentContext) request.getAttribute(CONTEXT_REQUEST_KEY);
 		try {
 			if (ctx == null) {
 				ctx = createContentContext(request, response, true);
-				if (ctx.getRenderMode() != ContentContext.EDIT_MODE) {
-					ContentService content = ContentService.getInstance(GlobalContext.getInstance(request));
-					if (!content.contentExistForContext(ctx)) {
-						boolean editPreview = false;
-						if (ctx.getRenderMode() == ContentContext.PREVIEW_MODE) {
-							GlobalContext globalContext = GlobalContext.getInstance(request);
-							EditContext editCtx = EditContext.getInstance(globalContext, request.getSession());
-							editPreview = editCtx.isEditPreview();
-						}
-						if (!editPreview) {
-							MenuElement menu = content.getNavigation(ctx);
-							if (menu != null) {
-								menu = menu.searchChild(ctx);
-								if ((menu != null) && (menu.getChildMenuElements().size() > 0)) {
-									// TODO: clean this system with a recursive system
-									ctx.setPath(menu.getChildMenuElements().iterator().next().getPath());
-									if (!content.contentExistForContext(ctx)) {
-										if ((menu != null) && (menu.getChildMenuElements().iterator().next().getChildMenuElements().size() > 0)) {
-											ctx.setPath(menu.getChildMenuElements().iterator().next().getChildMenuElements().iterator().next().getPath());
-										}
-									}
-								}
-							}
-						}
-					}
-				}
 				ctx.setUser();
 				ctx.setFree(false);
+				ctx.correctPath = false;
 			} else {
 				ctx.setRequest(request);
 				ctx.setResponse(response);
@@ -134,6 +122,34 @@ public class ContentContext {
 		} catch (Exception e) {
 			e.printStackTrace();
 			throw e;
+		}
+
+		if (ctx.getRenderMode() != ContentContext.EDIT_MODE && !ctx.correctPath && correctPath) {
+			ctx.correctPath = correctPath;
+			ContentService content = ContentService.getInstance(GlobalContext.getInstance(request));
+			if (!content.contentExistForContext(ctx)) {
+				boolean editPreview = false;
+				if (ctx.getRenderMode() == ContentContext.PREVIEW_MODE) {
+					GlobalContext globalContext = GlobalContext.getInstance(request);
+					EditContext editCtx = EditContext.getInstance(globalContext, request.getSession());
+					editPreview = editCtx.isEditPreview();
+				}
+				if (!editPreview && correctPath) {
+					MenuElement menu = content.getNavigation(ctx);
+					if (menu != null) {
+						menu = menu.searchChild(ctx);
+						if ((menu != null) && (menu.getChildMenuElements().size() > 0)) {
+							// TODO: clean this system with a recursive system
+							ctx.setPath(menu.getChildMenuElements().iterator().next().getPath());
+							if (!content.contentExistForContext(ctx)) {
+								if ((menu != null) && (menu.getChildMenuElements().iterator().next().getChildMenuElements().size() > 0)) {
+									ctx.setPath(menu.getChildMenuElements().iterator().next().getChildMenuElements().iterator().next().getPath());
+								}
+							}
+						}
+					}
+				}
+			}
 		}
 
 		return ctx;
@@ -251,6 +267,8 @@ public class ContentContext {
 
 	boolean pageRequest = false;
 
+	boolean correctPath = true;
+
 	IURLFactory urlFactory = null;
 	URL dmzServerInter = null;
 	boolean visible = true;
@@ -334,6 +352,7 @@ public class ContentContext {
 		free = ctx.free;
 		device = ctx.getDevice();
 		format = ctx.format;
+		correctPath = ctx.correctPath;
 	}
 
 	public String getArea() {

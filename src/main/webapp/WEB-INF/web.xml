@@ -77,12 +77,23 @@
 		<servlet-name>VFSServlet</servlet-name>
 		<url-pattern>/vfs/*</url-pattern>
 	</servlet-mapping>
+	
+	<servlet>
+		<servlet-name>expcomp</servlet-name>
+		<servlet-class>org.javlo.servlet.ExportComponents</servlet-class>
+		<load-on-startup>1</load-on-startup>
+	</servlet>
+	<servlet-mapping>
+		<servlet-name>expcomp</servlet-name>
+		<url-pattern>/expcomp/*</url-pattern>
+	</servlet-mapping>
 
 	<servlet>
 		<servlet-name>SiteMapServlet</servlet-name>
 		<servlet-class>org.javlo.servlet.SiteMapServlet</servlet-class>
 		<load-on-startup>1</load-on-startup>
 	</servlet>
+	
 	<servlet-mapping>
 		<servlet-name>SiteMapServlet</servlet-name>
 		<url-pattern>/sitemap.xml</url-pattern>

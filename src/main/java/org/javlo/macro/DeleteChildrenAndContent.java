@@ -1,6 +1,7 @@
 package org.javlo.macro;
 
 import java.util.Collection;
+import java.util.LinkedList;
 import java.util.Map;
 
 import org.javlo.component.core.ComponentBean;
@@ -24,10 +25,11 @@ public class DeleteChildrenAndContent extends AbstractMacro {
 
 		ctx.getCurrentPage().setContent(new ComponentBean[0]);
 
-		Collection<MenuElement> pages = ctx.getCurrentPage().getChildMenuElements();
+		Collection<MenuElement> pages = new LinkedList<MenuElement>(ctx.getCurrentPage().getChildMenuElements());
 		for (MenuElement menuElement : pages) {
 			service.removeNavigationNoStore(ctx, menuElement);
 		}
+		pages = null;
 
 		PersistenceService persistenceService = PersistenceService.getInstance(globalContext);
 		persistenceService.store(ctx);

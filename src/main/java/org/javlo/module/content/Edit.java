@@ -349,7 +349,7 @@ public class Edit extends AbstractModuleAction {
 	private static void loadComponentList(ContentContext ctx) throws Exception {
 		// if (ctx.getRequest().getAttribute("components") == null) {
 		GlobalContext globalContext = GlobalContext.getInstance(ctx.getRequest());
-		IContentVisualComponent[] components = ComponentFactory.getComponents(ctx);
+		IContentVisualComponent[] components = ComponentFactory.getComponents(ctx, ctx.getCurrentPage());
 		List<ComponentWrapper> comps = new LinkedList<ComponentWrapper>();
 		EditContext editCtx = EditContext.getInstance(globalContext, ctx.getRequest().getSession());
 		ComponentWrapper titleWrapper = null;

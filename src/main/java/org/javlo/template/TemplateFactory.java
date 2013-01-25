@@ -300,6 +300,10 @@ public class TemplateFactory {
 	}
 
 	public static Template getTemplate(ContentContext ctx, MenuElement elem) throws Exception {
+		String key = "_template_" + elem.getId() + '_' + ctx.getRenderMode();
+		if (ctx.getRequest().getAttribute(key) != null) {
+			return (Template) ctx.getRequest().getAttribute(key);
+		}
 		Template template = null;
 		if (elem != null) {
 			template = getTemplates(ctx.getRequest().getSession().getServletContext()).get(elem.getTemplateId());
@@ -310,6 +314,7 @@ public class TemplateFactory {
 				}
 			}
 		}
+		ctx.getRequest().setAttribute(key, template);
 		return template;
 	}
 
