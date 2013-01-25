@@ -135,6 +135,11 @@ jQuery(document).ready(function(){
 	},function(){
 		jQuery(this).find('ul:first').css({visibility: "hidden"});
 	});
+	
+
+	////////////TABS /////////////////
+	jQuery( ".tabs" ).tabs();
+
 
 	
 });
