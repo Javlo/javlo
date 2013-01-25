@@ -51,3 +51,5 @@ change log
  * no prefix is host 
  
 * 2.0.0.14 [22/01/2013]
+
+ * export component as csv and excel file

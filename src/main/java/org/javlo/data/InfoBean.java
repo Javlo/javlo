@@ -419,4 +419,8 @@ public class InfoBean {
 			return true;
 		}
 	}
+
+	public String getArea() {
+		return ctx.getArea();
+	}
 }
