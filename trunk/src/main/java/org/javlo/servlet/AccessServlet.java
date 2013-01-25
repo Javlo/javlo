@@ -201,6 +201,8 @@ public class AccessServlet extends HttpServlet {
 
 			GlobalContext globalContext = GlobalContext.getInstance(request);
 
+			ContentContext ctx = ContentContext.getContentContext(request, response);
+
 			if (FIRST_REQUEST) {
 				synchronized (FIRST_REQUEST) {
 					if (FIRST_REQUEST) {
@@ -219,8 +221,6 @@ public class AccessServlet extends HttpServlet {
 					}
 				}
 			}
-
-			ContentContext ctx = ContentContext.getContentContext(request, response);
 
 			ctx.getCurrentTemplate();
 			request.setAttribute("frontCache", globalContext.getFrontCache(ctx));

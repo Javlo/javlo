@@ -224,6 +224,26 @@ public class CSVFactory {
 		}
 	}
 
+	public static final String exportLine(Collection<String> data, String separator) {
+		ByteArrayOutputStream outStream = new ByteArrayOutputStream();
+		PrintStream out = new PrintStream(outStream);
+		String sep = "";
+		for (String element : data) {
+			String elem = element;
+			if (elem == null) {
+				elem = "\"\"";
+			} else {
+				elem = "\"" + replace(elem, "\"", "\"\"") + "\"";
+			}
+			out.print(sep);
+			out.print(elem);
+			sep = separator;
+		}
+		out.close();
+		return new String(outStream.toByteArray());
+
+	}
+
 	public void exportRowCSV(OutputStream outStream, String separator, Collection<String> row) {
 		synchronized (lock) {
 			PrintStream out = new PrintStream(outStream);

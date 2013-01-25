@@ -1165,7 +1165,6 @@ public class MenuElement implements Serializable {
 	private synchronized ContentElementList getAllLocalContent(ContentContext ctx) throws Exception {
 		ContentElementList localContentElementList = localContentElementListMap.get(ctx.getRequestContentLanguage());
 		if (localContentElementList == null) {
-
 			logger.fine("update all local content on (ctx:" + ctx + ")");
 
 			/*

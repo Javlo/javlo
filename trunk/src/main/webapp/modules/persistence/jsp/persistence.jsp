@@ -20,4 +20,21 @@
 </div>
 </form>
 </fieldset>
+
+<c:if test="${fn:length(exportLinks) > 0}">
+<fieldset>
+<legend>data</legend>
+<div class="accordion">
+<c:forEach var="link" items="${exportLinks}">
+<h3><a href="#">${link.label}</a></h3>
+<div>
+<ul>
+<li><a href="${link.csvURL}">CSV</a></li>
+<li><a href="${link.excelURL}">Excel</a></li>
+</ul>
+</div>
+</c:forEach>
+</div>
+</fieldset>
+</c:if>
 </div>
