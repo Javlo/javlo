@@ -34,5 +34,4 @@ public class CommentsService {
 		}
 		return reactions;
 	}
-
 }

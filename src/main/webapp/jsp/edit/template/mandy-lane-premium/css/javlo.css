@@ -296,6 +296,10 @@ ul,li {
 	margin-left: 16px;
 }
 
+.tabs ul {
+	margin-left: 0;
+}
+
 .action-button {
 	background: url("../images/bgbutton4.png") repeat-x scroll left top
 		transparent;
