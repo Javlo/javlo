@@ -79,6 +79,7 @@ ul.menu {
 
 #content-edit {		
 	padding-right: 2px;
+	min-height: 480px;
 }
 
 #content-edit select {

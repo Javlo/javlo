@@ -342,7 +342,7 @@ ul,li {
 }
 
 .action .action-button {
-	vertical-align: text-top;
+	vertical-align: bottom;
 	margin: 0 0 0 5px;
 	height: 18px;
 	padding: 0px 5px 4px 5px;
