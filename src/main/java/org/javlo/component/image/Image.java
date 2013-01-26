@@ -153,21 +153,20 @@ public class Image extends AbstractFileComponent implements IImageTitle, IPrevie
 		String[] images = getFileList(getFileDirectory(ctx));
 		String currentFileLink = URLHelper.mergePath(getDirSelected(), getFileName());
 		GlobalContext globalContext = GlobalContext.getInstance(ctx.getRequest());
-		out.println("<div class=\"image-selected\">");
-
+		
 		FileAction.FileBean file = new FileAction.FileBean(ctx, getFile(ctx));
-		out.println("<div class=\"focus-zone\">");
-
 		Map<String, String> params = new HashMap<String, String>();
 		params.put("webaction", "edit.save");
 		params.put("components", getId());
 		params.put("id-" + getId(), "true");
 		params.put(getFileXHTMLInputName(), "file.png"); // fake file name
 		params.put(getDirInputName(), getDirSelected()); // fake file name
-
 		String uploadURL = URLHelper.createURL(ctx, params);
+		out.println("<div class=\"image-selected drop-files\" data-fieldname=\"" + getFileXHTMLInputName() + "\" data-url=\"" + uploadURL + "\">");
+		
+		out.println("<div class=\"focus-zone\">");
 
-		out.println("<div class=\"drop-files\" data-fieldname=\"" + getFileXHTMLInputName() + "\" data-url=\"" + uploadURL + "\" id=\"" + getPreviewZoneId() + "\" class=\"list-container\">");
+		out.println("<div id=\"" + getPreviewZoneId() + "\" class=\"list-container\">");
 		out.println("<img src=\"" + URLHelper.createTransformURL(ctx, getPage(), getResourceURL(ctx, getFileName()), "list") + "\" />&nbsp;");
 		out.println("<div class=\"focus-point\">x</div>");
 		out.println("<input class=\"posx\" type=\"hidden\" name=\"posx-" + file.getId() + "\" value=\"" + file.getFocusZoneX() + "\" />");
