@@ -1126,6 +1126,10 @@ public class MenuElement implements Serializable {
 	}
 
 	public void addContent(String parentId, ComponentBean bean) {
+		addContent(parentId, bean, true);
+	}
+
+	public void addContent(String parentId, ComponentBean bean, boolean realeaseCache) {
 
 		assert bean != null;
 		synchronized (getLock()) {
@@ -1154,7 +1158,9 @@ public class MenuElement implements Serializable {
 				componentBean = newBean;
 			}
 		}
-		releaseCache();
+		if (realeaseCache) {
+			releaseCache();
+		}
 	}
 
 	public void addEditorRoles(String group) {

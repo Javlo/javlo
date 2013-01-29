@@ -208,7 +208,7 @@ public class ContentService {
 		return ctx.contentExistForContext;
 	}
 
-	public String createContent(ContentContext ctx, ComponentBean inBean, String parentId) throws Exception {
+	public String createContent(ContentContext ctx, ComponentBean inBean, String parentId, boolean releaseCache) throws Exception {
 		String id = StringHelper.getRandomId();
 		ComponentBean bean = new ComponentBean(id, inBean.getType(), inBean.getValue(), ctx.getContentLanguage(), false);
 		bean.setList(inBean.isList());
@@ -217,11 +217,11 @@ public class ContentService {
 		bean.setRepeat(inBean.isRepeat());
 		bean.setRenderer(inBean.getRenderer());
 		MenuElement elem = ctx.getCurrentPage();
-		elem.addContent(parentId, bean);
+		elem.addContent(parentId, bean, releaseCache);
 		return id;
 	}
 
-	public String createContent(ContentContext ctx, String parentId, String type, String content) throws Exception {
+	public String createContent(ContentContext ctx, String parentId, String type, String content, boolean releaseCache) throws Exception {
 		if (content == null) {
 			content = "";
 		}
@@ -232,7 +232,7 @@ public class ContentService {
 		bean.setArea(editCtx.getCurrentArea());
 		bean.setAuthors(ctx.getCurrentEditUser().getLogin());
 		MenuElement elem = ctx.getCurrentPage();
-		elem.addContent(parentId, bean);
+		elem.addContent(parentId, bean, releaseCache);
 		return id;
 	}
 

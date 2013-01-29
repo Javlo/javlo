@@ -28,7 +28,7 @@ public class ConvertToCurrentVersion {
 				newBean.setValue("carousel converted, check content.");
 				newBean.setType(DebugNote.TYPE);
 				try {
-					content.createContent(ctx, newBean, bean.getId());
+					content.createContent(ctx, newBean, bean.getId(), false);
 				} catch (Exception e) {
 					e.printStackTrace();
 				}
@@ -51,7 +51,7 @@ public class ConvertToCurrentVersion {
 			newBean.setValue("page teaser converted, check content.");
 			newBean.setType(DebugNote.TYPE);
 			try {
-				content.createContent(ctx, newBean, bean.getId());
+				content.createContent(ctx, newBean, bean.getId(), false);
 			} catch (Exception e) {
 				e.printStackTrace();
 			}
