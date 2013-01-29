@@ -3,6 +3,7 @@ package org.javlo.service;
 import java.util.logging.Logger;
 
 import org.javlo.component.core.ComponentBean;
+import org.javlo.component.core.DebugNote;
 import org.javlo.component.image.GlobalImage;
 import org.javlo.component.links.PageReferenceComponent;
 import org.javlo.component.text.XHTML;
@@ -25,6 +26,7 @@ public class ConvertToCurrentVersion {
 				bean.setRenderer("carousel");
 				ComponentBean newBean = new ComponentBean();
 				newBean.setValue("carousel converted, check content.");
+				newBean.setType(DebugNote.TYPE);
 				try {
 					content.createContent(ctx, newBean, bean.getId());
 				} catch (Exception e) {
@@ -47,6 +49,7 @@ public class ConvertToCurrentVersion {
 			bean.setModify(true);
 			ComponentBean newBean = new ComponentBean();
 			newBean.setValue("page teaser converted, check content.");
+			newBean.setType(DebugNote.TYPE);
 			try {
 				content.createContent(ctx, newBean, bean.getId());
 			} catch (Exception e) {
