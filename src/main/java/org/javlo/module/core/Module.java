@@ -980,4 +980,15 @@ public class Module {
 		this.needed = needed;
 	}
 
+	/**
+	 * return the real path of a file inside the module.
+	 * 
+	 * @param path
+	 *            a path relative to module root.
+	 * @return a absolute path.
+	 */
+	public String getRealPath(String path) {
+		return URLHelper.mergePath(this.path, path);
+	}
+
 }

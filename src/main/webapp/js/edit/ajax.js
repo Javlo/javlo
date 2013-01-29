@@ -1,7 +1,7 @@
 jQuery(document).ready(function() {	
 	jQuery("a.ajax").live("click", function(event) {
 		event.preventDefault();
-		jQuery("#ajax-loader").addClass("active");				
+						
 		ajaxRequest(jQuery(this).attr('href'));	
 	});	
 	var AJAX_SUBMIT_SHADOW_DATA = "_AjaxSubmitShadow"
@@ -56,7 +56,7 @@ jQuery(document).ready(function() {
 	jQuery(document).trigger("ajaxUpdate");
 });
 
-function ajaxRequest(url, form) {
+function ajaxRequest(url, form) {	
 	if (url.indexOf("/edit-")>=0) {
 		url = url.replace("/edit-", "/ajax-");
 	} else {
@@ -70,7 +70,8 @@ function ajaxRequest(url, form) {
 	var data=null;
 	if (form != null) {
 		data = jQuery(form).serialize();
-	}	
+	}
+	startAjaxLoading();
 	jQuery.ajax({
 		url : url,
 		cache : false,
@@ -101,7 +102,7 @@ function ajaxRequest(url, form) {
 		});
 		jQuery(form).trigger("ajaxUpdate");
 		jQuery(document).trigger("ajaxUpdate");
-		jQuery("#ajax-loader").removeClass("active");
+		endAjaxLoading();
 		try {
 			initPreview();
 		} catch (ex) {
@@ -200,6 +201,14 @@ function initDropFile() {
 function doNothing(evt) {
 	evt.stopPropagation();
 	evt.preventDefault();
+}
+
+function startAjaxLoading() {
+	jQuery("#ajax-loader").addClass("active");
+}
+
+function endAjaxLoading() {
+	jQuery("#ajax-loader").removeClass("active");
 }
 
 

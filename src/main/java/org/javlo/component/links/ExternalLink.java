@@ -78,7 +78,7 @@ public class ExternalLink extends ComplexPropertiesLink implements IReverseLinkC
 			if (globalContext.isOpenExernalLinkAsPopup(link)) {
 				target = "target=\"_blank\" ";
 			}
-			
+
 			link = StringHelper.toXMLAttribute(link);
 
 			res.append("<a" + getSpecialPreviewCssClass(ctx, insertCssClass) + getSpecialPreviewCssId(ctx) + " " + target + "href=\"");
@@ -86,7 +86,7 @@ public class ExternalLink extends ComplexPropertiesLink implements IReverseLinkC
 			res.append("\">");
 			res.append(getLabel());
 			if (getConfig(ctx).getProperty("wai.mark-external-link", null) != null && StringHelper.isTrue(getConfig(ctx).getProperty("wai.mark-external-link", "false"))) {
-				res.append("<span class=\"wai\">"+I18nAccess.getInstance(ctx.getRequest()).getViewText("wai.external-link")+"</span>");
+				res.append("<span class=\"wai\">" + I18nAccess.getInstance(ctx.getRequest()).getViewText("wai.external-link") + "</span>");
 			}
 			res.append("</a>");
 			return res.toString();
@@ -139,13 +139,13 @@ public class ExternalLink extends ComplexPropertiesLink implements IReverseLinkC
 
 			out.println("<div class=\"edit three-col-layout\"><div class=\"line\">");
 			String reverseLink = properties.getProperty(REVERSE_LINK_KEY, ReverseLinkService.NONE);
-			
+
 			// 1.3 to 1.4 conversion from legacy value "true" to corresponding "all"
 			if (StringHelper.isTrue(reverseLink)) {
 				reverseLink = ReverseLinkService.ALL;
 			}
 			out.println("<label for=\"" + getReverseLinkName() + "\">" + reverseLinkLabel + " : </label>");
-			out.println(XHTMLHelper.getReverlinkSelectType(ctx, getReverseLinkName(), reverseLink));			
+			out.println(XHTMLHelper.getReverlinkSelectType(ctx, getReverseLinkName(), reverseLink));
 			out.println("</div><div class=\"line\">");
 			out.println("<label for=\"" + getLinkName() + "\">" + linkTitle + "</label>");
 			out.print(" : <input id=\"" + getLinkName() + "\" name=\"" + getLinkName() + "\" value=\"");
@@ -185,7 +185,7 @@ public class ExternalLink extends ComplexPropertiesLink implements IReverseLinkC
 		String label = requestService.getParameter(getLinkLabelName(), null);
 		String link = requestService.getParameter(getLinkName(), "");
 		String reverseLinkName = requestService.getParameter(getReverseLinkName(), ReverseLinkService.NONE);
-		
+
 		if (label != null) {
 			if (link != null) {
 				setModify();
@@ -200,7 +200,7 @@ public class ExternalLink extends ComplexPropertiesLink implements IReverseLinkC
 				}
 			}
 			storeProperties();
-		}		
+		}
 	}
 
 	public static void main(String[] args) {
@@ -238,10 +238,10 @@ public class ExternalLink extends ComplexPropertiesLink implements IReverseLinkC
 	}
 
 	@Override
-	public boolean isReverseLink() {		
+	public boolean isReverseLink() {
 		String reverseLinkValue = properties.getProperty(REVERSE_LINK_KEY, ReverseLinkService.NONE);
 		boolean outIsReverseLink = ReverseLinkService.LINK_TYPES.contains(reverseLinkValue);
-		//return StringHelper.isTrue(reverseLinkValue) || outIsReverseLink; //TODO: check why we do that ?
+		// return StringHelper.isTrue(reverseLinkValue) || outIsReverseLink; //TODO: check why we do that ?
 		return outIsReverseLink;
 	}
 
@@ -249,7 +249,7 @@ public class ExternalLink extends ComplexPropertiesLink implements IReverseLinkC
 	public boolean isOnlyFirstOccurrence() {
 		return ReverseLinkService.ONLY_FIRST.equals(properties.getProperty(REVERSE_LINK_KEY));
 	}
-	
+
 	@Override
 	public boolean isOnlyThisPage() {
 		return properties.getProperty(REVERSE_LINK_KEY, "none").equals(ReverseLinkService.ONLY_THIS_PAGE);

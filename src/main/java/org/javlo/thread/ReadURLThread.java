@@ -8,6 +8,7 @@ import java.util.List;
 import org.javlo.helper.NetHelper;
 import org.javlo.helper.ResourceHelper;
 import org.javlo.helper.StringHelper;
+import org.javlo.service.resource.Resource;
 
 public class ReadURLThread extends AbstractThread {
 
@@ -37,9 +38,9 @@ public class ReadURLThread extends AbstractThread {
 			log = "read : " + url;
 			String content = NetHelper.readPage(url);
 			if (StringHelper.isTrue(getField(READ_IMAGE))) {
-				List<String> images = NetHelper.extractImage(url, content);
-				for (String image : images) {
-					URL imageUrl = new URL(image);
+				List<Resource> images = NetHelper.extractImage(url, content);
+				for (Resource image : images) {
+					URL imageUrl = new URL(image.getUri());
 					ByteArrayOutputStream out = new ByteArrayOutputStream();
 					InputStream in = imageUrl.openStream();
 					try {
@@ -55,6 +56,7 @@ public class ReadURLThread extends AbstractThread {
 		}
 	}
 
+	@Override
 	public String logInfo() {
 		return log;
 	}

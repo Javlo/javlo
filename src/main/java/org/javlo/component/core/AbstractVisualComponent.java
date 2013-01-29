@@ -1136,6 +1136,7 @@ public abstract class AbstractVisualComponent implements IContentVisualComponent
 	public String getXHTMLCode(ContentContext ctx) {
 
 		setNeedRefresh(false);
+		ctx.getRequest().setAttribute("comp", this);
 
 		try {
 
@@ -1499,7 +1500,6 @@ public abstract class AbstractVisualComponent implements IContentVisualComponent
 	 * @throws Exception
 	 */
 	protected String processView(ContentContext ctx) throws Exception {
-		ctx.getRequest().setAttribute("comp", getComponentBean());
 		ctx.getRequest().setAttribute("config", getConfig(ctx));
 		ctx.getRequest().setAttribute("style", getStyle(ctx));
 		// ctx.getRequest().setAttribute("viewXHTML", getViewXHTMLCode(ctx));
