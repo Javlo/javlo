@@ -34,8 +34,8 @@ public class PasteCopiedElementInAllLanguageMacro extends AbstractMacro {
 					if (!beanLg.equals(lg)) {
 						ContentService content = ContentService.getInstance(ctx.getRequest());
 						bean.setArea(ctx.getArea());
-						bean.setLanguage(lg);						
-						content.createContent(lgCtx, bean, null);
+						bean.setLanguage(lg);
+						content.createContent(lgCtx, bean, null, true);
 					}
 				}
 			}

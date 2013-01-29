@@ -650,7 +650,7 @@ public class Edit extends AbstractModuleAction {
 			return "bad insert request need previousId and component type.";
 		}
 
-		String newId = content.createContent(ctx, previousId, type, "");
+		String newId = content.createContent(ctx, previousId, type, "", true);
 		if (ctx.isAjax()) {
 			updateComponent(ctx, currentModule, newId, previousId);
 		}
@@ -1201,7 +1201,7 @@ public class Edit extends AbstractModuleAction {
 			ComponentBean bean = elems.next(ctx).getBean(ctx);
 			bean.setArea(ctx.getArea());
 			bean.setLanguage(ctx.getRequestContentLanguage());
-			parentId = content.createContent(ctx, bean, parentId);
+			parentId = content.createContent(ctx, bean, parentId, true);
 			c++;
 		}
 
