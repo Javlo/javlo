@@ -17,7 +17,6 @@ public class ConvertToCurrentVersion {
 	private static Logger logger = Logger.getLogger(ConvertToCurrentVersion.class.getName());
 
 	public static int convert(ContentContext ctx, ComponentBean bean, String version) {
-		ContentService content = ContentService.getInstance(ctx.getRequest());
 		int convertion = 0;
 		if (bean.getType().equals("page-links")) {
 			bean.setType(PageReferenceComponent.TYPE);
