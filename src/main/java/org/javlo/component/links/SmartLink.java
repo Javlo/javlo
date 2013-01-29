@@ -120,7 +120,9 @@ public class SmartLink extends ComplexPropertiesLink implements ILink, IAction {
 		PrintStream out = new PrintStream(outStream);
 		out.println("<a class=\"" + getType() + "\" href=\"" + getURL() + "\">");
 		out.println("<figure><img src=\"" + getImageURL() + "\" /></figure>");
-		out.println("<span class=\"date\">" + StringHelper.renderDate(getTime()) + "<span>" + StringHelper.renderTimeOnly(getTime()) + "</span></span>");
+		if (getDate().trim().length() > 0) {
+			out.println("<span class=\"date\">" + StringHelper.renderDate(getTime()) + "<span>" + StringHelper.renderTimeOnly(getTime()) + "</span></span>");
+		}
 		out.println("<h4>" + getTitle() + "</h4>");
 		out.println("<p>" + getDescription() + "</p>");
 		out.println("</a>");

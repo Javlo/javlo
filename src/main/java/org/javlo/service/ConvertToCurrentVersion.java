@@ -33,6 +33,11 @@ public class ConvertToCurrentVersion {
 			bean.setType(XHTML.TYPE);
 			bean.setModify(true);
 		}
+		if (bean.getType().equals("page-teaser")) {
+			convertion++;
+			bean.setType(PageReferenceComponent.TYPE);
+			bean.setModify(true);
+		}
 		if (version.startsWith("1") && bean.getType().equals("banner")) {
 			convertion++;
 			bean.setType(GlobalImage.TYPE);
