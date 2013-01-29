@@ -86,6 +86,12 @@ public class NetHelper {
 		}
 	}
 
+	public static Long readDate(URL url) throws Exception {
+		URLConnection conn = url.openConnection();
+		conn.connect();
+		return conn.getDate();
+	}
+
 	/**
 	 * read a page a put content in a Stream.
 	 * 

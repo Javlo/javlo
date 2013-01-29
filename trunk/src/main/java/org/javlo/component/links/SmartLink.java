@@ -3,6 +3,8 @@ package org.javlo.component.links;
 import java.io.ByteArrayOutputStream;
 import java.io.PrintStream;
 import java.net.URL;
+import java.text.ParseException;
+import java.util.Date;
 
 import javax.servlet.ServletContext;
 
@@ -47,6 +49,10 @@ public class SmartLink extends ComplexPropertiesLink implements ILink, IAction {
 		return "title_" + getId();
 	}
 
+	public String getDateInputName() {
+		return "date_" + getId();
+	}
+
 	public String getDescriptionInputName() {
 		return "description_" + getId();
 	}
@@ -61,6 +67,27 @@ public class SmartLink extends ComplexPropertiesLink implements ILink, IAction {
 
 	public void setURL(String url) {
 		properties.setProperty("url", url);
+	}
+
+	public String getDate() {
+		return properties.getProperty("date", "");
+	}
+
+	public void setDate(String date) {
+		properties.setProperty("date", date);
+	}
+
+	public Date getTime() {
+		if (getDate().trim().length() > 0) {
+			Date time;
+			try {
+				time = StringHelper.parseTime(getDate());
+				return time;
+			} catch (ParseException e) {
+				logger.warning(e.getMessage());
+			}
+		}
+		return null;
 	}
 
 	public String getDescription() {
@@ -93,6 +120,7 @@ public class SmartLink extends ComplexPropertiesLink implements ILink, IAction {
 		PrintStream out = new PrintStream(outStream);
 		out.println("<a class=\"" + getType() + "\" href=\"" + getURL() + "\">");
 		out.println("<figure><img src=\"" + getImageURL() + "\" /></figure>");
+		out.println("<span class=\"date\">" + StringHelper.renderDate(getTime()) + "<span>" + StringHelper.renderTimeOnly(getTime()) + "</span></span>");
 		out.println("<h4>" + getTitle() + "</h4>");
 		out.println("<p>" + getDescription() + "</p>");
 		out.println("</a>");
@@ -120,6 +148,7 @@ public class SmartLink extends ComplexPropertiesLink implements ILink, IAction {
 				ctx.getRequest().setAttribute("title", getTitle());
 				ctx.getRequest().setAttribute("description", getDescription());
 				ctx.getRequest().setAttribute("image", getImageURL());
+				ctx.getRequest().setAttribute("date", getDate());
 				String xhtml = ServletHelper.executeJSP(ctx, renderer);
 				out.println(xhtml);
 			}
@@ -150,6 +179,7 @@ public class SmartLink extends ComplexPropertiesLink implements ILink, IAction {
 				ctx.getRequest().setAttribute("images", NetHelper.extractImage(sourceURL, remoteXHTML));
 				ctx.getRequest().setAttribute("comp", comp);
 				ctx.getRequest().setAttribute("image", comp.getImageURL());
+				ctx.getRequest().setAttribute("date", StringHelper.renderTime(new Date(NetHelper.readDate(sourceURL))));
 				String xhtml = ServletHelper.executeJSP(ctx, renderer);
 				ctx.getAjaxInsideZone().put(comp.getBodyId(), xhtml);
 			} else {
@@ -172,6 +202,7 @@ public class SmartLink extends ComplexPropertiesLink implements ILink, IAction {
 		setImageURL(rs.getParameter(getImageInputName(), ""));
 		setDescription((rs.getParameter(getDescriptionInputName(), "")));
 		setTitle((rs.getParameter(getTitleInputName(), "")));
+		setDate((rs.getParameter(getDateInputName(), "")));
 		storeProperties();
 	}
 
