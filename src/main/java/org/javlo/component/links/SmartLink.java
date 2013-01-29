@@ -92,7 +92,7 @@ public class SmartLink extends ComplexPropertiesLink implements ILink, IAction {
 		ByteArrayOutputStream outStream = new ByteArrayOutputStream();
 		PrintStream out = new PrintStream(outStream);
 		out.println("<a class=\"" + getType() + "\" href=\"" + getURL() + "\">");
-		out.println("<img src=\"" + getImageURL() + "\" />");
+		out.println("<figure><img src=\"" + getImageURL() + "\" /></figure>");
 		out.println("<h4>" + getTitle() + "</h4>");
 		out.println("<p>" + getDescription() + "</p>");
 		out.println("</a>");
