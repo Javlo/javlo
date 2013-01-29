@@ -20,6 +20,11 @@ public abstract class ComplexPropertiesLink extends AbstractVisualComponent {
 
 	protected Properties properties = new Properties();
 
+	@Override
+	protected void init() throws org.javlo.exception.ResourceNotFoundException {
+		reloadProperties();
+	};
+
 	String getHeader() {
 		return HEADER_V1_0;
 	}
@@ -47,7 +52,10 @@ public abstract class ComplexPropertiesLink extends AbstractVisualComponent {
 				e.printStackTrace();
 			}
 			String res = new String(out.toByteArray());
-			setValue(res);
+			if (!res.equals(getValue())) {
+				setValue(res);
+				setModify();
+			}
 		}
 	}
 

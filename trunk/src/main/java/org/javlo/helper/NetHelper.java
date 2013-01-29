@@ -23,6 +23,7 @@ import org.javlo.config.StaticConfig;
 import org.javlo.context.ContentContext;
 import org.javlo.context.GlobalContext;
 import org.javlo.mailing.MailService;
+import org.javlo.service.resource.Resource;
 import org.javlo.utils.MapCollectionWrapper;
 import org.javlo.ztatic.FileCache;
 
@@ -143,15 +144,11 @@ public class NetHelper {
 
 		String contentLowerCase = content.toLowerCase();
 		int indexDescriptionStart = contentLowerCase.indexOf("name=\"description\"");
-		indexDescriptionStart = contentLowerCase.indexOf("content=\"");
-		int indexDescriptionEnd = contentLowerCase.indexOf("</meta>", indexDescriptionStart);
+		indexDescriptionStart = contentLowerCase.indexOf("content=\"", indexDescriptionStart) + "content=\"".length();
+		int indexDescriptionEnd = contentLowerCase.indexOf("\"", indexDescriptionStart + "content=\"".length() + 1);
 
 		if ((indexDescriptionStart >= 0) && (indexDescriptionEnd >= 0) && indexDescriptionEnd > indexDescriptionStart) {
-			String description = content.substring(indexDescriptionStart + "<title>".length(), indexDescriptionEnd);
-			if (description.contains(">")) { // no html in description
-				return "";
-			}
-			return description;
+			return content.substring(indexDescriptionStart, indexDescriptionEnd);
 		}
 
 		return null;
@@ -161,17 +158,45 @@ public class NetHelper {
 		return userAgent.contains("robo");
 	}
 
-	public static List<String> extractImage(URL inURL, String content) {
-		List<String> urlList = new LinkedList<String>();
+	public static void main(String[] args) {
+
+		System.out.println(getPageDescription("<meta name=\"description\" content=\"ceci est une description\"><body><img src=\"test.jpg\" alt=\"coucou\" /></body>"));
+
+	}
+
+	public static List<Resource> extractImage(URL inURL, String content) {
+		List<Resource> urlList = new LinkedList<Resource>();
 
 		int srcIndex = content.toLowerCase().indexOf("src=\"") + "src=\"".length();
 		while (srcIndex >= "src=\"".length()) {
 			int closeLink = content.indexOf("\"", srcIndex + 1);
+			int closeTag = content.indexOf(">", srcIndex + 1);
 			if (closeLink >= 0) {
 				String url = content.substring(srcIndex, closeLink);
 
-				url = URLHelper.mergePath(URLHelper.extractPath(inURL.toString()), url);
-				urlList.add(url);
+				int altIndex = content.toLowerCase().indexOf("alt=\"", srcIndex) + "alt=\"".length();
+				String description = "";
+				if (altIndex >= "alt=\"".length() && altIndex < closeTag) {
+					description = content.substring(altIndex, content.indexOf("\"", altIndex + 1));
+				}
+
+				if (StringHelper.isImage(url)) {
+
+					if (!URLHelper.isAbsoluteURL(url)) {
+						if (!url.trim().startsWith("/")) {
+							url = URLHelper.mergePath(URLHelper.extractPath(inURL.toString()), url);
+						} else {
+							url = "http://" + URLHelper.mergePath(URLHelper.extractHost(inURL.toString()), url);
+						}
+					}
+
+					Resource res = new Resource();
+					res.setId(url);
+					res.setUri(url);
+					res.setName(StringHelper.getFileNameFromPath(url));
+					res.setDescription(StringHelper.removeTag(description));
+					urlList.add(res);
+				}
 			}
 			srcIndex = content.toLowerCase().indexOf("src=\"", srcIndex) + "src=\"".length();
 		}

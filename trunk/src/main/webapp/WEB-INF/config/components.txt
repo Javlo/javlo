@@ -52,6 +52,7 @@ org.javlo.component.links.SmartExternalLinkImportation
 org.javlo.component.links.SmartExternalLinkImportation
 org.javlo.component.links.AnchorComponent
 org.javlo.component.links.AnchorLink
+org.javlo.component.links.SmartLink
 
 --content.title.graphic
 

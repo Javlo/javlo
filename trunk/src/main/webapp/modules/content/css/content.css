@@ -65,6 +65,10 @@ ul.menu {
 	width: auto;	
 }
 
+.line-full input {
+	width: 100%;
+}
+
 .component input[type="radio"], .component input[type="checkbox"] {
 	width: auto;
 } 
@@ -265,4 +269,73 @@ li.line {
 .area-label:hover {
 	z-index: 100;
 	color: #999999;
+}
+
+.smart-link-body img {
+	width: 120px;
+	max-height: 120px;
+}
+
+.smart-link-body .picture {
+	width: 260px;	
+	padding: 0;
+	float: left;
+}
+
+.smart-link-body {	
+	overflow: hidden;	
+	margin-top: 15px;
+}
+
+.smart-link-body li {
+	display: none;
+}
+
+.smart-link-body li.active {
+	display: block;
+}
+
+.smart-link-body figure, .smart-link-body a {
+	margin: 0;	
+	height: 140px;
+	display: block;
+	float: left;
+}
+
+.smart-link-body figure {
+	width: 120px;
+	height: 140px;
+	overflow: hidden;
+	margin-left: 59px; 
+}
+
+.smart-link-body ul figure {
+	margin-left: 0;
+}
+
+.smart-link-body figcaption {
+	display: block;
+	text-align: center;
+}
+
+.smart-link-body a {	
+	border: 1px solid #CCCCCC;
+	background-color: #eeeeee;	
+}
+
+.smart-link-body a span {
+	display:  block;
+	color: #333333;
+	font-size: 28px;
+	font-weight: bold;
+	padding: 50px 5px 0 5px;
+	text-align: center;	
+}
+
+.smart-link-body a.previous {
+	margin-right: 15px;
+}
+
+.smart-link-body a.next {
+	margin-left: 15px;
 }
