@@ -1699,6 +1699,13 @@ public class StringHelper {
 		return renderDate(date, "dd/MM/yyyy HH:mm:ss");
 	}
 
+	public static String renderTimeOnly(Date date) {
+		if (date == null) {
+			return null;
+		}
+		return renderDate(date, "HH:mm:ss");
+	}
+
 	/**
 	 * render a date, search the format in I18n files.
 	 * 

@@ -34,6 +34,10 @@ displayFigureSize(jQuery("#comp-${comp.id} figure"));
 </div>
 <div class="info">
 	<div class="line">
+		<label for="${comp.dateInputName}">date</label>
+		<input type="text" name="${comp.dateInputName}" value="${date}" />
+	</div>
+	<div class="line">
 		<label for="${comp.titleInputName}">title</label>
 		<input type="text" name="${comp.titleInputName}" value="${title}" />
 	</div>
