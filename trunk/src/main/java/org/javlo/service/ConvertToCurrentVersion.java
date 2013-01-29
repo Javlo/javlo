@@ -17,11 +17,19 @@ public class ConvertToCurrentVersion {
 	private static Logger logger = Logger.getLogger(ConvertToCurrentVersion.class.getName());
 
 	public static int convert(ContentContext ctx, ComponentBean bean, String version) {
+		ContentService content = ContentService.getInstance(ctx.getRequest());
 		int convertion = 0;
 		if (bean.getType().equals("page-links")) {
 			bean.setType(PageReferenceComponent.TYPE);
 			if (bean.getValue().contains("slide-show")) {
 				bean.setRenderer("carousel");
+				ComponentBean newBean = new ComponentBean();
+				newBean.setValue("carousel converted, check content.");
+				try {
+					content.createContent(ctx, newBean, bean.getId());
+				} catch (Exception e) {
+					e.printStackTrace();
+				}
 			} else {
 				bean.setRenderer("products");
 			}
@@ -37,6 +45,13 @@ public class ConvertToCurrentVersion {
 			convertion++;
 			bean.setType(PageReferenceComponent.TYPE);
 			bean.setModify(true);
+			ComponentBean newBean = new ComponentBean();
+			newBean.setValue("page teaser converted, check content.");
+			try {
+				content.createContent(ctx, newBean, bean.getId());
+			} catch (Exception e) {
+				e.printStackTrace();
+			}
 		}
 		if (version.startsWith("1") && bean.getType().equals("banner")) {
 			convertion++;
