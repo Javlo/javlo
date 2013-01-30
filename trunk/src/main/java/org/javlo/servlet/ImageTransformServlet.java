@@ -326,12 +326,21 @@ public class ImageTransformServlet extends HttpServlet {
 		/** max width and max height **/
 		if (config.getMaxWidth(ctx.getDevice(), filter, area) > 0) {
 			if (img.getWidth() > config.getMaxWidth(ctx.getDevice(), filter, area)) {
-				img = ImageEngine.resizeWidth(img, config.getMaxWidth(ctx.getDevice(), filter, area));
+				if (!config.isCropResize(ctx.getDevice(), filter, area)) {
+					img = ImageEngine.resizeWidth(img, config.getMaxWidth(ctx.getDevice(), filter, area));
+				} else {
+					img = ImageEngine.resize(img, config.getMaxWidth(ctx.getDevice(), filter, area), img.getHeight(), true, false, 0, 0, 0, 0, null, staticInfo.getFocusZoneX(ctx), staticInfo.getFocusZoneY(ctx), config.isFocusZone(ctx.getDevice(), filter, area));
+				}
 			}
 		}
+
 		if (config.getMaxHeight(ctx.getDevice(), filter, area) > 0) {
 			if (img.getHeight() > config.getMaxHeight(ctx.getDevice(), filter, area)) {
-				img = ImageEngine.resizeHeight(img, config.getMaxHeight(ctx.getDevice(), filter, area), config.getBGColor(ctx.getDevice(), filter, area));
+				if (!config.isCropResize(ctx.getDevice(), filter, area)) {
+					img = ImageEngine.resizeHeight(img, config.getMaxHeight(ctx.getDevice(), filter, area), config.getBGColor(ctx.getDevice(), filter, area));
+				} else {
+					img = ImageEngine.resize(img, img.getWidth(), config.getMaxHeight(ctx.getDevice(), filter, area), true, false, 0, 0, 0, 0, null, staticInfo.getFocusZoneX(ctx), staticInfo.getFocusZoneY(ctx), config.isFocusZone(ctx.getDevice(), filter, area));
+				}
 			}
 		}
 
