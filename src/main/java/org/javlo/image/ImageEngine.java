@@ -642,11 +642,18 @@ public class ImageEngine {
 
 		logger.info("resize with:" + inWidth + " height:" + inHeight + " bgColor:" + bgColor);
 
+		if (inWidth < 0) {
+			inWidth = Math.abs(source.getWidth() * inHeight / source.getHeight());
+		} else if (inHeight < 0) {
+			inHeight = Math.abs(source.getHeight() * inWidth / source.getWidth());
+		}
+
 		if (addBorder) {
 			int newHeight;
 			int newWidth;
 			int borderHeight = 0;
 			int borderWidth = 0;
+
 			if ((float) source.getWidth() / (float) source.getHeight() > (float) inWidth / (float) inHeight) {
 				newWidth = source.getWidth();
 				newHeight = (source.getWidth() * inHeight) / inWidth;
@@ -678,6 +685,8 @@ public class ImageEngine {
 		}
 
 		BufferedImage workImage;
+
+		System.out.println("***** ImageEngine.resize : inHeight = " + inHeight); // TODO: remove debug trace
 
 		int workWith = inWidth - (ml + mr);
 		int workHeight = inHeight - (mt + mb);
