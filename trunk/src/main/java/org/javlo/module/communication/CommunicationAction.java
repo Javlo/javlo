@@ -112,55 +112,53 @@ public class CommunicationAction extends AbstractModuleAction {
 		String currentSite = IMService.ALL_SITES;
 		String currentUser = ctx.getCurrentUserId();
 
-		Long lastMessageId = null;
-		if (ctx.isAjax()) {
-			lastMessageId = StringHelper.safeParseLong(request.getParameter("lastMessageId"), null);
-		}
+		Long lastMessageId = StringHelper.safeParseLong(request.getParameter("lastMessageId"), null);
 
 		IMService imService = IMService.getInstance(request.getSession());
 
 		List<IMItem> messages = new ArrayList<IMItem>();
 		lastMessageId = imService.fillMessageList(currentSite, currentUser, lastMessageId, messages);
 
-		AdminUserSecurity adminUserSecurity = AdminUserSecurity.getInstance();
+//		AdminUserSecurity adminUserSecurity = AdminUserSecurity.getInstance();
 
-		Collection<String> sites = new LinkedList<String>();
-		Collection<GlobalContext> allContext = GlobalContextFactory.getAllGlobalContext(request.getSession());
-		for (GlobalContext context : allContext) {
-			if (ctx.getCurrentEditUser() != null) {
-				if (adminUserSecurity.isAdmin(ctx.getCurrentEditUser()) || context.getUsersAccess().contains(ctx.getCurrentEditUser().getLogin())) {
-					if (context.getAliasOf() == null || context.getAliasOf().trim().isEmpty()) {
-						sites.add(context.getContextKey());
-					}
-				}
-			}
-		}
+//		Collection<String> sites = new LinkedList<String>();
+//		Collection<GlobalContext> allContext = GlobalContextFactory.getAllGlobalContext(request.getSession());
+//		for (GlobalContext context : allContext) {
+//			if (ctx.getCurrentEditUser() != null) {
+//				if (adminUserSecurity.isAdmin(ctx.getCurrentEditUser()) || context.getUsersAccess().contains(ctx.getCurrentEditUser().getLogin())) {
+//					if (context.getAliasOf() == null || context.getAliasOf().trim().isEmpty()) {
+//						sites.add(context.getContextKey());
+//					}
+//				}
+//			}
+//		}
 
-		Map<String, Map<String, IMUser>> usersBySite = new LinkedHashMap<String, Map<String, IMUser>>();
-		for (GlobalContext context : allContext) {
-			if (ctx.getCurrentEditUser() != null) {
-				if (adminUserSecurity.isAdmin(ctx.getCurrentEditUser()) || context.getUsersAccess().contains(ctx.getCurrentEditUser().getLogin())) {
-					Map<String, IMUser> users = new LinkedHashMap<String, IMUser>();
-					List<Principal> list = context.getAllPrincipals();
-					for (Principal principal : list) {
-						IMUser user = new IMUser();
-						user.setSite(context.getContextKey());
-						user.setUsername(principal.getName());
-						user.setColor(imService.getUserColor(currentSite, principal.getName()));
-						users.put(principal.getName(), user);
-					}
-					usersBySite.put(context.getContextKey(), users);
-				}
-			}
-		}
+//		Map<String, Map<String, IMUser>> usersBySite = new LinkedHashMap<String, Map<String, IMUser>>();
+//		for (GlobalContext context : allContext) {
+//			if (ctx.getCurrentEditUser() != null) {
+//				if (adminUserSecurity.isAdmin(ctx.getCurrentEditUser()) || context.getUsersAccess().contains(ctx.getCurrentEditUser().getLogin())) {
+//					Map<String, IMUser> users = new LinkedHashMap<String, IMUser>();
+//					List<Principal> list = context.getAllPrincipals();
+//					for (Principal principal : list) {
+//						IMUser user = new IMUser();
+//						user.setSite(context.getContextKey());
+//						user.setUsername(principal.getName());
+//						user.setColor(imService.getUserColor(currentSite, principal.getName()));
+//						users.put(principal.getName(), user);
+//					}
+//					usersBySite.put(context.getContextKey(), users);
+//				}
+//			}
+//		}
 
 
-		IMData data = new IMData();
-		data.setSites(sites);
-		data.setCurrentUser(currentUser);
+		RemoteIMData data = new RemoteIMData();
+//		data.setSites(sites);
+//		data.setCurrentUser(currentUser);
 		data.setLastMessageId(lastMessageId);
-		data.setMessages(messages);
-		data.setUsersBySite(usersBySite);
+//		data.setMessages(messages);
+		data.setLastMessage(messages.size() == 0 ? null : messages.get(messages.size() - 1));
+//		data.setUsersBySite(usersBySite);
 
 		ctx.getAjaxData().put("aimData", data);
 		return null;

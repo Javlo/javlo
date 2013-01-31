@@ -1,5 +1,6 @@
 package org.javlo.utils;
 
+import java.lang.reflect.Type;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
@@ -20,8 +21,16 @@ public class JSONMap implements Map<String, Object> {
 
 	private static final Gson JSON = new Gson();
 
+	public static JSONMap parseMap(String jsonStr) {
+		return transformMap(JSON.fromJson(jsonStr, JsonElement.class));
+	}
+
 	public static Object parse(String jsonStr) {
 		return transform(JSON.fromJson(jsonStr, JsonElement.class));
+	}
+
+	public static JSONMap transformMap(JsonElement element) {
+		return new JSONMap(element.getAsJsonObject());
 	}
 
 	public static Object transform(JsonElement element) {
@@ -109,10 +118,23 @@ public class JSONMap implements Map<String, Object> {
 		return transform(object.get("" + key));
 	}
 
+	public JSONMap getMap(Object key) {
+		return transformMap(object.get("" + key));
+	}
+
+	public <T> T getValue(Object key, Class<T> classOfT) {
+		return JSON.fromJson(object.get("" + key), classOfT);
+	}
+
+	@SuppressWarnings("unchecked")
+	public <T> T getValue(Object key, Type typeOfT) {
+		return (T) JSON.fromJson(object.get("" + key), typeOfT);
+	}
+
 	@Override
 	public Object put(String key, Object value) {
 		Object o = remove(key);
-		object.add("" + key, JSON.toJsonTree(value));
+		object.add(key, JSON.toJsonTree(value));
 		return o;
 	}
 
