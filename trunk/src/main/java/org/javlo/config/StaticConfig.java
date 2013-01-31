@@ -1061,7 +1061,7 @@ public class StaticConfig extends Observable {
 		}
 	}
 
-	private String replaceFolderVariable(String folder) {
+	public String replaceFolderVariable(String folder) {
 		folder = folder.replace("$HOME", HOME);
 		return folder;
 	}

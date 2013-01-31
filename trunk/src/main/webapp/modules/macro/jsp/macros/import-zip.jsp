@@ -4,10 +4,10 @@
 <form method="post" action="${info.currentURL}" class="standard-form js-change-submit">
 <fieldset>
 <legend>Import page</legend>
-<input type="webaction" value="macro-import-zip.import" />
-<c:forEarch var="page" items="${pages}">
-<input type="submit" name="${page.name}" value="${page.label}" />
-</c:forEarch>
+<input type="hidden" name="webaction" value="macro-import-zip.import" />
+<c:forEach var="page" items="${pages}">
+<input class="action-button" type="submit" name="file" value="${page.name}" />
+</c:forEach>
 
 </fieldset>
 </form>

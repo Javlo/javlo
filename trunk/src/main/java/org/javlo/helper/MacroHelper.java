@@ -810,6 +810,23 @@ public class MacroHelper {
 		}
 	}
 
+	public static MenuElement createArticlePage(ContentContext ctx, MenuElement rootPage, Date date) throws IOException, Exception {
+		Calendar cal = Calendar.getInstance();
+		cal.setTime(date);
+		if (rootPage != null) {
+			String yearPageName = rootPage.getName() + "-" + cal.get(Calendar.YEAR);
+			MenuElement yearPage = MacroHelper.addPageIfNotExist(ctx, rootPage.getName(), yearPageName, true);
+			createMonthStructure(ctx, yearPage);
+			String mountPageName = MacroHelper.getMonthPageName(ctx, yearPage.getName(), date);
+			MenuElement mountPage = ContentService.getInstance(ctx.getRequest()).getNavigation(ctx).searchChildFromName(mountPageName);
+			if (mountPage != null) {
+				MenuElement newPage = MacroHelper.createArticlePageName(ctx, mountPage);
+				return newPage;
+			}
+		}
+		return null;
+	}
+
 	public static void main(String[] args) {
 		String type = "sidebar(page-reference)";
 

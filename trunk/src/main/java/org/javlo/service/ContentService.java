@@ -100,8 +100,6 @@ public class ContentService {
 
 	private boolean previewMode = true;
 
-	public static final Object LOCK_LOAD_NAVIGATION = new Object();
-
 	public static ContentService getInstance(HttpServletRequest request) {
 		return getInstance(GlobalContext.getInstance(request));
 	}
@@ -206,6 +204,22 @@ public class ContentService {
 			}
 		}
 		return ctx.contentExistForContext;
+	}
+
+	public String createContent(ContentContext ctx, MenuElement page, ComponentBean inBean, String parentId, boolean releaseCache) throws Exception {
+		String id = StringHelper.getRandomId();
+		String lg = inBean.getLanguage();
+		if (lg == null) {
+			lg = ctx.getContentLanguage();
+		}
+		ComponentBean bean = new ComponentBean(id, inBean.getType(), inBean.getValue(), lg, false);
+		bean.setList(inBean.isList());
+		bean.setStyle(inBean.getStyle());
+		bean.setArea(inBean.getArea());
+		bean.setRepeat(inBean.isRepeat());
+		bean.setRenderer(inBean.getRenderer());
+		page.addContent(parentId, bean, releaseCache);
+		return id;
 	}
 
 	public String createContent(ContentContext ctx, ComponentBean inBean, String parentId, boolean releaseCache) throws Exception {
@@ -392,8 +406,8 @@ public class ContentService {
 	 */
 	public MenuElement getNavigation(ContentContext ctx) throws Exception {
 		MenuElement res = null;
-		synchronized (LOCK_LOAD_NAVIGATION) {
-			GlobalContext globalContext = GlobalContext.getInstance(ctx.getRequest());
+		GlobalContext globalContext = GlobalContext.getInstance(ctx.getRequest());
+		synchronized (globalContext) {
 			if (ctx.getRenderMode() == ContentContext.TIME_MODE && globalContext.getTimeTravelerContext().getTravelTime() != null) {
 				if (timeTravelerNav == null) {
 					Date timeTravelDate = globalContext.getTimeTravelerContext().getTravelTime();
@@ -434,7 +448,7 @@ public class ContentService {
 	 * check if navigation was allready loaded for a specific render mode.
 	 */
 	public boolean isNavigationLoaded(ContentContext ctx) {
-		synchronized (LOCK_LOAD_NAVIGATION) {
+		synchronized (GlobalContext.getInstance(ctx.getRequest())) {
 			if (ctx.getRenderMode() == ContentContext.TIME_MODE) {
 				return timeTravelerNav != null;
 			} else if (!ctx.isAsViewMode()) {
@@ -511,7 +525,7 @@ public class ContentService {
 				}
 			}
 		}
-		synchronized (LOCK_LOAD_NAVIGATION) {
+		synchronized (globalContext) {
 			setViewNav(newViewNav);
 			viewGlobalMap = contentAttributeMap;
 		}

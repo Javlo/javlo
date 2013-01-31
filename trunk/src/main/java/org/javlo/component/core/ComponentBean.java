@@ -33,6 +33,12 @@ public class ComponentBean {
 		language = "";
 	}
 
+	public ComponentBean(String newType, String newValue, String newLanguague) {
+		type = newType;
+		value = newValue;
+		language = newLanguague;
+	}
+
 	public ComponentBean(String newId, String newType, String newValue, String newLanguague, boolean newRepeat) {
 		id = newId;
 		type = newType;

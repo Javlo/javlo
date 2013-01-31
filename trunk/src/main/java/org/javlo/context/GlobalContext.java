@@ -610,10 +610,7 @@ public class GlobalContext implements Serializable {
 			FileUtils.copyFileToDirectory(contextFile, trash);
 			properties.clear();
 			FileUtils.forceDelete(contextFile);
-
-			// ServletContextWeakReference gcc = ServletContextWeakReference.getInstance(application);
 			synchronized (staticConfig.getContextFolder()) {
-				// cacheManager.removalAll();
 				application.removeAttribute(contextKey);
 			}
 
