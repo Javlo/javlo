@@ -26,4 +26,13 @@ public class DataAction implements IAction {
 		}
 		return null;
 	}
+
+	public static String performToken(ContentContext ctx, User user) {
+		if (user != null) {
+			ctx.getAjaxData().put("token", user.getUserInfo().getToken());
+		} else {
+			return "no access";
+		}
+		return null;
+	}
 }

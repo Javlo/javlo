@@ -16,8 +16,10 @@ import org.javlo.context.GlobalContext;
 import org.javlo.data.InfoBean;
 import org.javlo.helper.AjaxHelper;
 import org.javlo.helper.ServletHelper;
+import org.javlo.helper.StringHelper;
 import org.javlo.module.core.ModulesContext;
 import org.javlo.service.NotificationService;
+import org.javlo.service.RequestService;
 import org.javlo.tracking.Tracker;
 
 import com.google.gson.Gson;
@@ -56,6 +58,8 @@ public class AjaxServlet extends HttpServlet {
 
 			Tracker.trace(request, response);
 
+			RequestService rs = RequestService.getInstance(request);
+
 			ctx.setAjax(true);
 			GlobalContext globalContext = GlobalContext.getInstance(ctx.getRequest());
 			EditContext editCtx = EditContext.getInstance(globalContext, request.getSession());
@@ -73,6 +77,8 @@ public class AjaxServlet extends HttpServlet {
 
 			ServletHelper.prepareModule(ctx);
 
+			boolean onlyData = StringHelper.isTrue(rs.getParameter("data", null));
+
 			Map<String, Object> outMap = new HashMap<String, Object>();
 			StringWriter strWriter = new StringWriter();
 
@@ -84,8 +90,10 @@ public class AjaxServlet extends HttpServlet {
 					ctx.addAjaxInsideZone("notification-count", "" + unreadNotification);
 				}
 				AjaxHelper.render(ctx, ctx.getAjaxInsideZone(), ctx.getScheduledAjaxInsideZone());
-				outMap.put("insideZone", ctx.getAjaxInsideZone());
-				outMap.put("zone", ctx.getAjaxZone());
+				if (!onlyData) {
+					outMap.put("insideZone", ctx.getAjaxInsideZone());
+					outMap.put("zone", ctx.getAjaxZone());
+				}
 				if (ctx.getAjaxData().size() > 0) {
 					outMap.put("data", ctx.getAjaxData());
 				}
@@ -106,5 +114,4 @@ public class AjaxServlet extends HttpServlet {
 			t.printStackTrace();
 		}
 	}
-
 }
