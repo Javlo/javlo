@@ -23,6 +23,7 @@ public class ServiceFactory {
 		}
 	}
 
+	private NotificationService notificationService;
 	private HttpClientService httpClient = new HttpClientService();
 	private DefaultHttpClient rawHttpClient;
 	private Gson json = new Gson();
@@ -40,6 +41,13 @@ public class ServiceFactory {
 
 	public ClientTray getTray() {
 		return ClientTray.getInstance();
+	}
+
+	public NotificationService getNotificationService() {
+		if (notificationService == null) {
+			notificationService = new NotificationService();
+		}
+		return notificationService;
 	}
 
 	public ActionService getAction() {

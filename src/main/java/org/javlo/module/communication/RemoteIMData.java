@@ -8,11 +8,12 @@ import java.util.Map;
 
 import org.javlo.service.IMService.IMItem;
 
-public class IMData {
+public class RemoteIMData {
 
 	private String currentUser;
 	private Long lastMessageId;
 	private List<IMItem> messages;
+	private IMItem lastMessage;
 
 	private Collection<String> sites = new ArrayList<String>();
 	private Map<String, Map<String, IMUser>> usersBySite = new HashMap<String, Map<String, IMUser>>();
@@ -36,6 +37,13 @@ public class IMData {
 	}
 	public void setMessages(List<IMItem> messages) {
 		this.messages = messages;
+	}
+
+	public IMItem getLastMessage() {
+		return lastMessage;
+	}
+	public void setLastMessage(IMItem lastMessage) {
+		this.lastMessage = lastMessage;
 	}
 
 	public Collection<String> getSites() {

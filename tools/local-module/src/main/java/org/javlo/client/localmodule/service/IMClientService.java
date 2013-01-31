@@ -12,10 +12,9 @@ import org.apache.http.client.methods.HttpGet;
 import org.apache.http.util.EntityUtils;
 import org.javlo.client.localmodule.model.ServerConfig;
 import org.javlo.helper.URLHelper;
-import org.javlo.module.communication.IMData;
-
-import com.google.gson.Gson;
-import com.google.gson.JsonElement;
+import org.javlo.module.communication.RemoteIMData;
+import org.javlo.service.IMService.IMItem;
+import org.javlo.utils.JSONMap;
 
 public class IMClientService {
 	private static final Logger logger = Logger.getLogger(IMClientService.class.getName());
@@ -42,6 +41,8 @@ public class IMClientService {
 	private ObserverSynchroService ss = null;
 
 	private boolean waiting = false;
+
+	private Long lastMessageId;
 
 	private IMClientService() {
 	}
@@ -123,6 +124,9 @@ public class IMClientService {
 	private void refreshIMStatus(ServerConfig server, HttpClient httpClient) {
 		try {
 			String url = server.getServerURL() + "&webaction=communication.RemoteRefreshAIM";
+			if(lastMessageId != null) {
+				url += "&lastMessageId=" + lastMessageId;
+			}
 			url = URLHelper.changeMode(url, "ajax");
 			System.out.println(url);
 			HttpGet httpget = new HttpGet(url);
@@ -132,16 +136,18 @@ public class IMClientService {
 			if (response.getStatusLine().getStatusCode() == 200) {
 				String content = EntityUtils.toString(entity);
 
-				Gson j = factory.getJson();
+				JSONMap ajaxMap = JSONMap.parseMap(content);
 
-				JsonElement ajaxMap = j.fromJson(content, JsonElement.class);
-				JsonElement aimDataJson = ajaxMap.getAsJsonObject().getAsJsonObject("data").get("aimData");
+				RemoteIMData aimData = ajaxMap.getMap("data").getValue("aimData", RemoteIMData.class);
 
-				IMData aimData = j.fromJson(aimDataJson, IMData.class);
-				System.out.println(aimData.getCurrentUser());
-				for (String site : aimData.getSites()) {
-					System.out.println("  " + site);
+				lastMessageId = aimData.getLastMessageId();
+
+				IMItem msg = aimData.getLastMessage();
+				if (msg != null) {
+					factory.getNotificationService().displayIMMessage(msg);
+					System.out.println(msg.getFromUser() + ": " + msg.getMessage());
 				}
+
 			}
 		} catch (ClientProtocolException ex) {
 			// TODO Auto-generated catch block
