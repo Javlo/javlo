@@ -149,13 +149,14 @@ public class ActionManager {
 	 * @return a list of IAction implementation
 	 */
 	private static IAction[] getSpecialActionGroup() {
-		IAction[] outActionGroup = new IAction[3];
+		IAction[] outActionGroup = new IAction[4];
 		outActionGroup[0] = new SearchActions();
 		// outActionGroup[1] = new MailingActions();
 		// outActionGroup[2] = new AdminAction();
 		// outActionGroup[3] = new EcomActions();
 		outActionGroup[1] = new ViewActions();
 		outActionGroup[2] = new TimeTravelerActions();
+		outActionGroup[3] = new DataAction();
 		return outActionGroup;
 	}
 

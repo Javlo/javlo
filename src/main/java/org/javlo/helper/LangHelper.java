@@ -24,6 +24,7 @@ import org.javlo.module.core.ModulesContext;
 import org.javlo.navigation.MenuElement;
 import org.javlo.service.ClipBoard;
 import org.javlo.service.ContentService;
+import org.javlo.service.NotificationService;
 import org.javlo.service.PersistenceService;
 import org.javlo.service.RequestService;
 import org.javlo.user.AdminUserFactory;
@@ -69,6 +70,7 @@ public class LangHelper {
 	 *         <li>AbstractModuleContext : return the current module context</li>
 	 *         <li>? extends AbstractModuleContext : instanciate a abstract module</li>>
 	 *         <li>String : the query parameter (when user make a search)</li>
+	 *         <li>NotificationService</li>
 	 *         </ul>
 	 * @throws Exception
 	 */
@@ -131,6 +133,8 @@ public class LangHelper {
 			return AbstractModuleContext.getInstance(request.getSession(), GlobalContext.getInstance(request), ModulesContext.getInstance(request.getSession(), GlobalContext.getInstance(request)).getCurrentModule(), c);
 		} else if (c.equals(User.class)) {
 			return EditContext.getInstance(GlobalContext.getInstance(request), request.getSession()).getEditUser();
+		} else if (c.equals(NotificationService.class)) {
+			return NotificationService.getInstance(GlobalContext.getInstance(request));
 		}
 		return null;
 	}
