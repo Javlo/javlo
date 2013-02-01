@@ -137,4 +137,9 @@ public class Box extends AbstractVisualComponent implements IContainer {
 		return !isCloseBox();
 	}
 
+	@Override
+	public int getComplexityLevel() {
+		return AbstractVisualComponent.COMPLEXITY_STANDARD;
+	}
+
 }

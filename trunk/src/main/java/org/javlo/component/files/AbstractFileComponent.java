@@ -521,11 +521,6 @@ public abstract class AbstractFileComponent extends AbstractVisualComponent impl
 		return getFileName().trim().length() == 0;
 	}
 
-	@Override
-	public boolean isExtractable() {
-		return false;
-	}
-
 	protected boolean isFileNameValid(String fileName) {
 		return true;
 	}

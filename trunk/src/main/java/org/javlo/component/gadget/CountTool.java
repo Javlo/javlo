@@ -18,7 +18,6 @@ import org.javlo.i18n.I18nAccess;
 import org.javlo.message.GenericMessage;
 import org.javlo.service.RequestService;
 
-
 /**
  * @author pvandermaesen
  */
@@ -124,20 +123,18 @@ public class CountTool extends AbstractVisualComponent {
 		Calendar cal = GregorianCalendar.getInstance();
 		I18nAccess i18nAccess = I18nAccess.getInstance(ctx.getRequest());
 		i18nAccess.changeViewLanguage(ctx);
-		String js="";
+		String js = "";
 		if (getLink().length() > 0) {
-			out.println("<a href=\""+getLink()+"\">");
+			out.println("<a href=\"" + getLink() + "\">");
 		}
-		out.println("<div"+js+" class=\"count-tool count-tool-" + ctx.getRequestContentLanguage() + "\">");
+		out.println("<div" + js + " class=\"count-tool count-tool-" + ctx.getRequestContentLanguage() + "\">");
 		out.println("	<input type=\"text\" class=\"timer-days\" readonly=\"readonly\" />");
 		out.println("	<input type=\"text\" class=\"timer-time\" readonly=\"readonly\" />");
 		out.println("	<script language=\"javascript\">");
 		cal.setTime(new Date());
-		out.println("		var currentDate = new Date(" + cal.get(Calendar.YEAR) + "," + cal.get(Calendar.MONTH) + "," + cal.get(Calendar.DAY_OF_MONTH) + ","
-				+ cal.get(Calendar.HOUR) + "," + cal.get(Calendar.MINUTE) + "," + cal.get(Calendar.SECOND) + ");");
+		out.println("		var currentDate = new Date(" + cal.get(Calendar.YEAR) + "," + cal.get(Calendar.MONTH) + "," + cal.get(Calendar.DAY_OF_MONTH) + "," + cal.get(Calendar.HOUR) + "," + cal.get(Calendar.MINUTE) + "," + cal.get(Calendar.SECOND) + ");");
 		cal.setTime(getDate());
-		out.println("		var endDate = new Date(" + cal.get(Calendar.YEAR) + "," + cal.get(Calendar.MONTH) + "," + cal.get(Calendar.DAY_OF_MONTH) + ","
-				+ cal.get(Calendar.HOUR_OF_DAY) + "," + cal.get(Calendar.MINUTE) + "," + cal.get(Calendar.SECOND) + ");");
+		out.println("		var endDate = new Date(" + cal.get(Calendar.YEAR) + "," + cal.get(Calendar.MONTH) + "," + cal.get(Calendar.DAY_OF_MONTH) + "," + cal.get(Calendar.HOUR_OF_DAY) + "," + cal.get(Calendar.MINUTE) + "," + cal.get(Calendar.SECOND) + ");");
 		out.println("		displayDate('" + i18nAccess.getContentViewText("global.days") + "');displayDate.periodical(1000);");
 		out.println("	</script>");
 		out.println("</div>");
@@ -149,19 +146,9 @@ public class CountTool extends AbstractVisualComponent {
 		return writer.toString();
 	}
 
+	@Override
 	public String getType() {
 		return TYPE;
-	}
-
-	/**
-	 * you can check if it is possible to extract the selection of the component
-	 * in a other component.
-	 * 
-	 * @return true if content is extractable
-	 */
-	@Override
-	public boolean isExtractable() {
-		return true;
 	}
 
 	@Override

@@ -32,4 +32,9 @@ public class ForceRealContent extends AbstractVisualComponent {
 		return true;
 	}
 
+	@Override
+	public int getComplexityLevel() {
+		return AbstractVisualComponent.COMPLEXITY_ADMIN;
+	}
+
 }

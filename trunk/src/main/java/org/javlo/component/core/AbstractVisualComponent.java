@@ -1324,16 +1324,6 @@ public abstract class AbstractVisualComponent implements IContentVisualComponent
 		return getValue().trim().length() == 0;
 	}
 
-	/**
-	 * you can check if it is possible to extract the selection of the component in a other component.
-	 * 
-	 * @return true if content is extractable
-	 */
-	@Override
-	public boolean isExtractable() {
-		return false;
-	}
-
 	protected boolean isFirstElementOfRepeatSequence(ContentContext ctx) throws Exception {
 		MenuElement currentPage = ctx.getCurrentPage();
 		if (isRepeat() && currentPage.equals(getPage())) {

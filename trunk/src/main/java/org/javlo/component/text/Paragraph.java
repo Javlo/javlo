@@ -12,7 +12,6 @@ import org.javlo.helper.XHTMLHelper;
 import org.javlo.service.ReverseLinkService;
 import org.javlo.utils.SuffixPrefix;
 
-
 /**
  * @author pvandermaesen
  */
@@ -29,11 +28,11 @@ public class Paragraph extends AbstractVisualComponent {
 	public String getPrefixViewXHTMLCode(ContentContext ctx) {
 		String style = getStyle(ctx);
 		if (style != null) {
-			style = style+" ";
+			style = style + " ";
 		} else {
 			style = "";
 		}
-		return "<p"+getSpecialPreviewCssClass(ctx, style+getType()) + getSpecialPreviewCssId(ctx) + ">";
+		return "<p" + getSpecialPreviewCssClass(ctx, style + getType()) + getSpecialPreviewCssId(ctx) + ">";
 	}
 
 	@Override
@@ -44,7 +43,7 @@ public class Paragraph extends AbstractVisualComponent {
 	protected boolean isPrefixed() {
 		return false;
 	}
-	
+
 	protected String getContent(ContentContext ctx) {
 		return getValue();
 	}
@@ -63,7 +62,7 @@ public class Paragraph extends AbstractVisualComponent {
 		}
 
 		GlobalContext globalContext = GlobalContext.getInstance(ctx.getRequest());
-		String value = XHTMLHelper.textToXHTML(content, getType(),globalContext);
+		String value = XHTMLHelper.textToXHTML(content, getType(), globalContext);
 		ReverseLinkService reverserLinkService = ReverseLinkService.getInstance(globalContext);
 		value = reverserLinkService.replaceLink(ctx, value);
 
@@ -73,17 +72,6 @@ public class Paragraph extends AbstractVisualComponent {
 	@Override
 	public String getType() {
 		return TYPE;
-	}
-
-	/**
-	 * you can check if it is possible to extract the selection of the component
-	 * in a other component.
-	 *
-	 * @return true if content is extractable
-	 */
-	@Override
-	public boolean isExtractable() {
-		return true;
 	}
 
 	@Override
@@ -100,7 +88,7 @@ public class Paragraph extends AbstractVisualComponent {
 	public boolean isContentCachable(ContentContext ctx) {
 		return true;
 	}
-	
+
 	@Override
 	public boolean isRealContent(ContentContext ctx) {
 		return !isEmpty(ctx);

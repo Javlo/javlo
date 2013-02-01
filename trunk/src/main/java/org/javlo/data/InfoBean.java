@@ -423,4 +423,5 @@ public class InfoBean {
 	public String getArea() {
 		return ctx.getArea();
 	}
+
 }

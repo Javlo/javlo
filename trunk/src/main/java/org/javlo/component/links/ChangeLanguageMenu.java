@@ -157,4 +157,9 @@ public class ChangeLanguageMenu extends AbstractVisualComponent {
 		return new String[] { "languages", CONTENT_LANGUAGES_STYLE };
 	}
 
+	@Override
+	public int getComplexityLevel() {
+		return AbstractVisualComponent.COMPLEXITY_STANDARD;
+	}
+
 }
