@@ -504,10 +504,11 @@ public class Edit extends AbstractModuleAction {
 				publish = "&button_publish=true";
 			}
 
+			request.setAttribute("previewURL", URLHelper.createURL(ctx.getContextWithOtherRenderMode(ContentContext.PREVIEW_MODE)));
+
 			switch (modCtx.getMode()) {
 			case ContentModuleContext.PREVIEW_MODE:
 				currentModule.setToolsRenderer("/jsp/actions.jsp?button_edit=true&button_page=true" + publish);
-				request.setAttribute("previewURL", URLHelper.createURL(ctx.getContextWithOtherRenderMode(ContentContext.PREVIEW_MODE)));
 				currentModule.setRenderer("/jsp/preview.jsp");
 				currentModule.setBreadcrumbTitle(I18nAccess.getInstance(ctx.getRequest()).getText("content.preview"));
 				break;
