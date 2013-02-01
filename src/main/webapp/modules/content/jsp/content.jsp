@@ -1,5 +1,3 @@
-<%@page import="org.javlo.context.UserInterfaceContext"%>
-<%@page import="org.javlo.user.AdminUserSecurity"%>
 <%@page contentType="text/html"
         import="
         java.util.Stack,
@@ -14,6 +12,8 @@
    	    org.javlo.helper.XHTMLHelper,
    	    org.javlo.context.GlobalContext,
    	    org.javlo.navigation.MenuElement,
+   	    org.javlo.user.AdminUserSecurity,
+   	    org.javlo.context.UserInterfaceContext,
    	    org.javlo.helper.StringHelper,
    	    org.javlo.component.core.ComponentContext,
 	    org.javlo.component.core.IContentVisualComponent,
