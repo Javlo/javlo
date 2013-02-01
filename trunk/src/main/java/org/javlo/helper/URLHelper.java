@@ -977,4 +977,12 @@ public class URLHelper extends ElementaryURLHelper {
 		System.out.println("parent url : " + getParentURL("test.png"));
 	}
 
+	public static String replaceFolderVariable(ContentContext ctx, String url) {
+		String outURL = url;
+		GlobalContext globalContext = GlobalContext.getInstance(ctx.getRequest());
+		outURL = globalContext.getStaticConfig().replaceFolderVariable(outURL);
+		outURL = outURL.replace("$DATA", globalContext.getDataFolder());
+		return outURL;
+	}
+
 }

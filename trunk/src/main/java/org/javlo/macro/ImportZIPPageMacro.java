@@ -58,7 +58,7 @@ public class ImportZIPPageMacro implements IInteractiveMacro, IAction {
 		private static File getImportFolder(ContentContext ctx) throws Exception {
 			Properties config = getConfig(ctx);
 			StaticConfig staticConfig = StaticConfig.getInstance(ctx.getRequest().getSession());
-			File dir = new File(staticConfig.replaceFolderVariable("$HOME/data/import"));
+			File dir = new File(URLHelper.replaceFolderVariable(ctx, "$HOME/data/import"));
 			if (config != null) {
 				dir = new File(config.getProperty("folder", staticConfig.replaceFolderVariable("$HOME/data/import")));
 			}
