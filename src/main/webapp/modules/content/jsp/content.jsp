@@ -74,7 +74,7 @@ if (components.length > 0 && components[0].getPreviousComponent() != null) {
 }
 /*** rendering ***/
 
-if (!StringHelper.isTrue(request.getParameter("noinsert")) && !UserInterfaceContext.getInstance(session, globalContext).isLight()) {
+if (!StringHelper.isTrue(request.getParameter("noinsert"))) {
 %>
 
 <div class="insert-line" id="insert-line-<%=previousId%>">
