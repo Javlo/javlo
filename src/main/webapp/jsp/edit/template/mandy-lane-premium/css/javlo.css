@@ -13,11 +13,11 @@ table th {
 }
 
 h1 {
-	font-size: 20px;
+	font-size: 16px;
 	max-width: 460px;
 	overflow: hidden;
 	float: right;
-	margin-top: 38px;
+	margin-top: 40px;
 	margin-right: 220px;
 	color: #cccccc;
 }
