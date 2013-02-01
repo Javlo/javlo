@@ -7,6 +7,7 @@ import java.io.PrintWriter;
 import java.io.StringWriter;
 import java.util.Set;
 
+import org.javlo.component.core.AbstractVisualComponent;
 import org.javlo.component.core.ComplexPropertiesLink;
 import org.javlo.component.core.ComponentBean;
 import org.javlo.component.core.IInternalLink;
@@ -16,7 +17,6 @@ import org.javlo.helper.URLHelper;
 import org.javlo.helper.XHTMLHelper;
 import org.javlo.i18n.I18nAccess;
 import org.javlo.service.RequestService;
-
 
 /**
  * @author pvandermaesen
@@ -74,7 +74,7 @@ public class ChangeLanguageLink extends ComplexPropertiesLink implements IIntern
 			ctxLg.setRequestContentLanguage(linkId);
 		}
 
-		return "<a href=\""+URLHelper.createURL(ctxLg)+"\" />"+label+"</a>";
+		return "<a href=\"" + URLHelper.createURL(ctxLg) + "\" />" + label + "</a>";
 	}
 
 	protected String getParam() throws Exception {
@@ -168,6 +168,11 @@ public class ChangeLanguageLink extends ComplexPropertiesLink implements IIntern
 	@Override
 	public boolean isListable() {
 		return true;
+	}
+
+	@Override
+	public int getComplexityLevel() {
+		return AbstractVisualComponent.COMPLEXITY_STANDARD;
 	}
 
 }

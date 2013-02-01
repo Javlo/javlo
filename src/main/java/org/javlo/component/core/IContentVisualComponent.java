@@ -450,13 +450,6 @@ public interface IContentVisualComponent {
 	public GenericMessage getMessage();
 
 	/**
-	 * you can check if it is possible to extract the selection of the component in a other component.
-	 * 
-	 * @return true if content is extractable
-	 */
-	public boolean isExtractable();
-
-	/**
 	 * you can insert a text in this component
 	 * 
 	 * @return true if a text is insertable

@@ -1,3 +1,4 @@
+<%@page import="org.javlo.context.UserInterfaceContext"%>
 <%@page import="org.javlo.user.AdminUserSecurity"%>
 <%@page contentType="text/html"
         import="
@@ -73,7 +74,7 @@ if (components.length > 0 && components[0].getPreviousComponent() != null) {
 }
 /*** rendering ***/
 
-if (!StringHelper.isTrue(request.getParameter("noinsert")) && !StringHelper.isTrue(request.getAttribute("lightInterface"))) {
+if (!StringHelper.isTrue(request.getParameter("noinsert")) && !UserInterfaceContext.getInstance(session, globalContext).isLight()) {
 %>
 
 <div class="insert-line" id="insert-line-<%=previousId%>">

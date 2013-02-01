@@ -30,7 +30,6 @@ import org.javlo.message.GenericMessage;
 import org.javlo.message.MessageRepository;
 import org.javlo.service.RequestService;
 
-
 /**
  * @author pvandermaesen
  */
@@ -53,13 +52,12 @@ public class Contact extends AbstractVisualComponent implements ICSS, IAction {
 		res.add("body");
 		return res;
 	}
-	
+
 	protected static List<String> getCompulsoryField() {
 		List<String> res = new LinkedList<String>();
 		res.add("email");
 		return res;
 	}
-
 
 	protected List<String> getSelectedFields() {
 		String[] values = StringHelper.stringToArray(getValue());
@@ -85,7 +83,7 @@ public class Contact extends AbstractVisualComponent implements ICSS, IAction {
 			value = "";
 		}
 		value = StringEscapeUtils.escapeXml(value);
-		
+
 		if (field.equals("body")) {
 			return "<textarea id=\"" + id + "\" name=\"" + id + "\">" + value + "</textarea>";
 		} else {
@@ -107,7 +105,7 @@ public class Contact extends AbstractVisualComponent implements ICSS, IAction {
 			msg = new GenericMessage("contact.intro", GenericMessage.INFO);
 		}
 
-		out.println("<div class=\""+firstMessageClass+"message message-" + msg.getTypeLabel() + "\">");
+		out.println("<div class=\"" + firstMessageClass + "message message-" + msg.getTypeLabel() + "\">");
 		out.println(i18nAccess.getContentViewText(msg.getMessage()));
 		out.println("</div>");
 
@@ -124,17 +122,17 @@ public class Contact extends AbstractVisualComponent implements ICSS, IAction {
 				out.print(i18nAccess.getContentViewText("field." + field));
 				if (getCompulsoryField().contains(field)) {
 					out.print(" *");
-					compulsoryFound=true;
+					compulsoryFound = true;
 				}
 				out.println("</label>");
 				out.println(getFieldInput(field, field, requestService.getParameter(field, "")));
 				out.println("</div>");
 			}
 			out.println("<div class=\"action\">");
-			out.println("<input type=\"submit\" value=\""+i18nAccess.getContentViewText("global.send")+"\"/>");
+			out.println("<input type=\"submit\" value=\"" + i18nAccess.getContentViewText("global.send") + "\"/>");
 			out.println("</div>");
 			if (compulsoryFound) {
-				out.println("<div class=\"message-permanent\">"+i18nAccess.getContentViewText("global.compulsory-field")+"</div>");
+				out.println("<div class=\"message-permanent\">" + i18nAccess.getContentViewText("global.compulsory-field") + "</div>");
 			}
 			out.println("</form>");
 		}
@@ -159,8 +157,7 @@ public class Contact extends AbstractVisualComponent implements ICSS, IAction {
 		out.println("<legend>");
 		out.println(i18nAccess.getText("content.contact.email-to-send"));
 		out.println("</legend>");
-		out.println("<input style=\"width: 220px;\" type=\"text\" id=\"" + getInputNameString() + "\" name=\"" + getInputNameString() + "\" value=\""
-				+ getEmail() + "\"/>");
+		out.println("<input style=\"width: 220px;\" type=\"text\" id=\"" + getInputNameString() + "\" name=\"" + getInputNameString() + "\" value=\"" + getEmail() + "\"/>");
 		out.println("</fieldset>");
 		out.println("<fieldset>");
 		out.println("<legend>");
@@ -173,8 +170,7 @@ public class Contact extends AbstractVisualComponent implements ICSS, IAction {
 			if (selectedFields.contains(field)) {
 				checked = "checked=\"checked\"";
 			}
-			out.println("<input type=\"checkbox\" id=\"" + inputId + "\" name=\"" + inputId + "\" " + checked + "/> <label for=\"" + inputId + "\">"
-					+ i18nAccess.getText("field." + field) + "</label> ");
+			out.println("<input type=\"checkbox\" id=\"" + inputId + "\" name=\"" + inputId + "\" " + checked + "/> <label for=\"" + inputId + "\">" + i18nAccess.getText("field." + field) + "</label> ");
 
 		}
 		out.println("</fieldset>");
@@ -182,19 +178,9 @@ public class Contact extends AbstractVisualComponent implements ICSS, IAction {
 		return res.toString();
 	}
 
+	@Override
 	public String getType() {
 		return "contact";
-	}
-
-	/**
-	 * you can check if it is possible to extract the selection of the component
-	 * in a other component.
-	 * 
-	 * @return true if content is extractable
-	 */
-	@Override
-	public boolean isExtractable() {
-		return true;
 	}
 
 	@Override
@@ -234,6 +220,7 @@ public class Contact extends AbstractVisualComponent implements ICSS, IAction {
 		}
 	}
 
+	@Override
 	public String getActionGroupName() {
 		return "contact";
 	}
@@ -292,13 +279,12 @@ public class Contact extends AbstractVisualComponent implements ICSS, IAction {
 
 		return null;
 	}
-	
+
 	@Override
 	public int getComplexityLevel() {
 		return COMPLEXITY_STANDARD;
 	}
-	
-	
+
 	@Override
 	public boolean isRealContent(ContentContext ctx) {
 		return true;

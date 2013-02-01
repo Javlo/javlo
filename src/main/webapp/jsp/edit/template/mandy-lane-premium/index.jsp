@@ -160,10 +160,10 @@
 				<jsp:include page="${box.renderer}" />			
 			</div>		
 		</c:forEach>		        
-        <c:if test="${currentModule.helpTitle != null}">
+        <%--<c:if test="${currentModule.helpTitle != null}">
         <h3 class="open">${currentModule.helpTitle}</h3>
         <div class="content" style="display: block;">${currentModule.helpText}</div>
-        </c:if>
+        </c:if> --%>
 	</div>
 	
 </div><!-- leftmenu -->

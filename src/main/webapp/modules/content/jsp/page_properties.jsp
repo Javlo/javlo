@@ -27,39 +27,13 @@
 </div>
 
 <div class="line">
-	<label>${i18n.edit['global.title']}</label>
-	<span>${page.info.title}</span>
-</div>
-
-<div class="line">
 	<label for="new_name">${i18n.edit['item.name']}</label>
 	<input type="text" id="new_name" name="new_name" value="${page.name}" />
 </div>
 
 <div class="line">
-	<label for="page_visible">${i18n.edit['item.visible']}</label>
-	<input type="checkbox" id="page_visible" name="view" ${page.info.visible?'checked="checked"':''} value="true" />
-</div>
-
-<div class="line">
-	<label for="break_repeat">${i18n.edit['item.break-repeat']}</label>
-	<input type="checkbox" id="break_repeat" name="break_repeat" ${page.info.breakRepeat?'checked="checked"':''} value="true" />
-</div>
-
-<div class="line">
-	<label>${i18n.edit['item.short-url']}</label>
-	<c:if test="${!page.allreadyShortURL}">
-		<input type="submit" id="shorturl-url-creator" name="shorturl" value="${i18n.edit['edit.action.short-url']}" />
-	</c:if>
-	<c:if test="${page.allreadyShortURL}">
-		<span><a href="${info.shortURL}">${page.shortURL}</a></span>
-	</c:if>
-</div>
-
-
-<div class="line">
-	<label>${i18n.edit['item.path']}</label>
-	<span>${page.path}</span>
+	<label>${i18n.edit['global.title']}</label>
+	<span>${page.info.title}</span>
 </div>
 
 <div class="line">
@@ -76,6 +50,34 @@
 	<label>${i18n.edit['item.modification-date']}</label>
 	<span>${page.modificationDate}</span>
 </div>
+
+<div class="line">
+	<label for="page_visible">${i18n.edit['item.visible']}</label>
+	<input type="checkbox" id="page_visible" name="view" ${page.info.visible?'checked="checked"':''} value="true" />
+</div>
+
+<c:if test="${!userInterface.light}">
+
+<div class="line">
+	<label for="break_repeat">${i18n.edit['item.break-repeat']}</label>
+	<input type="checkbox" id="break_repeat" name="break_repeat" ${page.info.breakRepeat?'checked="checked"':''} value="true" />
+</div>
+
+<div class="line">
+	<label>${i18n.edit['item.short-url']}</label>
+	<c:if test="${!page.allreadyShortURL}">
+		<input type="submit" id="shorturl-url-creator" name="shorturl" value="${i18n.edit['edit.action.short-url']}" />
+	</c:if>
+	<c:if test="${page.allreadyShortURL}">
+		<span><a href="${info.shortURL}">${page.shortURL}</a></span>
+	</c:if>
+</div>
+
+<div class="line">
+	<label>${i18n.edit['item.path']}</label>
+	<span>${page.path}</span>
+</div>
+
 
 <div class="line">
 	<label>${i18n.edit['item.last-access']}</label>
@@ -109,6 +111,10 @@
 </div>
 </c:if>
 </div>
+
+</c:if>
+
+
 
 <div class="action">
 	<c:if test="${not empty info.parent}">

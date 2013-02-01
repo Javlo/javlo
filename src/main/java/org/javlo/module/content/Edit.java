@@ -183,13 +183,15 @@ public class Edit extends AbstractModuleAction {
 		private String type;
 		private String label;
 		private String value;
+		private int complexityLevel;
 		private boolean metaTitle;
 		private boolean selected;
 
-		public ComponentWrapper(String type, String label, String value, boolean metaTitle) {
+		public ComponentWrapper(String type, String label, String value, int complexityLevel, boolean metaTitle) {
 			this.type = type;
 			this.label = label;
 			this.value = value;
+			this.complexityLevel = complexityLevel;
 			this.metaTitle = metaTitle;
 		}
 
@@ -231,6 +233,14 @@ public class Edit extends AbstractModuleAction {
 
 		public void setSelected(boolean selected) {
 			this.selected = selected;
+		}
+
+		public int getComplexityLevel() {
+			return complexityLevel;
+		}
+
+		public void setComplexityLevel(int complexityLevel) {
+			this.complexityLevel = complexityLevel;
 		}
 
 	}
@@ -357,7 +367,7 @@ public class Edit extends AbstractModuleAction {
 			if (!components[i].isMetaTitle() || !components[i + 1].isMetaTitle()) { // if next component is title too so the component group is empty
 				IContentVisualComponent comp = components[i];
 				if (comp.isMetaTitle() || globalContext.getComponents().contains(comp.getClass().getName()) || comp instanceof DynamicComponent) {
-					ComponentWrapper compWrapper = new ComponentWrapper(comp.getType(), comp.getComponentLabel(ctx, globalContext.getEditLanguage(ctx.getRequest().getSession())), comp.getValue(ctx), comp.isMetaTitle());
+					ComponentWrapper compWrapper = new ComponentWrapper(comp.getType(), comp.getComponentLabel(ctx, globalContext.getEditLanguage(ctx.getRequest().getSession())), comp.getValue(ctx), comp.getComplexityLevel(), comp.isMetaTitle());
 					if (components[i].isMetaTitle()) {
 						titleWrapper = compWrapper;
 					}
@@ -375,7 +385,7 @@ public class Edit extends AbstractModuleAction {
 		}
 		if (!components[components.length - 1].isMetaTitle()) {
 			IContentVisualComponent comp = components[components.length - 1];
-			ComponentWrapper compWrapper = new ComponentWrapper(comp.getType(), comp.getComponentLabel(ctx, globalContext.getEditLanguage(ctx.getRequest().getSession())), comp.getValue(ctx), comp.isMetaTitle());
+			ComponentWrapper compWrapper = new ComponentWrapper(comp.getType(), comp.getComponentLabel(ctx, globalContext.getEditLanguage(ctx.getRequest().getSession())), comp.getValue(ctx), comp.getComplexityLevel(), comp.isMetaTitle());
 			comps.add(compWrapper);
 			if (comp.getType().equals(editCtx.getActiveType())) {
 				compWrapper.setSelected(true);
@@ -389,15 +399,21 @@ public class Edit extends AbstractModuleAction {
 
 		List<ComponentWrapper> listWithoutEmptyTitle = new LinkedList<Edit.ComponentWrapper>();
 		ComponentWrapper title = null;
+		UserInterfaceContext uiContext = UserInterfaceContext.getInstance(ctx.getRequest().getSession(), globalContext);
 		for (ComponentWrapper comp : comps) {
 			if (comp.isMetaTitle()) {
 				title = comp;
 			} else {
 				if (title != null) {
-					listWithoutEmptyTitle.add(title);
+					if (comp.getComplexityLevel() == 1 || !uiContext.isLight()) {
+						listWithoutEmptyTitle.add(title);
+					}
 					title = null;
+
 				}
-				listWithoutEmptyTitle.add(comp);
+				if (comp.getComplexityLevel() == 1 || !uiContext.isLight()) {
+					listWithoutEmptyTitle.add(comp);
+				}
 			}
 		}
 
@@ -478,7 +494,7 @@ public class Edit extends AbstractModuleAction {
 			currentModule.setBreadcrumb(true);
 			currentModule.setSidebar(true);
 			UserInterfaceContext userIterfaceContext = UserInterfaceContext.getInstance(ctx.getRequest().getSession(), globalContext);
-			ctx.getRequest().setAttribute("userInterfaceContext", userIterfaceContext);
+
 			if (!userIterfaceContext.isComponentsList()) {
 				currentModule.clearAllBoxes();
 			}
@@ -532,11 +548,6 @@ public class Edit extends AbstractModuleAction {
 		if (ctx.getCurrentTemplate() != null) {
 			String templateImageURL = URLHelper.createTransformStaticTemplateURL(ctx, ctx.getCurrentTemplate(), "template", ctx.getCurrentTemplate().getVisualFile());
 			request.setAttribute("templateImageUrl", templateImageURL);
-		}
-
-		if (isLightInterface(ctx)) {
-			currentModule.setSidebar(false);
-			currentModule.removeNavigation("persistence");
 		}
 
 		if (ctx.getCurrentPage() == null) {

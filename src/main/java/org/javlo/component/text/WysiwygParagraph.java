@@ -50,14 +50,8 @@ public class WysiwygParagraph extends AbstractVisualComponent {
 	}
 
 	@Override
-	public boolean isExtractable() {
-		return false;
-	}
-
-	@Override
 	public void performEdit(ContentContext ctx) throws Exception {
 		RequestService requestService = RequestService.getInstance(ctx.getRequest());
-		String content = requestService.getParameter(getContentName(), "");
 		super.performEdit(ctx);
 	}
 

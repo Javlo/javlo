@@ -7,6 +7,7 @@ import javax.servlet.http.HttpSession;
 
 import org.javlo.helper.StringHelper;
 import org.javlo.user.AdminUserFactory;
+import org.javlo.user.AdminUserSecurity;
 import org.javlo.user.IUserInfo;
 import org.javlo.user.User;
 
@@ -20,14 +21,16 @@ public class UserInterfaceContext {
 
 	private boolean componentsList = true;
 
+	private boolean lightInterface = false;
+
 	private String currentModule = null;
 
-	public static final String KEY = "userInterfaceContext";
+	public static final String KEY = "userInterface";
 
 	private static final UserInterfaceContext FAKE_INSTACE = new UserInterfaceContext();
 
 	public static final UserInterfaceContext getInstance(HttpSession session, GlobalContext globalContext) {
-		UserInterfaceContext instance = (UserInterfaceContext) globalContext.getSessionAttribute(session, KEY);
+		UserInterfaceContext instance = (UserInterfaceContext) session.getAttribute(KEY);
 
 		if (instance == null) {
 			AdminUserFactory userFact = AdminUserFactory.createUserFactory(globalContext, session);
@@ -40,7 +43,9 @@ public class UserInterfaceContext {
 			instance.session = session;
 			instance.globalContext = globalContext;
 
-			globalContext.setSessionAttribute(session, KEY, instance);
+			session.setAttribute(KEY, instance);
+
+			instance.lightInterface = AdminUserSecurity.getInstance().haveRole(user, AdminUserSecurity.LIGHT_INTERFACE_ROLE);
 
 			if (userFact.getUser(user.getLogin()) != null) { // not god user, so storable user
 				IUserInfo ui = user.getUserInfo();
@@ -99,4 +104,7 @@ public class UserInterfaceContext {
 		}
 	}
 
+	public boolean isLight() {
+		return lightInterface;
+	}
 }

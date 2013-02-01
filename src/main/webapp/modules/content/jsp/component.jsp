@@ -11,7 +11,7 @@
 <div><ul>
 <c:set var="closeAccordion" value="</ul></div>"
 /></c:if>
-<c:if test="${not comp.metaTitle}"
+<c:if test="${!comp.metaTitle}"
 ><li${comp.selected?' class="selected"':''}><a class="ajax" href="${info.currentURL}?webaction=changeComponent&type=${comp.type}">${comp.label}</a></li>
 </c:if></c:forEach>
 ${closeAccordion}

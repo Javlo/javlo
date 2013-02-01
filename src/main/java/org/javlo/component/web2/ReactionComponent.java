@@ -27,6 +27,7 @@ import javax.servlet.http.HttpSession;
 
 import org.apache.commons.lang.StringUtils;
 import org.javlo.actions.IAction;
+import org.javlo.component.core.AbstractVisualComponent;
 import org.javlo.component.core.ComponentBean;
 import org.javlo.component.core.IContentVisualComponent;
 import org.javlo.component.dynamic.DynamicComponent;
@@ -687,5 +688,10 @@ public class ReactionComponent extends DynamicComponent implements IAction {
 	@Override
 	public boolean isContentTimeCachable(ContentContext ctx) {
 		return false;
+	}
+
+	@Override
+	public int getComplexityLevel() {
+		return AbstractVisualComponent.COMPLEXITY_STANDARD;
 	}
 }
