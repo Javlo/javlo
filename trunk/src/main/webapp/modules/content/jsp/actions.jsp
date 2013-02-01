@@ -60,7 +60,8 @@
 </c:if>
 
 <c:if test="${not empty param.button_edit and empty param.previewEdit}"><a class="action-button more edit" href="${info.currentURL}?webaction=changeMode&mode=1"><span>${i18n.edit['action.edit-content']}</span></a></c:if>
-<c:if test="${not empty param.button_preview and empty param.previewEdit}"><a class="action-button more preview" href="${info.currentURL}?webaction=changeMode&mode=2"><span>${i18n.edit['command.preview']}</span></a></c:if>
+<%--<c:if test="${not empty param.button_preview and empty param.previewEdit}"><a class="action-button more preview" href="${info.currentURL}?webaction=changeMode&mode=2"><span>${i18n.edit['command.preview']}</span></a></c:if>--%>
+<c:if test="${not empty param.button_preview and empty param.previewEdit}"><a class="action-button more preview" href="${previewURL}"><span>${i18n.edit['command.preview']}</span></a></c:if>
 <c:if test="${not empty param.button_page and empty param.previewEdit}"><a class="action-button more page" href="${info.currentURL}?webaction=changeMode&mode=3"><span>${i18n.edit['item.title']}</span></a></c:if>
 
 <c:if test="${not empty param.button_publish and empty param.previewEdit}"><a class="action-button publish ajax" href="${info.currentURL}?webaction=publish"><span>${i18n.edit['command.publish']}</span></a></c:if>

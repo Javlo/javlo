@@ -1238,3 +1238,8 @@ body.previewEdit {
 .component-list li {
 	line-height: 16px;
 }
+
+.sidebar #accordion .content:last-child {
+    color: #333333;
+    padding: 0;
+}
