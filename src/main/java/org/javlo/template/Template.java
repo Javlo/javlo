@@ -1372,7 +1372,7 @@ public class Template implements Comparable<Template> {
 	public String getSearchRenderer(ContentContext ctx) throws Exception {
 		String renderer = properties.getString("renderer.search", null);
 		if (renderer == null) {
-			return null;
+			return parent.getSearchRenderer(ctx);
 		}
 		return URLHelper.createStaticTemplateURLWithoutContext(ctx, ctx.getCurrentTemplate(), renderer); // not this ?
 	}
