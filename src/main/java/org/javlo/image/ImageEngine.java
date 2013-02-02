@@ -686,8 +686,6 @@ public class ImageEngine {
 
 		BufferedImage workImage;
 
-		System.out.println("***** ImageEngine.resize : inHeight = " + inHeight); // TODO: remove debug trace
-
 		int workWith = inWidth - (ml + mr);
 		int workHeight = inHeight - (mt + mb);
 
