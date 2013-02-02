@@ -16,8 +16,7 @@ h1 {
 	font-size: 16px;
 	max-width: 460px;
 	overflow: hidden;
-	float: right;
-	margin-top: 40px;
+	float: right;	
 	margin-right: 220px;
 	color: #cccccc;
 }
@@ -1248,4 +1247,5 @@ body.previewEdit {
 .topheader > ul {
     right: 220px;
     left: auto;
+    margin-top: 37px;
 }
