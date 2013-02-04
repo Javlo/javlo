@@ -32,17 +32,18 @@ editCtx.setRenderMode(ContentContext.EDIT_MODE);
 							<c:if test='${editPreview == "true"}'>
 								<input id="pc_edit_button" type="submit" value="${i18n.edit['preview.label.not-edit-page']}" title="${i18n.edit['preview.label.not-edit-page']}" class="pc_edit_true" />
 							</c:if>
-						</div>
-					</form>
-					<form id="change_template_form" action="<%=URLHelper.createURL(editCtx)%>?module=template&webaction=template.changeFromPreview&previewEdit=true" method="post">
-						<div class="pc_line">							
-							<input id="pc_change_template" type="submit" value="${i18n.edit['preview.label.choose-template']}" title="${i18n.edit['preview.label.choose-template']}" class="pc_edit_true" />
-						</div>
+						</div>				
 					</form>
 					<form id="pc_publish_form" action="${info.currentURL}" method="post">
 						<div class="pc_line">
 							<input type="hidden" name="webaction" value="edit.publish" />
 							<input id="pc_publish_button" type="submit" value="${i18n.edit['command.publish']}" title="${i18n.edit['command.publish']}" />
+						</div>
+					</form>
+					<c:if test='${editPreview == "true"}'>
+					<form id="change_template_form" action="<%=URLHelper.createURL(editCtx)%>?module=template&webaction=template.changeFromPreview&previewEdit=true" method="post">
+						<div class="pc_line">							
+							<input id="pc_change_template" type="submit" value="${i18n.edit['preview.label.choose-template']}" title="${i18n.edit['preview.label.choose-template']}" class="pc_edit_true" />
 						</div>
 					</form>
 					<form id="pc_del_page_form" action="${info.currentURL}" method="post">
@@ -51,7 +52,8 @@ editCtx.setRenderMode(ContentContext.EDIT_MODE);
 							<input type="hidden" value="edit.deletePage" name="webaction"/>
 							<input id="pc_del_page_button" type="submit" value="${i18n.edit['menu.delete']}" title="${i18n.edit['menu.delete']}" onclick="if (!confirm('${i18n.edit['menu.confirm-page']}')) return false;"/>
 						</div>
-					</form>
+					</form>					
+					</c:if>					
 				</div>
 			</fieldset>
 			<c:if test='${editPreview == "true"}'>				

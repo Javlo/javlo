@@ -591,13 +591,19 @@ public class MacroHelper {
 		I18nAccess i18nAccess = I18nAccess.getInstance(globalContext, ctx.getRequest().getSession());
 		for (String name : macroName) {
 			IMacro macro = factory.getMacro(name);
-			if (macro != null && !(macro instanceof IInteractiveMacro) && (adminMode || !macro.isAdmin())) {
+			if (macro != null && (adminMode || !macro.isAdmin())) {
 				macroFound = true;
 				out.println("<div class=\"macro\">");
-				out.println("<form id=\"form-macro-" + name + "\" method=\"post\" action=\"" + URLHelper.createURL(ctx) + "\">");
-				out.println("<input type=\"hidden\" name=\"webaction\" value=\"macro.executeMacro\" />");
-				out.println("<input type=\"submit\" name=\"macro-" + name + "\" value=\"" + i18nAccess.getText("macro.name." + name, name) + "\" />");
-				out.println("</form>");
+				/*
+				 * out.println("<form id=\"form-macro-" + name + "\" method=\"post\" action=\"" + URLHelper.createURL(ctx) + "\">"); out.println("<input type=\"hidden\" name=\"webaction\" value=\"macro.executeMacro\" />"); out.println("<input type=\"submit\" name=\"macro-" + name + "\" value=\"" + i18nAccess.getText("macro.name." + name, name) + "\" />"); out.println("</form>");
+				 */
+				String url = URLHelper.createURL(ctx.getContextWithOtherRenderMode(ContentContext.EDIT_MODE)) + "?module=macro&previewEdit=true&webaction=macro.executeInteractiveMacro&macro-" + name + '=' + name + "&macro=" + name;
+				if (macro instanceof IInteractiveMacro) {
+					String js = "jQuery.colorbox({href : '" + url + "',opacity : 0.6,iframe : true,width : '95%',	height : '95%'});";
+					out.println("<a class=\"action-button\" href=\"#\" onclick=\"" + js + " return false;\">" + i18nAccess.getText("macro.name." + name, name) + "</a>");
+				} else {
+					out.println("<a class=\"action-button\" href=\"" + url + "\">" + i18nAccess.getText("macro.name." + name, name) + "</a>");
+				}
 				out.println("</div>");
 			}
 		}

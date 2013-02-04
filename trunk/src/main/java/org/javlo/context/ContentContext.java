@@ -316,6 +316,12 @@ public class ContentContext {
 
 	private Collection<String> availableContentLanguages = null;
 
+	private boolean refreshParent = false;
+
+	private boolean closePopup = false;
+
+	private String parentURL = null;
+
 	private ContentContext() {
 	}
 
@@ -1299,4 +1305,36 @@ public class ContentContext {
 		request.removeAttribute(CONTEXT_REQUEST_KEY);
 	}
 
+	public boolean isRefreshParent() {
+		if (StringHelper.isTrue(request.getParameter("closeFrame"))) {
+			return true;
+		} else {
+			return refreshParent;
+		}
+	}
+
+	public void setRefreshParent(boolean refreshParent) {
+		this.refreshParent = refreshParent;
+	}
+
+	public String getParentURL() {
+		return parentURL;
+	}
+
+	public void setParentURL(String parentURL) {
+		this.parentURL = parentURL;
+	}
+
+	public boolean isPreviewEdit() {
+		RequestService requestService = RequestService.getInstance(request);
+		return StringHelper.isTrue(requestService.getParameter("previewEdit", null));
+	}
+
+	public boolean isClosePopup() {
+		return closePopup;
+	}
+
+	public void setClosePopup(boolean closePopup) {
+		this.closePopup = closePopup;
+	}
 }

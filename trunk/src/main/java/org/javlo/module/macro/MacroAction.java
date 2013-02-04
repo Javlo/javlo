@@ -44,7 +44,13 @@ public class MacroAction extends AbstractModuleAction {
 				}
 			}
 		}
-		
+
+		if (allMacros.size() == 0 || ctx.isPreviewEdit()) {
+			moduleContext.getCurrentModule().removeBox("macros");
+		} else {
+			moduleContext.getCurrentModule().restoreBoxes();
+		}
+
 		List<IMacro> alliMacros = new LinkedList<IMacro>();
 		for (IMacro macro : macros) {
 			if (globalContext.getMacros().contains(macro.getName())) {
@@ -53,23 +59,23 @@ public class MacroAction extends AbstractModuleAction {
 				}
 			}
 		}
-		
+
 		String outMsg = null;
 
 		if (macroContext.getActiveMacro() != null) {
 			ctx.getRequest().setAttribute("macro", macroContext.getActiveMacro());
 			if (macroContext.getActiveMacro() instanceof IInteractiveMacro) {
-				IInteractiveMacro iMacro = (IInteractiveMacro)macroContext.getActiveMacro();
+				IInteractiveMacro iMacro = (IInteractiveMacro) macroContext.getActiveMacro();
 				outMsg = iMacro.prepare(ctx);
-			String macroRenderer = iMacro.getRenderer();
-			macroRenderer = ResourceHelper.createModulePath(ctx, macroRenderer);
-			ctx.getRequest().setAttribute("macroRenderer", macroRenderer);
+				String macroRenderer = iMacro.getRenderer();
+				macroRenderer = ResourceHelper.createModulePath(ctx, macroRenderer);
+				ctx.getRequest().setAttribute("macroRenderer", macroRenderer);
 			}
 		}
 
 		ctx.getRequest().setAttribute("macros", allMacros);
 		ctx.getRequest().setAttribute("imacros", alliMacros);
-		
+
 		String parentMsg = super.prepare(ctx, moduleContext);
 
 		if (parentMsg == null) {
@@ -110,6 +116,9 @@ public class MacroAction extends AbstractModuleAction {
 	public static String performCloseMacro(RequestService rs, ContentContext ctx, MessageRepository messageRepository, I18nAccess i18nAccess) throws FileNotFoundException, InstantiationException, IllegalAccessException, IOException, ModuleException {
 		MacroModuleContext macroContext = MacroModuleContext.getInstance(ctx.getRequest());
 		macroContext.setActiveMacro(null);
+		if (ctx.isPreviewEdit()) {
+			ctx.setClosePopup(true);
+		}
 		return null;
 	}
 }

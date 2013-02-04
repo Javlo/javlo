@@ -5,10 +5,14 @@
 <html xmlns="http://www.w3.org/1999/xhtml">
 <head>
 
-<c:if test="${not empty param.closeFrame || not empty closeFrame}">
+<c:if test="${contentContext.closePopup}">
 <script type="text/javascript">
-    if (top.location.href != null) {
-		top.location.href=top.location.href; // close iframe and refresh parent frame
+    var url = top.location.href; // close iframe and refresh parent frame
+    <c:if test="${not empty contentContext.parentURL}">
+    	url = "${contentContext.parentURL}";
+    </c:if>
+    if (url != null) {
+		top.location.href=url; // close iframe and refresh parent frame
     }
 </script>
 </c:if>

@@ -9,6 +9,9 @@
 			<div>
 				<input type="hidden" name="webaction" value="executeInteractiveMacro" />
 				<input type="hidden" name="macro" value="${macro.name}" />
+				<c:if test="${not empty param.previewEdit}">
+				<input type="hidden" name="previewEdit" value="true" />
+				</c:if>
 				<input class="action-button" type="submit" name="run" value="${macro.name}" />
 			</div>
 		</form>
@@ -21,6 +24,9 @@
 	<form action="${info.currentURL}" method="post">
 		<div>
 			<input type="hidden" name="webaction" value="closeMacro" />
+			<c:if test="${not empty param.previewEdit}">
+			<input type="hidden" name="previewEdit" value="true" />
+			</c:if>
 			<input class="action-button" type="submit" value="${i18n.edit['global.cancel']}" />			 
 		</div>
 	</form>
