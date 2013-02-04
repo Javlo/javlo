@@ -1102,8 +1102,12 @@ public class Edit extends AbstractModuleAction {
 		return message;
 	}
 
-	public static final String performPreviewedit(EditContext editCtx) {
-		editCtx.setEditPreview(!editCtx.isEditPreview());
+	public static final String performPreviewedit(RequestService rs, EditContext editCtx) {
+		if (rs.getParameter("preview", null) == null) {
+			editCtx.setEditPreview(!editCtx.isEditPreview());
+		} else {
+			editCtx.setEditPreview(StringHelper.isTrue(rs.getParameter("preview", null)));
+		}
 		return null;
 	}
 
