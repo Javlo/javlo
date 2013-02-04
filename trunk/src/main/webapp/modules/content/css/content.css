@@ -277,10 +277,10 @@ li.line {
     right: 60px;
 }
 
-.area-label:hover {
+/*.area-label:hover {
 	z-index: 100;
 	color: #999999;
-}
+}*/
 
 .smart-link-body img {
 	width: 120px;

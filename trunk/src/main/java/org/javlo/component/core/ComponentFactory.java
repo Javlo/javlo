@@ -171,9 +171,9 @@ public class ComponentFactory {
 							}
 						}
 
-						Class c = ComponentFactory.class.getClassLoader().loadClass(className);
 						AbstractVisualComponent comp;
 						try {
+							Class c = ComponentFactory.class.getClassLoader().loadClass(className);
 							comp = (AbstractVisualComponent) c.newInstance();
 						} catch (Throwable t) {
 							t.printStackTrace();

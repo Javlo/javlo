@@ -262,6 +262,27 @@ public class MenuElement implements Serializable {
 				return -1;
 			}
 		}
+
+		public String getStartPublish() {
+			return StringHelper.renderTime(page.getStartPublishDate());
+		}
+
+		public String getEndPublish() {
+			return StringHelper.renderTime(page.getEndPublishDate());
+		}
+
+		public boolean isInsideTimeRange() {
+			return page.isInsideTimeRange();
+		}
+
+		public boolean isVisible() {
+			try {
+				return page.isVisible(ctx);
+			} catch (Exception e) {
+				return false;
+			}
+		}
+
 	}
 
 	/**
@@ -1030,6 +1051,10 @@ public class MenuElement implements Serializable {
 	public static java.util.logging.Logger logger = java.util.logging.Logger.getLogger(MenuElement.class.getName());
 
 	private String shortURL = null;
+
+	private Date startPublishDate = null;
+
+	private Date endPublishDate = null;
 
 	protected MenuElement() {
 	}
@@ -3122,6 +3147,9 @@ public class MenuElement implements Serializable {
 	}
 
 	public boolean isEmpty(ContentContext ctx) throws Exception {
+		if (!isInsideTimeRange()) {
+			return false;
+		}
 		return isEmpty(ctx, null);
 	}
 
@@ -3190,6 +3218,10 @@ public class MenuElement implements Serializable {
 	}
 
 	public boolean isRealContent(ContentContext ctx) throws Exception {
+
+		if (!isInsideTimeRange()) {
+			return false;
+		}
 
 		PageDescription desc = getPageDescriptionCached(ctx.getRequestContentLanguage());
 
@@ -3286,7 +3318,7 @@ public class MenuElement implements Serializable {
 			while (content.hasNext(contentAreaCtx)) {
 				IContentVisualComponent comp = content.next(contentAreaCtx);
 				if (!comp.isEmpty(contentAreaCtx)) {
-					return true;
+					return isInsideTimeRange();
 				}
 			}
 
@@ -3295,7 +3327,7 @@ public class MenuElement implements Serializable {
 				content = child.getContent(ctx);
 				while (content.hasNext(contentAreaCtx)) {
 					if (!content.next(contentAreaCtx).isEmpty(contentAreaCtx) /* && child.isVisible() */) { // TODO:
-						return true;
+						return isInsideTimeRange();
 					}
 				}
 			}
@@ -3804,4 +3836,73 @@ public class MenuElement implements Serializable {
 		this.shortURL = shortURL;
 	}
 
+	public Date getStartPublishDate() {
+		return startPublishDate;
+	}
+
+	public void setStartPublishDate(Date startPublishDate) {
+		this.startPublishDate = startPublishDate;
+	}
+
+	public Date getEndPublishDate() {
+		return endPublishDate;
+	}
+
+	public void setEndPublishDate(Date endPublishDate) {
+		this.endPublishDate = endPublishDate;
+	}
+
+	/**
+	 * return true if time range can modify the status of the page in the future.
+	 * 
+	 * @return
+	 */
+	public boolean isTimeRange() {
+		if (getEndPublishDate() != null) {
+			Calendar now = Calendar.getInstance();
+			Calendar cal = Calendar.getInstance();
+			cal.setTime(getEndPublishDate());
+			if (now.after(cal)) {
+				return false;
+			} else {
+				return true;
+			}
+		} else {
+			Calendar now = Calendar.getInstance();
+			Calendar cal = Calendar.getInstance();
+			cal.setTime(getStartPublishDate());
+			if (now.after(cal)) {
+				return false;
+			} else {
+				return true;
+			}
+		}
+	}
+
+	private boolean isInsideTimeRange() {
+		if (getStartPublishDate() == null && getEndPublishDate() == null) {
+			return true;
+		} else {
+			boolean inside = true;
+
+			Calendar now = Calendar.getInstance();
+			Calendar cal = Calendar.getInstance();
+
+			if (getStartPublishDate() != null) {
+				cal.setTime(getStartPublishDate());
+				if (now.before(cal)) {
+					inside = false;
+				}
+			}
+
+			if (getEndPublishDate() != null) {
+				cal.setTime(getEndPublishDate());
+				if (now.after(cal)) {
+					inside = false;
+				}
+			}
+
+			return inside;
+		}
+	}
 }
