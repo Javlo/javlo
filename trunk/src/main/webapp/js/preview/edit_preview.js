@@ -50,17 +50,9 @@ layerOver = function(item) {
 	var layer = jQuery("#preview-layer");
 	var insideLayer = jQuery("#preview-layer span");
 	if (item == null) {
-		// layer.fadeOut(10);
 		layer.css("z-index", -1);
-		// layer.animate({"top": 0, "left": 0, "width": 0, "height": 0},100);
-		/*
-		 * layer.css("top", 0); layer.css("left", 0); layer.css("width", 0);
-		 * layer.css("height", 0);
-		 */
 	} else {
 		var comp = jQuery(item);
-		// layer.fadeIn(100);
-		// console.log("layer.width() = "+layer.width());
 		if (layer.width() > 0) {
 			layer.css("z-index", 10000);
 		}
@@ -110,7 +102,6 @@ initPreview = function() {
 		e.stopPropagation();
 	});
 	jQuery("#preview-layer").on('drop', function(e) {
-		alert("drop");
 		e.preventDefault();
 		e.stopPropagation();
 	});
@@ -141,20 +132,15 @@ initPreview = function() {
 									var previewId = jQuery(this).attr("id")
 											.replace("cp_", "");
 									var area = jQuery(comp).parent().attr("id");
-									if (area == undefined) { // change
-																// language div
-																// or container
+									if (area == undefined) { // change language div or container
 										area = jQuery(comp).parent().parent()
 												.attr("id");
 									}
-									if (area == undefined) { // container +
-																// language
+									if (area == undefined) { // container language
 										area = jQuery(comp).parent().parent()
 												.parent().attr("id");
 									}
-									if (area == undefined) { // container +
-																// container +
-																// language
+									if (area == undefined) { // container container language
 										area = jQuery(comp).parent().parent()
 												.parent().parent().attr("id");
 									}
@@ -163,9 +149,9 @@ initPreview = function() {
 											+ compId + "&previous=" + previewId
 											+ "&area=" + area;
 								}
-
 								ajaxRequest(ajaxURL);
-
+							} else {
+								layerOver(null);
 							}
 
 						},
@@ -205,8 +191,7 @@ initPreview = function() {
 			jQuery("#preview_command .pc_body").addClass("hidden");
 
 		},
-		stop : function(event, ui) {
-			console.log("drop");
+		stop : function(event, ui) {			
 			var dropLayer = jQuery("#droppable-layer");
 			dropLayer.css("top", "-9999px");
 			dragging = false;

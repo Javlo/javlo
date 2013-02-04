@@ -12,7 +12,7 @@ ContentContext editCtx = new ContentContext(ctx);
 editCtx.setRenderMode(ContentContext.EDIT_MODE);
 %>
 <div id="preview_command" lang="${info.editLanguage}" class="edit-${not empty currentUser}">
-	<div class="pc_header">${i18n.edit["preview.command"]}<a id="pc_edit_mode_button" href="<%=URLHelper.createURL(editCtx)%>?module=content">X</a></div>
+	<div class="pc_header">${i18n.edit["preview.command"]}<a id="pc_edit_mode_button" href="<%=URLHelper.createURL(editCtx)%>?module=content&webaction=previewEdit&preview=false">X</a></div>
 	<div class="pc_body">
 			<c:if test="${not empty currentUser}">
 			<form id="pc_logout_form" action="${info.currentURL}" method="post">
