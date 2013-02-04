@@ -858,6 +858,24 @@ public class Edit extends AbstractModuleAction {
 				}
 			}
 
+			/** publish time range **/
+			if (requestService.getParameter("start_publish", null) != null) {
+				String startPublish = requestService.getParameter("start_publish", "").trim();
+				if (startPublish.length() > 0) {
+					Date startDate = StringHelper.smartParseDate(startPublish);
+					page.setStartPublishDate(startDate);
+				} else {
+					page.setStartPublishDate(null);
+				}
+				String endPublish = requestService.getParameter("end_publish", "").trim();
+				if (endPublish.length() > 0) {
+					Date endDate = StringHelper.smartParseDate(endPublish);
+					page.setEndPublishDate(endDate);
+				} else {
+					page.setEndPublishDate(null);
+				}
+			}
+
 			String templateName = requestService.getParameter("template", null);
 			if (templateName != null) {
 				if (templateName.length() > 1) {

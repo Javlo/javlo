@@ -1,6 +1,5 @@
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
 <%@ taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions" %>
-
 <div class="widgetbox page-properties">
 <h3><span>${i18n.edit['item.title']}</span></h3>
 <div class="content">
@@ -30,6 +29,24 @@
 	<label for="new_name">${i18n.edit['item.name']}</label>
 	<input type="text" id="new_name" name="new_name" value="${page.name}" />
 </div>
+
+<fieldset>
+<legend>${i18n.edit['item.time-range']}</legend>
+<div class="line">
+	<label for="start_publish">${i18n.edit['item.start-publish']}</label>
+	<input class="datepicker" type="text" id="start_publish" name="start_publish" value="${page.startPublish}" />
+</div>
+
+<div class="line">
+	<label for="end_publish">${i18n.edit['item.end-publish']}</label>
+	<input class="datepicker" type="text" id="end_publish" name="end_publish" value="${page.endPublish}" />
+</div>
+
+<div class="line">
+	<label for="end_publish">${i18n.edit['item.time-published']}</label>
+	<span>${page.insideTimeRange}</span>
+</div>
+</fieldset>
 
 <div class="line">
 	<label>${i18n.edit['global.title']}</label>
@@ -78,7 +95,6 @@
 	<span>${page.path}</span>
 </div>
 
-
 <div class="line">
 	<label>${i18n.edit['item.last-access']}</label>
 	<span>${page.lastAccess}</span>
@@ -114,8 +130,6 @@
 
 </c:if>
 
-
-
 <div class="action">
 	<c:if test="${not empty info.parent}">
     <a href="${info.parent.url}?webaction=deletePage&page=${page.id}" class="action-button warning needconfirm" title="${i18n.edit['global.delete']}"><span>${i18n.edit['global.delete']}</span></a>
@@ -124,7 +138,6 @@
 </div>
 
 </form>
-
 
 </div>
 </div>

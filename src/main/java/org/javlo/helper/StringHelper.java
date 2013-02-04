@@ -1217,7 +1217,23 @@ public class StringHelper {
 		return outDate;
 	}
 
+	public static Date parseDateTime(String inDate, char sep) throws ParseException {
+		Date outDate = null;
+		try {
+			outDate = StringHelper.parseDate(inDate, "dd" + sep + "MM" + sep + "yyyy HH:mm:ss");
+		} catch (ParseException e) {
+			try {
+				outDate = StringHelper.parseDate(inDate, "dd" + sep + "MM" + sep + "yy HH:mm:ss");
+			} catch (ParseException e1) {
+			}
+		}
+		return outDate;
+	}
+
 	public static Date smartParseDate(String inDate) {
+		if (inDate.length() > "yyyy-MM-dd".length()) {
+			return smartParseDateTime(inDate);
+		}
 		Date outDate = null;
 		if (inDate == null) {
 			return null;
@@ -1244,6 +1260,49 @@ public class StringHelper {
 			} else if (inDate.contains(" ")) {
 				try {
 					outDate = parseDate(inDate, ' ');
+				} catch (ParseException e) {
+				}
+			}
+		}
+		if (outDate == null) {
+			try {
+				outDate = parseDate(inDate, "yyyy-MM-dd");
+			} catch (ParseException e) {
+			}
+		}
+		return outDate;
+	}
+
+	public static Date smartParseDateTime(String inDate) {
+		if (inDate.length() <= "yyyy-MM-dd".length()) {
+			return smartParseDate(inDate);
+		}
+		Date outDate = null;
+		if (inDate == null) {
+			return null;
+		}
+		inDate = inDate.trim();
+		if (inDate.length() == 0) {
+			return null;
+		} else {
+			if (inDate.contains("/")) {
+				try {
+					outDate = parseDateTime(inDate, '/');
+				} catch (ParseException e) {
+				}
+			} else if (inDate.contains(":")) {
+				try {
+					outDate = parseDateTime(inDate, ':');
+				} catch (ParseException e) {
+				}
+			} else if (inDate.contains("-")) {
+				try {
+					outDate = parseDateTime(inDate, '-');
+				} catch (ParseException e) {
+				}
+			} else if (inDate.contains(" ")) {
+				try {
+					outDate = parseDateTime(inDate, ' ');
 				} catch (ParseException e) {
 				}
 			}
@@ -1297,6 +1356,9 @@ public class StringHelper {
 	}
 
 	public static Date parseSortableTime(String date) throws ParseException {
+		if (date == null) {
+			return null;
+		}
 		return parseDate(date, "yyyy-MM-dd HH:mm:ss");
 	}
 

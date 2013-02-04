@@ -304,6 +304,18 @@ public class XMLHelper {
 				out.print("\" linked-url=\"");
 				out.print(StringHelper.toXMLAttribute(page.getLinkedURL()));
 			}
+			if (page.getLinkedURL().trim().length() > 0) {
+				out.print("\" linked-url=\"");
+				out.print(StringHelper.toXMLAttribute(page.getLinkedURL()));
+			}
+			if (page.getStartPublishDate() != null) {
+				out.print("\" start-publish=\"");
+				out.print(StringHelper.renderSortableTime(page.getStartPublishDate()));
+			}
+			if (page.getEndPublishDate() != null) {
+				out.print("\" end-publish=\"");
+				out.print(StringHelper.renderSortableTime(page.getEndPublishDate()));
+			}
 			if (page.getEditorRoles().size() > 0) {
 				out.print("\" editor-roles=\"");
 				out.print(StringHelper.toXMLAttribute(StringHelper.collectionToString(page.getEditorRoles(), "#")));

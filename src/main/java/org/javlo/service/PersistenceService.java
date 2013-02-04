@@ -584,6 +584,13 @@ public class PersistenceService {
 		page.setModificationDate(modificationDate);
 		page.setLatestEditor(latestEditor);
 
+		try {
+			page.setStartPublishDate(StringHelper.parseSortableTime(pageXML.getAttributeValue("start-publish")));
+			page.setEndPublishDate(StringHelper.parseSortableTime(pageXML.getAttributeValue("end-publish")));
+		} catch (ParseException e) {
+			e.printStackTrace();
+		}
+
 		page.setShortURL(pageXML.getAttributeValue("shorturl", null));
 
 		page.setBreakRepeat(StringHelper.isTrue(pageXML.getAttributeValue("breakrepeat", "false")));

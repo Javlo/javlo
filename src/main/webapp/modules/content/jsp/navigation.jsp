@@ -15,7 +15,7 @@
 	</li>
 	<li><ul class="children sortable">
 	<c:forEach var="child" items="${page.children}">	
-	<li id="page-${child.name}" class="${child.url eq info.currentURL?'current ':''}${child.info.realContent?'real-content':''} ${fn:length(child.children) > 0?'have-children ':''}${child.info.realContent?'real-content':''}">
+	<li id="page-${child.name}" class="${child.url eq info.currentURL?'current ':''}${child.info.realContent?'real-content':''} ${fn:length(child.children) > 0?'have-children ':''}">
 	<a href="${child.url}">${child.info.title}</a>
 	</li>
 	</c:forEach>	
