@@ -111,7 +111,10 @@
     </div><!-- topheader -->
     
     <!-- logo -->
+    <div class="logo">
 	<img src="${info.editTemplateURL}/images/logo2.png" alt="Logo" />
+	<span class="text">${info.cmsName}</span>
+	</div>
     
     <div class="tabmenu">
     	<ul>

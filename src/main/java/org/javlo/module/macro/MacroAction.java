@@ -9,6 +9,7 @@ import java.util.List;
 import org.javlo.actions.AbstractModuleAction;
 import org.javlo.config.StaticConfig;
 import org.javlo.context.ContentContext;
+import org.javlo.context.EditContext;
 import org.javlo.context.GlobalContext;
 import org.javlo.helper.ResourceHelper;
 import org.javlo.i18n.I18nAccess;
@@ -45,7 +46,8 @@ public class MacroAction extends AbstractModuleAction {
 			}
 		}
 
-		if (allMacros.size() == 0 || ctx.isPreviewEdit()) {
+		EditContext editContext = EditContext.getInstance(globalContext, ctx.getRequest().getSession());
+		if (allMacros.size() == 0 || editContext.isEditPreview()) {
 			moduleContext.getCurrentModule().removeBox("macros");
 		} else {
 			moduleContext.getCurrentModule().restoreBoxes();
@@ -113,10 +115,10 @@ public class MacroAction extends AbstractModuleAction {
 		return null;
 	}
 
-	public static String performCloseMacro(RequestService rs, ContentContext ctx, MessageRepository messageRepository, I18nAccess i18nAccess) throws FileNotFoundException, InstantiationException, IllegalAccessException, IOException, ModuleException {
+	public static String performCloseMacro(RequestService rs, ContentContext ctx, EditContext editContext, MessageRepository messageRepository, I18nAccess i18nAccess) throws FileNotFoundException, InstantiationException, IllegalAccessException, IOException, ModuleException {
 		MacroModuleContext macroContext = MacroModuleContext.getInstance(ctx.getRequest());
 		macroContext.setActiveMacro(null);
-		if (ctx.isPreviewEdit()) {
+		if (editContext.isEditPreview()) {
 			ctx.setClosePopup(true);
 		}
 		return null;

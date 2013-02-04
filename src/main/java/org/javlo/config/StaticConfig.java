@@ -1151,4 +1151,8 @@ public class StaticConfig extends Observable {
 		return properties.getLong("transforming.size", 4);
 	}
 
+	public String getCmsName() {
+		return properties.getString("default-cms-name", "javlo");
+	}
+
 }

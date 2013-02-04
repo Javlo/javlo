@@ -4,6 +4,23 @@ input, textarea, select {
 	box-shadow: 1px 1px 3px #CCCCCC inset;
 }
 
+.logo {
+	overflow: hidden;
+}
+
+.logo img {
+	float: left;
+}
+
+.logo .text {
+	color: #CCCCCC;    
+    font-size: 16px;
+    font-weight: bold;    
+    margin-left: 12px;
+    margin-top: 33px;
+    float: left;
+}
+
 #search input {
 	box-shadow: none;
 }
