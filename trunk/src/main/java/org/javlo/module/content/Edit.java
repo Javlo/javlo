@@ -715,7 +715,7 @@ public class Edit extends AbstractModuleAction {
 		return null;
 	}
 
-	public static final String performSave(ContentContext ctx, GlobalContext globalContext, ContentService content, ComponentContext componentContext, RequestService requestService, I18nAccess i18nAccess, MessageRepository messageRepository, Module currentModule, AdminUserFactory adminUserFactory) throws Exception {
+	public static final String performSave(ContentContext ctx, EditContext editContext, GlobalContext globalContext, ContentService content, ComponentContext componentContext, RequestService requestService, I18nAccess i18nAccess, MessageRepository messageRepository, Module currentModule, AdminUserFactory adminUserFactory) throws Exception {
 
 		if (!canModifyCurrentPage(ctx) || !checkPageSecurity(ctx)) {
 			messageRepository.setGlobalMessageAndNotification(ctx, new GenericMessage(i18nAccess.getText("action.block"), GenericMessage.ERROR));
@@ -734,7 +734,7 @@ public class Edit extends AbstractModuleAction {
 			if (elem != null && StringHelper.isTrue(requestService.getParameter("id-" + elem.getId(), null))) {
 				elem.performConfig(ctx);
 				elem.performEdit(ctx);
-				if (ctx.isPreviewEdit()) {
+				if (editContext.isEditPreview()) {
 					componentContext.addNewComponent(elem);
 				}
 				if (!elem.isModify()) { // if elem not modified check modification via rawvalue
@@ -777,7 +777,7 @@ public class Edit extends AbstractModuleAction {
 			messageRepository.setGlobalMessageAndNotification(ctx, new GenericMessage(i18nAccess.getText("action.not-updated"), GenericMessage.ALERT));
 		}
 
-		if (requestService.getParameter("save", null) != null && ctx.isPreviewEdit()) {
+		if (requestService.getParameter("save", null) != null && editContext.isEditPreview()) {
 			ctx.setClosePopup(true);
 		}
 

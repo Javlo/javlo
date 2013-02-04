@@ -22,6 +22,7 @@ import javax.servlet.http.HttpSession;
 import org.javlo.actions.AbstractModuleAction;
 import org.javlo.config.StaticConfig;
 import org.javlo.context.ContentContext;
+import org.javlo.context.EditContext;
 import org.javlo.context.GlobalContext;
 import org.javlo.helper.StringHelper;
 import org.javlo.helper.URLHelper;
@@ -331,12 +332,14 @@ public class TemplateAction extends AbstractModuleAction {
 		return null;
 	}
 
-	public static String performSelectTemplate(RequestService rs, ContentContext ctx, MenuElement currentPage, MessageRepository messageRepository, I18nAccess i18nAccess) {
+	public static String performSelectTemplate(RequestService rs, ContentContext ctx, EditContext editContext, MenuElement currentPage, MessageRepository messageRepository, I18nAccess i18nAccess) {
 		String templateName = rs.getParameter("name", null);
 		currentPage.setTemplateName(templateName);
-		if (rs.getParameter("previewEdit", null) != null) {
-			ctx.getRequest().setAttribute("closeFrame", "true");
+
+		if (editContext.isEditPreview()) {
+			ctx.setClosePopup(true);
 		}
+
 		return null;
 	}
 

@@ -1325,11 +1325,6 @@ public class ContentContext {
 		this.parentURL = parentURL;
 	}
 
-	public boolean isPreviewEdit() {
-		RequestService requestService = RequestService.getInstance(request);
-		return StringHelper.isTrue(requestService.getParameter("previewEdit", null));
-	}
-
 	public boolean isClosePopup() {
 		return closePopup;
 	}

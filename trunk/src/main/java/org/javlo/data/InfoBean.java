@@ -6,6 +6,7 @@ import java.util.List;
 
 import javax.servlet.http.HttpServletRequest;
 
+import org.javlo.config.StaticConfig;
 import org.javlo.context.ContentContext;
 import org.javlo.context.EditContext;
 import org.javlo.context.GlobalContext;
@@ -62,6 +63,11 @@ public class InfoBean {
 	private MenuElement currentPage;
 	private ContentContext ctx;
 	private GlobalContext globalContext;
+
+	public String getCmsName() {
+		StaticConfig staticConfig = StaticConfig.getInstance(ctx.getRequest().getSession());
+		return staticConfig.getCmsName();
+	}
 
 	public String getCurrentAbsoluteURL() {
 		return URLHelper.createURL(ctx.getContextForAbsoluteURL());

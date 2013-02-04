@@ -120,8 +120,8 @@ for (int i=0; i<components.length; i++) {
 	}%>
  <div id="comp-<%=comp.getId()%>" class="<%=comp.getType()%><%if (components.length==1) {%> new<%}%>">
  <input type="hidden" name="components" value="<%=comp.getId()%>" />
- <div class="tabs component">
- 	  <div class="component-title"><a style="color: #<%=comp.getHexColor()%>" href="#" onclick="scrollToFirstQuarter(jQuery('#content-edit'),this); return false;"><%=comp.getComponentLabel(ctx, globalContext.getEditLanguage(request.getSession())) %></a></div>  	  
+ <div class="component-title"><a style="color: #<%=comp.getHexColor()%>" href="#" onclick="scrollToFirstQuarter(jQuery('#content-edit'),this); return false;"><%=comp.getComponentLabel(ctx, globalContext.getEditLanguage(request.getSession())) %></a></div>
+ <div class="tabs component"> 	    	  
       <ul>      	  	
           <li><a href="#tab1<%=inputSuffix%>">${i18n.edit["global.content"]}</a></li>
           <li><a href="#tab2<%=inputSuffix%>">${i18n.edit["global.config"]}</a></li>          
