@@ -274,6 +274,7 @@ li.line {
     font-family: Arial, Verdana, Helvetica, sans-serif;
     font-size:80px;
     font-weight:normal;
+    right: 60px;
 }
 
 .area-label:hover {
