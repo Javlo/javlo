@@ -797,6 +797,14 @@ public class Module {
 		return boxes.get(name);
 	}
 
+	public synchronized Box removeBox(String name) {
+		Box box = boxes.remove(name);
+		if (!mainBoxes.remove(box)) {
+			sideBoxes.remove(box);
+		}
+		return box;
+	}
+
 	public synchronized Box createMainBox(String name, String title, String renderer, boolean action) {
 		Box box = new Box(name, title, renderer, action);
 		mainBoxes.add(box);

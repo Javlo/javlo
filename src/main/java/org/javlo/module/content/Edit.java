@@ -734,7 +734,7 @@ public class Edit extends AbstractModuleAction {
 			if (elem != null && StringHelper.isTrue(requestService.getParameter("id-" + elem.getId(), null))) {
 				elem.performConfig(ctx);
 				elem.performEdit(ctx);
-				if (StringHelper.isTrue(requestService.getParameter("previewEdit", null))) {
+				if (ctx.isPreviewEdit()) {
 					componentContext.addNewComponent(elem);
 				}
 				if (!elem.isModify()) { // if elem not modified check modification via rawvalue
@@ -777,8 +777,8 @@ public class Edit extends AbstractModuleAction {
 			messageRepository.setGlobalMessageAndNotification(ctx, new GenericMessage(i18nAccess.getText("action.not-updated"), GenericMessage.ALERT));
 		}
 
-		if (requestService.getParameter("save", null) != null && StringHelper.isTrue((requestService.getParameter("previewEdit", null)))) {
-			ctx.getRequest().setAttribute("closeFrame", "true"); // close edit preview popup
+		if (requestService.getParameter("save", null) != null && ctx.isPreviewEdit()) {
+			ctx.setClosePopup(true);
 		}
 
 		return message;

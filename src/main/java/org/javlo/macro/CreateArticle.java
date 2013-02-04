@@ -7,8 +7,10 @@ import java.util.Map;
 
 import org.javlo.actions.IAction;
 import org.javlo.context.ContentContext;
+import org.javlo.context.EditContext;
 import org.javlo.helper.MacroHelper;
 import org.javlo.helper.StringHelper;
+import org.javlo.helper.URLHelper;
 import org.javlo.i18n.I18nAccess;
 import org.javlo.macro.core.IInteractiveMacro;
 import org.javlo.message.MessageRepository;
@@ -60,11 +62,13 @@ public class CreateArticle implements IInteractiveMacro, IAction {
 		return null;
 	}
 
-	public static String performCreate(RequestService rs, ContentContext ctx, MessageRepository messageRepository, I18nAccess i18nAccess) {
+	public static String performCreate(RequestService rs, EditContext editCtx, ContentContext ctx, MessageRepository messageRepository, I18nAccess i18nAccess) {
 		String pageName = rs.getParameter("root", null);
 		String date = rs.getParameter("date", null);
+		String message = null;
+		String newURL = null;
 		if (pageName == null || date == null) {
-			return "page or date not found.";
+			message = "page or date not found.";
 		}
 		try {
 			Date articleDate = StringHelper.parseDate(date);
@@ -81,19 +85,27 @@ public class CreateArticle implements IInteractiveMacro, IAction {
 					MenuElement newPage = MacroHelper.createArticlePageName(ctx, mountPage);
 					if (newPage != null) {
 						MacroHelper.addContentInPage(ctx, newPage, rootPage.getName().toLowerCase());
+						newURL = URLHelper.createURL(ctx.getContextWithOtherRenderMode(ContentContext.PREVIEW_MODE), newPage);
 					}
 				} else {
-					return "mount page not found : " + mountPageName;
+					message = "mount page not found : " + mountPageName;
 				}
 
 			} else {
-				return pageName + " not found.";
+				message = pageName + " not found.";
 			}
 			MacroModuleContext.getInstance(ctx.getRequest()).setActiveMacro(null);
+
+			if (editCtx.isEditPreview()) {
+				ctx.setClosePopup(true);
+				if (newURL != null) {
+					ctx.setParentURL(newURL);
+				}
+			}
 		} catch (Exception e) {
 			e.printStackTrace();
 			return e.getMessage();
 		}
-		return null;
+		return message;
 	}
 }
