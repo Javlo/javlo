@@ -440,8 +440,12 @@ public class InfoBean {
 		MenuElement page;
 		try {
 			page = ctx.getCurrentPage();
-			while (page.getParent() != null) {
-				page = page.getParent();
+			if (page.getParent() == null) {
+				return page.getPageBean(ctx);
+			} else {
+				while (page.getParent().getParent() != null) {
+					page = page.getParent();
+				}
 			}
 			return page.getPageBean(ctx);
 		} catch (Exception e) {
