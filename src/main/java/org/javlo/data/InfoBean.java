@@ -15,6 +15,7 @@ import org.javlo.helper.URLHelper;
 import org.javlo.message.GenericMessage;
 import org.javlo.message.MessageRepository;
 import org.javlo.navigation.MenuElement;
+import org.javlo.navigation.MenuElement.PageBean;
 import org.javlo.rendering.Device;
 import org.javlo.service.PersistenceService;
 import org.javlo.service.exception.ServiceException;
@@ -433,6 +434,21 @@ public class InfoBean {
 	public boolean isEditPreview() {
 		EditContext editContext = EditContext.getInstance(globalContext, ctx.getRequest().getSession());
 		return editContext.isEditPreview();
+	}
+
+	public PageBean getFirstLevelPage() {
+		MenuElement page;
+		try {
+			page = ctx.getCurrentPage();
+			while (page.getParent() != null) {
+				page = page.getParent();
+			}
+			return page.getPageBean(ctx);
+		} catch (Exception e) {
+			e.printStackTrace();
+			return null;
+		}
+
 	}
 
 }
