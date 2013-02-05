@@ -1,6 +1,7 @@
 package org.javlo.macro;
 
 import java.io.InputStream;
+import java.net.URL;
 import java.nio.charset.Charset;
 import java.util.Collection;
 import java.util.List;
@@ -12,7 +13,9 @@ import org.javlo.actions.IAction;
 import org.javlo.component.core.ComponentBean;
 import org.javlo.context.ContentContext;
 import org.javlo.helper.ContentHelper;
+import org.javlo.helper.NetHelper;
 import org.javlo.helper.ResourceHelper;
+import org.javlo.helper.StringHelper;
 import org.javlo.i18n.I18nAccess;
 import org.javlo.macro.core.IInteractiveMacro;
 import org.javlo.message.MessageRepository;
@@ -66,7 +69,7 @@ public class ImportContent implements IInteractiveMacro, IAction {
 
 				List<ComponentBean> newBeans = ContentHelper.createContentWithHTML(html, ctx.getRequestContentLanguage());
 
-				logger.info("import : " + newBeans.size() + " components.");
+				logger.info("import file : " + newBeans.size() + " components.");
 
 				String parentId = "0";
 				for (ComponentBean bean : newBeans) {
@@ -76,6 +79,20 @@ public class ImportContent implements IInteractiveMacro, IAction {
 				ResourceHelper.closeResource(in);
 			}
 		}
+
+		String url = rs.getParameter("url", "");
+		if (StringHelper.isURL(url)) {
+			String html = NetHelper.readPage(new URL(url));
+			List<ComponentBean> newBeans = ContentHelper.createContentWithHTML(html, ctx.getRequestContentLanguage());
+
+			logger.info("import url : " + newBeans.size() + " components.");
+
+			String parentId = "0";
+			for (ComponentBean bean : newBeans) {
+				parentId = content.createContent(ctx, bean, parentId, false);
+			}
+		}
+
 		ctx.getCurrentPage().releaseCache();
 
 		return null;
