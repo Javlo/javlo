@@ -18,6 +18,8 @@ public class AdminUserSecurity implements Serializable {
 
 	public static String CONTENT_ROLE = "content";
 
+	public static String DESIGN_ROLE = "design";
+
 	public static String MACRO_ROLE = "macro";
 
 	public static String LIGHT_INTERFACE_ROLE = "light-interface";
@@ -46,8 +48,6 @@ public class AdminUserSecurity implements Serializable {
 
 	private AdminUserSecurity() {
 
-		String[] allUserRightArray = { "adminlogin" };
-
 		/* CONTENT RIGHT */
 		String[] contentRights = { "delete", "changeview", "changetype", "remove", "copy", "paste", "insert", "update", "blockpage", "visible", "copypagestructure", "pastepage", "updateone", "macro", "insertmsg", "selectarea", "mkdir", "persistenceopen", "cancelcopy", "savemetastaticfile", "previewedit" };
 		Set<String> contentSet = new HashSet<String>(Arrays.asList(contentRights));
@@ -62,6 +62,11 @@ public class AdminUserSecurity implements Serializable {
 		String[] validationRights = { "validationpage" };
 		Set<String> validationSet = new HashSet<String>(Arrays.asList(validationRights));
 		rights.put(VALIDATION_ROLE, validationSet);
+
+		/* DESIGN RIGHT */
+		String[] designRights = { "changeview", "goEditTemplate", "changeRenderer", "validate", "browse", "delete" };
+		Set<String> designRightsSet = new HashSet<String>(Arrays.asList(designRights));
+		rights.put(DESIGN_ROLE, designRightsSet);
 
 	}
 
