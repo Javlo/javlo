@@ -13,9 +13,15 @@
 </div>
 
 <div class="line">
-	<label for="file">file</label>
+	<label for="file">upload file</label>
 	<input type="file" id="file" name="file" />
 </div>
+
+<div class="line">
+	<label for="url">file url</label>
+	<input type="text" id="url" name="url" />
+</div>
+
 <div class="action">
 	<input type="submit" value="import" />
 </div>
