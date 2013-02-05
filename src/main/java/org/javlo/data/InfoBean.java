@@ -430,4 +430,9 @@ public class InfoBean {
 		return ctx.getArea();
 	}
 
+	public boolean isEditPreview() {
+		EditContext editContext = EditContext.getInstance(globalContext, ctx.getRequest().getSession());
+		return editContext.isEditPreview();
+	}
+
 }
