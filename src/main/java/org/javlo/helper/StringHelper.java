@@ -1231,13 +1231,13 @@ public class StringHelper {
 	}
 
 	public static Date smartParseDate(String inDate) {
+		if (inDate == null) {
+			return null;
+		}
 		if (inDate.length() > "yyyy-MM-dd".length()) {
 			return smartParseDateTime(inDate);
 		}
 		Date outDate = null;
-		if (inDate == null) {
-			return null;
-		}
 		inDate = inDate.trim();
 		if (inDate.length() == 0) {
 			return null;
@@ -1274,13 +1274,13 @@ public class StringHelper {
 	}
 
 	public static Date smartParseDateTime(String inDate) {
+		if (inDate == null) {
+			return null;
+		}
 		if (inDate.length() <= "yyyy-MM-dd".length()) {
 			return smartParseDate(inDate);
 		}
 		Date outDate = null;
-		if (inDate == null) {
-			return null;
-		}
 		inDate = inDate.trim();
 		if (inDate.length() == 0) {
 			return null;
