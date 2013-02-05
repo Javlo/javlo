@@ -53,6 +53,8 @@ public class ExportComponents extends HttpServlet {
 			ctx.setArea(null);
 			ctx.setFree(true);
 
+			response.setContentType("text/csv");
+
 			String[] splittedPath = StringUtils.split(request.getPathInfo(), '/');
 			GlobalContext globalContext = GlobalContext.getInstance(ctx.getRequest());
 			String lg = globalContext.getDefaultLanguage();
