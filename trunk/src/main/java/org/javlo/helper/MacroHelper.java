@@ -5,7 +5,6 @@ import java.io.IOException;
 import java.io.PrintWriter;
 import java.io.StringWriter;
 import java.text.DateFormatSymbols;
-import java.text.SimpleDateFormat;
 import java.util.Arrays;
 import java.util.Calendar;
 import java.util.Collection;
@@ -804,9 +803,8 @@ public class MacroHelper {
 			if (mounthPage.getContent().length == 0) {
 				mounthPage.setVisible(true);
 				for (String lg : lgs) {
-					SimpleDateFormat mounthFormatDate = new SimpleDateFormat("MMMMMMMMMMMMMM", new Locale(lg));
-					String mounthName = mounthFormatDate.format(cal.getTime());
-					MacroHelper.addContent(lg, mounthPage, "0", Title.TYPE, mounthName);
+					String monthName = MacroHelper.getDisplayName(cal, Calendar.MONTH, MacroHelper.CALENDAR_LONG, new Locale(globalContext.getDefaultLanguage()));
+					MacroHelper.addContent(lg, mounthPage, "0", Title.TYPE, monthName);
 				}
 			}
 			cal.roll(Calendar.MONTH, false);
