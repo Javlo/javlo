@@ -771,10 +771,10 @@ public class Edit extends AbstractModuleAction {
 			NavigationService navigationService = NavigationService.getInstance(globalContext, ctx.getRequest().getSession());
 			navigationService.clearPage(ctx);
 
-			messageRepository.setGlobalMessageAndNotification(ctx, new GenericMessage(i18nAccess.getText("action.updated"), GenericMessage.INFO));
+			messageRepository.setGlobalMessage(new GenericMessage(i18nAccess.getText("action.updated"), GenericMessage.INFO));
 			autoPublish(ctx.getRequest(), ctx.getResponse());
 		} else {
-			messageRepository.setGlobalMessageAndNotification(ctx, new GenericMessage(i18nAccess.getText("action.not-updated"), GenericMessage.ALERT));
+			messageRepository.setGlobalMessage(new GenericMessage(i18nAccess.getText("action.not-updated"), GenericMessage.ALERT));
 		}
 
 		if (requestService.getParameter("save", null) != null && editContext.isEditPreview()) {
