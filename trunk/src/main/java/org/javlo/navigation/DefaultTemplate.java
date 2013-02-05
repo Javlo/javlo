@@ -234,7 +234,7 @@ public class DefaultTemplate extends Template {
 
 	@Override
 	protected String getImageFiltersRAW() {
-		return "standard;under-control-free";
+		return "standard;full;under-control-free";
 	}
 
 	@Override
