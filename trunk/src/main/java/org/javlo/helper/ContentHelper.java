@@ -5,6 +5,7 @@ import java.util.LinkedList;
 import java.util.List;
 
 import org.javlo.component.core.ComponentBean;
+import org.javlo.component.list.TextList;
 import org.javlo.component.text.Paragraph;
 import org.javlo.component.title.SubTitle;
 import org.javlo.component.title.Title;
@@ -47,6 +48,9 @@ public class ContentHelper {
 			} else if (tag.getName().equalsIgnoreCase("p")) {
 				String content = removeTag(tag.getInside(html));
 				newBean = new ComponentBean(Paragraph.TYPE, content, lg);
+			} else if (tag.getName().equalsIgnoreCase("ul")) {
+				String content = removeTag(tag.getInside(html));
+				newBean = new ComponentBean(TextList.TYPE, content, lg);
 			} else {
 				for (int i = 2; i < 8; i++) {
 					if (tag.getName().equalsIgnoreCase("h" + i)) {
