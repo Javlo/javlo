@@ -138,11 +138,13 @@ public class Video extends GlobalImage implements IAction, IVideo {
 		return i18nAccess.getText("action.add-video.add");
 	}
 
+	/*
+	 * @Override protected String getPreviewCode(ContentContext ctx) throws Exception { GlobalContext globalContext = GlobalContext.getInstance(ctx.getRequest()); I18nAccess i18nAccess = I18nAccess.getInstance(globalContext, ctx.getRequest().getSession()); return renderInline(ctx, "300", "235", true) + "<div class=\"preview-info\">" + i18nAccess.getText("content.video.latest-access") + " : " + getAccess(ctx, 30) + "</div>"; }
+	 */
+
 	@Override
 	protected String getPreviewCode(ContentContext ctx) throws Exception {
-		GlobalContext globalContext = GlobalContext.getInstance(ctx.getRequest());
-		I18nAccess i18nAccess = I18nAccess.getInstance(globalContext, ctx.getRequest().getSession());
-		return renderInline(ctx, "300", "235", true) + "<div class=\"preview-info\">" + i18nAccess.getText("content.video.latest-access") + " : " + getAccess(ctx, 30) + "</div>";
+		return "<a href=\"" + getURL(ctx) + "\"><img src=\"" + getPreviewURL(ctx, "thumbnails") + "\" /></a>";
 	}
 
 	@Override

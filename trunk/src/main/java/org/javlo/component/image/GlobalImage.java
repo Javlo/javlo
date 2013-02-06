@@ -5,6 +5,7 @@ package org.javlo.component.image;
 
 import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.net.URL;
 import java.text.ParseException;
 import java.util.ArrayList;
 import java.util.Collection;
@@ -22,6 +23,7 @@ import org.javlo.component.core.IReverseLinkComponent;
 import org.javlo.config.StaticConfig;
 import org.javlo.context.ContentContext;
 import org.javlo.context.GlobalContext;
+import org.javlo.helper.NetHelper;
 import org.javlo.helper.StringHelper;
 import org.javlo.helper.URLHelper;
 import org.javlo.helper.XHTMLHelper;
@@ -638,6 +640,15 @@ public class GlobalImage extends Image {
 		}
 		if (link != null) {
 			if (!link.equals(getLink())) {
+
+				try {
+					if (getTitle().trim().length() == 0 && URLHelper.isAbsoluteURL(link)) {
+						setTitle(NetHelper.getPageTitle(NetHelper.readPage(new URL(link))));
+					}
+				} catch (Exception e) {
+					e.printStackTrace();
+				}
+
 				setModify();
 				setLink(link);
 				storeProperties();
