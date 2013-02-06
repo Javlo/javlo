@@ -34,11 +34,6 @@ public class EmbedVideo extends Video implements IAction {
 	}
 
 	@Override
-	protected String getPreviewCode(ContentContext ctx) throws Exception {
-		return "<a href=\"" + getURL(ctx) + "\"><img src=\"" + getPreviewURL(ctx, "thumbnails") + "\" /></a>";
-	}
-
-	@Override
 	public String getViewXHTMLCode(ContentContext ctx) throws Exception {
 		return getEmbedCode();
 	}
