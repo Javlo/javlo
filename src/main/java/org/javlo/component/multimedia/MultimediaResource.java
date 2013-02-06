@@ -238,4 +238,25 @@ public class MultimediaResource {
 	public void setFullDescription(String fullDescription) {
 		this.fullDescription = fullDescription;
 	}
+
+	/**
+	 * return type : unknow, html, image, video
+	 * 
+	 * @return
+	 */
+	public String getType() {
+		String url = getURL();
+		if (url == null) {
+			return "unknow";
+		}
+		if (StringHelper.isImage(url)) {
+			return "image";
+		} else if (StringHelper.isURL(url)) {
+			return "html";
+		} else if (StringHelper.isVideo(url)) {
+			return "video";
+		} else {
+			return "unknow";
+		}
+	}
 }

@@ -419,17 +419,9 @@ public class Edit extends AbstractModuleAction {
 
 		ctx.getRequest().setAttribute("components", listWithoutEmptyTitle);
 
-		Module currentModule = ModulesContext.getInstance(ctx.getRequest().getSession(), globalContext).getCurrentModule();
-		Box componentBox = currentModule.getBox("components");
-		if (componentBox != null) {
-			I18nAccess i18nAccess = I18nAccess.getInstance(ctx.getRequest());
-			IContentVisualComponent comp = ComponentFactory.getComponentWithType(ctx, editCtx.getActiveType());
-			if (comp != null) {
-				componentBox.setTitle(i18nAccess.getText("components.title", new String[][] { { "component", comp.getComponentLabel(ctx, globalContext.getEditLanguage(ctx.getRequest().getSession())) } }));
-			} else {
-				componentBox.setTitle(i18nAccess.getText("components.title", new String[][] { { "component", "?" } }));
-			}
-		}
+		/*
+		 * Module currentModule = ModulesContext.getInstance(ctx.getRequest().getSession(), globalContext).getCurrentModule(); Box componentBox = currentModule.getBox("components"); if (componentBox != null) { I18nAccess i18nAccess = I18nAccess.getInstance(ctx.getRequest()); IContentVisualComponent comp = ComponentFactory.getComponentWithType(ctx, editCtx.getActiveType()); if (comp != null) { componentBox.setTitle(i18nAccess.getText("components.title", new String[][] { { "component", comp.getComponentLabel(ctx, globalContext.getEditLanguage(ctx.getRequest().getSession())) } })); } else { componentBox.setTitle(i18nAccess.getText("components.title", new String[][] { { "component", "?" } })); } }
+		 */
 		// }
 	}
 
@@ -633,7 +625,6 @@ public class Edit extends AbstractModuleAction {
 			newType = i18nAccess.getText("content." + newType, newType);
 			String msg = i18nAccess.getText("content.new-type", new String[][] { { "type", newType } });
 			MessageRepository.getInstance(ctx).setGlobalMessage(new GenericMessage(msg, GenericMessage.INFO));
-
 			if (requestService.getParameter("comp_id", null) != null) {
 				prepareUpdateInsertLine(ctx);
 				return performEditpreview(requestService, ctx, componentContext, editCtx, ContentService.getInstance(globalContext), ModulesContext.getInstance(ctx.getRequest().getSession(), globalContext), modCtx);
