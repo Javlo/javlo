@@ -59,6 +59,7 @@ org.javlo.component.links.SmartLink
 org.javlo.component.image.GlobalImage
 org.javlo.component.multimedia.Multimedia
 org.javlo.component.multimedia.Video
+org.javlo.component.multimedia.EmbedVideo
 org.javlo.component.multimedia.AllImagesGallery
 
 --content.title.container

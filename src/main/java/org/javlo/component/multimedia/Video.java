@@ -113,11 +113,6 @@ public class Video extends GlobalImage implements IAction, IVideo {
 	}
 
 	@Override
-	protected boolean isDisplayAllBouton() {
-		return false;
-	}
-
-	@Override
 	public String getFileDirectory(ContentContext ctx) {
 		String folder;
 		StaticConfig staticConfig = StaticConfig.getInstance(ctx.getRequest().getSession());
@@ -162,9 +157,37 @@ public class Video extends GlobalImage implements IAction, IVideo {
 	}
 
 	@Override
+	public String getRenderer(ContentContext ctx) {
+		return null;
+	}
+
+	@Override
 	public String getResourceURL(ContentContext ctx, String fileLink) {
 		StaticConfig staticConfig = StaticConfig.getInstance(ctx.getRequest().getSession());
 		return URLHelper.mergePath(staticConfig.getVideoFolder(), URLHelper.mergePath(getDirSelected(), fileLink));
+	}
+
+	private String getYoutubePreview(ContentContext ctx, String filter) throws Exception {
+		String videoCode = URLHelper.extractParameterFromURL(getLink()).get("v");
+
+		if (videoCode != null) {
+			GlobalContext globalContext = GlobalContext.getInstance(ctx.getRequest());
+			StaticConfig staticConfig = StaticConfig.getInstance(ctx.getRequest().getSession());
+			String fileName = "yt_" + videoCode.toLowerCase() + ".jpg";
+			File imageFile = new File(URLHelper.mergePath(globalContext.getDataFolder(), staticConfig.getImageFolder(), "youtube", fileName));
+			if (!imageFile.getParentFile().exists()) {
+				imageFile.getParentFile().mkdirs();
+			}
+			if (!imageFile.exists()) {
+				imageFile.createNewFile();
+				URL url = new URL("http://img.youtube.com/vi/" + videoCode + "/0.jpg");
+				FileOutputStream out = new FileOutputStream(imageFile);
+				NetHelper.readPage(url, out);
+				ResourceHelper.closeResource(out);
+			}
+			return URLHelper.createTransformURL(ctx, URLHelper.mergePath(staticConfig.getImageFolder(), "youtube", fileName), getConfig(ctx).getProperty("image.filter", "video"));
+		}
+		return null;
 	}
 
 	@Override
@@ -173,25 +196,8 @@ public class Video extends GlobalImage implements IAction, IVideo {
 			String imageLink = getResourceURL(ctx, getDecorationImage());
 			return URLHelper.createTransformURL(ctx, imageLink, getConfig(ctx).getProperty("image.filter", "video"));
 		} else if (getLink() != null && getLink().toLowerCase().contains("youtube")) {
-			String videoCode = URLHelper.extractParameterFromURL(getLink()).get("v");
 			try {
-				if (videoCode != null) {
-					GlobalContext globalContext = GlobalContext.getInstance(ctx.getRequest());
-					StaticConfig staticConfig = StaticConfig.getInstance(ctx.getRequest().getSession());
-					String fileName = "yt_" + videoCode.toLowerCase() + ".jpg";
-					File imageFile = new File(URLHelper.mergePath(globalContext.getDataFolder(), staticConfig.getImageFolder(), "youtube", fileName));
-					if (!imageFile.getParentFile().exists()) {
-						imageFile.getParentFile().mkdirs();
-					}
-					if (!imageFile.exists()) {
-						imageFile.createNewFile();
-						URL url = new URL("http://img.youtube.com/vi/" + videoCode + "/0.jpg");
-						FileOutputStream out = new FileOutputStream(imageFile);
-						NetHelper.readPage(url, out);
-						ResourceHelper.closeResource(out);
-					}
-					return URLHelper.createTransformURL(ctx, URLHelper.mergePath(staticConfig.getImageFolder(), "youtube", fileName), getConfig(ctx).getProperty("image.filter", "video"));
-				}
+				return getYoutubePreview(ctx, null);
 			} catch (Exception e) {
 				logger.warning(e.getMessage());
 				e.printStackTrace();
@@ -421,13 +427,20 @@ public class Video extends GlobalImage implements IAction, IVideo {
 		if (filter == null) {
 			filter = getImageFilter(ctx);
 		}
-		String imageLink = getResourceURL(ctx, getDecorationImage());
 		try {
-			return URLHelper.createTransformURL(ctx, imageLink, filter);
+			String decoImage = getDecorationImage();
+			if (decoImage != null && decoImage.trim().length() > 0) {
+				String imageLink = getResourceURL(ctx, getDecorationImage());
+				return URLHelper.createTransformURL(ctx, imageLink, filter);
+			} else if (getLink() != null && getLink().toLowerCase().contains("youtube")) {
+				return getYoutubePreview(ctx, null);
+			}
 		} catch (Exception e) {
+			logger.warning(e.getMessage());
 			e.printStackTrace();
-			return null;
 		}
+
+		return null;
 	}
 
 	@Override
