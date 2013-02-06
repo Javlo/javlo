@@ -74,6 +74,8 @@ public abstract class AbstractFileComponent extends AbstractVisualComponent impl
 
 	public static final String DESCRIPTION_KEY = "description";
 
+	public static final String EMBED_CODE_KEY = "embed-code";
+
 	protected static final String REVERSE_LINK_KEY = "reverse-lnk";
 
 	protected static final String ENCODING_KEY = "encoding";
@@ -205,8 +207,20 @@ public abstract class AbstractFileComponent extends AbstractVisualComponent impl
 		return properties.getProperty(DESCRIPTION_KEY);
 	}
 
+	public String getEmbedCode() {
+		return properties.getProperty(EMBED_CODE_KEY, "");
+	}
+
+	public void setEmbedCode(String embedCode) {
+		properties.setProperty(EMBED_CODE_KEY, embedCode);
+	}
+
 	public String getDescriptionName() {
 		return getId() + ID_SEPARATOR + "description";
+	}
+
+	public String getEmbedCodeName() {
+		return getId() + ID_SEPARATOR + "embed-code";
 	}
 
 	protected String getDirInputName() {
@@ -327,7 +341,7 @@ public abstract class AbstractFileComponent extends AbstractVisualComponent impl
 		if (isWithDescription()) {
 			String descriptionTitle = i18nAccess.getText("component.link.description");
 			finalCode.append("<div class=\"description\">");
-			finalCode.append("<label style=\"margin-bottom: 3px;\" for=\"" + getDescriptionName() + "\">");
+			finalCode.append("<label style=\"margin-bottom: 3px;\" for=\"" + getEmbedCode() + "\">");
 			finalCode.append(descriptionTitle);
 			finalCode.append("</label>");
 			finalCode.append("<textarea id=\"" + getDescriptionName() + "\" name=\"" + getDescriptionName() + "\">");
@@ -431,6 +445,11 @@ public abstract class AbstractFileComponent extends AbstractVisualComponent impl
 	protected String getImageDecorativeTitle(ContentContext ctx) throws FileNotFoundException, IOException {
 		I18nAccess i18nAccess = I18nAccess.getInstance(ctx.getRequest());
 		return i18nAccess.getText("action.add-image.add");
+	}
+
+	protected String getImageSelectTitle(ContentContext ctx) throws FileNotFoundException, IOException {
+		I18nAccess i18nAccess = I18nAccess.getInstance(ctx.getRequest());
+		return i18nAccess.getText("global.select");
 	}
 
 	public String getJSOnChange(ContentContext ctx) {

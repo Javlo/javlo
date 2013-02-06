@@ -61,8 +61,6 @@ public class GlobalImage extends Image {
 	private static final String RAW_FILTER = "raw";
 	private static final String HIDDEN_FILTER = "hidden";
 
-	private static final int MAX_PICTURE = 12;
-
 	private static final String LOCATION = "location";
 
 	private static final String TITLE = "title";
@@ -110,23 +108,30 @@ public class GlobalImage extends Image {
 		properties.setProperty("translated", id);
 	}
 
-	protected boolean isDisplayAllBouton() {
-		return false;
-	}
-
 	protected String getDefaultFilter() {
 		return "standard";
 	}
 
 	@Override
+	public String getPreviewURL(ContentContext ctx, String filter) {
+		try {
+			return URLHelper.createTransformURL(ctx, getPage(), getResourceURL(ctx, getFileName()), filter);
+		} catch (Exception e) {
+			e.printStackTrace();
+			return null;
+		}
+	}
+
+	@Override
 	public void prepareView(ContentContext ctx) throws Exception {
 		super.prepareView(ctx);
-		if (getDecorationImage() != null && getDecorationImage().trim().length() > 0) {
+		String decoImage = getDecorationImage();
+		if (decoImage != null && decoImage.trim().length() > 0) {
 			String imageLink = getResourceURL(ctx, getDecorationImage());
 			String imageFilter = getConfig(ctx).getProperty("image.filter", getDefaultFilter());
 			ctx.getRequest().setAttribute("image", URLHelper.createTransformURL(ctx, imageLink, imageFilter));
 		}
-		ctx.getRequest().setAttribute("previewURL", URLHelper.createTransformURL(ctx, getPage(), getResourceURL(ctx, getFileName()), getFilter(ctx)));
+		ctx.getRequest().setAttribute("previewURL", getPreviewURL(ctx, getFilter(ctx)));
 		ctx.getRequest().setAttribute("media", this);
 		ctx.getRequest().setAttribute("shortDate", StringHelper.renderShortDate(ctx, getDate()));
 	}
@@ -180,9 +185,11 @@ public class GlobalImage extends Image {
 			finalCode.append("</fieldset>");
 		}
 
-		finalCode.append("<div style=\"margin-top: 5px; margin-bottom: 5px;\"><label style=\"float: left; width: 160px; height: 16px;\" for=\"img_link_" + getId() + "\">");
-		finalCode.append(getImageLinkTitle(ctx));
-		finalCode.append(" : </label><input id=\"img_link_" + getId() + "\" name=\"" + getLinkXHTMLInputName() + "\" type=\"text\" value=\"" + getLink() + "\"/></div>");
+		if (isLink()) {
+			finalCode.append("<div style=\"margin-top: 5px; margin-bottom: 5px;\"><label style=\"float: left; width: 160px; height: 16px;\" for=\"img_link_" + getId() + "\">");
+			finalCode.append(getImageLinkTitle(ctx));
+			finalCode.append(" : </label><input id=\"img_link_" + getId() + "\" name=\"" + getLinkXHTMLInputName() + "\" type=\"text\" value=\"" + getLink() + "\"/></div>");
+		}
 
 		finalCode.append("<div style=\"margin-top: 5px; margin-bottom: 5px;\"><label style=\"float: left; width: 160px; height: 16px;\" for=\"new_dir_" + getId() + "\">");
 		finalCode.append(getNewDirLabelTitle(ctx));
@@ -239,7 +246,7 @@ public class GlobalImage extends Image {
 		}
 
 		String[] fileList = getFileList(getFileDirectory(ctx), getFileFilter());
-		if (fileList.length > 0) {
+		if (fileList.length > 0 && isMutlimediaResource()) {
 
 			finalCode.append("<div class=\"line\"><label for=\"" + getSelectXHTMLInputName() + "\">" + getImageChangeTitle(ctx) + " : </label>");
 
@@ -249,16 +256,6 @@ public class GlobalImage extends Image {
 
 			finalCode.append(XHTMLHelper.getInputOneSelect(getSelectXHTMLInputName(), fileListBlanck, getFileName(), getJSOnChange(ctx), true));
 			finalCode.append("</div>");
-
-			if (fileList.length > MAX_PICTURE && isDisplayAllBouton()) {
-				finalCode.append("<div class=\"line\">");
-				Map<String, String> ajaxParams = new HashMap<String, String>();
-				ajaxParams.put("webaction", "showallpreview");
-				ajaxParams.put("comp-id", getId());
-				String ajaxURL = URLHelper.createAjaxURL(ctx, ajaxParams);
-				finalCode.append("<input type=\"button\" value=\"" + i18nAccess.getText("content.image.show-all") + "\" onclick=\"showAllPictures('" + getPreviewZoneId() + "' , '" + ajaxURL + "');\" />");
-				finalCode.append("</div>");
-			}
 		}
 
 		if (canUpload()) {
@@ -270,12 +267,13 @@ public class GlobalImage extends Image {
 			finalCode.append("<div class=\"line deco-image\">");
 			finalCode.append("<label for=\"" + getDecoImageFileXHTMLInputName() + "\">" + getImageDecorativeTitle(ctx) + " :</label>");
 			finalCode.append("<input  id=\"" + getDecoImageFileXHTMLInputName() + "\" name=\"" + getDecoImageFileXHTMLInputName() + "\" type=\"file\"/>");
-			finalCode.append("</div><div class=\"line\">");
+			finalCode.append("</div>");
 
 			fileList = getFileList(getFileDirectory(ctx), getDecorationFilter());
 			if (fileList.length > 0) {
+				finalCode.append("<div class=\"line\">");
 				finalCode.append("<label for=\"" + getDecoImageXHTMLInputName() + "\">");
-				finalCode.append(getImageDecorativeTitle(ctx));
+				finalCode.append(getImageSelectTitle(ctx));
 				finalCode.append("</label>");
 
 				String[] fileListBlanck = new String[fileList.length + 1];
@@ -301,6 +299,18 @@ public class GlobalImage extends Image {
 			finalCode.append("</textarea></div>");
 		}
 
+		if (isEmbedCode()) {
+			// String descriptionTitle = i18nAccess.getText("component.link.description");
+			finalCode.append("<div class=\"embed\">");
+			finalCode.append("<label style=\"margin-bottom: 3px;\" for=\"" + getEmbedCodeName() + "\">");
+			finalCode.append("embed code");
+			finalCode.append("</label>");
+			finalCode.append("<textarea id=\"" + getEmbedCodeName() + "\" name=\"" + getEmbedCodeName() + "\">");
+			finalCode.append(getEmbedCode());
+			finalCode.append("</textarea></div>");
+
+		}
+
 		finalCode.append("</td></tr></table>");
 
 		// validation
@@ -311,6 +321,18 @@ public class GlobalImage extends Image {
 		}
 
 		return finalCode.toString();
+	}
+
+	protected boolean isMutlimediaResource() {
+		return true;
+	}
+
+	protected boolean isLink() {
+		return true;
+	}
+
+	protected boolean isEmbedCode() {
+		return false;
 	}
 
 	public String getTitle() {
@@ -462,11 +484,6 @@ public class GlobalImage extends Image {
 	}
 
 	@Override
-	protected int getMaxPreviewImages() {
-		return MAX_PICTURE;
-	}
-
-	@Override
 	public GenericMessage getMessage() {
 		return msg;
 	}
@@ -577,6 +594,7 @@ public class GlobalImage extends Image {
 		String location = requestService.getParameter(getInputNameLocation(), null);
 		String title = requestService.getParameter(getInputNameTitle(), null);
 		String translationOf = requestService.getParameter(getInputNameTranslation(), null);
+		String embedCode = requestService.getParameter(getEmbedCodeName(), null);
 
 		if (title != null) {
 			if (!title.equals(getTitle())) {
@@ -630,6 +648,13 @@ public class GlobalImage extends Image {
 				setModify();
 				setFilter(filter);
 				storeProperties();
+			}
+		}
+		if (embedCode != null) {
+			if (embedCode != getEmbedCode()) {
+				setModify();
+				storeProperties();
+				setEmbedCode(embedCode);
 			}
 		}
 

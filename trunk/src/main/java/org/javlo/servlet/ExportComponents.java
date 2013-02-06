@@ -19,6 +19,8 @@ import org.javlo.component.dynamic.DynamicComponent;
 import org.javlo.context.ContentContext;
 import org.javlo.context.GlobalContext;
 import org.javlo.fields.Field;
+import org.javlo.helper.ResourceHelper;
+import org.javlo.helper.StringHelper;
 import org.javlo.service.ContentService;
 import org.javlo.service.RequestService;
 import org.javlo.utils.CSVFactory;
@@ -39,16 +41,27 @@ public class ExportComponents extends HttpServlet {
 
 	private void process(HttpServletRequest request, HttpServletResponse response) throws ServletException {
 
-		RequestService requestService = RequestService.getInstance(request);
-
-		String componentType = request.getPathInfo();
-		if (!componentType.toLowerCase().endsWith(".csv")) {
-			logger.warning("bad format : " + componentType);
-			response.setStatus(HttpServletResponse.SC_NOT_FOUND);
-			return;
-		}
+		RequestService rs = RequestService.getInstance(request);
 
 		try {
+
+			String componentType = request.getPathInfo();
+			if (!componentType.toLowerCase().endsWith(".csv")) {
+				if (componentType.toLowerCase().endsWith(".html")) {
+					ContentContext ctx = ContentContext.getContentContext(request, response, false);
+					ctx.setRenderMode(ContentContext.VIEW_MODE);
+					String compId = StringHelper.getFileNameWithoutExtension(StringHelper.getFileNameFromPath(request.getRequestURI()));
+					ContentService content = ContentService.getInstance(ctx.getRequest());
+					IContentVisualComponent comp = content.getComponent(ctx, compId);
+					String xhtml = comp.getXHTMLCode(ctx);
+					ResourceHelper.writeStringToStream(xhtml, response.getOutputStream());
+				} else {
+					logger.warning("bad format : " + componentType);
+					response.setStatus(HttpServletResponse.SC_NOT_FOUND);
+					return;
+				}
+			}
+
 			ContentContext ctx = ContentContext.getContentContext(request, response, false);
 			ctx.setArea(null);
 			ctx.setFree(true);
@@ -79,7 +92,7 @@ public class ExportComponents extends HttpServlet {
 
 			ContentService content = ContentService.getInstance(request);
 
-			BufferedWriter out = new BufferedWriter(new OutputStreamWriter(response.getOutputStream(), Charset.forName(requestService.getParameter("encoding", ContentContext.CHARACTER_ENCODING))));
+			BufferedWriter out = new BufferedWriter(new OutputStreamWriter(response.getOutputStream(), Charset.forName(rs.getParameter("encoding", ContentContext.CHARACTER_ENCODING))));
 
 			List<IContentVisualComponent> components = content.getAllContent(ctx);
 			boolean firstLine = true;
@@ -99,7 +112,7 @@ public class ExportComponents extends HttpServlet {
 							for (Field field : fields) {
 								values.add(field.getName());
 							}
-							String csvLine = CSVFactory.exportLine(values, requestService.getParameter("separator", ","));
+							String csvLine = CSVFactory.exportLine(values, rs.getParameter("separator", ","));
 							out.append(csvLine);
 							out.newLine();
 						}
@@ -113,7 +126,7 @@ public class ExportComponents extends HttpServlet {
 						for (Field field : fields) {
 							values.add(field.getValue(new Locale(lg)));
 						}
-						out.append(CSVFactory.exportLine(values, requestService.getParameter("separator", ",")));
+						out.append(CSVFactory.exportLine(values, rs.getParameter("separator", ",")));
 						out.newLine();
 					} else {
 						if (firstLine) {
@@ -124,7 +137,7 @@ public class ExportComponents extends HttpServlet {
 							values.add("value");
 							values.add("style");
 							values.add("area");
-							String csvLine = CSVFactory.exportLine(values, requestService.getParameter("separator", ","));
+							String csvLine = CSVFactory.exportLine(values, rs.getParameter("separator", ","));
 							out.append(csvLine);
 							out.newLine();
 						}
@@ -134,7 +147,7 @@ public class ExportComponents extends HttpServlet {
 						values.add(comp.getValue(ctx));
 						values.add(comp.getStyle(ctx));
 						values.add(comp.getArea());
-						String csvLine = CSVFactory.exportLine(values, requestService.getParameter("separator", ","));
+						String csvLine = CSVFactory.exportLine(values, rs.getParameter("separator", ","));
 						out.append(csvLine);
 						out.newLine();
 					}
