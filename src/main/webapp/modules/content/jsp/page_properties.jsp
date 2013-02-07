@@ -83,7 +83,7 @@
 <div class="line">
 	<label>${i18n.edit['item.short-url']}</label>
 	<c:if test="${!page.allreadyShortURL}">
-		<input type="submit" id="shorturl-url-creator" name="shorturl" value="${i18n.edit['edit.action.short-url']}" />
+		<input class="action-button" type="submit" id="shorturl-url-creator" name="shorturl" value="${i18n.edit['edit.action.short-url']}" />
 	</c:if>
 	<c:if test="${page.allreadyShortURL}">
 		<span><a href="${info.shortURL}">${page.shortURL}</a></span>

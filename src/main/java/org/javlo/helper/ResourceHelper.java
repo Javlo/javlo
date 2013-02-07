@@ -3,7 +3,10 @@
  */
 package org.javlo.helper;
 
+import java.beans.XMLDecoder;
+import java.beans.XMLEncoder;
 import java.io.BufferedReader;
+import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.Closeable;
 import java.io.File;
@@ -18,6 +21,8 @@ import java.io.InputStreamReader;
 import java.io.OutputStream;
 import java.io.PrintStream;
 import java.io.RandomAccessFile;
+import java.io.Serializable;
+import java.io.UnsupportedEncodingException;
 import java.net.URL;
 import java.nio.charset.Charset;
 import java.util.ArrayList;
@@ -54,6 +59,8 @@ import org.javlo.helper.Comparator.FileComparator;
 import org.javlo.module.core.Module;
 import org.javlo.module.core.ModuleException;
 import org.javlo.module.core.ModulesContext;
+import org.javlo.module.ticket.Comment;
+import org.javlo.module.ticket.TicketBean;
 import org.javlo.service.resource.Resource;
 import org.javlo.user.IUserFactory;
 import org.javlo.user.UserFactory;
@@ -63,9 +70,6 @@ import org.javlo.ztatic.StaticInfo;
 import org.pdfbox.pdmodel.PDDocument;
 import org.pdfbox.util.PDFTextStripper;
 
-/**
- * @author pvandermaesen
- */
 public class ResourceHelper {
 
 	/**
@@ -1058,4 +1062,42 @@ public class ResourceHelper {
 		return insideModulePath;
 	}
 
+	public static Serializable loadBeanFromXML(String xml) {
+		Serializable obj;
+		InputStream in;
+		try {
+			in = new ByteArrayInputStream(xml.getBytes(ContentContext.CHARACTER_ENCODING));
+			XMLDecoder decoder = new XMLDecoder(in);
+			obj = (Serializable) decoder.readObject();
+			return obj;
+		} catch (UnsupportedEncodingException e) {
+			e.printStackTrace();
+		}
+		return null;
+	}
+
+	public static String storeBeanFromXML(Serializable bean) {
+		ByteArrayOutputStream out = new ByteArrayOutputStream();
+		XMLEncoder encoder = new XMLEncoder(out, ContentContext.CHARACTER_ENCODING, false, 0);
+		encoder.writeObject(bean);
+		encoder.flush();
+		encoder.close();
+		try {
+			return new String(out.toByteArray(), ContentContext.CHARACTER_ENCODING);
+		} catch (UnsupportedEncodingException e) {
+			e.printStackTrace();
+		}
+		return null;
+	}
+
+	public static void main(String[] args) {
+		TicketBean bean = new TicketBean();
+		bean.setAuthors("patrick");
+		bean.addComments(new Comment("patrick", "coucou"));
+		bean.addComments(new Comment("catherine", "coucou bis"));
+		String xml = storeBeanFromXML(bean);
+		System.out.println(xml);
+		TicketBean bean2 = (TicketBean) loadBeanFromXML(xml);
+		System.out.println("***** ResourceHelper.main : authors = " + bean2.getAuthors()); // TODO: remove debug trace
+	}
 }
