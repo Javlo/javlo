@@ -20,7 +20,7 @@ import org.javlo.helper.URLHelper;
 public class RemoteResourceFactory extends AbstractResourceFactory {
 
 	private GlobalContext globalContext;
-	private Map<String, RemoteResourceList> remoteResourcesCache = new HashMap<String, RemoteResourceList>();
+	private final Map<String, RemoteResourceList> remoteResourcesCache = new HashMap<String, RemoteResourceList>();
 	private List<String> typesCache;
 	private Map<String, List<String>> categoriesCache = new HashMap<String, List<String>>();
 	private static Logger logger = Logger.getLogger(RemoteResourceFactory.class.getName());
@@ -62,9 +62,8 @@ public class RemoteResourceFactory extends AbstractResourceFactory {
 		String key = type + '-' + category;
 		RemoteResourceList remoteResources = remoteResourcesCache.get(key);
 		if (remoteResources == null) {
-			System.out.println("***** RemoteResourceFactory.getResources : key = "+key); //TODO: remove debug trace
-			remoteResources = (RemoteResourceList) loadURI('/' + URLEncoder.encode(type,ContentContext.CHARACTER_ENCODING) + '/' + URLEncoder.encode(category,ContentContext.CHARACTER_ENCODING) + ".xml");
-			remoteResourcesCache.put(key, remoteResources);			
+			remoteResources = (RemoteResourceList) loadURI('/' + URLEncoder.encode(type, ContentContext.CHARACTER_ENCODING) + '/' + URLEncoder.encode(category, ContentContext.CHARACTER_ENCODING) + ".xml");
+			remoteResourcesCache.put(key, remoteResources);
 		}
 		return remoteResources;
 	}
@@ -122,5 +121,5 @@ public class RemoteResourceFactory extends AbstractResourceFactory {
 		typesCache = null;
 		categoriesCache = null;
 	}
-	
+
 }

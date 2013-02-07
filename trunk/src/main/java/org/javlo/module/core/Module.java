@@ -999,4 +999,10 @@ public class Module {
 		return URLHelper.mergePath(this.path, path);
 	}
 
+	public void addMainBox(String name, String title, String renderer, boolean action) {
+		Box box = new Box(name, title, renderer, action);
+		mainBoxes.add(box);
+		boxes.put(name, box);
+	}
+
 }
