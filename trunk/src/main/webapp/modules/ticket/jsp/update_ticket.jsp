@@ -7,7 +7,7 @@
 		<div class="line">
 			<label for="priority">priority : </label>
 			<select id="priority" name="priority">
-				<option value="1" ${ticket.priority == 1?'selected="selected"':''}>status</option>
+				<option value="1" ${ticket.priority == 1?'selected="selected"':''}>low</option>
 				<option value="2" ${ticket.priority == 2?'selected="selected"':''}>middle</option>
 				<option value="3" ${ticket.priority == 3?'selected="selected"':''}>high</option>
 			</select>
