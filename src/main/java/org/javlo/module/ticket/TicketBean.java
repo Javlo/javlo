@@ -23,6 +23,7 @@ public class TicketBean implements Serializable {
 	private String authors;
 	private String latestEditor;
 	private String category;
+	private boolean read = false;
 	private Date creationDate = new Date();
 	private Date lastUpdateDate = new Date();
 	private int priority = 1;
@@ -146,5 +147,13 @@ public class TicketBean implements Serializable {
 
 	public String getLastUpdateDateLabel() {
 		return StringHelper.renderSortableTime(getLastUpdateDate());
+	}
+
+	public boolean isRead() {
+		return read;
+	}
+
+	public void setRead(boolean read) {
+		this.read = read;
 	}
 }

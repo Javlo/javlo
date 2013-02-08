@@ -4,8 +4,7 @@
 
 <table cellpadding="0" cellspacing="0" border="0" class="dyntable" id="notes">
  <thead>
-     <tr>
-       <th class="head0">id</th>
+     <tr>       
        <th class="head1">title</th>          
        <th class="head0">authors</th>           
        <th class="head1">priority</th>
@@ -15,8 +14,7 @@
        <th class="head1">context</th>
      </tr>
 </thead>
-<colgroup>
-    <col class="con0" />
+<colgroup>    
     <col class="con1" />
     <col class="con0" />
     <col class="con1" />
@@ -27,9 +25,8 @@
 </colgroup>
 <tbody> 
  <c:forEach var="ticket" items="${tickets}">
- <tr class="gradeX">
-	 <td class="con0"><a href="${info.currentURL}?id=${ticket.id}">${ticket.id}</a></td>
-     <td class="con1">${ticket.title}</td>
+ <tr class="gradeX">	 
+     <td class="con1"><a class="${ticket.read?'read':'unread'}" href="${info.currentURL}?id=${ticket.id}">${ticket.title}</a></td>
      <td class="con0">${ticket.authors}</td>	 
      <td class="con1">${ticket.priority}</td>
      <td class="con0">${ticket.status}</td>
@@ -40,8 +37,7 @@
 </c:forEach>
 </tbody>
 <tfoot>
-   <tr>
-       <th class="head0">id</th>
+   <tr>       
        <th class="head1">title</th>          
        <th class="head0">authors</th>           
        <th class="head1">priority</th>
@@ -59,7 +55,6 @@ jQuery(document).ready(function() {
 		 "sPaginationType": "full_numbers",
 		 "aaSorting": [[ 0, "desc" ]],
 		 "aoColumns": [
-		               null,
 		               null,
 		               null,
 		               null,
