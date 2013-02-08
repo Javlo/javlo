@@ -65,9 +65,9 @@ public class TicketAction extends AbstractModuleAction {
 		Map<String, TicketBean> myTickets = getMyTicket(ctx);
 		ctx.getRequest().setAttribute("tickets", myTickets.values());
 
-		if (rs.getParameter("id", "").trim().length() > 0 && rs.getParameter("back", null) == null) {
-			TicketBean ticket = myTickets.get(rs.getParameter("id", null));
-			if (ticket.getAuthors().equals(ctx.getCurrentEditUser().getLogin())) {
+		TicketBean ticket = myTickets.get(rs.getParameter("id", null));
+		if (ticket != null && rs.getParameter("back", null) == null) {
+			if (ticket != null && ticket.getAuthors().equals(ctx.getCurrentEditUser().getLogin())) {
 				ticket.setRead(true);
 			}
 			ctx.getRequest().setAttribute("ticket", ticket);
