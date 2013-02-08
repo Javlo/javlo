@@ -41,4 +41,9 @@ public class CopyCurrentPageToOtherLanguages extends AbstractMacro {
 		return null;
 	}
 
+	@Override
+	public boolean isPreview() {
+		return true;
+	}
+
 }

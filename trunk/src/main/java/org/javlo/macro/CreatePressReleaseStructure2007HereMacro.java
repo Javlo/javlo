@@ -19,17 +19,18 @@ import org.javlo.message.MessageRepository;
 import org.javlo.navigation.MenuElement;
 import org.javlo.service.PersistenceService;
 
-
 public class CreatePressReleaseStructure2007HereMacro extends AbstractMacro {
 
 	public int getYear() {
 		return 2007;
 	}
 
+	@Override
 	public String getName() {
 		return "create-pr-structure-here-" + getYear();
 	}
 
+	@Override
 	public String perform(ContentContext ctx, Map<String, Object> params) throws Exception {
 
 		GlobalContext globalContext = GlobalContext.getInstance(ctx.getRequest());
@@ -47,14 +48,14 @@ public class CreatePressReleaseStructure2007HereMacro extends AbstractMacro {
 			Calendar cal = GregorianCalendar.getInstance();
 			cal.setTime(startDate);
 
-			MenuElement yearPage = MacroHelper.addPageIfNotExist(ctx, currentPage, currentPage.getName()+"-" + getYear(), true, false);
+			MenuElement yearPage = MacroHelper.addPageIfNotExist(ctx, currentPage, currentPage.getName() + "-" + getYear(), true, false);
 			yearPage.setVisible(true);
 			boolean lastMounth = false;
 			while (!lastMounth) {
 				String year = "" + cal.get(Calendar.YEAR);
 				String englishMonth = MacroHelper.getDisplayName(cal, Calendar.MONTH, MacroHelper.CALENDAR_LONG, Locale.ENGLISH);
 
-				MenuElement mounthPage = MacroHelper.addPageIfNotExist(ctx, yearPage.getName(), currentPage.getName()+"-" + year + "-" + englishMonth, false);
+				MenuElement mounthPage = MacroHelper.addPageIfNotExist(ctx, yearPage.getName(), currentPage.getName() + "-" + year + "-" + englishMonth, false);
 				Collection<String> lgs = globalContext.getLanguages();
 				if (mounthPage.getContent().length == 0) {
 					mounthPage.setVisible(true);
@@ -78,6 +79,11 @@ public class CreatePressReleaseStructure2007HereMacro extends AbstractMacro {
 		}
 
 		return null;
+	}
+
+	@Override
+	public boolean isPreview() {
+		return true;
 	}
 
 }

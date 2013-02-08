@@ -17,6 +17,7 @@ public class CleanResourceNameMacro extends AbstractMacro {
 	 */
 	protected static Logger logger = Logger.getLogger(CleanResourceNameMacro.class.getName());
 
+	@Override
 	public String getName() {
 		return "clean-resource-name";
 	}
@@ -34,12 +35,13 @@ public class CleanResourceNameMacro extends AbstractMacro {
 		} else {
 			File newFile = new File(URLHelper.mergePath(file.getParentFile().getAbsolutePath(), getNewName(file)));
 			if (!file.equals(newFile)) {
-				ResourceHelper.renameResource(ctx, file, newFile);		
+				ResourceHelper.renameResource(ctx, file, newFile);
 				file.renameTo(newFile);
 			}
 		}
 	}
 
+	@Override
 	public String perform(ContentContext ctx, Map<String, Object> params) throws Exception {
 
 		GlobalContext globalContext = GlobalContext.getInstance(ctx.getRequest());
@@ -47,4 +49,10 @@ public class CleanResourceNameMacro extends AbstractMacro {
 		renameFile(ctx, new File(staticFolder));
 		return null;
 	}
+
+	@Override
+	public boolean isPreview() {
+		return true;
+	}
+
 }

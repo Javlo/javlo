@@ -17,6 +17,11 @@ public interface IMacro {
 	 */
 	public boolean isAdmin();
 
-	
+	/**
+	 * is this macro can be execute in preview mode.
+	 * 
+	 * @return
+	 */
+	public boolean isPreview();
 
 }

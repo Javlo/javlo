@@ -111,4 +111,9 @@ public class ImportGalleryMacro implements IInteractiveMacro, IAction {
 		// TODO Auto-generated method stub
 		return null;
 	}
+
+	@Override
+	public boolean isPreview() {
+		return true;
+	}
 }

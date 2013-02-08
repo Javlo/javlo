@@ -12,6 +12,8 @@ import org.apache.commons.fileupload.FileItem;
 import org.javlo.actions.IAction;
 import org.javlo.component.core.ComponentBean;
 import org.javlo.context.ContentContext;
+import org.javlo.context.EditContext;
+import org.javlo.context.GlobalContext;
 import org.javlo.helper.ContentHelper;
 import org.javlo.helper.NetHelper;
 import org.javlo.helper.ResourceHelper;
@@ -56,7 +58,7 @@ public class ImportContent implements IInteractiveMacro, IAction {
 		return null;
 	}
 
-	public static String performImport(RequestService rs, ContentContext ctx, ContentService content, MessageRepository messageRepository, I18nAccess i18nAccess) throws Exception {
+	public static String performImport(RequestService rs, ContentContext ctx, EditContext editCtx, ContentService content, MessageRepository messageRepository, I18nAccess i18nAccess) throws Exception {
 
 		String encoding = rs.getParameter("encoding", ContentContext.CHARACTER_ENCODING);
 
@@ -65,16 +67,21 @@ public class ImportContent implements IInteractiveMacro, IAction {
 			InputStream in = null;
 			try {
 				in = fileItem.getInputStream();
-				String html = ResourceHelper.loadStringFromStream(fileItem.getInputStream(), Charset.forName(encoding));
-
-				List<ComponentBean> newBeans = ContentHelper.createContentWithHTML(html, ctx.getRequestContentLanguage());
-
-				logger.info("import file : " + newBeans.size() + " components.");
-
-				String parentId = "0";
-				for (ComponentBean bean : newBeans) {
-					parentId = content.createContent(ctx, bean, parentId, false);
+				List<ComponentBean> newBeans = null;
+				if (StringHelper.isHTML(fileItem.getName())) {
+					String html = ResourceHelper.loadStringFromStream(fileItem.getInputStream(), Charset.forName(encoding));
+					newBeans = ContentHelper.createContentWithHTML(html, ctx.getRequestContentLanguage());
+				} else if (StringHelper.getFileExtension(fileItem.getName()).equalsIgnoreCase("odt")) {
+					newBeans = ContentHelper.createContentFromODT(GlobalContext.getInstance(ctx.getRequest()), in, fileItem.getName(), ctx.getRequestContentLanguage());
 				}
+				if (newBeans != null) {
+					logger.info("import file : " + newBeans.size() + " components.");
+					String parentId = "0";
+					for (ComponentBean bean : newBeans) {
+						parentId = content.createContent(ctx, bean, parentId, false);
+					}
+				}
+
 			} finally {
 				ResourceHelper.closeResource(in);
 			}
@@ -95,6 +102,15 @@ public class ImportContent implements IInteractiveMacro, IAction {
 
 		ctx.getCurrentPage().releaseCache();
 
+		if (editCtx.isEditPreview()) {
+			ctx.setClosePopup(true);
+		}
+
 		return null;
+	}
+
+	@Override
+	public boolean isPreview() {
+		return true;
 	}
 }

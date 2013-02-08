@@ -11,7 +11,7 @@ import org.javlo.navigation.MenuElement;
 import org.javlo.service.PersistenceService;
 
 public class ImportDefaultLanguageMacro extends AbstractMacro {
-	
+
 	private static Logger logger = Logger.getLogger(ImportDefaultLanguageMacro.class.getName());
 
 	@Override
@@ -21,26 +21,31 @@ public class ImportDefaultLanguageMacro extends AbstractMacro {
 
 	@Override
 	public String perform(ContentContext ctx, Map<String, Object> params) throws Exception {
-		
+
 		GlobalContext globalContext = GlobalContext.getInstance(ctx.getRequest());
-		
+
 		ContentContext deftLanguageCtx = new ContentContext(ctx);
 		deftLanguageCtx.setLanguage(globalContext.getDefaultLanguages().iterator().next());
 		deftLanguageCtx.setRequestContentLanguage(globalContext.getDefaultLanguages().iterator().next());
-		
+
 		MenuElement currentPage = ctx.getCurrentPage();
-		
+
 		if (currentPage.isRealContent(ctx)) {
-			logger.info(currentPage.getPath()+" have allready content.");
+			logger.info(currentPage.getPath() + " have allready content.");
 			return null;
 		}
 
-		MacroHelper.copyLanguageStructure(currentPage, deftLanguageCtx, Arrays.asList(new ContentContext[] {ctx}), true);
+		MacroHelper.copyLanguageStructure(currentPage, deftLanguageCtx, Arrays.asList(new ContentContext[] { ctx }), true);
 
 		PersistenceService persistenceService = PersistenceService.getInstance(globalContext);
 		persistenceService.store(ctx);
 
 		return null;
+	}
+
+	@Override
+	public boolean isPreview() {
+		return true;
 	}
 
 }

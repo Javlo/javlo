@@ -1501,6 +1501,9 @@ public class StringHelper {
 	 * @return simple text
 	 */
 	public static String removeTag(String text) {
+		if (text == null) {
+			return "";
+		}
 		StringBuffer notTagStr = new StringBuffer();
 		boolean inTag = false;
 		for (int i = 0; i < text.length(); i++) {

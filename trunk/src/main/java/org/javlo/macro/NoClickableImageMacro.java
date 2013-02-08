@@ -37,4 +37,9 @@ public class NoClickableImageMacro extends AbstractMacro {
 		return null;
 	}
 
+	@Override
+	public boolean isPreview() {
+		return true;
+	}
+
 }

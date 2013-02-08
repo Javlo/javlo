@@ -83,20 +83,12 @@ public class XMLFactory {
 
 		String xml2 = "<body><page>";
 		xml2 = xml2 + "<subTitle value=\"The Secretary General discusses measures taken with the Crisis Management Team\" uuid=\"a4d4e65b-e6ab-42c0-89fa-782037ee4b94\"></subTitle>";
+		xml2 = xml2 + "<subTitle value=\"node1\" uuid=\"a4d4e65b-e6ab-42c0-89fa-782037ee4b94\">coucou</subTitle>";
 		xml2 = xml2 + "</page></body>";
 
 		try {
-			NodeXML node = getFirstNode(new ByteArrayInputStream(xml.getBytes()));
-			System.out.println("-- XML1 --"); // TODO: remove debug trace
-			System.out.println("***** XMLFactory.main : data = " + node.searchValue(".//intrasg:subTitle/@jahia:value")); // TODO: remove debug trace
-			System.out.println("***** XMLFactory.main : data = " + node.searchValue(".//subTitle/@jahia:value")); // TODO: remove debug trace
-			System.out.println("***** XMLFactory.main : data = " + node.searchValue(".//subTitle/@value")); // TODO: remove debug trace
-			System.out.println(""); // TODO: remove debug trace
-			node = getFirstNode(new ByteArrayInputStream(xml2.getBytes()));
-			System.out.println("-- XML2 --"); // TODO: remove debug trace
-			System.out.println("***** XMLFactory.main : data = " + node.searchValue(".//intrasg:subTitle/@jahia:value")); // TODO: remove debug trace
-			System.out.println("***** XMLFactory.main : data = " + node.searchValue(".//subTitle/@jahia:value")); // TODO: remove debug trace
-			System.out.println("***** XMLFactory.main : data = " + node.searchValue(".//subTitle/@value")); // TODO: remove debug trace
+			NodeXML node = getFirstNode(new ByteArrayInputStream(xml2.getBytes()));
+			System.out.println("***** XMLFactory.main : subTitle size : " + node.searchChildren("//subTitle[@*]").size()); // TODO: remove debug trace
 
 		} catch (Exception e) {
 			e.printStackTrace();

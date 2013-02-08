@@ -1,5 +1,8 @@
 package org.javlo.xml;
 
+import java.util.Collection;
+import java.util.LinkedList;
+
 import javax.xml.xpath.XPath;
 import javax.xml.xpath.XPathConstants;
 import javax.xml.xpath.XPathExpression;
@@ -11,6 +14,7 @@ import org.w3c.dom.CDATASection;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
+import org.w3c.dom.NodeList;
 import org.w3c.dom.Text;
 
 //TODO Adding javadoc could be helpfull.
@@ -211,6 +215,38 @@ public class NodeXML extends Object implements Cloneable {
 		return new NodeXML(node);
 	}
 
+	public Collection<NodeXML> searchChildren(String inXpath) throws XPathExpressionException {
+		XPathFactory xPathfactory = XPathFactory.newInstance();
+		XPath xpath = xPathfactory.newXPath();
+		XPathExpression expr = xpath.compile(inXpath);
+		NodeList nodes = (NodeList) expr.evaluate(getNode(), XPathConstants.NODESET);
+		Collection<NodeXML> outNodes = new LinkedList<NodeXML>();
+		for (int i = 0; i < nodes.getLength(); i++) {
+			outNodes.add(new NodeXML(nodes.item(i)));
+		}
+		return outNodes;
+	}
+
+	public Collection<NodeXML> getChildren() {
+		Collection<NodeXML> children = new LinkedList<NodeXML>();
+		NodeList list = node.getChildNodes();
+		for (int i = 0; i < list.getLength(); i++) {
+			children.add(new NodeXML(list.item(i)));
+		}
+		return children;
+	}
+
+	public Collection<NodeXML> getAllChildren() {
+		Collection<NodeXML> children = new LinkedList<NodeXML>();
+		NodeList list = node.getChildNodes();
+		for (int i = 0; i < list.getLength(); i++) {
+			NodeXML newNode = new NodeXML(list.item(i));
+			children.add(newNode);
+			children.addAll(newNode.getAllChildren());
+		}
+		return children;
+	}
+
 	public String searchValue(String inXpath) throws XPathExpressionException {
 		XPathFactory xPathfactory = XPathFactory.newInstance();
 		XPath xpath = xPathfactory.newXPath();
@@ -337,6 +373,24 @@ public class NodeXML extends Object implements Cloneable {
 		sb.append(this.getContent());
 		sb.append("\n");
 		return sb.toString();
+	}
+
+	/**
+	 * return the distance in node count form a prent
+	 * 
+	 * @param inParent
+	 * @return -1 if not found.
+	 */
+	public int getParentDistance(NodeXML inParent) {
+		int i = 1;
+		Node parent = node.getParentNode();
+		while (parent != null) {
+			i++;
+			if (inParent.node.equals(parent)) {
+				return i;
+			}
+		}
+		return -1;
 	}
 
 }

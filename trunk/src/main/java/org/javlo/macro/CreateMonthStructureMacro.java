@@ -30,4 +30,9 @@ public class CreateMonthStructureMacro extends AbstractMacro {
 		return null;
 	}
 
+	@Override
+	public boolean isPreview() {
+		return true;
+	}
+
 }

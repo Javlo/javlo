@@ -50,4 +50,9 @@ public class deleteComponentInBadArea extends AbstractMacro {
 		return "components deleted : " + countDeleted;
 	}
 
+	@Override
+	public boolean isPreview() {
+		return true;
+	}
+
 }

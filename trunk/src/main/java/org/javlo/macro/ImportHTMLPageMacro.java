@@ -10,6 +10,7 @@ import java.util.logging.Logger;
 
 import org.javlo.actions.IAction;
 import org.javlo.context.ContentContext;
+import org.javlo.context.EditContext;
 import org.javlo.context.GlobalContext;
 import org.javlo.helper.ImportHelper;
 import org.javlo.i18n.I18nAccess;
@@ -47,7 +48,7 @@ public class ImportHTMLPageMacro implements IInteractiveMacro, IAction {
 		return "macro-import-html";
 	}
 
-	public static String performImport(RequestService rs, ContentContext ctx, GlobalContext globalContext, MessageRepository messageRepository, I18nAccess i18nAccess) throws MalformedURLException, Exception {
+	public static String performImport(RequestService rs, ContentContext ctx, EditContext editCtx, GlobalContext globalContext, MessageRepository messageRepository, I18nAccess i18nAccess) throws MalformedURLException, Exception {
 		String url = rs.getParameter("url", null);
 		String titleCSS = rs.getParameter("title", null);
 		String contentCSS = rs.getParameter("content", null);
@@ -67,9 +68,7 @@ public class ImportHTMLPageMacro implements IInteractiveMacro, IAction {
 			}
 
 			if (msg.trim().length() == 0) {
-				return null;
-			} else {
-				return msg;
+				msg = null;
 			}
 
 		} else { // change context
@@ -81,8 +80,14 @@ public class ImportHTMLPageMacro implements IInteractiveMacro, IAction {
 				ctx.getRequest().setAttribute("contentSelector", config.get("selector." + context + ".content"));
 				ctx.getRequest().setAttribute("imageSelector", config.get("selector." + context + ".image"));
 			}
-			return null;
+
 		}
+
+		if (editCtx.isEditPreview()) {
+			ctx.setClosePopup(true);
+		}
+
+		return null;
 	}
 
 	static Properties getConfig(ContentContext ctx) throws Exception {
@@ -115,5 +120,10 @@ public class ImportHTMLPageMacro implements IInteractiveMacro, IAction {
 			return e.getMessage();
 		}
 		return null;
+	}
+
+	@Override
+	public boolean isPreview() {
+		return true;
 	}
 }

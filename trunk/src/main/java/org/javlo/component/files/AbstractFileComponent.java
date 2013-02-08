@@ -22,6 +22,7 @@ import java.util.zip.ZipEntry;
 import java.util.zip.ZipInputStream;
 
 import org.apache.commons.fileupload.FileItem;
+import org.apache.commons.lang.StringUtils;
 import org.javlo.bean.Link;
 import org.javlo.component.core.AbstractVisualComponent;
 import org.javlo.component.core.ComponentBean;
@@ -30,7 +31,6 @@ import org.javlo.component.core.IReverseLinkComponent;
 import org.javlo.config.StaticConfig;
 import org.javlo.context.ContentContext;
 import org.javlo.context.GlobalContext;
-import org.javlo.filter.DirectoryFilter;
 import org.javlo.filter.ZIPFilter;
 import org.javlo.helper.ArrayHelper;
 import org.javlo.helper.ElementaryURLHelper;
@@ -232,9 +232,16 @@ public abstract class AbstractFileComponent extends AbstractVisualComponent impl
 		return i18nAccess.getText("action.add-image.dir");
 	}
 
-	protected String[] getDirList(String directory) {
-		File dir = new File(directory);
-		return dir.list(new DirectoryFilter());
+	protected String[] getDirList(String inFolder) {
+		File folder = new File(inFolder);
+		Collection<File> children = ResourceHelper.getAllDirList(folder);
+		String[] folders = new String[children.size()];
+		int i = 0;
+		for (File dir : children) {
+			folders[i] = StringUtils.replace(dir.getAbsolutePath(), folder.getAbsolutePath(), "");
+			i++;
+		}
+		return folders;
 	}
 
 	public String getDirSelected() {

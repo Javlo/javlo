@@ -109,4 +109,9 @@ public class CreateMonthHereMacro extends AbstractMacro {
 		return false;
 	}
 
+	@Override
+	public boolean isPreview() {
+		return true;
+	}
+
 }

@@ -108,4 +108,9 @@ public class CreateArticle implements IInteractiveMacro, IAction {
 		}
 		return message;
 	}
+
+	@Override
+	public boolean isPreview() {
+		return true;
+	}
 }

@@ -84,6 +84,11 @@ public class TicketAction extends AbstractModuleAction {
 		return msg;
 	}
 
+	public static String performList(ContentContext ctx) throws ConfigurationException, IOException {
+		ctx.getAjaxData().put("tickets", getMyTicket(ctx));
+		return null;
+	}
+
 	public static String performUpdate(RequestService rs, ContentContext ctx, GlobalContext globalContext, User user, MessageRepository messageRepository, I18nAccess i18nAccess) throws Exception {
 		TicketService ticketService = TicketService.getInstance(globalContext);
 		String id = rs.getParameter("id", "");

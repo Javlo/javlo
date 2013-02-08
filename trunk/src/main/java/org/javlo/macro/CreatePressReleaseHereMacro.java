@@ -31,4 +31,9 @@ public class CreatePressReleaseHereMacro extends AbstractMacro {
 	public boolean isAdmin() {
 		return false;
 	}
+
+	@Override
+	public boolean isPreview() {
+		return true;
+	}
 };

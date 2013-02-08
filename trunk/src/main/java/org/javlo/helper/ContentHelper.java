@@ -1,16 +1,30 @@
 package org.javlo.helper;
 
+import java.io.ByteArrayOutputStream;
 import java.io.File;
+import java.io.FileInputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.PrintStream;
+import java.util.Collection;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.zip.ZipEntry;
+import java.util.zip.ZipException;
+import java.util.zip.ZipInputStream;
 
 import org.javlo.component.core.ComponentBean;
+import org.javlo.component.image.GlobalImage;
 import org.javlo.component.list.TextList;
 import org.javlo.component.text.Paragraph;
 import org.javlo.component.title.SubTitle;
 import org.javlo.component.title.Title;
+import org.javlo.context.GlobalContext;
 import org.javlo.helper.XMLManipulationHelper.BadXMLException;
 import org.javlo.helper.XMLManipulationHelper.TagDescription;
+import org.javlo.utils.UnclosableInputStream;
+import org.javlo.xml.NodeXML;
+import org.javlo.xml.XMLFactory;
 
 public class ContentHelper {
 
@@ -72,8 +86,12 @@ public class ContentHelper {
 
 	public static void main(String[] args) {
 		try {
-			String html = ResourceHelper.loadStringFromFile(new File("d:/trans/test_doc.htm"));
-			List<ComponentBean> content = createContentWithHTML(html, "en");
+			/*
+			 * String html = ResourceHelper.loadStringFromFile(new File("d:/trans/test_doc.htm")); List<ComponentBean> content = createContentWithHTML(html, "en"); for (ComponentBean componentBean : content) { System.out.println("**** " + componentBean.getType()); // TODO: remove debug trace System.out.println(componentBean.getValue()); // TODO: remove debug trace System.out.println(""); }
+			 */
+
+			List<ComponentBean> content = createContentFromODT(null, new FileInputStream(new File("d:/trans/test_doc.odt")), "test_doc.odt", "fr");
+			System.out.println("***** ContentHelper.main : imported : " + content.size()); // TODO: remove debug trace
 			for (ComponentBean componentBean : content) {
 				System.out.println("**** " + componentBean.getType()); // TODO: remove debug trace
 				System.out.println(componentBean.getValue()); // TODO: remove debug trace
@@ -82,5 +100,121 @@ public class ContentHelper {
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
+	}
+
+	public static void _main(String[] args) {
+		try {
+			ZipInputStream in = new ZipInputStream(new FileInputStream(new File("d:/trans/test_doc.odt")));
+			ZipEntry entry = in.getNextEntry();
+			while (entry != null) {
+				System.out.println("***** ContentHelper.main : entry : " + entry); // TODO: remove debug trace
+				entry = in.getNextEntry();
+			}
+		} catch (ZipException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+	}
+
+	/**
+	 * import a zip entry localy.
+	 * 
+	 * @param gc
+	 * @param entry
+	 *            the zip entry.
+	 * @param localFolder
+	 *            the local forlder in static folder.
+	 * @return false if file not create.
+	 * @throws IOException
+	 */
+	public static boolean importZipEntryToDataFolder(GlobalContext gc, ZipEntry entry, InputStream in, String localFolder) throws IOException {
+		File newFile = new File(URLHelper.mergePath(gc.getDataFolder(), localFolder, entry.getName()));
+		if (newFile.exists() || entry.isDirectory()) {
+			return false;
+		} else {
+			newFile.getParentFile().mkdirs();
+			if (!newFile.createNewFile()) {
+				return false;
+			} else {
+				ResourceHelper.writeStreamToFile(in, newFile);
+			}
+			return true;
+		}
+
+	}
+
+	public static List<ComponentBean> createContentFromODT(GlobalContext gc, InputStream in, String name, String lang) throws Exception {
+		List<ComponentBean> outBeans = new LinkedList<ComponentBean>();
+		ZipInputStream zipIn = new ZipInputStream(in);
+		ZipEntry entry = zipIn.getNextEntry();
+		String baseStaticFolder = "/import/" + name;
+		while (entry != null) {
+			if (gc != null && StringHelper.isImage(entry.getName())) {
+				importZipEntryToDataFolder(gc, entry, zipIn, URLHelper.mergePath(gc.getStaticConfig().getImageFolder(), baseStaticFolder));
+			} else if (entry.getName().equals("content.xml")) {
+				NodeXML root = XMLFactory.getFirstNode(new UnclosableInputStream(zipIn));
+				// Collection<NodeXML> nodes = root.searchChildren("//p|//h|//image");
+				Collection<NodeXML> nodes = root.searchChildren("//*");
+				String title = null;
+				for (NodeXML node : nodes) {
+					String value = StringHelper.removeTag(node.getContent()).trim();
+					if (value.length() > 0 || node.getName().endsWith(":image") || node.getName().endsWith(":list")) {
+						ComponentBean bean = null;
+						if (node.getName().endsWith(":h")) {
+							if (node.getAttributeValue("text:outline-level", "1").equals("1")) {
+								bean = new ComponentBean(Title.TYPE, value, lang);
+								title = value;
+							} else {
+								bean = new ComponentBean(SubTitle.TYPE, value, lang);
+								bean.setStyle(node.getAttributeValue("text:outline-level", "2"));
+							}
+						} else if (node.getName().endsWith(":p") && !node.getParent().getName().endsWith(":list-item")) {
+							bean = new ComponentBean(Paragraph.TYPE, value, lang);
+						} else if (node.getName().endsWith(":list")) {
+							ByteArrayOutputStream outStream = new ByteArrayOutputStream();
+							PrintStream out = new PrintStream(outStream);
+							Collection<NodeXML> children = node.getAllChildren();
+							for (NodeXML child : children) {
+								if (child.getContent() != null && child.getContent().trim().length() > 0) {
+									out.println(child.getContent());
+								}
+							}
+							out.close();
+							value = new String(outStream.toByteArray());
+							bean = new ComponentBean(TextList.TYPE, value, lang);
+						} else if (node.getName().endsWith(":image")) {
+							ByteArrayOutputStream outStream = new ByteArrayOutputStream();
+							PrintStream out = new PrintStream(outStream);
+							if (node.getAttributeValue("xlink:href") != null) {
+								File file = new File(node.getAttributeValue("xlink:href"));
+								String folder = "";
+								if (file.getParentFile() != null) {
+									folder = file.getParentFile().getPath();
+								}
+								out.println("dir=" + URLHelper.mergePath(baseStaticFolder, folder));
+								out.println("file-name=" + file.getName());
+								out.println(GlobalImage.IMAGE_FILTER + "=full");
+								if (title != null) {
+									out.println("label=" + title);
+								}
+								out.close();
+								value = new String(outStream.toByteArray());
+								bean = new ComponentBean(GlobalImage.TYPE, value, lang);
+							}
+						}
+						if (bean != null) {
+							outBeans.add(bean);
+						}
+					}
+				}
+			}
+			entry = zipIn.getNextEntry();
+
+		}
+
+		return outBeans;
 	}
 }

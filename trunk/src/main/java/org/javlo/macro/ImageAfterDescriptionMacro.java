@@ -64,4 +64,9 @@ public class ImageAfterDescriptionMacro extends AbstractMacro {
 
 		return null;
 	}
+
+	@Override
+	public boolean isPreview() {
+		return true;
+	}
 };
