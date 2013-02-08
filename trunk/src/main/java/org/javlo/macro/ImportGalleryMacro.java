@@ -114,6 +114,6 @@ public class ImportGalleryMacro implements IInteractiveMacro, IAction {
 
 	@Override
 	public boolean isPreview() {
-		return true;
+		return false;
 	}
 }

@@ -238,7 +238,7 @@ public abstract class AbstractFileComponent extends AbstractVisualComponent impl
 		String[] folders = new String[children.size()];
 		int i = 0;
 		for (File dir : children) {
-			folders[i] = StringUtils.replace(dir.getAbsolutePath(), folder.getAbsolutePath(), "");
+			folders[i] = StringUtils.replace(dir.getAbsolutePath(), folder.getAbsolutePath(), "").replace('\\', '/');
 			i++;
 		}
 		return folders;
