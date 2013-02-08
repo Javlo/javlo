@@ -1,3 +1,7 @@
 .maincontent .mainBox {
     margin-top: 0;
 }
+
+a.unread {
+	font-weight: bold;
+}

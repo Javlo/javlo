@@ -1,13 +1,16 @@
 package org.javlo.module.ticket;
 
 import java.io.IOException;
+import java.util.Collection;
 import java.util.Date;
-import java.util.LinkedList;
-import java.util.List;
+import java.util.HashMap;
+import java.util.Map;
 
+import org.apache.commons.configuration.ConfigurationException;
 import org.javlo.actions.AbstractModuleAction;
 import org.javlo.context.ContentContext;
 import org.javlo.context.GlobalContext;
+import org.javlo.context.GlobalContextFactory;
 import org.javlo.i18n.I18nAccess;
 import org.javlo.message.GenericMessage;
 import org.javlo.message.MessageRepository;
@@ -24,28 +27,50 @@ public class TicketAction extends AbstractModuleAction {
 		return "ticket";
 	}
 
+	private static Map<String, TicketBean> getMyTicket(ContentContext ctx) throws IOException, ConfigurationException {
+		GlobalContext globalContext = GlobalContext.getInstance(ctx.getRequest());
+		Map<String, TicketBean> myTickets = new HashMap<String, TicketBean>();
+
+		if (globalContext.isMaster()) {
+			Collection<GlobalContext> allContext = GlobalContextFactory.getAllGlobalContext(ctx.getRequest().getSession());
+			for (GlobalContext gc : allContext) {
+				TicketService ticketService = TicketService.getInstance(gc);
+				for (TicketBean ticket : ticketService.getTickets()) {
+					if (!ticket.getStatus().equals("archived")) {
+						myTickets.put(ticket.getId(), ticket);
+					}
+				}
+			}
+		} else {
+
+			TicketService ticketService = TicketService.getInstance(globalContext);
+			for (TicketBean ticket : ticketService.getTickets()) {
+				if (!ticket.getStatus().equals("archived")) {
+					if (AdminUserSecurity.getInstance().isAdmin(ctx.getCurrentEditUser()) || ticket.getAuthors().equals(ctx.getCurrentEditUser().getLogin())) {
+						myTickets.put(ticket.getId(), ticket);
+					}
+				}
+			}
+		}
+		return myTickets;
+	}
+
 	@Override
 	public String prepare(ContentContext ctx, ModulesContext modulesContext) throws Exception {
 		String msg = super.prepare(ctx, modulesContext);
 
 		RequestService rs = RequestService.getInstance(ctx.getRequest());
-		GlobalContext globalContext = GlobalContext.getInstance(ctx.getRequest());
+
 		Module ticketModule = modulesContext.getCurrentModule();
-
-		TicketService ticketService = TicketService.getInstance(globalContext);
-		List<TicketBean> myTickets = new LinkedList<TicketBean>();
-
-		for (TicketBean ticket : ticketService.getTickets()) {
-			if (!ticket.getStatus().equals("archived")) {
-				if (AdminUserSecurity.getInstance().isAdmin(ctx.getCurrentEditUser()) || ticket.getAuthors().equals(ctx.getCurrentEditUser().getLogin())) {
-					myTickets.add(ticket);
-				}
-			}
-		}
-		ctx.getRequest().setAttribute("tickets", myTickets);
+		Map<String, TicketBean> myTickets = getMyTicket(ctx);
+		ctx.getRequest().setAttribute("tickets", myTickets.values());
 
 		if (rs.getParameter("id", "").trim().length() > 0 && rs.getParameter("back", null) == null) {
-			ctx.getRequest().setAttribute("ticket", ticketService.getTicket(rs.getParameter("id", null)));
+			TicketBean ticket = myTickets.get(rs.getParameter("id", null));
+			if (ticket.getAuthors().equals(ctx.getCurrentEditUser().getLogin())) {
+				ticket.setRead(true);
+			}
+			ctx.getRequest().setAttribute("ticket", ticket);
 			if (ticketModule.getBox("main") == null) {
 				ticketModule.addMainBox("main", "update ticket : " + rs.getParameter("id", ""), "/jsp/update_ticket.jsp", true);
 				ticketModule.setRenderer(null);
@@ -58,12 +83,12 @@ public class TicketAction extends AbstractModuleAction {
 		return msg;
 	}
 
-	public static String performUpdate(RequestService rs, ContentContext ctx, GlobalContext globalContext, User user, MessageRepository messageRepository, I18nAccess i18nAccess) throws IOException {
+	public static String performUpdate(RequestService rs, ContentContext ctx, GlobalContext globalContext, User user, MessageRepository messageRepository, I18nAccess i18nAccess) throws Exception {
 		TicketService ticketService = TicketService.getInstance(globalContext);
 		String id = rs.getParameter("id", "");
 		TicketBean ticket;
 		if (id.trim().length() > 0) { // update
-			ticket = ticketService.getTicket(id);
+			ticket = getMyTicket(ctx).get(id);
 			if (ticket == null) {
 				return "ticket not found : " + id;
 			} else {
@@ -71,6 +96,9 @@ public class TicketAction extends AbstractModuleAction {
 				ticket.setLatestEditor(user.getLogin());
 			}
 		} else { // create
+			if (rs.getParameter("title", "").trim().length() == 0) {
+				return "please enter a title.";
+			}
 			ticket = new TicketBean();
 			ticket.setAuthors(user.getLogin());
 			ticket.setContext(globalContext.getContextKey());
@@ -83,8 +111,10 @@ public class TicketAction extends AbstractModuleAction {
 		ticket.setUrl(rs.getParameter("url", ticket.getUrl()));
 		if (rs.getParameter("comment", "").trim().length() > 0) {
 			ticket.addComments(new Comment(user.getLogin(), rs.getParameter("comment", "")));
+			if (!ticket.getAuthors().equals(ctx.getCurrentEditUser().getLogin())) {
+				ticket.setRead(false);
+			}
 		}
-
 		ticketService.updateTicket(ticket);
 
 		messageRepository.addMessage(new GenericMessage("ticket updated.", GenericMessage.INFO));
