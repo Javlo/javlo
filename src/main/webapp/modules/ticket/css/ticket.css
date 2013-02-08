@@ -5,3 +5,38 @@
 a.unread {
 	font-weight: bold;
 }
+
+.status {
+	padding: 3x;	
+	box-shadow: 1px 1px 2px #EEEEEE;
+	text-transform: uppercase;
+	color: #ffffff;
+	border-radius: 3px 3px 3px 3px;        
+    text-align: center;
+    display: block;
+}
+
+.status.new {
+	background-color: #474747;
+}
+
+.status.refuse {
+	background-color: #EF3513;
+}
+
+.status.onold {
+	background-color: #5C75A1;	
+}
+
+.status.working {
+	background-color: #7BB529;
+}
+
+.status.archived {
+	background-color: #8F7556;
+}
+
+.status.done {
+	background-color: #FEA00D;
+}
+

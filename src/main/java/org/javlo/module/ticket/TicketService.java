@@ -38,7 +38,7 @@ public class TicketService {
 		if (files != null) {
 			for (File file : files) {
 				TicketBean bean = loadTicket(file);
-				if (bean != null) {
+				if (bean != null && !bean.isDeleted()) {
 					tickets.put(bean.getId(), bean);
 				}
 			}
@@ -62,7 +62,11 @@ public class TicketService {
 	}
 
 	public void updateTicket(TicketBean ticket) throws IOException {
-		tickets.put(ticket.getId(), ticket);
+		if (!ticket.isDeleted()) {
+			tickets.put(ticket.getId(), ticket);
+		} else {
+			tickets.remove(ticket.getId());
+		}
 		storeTicket(ticket);
 	}
 

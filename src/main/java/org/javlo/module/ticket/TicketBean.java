@@ -24,6 +24,7 @@ public class TicketBean implements Serializable {
 	private String latestEditor;
 	private String category;
 	private boolean read = false;
+	private boolean deleted = false;
 	private Date creationDate = new Date();
 	private Date lastUpdateDate = new Date();
 	private int priority = 1;
@@ -155,5 +156,13 @@ public class TicketBean implements Serializable {
 
 	public void setRead(boolean read) {
 		this.read = read;
+	}
+
+	public boolean isDeleted() {
+		return deleted;
+	}
+
+	public void setDeleted(boolean deleted) {
+		this.deleted = deleted;
 	}
 }

@@ -17,8 +17,9 @@
 			<select id="status" name="status">
 				<option ${ticket.status == 'new'?'selected="selected"':''}>new</option>
 				<option ${ticket.status == 'working'?'selected="selected"':''}>working</option>
-				<option ${ticket.status == 'on old'?'selected="selected"':''}>on old</option>
+				<option value="onold" ${ticket.status == 'onold'?'selected="selected"':''}>on old</option>
 				<option ${ticket.status == 'refuse'?'selected="selected"':''}>refuse</option>
+				<option ${ticket.status == 'done'?'selected="selected"':''}>done</option>
 				<option ${ticket.status == 'archived'?'selected="selected"':''}>archived</option>
 			</select>
 		</div>
@@ -61,11 +62,14 @@
 	<fieldset>
 		<legend>new comments</legend>
 		<textarea name="comment"></textarea>
-		<div class="action">
+	</fieldset>
+	
+	<div class="action">
+		<input type="submit" name="delete" class="warning needconfirm" title="${i18n.edit['global.delete']}" value="${i18n.edit['global.delete']}" />
 		<input type="submit" name="back" value="${i18n.edit['global.back']}" />
 		<input type="submit" value="${i18n.edit['global.ok']}" />		
-		</div>
-	</fieldset>
+	</div>
+	
 </form>
 
 </div>
