@@ -18,10 +18,12 @@ import org.javlo.user.IUserInfo;
  */
 public class EncryptPasswordComponent extends AbstractMacro {
 
+	@Override
 	public String getName() {
 		return "encrypt-password";
 	}
 
+	@Override
 	public String perform(ContentContext ctx, Map<String, Object> params) throws Exception {
 		GlobalContext globalContext = GlobalContext.getInstance(ctx.getRequest());
 		IUserFactory adminUserFactory = AdminUserFactory.createUserFactory(globalContext, ctx.getRequest().getSession());
@@ -32,6 +34,11 @@ public class EncryptPasswordComponent extends AbstractMacro {
 		adminUserFactory.store();
 
 		return null;
+	}
+
+	@Override
+	public boolean isPreview() {
+		return true;
 	}
 
 };

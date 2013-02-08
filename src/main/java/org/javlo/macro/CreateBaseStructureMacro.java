@@ -15,14 +15,14 @@ import org.javlo.helper.MacroHelper;
 import org.javlo.navigation.MenuElement;
 import org.javlo.service.PersistenceService;
 
-
 public class CreateBaseStructureMacro extends AbstractMacro {
 
+	@Override
 	public String getName() {
 		return "create-base-site-structure-here";
 	}
-	
-	private static void addBaseContent (ContentContext ctx, MenuElement page) throws Exception {
+
+	private static void addBaseContent(ContentContext ctx, MenuElement page) throws Exception {
 		GlobalContext globalContext = GlobalContext.getInstance(ctx.getRequest());
 		Collection<String> lgs = globalContext.getContentLanguages();
 		for (String lg : lgs) {
@@ -34,10 +34,11 @@ public class CreateBaseStructureMacro extends AbstractMacro {
 		}
 	}
 
+	@Override
 	public String perform(ContentContext ctx, Map<String, Object> params) throws Exception {
-		
+
 		MenuElement currentPage = ctx.getCurrentPage();
-		
+
 		MenuElement page = MacroHelper.addPageIfNotExist(ctx, currentPage, "home", false, false);
 		addBaseContent(ctx, page);
 		page = MacroHelper.addPageIfNotExist(ctx, currentPage, "whoiswho", false, false);
@@ -52,12 +53,17 @@ public class CreateBaseStructureMacro extends AbstractMacro {
 		addBaseContent(ctx, page);
 		page = MacroHelper.addPageIfNotExist(ctx, currentPage, "sitemap", false, false);
 		addBaseContent(ctx, page);
-		
+
 		GlobalContext globalContext = GlobalContext.getInstance(ctx.getRequest());
 		PersistenceService persistenceService = PersistenceService.getInstance(globalContext);
 		persistenceService.store(ctx);
-		
+
 		return null;
+	}
+
+	@Override
+	public boolean isPreview() {
+		return true;
 	}
 
 }

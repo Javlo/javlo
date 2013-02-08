@@ -22,9 +22,9 @@ public class DefaultLgExpandMacro extends AbstractMacro {
 
 	protected boolean expand(ContentContext ctx, IContentVisualComponent baseComp, IContentVisualComponent targetComp) {
 		if (baseComp.getType().equals(GlobalImage.TYPE) && targetComp.getType().equals(GlobalImage.TYPE)) {
-			GlobalImage srcComp = (GlobalImage)baseComp;
-			GlobalImage trgComp = (GlobalImage)targetComp;
-			
+			GlobalImage srcComp = (GlobalImage) baseComp;
+			GlobalImage trgComp = (GlobalImage) targetComp;
+
 			if (srcComp.getFileName().equals(trgComp.getFileName())) {
 				trgComp.setLink(srcComp.getLink());
 				trgComp.setStyle(ctx, srcComp.getStyle(ctx));
@@ -63,11 +63,16 @@ public class DefaultLgExpandMacro extends AbstractMacro {
 				}
 			}
 		}
-		
-		String msg = modif+" component(s) identified as similar.";
+
+		String msg = modif + " component(s) identified as similar.";
 		MessageRepository.getInstance(ctx).setGlobalMessage(new GenericMessage(msg, GenericMessage.INFO));
-		
+
 		return null;
+	}
+
+	@Override
+	public boolean isPreview() {
+		return true;
 	}
 
 }

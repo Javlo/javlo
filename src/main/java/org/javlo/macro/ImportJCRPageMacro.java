@@ -41,7 +41,7 @@ import org.javlo.service.RequestService;
 import org.javlo.xml.NodeXML;
 import org.javlo.xml.XMLFactory;
 
-public class ImportZIPPageMacro implements IInteractiveMacro, IAction {
+public class ImportJCRPageMacro implements IInteractiveMacro, IAction {
 
 	public static class Config {
 		private Config() {
@@ -49,7 +49,7 @@ public class ImportZIPPageMacro implements IInteractiveMacro, IAction {
 
 		static Properties getConfig(ContentContext ctx) throws Exception {
 			if (ctx.getCurrentTemplate() != null) {
-				return ctx.getCurrentTemplate().getMacroProperties(GlobalContext.getInstance(ctx.getRequest()), "import-zip");
+				return ctx.getCurrentTemplate().getMacroProperties(GlobalContext.getInstance(ctx.getRequest()), "import-jcr");
 			} else {
 				return null;
 			}
@@ -102,7 +102,7 @@ public class ImportZIPPageMacro implements IInteractiveMacro, IAction {
 
 	}
 
-	private static Logger logger = Logger.getLogger(ImportZIPPageMacro.class.getName());
+	private static Logger logger = Logger.getLogger(ImportJCRPageMacro.class.getName());
 
 	public static final class Page {
 		private final String name;
@@ -125,7 +125,7 @@ public class ImportZIPPageMacro implements IInteractiveMacro, IAction {
 
 	@Override
 	public String getName() {
-		return "import-zip";
+		return "import-jcr";
 	}
 
 	@Override
@@ -256,6 +256,11 @@ public class ImportZIPPageMacro implements IInteractiveMacro, IAction {
 			e.printStackTrace();
 			return e.getMessage();
 		}
+	}
+
+	@Override
+	public boolean isPreview() {
+		return true;
 	}
 
 	public static void main(String[] args) {

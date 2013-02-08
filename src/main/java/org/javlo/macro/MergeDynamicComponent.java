@@ -73,4 +73,9 @@ public class MergeDynamicComponent extends AbstractMacro {
 
 		return null;
 	}
+
+	@Override
+	public boolean isPreview() {
+		return true;
+	}
 };

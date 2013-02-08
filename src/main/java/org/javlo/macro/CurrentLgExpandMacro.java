@@ -41,8 +41,8 @@ public class CurrentLgExpandMacro extends AbstractMacro {
 		GlobalContext globalContext = GlobalContext.getInstance(ctx.getRequest());
 
 		ContentContext defaultLgContext = new ContentContext(ctx);
-		//defaultLgContext.setLanguage(globalContext.getDefaultLanguage());
-		//defaultLgContext.setRequestContentLanguage(globalContext.getDefaultLanguage());
+		// defaultLgContext.setLanguage(globalContext.getDefaultLanguage());
+		// defaultLgContext.setRequestContentLanguage(globalContext.getDefaultLanguage());
 		ContentContext lgCtx = new ContentContext(ctx);
 		int modif = 0;
 
@@ -60,18 +60,23 @@ public class CurrentLgExpandMacro extends AbstractMacro {
 						if (expand(ctx, defaultLgContent.next(defaultLgContext), comp)) {
 							modif++;
 						}
-					}					
+					}
 				}
 			}
 		}
 
 		String msg = modif + " component(s) identified as similar.";
 		MessageRepository.getInstance(ctx).setGlobalMessage(new GenericMessage(msg, GenericMessage.INFO));
-		
+
 		PersistenceService persistenceService = PersistenceService.getInstance(globalContext);
 		persistenceService.store(ctx);
 
 		return null;
+	}
+
+	@Override
+	public boolean isPreview() {
+		return true;
 	}
 
 }

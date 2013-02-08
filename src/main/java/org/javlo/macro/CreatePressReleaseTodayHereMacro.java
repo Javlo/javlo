@@ -20,13 +20,14 @@ import org.javlo.message.MessageRepository;
 import org.javlo.navigation.MenuElement;
 import org.javlo.service.PersistenceService;
 
-
 public class CreatePressReleaseTodayHereMacro extends AbstractMacro {
 
+	@Override
 	public String getName() {
 		return "create-pr-today-here";
 	}
 
+	@Override
 	public String perform(ContentContext ctx, Map<String, Object> params) throws Exception {
 
 		MenuElement currentPage = ctx.getCurrentPage();
@@ -43,7 +44,7 @@ public class CreatePressReleaseTodayHereMacro extends AbstractMacro {
 			String englishMonth = MacroHelper.getDisplayName(cal, Calendar.MONTH, MacroHelper.CALENDAR_LONG, Locale.ENGLISH);
 			String englishMonthShort = MacroHelper.getDisplayName(cal, Calendar.MONTH, MacroHelper.CALENDAR_SHORT, Locale.ENGLISH);
 
-			MenuElement yearPage = MacroHelper.addPageIfNotExist(ctx, currentPage, currentPage.getName()+"-" + year, true, false);
+			MenuElement yearPage = MacroHelper.addPageIfNotExist(ctx, currentPage, currentPage.getName() + "-" + year, true, false);
 			MenuElement mountPage = MacroHelper.addPageIfNotExist(ctx, yearPage.getName(), currentPage.getName() + "-" + year + "-" + englishMonth, true);
 			MenuElement newPage = MacroHelper.addPage(ctx, mountPage.getName(), currentPage.getName() + "-" + year + "-" + englishMonthShort + "-", true);
 			newPage.setVisible(true);
@@ -66,10 +67,15 @@ public class CreatePressReleaseTodayHereMacro extends AbstractMacro {
 
 		return null;
 	}
-	
+
 	@Override
 	public boolean isAdmin() {
 		return false;
+	}
+
+	@Override
+	public boolean isPreview() {
+		return true;
 	}
 
 }

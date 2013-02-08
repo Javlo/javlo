@@ -12,17 +12,19 @@ import org.javlo.navigation.MenuElement;
 
 public class DeleteSmartExternalLinkMacro extends AbstractMacro {
 
+	@Override
 	public String getName() {
 		return "delete-smart-external-link";
 	}
 
+	@Override
 	public String perform(ContentContext ctx, Map<String, Object> params) throws Exception {
 
 		MenuElement currentPage = ctx.getCurrentPage();
 
 		List<IContentVisualComponent> comps = currentPage.getContentByType(ctx, SmartExternalLink.TYPE);
 		int countChange = 0;
-		for (IContentVisualComponent comp : comps) {			
+		for (IContentVisualComponent comp : comps) {
 			currentPage.removeContent(ctx, comp.getId());
 			countChange++;
 		}
@@ -31,5 +33,10 @@ public class DeleteSmartExternalLinkMacro extends AbstractMacro {
 		MessageRepository.getInstance(ctx).setGlobalMessage(new GenericMessage(msg, GenericMessage.INFO));
 
 		return null;
+	}
+
+	@Override
+	public boolean isPreview() {
+		return true;
 	}
 };

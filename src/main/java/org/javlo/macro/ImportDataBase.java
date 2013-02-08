@@ -36,14 +36,12 @@ public class ImportDataBase extends AbstractMacro {
 
 	static final Map<String, String> countries = new HashMap<String, String>();
 
-
-
 	@Override
 	public String getName() {
 		return "import-database";
 	}
 
-	protected void importItem(ContentContext ctx, MenuElement currentPage, Map<String, DynamicComponent> compCache, ResultSet rs, Map<String,String> types, String componentType, String lg) throws Exception {
+	protected void importItem(ContentContext ctx, MenuElement currentPage, Map<String, DynamicComponent> compCache, ResultSet rs, Map<String, String> types, String componentType, String lg) throws Exception {
 		String name = rs.getString("name");
 
 		ContentService content = ContentService.getInstance(ctx.getRequest());
@@ -88,7 +86,7 @@ public class ImportDataBase extends AbstractMacro {
 
 			String ctr = rs.getString("country");
 			String javloCtr = countries.get(ctr);
-			System.out.println("**** CREATE "+componentType+" : " + name + " (ctr=" + ctr + " - javloCtr=" + javloCtr + ") ****");
+			System.out.println("**** CREATE " + componentType + " : " + name + " (ctr=" + ctr + " - javloCtr=" + javloCtr + ") ****");
 			if (javloCtr == null) {
 				System.out.println("*** WARNING : bad country : " + ctr);
 			} else {
@@ -148,21 +146,21 @@ public class ImportDataBase extends AbstractMacro {
 		technicalTypes.put("15", "trans");
 		technicalTypes.put("16", "tourism");
 		technicalTypes.put("17", "agri");
-		
+
 		juriTypes.put("1", "lawyers");
 		juriTypes.put("2", "notaries");
-		
-		bankTypes.put("1","investmentloan"); 
-		bankTypes.put("2","leasing"); 
-		bankTypes.put("3","discountcredit"); 
-		bankTypes.put("4","guarantees"); 
-		bankTypes.put("5","cashcredit"); 
-		bankTypes.put("6","straightloan"); 
-		bankTypes.put("8","factoring"); 
-		bankTypes.put("9","venturecapital");
-		bankTypes.put("10","insuranceimportexport");
-		bankTypes.put("11","quasicapital");
-		bankTypes.put("12","smallloans");
+
+		bankTypes.put("1", "investmentloan");
+		bankTypes.put("2", "leasing");
+		bankTypes.put("3", "discountcredit");
+		bankTypes.put("4", "guarantees");
+		bankTypes.put("5", "cashcredit");
+		bankTypes.put("6", "straightloan");
+		bankTypes.put("8", "factoring");
+		bankTypes.put("9", "venturecapital");
+		bankTypes.put("10", "insuranceimportexport");
+		bankTypes.put("11", "quasicapital");
+		bankTypes.put("12", "smallloans");
 
 		/** import general **/
 		Connection conn = getConnection();
@@ -238,7 +236,7 @@ public class ImportDataBase extends AbstractMacro {
 
 		rs = readDataBase(conn, SQL_JURIDIQUE_EN);
 		while (rs.next()) {
-			importItem(ctx, currentPage, compCache, rs,  juriTypes, "juridique", "en");
+			importItem(ctx, currentPage, compCache, rs, juriTypes, "juridique", "en");
 		}
 		rs.close();
 
@@ -307,6 +305,11 @@ public class ImportDataBase extends AbstractMacro {
 			}
 		}
 
+	}
+
+	@Override
+	public boolean isPreview() {
+		return true;
 	}
 
 }

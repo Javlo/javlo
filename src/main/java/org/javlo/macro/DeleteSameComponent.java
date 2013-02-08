@@ -56,4 +56,9 @@ public class DeleteSameComponent extends AbstractMacro {
 		return "components deleted : " + countDeleted;
 	}
 
+	@Override
+	public boolean isPreview() {
+		return true;
+	}
+
 }

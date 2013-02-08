@@ -99,4 +99,9 @@ public class CreateWeekHereMacro extends AbstractMacro {
 		return false;
 	}
 
+	@Override
+	public boolean isPreview() {
+		return true;
+	}
+
 }
