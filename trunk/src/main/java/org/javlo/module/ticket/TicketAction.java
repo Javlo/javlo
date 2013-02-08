@@ -11,6 +11,7 @@ import org.javlo.actions.AbstractModuleAction;
 import org.javlo.context.ContentContext;
 import org.javlo.context.GlobalContext;
 import org.javlo.context.GlobalContextFactory;
+import org.javlo.helper.StringHelper;
 import org.javlo.i18n.I18nAccess;
 import org.javlo.message.GenericMessage;
 import org.javlo.message.MessageRepository;
@@ -36,20 +37,20 @@ public class TicketAction extends AbstractModuleAction {
 			for (GlobalContext gc : allContext) {
 				TicketService ticketService = TicketService.getInstance(gc);
 				for (TicketBean ticket : ticketService.getTickets()) {
-					if (!ticket.getStatus().equals("archived")) {
-						myTickets.put(ticket.getId(), ticket);
-					}
+					// if (!ticket.getStatus().equals("archived")) {
+					myTickets.put(ticket.getId(), ticket);
+					// }
 				}
 			}
 		} else {
 
 			TicketService ticketService = TicketService.getInstance(globalContext);
 			for (TicketBean ticket : ticketService.getTickets()) {
-				if (!ticket.getStatus().equals("archived")) {
-					if (AdminUserSecurity.getInstance().isAdmin(ctx.getCurrentEditUser()) || ticket.getAuthors().equals(ctx.getCurrentEditUser().getLogin())) {
-						myTickets.put(ticket.getId(), ticket);
-					}
+				// if (!ticket.getStatus().equals("archived")) {
+				if (AdminUserSecurity.getInstance().isAdmin(ctx.getCurrentEditUser()) || ticket.getAuthors().equals(ctx.getCurrentEditUser().getLogin())) {
+					myTickets.put(ticket.getId(), ticket);
 				}
+				// }
 			}
 		}
 		return myTickets;
@@ -66,7 +67,7 @@ public class TicketAction extends AbstractModuleAction {
 		ctx.getRequest().setAttribute("tickets", myTickets.values());
 
 		TicketBean ticket = myTickets.get(rs.getParameter("id", null));
-		if (ticket != null && rs.getParameter("back", null) == null) {
+		if (ticket != null && rs.getParameter("back", null) == null && !StringHelper.isTrue(ctx.getRequest().getAttribute("back-list"))) {
 			if (ticket != null && ticket.getAuthors().equals(ctx.getCurrentEditUser().getLogin())) {
 				ticket.setRead(true);
 			}
@@ -109,11 +110,14 @@ public class TicketAction extends AbstractModuleAction {
 		ticket.setMessage(rs.getParameter("message", ticket.getMessage()));
 		ticket.setStatus(rs.getParameter("status", ticket.getStatus()));
 		ticket.setUrl(rs.getParameter("url", ticket.getUrl()));
+		ticket.setDeleted(rs.getParameter("delete", null) != null);
 		if (rs.getParameter("comment", "").trim().length() > 0) {
 			ticket.addComments(new Comment(user.getLogin(), rs.getParameter("comment", "")));
 			if (!ticket.getAuthors().equals(ctx.getCurrentEditUser().getLogin())) {
 				ticket.setRead(false);
 			}
+		} else {
+			ctx.getRequest().setAttribute("back-list", true);
 		}
 		ticketService.updateTicket(ticket);
 

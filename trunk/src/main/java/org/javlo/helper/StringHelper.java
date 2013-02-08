@@ -1041,24 +1041,34 @@ public class StringHelper {
 	}
 
 	public static boolean isTrue(Object inBool) {
-		String bool = (String) inBool;
-		boolean res = false;
-		if (bool != null) {
-			bool = bool.trim();
-			if (bool.equalsIgnoreCase("true")) {
-				res = true;
-			} else if (bool.equalsIgnoreCase("on")) {
-				res = true;
-			} else if (bool.equalsIgnoreCase("yes")) {
-				res = true;
-			} else if (bool.equalsIgnoreCase("oui")) {
-				res = true;
-			} else if (bool.equalsIgnoreCase("selected")) {
-				res = true;
-			} else if (bool.equalsIgnoreCase("1")) {
-				res = true;
-			}
+		if (inBool == null) {
+			return false;
 		}
+		if (inBool instanceof Boolean) {
+			return (Boolean) inBool;
+		}
+		String bool = "" + inBool;
+		boolean res = false;
+
+		bool = bool.trim();
+		if (bool.equalsIgnoreCase("true")) {
+			res = true;
+		} else if (bool.equalsIgnoreCase("on")) {
+			res = true;
+		} else if (bool.equalsIgnoreCase("yes")) {
+			res = true;
+		} else if (bool.equalsIgnoreCase("jes")) {
+			res = true;
+		} else if (bool.equalsIgnoreCase("oui")) {
+			res = true;
+		} else if (bool.equalsIgnoreCase("ya")) {
+			res = true;
+		} else if (bool.equalsIgnoreCase("selected")) {
+			res = true;
+		} else if (bool.equalsIgnoreCase("1")) {
+			res = true;
+		}
+
 		return res;
 	}
 

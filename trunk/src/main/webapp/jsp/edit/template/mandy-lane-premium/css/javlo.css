@@ -347,21 +347,24 @@ ul,li {
 	text-transform: uppercase;
 }
 
-.action-button.warning {
+.standard-form .action .warning {
 	color: #ffffff;
 	background: url("../images/buttons/button_red.png") repeat-x scroll left top
 		transparent;	
 }
 
-.action-button.warning:hover {
+.standard-form .action .warning:hover {
 	background-position: 0 -39px;
 	text-decoration: none;
+	background: url("../images/buttons/button_red.png") repeat-x scroll left top
+	transparent;	
+	
 }
 
 .action .action-button {
 	vertical-align: bottom;
 	margin: 0 0 0 5px;
-	height: 18px;
+/*	height: 18px; */
 	padding: 0px 5px 4px 5px;
 	font-size: 12px;	
 }
