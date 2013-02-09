@@ -174,17 +174,35 @@ public class ContentHelper {
 						} else if (node.getName().endsWith(":p") && !node.getParent().getName().endsWith(":list-item")) {
 							bean = new ComponentBean(Paragraph.TYPE, value, lang);
 						} else if (node.getName().endsWith(":list")) {
-							ByteArrayOutputStream outStream = new ByteArrayOutputStream();
-							PrintStream out = new PrintStream(outStream);
-							Collection<NodeXML> children = node.getAllChildren();
-							for (NodeXML child : children) {
-								if (child.getContent() != null && child.getContent().trim().length() > 0) {
-									out.println(child.getContent());
+							NodeXML parent = node.getParent();
+							boolean subList = false;
+							while (parent != null) {
+								if (parent.getName().endsWith(":list")) {
+									subList = true;
 								}
+								parent = parent.getParent();
 							}
-							out.close();
-							value = new String(outStream.toByteArray());
-							bean = new ComponentBean(TextList.TYPE, value, lang);
+							if (!subList) {
+								ByteArrayOutputStream outStream = new ByteArrayOutputStream();
+								PrintStream out = new PrintStream(outStream);
+								Collection<NodeXML> children = node.getAllChildren();
+								for (NodeXML child : children) {
+									if (child.getContent() != null && child.getContent().trim().length() > 0) {
+										int parentDistance = child.getParentDistance(node);
+										String prefix = "";
+										if (parentDistance > 2) {
+											for (int i = 0; i < (parentDistance - 2) / 2; i++) {
+												prefix = prefix + '-';
+											}
+										}
+
+										out.println(prefix + child.getContent());
+									}
+								}
+								out.close();
+								value = new String(outStream.toByteArray());
+								bean = new ComponentBean(TextList.TYPE, value, lang);
+							}
 						} else if (node.getName().endsWith(":image")) {
 							ByteArrayOutputStream outStream = new ByteArrayOutputStream();
 							PrintStream out = new PrintStream(outStream);

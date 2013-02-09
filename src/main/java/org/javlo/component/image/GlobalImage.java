@@ -117,7 +117,9 @@ public class GlobalImage extends Image {
 	@Override
 	public String getPreviewURL(ContentContext ctx, String filter) {
 		try {
-			return URLHelper.createTransformURL(ctx, getPage(), getResourceURL(ctx, getFileName()), filter);
+			String url = URLHelper.createTransformURL(ctx, getPage(), getResourceURL(ctx, getFileName()), filter);
+			url = URLHelper.addParam(url, "hash", getStaticInfo(ctx).getVersionHash());
+			return url;
 		} catch (Exception e) {
 			e.printStackTrace();
 			return null;
@@ -131,7 +133,7 @@ public class GlobalImage extends Image {
 		if (decoImage != null && decoImage.trim().length() > 0) {
 			String imageLink = getResourceURL(ctx, getDecorationImage());
 			String imageFilter = getConfig(ctx).getProperty("image.filter", getDefaultFilter());
-			ctx.getRequest().setAttribute("image", URLHelper.createTransformURL(ctx, imageLink, imageFilter));
+			ctx.getRequest().setAttribute("image", URLHelper.addParam(URLHelper.createTransformURL(ctx, imageLink, imageFilter), "hash", getStaticInfo(ctx).getVersionHash()));
 		}
 		ctx.getRequest().setAttribute("previewURL", getPreviewURL(ctx, getFilter(ctx)));
 		ctx.getRequest().setAttribute("media", this);
@@ -499,6 +501,9 @@ public class GlobalImage extends Image {
 	 */
 	@Override
 	public String getViewXHTMLCode(ContentContext ctx) throws Exception {
+
+		System.out.println("***** GlobalImage.getViewXHTMLCode : START"); // TODO: remove debug trace
+
 		String filter = getFilter(ctx);
 		if (HIDDEN_FILTER.equals(filter)) {
 			return "";
@@ -544,6 +549,7 @@ public class GlobalImage extends Image {
 					openLink = true;
 				}
 			}
+			thumbURL = URLHelper.addParam(thumbURL, "hash", getStaticInfo(ctx).getVersionHash());
 			res.append("<img src=\"");
 			res.append(thumbURL);
 			res.append("\" alt=\"");

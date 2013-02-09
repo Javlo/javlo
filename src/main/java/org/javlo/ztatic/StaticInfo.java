@@ -338,6 +338,10 @@ public class StaticInfo {
 
 	private File file;
 
+	private String versionHash = StringHelper.getRandomId();
+
+	private Long crc32 = null;
+
 	/**
 	 * instance of static info sur shared file
 	 * 
@@ -715,6 +719,7 @@ public class StaticInfo {
 		} else {
 			content.setAttribute(ctx, getKey("focus-zone-x"), "" + focusZoneX);
 		}
+		versionHash = StringHelper.getRandomId();
 	}
 
 	/**
@@ -730,6 +735,7 @@ public class StaticInfo {
 		} else {
 			content.setAttribute(ctx, getKey("focus-zone-y"), "" + focusZoneY);
 		}
+		versionHash = StringHelper.getRandomId();
 	}
 
 	public void setLinkedPage(MenuElement linkedPage) {
@@ -846,6 +852,7 @@ public class StaticInfo {
 	}
 
 	public void setFile(File file) {
+		crc32 = null;
 		this.file = file;
 	}
 
@@ -854,12 +861,15 @@ public class StaticInfo {
 	}
 
 	public long getCRC32() {
-		try {
-			return FileUtils.checksumCRC32(file);
-		} catch (IOException e) {
-			e.printStackTrace();
-			return -1;
+		if (crc32 == null) {
+			try {
+				crc32 = FileUtils.checksumCRC32(file);
+			} catch (IOException e) {
+				e.printStackTrace();
+				crc32 = 0L;
+			}
 		}
+		return crc32;
 	}
 
 	public void renameFile(ContentContext ctx, File newFile) throws Exception {
@@ -962,5 +972,9 @@ public class StaticInfo {
 		} else {
 			return null;
 		}
+	}
+
+	public String getVersionHash() {
+		return versionHash + getCRC32();
 	}
 }

@@ -389,6 +389,7 @@ public class NodeXML extends Object implements Cloneable {
 			if (inParent.node.equals(parent)) {
 				return i;
 			}
+			parent = parent.getParentNode();
 		}
 		return -1;
 	}

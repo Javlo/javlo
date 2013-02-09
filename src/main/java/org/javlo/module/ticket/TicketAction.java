@@ -32,25 +32,27 @@ public class TicketAction extends AbstractModuleAction {
 		GlobalContext globalContext = GlobalContext.getInstance(ctx.getRequest());
 		Map<String, TicketBean> myTickets = new HashMap<String, TicketBean>();
 
+		String status = ctx.getRequest().getParameter("filter_status");
+
 		if (globalContext.isMaster()) {
 			Collection<GlobalContext> allContext = GlobalContextFactory.getAllGlobalContext(ctx.getRequest().getSession());
 			for (GlobalContext gc : allContext) {
 				TicketService ticketService = TicketService.getInstance(gc);
 				for (TicketBean ticket : ticketService.getTickets()) {
-					// if (!ticket.getStatus().equals("archived")) {
-					myTickets.put(ticket.getId(), ticket);
-					// }
+					if (status == null || status.trim().length() == 0 || ticket.getStatus().equals(status)) {
+						myTickets.put(ticket.getId(), ticket);
+					}
 				}
 			}
 		} else {
 
 			TicketService ticketService = TicketService.getInstance(globalContext);
 			for (TicketBean ticket : ticketService.getTickets()) {
-				// if (!ticket.getStatus().equals("archived")) {
 				if (AdminUserSecurity.getInstance().isAdmin(ctx.getCurrentEditUser()) || ticket.getAuthors().equals(ctx.getCurrentEditUser().getLogin())) {
-					myTickets.put(ticket.getId(), ticket);
+					if (status == null || status.trim().length() == 0 || ticket.getStatus().equals(status)) {
+						myTickets.put(ticket.getId(), ticket);
+					}
 				}
-				// }
 			}
 		}
 		return myTickets;
