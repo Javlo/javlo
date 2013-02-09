@@ -467,7 +467,7 @@ public abstract class AbstractFileComponent extends AbstractVisualComponent impl
 	}
 
 	public String getLabel() {
-		return properties.getProperty(LABEL_KEY);
+		return properties.getProperty(LABEL_KEY, "");
 	}
 
 	protected String getLabelXHTMLInputName() {

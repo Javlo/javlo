@@ -65,6 +65,7 @@ public class CreateArticle implements IInteractiveMacro, IAction {
 	public static String performCreate(RequestService rs, EditContext editCtx, ContentContext ctx, MessageRepository messageRepository, I18nAccess i18nAccess) {
 		String pageName = rs.getParameter("root", null);
 		String date = rs.getParameter("date", null);
+		boolean create = rs.getParameter("create", null) != null;
 		String message = null;
 		String newURL = null;
 		if (pageName == null || date == null) {
@@ -84,7 +85,9 @@ public class CreateArticle implements IInteractiveMacro, IAction {
 				if (mountPage != null) {
 					MenuElement newPage = MacroHelper.createArticlePageName(ctx, mountPage);
 					if (newPage != null) {
-						MacroHelper.addContentInPage(ctx, newPage, rootPage.getName().toLowerCase());
+						if (create) {
+							MacroHelper.addContentInPage(ctx, newPage, rootPage.getName().toLowerCase());
+						}
 						newURL = URLHelper.createURL(ctx.getContextWithOtherRenderMode(ContentContext.PREVIEW_MODE), newPage);
 					}
 				} else {

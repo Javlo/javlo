@@ -1,5 +1,5 @@
-.maincontent .mainBox {
-    margin-top: 0;
+#main-renderer {
+	margin-top: 20px;
 }
 
 a.unread {

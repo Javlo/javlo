@@ -85,7 +85,7 @@ editCtx.setRenderMode(ContentContext.EDIT_MODE);
 				<form id="pc_macro" action="${info.currentURL}" method="post">
 					<fieldset>
 						<legend>${i18n.edit['command.macro']}</legend>
-						<%=MacroHelper.getXHTMLMacroSelection(ctx, false)%>
+						<%=MacroHelper.getXHTMLMacroSelection(ctx, false, true)%>
 					</fieldset>
 				</form>
 			</c:if>

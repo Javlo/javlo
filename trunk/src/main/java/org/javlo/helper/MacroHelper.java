@@ -534,7 +534,7 @@ public class MacroHelper {
 	}
 
 	public static final String getXHTMLMacroSelection(ContentContext ctx) throws FileNotFoundException, IOException {
-		return getXHTMLMacroSelection(ctx, true);
+		return getXHTMLMacroSelection(ctx, true, true);
 	}
 
 	/**
@@ -578,7 +578,7 @@ public class MacroHelper {
 		}
 	}
 
-	public static final String getXHTMLMacroSelection(ContentContext ctx, boolean adminMode) throws FileNotFoundException, IOException {
+	public static final String getXHTMLMacroSelection(ContentContext ctx, boolean adminMode, boolean preview) throws FileNotFoundException, IOException {
 		GlobalContext globalContext = GlobalContext.getInstance(ctx.getRequest());
 
 		StringWriter writer = new StringWriter();
@@ -590,7 +590,7 @@ public class MacroHelper {
 		I18nAccess i18nAccess = I18nAccess.getInstance(globalContext, ctx.getRequest().getSession());
 		for (String name : macroName) {
 			IMacro macro = factory.getMacro(name);
-			if (macro != null && (adminMode || !macro.isAdmin())) {
+			if (macro != null && (adminMode || !macro.isAdmin()) && (!preview || macro.isPreview())) {
 				macroFound = true;
 				out.println("<div class=\"macro\">");
 				/*

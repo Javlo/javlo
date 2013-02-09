@@ -18,6 +18,11 @@
 	<label for="date">date</label>
 	<input type="text" class="datepicker" id="date" name="date" />
 </div>
+<div class="line">
+	<label for="create">create structure</label>
+	<input type="checkbox" id="create" name="create" checked="checked" />
+</div>
+
 <div class="action">
 	<input type="submit" value="create" />
 </div>

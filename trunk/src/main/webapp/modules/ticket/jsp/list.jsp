@@ -54,10 +54,10 @@
        <th class="head0">create</th>
        <th class="head1">update</th>       
        <th class="head0">#comments</th>
-       <th class="head1">status</th>
+       <th class="head1 filter">status</th>
        <c:if test="${globalContext.master}">
-       <th class="head0">authors</th>
-       <th class="head1">context</th>
+       <th class="head0 filter">authors</th>
+       <th class="head1 filter">context</th>
        </c:if>        
      </tr> 
    </tr>
@@ -86,5 +86,6 @@ jQuery(document).ready(function() {
 	});
 	
 });
+
 </script>
 </div>
