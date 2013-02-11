@@ -22,6 +22,7 @@ import org.javlo.helper.ResourceHelper;
 import org.javlo.helper.StringHelper;
 import org.javlo.helper.URLHelper;
 import org.javlo.i18n.I18nAccess;
+import org.javlo.macro.ImportJCRPageMacro;
 import org.javlo.message.GenericMessage;
 import org.javlo.message.MessageRepository;
 import org.javlo.service.ContentService;
@@ -84,6 +85,10 @@ public class DataAction implements IAction {
 					in.close();
 					cs.createContent(ctx, beans, "0", true);
 					ctx.setNeedRefresh(true);
+				} else if (StringHelper.getFileExtension(item.getName()).equalsIgnoreCase("zip") && item.getName().startsWith("export_")) {
+					InputStream in = item.getInputStream();
+					ImportJCRPageMacro.importFile(ctx, in, item.getName());
+					ResourceHelper.closeResource(in);
 				} else {
 					String resourceRelativeFolder = URLHelper.mergePath(gc.getStaticConfig().getStaticFolder(), tpl.getImportResourceFolder(), importFolder);
 					File targetFolder = new File(URLHelper.mergePath(gc.getDataFolder(), resourceRelativeFolder));

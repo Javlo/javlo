@@ -2,44 +2,34 @@ package org.javlo.macro;
 
 import java.io.File;
 import java.io.FileFilter;
+import java.io.FileInputStream;
 import java.io.IOException;
+import java.io.InputStream;
 import java.net.MalformedURLException;
-import java.text.SimpleDateFormat;
 import java.util.Collection;
-import java.util.Date;
-import java.util.Enumeration;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 import java.util.Properties;
 import java.util.logging.Logger;
-import java.util.zip.ZipEntry;
 import java.util.zip.ZipException;
-import java.util.zip.ZipFile;
 
 import org.apache.commons.io.filefilter.FileFilterUtils;
 import org.htmlparser.Node;
 import org.htmlparser.util.NodeList;
 import org.javlo.actions.IAction;
-import org.javlo.component.core.ComponentBean;
-import org.javlo.component.meta.DateComponent;
-import org.javlo.component.text.WysiwygParagraph;
-import org.javlo.component.title.Title;
 import org.javlo.config.StaticConfig;
 import org.javlo.context.ContentContext;
 import org.javlo.context.GlobalContext;
-import org.javlo.helper.MacroHelper;
+import org.javlo.helper.ContentHelper;
+import org.javlo.helper.ResourceHelper;
 import org.javlo.helper.StringHelper;
 import org.javlo.helper.URLHelper;
 import org.javlo.i18n.I18nAccess;
 import org.javlo.macro.core.IInteractiveMacro;
 import org.javlo.message.MessageRepository;
-import org.javlo.navigation.MenuElement;
-import org.javlo.service.ContentService;
 import org.javlo.service.RequestService;
-import org.javlo.xml.NodeXML;
-import org.javlo.xml.XMLFactory;
 
 public class ImportJCRPageMacro implements IInteractiveMacro, IAction {
 
@@ -98,6 +88,10 @@ public class ImportJCRPageMacro implements IInteractiveMacro, IAction {
 
 		private static String getPageRoot(ContentContext ctx) {
 			return getProperty(ctx, "page.root", "articles");
+		}
+
+		public static boolean isExplodHTML(ContentContext ctx) {
+			return StringHelper.isTrue(getProperty(ctx, "html.exploded", "true"));
 		}
 
 	}
@@ -194,47 +188,18 @@ public class ImportJCRPageMacro implements IInteractiveMacro, IAction {
 		return null;
 	}
 
-	private static String importFile(ContentContext ctx, File zip) throws ZipException, IOException {
-		ZipFile zipFile = new ZipFile(zip);
-		Enumeration<? extends ZipEntry> entries = zipFile.entries();
-		String pageName = StringHelper.getFileNameWithoutExtension(zip.getName());
-		while (entries.hasMoreElements()) {
-			ZipEntry entry = entries.nextElement();
-			if (!entry.isDirectory() && entry.getName().endsWith(".xml")) {
-				String fileName = entry.getName().replace(".xml", "");
-				Locale locale = getLocalBySuffix(fileName);
-				if (locale != null) {
-					try {
-						NodeXML node = XMLFactory.getFirstNode(zipFile.getInputStream(entry));
-						String title = node.searchValue(Config.getTitleXPath(ctx));
-						String dateStr = node.searchValue(Config.getDateXPath(ctx));
-						SimpleDateFormat format = new SimpleDateFormat(Config.getDateFormat(ctx));
-						Date date = format.parse(dateStr);
-						String xhtml = node.searchValue(Config.getContentXPath(ctx));
+	public static String importFile(ContentContext ctx, InputStream in, String name) throws ZipException, IOException {
+		return ContentHelper.importJCRFile(ctx, in, name, Config.getTitleXPath(ctx), Config.getDateXPath(ctx), Config.getDateFormat(ctx), Config.getContentXPath(ctx), Config.getPageRoot(ctx), Config.isExplodHTML(ctx));
+	}
 
-						ContentService content = ContentService.getInstance(ctx.getRequest());
-						MenuElement page = content.getNavigation(ctx).searchChildFromName(pageName);
-						MenuElement rootPage = content.getNavigation(ctx).searchChildFromName(Config.getPageRoot(ctx));
-						if (rootPage != null) {
-							if (page == null) {
-								page = MacroHelper.createArticlePage(ctx, rootPage, date);
-								page.setName(pageName);
-								ctx.setPath(page.getPath());
-							}
-							logger.info("create page : in " + locale + " " + page.getPath());
-							String compId = content.createContent(ctx, page, new ComponentBean(Title.TYPE, title, locale.getLanguage()), "0", false);
-							compId = content.createContent(ctx, page, new ComponentBean(DateComponent.TYPE, StringHelper.renderTime(date), locale.getLanguage()), compId, false);
-							compId = content.createContent(ctx, page, new ComponentBean(WysiwygParagraph.TYPE, xhtml, locale.getLanguage()), compId, false);
-						} else {
-							return "page not found : " + Config.getPageRoot(ctx);
-						}
-					} catch (Exception e) {
-						e.printStackTrace();
-					}
-				}
-			}
+	private static String importFile(ContentContext ctx, File zip) throws ZipException, IOException {
+		InputStream in = null;
+		try {
+			in = new FileInputStream(zip);
+			return importFile(ctx, in, zip.getName());
+		} finally {
+			ResourceHelper.closeResource(in);
 		}
-		return null;
 	}
 
 	@Override
