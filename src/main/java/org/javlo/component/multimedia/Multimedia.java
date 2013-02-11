@@ -65,11 +65,11 @@ public class Multimedia extends TimeRangeComponent implements IImageTitle {
 
 	protected static final String ORDER_BY_ACCESS = "order by access";
 
-	private static final String ALL = "all";
-	private static final String IMAGE = "image";
-	private static final String SOUND = "sound";
-	private static final String VIDEO = "video";
-	private static final String EMBED = "embed";
+	public static final String ALL = "all";
+	public static final String IMAGE = "image";
+	public static final String SOUND = "sound";
+	public static final String VIDEO = "video";
+	public static final String EMBED = "embed";
 
 	protected boolean acceptStaticInfo(ContentContext ctx, StaticInfo info) {
 
@@ -451,7 +451,6 @@ public class Multimedia extends TimeRangeComponent implements IImageTitle {
 
 	public String getFilesDirectory(ContentContext ctx) {
 		String fileDir = URLHelper.mergePath(getBaseStaticDir(ctx), getCurrentRootFolder());
-		;
 		return fileDir;
 	}
 
@@ -767,6 +766,7 @@ public class Multimedia extends TimeRangeComponent implements IImageTitle {
 		}
 
 		int max = Math.min(getMaxListSize(), allResource.size());
+		System.out.println("***** Multimedia.prepareView : MAX = " + max); // TODO: remove debug trace
 		ctx.getRequest().setAttribute("title", getTitle());
 		ctx.getRequest().setAttribute("pagination", pagination);
 		ctx.getRequest().setAttribute("resources", allResource.subList(0, max));

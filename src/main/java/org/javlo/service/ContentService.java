@@ -235,6 +235,16 @@ public class ContentService {
 		return id;
 	}
 
+	public String createContent(ContentContext ctx, Collection<ComponentBean> inBean, String parentId, boolean releaseCache) throws Exception {
+		for (ComponentBean bean : inBean) {
+			parentId = createContent(ctx, bean, parentId, false);
+		}
+		if (releaseCache) {
+			ctx.getCurrentPage().releaseCache();
+		}
+		return parentId;
+	}
+
 	public String createContent(ContentContext ctx, String parentId, String type, String content, boolean releaseCache) throws Exception {
 		if (content == null) {
 			content = "";

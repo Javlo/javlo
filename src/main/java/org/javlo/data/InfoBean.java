@@ -1,8 +1,10 @@
 package org.javlo.data;
 
 import java.util.Collection;
+import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Map;
 
 import javax.servlet.http.HttpServletRequest;
 
@@ -76,6 +78,12 @@ public class InfoBean {
 
 	public String getCurrentURL() {
 		return URLHelper.createURL(ctx);
+	}
+
+	public String getUploadURL() {
+		Map<String, String> params = new HashMap<String, String>();
+		params.put("webaction", "data.upload");
+		return URLHelper.createAjaxURL(ctx, params);
 	}
 
 	public String getCurrentViewURL() {

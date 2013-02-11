@@ -8,7 +8,6 @@ import java.io.BufferedReader;
 import java.io.BufferedWriter;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
-import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStreamReader;
@@ -1120,19 +1119,9 @@ public class StringHelper {
 
 	public static void main(String[] args) {
 
-		String text = "";
+		String text = "_12 _nathalie_1.jpg";
 
-		String xml;
-		try {
-
-			xml = ResourceHelper.loadStringFromFile(new File("c:/trans/test.xml"));
-
-			System.out.println(xml);
-
-		} catch (Exception e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
+		System.out.println("***** StringHelper.main : remove number : " + trimSpaceAndUnderscore(removeNumber(getFileNameWithoutExtension(text)))); // TODO: remove debug trace
 
 	}
 
@@ -2471,6 +2460,22 @@ public class StringHelper {
 			}
 		}
 		return key;
+	}
+
+	public static String removeNumber(String text) {
+		return text.replaceAll("0|1|2|3|4|5|6|7|8|9", "");
+	}
+
+	public static String trimSpaceAndUnderscore(String inText) {
+		String text = inText;
+		text = text.trim();
+		while (text.startsWith("_") && text.length() > 0) {
+			text = text.substring(1).trim();
+		}
+		while (text.endsWith("_") && text.length() > 0) {
+			text = text.substring(0, text.length() - 1).trim();
+		}
+		return text;
 	}
 
 	public String cleanString(String text) {

@@ -204,9 +204,9 @@ public class ContentHelper {
 								bean = new ComponentBean(TextList.TYPE, value, lang);
 							}
 						} else if (node.getName().endsWith(":image")) {
-							ByteArrayOutputStream outStream = new ByteArrayOutputStream();
-							PrintStream out = new PrintStream(outStream);
 							if (node.getAttributeValue("xlink:href") != null) {
+								ByteArrayOutputStream outStream = new ByteArrayOutputStream();
+								PrintStream out = new PrintStream(outStream);
 								File file = new File(node.getAttributeValue("xlink:href"));
 								String folder = "";
 								if (file.getParentFile() != null) {

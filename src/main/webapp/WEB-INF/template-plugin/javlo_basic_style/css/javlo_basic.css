@@ -13,6 +13,31 @@ body,html {
 	top: -999px;
 }
 
+/***************/
+/*** GALLERY ***/
+/***************/
+
+.hidden {
+	display: none;
+}
+
+.multimedia {
+	overflow: hidden;
+}
+
+.multimedia .item {
+	float: left;
+	margin: 12px;
+}
+
+.multimedia .subtitle {
+	display: none;
+}
+
+.multimedia .pagination {
+	text-align: center;
+}
+
 /****************/
 /*** messages ***/
 /****************/
@@ -82,52 +107,6 @@ body,html {
 	margin-top: 10px;
 	margin-bottom: 10px;
 	border-top: 1px #999999 solid;
-}
-
-/******************/
-/*** THUMBNAILS ***/
-/******************/
-.thumbnails-slide {
-	overflow: hidden;
-}
-
-.thumbnails-slide .images {
-	height: 60px;
-	width: 10000px;
-}
-
-.thumbnails-slide .slide-image {
-	margin: 0px;
-	border: 0px none;
-	padding: 0px;
-	float: left;
-}
-
-.thumbnails-slide .slide-image a,.thumbnails-slide .slide-image img {
-	margin: 0px;
-	border: 0px none;
-	padding: 0px;
-}
-
-.thumbnails {
-	clear: both;
-}
-
-.thumbnails .thumb-image {
-	float: left;
-	margin: 3px;
-}
-
-.labeled-image div {
-	display: none;
-}
-
-#content .slideshow {
-	text-align: center;
-}
-
-#content .slideshow .label {
-	display: block;
 }
 
 /**************/

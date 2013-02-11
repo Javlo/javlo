@@ -44,6 +44,8 @@ import javax.servlet.http.HttpSession;
 
 import org.apache.commons.configuration.ConfigurationException;
 import org.apache.commons.configuration.PropertiesConfiguration;
+import org.apache.commons.fileupload.FileItem;
+import org.apache.commons.io.FileExistsException;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.FilenameUtils;
 import org.apache.poi.hwpf.extractor.WordExtractor;
@@ -924,6 +926,29 @@ public class ResourceHelper {
 		try {
 			in = new FileInputStream(fileIn);
 			return writeStreamToFile(in, file);
+		} finally {
+			ResourceHelper.closeResource(in);
+		}
+	}
+
+	public static final int writeFileItemToFolder(FileItem fileItem, File folder) throws IOException {
+		if (!folder.isDirectory()) {
+			return -1;
+		}
+		File file = new File(URLHelper.mergePath(folder.getAbsolutePath(), fileItem.getName()));
+		if (!file.exists()) {
+			file.createNewFile();
+		} else {
+			throw new FileExistsException("File allready exist.");
+		}
+		InputStream in = null;
+		try {
+			in = fileItem.getInputStream();
+			return writeStreamToFile(in, file);
+		} catch (IOException e) {
+			ResourceHelper.closeResource(in);
+			file.delete();
+			throw e;
 		} finally {
 			ResourceHelper.closeResource(in);
 		}

@@ -33,9 +33,11 @@ import org.javlo.ztatic.StaticInfo;
  */
 public class Image extends AbstractFileComponent implements IImageTitle, IPreviewable, IStaticResource, IAction {
 
+	public static final String STYLE_CENTER = "image-center";
+
 	@Override
 	public String[] getStyleList(ContentContext ctx) {
-		return new String[] { "image-left", "image-right", "image-center", HIDDEN };
+		return new String[] { "image-left", "image-right", STYLE_CENTER, HIDDEN };
 	}
 
 	@Override
@@ -153,7 +155,7 @@ public class Image extends AbstractFileComponent implements IImageTitle, IPrevie
 		String[] images = getFileList(getFileDirectory(ctx));
 		String currentFileLink = URLHelper.mergePath(getDirSelected(), getFileName());
 		GlobalContext globalContext = GlobalContext.getInstance(ctx.getRequest());
-		
+
 		FileAction.FileBean file = new FileAction.FileBean(ctx, getFile(ctx));
 		Map<String, String> params = new HashMap<String, String>();
 		params.put("webaction", "edit.save");
@@ -163,7 +165,7 @@ public class Image extends AbstractFileComponent implements IImageTitle, IPrevie
 		params.put(getDirInputName(), getDirSelected()); // fake file name
 		String uploadURL = URLHelper.createURL(ctx, params);
 		out.println("<div class=\"image-selected drop-files\" data-fieldname=\"" + getFileXHTMLInputName() + "\" data-url=\"" + uploadURL + "\">");
-		
+
 		out.println("<div class=\"focus-zone\">");
 
 		out.println("<div id=\"" + getPreviewZoneId() + "\" class=\"list-container\">");

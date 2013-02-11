@@ -324,7 +324,7 @@
 	color: #000000;
 }
 
-#pc_message {
+#message-container .notification {
 	display: block;
 	padding: 7px;
 	width: 100%;
@@ -345,26 +345,16 @@
 	opacity: .95;
 }
 
-#pc_message .error {
-	display: inline;
+#message-container .error , #message-container .msgerror {	
 	padding-left: 18px;
-	background: url('../../images/icons/error.png') no-repeat left;
+	background-image: url('../../images/icons/error.png') no-repeat left;
 	color: #aa1111;
 }
 
-#pc_message .info {
-	display: inline;
+#message-container .info {	
 	padding-left: 18px;
-	background: url('../../images/icons/info.png') no-repeat left;
+	background-image: url('../../images/icons/info.png') no-repeat left;
 	color: #638EBD;
-}
-
-#pc_message .icone {
-	margin: 0 14px 0 0;
-	padding: 0px;
-	border: 0px none;
-	float: right;
-	cursor: pointer;
 }
 
 .pc_edit_action {
@@ -676,9 +666,12 @@
 
 #preview-layer span, #droppable-layer span {
 	display: block;	
-	background-color: #E3364A;
 	height: 9999px;
 	opacity: .30;
+}
+
+#preview-layer span {
+	background-color: #E3364A;	
 }
 
 #droppable-layer span {	
@@ -695,4 +688,23 @@
 	border-radius: 3px 3px 3px 3px;
 	background-color: #364AE3;
 	opacity: .30;
+}
+
+#pc_upload #upload-zone {
+	text-align: center;	
+}
+
+#pc_upload #upload-zone.dragover span {
+	color: #333333;
+	border-color: #333333;
+}
+
+#pc_upload #upload-zone span {
+	margin: 6px 0;
+	border: 1px #bbbbbb solid;
+	padding: 6px;
+	display: block;	
+	font-size: 16px;
+	color: #bbbbbb;
+	text-shadow: gray;
 }

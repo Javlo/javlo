@@ -669,7 +669,7 @@ public class Edit extends AbstractModuleAction {
 		return null;
 	}
 
-	public static final String performDelete(ContentContext ctx, HttpServletRequest request, HttpServletResponse response, I18nAccess i18nAccess, MessageRepository messageRepository) throws Exception {
+	public static final String performDelete(ContentContext ctx, HttpServletRequest request, EditContext editContext, HttpServletResponse response, I18nAccess i18nAccess, MessageRepository messageRepository) throws Exception {
 		if (!canModifyCurrentPage(ctx) || !checkPageSecurity(ctx)) {
 			messageRepository.setGlobalMessageAndNotification(ctx, new GenericMessage(i18nAccess.getText("action.block"), GenericMessage.ERROR));
 			return null;

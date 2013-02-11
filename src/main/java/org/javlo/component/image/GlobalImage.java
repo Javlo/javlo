@@ -502,8 +502,6 @@ public class GlobalImage extends Image {
 	@Override
 	public String getViewXHTMLCode(ContentContext ctx) throws Exception {
 
-		System.out.println("***** GlobalImage.getViewXHTMLCode : START"); // TODO: remove debug trace
-
 		String filter = getFilter(ctx);
 		if (HIDDEN_FILTER.equals(filter)) {
 			return "";

@@ -1,5 +1,6 @@
-<%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
-<%@page contentType="text/html" import="
+<%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c"
+%><%@ taglib uri="/WEB-INF/javlo.tld" prefix="jv"
+%><%@page contentType="text/html" import="
     	    org.javlo.helper.XHTMLHelper,
     	    org.javlo.helper.URLHelper,
     	    org.javlo.helper.MacroHelper,
@@ -68,6 +69,10 @@ editCtx.setRenderMode(ContentContext.EDIT_MODE);
 						</div>
 					</fieldset>
 				</form>
+				<div id="pc_upload">
+					<div id="ajax-loader">&nbsp;</div>
+					<div id="upload-zone" data-url="${info.uploadURL}" class="drop-files"><span>${i18n.edit['preview.upload-here']}</span></div>
+				</div>
 				<form id="children_list" action="${info.currentURL}" method="post">
 					<fieldset>
 						<legend>${i18n.edit['content.navigation']}</legend>
