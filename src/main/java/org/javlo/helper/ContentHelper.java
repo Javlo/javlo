@@ -18,6 +18,7 @@ import java.util.zip.ZipInputStream;
 
 import org.javlo.component.core.ComponentBean;
 import org.javlo.component.image.GlobalImage;
+import org.javlo.component.image.Image;
 import org.javlo.component.list.TextList;
 import org.javlo.component.meta.DateComponent;
 import org.javlo.component.text.Paragraph;
@@ -79,6 +80,18 @@ public class ContentHelper {
 			} else if (tag.getName().equalsIgnoreCase("ul")) {
 				String content = removeTag(tag.getInside(html));
 				newBean = new ComponentBean(TextList.TYPE, content, lg);
+			} else if (tag.getName().equalsIgnoreCase("img")) {
+				ByteArrayOutputStream outStream = new ByteArrayOutputStream();
+				PrintStream out = new PrintStream(outStream);
+				String imagePath = tag.getAttributes().get("src");
+				if (imagePath != null && imagePath.trim().length() > 0) {
+					out.println(Image.FILE_NAME_KEY + "=" + StringHelper.getFileNameFromPath(imagePath));
+					out.println(Image.DIR_KEY + "=" + StringHelper.getDirNameFromPath(imagePath).replace("###/webdav", ""));
+					out.println(GlobalImage.IMAGE_FILTER + "=full");
+					out.close();
+					newBean = new ComponentBean(GlobalImage.TYPE, new String(outStream.toByteArray()), lg);
+					newBean.setStyle(Image.STYLE_CENTER);
+				}
 			} else {
 				for (int i = 2; i < 8; i++) {
 					if (tag.getName().equalsIgnoreCase("h" + i)) {
@@ -117,8 +130,9 @@ public class ContentHelper {
 	}
 
 	public static void _main(String[] args) {
+		ZipInputStream in = null;
 		try {
-			ZipInputStream in = new ZipInputStream(new FileInputStream(new File("d:/trans/test_doc.odt")));
+			in = new ZipInputStream(new FileInputStream(new File("d:/trans/test_doc.odt")));
 			ZipEntry entry = in.getNextEntry();
 			while (entry != null) {
 				System.out.println("***** ContentHelper.main : entry : " + entry); // TODO: remove debug trace
@@ -130,6 +144,8 @@ public class ContentHelper {
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
+		} finally {
+			ResourceHelper.closeResource(in);
 		}
 	}
 
@@ -268,11 +284,12 @@ public class ContentHelper {
 		return null;
 	}
 
-	public static String importJCRFile(ContentContext ctx, InputStream in, String name, String titleXPath, String dateXPath, String dateFormat, String contentXPath, String pageRootXPath, boolean explodeHTML) throws ZipException, IOException {
+	public static String importJCRFile(ContentContext ctx, InputStream in, String name, MenuElement page, String titleXPath, String dateXPath, String dateFormat, String contentXPath, String pageRootXPath, boolean explodeHTML) throws ZipException, IOException {
 		ZipInputStream zipIn = new ZipInputStream(in);
 		/*
 		 * Enumeration<? extends ZipEntry> entries = zipIn.getNextEntry(); String pageName = StringHelper.getFileNameWithoutExtension(zip.getName());
 		 */
+		GlobalContext gc = GlobalContext.getInstance(ctx.getRequest());
 		String pageName = StringHelper.getFileNameWithoutExtension(name);
 		ZipEntry entry = zipIn.getNextEntry();
 		while (entry != null) {
@@ -289,7 +306,9 @@ public class ContentHelper {
 						String xhtml = node.searchValue(contentXPath);
 
 						ContentService content = ContentService.getInstance(ctx.getRequest());
-						MenuElement page = content.getNavigation(ctx).searchChildFromName(pageName);
+						if (page == null) {
+							page = content.getNavigation(ctx).searchChildFromName(pageName);
+						}
 						MenuElement rootPage = content.getNavigation(ctx).searchChildFromName(pageRootXPath);
 						if (rootPage != null) {
 							if (page == null) {
@@ -312,6 +331,11 @@ public class ContentHelper {
 					} catch (Exception e) {
 						e.printStackTrace();
 					}
+				}
+			} else if (StringHelper.isImage(entry.getName())) {
+				File localFile = new File(URLHelper.mergePath(gc.getDataFolder(), gc.getStaticConfig().getImageFolder(), entry.getName()));
+				if (!localFile.exists()) {
+					ResourceHelper.writeStreamToFile(zipIn, localFile);
 				}
 			}
 			entry = zipIn.getNextEntry();

@@ -87,8 +87,9 @@ public class DataAction implements IAction {
 					ctx.setNeedRefresh(true);
 				} else if (StringHelper.getFileExtension(item.getName()).equalsIgnoreCase("zip") && item.getName().startsWith("export_")) {
 					InputStream in = item.getInputStream();
-					ImportJCRPageMacro.importFile(ctx, in, item.getName());
+					ImportJCRPageMacro.importFile(ctx, in, item.getName(), ctx.getCurrentPage());
 					ResourceHelper.closeResource(in);
+					ctx.setNeedRefresh(true);
 				} else {
 					String resourceRelativeFolder = URLHelper.mergePath(gc.getStaticConfig().getStaticFolder(), tpl.getImportResourceFolder(), importFolder);
 					File targetFolder = new File(URLHelper.mergePath(gc.getDataFolder(), resourceRelativeFolder));
