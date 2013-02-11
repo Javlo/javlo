@@ -7,6 +7,10 @@ body,html {
 	display: none;
 }
 
+p.important {
+	font-weight: bold;
+}
+
 /** fake input **/
 #fk {
 	position: absolute;

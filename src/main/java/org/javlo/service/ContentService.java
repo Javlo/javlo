@@ -210,7 +210,7 @@ public class ContentService {
 		String id = StringHelper.getRandomId();
 		String lg = inBean.getLanguage();
 		if (lg == null) {
-			lg = ctx.getContentLanguage();
+			lg = ctx.getRequestContentLanguage();
 		}
 		ComponentBean bean = new ComponentBean(id, inBean.getType(), inBean.getValue(), lg, false);
 		bean.setList(inBean.isList());
@@ -235,14 +235,18 @@ public class ContentService {
 		return id;
 	}
 
-	public String createContent(ContentContext ctx, Collection<ComponentBean> inBean, String parentId, boolean releaseCache) throws Exception {
+	public String createContent(ContentContext ctx, MenuElement page, Collection<ComponentBean> inBean, String parentId, boolean releaseCache) throws Exception {
 		for (ComponentBean bean : inBean) {
-			parentId = createContent(ctx, bean, parentId, false);
+			parentId = createContent(ctx, page, bean, parentId, false);
 		}
 		if (releaseCache) {
 			ctx.getCurrentPage().releaseCache();
 		}
 		return parentId;
+	}
+
+	public String createContent(ContentContext ctx, Collection<ComponentBean> inBean, String parentId, boolean releaseCache) throws Exception {
+		return createContent(ctx, ctx.getCurrentPage(), inBean, parentId, releaseCache);
 	}
 
 	public String createContent(ContentContext ctx, String parentId, String type, String content, boolean releaseCache) throws Exception {

@@ -6,9 +6,12 @@ import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.PrintStream;
+import java.text.SimpleDateFormat;
 import java.util.Collection;
+import java.util.Date;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Locale;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipException;
 import java.util.zip.ZipInputStream;
@@ -16,17 +19,24 @@ import java.util.zip.ZipInputStream;
 import org.javlo.component.core.ComponentBean;
 import org.javlo.component.image.GlobalImage;
 import org.javlo.component.list.TextList;
+import org.javlo.component.meta.DateComponent;
 import org.javlo.component.text.Paragraph;
+import org.javlo.component.text.WysiwygParagraph;
 import org.javlo.component.title.SubTitle;
 import org.javlo.component.title.Title;
+import org.javlo.context.ContentContext;
 import org.javlo.context.GlobalContext;
 import org.javlo.helper.XMLManipulationHelper.BadXMLException;
 import org.javlo.helper.XMLManipulationHelper.TagDescription;
+import org.javlo.navigation.MenuElement;
+import org.javlo.service.ContentService;
 import org.javlo.utils.UnclosableInputStream;
 import org.javlo.xml.NodeXML;
 import org.javlo.xml.XMLFactory;
 
 public class ContentHelper {
+
+	private static java.util.logging.Logger logger = java.util.logging.Logger.getLogger(ContentHelper.class.getName());
 
 	/**
 	 * remove tag. sample: <a href="#">link</a> -> link
@@ -60,8 +70,12 @@ public class ContentHelper {
 				String content = removeTag(tag.getInside(html));
 				newBean = new ComponentBean(Title.TYPE, content, lg);
 			} else if (tag.getName().equalsIgnoreCase("p")) {
-				String content = removeTag(tag.getInside(html));
+				String inside = tag.getInside(html).trim();
+				String content = removeTag(inside);
 				newBean = new ComponentBean(Paragraph.TYPE, content, lg);
+				if (inside.startsWith("<strong")) {
+					newBean.setStyle("important");
+				}
 			} else if (tag.getName().equalsIgnoreCase("ul")) {
 				String content = removeTag(tag.getInside(html));
 				newBean = new ComponentBean(TextList.TYPE, content, lg);
@@ -234,5 +248,74 @@ public class ContentHelper {
 		}
 
 		return outBeans;
+	}
+
+	private static Locale getLocalBySuffix(String name) {
+		if (name.contains("_")) {
+			String[] splitted = name.split("_");
+			if (splitted.length == 2) {
+				if (splitted[1].length() == 2) {
+					return new Locale(splitted[1]);
+				}
+			} else if (splitted.length > 2) {
+				if (splitted[splitted.length - 2].length() == 2) {
+					return new Locale(splitted[splitted.length - 2], splitted[splitted.length - 1]);
+				} else {
+					return new Locale(splitted[splitted.length - 1]);
+				}
+			}
+		}
+		return null;
+	}
+
+	public static String importJCRFile(ContentContext ctx, InputStream in, String name, String titleXPath, String dateXPath, String dateFormat, String contentXPath, String pageRootXPath, boolean explodeHTML) throws ZipException, IOException {
+		ZipInputStream zipIn = new ZipInputStream(in);
+		/*
+		 * Enumeration<? extends ZipEntry> entries = zipIn.getNextEntry(); String pageName = StringHelper.getFileNameWithoutExtension(zip.getName());
+		 */
+		String pageName = StringHelper.getFileNameWithoutExtension(name);
+		ZipEntry entry = zipIn.getNextEntry();
+		while (entry != null) {
+			if (!entry.isDirectory() && entry.getName().endsWith(".xml")) {
+				String fileName = entry.getName().replace(".xml", "");
+				Locale locale = getLocalBySuffix(fileName);
+				if (locale != null) {
+					try {
+						NodeXML node = XMLFactory.getFirstNode(new UnclosableInputStream(zipIn));
+						String title = node.searchValue(titleXPath);
+						String dateStr = node.searchValue(dateXPath);
+						SimpleDateFormat format = new SimpleDateFormat(dateFormat);
+						Date date = format.parse(dateStr);
+						String xhtml = node.searchValue(contentXPath);
+
+						ContentService content = ContentService.getInstance(ctx.getRequest());
+						MenuElement page = content.getNavigation(ctx).searchChildFromName(pageName);
+						MenuElement rootPage = content.getNavigation(ctx).searchChildFromName(pageRootXPath);
+						if (rootPage != null) {
+							if (page == null) {
+								page = MacroHelper.createArticlePage(ctx, rootPage, date);
+								page.setName(pageName);
+								ctx.setPath(page.getPath());
+							}
+							logger.info("create page : in " + locale + " " + page.getPath());
+							String compId = content.createContent(ctx, page, new ComponentBean(Title.TYPE, title, locale.getLanguage()), "0", false);
+							compId = content.createContent(ctx, page, new ComponentBean(DateComponent.TYPE, StringHelper.renderTime(date), locale.getLanguage()), compId, false);
+							if (!explodeHTML) {
+								compId = content.createContent(ctx, page, new ComponentBean(WysiwygParagraph.TYPE, xhtml, locale.getLanguage()), compId, true);
+							} else {
+								Collection<ComponentBean> beans = createContentWithHTML(xhtml, locale.getLanguage());
+								compId = content.createContent(ctx, page, beans, compId, true);
+							}
+						} else {
+							return "page not found : " + pageRootXPath;
+						}
+					} catch (Exception e) {
+						e.printStackTrace();
+					}
+				}
+			}
+			entry = zipIn.getNextEntry();
+		}
+		return null;
 	}
 }

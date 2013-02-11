@@ -623,8 +623,8 @@ public class Edit extends AbstractModuleAction {
 		if (newType != null) {
 			editCtx.setActiveType(newType);
 			newType = i18nAccess.getText("content." + newType, newType);
-			String msg = i18nAccess.getText("content.new-type", new String[][] { { "type", newType } });
-			MessageRepository.getInstance(ctx).setGlobalMessage(new GenericMessage(msg, GenericMessage.INFO));
+			// String msg = i18nAccess.getText("content.new-type", new String[][] { { "type", newType } });
+			// MessageRepository.getInstance(ctx).setGlobalMessage(new GenericMessage(msg, GenericMessage.INFO));
 			if (requestService.getParameter("comp_id", null) != null) {
 				prepareUpdateInsertLine(ctx);
 				return performEditpreview(requestService, ctx, componentContext, editCtx, ContentService.getInstance(globalContext), ModulesContext.getInstance(ctx.getRequest().getSession(), globalContext), modCtx);
