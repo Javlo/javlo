@@ -742,6 +742,21 @@ public class StringHelper {
 		return outExt;
 	}
 
+	public static String getDirNameFromPath(String path) {
+		if (path.contains("?")) {
+			path = path.substring(0, path.indexOf('?'));
+		}
+		String outExt = path;
+		path = path.replace('\\', '/');
+		int dotIndex = path.lastIndexOf('/');
+		if (dotIndex >= 0) {
+			outExt = path.substring(0, dotIndex);
+		} else {
+			outExt = "";
+		}
+		return outExt;
+	}
+
 	/**
 	 * retreive the file extension.
 	 * 
@@ -1119,9 +1134,10 @@ public class StringHelper {
 
 	public static void main(String[] args) {
 
-		String text = "_12 _nathalie_1.jpg";
-
-		System.out.println("***** StringHelper.main : remove number : " + trimSpaceAndUnderscore(removeNumber(getFileNameWithoutExtension(text)))); // TODO: remove debug trace
+		System.out.println("***** StringHelper.main : /test/coucou.jpg = " + getDirNameFromPath("/test/coucou.jpg")); // TODO: remove debug trace
+		System.out.println("***** StringHelper.main : /test/ = " + getDirNameFromPath("/test/")); // TODO: remove debug trace
+		System.out.println("***** StringHelper.main : test.jpg = " + getDirNameFromPath("test.jpg")); // TODO: remove debug trace
+		System.out.println("***** StringHelper.main : test.jpg = " + getDirNameFromPath("/test")); // TODO: remove debug trace
 
 	}
 

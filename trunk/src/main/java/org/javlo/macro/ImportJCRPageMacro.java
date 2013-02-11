@@ -29,6 +29,7 @@ import org.javlo.helper.URLHelper;
 import org.javlo.i18n.I18nAccess;
 import org.javlo.macro.core.IInteractiveMacro;
 import org.javlo.message.MessageRepository;
+import org.javlo.navigation.MenuElement;
 import org.javlo.service.RequestService;
 
 public class ImportJCRPageMacro implements IInteractiveMacro, IAction {
@@ -188,15 +189,15 @@ public class ImportJCRPageMacro implements IInteractiveMacro, IAction {
 		return null;
 	}
 
-	public static String importFile(ContentContext ctx, InputStream in, String name) throws ZipException, IOException {
-		return ContentHelper.importJCRFile(ctx, in, name, Config.getTitleXPath(ctx), Config.getDateXPath(ctx), Config.getDateFormat(ctx), Config.getContentXPath(ctx), Config.getPageRoot(ctx), Config.isExplodHTML(ctx));
+	public static String importFile(ContentContext ctx, InputStream in, String name, MenuElement page) throws ZipException, IOException {
+		return ContentHelper.importJCRFile(ctx, in, name, page, Config.getTitleXPath(ctx), Config.getDateXPath(ctx), Config.getDateFormat(ctx), Config.getContentXPath(ctx), Config.getPageRoot(ctx), Config.isExplodHTML(ctx));
 	}
 
 	private static String importFile(ContentContext ctx, File zip) throws ZipException, IOException {
 		InputStream in = null;
 		try {
 			in = new FileInputStream(zip);
-			return importFile(ctx, in, zip.getName());
+			return importFile(ctx, in, zip.getName(), null);
 		} finally {
 			ResourceHelper.closeResource(in);
 		}
