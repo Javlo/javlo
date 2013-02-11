@@ -204,7 +204,7 @@ public abstract class AbstractFileComponent extends AbstractVisualComponent impl
 	}
 
 	public String getDescription() {
-		return properties.getProperty(DESCRIPTION_KEY);
+		return properties.getProperty(DESCRIPTION_KEY, "");
 	}
 
 	public String getEmbedCode() {

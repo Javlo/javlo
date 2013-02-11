@@ -4,7 +4,7 @@
 	<c:forEach var="resource" items="${resources}" varStatus="status">
 	
 	<c:set var="display" value="false" />
-	<c:if test="${status.index > (pagination.page-1)*pagination.pageSize || pagination.pageSize == 0}">
+	<c:if test="${status.index >= (pagination.page-1)*pagination.pageSize || pagination.pageSize == 0}">
 		<c:if test="${status.index <= (pagination.page)*pagination.pageSize || pagination.pageSize == 0}">
 			<c:set var="display" value="true" />
 		</c:if>
@@ -47,20 +47,6 @@
 				</div>
 			</c:if>
 			
-			<ul>
-				<li class="languages">
-					<div>
-						<a href="${resource.URL}?epbox&amp;gallery=tr-${resource.relation}" lang="${resource.language}" hreflang="${resource.language}" xml:lang="${resource.language}">
-						<span class="lang">${resource.language}</span>
-						</a>
-						<c:forEach var="trResource" items="${resource.translation}" varStatus="status">
-							<a href="${trResource.URL}?epbox&amp;gallery=tr-${trResource.relation}" lang="${trResource.language}" hreflang="${trResource.language}" xml:lang="${trResource.language}">
-							<span class="lang">${trResource.language}</span>
-							</a>
-						</c:forEach>
-					</div>
-				</li>
-			</ul>
 		</div>
 		</c:if>		
 	</c:forEach>

@@ -866,6 +866,10 @@ public class GlobalContext implements Serializable {
 		return dataFolder;
 	}
 
+	public String getStaticFolder() {
+		return URLHelper.mergePath(getDataFolder(), staticConfig.getStaticFolder());
+	}
+
 	public String getDBDriver() {
 		return properties.getString("db.driver", staticConfig.getDBDriver());
 	}

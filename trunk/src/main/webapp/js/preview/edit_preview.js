@@ -6,9 +6,9 @@ jQuery(document).ready(
 				jQuery("#preview_command").draggable({
 					handle : ".pc_header"
 				});
-				jQuery("body").after(
+				jQuery("body").append(
 						'<div id="preview-layer"><span>&nbsp;</span></div>');
-				jQuery("body").after(
+				jQuery("body").append(
 						'<div id="droppable-layer"><span>&nbsp;</span></div>');
 			} catch (err) {
 				if (typeof console != 'undefined') {
@@ -19,9 +19,9 @@ jQuery(document).ready(
 			initPreview();
 
 			jQuery("body").mouseover(function() {
-				if (!dragging) {
+				/*if (!dragging) {
 					layerOver(null);
-				}
+				}*/
 				return true;
 			});
 			jQuery("#preview-layer").click(
@@ -51,10 +51,12 @@ layerOver = function(item) {
 	var insideLayer = jQuery("#preview-layer span");
 	if (item == null) {
 		layer.css("z-index", -1);
+		layer.css("display", "none");
 	} else {
 		var comp = jQuery(item);
 		if (layer.width() > 0) {
 			layer.css("z-index", 10000);
+			layer.css("display", "block");
 		}
 		layer.css("top", comp.offset().top);
 		layer.css("left", comp.offset().left);
@@ -93,15 +95,20 @@ initPreview = function() {
 		return false;
 	});
 
+
 	jQuery("#preview-layer").on('dragover', function(e) {
 		e.preventDefault();
 		e.stopPropagation();
+	});
+	jQuery("#preview-layer").on('mouseout', function(e) {
+		layerOver(null);
 	});
 	jQuery("#preview-layer").on('dragenter', function(e) {
 		e.preventDefault();
 		e.stopPropagation();
 	});
 	jQuery("#preview-layer").on('drop', function(e) {
+		layerOver(null);
 		e.preventDefault();
 		e.stopPropagation();
 	});
@@ -115,11 +122,7 @@ initPreview = function() {
 						drop : function(event, ui) {
 							var layer = jQuery("#preview-layer");
 							var comp = layer.data("subItem");
-							if (jQuery(comp).attr('id') != jQuery(this).attr(
-									"id")) {
-
-								layerOver(comp);
-
+							if (jQuery(comp).attr('id') != jQuery(this).attr("id")) {
 								var compId = jQuery(comp).attr("id").replace(
 										"cp_", "");
 								if (jQuery(this).attr("id") == "preview-delete-zone") {
@@ -150,10 +153,8 @@ initPreview = function() {
 											+ "&area=" + area;
 								}
 								ajaxRequest(ajaxURL);
-							} else {
-								layerOver(null);
 							}
-
+							layerOver(null);
 						},
 						over : function(event, ui) {
 							dragging = true;
@@ -198,6 +199,7 @@ initPreview = function() {
 			jQuery(".free-edit-zone").removeClass("droppable");
 			jQuery("#preview_command .pc_body").removeClass("hidden");
 			jQuery("#preview-delete-zone").addClass("hidden");
+			layerOver(null);
 		}
 	});
 }

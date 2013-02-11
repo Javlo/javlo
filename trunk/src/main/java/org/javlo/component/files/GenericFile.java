@@ -28,6 +28,8 @@ public class GenericFile extends AbstractFileComponent implements IReverseLinkCo
 
 	private static final String SHADOW_STYLE = "shadow";
 
+	public static final String TYPE = "file";
+
 	private static final String HIDDEN = "hidden";
 
 	@Override
@@ -143,7 +145,7 @@ public class GenericFile extends AbstractFileComponent implements IReverseLinkCo
 	 */
 	@Override
 	public String getType() {
-		return "file";
+		return TYPE;
 	}
 
 	/**

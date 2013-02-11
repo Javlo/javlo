@@ -78,12 +78,23 @@ function ajaxRequest(url, form) {
 		data : data,
 		type : "post",
 		dataType : "json"
-	}).done(function(jsonObj) {		
+	}).done(function(jsonObj) {
+		endAjaxLoading();
+		if (jsonObj.data != null) {
+			jQuery.each(jsonObj.data, function(key, value) {
+				/** need test **/
+				if (key == "need-refresh" && value) {
+					window.location.href=window.location.href;
+				}
+			});
+		}
 		jQuery.each(jsonObj.zone, function(xhtmlId, xhtml) {
 			var item = jQuery("#" + xhtmlId);			
 			if (item != null) {
 				jQuery("#" + xhtmlId).replaceWith(xhtml);
 			} else {
+				jQuery.each(jsonObj.data, function(key, value) {				
+			});
 				if (console) {
 					console.log("warning : component "+xhtmlId+" not found for zone.");
 				}
@@ -101,8 +112,7 @@ function ajaxRequest(url, form) {
 
 		});
 		jQuery(form).trigger("ajaxUpdate");
-		jQuery(document).trigger("ajaxUpdate");
-		endAjaxLoading();
+		jQuery(document).trigger("ajaxUpdate");		
 		try {
 			initPreview();
 		} catch (ex) {
@@ -115,14 +125,19 @@ function ajaxRequest(url, form) {
 
 function initDropFile() {
 	jQuery.event.props.push('dataTransfer');
-	jQuery(".drop-files").on('dragover', function(e) {
+	jQuery(".drop-files").on('dragover', function(e) {		
+		jQuery(this).addClass("dragover");
 		doNothing(e);
 	});
+	jQuery(".drop-files").on('dragout', function(ev, drag) {		
+		jQuery(this).removeClass("dragover");		
+	 });
 	jQuery(".drop-files").on('dragenter', function(e) {
-		doNothing(e);	});
+		doNothing(e);
+	});
 	jQuery(".drop-files").on('drop', function(e) {		
 		doNothing(e);
-		
+		jQuery(this).removeClass("dragover");	
 		var url  = jQuery(this).data("url");		
 		if (url.indexOf("/edit-")>=0) {
 			url = url.replace("/edit-", "/ajax-");
@@ -135,64 +150,71 @@ function initDropFile() {
 			}
 		}	
 		var fieldName = jQuery(this).data("fieldname");
+		if (fieldName == null) {
+			filedName = "files";
+		}
+				
+		var i = 0;
 		
+		var fd=new FormData;
 		jQuery.each( e.dataTransfer.files, function(index, file) {
-			
-			var fd=new FormData;
-			fd.append(fieldName,file); 
-			
-			jQuery("#ajax-loader").addClass("active");
-			
-			/*jQuery.ajax({
-				url: url,
-				type: 'post',
-				data: fd,
-				processData: false,
-				contentType: false
-			});*/
-			
-			jQuery.ajax({
-				url : url,
-				cache : false,
-				data: fd,
-				type : "post",
-				dataType : "json",
-				processData: false,
-				contentType: false
-			}).done(function(jsonObj) {		
-				jQuery.each(jsonObj.zone, function(xhtmlId, xhtml) {
-					var item = jQuery("#" + xhtmlId);			
-					if (item != null) {
-						jQuery("#" + xhtmlId).replaceWith(xhtml);
-					} else {
-						if (console) {
-							console.log("warning : component "+xhtmlId+" not found for zone.");
-						}
+			startAjaxLoading();
+			if (i==0) {
+				fd.append(fieldName,file);
+			} else {
+				fd.append(fieldName+"_"+i,file);
+			}
+			i++;			
+		});
+		
+		jQuery.ajax({
+			url : url,
+			cache : false,
+			data: fd,
+			type : "post",
+			dataType : "json",
+			processData: false,
+			contentType: false
+		}).done(function(jsonObj) {
+			if (jsonObj.data != null) {
+				jQuery.each(jsonObj.data, function(key, value) {
+					if (key == "need-refresh" && value) {
+						console.log("refresh");
+						window.location.href=window.location.href;
 					}
 				});
-				jQuery.each(jsonObj.insideZone, function(xhtmlId, xhtml) {
-					var item = jQuery("#" + xhtmlId);
-					if (item != null) {
-						item.html(xhtml);	
-					} else {
-						if (console) {
-							console.log("warning : component "+xhtmlId+" not found for insideZone.");
-						}
-					}
-
-				});				
-				jQuery(document).trigger("ajaxUpdate");
-				jQuery("#ajax-loader").removeClass("active");
-				initDropFile();
-				try {
-					initPreview();					
-				} catch (ex) {
+			}
+			jQuery.each(jsonObj.zone, function(xhtmlId, xhtml) {
+				var item = jQuery("#" + xhtmlId);			
+				if (item != null) {
+					jQuery("#" + xhtmlId).replaceWith(xhtml);
+				} else {
 					if (console) {
-						console.log(ex);
+						console.log("warning : component "+xhtmlId+" not found for zone.");
 					}
 				}
 			});
-			
+			jQuery.each(jsonObj.insideZone, function(xhtmlId, xhtml) {
+				var item = jQuery("#" + xhtmlId);
+				if (item != null) {
+					item.html(xhtml);	
+				} else {
+					if (console) {
+						console.log("warning : component "+xhtmlId+" not found for insideZone.");
+					}
+				}
+
+			});				
+			jQuery(document).trigger("ajaxUpdate");
+			endAjaxLoading();
+			initDropFile();
+			try {
+				initPreview();					
+			} catch (ex) {
+				if (console) {
+					console.log(ex);
+				}
+			}
 		});
 		 
 	});
@@ -203,13 +225,22 @@ function doNothing(evt) {
 	evt.preventDefault();
 }
 
+var ajaxLoading = 0;
+
 function startAjaxLoading() {
+	ajaxLoading++;
 	jQuery("#ajax-loader").addClass("active");
+	jQuery("#upload-zone").addClass("hidden");
 }
 
 function endAjaxLoading() {
-	jQuery("#ajax-loader").removeClass("active");
+	ajaxLoading--;
+	if (ajaxLoading == 0) {
+		jQuery("#ajax-loader").removeClass("active");
+		jQuery("#upload-zone").removeClass("hidden");
+	}
 }
+
 
 
 

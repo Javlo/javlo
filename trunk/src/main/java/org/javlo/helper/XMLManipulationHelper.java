@@ -960,22 +960,20 @@ public class XMLManipulationHelper {
 		out.println("<jsp:include page=\"/jsp/preview/command.jsp\" />");
 		// out.println("<%if (editCtx.isEditPreview()) {");
 		out.println("<%MessageRepository messageRepository = MessageRepository.getInstance(ctx);");
+		out.println("	    %><div id=\"message-container\" class=\"standard\"><%");
 		out.println("   if (messageRepository.getGlobalMessage().getMessage().trim().length() > 0) {%>");
-		out.println("	    <div id=\"pc_message\" class=\"standard\">");
-		out.println("		<%=XHTMLHelper.getIconesCode(ctx, \"close.gif\", \"close\", \"hidePreviewMessage();\")%>");
-		out.println("       <div class=\"<%=messageRepository.getGlobalMessage().getTypeLabel()%>\"><%=messageRepository.getGlobalMessage().getMessage()%></div>");
-		out.println("</div><%}%>");
+		out.println("       <div class=\"notification <%=messageRepository.getGlobalMessage().getTypeLabel()%>\"><%=messageRepository.getGlobalMessage().getMessage()%></div>");
+		out.println("<%}%></div>");
 		// out.println("<%}%>");
 		out.println("<%}%>");
 
 		out.println("<%if (ctx.isInteractiveMode() && ctx.getRenderMode() == ContentContext.TIME_MODE) {%>");
 		out.println("<jsp:include page=\"/jsp/time-traveler/command.jsp\" />");
 		out.println("<%MessageRepository messageRepository = MessageRepository.getInstance(ctx);");
+		out.println("	    %><div id=\"message-container\" class=\"standard\"><%");
 		out.println("   if (messageRepository.getGlobalMessage().getMessage().trim().length() > 0) {%>");
-		out.println("	    <div id=\"pc_message\" class=\"standard\">");
-		out.println("		<%=XHTMLHelper.getIconesCode(ctx, \"close.gif\", \"close\", \"hidePreviewMessage();\")%>");
-		out.println("       <div class=\"<%=messageRepository.getGlobalMessage().getTypeLabel()%>\"><%=messageRepository.getGlobalMessage().getMessage()%></div>");
-		out.println("</div><%}%>");
+		out.println("       <div class=\"notification <%=messageRepository.getGlobalMessage().getTypeLabel()%>\"><%=messageRepository.getGlobalMessage().getMessage()%></div>");
+		out.println("<%}%></div>");
 		out.println("<%}%>");
 
 		out.close();
