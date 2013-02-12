@@ -911,7 +911,6 @@ public class ContentContext {
 	public void setNeedRefresh(boolean needRefresh) {
 		this.needRefresh = needRefresh;
 		if (isAjax()) {
-			System.out.println("***** ContentContext.setNeedRefresh : needRefresh = " + needRefresh); // TODO: remove debug trace
 			getAjaxData().put("need-refresh", needRefresh);
 		}
 	}
