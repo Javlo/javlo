@@ -100,24 +100,9 @@ public class ChildrenLink extends AbstractVisualComponent implements IImageTitle
 	protected String getRendererTitle() {
 		String[] values = getValue().split("" + DATA_SEPARATOR);
 		if (values.length > 1) {
-			return values[1];
+			return values[0];
 		} else {
 			return "";
-		}
-	}
-
-	@Override
-	public String getCurrentRenderer(ContentContext ctx) {
-		if (super.getCurrentRenderer(ctx) != null) {
-			return super.getCurrentRenderer(ctx);
-		} else {
-			String[] values = getValue().split("" + DATA_SEPARATOR);
-			if (values.length > 0) {
-				setRenderer(ctx, values[0]);
-				return values[0];
-			} else {
-				return "";
-			}
 		}
 	}
 
@@ -131,6 +116,10 @@ public class ChildrenLink extends AbstractVisualComponent implements IImageTitle
 		I18nAccess i18n = I18nAccess.getInstance(ctx.getRequest());
 		out.println("<input type=\"hidden\" name=\"comp-" + getId() + "\" value=\"true\" />");
 		out.println("<div class=\"line\">");
+		out.println("<label for=\"" + getInputNameRendererTitle() + "\">" + i18n.getText("global.title") + "</label>");
+		out.println("<input type=\"text\" id=\"" + getInputNameRendererTitle() + "\" name=\"" + getInputNameRendererTitle() + "\" value=\"" + getRendererTitle() + "\"/>");
+		out.println("</div><div class=\"line\">");
+		out.println("</div><div class=\"line\">");
 		out.println(XHTMLHelper.getCheckbox(getInputNameLabel(), isLabelListed()) + " <label for=\"" + getInputNameLabel() + "\">" + i18n.getText("content.children-list.label") + "</label>");
 		out.println("</div><div class=\"line\">");
 		out.println(XHTMLHelper.getCheckbox(getInputNameImage(), isImage()) + " <label for=\"" + getInputNameImage() + "\">" + i18n.getText("content.children-list.image") + "</label>");
