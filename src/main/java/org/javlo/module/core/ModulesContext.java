@@ -177,6 +177,12 @@ public class ModulesContext {
 				throw new ModuleException(e.getMessage());
 			}
 		}
+		if (!outContext.isCurrentModule()) {
+			UserInterfaceContext uic = UserInterfaceContext.getInstance(session, globalContext);
+			if (uic.getCurrentModule() != null) {
+				outContext.setCurrentModule(uic.getCurrentModule());
+			}
+		}
 		return outContext;
 	}
 
