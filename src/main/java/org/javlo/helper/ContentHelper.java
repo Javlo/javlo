@@ -292,6 +292,7 @@ public class ContentHelper {
 		GlobalContext gc = GlobalContext.getInstance(ctx.getRequest());
 		String pageName = StringHelper.getFileNameWithoutExtension(name);
 		ZipEntry entry = zipIn.getNextEntry();
+		int countComp = 0;
 		while (entry != null) {
 			if (!entry.isDirectory() && entry.getName().endsWith(".xml")) {
 				String fileName = entry.getName().replace(".xml", "");
@@ -310,7 +311,7 @@ public class ContentHelper {
 							page = content.getNavigation(ctx).searchChildFromName(pageName);
 						}
 						MenuElement rootPage = content.getNavigation(ctx).searchChildFromName(pageRootXPath);
-						if (rootPage != null) {
+						if (rootPage != null || page != null) {
 							if (page == null) {
 								page = MacroHelper.createArticlePage(ctx, rootPage, date);
 								page.setName(pageName);
@@ -318,19 +319,25 @@ public class ContentHelper {
 							}
 							logger.info("create page : in " + locale + " " + page.getPath());
 							String compId = content.createContent(ctx, page, new ComponentBean(Title.TYPE, title, locale.getLanguage()), "0", false);
+							countComp++;
 							compId = content.createContent(ctx, page, new ComponentBean(DateComponent.TYPE, StringHelper.renderTime(date), locale.getLanguage()), compId, false);
+							countComp++;
 							if (!explodeHTML) {
 								compId = content.createContent(ctx, page, new ComponentBean(WysiwygParagraph.TYPE, xhtml, locale.getLanguage()), compId, true);
+								countComp++;
 							} else {
 								Collection<ComponentBean> beans = createContentWithHTML(xhtml, locale.getLanguage());
 								compId = content.createContent(ctx, page, beans, compId, true);
+								countComp = countComp + beans.size();
 							}
+
 						} else {
 							return "page not found : " + pageRootXPath;
 						}
 					} catch (Exception e) {
 						e.printStackTrace();
 					}
+					logger.info("page create with " + countComp + " components.");
 				}
 			} else if (StringHelper.isImage(entry.getName())) {
 				File localFile = new File(URLHelper.mergePath(gc.getDataFolder(), gc.getStaticConfig().getImageFolder(), entry.getName()));
