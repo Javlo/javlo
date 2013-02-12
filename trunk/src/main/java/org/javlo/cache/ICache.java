@@ -1,12 +1,14 @@
 package org.javlo.cache;
 
+import java.io.Serializable;
+
 /**
  * Interface use for Cache
  * 
  * @author Patrick Vandermaesen
  * 
  */
-public interface ICache {
+public interface ICache extends Serializable {
 
 	/**
 	 * get a item from cache.

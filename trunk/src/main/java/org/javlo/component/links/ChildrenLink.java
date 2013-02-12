@@ -137,8 +137,6 @@ public class ChildrenLink extends AbstractVisualComponent implements IImageTitle
 		out.println("</div><div class=\"line\">");
 		out.println(XHTMLHelper.getCheckbox(getInputNameDescription(), isDescription()) + " <label for=\"" + getInputNameDescription() + "\">" + i18n.getText("content.children-list.description") + "</label>");
 		out.println("</div><div class=\"line\">");
-		out.println(XHTMLHelper.getCheckbox(getInputNameCombo(), isCombo()) + " <label for=\"" + getInputNameCombo() + "\">" + i18n.getText("content.children-list.combo") + "</label>");
-		out.println("</div><div class=\"line\">");
 		out.println(XHTMLHelper.getCheckbox(getInputLockParentPage(), isLockParentPage()) + " <label for=\"" + getInputLockParentPage() + "\">" + i18n.getText("content.children-list.linked") + "</label>");
 		out.println("</div>");
 
@@ -203,10 +201,6 @@ public class ChildrenLink extends AbstractVisualComponent implements IImageTitle
 
 	public String getInputLockParentPage() {
 		return "_lock_parent_page" + getId();
-	}
-
-	public String getInputNameCombo() {
-		return "combo_" + getId();
 	}
 
 	public String getInputNameDescription() {
@@ -458,68 +452,22 @@ public class ChildrenLink extends AbstractVisualComponent implements IImageTitle
 			return;
 		}
 		String newValue = "";
-		boolean modify = false;
 		if (requestService.getParameter(getInputNameDescription(), null) != null) {
 			newValue = DESCRIPTION;
-			if (!isDescription()) {
-				modify = true;
-			}
-		} else if (isDescription()) {
-			modify = true;
 		}
 		if (requestService.getParameter(getInputNameLabel(), null) != null) {
 			newValue = newValue + DATA_SEPARATOR + LABEL;
-			if (!isLabelListed()) {
-				modify = true;
-			}
-		} else if (isLabelListed()) {
-			modify = true;
 		}
 		if (requestService.getParameter(getInputNameImage(), null) != null) {
 			newValue = newValue + DATA_SEPARATOR + IMAGE;
-			if (!isImage()) {
-				modify = true;
-			}
-		} else if (isImage()) {
-			modify = true;
 		}
-		boolean lockParentPage = false;
 		if (requestService.getParameter(getInputLockParentPage(), null) != null) {
 			newValue = newValue + DATA_SEPARATOR + LOCK_PARENT_PAGE;
-			lockParentPage = true;
-			if (!isLockParentPage()) {
-				modify = true;
-			}
-		} else if (isLockParentPage()) {
-			modify = true;
-		}
-		if (requestService.getParameter(getInputNameCombo(), null) != null) {
-			if (!lockParentPage) {
-				newValue = LABEL + DATA_SEPARATOR + COMBO;
-			} else {
-				newValue = LABEL + DATA_SEPARATOR + COMBO + DATA_SEPARATOR + LOCK_PARENT_PAGE;
-			}
-			if (!isCombo() || isDescription() || isImage() || !isLabel()) {
-				modify = true;
-			}
-		} else if (isCombo()) {
-			modify = true;
 		}
 		String rendererTitle = requestService.getParameter(getInputNameRendererTitle(), "");
 		newValue = rendererTitle + DATA_SEPARATOR + newValue;
-		if (!getRendererTitle().equals(rendererTitle)) {
-			modify = true;
-			setModify();
-		}
-		String renderer = requestService.getParameter(getInputNameRenderer(), "");
-		newValue = renderer + DATA_SEPARATOR + newValue;
-		if (getRenderer(ctx) != null) {
-			if (!getRenderer(ctx).equals(renderer)) {
-				modify = true;
-				setModify();
-			}
-		}
-		if (modify) {
+
+		if (!newValue.equals(getValue())) {
 			setValue(newValue);
 			setModify();
 		}
