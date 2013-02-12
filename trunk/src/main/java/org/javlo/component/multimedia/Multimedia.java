@@ -766,7 +766,6 @@ public class Multimedia extends TimeRangeComponent implements IImageTitle {
 		}
 
 		int max = Math.min(getMaxListSize(), allResource.size());
-		System.out.println("***** Multimedia.prepareView : MAX = " + max); // TODO: remove debug trace
 		ctx.getRequest().setAttribute("title", getTitle());
 		ctx.getRequest().setAttribute("pagination", pagination);
 		ctx.getRequest().setAttribute("resources", allResource.subList(0, max));
