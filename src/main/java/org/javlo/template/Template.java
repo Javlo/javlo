@@ -773,6 +773,26 @@ public class Template implements Comparable<Template> {
 		return areas;
 	}
 
+	public Set<String> getComponentsIncludeForArea(String area) {
+		String key = XMLManipulationHelper.AREA_PREFIX + area + ".components.include";
+		String typeRAW = properties.getString(key);
+		if (typeRAW == null) {
+			return null;
+		} else {
+			return new HashSet(StringHelper.stringToCollection(typeRAW, ";"));
+		}
+	}
+
+	public Set<String> getComponentsExcludeForArea(String area) {
+		String key = XMLManipulationHelper.AREA_PREFIX + '.' + "components.exclude";
+		String typeRAW = properties.getString(key);
+		if (typeRAW == null) {
+			return null;
+		} else {
+			return new HashSet(StringHelper.stringToCollection(typeRAW, ";"));
+		}
+	}
+
 	public Map<String, String> getAreasMap() {
 		Map<String, String> areas = new HashMap<String, String>();
 		Iterator<String> keys = properties.getKeys();

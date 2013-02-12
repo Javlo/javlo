@@ -363,6 +363,10 @@ public class Edit extends AbstractModuleAction {
 		List<ComponentWrapper> comps = new LinkedList<ComponentWrapper>();
 		EditContext editCtx = EditContext.getInstance(globalContext, ctx.getRequest().getSession());
 		ComponentWrapper titleWrapper = null;
+
+		Set<String> inludeComponents = ctx.getCurrentTemplate().getComponentsIncludeForArea(editCtx.getCurrentArea());
+		Set<String> excludeComponents = ctx.getCurrentTemplate().getComponentsExcludeForArea(editCtx.getCurrentArea());
+
 		for (int i = 0; i < components.length - 1; i++) { // remove title without component
 			if (!components[i].isMetaTitle() || !components[i + 1].isMetaTitle()) { // if next component is title too so the component group is empty
 				IContentVisualComponent comp = components[i];
@@ -379,7 +383,11 @@ public class Edit extends AbstractModuleAction {
 							}
 						}
 					}
-					comps.add(compWrapper);
+					if (compWrapper.isMetaTitle() || inludeComponents == null || inludeComponents.contains(compWrapper.getType())) {
+						if (compWrapper.isMetaTitle() || excludeComponents == null || !excludeComponents.contains(compWrapper.getType())) {
+							comps.add(compWrapper);
+						}
+					}
 				}
 			}
 		}
