@@ -1035,11 +1035,7 @@ public class StaticConfig extends Observable {
 	}
 
 	public boolean isViewPrefix() {
-		String viewPrefix = properties.getString("url.view");
-		if (viewPrefix == null) {
-			return false;
-		}
-		return StringHelper.isTrue(viewPrefix);
+		return StringHelper.isTrue(properties.getString("url.view"));
 	}
 
 	public boolean isURIWithContext() {

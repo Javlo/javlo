@@ -1,6 +1,7 @@
 package org.javlo.cache;
 
 import java.io.Serializable;
+import java.util.Collection;
 
 /**
  * Interface use for Cache
@@ -9,6 +10,13 @@ import java.io.Serializable;
  * 
  */
 public interface ICache extends Serializable {
+
+	/**
+	 * get the name of the cache.
+	 * 
+	 * @return
+	 */
+	public String getName();
 
 	/**
 	 * get a item from cache.
@@ -48,4 +56,10 @@ public interface ICache extends Serializable {
 	 */
 	public int getSize();
 
+	/**
+	 * return all keys contains in cache.
+	 * 
+	 * @return
+	 */
+	public Collection<String> getKeys();
 }
