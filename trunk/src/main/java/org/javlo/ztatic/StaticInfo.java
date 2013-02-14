@@ -863,7 +863,11 @@ public class StaticInfo {
 	public long getCRC32() {
 		if (crc32 == null) {
 			try {
-				crc32 = FileUtils.checksumCRC32(file);
+				if (file.isFile()) {
+					crc32 = FileUtils.checksumCRC32(file);
+				} else {
+					crc32 = 0L;
+				}
 			} catch (IOException e) {
 				e.printStackTrace();
 				crc32 = 0L;
