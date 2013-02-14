@@ -10,13 +10,13 @@ import org.javlo.context.ContentContext;
 import org.javlo.helper.ComponentHelper;
 import org.javlo.navigation.MenuElement;
 
-public class DownDateMacro extends AbstractMacro {
+public class UpDateMacro extends AbstractMacro {
 
-	private static Logger logger = Logger.getLogger(DownDateMacro.class.getName());
+	private static Logger logger = Logger.getLogger(UpDateMacro.class.getName());
 
 	@Override
 	public String getName() {
-		return "down-date";
+		return "up-date";
 	}
 
 	@Override
@@ -25,13 +25,13 @@ public class DownDateMacro extends AbstractMacro {
 		for (MenuElement page : ctx.getCurrentPage().getAllChildren()) {
 			List<IContentVisualComponent> dates = page.getContentByType(ctx, DateComponent.TYPE);
 			for (IContentVisualComponent date : dates) {
-				if (date.getNextComponent() != null) {
-					ComponentHelper.moveComponent(ctx, date, date.getNextComponent(), date.getArea());
+				if (date.getPreviousComponent() != null) {
+					ComponentHelper.moveComponent(ctx, date, date.getPreviousComponent().getPreviousComponent(), date.getArea());
 					i++;
 				}
 			}
 		}
-		logger.info(i + " date component moved (down).");
+		logger.info(i + " date component moved (up).");
 		return null;
 	}
 
