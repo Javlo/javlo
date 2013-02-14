@@ -12,6 +12,9 @@ public class Unknown extends AbstractVisualComponent {
 
 	String type = "unknow";
 
+	public Unknown() {
+	}
+
 	public Unknown(ContentContext newCtx, ComponentBean bean) throws Exception {
 		init(bean, newCtx);
 	}
