@@ -13,7 +13,7 @@ ContentContext editCtx = new ContentContext(ctx);
 editCtx.setRenderMode(ContentContext.EDIT_MODE);
 %>
 <div id="preview_command" lang="${info.editLanguage}" class="edit-${not empty currentUser}">
-	<div class="pc_header">${i18n.edit["preview.command"]}<a id="pc_edit_mode_button" href="<%=URLHelper.createURL(editCtx)%>?module=content&webaction=previewEdit&preview=false">X</a></div>
+	<div class="pc_header">${i18n.edit["preview.command"]}<c:if test="${!userInterface.contributor}"><a id="pc_edit_mode_button" href="<%=URLHelper.createURL(editCtx)%>?module=content&webaction=previewEdit&preview=false">X</a></c:if></div>
 	<div class="pc_body">
 			<c:if test="${not empty currentUser}">
 			<form id="pc_logout_form" action="${info.currentURL}" method="post">
@@ -42,11 +42,13 @@ editCtx.setRenderMode(ContentContext.EDIT_MODE);
 						</div>
 					</form>
 					<c:if test='${editPreview == "true"}'>
+					<c:if test="${!userInterface.light && !userInterface.contributor}">
 					<form id="change_template_form" action="<%=URLHelper.createURL(editCtx)%>?module=template&webaction=template.changeFromPreview&previewEdit=true" method="post">
 						<div class="pc_line">							
 							<input id="pc_change_template" type="submit" value="${i18n.edit['preview.label.choose-template']}" title="${i18n.edit['preview.label.choose-template']}" class="pc_edit_true" />
 						</div>
 					</form>
+					</c:if>
 					<form id="pc_del_page_form" action="${info.currentURL}" method="post">
 						<div class="pc_line">
 							<input type="hidden" value="${info.pageID}" name="page"/>
@@ -57,7 +59,8 @@ editCtx.setRenderMode(ContentContext.EDIT_MODE);
 					</c:if>					
 				</div>
 			</fieldset>
-			<c:if test='${editPreview == "true"}'>				
+			<c:if test='${editPreview == "true"}'>	
+				<c:if test="${!userInterface.contributor}">			
 				<form id="insert_page" action="${info.currentURL}" method="post">
 					<fieldset>
 						<legend>${i18n.edit['menu.new-page-title']}</legend>
@@ -69,6 +72,7 @@ editCtx.setRenderMode(ContentContext.EDIT_MODE);
 						</div>
 					</fieldset>
 				</form>
+				</c:if>
 				<div id="pc_upload">
 					<div id="ajax-loader">&nbsp;</div>
 					<div id="upload-zone" data-url="${info.uploadURL}" class="drop-files"><span>${i18n.edit['preview.upload-here']}</span></div>

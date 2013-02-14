@@ -3,20 +3,16 @@
 <div class="close-component">
 <a class="close" href="${info.currentURL}?webaction=displayComponentsList">x</a>
 </div>
-<div class="content component-list"> <!-- components -->
-<div class="one_half">
+<div class="accordion component-list"> <!-- components -->
 <c:set var="closeAccordion" value="" />
-<c:set var="titleCount" value="0" />
 <c:forEach var="comp" items="${components}">
 <c:if test="${comp.metaTitle}">${closeAccordion}
-<c:set var="titleCount" value="${titleCount+1}" />
-<c:if test="${titleCount == 5}">
-	</div><div class="one_half">	
-</c:if><h4>${i18n.edit[comp.value]}</h4>
-<div><ul><c:set var="closeAccordion" value="</ul></div>"
-/></c:if><c:if test="${!comp.metaTitle}"
+<h4${comp.selected?' class="open"':''}><a href="#">${i18n.edit[comp.value]}</a></h4>
+<div><ul>
+<c:set var="closeAccordion" value="</ul></div>"
+/></c:if>
+<c:if test="${!comp.metaTitle}"
 ><li${comp.selected?' class="selected"':''}><a class="ajax" href="${info.currentURL}?webaction=changeComponent&type=${comp.type}">${comp.label}</a></li>
 </c:if></c:forEach>
 ${closeAccordion}
-</div>
 </div> <!-- /components -->

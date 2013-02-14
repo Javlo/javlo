@@ -2,6 +2,18 @@ ul.menu {
 	margin-left: 16px;
 }
 
+.component-list ul {
+	margin-left: 32px;
+	margin-bottom: 16px;
+}
+
+.component-list h4 {
+	padding: 0;
+	margin-top: 0;
+	margin-bottom: 8px;
+	
+}
+
 .children {
 	margin-left: 32px;
 }

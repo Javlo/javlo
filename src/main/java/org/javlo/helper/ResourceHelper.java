@@ -1103,7 +1103,8 @@ public class ResourceHelper {
 
 	public static String storeBeanFromXML(Serializable bean) {
 		ByteArrayOutputStream out = new ByteArrayOutputStream();
-		XMLEncoder encoder = new XMLEncoder(out, ContentContext.CHARACTER_ENCODING, false, 0);
+		//XMLEncoder encoder = new XMLEncoder(out, ContentContext.CHARACTER_ENCODING, false, 0);
+		XMLEncoder encoder = new XMLEncoder(out);
 		encoder.writeObject(bean);
 		encoder.flush();
 		encoder.close();

@@ -18,6 +18,8 @@ public class AdminUserSecurity implements Serializable {
 
 	public static String CONTENT_ROLE = "content";
 
+	public static String CONTRIBUTOR_ROLE = "contributor";
+
 	public static String DESIGN_ROLE = "design";
 
 	public static String MACRO_ROLE = "macro";
@@ -52,6 +54,7 @@ public class AdminUserSecurity implements Serializable {
 		String[] contentRights = { "delete", "changeview", "changetype", "remove", "copy", "paste", "insert", "update", "blockpage", "visible", "copypagestructure", "pastepage", "updateone", "macro", "insertmsg", "selectarea", "mkdir", "persistenceopen", "cancelcopy", "savemetastaticfile", "previewedit" };
 		Set<String> contentSet = new HashSet<String>(Arrays.asList(contentRights));
 		rights.put(CONTENT_ROLE, contentSet);
+		rights.put(CONTRIBUTOR_ROLE, contentSet);
 
 		/* MACRO RIGHT */
 		String[] macroRights = { "macro" };
