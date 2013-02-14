@@ -21,9 +21,9 @@ public class UserInterfaceContext {
 
 	private boolean componentsList = true;
 
-	private boolean lightInterface = false;
+	private boolean lightInterface = true;
 
-	private boolean contributor;
+	private boolean contributor = true;
 
 	private String currentModule = null;
 
