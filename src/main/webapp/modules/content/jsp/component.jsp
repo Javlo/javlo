@@ -10,7 +10,7 @@
 <c:forEach var="comp" items="${components}">
 <c:if test="${comp.metaTitle}">${closeAccordion}
 <c:set var="titleCount" value="${titleCount+1}" />
-<c:if test="${titleCount == 5}">
+<c:if test="${titleCount == 4}">
 	</div><div class="one_half">	
 </c:if><h4>${i18n.edit[comp.value]}</h4>
 <div><ul><c:set var="closeAccordion" value="</ul></div>"
