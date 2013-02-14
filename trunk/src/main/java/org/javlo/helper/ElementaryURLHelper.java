@@ -146,7 +146,6 @@ public abstract class ElementaryURLHelper {
 
 	protected static final String createNoProtocolURL(ContentContext ctx, GlobalContext globalContext, String uri, boolean ajax, boolean withPathPrefix, boolean widthEncodeURL) {
 		String newUri;
-		HttpServletRequest request = ctx.getRequest();
 
 		if (ctx.getRenderMode() == ContentContext.VIEW_MODE) {
 			IURLFactory urlCreator = ctx.getURLFactory();

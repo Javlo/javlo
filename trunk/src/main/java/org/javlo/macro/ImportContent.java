@@ -102,7 +102,7 @@ public class ImportContent implements IInteractiveMacro, IAction {
 
 		ctx.getCurrentPage().releaseCache();
 
-		if (editCtx.isEditPreview()) {
+		if (ctx.isEditPreview()) {
 			ctx.setClosePopup(true);
 		}
 

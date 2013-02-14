@@ -1,7 +1,6 @@
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
-<%@ taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions" %>
-
-<c:if test="${(not userInterface.componentsList || not empty param.previewEdit) && empty param.noinsert}">
+<%@ taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions"
+%><c:if test="${(not userInterface.componentsList || not empty param.previewEdit) && empty param.noinsert}">
 <c:set var="componentsList" value="true" />
 <div class="special last"> <!-- components -->
 <form id="form-component-list" action="${info.currentURL}" method="post" class="js-submit ajax">
@@ -63,7 +62,7 @@
 <%--<c:if test="${not empty param.button_preview and empty param.previewEdit}"><a class="action-button more preview" href="${info.currentURL}?webaction=changeMode&mode=2"><span>${i18n.edit['command.preview']}</span></a></c:if>--%>
 
 <c:if test="${not empty param.button_page and empty param.previewEdit}"><a class="action-button more page" href="${info.currentURL}?webaction=changeMode&mode=3"><span>${i18n.edit['item.title']}</span></a></c:if>
-<c:if test="${not empty param.button_copy}"><a class="action-button copy ajax more" href="${info.currentURL}?webaction=copyPage${not empty param.previewEdit?'&webaction=editPreview&PreviewEdit=true':''}"><span>${i18n.edit['action.copy-page']}</span></a></c:if>
+<c:if test="${not empty param.button_copy}"><a class="action-button copy ajax more" href="${info.currentURL}?webaction=copyPage${not empty param.previewEdit?'&webaction=editPreview&previewEdit=true':''}"><span>${i18n.edit['action.copy-page']}</span></a></c:if>
 
 <c:if test="${not empty param.button_publish and empty param.previewEdit}"><a class="action-button publish ajax" href="${info.currentURL}?webaction=publish"><span>${i18n.edit['command.publish']}</span></a></c:if>
 <c:if test="${not empty param.button_preview and empty param.previewEdit}"><a class="action-button preview" href="${previewURL}"><span>${i18n.edit['command.preview']}</span></a></c:if>

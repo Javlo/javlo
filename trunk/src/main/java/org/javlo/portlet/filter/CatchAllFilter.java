@@ -22,6 +22,7 @@ import org.javlo.context.ContentContext;
 import org.javlo.context.ContentManager;
 import org.javlo.context.EditContext;
 import org.javlo.context.GlobalContext;
+import org.javlo.context.UserInterfaceContext;
 import org.javlo.helper.NetHelper;
 import org.javlo.helper.RequestHelper;
 import org.javlo.helper.ResourceHelper;
@@ -78,9 +79,7 @@ public class CatchAllFilter implements Filter {
 				if (logoutUser != null) {
 					DataToIDService service = DataToIDService.getInstance(httpRequest.getSession().getServletContext());
 					service.clearData(logoutUser.getName());
-
 					globalContext.logout(logoutUser);
-
 					if (httpRequest.getUserPrincipal() != null) {
 						httpResponse.sendRedirect("" + httpRequest.getRequestURL());
 						return;
@@ -92,7 +91,6 @@ public class CatchAllFilter implements Filter {
 			}
 
 			/** STANDARD LOGIN **/
-
 			IUserFactory fact = UserFactory.createUserFactory(globalContext, httpRequest.getSession());
 			User user = fact.getCurrentUser(((HttpServletRequest) request).getSession());
 			EditContext editContext = EditContext.getInstance(GlobalContext.getInstance(((HttpServletRequest) request).getSession(), globalContext.getContextKey()), ((HttpServletRequest) request).getSession());
@@ -106,9 +104,7 @@ public class CatchAllFilter implements Filter {
 						} catch (Exception e) {
 							e.printStackTrace();
 						}
-						// ((HttpServletRequest) request).getSession().removeAttribute(UserFactory.SESSION_KEY);
 					}
-
 				}
 			}
 
@@ -129,7 +125,6 @@ public class CatchAllFilter implements Filter {
 							if (request.getParameter("autologin") != null) {
 								DataToIDService service = DataToIDService.getInstance(httpRequest.getSession().getServletContext());
 								String codeId = service.setData(login, IUserFactory.AUTO_LOGIN_AGE_SEC * 1000);
-								// RequestHelper.setCookieValue(httpResponse, "javlo_login_id", codeId, IUserFactory.AUTO_LOGIN_AGE_SEC);
 								String pathPrefix = ContentContext.getPathPrefix((HttpServletRequest) request);
 								RequestHelper.setCookieValue(httpResponse, "javlo_login_id", codeId, IUserFactory.AUTO_LOGIN_AGE_SEC, URLHelper.mergePath(pathPrefix, "/edit"));
 								RequestHelper.setCookieValue(httpResponse, "javlo_login_id", codeId, IUserFactory.AUTO_LOGIN_AGE_SEC, URLHelper.mergePath(pathPrefix, "/preview"));
@@ -171,7 +166,6 @@ public class CatchAllFilter implements Filter {
 						newUser = true;
 					}
 				}
-				// if (ContentManager.isEdit((HttpServletRequest) request) || ContentManager.isPreview((HttpServletRequest) request)) {
 				if (autoLoginUser != null) {
 					IUserFactory adminFactory = AdminUserFactory.createUserFactory(globalContext, httpRequest.getSession());
 					User principalUser = adminFactory.autoLogin(httpRequest, autoLoginUser);
@@ -185,7 +179,7 @@ public class CatchAllFilter implements Filter {
 						}
 					}
 				}
-				// }
+				UserInterfaceContext.getInstance(((HttpServletRequest) request).getSession(), globalContext);
 			}
 
 			if (request.getParameter("edit-login") != null || request.getParameter("j_token") != null || (httpRequest.getUserPrincipal() != null && logoutUser == null)) {
@@ -226,6 +220,7 @@ public class CatchAllFilter implements Filter {
 						messageRepository.setGlobalMessage(new GenericMessage(msg, GenericMessage.ERROR));
 					}
 				}
+				UserInterfaceContext.getInstance(((HttpServletRequest) request).getSession(), globalContext);
 			}
 
 			if (newUser) {

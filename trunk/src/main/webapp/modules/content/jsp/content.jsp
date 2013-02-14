@@ -78,12 +78,12 @@ if (!StringHelper.isTrue(request.getParameter("noinsert"))) {
 %>
 
 <div class="insert-line" id="insert-line-<%=previousId%>">
-	<a class="action-button ajax" onclick="scrollToFirstQuarter(jQuery('#content-edit'),this);" href="${info.currentURL}?webaction=insert&previous=<%=previousId%>&type=<%=currentTypeComponent.getType()%>"><%=insertHere%></a><%
+	<a class="action-button ajax" onclick="scrollToFirstQuarter(jQuery('#content-edit'),this);" href="${info.currentURL}?${info.editPreview?'previewEdit=true&':''}webaction=insert&previous=<%=previousId%>&type=<%=currentTypeComponent.getType()%>"><%=insertHere%></a><%
 	if (pastePageHere != null) {
-	%><a class="action-button" onclick="scrollToFirstQuarter(jQuery('#content-edit'),this);" href="${info.currentURL}?webaction=pastePage&previous=<%=previousId%>"><%=pastePageHere%></a><%
+	%><a class="action-button" onclick="scrollToFirstQuarter(jQuery('#content-edit'),this);" href="${info.currentURL}?${info.editPreview?'previewEdit=true&':''}webaction=pastePage&previous=<%=previousId%>"><%=pastePageHere%></a><%
 	}
 	if (pasteHere != null) {
-	%><a class="action-button ajax" onclick="scrollToFirstQuarter(jQuery('#content-edit'),this);" href="${info.currentURL}?webaction=pasteComp&previous=<%=previousId%>"><%=pasteHere%></a><%
+	%><a class="action-button ajax" onclick="scrollToFirstQuarter(jQuery('#content-edit'),this);" href="${info.currentURL}?${info.editPreview?'previewEdit=true&':''}webaction=pasteComp&previous=<%=previousId%>"><%=pasteHere%></a><%
 	}%>
 </div>
 <div id="comp-child-<%=previousId%>"></div>
@@ -157,12 +157,12 @@ for (int i=0; i<components.length; i++) {
   </div><%
   if (!StringHelper.isTrue(request.getParameter("noinsert")) && !StringHelper.isTrue(request.getAttribute("lightInterface"))) {%>  
   <div class="insert-line" id="insert-line-<%=comp.getId()%>">
-	<a class="action-button ajax" onclick="scrollToFirstQuarter(jQuery('#content-edit'),this);" href="${info.currentURL}?webaction=insert&previous=<%=comp.getId()%>&type=<%=currentTypeComponent.getType()%>"><%=insertHere%></a><%
+	<a class="action-button ajax" onclick="scrollToFirstQuarter(jQuery('#content-edit'),this);" href="${info.currentURL}?${info.editPreview?'previewEdit=true&':''}webaction=insert&previous=<%=comp.getId()%>&type=<%=currentTypeComponent.getType()%>"><%=insertHere%></a><%
 	if (pastePageHere != null) {
-	%><a class="action-button" onclick="scrollToFirstQuarter(jQuery('#content-edit'),this);" href="${info.currentURL}?webaction=pastePage&previous=<%=comp.getId()%>"><%=pastePageHere%></a><%
+	%><a class="action-button" onclick="scrollToFirstQuarter(jQuery('#content-edit'),this);" href="${info.currentURL}?${info.editPreview?'previewEdit=true&':''}webaction=pastePage&previous=<%=comp.getId()%>"><%=pastePageHere%></a><%
 	}
 	if (pasteHere != null) {
-	%><a class="action-button ajax" onclick="scrollToFirstQuarter(jQuery('#content-edit'),this);" href="${info.currentURL}?webaction=pasteComp&previous=<%=comp.getId()%>"><%=pasteHere%></a><%
+	%><a class="action-button ajax" onclick="scrollToFirstQuarter(jQuery('#content-edit'),this);" href="${info.currentURL}?${info.editPreview?'previewEdit=true&':''}webaction=pasteComp&previous=<%=comp.getId()%>"><%=pasteHere%></a><%
 	}%>
   </div>
  </div><%
@@ -177,7 +177,7 @@ for (int i=0; i<components.length; i++) {
   if (totalComp > 40 && request.getParameter("display-all") == null) {
   %>
   <div class="insert-line">
-	<a class="action-button" href="${info.currentURL}?display-all=true">${i18n.edit["edit.message.display-all-components"]}</a>
+	<a class="action-button" href="${info.currentURL}?${info.editPreview?'previewEdit=true&':''}display-all=true">${i18n.edit["edit.message.display-all-components"]}</a>
   </div><%
   i = components.length; // break  
 }
