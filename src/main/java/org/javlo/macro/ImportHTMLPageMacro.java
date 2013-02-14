@@ -83,7 +83,7 @@ public class ImportHTMLPageMacro implements IInteractiveMacro, IAction {
 
 		}
 
-		if (editCtx.isEditPreview()) {
+		if (ctx.isEditPreview()) {
 			ctx.setClosePopup(true);
 		}
 

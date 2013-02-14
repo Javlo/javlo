@@ -130,9 +130,7 @@ public class ContentContext {
 			if (!content.contentExistForContext(ctx)) {
 				boolean editPreview = false;
 				if (ctx.getRenderMode() == ContentContext.PREVIEW_MODE) {
-					GlobalContext globalContext = GlobalContext.getInstance(request);
-					EditContext editCtx = EditContext.getInstance(globalContext, request.getSession());
-					editPreview = editCtx.isEditPreview();
+					editPreview = ctx.isEditPreview();
 				}
 				if (!editPreview && correctPath) {
 					MenuElement menu = content.getNavigation(ctx);
@@ -1334,5 +1332,10 @@ public class ContentContext {
 
 	public void setClosePopup(boolean closePopup) {
 		this.closePopup = closePopup;
+	}
+
+	public boolean isEditPreview() {
+		RequestService rs = RequestService.getInstance(request);
+		return StringHelper.isTrue(rs.getParameter("previewEdit", null));
 	}
 }

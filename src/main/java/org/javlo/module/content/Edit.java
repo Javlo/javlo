@@ -91,12 +91,17 @@ public class Edit extends AbstractModuleAction {
 			pasteHere = i18nAccess.getText("content.paste-comp", new String[][] { { "type", clipBoard.getCopiedComponent(ctx).getType() } });
 		}
 
-		String insertXHTML = "<a class=\"action-button ajax\" href=\"" + URLHelper.createURL(ctx) + "?webaction=insert&previous=0&type=" + currentTypeComponent.getType() + "\">" + insertHere + "</a>";
+		String previewParam = "";
+		if (ctx.isEditPreview()) {
+			previewParam = "previewEdit=true&";
+		}
+
+		String insertXHTML = "<a class=\"action-button ajax\" href=\"" + URLHelper.createURL(ctx) + "?" + previewParam + "webaction=insert&previous=0&type=" + currentTypeComponent.getType() + "\">" + insertHere + "</a>";
 		if (pastePageHere != null) {
-			insertXHTML = insertXHTML + "<a class=\"action-button\" href=\"" + URLHelper.createURL(ctx) + "?webaction=pastePage&previous=0\">" + pastePageHere + "</a>";
+			insertXHTML = insertXHTML + "<a class=\"action-button\" href=\"" + URLHelper.createURL(ctx) + "?" + previewParam + "webaction=pastePage&previous=0\">" + pastePageHere + "</a>";
 		}
 		if (pasteHere != null) {
-			insertXHTML = insertXHTML + "<a class=\"action-button ajax\" href=\"" + URLHelper.createURL(ctx) + "?webaction=pasteComp&previous=0\">" + pasteHere + "</a>";
+			insertXHTML = insertXHTML + "<a class=\"action-button ajax\" href=\"" + URLHelper.createURL(ctx) + "?" + previewParam + "webaction=pasteComp&previous=0\">" + pasteHere + "</a>";
 		}
 		ctx.addAjaxInsideZone("insert-line-0", insertXHTML);
 
@@ -105,12 +110,12 @@ public class Edit extends AbstractModuleAction {
 		IContentComponentsList elems = ctx.getCurrentPage().getContent(areaCtx);
 		while (elems.hasNext(areaCtx)) {
 			IContentVisualComponent comp = elems.next(areaCtx);
-			insertXHTML = "<a class=\"action-button ajax\" href=\"" + URLHelper.createURL(ctx) + "?webaction=insert&previous=" + comp.getId() + "&type=" + currentTypeComponent.getType() + "\">" + insertHere + "</a>";
+			insertXHTML = "<a class=\"action-button ajax\" href=\"" + URLHelper.createURL(ctx) + "?" + previewParam + "webaction=insert&previous=" + comp.getId() + "&type=" + currentTypeComponent.getType() + "\">" + insertHere + "</a>";
 			if (pastePageHere != null) {
-				insertXHTML = insertXHTML + "<a class=\"action-button\" href=\"" + URLHelper.createURL(ctx) + "?webaction=pastePage&previous=" + comp.getId() + "\">" + pastePageHere + "</a>";
+				insertXHTML = insertXHTML + "<a class=\"action-button\" href=\"" + URLHelper.createURL(ctx) + "?" + previewParam + "webaction=pastePage&previous=" + comp.getId() + "\">" + pastePageHere + "</a>";
 			}
 			if (pasteHere != null) {
-				insertXHTML = insertXHTML + "<a class=\"action-button ajax\" href=\"" + URLHelper.createURL(ctx) + "?webaction=pasteComp&previous=" + comp.getId() + "\">" + pasteHere + "</a>";
+				insertXHTML = insertXHTML + "<a class=\"action-button ajax\" href=\"" + URLHelper.createURL(ctx) + "?" + previewParam + "webaction=pasteComp&previous=" + comp.getId() + "\">" + pasteHere + "</a>";
 			}
 			ctx.addAjaxInsideZone("insert-line-" + comp.getId(), insertXHTML);
 		}
@@ -695,11 +700,9 @@ public class Edit extends AbstractModuleAction {
 			PersistenceService persistenceService = PersistenceService.getInstance(globalContext);
 			persistenceService.store(ctx);
 
-			if (type != null) {
-				String typeName = type;
-				String msg = i18nAccess.getText("action.component.removed", new String[][] { { "type", typeName } });
-				MessageRepository.getInstance(ctx).setGlobalMessageAndNotification(ctx, new GenericMessage(msg, GenericMessage.INFO));
-			}
+			/*
+			 * if (type != null) { String typeName = type; String msg = i18nAccess.getText("action.component.removed", new String[][] { { "type", typeName } }); MessageRepository.getInstance(ctx).setGlobalMessageAndNotification(ctx, new GenericMessage(msg, GenericMessage.INFO)); }
+			 */
 
 			if (ctx.isAjax()) {
 				ctx.addAjaxZone("comp-" + id, "");
@@ -733,7 +736,7 @@ public class Edit extends AbstractModuleAction {
 			if (elem != null && StringHelper.isTrue(requestService.getParameter("id-" + elem.getId(), null))) {
 				elem.performConfig(ctx);
 				elem.performEdit(ctx);
-				if (editContext.isEditPreview()) {
+				if (ctx.isEditPreview()) {
 					componentContext.addNewComponent(elem);
 				}
 				if (!elem.isModify()) { // if elem not modified check modification via rawvalue

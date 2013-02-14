@@ -314,6 +314,10 @@ public class TemplateFactory {
 				}
 			}
 		}
+		if (template == null) {
+			GlobalContext globalContext = GlobalContext.getInstance(ctx.getRequest());
+			template = TemplateFactory.getDiskTemplate(ctx.getRequest().getSession().getServletContext(), globalContext.getDefaultTemplate());
+		}
 		ctx.getRequest().setAttribute(key, template);
 		return template;
 	}

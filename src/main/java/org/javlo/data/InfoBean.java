@@ -440,8 +440,7 @@ public class InfoBean {
 	}
 
 	public boolean isEditPreview() {
-		EditContext editContext = EditContext.getInstance(globalContext, ctx.getRequest().getSession());
-		return editContext.isEditPreview();
+		return ctx.isEditPreview();
 	}
 
 	public PageBean getFirstLevelPage() {
