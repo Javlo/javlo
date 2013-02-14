@@ -158,7 +158,7 @@
 
 <c:if test="${empty param.previewEdit}">
 <div class="sidebar">
-	<div id="accordion">
+	<div id="navigation">
 		<c:forEach var="box" items="${currentModule.navigation}">
 			<c:if test="${box.title != null}">		
 			<h3 class="open">${box.title}</h3>
