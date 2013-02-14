@@ -666,8 +666,8 @@ public class Edit extends AbstractModuleAction {
 			updateComponent(ctx, currentModule, newId, previousId);
 		}
 
-		String msg = i18nAccess.getText("action.component.created", new String[][] { { "type", type } });
-		messageRepository.setGlobalMessageAndNotification(ctx, new GenericMessage(msg, GenericMessage.INFO));
+		// String msg = i18nAccess.getText("action.component.created", new String[][] { { "type", type } });
+		// messageRepository.setGlobalMessageAndNotification(ctx, new GenericMessage(msg, GenericMessage.INFO));
 
 		PersistenceService persistenceService = PersistenceService.getInstance(globalContext);
 		persistenceService.store(ctx);
