@@ -4,9 +4,11 @@
 <h3><span>${i18n.edit['item.title']}</span></h3>
 <div class="content">
 
+<c:if test="${!userInterface.light}">
 <div class="template-preview">
 	<img src="${templateImageUrl}" alt="template preview" lang="en" />
 </div>
+</c:if>
 	
 <form id="form-page-properties" class="standard-form js-change-submit" action="${info.currentURL}" method="post">
 
@@ -15,6 +17,7 @@
 	<input type="hidden" name="name" value="${page.name}" />
 </div>
 
+<c:if test="${!userInterface.light}">
 <div class="line template">		
 	<label for="template">${i18n.edit['item.template']}</label>	
 	<select id="template" name="template">
@@ -24,6 +27,7 @@
 		</c:forEach>
 	</select>	
 </div>
+</c:if>
 
 <div class="line">
 	<label for="new_name">${i18n.edit['item.name']}</label>
