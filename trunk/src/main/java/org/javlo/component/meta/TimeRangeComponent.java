@@ -19,7 +19,7 @@ import org.javlo.service.RequestService;
  */
 public class TimeRangeComponent extends DateComponent {
 
-	protected static final String VALUE_SEPARATOR = "-";
+	protected static final String VALUE_SEPARATOR = "%";
 
 	/**
 	 * create a static logger.
@@ -36,6 +36,12 @@ public class TimeRangeComponent extends DateComponent {
 	@Override
 	protected void init() throws ResourceNotFoundException {
 		super.init();
+
+		/** convert old version **/
+		if (getValue().contains("-") && !getValue().contains(VALUE_SEPARATOR)) {
+			setValue(getValue().replaceAll("-", VALUE_SEPARATOR));
+		}
+
 		if (getEndDate() == null && initDate) {
 			Calendar calStart = GregorianCalendar.getInstance();
 			Calendar calEnd = GregorianCalendar.getInstance();
