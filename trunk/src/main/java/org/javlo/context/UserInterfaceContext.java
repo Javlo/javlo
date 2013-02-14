@@ -23,6 +23,8 @@ public class UserInterfaceContext {
 
 	private boolean lightInterface = false;
 
+	private boolean contributor;
+
 	private String currentModule = null;
 
 	public static final String KEY = "userInterface";
@@ -31,10 +33,10 @@ public class UserInterfaceContext {
 
 	public static final UserInterfaceContext getInstance(HttpSession session, GlobalContext globalContext) {
 		UserInterfaceContext instance = (UserInterfaceContext) session.getAttribute(KEY);
+		AdminUserFactory userFact = AdminUserFactory.createUserFactory(globalContext, session);
+		User user = userFact.getCurrentUser(session);
 
 		if (instance == null) {
-			AdminUserFactory userFact = AdminUserFactory.createUserFactory(globalContext, session);
-			User user = userFact.getCurrentUser(session);
 			if (userFact == null || user == null) {
 				return FAKE_INSTACE;
 			}
@@ -44,14 +46,11 @@ public class UserInterfaceContext {
 			instance.globalContext = globalContext;
 
 			session.setAttribute(KEY, instance);
-
-			instance.lightInterface = AdminUserSecurity.getInstance().haveRole(user, AdminUserSecurity.LIGHT_INTERFACE_ROLE);
-
-			if (userFact.getUser(user.getLogin()) != null) { // not god user, so storable user
-				IUserInfo ui = user.getUserInfo();
-				instance.fromString(ui.getInfo());
-			}
 		}
+
+		instance.lightInterface = AdminUserSecurity.getInstance().haveRole(user, AdminUserSecurity.LIGHT_INTERFACE_ROLE);
+		instance.contributor = AdminUserSecurity.getInstance().haveRole(user, AdminUserSecurity.CONTRIBUTOR_ROLE);
+
 		return instance;
 	}
 
@@ -106,5 +105,9 @@ public class UserInterfaceContext {
 
 	public boolean isLight() {
 		return lightInterface;
+	}
+
+	public boolean isContributor() {
+		return contributor;
 	}
 }
