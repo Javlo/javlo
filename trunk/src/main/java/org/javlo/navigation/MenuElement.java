@@ -2570,7 +2570,12 @@ public class MenuElement implements Serializable {
 		GlobalContext globalContext = GlobalContext.getInstance(ctx.getRequest());
 		ICache cache = globalContext.getCache("navigation");
 		if (releaseCache) {
-			cache.removeAll();
+			String prefix = getCacheKey("");
+			for (String key : cache.getKeys()) {
+				if (key.startsWith(prefix)) {
+					cache.removeItem(key);
+				}
+			}
 			releaseCache = false;
 		}
 		return cache;
