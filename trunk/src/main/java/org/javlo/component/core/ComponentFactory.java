@@ -176,7 +176,7 @@ public class ComponentFactory {
 							Class c = ComponentFactory.class.getClassLoader().loadClass(className);
 							comp = (AbstractVisualComponent) c.newInstance();
 						} catch (Throwable t) {
-							t.printStackTrace();
+							logger.warning(t.getMessage());
 							ComponentBean bean = new ComponentBean();
 							bean.setValue(t.getMessage());
 							comp = new Unknown(null, bean);

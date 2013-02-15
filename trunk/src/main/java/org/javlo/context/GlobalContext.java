@@ -66,6 +66,8 @@ import org.javlo.navigation.IURLFactory;
 import org.javlo.navigation.MenuElement;
 import org.javlo.service.ContentService;
 import org.javlo.service.RequestService;
+import org.javlo.service.ReverseLinkService;
+import org.javlo.service.exception.ServiceException;
 import org.javlo.template.Template;
 import org.javlo.user.AdminUserFactory;
 import org.javlo.user.IUserFactory;
@@ -712,21 +714,26 @@ public class GlobalContext implements Serializable {
 	}
 
 	private synchronized ICache getEhCacheCache(String cacheName) {
-		Cache cache = cacheManager.getCache(cacheName);
-		if (cache == null) {
-			synchronized (cacheManager) {
-				cache = cacheManager.getCache(cacheName);
-				if (cache == null) {
-					if (cacheName.equals(AbstractVisualComponent.TIME_CACHE_NAME)) {
-						cache = new Cache(cacheName, 0, true, false, 60, 60 * 60); // time cache config
-					} else {
-						cache = new Cache(cacheName, 0, true, false, 60 * 60 * 24, 60 * 60 * 24); // default cache config
+		ICache outCache = cacheMaps.get(cacheName);
+		if (outCache != null) {
+			Cache cache = cacheManager.getCache(cacheName);
+			if (cache == null) {
+				synchronized (cacheManager) {
+					cache = cacheManager.getCache(cacheName);
+					if (cache == null) {
+						if (cacheName.equals(AbstractVisualComponent.TIME_CACHE_NAME)) {
+							cache = new Cache(cacheName, 0, true, false, 60, 60 * 60); // time cache config
+						} else {
+							cache = new Cache(cacheName, 0, true, false, 60 * 60 * 24, 60 * 60 * 24); // default cache config
+						}
+						cacheManager.addCache(cache);
 					}
-					cacheManager.addCache(cache);
 				}
 			}
+			outCache = new EHCacheWrapper(getContextKey(), cacheName, cache);
+			cacheMaps.put(cacheName, outCache);
 		}
-		return new EHCacheWrapper(getContextKey(), cacheName, cache);
+		return outCache;
 	}
 
 	public List<String> getComponents() {
@@ -1619,17 +1626,24 @@ public class GlobalContext implements Serializable {
 	}
 
 	protected Collection<String> getAllCacheName() {
-		if (cacheManager != null) {
-			return new LinkedList<String>(Arrays.asList(cacheManager.getCacheNames()));
-		} else {
-			return cacheMaps.keySet();
-		}
+		return cacheMaps.keySet();
 	}
 
 	public void releaseAllCache() {
 		for (String name : getAllCacheName()) {
 			getCache(name).removeAll();
 		}
+		cacheMaps.clear();
+
+		viewPages.clear();
+		frontCache.clear();
+		try {
+			ReverseLinkService.getInstance(this).clearCache();
+		} catch (ServiceException e) {
+			e.printStackTrace();
+		}
+
+		dataFolder = null;
 	}
 
 	public void reload() {
