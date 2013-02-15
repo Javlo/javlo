@@ -17,8 +17,7 @@ public class RootMenuElement extends MenuElement {
 
 	public static RootMenuElement getInstance(GlobalContext globalContext) {
 		RootMenuElement elem = new RootMenuElement();
-		elem.cache = globalContext.getCache(MenuElement.class.getName());
-		elem.cache.removeAll();
+		elem.releaseCache = true;
 		return elem;
 	}
 

@@ -24,6 +24,8 @@ import java.util.logging.Logger;
 import javax.servlet.ServletContext;
 import javax.servlet.http.HttpSession;
 
+import net.sf.ehcache.CacheManager;
+
 import org.apache.commons.configuration.ConfigurationException;
 import org.apache.commons.configuration.PropertiesConfiguration;
 import org.apache.commons.io.FileUtils;
@@ -43,6 +45,8 @@ import org.javlo.user.IUserFactory;
 import org.javlo.user.User;
 
 public class StaticConfig extends Observable {
+
+	private static final String EHCACHE_FILE = "/WEB-INF/config/ehcache.xml";
 
 	protected static Logger logger = Logger.getLogger(StaticConfig.class.getName());
 
@@ -1145,6 +1149,48 @@ public class StaticConfig extends Observable {
 
 	public long getTransformingSize() {
 		return properties.getLong("transforming.size", 4);
+	}
+
+	CacheManager cacheManager = null;
+
+	public CacheManager getEhCacheManager() throws IOException {
+		if (useEhCache() && cacheManager == null) {
+			File ehCacheFile = null;
+			if (getEHCacheConfigFile() == null || !(new File(getEHCacheConfigFile()).exists())) {
+				logger.info("load default ehcache config from : " + EHCACHE_FILE);
+				ehCacheFile = new File(application.getRealPath(EHCACHE_FILE));
+			} else {
+				ehCacheFile = new File(getEHCacheConfigFile());
+				logger.info("load ehcache config from : " + ehCacheFile);
+			}
+
+			if (ehCacheFile != null && ehCacheFile.exists()) {
+				cacheManager = CacheManager.newInstance(ehCacheFile.getAbsolutePath());
+			} else {
+				cacheManager = CacheManager.getInstance();
+			}
+
+			System.out.println("");
+			System.out.println("***** StaticConfig.getEhCacheManager : LOAD CACHE :"); // TODO: remove debug trace
+			for (String name : cacheManager.getCacheNames()) {
+				System.out.println("'" + name + "' max item in memory = " + cacheManager.getCache(name).getCacheConfiguration().getMaxElementsInMemory());
+			}
+			System.out.println("");
+
+		}
+
+		return cacheManager;
+	}
+
+	public void shutdown() {
+		if (cacheManager != null) {
+			cacheManager.shutdown();
+		}
+	}
+
+	@Override
+	protected void finalize() throws Throwable {
+		shutdown();
 	}
 
 	public String getCmsName() {

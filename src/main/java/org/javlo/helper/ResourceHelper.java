@@ -18,6 +18,7 @@ import java.io.FilenameFilter;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.io.ObjectOutputStream;
 import java.io.OutputStream;
 import java.io.PrintStream;
 import java.io.RandomAccessFile;
@@ -982,6 +983,17 @@ public class ResourceHelper {
 		out.close();
 	}
 
+	public static final void writeBytesToFile(File file, byte[] content) throws IOException {
+		if (!file.exists()) {
+			file.createNewFile();
+		}
+		OutputStream out = new FileOutputStream(file);
+		for (byte element : content) {
+			out.write(element);
+		}
+		out.close();
+	}
+
 	public static final void writeStringToFile(File file, String content, String encoding) throws IOException {
 		if (!file.exists()) {
 			file.createNewFile();
@@ -1103,7 +1115,7 @@ public class ResourceHelper {
 
 	public static String storeBeanFromXML(Serializable bean) {
 		ByteArrayOutputStream out = new ByteArrayOutputStream();
-		//XMLEncoder encoder = new XMLEncoder(out, ContentContext.CHARACTER_ENCODING, false, 0);
+		// XMLEncoder encoder = new XMLEncoder(out, ContentContext.CHARACTER_ENCODING, false, 0);
 		XMLEncoder encoder = new XMLEncoder(out);
 		encoder.writeObject(bean);
 		encoder.flush();
@@ -1114,6 +1126,13 @@ public class ResourceHelper {
 			e.printStackTrace();
 		}
 		return null;
+	}
+
+	public static byte[] storeBeanToBin(Serializable bean) throws IOException {
+		ByteArrayOutputStream out = new ByteArrayOutputStream();
+		ObjectOutputStream obj_out = new ObjectOutputStream(out);
+		obj_out.writeObject(bean);
+		return out.toByteArray();
 	}
 
 	public static void main(String[] args) {

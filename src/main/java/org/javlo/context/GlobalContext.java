@@ -78,8 +78,6 @@ import org.javlo.ztatic.StaticInfo;
 
 public class GlobalContext implements Serializable {
 
-	private static final String EHCACHE_FILE = "/WEB-INF/config/ehcache.xml";
-
 	private static final long serialVersionUID = 1L;
 
 	private static final Object LOCK_GLOBAL_CONTEXT_LOAD = new Object();
@@ -285,17 +283,7 @@ public class GlobalContext implements Serializable {
 	}
 
 	private void initCacheManager() throws IOException {
-		if (staticConfig.useEhCache()) {
-			/*
-			 * Configuration cacheConfig; File ehCacheFile = null; if (staticConfig.getEHCacheConfigFile() == null || !(new File(staticConfig.getEHCacheConfigFile()).exists())) { logger.info("load default ehcache config from : " + EHCACHE_FILE); InputStream inConfig = application.getResourceAsStream(EHCACHE_FILE); if (inConfig != null) { cacheConfig = ConfigurationSource.getConfigurationSource(inConfig).createConfiguration(); inConfig.close(); } else { throw new FileNotFoundException("ehcache config file not found : " + EHCACHE_FILE); } } else { ehCacheFile = new File(staticConfig.getEHCacheConfigFile()); logger.info("load ehcache config from : " + ehCacheFile); cacheConfig = ConfigurationSource.getConfigurationSource(ehCacheFile).createConfiguration(); } cacheConfig.setName(getContextKey());
-			 */
-			if (staticConfig.useEhCache()) {
-				cacheManager = CacheManager.getInstance();
-			}
-			/*
-			 * if (cacheManager == null) { logger.severe("error on init ehCache width : " + ehCacheFile); cacheManager = new CacheManager(); } cacheManager.setName(getContextKey());
-			 */
-		}
+		cacheManager = staticConfig.getEhCacheManager();
 	}
 
 	public static GlobalContext getRealInstance(HttpSession session, String contextKey) throws IOException, ConfigurationException {
@@ -596,11 +584,6 @@ public class GlobalContext implements Serializable {
 			synchronized (staticConfig.getContextFolder()) {
 				application.removeAttribute(contextKey);
 			}
-
-			if (cacheManager != null) {
-				cacheManager.shutdown();
-			}
-
 			stopStoreThread = true;
 		} catch (IOException e) {
 			e.printStackTrace();
@@ -617,9 +600,6 @@ public class GlobalContext implements Serializable {
 
 	@Override
 	protected void finalize() throws Throwable {
-		if (cacheManager != null) {
-			cacheManager.shutdown();
-		}
 		stopStoreThread = true;
 		super.finalize();
 	}
@@ -715,7 +695,7 @@ public class GlobalContext implements Serializable {
 
 	private synchronized ICache getEhCacheCache(String cacheName) {
 		ICache outCache = cacheMaps.get(cacheName);
-		if (outCache != null) {
+		if (outCache == null) {
 			Cache cache = cacheManager.getCache(cacheName);
 			if (cache == null) {
 				synchronized (cacheManager) {
@@ -2535,9 +2515,6 @@ public class GlobalContext implements Serializable {
 				Cache cache = cacheManager.getCache(cacheName);
 				if (cache != null) {
 					out.println("**** cache name : " + cacheName);
-					// Statistics stat = cache.getStatistics();
-					out.println("**** cache mem. size : " + StringHelper.renderSize(cache.getMemoryStoreSize()));
-					// out.println("**** cache disk size : " + StringHelper.renderSize(cache.calculateOnDiskSize()));
 					out.println("**** mem. store size : " + cache.getMemoryStoreSize());
 					out.println("**** disk store size : " + cache.getDiskStoreSize());
 					out.println("**** cache size      : " + cache.getSize());
@@ -2549,6 +2526,7 @@ public class GlobalContext implements Serializable {
 					out.println("**** Eternal ?           : " + cache.getCacheConfiguration().isEternal());
 					out.println("**** Disk Persistent ?   : " + cache.getCacheConfiguration().isDiskPersistent());
 					out.println("**** Over flow to disk ? : " + cache.getCacheConfiguration().isOverflowToDisk());
+
 					/*
 					 * out.println("**** stat cache hits : " + stat.getCacheHits()); out.println("           memory    : " + stat.getInMemoryHits()); out.println("           disk      : " + stat.getDiskStoreObjectCount()); out.println("**** cache Misses    : " + stat.getCacheMisses()); out.println("**** cache count     : " + stat.getObjectCount());
 					 */

@@ -1,12 +1,14 @@
 package org.javlo.bean;
 
+import java.io.Serializable;
+
 /**
  * represent a link
  * 
  * @author Patrick Vandermaesen
  * 
  */
-public class Link {
+public class Link implements Serializable {
 
 	protected String url;
 	protected String title;

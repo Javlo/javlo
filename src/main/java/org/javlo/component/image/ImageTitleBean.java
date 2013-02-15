@@ -1,8 +1,10 @@
 package org.javlo.component.image;
 
+import java.io.Serializable;
+
 import org.javlo.context.ContentContext;
 
-public class ImageTitleBean implements IImageTitle {
+public class ImageTitleBean implements IImageTitle, Serializable {
 	
 	private final String imageDescription;
 	private final String imageURL;
