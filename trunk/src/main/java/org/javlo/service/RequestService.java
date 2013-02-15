@@ -60,9 +60,8 @@ public class RequestService {
 			try {
 				instance.parameters.putAll(request.getParameterMap());
 			} catch (RuntimeException e1) {
-				// TODO Auto-generated catch block
-				System.out.println(e1.getMessage());
-				// e1.printStackTrace();
+				// System.out.println(e1.getMessage());
+				e1.printStackTrace();
 			}
 			boolean isMultipart = ServletFileUpload.isMultipartContent(request);
 			if (isMultipart) {
@@ -121,7 +120,12 @@ public class RequestService {
 	public String getParameter(String key, String outDefault) {
 		String[] values = parameters.get(key);
 		if (values == null || values.length == 0 || values[0] == null) {
-			return outDefault;
+			if (request.getParameter(key) == null) { // TODO: check why sometime we need this.
+				return outDefault;
+			} else {
+				return request.getParameter(key);
+			}
+
 		} else {
 			return values[0];
 		}

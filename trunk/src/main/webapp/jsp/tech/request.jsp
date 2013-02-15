@@ -1,7 +1,12 @@
+<%@page import="org.javlo.service.RequestService"%>
 <%@page import="java.util.Enumeration"%>
 <%@page contentType="text/html"%>
 
 <h1>HttpServletRequest return of principal methods</h1>
+
+<code>'test' param default request         : </code><%=request.getParameter("test")%><br /><br />
+
+<code>'test' param default request service : </code><%=RequestService.getInstance(request).getParameter("test", null)%><br /><br />
 
 <code>request.getAuthType()</code> : <%=request.getAuthType()%><br /><br />
 
