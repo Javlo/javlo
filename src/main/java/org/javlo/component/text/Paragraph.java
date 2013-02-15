@@ -51,7 +51,6 @@ public class Paragraph extends AbstractVisualComponent {
 	@Override
 	public String getViewXHTMLCode(ContentContext ctx) throws Exception {
 		String content = getContent(ctx);
-
 		content = applyReplacement(content);
 
 		if (isPrefixed()) {

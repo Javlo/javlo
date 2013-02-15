@@ -28,7 +28,6 @@ import org.javlo.context.EditContext;
 import org.javlo.context.GlobalContext;
 import org.javlo.context.GlobalContextFactory;
 import org.javlo.data.InfoBean;
-import org.javlo.helper.DebugHelper;
 import org.javlo.helper.StringHelper;
 import org.javlo.navigation.MenuElement;
 import org.javlo.template.TemplateFactory;
@@ -80,7 +79,7 @@ public class ContentService {
 		System.out.println("*** weakTest 2 : " + weakTest.get());
 	}
 
-	private MenuElement _viewNav = null;
+	private MenuElement viewNav = null;
 
 	private Map<String, MenuElement> shortURLMap = null;
 
@@ -106,7 +105,7 @@ public class ContentService {
 
 	public MenuElement getViewNav() {
 		if (previewMode) {
-			return _viewNav;
+			return viewNav;
 		} else {
 			return previewNav;
 		}
@@ -114,7 +113,7 @@ public class ContentService {
 
 	public void setViewNav(MenuElement nav) {
 		if (previewMode) {
-			_viewNav = nav;
+			viewNav = nav;
 		}
 	}
 
@@ -452,8 +451,6 @@ public class ContentService {
 				}
 				res = getViewNav();
 			}
-			DebugHelper.checkAssert(res == null, "the return of getNavigation can be never null.");
-			StaticConfig staticConfig = StaticConfig.getInstance(ctx.getRequest().getSession());
 		}
 		return res;
 	}
@@ -584,9 +581,9 @@ public class ContentService {
 	}
 
 	public void releaseViewNav(ContentContext ctx, GlobalContext globalContext) throws Exception {
+		setViewNav(null);
 		globalContext.releaseAllCache();
 		clearComponentCache();
-		setViewNav(null);
 		shortURLMap = null;
 	}
 
