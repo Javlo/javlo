@@ -319,7 +319,7 @@ public class FileAction extends AbstractModuleAction {
 					staticInfo.setFocusZoneX(ctx, (int) Math.round(Double.parseDouble(newFocusX)));
 					staticInfo.setFocusZoneY(ctx, (int) Math.round(Double.parseDouble(newFocusY)));
 					PersistenceService.getInstance(globalContext).store(ctx);
-					messageRepository.setGlobalMessageAndNotification(ctx, new GenericMessage(i18nAccess.getText("file.message.updatefocus", new String[][] { { "file", file.getName() } }), GenericMessage.INFO));
+					//messageRepository.setGlobalMessageAndNotification(ctx, new GenericMessage(i18nAccess.getText("file.message.updatefocus", new String[][] { { "file", file.getName() } }), GenericMessage.INFO));
 
 					FileCache fileCache = FileCache.getInstance(ctx.getRequest().getSession().getServletContext());
 					fileCache.delete(file.getName());

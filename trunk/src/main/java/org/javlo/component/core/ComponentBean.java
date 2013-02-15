@@ -3,12 +3,19 @@
  */
 package org.javlo.component.core;
 
+import java.io.Serializable;
+
 import org.javlo.helper.StringHelper;
 
 /**
  * @author pvandermaesen component state less.
  */
-public class ComponentBean {
+public class ComponentBean implements Serializable {
+
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 1L;
 
 	public static final String DEFAULT_AREA = "content";
 

@@ -831,7 +831,7 @@ public class Edit extends AbstractModuleAction {
 
 			if (requestService.getParameter("shorturl", null) != null) {
 				if (!page.isShortURL()) {
-					page.getShortURL(); // create short url
+					page.getShortURL(ctx); // create short url
 					messageRepository.setGlobalMessageAndNotification(ctx, new GenericMessage(i18nAccess.getText("edit.message.shorturl"), GenericMessage.ALERT));
 				} else {
 					return "this page have allready short url.";

@@ -696,11 +696,11 @@ public class ContentService {
 				shortURLMap = new HashMap<String, MenuElement>();
 				MenuElement root = getNavigation(ctx);
 				if (root.isShortURL()) {
-					shortURLMap.put(root.getShortURL(), root);
+					shortURLMap.put(root.getShortURL(ctx), root);
 				}
 				for (MenuElement child : root.getAllChildren()) {
 					if (child.isShortURL()) {
-						shortURLMap.put(child.getShortURL(), child);
+						shortURLMap.put(child.getShortURL(ctx), child);
 					}
 				}
 			}

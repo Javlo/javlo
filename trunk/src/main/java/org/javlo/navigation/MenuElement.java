@@ -221,7 +221,7 @@ public class MenuElement implements Serializable {
 
 		public String getShortURL() {
 			try {
-				return page.getShortURL();
+				return page.getShortURL(ctx);
 			} catch (Exception e) {
 				e.printStackTrace();
 				return null;
@@ -397,10 +397,6 @@ public class MenuElement implements Serializable {
 
 		public Collection<IImageTitle> getImages() {
 			return images;
-		}
-
-		public void setImages(Collection<IImageTitle> images) {
-			this.images = images;
 		}
 
 		public String getDescription() {
@@ -852,10 +848,10 @@ public class MenuElement implements Serializable {
 
 	}
 
-	private GlobalContext globalContext;;
+	// private GlobalContext globalContext;;
 
 	protected PageDescription getPageDescription(ContentContext ctx) throws Exception {
-		PageDescription pageDescription = getPageBeanCached(ctx.getLanguage());
+		PageDescription pageDescription = getPageBeanCached(ctx, ctx.getLanguage());
 		if (pageDescription.getTitle() == null) {
 			pageDescription.category = getCategory(ctx);
 			pageDescription.contentDate = getContentDate(ctx);
@@ -897,9 +893,7 @@ public class MenuElement implements Serializable {
 
 	public static MenuElement getInstance(GlobalContext globalContext) {
 		MenuElement outMenuElement = new MenuElement();
-		outMenuElement.cache = globalContext.getCache("navigation");
-		outMenuElement.cache.removeAll();
-		outMenuElement.globalContext = globalContext;
+		outMenuElement.releaseCache = true;
 		return outMenuElement;
 	}
 
@@ -993,9 +987,9 @@ public class MenuElement implements Serializable {
 
 	MenuElement parent = null;
 
-	Map<String, ContentElementList> contentElementListMap = new HashMap<String, ContentElementList>();
+	transient Map<String, ContentElementList> contentElementListMap = new HashMap<String, ContentElementList>();
 
-	Map<String, ContentElementList> localContentElementListMap = new HashMap<String, ContentElementList>();
+	transient Map<String, ContentElementList> localContentElementListMap = new HashMap<String, ContentElementList>();
 
 	private Date creationDate = new Date();
 
@@ -1034,7 +1028,7 @@ public class MenuElement implements Serializable {
 
 	// private final Map<String, PageDescription> pageInfinityCache = new HashMap<String, PageDescription>();
 
-	protected ICache cache;
+	protected boolean releaseCache = false;
 
 	// private final TimeMap<String, Object> pageTimeCache = new TimeMap<String, Object>(60 * (int) Math.round(((Math.random() + 1) * 60))); // cache between 1u and 2u, all cache can not be updated at the same time
 
@@ -1342,6 +1336,7 @@ public class MenuElement implements Serializable {
 		int c = 0;
 		ContentElementList content = getAllContent(ctx);
 		ContentContext lgCtx = ctx;
+		GlobalContext globalContext = GlobalContext.getInstance(ctx.getRequest());
 		if (globalContext.isAutoSwitchToDefaultLanguage() && !this.isRealContent(ctx)) {
 			lgCtx = ctx.getContextWithContent(this);
 			if (lgCtx == null) {
@@ -1574,7 +1569,7 @@ public class MenuElement implements Serializable {
 	 */
 	public String getCategory(ContentContext ctx) throws Exception {
 
-		PageDescription desc = getPageDescriptionCached(ctx.getRequestContentLanguage());
+		PageDescription desc = getPageDescriptionCached(ctx, ctx.getRequestContentLanguage());
 
 		if (desc.category != null) {
 			return desc.category;
@@ -1857,7 +1852,7 @@ public class MenuElement implements Serializable {
 	 * @throws Exception
 	 */
 	public Date getContentDate(ContentContext ctx) throws Exception {
-		PageDescription desc = getPageDescriptionCached(ctx.getRequestContentLanguage());
+		PageDescription desc = getPageDescriptionCached(ctx, ctx.getRequestContentLanguage());
 		if (desc.contentDate != null) {
 			return desc.contentDate;
 		}
@@ -1932,7 +1927,7 @@ public class MenuElement implements Serializable {
 	 */
 	public String getDescription(ContentContext ctx) throws Exception {
 
-		PageDescription desc = getPageDescriptionCached(ctx.getRequestContentLanguage());
+		PageDescription desc = getPageDescriptionCached(ctx, ctx.getRequestContentLanguage());
 
 		if (desc.description != null) {
 			return desc.description;
@@ -1961,7 +1956,7 @@ public class MenuElement implements Serializable {
 	}
 
 	public Collection<String> getExternalResources(ContentContext ctx) throws Exception {
-		PageDescription desc = getPageDescriptionCached(ctx.getRequestContentLanguage());
+		PageDescription desc = getPageDescriptionCached(ctx, ctx.getRequestContentLanguage());
 		if (desc.needdedResources == null) {
 			Collection<String> outResources = new LinkedList<String>();
 			ContentElementList content = getAllContent(ctx);
@@ -2043,7 +2038,7 @@ public class MenuElement implements Serializable {
 		ContentContext newCtx = new ContentContext(ctx);
 		newCtx.setArea(null); // warning : check if the method is needed.
 
-		PageDescription desc = getPageDescriptionCached(newCtx.getLanguage());
+		PageDescription desc = getPageDescriptionCached(ctx, newCtx.getLanguage());
 
 		if (desc.label != null) {
 			return desc.label;
@@ -2081,7 +2076,7 @@ public class MenuElement implements Serializable {
 
 	public String getGlobalTitle(ContentContext ctx) throws Exception {
 
-		PageDescription desc = getPageDescriptionCached(ctx.getRequestContentLanguage());
+		PageDescription desc = getPageDescriptionCached(ctx, ctx.getRequestContentLanguage());
 
 		if (desc.globalTitle != null) {
 			return desc.globalTitle;
@@ -2099,7 +2094,7 @@ public class MenuElement implements Serializable {
 
 	public List<String> getGroupID(ContentContext ctx) throws Exception {
 
-		PageDescription desc = getPageDescriptionCached(ctx.getRequestContentLanguage());
+		PageDescription desc = getPageDescriptionCached(ctx, ctx.getRequestContentLanguage());
 
 		if (desc.groupID != null) {
 			return desc.groupID;
@@ -2141,7 +2136,7 @@ public class MenuElement implements Serializable {
 
 	public List<String> getChildrenCategories(ContentContext ctx) throws Exception {
 
-		PageDescription desc = getPageDescriptionCached(ctx.getRequestContentLanguage());
+		PageDescription desc = getPageDescriptionCached(ctx, ctx.getRequestContentLanguage());
 
 		if (desc.childrenCategories != null) {
 			return desc.childrenCategories;
@@ -2163,7 +2158,7 @@ public class MenuElement implements Serializable {
 	}
 
 	public String getHeaderContent(ContentContext ctx) throws Exception {
-		PageDescription desc = getPageDescriptionCached(ctx.getRequestContentLanguage());
+		PageDescription desc = getPageDescriptionCached(ctx, ctx.getRequestContentLanguage());
 
 		if (desc.headerContent != null) {
 			if (desc.headerContent.trim().length() == 0) {
@@ -2219,7 +2214,7 @@ public class MenuElement implements Serializable {
 	}
 
 	public IImageTitle getImage(ContentContext ctx) throws Exception {
-		PageDescription desc = getPageDescriptionCached(ctx.getRequestContentLanguage());
+		PageDescription desc = getPageDescriptionCached(ctx, ctx.getRequestContentLanguage());
 		IImageTitle res = null;
 		if (desc.imageLink != null) {
 			res = desc.imageLink;
@@ -2244,7 +2239,7 @@ public class MenuElement implements Serializable {
 	}
 
 	public Collection<IImageTitle> getImages(ContentContext ctx) throws Exception {
-		PageDescription desc = getPageDescriptionCached(ctx.getRequestContentLanguage());
+		PageDescription desc = getPageDescriptionCached(ctx, ctx.getRequestContentLanguage());
 		Collection<IImageTitle> res = null;
 		if (desc.images != null) {
 			res = desc.images;
@@ -2268,7 +2263,7 @@ public class MenuElement implements Serializable {
 	}
 
 	public Collection<Link> getStaticResources(ContentContext ctx) throws Exception {
-		PageDescription desc = getPageDescriptionCached(ctx.getRequestContentLanguage());
+		PageDescription desc = getPageDescriptionCached(ctx, ctx.getRequestContentLanguage());
 		Collection<Link> res = null;
 		if (desc.staticResources != null) {
 			res = desc.staticResources;
@@ -2291,7 +2286,7 @@ public class MenuElement implements Serializable {
 
 	public String getKeywords(ContentContext ctx) throws Exception {
 
-		PageDescription desc = getPageDescriptionCached(ctx.getRequestContentLanguage());
+		PageDescription desc = getPageDescriptionCached(ctx, ctx.getRequestContentLanguage());
 
 		if (desc.keywords != null) {
 			return desc.keywords;
@@ -2367,7 +2362,7 @@ public class MenuElement implements Serializable {
 	 */
 	public String getLinkOn(ContentContext ctx) throws Exception {
 
-		PageDescription desc = getPageDescriptionCached(ctx.getRequestContentLanguage());
+		PageDescription desc = getPageDescriptionCached(ctx, ctx.getRequestContentLanguage());
 
 		if (desc.linkOn == null) {
 			String res = "";
@@ -2431,7 +2426,7 @@ public class MenuElement implements Serializable {
 	 */
 	public String getLocation(ContentContext ctx) throws Exception {
 
-		PageDescription desc = getPageDescriptionCached(ctx.getRequestContentLanguage());
+		PageDescription desc = getPageDescriptionCached(ctx, ctx.getRequestContentLanguage());
 
 		if (desc.location != null) {
 			return desc.location;
@@ -2472,7 +2467,7 @@ public class MenuElement implements Serializable {
 	 */
 	public String getMetaDescription(ContentContext ctx) throws Exception {
 
-		PageDescription desc = getPageDescriptionCached(ctx.getRequestContentLanguage());
+		PageDescription desc = getPageDescriptionCached(ctx, ctx.getRequestContentLanguage());
 
 		if (desc.metaDescription != null) {
 			return desc.metaDescription;
@@ -2557,22 +2552,32 @@ public class MenuElement implements Serializable {
 		return outComp;
 	}
 
-	PageDescription getPageDescriptionCached(String lg) {
+	protected ICache getCache(ContentContext ctx) {
+		GlobalContext globalContext = GlobalContext.getInstance(ctx.getRequest());
+		ICache cache = globalContext.getCache("navigation");
+		if (releaseCache) {
+			cache.removeAll();
+			releaseCache = false;
+		}
+		return cache;
+	}
+
+	PageDescription getPageDescriptionCached(ContentContext ctx, String lg) {
 		String key = getCacheKey(lg);
-		PageDescription outDesc = (PageDescription) cache.get(key);
+		PageDescription outDesc = (PageDescription) getCache(ctx).get(key);
 		if (outDesc == null) {
 			outDesc = new PageDescription();
-			cache.put(key, outDesc);
+			getCache(ctx).put(key, outDesc);
 		}
 		return outDesc;
 	}
 
-	PageDescription getPageBeanCached(String lg) {
+	PageDescription getPageBeanCached(ContentContext ctx, String lg) {
 		String key = getCacheKey("bean-" + lg);
-		PageDescription outDesc = (PageDescription) cache.get(key);
+		PageDescription outDesc = (PageDescription) getCache(ctx).get(key);
 		if (outDesc == null) {
 			outDesc = new PageDescription();
-			cache.put(key, outDesc);
+			getCache(ctx).put(key, outDesc);
 		}
 		return outDesc;
 	}
@@ -2602,7 +2607,7 @@ public class MenuElement implements Serializable {
 
 		final double defaultValue = 0;
 
-		PageDescription desc = getPageDescriptionCached(ctx.getRequestContentLanguage());
+		PageDescription desc = getPageDescriptionCached(ctx, ctx.getRequestContentLanguage());
 
 		if (desc.pageRank != null) {
 			return desc.pageRank;
@@ -2637,7 +2642,7 @@ public class MenuElement implements Serializable {
 		ContentContext newCtx = new ContentContext(ctx);
 		newCtx.setArea(null); // warning : check if the method is needed.
 
-		PageDescription desc = getPageDescriptionCached(newCtx.getRequestContentLanguage());
+		PageDescription desc = getPageDescriptionCached(ctx, newCtx.getRequestContentLanguage());
 
 		if (desc.forcedPageTitle != null) {
 			return desc.forcedPageTitle;
@@ -2657,7 +2662,7 @@ public class MenuElement implements Serializable {
 		newCtx.setArea(null); // warning : check if the method is needed.
 		newCtx.setFree(true);
 
-		PageDescription desc = getPageDescriptionCached(newCtx.getRequestContentLanguage());
+		PageDescription desc = getPageDescriptionCached(ctx, newCtx.getRequestContentLanguage());
 
 		if (desc.pageTitle != null) {
 			return desc.pageTitle;
@@ -2794,7 +2799,7 @@ public class MenuElement implements Serializable {
 
 		ContentContext newCtx = new ContentContext(ctx);
 
-		PageDescription desc = getPageDescriptionCached(newCtx.getRequestContentLanguage());
+		PageDescription desc = getPageDescriptionCached(ctx, newCtx.getRequestContentLanguage());
 
 		if (desc.subTitle != null) {
 			return desc.subTitle;
@@ -2812,7 +2817,7 @@ public class MenuElement implements Serializable {
 
 	public List<String> getTags(ContentContext ctx) throws Exception {
 
-		PageDescription desc = getPageDescriptionCached(ctx.getRequestContentLanguage());
+		PageDescription desc = getPageDescriptionCached(ctx, ctx.getRequestContentLanguage());
 
 		if (desc.tags != null) {
 			return desc.tags;
@@ -2869,7 +2874,7 @@ public class MenuElement implements Serializable {
 	 */
 	public TimeRange getTimeRange(ContentContext ctx) throws Exception {
 
-		PageDescription desc = getPageDescriptionCached(ctx.getRequestContentLanguage());
+		PageDescription desc = getPageDescriptionCached(ctx, ctx.getRequestContentLanguage());
 
 		if (desc.timeRange != null) {
 			return desc.timeRange;
@@ -2892,7 +2897,7 @@ public class MenuElement implements Serializable {
 		ContentContext newCtx = new ContentContext(ctx);
 		newCtx.setArea(null); // warning : check if the method is needed.
 
-		PageDescription desc = getPageDescriptionCached(newCtx.getRequestContentLanguage());
+		PageDescription desc = getPageDescriptionCached(ctx, newCtx.getRequestContentLanguage());
 
 		if (desc.title != null) {
 			return desc.title;
@@ -2919,8 +2924,9 @@ public class MenuElement implements Serializable {
 
 		ContentContext newCtx = new ContentContext(ctx);
 		newCtx.setArea(null); // warning : check if the method is needed.
+		newCtx.setFree(true);
 
-		PageDescription desc = getPageDescriptionCached(newCtx.getRequestContentLanguage());
+		PageDescription desc = getPageDescriptionCached(ctx, newCtx.getRequestContentLanguage());
 
 		if (desc.localTitle != null) {
 			return desc.localTitle;
@@ -3114,7 +3120,7 @@ public class MenuElement implements Serializable {
 
 	// TODO: change this method with a method in the component, it return is date if visible of not.
 	public boolean isContentDateVisible(ContentContext ctx) throws Exception {
-		PageDescription desc = getPageDescriptionCached(ctx.getRequestContentLanguage());
+		PageDescription desc = getPageDescriptionCached(ctx, ctx.getRequestContentLanguage());
 		if (desc.contentDateVisible != null) {
 			return desc.contentDateVisible;
 		}
@@ -3155,7 +3161,7 @@ public class MenuElement implements Serializable {
 
 	public boolean isEmpty(ContentContext ctx, String area) throws Exception {
 
-		PageDescription desc = getPageDescriptionCached(ctx.getRequestContentLanguage());
+		PageDescription desc = getPageDescriptionCached(ctx, ctx.getRequestContentLanguage());
 
 		if (desc.isEmpty() != null) {
 			return desc.isEmpty();
@@ -3223,7 +3229,7 @@ public class MenuElement implements Serializable {
 			return false;
 		}
 
-		PageDescription desc = getPageDescriptionCached(ctx.getRequestContentLanguage());
+		PageDescription desc = getPageDescriptionCached(ctx, ctx.getRequestContentLanguage());
 
 		if (!desc.isRealContentNull()) {
 			return desc.isRealContent();
@@ -3379,7 +3385,7 @@ public class MenuElement implements Serializable {
 
 	public void releaseCache() {
 		// pageInfinityCache.clear();
-		cache.removeAll();
+		releaseCache = true;
 		contentElementListMap.clear();
 		localContentElementListMap.clear();
 	}
@@ -3450,7 +3456,7 @@ public class MenuElement implements Serializable {
 	}
 
 	/*
-	 * public boolean needJavaScript(ContentContext ctx) throws Exception { PageDescription desc = getPageDescriptionCached(ctx.getRequestContentLanguage()); if (desc.needJavaScript != null) { return desc.needJavaScript; }
+	 * public boolean needJavaScript(ContentContext ctx) throws Exception { PageDescription desc = getPageDescriptionCached(ctx,ctx.getRequestContentLanguage()); if (desc.needJavaScript != null) { return desc.needJavaScript; }
 	 * 
 	 * ContentElementList content = getAllContent(ctx); while (content.hasNext()) { IContentVisualComponent comp = content.next(); if (comp.needJavaScript()) { desc.needJavaScript = true; return true; } } desc.needJavaScript = false; return false; }
 	 */
@@ -3777,7 +3783,7 @@ public class MenuElement implements Serializable {
 	}
 
 	public boolean notInSearch(ContentContext ctx) throws Exception {
-		PageDescription desc = getPageDescriptionCached(ctx.getRequestContentLanguage());
+		PageDescription desc = getPageDescriptionCached(ctx, ctx.getRequestContentLanguage());
 
 		if (desc.notInSearch != null) {
 			return desc.notInSearch;
@@ -3814,19 +3820,24 @@ public class MenuElement implements Serializable {
 		return shortURL != null;
 	}
 
-	public String getShortURL() throws Exception {
+	public String getShortURL() {
+		return shortURL;
+	}
+
+	public String getShortURL(ContentContext ctx) throws Exception {
 		if (shortURL == null) {
 			HashSet<String> shortURLs = new HashSet<String>();
 			MenuElement root = getRoot();
 			if (root.isShortURL()) {
-				shortURLs.add(root.getShortURL());
+				shortURLs.add(root.getShortURL(ctx));
 			}
 			MenuElement[] children = root.getAllChildren();
 			for (MenuElement child : children) {
 				if (child.isShortURL()) {
-					shortURLs.add(child.getShortURL().substring(1));
+					shortURLs.add(child.getShortURL(ctx).substring(1));
 				}
 			}
+			GlobalContext globalContext = GlobalContext.getInstance(ctx.getRequest());
 			this.shortURL = 'U' + StringHelper.createKey(globalContext.getStaticConfig().getShortURLSize(), shortURLs);
 		}
 		return shortURL;
