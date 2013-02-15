@@ -660,6 +660,8 @@ public class Template implements Comparable<Template> {
 
 	private Template parent = null;
 
+	private boolean templateImportationError = false;
+
 	/**
 	 * check the structure of the template.
 	 * 
@@ -705,6 +707,7 @@ public class Template implements Comparable<Template> {
 			e.printStackTrace();
 		}
 		dynamicsComponents = null;
+		templateImportationError = false;
 		contextWithTemplateImported.clear();
 	}
 
@@ -1257,7 +1260,11 @@ public class Template implements Comparable<Template> {
 		Template parent = null;
 		String parentId = getParentName();
 		if (parentId != null && !parentId.equals(getName())) {
-			parent = Template.getInstance(config, ctx, parentId, false);
+			if (ctx == null) {
+				parent = Template.getInstance(config, ctx, parentId, false);
+			} else {
+				parent = TemplateFactory.getTemplates(ctx.getRequest().getSession().getServletContext()).get(parentId);
+			}
 		}
 		return parent;
 	}
@@ -1535,6 +1542,9 @@ public class Template implements Comparable<Template> {
 	}
 
 	public void importTemplateInWebapp(StaticConfig config, ContentContext ctx) throws IOException {
+		if (templateImportationError) {
+			return;
+		}
 		GlobalContext globalContext = null;
 		if (ctx != null) {
 			globalContext = GlobalContext.getInstance(ctx.getRequest());
@@ -1550,7 +1560,8 @@ public class Template implements Comparable<Template> {
 			FileUtils.deleteDirectory(templateTgt);
 			importTemplateInWebapp(config, ctx, globalContext, templateTgt);
 		} else {
-			logger.severe("folder not found : " + templateSrc);
+			logger.severe("folder not found : " + templateSrc + " templateImportationError = " + templateImportationError);
+			templateImportationError = true;
 		}
 	}
 

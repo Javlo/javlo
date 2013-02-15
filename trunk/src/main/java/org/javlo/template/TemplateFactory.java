@@ -6,9 +6,11 @@ import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import java.util.TreeSet;
 import java.util.logging.Logger;
 
@@ -38,6 +40,8 @@ public class TemplateFactory {
 	private static final String TEMPLATE_KEY = "wcms-templates";
 
 	public static List<String> TEMPLATE_COLOR_AMBIANCE = Arrays.asList(new String[] { "none", "black", "white", "gray", "red", "green", "blue", "orange", "yellow", "purple", "pink", "brun" });
+
+	private static final Set<String> templateNotExist = new HashSet<String>();
 
 	public static void cleanAllRenderer(ContentContext ctx, boolean secure) throws IOException {
 		cleanRenderer(ctx, null, secure);
@@ -78,6 +82,7 @@ public class TemplateFactory {
 
 	public static void clearTemplate(ServletContext application) {
 		application.removeAttribute(TEMPLATE_KEY);
+		templateNotExist.clear();
 	}
 
 	public static List<String> getAllAuthors(ServletContext application) throws IOException {
@@ -300,6 +305,9 @@ public class TemplateFactory {
 	}
 
 	public static Template getTemplate(ContentContext ctx, MenuElement elem) throws Exception {
+		if (templateNotExist.contains(elem.getTemplateId())) {
+			return null;
+		}
 		String key = "_template_" + elem.getId() + '_' + ctx.getRenderMode();
 		if (ctx.getRequest().getAttribute(key) != null) {
 			return (Template) ctx.getRequest().getAttribute(key);
@@ -317,9 +325,9 @@ public class TemplateFactory {
 		if (template == null) {
 			GlobalContext globalContext = GlobalContext.getInstance(ctx.getRequest());
 			template = TemplateFactory.getDiskTemplate(ctx.getRequest().getSession().getServletContext(), globalContext.getDefaultTemplate());
+			templateNotExist.add(elem.getTemplateId());
 		}
 		ctx.getRequest().setAttribute(key, template);
 		return template;
 	}
-
 }
