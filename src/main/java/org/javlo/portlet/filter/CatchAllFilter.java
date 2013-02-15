@@ -338,7 +338,13 @@ public class CatchAllFilter implements Filter {
 			editURI = editURI.substring(globalContext.getContextKey().length() + 1);
 		}
 
-		if (editURI.startsWith("/edit-") || editURI.startsWith("/ajax-")) {
+		if (editURI.startsWith("/edit-") || editURI.startsWith("/ajax-") || editURI.startsWith("/preview-edit")) {
+			boolean editPreview = false;
+			if (editURI.startsWith("/preview-edit")) {
+				editPreview = true;
+				editURI = editURI.replaceFirst("/preview-", "/");
+			}
+
 			String prefix = editURI.substring(0, 5);
 			editURI = editURI.substring("/edit-".length());
 			String module = editURI;
@@ -348,13 +354,11 @@ public class CatchAllFilter implements Filter {
 			}
 			if (module.length() > 0) {
 				editURI = prefix + editURI;
-				// String baseURI = editURI;
 				String query = httpRequest.getQueryString();
 				if (query != null) {
 					editURI = editURI + '?' + query;
 				}
 				if (query == null || !query.contains("module=")) {
-					// editURI = URLHelper.addParam(editURI, "module", module);
 					try {
 						ModulesContext.getInstance(httpRequest.getSession(), GlobalContext.getInstance(httpRequest)).setCurrentModule(module);
 					} catch (ModuleException e) {
@@ -366,37 +370,12 @@ public class CatchAllFilter implements Filter {
 					((HttpServletResponse) response).sendRedirect("" + httpRequest.getRequestURL());
 					return;
 				} else {
+					if (editPreview) {
+						editURI = URLHelper.addParam(editURI, "previewEdit", "true");
+					}
 					httpRequest.getRequestDispatcher(editURI).forward(request, response);
 					return;
 				}
-
-				/*
-				 * if (query != null && query.contains("edit-logout")) { ((HttpServletResponse) response).sendRedirect(baseURI); return; } else {
-				 */
-				// ((HttpServletResponse) response).sendRedirect(editURI);
-				// httpRequest.getRequestDispatcher(editURI).forward(request, response);
-				// return;
-				/* } */
-			}
-		} else if (editURI.startsWith("/ajax-")) {
-			editURI = editURI.substring("/ajax-".length());
-			String module = editURI;
-			if (editURI.contains("/")) {
-				module = module.substring(0, module.indexOf('/'));
-				editURI = editURI.substring(editURI.indexOf('/'));
-			}
-			if (module.length() > 0) {
-				editURI = "/ajax" + editURI;
-				String query = httpRequest.getQueryString();
-				if (query != null) {
-					editURI = editURI + '?' + query;
-				}
-				if (query == null || !query.contains("module=")) {
-					editURI = URLHelper.addParam(editURI, "module", module);
-				}
-				// ((HttpServletResponse) response).sendRedirect(editURI);
-				httpRequest.getRequestDispatcher(editURI).forward(request, response);
-				return;
 			}
 		}
 

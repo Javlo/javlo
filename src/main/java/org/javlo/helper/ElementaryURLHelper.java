@@ -175,6 +175,10 @@ public abstract class ElementaryURLHelper {
 
 		// String mode = "/view/";
 		if (ctx.getRenderMode() == ContentContext.EDIT_MODE) {
+			String previewPrefix = "";
+			if (ctx.isEditPreview()) {
+				previewPrefix = "preview-";
+			}
 			Module currentModule = null;
 			try {
 				currentModule = ModulesContext.getInstance(ctx.getRequest().getSession(), globalContext).getCurrentModule();
@@ -182,9 +186,9 @@ public abstract class ElementaryURLHelper {
 				e.printStackTrace();
 			}
 			if (currentModule == null || ctx.getCurrentEditUser() == null) {
-				mode = "/edit/";
+				mode = "/" + previewPrefix + "edit/";
 			} else {
-				mode = "/edit-" + currentModule.getName() + "/";
+				mode = "/" + previewPrefix + "edit-" + currentModule.getName() + "/";
 			}
 		} else if (ctx.getRenderMode() == ContentContext.PREVIEW_MODE) {
 			mode = "/preview/";
