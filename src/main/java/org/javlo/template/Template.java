@@ -1884,7 +1884,7 @@ public class Template implements Comparable<Template> {
 	 * @return true by default or the value of "resources.compress" property.
 	 */
 	public boolean isCompressResources() {
-		return properties.getBoolean("resources.compress", true);
+		return properties.getBoolean("resources.compress", false);
 	}
 
 	public String getRSSImageURL() {
