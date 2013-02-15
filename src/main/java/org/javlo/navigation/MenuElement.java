@@ -987,9 +987,9 @@ public class MenuElement implements Serializable {
 
 	MenuElement parent = null;
 
-	transient Map<String, ContentElementList> contentElementListMap = new HashMap<String, ContentElementList>();
+	transient Map<String, ContentElementList> contentElementListMap = null;
 
-	transient Map<String, ContentElementList> localContentElementListMap = new HashMap<String, ContentElementList>();
+	transient Map<String, ContentElementList> localContentElementListMap = null;
 
 	private Date creationDate = new Date();
 
@@ -1307,11 +1307,25 @@ public class MenuElement implements Serializable {
 		editGroups.clear();
 	}
 
+	public Map<String, ContentElementList> getContentElementListMap() {
+		if (contentElementListMap == null) {
+			contentElementListMap = new HashMap<String, ContentElementList>();
+		}
+		return contentElementListMap;
+	}
+
+	public Map<String, ContentElementList> getLocalContentElementListMap() {
+		if (localContentElementListMap == null) {
+			localContentElementListMap = new HashMap<String, ContentElementList>();
+		}
+		return localContentElementListMap;
+	}
+
 	/**
 	 * clear content of the page, and delete all children.
 	 */
 	private void clearPage() {
-		contentElementListMap.clear();
+		getContentElementListMap().clear();
 		childMenuElements.clear();
 	}
 
@@ -1463,7 +1477,7 @@ public class MenuElement implements Serializable {
 	 * @throws Exception
 	 */
 	private synchronized ContentElementList getAllLocalContent(ContentContext ctx) throws Exception {
-		ContentElementList localContentElementList = localContentElementListMap.get(ctx.getRequestContentLanguage());
+		ContentElementList localContentElementList = getLocalContentElementListMap().get(ctx.getRequestContentLanguage());
 		if (localContentElementList == null) {
 			logger.fine("update all local content on (ctx:" + ctx + ")");
 
@@ -1472,7 +1486,7 @@ public class MenuElement implements Serializable {
 			 */
 			localContentElementList = new ContentElementList(componentBean, ctx, this, true);
 
-			localContentElementListMap.put(ctx.getRequestContentLanguage(), localContentElementList);
+			getLocalContentElementListMap().put(ctx.getRequestContentLanguage(), localContentElementList);
 		}
 
 		localContentElementList.initialize(ctx);
@@ -2390,7 +2404,7 @@ public class MenuElement implements Serializable {
 	 * @throws Exception
 	 */
 	private synchronized ContentElementList getLocalContent(ContentContext ctx) throws Exception {
-		ContentElementList localContentElementList = contentElementListMap.get(ctx.getRequestContentLanguage());
+		ContentElementList localContentElementList = getContentElementListMap().get(ctx.getRequestContentLanguage());
 		if (localContentElementList == null) {
 
 			/*
@@ -2399,7 +2413,7 @@ public class MenuElement implements Serializable {
 			localContentElementList = new ContentElementList(componentBean, ctx, this, false);
 
 			if (!ctx.isFree()) { // no reference to template >>> some component can be absent
-				contentElementListMap.put(ctx.getRequestContentLanguage(), localContentElementList);
+				getContentElementListMap().put(ctx.getRequestContentLanguage(), localContentElementList);
 			}
 
 			logger.fine("update local content  - # component : " + localContentElementList.size(ctx) + " (ctx:" + ctx + ")");
@@ -3386,8 +3400,8 @@ public class MenuElement implements Serializable {
 	public void releaseCache() {
 		// pageInfinityCache.clear();
 		releaseCache = true;
-		contentElementListMap.clear();
-		localContentElementListMap.clear();
+		getContentElementListMap().clear();
+		getLocalContentElementListMap().clear();
 	}
 
 	public void removeChild(MenuElement elem) {
