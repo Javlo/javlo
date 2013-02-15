@@ -124,15 +124,14 @@ public class ContentContext {
 			throw e;
 		}
 
-		if (ctx.getRenderMode() != ContentContext.EDIT_MODE && !ctx.correctPath && correctPath) {
+		GlobalContext globalContext = GlobalContext.getInstance(ctx.getRequest());
+		EditContext editContext = EditContext.getInstance(globalContext, ctx.getRequest().getSession());
+
+		if (ctx.getRenderMode() != ContentContext.EDIT_MODE && !editContext.isEditPreview() && !ctx.correctPath && correctPath) {
 			ctx.correctPath = correctPath;
 			ContentService content = ContentService.getInstance(GlobalContext.getInstance(request));
 			if (!content.contentExistForContext(ctx)) {
-				boolean editPreview = false;
-				if (ctx.getRenderMode() == ContentContext.PREVIEW_MODE) {
-					editPreview = ctx.isEditPreview();
-				}
-				if (!editPreview && correctPath) {
+				if (correctPath) {
 					MenuElement menu = content.getNavigation(ctx);
 					if (menu != null) {
 						menu = menu.searchChild(ctx);
