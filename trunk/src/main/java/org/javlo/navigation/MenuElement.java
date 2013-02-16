@@ -23,6 +23,7 @@ import java.util.Set;
 import org.apache.commons.lang.StringUtils;
 import org.javlo.bean.Link;
 import org.javlo.cache.ICache;
+import org.javlo.cache.MapCache;
 import org.javlo.comparator.MenuElementPriorityComparator;
 import org.javlo.component.core.AbstractVisualComponent;
 import org.javlo.component.core.ComponentBean;
@@ -1049,6 +1050,8 @@ public class MenuElement implements Serializable {
 	private Date startPublishDate = null;
 
 	private Date endPublishDate = null;
+	
+	private transient ICache localCache = null;
 
 	protected MenuElement() {
 	}
@@ -2567,18 +2570,27 @@ public class MenuElement implements Serializable {
 	}
 
 	protected ICache getCache(ContentContext ctx) {
-		GlobalContext globalContext = GlobalContext.getInstance(ctx.getRequest());
+		/*GlobalContext globalContext = GlobalContext.getInstance(ctx.getRequest());
 		ICache cache = globalContext.getCache("navigation");
 		if (releaseCache) {
 			String prefix = getCacheKey("");
 			for (String key : cache.getKeys()) {
 				if (key.startsWith(prefix)) {
 					cache.removeItem(key);
-				}
+				} 
 			}
 			releaseCache = false;
 		}
-		return cache;
+		return cache;*/
+		
+		if (localCache == null) {
+			localCache = new MapCache(new HashMap(), "navigation");
+		}
+		if (releaseCache) {
+			localCache.removeAll();
+			releaseCache = false;
+		}
+		return localCache;
 	}
 
 	PageDescription getPageDescriptionCached(ContentContext ctx, String lg) {
