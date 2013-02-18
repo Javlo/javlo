@@ -154,6 +154,14 @@ public class TemplateFactory {
 		}
 	}
 
+	/**
+	 * get children of the template.
+	 * 
+	 * @param application
+	 * @param template
+	 * @return
+	 * @throws IOException
+	 */
 	public static Collection<Template> getTemplateChildren(ServletContext application, Template template) throws IOException {
 		List<Template> outList = new LinkedList<Template>();
 		List<Template> templates = getAllTemplates(application);
@@ -165,6 +173,30 @@ public class TemplateFactory {
 				}
 			}
 		}
+		return outList;
+	}
+
+	private static void searchAllChildren(List<Template> currentChildren, ServletContext application, Template template) throws IOException {
+		Collection<Template> children = getTemplateChildren(application, template);
+		for (Template child : children) {
+			if (!currentChildren.contains(child)) {
+				currentChildren.add(child);
+				searchAllChildren(currentChildren, application, child);
+			}
+		}
+	}
+
+	/**
+	 * get all descendants of the template
+	 * 
+	 * @param application
+	 * @param template
+	 * @return
+	 * @throws IOException
+	 */
+	public static Collection<Template> getTemplateAllChildren(ServletContext application, Template template) throws IOException {
+		List<Template> outList = new LinkedList<Template>();
+		searchAllChildren(outList, application, template);
 		return outList;
 	}
 

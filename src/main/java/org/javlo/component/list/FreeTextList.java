@@ -160,4 +160,9 @@ public class FreeTextList extends Paragraph {
 		return getItalicAndStrongLanguageMarkerList(ctx);
 	}
 
+	@Override
+	public boolean isContentCachable(ContentContext ctx) {
+		return true;
+	}
+
 }

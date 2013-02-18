@@ -320,7 +320,7 @@ public class TemplateAction extends AbstractModuleAction {
 	public String performCommitChildren(RequestService requestService, ServletContext application, ContentContext ctx, MessageRepository messageRepository, I18nAccess i18nAccess) throws IOException {
 		Template template = TemplateFactory.getDiskTemplate(application, requestService.getParameter("name", null), StringHelper.isTrue(requestService.getParameter("mailing", null)));
 		template.clearRenderer(ctx);
-		Collection<Template> children = TemplateFactory.getTemplateChildren(application, template);
+		Collection<Template> children = TemplateFactory.getTemplateAllChildren(application, template);
 		for (Template child : children) {
 			child.clearRenderer(ctx);
 		}

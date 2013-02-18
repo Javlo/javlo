@@ -11,19 +11,18 @@ import org.javlo.context.GlobalContext;
 import org.javlo.helper.StringHelper;
 import org.javlo.utils.SuffixPrefix;
 
-
 /**
- * @author pvandermaesen 
+ * @author pvandermaesen
  */
 public class TextList extends Paragraph {
-	
+
 	public static final String TYPE = "text-list";
-	
+
 	@Override
 	public String getType() {
 		return TYPE;
 	}
-	
+
 	@Override
 	public String getPrefixViewXHTMLCode(ContentContext ctx) {
 		return "";
@@ -33,26 +32,31 @@ public class TextList extends Paragraph {
 	public String getSuffixViewXHTMLCode(ContentContext ctx) {
 		return "";
 	}
-	
+
 	@Override
 	public String getViewXHTMLCode(ContentContext ctx) throws Exception {
 		GlobalContext globalContext = GlobalContext.getInstance(ctx.getRequest());
-		return "<div "+getSpecialPreviewCssClass(ctx, getStyle(ctx))+getSpecialPreviewCssId(ctx)+"\">"+StringHelper.textToList(getValue(), " ", null, true, globalContext)+"</div>";
+		return "<div " + getSpecialPreviewCssClass(ctx, getStyle(ctx)) + getSpecialPreviewCssId(ctx) + "\">" + StringHelper.textToList(getValue(), " ", null, true, globalContext) + "</div>";
 	}
-	
+
 	@Override
 	public boolean isInline() {
 		return false;
 	}
-	
+
 	@Override
 	public List<SuffixPrefix> getMarkerList(ContentContext ctx) {
 		return getQuotationLanguageMarkerList(ctx);
 	}
-	
+
 	@Override
 	public boolean isRealContent(ContentContext ctx) {
 		return !isEmpty(ctx);
+	}
+
+	@Override
+	public boolean isContentCachable(ContentContext ctx) {
+		return true;
 	}
 
 }

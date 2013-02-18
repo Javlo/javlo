@@ -85,7 +85,7 @@ public class Paragraph extends AbstractVisualComponent {
 
 	@Override
 	public boolean isContentCachable(ContentContext ctx) {
-		return true;
+		return false;
 	}
 
 	@Override
