@@ -11,6 +11,11 @@ p.important {
 	font-weight: bold;
 }
 
+figure {
+	margin: 0;
+	padding: 0;
+}
+
 /** fake input **/
 #fk {
 	position: absolute;
