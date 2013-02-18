@@ -18,10 +18,7 @@ jQuery(document).ready(
 
 			initPreview();
 
-			jQuery("body").mouseover(function() {
-				/*if (!dragging) {
-					layerOver(null);
-				}*/
+			jQuery("body").mouseover(function() {				
 				return true;
 			});
 			jQuery("#preview-layer").click(
@@ -67,6 +64,8 @@ layerOver = function(item) {
 }
 
 initPreview = function() {
+	
+	console.log("new ready");
 
 	jQuery(".editable-component").click(function() {
 
@@ -128,7 +127,7 @@ initPreview = function() {
 								if (jQuery(this).attr("id") == "preview-delete-zone") {
 									var ajaxURL = currentURL
 											+ "?webaction=edit.delete&id="
-											+ compId;
+											+ compId+ "&render-mode=3";;
 									jQuery(comp).remove();
 								} else {
 									jQuery(comp).insertAfter(jQuery(this));
@@ -150,7 +149,7 @@ initPreview = function() {
 									var ajaxURL = currentURL
 											+ "?webaction=edit.moveComponent&comp-id="
 											+ compId + "&previous=" + previewId
-											+ "&area=" + area;
+											+ "&area=" + area+ "&render-mode=3";
 								}
 								ajaxRequest(ajaxURL);
 							}

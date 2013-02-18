@@ -34,7 +34,7 @@ h1 {
 	max-width: 460px;
 	overflow: hidden;
 	float: right;	
-	margin-right: 220px;
+	margin-right: 300px;
 	color: #cccccc;
 }
 
@@ -1269,5 +1269,5 @@ body.previewEdit {
 .topheader > ul {
     right: 220px;
     left: auto;
-    margin-top: 37px;
+    margin-top: 0;
 }
