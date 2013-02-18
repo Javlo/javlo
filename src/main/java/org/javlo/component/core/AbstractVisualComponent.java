@@ -352,9 +352,6 @@ public abstract class AbstractVisualComponent implements IContentVisualComponent
 	public String getContentCache(ContentContext ctx) {
 		GlobalContext globalContext = GlobalContext.getInstance(ctx.getRequest());
 		ICache cache = globalContext.getCache(CACHE_NAME);
-
-		System.out.println("***** AbstractVisualComponent.getContentCache : getContentCacheKey(ctx) = " + getContentCacheKey(ctx)); // TODO: remove debug trace
-
 		return (String) cache.get(getContentCacheKey(ctx));
 	}
 
