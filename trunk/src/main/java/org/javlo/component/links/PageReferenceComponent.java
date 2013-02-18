@@ -934,7 +934,11 @@ public class PageReferenceComponent extends ComplexPropertiesLink implements IAc
 	public String getPrefixViewXHTMLCode(ContentContext ctx) {
 
 		if (getConfig(ctx).getProperty("prefix", null) != null) {
-			return getConfig(ctx).getProperty("prefix", null);
+			String prefix = "";
+			if (ctx.isPreview()) {
+				prefix = "<div " + getSpecialPreviewCssClass(ctx, "") + getSpecialPreviewCssId(ctx) + ">";
+			}
+			return prefix + getConfig(ctx).getProperty("prefix", null);
 		}
 
 		String specialClass = "";
@@ -989,7 +993,11 @@ public class PageReferenceComponent extends ComplexPropertiesLink implements IAc
 	@Override
 	public String getSuffixViewXHTMLCode(ContentContext ctx) {
 		if (getConfig(ctx).getProperty("suffix", null) != null) {
-			return getConfig(ctx).getProperty("suffix", null);
+			String suffix = "";
+			if (ctx.isPreview()) {
+				suffix = "</div>";
+			}
+			return getConfig(ctx).getProperty("suffix", null) + suffix;
 		}
 		return "</div>";
 	}

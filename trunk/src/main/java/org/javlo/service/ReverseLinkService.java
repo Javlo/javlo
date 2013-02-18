@@ -73,7 +73,7 @@ public class ReverseLinkService {
 
 	private transient String reversedLinkComponentCacheLang = null;
 
-	private Object lock = new Object();
+	private final Object lock = new Object();
 
 	public void clearCache() {
 		synchronized (lock) {
@@ -254,7 +254,8 @@ public class ReverseLinkService {
 			}
 		}
 
-		return remplacement.start(contentValue);
-	}
+		String outText = remplacement.start(contentValue);
 
+		return outText;
+	}
 }

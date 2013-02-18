@@ -739,11 +739,6 @@ public class ContentContext {
 		return needRefresh;
 	}
 
-	/**
-	 * @deprecated use getRenderMode()
-	 * @return
-	 */
-	@Deprecated
 	public boolean isPreview() {
 		return renderMode == PREVIEW_MODE;
 	}

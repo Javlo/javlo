@@ -352,6 +352,9 @@ public abstract class AbstractVisualComponent implements IContentVisualComponent
 	public String getContentCache(ContentContext ctx) {
 		GlobalContext globalContext = GlobalContext.getInstance(ctx.getRequest());
 		ICache cache = globalContext.getCache(CACHE_NAME);
+
+		System.out.println("***** AbstractVisualComponent.getContentCache : getContentCacheKey(ctx) = " + getContentCacheKey(ctx)); // TODO: remove debug trace
+
 		return (String) cache.get(getContentCacheKey(ctx));
 	}
 
@@ -1154,6 +1157,7 @@ public abstract class AbstractVisualComponent implements IContentVisualComponent
 					}
 				}
 			}
+
 			if (ctx.getRenderMode() == ContentContext.EDIT_MODE) {
 				return getEditXHTMLCode(ctx);
 			} else {
@@ -1187,10 +1191,11 @@ public abstract class AbstractVisualComponent implements IContentVisualComponent
 					synchronized (lockContent) {
 						long beforeTime = System.currentTimeMillis();
 						prepareView(ctx);
-						setContentCache(ctx, renderViewXHTMLCode(ctx));
+						String content = renderViewXHTMLCode(ctx);
+						setContentCache(ctx, content);
 						logger.fine("render content cache '" + getType() + "' : " + (System.currentTimeMillis() - beforeTime) / 1000 + " sec.");
+						return content;
 					}
-					return getContentCache(ctx);
 				} else {
 					String content;
 					if (isContentTimeCachable(ctx)) {
@@ -1555,6 +1560,7 @@ public abstract class AbstractVisualComponent implements IContentVisualComponent
 		}
 		GlobalContext globalContext = GlobalContext.getInstance(ctx.getRequest());
 		ICache cache = globalContext.getCache(CACHE_NAME);
+
 		cache.put(getContentCacheKey(ctx), contentCache);
 	}
 
