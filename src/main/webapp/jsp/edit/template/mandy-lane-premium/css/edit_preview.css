@@ -91,8 +91,10 @@
 	background-image: url('../images/icons/big-trash-hover.png');
 }
 
-#preview_command .action-button {
-    float: right;
+#preview_command .macro-list .action-button { 	
+ 	margin: 2px;
+ 	padding: 2px;
+ 	display: block;
 }
 
 #preview_command .action-button {
@@ -103,8 +105,7 @@
     color: #333333;
     display: inline-block;
     margin: 2px;
-    padding: 2px 5px;
-    width: 150px;
+    padding: 2px 5px;    
     text-align: center;
 }
 

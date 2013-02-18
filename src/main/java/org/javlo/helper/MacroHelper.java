@@ -593,15 +593,19 @@ public class MacroHelper {
 			if (macro != null && (adminMode || !macro.isAdmin()) && (!preview || macro.isPreview())) {
 				macroFound = true;
 				out.println("<div class=\"macro\">");
-				/*
-				 * out.println("<form id=\"form-macro-" + name + "\" method=\"post\" action=\"" + URLHelper.createURL(ctx) + "\">"); out.println("<input type=\"hidden\" name=\"webaction\" value=\"macro.executeMacro\" />"); out.println("<input type=\"submit\" name=\"macro-" + name + "\" value=\"" + i18nAccess.getText("macro.name." + name, name) + "\" />"); out.println("</form>");
-				 */
-				String url = URLHelper.createURL(ctx.getContextWithOtherRenderMode(ContentContext.EDIT_MODE)) + "?module=macro&previewEdit=true&webaction=macro.executeInteractiveMacro&macro-" + name + '=' + name + "&macro=" + name;
 				if (macro instanceof IInteractiveMacro) {
+					String url = URLHelper.createURL(ctx.getContextWithOtherRenderMode(ContentContext.EDIT_MODE)) + "?module=macro&previewEdit=true&webaction=macro.executeInteractiveMacro&macro-" + name + '=' + name + "&macro=" + name;
 					String js = "jQuery.colorbox({href : '" + url + "',opacity : 0.6,iframe : true,width : '95%',	height : '95%'});";
 					out.println("<a class=\"action-button\" href=\"#\" onclick=\"" + js + " return false;\">" + i18nAccess.getText("macro.name." + name, name) + "</a>");
 				} else {
-					out.println("<a class=\"action-button\" href=\"" + url + "\">" + i18nAccess.getText("macro.name." + name, name) + "</a>");
+					out.println("<form method=\"post\" action=\"" + URLHelper.createURL(ctx) + "\">");
+					out.println("<input type=\"hidden\" name=\"module\" value=\"macro\" />");
+					out.println("<input type=\"hidden\" name=\"previewEdit\" value=\"true\" />");
+					out.println("<input type=\"hidden\" name=\"webaction\" value=\"macro.executeMacro\" />");
+					out.println("<input type=\"hidden\" name=\"macro-" + name + "\" value=\"" + name + "\" />");
+					out.println("<input type=\"hidden\" name=\"macro\" value=\"" + name + "\" />");
+					out.println("<input class=\"action-button\" type=\"submit\" value=\"" + i18nAccess.getText("macro.name." + name, name) + "\" />");
+					out.println("</form>");
 				}
 				out.println("</div>");
 			}
