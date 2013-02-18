@@ -502,6 +502,10 @@ ul,li {
 	font-weight: bold;
 }
 
+.accountinfo .info {
+    max-width: 130px;
+    overflow: hidden;
+}
 
 #tools {
 	box-shadow: 1px 1px 0 #F3F3F3;
