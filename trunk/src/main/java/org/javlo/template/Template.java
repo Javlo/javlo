@@ -1694,7 +1694,6 @@ public class Template implements Comparable<Template> {
 	}
 
 	public boolean isTemplateInWebapp(ContentContext ctx) throws IOException {
-
 		GlobalContext globalContext = null;
 		if (ctx != null) {
 			globalContext = GlobalContext.getInstance(ctx.getRequest());
