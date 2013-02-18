@@ -24,6 +24,7 @@ import org.apache.commons.vfs2.FileType;
 import org.apache.commons.vfs2.VFS;
 import org.apache.commons.vfs2.impl.VFSClassLoader;
 import org.javlo.component.dynamic.DynamicComponent;
+import org.javlo.config.StaticConfig;
 import org.javlo.context.ContentContext;
 import org.javlo.context.GlobalContext;
 import org.javlo.helper.ConfigHelper;
@@ -76,6 +77,9 @@ public class ComponentFactory {
 				template = TemplateFactory.getTemplate(ctx, page);
 				if (template != null) {
 					/* load dynamic component */
+					if (!template.isTemplateInWebapp(ctx)) {
+						template.importTemplateInWebapp(StaticConfig.getInstance(ctx.getRequest().getSession()), ctx);
+					}
 					List<Properties> propertiesClasses = template.getDynamicComponentsProperties(globalContext);
 					if (propertiesClasses.size() > 0) {
 						array.add(new MetaTitle("content.title.template"));
