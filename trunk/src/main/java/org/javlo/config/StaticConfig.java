@@ -1170,8 +1170,6 @@ public class StaticConfig extends Observable {
 				cacheManager = CacheManager.getInstance();
 			}
 
-			System.out.println("");
-			System.out.println("***** StaticConfig.getEhCacheManager : LOAD CACHE :"); // TODO: remove debug trace
 			for (String name : cacheManager.getCacheNames()) {
 				System.out.println("'" + name + "' max item in memory = " + cacheManager.getCache(name).getCacheConfiguration().getMaxElementsInMemory());
 			}

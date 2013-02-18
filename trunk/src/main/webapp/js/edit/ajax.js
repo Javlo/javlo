@@ -50,8 +50,7 @@ jQuery(document).ready(function() {
 		}
 	});
 	
-	initDropFile();
-	
+	initDropFile();	
 	
 	jQuery(document).trigger("ajaxUpdate");
 });
@@ -113,13 +112,13 @@ function ajaxRequest(url, form) {
 		});
 		jQuery(form).trigger("ajaxUpdate");
 		jQuery(document).trigger("ajaxUpdate");		
-		try {
-			initPreview();
+		try {			
+			initPreview();			
 		} catch (ex) {
 			if (console) {
 				console.log(ex);
 			}
-		}
+		}		
 	});	
 }
 
@@ -178,8 +177,7 @@ function initDropFile() {
 		}).done(function(jsonObj) {
 			if (jsonObj.data != null) {
 				jQuery.each(jsonObj.data, function(key, value) {
-					if (key == "need-refresh" && value) {
-						console.log("refresh");
+					if (key == "need-refresh" && value) {						
 						window.location.href=window.location.href;
 					}
 				});
