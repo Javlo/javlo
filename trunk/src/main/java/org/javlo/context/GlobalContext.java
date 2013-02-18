@@ -751,12 +751,16 @@ public class GlobalContext implements Serializable {
 	public Set<String> getContentLanguages() {
 		String lgRAW = properties.getString("content-languages", getRAWLanguages());
 		if (lgRAW == null) {
-			return Collections.emptySet();
+			return getLanguages();
 		}
 		Set<String> outLg = new LinkedHashSet<String>();
+		outLg = new LinkedHashSet<String>();
 		for (String lg : StringHelper.stringToArray(lgRAW, ";")) {
 			lg = lg.replace(".", "");
 			outLg.add(lg);
+		}
+		if (outLg.size() == 0) {
+			return getLanguages();
 		}
 		return outLg;
 	}
