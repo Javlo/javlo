@@ -31,6 +31,8 @@ public class DeleteChildrenAndContent extends AbstractMacro {
 		}
 		pages = null;
 
+		ctx.getCurrentPage().releaseCache();
+
 		PersistenceService persistenceService = PersistenceService.getInstance(globalContext);
 		persistenceService.store(ctx);
 
@@ -40,6 +42,11 @@ public class DeleteChildrenAndContent extends AbstractMacro {
 	@Override
 	public boolean isPreview() {
 		return true;
+	}
+
+	@Override
+	public boolean isAdmin() {
+		return false;
 	}
 
 };

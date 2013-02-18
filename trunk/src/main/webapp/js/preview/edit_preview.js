@@ -65,8 +65,6 @@ layerOver = function(item) {
 
 initPreview = function() {
 	
-	console.log("new ready");
-
 	jQuery(".editable-component").click(function() {
 
 		layerOver(null);
