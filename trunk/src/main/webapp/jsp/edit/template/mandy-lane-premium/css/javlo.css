@@ -581,6 +581,10 @@ ul,li {
     width: 8px;
 }
 
+.sidebar {
+	overflow: hidden;
+}
+
 .sidebox, .mainbox {
 	position: relative;
 	margin-bottom: 20px;
@@ -825,6 +829,11 @@ ul,li {
 }
 
 /*** navigation ***/
+
+.leftmenu .add-page {    
+    margin-bottom: 24px;    
+}
+
 .navigation li li a, .navigation li li span {
 	padding-left: 48px;
 }
