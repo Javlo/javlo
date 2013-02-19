@@ -9,6 +9,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import org.javlo.context.ContentContext;
+import org.javlo.context.GlobalContext;
 import org.javlo.helper.RequestHelper;
 import org.javlo.module.mailing.MailingModuleContext;
 import org.javlo.service.RequestService;
@@ -49,6 +50,12 @@ public class ContentOnlyServlet extends HttpServlet {
 		try {
 			response.setContentType("text/html");
 			ContentContext ctx = ContentContext.getContentContext(request, response);
+
+			GlobalContext globalContext = GlobalContext.getInstance(ctx.getRequest());
+
+			if (globalContext.getPageIfExist(ctx, ctx.getPath()) == null) {
+				response.setStatus(HttpServletResponse.SC_NOT_FOUND);
+			}
 
 			RequestHelper.traceMailingFeedBack(ctx);
 
