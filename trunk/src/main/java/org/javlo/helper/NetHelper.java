@@ -68,6 +68,16 @@ public class NetHelper {
 		InputStream in = null;
 		try {
 			URLConnection conn = url.openConnection();
+
+			System.out.println("***** NetHelper.readPage : url = " + url); // TODO: remove debug trace
+			System.out.println("***** NetHelper.readPage : resp : " + ((HttpURLConnection) conn).getResponseCode()); // TODO: remove debug trace
+
+			if (conn instanceof HttpURLConnection) {
+				if (((HttpURLConnection) conn).getResponseCode() != HttpURLConnection.HTTP_OK) {
+					logger.warning("help url '" + url + "' return error code : " + ((HttpURLConnection) conn).getResponseCode());
+					return null;
+				}
+			}
 			if (url.getProtocol().equalsIgnoreCase("http") || url.getProtocol().equalsIgnoreCase("https")) {
 				HttpURLConnection httpConn = (HttpURLConnection) conn;
 				if (httpConn.getResponseCode() != HttpURLConnection.HTTP_OK) {

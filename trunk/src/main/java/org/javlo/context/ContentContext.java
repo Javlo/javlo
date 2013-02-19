@@ -955,7 +955,7 @@ public class ContentContext {
 		if (availableContentLanguages.contains(lg)) {
 			requestContentLanguage = lg;
 		} else {
-			logger.warning("request content language not available : " + lg);
+			logger.fine("request content language not available : " + lg);
 			requestContentLanguage = getLanguage();
 		}
 		resestCache();
