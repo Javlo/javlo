@@ -35,7 +35,6 @@ EditContext editContext = EditContext.getInstance(globalContext, request.getSess
 boolean admin = AdminUserSecurity.getInstance().isAdmin(editContext.getEditUser());
 
 int openCount = 0;
-int totalComp = 0;
 
 /** force edit mode in previe mode **/
 ctx.setRenderMode(ContentContext.EDIT_MODE);
@@ -107,10 +106,15 @@ components = allComponents.toArray(components);
 	%><div class="new-component-container" id="comp-child-<%=previousId%>"></div><%
 }
 
+if (components.length > 40 && request.getParameter("display-all") == null) {
+	  %>
+	  <div class="insert-line">
+		<a class="action-button" href="${info.currentURL}?${info.editPreview?'previewEdit=true&':''}display-all=true">${i18n.edit["edit.message.display-all-components"]}</a>
+	  </div><%	
+} else {
+
 for (int i=0; i<components.length; i++) {
 	IContentVisualComponent comp = components[i];
-
-	totalComp++;
 	String inputSuffix = "-"+comp.getId();
 	String helpText = componentContext.getHelpHTML(ctx, comp);
 	if (comp instanceof IContainer && ((IContainer)comp).isOpen(ctx)) {
@@ -174,17 +178,11 @@ for (int i=0; i<components.length; i++) {
 }
 %>
  <div class="new-component-container" id="comp-child-<%=comp.getId()%>"></div><%
-  if (totalComp > 40 && request.getParameter("display-all") == null) {
-  %>
-  <div class="insert-line">
-	<a class="action-button" href="${info.currentURL}?${info.editPreview?'previewEdit=true&':''}display-all=true">${i18n.edit["edit.message.display-all-components"]}</a>
-  </div><%
-  i = components.length; // break  
-}
-
+  
   %>  
 <%}
 for(String closeCode : closeContainerStack) {
 	%><%=closeCode%><%
+}
 }
 %>
