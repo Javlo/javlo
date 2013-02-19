@@ -799,7 +799,10 @@ public abstract class AbstractVisualComponent implements IContentVisualComponent
 		} else if (getConfig(ctx).getRenderes().size() == 1 || getCurrentRenderer(ctx) == null) {
 			return getConfig(ctx).getRenderes().values().iterator().next();
 		} else {
-			String renderer = getConfig(ctx).getRenderes().get(getCurrentRenderer(ctx));
+			String renderer = getConfig(ctx).getRenderes().get(getCurrentRenderer(ctx) + '.' + ctx.getArea());
+			if (renderer == null) {
+				renderer = getConfig(ctx).getRenderes().get(getCurrentRenderer(ctx));
+			}
 			if (renderer != null) {
 				return renderer;
 			} else {

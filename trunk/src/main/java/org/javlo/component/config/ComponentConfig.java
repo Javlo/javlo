@@ -155,7 +155,7 @@ public class ComponentConfig {
 		Iterator keys = properties.getKeys();
 		while (keys.hasNext()) {
 			String key = (String) keys.next();
-			if (key.startsWith("renderer.")) {
+			if (key.startsWith("renderer.") && key.split(".").length < 3) {
 				String value = (String) properties.getProperty(key);
 				key = key.replaceFirst("renderer.", "");
 				outRenderers.put(key, value);
