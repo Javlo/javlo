@@ -462,4 +462,8 @@ public class InfoBean {
 
 	}
 
+	public User getEditUser() {
+		return ctx.getCurrentEditUser();
+	}
+
 }

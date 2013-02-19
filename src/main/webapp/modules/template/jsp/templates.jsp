@@ -22,6 +22,10 @@
 	                   <span>${template.authors}</span>
 	               </p>
 	               <p>
+	                   <label>${i18n.edit['template.parent']}:</label>
+	                   <span>${template.parent}</span>
+	               </p>
+	               <p>
 	                   <label>${i18n.edit['template.creation-date']}:</label>
 	                   <span>${template.creationDate}</span>
 	               </p>
