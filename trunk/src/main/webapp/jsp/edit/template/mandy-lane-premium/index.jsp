@@ -139,8 +139,13 @@
         </ul>
     </div><!-- tabmenu -->
     
-    <div class="accountinfo">
+    <div class="accountinfo">    
+    	<c:if test="${not empty info.editUser.userInfo.facebook}">
+    	<img src="${fn:replace(info.editUser.userInfo.facebook,'//www.','//graph.')}/picture?type=small" alt="Avatar" />
+    	</c:if>
+    	<c:if test="${empty info.editUser.userInfo.facebook}">
     	<img src="${info.editTemplateURL}/images/avatar.png" alt="Avatar" />
+    	</c:if>
         <div class="info">
         	<h3>${currentUser.name}</h3>
             <small>${currentUser.userInfo.email}&nbsp;</small>
