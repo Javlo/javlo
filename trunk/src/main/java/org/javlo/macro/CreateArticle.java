@@ -100,7 +100,6 @@ public class CreateArticle implements IInteractiveMacro, IAction {
 			MacroModuleContext.getInstance(ctx.getRequest()).setActiveMacro(null);
 
 			if (ctx.isEditPreview()) {
-				System.out.println("***** CreateArticle.performCreate : newURL = " + newURL); // TODO: remove debug trace
 				ctx.setClosePopup(true);
 				if (newURL != null) {
 					ctx.setParentURL(newURL);
