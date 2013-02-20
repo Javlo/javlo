@@ -35,6 +35,7 @@ import org.javlo.helper.ComponentHelper;
 import org.javlo.helper.DebugHelper;
 import org.javlo.helper.LangHelper;
 import org.javlo.helper.NavigationHelper;
+import org.javlo.helper.ResourceHelper;
 import org.javlo.helper.ServletHelper;
 import org.javlo.helper.StringHelper;
 import org.javlo.helper.URLHelper;
@@ -56,6 +57,7 @@ import org.javlo.service.NavigationService;
 import org.javlo.service.PersistenceService;
 import org.javlo.service.PublishListener;
 import org.javlo.service.RequestService;
+import org.javlo.service.resource.ResourceStatus;
 import org.javlo.service.syncro.SynchroThread;
 import org.javlo.template.Template;
 import org.javlo.template.TemplateFactory;
@@ -63,6 +65,7 @@ import org.javlo.thread.AbstractThread;
 import org.javlo.user.AdminUserFactory;
 import org.javlo.user.AdminUserSecurity;
 import org.javlo.user.IUserFactory;
+import org.javlo.ztatic.FileCache;
 
 public class Edit extends AbstractModuleAction {
 
@@ -493,42 +496,64 @@ public class Edit extends AbstractModuleAction {
 
 		Module currentModule = modulesContext.getCurrentModule();
 
-		/** set the principal renderer **/
-		ContentModuleContext modCtx = (ContentModuleContext) LangHelper.smartInstance(request, ctx.getResponse(), ContentModuleContext.class);
-		if (request.getParameter("query") == null) {
-			currentModule.setBreadcrumb(true);
-			currentModule.setSidebar(true);
-			UserInterfaceContext userIterfaceContext = UserInterfaceContext.getInstance(ctx.getRequest().getSession(), globalContext);
+		if (ResourceStatus.isInstance(ctx.getRequest().getSession())) {
+			ResourceStatus resourceStatus = ResourceStatus.getInstance(ctx.getRequest().getSession());
+			String previewSourceCode = "<a class=\"action-button\" href=\"" + URLHelper.createResourceURL(ctx, resourceStatus.getSource().getUri()) + "\">Download</a>";
+			String previewTargetCode = "<a class=\"action-button\" href=\"" + URLHelper.createResourceURL(ctx, resourceStatus.getTarget().getUri()) + "\">Download</a>";
+			if (StringHelper.isImage(resourceStatus.getSource().getFile().getName())) {
+				previewSourceCode = "<a href=\"" + URLHelper.createResourceURL(ctx, resourceStatus.getSource().getUri()) + "\">";
+				previewSourceCode = previewSourceCode + "<figure><img src=\"" + URLHelper.createTransformURL(ctx, resourceStatus.getSource().getUri(), "preview") + "?hash=" + resourceStatus.getSource().getFile().length() + "\" alt=\"source\" /><figcaption>" + StringHelper.renderSize(resourceStatus.getSource().getFile().length()) + "</figcaption></figure></a>";
+				previewTargetCode = "<a href=\"" + URLHelper.createResourceURL(ctx, resourceStatus.getTarget().getUri()) + "\">";
+				previewTargetCode = previewTargetCode + "<figure><img src=\"" + URLHelper.createTransformURL(ctx, resourceStatus.getTarget().getUri(), "preview") + "?hash=" + resourceStatus.getTarget().getFile().length() + "\"  alt=\"source\" /><figcaption>" + StringHelper.renderSize(resourceStatus.getTarget().getFile().length()) + "</figcaption></figure></a>";
 
-			if (!userIterfaceContext.isComponentsList()) {
-				currentModule.clearAllBoxes();
+			}
+			ctx.getRequest().setAttribute("previewSourceCode", previewSourceCode);
+			ctx.getRequest().setAttribute("previewTargetCode", previewTargetCode);
+			ctx.getRequest().setAttribute("sourceDate", StringHelper.renderTime(new Date(resourceStatus.getSource().getFile().lastModified())));
+			ctx.getRequest().setAttribute("targetDate", StringHelper.renderTime(new Date(resourceStatus.getTarget().getFile().lastModified())));
+			currentModule.setRenderer("/jsp/confirm_replace.jsp");
+			currentModule.setToolsRenderer(null);
+			currentModule.setSidebar(false);
+		} else {
+
+			/** set the principal renderer **/
+			ContentModuleContext modCtx = (ContentModuleContext) LangHelper.smartInstance(request, ctx.getResponse(), ContentModuleContext.class);
+			if (request.getParameter("query") == null) {
+				currentModule.setBreadcrumb(true);
+				currentModule.setSidebar(true);
+				UserInterfaceContext userIterfaceContext = UserInterfaceContext.getInstance(ctx.getRequest().getSession(), globalContext);
+
+				if (!userIterfaceContext.isComponentsList()) {
+					currentModule.clearAllBoxes();
+				}
+
+				String publish = "";
+				if (globalContext.isPreviewMode()) {
+					publish = "&button_publish=true";
+				}
+
+				request.setAttribute("previewURL", URLHelper.createURL(ctx.getContextWithOtherRenderMode(ContentContext.PREVIEW_MODE)));
+
+				switch (modCtx.getMode()) {
+				case ContentModuleContext.PREVIEW_MODE:
+					currentModule.setToolsRenderer("/jsp/actions.jsp?button_edit=true&button_page=true" + publish);
+					currentModule.setRenderer("/jsp/preview.jsp");
+					currentModule.setBreadcrumbTitle(I18nAccess.getInstance(ctx.getRequest()).getText("content.preview"));
+					break;
+				case ContentModuleContext.PAGE_MODE:
+					currentModule.setToolsRenderer("/jsp/actions.jsp?button_edit=true&button_preview=true&button_delete_page=true" + publish);
+					request.setAttribute("page", ctx.getCurrentPage().getPageBean(ctx));
+					currentModule.setRenderer("/jsp/page_properties.jsp");
+					currentModule.setBreadcrumbTitle(I18nAccess.getInstance(ctx.getRequest()).getText("item.title"));
+					break;
+				default:
+					currentModule.setToolsRenderer("/jsp/actions.jsp?button_preview=true&button_page=true&button_save=true&button_copy=true&languages=true&areas=true" + publish);
+					currentModule.setRenderer("/jsp/content_wrapper.jsp");
+					currentModule.setBreadcrumbTitle(I18nAccess.getInstance(ctx.getRequest()).getText("content.mode.content"));
+					break;
+				}
 			}
 
-			String publish = "";
-			if (globalContext.isPreviewMode()) {
-				publish = "&button_publish=true";
-			}
-
-			request.setAttribute("previewURL", URLHelper.createURL(ctx.getContextWithOtherRenderMode(ContentContext.PREVIEW_MODE)));
-
-			switch (modCtx.getMode()) {
-			case ContentModuleContext.PREVIEW_MODE:
-				currentModule.setToolsRenderer("/jsp/actions.jsp?button_edit=true&button_page=true" + publish);
-				currentModule.setRenderer("/jsp/preview.jsp");
-				currentModule.setBreadcrumbTitle(I18nAccess.getInstance(ctx.getRequest()).getText("content.preview"));
-				break;
-			case ContentModuleContext.PAGE_MODE:
-				currentModule.setToolsRenderer("/jsp/actions.jsp?button_edit=true&button_preview=true&button_delete_page=true" + publish);
-				request.setAttribute("page", ctx.getCurrentPage().getPageBean(ctx));
-				currentModule.setRenderer("/jsp/page_properties.jsp");
-				currentModule.setBreadcrumbTitle(I18nAccess.getInstance(ctx.getRequest()).getText("item.title"));
-				break;
-			default:
-				currentModule.setToolsRenderer("/jsp/actions.jsp?button_preview=true&button_page=true&button_save=true&button_copy=true&languages=true&areas=true" + publish);
-				currentModule.setRenderer("/jsp/content_wrapper.jsp");
-				currentModule.setBreadcrumbTitle(I18nAccess.getInstance(ctx.getRequest()).getText("content.mode.content"));
-				break;
-			}
 		}
 
 		/** COMPONENT LIST **/
@@ -1369,4 +1394,19 @@ public class Edit extends AbstractModuleAction {
 		return null;
 	}
 
+	public static String performConfirmReplace(RequestService rs, ContentContext ctx, GlobalContext globalContext, HttpSession session, MessageRepository messageRepository, I18nAccess i18nAccess) throws IOException {
+		if (!ResourceStatus.isInstance(session)) {
+			return null;
+		}
+		if (rs.getParameter("cancel", null) != null) {
+			ResourceStatus.getInstance(session).release(ctx);
+		} else if (rs.getParameter("confirm", null) != null) {
+			ResourceStatus resourceStatus = ResourceStatus.getInstance(session);
+			FileCache.getInstance(session.getServletContext()).deleteAllFile(globalContext.getContextKey(), resourceStatus.getTarget().getFile().getName());
+			resourceStatus.getTarget().getFile().delete();
+			ResourceHelper.writeFileToFile(resourceStatus.getSource().getFile(), resourceStatus.getTarget().getFile());
+			resourceStatus.release(ctx);
+		}
+		return null;
+	}
 }

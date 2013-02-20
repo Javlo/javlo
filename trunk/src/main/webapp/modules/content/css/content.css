@@ -235,7 +235,6 @@ li.line {
     margin-left: 10px;
 }
 
-
 .insert-page input[type='submit'] {
     background: url("images/icon_arrow_3.png") no-repeat scroll 5px -31px #FFFFFF;
     padding-left: 26px;
@@ -288,11 +287,6 @@ li.line {
     font-weight:normal;
     right: 60px;
 }
-
-/*.area-label:hover {
-	z-index: 100;
-	color: #999999;
-}*/
 
 .smart-link-body img {
 	width: 120px;
@@ -361,4 +355,15 @@ li.line {
 
 .smart-link-body a.next {
 	margin-left: 15px;
+}
+
+.confirm-replace fieldset {
+	padding: 12px;
+	text-align: center;
+	vertical-align: middle;
+	height: 390px;
+}
+
+.confirm-replace .file-list {
+	overflow: hidden;
 }

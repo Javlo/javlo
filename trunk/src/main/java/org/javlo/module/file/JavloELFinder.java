@@ -10,6 +10,7 @@ import java.io.OutputStream;
 import java.io.Writer;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
@@ -157,6 +158,26 @@ public class JavloELFinder extends ELFinder {
 	}
 
 	@Override
+	protected void deleteFile(HttpServletRequest request, String[] filesHash, Map<String, Object> apiResponse) throws IOException {
+		Collection<ELFile> deletedFiles = new LinkedList<ELFile>();
+		for (String fileHash : filesHash) {
+			JavloELFile file = (JavloELFile) hashToFile(fileHash);
+			if (file.getFile().exists()) {
+				GlobalContext globalContext = GlobalContext.getInstance(request);
+				if (file.isDirectory()) {
+					FileUtils.deleteDirectory(file.getFile());
+					FileCache.getInstance(request.getSession().getServletContext()).clear(globalContext.getContextKey());
+				} else {
+					file.getFile().delete();
+					FileCache.getInstance(request.getSession().getServletContext()).deleteAllFile(globalContext.getContextKey(), file.getFile().getName());
+				}
+				deletedFiles.add(file);
+			}
+		}
+		apiResponse.put("removed", printFilesHash(deletedFiles));
+	}
+
+	@Override
 	protected void transformFile(String fileHash, String mode, int width, int height, int x, int y, Map<String, Object> apiResponse) throws Exception {
 		super.transformFile(fileHash, mode, width, height, x, y, apiResponse);
 		JavloELFile file = (JavloELFile) hashToFile(fileHash);
@@ -204,7 +225,7 @@ public class JavloELFinder extends ELFinder {
 	}
 
 	@Override
-	protected void renameFile(String fileHash, String name, Map<String, Object> apiResponse) throws Exception {
+	protected void renameFile(HttpServletRequest request, String fileHash, String name, Map<String, Object> apiResponse) throws Exception {
 		JavloELFile file = (JavloELFile) hashToFile(fileHash);
 		if (file.getFile().exists()) {
 			File newFile = new File(URLHelper.mergePath(file.getFile().getParent(), name));
@@ -212,9 +233,20 @@ public class JavloELFinder extends ELFinder {
 			if (newFile.exists()) {
 				throw new ELFinderException(i18nAccess.getText("file.message.error.allready-exist"));
 			} else {
+				// apiResponse.put("removed", printFilesHash(Arrays.asList(new ELFile[] { file })));
 				file.getFile().renameTo(newFile);
+				GlobalContext globalContext = GlobalContext.getInstance(request);
+				if (file.getFile().isDirectory()) {
+					FileCache.getInstance(request.getSession().getServletContext()).clear(globalContext.getContextKey());
+				} else {
+					FileCache.getInstance(request.getSession().getServletContext()).deleteAllFile(globalContext.getContextKey(), file.getFile().getName());
+				}
+				apiResponse.put("added", printFilesHash(Arrays.asList(new ELFile[] { new JavloELFile(file.getVolume(), newFile, file.getParentFile()) })));
+				// apiResponse.put("added", printFile(new JavloELFile(file.getVolume(), newFile, file.getParentFile())));
+				// apiResponse.put("removed", printFile(file));
 			}
 		}
+
 	}
 
 	@Override

@@ -55,7 +55,7 @@ public abstract class ELFinder {
 			} else if ("mkdir".equals(command)) {
 				createDir(request.getParameter("target"), request.getParameter("name"), apiResponse);
 			} else if ("rm".equals(command)) {
-				deleteFile(rs.getParameterValues("targets[]", null), apiResponse);
+				deleteFile(request, rs.getParameterValues("targets[]", null), apiResponse);
 			} else if ("duplicate".equals(command)) {
 				duplicateFile(rs.getParameterValues("targets[]", null), apiResponse);
 			} else if ("put".equals(command)) {
@@ -65,7 +65,7 @@ public abstract class ELFinder {
 			} else if ("get".equals(command)) {
 				getFile(rs.getParameter("target", null), apiResponse);
 			} else if ("rename".equals(command)) {
-				renameFile(rs.getParameter("target", null), rs.getParameter("name", null), apiResponse);
+				renameFile(request, rs.getParameter("target", null), rs.getParameter("name", null), apiResponse);
 			} else if ("upload".equals(command)) {
 				uploadFile(rs.getParameter("target", null), rs.getFileItemMap().get("upload[]"), rs.getParameter("name", null), apiResponse);
 			} else if ("archive".equals(command)) {
@@ -161,7 +161,7 @@ public abstract class ELFinder {
 
 	protected abstract void compressFiles(String[] files, String type, Map<String, Object> apiResponse) throws Exception;
 
-	protected abstract void renameFile(String fileHash, String name, Map<String, Object> apiResponse) throws ELFinderException, Exception;
+	protected abstract void renameFile(HttpServletRequest request, String fileHash, String name, Map<String, Object> apiResponse) throws ELFinderException, Exception;
 
 	protected abstract void duplicateFile(String[] filesHash, Map<String, Object> apiResponse) throws IOException;
 
@@ -235,21 +235,7 @@ public abstract class ELFinder {
 
 	protected abstract void createDir(String folderId, String fileName, Map<String, Object> response);
 
-	private void deleteFile(String[] filesHash, Map<String, Object> apiResponse) throws IOException {
-		Collection<ELFile> deletedFiles = new LinkedList<ELFile>();
-		for (String fileHash : filesHash) {
-			JavloELFile file = (JavloELFile) hashToFile(fileHash);
-			if (file.getFile().exists()) {
-				if (file.isDirectory()) {
-					FileUtils.deleteDirectory(file.getFile());
-				} else {
-					file.getFile().delete();
-				}
-				deletedFiles.add(file);
-			}
-		}
-		apiResponse.put("removed", printFilesHash(deletedFiles));
-	}
+	protected abstract void deleteFile(HttpServletRequest request, String[] filesHash, Map<String, Object> apiResponse) throws IOException;
 
 	private void createFile(String folderId, String fileName, Map<String, Object> response) throws IOException {
 		JavloELFile folder = (JavloELFile) hashToFile(folderId);

@@ -46,7 +46,9 @@ import org.javlo.message.MessageRepository;
 import org.javlo.navigation.MenuElement;
 import org.javlo.service.RequestService;
 import org.javlo.service.ReverseLinkService;
+import org.javlo.service.resource.LocalResource;
 import org.javlo.service.resource.Resource;
+import org.javlo.service.resource.ResourceStatus;
 import org.javlo.ztatic.IStaticContainer;
 import org.javlo.ztatic.StaticInfo;
 
@@ -723,7 +725,14 @@ public abstract class AbstractFileComponent extends AbstractVisualComponent impl
 
 			File f = new File(realName);
 			if (f.exists()) {
-				throw new IOException("file allready exist");
+				// create temp file
+				File tempFile = new File(StringHelper.getFileNameWithoutExtension(f.getAbsolutePath()) + "__TEMP" + '.' + StringHelper.getFileExtension(f.getName()));
+				ResourceHelper.writeStreamToFile(in, tempFile);
+				ResourceStatus resouceStatus = ResourceStatus.getInstance(ctx.getRequest().getSession());
+				resouceStatus.setSource(new LocalResource(ctx, tempFile));
+				resouceStatus.setTarget(new LocalResource(ctx, f));
+				// throw new IOException("file allready exist");
+				return null;
 			}
 
 			File dir = f.getParentFile();

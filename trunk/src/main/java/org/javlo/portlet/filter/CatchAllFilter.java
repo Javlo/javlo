@@ -82,12 +82,10 @@ public class CatchAllFilter implements Filter {
 					globalContext.logout(logoutUser);
 					if (httpRequest.getUserPrincipal() != null) {
 						httpResponse.sendRedirect("" + httpRequest.getRequestURL());
-						return;
 					}
 				}
 				httpRequest.getSession().invalidate();
 				httpRequest.getSession(true);
-				return;
 			}
 
 			/** STANDARD LOGIN **/
@@ -229,7 +227,6 @@ public class CatchAllFilter implements Filter {
 		} catch (Exception e) {
 			throw new ServletException(e);
 		}
-
 	}
 
 	@Override
@@ -328,6 +325,7 @@ public class CatchAllFilter implements Filter {
 		/***************/
 
 		doLoginFilter(request, response);
+		User user = UserFactory.createUserFactory(globalContext, httpRequest.getSession()).getCurrentUser(httpRequest.getSession());
 
 		/*****************/
 		/**** MODULES ****/
@@ -336,6 +334,13 @@ public class CatchAllFilter implements Filter {
 		String editURI = uri;
 		if (editURI.startsWith('/' + globalContext.getContextKey())) {
 			editURI = editURI.substring(globalContext.getContextKey().length() + 1);
+		}
+
+		if (user != null && AdminUserSecurity.getInstance().haveRole(user, AdminUserSecurity.CONTRIBUTOR_ROLE)) {
+			if (editURI.startsWith("/edit")) {
+				httpRequest.getRequestDispatcher(editURI.replaceFirst("/edit", "/preview")).forward(request, response);
+				return;
+			}
 		}
 
 		if (editURI.startsWith("/edit-") || editURI.startsWith("/ajax-") || editURI.startsWith("/preview-edit")) {
