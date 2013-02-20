@@ -224,6 +224,28 @@ public class FileCache {
 		}
 	}
 
+	/**
+	 * delete all files with this fileName
+	 * 
+	 * @param fileName
+	 * @param context
+	 *            a context, if null all context is considered.
+	 */
+	public void deleteAllFile(String context, String fileName) {
+		File cacheDir;
+		if (context != null) {
+			cacheDir = new File(URLHelper.mergePath(application.getRealPath(BASE_DIR), context));
+		} else {
+			cacheDir = new File(application.getRealPath(BASE_DIR));
+		}
+		for (File file : ResourceHelper.getAllFilesList(cacheDir)) {
+			if (file.getName().equals(fileName)) {
+				file.delete();
+			}
+		}
+
+	}
+
 	public void clear(String context) {
 		File cacheDir;
 		if (context != null) {

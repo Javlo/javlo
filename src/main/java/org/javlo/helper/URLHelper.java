@@ -131,21 +131,6 @@ public class URLHelper extends ElementaryURLHelper {
 		return createURL(otherContext);
 	}
 
-	/**
-	 * create a intern link URI to the preview site
-	 * 
-	 * @param uri
-	 *            a standard uri
-	 * @param ctx
-	 *            the current context of the content.
-	 * @return a URL
-	 */
-	public static String createPreViewURL(String uri, ContentContext ctx) throws Exception {
-		ContentContext viewCtx = new ContentContext(ctx);
-		viewCtx.setRenderMode(ContentContext.PREVIEW_MODE);
-		return createURL(viewCtx, uri);
-	}
-
 	public static String createResourceURL(ContentContext ctx, MenuElement currentPage, String url) {
 		if (url == null) {
 			return null;
@@ -174,6 +159,12 @@ public class URLHelper extends ElementaryURLHelper {
 		String url = file.getAbsolutePath();
 		url = StringUtils.removeStart(url, globalContext.getDataFolder());
 		return createResourceURL(ctx, url);
+	}
+
+	public static String createLocalURI(ContentContext ctx, File file) {
+		GlobalContext globalContext = GlobalContext.getInstance(ctx.getRequest());
+		String url = file.getAbsolutePath();
+		return StringUtils.removeStart(url, globalContext.getDataFolder());
 	}
 
 	public static String createResourceURL(ContentContext ctx, String url) {

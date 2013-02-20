@@ -478,7 +478,9 @@ public class GlobalImage extends Image {
 			return getLink();
 		} else if (getFileName() != null) {
 			String fileLink = getResourceURL(ctx, getFileName());
-			return URLHelper.createTransformURL(ctx, getPage(), fileLink, "thumb-view").replace('\\', '/');
+			String url = URLHelper.createTransformURL(ctx, getPage(), fileLink, "thumb-view").replace('\\', '/');
+			url = URLHelper.addParam(url, "hash", getStaticInfo(ctx).getVersionHash());
+			return url;
 		}
 		return null;
 	}

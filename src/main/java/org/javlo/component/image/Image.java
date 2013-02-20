@@ -169,7 +169,11 @@ public class Image extends AbstractFileComponent implements IImageTitle, IPrevie
 		out.println("<div class=\"focus-zone\">");
 
 		out.println("<div id=\"" + getPreviewZoneId() + "\" class=\"list-container\">");
-		out.println("<img src=\"" + URLHelper.createTransformURL(ctx, getPage(), getResourceURL(ctx, getFileName()), "list") + "\" />&nbsp;");
+
+		String url = URLHelper.createTransformURL(ctx, getPage(), getResourceURL(ctx, getFileName()), "list");
+		url = URLHelper.addParam(url, "hash", getStaticInfo(ctx).getVersionHash());
+
+		out.println("<img src=\"" + url + "\" />&nbsp;");
 		out.println("<div class=\"focus-point\">x</div>");
 		out.println("<input class=\"posx\" type=\"hidden\" name=\"posx-" + file.getId() + "\" value=\"" + file.getFocusZoneX() + "\" />");
 		out.println("<input class=\"posy\" type=\"hidden\" name=\"posy-" + file.getId() + "\" value=\"" + file.getFocusZoneY() + "\" />");
@@ -185,14 +189,12 @@ public class Image extends AbstractFileComponent implements IImageTitle, IPrevie
 					StaticInfo staticInfo = StaticInfo.getInstance(ctx, getFileURL(ctx, image));
 					String fileLink = URLHelper.mergePath(getDirSelected(), image);
 					String selected = "class=\"preview-image\"";
-					boolean isSelectedImage = false;
 					if (fileLink.equals(currentFileLink)) {
 						selected = " class=\"preview-image selected\"";
-						isSelectedImage = true;
 					}
 					String realURL = URLHelper.createResourceURL(ctx, getPage(), '/' + getResourceURL(ctx, image)) + "?CRC32=" + staticInfo.getCRC32();
 					String previewURL = URLHelper.createTransformURL(ctx, getPage(), getResourceURL(ctx, image), "preview") + "?CRC32=" + staticInfo.getCRC32();
-					String url = URLHelper.createTransformURL(ctx, getPage(), getResourceURL(ctx, image), getConfig(ctx).getProperty("thumbnails-filter", "thumbnails")) + "?CRC32=" + staticInfo.getCRC32();
+					url = URLHelper.createTransformURL(ctx, getPage(), getResourceURL(ctx, image), getConfig(ctx).getProperty("thumbnails-filter", "thumbnails")) + "?hash=" + staticInfo.getVersionHash();
 					String id = "image_name_select__" + getId();
 					// if (i < maxDisplayedImage || isSelectedImage) {
 					out.print("<div " + selected + ">");
