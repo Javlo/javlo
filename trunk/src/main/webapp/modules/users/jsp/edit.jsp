@@ -14,12 +14,17 @@
 
 <fieldset>
 <legend>${i18n.edit['user.info']}</legend>
-<c:forEach var="key" items="${userInfoKeys}">
+<div class="one_half">
+<c:forEach var="key" items="${userInfoKeys}" varStatus="status">
 	<div class="line">
 		<label for="${key}">${key}</label>
 		<input type="text" id="${key}" name="${key}" value="${userInfoMap[key]}" /> 
 	</div>
+	<c:if test="${status.count >= fn:length(userInfoKeys)/2 && status.count < fn:length(userInfoKeys)/2+1}">
+		</div><div class="one_half">
+	</c:if>
 </c:forEach>
+</div>
 </fieldset>
 
 <fieldset>
