@@ -93,7 +93,8 @@ org.javlo.component.meta.NotSearchPage
 org.javlo.component.meta.Keywords
 org.javlo.component.meta.PageWeight
 org.javlo.component.form.SearchResultComponent
-org.javlo.component.form.GenericFormForRegistering
+org.javlo.component.form.GenericFormForRegisteringµ
+org.javlo.component.portlet.PortletWrapper
 ec.ep.europarl.adagio.wcms.component.GenericFormPortlet
 ec.ep.europarl.adagio.wcms.component.QuizPollPortlet
 ec.ep.europarl.adagio.wcms.component.CYPRegisterPortlet
