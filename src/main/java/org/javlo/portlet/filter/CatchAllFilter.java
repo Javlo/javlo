@@ -57,7 +57,7 @@ public class CatchAllFilter implements Filter {
 	 */
 	public static Logger logger = Logger.getLogger(CatchAllFilter.class.getName());
 
-	public static void doLoginFilter(ServletRequest request, ServletResponse response) throws IOException, ServletException {
+	public static boolean doLoginFilter(ServletRequest request, ServletResponse response) throws IOException, ServletException {
 
 		logger.fine("start login filter");
 
@@ -224,6 +224,8 @@ public class CatchAllFilter implements Filter {
 			if (newUser) {
 				ModulesContext.getInstance(httpRequest.getSession(), globalContext).loadModule(httpRequest.getSession(), globalContext);
 			}
+
+			return newUser;
 		} catch (Exception e) {
 			throw new ServletException(e);
 		}
@@ -324,7 +326,7 @@ public class CatchAllFilter implements Filter {
 		/**** LOGIN ****/
 		/***************/
 
-		doLoginFilter(request, response);
+		boolean newUser = doLoginFilter(request, response);
 		User user = UserFactory.createUserFactory(globalContext, httpRequest.getSession()).getCurrentUser(httpRequest.getSession());
 
 		/*****************/
@@ -348,6 +350,14 @@ public class CatchAllFilter implements Filter {
 			if (editURI.startsWith("/preview-edit")) {
 				editPreview = true;
 				editURI = editURI.replaceFirst("/preview-", "/");
+				if (newUser) {
+					try {
+						ContentContext ctx = ContentContext.getContentContext(httpRequest, (HttpServletResponse) response);
+						ctx.setClosePopup(true);
+					} catch (Exception e) {
+						e.printStackTrace();
+					}
+				}
 			}
 
 			String prefix = editURI.substring(0, 5);

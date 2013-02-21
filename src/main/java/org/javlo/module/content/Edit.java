@@ -1162,14 +1162,16 @@ public class Edit extends AbstractModuleAction {
 		String[] compsId = requestService.getParameterValues("comp_id", null);
 		if (compsId != null) {
 			for (String compId : compsId) {
-				compId = compId.substring(3);
-				IContentVisualComponent comp = content.getComponent(ctx, compId);
-				if (comp == null) {
-					return "component not found : " + compId;
-				} else {
-					editContext.setCurrentArea(comp.getArea());
+				if (compId.trim().length() > 0) {
+					compId = compId.substring(3);
+					IContentVisualComponent comp = content.getComponent(ctx, compId);
+					if (comp == null) {
+						return "component not found : " + compId;
+					} else {
+						editContext.setCurrentArea(comp.getArea());
+					}
+					componentContext.addNewComponent(comp);
 				}
-				componentContext.addNewComponent(comp);
 			}
 		}
 		return null;

@@ -18,7 +18,10 @@ editCtx.setRenderMode(ContentContext.EDIT_MODE);
 			<c:if test="${not empty currentUser}">
 			<form id="pc_logout_form" action="${info.currentURL}" method="post">
 				<div class="pc_line">
-					<a href="${info.currentURL}?edit-logout=logout">${i18n.edit['login.logout']}</a>
+					<form id="form-logout" method="post" action="${info.currentURL}">
+						<input type="hidden" name="edit-logout" value="logout" />
+						<input type="submit" class="action-button central-button" href="${info.currentURL}" value="${i18n.edit['login.logout']}" />
+					</form>
 				</div>
 			</form>			
 			<fieldset class="pc_command">
@@ -59,7 +62,8 @@ editCtx.setRenderMode(ContentContext.EDIT_MODE);
 					</c:if>					
 				</div>
 			</fieldset>
-			<c:if test='${editPreview == "true"}'>	
+			<c:if test='${editPreview == "true"}'>
+				<a class="action-button central-button" href="${info.currentEditURL}?module=content&previewEdit=true" onclick="jQuery.colorbox({href : '${info.currentEditURL}?module=content&previewEdit=true',opacity : 0.6,iframe : true,width : '95%',	height : '95%'}); return false;">${i18n.edit['preview.label.edit-components']}</a>	
 				<c:if test="${!userInterface.contributor}">			
 				<form id="insert_page" action="${info.currentURL}" method="post">
 					<fieldset>
@@ -72,7 +76,7 @@ editCtx.setRenderMode(ContentContext.EDIT_MODE);
 						</div>
 					</fieldset>
 				</form>
-				</c:if>
+				</c:if>				
 				<div id="pc_upload">
 					<div id="ajax-loader">&nbsp;</div>
 					<div id="upload-zone" data-url="${info.uploadURL}" class="drop-files"><span>${i18n.edit['preview.upload-here']}</span></div>
@@ -98,23 +102,8 @@ editCtx.setRenderMode(ContentContext.EDIT_MODE);
 					</fieldset>
 				</form>
 			</c:if>
-		</c:if><c:if test="${empty currentUser}">
-				<form id="pc_login" name="login" method="post" action="${info.currentURL}">
-				<input type="hidden" name="login-type" value="adminlogin">
-				<input type="hidden" name="edit-login" value="edit-login">
-				<fieldset>
-					<legend>${i18n.edit['login.authentification']}</legend>
-					<div class="pc_line">
-						<label for="login">${i18n.edit["login.user"]} :</label>
-					    <div class="pc_input"><input id="login" type="text" name="j_username" value="" /></div>
-					</div>
-					<div class="pc_line">
-						<label for="password">${i18n.edit['login.password']} :</label>
-						<div class="pc_input"><input type="password" name="j_password" value="" /></div>
-					</div>	
-					<input type="submit" name="edit-login" value="${i18n.edit['global.submit']}" />
-				</fieldset>
-				</form>
+		</c:if><c:if test="${empty currentUser}">		
+			    <a class="action-button central-button" href="${info.currentEditURL}" onclick="jQuery.colorbox({href : '${info.currentEditURL}?previewEdit=true',opacity : 0.6,iframe : true,width : '95%',	height : '95%'}); return false;">${i18n.edit['global.login']}</a>
 			</c:if>
 	</div>
 	<a id="preview-delete-zone" href="#" class="hidden">&nbsp;</a>
