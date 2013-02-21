@@ -33,6 +33,7 @@ import org.apache.commons.configuration.ConfigurationException;
 import org.apache.commons.configuration.PropertiesConfiguration;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.FilenameUtils;
+import org.apache.commons.lang.StringUtils;
 import org.javlo.component.core.ComponentBean;
 import org.javlo.config.StaticConfig;
 import org.javlo.context.ContentContext;
@@ -762,7 +763,7 @@ public class Template implements Comparable<Template> {
 		Iterator<String> keys = properties.getKeys();
 		while (keys.hasNext()) {
 			String key = keys.next();
-			if (key.startsWith(XMLManipulationHelper.AREA_PREFIX) && !key.endsWith(".navigation")) {
+			if (key.startsWith(XMLManipulationHelper.AREA_PREFIX) && StringUtils.countMatches(key, ".") < 2) {
 				areas.add(key.substring(XMLManipulationHelper.AREA_PREFIX.length()));
 			}
 		}
