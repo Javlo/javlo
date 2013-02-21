@@ -321,12 +321,12 @@ public class PageReferenceComponent extends ComplexPropertiesLink implements IAc
 			return language;
 		}
 
-		public boolean isExternLinkOn() {
-			return linkOn != null;
+		public String getForceLinkOn() {
+			return linkOn;
 		}
 
 		public String getLinkOn() {
-			if (linkOn != null) {
+			if (linkOn != null && !isRealContent()) {
 				return linkOn;
 			} else {
 				return getUrl();
