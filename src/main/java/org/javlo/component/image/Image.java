@@ -131,7 +131,7 @@ public class Image extends AbstractFileComponent implements IImageTitle, IPrevie
 		StringWriter res = new StringWriter();
 		PrintWriter out = new PrintWriter(res);
 
-		out.println("<div id=\"" + getPreviewZoneId() + "\" class=\"list-container\" style=\"height: 220px; overflow: scroll; text-align: center;\">");
+		out.println("<div id=\"" + getPreviewZoneId() + "\" class=\"selected-zone\">");
 		out.println(getPreviewCode(ctx, getMaxPreviewImages()));
 		out.println("</div>");
 
@@ -164,7 +164,7 @@ public class Image extends AbstractFileComponent implements IImageTitle, IPrevie
 		params.put(getFileXHTMLInputName(), "file.png"); // fake file name
 		params.put(getDirInputName(), getDirSelected()); // fake file name
 		String uploadURL = URLHelper.createURL(ctx, params);
-		out.println("<div class=\"image-selected drop-files\" data-fieldname=\"" + getFileXHTMLInputName() + "\" data-url=\"" + uploadURL + "\">");
+		out.println("<div class=\"image-selected\" data-fieldname=\"" + getFileXHTMLInputName() + "\" data-url=\"" + uploadURL + "\">");
 
 		out.println("<div class=\"focus-zone\">");
 
@@ -202,10 +202,10 @@ public class Image extends AbstractFileComponent implements IImageTitle, IPrevie
 					if (globalContext.isImagePreview()) {
 						onMouseOver = " onMouseOver=\"previewImage('" + previewURL + "')\" onMouseOut=\"previewClear()\"";
 					}
-					out.print("<a class=\"image\" href=\"#\" onclick=\"jQuery('#" + id + "').val('" + image + "');jQuery('#" + id + "').trigger('change');" + getJSOnChange(ctx) + "\"><img name=\"" + getImageImgName() + "\"" + onMouseOver + " src=\"");
+					out.print("<figure><a class=\"image\" href=\"#\" onclick=\"jQuery('#" + id + "').val('" + image + "');jQuery('#" + id + "').trigger('change');" + getJSOnChange(ctx) + "\"><img name=\"" + getImageImgName() + "\"" + onMouseOver + " src=\"");
 					out.print(url);
 					out.print("\" alt=\"\">&nbsp;</a>");
-					out.print("<div class=\"name\"><a href=\"" + realURL + "\">" + image + "</a></div>");
+					out.print("<figcaption><a href=\"" + realURL + "\">" + image + "</a></figcaption></figure>");
 					out.print("</div>");
 					// }
 				}
