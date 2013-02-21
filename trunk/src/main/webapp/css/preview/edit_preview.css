@@ -78,6 +78,11 @@
 	font-weight: inherit;
 }
 
+#preview_command a.central-button, #preview_command input.central-button {
+	margin: 2px 0;	
+	display: block;
+}
+
 .edit-zone {
 	border: 1px #E4A826 solid;
 	background-color: #ffffff;

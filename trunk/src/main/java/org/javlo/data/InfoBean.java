@@ -90,6 +90,10 @@ public class InfoBean {
 		return URLHelper.createURL(ctx.getContextWithOtherRenderMode(ContentContext.VIEW_MODE).getFreeContentContext());
 	}
 
+	public String getCurrentEditURL() {
+		return URLHelper.createURL(ctx.getContextWithOtherRenderMode(ContentContext.EDIT_MODE).getFreeContentContext());
+	}
+
 	public String getCurrentPreviewURL() {
 		return URLHelper.createURL(ctx.getContextWithOtherRenderMode(ContentContext.PREVIEW_MODE).getFreeContentContext());
 	}

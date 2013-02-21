@@ -42,7 +42,7 @@
 </div>
 </c:if>
 
-<c:if test="${not empty param.areas and fn:length(areas) > 1 and empty param.previewEdit}">
+<c:if test="${not empty param.areas and fn:length(areas) > 1 and empty param.comp_id}">
 <div class="special">
 <form id="form-area" action="${info.currentURL}" method="post" class="js-submit">
 <div class="select-area form_default">
