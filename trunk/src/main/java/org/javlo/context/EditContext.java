@@ -559,7 +559,11 @@ public class EditContext implements Serializable {
 	}
 
 	public boolean isEditPreview() {
-		return editPreview;
+		if (getEditUser() == null) {
+			return false;
+		} else {
+			return editPreview;
+		}
 	}
 
 	public void setEditPreview(boolean editPreview) {
