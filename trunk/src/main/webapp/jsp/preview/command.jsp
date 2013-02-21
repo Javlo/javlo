@@ -16,14 +16,12 @@ editCtx.setRenderMode(ContentContext.EDIT_MODE);
 	<div class="pc_header">${i18n.edit["preview.command"]}<c:if test="${!userInterface.contributor}"><a id="pc_edit_mode_button" href="<%=URLHelper.createURL(editCtx)%>?module=content&webaction=previewEdit&preview=false">X</a></c:if></div>
 	<div class="pc_body">
 			<c:if test="${not empty currentUser}">
-			<form id="pc_logout_form" action="${info.currentURL}" method="post">
-				<div class="pc_line">
-					<form id="form-logout" method="post" action="${info.currentURL}">
-						<input type="hidden" name="edit-logout" value="logout" />
-						<input type="submit" class="action-button central-button" href="${info.currentURL}" value="${i18n.edit['login.logout']}" />
-					</form>
+				<form id="formlogout" name="formlogout" method="post" action="${info.currentURL}">			
+				<div class="pc_line">					
+					<input type="hidden" name="edit-logout" value="logout" />
+					<a class="action-button central-button" href="${info.currentURL}?edit-logout=true" onclick="document.formlogout.submit(); return false;">${i18n.edit['login.logout']}</a>					
 				</div>
-			</form>			
+				</form>						
 			<fieldset class="pc_command">
 				<legend>${i18n.edit['global.command']}</legend>
 				<div class="pc_form_line">			
