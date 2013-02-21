@@ -233,7 +233,7 @@ public class JavloELFinder extends ELFinder {
 			if (newFile.exists()) {
 				throw new ELFinderException(i18nAccess.getText("file.message.error.allready-exist"));
 			} else {
-				// apiResponse.put("removed", printFilesHash(Arrays.asList(new ELFile[] { file })));
+
 				file.getFile().renameTo(newFile);
 				GlobalContext globalContext = GlobalContext.getInstance(request);
 				if (file.getFile().isDirectory()) {
@@ -241,7 +241,8 @@ public class JavloELFinder extends ELFinder {
 				} else {
 					FileCache.getInstance(request.getSession().getServletContext()).deleteAllFile(globalContext.getContextKey(), file.getFile().getName());
 				}
-				apiResponse.put("added", printFilesHash(Arrays.asList(new ELFile[] { new JavloELFile(file.getVolume(), newFile, file.getParentFile()) })));
+				apiResponse.put("removed", printFilesHash(Arrays.asList(new ELFile[] { file })));
+				apiResponse.put("added", printFiles(Arrays.asList(new ELFile[] { new JavloELFile(file.getVolume(), newFile, file.getParentFile()) })));
 				// apiResponse.put("added", printFile(new JavloELFile(file.getVolume(), newFile, file.getParentFile())));
 				// apiResponse.put("removed", printFile(file));
 			}
