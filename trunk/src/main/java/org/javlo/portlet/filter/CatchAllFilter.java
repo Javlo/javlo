@@ -271,13 +271,11 @@ public class CatchAllFilter implements Filter {
 		String forwardURI = null;
 		boolean hostDefineSite = staticConfig.isHostDefineSite();
 		RequestService requestService = RequestService.getInstance(httpRequest);
-		ContentContext.setHostDefineSite((HttpServletRequest) request, true);
 		try {
 			if (!hostDefineSite) {
 				if (StringHelper.isTrue(requestService.getParameter("__check_context", "true"))) {
 					String contextURI = ContentManager.getContextName(httpRequest);
 					if (GlobalContext.isExist(httpRequest, contextURI)) {
-						ContentContext.setHostDefineSite((HttpServletRequest) request, false);
 						globalContext = GlobalContext.getInstance(httpRequest.getSession(), contextURI);
 						globalContext.setPathPrefix(contextURI);
 						String newURI = httpRequest.getServletPath();

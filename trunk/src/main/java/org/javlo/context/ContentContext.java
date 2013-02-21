@@ -13,6 +13,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.logging.Logger;
 
+import javax.servlet.ServletRequest;
 import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -39,7 +40,9 @@ import org.javlo.user.UserFactory;
  */
 public class ContentContext {
 
-	private static final String HOST_DEFINED_SITE = "host-defined-site";
+	private static final String HOST_DEFINED_SITE = "____host-defined-site";
+
+	private static final String FORCE_PATH_PREFIX = "____force-path-prefix";
 
 	public static final int EDIT_MODE = 1;
 
@@ -1265,19 +1268,19 @@ public class ContentContext {
 	}
 
 	public String getPathPrefix() {
-		if (isHostDefineSite()) {
-			return "";
-		}
-		GlobalContext globalContext = GlobalContext.getInstance(getRequest());
-		return globalContext.getPathPrefix();
+		return getPathPrefix(request);
 	}
 
 	public static String getPathPrefix(HttpServletRequest request) {
 		if (isHostDefineSite(request)) {
 			return "";
 		}
-		GlobalContext globalContext = GlobalContext.getInstance(request);
-		return globalContext.getPathPrefix();
+		if (request.getAttribute(FORCE_PATH_PREFIX) != null) {
+			return request.getAttribute(FORCE_PATH_PREFIX).toString();
+		} else {
+			GlobalContext globalContext = GlobalContext.getInstance(request);
+			return globalContext.getPathPrefix();
+		}
 	}
 
 	public boolean isHostDefineSite() {
@@ -1285,7 +1288,7 @@ public class ContentContext {
 	}
 
 	public static boolean isHostDefineSite(HttpServletRequest request) {
-		return StringHelper.isTrue(request.getParameter(HOST_DEFINED_SITE));
+		return StringHelper.isTrue(request.getAttribute(HOST_DEFINED_SITE));
 	}
 
 	public static void setHostDefineSite(HttpServletRequest request, boolean hostDefineSite) {
@@ -1331,5 +1334,9 @@ public class ContentContext {
 	public boolean isEditPreview() {
 		RequestService rs = RequestService.getInstance(request);
 		return StringHelper.isTrue(rs.getParameter("previewEdit", null));
+	}
+
+	public static void setForcePathPrefix(ServletRequest request, String forcePathPrefix) {
+		request.setAttribute(FORCE_PATH_PREFIX, forcePathPrefix);
 	}
 }
