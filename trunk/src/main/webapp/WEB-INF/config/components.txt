@@ -69,7 +69,7 @@ org.javlo.component.container.RepeatContainer
 org.javlo.component.container.DynamicComponentList
 org.javlo.component.container.TextDirection
 org.javlo.component.files.CSVArrayComponent
-org.javlo.component.portfileslet.PortletWrapperComponent
+org.javlo.component.portlet.PortletWrapperComponent
 
 --content.title.web2
 
@@ -94,7 +94,6 @@ org.javlo.component.meta.Keywords
 org.javlo.component.meta.PageWeight
 org.javlo.component.form.SearchResultComponent
 org.javlo.component.form.GenericFormForRegisteringµ
-org.javlo.component.portlet.PortletWrapper
 ec.ep.europarl.adagio.wcms.component.GenericFormPortlet
 ec.ep.europarl.adagio.wcms.component.QuizPollPortlet
 ec.ep.europarl.adagio.wcms.component.CYPRegisterPortlet
