@@ -109,6 +109,7 @@ public class AccessServlet extends HttpServlet {
 			}
 		}
 		super.destroy();
+		StaticConfig.getInstance(getServletContext()).shutdown();
 	}
 
 	@Override
