@@ -193,7 +193,10 @@ public class GlobalContext implements Serializable {
 						contextURI = ContentManager.getContextName(request);
 						if (contextURI.trim().length() > 0 && GlobalContext.isExist(request, contextURI)) {
 							globalContext = GlobalContext.getInstance(request.getSession(), contextURI);
-							globalContext.setPathPrefix(contextURI);
+							if (!globalContext.getContextKey().equals(contextURI)) { // alias
+								ContentContext.setForcePathPrefix(request, contextURI);
+							}
+							ContentContext.setHostDefineSite(request, false);
 						} else {
 							String host = ServletHelper.getSiteKey(request);
 							globalContext = GlobalContext.getInstance(request.getSession(), host);
@@ -202,6 +205,10 @@ public class GlobalContext implements Serializable {
 								logger.severe("error GlobalContext not found : " + request.getRequestURI());
 								return null;
 							}
+							if (!globalContext.getContextKey().equals(contextURI)) { // alias
+								ContentContext.setForcePathPrefix(request, contextURI);
+							}
+							ContentContext.setHostDefineSite(request, true);
 						}
 					} else {
 						logger.severe("error GlobalContext undefined : " + request.getRequestURI());
