@@ -235,6 +235,23 @@ public class ContentContext {
 				}
 			}
 
+			if (!ctx.isEdit() && (!ctx.isPreview() || !EditContext.getInstance(globalContext, ctx.getRequest().getSession()).isEditPreview())) {
+				try {
+					MenuElement page = ctx.getCurrentPage();
+					while (!page.isRealContent(ctx) && page.getChildMenuElements().size() > 0) {
+						page = page.getChildMenuElements().iterator().next();
+					}
+					if (page.isRealContent(ctx)) {
+
+						ctx.setCurrentPageCached(page);
+						ctx.setPath(page.getPath());
+					}
+
+				} catch (Exception e) {
+					e.printStackTrace();
+				}
+			}
+
 			StaticConfig config = StaticConfig.getInstance(request.getSession());
 			ctx.viewPrefix = config.isViewPrefix();
 
@@ -726,10 +743,8 @@ public class ContentContext {
 	}
 
 	/**
-	 * @deprecated user getRenderMode()
 	 * @return true if editable context
 	 */
-	@Deprecated
 	public boolean isEdit() {
 		return renderMode == EDIT_MODE;
 	}
