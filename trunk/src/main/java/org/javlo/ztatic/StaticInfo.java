@@ -532,9 +532,11 @@ public class StaticInfo {
 	public String getTitle(ContentContext ctx) {
 		if (getManualTitle(ctx).length() > 0) {
 			return getManualTitle(ctx);
-		} else {
-			return getLinkedTitle(ctx);
 		}
+		return "";
+		/*
+		 * else { return getLinkedTitle(ctx); }
+		 */
 	}
 
 	public String getManualTitle(ContentContext ctx) {
