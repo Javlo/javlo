@@ -280,8 +280,7 @@ public abstract class AbstractFileComponent extends AbstractVisualComponent impl
 			finalCode.append(XHTMLHelper.getReverlinkSelectType(ctx, getReverseLinkInputName(), reverseLink));
 			finalCode.append("</div>");
 		}
-
-		finalCode.append(getImageLabelTitle(ctx));
+		finalCode.append("<label for=\"" + getLabelXHTMLInputName() + "\">" + getImageLabelTitle(ctx) + " : </label>");
 		finalCode.append("<br />");
 		String[][] params = { { "rows", "1" } };
 		finalCode.append(XHTMLHelper.getTextArea(getLabelXHTMLInputName(), getLabel(), params));

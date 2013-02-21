@@ -159,7 +159,7 @@ public class GlobalImage extends Image {
 			finalCode.append("</div>");
 		}
 
-		finalCode.append(getImageLabelTitle(ctx));
+		finalCode.append("<label for=\"" + getLabelXHTMLInputName() + "\">" + getImageLabelTitle(ctx) + " : </label>");
 		String[][] params = { { "rows", "1" } };
 		finalCode.append(XHTMLHelper.getTextArea(getLabelXHTMLInputName(), getLabel(), params));
 		finalCode.append("<br />");
@@ -190,17 +190,17 @@ public class GlobalImage extends Image {
 		}
 
 		if (isLink()) {
-			finalCode.append("<div style=\"margin-top: 5px; margin-bottom: 5px;\"><label style=\"float: left; width: 160px; height: 16px;\" for=\"img_link_" + getId() + "\">");
+			finalCode.append("<div class=\"line\"><label for=\"img_link_" + getId() + "\">");
 			finalCode.append(getImageLinkTitle(ctx));
 			finalCode.append(" : </label><input id=\"img_link_" + getId() + "\" name=\"" + getLinkXHTMLInputName() + "\" type=\"text\" value=\"" + getLink() + "\"/></div>");
 		}
 
-		finalCode.append("<div style=\"margin-top: 5px; margin-bottom: 5px;\"><label style=\"float: left; width: 160px; height: 16px;\" for=\"new_dir_" + getId() + "\">");
+		finalCode.append("<div class=\"line\"><label for=\"new_dir_" + getId() + "\">");
 		finalCode.append(getNewDirLabelTitle(ctx));
 		finalCode.append(" : </label><input id=\"new_dir_" + getId() + "\" name=\"" + getNewDirInputName() + "\" type=\"text\"/></div>");
 
 		if ((getDirList(getFileDirectory(ctx)) != null) && (getDirList(getFileDirectory(ctx)).length > 0)) {
-			finalCode.append("<div style=\"margin-top: 5px; margin-bottom: 5px;\"><label style=\"float: left; width: 160px; height: 16px;\" for=\"" + getDirInputName() + "\">");
+			finalCode.append("<div class=\"line\"><label for=\"" + getDirInputName() + "\">");
 			finalCode.append(getDirLabelTitle(ctx));
 			finalCode.append(" : </label>");
 			Collection<String> dirsCol = new LinkedList<String>();
@@ -226,7 +226,7 @@ public class GlobalImage extends Image {
 		/* filter */
 		Template currentTemplate = ctx.getCurrentTemplate();
 		if (currentTemplate != null && isImageFilter()) {
-			finalCode.append("<div style=\"margin-top: 5px; margin-bottom: 5px;\"><label style=\"float: left; width: 160px; height: 16px;\" for=\"filter-" + getImageFilterInputName() + "\">");
+			finalCode.append("<div class=\"line\"><label for=\"filter-" + getImageFilterInputName() + "\">");
 
 			finalCode.append(i18nAccess.getText("content.global-image.image-filter"));
 			finalCode.append(" : </label>");

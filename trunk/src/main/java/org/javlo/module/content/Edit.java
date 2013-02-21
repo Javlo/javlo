@@ -804,7 +804,7 @@ public class Edit extends AbstractModuleAction {
 			messageRepository.setGlobalMessage(new GenericMessage(i18nAccess.getText("action.not-updated"), GenericMessage.ALERT));
 		}
 
-		if (requestService.getParameter("save", null) != null && editContext.isEditPreview()) {
+		if (requestService.getParameter("save", null) != null && editContext.isEditPreview() && !ResourceStatus.isInstance(ctx.getRequest().getSession())) {
 			ctx.setClosePopup(true);
 		}
 
@@ -1394,7 +1394,7 @@ public class Edit extends AbstractModuleAction {
 		return null;
 	}
 
-	public static String performConfirmReplace(RequestService rs, ContentContext ctx, GlobalContext globalContext, HttpSession session, MessageRepository messageRepository, I18nAccess i18nAccess) throws IOException {
+	public static String performConfirmReplace(RequestService rs, ContentContext ctx, GlobalContext globalContext, EditContext editCtx, HttpSession session, MessageRepository messageRepository, I18nAccess i18nAccess) throws IOException {
 		if (!ResourceStatus.isInstance(session)) {
 			return null;
 		}
@@ -1402,10 +1402,17 @@ public class Edit extends AbstractModuleAction {
 			ResourceStatus.getInstance(session).release(ctx);
 		} else if (rs.getParameter("confirm", null) != null) {
 			ResourceStatus resourceStatus = ResourceStatus.getInstance(session);
-			FileCache.getInstance(session.getServletContext()).deleteAllFile(globalContext.getContextKey(), resourceStatus.getTarget().getFile().getName());
-			resourceStatus.getTarget().getFile().delete();
-			ResourceHelper.writeFileToFile(resourceStatus.getSource().getFile(), resourceStatus.getTarget().getFile());
-			resourceStatus.release(ctx);
+			if (resourceStatus.getSource().getId().equals(rs.getParameter("source", "-")) && resourceStatus.getTarget().getId().equals(rs.getParameter("target", "-"))) {
+				FileCache.getInstance(session.getServletContext()).deleteAllFile(globalContext.getContextKey(), resourceStatus.getTarget().getFile().getName());
+				resourceStatus.getTarget().getFile().delete();
+				ResourceHelper.writeFileToFile(resourceStatus.getSource().getFile(), resourceStatus.getTarget().getFile());
+				resourceStatus.release(ctx);
+			} else {
+				return "error : bad file hash.";
+			}
+		}
+		if (editCtx.isEditPreview()) {
+			ctx.setClosePopup(true);
 		}
 		return null;
 	}

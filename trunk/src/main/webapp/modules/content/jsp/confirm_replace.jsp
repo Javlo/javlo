@@ -20,7 +20,7 @@
 
 <div class="one_half last">
 <fieldset>
-	<legend>${i18n.edit['confirm.remote']} (${sourceDate})</legend>
+	<legend>${i18n.edit['confirm.remote']}</legend>
 	${previewSourceCode}
 	<input type="submit" name="confirm" value="${i18n.edit['confirm.replace']}" />
 </fieldset>
