@@ -757,7 +757,7 @@ public class GlobalContext implements Serializable {
 
 	public Set<String> getContentLanguages() {
 		String lgRAW = properties.getString("content-languages", getRAWLanguages());
-		if (lgRAW == null) {
+		if (lgRAW == null || lgRAW.trim().length() == 0) {
 			return getLanguages();
 		}
 		Set<String> outLg = new LinkedHashSet<String>();

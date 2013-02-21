@@ -11,7 +11,7 @@ import org.javlo.service.PersistenceService;
 
 public class DeletePageFromSpecificUser extends AbstractMacro {
 
-	private static final String USER_NAME = "newtest-pluxl13";
+	private static final String USER_NAME = "test";
 
 	@Override
 	public String getName() {

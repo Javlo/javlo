@@ -1561,7 +1561,7 @@ public class Template implements Comparable<Template> {
 			FileUtils.deleteDirectory(templateTgt);
 			importTemplateInWebapp(config, ctx, globalContext, templateTgt);
 		} else {
-			logger.severe("folder not found : " + templateSrc + " templateImportationError = " + templateImportationError);
+			logger.severe("folder not found : " + templateSrc);
 			templateImportationError = true;
 		}
 	}
