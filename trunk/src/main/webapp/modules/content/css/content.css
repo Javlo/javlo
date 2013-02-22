@@ -1,3 +1,7 @@
+#jv_escape_menu {
+	display: none;
+}
+
 ul.menu {
 	margin-left: 16px;
 }
