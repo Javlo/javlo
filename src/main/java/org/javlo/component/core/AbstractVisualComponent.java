@@ -16,7 +16,6 @@ import java.io.PrintStream;
 import java.io.PrintWriter;
 import java.io.StringReader;
 import java.io.StringWriter;
-import java.net.MalformedURLException;
 import java.util.Calendar;
 import java.util.Collection;
 import java.util.Collections;
@@ -611,13 +610,13 @@ public abstract class AbstractVisualComponent implements IContentVisualComponent
 		}
 
 		String baseURL;
-		try {
-			baseURL = URLHelper.changeMode(getBaseHelpURL(ctx), "page");
-			return URLHelper.mergePath(baseURL, getHelpURI(ctx));
-		} catch (MalformedURLException e) {
-			e.printStackTrace();
-			return null;
-		}
+
+		baseURL = getBaseHelpURL(ctx).replaceFirst("/view/", "/page/");
+
+		ContentContext lgCtx = new ContentContext(ctx);
+		lgCtx.setAllLanguage(lang);
+		String url = URLHelper.mergePath(baseURL, getHelpURI(ctx));
+		return url;
 
 	}
 
