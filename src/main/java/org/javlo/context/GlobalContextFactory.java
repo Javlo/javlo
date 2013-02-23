@@ -12,6 +12,8 @@ import org.javlo.config.StaticConfig;
 import org.javlo.filter.PropertiesFilter;
 
 public class GlobalContextFactory {
+	
+	private static final String MASTER_CONTEXT_KEY = "masterContext";
 
 	public static final Collection<GlobalContext> getAllGlobalContext(HttpSession session) throws ConfigurationException, IOException {
 		StaticConfig staticConfig = StaticConfig.getInstance(session);
@@ -25,6 +27,21 @@ public class GlobalContextFactory {
 			}
 		}
 		return result;
+	}
+	
+	public static GlobalContext getMasterGlobalContext(HttpSession session) throws ConfigurationException, IOException {
+		GlobalContext masterContext = (GlobalContext) session.getServletContext().getAttribute(MASTER_CONTEXT_KEY);
+		StaticConfig staticConfig = StaticConfig.getInstance(session.getServletContext());
+		if (masterContext == null || !masterContext.getContextKey().equals(staticConfig.getMasterContext())) {
+			for (GlobalContext globalContext : getAllGlobalContext(session)) {
+				if (staticConfig.getMasterContext().equals(globalContext.getContextKey())) {
+					masterContext = globalContext;
+					break;
+				}
+			}
+			session.getServletContext().setAttribute(MASTER_CONTEXT_KEY, masterContext);
+		}
+		return masterContext;
 	}
 
 }
