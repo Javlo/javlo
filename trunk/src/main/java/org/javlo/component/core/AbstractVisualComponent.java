@@ -1447,17 +1447,18 @@ public abstract class AbstractVisualComponent implements IContentVisualComponent
 			viewData = new Properties();
 		}
 		if (isViewDataFile(ctx)) {
-			InputStream in;
+			InputStream in = null;
 			try {
 				in = new FileInputStream(getViewDataFile(ctx));
 				Properties newViewData = new Properties();
 				newViewData.load(in);
-				in.close();
 				viewData = newViewData;
 			} catch (FileNotFoundException e) {
 				e.printStackTrace();
 			} catch (IOException e) {
 				e.printStackTrace();
+			} finally {
+				ResourceHelper.closeResource(in);
 			}
 		}
 	}

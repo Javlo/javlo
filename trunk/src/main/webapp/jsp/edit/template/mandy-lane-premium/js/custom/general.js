@@ -138,7 +138,9 @@ jQuery(document).ready(function(){
 	
 
 	////////////TABS /////////////////
-	jQuery( ".tabs" ).tabs();
+	if (jQuery( ".tabs" ).length > 0) {
+		jQuery( ".tabs" ).tabs();
+	}
 
 
 	

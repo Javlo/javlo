@@ -483,7 +483,6 @@ public abstract class ElementaryURLHelper {
 	 * @return
 	 */
 	public static String getPathPrefix(ContentContext ctx) {
-		GlobalContext globalContext = GlobalContext.getInstance(ctx.getRequest());
 		String CACHE_KEY = "javlo-path-prefix-" + ctx.getPathPrefix();
 		String res = (String) ctx.getRequest().getAttribute(CACHE_KEY);
 		if (res == null) {
