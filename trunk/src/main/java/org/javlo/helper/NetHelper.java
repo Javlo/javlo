@@ -384,10 +384,12 @@ public class NetHelper {
 					imgBuffer.close();
 					// BufferedImage img = ImageIO.read(new ByteArrayInputStream(imgBuffer.toByteArray()));
 
-					ImageSize img = ImageHelper.getExifSize(new ByteArrayInputStream(imgBuffer.toByteArray()));
+					byte[] imageArray = imgBuffer.toByteArray();
+					ImageSize img = ImageHelper.getExifSize(new ByteArrayInputStream(imageArray));
 					if (img == null) {
-						img = ImageHelper.getJpegSize(new ByteArrayInputStream(imgBuffer.toByteArray()));
+						img = ImageHelper.getJpegSize(new ByteArrayInputStream(imageArray));
 					}
+					imageArray = null;
 
 					if (img != null) {
 
