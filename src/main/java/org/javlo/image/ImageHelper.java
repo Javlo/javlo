@@ -8,17 +8,23 @@ import java.awt.Graphics2D;
 import java.awt.image.BufferedImage;
 import java.awt.image.ColorModel;
 import java.awt.image.WritableRaster;
+import java.io.BufferedInputStream;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
+import java.nio.charset.Charset;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.logging.Logger;
 
 import javax.imageio.ImageIO;
 import javax.servlet.ServletContext;
 import javax.servlet.http.HttpServletRequest;
 
+import org.apache.commons.lang.StringUtils;
+import org.javlo.helper.LangHelper;
 import org.javlo.helper.ResourceHelper;
 import org.javlo.helper.StringHelper;
 import org.javlo.template.Template;
@@ -257,4 +263,67 @@ public class ImageHelper {
 		return null;
 	}
 
+	/**
+	 * return dimension of picture in exif data, null if not found.
+	 * 
+	 * @param in
+	 * @return
+	 * @throws IOException
+	 */
+	public static ImageSize getExifSize(InputStream in) throws IOException {
+		Map<String, String> exifData = getExifData(in);
+		ImageSize imageSize = null;
+		try {
+			imageSize = new ImageSize(Integer.parseInt(exifData.get("PixelXDimension")), Integer.parseInt(exifData.get("PixelYDimension")));
+		} catch (Throwable t) {
+		}
+		return imageSize;
+	}
+
+	public static ImageSize getJpegSize(InputStream in) {
+		ImageSize imageSize = null;
+		try {
+			byte[] buffer = new byte[1024 * 8];
+			BufferedInputStream bufIn = new BufferedInputStream(in);
+			int read = bufIn.read(buffer);
+
+			for (int i = 0; i < read; i++) {
+				if (buffer[i] == (byte) 0xff && buffer.length > i + 10) {
+					if (buffer[i + 1] == (byte) 0xc0) {
+						int j = 1;
+						while (buffer[i + j] != 8 && j < 5) {
+							j++;
+						}
+						if (j < 5) {
+							int height = LangHelper.unsigned(buffer[i + j + 1]) * 255 + LangHelper.unsigned(buffer[i + j + 2]);
+							int width = LangHelper.unsigned(buffer[i + j + 3]) * 255 + LangHelper.unsigned(buffer[i + j + 4]);
+							imageSize = new ImageSize(width, height);
+						}
+					}
+				}
+			}
+
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		return imageSize;
+
+	}
+
+	public static Map<String, String> getExifData(InputStream in) throws IOException {
+		String rawData = ResourceHelper.loadStringFromStream(in, Charset.defaultCharset());
+		Map<String, String> outData = new HashMap<String, String>();
+		int index = 0;
+		int exifIndex = rawData.indexOf("exif:", index);
+		while (exifIndex >= 0) {
+			String exifStr = rawData.substring(exifIndex, rawData.indexOf(' ', exifIndex + "exif:".length()));
+			index = index + exifStr.length();
+			String[] exifArray = StringUtils.split(exifStr, '=');
+			if (exifArray.length == 2) {
+				outData.put(exifArray[0].replace("exif:", ""), exifArray[1].replace("\"", ""));
+			}
+			exifIndex = rawData.indexOf("exif:", index);
+		}
+		return outData;
+	}
 }
