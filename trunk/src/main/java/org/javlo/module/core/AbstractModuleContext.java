@@ -38,6 +38,7 @@ public abstract class AbstractModuleContext {
 		if (context == null) {
 			AbstractModuleContext outCtx = implementationClass.newInstance();
 			outCtx.i18nAccess = I18nAccess.getInstance(globalContext, session);
+			outCtx.i18nAccess.setCurrentModule(globalContext, session, module);
 			outCtx.module = module;
 			outCtx.globalContext = globalContext;
 			outCtx.init();
