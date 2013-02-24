@@ -252,6 +252,7 @@ public class Template implements Comparable<Template> {
 		String version;
 		String deployId = StringHelper.getRandomId();
 		String type;
+		String parent;
 
 		public TemplateBean() {
 		};
@@ -275,6 +276,7 @@ public class Template implements Comparable<Template> {
 			Collections.sort(areas);
 			areaMap = template.getAreasMap();
 			valid = template.isValid();
+			parent = template.getParentName();
 			try {
 				imageURL = URLHelper.createTransformStaticTemplateURL(remoteCtx, template, "template", template.getVisualFile()) + "?deployId=" + template.getDeployId();
 			} catch (Exception e) {
@@ -463,6 +465,10 @@ public class Template implements Comparable<Template> {
 		@Override
 		public void setVersion(String version) {
 			this.version = version;
+		}
+		
+		public String getParent() {
+			return parent;
 		}
 	}
 

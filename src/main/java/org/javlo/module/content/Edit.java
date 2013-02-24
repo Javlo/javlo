@@ -372,33 +372,36 @@ public class Edit extends AbstractModuleAction {
 		EditContext editCtx = EditContext.getInstance(globalContext, ctx.getRequest().getSession());
 		ComponentWrapper titleWrapper = null;
 
-		Set<String> inludeComponents = ctx.getCurrentTemplate().getComponentsIncludeForArea(editCtx.getCurrentArea());
-		Set<String> excludeComponents = ctx.getCurrentTemplate().getComponentsExcludeForArea(editCtx.getCurrentArea());
+		if (ctx.getCurrentTemplate() != null) {
+			Set<String> inludeComponents = ctx.getCurrentTemplate().getComponentsIncludeForArea(editCtx.getCurrentArea());
+			Set<String> excludeComponents = ctx.getCurrentTemplate().getComponentsExcludeForArea(editCtx.getCurrentArea());
 
-		for (int i = 0; i < components.length - 1; i++) { // remove title without component
-			if (!components[i].isMetaTitle() || !components[i + 1].isMetaTitle()) { // if next component is title too so the component group is empty
-				IContentVisualComponent comp = components[i];
-				if (comp.isMetaTitle() || globalContext.getComponents().contains(comp.getClass().getName()) || comp instanceof DynamicComponent) {
-					ComponentWrapper compWrapper = new ComponentWrapper(comp.getType(), comp.getComponentLabel(ctx, globalContext.getEditLanguage(ctx.getRequest().getSession())), comp.getValue(ctx), comp.getComplexityLevel(), comp.isMetaTitle());
-					if (components[i].isMetaTitle()) {
-						titleWrapper = compWrapper;
-					}
-					if (comp.getType().equals(editCtx.getActiveType())) {
-						compWrapper.setSelected(true);
-						if (titleWrapper != null) {
-							{
-								titleWrapper.setSelected(true);
+			for (int i = 0; i < components.length - 1; i++) { // remove title without component
+				if (!components[i].isMetaTitle() || !components[i + 1].isMetaTitle()) { // if next component is title too so the component group is empty
+					IContentVisualComponent comp = components[i];
+					if (comp.isMetaTitle() || globalContext.getComponents().contains(comp.getClass().getName()) || comp instanceof DynamicComponent) {
+						ComponentWrapper compWrapper = new ComponentWrapper(comp.getType(), comp.getComponentLabel(ctx, globalContext.getEditLanguage(ctx.getRequest().getSession())), comp.getValue(ctx), comp.getComplexityLevel(), comp.isMetaTitle());
+						if (components[i].isMetaTitle()) {
+							titleWrapper = compWrapper;
+						}
+						if (comp.getType().equals(editCtx.getActiveType())) {
+							compWrapper.setSelected(true);
+							if (titleWrapper != null) {
+								{
+									titleWrapper.setSelected(true);
+								}
 							}
 						}
-					}
-					if (compWrapper.isMetaTitle() || inludeComponents == null || inludeComponents.contains(compWrapper.getType())) {
-						if (compWrapper.isMetaTitle() || excludeComponents == null || !excludeComponents.contains(compWrapper.getType())) {
-							comps.add(compWrapper);
+						if (compWrapper.isMetaTitle() || inludeComponents == null || inludeComponents.contains(compWrapper.getType())) {
+							if (compWrapper.isMetaTitle() || excludeComponents == null || !excludeComponents.contains(compWrapper.getType())) {
+								comps.add(compWrapper);
+							}
 						}
 					}
 				}
 			}
 		}
+		
 		if (!components[components.length - 1].isMetaTitle()) {
 			IContentVisualComponent comp = components[components.length - 1];
 			ComponentWrapper compWrapper = new ComponentWrapper(comp.getType(), comp.getComponentLabel(ctx, globalContext.getEditLanguage(ctx.getRequest().getSession())), comp.getValue(ctx), comp.getComplexityLevel(), comp.isMetaTitle());

@@ -470,4 +470,7 @@ public class InfoBean {
 		return ctx.getCurrentEditUser();
 	}
 
+	public String getAbsoluteURLPrefix() {
+		return URLHelper.createStaticURL(ctx.getContextForAbsoluteURL(), "/");
+	}
 }
