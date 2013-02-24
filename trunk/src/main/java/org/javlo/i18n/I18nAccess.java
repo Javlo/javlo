@@ -284,6 +284,11 @@ public class I18nAccess implements Serializable {
 	}
 
 	public Map<String, String> getEdit() {
+
+		if (displayKey) {
+			return new KeyMap<String>();
+		}
+
 		if (propEditMap == null) {
 			propEditMap = new Hashtable<String, String>();
 			Iterator<?> keys = propEdit.getKeys();
