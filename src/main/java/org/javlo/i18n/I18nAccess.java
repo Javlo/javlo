@@ -39,6 +39,7 @@ import org.javlo.module.core.ModulesContext;
 import org.javlo.service.RequestService;
 import org.javlo.service.exception.ServiceException;
 import org.javlo.template.Template;
+import org.javlo.utils.KeyMap;
 import org.javlo.utils.ReadOnlyMultiMap;
 import org.javlo.utils.ReadOnlyPropertiesConfigurationMap;
 
@@ -142,15 +143,21 @@ public class I18nAccess implements Serializable {
 
 	private PropertiesConfiguration propContentView = null;
 
+	private String latestTemplateId = "";
+
 	private Properties templateView = null;
+
+	private boolean templateImported = false;
 
 	private Properties moduleEdit = null;
 
-	private Map<String, String> propViewMap = null;
+	private ReadOnlyMultiMap propViewMap = null;
 
 	private final Object lockViewMap = new Object();
 
 	private Map<String, String> propEditMap = null;
+
+	private boolean moduleImported = false;
 
 	private String editLg = "";
 
@@ -177,6 +184,7 @@ public class I18nAccess implements Serializable {
 			this.currentModule = currentModule;
 			moduleEdit = currentModule.loadEditI18n(globalContext, session);
 			propEditMap = null;
+			moduleImported = false;
 		}
 	}
 
@@ -193,9 +201,11 @@ public class I18nAccess implements Serializable {
 
 	public void changeViewLanguage(ContentContext ctx) throws ServiceException, Exception {
 		if (ctx.getLanguage() != null && !ctx.getLanguage().equals(viewLg)) {
+			latestTemplateId = "";
 			initView(ctx.getLanguage());
 		}
 		if (ctx.getContentLanguage() != null && !ctx.getContentLanguage().equals(contentViewLg)) {
+			latestTemplateId = "";
 			initContentView(ctx, ctx.getContentLanguage());
 		}
 		updateTemplate(ctx);
@@ -281,13 +291,15 @@ public class I18nAccess implements Serializable {
 				String key = (String) keys.next();
 				propEditMap.put(key, "" + propEdit.getProperty(key));
 			}
-			if (moduleEdit != null) {
-				Set<?> keysList = moduleEdit.keySet();
-				for (Object key : keysList) {
-					propEditMap.put((String) key, "" + moduleEdit.getProperty((String) key));
-				}
+		}
+		if (moduleEdit != null && !moduleImported) {
+			moduleImported = true;
+			Set<?> keysList = moduleEdit.keySet();
+			for (Object key : keysList) {
+				propEditMap.put(key.toString(), "" + moduleEdit.getProperty((String) key));
 			}
 		}
+
 		return propEditMap;
 	}
 
@@ -398,6 +410,11 @@ public class I18nAccess implements Serializable {
 	}
 
 	public Map<String, String> getView() {
+
+		if (displayKey) {
+			return new KeyMap<String>();
+		}
+
 		synchronized (lockViewMap) {
 			if (propViewMap == null) {
 				ReadOnlyMultiMap mutliMap = new ReadOnlyMultiMap<String, String>();
@@ -407,10 +424,12 @@ public class I18nAccess implements Serializable {
 						mutliMap.addMap(new ReadOnlyPropertiesConfigurationMap(propView, displayKey));
 					}
 				}
-				if (templateView != null) {
-					mutliMap.addMap(templateView);
-				}
 			}
+		}
+
+		if (templateView != null && !templateImported) {
+			propViewMap.addMap(templateView);
+			templateImported = true;
 		}
 		return propViewMap;
 	}
@@ -549,7 +568,9 @@ public class I18nAccess implements Serializable {
 			GlobalContext globalContext = GlobalContext.getInstance(ctx.getRequest());
 			if (!ctx.isFree()) {
 				Template template = ctx.getCurrentTemplate();
-				if (template != null) {
+				if (template != null && !latestTemplateId.equals(template.getId())) {
+					latestTemplateId = template.getId();
+					templateImported = false;
 					template = template.getFinalTemplate(ctx);
 					templateView = template.getI18nProperties(globalContext, new Locale(ctx.getLanguage()));
 					Template parent = template.getParent();
