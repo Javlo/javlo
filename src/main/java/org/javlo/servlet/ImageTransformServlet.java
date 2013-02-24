@@ -370,7 +370,8 @@ public class ImageTransformServlet extends HttpServlet {
 				String fileExtension = config.getFileExtension(ctx.getDevice(), filter, area);
 				if (fileExtension == null) {
 					// fileExtension = (img.getColorModel().hasAlpha() ? "png" : "jpg");
-					fileExtension = "jpg";
+
+					fileExtension = StringHelper.getFileExtension(imageFile.getName());
 				}
 				logger.info("write image : " + fileExtension + " width: " + img.getWidth() + " height: " + img.getHeight());
 
@@ -692,5 +693,9 @@ public class ImageTransformServlet extends HttpServlet {
 		}
 		servletRun--;
 
+	}
+
+	public static void main(String[] args) {
+		File image1 = new File("d:/trans/1.jpg");
 	}
 }
