@@ -373,29 +373,10 @@ public class NetHelper {
 					ByteArrayOutputStream imgBuffer = new ByteArrayOutputStream();
 					int imageSize = 0;
 					conn = (new URL(url)).openConnection();
-					conn.setReadTimeout(10000);
+					conn.setReadTimeout(5000);
 					InputStream in = null;
 					try {
-						in = conn.getInputStream();
-						int available = in.available();
-						byte[] buffer = new byte[available];
-						int read = in.read(buffer);
-						int countNull = 0;
-
-						while (read >= 0) {
-							imgBuffer.write(buffer);
-							available = in.available();
-							buffer = new byte[available];
-							read = in.read(buffer);
-							if (read == 0) {
-								Thread.sleep(10);
-								countNull++;
-								if (countNull > 1000) {
-									read = -1;
-								}
-							}
-							imageSize = imageSize + read;
-						}
+						ResourceHelper.writeStreamToStream(in, imgBuffer);
 					} finally {
 						ResourceHelper.closeResource(in);
 					}

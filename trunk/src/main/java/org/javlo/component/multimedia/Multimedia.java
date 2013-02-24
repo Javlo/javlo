@@ -397,6 +397,16 @@ public class Multimedia extends TimeRangeComponent implements IImageTitle {
 		}
 		out.println("<input id=\"contentdate\" style=\"width: 120px;\" type=\"text\" id=\"" + getInputStartDateName() + "\" name=\"" + getInputStartDateName() + "\" value=\"" + StringHelper.renderDateWithDefaultValue(getStartDate(), "") + "\"/> - ");
 		out.println("<input style=\"width: 120px;\" type=\"text\" id=\"" + getInputEndDateName() + "\" name=\"" + getInputEndDateName() + "\" value=\"" + StringHelper.renderDateWithDefaultValue(getEndDate(), "") + "\"/>");
+
+		Map<String, String> filesParams = new HashMap<String, String>();
+		filesParams.put("path", URLHelper.mergePath("/", getRelativeFileDirectory(ctx), getCurrentRootFolder()));
+		filesParams.put("webaction", "changeRenderer");
+		filesParams.put("page", "meta");
+		String staticURL = URLHelper.createModuleURL(ctx, ctx.getPath(), "file", filesParams);
+		out.println("<a class=\"" + EDIT_ACTION_CSS_CLASS + "\" href=\"" + staticURL + "\">&nbsp;");
+		out.println(i18nAccess.getText("content.goto-static"));
+		out.println("</a>");
+
 		out.println("<div class=\"line\">");
 		out.println("<label for=\"" + getInputMaxListSizeName() + "\">" + i18nAccess.getText("content.multimedia-gallery.list-size") + "</label>");
 		out.println(" : <input style=\"width: 120px;\" type=\"text\" id=\"" + getInputMaxListSizeName() + "\" name=\"" + getInputMaxListSizeName() + "\" value=\"" + getMaxListSize() + "\"/>");
