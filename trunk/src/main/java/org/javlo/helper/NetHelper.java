@@ -1,6 +1,5 @@
 package org.javlo.helper;
 
-import java.awt.image.BufferedImage;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
@@ -15,13 +14,14 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.zip.CRC32;
 
-import javax.imageio.ImageIO;
 import javax.mail.internet.InternetAddress;
 import javax.servlet.http.HttpServletResponse;
 
 import org.javlo.config.StaticConfig;
 import org.javlo.context.ContentContext;
 import org.javlo.context.GlobalContext;
+import org.javlo.image.ImageHelper;
+import org.javlo.image.ImageSize;
 import org.javlo.mailing.MailService;
 import org.javlo.service.resource.Resource;
 import org.javlo.utils.MapCollectionWrapper;
@@ -358,7 +358,7 @@ public class NetHelper {
 			urls = extractExternalURL(pageURL, content);
 		}
 		int maxSizeFound = -1;
-		BufferedImage bestImage = null;
+		ImageSize bestImage = null;
 		boolean bestImageJpg = false;
 		String finalURL = null;
 		ByteArrayOutputStream finalImgBuffer = null;
@@ -382,7 +382,8 @@ public class NetHelper {
 					}
 
 					imgBuffer.close();
-					BufferedImage img = ImageIO.read(new ByteArrayInputStream(imgBuffer.toByteArray()));
+					// BufferedImage img = ImageIO.read(new ByteArrayInputStream(imgBuffer.toByteArray()));
+					ImageSize img = ImageHelper.getJpegSize(new ByteArrayInputStream(imgBuffer.toByteArray()));
 					int readImageSize = img.getWidth() * img.getHeight();
 
 					// DEBUG

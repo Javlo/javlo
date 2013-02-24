@@ -208,6 +208,10 @@ public class LangHelper {
 
 	}
 
+	public static final int unsigned(byte b) {
+		return b & 0xff;
+	}
+
 	public static class ListBuilder {
 
 		List<Object> list = new LinkedList<Object>();
