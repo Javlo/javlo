@@ -384,48 +384,52 @@ public class NetHelper {
 					imgBuffer.close();
 					// BufferedImage img = ImageIO.read(new ByteArrayInputStream(imgBuffer.toByteArray()));
 					ImageSize img = ImageHelper.getJpegSize(new ByteArrayInputStream(imgBuffer.toByteArray()));
-					int readImageSize = img.getWidth() * img.getHeight();
 
-					// DEBUG
-					/*
-					 * File imgDir = new File("/tmp/tmp-images"); imgDir.mkdirs(); ImageIO.write(img, "jpg", new File("/tmp/tmp-images/img_"+StringHelper.getRandomId()+".jpg"));
-					 */
+					if (img != null) {
 
-					if ((float) img.getWidth() / (float) img.getHeight() > 0.40) { // no
-						// banner
-						if ((float) img.getHeight() / (float) img.getWidth() > 0.40) { // no
+						int readImageSize = img.getWidth() * img.getHeight();
+
+						// DEBUG
+						/*
+						 * File imgDir = new File("/tmp/tmp-images"); imgDir.mkdirs(); ImageIO.write(img, "jpg", new File("/tmp/tmp-images/img_"+StringHelper.getRandomId()+".jpg"));
+						 */
+
+						if ((float) img.getWidth() / (float) img.getHeight() > 0.40) { // no
 							// banner
-							if (readImageSize > MIN_IMAGE_SIZE) {
-								bestImage = img;
-								maxSizeFound = imageSize;
-								finalURL = url;
-								finalImgBuffer = imgBuffer;
-								String ext = StringHelper.getFileExtension(url).toLowerCase();
-								if (ext.equals("jpg") || ext.equals("jpeg")) {
-									bestImageJpg = true;
-								}
-							} else if (imageSize > maxSizeFound) {
-								String ext = StringHelper.getFileExtension(url).toLowerCase();
-								if (ext.equals("jpg") || ext.equals("jpeg")) {
+							if ((float) img.getHeight() / (float) img.getWidth() > 0.40) { // no
+								// banner
+								if (readImageSize > MIN_IMAGE_SIZE) {
 									bestImage = img;
 									maxSizeFound = imageSize;
 									finalURL = url;
 									finalImgBuffer = imgBuffer;
-									bestImageJpg = true;
-								} else if (!bestImageJpg) {
-									bestImage = img;
-									maxSizeFound = imageSize;
-									finalURL = url;
-									finalImgBuffer = imgBuffer;
+									String ext = StringHelper.getFileExtension(url).toLowerCase();
+									if (ext.equals("jpg") || ext.equals("jpeg")) {
+										bestImageJpg = true;
+									}
+								} else if (imageSize > maxSizeFound) {
+									String ext = StringHelper.getFileExtension(url).toLowerCase();
+									if (ext.equals("jpg") || ext.equals("jpeg")) {
+										bestImage = img;
+										maxSizeFound = imageSize;
+										finalURL = url;
+										finalImgBuffer = imgBuffer;
+										bestImageJpg = true;
+									} else if (!bestImageJpg) {
+										bestImage = img;
+										maxSizeFound = imageSize;
+										finalURL = url;
+										finalImgBuffer = imgBuffer;
+									}
 								}
-							}
-							if (readImageSize > MIN_IMAGE_SIZE) {
-								if (preferVertical) {
-									if (bestImage.getWidth() < bestImage.getHeight()) {
+								if (readImageSize > MIN_IMAGE_SIZE) {
+									if (preferVertical) {
+										if (bestImage.getWidth() < bestImage.getHeight()) {
+											imageFoundedOk = true;
+										}
+									} else {
 										imageFoundedOk = true;
 									}
-								} else {
-									imageFoundedOk = true;
 								}
 							}
 						}
