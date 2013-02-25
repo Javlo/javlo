@@ -1,4 +1,5 @@
-<%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
+<%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c"
+%><%@ taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions" %>
 <div id="content-edit" class="full-height ${not empty userInterface.light?'light':''}">
 <div class="area-label">${info.area}</div>
 <c:set var="previewParams" value="?webaction=editPreview&_closeFrame=true&previewEdit=true&comp_id=${param.comp_id}" />

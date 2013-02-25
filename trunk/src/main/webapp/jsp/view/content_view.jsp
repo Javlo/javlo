@@ -35,8 +35,6 @@ if (ctx.getRenderMode() == ContentContext.PREVIEW_MODE && specificComp == null) 
 	%><div id="comp_0" class="free-edit-zone editable-component"><span>&nbsp;</span></div><%
 }
 
-
-
 String area = request.getParameter("area");
 if (area != null) {
 	ctx.setArea(area);
@@ -60,8 +58,7 @@ Boolean removeRepeat = StringHelper.isTrue(request.getParameter("_no-repeat"));
 AdminUserSecurity security = AdminUserSecurity.getInstance();
 
 if ( ctx.getSpecialContentRenderer() != null && area.equals(ComponentBean.DEFAULT_AREA)) {
-	%>
-<jsp:include page="<%=ctx.getSpecialContentRenderer()%>" /><%
+	%><jsp:include page="<%=ctx.getSpecialContentRenderer()%>" /><%
 } else {
 MenuElement currentPage = ctx.getCurrentPage();
 

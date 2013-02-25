@@ -229,6 +229,7 @@ public class ContentService {
 		bean.setArea(inBean.getArea());
 		bean.setRepeat(inBean.isRepeat());
 		bean.setRenderer(inBean.getRenderer());
+		bean.setModify(true);
 		MenuElement elem = ctx.getCurrentPage();
 		elem.addContent(parentId, bean, releaseCache);
 		return id;

@@ -932,20 +932,26 @@ public class ResourceHelper {
 		}
 	}
 
-	public static final int writeFileItemToFolder(FileItem fileItem, File folder) throws IOException {
+	public static final File writeFileItemToFolder(FileItem fileItem, File folder, boolean overwrite, boolean rename) throws IOException {
 		if (!folder.isDirectory()) {
-			return -1;
+			return null;
 		}
 		File file = new File(URLHelper.mergePath(folder.getAbsolutePath(), fileItem.getName()));
 		if (!file.exists()) {
 			file.createNewFile();
 		} else {
-			throw new FileExistsException("File allready exist.");
+			if (!overwrite && !rename) {
+				throw new FileExistsException("File allready exist.");
+			}
+			if (rename) {
+				file = ResourceHelper.getFreeFileName(file);
+			}
 		}
 		InputStream in = null;
 		try {
 			in = fileItem.getInputStream();
-			return writeStreamToFile(in, file);
+			writeStreamToFile(in, file);
+			return file;
 		} catch (IOException e) {
 			ResourceHelper.closeResource(in);
 			file.delete();
@@ -1011,6 +1017,12 @@ public class ResourceHelper {
 		out.close();
 	}
 
+	/**
+	 * return a free file name. if file exist add a number as suffix.
+	 * 
+	 * @param file
+	 * @return
+	 */
 	public static File getFreeFileName(File file) {
 		if (!file.exists()) {
 			return file;

@@ -527,6 +527,13 @@ public class ContentContext {
 		}
 	}
 
+	public ContentContext getContextForDefaultLanguage() {
+		GlobalContext globalContext = GlobalContext.getInstance(getRequest());
+		ContentContext defaultLgCtx = new ContentContext(this);
+		defaultLgCtx.setAllLangauge(globalContext.getDefaultLanguage());
+		return defaultLgCtx;
+	}
+
 	public String getCookieLanguage() {
 		Cookie[] cookies = request.getCookies();
 		if (cookies == null) {

@@ -353,7 +353,7 @@ public class Multimedia extends TimeRangeComponent implements IImageTitle {
 		return folder;
 	}
 
-	protected String getCurrentRootFolder() {
+	public String getCurrentRootFolder() {
 		String[] values = getValue().split(VALUE_SEPARATOR);
 		if (values.length >= 4) {
 			return values[3];
