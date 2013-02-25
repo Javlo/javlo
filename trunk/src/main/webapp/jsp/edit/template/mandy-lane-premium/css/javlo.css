@@ -21,6 +21,10 @@ input, textarea, select {
     float: left;
 }
 
+#navigation h3 {
+    margin-left: 15px;
+}
+
 #search input {
 	box-shadow: none;
 }

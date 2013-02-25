@@ -55,13 +55,13 @@
                 </p>                
                 <p class="menu">                	
                     <a href="${template.viewUrl}" class="view" title="${template.name}"></a>
-                    <a href="${info.currentURL}?webaction=goEditTemplate&name=${template.name}&mailing=${template.mailing}" class="edit"></a>
-                    <a href="${info.currentURL}?webaction=delete&name=${template.name}&mailing=${template.mailing}" class="delete"></a>
+                    <a href="${info.currentURL}?webaction=goEditTemplate&templateid=${template.name}&mailing=${template.mailing}" class="edit"></a>
+                    <a href="${info.currentURL}?webaction=delete&templateid=${template.name}&mailing=${template.mailing}" class="delete"></a>
                     <c:if test="${not empty selectUrl}">
                     <a href="${selectUrl}&template=${template.name}&mailing=${template.mailing}" class="select" title="select"></a>
                     </c:if>
                     <c:if test="${not template.valid}">
-                    <a href="${info.currentURL}?webaction=validate&name=${template.name}&mailing=${template.mailing}" class="validate" title="validate"></a>
+                    <a href="${info.currentURL}?webaction=validate&templateid=${template.name}&mailing=${template.mailing}" class="validate" title="validate"></a>
                     </c:if>
                 </p>                
             </div><!--info-->

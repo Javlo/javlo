@@ -51,6 +51,11 @@ public class TemplateAction extends AbstractModuleAction {
 
 	@Override
 	public String prepare(ContentContext ctx, ModulesContext moduleContext) throws Exception {
+
+		if (ctx.getRequest().getRequestURL().toString().endsWith(".wav")) { // hack for elfinder js
+			return null;
+		}
+
 		String msg = null;
 		GlobalContext globalContext = GlobalContext.getInstance(ctx.getRequest());
 		Module module = ModulesContext.getInstance(ctx.getRequest().getSession(), globalContext).getCurrentModule();
@@ -75,7 +80,12 @@ public class TemplateAction extends AbstractModuleAction {
 		ctx.getRequest().setAttribute("templates", templates);
 
 		Map<String, String> params = new HashMap<String, String>();
-		String templateName = requestService.getParameter("name", null);
+		String templateName = requestService.getParameter("templateid", null);
+		if (templateName == null) {
+			System.out.println("***** TemplateAction.prepare : url = " + ctx.getRequest().getRequestURL()); // TODO: remove debug trace
+			System.out.println("***** TemplateAction.prepare : query string = " + ctx.getRequest().getQueryString()); // TODO: remove debug trace
+		}
+		System.out.println("***** TemplateAction.prepare : templateName = " + templateName); // TODO: remove debug trace
 
 		if (templateName != null) {
 			Template template = TemplateFactory.getDiskTemplate(ctx.getRequest().getSession().getServletContext(), templateName, StringHelper.isTrue(ctx.getRequest().getParameter("mailing")));
@@ -85,7 +95,7 @@ public class TemplateAction extends AbstractModuleAction {
 				module.restoreAll();
 			} else {
 				ctx.getRequest().setAttribute("currentTemplate", new Template.TemplateBean(ctx, template));
-				params.put("name", templateName);
+				params.put("templateid", templateName);
 				FileModuleContext fileModuleContext = FileModuleContext.getInstance(ctx.getRequest());
 				fileModuleContext.clear();
 				fileModuleContext.setRoot(template.getTemplateRealPath());
@@ -115,9 +125,9 @@ public class TemplateAction extends AbstractModuleAction {
 
 	public String performGoEditTemplate(ServletContext application, HttpServletRequest request, ContentContext ctx, RequestService requestService, Module module, I18nAccess i18nAccess) throws Exception {
 		String msg = null;
-		Template template = TemplateFactory.getDiskTemplate(application, requestService.getParameter("name", null), StringHelper.isTrue(requestService.getParameter("mailing", null)));
+		Template template = TemplateFactory.getDiskTemplate(application, requestService.getParameter("templateid", null), StringHelper.isTrue(requestService.getParameter("mailing", null)));
 		if (template == null) {
-			msg = "template not found : " + requestService.getParameter("name", null);
+			msg = "template not found : " + requestService.getParameter("templateid", null);
 			module.clearAllBoxes();
 			module.restoreAll();
 		} else {
@@ -137,7 +147,7 @@ public class TemplateAction extends AbstractModuleAction {
 
 	public String performEditTemplate(ServletContext application, StaticConfig staticConfig, ContentContext ctx, RequestService requestService, Module module, I18nAccess i18nAccess, MessageRepository messageRepository) throws IOException {
 		String msg = null;
-		Template template = TemplateFactory.getDiskTemplate(application, requestService.getParameter("name", null), StringHelper.isTrue(requestService.getParameter("mailing", null)));
+		Template template = TemplateFactory.getDiskTemplate(application, requestService.getParameter("templateid", null), StringHelper.isTrue(requestService.getParameter("mailing", null)));
 		if (requestService.getParameter("back", null) != null) {
 			module.clearAllBoxes();
 			module.restoreAll();
@@ -227,14 +237,14 @@ public class TemplateAction extends AbstractModuleAction {
 		if (area == null) {
 			return "bad request structure, need 'area' as parameter.";
 		}
-		Template template = TemplateFactory.getDiskTemplate(application, requestService.getParameter("name", null), StringHelper.isTrue(requestService.getParameter("mailing", null)));
+		Template template = TemplateFactory.getDiskTemplate(application, requestService.getParameter("templateid", null), StringHelper.isTrue(requestService.getParameter("mailing", null)));
 		template.deleteArea(area);
 		return null;
 	}
 
 	public String performImport(RequestService requestService, HttpSession session, ContentContext ctx, GlobalContext globalContext, Module currentModule, MessageRepository messageRepository, I18nAccess i18nAccess) throws Exception {
 		String list = requestService.getParameter("list", null);
-		String templateName = requestService.getParameter("name", null);
+		String templateName = requestService.getParameter("templateid", null);
 		if (list == null || templateName == null) {
 			return "bad request structure : need 'list' and 'name' as parameter.";
 		}
@@ -289,7 +299,7 @@ public class TemplateAction extends AbstractModuleAction {
 	}
 
 	public String performValidate(RequestService requestService, HttpSession session, ContentContext ctx) throws IOException {
-		Template template = TemplateFactory.getDiskTemplate(session.getServletContext(), requestService.getParameter("name", null), StringHelper.isTrue(requestService.getParameter("mailing", null)));
+		Template template = TemplateFactory.getDiskTemplate(session.getServletContext(), requestService.getParameter("templateid", null), StringHelper.isTrue(requestService.getParameter("mailing", null)));
 		if (template == null) {
 			Collection<Template> templates;
 			templates = TemplateFactory.getAllDiskTemplates(session.getServletContext());
@@ -303,7 +313,7 @@ public class TemplateAction extends AbstractModuleAction {
 	}
 
 	public String performDelete(RequestService requestService, HttpSession session, ContentContext ctx) throws IOException {
-		Template template = TemplateFactory.getDiskTemplate(session.getServletContext(), requestService.getParameter("name", null), StringHelper.isTrue(requestService.getParameter("mailing", null)));
+		Template template = TemplateFactory.getDiskTemplate(session.getServletContext(), requestService.getParameter("templateid", null), StringHelper.isTrue(requestService.getParameter("mailing", null)));
 		if (template != null) {
 			template.delete();
 		}
@@ -311,20 +321,20 @@ public class TemplateAction extends AbstractModuleAction {
 	}
 
 	public String performCommit(RequestService requestService, ServletContext application, ContentContext ctx, MessageRepository messageRepository, I18nAccess i18nAccess) throws IOException {
-		Template template = TemplateFactory.getDiskTemplate(application, requestService.getParameter("name", null), StringHelper.isTrue(requestService.getParameter("mailing", null)));
+		Template template = TemplateFactory.getDiskTemplate(application, requestService.getParameter("templateid", null), StringHelper.isTrue(requestService.getParameter("mailing", null)));
 		template.clearRenderer(ctx);
-		messageRepository.setGlobalMessageAndNotification(ctx, new GenericMessage(i18nAccess.getText("template.message.commited", new String[][] { { "name", requestService.getParameter("name", null) } }), GenericMessage.INFO));
+		messageRepository.setGlobalMessageAndNotification(ctx, new GenericMessage(i18nAccess.getText("template.message.commited", new String[][] { { "name", requestService.getParameter("templateid", null) } }), GenericMessage.INFO));
 		return null;
 	}
 
 	public String performCommitChildren(RequestService requestService, ServletContext application, ContentContext ctx, MessageRepository messageRepository, I18nAccess i18nAccess) throws IOException {
-		Template template = TemplateFactory.getDiskTemplate(application, requestService.getParameter("name", null), StringHelper.isTrue(requestService.getParameter("mailing", null)));
+		Template template = TemplateFactory.getDiskTemplate(application, requestService.getParameter("templateid", null), StringHelper.isTrue(requestService.getParameter("mailing", null)));
 		template.clearRenderer(ctx);
 		Collection<Template> children = TemplateFactory.getTemplateAllChildren(application, template);
 		for (Template child : children) {
 			child.clearRenderer(ctx);
 		}
-		messageRepository.setGlobalMessageAndNotification(ctx, new GenericMessage(i18nAccess.getText("template.message.commited", new String[][] { { "name", requestService.getParameter("name", null) } }), GenericMessage.INFO));
+		messageRepository.setGlobalMessageAndNotification(ctx, new GenericMessage(i18nAccess.getText("template.message.commited", new String[][] { { "name", requestService.getParameter("templateid", null) } }), GenericMessage.INFO));
 		return null;
 	}
 
@@ -333,7 +343,7 @@ public class TemplateAction extends AbstractModuleAction {
 	}
 
 	public static String performSelectTemplate(RequestService rs, ContentContext ctx, EditContext editContext, MenuElement currentPage, MessageRepository messageRepository, I18nAccess i18nAccess) {
-		String templateName = rs.getParameter("name", null);
+		String templateName = rs.getParameter("templateid", null);
 		currentPage.setTemplateName(templateName);
 
 		if (editContext.isEditPreview()) {
