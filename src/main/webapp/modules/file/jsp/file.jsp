@@ -9,16 +9,20 @@
 <div class="content nopadding">
 <div id="fileManager" class="elfinder"></div>
 </div>
+<c:set var="params" value="" />
+<c:if test="${not empty param.templateid}">
+<c:set var="params" value="&templateid=${param.templateid}" />
+</c:if>
 <script type="text/javascript">
 jQuery(document).ready(function() {
 	var language = "${info.editLanguage}";
 	changeFooter();
 	jQuery('#fileManager').elfinder({
-		url : '${info.staticRootURL eq "/"?"":info.staticRootURL}${currentModule.path}/jsp/connector.jsp${not empty changeRoot?"?changeRoot=true":""}',
+		url : '${info.staticRootURL eq "/"?"":info.staticRootURL}${currentModule.path}/jsp/connector.jsp${not empty changeRoot?"?changeRoot=true":""}${params}',
 		lang : '${info.editLanguage}',
 		height: jQuery("#footer").offset().top - jQuery("#fileManager").offset().top - (jQuery(".maincontent .left").outerHeight(true) - jQuery(".maincontent .left").height()),
-		handlers : {			
-			open: function(event) { ajaxRequest("${info.currentURL}?webaction=updateBreadcrumb${not empty changeRoot?"&changeRoot=true":""}"); }
+		handlers : {	
+			open: function(event) { ajaxRequest("${info.currentURL}?webaction=updateBreadcrumb${not empty changeRoot?"&changeRoot=true":""}${params}"); }
 		},
 		
 		uiOptions : {

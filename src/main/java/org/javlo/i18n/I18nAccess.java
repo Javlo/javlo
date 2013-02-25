@@ -40,6 +40,7 @@ import org.javlo.service.RequestService;
 import org.javlo.service.exception.ServiceException;
 import org.javlo.template.Template;
 import org.javlo.utils.KeyMap;
+import org.javlo.utils.MapDisplayKeyIfNotFound;
 import org.javlo.utils.ReadOnlyMultiMap;
 import org.javlo.utils.ReadOnlyPropertiesConfigurationMap;
 
@@ -290,13 +291,14 @@ public class I18nAccess implements Serializable {
 		}
 
 		if (propEditMap == null) {
-			propEditMap = new Hashtable<String, String>();
+			propEditMap = new MapDisplayKeyIfNotFound(new Hashtable<String, String>());
 			Iterator<?> keys = propEdit.getKeys();
 			while (keys.hasNext()) {
 				String key = (String) keys.next();
 				propEditMap.put(key, "" + propEdit.getProperty(key));
 			}
 		}
+
 		if (moduleEdit != null && !moduleImported) {
 			moduleImported = true;
 			Set<?> keysList = moduleEdit.keySet();

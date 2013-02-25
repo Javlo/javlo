@@ -27,7 +27,7 @@
 	
 	<c:forEach var="area" items="${currentTemplate.areas}">
 	<div class="inline">
-		<h4>${area}</h4><span class="delete-area"><a href="${info.currentURL}?webaction=deleteArea&area=${area}&name=${currentTemplate.id}" title="${i18n.edit['global.delete']}">${i18n.edit['global.delete']}</a></span>
+		<h4>${area}</h4><span class="delete-area"><a href="${info.currentURL}?webaction=deleteArea&area=${area}&templateid=${currentTemplate.id}" title="${i18n.edit['global.delete']}">${i18n.edit['global.delete']}</a></span>
 		<ul>
 			<c:set var="areaFound" value="false" scope="page" />			
 			<c:forEach var="htmlID" items="${currentTemplate.HTMLIDS}">
