@@ -1050,7 +1050,7 @@ public class MenuElement implements Serializable {
 	private Date startPublishDate = null;
 
 	private Date endPublishDate = null;
-	
+
 	private transient ICache localCache = null;
 
 	protected MenuElement() {
@@ -1165,7 +1165,9 @@ public class MenuElement implements Serializable {
 						j++;
 						newBean[j] = bean;
 						parentFound = true;
-						bean.setArea(newBean[j].getArea());
+						if (newBean[j].getArea() != null) {
+							bean.setArea(newBean[j].getArea());
+						}
 					} else {
 						newBean[j] = element;
 					}
@@ -2570,19 +2572,10 @@ public class MenuElement implements Serializable {
 	}
 
 	protected ICache getCache(ContentContext ctx) {
-		/*GlobalContext globalContext = GlobalContext.getInstance(ctx.getRequest());
-		ICache cache = globalContext.getCache("navigation");
-		if (releaseCache) {
-			String prefix = getCacheKey("");
-			for (String key : cache.getKeys()) {
-				if (key.startsWith(prefix)) {
-					cache.removeItem(key);
-				} 
-			}
-			releaseCache = false;
-		}
-		return cache;*/
-		
+		/*
+		 * GlobalContext globalContext = GlobalContext.getInstance(ctx.getRequest()); ICache cache = globalContext.getCache("navigation"); if (releaseCache) { String prefix = getCacheKey(""); for (String key : cache.getKeys()) { if (key.startsWith(prefix)) { cache.removeItem(key); } } releaseCache = false; } return cache;
+		 */
+
 		if (localCache == null) {
 			localCache = new MapCache(new HashMap(), "navigation");
 		}

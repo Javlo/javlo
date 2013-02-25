@@ -573,7 +573,7 @@ public class I18nAccess implements Serializable {
 			GlobalContext globalContext = GlobalContext.getInstance(ctx.getRequest());
 			if (!ctx.isFree()) {
 				Template template = ctx.getCurrentTemplate();
-				if (template != null && !latestTemplateId.equals(template.getId())) {
+				if (template != null && template.getId() != null && !latestTemplateId.equals(template.getId())) {
 					latestTemplateId = template.getId();
 					templateImported = false;
 					template = template.getFinalTemplate(ctx);

@@ -4,17 +4,18 @@ import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.InputStream;
 import java.io.PrintStream;
-import java.util.Calendar;
 import java.util.Collection;
 import java.util.logging.Logger;
 
 import org.apache.commons.fileupload.FileItem;
 import org.apache.commons.io.FileExistsException;
 import org.javlo.component.core.ComponentBean;
+import org.javlo.component.core.IContentVisualComponent;
 import org.javlo.component.files.GenericFile;
 import org.javlo.component.image.GlobalImage;
 import org.javlo.component.image.Image;
 import org.javlo.component.multimedia.Multimedia;
+import org.javlo.component.title.Title;
 import org.javlo.context.ContentContext;
 import org.javlo.context.GlobalContext;
 import org.javlo.helper.ContentHelper;
@@ -30,6 +31,7 @@ import org.javlo.service.NotificationService;
 import org.javlo.service.RequestService;
 import org.javlo.template.Template;
 import org.javlo.user.User;
+import org.javlo.ztatic.StaticInfo;
 
 public class DataAction implements IAction {
 
@@ -68,8 +70,11 @@ public class DataAction implements IAction {
 			return "Please, login before upload files.";
 		}
 		Template tpl = ctx.getCurrentTemplate();
-		Calendar cal = Calendar.getInstance();
-		String importFolder = "" + (cal.get(Calendar.MONTH) + 1) + '_' + cal.get(Calendar.YEAR);
+		// Calendar cal = Calendar.getInstance();
+		// String importFolder = "" + (cal.get(Calendar.MONTH) + 1) + '_' + cal.get(Calendar.YEAR);
+		String importFolder = StringHelper.createFileName(ctx.getCurrentPage().getTitle(ctx.getContextForDefaultLanguage()));
+		importFolder = StringHelper.trimOn(importFolder, "-");
+		importFolder = importFolder.replace('-', '_');
 		int countImages = 0;
 		FileItem imageItem = null;
 		try {
@@ -96,7 +101,8 @@ public class DataAction implements IAction {
 					if (!targetFolder.exists()) {
 						targetFolder.mkdirs();
 					}
-					if (ResourceHelper.writeFileItemToFolder(item, targetFolder) > 0) {
+					File newFile = ResourceHelper.writeFileItemToFolder(item, targetFolder, false, true);
+					if (newFile != null && newFile.exists()) {
 						ByteArrayOutputStream outStream = new ByteArrayOutputStream();
 						PrintStream out = new PrintStream(outStream);
 						String dir = resourceRelativeFolder.replaceFirst(gc.getStaticConfig().getFileFolder(), "");
@@ -106,6 +112,8 @@ public class DataAction implements IAction {
 						ComponentBean bean = new ComponentBean(GenericFile.TYPE, new String(outStream.toByteArray()), ctx.getRequestContentLanguage());
 						cs.createContent(ctx, bean, "0", true);
 						ctx.setNeedRefresh(true);
+						StaticInfo staticInfo = StaticInfo.getInstance(ctx, newFile);
+						staticInfo.setShared(ctx, false); // by default a simple image is'nt share
 					} else {
 						return "error upload file : " + item.getName();
 					}
@@ -118,7 +126,8 @@ public class DataAction implements IAction {
 				if (!targetFolder.exists()) {
 					targetFolder.mkdirs();
 				}
-				if (ResourceHelper.writeFileItemToFolder(imageItem, targetFolder) > 0) {
+				File newFile = ResourceHelper.writeFileItemToFolder(imageItem, targetFolder, false, true);
+				if (newFile != null && newFile.exists()) {
 					ByteArrayOutputStream outStream = new ByteArrayOutputStream();
 					PrintStream out = new PrintStream(outStream);
 					String dir = imageRelativeFolder.replaceFirst(gc.getStaticConfig().getImageFolder(), "");
@@ -134,29 +143,64 @@ public class DataAction implements IAction {
 					return "error on file : " + imageItem.getName();
 				}
 			} else if (countImages > 1) { // gallery
-				String galFolder = StringHelper.trimSpaceAndUnderscore(StringHelper.removeNumber(StringHelper.getFileNameWithoutExtension(imageItem.getName())));
-				if (galFolder.trim().length() == 0) {
-					galFolder = "images";
+
+				Collection<IContentVisualComponent> mediaComps = ctx.getCurrentPage().getContentByType(ctx, Multimedia.TYPE);
+				boolean galleryFound = false;
+
+				String galleryRelativeFolder = null;
+				if (mediaComps.size() > 0) {
+					for (IContentVisualComponent comp : mediaComps) {
+						Multimedia multimedia = (Multimedia) comp;
+						if (multimedia.getCurrentRootFolder().length() > tpl.getImportGalleryFolder().length()) {
+
+							System.out.println("***** DataAction.performUpload : multimedia id = " + multimedia.getId()); // TODO: remove debug trace
+							System.out.println("***** DataAction.performUpload : multimedia page = " + multimedia.getPage().getName()); // TODO: remove debug trace
+
+							galleryRelativeFolder = URLHelper.mergePath(gc.getStaticConfig().getStaticFolder(), multimedia.getCurrentRootFolder());
+							galleryFound = true;
+							ctx.setNeedRefresh(true);
+						}
+					}
+
 				}
-				String galleryRelativeFolder = URLHelper.mergePath(gc.getStaticConfig().getStaticFolder(), tpl.getImportGalleryFolder(), importFolder, galFolder);
+				if (galleryRelativeFolder == null) {
+					String galFolder = importFolder;
+					if (galFolder.trim().length() == 0) {
+						galFolder = "images";
+					}
+					galleryRelativeFolder = URLHelper.mergePath(gc.getStaticConfig().getStaticFolder(), tpl.getImportGalleryFolder(), importFolder);
+				}
 				targetFolder = new File(URLHelper.mergePath(gc.getDataFolder(), galleryRelativeFolder));
-				int i = 1;
-				while (targetFolder.exists()) {
-					targetFolder = new File(URLHelper.mergePath(gc.getDataFolder(), galleryRelativeFolder, "_" + i));
-					i++;
+
+				if (!targetFolder.exists()) {
+					targetFolder.mkdirs();
 				}
-				targetFolder.mkdirs();
 				for (FileItem item : rs.getAllFileItem()) {
 					if (StringHelper.isImage(item.getName())) {
-						if (ResourceHelper.writeFileItemToFolder(item, targetFolder) < 0) {
+						if (ResourceHelper.writeFileItemToFolder(item, targetFolder, false, true) == null) {
 							logger.warning("Could'nt upload : " + item.getName());
 						}
 					}
 				}
-				ComponentBean multimedia = new ComponentBean(Multimedia.TYPE, "--12,128-" + galleryRelativeFolder.replaceFirst(gc.getStaticConfig().getStaticFolder(), "") + "---", ctx.getRequestContentLanguage());
-				multimedia.setStyle(Multimedia.IMAGE);
-				cs.createContent(ctx, multimedia, "0", true);
-				ctx.setNeedRefresh(true);
+
+				System.out.println("***** DataAction.performUpload : galleryFound = " + galleryFound); // TODO: remove debug trace
+
+				if (!galleryFound) {
+					ComponentBean multimedia = new ComponentBean(Multimedia.TYPE, "--12,128-" + galleryRelativeFolder.replaceFirst(gc.getStaticConfig().getStaticFolder(), "") + "---", ctx.getRequestContentLanguage());
+					multimedia.setStyle(Multimedia.IMAGE);
+
+					Collection<IContentVisualComponent> titles = ctx.getCurrentPage().getContentByType(ctx, Title.TYPE);
+					String previousId = "0";
+					if (titles.size() > 0) {
+						previousId = titles.iterator().next().getId();
+					}
+
+					System.out.println("***** DataAction.performUpload : previousId = " + previousId); // TODO: remove debug trace
+
+					cs.createContent(ctx, multimedia, previousId, true);
+
+					ctx.setNeedRefresh(true);
+				}
 
 			}
 		} catch (FileExistsException e) {

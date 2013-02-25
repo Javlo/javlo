@@ -64,12 +64,12 @@ if (clipBoard.getCopiedComponent(ctx) != null) {
 }
 
 ComponentContext componentContext = ComponentContext.getInstance(request);
-IContentVisualComponent[] components = componentContext.getNewComponents();
+Collection<IContentVisualComponent> components = componentContext.getNewComponents();
 
-if (components.length == 0 || request.getParameter("firstLine") != null) { /* if no specific components asked than render all components for the current context or force first line */
+if (components.size() == 0 || request.getParameter("firstLine") != null) { /* if no specific components asked than render all components for the current context or force first line */
 String previousId = "0";
-if (components.length > 0 && components[0].getPreviousComponent() != null) {
-	previousId = components[0].getPreviousComponent().getId();
+if (components.size() > 0 && components.iterator().next().getPreviousComponent() != null) {
+	previousId = components.iterator().next().getPreviousComponent().getId();
 }
 /*** rendering ***/
 
@@ -90,31 +90,30 @@ if (!StringHelper.isTrue(request.getParameter("noinsert"))) {
 } else {%><div class="insert-line" id="insert-line-<%=previousId%>">&nbsp;</div><%}
 
 }
-if (components.length == 0) {  /* if no specific components asked than render all components */
+if (components.size() == 0) {  /* if no specific components asked than render all components */
 ComponentContext compCtx = ComponentContext.getInstance(request);
 IContentComponentsList elems = ctx.getCurrentPage().getContent(ctx);
 Collection<IContentVisualComponent> allComponents = new LinkedList<IContentVisualComponent>();
 while (elems.hasNext(ctx)) {
 	allComponents.add(elems.next(ctx));
 }
-components = allComponents.toArray(components);
+components = allComponents;
 } else { /* / if (components.length == 0) { */
 	String previousId="0";
- 	if (components[0].getPreviousComponent() != null) {
- 		previousId=components[0].getPreviousComponent().getId();
+ 	if (components.iterator().next().getPreviousComponent() != null) {
+ 		previousId=components.iterator().next().getPreviousComponent().getId();
  	}
 	%><div class="new-component-container" id="comp-child-<%=previousId%>"></div><%
 }
 
-if (components.length > 40 && request.getParameter("display-all") == null) {
+if (components.size() > 40 && request.getParameter("display-all") == null) {
 	  %>
 	  <div class="insert-line">
-		<a class="action-button" href="${info.currentURL}?${info.editPreview?'previewEdit=true&':''}display-all=true">${i18n.edit["edit.message.display-all-components"]}</a>
+		<a class="action-button warning" href="${info.currentURL}?${info.editPreview?'previewEdit=true&':''}display-all=true">${i18n.edit["edit.message.display-all-components"]}</a>
 	  </div><%	
 } else {
 
-for (int i=0; i<components.length; i++) {
-	IContentVisualComponent comp = components[i];
+for (IContentVisualComponent comp : components) {	 
 	String inputSuffix = "-"+comp.getId();
 	String helpText = componentContext.getHelpHTML(ctx, comp);
 	if (comp instanceof IContainer && ((IContainer)comp).isOpen(ctx)) {
@@ -122,7 +121,7 @@ for (int i=0; i<components.length; i++) {
 	     %><%=((IContainer)comp).getOpenCode(ctx)%><%
 	
 	}%>
- <div id="comp-<%=comp.getId()%>" class="<%=comp.getType()%><%if (components.length==1) {%> new<%}%>">
+ <div id="comp-<%=comp.getId()%>" class="<%=comp.getType()%><%if (components.size()==1) {%> new<%}%>">
  <input type="hidden" name="components" value="<%=comp.getId()%>" />
  <div class="component-title"><a style="color: #<%=comp.getHexColor()%>" href="#" onclick="scrollToFirstQuarter(jQuery('#content-edit'),this); return false;"><%=comp.getComponentLabel(ctx, globalContext.getEditLanguage(request.getSession())) %></a></div>
  <div class="tabs component"> 	    	  

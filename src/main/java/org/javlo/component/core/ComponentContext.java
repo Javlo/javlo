@@ -1,6 +1,7 @@
 package org.javlo.component.core;
 
 import java.util.LinkedList;
+import java.util.List;
 import java.util.Map;
 import java.util.logging.Logger;
 
@@ -21,9 +22,9 @@ public class ComponentContext {
 
 	private static final String INSERTION_COMPONENT_KEY = "_insertion_component";
 
-	private static final String KEY = ComponentContext.class.getName();
+	private static final String KEY = "componentContext";
 
-	private final java.util.List<IContentVisualComponent> newComponentId = new LinkedList<IContentVisualComponent>();
+	private final List<IContentVisualComponent> newComponentId = new LinkedList<IContentVisualComponent>();
 
 	private boolean renderLink = true;
 
@@ -46,10 +47,8 @@ public class ComponentContext {
 		newComponentId.clear();
 	}
 
-	public IContentVisualComponent[] getNewComponents() {
-		IContentVisualComponent[] outComponentId = new IContentVisualComponent[newComponentId.size()];
-		newComponentId.toArray(outComponentId);
-		return outComponentId;
+	public List<IContentVisualComponent> getNewComponents() {
+		return newComponentId;
 	}
 
 	public boolean isRenderLink() {

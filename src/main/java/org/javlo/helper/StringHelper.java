@@ -2494,6 +2494,18 @@ public class StringHelper {
 		return text;
 	}
 
+	public static String trimOn(String inText, String token) {
+		String text = inText;
+		text = text.trim();
+		while (text.startsWith(token) && text.length() > 0) {
+			text = text.substring(1).trim();
+		}
+		while (text.endsWith(token) && text.length() > 0) {
+			text = text.substring(0, text.length() - 1).trim();
+		}
+		return text;
+	}
+
 	public String cleanString(String text) {
 		try {
 			return java.net.URLDecoder.decode(text, ContentContext.CHARACTER_ENCODING);
