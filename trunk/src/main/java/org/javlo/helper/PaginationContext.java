@@ -43,7 +43,6 @@ public class PaginationContext {
 		}
 		PaginationContext service = (PaginationContext) session.getAttribute(key);
 		if (service == null) {
-			System.out.println("***** PaginationContext.getInstance : CREATE PAGINATION key = " + key); // TODO: remove debug trace
 			service = new PaginationContext();
 			service.key = key;
 			session.setAttribute(key, service);
