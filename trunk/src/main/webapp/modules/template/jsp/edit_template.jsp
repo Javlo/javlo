@@ -6,20 +6,40 @@
 </div>
 
 <form id="form-edit-template" action="${info.currentURL}" class="standard-form" method="post">
-	
+
 	<div>
 		<input type="hidden" name="webaction" value="editTemplate" />
 		<input type="hidden" name="name" value="${currentTemplate.name}" />
 	</div>
 	
-	<div class="line">
-		<label for="author">${i18n.edit['global.author']}</label>
-		<input type="text" id="author" name="author" value="${currentTemplate.authors}" />
-	</div>
+	<div class="properties">
 	
-	<div class="line">
-		<label for="date">${i18n.edit['template.creation-date']}</label>
-		<input type="text" id="date" class="datepicker" name="date" value="${currentTemplate.creationDate}" />
+		<div class="one_half">
+		
+			<div class="line">
+				<label for="author">${i18n.edit['global.author']}</label>
+				<input type="text" id="author" name="author" value="${currentTemplate.authors}" />
+			</div>	
+			
+			<div class="line">
+				<label for="parent">${i18n.edit['template.label.parent']}</label>
+				<input type="text" id="parent" name="parent" value="${currentTemplate.parent}" />
+			</div>	
+			
+		</div><div class="one_half">
+		
+			<div class="line">
+				<label for="imageFilter">${i18n.edit['template.label.image-filter']}</label>
+				<input type="text" id="imageFilter" name="imageFilter" value="${currentTemplate.imageFilter}" />
+			</div>	
+			
+			<div class="line">
+				<label for="date">${i18n.edit['template.creation-date']}</label>
+				<input type="text" id="date" class="datepicker" name="date" value="${currentTemplate.creationDate}" />
+			</div>
+	
+		</div>
+	
 	</div>
 	
 	<fieldset>

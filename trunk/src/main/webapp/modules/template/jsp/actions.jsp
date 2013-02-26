@@ -5,8 +5,8 @@
 <c:if test="${not empty param.templateid}">
    <a class="action-button more" href="${fileURL}&templateid=${currentTemplate.name}"><span>${i18n.edit['template.action.browse']}...</span></a>
    <a class="action-button" href="${info.currentURL}?webaction=commit&templateid=${currentTemplate.name}"><span>${i18n.edit['template.action.commit']}</span></a>
-   <a class="action-button" href="${info.currentURL}?webaction=commitChildren&name=${currentTemplate.name}"><span>${i18n.edit['template.action.commit-children']}</span></a>
-      
+   <a class="action-button" href="${info.currentURL}?webaction=commitChildren&templateid=${currentTemplate.name}"><span>${i18n.edit['template.action.commit-children']}</span></a>   
+   <a class="action-button" href="${info.currentURL}?filter=&templateid=${currentTemplate.name}"><span>${i18n.edit['template.action.filter-image']}</span></a>
 </c:if>
 <c:if test="${empty param.templateid and empty nobrowse}">
 <a class="action-button more" href="${fileURL}"><span>${i18n.edit['template.action.browse']}...</span></a>

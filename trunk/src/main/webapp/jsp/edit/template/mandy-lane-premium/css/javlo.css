@@ -198,6 +198,10 @@ a.popup span {
 	width: 220px;
 }
 
+.standard-form table input,.standard-form table select {
+	width: auto;
+}
+
 .standard-form input[type=submit] {
 	width: auto;
 	line-height: 28px;

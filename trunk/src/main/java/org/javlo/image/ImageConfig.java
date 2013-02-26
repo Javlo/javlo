@@ -3,9 +3,10 @@ package org.javlo.image;
 import java.awt.Color;
 import java.io.InputStream;
 import java.io.InputStreamReader;
-import java.util.Collection;
+import java.util.Collections;
 import java.util.Iterator;
 import java.util.LinkedList;
+import java.util.List;
 import java.util.logging.Logger;
 
 import javax.servlet.http.HttpSession;
@@ -30,11 +31,11 @@ public class ImageConfig {
 	private static final String FILE_BASE = "/WEB-INF/config/image-config-base.properties";
 	private static final String KEY = ImageConfig.class.getName();
 
-	private static String[] filters = new String[0];
+	private static List<String> filters = new LinkedList<String>();
 
 	private ImageConfig(GlobalContext globalContext, HttpSession session, Template template) {
 
-		Collection<String> filtersCol = new LinkedList<String>();
+		List<String> filtersCol = new LinkedList<String>();
 
 		InputStream in = session.getServletContext().getResourceAsStream(FILE_BASE);
 		if (in == null) {
@@ -95,8 +96,8 @@ public class ImageConfig {
 			}
 		}
 
-		filters = new String[filtersCol.size()];
-		filtersCol.toArray(filters);
+		filters = filtersCol;
+		Collections.sort(filters);
 	}
 
 	public static ImageConfig getNewInstance(GlobalContext globalContext, HttpSession session, Template template) {
@@ -366,8 +367,12 @@ public class ImageConfig {
 		return properties.getInt(key, -1);
 	}
 
-	public static String[] getFilters() {
+	public static List<String> getFilters() {
 		return filters;
+	}
+
+	public PropertiesConfiguration getProperties() {
+		return properties;
 	}
 
 }

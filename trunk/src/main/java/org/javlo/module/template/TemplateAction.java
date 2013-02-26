@@ -3,22 +3,29 @@ package org.javlo.module.template;
 import java.awt.image.RenderedImage;
 import java.io.File;
 import java.io.FileOutputStream;
+import java.io.FileReader;
+import java.io.FileWriter;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.io.Reader;
+import java.io.Writer;
 import java.net.URL;
 import java.text.ParseException;
 import java.util.Collection;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.LinkedList;
+import java.util.List;
 import java.util.Map;
+import java.util.Properties;
 
 import javax.media.jai.JAI;
 import javax.servlet.ServletContext;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 
+import org.apache.commons.configuration.ConfigurationException;
 import org.javlo.actions.AbstractModuleAction;
 import org.javlo.config.StaticConfig;
 import org.javlo.context.ContentContext;
@@ -28,6 +35,7 @@ import org.javlo.helper.StringHelper;
 import org.javlo.helper.URLHelper;
 import org.javlo.helper.XMLManipulationHelper.BadXMLException;
 import org.javlo.i18n.I18nAccess;
+import org.javlo.image.ImageConfig;
 import org.javlo.message.GenericMessage;
 import org.javlo.message.MessageRepository;
 import org.javlo.module.core.Module;
@@ -41,12 +49,51 @@ import org.javlo.service.RequestService;
 import org.javlo.servlet.zip.ZipManagement;
 import org.javlo.template.Template;
 import org.javlo.template.TemplateFactory;
+import org.javlo.utils.ReadOnlyPropertiesConfigurationMap;
+import org.javlo.ztatic.FileCache;
 
 public class TemplateAction extends AbstractModuleAction {
 
 	@Override
 	public String getActionGroupName() {
 		return "template";
+	}
+
+	public static String getPreviewImageURL(ContentContext ctx, String filter, String area) {
+		return null;
+	}
+
+	private static List<String> getTextProperties() {
+		List<String> textProperties = new LinkedList<String>();
+		textProperties.add("width");
+		textProperties.add("height");
+		textProperties.add("max-width");
+		textProperties.add("max-height");
+		textProperties.add("margin-top");
+		textProperties.add("margin-right");
+		textProperties.add("margin-bottom");
+		textProperties.add("margin-left");
+		textProperties.add("adjust-color");
+		textProperties.add("replace-alpha");
+		textProperties.add("web2.height");
+		textProperties.add("web2.separation");
+		textProperties.add("background-color");
+		return textProperties;
+	}
+
+	private static List<String> getBooleanProperties() {
+		List<String> booleanProperties = new LinkedList<String>();
+		booleanProperties.add("grayscale");
+		booleanProperties.add("add-border");
+		booleanProperties.add("crop-resize");
+		booleanProperties.add("crystallize");
+		booleanProperties.add("edge");
+		booleanProperties.add("framing");
+		booleanProperties.add("emboss");
+		booleanProperties.add("web2");
+		booleanProperties.add("round-corner");
+		return booleanProperties;
+
 	}
 
 	@Override
@@ -81,14 +128,9 @@ public class TemplateAction extends AbstractModuleAction {
 
 		Map<String, String> params = new HashMap<String, String>();
 		String templateName = requestService.getParameter("templateid", null);
-		if (templateName == null) {
-			System.out.println("***** TemplateAction.prepare : url = " + ctx.getRequest().getRequestURL()); // TODO: remove debug trace
-			System.out.println("***** TemplateAction.prepare : query string = " + ctx.getRequest().getQueryString()); // TODO: remove debug trace
-		}
-		System.out.println("***** TemplateAction.prepare : templateName = " + templateName); // TODO: remove debug trace
 
 		if (templateName != null) {
-			Template template = TemplateFactory.getDiskTemplate(ctx.getRequest().getSession().getServletContext(), templateName, StringHelper.isTrue(ctx.getRequest().getParameter("mailing")));
+			Template template = TemplateFactory.getDiskTemplate(ctx.getRequest().getSession().getServletContext(), templateName);
 			if (template == null) {
 				msg = "template not found : " + templateName;
 				module.clearAllBoxes();
@@ -100,6 +142,29 @@ public class TemplateAction extends AbstractModuleAction {
 				fileModuleContext.clear();
 				fileModuleContext.setRoot(template.getTemplateRealPath());
 				fileModuleContext.setTitle("<a href=\"" + URLHelper.createModuleURL(ctx, ctx.getPath(), TemplateContext.NAME, params) + "\">" + template.getId() + "</a>");
+
+				if (requestService.getParameter("filter", null) != null && requestService.getParameter("back", null) == null) {
+
+					ImageConfig imageConfig = ImageConfig.getNewInstance(globalContext, ctx.getRequest().getSession(), template);
+					ctx.getRequest().setAttribute("filters", imageConfig.getFilters());
+
+					ctx.getRequest().setAttribute("areas", template.getAreas());
+					ctx.getRequest().setAttribute("textProperties", getTextProperties());
+					ctx.getRequest().setAttribute("booleanProperties", getBooleanProperties());
+					ctx.getRequest().setAttribute("allValues", new ReadOnlyPropertiesConfigurationMap(imageConfig.getProperties(), false));
+					if (template.getImageConfigFile().exists()) {
+						Properties values = new Properties();
+						Reader fileReader = new FileReader(template.getImageConfigFile());
+						values.load(fileReader);
+						fileReader.close();
+						ctx.getRequest().setAttribute("values", values);
+					}
+
+					module.getMainBoxes().iterator().next().setRenderer("/jsp/images.jsp");
+
+					// module.setRenderer("/jsp/images.jsp");
+				}
+
 			}
 		} else if (requestService.getParameter("list", null) == null) {
 			FileModuleContext fileModuleContext = FileModuleContext.getInstance(ctx.getRequest());
@@ -119,13 +184,12 @@ public class TemplateAction extends AbstractModuleAction {
 		if (moduleContext.getFromModule() != null && moduleContext.getFromModule().getName().equals("admin")) {
 			ctx.getRequest().setAttribute("selectUrl", moduleContext.getFromModule().getBackUrl());
 		}
-
 		return msg;
 	}
 
 	public String performGoEditTemplate(ServletContext application, HttpServletRequest request, ContentContext ctx, RequestService requestService, Module module, I18nAccess i18nAccess) throws Exception {
 		String msg = null;
-		Template template = TemplateFactory.getDiskTemplate(application, requestService.getParameter("templateid", null), StringHelper.isTrue(requestService.getParameter("mailing", null)));
+		Template template = TemplateFactory.getDiskTemplate(application, requestService.getParameter("templateid", null));
 		if (template == null) {
 			msg = "template not found : " + requestService.getParameter("templateid", null);
 			module.clearAllBoxes();
@@ -147,7 +211,7 @@ public class TemplateAction extends AbstractModuleAction {
 
 	public String performEditTemplate(ServletContext application, StaticConfig staticConfig, ContentContext ctx, RequestService requestService, Module module, I18nAccess i18nAccess, MessageRepository messageRepository) throws IOException {
 		String msg = null;
-		Template template = TemplateFactory.getDiskTemplate(application, requestService.getParameter("templateid", null), StringHelper.isTrue(requestService.getParameter("mailing", null)));
+		Template template = TemplateFactory.getDiskTemplate(application, requestService.getParameter("templateid", null));
 		if (requestService.getParameter("back", null) != null) {
 			module.clearAllBoxes();
 			module.restoreAll();
@@ -172,6 +236,9 @@ public class TemplateAction extends AbstractModuleAction {
 						}
 					}
 				}
+
+				template.setImageFiltersRAW(requestService.getParameter("image-filter", template.getImageFiltersRAW()));
+				template.setParentName(requestService.getParameter("parent", template.getParentName()));
 
 				String newArea = requestService.getParameter("new-area", "");
 				if (newArea.trim().length() > 0) {
@@ -237,7 +304,7 @@ public class TemplateAction extends AbstractModuleAction {
 		if (area == null) {
 			return "bad request structure, need 'area' as parameter.";
 		}
-		Template template = TemplateFactory.getDiskTemplate(application, requestService.getParameter("templateid", null), StringHelper.isTrue(requestService.getParameter("mailing", null)));
+		Template template = TemplateFactory.getDiskTemplate(application, requestService.getParameter("templateid", null));
 		template.deleteArea(area);
 		return null;
 	}
@@ -299,7 +366,7 @@ public class TemplateAction extends AbstractModuleAction {
 	}
 
 	public String performValidate(RequestService requestService, HttpSession session, ContentContext ctx) throws IOException {
-		Template template = TemplateFactory.getDiskTemplate(session.getServletContext(), requestService.getParameter("templateid", null), StringHelper.isTrue(requestService.getParameter("mailing", null)));
+		Template template = TemplateFactory.getDiskTemplate(session.getServletContext(), requestService.getParameter("templateid", null));
 		if (template == null) {
 			Collection<Template> templates;
 			templates = TemplateFactory.getAllDiskTemplates(session.getServletContext());
@@ -313,7 +380,7 @@ public class TemplateAction extends AbstractModuleAction {
 	}
 
 	public String performDelete(RequestService requestService, HttpSession session, ContentContext ctx) throws IOException {
-		Template template = TemplateFactory.getDiskTemplate(session.getServletContext(), requestService.getParameter("templateid", null), StringHelper.isTrue(requestService.getParameter("mailing", null)));
+		Template template = TemplateFactory.getDiskTemplate(session.getServletContext(), requestService.getParameter("templateid", null));
 		if (template != null) {
 			template.delete();
 		}
@@ -321,14 +388,14 @@ public class TemplateAction extends AbstractModuleAction {
 	}
 
 	public String performCommit(RequestService requestService, ServletContext application, ContentContext ctx, MessageRepository messageRepository, I18nAccess i18nAccess) throws IOException {
-		Template template = TemplateFactory.getDiskTemplate(application, requestService.getParameter("templateid", null), StringHelper.isTrue(requestService.getParameter("mailing", null)));
+		Template template = TemplateFactory.getDiskTemplate(application, requestService.getParameter("templateid", null));
 		template.clearRenderer(ctx);
 		messageRepository.setGlobalMessageAndNotification(ctx, new GenericMessage(i18nAccess.getText("template.message.commited", new String[][] { { "name", requestService.getParameter("templateid", null) } }), GenericMessage.INFO));
 		return null;
 	}
 
 	public String performCommitChildren(RequestService requestService, ServletContext application, ContentContext ctx, MessageRepository messageRepository, I18nAccess i18nAccess) throws IOException {
-		Template template = TemplateFactory.getDiskTemplate(application, requestService.getParameter("templateid", null), StringHelper.isTrue(requestService.getParameter("mailing", null)));
+		Template template = TemplateFactory.getDiskTemplate(application, requestService.getParameter("templateid", null));
 		template.clearRenderer(ctx);
 		Collection<Template> children = TemplateFactory.getTemplateAllChildren(application, template);
 		for (Template child : children) {
@@ -353,4 +420,87 @@ public class TemplateAction extends AbstractModuleAction {
 		return null;
 	}
 
+	public static String performUpdateFilter(RequestService rs, ServletContext application, GlobalContext globalContext, HttpSession session, ContentContext ctx, MessageRepository messageRepository, I18nAccess i18nAccess) throws IOException, ConfigurationException {
+		String filter = rs.getParameter("filter", null);
+
+		if (filter == null) {
+			return "need 'filter' as parameter.";
+		}
+		Template template = TemplateFactory.getDiskTemplate(application, rs.getParameter("templateid", null));
+		if (template == null) {
+			return "error, template not found.";
+		}
+
+		Properties imageConfig = new Properties();
+		Reader fileReader = new FileReader(template.getImageConfigFile());
+		imageConfig.load(fileReader);
+		fileReader.close();
+
+		boolean modifiy = false;
+
+		for (String prop : getTextProperties()) {
+			String allKey = filter + '.' + prop;
+			String val = rs.getParameter(allKey, "").trim();
+			if (val.length() == 0) {
+				if (rs.getParameter(allKey, null) != null) {
+					if (!val.equals(imageConfig.getProperty(allKey))) {
+						imageConfig.remove(allKey);
+						modifiy = true;
+					}
+				}
+			} else {
+				imageConfig.setProperty(allKey, val);
+				modifiy = true;
+			}
+			for (String area : template.getAreas()) {
+				String key = filter + '.' + area + '.' + prop;
+				val = rs.getParameter(key, "").trim();
+				if (val.length() == 0) {
+					if (rs.getParameter(key, null) != null) {
+						imageConfig.remove(key);
+					}
+				} else {
+					if (!val.equals(imageConfig.getProperty(key))) {
+						imageConfig.setProperty(key, val);
+						ctx.getRequest().setAttribute("modifiedArea", area);
+						modifiy = true;
+					}
+				}
+			}
+		}
+
+		for (String prop : getBooleanProperties()) {
+			String key = filter + '.' + prop;
+			boolean val = rs.getParameter(key, null) != null;
+
+			if (rs.getParameter('_' + key, null) != null) {
+				if (val != StringHelper.isTrue(imageConfig.getProperty(key))) {
+					imageConfig.setProperty(key, "" + val);
+					modifiy = true;
+				}
+			}
+
+			for (String area : template.getAreas()) {
+				key = filter + '.' + area + '.' + prop;
+				val = rs.getParameter(key, null) != null;
+				if (rs.getParameter('_' + key, null) != null) {
+					if (val != StringHelper.isTrue(imageConfig.getProperty(key))) {
+						imageConfig.setProperty(key, "" + val);
+						modifiy = true;
+						ctx.getRequest().setAttribute("modifiedArea", area);
+					}
+				}
+			}
+		}
+
+		if (modifiy) {
+			FileCache.getInstance(application).clear(globalContext.getContextKey());
+			Writer fileWriter = new FileWriter(template.getImageConfigFile());
+			imageConfig.store(fileWriter, "template module store.");
+			fileWriter.close();
+			ImageConfig.getNewInstance(globalContext, session, template);
+		}
+
+		return null;
+	}
 }

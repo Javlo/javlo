@@ -647,6 +647,7 @@ public class StaticInfo {
 	 * @return
 	 */
 	public int getFocusZoneX(ContentContext ctx) {
+
 		ContentService content = ContentService.getInstance(ctx.getRequest());
 
 		ContentContext editCtx = ctx.getContextWithOtherRenderMode(ContentContext.EDIT_MODE);

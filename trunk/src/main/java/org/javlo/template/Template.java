@@ -253,6 +253,7 @@ public class Template implements Comparable<Template> {
 		String deployId = StringHelper.getRandomId();
 		String type;
 		String parent;
+		String imageFilter;
 
 		public TemplateBean() {
 		};
@@ -296,6 +297,7 @@ public class Template implements Comparable<Template> {
 			deployId = template.getDeployId();
 			type = IRemoteResource.TYPE_TEMPLATE;
 			category = staticConfig.getMarketServerName();
+			imageFilter = template.getImageFiltersRAW();
 		}
 
 		public String getPreviewUrl() throws Exception {
@@ -466,10 +468,15 @@ public class Template implements Comparable<Template> {
 		public void setVersion(String version) {
 			this.version = version;
 		}
-		
+
 		public String getParent() {
 			return parent;
 		}
+
+		public String getImageFilter() {
+			return imageFilter;
+		}
+
 	}
 
 	public static class TemplateDateComparator implements Comparator<Template> {
@@ -1042,7 +1049,7 @@ public class Template implements Comparable<Template> {
 			deviceRenderer = properties.getString("html." + device.getCode(), defaultRenderer);
 		}
 		if (deviceRenderer != null) {
-			logger.info("device renderer found : " + deviceRenderer);
+			logger.fine("device renderer found : " + deviceRenderer + " (template:" + getId() + "");
 			return deviceRenderer;
 		} else {
 			return defaultRenderer;
@@ -1072,8 +1079,13 @@ public class Template implements Comparable<Template> {
 		}
 	}
 
+	public File getImageConfigFile() {
+		File templateImageConfigFile = new File(URLHelper.mergePath(getTemplateRealPath(), getImageConfigFileName()));
+		return templateImageConfigFile;
+	}
+
 	public PropertiesConfiguration getImageConfig() {
-		File templateImageConfigFile = new File(URLHelper.mergePath(getTemplateRealPath(), getImageConfigFile()));
+		File templateImageConfigFile = getImageConfigFile();
 		if (templateImageConfigFile.exists()) {
 			try {
 				PropertiesConfiguration templateProperties = new PropertiesConfiguration();
@@ -1107,8 +1119,8 @@ public class Template implements Comparable<Template> {
 		return null;
 	}
 
-	public String getImageConfigFile() {
-		return properties.getString("image-config", getParent().getImageConfigFile());
+	public String getImageConfigFileName() {
+		return properties.getString("image-config", getParent().getImageConfigFileName());
 	}
 
 	public List<String> getImageFilters() {
@@ -1120,8 +1132,12 @@ public class Template implements Comparable<Template> {
 		return outFilter;
 	}
 
-	protected String getImageFiltersRAW() {
+	public String getImageFiltersRAW() {
 		return properties.getString("images-filter", getParent().getImageFiltersRAW());
+	}
+
+	public void setImageFiltersRAW(String imageFilterRAW) {
+		properties.setProperty("images-filter", imageFilterRAW);
 	}
 
 	public String getLastSelectedClass() {
@@ -1276,8 +1292,12 @@ public class Template implements Comparable<Template> {
 		return parent;
 	}
 
-	private String getParentName() {
+	public String getParentName() {
 		return properties.getString("parent", null);
+	}
+
+	public void setParentName(String parent) {
+		properties.setProperty("parent", parent);
 	}
 
 	public synchronized String getRenderer(ContentContext ctx) throws IOException, BadXMLException {

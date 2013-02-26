@@ -498,17 +498,21 @@ public class ImageTransformServlet extends HttpServlet {
 
 			// org.javlo.helper.Logger.stepCount("transform", "template");
 
+			boolean localFile = false;
+
 			StaticInfo staticInfo = null;
+
 			if (imageName.substring(1).startsWith(staticConfig.getShareDataFolderKey())) {
 				imageName = imageName.substring(staticConfig.getShareDataFolderKey().length() + 2);
 				dataFolder = staticConfig.getShareDataFolder();
 				if (imageName != null) {
 					staticInfo = StaticInfo.getShareInstance(ctx, imageName.replaceFirst("/static", ""));
 				}
+			} else if (imageName.startsWith("/static")) {
+				staticInfo = StaticInfo.getInstance(ctx, imageName.replaceFirst("/static", ""));
 			} else {
-				if (imageName != null) {
-					staticInfo = StaticInfo.getInstance(ctx, imageName.replaceFirst("/static", ""));
-				}
+				localFile = true;
+				staticInfo = StaticInfo.getInstance(ctx, new File(getServletContext().getRealPath(imageName)));
 			}
 
 			if (staticInfo != null) {
@@ -546,7 +550,7 @@ public class ImageTransformServlet extends HttpServlet {
 				// method
 				// String baseFolder = URLHelper.mergePath(dataFolder, staticConfig.getStaticFolder()); //TODO: with javlo 1.4 it seem we do'nt need static folder ????
 				String baseFolder = dataFolder; // TODO: with javlo 1.4 it seem we do'nt need static folder ????
-				if (filter.startsWith("template")) {
+				if (filter.startsWith("template") || localFile) {
 					baseFolder = getServletContext().getRealPath("");
 				}
 
