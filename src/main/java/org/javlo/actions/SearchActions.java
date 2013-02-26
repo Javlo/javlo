@@ -86,6 +86,7 @@ public class SearchActions implements IAction {
 					search.search(ctx, groupId, searchStr, sort, componentList);
 					List<SearchElement> result = search.getSearchResult();
 					ctx.getRequest().getSession().setAttribute("searchList", result);
+					System.out.println("***** SearchActions.performSearch : result.size()  " + result.size()); // TODO: remove debug trace
 					PaginationContext.getInstance(ctx.getRequest().getSession(), "pagination", result.size(), 10);
 				} else {
 					msg = "error search strign not defined";
