@@ -27,4 +27,56 @@
 	margin-top: 10px;
 }
 
+.template .properties {
+	overflow: hidden;
+}
+
+table {
+	margin-top: 15px;
+}
+
+table th, table td {
+	border: 0 none;
+}
+
+.template table thead th {
+	background: none repeat scroll 0 0 #555555;	
+	border-right: 1px solid #777777;
+    color: #CCCCCC;
+    font-size: 12px;    
+    text-shadow: none;
+    text-transform: uppercase;
+    text-align: center;
+}
+
+table th {
+	background: none;
+	padding: 8px 10px;
+	vertical-align: middle;	
+	border-right: 1px solid #DDDDDD;
+}
+
+table td {
+	text-align: center;
+	vertical-align: middle;
+}
+
+table td.input {
+	vertical-align: middle;
+}
+
+#image-preview {	
+	text-align: center;
+	overflow: auto;
+}
+
+#image-preview figure {
+	max-width: 1000px;
+	display: inline-block;		
+}
+
+input[readonly] {
+	opacity:0.4;
+}
+
 

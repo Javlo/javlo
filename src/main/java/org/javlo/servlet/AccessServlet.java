@@ -366,6 +366,8 @@ public class AccessServlet extends HttpServlet {
 				ModulesContext moduleContext = ModulesContext.getInstance(request.getSession(), globalContext);
 				moduleContext.initContext(request, response);
 
+				i18nAccess.setCurrentModule(globalContext, request.getSession(), moduleContext.getCurrentModule());
+
 				EditContext editCtx = EditContext.getInstance(globalContext, request.getSession());
 				ctx.setArea(editCtx.getCurrentArea());
 			}
@@ -549,16 +551,16 @@ public class AccessServlet extends HttpServlet {
 						}
 
 						response.setContentType("text/html; charset=" + ContentContext.CHARACTER_ENCODING);
-						
+
 						GlobalContext masterContext = GlobalContextFactory.getMasterGlobalContext(request.getSession());
 						if (masterContext != null) {
-							File editCSS = new File (URLHelper.mergePath(masterContext.getStaticFolder(), "/edit/specific.css"));
+							File editCSS = new File(URLHelper.mergePath(masterContext.getStaticFolder(), "/edit/specific.css"));
 							if (editCSS.exists()) {
 								String savePathPrefix = ctx.getPathPrefix();
 								ContentContext.setForcePathPrefix(request, masterContext.getContextKey());
-								String cssURL = URLHelper.createResourceURL(ctx,URLHelper.mergePath(globalContext.getStaticConfig().getStaticFolder(), "/edit/specific.css"));
+								String cssURL = URLHelper.createResourceURL(ctx, URLHelper.mergePath(globalContext.getStaticConfig().getStaticFolder(), "/edit/specific.css"));
 								request.setAttribute("specificCSS", cssURL);
-								ContentContext.setForcePathPrefix(request,savePathPrefix);
+								ContentContext.setForcePathPrefix(request, savePathPrefix);
 							}
 						} else {
 							logger.severe("master context not found.");

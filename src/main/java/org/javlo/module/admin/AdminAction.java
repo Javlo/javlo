@@ -609,7 +609,7 @@ public class AdminAction extends AbstractModuleAction {
 				List<String> templatesName = currentGlobalContext.getTemplatesNames();
 				List<Template.TemplateBean> selectedTemplate = new LinkedList<Template.TemplateBean>();
 				for (String name : templatesName) {
-					Template template = TemplateFactory.getDiskTemplate(request.getSession().getServletContext(), name, false);
+					Template template = TemplateFactory.getDiskTemplate(request.getSession().getServletContext(), name);
 					if (template != null) {
 						if (!template.isTemplateInWebapp(ctx)) {
 							template.importTemplateInWebapp(StaticConfig.getInstance(ctx.getRequest().getSession().getServletContext()), ctx);

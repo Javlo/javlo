@@ -296,17 +296,6 @@ public class TemplateFactory {
 		return getDiskTemplates(application).get(name);
 	}
 
-	public static Template getDiskTemplate(ServletContext application, String templateName, boolean mailing) throws IOException {
-		Template template = null;
-		if (templateName != null) {
-			Map<String, Template> allTemplates;
-			allTemplates = TemplateFactory.getDiskTemplates(application);
-
-			template = allTemplates.get(templateName);
-		}
-		return template;
-	}
-
 	/**
 	 * get templates from template list cache or from disk if the cache does'nt exist.
 	 * 

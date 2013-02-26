@@ -122,7 +122,7 @@ public class DefaultTemplate extends Template {
 	}
 
 	@Override
-	public String getImageConfigFile() {
+	public String getImageConfigFileName() {
 		return "image-config.properties";
 	}
 
@@ -233,7 +233,7 @@ public class DefaultTemplate extends Template {
 	}
 
 	@Override
-	protected String getImageFiltersRAW() {
+	public String getImageFiltersRAW() {
 		return "standard;full;under-control-free";
 	}
 

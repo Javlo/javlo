@@ -33,11 +33,11 @@ public class PaginationContext {
 		return (PaginationContext) session.getAttribute(key);
 	}
 
-	public static PaginationContext getInstance(HttpSession session, String key, int countElement, int elemByPage) throws ServiceException {
+	public static PaginationContext getInstance(HttpSession session, String key, int inCountElement, int elemByPage) throws ServiceException {
 		int maxPage = 1;
 		if (elemByPage > 0) {
-			maxPage = countElement / elemByPage;
-			if (countElement % elemByPage != 0) {
+			maxPage = inCountElement / elemByPage;
+			if (inCountElement % elemByPage != 0) {
 				maxPage = maxPage + 1;
 			}
 		}
@@ -50,17 +50,17 @@ public class PaginationContext {
 		service.maxPage = maxPage;
 		service.pageSize = elemByPage;
 
-		if (service.countElement != countElement) {
-			service.countElement = countElement;
+		if (service.countElement != inCountElement) {
+			service.countElement = inCountElement;
 			service.setPage(1);
 		}
 
 		return service;
 	}
 
-	public static PaginationContext getInstance(HttpSession session, int countElement, int elemByPage) throws ServiceException {
-		int maxPage = countElement / elemByPage;
-		if (countElement % elemByPage != 0) {
+	public static PaginationContext getInstance(HttpSession session, int inCountElement, int elemByPage) throws ServiceException {
+		int maxPage = inCountElement / elemByPage;
+		if (inCountElement % elemByPage != 0) {
 			maxPage = maxPage + 1;
 		}
 		PaginationContext service = (PaginationContext) session.getAttribute(KEY);
@@ -71,8 +71,8 @@ public class PaginationContext {
 		service.maxPage = maxPage;
 		service.pageSize = elemByPage;
 
-		if (service.countElement != countElement) {
-			service.countElement = countElement;
+		if (service.countElement != inCountElement) {
+			service.countElement = inCountElement;
 			service.setPage(1);
 		}
 
