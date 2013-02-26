@@ -228,6 +228,10 @@ public class PaginationContext {
 		return writer.toString();
 	}
 
+	public int getCountElement() {
+		return countElement;
+	}
+
 	public String getKey() {
 		if (key == null) {
 			return KEY;
