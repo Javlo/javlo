@@ -1,6 +1,6 @@
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
 <%@ taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions" %>
-<c:if test="${fn:length(info.contentLanguages) > 1 and empty param.previewEdit}">
+<c:if test="${fn:length(info.contentLanguages) > 1 and empty param.previewEdit && empty param.templateid}">
 <div class="special${empty componentsList?' last':''}">
 <form id="form-languages" action="${info.currentURL}" method="post" class="js-submit">
 <div class="select-languages form_default">
