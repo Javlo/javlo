@@ -183,13 +183,6 @@ public class I18nAccess implements Serializable {
 	public void setCurrentModule(GlobalContext globalContext, HttpSession session, Module currentModule) throws IOException {
 
 		if (!currentModule.equals(this.currentModule)) {
-			if (currentModule.getName().equals("file")) {
-				try {
-					throw new Exception();
-				} catch (Exception e) {
-					e.printStackTrace();
-				}
-			}
 			this.currentModule = currentModule;
 			moduleEdit = currentModule.loadEditI18n(globalContext, session);
 			propEditMap = null;
