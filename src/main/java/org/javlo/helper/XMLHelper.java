@@ -145,7 +145,7 @@ public class XMLHelper {
 			out.println("<properties name=\"" + name + "\">");
 			for (String key : contentMap.keySet()) {
 				if (contentMap.get(key) != null && contentMap.get(key).length() > 0) {
-					out.print("<property key=\"" + key + "\">");
+					out.print("<property key=\"" + StringHelper.toXMLAttribute(key) + "\">");
 					out.print("<![CDATA[");
 					out.print(contentMap.get(key));
 					out.print("]]>");

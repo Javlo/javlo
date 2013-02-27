@@ -50,6 +50,7 @@ import org.javlo.servlet.zip.ZipManagement;
 import org.javlo.template.Template;
 import org.javlo.template.TemplateFactory;
 import org.javlo.utils.ReadOnlyPropertiesConfigurationMap;
+import org.javlo.utils.StructuredProperties;
 import org.javlo.ztatic.FileCache;
 
 public class TemplateAction extends AbstractModuleAction {
@@ -431,7 +432,7 @@ public class TemplateAction extends AbstractModuleAction {
 			return "error, template not found.";
 		}
 
-		Properties imageConfig = new Properties();
+		StructuredProperties imageConfig = new StructuredProperties();
 		Reader fileReader = new FileReader(template.getImageConfigFile());
 		imageConfig.load(fileReader);
 		fileReader.close();
