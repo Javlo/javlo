@@ -2240,7 +2240,7 @@ public class StringHelper {
 	 */
 	public static String toXMLAttribute(String value) {
 		value = value.replace("&", "&amp;");
-		value = value.replace(" ", "%20");
+		// value = value.replace(" ", "%20");
 		return value.replace("\"", "&quot;");
 	}
 

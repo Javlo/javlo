@@ -10,7 +10,7 @@
             	<img src="${template.previewUrl}" alt="${template.name}" />
             </c:if>
             <c:if test="${not empty param.previewEdit}">
-            	<a href="${info.currentURL}?webaction=selectTemplate&name=${template.name}&previewEdit=true">
+            	<a href="${info.currentURL}?webaction=selectTemplate&templateid=${template.name}&previewEdit=true">
             	<img src="${template.previewUrl}" alt="${template.name}" />
            		<div class="info">
 				   <p>
@@ -55,13 +55,13 @@
                 </p>                
                 <p class="menu">                	
                     <a href="${template.viewUrl}" class="view" title="${template.name}"></a>
-                    <a href="${info.currentURL}?webaction=goEditTemplate&templateid=${template.name}&mailing=${template.mailing}" class="edit"></a>
-                    <a href="${info.currentURL}?webaction=delete&templateid=${template.name}&mailing=${template.mailing}" class="delete"></a>
+                    <a href="${info.currentURL}?webaction=goEditTemplate&templateid=${template.name}" class="edit"></a>
+                    <a href="${info.currentURL}?webaction=delete&templateid=${template.name}" class="delete"></a>
                     <c:if test="${not empty selectUrl}">
                     <a href="${selectUrl}&template=${template.name}&mailing=${template.mailing}" class="select" title="select"></a>
                     </c:if>
                     <c:if test="${not template.valid}">
-                    <a href="${info.currentURL}?webaction=validate&templateid=${template.name}&mailing=${template.mailing}" class="validate" title="validate"></a>
+                    <a href="${info.currentURL}?webaction=validate&templateid=${template.name}" class="validate" title="validate"></a>
                     </c:if>
                 </p>                
             </div><!--info-->
