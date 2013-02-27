@@ -73,6 +73,7 @@ import org.javlo.user.AdminUserFactory;
 import org.javlo.user.IUserFactory;
 import org.javlo.user.User;
 import org.javlo.utils.SmartMap;
+import org.javlo.utils.StructuredProperties;
 import org.javlo.utils.TimeMap;
 import org.javlo.ztatic.StaticInfo;
 
@@ -1431,7 +1432,7 @@ public class GlobalContext implements Serializable {
 
 	public synchronized void initDataFile() {
 		if (dataProperties == null) {
-			dataProperties = new Properties();
+			dataProperties = new StructuredProperties();
 		}
 		InputStream in = null;
 		try {
