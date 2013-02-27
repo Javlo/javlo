@@ -10,7 +10,6 @@ import org.apache.commons.configuration.ConfigurationException;
 import org.javlo.actions.AbstractModuleAction;
 import org.javlo.context.ContentContext;
 import org.javlo.context.GlobalContext;
-import org.javlo.context.GlobalContextFactory;
 import org.javlo.helper.StringHelper;
 import org.javlo.i18n.I18nAccess;
 import org.javlo.message.GenericMessage;
@@ -28,29 +27,46 @@ public class TicketAction extends AbstractModuleAction {
 		return "ticket";
 	}
 
-	private static Map<String, TicketBean> getMyTicket(ContentContext ctx) throws IOException, ConfigurationException {
+	public static Map<String, TicketBean> getMyTicket(ContentContext ctx) throws IOException, ConfigurationException {
 		GlobalContext globalContext = GlobalContext.getInstance(ctx.getRequest());
 		Map<String, TicketBean> myTickets = new HashMap<String, TicketBean>();
 
 		String status = ctx.getRequest().getParameter("filter_status");
 
-		if (globalContext.isMaster()) {
-			Collection<GlobalContext> allContext = GlobalContextFactory.getAllGlobalContext(ctx.getRequest().getSession());
-			for (GlobalContext gc : allContext) {
-				TicketService ticketService = TicketService.getInstance(gc);
-				for (TicketBean ticket : ticketService.getTickets()) {
-					if (status == null || status.trim().length() == 0 || ticket.getStatus().equals(status)) {
-						myTickets.put(ticket.getId(), ticket);
-					}
+		Collection<TicketBean> tickets = TicketService.getAllTickets(ctx);
+
+		if (globalContext.isMaster() && ctx.getCurrentEditUser() != null) {
+			for (TicketBean ticket : tickets) {
+				if (status == null || status.trim().length() == 0 || ticket.getStatus().equals(status)) {
+					myTickets.put(ticket.getId(), ticket);
 				}
 			}
 		} else {
-
-			TicketService ticketService = TicketService.getInstance(globalContext);
-			for (TicketBean ticket : ticketService.getTickets()) {
-				if (AdminUserSecurity.getInstance().isAdmin(ctx.getCurrentEditUser()) || ticket.getAuthors().equals(ctx.getCurrentEditUser().getLogin())) {
+			for (TicketBean ticket : tickets) {
+				if (ctx.getCurrentEditUser() != null && (AdminUserSecurity.getInstance().isAdmin(ctx.getCurrentEditUser()) || ticket.getAuthors().equals(ctx.getCurrentEditUser().getLogin())) && ticket.getContext().equals(globalContext.getContextKey())) {
 					if (status == null || status.trim().length() == 0 || ticket.getStatus().equals(status)) {
 						myTickets.put(ticket.getId(), ticket);
+					}
+				} else { // sharing ticket
+					boolean sharing = false;
+					if (ticket.getShare() != null) {
+						if (ticket.getShare().equals("public")) {
+							sharing = true;
+						} else if (ticket.getShare().equals("")) {
+							sharing = false;
+						} else if (ticket.getShare().equals("site")) {
+							sharing = globalContext.getContextKey().equals(ticket.getContext());
+							if (sharing) {
+								sharing = ctx.getCurrentEditUser() != null;
+							}
+						} else if (ticket.getShare().equals("allsites")) {
+							sharing = ctx.getCurrentEditUser() != null;
+						}
+					}
+					if (sharing) {
+						if (status == null || status.trim().length() == 0 || ticket.getStatus().equals(status)) {
+							myTickets.put(ticket.getId(), ticket);
+						}
 					}
 				}
 			}
@@ -86,12 +102,12 @@ public class TicketAction extends AbstractModuleAction {
 		return msg;
 	}
 
-	public static String performList(ContentContext ctx) throws ConfigurationException, IOException {
-		ctx.getAjaxData().put("tickets", getMyTicket(ctx));
-		return null;
-	}
-
 	public static String performUpdate(RequestService rs, ContentContext ctx, GlobalContext globalContext, User user, MessageRepository messageRepository, I18nAccess i18nAccess) throws Exception {
+
+		if (rs.getParameter("back", null) != null) {
+			return null;
+		}
+
 		TicketService ticketService = TicketService.getInstance(globalContext);
 		String id = rs.getParameter("id", "");
 		TicketBean ticket;
@@ -111,20 +127,25 @@ public class TicketAction extends AbstractModuleAction {
 			ticket.setAuthors(user.getLogin());
 			ticket.setContext(globalContext.getContextKey());
 		}
-		ticket.setTitle(rs.getParameter("title", ticket.getTitle()));
-		ticket.setPriority(Integer.parseInt(rs.getParameter("priority", "" + ticket.getPriority())));
-		ticket.setCategory(rs.getParameter("category", ticket.getCategory()));
-		ticket.setMessage(rs.getParameter("message", ticket.getMessage()));
-		ticket.setStatus(rs.getParameter("status", ticket.getStatus()));
-		ticket.setUrl(rs.getParameter("url", ticket.getUrl()));
-		ticket.setDeleted(rs.getParameter("delete", null) != null);
-		if (rs.getParameter("comment", "").trim().length() > 0) {
-			ticket.addComments(new Comment(user.getLogin(), rs.getParameter("comment", "")));
-			if (!ticket.getAuthors().equals(ctx.getCurrentEditUser().getLogin())) {
-				ticket.setRead(false);
-			}
+
+		if (rs.getParameter("delete", null) != null) {
+			ticket.setDeleted(true);
 		} else {
-			ctx.getRequest().setAttribute("back-list", true);
+			ticket.setTitle(rs.getParameter("title", ticket.getTitle()));
+			ticket.setPriority(Integer.parseInt(rs.getParameter("priority", "" + ticket.getPriority())));
+			ticket.setCategory(rs.getParameter("category", ticket.getCategory()));
+			ticket.setMessage(rs.getParameter("message", ticket.getMessage()));
+			ticket.setStatus(rs.getParameter("status", ticket.getStatus()));
+			ticket.setShare(rs.getParameter("share", ticket.getShare()));
+			ticket.setUrl(rs.getParameter("url", ticket.getUrl()));
+			if (rs.getParameter("comment", "").trim().length() > 0) {
+				ticket.addComments(new Comment(user.getLogin(), rs.getParameter("comment", "")));
+				if (!ticket.getAuthors().equals(ctx.getCurrentEditUser().getLogin())) {
+					ticket.setRead(false);
+				}
+			} else {
+				ctx.getRequest().setAttribute("back-list", true);
+			}
 		}
 		ticketService.updateTicket(ticket);
 

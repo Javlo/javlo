@@ -12,6 +12,17 @@ input, textarea, select {
 	float: left;
 }
 
+.col-container {
+	overflow: hidden;
+}
+
+.frame {
+	margin: 4px 0;
+	border: 1px solid #CCCCCC;
+    border-radius: 3px 3px 3px 3px;    
+    padding: 4px;
+}
+
 .logo .text {
 	color: #CCCCCC;    
     font-size: 16px;

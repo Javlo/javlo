@@ -17,6 +17,7 @@ public class TicketBean implements Serializable {
 
 	private String id = StringHelper.getRandomId();
 	private String title;
+	private String share;
 	private String message;
 	private String context;
 	private String url;
@@ -164,5 +165,13 @@ public class TicketBean implements Serializable {
 
 	public void setDeleted(boolean deleted) {
 		this.deleted = deleted;
+	}
+
+	public String getShare() {
+		return share;
+	}
+
+	public void setShare(String share) {
+		this.share = share;
 	}
 }

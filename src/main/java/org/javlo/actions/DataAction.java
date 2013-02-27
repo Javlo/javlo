@@ -2,11 +2,15 @@ package org.javlo.actions;
 
 import java.io.ByteArrayOutputStream;
 import java.io.File;
+import java.io.IOException;
 import java.io.InputStream;
 import java.io.PrintStream;
 import java.util.Collection;
 import java.util.logging.Logger;
 
+import javax.servlet.http.HttpSession;
+
+import org.apache.commons.configuration.ConfigurationException;
 import org.apache.commons.fileupload.FileItem;
 import org.apache.commons.io.FileExistsException;
 import org.javlo.component.core.ComponentBean;
@@ -26,6 +30,7 @@ import org.javlo.i18n.I18nAccess;
 import org.javlo.macro.ImportJCRPageMacro;
 import org.javlo.message.GenericMessage;
 import org.javlo.message.MessageRepository;
+import org.javlo.module.ticket.TicketAction;
 import org.javlo.service.ContentService;
 import org.javlo.service.NotificationService;
 import org.javlo.service.RequestService;
@@ -62,6 +67,11 @@ public class DataAction implements IAction {
 		} else {
 			return "no access";
 		}
+		return null;
+	}
+
+	public static String performTickets(ContentContext ctx) throws ConfigurationException, IOException {
+		ctx.getAjaxData().put("tickets", TicketAction.getMyTicket(ctx));
 		return null;
 	}
 
@@ -152,10 +162,6 @@ public class DataAction implements IAction {
 					for (IContentVisualComponent comp : mediaComps) {
 						Multimedia multimedia = (Multimedia) comp;
 						if (multimedia.getCurrentRootFolder().length() > tpl.getImportGalleryFolder().length()) {
-
-							System.out.println("***** DataAction.performUpload : multimedia id = " + multimedia.getId()); // TODO: remove debug trace
-							System.out.println("***** DataAction.performUpload : multimedia page = " + multimedia.getPage().getName()); // TODO: remove debug trace
-
 							galleryRelativeFolder = URLHelper.mergePath(gc.getStaticConfig().getStaticFolder(), multimedia.getCurrentRootFolder());
 							galleryFound = true;
 							ctx.setNeedRefresh(true);
@@ -183,8 +189,6 @@ public class DataAction implements IAction {
 					}
 				}
 
-				System.out.println("***** DataAction.performUpload : galleryFound = " + galleryFound); // TODO: remove debug trace
-
 				if (!galleryFound) {
 					ComponentBean multimedia = new ComponentBean(Multimedia.TYPE, "--12,128-" + galleryRelativeFolder.replaceFirst(gc.getStaticConfig().getStaticFolder(), "") + "---", ctx.getRequestContentLanguage());
 					multimedia.setStyle(Multimedia.IMAGE);
@@ -194,9 +198,6 @@ public class DataAction implements IAction {
 					if (titles.size() > 0) {
 						previousId = titles.iterator().next().getId();
 					}
-
-					System.out.println("***** DataAction.performUpload : previousId = " + previousId); // TODO: remove debug trace
-
 					cs.createContent(ctx, multimedia, previousId, true);
 
 					ctx.setNeedRefresh(true);
@@ -206,6 +207,11 @@ public class DataAction implements IAction {
 		} catch (FileExistsException e) {
 			messageRepository.setGlobalMessage(new GenericMessage(i18nAccess.getText("data.file-allready-exist", "file allready exist."), GenericMessage.ERROR));
 		}
+		return null;
+	}
+
+	public static String performSessionId(ContentContext ctx, HttpSession session, User user) {
+		ctx.getAjaxData().put("sessionId", session.getId());
 		return null;
 	}
 }

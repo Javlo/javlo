@@ -10,6 +10,7 @@
 		<option ${param.filter_status == 'working'?'selected="selected"':''}>working</option>
 		<option ${param.filter_status == 'refuse'?'selected="selected"':''}>refuse</option>
 		<option ${param.filter_status == 'onold'?'selected="selected"':''}>onold</option>
+		<option ${param.filter_status == 'done'?'selected="selected"':''}>done</option>
 		<option ${param.filter_status == 'archived'?'selected="selected"':''}>archived</option>
 	</select>
 	<input type="submit" value="${i18n.edit['global.ok']}" />
