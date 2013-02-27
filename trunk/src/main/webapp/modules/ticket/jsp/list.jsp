@@ -11,9 +11,10 @@
        <th class="head1">update</th>       
        <th class="head0">#comments</th>
        <th class="head1">status</th>
-       <c:if test="${globalContext.master}">
+       <c:if test="${globalContext.master}">       
        <th class="head0">authors</th>
        <th class="head1">context</th>
+       <th class="head0">share</th>
        </c:if>       
      </tr>     
 </thead>
@@ -28,11 +29,12 @@
     <c:if test="${globalContext.master}">
     <col class="con0" />
     <col class="con1" />
+    <col class="con0" />
     </c:if>
 </colgroup>
 <tbody> 
  <c:forEach var="ticket" items="${tickets}">
- <tr class="gradeX">	 
+ <tr class="gradeX${ticket.deleted?' deleted':''}">	 
      <td class="con0"><a class="${ticket.read?'read':'unread'}" href="${info.currentURL}?id=${ticket.id}">${ticket.title}</a><span class="hidden">${ticket.message}</span></td>     	 
      <td class="con1">${ticket.priority}</td>     
      <td class="con0">${ticket.creationDateLabel}</td>
@@ -42,6 +44,7 @@
      <c:if test="${globalContext.master}">
      <td class="con0">${ticket.authors}</td>
      <td class="con1">${ticket.context}</td>
+     <td class="con0"><a class="share ${ticket.share}" href="${info.currentURL}?id=${ticket.id}"><c:if test="${empty ticket.share}">none</c:if>${ticket.share}</a></td>
      </c:if>
  </tr>     
 </c:forEach>
@@ -58,6 +61,7 @@
        <c:if test="${globalContext.master}">
        <th class="head0 filter">authors</th>
        <th class="head1 filter">context</th>
+        <th class="head0">share</th>
        </c:if>        
      </tr> 
    </tr>
@@ -76,6 +80,7 @@ jQuery(document).ready(function() {
 		               null,
 		               null,		               
 		               <c:if test="${globalContext.master}">
+		               null,
 		               null,
 		               null,
 		               </c:if>

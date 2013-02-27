@@ -5,11 +5,15 @@ import java.io.FileFilter;
 import java.io.IOException;
 import java.util.Collection;
 import java.util.HashMap;
+import java.util.LinkedList;
+import java.util.List;
 import java.util.Map;
 
+import org.apache.commons.configuration.ConfigurationException;
 import org.apache.commons.io.filefilter.FileFilterUtils;
 import org.javlo.context.ContentContext;
 import org.javlo.context.GlobalContext;
+import org.javlo.context.GlobalContextFactory;
 import org.javlo.helper.ResourceHelper;
 import org.javlo.helper.URLHelper;
 
@@ -76,5 +80,15 @@ public class TicketService {
 
 	public Collection<TicketBean> getTickets() {
 		return tickets.values();
+	}
+
+	public static List<TicketBean> getAllTickets(ContentContext ctx) throws IOException, ConfigurationException {
+		List<TicketBean> allTickets = new LinkedList<TicketBean>();
+		Collection<GlobalContext> allContext = GlobalContextFactory.getAllGlobalContext(ctx.getRequest().getSession());
+		for (GlobalContext gc : allContext) {
+			TicketService ticketService = TicketService.getInstance(gc);
+			allTickets.addAll(ticketService.getTickets());
+		}
+		return allTickets;
 	}
 }
