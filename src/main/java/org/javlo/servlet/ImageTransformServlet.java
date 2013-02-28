@@ -46,7 +46,9 @@ import com.jhlabs.image.EmbossFilter;
 import com.jhlabs.image.GrayscaleFilter;
 
 /**
- * @author pvandermaesen This Class get all button params from the html file and create a new TextButton with this params.
+ * transform a image. url : /transform/[filter]/[template]/[area]/[local*]|[]/uri_to_image. *local = access to a file in the webapp, if not local the file come from data folder.
+ * 
+ * @author pvandermaesen.
  * 
  * 
  */
@@ -510,8 +512,9 @@ public class ImageTransformServlet extends HttpServlet {
 				}
 			} else if (imageName.startsWith("/static")) {
 				staticInfo = StaticInfo.getInstance(ctx, imageName.replaceFirst("/static", ""));
-			} else {
+			} else if (imageName.startsWith("/local")) {
 				localFile = true;
+				imageName = imageName.replaceFirst("/local", "");
 				staticInfo = StaticInfo.getInstance(ctx, new File(getServletContext().getRealPath(imageName)));
 			}
 

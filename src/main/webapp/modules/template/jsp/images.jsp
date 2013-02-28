@@ -21,7 +21,7 @@
 	
 	<script type="text/javascript">	
 		function imagePreview(area) {
-			jQuery("#image-preview img").attr("src", "${info.staticRootURL}transform/${param.filter}/${currentTemplate.name}/"+area+"/images/demo.jpg?random="+Math.floor(Math.random()*10000));
+			jQuery("#image-preview img").attr("src", "${info.staticRootURL}transform/${param.filter}/${currentTemplate.name}/"+area+"/local/images/demo.jpg?random="+Math.floor(Math.random()*10000));
 			jQuery("#image-preview legend").html("preview : "+area);
 		}
 	</script>
