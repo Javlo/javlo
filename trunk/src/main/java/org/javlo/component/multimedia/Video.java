@@ -252,7 +252,7 @@ public class Video extends GlobalImage implements IAction, IVideo {
 	}
 
 	protected String getImageFilter(ContentContext ctx) {
-		return getConfig(ctx).getProperty("image.filter", "video");
+		return getConfig(ctx).getProperty("image.filter", "preview");
 	}
 
 	@Override
