@@ -79,4 +79,7 @@ input[readonly] {
 	opacity:0.4;
 }
 
+.css textarea {
+	height: 500px;
+}
 
