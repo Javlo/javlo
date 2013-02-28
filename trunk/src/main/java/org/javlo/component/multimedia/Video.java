@@ -187,7 +187,7 @@ public class Video extends GlobalImage implements IAction, IVideo {
 				NetHelper.readPage(url, out);
 				ResourceHelper.closeResource(out);
 			}
-			return URLHelper.createTransformURL(ctx, URLHelper.mergePath(staticConfig.getImageFolder(), "youtube", fileName), getConfig(ctx).getProperty("image.filter", "video"));
+			return URLHelper.createTransformURL(ctx, URLHelper.mergePath(staticConfig.getImageFolder(), "youtube", fileName), getConfig(ctx).getProperty("image.filter", "preview"));
 		}
 		return null;
 	}
@@ -248,7 +248,7 @@ public class Video extends GlobalImage implements IAction, IVideo {
 
 	@Override
 	protected String getDefaultFilter() {
-		return "video";
+		return "preview";
 	}
 
 	protected String getImageFilter(ContentContext ctx) {
