@@ -1,5 +1,6 @@
 package org.javlo.helper;
 
+import java.awt.image.BufferedImage;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
@@ -14,6 +15,7 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.zip.CRC32;
 
+import javax.imageio.ImageIO;
 import javax.mail.internet.InternetAddress;
 import javax.servlet.http.HttpServletResponse;
 
@@ -386,6 +388,11 @@ public class NetHelper {
 					if (img == null) {
 						img = ImageHelper.getJpegSize(new ByteArrayInputStream(imageArray));
 					}
+					if (img == null) {
+						logger.warning("no imagesize found for : "+url);
+						BufferedImage bufImg = ImageIO.read(new ByteArrayInputStream(imgBuffer.toByteArray()));
+						img = new ImageSize(bufImg.getWidth(), bufImg.getHeight());
+					}
 					imageArray = null;
 
 					if (img != null) {
@@ -436,7 +443,7 @@ public class NetHelper {
 								}
 							}
 						}
-					}
+					} s
 				} catch (Exception e) {
 					// just next image
 				}
