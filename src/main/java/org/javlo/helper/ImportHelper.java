@@ -1,12 +1,18 @@
 package org.javlo.helper;
 
 import java.io.File;
+import java.io.FileInputStream;
 import java.io.InputStream;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.Collection;
 import java.util.LinkedList;
 
+import org.apache.poi.POIOLE2TextExtractor;
+import org.apache.poi.POITextExtractor;
+import org.apache.poi.extractor.ExtractorFactory;
+import org.apache.poi.hwpf.extractor.WordExtractor;
+import org.apache.poi.poifs.filesystem.POIFSFileSystem;
 import org.htmlparser.Node;
 import org.htmlparser.NodeFilter;
 import org.htmlparser.Parser;
@@ -171,6 +177,38 @@ public class ImportHelper {
 			return "url is'nt valid : " + e.getMessage();
 		}
 		return null;
+	}
+
+	public static void main(String[] args) {
+		File file = new File("d:/trans/test_doc.doc");
+		FileInputStream fis;
+		try {
+			fis = new FileInputStream(file);
+			POIFSFileSystem fileSystem = new POIFSFileSystem(fis);
+			// Firstly, get an extractor for the Workbook
+			POIOLE2TextExtractor oleTextExtractor = ExtractorFactory.createExtractor(fileSystem);
+
+			System.out.println("t:" + oleTextExtractor.getText());
+
+			POITextExtractor[] embeddedExtractors = ExtractorFactory.getEmbededDocsTextExtractors(oleTextExtractor);
+			System.out.println("***** ImportHelper.main : size : " + embeddedExtractors.length); // TODO: remove debug trace
+			for (POITextExtractor textExtractor : embeddedExtractors) {
+				if (textExtractor instanceof WordExtractor) {
+					WordExtractor wordExtractor = (WordExtractor) textExtractor;
+					String[] paragraphText = wordExtractor.getParagraphText();
+					for (String paragraph : paragraphText) {
+						System.out.println(paragraph);
+					}
+					// Display the document's header and footer text
+					System.out.println("Footer text: " + wordExtractor.getFooterText());
+					System.out.println("Header text: " + wordExtractor.getHeaderText());
+				} else {
+					System.out.println("not word document : " + textExtractor);
+				}
+			}
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
 	}
 
 }

@@ -250,7 +250,7 @@ public class DefaultTemplate extends Template {
 	@Override
 	public File getLinkEmail(String lg) {
 		String templateFolder = config.getTemplateFolder();
-		File linkEmailFile = new File(URLHelper.mergePath(URLHelper.mergePath(templateFolder, getSourceFolder()), getLinkEmailFileName(lg)));
+		File linkEmailFile = new File(URLHelper.mergePath(URLHelper.mergePath(templateFolder, getSourceFolderName()), getLinkEmailFileName(lg)));
 		return linkEmailFile;
 
 	}

@@ -326,9 +326,6 @@ public class TemplateFactory {
 	}
 
 	public static Template getTemplate(ContentContext ctx, MenuElement elem) throws Exception {
-		if (templateNotExist.contains(elem.getTemplateId())) {
-			return null;
-		}
 		String key = "_template_" + elem.getId() + '_' + ctx.getRenderMode();
 		if (ctx.getRequest().getAttribute(key) != null) {
 			return (Template) ctx.getRequest().getAttribute(key);
@@ -345,12 +342,10 @@ public class TemplateFactory {
 		}
 		if (template == null) {
 			GlobalContext globalContext = GlobalContext.getInstance(ctx.getRequest());
-			template = TemplateFactory.getDiskTemplate(ctx.getRequest().getSession().getServletContext(), globalContext.getDefaultTemplate());
-			if (template == null) {
-				templateNotExist.add(elem.getTemplateId());
-			}
+			template = TemplateFactory.getTemplates(ctx.getRequest().getSession().getServletContext()).get(globalContext.getDefaultTemplate());
+		} else {
+			ctx.getRequest().setAttribute(key, template);
 		}
-		ctx.getRequest().setAttribute(key, template);
 		return template;
 	}
 }
