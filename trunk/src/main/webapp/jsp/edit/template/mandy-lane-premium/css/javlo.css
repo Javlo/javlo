@@ -69,10 +69,12 @@ h1 {
 	color: #aaaaaa;
 	font-style: italic;
 }
+
 ::-webkit-input-placeholder {
 	color: #aaaaaa;
 	font-style: italic;
 }
+
 :-moz-placeholder {
 	color: #aaaaaa;
 	font-style: italic;
@@ -1300,4 +1302,55 @@ body.previewEdit {
     right: 220px;
     left: auto;
     margin-top: 0;
+}
+
+.static-tabs ul {
+	 margin: 0;
+	 padding: 0;	 
+	 border-radius: 3px 3px 0 0;
+	 background: url("../../images/thead.png") repeat-x scroll left top #EEEEEE;
+     border-top: 1px solid #CCCCCC;
+     border-left: 1px solid #CCCCCC;
+     border-right: 1px solid #CCCCCC;
+     border-bottom: 1px solid #CCCCCC;     
+     position: relative;
+     height: 41px;
+}
+
+
+.static-tabs li {
+	display: inline-block;
+    float: left;
+	margin: 0;
+	padding: 0;	
+}
+
+.static-tabs li a {	
+    background: none repeat scroll 0 0 #EEEEEE;    
+    border-right: 1px solid #CCCCCC;
+    border-bottom: 1px solid #CCCCCC;
+    color: #333333;
+    display: block;
+    padding: 10px 20px;    
+}
+
+.static-tabs li a:hover {
+	background: none repeat scroll 0 0 #E7E7E7;
+}
+
+.static-tabs li.active a {
+	background: none repeat scroll 0 0 #FCFCFC;
+    border-bottom: 1px solid #FCFCFC;
+    color: #006699;    
+}
+
+
+.static-tabs .body {	 
+	 padding: 15px;
+	 border-radius: 0 0 3px 3px;
+	 background: none repeat scroll 0 0 #FCFCFC;
+	 overflow: hidden;
+	 border-bottom: 1px solid #CCCCCC;
+     border-right: 1px solid #CCCCCC;
+     border-left: 1px solid #CCCCCC;
 }

@@ -33,6 +33,7 @@ import org.apache.commons.configuration.ConfigurationException;
 import org.apache.commons.configuration.PropertiesConfiguration;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.FilenameUtils;
+import org.apache.commons.io.filefilter.FileFilterUtils;
 import org.apache.commons.lang.StringUtils;
 import org.javlo.component.core.ComponentBean;
 import org.javlo.config.StaticConfig;
@@ -237,6 +238,7 @@ public class Template implements Comparable<Template> {
 		String creationDate;
 		String downloadURL;
 		List<String> ids;
+		List<String> css;
 		Map<String, String> areaMap;
 		List<String> areas;
 		boolean valid;
@@ -298,6 +300,7 @@ public class Template implements Comparable<Template> {
 			type = IRemoteResource.TYPE_TEMPLATE;
 			category = staticConfig.getMarketServerName();
 			imageFilter = template.getImageFiltersRAW();
+			css = template.getCSS();
 		}
 
 		public String getPreviewUrl() throws Exception {
@@ -477,6 +480,10 @@ public class Template implements Comparable<Template> {
 			return imageFilter;
 		}
 
+		public List<String> getCSS() {
+			return css;
+		}
+
 	}
 
 	public static class TemplateDateComparator implements Comparator<Template> {
@@ -615,6 +622,7 @@ public class Template implements Comparable<Template> {
 	}
 
 	private static Template getInstance(StaticConfig config, ContentContext ctx, String templateDir, boolean alternativeTemplate) throws ConfigurationException, IOException {
+
 		if ((templateDir == null) || templateDir.trim().length() == 0) {
 			return DefaultTemplate.INSTANCE;
 		}
@@ -686,7 +694,7 @@ public class Template implements Comparable<Template> {
 	public List<GenericMessage> checkRenderer(GlobalContext globalContext, I18nAccess i18nAccess) throws IOException, BadXMLException {
 		String templateFolder = config.getTemplateFolder();
 
-		File HTMLFile = new File(URLHelper.mergePath(URLHelper.mergePath(templateFolder, getSourceFolder()), getHTMLFile(null)));
+		File HTMLFile = new File(URLHelper.mergePath(URLHelper.mergePath(templateFolder, getSourceFolderName()), getHTMLFile(null)));
 
 		List<GenericMessage> messages = new LinkedList<GenericMessage>();
 		List<String> resources = new LinkedList<String>();
@@ -707,10 +715,10 @@ public class Template implements Comparable<Template> {
 
 	public void clearRenderer(ContentContext ctx) {
 		String templateFolder = config.getTemplateFolder();
-		File templateSrc = new File(URLHelper.mergePath(templateFolder, getSourceFolder()));
+		File templateSrc = new File(URLHelper.mergePath(templateFolder, getSourceFolderName()));
 		if (templateSrc.exists()) {
 			try {
-				FileUtils.deleteDirectory(new File(URLHelper.mergePath(getWorkTemplateFolder(), getSourceFolder())));
+				FileUtils.deleteDirectory(new File(URLHelper.mergePath(getWorkTemplateFolder(), getSourceFolderName())));
 			} catch (IOException e) {
 				e.printStackTrace();
 			}
@@ -728,7 +736,7 @@ public class Template implements Comparable<Template> {
 	public void delete() {
 		try {
 			FileUtils.deleteDirectory(new File(getTemplateRealPath()));
-			FileUtils.deleteDirectory(new File(URLHelper.mergePath(getWorkTemplateFolder(), getSourceFolder())));
+			FileUtils.deleteDirectory(new File(URLHelper.mergePath(getWorkTemplateFolder(), getSourceFolderName())));
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
@@ -893,6 +901,28 @@ public class Template implements Comparable<Template> {
 		}
 		File[] propertiesFile = dynCompDir.listFiles(new PropertiesFilter());
 		return Arrays.asList(propertiesFile);
+	}
+
+	protected List<String> getCSS() throws IOException {
+		if (dir == null) {
+			return Collections.EMPTY_LIST;
+		}
+
+		config.getTemplateFolder();
+
+		Collection<File> file = ResourceHelper.getAllFiles(dir, FileFilterUtils.suffixFileFilter(".css"));
+		List<String> css = new LinkedList<String>();
+		for (File cssFile : file) {
+			String cssFileName = cssFile.getAbsolutePath().replace(dir.getAbsolutePath(), "");
+			cssFileName = cssFileName.replace("\\", "/");
+			if (cssFileName.startsWith("/")) {
+				cssFileName = cssFileName.substring(1);
+			}
+			css.add(cssFileName);
+		}
+
+		Collections.sort(css);
+		return css;
 	}
 
 	public Properties getConfigComponentFile(GlobalContext globalContext, String type) throws IOException {
@@ -1150,7 +1180,7 @@ public class Template implements Comparable<Template> {
 
 	public File getLinkEmail(String lg) {
 		String templateFolder = config.getTemplateFolder();
-		File linkEmailFile = new File(URLHelper.mergePath(URLHelper.mergePath(templateFolder, getSourceFolder()), getLinkEmailFileName(lg)));
+		File linkEmailFile = new File(URLHelper.mergePath(URLHelper.mergePath(templateFolder, getSourceFolderName()), getLinkEmailFileName(lg)));
 		return linkEmailFile;
 
 	}
@@ -1440,12 +1470,20 @@ public class Template implements Comparable<Template> {
 		return properties.getString("source", getParent().getSource());
 	}
 
-	public String getSourceFolder() {
+	public File getSourceFolder() {
+		return dir;
+	}
+
+	public String getSourceFolderName() {
 		if (dir == null) {
 			return null;
 		} else {
 			return dir.getName();
 		}
+	}
+
+	public File getFolder() {
+		return new File(URLHelper.mergePath(config.getTemplateFolder(), getSourceFolderName()));
 	}
 
 	public String getSpecialRendererTemplate() {
@@ -1540,7 +1578,7 @@ public class Template implements Comparable<Template> {
 			return null;
 		}
 		String templateFolder = config.getTemplateFolder();
-		return URLHelper.mergePath(templateFolder, getSourceFolder());
+		return URLHelper.mergePath(templateFolder, getSourceFolderName());
 	}
 
 	private String getTemplateTargetFolder(GlobalContext globalContext) {
@@ -1577,7 +1615,7 @@ public class Template implements Comparable<Template> {
 			globalContext = GlobalContext.getInstance(ctx.getRequest());
 		}
 		String templateFolder = config.getTemplateFolder();
-		File templateSrc = new File(URLHelper.mergePath(templateFolder, getSourceFolder()));
+		File templateSrc = new File(URLHelper.mergePath(templateFolder, getSourceFolderName()));
 		if (templateSrc.exists()) {
 
 			File templateTgt = new File(getTemplateTargetFolder(globalContext));
@@ -1597,7 +1635,7 @@ public class Template implements Comparable<Template> {
 			getParent().importTemplateInWebapp(config, ctx, globalContext, templateTarget);
 		}
 		String templateFolder = config.getTemplateFolder();
-		File templateSrc = new File(URLHelper.mergePath(templateFolder, getSourceFolder()));
+		File templateSrc = new File(URLHelper.mergePath(templateFolder, getSourceFolderName()));
 		if (templateSrc.exists()) {
 			logger.info("copy parent template from '" + templateSrc + "' to '" + templateTarget + "'");
 			FileUtils.copyDirectory(templateSrc, templateTarget, new WEBFileFilter(this, false, jsp, true), false);
@@ -1674,7 +1712,7 @@ public class Template implements Comparable<Template> {
 		String htmlFile = getHTMLFile(null);
 
 		String templateFolder = config.getTemplateFolder();
-		File indexFile = new File(URLHelper.mergePath(URLHelper.mergePath(templateFolder, getSourceFolder()), htmlFile));
+		File indexFile = new File(URLHelper.mergePath(URLHelper.mergePath(templateFolder, getSourceFolderName()), htmlFile));
 		return indexFile.exists();
 	}
 
@@ -1702,7 +1740,7 @@ public class Template implements Comparable<Template> {
 		String pdfFilStr = getVisualPDFile();
 
 		String templateFolder = config.getTemplateFolder();
-		File pdfFile = new File(URLHelper.mergePath(URLHelper.mergePath(templateFolder, getSourceFolder()), pdfFilStr));
+		File pdfFile = new File(URLHelper.mergePath(URLHelper.mergePath(templateFolder, getSourceFolderName()), pdfFilStr));
 		return pdfFile.exists();
 	}
 

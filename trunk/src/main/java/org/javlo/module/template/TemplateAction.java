@@ -31,6 +31,7 @@ import org.javlo.config.StaticConfig;
 import org.javlo.context.ContentContext;
 import org.javlo.context.EditContext;
 import org.javlo.context.GlobalContext;
+import org.javlo.helper.ResourceHelper;
 import org.javlo.helper.StringHelper;
 import org.javlo.helper.URLHelper;
 import org.javlo.helper.XMLManipulationHelper.BadXMLException;
@@ -164,6 +165,8 @@ public class TemplateAction extends AbstractModuleAction {
 					module.getMainBoxes().iterator().next().setRenderer("/jsp/images.jsp");
 
 					// module.setRenderer("/jsp/images.jsp");
+				} else if (requestService.getParameter("css", null) != null && requestService.getParameter("back", null) == null) {
+					module.getMainBoxes().iterator().next().setRenderer("/jsp/css.jsp");
 				}
 
 			}
@@ -502,6 +505,39 @@ public class TemplateAction extends AbstractModuleAction {
 			ImageConfig.getNewInstance(globalContext, session, template);
 		}
 
+		return null;
+	}
+
+	public static String performEditCSS(RequestService rs, ServletContext application, ContentContext ctx, MessageRepository messageRepository, I18nAccess i18nAccess) throws IOException {
+		String css = rs.getParameter("css", null);
+		if (css == null) {
+			return "error : no 'css' param.";
+		} else {
+			Template template = TemplateFactory.getTemplates(application).get(rs.getParameter("templateid", ""));
+			if (template == null) {
+				return "template not found";
+			} else {
+
+				// store new value
+				if (rs.getParameter("text", null) != null) {
+					File cssFile = new File(URLHelper.mergePath(template.getSourceFolder().getAbsolutePath(), rs.getParameter("file", "")));
+					if (cssFile.exists() && cssFile.isFile()) {
+						ResourceHelper.writeStringToFile(cssFile, rs.getParameter("text", null));
+					} else {
+						return "file not found : " + cssFile;
+					}
+				}
+
+				// load current value
+				File cssFile = new File(URLHelper.mergePath(template.getSourceFolder().getAbsolutePath(), css));
+				if (!cssFile.exists()) {
+					return "file not found : " + cssFile;
+				} else {
+					String text = ResourceHelper.loadStringFromFile(cssFile);
+					ctx.getRequest().setAttribute("text", text);
+				}
+			}
+		}
 		return null;
 	}
 }
