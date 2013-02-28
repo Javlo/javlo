@@ -196,7 +196,7 @@ public class Video extends GlobalImage implements IAction, IVideo {
 	public String getPreviewURL(ContentContext ctx) throws Exception {
 		if (getDecorationImage() != null && getDecorationImage().trim().length() > 1) {
 			String imageLink = getResourceURL(ctx, getDecorationImage());
-			return URLHelper.createTransformURL(ctx, imageLink, getConfig(ctx).getProperty("image.filter", "video"));
+			return URLHelper.createTransformURL(ctx, imageLink, getConfig(ctx).getProperty("image.filter", "preview"));
 		} else if (getLink() != null && getLink().toLowerCase().contains("youtube")) {
 			try {
 				return getYoutubePreview(ctx, null);
