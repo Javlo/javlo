@@ -516,6 +516,8 @@ public class ImageTransformServlet extends HttpServlet {
 				localFile = true;
 				imageName = imageName.replaceFirst("/local", "");
 				staticInfo = StaticInfo.getInstance(ctx, new File(getServletContext().getRealPath(imageName)));
+			} else {
+				staticInfo = StaticInfo.getInstance(ctx, imageName);
 			}
 
 			if (staticInfo != null) {
