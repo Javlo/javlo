@@ -389,7 +389,7 @@ public class NetHelper {
 						img = ImageHelper.getJpegSize(new ByteArrayInputStream(imageArray));
 					}
 					if (img == null) {
-						logger.warning("no imagesize found for : "+url);
+						logger.warning("no imagesize found for : " + url);
 						BufferedImage bufImg = ImageIO.read(new ByteArrayInputStream(imgBuffer.toByteArray()));
 						img = new ImageSize(bufImg.getWidth(), bufImg.getHeight());
 					}
@@ -443,7 +443,7 @@ public class NetHelper {
 								}
 							}
 						}
-					} s
+					}
 				} catch (Exception e) {
 					// just next image
 				}
