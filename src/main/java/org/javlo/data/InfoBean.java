@@ -33,6 +33,8 @@ public class InfoBean {
 
 	public static final String REQUEST_KEY = "info";
 
+	public static final String NEW_SESSION_PARAM = "__new_session";
+
 	public static InfoBean getCurrentInfoBean(HttpServletRequest request) {
 		return (InfoBean) request.getAttribute(REQUEST_KEY);
 	}
@@ -421,7 +423,11 @@ public class InfoBean {
 	}
 
 	public boolean isNewSession() {
-		return ctx.getRequest().getSession().isNew();
+		if (StringHelper.isTrue(ctx.getRequest().getParameter(NEW_SESSION_PARAM))) {
+			return true;
+		} else {
+			return ctx.getRequest().getSession().isNew();
+		}
 	}
 
 	/**
