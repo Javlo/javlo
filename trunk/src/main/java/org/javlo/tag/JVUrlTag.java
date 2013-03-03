@@ -11,12 +11,15 @@ import org.javlo.helper.URLHelper;
 
 public class JVUrlTag extends TagSupport {
 
+	private static final long serialVersionUID = 1L;
+
 	private String value = null;
 
 	public void setValue(String value) {
 		this.value = value;
 	}
 
+	@Override
 	public int doStartTag() throws JspException {
 		try {
 			JspWriter out = pageContext.getOut();
