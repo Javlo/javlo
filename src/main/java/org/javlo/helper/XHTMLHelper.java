@@ -154,6 +154,11 @@ public class XHTMLHelper {
 	}
 
 	private static String createHTMLLink(String url, GlobalContext globalContext) {
+		String suffix = "";
+		if (url.endsWith(".")) {
+			url = url.substring(0, url.length() - 1);
+			suffix = ".";
+		}
 		String outXHTML = url;
 		String target = "";
 		if (globalContext != null && globalContext.isOpenExernalLinkAsPopup(url)) {
@@ -175,7 +180,7 @@ public class XHTMLHelper {
 		} else if (url.startsWith("www.")) {
 			outXHTML = "<a class=\"" + cssClass + "\" href=\"http://" + url.trim() + "\"" + target + ">" + url + "</a>";
 		}
-		return outXHTML;
+		return outXHTML + suffix;
 	}
 
 	public static String escapeXHTML(String xhtml) {
@@ -1573,9 +1578,8 @@ public class XHTMLHelper {
 	}
 
 	public static void main(String[] args) {
-		String text = "\ncoucou \n\n\n\n c'est moi \n\n <BODy class=\"test\">comment</body> vas \ntu ?";
-		System.out.println("*** text = " + text);
-		System.out.println("*** body = " + extractBody(text));
+		System.out.println("***** XHTMLHelper.main : createHTMLLink = " + createHTMLLink("www.javlo.org.", null)); // TODO: remove debug trace
+		System.out.println("***** XHTMLHelper.main : createHTMLLink = " + createHTMLLink("www.javlo.org", null)); // TODO: remove debug trace
 	}
 
 	public static String removeTag(String html, String tag) throws BadXMLException {
