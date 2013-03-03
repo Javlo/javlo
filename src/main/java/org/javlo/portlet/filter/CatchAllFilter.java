@@ -539,7 +539,6 @@ public class CatchAllFilter implements Filter {
 				if (httpRequest.getSession().isNew() || StringHelper.isTrue(request.getParameter(InfoBean.NEW_SESSION_PARAM))) {
 					forwardURI = URLHelper.addParam(forwardURI, InfoBean.NEW_SESSION_PARAM, "true");
 				}
-
 				httpRequest.getRequestDispatcher(forwardURI).forward(httpRequest, response);
 			} else {
 				next.doFilter(httpRequest, response);
