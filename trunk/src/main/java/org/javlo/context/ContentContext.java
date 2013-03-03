@@ -242,7 +242,6 @@ public class ContentContext {
 						page = page.getChildMenuElements().iterator().next();
 					}
 					if (page.isRealContent(ctx)) {
-
 						ctx.setCurrentPageCached(page);
 						ctx.setPath(page.getPath());
 					}
