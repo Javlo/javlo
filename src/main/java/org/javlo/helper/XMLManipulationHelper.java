@@ -919,7 +919,7 @@ public class XMLManipulationHelper {
 		out.newLine();
 		out.append("%>");
 		out.newLine();
-		out.append("<%@taglib prefix=\"c\" uri=\"http://java.sun.com/jsp/jstl/core\"%>");
+		out.append("<%@taglib prefix=\"c\" uri=\"http://java.sun.com/jsp/jstl/core\"%><%@ taglib prefix=\"fn\" uri=\"http://java.sun.com/jsp/jstl/functions\"%><%@ taglib uri=\"/WEB-INF/javlo.tld\" prefix=\"jv\" %>");
 		out.newLine();
 		out.append("<%");
 		out.newLine();
