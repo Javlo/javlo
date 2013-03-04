@@ -61,7 +61,6 @@ public class GlobalImage extends Image {
 	public static final String TYPE = "global-image";
 
 	private static final String RAW_FILTER = "raw";
-	private static final String HIDDEN_FILTER = "hidden";
 
 	private static final String LOCATION = "location";
 
@@ -516,7 +515,7 @@ public class GlobalImage extends Image {
 	public String getViewXHTMLCode(ContentContext ctx) throws Exception {
 
 		String filter = getFilter(ctx);
-		if (HIDDEN_FILTER.equals(filter)) {
+		if (HIDDEN.equals(filter)) {
 			return "";
 		}
 		StringBuffer res = new StringBuffer();
