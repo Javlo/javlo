@@ -58,6 +58,8 @@ public class AjaxServlet extends HttpServlet {
 			RequestService rs = RequestService.getInstance(request);
 			if (rs.getParameter("render-mode", null) != null) {
 				ctx.setRenderMode(Integer.parseInt(rs.getParameter("render-mode", null)));
+			} else {
+				ctx.setRenderMode(ContentContext.PREVIEW_MODE);
 			}
 
 			ctx.setAjax(true);
