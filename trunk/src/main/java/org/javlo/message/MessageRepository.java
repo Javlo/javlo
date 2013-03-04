@@ -13,6 +13,7 @@ import javax.servlet.http.HttpServletRequest;
 import org.apache.commons.configuration.ConfigurationException;
 import org.javlo.context.ContentContext;
 import org.javlo.context.GlobalContext;
+import org.javlo.helper.URLHelper;
 import org.javlo.i18n.I18nMessage;
 import org.javlo.service.NotificationService;
 
@@ -114,7 +115,11 @@ public class MessageRepository {
 			}
 		}
 		NotificationService notifService = NotificationService.getInstance(GlobalContext.getInstance(request));
-		notifService.addNotification(globalMessage.getMessage(), globalMessage.getURL(), globalMessage.getType(), ctx.getCurrentUserId());
+		String url = globalMessage.getURL();
+		if (url == null) {
+			url = URLHelper.createURL(ctx.getContextWithOtherRenderMode(ContentContext.VIEW_MODE));
+		}
+		notifService.addNotification(globalMessage.getMessage(), url, globalMessage.getType(), ctx.getCurrentUserId());
 	}
 
 	public void clearGlobalMessage() {
