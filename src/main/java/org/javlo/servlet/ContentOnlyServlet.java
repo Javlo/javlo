@@ -11,6 +11,7 @@ import javax.servlet.http.HttpServletResponse;
 import org.javlo.context.ContentContext;
 import org.javlo.context.GlobalContext;
 import org.javlo.helper.RequestHelper;
+import org.javlo.i18n.I18nAccess;
 import org.javlo.module.mailing.MailingModuleContext;
 import org.javlo.service.RequestService;
 import org.javlo.template.Template;
@@ -88,6 +89,10 @@ public class ContentOnlyServlet extends HttpServlet {
 
 			if (templateID != null) {
 				template = Template.getApplicationInstance(request.getSession().getServletContext(), ctx, templateID);
+				ctx.setCurrentTemplate(template);
+				I18nAccess i18nAccess = I18nAccess.getInstance(ctx.getRequest());
+				i18nAccess.requestInit(ctx);
+
 			}
 
 			getServletContext().getRequestDispatcher(template.getRendererFullName(ctx)).include(request, response);
