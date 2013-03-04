@@ -58,180 +58,6 @@ public class CatchAllFilter implements Filter {
 	 */
 	public static Logger logger = Logger.getLogger(CatchAllFilter.class.getName());
 
-	public static boolean doLoginFilter(ServletRequest request, ServletResponse response) throws IOException, ServletException {
-
-		logger.fine("start login filter");
-
-		try {
-
-			HttpServletRequest httpRequest = (HttpServletRequest) request;
-			HttpServletResponse httpResponse = (HttpServletResponse) response;
-
-			GlobalContext globalContext = GlobalContext.getInstance(httpRequest);
-
-			I18nAccess i18nAccess = I18nAccess.getInstance(globalContext, httpRequest.getSession());
-			RequestService requestService = RequestService.getInstance(httpRequest);
-
-			Principal logoutUser = null;
-
-			if (request.getParameter("edit-logout") != null) {
-				IUserFactory fact = UserFactory.createUserFactory(globalContext, httpRequest.getSession());
-				logoutUser = fact.getCurrentUser(httpRequest.getSession());
-				if (logoutUser != null) {
-					DataToIDService service = DataToIDService.getInstance(httpRequest.getSession().getServletContext());
-					service.clearData(logoutUser.getName());
-					globalContext.logout(logoutUser);
-					if (httpRequest.getUserPrincipal() != null) {
-						httpResponse.sendRedirect("" + httpRequest.getRequestURL());
-					}
-				}
-				httpRequest.getSession().invalidate();
-				httpRequest.getSession(true);
-			}
-
-			/** STANDARD LOGIN **/
-			IUserFactory fact = UserFactory.createUserFactory(globalContext, httpRequest.getSession());
-			User user = fact.getCurrentUser(((HttpServletRequest) request).getSession());
-			EditContext editContext = EditContext.getInstance(GlobalContext.getInstance(((HttpServletRequest) request).getSession(), globalContext.getContextKey()), ((HttpServletRequest) request).getSession());
-			if (user != null) {
-				if (!user.getContext().equals(globalContext.getContextKey())) {
-					if (!AdminUserSecurity.getInstance().isGod(user) && !AdminUserSecurity.getInstance().isMaster(user)) {
-						try {
-							editContext.setEditUser(null);
-							logger.info("remove user '" + user.getLogin() + "' context does'nt match.");
-							user = null;
-						} catch (Exception e) {
-							e.printStackTrace();
-						}
-					}
-				}
-			}
-
-			if (user != null && editContext.getEditUser() == null) {
-				editContext.setEditUser(user);
-			}
-
-			if (fact.getCurrentUser(((HttpServletRequest) request).getSession()) == null) {
-
-				String loginType = requestService.getParameter("login-type", null);
-
-				if ((loginType == null || !loginType.equals("adminlogin")) && logoutUser == null) {
-
-					if (fact.getCurrentUser(((HttpServletRequest) request).getSession()) == null) {
-						if (request.getParameter("j_username") != null || httpRequest.getUserPrincipal() != null) {
-							String login = request.getParameter("j_username");
-
-							if (request.getParameter("autologin") != null) {
-								DataToIDService service = DataToIDService.getInstance(httpRequest.getSession().getServletContext());
-								String codeId = service.setData(login, IUserFactory.AUTO_LOGIN_AGE_SEC * 1000);
-								String pathPrefix = ContentContext.getPathPrefix((HttpServletRequest) request);
-								RequestHelper.setCookieValue(httpResponse, "javlo_login_id", codeId, IUserFactory.AUTO_LOGIN_AGE_SEC, URLHelper.mergePath(pathPrefix, "/edit"));
-								RequestHelper.setCookieValue(httpResponse, "javlo_login_id", codeId, IUserFactory.AUTO_LOGIN_AGE_SEC, URLHelper.mergePath(pathPrefix, "/preview"));
-							}
-
-							if (login == null && httpRequest.getUserPrincipal() != null) {
-								login = httpRequest.getUserPrincipal().getName();
-							}
-							if (fact.login(httpRequest, login, request.getParameter("j_password")) == null) {
-								String msg = i18nAccess.getText("user.error.msg");
-								MessageRepository messageRepository = MessageRepository.getInstance(((HttpServletRequest) request));
-								messageRepository.setGlobalMessage(new GenericMessage(msg, GenericMessage.ERROR));
-							}
-							ModulesContext.getInstance(httpRequest.getSession(), globalContext).loadModule(httpRequest.getSession(), globalContext);
-						}
-					}
-				}
-				fact.getCurrentUser(((HttpServletRequest) request).getSession());
-			}
-
-			boolean newUser = false;
-
-			/** EDIT LOGIN **/
-			if (fact.getCurrentUser(((HttpServletRequest) request).getSession()) == null) {
-
-				/* AUTO LOGIN */
-				String autoLoginId = RequestHelper.getCookieValue(httpRequest, "javlo_login_id");
-				String autoLoginUser = null;
-				if (autoLoginId != null) {
-					DataToIDService service = DataToIDService.getInstance(httpRequest.getSession().getServletContext());
-					service.clearTimeData();
-					autoLoginUser = service.getData(autoLoginId);
-
-					if (autoLoginUser != null) {
-						logger.info("autologin for : " + autoLoginUser);
-						String msg = i18nAccess.getText("user.autologin", new String[][] { { "login", autoLoginUser } });
-						MessageRepository messageRepository = MessageRepository.getInstance(((HttpServletRequest) request));
-						messageRepository.setGlobalMessage(new GenericMessage(msg, GenericMessage.INFO));
-						newUser = true;
-					}
-				}
-				if (autoLoginUser != null) {
-					IUserFactory adminFactory = AdminUserFactory.createUserFactory(globalContext, httpRequest.getSession());
-					User principalUser = adminFactory.autoLogin(httpRequest, autoLoginUser);
-					if (principalUser != null) {
-						globalContext.addPrincipal(principalUser);
-						newUser = true;
-						if (request.getParameter("edit-login") != null) {
-							adminFactory.autoLogin(httpRequest, principalUser.getLogin());
-							globalContext.addPrincipal(principalUser);
-							globalContext.eventLogin(principalUser.getLogin());
-						}
-					}
-				}
-				UserInterfaceContext.getInstance(((HttpServletRequest) request).getSession(), globalContext);
-			}
-
-			if (request.getParameter("edit-login") != null || request.getParameter("j_token") != null || (httpRequest.getUserPrincipal() != null && logoutUser == null)) {
-				String login = request.getParameter("j_username");
-
-				if (login == null && httpRequest.getUserPrincipal() != null) {
-					login = httpRequest.getUserPrincipal().getName();
-				}
-				AdminUserFactory adminFactory = AdminUserFactory.createUserFactory(globalContext, httpRequest.getSession());
-				User editUser = adminFactory.login(httpRequest, login, request.getParameter("j_password"));
-
-				if (editUser != null) {
-					if (request.getParameter("autologin") != null) {
-						DataToIDService service = DataToIDService.getInstance(httpRequest.getSession().getServletContext());
-						String codeId = service.setData(login, ((long) IUserFactory.AUTO_LOGIN_AGE_SEC) * 1000);
-						// RequestHelper.setCookieValue(httpResponse, "javlo_login_id", codeId, IUserFactory.AUTO_LOGIN_AGE_SEC);
-						String pathPrefix = ContentContext.getPathPrefix((HttpServletRequest) request);
-						RequestHelper.setCookieValue(httpResponse, "javlo_login_id", codeId, IUserFactory.AUTO_LOGIN_AGE_SEC, URLHelper.mergePath(pathPrefix, "/edit"));
-						RequestHelper.setCookieValue(httpResponse, "javlo_login_id", codeId, IUserFactory.AUTO_LOGIN_AGE_SEC, URLHelper.mergePath(pathPrefix, "/preview"));
-					}
-					globalContext.addPrincipal(editUser);
-					globalContext.eventLogin(editUser.getLogin());
-					newUser = true;
-
-					logger.info(login + " is logged roles : [" + StringHelper.collectionToString(editUser.getRoles(), ",") + ']');
-
-				} else {
-					String token = request.getParameter("j_token");
-					if (token != null) {
-						user = adminFactory.login(httpRequest, token);
-					} else {
-						logger.info(login + " fail to login.");
-					}
-					if (user == null) {
-						logger.info(login + " fail to login.");
-						String msg = i18nAccess.getText("user.error.msg");
-						MessageRepository messageRepository = MessageRepository.getInstance(((HttpServletRequest) request));
-						messageRepository.setGlobalMessage(new GenericMessage(msg, GenericMessage.ERROR));
-					}
-				}
-				UserInterfaceContext.getInstance(((HttpServletRequest) request).getSession(), globalContext);
-			}
-
-			if (newUser) {
-				ModulesContext.getInstance(httpRequest.getSession(), globalContext).loadModule(httpRequest.getSession(), globalContext);
-			}
-
-			return newUser;
-		} catch (Exception e) {
-			throw new ServletException(e);
-		}
-	}
-
 	@Override
 	public void destroy() {
 	}
@@ -544,6 +370,180 @@ public class CatchAllFilter implements Filter {
 				next.doFilter(httpRequest, response);
 			}
 
+		}
+	}
+
+	public static boolean doLoginFilter(ServletRequest request, ServletResponse response) throws IOException, ServletException {
+
+		logger.fine("start login filter");
+
+		try {
+
+			HttpServletRequest httpRequest = (HttpServletRequest) request;
+			HttpServletResponse httpResponse = (HttpServletResponse) response;
+
+			GlobalContext globalContext = GlobalContext.getInstance(httpRequest);
+
+			I18nAccess i18nAccess = I18nAccess.getInstance(globalContext, httpRequest.getSession());
+			RequestService requestService = RequestService.getInstance(httpRequest);
+
+			Principal logoutUser = null;
+
+			if (request.getParameter("edit-logout") != null) {
+				IUserFactory fact = UserFactory.createUserFactory(globalContext, httpRequest.getSession());
+				logoutUser = fact.getCurrentUser(httpRequest.getSession());
+				if (logoutUser != null) {
+					DataToIDService service = DataToIDService.getInstance(httpRequest.getSession().getServletContext());
+					service.clearData(logoutUser.getName());
+					globalContext.logout(logoutUser);
+					if (httpRequest.getUserPrincipal() != null) {
+						httpResponse.sendRedirect("" + httpRequest.getRequestURL());
+					}
+				}
+				httpRequest.getSession().invalidate();
+				httpRequest.getSession(true);
+			}
+
+			/** STANDARD LOGIN **/
+			IUserFactory fact = UserFactory.createUserFactory(globalContext, httpRequest.getSession());
+			User user = fact.getCurrentUser(((HttpServletRequest) request).getSession());
+			EditContext editContext = EditContext.getInstance(GlobalContext.getInstance(((HttpServletRequest) request).getSession(), globalContext.getContextKey()), ((HttpServletRequest) request).getSession());
+			if (user != null) {
+				if (!user.getContext().equals(globalContext.getContextKey())) {
+					if (!AdminUserSecurity.getInstance().isGod(user) && !AdminUserSecurity.getInstance().isMaster(user)) {
+						try {
+							editContext.setEditUser(null);
+							logger.info("remove user '" + user.getLogin() + "' context does'nt match.");
+							user = null;
+						} catch (Exception e) {
+							e.printStackTrace();
+						}
+					}
+				}
+			}
+
+			if (user != null && editContext.getEditUser() == null) {
+				editContext.setEditUser(user);
+			}
+
+			if (fact.getCurrentUser(((HttpServletRequest) request).getSession()) == null) {
+
+				String loginType = requestService.getParameter("login-type", null);
+
+				if ((loginType == null || !loginType.equals("adminlogin")) && logoutUser == null) {
+
+					if (fact.getCurrentUser(((HttpServletRequest) request).getSession()) == null) {
+						if (request.getParameter("j_username") != null || httpRequest.getUserPrincipal() != null) {
+							String login = request.getParameter("j_username");
+
+							if (request.getParameter("autologin") != null) {
+								DataToIDService service = DataToIDService.getInstance(httpRequest.getSession().getServletContext());
+								String codeId = service.setData(login, IUserFactory.AUTO_LOGIN_AGE_SEC * 1000);
+								String pathPrefix = ContentContext.getPathPrefix((HttpServletRequest) request);
+								RequestHelper.setCookieValue(httpResponse, "javlo_login_id", codeId, IUserFactory.AUTO_LOGIN_AGE_SEC, URLHelper.mergePath(pathPrefix, "/edit"));
+								RequestHelper.setCookieValue(httpResponse, "javlo_login_id", codeId, IUserFactory.AUTO_LOGIN_AGE_SEC, URLHelper.mergePath(pathPrefix, "/preview"));
+							}
+
+							if (login == null && httpRequest.getUserPrincipal() != null) {
+								login = httpRequest.getUserPrincipal().getName();
+							}
+							if (fact.login(httpRequest, login, request.getParameter("j_password")) == null) {
+								String msg = i18nAccess.getText("user.error.msg");
+								MessageRepository messageRepository = MessageRepository.getInstance(((HttpServletRequest) request));
+								messageRepository.setGlobalMessage(new GenericMessage(msg, GenericMessage.ERROR));
+							}
+							ModulesContext.getInstance(httpRequest.getSession(), globalContext).loadModule(httpRequest.getSession(), globalContext);
+						}
+					}
+				}
+				fact.getCurrentUser(((HttpServletRequest) request).getSession());
+			}
+
+			boolean newUser = false;
+
+			/** EDIT LOGIN **/
+			if (fact.getCurrentUser(((HttpServletRequest) request).getSession()) == null) {
+
+				/* AUTO LOGIN */
+				String autoLoginId = RequestHelper.getCookieValue(httpRequest, "javlo_login_id");
+				String autoLoginUser = null;
+				if (autoLoginId != null) {
+					DataToIDService service = DataToIDService.getInstance(httpRequest.getSession().getServletContext());
+					service.clearTimeData();
+					autoLoginUser = service.getData(autoLoginId);
+
+					if (autoLoginUser != null) {
+						logger.info("autologin for : " + autoLoginUser);
+						String msg = i18nAccess.getText("user.autologin", new String[][] { { "login", autoLoginUser } });
+						MessageRepository messageRepository = MessageRepository.getInstance(((HttpServletRequest) request));
+						messageRepository.setGlobalMessage(new GenericMessage(msg, GenericMessage.INFO));
+						newUser = true;
+					}
+				}
+				if (autoLoginUser != null) {
+					IUserFactory adminFactory = AdminUserFactory.createUserFactory(globalContext, httpRequest.getSession());
+					User principalUser = adminFactory.autoLogin(httpRequest, autoLoginUser);
+					if (principalUser != null) {
+						globalContext.addPrincipal(principalUser);
+						newUser = true;
+						if (request.getParameter("edit-login") != null) {
+							adminFactory.autoLogin(httpRequest, principalUser.getLogin());
+							globalContext.addPrincipal(principalUser);
+							globalContext.eventLogin(principalUser.getLogin());
+						}
+					}
+				}
+				UserInterfaceContext.getInstance(((HttpServletRequest) request).getSession(), globalContext);
+			}
+
+			if (request.getParameter("edit-login") != null || request.getParameter("j_token") != null || (httpRequest.getUserPrincipal() != null && logoutUser == null)) {
+				String login = request.getParameter("j_username");
+
+				if (login == null && httpRequest.getUserPrincipal() != null) {
+					login = httpRequest.getUserPrincipal().getName();
+				}
+				AdminUserFactory adminFactory = AdminUserFactory.createUserFactory(globalContext, httpRequest.getSession());
+				User editUser = adminFactory.login(httpRequest, login, request.getParameter("j_password"));
+
+				if (editUser != null) {
+					if (request.getParameter("autologin") != null) {
+						DataToIDService service = DataToIDService.getInstance(httpRequest.getSession().getServletContext());
+						String codeId = service.setData(login, ((long) IUserFactory.AUTO_LOGIN_AGE_SEC) * 1000);
+						// RequestHelper.setCookieValue(httpResponse, "javlo_login_id", codeId, IUserFactory.AUTO_LOGIN_AGE_SEC);
+						String pathPrefix = ContentContext.getPathPrefix((HttpServletRequest) request);
+						RequestHelper.setCookieValue(httpResponse, "javlo_login_id", codeId, IUserFactory.AUTO_LOGIN_AGE_SEC, URLHelper.mergePath(pathPrefix, "/edit"));
+						RequestHelper.setCookieValue(httpResponse, "javlo_login_id", codeId, IUserFactory.AUTO_LOGIN_AGE_SEC, URLHelper.mergePath(pathPrefix, "/preview"));
+					}
+					globalContext.addPrincipal(editUser);
+					globalContext.eventLogin(editUser.getLogin());
+					newUser = true;
+
+					logger.info(login + " is logged roles : [" + StringHelper.collectionToString(editUser.getRoles(), ",") + ']');
+
+				} else {
+					String token = request.getParameter("j_token");
+					if (token != null) {
+						user = adminFactory.login(httpRequest, token);
+					} else {
+						logger.info(login + " fail to login.");
+					}
+					if (user == null) {
+						logger.info(login + " fail to login.");
+						String msg = i18nAccess.getText("user.error.msg");
+						MessageRepository messageRepository = MessageRepository.getInstance(((HttpServletRequest) request));
+						messageRepository.setGlobalMessage(new GenericMessage(msg, GenericMessage.ERROR));
+					}
+				}
+				UserInterfaceContext.getInstance(((HttpServletRequest) request).getSession(), globalContext);
+			}
+
+			if (newUser) {
+				ModulesContext.getInstance(httpRequest.getSession(), globalContext).loadModule(httpRequest.getSession(), globalContext);
+			}
+
+			return newUser;
+		} catch (Exception e) {
+			throw new ServletException(e);
 		}
 	}
 

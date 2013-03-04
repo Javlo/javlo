@@ -434,8 +434,9 @@ public class ContentService {
 					timeTravelerGlobalMap = contentAttributeMap;
 				}
 				res = timeTravelerNav;
-			} else if (!ctx.isAsViewMode() || !previewMode) {
+			} else if (!ctx.isAsViewMode()) { // TODO: check the test was with : || !previewMode
 				if (previewNav == null) {
+					System.out.println("***** ContentService.getNavigation : PREVIEW"); // TODO: remove debug trace
 					PersistenceService persistenceService = PersistenceService.getInstance(globalContext);
 					logger.info("reload preview navigation");
 					Map<String, String> contentAttributeMap = new HashMap<String, String>();
@@ -445,6 +446,7 @@ public class ContentService {
 				res = previewNav;
 			} else {
 				if (getViewNav() == null) {
+					System.out.println("***** ContentService.getNavigation : VIEW"); // TODO: remove debug trace
 					PersistenceService persistenceService = PersistenceService.getInstance(globalContext);
 					Map<String, String> contentAttributeMap = new HashMap<String, String>();
 					setViewNav(persistenceService.load(ctx, ContentContext.VIEW_MODE, contentAttributeMap, null));
