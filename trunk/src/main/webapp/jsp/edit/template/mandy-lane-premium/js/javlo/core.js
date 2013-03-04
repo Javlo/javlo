@@ -71,12 +71,19 @@ jQuery(document).bind("ajaxUpdate",function () {
 });
 
 function fullHeight() {
-	jQuery(".full-height").each(function() {
+	/*jQuery(".full-height").each(function() {
 		if(typeof  jQuery("#footer") != 'undefined' && jQuery("#footer").offset() != null) {
 			var contentHeight = jQuery("#footer").offset().top - jQuery(this).offset().top;
 			jQuery(this).css("height", contentHeight+"px");
 		}
+	});*/
+	
+	jQuery(".full-height").each(function() {
+		var height = jQuery('#footer').offset().top -  jQuery(this).offset().top;		
+		jQuery(this).height(height);	
 	});
+	
+	
 }
 
 jQuery(window).resize(fullHeight);
