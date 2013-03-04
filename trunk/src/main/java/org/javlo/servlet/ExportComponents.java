@@ -45,10 +45,14 @@ public class ExportComponents extends HttpServlet {
 
 		try {
 
+			ContentContext ctx = ContentContext.getContentContext(request, response, false);
+			ctx.setArea(null);
+			ctx.setFree(true);
+			ctx.setExport(true);
+
 			String componentType = request.getPathInfo();
 			if (!componentType.toLowerCase().endsWith(".csv")) {
 				if (componentType.toLowerCase().endsWith(".html")) {
-					ContentContext ctx = ContentContext.getContentContext(request, response, false);
 					ctx.setRenderMode(ContentContext.VIEW_MODE);
 					String compId = StringHelper.getFileNameWithoutExtension(StringHelper.getFileNameFromPath(request.getRequestURI()));
 					ContentService content = ContentService.getInstance(ctx.getRequest());
@@ -61,10 +65,6 @@ public class ExportComponents extends HttpServlet {
 					return;
 				}
 			}
-
-			ContentContext ctx = ContentContext.getContentContext(request, response, false);
-			ctx.setArea(null);
-			ctx.setFree(true);
 
 			response.setContentType("text/csv");
 

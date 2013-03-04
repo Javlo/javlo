@@ -372,8 +372,8 @@ public abstract class AbstractVisualComponent implements IContentVisualComponent
 
 	@Override
 	public String getCurrentRenderer(ContentContext ctx) {
-		if (getBean(ctx).getRenderer() == null && getConfig(ctx).getRenderes().size() > 0) {
-			return getConfig(ctx).getRenderes().keySet().iterator().next();
+		if (getBean(ctx).getRenderer() == null && getRenderes(ctx).size() > 0) {
+			return getRenderes(ctx).keySet().iterator().next();
 		} else {
 			return getBean(ctx).getRenderer();
 		}
@@ -461,10 +461,10 @@ public abstract class AbstractVisualComponent implements IContentVisualComponent
 			out.println("</div>");
 		}
 
-		if (getConfig(ctx).getRenderes().size() > 0) {
+		if (getRenderes(ctx).size() > 0) {
 			out.println(getSelectRendererXHTML(ctx));
 			/*
-			 * out.println("<label for=\"renderer-" + getId() + "\">" + getRendererTitle() + "</label>"); out.println(XHTMLHelper.getInputOneSelect("style-" + getId(), getConfig(ctx).getRenderes(), getRenderer(ctx))); out.println("</div>");
+			 * out.println("<label for=\"renderer-" + getId() + "\">" + getRendererTitle() + "</label>"); out.println(XHTMLHelper.getInputOneSelect("style-" + getId(), getRenderes(ctx), getRenderer(ctx))); out.println("</div>");
 			 */
 		}
 
@@ -791,21 +791,25 @@ public abstract class AbstractVisualComponent implements IContentVisualComponent
 		return null;
 	}
 
+	public Map<String, String> getRenderes(ContentContext ctx) {
+		return getConfig(ctx).getRenderes();
+	}
+
 	@Override
 	public String getRenderer(ContentContext ctx) {
-		if (getConfig(ctx).getRenderes().size() == 0) {
+		if (getRenderes(ctx).size() == 0) {
 			return getDefaultRenderer(ctx);
-		} else if (getConfig(ctx).getRenderes().size() == 1 || getCurrentRenderer(ctx) == null) {
-			return getConfig(ctx).getRenderes().values().iterator().next();
+		} else if (getRenderes(ctx).size() == 1 || getCurrentRenderer(ctx) == null) {
+			return getRenderes(ctx).values().iterator().next();
 		} else {
-			String renderer = getConfig(ctx).getRenderes().get(getCurrentRenderer(ctx) + '.' + ctx.getArea());
+			String renderer = getRenderes(ctx).get(getCurrentRenderer(ctx) + '.' + ctx.getArea());
 			if (renderer == null) {
-				renderer = getConfig(ctx).getRenderes().get(getCurrentRenderer(ctx));
+				renderer = getRenderes(ctx).get(getCurrentRenderer(ctx));
 			}
 			if (renderer != null) {
 				return renderer;
 			} else {
-				return getConfig(ctx).getRenderes().values().iterator().next();
+				return getRenderes(ctx).values().iterator().next();
 			}
 		}
 	}
@@ -843,7 +847,7 @@ public abstract class AbstractVisualComponent implements IContentVisualComponent
 		out.println("<div class=\"line\">");
 		/* display as slide show */
 
-		Map<String, String> renderers = getConfig(ctx).getRenderes();
+		Map<String, String> renderers = getRenderes(ctx);
 		for (Map.Entry<String, String> entry : renderers.entrySet()) {
 			out.println(XHTMLHelper.getRadio(getInputNameRenderer(), entry.getKey(), getCurrentRenderer(ctx)));
 			out.println("<label for=\"" + entry.getKey() + "\">" + entry.getKey() + "</label></div><div class=\"line\">");

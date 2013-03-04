@@ -126,14 +126,23 @@ public class GlobalImage extends Image {
 		}
 	}
 
-	@Override
-	public void prepareView(ContentContext ctx) throws Exception {
-		super.prepareView(ctx);
+	protected String getImageURL(ContentContext ctx) throws Exception {
 		String decoImage = getDecorationImage();
 		if (decoImage != null && decoImage.trim().length() > 0) {
 			String imageLink = getResourceURL(ctx, getDecorationImage());
 			String imageFilter = getConfig(ctx).getProperty("image.filter", getDefaultFilter());
-			ctx.getRequest().setAttribute("image", URLHelper.addParam(URLHelper.createTransformURL(ctx, imageLink, imageFilter), "hash", getStaticInfo(ctx).getVersionHash()));
+			return URLHelper.addParam(URLHelper.createTransformURL(ctx, imageLink, imageFilter), "hash", getStaticInfo(ctx).getVersionHash());
+		} else {
+			return null;
+		}
+	}
+
+	@Override
+	public void prepareView(ContentContext ctx) throws Exception {
+		super.prepareView(ctx);
+		String imageURL = getImageURL(ctx);
+		if (imageURL != null) {
+			ctx.getRequest().setAttribute("image", imageURL);
 		}
 		ctx.getRequest().setAttribute("previewURL", getPreviewURL(ctx, getFilter(ctx)));
 		ctx.getRequest().setAttribute("media", this);
@@ -159,10 +168,12 @@ public class GlobalImage extends Image {
 			finalCode.append("</div>");
 		}
 
-		finalCode.append("<label for=\"" + getLabelXHTMLInputName() + "\">" + getImageLabelTitle(ctx) + " : </label>");
-		String[][] params = { { "rows", "1" } };
-		finalCode.append(XHTMLHelper.getTextArea(getLabelXHTMLInputName(), getLabel(), params));
-		finalCode.append("<br />");
+		if (!isMeta()) {
+			finalCode.append("<label for=\"" + getLabelXHTMLInputName() + "\">" + getImageLabelTitle(ctx) + " : </label>");
+			String[][] params = { { "rows", "1" } };
+			finalCode.append(XHTMLHelper.getTextArea(getLabelXHTMLInputName(), getLabel(), params));
+			finalCode.append("<br />");
+		}
 
 		I18nAccess i18nAccess = I18nAccess.getInstance(ctx.getRequest());
 
@@ -668,7 +679,7 @@ public class GlobalImage extends Image {
 			}
 		}
 		if (embedCode != null) {
-			if (embedCode != getEmbedCode()) {
+			if (!embedCode.equals(getEmbedCode())) {
 				setModify();
 				storeProperties();
 				setEmbedCode(embedCode);

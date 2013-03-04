@@ -659,11 +659,6 @@ public class Multimedia extends TimeRangeComponent implements IImageTitle {
 		int index = 0;
 
 		Collection<File> mulFiles = getAllMultimediaFiles(ctx);
-		if (mulFiles.size() == 0) {
-			logger.warning("no multimedia resources found.");
-			ctx.getRequest().setAttribute("resources", Collections.EMPTY_LIST);
-			return;
-		}
 
 		List<MultimediaResource> allResource = new LinkedList<MultimediaResource>();
 		Map<String, MultimediaResource> allURL = new HashMap<String, MultimediaResource>();
