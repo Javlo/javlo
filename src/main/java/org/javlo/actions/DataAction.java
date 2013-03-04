@@ -5,7 +5,12 @@ import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.PrintStream;
+import java.text.ParseException;
+import java.util.Calendar;
 import java.util.Collection;
+import java.util.Date;
+import java.util.LinkedList;
+import java.util.List;
 import java.util.logging.Logger;
 
 import javax.servlet.http.HttpSession;
@@ -33,6 +38,7 @@ import org.javlo.message.MessageRepository;
 import org.javlo.module.ticket.TicketAction;
 import org.javlo.service.ContentService;
 import org.javlo.service.NotificationService;
+import org.javlo.service.NotificationService.NotificationContainer;
 import org.javlo.service.RequestService;
 import org.javlo.template.Template;
 import org.javlo.user.User;
@@ -51,10 +57,27 @@ public class DataAction implements IAction {
 	 * get the list of modification. option for request : markread=true, mark all notification returned as read. this method need user logger.
 	 * 
 	 * @return
+	 * @throws ParseException
 	 */
-	public static String performNotifications(RequestService rs, ContentContext ctx, NotificationService notif, User user) {
+	public static String performNotifications(RequestService rs, ContentContext ctx, NotificationService notif, User user) throws ParseException {
 		if (user != null) {
-			ctx.getAjaxData().put("notifications", notif.getNotifications(user.getLogin(), 999, StringHelper.isTrue(rs.getParameter("markread", null))));
+			if (rs.getParameter("lastdate", null) != null) {
+				Date lastDate = StringHelper.parseFileTime(rs.getParameter("lastdate", null));
+				Calendar startCal = Calendar.getInstance();
+				startCal.setTime(lastDate);
+				List<NotificationContainer> notifs = notif.getNotifications(user.getLogin(), 999, StringHelper.isTrue(rs.getParameter("markread", null)));
+				List<NotificationContainer> finalNotifs = new LinkedList<NotificationService.NotificationContainer>();
+				Calendar cal = Calendar.getInstance();
+				for (NotificationContainer notificationContainer : notifs) {
+					cal.setTime(notificationContainer.getNotification().getCreationDate());
+					if (cal.after(startCal)) {
+						finalNotifs.add(notificationContainer);
+					}
+				}
+				ctx.getAjaxData().put("notifications", finalNotifs);
+			} else {
+				ctx.getAjaxData().put("notifications", notif.getNotifications(user.getLogin(), 999, StringHelper.isTrue(rs.getParameter("markread", null))));
+			}
 		} else {
 			return "no access";
 		}
@@ -62,6 +85,15 @@ public class DataAction implements IAction {
 	}
 
 	public static String performToken(ContentContext ctx, User user) {
+		if (user != null) {
+			ctx.getAjaxData().put("token", user.getUserInfo().getToken());
+		} else {
+			return "no access";
+		}
+		return null;
+	}
+
+	public static String performOneTimeToken(ContentContext ctx, User user) {
 		if (user != null) {
 			ctx.getAjaxData().put("token", user.getUserInfo().getToken());
 		} else {

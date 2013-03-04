@@ -1133,12 +1133,7 @@ public class StringHelper {
 	}
 
 	public static void main(String[] args) {
-
-		System.out.println("***** StringHelper.main : /test/coucou.jpg = " + getDirNameFromPath("/test/coucou.jpg")); // TODO: remove debug trace
-		System.out.println("***** StringHelper.main : /test/ = " + getDirNameFromPath("/test/")); // TODO: remove debug trace
-		System.out.println("***** StringHelper.main : test.jpg = " + getDirNameFromPath("test.jpg")); // TODO: remove debug trace
-		System.out.println("***** StringHelper.main : test.jpg = " + getDirNameFromPath("/test")); // TODO: remove debug trace
-
+		System.out.println("file time : " + renderFileTime(new Date()));
 	}
 
 	/**
