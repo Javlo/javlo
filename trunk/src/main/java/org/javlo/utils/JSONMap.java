@@ -13,13 +13,14 @@ import java.util.Set;
 import org.apache.commons.lang.NotImplementedException;
 
 import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 
 public class JSONMap implements Map<String, Object> {
 
-	private static final Gson JSON = new Gson();
+	public static final Gson JSON = new GsonBuilder().setDateFormat("yyyy-MM-dd_HH-mm-ss-SSS").create();
 
 	public static JSONMap parseMap(String jsonStr) {
 		return transformMap(JSON.fromJson(jsonStr, JsonElement.class));
