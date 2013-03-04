@@ -117,7 +117,7 @@ public class MessageRepository {
 		NotificationService notifService = NotificationService.getInstance(GlobalContext.getInstance(request));
 		String url = globalMessage.getURL();
 		if (url == null) {
-			url = URLHelper.createURL(ctx.getContextWithOtherRenderMode(ContentContext.VIEW_MODE).getContextForAbsoluteURL());
+			url = URLHelper.createURL(ctx.getContextWithOtherRenderMode(ContentContext.PREVIEW_MODE).getContextForAbsoluteURL());
 		}
 		notifService.addNotification(globalMessage.getMessage(), url, globalMessage.getType(), ctx.getCurrentUserId());
 	}

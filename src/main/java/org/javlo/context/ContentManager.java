@@ -332,7 +332,10 @@ public class ContentManager {
 			 * if (URLHelper.getPathPrefix(request).length() > 0) { pathTokens.nextToken(); } GlobalContext globalContext = GlobalContext.getInstance(request); if (!StringHelper.isEmpty(globalContext.getPathPrefix())) { pathTokens.nextToken(); }
 			 */
 			if (pathTokens.hasMoreTokens()) {
-				if (pathTokens.nextToken().equals("preview")) {
+				String nextToken = pathTokens.nextToken();
+				if (nextToken.equals("preview")) {
+					res = true;
+				} else if (nextToken.equals("ajax")) {
 					res = true;
 				}
 			}

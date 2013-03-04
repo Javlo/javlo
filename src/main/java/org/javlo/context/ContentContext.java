@@ -202,7 +202,6 @@ public class ContentContext {
 					ctx.renderMode = TIME_MODE;
 				}
 			}
-
 			ctx.setRequest(request);
 			ctx.setResponse(response);
 			ctx.setPath(ContentManager.getPath(request));
