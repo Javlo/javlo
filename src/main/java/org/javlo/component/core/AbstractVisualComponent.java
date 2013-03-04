@@ -1116,6 +1116,9 @@ public abstract class AbstractVisualComponent implements IContentVisualComponent
 
 	protected String renderViewXHTMLCode(ContentContext ctx) throws Exception {
 		if (HIDDEN.equals(getStyle(ctx))) {
+			if (ctx.getRenderMode() == ContentContext.PREVIEW_MODE && EditContext.getInstance(GlobalContext.getInstance(ctx.getRequest()), ctx.getRequest().getSession()).isEditPreview()) {
+				return '[' + getType() + ']';
+			}
 			return "";
 		}
 		if (getRenderer(ctx) != null) {
