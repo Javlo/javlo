@@ -251,10 +251,10 @@ public class MultimediaResource {
 		}
 		if (StringHelper.isImage(url)) {
 			return "image";
-		} else if (StringHelper.isURL(url)) {
-			return "html";
 		} else if (StringHelper.isVideo(url)) {
 			return "video";
+		} else if (StringHelper.isURL(url) || StringHelper.isHTML(url)) {
+			return "html";
 		} else {
 			return "unknow";
 		}

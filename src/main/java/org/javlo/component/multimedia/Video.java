@@ -12,6 +12,7 @@ import java.net.URL;
 import java.text.ParseException;
 import java.util.Calendar;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.Comparator;
 import java.util.Date;
 import java.util.HashMap;
@@ -154,13 +155,44 @@ public class Video extends GlobalImage implements IAction, IVideo {
 	}
 
 	@Override
+	public boolean isContentCachable(ContentContext ctx) {
+		if (getEmbedCode() != null && getEmbedCode().trim().length() == 0) {
+			return super.isContentCachable(ctx);
+		} else {
+			return false;
+		}
+	}
+
+	@Override
 	public String getViewXHTMLCode(ContentContext ctx) throws Exception {
-		return renderInline(ctx, null, null, false);
+		if (getEmbedCode() != null && getEmbedCode().trim().length() > 0 && (!getStyle().equals(LINK) || ctx.isExport())) {
+			return getEmbedCode();
+		} else {
+			return renderInline(ctx, null, null, false);
+		}
+	}
+
+	@Override
+	public Map<String, String> getRenderes(ContentContext ctx) {
+		if (getStyle().equals(LINK)) {
+			return super.getRenderes(ctx);
+		} else {
+			return Collections.EMPTY_MAP;
+		}
 	}
 
 	@Override
 	public String getRenderer(ContentContext ctx) {
 		return null;
+	}
+
+	@Override
+	protected String getImageURL(ContentContext ctx) throws Exception {
+		if (getLink() != null && getLink().toLowerCase().contains("youtube")) {
+			return getYoutubePreview(ctx, getConfig(ctx).getProperty("image.filter", getDefaultFilter()));
+		} else {
+			return super.getImageURL(ctx);
+		}
 	}
 
 	@Override
@@ -199,7 +231,8 @@ public class Video extends GlobalImage implements IAction, IVideo {
 			return URLHelper.createTransformURL(ctx, imageLink, getConfig(ctx).getProperty("image.filter", "preview"));
 		} else if (getLink() != null && getLink().toLowerCase().contains("youtube")) {
 			try {
-				return getYoutubePreview(ctx, null);
+				String previewYouTube = getYoutubePreview(ctx, null);
+				return previewYouTube;
 			} catch (Exception e) {
 				logger.warning(e.getMessage());
 				e.printStackTrace();
@@ -257,14 +290,19 @@ public class Video extends GlobalImage implements IAction, IVideo {
 
 	@Override
 	public String getURL(ContentContext ctx) {
-		if (getLink() != null && getLink().trim().length() > 0) {
-			return getLink();
+		if (getEmbedCode().trim().length() > 0) {
+			String url = "/expcomp/" + getId() + ".html";
+			return URLHelper.createStaticURL(ctx, url);
 		} else {
-			if (getFileName() != null && getFileName().trim().length() > 0) {
-				String fileLink = getResourceURL(ctx, getFileName());
-				return URLHelper.createResourceURL(ctx, getPage(), fileLink).replace('\\', '/');
+			if (getLink() != null && getLink().trim().length() > 0) {
+				return getLink();
 			} else {
-				return null;
+				if (getFileName() != null && getFileName().trim().length() > 0) {
+					String fileLink = getResourceURL(ctx, getFileName());
+					return URLHelper.createResourceURL(ctx, getPage(), fileLink).replace('\\', '/');
+				} else {
+					return null;
+				}
 			}
 		}
 	}
@@ -290,7 +328,9 @@ public class Video extends GlobalImage implements IAction, IVideo {
 				String fileLink = getResourceURL(ctx, getFileName());
 				ctx.getRequest().setAttribute("url", URLHelper.createResourceURL(ctx, getPage(), fileLink).replace('\\', '/'));
 			} else {
-				ctx.getRequest().setAttribute("url", getLink());
+				if (getLink() != null && getLink().trim().length() > 0) {
+					ctx.getRequest().setAttribute("url", getLink());
+				}
 			}
 
 			ctx.getRequest().setAttribute("type", ResourceHelper.getFileExtensionToManType(StringHelper.getFileExtension(getFileName())));
@@ -448,6 +488,11 @@ public class Video extends GlobalImage implements IAction, IVideo {
 	@Override
 	public String getResourceURL(ContentContext ctx) {
 		return getResourceURL(ctx, getDecorationImage());
+	}
+
+	@Override
+	protected boolean isEmbedCode() {
+		return true;
 	}
 
 	@Override

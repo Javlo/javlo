@@ -291,6 +291,8 @@ public class ContentContext {
 
 	boolean isAbsoluteURL = false;
 
+	private boolean export = false;
+
 	public Boolean contentExistForContext = null;
 
 	/** cache **/
@@ -375,6 +377,7 @@ public class ContentContext {
 		device = ctx.getDevice();
 		format = ctx.format;
 		correctPath = ctx.correctPath;
+		export = ctx.export;
 	}
 
 	public String getArea() {
@@ -1359,5 +1362,18 @@ public class ContentContext {
 
 	public static void setForcePathPrefix(ServletRequest request, String forcePathPrefix) {
 		request.setAttribute(FORCE_PATH_PREFIX, forcePathPrefix);
+	}
+
+	/**
+	 * render component from export servelt (for expose only one component).
+	 * 
+	 * @return
+	 */
+	public boolean isExport() {
+		return export;
+	}
+
+	public void setExport(boolean export) {
+		this.export = export;
 	}
 }
