@@ -1,9 +1,12 @@
 package org.javlo.client.localmodule.service;
 
+import java.awt.Desktop;
+import java.net.URI;
 import java.util.logging.Logger;
 
 import javax.swing.JOptionPane;
 
+import org.javlo.client.localmodule.model.ServerConfig;
 import org.javlo.client.localmodule.ui.ClientTray;
 import org.javlo.client.localmodule.ui.ConfigFrame;
 
@@ -21,11 +24,16 @@ public class ActionService {
 		}
 	}
 
+	private ServiceFactory factory = ServiceFactory.getInstance();
 	private I18nService i18n = I18nService.getInstance();
 	private ConfigService config = ConfigService.getInstance();
 	private ClientTray tray = ClientTray.getInstance();
 
 	private ActionService() {
+	}
+
+	public void executeDefaultAction() {
+		//Do nothingRemoteN
 	}
 
 	public void openWebInterface() {
@@ -37,43 +45,31 @@ public class ActionService {
 //		}
 	}
 
-	public void editMetadata() {
-//		try {
-//			String remoteLoginId = ServiceFactory.getInstance().getHttpClient().retrieveRemoteLoginId();
-//			Desktop.getDesktop().browse(new URI(config.getServerURL() + "/edit/?webaction=changeview&view=4&dir=___nomt___&login_id=" + remoteLoginId));
-//		} catch (Exception ex) {
-//			tray.displayErrorMessage(i18n.get("error.on-browse"), ex, true);
-//		}
+	public void openUrl(ServerConfig server, String url) {
+		ServerClientService client = factory.getClient(server);
+		url = client.tokenifyUrl(url);
+		try {
+			Desktop.getDesktop().browse(new URI(url));
+		} catch (Exception ex) {
+			tray.displayErrorMessage(i18n.get("error.on-browse"), ex, true);
+		}
 	}
 
 	public void showAbout() {
-		JOptionPane.showMessageDialog(null, "Javlo Local Folder About...");
+		JOptionPane.showMessageDialog(null, "Javlo Local Module About...");
 	}
 
 	public void showConfig() {
 		ConfigFrame.showDialog();
 	}
 
-	public void openFolder() {
-//		try {
-//			Desktop.getDesktop().open(config.getLocalFolderFile());
-//		} catch (Exception ex) {
-//			tray.displayErrorMessage(i18n.get("error.on-open-folder"), ex, true);
-//		}
-	}
-
-	public void startSynchro() {
-		SynchroControlService scs = SynchroControlService.getInstance();
-		scs.wakeUp();
-	}
-
 	public void exit() {
-		SynchroControlService scs = SynchroControlService.getInstance();
-		scs.stop();
+		NotificationClientService notifClient = NotificationClientService.getInstance();
+		notifClient.stop();
 		try {
-			while (scs.isStarted()) {
+			while (notifClient.isStarted()) {
 				Thread.sleep(300);
-				scs.stop();
+				notifClient.stop();
 			}
 		} catch (InterruptedException ex) {
 			ex.printStackTrace();

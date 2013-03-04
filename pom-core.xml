@@ -138,17 +138,18 @@
 			<artifactId>pdfbox</artifactId>
 			<version>0.7.3</version>
 		</dependency>
-
+		
 		<dependency>
 			<groupId>org.apache.poi</groupId>
 			<artifactId>poi-scratchpad</artifactId>
-			<version>3.8</version>
+			<version>3.9</version>
 		</dependency>
+            
 
 		<dependency>
 			<groupId>org.apache.poi</groupId>
-			<artifactId>poi</artifactId>
-			<version>3.1-FINAL</version>
+			<artifactId>poi-ooxml</artifactId>
+			<version>3.9</version>
 		</dependency>
 
 		<dependency>
@@ -243,12 +244,8 @@
 			<version>1.07.00</version>
 		</dependency>
 
-		<!-- MySQL database driver -->
-		<dependency>
-			<groupId>mysql</groupId>
-			<artifactId>mysql-connector-java</artifactId>
-			<version>5.1.9</version>
-		</dependency>
+		<!-- MySQL database driver <dependency> <groupId>mysql</groupId> <artifactId>mysql-connector-java</artifactId> 
+			<version>5.1.9</version> </dependency> -->
 
 		<dependency>
 			<groupId>javax.servlet.jsp</groupId>

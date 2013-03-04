@@ -21,8 +21,7 @@ import org.javlo.module.core.ModulesContext;
 import org.javlo.service.NotificationService;
 import org.javlo.service.RequestService;
 import org.javlo.tracking.Tracker;
-
-import com.google.gson.Gson;
+import org.javlo.utils.JSONMap;
 
 public class AjaxServlet extends HttpServlet {
 
@@ -32,8 +31,6 @@ public class AjaxServlet extends HttpServlet {
 	 * create a static logger.
 	 */
 	protected static Logger logger = Logger.getLogger(AjaxServlet.class.getName());
-
-	private static final Gson JSON = new Gson();
 
 	@Override
 	public void init() throws ServletException {
@@ -100,12 +97,12 @@ public class AjaxServlet extends HttpServlet {
 				if (ctx.getAjaxData().size() > 0) {
 					outMap.put("data", ctx.getAjaxData());
 				}
-				JSON.toJson(outMap, strWriter);
+				JSONMap.JSON.toJson(outMap, strWriter);
 			} else {
 				for (Object key : ctx.getAjaxMap().keySet()) {
 					outMap.put("" + key, ctx.getAjaxMap().get(key));
 				}
-				JSON.toJson(outMap, strWriter);
+				JSONMap.JSON.toJson(outMap, strWriter);
 			}
 			strWriter.flush();
 			response.setContentType("application/json");

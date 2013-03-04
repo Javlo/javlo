@@ -1,15 +1,12 @@
 package org.javlo.client.localmodule.service;
 
-import org.apache.http.HttpHost;
-import org.apache.http.auth.AuthScope;
-import org.apache.http.auth.UsernamePasswordCredentials;
-import org.apache.http.client.HttpClient;
-import org.apache.http.conn.params.ConnRoutePNames;
-import org.apache.http.impl.client.DefaultHttpClient;
-import org.javlo.client.localmodule.ui.ClientTray;
-import org.javlo.service.syncro.HttpClientService;
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.Map;
+import java.util.Map.Entry;
 
-import com.google.gson.Gson;
+import org.javlo.client.localmodule.model.ServerConfig;
+import org.javlo.client.localmodule.ui.ClientTray;
 
 public class ServiceFactory {
 
@@ -24,9 +21,7 @@ public class ServiceFactory {
 	}
 
 	private NotificationService notificationService;
-	private HttpClientService httpClient = new HttpClientService();
-	private DefaultHttpClient rawHttpClient;
-	private Gson json = new Gson();
+	private Map<String, ServerClientService> clients = new HashMap<String, ServerClientService>();
 
 	private ServiceFactory() {
 	}
@@ -54,46 +49,36 @@ public class ServiceFactory {
 		return ActionService.getInstance();
 	}
 
-	public IMClientService getIMClient() {
-		return IMClientService.getInstance();
+	public NotificationClientService getNotificationClient() {
+		return NotificationClientService.getInstance();
 	}
 
-	public SynchroControlService getSynchroControl() {
-		return SynchroControlService.getInstance();
-	}
-
-	public HttpClientService getHttpClient() {
-//		httpClient.setServerURL(getConfig().getServerURL());
-//		httpClient.setUsername(getConfig().getUsername());
-//		httpClient.setPassword(getConfig().getPassword());
-		httpClient.setProxyHost(getConfig().getProxyHost());
-		httpClient.setProxyPort(getConfig().getProxyPort());
-		return httpClient;
-	}
-
-	public HttpClient getRawHttpClient() {
-		if (rawHttpClient == null) {
-			DefaultHttpClient httpClient = new DefaultHttpClient();
-			rawHttpClient = httpClient;
-		}
-		synchronized (getConfig().lock) {
-			if (getConfig().getProxyHost() != null) {
-				rawHttpClient.getCredentialsProvider().setCredentials(
-						new AuthScope(getConfig().getProxyHost(), getConfig().getProxyPort()),
-						new UsernamePasswordCredentials(getConfig().getProxyUsername(), getConfig().getProxyPassword()));
-
-				HttpHost proxy = new HttpHost(getConfig().getProxyHost(), getConfig().getProxyPort());
-
-				rawHttpClient.getParams().setParameter(ConnRoutePNames.DEFAULT_PROXY, proxy);
-			} else {
-				rawHttpClient.getParams().removeParameter(ConnRoutePNames.DEFAULT_PROXY);
+	public ServerClientService getClient(ServerConfig serverConfig) {
+		ServerClientService client = clients.get(serverConfig.getServerURL());
+		if (client == null) {
+			synchronized (clients) {
+				client = clients.get(serverConfig.getServerURL());
+				if (client == null) {
+					ConfigService c = getConfig();
+					synchronized (c.lock) {
+						client = new ServerClientService(serverConfig,
+								c.getProxyHost(), c.getProxyPort(), c.getProxyUsername(), c.getProxyPassword());
+					}
+					clients.put(serverConfig.getServerURL(), client);
+				}
 			}
 		}
-		return rawHttpClient;
+		return client;
 	}
 
-	public Gson getJson() {
-		return json;
+	public void onConfigChange() {
+		getNotificationClient().start();
+		synchronized (clients) {
+			for (Iterator<Entry<String, ServerClientService>> iterator = clients.entrySet().iterator(); iterator.hasNext();) {
+				iterator.next().getValue().dispose();
+				iterator.remove();
+			}
+		}
 	}
 
 }

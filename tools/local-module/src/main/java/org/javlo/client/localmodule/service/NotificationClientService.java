@@ -1,19 +1,23 @@
 package org.javlo.client.localmodule.service;
 
-import java.io.File;
+import java.util.Date;
+import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
-public class SynchroControlService {
-	private static final Logger logger = Logger.getLogger(SynchroControlService.class.getName());
+import org.javlo.client.localmodule.model.RemoteNotification;
+import org.javlo.client.localmodule.model.ServerConfig;
 
-	private static final long WAIT_TIME = 10 * 60 * 1000; //10 minutes
+public class NotificationClientService {
+	private static final Logger logger = Logger.getLogger(NotificationClientService.class.getName());
 
-	private static SynchroControlService instance;
-	public static SynchroControlService getInstance() {
-		synchronized (SynchroControlService.class) {
+	private static final long WAIT_TIME = 10 * 1000; //10 secondes
+
+	private static NotificationClientService instance;
+	public static NotificationClientService getInstance() {
+		synchronized (NotificationClientService.class) {
 			if (instance == null) {
-				instance = new SynchroControlService();
+				instance = new NotificationClientService();
 			}
 			return instance;
 		}
@@ -25,19 +29,18 @@ public class SynchroControlService {
 	private Thread synchroThread = null;
 	private boolean stopping = false;
 
-	private String lastKey = null;
-	private ObserverSynchroService ss = null;
-
 	private boolean waiting = false;
 
-	private SynchroControlService() {
+	private Date lastDate;
+
+	private NotificationClientService() {
 	}
 
 	public void start() {
 		synchronized (lock) {
 			if (!isStarted()) {
 				stopping = false;
-				synchroThread = new Thread(SynchroControlService.class.getSimpleName()) {
+				synchroThread = new Thread(NotificationClientService.class.getSimpleName()) {
 					@Override
 					public void run() {
 						try {
@@ -86,24 +89,14 @@ public class SynchroControlService {
 		try {
 			synchronized (lock) {
 				while (!stopping) {
-					//Get the service
+					ServerConfig[] servers;
 					synchronized (factory.getConfig().lock) {
-						File localFolder = null; //= factory.getConfig().getLocalFolderFile();
-						String key = factory.getHttpClient().getServerURL().toString() + "|" + localFolder.getAbsolutePath();
-
-						if (ss == null || lastKey == null || !key.equals(lastKey)) {
-							if (!factory.getConfig().isValid()) {
-								throw new IllegalArgumentException();
-							}
-							ss = ObserverSynchroService.createInstance(factory.getHttpClient(), localFolder);
-							lastKey = key;
-						}
+						servers = factory.getConfig().getServers();
 					}
-					//Use the service
-					ss.setLocalName(null); //factory.getConfig().getComputerName());
-					factory.getTray().onSyncroStateChange(true);
-					ss.synchronize();
-					factory.getTray().onSyncroStateChange(false);
+					for (ServerConfig server : servers) {
+						ServerClientService client = factory.getClient(server);
+						refreshRemoteNotifications(server, client);
+					}
 					//Wait next loop
 					logger.info("- wait ----------------------------------------------------------");
 					waiting = true;
@@ -111,15 +104,26 @@ public class SynchroControlService {
 					waiting = false;
 				}
 			}
-		} catch (IllegalArgumentException ex) {
-			factory.getTray().displayErrorMessage(factory.getI18n().get("error.synchro.config"), ex, false);
-		} catch (InterruptedException ex) {
-			//Going out
 		} catch (Exception ex) {
 			factory.getTray().displayErrorMessage(factory.getI18n().get("error.synchro.fatal"), ex, false);
 			logger.log(Level.SEVERE, ex.getClass().getSimpleName() + " occured during synchro process", ex);
-		} finally {
-			factory.getTray().onSyncroStateChange(false);
 		}
 	}
+
+	private void refreshRemoteNotifications(ServerConfig server, ServerClientService client) {
+		try {
+			List<RemoteNotification> notifications = client.callDataNotifications(lastDate);
+			if (notifications != null && !notifications.isEmpty()) {
+				for (RemoteNotification remoteNotification : notifications) {
+					if (lastDate == null || remoteNotification.getCreationDate().after(lastDate)) {
+						lastDate = remoteNotification.getCreationDate();
+					}
+				}
+				factory.getNotificationService().pushNotifications(notifications);
+			}
+		} catch (Exception ex) {
+			logger.log(Level.WARNING, "Exception on notification request.", ex);
+		}
+	}
+
 }
