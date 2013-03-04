@@ -10,10 +10,13 @@ import java.util.Set;
 
 /**
  * implement a Map with Collection as value.
+ * 
  * @author Patrick Vandermaesen
- *
- * @param <K> the type of the key
- * @param <V> the type of element content in the collection
+ * 
+ * @param <K>
+ *            the type of the key
+ * @param <V>
+ *            the type of element content in the collection
  */
 public class MapCollectionWrapper<K, V> {
 
@@ -33,12 +36,13 @@ public class MapCollectionWrapper<K, V> {
 
 	/**
 	 * get the list
+	 * 
 	 * @param key
 	 * @return return a list and never null
 	 */
 	public List<V> get(K key) {
 		if (map.get(key) == null) {
-			map.put(key, new LinkedList<V>());			
+			map.put(key, new LinkedList<V>());
 		}
 		return map.get(key);
 	}
@@ -69,7 +73,7 @@ public class MapCollectionWrapper<K, V> {
 
 	/**
 	 * update the value, if hashcode allready exist in the List the oldest is removed.
-	 *
+	 * 
 	 * @param key
 	 * @param value
 	 * @return
@@ -138,6 +142,10 @@ public class MapCollectionWrapper<K, V> {
 			System.out.println(string);
 		}
 
+	}
+
+	public void clear() {
+		map.clear();
 	}
 
 }

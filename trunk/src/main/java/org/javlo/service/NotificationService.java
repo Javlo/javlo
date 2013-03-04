@@ -123,8 +123,8 @@ public class NotificationService {
 	 */
 	private static final long NOTIFICATION_MAX_AGE = 60 * 60;
 
-	private List<Notification> notifications = new LinkedList<Notification>();
-	private MapCollectionWrapper<String, WeakReference<Notification>> allReadyReaded = new MapCollectionWrapper<String, WeakReference<Notification>>();
+	private final List<Notification> notifications = new LinkedList<Notification>();
+	private final MapCollectionWrapper<String, WeakReference<Notification>> allReadyReaded = new MapCollectionWrapper<String, WeakReference<Notification>>();
 
 	public static final NotificationService getInstance(GlobalContext globalContext) {
 		NotificationService notificationService = (NotificationService) globalContext.getAttribute(KEY);
@@ -137,8 +137,8 @@ public class NotificationService {
 
 	public void clearList() {
 		synchronized (notifications) {
-			notifications = new LinkedList<Notification>();
-			allReadyReaded = new MapCollectionWrapper<String, WeakReference<Notification>>();
+			notifications.clear();
+			allReadyReaded.clear();
 		}
 	}
 
