@@ -1376,4 +1376,8 @@ public class ContentContext {
 	public void setExport(boolean export) {
 		this.export = export;
 	}
+
+	public GlobalContext getGlobalContext() {
+		return GlobalContext.getInstance(request);
+	}
 }

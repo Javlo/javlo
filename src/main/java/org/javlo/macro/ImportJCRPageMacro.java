@@ -30,6 +30,7 @@ import org.javlo.i18n.I18nAccess;
 import org.javlo.macro.core.IInteractiveMacro;
 import org.javlo.message.MessageRepository;
 import org.javlo.navigation.MenuElement;
+import org.javlo.service.ContentService;
 import org.javlo.service.RequestService;
 
 public class ImportJCRPageMacro implements IInteractiveMacro, IAction {
@@ -168,6 +169,11 @@ public class ImportJCRPageMacro implements IInteractiveMacro, IAction {
 			importFile(ctx, fileToImport);
 		}
 
+		if (ctx.isEditPreview()) {
+			ctx.setClosePopup(true);
+			ctx.setParentURL(URLHelper.createURL(ctx.getContextWithOtherRenderMode(ContentContext.PREVIEW_MODE)));
+		}
+
 		return null;
 	}
 
@@ -208,9 +214,13 @@ public class ImportJCRPageMacro implements IInteractiveMacro, IAction {
 		try {
 			File dir = Config.getImportFolder(ctx);
 			List<Page> pages = new LinkedList<Page>();
+			MenuElement root = ContentService.getInstance(ctx.getGlobalContext()).getNavigation(ctx);
 			if (dir.exists() && dir.isDirectory()) {
 				for (File file : dir.listFiles((FileFilter) FileFilterUtils.suffixFileFilter(".zip"))) {
-					pages.add(new Page(file.getName(), file.getName().replace(".zip", "")));
+					String pageName = file.getName().replace(".zip", "");
+					if (root.searchChildFromName(pageName) == null) {
+						pages.add(new Page(file.getName(), pageName));
+					}
 				}
 				ctx.getRequest().setAttribute("pages", pages);
 				return null;
