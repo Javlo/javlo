@@ -7,7 +7,7 @@ ctx.setAbsoluteURL(true);
 <jnlp
 	spec="$jnlpspec"
 	codebase="<%=URLHelper.createStaticURL(ctx, "/webstart/")%>"
-	context="$$context"
+	context="<%=URLHelper.createStaticURL(ctx, "/")%>"
 	href="$outputFile">
 	<information>
 		<title>Javlo LocalModule</title>
@@ -28,7 +28,6 @@ ctx.setAbsoluteURL(true);
 	<resources>
 		<j2se version="$j2seVersion" initial-heap-size="32m" max-heap-size="128m" />
 		$dependencies
-		$extensions
 	</resources>
 	<application-desc main-class="$mainClass" />
 </jnlp>
