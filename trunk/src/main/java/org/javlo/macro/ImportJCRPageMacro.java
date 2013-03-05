@@ -28,7 +28,9 @@ import org.javlo.helper.StringHelper;
 import org.javlo.helper.URLHelper;
 import org.javlo.i18n.I18nAccess;
 import org.javlo.macro.core.IInteractiveMacro;
+import org.javlo.message.GenericMessage;
 import org.javlo.message.MessageRepository;
+import org.javlo.module.core.ModulesContext;
 import org.javlo.navigation.MenuElement;
 import org.javlo.service.ContentService;
 import org.javlo.service.RequestService;
@@ -55,6 +57,16 @@ public class ImportJCRPageMacro implements IInteractiveMacro, IAction {
 				dir = new File(config.getProperty("folder", staticConfig.replaceFolderVariable("$HOME/data/import")));
 			}
 			return dir;
+		}
+
+		private static List<String> getRefusedFiles(ContentContext ctx) throws Exception {
+			File refusedFile = new File(URLHelper.mergePath(getImportFolder(ctx).getAbsolutePath(), "not_imported.txt"));
+			return ResourceHelper.loadCollectionFromFile(refusedFile);
+		}
+
+		private static void addRefusedFiles(ContentContext ctx, String fileName) throws Exception {
+			File refusedFile = new File(URLHelper.mergePath(getImportFolder(ctx).getAbsolutePath(), "not_imported.txt"));
+			ResourceHelper.appendStringToFile(refusedFile, fileName);
 		}
 
 		private static String getProperty(ContentContext ctx, String key, String defaultValue) {
@@ -160,13 +172,20 @@ public class ImportJCRPageMacro implements IInteractiveMacro, IAction {
 		}
 	}
 
-	public static String performImport(RequestService rs, ContentContext ctx, GlobalContext globalContext, MessageRepository messageRepository, I18nAccess i18nAccess) throws MalformedURLException, Exception {
-
-		File fileToImport = new File(URLHelper.mergePath(Config.getImportFolder(ctx).getAbsolutePath(), rs.getParameter("file", "_____")));
-		if (!fileToImport.exists()) {
-			return "file not found : " + fileToImport;
+	public static String performImport(RequestService rs, ContentContext ctx, GlobalContext globalContext, ModulesContext modulesContext, MessageRepository messageRepository, I18nAccess i18nAccess) throws MalformedURLException, Exception {
+		if (rs.getParameter("file", null) != null) {
+			File fileToImport = new File(URLHelper.mergePath(Config.getImportFolder(ctx).getAbsolutePath(), rs.getParameter("name", null)));
+			if (!fileToImport.exists()) {
+				return "file not found : " + fileToImport;
+			} else {
+				importFile(ctx, fileToImport);
+				messageRepository.setGlobalMessageAndNotification(ctx, new GenericMessage("new article create : " + fileToImport.getName(), GenericMessage.SUCCESS));
+				modulesContext.setCurrentModule("content");
+			}
 		} else {
-			importFile(ctx, fileToImport);
+			if (rs.getParameter("remove-file", null) != null) {
+				Config.addRefusedFiles(ctx, new Page(rs.getParameter("name", null), "").getName());
+			}
 		}
 
 		if (ctx.isEditPreview()) {
@@ -215,11 +234,14 @@ public class ImportJCRPageMacro implements IInteractiveMacro, IAction {
 			File dir = Config.getImportFolder(ctx);
 			List<Page> pages = new LinkedList<Page>();
 			MenuElement root = ContentService.getInstance(ctx.getGlobalContext()).getNavigation(ctx);
+			List<String> refusedPages = Config.getRefusedFiles(ctx);
 			if (dir.exists() && dir.isDirectory()) {
 				for (File file : dir.listFiles((FileFilter) FileFilterUtils.suffixFileFilter(".zip"))) {
-					String pageName = file.getName().replace(".zip", "");
-					if (root.searchChildFromName(pageName) == null) {
-						pages.add(new Page(file.getName(), pageName));
+					String pageLabel = file.getName().replace(".zip", "");
+					Page page = new Page(file.getName(), pageLabel);
+					String pageName = StringHelper.createFileName(StringHelper.getFileNameWithoutExtension(page.getName()));
+					if (root.searchChildFromName(pageName) == null && !refusedPages.contains(page.getName())) {
+						pages.add(page);
 					}
 				}
 				ctx.getRequest().setAttribute("pages", pages);

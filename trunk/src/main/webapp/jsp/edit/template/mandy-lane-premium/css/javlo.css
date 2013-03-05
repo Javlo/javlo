@@ -32,6 +32,11 @@ input, textarea, select {
     float: left;
 }
 
+figure {
+	margin: 0;
+	padding: 0;
+}
+
 #navigation h3 {
     margin-left: 15px;
 }

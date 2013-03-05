@@ -21,3 +21,7 @@
 	margin: 0;
 }
 
+	
+.dyntable td.action {
+	text-align: left;	
+}

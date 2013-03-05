@@ -256,6 +256,13 @@ public class UserFactory implements IUserFactory, Serializable {
 		if (token == null || token.trim().length() == 0) {
 			return null;
 		}
+		
+		GlobalContext globalContext = GlobalContext.getInstance(request);
+		String realToken = globalContext.convertOneTimeToken(token);
+		if (realToken != null) {
+			token = realToken;
+		}
+		
 		User outUser = null;
 		List<IUserInfo> users = getUserInfoList();
 		for (IUserInfo user : users) {
@@ -264,8 +271,7 @@ public class UserFactory implements IUserFactory, Serializable {
 			}
 		}
 
-		if (outUser != null) {
-			GlobalContext globalContext = GlobalContext.getInstance(request);
+		if (outUser != null) {			
 			outUser.setContext(globalContext.getContextKey());
 			request.getSession().setAttribute(SESSION_KEY, outUser);
 		}

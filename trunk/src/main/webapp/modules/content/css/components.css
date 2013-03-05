@@ -79,9 +79,11 @@
 }
 
 .component .preview-image a {
-	display: inline-block;	
-	height: 150px;
-	width: 150px;
+	display: block;	
+}
+
+.component .preview-image img {
+	display: block;
 }
 
 .component .preview-image figcaption a {

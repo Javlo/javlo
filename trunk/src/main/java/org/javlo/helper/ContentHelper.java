@@ -290,7 +290,7 @@ public class ContentHelper {
 		 * Enumeration<? extends ZipEntry> entries = zipIn.getNextEntry(); String pageName = StringHelper.getFileNameWithoutExtension(zip.getName());
 		 */
 		GlobalContext gc = GlobalContext.getInstance(ctx.getRequest());
-		String pageName = StringHelper.getFileNameWithoutExtension(name);
+		String pageName = StringHelper.createFileName(StringHelper.getFileNameWithoutExtension(name));
 		ZipEntry entry = zipIn.getNextEntry();
 		int countComp = 0;
 		while (entry != null) {

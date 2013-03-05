@@ -194,7 +194,7 @@ public class Image extends AbstractFileComponent implements IImageTitle, IPrevie
 					}
 					String realURL = URLHelper.createResourceURL(ctx, getPage(), '/' + getResourceURL(ctx, image)) + "?CRC32=" + staticInfo.getCRC32();
 					String previewURL = URLHelper.createTransformURL(ctx, getPage(), getResourceURL(ctx, image), "preview") + "?CRC32=" + staticInfo.getCRC32();
-					url = URLHelper.createTransformURL(ctx, getPage(), getResourceURL(ctx, image), getConfig(ctx).getProperty("thumbnails-filter", "thumbnails")) + "?hash=" + staticInfo.getVersionHash();
+					url = URLHelper.createTransformURL(ctx, getPage(), getResourceURL(ctx, image), "list") + "?hash=" + staticInfo.getVersionHash();
 					String id = "image_name_select__" + getId();
 					// if (i < maxDisplayedImage || isSelectedImage) {
 					out.print("<div " + selected + ">");
@@ -202,7 +202,8 @@ public class Image extends AbstractFileComponent implements IImageTitle, IPrevie
 					if (globalContext.isImagePreview()) {
 						onMouseOver = " onMouseOver=\"previewImage('" + previewURL + "')\" onMouseOut=\"previewClear()\"";
 					}
-					out.print("<figure><a class=\"image\" href=\"#\" onclick=\"jQuery('#" + id + "').val('" + image + "');jQuery('#" + id + "').trigger('change');" + getJSOnChange(ctx) + "\"><img name=\"" + getImageImgName() + "\"" + onMouseOver + " src=\"");
+					out.print("<figure><a class=\"image\" href=\"#\" onclick=\"jQuery('#" + id + "').val('" + image + "');jQuery('#" + id + "').trigger('change');" + getJSOnChange(ctx) + "\">");
+					out.print("<img name=\"" + getImageImgName() + "\"" + onMouseOver + " src=\"");
 					out.print(url);
 					out.print("\" alt=\"\">&nbsp;</a>");
 					out.print("<figcaption><a href=\"" + realURL + "\">" + image + "</a></figcaption></figure>");
