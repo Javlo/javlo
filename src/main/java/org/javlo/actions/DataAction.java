@@ -95,7 +95,9 @@ public class DataAction implements IAction {
 
 	public static String performOneTimeToken(ContentContext ctx, User user) {
 		if (user != null) {
-			ctx.getAjaxData().put("token", user.getUserInfo().getToken());
+			GlobalContext globalContext = GlobalContext.getInstance(ctx.getRequest());
+			String token = globalContext.createOneTimeToken(user.getUserInfo().getToken());
+			ctx.getAjaxData().put("token", token);
 		} else {
 			return "no access";
 		}

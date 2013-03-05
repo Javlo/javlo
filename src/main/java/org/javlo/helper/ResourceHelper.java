@@ -6,6 +6,7 @@ package org.javlo.helper;
 import java.beans.XMLDecoder;
 import java.beans.XMLEncoder;
 import java.io.BufferedReader;
+import java.io.BufferedWriter;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.Closeable;
@@ -14,6 +15,8 @@ import java.io.FileFilter;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
+import java.io.FileReader;
+import java.io.FileWriter;
 import java.io.FilenameFilter;
 import java.io.IOException;
 import java.io.InputStream;
@@ -22,8 +25,10 @@ import java.io.ObjectOutputStream;
 import java.io.OutputStream;
 import java.io.PrintStream;
 import java.io.RandomAccessFile;
+import java.io.Reader;
 import java.io.Serializable;
 import java.io.UnsupportedEncodingException;
+import java.io.Writer;
 import java.net.URL;
 import java.nio.charset.Charset;
 import java.util.ArrayList;
@@ -102,15 +107,6 @@ public class ResourceHelper {
 			return StringHelper.isVideo(fileName);
 		}
 
-	}
-
-	public synchronized static final void appendLineToFile(File file, String content, String encoding) throws IOException {
-		if (!file.exists()) {
-			file.createNewFile();
-		}
-		List<String> lines = FileUtils.readLines(file, encoding);
-		lines.add(content);
-		FileUtils.writeLines(file, lines);
 	}
 
 	public static boolean checksumEquals(String checksum1, String checksum2) {
@@ -753,7 +749,48 @@ public class ResourceHelper {
 	public static final String loadStringFromFile(File file) throws IOException {
 		InputStream in = new FileInputStream(file);
 		String content = loadStringFromStream(in, ContentContext.CHARSET_DEFAULT);
+		closeResource(in);
 		return content;
+	}
+
+	public static final List<String> loadCollectionFromFile(File file) throws IOException {
+		if (!file.exists()) {
+			return Collections.EMPTY_LIST;
+		}
+		List<String> outLines = new LinkedList<String>();
+		Reader in = new FileReader(file);
+
+		BufferedReader reader = new BufferedReader(in);
+		String line = reader.readLine();
+		while (line != null) {
+			outLines.add(line);
+			line = reader.readLine();
+		}
+		closeResource(reader);
+
+		return outLines;
+	}
+
+	public static final void storeCollectionToFile(File file, List<String> lines) throws IOException {
+		if (!file.exists()) {
+			file.getParentFile().mkdirs();
+			file.createNewFile();
+		}
+		Writer in = new FileWriter(file);
+		BufferedWriter writer = new BufferedWriter(in);
+		for (String line : lines) {
+			writer.write(line);
+			writer.newLine();
+		}
+		closeResource(writer);
+	}
+
+	public static final void appendStringToFile(File file, String line) throws IOException {
+		Writer in = new FileWriter(file, true);
+		BufferedWriter writer = new BufferedWriter(in);
+		writer.write(line);
+		writer.newLine();
+		closeResource(writer);
 	}
 
 	public static void main2(String[] args) {

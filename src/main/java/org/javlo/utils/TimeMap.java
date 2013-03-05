@@ -26,8 +26,8 @@ public class TimeMap<K, V> implements Map<K, V> {
 	/**
 	 * set the default time of the attribute live in second
 	 */
-	public TimeMap(int inDefaultTimeLiveValue) {
-		defaultTimeLiveValue = inDefaultTimeLiveValue;
+	public TimeMap(int inDefaultTimeLiveValueSecond) {
+		defaultTimeLiveValue = inDefaultTimeLiveValueSecond;
 	}
 
 	public int getDefaultTimeValue() {
