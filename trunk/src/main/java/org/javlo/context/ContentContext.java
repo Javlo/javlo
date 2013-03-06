@@ -1355,6 +1355,10 @@ public class ContentContext {
 	}
 
 	public boolean isEditPreview() {
+		return isEditPreview(request);
+	}
+
+	public static boolean isEditPreview(HttpServletRequest request) {
 		RequestService rs = RequestService.getInstance(request);
 		return StringHelper.isTrue(rs.getParameter("previewEdit", null));
 	}

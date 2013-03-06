@@ -665,6 +665,10 @@
 #preview-layer.ui-draggable-dragging {
 	border: 4px #E3364A solid;
 	opacity: .30;
+	-ms-filter: "progid:DXImageTransform.Microsoft.Alpha(Opacity=30)";
+    filter: alpha(opacity=30);
+    -khtml-opacity: 0.30;
+    -moz-opacity: 0.30;
 }
 
 #preview-layer.ui-draggable-dragging span {
@@ -675,10 +679,14 @@
 	display: block;	
 	height: 9999px;
 	opacity: .30;
+	-ms-filter: "progid:DXImageTransform.Microsoft.Alpha(Opacity=30)";
+    filter: alpha(opacity=30);
+    -khtml-opacity: 0.30;
+    -moz-opacity: 0.30;
 }
 
 #preview-layer span {
-	background-color: #E3364A;	
+	background-color: #E3364A;
 }
 
 #droppable-layer span {	
@@ -695,6 +703,10 @@
 	border-radius: 3px 3px 3px 3px;
 	background-color: #364AE3;
 	opacity: .30;
+	-ms-filter: "progid:DXImageTransform.Microsoft.Alpha(Opacity=30)";
+    filter: alpha(opacity=30);
+    -khtml-opacity: 0.30;
+    -moz-opacity: 0.30;
 }
 
 #pc_upload #upload-zone {
