@@ -425,7 +425,7 @@ public class I18nAccess implements Serializable {
 
 		synchronized (lockViewMap) {
 			if (propViewMap == null) {
-				ReadOnlyMultiMap mutliMap = new ReadOnlyMultiMap<String, String>();
+				ReadOnlyMultiMap<String, String> mutliMap = new ReadOnlyMultiMap<String, String>();
 				propViewMap = mutliMap;
 				if (propView != null) {
 					synchronized (propView) {

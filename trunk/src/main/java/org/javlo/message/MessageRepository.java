@@ -24,7 +24,7 @@ import org.javlo.service.NotificationService;
  */
 public class MessageRepository {
 
-	public static final String KEY = MessageRepository.class.getName();
+	public static final String KEY = "messages";
 
 	private final Collection<GenericMessage> messagesWithoutKey = new LinkedList<GenericMessage>();
 	private final Map<String, GenericMessage> messagesWithKey = new HashMap<String, GenericMessage>();

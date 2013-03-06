@@ -401,7 +401,7 @@ public class Edit extends AbstractModuleAction {
 				}
 			}
 		}
-		
+
 		if (!components[components.length - 1].isMetaTitle()) {
 			IContentVisualComponent comp = components[components.length - 1];
 			ComponentWrapper compWrapper = new ComponentWrapper(comp.getType(), comp.getComponentLabel(ctx, globalContext.getEditLanguage(ctx.getRequest().getSession())), comp.getValue(ctx), comp.getComplexityLevel(), comp.isMetaTitle());
@@ -1265,7 +1265,7 @@ public class Edit extends AbstractModuleAction {
 		int c = 0;
 		while (elems.hasNext(ctx)) {
 			ComponentBean bean = elems.next(ctx).getBean(ctx);
-			bean.setArea(ctx.getArea());
+			// bean.setArea(ctx.getArea()); the source component is always in the same area
 			bean.setLanguage(ctx.getRequestContentLanguage());
 			parentId = content.createContent(ctx, bean, parentId, true);
 			c++;
@@ -1370,7 +1370,7 @@ public class Edit extends AbstractModuleAction {
 		String msg = i18nAccess.getText("action.component.moved", new String[][] { { "type", comp.getType() } });
 		messageRepository.setGlobalMessageAndNotification(ctx, new GenericMessage(msg, GenericMessage.INFO));
 
-		// persistenceService.store(ctx);
+		persistenceService.store(ctx);
 		modifPage(ctx);
 		autoPublish(ctx.getRequest(), ctx.getResponse());
 
