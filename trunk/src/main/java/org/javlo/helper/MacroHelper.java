@@ -695,19 +695,15 @@ public class MacroHelper {
 		MenuElement root = ContentService.getInstance(ctx.getRequest()).getNavigation(ctx);
 		for (MenuElement page : root.getAllChildren()) {
 			if (page.getChildMenuElements().size() > 0) {
-				boolean isArticleRoot = true;
+				boolean isArticleRoot = false;
 				for (MenuElement child : page.getChildMenuElements()) {
 					int index = child.getName().lastIndexOf('-');
 					String year = child.getName();
 					if (index > 0) {
 						year = child.getName().substring(index + 1, child.getName().length());
 					}
-					if (year.length() != 4) {
-						isArticleRoot = false;
-					} else {
-						if (!NumberUtils.isNumber(year)) {
-							isArticleRoot = false;
-						}
+					if (year.length() == 4 && NumberUtils.isNumber(year)) {
+						isArticleRoot = true;
 					}
 				}
 				if (isArticleRoot) {
