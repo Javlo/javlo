@@ -21,36 +21,36 @@ public class DecorationImage extends GlobalImage {
 	public void init(ComponentBean bean, ContentContext newContext) throws Exception {
 		super.init(bean, newContext);
 	}
-	
+
 	@Override
 	public String getType() {
 		return "decoration-image";
 	}
-	
+
 	@Override
-	protected boolean canUpload() {
+	protected boolean canUpload(ContentContext ctx) {
 		return false;
 	}
-	
+
 	@Override
 	public String getFileDirectory(ContentContext ctx) {
 		StaticConfig staticConfig = StaticConfig.getInstance(ctx.getRequest().getSession());
-		String imageFolder = URLHelper.mergePath(staticConfig.getShareDataFolder(), staticConfig.getShareImageFolder());		
+		String imageFolder = URLHelper.mergePath(staticConfig.getShareDataFolder(), staticConfig.getShareImageFolder());
 		return imageFolder;
 	}
-	
+
 	@Override
 	public String getResourceURL(ContentContext ctx, String fileLink) {
 		StaticConfig staticConfig = StaticConfig.getInstance(ctx.getRequest().getSession());
 		String imageFolder = URLHelper.mergePath(staticConfig.getShareDataFolderKey(), staticConfig.getShareImageFolder());
-		return URLHelper.mergePath(imageFolder, URLHelper.mergePath(getDirSelected(), fileLink));		
+		return URLHelper.mergePath(imageFolder, URLHelper.mergePath(getDirSelected(), fileLink));
 	}
-	
+
 	@Override
 	protected boolean isLinkToStatic() {
 		return false;
 	}
-	
+
 	@Override
 	/**
 	 * no importation of shared image.

@@ -14,13 +14,8 @@ public class EmbedVideo extends Video implements IAction {
 	}
 
 	@Override
-	protected boolean canUpload() {
+	protected boolean canUpload(ContentContext ctx) {
 		return false;
-	}
-
-	@Override
-	protected boolean isEmbedCode() {
-		return true;
 	}
 
 	@Override
