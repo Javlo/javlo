@@ -65,7 +65,7 @@ import org.javlo.utils.SuffixPrefix;
  * <li>{@link String} style : the style selected for the component. See {@link #getStyle(ContentContext)}</li>
  * </ul>
  * 
- * @author pvanderm
+ * @author Patrick Vandermaesen
  */
 public abstract class AbstractVisualComponent implements IContentVisualComponent {
 

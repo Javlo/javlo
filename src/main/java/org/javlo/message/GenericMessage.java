@@ -16,8 +16,8 @@ public class GenericMessage {
 	public static final int ERROR = 1;
 	public static final int ALERT = 2;
 	public static final int INFO = 3;
-	public static final int SUCCESS = 5;
 	public static final int HELP = 4;
+	public static final int SUCCESS = 5;
 
 	int type;
 	String message = null;

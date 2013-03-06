@@ -40,7 +40,12 @@ import org.javlo.user.UserFactory;
 import org.javlo.user.exception.UserAllreadyExistException;
 
 /**
- * @author pvandermaesen
+ * This class is use for register a user :</h4>
+ * <ul>
+ * <li>{@link Boolean} name : true if contributor need first name and laste name</li>
+ * </ul>
+ * 
+ * @author Patrick Vandermaesen
  */
 public class FormMailingComponent extends AbstractVisualComponent implements IAction {
 
@@ -68,9 +73,8 @@ public class FormMailingComponent extends AbstractVisualComponent implements IAc
 	}
 
 	/**
-	 *
-	 * @see org.javlo.component.AbstractVisualComponent#init(java.lang.String,
-	 *      java.lang.String, org.javlo.ContentContext)
+	 * 
+	 * @see org.javlo.component.AbstractVisualComponent#init(java.lang.String, java.lang.String, org.javlo.ContentContext)
 	 */
 	@Override
 	protected void init(ComponentBean bean, ContentContext ctx) throws Exception {
@@ -239,10 +243,17 @@ public class FormMailingComponent extends AbstractVisualComponent implements IAc
 	protected Set<String> getRolesAsArray() {
 		return new HashSet<String>(StringHelper.stringToCollection(getRolesAsRaw()));
 	}
-	
+
 	@Override
 	public boolean isRealContent(ContentContext ctx) {
 		return true;
+	}
+
+	@Override
+	public void prepareView(ContentContext ctx) throws Exception {
+		super.prepareView(ctx);
+		ctx.getRequest().setAttribute("name", isNeedName());
+
 	}
 
 	/*
@@ -268,18 +279,18 @@ public class FormMailingComponent extends AbstractVisualComponent implements IAc
 		String confirmEmail = comp.getConfirmEmail();
 		if (confirmEmail != null && request.getParameter("direct") == null) {
 			StringBuffer urlParam = new StringBuffer("?webaction=" + comp.getActionGroupName() + ".submit");
-			logger.info("send email confirmation to : "+email+" ("+firstName+' '+lastName+')');
+			logger.info("send email confirmation to : " + email + " (" + firstName + ' ' + lastName + ')');
 			urlParam.append("&email=" + email);
 			urlParam.append("&firstname=" + firstName);
 			urlParam.append("&lastname=" + lastName);
 			urlParam.append("&" + COMP_ID_REQUEST_PARAM + '=' + compId);
 			urlParam.append("&direct=d");
 			StaticConfig staticConfig = StaticConfig.getInstance(ctx.getRequest().getSession().getServletContext());
-			//String encodedParam = StringHelper.encodeBase64ToURLParam(StringSecurityUtil.encode(urlParam.toString(), staticConfig.getSecretKey()));
+			// String encodedParam = StringHelper.encodeBase64ToURLParam(StringSecurityUtil.encode(urlParam.toString(), staticConfig.getSecretKey()));
 			String encodedParam = StringSecurityUtil.encode(urlParam.toString(), staticConfig.getSecretKey());
 			ContentContext absURLCtx = new ContentContext(ctx);
 			absURLCtx.setAbsoluteURL(true);
-			String registerURL = URLHelper.createURL(absURLCtx) + '?' + RequestHelper.CRYPTED_PARAM_NAME + "=" + encodedParam + "#reg_"+comp.getId();
+			String registerURL = URLHelper.createURL(absURLCtx) + '?' + RequestHelper.CRYPTED_PARAM_NAME + "=" + encodedParam + "#reg_" + comp.getId();
 			confirmEmail = confirmEmail.replace("##URL##", registerURL);
 			confirmEmail = confirmEmail.replace("##firstname##", firstName);
 			confirmEmail = confirmEmail.replace("##lastname##", lastName);
@@ -287,7 +298,7 @@ public class FormMailingComponent extends AbstractVisualComponent implements IAc
 			// DEBUG = FileUtils.writeStringToFile(new File ("/tmp/mail.html"),
 			// confirmEmail);
 
-			MailService mailService = MailService.getInstance(staticConfig);			
+			MailService mailService = MailService.getInstance(staticConfig);
 			mailService.sendMail(new InternetAddress(globalContext.getAdministratorEmail()), new InternetAddress(email), comp.getEmailSubject(), confirmEmail, true);
 
 			GenericMessage msg = new GenericMessage(i18nAccess.getContentViewText("user.error.email-send"), GenericMessage.INFO);
@@ -342,6 +353,9 @@ public class FormMailingComponent extends AbstractVisualComponent implements IAc
 					fact.addUserInfo(userInfo);
 				}
 				request.setAttribute(StringHelper.REQUEST_KEY_FORM_VALID, "true");
+				GenericMessage msg = new GenericMessage(i18nAccess.getContentViewText("form.message"), GenericMessage.INFO);
+				messageRepository.setGlobalMessage(msg);
+				logger.info("user registred in '" + globalContext.getContextKey() + "' site : " + email);
 				fact.store();
 			} catch (UserAllreadyExistException e) {
 				GenericMessage msg = new GenericMessage(i18nAccess.getContentViewText("user.error.email-allready-exist"), GenericMessage.ERROR);
@@ -350,9 +364,7 @@ public class FormMailingComponent extends AbstractVisualComponent implements IAc
 				return "";
 			}
 			/*
-			 * if (fact.getCurrentUser() == null) {
-			 * fact.login(GlobalContext.getInstance(request),
-			 * userInfo.getLogin(), userInfo.getPassword()); }
+			 * if (fact.getCurrentUser() == null) { fact.login(GlobalContext.getInstance(request), userInfo.getLogin(), userInfo.getPassword()); }
 			 */
 
 		}
