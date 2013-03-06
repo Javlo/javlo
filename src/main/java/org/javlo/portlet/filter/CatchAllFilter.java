@@ -163,7 +163,7 @@ public class CatchAllFilter implements Filter {
 			editURI = editURI.substring(globalContext.getContextKey().length() + 1);
 		}
 
-		if (user != null && AdminUserSecurity.getInstance().haveRole(user, AdminUserSecurity.CONTRIBUTOR_ROLE)) {
+		if (user != null && AdminUserSecurity.getInstance().haveRole(user, AdminUserSecurity.CONTRIBUTOR_ROLE) && (!ContentContext.isEditPreview(httpRequest))) {
 			if (editURI.startsWith("/edit")) {
 				httpRequest.getRequestDispatcher(editURI.replaceFirst("/edit", "/preview")).forward(request, response);
 				return;
