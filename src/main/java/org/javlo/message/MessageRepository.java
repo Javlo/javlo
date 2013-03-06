@@ -94,7 +94,7 @@ public class MessageRepository {
 	 */
 	public void setGlobalMessage(GenericMessage globalMessage) {
 		if (this.globalMessage != null) {
-			if (this.globalMessage.getType() > globalMessage.getType()) {
+			if (globalMessage.getType() < this.globalMessage.getType()) {
 				this.globalMessage = globalMessage;
 			}
 		} else {

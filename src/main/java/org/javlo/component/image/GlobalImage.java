@@ -29,6 +29,7 @@ import org.javlo.helper.URLHelper;
 import org.javlo.helper.XHTMLHelper;
 import org.javlo.i18n.I18nAccess;
 import org.javlo.message.GenericMessage;
+import org.javlo.message.MessageRepository;
 import org.javlo.service.RequestService;
 import org.javlo.template.Template;
 
@@ -69,7 +70,7 @@ public class GlobalImage extends Image {
 	private GenericMessage msg;
 
 	@Override
-	protected boolean canUpload() {
+	protected boolean canUpload(ContentContext ctx) {
 		return true;
 	}
 
@@ -272,7 +273,7 @@ public class GlobalImage extends Image {
 			finalCode.append("</div>");
 		}
 
-		if (canUpload()) {
+		if (canUpload(ctx)) {
 			finalCode.append("<div class=\"line\"><label for=\"" + getFileXHTMLInputName() + "\">" + getImageUploadTitle(ctx) + " : </label>");
 			finalCode.append("<input name=\"" + getFileXHTMLInputName() + "\" type=\"file\"/></div>");
 		}
@@ -657,6 +658,14 @@ public class GlobalImage extends Image {
 		if (link != null) {
 			if (!link.equals(getLink())) {
 
+				if (!StringHelper.isURL(link)) {
+					MessageRepository.getInstance(ctx).setGlobalMessage(new GenericMessage("bad link.", GenericMessage.ALERT));
+				} else {
+					if (!isLinkValid(link)) {
+						MessageRepository.getInstance(ctx).setGlobalMessage(new GenericMessage("link to video work only with youtube, dailymotioin or europartv.", GenericMessage.ALERT));
+					}
+				}
+
 				try {
 					if (getTitle().trim().length() == 0 && URLHelper.isAbsoluteURL(link)) {
 						setTitle(NetHelper.getPageTitle(NetHelper.readPage(new URL(link))));
@@ -687,6 +696,10 @@ public class GlobalImage extends Image {
 
 		super.performEdit(ctx);
 
+	}
+
+	protected boolean isLinkValid(String url) {
+		return true;
 	}
 
 	public void setFilter(String filter) {
