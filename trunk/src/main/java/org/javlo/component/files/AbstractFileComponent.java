@@ -95,7 +95,7 @@ public abstract class AbstractFileComponent extends AbstractVisualComponent impl
 		properties.setProperty(REVERSE_LINK_KEY, ReverseLinkService.NONE);
 	}
 
-	protected boolean canUpload() {
+	protected boolean canUpload(ContentContext ctx) {
 		return true;
 	}
 
@@ -285,7 +285,7 @@ public abstract class AbstractFileComponent extends AbstractVisualComponent impl
 		String[][] params = { { "rows", "1" } };
 		finalCode.append(XHTMLHelper.getTextArea(getLabelXHTMLInputName(), getLabel(), params));
 
-		if (canUpload()) {
+		if (canUpload(ctx)) {
 			finalCode.append("<div class=\"command\" style=\"margin-top: 5px; margin-bottom: 5px;\"><label style=\"float: left; width: 160px; height: 16px;\" for=\"new_dir_" + getId() + "\">");
 			finalCode.append(getNewDirLabelTitle(ctx));
 			finalCode.append(" : </label><input id=\"new_dir_" + getId() + "\" name=\"" + getNewDirInputName() + "\" type=\"text\"/></div>");
@@ -314,7 +314,7 @@ public abstract class AbstractFileComponent extends AbstractVisualComponent impl
 			finalCode.append("</div>");
 		}
 
-		if (canUpload()) {
+		if (canUpload(ctx)) {
 			finalCode.append(getImageUploadTitle(ctx));
 			finalCode.append("<br /><input name=\"" + getFileXHTMLInputName() + "\" type=\"file\"/><br /><br />");
 		}
@@ -649,7 +649,7 @@ public abstract class AbstractFileComponent extends AbstractVisualComponent impl
 				properties.setProperty(DESCRIPTION_KEY, description);
 			}
 
-			if (canUpload()) {
+			if (canUpload(ctx)) {
 				if (isFileNameValid(fileName)) {
 					try {
 						uploadFiles(ctx, requestService);

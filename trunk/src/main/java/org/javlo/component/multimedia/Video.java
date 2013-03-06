@@ -114,6 +114,11 @@ public class Video extends GlobalImage implements IAction, IVideo {
 	}
 
 	@Override
+	protected boolean canUpload(ContentContext ctx) {
+		return StringHelper.isTrue(getConfig(ctx).getProperty("upload", "true"));
+	}
+
+	@Override
 	public String getFileDirectory(ContentContext ctx) {
 		String folder;
 		StaticConfig staticConfig = StaticConfig.getInstance(ctx.getRequest().getSession());
@@ -389,6 +394,11 @@ public class Video extends GlobalImage implements IAction, IVideo {
 	}
 
 	@Override
+	protected boolean isLinkValid(String url) {
+		return url.contains("youtube.com") || url.contains("dailymotion.com") || url.contains("europarltv");
+	}
+
+	@Override
 	protected boolean isMeta() {
 		return true;
 	}
@@ -492,7 +502,20 @@ public class Video extends GlobalImage implements IAction, IVideo {
 
 	@Override
 	protected boolean isEmbedCode() {
-		return true;
+		if (getEmbedCode().trim().length() > 0) {
+			return true;
+		} else {
+			return getLink().trim().length() == 0;
+		}
+	}
+
+	@Override
+	protected boolean isLink() {
+		if (getLink().trim().length() > 0) {
+			return true;
+		} else {
+			return getEmbedCode().trim().length() == 0;
+		}
 	}
 
 	@Override
