@@ -14,6 +14,8 @@ import java.util.Locale;
 import java.util.Map;
 
 import org.javlo.component.core.IContentVisualComponent;
+import org.javlo.component.meta.LocationComponent;
+import org.javlo.component.title.SubTitle;
 import org.javlo.context.ContentContext;
 import org.javlo.context.GlobalContext;
 import org.javlo.i18n.I18nAccess;
@@ -208,10 +210,22 @@ public class TimeHelper {
 				if (betweenInDay(key, startDate, endDate)) {
 					out.println("<event date=\"" + StringHelper.renderShortDate(ctx, key) + "\" >");
 					List<IContentVisualComponent> contentForDate = contentByDate.get(key);
-					out.println("<content><![CDATA[");
+					StringBuffer content = new StringBuffer();
 					for (IContentVisualComponent contentVisualComponent : contentForDate) {
-						out.println(contentVisualComponent.getXHTMLCode(ctx));
+						if (contentVisualComponent.getType().equals(LocationComponent.TYPE)) {
+							out.print("<location>");
+							out.print(contentVisualComponent.getValue(ctx));
+							out.println("</location>");
+						} else if (contentVisualComponent.getType().equals(SubTitle.TYPE)) {
+							out.print("<title type=\"" + contentVisualComponent.getStyle(ctx) + "\">");
+							out.print(contentVisualComponent.getValue(ctx));
+							out.println("</title>");
+						} else {
+							content.append(contentVisualComponent.getXHTMLCode(ctx));
+						}
 					}
+					out.println("<content><![CDATA[");
+					out.println(content);
 					out.println("]]></content>");
 					out.println("</event>");
 				}
