@@ -58,6 +58,11 @@ public class CSVArrayComponent extends AbstractFileComponent {
 		return COMPLEXITY_STANDARD;
 	}
 
+	@Override
+	public String getHexColor() {
+		return TEXT_COLOR;
+	}
+
 	private Charset getCurrentEncoding(ContentContext ctx) {
 		Charset charset = Charset.forName("utf-16"); // default encoding if encoding not found
 
