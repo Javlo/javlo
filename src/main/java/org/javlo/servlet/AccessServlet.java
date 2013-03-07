@@ -34,6 +34,7 @@ import org.javlo.component.core.IContentVisualComponent;
 import org.javlo.component.portlet.AbstractPortletWrapperComponent;
 import org.javlo.config.StaticConfig;
 import org.javlo.context.ContentContext;
+import org.javlo.context.ContentManager;
 import org.javlo.context.EditContext;
 import org.javlo.context.GlobalContext;
 import org.javlo.context.GlobalContextFactory;
@@ -42,6 +43,7 @@ import org.javlo.helper.DebugHelper;
 import org.javlo.helper.RequestHelper;
 import org.javlo.helper.ServletHelper;
 import org.javlo.helper.StringHelper;
+import org.javlo.helper.TimeHelper;
 import org.javlo.helper.URLHelper;
 import org.javlo.helper.XMLHelper;
 import org.javlo.i18n.I18nAccess;
@@ -647,8 +649,17 @@ public class AccessServlet extends HttpServlet {
 						pdfRenderer.layout();
 						pdfRenderer.createPDF(out);
 
-					} else {
+					} else if (ctx.getFormat().equalsIgnoreCase("calxml")) {
 
+						String realPath = ContentManager.getPath(request);
+						MenuElement agendaPage = ContentService.getInstance(globalContext).getNavigation(ctx).searchChild(ctx, realPath);
+
+						response.setContentType("text/xml; charset=" + ContentContext.CHARACTER_ENCODING);
+						Date startDate = StringHelper.parseSortableDate(requestService.getParameter("start-date", "1900-01-01"));
+						Date endDate = StringHelper.parseSortableDate(requestService.getParameter("end-date", "2100-01-01"));
+						String agendaXML = TimeHelper.exportAgenda(ctx, agendaPage, startDate, endDate);
+						response.getWriter().write(agendaXML);
+					} else {
 						if (elem == null) {
 							logger.warning("bad path : " + path);
 						}

@@ -240,7 +240,7 @@ public abstract class AbstractPortletWrapperComponent extends AbstractProperties
 	public final PortletWindowImpl getPortletWindow(ContentContext ctx) {
 		PortletManager pm = PortletManager.getInstance(ctx.getRequest().getSession().getServletContext());
 		PortletWindowImpl pw = pm.getPortletWindow(this, ctx);
-
+		
 		if (pw != null) {
 
 			// legacy, windowID used instead
@@ -248,6 +248,7 @@ public abstract class AbstractPortletWrapperComponent extends AbstractProperties
 
 			// legacy, event based storage instead
 			ctx.getRequest().setAttribute(pw.getId().getStringId(), getPortletValue(ctx));
+			
 		}
 		return pw;
 	}
