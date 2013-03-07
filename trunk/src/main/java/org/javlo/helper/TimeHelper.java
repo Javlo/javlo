@@ -209,6 +209,8 @@ public class TimeHelper {
 				Date key = dates.next();
 				if (betweenInDay(key, startDate, endDate)) {
 					out.println("<event date=\"" + StringHelper.renderSortableDate(key) + "\" >");
+					out.println("<url>" + URLHelper.createURL(ctx.getContextForAbsoluteURL(), element) + "</url>");
+
 					List<IContentVisualComponent> contentForDate = contentByDate.get(key);
 					StringBuffer content = new StringBuffer();
 					for (IContentVisualComponent contentVisualComponent : contentForDate) {
