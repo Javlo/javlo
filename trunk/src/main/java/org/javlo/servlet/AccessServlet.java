@@ -649,7 +649,7 @@ public class AccessServlet extends HttpServlet {
 						pdfRenderer.layout();
 						pdfRenderer.createPDF(out);
 
-					} else if (ctx.getFormat().equalsIgnoreCase("calxml")) {
+					} else if (ctx.getFormat().equalsIgnoreCase("cxml")) {
 
 						String realPath = ContentManager.getPath(request);
 						MenuElement agendaPage = ContentService.getInstance(globalContext).getNavigation(ctx).searchChild(ctx, realPath);

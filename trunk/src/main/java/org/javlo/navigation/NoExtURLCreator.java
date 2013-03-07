@@ -50,7 +50,7 @@ public class NoExtURLCreator implements IURLFactory {
 		if (pathItems.length >= 4) {
 			format = pathItems[pathItems.length - 2];
 		}
-		if (format.length() > 4 || (!format.equals("html") && !format.equals("pdf") && !format.equals("png") && !format.equals("jpg"))) {
+		if (format.length() > 4 || (!format.equals("html") && !format.equals("pdf") && !format.equals("png") && !format.equals("jpg") && !format.equals("cxml"))) {
 			format = "html";
 		}
 		return format;
