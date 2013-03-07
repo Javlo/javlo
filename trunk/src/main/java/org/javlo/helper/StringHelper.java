@@ -1372,6 +1372,13 @@ public class StringHelper {
 		return parseDate(date, "yyyy-MM-dd HH:mm:ss");
 	}
 
+	public static Date parseSortableDate(String date) throws ParseException {
+		if (date == null) {
+			return null;
+		}
+		return parseDate(date, "yyyy-MM-dd");
+	}
+
 	/*
 	 * public static String encodeBase64ToURLParam(String base64Code) { return base64Code.replace('+', '_').replace('/', '-').replace('=','*'); }
 	 * 

@@ -153,7 +153,7 @@ public class ContentManager {
 
 	}
 
-	static String getPath(HttpServletRequest request) {
+	public static String getPath(HttpServletRequest request) {
 		String path = null;
 		String realPath = RequestService.getURI(request);
 

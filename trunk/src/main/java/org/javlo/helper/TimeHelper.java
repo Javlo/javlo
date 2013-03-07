@@ -2,15 +2,22 @@ package org.javlo.helper;
 
 import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.io.PrintWriter;
+import java.io.StringWriter;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.Iterator;
+import java.util.List;
 import java.util.Locale;
+import java.util.Map;
 
+import org.javlo.component.core.IContentVisualComponent;
 import org.javlo.context.ContentContext;
 import org.javlo.context.GlobalContext;
 import org.javlo.i18n.I18nAccess;
+import org.javlo.navigation.MenuElement;
 
 public class TimeHelper {
 
@@ -185,6 +192,34 @@ public class TimeHelper {
 			dateFormat = new SimpleDateFormat(manualDateFormat);
 		}
 		return dateFormat;
+	}
+
+	public static String exportAgenda(ContentContext ctx, MenuElement agendaPage, Date startDate, Date endDate) throws Exception {
+		StringWriter writer = new StringWriter();
+		PrintWriter out = new PrintWriter(writer);
+		MenuElement[] children = agendaPage.getAllChildren();
+		out.println("<?xml version=\"1.0\" encoding=\"UTF-8\"?>");
+		out.println("<agenda lang=\"" + ctx.getRequestContentLanguage() + "\" start-date=\"" + StringHelper.renderSortableDate(startDate) + "\" end-date=\"" + StringHelper.renderSortableDate(endDate) + "\">");
+		for (MenuElement element : children) {
+			Map<Date, List<IContentVisualComponent>> contentByDate = element.getContentByDate(ctx);
+			Iterator<Date> dates = contentByDate.keySet().iterator();
+			while (dates.hasNext()) {
+				Date key = dates.next();
+				if (betweenInDay(key, startDate, endDate)) {
+					out.println("<event date=\"" + StringHelper.renderShortDate(ctx, key) + "\" >");
+					List<IContentVisualComponent> contentForDate = contentByDate.get(key);
+					out.println("<content><![CDATA[");
+					for (IContentVisualComponent contentVisualComponent : contentForDate) {
+						out.println(contentVisualComponent.getXHTMLCode(ctx));
+					}
+					out.println("]]></content>");
+					out.println("</event>");
+				}
+			}
+		}
+		out.println("</agenda>");
+		out.close();
+		return writer.toString();
 	}
 
 	public static void main(String[] args) {
