@@ -208,7 +208,7 @@ public class TimeHelper {
 			while (dates.hasNext()) {
 				Date key = dates.next();
 				if (betweenInDay(key, startDate, endDate)) {
-					out.println("<event date=\"" + StringHelper.renderShortDate(ctx, key) + "\" >");
+					out.println("<event date=\"" + StringHelper.renderSortableDate(key) + "\" >");
 					List<IContentVisualComponent> contentForDate = contentByDate.get(key);
 					StringBuffer content = new StringBuffer();
 					for (IContentVisualComponent contentVisualComponent : contentForDate) {

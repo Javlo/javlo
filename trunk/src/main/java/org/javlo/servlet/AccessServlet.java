@@ -623,7 +623,6 @@ public class AccessServlet extends HttpServlet {
 						imageWriter.write(img, out);
 
 					} else if (ctx.getFormat().equalsIgnoreCase("pdf")) {
-
 						response.setContentType("application/pdf;");
 						OutputStream out = response.getOutputStream();
 						ContentContext viewCtx = ctx.getContextWithOtherRenderMode(ContentContext.VIEW_MODE);
@@ -648,7 +647,6 @@ public class AccessServlet extends HttpServlet {
 						pdfRenderer.setDocument(url);
 						pdfRenderer.layout();
 						pdfRenderer.createPDF(out);
-
 					} else if (ctx.getFormat().equalsIgnoreCase("cxml")) {
 
 						String realPath = ContentManager.getPath(request);
