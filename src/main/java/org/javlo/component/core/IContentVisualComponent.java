@@ -41,14 +41,15 @@ public interface IContentVisualComponent {
 	static public int COMPLEXITY_ADMIN = 3;
 
 	/* default values for colors */
-	static public String DEFAULT_COLOR = "F79A0A";
+	static public String DEFAULT_COLOR = "74AA27";
 	static public String TEXT_COLOR = "3F3F3F";
-	static public String LINK_COLOR = "47608E";
-	static public String TITLE_COLOR = "74AA27";
-	static public String GRAPHIC_COLOR = "86C12D";
+	static public String LINK_COLOR = "99CCF9";
+	static public String TITLE_COLOR = "F79A0A";
+	static public String GRAPHIC_COLOR = "E9320F";
 	static public String ECOM_COLOR = "DDDDDD";
-	static public String DYN_COMP_COLOR = "E9320F";
-	static public String WEB2_COLOR = "AACBE9";
+	static public String DYN_COMP_COLOR = "86C12D";
+	static public String WEB2_COLOR = "5A4C93";
+	static public String CONTAINER_COLOR = "D57C60";
 
 	/**
 	 * get the configuration of the component. from project or from template.

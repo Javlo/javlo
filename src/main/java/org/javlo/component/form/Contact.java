@@ -290,4 +290,9 @@ public class Contact extends AbstractVisualComponent implements ICSS, IAction {
 		return true;
 	}
 
+	@Override
+	public String getHexColor() {
+		return WEB2_COLOR;
+	}
+
 }
