@@ -9,7 +9,7 @@ import java.util.Set;
 
 public class ReadOnlyMultiMap<K, V> implements Map<K, V> {
 
-	private List<Map<K, V>> maps = new LinkedList<Map<K, V>>();
+	private final List<Map<K, V>> maps = new LinkedList<Map<K, V>>();
 
 	@Override
 	public void clear() {
@@ -47,7 +47,9 @@ public class ReadOnlyMultiMap<K, V> implements Map<K, V> {
 
 	@Override
 	public V get(Object key) {
+		int i = 0;
 		for (Map<K, V> map : maps) {
+			i++;
 			if (map.get(key) != null) {
 				return map.get(key);
 			}
@@ -113,6 +115,10 @@ public class ReadOnlyMultiMap<K, V> implements Map<K, V> {
 
 	public void clearMaps() {
 		maps.clear();
+	}
+
+	public int mapListSize() {
+		return maps.size();
 	}
 
 }

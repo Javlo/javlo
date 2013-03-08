@@ -2,6 +2,8 @@ package org.javlo.module.file;
 
 import java.io.File;
 import java.io.FileFilter;
+import java.io.FileNotFoundException;
+import java.io.IOException;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
@@ -33,9 +35,11 @@ import org.javlo.module.core.AbstractModuleContext;
 import org.javlo.module.core.Module;
 import org.javlo.module.core.Module.Box;
 import org.javlo.module.core.Module.HtmlLink;
+import org.javlo.module.core.ModuleException;
 import org.javlo.module.core.ModulesContext;
 import org.javlo.service.PersistenceService;
 import org.javlo.service.RequestService;
+import org.javlo.user.AdminUserSecurity;
 import org.javlo.ztatic.FileCache;
 import org.javlo.ztatic.StaticInfo;
 
@@ -173,8 +177,19 @@ public class FileAction extends AbstractModuleAction {
 		return FileModuleContext.getInstance(session, GlobalContext.getSessionInstance(session), module, FileModuleContext.class);
 	}
 
+	public File getFolder(ContentContext ctx) throws FileNotFoundException, InstantiationException, IllegalAccessException, IOException, ModuleException {
+		GlobalContext globalContext = GlobalContext.getInstance(ctx.getRequest());
+		String sourceFolder = globalContext.getDataFolder();
+		if (AdminUserSecurity.getInstance().isGod(ctx.getCurrentEditUser())) {
+			sourceFolder = globalContext.getStaticConfig().getAllDataFolder();
+		}
+		FileModuleContext fileModuleContext = FileModuleContext.getInstance(ctx.getRequest());
+		return new File(sourceFolder, fileModuleContext.getPath());
+	}
+
 	@Override
 	public String prepare(ContentContext ctx, ModulesContext modulesContext) throws Exception {
+		
 		String msg = super.prepare(ctx, modulesContext);
 		FileModuleContext fileModuleContext = (FileModuleContext) LangHelper.smartInstance(ctx.getRequest(), ctx.getResponse(), FileModuleContext.class);
 		GlobalContext globalContext = GlobalContext.getInstance(ctx.getRequest());
@@ -211,7 +226,7 @@ public class FileAction extends AbstractModuleAction {
 		if (fileModuleContext.getCurrentLink().equals(FileModuleContext.PAGE_META)) {
 			modulesContext.getCurrentModule().setToolsRenderer("/jsp/actions.jsp");
 			modulesContext.getCurrentModule().clearAllBoxes();
-			File folder = new File(URLHelper.mergePath(globalContext.getDataFolder(), fileModuleContext.getPath()));
+			File folder = getFolder(ctx);
 			if (folder.exists()) {
 				Collection<FileBean> allFileInfo = new LinkedList<FileBean>();
 				for (File file : folder.listFiles(new DirectoryFilter())) {
@@ -242,6 +257,8 @@ public class FileAction extends AbstractModuleAction {
 
 		currentModule.clearBreadcrump();
 		currentModule.setBreadcrumbTitle("");
+		
+		ctx.setRenderMode(ContentContext.EDIT_MODE);  // ajax can preview mode by default
 
 		String[] pathItems = URLHelper.cleanPath(fileModuleContext.getPath(), true).split("/");
 		String currentPath = "/";
@@ -305,8 +322,7 @@ public class FileAction extends AbstractModuleAction {
 	}
 
 	public String performUpdateFocus(RequestService rs, ContentContext ctx, GlobalContext globalContext, FileModuleContext fileModuleContext, I18nAccess i18nAccess, MessageRepository messageRepository) throws Exception {
-		String path = rs.getParameter("image_path", fileModuleContext.getPath());
-		File folder = new File(URLHelper.mergePath(globalContext.getDataFolder(), path));
+		File folder = getFolder(ctx);
 		if (folder.exists()) {
 			for (File file : folder.listFiles((FileFilter) FileFileFilter.FILE)) {
 				StaticInfo staticInfo = StaticInfo.getInstance(ctx, file);
@@ -319,7 +335,7 @@ public class FileAction extends AbstractModuleAction {
 					staticInfo.setFocusZoneX(ctx, (int) Math.round(Double.parseDouble(newFocusX)));
 					staticInfo.setFocusZoneY(ctx, (int) Math.round(Double.parseDouble(newFocusY)));
 					PersistenceService.getInstance(globalContext).store(ctx);
-					//messageRepository.setGlobalMessageAndNotification(ctx, new GenericMessage(i18nAccess.getText("file.message.updatefocus", new String[][] { { "file", file.getName() } }), GenericMessage.INFO));
+					// messageRepository.setGlobalMessageAndNotification(ctx, new GenericMessage(i18nAccess.getText("file.message.updatefocus", new String[][] { { "file", file.getName() } }), GenericMessage.INFO));
 
 					FileCache fileCache = FileCache.getInstance(ctx.getRequest().getSession().getServletContext());
 					fileCache.delete(file.getName());
@@ -332,7 +348,7 @@ public class FileAction extends AbstractModuleAction {
 	}
 
 	public String performUpdateMeta(RequestService rs, ContentContext ctx, GlobalContext globalContext, FileModuleContext fileModuleContext, I18nAccess i18nAccess, MessageRepository messageRepository) throws Exception {
-		File folder = new File(URLHelper.mergePath(globalContext.getDataFolder(), fileModuleContext.getPath()));
+		File folder = getFolder(ctx);
 		if (folder.exists()) {
 			for (File file : folder.listFiles()) {
 				StaticInfo staticInfo = StaticInfo.getInstance(ctx, file);

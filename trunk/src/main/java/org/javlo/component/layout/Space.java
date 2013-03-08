@@ -30,6 +30,7 @@ public class Space extends AbstractVisualComponent {
 		return finalCode.toString();
 	}
 
+	@Override
 	public String getType() {
 		return "space";
 	}
@@ -43,7 +44,7 @@ public class Space extends AbstractVisualComponent {
 	public String[] getStyleLabelList(ContentContext ctx) {
 		String[] outSize = new String[5];
 		try {
-			I18nAccess i18n = I18nAccess.createI18nAccess(ctx);
+			I18nAccess i18n = I18nAccess.getInstance(ctx);
 			outSize[0] = i18n.getText("size.tiny");
 			outSize[1] = i18n.getText("size.small");
 			outSize[2] = i18n.getText("size.normal");

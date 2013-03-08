@@ -20,6 +20,7 @@ import java.util.Locale;
 import java.util.Map;
 import java.util.Properties;
 import java.util.Set;
+import java.util.Stack;
 import java.util.logging.Logger;
 
 import javax.servlet.ServletContext;
@@ -64,34 +65,9 @@ public class I18nAccess implements Serializable {
 
 	public static final Properties FAKE_I18N_FILE = new Properties();
 
-	// static final String I18N_EDIT_FILE_NAME = "/WEB-INF/i18n/edit_";
-
-	// static final String I18N_VIEW_FILE_NAME = "/WEB-INF/i18n/view_";
-
-	// static final String I18N_SPECEFIC_FILE_NAME =
-	// "/WEB-INF/i18n/specific_edit_";
-
-	// static final String I18N_SPECEFIC_VIEW_FILE_NAME =
-	// "/WEB-INF/i18n/specific_view_";
-
-	/**
-	 * @param session
-	 * @return
-	 * @throws FileNotFoundException
-	 * @throws IOException
-	 * @throws ConfigurationException
-	 * @deprecated use getInstance(HttpSession)
-	 */
-	@Deprecated
-	public static final I18nAccess createI18nAccess(ContentContext ctx) throws FileNotFoundException, IOException, ConfigurationException {
-		GlobalContext globalContext = GlobalContext.getInstance(ctx.getRequest());
-		I18nAccess res = getInstance(globalContext, ctx.getRequest().getSession());
-		return res;
-	}
-
 	public static I18nAccess getInstance(ContentContext ctx) throws ServiceException, Exception {
 		GlobalContext globalContext = GlobalContext.getInstance(ctx.getRequest());
-		I18nAccess i18n = new I18nAccess(globalContext);
+		I18nAccess i18n = getInstance(ctx.getRequest());
 		if (ctx.getRenderMode() == ContentContext.EDIT_MODE || ctx.getRenderMode() == ContentContext.PREVIEW_MODE) {
 			i18n.initEdit(globalContext, ctx.getRequest().getSession());
 			ModulesContext moduleContext = ModulesContext.getInstance(ctx.getRequest().getSession(), globalContext);
@@ -146,7 +122,7 @@ public class I18nAccess implements Serializable {
 
 	private String latestTemplateId = "";
 
-	private Properties templateView = null;
+	private final Properties templateView = new Properties();
 
 	private boolean templateImported = false;
 
@@ -425,11 +401,10 @@ public class I18nAccess implements Serializable {
 
 		synchronized (lockViewMap) {
 			if (propViewMap == null) {
-				ReadOnlyMultiMap<String, String> mutliMap = new ReadOnlyMultiMap<String, String>();
-				propViewMap = mutliMap;
+				propViewMap = new ReadOnlyMultiMap<String, String>();
 				if (propView != null) {
 					synchronized (propView) {
-						mutliMap.addMap(new ReadOnlyPropertiesConfigurationMap(propView, displayKey));
+						propViewMap.addMap(new ReadOnlyPropertiesConfigurationMap(propView, displayKey));
 					}
 				}
 			}
@@ -439,6 +414,7 @@ public class I18nAccess implements Serializable {
 			propViewMap.addMap(templateView);
 			templateImported = true;
 		}
+
 		return propViewMap;
 	}
 
@@ -530,6 +506,7 @@ public class I18nAccess implements Serializable {
 		contentViewLg = newViewLg;
 		propContentView = i18nResource.getViewFile(newViewLg, true);
 		propViewMap = null;
+		templateView.clear();
 		propEditMap = null;
 	}
 
@@ -555,6 +532,7 @@ public class I18nAccess implements Serializable {
 
 		propViewMap = null;
 		propEditMap = null;
+		templateView.clear();
 	}
 
 	private boolean isHelp() {
@@ -577,27 +555,27 @@ public class I18nAccess implements Serializable {
 			if (!ctx.isFree()) {
 				Template template = ctx.getCurrentTemplate();
 				if (template != null && template.getId() != null && !latestTemplateId.equals(template.getId())) {
+					propViewMap = null;
 					latestTemplateId = template.getId();
-					templateImported = false;
 					template = template.getFinalTemplate(ctx);
 					if (!template.isTemplateInWebapp(ctx)) {
 						template.importTemplateInWebapp(globalContext.getStaticConfig(), ctx);
 					}
-					templateView = template.getI18nProperties(globalContext, new Locale(ctx.getLanguage()));
+
+					Stack<Properties> stack = new Stack<Properties>();
+					stack.push(template.getI18nProperties(globalContext, new Locale(ctx.getLanguage())));
 					Template parent = template.getParent();
 					while (parent != null) {
-						if (!parent.isTemplateInWebapp(ctx)) {
-							parent.importTemplateInWebapp(globalContext.getStaticConfig(), ctx);
-						}
-						Properties parentView = parent.getI18nProperties(globalContext, new Locale(ctx.getLanguage()));
-						if (parentView != null) {
-							if (templateView != null) {
-								parentView.putAll(templateView);
-							}
-							templateView = parentView;
-						}
+						stack.push(parent.getI18nProperties(globalContext, new Locale(ctx.getLanguage())));
 						parent = parent.getParent();
 					}
+
+					while (!stack.empty()) {
+						Properties prop = stack.pop();
+						templateView.putAll(prop);
+					}
+
+					templateImported = false;
 				}
 			}
 		}

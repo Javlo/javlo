@@ -587,6 +587,8 @@ public class Template implements Comparable<Template> {
 
 	private final Set<String> contextWithTemplateImported = new HashSet<String>();
 
+	private Properties i18n;
+
 	public static Template getApplicationInstance(ServletContext application, ContentContext ctx, String templateDir) throws ConfigurationException, IOException {
 
 		Template outTemplate = null;
@@ -731,6 +733,7 @@ public class Template implements Comparable<Template> {
 		dynamicsComponents = null;
 		templateImportationError = false;
 		contextWithTemplateImported.clear();
+		i18n = null;
 	}
 
 	public void delete() {
@@ -1121,14 +1124,16 @@ public class Template implements Comparable<Template> {
 	}
 
 	public Properties getI18nProperties(GlobalContext globalContext, Locale locale) throws IOException {
-		File i18nFile = new File(URLHelper.mergePath(URLHelper.mergePath(getWorkTemplateFolder(), getFolder(globalContext)), I18N_FILE + locale.getLanguage() + ".properties"));
-		Properties prop = new Properties();
-		if (i18nFile.exists()) {
-			Reader reader = new FileReader(i18nFile);
-			prop.load(reader);
-			reader.close();
+		if (i18n == null) {
+			File i18nFile = new File(URLHelper.mergePath(URLHelper.mergePath(getWorkTemplateFolder(), getFolder(globalContext)), I18N_FILE + locale.getLanguage() + ".properties"));
+			i18n = new Properties();
+			if (i18nFile.exists()) {
+				Reader reader = new FileReader(i18nFile);
+				i18n.load(reader);
+				reader.close();
+			}
 		}
-		return prop;
+		return i18n;
 	}
 
 	public String getId() {

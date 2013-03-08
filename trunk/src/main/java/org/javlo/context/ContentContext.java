@@ -608,7 +608,6 @@ public class ContentContext {
 			}
 
 			if ((template == null) || !template.exist()) {
-
 				if (globalContext.getDefaultTemplate() != null) {
 					template = Template.getApplicationInstance(getRequest().getSession().getServletContext(), this, globalContext.getDefaultTemplate());
 				}
