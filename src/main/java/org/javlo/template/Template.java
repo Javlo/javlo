@@ -798,6 +798,36 @@ public class Template implements Comparable<Template> {
 		return areas;
 	}
 
+	public List<String> getAreas(boolean admin) {
+		List<String> areas = new LinkedList<String>();
+		Iterator<String> keys = properties.getKeys();
+		while (keys.hasNext()) {
+			String key = keys.next();
+			if (key.startsWith(XMLManipulationHelper.AREA_PREFIX) && StringUtils.countMatches(key, ".") < 2) {
+				String area = key.substring(XMLManipulationHelper.AREA_PREFIX.length());
+				if (admin || !isAdminArea(area))
+					areas.add(area);
+			}
+		}
+		if (areas.size() == 0) {
+			if (getParent() == null) {
+				areas.add(ComponentBean.DEFAULT_AREA);
+			} else {
+				return getParent().getAreas();
+			}
+		}
+		return areas;
+	}
+
+	public boolean isAdminArea(String area) {
+		String key = XMLManipulationHelper.AREA_PREFIX + area + ".admin";
+		if (properties.getProperty(key) != null) {
+			return properties.getBoolean(key);
+		} else {
+			return false;
+		}
+	}
+
 	public Set<String> getComponentsIncludeForArea(String area) {
 		String key = XMLManipulationHelper.AREA_PREFIX + area + ".components.include";
 		String typeRAW = properties.getString(key);
