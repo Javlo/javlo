@@ -32,8 +32,8 @@
      <td class="con0">${comp.type}</td>
      <c:set var="i18nKey" value="content.${comp.type}"></c:set>
      <td class="con1">${i18n.edit[i18nKey]}</td>
-     <td class="con0" style="background-color: #${comp.hexColor}">&nbsp;</td>
-     <td class="con1" align=" center"><c:if test="${comp.listable}"><span class="icone_true">${comp.listable}</span></c:if><c:if test="${not comp.listable}">&nbsp;</c:if></td>
+     <td class="con0" style="background-color: #${comp.hexColor}">${comp.hexColor}</td>
+     <td class="con1" align="center"><c:if test="${comp.listable}"><span class="icone_true">${comp.listable}</span></c:if><c:if test="${not comp.listable}">&nbsp;</c:if></td>
      <td class="con0">${comp.className}</td>
      <td class="con0">
      <c:set var="contains" value="false" />

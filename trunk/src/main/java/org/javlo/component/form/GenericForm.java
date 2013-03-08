@@ -280,4 +280,5 @@ public class GenericForm extends AbstractVisualComponent implements IAction {
 	public int getComplexityLevel() {
 		return AbstractVisualComponent.COMPLEXITY_STANDARD;
 	}
+
 }

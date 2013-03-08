@@ -142,4 +142,9 @@ public class Box extends AbstractVisualComponent implements IContainer {
 		return AbstractVisualComponent.COMPLEXITY_STANDARD;
 	}
 
+	@Override
+	public String getHexColor() {
+		return IContentVisualComponent.CONTAINER_COLOR;
+	}
+
 }

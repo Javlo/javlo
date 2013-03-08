@@ -194,13 +194,15 @@ public class Edit extends AbstractModuleAction {
 		private int complexityLevel;
 		private boolean metaTitle;
 		private boolean selected;
+		private String hexColor;
 
-		public ComponentWrapper(String type, String label, String value, int complexityLevel, boolean metaTitle) {
+		public ComponentWrapper(String type, String label, String value, String hexColor, int complexityLevel, boolean metaTitle) {
 			this.type = type;
 			this.label = label;
 			this.value = value;
 			this.complexityLevel = complexityLevel;
 			this.metaTitle = metaTitle;
+			this.hexColor = hexColor;
 		}
 
 		public String getType() {
@@ -251,6 +253,13 @@ public class Edit extends AbstractModuleAction {
 			this.complexityLevel = complexityLevel;
 		}
 
+		public String getHexColor() {
+			return hexColor;
+		}
+
+		public void setHexColor(String hexColor) {
+			this.hexColor = hexColor;
+		}
 	}
 
 	@Override
@@ -380,7 +389,7 @@ public class Edit extends AbstractModuleAction {
 				if (!components[i].isMetaTitle() || !components[i + 1].isMetaTitle()) { // if next component is title too so the component group is empty
 					IContentVisualComponent comp = components[i];
 					if (comp.isMetaTitle() || globalContext.getComponents().contains(comp.getClass().getName()) || comp instanceof DynamicComponent) {
-						ComponentWrapper compWrapper = new ComponentWrapper(comp.getType(), comp.getComponentLabel(ctx, globalContext.getEditLanguage(ctx.getRequest().getSession())), comp.getValue(ctx), comp.getComplexityLevel(), comp.isMetaTitle());
+						ComponentWrapper compWrapper = new ComponentWrapper(comp.getType(), comp.getComponentLabel(ctx, globalContext.getEditLanguage(ctx.getRequest().getSession())), comp.getValue(ctx), comp.getHexColor(), comp.getComplexityLevel(), comp.isMetaTitle());
 						if (components[i].isMetaTitle()) {
 							titleWrapper = compWrapper;
 						}
@@ -404,7 +413,7 @@ public class Edit extends AbstractModuleAction {
 
 		if (!components[components.length - 1].isMetaTitle()) {
 			IContentVisualComponent comp = components[components.length - 1];
-			ComponentWrapper compWrapper = new ComponentWrapper(comp.getType(), comp.getComponentLabel(ctx, globalContext.getEditLanguage(ctx.getRequest().getSession())), comp.getValue(ctx), comp.getComplexityLevel(), comp.isMetaTitle());
+			ComponentWrapper compWrapper = new ComponentWrapper(comp.getType(), comp.getComponentLabel(ctx, globalContext.getEditLanguage(ctx.getRequest().getSession())), comp.getValue(ctx), comp.getHexColor(), comp.getComplexityLevel(), comp.isMetaTitle());
 			comps.add(compWrapper);
 			if (comp.getType().equals(editCtx.getActiveType())) {
 				compWrapper.setSelected(true);
@@ -434,6 +443,13 @@ public class Edit extends AbstractModuleAction {
 					listWithoutEmptyTitle.add(comp);
 				}
 			}
+		}
+
+		for (int i = 0; i < listWithoutEmptyTitle.size(); i++) {
+			if (i < listWithoutEmptyTitle.size() - 1) {
+				listWithoutEmptyTitle.get(i).setHexColor(listWithoutEmptyTitle.get(i + 1).getHexColor());
+			}
+
 		}
 
 		ctx.getRequest().setAttribute("components", listWithoutEmptyTitle);

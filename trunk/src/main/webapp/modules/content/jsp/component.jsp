@@ -12,7 +12,7 @@
 <c:set var="titleCount" value="${titleCount+1}" />
 <c:if test="${titleCount == 4}">
 	</div><div class="one_half">	
-</c:if><h4>${i18n.edit[comp.value]}</h4>
+</c:if><h4 style="color: #${comp.hexColor}">${i18n.edit[comp.value]}</h4>
 <div><ul><c:set var="closeAccordion" value="</ul></div>"
 /></c:if><c:if test="${!comp.metaTitle}"
 ><li${comp.selected?' class="selected"':''}><a class="ajax" href="${info.currentURL}?webaction=changeComponent&type=${comp.type}">${comp.label}</a></li>
