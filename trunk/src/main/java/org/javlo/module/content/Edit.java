@@ -573,7 +573,7 @@ public class Edit extends AbstractModuleAction {
 		Collections.sort(templates);
 
 		if (ctx.getCurrentTemplate() != null) {
-			ctx.getRequest().setAttribute("areas", ctx.getCurrentTemplate().getAreas());
+			ctx.getRequest().setAttribute("areas", ctx.getCurrentTemplate().getAreas(AdminUserSecurity.getInstance().isAdmin(ctx.getCurrentEditUser())));
 		}
 		ctx.getRequest().setAttribute("currentArea", editCtx.getCurrentArea());
 
