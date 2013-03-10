@@ -87,8 +87,8 @@ public abstract class AbstractFileComponent extends AbstractVisualComponent impl
 	protected Properties properties = new Properties();
 
 	public AbstractFileComponent() {
+		super();
 		properties.setProperty(LABEL_KEY, "");
-		properties.setProperty(FILE_NAME_KEY, "");
 		properties.setProperty(FILE_NAME_KEY, "");
 		properties.setProperty(DESCRIPTION_KEY, "");
 		properties.setProperty(ENCODING_KEY, DEFAULT_ENCODING);

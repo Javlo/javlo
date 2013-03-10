@@ -692,6 +692,7 @@ public class AccessServlet extends HttpServlet {
 							ctx.setCurrentTemplate(template);
 
 							String jspPath = template.getRendererFullName(ctx);
+
 							getServletContext().getRequestDispatcher(jspPath).include(request, response);
 						}
 					}

@@ -52,7 +52,6 @@ import org.javlo.config.StaticConfig;
 import org.javlo.context.ContentContext;
 import org.javlo.context.ContentManager;
 import org.javlo.context.GlobalContext;
-import org.javlo.helper.Logger;
 import org.javlo.helper.NavigationHelper;
 import org.javlo.helper.NetHelper;
 import org.javlo.helper.StringHelper;
@@ -332,6 +331,8 @@ public class MenuElement implements Serializable {
 
 		public Collection<String> needdedResources = null;
 
+		private final Map<String, Boolean> emptyArea = new HashMap<String, Boolean>();
+
 		public boolean isVisible() {
 			return visible;
 		}
@@ -442,6 +443,18 @@ public class MenuElement implements Serializable {
 
 		public Boolean isEmpty() {
 			return empty;
+		}
+
+		public Boolean isEmpty(String area) {
+			return emptyArea.get(area);
+		}
+
+		public void setEmpty(String area, boolean empty) {
+			emptyArea.put(area, empty);
+		}
+
+		public Map<String, Boolean> getEmptyArea() {
+			return emptyArea;
 		}
 
 		public void setEmpty(Boolean isEmpty) {
@@ -575,6 +588,21 @@ public class MenuElement implements Serializable {
 				logger.warning(e.getMessage());
 				return false;
 			}
+		}
+
+		@Override
+		public Map<String, Boolean> getEmptyArea() {
+			Map<String, Boolean> outMaps = new HashMap<String, Boolean>();
+			try {
+				if (ctx.getCurrentTemplate() != null) {
+					for (String area : ctx.getCurrentTemplate().getAreas()) {
+						outMaps.put(area, page.isEmpty(ctx, area));
+					}
+				}
+			} catch (Exception e) {
+				e.printStackTrace();
+			}
+			return outMaps;
 		}
 
 		@Override
@@ -3187,31 +3215,29 @@ public class MenuElement implements Serializable {
 
 		PageDescription desc = getPageDescriptionCached(ctx, ctx.getRequestContentLanguage());
 
-		if (desc.isEmpty() != null) {
-			return desc.isEmpty();
+		if (desc.isEmpty(area) != null) {
+			return desc.isEmpty(area);
 		}
 
 		if (ctx.getRequestContentLanguage() == null) {
 			return true;
 		}
-		ContentContext ctxNoArea = new ContentContext(ctx);
-		ctxNoArea.setArea(null);
-		Logger.startCount("local content");
-		IContentComponentsList contentList = getAllLocalContent(ctxNoArea);
-		Logger.stepCount("local content", "local content loaded");
-		while ((contentList.hasNext(ctxNoArea))) {
-			IContentVisualComponent component = contentList.next(ctxNoArea);
+		ContentContext ctxForceArea = new ContentContext(ctx);
+		ctxForceArea.setArea(area);
+
+		IContentComponentsList contentList = getLocalContent(ctxForceArea);
+		while ((contentList.hasNext(ctxForceArea))) {
+			IContentVisualComponent component = contentList.next(ctxForceArea);
 			if (component != null) {
-				if (!component.isEmpty(ctxNoArea)) {
+				if (!component.isEmpty(ctxForceArea)) {
 					if (!component.isRepeat()) {
-						desc.empty = false;
+						desc.setEmpty(area, false);
 						return false;
 					}
 				}
 			}
 		}
-		Logger.endCount("local content", "content checked");
-		desc.empty = true;
+		desc.setEmpty(area, true);
 		return true;
 	}
 
