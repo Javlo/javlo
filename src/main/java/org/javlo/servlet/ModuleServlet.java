@@ -10,6 +10,7 @@ import javax.servlet.http.HttpServletResponse;
 
 import org.javlo.context.ContentContext;
 import org.javlo.context.GlobalContext;
+import org.javlo.context.UserInterfaceContext;
 import org.javlo.data.InfoBean;
 import org.javlo.helper.ServletHelper;
 import org.javlo.module.core.Module;
@@ -75,6 +76,8 @@ public class ModuleServlet extends HttpServlet {
 						if (module.getViewRenderer() != null) {
 							RequestDispatcher rd = request.getRequestDispatcher(module.getViewRenderer());
 							rd.include(request, response);
+							UserInterfaceContext uic = UserInterfaceContext.getInstance(request.getSession(), globalContext);
+							uic.setCurrentModule(module.getName());
 							return;
 						} else {
 							throw new ServletException("no view renderer for module : " + module.getName());

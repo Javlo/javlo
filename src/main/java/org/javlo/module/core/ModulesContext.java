@@ -163,12 +163,12 @@ public class ModulesContext {
 		ModulesContext outContext = (ModulesContext) globalContext.getSessionAttribute(session, KEY);
 		if (outContext == null || !outContext.siteKey.equals(globalContext.getContextKey())) {
 			outContext = new ModulesContext(session, globalContext);
-			globalContext.setSessionAttribute(session, KEY, outContext);
 			I18nAccess i18nAccess;
 			try {
 				UserInterfaceContext uic = UserInterfaceContext.getInstance(session, globalContext);
 				if (uic.getCurrentModule() != null) {
 					outContext.setCurrentModule(uic.getCurrentModule());
+					globalContext.setSessionAttribute(session, KEY, outContext);
 				}
 				i18nAccess = I18nAccess.getInstance(globalContext, session);
 				i18nAccess.setCurrentModule(globalContext, session, outContext.getCurrentModule());

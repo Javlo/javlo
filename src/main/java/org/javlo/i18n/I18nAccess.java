@@ -163,6 +163,7 @@ public class I18nAccess implements Serializable {
 			moduleEdit = currentModule.loadEditI18n(globalContext, session);
 			propEditMap = null;
 			moduleImported = false;
+
 		}
 	}
 
