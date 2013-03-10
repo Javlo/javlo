@@ -45,6 +45,8 @@ public class UserInterfaceContext {
 			instance.session = session;
 			instance.globalContext = globalContext;
 
+			instance.fromString(user.getUserInfo().getInfo());
+
 			session.setAttribute(KEY, instance);
 		}
 

@@ -43,11 +43,11 @@ public interface IContentVisualComponent {
 	/* default values for colors */
 	static public String DEFAULT_COLOR = "74AA27";
 	static public String TEXT_COLOR = "3F3F3F";
-	static public String LINK_COLOR = "99CCF9";
-	static public String TITLE_COLOR = "F79A0A";
-	static public String GRAPHIC_COLOR = "E9320F";
+	static public String LINK_COLOR = "F79A0A";
+	static public String TITLE_COLOR = "E9320F";
+	static public String GRAPHIC_COLOR = "86C12D";
 	static public String ECOM_COLOR = "DDDDDD";
-	static public String DYN_COMP_COLOR = "86C12D";
+	static public String DYN_COMP_COLOR = "99CCF9";
 	static public String WEB2_COLOR = "5A4C93";
 	static public String CONTAINER_COLOR = "D57C60";
 
