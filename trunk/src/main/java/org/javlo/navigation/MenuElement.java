@@ -75,6 +75,8 @@ import org.javlo.ztatic.StaticInfo;
  */
 public class MenuElement implements Serializable {
 
+	public static final String PAGE_TYPE_DEFAULT = "default";
+
 	private static final String NO_LANG = "no-lang";
 
 	private static final long serialVersionUID = 1L;
@@ -326,6 +328,7 @@ public class MenuElement implements Serializable {
 		String referenceLanguage = null;
 		boolean breakRepeat;
 		int priority;
+		String type = PAGE_TYPE_DEFAULT;
 
 		public ImageTitleBean imageLink;
 
@@ -566,6 +569,14 @@ public class MenuElement implements Serializable {
 
 		public List<String> getChildrenCategories() {
 			return childrenCategories;
+		}
+
+		public String getType() {
+			return type;
+		}
+
+		public void setType(String type) {
+			this.type = type;
 		}
 
 	}
@@ -875,6 +886,11 @@ public class MenuElement implements Serializable {
 			}
 		}
 
+		@Override
+		public String getType() {
+			return page.getType();
+		}
+
 	}
 
 	// private GlobalContext globalContext;;
@@ -912,6 +928,7 @@ public class MenuElement implements Serializable {
 			pageDescription.referenceLanguage = getReferenceLanguage();
 			pageDescription.priority = getPriority();
 			pageDescription.childrenCategories = getChildrenCategories(ctx);
+			pageDescription.type = getType();
 		}
 		return pageDescription;
 	}
@@ -1047,6 +1064,8 @@ public class MenuElement implements Serializable {
 	private boolean https = false;
 
 	private String referenceLanguage = null;
+
+	private String type = PAGE_TYPE_DEFAULT;
 
 	/**
 	 * protect page localy if there are linked with other website.
@@ -3965,5 +3984,13 @@ public class MenuElement implements Serializable {
 
 			return inside;
 		}
+	}
+
+	public String getType() {
+		return type;
+	}
+
+	public void setType(String type) {
+		this.type = type;
 	}
 }

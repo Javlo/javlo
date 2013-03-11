@@ -904,6 +904,12 @@ public class Edit extends AbstractModuleAction {
 				}
 			}
 
+			/** page type **/
+			String pageType = requestService.getParameter("page_type", null);
+			if (pageType != null) {
+				page.setType(pageType);
+			}
+
 			/** publish time range **/
 			if (requestService.getParameter("start_publish", null) != null) {
 				String startPublish = requestService.getParameter("start_publish", "").trim();

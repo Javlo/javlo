@@ -314,4 +314,9 @@ public class DefaultTemplate extends Template {
 		return null;
 	}
 
+	@Override
+	public String getPageTypesRAW() {
+		return MenuElement.PAGE_TYPE_DEFAULT;
+	}
+
 }
