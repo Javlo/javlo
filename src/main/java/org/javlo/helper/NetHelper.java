@@ -373,7 +373,7 @@ public class NetHelper {
 					int imageSize = 0;
 					conn = (new URL(url)).openConnection();
 					conn.setReadTimeout(5000);
-					InputStream in = null;
+					InputStream in = conn.getInputStream();
 					try {
 						ResourceHelper.writeStreamToStream(in, imgBuffer);
 					} finally {

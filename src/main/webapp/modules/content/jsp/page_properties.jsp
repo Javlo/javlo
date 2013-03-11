@@ -77,6 +77,18 @@
 	<input type="checkbox" id="page_visible" name="view" ${page.info.visible?'checked="checked"':''} value="true" />
 </div>
 
+<c:if test="${fn:length(info.template.pageTypes) > 1}">
+<fieldset>
+	<legend>${i18n.edit['item.types']}</legend>
+	<c:forEach var="type" items="${info.template.pageTypes}">
+	<div class="line">
+		<label for="page_type_${type}">${type}</label>		
+		<input type="radio" id="page_type_${type}" name="page_type" value="${type}"${page.info.type == type?' checked="checked"':''} />		
+	</div>
+	</c:forEach>
+</fieldset>
+</c:if>
+
 <c:if test="${!userInterface.light}">
 
 <div class="line">

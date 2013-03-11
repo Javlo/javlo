@@ -579,6 +579,11 @@ public class PersistenceService {
 		page.setBlocked(StringHelper.isTrue(pageXML.getAttributeValue("blocked", "false")));
 		page.setBlocker(pageXML.getAttributeValue("blocker", ""));
 
+		String type = pageXML.getAttributeValue("type", null);
+		if (type != null) {
+			page.setType(type);
+		}
+
 		page.setCreationDate(creationDate);
 		page.setCreator(creator);
 		page.setModificationDate(modificationDate);
