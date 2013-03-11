@@ -128,9 +128,6 @@ public class SmartExternalLink extends ComplexPropertiesLink implements IReverse
 
 		@Override
 		public void run() {
-
-			System.out.println("***** SmartExternalLink.UndateInfo.run : START : " + getURL()); // TODO: remove debug trace
-
 			if (mustBeRemoved()) {
 				return;
 			}
@@ -170,7 +167,6 @@ public class SmartExternalLink extends ComplexPropertiesLink implements IReverse
 								}
 								logInfo = "load image : " + StringHelper.neverNull(imageURL, "?");
 								String uri = NetHelper.getLocalCopyOfPageImage(getCacheFodler(), getDataFolder(), url, imageURL, pageContent, crc32, true, true);
-								System.out.println("***** SmartExternalLink.UndateInfo.run : uri = " + uri); // TODO: remove debug trace
 								setImageCRC32(crc32.getValue());
 								if (uri != null) {
 									setImageURI(uri);
