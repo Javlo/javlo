@@ -91,68 +91,73 @@ public class ReverseLinkService {
 	}
 
 	public Map<String, MenuElement> getReversedLinkCache(MenuElement elem) throws Exception {
-		synchronized (lock) {
-			if (reversedLinkCache == null) {
-				reversedLinkCache = new HashMap<String, MenuElement>();
-				MenuElement[] children = elem.getAllChildren();
-				for (MenuElement element : children) {
-					String[] linkNames = StringHelper.readLines(element.getReversedLink());
-					for (String linkName : linkNames) {
-						if (linkName.trim().length() > 0) {
-							reversedLinkCache.put(linkName, element);
+		if (reversedLinkCache == null) {
+			synchronized (lock) {
+				if (reversedLinkCache == null) {
+					reversedLinkCache = new HashMap<String, MenuElement>();
+					MenuElement[] children = elem.getAllChildren();
+					for (MenuElement element : children) {
+						String[] linkNames = StringHelper.readLines(element.getReversedLink());
+						for (String linkName : linkNames) {
+							if (linkName.trim().length() > 0) {
+								reversedLinkCache.put(linkName, element);
+							}
 						}
 					}
 				}
 			}
-			return reversedLinkCache;
 		}
+		return reversedLinkCache;
 	}
 
 	/* reverese link component */
 	private Map<String, ComponentPage> getReversedLinkComponentCache(ContentContext ctx, MenuElement elem) throws Exception {
-		synchronized (lock) {
-			if ((reversedLinkComponentCache == null) || (!reversedLinkComponentCacheLang.equals(ctx.getRequestContentLanguage()))) {
-				reversedLinkComponentCacheLang = ctx.getRequestContentLanguage();
-				reversedLinkComponentCache = new HashMap<String, ComponentPage>();
-				MenuElement[] children = elem.getAllChildren();
-				for (MenuElement element : children) {
-					ContentElementList content = element.getLocalContentCopy(ctx);
+		if ((reversedLinkComponentCache == null) || (!reversedLinkComponentCacheLang.equals(ctx.getRequestContentLanguage()))) {
+			synchronized (lock) {
+				if ((reversedLinkComponentCache == null) || (!reversedLinkComponentCacheLang.equals(ctx.getRequestContentLanguage()))) {
+					reversedLinkComponentCacheLang = ctx.getRequestContentLanguage();
+					reversedLinkComponentCache = new HashMap<String, ComponentPage>();
+					MenuElement[] children = elem.getAllChildren();
+					for (MenuElement element : children) {
+						ContentElementList content = element.getLocalContentCopy(ctx);
 
-					int count = 0; // DEBUG
+						int count = 0; // DEBUG
 
-					while (content.hasNext(ctx) && count < 100000) {
+						while (content.hasNext(ctx) && count < 100000) {
 
-						count++;
+							count++;
 
-						IContentVisualComponent comp = content.next(ctx);
-						if (comp instanceof IReverseLinkComponent) {
-							/*
-							 * System.out.println("***** name : " + ((IReverseLinkComponent) comp).getLinkText(ctx)); System.out.println("**** isReverseLlink : " + ((IReverseLinkComponent) comp).isReverseLink());
-							 */
-							if (((IReverseLinkComponent) comp).isReverseLink()) {
-								String text = ((IReverseLinkComponent) comp).getLinkText(ctx);
-								ComponentPage componentPage = new ComponentPage();
-								componentPage.setComponent((IReverseLinkComponent) comp);
-								componentPage.setPage(element);
-								reversedLinkComponentCache.put(text, componentPage);
+							IContentVisualComponent comp = content.next(ctx);
+							if (comp instanceof IReverseLinkComponent) {
+								/*
+								 * System.out.println("***** name : " + ((IReverseLinkComponent) comp).getLinkText(ctx)); System.out.println("**** isReverseLlink : " + ((IReverseLinkComponent) comp).isReverseLink());
+								 */
+								if (((IReverseLinkComponent) comp).isReverseLink()) {
+									String text = ((IReverseLinkComponent) comp).getLinkText(ctx);
+									ComponentPage componentPage = new ComponentPage();
+									componentPage.setComponent((IReverseLinkComponent) comp);
+									componentPage.setPage(element);
+									reversedLinkComponentCache.put(text, componentPage);
+								}
 							}
 						}
-					}
 
-					if (count == 100000) {
-						GlobalContext globalContext = GlobalContext.getInstance(ctx.getRequest());
-						System.out.println("***************************************************************************");
-						System.out.println("***************************************************************************");
-						System.out.println("***** BAD CONTENT STRUCTURE DETECTED IN " + this.getClass().getName());
-						System.out.println("***** context key : " + globalContext.getContextKey());
-						System.out.println("***** path : " + ctx.getPath());
-						System.out.println("***************************************************************************");
-						System.out.println("***************************************************************************");
+						if (count == 100000) {
+							GlobalContext globalContext = GlobalContext.getInstance(ctx.getRequest());
+							System.out.println("***************************************************************************");
+							System.out.println("***************************************************************************");
+							System.out.println("***** BAD CONTENT STRUCTURE DETECTED IN " + this.getClass().getName());
+							System.out.println("***** context key : " + globalContext.getContextKey());
+							System.out.println("***** path : " + ctx.getPath());
+							System.out.println("***************************************************************************");
+							System.out.println("***************************************************************************");
+						}
 					}
 				}
 			}
-			return reversedLinkComponentCache;
 		}
+		return reversedLinkComponentCache;
+
 	}
 
 	public String replaceLink(ContentContext ctx, String contentValue) throws Exception {
