@@ -944,6 +944,9 @@ public class MenuElement implements Serializable {
 	}
 
 	public static MenuElement searchChild(MenuElement elem, ContentContext ctx, String path, Collection<MenuElement> pastNode) throws Exception {
+		if (elem == null) {
+			return null;
+		}
 		// check if this is the path to homepage
 		if (elem.getParent() == null && ('/' + elem.getName()).equals(path)) {
 			return elem;
