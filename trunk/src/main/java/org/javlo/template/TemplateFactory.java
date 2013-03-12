@@ -326,6 +326,9 @@ public class TemplateFactory {
 	}
 
 	public static Template getTemplate(ContentContext ctx, MenuElement elem) throws Exception {
+		if (elem == null) {
+			return null;
+		}
 		String key = "_template_" + elem.getId() + '_' + ctx.getRenderMode();
 		if (ctx.getRequest().getAttribute(key) != null) {
 			return (Template) ctx.getRequest().getAttribute(key);

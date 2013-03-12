@@ -122,6 +122,8 @@ public class I18nAccess implements Serializable {
 
 	private String latestTemplateId = "";
 
+	private String latestTemplateLang = "";
+
 	private final Properties templateView = new Properties();
 
 	private boolean templateImported = false;
@@ -437,6 +439,7 @@ public class I18nAccess implements Serializable {
 				}
 			}
 		}
+
 		if (text == null) {
 			text = "[KEY NOT FOUND : " + key + "]";
 		}
@@ -507,7 +510,6 @@ public class I18nAccess implements Serializable {
 		contentViewLg = newViewLg;
 		propContentView = i18nResource.getViewFile(newViewLg, true);
 		propViewMap = null;
-		templateView.clear();
 		propEditMap = null;
 	}
 
@@ -533,7 +535,6 @@ public class I18nAccess implements Serializable {
 
 		propViewMap = null;
 		propEditMap = null;
-		templateView.clear();
 	}
 
 	private boolean isHelp() {
@@ -555,9 +556,10 @@ public class I18nAccess implements Serializable {
 			GlobalContext globalContext = GlobalContext.getInstance(ctx.getRequest());
 			if (!ctx.isFree()) {
 				Template template = ctx.getCurrentTemplate();
-				if (template != null && template.getId() != null && !latestTemplateId.equals(template.getId())) {
+				if (template != null && template.getId() != null && (!latestTemplateId.equals(template.getId()) || !latestTemplateLang.equals(ctx.getLanguage()))) {
 					propViewMap = null;
 					latestTemplateId = template.getId();
+					latestTemplateLang = ctx.getLanguage();
 					template = template.getFinalTemplate(ctx);
 					if (!template.isTemplateInWebapp(ctx)) {
 						template.importTemplateInWebapp(globalContext.getStaticConfig(), ctx);
@@ -571,11 +573,11 @@ public class I18nAccess implements Serializable {
 						parent = parent.getParent();
 					}
 
+					templateView.clear();
 					while (!stack.empty()) {
 						Properties prop = stack.pop();
 						templateView.putAll(prop);
 					}
-
 					templateImported = false;
 				}
 			}

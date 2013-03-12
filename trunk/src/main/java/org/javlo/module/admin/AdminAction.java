@@ -575,7 +575,7 @@ public class AdminAction extends AbstractModuleAction {
 			}
 			request.setAttribute("currentContext", new GlobalContextBean(currentGlobalContext, request.getSession()));
 			if (currentGlobalContext != null) {
-				List<Template> templates = TemplateFactory.getAllDiskTemplates(request.getSession().getServletContext());
+				List<Template> templates = TemplateFactory.getAllTemplates(request.getSession().getServletContext());
 				Collections.sort(templates);
 
 				Template defaultTemplate = TemplateFactory.getDiskTemplate(request.getSession().getServletContext(), currentGlobalContext.getDefaultTemplate());

@@ -84,6 +84,9 @@ public abstract class ELFinder {
 				pasteFiles(rs.getParameter("src", null), rs.getParameter("dst", null), rs.getParameterValues("targets[]", null), StringHelper.isTrue(rs.getParameter("cut", "false")), apiResponse);
 			}
 			if (request.getSession().getAttribute("ELPath") != null) {
+
+				System.out.println("***** ELFinder.process : ELPATH = " + request.getSession().getAttribute("ELPath")); // TODO: remove debug trace
+
 				apiResponse.clear();
 				init("" + request.getSession().getAttribute("ELPath"), apiResponse);
 				request.getSession().removeAttribute("ELPath");
@@ -103,16 +106,14 @@ public abstract class ELFinder {
 
 	private void init(String inFolder, Map<String, Object> apiResponse) {
 		String[] folders = inFolder.split("/");
+		ELFile currentFile = null;
 		if (folders.length > 1) {
-			String volName = folders[1];
-			ELFile currentFile = null;
-			for (ELFile volume : getVolumeFiles()) {
-				if (volume.getFile().getName().equals(volName)) {
-					currentFile = volume;
-				}
-			}
+			/*
+			 * String volName = folders[1]; ELFile currentFile = null; for (ELFile volume : getVolumeFiles()) { if (volume.getFile().getName().equals(volName)) { currentFile = volume; } }
+			 */
+			currentFile = getVolumeFiles().iterator().next();
 			if (currentFile != null) {
-				for (int i = 2; i < folders.length; i++) {
+				for (int i = 1; i < folders.length; i++) {
 					for (ELFile file : currentFile.getChildren()) {
 						if (file.getFile().getName().equals(folders[i])) {
 							currentFile = file;
@@ -120,10 +121,8 @@ public abstract class ELFinder {
 					}
 				}
 			}
-			if (currentFile != null) {
-				open(true, currentFile, true, apiResponse);
-			}
 		}
+		open(true, currentFile, true, apiResponse);
 	}
 
 	private void pasteFiles(String srcHashFolder, String dstHashFolder, String[] files, boolean cut, Map<String, Object> apiResponse) throws IOException {

@@ -4,6 +4,7 @@ import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.codehaus.plexus.util.StringUtils;
 import org.javlo.context.ContentContext;
 import org.javlo.context.GlobalContext;
 import org.javlo.helper.ResourceHelper;
@@ -70,7 +71,7 @@ public class JavloELFile extends ELFile {
 				StaticInfo info = StaticInfo.getInstance(getContentContext(), file);
 				GlobalContext globalContext = GlobalContext.getSessionInstance(getContentContext().getRequest().getSession());
 				if (!ResourceHelper.isTemplateFile(globalContext, file)) {
-					String url = URLHelper.createResourceURL(getContentContext(), '/' + globalContext.getStaticConfig().getStaticFolder() + info.getStaticURL());
+					String url = URLHelper.createResourceURL(getContentContext(), info.getStaticURL());
 					return url;
 				} else {
 					String url = URLHelper.createTemplateResourceURL(getContentContext(), '/' + globalContext.getStaticConfig().getStaticFolder() + info.getStaticURL());
@@ -94,9 +95,10 @@ public class JavloELFile extends ELFile {
 					return url;
 				} else {
 					String templateName = ResourceHelper.extractTemplateName(globalContext, file);
-					Template template = TemplateFactory.getDiskTemplate(getContentContext().getRequest().getSession().getServletContext(), templateName);
+					Template template = TemplateFactory.getTemplates(getContentContext().getRequest().getSession().getServletContext()).get(templateName);
 					if (template != null) {
-						String url = URLHelper.createTransformStaticTemplateURL(getContentContext().getContextWithOtherRenderMode(ContentContext.EDIT_MODE), template, "template", info.getStaticURL().replaceFirst('/' + templateName, "")) + "?ts=" + file.lastModified();
+						String fileURI = StringUtils.replace(file.getAbsolutePath(), template.getFolder().getAbsolutePath(), "");
+						String url = URLHelper.createTransformStaticTemplateURL(getContentContext().getContextWithOtherRenderMode(ContentContext.EDIT_MODE), template, "template", fileURI) + "?ts=" + file.lastModified();
 						return url;
 					} else {
 						return null;

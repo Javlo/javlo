@@ -164,6 +164,17 @@ public class ComponentConfig {
 		return outRenderers;
 	}
 
+	public String getDefaultRenderer() {
+		String defaultRenderer = properties.getString("default-renderer");
+		if (defaultRenderer != null) {
+			if (getRenderes().get(defaultRenderer) == null) {
+				logger.warning("default renderer not found in renderer list : " + defaultRenderer);
+				defaultRenderer = null;
+			}
+		}
+		return defaultRenderer;
+	}
+
 	public String[] getStyleLabelList() {
 		if (properties == null) {
 			return new String[0];

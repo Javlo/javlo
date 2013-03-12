@@ -421,6 +421,7 @@ public class ContentService {
 	public MenuElement getNavigation(ContentContext ctx) throws Exception {
 		MenuElement res = null;
 		GlobalContext globalContext = GlobalContext.getInstance(ctx.getRequest());
+
 		synchronized (globalContext) {
 			if (ctx.getRenderMode() == ContentContext.TIME_MODE && globalContext.getTimeTravelerContext().getTravelTime() != null) {
 				if (timeTravelerNav == null) {
@@ -434,25 +435,29 @@ public class ContentService {
 					timeTravelerGlobalMap = contentAttributeMap;
 				}
 				res = timeTravelerNav;
-			} else if (!ctx.isAsViewMode()) { // TODO: check the test was with : || !previewMode
+			} else if (!ctx.isAsViewMode() || !previewMode) { // TODO: check the test was with : || !previewMode
 				if (previewNav == null) {
+					long startTime = System.currentTimeMillis();
 					PersistenceService persistenceService = PersistenceService.getInstance(globalContext);
-					logger.info("reload preview navigation");
 					Map<String, String> contentAttributeMap = new HashMap<String, String>();
 					previewNav = persistenceService.load(ctx, ContentContext.PREVIEW_MODE, contentAttributeMap, null);
 					previewGlobalMap = contentAttributeMap;
+					logger.info("load preview of '" + globalContext.getContextKey() + "' nav in " + StringHelper.renderTimeInSecond((System.currentTimeMillis() - startTime) / 1000) + " sec.");
 				}
 				res = previewNav;
 			} else {
 				if (getViewNav() == null) {
+					long startTime = System.currentTimeMillis();
 					PersistenceService persistenceService = PersistenceService.getInstance(globalContext);
 					Map<String, String> contentAttributeMap = new HashMap<String, String>();
 					setViewNav(persistenceService.load(ctx, ContentContext.VIEW_MODE, contentAttributeMap, null));
 					viewGlobalMap = contentAttributeMap;
+					logger.info("load view of '" + globalContext.getContextKey() + "' nav in " + StringHelper.renderTimeInSecond((System.currentTimeMillis() - startTime) / 1000) + " sec.");
 				}
 				res = getViewNav();
 			}
 		}
+
 		return res;
 	}
 

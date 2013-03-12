@@ -237,14 +237,15 @@ public class ContentContext {
 			if (!ctx.isEdit() && (!ctx.isPreview() || !EditContext.getInstance(globalContext, ctx.getRequest().getSession()).isEditPreview())) {
 				try {
 					MenuElement page = ctx.getCurrentPage();
-					while (!page.isRealContent(ctx) && page.getChildMenuElements().size() > 0) {
-						page = page.getChildMenuElements().iterator().next();
+					if (page != null) {
+						while (!page.isRealContent(ctx) && page.getChildMenuElements().size() > 0) {
+							page = page.getChildMenuElements().iterator().next();
+						}
+						if (page.isRealContent(ctx)) {
+							ctx.setCurrentPageCached(page);
+							ctx.setPath(page.getPath());
+						}
 					}
-					if (page.isRealContent(ctx)) {
-						ctx.setCurrentPageCached(page);
-						ctx.setPath(page.getPath());
-					}
-
 				} catch (Exception e) {
 					e.printStackTrace();
 				}
@@ -1162,7 +1163,7 @@ public class ContentContext {
 			outTemplates = new LinkedList<Template>();
 			GlobalContext globalContext = GlobalContext.getInstance(request);
 			Collection<String> templatesNames = globalContext.getTemplatesNames();
-			Collection<Template> templates = TemplateFactory.getAllDiskTemplates(request.getSession().getServletContext());
+			Collection<Template> templates = TemplateFactory.getAllTemplates(request.getSession().getServletContext());
 			for (Template template : templates) {
 				if (templatesNames.contains(template.getName())) {
 					outTemplates.add(template);
