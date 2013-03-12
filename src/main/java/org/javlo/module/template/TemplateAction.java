@@ -111,7 +111,7 @@ public class TemplateAction extends AbstractModuleAction {
 		RequestService requestService = RequestService.getInstance(ctx.getRequest());
 		TemplateContext templateContext = TemplateContext.getInstance(ctx.getRequest().getSession(), globalContext, module);
 
-		Collection<Template> allTemplate = TemplateFactory.getAllDiskTemplates(ctx.getRequest().getSession().getServletContext());
+		Collection<Template> allTemplate = TemplateFactory.getAllTemplates(ctx.getRequest().getSession().getServletContext());
 		Collection<String> contextTemplates = globalContext.getTemplatesNames();
 
 		Collection<Template.TemplateBean> templates = new LinkedList<Template.TemplateBean>();
@@ -132,7 +132,7 @@ public class TemplateAction extends AbstractModuleAction {
 		String templateName = requestService.getParameter("templateid", null);
 
 		if (templateName != null) {
-			Template template = TemplateFactory.getDiskTemplate(ctx.getRequest().getSession().getServletContext(), templateName);
+			Template template = TemplateFactory.getTemplates(ctx.getRequest().getSession().getServletContext()).get(templateName);
 			if (template == null) {
 				msg = "template not found : " + templateName;
 				module.clearAllBoxes();

@@ -36,6 +36,7 @@ import org.javlo.helper.filefilter.ImageFileFilter;
 import org.javlo.helper.filefilter.SoundFileFilter;
 import org.javlo.helper.filefilter.VideoOrURLFileFilter;
 import org.javlo.i18n.I18nAccess;
+import org.javlo.module.file.FileAction;
 import org.javlo.navigation.MenuElement;
 import org.javlo.service.ContentService;
 import org.javlo.service.RequestService;
@@ -392,20 +393,26 @@ public class Multimedia extends TimeRangeComponent implements IImageTitle {
 		out.println(" : <input style=\"width: 120px;\" type=\"text\" id=\"" + getInputTitle() + "\" name=\"" + getInputTitle() + "\" value=\"" + getTitle() + "\"/>");
 		out.println("</div>");
 
+		out.println("<div class=\"line\">");
 		if (isFolder()) {
 			out.println(XHTMLHelper.getInputOneSelect(getInputBaseFolderName(), folderSelection, getCurrentRootFolder()));
 		}
-		out.println("<input id=\"contentdate\" style=\"width: 120px;\" type=\"text\" id=\"" + getInputStartDateName() + "\" name=\"" + getInputStartDateName() + "\" value=\"" + StringHelper.renderDateWithDefaultValue(getStartDate(), "") + "\"/> - ");
-		out.println("<input style=\"width: 120px;\" type=\"text\" id=\"" + getInputEndDateName() + "\" name=\"" + getInputEndDateName() + "\" value=\"" + StringHelper.renderDateWithDefaultValue(getEndDate(), "") + "\"/>");
 
 		Map<String, String> filesParams = new HashMap<String, String>();
-		filesParams.put("path", URLHelper.mergePath("/", getRelativeFileDirectory(ctx), getCurrentRootFolder()));
+		filesParams.put("path", URLHelper.mergePath(FileAction.getContextPathPrefix(ctx), getCurrentRootFolder()));
 		filesParams.put("webaction", "changeRenderer");
 		filesParams.put("page", "meta");
 		String staticURL = URLHelper.createModuleURL(ctx, ctx.getPath(), "file", filesParams);
 		out.println("<a class=\"" + EDIT_ACTION_CSS_CLASS + "\" href=\"" + staticURL + "\">&nbsp;");
 		out.println(i18nAccess.getText("content.goto-static"));
 		out.println("</a>");
+		out.println("</div>");
+
+		out.println("<div class=\"line\">");
+		out.println("<label for=\"" + getInputStartDateName() + "\">" + i18nAccess.getText("content.multimedia-gallery.date-range") + "</label>");
+		out.println(" : <input id=\"contentdate\" style=\"width: 120px;\" type=\"text\" id=\"" + getInputStartDateName() + "\" name=\"" + getInputStartDateName() + "\" value=\"" + StringHelper.renderDateWithDefaultValue(getStartDate(), "") + "\"/> - ");
+		out.println("<input style=\"width: 120px;\" type=\"text\" id=\"" + getInputEndDateName() + "\" name=\"" + getInputEndDateName() + "\" value=\"" + StringHelper.renderDateWithDefaultValue(getEndDate(), "") + "\"/>");
+		out.println("</div>");
 
 		out.println("<div class=\"line\">");
 		out.println("<label for=\"" + getInputMaxListSizeName() + "\">" + i18nAccess.getText("content.multimedia-gallery.list-size") + "</label>");

@@ -32,6 +32,7 @@ import org.javlo.image.ImageEngine;
 import org.javlo.image.ImageHelper;
 import org.javlo.rendering.Device;
 import org.javlo.template.Template;
+import org.javlo.template.TemplateFactory;
 import org.javlo.tracking.Track;
 import org.javlo.tracking.Tracker;
 import org.javlo.user.IUserFactory;
@@ -484,7 +485,8 @@ public class ImageTransformServlet extends HttpServlet {
 
 					try {
 						if (!Template.EDIT_TEMPLATE_CODE.equals(templateId)) {
-							template = Template.getApplicationInstance(request.getSession().getServletContext(), ctx, templateId);
+							//template = Template.getApplicationInstance(request.getSession().getServletContext(), ctx, templateId);
+							template = TemplateFactory.getTemplates(getServletContext()).get(templateId);
 						}
 					} catch (Exception e) {
 						e.printStackTrace();

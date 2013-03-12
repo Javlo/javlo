@@ -373,7 +373,12 @@ public abstract class AbstractVisualComponent implements IContentVisualComponent
 	@Override
 	public String getCurrentRenderer(ContentContext ctx) {
 		if (getBean(ctx).getRenderer() == null && getRenderes(ctx).size() > 0) {
-			return getRenderes(ctx).keySet().iterator().next();
+			String defaultRenderer = getConfig(ctx).getDefaultRenderer();
+			if (defaultRenderer != null) {
+				return defaultRenderer;
+			} else {
+				return getRenderes(ctx).keySet().iterator().next();
+			}
 		} else {
 			return getBean(ctx).getRenderer();
 		}

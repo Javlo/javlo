@@ -24,6 +24,7 @@ import org.javlo.component.core.ContentElementList;
 import org.javlo.component.core.IContentComponentsList;
 import org.javlo.component.core.IContentVisualComponent;
 import org.javlo.component.dynamic.DynamicComponent;
+import org.javlo.component.title.Title;
 import org.javlo.config.StaticConfig;
 import org.javlo.context.ContentContext;
 import org.javlo.context.ContextException;
@@ -931,7 +932,7 @@ public class Edit extends AbstractModuleAction {
 			String templateName = requestService.getParameter("template", null);
 			if (templateName != null) {
 				if (templateName.length() > 1) {
-					Template template = TemplateFactory.getDiskTemplates(application).get(templateName);
+					Template template = TemplateFactory.getTemplates(application).get(templateName);
 					if (template != null && ctx.getCurrentTemplates().contains(template)) { // TODO: check this test
 						page.setTemplateName(template.getName());
 						modify = true;
@@ -1010,6 +1011,14 @@ public class Edit extends AbstractModuleAction {
 					ctx.getCurrentPage().addChildMenuElement(elem);
 				}
 				path = path + "/" + nodeName;
+
+				/** initial content **/
+				List<ComponentBean> initContent = new LinkedList<ComponentBean>();
+				for (String lg : globalContext.getContentLanguages()) {
+					i18nAccess.requestInit(ctx);
+					initContent.add(new ComponentBean(Title.TYPE, "[title] - " + elem.getName(), lg));
+				}
+				content.createContent(ctx, elem, initContent, "0", false);
 
 				PersistenceService persistenceService = PersistenceService.getInstance(globalContext);
 				persistenceService.store(ctx);

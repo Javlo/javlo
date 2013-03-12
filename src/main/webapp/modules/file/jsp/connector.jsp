@@ -1,3 +1,4 @@
+<%@page import="org.javlo.module.file.FileAction"%>
 <%@page import="
 java.util.Map,
 java.util.HashMap,
@@ -30,11 +31,7 @@ ContentContext ctx = ContentContext.getContentContext(request, response);
 GlobalContext globalContext = GlobalContext.getSessionInstance(ctx.getRequest().getSession());
 String root;
 if (request.getParameter("changeRoot") == null) {
-	if (AdminUserSecurity.getInstance().isGod(ctx.getCurrentEditUser())) {
-		root = globalContext.getDataFolder();
-	} else {
-		root = URLHelper.mergePath(globalContext.getDataFolder(), globalContext.getStaticConfig().getStaticFolder());
-	}
+	root = FileAction.getContextROOTFolder(ctx);
 } else {
 	root = ((FileModuleContext)FileModuleContext.getInstance(session, globalContext, ModulesContext.getInstance(session, globalContext).getCurrentModule(), FileModuleContext.class)).getRoot();
 }

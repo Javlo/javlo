@@ -114,7 +114,7 @@ public class JavloELFinder extends ELFinder {
 			e.printStackTrace();
 			return;
 		}
-		fileModuleContext.setPath(file.getFile().getAbsolutePath().replace(file.getVolume().getRoot().getFile().getAbsolutePath(), file.getVolume().getRoot().getFile().getName()));
+		fileModuleContext.setPath(file.getFile().getAbsolutePath().replace(file.getVolume().getRoot().getFile().getAbsolutePath(), ""));
 	}
 
 	@Override

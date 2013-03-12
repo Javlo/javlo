@@ -74,7 +74,11 @@ public class FileAction extends AbstractModuleAction {
 				String currentURL;
 				try {
 					currentURL = InfoBean.getCurrentInfoBean(ctx).getCurrentURL();
-					return currentURL + "?path=/" + URLHelper.mergePath(globalContext.getStaticConfig().getStaticFolder(), staticInfo.getStaticURL());
+					String path = staticInfo.getStaticURL();
+					if (AdminUserSecurity.getInstance().isGod(ctx.getCurrentEditUser())) {
+						path = URLHelper.mergePath("/" + globalContext.getStaticConfig().getStaticFolder(), staticInfo.getStaticURL());
+					}
+					return currentURL + "?path=" + path;
 				} catch (Exception e) {
 					e.printStackTrace();
 				}
@@ -178,24 +182,26 @@ public class FileAction extends AbstractModuleAction {
 	}
 
 	public File getFolder(ContentContext ctx) throws FileNotFoundException, InstantiationException, IllegalAccessException, IOException, ModuleException {
-		GlobalContext globalContext = GlobalContext.getInstance(ctx.getRequest());
-		String sourceFolder = globalContext.getDataFolder();
-		if (AdminUserSecurity.getInstance().isGod(ctx.getCurrentEditUser())) {
-			sourceFolder = globalContext.getStaticConfig().getAllDataFolder();
-		}
+		String sourceFolder = getContextROOTFolder(ctx);
 		FileModuleContext fileModuleContext = FileModuleContext.getInstance(ctx.getRequest());
-		return new File(sourceFolder, fileModuleContext.getPath());
+		File folder = new File(sourceFolder, fileModuleContext.getPath());
+		System.out.println("***** FileAction.getFolder : sourceFolder = " + sourceFolder); // TODO: remove debug trace
+		System.out.println("***** FileAction.getFolder : fileModuleContext.getPath() = " + fileModuleContext.getPath()); // TODO: remove debug trace
+		System.out.println("***** FileAction.getFolder : folder = " + folder); // TODO: remove debug trace
+		return folder;
 	}
 
 	@Override
 	public String prepare(ContentContext ctx, ModulesContext modulesContext) throws Exception {
-		
+
 		String msg = super.prepare(ctx, modulesContext);
 		FileModuleContext fileModuleContext = (FileModuleContext) LangHelper.smartInstance(ctx.getRequest(), ctx.getResponse(), FileModuleContext.class);
+
 		GlobalContext globalContext = GlobalContext.getInstance(ctx.getRequest());
 
 		ctx.getRequest().setAttribute("currentModule", modulesContext.getCurrentModule());
 		ctx.getRequest().setAttribute("tags", globalContext.getTags());
+		ctx.getRequest().setAttribute("pathPrefix", getContextPathPrefix(ctx));
 
 		if (ctx.getRequest().getParameter("path") != null) {
 			fileModuleContext.setPath(ctx.getRequest().getParameter("path"));
@@ -257,16 +263,22 @@ public class FileAction extends AbstractModuleAction {
 
 		currentModule.clearBreadcrump();
 		currentModule.setBreadcrumbTitle("");
-		
-		ctx.setRenderMode(ContentContext.EDIT_MODE);  // ajax can preview mode by default
 
-		String[] pathItems = URLHelper.cleanPath(fileModuleContext.getPath(), true).split("/");
+		ctx.setRenderMode(ContentContext.EDIT_MODE); // ajax can preview mode by default
+
+		String[] tmpPathItems = URLHelper.cleanPath(fileModuleContext.getPath(), true).split("/");
+		String[] pathItems = new String[tmpPathItems.length + 1];
+		for (int i = 0; i < tmpPathItems.length; i++) {
+			pathItems[i + 1] = tmpPathItems[i];
+		}
+		pathItems[0] = "/";
+
 		String currentPath = "/";
 
 		for (int i = 0; i < pathItems.length; i++) {
 			String path = pathItems[i];
 			if (path.trim().length() > 0) {
-				currentPath = currentPath + path + '/';
+				currentPath = URLHelper.mergePath(currentPath, path, "/");
 
 				Map<String, String> filesParams = new HashMap<String, String>();
 				filesParams.put("path", currentPath);
@@ -284,8 +296,7 @@ public class FileAction extends AbstractModuleAction {
 				}
 
 				// search children
-				GlobalContext globalContext = GlobalContext.getInstance(ctx.getRequest());
-				File currentDir = new File(URLHelper.mergePath(globalContext.getDataFolder(), currentPath));
+				File currentDir = new File(URLHelper.mergePath(getContextROOTFolder(ctx), currentPath));
 				File[] children = currentDir.listFiles(new DirectoryFilter());
 				List<HtmlLink> childrenLinks = new LinkedList<Module.HtmlLink>();
 				if (children != null) {
@@ -402,5 +413,24 @@ public class FileAction extends AbstractModuleAction {
 			return "folder not found : " + folder;
 		}
 		return null;
+	}
+
+	public static String getContextPathPrefix(ContentContext ctx) {
+		GlobalContext globalContext = GlobalContext.getInstance(ctx.getRequest());
+		if (AdminUserSecurity.getInstance().isGod(ctx.getCurrentEditUser())) {
+			return URLHelper.mergePath("/", globalContext.getFolder());
+		} else {
+			return "/";
+		}
+
+	}
+
+	public static String getContextROOTFolder(ContentContext ctx) {
+		GlobalContext globalContext = GlobalContext.getInstance(ctx.getRequest());
+		if (AdminUserSecurity.getInstance().isGod(ctx.getCurrentEditUser())) {
+			return globalContext.getDataFolder();
+		} else {
+			return URLHelper.mergePath(globalContext.getDataFolder(), globalContext.getStaticConfig().getStaticFolder());
+		}
 	}
 }

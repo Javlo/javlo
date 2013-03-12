@@ -589,6 +589,8 @@ public class Template implements Comparable<Template> {
 
 	private Properties i18n;
 
+	private Locale i18nLang = null;
+
 	public static Template getApplicationInstance(ServletContext application, ContentContext ctx, String templateDir) throws ConfigurationException, IOException {
 
 		Template outTemplate = null;
@@ -1124,7 +1126,8 @@ public class Template implements Comparable<Template> {
 	}
 
 	public Properties getI18nProperties(GlobalContext globalContext, Locale locale) throws IOException {
-		if (i18n == null) {
+		if (i18n == null || !locale.equals(i18nLang)) {
+			i18nLang = locale;
 			File i18nFile = new File(URLHelper.mergePath(URLHelper.mergePath(getWorkTemplateFolder(), getFolder(globalContext)), I18N_FILE + locale.getLanguage() + ".properties"));
 			i18n = new Properties();
 			if (i18nFile.exists()) {
@@ -1665,16 +1668,16 @@ public class Template implements Comparable<Template> {
 		String templateFolder = config.getTemplateFolder();
 		File templateSrc = new File(URLHelper.mergePath(templateFolder, getSourceFolderName()));
 		if (templateSrc.exists()) {
-
 			File templateTgt = new File(getTemplateTargetFolder(globalContext));
-
 			logger.info("copy template from '" + templateSrc + "' to '" + templateTgt + "'");
-
 			FileUtils.deleteDirectory(templateTgt);
 			importTemplateInWebapp(config, ctx, globalContext, templateTgt);
 		} else {
 			logger.severe("folder not found : " + templateSrc);
 			templateImportationError = true;
+			/*
+			 * try { throw new Exception(); } catch (Exception e) { // TODO Auto-generated catch block e.printStackTrace(); }
+			 */
 		}
 	}
 

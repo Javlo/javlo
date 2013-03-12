@@ -370,7 +370,10 @@ public class StaticInfo {
 			fullStaticFolder = staticConfig.getTemplateFolder();
 		}
 
-		String relURL = fullURL.replace(fullStaticFolder, "");
+		String relURL = "/";
+		if (fullURL.length() > fullStaticFolder.length()) {
+			relURL = StringUtils.replace(fullURL, fullStaticFolder, "");
+		}
 		return getInstance(ctx, relURL);
 	}
 
