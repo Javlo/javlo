@@ -6,9 +6,9 @@ import java.util.logging.Logger;
 import javax.servlet.ServletContext;
 
 public class ThreadManager extends Thread {
-	
+
 	private static final String KEY = ThreadManager.class.getName();
-	
+
 	AbstractThread currentThread;
 
 	private class LocalThread extends Thread {
@@ -44,9 +44,10 @@ public class ThreadManager extends Thread {
 	public Boolean stop = false;
 
 	private File threadDir = null;
-	
-	private ThreadManager(){};
-	
+
+	private ThreadManager() {
+	};
+
 	public static ThreadManager getInstance(ServletContext application) {
 		ThreadManager instance = (ThreadManager) application.getAttribute(KEY);
 		if (instance == null) {
@@ -58,6 +59,14 @@ public class ThreadManager extends Thread {
 
 	@Override
 	public void run() {
+
+		/*** start by big sleep, wait web site loading ***/
+		try {
+			Thread.sleep(5 * 60 * 1000); // wait 5 minutes before run thread
+		} catch (InterruptedException e1) {
+			e1.printStackTrace();
+		}
+
 		while (!stop) {
 			File[] threadFiles = threadDir.listFiles(AbstractThread.threadFileFilter);
 			if (threadFiles != null) {
@@ -66,7 +75,7 @@ public class ThreadManager extends Thread {
 				}
 				for (File file : threadFiles) {
 					if (!stop) {
-						
+
 						try {
 							currentThread = AbstractThread.getInstance(file);
 							if (currentThread != null && currentThread.needRunning()) {
@@ -110,7 +119,7 @@ public class ThreadManager extends Thread {
 	public void setThreadDir(File threadDir) {
 		this.threadDir = threadDir;
 	}
-	
+
 	public int countThread() {
 		File[] threadFiles = threadDir.listFiles(AbstractThread.threadFileFilter);
 		if (threadFiles == null) {
@@ -118,25 +127,25 @@ public class ThreadManager extends Thread {
 		}
 		return threadFiles.length;
 	}
-	
+
 	public int purgeAllThread() {
 		File[] threadFiles = threadDir.listFiles(AbstractThread.threadFileFilter);
 		int fileDeleted = 0;
-		for (int i = 0; i < threadFiles.length; i++) {
-			if (threadFiles[i].delete()) {
+		for (File threadFile : threadFiles) {
+			if (threadFile.delete()) {
 				fileDeleted++;
 			}
 		}
 		return fileDeleted;
 	}
-	
+
 	public String getCurrentThreadName() {
 		if (currentThread != null) {
 			return currentThread.getClass().getSimpleName();
 		}
 		return "";
 	}
-	
+
 	public String getCurrentThreadInfo() {
 		if (currentThread != null) {
 			return currentThread.logInfo();
