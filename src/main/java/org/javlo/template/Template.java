@@ -736,6 +736,7 @@ public class Template implements Comparable<Template> {
 		templateImportationError = false;
 		contextWithTemplateImported.clear();
 		i18n = null;
+		i18nLang = null;
 	}
 
 	public void delete() {
@@ -1128,7 +1129,7 @@ public class Template implements Comparable<Template> {
 	public Properties getI18nProperties(GlobalContext globalContext, Locale locale) throws IOException {
 		if (i18n == null || !locale.equals(i18nLang)) {
 			i18nLang = locale;
-			File i18nFile = new File(URLHelper.mergePath(URLHelper.mergePath(getWorkTemplateFolder(), getFolder(globalContext)), I18N_FILE + locale.getLanguage() + ".properties"));
+			File i18nFile = new File(URLHelper.mergePath(URLHelper.mergePath(getFolder().getAbsolutePath(), I18N_FILE + locale.getLanguage() + ".properties")));
 			i18n = new Properties();
 			if (i18nFile.exists()) {
 				Reader reader = new FileReader(i18nFile);
