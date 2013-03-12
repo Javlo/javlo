@@ -575,9 +575,9 @@ public class I18nAccess implements Serializable {
 
 					templateView.clear();
 					while (!stack.empty()) {
-						Properties prop = stack.pop();
-						templateView.putAll(prop);
+						templateView.putAll(stack.pop());
 					}
+
 					templateImported = false;
 				}
 			}
