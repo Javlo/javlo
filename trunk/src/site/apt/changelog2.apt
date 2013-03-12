@@ -61,3 +61,11 @@ change log
 * 2.0.0.15 [11/02/2013]
 
  * ehcache usage refactoring
+ 
+ * edit template css / image config
+ 
+ * browse all files for god user
+ 
+ * do not call disktemplates methods if not necessary
+ 
+* 2.0.0.16 [12/03/2013] 
