@@ -67,6 +67,8 @@ public class ThreadManager extends Thread {
 			e1.printStackTrace();
 		}
 
+		logger.info("start thread manager on : " + threadDir);
+
 		while (!stop) {
 			File[] threadFiles = threadDir.listFiles(AbstractThread.threadFileFilter);
 			if (threadFiles != null) {
