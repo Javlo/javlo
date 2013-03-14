@@ -79,8 +79,11 @@ function fullHeight() {
 	});*/
 	
 	jQuery(".full-height").each(function() {
-		var height = jQuery('#footer').offset().top -  jQuery(this).offset().top;		
-		jQuery(this).height(height);	
+		var footer = jQuery('#footer');
+		if (footer.length > 0) {
+			var height = footer.offset().top -  jQuery(this).offset().top;		
+			jQuery(this).height(height);
+		}
 	});
 	
 	

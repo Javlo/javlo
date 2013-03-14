@@ -31,7 +31,6 @@ jQuery(document).ready(function() {
 		}
 	});
 	jQuery('form.ajax').live("submit", function(event) {
-		console.log("ajax form");
 		var form = jQuery(this);		
 		var ajaxSubmit = true;
 		jQuery.each(form.find("input[type='file']"), function() {			

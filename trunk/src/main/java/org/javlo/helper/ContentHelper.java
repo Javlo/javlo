@@ -309,8 +309,9 @@ public class ContentHelper {
 						ContentService content = ContentService.getInstance(ctx.getRequest());
 						if (page == null) {
 							page = content.getNavigation(ctx).searchChildFromName(pageName);
-						}
+						}						
 						MenuElement rootPage = content.getNavigation(ctx).searchChildFromName(pageRootXPath);
+												
 						if (rootPage != null || page != null) {
 							if (page == null) {
 								page = MacroHelper.createArticlePage(ctx, rootPage, date);

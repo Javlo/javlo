@@ -737,7 +737,7 @@ public class XMLManipulationHelper {
 		 * out.println("<script type=\"text/javascript\">"); out.println("var gaJsHost = ((\"https:\" == document.location.protocol) ? \"https://ssl.\" : \"http://www.\");"); out.println("document.write(unescape(\"%3Cscript src='\" + gaJsHost + \"google-analytics.com/ga.js' type='text/javascript'%3E%3C/script%3E\"));"); out.println("</script>"); out.println("<script type=\"text/javascript\">"); out.println("try {"); out.println("var pageTracker = _gat._getTracker(\"<%=globalContext.getGoogleAnalyticsUACCT()%>\");"); out.println("pageTracker._trackPageview();"); out.println("} catch(err) {}</script>");
 		 */
 
-		out.println("<script type=\"text/javascript\">");
+		out.println("<%if (globalContext.getGoogleAnalyticsUACCT().length() > 4) {%><script type=\"text/javascript\">");
 		out.println("var _gaq = _gaq || [];");
 		out.println("_gaq.push(['_setAccount', '<%=globalContext.getGoogleAnalyticsUACCT()%>']);");
 		out.println("_gaq.push(['_trackPageview']);");
@@ -746,7 +746,7 @@ public class XMLManipulationHelper {
 		out.println("      ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';");
 		out.println("      var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);");
 		out.println("   })();");
-		out.println("</script>");
+		out.println("</script><%}%>");
 
 		out.close();
 		return writer.toString();

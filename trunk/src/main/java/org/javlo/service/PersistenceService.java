@@ -1048,7 +1048,7 @@ public class PersistenceService {
 	}
 
 	public void store(ContentContext ctx) throws Exception {
-		store(ctx, ContentContext.PREVIEW_MODE);
+		store(ctx.getContextWithOtherRenderMode(ContentContext.PREVIEW_MODE), ContentContext.PREVIEW_MODE);
 	}
 
 	public void store(ContentContext ctx, int renderMode) throws Exception {

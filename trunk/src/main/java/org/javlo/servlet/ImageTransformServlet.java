@@ -485,7 +485,7 @@ public class ImageTransformServlet extends HttpServlet {
 
 					try {
 						if (!Template.EDIT_TEMPLATE_CODE.equals(templateId)) {
-							//template = Template.getApplicationInstance(request.getSession().getServletContext(), ctx, templateId);
+							// template = Template.getApplicationInstance(request.getSession().getServletContext(), ctx, templateId);
 							template = TemplateFactory.getTemplates(getServletContext()).get(templateId);
 						}
 					} catch (Exception e) {
@@ -599,7 +599,9 @@ public class ImageTransformServlet extends HttpServlet {
 				String key = ImageHelper.createSpecialDirectory(globalContext.getContextKey(), filter, area, deviceCode, template);
 				if (fc.getFileName(key, imageName).exists()) {
 					response.sendRedirect(URLHelper.createStaticURL(ctx, fc.getRelativeFilePath(key, imageName)));
-					return;
+					/*
+					 * String url = URLHelper.createStaticURL(ctx, fc.getRelativeFilePath(key, imageName)); if (url.startsWith('/' + ctx.getPathPrefix())) { url = StringUtils.replaceOnce(url, '/' + ctx.getPathPrefix(), ""); } System.out.println("***** ImageTransformServlet.processRequest : url = " + url); // TODO: remove debug trace request.getRequestDispatcher(URLHelper.createStaticURL(ctx, fc.getRelativeFilePath(key, imageName))).forward(request, response); return;
+					 */
 				}
 
 				InputStream fileStream = loadFileFromDisk(globalContext, imageName, filter, area, ctx.getDevice(), template, imageFile.lastModified());

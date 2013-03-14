@@ -36,8 +36,10 @@ import org.javlo.helper.ResourceHelper;
 import org.javlo.helper.StringHelper;
 import org.javlo.helper.URLHelper;
 import org.javlo.i18n.I18nAccess;
+import org.javlo.service.PersistenceService;
 import org.javlo.servlet.zip.ZipManagement;
 import org.javlo.ztatic.FileCache;
+import org.javlo.ztatic.StaticInfo;
 
 /**
  * 
@@ -225,7 +227,7 @@ public class JavloELFinder extends ELFinder {
 	}
 
 	@Override
-	protected void renameFile(HttpServletRequest request, String fileHash, String name, Map<String, Object> apiResponse) throws Exception {
+	protected void renameFile(HttpServletRequest request, HttpServletResponse response, String fileHash, String name, Map<String, Object> apiResponse) throws Exception {
 		JavloELFile file = (JavloELFile) hashToFile(fileHash);
 		if (file.getFile().exists()) {
 			File newFile = new File(URLHelper.mergePath(file.getFile().getParent(), name));
@@ -233,9 +235,12 @@ public class JavloELFinder extends ELFinder {
 			if (newFile.exists()) {
 				throw new ELFinderException(i18nAccess.getText("file.message.error.allready-exist"));
 			} else {
-
+				ContentContext ctx = ContentContext.getContentContext(request, response);
+				StaticInfo staticInfo = StaticInfo.getInstance(ctx, file.getFile());
 				file.getFile().renameTo(newFile);
+				staticInfo.renameFile(ctx, newFile);
 				GlobalContext globalContext = GlobalContext.getInstance(request);
+				PersistenceService.getInstance(globalContext).store(ctx);
 				if (file.getFile().isDirectory()) {
 					FileCache.getInstance(request.getSession().getServletContext()).clear(globalContext.getContextKey());
 				} else {

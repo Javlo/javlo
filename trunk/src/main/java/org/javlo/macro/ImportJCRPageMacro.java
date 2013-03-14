@@ -178,9 +178,13 @@ public class ImportJCRPageMacro implements IInteractiveMacro, IAction {
 			if (!fileToImport.exists()) {
 				return "file not found : " + fileToImport;
 			} else {
-				importFile(ctx, fileToImport);
-				messageRepository.setGlobalMessageAndNotification(ctx, new GenericMessage("new article create : " + fileToImport.getName(), GenericMessage.SUCCESS));
-				modulesContext.setCurrentModule("content");
+				String msg = importFile(ctx, fileToImport);
+				if (msg == null) {
+					messageRepository.setGlobalMessageAndNotification(ctx, new GenericMessage("new article create : " + fileToImport.getName(), GenericMessage.SUCCESS));
+					modulesContext.setCurrentModule("content");
+				} else {
+					return msg;
+				}
 			}
 		} else {
 			if (rs.getParameter("remove-file", null) != null) {
