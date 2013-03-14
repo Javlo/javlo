@@ -17,6 +17,10 @@
 	padding: 3px;
 }
 
+.portlet-wrapper td {
+	width: auto;
+}
+
 .page-list td {
 	width: auto;
 }

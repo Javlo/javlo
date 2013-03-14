@@ -114,17 +114,26 @@
 
 <fieldset>
 <legend>${i18n.edit['user.social']}</legend>
-	<div class="line">
-		<label for="facebook">facebook</label>
-		<input type="text" id="facebook" name="facebook" value="${userInfoMap["facebook"]}" /> 
+	<div class="one_half">
+		<div class="line">
+			<label for="facebook">facebook</label>
+			<input type="text" id="facebook" name="facebook" value="${userInfoMap["facebook"]}" /> 
+		</div>
+		<div class="line">
+			<label for="googleplus">google+</label>
+			<input type="text" id="googleplus" name="googleplus" value="${userInfoMap["googleplus"]}" /> 
+		</div>
 	</div>
-	<div class="line">
-		<label for="googleplus">google+</label>
-		<input type="text" id="googleplus" name="googleplus" value="${userInfoMap["googleplus"]}" /> 
-	</div>
+	<div class="one_half">
 	<div class="line">
 		<label for=linkedin">linkedin</label>
 		<input type="text" id="linkedin" name="linkedin" value="${userInfoMap["linkedin"]}" /> 
+	</div>
+	<div class="line">
+		<label for=twitter">twitter</label>
+		<input type="text" id="twitter" name="twitter" value="${userInfoMap["twitter"]}" /> 
+	</div>
+	
 	</div>
 </fieldset>
 

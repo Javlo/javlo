@@ -90,6 +90,7 @@ public class AdminAction extends AbstractModuleAction {
 		private boolean previewMode;
 		private boolean openExternalLinkAsPopup = false;
 		private boolean openFileAsPopup = false;
+		private boolean wizz = false;
 		private String noPopupDomain;
 		private String URIAlias;
 		private boolean master = false;
@@ -123,6 +124,7 @@ public class AdminAction extends AbstractModuleAction {
 			setView(ContentService.getInstance(globalContext).isViewNav());
 			setEdit(ContentService.getInstance(globalContext).isPreviewNav());
 			setVisibility(globalContext.isView());
+			setWizz(globalContext.isWizz());
 			setEditability(globalContext.isEditable());
 			setDefaultTemplate(globalContext.getDefaultTemplate());
 			setExtendMenu(globalContext.isExtendMenu());
@@ -510,6 +512,14 @@ public class AdminAction extends AbstractModuleAction {
 			this.master = master;
 		}
 
+		public boolean isWizz() {
+			return wizz;
+		}
+
+		public void setWizz(boolean wizz) {
+			this.wizz = wizz;
+		}
+
 	}
 
 	@Override
@@ -788,6 +798,8 @@ public class AdminAction extends AbstractModuleAction {
 					currentGlobalContext.setNoPopupDomainRAW(requestService.getParameter("nopup-domain", ""));
 
 					currentGlobalContext.setPreviewMode(requestService.getParameter("preview-mode", null) != null);
+
+					currentGlobalContext.setWizz(requestService.getParameter("wizz", null) != null);
 
 					String dateFormat = requestService.getParameter("short-date", null);
 					if (dateFormat != null) {

@@ -1504,6 +1504,10 @@ public class GlobalContext implements Serializable {
 		return properties.getBoolean("easy", false);
 	}
 
+	public boolean isWizz() {
+		return properties.getBoolean("wizz", false);
+	}
+
 	public boolean isEditable() {
 		return properties.getBoolean("editable", true);
 	}
@@ -1942,6 +1946,11 @@ public class GlobalContext implements Serializable {
 
 	public void setEasy(boolean easy) {
 		properties.setProperty("easy", easy);
+		save();
+	}
+
+	public void setWizz(boolean wizz) {
+		properties.setProperty("wizz", wizz);
 		save();
 	}
 

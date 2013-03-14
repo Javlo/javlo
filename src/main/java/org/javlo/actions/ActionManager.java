@@ -184,10 +184,13 @@ public class ActionManager {
 				/** security **/
 				if (action instanceof IModuleAction) { // if module action
 					User currentUser = AdminUserFactory.createAdminUserFactory(globalContext, request.getSession()).getCurrentUser(request.getSession());
+					ContentContext ctx = ContentContext.getContentContext(request, response);
+					if (currentUser == null) {
+						ctx.setNeedRefresh(true);
+					}
 					if (!AdminUserSecurity.getInstance().isAdmin(currentUser)) {
 						if (!moduleContext.getCurrentModule().haveRight(request.getSession(), currentUser)) {
 							I18nAccess i18nAccess = I18nAccess.getInstance(request);
-							ContentContext ctx = ContentContext.getContentContext(request, response);
 							MessageRepository msgRepo = MessageRepository.getInstance(ctx);
 							msgRepo.setGlobalMessageAndNotification(ctx, new GenericMessage(i18nAccess.getText("global.message.noright") + " (" + actionName + ')', GenericMessage.ERROR));
 							return null;

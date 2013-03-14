@@ -158,14 +158,13 @@ public class I18nAccess implements Serializable {
 
 	private String contextKey;
 
-	public void setCurrentModule(GlobalContext globalContext, HttpSession session, Module currentModule) throws IOException {
-
-		if (!currentModule.equals(this.currentModule)) {
+	public synchronized void setCurrentModule(GlobalContext globalContext, HttpSession session, Module currentModule) throws IOException {
+		if (this.currentModule == null || !currentModule.getName().equals(this.currentModule.getName())) {
+			System.out.println("***** I18nAccess.setCurrentModule : LOAD MODULE : " + currentModule.getName()); // TODO: remove debug trace
 			this.currentModule = currentModule;
 			moduleEdit = currentModule.loadEditI18n(globalContext, session);
 			propEditMap = null;
 			moduleImported = false;
-
 		}
 	}
 
@@ -280,6 +279,7 @@ public class I18nAccess implements Serializable {
 		}
 
 		if (moduleEdit != null && !moduleImported) {
+			System.out.println("***** I18nAccess.getEdit : IMPORT MODULE"); // TODO: remove debug trace
 			moduleImported = true;
 			Set<?> keysList = moduleEdit.keySet();
 			for (Object key : keysList) {
@@ -521,6 +521,7 @@ public class I18nAccess implements Serializable {
 			propEdit = i18nResource.getEditFile(newEditLg, true);
 			if (currentModule != null) {
 				moduleEdit = currentModule.loadEditI18n(globalContext, session);
+				System.out.println("***** I18nAccess.initEdit : INIT MODULE : " + currentModule.getName()); // TODO: remove debug trace
 			}
 		}
 	}
@@ -565,7 +566,7 @@ public class I18nAccess implements Serializable {
 						template.importTemplateInWebapp(globalContext.getStaticConfig(), ctx);
 					}
 
-					Stack<Properties> stack = new Stack<Properties>();
+					Stack<Map> stack = new Stack<Map>();
 					stack.push(template.getI18nProperties(globalContext, new Locale(ctx.getLanguage())));
 					Template parent = template.getParent();
 					while (parent != null) {
