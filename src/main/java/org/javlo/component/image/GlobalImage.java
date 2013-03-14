@@ -144,7 +144,11 @@ public class GlobalImage extends Image {
 		if (imageURL != null) {
 			ctx.getRequest().setAttribute("image", imageURL);
 		}
-		ctx.getRequest().setAttribute("previewURL", getPreviewURL(ctx, getFilter(ctx)));
+		if (getFilter(ctx).equals(RAW_FILTER)) {
+			ctx.getRequest().setAttribute("previewURL", getURL(ctx));
+		} else {
+			ctx.getRequest().setAttribute("previewURL", getPreviewURL(ctx, getFilter(ctx)));
+		}
 		ctx.getRequest().setAttribute("media", this);
 		ctx.getRequest().setAttribute("shortDate", StringHelper.renderShortDate(ctx, getDate()));
 	}
