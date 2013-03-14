@@ -68,4 +68,12 @@ change log
  
  * do not call disktemplates methods if not necessary
  
-* 2.0.0.16 [12/03/2013] 
+* 2.0.0.16 [12/03/2013]
+ 
+ * i18n optimisation
+  
+ * active wizz optioin 
+ 
+ * UserInterfaceContext bug init correction
+ 
+* 2.0.0.17 [14/03/2013]
