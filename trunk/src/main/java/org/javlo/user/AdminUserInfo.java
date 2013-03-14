@@ -5,6 +5,7 @@ public class AdminUserInfo extends UserInfo {
 	private String facebook;
 	private String googleplus;
 	private String linkedin;
+	private String twitter;
 
 	public String getFacebook() {
 		return facebook;
@@ -28,6 +29,14 @@ public class AdminUserInfo extends UserInfo {
 
 	public void setLinkedin(String linkedin) {
 		this.linkedin = linkedin;
+	}
+
+	public String getTwitter() {
+		return twitter;
+	}
+
+	public void setTwitter(String twitter) {
+		this.twitter = twitter;
 	}
 
 }

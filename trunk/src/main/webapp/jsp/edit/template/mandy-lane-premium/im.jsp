@@ -81,8 +81,11 @@ InfoBean.updateInfoBean(ctx);
 			</c:forEach>
 		</select>
 		<input name="message" type="text" placeholder="${i18n.edit['im.label.message']}" />
-		<input type="submit" value="${i18n.edit['im.action.send']}" />
-		<input id="im-send-wizz" type="button" value="${i18n.edit['im.action.send-wizz']}" />
+		<input type="submit" value="${i18n.edit['im.action.send']}" /><%
+		if (globalContext.isWizz()) {
+		%>		
+		<input id="im-send-wizz" type="button" value="${i18n.edit['im.action.send-wizz']}" /><%
+		}%>		
 	</form>
 </div>
 <script>

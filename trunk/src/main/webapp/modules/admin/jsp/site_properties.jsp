@@ -162,6 +162,11 @@
 </div>
 
 <div class="line">		
+	<label for="wizz">${i18n.edit['admin.form.wizz']}</label>
+	<input type="checkbox" id="wizz" name="wizz" ${currentContext.wizz?'checked="checked"':""}" />	
+</div>
+
+<div class="line">		
 	<label for="help-url">${i18n.edit['admin.title.help-url']}</label>
 	<input type="text" id="help-url" name="help-url" value="${currentContext.helpURL}" />	
 </div>

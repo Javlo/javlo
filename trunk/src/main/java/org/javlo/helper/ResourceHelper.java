@@ -39,7 +39,6 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.Properties;
-import java.util.Set;
 import java.util.TreeSet;
 import java.util.zip.CRC32;
 import java.util.zip.CheckedInputStream;
@@ -329,9 +328,9 @@ public class ResourceHelper {
 		if (dir == null || !dir.isDirectory() || !dir.exists()) {
 			return Collections.EMPTY_LIST;
 		}
-		Set<File> outFiles;
+		Collection<File> outFiles;
 		if (comp == null) {
-			outFiles = new TreeSet<File>();
+			outFiles = new LinkedList<File>();
 		} else {
 			outFiles = new TreeSet<File>(comp);
 		}

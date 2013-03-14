@@ -587,9 +587,7 @@ public class Template implements Comparable<Template> {
 
 	private final Set<String> contextWithTemplateImported = new HashSet<String>();
 
-	private Properties i18n;
-
-	private Locale i18nLang = null;
+	private final Map<String, Map> i18n = new HashMap<String, Map>();
 
 	public static Template getApplicationInstance(ServletContext application, ContentContext ctx, String templateDir) throws ConfigurationException, IOException {
 
@@ -735,8 +733,7 @@ public class Template implements Comparable<Template> {
 		dynamicsComponents = null;
 		templateImportationError = false;
 		contextWithTemplateImported.clear();
-		i18n = null;
-		i18nLang = null;
+		i18n.clear();
 	}
 
 	public void delete() {
@@ -1126,18 +1123,24 @@ public class Template implements Comparable<Template> {
 		return properties.getString("home", getParent().getHTMLHomeFile());
 	}
 
-	public Properties getI18nProperties(GlobalContext globalContext, Locale locale) throws IOException {
-		if (i18n == null || !locale.equals(i18nLang)) {
-			i18nLang = locale;
-			File i18nFile = new File(URLHelper.mergePath(URLHelper.mergePath(getFolder().getAbsolutePath(), I18N_FILE + locale.getLanguage() + ".properties")));
-			i18n = new Properties();
-			if (i18nFile.exists()) {
-				Reader reader = new FileReader(i18nFile);
-				i18n.load(reader);
-				reader.close();
-			}
+	public synchronized Map getI18nProperties(GlobalContext globalContext, Locale locale) throws IOException {
+		if (locale == null) {
+			return null;
 		}
-		return i18n;
+		Map propI18n = i18n.get(locale.getLanguage());
+		if (propI18n == null) {
+			File i18nFile = new File(URLHelper.mergePath(URLHelper.mergePath(getFolder().getAbsolutePath(), I18N_FILE + locale.getLanguage() + ".properties")));
+			if (i18nFile.exists()) {
+				propI18n = new Properties();
+				Reader reader = new FileReader(i18nFile);
+				((Properties) propI18n).load(reader);
+				reader.close();
+			} else {
+				propI18n = Collections.EMPTY_MAP;
+			}
+			i18n.put(locale.getLanguage(), propI18n);
+		}
+		return propI18n;
 	}
 
 	public String getId() {

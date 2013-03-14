@@ -62,10 +62,12 @@ public class UserInterfaceContext {
 	}
 
 	public void fromString(String content) {
-		String[] data = content.split(";");
-		componentsList = StringHelper.isTrue(data[0]);
-		if (data.length > 1 && data[1].trim().length() > 0) {
-			currentModule = data[1];
+		if (content == null || content.trim().length() > 0) {
+			String[] data = content.split(";");
+			componentsList = StringHelper.isTrue(data[0]);
+			if (data.length > 1 && data[1].trim().length() > 0) {
+				currentModule = data[1];
+			}
 		}
 	}
 
@@ -87,6 +89,7 @@ public class UserInterfaceContext {
 		User user = userFact.getCurrentUser(session);
 		if (userFact.getUser(user.getLogin()) != null) { // not god user, so storable user
 			IUserInfo ui = user.getUserInfo();
+			System.out.println("***** UserInterfaceContext.store : store: " + toString()); // TODO: remove debug trace
 			ui.setInfo(toString());
 			userFact.updateUserInfo(ui);
 		} else {
