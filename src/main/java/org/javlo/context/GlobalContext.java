@@ -496,8 +496,8 @@ public class GlobalContext implements Serializable {
 	private Long accountSize = null;
 
 	private String dataFolder = null;
-	
-	private TimeMap<String,String> oneTimeTokens = new TimeMap<String, String>(60*60); // one time tolen live 1u 
+
+	private final TimeMap<String, String> oneTimeTokens = new TimeMap<String, String>(60 * 60); // one time tolen live 1u
 
 	public long getAccountSize() {
 		if (accountSize == null) {
@@ -833,6 +833,27 @@ public class GlobalContext implements Serializable {
 			initDataFile();
 		}
 		return dataProperties.keySet();
+	}
+
+	/**
+	 * rename keys in data map
+	 * 
+	 * @param oldPrefix
+	 * @param newPrefix
+	 * @return number of renamed keys
+	 */
+	public synchronized int renameKeys(String oldPrefix, String newPrefix) {
+		int c = 0;
+		for (Object key : getDataKeys()) {
+			if (key.toString().startsWith(oldPrefix)) {
+				String newKey = StringUtils.replaceOnce(key.toString(), oldPrefix, newPrefix);
+				String value = getData(key.toString());
+				dataProperties.put(newKey, value);
+				dataProperties.remove(key);
+				c++;
+			}
+		}
+		return c;
 	}
 
 	private File getDataFile() throws IOException {
@@ -2553,18 +2574,18 @@ public class GlobalContext implements Serializable {
 
 		}
 	}
-	
+
 	public String createOneTimeToken(String token) {
 		String newToken = StringHelper.getRandomIdBase64();
 		oneTimeTokens.put(newToken, token);
 		return newToken;
 	}
-	
+
 	public String convertOneTimeToken(String token) {
-		System.out.println("***** GlobalContext.convertOneTimeToken : token = "+token); //TODO: remove debug trace
+		System.out.println("***** GlobalContext.convertOneTimeToken : token = " + token); // TODO: remove debug trace
 		String realToken = oneTimeTokens.get(token);
 		if (realToken != null) {
-			System.out.println("***** GlobalContext.convertOneTimeToken : realToken = "+realToken); //TODO: remove debug trace
+			System.out.println("***** GlobalContext.convertOneTimeToken : realToken = " + realToken); // TODO: remove debug trace
 			oneTimeTokens.remove(token);
 		}
 		return realToken;

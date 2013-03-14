@@ -65,7 +65,7 @@ public abstract class ELFinder {
 			} else if ("get".equals(command)) {
 				getFile(rs.getParameter("target", null), apiResponse);
 			} else if ("rename".equals(command)) {
-				renameFile(request, rs.getParameter("target", null), rs.getParameter("name", null), apiResponse);
+				renameFile(request, response, rs.getParameter("target", null), rs.getParameter("name", null), apiResponse);
 			} else if ("upload".equals(command)) {
 				uploadFile(rs.getParameter("target", null), rs.getFileItemMap().get("upload[]"), rs.getParameter("name", null), apiResponse);
 			} else if ("archive".equals(command)) {
@@ -84,9 +84,6 @@ public abstract class ELFinder {
 				pasteFiles(rs.getParameter("src", null), rs.getParameter("dst", null), rs.getParameterValues("targets[]", null), StringHelper.isTrue(rs.getParameter("cut", "false")), apiResponse);
 			}
 			if (request.getSession().getAttribute("ELPath") != null) {
-
-				System.out.println("***** ELFinder.process : ELPATH = " + request.getSession().getAttribute("ELPath")); // TODO: remove debug trace
-
 				apiResponse.clear();
 				init("" + request.getSession().getAttribute("ELPath"), apiResponse);
 				request.getSession().removeAttribute("ELPath");
@@ -160,7 +157,7 @@ public abstract class ELFinder {
 
 	protected abstract void compressFiles(String[] files, String type, Map<String, Object> apiResponse) throws Exception;
 
-	protected abstract void renameFile(HttpServletRequest request, String fileHash, String name, Map<String, Object> apiResponse) throws ELFinderException, Exception;
+	protected abstract void renameFile(HttpServletRequest request, HttpServletResponse response, String fileHash, String name, Map<String, Object> apiResponse) throws ELFinderException, Exception;
 
 	protected abstract void duplicateFile(String[] filesHash, Map<String, Object> apiResponse) throws IOException;
 

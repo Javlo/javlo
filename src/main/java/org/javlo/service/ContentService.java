@@ -612,9 +612,10 @@ public class ContentService {
 		}
 	}
 
-	public synchronized void renameKeys(String oldKeyPrefix, String newKeyPrefix) {
+	public synchronized int renameKeys(String oldKeyPrefix, String newKeyPrefix) {
 		Collection<String> keys = previewGlobalMap.keySet();
 		Collection<String> toBeModified = new LinkedList<String>();
+		int c = 0;
 		for (Object keyObj : keys) {
 			String key = (String) keyObj;
 			if (key.startsWith(oldKeyPrefix)) {
@@ -622,12 +623,12 @@ public class ContentService {
 			}
 		}
 		for (String key : toBeModified) {
-			if (key.startsWith(oldKeyPrefix)) {
-				String newKey = StringUtils.replaceOnce(key, oldKeyPrefix, newKeyPrefix);
-				previewGlobalMap.put(newKey, previewGlobalMap.get(key));
-				previewGlobalMap.remove(key);
-			}
+			String newKey = StringUtils.replaceOnce(key, oldKeyPrefix, newKeyPrefix);
+			previewGlobalMap.put(newKey, previewGlobalMap.get(key));
+			previewGlobalMap.remove(key);
+			c++;
 		}
+		return c;
 	}
 
 	public void setAttribute(ContentContext ctx, String key, String value) {

@@ -356,7 +356,11 @@ public class StaticInfo {
 	}
 
 	private String getKey(String key) {
-		return KEY + staticURL + '-' + key;
+		return getKey(staticURL, key);
+	}
+
+	private String getKey(String inStaticURL, String key) {
+		return KEY + inStaticURL + '-' + key;
 	}
 
 	public static StaticInfo getInstance(ContentContext ctx, File file) throws Exception {

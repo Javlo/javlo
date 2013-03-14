@@ -170,16 +170,19 @@ public class Image extends AbstractFileComponent implements IImageTitle, IPrevie
 
 		out.println("<div id=\"" + getPreviewZoneId() + "\" class=\"list-container\">");
 
-		String url = URLHelper.createTransformURL(ctx, getPage(), getResourceURL(ctx, getFileName()), "list");
-		url = URLHelper.addParam(url, "hash", getStaticInfo(ctx).getVersionHash());
-
-		out.println("<img src=\"" + url + "\" />&nbsp;");
-		out.println("<div class=\"focus-point\">x</div>");
-		out.println("<input class=\"posx\" type=\"hidden\" name=\"posx-" + file.getId() + "\" value=\"" + file.getFocusZoneX() + "\" />");
-		out.println("<input class=\"posy\" type=\"hidden\" name=\"posy-" + file.getId() + "\" value=\"" + file.getFocusZoneY() + "\" />");
-		out.println("<input class=\"path\" type=\"hidden\" name=\"image_path-" + file.getId() + "\" value=\"" + URLHelper.mergePath(getRelativeFileDirectory(ctx), getDirSelected()) + "\" />");
-		out.println("</div></div>");
-		out.println("<script type=\"text/javascript\">initFocusPoint();</script>");
+		String url;
+		if (getFileName().trim().length() > 0) {
+			url = URLHelper.createTransformURL(ctx, getPage(), getResourceURL(ctx, getFileName()), "list");
+			url = URLHelper.addParam(url, "hash", getStaticInfo(ctx).getVersionHash());
+	
+			out.println("<img src=\"" + url + "\" />&nbsp;");
+			out.println("<div class=\"focus-point\">x</div>");
+			out.println("<input class=\"posx\" type=\"hidden\" name=\"posx-" + file.getId() + "\" value=\"" + file.getFocusZoneX() + "\" />");
+			out.println("<input class=\"posy\" type=\"hidden\" name=\"posy-" + file.getId() + "\" value=\"" + file.getFocusZoneY() + "\" />");
+			out.println("<input class=\"path\" type=\"hidden\" name=\"image_path-" + file.getId() + "\" value=\"" + URLHelper.mergePath(getRelativeFileDirectory(ctx), getDirSelected()) + "\" />");
+			out.println("</div></div>");
+			out.println("<script type=\"text/javascript\">initFocusPoint();</script>");
+		}
 
 		if (imageList) {
 			out.println("<div class=\"name\">" + getFileName() + "</div>");

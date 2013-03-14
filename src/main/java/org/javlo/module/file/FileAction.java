@@ -185,9 +185,6 @@ public class FileAction extends AbstractModuleAction {
 		String sourceFolder = getContextROOTFolder(ctx);
 		FileModuleContext fileModuleContext = FileModuleContext.getInstance(ctx.getRequest());
 		File folder = new File(sourceFolder, fileModuleContext.getPath());
-		System.out.println("***** FileAction.getFolder : sourceFolder = " + sourceFolder); // TODO: remove debug trace
-		System.out.println("***** FileAction.getFolder : fileModuleContext.getPath() = " + fileModuleContext.getPath()); // TODO: remove debug trace
-		System.out.println("***** FileAction.getFolder : folder = " + folder); // TODO: remove debug trace
 		return folder;
 	}
 
@@ -334,6 +331,10 @@ public class FileAction extends AbstractModuleAction {
 
 	public String performUpdateFocus(RequestService rs, ContentContext ctx, GlobalContext globalContext, FileModuleContext fileModuleContext, I18nAccess i18nAccess, MessageRepository messageRepository) throws Exception {
 		File folder = getFolder(ctx);
+		if (rs.getParameter("image_path", null) != null) {
+			folder = new File(getContextROOTFolder(ctx), rs.getParameter("image_path", null));
+		}
+		boolean found = false;
 		if (folder.exists()) {
 			for (File file : folder.listFiles((FileFilter) FileFileFilter.FILE)) {
 				StaticInfo staticInfo = StaticInfo.getInstance(ctx, file);
@@ -343,6 +344,7 @@ public class FileAction extends AbstractModuleAction {
 				String newFocusY = rs.getParameter("posy-" + fileBean.getId(), null);
 
 				if (newFocusX != null && newFocusY != null) {
+					found = true;
 					staticInfo.setFocusZoneX(ctx, (int) Math.round(Double.parseDouble(newFocusX)));
 					staticInfo.setFocusZoneY(ctx, (int) Math.round(Double.parseDouble(newFocusY)));
 					PersistenceService.getInstance(globalContext).store(ctx);
@@ -351,6 +353,9 @@ public class FileAction extends AbstractModuleAction {
 					FileCache fileCache = FileCache.getInstance(ctx.getRequest().getSession().getServletContext());
 					fileCache.delete(file.getName());
 				}
+			}
+			if (!found) {
+				return "focus technical error : file not found.";
 			}
 			return null;
 		} else {
