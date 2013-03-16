@@ -601,7 +601,7 @@ public class ImageTransformServlet extends HttpServlet {
 				if (fc.getFileName(key, imageName).exists()) {
 					// response.sendRedirect(URLHelper.createStaticURL(ctx, fc.getRelativeFilePath(key, imageName)));
 					String url = URLHelper.createStaticURL(ctx, fc.getRelativeFilePath(key, imageName));
-					if (url.startsWith('/' + ctx.getPathPrefix())) {
+					if (ctx.getPathPrefix().length() > 0 && url.startsWith('/' + ctx.getPathPrefix())) {
 						url = StringUtils.replaceOnce(url, '/' + ctx.getPathPrefix(), "");
 					}
 					request.getRequestDispatcher(url).forward(request, response);

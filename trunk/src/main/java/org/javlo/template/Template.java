@@ -624,6 +624,10 @@ public class Template implements Comparable<Template> {
 	}
 
 	private static Template getInstance(StaticConfig config, ContentContext ctx, String templateDir, boolean alternativeTemplate) throws ConfigurationException, IOException {
+		
+		if (config == null) {
+			throw new RuntimeException("StaticConfig can not be null.");
+		}
 
 		if ((templateDir == null) || templateDir.trim().length() == 0) {
 			return DefaultTemplate.INSTANCE;
