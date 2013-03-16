@@ -24,6 +24,7 @@ import javax.servlet.http.HttpServletRequest;
 import org.apache.commons.configuration.ConfigurationException;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.lang.StringUtils;
+import org.javlo.cache.ICache;
 import org.javlo.config.StaticConfig;
 import org.javlo.context.ContentContext;
 import org.javlo.context.GlobalContext;
@@ -342,6 +343,8 @@ public class StaticInfo {
 
 	private Long crc32 = null;
 
+	private Date date;
+
 	/**
 	 * instance of static info sur shared file
 	 * 
@@ -410,13 +413,9 @@ public class StaticInfo {
 			realPath = URLHelper.mergePath(realPath, inStaticURL);
 
 			File file = new File(realPath);
-			if (!file.exists()) {
-				logger.fine("could not instancied resource because file does'nt exist : " + file + " context name : " + globalContext.getContextKey());
-			} else if (file.isDirectory()) {
-				if (!staticInfo.staticURL.endsWith("/")) {
-					staticInfo.staticURL = staticInfo.staticURL + '/';
-				}
-			}
+			/*
+			 * if (!file.exists()) { logger.fine("could not instancied resource because file does'nt exist : " + file + " context name : " + globalContext.getContextKey()); } else if (file.isDirectory()) { if (!staticInfo.staticURL.endsWith("/")) { staticInfo.staticURL = staticInfo.staticURL + '/'; } }
+			 */
 			staticInfo.setFile(file);
 			staticInfo.size = file.length();
 
@@ -574,16 +573,30 @@ public class StaticInfo {
 	}
 
 	public Date getDate(ContentContext ctx) {
-		if (getManualDate(ctx) != null) {
-			return getManualDate(ctx);
-		} else {
-			Date linkedDate = getLinkedDate(ctx);
-			if (linkedDate == null) {
-				return getFileDate();
+		if (date == null) {
+			if (getManualDate(ctx) != null) {
+				date = getManualDate(ctx);
 			} else {
-				return linkedDate;
+				Date linkedDate = getLinkedDate(ctx);
+				if (linkedDate == null) {
+					date = getFileDate(ctx);
+				} else {
+					date = linkedDate;
+				}
 			}
 		}
+		return date;
+	}
+
+	public Date getFileDate(ContentContext ctx) {
+		GlobalContext globalContext = GlobalContext.getInstance(ctx.getRequest());
+		ICache fileInfoCache = globalContext.getEternalCache("file-info");
+		Date outDate = (Date) fileInfoCache.get(getKey("file-date"));
+		if (outDate == null) {
+			outDate = getFileDate();
+			fileInfoCache.put(getKey("file-date"), outDate);
+		}
+		return outDate;
 	}
 
 	public void setDate(ContentContext ctx, Date date) {
@@ -781,7 +794,7 @@ public class StaticInfo {
 		}
 	}
 
-	public Date getFileDate() {
+	private Date getFileDate() {
 		if (fileDate == null) {
 			fileDate = new Date(getFile().lastModified());
 		}

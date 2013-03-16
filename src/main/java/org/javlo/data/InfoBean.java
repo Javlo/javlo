@@ -336,7 +336,7 @@ public class InfoBean {
 
 	public String getShortURL() {
 		try {
-			return URLHelper.createStaticURL(ctx, ctx.getCurrentPage().getShortURL(ctx));
+			return URLHelper.createStaticURL(ctx.getContextForAbsoluteURL(), ctx.getCurrentPage().getShortURL(ctx));
 		} catch (Exception e) {
 			e.printStackTrace();
 			return null;

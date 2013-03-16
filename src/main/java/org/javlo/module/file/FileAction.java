@@ -169,6 +169,15 @@ public class FileAction extends AbstractModuleAction {
 			return staticInfo.getFile().isDirectory();
 		}
 
+		public int getPopularity() {
+			try {
+				return staticInfo.getAccessFromSomeDays(ctx);
+			} catch (Exception e) {
+				e.printStackTrace();
+				return 0;
+			}
+		}
+
 	}
 
 	@Override
