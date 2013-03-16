@@ -268,11 +268,14 @@ public class I18nAccess implements Serializable {
 		if (displayKey) {
 			return new KeyMap<String>();
 		}
+		
+		boolean createPropEditMap = false;
 
 		if (propEditMap == null) {
 			synchronized (this) {
 				if (propEditMap == null) {
 					propEditMap = new MapDisplayKeyIfNotFound(new Hashtable<String, String>());
+					createPropEditMap = true;
 					System.out.println("***** I18nAccess.getEdit : create prop edit map."); // TODO: remove debug trace
 					Iterator<?> keys = propEdit.getKeys();
 					while (keys.hasNext()) {
@@ -283,7 +286,7 @@ public class I18nAccess implements Serializable {
 			}
 		}
 
-		if (moduleEdit != null && !moduleImported) {
+		if (moduleEdit != null && !moduleImported || createPropEditMap) {
 			System.out.println("***** I18nAccess.getEdit : IMPORT MODULE"); // TODO: remove debug trace
 			moduleImported = true;
 			Set<?> keysList = moduleEdit.keySet();
