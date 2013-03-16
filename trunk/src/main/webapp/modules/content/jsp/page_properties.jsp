@@ -102,7 +102,8 @@
 		<input class="action-button" type="submit" id="shorturl-url-creator" name="shorturl" value="${i18n.edit['edit.action.short-url']}" />
 	</c:if>
 	<c:if test="${page.allreadyShortURL}">
-		<span><a href="${info.shortURL}">${page.shortURL}</a></span>
+		<span class="noclipboard"><a href="${info.shortURL}">${page.shortURL}</a></span>
+		<input class="clipboard" type="button" onclick="clipboardCopy('${info.shortURL}');" value="copy : ${page.shortURL}" />
 	</c:if>
 </div>
 

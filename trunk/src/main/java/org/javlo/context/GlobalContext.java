@@ -124,6 +124,8 @@ public class GlobalContext implements Serializable {
 
 	private final Map<String, ICache> cacheMaps = new HashMap<String, ICache>();
 
+	private final Map<String, ICache> eternalCacheMaps = new HashMap<String, ICache>();
+
 	private IURLFactory urlFactory = null;
 
 	private final Map<String, MenuElement> viewPages = new HashMap<String, MenuElement>();
@@ -678,6 +680,15 @@ public class GlobalContext implements Serializable {
 		} else {
 			return getMapCache(cacheName);
 		}
+	}
+
+	public ICache getEternalCache(String cacheName) {
+		ICache cache = eternalCacheMaps.get(cacheName);
+		if (cache == null) {
+			cache = new MapCache(new HashMap(), cacheName);
+			eternalCacheMaps.put(cacheName, cache);
+		}
+		return cache;
 	}
 
 	public List<ICache> getAllCache() {

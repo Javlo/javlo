@@ -1,3 +1,11 @@
+jQuery(document).ready(function(){
+	if (window.clipboardData == null) {
+		jQuery('.clipboard').remove();
+	} else {
+		jQuery('.noclipboard').remove();
+	}
+});
+
 function loadWysiwyg(cssQuery) {
 	tinyMCE.init({
 	// General options
@@ -15,6 +23,10 @@ function loadWysiwyg(cssQuery) {
 	theme_advanced_statusbar_location : "bottom",
 	theme_advanced_resizing : true
 	});	 
+}
+
+function clipboardCopy(text) {
+	window.clipboardData.setData('Text', text);
 }
 
 

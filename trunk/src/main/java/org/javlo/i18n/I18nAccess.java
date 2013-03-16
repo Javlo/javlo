@@ -136,7 +136,7 @@ public class I18nAccess implements Serializable {
 
 	private Map<String, String> propEditMap = null;
 
-	private boolean moduleImported = false;
+	private Boolean moduleImported = false;
 
 	private String editLg = "";
 
@@ -270,11 +270,16 @@ public class I18nAccess implements Serializable {
 		}
 
 		if (propEditMap == null) {
-			propEditMap = new MapDisplayKeyIfNotFound(new Hashtable<String, String>());
-			Iterator<?> keys = propEdit.getKeys();
-			while (keys.hasNext()) {
-				String key = (String) keys.next();
-				propEditMap.put(key, "" + propEdit.getProperty(key));
+			synchronized (this) {
+				if (propEditMap == null) {
+					propEditMap = new MapDisplayKeyIfNotFound(new Hashtable<String, String>());
+					System.out.println("***** I18nAccess.getEdit : create prop edit map."); // TODO: remove debug trace
+					Iterator<?> keys = propEdit.getKeys();
+					while (keys.hasNext()) {
+						String key = (String) keys.next();
+						propEditMap.put(key, "" + propEdit.getProperty(key));
+					}
+				}
 			}
 		}
 

@@ -127,7 +127,7 @@
     padding: 5px;
 }
 
-.component textarea {
+.xhtml .component textarea, .text-editor .component textarea {
 	width: 96%;	
 }
 

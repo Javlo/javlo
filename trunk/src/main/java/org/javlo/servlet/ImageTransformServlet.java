@@ -20,6 +20,7 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import org.apache.commons.lang.StringUtils;
 import org.javlo.config.StaticConfig;
 import org.javlo.context.ContentContext;
 import org.javlo.context.GlobalContext;
@@ -598,10 +599,14 @@ public class ImageTransformServlet extends HttpServlet {
 				FileCache fc = FileCache.getInstance(getServletContext());
 				String key = ImageHelper.createSpecialDirectory(globalContext.getContextKey(), filter, area, deviceCode, template);
 				if (fc.getFileName(key, imageName).exists()) {
-					response.sendRedirect(URLHelper.createStaticURL(ctx, fc.getRelativeFilePath(key, imageName)));
-					/*
-					 * String url = URLHelper.createStaticURL(ctx, fc.getRelativeFilePath(key, imageName)); if (url.startsWith('/' + ctx.getPathPrefix())) { url = StringUtils.replaceOnce(url, '/' + ctx.getPathPrefix(), ""); } System.out.println("***** ImageTransformServlet.processRequest : url = " + url); // TODO: remove debug trace request.getRequestDispatcher(URLHelper.createStaticURL(ctx, fc.getRelativeFilePath(key, imageName))).forward(request, response); return;
-					 */
+					// response.sendRedirect(URLHelper.createStaticURL(ctx, fc.getRelativeFilePath(key, imageName)));
+					String url = URLHelper.createStaticURL(ctx, fc.getRelativeFilePath(key, imageName));
+					if (url.startsWith('/' + ctx.getPathPrefix())) {
+						url = StringUtils.replaceOnce(url, '/' + ctx.getPathPrefix(), "");
+					}
+					request.getRequestDispatcher(url).forward(request, response);
+					return;
+
 				}
 
 				InputStream fileStream = loadFileFromDisk(globalContext, imageName, filter, area, ctx.getDevice(), template, imageFile.lastModified());

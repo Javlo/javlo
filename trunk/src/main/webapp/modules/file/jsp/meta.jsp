@@ -9,7 +9,8 @@
 <ul>
 <c:forEach var="file" items="${files}">
 	<li class="${file.directory?'directory':'file'}">
-		<div class="title"><span><a href="${file.URL}">${file.name}</a></span><span class="size">${file.size}</span><span class="last">${file.manType}</span></div>
+	    <c:set var="popularity" value=" - #${file.popularity}" />
+		<div class="title"><span><a href="${file.URL}">${file.name}</a></span><span class="size">${file.size} ${info.admin?popularity:''}</span><span class="last">${file.manType}</span></div>
 		<div class="body">
 		<c:if test="${file.image}">		
 		<div class="download picture">
