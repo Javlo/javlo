@@ -87,7 +87,7 @@ public class MailingThread extends Thread {
 			}
 		}
 		try {
-			mailService.sendMail(null, mailing.getFrom(), mailing.getNotif(), bcc, "report mailing : " + mailing.getSubject(), content, false);
+			mailService.sendMail(null, mailing.getFrom(), mailing.getNotif(), null, bcc, "report mailing : " + mailing.getSubject(), content, false);
 		} catch (Exception ex) {
 			// TODO Auto-generated catch block
 			ex.printStackTrace();
