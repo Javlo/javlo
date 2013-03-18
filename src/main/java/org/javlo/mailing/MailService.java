@@ -146,7 +146,7 @@ public class MailService {
 	 * @throws IllegalArgumentException
 	 *             if no recipient provided or no sender
 	 */
-	public void sendMail(Transport transport, InternetAddress sender, List<InternetAddress> recipients, List<InternetAddress> bccRecipients, String subject, String content, boolean isHTML) throws MessagingException {
+	public void sendMail(Transport transport, InternetAddress sender, List<InternetAddress> recipients, List<InternetAddress> ccRecipients, List<InternetAddress> bccRecipients, String subject, String content, boolean isHTML) throws MessagingException {
 
 		String recipientsStr = new LinkedList<InternetAddress>(recipients).toString();
 
@@ -165,7 +165,10 @@ public class MailService {
 			msg.setSentDate(sendDate);
 			msg.setFrom(sender);
 			msg.setRecipients(Message.RecipientType.TO, recipients.toArray(new InternetAddress[recipients.size()]));
-			if (bccRecipients != null) {
+			if (ccRecipients != null && ccRecipients.size() > 0) {
+				msg.setRecipients(Message.RecipientType.CC, ccRecipients.toArray(new InternetAddress[ccRecipients.size()]));
+			}
+			if (bccRecipients != null && bccRecipients.size() > 0) {
 				msg.setRecipients(Message.RecipientType.BCC, bccRecipients.toArray(new InternetAddress[bccRecipients.size()]));
 			}
 			msg.setSubject(subject, ContentContext.CHARACTER_ENCODING);
@@ -248,12 +251,12 @@ public class MailService {
 	 * @throws IllegalArgumentException
 	 *             if no recipient provided or no sender
 	 */
-	public void sendMail(Transport transport, InternetAddress sender, InternetAddress recipient, List<InternetAddress> bccRecipients, String subject, String content, boolean isHTML) throws MessagingException {
+	public void sendMail(Transport transport, InternetAddress sender, InternetAddress recipient, List<InternetAddress> ccRecipients, List<InternetAddress> bccRecipients, String subject, String content, boolean isHTML) throws MessagingException {
 		List<InternetAddress> recipients = null;
 		if (recipient != null) {
 			recipients = Arrays.asList(recipient);
 		}
-		sendMail(transport, sender, recipients, bccRecipients, subject, content, isHTML);
+		sendMail(transport, sender, recipients, ccRecipients, bccRecipients, subject, content, isHTML);
 	}
 
 	/**
@@ -277,11 +280,11 @@ public class MailService {
 	 *             if no recipient provided or no sender
 	 */
 	public void sendMail(Transport transport, InternetAddress sender, InternetAddress recipient, String subject, String content, boolean isHTML) throws MessagingException {
-		sendMail(transport, sender, recipient, null, subject, content, isHTML);
+		sendMail(transport, sender, recipient, null, null, subject, content, isHTML);
 	}
 
 	public void sendMail(InternetAddress sender, InternetAddress recipient, String subject, String content, boolean isHTML) throws MessagingException {
-		sendMail(null, sender, recipient, null, subject, content, isHTML);
+		sendMail(null, sender, recipient, null, null, subject, content, isHTML);
 	}
 
 }

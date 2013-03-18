@@ -259,11 +259,18 @@ public class GenericForm extends AbstractVisualComponent implements IAction {
 			}
 
 			if (comp.isSendEmail() && !fakeFilled) {
+
+				String emailFrom = comp.getLocalConfig(false).getProperty("mail.from", StaticConfig.getInstance(request.getSession()).getSiteEmail());
+				String emailTo = comp.getLocalConfig(false).getProperty("mail.to", globalContext.getAdministratorEmail());
+				String emailCC = comp.getLocalConfig(false).getProperty("mail.cc", "");
+				String emailBCC = comp.getLocalConfig(false).getProperty("mail.bcc", "");
+
 				MailService mailService = MailService.getInstance(globalContext.getStaticConfig());
-				InternetAddress fromEmail = new InternetAddress(StaticConfig.getInstance(request.getSession()).getSiteEmail());
-				InternetAddress adminEmail = new InternetAddress(globalContext.getAdministratorEmail());
-				InternetAddress bccEmail = new InternetAddress("p@noctis.be");
-				mailService.sendMail(null, fromEmail, adminEmail, Arrays.asList(bccEmail), subject, mailContent, false);
+				InternetAddress fromEmail = new InternetAddress(emailFrom);
+				InternetAddress toEmail = new InternetAddress(emailTo);
+				InternetAddress ccEmail = new InternetAddress(emailCC);
+				InternetAddress bccEmail = new InternetAddress(emailBCC);
+				mailService.sendMail(null, fromEmail, toEmail, Arrays.asList(ccEmail), Arrays.asList(bccEmail), subject, mailContent, false);
 			}
 
 			GenericMessage msg = new GenericMessage(comp.getLocalConfig(false).getProperty("message.thanks"), GenericMessage.INFO);

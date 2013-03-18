@@ -327,14 +327,16 @@ public abstract class AbstractVisualComponent implements IContentVisualComponent
 	}
 
 	private String getContentCacheKey(ContentContext ctx) {
-		String keySuffix = "";
+		String keySuffix = ctx.getLanguage() + '-' + ctx.getRequestContentLanguage();
+
 		if (isContentCachableByQuery(ctx)) {
-			keySuffix = '_' + ctx.getRequest().getQueryString();
+			keySuffix = keySuffix + '_' + ctx.getRequest().getQueryString();
 		}
 
 		if (ctx.getDevice() == null) { // TODO: check why this method can return "null"
 			return Device.DEFAULT_DEVICE + '_' + getId() + keySuffix;
 		}
+
 		return ctx.getDevice().getCode() + '_' + getId() + keySuffix;
 	}
 
@@ -351,7 +353,8 @@ public abstract class AbstractVisualComponent implements IContentVisualComponent
 	public String getContentCache(ContentContext ctx) {
 		GlobalContext globalContext = GlobalContext.getInstance(ctx.getRequest());
 		ICache cache = globalContext.getCache(CACHE_NAME);
-		return (String) cache.get(getContentCacheKey(ctx));
+		String contentKey = getContentCacheKey(ctx);
+		return (String) cache.get(contentKey);
 	}
 
 	/**
@@ -1110,9 +1113,15 @@ public abstract class AbstractVisualComponent implements IContentVisualComponent
 		if (url != null) {
 			ctx.getRequest().setAttribute(COMPONENT_KEY, this);
 			if (!url.startsWith("/")) {
+
 				url = URLHelper.createJSPComponentURL(ctx.getRequest(), url, getComponentPath());
 			}
 			logger.fine("execute view jsp in '" + getType() + "' : " + url);
+			try {
+				I18nAccess.getInstance(ctx);
+			} catch (Exception e) {
+				e.printStackTrace();
+			}
 			return ServletHelper.executeJSP(ctx, url);
 		} else {
 			return null;
@@ -1573,7 +1582,9 @@ public abstract class AbstractVisualComponent implements IContentVisualComponent
 		GlobalContext globalContext = GlobalContext.getInstance(ctx.getRequest());
 		ICache cache = globalContext.getCache(CACHE_NAME);
 
-		cache.put(getContentCacheKey(ctx), contentCache);
+		String contentKey = getContentCacheKey(ctx);
+
+		cache.put(contentKey, contentCache);
 	}
 
 	public void setContentTimeCache(ContentContext ctx, String contentCache) {

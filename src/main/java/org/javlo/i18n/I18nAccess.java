@@ -87,7 +87,7 @@ public class I18nAccess implements Serializable {
 	 * @throws IOException
 	 * @throws ConfigurationException
 	 */
-	public static final I18nAccess getInstance(HttpServletRequest request) throws FileNotFoundException, IOException {
+	public static final I18nAccess getInstance(HttpServletRequest request) throws FileNotFoundException, IOException, ConfigurationException {
 		GlobalContext globalContext = GlobalContext.getInstance(request);
 		I18nAccess i18nAccess = getInstance(globalContext, request.getSession());
 		return i18nAccess;
@@ -100,16 +100,12 @@ public class I18nAccess implements Serializable {
 	 * @throws IOException
 	 * @throws ConfigurationException
 	 */
-	public static final I18nAccess getInstance(GlobalContext globalContext, HttpSession session) throws FileNotFoundException, IOException {
+	public static final I18nAccess getInstance(GlobalContext globalContext, HttpSession session) throws FileNotFoundException, IOException, ConfigurationException {
 		I18nAccess i18nAccess = (I18nAccess) session.getAttribute(SESSION_KEY);
 		if (i18nAccess == null || !i18nAccess.getContextKey().equals(globalContext.getContextKey())) {
 			i18nAccess = new I18nAccess(globalContext);
-			session.setAttribute(SESSION_KEY, i18nAccess);
-		}
-		try {
 			i18nAccess.initEdit(globalContext, session);
-		} catch (ConfigurationException e) {
-			throw new IOException(e.getMessage());
+			session.setAttribute(SESSION_KEY, i18nAccess);
 		}
 		return i18nAccess;
 	}
@@ -160,7 +156,6 @@ public class I18nAccess implements Serializable {
 
 	public synchronized void setCurrentModule(GlobalContext globalContext, HttpSession session, Module currentModule) throws IOException {
 		if (this.currentModule == null || !currentModule.getName().equals(this.currentModule.getName())) {
-			System.out.println("***** I18nAccess.setCurrentModule : LOAD MODULE : " + currentModule.getName()); // TODO: remove debug trace
 			this.currentModule = currentModule;
 			moduleEdit = currentModule.loadEditI18n(globalContext, session);
 			propEditMap = null;
@@ -183,10 +178,12 @@ public class I18nAccess implements Serializable {
 		if (ctx.getLanguage() != null && !ctx.getLanguage().equals(viewLg)) {
 			latestTemplateId = "";
 			initView(ctx.getLanguage());
+			propViewMap = null;
 		}
-		if (ctx.getContentLanguage() != null && !ctx.getContentLanguage().equals(contentViewLg)) {
+		if (ctx.getRequestContentLanguage() != null && !ctx.getRequestContentLanguage().equals(contentViewLg)) {
 			latestTemplateId = "";
-			initContentView(ctx, ctx.getContentLanguage());
+			initContentView(ctx, ctx.getRequestContentLanguage());
+			propViewMap = null;
 		}
 		updateTemplate(ctx);
 	}
@@ -268,7 +265,7 @@ public class I18nAccess implements Serializable {
 		if (displayKey) {
 			return new KeyMap<String>();
 		}
-		
+
 		boolean createPropEditMap = false;
 
 		if (propEditMap == null) {
@@ -276,7 +273,6 @@ public class I18nAccess implements Serializable {
 				if (propEditMap == null) {
 					propEditMap = new MapDisplayKeyIfNotFound(new Hashtable<String, String>());
 					createPropEditMap = true;
-					System.out.println("***** I18nAccess.getEdit : create prop edit map."); // TODO: remove debug trace
 					Iterator<?> keys = propEdit.getKeys();
 					while (keys.hasNext()) {
 						String key = (String) keys.next();
@@ -286,12 +282,13 @@ public class I18nAccess implements Serializable {
 			}
 		}
 
-		if (moduleEdit != null && !moduleImported || createPropEditMap) {
-			System.out.println("***** I18nAccess.getEdit : IMPORT MODULE"); // TODO: remove debug trace
-			moduleImported = true;
-			Set<?> keysList = moduleEdit.keySet();
-			for (Object key : keysList) {
-				propEditMap.put(key.toString(), "" + moduleEdit.getProperty((String) key));
+		if (!moduleImported || createPropEditMap) {
+			if (moduleEdit != null) {
+				moduleImported = true;
+				Set<?> keysList = moduleEdit.keySet();
+				for (Object key : keysList) {
+					propEditMap.put(key.toString(), "" + moduleEdit.getProperty((String) key));
+				}
 			}
 		}
 
@@ -410,9 +407,11 @@ public class I18nAccess implements Serializable {
 			return new KeyMap<String>();
 		}
 
+		boolean createPropViewMap = false;
 		synchronized (lockViewMap) {
 			if (propViewMap == null) {
 				propViewMap = new ReadOnlyMultiMap<String, String>();
+				createPropViewMap = true;
 				if (propView != null) {
 					synchronized (propView) {
 						propViewMap.addMap(new ReadOnlyPropertiesConfigurationMap(propView, displayKey));
@@ -421,7 +420,7 @@ public class I18nAccess implements Serializable {
 			}
 		}
 
-		if (templateView != null && !templateImported) {
+		if (templateView != null && !templateImported || createPropViewMap) {
 			propViewMap.addMap(templateView);
 			templateImported = true;
 		}
@@ -518,18 +517,20 @@ public class I18nAccess implements Serializable {
 		contentViewLg = newViewLg;
 		propContentView = i18nResource.getViewFile(newViewLg, true);
 		propViewMap = null;
-		propEditMap = null;
+		// propEditMap = null;
 	}
 
 	private void initEdit(GlobalContext globalContext, HttpSession session) throws IOException, ConfigurationException {
 		String newEditLg = globalContext.getEditLanguage(session);
+
 		if (!newEditLg.equals(editLg)) {
+			propEditMap = null;
 			editLg = newEditLg;
 			componentsPath.clear();
+
 			propEdit = i18nResource.getEditFile(newEditLg, true);
 			if (currentModule != null) {
 				moduleEdit = currentModule.loadEditI18n(globalContext, session);
-				System.out.println("***** I18nAccess.initEdit : INIT MODULE : " + currentModule.getName()); // TODO: remove debug trace
 			}
 		}
 	}
@@ -543,7 +544,7 @@ public class I18nAccess implements Serializable {
 		viewLg = newViewLg;
 
 		propViewMap = null;
-		propEditMap = null;
+		// propEditMap = null;
 	}
 
 	private boolean isHelp() {

@@ -705,7 +705,7 @@ public class GlobalContext implements Serializable {
 		return outCaches;
 	}
 
-	private synchronized ICache getMapCache(String cacheName) {
+	public synchronized ICache getMapCache(String cacheName) {
 		ICache cache = cacheMaps.get(cacheName);
 		if (cache == null) {
 			cache = new MapCache(new HashMap(), cacheName);
