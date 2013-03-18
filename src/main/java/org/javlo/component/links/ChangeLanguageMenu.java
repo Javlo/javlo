@@ -143,6 +143,11 @@ public class ChangeLanguageMenu extends AbstractVisualComponent {
 		return false;
 	}
 
+	@Override
+	public boolean isContentTimeCachable(ContentContext ctx) {
+		return false;
+	}
+
 	public boolean isContentLanguages(ContentContext ctx) {
 		return CONTENT_LANGUAGES_STYLE.equals(getStyle(ctx));
 	}

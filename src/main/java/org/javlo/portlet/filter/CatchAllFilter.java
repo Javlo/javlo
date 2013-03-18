@@ -331,29 +331,15 @@ public class CatchAllFilter implements Filter {
 				}
 			}
 
-			try {
-
-				if (request.getParameter("webaction") != null && request.getParameter("webaction").equals("view.language")) {
-					String lang = request.getParameter("lg");
-					if (lang != null) {
-						ContentContext ctx = ContentContext.getContentContext((HttpServletRequest) request, (HttpServletResponse) response);
-						if (globalContext.getLanguages().contains(lang)) {
-							ctx.setLanguage(lang);
-							ctx.setContentLanguage(lang);
-							ctx.setRequestContentLanguage(null);
-							ctx.setCookieLanguage(lang);
-						}
-						String newURL = URLHelper.createURL(ctx);
-						NetHelper.sendRedirectPermanently((HttpServletResponse) response, newURL);
-						return;
-					}
-				}
-
-				initElements(request, response);
-
-			} catch (Exception e) {
-				e.printStackTrace();
-			}
+			/*
+			 * try {
+			 * 
+			 * if (request.getParameter("webaction") != null && request.getParameter("webaction").equals("view.language")) { String lang = request.getParameter("lg"); if (lang != null) { ContentContext ctx = ContentContext.getContentContext((HttpServletRequest) request, (HttpServletResponse) response); if (globalContext.getLanguages().contains(lang)) { ctx.setAllLanguage(lang); ctx.setCookieLanguage(lang); } String newURL = URLHelper.createURL(ctx); System.out.println("***** CatchAllFilter.doFilter : newURL = " + newURL); // TODO: remove debug trace NetHelper.sendRedirectTemporarily((HttpServletResponse) response, newURL); return; } }
+			 * 
+			 * initElements(request, response);
+			 * 
+			 * } catch (Exception e) { e.printStackTrace(); }
+			 */
 
 			if (httpRequest.getUserPrincipal() != null) {
 				logger.fine("principal user found : " + httpRequest.getUserPrincipal());

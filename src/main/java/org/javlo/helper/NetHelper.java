@@ -565,8 +565,15 @@ public class NetHelper {
 	}
 
 	public static void sendRedirectPermanently(HttpServletResponse response, String url) {
-		response.setStatus(301);
+		response.setStatus(HttpServletResponse.SC_MOVED_PERMANENTLY);
 		response.setHeader("Location", url);
 		response.setHeader("Connection", "close");
 	}
+
+	public static void sendRedirectTemporarily(HttpServletResponse response, String url) {
+		response.setStatus(HttpServletResponse.SC_MOVED_TEMPORARILY);
+		response.setHeader("Location", url);
+		response.setHeader("Connection", "close");
+	}
+
 }
