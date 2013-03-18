@@ -558,7 +558,11 @@ public class StaticConfig extends Observable {
 	}
 
 	public String getImageFolder() {
-		return ElementaryURLHelper.mergePath(getStaticFolder(), properties.getString("image-folder", "images"));
+		return ElementaryURLHelper.mergePath(getStaticFolder(), getImageFolderName());
+	}
+
+	public String getImageFolderName() {
+		return properties.getString("image-folder", "images");
 	}
 
 	public String getVideoFolder() {

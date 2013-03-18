@@ -30,6 +30,7 @@ import org.javlo.helper.XHTMLHelper;
 import org.javlo.i18n.I18nAccess;
 import org.javlo.message.GenericMessage;
 import org.javlo.message.MessageRepository;
+import org.javlo.module.file.FileAction;
 import org.javlo.service.RequestService;
 import org.javlo.template.Template;
 
@@ -227,7 +228,9 @@ public class GlobalImage extends Image {
 			finalCode.append(XHTMLHelper.getInputOneSelect(getDirInputName(), dirsCol, getDirSelected(), getJSOnChange(ctx), true));
 
 			Map<String, String> filesParams = new HashMap<String, String>();
-			filesParams.put("path", URLHelper.mergePath("/", getRelativeFileDirectory(ctx), getDirSelected()));
+
+			String path = URLHelper.mergePath(FileAction.getPathPrefix(ctx), StaticConfig.getInstance(ctx.getRequest().getSession()).getImageFolderName(), getDirSelected());
+			filesParams.put("path", path);
 			filesParams.put("webaction", "changeRenderer");
 			filesParams.put("page", "meta");
 			String staticURL = URLHelper.createModuleURL(ctx, ctx.getPath(), "file", filesParams);

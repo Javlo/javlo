@@ -150,7 +150,7 @@ public class Video extends GlobalImage implements IAction, IVideo {
 
 	@Override
 	protected String getPreviewCode(ContentContext ctx) throws Exception {
-		return "<a href=\"" + getURL(ctx) + "\"><img src=\"" + getPreviewURL(ctx, "thumbnails") + "\" /></a>";
+		return "<a href=\"" + getURL(ctx) + "\"><figure><img src=\"" + getPreviewURL(ctx, "thumbnails") + "\" /><figcaption>" + getFile(ctx).getName() + " #" + getAccess(ctx, 30) + "</figcaption></figure></a>";
 	}
 
 	@Override
@@ -521,5 +521,15 @@ public class Video extends GlobalImage implements IAction, IVideo {
 	@Override
 	public String getActionGroupName() {
 		return "video";
+	}
+
+	@Override
+	public int getPopularity(ContentContext ctx) {
+		try {
+			return getAccess(ctx, 30);
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		return 0;
 	}
 }
