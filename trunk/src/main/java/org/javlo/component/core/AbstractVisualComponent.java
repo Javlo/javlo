@@ -327,7 +327,7 @@ public abstract class AbstractVisualComponent implements IContentVisualComponent
 	}
 
 	private String getContentCacheKey(ContentContext ctx) {
-		String keySuffix = ctx.getLanguage() + '-' + ctx.getRequestContentLanguage();
+		String keySuffix = ctx.getLanguage() + '-' + ctx.getRequestContentLanguage() + '-' + ctx.getRenderMode();
 
 		if (isContentCachableByQuery(ctx)) {
 			keySuffix = keySuffix + '_' + ctx.getRequest().getQueryString();
@@ -1588,6 +1588,7 @@ public abstract class AbstractVisualComponent implements IContentVisualComponent
 	}
 
 	public void setContentTimeCache(ContentContext ctx, String contentCache) {
+
 		if (contentCache == null) {
 			return;
 		}

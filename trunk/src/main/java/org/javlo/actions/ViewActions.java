@@ -11,6 +11,7 @@ import javax.servlet.http.HttpServletResponse;
 import org.javlo.config.StaticConfig;
 import org.javlo.context.ContentContext;
 import org.javlo.context.GlobalContext;
+import org.javlo.helper.NetHelper;
 import org.javlo.helper.PaginationContext;
 import org.javlo.helper.URLHelper;
 import org.javlo.i18n.I18nAccess;
@@ -34,16 +35,14 @@ public class ViewActions implements IAction {
 			ContentContext ctx = ContentContext.getContentContext(request, response);
 			GlobalContext globalContext = GlobalContext.getInstance(request);
 			String lang = request.getParameter("lg");
-
 			if (lang != null) {
 				if (globalContext.getLanguages().contains(lang)) {
-					ctx.setLanguage(lang);
-					ctx.setContentLanguage(lang);
+					ctx.setAllLanguage(lang);
 					ctx.setCookieLanguage(lang);
 					I18nAccess i18nAccess = I18nAccess.getInstance(globalContext, request.getSession());
 					i18nAccess.changeViewLanguage(ctx);
-					// request.getRequestDispatcher(URLHelper.createURL(ctx)).forward(request, response);
-					response.sendRedirect(URLHelper.createURL(ctx));
+					String url = URLHelper.createURL(ctx);
+					NetHelper.sendRedirectTemporarily(response, url);
 				}
 			}
 
