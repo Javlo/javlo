@@ -639,7 +639,7 @@ public class UserRegistrationComponent extends AbstractVisualComponent implement
 
 			MailService mailService = MailService.getInstance(staticConfig);
 			try {
-				mailService.sendMail(null, new InternetAddress(globalContext.getAdministratorEmail()), new InternetAddress(email), bcc, comp.getEmailSubject(), confirmEmail, true);
+				mailService.sendMail(null, new InternetAddress(globalContext.getAdministratorEmail()), new InternetAddress(email), null, bcc, comp.getEmailSubject(), confirmEmail, true);
 				GenericMessage msg = new GenericMessage(i18nAccess.getContentViewText("user.error.email-send"), GenericMessage.INFO);
 				messageRepository.setGlobalMessage(msg);
 			} catch (Exception ex) {

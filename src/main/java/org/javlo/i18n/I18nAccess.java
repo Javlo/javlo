@@ -87,7 +87,7 @@ public class I18nAccess implements Serializable {
 	 * @throws IOException
 	 * @throws ConfigurationException
 	 */
-	public static final I18nAccess getInstance(HttpServletRequest request) throws FileNotFoundException, IOException, ConfigurationException {
+	public static final I18nAccess getInstance(HttpServletRequest request) throws FileNotFoundException, IOException {
 		GlobalContext globalContext = GlobalContext.getInstance(request);
 		I18nAccess i18nAccess = getInstance(globalContext, request.getSession());
 		return i18nAccess;
@@ -100,11 +100,15 @@ public class I18nAccess implements Serializable {
 	 * @throws IOException
 	 * @throws ConfigurationException
 	 */
-	public static final I18nAccess getInstance(GlobalContext globalContext, HttpSession session) throws FileNotFoundException, IOException, ConfigurationException {
+	public static final I18nAccess getInstance(GlobalContext globalContext, HttpSession session) throws FileNotFoundException, IOException {
 		I18nAccess i18nAccess = (I18nAccess) session.getAttribute(SESSION_KEY);
 		if (i18nAccess == null || !i18nAccess.getContextKey().equals(globalContext.getContextKey())) {
 			i18nAccess = new I18nAccess(globalContext);
-			i18nAccess.initEdit(globalContext, session);
+			try {
+				i18nAccess.initEdit(globalContext, session);
+			} catch (ConfigurationException e) {
+				e.printStackTrace();
+			}
 			session.setAttribute(SESSION_KEY, i18nAccess);
 		}
 		return i18nAccess;
