@@ -1896,6 +1896,7 @@ public class GlobalContext implements Serializable {
 				try {
 					out = new FileOutputStream(getDataFile());
 					long startTime = System.currentTimeMillis();
+					logger.info("start storage data of context " + getContextKey());
 					dataProperties.store(out, getContextKey());
 					logger.info("store data for : " + getContextKey() + " size:" + dataProperties.size() + " time:" + StringHelper.renderTimeInSecond(System.currentTimeMillis() - startTime));
 				} catch (Exception e) {
