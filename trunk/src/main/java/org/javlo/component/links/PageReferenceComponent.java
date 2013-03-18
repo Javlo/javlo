@@ -175,7 +175,7 @@ public class PageReferenceComponent extends ComplexPropertiesLink implements IAc
 				bean.addTagLabel(i18nAccess.getViewText("tag." + tag));
 			}
 
-			i18nAccess.changeViewLanguage(ctx);
+			// i18nAccess.changeViewLanguage(ctx);
 
 			bean.id = page.getId();
 			bean.name = page.getName();
@@ -1229,9 +1229,9 @@ public class PageReferenceComponent extends ComplexPropertiesLink implements IAc
 		Collection<String> allMonthsKeys = new HashSet<String>();
 
 		for (MenuElement page : pages) {
-			ContentContext lgCtx = ctx;
+			ContentContext lgCtx = new ContentContext(ctx);
 			if (GlobalContext.getInstance(ctx.getRequest()).isAutoSwitchToDefaultLanguage()) {
-				lgCtx = page.getContentContextWithContent(ctx);
+				lgCtx = new ContentContext(page.getContentContextWithContent(ctx));
 			}
 			if (filterPage(lgCtx, page)) {
 				if (countPage < getMaxNews(lgCtx)) {

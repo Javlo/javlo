@@ -578,13 +578,10 @@ public class Module {
 		}
 		Properties prop = null;
 		if (file.exists()) {
-			System.out.println("***** Module.loadEditI18n : FOUND : " + file); // TODO: remove debug trace
 			prop = new Properties();
 			FileReader reader = new FileReader(file);
 			prop.load(reader);
 			reader.close();
-		} else {
-			System.out.println("***** Module.loadEditI18n : NOT FOUND : " + file); // TODO: remove debug trace
 		}
 		return prop;
 	}

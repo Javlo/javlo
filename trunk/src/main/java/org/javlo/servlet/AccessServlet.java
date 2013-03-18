@@ -248,7 +248,7 @@ public class AccessServlet extends HttpServlet {
 				return;
 			}
 
-			I18nAccess i18nAccess = I18nAccess.getInstance(globalContext, request.getSession());
+			I18nAccess i18nAccess = I18nAccess.getInstance(ctx);
 
 			i18nAccess.requestInit(ctx);
 

@@ -920,6 +920,7 @@ public class AdminAction extends AbstractModuleAction {
 					ContentService content = ContentService.getInstance(currentGlobalContext);
 					if (view) {
 						content.releaseViewNav(ctx, currentGlobalContext);
+						globalContext.releaseAllCache();
 						messageRepository.setGlobalMessage(new GenericMessage(i18nAccess.getText("admin.message.release-view"), GenericMessage.INFO));
 					} else {
 						content.setPreviewNav(null);
