@@ -2602,10 +2602,8 @@ public class GlobalContext implements Serializable {
 	}
 
 	public String convertOneTimeToken(String token) {
-		System.out.println("***** GlobalContext.convertOneTimeToken : token = " + token); // TODO: remove debug trace
 		String realToken = oneTimeTokens.get(token);
 		if (realToken != null) {
-			System.out.println("***** GlobalContext.convertOneTimeToken : realToken = " + realToken); // TODO: remove debug trace
 			oneTimeTokens.remove(token);
 		}
 		return realToken;
