@@ -39,7 +39,9 @@ import org.javlo.module.core.ModuleException;
 import org.javlo.module.core.ModulesContext;
 import org.javlo.service.PersistenceService;
 import org.javlo.service.RequestService;
+import org.javlo.user.AdminUserFactory;
 import org.javlo.user.AdminUserSecurity;
+import org.javlo.user.User;
 import org.javlo.ztatic.FileCache;
 import org.javlo.ztatic.StaticInfo;
 
@@ -207,7 +209,7 @@ public class FileAction extends AbstractModuleAction {
 
 		ctx.getRequest().setAttribute("currentModule", modulesContext.getCurrentModule());
 		ctx.getRequest().setAttribute("tags", globalContext.getTags());
-		ctx.getRequest().setAttribute("pathPrefix", getContextPathPrefix(ctx));
+		ctx.getRequest().setAttribute("pathPrefix", getROOTPath(ctx));
 
 		if (ctx.getRequest().getParameter("path") != null) {
 			fileModuleContext.setPath(ctx.getRequest().getParameter("path"));
@@ -429,10 +431,44 @@ public class FileAction extends AbstractModuleAction {
 		return null;
 	}
 
-	public static String getContextPathPrefix(ContentContext ctx) {
+	public static String getROOTPath(ContentContext ctx) {
 		GlobalContext globalContext = GlobalContext.getInstance(ctx.getRequest());
 		if (AdminUserSecurity.getInstance().isGod(ctx.getCurrentEditUser())) {
 			return URLHelper.mergePath("/", globalContext.getFolder());
+		} else {
+			return "/";
+		}
+
+	}
+
+	/**
+	 * get the prefix of url resource.
+	 * 
+	 * @param ctx
+	 * @return
+	 */
+	public static String getURLPathPrefix(ContentContext ctx) {
+		GlobalContext globalContext = GlobalContext.getInstance(ctx.getRequest());
+		User user = AdminUserFactory.createAdminUserFactory(globalContext, ctx.getRequest().getSession()).getCurrentUser(ctx.getRequest().getSession());
+		if (!AdminUserSecurity.getInstance().isGod(user)) {
+			return URLHelper.mergePath("/", globalContext.getStaticConfig().getStaticFolder(), "/");
+		} else {
+			return "/";
+		}
+
+	}
+
+	/**
+	 * get the prefix of path to browse resource.
+	 * 
+	 * @param ctx
+	 * @return
+	 */
+	public static String getPathPrefix(ContentContext ctx) {
+		GlobalContext globalContext = GlobalContext.getInstance(ctx.getRequest());
+		User user = AdminUserFactory.createAdminUserFactory(globalContext, ctx.getRequest().getSession()).getCurrentUser(ctx.getRequest().getSession());
+		if (AdminUserSecurity.getInstance().isGod(user)) {
+			return URLHelper.mergePath("/", globalContext.getStaticConfig().getStaticFolder(), "/");
 		} else {
 			return "/";
 		}

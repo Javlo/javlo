@@ -399,7 +399,7 @@ public class Multimedia extends TimeRangeComponent implements IImageTitle {
 		}
 
 		Map<String, String> filesParams = new HashMap<String, String>();
-		filesParams.put("path", URLHelper.mergePath(FileAction.getContextPathPrefix(ctx), getCurrentRootFolder()));
+		filesParams.put("path", URLHelper.mergePath(FileAction.getPathPrefix(ctx), getCurrentRootFolder()));
 		filesParams.put("webaction", "changeRenderer");
 		filesParams.put("page", "meta");
 		String staticURL = URLHelper.createModuleURL(ctx, ctx.getPath(), "file", filesParams);
@@ -737,6 +737,7 @@ public class Multimedia extends TimeRangeComponent implements IImageTitle {
 				resource.setURL(multimediaURL);
 				resource.setTags(info.getTags(lgCtx));
 				resource.setLanguage(lgCtx.getRequestContentLanguage());
+				resource.setIndex(info.getAccessFromSomeDays(lgCtx));
 
 				allURL.put(resource.getURL(), resource);
 
@@ -744,7 +745,6 @@ public class Multimedia extends TimeRangeComponent implements IImageTitle {
 
 				if (isRenderInfo(ctx)) {
 					index++;
-					resource.setIndex(info.getAccessFromSomeDays(lgCtx));
 					allResource.add(resource);
 				}
 			}
@@ -772,7 +772,7 @@ public class Multimedia extends TimeRangeComponent implements IImageTitle {
 		PaginationContext pagination = PaginationContext.getInstance(ctx.getRequest().getSession(), getId(), allResource.size(), getPageSize());
 
 		if (isOrderByAccess(ctx)) {
-			Collections.sort(allResource, new MultimediaResource.SortByIndex(false));
+			Collections.sort(allResource, new MultimediaResource.SortByIndex(true));
 		} else {
 			Collections.sort(allResource, new MultimediaResource.SortByDate(false));
 		}

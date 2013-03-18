@@ -54,6 +54,8 @@ jQuery(document).ready(function() {
 	jQuery(document).trigger("ajaxUpdate");
 });
 
+
+
 function ajaxRequest(url, form) {	
 	if (url.indexOf("/edit-")>=0) {
 		url = url.replace("/edit-", "/ajax-");
