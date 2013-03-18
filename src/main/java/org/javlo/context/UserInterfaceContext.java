@@ -86,7 +86,6 @@ public class UserInterfaceContext {
 
 	private void store() throws IOException {
 		AdminUserFactory userFact = AdminUserFactory.createUserFactory(globalContext, session);
-		System.out.println("***** UserInterfaceContext.store : userFact = " + userFact); // TODO: remove debug trace
 		User user = userFact.getCurrentUser(session);
 		user = userFact.getUser(user.getLogin()); // get real user
 		if (user != null) {
@@ -94,8 +93,6 @@ public class UserInterfaceContext {
 			IUserInfo ui = user.getUserInfo();
 			ui.setInfo(toString());
 			userFact.updateUserInfo(ui);
-		} else {
-			logger.warning("can not store user interface information for user " + user.getLogin());
 		}
 	}
 
