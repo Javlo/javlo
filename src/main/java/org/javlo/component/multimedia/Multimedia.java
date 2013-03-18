@@ -744,7 +744,7 @@ public class Multimedia extends TimeRangeComponent implements IImageTitle {
 
 				if (isRenderInfo(ctx)) {
 					index++;
-					resource.setIndex(index);
+					resource.setIndex(info.getAccessFromSomeDays(lgCtx));
 					allResource.add(resource);
 				}
 			}
