@@ -21,20 +21,20 @@ if (lg == null) {
 }
 
 if (lg.trim().length() == 0) {
+	lg = request.getLocale().getLanguage();
+}
+
+if (lg.trim().length() == 0 || !globalContext.getLanguages().contains(lg)) {
 	if (globalContext != null) {
 		lg = globalContext.getDefaultLanguage();
 	}
-}
-
-if (lg.trim().length() == 0) {
-	lg = request.getLocale().getLanguage();
 }
 
 if (!globalContext.getLanguages().contains(lg)) {
 	lg = globalContext.getLanguages().iterator().next();
 }
 
-ctx.setLanguage(lg);
+ctx.setAllLanguage(lg);
 i18nAccess.changeViewLanguage(ctx);
 
 ContentService content = ContentService.getInstance(globalContext);

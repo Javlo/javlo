@@ -234,20 +234,23 @@ public class ContentContext {
 				}
 			}
 
-			if (!ctx.isEdit() && (!ctx.isPreview() || !EditContext.getInstance(globalContext, ctx.getRequest().getSession()).isEditPreview())) {
-				try {
-					MenuElement page = ctx.getCurrentPage();
-					if (page != null) {
-						while (!page.isRealContent(ctx) && page.getChildMenuElements().size() > 0) {
-							page = page.getChildMenuElements().iterator().next();
+			if (!ctx.isEdit() && !ctx.isAjax()) {
+				EditContext editContext = EditContext.getInstance(globalContext, ctx.getRequest().getSession());
+				if (!ctx.isPreview() || !editContext.isEditPreview()) {
+					try {
+						MenuElement page = ctx.getCurrentPage();
+						if (page != null) {
+							while (!page.isRealContent(ctx) && page.getChildMenuElements().size() > 0) {
+								page = page.getChildMenuElements().iterator().next();
+							}
+							if (page.isRealContent(ctx)) {
+								ctx.setCurrentPageCached(page);
+								ctx.setPath(page.getPath());
+							}
 						}
-						if (page.isRealContent(ctx)) {
-							ctx.setCurrentPageCached(page);
-							ctx.setPath(page.getPath());
-						}
+					} catch (Exception e) {
+						e.printStackTrace();
 					}
-				} catch (Exception e) {
-					e.printStackTrace();
 				}
 			}
 
