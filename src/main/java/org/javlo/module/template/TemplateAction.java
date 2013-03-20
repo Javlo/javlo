@@ -166,7 +166,9 @@ public class TemplateAction extends AbstractModuleAction {
 
 					// module.setRenderer("/jsp/images.jsp");
 				} else if (requestService.getParameter("css", null) != null && requestService.getParameter("back", null) == null) {
-					module.getMainBoxes().iterator().next().setRenderer("/jsp/css.jsp");
+					if (module.getMainBoxes().size() > 0) {
+						module.getMainBoxes().iterator().next().setRenderer("/jsp/css.jsp");
+					}
 				}
 
 			}
