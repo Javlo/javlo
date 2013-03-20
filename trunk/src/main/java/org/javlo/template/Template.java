@@ -624,7 +624,7 @@ public class Template implements Comparable<Template> {
 	}
 
 	private static Template getInstance(StaticConfig config, ContentContext ctx, String templateDir, boolean alternativeTemplate) throws ConfigurationException, IOException {
-		
+
 		if (config == null) {
 			throw new RuntimeException("StaticConfig can not be null.");
 		}
@@ -820,7 +820,7 @@ public class Template implements Comparable<Template> {
 			if (getParent() == null) {
 				areas.add(ComponentBean.DEFAULT_AREA);
 			} else {
-				return getParent().getAreas();
+				return getParent().getAreas(admin);
 			}
 		}
 		return areas;

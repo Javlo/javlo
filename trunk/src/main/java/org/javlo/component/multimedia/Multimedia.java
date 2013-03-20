@@ -695,8 +695,10 @@ public class Multimedia extends TimeRangeComponent implements IImageTitle {
 			Iterator<String> defaultLg = globalContext.getDefaultLanguages().iterator();
 			lgCtx.setRequestContentLanguage(lgCtx.getRequestContentLanguage()); // if the page is defined only in a lang the information must still be display in current lg
 			StaticInfo info = StaticInfo.getInstance(lgCtx, file);
+
 			while (!info.isPertinent(lgCtx) && defaultLg.hasNext()) {
-				lgCtx.setRequestContentLanguage(defaultLg.next());
+				String lg = defaultLg.next();
+				lgCtx.setAllLanguage(lg);
 			}
 			if (!info.isPertinent(lgCtx)) {
 				lgCtx = ctx;
