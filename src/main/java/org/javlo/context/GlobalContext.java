@@ -1234,6 +1234,7 @@ public class GlobalContext implements Serializable {
 			if (page != null && ctx.getRenderMode() == ContentContext.VIEW_MODE) {
 				viewPages.put(url, page);
 			}
+
 			return page;
 		}
 	}

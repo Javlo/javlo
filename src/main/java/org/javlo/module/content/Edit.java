@@ -740,6 +740,9 @@ public class Edit extends AbstractModuleAction {
 				clipBoard.clear();
 			}
 			MenuElement elem = ctx.getCurrentPage();
+
+			System.out.println("***** Edit.performDelete : PATH = " + elem.getPath()); // TODO: remove debug trace
+
 			String type = elem.removeContent(ctx, id);
 			GlobalContext globalContext = GlobalContext.getInstance(request);
 			PersistenceService persistenceService = PersistenceService.getInstance(globalContext);
@@ -1182,11 +1185,9 @@ public class Edit extends AbstractModuleAction {
 	}
 
 	public static final String performPreviewedit(RequestService rs, EditContext editCtx) {
-		if (rs.getParameter("preview", null) == null) {
-			editCtx.setEditPreview(!editCtx.isEditPreview());
-		} else {
-			editCtx.setEditPreview(StringHelper.isTrue(rs.getParameter("preview", null)));
-		}
+		/*
+		 * if (rs.getParameter("preview", null) == null) { editCtx.setEditPreview(!editCtx.isEditPreview()); } else { editCtx.setEditPreview(StringHelper.isTrue(rs.getParameter("preview", null))); }
+		 */
 		return null;
 	}
 
