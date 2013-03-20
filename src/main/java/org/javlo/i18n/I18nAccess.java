@@ -416,10 +416,9 @@ public class I18nAccess implements Serializable {
 			if (propViewMap == null) {
 				propViewMap = new ReadOnlyMultiMap<String, String>();
 				createPropViewMap = true;
-				if (propView != null) {
-					synchronized (propView) {
-						propViewMap.addMap(new ReadOnlyPropertiesConfigurationMap(propView, displayKey));
-					}
+				PropertiesConfiguration localPropView = propView;
+				if (localPropView != null) {
+					propViewMap.addMap(new ReadOnlyPropertiesConfigurationMap(localPropView, displayKey));
 				}
 			}
 		}
