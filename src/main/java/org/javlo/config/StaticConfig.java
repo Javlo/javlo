@@ -1135,7 +1135,7 @@ public class StaticConfig extends Observable {
 	}
 
 	public boolean useEhCache() {
-		return properties.getBoolean("ehcache-active", true);
+		return properties.getBoolean("ehcache-active", false);
 	}
 
 	public int getShortURLSize() {
