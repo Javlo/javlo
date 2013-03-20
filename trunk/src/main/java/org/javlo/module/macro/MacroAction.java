@@ -46,8 +46,7 @@ public class MacroAction extends AbstractModuleAction {
 			}
 		}
 
-		EditContext editContext = EditContext.getInstance(globalContext, ctx.getRequest().getSession());
-		if (allMacros.size() == 0 || editContext.isEditPreview()) {
+		if (allMacros.size() == 0 || ctx.isEditPreview()) {
 			moduleContext.getCurrentModule().removeBox("macros");
 		} else {
 			moduleContext.getCurrentModule().restoreBoxes();

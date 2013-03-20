@@ -583,7 +583,7 @@ public abstract class AbstractFileComponent extends AbstractVisualComponent impl
 		RequestService requestService = RequestService.getInstance(ctx.getRequest());
 		I18nAccess i18nAccess = I18nAccess.getInstance(ctx.getRequest());
 
-		String label = requestService.getParameter(getLabelXHTMLInputName(), null);
+		String label = requestService.getParameter(getLabelXHTMLInputName(), "");
 		String fileName = requestService.getParameter(getFileXHTMLInputName(), "");
 		String newDir = requestService.getParameter(getNewDirInputName(), "");
 		String selectedDir = requestService.getParameter(getDirInputName(), "");
@@ -607,6 +607,8 @@ public abstract class AbstractFileComponent extends AbstractVisualComponent impl
 			}
 		}
 
+		
+
 		if (fileName != null) {
 
 			if (fileName.trim().length() == 0) {
@@ -614,58 +616,58 @@ public abstract class AbstractFileComponent extends AbstractVisualComponent impl
 				fileName = StringHelper.getFileNameFromPath(fileName);
 			}
 
-			if (label != null) {
-				if ((!label.equals(getLabel())) || (!fileName.equals(getFileName()))) {
-					setModify();
-				}
-				if (!reverseLink.equals(properties.getProperty(REVERSE_LINK_KEY))) {
-					properties.setProperty(REVERSE_LINK_KEY, reverseLink);
-					setModify();
+			
 
-					GlobalContext globalContext = GlobalContext.getInstance(ctx.getRequest());
-					ReverseLinkService reverlinkService = ReverseLinkService.getInstance(globalContext);
-					reverlinkService.clearCache();
-				}
+			if ((!label.equals(getLabel())) || (!fileName.equals(getFileName()))) {
+				setModify();
+			}
+			if (!reverseLink.equals(properties.getProperty(REVERSE_LINK_KEY))) {
+				properties.setProperty(REVERSE_LINK_KEY, reverseLink);
+				setModify();
 
-				if (!getDirSelected().equals(selectedDir)) {
-					setModify();
-					fileName = "";
-					MessageRepository messageRepository = MessageRepository.getInstance(ctx);
-					messageRepository.setGlobalMessage(new GenericMessage(i18nAccess.getText("content.file.info.select-dir", new String[][] { { "group", selectedDir } }), GenericMessage.INFO));
-					setNeedRefresh(true);
-				}
-
-				if (needEncoding()) {
-					String encoding = requestService.getParameter(getEncodingXHTMLInputName(), null);
-					if (encoding != null) {
-						properties.setProperty(ENCODING_KEY, encoding);
-						setModify();
-					}
-				}
-
-				setDirSelected(selectedDir);
-				setFileName(fileName);
-				properties.setProperty(LABEL_KEY, label);
-				properties.setProperty(DESCRIPTION_KEY, description);
+				GlobalContext globalContext = GlobalContext.getInstance(ctx.getRequest());
+				ReverseLinkService reverlinkService = ReverseLinkService.getInstance(globalContext);
+				reverlinkService.clearCache();
 			}
 
-			if (canUpload(ctx)) {
-				if (isFileNameValid(fileName)) {
-					try {
-						uploadFiles(ctx, requestService);
-					} catch (IOException e) {
-						MessageRepository messageRepository = MessageRepository.getInstance(ctx);
-						messageRepository.setGlobalMessage(new GenericMessage(i18nAccess.getText("content.file.exist"), GenericMessage.ERROR));
-					}
-				}
-			}
-
-			if (isModify()) {
+			if (!getDirSelected().equals(selectedDir)) {
+			
+				fileName = "";
+				MessageRepository messageRepository = MessageRepository.getInstance(ctx);
+				messageRepository.setGlobalMessage(new GenericMessage(i18nAccess.getText("content.file.info.select-dir", new String[][] { { "group", selectedDir } }), GenericMessage.INFO));
 				setNeedRefresh(true);
 			}
 
-			storeProperties();
+			if (needEncoding()) {
+				String encoding = requestService.getParameter(getEncodingXHTMLInputName(), null);
+				if (encoding != null) {
+					properties.setProperty(ENCODING_KEY, encoding);
+					setModify();
+				}
+			}
+
+			setDirSelected(selectedDir);
+			setFileName(fileName);
+			properties.setProperty(LABEL_KEY, label);
+			properties.setProperty(DESCRIPTION_KEY, description);
 		}
+
+		if (canUpload(ctx)) {
+			if (isFileNameValid(fileName)) {
+				try {
+					uploadFiles(ctx, requestService);
+				} catch (IOException e) {
+					MessageRepository messageRepository = MessageRepository.getInstance(ctx);
+					messageRepository.setGlobalMessage(new GenericMessage(i18nAccess.getText("content.file.exist"), GenericMessage.ERROR));
+				}
+			}
+		}
+
+		if (isModify()) {
+			setNeedRefresh(true);
+		}
+
+		storeProperties();
 	}
 
 	protected void reloadProperties() {
