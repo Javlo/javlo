@@ -77,3 +77,9 @@ change log
  * UserInterfaceContext bug init correction
  
 * 2.0.0.17 [14/03/2013]
+
+ * correction bug : url special width context.
+ 
+ * correction bug : edit empty page with children
+
+* 2.0.0.18 21/03/2013]
