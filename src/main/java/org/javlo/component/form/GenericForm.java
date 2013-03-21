@@ -202,7 +202,7 @@ public class GenericForm extends AbstractVisualComponent implements IAction {
 		String subject = "GenericForm submit : '" + globalContext.getGlobalTitle() + "' ";
 
 		String subjectField = comp.getLocalConfig(false).getProperty("mail.subject.field", null);
-		if (subjectField != null && comp.getLocalConfig(false).getProperty(subjectField, null) != null) {
+		if (subjectField != null && requestService.getParameter(subjectField, null) != null) {
 			subject = comp.getLocalConfig(false).getProperty("mail.subject", "") + requestService.getParameter(subjectField, null);
 		} else {
 			subject = comp.getLocalConfig(false).getProperty("mail.subject", subject);
