@@ -8,6 +8,7 @@ import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.OutputStreamWriter;
+import java.io.PrintStream;
 import java.io.PrintWriter;
 import java.util.Arrays;
 import java.util.Date;
@@ -40,7 +41,7 @@ public class MailService {
 	public static final String SMTP_USER_PARAM = "mail.smtp.user";
 	public static final String SMTP_PASSWORD_PARAM = "mail.smtp.password";
 
-	private static final boolean DEBUG = true;
+	private static final boolean DEBUG = false;
 
 	/**
 	 * create a static logger.
@@ -193,19 +194,32 @@ public class MailService {
 		} else {
 			FileOutputStream out = null;
 			try {
-				File mailFile = new File(tempDir, "mail-debug/mail-" + StringHelper.renderFileTime(sendDate) + "-" + StringHelper.stringToFileName(subject) + ".txt");
-				mailFile.getParentFile().mkdirs();
-				out = new FileOutputStream(mailFile, true);
-				PrintWriter w = new PrintWriter(new OutputStreamWriter(out, ContentContext.CHARACTER_ENCODING));
+				PrintStream w = System.out;
+				if (tempDir != null && new File(tempDir).exists()) {
+					File mailFile = new File(tempDir, "mail-debug/mail-" + StringHelper.renderFileTime(sendDate) + "-" + StringHelper.stringToFileName(subject) + ".txt");
+					mailFile.getParentFile().mkdirs();
+					out = new FileOutputStream(mailFile, true);
+					w = new PrintStream(mailFile, ContentContext.CHARACTER_ENCODING);
+				} else {
+					w.println("");
+				}
+				
 				w.println("FROM:");
 				w.println(sender.toString());
-				w.print("TO: ");
+				w.print("TO: #");
 				w.println(Integer.toString(recipients.size()));
 				for (InternetAddress recipient : recipients) {
 					w.println(recipient.toString());
 				}
+				if (ccRecipients != null) {
+					w.print("CC: #");
+					w.println(Integer.toString(ccRecipients.size()));
+					for (InternetAddress ccRecipient : ccRecipients) {
+						w.println(ccRecipient.toString());
+					}
+				}
 				if (bccRecipients != null) {
-					w.print("BCC: ");
+					w.print("BCC: #");
 					w.println(Integer.toString(bccRecipients.size()));
 					for (InternetAddress bccRecipient : bccRecipients) {
 						w.println(bccRecipient.toString());
@@ -219,6 +233,7 @@ public class MailService {
 				w.print("--BEGIN--");
 				w.print(content);
 				w.println("--END--");
+				w.println("");
 				w.flush();
 			} catch (IOException e) {
 				throw new RuntimeException("Exception when writing debug mail file.", e);

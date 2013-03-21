@@ -183,7 +183,7 @@ public class GlobalContext implements Serializable {
 	public static GlobalContext getInstance(HttpServletRequest request) {
 		try {
 			String contextURI;
-			GlobalContext globalContext = getSessionInstance(request.getSession());
+			GlobalContext globalContext = (GlobalContext) request.getAttribute(KEY);
 			if (globalContext == null) {
 				StaticConfig staticConfig = StaticConfig.getInstance(request.getSession().getServletContext());
 				if (staticConfig.isHostDefineSite()) {
@@ -394,7 +394,7 @@ public class GlobalContext implements Serializable {
 			}
 
 			session.getServletContext().setAttribute(contextKey, newInstance);
-			session.setAttribute(KEY, newInstance.getContextKey());
+			session.setAttribute(KEY, newInstance);
 
 			synchronized (newInstance.properties) {
 				newInstance.properties.setProperty("access-date", StringHelper.renderTime(new Date()));
