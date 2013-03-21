@@ -199,13 +199,13 @@ public class GenericForm extends AbstractVisualComponent implements IAction {
 
 		GlobalContext globalContext = GlobalContext.getInstance(ctx.getRequest());
 
-		String subject = "GenericForm submit : '" + globalContext.getGlobalTitle()+"' ";
-		
+		String subject = "GenericForm submit : '" + globalContext.getGlobalTitle() + "' ";
+
 		String subjectField = comp.getLocalConfig(false).getProperty("mail.subject.field", null);
 		if (subjectField != null && comp.getLocalConfig(false).getProperty(subjectField, null) != null) {
 			subject = comp.getLocalConfig(false).getProperty("mail.subject", "") + requestService.getParameter(subjectField, null);
-		} else {		
-		    subject = comp.getLocalConfig(false).getProperty("mail.subject", subject) + comp.getLocalConfig(false).getProperty("");
+		} else {
+			subject = comp.getLocalConfig(false).getProperty("mail.subject", subject) + comp.getLocalConfig(false).getProperty("");
 		}
 
 		Map<String, Object> params = request.getParameterMap();
@@ -279,15 +279,31 @@ public class GenericForm extends AbstractVisualComponent implements IAction {
 					}
 				}
 				String emailTo = comp.getLocalConfig(false).getProperty("mail.to", globalContext.getAdministratorEmail());
-				String emailCC = comp.getLocalConfig(false).getProperty("mail.cc", "");
-				String emailBCC = comp.getLocalConfig(false).getProperty("mail.bcc", "");
+				String emailCC = comp.getLocalConfig(false).getProperty("mail.cc", null);
+				String emailBCC = comp.getLocalConfig(false).getProperty("mail.bcc", null);
 
 				MailService mailService = MailService.getInstance(globalContext.getStaticConfig());
 				InternetAddress fromEmail = new InternetAddress(emailFrom);
 				InternetAddress toEmail = new InternetAddress(emailTo);
-				InternetAddress ccEmail = new InternetAddress(emailCC);
-				InternetAddress bccEmail = new InternetAddress(emailBCC);
-				mailService.sendMail(null, fromEmail, toEmail, Arrays.asList(ccEmail), Arrays.asList(bccEmail), subject, mailContent, false);
+				InternetAddress ccEmail = null;
+				if (emailCC != null) {
+					ccEmail = new InternetAddress(emailCC);
+				}
+				InternetAddress bccEmail = null;
+				if (emailBCC != null) {
+					bccEmail = new InternetAddress(emailBCC);
+				}
+				
+				List<InternetAddress> ccList = null;
+				if (ccEmail != null) {
+					ccList = Arrays.asList(ccEmail);
+				}
+				List<InternetAddress> bccList = null;
+				if (bccEmail != null) {
+					bccList = Arrays.asList(bccEmail);
+				}
+				
+				mailService.sendMail(null, fromEmail, toEmail, ccList, bccList, subject, mailContent, false);
 			}
 
 			GenericMessage msg = new GenericMessage(comp.getLocalConfig(false).getProperty("message.thanks"), GenericMessage.INFO);
