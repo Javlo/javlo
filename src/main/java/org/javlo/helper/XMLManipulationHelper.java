@@ -852,7 +852,7 @@ public class XMLManipulationHelper {
 		out.newLine();
 		out.append("<%=(ctx.isInteractiveMode() ? \"<link rel=\\\"stylesheet\\\" type=\\\"text/css\\\" href=\\\"\"+URLHelper.createStaticURL(ctx,\"/css/preview/edit_preview.css\")+\"\\\"></link>\" : \"\")  %>");
 		out.newLine();
-		out.append("<%=(ctx.isInteractiveMode() ? \"<link rel=\\\"stylesheet\\\" type=\\\"text/css\\\" href=\\\"\"+editCtx.getEditTemplateFolder()+\"/css/edit_preview.css\"+\"\\\"></link>\" : \"\")  %>");
+		out.append("<%=(ctx.isInteractiveMode() ? \"<link rel=\\\"stylesheet\\\" type=\\\"text/css\\\" href=\\\"\"+URLHelper.createStaticURL(ctx,\"/\")+editCtx.getEditTemplateFolder()+\"/css/edit_preview.css\"+\"\\\"></link>\" : \"\")  %>");
 		out.newLine();
 		out.append("<%=(ctx.isInteractiveMode() ? \"<script type=\\\"text/javascript\\\" src=\\\"\"+URLHelper.createStaticURL(ctx,\"/js/preview/edit_preview.js\")+\"\\\"></script>\" : \"\")  %>");
 		out.newLine();
