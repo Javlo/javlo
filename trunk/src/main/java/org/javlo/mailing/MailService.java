@@ -40,7 +40,7 @@ public class MailService {
 	public static final String SMTP_USER_PARAM = "mail.smtp.user";
 	public static final String SMTP_PASSWORD_PARAM = "mail.smtp.password";
 
-	private static final boolean DEBUG = false;
+	private static final boolean DEBUG = true;
 
 	/**
 	 * create a static logger.

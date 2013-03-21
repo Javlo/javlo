@@ -199,7 +199,14 @@ public class GenericForm extends AbstractVisualComponent implements IAction {
 
 		GlobalContext globalContext = GlobalContext.getInstance(ctx.getRequest());
 
-		String subject = "GenericForm submit : " + globalContext.getGlobalTitle();
+		String subject = "GenericForm submit : '" + globalContext.getGlobalTitle()+"' ";
+		
+		String subjectField = comp.getLocalConfig(false).getProperty("mail.subject.field", null);
+		if (subjectField != null && comp.getLocalConfig(false).getProperty(subjectField, null) != null) {
+			subject = comp.getLocalConfig(false).getProperty("mail.subject", "") + requestService.getParameter(subjectField, null);
+		} else {		
+		    subject = comp.getLocalConfig(false).getProperty("mail.subject", subject) + comp.getLocalConfig(false).getProperty("");
+		}
 
 		Map<String, Object> params = request.getParameterMap();
 		Map<String, String> result = new HashMap<String, String>();
@@ -261,6 +268,16 @@ public class GenericForm extends AbstractVisualComponent implements IAction {
 			if (comp.isSendEmail() && !fakeFilled) {
 
 				String emailFrom = comp.getLocalConfig(false).getProperty("mail.from", StaticConfig.getInstance(request.getSession()).getSiteEmail());
+				String emailFromField = comp.getLocalConfig(false).getProperty("mail.from.field", null);
+				if (emailFromField != null && requestService.getParameter(emailFromField, "") != null) {
+					String tmpEmail = requestService.getParameter(emailFromField, "");
+					try {
+						new InternetAddress(tmpEmail);
+						emailFrom = tmpEmail;
+					} catch (Exception e) {
+						logger.warning(e.getMessage());
+					}
+				}
 				String emailTo = comp.getLocalConfig(false).getProperty("mail.to", globalContext.getAdministratorEmail());
 				String emailCC = comp.getLocalConfig(false).getProperty("mail.cc", "");
 				String emailBCC = comp.getLocalConfig(false).getProperty("mail.bcc", "");
