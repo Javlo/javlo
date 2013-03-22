@@ -49,7 +49,6 @@ org.javlo.component.links.RSSLink
 org.javlo.component.links.RSSReader
 org.javlo.component.links.MirrorComponent
 org.javlo.component.links.PageMirrorComponent
-org.javlo.component.links.UserInfoLink
 org.javlo.component.links.AgendaImport
 org.javlo.component.links.SubtitleLink
 org.javlo.component.links.SmartExternalLink
@@ -84,7 +83,7 @@ org.javlo.component.form.GenericForm
 org.javlo.component.list.FAQComponent
 org.javlo.component.web2.ReactionComponent
 org.javlo.component.web2.PageRank
-org.javlo.component.form.FormMailingComponent
+
 
 --content.title.special
 
@@ -96,6 +95,8 @@ org.javlo.component.form.SearchResultComponent
 org.javlo.component.form.GenericFormForRegistering
 org.javlo.component.container.DynamicComponentList
 org.javlo.component.portlet.PortletWrapperComponent
+org.javlo.component.links.UserInfoLink
+org.javlo.component.form.FormMailingComponent
 ec.ep.europarl.adagio.wcms.component.GenericFormPortlet
 ec.ep.europarl.adagio.wcms.component.QuizPollPortlet
 ec.ep.europarl.adagio.wcms.component.CYPRegisterPortlet
