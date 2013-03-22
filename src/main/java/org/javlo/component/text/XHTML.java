@@ -26,7 +26,7 @@ public class XHTML extends AbstractVisualComponent {
 
 	@Override
 	public int getComplexityLevel() {
-		return COMPLEXITY_ADMIN;
+		return COMPLEXITY_EASY;
 	}
 
 	@Override
