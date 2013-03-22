@@ -157,4 +157,5 @@ public class RSSRegistration extends AbstractPropertiesComponent {
 	public String getHeader() {
 		return "rss-config";
 	}
+
 }
