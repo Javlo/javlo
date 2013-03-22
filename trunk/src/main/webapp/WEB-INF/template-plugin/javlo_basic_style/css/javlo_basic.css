@@ -47,6 +47,10 @@ figure {
 	text-align: center;
 }
 
+#breadcrumb .title {
+	display: none;
+}
+
 /****************/
 /*** messages ***/
 /****************/
