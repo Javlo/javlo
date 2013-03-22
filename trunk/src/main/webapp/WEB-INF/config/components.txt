@@ -20,9 +20,7 @@ org.javlo.component.meta.PageWeight
 
 --content.title.text
 
-
 org.javlo.component.text.Paragraph
-org.javlo.component.text.XHTML
 org.javlo.component.text.WysiwygParagraph
 org.javlo.component.list.FreeTextList
 org.javlo.component.text.ContactText
@@ -65,6 +63,7 @@ org.javlo.component.multimedia.Multimedia
 org.javlo.component.multimedia.Video
 org.javlo.component.multimedia.EmbedVideo
 org.javlo.component.multimedia.AllImagesGallery
+org.javlo.component.text.XHTML
 
 --content.title.container
 
