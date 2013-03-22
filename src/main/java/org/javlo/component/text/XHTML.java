@@ -46,7 +46,7 @@ public class XHTML extends AbstractVisualComponent {
 
 	@Override
 	public String getHexColor() {
-		return TEXT_COLOR;
+		return GRAPHIC_COLOR;
 	}
 
 	@Override
