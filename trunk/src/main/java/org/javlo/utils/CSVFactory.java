@@ -409,7 +409,7 @@ public class CSVFactory {
 
 		Collections.sort(titles);
 		String[] rawContent = new String[titles.size()];
-		for (int i = 1; i < titles.size(); i++) {
+		for (int i = 0; i < titles.size(); i++) {
 			rawContent[i] = StringHelper.neverNull(content.get(titles.get(i)));
 		}
 

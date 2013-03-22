@@ -7,6 +7,7 @@ import java.io.PrintStream;
 import java.io.StringReader;
 import java.util.Arrays;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.LinkedList;
@@ -28,6 +29,7 @@ import org.javlo.context.ContentContext;
 import org.javlo.context.GlobalContext;
 import org.javlo.helper.StringHelper;
 import org.javlo.helper.URLHelper;
+import org.javlo.helper.Comparator.StringComparator;
 import org.javlo.mailing.MailService;
 import org.javlo.message.GenericMessage;
 import org.javlo.service.CaptchaService;
@@ -135,6 +137,7 @@ public class GenericForm extends AbstractVisualComponent implements IAction {
 	}
 
 	protected void storeResult(ContentContext ctx, Map<String, String> data) throws IOException {
+
 		synchronized (LOCK) {
 			File file = getFile(ctx);
 			Collection<String> titles = CSVFactory.loadTitle(file);
@@ -222,7 +225,8 @@ public class GenericForm extends AbstractVisualComponent implements IAction {
 		boolean withXHTML = StringHelper.isTrue(comp.getLocalConfig(false).getProperty("field.xhtml", null));
 		boolean fakeFilled = false;
 
-		Collection<String> keys = params.keySet();
+		List<String> keys = new LinkedList(params.keySet());
+		Collections.sort(keys, new StringComparator());
 		for (String key : keys) {
 			if (!key.equals("webaction") && !key.equals("comp_id") && !key.equals("captcha")) {
 				Object value = params.get(key);
@@ -242,10 +246,13 @@ public class GenericForm extends AbstractVisualComponent implements IAction {
 
 				if (value instanceof Object[]) {
 					finalValue = StringHelper.arrayToString((Object[]) params.get(key), ",");
-					out.println(key + '=' + finalValue);
+					out.println(key + ':');
+					out.println(finalValue);
 				} else {
-					out.println(key + '=' + finalValue);
+					out.println(key + ':');
+					out.println(finalValue);
 				}
+				out.println("");
 				result.put(key, finalValue);
 			}
 		}
@@ -257,7 +264,7 @@ public class GenericForm extends AbstractVisualComponent implements IAction {
 		}
 
 		if (errorFields.size() == 0) {
-			String mailContent = StringHelper.sortText(new String(outStream.toByteArray()));
+			String mailContent = new String(outStream.toByteArray());
 
 			logger.info("mail content : " + mailContent);
 
@@ -293,7 +300,7 @@ public class GenericForm extends AbstractVisualComponent implements IAction {
 				if (emailBCC != null) {
 					bccEmail = new InternetAddress(emailBCC);
 				}
-				
+
 				List<InternetAddress> ccList = null;
 				if (ccEmail != null) {
 					ccList = Arrays.asList(ccEmail);
@@ -302,7 +309,7 @@ public class GenericForm extends AbstractVisualComponent implements IAction {
 				if (bccEmail != null) {
 					bccList = Arrays.asList(bccEmail);
 				}
-				
+
 				mailService.sendMail(null, fromEmail, toEmail, ccList, bccList, subject, mailContent, false);
 			}
 

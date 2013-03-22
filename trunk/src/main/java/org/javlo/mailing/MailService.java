@@ -7,9 +7,7 @@ package org.javlo.mailing;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
-import java.io.OutputStreamWriter;
 import java.io.PrintStream;
-import java.io.PrintWriter;
 import java.util.Arrays;
 import java.util.Date;
 import java.util.LinkedList;
@@ -203,7 +201,7 @@ public class MailService {
 				} else {
 					w.println("");
 				}
-				
+
 				w.println("FROM:");
 				w.println(sender.toString());
 				w.print("TO: #");
