@@ -440,8 +440,8 @@ public class CSVFactory {
 			}
 			List<Map<String, String>> data = loadContentAsMap(file);
 			Map<String, String> newLine = new HashMap<String, String>();
-			newLine.put("key1.2", "new \"value\" 1.2");
-			newLine.put("lastname", "Vandermaesen");
+			newLine.put("lastname", "Patrick \"vandermaesen\"");
+			newLine.put("firstname", "Patrick\n\r vandermaesen");
 			data.add(newLine);
 			storeContentAsMap(file, data);
 		} catch (IOException e) {
