@@ -435,9 +435,12 @@ public class CSVFactory {
 	public static void main(String[] args) {
 		try {
 			File file = new File("c:/trans/test.csv");
+			if (!file.exists()) {
+				file.createNewFile();
+			}
 			List<Map<String, String>> data = loadContentAsMap(file);
 			Map<String, String> newLine = new HashMap<String, String>();
-			newLine.put("key1.2", "new value 1.2");
+			newLine.put("key1.2", "new \"value\" 1.2");
 			newLine.put("lastname", "Vandermaesen");
 			data.add(newLine);
 			storeContentAsMap(file, data);

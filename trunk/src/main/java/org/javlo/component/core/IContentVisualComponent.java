@@ -44,7 +44,7 @@ public interface IContentVisualComponent {
 	static public String DEFAULT_COLOR = "74AA27";
 	static public String TEXT_COLOR = "3F3F3F";
 	static public String LINK_COLOR = "F79A0A";
-	static public String TITLE_COLOR = "E9320F";
+	static public String META_COLOR = "E9320F";
 	static public String GRAPHIC_COLOR = "86C12D";
 	static public String ECOM_COLOR = "DDDDDD";
 	static public String DYN_COMP_COLOR = "99CCF9";

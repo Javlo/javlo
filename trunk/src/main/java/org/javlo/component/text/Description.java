@@ -23,7 +23,7 @@ public class Description extends AbstractVisualComponent {
 
 	@Override
 	public String getHexColor() {
-		return TEXT_COLOR;
+		return META_COLOR;
 	}
 
 	@Override
@@ -103,7 +103,7 @@ public class Description extends AbstractVisualComponent {
 	private boolean isNotDisplayHTML(ContentContext ctx) {
 		return StringHelper.neverNull(getStyle(ctx)).equals("hidden");
 	}
-	
+
 	@Override
 	public boolean isRealContent(ContentContext ctx) {
 		return !isNotDisplayHTML(ctx) && getValue().length() > 0;

@@ -165,7 +165,7 @@ public class ImageTitle extends Image {
 
 	@Override
 	public String getHexColor() {
-		return TITLE_COLOR;
+		return META_COLOR;
 	}
 	
 	@Override

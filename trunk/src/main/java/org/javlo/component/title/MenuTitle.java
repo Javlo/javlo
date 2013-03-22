@@ -38,7 +38,7 @@ public class MenuTitle extends AbstractVisualComponent {
 	
 	@Override
 	public String getHexColor() {
-		return TITLE_COLOR;
+		return META_COLOR;
 	}
 
 	/*public String getHelpURL(String lang) {

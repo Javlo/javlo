@@ -3,7 +3,7 @@
 
 # GLOBAL COMPONENTS
 
---content.title.title
+--content.title.meta
 
 org.javlo.component.title.Title
 org.javlo.component.title.SubTitle
@@ -13,10 +13,11 @@ org.javlo.component.title.WebSiteTitle
 org.javlo.component.meta.DateComponent
 org.javlo.component.meta.LocationComponent
 org.javlo.component.meta.TimeRangeComponent
+org.javlo.component.text.Description
 
 --content.title.text
 
-org.javlo.component.text.Description
+
 org.javlo.component.text.Paragraph
 org.javlo.component.text.XHTML
 org.javlo.component.text.WysiwygParagraph

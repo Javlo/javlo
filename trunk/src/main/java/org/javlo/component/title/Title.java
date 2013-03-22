@@ -51,7 +51,7 @@ public class Title extends AbstractVisualComponent {
 
 	@Override
 	public String getHexColor() {
-		return TITLE_COLOR;
+		return META_COLOR;
 	}
 
 	@Override
