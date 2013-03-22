@@ -171,7 +171,7 @@ public class DateComponent extends AbstractVisualComponent implements IDate {
 
 	@Override
 	public String getHexColor() {
-		return TITLE_COLOR;
+		return META_COLOR;
 	}
 
 	@Override
