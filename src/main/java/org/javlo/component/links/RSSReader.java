@@ -43,12 +43,12 @@ public class RSSReader extends ComplexPropertiesLink {
 
 		private Boolean running = false;
 
-		private String rule;
-		private String style;
+		private final String rule;
+		private final String style;
 
-		private DateFormat dateFormat;
+		private final DateFormat dateFormat;
 
-		private RSSReader comp;
+		private final RSSReader comp;
 
 		private ReadRSSThread(RSSReader inComp, DateFormat inDateFormat, String inRule, String inStyle) {
 			comp = inComp;
@@ -132,7 +132,6 @@ public class RSSReader extends ComplexPropertiesLink {
 
 	protected static final String RULE_KEY = "rule";
 
-
 	protected Calendar getBackDate(String style) {
 		Calendar backDate = Calendar.getInstance();
 		int backDay = 9999; /*
@@ -163,13 +162,13 @@ public class RSSReader extends ComplexPropertiesLink {
 
 	@Override
 	public int getComplexityLevel() {
-		return COMPLEXITY_ADMIN;
+		return COMPLEXITY_EASY;
 	}
 
 	public String getRuleParamName() {
 		return "rule" + ID_SEPARATOR + getId();
 	}
-	
+
 	public String getRule() {
 		return properties.getProperty(RULE_KEY, ALWAYS);
 	}
@@ -357,7 +356,6 @@ public class RSSReader extends ComplexPropertiesLink {
 
 	}
 
-	
 	// TODO: apply rules to all components in common bar ?
 	public String[] getRuleLabelList(ContentContext ctx) {
 		try {
@@ -377,7 +375,7 @@ public class RSSReader extends ComplexPropertiesLink {
 	public String[] getRuleList(ContentContext ctx) {
 		return new String[] { ALWAYS, STAY_1D, STAY_3D, STAY_1W, STAY_1M, STAY_1Y, STAY_1N, STAY_3N, STAY_6N, STAY_10N };
 	}
-	
+
 	public String getRuleTitle(ContentContext ctx) {
 		try {
 			I18nAccess i18nAccess = I18nAccess.getInstance(ctx.getRequest());
@@ -388,7 +386,6 @@ public class RSSReader extends ComplexPropertiesLink {
 		return "content.rss-reader.rule";
 	}
 
-	
 	@Override
 	public String getSuffixViewXHTMLCode(ContentContext ctx) {
 		return "</div>";
@@ -432,7 +429,7 @@ public class RSSReader extends ComplexPropertiesLink {
 		/* check if the content of db is correct version */
 		if (getValue().trim().length() > 0) {
 			properties.load(stringToStream(getValue()));
-			
+
 			// legacy: get rule from former style
 			if (Arrays.asList(getRuleList(newContext)).contains(getStyle(newContext))) {
 				properties.setProperty(RULE_KEY, getStyle(newContext));

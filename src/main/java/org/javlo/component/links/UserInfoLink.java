@@ -130,7 +130,7 @@ public class UserInfoLink extends AbstractVisualComponent {
 
 	@Override
 	public String getHexColor() {
-		return LINK_COLOR;
+		return DEFAULT_COLOR;
 	}
 
 	@Override
