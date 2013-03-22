@@ -210,4 +210,10 @@ public class DynamicComponentList extends AbstractPropertiesComponent {
 		}
 		return true;
 	}
+
+	@Override
+	public String getHexColor() {
+		return DEFAULT_COLOR;
+	}
+
 }
