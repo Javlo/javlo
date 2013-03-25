@@ -9,7 +9,10 @@ import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.Date;
+import java.util.Enumeration;
 import java.util.HashMap;
+import java.util.Hashtable;
+import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
@@ -21,6 +24,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import org.javlo.actions.IAction;
+import org.javlo.component.config.ComponentConfig;
 import org.javlo.component.core.AbstractVisualComponent;
 import org.javlo.component.core.ComponentBean;
 import org.javlo.component.core.IContentVisualComponent;
@@ -73,6 +77,33 @@ public class GenericForm extends AbstractVisualComponent implements IAction {
 		if (getValue() == null || getValue().trim().length() == 0) {
 			setValue(StringHelper.sortText(getConfig(ctx).getRAWConfig(ctx, ctx.getCurrentTemplate(), getType())));
 		}
+	}
+	
+	@Override
+	public Map<String, String> getRenderes(ContentContext ctx) {
+		Properties properties = getLocalConfig(false);
+		if (properties == null) {
+			return Collections.EMPTY_MAP;
+		}
+		Map<String, String> outRenderers = new Hashtable<String, String>();
+		Enumeration<Object> keys = properties.keys();
+		while (keys.hasMoreElements()) {
+			String key = (String) keys.nextElement();
+			if (key.startsWith("renderer.") && key.split(".").length < 3) {
+				String value = (String) properties.getProperty(key);
+				key = key.replaceFirst("renderer.", "");
+				outRenderers.put(key, value);
+			}
+		}
+		return outRenderers;
+	}
+	
+	@Override
+	public ComponentConfig getConfig(ContentContext ctx) {
+		if ((ctx == null) || (ctx.getRequest() == null) || ((ctx.getRequest().getSession() == null))) {
+			return ComponentConfig.getInstance();
+		}
+		return ComponentConfig.getInstance(ctx, getType());
 	}
 
 	@Override
@@ -156,6 +187,7 @@ public class GenericForm extends AbstractVisualComponent implements IAction {
 			}
 		}
 	}
+	
 
 	@Override
 	public void performEdit(ContentContext ctx) throws Exception {
