@@ -90,7 +90,7 @@ public class UserAction extends AbstractModuleAction {
 		if (!userContext.getMode().equals(UserModuleContext.VIEW_MY_SELF)) {
 			String CSVLink = URLHelper.createStaticURL(ctx, "/users-list/" + globalContext.getContextKey() + "-users.csv");
 			if (userContext.getMode().equals(UserModuleContext.ADMIN_USERS_LIST)) {
-				CSVLink = URLHelper.createStaticURL(ctx, "/users-admin-list/" + globalContext.getContextKey() + "-users.csv");
+				CSVLink = URLHelper.createStaticURL(ctx, "/users-list/" + globalContext.getContextKey() + "-admin-users.csv");
 				CSVLink = CSVLink + "?admin=true";
 			}
 			ctx.getRequest().setAttribute("CSVLink", CSVLink);
