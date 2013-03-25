@@ -588,11 +588,13 @@ public class AdminAction extends AbstractModuleAction {
 				List<Template> templates = TemplateFactory.getAllTemplates(request.getSession().getServletContext());
 				Collections.sort(templates);
 
-				Template defaultTemplate = TemplateFactory.getDiskTemplate(request.getSession().getServletContext(), currentGlobalContext.getDefaultTemplate());
+				Template defaultTemplate = TemplateFactory.getTemplates(request.getSession().getServletContext()).get(currentGlobalContext.getDefaultTemplate());
 
 				if (defaultTemplate != null) {
 					try {
-						defaultTemplate.importTemplateInWebapp(StaticConfig.getInstance(ctx.getRequest().getSession().getServletContext()), ctx);
+						if (!defaultTemplate.isTemplateInWebapp(viewCtx)) {
+							defaultTemplate.importTemplateInWebapp(StaticConfig.getInstance(ctx.getRequest().getSession().getServletContext()), ctx);
+						}
 						String templateImageURL = URLHelper.createTransformStaticTemplateURL(ctx, defaultTemplate, "template", defaultTemplate.getVisualFile());
 						request.setAttribute("templateImageUrl", templateImageURL);
 					} catch (Exception e) {
