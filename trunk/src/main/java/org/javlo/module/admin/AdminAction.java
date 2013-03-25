@@ -56,6 +56,7 @@ import org.javlo.tracking.Tracker;
 import org.javlo.user.AdminUserFactory;
 import org.javlo.user.AdminUserSecurity;
 import org.javlo.user.User;
+import org.javlo.user.UserFactory;
 import org.javlo.user.exception.JavloSecurityException;
 import org.javlo.ztatic.FileCache;
 
@@ -1001,30 +1002,45 @@ public class AdminAction extends AbstractModuleAction {
 		return msg;
 	}
 
-	public static final String performClearCache(HttpServletRequest request, GlobalContext globalContext, HttpSession session, User user, ContentContext ctx, MessageRepository messageRepository, I18nAccess i18nAccess, FileCache fileCache) throws Exception {
+	public static final String performClearCache(HttpServletRequest request, GlobalContext globalContext, HttpSession session, User user, ContentContext ctx, MessageRepository messageRepository, I18nAccess i18nAccess) throws Exception {
 
 		if (!AdminUserSecurity.getInstance().isMaster(user) && !AdminUserSecurity.getInstance().isGod(user) && !AdminUserSecurity.getInstance().isAdmin(user)) {
-			return "1.security error !";
+			return "security error !";
 		}
 
 		String currentContextKey = request.getParameter("context");
 		if (currentContextKey == null) { // param context is used only for check the type of call, but you can clear only current context
 			ContentService.clearAllContextCache(ctx);
-			fileCache.clear();
 		} else {
 
 			if (!AdminUserSecurity.getInstance().isMaster(user) && !AdminUserSecurity.getInstance().isGod(user)) {
-				return "2.security error !";
+				return "security error !";
 			}
-
-			fileCache.clear(globalContext.getContextKey());
 			ContentService.clearCache(ctx, globalContext);
+			AdminUserFactory.createAdminUserFactory(globalContext, session).reload(globalContext, session);
+			UserFactory.createUserFactory(globalContext, session).reload(globalContext, session);
 		}
 		messageRepository.setGlobalMessageAndNotification(ctx, new GenericMessage(i18nAccess.getText("admin.message.clear cache"), GenericMessage.INFO));
 		Tracker.getTracker(globalContext, session);
 		LogService.getInstance(session).clear();
 
 		System.gc();
+		return null;
+	}
+
+	public static String performClearimagecache(HttpServletRequest request, GlobalContext globalContext, HttpSession session, User user, ContentContext ctx, MessageRepository messageRepository, I18nAccess i18nAccess, FileCache fileCache) {
+		if (!AdminUserSecurity.getInstance().isMaster(user) && !AdminUserSecurity.getInstance().isGod(user) && !AdminUserSecurity.getInstance().isAdmin(user)) {
+			return "security error !";
+		}
+		String currentContextKey = request.getParameter("context");
+		if (currentContextKey == null) { // param context is used only for check the type of call, but you can clear only current context
+			fileCache.clear();
+		} else {
+			if (!AdminUserSecurity.getInstance().isMaster(user) && !AdminUserSecurity.getInstance().isGod(user)) {
+				return "security error !";
+			}
+			fileCache.clear(globalContext.getContextKey());
+		}
 		return null;
 	}
 

@@ -14,6 +14,7 @@
 <c:if test="${info.admin}">
 <c:set var="paramContext" value="&context=${context}" />
 <a class="action-button clear-cache" href="${info.currentURL}?webaction=clearcache${not empty context?paramContext:''}"><span>${i18n.edit['admin.clear-cache']}</span></a>
+<a class="action-button clear-cache" href="${info.currentURL}?webaction=clearimagecache${not empty context?paramContext:''}"><span>${i18n.edit['admin.clear-image-cache']}</span></a>
 </c:if>
 <div class="clear">&nbsp;</div>
 
