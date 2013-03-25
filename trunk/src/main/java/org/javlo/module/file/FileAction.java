@@ -343,7 +343,7 @@ public class FileAction extends AbstractModuleAction {
 	public String performUpdateFocus(RequestService rs, ContentContext ctx, GlobalContext globalContext, FileModuleContext fileModuleContext, I18nAccess i18nAccess, MessageRepository messageRepository) throws Exception {
 		File folder = getFolder(ctx);
 		if (rs.getParameter("image_path", null) != null) {
-			folder = new File(getContextROOTFolder(ctx), rs.getParameter("image_path", null));
+			folder = new File(globalContext.getDataFolder(), rs.getParameter("image_path", null));
 		}
 		boolean found = false;
 		if (folder.exists()) {

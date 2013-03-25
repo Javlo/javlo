@@ -2,6 +2,7 @@ package org.javlo.servlet;
 
 import java.awt.image.BufferedImage;
 import java.io.File;
+import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
@@ -20,7 +21,6 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import org.apache.commons.lang.StringUtils;
 import org.javlo.config.StaticConfig;
 import org.javlo.context.ContentContext;
 import org.javlo.context.GlobalContext;
@@ -453,6 +453,7 @@ public class ImageTransformServlet extends HttpServlet {
 		// org.javlo.helper.Logger.stepCount("transform", "end tracking");
 
 		String pathInfo = request.getPathInfo().substring(1);
+		
 		pathInfo = pathInfo.replace('\\', '/'); // for windows server
 
 		String dataFolder = globalContext.getDataFolder();
@@ -500,7 +501,7 @@ public class ImageTransformServlet extends HttpServlet {
 					e1.printStackTrace();
 				}
 			}
-
+			
 			// org.javlo.helper.Logger.stepCount("transform", "template");
 
 			boolean localFile = false;
@@ -600,11 +601,18 @@ public class ImageTransformServlet extends HttpServlet {
 				String key = ImageHelper.createSpecialDirectory(globalContext.getContextKey(), filter, area, deviceCode, template);
 				if (fc.getFileName(key, imageName).exists()) {
 					// response.sendRedirect(URLHelper.createStaticURL(ctx, fc.getRelativeFilePath(key, imageName)));
-					String url = URLHelper.createStaticURL(ctx, fc.getRelativeFilePath(key, imageName));
+					/*String url = URLHelper.createStaticURL(ctx, fc.getRelativeFilePath(key, imageName));
 					if (ctx.getPathPrefix().length() > 0 && url.startsWith('/' + ctx.getPathPrefix())) {
 						url = StringUtils.replaceOnce(url, '/' + ctx.getPathPrefix(), "");
 					}
-					request.getRequestDispatcher(url).forward(request, response);
+					request.getRequestDispatcher(url).forward(request, response);*/
+					InputStream in = null;
+					try {
+						in = new FileInputStream(fc.getFileName(key,imageName));
+						ResourceHelper.writeStreamToStream(in, response.getOutputStream());
+					} finally {
+						ResourceHelper.closeResource(in);
+					}
 					return;
 
 				}
