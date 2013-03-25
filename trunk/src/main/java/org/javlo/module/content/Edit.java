@@ -1283,6 +1283,7 @@ public class Edit extends AbstractModuleAction {
 		}
 
 		ContentContext newCtx = editCtx.getContextForCopy(ctx);
+		newCtx.setRenderMode(ContentContext.EDIT_MODE);
 		newCtx.setRequest(ctx.getRequest());
 		newCtx.setResponse(ctx.getResponse());
 

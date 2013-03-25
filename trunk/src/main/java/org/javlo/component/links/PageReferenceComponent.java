@@ -1124,6 +1124,7 @@ public class PageReferenceComponent extends ComplexPropertiesLink implements IAc
 
 	@Override
 	public void prepareView(ContentContext ctx) throws Exception {
+
 		super.prepareView(ctx);
 		Calendar backDate = getBackDate(ctx);
 
