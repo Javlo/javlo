@@ -456,18 +456,14 @@ public class Video extends GlobalImage implements IAction, IVideo {
 	public static final String performAccess(HttpServletRequest request, HttpServletResponse response) throws Exception {
 		RequestService requestService = RequestService.getInstance(request);
 		String compId = requestService.getParameter("comp-id", null);
-		System.out.println("***** Video.performAccess : compId = " + compId); // TODO: remove debug trace
 		if (compId != null) {
 			ContentContext ctx = ContentContext.getContentContext(request, response);
 			ContentService content = ContentService.getInstance(ctx.getRequest());
 			IContentVisualComponent comp = content.getComponent(ctx, compId);
 			if (comp != null && comp instanceof Video) {
 				((Video) comp).addOneAccess(ctx);
-				System.out.println("***** Video.performAccess : #access = " + ((Video) comp).getAccess(ctx, 30)); // TODO: remove debug trace
 			}
-
 		}
-
 		return null;
 	}
 

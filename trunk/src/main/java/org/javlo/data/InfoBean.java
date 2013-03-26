@@ -101,9 +101,7 @@ public class InfoBean {
 	}
 
 	public String getCurrentAjaxURL() {
-		ContentContext ajaxURL = ctx.getContextWithOtherRenderMode(ContentContext.PREVIEW_MODE);
-		ajaxURL.setAjax(true);
-		return URLHelper.createURL(ajaxURL.getFreeContentContext());
+		return URLHelper.createAjaxURL(ctx, ctx.getPath());
 	}
 
 	public String getPDFURL() {

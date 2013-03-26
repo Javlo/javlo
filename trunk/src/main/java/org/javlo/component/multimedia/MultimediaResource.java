@@ -63,6 +63,7 @@ public class MultimediaResource {
 
 	}
 
+	private String id;
 	private String URL;
 	private String previewURL;
 	private String path;
@@ -258,5 +259,13 @@ public class MultimediaResource {
 		} else {
 			return "unknow";
 		}
+	}
+
+	public String getId() {
+		return id;
+	}
+
+	public void setId(String id) {
+		this.id = id;
 	}
 }
