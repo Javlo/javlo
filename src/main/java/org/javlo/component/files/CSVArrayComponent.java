@@ -303,7 +303,7 @@ public class CSVArrayComponent extends AbstractFileComponent {
 		if (content.trim().length() == 0) {
 			content = "&nbsp;";
 		}
-		return content;
+		return XHTMLHelper.autoLink(content);
 	}
 
 	@Override
