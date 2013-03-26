@@ -309,7 +309,6 @@ public class UserFactory implements IUserFactory, Serializable {
 	 */
 	@Override
 	public List<IUserInfo> getUserInfoList() {
-
 		synchronized (lock) {
 			if (userInfoList == null) {
 				String userInfoPath = getFileName();
@@ -504,7 +503,7 @@ public class UserFactory implements IUserFactory, Serializable {
 
 	@Override
 	public void reload(GlobalContext globalContext, HttpSession session) {
-		userInfoList = null;
+		releaseUserInfoList();
 	}
 
 	/*
