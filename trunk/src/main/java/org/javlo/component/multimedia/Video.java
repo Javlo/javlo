@@ -468,13 +468,6 @@ public class Video extends GlobalImage implements IAction, IVideo {
 	}
 
 	@Override
-	public Collection<String> getExternalResources(ContentContext ctx) {
-		Collection<String> resources = new LinkedList<String>();
-		resources.add("/js/freefw/ajax.js");
-		return resources;
-	}
-
-	@Override
 	public String getPreviewURL(ContentContext ctx, String filter) {
 		if (filter == null) {
 			filter = getImageFilter(ctx);
