@@ -100,6 +100,12 @@ public class InfoBean {
 		return URLHelper.createURL(ctx.getContextWithOtherRenderMode(ContentContext.PREVIEW_MODE).getFreeContentContext());
 	}
 
+	public String getCurrentAjaxURL() {
+		ContentContext ajaxURL = ctx.getContextWithOtherRenderMode(ContentContext.PREVIEW_MODE);
+		ajaxURL.setAjax(true);
+		return URLHelper.createURL(ajaxURL.getFreeContentContext());
+	}
+
 	public String getPDFURL() {
 		ContentContext pdfCtx = new ContentContext(ctx);
 		pdfCtx.setFormat("pdf");
