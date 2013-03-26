@@ -616,4 +616,31 @@ public class I18nAccess implements Serializable {
 		}
 		return months;
 	}
+
+	public static void main(String[] args) {
+		Properties zagreb = new Properties();
+		zagreb.put("test", "val zagreb");
+		Properties io = new Properties();
+		io.put("test", "val io");
+		Properties galaxy = new Properties();
+		galaxy.put("test", "val galaxy");
+		Stack<Properties> stack = new Stack<Properties>();
+		stack.push(zagreb);
+		stack.push(io);
+		stack.push(galaxy);
+
+		Properties templateView = new Properties();
+		templateView.clear();
+		while (!stack.empty()) {
+			templateView.putAll(stack.pop());
+		}
+
+		templateView.putAll(galaxy);
+		templateView.putAll(io);
+		templateView.putAll(zagreb);
+
+		System.out.println("***** I18nAccess.test = " + templateView.getProperty("test")); // TODO: remove debug trace
+
+	}
+
 }

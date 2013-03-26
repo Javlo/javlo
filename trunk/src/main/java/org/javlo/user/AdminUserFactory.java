@@ -9,7 +9,6 @@ import java.util.logging.Logger;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 
-import org.javlo.config.StaticConfig;
 import org.javlo.context.EditContext;
 import org.javlo.context.GlobalContext;
 import org.javlo.helper.URLHelper;
@@ -46,21 +45,18 @@ public class AdminUserFactory extends UserFactory {
 		return res;
 	}
 
+	/**
+	 * @deprecated use createUserFactory
+	 * @param globalContext
+	 * @param session
+	 * @return
+	 */
+	@Deprecated
 	public static AdminUserFactory createAdminUserFactory(GlobalContext globalContext, HttpSession session) {
-		StaticConfig staticConfig = StaticConfig.getInstance(session);
-		AdminUserFactory res = (AdminUserFactory) session.getServletContext().getAttribute(staticConfig.getAdminUserFactoryClassName());
-		if (res == null) {
-			try {
-				res = staticConfig.getAdminUserFactory(globalContext, session);
-				logger.fine("create userFactory : " + res.getClass().getName());
-			} catch (Exception e) {
-				logger.severe(e.getMessage());
-				e.printStackTrace();
-			}
-			res.init(globalContext, session);
-			session.getServletContext().setAttribute(staticConfig.getAdminUserFactoryClassName(), res);
-		}
-		return res;
+		return createUserFactory(globalContext, session);
+		/*
+		 * StaticConfig staticConfig = StaticConfig.getInstance(session); AdminUserFactory res = (AdminUserFactory) session.getServletContext().getAttribute(staticConfig.getAdminUserFactoryClassName()); if (res == null) { try { res = staticConfig.getAdminUserFactory(globalContext, session); logger.fine("create userFactory : " + res.getClass().getName()); } catch (Exception e) { logger.severe(e.getMessage()); e.printStackTrace(); } res.init(globalContext, session); session.getServletContext().setAttribute(staticConfig.getAdminUserFactoryClassName(), res); } return res;
+		 */
 	}
 
 	@Override

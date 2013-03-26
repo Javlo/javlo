@@ -1003,26 +1003,24 @@ public class AdminAction extends AbstractModuleAction {
 	}
 
 	public static final String performClearCache(HttpServletRequest request, GlobalContext globalContext, HttpSession session, User user, ContentContext ctx, MessageRepository messageRepository, I18nAccess i18nAccess) throws Exception {
-
 		if (!AdminUserSecurity.getInstance().isMaster(user) && !AdminUserSecurity.getInstance().isGod(user) && !AdminUserSecurity.getInstance().isAdmin(user)) {
 			return "security error !";
 		}
-
 		String currentContextKey = request.getParameter("context");
 		if (currentContextKey == null) { // param context is used only for check the type of call, but you can clear only current context
 			ContentService.clearAllContextCache(ctx);
 		} else {
-
 			if (!AdminUserSecurity.getInstance().isMaster(user) && !AdminUserSecurity.getInstance().isGod(user)) {
 				return "security error !";
 			}
 			ContentService.clearCache(ctx, globalContext);
-			AdminUserFactory.createAdminUserFactory(globalContext, session).reload(globalContext, session);
-			UserFactory.createUserFactory(globalContext, session).reload(globalContext, session);
 		}
 		messageRepository.setGlobalMessageAndNotification(ctx, new GenericMessage(i18nAccess.getText("admin.message.clear cache"), GenericMessage.INFO));
 		Tracker.getTracker(globalContext, session);
 		LogService.getInstance(session).clear();
+
+		AdminUserFactory.createUserFactory(globalContext, session).reload(globalContext, session);
+		UserFactory.createUserFactory(globalContext, session).reload(globalContext, session);
 
 		System.gc();
 		return null;
