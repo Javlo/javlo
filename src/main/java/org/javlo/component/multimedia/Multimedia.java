@@ -228,6 +228,7 @@ public class Multimedia extends TimeRangeComponent implements IImageTitle {
 		resource.setTags(video.getTags(lgCtx));
 		resource.setIndex(video.getPopularity(lgCtx));
 		resource.setLanguage(lgCtx.getRequestContentLanguage());
+		resource.setId(video.getId());
 		return resource;
 	}
 
