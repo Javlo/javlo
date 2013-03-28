@@ -96,10 +96,10 @@ public class ConfigService {
 
 	private static AppConfig loadBean(Properties properties) {
 		AppConfig bean = new AppConfig();
-		bean.setProxyHost(properties.getProperty("http.proxyHost", System.getProperty("http.proxyHost")));
-		bean.setProxyPort(safeParseInt(properties.getProperty("http.proxyPort", System.getProperty("http.proxyPort"))));
-		bean.setProxyUsername(properties.getProperty("http.proxyUserName"));
-		bean.setProxyPassword(properties.getProperty("http.proxyPassword"));
+		bean.setProxyHost(StringHelper.trimAndNullify(properties.getProperty("http.proxyHost", System.getProperty("http.proxyHost"))));
+		bean.setProxyPort(safeParseInt(StringHelper.trimAndNullify(properties.getProperty("http.proxyPort", System.getProperty("http.proxyPort")))));
+		bean.setProxyUsername(StringHelper.trimAndNullify(properties.getProperty("http.proxyUserName")));
+		bean.setProxyPassword(StringHelper.trimAndNullify(properties.getProperty("http.proxyPassword")));
 
 		List<ServerConfig> servers = new LinkedList<ServerConfig>();
 		int i = 0;
@@ -137,10 +137,10 @@ public class ConfigService {
 			String base = "server." + i + ".";
 			out.setProperty(base + "url", server.getServerURL());
 		}
-		out.setProperty("http.proxyHost", bean.getProxyHost());
-		out.setProperty("http.proxyPort", "" + bean.getProxyPort());
-		out.setProperty("http.proxyUserName", bean.getProxyUsername());
-		out.setProperty("http.proxyPassword", bean.getProxyPassword());
+		out.setProperty("http.proxyHost", StringHelper.neverNull(bean.getProxyHost()));
+		out.setProperty("http.proxyPort", StringHelper.neverNull(bean.getProxyPort()));
+		out.setProperty("http.proxyUserName", StringHelper.neverNull(bean.getProxyUsername()));
+		out.setProperty("http.proxyPassword", StringHelper.neverNull(bean.getProxyPassword()));
 		return out;
 	}
 
