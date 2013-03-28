@@ -34,6 +34,8 @@ public class ServerClientService {
 
 	private final ServerConfig server;
 
+	private Date lastNotificationDate;
+
 	public ServerClientService(ServerConfig server, String proxyHost, Integer proxyPort, String proxyUsername, String proxyPassword) {
 		this.server = server;
 
@@ -52,6 +54,18 @@ public class ServerClientService {
 
 	public synchronized void dispose() {
 		httpClient.getConnectionManager().shutdown();
+	}
+
+	public List<RemoteNotification> getNewDataNotifications() throws ClientProtocolException, IOException {
+		List<RemoteNotification> notifications = callDataNotifications(lastNotificationDate);
+		if (notifications != null && !notifications.isEmpty()) {
+			for (RemoteNotification remoteNotification : notifications) {
+				if (lastNotificationDate == null || remoteNotification.getCreationDate().after(lastNotificationDate)) {
+					lastNotificationDate = remoteNotification.getCreationDate();
+				}
+			}
+		}
+		return notifications;
 	}
 
 	public List<RemoteNotification> callDataNotifications(Date lastDate) throws ClientProtocolException, IOException {

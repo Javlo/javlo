@@ -1,6 +1,8 @@
 package org.javlo.client.localmodule.service;
 
-import java.util.Date;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -31,8 +33,6 @@ public class NotificationClientService {
 
 	private boolean waiting = false;
 
-	private Date lastDate;
-
 	private NotificationClientService() {
 	}
 
@@ -41,6 +41,9 @@ public class NotificationClientService {
 			if (!isStarted()) {
 				stopping = false;
 				synchroThread = new Thread(NotificationClientService.class.getSimpleName()) {
+					{
+						setDaemon(true);
+					}
 					@Override
 					public void run() {
 						try {
@@ -89,14 +92,7 @@ public class NotificationClientService {
 		try {
 			synchronized (lock) {
 				while (!stopping) {
-					ServerConfig[] servers;
-					synchronized (factory.getConfig().lock) {
-						servers = factory.getConfig().getServers();
-					}
-					for (ServerConfig server : servers) {
-						ServerClientService client = factory.getClient(server);
-						refreshRemoteNotifications(server, client);
-					}
+					refreshNotifications();
 					//Wait next loop
 					logger.info("- wait ----------------------------------------------------------");
 					waiting = true;
@@ -110,20 +106,27 @@ public class NotificationClientService {
 		}
 	}
 
-	private void refreshRemoteNotifications(ServerConfig server, ServerClientService client) {
-		try {
-			List<RemoteNotification> notifications = client.callDataNotifications(lastDate);
-			if (notifications != null && !notifications.isEmpty()) {
-				for (RemoteNotification remoteNotification : notifications) {
-					if (lastDate == null || remoteNotification.getCreationDate().after(lastDate)) {
-						lastDate = remoteNotification.getCreationDate();
-					}
+	private void refreshNotifications() {
+		List<RemoteNotification> allNewNotifications = new ArrayList<RemoteNotification>();
+		for (ServerConfig server : factory.getConfig().getBean().getServers()) {
+			ServerClientService client = factory.getClient(server);
+			try {
+				List<RemoteNotification> notifications = client.getNewDataNotifications();
+				if (notifications != null && !notifications.isEmpty()) {
+					allNewNotifications.addAll(notifications);
 				}
-				factory.getNotificationService().pushNotifications(notifications);
+			} catch (Exception ex) {
+				logger.log(Level.WARNING, "Exception on notification request.", ex);
 			}
-		} catch (Exception ex) {
-			logger.log(Level.WARNING, "Exception on notification request.", ex);
+		}
+		if (!allNewNotifications.isEmpty()) {
+			Collections.sort(allNewNotifications, new Comparator<RemoteNotification>() {
+				@Override
+				public int compare(RemoteNotification o1, RemoteNotification o2) {
+					return o1.getCreationDate().compareTo(o2.getCreationDate());
+				}
+			});
+			factory.getNotificationService().pushNotifications(allNewNotifications);
 		}
 	}
-
 }

@@ -3,8 +3,8 @@ package org.javlo.client.localmodule.service;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
-import java.util.Map.Entry;
 
+import org.javlo.client.localmodule.model.AppConfig;
 import org.javlo.client.localmodule.model.ServerConfig;
 import org.javlo.client.localmodule.ui.ClientTray;
 
@@ -59,11 +59,9 @@ public class ServiceFactory {
 			synchronized (clients) {
 				client = clients.get(serverConfig.getServerURL());
 				if (client == null) {
-					ConfigService c = getConfig();
-					synchronized (c.lock) {
-						client = new ServerClientService(serverConfig,
-								c.getProxyHost(), c.getProxyPort(), c.getProxyUsername(), c.getProxyPassword());
-					}
+					AppConfig c = getConfig().getBean();
+					client = new ServerClientService(serverConfig,
+							c.getProxyHost(), c.getProxyPort(), c.getProxyUsername(), c.getProxyPassword());
 					clients.put(serverConfig.getServerURL(), client);
 				}
 			}
@@ -74,11 +72,12 @@ public class ServiceFactory {
 	public void onConfigChange() {
 		getNotificationClient().start();
 		synchronized (clients) {
-			for (Iterator<Entry<String, ServerClientService>> iterator = clients.entrySet().iterator(); iterator.hasNext();) {
-				iterator.next().getValue().dispose();
+			for (Iterator<ServerClientService> iterator = clients.values().iterator(); iterator.hasNext();) {
+				iterator.next().dispose();
 				iterator.remove();
 			}
 		}
+		getNotificationService().clear();
 	}
 
 }

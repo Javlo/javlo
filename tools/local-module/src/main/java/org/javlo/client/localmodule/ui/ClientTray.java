@@ -42,6 +42,8 @@ public class ClientTray {
 
 	private PopupMenu menu;
 	private PopupMenu notificationsItem;
+	private MenuItem emptyNotification;
+	private MenuItem showAllNotifications;
 	private TrayIcon tray;
 	private Image passiveIcon;
 	private Image activeIcon;
@@ -66,18 +68,16 @@ public class ClientTray {
 		menu = new PopupMenu();
 
 		notificationsItem = new PopupMenu(i18n.get("menu.last-notifications"));
-		MenuItem emptyNotification = new MenuItem(i18n.get("menu.empty-notification"));
+		emptyNotification = new MenuItem(i18n.get("menu.empty-notification"));
 		emptyNotification.setEnabled(false);
 		notificationsItem.add(emptyNotification);
+		showAllNotifications = new MenuItem(i18n.get("menu.show-all-notifications"));
 
-		MenuItem openWebInterfaceItem = new MenuItem(i18n.get("menu.open-webinterface"));
 		MenuItem configItem = new MenuItem(i18n.get("menu.open-config"));
 		MenuItem aboutItem = new MenuItem(i18n.get("menu.about"));
 		MenuItem exitItem = new MenuItem(i18n.get("menu.exit"));
 
 		menu.add(notificationsItem);
-//		menu.addSeparator();
-//		menu.add(openWebInterfaceItem);
 		menu.addSeparator();
 		menu.add(configItem);
 		menu.add(aboutItem);
@@ -98,12 +98,14 @@ public class ClientTray {
 				onTrayClick(e);
 			}
 		});
-		openWebInterfaceItem.addActionListener(new ActionListener() {
+
+		showAllNotifications.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
-				getAction().openWebInterface();
+				getAction().showNotifications();
 			}
 		});
+
 		configItem.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
@@ -143,11 +145,17 @@ public class ClientTray {
 		if (notifications.size() > MAX_NOTIFICATIONS) {
 			notifications = notifications.subList(0, MAX_NOTIFICATIONS);
 		}
-		for (RemoteNotification notification : notifications) {
-			MenuItem mi = new MenuItem();
-			mi.setLabel(notification.getMenuLabel());
-			mi.addActionListener(new NotificationActionListener(notification));
-			notificationsItem.insert(mi, 0);
+		if (notifications.isEmpty()) {
+			notificationsItem.add(emptyNotification);
+		} else {
+			for (RemoteNotification notification : notifications) {
+				MenuItem mi = new MenuItem();
+				mi.setLabel(notification.getMenuLabel());
+				mi.addActionListener(new NotificationActionListener(notification));
+				notificationsItem.insert(mi, 0);
+			}
+//			notificationsItem.addSeparator();
+//			notificationsItem.add(showAllNotifications);
 		}
 	}
 
