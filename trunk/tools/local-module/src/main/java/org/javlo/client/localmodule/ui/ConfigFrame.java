@@ -3,6 +3,8 @@ package org.javlo.client.localmodule.ui;
 import java.util.Enumeration;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 import javax.swing.DefaultListModel;
 import javax.swing.JOptionPane;
@@ -21,6 +23,8 @@ import org.javlo.helper.StringHelper;
 public class ConfigFrame extends javax.swing.JDialog {
 
 	private static final long serialVersionUID = 7060664378303938141L;
+
+	private static final Logger logger = Logger.getLogger(ConfigFrame.class.getName());
 
 	private static ConfigFrame instance;
 
@@ -119,6 +123,7 @@ public class ConfigFrame extends javax.swing.JDialog {
 				ServiceFactory.getInstance().onConfigChange();
 				return true;
 			} catch (Exception ex) {
+				logger.log(Level.SEVERE, "Exception during save config.", ex);
 				try {
 					config.reload();
 				} catch (Exception ex2) {
