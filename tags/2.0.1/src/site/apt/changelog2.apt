@@ -1,0 +1,87 @@
+change log
+
+* 2.0 [15/06/2012]
+
+ * alpha version online. 
+
+* 2.0.0.8 [18/10/2012]
+
+ * Cache abstraction
+ 
+ * PageBean and infoBean transform as smart bean.
+ 
+ * short url  
+
+ * auto import data 1.4 >> 2.0
+ 
+* 2.0.0.9 [24/10/2012]
+
+ * page-reference : user default renderer mecanisms
+ 
+* 2.0.0.10 [08/11/2012]
+
+ * work list of MenuElement as List in place of Array
+ 
+ * jalvo work without portlet lib
+ 
+ * preview edition work with template with absolute reference to jQuery lib
+ 
+ * can desactivated preview mode
+ 
+* 2.0.0.11 [23/11/2012]
+
+ * preview move component
+ 
+ * some optimisation (reduce File access)
+ 
+ * Always close stream in ImageTransformServlet
+ 
+* 2.0.0.12 [12/12/2012]
+
+ * display error position if parsing error on content + interactive macro interface + import remote html page macro
+ 
+ * images transform at the same time.
+ 
+* 2.0.0.13 [22/12/2012]
+
+ * master user and master site
+ 
+ * facebook module ok
+ 
+ * no prefix is host 
+ 
+* 2.0.0.14 [22/01/2013]
+
+ * export component as csv and excel file
+ 
+ * SmartPageDescription - speed optimisation
+ 
+ * upload documents with drap and drop in preview mode.
+ 
+* 2.0.0.15 [11/02/2013]
+
+ * ehcache usage refactoring
+ 
+ * edit template css / image config
+ 
+ * browse all files for god user
+ 
+ * do not call disktemplates methods if not necessary
+ 
+* 2.0.0.16 [12/03/2013]
+ 
+ * i18n optimisation
+  
+ * active wizz optioin 
+ 
+ * UserInterfaceContext bug init correction
+ 
+* 2.0.0.17 [14/03/2013]
+
+ * correction bug : url special width context.
+ 
+ * correction bug : edit empty page with children
+
+* 2.0.0.18 21/03/2013]
+
+* 2.0.1 stable 28/03/2013

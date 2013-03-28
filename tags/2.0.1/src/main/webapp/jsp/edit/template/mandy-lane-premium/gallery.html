@@ -1,0 +1,538 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<title>Gallery | Mandy Lane - Premium Admin Template</title>
+<link rel="stylesheet" media="screen" href="css/style.css" />
+
+<!--[if IE 9]>
+    <link rel="stylesheet" media="screen" href="css/ie9.css"/>
+<![endif]-->
+
+<!--[if IE 8]>
+    <link rel="stylesheet" media="screen" href="css/ie8.css"/>
+<![endif]-->
+
+<!--[if IE 7]>
+    <link rel="stylesheet" media="screen" href="css/ie7.css"/>
+<![endif]-->
+
+<script type="text/javascript" src="js/plugins/jquery-1.7.min.js"></script>
+<script type="text/javascript" src="js/plugins/jquery-ui-1.8.16.custom.min.js"></script>
+<script type="text/javascript" src="js/plugins/jquery.validate.min.js"></script>
+<script type="text/javascript" src="js/plugins/jquery.colorbox-min.js"></script>
+<script type="text/javascript" src="js/custom/general.js"></script>
+<script type="text/javascript" src="js/custom/gallery.js"></script>
+</head>
+
+<body class="bodygrey">
+
+<div class="headerspace"></div>
+
+<div class="header">
+	
+    <form id="search" action="" method="post">
+    	<input type="text" name="keyword" /> <button class="searchbutton"></button>
+    </form>
+    
+    <div class="topheader">
+        <ul>
+            <li class="note">
+                <a href="pages/message.html" class="messagenotify">
+                    <span class="wrap">
+                        <span class="thicon msgicon"></span>
+                        <span class="count">1</span>
+                    </span>
+                </a>
+            </li>
+            <li class="note">
+            	<a href="pages/info.html" class="alertnotify">
+                	<span class="wrap">
+                    	<span class="thicon infoicon"></span>
+                        <span class="count">5</span>
+                    </span>
+                </a>
+            </li>
+        </ul><!--horMenu-->
+    </div><!--topheader-->
+
+
+    <!-- logo -->
+	<a href=""><img src="images/logo2.png" alt="Logo" /></a>
+    
+    <div class="tabmenu">
+    	<ul>
+        	<li><a href="dashboard.html" class="dashboard"><span>Dashboard</span></a></li>
+            <li><a href="elements.html" class="elements"><span>Elements</span></a>
+            	<ul class="subnav">
+                	<li><a href=""><span>Sub Menu One</span></a></li>
+                    <li><a href=""><span>Sub Menu Two</span></a></li>
+                    <li><a href=""><span>Sub Menu Three</span></a></li>
+                </ul>
+            </li>
+            <li><a href="reports.html" class="reports"><span>Reports</span></a></li>
+            <li><a href="users.html" class="users"><span>Users</span></a></li>
+        </ul>
+    </div><!--tabmenu-->
+    
+    <div class="accountinfo">
+    	<img src="images/avatar.png" alt="Avatar" />
+        <div class="info">
+        	<h3>John Doe</h3>
+            <small>youremail@domain.com</small>
+            <p>
+            	<a href="">Account Settings</a> <a href="index.html">Logout</a>
+            </p>
+        </div><!--info-->
+    </div><!--accountinfo-->
+</div><!--header-->
+
+
+<div class="sidebar">
+	<div id="accordion">
+        <h3 class="open">Main Navigation</h3>
+        <div class="content" style="display: block;">
+        	<ul class="leftmenu">
+            	<li><a href="dashboard.html" class="home">General</a></li>
+                <li><a href="forms.html" class="form">Form Styling</a></li>
+                <li><a href="tables.html" class="table">Table Styling</a></li>
+                <li class="current"><a href="gallery.html" class="gallery">Image Gallery</a></li>
+                <li><a href="grid.html" class="grid">Grid Styling</a></li>
+                <li><a href="calendar.html" class="calendar">Calendar</a></li>
+                <li><a href="buttons.html" class="buttons">Buttons &amp; Icons</a></li>
+                <li><a href="editor.html" class="editor">WYSIWYG Editor</a></li>
+                <li><a href="filemanager.html" class="file">File Manager</a></li>
+                <li><a href="invoice.html" class="form">Invoice</a></li>
+                <li><a href="404.html" class="error">404 Page</a></li>
+            </ul>
+        </div>
+        <h3 class="open">Custom Text</h3>
+        <div class="content" style="display: block;">Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. </div>
+	</div>
+	
+</div><!--leftmenu-->
+
+
+<div class="maincontent">
+	
+    <div class="breadcrumbs">
+    	<a href="dashboard.html">Dashboard</a>
+        <span>Gallery</span>
+    </div><!-- breadcrumbs -->
+
+    <div class="left">
+    	
+        <h1 class="pageTitle">Gallery</h1>
+                
+        <div id="gallery" class="gallery">
+        
+            <ul class="submenu">
+                <li class="current"><a href="#gridview">Grid View</a></li>
+                <li><a href="#listview">List View</a></li>
+            </ul>
+            
+            <br />
+            
+            <div id="gridview" class="thumbview">
+                <ul>
+                    <li>
+                        <div class="thumb">
+                            <img src="images/assets/thumb/medium/thumb1.png" alt="" />
+                            <div class="info">
+                                <p>
+                                    <label>Filename:</label>
+                                    <span>Picture1.jpg</span>
+                                </p>
+                                <p>
+                                    <label>File Size:</label>
+                                    <span>1.5MB</span>
+                                </p>
+                                <p>
+                                    <label>Dimension:</label>
+                                    <span>800 x 600</span>
+                                </p>
+                                <p>
+                                    <label>Uploaded:</label>
+                                    <span>November 30, 2011</span>
+                                </p>
+                                <p class="menu">
+                                    <a href="images/assets/thumb/large/thumb1.png" class="view"></a> <a href="" class="delete"></a>
+                                </p>
+                            </div><!--info-->
+                        </div><!--thumb-->
+                    </li>
+                        
+                    <li>
+                        <div class="thumb">
+                            <img src="images/assets/thumb/medium/thumb2.png" alt="" />
+                            <div class="info">
+                                <p>
+                                    <label>Filename:</label>
+                                    <span>Picture1.jpg</span>
+                                </p>
+                                <p>
+                                    <label>File Size:</label>
+                                    <span>1.5MB</span>
+                                </p>
+                                <p>
+                                    <label>Dimension:</label>
+                                    <span>800 x 600</span>
+                                </p>
+                                <p>
+                                    <label>Uploaded:</label>
+                                    <span>November 30, 2011m</span>
+                                </p>
+                                <p class="menu">
+                                    <a href="images/assets/thumb/large/thumb2.png" class="view"></a> <a href="" class="delete"></a>
+                                </p>
+                            </div><!--info-->
+                        </div><!--thumb-->
+                    </li>
+                        
+                    <li>
+                        <div class="thumb">
+                            <img src="images/assets/thumb/medium/thumb3.png" alt="" />
+                            <div class="info">
+                                <p>
+                                    <label>Filename:</label>
+                                    <span>Picture1.jpg</span>
+                                </p>
+                                <p>
+                                    <label>File Size:</label>
+                                    <span>1.5MB</span>
+                                </p>
+                                <p>
+                                    <label>Dimension:</label>
+                                    <span>800 x 600</span>
+                                </p>
+                                <p>
+                                    <label>Uploaded:</label>
+                                    <span>November 30, 2011</span>
+                                </p>
+                                <p class="menu">
+                                    <a href="images/assets/thumb/large/thumb3.png" class="view"></a> <a href="" class="delete"></a>
+                                </p>
+                            </div><!--info-->
+                        </div><!--thumb-->
+                    </li>
+                        
+                    <li>
+                        <div class="thumb">
+                            <img src="images/assets/thumb/medium/thumb4.png" alt="" />
+                            <div class="info">
+                                <p>
+                                    <label>Filename:</label>
+                                    <span>Picture1.jpg</span>
+                                </p>
+                                <p>
+                                    <label>File Size:</label>
+                                    <span>1.5MB</span>
+                                </p>
+                                <p>
+                                    <label>Dimension:</label>
+                                    <span>800 x 600</span>
+                                </p>
+                                <p>
+                                    <label>Uploaded:</label>
+                                    <span>November 30, 2011</span>
+                                </p>
+                                <p class="menu">
+                                    <a href="images/assets/thumb/large/thumb4.png" class="view"></a> <a href="" class="delete"></a>
+                                </p>
+                            </div><!--info-->
+                        </div><!--thumb-->
+                    </li>
+                        
+                    <li>
+                        <div class="thumb">
+                            <img src="images/assets/thumb/medium/thumb5.png" alt="" />
+                            <div class="info">
+                                <p>
+                                    <label>Filename:</label>
+                                    <span>Picture1.jpg</span>
+                                </p>
+                                <p>
+                                    <label>File Size:</label>
+                                    <span>1.5MB</span>
+                                </p>
+                                <p>
+                                    <label>Dimension:</label>
+                                    <span>800 x 600</span>
+                                </p>
+                                <p>
+                                    <label>Uploaded:</label>
+                                    <span>November 30, 2011</span>
+                                </p>
+                                <p class="menu">
+                                    <a href="images/assets/thumb/large/thumb5.png" class="view"></a> <a href="" class="delete"></a>
+                                </p>
+                            </div><!--info-->
+                        </div><!--thumb-->
+                    </li>
+                        
+                    <li>
+                        <div class="thumb">
+                            <img src="images/assets/thumb/medium/thumb6.png" alt="" />
+                            <div class="info">
+                                <p>
+                                    <label>Filename:</label>
+                                    <span>Picture1.jpg</span>
+                                </p>
+                                <p>
+                                    <label>File Size:</label>
+                                    <span>1.5MB</span>
+                                </p>
+                                <p>
+                                    <label>Dimension:</label>
+                                    <span>800 x 600</span>
+                                </p>
+                                <p>
+                                    <label>Uploaded:</label>
+                                    <span>November 30, 2011</span>
+                                </p>
+                                <p class="menu">
+                                    <a href="images/assets/thumb/large/thumb6.png" class="view"></a> <a href="" class="delete"></a>
+                                </p>
+                            </div><!--info-->
+                        </div><!--thumb-->
+                    </li>
+                    
+                    <li>
+                        <div class="thumb">
+                            <img src="images/assets/thumb/medium/thumb7.png" alt="" />
+                            <div class="info">
+                                <p>
+                                    <label>Filename:</label>
+                                    <span>Picture1.jpg</span>
+                                </p>
+                                <p>
+                                    <label>File Size:</label>
+                                    <span>1.5MB</span>
+                                </p>
+                                <p>
+                                    <label>Dimension:</label>
+                                    <span>800 x 600</span>
+                                </p>
+                                <p>
+                                    <label>Uploaded:</label>
+                                    <span>November 30, 2011</span>
+                                </p>
+                                <p class="menu">
+                                    <a href="images/assets/thumb/large/thumb7.png" class="view"></a> <a href="" class="delete"></a>
+                                </p>
+                            </div><!--info-->
+                        </div><!--thumb-->
+                    </li>
+                        
+                    <li>
+                        <div class="thumb">
+                            <img src="images/assets/thumb/medium/thumb8.png" alt="" />
+                            <div class="info">
+                                <p>
+                                    <label>Filename:</label>
+                                    <span>Picture1.jpg</span>
+                                </p>
+                                <p>
+                                    <label>File Size:</label>
+                                    <span>1.5MB</span>
+                                </p>
+                                <p>
+                                    <label>Dimension:</label>
+                                    <span>800 x 600</span>
+                                </p>
+                                <p>
+                                    <label>Uploaded:</label>
+                                    <span>November 30, 2011</span>
+                                </p>
+                                <p class="menu">
+                                    <a href="images/assets/thumb/large/thumb8.png" class="view"></a> <a href="" class="delete"></a>
+                                </p>
+                            </div><!--info-->
+                        </div><!--thumb-->
+                    </li>
+                        
+                    <li>
+                        <div class="thumb">
+                            <img src="images/assets/thumb/medium/thumb9.png" alt="" />
+                            <div class="info">
+                                <p>
+                                    <label>Filename:</label>
+                                    <span>Picture1.jpg</span>
+                                </p>
+                                <p>
+                                    <label>File Size:</label>
+                                    <span>1.5MB</span>
+                                </p>
+                                <p>
+                                    <label>Dimension:</label>
+                                    <span>800 x 600</span>
+                                </p>
+                                <p>
+                                    <label>Uploaded:</label>
+                                    <span>November 30, 2011</span>
+                                </p>
+                                <p class="menu">
+                                    <a href="images/assets/thumb/large/thumb9.png" class="view"></a> <a href="" class="delete"></a>
+                                </p>
+                            </div><!--info-->
+                        </div><!--thumb-->
+                    </li>
+                        
+                </ul>    	
+            </div><!--gridview-->
+                
+            <div id="listview" class="listview">
+                    
+                <table cellpadding="0" cellspacing="0" class="sTableHead" width="100%">
+                    <colgroup>
+                    	<col class="head0" width="5%" />
+                        <col class="head1" width="10%" />
+                        <col class="head0" width="20%" />
+                        <col class="head1" width="15%" />
+                        <col class="head0" width="15%" />
+                        <col class="head1" width="15%" />
+                        <col class="head0" width="20%" />
+                    </colgroup>
+                    <tr>
+                        <td align="center"><input type="checkbox" class="checkall" /></td>
+                        <td align="center">Thumb</td>
+                        <td>Filename</td>
+                        <td>File Size</td>
+                        <td>Dimension</td>
+                        <td>Uploaded</td>
+                        <td align="center">Action</td>
+                    </tr>
+                </table>
+                <div class="sTableWrapper">
+                    <table cellpadding="0" cellspacing="0" class="sTable" width="100%">
+                        <colgroup>
+                            <col class="con0" width="5%" />
+                            <col class="con1" width="10%" />
+                            <col class="con0" width="20%" />
+                            <col class="con1" width="15%" />
+                            <col class="con0" width="15%" />
+                            <col class="con1" width="15%" />
+                            <col class="con0" width="20%" />
+                        </colgroup>
+                        <tr>
+                            <td align="center"><input type="checkbox" /></td>
+                            <td align="center"><img src="images/assets/thumb/small/thumb1.png" alt="" /></td>
+                            <td>Picture1.jpg</td>
+                            <td>1.5MB</td>
+                            <td>3600x2088</td>
+                            <td>December 02, 2011</td>
+                            <td align="center"><a href="images/assets/thumb/large/thumb1.png" class="view">View</a> &nbsp; <a href="" class="deleteimage">Delete</a></td>
+                        </tr>
+                        <tr>
+                            <td align="center"><input type="checkbox" /></td>
+                            <td align="center"><img src="images/assets/thumb/small/thumb2.png" alt="" /></td>
+                            <td>Picture2.jpg</td>
+                            <td>3.2MB</td>
+                            <td>4600x2588</td>
+                            <td>December 02, 2011</td>
+                            <td align="center"><a href="images/assets/thumb/large/thumb2.png" class="view">View</a> &nbsp; <a href="" class="deleteimage">Delete</a></td>
+                        </tr>
+                        <tr>
+                            <td align="center"><input type="checkbox" /></td>
+                            <td align="center"><img src="images/assets/thumb/small/thumb3.png" alt="" /></td>
+                            <td>Picture3.jpg</td>
+                            <td>1.2MB</td>
+                            <td>1280x1024</td>
+                            <td>December 02, 2011</td>
+                            <td align="center"><a href="images/assets/thumb/large/thumb3.png" class="view">View</a> &nbsp; <a href="" class="deleteimage">Delete</a></td>
+                        </tr>
+                        <tr>
+                            <td align="center"><input type="checkbox" /></td>
+                            <td align="center"><img src="images/assets/thumb/small/thumb4.png" alt="" /></td>
+                            <td>Picture4.jpg</td>
+                            <td>2.2MB</td>
+                            <td>3600x2088</td>
+                            <td>December 02, 2011</td>
+                            <td align="center"><a href="images/assets/thumb/large/thumb4.png" class="view">View</a> &nbsp; <a href="" class="deleteimage">Delete</a></td>
+                        </tr>
+                        <tr>
+                            <td align="center"><input type="checkbox" /></td>
+                            <td align="center"><img src="images/assets/thumb/small/thumb5.png" alt="" /></td>
+                            <td>Picture5.jpg</td>
+                            <td>2.1MB</td>
+                            <td>1280x768</td>
+                            <td>December 02, 2011</td>
+                            <td align="center"><a href="images/assets/thumb/large/thumb5.png" class="view">View</a> &nbsp; <a href="" class="deleteimage">Delete</a></td>
+                        </tr>
+                        <tr>
+                            <td align="center"><input type="checkbox" /></td>
+                            <td align="center"><img src="images/assets/thumb/small/thumb6.png" alt="" /></td>
+                            <td>Picture1.jpg</td>
+                            <td>1.5MB</td>
+                            <td>3600x2088</td>
+                            <td>December 02, 2011</td>
+                            <td align="center"><a href="images/assets/thumb/large/thumb6.png" class="view">View</a> &nbsp; <a href="" class="deleteimage">Delete</a></td>
+                        </tr>
+                        <tr>
+                            <td align="center"><input type="checkbox" /></td>
+                            <td align="center"><img src="images/assets/thumb/small/thumb7.png" alt="" /></td>
+                            <td>Picture1.jpg</td>
+                            <td>1.5MB</td>
+                            <td>3600x2088</td>
+                            <td>December 02, 2011</td>
+                            <td align="center"><a href="images/assets/thumb/large/thumb7.png" class="view">View</a> &nbsp; <a href="" class="deleteimage">Delete</a></td>
+                        </tr>
+                        <tr>
+                            <td align="center"><input type="checkbox" /></td>
+                            <td align="center"><img src="images/assets/thumb/small/thumb8.png" alt="" /></td>
+                            <td>Picture1.jpg</td>
+                            <td>1.5MB</td>
+                            <td>3600x2088</td>
+                            <td>December 02, 2011</td>
+                            <td align="center"><a href="images/assets/thumb/large/thumb8.png" class="view">View</a> &nbsp; <a href="" class="deleteimage">Delete</a></td>
+                        </tr>
+                        <tr>
+                            <td align="center"><input type="checkbox" /></td>
+                            <td align="center"><img src="images/assets/thumb/small/thumb9.png" alt="" /></td>
+                            <td>Picture1.jpg</td>
+                            <td>1.5MB</td>
+                            <td>3600x2088</td>
+                            <td>December 02, 2011</td>
+                            <td align="center"><a href="images/assets/thumb/large/thumb9.png" class="view">View</a> &nbsp; <a href="" class="deleteimage">Delete</a></td>
+                        </tr>
+                    </table>
+                 </div><!--sTableWrapper-->
+                    
+            </div><!-- listview -->
+
+		</div><!--gallery-->
+
+            
+            <br clear="all" />
+            
+            <div class="pagination">
+            	<a class="first disabled">&laquo; First</a>
+                <a class="prev disabled">&lsaquo; Prev</a>
+            	<a href="" class="current">1</a>
+                <a href="">2</a>
+                <a href="">3</a>
+                <a href="">4</a>
+                <a href="">5</a>
+                <span>...</span>
+                <a href="">18</a>
+                <a href="" class="next">Next &rsaquo;</a>
+                <a href="" class="last">Last &raquo;</a>
+            </div><!--pagination-->
+        
+        	
+    </div><!--left-->
+    
+    <br clear="all" />
+    
+</div><!--maincontent-->
+
+<br />
+<div class="footer footer_float">
+	<div class="footerinner">
+    	&copy; 2011. Mandy Lane Premium Template. All Rights Reserved.
+    </div><!-- footerinner -->
+</div><!-- footer -->
+
+
+</body>
+</html>

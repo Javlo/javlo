@@ -1,0 +1,36 @@
+#blocked {
+	text-align: center;	
+	padding-top: 250px;
+	font-family: sans-serif;
+}
+
+#blocked #main {
+	display: inline-block;
+	width: 256px;
+	height: 300px;
+	padding-top: 260px;
+	background-image: url("images/lock.png");
+	background-repeat: no-repeat;
+	vertical-align: bottom;
+	
+}
+
+.loginbox .password {
+    border-radius: 3px 3px 3px 3px;
+    display: inline-block;
+    font-size: 14px;
+    padding: 7px 5px 6px 40px;
+}
+
+.loginbox .password {
+    background: url("images/passwordfield.png") no-repeat scroll left top #EEEEEE;
+    border: 0 none;
+    margin-right: 10px;
+    width: 190px;
+}
+
+#main a {
+    color: #c9c9c9;    
+    font-size: 11px;
+    text-decoration: none;
+}
