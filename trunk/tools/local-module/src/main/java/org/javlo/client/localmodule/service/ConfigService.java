@@ -1,16 +1,20 @@
 package org.javlo.client.localmodule.service;
 
 import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
 import java.net.URL;
-import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Properties;
 import java.util.logging.Logger;
 
-import org.apache.commons.configuration.ConfigurationException;
-import org.apache.commons.configuration.PropertiesConfiguration;
+import org.javlo.client.localmodule.model.AppConfig;
 import org.javlo.client.localmodule.model.ServerConfig;
+import org.javlo.helper.ResourceHelper;
 import org.javlo.helper.StringHelper;
 
 public class ConfigService {
@@ -30,247 +34,51 @@ public class ConfigService {
 		}
 	}
 
-	PropertiesConfiguration properties = new PropertiesConfiguration();
-
-	public final Object lock = new Object();
+	private AppConfig bean;
 
 	private ConfigService() {
 	}
 
-	public void init() throws IOException, ConfigurationException {
-		synchronized (lock) {
-			File file = new File(StringHelper.expandSystemProperties(FILE_NAME));
-			logger.info("load local-module config : " + file);
-			if (!file.exists()) {
-				if (!file.getParentFile().exists()) {
-					file.getParentFile().mkdirs();
-				}
-				file.createNewFile();
+	public AppConfig getBean() {
+		return bean;
+	}
+
+	public synchronized void init() throws IOException {
+		reload();
+	}
+
+	private File getFile() throws IOException {
+		File file = new File(StringHelper.expandSystemProperties(FILE_NAME));
+		logger.info("load local-module config : " + file);
+		if (!file.exists()) {
+			if (!file.getParentFile().exists()) {
+				file.getParentFile().mkdirs();
 			}
-			properties.setDelimiterParsingDisabled(true);
-			properties.setFile(file);
-			properties.load();
+			file.createNewFile();
 		}
+		return file;
 	}
 
-	public void reload() throws ConfigurationException {
-		synchronized (lock) {
-			properties.clear();
-			properties.load();
-		}
-	}
-
-	public void save() throws ConfigurationException {
-		synchronized (lock) {
-//			String saved = null;
-//			if (!isStorePassword()) {
-//				saved = getPassword();
-//				setPassword(null);
-//			}
-			properties.save();
-//			if (saved != null) {
-//				setPassword(saved);
-//			}
-		}
-	}
-
-//	public String getComputerName() {
-//		synchronized (lock) {
-//			String out = properties.getString("local.computerName", null);
-//			if (out == null) {
-//				try {
-//					out = InetAddress.getLocalHost().getHostName();
-//				} catch (UnknownHostException ex) {
-//					out = new SimpleDateFormat("'Computer'D-sSSS").format(new Date());
-//				}
-//			}
-//			return out;
-//		}
-//	}
-//	public void setComputerName(String computerName) {
-//		synchronized (lock) {
-//			properties.setProperty("local.computerName", computerName);
-//		}
-//	}
-
-//	public File getLocalFolderFile() {
-//		File out = new File(getLocalFolder());
-//		out.mkdirs();
-//		return out;
-//	}
-//	public String getLocalFolder() {
-//		synchronized (lock) {
-//			return properties.getString("local.folder");
-//		}
-//	}
-//	public void setLocalFolder(String localFolder) {
-//		synchronized (lock) {
-//			properties.setProperty("local.folder", localFolder);
-//		}
-//	}
-
-	public ServerConfig[] getServers() {
-		List<ServerConfig> servers = new LinkedList<ServerConfig>();
-		int i = 0;
-		while (true) {
-			String base = "server." + i + ".";
-			String serverURL = properties.getString(base + "url");
-			if (serverURL == null) {
-				break;
-			}
-			ServerConfig server = new ServerConfig();
-			server.setServerURL(serverURL);
-			servers.add(server);
-			i++;
-		}
-		return servers.toArray(new ServerConfig[servers.size()]);
-	}
-
-	public void setServers(ServerConfig[] servers) {
-		for (Iterator<String> iterator = properties.getKeys("server"); iterator.hasNext();) {
-			properties.clearProperty(iterator.next());
-		}
-		int i = 0;
-		for (ServerConfig server : servers) {
-			String base = "server." + i + ".";
-			properties.setProperty(base + "url", server.getServerURL());
-			i++;
-		}
-	}
-
-//	public String getServerURL() {
-//		synchronized (lock) {
-//			return properties.getString("server.url");
-//		}
-//	}
-//	public void setServerURL(String serverURL) {
-//		synchronized (lock) {
-//			properties.setProperty("server.url", serverURL);
-//		}
-//	}
-//
-//	public String getUsername() {
-//		synchronized (lock) {
-//			String out = properties.getString("server.username");
-//			if (out == null) {
-//				out = System.getProperty("user.name");
-//			}
-//			return out;
-//		}
-//	}
-//	public void setUsername(String username) {
-//		synchronized (lock) {
-//			properties.setProperty("server.username", username);
-//		}
-//	}
-//
-//	public boolean isStorePassword() {
-//		synchronized (lock) {
-//			return properties.getBoolean("server.store-password", false);
-//		}
-//	}
-//	public void setStorePassword(boolean password) {
-//		synchronized (lock) {
-//			properties.setProperty("server.store-password", password);
-//		}
-//	}
-//
-//	public String getPassword() {
-//		synchronized (lock) {
-//			return properties.getString("server.password");
-//		}
-//	}
-//	public void setPassword(String password) {
-//		synchronized (lock) {
-//			properties.setProperty("server.password", password);
-//		}
-//	}
-
-	public String getProxyHost() {
-		synchronized (lock) {
-			String out = properties.getString("http.proxyHost");
-			if (out == null) {
-				out = System.getProperty("http.proxyHost");
-			}
-			return out;
-		}
-	}
-	public void setProxyHost(String proxyHost) {
-		synchronized (lock) {
-			properties.setProperty("http.proxyHost", proxyHost);
-		}
-	}
-
-	public Integer getProxyPort() {
-		synchronized (lock) {
-			Integer out = properties.getInteger("http.proxyPort", null);
-			if (out == null) {
-				try {
-					out = Integer.parseInt(System.getProperty("http.proxyPort"));
-				} catch (Exception e) {
-				}
-			}
-			return out;
-		}
-	}
-	public void setProxyPort(Integer proxyPort) {
-		synchronized (lock) {
-			properties.setProperty("http.proxyPort", proxyPort);
-		}
-	}
-
-	public String getProxyUsername() {
-		synchronized (lock) {
-			String out = properties.getString("http.proxyUserName");
-			if (out == null) {
-				out = System.getProperty("http.proxyUserName");
-			}
-			return out;
-		}
-	}
-	public void setProxyUsername(String proxyUsername) {
-		synchronized (lock) {
-			properties.setProperty("http.proxyUserName", proxyUsername);
-		}
-	}
-
-	public String getProxyPassword() {
-		synchronized (lock) {
-			String out = properties.getString("http.proxyPassword");
-			if (out == null) {
-				out = System.getProperty("http.proxyPassword");
-			}
-			return out;
-		}
-	}
-	public void setProxyPassword(String proxyPassword) {
-		synchronized (lock) {
-			properties.setProperty("http.proxyPassword", proxyPassword);
-		}
-	}
-
-	public boolean isValid() {
-		synchronized (lock) {
-			return true //
-			&& getServers().length > 0 //
-//					&& getComputerName() != null //
-//					&& checkLocalFolder(getLocalFolder()) //
-//					&& checkServerURL(getServerURL()) //
-//					&& getUsername() != null //
-//					&& getPassword() != null //
-			;
-		}
-	}
-
-	public static boolean checkLocalFolder(String localFolder) {
-		if (localFolder == null)
-			return false;
-		File lf = new File(localFolder);
+	public synchronized void reload() throws IOException {
+		Properties properties = new Properties();
+		InputStream in = null;
 		try {
-			lf.mkdir();
-			return lf.exists() && lf.isDirectory();
-		} catch (Exception ex) {
-			return false;
+			in = new FileInputStream(getFile());
+			properties.load(in);
+			bean = loadBean(properties);
+		} finally {
+			ResourceHelper.safeClose(in);
+		}
+	}
+
+	public synchronized void save() throws IOException {
+		OutputStream out = null;
+		try {
+			out = new FileOutputStream(getFile());
+			Properties p = storeBean(bean);
+			p.store(out, "");
+		} finally {
+			ResourceHelper.safeClose(out);
 		}
 	}
 
@@ -284,6 +92,56 @@ public class ConfigService {
 		} catch (Exception ex) {
 			return false;
 		}
+	}
+
+	private static AppConfig loadBean(Properties properties) {
+		AppConfig bean = new AppConfig();
+		bean.setProxyHost(properties.getProperty("http.proxyHost", System.getProperty("http.proxyHost")));
+		bean.setProxyPort(safeParseInt(properties.getProperty("http.proxyPort", System.getProperty("http.proxyPort"))));
+		bean.setProxyUsername(properties.getProperty("http.proxyUserName"));
+		bean.setProxyPassword(properties.getProperty("http.proxyPassword"));
+
+		List<ServerConfig> servers = new LinkedList<ServerConfig>();
+		int i = 0;
+		while (true) {
+			String base = "server." + i + ".";
+			String serverURL = properties.getProperty(base + "url");
+			if (serverURL == null) {
+				break;
+			}
+			ServerConfig server = new ServerConfig();
+			server.setServerURL(serverURL);
+			servers.add(server);
+			i++;
+		}
+		bean.setServers(servers.toArray(new ServerConfig[servers.size()]));
+		return bean;
+	}
+
+	private static Integer safeParseInt(String str) {
+		Integer out = null;
+		if (str != null) {
+			try {
+				out = Integer.parseInt(str);
+			} catch (Exception e) {
+			}
+		}
+		return out;
+	}
+
+	private static Properties storeBean(AppConfig bean) {
+		Properties out = new Properties();
+		ServerConfig[] servers = bean.getServers();
+		for (int i = 0; i < servers.length; i++) {
+			ServerConfig server = servers[i];
+			String base = "server." + i + ".";
+			out.setProperty(base + "url", server.getServerURL());
+		}
+		out.setProperty("http.proxyHost", bean.getProxyHost());
+		out.setProperty("http.proxyPort", "" + bean.getProxyPort());
+		out.setProperty("http.proxyUserName", bean.getProxyUsername());
+		out.setProperty("http.proxyPassword", bean.getProxyPassword());
+		return out;
 	}
 
 }
