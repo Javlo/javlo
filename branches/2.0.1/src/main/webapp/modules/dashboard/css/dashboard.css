@@ -1,0 +1,23 @@
+.maincontent .left {
+	padding: 0 15px;
+}
+
+#notifications .current {
+	font-weight: bold;
+}
+
+span.label {
+	display: inline-block;
+	width: 150px;
+	font-weight: bold;
+}
+
+.pie, .week {
+    height: 250px;
+    width: auto;
+}
+
+.charge {
+    height: 250px;
+    width: auto;
+}

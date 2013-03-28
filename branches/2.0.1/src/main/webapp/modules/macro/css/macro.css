@@ -1,0 +1,27 @@
+@import url("../../content/css/content.css");
+
+#macro li {
+	margin: 10px;
+	display:inline-block;
+}
+
+.mainBox {
+    margin-top: 0;
+}	
+
+.cancel {
+	float: right;
+}
+
+.macro-interface {
+	margin-right: 80px;
+}
+
+.macro-interface fieldset {
+	margin: 0;
+}
+
+	
+.dyntable td.action {
+	text-align: left;	
+}
