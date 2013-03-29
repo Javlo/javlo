@@ -94,7 +94,7 @@ public class MessageRepository {
 	 */
 	public void setGlobalMessage(GenericMessage globalMessage) {
 		if (this.globalMessage != null) {
-			if (globalMessage.getType() < this.globalMessage.getType()) {
+			if (this.globalMessage.getType() == 0 || globalMessage.getType() < this.globalMessage.getType()) {
 				this.globalMessage = globalMessage;
 			}
 		} else {
@@ -110,7 +110,7 @@ public class MessageRepository {
 	 */
 	public void setGlobalMessageAndNotification(ContentContext ctx, GenericMessage globalMessage) {
 		if (this.globalMessage != null) {
-			if (this.globalMessage.getType() > globalMessage.getType()) {
+			if (this.globalMessage.getType() == 0 || globalMessage.getType() < this.globalMessage.getType()) {
 				this.globalMessage = globalMessage;
 			}
 		}

@@ -1092,6 +1092,7 @@ public class Edit extends AbstractModuleAction {
 
 				String msg = i18nAccess.getText("content.published");
 				MessageRepository.getInstance(ctx).setGlobalMessageAndNotification(ctx, new GenericMessage(msg, GenericMessage.INFO));
+				// MessageRepository.getInstance(ctx).setGlobalMessage(new GenericMessage(msg, GenericMessage.INFO));
 
 				performSynchro(application, staticConfig, globalContext);
 
