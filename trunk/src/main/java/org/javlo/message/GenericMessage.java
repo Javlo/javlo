@@ -24,7 +24,7 @@ public class GenericMessage {
 	String key = null;
 	String URL = null;
 
-	public static final GenericMessage EMPTY_MESSAGE = new GenericMessage("", null, Integer.MAX_VALUE);
+	public static final GenericMessage EMPTY_MESSAGE = new GenericMessage("", null, 0);
 
 	public GenericMessage(String msg, int newType) {
 		this(msg, null, newType);
