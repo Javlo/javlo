@@ -720,24 +720,26 @@ public class Template implements Comparable<Template> {
 	}
 
 	public void clearRenderer(ContentContext ctx) {
-		String templateFolder = config.getTemplateFolder();
-		File templateSrc = new File(URLHelper.mergePath(templateFolder, getSourceFolderName()));
-		if (templateSrc.exists()) {
+		synchronized (ctx.getGlobalContext().LOCK_IMPORT_TEMPLATE) {
+			String templateFolder = config.getTemplateFolder();
+			File templateSrc = new File(URLHelper.mergePath(templateFolder, getSourceFolderName()));
+			if (templateSrc.exists()) {
+				try {
+					FileUtils.deleteDirectory(new File(URLHelper.mergePath(getWorkTemplateFolder(), getSourceFolderName())));
+				} catch (IOException e) {
+					e.printStackTrace();
+				}
+			}
 			try {
-				FileUtils.deleteDirectory(new File(URLHelper.mergePath(getWorkTemplateFolder(), getSourceFolderName())));
+				importTemplateInWebapp(config.getInstance(ctx.getRequest().getSession().getServletContext()), ctx);
 			} catch (IOException e) {
 				e.printStackTrace();
 			}
+			dynamicsComponents = null;
+			templateImportationError = false;
+			contextWithTemplateImported.clear();
+			i18n.clear();
 		}
-		try {
-			importTemplateInWebapp(config.getInstance(ctx.getRequest().getSession().getServletContext()), ctx);
-		} catch (IOException e) {
-			e.printStackTrace();
-		}
-		dynamicsComponents = null;
-		templateImportationError = false;
-		contextWithTemplateImported.clear();
-		i18n.clear();
 	}
 
 	public void delete() {
@@ -929,15 +931,17 @@ public class Template implements Comparable<Template> {
 	}
 
 	protected List<File> getComponentFile(GlobalContext globalContext) throws IOException {
-		String templateFolder = getWorkTemplateFolder();
+		synchronized (globalContext.LOCK_IMPORT_TEMPLATE) {
+			String templateFolder = getWorkTemplateFolder();
 
-		String path = URLHelper.mergePath(URLHelper.mergePath(templateFolder, getFolder(globalContext)), DYNAMIC_COMPONENTS_PROPERTIES_FOLDER);
-		File dynCompDir = new File(path);
-		if (!dynCompDir.exists()) {
-			return Collections.emptyList();
+			String path = URLHelper.mergePath(URLHelper.mergePath(templateFolder, getFolder(globalContext)), DYNAMIC_COMPONENTS_PROPERTIES_FOLDER);
+			File dynCompDir = new File(path);
+			if (!dynCompDir.exists()) {
+				return Collections.emptyList();
+			}
+			File[] propertiesFile = dynCompDir.listFiles(new PropertiesFilter());
+			return Arrays.asList(propertiesFile);
 		}
-		File[] propertiesFile = dynCompDir.listFiles(new PropertiesFilter());
-		return Arrays.asList(propertiesFile);
 	}
 
 	protected List<String> getCSS() throws IOException {
@@ -1004,21 +1008,25 @@ public class Template implements Comparable<Template> {
 
 	public final List<Properties> getDynamicComponentsProperties(GlobalContext globalContext) throws IOException {
 		if (dynamicsComponents == null) {
-			List<File> files = getComponentFile(globalContext);
-			List<Properties> outProperties = new LinkedList<Properties>();
-			for (File file : files) {
-				Properties prop = new Properties();
-				InputStream in = new FileInputStream(file);
-				Reader inReader = new InputStreamReader(in, ContentContext.CHARACTER_ENCODING);
-				try {
-					prop.load(inReader);
-				} finally {
-					ResourceHelper.closeResource(in);
-					ResourceHelper.closeResource(inReader);
+			synchronized (globalContext.LOCK_IMPORT_TEMPLATE) {
+				if (dynamicsComponents == null) {
+					List<File> files = getComponentFile(globalContext);
+					List<Properties> outProperties = new LinkedList<Properties>();
+					for (File file : files) {
+						Properties prop = new Properties();
+						InputStream in = new FileInputStream(file);
+						Reader inReader = new InputStreamReader(in, ContentContext.CHARACTER_ENCODING);
+						try {
+							prop.load(inReader);
+						} finally {
+							ResourceHelper.closeResource(in);
+							ResourceHelper.closeResource(inReader);
+						}
+						outProperties.add(prop);
+					}
+					dynamicsComponents = outProperties;
 				}
-				outProperties.add(prop);
 			}
-			dynamicsComponents = outProperties;
 		}
 		return dynamicsComponents;
 	}
@@ -1133,16 +1141,18 @@ public class Template implements Comparable<Template> {
 		}
 		Map propI18n = i18n.get(locale.getLanguage());
 		if (propI18n == null) {
-			File i18nFile = new File(URLHelper.mergePath(URLHelper.mergePath(getFolder().getAbsolutePath(), I18N_FILE + locale.getLanguage() + ".properties")));
-			if (i18nFile.exists()) {
-				propI18n = new Properties();
-				Reader reader = new FileReader(i18nFile);
-				((Properties) propI18n).load(reader);
-				reader.close();
-			} else {
-				propI18n = Collections.EMPTY_MAP;
+			synchronized (globalContext.LOCK_IMPORT_TEMPLATE) {
+				File i18nFile = new File(URLHelper.mergePath(URLHelper.mergePath(getFolder().getAbsolutePath(), I18N_FILE + locale.getLanguage() + ".properties")));
+				if (i18nFile.exists()) {
+					propI18n = new Properties();
+					Reader reader = new FileReader(i18nFile);
+					((Properties) propI18n).load(reader);
+					reader.close();
+				} else {
+					propI18n = Collections.EMPTY_MAP;
+				}
+				i18n.put(locale.getLanguage(), propI18n);
 			}
-			i18n.put(locale.getLanguage(), propI18n);
 		}
 		return propI18n;
 	}
@@ -1282,20 +1292,22 @@ public class Template implements Comparable<Template> {
 	}
 
 	public Properties getMacroProperties(GlobalContext globalContext, String macroKey) throws IOException {
-		List<File> macroFiles = getMacroFile(globalContext);
-		for (File pFile : macroFiles) {
-			if (pFile.getName().equals(macroKey + ".properties")) {
-				Properties prop = new Properties();
-				InputStream in = new FileInputStream(pFile);
-				try {
-					prop.load(in);
-				} finally {
-					ResourceHelper.closeResource(in);
+		synchronized (globalContext.LOCK_IMPORT_TEMPLATE) {
+			List<File> macroFiles = getMacroFile(globalContext);
+			for (File pFile : macroFiles) {
+				if (pFile.getName().equals(macroKey + ".properties")) {
+					Properties prop = new Properties();
+					InputStream in = new FileInputStream(pFile);
+					try {
+						prop.load(in);
+					} finally {
+						ResourceHelper.closeResource(in);
+					}
+					return prop;
 				}
-				return prop;
 			}
+			return null;
 		}
-		return null;
 	}
 
 	public String getMailContent(ContentContext ctx, String mailName) throws IOException {
@@ -1390,29 +1402,31 @@ public class Template implements Comparable<Template> {
 	}
 
 	public synchronized String getRenderer(ContentContext ctx) throws IOException, BadXMLException {
+		synchronized (ctx.getGlobalContext().LOCK_IMPORT_TEMPLATE) {
 
-		String renderer = getRendererFile(ctx.getDevice());
+			String renderer = getRendererFile(ctx.getDevice());
 
-		GlobalContext globalContext = GlobalContext.getInstance(ctx.getRequest());
+			GlobalContext globalContext = GlobalContext.getInstance(ctx.getRequest());
 
-		String jspPath = URLHelper.mergePath(getTemplateTargetFolder(globalContext), renderer);
-		File jspFile = new File(jspPath);
+			String jspPath = URLHelper.mergePath(getTemplateTargetFolder(globalContext), renderer);
+			File jspFile = new File(jspPath);
 
-		if (!jspFile.exists()) {
-			importTemplateInWebapp(globalContext.getStaticConfig(), ctx);
-			File HTMLFile = new File(URLHelper.mergePath(getTemplateTargetFolder(globalContext), getHTMLFile(ctx.getDevice())));
-			logger.info(jspFile + " not found, try to generate from " + HTMLFile);
-			if (!HTMLFile.exists()) {
-				logger.warning(HTMLFile + " not found.");
+			if (!jspFile.exists()) {
+				importTemplateInWebapp(globalContext.getStaticConfig(), ctx);
+				File HTMLFile = new File(URLHelper.mergePath(getTemplateTargetFolder(globalContext), getHTMLFile(ctx.getDevice())));
+				logger.info(jspFile + " not found, try to generate from " + HTMLFile);
+				if (!HTMLFile.exists()) {
+					logger.warning(HTMLFile + " not found.");
+				}
+				List<String> resources = new LinkedList<String>();
+				TemplatePluginFactory templatePluginFactory = TemplatePluginFactory.getInstance(globalContext.getServletContext());
+				List<String> ids = new LinkedList<String>();
+				int depth = XMLManipulationHelper.convertHTMLtoTemplate(globalContext, HTMLFile, jspFile, getMap(), getAreas(), resources, templatePluginFactory.getAllTemplatePlugin(globalContext.getTemplatePlugin()), ids, isMailing());
+				setHTMLIDS(ids);
+				setDepth(depth);
 			}
-			List<String> resources = new LinkedList<String>();
-			TemplatePluginFactory templatePluginFactory = TemplatePluginFactory.getInstance(globalContext.getServletContext());
-			List<String> ids = new LinkedList<String>();
-			int depth = XMLManipulationHelper.convertHTMLtoTemplate(globalContext, HTMLFile, jspFile, getMap(), getAreas(), resources, templatePluginFactory.getAllTemplatePlugin(globalContext.getTemplatePlugin()), ids, isMailing());
-			setHTMLIDS(ids);
-			setDepth(depth);
+			return renderer;
 		}
-		return renderer;
 	}
 
 	public synchronized String getRenderer(ContentContext ctx, String file) throws Exception {
@@ -1673,19 +1687,24 @@ public class Template implements Comparable<Template> {
 		if (ctx != null) {
 			globalContext = GlobalContext.getInstance(ctx.getRequest());
 		}
-		String templateFolder = config.getTemplateFolder();
-		File templateSrc = new File(URLHelper.mergePath(templateFolder, getSourceFolderName()));
-		if (templateSrc.exists()) {
-			File templateTgt = new File(getTemplateTargetFolder(globalContext));
-			logger.info("copy template from '" + templateSrc + "' to '" + templateTgt + "'");
-			FileUtils.deleteDirectory(templateTgt);
-			importTemplateInWebapp(config, ctx, globalContext, templateTgt);
-		} else {
-			logger.severe("folder not found : " + templateSrc);
-			templateImportationError = true;
-			/*
-			 * try { throw new Exception(); } catch (Exception e) { // TODO Auto-generated catch block e.printStackTrace(); }
-			 */
+		Object lockImport = this;
+		if (globalContext != null) {
+			lockImport = globalContext.LOCK_IMPORT_TEMPLATE;
+		}
+		synchronized (lockImport) {
+			if (isTemplateInWebapp(ctx)) {
+				String templateFolder = config.getTemplateFolder();
+				File templateSrc = new File(URLHelper.mergePath(templateFolder, getSourceFolderName()));
+				if (templateSrc.exists()) {
+					File templateTgt = new File(getTemplateTargetFolder(globalContext));
+					logger.info("copy template from '" + templateSrc + "' to '" + templateTgt + "'");
+					FileUtils.deleteDirectory(templateTgt);
+					importTemplateInWebapp(config, ctx, globalContext, templateTgt);
+				} else {
+					logger.severe("folder not found : " + templateSrc);
+					templateImportationError = true;
+				}
+			}
 		}
 	}
 
@@ -1759,7 +1778,6 @@ public class Template implements Comparable<Template> {
 		if (config != null) {
 			TemplateFactory.clearTemplate(config.getServletContext());
 		}
-
 	}
 
 	public boolean isAlternativeTemplate(ContentContext ctx) {
