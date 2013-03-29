@@ -106,7 +106,7 @@ components = allComponents;
 	%><div class="new-component-container" id="comp-child-<%=previousId%>"></div><%
 }
 
-if (components.size() > 40 && request.getParameter("display-all") == null) {
+if (components.size() > 60 && request.getParameter("display-all") == null) {
 	  %>
 	  <div class="insert-line">
 		<a class="action-button warning" href="${info.currentURL}?${info.editPreview?'previewEdit=true&':''}display-all=true">${i18n.edit["edit.message.display-all-components"]}</a>

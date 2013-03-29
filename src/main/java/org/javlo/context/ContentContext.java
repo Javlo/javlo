@@ -238,7 +238,7 @@ public class ContentContext {
 				EditContext editContext = EditContext.getInstance(globalContext, ctx.getRequest().getSession());
 				if (!ctx.isPreview() || !editContext.isEditPreview()) {
 					try {
-						MenuElement page = ctx.getCurrentPage();
+						MenuElement page = ctx.getCurrentPage(true);
 						if (page != null) {
 							while (!page.isRealContent(ctx) && page.getChildMenuElements().size() > 0) {
 								page = page.getChildMenuElements().iterator().next();
@@ -561,7 +561,7 @@ public class ContentContext {
 		return null;
 	}
 
-	public MenuElement getCurrentPage() throws Exception {
+	private MenuElement getCurrentPage(boolean urlFacotry) throws Exception {
 		if (getCurrentPageCached() != null) {
 			return getCurrentPageCached();
 		}
@@ -571,7 +571,7 @@ public class ContentContext {
 			return root;
 		} else {
 			if (getPath().trim().length() > 0) {
-				MenuElement elem = globalContext.getPageIfExist(this, getPath());
+				MenuElement elem = globalContext.getPageIfExist(this, getPath(), urlFacotry);
 				if (elem != null) {
 					setCurrentPageCached(elem);
 				} else {
@@ -583,6 +583,10 @@ public class ContentContext {
 				return root;
 			}
 		}
+	};
+
+	public MenuElement getCurrentPage() throws Exception {
+		return getCurrentPage(false);
 	};
 
 	public MenuElement getCurrentPageCached() {

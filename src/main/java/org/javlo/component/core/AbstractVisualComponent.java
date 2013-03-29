@@ -105,11 +105,9 @@ public abstract class AbstractVisualComponent implements IContentVisualComponent
 
 	private Properties viewData = null;
 
-	private final Object lockContent = new Object();
-
-	private final Object lockContentTime = new Object();
-
 	private MenuElement page = null;
+
+	private ComponentConfig config = null;
 
 	public static final String getComponentId(HttpServletRequest request) {
 		return (String) request.getAttribute(COMP_ID_REQUEST_PARAM);
@@ -299,10 +297,18 @@ public abstract class AbstractVisualComponent implements IContentVisualComponent
 
 	@Override
 	public ComponentConfig getConfig(ContentContext ctx) {
+		if (config != null) {
+			return config;
+		}
 		if ((ctx == null) || (ctx.getRequest() == null) || ((ctx.getRequest().getSession() == null))) {
 			return ComponentConfig.getInstance();
 		}
-		return ComponentConfig.getInstance(ctx, getType());
+
+		ComponentConfig outConfig = ComponentConfig.getInstance(ctx, getType());
+		if (ctx.isAsViewMode()) {
+			config = outConfig;
+		}
+		return outConfig;
 	}
 
 	public String getContentTimeCache(ContentContext ctx) {
@@ -1132,8 +1138,9 @@ public abstract class AbstractVisualComponent implements IContentVisualComponent
 		if (HIDDEN.equals(getStyle(ctx))) {
 			if (ctx.getRenderMode() == ContentContext.PREVIEW_MODE && EditContext.getInstance(GlobalContext.getInstance(ctx.getRequest()), ctx.getRequest().getSession()).isEditPreview()) {
 				return '[' + getType() + ']';
+			} else {
+				return "";
 			}
-			return "";
 		}
 		if (getRenderer(ctx) != null) {
 			return executeCurrentRenderer(ctx);
@@ -1167,8 +1174,9 @@ public abstract class AbstractVisualComponent implements IContentVisualComponent
 				processView(ctx);
 			}
 
+			GlobalContext globalContext = GlobalContext.getInstance(ctx.getRequest());
+
 			if ((ctx.getRenderMode() == ContentContext.PREVIEW_MODE)) {
-				GlobalContext globalContext = GlobalContext.getInstance(ctx.getRequest());
 				EditContext editCtx = EditContext.getInstance(globalContext, ctx.getRequest().getSession());
 				if (editCtx.isEditPreview() && isDefaultValue(ctx)) {
 					String emptyCode = getEmptyCode(ctx);
@@ -1185,47 +1193,30 @@ public abstract class AbstractVisualComponent implements IContentVisualComponent
 				if (ctx.getRenderMode() == ContentContext.VIEW_MODE && isContentCachable(ctx)) {
 					if (getContentCache(ctx) != null) {
 						return getContentCache(ctx);
-					} else {
-						synchronized (lockContent) {
-							if (getContentCache(ctx) != null) {
-								return getContentCache(ctx);
-							}
-						}
 					}
 				}
 				if (ctx.getRenderMode() == ContentContext.VIEW_MODE && isContentTimeCachable(ctx)) {
 					String timeContent = getContentTimeCache(ctx);
 					if (timeContent != null) {
 						return timeContent;
-					} else {
-						synchronized (lockContentTime) {
-							timeContent = getContentTimeCache(ctx);
-							if (timeContent != null) {
-								return timeContent;
-							}
-						}
 					}
 				}
 				if (ctx.getRenderMode() == ContentContext.VIEW_MODE && isContentCachable(ctx)) {
 					logger.fine("add content in cache for component " + getType() + " in page : " + ctx.getPath());
-					synchronized (lockContent) {
-						long beforeTime = System.currentTimeMillis();
-						prepareView(ctx);
-						String content = renderViewXHTMLCode(ctx);
-						setContentCache(ctx, content);
-						logger.fine("render content cache '" + getType() + "' : " + (System.currentTimeMillis() - beforeTime) / 1000 + " sec.");
-						return content;
-					}
+					long beforeTime = System.currentTimeMillis();
+					prepareView(ctx);
+					String content = renderViewXHTMLCode(ctx);
+					setContentCache(ctx, content);
+					logger.fine("render content cache '" + getType() + "' : " + (System.currentTimeMillis() - beforeTime) / 1000 + " sec.");
+					return content;
 				} else {
 					String content;
 					if (isContentTimeCachable(ctx)) {
-						synchronized (lockContentTime) {
-							long beforeTime = System.currentTimeMillis();
-							prepareView(ctx);
-							content = renderViewXHTMLCode(ctx);
-							logger.fine("render content time cache '" + getType() + "' : " + (System.currentTimeMillis() - beforeTime) / 1000 + " sec.");
-							setContentTimeCache(ctx, content);
-						}
+						long beforeTime = System.currentTimeMillis();
+						prepareView(ctx);
+						content = renderViewXHTMLCode(ctx);
+						logger.fine("render content time cache '" + getType() + "' : " + (System.currentTimeMillis() - beforeTime) / 1000 + " sec.");
+						setContentTimeCache(ctx, content);
 					} else {
 						prepareView(ctx);
 						content = renderViewXHTMLCode(ctx);

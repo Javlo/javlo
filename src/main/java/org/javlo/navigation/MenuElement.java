@@ -1103,6 +1103,8 @@ public class MenuElement implements Serializable {
 
 	private transient ICache localCache = null;
 
+	private MenuElement root = null;
+
 	protected MenuElement() {
 	}
 
@@ -1531,21 +1533,23 @@ public class MenuElement implements Serializable {
 	 * @return
 	 * @throws Exception
 	 */
-	private synchronized ContentElementList getAllLocalContent(ContentContext ctx) throws Exception {
-		ContentElementList localContentElementList = getLocalContentElementListMap().get(ctx.getRequestContentLanguage());
-		if (localContentElementList == null) {
-			logger.fine("update all local content on (ctx:" + ctx + ")");
+	private ContentElementList getAllLocalContent(ContentContext ctx) throws Exception {
+		synchronized (getLock()) {
+			ContentElementList localContentElementList = getLocalContentElementListMap().get(ctx.getRequestContentLanguage());
+			if (localContentElementList == null) {
+				logger.fine("update all local content on (ctx:" + ctx + ")");
 
-			/*
-			 * ComponentBean[] localComponentBean; synchronized (componentBean) { localComponentBean = new ComponentBean[componentBean.length]; System.arraycopy(componentBean, 0, localComponentBean, 0, componentBean.length); }
-			 */
-			localContentElementList = new ContentElementList(componentBean, ctx, this, true);
+				/*
+				 * ComponentBean[] localComponentBean; synchronized (componentBean) { localComponentBean = new ComponentBean[componentBean.length]; System.arraycopy(componentBean, 0, localComponentBean, 0, componentBean.length); }
+				 */
+				localContentElementList = new ContentElementList(componentBean, ctx, this, true);
 
-			getLocalContentElementListMap().put(ctx.getRequestContentLanguage(), localContentElementList);
+				getLocalContentElementListMap().put(ctx.getRequestContentLanguage(), localContentElementList);
+			}
+
+			localContentElementList.initialize(ctx);
+			return localContentElementList;
 		}
-
-		localContentElementList.initialize(ctx);
-		return localContentElementList;
 	}
 
 	public ComponentBean[] getAllLocalContentBean() throws Exception {
@@ -1782,7 +1786,7 @@ public class MenuElement implements Serializable {
 	public ContentElementList getContent(ContentContext ctx) throws Exception {
 
 		ContentContext pageCtx = ctx.getContextOnPage(this);
-		ContentElementList elemList = new ContentElementList(getLocalContent(pageCtx));
+		ContentElementList elemList = getLocalContent(pageCtx);
 
 		if (!isBreakRepeat()) {
 			if ((getParent() != null) && (ctx.getRenderMode() != ContentContext.EDIT_MODE)) {
@@ -1964,7 +1968,6 @@ public class MenuElement implements Serializable {
 		} else {
 			return getModificationDate();
 		}
-
 	}
 
 	public Date getCreationDate() {
@@ -1995,7 +1998,6 @@ public class MenuElement implements Serializable {
 	 * @throws Exception
 	 */
 	public String getDescription(ContentContext ctx) throws Exception {
-
 		PageDescription desc = getPageDescriptionCached(ctx, ctx.getRequestContentLanguage());
 
 		if (desc.description != null) {
@@ -2458,22 +2460,20 @@ public class MenuElement implements Serializable {
 	 * @return
 	 * @throws Exception
 	 */
-	private synchronized ContentElementList getLocalContent(ContentContext ctx) throws Exception {
+	private ContentElementList getLocalContent(ContentContext ctx) throws Exception {
 		ContentElementList localContentElementList = getContentElementListMap().get(ctx.getRequestContentLanguage());
 		if (localContentElementList == null) {
+			synchronized (getLock()) {
+				localContentElementList = new ContentElementList(componentBean, ctx, this, false);
 
-			/*
-			 * ComponentBean[] localComponentBean; synchronized (componentBean) { localComponentBean = new ComponentBean[componentBean.length]; System.arraycopy(componentBean, 0, localComponentBean, 0, componentBean.length); }
-			 */
-			localContentElementList = new ContentElementList(componentBean, ctx, this, false);
+				if (!ctx.isFree()) { // no reference to template >>> some component can be absent
+					getContentElementListMap().put(ctx.getRequestContentLanguage(), localContentElementList);
+				}
 
-			if (!ctx.isFree()) { // no reference to template >>> some component can be absent
-				getContentElementListMap().put(ctx.getRequestContentLanguage(), localContentElementList);
+				logger.fine("update local content  - # component : " + localContentElementList.size(ctx) + " (ctx:" + ctx + ")");
 			}
-
-			logger.fine("update local content  - # component : " + localContentElementList.size(ctx) + " (ctx:" + ctx + ")");
 		}
-
+		localContentElementList = new ContentElementList(localContentElementList);
 		localContentElementList.initialize(ctx);
 
 		return localContentElementList;
@@ -2481,9 +2481,7 @@ public class MenuElement implements Serializable {
 	}
 
 	public ContentElementList getLocalContentCopy(ContentContext ctx) throws Exception {
-		ContentElementList outList = new ContentElementList(getLocalContent(ctx));
-		outList.initialize(ctx);
-		return outList;
+		return getLocalContent(ctx);
 	}
 
 	/**
@@ -2831,13 +2829,16 @@ public class MenuElement implements Serializable {
 	}
 
 	public MenuElement getRoot() {
-		MenuElement rootNode = this;
-		MenuElement parent = getParent();
-		while (parent != null) {
-			rootNode = parent;
-			parent = parent.getParent();
+		if (root == null) {
+			MenuElement rootNode = this;
+			MenuElement parent = getParent();
+			while (parent != null) {
+				rootNode = parent;
+				parent = parent.getParent();
+			}
+			root = rootNode;
 		}
-		return rootNode;
+		return root;
 	}
 
 	/**
@@ -2967,7 +2968,6 @@ public class MenuElement implements Serializable {
 	}
 
 	public String getTitle(ContentContext ctx) throws Exception {
-
 		ContentContext newCtx = new ContentContext(ctx);
 		newCtx.setArea(null); // warning : check if the method is needed.
 
@@ -2995,7 +2995,6 @@ public class MenuElement implements Serializable {
 	 * @throws Exception
 	 */
 	public String getLocalTitle(ContentContext ctx) throws Exception {
-
 		ContentContext newCtx = new ContentContext(ctx);
 		newCtx.setArea(null); // warning : check if the method is needed.
 		newCtx.setFree(true);
@@ -3006,7 +3005,7 @@ public class MenuElement implements Serializable {
 			return desc.localTitle;
 		}
 
-		desc.localTitle = getContent(newCtx).getLocalTitle();
+		desc.localTitle = getLocalContent(newCtx).getLocalTitle();
 
 		if (desc.localTitle != null) {
 			if ((desc.localTitle.trim().length() == 0) && (name != null)) {
@@ -3042,7 +3041,6 @@ public class MenuElement implements Serializable {
 		} else {
 			outList.addAll(virtualChild);
 		}
-
 		return outList;
 	}
 
@@ -3072,10 +3070,6 @@ public class MenuElement implements Serializable {
 			} else {
 
 				MenuElement realParent = parent;
-				/*
-				 * if (!realParent.isSelected(ctx)) { for (MenuElement vparent : getVirtualParent()) { if (vparent.isSelected(ctx)) { realParent = vparent; } } }
-				 */// TODO : warning this comment must be bad, but with it you have a recursive call to isSelected
-
 				if (realParent != null) {
 					return realParent.getVirtualPathRec(ctx, c + 1) + '/' + getName();
 				} else {
@@ -3099,29 +3093,31 @@ public class MenuElement implements Serializable {
 	 * @throws Exception
 	 */
 	public List<MenuElement> getVisibleChildMenuElements(ContentContext ctx) throws Exception {
-		ArrayList<MenuElement> resObj = new ArrayList<MenuElement>();
-		for (MenuElement element : childMenuElements) {
-			if (element.isVisible(ctx)) {
-				resObj.add(element);
-			} else {
-				GlobalContext globalContext = GlobalContext.getInstance(ctx.getRequest());
-				if (globalContext.isAutoSwitchToDefaultLanguage() && ctx.getRenderMode() != ContentContext.EDIT_MODE) {
-					ContentContext defaultLgCtx = new ContentContext(ctx);
-					defaultLgCtx.setArea(null);
-					Iterator<String> defaultLgs = globalContext.getDefaultLanguages().iterator();
-					boolean insered = false;
-					while (defaultLgs.hasNext() && !insered) {
-						String lg = defaultLgs.next();
-						defaultLgCtx.setRequestContentLanguage(lg);
-						if (element.isVisible(defaultLgCtx)) {
-							resObj.add(element);
-							insered = true;
+		synchronized (getLock()) {
+			ArrayList<MenuElement> resObj = new ArrayList<MenuElement>();
+			for (MenuElement element : childMenuElements) {
+				if (element.isVisible(ctx)) {
+					resObj.add(element);
+				} else {
+					GlobalContext globalContext = GlobalContext.getInstance(ctx.getRequest());
+					if (globalContext.isAutoSwitchToDefaultLanguage() && ctx.getRenderMode() != ContentContext.EDIT_MODE) {
+						ContentContext defaultLgCtx = new ContentContext(ctx);
+						defaultLgCtx.setArea(null);
+						Iterator<String> defaultLgs = globalContext.getDefaultLanguages().iterator();
+						boolean insered = false;
+						while (defaultLgs.hasNext() && !insered) {
+							String lg = defaultLgs.next();
+							defaultLgCtx.setRequestContentLanguage(lg);
+							if (element.isVisible(defaultLgCtx)) {
+								resObj.add(element);
+								insered = true;
+							}
 						}
 					}
 				}
 			}
+			return resObj;
 		}
-		return resObj;
 	}
 
 	public List<MenuElement> getVisibleChildMenuElementsList(ContentContext ctx) throws Exception {
@@ -3234,7 +3230,6 @@ public class MenuElement implements Serializable {
 	}
 
 	public boolean isEmpty(ContentContext ctx, String area) throws Exception {
-
 		PageDescription desc = getPageDescriptionCached(ctx, ctx.getRequestContentLanguage());
 
 		if (desc.isEmpty(area) != null) {
@@ -3296,7 +3291,6 @@ public class MenuElement implements Serializable {
 	}
 
 	public boolean isRealContent(ContentContext ctx) throws Exception {
-
 		if (!isInsideTimeRange()) {
 			return false;
 		}
@@ -3310,10 +3304,6 @@ public class MenuElement implements Serializable {
 		ContentContext contentAreaCtx = new ContentContext(ctx);
 		contentAreaCtx.setArea(ComponentBean.DEFAULT_AREA);
 
-		/*
-		 * if (isEmpty(contentAreaCtx)) { return false; }
-		 */
-
 		ContentElementList comps = getContent(contentAreaCtx);
 		while (comps.hasNext(contentAreaCtx)) {
 			IContentVisualComponent comp = comps.next(contentAreaCtx);
@@ -3326,6 +3316,7 @@ public class MenuElement implements Serializable {
 		desc.realContent = false;
 
 		return false;
+
 	}
 
 	public boolean isRealContentAnyLanguage(ContentContext ctx) throws Exception {
@@ -3542,7 +3533,7 @@ public class MenuElement implements Serializable {
 		 * if (path.equals("/")) { return this; } else { Collection<MenuElement> pastNode = new LinkedList<MenuElement>(); return searchChild(this, ctx, path, pastNode); }
 		 */
 		GlobalContext globalContext = GlobalContext.getInstance(ctx.getRequest());
-		return globalContext.getPage(ctx, path);
+		return globalContext.getPage(ctx, path, false);
 	}
 
 	/**
@@ -3716,7 +3707,9 @@ public class MenuElement implements Serializable {
 	}
 
 	public void setTemplateName(String inTemplate) {
-		templateId = inTemplate;
+		synchronized (getLock()) {
+			templateId = inTemplate;
+		}
 	}
 
 	/**
@@ -3752,8 +3745,10 @@ public class MenuElement implements Serializable {
 	 * @param b
 	 */
 	public void setVisible(boolean b) {
-		releaseCache();
-		visible = b;
+		synchronized (getLock()) {
+			releaseCache();
+			visible = b;
+		}
 	}
 
 	private void sortChild() {

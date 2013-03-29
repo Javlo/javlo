@@ -254,7 +254,7 @@ public class ContentService {
 			content = "";
 		}
 		String id = StringHelper.getRandomId();
-		ComponentBean bean = new ComponentBean(id, type, content, ctx.getContentLanguage(), false);
+		ComponentBean bean = new ComponentBean(id, type, content, ctx.getRequestContentLanguage(), false);
 		GlobalContext globalContext = GlobalContext.getInstance(ctx.getRequest());
 		EditContext editCtx = EditContext.getInstance(globalContext, ctx.getRequest().getSession());
 		bean.setArea(editCtx.getCurrentArea());
@@ -269,7 +269,7 @@ public class ContentService {
 			content = "";
 		}
 		String id = StringHelper.getRandomId();
-		ComponentBean bean = new ComponentBean(id, type, content, ctx.getContentLanguage(), repeat);
+		ComponentBean bean = new ComponentBean(id, type, content, ctx.getRequestContentLanguage(), repeat);
 		bean.setRenderer(renderer);
 		GlobalContext globalContext = GlobalContext.getInstance(ctx.getRequest());
 		EditContext editCtx = EditContext.getInstance(globalContext, ctx.getRequest().getSession());
@@ -587,10 +587,12 @@ public class ContentService {
 	}
 
 	public void releaseViewNav(ContentContext ctx, GlobalContext globalContext) throws Exception {
-		setViewNav(null);
-		globalContext.releaseAllCache();
-		clearComponentCache();
-		shortURLMap = null;
+		synchronized (globalContext.RELEASE_CACHE) {
+			setViewNav(null);
+			globalContext.releaseAllCache();
+			clearComponentCache();
+			shortURLMap = null;
+		}
 	}
 
 	public void removeAttribute(ContentContext ctx, String key) {
