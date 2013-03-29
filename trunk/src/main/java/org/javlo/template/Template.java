@@ -1692,7 +1692,7 @@ public class Template implements Comparable<Template> {
 			lockImport = globalContext.LOCK_IMPORT_TEMPLATE;
 		}
 		synchronized (lockImport) {
-			if (isTemplateInWebapp(ctx)) {
+			if (!isTemplateFolderInWebapp(ctx)) {
 				String templateFolder = config.getTemplateFolder();
 				File templateSrc = new File(URLHelper.mergePath(templateFolder, getSourceFolderName()));
 				if (templateSrc.exists()) {
@@ -1847,8 +1847,21 @@ public class Template implements Comparable<Template> {
 		if (templateTgt.exists() && globalContext != null) {
 			contextWithTemplateImported.add(globalContext.getContextKey());
 		}
-		return templateTgt.exists();
+		boolean outExist = templateTgt.exists();
+		return outExist;
+	}
 
+	private boolean isTemplateFolderInWebapp(ContentContext ctx) {
+		GlobalContext globalContext = null;
+		if (ctx != null) {
+			globalContext = ctx.getGlobalContext();
+		}
+		File templateTgt = new File(URLHelper.mergePath(getWorkTemplateFolder(), getFolder(globalContext)));
+		if (templateTgt.exists() && globalContext != null) {
+			contextWithTemplateImported.add(globalContext.getContextKey());
+		}
+		boolean outExist = templateTgt.exists();
+		return outExist;
 	}
 
 	public boolean isValid() {
