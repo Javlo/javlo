@@ -84,6 +84,8 @@ public class GlobalContext implements Serializable {
 
 	private static final Object LOCK_GLOBAL_CONTEXT_LOAD = new Object();
 
+	public final Object LOCK_IMPORT_TEMPLATE = new Object();
+
 	private class StorePropertyThread extends Thread {
 
 		private static final int SLEEP_BETWEEN_STORAGE = 10 * 1000; // 10 sec
