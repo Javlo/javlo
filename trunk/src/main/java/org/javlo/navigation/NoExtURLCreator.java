@@ -1,11 +1,8 @@
 package org.javlo.navigation;
 
 import java.net.URLEncoder;
-import java.util.Collection;
 
 import org.apache.commons.lang.StringUtils;
-import org.javlo.component.core.IContentVisualComponent;
-import org.javlo.component.navigation.PageURL;
 import org.javlo.context.ContentContext;
 import org.javlo.context.GlobalContext;
 import org.javlo.helper.StringHelper;
@@ -26,10 +23,9 @@ public class NoExtURLCreator implements IURLFactory {
 
 	@Override
 	public String createURL(ContentContext ctx, MenuElement currentPage) throws Exception {
-		Collection<IContentVisualComponent> comps = currentPage.getContentByType(ctx, PageURL.TYPE);
-		if (comps.size() > 0) {
-			return ((PageURL) comps.iterator().next()).getValue();
-		}
+		/*
+		 * Collection<IContentVisualComponent> comps = currentPage.getContentByType(ctx, PageURL.TYPE); if (comps.size() > 0) { return ((PageURL) comps.iterator().next()).getValue(); }
+		 */
 		ContentContext lgCtx = ctx;
 		if (fromDefaultLanguage()) {
 			GlobalContext globalContext = GlobalContext.getInstance(ctx.getRequest());

@@ -18,6 +18,7 @@ public class FieldImage extends FieldFile {
 		return StringHelper.isTrue(properties.getProperty("field." + getUnicName() + ".image.label", "true"));
 	}
 
+	@Override
 	protected String getFileTypeFolder() {
 		return getStaticConfig().getImageFolder();
 	}
@@ -31,17 +32,17 @@ public class FieldImage extends FieldFile {
 	public String getViewXHTMLCode(ContentContext ctx) throws Exception {
 		StringWriter writer = new StringWriter();
 		PrintWriter out = new PrintWriter(writer);
-		
+
 		if (!isViewDisplayed()) {
 			return "";
 		}
-		
+
 		if (getCurrentFile() == null || getCurrentFile().trim().length() == 0) {
 			return "";
 		}
 
 		String relativePath = URLHelper.mergePath(getFileTypeFolder(), getCurrentFolder());
-		if (getCurrentFile() != null) {
+		if (getCurrentFile() != null && getCurrentFile().trim().length() > 0) {
 			String fileURL = URLHelper.mergePath(relativePath, getCurrentFile());
 
 			String img;
