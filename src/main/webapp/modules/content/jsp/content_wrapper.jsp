@@ -5,6 +5,7 @@
 <c:set var="previewParams" value="?webaction=editPreview&_closeFrame=true&previewEdit=true&comp_id=${param.comp_id}" />
 	<form id="form-content" class="components ${empty param.previewEdit?'ajax':''}" action="${info.currentURL}${not empty param.previewEdit?'?previewEdit=true':''}" enctype="multipart/form-data" method="post">
 		<input type="hidden" name="webaction" value="edit.save" />
+		<input type="hidden" name="render-mode" value="1" />		
 		<jsp:include page="content.jsp${not empty param.previewEdit?'?firstLine=true':''}" />
 		<div class="insert-line">
 			<c:set var="saveItem" value="${i18n.edit['global.save']}" />
