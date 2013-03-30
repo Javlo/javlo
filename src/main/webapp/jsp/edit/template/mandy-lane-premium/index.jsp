@@ -243,7 +243,7 @@
 <c:if test="${empty param.previewEdit}">
 <div id="footer" class="footer footer_float">
 	<div class="footerinner">
-    	<a href="http://javlo.org">javlo.org</a><c:if test="${!userInterface.light}"> 2012 - v ${info.version} - <span id="preview-version">${info.previewVersion}</span></c:if>
+    	<a href="http://javlo.org">javlo.org</a><c:if test="${!userInterface.light}"> 2012 - v ${info.version} - <span id="preview-version">${info.previewVersion}</span> - <span id="server-time">${info.serverTime}</span></c:if>
     </div><!-- footerinner -->
 </div><!-- footer -->
 </c:if>

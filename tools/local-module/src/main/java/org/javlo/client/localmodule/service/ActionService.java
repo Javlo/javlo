@@ -63,6 +63,10 @@ public class ActionService {
 		ConfigFrame.showDialog();
 	}
 
+	public void showNotifications() {
+		//NotificationListFrame.showDialog();
+	}
+
 	public void exit() {
 		NotificationClientService notifClient = NotificationClientService.getInstance();
 		notifClient.stop();

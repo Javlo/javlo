@@ -40,6 +40,11 @@ public class DefaultTemplate extends Template {
 	}
 
 	@Override
+	public String getId() {
+		return "0";
+	}
+
+	@Override
 	public String getOwner() {
 		return "";
 	}

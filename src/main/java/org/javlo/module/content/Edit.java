@@ -4,6 +4,7 @@ import java.io.IOException;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
@@ -741,9 +742,7 @@ public class Edit extends AbstractModuleAction {
 			}
 			MenuElement elem = ctx.getCurrentPage();
 
-			System.out.println("***** Edit.performDelete : PATH = " + elem.getPath()); // TODO: remove debug trace
-
-			String type = elem.removeContent(ctx, id);
+			elem.removeContent(ctx, id);
 			GlobalContext globalContext = GlobalContext.getInstance(request);
 			PersistenceService persistenceService = PersistenceService.getInstance(globalContext);
 			persistenceService.store(ctx);
@@ -1071,39 +1070,44 @@ public class Edit extends AbstractModuleAction {
 
 			String message = null;
 
-			PersistenceService persistenceService = PersistenceService.getInstance(globalContext);
+			synchronized (globalContext) {
 
-			if (!globalContext.isPortail()) {
-				persistenceService.publishPreviewFile(ctx);
-			} else {
-				ContentContext viewCtx = new ContentContext(ctx);
-				viewCtx.setRenderMode(ContentContext.VIEW_MODE);
+				PersistenceService persistenceService = PersistenceService.getInstance(globalContext);
 
-				MenuElement viewNav = content.getNavigation(viewCtx);
-				NavigationHelper.publishNavigation(ctx, content.getNavigation(ctx), viewNav);
-				persistenceService.store(viewCtx, ContentContext.VIEW_MODE);
+				if (!globalContext.isPortail()) {
+					persistenceService.publishPreviewFile(ctx);
+				} else {
+					ContentContext viewCtx = new ContentContext(ctx);
+					viewCtx.setRenderMode(ContentContext.VIEW_MODE);
+
+					MenuElement viewNav = content.getNavigation(viewCtx);
+					NavigationHelper.publishNavigation(ctx, content.getNavigation(ctx), viewNav);
+					persistenceService.store(viewCtx, ContentContext.VIEW_MODE);
+				}
+
+				globalContext.setPublishDate(new Date());
+				globalContext.setLatestPublisher(ctx.getCurrentEditUser().getLogin());
+
+				content.releaseViewNav(ctx, globalContext);
+
+				String msg = i18nAccess.getText("content.published");
+				MessageRepository.getInstance(ctx).setGlobalMessageAndNotification(ctx, new GenericMessage(msg, GenericMessage.INFO));
+				// MessageRepository.getInstance(ctx).setGlobalMessage(new GenericMessage(msg, GenericMessage.INFO));
+
+				performSynchro(application, staticConfig, globalContext);
+
+				NavigationService navigationService = NavigationService.getInstance(globalContext, request.getSession());
+				navigationService.clearAllViewPage();
+
+				// clean component list when publish
+				ComponentFactory.cleanComponentList(request.getSession().getServletContext(), globalContext);
 			}
-
-			globalContext.setPublishDate(new Date());
-			globalContext.setLatestPublisher(ctx.getCurrentEditUser().getLogin());
-
-			content.releaseViewNav(ctx, globalContext);
-
-			String msg = i18nAccess.getText("content.published");
-			MessageRepository.getInstance(ctx).setGlobalMessageAndNotification(ctx, new GenericMessage(msg, GenericMessage.INFO));
-
-			performSynchro(application, staticConfig, globalContext);
-
-			NavigationService navigationService = NavigationService.getInstance(globalContext, request.getSession());
-			navigationService.clearAllViewPage();
-
-			// clean component list when publish
-			ComponentFactory.cleanComponentList(request.getSession().getServletContext(), globalContext);
 
 			/*** check url ***/
 			ContentContext lgCtx = new ContentContext(ctx);
 			Collection<String> lgs = globalContext.getContentLanguages();
-			Collection<String> urls = new HashSet<String>();
+			Map<String, String> pages = new HashMap<String, String>();
+			Collection<String> errorPageNames = new LinkedList<String>();
 			String dblURL = null;
 			IURLFactory urlFactory = globalContext.getURLFactory(lgCtx);
 			if (urlFactory != null) {
@@ -1112,17 +1116,26 @@ public class Edit extends AbstractModuleAction {
 					MenuElement[] children = ContentService.getInstance(globalContext).getNavigation(lgCtx).getAllChildren();
 					for (MenuElement menuElement : children) {
 						String url = lgCtx.getRequestContentLanguage() + urlFactory.createURL(lgCtx, menuElement);
-						if (urls.contains(url)) {
-							dblURL = url;
+						if (pages.keySet().contains(url)) {
+							if (!errorPageNames.contains(menuElement.getName())) {
+								errorPageNames.add(menuElement.getName());
+							}
+							logger.warning("page : " + menuElement.getName() + " is refered by a url allready user : " + url);
+							if (!errorPageNames.contains(pages.get(url))) {
+								errorPageNames.add(pages.get(url));
+							}
+							if (menuElement.isRealContent(lgCtx)) {
+								dblURL = url;
+							}
 						} else {
-							urls.add(url);
+							pages.put(url, menuElement.getName());
 						}
 					}
 				}
 			}
 
 			if (dblURL != null) {
-				msg = i18nAccess.getText("action.publish.error.same-url", new String[][] { { "url", dblURL } });
+				String msg = i18nAccess.getText("action.publish.error.same-url", new String[][] { { "url", dblURL }, { "pages", StringHelper.collectionToString(errorPageNames, ",") } });
 				MessageRepository.getInstance(ctx).setGlobalMessageAndNotification(ctx, new GenericMessage(msg, GenericMessage.ALERT));
 			}
 

@@ -94,8 +94,14 @@ jQuery(document).ready(function() {
 		item.css("display","none");
 	});
 	
-	initFocusPoint();
 	
+	jQuery(".submit_on_change").each(function(){
+		jQuery(this).live("change",function() {
+			jQuery(this.form).trigger("submit");
+		});
+	});
+
+	initFocusPoint();	
 });
 
 jQuery.fn.extend({

@@ -3,10 +3,13 @@ package org.javlo.client.localmodule.ui;
 import java.util.Enumeration;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 import javax.swing.DefaultListModel;
 import javax.swing.JOptionPane;
 
+import org.javlo.client.localmodule.model.AppConfig;
 import org.javlo.client.localmodule.model.ServerConfig;
 import org.javlo.client.localmodule.service.ConfigService;
 import org.javlo.client.localmodule.service.I18nService;
@@ -20,6 +23,8 @@ import org.javlo.helper.StringHelper;
 public class ConfigFrame extends javax.swing.JDialog {
 
 	private static final long serialVersionUID = 7060664378303938141L;
+
+	private static final Logger logger = Logger.getLogger(ConfigFrame.class.getName());
 
 	private static ConfigFrame instance;
 
@@ -57,19 +62,20 @@ public class ConfigFrame extends javax.swing.JDialog {
 
 	private void loadConfig() {
 		lstServersModel = new DefaultListModel();
-		for (ServerConfig serverConfig : config.getServers()) {
+		AppConfig configBean = config.getBean();
+		for (ServerConfig serverConfig : configBean.getServers()) {
 			lstServersModel.addElement(serverConfig);
 		}
 		lstServers.setModel(lstServersModel);
 
-		txtProxyHost.setText(config.getProxyHost());
-		if (config.getProxyPort() == null) {
+		txtProxyHost.setText(configBean.getProxyHost());
+		if (configBean.getProxyPort() == null) {
 			txtProxyPort.setText(null);
 		} else {
-			txtProxyPort.setText("" + config.getProxyPort());
+			txtProxyPort.setText("" + configBean.getProxyPort());
 		}
-		txtProxyUsername.setText(config.getProxyUsername());
-		txtProxyPassword.setText(config.getProxyPassword());
+		txtProxyUsername.setText(configBean.getProxyUsername());
+		txtProxyPassword.setText(configBean.getProxyPassword());
 	}
 
 	private boolean saveConfig() {
@@ -104,18 +110,20 @@ public class ConfigFrame extends javax.swing.JDialog {
 		}
 
 		//Store
-		synchronized (config.lock) {
-			config.setServers(servers.toArray(new ServerConfig[servers.size()]));
+		synchronized (config) {
+			AppConfig configBean = config.getBean();
+			configBean.setServers(servers.toArray(new ServerConfig[servers.size()]));
 
-			config.setProxyHost(proxyHost);
-			config.setProxyPort(proxyPort);
-			config.setProxyUsername(StringHelper.trimAndNullify(txtProxyUsername.getText()));
-			config.setProxyPassword(StringHelper.trimAndNullify(new String(txtProxyPassword.getPassword())));
+			configBean.setProxyHost(proxyHost);
+			configBean.setProxyPort(proxyPort);
+			configBean.setProxyUsername(StringHelper.trimAndNullify(txtProxyUsername.getText()));
+			configBean.setProxyPassword(StringHelper.trimAndNullify(new String(txtProxyPassword.getPassword())));
 			try {
 				config.save();
 				ServiceFactory.getInstance().onConfigChange();
 				return true;
 			} catch (Exception ex) {
+				logger.log(Level.SEVERE, "Exception during save config.", ex);
 				try {
 					config.reload();
 				} catch (Exception ex2) {

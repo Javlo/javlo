@@ -28,11 +28,15 @@ public class RemoteNotification {
 	}
 
 	public String getTitle() {
-		return "New notification";
+		return getServer().getTitle();
 	}
 
 	public String getMessage() {
 		return container.getNotification().getMessage();
+	}
+
+	public int getType() {
+		return container.getNotification().getType();
 	}
 
 	public String getUrl() {
@@ -40,7 +44,7 @@ public class RemoteNotification {
 	}
 
 	public String getMenuLabel() {
-		return new SimpleDateFormat("HH:mm").format(getCreationDate()) + " > " + getMessage();
+		return new SimpleDateFormat("HH:mm").format(getCreationDate()) + " > " + getTitle() + ": " + getMessage();
 	}
 
 }
