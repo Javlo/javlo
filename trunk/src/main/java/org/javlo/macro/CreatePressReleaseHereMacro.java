@@ -4,6 +4,7 @@ import java.util.Map;
 
 import org.javlo.context.ContentContext;
 import org.javlo.helper.MacroHelper;
+import org.javlo.module.core.ModulesContext;
 import org.javlo.navigation.MenuElement;
 
 public class CreatePressReleaseHereMacro extends AbstractMacro {
@@ -24,6 +25,7 @@ public class CreatePressReleaseHereMacro extends AbstractMacro {
 		if (newPage != null) {
 			MacroHelper.addContentInPage(ctx, newPage, getPageStructureName());
 		}
+		ModulesContext.getInstance(ctx.getRequest().getSession(), ctx.getGlobalContext()).setCurrentModule("content");
 		return null;
 	}
 
