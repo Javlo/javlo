@@ -72,7 +72,7 @@ import org.xhtmlrenderer.pdf.ITextRenderer;
 import org.xhtmlrenderer.swing.Java2DRenderer;
 import org.xhtmlrenderer.util.FSImageWriter;
 
-public class AccessServlet extends HttpServlet {
+public class AccessServlet extends HttpServlet implements IVersion {
 
 	private static final DecimalFormat df = new DecimalFormat("#####0.00");
 
@@ -86,8 +86,6 @@ public class AccessServlet extends HttpServlet {
 	 * create a static logger.
 	 */
 	public static Logger logger = Logger.getLogger(AccessServlet.class.getName());
-
-	public static final String VERSION = "2.0.1";
 
 	@Override
 	public void destroy() {

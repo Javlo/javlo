@@ -34,6 +34,8 @@ import org.javlo.ztatic.StaticInfo;
 
 public class FieldFile extends Field implements IStaticContainer {
 
+	private static java.util.logging.Logger logger = java.util.logging.Logger.getLogger(FieldFile.class.getName());
+
 	protected String getInputFolderName() {
 		return getName() + "-folder-" + getId();
 	}
@@ -118,6 +120,8 @@ public class FieldFile extends Field implements IStaticContainer {
 					list.add(files[i].getName());
 				}
 			}
+		} else {
+			logger.warning("folder not found : " + dir);
 		}
 		return list;
 	}
@@ -170,12 +174,12 @@ public class FieldFile extends Field implements IStaticContainer {
 
 		out.println("<div class=\"line\">");
 		out.println("<label for=\"" + getInputFolderName() + "\">" + getFolderLabel() + " : </label>");
-		out.println(XHTMLHelper.getInputOneSelect(getInputFolderName(), getFolderListForSelection(), getCurrentFolder(), "ajax_update_change"));
+		out.println(XHTMLHelper.getInputOneSelect(getInputFolderName(), getFolderListForSelection(), getCurrentFolder(), "jQuery(this.form).trigger('submit');", true));
 		out.println("</div>");
 
 		out.println("<div class=\"line\">");
 		out.println("<label for=\"" + getInputFileName() + "\">" + getFileLabel() + " : </label>");
-		out.println(XHTMLHelper.getInputOneSelect(getInputFileName(), getFileList(), getCurrentFile(), "ajax_update_change"));
+		out.println(XHTMLHelper.getInputOneSelect(getInputFileName(), getFileList(), getCurrentFile(), "jQuery(this.form).trigger('submit');", true));
 		out.println("</div>");
 
 		out.println("<div class=\"line\">");
@@ -272,25 +276,6 @@ public class FieldFile extends Field implements IStaticContainer {
 		String label = requestService.getParameter(getInputLabelFileName(), null);
 		String link = requestService.getParameter(getInputLabelLinkName(), null);
 
-		if (newFolderName.trim().length() > 0) {
-			File newFolder = new File(URLHelper.mergePath(getFileDirectory(), newFolderName));
-			newFolder.mkdirs();
-			if (!getCurrentFolder().equals(newFolderName)) {
-				setCurrentFolder(newFolderName);
-				setCurrentFile("");
-				modify = true;
-				setNeedRefresh(true);
-			}
-		} else if (!getCurrentFolder().equals(folder)) {
-			setCurrentFolder(folder);
-			if (getFileList().iterator().hasNext()) {
-				newFileName = getFileList().iterator().next();
-			} else {
-				newFileName = "";
-			}
-			modify = true;
-		}
-
 		if (label != null) {
 			if (!label.equals(getCurrentLabel())) {
 				modify = true;
@@ -303,6 +288,27 @@ public class FieldFile extends Field implements IStaticContainer {
 				modify = true;
 				setCurrentLink(link);
 			}
+		}
+
+		if (newFolderName.trim().length() > 0) {
+			File newFolder = new File(URLHelper.mergePath(getFileDirectory(), newFolderName));
+			newFolder.mkdirs();
+			if (!getCurrentFolder().equals(newFolderName)) {
+				setCurrentFolder(newFolderName);
+				setCurrentFile("");
+				setCurrentLabel("");
+				newFileName = "";
+				fileName = "";
+				modify = true;
+				setNeedRefresh(true);
+			}
+		} else if (!getCurrentFolder().equals(folder)) {
+			setCurrentFolder(folder);
+			setCurrentFile("");
+			setCurrentLabel("");
+			newFileName = "";
+			fileName = "";
+			setNeedRefresh(true);
 		}
 
 		if (newFileName.trim().length() > 0) {
@@ -335,6 +341,7 @@ public class FieldFile extends Field implements IStaticContainer {
 		} else if (!fileName.equals(getCurrentFile())) {
 			setCurrentFile(fileName);
 			modify = true;
+			setNeedRefresh(true);
 		}
 
 		return modify;

@@ -152,7 +152,7 @@ public abstract class ElementaryURLHelper {
 			if (urlCreator != null) {
 				try {
 					uri = uri.substring(0, uri.lastIndexOf("."));
-					MenuElement page = globalContext.getPage(ctx, uri);
+					MenuElement page = globalContext.getPage(ctx, uri, false);
 					uri = urlCreator.createURL(ctx, page);
 				} catch (Exception e) {
 					e.printStackTrace();

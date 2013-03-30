@@ -47,9 +47,9 @@ public class LocalModule implements Runnable {
 			return;
 		}
 
-		if (!config.isValid()) {
+		if (!config.getBean().isValid()) {
 			action.showConfig();
-			if (!config.isValid()) {
+			if (!config.getBean().isValid()) {
 				action.exit();
 				return;
 			}

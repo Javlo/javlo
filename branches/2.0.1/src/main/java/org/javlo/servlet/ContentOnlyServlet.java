@@ -54,7 +54,7 @@ public class ContentOnlyServlet extends HttpServlet {
 
 			GlobalContext globalContext = GlobalContext.getInstance(ctx.getRequest());
 
-			if (globalContext.getPageIfExist(ctx, ctx.getPath()) == null) {
+			if (globalContext.getPageIfExist(ctx, ctx.getPath(), false) == null) {
 				response.setStatus(HttpServletResponse.SC_NOT_FOUND);
 			}
 

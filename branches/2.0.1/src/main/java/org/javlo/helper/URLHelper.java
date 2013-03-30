@@ -921,7 +921,7 @@ public class URLHelper extends ElementaryURLHelper {
 
 	}
 
-	public static final String changeMode(String inURL, String mode) throws MalformedURLException {
+	public static final String _changeMode(String inURL, String mode) throws MalformedURLException {
 		URL url = new URL(inURL);
 
 		String path = url.getPath();
@@ -946,6 +946,22 @@ public class URLHelper extends ElementaryURLHelper {
 
 	}
 
+	public static final String changeMode(String inURL, String mode) throws MalformedURLException {
+		URL url = new URL(inURL);
+		String path = url.getPath();
+		String[] pathItems = StringUtils.splitByWholeSeparator(path, "/");
+		for (int i = 0; i < pathItems.length; i++) {
+			if (pathItems[i].startsWith("edit-") || pathItems[i].equals("edit") || pathItems[i].startsWith("ajax-") || pathItems[i].equals("ajax") || pathItems[i].equals("preview")) {
+				pathItems[i] = mode;
+			}
+		}
+		String port = "";
+		if (url.getPort() >= 0 && url.getPort() != 80) {
+			port = ":" + url.getPort();
+		}
+		return url.getProtocol() + "://" + url.getHost() + port + '/' + URLHelper.mergePath(pathItems);
+	}
+
 	/**
 	 * get the parent url of a url. sample: http://www.javlo.org/static/images/visual.png >> http://www.javlo.org/static/images
 	 * 
@@ -964,7 +980,12 @@ public class URLHelper extends ElementaryURLHelper {
 	}
 
 	public static void main(String[] args) {
-		System.out.println("parent url : " + getParentURL("test.png"));
+		try {
+			System.out.println("***** URLHelper.main : url  = " + changeMode("http://www.javlo.org/demo/edit-user/home.html", "ajax"));
+		} catch (MalformedURLException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} // TODO: remove debug trace
 	}
 
 	public static String replaceFolderVariable(ContentContext ctx, String url) {

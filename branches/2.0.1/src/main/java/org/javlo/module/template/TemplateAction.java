@@ -111,7 +111,7 @@ public class TemplateAction extends AbstractModuleAction {
 		RequestService requestService = RequestService.getInstance(ctx.getRequest());
 		TemplateContext templateContext = TemplateContext.getInstance(ctx.getRequest().getSession(), globalContext, module);
 
-		Collection<Template> allTemplate = TemplateFactory.getAllTemplates(ctx.getRequest().getSession().getServletContext());
+		Collection<Template> allTemplate = TemplateFactory.getAllDiskTemplates(ctx.getRequest().getSession().getServletContext());
 		Collection<String> contextTemplates = globalContext.getTemplatesNames();
 
 		Collection<Template.TemplateBean> templates = new LinkedList<Template.TemplateBean>();

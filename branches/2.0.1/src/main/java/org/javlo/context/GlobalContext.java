@@ -22,6 +22,7 @@ import java.util.Collections;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.Hashtable;
 import java.util.Iterator;
 import java.util.LinkedHashSet;
 import java.util.LinkedList;
@@ -83,6 +84,8 @@ public class GlobalContext implements Serializable {
 
 	private static final Object LOCK_GLOBAL_CONTEXT_LOAD = new Object();
 
+	public final Object LOCK_IMPORT_TEMPLATE = new Object();
+
 	private class StorePropertyThread extends Thread {
 
 		private static final int SLEEP_BETWEEN_STORAGE = 10 * 1000; // 10 sec
@@ -122,13 +125,15 @@ public class GlobalContext implements Serializable {
 
 	private CacheManager cacheManager;
 
-	private final Map<String, ICache> cacheMaps = new HashMap<String, ICache>();
+	private final Map<String, ICache> cacheMaps = new Hashtable<String, ICache>();
 
-	private final Map<String, ICache> eternalCacheMaps = new HashMap<String, ICache>();
+	private final Map<String, ICache> eternalCacheMaps = new Hashtable<String, ICache>();
 
 	private IURLFactory urlFactory = null;
 
-	private final Map<String, MenuElement> viewPages = new HashMap<String, MenuElement>();
+	private Map<String, MenuElement> viewPages = null;
+
+	private boolean urlFromFactoryImported = false;
 
 	private final SmartMap frontCache = new SmartMap();
 
@@ -501,6 +506,8 @@ public class GlobalContext implements Serializable {
 
 	private final TimeMap<String, String> oneTimeTokens = new TimeMap<String, String>(60 * 60); // one time tolen live 1u
 
+	public final Object RELEASE_CACHE = new Object();
+
 	public long getAccountSize() {
 		if (accountSize == null) {
 			File file = new File(getDataFolder());
@@ -714,7 +721,7 @@ public class GlobalContext implements Serializable {
 		return cache;
 	}
 
-	private synchronized ICache getEhCacheCache(String cacheName) {
+	private ICache getEhCacheCache(String cacheName) {
 		ICache outCache = cacheMaps.get(cacheName);
 		if (outCache == null) {
 			Cache cache = cacheManager.getCache(cacheName);
@@ -1178,8 +1185,8 @@ public class GlobalContext implements Serializable {
 		return properties.getString("date.medium", staticConfig.getDefaultDateFormat());
 	}
 
-	public MenuElement getPage(ContentContext ctx, String url) throws Exception {
-		MenuElement elem = getPageIfExist(ctx, url);
+	public MenuElement getPage(ContentContext ctx, String url, boolean useURLCreator) throws Exception {
+		MenuElement elem = getPageIfExist(ctx, url, useURLCreator);
 		if (elem == null) {
 			if (ctx.isPageRequest() && ctx.getPath().equals(url)) {
 				logger.info("page not found : " + url + " (ctx=" + ctx + ')');
@@ -1194,23 +1201,32 @@ public class GlobalContext implements Serializable {
 		return elem;
 	}
 
-	public MenuElement getPageIfExist(ContentContext ctx, String url) throws Exception {
+	public MenuElement getPageIfExist(ContentContext ctx, String url, boolean useURLCreator) throws Exception {
 		IURLFactory urlCreator = getURLFactory(ctx);
-		if (ctx.getRenderMode() == ContentContext.VIEW_MODE && urlCreator != null) {
-			synchronized (viewPages) {
-				if (viewPages.size() == 0) {
-					ContentContext lgCtx = new ContentContext(ctx);
-					Collection<String> lgs = getContentLanguages();
-					for (String lg : lgs) {
-						lgCtx.setRequestContentLanguage(lg);
-						MenuElement[] children = ContentService.getInstance(ctx.getRequest()).getNavigation(lgCtx).getAllChildren();
-						for (MenuElement menuElement : children) {
-							String pageURL = urlCreator.createURL(lgCtx, menuElement);
-							String pageKeyURL = urlCreator.createURLKey(pageURL);
-							viewPages.put(pageKeyURL, menuElement);
+		if (ctx.getRenderMode() == ContentContext.VIEW_MODE && urlCreator != null && useURLCreator) {
+			if (!urlFromFactoryImported) {
+				synchronized (this) {
+					if (!urlFromFactoryImported) {
+						Map<String, MenuElement> localViewPages = new Hashtable<String, MenuElement>();
+						ContentContext lgCtx = new ContentContext(ctx);
+						Collection<String> lgs = getContentLanguages();
+						for (String lg : lgs) {
+							lgCtx.setRequestContentLanguage(lg);
+							MenuElement[] children = ContentService.getInstance(ctx.getRequest()).getNavigation(lgCtx).getAllChildren();
+							for (MenuElement menuElement : children) {
+								String pageURL = urlCreator.createURL(lgCtx, menuElement);
+								String pageKeyURL = urlCreator.createURLKey(pageURL);
+								localViewPages.put(pageKeyURL, menuElement);
+							}
 						}
+						viewPages = localViewPages;
+						urlFromFactoryImported = true;
 					}
 				}
+			}
+		} else {
+			if (viewPages == null) {
+				viewPages = new Hashtable<String, MenuElement>();
 			}
 		}
 		if (ctx.getRenderMode() == ContentContext.VIEW_MODE) {
@@ -1661,20 +1677,23 @@ public class GlobalContext implements Serializable {
 	}
 
 	public void releaseAllCache() {
-		for (String name : getAllCacheName()) {
-			getCache(name).removeAll();
-		}
-		cacheMaps.clear();
+		synchronized (RELEASE_CACHE) {
+			for (String name : getAllCacheName()) {
+				getCache(name).removeAll();
+			}
+			cacheMaps.clear();
 
-		viewPages.clear();
-		frontCache.clear();
-		try {
-			ReverseLinkService.getInstance(this).clearCache();
-		} catch (ServiceException e) {
-			e.printStackTrace();
-		}
+			viewPages = null;
+			urlFromFactoryImported = false;
+			frontCache.clear();
+			try {
+				ReverseLinkService.getInstance(this).clearCache();
+			} catch (ServiceException e) {
+				e.printStackTrace();
+			}
 
-		dataFolder = null;
+			dataFolder = null;
+		}
 	}
 
 	public void reload() {
@@ -2555,7 +2574,11 @@ public class GlobalContext implements Serializable {
 		}
 		out.println("**** # attributes       :  " + attributes.size());
 		out.println("**** # time attributes  :  " + timeAttributes.size());
-		out.println("**** # cached pages     :  " + viewPages.size());
+		if (viewPages != null) {
+			out.println("**** # cached pages     :  " + viewPages.size());
+		} else {
+			out.println("**** # cached pages     :  not found.");
+		}
 		out.println("****");
 		out.println("****************************************************************");
 		out.println("****************************************************************");

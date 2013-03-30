@@ -177,7 +177,7 @@ public class Field implements Cloneable {
 		String path = properties.getProperty("list." + listName + ".path");
 		if (path != null) {
 			GlobalContext globalContext = GlobalContext.getInstance(ctx.getRequest());
-			MenuElement page = globalContext.getPage(ctx, path);
+			MenuElement page = globalContext.getPage(ctx, path, false);
 			if (page != null) {
 				Collection<MenuElement> children = page.getChildMenuElements();
 				for (MenuElement child : children) {

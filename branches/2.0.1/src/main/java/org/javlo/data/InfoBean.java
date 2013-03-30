@@ -1,6 +1,7 @@
 package org.javlo.data;
 
 import java.util.Collection;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
@@ -482,5 +483,9 @@ public class InfoBean {
 
 	public String getAbsoluteURLPrefix() {
 		return URLHelper.createStaticURL(ctx.getContextForAbsoluteURL(), "/");
+	}
+
+	public String getServerTime() {
+		return StringHelper.renderTime(new Date());
 	}
 }
