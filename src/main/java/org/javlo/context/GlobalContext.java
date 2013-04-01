@@ -1203,11 +1203,12 @@ public class GlobalContext implements Serializable {
 
 	public MenuElement getPageIfExist(ContentContext ctx, String url, boolean useURLCreator) throws Exception {
 		IURLFactory urlCreator = getURLFactory(ctx);
+		Map<String, MenuElement> localViewPages = viewPages;
 		if (ctx.getRenderMode() == ContentContext.VIEW_MODE && urlCreator != null && useURLCreator) {
 			if (!urlFromFactoryImported) {
 				synchronized (this) {
 					if (!urlFromFactoryImported) {
-						Map<String, MenuElement> localViewPages = new Hashtable<String, MenuElement>();
+						localViewPages = new Hashtable<String, MenuElement>();
 						ContentContext lgCtx = new ContentContext(ctx);
 						Collection<String> lgs = getContentLanguages();
 						for (String lg : lgs) {
@@ -1225,8 +1226,9 @@ public class GlobalContext implements Serializable {
 				}
 			}
 		} else {
-			if (viewPages == null) {
-				viewPages = new Hashtable<String, MenuElement>();
+			if (localViewPages == null) {
+				localViewPages = new Hashtable<String, MenuElement>();
+				viewPages = localViewPages;
 			}
 		}
 		if (ctx.getRenderMode() == ContentContext.VIEW_MODE) {
@@ -1235,7 +1237,7 @@ public class GlobalContext implements Serializable {
 				keyURL = urlCreator.createURLKey(url);
 			}
 
-			MenuElement page = viewPages.get(keyURL);
+			MenuElement page = localViewPages.get(keyURL);
 			if (page != null) {
 				return page;
 			}
@@ -1248,7 +1250,7 @@ public class GlobalContext implements Serializable {
 			MenuElement page = MenuElement.searchChild(root, ctx, url, pastNode);
 
 			if (page != null && ctx.getRenderMode() == ContentContext.VIEW_MODE) {
-				viewPages.put(url, page);
+				localViewPages.put(url, page);
 			}
 
 			return page;

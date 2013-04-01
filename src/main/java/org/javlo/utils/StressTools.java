@@ -17,8 +17,16 @@ import org.apache.http.HttpResponse;
 import org.apache.http.client.HttpClient;
 import org.apache.http.client.methods.HttpGet;
 import org.apache.http.client.protocol.ClientContext;
+import org.apache.http.conn.ClientConnectionManager;
+import org.apache.http.conn.scheme.PlainSocketFactory;
+import org.apache.http.conn.scheme.Scheme;
+import org.apache.http.conn.scheme.SchemeRegistry;
 import org.apache.http.impl.client.BasicCookieStore;
 import org.apache.http.impl.client.DefaultHttpClient;
+import org.apache.http.impl.conn.tsccm.ThreadSafeClientConnManager;
+import org.apache.http.params.BasicHttpParams;
+import org.apache.http.params.CoreConnectionPNames;
+import org.apache.http.params.HttpParams;
 import org.apache.http.protocol.BasicHttpContext;
 import org.apache.http.protocol.HttpContext;
 import org.javlo.helper.ResourceHelper;
@@ -26,8 +34,8 @@ import org.javlo.helper.StringHelper;
 
 public class StressTools {
 
-	private static final String SCENARIO_FILE = "c:/trans/test1.txt";
-	private static final String RESULT_PREFIX = "c:/trans/result-";
+	private static final String SCENARIO_FILE = "C:/work/stress_test/test_pres_local.txt";
+	private static final String RESULT_PREFIX = "C:/work/stress_test/result-";
 
 	private static class StressThread extends Thread {
 
@@ -37,12 +45,12 @@ public class StressTools {
 		private final long thinkTime;
 		private final long occurence;
 		private final String scenario;
-		private final OutputStream resultStream;
+		private final PrintStream resultStream;
 
-		private final HttpClient httpclient = new DefaultHttpClient();
+		private final HttpClient httpclient;
 		private final HttpContext localContext = new BasicHttpContext();
 
-		public StressThread(long thinkTime, long occurence, String scenario, OutputStream resultStream) {
+		public StressThread(long thinkTime, long occurence, String scenario, PrintStream resultStream) {
 			super();
 			synchronized (threadCount) {
 				threadCount++;
@@ -53,6 +61,12 @@ public class StressTools {
 			this.scenario = scenario;
 			this.resultStream = resultStream;
 
+			HttpParams params = new BasicHttpParams();
+			SchemeRegistry registry = new SchemeRegistry();
+			registry.register(new Scheme("http", PlainSocketFactory.getSocketFactory(), 80));
+			ClientConnectionManager cm = new ThreadSafeClientConnManager(params, registry);
+			httpclient = new DefaultHttpClient(cm, params);
+
 			localContext.setAttribute(ClientContext.COOKIE_STORE, new BasicCookieStore());
 		}
 
@@ -60,10 +74,14 @@ public class StressTools {
 		public void run() {
 			try {
 				System.out.println("Start thread : " + threadCount);
-				runTest(httpclient, localContext, threadNumber, scenario, 2, resultStream, true, thinkTime);
+
+				httpclient.getParams().setParameter(CoreConnectionPNames.CONNECTION_TIMEOUT, 60 * 1000);
+
+				runTest(httpclient, localContext, threadNumber, scenario, 2, resultStream, thinkTime);
 				for (int i = 1; i < occurence; i++) {
-					runTest(httpclient, localContext, threadNumber, scenario, 2, resultStream, false, thinkTime);
+					runTest(httpclient, localContext, threadNumber, scenario, 2, resultStream, thinkTime);
 				}
+				httpclient.getConnectionManager().shutdown();
 				resultStream.close();
 				System.out.println("Stop thread : " + threadCount);
 				threadCount--;
@@ -83,30 +101,29 @@ public class StressTools {
 
 		String scenarioText = ResourceHelper.loadStringFromFile(scenario);
 
+		File resultFile = new File(resultPrefix + StringHelper.createFileName(StringHelper.renderTime(new Date())) + '-' + StressThread.threadCount + ".csv");
+		resultFile.createNewFile();
+		OutputStream outStream = new FileOutputStream(resultFile);
+		PrintStream out = new PrintStream(outStream);
+		out.println("\"time\", \"url\", \"return ok\", \"time\", \"error message\" ");
+
 		for (int i = 0; i < 100; i++) {
-			File resultFile = new File(resultPrefix + StringHelper.createFileName(StringHelper.renderTime(new Date())) + '-' + StressThread.threadCount + ".csv");
 			resultFile.createNewFile();
-			OutputStream outStream = new FileOutputStream(resultFile);
-			StressThread thread = new StressThread(100, 2, scenarioText, outStream);
+			StressThread thread = new StressThread(10, 2, scenarioText, out);
 			thread.start();
 		}
 
 	}
 
-	private static void runTest(HttpClient httpClient, HttpContext httpContext, int threadNumber, String scenario, int repeat, OutputStream resultOut, boolean printHeader, long thinkTime) throws IOException {
-
-		PrintStream out = new PrintStream(resultOut);
+	private static void runTest(HttpClient httpClient, HttpContext httpContext, int threadNumber, String scenario, int repeat, PrintStream out, long thinkTime) throws IOException {
 
 		for (int i = 0; i < repeat; i++) {
 
 			Reader r = new StringReader(scenario);
 			BufferedReader br = new BufferedReader(r);
 
-			if (printHeader) {
-				out.println("\"time\", \"url\", \"return ok\", \"time\", \"error message\" ");
-			}
-
 			String line = br.readLine();
+			int lineNumber = 1;
 			while (line != null) {
 				String[] splitedLine = line.split(">>>");
 				if (splitedLine.length == 2) {
@@ -142,12 +159,24 @@ public class StressTools {
 							validReturn = content.contains(result);
 						}
 					}
-					out.println("\"" + StringHelper.renderTime(new Date()) + "\",\"" + key + "\",\"" + validReturn + "\",\"" + StringHelper.renderTimeInSecond(endTime - startTime) + "\",\"" + errorMessage + "\"");
+					synchronized (out) {
+						out.println("\"" + StringHelper.renderTime(new Date()) + "\",\"" + key + "\",\"" + validReturn + "\",\"" + StringHelper.renderTimeInSecond(endTime - startTime) + "\",\"" + errorMessage + "\"");
+					}
+
 					if (!validReturn) {
+						System.out.println("");
 						System.out.println(validReturn + " - " + threadNumber + " : " + key + " - " + errorMessage);
+						System.out.println("");
+					} else {
+						if (lineNumber % 10 == 0) {
+							System.out.println("");
+						}
+						System.out.print(" " + lineNumber + " ");
 					}
 				} else {
-					out.println("\"ERROR BAD LINE : " + line + "\",\"\",\"\",\"\",\"\"");
+					synchronized (out) {
+						out.println("\"ERROR BAD LINE : " + line + "\",\"\",\"\",\"\",\"\"");
+					}
 				}
 				line = br.readLine();
 				if (thinkTime > 0) {
@@ -157,12 +186,15 @@ public class StressTools {
 						e.printStackTrace();
 					}
 				}
+				lineNumber++;
 			}
 
 			r.close();
 			br.close();
 		}
-		out.flush();
+		synchronized (out) {
+			out.flush();
+		}
 	}
 
 	public static void main(String[] args) {
