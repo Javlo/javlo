@@ -71,8 +71,8 @@ public class PersistenceThread extends Thread {
 	public void run() {
 		try {
 			logger.info("start persitence thread");
-			synchronized (LOCK) {
-				synchronized (menuElement.getLock()) {
+			synchronized (menuElement.getLock()) {
+				synchronized (LOCK) {
 					store(menuElement, mode, getDefaultLg());
 				}
 			}

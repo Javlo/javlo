@@ -753,80 +753,81 @@ public class PersistenceService {
 	}
 
 	public MenuElement load(ContentContext ctx, int renderMode, Map<String, String> contentAttributeMap, Date timeTravelDate) throws Exception {
+		synchronized (ctx.getGlobalContext()) {
+			synchronized (PersistenceThread.LOCK) {
 
-		synchronized (PersistenceThread.LOCK) {
+				loadVersion();
 
-			loadVersion();
+				logger.info("load version : " + version + " in mode : " + renderMode);
 
-			logger.info("load version : " + version + " in mode : " + renderMode);
+				MenuElement root;
+				InputStream in = null, in2 = null;
+				try {
 
-			MenuElement root;
-			InputStream in = null, in2 = null;
-			try {
-
-				if (timeTravelDate != null) {
-					// An other render mode than VIEW_MODE is not supported with a timeTravelDate.
-					Map<File, Date> backups = getBackupFiles();
-					long minDiff = Long.MIN_VALUE;
-					Entry<File, Date> minBackup = null;
-					for (Entry<File, Date> backup : backups.entrySet()) {
-						long diff = backup.getValue().getTime() - timeTravelDate.getTime();
-						if (diff <= 0 && diff > minDiff) {
-							minDiff = diff;
-							minBackup = backup;
-						}
-					}
-					if (minBackup != null) {
-						in2 = new FileInputStream(minBackup.getKey());
-						ZipInputStream zip = new ZipInputStream(in2);
-						ZipEntry entry = zip.getNextEntry();
-						while (entry != null) {
-							if (ResourceHelper.getFile(entry.getName()).equals("content_" + ContentContext.VIEW_MODE + ".xml")) {
-								in = zip;
-								break;
+					if (timeTravelDate != null) {
+						// An other render mode than VIEW_MODE is not supported with a timeTravelDate.
+						Map<File, Date> backups = getBackupFiles();
+						long minDiff = Long.MIN_VALUE;
+						Entry<File, Date> minBackup = null;
+						for (Entry<File, Date> backup : backups.entrySet()) {
+							long diff = backup.getValue().getTime() - timeTravelDate.getTime();
+							if (diff <= 0 && diff > minDiff) {
+								minDiff = diff;
+								minBackup = backup;
 							}
-							entry = zip.getNextEntry();
+						}
+						if (minBackup != null) {
+							in2 = new FileInputStream(minBackup.getKey());
+							ZipInputStream zip = new ZipInputStream(in2);
+							ZipEntry entry = zip.getNextEntry();
+							while (entry != null) {
+								if (ResourceHelper.getFile(entry.getName()).equals("content_" + ContentContext.VIEW_MODE + ".xml")) {
+									in = zip;
+									break;
+								}
+								entry = zip.getNextEntry();
+							}
 						}
 					}
-				}
-				if (in == null) {
-					File file;
-					if (renderMode == ContentContext.PREVIEW_MODE) {
-						file = new File(getDirectory() + "/content_" + renderMode + '_' + version + ".xml");
+					if (in == null) {
+						File file;
+						if (renderMode == ContentContext.PREVIEW_MODE) {
+							file = new File(getDirectory() + "/content_" + renderMode + '_' + version + ".xml");
+						} else {
+							file = new File(getDirectory() + "/content_" + renderMode + ".xml");
+						}
+						if (file.exists()) {
+							in = new FileInputStream(file);
+						}
+					}
+
+					if (in == null) {
+						root = MenuElement.getInstance(globalContext);
+						root.setName("root");
+						root.setVisible(true);
+						root.setPriority(1);
+						root.setId("0");
+						/*
+						 * file.createNewFile(); BufferedWriter out = new BufferedWriter(new FileWriter(file)); out.write("<content version=\"" + version + "\"><page id=\"0\" name=\"root\" priority=\"1\" visible=\"true\" userRoles=\"\" /></content>" ); out.close();
+						 */
 					} else {
-						file = new File(getDirectory() + "/content_" + renderMode + ".xml");
+						LoadingBean loadBean = load(ctx, in, contentAttributeMap, renderMode);
+						root = loadBean.getRoot();
+						ConvertToCurrentVersion.convert(ctx, loadBean);
+
+						/** load linked content **/
+						/*
+						 * MenuElement[] children = root.getAllChilds(); root.updateLinkedData(ctx); for (MenuElement page : children) { page.updateLinkedData(ctx); }
+						 */
 					}
-					if (file.exists()) {
-						in = new FileInputStream(file);
-					}
+
+				} finally {
+					ResourceHelper.closeResource(in);
+					ResourceHelper.closeResource(in2);
 				}
 
-				if (in == null) {
-					root = MenuElement.getInstance(globalContext);
-					root.setName("root");
-					root.setVisible(true);
-					root.setPriority(1);
-					root.setId("0");
-					/*
-					 * file.createNewFile(); BufferedWriter out = new BufferedWriter(new FileWriter(file)); out.write("<content version=\"" + version + "\"><page id=\"0\" name=\"root\" priority=\"1\" visible=\"true\" userRoles=\"\" /></content>" ); out.close();
-					 */
-				} else {
-					LoadingBean loadBean = load(ctx, in, contentAttributeMap, renderMode);
-					root = loadBean.getRoot();
-					ConvertToCurrentVersion.convert(ctx, loadBean);
-
-					/** load linked content **/
-					/*
-					 * MenuElement[] children = root.getAllChilds(); root.updateLinkedData(ctx); for (MenuElement page : children) { page.updateLinkedData(ctx); }
-					 */
-				}
-
-			} finally {
-				ResourceHelper.closeResource(in);
-				ResourceHelper.closeResource(in2);
+				return root;
 			}
-
-			return root;
 		}
 	}
 
@@ -1053,34 +1054,38 @@ public class PersistenceService {
 
 	public void store(ContentContext ctx, int renderMode) throws Exception {
 
-		logger.info("store in " + renderMode + " mode.");
+		synchronized (ctx.getGlobalContext()) {
 
-		PersistenceThread persThread = new PersistenceThread();
-		ContentService content = ContentService.getInstance(globalContext);
-		MenuElement menuElement = content.getNavigation(ctx);
-		String defaultLg = globalContext.getDefaultLanguages().iterator().next();
-		if (!globalContext.getLanguages().contains(defaultLg)) {
-			defaultLg = null;
+			logger.info("store in " + renderMode + " mode.");
+
+			PersistenceThread persThread = new PersistenceThread();
+			ContentService content = ContentService.getInstance(globalContext);
+			MenuElement menuElement = content.getNavigation(ctx);
+			String defaultLg = globalContext.getDefaultLanguages().iterator().next();
+			if (!globalContext.getLanguages().contains(defaultLg)) {
+				defaultLg = null;
+			}
+			persThread.setMenuElement(menuElement);
+			persThread.setMode(renderMode);
+			persThread.setPersistenceService(this);
+			persThread.setDefaultLg(defaultLg);
+			persThread.setGlobalContentMap(content.getGlobalMap(ctx));
+
+			GlobalContext globalContext = GlobalContext.getInstance(ctx.getRequest());
+			persThread.setDataFolder(globalContext.getDataFolder());
+
+			StaticConfig staticConfig = StaticConfig.getInstance(ctx.getRequest().getSession().getServletContext());
+			if (StaticInfo._STATIC_INFO_DIR != null) {
+				String staticInfo = URLHelper.mergePath(globalContext.getDataFolder(), StaticInfo._STATIC_INFO_DIR);
+				persThread.addFolderToSave(new File(staticInfo));
+			}
+			persThread.addFolderToSave(new File(URLHelper.mergePath(globalContext.getDataFolder(), staticConfig.getUserInfoFile())));
+
+			// synchronized (MenuElement.LOCK_ACCESS) {
+			persThread.start();
+			// }
+
 		}
-		persThread.setMenuElement(menuElement);
-		persThread.setMode(renderMode);
-		persThread.setPersistenceService(this);
-		persThread.setDefaultLg(defaultLg);
-		persThread.setGlobalContentMap(content.getGlobalMap(ctx));
-
-		GlobalContext globalContext = GlobalContext.getInstance(ctx.getRequest());
-		persThread.setDataFolder(globalContext.getDataFolder());
-
-		StaticConfig staticConfig = StaticConfig.getInstance(ctx.getRequest().getSession().getServletContext());
-		if (StaticInfo._STATIC_INFO_DIR != null) {
-			String staticInfo = URLHelper.mergePath(globalContext.getDataFolder(), StaticInfo._STATIC_INFO_DIR);
-			persThread.addFolderToSave(new File(staticInfo));
-		}
-		persThread.addFolderToSave(new File(URLHelper.mergePath(globalContext.getDataFolder(), staticConfig.getUserInfoFile())));
-
-		// synchronized (MenuElement.LOCK_ACCESS) {
-		persThread.start();
-		// }
 	}
 
 	public void store(InputStream in) throws Exception {

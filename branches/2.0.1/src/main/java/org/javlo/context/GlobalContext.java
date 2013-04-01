@@ -84,6 +84,8 @@ public class GlobalContext implements Serializable {
 
 	private static final Object LOCK_GLOBAL_CONTEXT_LOAD = new Object();
 
+	private final Object LOCK_DATA_FILE = new Object();
+
 	public final Object LOCK_IMPORT_TEMPLATE = new Object();
 
 	private class StorePropertyThread extends Thread {
@@ -839,18 +841,20 @@ public class GlobalContext implements Serializable {
 		}
 	}
 
-	public synchronized String getData(String key) {
-		if (dataProperties == null) {
-			initDataFile();
+	public String getData(String key) {
+		Properties prop = dataProperties;
+		if (prop == null) {
+			prop = initDataFile();
 		}
-		return dataProperties.getProperty(key);
+		return prop.getProperty(key);
 	}
 
-	public synchronized Collection<Object> getDataKeys() {
-		if (dataProperties == null) {
-			initDataFile();
+	public Collection<Object> getDataKeys() {
+		Properties prop = dataProperties;
+		if (prop == null) {
+			prop = initDataFile();
 		}
-		return dataProperties.keySet();
+		return prop.keySet();
 	}
 
 	/**
@@ -1203,11 +1207,12 @@ public class GlobalContext implements Serializable {
 
 	public MenuElement getPageIfExist(ContentContext ctx, String url, boolean useURLCreator) throws Exception {
 		IURLFactory urlCreator = getURLFactory(ctx);
+		Map<String, MenuElement> localViewPages = viewPages;
 		if (ctx.getRenderMode() == ContentContext.VIEW_MODE && urlCreator != null && useURLCreator) {
 			if (!urlFromFactoryImported) {
 				synchronized (this) {
 					if (!urlFromFactoryImported) {
-						Map<String, MenuElement> localViewPages = new Hashtable<String, MenuElement>();
+						localViewPages = new Hashtable<String, MenuElement>();
 						ContentContext lgCtx = new ContentContext(ctx);
 						Collection<String> lgs = getContentLanguages();
 						for (String lg : lgs) {
@@ -1225,8 +1230,9 @@ public class GlobalContext implements Serializable {
 				}
 			}
 		} else {
-			if (viewPages == null) {
-				viewPages = new Hashtable<String, MenuElement>();
+			if (localViewPages == null) {
+				localViewPages = new Hashtable<String, MenuElement>();
+				viewPages = localViewPages;
 			}
 		}
 		if (ctx.getRenderMode() == ContentContext.VIEW_MODE) {
@@ -1235,7 +1241,7 @@ public class GlobalContext implements Serializable {
 				keyURL = urlCreator.createURLKey(url);
 			}
 
-			MenuElement page = viewPages.get(keyURL);
+			MenuElement page = localViewPages.get(keyURL);
 			if (page != null) {
 				return page;
 			}
@@ -1248,7 +1254,7 @@ public class GlobalContext implements Serializable {
 			MenuElement page = MenuElement.searchChild(root, ctx, url, pastNode);
 
 			if (page != null && ctx.getRenderMode() == ContentContext.VIEW_MODE) {
-				viewPages.put(url, page);
+				localViewPages.put(url, page);
 			}
 
 			return page;
@@ -1481,19 +1487,24 @@ public class GlobalContext implements Serializable {
 		return outLg;
 	}
 
-	public synchronized void initDataFile() {
-		if (dataProperties == null) {
-			dataProperties = new StructuredProperties();
+	public Properties initDataFile() {
+		Properties outProp = dataProperties;
+		if (outProp == null) {
+			outProp = new StructuredProperties();
 		}
 		InputStream in = null;
 		try {
 			in = new FileInputStream(getDataFile());
-			dataProperties.load(in);
+			synchronized (LOCK_DATA_FILE) {
+				outProp.load(in);
+			}
 		} catch (IOException e) {
 			e.printStackTrace();
 		} finally {
 			ResourceHelper.closeResource(in);
 		}
+		dataProperties = outProp;
+		return outProp;
 	}
 
 	public boolean isAdminManagement() {
@@ -1894,11 +1905,12 @@ public class GlobalContext implements Serializable {
 	}
 
 	public synchronized void setData(String key, String value) {
-		if (dataProperties == null) {
-			initDataFile();
+		Properties prop = dataProperties;
+		if (prop == null) {
+			prop = initDataFile();
 		}
-		synchronized (dataProperties) {
-			dataProperties.put(key, value);
+		synchronized (prop) {
+			prop.put(key, value);
 			askStoreData();
 		}
 
@@ -1910,7 +1922,7 @@ public class GlobalContext implements Serializable {
 
 	private void saveData() {
 		if (dataProperties != null) {
-			synchronized (dataProperties) {
+			synchronized (LOCK_DATA_FILE) {
 				logger.fine("store data");
 				OutputStream out = null;
 				try {
