@@ -170,6 +170,9 @@ public class NetHelper {
 	}
 
 	public static boolean isUserAgentRobot(String userAgent) {
+		if (userAgent == null) {
+			return false;
+		}
 		return userAgent.contains("robo");
 	}
 
