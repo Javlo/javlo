@@ -1534,22 +1534,18 @@ public class MenuElement implements Serializable {
 	 * @throws Exception
 	 */
 	private ContentElementList getAllLocalContent(ContentContext ctx) throws Exception {
-		synchronized (getLock()) {
-			ContentElementList localContentElementList = getLocalContentElementListMap().get(ctx.getRequestContentLanguage());
-			if (localContentElementList == null) {
-				logger.fine("update all local content on (ctx:" + ctx + ")");
 
-				/*
-				 * ComponentBean[] localComponentBean; synchronized (componentBean) { localComponentBean = new ComponentBean[componentBean.length]; System.arraycopy(componentBean, 0, localComponentBean, 0, componentBean.length); }
-				 */
-				localContentElementList = new ContentElementList(componentBean, ctx, this, true);
+		ContentElementList localContentElementList = getLocalContentElementListMap().get(ctx.getRequestContentLanguage());
+		if (localContentElementList == null) {
+			logger.fine("update all local content on (ctx:" + ctx + ")");
 
-				getLocalContentElementListMap().put(ctx.getRequestContentLanguage(), localContentElementList);
-			}
+			localContentElementList = new ContentElementList(componentBean, ctx, this, true);
 
-			localContentElementList.initialize(ctx);
-			return localContentElementList;
+			getLocalContentElementListMap().put(ctx.getRequestContentLanguage(), localContentElementList);
 		}
+
+		localContentElementList.initialize(ctx);
+		return localContentElementList;
 	}
 
 	public ComponentBean[] getAllLocalContentBean() throws Exception {
@@ -2463,21 +2459,18 @@ public class MenuElement implements Serializable {
 	private ContentElementList getLocalContent(ContentContext ctx) throws Exception {
 		ContentElementList localContentElementList = getContentElementListMap().get(ctx.getRequestContentLanguage());
 		if (localContentElementList == null) {
-			synchronized (getLock()) {
-				localContentElementList = new ContentElementList(componentBean, ctx, this, false);
+			localContentElementList = new ContentElementList(componentBean, ctx, this, false);
 
-				if (!ctx.isFree()) { // no reference to template >>> some component can be absent
-					getContentElementListMap().put(ctx.getRequestContentLanguage(), localContentElementList);
-				}
-
-				logger.fine("update local content  - # component : " + localContentElementList.size(ctx) + " (ctx:" + ctx + ")");
+			if (!ctx.isFree()) { // no reference to template >>> some component can be absent
+				getContentElementListMap().put(ctx.getRequestContentLanguage(), localContentElementList);
 			}
+
+			logger.fine("update local content  - # component : " + localContentElementList.size(ctx) + " (ctx:" + ctx + ")");
 		}
 		localContentElementList = new ContentElementList(localContentElementList);
 		localContentElementList.initialize(ctx);
 
 		return localContentElementList;
-
 	}
 
 	public ContentElementList getLocalContentCopy(ContentContext ctx) throws Exception {
