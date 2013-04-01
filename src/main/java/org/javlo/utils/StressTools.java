@@ -101,7 +101,7 @@ public class StressTools {
 
 		String scenarioText = ResourceHelper.loadStringFromFile(scenario);
 
-		File resultFile = new File(resultPrefix + StringHelper.createFileName(StringHelper.renderTime(new Date())) + '-' + StressThread.threadCount + ".csv");
+		File resultFile = new File(resultPrefix + StringHelper.createFileName(StringHelper.renderTime(new Date())) + ".csv");
 		resultFile.createNewFile();
 		OutputStream outStream = new FileOutputStream(resultFile);
 		PrintStream out = new PrintStream(outStream);
@@ -109,7 +109,7 @@ public class StressTools {
 
 		for (int i = 0; i < 100; i++) {
 			resultFile.createNewFile();
-			StressThread thread = new StressThread(10, 2, scenarioText, out);
+			StressThread thread = new StressThread(10, 20, scenarioText, out);
 			thread.start();
 		}
 
@@ -133,17 +133,21 @@ public class StressTools {
 					String content = null;
 					String errorMessage = "";
 
-					HttpGet httpget = new HttpGet(key);
-					HttpResponse response = httpClient.execute(httpget, httpContext);
-					HttpEntity entity = response.getEntity();
-					InputStream in = null;
-					if (entity != null) {
-						try {
-							in = entity.getContent();
-							content = ResourceHelper.loadStringFromStream(in, Charset.defaultCharset());
-						} finally {
-							ResourceHelper.closeResource(in);
+					try {
+						HttpGet httpget = new HttpGet(key);
+						HttpResponse response = httpClient.execute(httpget, httpContext);
+						HttpEntity entity = response.getEntity();
+						InputStream in = null;
+						if (entity != null) {
+							try {
+								in = entity.getContent();
+								content = ResourceHelper.loadStringFromStream(in, Charset.defaultCharset());
+							} finally {
+								ResourceHelper.closeResource(in);
+							}
 						}
+					} catch (Throwable t) {
+						errorMessage = t.getMessage();
 					}
 
 					/*

@@ -940,6 +940,7 @@ public class MenuElement implements Serializable {
 	public static MenuElement getInstance(GlobalContext globalContext) {
 		MenuElement outMenuElement = new MenuElement();
 		outMenuElement.releaseCache = true;
+		outMenuElement.globalContext = globalContext;
 		return outMenuElement;
 	}
 
@@ -1104,6 +1105,8 @@ public class MenuElement implements Serializable {
 	private transient ICache localCache = null;
 
 	private MenuElement root = null;
+
+	private GlobalContext globalContext = null;
 
 	protected MenuElement() {
 	}
@@ -2511,7 +2514,7 @@ public class MenuElement implements Serializable {
 	 * @return
 	 */
 	public Object getLock() {
-		return getRoot();
+		return globalContext;
 	}
 
 	public Date getManualModificationDate() {
@@ -3086,31 +3089,29 @@ public class MenuElement implements Serializable {
 	 * @throws Exception
 	 */
 	public List<MenuElement> getVisibleChildMenuElements(ContentContext ctx) throws Exception {
-		synchronized (getLock()) {
-			ArrayList<MenuElement> resObj = new ArrayList<MenuElement>();
-			for (MenuElement element : childMenuElements) {
-				if (element.isVisible(ctx)) {
-					resObj.add(element);
-				} else {
-					GlobalContext globalContext = GlobalContext.getInstance(ctx.getRequest());
-					if (globalContext.isAutoSwitchToDefaultLanguage() && ctx.getRenderMode() != ContentContext.EDIT_MODE) {
-						ContentContext defaultLgCtx = new ContentContext(ctx);
-						defaultLgCtx.setArea(null);
-						Iterator<String> defaultLgs = globalContext.getDefaultLanguages().iterator();
-						boolean insered = false;
-						while (defaultLgs.hasNext() && !insered) {
-							String lg = defaultLgs.next();
-							defaultLgCtx.setRequestContentLanguage(lg);
-							if (element.isVisible(defaultLgCtx)) {
-								resObj.add(element);
-								insered = true;
-							}
+		ArrayList<MenuElement> resObj = new ArrayList<MenuElement>();
+		for (MenuElement element : childMenuElements) {
+			if (element.isVisible(ctx)) {
+				resObj.add(element);
+			} else {
+				GlobalContext globalContext = GlobalContext.getInstance(ctx.getRequest());
+				if (globalContext.isAutoSwitchToDefaultLanguage() && ctx.getRenderMode() != ContentContext.EDIT_MODE) {
+					ContentContext defaultLgCtx = new ContentContext(ctx);
+					defaultLgCtx.setArea(null);
+					Iterator<String> defaultLgs = globalContext.getDefaultLanguages().iterator();
+					boolean insered = false;
+					while (defaultLgs.hasNext() && !insered) {
+						String lg = defaultLgs.next();
+						defaultLgCtx.setRequestContentLanguage(lg);
+						if (element.isVisible(defaultLgCtx)) {
+							resObj.add(element);
+							insered = true;
 						}
 					}
 				}
 			}
-			return resObj;
 		}
+		return resObj;
 	}
 
 	public List<MenuElement> getVisibleChildMenuElementsList(ContentContext ctx) throws Exception {
@@ -3654,9 +3655,7 @@ public class MenuElement implements Serializable {
 	}
 
 	public void setModificationDate(Date modificationDate) {
-		synchronized (getLock()) {
-			this.modificationDate = modificationDate;
-		}
+		this.modificationDate = modificationDate;
 	}
 
 	/*
