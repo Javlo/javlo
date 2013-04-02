@@ -152,12 +152,15 @@ public class RequestService {
 		}
 	}
 
-	public Map<String, String> getParameterMap() {
-		Map<String, String> outMap = new HashMap<String, String>();
+	public Map<String, Object> getParameterMap() {
+		Map<String, Object> outMap = new HashMap<String, Object>();
 
 		for (Map.Entry<String, String[]> entry : parameters.entrySet()) {
-			if (entry.getValue().length > 0)
+			if (entry.getValue().length > 0) {
 				outMap.put(entry.getKey(), entry.getValue()[0]);
+			} else {
+				outMap.put(entry.getKey(), entry.getValue());
+			}
 		}
 
 		return outMap;
