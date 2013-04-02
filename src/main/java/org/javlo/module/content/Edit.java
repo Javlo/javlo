@@ -970,6 +970,7 @@ public class Edit extends AbstractModuleAction {
 				ctx.setLanguage(lg);
 			}
 			ctx.setContentLanguage(lg);
+			ctx.setRequestContentLanguage(lg);
 			messageRepository.setGlobalMessage(new GenericMessage(i18nAccess.getText("edit.message.new-language") + lg, GenericMessage.INFO));
 			String newURL = URLHelper.createURL(ctx);
 			ctx.getResponse().sendRedirect(newURL);
