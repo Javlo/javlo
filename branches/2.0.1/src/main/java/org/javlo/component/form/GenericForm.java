@@ -280,17 +280,35 @@ public class GenericForm extends AbstractVisualComponent implements IAction {
 
 		Map<String, String> specialValues = new HashMap<String, String>();
 
+		String badFileFormatRAW = comp.getLocalConfig(false).getProperty("file.bad-file", "exe,bat,scr,bin,obj,lib,dll,bat,sh,com,cmd,msi,jsp,xml,html,htm,vbe,wsf,wsc,asp");
+		List<String> badFileFormat = StringHelper.stringToCollection(badFileFormatRAW, ",");
+		String maxFileSizeRAW = comp.getLocalConfig(false).getProperty("file.max-size", "" + (10 * 1024 * 1024));
+		long maxFileSize = Long.parseLong(maxFileSizeRAW);
+
 		for (FileItem file : requestService.getAllFileItem()) {
+			String ext = StringHelper.getFileExtension(file.getName()).toLowerCase();
+			if (badFileFormat.contains(ext)) {
+				logger.warning("file blocked because bad extenstion : " + file.getName());
+				GenericMessage msg = new GenericMessage(comp.getLocalConfig(false).getProperty("message.bad-file", "bad file format."), GenericMessage.ERROR);
+				request.setAttribute("msg", msg);
+				return null;
+			}
 			InputStream in = file.getInputStream();
 			if (in != null) {
 				try {
-					String fileName = URLHelper.mergePath(comp.getAttachFolder(ctx).getAbsolutePath(), file.getName());
-					File freeFile = ResourceHelper.getFreeFileName(new File(fileName));
-					ResourceHelper.writeStreamToFile(in, freeFile);
-					StaticInfo staticInfo = StaticInfo.getInstance(ctx, freeFile);
-					String fileURL = URLHelper.createResourceURL(ctx.getContextForAbsoluteURL(), URLHelper.mergePath(globalContext.getStaticConfig().getStaticFolder(), staticInfo.getStaticURL()));
-					result.put(file.getFieldName(), fileURL);
-					specialValues.put(file.getFieldName(), fileURL);
+					if (file.getName().trim().length() > 0) {
+						String fileName = URLHelper.mergePath(comp.getAttachFolder(ctx).getAbsolutePath(), StringHelper.createFileName(file.getName()));
+						File freeFile = ResourceHelper.getFreeFileName(new File(fileName));
+						if (ResourceHelper.writeStreamToFile(in, freeFile, maxFileSize) < 0) {
+							GenericMessage msg = new GenericMessage(comp.getLocalConfig(false).getProperty("message.tobig-file", "file to big."), GenericMessage.ERROR);
+							request.setAttribute("msg", msg);
+							return null;
+						}
+						StaticInfo staticInfo = StaticInfo.getInstance(ctx, freeFile);
+						String fileURL = URLHelper.createResourceURL(ctx.getContextForAbsoluteURL(), URLHelper.mergePath(globalContext.getStaticConfig().getStaticFolder(), staticInfo.getStaticURL()));
+						result.put(file.getFieldName(), fileURL);
+						specialValues.put(file.getFieldName(), fileURL);
+					}
 				} finally {
 					ResourceHelper.closeResource(in);
 				}
@@ -385,8 +403,6 @@ public class GenericForm extends AbstractVisualComponent implements IAction {
 				if (bccEmail != null) {
 					bccList = Arrays.asList(bccEmail);
 				}
-
-				System.out.println("***** GenericForm.performSubmit : mailContent = " + mailContent); // TODO: remove debug trace
 
 				try {
 					mailService.sendMail(null, fromEmail, toEmail, ccList, bccList, subject, mailContent, false);

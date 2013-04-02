@@ -108,18 +108,8 @@ public class ViewActions implements IAction {
 	}
 
 	public static String performPagination(HttpServletRequest request, HttpServletResponse response) throws Exception {
-		String page = request.getParameter("page");
-		String contextKey = request.getParameter("key");
-
-		if (page == null || contextKey == null) {
-			return "bad parameters strucuture : page and key is required.";
-		}
-		PaginationContext paginationContext = PaginationContext.getInstance(request.getSession(), contextKey);
-		if (paginationContext != null) {
-			paginationContext.setPage(Integer.parseInt(page));
-		} else {
-			return "pagination context not found : " + contextKey;
-		}
+		PaginationContext paginationContext = PaginationContext.getInstance(request, request.getParameter("key"));
+		logger.fine("new page selected : " + paginationContext.getPage());
 		return null;
 	}
 
