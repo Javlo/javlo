@@ -296,17 +296,19 @@ public class GenericForm extends AbstractVisualComponent implements IAction {
 			InputStream in = file.getInputStream();
 			if (in != null) {
 				try {
-					String fileName = URLHelper.mergePath(comp.getAttachFolder(ctx).getAbsolutePath(), StringHelper.createFileName(file.getName()));
-					File freeFile = ResourceHelper.getFreeFileName(new File(fileName));
-					if (ResourceHelper.writeStreamToFile(in, freeFile, maxFileSize) < 0) {
-						GenericMessage msg = new GenericMessage(comp.getLocalConfig(false).getProperty("message.tobig-file", "file to big."), GenericMessage.ERROR);
-						request.setAttribute("msg", msg);
-						return null;
+					if (file.getName().trim().length() > 0) {
+						String fileName = URLHelper.mergePath(comp.getAttachFolder(ctx).getAbsolutePath(), StringHelper.createFileName(file.getName()));
+						File freeFile = ResourceHelper.getFreeFileName(new File(fileName));
+						if (ResourceHelper.writeStreamToFile(in, freeFile, maxFileSize) < 0) {
+							GenericMessage msg = new GenericMessage(comp.getLocalConfig(false).getProperty("message.tobig-file", "file to big."), GenericMessage.ERROR);
+							request.setAttribute("msg", msg);
+							return null;
+						}
+						StaticInfo staticInfo = StaticInfo.getInstance(ctx, freeFile);
+						String fileURL = URLHelper.createResourceURL(ctx.getContextForAbsoluteURL(), URLHelper.mergePath(globalContext.getStaticConfig().getStaticFolder(), staticInfo.getStaticURL()));
+						result.put(file.getFieldName(), fileURL);
+						specialValues.put(file.getFieldName(), fileURL);
 					}
-					StaticInfo staticInfo = StaticInfo.getInstance(ctx, freeFile);
-					String fileURL = URLHelper.createResourceURL(ctx.getContextForAbsoluteURL(), URLHelper.mergePath(globalContext.getStaticConfig().getStaticFolder(), staticInfo.getStaticURL()));
-					result.put(file.getFieldName(), fileURL);
-					specialValues.put(file.getFieldName(), fileURL);
 				} finally {
 					ResourceHelper.closeResource(in);
 				}
