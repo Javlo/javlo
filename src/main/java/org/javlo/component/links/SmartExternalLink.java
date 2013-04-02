@@ -508,86 +508,93 @@ public class SmartExternalLink extends ComplexPropertiesLink implements IReverse
 	@Override
 	public String getViewXHTMLCode(ContentContext ctx) throws Exception {
 
-		loadData(ctx);
+		try {
 
-		String link = properties.getProperty(LINK_KEY, "");
-		Collection<String> pageURLList = (Collection<String>) ctx.getRequest().getAttribute("page-url-list");
-		if (link.trim().length() > 0) {
-			if (pageURLList == null) {
-				pageURLList = new TreeSet<String>();
-				ctx.getRequest().setAttribute("page-url-list", pageURLList);
+			loadData(ctx);
+
+			String link = properties.getProperty(LINK_KEY, "");
+			Collection<String> pageURLList = (Collection<String>) ctx.getRequest().getAttribute("page-url-list");
+			if (link.trim().length() > 0) {
+				if (pageURLList == null) {
+					pageURLList = new TreeSet<String>();
+					ctx.getRequest().setAttribute("page-url-list", pageURLList);
+				}
+				if (pageURLList.contains(link)) {
+					logger.info("must be deleted because url found in request.");
+					setMustBeRemoved(ctx, true);
+				}
 			}
-			if (pageURLList.contains(link)) {
-				logger.info("must be deleted because url found in request.");
-				setMustBeRemoved(ctx, true);
-			}
-		}
 
-		if (isEmpty(ctx)) {
-			return "";
-		}
-
-		if (mustBeRemoved(ctx) || isURLinRequest(ctx, getLinkURL(ctx))) {
-			MenuElement elem = ctx.getCurrentPage();
-			// elem.removeContent(ctx, getId(), false);
-			elem.addCompToDelete(getId());
-			logger.warning("delete component url : " + getLinkURL(ctx));
-			return "";
-		}
-
-		Collection<Long> crc32List = (Collection<Long>) ctx.getRequest().getAttribute("crc-32-list");
-		if (crc32List == null) {
-			crc32List = new TreeSet<Long>();
-			ctx.getRequest().setAttribute("crc-32-list", crc32List);
-		}
-
-		Long crc32 = new Long(getImageCRC32(ctx));
-		if (crc32 >= 0) {
-			if (crc32List.contains(crc32)) {
+			if (isEmpty(ctx)) {
 				return "";
+			}
+
+			if (mustBeRemoved(ctx) || isURLinRequest(ctx, getLinkURL(ctx))) {
+				MenuElement elem = ctx.getCurrentPage();
+				// elem.removeContent(ctx, getId(), false);
+				elem.addCompToDelete(getId());
+				logger.warning("delete component url : " + getLinkURL(ctx));
+				return "";
+			}
+
+			Collection<Long> crc32List = (Collection<Long>) ctx.getRequest().getAttribute("crc-32-list");
+			if (crc32List == null) {
+				crc32List = new TreeSet<Long>();
+				ctx.getRequest().setAttribute("crc-32-list", crc32List);
+			}
+
+			Long crc32 = new Long(getImageCRC32(ctx));
+			if (crc32 >= 0) {
+				if (crc32List.contains(crc32)) {
+					return "";
+				} else {
+					crc32List.add(crc32);
+				}
+			}
+
+			/** * refresh smart info ** */
+			StringBuffer res = new StringBuffer();
+
+			if (isDisplayable(ctx)) {
+
+				if (!pageURLList.contains(link)) {
+					pageURLList.add(link);
+				}
+
+				String cssClass = getStyle(ctx);
+				String insertCssClass = "";
+				if (cssClass != null) {
+					insertCssClass = cssClass;
+				}
+				res.append("<div " + getSpecialPreviewCssClass(ctx, getStyle(ctx) + " " + getType()) + getSpecialPreviewCssId(ctx) + " >");
+				res.append("<a" + getSpecialPreviewCssClass(ctx, insertCssClass) + getSpecialPreviewCssId(ctx) + " href=\" ");
+				res.append(link);
+				res.append("\">");
+				if (getImageURI(ctx) != null) {
+					res.append("<span class=\"image\">");
+					String imageURL = URLHelper.createTransformURL(ctx, getImageURI(ctx), "list");
+					res.append("<img src=\"" + imageURL + "\" alt=\"" + getTitle(ctx) + "\" />");
+					res.append("</span>");
+				}
+				if (getDescription(ctx) != null) {
+					res.append("<span class=\"description\">");
+					res.append(getDescription(ctx));
+					res.append("</span>");
+				}
+				res.append("<span class=\"label\">");
+				res.append(getLabel(ctx));
+				res.append("</span>");
+				res.append("</a></div>");
 			} else {
-				crc32List.add(crc32);
+				refreshAutoInfo(ctx);
 			}
+
+			return res.toString();
+
+		} catch (Throwable t) {
+			t.printStackTrace();
+			return "";
 		}
-
-		/** * refresh smart info ** */
-		StringBuffer res = new StringBuffer();
-
-		if (isDisplayable(ctx)) {
-
-			if (!pageURLList.contains(link)) {
-				pageURLList.add(link);
-			}
-
-			String cssClass = getStyle(ctx);
-			String insertCssClass = "";
-			if (cssClass != null) {
-				insertCssClass = cssClass;
-			}
-			res.append("<div " + getSpecialPreviewCssClass(ctx, getStyle(ctx) + " " + getType()) + getSpecialPreviewCssId(ctx) + " >");
-			res.append("<a" + getSpecialPreviewCssClass(ctx, insertCssClass) + getSpecialPreviewCssId(ctx) + " href=\" ");
-			res.append(link);
-			res.append("\">");
-			if (getImageURI(ctx) != null) {
-				res.append("<span class=\"image\">");
-				String imageURL = URLHelper.createTransformURL(ctx, getImageURI(ctx), "list");
-				res.append("<img src=\"" + imageURL + "\" alt=\"" + getTitle(ctx) + "\" />");
-				res.append("</span>");
-			}
-			if (getDescription(ctx) != null) {
-				res.append("<span class=\"description\">");
-				res.append(getDescription(ctx));
-				res.append("</span>");
-			}
-			res.append("<span class=\"label\">");
-			res.append(getLabel(ctx));
-			res.append("</span>");
-			res.append("</a></div>");
-		} else {
-			refreshAutoInfo(ctx);
-		}
-
-		return res.toString();
 
 	}
 
