@@ -3,6 +3,7 @@ package org.javlo.component.form;
 import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.IOException;
+import java.io.InputStream;
 import java.io.PrintStream;
 import java.io.StringReader;
 import java.util.Arrays;
@@ -12,7 +13,6 @@ import java.util.Date;
 import java.util.Enumeration;
 import java.util.HashMap;
 import java.util.Hashtable;
-import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
@@ -23,6 +23,7 @@ import javax.mail.internet.InternetAddress;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import org.apache.commons.fileupload.FileItem;
 import org.javlo.actions.IAction;
 import org.javlo.component.config.ComponentConfig;
 import org.javlo.component.core.AbstractVisualComponent;
@@ -31,6 +32,7 @@ import org.javlo.component.core.IContentVisualComponent;
 import org.javlo.config.StaticConfig;
 import org.javlo.context.ContentContext;
 import org.javlo.context.GlobalContext;
+import org.javlo.helper.ResourceHelper;
 import org.javlo.helper.StringHelper;
 import org.javlo.helper.URLHelper;
 import org.javlo.helper.Comparator.StringComparator;
@@ -41,6 +43,7 @@ import org.javlo.service.ContentService;
 import org.javlo.service.RequestService;
 import org.javlo.utils.CSVFactory;
 import org.javlo.utils.CollectionAsMap;
+import org.javlo.ztatic.StaticInfo;
 
 /**
  * store html form in csv file and send email with parameters. For use this component you need to create a renderer with a html form. this form need at least two field : <code>
@@ -78,7 +81,7 @@ public class GenericForm extends AbstractVisualComponent implements IAction {
 			setValue(StringHelper.sortText(getConfig(ctx).getRAWConfig(ctx, ctx.getCurrentTemplate(), getType())));
 		}
 	}
-	
+
 	@Override
 	public Map<String, String> getRenderes(ContentContext ctx) {
 		Properties properties = getLocalConfig(false);
@@ -90,14 +93,14 @@ public class GenericForm extends AbstractVisualComponent implements IAction {
 		while (keys.hasMoreElements()) {
 			String key = (String) keys.nextElement();
 			if (key.startsWith("renderer.") && key.split(".").length < 3) {
-				String value = (String) properties.getProperty(key);
+				String value = properties.getProperty(key);
 				key = key.replaceFirst("renderer.", "");
 				outRenderers.put(key, value);
 			}
 		}
 		return outRenderers;
 	}
-	
+
 	@Override
 	public ComponentConfig getConfig(ContentContext ctx) {
 		if ((ctx == null) || (ctx.getRequest() == null) || ((ctx.getRequest().getSession() == null))) {
@@ -167,6 +170,20 @@ public class GenericForm extends AbstractVisualComponent implements IAction {
 		return file;
 	}
 
+	protected File getAttachFolder(ContentContext ctx) throws IOException {
+		GlobalContext globalContext = GlobalContext.getInstance(ctx.getRequest());
+		String fileName = "df-" + getId();
+		if (getLocalConfig(false).get("filename") != null) {
+			fileName = getLocalConfig(false).getProperty("filename");
+		}
+		fileName = StringHelper.getFileNameWithoutExtension(fileName);
+		File dir = new File(URLHelper.mergePath(globalContext.getDataFolder(), globalContext.getStaticConfig().getStaticFolder(), "dynamic-form-result", fileName));
+		if (!dir.exists()) {
+			dir.mkdirs();
+		}
+		return dir;
+	}
+
 	protected void storeResult(ContentContext ctx, Map<String, String> data) throws IOException {
 
 		synchronized (LOCK) {
@@ -187,7 +204,6 @@ public class GenericForm extends AbstractVisualComponent implements IAction {
 			}
 		}
 	}
-	
 
 	@Override
 	public void performEdit(ContentContext ctx) throws Exception {
@@ -243,7 +259,7 @@ public class GenericForm extends AbstractVisualComponent implements IAction {
 			subject = comp.getLocalConfig(false).getProperty("mail.subject", subject);
 		}
 
-		Map<String, Object> params = request.getParameterMap();
+		Map<String, Object> params = requestService.getParameterMap();
 		Map<String, String> result = new HashMap<String, String>();
 		List<String> errorFields = new LinkedList<String>();
 		result.put("__registration time", StringHelper.renderSortableTime(new Date()));
@@ -259,10 +275,38 @@ public class GenericForm extends AbstractVisualComponent implements IAction {
 
 		List<String> keys = new LinkedList(params.keySet());
 		Collections.sort(keys, new StringComparator());
+
+		/** store attach files **/
+
+		Map<String, String> specialValues = new HashMap<String, String>();
+
+		for (FileItem file : requestService.getAllFileItem()) {
+			InputStream in = file.getInputStream();
+			if (in != null) {
+				try {
+					String fileName = URLHelper.mergePath(comp.getAttachFolder(ctx).getAbsolutePath(), file.getName());
+					File freeFile = ResourceHelper.getFreeFileName(new File(fileName));
+					ResourceHelper.writeStreamToFile(in, freeFile);
+					StaticInfo staticInfo = StaticInfo.getInstance(ctx, freeFile);
+					String fileURL = URLHelper.createResourceURL(ctx.getContextForAbsoluteURL(), URLHelper.mergePath(globalContext.getStaticConfig().getStaticFolder(), staticInfo.getStaticURL()));
+					result.put(file.getFieldName(), fileURL);
+					specialValues.put(file.getFieldName(), fileURL);
+				} finally {
+					ResourceHelper.closeResource(in);
+				}
+			}
+		}
+
 		for (String key : keys) {
 			if (!key.equals("webaction") && !key.equals("comp_id") && !key.equals("captcha")) {
 				Object value = params.get(key);
+				if (specialValues.get(key) != null) {
+					value = specialValues.get(key);
+				}
 				String finalValue = requestService.getParameter(key, "");
+				if (specialValues.get(key) != null) {
+					finalValue = specialValues.get(key);
+				}
 
 				if (key.equals(fakeField) && finalValue.trim().length() > 0) {
 					fakeFilled = true;
@@ -342,7 +386,17 @@ public class GenericForm extends AbstractVisualComponent implements IAction {
 					bccList = Arrays.asList(bccEmail);
 				}
 
-				mailService.sendMail(null, fromEmail, toEmail, ccList, bccList, subject, mailContent, false);
+				System.out.println("***** GenericForm.performSubmit : mailContent = " + mailContent); // TODO: remove debug trace
+
+				try {
+					mailService.sendMail(null, fromEmail, toEmail, ccList, bccList, subject, mailContent, false);
+				} catch (Exception e) {
+					e.printStackTrace();
+					GenericMessage msg = new GenericMessage(comp.getLocalConfig(false).getProperty("message.error", "technical error."), GenericMessage.ERROR);
+					request.setAttribute("msg", msg);
+					request.setAttribute("valid", "false");
+					return null;
+				}
 			}
 
 			GenericMessage msg = new GenericMessage(comp.getLocalConfig(false).getProperty("message.thanks"), GenericMessage.INFO);
