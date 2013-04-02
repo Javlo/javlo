@@ -937,6 +937,10 @@ public class ResourceHelper {
 	}
 
 	public static final int writeStreamToFile(InputStream in, File file) throws IOException {
+		return writeStreamToFile(in, file, Long.MAX_VALUE);
+	}
+
+	public static final int writeStreamToFile(InputStream in, File file, long maxSize) throws IOException {
 
 		int countByte = 0;
 
@@ -950,7 +954,12 @@ public class ResourceHelper {
 		OutputStream out = null;
 		try {
 			out = new FileOutputStream(file);
-			countByte = writeStreamToStream(in, out);
+			countByte = writeStreamToStream(in, out, maxSize);
+			if (countByte < 0) {
+				ResourceHelper.closeResource(out);
+				file.delete();
+				return -1;
+			}
 		} finally {
 			ResourceHelper.closeResource(out);
 		}
@@ -997,17 +1006,24 @@ public class ResourceHelper {
 		}
 	}
 
+	public static final int writeStreamToStream(InputStream in, OutputStream out) throws IOException {
+		return writeStreamToStream(in, out, Long.MAX_VALUE);
+	}
+
 	/**
 	 * write a InputStream in a OuputStream, without close.
 	 * 
 	 * @return the size of transfered data in byte.
 	 */
-	public static final int writeStreamToStream(InputStream in, OutputStream out) throws IOException {
+	public static final int writeStreamToStream(InputStream in, OutputStream out, long maxSize) throws IOException {
 		final byte[] buffer = new byte[1024 * 4];
 		int size = 0;
 		int byteReaded = in.read(buffer);
 		while (byteReaded >= 0) {
 			size = size + byteReaded;
+			if (size > maxSize) {
+				return -1;
+			}
 			out.write(buffer, 0, byteReaded);
 			byteReaded = in.read(buffer);
 		}

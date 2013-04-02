@@ -23,7 +23,7 @@ public class RequestService {
 
 	FileCleaningTracker tracker = new FileCleaningTracker();
 
-	private static final String KEY = RequestService.class.getName();
+	private static final String KEY = "requestService";
 
 	private final Map<String, String[]> parameters = new HashMap<String, String[]>();
 
