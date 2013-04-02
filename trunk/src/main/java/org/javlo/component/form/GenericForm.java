@@ -280,13 +280,28 @@ public class GenericForm extends AbstractVisualComponent implements IAction {
 
 		Map<String, String> specialValues = new HashMap<String, String>();
 
+		String badFileFormatRAW = comp.getLocalConfig(false).getProperty("file.bad-file", "exe,bat,scr,bin,obj,lib,dll,bat,sh,com,cmd,msi");
+		List<String> badFileFormat = StringHelper.stringToCollection(badFileFormatRAW, ",");
+		String maxFileSizeRAW = comp.getLocalConfig(false).getProperty("file.max-size", "" + (10 * 1024 * 1024));
+		long maxFileSize = Long.parseLong(maxFileSizeRAW);
+
 		for (FileItem file : requestService.getAllFileItem()) {
+			String ext = StringHelper.getFileExtension(file.getName()).toLowerCase();
+			if (badFileFormat.contains(ext)) {
+				GenericMessage msg = new GenericMessage(comp.getLocalConfig(false).getProperty("message.bad-file", "bad file format."), GenericMessage.ERROR);
+				request.setAttribute("msg", msg);
+				return null;
+			}
 			InputStream in = file.getInputStream();
 			if (in != null) {
 				try {
 					String fileName = URLHelper.mergePath(comp.getAttachFolder(ctx).getAbsolutePath(), file.getName());
 					File freeFile = ResourceHelper.getFreeFileName(new File(fileName));
-					ResourceHelper.writeStreamToFile(in, freeFile);
+					if (ResourceHelper.writeStreamToFile(in, freeFile, maxFileSize) < 0) {
+						GenericMessage msg = new GenericMessage(comp.getLocalConfig(false).getProperty("message.tobig-file", "file to big."), GenericMessage.ERROR);
+						request.setAttribute("msg", msg);
+						return null;
+					}
 					StaticInfo staticInfo = StaticInfo.getInstance(ctx, freeFile);
 					String fileURL = URLHelper.createResourceURL(ctx.getContextForAbsoluteURL(), URLHelper.mergePath(globalContext.getStaticConfig().getStaticFolder(), staticInfo.getStaticURL()));
 					result.put(file.getFieldName(), fileURL);
@@ -385,8 +400,6 @@ public class GenericForm extends AbstractVisualComponent implements IAction {
 				if (bccEmail != null) {
 					bccList = Arrays.asList(bccEmail);
 				}
-
-				System.out.println("***** GenericForm.performSubmit : mailContent = " + mailContent); // TODO: remove debug trace
 
 				try {
 					mailService.sendMail(null, fromEmail, toEmail, ccList, bccList, subject, mailContent, false);
