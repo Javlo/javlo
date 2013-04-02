@@ -1280,7 +1280,7 @@ public class PageReferenceComponent extends ComplexPropertiesLink implements IAc
 		}
 
 		PagesStatus pagesStatus = new PagesStatus(countPage, realContentSize);
-		PaginationContext pagination = PaginationContext.getInstance(ctx.getRequest().getSession(), getId(), pageBeans.size(), getPageSize(ctx));
+		PaginationContext pagination = PaginationContext.getInstance(ctx.getRequest(), getId(), pageBeans.size(), getPageSize(ctx));
 
 		List<String> months = new LinkedList<String>();
 		for (Calendar calendar : allMonths) {
