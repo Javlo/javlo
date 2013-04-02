@@ -297,7 +297,7 @@ public class GenericForm extends AbstractVisualComponent implements IAction {
 			if (in != null) {
 				try {
 					String fileName = URLHelper.mergePath(comp.getAttachFolder(ctx).getAbsolutePath(), file.getName());
-					File freeFile = ResourceHelper.getFreeFileName(new File(fileName));
+					File freeFile = ResourceHelper.getFreeFileName(new File(StringHelper.createFileName(fileName)));
 					if (ResourceHelper.writeStreamToFile(in, freeFile, maxFileSize) < 0) {
 						GenericMessage msg = new GenericMessage(comp.getLocalConfig(false).getProperty("message.tobig-file", "file to big."), GenericMessage.ERROR);
 						request.setAttribute("msg", msg);
