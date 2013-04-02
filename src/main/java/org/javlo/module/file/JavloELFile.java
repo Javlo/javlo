@@ -72,7 +72,6 @@ public class JavloELFile extends ELFile {
 				GlobalContext globalContext = GlobalContext.getSessionInstance(getContentContext().getRequest().getSession());
 				if (!ResourceHelper.isTemplateFile(globalContext, file)) {
 					String pathPrefix = FileAction.getURLPathPrefix(getContentContext());
-					System.out.println("***** JavloELFile.getURL : pathPrefix = " + pathPrefix); // TODO: remove debug trace
 					String url = URLHelper.createResourceURL(getContentContext(), URLHelper.mergePath(pathPrefix, info.getStaticURL()));
 					return url;
 				} else {

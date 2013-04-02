@@ -1059,7 +1059,7 @@ public class ResourceHelper {
 	 * @param file
 	 * @return
 	 */
-	public static File getFreeFileName(File file) {
+	public synchronized static File getFreeFileName(File file) {
 		if (!file.exists()) {
 			return file;
 		}
