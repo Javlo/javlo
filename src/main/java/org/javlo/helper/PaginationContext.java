@@ -6,7 +6,6 @@ import java.io.PrintWriter;
 import java.io.StringWriter;
 
 import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpSession;
 
 import org.javlo.context.ContentContext;
 import org.javlo.i18n.I18nAccess;
@@ -14,6 +13,8 @@ import org.javlo.service.RequestService;
 import org.javlo.service.exception.ServiceException;
 
 public class PaginationContext {
+
+	private static java.util.logging.Logger logger = java.util.logging.Logger.getLogger(PaginationContext.class.getName());
 
 	private static final String KEY = PaginationContext.class.getName();
 
@@ -29,11 +30,17 @@ public class PaginationContext {
 
 	private String key = null;
 
-	public static PaginationContext getInstance(HttpSession session, String key) throws ServiceException {
-		return (PaginationContext) session.getAttribute(key);
+	public static PaginationContext getInstance(HttpServletRequest request, String key) throws ServiceException {
+		PaginationContext service = (PaginationContext) request.getAttribute(key);
+		try {
+			service.page = Integer.parseInt(request.getParameter("page"));
+		} catch (Throwable t) {
+			logger.fine(t.getMessage());
+		}
+		return service;
 	}
 
-	public static PaginationContext getInstance(HttpSession session, String key, int inCountElement, int elemByPage) throws ServiceException {
+	public static PaginationContext getInstance(HttpServletRequest request, String key, int inCountElement, int elemByPage) throws ServiceException {
 		int maxPage = 1;
 		if (elemByPage > 0) {
 			maxPage = inCountElement / elemByPage;
@@ -41,11 +48,11 @@ public class PaginationContext {
 				maxPage = maxPage + 1;
 			}
 		}
-		PaginationContext service = (PaginationContext) session.getAttribute(key);
+		PaginationContext service = (PaginationContext) request.getAttribute(key);
 		if (service == null) {
 			service = new PaginationContext();
 			service.key = key;
-			session.setAttribute(key, service);
+			request.setAttribute(key, service);
 		}
 		service.maxPage = maxPage;
 		service.pageSize = elemByPage;
@@ -54,19 +61,23 @@ public class PaginationContext {
 			service.countElement = inCountElement;
 			service.setPage(1);
 		}
-
+		try {
+			service.page = Integer.parseInt(request.getParameter("page"));
+		} catch (Throwable t) {
+			logger.fine(t.getMessage());
+		}
 		return service;
 	}
 
-	public static PaginationContext getInstance(HttpSession session, int inCountElement, int elemByPage) throws ServiceException {
+	public static PaginationContext getInstance(HttpServletRequest request, int inCountElement, int elemByPage) throws ServiceException {
 		int maxPage = inCountElement / elemByPage;
 		if (inCountElement % elemByPage != 0) {
 			maxPage = maxPage + 1;
 		}
-		PaginationContext service = (PaginationContext) session.getAttribute(KEY);
+		PaginationContext service = (PaginationContext) request.getAttribute(KEY);
 		if (service == null) {
 			service = new PaginationContext();
-			session.setAttribute(KEY, service);
+			request.setAttribute(KEY, service);
 		}
 		service.maxPage = maxPage;
 		service.pageSize = elemByPage;
@@ -75,7 +86,11 @@ public class PaginationContext {
 			service.countElement = inCountElement;
 			service.setPage(1);
 		}
-
+		try {
+			service.page = Integer.parseInt(request.getParameter("page"));
+		} catch (Throwable t) {
+			logger.fine(t.getMessage());
+		}
 		return service;
 	}
 

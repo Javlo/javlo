@@ -772,7 +772,7 @@ public class Multimedia extends TimeRangeComponent implements IImageTitle {
 		}
 		logger.fine("load content resource : " + countContentResource);
 
-		PaginationContext pagination = PaginationContext.getInstance(ctx.getRequest().getSession(), getId(), allResource.size(), getPageSize());
+		PaginationContext pagination = PaginationContext.getInstance(ctx.getRequest(), getId(), allResource.size(), getPageSize());
 
 		if (isOrderByAccess(ctx)) {
 			Collections.sort(allResource, new MultimediaResource.SortByIndex(true));
