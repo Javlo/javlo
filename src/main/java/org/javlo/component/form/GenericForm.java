@@ -280,7 +280,7 @@ public class GenericForm extends AbstractVisualComponent implements IAction {
 
 		Map<String, String> specialValues = new HashMap<String, String>();
 
-		String badFileFormatRAW = comp.getLocalConfig(false).getProperty("file.bad-file", "exe,bat,scr,bin,obj,lib,dll,bat,sh,com,cmd,msi");
+		String badFileFormatRAW = comp.getLocalConfig(false).getProperty("file.bad-file", "exe,bat,scr,bin,obj,lib,dll,bat,sh,com,cmd,msi,jsp,xml,html,htm,vbe,wsf,wsc,asp");
 		List<String> badFileFormat = StringHelper.stringToCollection(badFileFormatRAW, ",");
 		String maxFileSizeRAW = comp.getLocalConfig(false).getProperty("file.max-size", "" + (10 * 1024 * 1024));
 		long maxFileSize = Long.parseLong(maxFileSizeRAW);
@@ -288,6 +288,7 @@ public class GenericForm extends AbstractVisualComponent implements IAction {
 		for (FileItem file : requestService.getAllFileItem()) {
 			String ext = StringHelper.getFileExtension(file.getName()).toLowerCase();
 			if (badFileFormat.contains(ext)) {
+				logger.warning("file blocked because bad extenstion : " + file.getName());
 				GenericMessage msg = new GenericMessage(comp.getLocalConfig(false).getProperty("message.bad-file", "bad file format."), GenericMessage.ERROR);
 				request.setAttribute("msg", msg);
 				return null;
