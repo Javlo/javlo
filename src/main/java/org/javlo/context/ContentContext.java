@@ -222,7 +222,7 @@ public class ContentContext {
 				contentLg = lg;
 				ctx.setContentLanguage(contentLg);
 			} else {
-				if (ctx.renderMode != EDIT_MODE) {
+				if (ctx.renderMode != EDIT_MODE && ctx.renderMode != PREVIEW_MODE) {
 					if (globalContext.isAutoSwitchToDefaultLanguage()) {
 						ctx.setRequestContentLanguage(contentLg);
 						ctx.setContentLanguage(lg);
