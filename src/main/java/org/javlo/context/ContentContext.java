@@ -132,7 +132,6 @@ public class ContentContext {
 
 		if (ctx.getRenderMode() != ContentContext.EDIT_MODE && !editContext.isEditPreview() && !ctx.correctPath && correctPath || ctx.getRenderMode() == ContentContext.VIEW_MODE) {
 			if (!ctx.isAjax()) {
-				System.out.println("***** ContentContext.getContentContext : SEARCH CORRECT PAGE."); //TODO: remove debug trace
 				ctx.correctPath = correctPath;
 				ContentService content = ContentService.getInstance(GlobalContext.getInstance(request));
 				if (!content.contentExistForContext(ctx)) {
