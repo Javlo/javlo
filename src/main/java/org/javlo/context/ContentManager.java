@@ -268,6 +268,28 @@ public class ContentManager {
 	public static boolean isEdit(HttpServletRequest request) {
 		return isEdit(request, false);
 	}
+	
+	public static boolean isAjax(HttpServletRequest request) {
+		return isAjax(request, false);
+	}
+	
+	public static boolean isAjax(HttpServletRequest request, boolean uriPrefixed) {
+		boolean res = false;
+		String realPath = request.getServletPath();
+		if (realPath != null) {
+			StringTokenizer pathTokens = new StringTokenizer(realPath, "/");
+			if (uriPrefixed) {
+				pathTokens.nextToken();
+			}
+			if (pathTokens.hasMoreTokens()) {
+				String nextToken = pathTokens.nextToken();
+				if (nextToken.equals("ajax")) {
+					res = true;
+				}
+			}
+		}
+		return res;
+	}
 
 	public static boolean isEdit(HttpServletRequest request, boolean uriPrefixed) {
 		boolean res = false;
@@ -277,9 +299,6 @@ public class ContentManager {
 			if (uriPrefixed) {
 				pathTokens.nextToken();
 			}
-			/*
-			 * if (!StringHelper.isEmpty(URLHelper.getPathPrefix(request))) { pathTokens.nextToken(); } GlobalContext globalContext = GlobalContext.getInstance(request); if (!StringHelper.isEmpty(globalContext.getPathPrefix())) { pathTokens.nextToken(); }
-			 */
 			if (pathTokens.hasMoreTokens()) {
 				String nextToken = pathTokens.nextToken();
 				if (nextToken.equals("edit") || nextToken.equals("ajax")) {
@@ -376,12 +395,6 @@ public class ContentManager {
 			if (uriPrefixed) {
 				pathTokens.nextToken();
 			}
-			/*
-			 * if (URLHelper.getPathPrefix(request).length() > 0) { pathTokens.nextToken(); }
-			 */
-			/*
-			 * GlobalContext globalContext = GlobalContext.getInstance(request); if (!StringHelper.isEmpty(globalContext.getPathPrefix())) { pathTokens.nextToken(); }
-			 */
 			if (pathTokens.hasMoreTokens()) {
 				String nextToken = pathTokens.nextToken();
 				if (nextToken.equals("view")) {
