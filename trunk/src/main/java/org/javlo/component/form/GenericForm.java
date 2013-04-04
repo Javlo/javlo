@@ -98,7 +98,12 @@ public class GenericForm extends AbstractVisualComponent implements IAction {
 				outRenderers.put(key, value);
 			}
 		}
-		return outRenderers;
+		if (outRenderers.size() == 0) {
+			return super.getRenderes(ctx);
+		} else {
+			return outRenderers;
+		}
+
 	}
 
 	@Override
