@@ -131,19 +131,21 @@ public class ContentContext {
 		EditContext editContext = EditContext.getInstance(globalContext, ctx.getRequest().getSession());
 
 		if (ctx.getRenderMode() != ContentContext.EDIT_MODE && !editContext.isEditPreview() && !ctx.correctPath && correctPath || ctx.getRenderMode() == ContentContext.VIEW_MODE) {
-			ctx.correctPath = correctPath;
-			ContentService content = ContentService.getInstance(GlobalContext.getInstance(request));
-			if (!content.contentExistForContext(ctx)) {
-				if (correctPath) {
-					MenuElement menu = content.getNavigation(ctx);
-					if (menu != null) {
-						menu = menu.searchChild(ctx);
-						if ((menu != null) && (menu.getChildMenuElements().size() > 0)) {
-							// TODO: clean this system with a recursive system
-							ctx.setPath(menu.getChildMenuElements().iterator().next().getPath());
-							if (!content.contentExistForContext(ctx)) {
-								if ((menu != null) && (menu.getChildMenuElements().iterator().next().getChildMenuElements().size() > 0)) {
-									ctx.setPath(menu.getChildMenuElements().iterator().next().getChildMenuElements().iterator().next().getPath());
+			if (!ctx.isAjax()) {
+				ctx.correctPath = correctPath;
+				ContentService content = ContentService.getInstance(GlobalContext.getInstance(request));
+				if (!content.contentExistForContext(ctx)) {
+					if (correctPath) {
+						MenuElement menu = content.getNavigation(ctx);
+						if (menu != null) {
+							menu = menu.searchChild(ctx);
+							if ((menu != null) && (menu.getChildMenuElements().size() > 0)) {
+								// TODO: clean this system with a recursive system
+								ctx.setPath(menu.getChildMenuElements().iterator().next().getPath());
+								if (!content.contentExistForContext(ctx)) {
+									if ((menu != null) && (menu.getChildMenuElements().iterator().next().getChildMenuElements().size() > 0)) {
+										ctx.setPath(menu.getChildMenuElements().iterator().next().getChildMenuElements().iterator().next().getPath());
+									}
 								}
 							}
 						}
@@ -202,6 +204,7 @@ public class ContentContext {
 					ctx.renderMode = TIME_MODE;
 				}
 			}
+			ctx.ajax = ContentManager.isAjax(request);
 			ctx.setRequest(request);
 			ctx.setResponse(response);
 			ctx.setPath(ContentManager.getPath(request));
