@@ -21,7 +21,7 @@
 		org.javlo.component.core.ComponentBean,				
 		org.javlo.helper.URLHelper"
 %><%
-ContentContext ctx = ContentContext.getContentContext ( request, response );
+ContentContext ctx = new ContentContext( ContentContext.getContentContext ( request, response ) );
 GlobalContext globalContext = GlobalContext.getInstance(request);
 boolean pageEmpty = true;
 
@@ -111,8 +111,7 @@ IContentVisualComponent elem = null;
 				}
 			}
 			
-			%>
-<%if (elems != null) {%><%=elems.getPrefixXHTMLCode(ctx)
+			%><%if (elems != null) {%><%=elems.getPrefixXHTMLCode(ctx)
 %><%}%><%=elem.getPrefixViewXHTMLCode(ctx)%>
 <%=elem.getXHTMLCode(ctx)%>
 <%=elem.getSuffixViewXHTMLCode(ctx)%>

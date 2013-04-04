@@ -1124,7 +1124,6 @@ public class PageReferenceComponent extends ComplexPropertiesLink implements IAc
 
 	@Override
 	public void prepareView(ContentContext ctx) throws Exception {
-
 		super.prepareView(ctx);
 		Calendar backDate = getBackDate(ctx);
 
@@ -1294,7 +1293,6 @@ public class PageReferenceComponent extends ComplexPropertiesLink implements IAc
 		ctx.getRequest().setAttribute("comp", this);
 		ctx.getRequest().setAttribute("months", months);
 		ctx.getRequest().setAttribute("tags", globalContext.getTags());
-
 	}
 
 	public static void main(String[] args) {

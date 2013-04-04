@@ -164,7 +164,7 @@ public class GenericForm extends AbstractVisualComponent implements IAction {
 	protected File getFile(ContentContext ctx) throws IOException {
 		GlobalContext globalContext = GlobalContext.getInstance(ctx.getRequest());
 		String fileName = "df-" + getId() + ".csv";
-		if (getLocalConfig(false).get("filename") != null) {
+		if (getLocalConfig(false).get("filename") != null && getLocalConfig(false).get("filename").toString().trim().length() > 0) {
 			fileName = getLocalConfig(false).getProperty("filename");
 		}
 		File file = new File(URLHelper.mergePath(globalContext.getDataFolder(), globalContext.getStaticConfig().getStaticFolder(), "dynamic-form-result", fileName));
@@ -216,8 +216,8 @@ public class GenericForm extends AbstractVisualComponent implements IAction {
 		getLocalConfig(true);
 	}
 
-	protected boolean isCaptcha() {
-		return true;
+	public boolean isCaptcha() {
+		return StringHelper.isTrue(getLocalConfig(false).getProperty("captcha", "" + isCaptcha()));
 	}
 
 	protected boolean isSendEmail() {

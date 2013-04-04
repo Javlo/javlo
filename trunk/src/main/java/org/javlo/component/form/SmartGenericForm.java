@@ -111,6 +111,8 @@ public class SmartGenericForm extends GenericForm {
 		ByteArrayOutputStream outStream = new ByteArrayOutputStream();
 		PrintStream out = new PrintStream(outStream);
 		out.println(XHTMLHelper.renderLine("title", getInputName("title"), getLocalConfig(false).getProperty("title", "")));
+		out.println(XHTMLHelper.renderLine("filename", getInputName("filename"), getLocalConfig(false).getProperty("filename", "")));
+		out.println(XHTMLHelper.renderLine("captcha", getInputName("captcha"), StringHelper.isTrue(getLocalConfig(false).getProperty("captcha", null))));
 		out.println("<div class=\"col-group\"><div class=\"one_half\"><fieldset><legend>e-mail</legend>");
 		out.println(XHTMLHelper.renderLine("mail to :", getInputName("to"), getLocalConfig(false).getProperty("mail.to", "")));
 		out.println(XHTMLHelper.renderLine("mail cc :", getInputName("cc"), getLocalConfig(false).getProperty("mail.cc", "")));
@@ -216,6 +218,8 @@ public class SmartGenericForm extends GenericForm {
 	public void performEdit(ContentContext ctx) throws Exception {
 		RequestService rs = RequestService.getInstance(ctx.getRequest());
 		getLocalConfig(false).setProperty("title", rs.getParameter(getInputName("title"), ""));
+		getLocalConfig(false).setProperty("filename", rs.getParameter(getInputName("filename"), ""));
+		getLocalConfig(false).setProperty("captcha", rs.getParameter(getInputName("captcha"), ""));
 		getLocalConfig(false).setProperty("mail.to", rs.getParameter(getInputName("to"), ""));
 		getLocalConfig(false).setProperty("mail.cc", rs.getParameter(getInputName("cc"), ""));
 		getLocalConfig(false).setProperty("mail.bcc", rs.getParameter(getInputName("bcc"), ""));
