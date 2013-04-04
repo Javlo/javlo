@@ -83,6 +83,7 @@ org.javlo.component.form.SmartGenericForm
 org.javlo.component.list.FAQComponent
 org.javlo.component.web2.ReactionComponent
 org.javlo.component.web2.PageRank
+org.javlo.component.web2.SimplePoll
 
 
 --content.title.special
