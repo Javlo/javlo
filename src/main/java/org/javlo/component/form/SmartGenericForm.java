@@ -16,6 +16,7 @@ import org.apache.commons.lang.StringUtils;
 import org.javlo.context.ContentContext;
 import org.javlo.helper.StringHelper;
 import org.javlo.helper.XHTMLHelper;
+import org.javlo.helper.Comparator.StringComparator;
 import org.javlo.service.RequestService;
 
 public class SmartGenericForm extends GenericForm {
@@ -26,7 +27,7 @@ public class SmartGenericForm extends GenericForm {
 
 			@Override
 			public int compare(Field o1, Field o2) {
-				return o1.getName().compareTo(o2.getName());
+				return StringComparator.compareText(o1.getName(), o2.getName());
 			}
 
 		}
@@ -37,14 +38,12 @@ public class SmartGenericForm extends GenericForm {
 		private String label;
 		private String type = "text";
 		private String value;
-		private boolean require;
 
-		public Field(String name, String label, String type, String value, String require) {
+		public Field(String name, String label, String type, String value) {
 			this.name = name;
 			this.label = label;
 			this.type = type;
 			this.value = value;
-			this.require = StringHelper.isTrue(require);
 		}
 
 		public String getLabel() {
@@ -76,46 +75,65 @@ public class SmartGenericForm extends GenericForm {
 		}
 
 		public void setName(String name) {
-			this.name = name;
+			this.name = StringHelper.createASCIIString(name);
 		}
 
 		@Override
 		public String toString() {
-			return getLabel() + SEP + getType() + SEP + getValue() + SEP + require;
+			return getLabel() + SEP + getType() + SEP + getValue();
 		}
 
 		public boolean isRequire() {
-			return require;
+			if (getName().length() > 0) {
+				return Character.isUpperCase(getName().charAt(0));
+			} else {
+				return false;
+			}
 		}
 
 		public void setRequire(boolean require) {
-			this.require = require;
+			if (getName().length() > 0) {
+				if (require) {
+					setName(getName().substring(0, 1).toUpperCase() + getName().substring(1));
+				} else {
+					setName(getName().substring(0, 1).toLowerCase() + getName().substring(1));
+				}
+			}
+
 		}
 	}
 
 	public static final String TYPE = "smart-generic-form";
-	private static final Collection<? extends Object> FIELD_TYPES = Arrays.asList(new String[] { "text", "yes/no", "email" });
+	private static final Collection<? extends Object> FIELD_TYPES = Arrays.asList(new String[] { "text", "yes/no", "email", "file" });
 
 	@Override
 	protected String getEditXHTMLCode(ContentContext ctx) throws Exception {
 		ByteArrayOutputStream outStream = new ByteArrayOutputStream();
 		PrintStream out = new PrintStream(outStream);
 		out.println(XHTMLHelper.renderLine("title", getInputName("title"), getLocalConfig(false).getProperty("title", "")));
-		out.println("<div class=\"col-group\"><div class=\"one_half\">");
+		out.println("<div class=\"col-group\"><div class=\"one_half\"><fieldset><legend>e-mail</legend>");
+		out.println(XHTMLHelper.renderLine("mail to :", getInputName("to"), getLocalConfig(false).getProperty("mail.to", "")));
+		out.println(XHTMLHelper.renderLine("mail cc :", getInputName("cc"), getLocalConfig(false).getProperty("mail.cc", "")));
+		out.println(XHTMLHelper.renderLine("mail bcc :", getInputName("bcc"), getLocalConfig(false).getProperty("mail.bcc", "")));
 		out.println(XHTMLHelper.renderLine("mail subject :", getInputName("subject"), getLocalConfig(false).getProperty("mail.subject", "")));
 		out.println(XHTMLHelper.renderLine("mail subject field :", getInputName("subject-field"), getLocalConfig(false).getProperty("mail.subject.field", "")));
 		out.println(XHTMLHelper.renderLine("mail from :", getInputName("from"), getLocalConfig(false).getProperty("mail.from", "")));
 		out.println(XHTMLHelper.renderLine("mail from field :", getInputName("from-field"), getLocalConfig(false).getProperty("mail.from.field", "")));
-		out.println("</div>");
-		out.println("<div class=\"one_half\">");
-		out.println(XHTMLHelper.renderLine("msg 'bad file' :", getInputName("message-badfile"), getLocalConfig(false).getProperty("message.bad-file", "")));
-		out.println("</div></div>");
+		out.println("</fieldset></div>");
+		out.println("<div class=\"one_half\"><fieldset><legend>message</legend>");
+		out.println(XHTMLHelper.renderLine("field required :", getInputName("error-required"), getLocalConfig(false).getProperty("error.required", "")));
+		out.println(XHTMLHelper.renderLine("thanks :", getInputName("message-thanks"), getLocalConfig(false).getProperty("message.thanks", "")));
+		out.println(XHTMLHelper.renderLine("error :", getInputName("message-error"), getLocalConfig(false).getProperty("message.error", "")));
+		if (isFile()) {
+			out.println(XHTMLHelper.renderLine("bad file format :", getInputName("message-bad-file"), getLocalConfig(false).getProperty("message.bad-file", "")));
+			out.println(XHTMLHelper.renderLine("file to big :", getInputName("message-tobig-file"), getLocalConfig(false).getProperty("message.tobig-file", "")));
+		}
+		out.println("</fieldset></div></div>");
 		out.println("<div class=\"action-add\"><input type=\"text\" name=\"" + getInputName("new-name") + "\" placeholder=\"field name\" /> <input type=\"submit\" name=\"" + getInputName("add") + "\" value=\"add\" /></div>");
 		out.println("<table class=\"sTable2\">");
 		out.println("<thead><tr><td>name</td><td>label</td><td>type</td><td>require</td><td>action</td></tr></thead>");
 		out.println("<tbody>");
 		List<Field> fields = getFields();
-
 		for (Field field : fields) {
 			out.println(getEditXHTML(field));
 		}
@@ -154,13 +172,22 @@ public class SmartGenericForm extends GenericForm {
 				if (name.trim().length() > 0) {
 					String value = p.getProperty(key);
 					String[] data = StringUtils.splitPreserveAllTokens(value, Field.SEP);
-					Field field = new Field(name, data[0], data[1], data[2], data[3]);
+					Field field = new Field(name, data[0], data[1], data[2]);
 					fields.add(field);
 				}
 			}
 		}
 		Collections.sort(fields, new Field.FieldComparator());
 		return fields;
+	}
+
+	public boolean isFile() {
+		for (Field field : getFields()) {
+			if (field.getType().equals("file")) {
+				return true;
+			}
+		}
+		return false;
 	}
 
 	@Override
@@ -189,31 +216,43 @@ public class SmartGenericForm extends GenericForm {
 	public void performEdit(ContentContext ctx) throws Exception {
 		RequestService rs = RequestService.getInstance(ctx.getRequest());
 		getLocalConfig(false).setProperty("title", rs.getParameter(getInputName("title"), ""));
+		getLocalConfig(false).setProperty("mail.to", rs.getParameter(getInputName("to"), ""));
+		getLocalConfig(false).setProperty("mail.cc", rs.getParameter(getInputName("cc"), ""));
+		getLocalConfig(false).setProperty("mail.bcc", rs.getParameter(getInputName("bcc"), ""));
 		getLocalConfig(false).setProperty("mail.subject", rs.getParameter(getInputName("subject"), ""));
 		getLocalConfig(false).setProperty("mail.subject.field", rs.getParameter(getInputName("subject-field"), ""));
 		getLocalConfig(false).setProperty("mail.from", rs.getParameter(getInputName("from"), ""));
 		getLocalConfig(false).setProperty("mail.from.field", rs.getParameter(getInputName("from-field"), ""));
 
+		getLocalConfig(false).setProperty("error.required", rs.getParameter(getInputName("error-required"), ""));
+		getLocalConfig(false).setProperty("message.thanks", rs.getParameter(getInputName("message-thanks"), ""));
+		getLocalConfig(false).setProperty("message.error", rs.getParameter(getInputName("message-error"), ""));
+		// getLocalConfig(false).setProperty("", rs.getParameter(getInputName(""), ""));
+
+		if (isFile()) {
+			getLocalConfig(false).setProperty("message.bad-file", rs.getParameter(getInputName("message-bad-file"), ""));
+			getLocalConfig(false).setProperty("message.tobig-file", rs.getParameter(getInputName("message-tobig-file"), ""));
+		}
+
 		for (Field field : getFields()) {
+			String oldName = field.getName();
 			if (rs.getParameter(getInputName("del-" + field.getName()), null) != null) {
 				delField(field.getName());
-				setNeedRefresh(true);
 			} else {
-				field.setRequire(rs.getParameter(getInputName("require-" + field.getName()), null) != null);
-				field.setLabel(rs.getParameter(getInputName("label-" + field.getName()), ""));
-				field.setType(rs.getParameter(getInputName("type-" + field.getName()), ""));
-				String newName = rs.getParameter(getInputName("name-" + field.getName()), "");
-				if (!newName.equals(field.getName())) {
-					delField(field.getName());
-					field.setName(newName);
+				field.setName(rs.getParameter(getInputName("name-" + oldName), ""));
+				field.setRequire(rs.getParameter(getInputName("require-" + oldName), null) != null);
+				field.setLabel(rs.getParameter(getInputName("label-" + oldName), ""));
+				field.setType(rs.getParameter(getInputName("type-" + oldName), ""));
+				if (!oldName.equals(field.getName())) {
+					delField(oldName);
 				}
 				storeField(field);
 			}
 		}
 
 		if (rs.getParameter(getInputName("add"), null) != null && rs.getParameter(getInputName("new-name"), "").trim().length() > 0) {
-			storeField(new Field(rs.getParameter(getInputName("new-name"), ""), "", "text", "", "false"));
-			setNeedRefresh(true);
+			storeField(new Field(rs.getParameter(getInputName("new-name"), ""), "", "text", ""));
+
 		}
 
 		Writer writer = new StringWriter();
@@ -221,6 +260,7 @@ public class SmartGenericForm extends GenericForm {
 		if (!getValue().equals(writer.toString())) {
 			setValue(writer.toString());
 			setModify();
+			setNeedRefresh(true);
 		}
 	}
 
