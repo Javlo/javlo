@@ -217,7 +217,7 @@ public class GenericForm extends AbstractVisualComponent implements IAction {
 	}
 
 	public boolean isCaptcha() {
-		return StringHelper.isTrue(getLocalConfig(false).getProperty("captcha", "" + isCaptcha()));
+		return StringHelper.isTrue(getLocalConfig(false).getProperty("captcha", "true"));
 	}
 
 	protected boolean isSendEmail() {
