@@ -37,6 +37,7 @@ public class MailingThread extends Thread {
 
 	public MailingThread(ServletContext inApplication) {
 		application = inApplication;
+		setName("MailingThread");
 	}
 
 	/**
