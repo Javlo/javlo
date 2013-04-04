@@ -104,7 +104,7 @@ public class SmartGenericForm extends GenericForm {
 	}
 
 	public static final String TYPE = "smart-generic-form";
-	private static final Collection<? extends Object> FIELD_TYPES = Arrays.asList(new String[] { "text", "yes/no", "email", "file" });
+	private static final Collection<? extends Object> FIELD_TYPES = Arrays.asList(new String[] { "text", "large-text", "yes-no", "email", "file" });
 
 	@Override
 	protected String getEditXHTMLCode(ContentContext ctx) throws Exception {
@@ -126,6 +126,9 @@ public class SmartGenericForm extends GenericForm {
 		out.println(XHTMLHelper.renderLine("field required :", getInputName("error-required"), getLocalConfig(false).getProperty("error.required", "")));
 		out.println(XHTMLHelper.renderLine("thanks :", getInputName("message-thanks"), getLocalConfig(false).getProperty("message.thanks", "")));
 		out.println(XHTMLHelper.renderLine("error :", getInputName("message-error"), getLocalConfig(false).getProperty("message.error", "")));
+		if (isCaptcha()) {
+			out.println(XHTMLHelper.renderLine("captcha :", getInputName("label-captcha"), getLocalConfig(false).getProperty("label.captcha", "")));
+		}
 		if (isFile()) {
 			out.println(XHTMLHelper.renderLine("bad file format :", getInputName("message-bad-file"), getLocalConfig(false).getProperty("message.bad-file", "")));
 			out.println(XHTMLHelper.renderLine("file to big :", getInputName("message-tobig-file"), getLocalConfig(false).getProperty("message.tobig-file", "")));
@@ -231,6 +234,10 @@ public class SmartGenericForm extends GenericForm {
 		getLocalConfig(false).setProperty("error.required", rs.getParameter(getInputName("error-required"), ""));
 		getLocalConfig(false).setProperty("message.thanks", rs.getParameter(getInputName("message-thanks"), ""));
 		getLocalConfig(false).setProperty("message.error", rs.getParameter(getInputName("message-error"), ""));
+
+		if (isCaptcha()) {
+			getLocalConfig(false).setProperty("label.captcha", rs.getParameter(getInputName("label-captcha"), ""));
+		}
 		// getLocalConfig(false).setProperty("", rs.getParameter(getInputName(""), ""));
 
 		if (isFile()) {
