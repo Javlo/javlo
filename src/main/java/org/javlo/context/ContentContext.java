@@ -587,13 +587,9 @@ public class ContentContext {
 		}
 	};
 
-	private static final Object obj = new Object();
-
 	public MenuElement getCurrentPage() throws Exception {
-		synchronized (obj) {
-			MenuElement outPage = getCurrentPage(false);
-			return outPage;
-		}
+		MenuElement outPage = getCurrentPage(false);
+		return outPage;
 	};
 
 	public MenuElement getCurrentPageCached() {
