@@ -27,7 +27,15 @@
 		<c:when test="${field.type eq 'file'}">
 			<label for="${field.name}">${field.label} ${field.require?'*':''}</label>
 			<input type="file" name="${field.name}" />
-		</c:when>			
+		</c:when>	
+		<c:when test="${field.type eq 'list'}">
+			<label for="${field.name}">${field.label} ${field.require?'*':''}</label>
+			<select name="${field.name}">
+				<c:forEach var="item" items="${field.list}">
+					<option>${item}</option> 
+				</c:forEach>
+			</select>
+		</c:when>		
 	</c:choose>
 	</div>
 

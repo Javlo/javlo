@@ -239,4 +239,21 @@ public class LangHelper {
 
 	}
 
+	/**
+	 * save access to array.
+	 * 
+	 * @param arrays
+	 * @param i
+	 *            index.
+	 * @param defaultValue
+	 * @return default value if array is smaller than index.
+	 */
+	public static Object arrays(Object[] arrays, int i, Object defaultValue) {
+		if (arrays.length <= i) {
+			return defaultValue;
+		} else {
+			return arrays[i];
+		}
+	}
+
 }

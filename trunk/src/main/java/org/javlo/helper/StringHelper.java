@@ -91,6 +91,8 @@ public class StringHelper {
 
 	private static final String KEY_ACCEPTABLE_CHAR = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";
 
+	public static final String DEFAULT_LIST_SEPARATOR = "?";
+
 	private static long previousRandomId = System.currentTimeMillis();
 
 	private static String previousDateId = "";
@@ -154,6 +156,25 @@ public class StringHelper {
 
 	public static String collectionToString(Collection<?> col) {
 		return collectionToString(col, DEFAULT_SEPARATOR);
+	}
+
+	/**
+	 * convert a collection to text. Each item of the collection will be a line if the text.
+	 * 
+	 * @param col
+	 * @return
+	 */
+	public static String collectionToText(Collection<?> col) {
+		if (col == null || col.size() == 0) {
+			return "";
+		}
+		ByteArrayOutputStream outStream = new ByteArrayOutputStream();
+		PrintStream out = new PrintStream(outStream);
+		for (Object object : col) {
+			out.println(object);
+		}
+		out.close();
+		return new String(outStream.toByteArray());
 	}
 
 	public static String collectionToString(Collection<?> col, String inSep) {
@@ -235,6 +256,10 @@ public class StringHelper {
 	 * @return XHTML code
 	 */
 	public static String CR2BR(String text) {
+		return replaceCR(text, "<br />");
+	}
+
+	public static String replaceCR(String text, String separator) {
 		String res = text;
 		StringReader reader = new StringReader(res);
 		BufferedReader bReader = new BufferedReader(reader);
@@ -243,8 +268,10 @@ public class StringHelper {
 			String line = bReader.readLine();
 			while (line != null) {
 				CRres.append(line);
-				CRres.append("<br />");
 				line = bReader.readLine();
+				if (line != null) {
+					CRres.append(separator);
+				}
 			}
 		} catch (IOException e) {
 			// impossible
@@ -2037,7 +2064,7 @@ public class StringHelper {
 		if (str == null) {
 			return null;
 		}
-		return stringToCollection(str, "\\?");
+		return stringToCollection(str, DEFAULT_LIST_SEPARATOR);
 	}
 
 	public static List<String> stringToCollection(String str, String token) {
@@ -2047,7 +2074,7 @@ public class StringHelper {
 		if (str.trim().length() == 0) {
 			return Collections.emptyList();
 		}
-		return Arrays.asList(str.split(token));
+		return Arrays.asList(StringUtils.split(str, token));
 	}
 
 	public static String stringToFileName(String inStr) {
