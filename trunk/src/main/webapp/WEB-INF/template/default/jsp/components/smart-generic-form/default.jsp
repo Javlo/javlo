@@ -32,7 +32,7 @@
 			<label for="${field.name}">${field.label} ${field.require?'*':''}</label>
 			<select name="${field.name}">
 				<c:forEach var="item" items="${field.list}">
-					<option>${item}</option> 
+					<option${requestService.parameterMap[field.name] = item?' selected="selected":''}>${item}</option> 
 				</c:forEach>
 			</select>
 		</c:when>		

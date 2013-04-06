@@ -1163,7 +1163,7 @@ public abstract class AbstractVisualComponent implements IContentVisualComponent
 	}
 
 	@Override
-	public String getXHTMLCode(ContentContext ctx) {
+	public final String getXHTMLCode(ContentContext ctx) {
 
 		setNeedRefresh(false);
 		ctx.getRequest().setAttribute("comp", this);
@@ -1191,8 +1191,10 @@ public abstract class AbstractVisualComponent implements IContentVisualComponent
 			} else {
 				ctx.getRequest().setAttribute(COMP_ID_REQUEST_PARAM, getId());
 				if (ctx.getRenderMode() == ContentContext.VIEW_MODE && isContentCachable(ctx)) {
-					if (getContentCache(ctx) != null) {
-						return getContentCache(ctx);
+					synchronized (this) {
+						if (getContentCache(ctx) != null) {
+							return getContentCache(ctx);
+						}
 					}
 				}
 				if (ctx.getRenderMode() == ContentContext.VIEW_MODE && isContentTimeCachable(ctx)) {
@@ -1204,9 +1206,12 @@ public abstract class AbstractVisualComponent implements IContentVisualComponent
 				if (ctx.getRenderMode() == ContentContext.VIEW_MODE && isContentCachable(ctx)) {
 					logger.fine("add content in cache for component " + getType() + " in page : " + ctx.getPath());
 					long beforeTime = System.currentTimeMillis();
-					prepareView(ctx);
-					String content = renderViewXHTMLCode(ctx);
-					setContentCache(ctx, content);
+					String content;
+					synchronized (this) {
+						prepareView(ctx);
+						content = renderViewXHTMLCode(ctx);
+						setContentCache(ctx, content);
+					}
 					logger.fine("render content cache '" + getType() + "' : " + (System.currentTimeMillis() - beforeTime) / 1000 + " sec.");
 					return content;
 				} else {
