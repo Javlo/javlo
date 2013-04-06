@@ -1169,15 +1169,16 @@ public class XMLManipulationHelper {
 					}
 
 					if ((xml.charAt(i - 1) == '/') || (xml.charAt(i - 1) == '-')) { // auto
-						// close
-						// tag
-						TagDescription autoCloseTag = stack.pop();
-						if (!tagName.equals(autoCloseTag.getName()) && validation) {
-							String msg = "tag '" + tagName + "' close the tag '" + tagName + "' char localistaion : " + i;
-							throw new BadXMLException(msg, i, tagName, autoCloseTag.getName());
-						} else {
-							autoCloseTag.setCloseStart(autoCloseTag.getOpenStart());
-							autoCloseTag.setCloseEnd(autoCloseTag.getOpenEnd());
+						// close tag
+						if (!stack.empty()) {
+							TagDescription autoCloseTag = stack.pop();
+							if (!tagName.equals(autoCloseTag.getName()) && validation) {
+								String msg = "tag '" + tagName + "' close the tag '" + tagName + "' char localistaion : " + i;
+								throw new BadXMLException(msg, i, tagName, autoCloseTag.getName());
+							} else {
+								autoCloseTag.setCloseStart(autoCloseTag.getOpenStart());
+								autoCloseTag.setCloseEnd(autoCloseTag.getOpenEnd());
+							}
 						}
 					}
 				}
