@@ -84,9 +84,11 @@ public class GlobalContext implements Serializable {
 
 	private static final Object LOCK_GLOBAL_CONTEXT_LOAD = new Object();
 
-	private final Object LOCK_DATA_FILE = new Object();
+	private final Object lockDataFile = new Object();
 
 	public final Object LOCK_IMPORT_TEMPLATE = new Object();
+
+	private final Object lockNavigation = new Object();
 
 	private class StorePropertyThread extends Thread {
 
@@ -844,7 +846,11 @@ public class GlobalContext implements Serializable {
 	public String getData(String key) {
 		Properties prop = dataProperties;
 		if (prop == null) {
-			prop = initDataFile();
+			synchronized (lockDataFile) {
+				if (prop == null) {
+					prop = initDataFile();
+				}
+			}
 		}
 		return prop.getProperty(key);
 	}
@@ -1226,6 +1232,8 @@ public class GlobalContext implements Serializable {
 						}
 						viewPages = localViewPages;
 						urlFromFactoryImported = true;
+					} else {
+						localViewPages = viewPages;
 					}
 				}
 			}
@@ -1495,9 +1503,7 @@ public class GlobalContext implements Serializable {
 		InputStream in = null;
 		try {
 			in = new FileInputStream(getDataFile());
-			synchronized (LOCK_DATA_FILE) {
-				outProp.load(in);
-			}
+			outProp.load(in);
 		} catch (IOException e) {
 			e.printStackTrace();
 		} finally {
@@ -1922,7 +1928,7 @@ public class GlobalContext implements Serializable {
 
 	private void saveData() {
 		if (dataProperties != null) {
-			synchronized (LOCK_DATA_FILE) {
+			synchronized (lockDataFile) {
 				logger.fine("store data");
 				OutputStream out = null;
 				try {
@@ -2649,5 +2655,9 @@ public class GlobalContext implements Serializable {
 
 	public boolean isEhCache() {
 		return cacheManager != null;
+	}
+
+	public Object getLockNavigation() {
+		return lockNavigation;
 	}
 }

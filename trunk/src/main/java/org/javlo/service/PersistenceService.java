@@ -754,80 +754,78 @@ public class PersistenceService {
 
 	public MenuElement load(ContentContext ctx, int renderMode, Map<String, String> contentAttributeMap, Date timeTravelDate) throws Exception {
 		synchronized (ctx.getGlobalContext()) {
-			synchronized (PersistenceThread.LOCK) {
 
-				loadVersion();
+			loadVersion();
 
-				logger.info("load version : " + version + " in mode : " + renderMode);
+			logger.info("load version : " + version + " in mode : " + renderMode);
 
-				MenuElement root;
-				InputStream in = null, in2 = null;
-				try {
+			MenuElement root;
+			InputStream in = null, in2 = null;
+			try {
 
-					if (timeTravelDate != null) {
-						// An other render mode than VIEW_MODE is not supported with a timeTravelDate.
-						Map<File, Date> backups = getBackupFiles();
-						long minDiff = Long.MIN_VALUE;
-						Entry<File, Date> minBackup = null;
-						for (Entry<File, Date> backup : backups.entrySet()) {
-							long diff = backup.getValue().getTime() - timeTravelDate.getTime();
-							if (diff <= 0 && diff > minDiff) {
-								minDiff = diff;
-								minBackup = backup;
-							}
-						}
-						if (minBackup != null) {
-							in2 = new FileInputStream(minBackup.getKey());
-							ZipInputStream zip = new ZipInputStream(in2);
-							ZipEntry entry = zip.getNextEntry();
-							while (entry != null) {
-								if (ResourceHelper.getFile(entry.getName()).equals("content_" + ContentContext.VIEW_MODE + ".xml")) {
-									in = zip;
-									break;
-								}
-								entry = zip.getNextEntry();
-							}
+				if (timeTravelDate != null) {
+					// An other render mode than VIEW_MODE is not supported with a timeTravelDate.
+					Map<File, Date> backups = getBackupFiles();
+					long minDiff = Long.MIN_VALUE;
+					Entry<File, Date> minBackup = null;
+					for (Entry<File, Date> backup : backups.entrySet()) {
+						long diff = backup.getValue().getTime() - timeTravelDate.getTime();
+						if (diff <= 0 && diff > minDiff) {
+							minDiff = diff;
+							minBackup = backup;
 						}
 					}
-					if (in == null) {
-						File file;
-						if (renderMode == ContentContext.PREVIEW_MODE) {
-							file = new File(getDirectory() + "/content_" + renderMode + '_' + version + ".xml");
-						} else {
-							file = new File(getDirectory() + "/content_" + renderMode + ".xml");
-						}
-						if (file.exists()) {
-							in = new FileInputStream(file);
+					if (minBackup != null) {
+						in2 = new FileInputStream(minBackup.getKey());
+						ZipInputStream zip = new ZipInputStream(in2);
+						ZipEntry entry = zip.getNextEntry();
+						while (entry != null) {
+							if (ResourceHelper.getFile(entry.getName()).equals("content_" + ContentContext.VIEW_MODE + ".xml")) {
+								in = zip;
+								break;
+							}
+							entry = zip.getNextEntry();
 						}
 					}
-
-					if (in == null) {
-						root = MenuElement.getInstance(globalContext);
-						root.setName("root");
-						root.setVisible(true);
-						root.setPriority(1);
-						root.setId("0");
-						/*
-						 * file.createNewFile(); BufferedWriter out = new BufferedWriter(new FileWriter(file)); out.write("<content version=\"" + version + "\"><page id=\"0\" name=\"root\" priority=\"1\" visible=\"true\" userRoles=\"\" /></content>" ); out.close();
-						 */
+				}
+				if (in == null) {
+					File file;
+					if (renderMode == ContentContext.PREVIEW_MODE) {
+						file = new File(getDirectory() + "/content_" + renderMode + '_' + version + ".xml");
 					} else {
-						LoadingBean loadBean = load(ctx, in, contentAttributeMap, renderMode);
-						root = loadBean.getRoot();
-						ConvertToCurrentVersion.convert(ctx, loadBean);
-
-						/** load linked content **/
-						/*
-						 * MenuElement[] children = root.getAllChilds(); root.updateLinkedData(ctx); for (MenuElement page : children) { page.updateLinkedData(ctx); }
-						 */
+						file = new File(getDirectory() + "/content_" + renderMode + ".xml");
 					}
-
-				} finally {
-					ResourceHelper.closeResource(in);
-					ResourceHelper.closeResource(in2);
+					if (file.exists()) {
+						in = new FileInputStream(file);
+					}
 				}
 
-				return root;
+				if (in == null) {
+					root = MenuElement.getInstance(globalContext);
+					root.setName("root");
+					root.setVisible(true);
+					root.setPriority(1);
+					root.setId("0");
+					/*
+					 * file.createNewFile(); BufferedWriter out = new BufferedWriter(new FileWriter(file)); out.write("<content version=\"" + version + "\"><page id=\"0\" name=\"root\" priority=\"1\" visible=\"true\" userRoles=\"\" /></content>" ); out.close();
+					 */
+				} else {
+					LoadingBean loadBean = load(ctx, in, contentAttributeMap, renderMode);
+					root = loadBean.getRoot();
+					ConvertToCurrentVersion.convert(ctx, loadBean);
+
+					/** load linked content **/
+					/*
+					 * MenuElement[] children = root.getAllChilds(); root.updateLinkedData(ctx); for (MenuElement page : children) { page.updateLinkedData(ctx); }
+					 */
+				}
+
+			} finally {
+				ResourceHelper.closeResource(in);
+				ResourceHelper.closeResource(in2);
 			}
+
+			return root;
 		}
 	}
 
