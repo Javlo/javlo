@@ -847,6 +847,7 @@ public class GlobalContext implements Serializable {
 		Properties prop = dataProperties;
 		if (prop == null) {
 			synchronized (lockDataFile) {
+				prop = dataProperties;
 				if (prop == null) {
 					prop = initDataFile();
 				}
