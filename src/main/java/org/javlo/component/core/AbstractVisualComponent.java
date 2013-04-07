@@ -1191,6 +1191,9 @@ public abstract class AbstractVisualComponent implements IContentVisualComponent
 			} else {
 				ctx.getRequest().setAttribute(COMP_ID_REQUEST_PARAM, getId());
 				if (ctx.getRenderMode() == ContentContext.VIEW_MODE && isContentCachable(ctx)) {
+					if (getContentCache(ctx) != null) {
+						return getContentCache(ctx);
+					}
 					synchronized (this) {
 						if (getContentCache(ctx) != null) {
 							return getContentCache(ctx);

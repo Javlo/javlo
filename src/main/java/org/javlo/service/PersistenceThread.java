@@ -21,8 +21,6 @@ import org.javlo.servlet.zip.ZipManagement;
 
 public class PersistenceThread extends Thread {
 
-	public static final Object LOCK = new Object();
-
 	private static Logger logger = Logger.getLogger(PersistenceThread.class.getName());
 
 	private MenuElement menuElement;
@@ -72,9 +70,7 @@ public class PersistenceThread extends Thread {
 		try {
 			logger.info("start persitence thread");
 			synchronized (menuElement.getLock()) {
-				synchronized (LOCK) {
-					store(menuElement, mode, getDefaultLg());
-				}
+				store(menuElement, mode, getDefaultLg());
 			}
 			logger.info("end persitence thread");
 		} catch (Exception e) {

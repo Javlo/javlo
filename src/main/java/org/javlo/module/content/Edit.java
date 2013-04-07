@@ -1065,9 +1065,9 @@ public class Edit extends AbstractModuleAction {
 
 	public static String performPublish(ServletContext application, HttpServletRequest request, StaticConfig staticConfig, GlobalContext globalContext, ContentService content, ContentContext ctx, I18nAccess i18nAccess) throws Exception {
 
-		DebugHelper.writeInfo(System.out);
-
 		synchronized (content.getNavigation(ctx).getLock()) {
+
+			DebugHelper.writeInfo(System.out);
 
 			String message = null;
 
