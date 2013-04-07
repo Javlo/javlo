@@ -7,6 +7,10 @@
 	
 }
 
+.component h3 {
+	margin-top: 12px;
+}
+
 .component table {
 	width: 100%;
 	border-collapse: collapse;

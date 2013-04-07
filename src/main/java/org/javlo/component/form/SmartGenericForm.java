@@ -22,24 +22,30 @@ import org.javlo.service.RequestService;
 
 public class SmartGenericForm extends GenericForm {
 
-	public static final class Field {
+	public static class Field {
 
 		public static final class FieldComparator implements Comparator<Field> {
 
 			@Override
 			public int compare(Field o1, Field o2) {
-				return StringComparator.compareText(o1.getName(), o2.getName());
+				if (o1.getOrder() > 0 && o2.getOrder() > 0) {
+					return o1.getOrder().compareTo(o2.getOrder());
+				} else {
+					return StringComparator.compareText(o1.getName(), o2.getName());
+				}
 			}
-
 		}
 
-		private static final char SEP = '|';
+		protected static final char SEP = '|';
 
 		private String name;
 		private String label;
 		private String type = "text";
 		private String value;
 		private String list = "";
+		private int order = 0;
+
+		protected static Collection<? extends Object> FIELD_TYPES = Arrays.asList(new String[] { "text", "large-text", "yes-no", "email", "list", "file" });
 
 		public Field(String name, String label, String type, String value, String list) {
 			this.name = name;
@@ -83,7 +89,7 @@ public class SmartGenericForm extends GenericForm {
 
 		@Override
 		public String toString() {
-			return getLabel() + SEP + getType() + SEP + getValue() + SEP + list;
+			return getLabel() + SEP + getType() + SEP + getValue() + SEP + list + SEP + getOrder();
 		}
 
 		public boolean isRequire() {
@@ -113,10 +119,25 @@ public class SmartGenericForm extends GenericForm {
 		public void setList(String list) {
 			this.list = StringHelper.replaceCR(list, StringHelper.DEFAULT_LIST_SEPARATOR);
 		}
+
+		public Integer getOrder() {
+			return order;
+		}
+
+		public void setOrder(int ordre) {
+			this.order = ordre;
+		}
+
+		public String getPrefix() {
+			return "field";
+		}
+
+		public Collection<? extends Object> getFieldTypes() {
+			return FIELD_TYPES;
+		}
 	}
 
 	public static final String TYPE = "smart-generic-form";
-	private static final Collection<? extends Object> FIELD_TYPES = Arrays.asList(new String[] { "text", "large-text", "yes-no", "email", "list", "file" });
 
 	@Override
 	protected String getEditXHTMLCode(ContentContext ctx) throws Exception {
@@ -146,20 +167,22 @@ public class SmartGenericForm extends GenericForm {
 			out.println(XHTMLHelper.renderLine("file to big :", getInputName("message-tobig-file"), getLocalConfig(false).getProperty("message.tobig-file", "")));
 		}
 		out.println("</fieldset></div></div>");
-		out.println("<div class=\"action-add\"><input type=\"text\" name=\"" + getInputName("new-name") + "\" placeholder=\"field name\" /> <input type=\"submit\" name=\"" + getInputName("add") + "\" value=\"add\" /></div>");
-		out.println("<table class=\"sTable2\">");
-		String listTitle = "";
-		if (isList()) {
-			listTitle = "<td>list</td>";
+		out.println("<div class=\"action-add\"><input type=\"text\" name=\"" + getInputName("new-name") + "\" placeholder=\"field name\" /> <input type=\"submit\" name=\"" + getInputName("add") + "\" value=\"add field\" /></div>");
+		if (getFields().size() > 0) {
+			out.println("<table class=\"sTable2\">");
+			String listTitle = "";
+			if (isList()) {
+				listTitle = "<td>list</td>";
+			}
+			out.println("<thead><tr><td>name</td><td>label</td>" + listTitle + "<td>type</td><td>require</td><td>action</td></tr></thead>");
+			out.println("<tbody>");
+			List<Field> fields = getFields();
+			for (Field field : fields) {
+				out.println(getEditXHTML(field));
+			}
+			out.println("</tbody>");
+			out.println("</table>");
 		}
-		out.println("<thead><tr><td>name</td><td>label</td>" + listTitle + "<td>type</td><td>require</td><td>action</td></tr></thead>");
-		out.println("<tbody>");
-		List<Field> fields = getFields();
-		for (Field field : fields) {
-			out.println(getEditXHTML(field));
-		}
-		out.println("</tbody>");
-		out.println("</table>");
 
 		out.close();
 		return new String(outStream.toByteArray());
@@ -178,7 +201,7 @@ public class SmartGenericForm extends GenericForm {
 				out.println("<td>&nbsp;</td>");
 			}
 		}
-		out.println("<td>" + XHTMLHelper.getInputOneSelect(getInputName("type-" + field.getName()), FIELD_TYPES, field.getType()) + "</td>");
+		out.println("<td>" + XHTMLHelper.getInputOneSelect(getInputName("type-" + field.getName()), field.getFieldTypes(), field.getType()) + "</td>");
 		String required = "";
 		if (field.isRequire()) {
 			required = " checked=\"checked\"";
@@ -236,16 +259,16 @@ public class SmartGenericForm extends GenericForm {
 		return getLocalConfig(false).getProperty("title");
 	}
 
-	public synchronized void storeField(Field field) {
-		String key = "field." + field.getName();
+	protected synchronized void store(Field field) {
+		String key = field.getPrefix() + '.' + field.getName();
 		Properties prop = getLocalConfig(false);
 		if (prop.contains(key)) {
 			prop.remove(prop);
 		}
-		prop.setProperty(key, field.toString());
+		getLocalConfig(false).put(key, field.toString());
 	}
 
-	public synchronized void delField(String name) {
+	protected synchronized void delField(String name) {
 		getLocalConfig(false).remove("field." + name);
 	}
 
@@ -293,13 +316,12 @@ public class SmartGenericForm extends GenericForm {
 				if (listValue != null) {
 					field.setList(listValue);
 				}
-				storeField(field);
+				store(field);
 			}
 		}
 
-		if (rs.getParameter(getInputName("add"), null) != null && rs.getParameter(getInputName("new-name"), "").trim().length() > 0) {
-			storeField(new Field(rs.getParameter(getInputName("new-name"), ""), "", "text", "", ""));
-
+		if (rs.getParameter(getInputName("new-name"), "").trim().length() > 0) {
+			store(new Field(rs.getParameter(getInputName("new-name"), ""), "", "text", "", ""));
 		}
 
 		Writer writer = new StringWriter();
