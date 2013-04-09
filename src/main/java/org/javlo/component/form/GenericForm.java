@@ -98,9 +98,25 @@ public class GenericForm extends AbstractVisualComponent implements IAction {
 				outRenderers.put(key, value);
 			}
 		}
+
 		if (outRenderers.size() == 0) {
 			return super.getRenderes(ctx);
 		} else {
+			try {
+				String workTemplate = ctx.getCurrentTemplate().getLocalWorkTemplateFolder();
+				for (String key : outRenderers.keySet()) {
+					String value = outRenderers.get(key);
+					if (!value.startsWith(workTemplate)) {
+						ContentContext notAbstCtx = new ContentContext(ctx);
+						notAbstCtx.setAbsoluteURL(false);
+						value = URLHelper.createStaticTemplateURLWithoutContext(notAbstCtx, ctx.getCurrentTemplate(), value);
+						outRenderers.remove(key);
+						outRenderers.put(key, value);
+					}
+				}
+			} catch (Exception e) {
+				e.printStackTrace();
+			}
 			return outRenderers;
 		}
 
