@@ -42,9 +42,10 @@ public class GenericQuiz extends SmartGenericForm {
 			if (status == null) {
 				status = new Status();
 				session.setAttribute(KEY, status);
-			}
-			for (Question question : comp.getQuestions()) {
-				status.responses.add(new GenericQuiz.Response(question, null));
+				for (Question question : comp.getQuestions()) {
+					Response response = new GenericQuiz.Response(question, null);
+					status.responses.add(response);
+				}
 			}
 			return status;
 		}
@@ -59,6 +60,14 @@ public class GenericQuiz extends SmartGenericForm {
 
 		public List<GenericQuiz.Response> getResponses() {
 			return responses;
+		}
+
+		public GenericQuiz.Response getResponse() {
+			if (question - 1 < responses.size()) {
+				return responses.get(question - 1);
+			} else {
+				return null;
+			}
 		}
 	}
 
@@ -92,9 +101,11 @@ public class GenericQuiz extends SmartGenericForm {
 	@Override
 	public void prepareView(ContentContext ctx) throws Exception {
 		super.prepareView(ctx);
-		ctx.getRequest().setAttribute("quiz", true);
+		Status status = Status.getInstance(ctx.getRequest().getSession(), this);
+		if (status.getQuestion() <= getQuestions().size()) {
+			ctx.getRequest().setAttribute("quiz", true);
+		}
 		ctx.getRequest().setAttribute("status", Status.getInstance(ctx.getRequest().getSession(), this));
-		ctx.getRequest().setAttribute("response", new Response(getQuestions().iterator().next(), ""));
 	}
 
 	public static class Question extends SmartGenericForm.Field {
@@ -179,6 +190,14 @@ public class GenericQuiz extends SmartGenericForm {
 		return false;
 	}
 
+	public String getQuizTitle() {
+		return getLocalConfig(false).getProperty("qtitle");
+	}
+
+	public String getResultTitle() {
+		return getLocalConfig(false).getProperty("result-title");
+	}
+
 	public String getEditXHTML(Question question) {
 		ByteArrayOutputStream outStream = new ByteArrayOutputStream();
 		PrintStream out = new PrintStream(outStream);
@@ -204,9 +223,10 @@ public class GenericQuiz extends SmartGenericForm {
 	protected String getEditXHTMLCode(ContentContext ctx) throws Exception {
 		ByteArrayOutputStream outStream = new ByteArrayOutputStream();
 		PrintStream out = new PrintStream(outStream);
-		out.println(super.getEditXHTMLCode(ctx));
 
-		out.println("<h3>Quiz</h3>");
+		out.println(XHTMLHelper.renderLine("title", getInputName("qtitle"), getLocalConfig(false).getProperty("qtitle", "")));
+		out.println(XHTMLHelper.renderLine("result title", getInputName("result-title"), getLocalConfig(false).getProperty("result-title", "")));
+
 		out.println("<div class=\"action-add\"><input type=\"submit\" name=\"" + getInputName("addq") + "\" value=\"add question\" /></div>");
 		if (getQuestions().size() > 0) {
 			out.println("<table class=\"sTable2\">");
@@ -224,12 +244,14 @@ public class GenericQuiz extends SmartGenericForm {
 			out.println("</table>");
 		}
 
+		out.println("<h3>Form for conclusion</h3>");
+		out.println(super.getEditXHTMLCode(ctx));
+
 		out.close();
 		return new String(outStream.toByteArray());
 	}
 
-	@Override
-	protected synchronized void delField(String name) {
+	protected synchronized void delQuestion(String name) {
 		getLocalConfig(false).remove(Question.PREFIX + '.' + name);
 	}
 
@@ -237,12 +259,13 @@ public class GenericQuiz extends SmartGenericForm {
 	public void performEdit(ContentContext ctx) throws Exception {
 		super.performEdit(ctx);
 		RequestService rs = RequestService.getInstance(ctx.getRequest());
+		getLocalConfig(false).setProperty("qtitle", rs.getParameter(getInputName("qtitle"), ""));
+		getLocalConfig(false).setProperty("result-title", rs.getParameter(getInputName("result-title"), ""));
+
 		for (Question question : getQuestions()) {
 			String oldName = question.getName();
 			if (rs.getParameter(getInputName("del-" + question.getName()), null) != null) {
-				delField(question.getName());
-				setModify();
-				setNeedRefresh(true);
+				delQuestion(question.getName());
 			} else {
 				question.setName(rs.getParameter(getInputName("name-" + oldName), ""));
 				try {
@@ -255,15 +278,13 @@ public class GenericQuiz extends SmartGenericForm {
 				question.setType(rs.getParameter(getInputName("type-" + oldName), ""));
 				question.setResponse(rs.getParameter(getInputName("response-" + oldName), ""));
 				if (!oldName.equals(question.getName())) {
-					delField(oldName);
+					delQuestion(oldName);
 				}
 				String listValue = rs.getParameter(getInputName("list-" + oldName), null);
 				if (listValue != null) {
 					question.setList(listValue);
 				}
 				store(question);
-				setModify();
-				setNeedRefresh(true);
 			}
 		}
 		if (rs.getParameter(getInputName("addq"), null) != null) {
@@ -274,9 +295,8 @@ public class GenericQuiz extends SmartGenericForm {
 			}
 			Question question = new Question("text", "", "", "", order, "");
 			store(question);
-			setModify();
-			setNeedRefresh(true);
 		}
+		store(ctx);
 	}
 
 	@Override
@@ -293,6 +313,7 @@ public class GenericQuiz extends SmartGenericForm {
 			Status status = Status.getInstance(ctx.getRequest().getSession(), quiz);
 			Response response = status.getResponses().get(status.getQuestion() - 1);
 			response.setResponse(rs.getParameter(response.getQuestion().getName(), null));
+			status.setQuestion(status.getQuestion() + 1);
 		}
 		return null;
 	}
