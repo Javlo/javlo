@@ -294,7 +294,7 @@ public class GenericForm extends AbstractVisualComponent implements IAction {
 		boolean withXHTML = StringHelper.isTrue(comp.getLocalConfig(false).getProperty("field.xhtml", null));
 		boolean fakeFilled = false;
 
-		List<String> keys = new LinkedList(params.keySet());
+		List<String> keys = new LinkedList<String>(params.keySet());
 		Collections.sort(keys, new StringComparator());
 
 		/** store attach files **/

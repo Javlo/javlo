@@ -1,6 +1,7 @@
 package org.javlo.component.form;
 
 import java.io.ByteArrayOutputStream;
+import java.io.IOException;
 import java.io.PrintStream;
 import java.io.StringWriter;
 import java.io.Writer;
@@ -272,6 +273,16 @@ public class SmartGenericForm extends GenericForm {
 		getLocalConfig(false).remove("field." + name);
 	}
 
+	protected void store(ContentContext ctx) throws IOException {
+		Writer writer = new StringWriter();
+		getLocalConfig(false).store(writer, "comp:" + getId());
+		if (!getValue().equals(writer.toString())) {
+			setValue(writer.toString());
+			setModify();
+			setNeedRefresh(true);
+		}
+	}
+
 	@Override
 	public void performEdit(ContentContext ctx) throws Exception {
 		RequestService rs = RequestService.getInstance(ctx.getRequest());
@@ -302,8 +313,9 @@ public class SmartGenericForm extends GenericForm {
 
 		for (Field field : getFields()) {
 			String oldName = field.getName();
-			if (rs.getParameter(getInputName("del-" + field.getName()), null) != null) {
-				delField(field.getName());
+			String name = getInputName("del-" + oldName);
+			if (rs.getParameter(name, null) != null) {
+				delField(oldName);
 			} else {
 				field.setName(rs.getParameter(getInputName("name-" + oldName), ""));
 				field.setRequire(rs.getParameter(getInputName("require-" + oldName), null) != null);
@@ -324,13 +336,7 @@ public class SmartGenericForm extends GenericForm {
 			store(new Field(rs.getParameter(getInputName("new-name"), ""), "", "text", "", ""));
 		}
 
-		Writer writer = new StringWriter();
-		getLocalConfig(false).store(writer, "comp:" + getId());
-		if (!getValue().equals(writer.toString())) {
-			setValue(writer.toString());
-			setModify();
-			setNeedRefresh(true);
-		}
+		store(ctx);
 	}
 
 	@Override
