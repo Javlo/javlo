@@ -9,11 +9,16 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Properties;
 
+import javax.servlet.http.HttpSession;
+
 import org.apache.commons.lang.StringUtils;
 import org.javlo.context.ContentContext;
 import org.javlo.helper.LangHelper;
 import org.javlo.helper.StringHelper;
 import org.javlo.helper.XHTMLHelper;
+import org.javlo.i18n.I18nAccess;
+import org.javlo.message.MessageRepository;
+import org.javlo.service.ContentService;
 import org.javlo.service.RequestService;
 
 public class GenericQuiz extends SmartGenericForm {
@@ -23,6 +28,73 @@ public class GenericQuiz extends SmartGenericForm {
 	@Override
 	public String getType() {
 		return TYPE;
+	}
+
+	public static class Status {
+
+		private final List<GenericQuiz.Response> responses = new LinkedList<GenericQuiz.Response>();
+
+		private int question = 1;
+
+		public static Status getInstance(HttpSession session, GenericQuiz comp) {
+			String KEY = "status-" + comp.getId();
+			Status status = (Status) session.getAttribute(KEY);
+			if (status == null) {
+				status = new Status();
+				session.setAttribute(KEY, status);
+			}
+			for (Question question : comp.getQuestions()) {
+				status.responses.add(new GenericQuiz.Response(question, null));
+			}
+			return status;
+		}
+
+		public int getQuestion() {
+			return question;
+		}
+
+		public void setQuestion(int question) {
+			this.question = question;
+		}
+
+		public List<GenericQuiz.Response> getResponses() {
+			return responses;
+		}
+	}
+
+	public static class Response {
+		private Question question;
+		private String response;
+
+		public Response(Question question, String response) {
+			super();
+			this.question = question;
+			this.response = response;
+		}
+
+		public Question getQuestion() {
+			return question;
+		}
+
+		public void setQuestion(Question question) {
+			this.question = question;
+		}
+
+		public String getResponse() {
+			return response;
+		}
+
+		public void setResponse(String response) {
+			this.response = response;
+		}
+	}
+
+	@Override
+	public void prepareView(ContentContext ctx) throws Exception {
+		super.prepareView(ctx);
+		ctx.getRequest().setAttribute("quiz", true);
+		ctx.getRequest().setAttribute("status", Status.getInstance(ctx.getRequest().getSession(), this));
+		ctx.getRequest().setAttribute("response", new Response(getQuestions().iterator().next(), ""));
 	}
 
 	public static class Question extends SmartGenericForm.Field {
@@ -205,5 +277,23 @@ public class GenericQuiz extends SmartGenericForm {
 			setModify();
 			setNeedRefresh(true);
 		}
+	}
+
+	@Override
+	public String getActionGroupName() {
+		return "quiz";
+	}
+
+	public static String performResponse(RequestService rs, ContentService content, ContentContext ctx, MessageRepository messageRepository, I18nAccess i18nAccess) throws Exception {
+		String compId = rs.getParameter("comp-id", null);
+		if (compId == null) {
+			return "compId not found.";
+		} else {
+			GenericQuiz quiz = (GenericQuiz) content.getComponent(ctx, compId);
+			Status status = Status.getInstance(ctx.getRequest().getSession(), quiz);
+			Response response = status.getResponses().get(status.getQuestion() - 1);
+			response.setResponse(rs.getParameter(response.getQuestion().getName(), null));
+		}
+		return null;
 	}
 }

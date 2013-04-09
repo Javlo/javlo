@@ -1599,7 +1599,6 @@ public class GlobalContext implements Serializable {
 	}
 
 	public boolean isOpenExernalLinkAsPopup(String url) {
-
 		if (!isOpenExternalLinkAsPopup()) {
 			return false;
 		}

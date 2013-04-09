@@ -207,6 +207,7 @@ public class ActionManager {
 			if (t.getCause() instanceof JavloSecurityException) {
 				message = t.getMessage();
 				logger.warning(message);
+				t.printStackTrace();
 			} else {
 				t.printStackTrace();
 				if (t.getCause().getMessage() != null) {
