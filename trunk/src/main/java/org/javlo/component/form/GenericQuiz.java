@@ -99,6 +99,33 @@ public class GenericQuiz extends SmartGenericForm {
 	}
 
 	@Override
+	protected boolean isHTMLMail() {
+		return true;
+	}
+
+	@Override
+	protected String getMailFooter(ContentContext ctx) {
+		ByteArrayOutputStream outStream = new ByteArrayOutputStream();
+		PrintStream out = new PrintStream(outStream);
+		out.println("<h3>" + getQuizTitle() + "</h3>");
+		out.println("<ul>");
+		for (Response response : Status.getInstance(ctx.getRequest().getSession(), this).getResponses()) {
+			String style = "";
+			if (response.getQuestion().getResponse() != null && response.getQuestion().getResponse().trim().length() > 0) {
+				if (response.getQuestion().getResponse().equals(response.getResponse())) {
+					style = " style=\"color: #00ff00;\"";
+				} else {
+					style = " style=\"color: #ff0000;\"";
+				}
+			}
+			out.println("<li>" + response.getQuestion().getLabel() + " <span" + style + ">" + response.getResponse() + "</span></li>");
+		}
+		out.println("</ul>");
+		out.close();
+		return new String(outStream.toByteArray());
+	}
+
+	@Override
 	public void prepareView(ContentContext ctx) throws Exception {
 		super.prepareView(ctx);
 		Status status = Status.getInstance(ctx.getRequest().getSession(), this);

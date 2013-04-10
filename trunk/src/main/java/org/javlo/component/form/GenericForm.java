@@ -35,6 +35,7 @@ import org.javlo.context.GlobalContext;
 import org.javlo.helper.ResourceHelper;
 import org.javlo.helper.StringHelper;
 import org.javlo.helper.URLHelper;
+import org.javlo.helper.XHTMLHelper;
 import org.javlo.helper.Comparator.StringComparator;
 import org.javlo.mailing.MailService;
 import org.javlo.message.GenericMessage;
@@ -244,6 +245,18 @@ public class GenericForm extends AbstractVisualComponent implements IAction {
 		return true;
 	}
 
+	protected String getMailHeader(ContentContext ctx) {
+		return "";
+	}
+
+	protected String getMailFooter(ContentContext ctx) {
+		return "";
+	}
+
+	protected boolean isHTMLMail() {
+		return false;
+	}
+
 	public static String performSubmit(HttpServletRequest request, HttpServletResponse response) throws Exception {
 
 		RequestService requestService = RequestService.getInstance(request);
@@ -265,9 +278,6 @@ public class GenericForm extends AbstractVisualComponent implements IAction {
 				CaptchaService.getInstance(request.getSession()).setCurrentCaptchaCode("");
 			}
 		}
-
-		ByteArrayOutputStream outStream = new ByteArrayOutputStream();
-		PrintStream out = new PrintStream(outStream);
 
 		GlobalContext globalContext = GlobalContext.getInstance(ctx.getRequest());
 
@@ -336,6 +346,9 @@ public class GenericForm extends AbstractVisualComponent implements IAction {
 			}
 		}
 
+		ByteArrayOutputStream outStream = new ByteArrayOutputStream();
+		PrintStream out = new PrintStream(outStream);
+
 		for (String key : keys) {
 			if (!key.equals("webaction") && !key.equals("comp_id") && !key.equals("captcha")) {
 				Object value = params.get(key);
@@ -380,6 +393,10 @@ public class GenericForm extends AbstractVisualComponent implements IAction {
 
 		if (errorFields.size() == 0) {
 			String mailContent = new String(outStream.toByteArray());
+			if (comp.isHTMLMail()) {
+				mailContent = XHTMLHelper.textToXHTML(mailContent);
+			}
+			mailContent = comp.getMailHeader(ctx) + mailContent + comp.getMailFooter(ctx);
 
 			logger.info("mail content : " + mailContent);
 
@@ -404,29 +421,30 @@ public class GenericForm extends AbstractVisualComponent implements IAction {
 				String emailCC = comp.getLocalConfig(false).getProperty("mail.cc", null);
 				String emailBCC = comp.getLocalConfig(false).getProperty("mail.bcc", null);
 
-				MailService mailService = MailService.getInstance(globalContext.getStaticConfig());
-				InternetAddress fromEmail = new InternetAddress(emailFrom);
-				InternetAddress toEmail = new InternetAddress(emailTo);
-				InternetAddress ccEmail = null;
-				if (emailCC != null) {
-					ccEmail = new InternetAddress(emailCC);
-				}
-				InternetAddress bccEmail = null;
-				if (emailBCC != null) {
-					bccEmail = new InternetAddress(emailBCC);
-				}
-
-				List<InternetAddress> ccList = null;
-				if (ccEmail != null) {
-					ccList = Arrays.asList(ccEmail);
-				}
-				List<InternetAddress> bccList = null;
-				if (bccEmail != null) {
-					bccList = Arrays.asList(bccEmail);
-				}
-
 				try {
-					mailService.sendMail(null, fromEmail, toEmail, ccList, bccList, subject, mailContent, false);
+
+					MailService mailService = MailService.getInstance(globalContext.getStaticConfig());
+					InternetAddress fromEmail = new InternetAddress(emailFrom);
+					InternetAddress toEmail = new InternetAddress(emailTo);
+					InternetAddress ccEmail = null;
+					if (emailCC != null && emailCC.trim().length() > 0) {
+						ccEmail = new InternetAddress(emailCC);
+					}
+					InternetAddress bccEmail = null;
+					if (emailBCC != null && emailBCC.trim().length() > 0) {
+						bccEmail = new InternetAddress(emailBCC);
+					}
+
+					List<InternetAddress> ccList = null;
+					if (ccEmail != null) {
+						ccList = Arrays.asList(ccEmail);
+					}
+					List<InternetAddress> bccList = null;
+					if (bccEmail != null) {
+						bccList = Arrays.asList(bccEmail);
+					}
+
+					mailService.sendMail(null, fromEmail, toEmail, ccList, bccList, subject, mailContent, comp.isHTMLMail());
 				} catch (Exception e) {
 					e.printStackTrace();
 					GenericMessage msg = new GenericMessage(comp.getLocalConfig(false).getProperty("message.error", "technical error."), GenericMessage.ERROR);

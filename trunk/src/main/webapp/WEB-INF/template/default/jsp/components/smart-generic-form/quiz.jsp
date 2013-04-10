@@ -6,7 +6,14 @@
 <h3>${comp.resultTitle}</h3>
 <ul class="result">
 <c:forEach var="response" items="${status.responses}">
-	<li class="${response.response eq response.question.response?'right':'wrong'}"><span class="question">${response.question.label}</span> : <span class="response">${response.response}</span> </li>
+	<c:set var="cssClass" value="free" />
+	<c:if test="${not empty response.question.response}">
+		<c:set var="cssClass" value="wrong" />
+		<c:if test="${response.response eq response.question.response}">
+			<c:set var="cssClass" value="right" />
+		</c:if>		
+	</c:if>
+	<li class="${cssClass}"><span class="question">${response.question.label}</span> : <span class="response">${response.response}</span> </li>
 </c:forEach>
 </ul>
 
