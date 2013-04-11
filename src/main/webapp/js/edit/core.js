@@ -149,6 +149,10 @@ filter = function(filterStr,selector) {
 			return true;
 		}
 	}).addClass("hidden");
+	try {
+		updateLayout();
+	} catch(err) {		
+	}
 }
 
 scrollToCenter = function(container, target) {
