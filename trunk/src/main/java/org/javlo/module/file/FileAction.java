@@ -6,6 +6,7 @@ import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.util.Collection;
 import java.util.Collections;
+import java.util.Comparator;
 import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
@@ -50,6 +51,22 @@ public class FileAction extends AbstractModuleAction {
 	private static Logger logger = Logger.getLogger(FileAction.class.getName());
 
 	public static class FileBean {
+
+		public static class FileBeanComparator implements Comparator<FileBean> {
+
+			private final ContentContext ctx;
+
+			public FileBeanComparator(ContentContext inCtx) {
+				ctx = inCtx;
+			}
+
+			@Override
+			public int compare(FileBean file1, FileBean file2) {
+				return -file1.getStaticInfo().getDate(ctx).compareTo(file2.getStaticInfo().getDate(ctx));
+			}
+
+		}
+
 		ContentContext ctx;
 		StaticInfo staticInfo;
 		Map<String, String> tags;
@@ -242,13 +259,16 @@ public class FileAction extends AbstractModuleAction {
 			modulesContext.getCurrentModule().clearAllBoxes();
 			File folder = getFolder(ctx);
 			if (folder.exists()) {
-				Collection<FileBean> allFileInfo = new LinkedList<FileBean>();
+				List<FileBean> allFileInfo = new LinkedList<FileBean>();
 				for (File file : folder.listFiles(new DirectoryFilter())) {
 					allFileInfo.add(new FileBean(ctx, StaticInfo.getInstance(ctx, file)));
 				}
+				List<FileBean> fileList = new LinkedList<FileBean>();
 				for (File file : folder.listFiles((FileFilter) FileFileFilter.FILE)) {
-					allFileInfo.add(new FileBean(ctx, StaticInfo.getInstance(ctx, file)));
+					fileList.add(new FileBean(ctx, StaticInfo.getInstance(ctx, file)));
 				}
+				Collections.sort(fileList, new FileBean.FileBeanComparator(ctx));
+				allFileInfo.addAll(fileList);
 				ctx.getRequest().setAttribute("files", allFileInfo);
 			} else {
 				logger.warning("folder not found : " + folder);

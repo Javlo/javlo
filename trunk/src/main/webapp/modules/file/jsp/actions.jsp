@@ -16,6 +16,7 @@
 </div>
 </c:if>
 <c:if test="${empty param.templateid}"><a class="action-button save" href="#save" onclick="jQuery('#form-meta').submit(); return false;"><span>${i18n.edit['action.update']}</span></a></c:if>
+<input type="text" name="filter" placeholder="${i18n.edit['global.filter']}" onkeyup="filter(this.value, '#main-renderer .file');"/>
 <c:if test="${not empty param.templateid}">
 <a class="action-button ajax" href="${info.currentURL}?webaction=template.commit&webaction=browse&templateid=${param.templateid}&from-module=template"><span>${i18n.edit['template.action.commit']}</span></a>
 <a class="action-button ajax" href="${info.currentURL}?webaction=template.commitChildren&webaction=browse&templateid=${param.templateid}&from-module=template"><span>${i18n.edit['template.action.commit-children']}</span></a>

@@ -1142,6 +1142,10 @@ body.previewEdit {
     width: 535px;    
 }
 
+.form-list li.hidden {
+	display: none;
+}
+
 .form-list li .body {
 	padding: 10px;
 }
