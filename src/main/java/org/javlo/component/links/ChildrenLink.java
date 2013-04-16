@@ -74,6 +74,10 @@ public class ChildrenLink extends AbstractVisualComponent implements IImageTitle
 			return currentPage.getSubTitle(ctx);
 		}
 
+		public boolean isRealContent() throws Exception {
+			return currentPage.isRealContent(ctx);
+		}
+
 		// public IImageTitle getImage() throws Exception {
 		// return child.getImage(ctx);
 		// }
