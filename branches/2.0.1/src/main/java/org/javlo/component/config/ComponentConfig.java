@@ -39,20 +39,22 @@ public class ComponentConfig {
 		Template currentTemplate;
 		ComponentConfig outCfg = null;
 		try {
-			currentTemplate = ctx.getCurrentTemplate();
-			String templateId = "no_template";
-			if (currentTemplate != null) {
-				templateId = currentTemplate.getId();
-			}
-			String key = KEY + '-' + templateId + '-' + type;
-			outCfg = (ComponentConfig) globalContext.getAttribute(key);
-			if (outCfg == null) {
-				outCfg = new ComponentConfig(ctx, currentTemplate, type);
-				globalContext.setAttribute(key, outCfg);
-			} else if (currentTemplate != null) {
-				if (!currentTemplate.getBuildId().equals(outCfg.templateBuildId)) {
+			synchronized (globalContext.LOCK_IMPORT_TEMPLATE) {
+				currentTemplate = ctx.getCurrentTemplate();
+				String templateId = "no_template";
+				if (currentTemplate != null) {
+					templateId = currentTemplate.getId();
+				}
+				String key = KEY + '-' + templateId + '-' + type;
+				outCfg = (ComponentConfig) globalContext.getAttribute(key);
+				if (outCfg == null) {
 					outCfg = new ComponentConfig(ctx, currentTemplate, type);
 					globalContext.setAttribute(key, outCfg);
+				} else if (currentTemplate != null) {
+					if (!currentTemplate.getBuildId().equals(outCfg.templateBuildId)) {
+						outCfg = new ComponentConfig(ctx, currentTemplate, type);
+						globalContext.setAttribute(key, outCfg);
+					}
 				}
 			}
 		} catch (Exception e) {

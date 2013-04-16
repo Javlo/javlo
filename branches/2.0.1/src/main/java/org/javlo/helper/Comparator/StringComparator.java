@@ -6,10 +6,15 @@ import org.javlo.helper.StringHelper;
 
 public class StringComparator implements Comparator<String> {
 
-	public int compare(String arg0, String arg1) {
-		String str1 = StringHelper.createASCIIString(arg0).toLowerCase();
-		String str2 = StringHelper.createASCIIString(arg1).toLowerCase();
+	public static int compareText(String inStr1, String inStr2) {
+		String str1 = StringHelper.createASCIIString(inStr1).toLowerCase();
+		String str2 = StringHelper.createASCIIString(inStr2).toLowerCase();
 		return str1.compareTo(str2);
+	}
+
+	@Override
+	public int compare(String arg0, String arg1) {
+		return compareText(arg0, arg1);
 	}
 
 }

@@ -7,6 +7,10 @@
 	
 }
 
+.component h3 {
+	margin-top: 12px;
+}
+
 .component table {
 	width: 100%;
 	border-collapse: collapse;
@@ -15,6 +19,7 @@
 .component td {
 	width: 50%;
 	padding: 3px;
+	vertical-align: top;
 }
 
 .portlet-wrapper td {

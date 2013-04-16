@@ -345,6 +345,8 @@ public class StaticInfo {
 
 	private Date date;
 
+	private int accessFromSomeDays = -1;
+
 	/**
 	 * instance of static info sur shared file
 	 * 
@@ -906,16 +908,19 @@ public class StaticInfo {
 	}
 
 	public int getAccessFromSomeDays(ContentContext ctx) throws Exception {
-		StaticConfig staticConfig = StaticConfig.getInstance(ctx.getRequest().getSession());
-		Calendar cal = Calendar.getInstance();
-		int countDay = 0;
-		int outAccess = 0;
-		while (countDay < staticConfig.getLastAccessStatic()) {
-			outAccess = outAccess + getAccess(ctx, cal.getTime());
-			cal.roll(Calendar.DAY_OF_YEAR, false);
-			countDay++;
+		if (accessFromSomeDays < 0) {
+			StaticConfig staticConfig = StaticConfig.getInstance(ctx.getRequest().getSession());
+			Calendar cal = Calendar.getInstance();
+			int countDay = 0;
+			int outAccess = 0;
+			while (countDay < staticConfig.getLastAccessStatic()) {
+				outAccess = outAccess + getAccess(ctx, cal.getTime());
+				cal.roll(Calendar.DAY_OF_YEAR, false);
+				countDay++;
+			}
+			accessFromSomeDays = outAccess;
 		}
-		return outAccess;
+		return accessFromSomeDays;
 	}
 
 	public static void main(String[] args) {

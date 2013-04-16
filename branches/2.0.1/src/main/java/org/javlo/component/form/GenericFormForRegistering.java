@@ -20,7 +20,7 @@ import org.javlo.user.exception.UserAllreadyExistException;
 public class GenericFormForRegistering extends GenericForm {
 
 	@Override
-	protected boolean isCaptcha() {
+	public boolean isCaptcha() {
 		return false;
 	}
 

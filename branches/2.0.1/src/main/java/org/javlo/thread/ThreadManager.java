@@ -46,6 +46,7 @@ public class ThreadManager extends Thread {
 	private File threadDir = null;
 
 	private ThreadManager() {
+		setName("Javlo Thread Manager");
 	};
 
 	public static ThreadManager getInstance(ServletContext application) {

@@ -433,6 +433,9 @@ public class ImageTransformServlet extends HttpServlet {
 
 		/* TRACKING */
 		GlobalContext globalContext = GlobalContext.getInstance(request);
+
+		Thread.currentThread().setName("ImageTransformServlet-" + globalContext.getContextKey());
+
 		IUserFactory fact = UserFactory.createUserFactory(globalContext, request.getSession());
 		User user = fact.getCurrentUser(request.getSession());
 		String userName = null;
@@ -453,7 +456,7 @@ public class ImageTransformServlet extends HttpServlet {
 		// org.javlo.helper.Logger.stepCount("transform", "end tracking");
 
 		String pathInfo = request.getPathInfo().substring(1);
-		
+
 		pathInfo = pathInfo.replace('\\', '/'); // for windows server
 
 		String dataFolder = globalContext.getDataFolder();
@@ -501,7 +504,7 @@ public class ImageTransformServlet extends HttpServlet {
 					e1.printStackTrace();
 				}
 			}
-			
+
 			// org.javlo.helper.Logger.stepCount("transform", "template");
 
 			boolean localFile = false;
@@ -601,14 +604,12 @@ public class ImageTransformServlet extends HttpServlet {
 				String key = ImageHelper.createSpecialDirectory(globalContext.getContextKey(), filter, area, deviceCode, template);
 				if (fc.getFileName(key, imageName).exists()) {
 					// response.sendRedirect(URLHelper.createStaticURL(ctx, fc.getRelativeFilePath(key, imageName)));
-					/*String url = URLHelper.createStaticURL(ctx, fc.getRelativeFilePath(key, imageName));
-					if (ctx.getPathPrefix().length() > 0 && url.startsWith('/' + ctx.getPathPrefix())) {
-						url = StringUtils.replaceOnce(url, '/' + ctx.getPathPrefix(), "");
-					}
-					request.getRequestDispatcher(url).forward(request, response);*/
+					/*
+					 * String url = URLHelper.createStaticURL(ctx, fc.getRelativeFilePath(key, imageName)); if (ctx.getPathPrefix().length() > 0 && url.startsWith('/' + ctx.getPathPrefix())) { url = StringUtils.replaceOnce(url, '/' + ctx.getPathPrefix(), ""); } request.getRequestDispatcher(url).forward(request, response);
+					 */
 					InputStream in = null;
 					try {
-						in = new FileInputStream(fc.getFileName(key,imageName));
+						in = new FileInputStream(fc.getFileName(key, imageName));
 						ResourceHelper.writeStreamToStream(in, response.getOutputStream());
 					} finally {
 						ResourceHelper.closeResource(in);

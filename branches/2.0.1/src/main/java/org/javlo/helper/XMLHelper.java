@@ -308,10 +308,6 @@ public class XMLHelper {
 				out.print("\" linked-url=\"");
 				out.print(StringHelper.toXMLAttribute(page.getLinkedURL()));
 			}
-			if (page.getLinkedURL().trim().length() > 0) {
-				out.print("\" linked-url=\"");
-				out.print(StringHelper.toXMLAttribute(page.getLinkedURL()));
-			}
 			if (page.getStartPublishDate() != null) {
 				out.print("\" start-publish=\"");
 				out.print(StringHelper.renderSortableTime(page.getStartPublishDate()));

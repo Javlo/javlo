@@ -140,7 +140,6 @@ public class ContentContext {
 						if (menu != null) {
 							menu = menu.searchChild(ctx);
 							if ((menu != null) && (menu.getChildMenuElements().size() > 0)) {
-								// TODO: clean this system with a recursive system
 								ctx.setPath(menu.getChildMenuElements().iterator().next().getPath());
 								if (!content.contentExistForContext(ctx)) {
 									if ((menu != null) && (menu.getChildMenuElements().iterator().next().getChildMenuElements().size() > 0)) {
@@ -589,7 +588,8 @@ public class ContentContext {
 	};
 
 	public MenuElement getCurrentPage() throws Exception {
-		return getCurrentPage(false);
+		MenuElement outPage = getCurrentPage(false);
+		return outPage;
 	};
 
 	public MenuElement getCurrentPageCached() {

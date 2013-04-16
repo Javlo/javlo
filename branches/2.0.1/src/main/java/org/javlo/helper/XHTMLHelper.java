@@ -1986,6 +1986,32 @@ public class XHTMLHelper {
 
 	}
 
+	public static String renderLine(String label, String inputName, String value) {
+		ByteArrayOutputStream outStream = new ByteArrayOutputStream();
+		PrintStream out = new PrintStream(outStream);
+		out.println("<div class=\"line\">");
+		out.println("<label for=\"" + inputName + "\">" + label + "</label>");
+		out.println("<input type=\"text\" id=\"" + inputName + "\" name=\"" + inputName + "\" value=\"" + value + "\" />");
+		out.println("</div>");
+		out.close();
+		return new String(outStream.toByteArray());
+	}
+
+	public static String renderLine(String label, String inputName, boolean checked) {
+		ByteArrayOutputStream outStream = new ByteArrayOutputStream();
+		PrintStream out = new PrintStream(outStream);
+		out.println("<div class=\"line\">");
+		out.println("<label for=\"" + inputName + "\">" + label + "</label>");
+		String chechedHTML = "";
+		if (checked) {
+			chechedHTML = " checked=\"checked\"";
+		}
+		out.println("<input type=\"checkbox\" id=\"" + inputName + "\" name=\"" + inputName + "\"" + chechedHTML + " />");
+		out.println("</div>");
+		out.close();
+		return new String(outStream.toByteArray());
+	}
+
 	public static String extractBody(String content) {
 		String lowerContent = content.toLowerCase();
 		int startBody = lowerContent.indexOf("<body");

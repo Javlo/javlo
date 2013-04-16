@@ -22,6 +22,10 @@ ul.menu {
 	margin-left: 32px;
 }
 
+.col-group {
+	overflow: hidden;
+}
+
 .navigation li a.editor {
     background-image: url("images/page.png");
     background-position: 7px center;
@@ -66,8 +70,20 @@ ul.menu {
 	position: inherit;
 }
 
+.component {
+	overflow: hidden;
+}
+
 .component input, .component textarea, .component select {
 	width: 60%;
+}
+
+.component table input, .component table textarea, .component table select {
+	width: auto;
+}
+
+.action-add {
+	margin: 15px 0;
 }
 
 .line-inline {

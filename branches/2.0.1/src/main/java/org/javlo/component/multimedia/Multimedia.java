@@ -339,11 +339,9 @@ public class Multimedia extends TimeRangeComponent implements IImageTitle {
 			}
 		}
 
-		if (isOrderByAccess(ctx)) {
-			Collections.sort(files, new StaticInfo.StaticFileSortByPopularity(ctx, false));
-		} else {
-			Collections.sort(files, new StaticInfo.StaticFileSort(ctx, false));
-		}
+		/*
+		 * if (isOrderByAccess(ctx)) { Collections.sort(files, new StaticInfo.StaticFileSortByPopularity(ctx, false)); } else { Collections.sort(files, new StaticInfo.StaticFileSort(ctx, false)); }
+		 */
 
 		return files;
 	}

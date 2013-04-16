@@ -10,8 +10,6 @@ import javax.servlet.http.HttpServletRequest;
 import org.javlo.config.StaticConfig;
 import org.javlo.helper.StringHelper;
 import org.javlo.i18n.I18nAccess;
-import org.javlo.navigation.MenuElement;
-import org.javlo.service.ContentService;
 import org.javlo.service.RequestService;
 
 /**
@@ -215,36 +213,6 @@ public class ContentManager {
 		return rewrite;
 	}
 
-	/**
-	 * construct a valid path if the path is not valid.
-	 * 
-	 * @param path
-	 *            a path, valid or not
-	 * @return a valid path.
-	 */
-	public static String getValidPath(ContentContext ctx, String path) throws Exception {
-		String res = path;
-
-		ContentService content = ContentService.getInstance(ctx.getRequest());
-		MenuElement elem = content.getNavigation(ctx);
-		if (elem.searchChild(ctx) == null) {
-			res = "/";
-			String lastName = path;
-			if (path.indexOf('/') >= 0) {
-				if (path.lastIndexOf('/') + 1 < path.length()) {
-					lastName = path.substring(path.lastIndexOf('/') + 1, path.length());
-				}
-			}
-			elem = elem.searchChildFromName(lastName);
-			if (elem != null) {
-				res = elem.getPath();
-			}
-		}
-		ctx.setPath(res);
-
-		return res;
-	}
-
 	public static boolean isAdmin(String path) {
 		boolean res = false;
 		if (path != null) {
@@ -268,11 +236,11 @@ public class ContentManager {
 	public static boolean isEdit(HttpServletRequest request) {
 		return isEdit(request, false);
 	}
-	
+
 	public static boolean isAjax(HttpServletRequest request) {
 		return isAjax(request, false);
 	}
-	
+
 	public static boolean isAjax(HttpServletRequest request, boolean uriPrefixed) {
 		boolean res = false;
 		String realPath = request.getServletPath();

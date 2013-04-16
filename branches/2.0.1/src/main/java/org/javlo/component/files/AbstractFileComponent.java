@@ -59,6 +59,7 @@ import org.javlo.ztatic.StaticInfo;
  * <li>{@link String} url : url to resource.</li>
  * <li>{@link String} description : description of the resource.</li>
  * <li>{@link String} label : label defined by contributor.</li>
+ * <li>{@link boolean} blank : true if link must be open as popup.</li>
  * <li>{@link StaticInfo} resource : static info of resource.</li>
  * </ul>
  * 
@@ -148,6 +149,7 @@ public abstract class AbstractFileComponent extends AbstractVisualComponent impl
 		super.prepareView(ctx);
 		String url = getURL(ctx);
 		ctx.getRequest().setAttribute("url", url);
+		ctx.getRequest().setAttribute("blank", ctx.getGlobalContext().isOpenExernalLinkAsPopup(url));
 		ctx.getRequest().setAttribute("descritpion", getDescription());
 		StaticInfo staticInfo = getStaticInfo(ctx);
 		if (getLabel() != null && getLabel().length() > 0) {
@@ -607,16 +609,12 @@ public abstract class AbstractFileComponent extends AbstractVisualComponent impl
 			}
 		}
 
-		
-
 		if (fileName != null) {
 
 			if (fileName.trim().length() == 0) {
 				fileName = requestService.getParameter(getSelectXHTMLInputName(), "");
 				fileName = StringHelper.getFileNameFromPath(fileName);
 			}
-
-			
 
 			if ((!label.equals(getLabel())) || (!fileName.equals(getFileName()))) {
 				setModify();
@@ -631,7 +629,7 @@ public abstract class AbstractFileComponent extends AbstractVisualComponent impl
 			}
 
 			if (!getDirSelected().equals(selectedDir)) {
-			
+
 				fileName = "";
 				MessageRepository messageRepository = MessageRepository.getInstance(ctx);
 				messageRepository.setGlobalMessage(new GenericMessage(i18nAccess.getText("content.file.info.select-dir", new String[][] { { "group", selectedDir } }), GenericMessage.INFO));
