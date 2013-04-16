@@ -609,11 +609,6 @@ public class GlobalImage extends Image {
 	}
 
 	@Override
-	public boolean needJavaScript(ContentContext ctx) {
-		return false;
-	}
-
-	@Override
 	public void performEdit(ContentContext ctx) throws Exception {
 		RequestService requestService = RequestService.getInstance(ctx.getRequest());
 		String link = requestService.getParameter(getLinkXHTMLInputName(), null);

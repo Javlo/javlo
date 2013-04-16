@@ -518,11 +518,6 @@ public class MultimediaGallery extends TimeRangeComponent {
 	}
 
 	@Override
-	public boolean needJavaScript(ContentContext ctx) {
-		return false;
-	}
-
-	@Override
 	public void performEdit(ContentContext ctx) throws Exception {
 		RequestService requestService = RequestService.getInstance(ctx.getRequest());
 		String newStartDate = requestService.getParameter(getInputStartDateName(), null);

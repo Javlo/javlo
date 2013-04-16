@@ -1071,7 +1071,7 @@ public class Edit extends AbstractModuleAction {
 
 			String message = null;
 
-			synchronized (globalContext) {
+			synchronized (globalContext.getLockLoadContent()) {
 
 				PersistenceService persistenceService = PersistenceService.getInstance(globalContext);
 

@@ -572,27 +572,7 @@ public abstract class AbstractVisualComponent implements IContentVisualComponent
 
 	@Override
 	public Collection<String> getExternalResources(ContentContext ctx) {
-		if (!needJavaScript(ctx)) {
-			return Collections.emptyList();
-		} else {
-			List<String> resources = new LinkedList<String>();
-			// resources.add("/css/slimbox/slimbox.css");
-			resources.add("/js/mootools.js");
-			// resources.add("/js/slimbox.js");
-			resources.add("/js/global.js");
-			resources.add("/js/calendar/js/HtmlManager.js");
-			resources.add("/js/calendar/js/calendarFunctions.js");
-			resources.add("/js/calendar/js/calendarOptions.js");
-			resources.add("/js/calendar/js/calendarTranslate_" + ctx.getContentLanguage() + ".js");
-			resources.add("/js/calendar/css/style_calendar.css");
-			resources.add("/js/calendar/css/style_calendarcolor.css");
-			resources.add("/js/shadowbox/src/adapter/shadowbox-base.js");
-			resources.add("/js/shadowbox/src/shadowbox.js");
-			resources.add("/js/shadowboxOptions.js");
-			resources.add("/js/onLoadFunctions.js");
-			return resources;
-		}
-
+		return Collections.emptyList();
 	}
 
 	@Override
@@ -1193,7 +1173,7 @@ public abstract class AbstractVisualComponent implements IContentVisualComponent
 					if (getContentCache(ctx) != null) {
 						return getContentCache(ctx);
 					}
-					synchronized (this) {
+					synchronized (getLock(ctx)) {
 						if (getContentCache(ctx) != null) {
 							return getContentCache(ctx);
 						}
@@ -1204,12 +1184,18 @@ public abstract class AbstractVisualComponent implements IContentVisualComponent
 					if (timeContent != null) {
 						return timeContent;
 					}
+					synchronized (getLock(ctx)) {
+						timeContent = getContentTimeCache(ctx);
+						if (timeContent != null) {
+							return timeContent;
+						}
+					}
 				}
 				if (ctx.getRenderMode() == ContentContext.VIEW_MODE && isContentCachable(ctx)) {
 					logger.fine("add content in cache for component " + getType() + " in page : " + ctx.getPath());
 					long beforeTime = System.currentTimeMillis();
 					String content;
-					synchronized (this) {
+					synchronized (getLock(ctx)) {
 						prepareView(ctx);
 						content = renderViewXHTMLCode(ctx);
 						setContentCache(ctx, content);
@@ -1220,10 +1206,12 @@ public abstract class AbstractVisualComponent implements IContentVisualComponent
 					String content;
 					if (isContentTimeCachable(ctx)) {
 						long beforeTime = System.currentTimeMillis();
-						prepareView(ctx);
-						content = renderViewXHTMLCode(ctx);
-						logger.fine("render content time cache '" + getType() + "' : " + (System.currentTimeMillis() - beforeTime) / 1000 + " sec.");
-						setContentTimeCache(ctx, content);
+						synchronized (getLock(ctx)) {
+							prepareView(ctx);
+							content = renderViewXHTMLCode(ctx);
+							logger.fine("render content time cache '" + getType() + "' : " + (System.currentTimeMillis() - beforeTime) / 1000 + " sec.");
+							setContentTimeCache(ctx, content);
+						}
 					} else {
 						prepareView(ctx);
 						content = renderViewXHTMLCode(ctx);
@@ -1238,6 +1226,10 @@ public abstract class AbstractVisualComponent implements IContentVisualComponent
 			e.printStackTrace();
 			return "";
 		}
+	}
+
+	protected Object getLock(ContentContext ctx) {
+		return this;
 	}
 
 	/**
@@ -1480,10 +1472,6 @@ public abstract class AbstractVisualComponent implements IContentVisualComponent
 				ResourceHelper.closeResource(in);
 			}
 		}
-	}
-
-	protected boolean needJavaScript(ContentContext ctx) {
-		return false;
 	}
 
 	@Override

@@ -173,11 +173,6 @@ public class VFSFile extends AbstractFileComponent implements IReverseLinkCompon
 	}
 
 	@Override
-	protected boolean needJavaScript(ContentContext ctx) {
-		return false;
-	}
-
-	@Override
 	protected boolean needEncoding() {
 		return true;
 	}

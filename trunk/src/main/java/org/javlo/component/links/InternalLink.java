@@ -36,7 +36,7 @@ public class InternalLink extends ComplexPropertiesLink implements IInternalLink
 	 * create a static logger.
 	 */
 	protected static Logger logger = Logger.getLogger(InternalLink.class.getName());
-	
+
 	private static final String HIDDEN = "hidden";
 
 	private static final String TITLE = "title";
@@ -90,7 +90,7 @@ public class InternalLink extends ComplexPropertiesLink implements IInternalLink
 			out.println("<div class=\"line\"><label for=\"" + getReverseLinkName() + "\">" + reverseLinkLabel + " : </label>");
 			out.println(XHTMLHelper.getReverlinkSelectType(ctx, getReverseLinkName(), reverseLink));
 
-			out.println("</div><div class=\"line\"><label for=\""+getLinkName()+"\">");
+			out.println("</div><div class=\"line\"><label for=\"" + getLinkName() + "\">");
 
 			out.println(linkTitle + " : ");
 			out.println("</label><select id=\"" + getLinkName() + "\" name=\"" + getLinkName() + "\">");
@@ -116,7 +116,7 @@ public class InternalLink extends ComplexPropertiesLink implements IInternalLink
 			} else {
 				setMessage(new GenericMessage(i18nAccess.getText("component.message.help.choose_link"), GenericMessage.HELP));
 			}
-			out.println("</div><div class=\"line\"><label for=\""+getLinkLabelName()+"\">");
+			out.println("</div><div class=\"line\"><label for=\"" + getLinkLabelName() + "\">");
 			out.print(labelTitle);
 			out.print(" : </label>");
 			out.println(XHTMLHelper.getTextInput(getLinkLabelName(), label));
@@ -127,7 +127,7 @@ public class InternalLink extends ComplexPropertiesLink implements IInternalLink
 
 		return writer.toString();
 	}
-	
+
 	@Override
 	public String getHexColor() {
 		return LINK_COLOR;
@@ -206,7 +206,7 @@ public class InternalLink extends ComplexPropertiesLink implements IInternalLink
 	public String getType() {
 		return TYPE;
 	}
-	
+
 	/**
 	 * @see org.javlo.itf.IContentVisualComponent#getXHTMLCode()
 	 */
@@ -217,11 +217,11 @@ public class InternalLink extends ComplexPropertiesLink implements IInternalLink
 		if (style == null) {
 			style = TITLE;
 		}
-		
+
 		if (style.contains(HIDDEN)) {
 			return "";
 		}
-		
+
 		StringBuffer res = new StringBuffer();
 
 		String linkId = properties.getProperty(LINK_KEY, "/");
@@ -388,6 +388,11 @@ public class InternalLink extends ComplexPropertiesLink implements IInternalLink
 		} else {
 			return null;
 		}
+	}
+
+	@Override
+	protected Object getLock(ContentContext ctx) {
+		return ctx.getGlobalContext().getLockLoadContent();
 	}
 
 }

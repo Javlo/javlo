@@ -31,7 +31,7 @@ public class NavigationService {
 			service.persistenceService = PersistenceService.getInstance(globalContext);
 			service.viewPageCache = globalContext.getCache("navigation-cache-view");
 			service.previewPageCache = globalContext.getCache("navigation-cache-preview");
-			service.lock = globalContext.getLockNavigation();
+			service.lock = globalContext.getLockLoadContent();
 			globalContext.setAttribute(KEY, service);
 		}
 		return service;
@@ -79,13 +79,18 @@ public class NavigationService {
 	}
 
 	public MenuElement getPage(ContentContext ctx, String pageKey) throws Exception {
+
+		ICache cache;
+		if (ctx.getRenderMode() == ContentContext.VIEW_MODE) {
+			cache = viewPageCache;
+		} else {
+			cache = previewPageCache;
+		}
+		MenuElement menuElement = (MenuElement) cache.get(pageKey);
+		if (menuElement != null) {
+			return menuElement;
+		}
 		synchronized (lock) {
-			ICache cache;
-			if (ctx.getRenderMode() == ContentContext.VIEW_MODE) {
-				cache = viewPageCache;
-			} else {
-				cache = previewPageCache;
-			}
 			if (cache.getSize() == 0) { // init cache
 				logger.info("reload page cache. (mode:" + ctx.getRenderMode() + ')');
 				ContentService content = ContentService.getInstance(ctx.getRequest());
@@ -104,7 +109,7 @@ public class NavigationService {
 					}
 				}
 			}
-			MenuElement menuElement = (MenuElement) cache.get(pageKey);
+			menuElement = (MenuElement) cache.get(pageKey);
 			if (menuElement != null) {
 				return menuElement;
 			} else {

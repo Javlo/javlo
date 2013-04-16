@@ -334,6 +334,11 @@ public class AgendaImport extends AbstractVisualComponent {
 	}
 
 	@Override
+	protected Object getLock(ContentContext ctx) {
+		return ctx.getGlobalContext().getLockLoadContent();
+	}
+
+	@Override
 	public boolean isEmpty(ContentContext ctx) {
 		return false;
 	}

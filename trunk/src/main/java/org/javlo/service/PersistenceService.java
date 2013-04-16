@@ -753,7 +753,7 @@ public class PersistenceService {
 	}
 
 	public MenuElement load(ContentContext ctx, int renderMode, Map<String, String> contentAttributeMap, Date timeTravelDate) throws Exception {
-		synchronized (ctx.getGlobalContext()) {
+		synchronized (ctx.getGlobalContext().getLockLoadContent()) {
 
 			loadVersion();
 
@@ -1052,7 +1052,7 @@ public class PersistenceService {
 
 	public void store(ContentContext ctx, int renderMode) throws Exception {
 
-		synchronized (ctx.getGlobalContext()) {
+		synchronized (ctx.getGlobalContext().getLockLoadContent()) {
 
 			logger.info("store in " + renderMode + " mode.");
 

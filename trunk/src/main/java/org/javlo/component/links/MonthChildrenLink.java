@@ -126,9 +126,10 @@ public class MonthChildrenLink extends AbstractVisualComponent implements IActio
 
 		StringWriter writer = new StringWriter();
 		PrintWriter out = new PrintWriter(writer);
-		
-		/*out.println("<a href=\""+ URLHelper.createURL(ctx)+"\">"+ URLHelper.createURL(ctx)+"</a>");
-		out.println("<p>"+ ctx.getPath() + " cp:" + ctx.getCurrentPage().getPath() + "</p>");*/
+
+		/*
+		 * out.println("<a href=\""+ URLHelper.createURL(ctx)+"\">"+ URLHelper.createURL(ctx)+"</a>"); out.println("<p>"+ ctx.getPath() + " cp:" + ctx.getCurrentPage().getPath() + "</p>");
+		 */
 
 		out.println("<form class=\"" + getType() + "\" id=\"month-select-" + getId() + "\" action=\"" + URLHelper.createURL(ctx) + "\" method=\"post\">");
 
@@ -149,11 +150,6 @@ public class MonthChildrenLink extends AbstractVisualComponent implements IActio
 
 		out.close();
 		return writer.toString();
-	}
-
-	@Override
-	public boolean needJavaScript(ContentContext ctx) {
-		return true;
 	}
 
 	@Override
