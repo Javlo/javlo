@@ -28,13 +28,6 @@ public class Device implements Serializable {
 			currentDevice.setUserAgent(userAgent);
 			request.getSession().setAttribute(Device.class.getCanonicalName(), currentDevice);
 			logger.fine("Create new device : '" + currentDevice.getCode() + "' userAgent : " + userAgent);
-
-			System.out.println("***** Device.getDevice : ***********************************"); // TODO: remove debug trace
-			System.out.println("***** Device.getDevice : ***********************************"); // TODO: remove debug trace
-			System.out.println("***** Device.getDevice : " + currentDevice.getCode()); // TODO: remove debug trace
-			System.out.println("***** Device.getDevice : ***********************************"); // TODO: remove debug trace
-			System.out.println("***** Device.getDevice : ***********************************"); // TODO: remove debug trace
-
 		}
 		String forcedCode = request.getParameter(FORCE_DEVICE_PARAMETER_NAME);
 		if (forcedCode != null) {
