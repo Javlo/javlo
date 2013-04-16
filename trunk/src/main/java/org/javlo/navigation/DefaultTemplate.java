@@ -15,6 +15,7 @@ import org.apache.commons.configuration.PropertiesConfiguration;
 import org.javlo.config.StaticConfig;
 import org.javlo.context.ContentContext;
 import org.javlo.context.GlobalContext;
+import org.javlo.helper.StringHelper;
 import org.javlo.helper.URLHelper;
 import org.javlo.helper.XMLManipulationHelper.BadXMLException;
 import org.javlo.i18n.I18nAccess;
@@ -88,7 +89,11 @@ public class DefaultTemplate extends Template {
 
 	@Override
 	protected String getRendererFile(Device device) {
-		return "index.jsp";
+		String renderer = "index.jsp";
+		if (device != null && !device.isDefault()) {
+			renderer = StringHelper.addSufixToFileName(renderer, '-' + device.getCode());
+		}
+		return renderer;
 	}
 
 	@Override
