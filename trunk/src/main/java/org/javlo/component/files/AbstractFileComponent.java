@@ -629,7 +629,6 @@ public abstract class AbstractFileComponent extends AbstractVisualComponent impl
 			}
 
 			if (!getDirSelected().equals(selectedDir)) {
-
 				fileName = "";
 				MessageRepository messageRepository = MessageRepository.getInstance(ctx);
 				messageRepository.setGlobalMessage(new GenericMessage(i18nAccess.getText("content.file.info.select-dir", new String[][] { { "group", selectedDir } }), GenericMessage.INFO));
