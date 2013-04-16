@@ -940,7 +940,7 @@ public class MenuElement implements Serializable {
 	public static MenuElement getInstance(GlobalContext globalContext) {
 		MenuElement outMenuElement = new MenuElement();
 		outMenuElement.releaseCache = true;
-		outMenuElement.globalContext = globalContext;
+		outMenuElement.lock = globalContext.getLockLoadContent();
 		return outMenuElement;
 	}
 
@@ -1106,7 +1106,7 @@ public class MenuElement implements Serializable {
 
 	private MenuElement root = null;
 
-	private GlobalContext globalContext = null;
+	private Object lock = null;
 
 	protected MenuElement() {
 	}
@@ -2514,7 +2514,7 @@ public class MenuElement implements Serializable {
 	 * @return
 	 */
 	public Object getLock() {
-		return globalContext;
+		return lock;
 	}
 
 	public Date getManualModificationDate() {

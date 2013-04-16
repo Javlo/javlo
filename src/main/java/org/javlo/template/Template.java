@@ -720,7 +720,7 @@ public class Template implements Comparable<Template> {
 	}
 
 	public void clearRenderer(ContentContext ctx) {
-		synchronized (ctx.getGlobalContext().LOCK_IMPORT_TEMPLATE) {
+		synchronized (ctx.getGlobalContext().getLockImportTemplate()) {
 			String templateFolder = config.getTemplateFolder();
 			File templateSrc = new File(URLHelper.mergePath(templateFolder, getSourceFolderName()));
 			if (templateSrc.exists()) {
@@ -931,7 +931,7 @@ public class Template implements Comparable<Template> {
 	}
 
 	protected List<File> getComponentFile(GlobalContext globalContext) throws IOException {
-		synchronized (globalContext.LOCK_IMPORT_TEMPLATE) {
+		synchronized (globalContext.getLockImportTemplate()) {
 			String templateFolder = getWorkTemplateFolder();
 
 			String path = URLHelper.mergePath(URLHelper.mergePath(templateFolder, getFolder(globalContext)), DYNAMIC_COMPONENTS_PROPERTIES_FOLDER);
@@ -1008,7 +1008,7 @@ public class Template implements Comparable<Template> {
 
 	public final List<Properties> getDynamicComponentsProperties(GlobalContext globalContext) throws IOException {
 		if (dynamicsComponents == null) {
-			synchronized (globalContext.LOCK_IMPORT_TEMPLATE) {
+			synchronized (globalContext.getLockImportTemplate()) {
 				if (dynamicsComponents == null) {
 					List<File> files = getComponentFile(globalContext);
 					List<Properties> outProperties = new LinkedList<Properties>();
@@ -1141,7 +1141,7 @@ public class Template implements Comparable<Template> {
 		}
 		Map propI18n = i18n.get(locale.getLanguage());
 		if (propI18n == null) {
-			synchronized (globalContext.LOCK_IMPORT_TEMPLATE) {
+			synchronized (globalContext.getLockImportTemplate()) {
 				File i18nFile = new File(URLHelper.mergePath(URLHelper.mergePath(getFolder().getAbsolutePath(), I18N_FILE + locale.getLanguage() + ".properties")));
 				if (i18nFile.exists()) {
 					propI18n = new Properties();
@@ -1292,7 +1292,7 @@ public class Template implements Comparable<Template> {
 	}
 
 	public Properties getMacroProperties(GlobalContext globalContext, String macroKey) throws IOException {
-		synchronized (globalContext.LOCK_IMPORT_TEMPLATE) {
+		synchronized (globalContext.getLockImportTemplate()) {
 			List<File> macroFiles = getMacroFile(globalContext);
 			for (File pFile : macroFiles) {
 				if (pFile.getName().equals(macroKey + ".properties")) {
@@ -1402,7 +1402,7 @@ public class Template implements Comparable<Template> {
 	}
 
 	public synchronized String getRenderer(ContentContext ctx) throws IOException, BadXMLException {
-		synchronized (ctx.getGlobalContext().LOCK_IMPORT_TEMPLATE) {
+		synchronized (ctx.getGlobalContext().getLockImportTemplate()) {
 
 			String renderer = getRendererFile(ctx.getDevice());
 
@@ -1693,7 +1693,7 @@ public class Template implements Comparable<Template> {
 		}
 		Object lockImport = this;
 		if (globalContext != null) {
-			lockImport = globalContext.LOCK_IMPORT_TEMPLATE;
+			lockImport = globalContext.getLockImportTemplate();
 		}
 		synchronized (lockImport) {
 			if (!isTemplateFolderInWebapp(ctx)) {

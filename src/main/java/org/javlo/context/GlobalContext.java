@@ -86,9 +86,9 @@ public class GlobalContext implements Serializable {
 
 	private final Object lockDataFile = new Object();
 
-	public final Object LOCK_IMPORT_TEMPLATE = new Object();
+	private final Object lockImportTemplate = new Object();
 
-	private final Object lockNavigation = new Object();
+	private final Object lockLoadContent = new Object();
 
 	private class StorePropertyThread extends Thread {
 
@@ -1217,7 +1217,7 @@ public class GlobalContext implements Serializable {
 		Map<String, MenuElement> localViewPages = viewPages;
 		if (ctx.getRenderMode() == ContentContext.VIEW_MODE && urlCreator != null && useURLCreator) {
 			if (!urlFromFactoryImported) {
-				synchronized (this) {
+				synchronized (this.getLockLoadContent()) {
 					if (!urlFromFactoryImported) {
 						localViewPages = new Hashtable<String, MenuElement>();
 						ContentContext lgCtx = new ContentContext(ctx);
@@ -2657,7 +2657,11 @@ public class GlobalContext implements Serializable {
 		return cacheManager != null;
 	}
 
-	public Object getLockNavigation() {
-		return lockNavigation;
+	public Object getLockImportTemplate() {
+		return lockImportTemplate;
+	}
+
+	public Object getLockLoadContent() {
+		return lockLoadContent;
 	}
 }

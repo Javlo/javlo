@@ -30,17 +30,17 @@ import org.javlo.service.RequestService;
  * @author pvandermaesen
  */
 public class WeekChildrenLink extends AbstractVisualComponent implements IAction {
-	
+
 	/**
 	 * create a static logger.
 	 */
 	protected static Logger logger = Logger.getLogger(WeekChildrenLink.class.getName());
-	
+
 	public static final String createWeekPageName(String parentName, Date date) {
 		Calendar cal = GregorianCalendar.getInstance();
 		cal.setTime(date);
 		String year = "" + cal.get(Calendar.YEAR);
-		return parentName+"_"+year + "_" + cal.get(Calendar.WEEK_OF_YEAR);
+		return parentName + "_" + year + "_" + cal.get(Calendar.WEEK_OF_YEAR);
 	}
 
 	public static final String TYPE = "week-link";
@@ -53,30 +53,31 @@ public class WeekChildrenLink extends AbstractVisualComponent implements IAction
 
 		StringWriter writer = new StringWriter();
 		PrintWriter out = new PrintWriter(writer);
-		
-		out.println("<form id=\"week-select-"+getId()+"\" action=\""+URLHelper.createURL(ctx)+"\" method=\"post\">");
-		
-		out.println("<div id=\"calendarweek_0\" class=\"content_calendar\">");		
-		
+
+		out.println("<form id=\"week-select-" + getId() + "\" action=\"" + URLHelper.createURL(ctx) + "\" method=\"post\">");
+
+		out.println("<div id=\"calendarweek_0\" class=\"content_calendar\">");
+
 		out.println("<input type=\"hidden\" name=\"webaction\" value=\"week.goto\" />");
-		
-		out.println("<input type=\"hidden\" name=\"parent\" value=\""+getPage().getId()+"\" />");
-		
+
+		out.println("<input type=\"hidden\" name=\"parent\" value=\"" + getPage().getId() + "\" />");
+
 		RequestService requestService = RequestService.getInstance(ctx.getRequest());
 
-		out.println("<input id=\"dateweek_field_0\" type=\"text\" name=\"week\" value=\""+requestService.getParameter("week", "")+"\" />");
-		
+		out.println("<input id=\"dateweek_field_0\" type=\"text\" name=\"week\" value=\"" + requestService.getParameter("week", "") + "\" />");
+
 		I18nAccess i18nAccess = I18nAccess.getInstance(ctx.getRequest());
-		out.println("<input type=\"submit\" name=\"ok\" value=\""+i18nAccess.getViewText("global.ok")+"\" />");
-	
+		out.println("<input type=\"submit\" name=\"ok\" value=\"" + i18nAccess.getViewText("global.ok") + "\" />");
+
 		out.println("</div>");
 
 		out.println("</form>");
-		
+
 		out.close();
 		return writer.toString();
 	}
 
+	@Override
 	public String getType() {
 		return TYPE;
 	}
@@ -93,7 +94,7 @@ public class WeekChildrenLink extends AbstractVisualComponent implements IAction
 
 	@Override
 	public void performEdit(ContentContext ctx) throws Exception {
-		
+
 	}
 
 	@Override
@@ -104,21 +105,21 @@ public class WeekChildrenLink extends AbstractVisualComponent implements IAction
 	public static final String performGoto(HttpServletRequest request, HttpServletResponse response) throws Exception {
 		RequestService requestService = RequestService.getInstance(request);
 		String week = requestService.getParameter("week", null);
-		//String parent = requestService.getParameter("parent", null);
-		
+		// String parent = requestService.getParameter("parent", null);
+
 		ContentContext ctx = ContentContext.getContentContext(request, response);
 		if (week != null) {
 			if (week.contains(":")) {
-				week = week.substring(week.indexOf(':')+1);
+				week = week.substring(week.indexOf(':') + 1);
 			}
 			if (week.contains("-")) {
-				week = week.substring(0,week.indexOf('-'));
+				week = week.substring(0, week.indexOf('-'));
 			}
 			try {
-				Date date = StringHelper.parseDate(week);				
+				Date date = StringHelper.parseDate(week);
 				MenuElement rootPage = ContentService.getInstance(request).getNavigation(ctx);
-				
-				MenuElement currentPage = null;//rootPage.searchChildFromId(parent);
+
+				MenuElement currentPage = null;// rootPage.searchChildFromId(parent);
 				if (currentPage == null) {
 					logger.warning("page not defined in request.");
 					currentPage = ctx.getCurrentPage();
@@ -132,20 +133,14 @@ public class WeekChildrenLink extends AbstractVisualComponent implements IAction
 				}
 			} catch (ParseException e) {
 				e.printStackTrace();
-			}			
+			}
 		}
-		
+
 		MessageRepository msgRepo = MessageRepository.getInstance(ctx);
 		I18nAccess i18nAccess = I18nAccess.getInstance(ctx.getRequest());
 		msgRepo.setGlobalMessage(new GenericMessage(i18nAccess.getText("global.page-not-found"), GenericMessage.ERROR));
-		
+
 		return null;
 	}
-	
-	@Override
-	public boolean needJavaScript(ContentContext ctx) {
-		return true;
-	}
-	
 
 }

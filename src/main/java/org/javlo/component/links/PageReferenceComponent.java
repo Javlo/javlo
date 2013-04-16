@@ -1528,4 +1528,9 @@ public class PageReferenceComponent extends ComplexPropertiesLink implements IAc
 		return 0;
 	}
 
+	@Override
+	protected Object getLock(ContentContext ctx) {
+		return ctx.getGlobalContext().getLockLoadContent();
+	}
+
 }

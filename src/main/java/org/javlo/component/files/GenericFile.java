@@ -235,11 +235,6 @@ public class GenericFile extends AbstractFileComponent implements IReverseLinkCo
 	}
 
 	@Override
-	public boolean needJavaScript(ContentContext ctx) {
-		return getStyle(ctx).equals(SHADOW_STYLE);
-	}
-
-	@Override
 	public boolean isRealContent(ContentContext ctx) {
 		return getValue().trim().length() > 0;
 	}

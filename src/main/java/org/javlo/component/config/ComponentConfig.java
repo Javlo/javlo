@@ -39,12 +39,12 @@ public class ComponentConfig {
 		Template currentTemplate;
 		ComponentConfig outCfg = null;
 		try {
-			synchronized (globalContext.LOCK_IMPORT_TEMPLATE) {
-				currentTemplate = ctx.getCurrentTemplate();
-				String templateId = "no_template";
-				if (currentTemplate != null) {
-					templateId = currentTemplate.getId();
-				}
+			currentTemplate = ctx.getCurrentTemplate();
+			String templateId = "no_template";
+			if (currentTemplate != null) {
+				templateId = currentTemplate.getId();
+			}
+			synchronized (globalContext.getLockImportTemplate()) {
 				String key = KEY + '-' + templateId + '-' + type;
 				outCfg = (ComponentConfig) globalContext.getAttribute(key);
 				if (outCfg == null) {

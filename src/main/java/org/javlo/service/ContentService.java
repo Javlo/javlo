@@ -422,7 +422,7 @@ public class ContentService {
 		MenuElement res = null;
 		GlobalContext globalContext = GlobalContext.getInstance(ctx.getRequest());
 
-		synchronized (globalContext) {
+		synchronized (globalContext.getLockLoadContent()) {
 			if (ctx.getRenderMode() == ContentContext.TIME_MODE && globalContext.getTimeTravelerContext().getTravelTime() != null) {
 				if (timeTravelerNav == null) {
 					Date timeTravelDate = globalContext.getTimeTravelerContext().getTravelTime();
@@ -465,7 +465,7 @@ public class ContentService {
 	 * check if navigation was allready loaded for a specific render mode.
 	 */
 	public boolean isNavigationLoaded(ContentContext ctx) {
-		synchronized (GlobalContext.getInstance(ctx.getRequest())) {
+		synchronized (GlobalContext.getInstance(ctx.getRequest()).getLockLoadContent()) {
 			if (ctx.getRenderMode() == ContentContext.TIME_MODE) {
 				return timeTravelerNav != null;
 			} else if (!ctx.isAsViewMode()) {
@@ -542,7 +542,7 @@ public class ContentService {
 				}
 			}
 		}
-		synchronized (globalContext) {
+		synchronized (globalContext.getLockLoadContent()) {
 			setViewNav(newViewNav);
 			viewGlobalMap = contentAttributeMap;
 		}

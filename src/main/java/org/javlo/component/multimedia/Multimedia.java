@@ -852,11 +852,6 @@ public class Multimedia extends TimeRangeComponent implements IImageTitle {
 	}
 
 	@Override
-	public boolean needJavaScript(ContentContext ctx) {
-		return false;
-	}
-
-	@Override
 	public void performEdit(ContentContext ctx) throws Exception {
 		RequestService requestService = RequestService.getInstance(ctx.getRequest());
 		String folder = requestService.getParameter(getInputBaseFolderName(), null);
@@ -934,6 +929,11 @@ public class Multimedia extends TimeRangeComponent implements IImageTitle {
 		} catch (Exception e) {
 			return false;
 		}
+	}
+
+	@Override
+	protected Object getLock(ContentContext ctx) {
+		return ctx.getGlobalContext().getLockLoadContent();
 	}
 
 }
