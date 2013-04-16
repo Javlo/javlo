@@ -223,6 +223,9 @@ public class GlobalImage extends Image {
 			dirsCol.add("");
 			String[] dirs = getDirList(getFileDirectory(ctx));
 			for (String dir : dirs) {
+				if (dir.length() > 0 && dir.startsWith("/")) {
+					dir = dir.substring(1);
+				}
 				dirsCol.add(dir);
 			}
 			finalCode.append(XHTMLHelper.getInputOneSelect(getDirInputName(), dirsCol, getDirSelected(), getJSOnChange(ctx), true));
