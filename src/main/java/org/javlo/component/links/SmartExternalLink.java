@@ -578,11 +578,11 @@ public class SmartExternalLink extends ComplexPropertiesLink implements IReverse
 				}
 				if (getDescription(ctx) != null) {
 					res.append("<span class=\"description\">");
-					res.append(getDescription(ctx));
+					res.append(StringHelper.removeTag(getDescription(ctx)));
 					res.append("</span>");
 				}
 				res.append("<span class=\"label\">");
-				res.append(getLabel(ctx));
+				res.append(StringHelper.removeTag(getLabel(ctx)));
 				res.append("</span>");
 				res.append("</a></div>");
 			} else {

@@ -35,6 +35,7 @@ import org.javlo.context.GlobalContext;
 import org.javlo.helper.ResourceHelper;
 import org.javlo.helper.StringHelper;
 import org.javlo.helper.URLHelper;
+import org.javlo.helper.XHTMLHelper;
 import org.javlo.helper.Comparator.StringComparator;
 import org.javlo.mailing.MailService;
 import org.javlo.message.GenericMessage;
@@ -98,7 +99,28 @@ public class GenericForm extends AbstractVisualComponent implements IAction {
 				outRenderers.put(key, value);
 			}
 		}
-		return outRenderers;
+
+		if (outRenderers.size() == 0) {
+			return super.getRenderes(ctx);
+		} else {
+			try {
+				String workTemplate = ctx.getCurrentTemplate().getLocalWorkTemplateFolder();
+				for (String key : outRenderers.keySet()) {
+					String value = outRenderers.get(key);
+					if (!value.startsWith(workTemplate)) {
+						ContentContext notAbstCtx = new ContentContext(ctx);
+						notAbstCtx.setAbsoluteURL(false);
+						value = URLHelper.createStaticTemplateURLWithoutContext(notAbstCtx, ctx.getCurrentTemplate(), value);
+						outRenderers.remove(key);
+						outRenderers.put(key, value);
+					}
+				}
+			} catch (Exception e) {
+				e.printStackTrace();
+			}
+			return outRenderers;
+		}
+
 	}
 
 	@Override
@@ -159,7 +181,7 @@ public class GenericForm extends AbstractVisualComponent implements IAction {
 	protected File getFile(ContentContext ctx) throws IOException {
 		GlobalContext globalContext = GlobalContext.getInstance(ctx.getRequest());
 		String fileName = "df-" + getId() + ".csv";
-		if (getLocalConfig(false).get("filename") != null) {
+		if (getLocalConfig(false).get("filename") != null && getLocalConfig(false).get("filename").toString().trim().length() > 0) {
 			fileName = getLocalConfig(false).getProperty("filename");
 		}
 		File file = new File(URLHelper.mergePath(globalContext.getDataFolder(), globalContext.getStaticConfig().getStaticFolder(), "dynamic-form-result", fileName));
@@ -211,8 +233,8 @@ public class GenericForm extends AbstractVisualComponent implements IAction {
 		getLocalConfig(true);
 	}
 
-	protected boolean isCaptcha() {
-		return true;
+	public boolean isCaptcha() {
+		return StringHelper.isTrue(getLocalConfig(false).getProperty("captcha", "true"));
 	}
 
 	protected boolean isSendEmail() {
@@ -221,6 +243,18 @@ public class GenericForm extends AbstractVisualComponent implements IAction {
 
 	protected boolean isStorage() {
 		return true;
+	}
+
+	protected String getMailHeader(ContentContext ctx) {
+		return "";
+	}
+
+	protected String getMailFooter(ContentContext ctx) {
+		return "";
+	}
+
+	protected boolean isHTMLMail() {
+		return false;
 	}
 
 	public static String performSubmit(HttpServletRequest request, HttpServletResponse response) throws Exception {
@@ -244,9 +278,6 @@ public class GenericForm extends AbstractVisualComponent implements IAction {
 				CaptchaService.getInstance(request.getSession()).setCurrentCaptchaCode("");
 			}
 		}
-
-		ByteArrayOutputStream outStream = new ByteArrayOutputStream();
-		PrintStream out = new PrintStream(outStream);
 
 		GlobalContext globalContext = GlobalContext.getInstance(ctx.getRequest());
 
@@ -273,7 +304,7 @@ public class GenericForm extends AbstractVisualComponent implements IAction {
 		boolean withXHTML = StringHelper.isTrue(comp.getLocalConfig(false).getProperty("field.xhtml", null));
 		boolean fakeFilled = false;
 
-		List<String> keys = new LinkedList(params.keySet());
+		List<String> keys = new LinkedList<String>(params.keySet());
 		Collections.sort(keys, new StringComparator());
 
 		/** store attach files **/
@@ -314,6 +345,9 @@ public class GenericForm extends AbstractVisualComponent implements IAction {
 				}
 			}
 		}
+
+		ByteArrayOutputStream outStream = new ByteArrayOutputStream();
+		PrintStream out = new PrintStream(outStream);
 
 		for (String key : keys) {
 			if (!key.equals("webaction") && !key.equals("comp_id") && !key.equals("captcha")) {
@@ -359,6 +393,10 @@ public class GenericForm extends AbstractVisualComponent implements IAction {
 
 		if (errorFields.size() == 0) {
 			String mailContent = new String(outStream.toByteArray());
+			if (comp.isHTMLMail()) {
+				mailContent = XHTMLHelper.textToXHTML(mailContent);
+			}
+			mailContent = comp.getMailHeader(ctx) + mailContent + comp.getMailFooter(ctx);
 
 			logger.info("mail content : " + mailContent);
 
@@ -383,29 +421,30 @@ public class GenericForm extends AbstractVisualComponent implements IAction {
 				String emailCC = comp.getLocalConfig(false).getProperty("mail.cc", null);
 				String emailBCC = comp.getLocalConfig(false).getProperty("mail.bcc", null);
 
-				MailService mailService = MailService.getInstance(globalContext.getStaticConfig());
-				InternetAddress fromEmail = new InternetAddress(emailFrom);
-				InternetAddress toEmail = new InternetAddress(emailTo);
-				InternetAddress ccEmail = null;
-				if (emailCC != null) {
-					ccEmail = new InternetAddress(emailCC);
-				}
-				InternetAddress bccEmail = null;
-				if (emailBCC != null) {
-					bccEmail = new InternetAddress(emailBCC);
-				}
-
-				List<InternetAddress> ccList = null;
-				if (ccEmail != null) {
-					ccList = Arrays.asList(ccEmail);
-				}
-				List<InternetAddress> bccList = null;
-				if (bccEmail != null) {
-					bccList = Arrays.asList(bccEmail);
-				}
-
 				try {
-					mailService.sendMail(null, fromEmail, toEmail, ccList, bccList, subject, mailContent, false);
+
+					MailService mailService = MailService.getInstance(globalContext.getStaticConfig());
+					InternetAddress fromEmail = new InternetAddress(emailFrom);
+					InternetAddress toEmail = new InternetAddress(emailTo);
+					InternetAddress ccEmail = null;
+					if (emailCC != null && emailCC.trim().length() > 0) {
+						ccEmail = new InternetAddress(emailCC);
+					}
+					InternetAddress bccEmail = null;
+					if (emailBCC != null && emailBCC.trim().length() > 0) {
+						bccEmail = new InternetAddress(emailBCC);
+					}
+
+					List<InternetAddress> ccList = null;
+					if (ccEmail != null) {
+						ccList = Arrays.asList(ccEmail);
+					}
+					List<InternetAddress> bccList = null;
+					if (bccEmail != null) {
+						bccList = Arrays.asList(bccEmail);
+					}
+
+					mailService.sendMail(null, fromEmail, toEmail, ccList, bccList, subject, mailContent, comp.isHTMLMail());
 				} catch (Exception e) {
 					e.printStackTrace();
 					GenericMessage msg = new GenericMessage(comp.getLocalConfig(false).getProperty("message.error", "technical error."), GenericMessage.ERROR);

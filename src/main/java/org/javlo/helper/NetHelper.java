@@ -369,6 +369,9 @@ public class NetHelper {
 
 		for (Iterator<String> iterator = urls.iterator(); iterator.hasNext() && !imageFoundedOk;) {
 			String url = iterator.next();
+			if (url.contains("?")) {
+				url = url.substring(0, url.indexOf('?'));
+			}
 			if (StringHelper.isImage(url)) {
 				URLConnection conn;
 				try {

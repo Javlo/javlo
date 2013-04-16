@@ -22,6 +22,8 @@ public class NavigationService {
 
 	private static final String KEY = NavigationService.class.getName();
 
+	private Object lock;
+
 	public static NavigationService getInstance(GlobalContext globalContext, HttpSession session) throws ServiceException {
 		NavigationService service = (NavigationService) globalContext.getAttribute(KEY);
 		if (service == null) {
@@ -29,6 +31,7 @@ public class NavigationService {
 			service.persistenceService = PersistenceService.getInstance(globalContext);
 			service.viewPageCache = globalContext.getCache("navigation-cache-view");
 			service.previewPageCache = globalContext.getCache("navigation-cache-preview");
+			service.lock = globalContext.getLockNavigation();
 			globalContext.setAttribute(KEY, service);
 		}
 		return service;
@@ -47,20 +50,20 @@ public class NavigationService {
 	private ICache previewPageCache = null;
 
 	public void clearAllPage() {
-		synchronized (KEY) {
+		synchronized (lock) {
 			viewPageCache.removeAll();
 			previewPageCache.removeAll();
 		}
 	}
 
 	public void clearAllViewPage() {
-		synchronized (KEY) {
+		synchronized (lock) {
 			viewPageCache.removeAll();
 		}
 	}
 
 	public void clearPage(ContentContext ctx) {
-		synchronized (KEY) {
+		synchronized (lock) {
 			GlobalContext globalContext = GlobalContext.getInstance(ctx.getRequest());
 			if (!globalContext.isPreviewMode()) {
 				viewPageCache.removeAll();
@@ -76,7 +79,7 @@ public class NavigationService {
 	}
 
 	public MenuElement getPage(ContentContext ctx, String pageKey) throws Exception {
-		synchronized (KEY) {
+		synchronized (lock) {
 			ICache cache;
 			if (ctx.getRenderMode() == ContentContext.VIEW_MODE) {
 				cache = viewPageCache;

@@ -1119,7 +1119,6 @@ public abstract class AbstractVisualComponent implements IContentVisualComponent
 		if (url != null) {
 			ctx.getRequest().setAttribute(COMPONENT_KEY, this);
 			if (!url.startsWith("/")) {
-
 				url = URLHelper.createJSPComponentURL(ctx.getRequest(), url, getComponentPath());
 			}
 			logger.fine("execute view jsp in '" + getType() + "' : " + url);
@@ -1163,7 +1162,7 @@ public abstract class AbstractVisualComponent implements IContentVisualComponent
 	}
 
 	@Override
-	public String getXHTMLCode(ContentContext ctx) {
+	public final String getXHTMLCode(ContentContext ctx) {
 
 		setNeedRefresh(false);
 		ctx.getRequest().setAttribute("comp", this);
@@ -1194,6 +1193,11 @@ public abstract class AbstractVisualComponent implements IContentVisualComponent
 					if (getContentCache(ctx) != null) {
 						return getContentCache(ctx);
 					}
+					synchronized (this) {
+						if (getContentCache(ctx) != null) {
+							return getContentCache(ctx);
+						}
+					}
 				}
 				if (ctx.getRenderMode() == ContentContext.VIEW_MODE && isContentTimeCachable(ctx)) {
 					String timeContent = getContentTimeCache(ctx);
@@ -1204,9 +1208,12 @@ public abstract class AbstractVisualComponent implements IContentVisualComponent
 				if (ctx.getRenderMode() == ContentContext.VIEW_MODE && isContentCachable(ctx)) {
 					logger.fine("add content in cache for component " + getType() + " in page : " + ctx.getPath());
 					long beforeTime = System.currentTimeMillis();
-					prepareView(ctx);
-					String content = renderViewXHTMLCode(ctx);
-					setContentCache(ctx, content);
+					String content;
+					synchronized (this) {
+						prepareView(ctx);
+						content = renderViewXHTMLCode(ctx);
+						setContentCache(ctx, content);
+					}
 					logger.fine("render content cache '" + getType() + "' : " + (System.currentTimeMillis() - beforeTime) / 1000 + " sec.");
 					return content;
 				} else {
