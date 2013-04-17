@@ -45,6 +45,9 @@ initFocusPoint = function() {
 }
 
 jQuery(document).ready(function() {
+	
+	closableFieldSet(jQuery("fieldset.closable"));
+	
 	jQuery("input.label-inside").each(function(){				
 		var input = jQuery(this);		
 		input.data.storedName = input.attr("name");
@@ -166,6 +169,68 @@ scrollToFirstQuarter = function(container, target) {
         scrollTop: ((jQuery(target).offset().top+jQuery(container).scrollTop()) - jQuery(container).offset().top) - (jQuery(container).height()/4 + jQuery(target).height()/2) 
     }, 500);	
 }
+
+function hashItem(item) {
+	var path = "";
+	while (jQuery(item).parent().length > 0) {
+		path = path + "_" + (jQuery(item).index(jQuery(item).parent().children())+1);
+		item = jQuery(item).parent().get(0);		
+	}
+	return path;
+}
+
+function closableFieldSet(items) {
+	items.each(function(){
+		var hash = "closable_"+hashItem(this);
+		console.log("hash = "+hash);
+		var initVal = jQuery.cookie(hash);
+		console.log("initVal = "+initVal);
+		if (initVal == "close") {
+			jQuery(this).prepend('<a class="closable_action close" href="#">#</a>');
+			jQuery(this).children().each(function(){
+				var child = jQuery(this);					
+				if (!child.hasClass("closable_action") && this.nodeName.toLowerCase() != "legend") {
+					child.hide();
+				}
+			});	
+		} else {
+			jQuery(this).prepend('<a class="closable_action open" href="#">_</a>');
+		}
+		jQuery(this).find(".closable_action").each(function(){
+			jQuery(this).click(function() {
+				var hash = "closable_"+hashItem(jQuery(this).parent());
+				console.log("hash = "+hash);
+				var link = jQuery(this);
+				if (link.hasClass("open")) {
+					$.cookie(hash, "close", { path: '/',  expires: 365 });
+					jQuery.cookie(hash);
+					link.removeClass("open");
+					link.addClass("close");
+					link.html("#");				
+					link.parent().children().each(function(){
+						var child = jQuery(this);					
+						if (!child.hasClass("closable_action") && this.nodeName.toLowerCase() != "legend") {
+							child.hide();
+						}
+					});				
+				} else {
+					$.cookie(hash, "open", { path: '/',  expires: 365 });
+					link.removeClass("close");
+					link.addClass("open");
+					link.html("_");	
+					
+					link.parent().children().each(function(){
+						var child = jQuery(this);
+						if (!child.hasClass("closable_action") && this.nodeName.toLowerCase() != "legend") {
+							child.show();
+						}
+					});
+				}
+			});
+		});
+	});
+}
+
 
 function getParam( url, name )
 {

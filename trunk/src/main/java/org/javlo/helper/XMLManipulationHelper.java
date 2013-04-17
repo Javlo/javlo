@@ -957,8 +957,8 @@ public class XMLManipulationHelper {
 	private static String getPreviewCode() {
 		StringWriter writer = new StringWriter();
 		PrintWriter out = new PrintWriter(writer);
-		out.println("<%if (ctx.isInteractiveMode() && ctx.getRenderMode() == ContentContext.PREVIEW_MODE) {%>");
-		out.println("<jsp:include page=\"/jsp/preview/command.jsp\" />");
+		out.println("<%if (ctx.isInteractiveMode() && ctx.getRenderMode() == ContentContext.PREVIEW_MODE && !ctx.getGlobalContext().getStaticConfig().isFixPreview()) {");
+		out.println("%><jsp:include page=\"/jsp/preview/command.jsp\" />");
 		// out.println("<%if (editCtx.isEditPreview()) {");
 		out.println("<%MessageRepository messageRepository = MessageRepository.getInstance(ctx);");
 		out.println("	    %><div id=\"message-container\" class=\"standard\"><%");
@@ -975,6 +975,7 @@ public class XMLManipulationHelper {
 		out.println("   if (messageRepository.getGlobalMessage().getMessage().trim().length() > 0) {%>");
 		out.println("       <div class=\"notification <%=messageRepository.getGlobalMessage().getTypeLabel()%>\"><%=messageRepository.getGlobalMessage().getMessage()%></div>");
 		out.println("<%}%></div>");
+
 		out.println("<%}%>");
 
 		out.close();
