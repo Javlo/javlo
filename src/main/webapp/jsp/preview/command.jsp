@@ -61,8 +61,16 @@ editCtx.setRenderMode(ContentContext.EDIT_MODE);
 				</div>
 			</fieldset>
 			<c:if test='${editPreview == "true"}'>
-				<a class="action-button central-button" href="${info.currentEditURL}?module=content&previewEdit=true" onclick="jQuery.colorbox({href : '${info.currentEditURL}?module=content&previewEdit=true',opacity : 0.6,iframe : true,width : '95%',	height : '95%'}); return false;">${i18n.edit['preview.label.edit-components']}</a>	
-				<c:if test="${!userInterface.contributor}">			
+				<a class="action-button central-button" href="${info.currentEditURL}?module=content&previewEdit=true" onclick="jQuery.colorbox({href : '${info.currentEditURL}?module=content&previewEdit=true',opacity : 0.6,iframe : true,width : '95%',	height : '95%'}); return false;">${i18n.edit['preview.label.edit-components']}</a>				
+				<div id="pc_upload">
+					<div id="ajax-loader">&nbsp;</div>
+					<div id="upload-zone" data-url="${info.uploadURL}" class="drop-files"><span>${i18n.edit['preview.upload-here']}</span></div>
+				</div>
+				<c:if test="${not empty components}"><fieldset class="closable">
+					<legend>${i18n.edit["component.choose"]}</legend>
+					<jsp:include page="component.jsp" />
+				</fieldset>
+				</c:if><c:if test="${!userInterface.contributor}">			
 				<form id="insert_page" action="${info.currentURL}" method="post">
 					<fieldset>
 						<legend>${i18n.edit['menu.new-page-title']}</legend>
@@ -74,11 +82,7 @@ editCtx.setRenderMode(ContentContext.EDIT_MODE);
 						</div>
 					</fieldset>
 				</form>
-				</c:if>				
-				<div id="pc_upload">
-					<div id="ajax-loader">&nbsp;</div>
-					<div id="upload-zone" data-url="${info.uploadURL}" class="drop-files"><span>${i18n.edit['preview.upload-here']}</span></div>
-				</div>
+				</c:if>	
 				<form id="children_list" action="${info.currentURL}" method="post">
 					<fieldset>
 						<legend>${i18n.edit['content.navigation']}</legend>

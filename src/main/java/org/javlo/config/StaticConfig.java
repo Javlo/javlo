@@ -1199,4 +1199,8 @@ public class StaticConfig extends Observable {
 		return properties.getString("default-cms-name", "javlo");
 	}
 
+	public boolean isFixPreview() {
+		return properties.getBoolean("fix-preview", false);
+	}
+
 }

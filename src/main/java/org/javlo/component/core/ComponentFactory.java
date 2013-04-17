@@ -11,6 +11,7 @@ import java.util.Arrays;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Properties;
+import java.util.Set;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -26,8 +27,12 @@ import org.apache.commons.vfs2.impl.VFSClassLoader;
 import org.javlo.component.dynamic.DynamicComponent;
 import org.javlo.config.StaticConfig;
 import org.javlo.context.ContentContext;
+import org.javlo.context.EditContext;
 import org.javlo.context.GlobalContext;
+import org.javlo.context.UserInterfaceContext;
 import org.javlo.helper.ConfigHelper;
+import org.javlo.module.content.Edit;
+import org.javlo.module.content.Edit.ComponentWrapper;
 import org.javlo.navigation.MenuElement;
 import org.javlo.service.ContentService;
 import org.javlo.template.Template;
@@ -426,5 +431,88 @@ public class ComponentFactory {
 		}
 		return components;
 	}
+	
+   public static List<ComponentWrapper> getComponentForDisplay(ContentContext ctx) throws Exception {
+	   
+	   List<ComponentWrapper> comps = new LinkedList<ComponentWrapper>();
+		EditContext editCtx = EditContext.getInstance(ctx.getGlobalContext(), ctx.getRequest().getSession());
+		ComponentWrapper titleWrapper = null;
+		
+		IContentVisualComponent[] components = getComponents(ctx, ctx.getCurrentPage());
+
+		if (ctx.getCurrentTemplate() != null) {
+			Set<String> inludeComponents = ctx.getCurrentTemplate().getComponentsIncludeForArea(editCtx.getCurrentArea());
+			Set<String> excludeComponents = ctx.getCurrentTemplate().getComponentsExcludeForArea(editCtx.getCurrentArea());
+
+			for (int i = 0; i < components.length - 1; i++) { // remove title without component
+				if (!components[i].isMetaTitle() || !components[i + 1].isMetaTitle()) { // if next component is title too so the component group is empty
+					IContentVisualComponent comp = components[i];
+					if (comp.isMetaTitle() || ctx.getGlobalContext().getComponents().contains(comp.getClass().getName()) || comp instanceof DynamicComponent) {
+						ComponentWrapper compWrapper = new ComponentWrapper(comp.getType(), comp.getComponentLabel(ctx, ctx.getGlobalContext().getEditLanguage(ctx.getRequest().getSession())), comp.getValue(ctx), comp.getHexColor(), comp.getComplexityLevel(), comp.isMetaTitle());
+						if (components[i].isMetaTitle()) {
+							titleWrapper = compWrapper;
+						}
+						if (comp.getType().equals(editCtx.getActiveType())) {
+							compWrapper.setSelected(true);
+							if (titleWrapper != null) {
+								{
+									titleWrapper.setSelected(true);
+								}
+							}
+						}
+						if (compWrapper.isMetaTitle() || inludeComponents == null || inludeComponents.contains(compWrapper.getType())) {
+							if (compWrapper.isMetaTitle() || excludeComponents == null || !excludeComponents.contains(compWrapper.getType())) {
+								comps.add(compWrapper);
+							}
+						}
+					}
+				}
+			}
+		}
+
+		if (!components[components.length - 1].isMetaTitle()) {
+			IContentVisualComponent comp = components[components.length - 1];
+			ComponentWrapper compWrapper = new ComponentWrapper(comp.getType(), comp.getComponentLabel(ctx, ctx.getGlobalContext().getEditLanguage(ctx.getRequest().getSession())), comp.getValue(ctx), comp.getHexColor(), comp.getComplexityLevel(), comp.isMetaTitle());
+			comps.add(compWrapper);
+			if (comp.getType().equals(editCtx.getActiveType())) {
+				compWrapper.setSelected(true);
+				if (titleWrapper != null) {
+					{
+						titleWrapper.setSelected(true);
+					}
+				}
+			}
+		}
+
+	   
+	   List<ComponentWrapper> listWithoutEmptyTitle = new LinkedList<Edit.ComponentWrapper>();
+		ComponentWrapper title = null;
+		UserInterfaceContext uiContext = UserInterfaceContext.getInstance(ctx.getRequest().getSession(), ctx.getGlobalContext());
+		for (ComponentWrapper comp : comps) {
+			if (comp.isMetaTitle()) {
+				title = comp;
+			} else {
+				if (title != null) {
+					if (comp.getComplexityLevel() == 1 || !uiContext.isLight()) {
+						listWithoutEmptyTitle.add(title);
+					}
+					title = null;
+
+				}
+				if (comp.getComplexityLevel() == 1 || !uiContext.isLight()) {
+					listWithoutEmptyTitle.add(comp);
+				}
+			}
+		}
+
+		for (int i = 0; i < listWithoutEmptyTitle.size(); i++) {
+			if (i < listWithoutEmptyTitle.size() - 1) {
+				listWithoutEmptyTitle.get(i).setHexColor(listWithoutEmptyTitle.get(i + 1).getHexColor());
+			}
+
+		}
+		
+		return listWithoutEmptyTitle;
+   }
 
 }
