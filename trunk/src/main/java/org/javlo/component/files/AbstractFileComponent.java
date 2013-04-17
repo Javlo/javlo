@@ -249,7 +249,11 @@ public abstract class AbstractFileComponent extends AbstractVisualComponent impl
 	}
 
 	public String getDirSelected() {
-		return properties.getProperty(DIR_KEY, "");
+		String dir = properties.getProperty(DIR_KEY, "");
+		if (dir.length() > 1 && dir.startsWith("/")) {
+			dir = dir.substring(1);
+		}
+		return dir;
 	}
 
 	@Override
