@@ -1369,7 +1369,7 @@ public class MenuElement implements Serializable {
 
 	public Map<String, ContentElementList> getContentElementListMap() {
 		if (contentElementListMap == null) {
-			contentElementListMap = new HashMap<String, ContentElementList>();
+			contentElementListMap = Collections.synchronizedMap(new HashMap<String, ContentElementList>());
 		}
 		return contentElementListMap;
 	}
