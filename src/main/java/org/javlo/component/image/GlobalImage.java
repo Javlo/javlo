@@ -601,6 +601,13 @@ public class GlobalImage extends Image {
 	public void init(ComponentBean bean, ContentContext newContext) throws Exception {
 		super.init(bean, newContext);
 		properties.load(stringToStream(getValue()));
+
+		if (isMeta()) {
+			if (getLabel().trim().length() > 0 && getTitle().trim().length() == 0) {
+				setTitle(getLabel());
+			}
+		}
+
 	}
 
 	@Override

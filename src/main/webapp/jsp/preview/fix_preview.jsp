@@ -87,7 +87,22 @@ EditContext editCtx = EditContext.getInstance(ctx.getGlobalContext(), request.ge
 			position: absolute;
 			display: block;			
 			right: 12px;
-			top: -2px;
+			top: 3px;
+			font-size: 0;
+			background-color: #EEEEEE;
+		}
+		
+		fieldset.closable .closable_action.open {
+			border: 2px #B1B1B1 solid;
+			height: 6px;
+			width: 6px;
+			top: 2px;		
+		}
+		
+		fieldset.closable .closable_action.close {
+			border: 2px #B1B1B1 solid;
+			height: 3px;
+			width: 6px;
 		}
 			
 	</style>
