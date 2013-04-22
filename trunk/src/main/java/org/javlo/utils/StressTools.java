@@ -34,8 +34,8 @@ import org.javlo.helper.StringHelper;
 
 public class StressTools {
 
-	private static final String SCENARIO_FILE = "C:/work/stress_test/test_tanuki.txt";
-	private static final String RESULT_PREFIX = "C:/work/stress_test/result-tanuki.";
+	private static final String SCENARIO_FILE = "C:/work/stress_test/test_magnolia.txt";
+	private static final String RESULT_PREFIX = "C:/work/stress_test/result-magnolia.";
 
 	private static class StressThread extends Thread {
 
