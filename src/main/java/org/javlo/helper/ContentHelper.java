@@ -19,7 +19,7 @@ import java.util.zip.ZipInputStream;
 import org.javlo.component.core.ComponentBean;
 import org.javlo.component.image.GlobalImage;
 import org.javlo.component.image.Image;
-import org.javlo.component.list.TextList;
+import org.javlo.component.list.FreeTextList;
 import org.javlo.component.meta.DateComponent;
 import org.javlo.component.text.Paragraph;
 import org.javlo.component.text.WysiwygParagraph;
@@ -79,7 +79,7 @@ public class ContentHelper {
 				}
 			} else if (tag.getName().equalsIgnoreCase("ul")) {
 				String content = removeTag(tag.getInside(html));
-				newBean = new ComponentBean(TextList.TYPE, content, lg);
+				newBean = new ComponentBean(FreeTextList.TYPE, content, lg);
 			} else if (tag.getName().equalsIgnoreCase("img")) {
 				ByteArrayOutputStream outStream = new ByteArrayOutputStream();
 				PrintStream out = new PrintStream(outStream);
@@ -231,7 +231,7 @@ public class ContentHelper {
 								}
 								out.close();
 								value = new String(outStream.toByteArray());
-								bean = new ComponentBean(TextList.TYPE, value, lang);
+								bean = new ComponentBean(FreeTextList.TYPE, value, lang);
 							}
 						} else if (node.getName().endsWith(":image")) {
 							if (node.getAttributeValue("xlink:href") != null) {
@@ -309,9 +309,9 @@ public class ContentHelper {
 						ContentService content = ContentService.getInstance(ctx.getRequest());
 						if (page == null) {
 							page = content.getNavigation(ctx).searchChildFromName(pageName);
-						}						
+						}
 						MenuElement rootPage = content.getNavigation(ctx).searchChildFromName(pageRootXPath);
-												
+
 						if (rootPage != null || page != null) {
 							if (page == null) {
 								page = MacroHelper.createArticlePage(ctx, rootPage, date);

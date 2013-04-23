@@ -173,7 +173,7 @@ scrollToFirstQuarter = function(container, target) {
 function hashItem(item) {
 	var path = "";
 	while (jQuery(item).parent().length > 0) {
-		path = path + "_" + (jQuery(item).index(jQuery(item).parent().children())+1);
+		path = path + "_" + ((jQuery(item).parent().children().index(item))+1);
 		item = jQuery(item).parent().get(0);		
 	}
 	return path;
@@ -181,10 +181,8 @@ function hashItem(item) {
 
 function closableFieldSet(items) {
 	items.each(function(){
-		var hash = "closable_"+hashItem(this);
-		console.log("hash = "+hash);
-		var initVal = jQuery.cookie(hash);
-		console.log("initVal = "+initVal);
+		var hash = "closable_"+hashItem(this);		
+		var initVal = jQuery.cookie(hash);		
 		if (initVal == "close") {
 			jQuery(this).prepend('<a class="closable_action close" href="#">#</a>');
 			jQuery(this).children().each(function(){
@@ -198,8 +196,7 @@ function closableFieldSet(items) {
 		}
 		jQuery(this).find(".closable_action").each(function(){
 			jQuery(this).click(function() {
-				var hash = "closable_"+hashItem(jQuery(this).parent());
-				console.log("hash = "+hash);
+				var hash = "closable_"+hashItem(jQuery(this).parent());				
 				var link = jQuery(this);
 				if (link.hasClass("open")) {
 					$.cookie(hash, "close", { path: '/',  expires: 365 });

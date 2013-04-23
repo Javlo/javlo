@@ -175,6 +175,29 @@ public class XMLManipulationHelper {
 			return outTag.toString();
 		}
 
+		/**
+		 * return the tag rendered in HTML
+		 * 
+		 * @param inside
+		 *            the content (null for autoclose tag)
+		 * @return a HTML code with the tag
+		 */
+		public String renderOpen() {
+			StringBuffer outTag = new StringBuffer();
+			outTag.append("<" + getName());
+			Collection<Map.Entry<String, String>> entries = getAttributes().entrySet();
+			for (Map.Entry<String, String> entry : entries) {
+				outTag.append(" ");
+				outTag.append(entry.getKey());
+				outTag.append("=");
+				outTag.append("\"");
+				outTag.append(entry.getValue().trim());
+				outTag.append("\"");
+			}
+			outTag.append(">");
+			return outTag.toString();
+		}
+
 		public void setCloseEnd(int closeEnd) {
 			this.closeEnd = closeEnd;
 		}
@@ -203,7 +226,7 @@ public class XMLManipulationHelper {
 				out.append(" ");
 				out.append(key);
 				out.append("=\"");
-				out.append(attributes.get(key));
+				out.append(attributes.get(key).trim());
 				out.append("\"");
 			}
 			if (getOpenEnd() == getCloseEnd()) { // auto close tag
@@ -333,6 +356,10 @@ public class XMLManipulationHelper {
 						remplacement.addReplacement(tags[i].getOpenStart() - 1, tags[i].getOpenStart() - 1, prefix);
 						remplacement.addReplacement(tags[i].getOpenEnd() + 1, tags[i].getCloseStart(), "<jsp:include page=\"/jsp/view/content_view.jsp?area=" + area + "\" />");
 						remplacement.addReplacement(tags[i].getCloseEnd() + 1, tags[i].getCloseEnd() + 1, sufix);
+						String cssClass = StringHelper.neverNull(tags[i].getAttributes().get("class"));
+
+						tags[i].getAttributes().put("class", (cssClass + " _area").trim());
+						remplacement.addReplacement(tags[i].getOpenStart(), tags[i].getOpenEnd() + 1, tags[i].renderOpen());
 					}
 				}
 				// }
@@ -428,6 +455,10 @@ public class XMLManipulationHelper {
 				if (!isMail) {
 					if (tags[i].getName().equalsIgnoreCase("body")) {
 						String contentZone = getValue(options, AREA_PREFIX + "content", null);
+						String cssClass = StringHelper.neverNull(tags[i].getAttributes().get("class"));
+						cssClass = cssClass + " " + "<%if (ctx.getRenderMode() == ContentContext.PREVIEW_MODE) { if(ctx.getGlobalContext().getStaticConfig().isFixPreview() ) {%>fix-preview<%} else {%>floating-preview<%} }%>";
+						tags[i].getAttributes().put("class", cssClass.trim());
+						remplacement.addReplacement(tags[i].getOpenStart(), tags[i].getOpenEnd() + 1, tags[i].renderOpen());
 						if (contentZone != null) {
 							remplacement.addReplacement(tags[i].getOpenEnd() + 1, tags[i].getOpenEnd() + 1, getPreviewCode() + getEscapeMenu(contentZone) + getResetTemplate() + getAfterBodyCode());
 						}
@@ -813,6 +844,12 @@ public class XMLManipulationHelper {
 		out.newLine();
 		out.append("<link rel=\"shortcut icon\" type=\"image/ico\" href=\"<%=URLHelper.createStaticURL(ctx,\"/favicon.ico\")%>\" />");
 		out.newLine();
+
+		out.append("<%if (ctx.getRenderMode() != ContentContext.VIEW_MODE) {%>");
+		out.append("<meta name=\"ROBOTS\" content=\"NONE\" />");
+		out.append("<%}%>");
+		out.newLine();
+
 		out.append("<%if (ctx.isInteractiveMode()) {%>");
 		out.newLine();
 		out.append("<%=XHTMLHelper.renderHeaderResourceInsertion(ctx, \"/js/lib/jquery-1.7.2.min.js\")%>");
@@ -824,6 +861,8 @@ public class XMLManipulationHelper {
 		out.append("<%if (ctx.isPreview()) {%>");
 		out.newLine();
 		out.append("<%=XHTMLHelper.renderHeaderResourceInsertion(ctx, \"/js/lib/jquery.colorbox-min.js\")%>");
+		out.newLine();
+		out.append("<%=XHTMLHelper.renderHeaderResourceInsertion(ctx, \"/js/lib/jquery.cookie.js\")%>");
 		out.newLine();
 		out.append("<%=XHTMLHelper.renderHeaderResourceInsertion(ctx, \"/css/lib/colorbox/colorbox.css\")%>");
 		out.newLine();
@@ -957,14 +996,14 @@ public class XMLManipulationHelper {
 	private static String getPreviewCode() {
 		StringWriter writer = new StringWriter();
 		PrintWriter out = new PrintWriter(writer);
-		out.println("<%if (ctx.isInteractiveMode() && ctx.getRenderMode() == ContentContext.PREVIEW_MODE && !ctx.getGlobalContext().getStaticConfig().isFixPreview()) {");
+		out.println("<%if (ctx.isInteractiveMode() && ctx.getRenderMode() == ContentContext.PREVIEW_MODE) {");
 		out.println("%><jsp:include page=\"/jsp/preview/command.jsp\" />");
 		// out.println("<%if (editCtx.isEditPreview()) {");
-		out.println("<%MessageRepository messageRepository = MessageRepository.getInstance(ctx);");
+	/*	out.println("<%MessageRepository messageRepository = MessageRepository.getInstance(ctx);");
 		out.println("	    %><div id=\"message-container\" class=\"standard\"><%");
 		out.println("   if (messageRepository.getGlobalMessage().getMessage().trim().length() > 0) {%>");
 		out.println("       <div class=\"notification <%=messageRepository.getGlobalMessage().getTypeLabel()%>\"><%=messageRepository.getGlobalMessage().getMessage()%></div>");
-		out.println("<%}%></div>");
+		out.println("<%}%></div>");*/
 		// out.println("<%}%>");
 		out.println("<%}%>");
 

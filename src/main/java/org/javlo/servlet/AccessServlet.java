@@ -697,15 +697,11 @@ public class AccessServlet extends HttpServlet implements IVersion {
 								ctx.getRequest().setAttribute("components", ComponentFactory.getComponentForDisplay(ctx));
 							}
 
-							if (ctx.getRenderMode() == ContentContext.PREVIEW_MODE && staticConfig.isFixPreview() && !StringHelper.isTrue(requestService.getParameter("iframe", null))) {
-								Map<String, String> params = new HashMap<String, String>();
-								params.put("iframe", "true");
-								String url = URLHelper.createURL(ctx, params);
-								ctx.getRequest().setAttribute("currentPage", url);
-								getServletContext().getRequestDispatcher("/jsp/preview/fix_preview.jsp").include(request, response);
-							} else {
-								getServletContext().getRequestDispatcher(jspPath).include(request, response);
-							}
+							/*
+							 * if (ctx.getRenderMode() == ContentContext.PREVIEW_MODE && staticConfig.isFixPreview() && !StringHelper.isTrue(requestService.getParameter("iframe", null))) { Map<String, String> params = new HashMap<String, String>(); params.put("iframe", "true"); String url = URLHelper.createURL(ctx, params); ctx.getRequest().setAttribute("currentPage", url); getServletContext().getRequestDispatcher("/jsp/preview/fix_preview.jsp").include(request, response); } else {
+							 */
+							getServletContext().getRequestDispatcher(jspPath).include(request, response);
+							/* } */
 						}
 					}
 					localLogger.endCount("content", "include content");

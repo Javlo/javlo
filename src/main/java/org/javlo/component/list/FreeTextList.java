@@ -3,11 +3,14 @@
  */
 package org.javlo.component.list;
 
+import java.io.ByteArrayOutputStream;
+import java.io.PrintStream;
 import java.util.List;
 
 import org.javlo.component.text.Paragraph;
 import org.javlo.context.ContentContext;
 import org.javlo.context.GlobalContext;
+import org.javlo.helper.LoremIpsumGenerator;
 import org.javlo.helper.StringHelper;
 import org.javlo.i18n.I18nAccess;
 import org.javlo.service.RequestService;
@@ -163,6 +166,18 @@ public class FreeTextList extends Paragraph {
 	@Override
 	public boolean isContentCachable(ContentContext ctx) {
 		return true;
+	}
+
+	@Override
+	public void initContent(ContentContext ctx) {
+		super.initContent(ctx);
+		ByteArrayOutputStream outStream = new ByteArrayOutputStream();
+		PrintStream out = new PrintStream(outStream);
+		for (int i = 0; i < 7; i++) {
+			out.println(LoremIpsumGenerator.getParagraph(8, false, false) + '.');
+		}
+		out.close();
+		setValue(new String(outStream.toByteArray()));
 	}
 
 }

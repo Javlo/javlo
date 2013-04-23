@@ -174,7 +174,7 @@ public class Image extends AbstractFileComponent implements IImageTitle, IPrevie
 		if (getFileName().trim().length() > 0) {
 			url = URLHelper.createTransformURL(ctx, getPage(), getResourceURL(ctx, getFileName()), "list");
 			url = URLHelper.addParam(url, "hash", getStaticInfo(ctx).getVersionHash());
-	
+
 			out.println("<img src=\"" + url + "\" />&nbsp;");
 			out.println("<div class=\"focus-point\">x</div>");
 			out.println("<input class=\"posx\" type=\"hidden\" name=\"posx-" + file.getId() + "\" value=\"" + file.getFocusZoneX() + "\" />");
@@ -449,5 +449,15 @@ public class Image extends AbstractFileComponent implements IImageTitle, IPrevie
 		}
 		return "error on request structure.";
 
+	}
+
+	@Override
+	public void initContent(ContentContext ctx) throws Exception {
+		super.initContent(ctx);
+		setDirSelected("");
+		setFileName("default.jpg");
+		storeProperties();
+		setStyle(ctx,STYLE_CENTER);
+		setModify();
 	}
 }

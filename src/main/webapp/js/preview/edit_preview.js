@@ -3,7 +3,7 @@ var dragging = false;
 jQuery(document).ready(
 		function() {
 			try {
-				jQuery("#preview_command").draggable({
+				jQuery(".floating-preview #preview_command").draggable({
 					handle : ".pc_header"
 				});
 				jQuery("body").append(
@@ -43,12 +43,14 @@ jQuery(document).ready(
 			});
 		});
 
-layerOver = function(item) {
-	var layer = jQuery("#preview-layer");
+layerOver = function(item, deletable) {	
+	var layer = jQuery("#preview-layer");	
+	layer.data("deletable", deletable);
 	var insideLayer = jQuery("#preview-layer span");
-	if (item == null) {
+	if (item == null) {		
 		layer.css("z-index", -1);
 		layer.css("display", "none");
+		layer.data("compType", null);
 	} else {
 		var comp = jQuery(item);
 		if (layer.width() > 0) {
@@ -87,25 +89,65 @@ initPreview = function() {
 
 	jQuery(".editable-component").mouseover(function() {
 		if (!dragging) {			
-			layerOver(this);
+			layerOver(this, true);
 		}
 		return false;
 	});
+	
+	jQuery(".component-list .component").mouseover(function() {
+		if (!dragging) {			
+			layerOver(this, false);
+			var layer = jQuery("#preview-layer");
+			layer.data("compType", jQuery(this).data("type"));		
+		}
+		return false;
+	});
+	
+	jQuery(".component-list .component").mouseout(function() {
+		if (!dragging) {			
+			layerOver(this, false);
+		}
+		
+		return false;
+	});
 
+	/*jQuery(".component-list .component").draggable({
+		cursor : "move",
+		start : function(event, ui) {
+			dragging = true;
+			jQuery(".free-edit-zone").addClass("droppable");
+			var layer = jQuery("#preview-layer");
+			layer.data("compType", jQuery(this).data("type"));
+		},
+		stop : function(event, ui) {
+			jQuery(".free-edit-zone").removeClass("droppable");
+			var dropLayer = jQuery("#droppable-layer");
+			dropLayer.css("top", "-9999px");
+			dragging = false;
+			jQuery(".free-edit-zone").removeClass("droppable");
+			jQuery("#preview_command .pc_body").removeClass("hidden");			
+			layerOver(null);
+			var layer = jQuery("#preview-layer");
+			layer.data("compType", null);
+		}
+	});*/
 
 	jQuery("#preview-layer").on('dragover', function(e) {
 		e.preventDefault();
 		e.stopPropagation();
 	});
 	jQuery("#preview-layer").on('mouseout', function(e) {
-		layerOver(null);
-	});
+		if (!dragging) {
+			layerOver(null);
+		}
+	});	
 	jQuery("#preview-layer").on('dragenter', function(e) {
 		e.preventDefault();
 		e.stopPropagation();
 	});
 	jQuery("#preview-layer").on('drop', function(e) {
-		layerOver(null);
+		layerOver(null);					
+		jQuery(this).data("compType", null);
 		e.preventDefault();
 		e.stopPropagation();
 	});
@@ -118,34 +160,38 @@ initPreview = function() {
 						tolerance : 'pointer',
 						drop : function(event, ui) {
 							var layer = jQuery("#preview-layer");
-							var comp = layer.data("subItem");
-							if (jQuery(comp).attr('id') != jQuery(this).attr("id")) {
-								var compId = jQuery(comp).attr("id").replace(
-										"cp_", "");
-								if (jQuery(this).attr("id") == "preview-delete-zone") {
+							var comp = layer.data("subItem");							
+							var compType = layer.data("compType");
+							var area = null;
+							if (compType !== undefined && compType != null) {								
+								var previewId = jQuery(this).attr("id").replace("cp_", "");
+								var parent = jQuery(this).parent();
+								while (jQuery(parent).get(0).tagName.toLowerCase() != "body" && !parent.hasClass("_area")) {									
+									parent = jQuery(parent).parent();									
+								}
+								area = jQuery(parent).attr("id");
+								var ajaxURL = currentURL
+								+ "?webaction_1=edit.insert&webaction_2=data.updateArea&type="
+								+ compType + "&previous=" + previewId
+								+ "&area=" + area+ "&render-mode=3&init=true";
+								ajaxRequest(ajaxURL);
+							} else if (comp !== undefined && jQuery(comp).attr('id') != jQuery(this).attr("id")) {
+								var compId = jQuery(comp).attr("id").replace("cp_", "");
+								if (jQuery(this).attr("id") == "preview-delete-zone") {									
 									var ajaxURL = currentURL
 											+ "?webaction=edit.delete&id="
-											+ compId+ "&render-mode=3";;
+											+ compId+ "&render-mode=3";
 									jQuery(comp).remove();
-								} else {
+								} else if (comp !== undefined) {
 									jQuery(comp).insertAfter(jQuery(this));
-									var previewId = jQuery(this).attr("id")
-											.replace("cp_", "");
-									var area = jQuery(comp).parent().attr("id");
-									if (area == undefined) { // change language div or container
-										area = jQuery(comp).parent().parent()
-												.attr("id");
+									var previewId = jQuery(this).attr("id").replace("cp_", "");									
+									var parent = jQuery(comp).parent();
+									while (parent !== undefined && !parent.hasClass("_area")) {
+										parent = jQuery(parent).parent();
 									}
-									if (area == undefined) { // container language
-										area = jQuery(comp).parent().parent()
-												.parent().attr("id");
-									}
-									if (area == undefined) { // container container language
-										area = jQuery(comp).parent().parent()
-												.parent().parent().attr("id");
-									}
+									area = jQuery(parent).attr("id");
 									var ajaxURL = currentURL
-											+ "?webaction=edit.moveComponent&comp-id="
+											+ "?webaction_1=edit.moveComponent&webaction_2=edit.updateArea&comp-id="
 											+ compId + "&previous=" + previewId
 											+ "&area=" + area+ "&render-mode=3";
 								}
@@ -183,19 +229,21 @@ initPreview = function() {
 		start : function(event, ui) {
 			dragging = true;
 			var layer = jQuery("#preview-layer");
-
-			jQuery(".free-edit-zone").addClass("droppable");
-			jQuery("#preview-delete-zone").removeClass("hidden");
-			jQuery("#preview_command .pc_body").addClass("hidden");
-
+			jQuery(".free-edit-zone").addClass("droppable");			
+			if (jQuery(this).data("deletable") !== undefined && jQuery(this).data("deletable")) {
+				jQuery("#preview-delete-zone").removeClass("hidden");
+				jQuery("#preview_command .pc_body").addClass("hidden");
+			}
 		},
-		stop : function(event, ui) {			
+		stop : function(event, ui) {	
 			var dropLayer = jQuery("#droppable-layer");
 			dropLayer.css("top", "-9999px");
 			dragging = false;
 			jQuery(".free-edit-zone").removeClass("droppable");
-			jQuery("#preview_command .pc_body").removeClass("hidden");
-			jQuery("#preview-delete-zone").addClass("hidden");
+			if (jQuery(this).data("deletable") !== undefined && jQuery(this).data("deletable")) {
+				jQuery("#preview_command .pc_body").removeClass("hidden");
+				jQuery("#preview-delete-zone").addClass("hidden");
+			}
 			layerOver(null);
 		}
 	});

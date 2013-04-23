@@ -53,9 +53,11 @@ public class MacroAction extends AbstractModuleAction {
 		}
 
 		List<IMacro> alliMacros = new LinkedList<IMacro>();
-		for (IMacro macro : macros) {
+		for (IMacro macro : macros) {			
 			if (globalContext.getMacros().contains(macro.getName())) {
+				System.out.println("***** MacroAction.prepare : macro = "+macro.getName()); //TODO: remove debug trace
 				if (macro instanceof IInteractiveMacro) {
+					System.out.println("***** MacroAction.prepare : ADD"); //TODO: remove debug trace
 					alliMacros.add(macro);
 				}
 			}

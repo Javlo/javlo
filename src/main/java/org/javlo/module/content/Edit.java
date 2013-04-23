@@ -24,7 +24,6 @@ import org.javlo.component.core.ComponentFactory;
 import org.javlo.component.core.ContentElementList;
 import org.javlo.component.core.IContentComponentsList;
 import org.javlo.component.core.IContentVisualComponent;
-import org.javlo.component.dynamic.DynamicComponent;
 import org.javlo.component.title.Title;
 import org.javlo.config.StaticConfig;
 import org.javlo.context.ContentContext;
@@ -618,20 +617,41 @@ public class Edit extends AbstractModuleAction {
 		return message;
 	}
 
-	public static final String performInsert(HttpServletRequest request, HttpServletResponse response, GlobalContext globalContext, ContentContext ctx, ContentService content, Module currentModule, I18nAccess i18nAccess, MessageRepository messageRepository) throws Exception {
+	public static final String performInsert(HttpServletRequest request, HttpServletResponse response, RequestService rs, GlobalContext globalContext, EditContext editContext, ContentContext ctx, ContentService content, Module currentModule, I18nAccess i18nAccess, MessageRepository messageRepository) throws Exception {
 		if (!canModifyCurrentPage(ctx) || !checkPageSecurity(ctx)) {
 			messageRepository.setGlobalMessageAndNotification(ctx, new GenericMessage(i18nAccess.getText("action.block"), GenericMessage.ERROR));
 			return null;
 		}
-		String previousId = request.getParameter("previous");
+		String previousId = rs.getParameter("previous", null);
+
 		String type = request.getParameter("type");
 		if (previousId == null || type == null) {
 			return "bad insert request need previousId and component type.";
 		}
 
+		String areaKey = null;
+		String area = rs.getParameter("area", null);
+		if (area != null) {
+			for (Map.Entry<String, String> areaId : ctx.getCurrentTemplate().getAreasMap().entrySet()) {
+				if (areaId.getValue().equals(area)) {
+					areaKey = areaId.getKey();
+				}
+			}
+			if (areaKey == null) {
+				return "area not found : " + area;
+			}
+			ctx = ctx.getContextWithArea(areaKey);
+			editContext.setCurrentArea(areaKey);
+		}
+
 		String newId = content.createContent(ctx, previousId, type, "", true);
 		if (ctx.isAjax()) {
 			updateComponent(ctx, currentModule, newId, previousId);
+		}
+
+		if (StringHelper.isTrue(rs.getParameter("init", null))) {
+			IContentVisualComponent comp = content.getComponent(ctx, newId);
+			comp.initContent(ctx);
 		}
 
 		// String msg = i18nAccess.getText("action.component.created", new String[][] { { "type", type } });
@@ -1313,6 +1333,7 @@ public class Edit extends AbstractModuleAction {
 		String previous = rs.getParameter("previous", null);
 		String compId = rs.getParameter("comp-id", null);
 		String areaId = rs.getParameter("area", null);
+
 		if (previous == null || compId == null || areaId == null) {
 			return "bad request structure : need 'previous', 'comp-id' and 'area' as parameters.";
 		}
