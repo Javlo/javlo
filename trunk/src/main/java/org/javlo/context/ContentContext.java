@@ -348,9 +348,9 @@ public class ContentContext {
 	private ContentContext() {
 	}
 
-	private final Map<String, String> ajaxInsideZone = new HashMap<String, String>();
-	private final Map<String, Object> ajaxData = new HashMap<String, Object>();
-	private final Map<String, ScheduledRender> scheduledAjaxInsideZone = new HashMap<String, ScheduledRender>();
+	private Map<String, String> ajaxInsideZone = new HashMap<String, String>();
+	private Map<String, Object> ajaxData = new HashMap<String, Object>();
+	private Map<String, ScheduledRender> scheduledAjaxInsideZone = new HashMap<String, ScheduledRender>();
 	private final Map<String, String> ajaxZone = new HashMap<String, String>();;
 
 	private User currentUser = null;
@@ -383,6 +383,11 @@ public class ContentContext {
 		format = ctx.format;
 		correctPath = ctx.correctPath;
 		export = ctx.export;
+
+		ajaxData = ctx.ajaxData;
+		ajaxInsideZone = ctx.ajaxInsideZone;
+		ajaxData = ctx.ajaxData;
+		scheduledAjaxInsideZone = ctx.scheduledAjaxInsideZone;
 	}
 
 	public String getArea() {

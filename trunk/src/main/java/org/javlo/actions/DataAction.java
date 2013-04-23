@@ -11,6 +11,7 @@ import java.util.Collection;
 import java.util.Date;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Map;
 import java.util.logging.Logger;
 
 import javax.servlet.http.HttpSession;
@@ -29,6 +30,7 @@ import org.javlo.context.ContentContext;
 import org.javlo.context.GlobalContext;
 import org.javlo.helper.ContentHelper;
 import org.javlo.helper.ResourceHelper;
+import org.javlo.helper.ServletHelper;
 import org.javlo.helper.StringHelper;
 import org.javlo.helper.URLHelper;
 import org.javlo.i18n.I18nAccess;
@@ -101,6 +103,31 @@ public class DataAction implements IAction {
 		} else {
 			return "no access";
 		}
+		return null;
+	}
+
+	public static String performUpdateArea(RequestService rs, ContentContext ctx, MessageRepository messageRepository, I18nAccess i18nAccess) throws Exception {
+
+		String areaKey = null;
+		String area = rs.getParameter("area", null);
+		if (area != null) {
+			for (Map.Entry<String, String> areaId : ctx.getCurrentTemplate().getAreasMap().entrySet()) {
+				if (areaId.getValue().equals(area)) {
+					areaKey = areaId.getKey();
+				}
+			}
+		}
+
+		if (areaKey == null) {
+			return "area not found : " + area;
+		}
+
+		String mode = rs.getParameter("render-mode", null);
+
+		if (mode != null) {
+			ctx.setRenderMode(Integer.parseInt(mode));
+		}
+		ctx.getAjaxInsideZone().put(area, ServletHelper.executeJSP(ctx, "/jsp/view/content_view.jsp?area=" + areaKey));
 		return null;
 	}
 

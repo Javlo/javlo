@@ -8,6 +8,7 @@ import java.util.List;
 import org.javlo.component.core.AbstractVisualComponent;
 import org.javlo.context.ContentContext;
 import org.javlo.context.GlobalContext;
+import org.javlo.helper.LoremIpsumGenerator;
 import org.javlo.helper.XHTMLHelper;
 import org.javlo.service.ReverseLinkService;
 import org.javlo.utils.SuffixPrefix;
@@ -91,6 +92,12 @@ public class Paragraph extends AbstractVisualComponent {
 	@Override
 	public boolean isRealContent(ContentContext ctx) {
 		return !isEmpty(ctx);
+	}
+
+	@Override
+	public void initContent(ContentContext ctx) {
+		setValue(LoremIpsumGenerator.getParagraph(80, false, true));
+		setModify();
 	}
 
 }

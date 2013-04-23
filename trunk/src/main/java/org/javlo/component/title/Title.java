@@ -6,8 +6,8 @@ package org.javlo.component.title;
 import org.javlo.component.core.AbstractVisualComponent;
 import org.javlo.context.ContentContext;
 import org.javlo.context.GlobalContext;
+import org.javlo.helper.LoremIpsumGenerator;
 import org.javlo.service.ReverseLinkService;
-
 
 /**
  * @author pvandermaesen
@@ -27,8 +27,8 @@ public class Title extends AbstractVisualComponent {
 	@Override
 	public String getViewXHTMLCode(ContentContext ctx) throws Exception {
 		StringBuffer res = new StringBuffer();
-		res.append("<h1 "+getSpecialPreviewCssClass(ctx, getStyle(ctx))+getSpecialPreviewCssId(ctx)+"><span>");
-		
+		res.append("<h1 " + getSpecialPreviewCssClass(ctx, getStyle(ctx)) + getSpecialPreviewCssId(ctx) + "><span>");
+
 		String value = getValue();
 		GlobalContext globalContext = GlobalContext.getInstance(ctx.getRequest());
 		ReverseLinkService reverserLinkService = ReverseLinkService.getInstance(globalContext);
@@ -78,5 +78,11 @@ public class Title extends AbstractVisualComponent {
 	public boolean isUnique() {
 		return true;
 	}
-	
+
+	@Override
+	public void initContent(ContentContext ctx) {
+		setValue(LoremIpsumGenerator.getParagraph(4, false, true));
+		setModify();
+	}
+
 }

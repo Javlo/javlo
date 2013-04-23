@@ -681,4 +681,13 @@ public interface IContentVisualComponent {
 	 */
 	public String getAuthors();
 
+	/**
+	 * init the content with a default value. sample : "lorem ipsum" for text component.
+	 * 
+	 * @param ctx
+	 * @return
+	 * @throws Exception
+	 */
+	public void initContent(ContentContext ctx) throws Exception;
+
 }

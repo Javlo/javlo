@@ -1736,6 +1736,10 @@ public abstract class AbstractVisualComponent implements IContentVisualComponent
 		return Integer.parseInt(contentTimeCache);
 	}
 
+	@Override
+	public void initContent(ContentContext ctx) throws Exception {
+	}
+
 	// generate compilation error : use for refactoring
 
 	/*

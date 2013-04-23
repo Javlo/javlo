@@ -8,7 +8,7 @@ import java.util.List;
 import org.javlo.component.core.AbstractVisualComponent;
 import org.javlo.context.ContentContext;
 import org.javlo.context.GlobalContext;
-import org.javlo.service.RequestService;
+import org.javlo.helper.LoremIpsumGenerator;
 import org.javlo.service.ReverseLinkService;
 import org.javlo.utils.SuffixPrefix;
 
@@ -50,14 +50,14 @@ public class WysiwygParagraph extends AbstractVisualComponent {
 	}
 
 	@Override
-	public void performEdit(ContentContext ctx) throws Exception {
-		RequestService requestService = RequestService.getInstance(ctx.getRequest());
-		super.performEdit(ctx);
+	public boolean isRealContent(ContentContext ctx) {
+		return getValue().trim().length() > 0;
 	}
 
 	@Override
-	public boolean isRealContent(ContentContext ctx) {
-		return getValue().trim().length() > 0;
+	public void initContent(ContentContext ctx) {
+		setValue(LoremIpsumGenerator.getParagraph(120, false, true));
+		setModify();
 	}
 
 }

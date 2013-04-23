@@ -264,3 +264,8 @@
 .smart-link-body a.next {
 	margin-left: 15px;
 }
+
+div.wysiwyg-paragraph textarea {
+	width: 98%;
+	display: block;
+}

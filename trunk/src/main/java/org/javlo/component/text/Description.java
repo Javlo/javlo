@@ -8,6 +8,7 @@ import java.util.List;
 import org.javlo.component.core.AbstractVisualComponent;
 import org.javlo.context.ContentContext;
 import org.javlo.context.GlobalContext;
+import org.javlo.helper.LoremIpsumGenerator;
 import org.javlo.helper.StringHelper;
 import org.javlo.helper.XHTMLHelper;
 import org.javlo.i18n.I18nAccess;
@@ -107,6 +108,12 @@ public class Description extends AbstractVisualComponent {
 	@Override
 	public boolean isRealContent(ContentContext ctx) {
 		return !isNotDisplayHTML(ctx) && getValue().length() > 0;
+	}
+	
+	@Override
+	public void initContent(ContentContext ctx) {
+		setValue(LoremIpsumGenerator.getParagraph(40, false, true));
+		setModify();
 	}
 
 }

@@ -3,6 +3,7 @@ package org.javlo.component.title;
 import org.javlo.component.core.AbstractVisualComponent;
 import org.javlo.context.ContentContext;
 import org.javlo.context.GlobalContext;
+import org.javlo.helper.LoremIpsumGenerator;
 import org.javlo.helper.StringHelper;
 import org.javlo.helper.XHTMLHelper;
 import org.javlo.service.ReverseLinkService;
@@ -14,24 +15,25 @@ public class SubTitle extends AbstractVisualComponent {
 
 	public static final String TYPE = "subtitle";
 
+	@Override
 	public String getPrefixViewXHTMLCode(ContentContext ctx) {
 		return "<div " + getSpecialPreviewCssClass(ctx, "") + getSpecialPreviewCssId(ctx) + " >";
 	}
 
 	public String getXHTMLId(ContentContext ctx) {
 		if (ctx.getRequest().getAttribute("__subtitle__" + getId()) != null) {
-			return (String)ctx.getRequest().getAttribute("__subtitle__" + getId());
+			return (String) ctx.getRequest().getAttribute("__subtitle__" + getId());
 		}
 		String htmlID = StringHelper.createFileName(getValue());
 		if (htmlID.trim().length() == 0) {
 			htmlID = "empty";
 		}
-		htmlID = "H_"+htmlID;
+		htmlID = "H_" + htmlID;
 		while (ctx.getRequest().getAttribute("__subtitle__" + htmlID) != null) {
 			htmlID = htmlID + "_bis";
 		}
 		ctx.getRequest().setAttribute("__subtitle__" + htmlID, "");
-		ctx.getRequest().setAttribute("__subtitle__" + getId(), htmlID);		
+		ctx.getRequest().setAttribute("__subtitle__" + getId(), htmlID);
 		return htmlID;
 	}
 
@@ -51,7 +53,7 @@ public class SubTitle extends AbstractVisualComponent {
 			String value = getValue();
 			GlobalContext globalContext = GlobalContext.getInstance(ctx.getRequest());
 			if (level.equals("7") || level.equals("8") || level.equals("9")) {
-				res.append("<div id=\"" + getXHTMLId(ctx) + "\" class=\"subtitle-" + level + "\">");				
+				res.append("<div id=\"" + getXHTMLId(ctx) + "\" class=\"subtitle-" + level + "\">");
 				ReverseLinkService reverserLinkService = ReverseLinkService.getInstance(globalContext);
 				value = reverserLinkService.replaceLink(ctx, value);
 				res.append(XHTMLHelper.textToXHTML(value));
@@ -67,6 +69,7 @@ public class SubTitle extends AbstractVisualComponent {
 		}
 	}
 
+	@Override
 	public String getType() {
 		return TYPE;
 	}
@@ -110,6 +113,10 @@ public class SubTitle extends AbstractVisualComponent {
 		return 0;
 	}
 
-	
+	@Override
+	public void initContent(ContentContext ctx) {
+		setValue(LoremIpsumGenerator.getParagraph(6, false, true));
+		setModify();
+	}
 
 }
