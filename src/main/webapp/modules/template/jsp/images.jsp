@@ -2,7 +2,7 @@
 <%@ taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions" %>
 <div class="content">
 
-<form id="form-properties-template" action="${info.currentURL}" class="standard-form js-change-submit" method="post">
+<form id="form-properties-template" action="${info.currentURL}" class="standard-form" method="post">
 	
 	<div>
 		<input type="hidden" name="webaction" value="updateFilter" />
@@ -11,7 +11,7 @@
 	
 	<div class="line">
 		<label for="filter">${i18n.edit['template.label.filter']}</label>
-		<select id="filter" name="filter">
+		<select id="filter" name="filter" onchange="this.form.submit();">
 		<option value="">${i18n.edit['template.filter.choose']}</option>
 		<c:forEach var="filter" items="${filters}">
 			<option${filter == param.filter?' selected="selected"':''}>${filter}</option>
@@ -25,8 +25,8 @@
 			jQuery("#image-preview legend").html("preview : "+area);
 		}
 	</script>
-	
-	
+
+
 	<c:if test="${not empty param.filter}">
 	<div class="sTableWrapper">
 	<table class="sTable" width="100%" cellspacing="0" cellpadding="0">		
@@ -55,15 +55,33 @@
 			<th>${prop}</th>
 			<c:set var="key" value="${param.filter}.${prop}" />
 			<td>
-				<input type="checkbox" name="${key}" ${values[key] == "true"?'checked="checked"':''} />
-				<input type="checkbox" readonly="readonly" ${allValues[key] == "true"?'checked="checked"':''} />
+				<!-- input type="checkbox" name="${key}" ${values[key] == "true"?'checked="checked"':''} />
+				<input type="checkbox" readonly="readonly" ${allValues[key] == "true"?'checked="checked"':''} / -->
+				
+					<select name="${key}">
+						<option ${values[key] == ""?'selected="selected"':''}></option>
+						<option ${values[key] == "true"?'selected="selected"':''}>true</option>
+						<option ${values[key] == "false"?'selected="selected"':''}>false</option>						
+					</select>
+					
+					<div class="default">${allValues[key]}</div>
+				
 				<input type="hidden" name="_${key}" value="true" />
 			</td>
 			<c:forEach var="area" items="${areas}">
 				<c:set var="key" value="${param.filter}.${area}.${prop}" />
 				<td>
-					<input type="checkbox" name="${key}" ${values[key] == "true"?'checked="checked"':''} onchange="jQuery(this).append('<input type=\'hidden\' name=\'_${key}\' value=\'true\' />');" />
-					<input type="checkbox" readonly="readonly" ${allValues[key] == "true"?'checked="checked"':''} />
+					<!-- input type="checkbox" name="${key}" ${values[key] == "true"?'checked="checked"':''} onchange="jQuery(this).append('<input type=\'hidden\' name=\'_${key}\' value=\'true\' />');" / -->
+					
+					<select name="${key}" onchange="jQuery(this).append('<input type=\'hidden\' name=\'_${key}\' value=\'true\' />');">
+						<option ${values[key] == ""?'selected="selected"':''}></option>
+						<option ${values[key] == "true"?'selected="selected"':''}>true</option>
+						<option ${values[key] == "false"?'selected="selected"':''}>false</option>						
+					</select>
+					
+					<div class="default">${allValues[key]}</div>
+					
+					<!--  input type="checkbox" readonly="readonly" ${allValues[key] == "true"?'checked="checked"':''} / -->
 					
 				</td>
 			</c:forEach>
