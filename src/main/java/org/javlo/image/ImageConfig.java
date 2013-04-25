@@ -31,7 +31,7 @@ public class ImageConfig {
 	private static final String FILE_BASE = "/WEB-INF/config/image-config-base.properties";
 	private static final String KEY = ImageConfig.class.getName();
 
-	private static List<String> filters = new LinkedList<String>();
+	private List<String> filters = new LinkedList<String>();
 
 	private ImageConfig(GlobalContext globalContext, HttpSession session, Template template) {
 
@@ -367,7 +367,7 @@ public class ImageConfig {
 		return properties.getInt(key, -1);
 	}
 
-	public static List<String> getFilters() {
+	public List<String> getFilters() {
 		return filters;
 	}
 
