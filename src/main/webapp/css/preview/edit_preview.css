@@ -717,10 +717,6 @@ fieldset.closable .closable_action.close {
 	color: #000000;
 }
 
-.free-edit-zone {
-	height: 24px;
-}
-
 #preview-layer, #droppable-layer {
 	position: absolute;
 	top: 0;
@@ -771,15 +767,44 @@ fieldset.closable .closable_action.close {
 }
 
 .free-edit-zone.droppable {
+	padding: 4px;
 	display: block;
 	border-radius: 3px 3px 3px 3px;
-	background-color: #364AE3;
+	background-color: #aaaaaa;
 	opacity: .30;
 	-ms-filter: "progid:DXImageTransform.Microsoft.Alpha(Opacity=30)";
     filter: alpha(opacity=30);
     -khtml-opacity: 0.30;
     -moz-opacity: 0.30;
+    margin-bottom: 4px;
 }
+
+.free-edit-zone.droppable span {
+   display: block;
+   border: 2px #777777 dashed;
+   border-radius: 3px 3px 3px 3px;
+}
+
+.drop-zone {
+	margin-bottom: 4px;
+	padding: 2px;
+	display: block;
+	border-radius: 3px 3px 3px 3px;
+	background-color: #aaaaaa;
+	opacity: .30;
+	-ms-filter: "progid:DXImageTransform.Microsoft.Alpha(Opacity=30)";
+    filter: alpha(opacity=30);
+    -khtml-opacity: 0.30;
+    -moz-opacity: 0.30; 
+    overflow: hidden;
+}
+
+.drop-zone span, .free-edit-zone.drop-selected span {
+   display: block;
+   border: 2px #eeeeee dashed;	
+   border-radius: 3px 3px 3px 3px;
+}
+
 
 #pc_upload #upload-zone {
 	text-align: center;	

@@ -1533,4 +1533,16 @@ public class PageReferenceComponent extends ComplexPropertiesLink implements IAc
 		return ctx.getGlobalContext().getLockLoadContent();
 	}
 
+	@Override
+	public void initContent(ContentContext ctx) throws Exception {
+		super.initContent(ctx);
+		ByteArrayOutputStream outStream = new ByteArrayOutputStream();
+		PrintStream out = new PrintStream(outStream);
+		out.println("parent-node=/articles");
+		out.println("width_empty=false");
+		out.println("is-def-selected=true");
+		out.close();
+		setValue(new String(outStream.toByteArray()));
+
+	}
 }

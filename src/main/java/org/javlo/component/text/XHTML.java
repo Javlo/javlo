@@ -49,7 +49,7 @@ public class XHTML extends AbstractVisualComponent {
 		return GRAPHIC_COLOR;
 	}
 
-	@Override
+	/*@Override
 	public String getPrefixViewXHTMLCode(ContentContext ctx) {
 		return "";
 	}
@@ -57,7 +57,7 @@ public class XHTML extends AbstractVisualComponent {
 	@Override
 	public String getSuffixViewXHTMLCode(ContentContext ctx) {
 		return "";
-	}
+	}*/
 
 	@Override
 	public String getType() {
