@@ -82,6 +82,7 @@ public class SimplePoll extends Paragraph implements IAction {
 	}
 
 	public synchronized void addVotes(ContentContext ctx, String code) throws IOException {
+		System.out.println("***** SimplePoll.addVotes : code = " + code); // TODO: remove debug trace
 		if (code == null) {
 			return;
 		}
