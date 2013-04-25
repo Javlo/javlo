@@ -195,11 +195,6 @@ public class SimplePoll extends Paragraph implements IAction {
 		return finalCode.toString();
 	}
 
-	@Override
-	public String getPrefixViewXHTMLCode(ContentContext ctx) {
-		return "<div " + getSpecialPreviewCssClass(ctx, getStyle(ctx) + ' ' + getType()) + getSpecialPreviewCssId(ctx) + ">";
-	}
-
 	public String getQuestion() {
 		String value = getValue();
 		if (value.indexOf('#') > -1) {
@@ -274,11 +269,6 @@ public class SimplePoll extends Paragraph implements IAction {
 	@Override
 	public String getStyleTitle(ContentContext ctx) {
 		return "";
-	}
-
-	@Override
-	public String getSuffixViewXHTMLCode(ContentContext ctx) {
-		return "</div>";
 	}
 
 	@Override
