@@ -547,7 +547,7 @@ public class XMLManipulationHelper {
 						if (content.indexOf(HEADER_ZONE) > 0) {
 							remplacement.addReplacement(content.indexOf(HEADER_ZONE), content.indexOf(HEADER_ZONE) + HEADER_ZONE.length(), getHTMLPrefixHead());
 						} else {
-							remplacement.addReplacement(tags[i].getCloseStart() + 1, tags[i].getCloseStart() + 1, getHTMLPrefixHead());
+							remplacement.addReplacement(tags[i].getCloseStart(), tags[i].getCloseStart(), getHTMLPrefixHead());
 						}
 
 						/** template plugin **/
