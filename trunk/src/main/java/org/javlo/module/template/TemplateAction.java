@@ -148,12 +148,13 @@ public class TemplateAction extends AbstractModuleAction {
 				if (requestService.getParameter("filter", null) != null && requestService.getParameter("back", null) == null) {
 
 					ImageConfig imageConfig = ImageConfig.getNewInstance(globalContext, ctx.getRequest().getSession(), template);
+					ImageConfig parentImageConfig = ImageConfig.getNewInstance(globalContext, ctx.getRequest().getSession(), template.getParent());
 					ctx.getRequest().setAttribute("filters", imageConfig.getFilters());
 
 					ctx.getRequest().setAttribute("areas", template.getAreas());
 					ctx.getRequest().setAttribute("textProperties", getTextProperties());
 					ctx.getRequest().setAttribute("booleanProperties", getBooleanProperties());
-					ctx.getRequest().setAttribute("allValues", new ReadOnlyPropertiesConfigurationMap(imageConfig.getProperties(), false));
+					ctx.getRequest().setAttribute("allValues", new ReadOnlyPropertiesConfigurationMap(parentImageConfig.getProperties(), false));
 					if (template.getImageConfigFile().exists()) {
 						Properties values = new Properties();
 						Reader fileReader = new FileReader(template.getImageConfigFile());
@@ -477,25 +478,39 @@ public class TemplateAction extends AbstractModuleAction {
 
 		for (String prop : getBooleanProperties()) {
 			String key = filter + '.' + prop;
-			boolean val = rs.getParameter(key, null) != null;
+
+			boolean val = StringHelper.isTrue(rs.getParameter(key, null));
 
 			if (rs.getParameter('_' + key, null) != null) {
-				if (val != StringHelper.isTrue(imageConfig.getProperty(key))) {
-					imageConfig.setProperty(key, "" + val);
+				if (rs.getParameter(key, "").trim().length() == 0) {
+					imageConfig.remove(key);
 					modifiy = true;
+				} else {
+					if (val != StringHelper.isTrue(imageConfig.getProperty(key, null)) || imageConfig.getProperty(key, null) == null) {
+						imageConfig.setProperty(key, "" + val);
+						modifiy = true;
+					}
 				}
 			}
 
 			for (String area : template.getAreas()) {
 				key = filter + '.' + area + '.' + prop;
 				val = rs.getParameter(key, null) != null;
+
 				if (rs.getParameter('_' + key, null) != null) {
-					if (val != StringHelper.isTrue(imageConfig.getProperty(key))) {
-						imageConfig.setProperty(key, "" + val);
+					if (rs.getParameter(key, "").trim().length() == 0) {
+						imageConfig.remove(key);
 						modifiy = true;
 						ctx.getRequest().setAttribute("modifiedArea", area);
+					} else {
+						if (val != StringHelper.isTrue(imageConfig.getProperty(key, null)) || imageConfig.getProperty(key, null) == null) {
+							imageConfig.setProperty(key, "" + val);
+							modifiy = true;
+							ctx.getRequest().setAttribute("modifiedArea", area);
+						}
 					}
 				}
+
 			}
 		}
 

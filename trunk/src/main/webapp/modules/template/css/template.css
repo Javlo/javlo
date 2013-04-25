@@ -83,3 +83,14 @@ input[readonly] {
 	height: 500px;
 }
 
+#form-properties-template .default {
+	margin-left: 12px;
+	box-shadow: 1px 1px 3px #CCCCCC inset;
+	border: 1px solid #CCCCCC;
+    padding: 5px;
+    display: inline-block;
+    vertical-align: text-top;
+    height: 18px;
+    width: 36px;
+} 
+
