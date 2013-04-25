@@ -436,4 +436,10 @@ public class SimplePoll extends AbstractVisualComponent implements IAction {
 		out.close();
 		setValue("Question#" + new String(outStream.toByteArray()));
 	}
+
+	@Override
+	public boolean isContentCachable(ContentContext ctx) {
+		return !getStyle(ctx).equals(INTERACTIVE);
+	}
+
 }
