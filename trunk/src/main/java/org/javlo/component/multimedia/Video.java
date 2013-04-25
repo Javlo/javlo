@@ -337,7 +337,6 @@ public class Video extends GlobalImage implements IAction, IVideo {
 					ctx.getRequest().setAttribute("url", getLink());
 				}
 			}
-
 			ctx.getRequest().setAttribute("type", ResourceHelper.getFileExtensionToManType(StringHelper.getFileExtension(getFileName())));
 			ctx.getRequest().setAttribute("label", getLabel());
 			if (getDecorationImage() != null && getDecorationImage().trim().length() > 0) {

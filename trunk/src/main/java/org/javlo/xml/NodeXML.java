@@ -150,6 +150,10 @@ public class NodeXML extends Object implements Cloneable {
 		return null;
 	}
 
+	/*
+	 * public List<String> getAttributes() { List<String> attributes = new LinkedList<String>(); NamedNodeMap nodeMap = ((Element) node).getAttributes(); nodeMap. return attributes; }
+	 */
+
 	/**
 	 * get a attribute value, with a standard value if the attribute is not found.
 	 * 

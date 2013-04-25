@@ -6,6 +6,7 @@ import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.PrintStream;
+import java.net.URL;
 import java.text.SimpleDateFormat;
 import java.util.Collection;
 import java.util.Date;
@@ -19,8 +20,10 @@ import java.util.zip.ZipInputStream;
 import org.javlo.component.core.ComponentBean;
 import org.javlo.component.image.GlobalImage;
 import org.javlo.component.image.Image;
+import org.javlo.component.links.ExternalLink;
 import org.javlo.component.list.FreeTextList;
 import org.javlo.component.meta.DateComponent;
+import org.javlo.component.multimedia.Video;
 import org.javlo.component.text.Paragraph;
 import org.javlo.component.text.WysiwygParagraph;
 import org.javlo.component.title.SubTitle;
@@ -129,26 +132,6 @@ public class ContentHelper {
 		}
 	}
 
-	public static void _main(String[] args) {
-		ZipInputStream in = null;
-		try {
-			in = new ZipInputStream(new FileInputStream(new File("d:/trans/test_doc.odt")));
-			ZipEntry entry = in.getNextEntry();
-			while (entry != null) {
-				System.out.println("***** ContentHelper.main : entry : " + entry); // TODO: remove debug trace
-				entry = in.getNextEntry();
-			}
-		} catch (ZipException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		} catch (IOException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		} finally {
-			ResourceHelper.closeResource(in);
-		}
-	}
-
 	/**
 	 * import a zip entry localy.
 	 * 
@@ -191,8 +174,18 @@ public class ContentHelper {
 				String title = null;
 				for (NodeXML node : nodes) {
 					String value = StringHelper.removeTag(node.getContent()).trim();
+					ComponentBean bean = null;
+					if (node.getName().endsWith(":a")) {
+						String href = node.getAttributeValue("xlink:href");
+						String label = StringHelper.removeTag(node.getContent()).trim();
+						if (href.contains("youtube.com")) {
+							label = NetHelper.getPageTitle(new URL(href));
+							bean = new ComponentBean(Video.TYPE, StringHelper.writeLines("title=" + label, "link=" + href), lang);
+						} else {
+							bean = new ComponentBean(ExternalLink.TYPE, StringHelper.writeLines("label=" + label, "link=" + href), lang);
+						}
+					}
 					if (value.length() > 0 || node.getName().endsWith(":image") || node.getName().endsWith(":list")) {
-						ComponentBean bean = null;
 						if (node.getName().endsWith(":h")) {
 							if (node.getAttributeValue("text:outline-level", "1").equals("1")) {
 								bean = new ComponentBean(Title.TYPE, value, lang);
@@ -201,7 +194,9 @@ public class ContentHelper {
 								bean = new ComponentBean(SubTitle.TYPE, value, lang);
 								bean.setStyle(node.getAttributeValue("text:outline-level", "2"));
 							}
-						} else if (node.getName().endsWith(":p") && !node.getParent().getName().endsWith(":list-item")) {
+						}
+
+						if (node.getName().endsWith(":p") && !node.getParent().getName().endsWith(":list-item")) {
 							bean = new ComponentBean(Paragraph.TYPE, value, lang);
 						} else if (node.getName().endsWith(":list")) {
 							NodeXML parent = node.getParent();
@@ -253,9 +248,9 @@ public class ContentHelper {
 								bean = new ComponentBean(GlobalImage.TYPE, value, lang);
 							}
 						}
-						if (bean != null) {
-							outBeans.add(bean);
-						}
+					}
+					if (bean != null) {
+						outBeans.add(bean);
 					}
 				}
 			}
