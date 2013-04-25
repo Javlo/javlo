@@ -3,7 +3,9 @@
  */
 package org.javlo.component.web2;
 
+import java.io.ByteArrayOutputStream;
 import java.io.IOException;
+import java.io.PrintStream;
 import java.io.PrintWriter;
 import java.io.StringWriter;
 import java.util.Iterator;
@@ -15,8 +17,8 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import org.javlo.actions.IAction;
+import org.javlo.component.core.AbstractVisualComponent;
 import org.javlo.component.core.ComponentBean;
-import org.javlo.component.text.Paragraph;
 import org.javlo.context.ContentContext;
 import org.javlo.context.GlobalContext;
 import org.javlo.helper.StringHelper;
@@ -28,7 +30,7 @@ import org.javlo.user.AdminUserFactory;
 /**
  * @author pvandermaesen
  */
-public class SimplePoll extends Paragraph implements IAction {
+public class SimplePoll extends AbstractVisualComponent implements IAction {
 
 	private static final String INTERACTIVE = "interactive";
 
@@ -82,7 +84,6 @@ public class SimplePoll extends Paragraph implements IAction {
 	}
 
 	public synchronized void addVotes(ContentContext ctx, String code) throws IOException {
-		System.out.println("***** SimplePoll.addVotes : code = " + code); // TODO: remove debug trace
 		if (code == null) {
 			return;
 		}
@@ -422,5 +423,17 @@ public class SimplePoll extends Paragraph implements IAction {
 				setModify();
 			}
 		}
+	}
+
+	@Override
+	public void initContent(ContentContext ctx) throws Exception {
+		super.initContent(ctx);
+		ByteArrayOutputStream outStream = new ByteArrayOutputStream();
+		PrintStream out = new PrintStream(outStream);
+		out.println("question 1");
+		out.println("question 2");
+		out.println("question 3");
+		out.close();
+		setValue("Question#" + new String(outStream.toByteArray()));
 	}
 }
