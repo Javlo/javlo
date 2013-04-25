@@ -11,6 +11,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import org.javlo.config.StaticConfig;
+import org.javlo.context.ContentContext;
 import org.javlo.context.GlobalContext;
 import org.javlo.servlet.zip.ZipManagement;
 
@@ -40,6 +41,13 @@ public class ZIPServlet extends HttpServlet {
 
 	private void process(HttpServletRequest request, HttpServletResponse response) throws ServletException {
 		try {
+
+			ContentContext ctx = ContentContext.getContentContext(request, response);
+			if (ctx.getCurrentEditUser() == null) {
+				response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
+				return;
+			}
+
 			response.setContentType("application/gzip");
 			StaticConfig staticConfig = StaticConfig.getInstance(request.getSession());
 			GlobalContext globalContext = GlobalContext.getInstance(request);
