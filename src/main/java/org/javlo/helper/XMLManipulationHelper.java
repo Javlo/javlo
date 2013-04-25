@@ -547,7 +547,7 @@ public class XMLManipulationHelper {
 						if (content.indexOf(HEADER_ZONE) > 0) {
 							remplacement.addReplacement(content.indexOf(HEADER_ZONE), content.indexOf(HEADER_ZONE) + HEADER_ZONE.length(), getHTMLPrefixHead());
 						} else {
-							remplacement.addReplacement(tags[i].getOpenEnd() + 1, tags[i].getOpenEnd() + 1, getHTMLPrefixHead());
+							remplacement.addReplacement(tags[i].getCloseStart() + 1, tags[i].getCloseStart() + 1, getHTMLPrefixHead());
 						}
 
 						/** template plugin **/
@@ -852,7 +852,7 @@ public class XMLManipulationHelper {
 
 		out.append("<%if (ctx.isInteractiveMode()) {%>");
 		out.newLine();
-		out.append("<%=XHTMLHelper.renderHeaderResourceInsertion(ctx, \"/js/lib/jquery-1.7.2.min.js\")%>");
+		out.append("<%=XHTMLHelper.renderHeaderResourceInsertion(ctx, \"/js/lib/jquery-1.9.1.min\")%>");
 		out.newLine();
 		out.append("<%=XHTMLHelper.renderHeaderResourceInsertion(ctx, \"/js/lib/jquery-ui-1.9.2.custom.min.js\")%>");
 		out.newLine();
@@ -999,11 +999,9 @@ public class XMLManipulationHelper {
 		out.println("<%if (ctx.isInteractiveMode() && ctx.getRenderMode() == ContentContext.PREVIEW_MODE) {");
 		out.println("%><jsp:include page=\"/jsp/preview/command.jsp\" />");
 		// out.println("<%if (editCtx.isEditPreview()) {");
-	/*	out.println("<%MessageRepository messageRepository = MessageRepository.getInstance(ctx);");
-		out.println("	    %><div id=\"message-container\" class=\"standard\"><%");
-		out.println("   if (messageRepository.getGlobalMessage().getMessage().trim().length() > 0) {%>");
-		out.println("       <div class=\"notification <%=messageRepository.getGlobalMessage().getTypeLabel()%>\"><%=messageRepository.getGlobalMessage().getMessage()%></div>");
-		out.println("<%}%></div>");*/
+		/*
+		 * out.println("<%MessageRepository messageRepository = MessageRepository.getInstance(ctx);"); out.println("	    %><div id=\"message-container\" class=\"standard\"><%"); out.println("   if (messageRepository.getGlobalMessage().getMessage().trim().length() > 0) {%>"); out.println("       <div class=\"notification <%=messageRepository.getGlobalMessage().getTypeLabel()%>\"><%=messageRepository.getGlobalMessage().getMessage()%></div>"); out.println("<%}%></div>");
+		 */
 		// out.println("<%}%>");
 		out.println("<%}%>");
 
