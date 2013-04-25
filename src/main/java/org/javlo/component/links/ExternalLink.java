@@ -26,6 +26,7 @@ import org.javlo.service.ReverseLinkService;
 public class ExternalLink extends ComplexPropertiesLink implements IReverseLinkComponent, ILink {
 
 	private static final String REVERSE_LINK_KEY = "reverse-link";
+	public static final String TYPE = "external-link";
 
 	@Override
 	public void init(ComponentBean bean, ContentContext newContext) throws Exception {
@@ -176,7 +177,7 @@ public class ExternalLink extends ComplexPropertiesLink implements IReverseLinkC
 
 	@Override
 	public String getType() {
-		return "external-link";
+		return TYPE;
 	}
 
 	@Override

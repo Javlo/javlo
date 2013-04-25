@@ -2357,7 +2357,7 @@ public class StringHelper {
 		return outMap;
 	}
 
-	public static String writeLines(String[] text) {
+	public static String writeLines(String... text) {
 		StringWriter writer = new StringWriter();
 		BufferedWriter bufWriter = new BufferedWriter(writer);
 		try {
