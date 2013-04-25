@@ -261,4 +261,12 @@ public class ExternalLink extends ComplexPropertiesLink implements IReverseLinkC
 		return XHTMLHelper.escapeXHTML(properties.getProperty(LINK_KEY, ""));
 	}
 
+	@Override
+	public void initContent(ContentContext ctx) throws Exception {
+		super.initContent(ctx);
+		properties.setProperty(LINK_KEY, "http://www.javlo.org");
+		properties.setProperty(LABEL_KEY, "javlo.org");
+		storeProperties();
+		setModify();
+	}
 }
