@@ -59,8 +59,10 @@ layerOver = function(item, deletable) {
 		}
 		layer.css("top", comp.offset().top);
 		layer.css("left", comp.offset().left);
-		layer.css("width", comp.width());
+		
+		layer.css("width", comp.width());			
 		layer.css("height", comp.height());
+		
 		layer.data("subItem", comp);
 	}
 }
@@ -135,6 +137,13 @@ initPreview = function() {
 	jQuery("#preview-layer").on('dragover', function(e) {
 		e.preventDefault();
 		e.stopPropagation();
+		layer = jQuery(this);
+		var height = layer.height();
+		if (height < 40) {
+			height = 40;
+		}					
+		layer.css("height", height);
+	
 	});
 	jQuery("#preview-layer").on('mouseout', function(e) {
 		if (!dragging) {
@@ -142,6 +151,7 @@ initPreview = function() {
 		}
 	});	
 	jQuery("#preview-layer").on('dragenter', function(e) {
+		
 		e.preventDefault();
 		e.stopPropagation();
 	});
@@ -198,27 +208,44 @@ initPreview = function() {
 								ajaxRequest(ajaxURL);
 							}
 							layerOver(null);
+							jQuery(this).find(".drop-zone").remove();
+							jQuery(this).removeClass("drop-selected");
 						},
 						over : function(event, ui) {
 							dragging = true;
 							var dropLayer = jQuery("#droppable-layer");
 							var layer = jQuery("#preview-layer");
 							var target = jQuery(this);
+							
+							if (!target.hasClass("free-edit-zone")) {
+								if (target.find(".drop-zone").length == 0) {
+									target.append('<div class="drop-zone"><span>&nbsp;</span></div>');
+								}
+							} else {
+								target.addClass("drop-selected");
+							}
+							
 							if (dropLayer.offset.top < 0) {
 								dropLayer.css("top", "" + target.offset().top
 										+ "px");
 								dropLayer.css("left", "" + target.offset().left
 										+ "px");
 							}
-							dropLayer.animate({
+							jQuery("#preview-layer").addClass("drop-up");
+							/*dropLayer.animate({
 								"top" : target.offset().top,
 								"left" : target.offset().left,
-								"width" : target.width(),
-								"height" : target.height()
-							}, 50);
-							layer.animate({
+								"width" : target.outerWidth(),
+								"height" : target.outerHeight()
+							}, 50);*/
+							/*layer.animate({
 								"width" : target.parent().width()
-							}, 150);
+							}, 150);*/
+						},
+						out : function(event,ui) {
+							jQuery(this).find(".drop-zone").remove();
+							jQuery(this).removeClass("drop-selected");
+							jQuery("#preview-layer").removeClass("drop-up");
 						}
 					});
 
@@ -234,6 +261,9 @@ initPreview = function() {
 				jQuery("#preview-delete-zone").removeClass("hidden");
 				jQuery("#preview_command .pc_body").addClass("hidden");
 			}
+			if (jQuery(this).height() < 40) {			
+				jQuery(this).height(40);
+			};
 		},
 		stop : function(event, ui) {	
 			var dropLayer = jQuery("#droppable-layer");

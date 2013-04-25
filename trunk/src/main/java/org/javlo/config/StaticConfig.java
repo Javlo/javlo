@@ -1200,7 +1200,7 @@ public class StaticConfig extends Observable {
 	}
 
 	public boolean isFixPreview() {
-		return properties.getBoolean("fix-preview", false);
+		return properties.getBoolean("fix-preview", true);
 	}
 
 }

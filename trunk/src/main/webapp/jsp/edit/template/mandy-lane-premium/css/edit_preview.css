@@ -132,7 +132,8 @@
 	display: block;
 }
 
-/***NOTIFICATION MESSAGES (login.html, dashboard.html)***/
+/** NOTIFICATION MESSAGES (login.html, dashboard.html) **/
+
 #preview_command .message {
 	padding: 5px 5px 5px 15px;
 	margin: 0 0 4px 0;
@@ -162,4 +163,37 @@
 #preview_command .msgerror {
 	border: 1px solid #e18b7c;
 	background: #fad5cf url(../images/icons/error.png) no-repeat 10px center;
+}
+
+.free-edit-zone.droppable span, .drop-zone span {
+	height: 40px;
+	background-image: url('../images/icons/droppable.png');
+	background-position: center center;
+	background-repeat: no-repeat;
+}
+
+.drop-zone span, .free-edit-zone.drop-selected span {
+	background-image: url('../images/icons/drop.png');
+}
+
+#preview-layer.ui-draggable-dragging {
+	border: 4px #777777 solid;
+	height: 40px;
+	width: 40px;
+	display: block;
+	background-image: url('../images/icons/box_close.png');
+	background-position: center center;
+	background-repeat: no-repeat;
+}
+
+#preview-layer.ui-draggable-dragging.drop-up {
+	background-image: url('../images/icons/box_open.png');
+}
+
+#preview-layer.ui-draggable-dragging {
+	border-color: 4px #777777 solid;
+}
+
+#preview-layer span {
+	background-color: #777777;
 }
