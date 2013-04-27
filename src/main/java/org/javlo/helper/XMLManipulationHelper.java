@@ -547,7 +547,7 @@ public class XMLManipulationHelper {
 						if (content.indexOf(HEADER_ZONE) > 0) {
 							remplacement.addReplacement(content.indexOf(HEADER_ZONE), content.indexOf(HEADER_ZONE) + HEADER_ZONE.length(), getHTMLPrefixHead());
 						} else {
-							remplacement.addReplacement(tags[i].getCloseStart(), tags[i].getCloseStart(), getHTMLPrefixHead());
+							remplacement.addReplacement(tags[i].getOpenEnd() + 1, tags[i].getOpenEnd() + 1, getHTMLPrefixHead());
 						}
 
 						/** template plugin **/
@@ -852,7 +852,7 @@ public class XMLManipulationHelper {
 
 		out.append("<%if (ctx.isInteractiveMode()) {%>");
 		out.newLine();
-		out.append("<%=XHTMLHelper.renderHeaderResourceInsertion(ctx, \"/js/lib/jquery-1.9.1.min\")%>");
+		out.append("<%=XHTMLHelper.renderHeaderResourceInsertion(ctx, \"/js/lib/jquery-1.8.3.min.js\")%>");
 		out.newLine();
 		out.append("<%=XHTMLHelper.renderHeaderResourceInsertion(ctx, \"/js/lib/jquery-ui-1.9.2.custom.min.js\")%>");
 		out.newLine();
