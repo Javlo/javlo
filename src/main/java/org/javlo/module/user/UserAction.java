@@ -1,7 +1,9 @@
 package org.javlo.module.user;
 
 import java.io.IOException;
+import java.io.InputStream;
 import java.lang.reflect.InvocationTargetException;
+import java.nio.charset.Charset;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.HashSet;
@@ -14,12 +16,15 @@ import java.util.logging.Logger;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 
+import org.apache.commons.fileupload.FileItem;
 import org.javlo.actions.AbstractModuleAction;
 import org.javlo.config.StaticConfig;
 import org.javlo.context.ContentContext;
 import org.javlo.context.GlobalContext;
 import org.javlo.helper.BeanHelper;
+import org.javlo.helper.JavaHelper;
 import org.javlo.helper.RequestParameterMap;
+import org.javlo.helper.ResourceHelper;
 import org.javlo.helper.StringHelper;
 import org.javlo.helper.URLHelper;
 import org.javlo.i18n.I18nAccess;
@@ -35,6 +40,7 @@ import org.javlo.user.IUserInfo;
 import org.javlo.user.User;
 import org.javlo.user.UserFactory;
 import org.javlo.user.exception.UserAllreadyExistException;
+import org.javlo.utils.CSVFactory;
 
 public class UserAction extends AbstractModuleAction {
 
@@ -85,6 +91,10 @@ public class UserAction extends AbstractModuleAction {
 			List<String> roles = new LinkedList<String>(userFactory.getAllRoles(globalContext, ctx.getRequest().getSession()));
 			Collections.sort(roles);
 			ctx.getRequest().setAttribute("roles", roles);
+		}
+
+		if (userContext.getMode().equals(UserModuleContext.ADMIN_USERS_LIST)) {
+			ctx.getRequest().setAttribute("admin", "true");
 		}
 
 		if (!userContext.getMode().equals(UserModuleContext.VIEW_MY_SELF)) {
@@ -313,4 +323,81 @@ public class UserAction extends AbstractModuleAction {
 		return null;
 	}
 
+	public static String performUpload(RequestService rs, HttpSession session, User user, ContentContext ctx, GlobalContext globalContext, MessageRepository messageRepository, I18nAccess i18nAccess) throws IOException {
+
+		if (!AdminUserSecurity.getInstance().haveRight(user, AdminUserSecurity.USER_ROLE)) {
+			return "security error.";
+		}
+
+		boolean admin = StringHelper.isTrue(rs.getParameter("admin", null));
+		IUserFactory userFact;
+		if (admin) {
+			userFact = AdminUserFactory.createUserFactory(globalContext, session);
+		} else {
+			userFact = UserFactory.createUserFactory(globalContext, session);
+		}
+
+		Collection<FileItem> fileItems = rs.getAllFileItem();
+		String msg = null;
+		for (FileItem item : fileItems) {
+			if (item.getFieldName().trim().length() > 1) {
+
+				Charset charset = Charset.forName(ContentContext.CHARACTER_ENCODING);
+				if (StringHelper.getFileExtension(item.getName()).equals("txt")) { // hack
+					charset = Charset.forName("utf-16");
+				}
+
+				InputStream in = item.getInputStream();
+				if (in == null) {
+					return null;
+				}
+				CSVFactory csvFact;
+				try {
+					csvFact = new CSVFactory(in, null, charset);
+				} finally {
+					ResourceHelper.closeResource(in);
+				}
+				String[][] usersArrays = csvFact.getArray();
+				if (usersArrays.length < 2) {
+					msg = i18nAccess.getText("global.message.file-format-error");
+					MessageRepository.getInstance(ctx).setGlobalMessage(new GenericMessage(msg, GenericMessage.ERROR));
+					return null;
+				} else {
+					if (usersArrays[1].length < 5) {
+						msg = i18nAccess.getText("global.message.file-format-error");
+						MessageRepository.getInstance(ctx).setGlobalMessage(new GenericMessage(msg, GenericMessage.ERROR));
+						return null;
+					}
+				}
+
+				Collection<IUserInfo> userInfoList = new LinkedList<IUserInfo>();
+				for (int i = 1; i < usersArrays.length; i++) {
+					IUserInfo userInfo = userFact.createUserInfos();
+					String[] labels = usersArrays[0];
+					try {
+						BeanHelper.copy(JavaHelper.createMap(labels, usersArrays[i]), userInfo);
+						userInfoList.add(userInfo);
+					} catch (Exception e) {
+						logger.warning("error on : " + userInfo.getLogin() + " : " + e.getMessage());
+					}
+				}
+
+				if (userInfoList.size() > 0) {
+					userFact.clearUserInfoList();
+					for (Object element2 : userInfoList) {
+						IUserInfo element = (IUserInfo) element2;
+						try {
+							userFact.addUserInfo(element);
+						} catch (UserAllreadyExistException e) {
+							logger.warning("error on : " + element.getLogin() + " : " + e.getMessage());
+						}
+					}
+					userFact.store();
+				}
+
+			}
+		}
+
+		return msg;
+	}
 }

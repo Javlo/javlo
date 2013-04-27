@@ -3,6 +3,8 @@
 <c:if test="${not empty CSVLink}">
 	<div class="link"><a href="${CSVLink}">${CSVName}</a></div>
 </c:if>
+<div class="link"><a class="popup" href="${info.absoluteURLPrefix}${currentModule.path}/jsp/upload.jsp?admin=${admin}&currentURL=${info.currentURL}" title="${i18n.edit['edit.action.upload']}"><span>${i18n.edit['edit.action.upload']}</span></a></div>
+
 <div class="special">
 <form class="form_default" id="form-add-user" action="${info.currentURL}" method="post">
 <div>
