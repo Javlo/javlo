@@ -146,7 +146,7 @@ public class TemplateAction extends AbstractModuleAction {
 				fileModuleContext.setTitle("<a href=\"" + URLHelper.createModuleURL(ctx, ctx.getPath(), TemplateContext.NAME, params) + "\">" + template.getId() + "</a>");
 
 				if (requestService.getParameter("filter", null) != null && requestService.getParameter("back", null) == null) {
-
+ 
 					ImageConfig imageConfig = ImageConfig.getNewInstance(globalContext, ctx.getRequest().getSession(), template);
 					ImageConfig parentImageConfig = ImageConfig.getNewInstance(globalContext, ctx.getRequest().getSession(), template.getParent());
 					ctx.getRequest().setAttribute("filters", imageConfig.getFilters());

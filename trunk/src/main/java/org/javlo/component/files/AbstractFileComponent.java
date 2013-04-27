@@ -605,6 +605,7 @@ public abstract class AbstractFileComponent extends AbstractVisualComponent impl
 					MessageRepository messageRepository = MessageRepository.getInstance(ctx);
 					messageRepository.setGlobalMessage(new GenericMessage(i18nAccess.getText("content.file.info.create-dir", new String[][] { { "group", newDir } }), GenericMessage.INFO));
 					selectedDir = newDir;
+					setModify();
 					setNeedRefresh(true);
 				}
 			} else {
