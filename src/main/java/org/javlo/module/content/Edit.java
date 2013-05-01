@@ -718,21 +718,23 @@ public class Edit extends AbstractModuleAction {
 		for (String compId : components) {
 			IContentVisualComponent elem = content.getComponent(ctx, compId);
 			if (elem != null && StringHelper.isTrue(requestService.getParameter("id-" + elem.getId(), null))) {
-				elem.performConfig(ctx);
-				elem.performEdit(ctx);
-				if (ctx.isEditPreview()) {
-					componentContext.addNewComponent(elem);
-				}
-				if (!elem.isModify()) { // if elem not modified check modification via rawvalue
-					String rawValue = requestService.getParameter("raw_value_" + elem.getId(), null);
-					if (rawValue != null && !rawValue.equals(elem.getValue(ctx))) {
-						logger.info("raw value modification for " + elem.getType());
-						elem.setValue(rawValue);
-						elem.setNeedRefresh(true);
+				if (!globalContext.isOnlyCreatorModify() || elem.getAuthors().equals(ctx.getCurrentEditUser().getLogin())) {
+					elem.performConfig(ctx);
+					elem.performEdit(ctx);
+					if (ctx.isEditPreview()) {
+						componentContext.addNewComponent(elem);
 					}
-				}
-				if (elem.isNeedRefresh() && ctx.isAjax()) {
-					updateComponent(ctx, currentModule, elem.getId(), null);
+					if (!elem.isModify()) { // if elem not modified check modification via rawvalue
+						String rawValue = requestService.getParameter("raw_value_" + elem.getId(), null);
+						if (rawValue != null && !rawValue.equals(elem.getValue(ctx))) {
+							logger.info("raw value modification for " + elem.getType());
+							elem.setValue(rawValue);
+							elem.setNeedRefresh(true);
+						}
+					}
+					if (elem.isNeedRefresh() && ctx.isAjax()) {
+						updateComponent(ctx, currentModule, elem.getId(), null);
+					}
 				}
 			}
 

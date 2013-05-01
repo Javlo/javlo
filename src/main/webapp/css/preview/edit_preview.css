@@ -531,13 +531,15 @@ fieldset.closable .closable_action.close {
 	height: 16px;
 }
 
-#preview_command .pc_command .pc_form_line input {
+#preview_command .pc_command .pc_form_line input, #preview_command .pc_command .pc_form_line input:hover {
 	#text-indent: -10000px; /* remove text on firefox */
 	font-size: 0px;
 	border: 0 none;
 	background-repeat: none;
 	width: 16px;
 	height: 16px;
+	background-repeat : no-repeat;
+	background-position: center center;
 }
 
 #preview_command .pc_command #pc_edit_button {
@@ -731,12 +733,14 @@ fieldset.closable .closable_action.close {
 }
 
 #preview-layer.ui-draggable-dragging {
-	border: 4px #E3364A solid;
-	opacity: .30;
-	-ms-filter: "progid:DXImageTransform.Microsoft.Alpha(Opacity=30)";
-    filter: alpha(opacity=30);
-    -khtml-opacity: 0.30;
-    -moz-opacity: 0.30;
+	/*border: 4px #E3364A solid;*/
+	width: 40px;
+	height: 40px;
+	opacity: .60;
+	-ms-filter: "progid:DXImageTransform.Microsoft.Alpha(Opacity=60)";
+    filter: alpha(opacity=60);
+    -khtml-opacity: 0.60;
+    -moz-opacity: 0.60;
 }
 
 #preview-layer.ui-draggable-dragging span {

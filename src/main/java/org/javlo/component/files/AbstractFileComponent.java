@@ -243,6 +243,9 @@ public abstract class AbstractFileComponent extends AbstractVisualComponent impl
 		int i = 0;
 		for (File dir : children) {
 			folders[i] = StringUtils.replace(dir.getAbsolutePath(), folder.getAbsolutePath(), "").replace('\\', '/');
+			if (folders[i].length() > 1 && folders[i].startsWith("/")) {
+				folders[i] = folders[i].substring(1);
+			}
 			i++;
 		}
 		return folders;

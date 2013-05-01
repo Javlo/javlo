@@ -28,9 +28,9 @@ jQuery(document).ready(
 								jQuery(this).data("subItem"));
 						return true;
 					});
-			jQuery("#pc_change_template").click(function() {
+			jQuery(".preview-edit").click(function() {
 				var elems = jQuery(this);
-				var editURL = jQuery("#change_template_form").attr("action");
+				var editURL = elems.attr("action");
 				var param = "";
 				jQuery.colorbox({
 					href : editURL + param,
