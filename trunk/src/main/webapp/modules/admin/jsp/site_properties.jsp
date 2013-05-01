@@ -215,6 +215,12 @@
 </div>
 
 <div class="one_half">
+
+<div class="line">		
+	<label for="only-creator-modify">${i18n.edit['admin.form.only-creator-modify']}</label>
+	<input type="checkbox" id="only-creator-modify" name="only-creator-modify" ${currentContext.onlyCreatorModify?'checked="checked"':""}" />
+</div>
+
 <div class="line">		
 	<label for="users-access">${i18n.edit['admin.form.users-access']}</label>
 	<textarea id="users-access" name="users-access">${currentContext.usersAccess}</textarea>	

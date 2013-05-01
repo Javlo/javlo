@@ -1597,6 +1597,14 @@ public class GlobalContext implements Serializable {
 	public boolean isOpenExternalLinkAsPopup() {
 		return properties.getBoolean("is-popup", false);
 	}
+	
+	/**
+	 * if return true only the creator of the component can modify it.
+	 * @return
+	 */
+	public boolean isOnlyCreatorModify() {
+		return properties.getBoolean("is-only-creator-modify", false);
+	}
 
 	public boolean isOpenExernalLinkAsPopup(String url) {
 		if (!isOpenExternalLinkAsPopup()) {
@@ -2226,6 +2234,11 @@ public class GlobalContext implements Serializable {
 		properties.setProperty("is-popup", ipPopup);
 		save();
 	}
+	
+	public void setOnlyCreatorModify(boolean creatorModif) {
+		properties.setProperty("is-only-creator-modify", creatorModif);
+		save();
+	}	
 
 	public void setOpenFileAsPopup(boolean ipPopup) {
 		properties.setProperty("is-popup-file", ipPopup);

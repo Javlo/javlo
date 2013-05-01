@@ -4,6 +4,7 @@ jQuery(document).ready(function(){
 	} else {
 		jQuery('.noclipboard').remove();
 	}
+	jQuery(".readonly input, .readonly textarea, .readonly select").attr("readonly", "readonly");
 });
 
 function loadWysiwyg(cssQuery) {

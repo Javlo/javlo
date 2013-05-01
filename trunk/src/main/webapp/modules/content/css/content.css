@@ -58,6 +58,17 @@ ul.menu {
 	box-shadow: inset 0 -2px 2px #dddddd;
 }
 
+.component-title .authors {
+	font-style: italic;
+}
+
+.readonly .component-title a {
+	padding-right: 20px;
+	background-image: url('../images/lock.png');
+	background-repeat: no-repeat;
+	background-position: right center;
+}
+
 .component.tabs ul { /* for place a not selectable title before jquery ui tabs */
 	position: static;
 }

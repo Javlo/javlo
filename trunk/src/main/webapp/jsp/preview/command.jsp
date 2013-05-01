@@ -47,7 +47,7 @@ editCtx.setRenderMode(ContentContext.EDIT_MODE);
 					</form>
 					<c:if test='${editPreview == "true"}'>
 					<c:if test="${!userInterface.light && !userInterface.contributor}">
-					<form id="change_template_form" action="<%=URLHelper.createURL(editCtx)%>?module=template&webaction=template.changeFromPreview&previewEdit=true" method="post">
+					<form class="preview-edit" id="change_template_form" action="<%=URLHelper.createURL(editCtx)%>?module=template&webaction=template.changeFromPreview&previewEdit=true" method="post">
 						<div class="pc_line">							
 							<input id="pc_change_template" type="submit" value="${i18n.edit['preview.label.choose-template']}" title="${i18n.edit['preview.label.choose-template']}" class="pc_edit_true" />
 						</div>
@@ -58,6 +58,11 @@ editCtx.setRenderMode(ContentContext.EDIT_MODE);
 							<input type="hidden" value="${info.pageID}" name="page"/>
 							<input type="hidden" value="edit.deletePage" name="webaction"/>
 							<input id="pc_del_page_button" type="submit" value="${i18n.edit['menu.delete']}" title="${i18n.edit['menu.delete']}" onclick="if (!confirm('${i18n.edit['menu.confirm-page']}')) return false;"/>
+						</div>
+					</form>
+					<form class="preview-edit" id="user_info" action="<%=URLHelper.createURL(editCtx)%>?module=users&webaction=user.ChangeMode&mode=myself&previewEdit=true" method="post">
+						<div class="pc_line">							
+							<input id="pc_user_info" type="submit" value="${i18n.edit['global.account-setting']}" title="${i18n.edit['global.account-setting']}" class="pc_edit_true" />
 						</div>
 					</form>					
 					</c:if>					

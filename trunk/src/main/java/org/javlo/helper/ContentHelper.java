@@ -10,9 +10,11 @@ import java.net.URL;
 import java.text.SimpleDateFormat;
 import java.util.Collection;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Locale;
+import java.util.Map;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipException;
 import java.util.zip.ZipInputStream;
@@ -120,12 +122,12 @@ public class ContentHelper {
 			 * String html = ResourceHelper.loadStringFromFile(new File("d:/trans/test_doc.htm")); List<ComponentBean> content = createContentWithHTML(html, "en"); for (ComponentBean componentBean : content) { System.out.println("**** " + componentBean.getType()); // TODO: remove debug trace System.out.println(componentBean.getValue()); // TODO: remove debug trace System.out.println(""); }
 			 */
 
-			List<ComponentBean> content = createContentFromODT(null, new FileInputStream(new File("d:/trans/test_doc.odt")), "test_doc.odt", "fr");
+			List<ComponentBean> content = createContentFromODT(null, new FileInputStream(new File("d:/trans/mep_test.odt")), "map_test.odt", "fr");
 			System.out.println("***** ContentHelper.main : imported : " + content.size()); // TODO: remove debug trace
 			for (ComponentBean componentBean : content) {
 				System.out.println("**** " + componentBean.getType()); // TODO: remove debug trace
-				System.out.println(componentBean.getValue()); // TODO: remove debug trace
-				System.out.println("");
+				//System.out.println(componentBean.getValue()); // TODO: remove debug trace
+				//System.out.println("");
 			}
 		} catch (Exception e) {
 			e.printStackTrace();
@@ -172,6 +174,14 @@ public class ContentHelper {
 				// Collection<NodeXML> nodes = root.searchChildren("//p|//h|//image");
 				Collection<NodeXML> nodes = root.searchChildren("//*");
 				String title = null;
+				Map<String,String> stylesTree = new HashMap<String, String>();
+				for (NodeXML node : nodes) {
+					if (node.getName().endsWith(":style")) {
+						if (node.getAttributeValue("style:parent-style-name") != null) {
+							stylesTree.put(node.getAttributeValue("style:name"), node.getAttributeValue("style:parent-style-name"));
+						}
+					}
+				}
 				for (NodeXML node : nodes) {
 					String value = StringHelper.removeTag(node.getContent()).trim();
 					ComponentBean bean = null;
@@ -186,8 +196,8 @@ public class ContentHelper {
 						}
 					}
 					if (value.length() > 0 || node.getName().endsWith(":image") || node.getName().endsWith(":list")) {
-						if (node.getName().endsWith(":h")) {
-							if (node.getAttributeValue("text:outline-level", "1").equals("1")) {
+						if (node.getName().endsWith(":h") || "title".equalsIgnoreCase(stylesTree.get(node.getAttributeValue("text:style-name")))) {
+							if (node.getAttributeValue("text:outline-level", "1").equals("1") || "title".equalsIgnoreCase(stylesTree.get(node.getAttributeValue("text:style-name")))) {
 								bean = new ComponentBean(Title.TYPE, value, lang);
 								title = value;
 							} else {
@@ -195,8 +205,13 @@ public class ContentHelper {
 								bean.setStyle(node.getAttributeValue("text:outline-level", "2"));
 							}
 						}
+						
+						if (node.getParent() != null && node.getParent().getAttributeValue("text:style-name","").equalsIgnoreCase("subtitle")) {
+							bean = new ComponentBean(SubTitle.TYPE, value, lang);
+							bean.setStyle(node.getAttributeValue("text:outline-level", "2"));						
+						}
 
-						if (node.getName().endsWith(":p") && !node.getParent().getName().endsWith(":list-item")) {
+						if (bean == null && node.getName().endsWith(":p") && !node.getParent().getName().endsWith(":list-item")) {
 							bean = new ComponentBean(Paragraph.TYPE, value, lang);
 						} else if (node.getName().endsWith(":list")) {
 							NodeXML parent = node.getParent();
