@@ -412,8 +412,8 @@ public class JavloELFinder extends ELFinder {
 						if (newFile.exists()) {
 							Collection<File> children = ResourceHelper.getAllFilesList(newFile);
 							for (File child : children) {
+								File oldChildren = new File(child.getAbsolutePath().replace(newFile.getAbsolutePath(), oldFile.getFile().getAbsolutePath()));
 								if (child.isFile()) {
-									File oldChildren = new File(child.getAbsolutePath().replace(newFile.getAbsolutePath(), oldFile.getFile().getAbsolutePath()));
 									try {
 										ResourceHelper.renameResource(dstFolder.getContentContext().getContextWithOtherRenderMode(ContentContext.EDIT_MODE), oldChildren, child);
 									} catch (Exception e) {
@@ -421,6 +421,7 @@ public class JavloELFinder extends ELFinder {
 										throw new IOException(e);
 									}
 								}
+								removeFiles.add(new JavloELFile(oldFile.getVolume(), oldChildren, oldFile));
 							}
 						}
 					} else {
@@ -432,6 +433,6 @@ public class JavloELFinder extends ELFinder {
 			}
 		}
 		apiResponse.put("added", printFiles(addedFiles));
-		apiResponse.put("removed", printFiles(removeFiles));
+		apiResponse.put("removed", printFilesHash(removeFiles));
 	}
 }
