@@ -382,4 +382,56 @@ public class JavloELFinder extends ELFinder {
 
 		return outOptions;
 	}
+
+	@Override
+	protected void pasteFiles(String srcHashFolder, String dstHashFolder, String[] files, boolean cut, Map<String, Object> apiResponse) throws IOException {
+		JavloELFile dstFolder = (JavloELFile) hashToFile(dstHashFolder);
+		List<ELFile> addedFiles = new LinkedList<ELFile>();
+		List<ELFile> removeFiles = new LinkedList<ELFile>();
+		for (String file : files) {
+			ELFile oldFile = hashToFile(file);
+			File newFile = new File(URLHelper.mergePath(dstFolder.getFile().getAbsolutePath(), oldFile.getFile().getName()));
+			if (!newFile.exists()) {
+				if (oldFile.getFile().isFile()) {
+					ELFile newELFile = createELFile(dstFolder, newFile);
+					ResourceHelper.writeFileToFile(oldFile.getFile(), newFile);
+					addedFiles.add(newELFile);
+					if (cut) {
+						oldFile.getFile().delete();
+						removeFiles.add(oldFile);
+						try {
+							ResourceHelper.renameResource(dstFolder.getContentContext().getContextWithOtherRenderMode(ContentContext.EDIT_MODE), oldFile.getFile(), newFile);
+						} catch (Exception e) {
+							e.printStackTrace();
+							throw new IOException(e);
+						}
+					}
+				} else {
+					if (cut) {
+						FileUtils.moveDirectory(oldFile.getFile(), newFile);
+						if (newFile.exists()) {
+							Collection<File> children = ResourceHelper.getAllFilesList(newFile);
+							for (File child : children) {
+								if (child.isFile()) {
+									File oldChildren = new File(child.getAbsolutePath().replace(newFile.getAbsolutePath(), oldFile.getFile().getAbsolutePath()));
+									try {
+										ResourceHelper.renameResource(dstFolder.getContentContext().getContextWithOtherRenderMode(ContentContext.EDIT_MODE), oldChildren, child);
+									} catch (Exception e) {
+										e.printStackTrace();
+										throw new IOException(e);
+									}
+								}
+							}
+						}
+					} else {
+						FileUtils.copyDirectory(oldFile.getFile(), newFile);
+					}
+					ELFile newELFile = createELFile(dstFolder, newFile);
+					addedFiles.add(newELFile);
+				}
+			}
+		}
+		apiResponse.put("added", printFiles(addedFiles));
+		apiResponse.put("removed", printFiles(removeFiles));
+	}
 }

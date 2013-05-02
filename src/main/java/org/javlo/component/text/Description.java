@@ -109,11 +109,12 @@ public class Description extends AbstractVisualComponent {
 	public boolean isRealContent(ContentContext ctx) {
 		return !isNotDisplayHTML(ctx) && getValue().length() > 0;
 	}
-	
+
 	@Override
-	public void initContent(ContentContext ctx) {
+	public boolean initContent(ContentContext ctx) {
 		setValue(LoremIpsumGenerator.getParagraph(40, false, true));
 		setModify();
+		return true;
 	}
 
 }

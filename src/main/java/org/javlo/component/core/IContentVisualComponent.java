@@ -685,9 +685,9 @@ public interface IContentVisualComponent {
 	 * init the content with a default value. sample : "lorem ipsum" for text component.
 	 * 
 	 * @param ctx
-	 * @return
+	 * @return true if content is create.
 	 * @throws Exception
 	 */
-	public void initContent(ContentContext ctx) throws Exception;
+	public boolean initContent(ContentContext ctx) throws Exception;
 
 }

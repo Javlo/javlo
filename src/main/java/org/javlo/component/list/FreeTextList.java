@@ -169,7 +169,7 @@ public class FreeTextList extends Paragraph {
 	}
 
 	@Override
-	public void initContent(ContentContext ctx) {
+	public boolean initContent(ContentContext ctx) {
 		super.initContent(ctx);
 		ByteArrayOutputStream outStream = new ByteArrayOutputStream();
 		PrintStream out = new PrintStream(outStream);
@@ -178,6 +178,7 @@ public class FreeTextList extends Paragraph {
 		}
 		out.close();
 		setValue(new String(outStream.toByteArray()));
+		return true;
 	}
 
 }

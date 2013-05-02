@@ -344,4 +344,9 @@ public class GenericQuiz extends SmartGenericForm {
 		}
 		return null;
 	}
+
+	@Override
+	public int getComplexityLevel() {
+		return COMPLEXITY_EASY;
+	}
 }

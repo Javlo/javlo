@@ -55,9 +55,10 @@ public class WysiwygParagraph extends AbstractVisualComponent {
 	}
 
 	@Override
-	public void initContent(ContentContext ctx) {
+	public boolean initContent(ContentContext ctx) {
 		setValue(LoremIpsumGenerator.getParagraph(120, false, true));
 		setModify();
+		return true;
 	}
 
 }

@@ -1534,7 +1534,7 @@ public class PageReferenceComponent extends ComplexPropertiesLink implements IAc
 	}
 
 	@Override
-	public void initContent(ContentContext ctx) throws Exception {
+	public boolean initContent(ContentContext ctx) throws Exception {
 		super.initContent(ctx);
 		ByteArrayOutputStream outStream = new ByteArrayOutputStream();
 		PrintStream out = new PrintStream(outStream);
@@ -1543,6 +1543,6 @@ public class PageReferenceComponent extends ComplexPropertiesLink implements IAc
 		out.println("is-def-selected=true");
 		out.close();
 		setValue(new String(outStream.toByteArray()));
-
+		return true;
 	}
 }

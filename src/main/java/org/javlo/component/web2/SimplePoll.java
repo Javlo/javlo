@@ -426,7 +426,7 @@ public class SimplePoll extends AbstractVisualComponent implements IAction {
 	}
 
 	@Override
-	public void initContent(ContentContext ctx) throws Exception {
+	public boolean initContent(ContentContext ctx) throws Exception {
 		super.initContent(ctx);
 		ByteArrayOutputStream outStream = new ByteArrayOutputStream();
 		PrintStream out = new PrintStream(outStream);
@@ -435,6 +435,7 @@ public class SimplePoll extends AbstractVisualComponent implements IAction {
 		out.println("question 3");
 		out.close();
 		setValue("Question#" + new String(outStream.toByteArray()));
+		return true;
 	}
 
 	@Override

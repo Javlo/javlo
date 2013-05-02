@@ -122,7 +122,7 @@ public abstract class ELFinder {
 		open(true, currentFile, true, apiResponse);
 	}
 
-	private void pasteFiles(String srcHashFolder, String dstHashFolder, String[] files, boolean cut, Map<String, Object> apiResponse) throws IOException {
+	protected void pasteFiles(String srcHashFolder, String dstHashFolder, String[] files, boolean cut, Map<String, Object> apiResponse) throws IOException {
 		ELFile dstFolder = hashToFile(dstHashFolder);
 		List<ELFile> addedFiles = new LinkedList<ELFile>();
 		List<ELFile> removeFiles = new LinkedList<ELFile>();
@@ -130,7 +130,7 @@ public abstract class ELFinder {
 			ELFile oldFile = hashToFile(file);
 			File newFile = new File(URLHelper.mergePath(dstFolder.getFile().getAbsolutePath(), oldFile.getFile().getName()));
 			if (!newFile.exists()) {
-				if (newFile.isFile()) {
+				if (oldFile.getFile().isFile()) {
 					ELFile newELFile = createELFile(dstFolder, newFile);
 					ResourceHelper.writeFileToFile(oldFile.getFile(), newFile);
 					addedFiles.add(newELFile);
