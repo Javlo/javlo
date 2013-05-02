@@ -689,18 +689,17 @@ public abstract class AbstractFileComponent extends AbstractVisualComponent impl
 
 	@Override
 	public boolean renameResource(ContentContext ctx, File oldName, File newName) {
+
 		if (oldName.equals(newName)) {
 			return false;
 		}
-		String currentFile = ElementaryURLHelper.mergePath(getFileDirectory(ctx), getDirSelected());
-		currentFile = ElementaryURLHelper.mergePath(currentFile, getFileName());
+		String currentFile = URLHelper.mergePath(getFileDirectory(ctx), getDirSelected(), getFileName());
+
 		File file = new File(currentFile);
-		if (file.equals(oldName)) {
-			String relativeNewFileDir = newName.getParentFile().getAbsolutePath().replace(getFileDirectory(ctx), "");
-			if (relativeNewFileDir.length() == newName.getParentFile().getAbsolutePath().length()) {
-				return false;
-			}
+		if (file.getAbsolutePath().replace('\\', '/').equals(oldName.getAbsolutePath().replace('\\', '/'))) {
+			String relativeNewFileDir = newName.getParentFile().getAbsolutePath().replace('\\', '/').replace(getFileDirectory(ctx).replace('\\', '/'), "");
 			setFileName(newName.getName());
+
 			setDirSelected(relativeNewFileDir);
 			setModify();
 			storeProperties();

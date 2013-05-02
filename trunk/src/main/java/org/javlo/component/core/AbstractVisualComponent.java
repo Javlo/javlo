@@ -1737,7 +1737,8 @@ public abstract class AbstractVisualComponent implements IContentVisualComponent
 	}
 
 	@Override
-	public void initContent(ContentContext ctx) throws Exception {
+	public boolean initContent(ContentContext ctx) throws Exception {
+		return false;
 	}
 
 	// generate compilation error : use for refactoring

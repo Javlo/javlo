@@ -452,12 +452,21 @@ public class Image extends AbstractFileComponent implements IImageTitle, IPrevie
 	}
 
 	@Override
-	public void initContent(ContentContext ctx) throws Exception {
+	public boolean initContent(ContentContext ctx) throws Exception {
 		super.initContent(ctx);
-		setDirSelected("");
-		setFileName("default.jpg");
-		storeProperties();
-		setStyle(ctx,STYLE_CENTER);
-		setModify();
+
+		String defaultFileName = "default.jpg";
+		File defaultFile = new File(URLHelper.mergePath(getFileDirectory(ctx), defaultFileName));
+
+		if (defaultFile.exists()) {
+			setDirSelected("");
+			setFileName("default.jpg");
+			storeProperties();
+			setStyle(ctx, STYLE_CENTER);
+			setModify();
+			return true;
+		} else {
+			return false;
+		}
 	}
 }

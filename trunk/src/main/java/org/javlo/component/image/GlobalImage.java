@@ -777,12 +777,16 @@ public class GlobalImage extends Image {
 	}
 
 	@Override
-	public void initContent(ContentContext ctx) throws Exception {
-		if (ctx.getCurrentTemplate().getImageFilters().contains("full")) {
-			setFilter("full");
-		} else if (ctx.getCurrentTemplate().getImageFilters().size() > 0) {
-			setFilter(ctx.getCurrentTemplate().getImageFilters().iterator().next());
+	public boolean initContent(ContentContext ctx) throws Exception {
+		if (super.initContent(ctx)) {
+			if (ctx.getCurrentTemplate().getImageFilters().contains("full")) {
+				setFilter("full");
+			} else if (ctx.getCurrentTemplate().getImageFilters().size() > 0) {
+				setFilter(ctx.getCurrentTemplate().getImageFilters().iterator().next());
+			}
+			return true;
+		} else {
+			return false;
 		}
-		super.initContent(ctx);
 	}
 }
