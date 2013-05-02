@@ -19,7 +19,6 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import org.apache.commons.fileupload.FileItem;
-import org.apache.commons.io.FileUtils;
 import org.javlo.helper.ResourceHelper;
 import org.javlo.helper.StringHelper;
 import org.javlo.helper.URLHelper;
@@ -122,32 +121,11 @@ public abstract class ELFinder {
 		open(true, currentFile, true, apiResponse);
 	}
 
-	protected void pasteFiles(String srcHashFolder, String dstHashFolder, String[] files, boolean cut, Map<String, Object> apiResponse) throws IOException {
-		ELFile dstFolder = hashToFile(dstHashFolder);
-		List<ELFile> addedFiles = new LinkedList<ELFile>();
-		List<ELFile> removeFiles = new LinkedList<ELFile>();
-		for (String file : files) {
-			ELFile oldFile = hashToFile(file);
-			File newFile = new File(URLHelper.mergePath(dstFolder.getFile().getAbsolutePath(), oldFile.getFile().getName()));
-			if (!newFile.exists()) {
-				if (oldFile.getFile().isFile()) {
-					ELFile newELFile = createELFile(dstFolder, newFile);
-					ResourceHelper.writeFileToFile(oldFile.getFile(), newFile);
-					addedFiles.add(newELFile);
-					if (cut) {
-						oldFile.getFile().delete();
-						removeFiles.add(oldFile);
-					}
-				} else {
-					FileUtils.moveDirectory(oldFile.getFile(), newFile);
-					ELFile newELFile = createELFile(dstFolder, newFile);
-					addedFiles.add(newELFile);
-				}
-			}
-		}
-		apiResponse.put("added", printFiles(addedFiles));
-		apiResponse.put("removed", printFiles(removeFiles));
-	}
+	protected abstract void pasteFiles(String srcHashFolder, String dstHashFolder, String[] files, boolean cut, Map<String, Object> apiResponse) throws IOException;
+
+	/*
+	 * ELFile dstFolder = hashToFile(dstHashFolder); List<ELFile> addedFiles = new LinkedList<ELFile>(); List<ELFile> removeFiles = new LinkedList<ELFile>(); for (String file : files) { ELFile oldFile = hashToFile(file); File newFile = new File(URLHelper.mergePath(dstFolder.getFile().getAbsolutePath(), oldFile.getFile().getName())); if (!newFile.exists()) { if (oldFile.getFile().isFile()) { ELFile newELFile = createELFile(dstFolder, newFile); ResourceHelper.writeFileToFile(oldFile.getFile(), newFile); addedFiles.add(newELFile); if (cut) { oldFile.getFile().delete(); removeFiles.add(oldFile); } } else { FileUtils.moveDirectory(oldFile.getFile(), newFile); ELFile newELFile = createELFile(dstFolder, newFile); addedFiles.add(newELFile); } } } apiResponse.put("added", printFiles(addedFiles)); apiResponse.put("removed", printFiles(removeFiles)); }
+	 */
 
 	protected abstract ELFile createELFile(ELFile parent, File file);
 
