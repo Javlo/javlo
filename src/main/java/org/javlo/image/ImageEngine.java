@@ -1,6 +1,7 @@
 package org.javlo.image;
 
 import java.awt.Color;
+import java.awt.Graphics2D;
 import java.awt.geom.AffineTransform;
 import java.awt.image.AffineTransformOp;
 import java.awt.image.BufferedImage;
@@ -888,27 +889,89 @@ public class ImageEngine {
 	}
 
 	/**
+	 * rotate the image with angle in degree. note than result can be bigger than source.
+	 * 
+	 * @param image
+	 * @param angle
+	 * @return
+	 */
+	public static BufferedImage rotate(BufferedImage image, int angle, Color bg) {
+
+		int targetType = image.getType();
+		if (bg != null) {
+			targetType = BufferedImage.TYPE_3BYTE_BGR;
+		}
+
+		double radAngle = Math.toRadians(angle);
+		double cos = Math.cos(radAngle);
+		double sin = Math.sin(radAngle);
+		int newWidth = (int) Math.round(Math.abs(image.getWidth() * cos) + Math.abs(image.getHeight() * sin));
+		int newHeight = (int) Math.round(Math.abs(image.getWidth() * sin) + Math.abs(image.getHeight() * cos));
+
+		int maxBorder = Math.max(image.getHeight(), image.getWidth());
+
+		BufferedImage outImage = new BufferedImage(maxBorder * 2, maxBorder * 2, targetType);
+
+		Graphics2D graphics = outImage.createGraphics();
+		if (bg != null) {
+			graphics.setColor(bg);
+			graphics.fillRect(0, 0, outImage.getWidth(), outImage.getHeight());
+		}
+
+		BufferedImage workImage = new BufferedImage(maxBorder * 2, maxBorder * 2, targetType);
+
+		Graphics2D wgr = workImage.createGraphics();
+		wgr.drawImage(image, workImage.getWidth() / 2 - image.getWidth() / 2, workImage.getHeight() / 2 - image.getHeight() / 2, null);
+
+		// Rotation information
+		AffineTransform tx = AffineTransform.getRotateInstance(radAngle, maxBorder, maxBorder);
+		AffineTransformOp op = new AffineTransformOp(tx, AffineTransformOp.TYPE_BILINEAR);
+
+		// Drawing the rotated image at the required drawing locations
+		graphics.drawImage(op.filter(workImage, null), 0, 0, null);
+
+		/*
+		 * graphics.setColor(Color.BLACK); graphics.drawLine(0, maxBorder, maxBorder * 2, maxBorder); graphics.drawLine(maxBorder, 0, maxBorder, maxBorder * 2);
+		 */
+
+		int startX = (outImage.getWidth() - newWidth) / 2;
+		int startY = (outImage.getHeight() - newHeight) / 2;
+
+		/*
+		 * graphics.setColor(Color.BLUE); graphics.drawRect(startX, startY, newWidth, newHeight);
+		 */
+
+		/*
+		 * try { ImageIO.write(outImage, "png", new File("d:/trans/no_crop.png")); ImageIO.write(workImage, "png", new File("d:/trans/work_image.png")); } catch (IOException e) { // TODO Auto-generated catch block e.printStackTrace(); }
+		 */
+
+		return outImage.getSubimage(startX, startY, newWidth, newHeight);
+	}
+
+	/**
 	 * @param args
 	 */
 	public static void main(String[] args) {
-		File source = new File("d:/trans/test.jpg");
+		File source = new File("d:/trans/4.jpg");
 		File target = new File("d:/trans/target.jpg");
 
 		try {
 			System.out.println("start...");
-			BufferedImage image = ImageIO.read(source);
-			image = cropImage(image, 100, 100, 100, 100);
+			BufferedImage sourceImage = ImageIO.read(source);
+			for (int a = 360; a < 360 * 2; a++) {
+				BufferedImage image = rotate(sourceImage, a, null);
+				ImageIO.write(image, "jpg", new File("d:/trans/rotate/target_" + a + ".jpg"));
+				System.gc();
+			}
 			// image = lightBlurring(image);
 			// image = blurring(image);
 			// image = applyFilter(image,filterImage, true, 50,50,50,50,null);
 			// image = drawBorderCorner (image, Math.min(image.getHeight(),
 			// image.getWidth())/4, Color.RED, 50);
 
-			ImageIO.write(image, "png", target);
 			System.out.println("end.");
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
 	}
-
 }

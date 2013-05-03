@@ -76,9 +76,10 @@ public abstract class ELFinder {
 				String target = rs.getParameter("target", null);
 				int height = Integer.parseInt(rs.getParameter("height", "-1"));
 				int width = Integer.parseInt(rs.getParameter("width", "-1"));
+				int degree = Integer.parseInt(rs.getParameter("degree", "0"));
 				int x = Integer.parseInt(rs.getParameter("x", "-1"));
 				int y = Integer.parseInt(rs.getParameter("y", "-1"));
-				transformFile(target, mode, width, height, x, y, apiResponse);
+				transformFile(target, mode, width, height, x, y, degree, apiResponse);
 			} else if ("paste".equals(command)) {
 				pasteFiles(rs.getParameter("src", null), rs.getParameter("dst", null), rs.getParameterValues("targets[]", null), StringHelper.isTrue(rs.getParameter("cut", "false")), apiResponse);
 			}
@@ -139,7 +140,7 @@ public abstract class ELFinder {
 
 	protected abstract void duplicateFile(String[] filesHash, Map<String, Object> apiResponse) throws IOException;
 
-	protected void transformFile(String fileHash, String mode, int width, int height, int x, int y, Map<String, Object> apiResponse) throws Exception {
+	protected void transformFile(String fileHash, String mode, int width, int height, int x, int y, int degree, Map<String, Object> apiResponse) throws Exception {
 		ELFile file = hashToFile(fileHash);
 		if (file.getFile().exists()) {
 			if ("resize".equals(mode)) {
@@ -150,6 +151,11 @@ public abstract class ELFinder {
 			} else if ("crop".equals(mode)) {
 				BufferedImage img = ImageEngine.loadImage(file.getFile());
 				img = ImageEngine.cropImage(img, width, height, x, y);
+				ImageEngine.storeImage(img, file.getFile());
+				apiResponse.put("changed", printFiles(Arrays.asList(new ELFile[] { file })));
+			} else if ("rotate".equals(mode)) {
+				BufferedImage img = ImageEngine.loadImage(file.getFile());
+				img = ImageEngine.rotate(img, degree, null);
 				ImageEngine.storeImage(img, file.getFile());
 				apiResponse.put("changed", printFiles(Arrays.asList(new ELFile[] { file })));
 			}
