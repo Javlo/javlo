@@ -930,20 +930,8 @@ public class ImageEngine {
 		// Drawing the rotated image at the required drawing locations
 		graphics.drawImage(op.filter(workImage, null), 0, 0, null);
 
-		/*
-		 * graphics.setColor(Color.BLACK); graphics.drawLine(0, maxBorder, maxBorder * 2, maxBorder); graphics.drawLine(maxBorder, 0, maxBorder, maxBorder * 2);
-		 */
-
 		int startX = (outImage.getWidth() - newWidth) / 2;
 		int startY = (outImage.getHeight() - newHeight) / 2;
-
-		/*
-		 * graphics.setColor(Color.BLUE); graphics.drawRect(startX, startY, newWidth, newHeight);
-		 */
-
-		/*
-		 * try { ImageIO.write(outImage, "png", new File("d:/trans/no_crop.png")); ImageIO.write(workImage, "png", new File("d:/trans/work_image.png")); } catch (IOException e) { // TODO Auto-generated catch block e.printStackTrace(); }
-		 */
 
 		return outImage.getSubimage(startX, startY, newWidth, newHeight);
 	}
