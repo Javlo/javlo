@@ -180,8 +180,8 @@ public class JavloELFinder extends ELFinder {
 	}
 
 	@Override
-	protected void transformFile(String fileHash, String mode, int width, int height, int x, int y, Map<String, Object> apiResponse) throws Exception {
-		super.transformFile(fileHash, mode, width, height, x, y, apiResponse);
+	protected void transformFile(String fileHash, String mode, int width, int height, int x, int y, int degree, Map<String, Object> apiResponse) throws Exception {
+		super.transformFile(fileHash, mode, width, height, x, y, degree, apiResponse);
 		JavloELFile file = (JavloELFile) hashToFile(fileHash);
 		if (file.getFile().exists()) {
 			StaticConfig staticConfig = StaticConfig.getInstance(application);
