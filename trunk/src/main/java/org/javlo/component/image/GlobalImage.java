@@ -399,7 +399,9 @@ public class GlobalImage extends Image {
 	}
 
 	private void setTitle(String title) {
-		properties.setProperty(TITLE, title);
+		if (title != null) {
+			properties.setProperty(TITLE, title);
+		}
 	}
 
 	private String getInputNameTitle() {

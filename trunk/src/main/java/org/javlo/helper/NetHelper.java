@@ -29,6 +29,9 @@ import org.javlo.service.resource.Resource;
 import org.javlo.utils.MapCollectionWrapper;
 import org.javlo.ztatic.FileCache;
 
+import com.google.gson.JsonElement;
+import com.google.gson.JsonParser;
+
 public class NetHelper {
 
 	/**
@@ -72,6 +75,48 @@ public class NetHelper {
 			URLConnection conn = url.openConnection();
 
 			if (conn instanceof HttpURLConnection) {
+				HttpURLConnection httpConn = (HttpURLConnection) conn;
+				httpConn.setInstanceFollowRedirects(true);
+				if (httpConn.getResponseCode() != HttpURLConnection.HTTP_OK && httpConn.getResponseCode() != HttpURLConnection.HTTP_MOVED_TEMP && httpConn.getResponseCode() != HttpURLConnection.HTTP_MOVED_PERM) {
+					logger.warning("help url '" + url + "' return error code : " + ((HttpURLConnection) conn).getResponseCode());
+					return null;
+				}
+
+				if (url.getProtocol().equalsIgnoreCase("http") || url.getProtocol().equalsIgnoreCase("https")) {
+					if (httpConn.getResponseCode() != HttpURLConnection.HTTP_OK && httpConn.getResponseCode() != HttpURLConnection.HTTP_MOVED_TEMP && httpConn.getResponseCode() != HttpURLConnection.HTTP_MOVED_PERM) {
+						return null;
+					}
+				}
+			}
+			in = conn.getInputStream();
+			ResourceHelper.writeStreamToStream(in, out);
+		} finally {
+			ResourceHelper.closeResource(in);
+		}
+		if (cssInline) {
+			return CSSParser.mergeCSS(new String(out.toByteArray(), ContentContext.CHARACTER_ENCODING));
+		} else {
+			return new String(out.toByteArray(), ContentContext.CHARACTER_ENCODING);
+		}
+	}
+
+	/**
+	 * read a page a put content in a String.
+	 * 
+	 * @param url
+	 *            a valid URL
+	 * @return code returned by the http request on the URL.
+	 * @throws IOException
+	 */
+	public static JsonElement readJson(URL url) throws Exception {
+
+		ByteArrayOutputStream out = new ByteArrayOutputStream();
+
+		InputStream in = null;
+		try {
+			URLConnection conn = url.openConnection();
+
+			if (conn instanceof HttpURLConnection) {
 				if (((HttpURLConnection) conn).getResponseCode() != HttpURLConnection.HTTP_OK) {
 					logger.warning("help url '" + url + "' return error code : " + ((HttpURLConnection) conn).getResponseCode());
 					return null;
@@ -88,11 +133,9 @@ public class NetHelper {
 		} finally {
 			ResourceHelper.closeResource(in);
 		}
-		if (cssInline) {
-			return CSSParser.mergeCSS(new String(out.toByteArray(), ContentContext.CHARACTER_ENCODING));
-		} else {
-			return new String(out.toByteArray(), ContentContext.CHARACTER_ENCODING);
-		}
+
+		JsonParser parser = new JsonParser();
+		return parser.parse(new String(out.toByteArray()));
 	}
 
 	public static Long readDate(URL url) throws Exception {
