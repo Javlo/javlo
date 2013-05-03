@@ -40,6 +40,8 @@ import org.javlo.service.ContentService;
 import org.javlo.service.RequestService;
 import org.javlo.service.resource.Resource;
 
+import com.google.gson.JsonElement;
+
 /**
  * @author pvandermaesen
  */
@@ -76,6 +78,8 @@ public class Video extends GlobalImage implements IAction, IVideo {
 	public static final String TYPE = "linked-video";
 
 	private static final String LINK = "link";
+
+	private static final CharSequence YOUTUBE_KEY = "youtu";
 
 	@Override
 	public Collection<Resource> getAllResources(ContentContext ctx) {
@@ -193,8 +197,10 @@ public class Video extends GlobalImage implements IAction, IVideo {
 
 	@Override
 	protected String getImageURL(ContentContext ctx) throws Exception {
-		if (getLink() != null && getLink().toLowerCase().contains("youtube")) {
+		if (getLink() != null && getLink().toLowerCase().contains(YOUTUBE_KEY)) {
 			return getYoutubePreview(ctx, getConfig(ctx).getProperty("image.filter", getDefaultFilter()));
+		} else if (getLink() != null && getLink().toLowerCase().contains("vimeo")) {
+			return getVimeoPreview(ctx, getConfig(ctx).getProperty("image.filter", getDefaultFilter()));
 		} else {
 			return super.getImageURL(ctx);
 		}
@@ -208,6 +214,9 @@ public class Video extends GlobalImage implements IAction, IVideo {
 
 	private String getYoutubePreview(ContentContext ctx, String filter) throws Exception {
 		String videoCode = URLHelper.extractParameterFromURL(getLink()).get("v");
+		if (videoCode == null) {
+			videoCode = URLHelper.extractFileName(getLink());
+		}
 
 		if (videoCode != null) {
 			GlobalContext globalContext = GlobalContext.getInstance(ctx.getRequest());
@@ -229,12 +238,37 @@ public class Video extends GlobalImage implements IAction, IVideo {
 		return null;
 	}
 
+	private String getVimeoPreview(ContentContext ctx, String filter) throws Exception {
+		String videoCode = URLHelper.extractFileName(getLink());
+
+		if (videoCode != null) {
+
+			GlobalContext globalContext = GlobalContext.getInstance(ctx.getRequest());
+			StaticConfig staticConfig = StaticConfig.getInstance(ctx.getRequest().getSession());
+			String fileName = "vo_" + videoCode.toLowerCase() + ".jpg";
+			File imageFile = new File(URLHelper.mergePath(globalContext.getDataFolder(), staticConfig.getImageFolder(), "vimeo", fileName));
+			if (!imageFile.getParentFile().exists()) {
+				imageFile.getParentFile().mkdirs();
+			}
+			if (!imageFile.exists()) {
+				JsonElement elem = NetHelper.readJson(new URL("http://vimeo.com/api/v2/video/" + videoCode + ".json"));
+				String imageURL = elem.getAsJsonArray().get(0).getAsJsonObject().get("thumbnail_large").getAsString();
+				imageFile.createNewFile();
+				FileOutputStream out = new FileOutputStream(imageFile);
+				NetHelper.readPage(new URL(imageURL), out);
+				ResourceHelper.closeResource(out);
+			}
+			return URLHelper.createTransformURL(ctx, URLHelper.mergePath(staticConfig.getImageFolder(), "vimeo", fileName), getConfig(ctx).getProperty("image.filter", "preview"));
+		}
+		return null;
+	}
+
 	@Override
 	public String getPreviewURL(ContentContext ctx) throws Exception {
 		if (getDecorationImage() != null && getDecorationImage().trim().length() > 1) {
 			String imageLink = getResourceURL(ctx, getDecorationImage());
 			return URLHelper.createTransformURL(ctx, imageLink, getConfig(ctx).getProperty("image.filter", "preview"));
-		} else if (getLink() != null && getLink().toLowerCase().contains("youtube")) {
+		} else if (getLink() != null && getLink().toLowerCase().contains(YOUTUBE_KEY)) {
 			try {
 				String previewYouTube = getYoutubePreview(ctx, null);
 				return previewYouTube;
@@ -363,7 +397,7 @@ public class Video extends GlobalImage implements IAction, IVideo {
 				ctx.getRequest().setAttribute("width", StringHelper.neverNull(width, getConfig(ctx).getProperty("local.width", "420")));
 				ctx.getRequest().setAttribute("height", StringHelper.neverNull(height, getConfig(ctx).getProperty("local.height", "315")));
 				return executeJSP(ctx, getConfig(ctx).getRenderes().get("local"));
-			} else if (link.toLowerCase().contains("youtube")) {
+			} else if (link.toLowerCase().contains(YOUTUBE_KEY)) {
 				String videoCode = URLHelper.extractParameterFromURL(link).get("v");
 				ctx.getRequest().setAttribute("vid", videoCode);
 				ctx.getRequest().setAttribute("url", "http://www.youtube.com/embed/" + videoCode);
@@ -386,6 +420,14 @@ public class Video extends GlobalImage implements IAction, IVideo {
 					ctx.getRequest().setAttribute("height", StringHelper.neverNull(height, getConfig(ctx).getProperty("europarltv.height", "315")));
 					return executeJSP(ctx, getConfig(ctx).getRenderes().get("europarltv"));
 				}
+			} else if (link.toLowerCase().contains("vimeo")) {
+				if (link.split("/").length > 1) {
+					String videoCode = link.split("/")[link.split("/").length - 1];
+					ctx.getRequest().setAttribute("vid", videoCode);
+					ctx.getRequest().setAttribute("width", StringHelper.neverNull(width, getConfig(ctx).getProperty("vimeo.width", "420")));
+					ctx.getRequest().setAttribute("height", StringHelper.neverNull(height, getConfig(ctx).getProperty("vimeo.height", "315")));
+					return executeJSP(ctx, getConfig(ctx).getRenderes().get("vimeo"));
+				}
 			}
 		}
 
@@ -394,7 +436,7 @@ public class Video extends GlobalImage implements IAction, IVideo {
 
 	@Override
 	protected boolean isLinkValid(String url) {
-		return url.contains("youtube.com") || url.contains("dailymotion.com") || url.contains("europarltv");
+		return url.contains(YOUTUBE_KEY) || url.contains("dailymotion.com") || url.contains("europarltv") || url.contains("vimeo");
 	}
 
 	@Override
@@ -476,8 +518,10 @@ public class Video extends GlobalImage implements IAction, IVideo {
 			if (decoImage != null && decoImage.trim().length() > 0) {
 				String imageLink = getResourceURL(ctx, getDecorationImage());
 				return URLHelper.createTransformURL(ctx, imageLink, filter);
-			} else if (getLink() != null && getLink().toLowerCase().contains("youtube")) {
+			} else if (getLink() != null && getLink().toLowerCase().contains(YOUTUBE_KEY)) {
 				return getYoutubePreview(ctx, null);
+			} else if (getLink() != null && getLink().toLowerCase().contains("vimeo")) {
+				return getVimeoPreview(ctx, null);
 			}
 		} catch (Exception e) {
 			logger.warning(e.getMessage());
