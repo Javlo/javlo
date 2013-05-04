@@ -3,8 +3,10 @@
 <c:choose>
 <c:when test="${url eq '#'}">
 <figure>
+<span class="nolink">
 <img src="${previewURL}" alt="${not empty label?label:description}" />
 <c:if test="${empty param.nolabel}"><figcaption>${not empty label?label:description}</figcaption></c:if>
+</span>
 </figure>
 </c:when>
 <c:otherwise>
