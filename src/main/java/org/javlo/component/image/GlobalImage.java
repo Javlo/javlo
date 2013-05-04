@@ -672,7 +672,7 @@ public class GlobalImage extends Image {
 		if (link != null) {
 			if (!link.equals(getLink())) {
 
-				if (!StringHelper.isURL(link)) {
+				if (!StringHelper.isURL(link) && !link.trim().equals("#")) {
 					MessageRepository.getInstance(ctx).setGlobalMessage(new GenericMessage("bad link.", GenericMessage.ALERT));
 				} else {
 					if (!isLinkValid(link)) {
