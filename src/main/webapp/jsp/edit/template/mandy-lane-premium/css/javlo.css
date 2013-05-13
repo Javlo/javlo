@@ -887,9 +887,8 @@ ul,li {
 	margin-left: 0;
 }
 
-.navigation .children .have-children a {
-	background: url("../images/icons/more.png") no-repeat scroll 0 11px
-		transparent;
+.navigation .children .have-children a:after {
+	content:"...";
 }
 
 .navigation .children .real-content a {

@@ -41,6 +41,16 @@ jQuery(document).ready(
 				});
 				return false;
 			});
+			
+			/////////// SORTABLE /////////////
+			jQuery(".sortable").sortable({
+				   placeholder: "sortable-target"
+				   ,stop: function(event, ui) {
+					   var url = jQuery("#form-add-page").attr("action");
+					   url=url+"?webaction=edit.movePage&page="+jQuery(ui.item).attr("id")+"&previous="+jQuery(ui.item).prev().attr("id");
+					   ajaxRequest(url);
+				   }
+			});
 		});
 
 layerOver = function(item, deletable) {	
