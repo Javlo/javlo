@@ -223,7 +223,7 @@ public class ContentService {
 
 	public String createContent(ContentContext ctx, ComponentBean inBean, String parentId, boolean releaseCache) throws Exception {
 		String id = StringHelper.getRandomId();
-		ComponentBean bean = new ComponentBean(id, inBean.getType(), inBean.getValue(), ctx.getContentLanguage(), false);
+		ComponentBean bean = new ComponentBean(id, inBean.getType(), inBean.getValue(), ctx.getRequestContentLanguage(), false);
 		bean.setList(inBean.isList());
 		bean.setStyle(inBean.getStyle());
 		bean.setArea(inBean.getArea());
@@ -232,6 +232,29 @@ public class ContentService {
 		bean.setModify(true);
 		MenuElement elem = ctx.getCurrentPage();
 		elem.addContent(parentId, bean, releaseCache);
+		return id;
+	}
+
+	public String createContentAtEnd(ContentContext ctx, ComponentBean inBean, boolean releaseCache) throws Exception {
+		String id = StringHelper.getRandomId();
+		ComponentBean bean = new ComponentBean(id, inBean.getType(), inBean.getValue(), ctx.getRequestContentLanguage(), false);
+		bean.setList(inBean.isList());
+		bean.setStyle(inBean.getStyle());
+		bean.setArea(inBean.getArea());
+		bean.setRepeat(inBean.isRepeat());
+		bean.setRenderer(inBean.getRenderer());
+		bean.setModify(true);
+		MenuElement elem = ctx.getCurrentPage();
+		ContentElementList list = elem.getContent(ctx);
+		IContentVisualComponent comp = list.next(ctx);
+		while (list.hasNext(ctx)) {
+			comp = list.next(ctx);
+		}
+		if (comp != null) {
+			elem.addContent(comp.getId(), bean, releaseCache);
+		} else {
+			elem.addContent("0", bean, releaseCache);
+		}
 		return id;
 	}
 
