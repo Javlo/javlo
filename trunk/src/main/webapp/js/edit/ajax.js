@@ -233,7 +233,7 @@ function startAjaxLoading() {
 }
 
 function endAjaxLoading() {
-	ajaxLoading--;
+	ajaxLoading--;	
 	if (ajaxLoading == 0) {
 		jQuery("#ajax-loader").removeClass("active");
 		jQuery("#upload-zone").removeClass("hidden");

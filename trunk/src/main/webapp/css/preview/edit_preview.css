@@ -441,6 +441,11 @@ body.fix-preview {
     width: 234px;
 }
 
+.fix-preview #preview_command .add-page input[type="text"] {
+	width: 187px;
+	display: inline;
+}
+
 fieldset.closable {
 	position: relative;
 }		
@@ -454,11 +459,37 @@ fieldset.closable .closable_action {
 	background-color: #EEEEEE;
 }
 
+.navigation li {
+	margin-left: 6px;
+}
+
+.navigation li.parent {
+	margin: 0;
+}
+
+.navigation .current {
+	font-weight: bold;	
+}
+
+.navigation .have-children a:after {
+	content: "...";
+} 
+
 fieldset.closable .closable_action.open {
 	border: 2px #B1B1B1 solid;
 	height: 6px;
 	width: 6px;
 	top: 3px;		
+}
+
+.sortable-target {
+	margin-left: -32px;
+	background-color: #EEEEEE;
+    border-bottom: 1px solid #A6C0DE;
+    border-right: 0 none;
+    border-top: 1px solid #A6C0DE;
+    color: #333333;
+    height: 20px;
 }
 
 fieldset.closable .closable_action.close {

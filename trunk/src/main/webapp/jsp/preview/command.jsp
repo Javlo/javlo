@@ -14,7 +14,7 @@ editCtx.setRenderMode(ContentContext.EDIT_MODE);
 %>
 <div id="preview_command" lang="${info.editLanguage}" class="edit-${not empty currentUser}">
 	<div class="pc_header">${i18n.edit["preview.command"]}<c:if test="${!userInterface.contributor}"><a id="pc_edit_mode_button" href="<%=URLHelper.createURL(editCtx)%>?module=content&webaction=previewEdit&preview=false">X</a></c:if></div>
-	<div class="pc_body">
+	<div class="pc_body">		    
 			<c:if test="${not empty messages.globalMessage && messages.globalMessage.type > 0 && not empty messages.globalMessage.message}">
 				<div class="message msg${messages.globalMessage.typeLabel}">${messages.globalMessage.message}</div>
 			</c:if>
@@ -82,36 +82,16 @@ editCtx.setRenderMode(ContentContext.EDIT_MODE);
 				<form id="children_list" action="${info.currentURL}" method="post">
 					<fieldset class="closable">
 						<legend>${i18n.edit['content.navigation']}</legend>
-						<c:if test="${not empty info.parent.url}">
-							<div class="pc_parent_link">
-								<a href="${info.parent.url}">[..]</a>
-							</div>
-						</c:if>							
-						<div class="pc_menu">
-							<input type="hidden" name="webaction" value="movepreview" />
-						<%=XHTMLNavigationHelper.renderDefinedMenu(ctx, false, false)%>
-						</div>
+						<jsp:include page="navigation.jsp"></jsp:include>
 					</fieldset>
-				</form><c:if test="${!userInterface.contributor}">			
-				<form id="insert_page" action="${info.currentURL}" method="post">
-					<fieldset class="closable">
-						<legend>${i18n.edit['menu.new-page-title']}</legend>
-						<div class="pc_line">
-							<input type="hidden" name="webaction" value="edit.addpage" />
-							<input type="text" name="name" value="" />
-							<input type="submit" name="add-first" value="${i18n.edit['menu.new-page-first']}" />
-							<input type="submit" class="button-right" name="add-last" value="${i18n.edit['menu.new-page-last']}" />
-						</div>
-					</fieldset>
-				</form>
+				</form>				
 				</c:if>	
 				<form id="pc_macro" action="${info.currentURL}" method="post">
 					<fieldset class="closable">
 						<legend>${i18n.edit['command.macro']}</legend>
 						<%=MacroHelper.getXHTMLMacroSelection(ctx, false, true)%>
 					</fieldset>
-				</form>
-			</c:if>
+				</form>			
 		</c:if><c:if test="${empty currentUser}">		
 			    <a class="action-button central-button" href="${info.currentEditURL}" onclick="jQuery.colorbox({href : '${info.currentEditURL}?previewEdit=true',opacity : 0.6,iframe : true,width : '95%',	height : '95%'}); return false;">${i18n.edit['global.login']}</a>
 			</c:if>

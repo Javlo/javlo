@@ -178,10 +178,10 @@ public class DataAction implements IAction {
 						PrintStream out = new PrintStream(outStream);
 						String dir = resourceRelativeFolder.replaceFirst(gc.getStaticConfig().getFileFolder(), "");
 						out.println("dir=" + dir);
-						out.println("file-name=" + item.getName());
+						out.println("file-name=" + newFile.getName());
 						out.close();
 						ComponentBean bean = new ComponentBean(GenericFile.TYPE, new String(outStream.toByteArray()), ctx.getRequestContentLanguage());
-						cs.createContent(ctx, bean, "0", true);
+						cs.createContentAtEnd(ctx, bean, true);
 						ctx.setNeedRefresh(true);
 						StaticInfo staticInfo = StaticInfo.getInstance(ctx, newFile);
 						staticInfo.setShared(ctx, false); // by default a simple image is'nt share
