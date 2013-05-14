@@ -4,6 +4,10 @@ input, textarea, select {
 	box-shadow: 1px 1px 3px #CCCCCC inset;
 }
 
+body.js #form-select-role input[type=submit] {
+	display: none;
+}
+
 .logo {
 	overflow: hidden;
 }
@@ -35,6 +39,11 @@ input, textarea, select {
 figure {
 	margin: 0;
 	padding: 0;
+}
+
+option.placeholder {
+	font-style: italic;
+	color: #aaaaaa;
 }
 
 #navigation h3 {
@@ -359,6 +368,10 @@ ul,li {
 	display: inline-block;
 	margin: 2px 2px;
 	padding: 2px 5px;	
+}
+
+#tools label {
+	width: auto;
 }
 
 .action-button:hover {

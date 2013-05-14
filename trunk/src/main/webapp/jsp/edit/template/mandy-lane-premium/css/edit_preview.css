@@ -138,7 +138,7 @@
 /** NOTIFICATION MESSAGES (login.html, dashboard.html) **/
 
 #preview_command .message {
-	padding: 5px 5px 5px 15px;
+	padding: 5px 5px 5px 30px;
 	margin: 0 0 4px 0;
 	-moz-border-radius: 2px;
 	-webkit-border-radius: 2px;

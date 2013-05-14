@@ -46,6 +46,8 @@ initFocusPoint = function() {
 
 jQuery(document).ready(function() {
 	
+	jQuery("body").addClass("js");
+	
 	closableFieldSet(jQuery("fieldset.closable"));
 	
 	jQuery("input.label-inside").each(function(){				

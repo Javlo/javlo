@@ -46,7 +46,7 @@ jQuery(document).ready(
 			jQuery(".sortable").sortable({
 				   placeholder: "sortable-target"
 				   ,stop: function(event, ui) {
-					   var url = jQuery("#form-add-page").attr("action");
+					   var url = jQuery("#children_list").attr("action");
 					   url=url+"?webaction=edit.movePage&page="+jQuery(ui.item).attr("id")+"&previous="+jQuery(ui.item).prev().attr("id");
 					   ajaxRequest(url);
 				   }

@@ -27,6 +27,8 @@ public class UserModuleContext {
 
 	private List<String> modes;
 
+	private String currentRole = null;
+
 	private String mode = VIEW_MY_SELF;
 
 	public static UserModuleContext getInstance(HttpServletRequest request) {
@@ -90,5 +92,16 @@ public class UserModuleContext {
 
 	public void setMode(String mode) {
 		this.mode = mode;
+	}
+
+	public String getCurrentRole() {
+		return currentRole;
+	}
+
+	public void setCurrentRole(String currentRole) {
+		if (currentRole != null && currentRole.trim().length() == 0) {
+			currentRole = null;
+		}
+		this.currentRole = currentRole;
 	}
 }
