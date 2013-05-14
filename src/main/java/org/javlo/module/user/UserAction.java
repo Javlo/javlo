@@ -4,6 +4,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.lang.reflect.InvocationTargetException;
 import java.nio.charset.Charset;
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.HashSet;
@@ -58,12 +59,26 @@ public class UserAction extends AbstractModuleAction {
 		UserModuleContext userContext = UserModuleContext.getInstance(ctx.getRequest());
 		RequestService requestService = RequestService.getInstance(ctx.getRequest());
 
-		ctx.getRequest().setAttribute("users", userContext.getUserFactory(ctx).getUserInfoList());
 		GlobalContext globalContext = GlobalContext.getInstance(ctx.getRequest());
-
 		IUserFactory userFactory = userContext.getUserFactory(ctx);
 		if (userFactory.getCurrentUser(ctx.getRequest().getSession()) == null) {
 			return null;
+		}
+
+		if (userContext.getCurrentRole() != null && !userFactory.getAllRoles(globalContext, ctx.getRequest().getSession()).contains(userContext.getCurrentRole())) {
+			userContext.setCurrentRole(null);
+		}
+
+		if (userContext.getCurrentRole() != null) {
+			List<IUserInfo> users = new LinkedList<IUserInfo>();
+			for (IUserInfo user : userContext.getUserFactory(ctx).getUserInfoList()) {
+				if (user.getRoles().contains(userContext.getCurrentRole())) {
+					users.add(user);
+				}
+			}
+			ctx.getRequest().setAttribute("users", users);
+		} else {
+			ctx.getRequest().setAttribute("users", userContext.getUserFactory(ctx).getUserInfoList());
 		}
 
 		if ((requestService.getParameter("user", null) == null || requestService.getParameter("back", null) != null) && !userContext.getMode().equals(UserModuleContext.VIEW_MY_SELF)) {
@@ -89,10 +104,12 @@ public class UserAction extends AbstractModuleAction {
 			List<String> keys = new LinkedList<String>(userInfoMap.keySet());
 			Collections.sort(keys);
 			ctx.getRequest().setAttribute("userInfoKeys", keys);
-			List<String> roles = new LinkedList<String>(userFactory.getAllRoles(globalContext, ctx.getRequest().getSession()));
-			Collections.sort(roles);
-			ctx.getRequest().setAttribute("roles", roles);
+
 		}
+
+		List<String> roles = new LinkedList<String>(userFactory.getAllRoles(globalContext, ctx.getRequest().getSession()));
+		Collections.sort(roles);
+		ctx.getRequest().setAttribute("roles", roles);
 
 		if (userContext.getMode().equals(UserModuleContext.ADMIN_USERS_LIST)) {
 			ctx.getRequest().setAttribute("admin", "true");
@@ -158,7 +175,7 @@ public class UserAction extends AbstractModuleAction {
 
 			messageRepository.setGlobalMessageAndNotification(ctx, new GenericMessage(i18nAccess.getText("user.message.updated", new String[][] { { "user", user.getLogin() } }), GenericMessage.INFO));
 		}
-		
+
 		if (editContext.isEditPreview()) {
 			ctx.setClosePopup(true);
 		}
@@ -231,6 +248,9 @@ public class UserAction extends AbstractModuleAction {
 		IUserInfo newUserInfo = userFactory.createUserInfos();
 		newUserInfo.setId(newUser);
 		newUserInfo.setLogin(newUser);
+		if (userContext.getCurrentRole() != null) {
+			newUserInfo.setRoles(new HashSet<String>(Arrays.asList(new String[] { userContext.getCurrentRole() })));
+		}
 		try {
 			userFactory.addUserInfo(newUserInfo);
 			try {
@@ -404,5 +424,17 @@ public class UserAction extends AbstractModuleAction {
 		}
 
 		return msg;
+	}
+
+	public static String performSelectRole(HttpServletRequest request, ContentContext ctx, GlobalContext globalContext, HttpSession session, MessageRepository messageRepository, I18nAccess i18nAccess) {
+		String role = request.getParameter("role");
+		if (role == null) {
+			return "bad request structure : need 'role' as parameter.";
+		}
+		UserModuleContext context = UserModuleContext.getInstance(request);
+		context.setCurrentRole(role);
+		messageRepository.setGlobalMessage(new GenericMessage(i18nAccess.getText("user.message.ok-change-role") + ' ' + role, GenericMessage.INFO));
+		return null;
+
 	}
 }
