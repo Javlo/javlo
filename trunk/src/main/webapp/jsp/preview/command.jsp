@@ -64,7 +64,13 @@ editCtx.setRenderMode(ContentContext.EDIT_MODE);
 						<div class="pc_line">							
 							<input id="pc_user_info" type="submit" value="${i18n.edit['global.account-setting']}" title="${i18n.edit['global.account-setting']}" class="pc_edit_true" />
 						</div>
+					</form>
+					<form class="preview-edit" id="page_properties" action="<%=URLHelper.createURL(editCtx)%>?module=content&webaction=changeMode&mode=3&previewEdit=true" method="post">
+						<div class="pc_line">							
+							<input id="pc_page_properties" type="submit" value="${i18n.edit['global.page-properties']}" title="${i18n.edit['global.page-properties']}" class="pc_edit_true" />
+						</div>
 					</form>					
+										
 					</c:if>					
 				</div>
 			</fieldset>

@@ -69,6 +69,7 @@ public class InfoBean {
 	private MenuElement currentPage;
 	private ContentContext ctx;
 	private GlobalContext globalContext;
+	private boolean tools = true;
 
 	public String getCmsName() {
 		StaticConfig staticConfig = StaticConfig.getInstance(ctx.getRequest().getSession());
@@ -487,5 +488,13 @@ public class InfoBean {
 
 	public String getServerTime() {
 		return StringHelper.renderTime(new Date());
+	}
+
+	public boolean isTools() {
+		return tools;
+	}
+
+	public void setTools(boolean actionBar) {
+		this.tools = actionBar;
 	}
 }

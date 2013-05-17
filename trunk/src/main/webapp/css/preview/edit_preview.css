@@ -322,7 +322,7 @@
 *************************/
 
 /*** RESETER ***/
-#preview_command,#preview_command label,#preview_command img,#preview_command div,#preview_command span,#preview_command input,#preview_command fieldset,#preview_command legend,#preview_command form,#preview_command select,#preview_command option
+#preview_command,#preview_command li, #preview_command ul,#preview_command label,#preview_command img,#preview_command div,#preview_command span,#preview_command input,#preview_command fieldset,#preview_command legend,#preview_command form,#preview_command select,#preview_command option
 	{
 	margin: 0px;
 	border: 0px none;
@@ -334,6 +334,8 @@
 	text-transform: none;
 	color: #000000;
 	display: block;
+	list-style: none;
+	font-weight: normal;
 }
 
 #message-container .notification {
@@ -446,11 +448,11 @@ body.fix-preview {
 	display: inline;
 }
 
-fieldset.closable {
+#preview_command fieldset.closable {
 	position: relative;
 }		
 
-fieldset.closable .closable_action {
+#preview_command fieldset.closable .closable_action {
 	position: absolute;
 	display: block;			
 	right: 12px;
@@ -459,30 +461,30 @@ fieldset.closable .closable_action {
 	background-color: #EEEEEE;
 }
 
-.navigation li {
+#preview_command .navigation li {
 	margin-left: 6px;
 }
 
-.navigation li.parent {
+#preview_command .navigation li.parent {
 	margin: 0;
 }
 
-.navigation .current {
+#preview_command .navigation .current {
 	font-weight: bold;	
 }
 
-.navigation .have-children a:after {
+#preview_command .navigation .have-children a:after {
 	content: "...";
 } 
 
-fieldset.closable .closable_action.open {
+#preview_command fieldset.closable .closable_action.open {
 	border: 2px #B1B1B1 solid;
 	height: 6px;
 	width: 6px;
 	top: 3px;		
 }
 
-.sortable-target {
+#preview_command .sortable-target {
 	margin-left: -32px;
 	background-color: #EEEEEE;
     border-bottom: 1px solid #A6C0DE;
@@ -492,7 +494,7 @@ fieldset.closable .closable_action.open {
     height: 20px;
 }
 
-fieldset.closable .closable_action.close {
+#preview_command fieldset.closable .closable_action.close {
 	border: 2px #B1B1B1 solid;
 	height: 3px;
 	width: 6px;

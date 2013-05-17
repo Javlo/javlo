@@ -219,6 +219,10 @@ a.popup span {
 	vertical-align: middle;
 }
 
+.macros .inline label {
+	width: 235px;
+}
+
 .standard-form input,.standard-form select {
 	display: inline-block;
 	vertical-align: text-top;

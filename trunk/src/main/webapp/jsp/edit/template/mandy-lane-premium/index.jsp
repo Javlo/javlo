@@ -200,7 +200,7 @@
 		<jsp:include page="message.jsp" />
 		</div>
 		
-		<c:if test="${currentModule.toolsRenderer != null}">
+		<c:if test="${currentModule.toolsRenderer != null && info.tools}">
 			<div id="tools">
 				<h3>${currentModule.toolsTitle}</h3>
 				<div class="content"><jsp:include page="${currentModule.toolsRenderer}" /></div>
