@@ -783,8 +783,12 @@ public class GlobalImage extends Image {
 		if (super.initContent(ctx)) {
 			if (ctx.getCurrentTemplate().getImageFilters().contains("full")) {
 				setFilter("full");
+				setModify();
+				storeProperties();
 			} else if (ctx.getCurrentTemplate().getImageFilters().size() > 0) {
 				setFilter(ctx.getCurrentTemplate().getImageFilters().iterator().next());
+				setModify();
+				storeProperties();
 			}
 			return true;
 		} else {

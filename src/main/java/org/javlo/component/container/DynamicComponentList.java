@@ -216,4 +216,9 @@ public class DynamicComponentList extends AbstractPropertiesComponent {
 		return DEFAULT_COLOR;
 	}
 
+	@Override
+	public int getComplexityLevel() {
+		return COMPLEXITY_STANDARD;
+	}
+
 }

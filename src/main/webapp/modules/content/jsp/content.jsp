@@ -71,11 +71,10 @@ String previousId = "0";
 if (components.size() > 0 && components.iterator().next().getPreviousComponent() != null) {
 	previousId = components.iterator().next().getPreviousComponent().getId();
 }
+
 /*** rendering ***/
-
-if (!StringHelper.isTrue(request.getParameter("noinsert"))) {
+if (!StringHelper.isTrue(request.getParameter("noinsert")) && !StringHelper.isTrue(request.getAttribute("noinsert"))) {
 %>
-
 <div class="insert-line" id="insert-line-<%=previousId%>">
 	<a class="action-button ajax" onclick="scrollToFirstQuarter(jQuery('#content-edit'),this);" href="${info.currentURL}?${info.editPreview?'previewEdit=true&':''}webaction=insert&previous=<%=previousId%>&type=<%=currentTypeComponent.getType()%>"><%=insertHere%></a><%
 	if (pastePageHere != null) {
@@ -165,7 +164,7 @@ for (IContentVisualComponent comp : components) {
       </div><%}%>
       <input type="hidden" name="id-<%=comp.getId()%>" value="true" /> 
   </div><%
-  if (!StringHelper.isTrue(request.getParameter("noinsert")) && !StringHelper.isTrue(request.getAttribute("lightInterface"))) {%>  
+  if (!StringHelper.isTrue(request.getParameter("noinsert")) && !StringHelper.isTrue(request.getAttribute("noinsert")) && !StringHelper.isTrue(request.getAttribute("lightInterface"))) {%>  
   <div class="insert-line" id="insert-line-<%=comp.getId()%>">
 	<a class="action-button ajax" onclick="scrollToFirstQuarter(jQuery('#content-edit'),this);" href="${info.currentURL}?${info.editPreview?'previewEdit=true&':''}webaction=insert&previous=<%=comp.getId()%>&type=<%=currentTypeComponent.getType()%>"><%=insertHere%></a><%
 	if (pastePageHere != null) {

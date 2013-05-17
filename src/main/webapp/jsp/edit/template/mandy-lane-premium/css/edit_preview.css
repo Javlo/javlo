@@ -31,7 +31,7 @@
     color: #333333;
     display: inline-block;
     margin: 2px;
-    padding: 2px 5px;
+    padding: 2px 5px;    
 }
 
 
@@ -42,6 +42,10 @@
 
 #preview_command .pc_line input {
 	border: 0 none;
+}
+
+#preview_command .pc_command input {
+	background-color: #EFEFEF;
 }
 
 #preview_command .pc_command #pc_edit_button {
@@ -70,6 +74,10 @@
 
 #preview_command .pc_command #pc_user_info {
 	background-image: url('../images/icons/small/black/user.png');
+}
+
+#preview_command .pc_command #pc_page_properties {
+	background-image: url('../images/icons/small/black/page_properties.png');
 }
 
 #preview_command #pc_edit_mode_button {

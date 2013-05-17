@@ -431,18 +431,22 @@ public class ComponentFactory {
 		}
 		return components;
 	}
-	
-   public static List<ComponentWrapper> getComponentForDisplay(ContentContext ctx) throws Exception {
-	   
-	   List<ComponentWrapper> comps = new LinkedList<ComponentWrapper>();
+
+	public static List<ComponentWrapper> getComponentForDisplay(ContentContext ctx) throws Exception {
+
+		List<ComponentWrapper> comps = new LinkedList<ComponentWrapper>();
 		EditContext editCtx = EditContext.getInstance(ctx.getGlobalContext(), ctx.getRequest().getSession());
 		ComponentWrapper titleWrapper = null;
-		
+
 		IContentVisualComponent[] components = getComponents(ctx, ctx.getCurrentPage());
 
 		if (ctx.getCurrentTemplate() != null) {
-			Set<String> inludeComponents = ctx.getCurrentTemplate().getComponentsIncludeForArea(editCtx.getCurrentArea());
-			Set<String> excludeComponents = ctx.getCurrentTemplate().getComponentsExcludeForArea(editCtx.getCurrentArea());
+			Set<String> inludeComponents = null;
+			Set<String> excludeComponents = null;
+			if (ctx.isAsEditMode()) {
+				inludeComponents = ctx.getCurrentTemplate().getComponentsIncludeForArea(editCtx.getCurrentArea());
+				excludeComponents = ctx.getCurrentTemplate().getComponentsExcludeForArea(editCtx.getCurrentArea());
+			}
 
 			for (int i = 0; i < components.length - 1; i++) { // remove title without component
 				if (!components[i].isMetaTitle() || !components[i + 1].isMetaTitle()) { // if next component is title too so the component group is empty
@@ -484,8 +488,7 @@ public class ComponentFactory {
 			}
 		}
 
-	   
-	   List<ComponentWrapper> listWithoutEmptyTitle = new LinkedList<Edit.ComponentWrapper>();
+		List<ComponentWrapper> listWithoutEmptyTitle = new LinkedList<Edit.ComponentWrapper>();
 		ComponentWrapper title = null;
 		UserInterfaceContext uiContext = UserInterfaceContext.getInstance(ctx.getRequest().getSession(), ctx.getGlobalContext());
 		for (ComponentWrapper comp : comps) {
@@ -511,8 +514,8 @@ public class ComponentFactory {
 			}
 
 		}
-		
+
 		return listWithoutEmptyTitle;
-   }
+	}
 
 }

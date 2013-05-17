@@ -542,6 +542,8 @@ public class PageReferenceComponent extends ComplexPropertiesLink implements IAc
 
 	private static final String WIDTH_EMPTY_PAGE_PROP_KEY = "width_empty";
 
+	private static final String INTRANET_MODE_KEY = "intranet_mode";
+
 	public static final Integer getCurrentMonth(HttpSession session) {
 		return (Integer) session.getAttribute("___current_month");
 	}
@@ -757,9 +759,15 @@ public class PageReferenceComponent extends ComplexPropertiesLink implements IAc
 			out.println(XHTMLHelper.getInputOneSelectFirstEnpty(getTagsInputName(), globalContext.getTags(), getTag()));
 			out.println("</div>");
 		}
+
 		out.println("<div class=\"line\">");
 		out.println(XHTMLHelper.getCheckbox(getWidthEmptyPageInputName(), isWidthEmptyPage()));
 		out.println("<label for=\"" + getWidthEmptyPageInputName() + "\">" + i18nAccess.getText("content.page-teaser.width-empty-page") + "</label></div>");
+
+		out.println("<div class=\"line\">");
+		out.println(XHTMLHelper.getCheckbox(getIntranetModeInputName(), isIntranetMode()));
+		out.println("<label for=\"" + getIntranetModeInputName() + "\">" + i18nAccess.getText("content.intranet-mode") + "</label></div>");
+
 		out.println("</fieldset>");
 
 		out.println("<fieldset class=\"order\">");
@@ -1033,6 +1041,10 @@ public class PageReferenceComponent extends ComplexPropertiesLink implements IAc
 		properties.setProperty(DISPLAY_FIRST_PAGE_KEY, "" + value);
 	}
 
+	protected void setIntranetMode(boolean mode) {
+		properties.setProperty(INTRANET_MODE_KEY, "" + mode);
+	}
+
 	protected String getInputFirstPageFull() {
 		return "first-page-full-" + getId();
 	}
@@ -1052,6 +1064,10 @@ public class PageReferenceComponent extends ComplexPropertiesLink implements IAc
 
 	protected String getWidthEmptyPageInputName() {
 		return "width-empty-page-" + getId();
+	}
+
+	protected String getIntranetModeInputName() {
+		return "intranet-mode-" + getId();
 	}
 
 	@Override
@@ -1111,6 +1127,10 @@ public class PageReferenceComponent extends ComplexPropertiesLink implements IAc
 
 	private boolean isWidthEmptyPage() {
 		return StringHelper.isTrue(properties.getProperty(WIDTH_EMPTY_PAGE_PROP_KEY, "false"));
+	}
+
+	private boolean isIntranetMode() {
+		return StringHelper.isTrue(properties.getProperty(INTRANET_MODE_KEY, "false"));
 	}
 
 	public int getPageSize(ContentContext ctx) {
@@ -1228,6 +1248,13 @@ public class PageReferenceComponent extends ComplexPropertiesLink implements IAc
 		Collection<Calendar> allMonths = new LinkedList<Calendar>();
 		Collection<String> allMonthsKeys = new HashSet<String>();
 
+		Collection<String> roles = new LinkedList<String>();
+		if (ctx.getCurrentUser() != null) {
+			roles = ctx.getCurrentUser().getRoles();
+		} else {
+			roles = Collections.EMPTY_LIST;
+		}
+
 		for (MenuElement page : pages) {
 			ContentContext lgCtx = new ContentContext(ctx);
 			if (GlobalContext.getInstance(ctx.getRequest()).isAutoSwitchToDefaultLanguage()) {
@@ -1244,22 +1271,25 @@ public class PageReferenceComponent extends ComplexPropertiesLink implements IAc
 						if (page.isRealContent(lgCtx)) {
 							realContentSize++;
 						}
-						if (page.isRealContent(lgCtx) || isWidthEmptyPage()) {
-							if (tagFilter == null || tagFilter.trim().length() == 0 || page.getTags(lgCtx).contains(tagFilter)) {
-								if (catFilter == null || catFilter.trim().length() == 0 || page.getCategory(lgCtx).equals(catFilter)) {
-									Calendar cal = Calendar.getInstance();
-									cal.setTime(page.getContentDateNeverNull(lgCtx));
-									cal = TimeHelper.convertRemoveAfterMonth(cal);
-									String key = ("" + cal.get(Calendar.YEAR)) + '-' + cal.get(Calendar.MONTH);
-									if (!allMonthsKeys.contains(key)) {
-										allMonths.add(cal);
-										allMonthsKeys.add(key);
-									}
 
-									if (monthFilter == null || TimeHelper.betweenInDay(page.getContentDateNeverNull(lgCtx), startDate.getTime(), endDate.getTime())) {
-										countPage++;
-										if (countPage >= firstPageNumber && countPage <= lastPageNumber) {
-											pageBeans.add(PageBean.getInstance(lgCtx, page, this));
+						if (!isIntranetMode() || page.getEditorRoles().size() == 0 || (new HashSet<String>(page.getEditorRoles()).removeAll(roles))) {
+							if (page.isRealContent(lgCtx) || isWidthEmptyPage()) {
+								if (tagFilter == null || tagFilter.trim().length() == 0 || page.getTags(lgCtx).contains(tagFilter)) {
+									if (catFilter == null || catFilter.trim().length() == 0 || page.getCategory(lgCtx).equals(catFilter)) {
+										Calendar cal = Calendar.getInstance();
+										cal.setTime(page.getContentDateNeverNull(lgCtx));
+										cal = TimeHelper.convertRemoveAfterMonth(cal);
+										String key = ("" + cal.get(Calendar.YEAR)) + '-' + cal.get(Calendar.MONTH);
+										if (!allMonthsKeys.contains(key)) {
+											allMonths.add(cal);
+											allMonthsKeys.add(key);
+										}
+
+										if (monthFilter == null || TimeHelper.betweenInDay(page.getContentDateNeverNull(lgCtx), startDate.getTime(), endDate.getTime())) {
+											countPage++;
+											if (countPage >= firstPageNumber && countPage <= lastPageNumber) {
+												pageBeans.add(PageBean.getInstance(lgCtx, page, this));
+											}
 										}
 									}
 								}
@@ -1397,6 +1427,12 @@ public class PageReferenceComponent extends ComplexPropertiesLink implements IAc
 			boolean displayFirstPage = requestService.getParameter(getInputFirstPageFull(), null) != null;
 			if (displayFirstPage != isDisplayFirstPage()) {
 				setDisplayFirstPage(displayFirstPage);
+				setModify();
+			}
+
+			boolean intranetMode = requestService.getParameter(getIntranetModeInputName(), null) != null;
+			if (intranetMode != isIntranetMode()) {
+				setIntranetMode(intranetMode);
 				setModify();
 			}
 

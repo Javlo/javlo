@@ -493,6 +493,16 @@ public class Edit extends AbstractModuleAction {
 
 		}
 
+		ComponentContext componentContext = ComponentContext.getInstance(request);
+		if (ctx.isEditPreview() && request.getParameter("comp_id") != null || (componentContext.getNewComponents() != null && componentContext.getNewComponents().size() == 1)) {
+			InfoBean.getCurrentInfoBean(ctx).setTools(false);
+			ctx.getRequest().setAttribute("noinsert", "true");
+		}
+		if (ctx.isEditPreview() && request.getParameter("mode") != null && request.getParameter("mode").equals("3")) {
+			InfoBean.getCurrentInfoBean(ctx).setTools(false);
+			ctx.getRequest().setAttribute("noinsert", "true");
+		}
+
 		/** COMPONENT LIST **/
 		loadComponentList(ctx);
 
@@ -769,6 +779,11 @@ public class Edit extends AbstractModuleAction {
 			ctx.setClosePopup(true);
 		}
 
+		if (ctx.isEditPreview() && componentContext.getNewComponents() != null && componentContext.getNewComponents().size() == 1) {
+			InfoBean.getCurrentInfoBean(ctx).setTools(false);
+			ctx.getRequest().setAttribute("noinsert", "true");
+		}
+
 		return message;
 	}
 
@@ -892,6 +907,10 @@ public class Edit extends AbstractModuleAction {
 					PersistenceService.getInstance(globalContext).store(ctx);
 					messageRepository.setGlobalMessageAndNotification(ctx, new GenericMessage(i18nAccess.getText("message.update-page-properties"), GenericMessage.INFO));
 				}
+			}
+
+			if (editCtx.isEditPreview()) {
+				ctx.setClosePopup(true);
 			}
 		}
 
