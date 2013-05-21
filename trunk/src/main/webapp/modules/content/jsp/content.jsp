@@ -122,7 +122,7 @@ for (IContentVisualComponent comp : components) {
 	}
 	String readOnlyClass= "";
 	String authors = "";
-	if (globalContext.isOnlyCreatorModify() && comp.getAuthors().equals(ctx.getCurrentEditUser().getLogin())) {
+	if (globalContext.isOnlyCreatorModify() && !comp.getAuthors().equals(ctx.getCurrentEditUser().getLogin())) {
 		readOnlyClass = "readonly ";
 		authors = " <span class=\"authors\"> - "+comp.getAuthors()+"</span>";
 	}

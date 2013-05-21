@@ -17,6 +17,24 @@ import org.javlo.service.RequestService;
 
 public class RequestHelper {
 
+	private static class PathCookie extends Cookie {
+
+		private String path = "/";
+
+		public PathCookie(String arg0, String arg1, String inPath) {
+			super(arg0, arg1);
+			if (inPath != null) {
+				path = inPath;
+			}
+		}
+
+		@Override
+		public String getPath() {
+			return path;
+		}
+
+	}
+
 	public static final String CRYPTED_PARAM_NAME = "cparam";
 
 	public static final String CLOSE_WINDOW_PARAMETER = "close-window";
@@ -83,9 +101,15 @@ public class RequestHelper {
 	}
 
 	public static void setCookieValue(HttpServletResponse response, String key, String value, int expiry, String path) {
-		Cookie cokkie = new Cookie(key, value);
+		try {
+			throw new Exception();
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		System.out.println("***** RequestHelper.setCookieValue : path = " + path); // TODO: remove debug trace
+		Cookie cokkie = new PathCookie(key, value, path);
+		System.out.println("***** RequestHelper.setCookieValue : cookie path = " + cokkie.getPath()); // TODO: remove debug trace
 		cokkie.setMaxAge(expiry);
-		cokkie.setPath(path);
 		response.addCookie(cokkie);
 	}
 

@@ -425,9 +425,9 @@ public class XHTMLNavigationHelper {
 					out.println("<li class=\"" + cssClass + "\">");
 
 					String title = page.getTitle(ctx);
-					title = StringHelper.removeTag(title);
 					String fullTitleHTML = "";
-					if (!title.equals(visualCode)) {
+					if (!title.equals(visualCode) && !title.equals(page.getName())) {
+						title = StringHelper.removeTag(title).replace("\"", "&quot;");
 						fullTitleHTML = " title=\"" + title + "\"";
 					}
 					out.print(selectedStrIn + "<a " + selected + " href=\"" + URLHelper.createURL(ctx, page) + "\" " + fullTitleHTML + " " + att + "><span><span>" + visualCode + "</span></span></a>");

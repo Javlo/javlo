@@ -84,9 +84,8 @@ function fullHeight() {
 			var height = footer.offset().top -  jQuery(this).offset().top;		
 			jQuery(this).height(height);
 		}
-	});
-	
-	
+	});	
+
 }
 
 jQuery(window).resize(fullHeight);
