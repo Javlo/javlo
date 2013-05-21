@@ -322,7 +322,7 @@
 *************************/
 
 /*** RESETER ***/
-#preview_command,#preview_command li, #preview_command ul,#preview_command label,#preview_command img,#preview_command div,#preview_command span,#preview_command input,#preview_command fieldset,#preview_command legend,#preview_command form,#preview_command select,#preview_command option
+#preview_command,#preview_command h1, #preview_command h2, #preview_command h3, #preview_command h4, #preview_command li, #preview_command ul,#preview_command label,#preview_command img,#preview_command div,#preview_command span,#preview_command input,#preview_command fieldset,#preview_command legend,#preview_command form,#preview_command select,#preview_command option
 	{
 	margin: 0px;
 	border: 0px none;
