@@ -1,9 +1,28 @@
 jQuery(document).ready(function() {	
-	editAreaLoader.init({
-		id : "text-editor"
-		,start_highlight: true
-		,allow_resize: false
-		,syntax: jQuery("#text-editor").data("ext")
-		,toolbar: "search, go_to_line, |, undo, redo, |, select_font, |, change_smooth_selection, highlight, reset_highlight, |, help"
+
+	var value = jQuery("#text-editor").val();
+	
+	jQuery("#text-editor").addClass("hidden");
+	jQuery("#text-editor").after('<pre id="ace-text-editor">'+value+'</pre>');
+	fullHeight(jQuery("#ace-text-editor"));
+	var editor = ace.edit("ace-text-editor");
+	editor.setTheme("ace/theme/github");
+	editor.getSession().setMode("ace/mode/css");
+	editor.getSession().on('change', function(e) {
+		var editor = ace.edit("ace-text-editor");		
+		jQuery("#text-editor").val(editor.getValue());
 	});
+	
 });
+
+
+function fullHeight(item) {	
+	jQuery(item).each(function() {
+		var footer = jQuery('#footer');
+		if (footer.length > 0) {
+			var height = footer.offset().top -  jQuery(this).offset().top - 95;		
+			jQuery(this).height(height);
+		}
+	});	
+
+}
