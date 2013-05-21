@@ -12,7 +12,7 @@ import org.javlo.user.exception.UserAllreadyExistException;
 
 public interface IUserFactory {
 
-	public static final int AUTO_LOGIN_AGE_SEC = 6 * 60 * 60 * 24 * 30; // 6 month for autologin live cycle
+	public static final int AUTO_LOGIN_AGE_SEC = 60 * 60 * 24 * 365; // 1 years
 
 	public abstract User getUser(String login);
 

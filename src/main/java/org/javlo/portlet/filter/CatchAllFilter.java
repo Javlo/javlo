@@ -424,10 +424,8 @@ public class CatchAllFilter implements Filter {
 
 							if (request.getParameter("autologin") != null) {
 								DataToIDService service = DataToIDService.getInstance(httpRequest.getSession().getServletContext());
-								String codeId = service.setData(login, IUserFactory.AUTO_LOGIN_AGE_SEC * 1000);
-								String pathPrefix = ContentContext.getPathPrefix((HttpServletRequest) request);
-								RequestHelper.setCookieValue(httpResponse, "javlo_login_id", codeId, IUserFactory.AUTO_LOGIN_AGE_SEC, URLHelper.mergePath(pathPrefix, "/edit"));
-								RequestHelper.setCookieValue(httpResponse, "javlo_login_id", codeId, IUserFactory.AUTO_LOGIN_AGE_SEC, URLHelper.mergePath(pathPrefix, "/preview"));
+								String codeId = service.setData(login, IUserFactory.AUTO_LOGIN_AGE_SEC);
+								RequestHelper.setCookieValue(httpResponse, "javlo_login_id", codeId, IUserFactory.AUTO_LOGIN_AGE_SEC, null);
 							}
 
 							if (login == null && httpRequest.getUserPrincipal() != null) {
@@ -495,10 +493,7 @@ public class CatchAllFilter implements Filter {
 					if (request.getParameter("autologin") != null) {
 						DataToIDService service = DataToIDService.getInstance(httpRequest.getSession().getServletContext());
 						String codeId = service.setData(login, ((long) IUserFactory.AUTO_LOGIN_AGE_SEC) * 1000);
-						// RequestHelper.setCookieValue(httpResponse, "javlo_login_id", codeId, IUserFactory.AUTO_LOGIN_AGE_SEC);
-						String pathPrefix = ContentContext.getPathPrefix((HttpServletRequest) request);
-						RequestHelper.setCookieValue(httpResponse, "javlo_login_id", codeId, IUserFactory.AUTO_LOGIN_AGE_SEC, URLHelper.mergePath(pathPrefix, "/edit"));
-						RequestHelper.setCookieValue(httpResponse, "javlo_login_id", codeId, IUserFactory.AUTO_LOGIN_AGE_SEC, URLHelper.mergePath(pathPrefix, "/preview"));
+						RequestHelper.setCookieValue(httpResponse, "javlo_login_id", codeId, IUserFactory.AUTO_LOGIN_AGE_SEC, null);
 					}
 					globalContext.addPrincipal(editUser);
 					globalContext.eventLogin(editUser.getLogin());

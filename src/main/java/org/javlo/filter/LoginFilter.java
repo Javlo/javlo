@@ -99,8 +99,7 @@ public class LoginFilter implements Filter {
 							if (request.getParameter("autologin") != null) {
 								DataToIDService service = DataToIDService.getInstance(httpRequest.getSession().getServletContext());
 								String codeId = service.setData(login, IUserFactory.AUTO_LOGIN_AGE_SEC * 1000);
-								RequestHelper.setCookieValue(httpResponse, "javlo_login_id", codeId, IUserFactory.AUTO_LOGIN_AGE_SEC, "/edit");
-								RequestHelper.setCookieValue(httpResponse, "javlo_login_id", codeId, IUserFactory.AUTO_LOGIN_AGE_SEC, "/preview");
+								RequestHelper.setCookieValue(httpResponse, "javlo_login_id", codeId, IUserFactory.AUTO_LOGIN_AGE_SEC, null);
 							}
 
 							if (login == null && httpRequest.getUserPrincipal() != null) {
