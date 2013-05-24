@@ -95,14 +95,6 @@ public class ChangeLanguageMenu extends AbstractVisualComponent {
 	}
 
 	@Override
-	public String getRenderer(ContentContext ctx) {
-		if (getConfig(ctx).getRenderes().size() > 0) {
-			return getConfig(ctx).getRenderes().values().iterator().next();
-		}
-		return "languages.jsp";
-	}
-
-	@Override
 	public void prepareView(ContentContext ctx) throws Exception {
 		super.prepareView(ctx);
 		Collection<LanguageBean> outLanguages = new LinkedList<LanguageBean>();
