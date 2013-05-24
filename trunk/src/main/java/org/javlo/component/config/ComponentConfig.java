@@ -17,7 +17,6 @@ import org.javlo.context.ContentContext;
 import org.javlo.context.GlobalContext;
 import org.javlo.helper.ResourceHelper;
 import org.javlo.helper.StringHelper;
-import org.javlo.helper.URLHelper;
 import org.javlo.template.Template;
 
 public class ComponentConfig {
@@ -117,11 +116,11 @@ public class ComponentConfig {
 						if (key.startsWith("renderer.")) {
 							ContentContext notAbstCtx = new ContentContext(ctx);
 							notAbstCtx.setAbsoluteURL(false);
-							String renderer = URLHelper.createStaticTemplateURLWithoutContext(notAbstCtx, currentTemplate, "" + templateProp.get(key));
+							// String renderer = URLHelper.createStaticTemplateURLWithoutContext(notAbstCtx, currentTemplate, "" + templateProp.get(key));
 							if (properties.containsKey(key)) {
 								properties.clearProperty(key);
 							}
-							properties.addProperty("" + key, renderer);
+							properties.addProperty("" + key, templateProp.get(key));
 						} else {
 							if (properties.containsKey(key)) {
 								properties.clearProperty(key);

@@ -120,7 +120,6 @@ public class GenericForm extends AbstractVisualComponent implements IAction {
 			}
 			return outRenderers;
 		}
-
 	}
 
 	@Override

@@ -208,7 +208,8 @@ public class DataAction implements IAction {
 					out.close();
 					ComponentBean image = new ComponentBean(GlobalImage.TYPE, new String(outStream.toByteArray()), ctx.getRequestContentLanguage());
 					image.setStyle(Image.STYLE_CENTER);
-					cs.createContent(ctx, image, "0", true);
+					// cs.createContent(ctx, image, "0", true);
+					cs.createContentAtEnd(ctx, image, true);
 					ctx.setNeedRefresh(true);
 				} else {
 					return "error on file : " + imageItem.getName();
