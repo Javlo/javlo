@@ -791,21 +791,31 @@ public abstract class AbstractVisualComponent implements IContentVisualComponent
 
 	@Override
 	public String getRenderer(ContentContext ctx) {
+		String renderer;
 		if (getRenderes(ctx).size() == 0) {
 			return getDefaultRenderer(ctx);
 		} else if (getRenderes(ctx).size() == 1 || getCurrentRenderer(ctx) == null) {
-			return getRenderes(ctx).values().iterator().next();
+			renderer = getRenderes(ctx).values().iterator().next();
 		} else {
-			String renderer = getRenderes(ctx).get(getCurrentRenderer(ctx) + '.' + ctx.getArea());
+			renderer = getRenderes(ctx).get(getCurrentRenderer(ctx) + '.' + ctx.getArea());
 			if (renderer == null) {
 				renderer = getRenderes(ctx).get(getCurrentRenderer(ctx));
 			}
-			if (renderer != null) {
-				return renderer;
-			} else {
-				return getRenderes(ctx).values().iterator().next();
+			if (renderer == null) {
+				renderer = getRenderes(ctx).values().iterator().next();
 			}
 		}
+		try {
+			if (ctx.getCurrentTemplate() != null) {
+				String workTemplateFolder = ctx.getCurrentTemplate().getWorkTemplateFolder();
+				if (!renderer.startsWith('/' + workTemplateFolder)) {
+					renderer = URLHelper.createStaticTemplateURLWithoutContext(ctx, ctx.getCurrentTemplate(), renderer);
+				}
+			}
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		return renderer;
 	}
 
 	protected String getRendererTitle() {
