@@ -191,11 +191,6 @@ public class Video extends GlobalImage implements IAction, IVideo {
 	}
 
 	@Override
-	public String getRenderer(ContentContext ctx) {
-		return null;
-	}
-
-	@Override
 	protected String getImageURL(ContentContext ctx) throws Exception {
 		if (getLink() != null && getLink().toLowerCase().contains(YOUTUBE_KEY)) {
 			return getYoutubePreview(ctx, getConfig(ctx).getProperty("image.filter", getDefaultFilter()));
