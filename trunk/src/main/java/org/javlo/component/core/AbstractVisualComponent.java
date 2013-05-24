@@ -815,7 +815,6 @@ public abstract class AbstractVisualComponent implements IContentVisualComponent
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
-		System.out.println("***** AbstractVisualComponent.getRenderer : type=" + getType() + "  -   " + renderer); // TODO: remove debug trace
 		return renderer;
 	}
 
