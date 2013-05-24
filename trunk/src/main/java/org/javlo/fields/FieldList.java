@@ -18,7 +18,7 @@ public class FieldList extends Field {
 
 	@Override
 	public String getDisplayValue(ContentContext ctx, Locale locale) throws Exception {
-		return getList(ctx, getListName(), locale).get(getValue());
+		return "<span class=\"" + StringHelper.createFileName(getValue()) + "\">" + getList(ctx, getListName(), locale).get(getValue()) + "</span>";
 	}
 
 	@Override
@@ -37,9 +37,7 @@ public class FieldList extends Field {
 		out.println("	<label for=\"" + getInputName() + "\">" + getLabel(new Locale(globalContext.getEditLanguage(ctx.getRequest().getSession()))) + " : </label>");
 		out.println("	<select id=\"" + getInputName() + "\" name=\"" + getInputName() + "\" value=\"" + StringHelper.neverNull(getValue()) + "\">");
 		Collection<Map.Entry<String, String>> valuesCol = getList(ctx, getListName(), new Locale(ctx.getContextLanguage())).entrySet();
-		// Collection<Map.Entry<String, String>> values = new TreeSet(new JavaHelper.MapEntriesSortOnValue());
 		Collection<Map.Entry<String, String>> values = valuesCol;
-		// values.addAll(valuesCol);
 
 		for (Map.Entry<String, String> value : values) {
 			String selected = "";

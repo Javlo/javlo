@@ -188,6 +188,7 @@ public class Field implements Cloneable {
 			for (int i = 0; i < 9999; i++) {
 				String value = properties.getProperty("list." + listName + "." + i);
 				if (value != null) {
+					String key = value;
 					String[] splitedValue = value.split(",");
 					if (splitedValue.length > 1) {
 						if (properties.getProperty("list." + listName + "." + i + "." + locale.getLanguage()) != null) {
@@ -200,7 +201,7 @@ public class Field implements Cloneable {
 						if (properties.getProperty("list." + listName + "." + i + "." + locale.getLanguage()) != null) {
 							value = properties.getProperty("list." + listName + "." + i + "." + locale.getLanguage());
 						}
-						keyValue.put(value, value);
+						keyValue.put(key, value);
 					}
 				}
 			}
