@@ -7,6 +7,7 @@ import java.util.Map;
 import org.javlo.client.localmodule.model.AppConfig;
 import org.javlo.client.localmodule.model.ServerConfig;
 import org.javlo.client.localmodule.ui.ClientTray;
+import org.javlo.client.localmodule.ui.StatusFrame;
 
 public class ServiceFactory {
 
@@ -78,6 +79,20 @@ public class ServiceFactory {
 			}
 		}
 		getNotificationService().clear();
+		StatusFrame.onConfigChange();
+	}
+
+	public void onServerStatusChange(ServerConfig server) {
+		ClientTray.onServerStatusChange(server);
+		StatusFrame.onServerStatusChange(server);
+	}
+
+	public void onWorkStart() {
+		getTray().setActiveState(true);
+	}
+
+	public void onWorkFinish() {
+		getTray().setActiveState(false);
 	}
 
 }

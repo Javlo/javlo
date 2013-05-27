@@ -39,7 +39,7 @@ public class ConfigService {
 	private ConfigService() {
 	}
 
-	public AppConfig getBean() {
+	public synchronized AppConfig getBean() {
 		return bean;
 	}
 

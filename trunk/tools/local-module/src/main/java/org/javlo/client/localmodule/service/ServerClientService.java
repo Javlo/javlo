@@ -1,6 +1,7 @@
 package org.javlo.client.localmodule.service;
 
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.LinkedList;
 import java.util.List;
@@ -19,6 +20,7 @@ import org.apache.http.impl.client.DefaultHttpClient;
 import org.apache.http.util.EntityUtils;
 import org.javlo.client.localmodule.model.RemoteNotification;
 import org.javlo.client.localmodule.model.ServerConfig;
+import org.javlo.client.localmodule.model.ServerStatus;
 import org.javlo.helper.StringHelper;
 import org.javlo.helper.URLHelper;
 import org.javlo.service.NotificationService.NotificationContainer;
@@ -36,6 +38,10 @@ public class ServerClientService {
 
 	private Date lastNotificationDate;
 
+	private ServerStatus status = ServerStatus.UNKNOWN;
+
+	private String statusInfo;
+
 	public ServerClientService(ServerConfig server, String proxyHost, Integer proxyPort, String proxyUsername, String proxyPassword) {
 		this.server = server;
 
@@ -52,20 +58,51 @@ public class ServerClientService {
 		}
 	}
 
+	public ServerConfig getServer() {
+		return server;
+	}
+
+	public ServerStatus getStatus() {
+		return status;
+	}
+
+	public String getStatusInfo() {
+		return statusInfo;
+	}
+
+	private void onSuccess() {
+		status = ServerStatus.OK;
+		statusInfo = null;
+		ServiceFactory.getInstance().onServerStatusChange(server);
+	}
+
+	private void onError(Exception ex) {
+		status = ServerStatus.ERRONEOUS;
+		statusInfo = ex.getMessage();
+		ServiceFactory.getInstance().onServerStatusChange(server);
+	}
+
 	public synchronized void dispose() {
 		httpClient.getConnectionManager().shutdown();
 	}
 
-	public List<RemoteNotification> getNewDataNotifications() throws ClientProtocolException, IOException {
-		List<RemoteNotification> notifications = callDataNotifications(lastNotificationDate);
-		if (notifications != null && !notifications.isEmpty()) {
-			for (RemoteNotification remoteNotification : notifications) {
-				if (lastNotificationDate == null || remoteNotification.getCreationDate().after(lastNotificationDate)) {
-					lastNotificationDate = remoteNotification.getCreationDate();
+	public List<RemoteNotification> getNewDataNotifications() {
+		try {
+			List<RemoteNotification> notifications = callDataNotifications(lastNotificationDate);
+			onSuccess();
+			if (notifications != null && !notifications.isEmpty()) {
+				for (RemoteNotification remoteNotification : notifications) {
+					if (lastNotificationDate == null || remoteNotification.getCreationDate().after(lastNotificationDate)) {
+						lastNotificationDate = remoteNotification.getCreationDate();
+					}
 				}
 			}
+			return notifications;
+		} catch (Exception ex) {
+			onError(ex);
+			logger.log(Level.WARNING, "Exception on notification request.", ex);
+			return new ArrayList<RemoteNotification>();
 		}
-		return notifications;
 	}
 
 	public List<RemoteNotification> callDataNotifications(Date lastDate) throws ClientProtocolException, IOException {
@@ -85,13 +122,19 @@ public class ServerClientService {
 
 			JSONMap ajaxMap = JSONMap.parseMap(content);
 
-			List<NotificationContainer> notifications = ajaxMap.getMap("data").getValue("notifications",
-					new TypeToken<List<NotificationContainer>>() {
-					}.getType());
+			List<NotificationContainer> notifications = null;
+			JSONMap dataMap = ajaxMap.getMap("data");
+			if (dataMap != null) {
+				notifications = dataMap.getValue("notifications",
+						new TypeToken<List<NotificationContainer>>() {
+						}.getType());
+			}
 
 			List<RemoteNotification> out = new LinkedList<RemoteNotification>();
-			for (NotificationContainer notificationContainer : notifications) {
-				out.add(new RemoteNotification(server, notificationContainer));
+			if (notifications != null) {
+				for (NotificationContainer notificationContainer : notifications) {
+					out.add(new RemoteNotification(server, notificationContainer));
+				}
 			}
 			return out;
 
