@@ -20,7 +20,7 @@ import com.google.gson.JsonObject;
 
 public class JSONMap implements Map<String, Object> {
 
-	public static final Gson JSON = new GsonBuilder().setDateFormat("yyyy-MM-dd_HH-mm-ss-SSS").create();
+	public static final Gson JSON = new GsonBuilder().setDateFormat("yyyy-MM-dd_HH-mm-ss-SSS ").create();
 
 	public static JSONMap parseMap(String jsonStr) {
 		return transformMap(JSON.fromJson(jsonStr, JsonElement.class));
@@ -120,7 +120,12 @@ public class JSONMap implements Map<String, Object> {
 	}
 
 	public JSONMap getMap(Object key) {
-		return transformMap(object.get("" + key));
+		JsonElement p = object.get("" + key);
+		if (p != null) {
+			return transformMap(p);
+		} else {
+			return null;
+		}
 	}
 
 	public <T> T getValue(Object key, Class<T> classOfT) {

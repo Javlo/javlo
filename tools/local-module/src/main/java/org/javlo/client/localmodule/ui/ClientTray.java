@@ -16,8 +16,12 @@ import javax.swing.ImageIcon;
 import javax.swing.JOptionPane;
 
 import org.javlo.client.localmodule.model.RemoteNotification;
+import org.javlo.client.localmodule.model.ServerConfig;
+import org.javlo.client.localmodule.model.ServerStatus;
 import org.javlo.client.localmodule.service.ActionService;
+import org.javlo.client.localmodule.service.ConfigService;
 import org.javlo.client.localmodule.service.I18nService;
+import org.javlo.client.localmodule.service.ServerClientService;
 import org.javlo.client.localmodule.service.ServiceFactory;
 
 public class ClientTray {
@@ -38,6 +42,26 @@ public class ClientTray {
 		}
 	}
 
+	public static void onServerStatusChange(ServerConfig server) {
+		boolean atLeastOneError = false;
+		ServiceFactory factory = ServiceFactory.getInstance();
+		if (ServerStatus.ERRONEOUS.equals(factory.getClient(server).getStatus())) {
+			atLeastOneError = true;
+		} else {
+			ConfigService config = factory.getConfig();
+			synchronized (config.getBean()) {
+				for (ServerConfig sc : config.getBean().getServers()) {
+					ServerClientService scs = factory.getClient(sc);
+					if (scs.getStatus().equals(ServerStatus.ERRONEOUS)) {
+						atLeastOneError = true;
+						break;
+					}
+				}
+			}
+		}
+		getInstance().setErroneousState(atLeastOneError);
+	}
+
 	private I18nService i18n = I18nService.getInstance();
 
 	private PopupMenu menu;
@@ -45,9 +69,12 @@ public class ClientTray {
 	private MenuItem emptyNotification;
 	private MenuItem showAllNotifications;
 	private TrayIcon tray;
-	private Image passiveIcon;
+	private Image defaultIcon;
 	private Image activeIcon;
+	private Image errorIcon;
 	private boolean trayAdded = false;
+	private boolean activeState = false;
+	private boolean erroneousState = false;
 
 	private TrayMessageAction lastMessageAction;
 
@@ -59,9 +86,10 @@ public class ClientTray {
 		if (tray != null) {
 			return;
 		}
-		passiveIcon = new ImageIcon(getClass().getResource("/trayicon_large.png"), "tray icon").getImage();
+		defaultIcon = new ImageIcon(getClass().getResource("/trayicon_large.png"), "tray icon").getImage();
 		activeIcon = new ImageIcon(getClass().getResource("/trayicon_active_large.png"), "tray active icon").getImage();
-		tray = new TrayIcon(passiveIcon);
+		errorIcon = new ImageIcon(getClass().getResource("/trayicon_error_large.png"), "tray error icon").getImage();
+		tray = new TrayIcon(defaultIcon);
 		tray.setToolTip(i18n.get("tray.tooltip"));
 		tray.setImageAutoSize(true);
 
@@ -73,11 +101,14 @@ public class ClientTray {
 		notificationsItem.add(emptyNotification);
 		showAllNotifications = new MenuItem(i18n.get("menu.show-all-notifications"));
 
+		MenuItem statusItem = new MenuItem(i18n.get("menu.status"));
 		MenuItem configItem = new MenuItem(i18n.get("menu.open-config"));
 		MenuItem aboutItem = new MenuItem(i18n.get("menu.about"));
 		MenuItem exitItem = new MenuItem(i18n.get("menu.exit"));
 
 		menu.add(notificationsItem);
+		menu.addSeparator();
+		menu.add(statusItem);
 		menu.addSeparator();
 		menu.add(configItem);
 		menu.add(aboutItem);
@@ -106,6 +137,13 @@ public class ClientTray {
 			}
 		});
 
+		statusItem.addActionListener(new ActionListener() {
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				getAction().showStatus();
+			}
+		});
+
 		configItem.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
@@ -128,6 +166,24 @@ public class ClientTray {
 		});
 
 		displayInfoMessage(i18n.get("tray.tooltip"), i18n.get("tray.started"), false);
+	}
+
+	public boolean isActiveState() {
+		return activeState;
+	}
+
+	public void setActiveState(boolean runningState) {
+		this.activeState = runningState;
+		refreshIcon();
+	}
+
+	public boolean isErroneousState() {
+		return erroneousState;
+	}
+
+	public void setErroneousState(boolean erroneous) {
+		this.erroneousState = erroneous;
+		refreshIcon();
 	}
 
 	private void onTrayClick(ActionEvent e) {
@@ -159,13 +215,15 @@ public class ClientTray {
 		}
 	}
 
-	/**
-	 * Called by {@link SynchroControlService} to update graphical information. TODO Use listeners?
-	 * @param running
-	 */
-	public void onSyncroStateChange(boolean running) {
+	private void refreshIcon() {
 		if (trayAdded) {
-			tray.setImage(running ? activeIcon : passiveIcon);
+			if (activeState) {
+				tray.setImage(activeIcon);
+			} else if (erroneousState) {
+				tray.setImage(errorIcon);
+			} else {
+				tray.setImage(defaultIcon);
+			}
 		}
 	}
 

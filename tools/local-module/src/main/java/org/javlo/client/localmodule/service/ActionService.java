@@ -9,6 +9,7 @@ import javax.swing.JOptionPane;
 import org.javlo.client.localmodule.model.ServerConfig;
 import org.javlo.client.localmodule.ui.ClientTray;
 import org.javlo.client.localmodule.ui.ConfigFrame;
+import org.javlo.client.localmodule.ui.StatusFrame;
 
 public class ActionService {
 
@@ -33,7 +34,11 @@ public class ActionService {
 	}
 
 	public void executeDefaultAction() {
-		//Do nothingRemoteN
+		showStatus();
+	}
+
+	public void showStatus() {
+		StatusFrame.showDialog();
 	}
 
 	public void openWebInterface() {

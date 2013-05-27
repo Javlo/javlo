@@ -92,7 +92,9 @@ public class NotificationClientService {
 		try {
 			synchronized (lock) {
 				while (!stopping) {
+					factory.onWorkStart();
 					refreshNotifications();
+					factory.onWorkFinish();
 					//Wait next loop
 					logger.info("- wait ----------------------------------------------------------");
 					waiting = true;
@@ -110,13 +112,9 @@ public class NotificationClientService {
 		List<RemoteNotification> allNewNotifications = new ArrayList<RemoteNotification>();
 		for (ServerConfig server : factory.getConfig().getBean().getServers()) {
 			ServerClientService client = factory.getClient(server);
-			try {
-				List<RemoteNotification> notifications = client.getNewDataNotifications();
-				if (notifications != null && !notifications.isEmpty()) {
-					allNewNotifications.addAll(notifications);
-				}
-			} catch (Exception ex) {
-				logger.log(Level.WARNING, "Exception on notification request.", ex);
+			List<RemoteNotification> notifications = client.getNewDataNotifications();
+			if (notifications != null && !notifications.isEmpty()) {
+				allNewNotifications.addAll(notifications);
 			}
 		}
 		if (!allNewNotifications.isEmpty()) {
