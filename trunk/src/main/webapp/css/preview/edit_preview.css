@@ -1,4 +1,3 @@
-/* empêche la sélection */
 [draggable] {
     -moz-user-select: none;
     -khtml-user-select: none;
@@ -459,7 +458,7 @@ body.fix-preview {
 	position: absolute;
 	display: block;			
 	right: 12px;
-	top: 5px;
+	top: 3px;
 	font-size: 0;
 	background-color: #EEEEEE;
 }
@@ -484,7 +483,7 @@ body.fix-preview {
 	border: 2px #B1B1B1 solid;
 	height: 6px;
 	width: 6px;
-	top: 3px;		
+	top: 2px;		
 }
 
 #preview_command .sortable-target {

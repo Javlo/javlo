@@ -4,6 +4,7 @@
 package org.javlo.component.core;
 
 import java.io.Serializable;
+import java.util.Date;
 
 import org.javlo.helper.StringHelper;
 
@@ -30,6 +31,9 @@ public class ComponentBean implements Serializable {
 
 	private boolean repeat = false;
 	private boolean modify = false;
+
+	private Date creationDate = new Date();
+	private Date modificationDate = new Date();
 
 	private String area = DEFAULT_AREA;
 
@@ -145,6 +149,9 @@ public class ComponentBean implements Serializable {
 	}
 
 	public void setModify(boolean modify) {
+		if (modify) {
+			modificationDate = new Date();
+		}
 		this.modify = modify;
 	}
 
@@ -170,6 +177,22 @@ public class ComponentBean implements Serializable {
 
 	public void setAuthors(String authors) {
 		this.authors = authors;
+	}
+
+	public Date getCreationDate() {
+		return creationDate;
+	}
+
+	public void setCreationDate(Date creationDate) {
+		this.creationDate = creationDate;
+	}
+
+	public Date getModificationDate() {
+		return modificationDate;
+	}
+
+	public void setModificationDate(Date modificationDate) {
+		this.modificationDate = modificationDate;
 	}
 
 }

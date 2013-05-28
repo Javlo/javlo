@@ -93,6 +93,7 @@ public class AdminAction extends AbstractModuleAction {
 		private boolean openFileAsPopup = false;
 		private boolean wizz = false;
 		private boolean onlyCreatorModify = false;
+		private boolean displayCreator = false;
 		private String noPopupDomain;
 		private String URIAlias;
 		private boolean master = false;
@@ -157,8 +158,9 @@ public class AdminAction extends AbstractModuleAction {
 			setBlockPassword(globalContext.getBlockPassword());
 
 			setMaster(globalContext.isMaster());
-			
+
 			setOnlyCreatorModify(globalContext.isOnlyCreatorModify());
+			setDisplayCreator(globalContext.isDisplayCreator());
 
 			Properties properties = new Properties();
 			properties.putAll(globalContext.getURIAlias());
@@ -532,6 +534,14 @@ public class AdminAction extends AbstractModuleAction {
 			this.onlyCreatorModify = onlyCreatorModify;
 		}
 
+		public boolean isDisplayCreator() {
+			return displayCreator;
+		}
+
+		public void setDisplayCreator(boolean displayCreator) {
+			this.displayCreator = displayCreator;
+		}
+
 	}
 
 	@Override
@@ -784,6 +794,7 @@ public class AdminAction extends AbstractModuleAction {
 					currentGlobalContext.setAdministrator(requestService.getParameter("administrator", ""));
 					currentGlobalContext.setHomePage(requestService.getParameter("homepage", ""));
 					currentGlobalContext.setOnlyCreatorModify(StringHelper.isTrue(requestService.getParameter("only-creator-modify", null)));
+					currentGlobalContext.setDisplayCreator((StringHelper.isTrue(requestService.getParameter("display-creator", null))));
 					try {
 						currentGlobalContext.setURLFactory(requestService.getParameter("urlfactory", ""));
 					} catch (Exception e1) {

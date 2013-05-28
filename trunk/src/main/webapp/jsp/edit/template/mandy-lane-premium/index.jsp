@@ -142,14 +142,11 @@
     </div><!-- tabmenu -->
     
     <div class="accountinfo">    
-    	<c:if test="${not empty info.editUser.userInfo.facebook}">
-    	<img src="${fn:replace(info.editUser.userInfo.facebook,'//www.','//graph.')}/picture?type=small" alt="facebook Avatar" />
+    	<c:if test="${not empty info.editUser.userInfo.avatarURL}">
+    	<img src="${info.editUser.userInfo.avatarURL}" alt="social avatar" lang="en" />
     	</c:if>
-		<c:if test="${empty info.editUser.userInfo.facebook && not empty info.editUser.userInfo.twitter}">
-    		<img src="https://api.twitter.com/1/users/profile_image?screen_name=${fn:replace(info.editUser.userInfo.twitter,'https://twitter.com/','')}&size=normal" alt="twitter Avatar" />
-    	</c:if>    	
-    	<c:if test="${empty info.editUser.userInfo.facebook && empty info.editUser.userInfo.twitter}">
-    	<img src="${info.editTemplateURL}/images/avatar.png" alt="default avatar" />
+    	<c:if test="${empty info.editUser.userInfo.avatarURL}">
+    	<img src="${info.editTemplateURL}/images/avatar.png" alt="default avatar" lang="en" />
     	</c:if>
         <div class="info">
         	<h3>${currentUser.name}</h3>

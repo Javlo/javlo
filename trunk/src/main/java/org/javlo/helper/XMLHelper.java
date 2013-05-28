@@ -190,6 +190,12 @@ public class XMLHelper {
 			out.print("\" authors=\"");
 			out.print(StringHelper.neverNull(beans[j].getAuthors()));
 
+			out.print("\" creationDate=\"");
+			out.print(StringHelper.renderTime(beans[j].getCreationDate()));
+
+			out.print("\" modificationDate=\"");
+			out.print(StringHelper.renderTime(beans[j].getModificationDate()));
+
 			if (style != null && style.length() > 0) {
 				out.print("\" style=\"");
 				out.print(StringHelper.toXMLAttribute(style));

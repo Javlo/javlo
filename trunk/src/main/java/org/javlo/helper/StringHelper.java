@@ -771,6 +771,20 @@ public class StringHelper {
 		return outExt;
 	}
 
+	public static String getLanguageFromFileName(String filename) {
+		if (!filename.contains("_")) {
+			return null;
+		} else {
+			filename = getFileNameWithoutExtension(filename);
+			String lg = filename.substring(filename.lastIndexOf("_") + 1);
+			if (lg.length() != 2) {
+				return null;
+			} else {
+				return lg;
+			}
+		}
+	}
+
 	public static String getDirNameFromPath(String path) {
 		if (path.contains("?")) {
 			path = path.substring(0, path.indexOf('?'));
@@ -1162,7 +1176,9 @@ public class StringHelper {
 	}
 
 	public static void main(String[] args) {
-		System.out.println("file time : " + renderFileTime(new Date()));
+		System.out.println("file time : " + getLanguageFromFileName("view_en.properties"));
+		System.out.println("file time : " + getLanguageFromFileName("view_end.properties"));
+		System.out.println("file time : " + getLanguageFromFileName("view.properties"));
 	}
 
 	/**

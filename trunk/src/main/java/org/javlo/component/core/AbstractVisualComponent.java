@@ -19,6 +19,7 @@ import java.io.StringWriter;
 import java.util.Calendar;
 import java.util.Collection;
 import java.util.Collections;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
@@ -231,6 +232,8 @@ public abstract class AbstractVisualComponent implements IContentVisualComponent
 
 	/**
 	 * @see org.javlo.itf.IContentVisualComponent#getBean()
+	 * @param ctx
+	 *            can be null;
 	 */
 	@Override
 	public ComponentBean getBean(ContentContext ctx) {
@@ -1751,6 +1754,15 @@ public abstract class AbstractVisualComponent implements IContentVisualComponent
 		return false;
 	}
 
+	@Override
+	public Date getCreationDate() {
+		return getBean(null).getCreationDate();
+	}
+
+	@Override
+	public Date getModificationDate() {
+		return getBean(null).getModificationDate();
+	}
 	// generate compilation error : use for refactoring
 
 	/*

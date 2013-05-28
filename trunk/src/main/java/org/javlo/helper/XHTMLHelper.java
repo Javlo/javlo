@@ -54,6 +54,7 @@ import org.javlo.i18n.I18nAccess;
 import org.javlo.message.GenericMessage;
 import org.javlo.navigation.MenuElement;
 import org.javlo.service.ContentService;
+import org.javlo.service.ListService;
 import org.javlo.service.RequestService;
 import org.javlo.service.ReverseLinkService;
 import org.javlo.utils.SuffixPrefix;
@@ -2024,6 +2025,25 @@ public class XHTMLHelper {
 		}
 		return content;
 
+	}
+
+	/**
+	 * transform a value to a span with key as class and value inside.
+	 * 
+	 * @param list
+	 * @param key
+	 * @return the key if list null, and empty string if key not found in the list.
+	 */
+	public static String renderListItem(List<ListService.Item> list, String key) {
+		if (list == null) {
+			return key;
+		}
+		for (ListService.Item item : list) {
+			if (item.getKey().equals(key)) {
+				return "<span class=\"" + item.getKey() + "\">" + item.getValue() + "</span>";
+			}
+		}
+		return "";
 	}
 
 	private XHTMLHelper() {

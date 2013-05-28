@@ -99,6 +99,7 @@ org.javlo.component.container.DynamicComponentList
 org.javlo.component.portlet.PortletWrapperComponent
 org.javlo.component.links.UserInfoLink
 org.javlo.component.form.FormMailingComponent
+org.javlo.component.users.UserSearch
 ec.ep.europarl.adagio.wcms.component.GenericFormPortlet
 ec.ep.europarl.adagio.wcms.component.QuizPollPortlet
 ec.ep.europarl.adagio.wcms.component.CYPRegisterPortlet

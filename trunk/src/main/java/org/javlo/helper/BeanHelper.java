@@ -123,6 +123,31 @@ public class BeanHelper {
 		return res;
 	}
 
+	public static String beanToString(Object bean) {
+		StringBuffer outStr = new StringBuffer();
+		Method[] methods = bean.getClass().getMethods();
+		for (Method method : methods) {
+			if (method.getName().startsWith("get")) {
+				if (method.getReturnType().equals(String.class)) {
+					String name = method.getName().substring(3);
+					name = StringHelper.firstLetterLower(name);
+					String value = null;
+					try {
+						value = (String) method.invoke(bean, (Object[]) null);
+					} catch (Exception e) {
+						e.printStackTrace();
+					}
+					if (value == null) {
+						value = "";
+					}
+					outStr.append(value);
+					outStr.append(' ');
+				}
+			}
+		}
+		return outStr.toString();
+	}
+
 	/**
 	 * copy map in bean, call set[key] ( value ).
 	 * 

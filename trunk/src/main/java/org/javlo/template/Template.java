@@ -5,6 +5,7 @@ import java.io.File;
 import java.io.FileFilter;
 import java.io.FileInputStream;
 import java.io.FileReader;
+import java.io.FilenameFilter;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
@@ -50,6 +51,7 @@ import org.javlo.message.GenericMessage;
 import org.javlo.navigation.DefaultTemplate;
 import org.javlo.remote.IRemoteResource;
 import org.javlo.rendering.Device;
+import org.javlo.service.ListService;
 import org.javlo.service.exception.ServiceException;
 import org.javlo.servlet.zip.ZipManagement;
 
@@ -550,6 +552,8 @@ public class Template implements Comparable<Template> {
 	private static final String CONFIG_COMPONENTS_PROPERTIES_FOLDER = "components-config";
 
 	private static final String I18N_FILE = "view_";
+
+	private static final String LIST_FOLDER = "list";
 
 	private static final String MACRO_FOLDER = "macro";
 
@@ -1155,6 +1159,33 @@ public class Template implements Comparable<Template> {
 			}
 		}
 		return propI18n;
+	}
+
+	public synchronized Map<String, List<ListService.Item>> getAllList(GlobalContext globalContext, Locale locale) throws IOException {
+		if (locale == null) {
+			return null;
+		}
+		File listFolder = new File(URLHelper.mergePath(URLHelper.mergePath(getFolder().getAbsolutePath(), LIST_FOLDER)));
+		if (!listFolder.isDirectory()) {
+			return Collections.EMPTY_MAP;
+		} else {
+			Map<String, List<ListService.Item>> linkedMap = new HashMap<String, List<ListService.Item>>();
+			for (File list : listFolder.listFiles((FilenameFilter) new FileFilterUtils().suffixFileFilter(".properties"))) {
+				String lg = StringHelper.getLanguageFromFileName(list.getName());
+				if (list.isFile() && (lg == null || lg.equals(locale.getLanguage()))) {
+					Properties listProp = new Properties();
+					Reader reader = new FileReader(list);
+					listProp.load(reader);
+					reader.close();
+					List<ListService.Item> serviceList = new LinkedList<ListService.Item>();
+					for (Map.Entry entry : listProp.entrySet()) {
+						serviceList.add(new ListService.Item(entry));
+					}
+					linkedMap.put(StringHelper.getFileNameWithoutExtension(list.getName()), serviceList);
+				}
+			}
+			return linkedMap;
+		}
 	}
 
 	public String getId() {

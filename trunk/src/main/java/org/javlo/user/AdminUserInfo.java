@@ -39,4 +39,15 @@ public class AdminUserInfo extends UserInfo {
 		this.twitter = twitter;
 	}
 
+	@Override
+	public String getAvatarURL() {
+		if (getFacebook() != null) {
+			return getFacebook().replace("//www.", "//graph.") + "/picture?type=small";
+		} else if (getTwitter() != null) {
+			return "https://api.twitter.com/1/users/profile_image?screen_name=" + getTwitter().replaceAll("https://twitter.com/", "") + "&size=normal";
+		} else {
+			return null;
+		}
+	}
+
 }
