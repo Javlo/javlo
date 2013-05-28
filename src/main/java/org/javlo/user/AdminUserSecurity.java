@@ -23,6 +23,8 @@ public class AdminUserSecurity implements Serializable {
 	public static String DESIGN_ROLE = "design";
 
 	public static String MACRO_ROLE = "macro";
+	
+	public static String MAILING_ROLE = "mailing";
 
 	public static String LIGHT_INTERFACE_ROLE = "light-interface";
 

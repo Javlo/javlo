@@ -58,6 +58,7 @@ import org.javlo.portlet.PortletWindowImpl;
 import org.javlo.portlet.filter.MultiReadRequestWrapper;
 import org.javlo.rendering.Device;
 import org.javlo.service.ContentService;
+import org.javlo.service.ListService;
 import org.javlo.service.RequestService;
 import org.javlo.service.remote.RemoteMessage;
 import org.javlo.service.remote.RemoteMessageService;
@@ -251,6 +252,7 @@ public class AccessServlet extends HttpServlet implements IVersion {
 			I18nAccess i18nAccess = I18nAccess.getInstance(ctx);
 
 			i18nAccess.requestInit(ctx);
+			ctx.getRequest().setAttribute("list", ListService.getInstance(ctx).getAllList(ctx));
 
 			/* ******** */
 			/* SECURITY */

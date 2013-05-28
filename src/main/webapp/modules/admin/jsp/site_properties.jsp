@@ -222,6 +222,12 @@
 </div>
 
 <div class="line">		
+	<label for="display-creator">${i18n.edit['admin.form.display-creator']}</label>
+	<input type="checkbox" id="display-creator" name="display-creator" ${currentContext.displayCreator?'checked="checked"':""}" />
+</div>
+
+
+<div class="line">		
 	<label for="users-access">${i18n.edit['admin.form.users-access']}</label>
 	<textarea id="users-access" name="users-access">${currentContext.usersAccess}</textarea>	
 </div>

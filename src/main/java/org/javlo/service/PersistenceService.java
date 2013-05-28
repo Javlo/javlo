@@ -651,6 +651,14 @@ public class PersistenceService {
 				root.setVisible(StringHelper.isTrue(page.getAttributeValue("visible", "false")));
 				root.setHttps(StringHelper.isTrue(page.getAttributeValue("https", "false")));
 				root.setCreator(page.getAttributeValue("creator", ""));
+
+				try {
+					root.setCreationDate(StringHelper.parseDate(page.getAttributeValue("creationDate", StringHelper.renderTime(new Date()))));
+					root.setModificationDate(StringHelper.parseDate(page.getAttributeValue("modificationDate", StringHelper.renderTime(new Date()))));
+				} catch (ParseException e) {
+					e.printStackTrace();
+				}
+
 				root.setLatestEditor(page.getAttributeValue("latestEditor", ""));
 				root.setValid(StringHelper.isTrue(page.getAttributeValue("valid", "false")));
 				root.setValidater(page.getAttributeValue("validater", ""));

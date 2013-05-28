@@ -61,7 +61,17 @@
 	</div>
 	<div class="line">
 		<label for="function">function</label>
-		<input type="text" id="function" name="function" value="${userInfoMap["function"]}" /> 
+		<c:if test="${empty list.functions}">
+		<input type="text" id="function" name="function" value="${userInfoMap["function"]}" />
+		</c:if>
+		 <c:if test="${not empty list.functions}">
+		 	<select id="function" name="function">
+		 		<option></option>
+		 		<c:forEach var="function" items="${list.functions}">
+		 			<option value="${function.key}"${userInfoMap["function"] == function.key?' selected="selected"':''}>${function.value}</option>
+		 		</c:forEach>		 		
+		 	</select>
+		 </c:if> 
 	</div>
 	<div class="line">
 		<label for="phone">phone</label>
@@ -87,7 +97,17 @@
 	</div>
 	<div class="line">
 		<label for="country">country</label>
-		<input type="text" id="country" name="country" value="${userInfoMap["country"]}" /> 
+		<c:if test="${empty list.countries}">
+			<input type="text" id="country" name="country" value="${userInfoMap["country"]}" />
+		</c:if>
+		 <c:if test="${not empty list.countries}">
+		 	<select id="country" name="country">
+		 		<option></option>
+		 		<c:forEach var="country" items="${list.countries}">
+		 			<option value="${country.key}"${userInfoMap["country"] == country.key?' selected="selected"':''}>${country.value}</option>
+		 		</c:forEach>		 		
+		 	</select>
+		 </c:if>
 	</div>
 	<div class="line">
 		<label for="preferredLanguageRaw">preferred Language</label>

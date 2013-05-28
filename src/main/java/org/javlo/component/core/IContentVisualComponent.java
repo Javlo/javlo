@@ -6,6 +6,7 @@ package org.javlo.component.core;
 
 import java.io.IOException;
 import java.util.Collection;
+import java.util.Date;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
@@ -689,5 +690,9 @@ public interface IContentVisualComponent {
 	 * @throws Exception
 	 */
 	public boolean initContent(ContentContext ctx) throws Exception;
+
+	public Date getCreationDate();
+
+	public Date getModificationDate();
 
 }

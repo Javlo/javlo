@@ -66,4 +66,6 @@ public interface IUserInfo {
 
 	public String[] getAllValues();
 
+	public String getAvatarURL();
+
 }

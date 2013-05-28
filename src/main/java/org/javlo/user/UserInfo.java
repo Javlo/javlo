@@ -456,11 +456,18 @@ public class UserInfo implements Comparable<IUserInfo>, IUserInfo, Serializable 
 		this.function = function;
 	}
 
+	@Override
 	public String getToken() {
 		return token;
 	}
 
+	@Override
 	public void setToken(String token) {
 		this.token = token;
+	}
+
+	@Override
+	public String getAvatarURL() {
+		return null;
 	}
 }

@@ -112,7 +112,14 @@ IContentVisualComponent elem = null;
 			}
 			
 			%><%if (elems != null) {%><%=elems.getPrefixXHTMLCode(ctx)
-%><%}%><%=elem.getPrefixViewXHTMLCode(ctx)%>
+%><%}
+
+if (globalContext.isDisplayCreator()) {
+	request.setAttribute("creator", elem.getAuthors());	
+	request.setAttribute("date", StringHelper.renderTime(elem.getModificationDate()));
+	%><jsp:include page="display_user.jsp"></jsp:include><%
+}
+%><%=elem.getPrefixViewXHTMLCode(ctx)%>
 <%=elem.getXHTMLCode(ctx)%>
 <%=elem.getSuffixViewXHTMLCode(ctx)%>
 <%if (elems != null) {%><%=elems.getSufixXHTMLCode(ctx)
