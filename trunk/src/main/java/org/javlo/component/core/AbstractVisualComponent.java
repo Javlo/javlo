@@ -54,6 +54,8 @@ import org.javlo.message.GenericMessage;
 import org.javlo.navigation.MenuElement;
 import org.javlo.rendering.Device;
 import org.javlo.service.RequestService;
+import org.javlo.user.AdminUserSecurity;
+import org.javlo.user.User;
 import org.javlo.utils.DebugListening;
 import org.javlo.utils.SuffixPrefix;
 
@@ -237,7 +239,11 @@ public abstract class AbstractVisualComponent implements IContentVisualComponent
 	 */
 	@Override
 	public ComponentBean getBean(ContentContext ctx) {
-		ComponentBean beanCopy = new ComponentBean(componentBean.getId(), componentBean.getType(), componentBean.getValue(), componentBean.getLanguage(), componentBean.isRepeat());
+		User authors = null;
+		if (ctx != null) {
+			authors = ctx.getCurrentEditUser();
+		}
+		ComponentBean beanCopy = new ComponentBean(componentBean.getId(), componentBean.getType(), componentBean.getValue(), componentBean.getLanguage(), componentBean.isRepeat(), authors);
 		beanCopy.setList(componentBean.isList());
 		beanCopy.setStyle(componentBean.getStyle());
 		beanCopy.setArea(componentBean.getArea());
@@ -892,8 +898,10 @@ public abstract class AbstractVisualComponent implements IContentVisualComponent
 			GlobalContext globalContext = GlobalContext.getInstance(ctx.getRequest());
 			EditContext editCtx = EditContext.getInstance(globalContext, ctx.getRequest().getSession());
 			try {
-				if (editCtx.isEditPreview() && (!isRepeat() || getPage().equals(ctx.getCurrentPage()))) {
-					return " class=\"editable-component" + currentClass + "\"";
+				if (!globalContext.isOnlyCreatorModify() || (ctx.getCurrentEditUser() != null && (AdminUserSecurity.getInstance().isAdmin(ctx.getCurrentEditUser()) || getAuthors().equals(ctx.getCurrentEditUser().getLogin())))) {
+					if (editCtx.isEditPreview() && (!isRepeat() || getPage().equals(ctx.getCurrentPage()))) {
+						return " class=\"editable-component" + currentClass + "\"";
+					}
 				}
 			} catch (Exception e) {
 				e.printStackTrace();

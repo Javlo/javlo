@@ -151,7 +151,7 @@ public class SmartExternalLinkImportation extends AbstractVisualComponent {
 			String pageContent = getValue();
 			List<URL> extLinks = NetHelper.getExternalLinks(pageContent);
 			for (URL url : extLinks) {
-				parentId = currentPage.prepareAddContent(ctx.getRequestContentLanguage(), parentId, SmartExternalLink.TYPE, getStyle(ctx), ComplexPropertiesLink.LINK_KEY + "=" + url);
+				parentId = currentPage.prepareAddContent(ctx.getRequestContentLanguage(), parentId, SmartExternalLink.TYPE, getStyle(ctx), ComplexPropertiesLink.LINK_KEY + "=" + url, ctx.getCurrentEditUser());
 				countImport++;
 			}
 		} else {
@@ -162,7 +162,7 @@ public class SmartExternalLinkImportation extends AbstractVisualComponent {
 				String pageContent = NetHelper.readPage(new URL(link));
 				List<URL> extLinks = NetHelper.getExternalLinks(pageContent);
 				for (URL url : extLinks) {
-					parentId = currentPage.prepareAddContent(ctx.getRequestContentLanguage(), parentId, SmartExternalLink.TYPE, getStyle(ctx), ComplexPropertiesLink.LINK_KEY + "=" + url);
+					parentId = currentPage.prepareAddContent(ctx.getRequestContentLanguage(), parentId, SmartExternalLink.TYPE, getStyle(ctx), ComplexPropertiesLink.LINK_KEY + "=" + url, ctx.getCurrentEditUser());
 				}
 				link = read.readLine();
 				countImport++;

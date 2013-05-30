@@ -45,6 +45,7 @@ import org.javlo.navigation.MenuElement;
 import org.javlo.service.ContentService;
 import org.javlo.service.NavigationService;
 import org.javlo.service.PersistenceService;
+import org.javlo.user.User;
 
 public class MacroHelper {
 
@@ -72,8 +73,8 @@ public class MacroHelper {
 	 * @return the if of the new component
 	 * @throws Exception
 	 */
-	public static final String addContent(String lg, MenuElement page, String parentCompId, String contentType, String value) throws Exception {
-		return addContent(lg, page, parentCompId, contentType, null, value);
+	public static final String addContent(String lg, MenuElement page, String parentCompId, String contentType, String value, User authors) throws Exception {
+		return addContent(lg, page, parentCompId, contentType, null, value, authors);
 	}
 
 	/**
@@ -92,8 +93,8 @@ public class MacroHelper {
 	 * @return the if of the new component
 	 * @throws Exception
 	 */
-	public static final String addContent(String lg, MenuElement page, String parentCompId, String contentType, String style, String value) throws Exception {
-		return addContent(lg, page, parentCompId, contentType, style, null, value);
+	public static final String addContent(String lg, MenuElement page, String parentCompId, String contentType, String style, String value, User authors) throws Exception {
+		return addContent(lg, page, parentCompId, contentType, style, null, value, authors);
 	}
 
 	/**
@@ -116,8 +117,8 @@ public class MacroHelper {
 	 * @return the if of the new component
 	 * @throws Exception
 	 */
-	public static final String addContent(String lg, MenuElement page, String parentCompId, String contentType, String style, String area, String value) throws Exception {
-		ComponentBean comp = new ComponentBean(StringHelper.getRandomId(), contentType, value, lg, false);
+	public static final String addContent(String lg, MenuElement page, String parentCompId, String contentType, String style, String area, String value, User authors) throws Exception {
+		ComponentBean comp = new ComponentBean(StringHelper.getRandomId(), contentType, value, lg, false, authors);
 		if (area != null) {
 			comp.setArea(area);
 		}
@@ -128,8 +129,8 @@ public class MacroHelper {
 		return comp.getId();
 	}
 
-	public static final String addContent(String lg, MenuElement page, String parentCompId, String contentType, String style, String area, String value, boolean inList) throws Exception {
-		ComponentBean comp = new ComponentBean(StringHelper.getRandomId(), contentType, value, lg, false);
+	public static final String addContent(String lg, MenuElement page, String parentCompId, String contentType, String style, String area, String value, boolean inList, User authors) throws Exception {
+		ComponentBean comp = new ComponentBean(StringHelper.getRandomId(), contentType, value, lg, false, authors);
 		comp.setList(inList);
 		if (area != null) {
 			comp.setArea(area);
@@ -178,7 +179,7 @@ public class MacroHelper {
 	 * @throws Exception
 	 */
 	public static final String addContentIfNotExist(ContentContext ctx, MenuElement page, String parentCompId, String contentType, String value, String style) throws Exception {
-		ComponentBean newComp = new ComponentBean(StringHelper.getRandomId(), contentType, value, ctx.getContentLanguage(), false);
+		ComponentBean newComp = new ComponentBean(StringHelper.getRandomId(), contentType, value, ctx.getContentLanguage(), false, ctx.getCurrentEditUser());
 		if (style != null) {
 			newComp.setStyle(style);
 		}
@@ -423,7 +424,7 @@ public class MacroHelper {
 						if (withContent) {
 							content = comp.getValue(ctxNoArea);
 						}
-						parentId = addContent(lgCtx.getRequestContentLanguage(), currentPage, parentId, comp.getType(), comp.getStyle(ctxNoArea), comp.getArea(), content);
+						parentId = addContent(lgCtx.getRequestContentLanguage(), currentPage, parentId, comp.getType(), comp.getStyle(ctxNoArea), comp.getArea(), content, ctx.getCurrentEditUser());
 					}
 				}
 			}
@@ -443,7 +444,7 @@ public class MacroHelper {
 		ContentElementList sourceContent = fromPage.getLocalContentCopy(fromCtx);
 		String parentCompId = "0";
 		for (IContentVisualComponent component : sourceContent.asIterable(fromCtx)) {
-			parentCompId = MacroHelper.addContent(toCtx.getRequestContentLanguage(), toPage, parentCompId, component.getType(), component.getStyle(fromCtx), component.getArea(), component.getValue(fromCtx));
+			parentCompId = MacroHelper.addContent(toCtx.getRequestContentLanguage(), toPage, parentCompId, component.getType(), component.getStyle(fromCtx), component.getArea(), component.getValue(fromCtx), fromCtx.getCurrentEditUser());
 		}
 	}
 
@@ -574,7 +575,7 @@ public class MacroHelper {
 				style = StringUtils.split(type, "|")[1];
 				type = StringUtils.split(type, "|")[0];
 			}
-			contentId = addContent(ctx.getRequestContentLanguage(), page, contentId, type, style, area, value);
+			contentId = addContent(ctx.getRequestContentLanguage(), page, contentId, type, style, area, value, ctx.getCurrentEditUser());
 		}
 	}
 
@@ -743,7 +744,7 @@ public class MacroHelper {
 							value = LoremIpsumGenerator.getParagraph(50, false, true);
 						}
 					}
-					parentId = MacroHelper.addContent(lg, page, parentId, type, style, area, value, asList);
+					parentId = MacroHelper.addContent(lg, page, parentId, type, style, area, value, asList, ctx.getCurrentEditUser());
 				}
 			}
 		}
@@ -763,11 +764,11 @@ public class MacroHelper {
 			Collection<String> lgs = globalContext.getContentLanguages();
 			for (String lg : lgs) {
 				String parentId = "0";
-				parentId = MacroHelper.addContent(lg, newPage, parentId, DateComponent.TYPE, "");
-				parentId = MacroHelper.addContent(lg, newPage, parentId, Title.TYPE, "");
-				parentId = MacroHelper.addContent(lg, newPage, parentId, Description.TYPE, "");
-				parentId = MacroHelper.addContent(lg, newPage, parentId, GlobalImage.TYPE, "");
-				parentId = MacroHelper.addContent(lg, newPage, parentId, Paragraph.TYPE, "");
+				parentId = MacroHelper.addContent(lg, newPage, parentId, DateComponent.TYPE, "", ctx.getCurrentEditUser());
+				parentId = MacroHelper.addContent(lg, newPage, parentId, Title.TYPE, "", ctx.getCurrentEditUser());
+				parentId = MacroHelper.addContent(lg, newPage, parentId, Description.TYPE, "", ctx.getCurrentEditUser());
+				parentId = MacroHelper.addContent(lg, newPage, parentId, GlobalImage.TYPE, "", ctx.getCurrentEditUser());
+				parentId = MacroHelper.addContent(lg, newPage, parentId, Paragraph.TYPE, "", ctx.getCurrentEditUser());
 			}
 		} else {
 			MacroHelper.createPageStructure(ctx, newPage, pressReleaseStructure, StringHelper.isTrue(pressReleaseStructure.get("fake-content")));
@@ -804,7 +805,7 @@ public class MacroHelper {
 				mounthPage.setVisible(true);
 				for (String lg : lgs) {
 					String monthName = MacroHelper.getDisplayName(cal, Calendar.MONTH, MacroHelper.CALENDAR_LONG, new Locale(globalContext.getDefaultLanguage()));
-					MacroHelper.addContent(lg, mounthPage, "0", Title.TYPE, monthName);
+					MacroHelper.addContent(lg, mounthPage, "0", Title.TYPE, monthName, ctx.getCurrentEditUser());
 				}
 			}
 			cal.roll(Calendar.MONTH, false);

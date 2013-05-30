@@ -66,6 +66,7 @@ import org.javlo.thread.AbstractThread;
 import org.javlo.user.AdminUserFactory;
 import org.javlo.user.AdminUserSecurity;
 import org.javlo.user.IUserFactory;
+import org.javlo.user.UserFactory;
 import org.javlo.ztatic.FileCache;
 
 public class Edit extends AbstractModuleAction {
@@ -442,7 +443,6 @@ public class Edit extends AbstractModuleAction {
 				previewSourceCode = previewSourceCode + "<figure><img src=\"" + URLHelper.createTransformURL(ctx, resourceStatus.getSource().getUri(), "preview") + "?hash=" + resourceStatus.getSource().getFile().length() + "\" alt=\"source\" /><figcaption>" + StringHelper.renderSize(resourceStatus.getSource().getFile().length()) + "</figcaption></figure></a>";
 				previewTargetCode = "<a href=\"" + URLHelper.createResourceURL(ctx, resourceStatus.getTarget().getUri()) + "\">";
 				previewTargetCode = previewTargetCode + "<figure><img src=\"" + URLHelper.createTransformURL(ctx, resourceStatus.getTarget().getUri(), "preview") + "?hash=" + resourceStatus.getTarget().getFile().length() + "\"  alt=\"source\" /><figcaption>" + StringHelper.renderSize(resourceStatus.getTarget().getFile().length()) + "</figcaption></figure></a>";
-
 			}
 			ctx.getRequest().setAttribute("previewSourceCode", previewSourceCode);
 			ctx.getRequest().setAttribute("previewTargetCode", previewTargetCode);
@@ -452,7 +452,6 @@ public class Edit extends AbstractModuleAction {
 			currentModule.setToolsRenderer(null);
 			currentModule.setSidebar(false);
 		} else {
-
 			/** set the principal renderer **/
 			ContentModuleContext modCtx = (ContentModuleContext) LangHelper.smartInstance(request, ctx.getResponse(), ContentModuleContext.class);
 			if (request.getParameter("query") == null) {
@@ -490,7 +489,18 @@ public class Edit extends AbstractModuleAction {
 					break;
 				}
 			}
-
+			
+			List<String> roles = new LinkedList<String>();
+			Set<String> roleSet = new HashSet<String>();
+			for (String role : globalContext.getAdminUserRoles()) {
+				roleSet.clear();
+				roleSet.add(role);
+				if (ctx.getCurrentEditUser().validForRoles(roleSet)) {
+					roles.add(role);
+				}
+			}			
+			Collections.sort(roles);
+			ctx.getRequest().setAttribute("adminRoles", roles);
 		}
 
 		ComponentContext componentContext = ComponentContext.getInstance(request);
@@ -977,7 +987,7 @@ public class Edit extends AbstractModuleAction {
 				List<ComponentBean> initContent = new LinkedList<ComponentBean>();
 				for (String lg : globalContext.getContentLanguages()) {
 					i18nAccess.requestInit(ctx);
-					initContent.add(new ComponentBean(Title.TYPE, "[title] - " + elem.getName(), lg));
+					initContent.add(new ComponentBean("", Title.TYPE, elem.getName(), lg, false, ctx.getCurrentEditUser()));
 				}
 				content.createContent(ctx, elem, initContent, "0", false);
 

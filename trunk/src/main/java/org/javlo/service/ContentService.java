@@ -211,7 +211,7 @@ public class ContentService {
 		if (lg == null) {
 			lg = ctx.getRequestContentLanguage();
 		}
-		ComponentBean bean = new ComponentBean(id, inBean.getType(), inBean.getValue(), lg, false);
+		ComponentBean bean = new ComponentBean(id, inBean.getType(), inBean.getValue(), lg, false, ctx.getCurrentEditUser());
 		bean.setList(inBean.isList());
 		bean.setStyle(inBean.getStyle());
 		bean.setArea(inBean.getArea());
@@ -223,7 +223,7 @@ public class ContentService {
 
 	public String createContent(ContentContext ctx, ComponentBean inBean, String parentId, boolean releaseCache) throws Exception {
 		String id = StringHelper.getRandomId();
-		ComponentBean bean = new ComponentBean(id, inBean.getType(), inBean.getValue(), ctx.getRequestContentLanguage(), false);
+		ComponentBean bean = new ComponentBean(id, inBean.getType(), inBean.getValue(), ctx.getRequestContentLanguage(), false, ctx.getCurrentEditUser());
 		bean.setList(inBean.isList());
 		bean.setStyle(inBean.getStyle());
 		bean.setArea(inBean.getArea());
@@ -237,7 +237,7 @@ public class ContentService {
 
 	public String createContentAtEnd(ContentContext ctx, ComponentBean inBean, boolean releaseCache) throws Exception {
 		String id = StringHelper.getRandomId();
-		ComponentBean bean = new ComponentBean(id, inBean.getType(), inBean.getValue(), ctx.getRequestContentLanguage(), false);
+		ComponentBean bean = new ComponentBean(id, inBean.getType(), inBean.getValue(), ctx.getRequestContentLanguage(), false, ctx.getCurrentEditUser());
 		bean.setList(inBean.isList());
 		bean.setStyle(inBean.getStyle());
 		bean.setArea(inBean.getArea());
@@ -277,7 +277,7 @@ public class ContentService {
 			content = "";
 		}
 		String id = StringHelper.getRandomId();
-		ComponentBean bean = new ComponentBean(id, type, content, ctx.getRequestContentLanguage(), false);
+		ComponentBean bean = new ComponentBean(id, type, content, ctx.getRequestContentLanguage(), false, ctx.getCurrentEditUser());
 		GlobalContext globalContext = GlobalContext.getInstance(ctx.getRequest());
 		EditContext editCtx = EditContext.getInstance(globalContext, ctx.getRequest().getSession());
 		bean.setArea(editCtx.getCurrentArea());
@@ -292,7 +292,7 @@ public class ContentService {
 			content = "";
 		}
 		String id = StringHelper.getRandomId();
-		ComponentBean bean = new ComponentBean(id, type, content, ctx.getRequestContentLanguage(), repeat);
+		ComponentBean bean = new ComponentBean(id, type, content, ctx.getRequestContentLanguage(), repeat, ctx.getCurrentEditUser());
 		bean.setRenderer(renderer);
 		GlobalContext globalContext = GlobalContext.getInstance(ctx.getRequest());
 		EditContext editCtx = EditContext.getInstance(globalContext, ctx.getRequest().getSession());

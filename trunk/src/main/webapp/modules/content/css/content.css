@@ -170,6 +170,7 @@ li.line {
 
 .roles .inline label {
 	width: auto;
+	float: none;
 }
 
 .roles {

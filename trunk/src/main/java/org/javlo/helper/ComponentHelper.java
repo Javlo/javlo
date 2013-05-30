@@ -32,7 +32,7 @@ public class ComponentHelper {
 		MenuElement dynPage = MacroHelper.createPathIfNotExist(ctx, path);
 		List<IContentVisualComponent> comps = dynPage.getContentByType(ctx, DynamicParagraph.TYPE);
 		if (comps.size() == 0) {
-			MacroHelper.addContent(ctx.getRequestContentLanguage(), dynPage, "0", DynamicParagraph.TYPE, "");
+			MacroHelper.addContent(ctx.getRequestContentLanguage(), dynPage, "0", DynamicParagraph.TYPE, "", ctx.getCurrentEditUser());
 			comps = dynPage.getContentByType(ctx, DynamicParagraph.TYPE);
 		}
 		DynamicParagraph dynParagraph = (DynamicParagraph) comps.iterator().next();

@@ -26,11 +26,11 @@ public class CreateBaseStructureMacro extends AbstractMacro {
 		GlobalContext globalContext = GlobalContext.getInstance(ctx.getRequest());
 		Collection<String> lgs = globalContext.getContentLanguages();
 		for (String lg : lgs) {
-			String parentId = MacroHelper.addContent(lg, page, "0", DebugNote.TYPE, "page created automatically - please remove me");
-			parentId = MacroHelper.addContent(lg, page, parentId, Title.TYPE, LoremIpsumGenerator.getParagraph(3, false, false));
-			parentId = MacroHelper.addContent(lg, page, parentId, Description.TYPE, LoremIpsumGenerator.getParagraph(55, false, true));
-			parentId = MacroHelper.addContent(lg, page, parentId, GlobalImage.TYPE, "");
-			parentId = MacroHelper.addContent(lg, page, parentId, Paragraph.TYPE, LoremIpsumGenerator.getParagraph(80, false, true));
+			String parentId = MacroHelper.addContent(lg, page, "0", DebugNote.TYPE, "page created automatically - please remove me", ctx.getCurrentEditUser());
+			parentId = MacroHelper.addContent(lg, page, parentId, Title.TYPE, LoremIpsumGenerator.getParagraph(3, false, false), ctx.getCurrentEditUser());
+			parentId = MacroHelper.addContent(lg, page, parentId, Description.TYPE, LoremIpsumGenerator.getParagraph(55, false, true), ctx.getCurrentEditUser());
+			parentId = MacroHelper.addContent(lg, page, parentId, GlobalImage.TYPE, "", ctx.getCurrentEditUser());
+			parentId = MacroHelper.addContent(lg, page, parentId, Paragraph.TYPE, LoremIpsumGenerator.getParagraph(80, false, true), ctx.getCurrentEditUser());
 		}
 	}
 

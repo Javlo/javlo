@@ -63,6 +63,7 @@ import org.javlo.message.MessageRepository;
 import org.javlo.service.PersistenceService;
 import org.javlo.service.exception.ServiceException;
 import org.javlo.service.resource.Resource;
+import org.javlo.user.User;
 import org.javlo.utils.CollectionAsMap;
 import org.javlo.utils.TimeRange;
 import org.javlo.xml.NodeXML;
@@ -1628,8 +1629,12 @@ public class MenuElement implements Serializable {
 		return blocker;
 	}
 
-	protected String getCacheKey(String subkey) {
-		return this.getClass().getName() + "_" + getId() + "_" + subkey;
+	protected String getCacheKey(ContentContext ctx, String subkey) {
+		String key = this.getClass().getName() + '_' + getId() + '_' + subkey;
+		if (ctx.getGlobalContext().isCollaborativeMode() && ctx.getCurrentEditUser() != null) {
+			key = key + '_' + ctx.getCurrentEditUser().getLogin();
+		}
+		return key;
 	}
 
 	/**
@@ -2631,7 +2636,10 @@ public class MenuElement implements Serializable {
 	}
 
 	PageDescription getPageDescriptionCached(ContentContext ctx, String lg) {
-		String key = getCacheKey(lg);
+		String key = getCacheKey(ctx, lg);
+		
+		
+		
 		PageDescription outDesc = (PageDescription) getCache(ctx).get(key);
 		if (outDesc == null) {
 			outDesc = new PageDescription();
@@ -2641,7 +2649,7 @@ public class MenuElement implements Serializable {
 	}
 
 	PageDescription getPageBeanCached(ContentContext ctx, String lg) {
-		String key = getCacheKey("bean-" + lg);
+		String key = getCacheKey(ctx, "bean-" + lg);
 		PageDescription outDesc = (PageDescription) getCache(ctx).get(key);
 		if (outDesc == null) {
 			outDesc = new PageDescription();
@@ -3297,7 +3305,7 @@ public class MenuElement implements Serializable {
 
 		ContentContext contentAreaCtx = new ContentContext(ctx);
 		contentAreaCtx.setArea(ComponentBean.DEFAULT_AREA);
-
+		
 		ContentElementList comps = getContent(contentAreaCtx);
 		while (comps.hasNext(contentAreaCtx)) {
 			IContentVisualComponent comp = comps.next(contentAreaCtx);
@@ -3378,6 +3386,13 @@ public class MenuElement implements Serializable {
 			ContentContext contentAreaCtx = new ContentContext(ctx);
 			contentAreaCtx.setArea(ComponentBean.DEFAULT_AREA);
 			ContentElementList content = this.getContent(contentAreaCtx);
+			
+			if (ctx.getGlobalContext().isCollaborativeMode() && ctx.getCurrentEditUser() != null) {
+				if (getEditorRoles().size() > 0 && !ctx.getCurrentEditUser().validForRoles(getEditorRoles())) {	
+					return false;
+				}
+			}
+			
 			while (content.hasNext(contentAreaCtx)) {
 				IContentVisualComponent comp = content.next(contentAreaCtx);
 				if (!comp.isEmpty(contentAreaCtx)) {
@@ -3427,8 +3442,8 @@ public class MenuElement implements Serializable {
 	 * @return the if of the new component
 	 * @throws Exception
 	 */
-	public final String prepareAddContent(String lg, String parentCompId, String contentType, String style, String value) throws Exception {
-		ComponentBean comp = new ComponentBean(StringHelper.getRandomId(), contentType, value, lg, false);
+	public final String prepareAddContent(String lg, String parentCompId, String contentType, String style, String value, User authors) throws Exception {
+		ComponentBean comp = new ComponentBean(StringHelper.getRandomId(), contentType, value, lg, false, authors);
 		if (style != null) {
 			comp.setStyle(style);
 		}

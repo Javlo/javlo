@@ -222,8 +222,8 @@
 </div>
 
 <div class="line">		
-	<label for="display-creator">${i18n.edit['admin.form.display-creator']}</label>
-	<input type="checkbox" id="display-creator" name="display-creator" ${currentContext.displayCreator?'checked="checked"':""}" />
+	<label for="collaborative-mode">${i18n.edit['admin.form.collaborative-mode']}</label>
+	<input type="checkbox" id="collaborative-mode" name="collaborative-mode" ${currentContext.collaborativeMode?'checked="checked"':""}" />
 </div>
 
 

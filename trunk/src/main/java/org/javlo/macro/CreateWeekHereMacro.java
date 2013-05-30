@@ -59,13 +59,13 @@ public class CreateWeekHereMacro extends AbstractMacro {
 					Collection<String> lgs = globalContext.getContentLanguages();
 					for (String lg : lgs) {
 						String parentId = "0";
-						parentId = MacroHelper.addContent(lg, weekPage, parentId, SubTitle.TYPE, "3", "");
-						parentId = MacroHelper.addContent(lg, weekPage, parentId, DateComponent.TYPE, null, "");
-						parentId = MacroHelper.addContent(lg, weekPage, parentId, LocationComponent.TYPE, null, "");
-						parentId = MacroHelper.addContent(lg, weekPage, parentId, FreeTextList.TYPE, null, "");
-						parentId = MacroHelper.addContent(lg, weekPage, parentId, DateComponent.TYPE, null, "");
-						parentId = MacroHelper.addContent(lg, weekPage, parentId, LocationComponent.TYPE, null, "");
-						parentId = MacroHelper.addContent(lg, weekPage, parentId, FreeTextList.TYPE, null, "");
+						parentId = MacroHelper.addContent(lg, weekPage, parentId, SubTitle.TYPE, "3", "", ctx.getCurrentEditUser());
+						parentId = MacroHelper.addContent(lg, weekPage, parentId, DateComponent.TYPE, null, "", ctx.getCurrentEditUser());
+						parentId = MacroHelper.addContent(lg, weekPage, parentId, LocationComponent.TYPE, null, "", ctx.getCurrentEditUser());
+						parentId = MacroHelper.addContent(lg, weekPage, parentId, FreeTextList.TYPE, null, "", ctx.getCurrentEditUser());
+						parentId = MacroHelper.addContent(lg, weekPage, parentId, DateComponent.TYPE, null, "", ctx.getCurrentEditUser());
+						parentId = MacroHelper.addContent(lg, weekPage, parentId, LocationComponent.TYPE, null, "", ctx.getCurrentEditUser());
+						parentId = MacroHelper.addContent(lg, weekPage, parentId, FreeTextList.TYPE, null, "", ctx.getCurrentEditUser());
 					}
 				} else {
 					MacroHelper.createPageStructure(ctx, weekPage, weekStructure, false);

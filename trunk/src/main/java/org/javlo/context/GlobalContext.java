@@ -1612,8 +1612,8 @@ public class GlobalContext implements Serializable {
 	 * 
 	 * @return
 	 */
-	public boolean isDisplayCreator() {
-		return properties.getBoolean("is-display-creator", false);
+	public boolean isCollaborativeMode() {
+		return properties.getBoolean("is-collaborative-mode", false);
 	}
 
 	public boolean isOpenExernalLinkAsPopup(String url) {
@@ -2250,8 +2250,8 @@ public class GlobalContext implements Serializable {
 		save();
 	}
 
-	public void setDisplayCreator(boolean display) {
-		properties.setProperty("is-display-creator", display);
+	public void setCollaborativeMode(boolean display) {
+		properties.setProperty("is-collaborative-mode", display);
 		save();
 	}
 

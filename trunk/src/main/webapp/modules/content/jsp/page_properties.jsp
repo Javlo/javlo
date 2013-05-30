@@ -117,12 +117,14 @@
 	<span>${page.lastAccess}</span>
 </div>
 
+</c:if>
+
 <div class="roles">
-<c:if test="${fn:length(info.adminRoles) > 0}">
+<c:if test="${fn:length(adminRoles) > 0}">
 <div class="one_half">
 	<fieldset>
 	<legend>${i18n.edit['item.title.admin-roles']}</legend>
-	<c:forEach var="role" items="${info.adminRoles }">
+	<c:forEach var="role" items="${adminRoles}">
 		<div class="inline">		
 		<label for="admin-${role}">${role}</label><input type="checkbox" name="admin-${role}" id="admin-${role}" ${not empty page.adminRoles[role]?'checked="checked"':''} />
 		</div> 
@@ -144,8 +146,6 @@
 </div>
 </c:if>
 </div>
-
-</c:if>
 
 <div class="action">
 	<input type="submit" value="${i18n.edit['global.ok']}" />

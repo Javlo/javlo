@@ -1,9 +1,14 @@
 package org.javlo.macro;
 
 import java.util.Calendar;
+import java.util.Collections;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.HashSet;
+import java.util.LinkedList;
+import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import org.javlo.actions.IAction;
 import org.javlo.context.ContentContext;
@@ -58,6 +63,18 @@ public class CreateArticle implements IInteractiveMacro, IAction {
 			return e.getMessage();
 		}
 		ctx.getRequest().setAttribute("pages", rootPages);
+		
+		List<String> roles = new LinkedList<String>();
+		Set<String> roleSet = new HashSet<String>();
+		for (String role : ctx.getGlobalContext().getAdminUserRoles()) {
+			roleSet.clear();
+			roleSet.add(role);
+			if (ctx.getCurrentEditUser().validForRoles(roleSet)) {
+				roles.add(role);
+			}
+		}			
+		Collections.sort(roles);
+		ctx.getRequest().setAttribute("adminRoles", roles);
 
 		return null;
 	}
@@ -77,6 +94,17 @@ public class CreateArticle implements IInteractiveMacro, IAction {
 			cal.setTime(articleDate);
 			MenuElement rootPage = ContentService.getInstance(ctx.getRequest()).getNavigation(ctx).searchChildFromName(pageName);
 			if (rootPage != null) {
+				
+				List<String> roles = new LinkedList<String>();
+				Set<String> roleSet = new HashSet<String>();
+				for (String role : ctx.getGlobalContext().getAdminUserRoles()) {
+					roleSet.clear();
+					roleSet.add(role);
+					if (ctx.getCurrentEditUser().validForRoles(roleSet)) {
+						roles.add(role);
+					}
+				}	
+				
 				String yearPageName = rootPage.getName() + "-" + cal.get(Calendar.YEAR);
 				MenuElement yearPage = MacroHelper.addPageIfNotExist(ctx, rootPage.getName(), yearPageName, true);
 				MacroHelper.createMonthStructure(ctx, yearPage);
@@ -89,6 +117,12 @@ public class CreateArticle implements IInteractiveMacro, IAction {
 							MacroHelper.addContentInPage(ctx, newPage, rootPage.getName().toLowerCase());
 						}
 						newURL = URLHelper.createURL(ctx.getContextWithOtherRenderMode(ContentContext.PREVIEW_MODE), newPage);
+						
+						for (String role :roles) {
+							if (rs.getParameter("role-"+role, null) != null) {
+								newPage.addEditorRoles(role);
+							}
+						}
 					}
 				} else {
 					message = "mount page not found : " + mountPageName;

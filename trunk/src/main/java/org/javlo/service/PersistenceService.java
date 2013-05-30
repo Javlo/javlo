@@ -481,7 +481,9 @@ public class PersistenceService {
 				content = "";
 			}
 
-			ComponentBean bean = new ComponentBean(id, type, content, lg, isRepeat);
+			ComponentBean bean = new ComponentBean(type, content, lg);
+			bean.setId(id);
+			bean.setRepeat(isRepeat);
 			bean.setStyle(style);
 			bean.setList(StringHelper.isTrue(inlist));
 			bean.setArea(contentNode.getAttributeValue("area", ComponentBean.DEFAULT_AREA));

@@ -143,7 +143,7 @@ public class MirrorLinkImportation extends AbstractVisualComponent {
 		for (int i = 0; i < contentSource.length; i++) {
 			if (getCurrentType().contains(contentSource[i].getType())) {
 				if (!idImported.keySet().contains(contentSource[i].getId())) {
-					parent = MacroHelper.addContent(ctx.getRequestContentLanguage(), targetPage, parent, MirrorComponent.TYPE, contentSource[i].getId());
+					parent = MacroHelper.addContent(ctx.getRequestContentLanguage(), targetPage, parent, MirrorComponent.TYPE, contentSource[i].getId(), ctx.getCurrentEditUser());
 				} else {
 					parent = idImported.get(contentSource[i].getId());
 				}

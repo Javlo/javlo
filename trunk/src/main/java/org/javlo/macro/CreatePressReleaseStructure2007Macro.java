@@ -52,7 +52,7 @@ public class CreatePressReleaseStructure2007Macro extends AbstractMacro {
 					SimpleDateFormat mounthFormatDate = new SimpleDateFormat("MMMMMMMMMMMMMM", new Locale(lg));
 					String mounthName = mounthFormatDate.format(cal.getTime());
 
-					MacroHelper.addContent(lg, mounthPage, "0", Title.TYPE, mounthName);
+					MacroHelper.addContent(lg, mounthPage, "0", Title.TYPE, mounthName, ctx.getCurrentEditUser());
 				}
 			}
 

@@ -86,8 +86,8 @@ public class CreateMonthHereMacro extends AbstractMacro {
 						localContext.setRequestContentLanguage(lg);
 
 						String title = currentMonth + ' ' + cal.get(Calendar.YEAR);
-						parentId = MacroHelper.addContent(lg, monthPage, parentId, PageTitle.TYPE, null, currentPage.getTitle(localContext) + " - " + title);
-						parentId = MacroHelper.addContent(lg, monthPage, parentId, Title.TYPE, null, title);
+						parentId = MacroHelper.addContent(lg, monthPage, parentId, PageTitle.TYPE, null, currentPage.getTitle(localContext) + " - " + title, ctx.getCurrentEditUser());
+						parentId = MacroHelper.addContent(lg, monthPage, parentId, Title.TYPE, null, title,ctx.getCurrentEditUser());
 					}
 				} else {
 					MacroHelper.createPageStructure(ctx, monthPage, monthStructure, false);
