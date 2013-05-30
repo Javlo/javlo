@@ -690,6 +690,15 @@ public class AccessServlet extends HttpServlet implements IVersion {
 									}
 								}
 							}
+							
+							if (ctx.getGlobalContext().isCollaborativeMode()) {
+								Set<String> pageRoles = ctx.getCurrentPage().getEditorRoles();
+								if (pageRoles.size() > 0) {
+									if (ctx.getCurrentEditUser() == null || !ctx.getCurrentEditUser().validForRoles(pageRoles)) {
+										ctx.setSpecialContentRenderer("/jsp/view/no_access.jsp");
+									}
+								}
+							}
 
 							ctx.setCurrentTemplate(template);
 

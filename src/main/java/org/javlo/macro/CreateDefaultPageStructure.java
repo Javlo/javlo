@@ -41,10 +41,10 @@ public class CreateDefaultPageStructure extends AbstractMacro {
 				lgCtx.setLanguage(lg);
 				if (currentPage.getContent(lgCtx).size(ctx) == 0) {
 					// parentId = MacroHelper.addContent(lg, currentPage, parentId, DateComponent.TYPE, "");
-					parentId = MacroHelper.addContent(lg, currentPage, parentId, Title.TYPE, "");
-					parentId = MacroHelper.addContent(lg, currentPage, parentId, Description.TYPE, "");
-					parentId = MacroHelper.addContent(lg, currentPage, parentId, GlobalImage.TYPE, "");
-					parentId = MacroHelper.addContent(lg, currentPage, parentId, Paragraph.TYPE, "");
+					parentId = MacroHelper.addContent(lg, currentPage, parentId, Title.TYPE, "", ctx.getCurrentEditUser());
+					parentId = MacroHelper.addContent(lg, currentPage, parentId, Description.TYPE, "", ctx.getCurrentEditUser());
+					parentId = MacroHelper.addContent(lg, currentPage, parentId, GlobalImage.TYPE, "", ctx.getCurrentEditUser());
+					parentId = MacroHelper.addContent(lg, currentPage, parentId, Paragraph.TYPE, "", ctx.getCurrentEditUser());
 				}
 			}
 

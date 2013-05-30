@@ -20,8 +20,27 @@
 </div>
 <div class="line">
 	<label for="create">create structure</label>
-	<input type="checkbox" id="create" name="create" checked="checked" />
+	<input type="checkbox" id="create" name="create" />
 </div>
+
+<c:if test="${globalContext.collaborativeMode}">
+	<div class="line">
+		<label for="email">send email</label>
+		<input type="checkbox" id="email" name="email" />
+	</div>
+	<div class="roles">	
+	<fieldset>
+		<legend>choose group (no selection = everybody)</legend>		
+		<c:forEach var="role" items="${adminRoles}">
+			<div class="inline">
+			<label for="role-${role}">${role}</label>
+			<input type="checkbox" id="role-${role}" name="role-${role}" />
+			</div>
+		</c:forEach>
+	</fieldset>
+	</div>
+</c:if>
+
 
 <div class="action">
 	<input type="submit" value="create" />

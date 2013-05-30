@@ -74,7 +74,7 @@ public class ImportDataBase extends AbstractMacro {
 			compCache.get(name).storeProperties();
 			compCache.get(name).setModify();
 		} else {
-			String parentId = MacroHelper.addContent(ctx.getRequestContentLanguage(), currentPage, "0", componentType, "");
+			String parentId = MacroHelper.addContent(ctx.getRequestContentLanguage(), currentPage, "0", componentType, "", ctx.getCurrentEditUser());
 			DynamicComponent comp = (DynamicComponent) content.getComponent(ctx, parentId);
 
 			comp.getField(ctx, "title").setValue(name);
@@ -178,7 +178,7 @@ public class ImportDataBase extends AbstractMacro {
 		String parentId = "0";
 		while (rs.next()) {
 
-			parentId = MacroHelper.addContent(ctx.getRequestContentLanguage(), currentPage, "0", "general", "");
+			parentId = MacroHelper.addContent(ctx.getRequestContentLanguage(), currentPage, "0", "general", "", ctx.getCurrentEditUser());
 			DynamicComponent comp = (DynamicComponent) content.getComponent(ctx, parentId);
 
 			String name = rs.getString("name");

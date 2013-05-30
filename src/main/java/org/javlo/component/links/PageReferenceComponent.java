@@ -1248,12 +1248,12 @@ public class PageReferenceComponent extends ComplexPropertiesLink implements IAc
 		Collection<Calendar> allMonths = new LinkedList<Calendar>();
 		Collection<String> allMonthsKeys = new HashSet<String>();
 
-		Collection<String> roles = new LinkedList<String>();
+		/*Collection<String> roles = new LinkedList<String>();
 		if (ctx.getCurrentUser() != null) {
 			roles = ctx.getCurrentUser().getRoles();
 		} else {
 			roles = Collections.EMPTY_LIST;
-		}
+		}*/
 
 		for (MenuElement page : pages) {
 			ContentContext lgCtx = new ContentContext(ctx);
@@ -1272,7 +1272,7 @@ public class PageReferenceComponent extends ComplexPropertiesLink implements IAc
 							realContentSize++;
 						}
 
-						if (!isIntranetMode() || page.getEditorRoles().size() == 0 || (new HashSet<String>(page.getEditorRoles()).removeAll(roles))) {
+						if (!isIntranetMode() || page.getEditorRoles().size() == 0 || (ctx.getCurrentEditUser() != null && ctx.getCurrentEditUser().validForRoles(page.getEditorRoles()))) {
 							if (page.isRealContent(lgCtx) || isWidthEmptyPage()) {
 								if (tagFilter == null || tagFilter.trim().length() == 0 || page.getTags(lgCtx).contains(tagFilter)) {
 									if (catFilter == null || catFilter.trim().length() == 0 || page.getCategory(lgCtx).equals(catFilter)) {

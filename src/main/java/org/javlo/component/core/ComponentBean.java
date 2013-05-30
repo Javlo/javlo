@@ -7,6 +7,7 @@ import java.io.Serializable;
 import java.util.Date;
 
 import org.javlo.helper.StringHelper;
+import org.javlo.user.User;
 
 /**
  * @author pvandermaesen component state less.
@@ -50,12 +51,15 @@ public class ComponentBean implements Serializable {
 		language = newLanguague;
 	}
 
-	public ComponentBean(String newId, String newType, String newValue, String newLanguague, boolean newRepeat) {
+	public ComponentBean(String newId, String newType, String newValue, String newLanguague, boolean newRepeat, User authors) {
 		id = newId;
 		type = newType;
 		value = newValue;
 		language = newLanguague;
 		repeat = newRepeat;
+		if (authors != null) {
+			this.authors = authors.getLogin();
+		}
 	}
 
 	/**

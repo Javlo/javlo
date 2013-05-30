@@ -284,7 +284,7 @@ public class InfoBean {
 		IUserFactory userFactory = UserFactory.createUserFactory(globalContext, ctx.getRequest().getSession());
 		return userFactory.getAllRoles(globalContext, ctx.getRequest().getSession());
 	}
-
+	
 	public MenuElement.PageBean getParent() {
 		if (currentPage.getParent() != null) {
 			try {

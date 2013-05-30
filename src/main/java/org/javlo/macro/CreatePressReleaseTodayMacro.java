@@ -58,11 +58,11 @@ public class CreatePressReleaseTodayMacro extends AbstractMacro {
 			for (String lg : lgs) {
 				logger.info("no '" + getPageStructureName() + "' page structure found in template : " + ctx.getCurrentTemplate().getName());
 				String parentId = "0";
-				parentId = MacroHelper.addContent(lg, newPage, parentId, DateComponent.TYPE, "");
-				parentId = MacroHelper.addContent(lg, newPage, parentId, Title.TYPE, "");
-				parentId = MacroHelper.addContent(lg, newPage, parentId, Description.TYPE, "");
-				parentId = MacroHelper.addContent(lg, newPage, parentId, GlobalImage.TYPE, "");
-				parentId = MacroHelper.addContent(lg, newPage, parentId, Paragraph.TYPE, "");
+				parentId = MacroHelper.addContent(lg, newPage, parentId, DateComponent.TYPE, "", ctx.getCurrentEditUser());
+				parentId = MacroHelper.addContent(lg, newPage, parentId, Title.TYPE, "", ctx.getCurrentEditUser());
+				parentId = MacroHelper.addContent(lg, newPage, parentId, Description.TYPE, "", ctx.getCurrentEditUser());
+				parentId = MacroHelper.addContent(lg, newPage, parentId, GlobalImage.TYPE, "", ctx.getCurrentEditUser());
+				parentId = MacroHelper.addContent(lg, newPage, parentId, Paragraph.TYPE, "", ctx.getCurrentEditUser());
 			}
 		} else {
 			MacroHelper.createPageStructure(ctx, newPage, pressReleaseStructure, false);

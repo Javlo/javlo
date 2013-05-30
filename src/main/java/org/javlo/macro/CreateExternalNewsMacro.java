@@ -25,17 +25,17 @@ public class CreateExternalNewsMacro extends AbstractMacro {
 		ComponentContext compCtx = ComponentContext.getInstance(ctx.getRequest());
 		ContentService content = ContentService.getInstance(ctx.getRequest());
 
-		MenuElement newPage = MacroHelper.addPage(ctx, "news", "external-news-", true);
+		MenuElement newPage = MacroHelper.addPage(ctx, "news", "external-news-", true);		
 
-		ComponentBean title = new ComponentBean(StringHelper.getRandomId(), "title", null, ctx.getLanguage(), false);
+		ComponentBean title = new ComponentBean(StringHelper.getRandomId(), "title", null, ctx.getLanguage(), false, ctx.getCurrentEditUser());
 		newPage.addContent(null, title);
 		compCtx.addNewComponent(content.getComponent(ctx, title.getId()));
 
-		ComponentBean text = new ComponentBean(StringHelper.getRandomId(), "paragraph", null, ctx.getLanguage(), false);
+		ComponentBean text = new ComponentBean(StringHelper.getRandomId(), "paragraph", null, ctx.getLanguage(), false, ctx.getCurrentEditUser());
 		newPage.addContent(title.getId(), text);
 		compCtx.addNewComponent(content.getComponent(ctx, text.getId()));
 
-		ComponentBean elnk = new ComponentBean(StringHelper.getRandomId(), "external-link", null, ctx.getLanguage(), false);
+		ComponentBean elnk = new ComponentBean(StringHelper.getRandomId(), "external-link", null, ctx.getLanguage(), false, ctx.getCurrentEditUser());
 		newPage.addContent(text.getId(), elnk);
 		compCtx.addNewComponent(content.getComponent(ctx, elnk.getId()));
 
