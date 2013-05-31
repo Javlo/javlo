@@ -57,7 +57,17 @@
 	</div>
 	<div class="line">
 		<label for="organization">organization</label>
-		<input type="text" id="organization" name="organization" value="${userInfoMap["organization"]}" /> 
+		<c:if test="${empty list.organization}">
+		<input type="text" id="organization" name="organization" value="${userInfoMap["organization"]}" />
+		</c:if> 
+		<c:if test="${not empty list.organization}">
+		 	<select id="organization" name="organization">
+		 		<option></option>
+		 		<c:forEach var="organization" items="${list.organization}">
+		 			<option value="${organization.key}"${userInfoMap["organization"] == organization.key?' selected="selected"':''}>${organization.value}</option>
+		 		</c:forEach>		 		
+		 	</select>
+		 </c:if> 
 	</div>
 	<div class="line">
 		<label for="function">function</label>

@@ -20,7 +20,7 @@
 </div>
 <div class="line">
 	<label for="create">create structure</label>
-	<input type="checkbox" id="create" name="create" />
+	<input type="checkbox" id="create" name="create" checked="checked" />
 </div>
 
 <c:if test="${globalContext.collaborativeMode}">

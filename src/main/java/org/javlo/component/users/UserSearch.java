@@ -29,6 +29,11 @@ public class UserSearch extends AbstractVisualComponent implements IAction {
 	public String getType() {
 		return TYPE;
 	}
+	
+	@Override
+	public boolean isUnique() {
+		return true;
+	}
 
 	@Override
 	public String getViewXHTMLCode(ContentContext ctx) throws Exception {
@@ -38,6 +43,7 @@ public class UserSearch extends AbstractVisualComponent implements IAction {
 
 		List<Item> countries = listService.getList(ctx, "countries");
 		List<Item> functions = listService.getList(ctx, "functions");
+		List<Item> organizations = listService.getList(ctx, "organization");
 
 		ByteArrayOutputStream outStream = new ByteArrayOutputStream();
 		PrintStream out = new PrintStream(outStream);
@@ -92,7 +98,7 @@ public class UserSearch extends AbstractVisualComponent implements IAction {
 				out.println("<span class=\"error\">Sorry, no result</span>");
 			} else {
 				out.println("<table>");
-				out.println("<tr><th>Firstname</th><th>Lastname</th><th>email</th><th>country</th><th>domain</th><th>phone</th></tr>");
+				out.println("<tr><th>Photo</th><th>Firstname</th><th>Lastname</th><th>email</th><th>organization</th><th>country</th><th>domain</th><th>phone</th></tr>");
 				int i = 0;
 				for (UserInfo user : users) {
 					i++;
@@ -102,7 +108,13 @@ public class UserSearch extends AbstractVisualComponent implements IAction {
 					}
 					String country = XHTMLHelper.renderListItem(countries, user.getCountry());
 					String function = XHTMLHelper.renderListItem(functions, user.getFunction());
-					out.println("<tr class=\"" + oddEven + "\"><td>" + user.getFirstName() + "</td><td>" + user.getLastName() + "</td><td><a href=\"mailto:" + user.getEmail() + "\">contact</a></td><td>" + country + "</td><td>" + function + "</td><td>" + user.getPhone() + "</td></tr>");
+					String organization = XHTMLHelper.renderListItem(organizations, user.getOrganization());
+					String avatar = "&nbsp;";
+					if (user.getAvatarURL() != null) {
+						avatar = "<img src=\""+user.getAvatarURL()+"\" alt=\""+user.getFirstName()+' '+user.getLastName()+"\" />";
+					}
+					
+					out.println("<tr class=\"" + oddEven + "\"><td>" + avatar + "</td><td>" + user.getFirstName() + "</td><td>" + user.getLastName() + "</td><td><a href=\"mailto:" + user.getEmail() + "\">contact</a></td><td>" + organization + "</td><td>" + country + "</td><td>" + function + "</td><td>" + user.getPhone() + "</td></tr>");
 				}
 				out.println("</table>");
 			}

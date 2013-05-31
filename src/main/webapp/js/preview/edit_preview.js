@@ -172,7 +172,7 @@ initPreview = function() {
 		e.stopPropagation();
 	});
 
-	jQuery(".editable-component, #preview-delete-zone")
+	jQuery(".editable-component, .not-editable-component, #preview-delete-zone")
 			.droppable(
 					{
 						cursor : 'move',

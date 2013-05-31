@@ -59,6 +59,8 @@ AdminUserSecurity security = AdminUserSecurity.getInstance();
 
 if ( ctx.getSpecialContentRenderer() != null && area.equals(ComponentBean.DEFAULT_AREA)) {
 	%><jsp:include page="<%=ctx.getSpecialContentRenderer()%>" /><%
+} else if ( ctx.getSpecialContentRenderer() != null) {
+	%><!-- this area is empty because special rederer is defined. --><%
 } else {
 MenuElement currentPage = ctx.getCurrentPage();
 
@@ -113,14 +115,17 @@ IContentVisualComponent elem = null;
 			
 			%><%if (elems != null) {%><%=elems.getPrefixXHTMLCode(ctx)
 %><%}
-
+%><%=elem.getPrefixViewXHTMLCode(ctx)%><%
 if (globalContext.isCollaborativeMode() && ctx.getRenderMode() == ContentContext.PREVIEW_MODE) {
 	request.setAttribute("elem", elem);	
+	if (elem.getPreviousComponent() != null && elem.getPreviousComponent().getAuthors().equals(elem.getAuthors())) {
+		request.setAttribute("samePrevious", new Boolean(true));
+	} else {
+		request.setAttribute("samePrevious", new Boolean(false));
+	}
 	request.setAttribute("creator", elem.getAuthors());
 	request.setAttribute("date", StringHelper.renderTime(elem.getModificationDate()));%><jsp:include page="display_user.jsp"></jsp:include><%
-}
-%><%=elem.getPrefixViewXHTMLCode(ctx)%>
-<%=elem.getXHTMLCode(ctx)%>
+}%><%=elem.getXHTMLCode(ctx)%>
 <%=elem.getSuffixViewXHTMLCode(ctx)%>
 <%if (elems != null) {%><%=elems.getSufixXHTMLCode(ctx)
 %><%}%><%		
