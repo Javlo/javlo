@@ -155,16 +155,17 @@ public class ServerClientService {
 	}
 
 	public String tokenifyUrl(String simpleUrl) {
+		HttpResponse response = null;
 		try {
 			String url = URLHelper.addParam(server.getServerURL(), "webaction", "data.oneTimeToken");
 			url = URLHelper.changeMode(url, "ajax");
 			logger.info("Start request to server: " + url);
 			HttpGet httpget = new HttpGet(url);
-			HttpResponse response = httpClient.execute(httpget);
+			response = httpClient.execute(httpget);
 			onSuccess();
-			HttpEntity entity = response.getEntity();
 
 			if (response.getStatusLine().getStatusCode() == 200) {
+				HttpEntity entity = response.getEntity();
 				String content = EntityUtils.toString(entity);
 				logger.info("Server response: " + content);
 
@@ -177,6 +178,8 @@ public class ServerClientService {
 		} catch (Exception ex) {
 			onError(ex);
 			logger.log(Level.SEVERE, "Exception retreiving one time token.", ex);
+		} finally {
+			safeConsume(response);
 		}
 		return simpleUrl;
 	}
@@ -231,13 +234,13 @@ public class ServerClientService {
 		}
 	}
 
-	private void safeConsume(HttpResponse resp) {
-		if (resp != null) {
-			HttpEntity entity = resp.getEntity();
+	private void safeConsume(HttpResponse response) {
+		if (response != null) {
+			HttpEntity entity = response.getEntity();
 			if (entity != null) {
 				try {
 					entity.consumeContent();
-				} catch (IOException ex) {
+				} catch (IOException ignored) {
 					//Ignore exception
 				}
 			}
