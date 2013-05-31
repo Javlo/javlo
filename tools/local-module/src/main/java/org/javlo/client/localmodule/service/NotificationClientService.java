@@ -112,9 +112,19 @@ public class NotificationClientService {
 		List<RemoteNotification> allNewNotifications = new ArrayList<RemoteNotification>();
 		for (ServerConfig server : factory.getConfig().getBean().getServers()) {
 			ServerClientService client = factory.getClient(server);
-			List<RemoteNotification> notifications = client.getNewDataNotifications();
-			if (notifications != null && !notifications.isEmpty()) {
-				allNewNotifications.addAll(notifications);
+			switch (server.getType()) {
+			case JAVLO2:
+				List<RemoteNotification> notifications = client.getNewDataNotifications();
+				if (notifications != null && !notifications.isEmpty()) {
+					allNewNotifications.addAll(notifications);
+				}
+				break;
+			case OTHER:
+				client.checkThePhrase();
+				break;
+			default:
+				logger.warning("Unmanaged enum value: " + server.getType());
+				break;
 			}
 		}
 		if (!allNewNotifications.isEmpty()) {

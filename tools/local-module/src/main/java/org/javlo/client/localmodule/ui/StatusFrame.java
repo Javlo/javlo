@@ -41,26 +41,26 @@ public class StatusFrame extends javax.swing.JDialog {
 
 	public static void onServerStatusChange(ServerConfig server) {
 		if (instance != null) {
-			instance.serversModel.fireTableRowsUpdated(instance.factory.getClient(server));
+			instance.tblServersModel.fireTableRowsUpdated(instance.factory.getClient(server));
 		}
 	}
 
 	private I18nService i18n = I18nService.getInstance();
 	private ServiceFactory factory = ServiceFactory.getInstance();
-	private ListTableModel<ServerClientService> serversModel;
+	private ListTableModel<ServerClientService> tblServersModel;
 
 	public StatusFrame() {
 		initComponents();
 		tblServers.setAutoResizeMode(JTable.AUTO_RESIZE_OFF);
 		tblServers.setGridColor(SystemColor.control);
 		tblServers.setShowVerticalLines(false);
-		serversModel = new ListTableModel<ServerClientService>(tblServers);
-		tblServers.setModel(serversModel);
+		tblServersModel = new ListTableModel<ServerClientService>(tblServers);
+		tblServers.setModel(tblServersModel);
 		tblServers.addColumn(new ListTableColumn<ServerClientService, String>(i18n.get("status.column.server"), 100) {
 			private static final long serialVersionUID = 1L;
 			@Override
 			public String getValue(ServerClientService itemData) {
-				return itemData.getServer().getTitle();
+				return itemData.getServer().getLabel();
 			}
 		});
 		tblServers.addColumn(new ListTableColumn<ServerClientService, String>(i18n.get("status.column.status"), 65) {
@@ -80,7 +80,7 @@ public class StatusFrame extends javax.swing.JDialog {
 	}
 
 	private void loadConfig() {
-		List<ServerClientService> items = serversModel.getItems();
+		List<ServerClientService> items = tblServersModel.getItems();
 		items.clear();
 		ConfigService config = factory.getConfig();
 		synchronized (config) {

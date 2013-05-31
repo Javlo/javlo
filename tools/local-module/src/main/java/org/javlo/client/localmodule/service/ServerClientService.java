@@ -15,8 +15,12 @@ import org.apache.http.auth.AuthScope;
 import org.apache.http.auth.UsernamePasswordCredentials;
 import org.apache.http.client.ClientProtocolException;
 import org.apache.http.client.methods.HttpGet;
+import org.apache.http.conn.ClientConnectionManager;
+import org.apache.http.conn.ClientConnectionManagerFactory;
 import org.apache.http.conn.params.ConnRoutePNames;
+import org.apache.http.conn.scheme.SchemeRegistry;
 import org.apache.http.impl.client.DefaultHttpClient;
+import org.apache.http.impl.conn.tsccm.ThreadSafeClientConnManager;
 import org.apache.http.util.EntityUtils;
 import org.javlo.client.localmodule.model.RemoteNotification;
 import org.javlo.client.localmodule.model.ServerConfig;
@@ -47,6 +51,8 @@ public class ServerClientService {
 
 		httpClient = new DefaultHttpClient();
 
+		//httpClient.getParams().setParameter(ClientPNames.CONNECTION_MANAGER_FACTORY_CLASS_NAME, HttpClientServiceClientConnectionManagerFactory.class.getName());
+
 		if (proxyHost != null) {
 			httpClient.getCredentialsProvider().setCredentials(
 					new AuthScope(proxyHost, proxyPort),
@@ -76,8 +82,14 @@ public class ServerClientService {
 		ServiceFactory.getInstance().onServerStatusChange(server);
 	}
 
+	private void onWarning(String info) {
+		status = ServerStatus.WARNING;
+		statusInfo = info;
+		ServiceFactory.getInstance().onServerStatusChange(server);
+	}
+
 	private void onError(Exception ex) {
-		status = ServerStatus.ERRONEOUS;
+		status = ServerStatus.ERROR;
 		statusInfo = ex.getMessage();
 		ServiceFactory.getInstance().onServerStatusChange(server);
 	}
@@ -149,6 +161,7 @@ public class ServerClientService {
 			logger.info("Start request to server: " + url);
 			HttpGet httpget = new HttpGet(url);
 			HttpResponse response = httpClient.execute(httpget);
+			onSuccess();
 			HttpEntity entity = response.getEntity();
 
 			if (response.getStatusLine().getStatusCode() == 200) {
@@ -162,9 +175,81 @@ public class ServerClientService {
 				return URLHelper.addParam(simpleUrl, "j_token", token);
 			}
 		} catch (Exception ex) {
+			onError(ex);
 			logger.log(Level.SEVERE, "Exception retreiving one time token.", ex);
 		}
 		return simpleUrl;
+	}
+
+	public void checkThePhrase() {
+		HttpResponse response = null;
+		try {
+			String url = server.getServerURL();
+			logger.info("Start request to server: " + url);
+			HttpGet httpget = new HttpGet(url);
+			response = httpClient.execute(httpget);
+			onSuccess();
+
+			if (response.getStatusLine().getStatusCode() == 200) {
+				HttpEntity entity = response.getEntity();
+				String content = EntityUtils.toString(entity);
+				if (!content.contains(server.getCheckPhrase())) {
+					onWarning("CheckPhrase not found!");
+				}
+			} else {
+				onWarning("HTTP status: " + response.getStatusLine());
+			}
+		} catch (Exception ex) {
+			onError(ex);
+			logger.log(Level.SEVERE, "Exception retreiving one time token.", ex);
+		} finally {
+			safeConsume(response);
+		}
+	}
+
+	public String httpGetAsString(String url) {
+		HttpResponse response = null;
+		try {
+			logger.fine("Start request to server: " + url);
+			HttpGet httpget = new HttpGet(url);
+			response = httpClient.execute(httpget);
+			onSuccess();
+
+			if (response.getStatusLine().getStatusCode() == 200) {
+				HttpEntity entity = response.getEntity();
+				return EntityUtils.toString(entity);
+			} else {
+				onWarning("HTTP status: " + response.getStatusLine());
+				return null;
+			}
+		} catch (Exception ex) {
+			onError(ex);
+			logger.log(Level.SEVERE, "Exception when executing Http GET.", ex);
+			return null;
+		} finally {
+			safeConsume(response);
+		}
+	}
+
+	private void safeConsume(HttpResponse resp) {
+		if (resp != null) {
+			HttpEntity entity = resp.getEntity();
+			if (entity != null) {
+				try {
+					entity.consumeContent();
+				} catch (IOException ex) {
+					//Ignore exception
+				}
+			}
+		}
+	}
+
+	public static class HttpClientServiceClientConnectionManagerFactory implements ClientConnectionManagerFactory {
+		@Override
+		public ClientConnectionManager newInstance(org.apache.http.params.HttpParams params, SchemeRegistry schemeRegistry) {
+			return new ThreadSafeClientConnManager(params, schemeRegistry);
+		}
+
 	}
 
 }

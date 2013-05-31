@@ -43,23 +43,18 @@ public class ClientTray {
 	}
 
 	public static void onServerStatusChange(ServerConfig server) {
-		boolean atLeastOneError = false;
+		ServerStatus worseStatus = ServerStatus.UNKNOWN;
 		ServiceFactory factory = ServiceFactory.getInstance();
-		if (ServerStatus.ERRONEOUS.equals(factory.getClient(server).getStatus())) {
-			atLeastOneError = true;
-		} else {
-			ConfigService config = factory.getConfig();
-			synchronized (config.getBean()) {
-				for (ServerConfig sc : config.getBean().getServers()) {
-					ServerClientService scs = factory.getClient(sc);
-					if (scs.getStatus().equals(ServerStatus.ERRONEOUS)) {
-						atLeastOneError = true;
-						break;
-					}
+		ConfigService config = factory.getConfig();
+		synchronized (config.getBean()) {
+			for (ServerConfig sc : config.getBean().getServers()) {
+				ServerClientService scs = factory.getClient(sc);
+				if (scs.getStatus().compareTo(worseStatus) >= 1) {
+					worseStatus = scs.getStatus();
 				}
 			}
 		}
-		getInstance().setErroneousState(atLeastOneError);
+		getInstance().setWorseServerStatus(worseStatus);
 	}
 
 	private I18nService i18n = I18nService.getInstance();
@@ -71,10 +66,11 @@ public class ClientTray {
 	private TrayIcon tray;
 	private Image defaultIcon;
 	private Image activeIcon;
+	private Image warningIcon;
 	private Image errorIcon;
 	private boolean trayAdded = false;
 	private boolean activeState = false;
-	private boolean erroneousState = false;
+	private ServerStatus worseServerStatus = ServerStatus.UNKNOWN;
 
 	private TrayMessageAction lastMessageAction;
 
@@ -88,6 +84,7 @@ public class ClientTray {
 		}
 		defaultIcon = new ImageIcon(getClass().getResource("/trayicon_large.png"), "tray icon").getImage();
 		activeIcon = new ImageIcon(getClass().getResource("/trayicon_active_large.png"), "tray active icon").getImage();
+		warningIcon = new ImageIcon(getClass().getResource("/trayicon_warning_large.png"), "tray warning icon").getImage();
 		errorIcon = new ImageIcon(getClass().getResource("/trayicon_error_large.png"), "tray error icon").getImage();
 		tray = new TrayIcon(defaultIcon);
 		tray.setToolTip(i18n.get("tray.tooltip"));
@@ -177,12 +174,12 @@ public class ClientTray {
 		refreshIcon();
 	}
 
-	public boolean isErroneousState() {
-		return erroneousState;
+	public ServerStatus getWorseServerStatus() {
+		return worseServerStatus;
 	}
 
-	public void setErroneousState(boolean erroneous) {
-		this.erroneousState = erroneous;
+	public void setWorseServerStatus(ServerStatus worseServerStatus) {
+		this.worseServerStatus = worseServerStatus;
 		refreshIcon();
 	}
 
@@ -219,10 +216,20 @@ public class ClientTray {
 		if (trayAdded) {
 			if (activeState) {
 				tray.setImage(activeIcon);
-			} else if (erroneousState) {
-				tray.setImage(errorIcon);
 			} else {
-				tray.setImage(defaultIcon);
+				switch (worseServerStatus) {
+				case ERROR:
+					tray.setImage(errorIcon);
+					break;
+				case WARNING:
+					tray.setImage(warningIcon);
+					break;
+				case OK:
+				case UNKNOWN:
+				default:
+					tray.setImage(defaultIcon);
+					break;
+				}
 			}
 		}
 	}

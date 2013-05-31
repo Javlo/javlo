@@ -28,7 +28,7 @@ public class RemoteNotification {
 	}
 
 	public String getTitle() {
-		return getServer().getTitle();
+		return getServer().getLabel();
 	}
 
 	public String getMessage() {
