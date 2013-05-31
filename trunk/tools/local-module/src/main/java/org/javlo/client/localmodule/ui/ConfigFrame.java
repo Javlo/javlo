@@ -64,7 +64,7 @@ public class ConfigFrame extends javax.swing.JDialog {
 		lstServersModel = new DefaultListModel();
 		AppConfig configBean = config.getBean();
 		for (ServerConfig serverConfig : configBean.getServers()) {
-			lstServersModel.addElement(serverConfig);
+			lstServersModel.addElement(serverConfig.copy());
 		}
 		lstServers.setModel(lstServersModel);
 
@@ -187,6 +187,11 @@ public class ConfigFrame extends javax.swing.JDialog {
 
 		lblServers.setText(i18n.get("config.servers")); // NOI18N
 
+		lstServers.addMouseListener(new java.awt.event.MouseAdapter() {
+			public void mouseClicked(java.awt.event.MouseEvent evt) {
+				lstServersMouseClicked(evt);
+			}
+		});
 		sclServers.setViewportView(lstServers);
 
 		btnAddServer.setText(i18n.get("config.action.add-server")); // NOI18N
@@ -385,6 +390,12 @@ public class ConfigFrame extends javax.swing.JDialog {
 			lstServersModel.removeElement(server);
 		}
 	}//GEN-LAST:event_btnRemoveServerActionPerformed
+
+	private void lstServersMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_lstServersMouseClicked
+		if (evt.getClickCount() == 2) {
+			btnEditServerActionPerformed(null);
+		}
+	}//GEN-LAST:event_lstServersMouseClicked
 
 	// Variables declaration - do not modify//GEN-BEGIN:variables
 	private javax.swing.JButton btnAddServer;

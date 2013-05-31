@@ -10,10 +10,12 @@ import java.net.URL;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Properties;
+import java.util.logging.Level;
 import java.util.logging.Logger;
 
 import org.javlo.client.localmodule.model.AppConfig;
 import org.javlo.client.localmodule.model.ServerConfig;
+import org.javlo.client.localmodule.model.ServerType;
 import org.javlo.helper.ResourceHelper;
 import org.javlo.helper.StringHelper;
 
@@ -111,6 +113,16 @@ public class ConfigService {
 			}
 			ServerConfig server = new ServerConfig();
 			server.setServerURL(serverURL);
+			server.setTitle(properties.getProperty(base + "title"));
+			String typeRaw = properties.getProperty(base + "type");
+			ServerType type = ServerType.OTHER;
+			try {
+				type = ServerType.valueOf(typeRaw);
+			} catch (Exception ex) {
+				logger.log(Level.WARNING, "Exception parsing server type: " + typeRaw, ex);
+			}
+			server.setType(type);
+			server.setCheckPhrase(properties.getProperty(base + "checkphrase"));
 			servers.add(server);
 			i++;
 		}
@@ -136,6 +148,9 @@ public class ConfigService {
 			ServerConfig server = servers[i];
 			String base = "server." + i + ".";
 			out.setProperty(base + "url", server.getServerURL());
+			out.setProperty(base + "title", server.getTitle());
+			out.setProperty(base + "type", server.getType() == null ? null : server.getType().name());
+			out.setProperty(base + "checkphrase", server.getCheckPhrase());
 		}
 		out.setProperty("http.proxyHost", StringHelper.neverNull(bean.getProxyHost()));
 		out.setProperty("http.proxyPort", StringHelper.neverNull(bean.getProxyPort()));
