@@ -898,10 +898,12 @@ public abstract class AbstractVisualComponent implements IContentVisualComponent
 			GlobalContext globalContext = GlobalContext.getInstance(ctx.getRequest());
 			EditContext editCtx = EditContext.getInstance(globalContext, ctx.getRequest().getSession());
 			try {
+				String classPrefix = "not-";
 				if (!globalContext.isOnlyCreatorModify() || (ctx.getCurrentEditUser() != null && (AdminUserSecurity.getInstance().isAdmin(ctx.getCurrentEditUser()) || getAuthors().equals(ctx.getCurrentEditUser().getLogin())))) {
-					if (editCtx.isEditPreview() && (!isRepeat() || getPage().equals(ctx.getCurrentPage()))) {
-						return " class=\"editable-component" + currentClass + "\"";
-					}
+					classPrefix = "";
+				}
+				if (editCtx.isEditPreview() && (!isRepeat() || getPage().equals(ctx.getCurrentPage()))) {
+					return " class=\""+classPrefix+"editable-component" + currentClass + "\"";
 				}
 			} catch (Exception e) {
 				e.printStackTrace();

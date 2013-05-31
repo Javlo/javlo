@@ -10,7 +10,7 @@ User user = userFactory.getUser(""+request.getAttribute("creator"));
 if (user != null) {
 	request.setAttribute("user", user);
 %>
-<div class="jcreator ${elem.authors} ${elem.type}">
+<div class="jcreator ${elem.authors} ${elem.type} ${samePrevious?'previous-same':'previous-different'}">
 	<c:if test="${not empty user.userInfo.avatarURL}"><span class="avatar"><img src="${user.userInfo.avatarURL}" alt="avatar ${elem.authors}" /></span></c:if>
 	<span class="username">${elem.authors}</span>
 	<c:if test="${not empty user.userInfo.email}"><span class="email"><a href="mailto:${user.userInfo.email}">${user.userInfo.email}</a></span></c:if>

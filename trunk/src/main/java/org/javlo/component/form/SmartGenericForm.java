@@ -44,16 +44,18 @@ public class SmartGenericForm extends GenericForm {
 		private String type = "text";
 		private String value;
 		private String list = "";
+		private String registeredList = "";
 		private int order = 0;
 
-		protected static Collection<? extends Object> FIELD_TYPES = Arrays.asList(new String[] { "text", "large-text", "yes-no", "email", "list", "file" });
+		protected static Collection<? extends Object> FIELD_TYPES = Arrays.asList(new String[] { "text", "large-text", "yes-no", "email", "list", "registered-list", "file" });
 
-		public Field(String name, String label, String type, String value, String list) {
+		public Field(String name, String label, String type, String value, String list, String registeredList) {
 			this.name = name;
 			this.label = label;
 			this.type = type;
 			this.value = value;
 			this.list = list;
+			this.registeredList = registeredList;
 		}
 
 		public String getLabel() {
@@ -90,7 +92,7 @@ public class SmartGenericForm extends GenericForm {
 
 		@Override
 		public String toString() {
-			return getLabel() + SEP + getType() + SEP + getValue() + SEP + list + SEP + getOrder();
+			return getLabel() + SEP + getType() + SEP + getValue() + SEP + list + SEP + getOrder() + SEP + getRegisteredList();
 		}
 
 		public boolean isRequire() {
@@ -135,6 +137,14 @@ public class SmartGenericForm extends GenericForm {
 
 		public Collection<? extends Object> getFieldTypes() {
 			return FIELD_TYPES;
+		}
+
+		public String getRegisteredList() {
+			return registeredList;
+		}
+
+		public void setRegisteredList(String registeredList) {
+			this.registeredList = registeredList;
 		}
 	}
 
@@ -198,6 +208,8 @@ public class SmartGenericForm extends GenericForm {
 		if (isList()) {
 			if (field.getType().equals("list")) {
 				out.println("<td><textarea name=\"" + getInputName("list-" + field.getName()) + "\">" + StringHelper.collectionToText(field.getList()) + "</textarea></td>");
+			} else if (field.getType().equals("registered-list")) {
+				out.println("<td><input name=\"" + getInputName("registered-list-" + field.getName()) + "\" placeholder=\"list name\" value=\""+field.getRegisteredList()+"\"/></td>");
 			} else {
 				out.println("<td>&nbsp;</td>");
 			}
@@ -224,7 +236,7 @@ public class SmartGenericForm extends GenericForm {
 				if (name.trim().length() > 0) {
 					String value = p.getProperty(key);
 					String[] data = StringUtils.splitPreserveAllTokens(value, Field.SEP);
-					Field field = new Field(name, (String) LangHelper.arrays(data, 0, ""), (String) LangHelper.arrays(data, 1, ""), (String) LangHelper.arrays(data, 2, ""), (String) LangHelper.arrays(data, 3, ""));
+					Field field = new Field(name, (String) LangHelper.arrays(data, 0, ""), (String) LangHelper.arrays(data, 1, ""), (String) LangHelper.arrays(data, 2, ""), (String) LangHelper.arrays(data, 3, ""), (String) LangHelper.arrays(data, 5, ""));
 					fields.add(field);
 				}
 			}
@@ -244,7 +256,7 @@ public class SmartGenericForm extends GenericForm {
 
 	public boolean isList() {
 		for (Field field : getFields()) {
-			if (field.getType().equals("list")) {
+			if (field.getType().contains("list")) {
 				return true;
 			}
 		}
@@ -328,12 +340,16 @@ public class SmartGenericForm extends GenericForm {
 				if (listValue != null) {
 					field.setList(listValue);
 				}
+				String registeredListValue = rs.getParameter(getInputName("registered-list-" + oldName), null);
+				if (registeredListValue != null) {
+					field.setRegisteredList(registeredListValue);
+				}
 				store(field);
 			}
 		}
 
 		if (rs.getParameter(getInputName("new-name"), "").trim().length() > 0) {
-			store(new Field(rs.getParameter(getInputName("new-name"), ""), "", "text", "", ""));
+			store(new Field(rs.getParameter(getInputName("new-name"), ""), "", "text", "", "", ""));
 		}
 
 		store(ctx);

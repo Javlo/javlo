@@ -910,6 +910,10 @@ body.fix-preview {
 	color: #0000ff;
 }
 
+.jcreator.previous-same {
+	display: none;
+}
+
 .jcreator .avatar {
 	float: left;
 	margin-right: 3px;

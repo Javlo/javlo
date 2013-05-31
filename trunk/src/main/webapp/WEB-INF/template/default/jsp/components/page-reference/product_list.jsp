@@ -25,6 +25,9 @@
 					</figure>
 				</c:if>
 				<div class="body">
+					<c:if test="${globalContext.collaborativeMode && not empty page.creator}">
+						<div class="authors">${page.creator}</div>
+					</c:if>
 					<span class="date">${page.date}</span> <a title="${page.title}"
 						href="${page.url}">${page.title}</a>
 					<c:if test="${not empty page.description}">

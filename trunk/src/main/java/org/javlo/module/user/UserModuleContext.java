@@ -2,6 +2,7 @@ package org.javlo.module.user;
 
 import java.util.Arrays;
 import java.util.Collection;
+import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -46,11 +47,10 @@ public class UserModuleContext {
 
 		userContext.modes = new LinkedList<String>(allModes);
 
-		if (!adminUserSecurity.haveRight(adminUserFactory.getCurrentUser(session), AdminUserSecurity.ADMIN_USER_ROLE, AdminUserSecurity.GENERAL_ADMIN)) {
+		if (!adminUserFactory.getCurrentUser(session).validForRoles(new HashSet<String>(Arrays.asList(AdminUserSecurity.ADMIN_USER_ROLE)))) {
 			userContext.modes.remove(ADMIN_USERS_LIST);
 		}
-
-		if (!adminUserSecurity.haveRight(adminUserFactory.getCurrentUser(session), AdminUserSecurity.USER_ROLE, AdminUserSecurity.GENERAL_ADMIN)) {
+		if (!adminUserFactory.getCurrentUser(session).validForRoles(new HashSet<String>(Arrays.asList(AdminUserSecurity.USER_ROLE)))) {
 			userContext.modes.remove(VIEW_USERS_LIST);
 		}
 

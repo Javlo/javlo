@@ -26,5 +26,13 @@
 				</c:forEach>
 			</select>
 		</c:when>		
+		<c:when test="${field.type eq 'registered-list'}">
+			<label for="${field.name}">${field.label} ${field.require?'*':''}</label>
+			<select name="${field.name}">
+				<c:forEach var="item" items="${list[field.registeredList]}"> 
+					<option${requestService.parameterMap[field.name] eq item?' selected="selected"':''} value="${item.key}">${item.value}</option> 
+				</c:forEach>
+			</select>
+		</c:when>
 	</c:choose>
 </div>

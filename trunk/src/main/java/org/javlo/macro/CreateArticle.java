@@ -85,16 +85,20 @@ public class CreateArticle implements IInteractiveMacro, IAction {
 		boolean create = rs.getParameter("create", null) != null;
 		String message = null;
 		String newURL = null;
-		if (pageName == null || date == null) {
-			message = "page or date not found.";
+		if (pageName == null) {
+			return "page or date not found.";
 		}
 		try {
-			Date articleDate = StringHelper.parseDate(date);
+			Date articleDate;
+			if (date != null && date.trim().length() > 0) {
+				articleDate = StringHelper.parseDate(date);
+			} else {
+				articleDate = new Date();
+			}
 			Calendar cal = Calendar.getInstance();
 			cal.setTime(articleDate);
 			MenuElement rootPage = ContentService.getInstance(ctx.getRequest()).getNavigation(ctx).searchChildFromName(pageName);
-			if (rootPage != null) {
-				
+			if (rootPage != null) {				
 				List<String> roles = new LinkedList<String>();
 				Set<String> roleSet = new HashSet<String>();
 				for (String role : ctx.getGlobalContext().getAdminUserRoles()) {
@@ -103,8 +107,7 @@ public class CreateArticle implements IInteractiveMacro, IAction {
 					if (ctx.getCurrentEditUser().validForRoles(roleSet)) {
 						roles.add(role);
 					}
-				}	
-				
+				}
 				String yearPageName = rootPage.getName() + "-" + cal.get(Calendar.YEAR);
 				MenuElement yearPage = MacroHelper.addPageIfNotExist(ctx, rootPage.getName(), yearPageName, true);
 				MacroHelper.createMonthStructure(ctx, yearPage);
@@ -127,12 +130,10 @@ public class CreateArticle implements IInteractiveMacro, IAction {
 				} else {
 					message = "mount page not found : " + mountPageName;
 				}
-
 			} else {
 				message = pageName + " not found.";
 			}
 			MacroModuleContext.getInstance(ctx.getRequest()).setActiveMacro(null);
-
 			if (ctx.isEditPreview()) {
 				ctx.setClosePopup(true);
 				if (newURL != null) {

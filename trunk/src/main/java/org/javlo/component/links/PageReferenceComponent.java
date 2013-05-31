@@ -76,7 +76,7 @@ public class PageReferenceComponent extends ComplexPropertiesLink implements IAc
 			private String linkURL;
 			private String description;
 			private String path;
-			private String cssClass;
+			private String cssClass;			
 
 			public Image(String url, String viewURL, String linkURL, String cssClass, String description, String path) {
 				super();
@@ -85,7 +85,7 @@ public class PageReferenceComponent extends ComplexPropertiesLink implements IAc
 				this.linkURL = linkURL;
 				this.setCssClass(cssClass);
 				this.description = description;
-				this.path = path;
+				this.path = path;				
 			}
 
 			public String getCssClass() {
@@ -135,7 +135,7 @@ public class PageReferenceComponent extends ComplexPropertiesLink implements IAc
 			public void setViewURL(String viewURL) {
 				this.viewURL = viewURL;
 			}
-
+			
 		}
 
 		private static PageBean getInstance(ContentContext ctx, MenuElement page, PageReferenceComponent comp) throws Exception {
@@ -163,6 +163,7 @@ public class PageReferenceComponent extends ComplexPropertiesLink implements IAc
 			bean.category = page.getCategory(ctx);
 			bean.visible = page.isVisible();
 			bean.path = page.getPath();
+			bean.creator = page.getCreator();
 			bean.setCategoryKey("category." + StringHelper.neverNull(page.getCategory(ctx)).toLowerCase().replaceAll(" ", ""));
 
 			I18nAccess i18nAccess = I18nAccess.getInstance(ctx.getRequest());
@@ -268,6 +269,7 @@ public class PageReferenceComponent extends ComplexPropertiesLink implements IAc
 		private String linkOn = null;
 		private String rawTags = null;
 		private String path = null;
+		private String creator = null;
 		private boolean realContent = false;
 		private boolean visible = false;
 		private Collection<Link> links = new LinkedList<Link>();
@@ -457,6 +459,14 @@ public class PageReferenceComponent extends ComplexPropertiesLink implements IAc
 
 		public void setPath(String path) {
 			this.path = path;
+		}
+
+		public String getCreator() {
+			return creator;
+		}
+
+		public void setCreator(String creator) {
+			this.creator = creator;
 		}
 
 	}
