@@ -95,3 +95,21 @@ change log
  * fix preview edition
  
 * 2.0.2.1 25/4/2013
+
+ * move folder and file (and mofidy reference in content)
+ 
+ * image rotation
+
+ * autologin correction
+ 
+ * vimeo integration
+
+ * new text editor
+ 
+ * new css editor
+ 
+ * list service
+
+ * collaborative mode
+ 
+* 2.0.2.2 31/5/2013
