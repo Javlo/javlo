@@ -5,7 +5,7 @@
 	</div>	</c:if>	<c:if test="${empty valid}">
 <h3>${comp.title}</h3>
 <form method="post" action="${info.currentURL}" ${comp.file?' enctype="multipart/form-data"':''}>
-<input type="hidden" name="webaction" value="gform.submit" />
+<input type="hidden" name="webaction" value="smart-form.submit" />
 <input type="hidden" name="comp_id" value="${comp.id}" />
 
 <c:forEach var="localField" items="${comp.fields}">
