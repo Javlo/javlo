@@ -130,6 +130,15 @@ ul.menu {
 	width: auto;
 }
 
+#content-edit table input {
+	display: inline-block;
+	margin-left: 6px;
+}
+
+#content-edit .smart-generic-form .action {
+	width: 140px;
+}
+
 /** components **/
 
 /*** css for design component in edit mode ***/
