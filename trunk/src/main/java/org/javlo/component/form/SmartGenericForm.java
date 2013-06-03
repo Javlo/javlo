@@ -49,13 +49,14 @@ public class SmartGenericForm extends GenericForm {
 
 		protected static Collection<? extends Object> FIELD_TYPES = Arrays.asList(new String[] { "text", "large-text", "yes-no", "email", "list", "registered-list", "file" });
 
-		public Field(String name, String label, String type, String value, String list, String registeredList) {
+		public Field(String name, String label, String type, String value, String list, String registeredList, int order) {
 			this.name = name;
 			this.label = label;
 			this.type = type;
 			this.value = value;
 			this.list = list;
 			this.registeredList = registeredList;
+			this.order = order;
 		}
 
 		public String getLabel() {
@@ -92,7 +93,7 @@ public class SmartGenericForm extends GenericForm {
 
 		@Override
 		public String toString() {
-			return getLabel() + SEP + getType() + SEP + getValue() + SEP + list + SEP + getOrder() + SEP + getRegisteredList();
+			return getLabel() + SEP + getType() + SEP + getValue() + SEP + list + SEP + getOrder() + SEP + getRegisteredList() + SEP + getOrder();
 		}
 
 		public boolean isRequire() {
@@ -220,7 +221,11 @@ public class SmartGenericForm extends GenericForm {
 			required = " checked=\"checked\"";
 		}
 		out.println("<td><input type=\"checkbox\" name=\"" + getInputName("require-" + field.getName()) + "\"" + required + " /></td>");
-		out.println("<td><input class=\"needconfirm\" type=\"submit\" name=\"" + getInputName("del-" + field.getName()) + "\" value=\"del\" /></td>");
+		out.println("<td><div  class=\"action\">");
+		out.println("  <input class=\"up\" type=\"submit\" name=\"" + getInputName("up-" + field.getName()) + "\" value=\"up\" />");
+		out.println("  <input class=\"down\" type=\"submit\" name=\"" + getInputName("down-" + field.getName()) + "\" value=\"down\" />");
+		out.println("  <input class=\"needconfirm\" type=\"submit\" name=\"" + getInputName("del-" + field.getName()) + "\" value=\"del\" />");
+		out.println("</div></td>");
 		out.println("</tr>");
 		out.close();
 		return new String(outStream.toByteArray());
@@ -236,7 +241,7 @@ public class SmartGenericForm extends GenericForm {
 				if (name.trim().length() > 0) {
 					String value = p.getProperty(key);
 					String[] data = StringUtils.splitPreserveAllTokens(value, Field.SEP);
-					Field field = new Field(name, (String) LangHelper.arrays(data, 0, ""), (String) LangHelper.arrays(data, 1, ""), (String) LangHelper.arrays(data, 2, ""), (String) LangHelper.arrays(data, 3, ""), (String) LangHelper.arrays(data, 5, ""));
+					Field field = new Field(name, (String) LangHelper.arrays(data, 0, ""), (String) LangHelper.arrays(data, 1, ""), (String) LangHelper.arrays(data, 2, ""), (String) LangHelper.arrays(data, 3, ""), (String) LangHelper.arrays(data, 5, ""), Integer.parseInt(""+LangHelper.arrays(data, 6, "0")));
 					fields.add(field);
 				}
 			}
@@ -323,8 +328,12 @@ public class SmartGenericForm extends GenericForm {
 			getLocalConfig(false).setProperty("message.tobig-file", rs.getParameter(getInputName("message-tobig-file"), ""));
 		}
 
+		int pos = 10;
 		for (Field field : getFields()) {
-			String oldName = field.getName();
+			field.setOrder(pos);
+			pos = pos + 10;
+			String oldName = field.getName();			
+			
 			String name = getInputName("del-" + oldName);
 			if (rs.getParameter(name, null) != null) {
 				delField(oldName);
@@ -344,12 +353,22 @@ public class SmartGenericForm extends GenericForm {
 				if (registeredListValue != null) {
 					field.setRegisteredList(registeredListValue);
 				}
+				
+				String up = getInputName("up-" + oldName);
+				if (rs.getParameter(up, null) != null) {
+					field.setOrder (field.getOrder()-15);
+				} 
+				String down = getInputName("down-" + oldName);
+				if (rs.getParameter(down, null) != null) {
+					field.setOrder (field.getOrder()+15);
+				} 
+				
 				store(field);
 			}
 		}
 
 		if (rs.getParameter(getInputName("new-name"), "").trim().length() > 0) {
-			store(new Field(rs.getParameter(getInputName("new-name"), ""), "", "text", "", "", ""));
+			store(new Field(rs.getParameter(getInputName("new-name"), ""), "", "text", "", "", "", pos+20));
 		}
 
 		store(ctx);
