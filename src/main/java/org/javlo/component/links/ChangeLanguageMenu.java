@@ -105,7 +105,7 @@ public class ChangeLanguageMenu extends AbstractVisualComponent {
 			languages = globalContext.getContentLanguages();
 		} else {
 			languages = globalContext.getLanguages();
-		}
+		}		
 		ContentContext lgCtx = new ContentContext(ctx);
 		for (String lg : languages) {
 			lgCtx.setRequestContentLanguage(lg);
@@ -115,7 +115,7 @@ public class ChangeLanguageMenu extends AbstractVisualComponent {
 			}
 			String label = (new Locale(lg)).getDisplayLanguage(new Locale(lg));
 			String translatedLabel = (new Locale(lg)).getDisplayLanguage(new Locale(ctx.getLanguage()));
-			String url = URLHelper.createURL(lgCtx);
+			String url = URLHelper.createURL(lgCtx);			
 			LanguageBean bean = new LanguageBean();
 			bean.setLanguage(lg);
 			bean.setLabel(label);
