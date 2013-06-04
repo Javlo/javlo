@@ -130,7 +130,7 @@ ul.menu {
 	width: auto;
 }
 
-#content-edit table input {
+#content-edit table input, #content-edit table select, #content-edit table textarea, #content-edit table a  {
 	display: inline-block;
 	margin-left: 6px;
 }

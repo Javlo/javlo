@@ -215,10 +215,11 @@ public class GlobalImage extends Image {
 		finalCode.append(getNewDirLabelTitle(ctx));
 		finalCode.append(" : </label><input id=\"new_dir_" + getId() + "\" name=\"" + getNewDirInputName() + "\" type=\"text\"/></div>");
 
-		if ((getDirList(getFileDirectory(ctx)) != null) && (getDirList(getFileDirectory(ctx)).length > 0)) {
-			finalCode.append("<div class=\"line\"><label for=\"" + getDirInputName() + "\">");
-			finalCode.append(getDirLabelTitle(ctx));
-			finalCode.append(" : </label>");
+		
+		finalCode.append("<div class=\"line\"><label for=\"" + getDirInputName() + "\">");
+		finalCode.append(getDirLabelTitle(ctx));
+		finalCode.append(" : </label>");
+		if ((getDirList(getFileDirectory(ctx)) != null) && (getDirList(getFileDirectory(ctx)).length > 0)) {			
 			Collection<String> dirsCol = new LinkedList<String>();
 			dirsCol.add("");
 			String[] dirs = getDirList(getFileDirectory(ctx));
@@ -229,20 +230,18 @@ public class GlobalImage extends Image {
 				dirsCol.add(dir);
 			}
 			finalCode.append(XHTMLHelper.getInputOneSelect(getDirInputName(), dirsCol, getDirSelected(), getJSOnChange(ctx), true));
-
-			Map<String, String> filesParams = new HashMap<String, String>();
-
-			String path = URLHelper.mergePath(FileAction.getPathPrefix(ctx), StaticConfig.getInstance(ctx.getRequest().getSession()).getImageFolderName(), getDirSelected());
-			filesParams.put("path", path);
-			filesParams.put("webaction", "changeRenderer");
-			filesParams.put("page", "meta");
-			String staticURL = URLHelper.createModuleURL(ctx, ctx.getPath(), "file", filesParams);
-
-			finalCode.append("<a class=\"" + EDIT_ACTION_CSS_CLASS + "\" href=\"" + staticURL + "\">&nbsp;");
-			finalCode.append(i18nAccess.getText("content.goto-static"));
-			finalCode.append("</a>");
-			finalCode.append("</div>");
 		}
+		
+		Map<String, String> filesParams = new HashMap<String, String>();
+		String path = URLHelper.mergePath(FileAction.getPathPrefix(ctx), StaticConfig.getInstance(ctx.getRequest().getSession()).getImageFolderName(), getDirSelected());
+		filesParams.put("path", path);
+		filesParams.put("webaction", "changeRenderer");
+		filesParams.put("page", "meta");
+		String staticURL = URLHelper.createModuleURL(ctx, ctx.getPath(), "file", filesParams);
+		finalCode.append("<a class=\"" + EDIT_ACTION_CSS_CLASS + "\" href=\"" + staticURL + "\">&nbsp;");
+		finalCode.append(i18nAccess.getText("content.goto-static"));
+		finalCode.append("</a>");
+		finalCode.append("</div>");
 
 		/* filter */
 		Template currentTemplate = ctx.getCurrentTemplate();

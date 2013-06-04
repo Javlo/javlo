@@ -185,8 +185,7 @@ public class GlobalContext implements Serializable {
 	}
 
 	public static GlobalContext getSessionInstance(HttpSession session) {
-		String contextKey = (String) session.getAttribute(KEY);
-		return (GlobalContext) session.getServletContext().getAttribute(contextKey);
+		return (GlobalContext) session.getAttribute(KEY);
 	}
 
 	public static GlobalContext getInstance(HttpServletRequest request) {
@@ -227,7 +226,7 @@ public class GlobalContext implements Serializable {
 						return null;
 					}
 				}
-				request.getSession().setAttribute(KEY, contextURI); // mark global context in session.
+				request.getSession().setAttribute(KEY, globalContext); // mark global context in session.
 			} else {
 				contextURI = globalContext.getContextKey();
 			}
@@ -269,7 +268,7 @@ public class GlobalContext implements Serializable {
 				newInstance = getRealInstance(session, alias);
 			}
 		}
-		session.setAttribute(KEY, newInstance.getContextKey());
+		session.setAttribute(KEY, newInstance);
 		return newInstance;
 	}
 

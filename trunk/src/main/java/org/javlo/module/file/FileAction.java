@@ -4,6 +4,7 @@ import java.io.File;
 import java.io.FileFilter;
 import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.io.InputStream;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.Comparator;
@@ -16,6 +17,7 @@ import java.util.logging.Logger;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 
+import org.apache.commons.fileupload.FileItem;
 import org.apache.commons.io.filefilter.FileFileFilter;
 import org.javlo.actions.AbstractModuleAction;
 import org.javlo.bean.LinkToRenderer;
@@ -503,4 +505,23 @@ public class FileAction extends AbstractModuleAction {
 			return URLHelper.mergePath(globalContext.getDataFolder(), globalContext.getStaticConfig().getStaticFolder());
 		}
 	}
+	
+	public static String performUpload(ContentContext ctx, RequestService rs) throws FileNotFoundException, InstantiationException, IllegalAccessException, IOException, ModuleException {
+		String sourceFolder = getContextROOTFolder(ctx);
+		FileModuleContext fileModuleContext = FileModuleContext.getInstance(ctx.getRequest());
+		File folder = new File(sourceFolder, fileModuleContext.getPath());
+		for (FileItem file : rs.getAllFileItem()) {
+			File newFile = new File(URLHelper.mergePath(folder.getAbsolutePath(), StringHelper.createFileName(file.getName())));
+			newFile = ResourceHelper.getFreeFileName(newFile);			
+			InputStream in = file.getInputStream();
+			try {
+				ResourceHelper.writeStreamToFile(in, newFile);
+			} finally {
+				ResourceHelper.closeResource(in);
+			}
+		}
+		return null;
+	}
+	
+	
 }
