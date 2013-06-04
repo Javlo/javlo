@@ -237,7 +237,6 @@ public class Video extends GlobalImage implements IAction, IVideo {
 		String videoCode = URLHelper.extractFileName(getLink());
 
 		if (videoCode != null) {
-
 			GlobalContext globalContext = GlobalContext.getInstance(ctx.getRequest());
 			StaticConfig staticConfig = StaticConfig.getInstance(ctx.getRequest().getSession());
 			String fileName = "vo_" + videoCode.toLowerCase() + ".jpg";
