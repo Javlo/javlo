@@ -9,6 +9,10 @@
 	display: none;
 }
 
+#preview_command .current a {
+	font-weight: bold;
+}
+
 #one-component-edit {
 	font-size: 11px;
 }
