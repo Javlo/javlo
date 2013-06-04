@@ -484,7 +484,7 @@ public abstract class AbstractVisualComponent implements IContentVisualComponent
 			out.println("</div>");
 		}
 
-		if (getRenderes(ctx).size() > 0) {
+		if (getRenderes(ctx) == null || getRenderes(ctx).size() > 0) {
 			out.println(getSelectRendererXHTML(ctx));
 			/*
 			 * out.println("<label for=\"renderer-" + getId() + "\">" + getRendererTitle() + "</label>"); out.println(XHTMLHelper.getInputOneSelect("style-" + getId(), getRenderes(ctx), getRenderer(ctx))); out.println("</div>");
@@ -801,7 +801,7 @@ public abstract class AbstractVisualComponent implements IContentVisualComponent
 	@Override
 	public String getRenderer(ContentContext ctx) {
 		String renderer;
-		if (getRenderes(ctx).size() == 0) {
+		if (getRenderes(ctx) == null || getRenderes(ctx).size() == 0) {
 			renderer = getDefaultRenderer(ctx);
 		} else if (getRenderes(ctx).size() == 1 || getCurrentRenderer(ctx) == null) {
 			renderer = getRenderes(ctx).values().iterator().next();
