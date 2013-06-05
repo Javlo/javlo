@@ -1103,6 +1103,11 @@ div.popup {
 	text-align: center;
 }
 
+.upload input[type=text] {
+	width: 78%;
+	margin-bottom: 24px;
+}
+
 /** preview **/
 body.previewEdit {
 	background: none;

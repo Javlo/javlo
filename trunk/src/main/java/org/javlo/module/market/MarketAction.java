@@ -131,7 +131,7 @@ public class MarketAction extends AbstractModuleAction {
 			try {
 				URL zipURL = new URL(resource.getDownloadURL());
 				in = zipURL.openConnection().getInputStream();
-				ZipManagement.uploadZipTemplate(ctx, in, newTemplate.getId(), false);
+				ZipManagement.uploadZipTemplate(ctx, in, newTemplate.getId());
 				in.close();
 				if (resource.getImageURL() != null) {
 					URL imageURL = new URL(resource.getImageURL());

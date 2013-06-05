@@ -2,6 +2,7 @@ package org.javlo.module.template;
 
 import java.awt.image.RenderedImage;
 import java.io.File;
+import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.FileReader;
 import java.io.FileWriter;
@@ -26,6 +27,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 
 import org.apache.commons.configuration.ConfigurationException;
+import org.apache.commons.fileupload.FileItem;
 import org.javlo.actions.AbstractModuleAction;
 import org.javlo.config.StaticConfig;
 import org.javlo.context.ContentContext;
@@ -40,6 +42,7 @@ import org.javlo.image.ImageConfig;
 import org.javlo.message.GenericMessage;
 import org.javlo.message.MessageRepository;
 import org.javlo.module.core.Module;
+import org.javlo.module.core.ModuleException;
 import org.javlo.module.core.ModulesContext;
 import org.javlo.module.file.FileModuleContext;
 import org.javlo.module.template.remote.IRemoteResourcesFactory;
@@ -50,6 +53,7 @@ import org.javlo.service.RequestService;
 import org.javlo.servlet.zip.ZipManagement;
 import org.javlo.template.Template;
 import org.javlo.template.TemplateFactory;
+import org.javlo.user.AdminUserSecurity;
 import org.javlo.utils.ReadOnlyPropertiesConfigurationMap;
 import org.javlo.utils.StructuredProperties;
 import org.javlo.ztatic.FileCache;
@@ -339,7 +343,7 @@ public class TemplateAction extends AbstractModuleAction {
 			try {
 				URL zipURL = new URL(template.getDownloadURL());
 				in = zipURL.openConnection().getInputStream();
-				ZipManagement.uploadZipTemplate(ctx, in, newTemplate.getId(), false);
+				ZipManagement.uploadZipTemplate(ctx, in, newTemplate.getId());
 				in.close();
 
 				URL imageURL = new URL(template.getImageURL());
@@ -555,6 +559,59 @@ public class TemplateAction extends AbstractModuleAction {
 				}
 			}
 		}
+		return null;
+	}
+	
+	public static String getContextROOTFolder(ContentContext ctx) {
+		GlobalContext globalContext = GlobalContext.getInstance(ctx.getRequest());
+		if (AdminUserSecurity.getInstance().isGod(ctx.getCurrentEditUser())) {
+			return globalContext.getDataFolder();
+		} else {
+			return URLHelper.mergePath(globalContext.getDataFolder(), globalContext.getStaticConfig().getStaticFolder());
+		}
+	}
+	
+	private static boolean uploadTemplate (ContentContext ctx, InputStream in, File file) throws Exception {
+		if (!StringHelper.getFileExtension(file.getName()).toLowerCase().equals("zip")) {
+			return false;
+		} else {			
+			ZipManagement.uploadZipTemplate(ctx, in, StringHelper.getFileNameWithoutExtension(file.getName()));
+			return true;
+		}		
+	}
+	
+	public static String performUpload(ContentContext ctx, RequestService rs, MessageRepository messageRepository, I18nAccess i18nAccess) throws Exception {
+		String sourceFolder = getContextROOTFolder(ctx);
+		FileModuleContext fileModuleContext = FileModuleContext.getInstance(ctx.getRequest());
+		File folder = new File(sourceFolder, fileModuleContext.getPath());
+		for (FileItem file : rs.getAllFileItem()) {
+			File newFile = new File(URLHelper.mergePath(folder.getAbsolutePath(), StringHelper.createFileName(file.getName())));
+			newFile = ResourceHelper.getFreeFileName(newFile);			
+			InputStream in = file.getInputStream();
+			try {
+				if (!uploadTemplate(ctx,in,newFile)) {
+					messageRepository.setGlobalMessage(new GenericMessage(i18nAccess.getText("template.error.bad-template-file"), GenericMessage.ERROR));					
+				}
+			} finally {
+				ResourceHelper.closeResource(in);
+			}
+		}
+		
+		String urlStr = rs.getParameter("url", "");
+		if (urlStr.trim().length() > 0) {
+			URL url = new URL(urlStr);
+			InputStream in = url.openConnection().getInputStream();
+			try {
+				File newFile = new File(URLHelper.mergePath(folder.getAbsolutePath(), StringHelper.createFileName(StringHelper.getFileNameFromPath(urlStr))));
+				newFile = ResourceHelper.getFreeFileName(newFile);	
+				if (!uploadTemplate(ctx,in,newFile)) {
+					messageRepository.setGlobalMessage(new GenericMessage(i18nAccess.getText("template.error.bad-template-file"), GenericMessage.ERROR));					
+				}
+			} finally {
+				ResourceHelper.closeResource(in);
+			}			
+		}
+		
 		return null;
 	}
 }

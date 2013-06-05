@@ -5,6 +5,7 @@ import java.io.FileFilter;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
+import java.net.URL;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.Comparator;
@@ -520,6 +521,20 @@ public class FileAction extends AbstractModuleAction {
 				ResourceHelper.closeResource(in);
 			}
 		}
+		
+		String urlStr = rs.getParameter("url", "");
+		if (urlStr.trim().length() > 0) {
+			URL url = new URL(urlStr);
+			InputStream in = url.openConnection().getInputStream();
+			try {
+				File newFile = new File(URLHelper.mergePath(folder.getAbsolutePath(), StringHelper.createFileName(StringHelper.getFileNameFromPath(urlStr))));
+				newFile = ResourceHelper.getFreeFileName(newFile);	
+				ResourceHelper.writeStreamToFile(in, newFile);
+			} finally {
+				ResourceHelper.closeResource(in);
+			}			
+		}
+		
 		return null;
 	}
 	
