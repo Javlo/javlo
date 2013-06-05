@@ -351,15 +351,26 @@ public class ContentService {
 			return value;
 		}
 	}
+	
+	private static String getComponentKey(ContentContext ctx, String id) {
+		int mode = ctx.getRenderMode();
+		if (mode == ContentContext.PREVIEW_MODE) {
+			mode = ContentContext.EDIT_MODE;
+		}
+		return id+'-'+mode;
+	}
 
 	public IContentVisualComponent getCachedComponent(ContentContext ctx, String id) throws Exception {
 		if (id == null) {
 			return null;
 		}
-		WeakReference<IContentVisualComponent> ref = components.get(id + ctx.getRenderMode());
+		WeakReference<IContentVisualComponent> ref = components.get(getComponentKey(ctx,id));
 		IContentVisualComponent component = null;
 		if (ref != null) {
 			component = ref.get();
+			if (component == null) {
+				components.remove(getComponentKey(ctx,id));
+			}
 		}
 		return component;
 	}
@@ -368,7 +379,7 @@ public class ContentService {
 		if (id == null) {
 			return null;
 		}
-		WeakReference<IContentVisualComponent> ref = components.get(id + ctx.getRenderMode());
+		WeakReference<IContentVisualComponent> ref = components.get(getComponentKey(ctx,id));
 		IContentVisualComponent component = null;
 		if (ref != null) {
 			component = ref.get();
@@ -376,11 +387,11 @@ public class ContentService {
 		if (component == null) {
 			component = searchComponent(ctx, getNavigation(ctx), id);
 			if (component != null) {
-				components.put(id + ctx.getRenderMode(), new WeakReference<IContentVisualComponent>(component));
+				components.put(getComponentKey(ctx,id), new WeakReference<IContentVisualComponent>(component));
 			}
 		}
 		if (component == null) {
-			components.remove(id + ctx.getRenderMode());
+			components.remove(getComponentKey(ctx,id));
 		}
 		return component;
 	}
@@ -389,7 +400,7 @@ public class ContentService {
 		if (id == null) {
 			return null;
 		}
-		WeakReference<IContentVisualComponent> ref = components.get(id + ctx.getRenderMode());
+		WeakReference<IContentVisualComponent> ref = components.get(getComponentKey(ctx,id));
 		IContentVisualComponent component = null;
 		if (ref != null) {
 			component = ref.get();
@@ -402,11 +413,11 @@ public class ContentService {
 			localContext.setRequestContentLanguage(languages.next());
 			component = searchComponent(localContext, getNavigation(localContext), id);
 			if (component != null) {
-				components.put(id + ctx.getRenderMode(), new WeakReference<IContentVisualComponent>(component));
+				components.put(getComponentKey(ctx,id), new WeakReference<IContentVisualComponent>(component));
 			}
 		}
 		if (component == null) {
-			components.remove(id + ctx.getRenderMode());
+			components.remove(getComponentKey(ctx,id));
 		}
 		return component;
 	}
@@ -675,8 +686,8 @@ public class ContentService {
 		}
 	}
 
-	public void setCachedComponent(IContentVisualComponent comp) throws Exception {
-		components.put(comp.getId(), new WeakReference<IContentVisualComponent>(comp));
+	public void setCachedComponent(ContentContext ctx, IContentVisualComponent comp) throws Exception {
+		components.put(getComponentKey(ctx,comp.getId()), new WeakReference<IContentVisualComponent>(comp));
 	}
 
 	public List<IContentVisualComponent> getAllContent(ContentContext ctx) throws Exception {
