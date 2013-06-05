@@ -59,7 +59,7 @@ public class ContentElementList implements IContentComponentsList {
 				IContentVisualComponent comp = content.getCachedComponent(ctx, bean.getId());
 				if (comp == null) {
 					comp = ComponentFactory.createComponent(ctx, bean, inPage, previousComponent, null);
-					content.setCachedComponent(comp);
+					content.setCachedComponent(ctx,comp);
 				}
 				previousComponent = comp;
 				contentElements.add(comp);

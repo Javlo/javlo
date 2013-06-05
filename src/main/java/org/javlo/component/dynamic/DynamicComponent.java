@@ -207,15 +207,16 @@ public class DynamicComponent extends AbstractVisualComponent implements IStatic
 						if (field.getCSSClass() != null && field.getCSSClass().trim().length() > 0) {
 							cssClass = ' ' + field.getCSSClass();
 						}
-						out.println(field.getFieldPrefix(ctx));
 						if (field.isWrapped()) {
 							out.println("<div class=\"field " + field.getName() + firstFiledClass + cssClass + "\">");
 						}
+						out.println(field.getFieldPrefix(ctx));
 						out.println(field.getViewXHTMLCode(ctx));
+						out.println(field.getFieldSuffix(ctx));
 						if (field.isWrapped()) {
 							out.println("</div>");
 						}
-						out.println(field.getFieldSuffix(ctx));
+						
 						firstFiledClass = "";
 					}
 				}
