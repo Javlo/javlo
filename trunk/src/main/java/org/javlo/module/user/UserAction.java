@@ -109,6 +109,16 @@ public class UserAction extends AbstractModuleAction {
 
 		List<String> roles = new LinkedList<String>(userFactory.getAllRoles(globalContext, ctx.getRequest().getSession()));
 		Collections.sort(roles);
+		
+		if (userFactory instanceof AdminUserFactory) {
+			for (String adminRole : globalContext.getAdminUserRoles()) {
+				roles.remove(adminRole);
+			}
+			List<String> contextRoles = new LinkedList<String>(globalContext.getAdminUserRoles());
+			Collections.sort(contextRoles);
+			ctx.getRequest().setAttribute("contextRoles", contextRoles);
+		}
+		
 		ctx.getRequest().setAttribute("roles", roles);
 
 		if (userContext.getMode().equals(UserModuleContext.ADMIN_USERS_LIST)) {

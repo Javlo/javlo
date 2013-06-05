@@ -48,8 +48,14 @@ public interface IUserFactory {
 
 	public abstract List<IUserInfo> getUserInfoForRoles(String[] inRoles);
 
+	/**
+	 * get all roles of the user.
+	 * @param globalContext
+	 * @param session
+	 * @return
+	 */
 	public abstract Set<String> getAllRoles(GlobalContext globalContext, HttpSession session);
-
+	
 	public abstract void init(GlobalContext globalContext, HttpSession newSession);
 
 	public abstract void reload(GlobalContext globalContext, HttpSession session);

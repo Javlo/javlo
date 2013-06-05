@@ -27,6 +27,7 @@
 </div>
 </fieldset>
 
+<c:if test="${fn:length(user.roles) > 0}">
 <fieldset>
 <legend>${i18n.edit['user.roles']}</legend>
 <c:forEach var="role" items="${roles}">
@@ -44,6 +45,28 @@
 
 </c:forEach>
 </fieldset>
+</c:if>
+
+
+<c:if test="${not empty contextRoles}">
+<fieldset>
+<legend>${i18n.edit['user.context-roles']}</legend>
+<c:forEach var="role" items="${contextRoles}">
+
+<div class="inline">	
+	<c:set var="contains" value="false" />
+	<c:forEach var="userRole" items="${user.roles}">
+ 		 <c:if test="${userRole eq role}">
+   		 <c:set var="contains" value="true" />
+ 		 </c:if>
+	</c:forEach>
+	<input type="checkbox" id="role-${role}" name="role-${role}" <c:if test="${contains}">checked="checked"</c:if> />
+	<label for="role-${role}">${role}</label>
+</div>
+
+</c:forEach>
+</fieldset>
+</c:if>
 
 <div class="action">
 	<input type="submit" name="back" value="${i18n.edit['global.back']}" />

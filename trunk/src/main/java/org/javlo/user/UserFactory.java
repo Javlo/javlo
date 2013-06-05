@@ -197,7 +197,7 @@ public class UserFactory implements IUserFactory, Serializable {
 		EditContext editContext = EditContext.getInstance(globalContext, session);
 		return editContext.getUserRoles();
 	}
-
+	
 	/*
 	 * (non-Javadoc)
 	 * 
