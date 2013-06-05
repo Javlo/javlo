@@ -1,6 +1,7 @@
 package org.javlo.macro;
 
 import java.util.Calendar;
+import java.util.Collection;
 import java.util.Collections;
 import java.util.Date;
 import java.util.HashMap;
@@ -9,22 +10,32 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.logging.Logger;
+
+import javax.mail.internet.InternetAddress;
 
 import org.javlo.actions.IAction;
 import org.javlo.context.ContentContext;
 import org.javlo.context.EditContext;
+import org.javlo.context.GlobalContext;
 import org.javlo.helper.MacroHelper;
+import org.javlo.helper.NetHelper;
 import org.javlo.helper.StringHelper;
 import org.javlo.helper.URLHelper;
 import org.javlo.i18n.I18nAccess;
 import org.javlo.macro.core.IInteractiveMacro;
+import org.javlo.mailing.Mailing;
 import org.javlo.message.MessageRepository;
 import org.javlo.module.macro.MacroModuleContext;
 import org.javlo.navigation.MenuElement;
 import org.javlo.service.ContentService;
 import org.javlo.service.RequestService;
+import org.javlo.user.AdminUserFactory;
+import org.javlo.user.IUserInfo;
 
 public class CreateArticle implements IInteractiveMacro, IAction {
+	
+	private static Logger logger = Logger.getLogger(CreateArticle.class.getName());
 
 	@Override
 	public String getName() {
@@ -121,10 +132,46 @@ public class CreateArticle implements IInteractiveMacro, IAction {
 						}
 						newURL = URLHelper.createURL(ctx.getContextWithOtherRenderMode(ContentContext.PREVIEW_MODE), newPage);
 						
+						List<String> selectedRole = new LinkedList<String>();
 						for (String role :roles) {
 							if (rs.getParameter("role-"+role, null) != null) {
 								newPage.addEditorRoles(role);
+								selectedRole.add(role);
 							}
+						}
+						
+						if (rs.getParameter("email", null) != null) {
+							GlobalContext globalContext = GlobalContext.getInstance(ctx.getRequest());
+							AdminUserFactory userFact = AdminUserFactory.createAdminUserFactory(globalContext, ctx.getRequest().getSession());
+							
+							Set<InternetAddress> receivers = new HashSet<InternetAddress>();
+							for (IUserInfo userInfo : userFact.getUserInfoList()) {
+								Set<String> userRoles = new HashSet<String>(userInfo.getRoles());
+								userRoles.retainAll(selectedRole);
+								if (userRoles.size() > 0) {
+									try {
+										InternetAddress address = new InternetAddress(userInfo.getEmail());
+										if (address != null) {
+											receivers.add(address);
+										}
+									} catch (Exception e) {
+										logger.warning(e.getMessage());
+									}								
+								}
+							}
+							Mailing m = new Mailing();
+							m.setFrom(new InternetAddress(globalContext.getAdministratorEmail()));
+							m.setReceivers(receivers);
+							m.setSubject("new page on intranet.");
+							m.setAdminEmail(globalContext.getAdministratorEmail());
+							m.setNotif(null);
+							String pageURL = URLHelper.createURL(ctx.getContextForAbsoluteURL(), newPage);
+							m.setContent("new page create on intranet : "+pageURL);
+							m.setHtml(false);
+							Calendar calendar = Calendar.getInstance();
+							calendar.roll(Calendar.MINUTE, 5);
+							m.setSendDate(calendar.getTime());
+							m.store(ctx.getRequest().getSession().getServletContext());
 						}
 					}
 				} else {

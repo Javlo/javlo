@@ -86,7 +86,6 @@ org.javlo.component.web2.ReactionComponent
 org.javlo.component.web2.PageRank
 org.javlo.component.web2.SimplePoll
 
-
 --content.title.special
 
 org.javlo.component.layout.ContentSeparation
@@ -100,8 +99,3 @@ org.javlo.component.portlet.PortletWrapperComponent
 org.javlo.component.links.UserInfoLink
 org.javlo.component.form.FormMailingComponent
 org.javlo.component.users.UserSearch
-ec.ep.europarl.adagio.wcms.component.GenericFormPortlet
-ec.ep.europarl.adagio.wcms.component.QuizPollPortlet
-ec.ep.europarl.adagio.wcms.component.CYPRegisterPortlet
-ec.ep.europarl.adagio.wcms.component.EPPJWizardPortlet
-

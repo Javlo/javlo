@@ -323,7 +323,9 @@ public class Mailing {
 		File receiversFile = new File(dir.getAbsolutePath() + '/' + RECEIVERS_FILE);
 		Collection<String> lines = new LinkedList<String>();
 		for (InternetAddress receiver : receivers) {
-			lines.add(receiver.toUnicodeString());
+			if (receiver != null) {
+				lines.add(receiver.toUnicodeString());
+			}
 		}
 		FileUtils.writeLines(receiversFile, lines);
 
@@ -332,7 +334,9 @@ public class Mailing {
 		config.setProperty("subject", subject);
 		config.setProperty("language", language);
 		config.setProperty("sender", from.toUnicodeString());
-		config.setProperty("notif", notif.toUnicodeString());
+		if (notif != null) {
+			config.setProperty("notif", notif.toUnicodeString());
+		}
 		config.setProperty("send", new Boolean(isSend()));
 		config.setProperty("roles", StringHelper.arrayToString(roles));
 		config.setProperty("encoding", encoding);
