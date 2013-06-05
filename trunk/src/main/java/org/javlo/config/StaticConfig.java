@@ -989,6 +989,14 @@ public class StaticConfig extends Observable {
 	public boolean isCorporate() {
 		return properties.getBoolean("admin.corporate", true);
 	}
+	
+	/**
+	 * cancul account size of true.  Account size is always -1 if false.
+	 * @return
+	 */
+	public boolean isAccountSize() {
+		return properties.getBoolean("account.size", true);
+	}
 
 	public boolean isDataFolderRelative() {
 		return properties.getBoolean("data-folder-relative", true);

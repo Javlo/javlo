@@ -514,7 +514,7 @@ public class GlobalContext implements Serializable {
 	public long getAccountSize() {
 		if (accountSize == null) {
 			File file = new File(getDataFolder());
-			if (file.exists()) {
+			if (getStaticConfig().isAccountSize() && file.exists()) {				
 				accountSize = FileUtils.sizeOfDirectory(file);
 			} else {
 				return -1;
