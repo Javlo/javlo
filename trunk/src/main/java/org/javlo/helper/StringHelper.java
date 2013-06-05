@@ -739,6 +739,9 @@ public class StringHelper {
 	 * @return a file extension without dot ( pdf, zip, ... )
 	 */
 	public static String getFileExtension(String inFileName) {
+		if (inFileName == null) {
+			return "";
+		}
 		String outExt = "";
 		int dotIndex = inFileName.lastIndexOf('.');
 		int endIndex = inFileName.lastIndexOf('?');
@@ -772,7 +775,7 @@ public class StringHelper {
 	}
 
 	public static String getLanguageFromFileName(String filename) {
-		if (!filename.contains("_")) {
+		if (filename == null || !filename.contains("_")) {
 			return null;
 		} else {
 			filename = getFileNameWithoutExtension(filename);
