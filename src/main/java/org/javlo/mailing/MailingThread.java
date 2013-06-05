@@ -51,6 +51,11 @@ public class MailingThread extends Thread {
 	}
 
 	public void sendReport(Mailing mailing) throws IOException {
+		
+		if (mailing.getNotif() == null) {
+			return;
+		}
+		
 		ByteArrayOutputStream mailBody = new ByteArrayOutputStream();
 		PrintWriter mailOut = new PrintWriter(mailBody);
 		mailOut.println("MAILING REPORT");

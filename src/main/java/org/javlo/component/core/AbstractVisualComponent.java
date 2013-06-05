@@ -818,7 +818,9 @@ public abstract class AbstractVisualComponent implements IContentVisualComponent
 			if (ctx.getCurrentTemplate() != null && renderer != null) {
 				String workTemplateFolder = ctx.getCurrentTemplate().getWorkTemplateFolder();
 				if (!renderer.startsWith('/' + workTemplateFolder)) {
-					renderer = URLHelper.createStaticTemplateURLWithoutContext(ctx, ctx.getCurrentTemplate(), renderer);
+					ContentContext notAbsCtx = new ContentContext(ctx);
+					notAbsCtx.setAbsoluteURL(false);
+					renderer = URLHelper.createStaticTemplateURLWithoutContext(notAbsCtx, ctx.getCurrentTemplate(), renderer);
 				}
 			}
 		} catch (Exception e) {
@@ -1118,12 +1120,12 @@ public abstract class AbstractVisualComponent implements IContentVisualComponent
 	}
 
 	protected String executeCurrentRenderer(ContentContext ctx) throws ServletException, IOException {
-		String url = getRenderer(ctx);
+		String url = getRenderer(ctx);		
 		if (url != null) {
 			ctx.getRequest().setAttribute(COMPONENT_KEY, this);
 			if (!url.startsWith("/")) {
 				url = URLHelper.createJSPComponentURL(ctx.getRequest(), url, getComponentPath());
-			}
+			}			
 			logger.fine("execute view jsp in '" + getType() + "' : " + url);
 			try {
 				I18nAccess.getInstance(ctx);
