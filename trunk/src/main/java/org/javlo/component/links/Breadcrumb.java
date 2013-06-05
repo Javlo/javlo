@@ -33,11 +33,6 @@ public class Breadcrumb extends AbstractVisualComponent {
 	}
 
 	@Override
-	public String getDefaultRenderer(ContentContext ctx) {
-		return "default.jsp";
-	}
-
-	@Override
 	public int getComplexityLevel() {
 		return AbstractVisualComponent.COMPLEXITY_STANDARD;
 	}
