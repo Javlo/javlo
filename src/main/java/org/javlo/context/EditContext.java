@@ -469,8 +469,7 @@ public class EditContext implements Serializable {
 		}
 		for (String role : roles) {
 			outRoles.add(role);
-		}
-		// Arrays.sort(outRoles);
+		}		
 		return outRoles;
 	}
 
