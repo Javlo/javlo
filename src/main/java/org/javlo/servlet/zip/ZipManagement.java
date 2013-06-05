@@ -210,21 +210,18 @@ public class ZipManagement {
 		ContentService.getInstance(request).releaseAll(ContentContext.getContentContext(request, response), globalContext);
 	}
 
-	public static void uploadZipTemplate(ContentContext ctx, InputStream in, String templateId, boolean mailing) throws Exception {
-
+	public static void uploadZipTemplate(ContentContext ctx, InputStream in, String templateId) throws Exception {
 		I18nAccess i18nAccess = I18nAccess.getInstance(ctx.getRequest());
 		MessageRepository msgRepo = MessageRepository.getInstance(ctx);
 
 		ZipInputStream zipIn = new ZipInputStream(in);
 		ZipEntry entry = zipIn.getNextEntry();
 		StaticConfig staticConfig = StaticConfig.getInstance(ctx.getRequest().getSession());
-		String templateFolder;
-		if (mailing) {
-			templateFolder = URLHelper.mergePath(staticConfig.getMailingTemplateFolder(), templateId);
-		} else {
-			templateFolder = URLHelper.mergePath(staticConfig.getTemplateFolder(), templateId);
-		}
+		String templateFolder;		
+		templateFolder = URLHelper.mergePath(staticConfig.getTemplateFolder(), templateId);
+		
 		boolean foundIndex = false;
+		boolean foundConfig = false;
 		while (entry != null) {
 			File file = new File(URLHelper.mergePath(templateFolder, entry.getName()));
 			if ((!file.getAbsolutePath().contains("/CVS")) && (!file.getAbsolutePath().contains("\\CVS"))) {
@@ -233,6 +230,9 @@ public class ZipManagement {
 					try {
 						if (file.getName().endsWith("index.html")) {
 							foundIndex = true;
+						}
+						if (file.getName().endsWith("config.properties")) {
+							foundConfig = true;
 						}
 						file.createNewFile();
 					} catch (Throwable t) {
@@ -246,8 +246,11 @@ public class ZipManagement {
 
 			entry = zipIn.getNextEntry();
 		}
-		if (!foundIndex) {
+		if (!foundIndex && foundConfig) {
 			msgRepo.setGlobalMessage(new GenericMessage(i18nAccess.getText("command.admin.template.html-not-found"), GenericMessage.ERROR));
+		}
+		if (!foundConfig) {
+			msgRepo.setGlobalMessage(new GenericMessage(i18nAccess.getText("command.admin.template.config-not-found"), GenericMessage.ERROR));
 		}
 		zipIn.close();
 	}
