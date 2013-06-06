@@ -209,20 +209,20 @@ li.line {
 }
 
 .area-label {
-	padding: 20px 0 0 30px;
+	padding: 8px 0 0 30px;
 	color: #dddddd;
 	position: absolute;
-	writing-mode:tb-rl;
-    -webkit-transform:rotate(90deg);
-    -moz-transform:rotate(90deg);
+	/*writing-mode:tb-rl;*/
+    /*-webkit-transform:rotate(90deg);
+    -moz-transform:rotate(90deg);*/
     white-space:nowrap;
     display:block;    
-    width:20px;
-    height:20px;
+    /*width:20px;*/
+    /*height:20px;*/
     font-family: Arial, Verdana, Helvetica, sans-serif;
-    font-size:80px;
+    font-size:40px;
     font-weight:normal;
-    right: 60px;
+    right: 36px;
 }
 
 

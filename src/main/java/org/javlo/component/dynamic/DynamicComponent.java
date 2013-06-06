@@ -207,16 +207,15 @@ public class DynamicComponent extends AbstractVisualComponent implements IStatic
 						if (field.getCSSClass() != null && field.getCSSClass().trim().length() > 0) {
 							cssClass = ' ' + field.getCSSClass();
 						}
+						out.println(field.getFieldPrefix(ctx));
 						if (field.isWrapped()) {
 							out.println("<div class=\"field " + field.getName() + firstFiledClass + cssClass + "\">");
 						}
-						out.println(field.getFieldPrefix(ctx));
 						out.println(field.getViewXHTMLCode(ctx));
-						out.println(field.getFieldSuffix(ctx));
 						if (field.isWrapped()) {
 							out.println("</div>");
 						}
-						
+						out.println(field.getFieldSuffix(ctx));
 						firstFiledClass = "";
 					}
 				}
@@ -692,6 +691,20 @@ public class DynamicComponent extends AbstractVisualComponent implements IStatic
 			outText.append(' ');
 		}
 		return outText.toString();
+	}
+	
+	@Override
+	public boolean initContent(ContentContext ctx) throws Exception {
+		reloadProperties();
+		boolean outInit = false;
+		System.out.println("***** DynamicComponent.initContent : size = "+getFields(ctx).size()); //TODO: remove debug trace
+		for (Field field : getFields(ctx)) {
+			System.out.println("***** DynamicComponent.initContent : field = "+field.getName()); //TODO: remove debug trace
+			if (field.initContent(ctx)) {
+				outInit = true;
+			}
+		}
+		return outInit;
 	}
 
 }

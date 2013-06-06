@@ -381,6 +381,7 @@ public class GlobalContext implements Serializable {
 							newInstance.setAutoSwitchToDefaultLanguage(defaultContext.isAutoSwitchToDefaultLanguage());
 							newInstance.setOpenFileAsPopup(defaultContext.isOpenExternalLinkAsPopup());
 							newInstance.setNoPopupDomainRAW(defaultContext.getNoPopupDomainRAW());
+							newInstance.setModules(defaultContext.getModules());
 
 							String defaultContentFolder = defaultContext.getDataFolder();
 							String newContentFolder = newInstance.getDataFolder();
@@ -2670,6 +2671,14 @@ public class GlobalContext implements Serializable {
 		String newToken = StringHelper.getRandomIdBase64();
 		oneTimeTokens.put(newToken, token);
 		return newToken;
+	}
+	
+	public String getOneTimeToken(String token) {		
+		String oneTimeToken = oneTimeTokens.get(token);
+		if (oneTimeToken == null) {
+			oneTimeToken = createOneTimeToken(token);
+		}
+		return oneTimeToken;
 	}
 
 	public String convertOneTimeToken(String token) {
