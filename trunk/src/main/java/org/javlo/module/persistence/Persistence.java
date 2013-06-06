@@ -1,6 +1,8 @@
 package org.javlo.module.persistence;
 
+import java.io.IOException;
 import java.io.InputStream;
+import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.Collection;
 import java.util.Collections;
@@ -118,13 +120,30 @@ public class Persistence extends AbstractModuleAction {
 			beans.add(new ExportBean(type, csvURL, excelURL));
 		}
 		ctx.getRequest().setAttribute("exportLinks", beans);
+		if (ctx.getCurrentUser().getUserInfo().getToken() != null) {
+			ctx.getRequest().setAttribute("token", globalContext.getOneTimeToken(ctx.getCurrentUser().getUserInfo().getToken()));
+		}
 
 		return msg;
 	}
 
-	public static String performUpload(RequestService requestService, HttpServletRequest request, HttpServletResponse response, ContentContext ctx, ContentService content, I18nAccess i18nAccess) {
+	public static String performUpload(RequestService requestService, HttpServletRequest request, HttpServletResponse response, ContentContext ctx, ContentService content, I18nAccess i18nAccess) throws Exception {
 
 		Collection<FileItem> fileItems = requestService.getAllFileItem();
+		
+		String urlParam = requestService.getParameter("url", "");
+		if (urlParam.trim().length() > 0) {
+			URL url = new URL(urlParam);
+			InputStream in = url.openStream();
+			try {
+				ZipManagement.uploadZipFile(request, response, in);
+			} finally {
+				ResourceHelper.closeResource(in);
+			}
+			content.releasePreviewNav(ctx);
+			String msg = i18nAccess.getText("edit.message.uploaded");
+			MessageRepository.getInstance(ctx).setGlobalMessageAndNotification(ctx, new GenericMessage(msg, GenericMessage.INFO));
+		}
 
 		for (FileItem item : fileItems) {
 			try {
@@ -135,12 +154,9 @@ public class Persistence extends AbstractModuleAction {
 					} finally {
 						ResourceHelper.closeResource(in);
 					}
-
 					content.releasePreviewNav(ctx);
-
 					String msg = i18nAccess.getText("edit.message.uploaded");
 					MessageRepository.getInstance(ctx).setGlobalMessageAndNotification(ctx, new GenericMessage(msg, GenericMessage.INFO));
-
 				}
 			} catch (Exception e) {
 				e.printStackTrace();

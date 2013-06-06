@@ -308,11 +308,11 @@ public class FieldFile extends Field implements IStaticContainer {
 			setCurrentLabel("");
 			newFileName = "";
 			fileName = "";
+			modify = true;
 			setNeedRefresh(true);
 		}
 
 		if (newFileName.trim().length() > 0) {
-
 			Collection<FileItem> fileItems = requestService.getAllFileItem();
 			try {
 				for (FileItem fileItem : fileItems) {
@@ -334,7 +334,6 @@ public class FieldFile extends Field implements IStaticContainer {
 				}
 				setCurrentFile(newFileName);
 			} catch (IOException e) {
-				// TODO set message for user
 				e.printStackTrace();
 			}
 

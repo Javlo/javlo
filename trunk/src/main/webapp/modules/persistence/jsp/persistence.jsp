@@ -4,9 +4,17 @@
 <fieldset>
 <legend>${i18n.edit['persistence.title.load-save']}</legend>
 <ul class="navigation">
-	<li><a href="${download}">${i18n.edit['edit.link.download']}</a></li>	
-	<li><a href="${downloadAll}">${i18n.edit['edit.link.download-static']}</a></li>
-	<li><a class="popup" href="${info.absoluteURLPrefix}${currentModule.path}/jsp/upload.jsp?editTemplateURL=${info.editTemplateURL}&currentURL=${info.currentURL}" title="${i18n.edit['edit.action.upload']}"><span>${i18n.edit['edit.action.upload']}</span></a></li>		
+	<li>
+		<a href="${download}">${i18n.edit['edit.link.download']}</a>
+		<c:if test="${not empty token}"><a class="token" href="${download}&j_token=${token}">[${i18n.edit['edit.link.token-download']}]</a></c:if>
+	</li>	
+	<li>
+		<a href="${downloadAll}">${i18n.edit['edit.link.download-static']}</a>
+		<c:if test="${not empty token}"><a class="token" href="${downloadAll}?j_token=${token}">[${i18n.edit['edit.link.token-download']}]</a></c:if>
+	</li>
+	<li>
+		<a class="popup" href="${info.absoluteURLPrefix}${currentModule.path}/jsp/upload.jsp?editTemplateURL=${info.editTemplateURL}&currentURL=${info.currentURL}" title="${i18n.edit['edit.action.upload']}"><span>${i18n.edit['edit.action.upload']}</span></a>
+	</li>		
 </ul>
 </fieldset>
 <fieldset>
