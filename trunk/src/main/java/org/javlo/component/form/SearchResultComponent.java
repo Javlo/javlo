@@ -17,7 +17,7 @@ public class SearchResultComponent extends AbstractVisualComponent {
 		super.prepareView(ctx);
 	}
 
-	@Override
+	/*@Override
 	public String getViewXHTMLCode(ContentContext ctx) throws Exception {
 		String renderer = "/jsp/components/search/search_result.jsp";
 
@@ -26,7 +26,7 @@ public class SearchResultComponent extends AbstractVisualComponent {
 		}
 		org.javlo.search.SearchResult.getInstance(ctx); // update ctx
 		return executeJSP(ctx, renderer);
-	}
+	}*/
 
 	@Override
 	public int getComplexityLevel() {

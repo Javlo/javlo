@@ -47,6 +47,7 @@ import org.javlo.helper.URLHelper;
 import org.javlo.helper.XMLManipulationHelper;
 import org.javlo.helper.XMLManipulationHelper.BadXMLException;
 import org.javlo.i18n.I18nAccess;
+import org.javlo.mailing.Mail;
 import org.javlo.message.GenericMessage;
 import org.javlo.navigation.DefaultTemplate;
 import org.javlo.remote.IRemoteResource;
@@ -1341,14 +1342,21 @@ public class Template implements Comparable<Template> {
 		}
 	}
 
-	public String getMailContent(ContentContext ctx, String mailName) throws IOException {
+	public Mail getMail(ContentContext ctx, String mailName, String lg) throws IOException {
 		String folder = URLHelper.mergePath(getTemplateRealPath(), MAIL_FOLDER);
-		File htmlFile = new File(URLHelper.mergePath(folder, mailName + '-' + ctx.getContentLanguage() + ".html"));
+		File htmlFile = new File(URLHelper.mergePath(folder, mailName + '-' + lg + ".html"));
+		
 		if (!htmlFile.exists()) {
 			logger.warning("html file not found : " + htmlFile);
 			return null;
 		} else {
-			return FileUtils.readFileToString(htmlFile, ContentContext.CHARACTER_ENCODING);
+			String content = FileUtils.readFileToString(htmlFile, ContentContext.CHARACTER_ENCODING);
+			String subject = "";
+			File subjectFile = new File(URLHelper.mergePath(folder, mailName + '-' + lg + ".txt"));
+			if (subjectFile.exists()) {
+				subject = FileUtils.readFileToString(subjectFile, ContentContext.CHARACTER_ENCODING);
+			}
+			return new Mail(subject,content);
 		}
 	}
 

@@ -1,7 +1,6 @@
 package org.javlo.macro;
 
 import java.util.Calendar;
-import java.util.Collection;
 import java.util.Collections;
 import java.util.Date;
 import java.util.HashMap;
@@ -19,11 +18,12 @@ import org.javlo.context.ContentContext;
 import org.javlo.context.EditContext;
 import org.javlo.context.GlobalContext;
 import org.javlo.helper.MacroHelper;
-import org.javlo.helper.NetHelper;
 import org.javlo.helper.StringHelper;
 import org.javlo.helper.URLHelper;
+import org.javlo.helper.XHTMLHelper;
 import org.javlo.i18n.I18nAccess;
 import org.javlo.macro.core.IInteractiveMacro;
+import org.javlo.mailing.Mail;
 import org.javlo.mailing.Mailing;
 import org.javlo.message.MessageRepository;
 import org.javlo.module.macro.MacroModuleContext;
@@ -159,15 +159,25 @@ public class CreateArticle implements IInteractiveMacro, IAction {
 									}								
 								}
 							}
+							
+							Mail mail = ctx.getCurrentTemplate().getMail(ctx, "create-article", ctx.getRequestContentLanguage());
+							if (mail == null) {
+								mail = new Mail("new page created.", "a new page was create on : "+URLHelper.createURL(ctx.getContextForAbsoluteURL().getContextWithOtherRenderMode(ContentContext.VIEW_MODE)));
+							} else {
+								ContentContext mailContext = ctx.getContextWithOtherRenderMode(ContentContext.VIEW_MODE);
+								mailContext.setPath(newPage.getPath());
+								mail.setContent(XHTMLHelper.replaceJSTLData(mailContext, mail.getContent()));
+								mail.setSubject(XHTMLHelper.replaceJSTLData(mailContext, mail.getSubject()));
+							}							
+							
 							Mailing m = new Mailing();
 							m.setFrom(new InternetAddress(globalContext.getAdministratorEmail()));
 							m.setReceivers(receivers);
-							m.setSubject("new page on intranet.");
+							m.setSubject(mail.getSubject());
 							m.setAdminEmail(globalContext.getAdministratorEmail());
-							m.setNotif(null);
-							String pageURL = URLHelper.createURL(ctx.getContextForAbsoluteURL(), newPage);
-							m.setContent("new page create on intranet : "+pageURL);
-							m.setHtml(false);
+							m.setNotif(null);							
+							m.setContent(mail.getContent());
+							m.setHtml(mail.isHtml());
 							Calendar calendar = Calendar.getInstance();
 							calendar.roll(Calendar.MINUTE, 5);
 							m.setSendDate(calendar.getTime());
