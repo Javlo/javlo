@@ -27,7 +27,7 @@
 </div>
 </fieldset>
 
-<c:if test="${fn:length(user.roles) > 0}">
+<c:if test="${fn:length(roles) > 0}">
 <fieldset>
 <legend>${i18n.edit['user.roles']}</legend>
 <c:forEach var="role" items="${roles}">
