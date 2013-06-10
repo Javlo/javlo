@@ -198,7 +198,7 @@ public class GenericQuiz extends SmartGenericForm {
 					String value = (String) LangHelper.arrays(data, 2, "");
 					String list = (String) LangHelper.arrays(data, 3, "");
 					int order = Integer.parseInt((String) LangHelper.arrays(data, 4, "0"));
-					String response = (String) LangHelper.arrays(data, 5, "");
+					String response = (String) LangHelper.arrays(data, 7, "");
 					Question field = new Question(label, type, value, list, order, response);
 					fields.add(field);
 				}
@@ -253,6 +253,7 @@ public class GenericQuiz extends SmartGenericForm {
 
 		out.println(XHTMLHelper.renderLine("title", getInputName("qtitle"), getLocalConfig(false).getProperty("qtitle", "")));
 		out.println(XHTMLHelper.renderLine("result title", getInputName("result-title"), getLocalConfig(false).getProperty("result-title", "")));
+		out.println(XHTMLHelper.renderLine("'next'  button", getInputName("next"), getLocalConfig(false).getProperty("next", "next")));
 
 		out.println("<div class=\"action-add\"><input type=\"submit\" name=\"" + getInputName("addq") + "\" value=\"add question\" /></div>");
 		if (getQuestions().size() > 0) {
@@ -288,6 +289,7 @@ public class GenericQuiz extends SmartGenericForm {
 		RequestService rs = RequestService.getInstance(ctx.getRequest());
 		getLocalConfig(false).setProperty("qtitle", rs.getParameter(getInputName("qtitle"), ""));
 		getLocalConfig(false).setProperty("result-title", rs.getParameter(getInputName("result-title"), ""));
+		getLocalConfig(false).setProperty("next", rs.getParameter(getInputName("next"), ""));
 
 		for (Question question : getQuestions()) {
 			String oldName = question.getName();
