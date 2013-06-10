@@ -121,7 +121,7 @@ public class SmartGenericForm extends AbstractVisualComponent implements IAction
 		public void setName(String name) {
 			this.name = StringHelper.createASCIIString(name);
 		}
-
+		
 		@Override
 		public String toString() {
 			return getLabel() + SEP + getType() + SEP + getValue() + SEP + list + SEP + getOrder() + SEP + getRegisteredList() + SEP + getOrder();
@@ -363,6 +363,12 @@ public class SmartGenericForm extends AbstractVisualComponent implements IAction
 			setModify();
 			setNeedRefresh(true);
 		}
+	}
+	
+	@Override
+	public void prepareView(ContentContext ctx) throws Exception {
+		super.prepareView(ctx);
+		ctx.getRequest().setAttribute("ci18n", getLocalConfig(false));
 	}
 
 	@Override
