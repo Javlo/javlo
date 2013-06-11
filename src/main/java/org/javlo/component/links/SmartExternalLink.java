@@ -501,6 +501,12 @@ public class SmartExternalLink extends ComplexPropertiesLink implements IReverse
 	public String getType() {
 		return TYPE;
 	}
+	
+	@Override
+	public void prepareView(ContentContext ctx) throws Exception {
+		super.prepareView(ctx);
+		
+	}
 
 	/**
 	 * @see org.javlo.itf.IContentVisualComponent#getXHTMLCode()

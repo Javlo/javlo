@@ -6,3 +6,23 @@
 	text-align: right;
 	clear: both;
 }
+
+#sitelist .complexity span {	
+	padding: 2px 12px;
+	text-align: center;
+	border-radius: 8px;
+}
+
+#sitelist .complexity span.complexity-3 {
+ 	background-color: #E9320F;
+}
+
+#sitelist .complexity span.complexity-2 {
+	background-color: #F79A0A;
+}
+
+#sitelist .complexity span.complexity-1 {
+	background-color: #74AA27;
+}
+
+

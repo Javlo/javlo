@@ -678,7 +678,7 @@ public class PageReferenceComponent extends ComplexPropertiesLink implements IAc
 
 	@Override
 	public int getComplexityLevel() {
-		return COMPLEXITY_ADMIN;
+		return COMPLEXITY_EASY;
 	}
 
 	private String getContentTitle() {

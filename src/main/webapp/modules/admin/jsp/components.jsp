@@ -1,4 +1,4 @@
-<%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
+	<%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
 <div class="left">
 
 <form id="form-components" action="${info.currentURL}" method="post" class="standard-form">
@@ -14,8 +14,9 @@
        <th class="head1">${i18n.edit['global.name']}</th>
        <th class="head0">${i18n.edit['admin.title.color']}</th>
        <th class="head1">${i18n.edit['content.title.listable']}</th>
-       <th class="head0">class</th>
-       <th class="head1">${i18n.edit['global.select']}</th>
+       <th class="head0">${i18n.edit['admin.title.complexity']}</th>
+       <th class="head1">class</th>
+       <th class="head0">${i18n.edit['global.select']}</th>
      </tr>
 </thead>
 <colgroup>
@@ -34,7 +35,8 @@
      <td class="con1">${i18n.edit[i18nKey]}</td>
      <td class="con0" style="background-color: #${comp.hexColor}">${comp.hexColor}</td>
      <td class="con1" align="center"><c:if test="${comp.listable}"><span class="icone_true">${comp.listable}</span></c:if><c:if test="${not comp.listable}">&nbsp;</c:if></td>
-     <td class="con0">${comp.className}</td>
+     <td class="con0 complexity" align="center"><span class="complexity-${comp.complexityLevel}">${comp.complexityLevel}</span></td>
+     <td class="con1">${comp.className}</td>
      <td class="con0">
      <c:set var="contains" value="false" />
 		<c:forEach var="item" items="${currentComponents}">		
@@ -53,8 +55,9 @@
      <th class="head1">${i18n.edit['global.name']}</th>
      <th class="head0">${i18n.edit['admin.title.color']}</th>
      <th class="head1">${i18n.edit['content.title.listable']}</th>
-     <th class="head0">class</th>
-     <th class="head1">${i18n.edit['global.select']}</th>
+     <th class="head0">${i18n.edit['admin.title.complexity']}</th>
+     <th class="head1">class</th>
+     <th class="head0">${i18n.edit['global.select']}</th>
    </tr>
 </tfoot>
 </table>
@@ -66,6 +69,7 @@ jQuery(document).ready(function() {
 		 "aaSorting": [[ 2, "desc" ]],
 		 "aoColumns": [
 		               { "asSorting": [ "" ] },
+		               null,
 		               null,
 		               null,
 		               null,

@@ -28,7 +28,7 @@ public class WysiwygParagraph extends AbstractVisualComponent {
 		finalCode.append(" rows=\"" + 30 + "\">");
 		finalCode.append(getValue());
 		finalCode.append("</textarea>");
-		finalCode.append("<script type=\"text/javascript\">loadWysiwyg('#" + getContentName() + "');</script>");
+		finalCode.append("<script type=\"text/javascript\">jQuery(document).ready(loadWysiwyg('#" + getContentName() + "'));</script>");
 		return finalCode.toString();
 	}
 

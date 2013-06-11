@@ -123,7 +123,7 @@ public class RSSRegistration extends AbstractPropertiesComponent {
 
 	@Override
 	public int getComplexityLevel() {
-		return COMPLEXITY_STANDARD;
+		return COMPLEXITY_EASY;
 	}
 
 	@Override
