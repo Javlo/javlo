@@ -9,14 +9,11 @@ jQuery(document).ready(function(){
 
 function loadWysiwyg(cssQuery) {
 	tinyMCE.init({
-	// General options
 	mode : "specific_textareas",
 	theme : "modern",
-	add_form_submit_trigger: true,
-	editor_selector : 'tinymce-light',
-	//editor_selector : cssQuery,
-	plugins : "paste",
+	add_form_submit_trigger: true,	
 	menubar : false,
+	selector: cssQuery,
 	toolbar: "undo redo | bold italic | alignleft aligncenter alignright alignjustify | bullist numlist outdent indent"
 	});	 
 }
