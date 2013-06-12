@@ -110,7 +110,7 @@ public abstract class AbstractVisualComponent implements IContentVisualComponent
 
 	private MenuElement page = null;
 
-	private ComponentConfig config = null;
+	protected ComponentConfig config = null;
 
 	public static final String getComponentId(HttpServletRequest request) {
 		return (String) request.getAttribute(COMP_ID_REQUEST_PARAM);
@@ -314,7 +314,7 @@ public abstract class AbstractVisualComponent implements IContentVisualComponent
 		}
 
 		ComponentConfig outConfig = ComponentConfig.getInstance(ctx, getType());
-		if (ctx.isAsViewMode()) {
+		if (ctx.isAsViewMode() && outConfig != ComponentConfig.EMPTY_INSTANCE) {
 			config = outConfig;
 		}
 		return outConfig;
@@ -801,17 +801,19 @@ public abstract class AbstractVisualComponent implements IContentVisualComponent
 	@Override
 	public String getRenderer(ContentContext ctx) {
 		String renderer;
-		if (getRenderes(ctx) == null || getRenderes(ctx).size() == 0) {
+		String currentRenderer = getCurrentRenderer(ctx);
+		Map<String, String> renderers = getRenderes(ctx);
+		if (renderers == null || renderers.size() == 0) {
 			renderer = getDefaultRenderer(ctx);
-		} else if (getRenderes(ctx).size() == 1 || getCurrentRenderer(ctx) == null) {
-			renderer = getRenderes(ctx).values().iterator().next();
+		} else if (renderers.size() == 1 || currentRenderer == null) {
+			renderer = renderers.values().iterator().next();
 		} else {
-			renderer = getRenderes(ctx).get(getCurrentRenderer(ctx) + '.' + ctx.getArea());
+			renderer = renderers.get(currentRenderer+ '.' + ctx.getArea());
 			if (renderer == null) {
-				renderer = getRenderes(ctx).get(getCurrentRenderer(ctx));
+				renderer = renderers.get(currentRenderer);
 			}
 			if (renderer == null) {
-				renderer = getRenderes(ctx).values().iterator().next();
+				renderer = renderers.values().iterator().next();
 			}
 		}
 		try {

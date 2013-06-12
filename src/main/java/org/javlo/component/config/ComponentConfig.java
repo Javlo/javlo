@@ -1,8 +1,6 @@
 package org.javlo.component.config;
 
 import java.io.ByteArrayOutputStream;
-import java.io.InputStream;
-import java.io.InputStreamReader;
 import java.util.Collections;
 import java.util.Enumeration;
 import java.util.Hashtable;
@@ -15,11 +13,12 @@ import org.apache.commons.configuration.ConfigurationException;
 import org.apache.commons.configuration.PropertiesConfiguration;
 import org.javlo.context.ContentContext;
 import org.javlo.context.GlobalContext;
-import org.javlo.helper.ResourceHelper;
 import org.javlo.helper.StringHelper;
 import org.javlo.template.Template;
 
 public class ComponentConfig {
+	
+	public static final ComponentConfig EMPTY_INSTANCE = new ComponentConfig();
 
 	private String templateBuildId = null;
 
@@ -37,11 +36,13 @@ public class ComponentConfig {
 		GlobalContext globalContext = GlobalContext.getInstance(ctx.getRequest());
 		Template currentTemplate;
 		ComponentConfig outCfg = null;
-		try {
-			currentTemplate = ctx.getCurrentTemplate();
-			String templateId = "no_template";
+		try {						
+			currentTemplate = ctx.getCurrentTemplate();			
+			String templateId;
 			if (currentTemplate != null) {
 				templateId = currentTemplate.getId();
+			} else {
+				return ComponentConfig.EMPTY_INSTANCE;
 			}
 			synchronized (globalContext.getLockImportTemplate()) {
 				String key = KEY + '-' + templateId + '-' + type;
@@ -64,8 +65,6 @@ public class ComponentConfig {
 
 	PropertiesConfiguration properties = null;
 
-	private static final String CONFIG_DIR = "/WEB-INF/config/components";
-
 	private static final String KEY = ComponentConfig.class.getName();
 
 	private ComponentConfig() {
@@ -84,23 +83,6 @@ public class ComponentConfig {
 	}
 
 	private ComponentConfig(ContentContext ctx, Template currentTemplate, String type) {
-
-		String file = CONFIG_DIR + '/' + type + ".properties";
-
-		InputStream in = ctx.getRequest().getSession().getServletContext().getResourceAsStream(file);
-		if (in == null) {
-			logger.fine("config file for '" + type + "' not found : " + file);
-		} else {
-			try {
-				properties = new PropertiesConfiguration();
-				properties.load(new InputStreamReader(in));
-			} catch (Exception e) {
-				logger.warning("config file for '" + type + "' can not be loaded (msg: " + e.getMessage() + ")");
-			} finally {
-				ResourceHelper.closeResource(in);
-			}
-		}
-
 		try {
 			if (currentTemplate != null) {
 				templateBuildId = currentTemplate.getBuildId();
@@ -114,8 +96,8 @@ public class ComponentConfig {
 					while (keys.hasMoreElements()) {
 						String key = "" + keys.nextElement();
 						if (key.startsWith("renderer.")) {
-							ContentContext notAbstCtx = new ContentContext(ctx);
-							notAbstCtx.setAbsoluteURL(false);
+							/*ContentContext notAbstCtx = new ContentContext(ctx);
+							notAbstCtx.setAbsoluteURL(false);*/
 							// String renderer = URLHelper.createStaticTemplateURLWithoutContext(notAbstCtx, currentTemplate, "" + templateProp.get(key));
 							if (properties.containsKey(key)) {
 								properties.clearProperty(key);

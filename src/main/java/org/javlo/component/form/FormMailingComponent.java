@@ -64,9 +64,8 @@ public class FormMailingComponent extends AbstractVisualComponent implements IAc
 	public String getType() {
 		return "form-mailing";
 	}
-
-	@Override
-	public String getViewXHTMLCode(ContentContext ctx) throws Exception {
+	
+	public String _getViewXHTMLCode(ContentContext ctx) throws Exception {
 		ctx.getRequest().setAttribute("comp", this);
 		needForm = true;
 		return executeJSP(ctx, "/jsp/registration/mailing.jsp?comp-id=" + getId());
@@ -253,7 +252,8 @@ public class FormMailingComponent extends AbstractVisualComponent implements IAc
 	public void prepareView(ContentContext ctx) throws Exception {
 		super.prepareView(ctx);
 		ctx.getRequest().setAttribute("name", isNeedName());
-
+		ctx.getRequest().setAttribute("comp", this);
+		needForm = true;
 	}
 
 	/*

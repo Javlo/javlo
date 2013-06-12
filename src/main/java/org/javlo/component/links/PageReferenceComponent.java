@@ -184,8 +184,10 @@ public class PageReferenceComponent extends ComplexPropertiesLink implements IAc
 			bean.linkOn = page.getLinkOn(ctx);
 			if (page.getContentDate(ctx) != null) {
 				bean.date = StringHelper.renderShortDate(ctx, page.getContentDate(ctx));
+				bean.contentDate = true;
 			} else {
 				bean.date = StringHelper.renderShortDate(ctx, page.getModificationDate());
+				bean.contentDate = false;
 			}
 			if (page.getTimeRange(ctx) != null) {
 				bean.startDate = StringHelper.renderShortDate(ctx, page.getTimeRange(ctx).getStartDate());
@@ -249,6 +251,7 @@ public class PageReferenceComponent extends ComplexPropertiesLink implements IAc
 		private String id = null;
 		private String name = null;
 		private boolean selected = false;
+		private boolean contentDate = false;
 		private String title = null;
 		private String subTitle = null;
 		private String attTitle = null;
@@ -467,6 +470,14 @@ public class PageReferenceComponent extends ComplexPropertiesLink implements IAc
 
 		public void setCreator(String creator) {
 			this.creator = creator;
+		}
+
+		public boolean isContentDate() {
+			return contentDate;
+		}
+
+		public void setContentDate(boolean contentDate) {
+			this.contentDate = contentDate;
 		}
 
 	}
