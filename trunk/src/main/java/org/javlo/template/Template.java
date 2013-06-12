@@ -975,12 +975,8 @@ public class Template implements Comparable<Template> {
 		String templateFolder = getWorkTemplateFolder();
 		String path = URLHelper.mergePath(URLHelper.mergePath(templateFolder, getFolder(globalContext)), CONFIG_COMPONENTS_PROPERTIES_FOLDER, type + ".properties");
 		File configFile = new File(path);
-	
-		if (configFile.exists()) {
-			System.out.println("***** Template.getConfigComponentFile : found = "+configFile); //TODO: remove debug trace
+		if (configFile.exists()) {			
 			return ResourceHelper.loadProperties(configFile);			
-		} else {
-			System.out.println("***** Template.getConfigComponentFile : not found : "+configFile); //TODO: remove debug trace
 		}
 		return null;
 	}
