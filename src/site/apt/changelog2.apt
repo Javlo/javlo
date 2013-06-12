@@ -113,3 +113,13 @@ change log
  * collaborative mode
  
 * 2.0.2.2 31/5/2013
+
+ * don't display account size
+ 
+ * upload from url
+
+ * definition of mail inside template
+
+ * don't load config of component from webapp but only from template
+ 
+* 2.0.2.3 12/6/2013
