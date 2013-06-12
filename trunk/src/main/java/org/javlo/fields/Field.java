@@ -282,7 +282,9 @@ public class Field implements Cloneable {
 		}
 		GlobalContext globalContext = GlobalContext.getInstance(ctx.getRequest());
 		ReverseLinkService reverserLinkService = ReverseLinkService.getInstance(globalContext);
-		displayStr = XHTMLHelper.autoLink(displayStr);
+		if (!displayStr.toLowerCase().contains("<a")) {
+			displayStr = XHTMLHelper.autoLink(displayStr);
+		}
 		displayStr = reverserLinkService.replaceLink(ctx, displayStr);
 
 		if (isWrapped()) {
