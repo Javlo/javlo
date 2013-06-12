@@ -182,6 +182,8 @@ public class Image extends AbstractFileComponent implements IImageTitle, IPrevie
 			out.println("<input class=\"path\" type=\"hidden\" name=\"image_path-" + file.getId() + "\" value=\"" + URLHelper.mergePath(getRelativeFileDirectory(ctx), getDirSelected()) + "\" />");
 			out.println("</div></div>");
 			out.println("<script type=\"text/javascript\">initFocusPoint();</script>");
+		} else {
+			imageList = true;
 		}
 
 		if (imageList) {
