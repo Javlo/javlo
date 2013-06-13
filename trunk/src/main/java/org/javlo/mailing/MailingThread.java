@@ -125,7 +125,7 @@ public class MailingThread extends Thread {
 				DataToIDService dataToID = DataToIDService.getInstance(application);
 				String data = "mailing=" + mailing.getId() + "&to=" + to;
 				mailing.addData("data", dataToID.setData(data));
-				mailing.addData("roles", StringHelper.arrayToString(mailing.getRoles(), ";"));
+				mailing.addData("roles", StringHelper.collectionToString(mailing.getRoles(), ";"));
 
 				String content = extractContent(mailing);
 

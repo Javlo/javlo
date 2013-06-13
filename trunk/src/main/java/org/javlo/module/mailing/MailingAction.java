@@ -1,11 +1,17 @@
 package org.javlo.module.mailing;
 
+import java.io.IOException;
 import java.util.Collection;
+import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 import java.util.logging.Logger;
 
+import javax.mail.internet.AddressException;
+import javax.mail.internet.InternetAddress;
+import javax.servlet.ServletContext;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 
@@ -13,6 +19,7 @@ import org.javlo.actions.AbstractModuleAction;
 import org.javlo.config.StaticConfig;
 import org.javlo.context.ContentContext;
 import org.javlo.context.GlobalContext;
+import org.javlo.helper.StringHelper;
 import org.javlo.helper.URLHelper;
 import org.javlo.i18n.I18nAccess;
 import org.javlo.message.GenericMessage;
@@ -20,10 +27,12 @@ import org.javlo.message.MessageRepository;
 import org.javlo.module.core.AbstractModuleContext;
 import org.javlo.module.core.Module;
 import org.javlo.module.core.ModulesContext;
+import org.javlo.service.DataToIDService;
 import org.javlo.service.RequestService;
 import org.javlo.template.Template;
 import org.javlo.template.TemplateFactory;
 import org.javlo.user.IUserFactory;
+import org.javlo.user.User;
 import org.javlo.user.UserFactory;
 
 public class MailingAction extends AbstractModuleAction {
@@ -143,6 +152,32 @@ public class MailingAction extends AbstractModuleAction {
 		if (ctx.isAjax()) {
 			currentModule.getBox(SEND_WIZARD_BOX).update(ctx);
 			currentModule.updateMainRenderer(ctx);
+		}
+		return null;
+	}
+	
+	public static String performUnsubscribe(ServletContext application, HttpServletRequest request, RequestService rs, ContentContext ctx, MessageRepository messageRepository, I18nAccess i18nAccess) throws IOException {
+		String mfb = rs.getParameter(MailingAction.MAILING_FEEDBACK_PARAM_NAME, null);
+		if (mfb != null) {
+			DataToIDService serv = DataToIDService.getInstance(application);			
+			Map<String, String> params = StringHelper.uriParamToMap(serv.getData(mfb));
+			String to = params.get("to");
+			InternetAddress add;
+			try {
+				add = new InternetAddress(to);	
+				IUserFactory userFactory = UserFactory.createUserFactory(request);
+				User user = userFactory.getUser(add.getAddress());
+				if (user != null) {
+					System.out.println("***** MailingAction.performUnsubscribe : roles  : "+StringHelper.stringToCollection(rs.getParameter("roles", ""))); //TODO: remove debug trace
+					Set<String> roles = new HashSet<String>(StringHelper.stringToCollection(rs.getParameter("roles", ""),";"));
+					user.getUserInfo().removeRoles(roles);
+					userFactory.store();
+				}
+			} catch (AddressException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+
 		}
 		return null;
 	}

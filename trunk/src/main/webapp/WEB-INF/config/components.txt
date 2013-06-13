@@ -55,6 +55,7 @@ org.javlo.component.links.SmartExternalLinkImportation
 org.javlo.component.links.AnchorComponent
 org.javlo.component.links.AnchorLink
 org.javlo.component.links.SmartLink
+org.javlo.component.links.UnsubsribeLink
 
 --content.title.graphic
 
