@@ -102,6 +102,11 @@ ul.menu {
 	display: inline-block;
 	line-height: 18px;
 	overflow: hidden;
+	margin: 5px 0;
+}
+
+.line-inline.first {
+	padding: 0 15px 0 0;
 }
 
 .line-inline input {
@@ -236,5 +241,9 @@ li.line {
 
 .confirm-replace .file-list {
 	overflow: hidden;
+}
+
+.page-list .filter input {
+	width: 98%;
 }
 
