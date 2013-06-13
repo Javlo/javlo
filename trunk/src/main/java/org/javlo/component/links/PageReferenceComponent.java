@@ -55,9 +55,11 @@ import org.javlo.service.RequestService;
  * list of links to a subset of pages. <h4>exposed variable :</h4>
  * <ul>
  * <li>inherited from {@link AbstractVisualComponent}</li>
- * <li>{@link PageStatus} pagesStatus : root page of menu. See {@link #getRootPage}.</li>
+ * <li>{@link PageStatus} pagesStatus : root page of menu. See
+ * {@link #getRootPage}.</li>
  * <li>{@link PageBean} pages : list of pages selected to display.</li>
- * <li>{@link String} title : title of the page list. See {@link #getContentTitle}</li>
+ * <li>{@link String} title : title of the page list. See
+ * {@link #getContentTitle}</li>
  * <li>{@link PageReferenceComponent} comp : current component.</li>
  * <li>{@link String} firstPage : first page rendered in xHTML.</li>
  * </ul>
@@ -76,7 +78,7 @@ public class PageReferenceComponent extends ComplexPropertiesLink implements IAc
 			private String linkURL;
 			private String description;
 			private String path;
-			private String cssClass;			
+			private String cssClass;
 
 			public Image(String url, String viewURL, String linkURL, String cssClass, String description, String path) {
 				super();
@@ -85,7 +87,7 @@ public class PageReferenceComponent extends ComplexPropertiesLink implements IAc
 				this.linkURL = linkURL;
 				this.setCssClass(cssClass);
 				this.description = description;
-				this.path = path;				
+				this.path = path;
 			}
 
 			public String getCssClass() {
@@ -135,7 +137,7 @@ public class PageReferenceComponent extends ComplexPropertiesLink implements IAc
 			public void setViewURL(String viewURL) {
 				this.viewURL = viewURL;
 			}
-			
+
 		}
 
 		private static PageBean getInstance(ContentContext ctx, MenuElement page, PageReferenceComponent comp) throws Exception {
@@ -657,7 +659,8 @@ public class PageReferenceComponent extends ComplexPropertiesLink implements IAc
 	protected Calendar getBackDate(ContentContext ctx) {
 		Calendar backDate = Calendar.getInstance();
 		int backDay = 9999; /*
-							 * infinity back if no back day defined (all news included)
+							 * infinity back if no back day defined (all news
+							 * included)
 							 */
 		String style = getStyle(ctx);
 		if (style.equals(STAY_1D)) {
@@ -709,6 +712,22 @@ public class PageReferenceComponent extends ComplexPropertiesLink implements IAc
 		return "display-as-" + getId();
 	}
 
+	protected boolean isUITimeSelection(ContentContext ctx) {
+		return StringHelper.isTrue(getConfig(ctx).getProperty("ui.time-selection", "true"));
+	}
+
+	protected boolean isUIFullDisplayFirstPage(ContentContext ctx) {
+		return StringHelper.isTrue(getConfig(ctx).getProperty("ui.full-display-first-page", "true"));
+	}
+
+	protected boolean isUIFilterOnEditUsers(ContentContext ctx) {
+		return StringHelper.isTrue(getConfig(ctx).getProperty("ui.filter-on-edit-users", null));
+	}
+
+	protected boolean isUILargeSorting(ContentContext ctx) {
+		return StringHelper.isTrue(getConfig(ctx).getProperty("ui.large-sorting", "true"));
+	}
+
 	/**
 	 * @see org.javlo.itf.IContentVisualComponent#getXHTMLCode()
 	 */
@@ -729,49 +748,23 @@ public class PageReferenceComponent extends ComplexPropertiesLink implements IAc
 
 		out.println("<fieldset class=\"config\">");
 		out.println("<legend>" + i18nAccess.getText("global.config") + "</legend>");
+
 		/* by default selected */
 		out.println("<div class=\"line\">");
 		out.println(XHTMLHelper.getCheckbox(getDefaultSelectedInputName(), isDefaultSelected()));
 		out.println("<label for=\"" + getDefaultSelectedInputName() + "\">" + i18nAccess.getText("content.page-teaser.default-selected") + "</label></div>");
-		/* parent node */
-		out.println("<div class=\"line\">");
-		out.println("<label for=\"" + getParentNodeInputName() + "\">" + i18nAccess.getText("content.page-teaser.parent-node") + " : </label>");
-		out.println(XHTMLNavigationHelper.renderComboNavigation(ctx, menu, getParentNodeInputName(), getParentNode()));
-		out.println("</div>");
-		/* sequence of pages */
-		out.println("<div class=\"line-inline\">");
-		out.println("<label for=\"" + getFirstPageNumberInputName() + "\">" + i18nAccess.getText("content.page-teaser.start-page") + " : </label>");
-		out.println("<input id=\"" + getFirstPageNumberInputName() + "\" name=\"" + getFirstPageNumberInputName() + "\" value=\"" + getFirstPageNumber() + "\"/>");
-		out.println("<label for=\"" + getLastPageNumberInputName() + "\">" + i18nAccess.getText("content.page-teaser.end-page") + " : </label>");
-		String lastValue = "" + getLastPageNumber();
-		if (getLastPageNumber() == Integer.MAX_VALUE) {
-			lastValue = "";
-		}
-		out.println("<input id=\"" + getLastPageNumberInputName() + "\" name=\"" + getLastPageNumberInputName() + "\" value=\"" + lastValue + "\"/>");
-		out.println("</div>");
-		/* time selection */
-		out.println("<div class=\"line-inline\">");
-		out.println("<label>" + i18nAccess.getText("content.page-teaser.time-selection") + " : </label>");
-		// out.println(XHTMLHelper.getInputOneSelectFirstEnpty(getTimeSelectionInputName(null), getTimeSelectionOptions(), ""+getTimeSelection(), false));
-		for (String option : getTimeSelectionOptions()) {
+
+		if (isUIFullDisplayFirstPage(ctx)) {
+			/* first page full */
+			out.println("<div class=\"line\">");
 			String selected = "";
-			if (getTimeSelection().contains(option)) {
+			if (isDisplayFirstPage()) {
 				selected = " checked=\"checked\"";
 			}
-			out.println("<input type=\"checkbox\" name=\"" + getTimeSelectionInputName(option) + "\"" + selected + " />");
-			out.println("<label for=\"" + getTimeSelectionInputName(option) + "\">" + i18nAccess.getText("content.page-teaser." + option, option) + "</label>");
+			out.println("<input type=\"checkbox\" name=\"" + getInputFirstPageFull() + "\"" + selected + " />");
+			out.println("<label for=\"" + getInputFirstPageFull() + "\">" + i18nAccess.getText("content.display-first-page") + "</label>");
+			out.println("</div>");
 		}
-		out.println("</div>");
-		/* first page full */
-		out.println("<div class=\"line\">");
-		String selected = "";
-		if (isDisplayFirstPage()) {
-			selected = " checked=\"checked\"";
-		}
-		out.println("<input type=\"checkbox\" name=\"" + getInputFirstPageFull() + "\"" + selected + " />");
-		out.println("<label for=\"" + getInputFirstPageFull() + "\">" + i18nAccess.getText("content.display-first-page") + "</label>");
-		out.println("</div>");
-
 		/* tag filter */
 		GlobalContext globalContext = GlobalContext.getInstance(ctx.getRequest());
 		if (globalContext.isTags() && globalContext.getTags().size() > 0) {
@@ -785,9 +778,51 @@ public class PageReferenceComponent extends ComplexPropertiesLink implements IAc
 		out.println(XHTMLHelper.getCheckbox(getWidthEmptyPageInputName(), isWidthEmptyPage()));
 		out.println("<label for=\"" + getWidthEmptyPageInputName() + "\">" + i18nAccess.getText("content.page-teaser.width-empty-page") + "</label></div>");
 
+		if (isUIFilterOnEditUsers(ctx)) {
+			out.println("<div class=\"line\">");
+			out.println(XHTMLHelper.getCheckbox(getIntranetModeInputName(), isIntranetMode()));
+			out.println("<label for=\"" + getIntranetModeInputName() + "\">" + i18nAccess.getText("content.intranet-mode") + "</label></div>");
+		}
+
+		/* parent node */
 		out.println("<div class=\"line\">");
-		out.println(XHTMLHelper.getCheckbox(getIntranetModeInputName(), isIntranetMode()));
-		out.println("<label for=\"" + getIntranetModeInputName() + "\">" + i18nAccess.getText("content.intranet-mode") + "</label></div>");
+		out.println("<label for=\"" + getParentNodeInputName() + "\">" + i18nAccess.getText("content.page-teaser.parent-node") + " : </label>");
+		out.println(XHTMLNavigationHelper.renderComboNavigation(ctx, menu, getParentNodeInputName(), getParentNode()));
+		out.println("</div>");
+
+		out.println("<div class=\"line\">");
+		out.println("<label for=\"" + getInputNameTitle() + "\">" + i18nAccess.getText("global.title") + " : </label>");
+		out.println("<input type=\"text\" id=\"" + getInputNameTitle() + "\" name=\"" + getInputNameTitle() + "\" value=\"" + getContentTitle() + "\"  />");
+		out.println("</div>");
+
+		/* sequence of pages */
+		out.println("<div class=\"line-inline first\">");
+		out.println("<label for=\"" + getFirstPageNumberInputName() + "\">" + i18nAccess.getText("content.page-teaser.start-page") + " : </label>");
+		out.println("<input id=\"" + getFirstPageNumberInputName() + "\" name=\"" + getFirstPageNumberInputName() + "\" value=\"" + getFirstPageNumber() + "\"/>");
+		out.println("<label for=\"" + getLastPageNumberInputName() + "\">" + i18nAccess.getText("content.page-teaser.end-page") + " : </label>");
+		String lastValue = "" + getLastPageNumber();
+		if (getLastPageNumber() == Integer.MAX_VALUE) {
+			lastValue = "";
+		}
+		out.println("<input id=\"" + getLastPageNumberInputName() + "\" name=\"" + getLastPageNumberInputName() + "\" value=\"" + lastValue + "\"/>");
+		out.println("</div>");
+
+		/* time selection */
+		if (isUITimeSelection(ctx)) {
+			out.println("<div class=\"line-inline\">");
+			out.println("<label>" + i18nAccess.getText("content.page-teaser.time-selection") + " : </label>");
+			// out.println(XHTMLHelper.getInputOneSelectFirstEnpty(getTimeSelectionInputName(null),
+			// getTimeSelectionOptions(), ""+getTimeSelection(), false));
+			for (String option : getTimeSelectionOptions()) {
+				String selected = "";
+				if (getTimeSelection().contains(option)) {
+					selected = " checked=\"checked\"";
+				}
+				out.println("<input type=\"checkbox\" name=\"" + getTimeSelectionInputName(option) + "\"" + selected + " />");
+				out.println("<label for=\"" + getTimeSelectionInputName(option) + "\">" + i18nAccess.getText("content.page-teaser." + option, option) + "</label>");
+			}
+			out.println("</div>");
+		}
 
 		out.println("</fieldset>");
 
@@ -804,29 +839,26 @@ public class PageReferenceComponent extends ComplexPropertiesLink implements IAc
 		out.println("<div class=\"line\">");
 		out.println(XHTMLHelper.getRadio(getOrderInputName(), "date", getOrder()));
 		out.println("<label for=\"date\">" + i18nAccess.getText("content.page-teaser.order-date") + "</label></div>");
-		out.println("<div class=\"line\">");
-		out.println(XHTMLHelper.getRadio(getOrderInputName(), "creation", getOrder()));
-		out.println("<label for=\"date\">" + i18nAccess.getText("content.page-teaser.order-creation") + "</label></div>");
-		out.println("<div class=\"line\">");
-		out.println(XHTMLHelper.getRadio(getOrderInputName(), "visit", getOrder()));
-		out.println("<label for=\"visit\">" + i18nAccess.getText("content.page-teaser.order-visit") + "</label></div>");
-		out.println("<div class=\"line\">");
-		out.println(XHTMLHelper.getRadio(getOrderInputName(), "popularity", getOrder()));
-		out.println("<label for=\"popularity\">" + i18nAccess.getText("content.page-teaser.order-popularity") + "</label></div>");
+		if (isUILargeSorting(ctx)) {
+			out.println("<div class=\"line\">");
+			out.println(XHTMLHelper.getRadio(getOrderInputName(), "creation", getOrder()));
+			out.println("<label for=\"date\">" + i18nAccess.getText("content.page-teaser.order-creation") + "</label></div>");
+			out.println("<div class=\"line\">");
+			out.println(XHTMLHelper.getRadio(getOrderInputName(), "visit", getOrder()));
+			out.println("<label for=\"visit\">" + i18nAccess.getText("content.page-teaser.order-visit") + "</label></div>");
+			out.println("<div class=\"line\">");
+			out.println(XHTMLHelper.getRadio(getOrderInputName(), "popularity", getOrder()));
+			out.println("<label for=\"popularity\">" + i18nAccess.getText("content.page-teaser.order-popularity") + "</label></div>");
+		}
 
 		out.println("</fieldset>");
 
-		out.println("<div class=\"line\">");
-		out.println("<label for=\"" + getInputNameTitle() + "\">" + i18nAccess.getText("global.title") + " : </label>");
-		out.println("<input type=\"text\" id=\"" + getInputNameTitle() + "\" name=\"" + getInputNameTitle() + "\" value=\"" + getContentTitle() + "\"  />");
-		out.println("</div>");
-
+		out.println("<fieldset class=\"page-list\">");
+		out.println("<legend>" + i18nAccess.getText("content.page-teaser.page-list") + "</legend>");
 		/* array filter */
-		String filterID = "filter-" + getId();
 		String tableID = "table-" + getId();
-		out.println("<div class=\"line\" style=\"margin-left: 5px;\">");
-		out.println("<label for=\"" + filterID + "\">" + i18nAccess.getText("global.filter") + " : </label>");
-		out.println("<input type=\"text\" onkeyup=\"filter(this.value, '." + tableID + " .filtered');\"/>");
+		out.println("<div class=\"filter line\">");
+		out.println("<input type=\"text\" placeholder=\"" + i18nAccess.getText("global.filter") + "\" onkeyup=\"filter(this.value, '." + tableID + " .filtered');\"/>");
 		out.println("</div>");
 
 		out.print("<div class=\"page-list-container\"><table class=\"");
@@ -873,7 +905,7 @@ public class PageReferenceComponent extends ComplexPropertiesLink implements IAc
 			}
 		}
 
-		out.println("</tr></table></div>");
+		out.println("</tr></table></div></fieldset>");
 		return new String(outStream.toByteArray());
 	}
 
@@ -1269,12 +1301,12 @@ public class PageReferenceComponent extends ComplexPropertiesLink implements IAc
 		Collection<Calendar> allMonths = new LinkedList<Calendar>();
 		Collection<String> allMonthsKeys = new HashSet<String>();
 
-		/*Collection<String> roles = new LinkedList<String>();
-		if (ctx.getCurrentUser() != null) {
-			roles = ctx.getCurrentUser().getRoles();
-		} else {
-			roles = Collections.EMPTY_LIST;
-		}*/
+		/*
+		 * Collection<String> roles = new LinkedList<String>(); if
+		 * (ctx.getCurrentUser() != null) { roles =
+		 * ctx.getCurrentUser().getRoles(); } else { roles =
+		 * Collections.EMPTY_LIST; }
+		 */
 
 		for (MenuElement page : pages) {
 			ContentContext lgCtx = new ContentContext(ctx);
@@ -1350,12 +1382,21 @@ public class PageReferenceComponent extends ComplexPropertiesLink implements IAc
 		Date mount = new Date();
 		Calendar endDate = Calendar.getInstance();
 		endDate.setTime(mount);
-		System.out.println("***** PageReferenceComponent.main : 0 = " + StringHelper.renderTime(endDate.getTime())); // TODO: remove debug trace
+		System.out.println("***** PageReferenceComponent.main : 0 = " + StringHelper.renderTime(endDate.getTime())); // TODO:
+																														// remove
+																														// debug
+																														// trace
 		endDate = TimeHelper.convertRemoveAfterMonth(endDate);
-		System.out.println("***** PageReferenceComponent.main : 1 = " + StringHelper.renderTime(endDate.getTime())); // TODO: remove debug trace
+		System.out.println("***** PageReferenceComponent.main : 1 = " + StringHelper.renderTime(endDate.getTime())); // TODO:
+																														// remove
+																														// debug
+																														// trace
 		endDate.add(Calendar.MONTH, 1);
 		endDate.add(Calendar.SECOND, -1);
-		System.out.println("***** PageReferenceComponent.main : 2 = " + StringHelper.renderTime(endDate.getTime())); // TODO: remove debug trace
+		System.out.println("***** PageReferenceComponent.main : 2 = " + StringHelper.renderTime(endDate.getTime())); // TODO:
+																														// remove
+																														// debug
+																														// trace
 	}
 
 	private void popularitySorting(ContentContext ctx, List<MenuElement> pages, int pertinentPageToBeSort) throws Exception {
@@ -1431,7 +1472,7 @@ public class PageReferenceComponent extends ComplexPropertiesLink implements IAc
 				setModify();
 			}
 
-			if (requestService.getParameter(getOrderInputName(), null) != null) {
+			if (isUITimeSelection(ctx) && requestService.getParameter(getOrderInputName(), null) != null) {
 				Collection<String> timeSelectionList = new LinkedList<String>();
 				for (String option : getTimeSelectionOptions()) {
 					String timeSelection = requestService.getParameter(getTimeSelectionInputName(option), null);
@@ -1445,16 +1486,20 @@ public class PageReferenceComponent extends ComplexPropertiesLink implements IAc
 				}
 			}
 
-			boolean displayFirstPage = requestService.getParameter(getInputFirstPageFull(), null) != null;
-			if (displayFirstPage != isDisplayFirstPage()) {
-				setDisplayFirstPage(displayFirstPage);
-				setModify();
+			if (isUIFullDisplayFirstPage(ctx)) {
+				boolean displayFirstPage = requestService.getParameter(getInputFirstPageFull(), null) != null;
+				if (displayFirstPage != isDisplayFirstPage()) {
+					setDisplayFirstPage(displayFirstPage);
+					setModify();
+				}
 			}
 
-			boolean intranetMode = requestService.getParameter(getIntranetModeInputName(), null) != null;
-			if (intranetMode != isIntranetMode()) {
-				setIntranetMode(intranetMode);
-				setModify();
+			if (isUIFilterOnEditUsers(ctx)) {
+				boolean intranetMode = requestService.getParameter(getIntranetModeInputName(), null) != null;
+				if (intranetMode != isIntranetMode()) {
+					setIntranetMode(intranetMode);
+					setModify();
+				}
 			}
 
 			String lastPageNumber = requestService.getParameter(getLastPageNumberInputName(), "");
