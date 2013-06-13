@@ -123,3 +123,5 @@ change log
  * don't load config of component from webapp but only from template
  
 * 2.0.2.3 12/6/2013
+
+ * mailing unsubscribe
