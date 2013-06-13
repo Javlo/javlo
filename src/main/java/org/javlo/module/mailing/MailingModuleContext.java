@@ -213,6 +213,7 @@ public class MailingModuleContext extends AbstractModuleContext {
 		m.setNotif(new InternetAddress(reportTo));
 		m.setContent(NetHelper.readPage(url, true));
 		m.setHtml(true);
+		m.setRoles(groups);
 		m.store(ctx.getRequest().getSession().getServletContext());
 	}
 

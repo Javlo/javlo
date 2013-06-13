@@ -110,7 +110,7 @@ public class Mailing {
 
 	private boolean TEST = false;
 
-	private String[] roles = new String[0];
+	private List<String> roles = Collections.EMPTY_LIST;
 
 	private File dir = null;
 
@@ -123,7 +123,7 @@ public class Mailing {
 	private String templateId = null;
 
 	String getUnsubscribeURL(String mail) {
-		String params = "?webaction=mailing.Unsubscriberole&mail=" + mail + "&roles=" + StringHelper.arrayToString(roles);
+		String params = "?webaction=mailing.Unsubscriberole&mail=" + mail + "&roles=" + StringHelper.collectionToString(roles);
 		return getUnsubscribeURL() + params;
 	}
 
@@ -194,7 +194,7 @@ public class Mailing {
 		return receivers.size();
 	}
 
-	public void setRoles(String[] inRoles) {
+	public void setRoles(List<String> inRoles) {
 		roles = inRoles;
 	}
 
@@ -254,7 +254,7 @@ public class Mailing {
 			contextKey = config.getString("context-key", null);
 			encoding = config.getString("encoding", ContentContext.CHARACTER_ENCODING);
 			unsubscribeURL = config.getString("unsubscribeURL", null);
-			roles = StringHelper.stringToArray(config.getString("roles", ""));
+			roles = StringHelper.stringToCollection(config.getString("roles", ""));
 			templateId = config.getString("template", null);
 			adminEmail = config.getString("admin.email", null);
 			try {
@@ -338,7 +338,7 @@ public class Mailing {
 			config.setProperty("notif", notif.toUnicodeString());
 		}
 		config.setProperty("send", new Boolean(isSend()));
-		config.setProperty("roles", StringHelper.arrayToString(roles));
+		config.setProperty("roles", StringHelper.collectionToString(roles));
 		config.setProperty("encoding", encoding);
 		config.setProperty("date", StringHelper.renderTime(new Date()));
 		config.setProperty("test", TEST);
@@ -536,7 +536,7 @@ public class Mailing {
 		return date;
 	}
 
-	public String[] getRoles() {
+	public List<String> getRoles() {
 		return roles;
 	}
 

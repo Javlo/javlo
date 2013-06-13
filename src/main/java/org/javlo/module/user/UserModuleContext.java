@@ -47,10 +47,10 @@ public class UserModuleContext {
 
 		userContext.modes = new LinkedList<String>(allModes);
 
-		if (!adminUserFactory.getCurrentUser(session).validForRoles(new HashSet<String>(Arrays.asList(AdminUserSecurity.ADMIN_USER_ROLE)))) {
+		if (adminUserFactory.getCurrentUser(session) != null && !adminUserFactory.getCurrentUser(session).validForRoles(new HashSet<String>(Arrays.asList(AdminUserSecurity.ADMIN_USER_ROLE)))) {
 			userContext.modes.remove(ADMIN_USERS_LIST);
 		}
-		if (!adminUserFactory.getCurrentUser(session).validForRoles(new HashSet<String>(Arrays.asList(AdminUserSecurity.USER_ROLE)))) {
+		if (adminUserFactory.getCurrentUser(session) != null && !adminUserFactory.getCurrentUser(session).validForRoles(new HashSet<String>(Arrays.asList(AdminUserSecurity.USER_ROLE)))) {
 			userContext.modes.remove(VIEW_USERS_LIST);
 		}
 

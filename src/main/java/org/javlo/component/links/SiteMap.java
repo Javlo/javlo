@@ -219,5 +219,10 @@ public class SiteMap extends AbstractVisualComponent {
 	public boolean isVisible(ContentContext ctx) {
 		return true;
 	}
+	
+	@Override
+	public boolean isRealContent(ContentContext ctx) {
+		return true;
+	}
 
 }

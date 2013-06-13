@@ -3299,13 +3299,12 @@ public class MenuElement implements Serializable {
 
 		PageDescription desc = getPageDescriptionCached(ctx, ctx.getRequestContentLanguage());
 
-		if (!desc.isRealContentNull()) {
+		if (!desc.isRealContentNull()) {			
 			return desc.isRealContent();
 		}
 
 		ContentContext contentAreaCtx = new ContentContext(ctx);
 		contentAreaCtx.setArea(ComponentBean.DEFAULT_AREA);
-		
 		ContentElementList comps = getContent(contentAreaCtx);
 		while (comps.hasNext(contentAreaCtx)) {
 			IContentVisualComponent comp = comps.next(contentAreaCtx);

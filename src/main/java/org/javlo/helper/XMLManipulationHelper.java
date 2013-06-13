@@ -452,18 +452,18 @@ public class XMLManipulationHelper {
 				}
 
 				/* insert before all */
-				if (!isMail) {
+				//if (!isMail) {
 					if (tags[i].getName().equalsIgnoreCase("body")) {
 						String contentZone = getValue(options, AREA_PREFIX + "content", null);
 						String cssClass = StringHelper.neverNull(tags[i].getAttributes().get("class"));
 						cssClass = cssClass + " " + "<%if (ctx.getRenderMode() == ContentContext.PREVIEW_MODE) { if(ctx.getGlobalContext().getStaticConfig().isFixPreview() ) {%>fix-preview<%} else {%>floating-preview<%} }%>";
 						tags[i].getAttributes().put("class", cssClass.trim());
 						remplacement.addReplacement(tags[i].getOpenStart(), tags[i].getOpenEnd() + 1, tags[i].renderOpen());
-						if (contentZone != null) {
+						if (contentZone != null && !isMail) {
 							remplacement.addReplacement(tags[i].getOpenEnd() + 1, tags[i].getOpenEnd() + 1, getPreviewCode() + getEscapeMenu(contentZone) + getResetTemplate() + getAfterBodyCode());
 						}
 					}
-				}
+				//}
 
 				/* link - StyleSheet */
 				if (tags[i].getName().equalsIgnoreCase("link")) {
@@ -541,7 +541,7 @@ public class XMLManipulationHelper {
 				}
 
 				/* head - StyleSheet */
-				if (!isMail) {
+				//if (!isMail) {
 					if (tags[i].getName().equalsIgnoreCase("head")) {
 
 						if (content.indexOf(HEADER_ZONE) > 0) {
@@ -589,7 +589,7 @@ public class XMLManipulationHelper {
 
 						remplacement.addReplacement(tags[i].getCloseStart() - 1, tags[i].getCloseStart(), getHTMLSufixHead() + new String(outStream.toByteArray()));
 					}
-				}
+				//}
 
 				/* title */
 				if (!isMail) {
