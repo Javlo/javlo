@@ -167,8 +167,7 @@ public class MailingAction extends AbstractModuleAction {
 				add = new InternetAddress(to);	
 				IUserFactory userFactory = UserFactory.createUserFactory(request);
 				User user = userFactory.getUser(add.getAddress());
-				if (user != null) {
-					System.out.println("***** MailingAction.performUnsubscribe : roles  : "+StringHelper.stringToCollection(rs.getParameter("roles", ""))); //TODO: remove debug trace
+				if (user != null) {					
 					Set<String> roles = new HashSet<String>(StringHelper.stringToCollection(rs.getParameter("roles", ""),";"));
 					user.getUserInfo().removeRoles(roles);
 					userFactory.store();
