@@ -36,11 +36,6 @@ public class Menu extends AbstractPropertiesComponent {
 	public List<String> getFields(ContentContext ctx) throws Exception {
 		return FIELDS;
 	}
-	
-	@Override
-	public String getDefaultRenderer(ContentContext ctx) {
-		return "default.jsp";
-	}
 
 	@Override
 	public String getType() {
