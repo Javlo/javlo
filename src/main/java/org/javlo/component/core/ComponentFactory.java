@@ -424,7 +424,7 @@ public class ComponentFactory {
 		List<IContentVisualComponent> components = new LinkedList<IContentVisualComponent>();
 		for (int i = 0; i < componentsType.length; i++) {
 			if (!componentsType[i].isHidden(ctx) && !(componentsType[i] instanceof MetaTitle) && currentComponents.contains(componentsType[i].getClass().getName())) {
-				if (componentsType[i].getComplexityLevel() <= complexityLevel) {
+				if (componentsType[i].getComplexityLevel(ctx) <= complexityLevel) {
 					components.add(componentsType[i]);
 				}
 			}
@@ -452,7 +452,7 @@ public class ComponentFactory {
 				if (!components[i].isMetaTitle() || !components[i + 1].isMetaTitle()) { // if next component is title too so the component group is empty
 					IContentVisualComponent comp = components[i];
 					if (comp.isMetaTitle() || ctx.getGlobalContext().getComponents().contains(comp.getClass().getName()) || comp instanceof DynamicComponent) {
-						ComponentWrapper compWrapper = new ComponentWrapper(comp.getType(), comp.getComponentLabel(ctx, ctx.getGlobalContext().getEditLanguage(ctx.getRequest().getSession())), comp.getValue(ctx), comp.getHexColor(), comp.getComplexityLevel(), comp.isMetaTitle());
+						ComponentWrapper compWrapper = new ComponentWrapper(comp.getType(), comp.getComponentLabel(ctx, ctx.getGlobalContext().getEditLanguage(ctx.getRequest().getSession())), comp.getValue(ctx), comp.getHexColor(), comp.getComplexityLevel(ctx), comp.isMetaTitle());
 						if (components[i].isMetaTitle()) {
 							titleWrapper = compWrapper;
 						}
@@ -476,7 +476,7 @@ public class ComponentFactory {
 
 		if (!components[components.length - 1].isMetaTitle()) {
 			IContentVisualComponent comp = components[components.length - 1];
-			ComponentWrapper compWrapper = new ComponentWrapper(comp.getType(), comp.getComponentLabel(ctx, ctx.getGlobalContext().getEditLanguage(ctx.getRequest().getSession())), comp.getValue(ctx), comp.getHexColor(), comp.getComplexityLevel(), comp.isMetaTitle());
+			ComponentWrapper compWrapper = new ComponentWrapper(comp.getType(), comp.getComponentLabel(ctx, ctx.getGlobalContext().getEditLanguage(ctx.getRequest().getSession())), comp.getValue(ctx), comp.getHexColor(), comp.getComplexityLevel(null), comp.isMetaTitle());
 			comps.add(compWrapper);
 			if (comp.getType().equals(editCtx.getActiveType())) {
 				compWrapper.setSelected(true);

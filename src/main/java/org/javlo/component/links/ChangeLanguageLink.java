@@ -171,7 +171,7 @@ public class ChangeLanguageLink extends ComplexPropertiesLink implements IIntern
 	}
 
 	@Override
-	public int getComplexityLevel() {
+	public int getComplexityLevel(ContentContext ctx) {
 		return AbstractVisualComponent.COMPLEXITY_STANDARD;
 	}
 

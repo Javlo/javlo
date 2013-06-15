@@ -543,6 +543,37 @@ public class AdminAction extends AbstractModuleAction {
 		}
 
 	}
+	
+	public static class ComponentBean {
+		
+		ContentContext ctx;
+		IContentVisualComponent comp;
+		
+		public ComponentBean (ContentContext ctx, IContentVisualComponent comp) {
+			this.ctx = ctx;
+			this.comp = comp;
+		}
+		
+		public IContentVisualComponent getComponent() {
+			return comp;
+		}
+		
+		public int getComplexityLevel() {
+			return comp.getComplexityLevel(ctx);
+		}
+		
+		public boolean isListable() {
+			return comp.isListable();
+		}
+		
+		public String getType() {
+			return comp.getType();
+		}
+		
+		public String getHexColor() {
+			return comp.getHexColor();
+		}
+	}
 
 	@Override
 	public String getActionGroupName() {
@@ -628,10 +659,10 @@ public class AdminAction extends AbstractModuleAction {
 				List<String> currentComponents = null;
 				currentComponents = currentGlobalContext.getComponents();
 				IContentVisualComponent[] componentsType = ComponentFactory.getComponents(currentGlobalContext);
-				Collection<IContentVisualComponent> components = new LinkedList<IContentVisualComponent>();
+				Collection<ComponentBean> components = new LinkedList<ComponentBean>();
 				for (int i = 0; i < componentsType.length; i++) {
 					if (!componentsType[i].isHidden(ctx) && !(componentsType[i] instanceof MetaTitle)) {
-						components.add(componentsType[i]);
+						components.add(new ComponentBean(ctx, componentsType[i]));
 					}
 				}
 				request.setAttribute("components", components);

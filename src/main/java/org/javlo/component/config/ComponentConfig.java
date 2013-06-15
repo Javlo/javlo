@@ -186,6 +186,14 @@ public class ComponentConfig {
 		}
 		return properties.getString("style-title");
 	}
+	
+	public int getComplexity(int defaultComplexity) {
+		if (properties == null || properties.getString("complexity") == null) {
+			return defaultComplexity;
+		} else {
+			return Integer.parseInt(properties.getString("complexity"));
+		}
+	}
 
 	public boolean isClickable() {
 		if (properties == null) {
