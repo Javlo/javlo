@@ -37,7 +37,7 @@ public class RSSLink extends ComplexPropertiesLink {
 
 	@Override
 	public int getComplexityLevel() {
-		return COMPLEXITY_STANDARD;
+		return COMPLEXITY_EASY;
 	}
 
 	@Override

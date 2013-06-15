@@ -97,7 +97,7 @@ public class ChildrenLink extends AbstractVisualComponent implements IImageTitle
 
 	@Override
 	public int getComplexityLevel() {
-		return COMPLEXITY_STANDARD;
+		return COMPLEXITY_EASY;
 	}
 
 	@Override

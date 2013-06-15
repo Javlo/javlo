@@ -56,7 +56,7 @@ public class DebugNote extends AbstractVisualComponent {
 
 	@Override
 	public int getComplexityLevel() {
-		return COMPLEXITY_STANDARD;
+		return COMPLEXITY_EASY;
 	}
 
 }
