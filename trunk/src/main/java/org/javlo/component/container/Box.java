@@ -138,7 +138,7 @@ public class Box extends AbstractVisualComponent implements IContainer {
 	}
 
 	@Override
-	public int getComplexityLevel() {
+	public int getComplexityLevel(ContentContext ctx) {
 		return AbstractVisualComponent.COMPLEXITY_STANDARD;
 	}
 

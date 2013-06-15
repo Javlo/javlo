@@ -96,8 +96,8 @@ public class ChildrenLink extends AbstractVisualComponent implements IImageTitle
 	}
 
 	@Override
-	public int getComplexityLevel() {
-		return COMPLEXITY_EASY;
+	public int getComplexityLevel(ContentContext ctx) {
+		return getConfig(ctx).getComplexity(COMPLEXITY_EASY);
 	}
 
 	@Override
@@ -494,4 +494,5 @@ public class ChildrenLink extends AbstractVisualComponent implements IImageTitle
 			return false;
 		}
 	}
+	
 }

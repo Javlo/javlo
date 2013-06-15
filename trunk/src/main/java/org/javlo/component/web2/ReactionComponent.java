@@ -691,7 +691,7 @@ public class ReactionComponent extends DynamicComponent implements IAction {
 	}
 
 	@Override
-	public int getComplexityLevel() {
+	public int getComplexityLevel(ContentContext ctx) {
 		return AbstractVisualComponent.COMPLEXITY_STANDARD;
 	}
 }

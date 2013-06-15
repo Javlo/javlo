@@ -155,7 +155,7 @@ public class LanguageCopy extends AbstractPropertiesComponent {
 	}
 
 	@Override
-	public int getComplexityLevel() {
+	public int getComplexityLevel(ContentContext ctx) {
 		return COMPLEXITY_ADMIN;
 	}
 

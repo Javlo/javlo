@@ -48,7 +48,7 @@ public class WebSiteTitle extends AbstractVisualComponent {
 	}
 	
 	@Override
-	public int getComplexityLevel() {
+	public int getComplexityLevel(ContentContext ctx) {
 		return IContentVisualComponent.COMPLEXITY_ADMIN;
 	}
 

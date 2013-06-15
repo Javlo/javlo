@@ -553,10 +553,11 @@ public interface IContentVisualComponent {
 
 	/**
 	 * return the complexity level of the component.
+	 * @param ctx TODO
 	 * 
 	 * @return see contant
 	 */
-	public int getComplexityLevel();
+	public int getComplexityLevel(ContentContext ctx);
 
 	/**
 	 * true if component marked as hidden (in components.txt the class name start with '.')

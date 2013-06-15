@@ -36,15 +36,15 @@
      <td class="con0" style="background-color: #${comp.hexColor}">${comp.hexColor}</td>
      <td class="con1" align="center"><c:if test="${comp.listable}"><span class="icone_true">${comp.listable}</span></c:if><c:if test="${not comp.listable}">&nbsp;</c:if></td>
      <td class="con0 complexity" align="center"><span class="complexity-${comp.complexityLevel}">${comp.complexityLevel}</span></td>
-     <td class="con1">${comp.className}</td>
+     <td class="con1">${comp.component.className}</td>
      <td class="con0">
      <c:set var="contains" value="false" />
 		<c:forEach var="item" items="${currentComponents}">		
-  	 	<c:if test="${comp.className eq item}">
+  	 	<c:if test="${comp.component.className eq item}">
     		<c:set var="contains" value="true" />
   		</c:if>
 	</c:forEach>
-	<div style="display: none;">${contains}</div><input type="checkbox"${contains?' checked="checked"':''} name="${comp.className}" /> 
+	<div style="display: none;">${contains}</div><input type="checkbox"${contains?' checked="checked"':''} name="${comp.component.className}" /> 
      </td>
  </tr>     
  </c:forEach>

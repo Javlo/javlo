@@ -69,7 +69,7 @@ public class PageTitle extends AbstractVisualComponent {
 	}
 	
 	@Override
-	public int getComplexityLevel() {
+	public int getComplexityLevel(ContentContext ctx) {
 		return IContentVisualComponent.COMPLEXITY_STANDARD;
 	}
 
