@@ -737,7 +737,9 @@ public class AdminAction extends AbstractModuleAction {
 	@Override
 	public Boolean haveRight(HttpSession session, User user) throws ModuleException {
 		/*
-		 * AdminUserSecurity adminUserSecurity = AdminUserSecurity.getInstance(); if (adminUserSecurity.isAdmin(user)) { return true; }
+		 * AdminUserSecurity adminUserSecurity =
+		 * AdminUserSecurity.getInstance(); if (adminUserSecurity.isAdmin(user))
+		 * { return true; }
 		 */
 
 		if (user == null) {
@@ -1030,7 +1032,9 @@ public class AdminAction extends AbstractModuleAction {
 			return "security error !";
 		}
 		String currentContextKey = request.getParameter("context");
-		if (currentContextKey == null) { // param context is used only for check the type of call, but you can clear only current context
+		if (currentContextKey == null) { // param context is used only for check
+											// the type of call, but you can
+											// clear only current context
 			ContentService.clearAllContextCache(ctx);
 		} else {
 			if (!AdminUserSecurity.getInstance().isMaster(user) && !AdminUserSecurity.getInstance().isGod(user)) {
@@ -1054,7 +1058,9 @@ public class AdminAction extends AbstractModuleAction {
 			return "security error !";
 		}
 		String currentContextKey = request.getParameter("context");
-		if (currentContextKey == null) { // param context is used only for check the type of call, but you can clear only current context
+		if (currentContextKey == null) { // param context is used only for check
+											// the type of call, but you can
+											// clear only current context
 			fileCache.clear();
 		} else {
 			if (!AdminUserSecurity.getInstance().isMaster(user) && !AdminUserSecurity.getInstance().isGod(user)) {
@@ -1216,6 +1222,22 @@ public class AdminAction extends AbstractModuleAction {
 			}
 		} else {
 			return "default web site not found.";
+		}
+		return null;
+	}
+
+	public static String performComponentsForAll(RequestService rs, HttpSession session, AdminUserSecurity adminUserSecurity, ContentContext ctx, MessageRepository messageRepository, I18nAccess i18nAccess) throws ConfigurationException, IOException, NoSuchMethodException, ClassNotFoundException, IllegalArgumentException, InstantiationException, IllegalAccessException, InvocationTargetException {
+		GlobalContext currentContext = GlobalContext.getInstance(session, rs.getParameter("context", null));
+		Collection<GlobalContextBean> ctxAllBean = new LinkedList<GlobalContextBean>();
+		Collection<GlobalContext> allContext = GlobalContextFactory.getAllGlobalContext(session);
+		for (GlobalContext context : allContext) {
+			if (ctx.getCurrentEditUser() != null) {
+				if (adminUserSecurity.isAdmin(ctx.getCurrentEditUser()) || context.getUsersAccess().contains(ctx.getCurrentEditUser().getLogin())) {
+					if (!context.getContextKey().equals(currentContext.getContextKey())) {
+						context.setComponents(new LinkedList(currentContext.getComponents()));
+					}
+				}
+			}
 		}
 		return null;
 	}
