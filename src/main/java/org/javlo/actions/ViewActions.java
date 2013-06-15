@@ -109,7 +109,9 @@ public class ViewActions implements IAction {
 
 	public static String performPagination(HttpServletRequest request, HttpServletResponse response) throws Exception {
 		PaginationContext paginationContext = PaginationContext.getInstance(request, request.getParameter("key"));
-		logger.fine("new page selected : " + paginationContext.getPage());
+		if (paginationContext != null) {
+			logger.fine("new page selected : " + paginationContext.getPage());
+		}
 		return null;
 	}
 
