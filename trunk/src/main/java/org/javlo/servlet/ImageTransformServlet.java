@@ -140,8 +140,6 @@ public class ImageTransformServlet extends HttpServlet {
 
 	private static final Map<String, Object> imageTransforming = new ConcurrentHashMap<String, Object>();
 
-	private final String cacheDir = "_dc";
-
 	@Override
 	public void init() throws ServletException {
 		super.init();
@@ -405,19 +403,6 @@ public class ImageTransformServlet extends HttpServlet {
 		return stream;
 	}
 
-	public BufferedImage loadImageFromDisk(String name, int width, int filter) {
-		File file = new File(cacheDir + "/" + ImageHelper.createSpecialDirectory(width, filter) + "/" + ImageHelper.pathToKey(name));
-		BufferedImage image = null;
-		if (file.exists()) {
-			try {
-				image = ImageIO.read(file);
-			} catch (IOException e) {
-				e.printStackTrace();
-			}
-		}
-		return image;
-	}
-
 	/**
 	 * get the text and the picture and build a button
 	 * 
@@ -494,22 +479,16 @@ public class ImageTransformServlet extends HttpServlet {
 
 					try {
 						if (!Template.EDIT_TEMPLATE_CODE.equals(templateId)) {
-							// template = Template.getApplicationInstance(request.getSession().getServletContext(), ctx, templateId);
 							template = TemplateFactory.getTemplates(getServletContext()).get(templateId);
 						}
 					} catch (Exception e) {
 						e.printStackTrace();
 					}
-
-					// pathInfo = pathInfo.substring(slachIndex + 1);
-
 					imageName = pathInfo;
 				} catch (NumberFormatException e1) {
 					e1.printStackTrace();
 				}
 			}
-
-			// org.javlo.helper.Logger.stepCount("transform", "template");
 
 			boolean localFile = false;
 
