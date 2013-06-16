@@ -43,6 +43,7 @@ import org.javlo.servlet.AccessServlet;
 import org.javlo.user.AdminUserFactory;
 import org.javlo.user.IUserFactory;
 import org.javlo.user.User;
+import org.javlo.ztatic.FileCache;
 
 public class StaticConfig extends Observable {
 
@@ -497,6 +498,10 @@ public class StaticConfig extends Observable {
 
 	public String getFileFolder() {
 		return ElementaryURLHelper.mergePath(getStaticFolder(), properties.getString("file-folder", "files"));
+	}
+	
+	public String getImageCacheFolder() {
+		return ElementaryURLHelper.mergePath(getStaticFolder(), properties.getString("image-cache-folder", FileCache.BASE_DIR));
 	}
 
 	public String getFlashFolder() {

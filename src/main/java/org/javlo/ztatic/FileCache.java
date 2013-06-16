@@ -16,6 +16,7 @@ import java.util.logging.Logger;
 import javax.servlet.ServletContext;
 
 import org.apache.commons.io.FileUtils;
+import org.javlo.config.StaticConfig;
 import org.javlo.helper.ResourceHelper;
 import org.javlo.helper.StringHelper;
 import org.javlo.helper.URLHelper;
@@ -32,17 +33,25 @@ public class FileCache {
 
 	private static final String KEY = FileCache.class.getName();
 	public static final String BASE_DIR = "/temp";
+	
+	private final String baseDirName;
 
 	ServletContext application = null;
+	
+	File baseDir = null;
 
 	private FileCache(ServletContext inApplication) {
 		application = inApplication;
 		application.setAttribute(KEY, this);
-
-		File file = new File(application.getRealPath(BASE_DIR + '/'));
-		if (!file.exists()) {
-			logger.info("create dir : " + file);
-			file.mkdirs();
+	
+		StaticConfig staticConfig = StaticConfig.getInstance(application);
+		baseDirName = staticConfig.getImageCacheFolder();
+		baseDir = new File(application.getRealPath(baseDirName));
+		
+		File dir = getCacheDir();
+		if (!dir.exists()) {
+			logger.info("create dir : " + dir);
+			dir.mkdirs();
 		}
 	}
 
@@ -63,7 +72,7 @@ public class FileCache {
 
 	public String getRelativeFilePath(String key, String fileName) {
 		fileName = fileName.replace('\\', '/');
-		String cacheFileName = BASE_DIR + '/' + key;
+		String cacheFileName = baseDirName + '/' + key;
 		if (fileName.startsWith("/")) {
 			cacheFileName = cacheFileName + fileName;
 		} else {
@@ -200,6 +209,13 @@ public class FileCache {
 		File file = getFileName(key, fileName);
 		return file.lastModified();
 	}
+	
+	protected File getCacheDir() {
+		if(baseDir == null) {
+			baseDir = new File(application.getRealPath(BASE_DIR));
+		}
+		return baseDir;
+	}
 
 	/**
 	 * clear a file for all keys.
@@ -208,7 +224,7 @@ public class FileCache {
 	 *            a file name.
 	 */
 	public void delete(String fileName) {
-		File cacheDir = new File(application.getRealPath(BASE_DIR));
+		File cacheDir = getCacheDir();
 		// File[] keys = cacheDir.listFiles(new DirectoryFilter());
 
 		Collection<File> keys = ResourceHelper.getAllDirList(cacheDir);
@@ -234,9 +250,9 @@ public class FileCache {
 	public void deleteAllFile(String context, String fileName) {
 		File cacheDir;
 		if (context != null) {
-			cacheDir = new File(URLHelper.mergePath(application.getRealPath(BASE_DIR), context));
+			cacheDir = new File(getCacheDir().getAbsolutePath(), context);
 		} else {
-			cacheDir = new File(application.getRealPath(BASE_DIR));
+			cacheDir = getCacheDir();
 		}
 		for (File file : ResourceHelper.getAllFilesList(cacheDir)) {
 			if (file.getName().equals(fileName)) {
@@ -249,9 +265,9 @@ public class FileCache {
 	public void clear(String context) {
 		File cacheDir;
 		if (context != null) {
-			cacheDir = new File(URLHelper.mergePath(application.getRealPath(BASE_DIR), context));
+			cacheDir = new File(URLHelper.mergePath(getCacheDir().getAbsolutePath(), context));
 		} else {
-			cacheDir = new File(application.getRealPath(BASE_DIR));
+			cacheDir = getCacheDir();
 		}
 		try {
 			FileUtils.deleteDirectory(cacheDir);
@@ -275,7 +291,7 @@ public class FileCache {
 
 	public void storeBean(String key, Serializable obj) throws IOException {
 		String fileName = StringHelper.createFileName(key) + ".serial.xml";
-		File file = new File(URLHelper.mergePath(application.getRealPath(BASE_DIR), fileName));
+		File file = new File(URLHelper.mergePath(getCacheDir().getAbsolutePath(), fileName));
 		if (file.exists() && obj == null) {
 			file.delete();
 			return;
@@ -292,7 +308,7 @@ public class FileCache {
 
 	public Serializable loadBean(String key) throws ClassNotFoundException, IOException {
 		String fileName = StringHelper.createFileName(key) + ".serial.xml";
-		File file = new File(URLHelper.mergePath(application.getRealPath(BASE_DIR), fileName));
+		File file = new File(URLHelper.mergePath(getCacheDir().getAbsolutePath(), fileName));
 		if (!file.exists()) {
 			return null;
 		}
