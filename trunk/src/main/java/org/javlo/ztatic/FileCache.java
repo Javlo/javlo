@@ -165,8 +165,13 @@ public class FileCache {
 	public OutputStream saveFile(String key, String fileName) throws IOException {
 		File file = getFileName(key, fileName);
 		if (!file.exists()) {
-			file.getParentFile().mkdirs();
-			file.createNewFile();
+			try {
+				file.getParentFile().mkdirs();
+				file.createNewFile();
+			} catch (Exception e) {
+				logger.warning("error on create file : "+file);
+				throw new IOException(e);
+			}
 		}
 		OutputStream out = new FileOutputStream(file);
 		return out;
