@@ -393,7 +393,7 @@ public class ImageTransformServlet extends HttpServlet {
 
 	}
 
-	private InputStream loadFileFromDisk(GlobalContext globalContext, String name, String filter, String area, Device device, Template template, long lastModificationDate) throws FileNotFoundException {
+	private InputStream loadFileFromDisk(GlobalContext globalContext, String name, String filter, String area, Device device, Template template, long lastModificationDate) throws IOException {
 		String deviceCode = "no-device";
 		if (device != null) {
 			deviceCode = device.getCode();

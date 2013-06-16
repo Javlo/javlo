@@ -46,7 +46,11 @@ public class FileCache {
 	
 		StaticConfig staticConfig = StaticConfig.getInstance(application);
 		baseDirName = staticConfig.getImageCacheFolder();
-		baseDir = new File(application.getRealPath(baseDirName));
+		try {
+			baseDir = new File(application.getRealPath(baseDirName)).getCanonicalFile();
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
 		
 		File dir = getCacheDir();
 		if (!dir.exists()) {
@@ -163,7 +167,7 @@ public class FileCache {
 	 * @throws IOException
 	 */
 	public OutputStream saveFile(String key, String fileName) throws IOException {
-		File file = getFileName(key, fileName);
+		File file = getFileName(key, fileName).getCanonicalFile();
 		if (!file.exists()) {
 			try {
 				file.getParentFile().mkdirs();
@@ -187,8 +191,8 @@ public class FileCache {
 	 * @return a inputStream from file.
 	 * @throws FileNotFoundException
 	 */
-	public InputStream getFileInputStream(String key, String fileName, long latestModificationDate) throws FileNotFoundException {
-		File file = getFileName(key, fileName);
+	public InputStream getFileInputStream(String key, String fileName, long latestModificationDate) throws IOException {
+		File file = getFileName(key, fileName).getCanonicalFile();
 
 		if (latestModificationDate > file.lastModified()) {
 			return null;
