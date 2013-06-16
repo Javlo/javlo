@@ -94,3 +94,6 @@ input[readonly] {
     width: 36px;
 } 
 
+.static-tabs {
+	overflow: hidden;
+}
