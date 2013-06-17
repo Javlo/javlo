@@ -204,13 +204,10 @@ public class EditContext implements Serializable {
 
 	public static final EditContext getInstance(GlobalContext globalContext, HttpSession session) {
 		EditContext ctx = (EditContext) session.getAttribute(SESSION_KEY);
-		if (ctx == null) {
+		if (ctx == null || !ctx.globalContext.getContextKey().equals(globalContext.getContextKey())) {
 			ctx = new EditContext(globalContext, session);
 			session.setAttribute(SESSION_KEY, ctx);
-		} else {
-			if (ctx.globalContext == null) {
-				ctx.globalContext = globalContext;
-			}
+			ctx.globalContext = globalContext;
 		}
 		return ctx;
 	}
@@ -469,7 +466,7 @@ public class EditContext implements Serializable {
 		}
 		for (String role : roles) {
 			outRoles.add(role);
-		}		
+		}
 		return outRoles;
 	}
 

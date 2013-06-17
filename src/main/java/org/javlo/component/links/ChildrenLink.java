@@ -14,6 +14,8 @@ import java.util.List;
 
 import org.javlo.component.core.AbstractVisualComponent;
 import org.javlo.component.image.IImageTitle;
+import org.javlo.component.image.ImageBean;
+import org.javlo.component.image.ImageTitleBean;
 import org.javlo.context.ContentContext;
 import org.javlo.exception.ResourceNotFoundException;
 import org.javlo.helper.StringHelper;
@@ -78,9 +80,15 @@ public class ChildrenLink extends AbstractVisualComponent implements IImageTitle
 			return currentPage.isRealContent(ctx);
 		}
 
-		// public IImageTitle getImage() throws Exception {
-		// return child.getImage(ctx);
-		// }
+		public ImageBean getImage() throws Exception {
+			IImageTitle image = child.getImage(ctx);
+			if (image != null) {
+				String imageURL = URLHelper.createTransformURL(ctx, image.getResourceURL(ctx),getConfig(ctx).getProperty("filter", "list"));
+				return new ImageBean(imageURL, image.getImageDescription(ctx),image.getImageLinkURL(ctx));
+			} else {
+				return null;
+			}
+		}
 
 	}
 
@@ -123,13 +131,15 @@ public class ChildrenLink extends AbstractVisualComponent implements IImageTitle
 		out.println("<label for=\"" + getInputNameRendererTitle() + "\">" + i18n.getText("global.title") + "</label>");
 		out.println("<input type=\"text\" id=\"" + getInputNameRendererTitle() + "\" name=\"" + getInputNameRendererTitle() + "\" value=\"" + getRendererTitle() + "\"/>");
 		out.println("</div><div class=\"line\">");
-		out.println("</div><div class=\"line\">");
-		out.println(XHTMLHelper.getCheckbox(getInputNameLabel(), isLabelListed()) + " <label for=\"" + getInputNameLabel() + "\">" + i18n.getText("content.children-list.label") + "</label>");
-		out.println("</div><div class=\"line\">");
-		out.println(XHTMLHelper.getCheckbox(getInputNameImage(), isImage()) + " <label for=\"" + getInputNameImage() + "\">" + i18n.getText("content.children-list.image") + "</label>");
-		out.println("</div><div class=\"line\">");
-		out.println(XHTMLHelper.getCheckbox(getInputNameDescription(), isDescription()) + " <label for=\"" + getInputNameDescription() + "\">" + i18n.getText("content.children-list.description") + "</label>");
-		out.println("</div><div class=\"line\">");
+		if (getRenderes(ctx).size() < 1) {
+			out.println("</div><div class=\"line\">");
+			out.println(XHTMLHelper.getCheckbox(getInputNameLabel(), isLabelListed()) + " <label for=\"" + getInputNameLabel() + "\">" + i18n.getText("content.children-list.label") + "</label>");
+			out.println("</div><div class=\"line\">");
+			out.println(XHTMLHelper.getCheckbox(getInputNameImage(), isImage()) + " <label for=\"" + getInputNameImage() + "\">" + i18n.getText("content.children-list.image") + "</label>");
+			out.println("</div><div class=\"line\">");
+			out.println(XHTMLHelper.getCheckbox(getInputNameDescription(), isDescription()) + " <label for=\"" + getInputNameDescription() + "\">" + i18n.getText("content.children-list.description") + "</label>");
+			out.println("</div><div class=\"line\">");
+		}
 		out.println(XHTMLHelper.getCheckbox(getInputLockParentPage(), isLockParentPage()) + " <label for=\"" + getInputLockParentPage() + "\">" + i18n.getText("content.children-list.linked") + "</label>");
 		out.println("</div>");
 
@@ -441,7 +451,13 @@ public class ChildrenLink extends AbstractVisualComponent implements IImageTitle
 	@Override
 	public void performEdit(ContentContext ctx) throws Exception {
 		RequestService requestService = RequestService.getInstance(ctx.getRequest());
-		if (requestService.getParameter("comp-" + getId(), null) == null) { // this component is not in edit form
+		if (requestService.getParameter("comp-" + getId(), null) == null) { // this
+																			// component
+																			// is
+																			// not
+																			// in
+																			// edit
+																			// form
 			return;
 		}
 		String newValue = "";
@@ -494,5 +510,5 @@ public class ChildrenLink extends AbstractVisualComponent implements IImageTitle
 			return false;
 		}
 	}
-	
+
 }
