@@ -97,6 +97,7 @@ public class AdminAction extends AbstractModuleAction {
 		private String noPopupDomain;
 		private String URIAlias;
 		private boolean master = false;
+		private String forcedHost = "";
 
 		private String shortDateFormat;
 		private String mediumDateFormat;
@@ -139,6 +140,8 @@ public class AdminAction extends AbstractModuleAction {
 
 			setHelpURL(globalContext.getHelpURL());
 			setPrivateHelpURL(globalContext.getPrivateHelpURL());
+			
+			setForcedHost(globalContext.getForcedHost());
 
 			setSize(StringHelper.renderSize(globalContext.getAccountSize()));
 			setGlobalTitle(globalContext.getGlobalTitle());
@@ -542,6 +545,14 @@ public class AdminAction extends AbstractModuleAction {
 			this.collaborativeMode = displayCreator;
 		}
 
+		public String getForcedHost() {
+			return forcedHost;
+		}
+
+		public void setForcedHost(String forcedHost) {
+			this.forcedHost = forcedHost;
+		}
+
 	}
 	
 	public static class ComponentBean {
@@ -844,6 +855,13 @@ public class AdminAction extends AbstractModuleAction {
 						currentGlobalContext.setAliasURI(properties);
 					} else {
 						return "uri-alias parameter not found.";
+					}
+					
+					String forcedHost = requestService.getParameter("forced-host", "");
+					if (forcedHost.trim().length() > 0) {
+						currentGlobalContext.setForcedHost(forcedHost);
+					} else {
+						currentGlobalContext.setForcedHost("");
 					}
 
 					currentGlobalContext.setUserRoles(new HashSet<String>(StringHelper.stringToCollection(requestService.getParameter("user-roles", ""), ",")));

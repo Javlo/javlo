@@ -129,6 +129,10 @@ public class ContentContext {
 
 		GlobalContext globalContext = GlobalContext.getInstance(ctx.getRequest());
 		EditContext editContext = EditContext.getInstance(globalContext, ctx.getRequest().getSession());
+		
+		if (globalContext.getForcedHost().length() > 0) {
+			ctx.setHostName(globalContext.getForcedHost());
+		}
 
 		if (ctx.getRenderMode() != ContentContext.EDIT_MODE && !editContext.isEditPreview() && !ctx.correctPath && correctPath || ctx.getRenderMode() == ContentContext.VIEW_MODE) {
 			if (!ctx.isAjax()) {

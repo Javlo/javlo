@@ -226,7 +226,11 @@ public class GlobalContext implements Serializable {
 						return null;
 					}
 				}
-				request.getSession().setAttribute(KEY, globalContext); // mark global context in session.
+				request.getSession().setAttribute(KEY, globalContext); // mark
+																		// global
+																		// context
+																		// in
+																		// session.
 			} else {
 				contextURI = globalContext.getContextKey();
 			}
@@ -314,7 +318,8 @@ public class GlobalContext implements Serializable {
 		StaticConfig staticConfig = StaticConfig.getInstance(session.getServletContext());
 
 		synchronized (LOCK_GLOBAL_CONTEXT_LOAD) {
-			// ServletContextWeakReference gcc = ServletContextWeakReference.getInstance(session.getServletContext());
+			// ServletContextWeakReference gcc =
+			// ServletContextWeakReference.getInstance(session.getServletContext());
 			GlobalContext newInstance = (GlobalContext) session.getServletContext().getAttribute(contextKey);
 			if (newInstance == null) {
 				newInstance = new GlobalContext();
@@ -508,14 +513,18 @@ public class GlobalContext implements Serializable {
 
 	private String dataFolder = null;
 
-	private final TimeMap<String, String> oneTimeTokens = new TimeMap<String, String>(60 * 60); // one time tolen live 1u
+	private final TimeMap<String, String> oneTimeTokens = new TimeMap<String, String>(60 * 60); // one
+																								// time
+																								// tolen
+																								// live
+																								// 1u
 
 	public final Object RELEASE_CACHE = new Object();
 
 	public long getAccountSize() {
 		if (accountSize == null) {
 			File file = new File(getDataFolder());
-			if (getStaticConfig().isAccountSize() && file.exists()) {				
+			if (getStaticConfig().isAccountSize() && file.exists()) {
 				accountSize = FileUtils.sizeOfDirectory(file);
 			} else {
 				return -1;
@@ -734,9 +743,13 @@ public class GlobalContext implements Serializable {
 					cache = cacheManager.getCache(cacheName);
 					if (cache == null) {
 						if (cacheName.equals(AbstractVisualComponent.TIME_CACHE_NAME)) {
-							cache = new Cache(cacheName, 0, true, false, 60, 60 * 60); // time cache config
+							cache = new Cache(cacheName, 0, true, false, 60, 60 * 60); // time
+																						// cache
+																						// config
 						} else {
-							cache = new Cache(cacheName, 0, true, false, 60 * 60 * 24, 60 * 60 * 24); // default cache config
+							cache = new Cache(cacheName, 0, true, false, 60 * 60 * 24, 60 * 60 * 24); // default
+																										// cache
+																										// config
 						}
 						cacheManager.addCache(cache);
 					}
@@ -1140,7 +1153,10 @@ public class GlobalContext implements Serializable {
 	}
 
 	/*
-	 * public String getDefaultLanguage() { String defaultLg = "en"; if (getLanguages().size() > 0) { defaultLg = getLanguages().iterator().next(); } return properties.getString("default.language", defaultLg); }
+	 * public String getDefaultLanguage() { String defaultLg = "en"; if
+	 * (getLanguages().size() > 0) { defaultLg =
+	 * getLanguages().iterator().next(); } return
+	 * properties.getString("default.language", defaultLg); }
 	 */
 
 	public String getLook() {
@@ -2500,6 +2516,17 @@ public class GlobalContext implements Serializable {
 		return properties.getString("security.block-password", null);
 	}
 
+	public String getForcedHost() {
+		return properties.getString("url.forced-host", "");
+	}
+
+	public void setForcedHost(String host) {
+		synchronized (properties) {
+			properties.setProperty("url.forced-host", host);
+			save();
+		}
+	}
+
 	public void setBlockPassword(String pwd) {
 		synchronized (properties) {
 			properties.setProperty("security.block-password", pwd);
@@ -2650,7 +2677,16 @@ public class GlobalContext implements Serializable {
 					out.println("**** Over flow to disk ? : " + cache.getCacheConfiguration().isOverflowToDisk());
 
 					/*
-					 * out.println("**** stat cache hits : " + stat.getCacheHits()); out.println("           memory    : " + stat.getInMemoryHits()); out.println("           disk      : " + stat.getDiskStoreObjectCount()); out.println("**** cache Misses    : " + stat.getCacheMisses()); out.println("**** cache count     : " + stat.getObjectCount());
+					 * out.println("**** stat cache hits : " +
+					 * stat.getCacheHits());
+					 * out.println("           memory    : " +
+					 * stat.getInMemoryHits());
+					 * out.println("           disk      : " +
+					 * stat.getDiskStoreObjectCount());
+					 * out.println("**** cache Misses    : " +
+					 * stat.getCacheMisses());
+					 * out.println("**** cache count     : " +
+					 * stat.getObjectCount());
 					 */
 					out.println("****");
 				}
@@ -2672,8 +2708,8 @@ public class GlobalContext implements Serializable {
 		oneTimeTokens.put(newToken, token);
 		return newToken;
 	}
-	
-	public String getOneTimeToken(String token) {		
+
+	public String getOneTimeToken(String token) {
 		String oneTimeToken = oneTimeTokens.get(token);
 		if (oneTimeToken == null) {
 			oneTimeToken = createOneTimeToken(token);
