@@ -137,6 +137,11 @@
 </div>
 
 <div class="line">		
+	<label for="forced-host">${i18n.edit['admin.form.forced-host']}</label>
+	<input type="text" id="forced-host" name="forced-host" value="${currentContext.forcedHost}" />	
+</div>
+
+<div class="line">		
 	<label for="nopup-domain">${i18n.edit['admin.form-popup-domain']}</label>
 	<input type="text" id="nopup-domain" name="nopup-domain" value="${currentContext.noPopupDomain}" />	
 </div>
