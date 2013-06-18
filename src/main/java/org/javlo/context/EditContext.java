@@ -203,10 +203,11 @@ public class EditContext implements Serializable {
 	};
 
 	public static final EditContext getInstance(GlobalContext globalContext, HttpSession session) {
-		EditContext ctx = (EditContext) session.getAttribute(SESSION_KEY);
-		if (ctx == null || !ctx.globalContext.getContextKey().equals(globalContext.getContextKey())) {
+		String key = SESSION_KEY+globalContext.getContextKey();
+		EditContext ctx = (EditContext) session.getAttribute(key);
+		if (ctx == null) {
 			ctx = new EditContext(globalContext, session);
-			session.setAttribute(SESSION_KEY, ctx);
+			session.setAttribute(key, ctx);
 			ctx.globalContext = globalContext;
 		}
 		return ctx;
