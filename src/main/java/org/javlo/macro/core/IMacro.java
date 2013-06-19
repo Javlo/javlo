@@ -24,4 +24,5 @@ public interface IMacro {
 	 */
 	public boolean isPreview();
 
+
 }
