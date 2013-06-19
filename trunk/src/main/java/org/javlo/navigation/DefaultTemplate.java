@@ -118,10 +118,6 @@ public class DefaultTemplate extends Template {
 		return "index.jsp";
 	}
 
-	public String getRenderer() throws IOException, BadXMLException {
-		return "index.jsp";
-	}
-
 	public boolean isRenderer() {
 		return true;
 	}

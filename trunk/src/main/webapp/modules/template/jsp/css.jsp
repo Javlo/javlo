@@ -9,6 +9,11 @@
 		<input type="hidden" name="templateid" value="${currentTemplate.name}" />
 	</div>
 	
+	<div class="action top">
+			<input type="submit" name="back" value="${i18n.edit['global.back']}" />
+			<input type="submit" value="${i18n.edit['global.ok']}" />		
+	</div>
+	
 	<div class="static-tabs">
 		<ul>
 		<c:forEach var="css" items="${currentTemplate.CSS}">
@@ -17,6 +22,7 @@
 		</ul>
 	</div>
 	<div class="body">	
+		
 		<c:if test="${not empty param.css}">	
 			<input type="hidden" name="file" value="${param.css}" />
 			<input type="hidden" name="css" value="${param.css}" />

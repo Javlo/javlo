@@ -364,7 +364,7 @@ public class Module {
 
 	}
 
-	private void loadModule() throws IOException {
+	private synchronized void loadModule() throws IOException {
 
 		cssURI.clear();
 		jsURI.clear();
@@ -690,6 +690,7 @@ public class Module {
 	 * @throws IOException
 	 */
 	public void restoreAll() throws IOException {
+		clearAllBoxes();
 		loadModule();
 	}
 
@@ -836,11 +837,11 @@ public class Module {
 		return box;
 	}
 
-	public synchronized void clearAllBoxes() {
+	public synchronized void clearAllBoxes() {		
 		boxes.clear();
 		sideBoxes.clear();
 		mainBoxes.clear();
-		setSidebar(false);
+		setSidebar(false);		
 	}
 
 	public String getBackUrl() {

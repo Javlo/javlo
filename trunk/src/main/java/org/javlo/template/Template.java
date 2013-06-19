@@ -259,6 +259,7 @@ public class Template implements Comparable<Template> {
 		String type;
 		String parent;
 		String imageFilter;
+		List<String> htmls;
 
 		public TemplateBean() {
 		};
@@ -304,6 +305,8 @@ public class Template implements Comparable<Template> {
 			category = staticConfig.getMarketServerName();
 			imageFilter = template.getImageFiltersRAW();
 			css = template.getCSS();
+			htmls = new LinkedList<String>();
+			htmls.add(template.getHTMLFile(ctx.getDevice()));			
 		}
 
 		public String getPreviewUrl() throws Exception {
@@ -485,6 +488,10 @@ public class Template implements Comparable<Template> {
 
 		public List<String> getCSS() {
 			return css;
+		}
+
+		public List<String> getHtmls() {
+			return htmls;
 		}
 
 	}
@@ -1122,16 +1129,16 @@ public class Template implements Comparable<Template> {
 		return URLHelper.mergePath(getLocalTemplateTargetFolder(globalContext), getHomeRenderer(globalContext));
 	}
 
-	public String getHTMLFile(Device device) {
-		String defaultRenderer = properties.getString("html", getParent().getHTMLFile(device));
+	public String getHTMLFile(Device device) {		
 		String deviceRenderer = null;
 		if (device != null) {
-			deviceRenderer = properties.getString("html." + device.getCode(), defaultRenderer);
+			deviceRenderer = properties.getString("html." + device.getCode(), null);
 		}
 		if (deviceRenderer != null) {
 			logger.fine("device renderer found : " + deviceRenderer + " (template:" + getId() + "");
 			return deviceRenderer;
 		} else {
+			String defaultRenderer = properties.getString("html", getParent().getHTMLFile(device));
 			return defaultRenderer;
 		}
 	}
@@ -1512,6 +1519,12 @@ public class Template implements Comparable<Template> {
 			}
 		}
 		return renderer;
+	}
+	
+	protected List<String> getRenderers() {
+		List<String> renderers = new LinkedList<String>();
+		
+		return renderers;
 	}
 
 	public String getRendererFullName(ContentContext ctx) throws ServiceException {

@@ -8,7 +8,10 @@
    <a class="action-button more" href="${info.currentURL}?filter=&templateid=${currentTemplate.name}"><span>${i18n.edit['template.action.filter-image']}</span></a>
    <c:if test="${fn:length(currentTemplate.CSS)>0}">
        <a class="action-button more" href="${info.currentURL}?css=${currentTemplate.CSS[0]}&templateid=${currentTemplate.name}&webaction=editCSS"><span>${i18n.edit['template.action.css']}</span></a>	
-   </c:if> 
+   </c:if>
+   <c:if test="${fn:length(currentTemplate.htmls)>0}">
+   	<a class="action-button more" href="${info.currentURL}?html=${currentTemplate.htmls[0]}&templateid=${currentTemplate.name}&webaction=editHTML"><span>${i18n.edit['template.action.html']}</span></a>
+   </c:if>	 
    <c:set var="css" value="&css=${param.css}&webaction=editCSS" />
    <a class="action-button" href="${info.currentURL}?webaction=commit&templateid=${currentTemplate.name}${not empty param.css?css:''}"><span>${i18n.edit['template.action.commit']}</span></a>
    <a class="action-button" href="${info.currentURL}?webaction=commitChildren&templateid=${currentTemplate.name}${not empty param.css?css:''}"><span>${i18n.edit['template.action.commit-children']}</span></a>   
