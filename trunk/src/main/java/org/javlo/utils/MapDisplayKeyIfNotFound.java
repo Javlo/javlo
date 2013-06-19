@@ -36,7 +36,7 @@ public class MapDisplayKeyIfNotFound implements Map<String, String> {
 	public String get(Object key) {
 		String value = map.get(key);
 		if (value == null) {
-			return "?-" + key;
+			return ""+key;
 		}
 		return value;
 	}
