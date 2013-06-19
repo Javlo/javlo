@@ -392,9 +392,13 @@
 	padding: 3px;
 }
 
-#preview_command a {
+#preview_command .navigation a {
 	color: #3333aa;
 	text-decoration: none;
+	max-width: 220px;
+	overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
 }
 
 #pc_login label {

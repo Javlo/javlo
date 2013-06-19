@@ -469,7 +469,7 @@ public class XMLManipulationHelper {
 				if (tags[i].getName().equalsIgnoreCase("link")) {
 					String hrefValue = attributes.get("href");
 
-					if ((hrefValue != null) && (!StringHelper.isURL(hrefValue)) && !hrefValue.toLowerCase().startsWith("https")) { // don't modify https because it is external api as facebook and not library
+					if ((hrefValue != null) && !hrefValue.contains("${") && (!StringHelper.isURL(hrefValue)) && !hrefValue.toLowerCase().startsWith("https")) { // don't modify https because it is external api as facebook and not library
 						String newLinkGeneratorIf = "<%if (!XHTMLHelper.allReadyInsered(ctx, \"" + hrefValue + "\")) {%>";
 						resources.add(hrefValue);
 						attributes.put("href", "<%=URLHelper.createStaticTemplateURL(ctx,\"/" + hrefValue + "\", \"" + templateVersion + "\")%>");
