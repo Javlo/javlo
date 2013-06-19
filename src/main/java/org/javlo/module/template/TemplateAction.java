@@ -2,7 +2,6 @@ package org.javlo.module.template;
 
 import java.awt.image.RenderedImage;
 import java.io.File;
-import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.FileReader;
 import java.io.FileWriter;
@@ -42,7 +41,6 @@ import org.javlo.image.ImageConfig;
 import org.javlo.message.GenericMessage;
 import org.javlo.message.MessageRepository;
 import org.javlo.module.core.Module;
-import org.javlo.module.core.ModuleException;
 import org.javlo.module.core.ModulesContext;
 import org.javlo.module.file.FileModuleContext;
 import org.javlo.module.template.remote.IRemoteResourcesFactory;
@@ -138,8 +136,7 @@ public class TemplateAction extends AbstractModuleAction {
 		if (templateName != null) {
 			Template template = TemplateFactory.getTemplates(ctx.getRequest().getSession().getServletContext()).get(templateName);
 			if (template == null) {
-				msg = "template not found : " + templateName;
-				module.clearAllBoxes();
+				msg = "template not found : " + templateName;				
 				module.restoreAll();
 			} else {
 				ctx.getRequest().setAttribute("currentTemplate", new Template.TemplateBean(ctx, template));
@@ -148,7 +145,7 @@ public class TemplateAction extends AbstractModuleAction {
 				fileModuleContext.clear();
 				fileModuleContext.setRoot(template.getTemplateRealPath());
 				fileModuleContext.setTitle("<a href=\"" + URLHelper.createModuleURL(ctx, ctx.getPath(), TemplateContext.NAME, params) + "\">" + template.getId() + "</a>");
-
+				I18nAccess i18nAccess = I18nAccess.getInstance(ctx.getRequest());
 				if (requestService.getParameter("filter", null) != null && requestService.getParameter("back", null) == null) {
  
 					ImageConfig imageConfig = ImageConfig.getNewInstance(globalContext, ctx.getRequest().getSession(), template);
@@ -170,20 +167,33 @@ public class TemplateAction extends AbstractModuleAction {
 					module.getMainBoxes().iterator().next().setRenderer("/jsp/images.jsp");
 
 					// module.setRenderer("/jsp/images.jsp");
-				} else if (requestService.getParameter("css", null) != null && requestService.getParameter("back", null) == null) {
+				} else if (requestService.getParameter("css", null) != null && requestService.getParameter("back", null) == null) {					
 					if (module.getMainBoxes().size() > 0) {
 						module.getMainBoxes().iterator().next().setRenderer("/jsp/css.jsp");
+						module.setRenderer(null);						
+					} else {						
+						module.createMainBox("edit_template", i18nAccess.getText("template.edit.title") + " : " + template.getName(), "/jsp/css.jsp", false);
+						module.setRenderer(null);
 					}
+				} else if (requestService.getParameter("html", null) != null && requestService.getParameter("back", null) == null) {
+					if (module.getMainBoxes().size() > 0) {
+						module.getMainBoxes().iterator().next().setRenderer("/jsp/html.jsp");
+						module.setRenderer(null);
+					} else {						
+						module.createMainBox("edit_template", i18nAccess.getText("template.edit.title") + " : " + template.getName(), "/jsp/html.jsp", false);
+						module.setRenderer(null);
+					}
+				} else if (requestService.getParameter("back", null) != null) {			
+					module.restoreAll();
+					module.createMainBox("edit_template", i18nAccess.getText("template.edit.title") + " : " + template.getName(), "/jsp/edit_template.jsp", false);
 				}
-
 			}
 		} else if (requestService.getParameter("list", null) == null) {
 			FileModuleContext fileModuleContext = FileModuleContext.getInstance(ctx.getRequest());
 			fileModuleContext.clear();
 			fileModuleContext.setRoot(globalContext.getStaticConfig().getTemplateFolder());
 			I18nAccess i18nAccess = I18nAccess.getInstance(ctx.getRequest());
-			fileModuleContext.setTitle("<a href=\"" + URLHelper.createModuleURL(ctx, ctx.getPath(), TemplateContext.NAME, params) + "\">" + i18nAccess.getText("template.action.browse") + "</a>");
-			module.clearAllBoxes();
+			fileModuleContext.setTitle("<a href=\"" + URLHelper.createModuleURL(ctx, ctx.getPath(), TemplateContext.NAME, params) + "\">" + i18nAccess.getText("template.action.browse") + "</a>");			
 			module.restoreAll();
 		}
 
@@ -214,7 +224,7 @@ public class TemplateAction extends AbstractModuleAction {
 				template.getRenderer(ctx); // prepare ids list
 			} catch (BadXMLException e) {
 				e.printStackTrace();
-			}
+			}			
 			module.createMainBox("edit_template", i18nAccess.getText("template.edit.title") + " : " + template.getName(), "/jsp/edit_template.jsp", false);
 		}
 		return msg;
@@ -223,8 +233,7 @@ public class TemplateAction extends AbstractModuleAction {
 	public String performEditTemplate(ServletContext application, StaticConfig staticConfig, ContentContext ctx, RequestService requestService, Module module, I18nAccess i18nAccess, MessageRepository messageRepository) throws IOException {
 		String msg = null;
 		Template template = TemplateFactory.getDiskTemplate(application, requestService.getParameter("templateid", null));
-		if (requestService.getParameter("back", null) != null) {
-			module.clearAllBoxes();
+		if (requestService.getParameter("back", null) != null) {			
 			module.restoreAll();
 		} else {
 			try {
@@ -299,13 +308,11 @@ public class TemplateAction extends AbstractModuleAction {
 				}
 				currentModule.setRenderer("/jsp/remote_templates.jsp");
 				currentModule.createSideBox("sponsors", i18nAccess.getText("global.sponsors"), "/jsp/sponsors.jsp", false);
-			} else {
-				currentModule.clearAllBoxes();
+			} else {				
 				currentModule.restoreAll();
 			}
-		} else {
-			currentModule.restoreAll();
-			currentModule.clearAllBoxes();
+		} else {			
+			currentModule.restoreAll();			
 		}
 		return null;
 	}
@@ -355,9 +362,8 @@ public class TemplateAction extends AbstractModuleAction {
 
 				messageRepository.setGlobalMessageAndNotification(ctx, new GenericMessage(i18nAccess.getText("template.message.imported", new String[][] { { "name", newTemplate.getId() } }), GenericMessage.INFO));
 
-				templateContext.setCurrentLink(null); // return to local template list.
-				currentModule.restoreAll();
-				currentModule.clearAllBoxes();
+				templateContext.setCurrentLink(null); // return to local template list.				
+				currentModule.restoreAll();				
 
 			} catch (Exception e) {
 				e.printStackTrace();
@@ -529,6 +535,37 @@ public class TemplateAction extends AbstractModuleAction {
 		return null;
 	}
 
+	public static String performEditHTML(RequestService rs, ServletContext application, ContentContext ctx, MessageRepository messageRepository, I18nAccess i18nAccess) throws IOException {
+		String html = rs.getParameter("html", null);
+		if (html == null) {
+			return "error : no 'html' param.";
+		} else {
+			Template template = TemplateFactory.getTemplates(application).get(rs.getParameter("templateid", ""));
+			if (template == null) {
+				return "template not found";
+			} else {
+				// store new value
+				if (rs.getParameter("text", null) != null) {
+					File htmlFile = new File(URLHelper.mergePath(template.getSourceFolder().getAbsolutePath(), rs.getParameter("file", "")));
+					if (htmlFile.exists() && htmlFile.isFile()) {
+						ResourceHelper.writeStringToFile(htmlFile, rs.getParameter("text", null));
+					} else {
+						return "file not found : " + htmlFile;
+					}
+				}
+				// load current value
+				File htmlFile = new File(URLHelper.mergePath(template.getSourceFolder().getAbsolutePath(), html));
+				if (!htmlFile.exists()) {
+					return "file not found : " + htmlFile;
+				} else {
+					String text = ResourceHelper.loadStringFromFile(htmlFile);
+					ctx.getRequest().setAttribute("text", text);
+				}
+			}
+		}
+		return null;
+	}
+
 	public static String performEditCSS(RequestService rs, ServletContext application, ContentContext ctx, MessageRepository messageRepository, I18nAccess i18nAccess) throws IOException {
 		String css = rs.getParameter("css", null);
 		if (css == null) {
@@ -538,7 +575,6 @@ public class TemplateAction extends AbstractModuleAction {
 			if (template == null) {
 				return "template not found";
 			} else {
-
 				// store new value
 				if (rs.getParameter("text", null) != null) {
 					File cssFile = new File(URLHelper.mergePath(template.getSourceFolder().getAbsolutePath(), rs.getParameter("file", "")));
@@ -548,7 +584,6 @@ public class TemplateAction extends AbstractModuleAction {
 						return "file not found : " + cssFile;
 					}
 				}
-
 				// load current value
 				File cssFile = new File(URLHelper.mergePath(template.getSourceFolder().getAbsolutePath(), css));
 				if (!cssFile.exists()) {

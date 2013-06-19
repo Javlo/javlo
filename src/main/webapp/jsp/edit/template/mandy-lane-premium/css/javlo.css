@@ -254,7 +254,12 @@ a.popup span {
 }
 
 .standard-form .action {
-	margin-top: 10px;
+	margin-top: 10px;	
+}
+
+.standard-form .action.top {
+	margin-top: 0;
+	margin-bottom: 10px;
 }
 
 .standard-form .action,.array-form .action {
