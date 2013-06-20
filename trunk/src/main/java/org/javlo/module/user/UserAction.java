@@ -198,8 +198,6 @@ public class UserAction extends AbstractModuleAction {
 			UserModuleContext userContext = UserModuleContext.getInstance(ctx.getRequest());
 			IUserFactory userFactory = userContext.getUserFactory(ctx);
 
-			System.out.println("***** UserAction.performUpdate : userFactory : " + userFactory); // TODO: remove debug trace
-
 			User user = userFactory.getUser(requestService.getParameter("user", null));
 			if (user == null) {
 				return "user not found : " + requestService.getParameter("user", null);
