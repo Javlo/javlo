@@ -59,6 +59,8 @@ import org.javlo.service.PersistenceService;
 import org.javlo.service.PublishListener;
 import org.javlo.service.RequestService;
 import org.javlo.service.resource.ResourceStatus;
+import org.javlo.service.shared.SharedContent;
+import org.javlo.service.shared.SharedContentService;
 import org.javlo.service.syncro.SynchroThread;
 import org.javlo.template.Template;
 import org.javlo.template.TemplateFactory;
@@ -66,7 +68,6 @@ import org.javlo.thread.AbstractThread;
 import org.javlo.user.AdminUserFactory;
 import org.javlo.user.AdminUserSecurity;
 import org.javlo.user.IUserFactory;
-import org.javlo.user.UserFactory;
 import org.javlo.ztatic.FileCache;
 
 public class Edit extends AbstractModuleAction {
@@ -876,6 +877,12 @@ public class Edit extends AbstractModuleAction {
 			if (pageType != null) {
 				page.setType(pageType);
 			}
+			
+			/** shared **/
+			String pageShared = requestService.getParameter("share", null);
+			if (pageShared != null) {
+				page.setSharedName(pageShared);
+			}
 
 			/** publish time range **/
 			if (requestService.getParameter("start_publish", null) != null) {
@@ -1438,6 +1445,18 @@ public class Edit extends AbstractModuleAction {
 		}
 		if (editCtx.isEditPreview()) {
 			ctx.setClosePopup(true);
+		}
+		return null;
+	}
+	
+	public static String performInsertShared(RequestService rs, ContentContext ctx, ContentService content, SharedContentService sharedContentService, Module currentModule, MessageRepository messageRepository, I18nAccess i18nAccess) throws Exception {
+		String sharedData = rs.getParameter("sharedContent", null);
+		String previousId = rs.getParameter("previous", null);
+		if (sharedData == null || previousId == null) {
+			return "bad request structure, need sharedData and previousId as parameter.";
+		} else {
+			SharedContent sharedContent = sharedContentService.getSharedContent(ctx, sharedData);
+			content.createContent(ctx, sharedContent.getContent(), previousId,true);
 		}
 		return null;
 	}

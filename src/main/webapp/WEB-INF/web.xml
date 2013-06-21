@@ -186,18 +186,28 @@
 	<servlet>
 		<servlet-name>mailing</servlet-name>
 		<servlet-class>org.javlo.servlet.MailingServlet</servlet-class>
-		<load-on-startup>1</load-on-startup>
+		<load-on-startup>0</load-on-startup>
 	</servlet>
 	<servlet-mapping>
 		<servlet-name>mailing</servlet-name>
 		<url-pattern>/mailing/*</url-pattern>
+	</servlet-mapping>
+	
+	<servlet>
+		<servlet-name>context</servlet-name>
+		<servlet-class>org.javlo.servlet.ContextServlet</servlet-class>
+		<load-on-startup>0</load-on-startup>
+	</servlet>
+	<servlet-mapping>
+		<servlet-name>context</servlet-name>
+		<url-pattern>/context/*</url-pattern>
 	</servlet-mapping>
 
 	<!-- REMOTE -->
 	<servlet>
 		<servlet-name>RemoteResourceServlet</servlet-name>
 		<servlet-class>org.javlo.servlet.RemoteResourceServlet</servlet-class>
-		<load-on-startup>1</load-on-startup>
+		<load-on-startup>0</load-on-startup>
 	</servlet>
 	<servlet-mapping>
 		<servlet-name>RemoteResourceServlet</servlet-name>
@@ -207,7 +217,7 @@
 	<servlet>
 		<servlet-name>FolderServlet</servlet-name>
 		<servlet-class>org.javlo.servlet.FolderServlet</servlet-class>
-		<load-on-startup>1</load-on-startup>
+		<load-on-startup>0</load-on-startup>
 	</servlet>
 	<servlet-mapping>
 		<servlet-name>FolderServlet</servlet-name>

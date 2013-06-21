@@ -266,6 +266,10 @@ public class InfoBean {
 	public String getStaticRootURL() {
 		return URLHelper.createStaticURL(ctx, "/");
 	}
+	
+	public String getContextDownloadURL() {
+		return URLHelper.createStaticURL(ctx, "/context");
+	}
 
 	public String getCaptchaURL() {
 		return URLHelper.createStaticURL(ctx, "/captcha.jpg");

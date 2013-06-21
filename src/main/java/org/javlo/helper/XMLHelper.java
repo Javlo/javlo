@@ -291,8 +291,11 @@ public class XMLHelper {
 			if (page.isBreakRepeat()) {
 				out.print("\" breakrepeat=\"");
 				out.print(page.isBreakRepeat());
+			}			
+			if (page.getSharedName() != null && page.getSharedName().trim().length() > 0) {
+				out.print("\" sharedName=\"");
+				out.print(page.getSharedName());
 			}
-
 			if (page.isHttps())
 				if (validationDate != null && validationDate.trim().length() > 0) {
 					out.print("\" https=\"");

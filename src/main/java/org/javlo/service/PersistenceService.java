@@ -580,6 +580,8 @@ public class PersistenceService {
 		page.setValidationDate(validationDate);
 		page.setBlocked(StringHelper.isTrue(pageXML.getAttributeValue("blocked", "false")));
 		page.setBlocker(pageXML.getAttributeValue("blocker", ""));
+		
+		page.setSharedName(pageXML.getAttributeValue("sharedName", null));
 
 		String type = pageXML.getAttributeValue("type", null);
 		if (type != null) {

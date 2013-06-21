@@ -325,7 +325,7 @@
 *************************/
 
 /*** RESETER ***/
-#preview_command,#preview_command h1, #preview_command h2, #preview_command h3, #preview_command h4, #preview_command li, #preview_command ul,#preview_command label,#preview_command img,#preview_command div,#preview_command a,#preview_command span,#preview_command input,#preview_command fieldset,#preview_command legend,#preview_command form,#preview_command select,#preview_command option,#preview_command .navigation
+#preview_command figure, #preview_command .content, #preview_command .description, #preview_command,#preview_command h1, #preview_command h2, #preview_command h3, #preview_command h4, #preview_command li, #preview_command ul,#preview_command label,#preview_command img,#preview_command div,#preview_command a,#preview_command span,#preview_command input,#preview_command fieldset,#preview_command legend,#preview_command form,#preview_command select,#preview_command option,#preview_command .navigation
 	{
 	margin: 0;
 	border: 0 none;
@@ -339,6 +339,7 @@
 	display: block;
 	list-style: none;
 	font-weight: normal;
+	width: auto;
 	height: auto;
 	text-shadow: none;
 	line-height: normal; 
@@ -930,4 +931,42 @@ body.fix-preview {
 .jcreator img {
 	width: 50px;
 	height: 50px;
+}
+
+#preview_command .shared-content {
+	overflow: auto;
+	height: 235px;
+}
+
+#preview_command .shared-content .content-wrapper {
+	margin: 5px 0;
+	border-bottom: 1px solid #AAAAAA;
+	padding: 5px;	
+	overflow: hidden;
+	display: block;
+}
+
+#preview_command .shared-content .content {
+	display: block;	
+	overflow: hidden;
+	width: 100%;	
+}
+
+#preview_command .shared-content h4 {
+	font-size: 12px;
+	margin: 0 0 3px 0;
+	padding: 0;
+	font-weight: bold;
+}
+
+#preview_command .shared-content .content figure {
+	margin: 0;
+	padding: 0;
+	float: left;
+	margin-right: 5px;
+}
+
+#preview_command .shared-content .content .description {
+	height: 75px;
+	overflow: hidden;
 }

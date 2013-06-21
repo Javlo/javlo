@@ -27,6 +27,7 @@ import org.javlo.service.ContentService;
 import org.javlo.service.NotificationService;
 import org.javlo.service.PersistenceService;
 import org.javlo.service.RequestService;
+import org.javlo.service.shared.SharedContentService;
 import org.javlo.user.AdminUserFactory;
 import org.javlo.user.AdminUserSecurity;
 import org.javlo.user.User;
@@ -71,6 +72,7 @@ public class LangHelper {
 	 *         <li>? extends AbstractModuleContext : instanciate a abstract module</li>>
 	 *         <li>String : the query parameter (when user make a search)</li>
 	 *         <li>NotificationService</li>
+	 *         <li>SharedContentService</li>
 	 *         </ul>
 	 * @throws Exception
 	 */
@@ -135,6 +137,8 @@ public class LangHelper {
 			return EditContext.getInstance(GlobalContext.getInstance(request), request.getSession()).getEditUser();
 		} else if (c.equals(NotificationService.class)) {
 			return NotificationService.getInstance(GlobalContext.getInstance(request));
+		} else if (c.equals(SharedContentService.class)) {
+			return SharedContentService.getInstance(ContentContext.getContentContext(request, response));
 		}
 		return null;
 	}
