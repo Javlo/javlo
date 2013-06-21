@@ -330,6 +330,7 @@ public class MenuElement implements Serializable {
 		boolean breakRepeat;
 		int priority;
 		String type = PAGE_TYPE_DEFAULT;
+		String sharedName = null;
 
 		public ImageTitleBean imageLink;
 
@@ -578,6 +579,14 @@ public class MenuElement implements Serializable {
 
 		public void setType(String type) {
 			this.type = type;
+		}
+		
+		public String getSharedName() {
+			return StringHelper.neverNull(sharedName);
+		}
+		
+		public void setSharedName(String sharedName) {
+			this.sharedName = sharedName;
 		}
 
 	}
@@ -886,6 +895,11 @@ public class MenuElement implements Serializable {
 				return null;
 			}
 		}
+		
+		@Override
+		public String getSharedName() {
+			return page.getSharedName();
+		}
 
 		@Override
 		public String getType() {
@@ -930,6 +944,7 @@ public class MenuElement implements Serializable {
 			pageDescription.priority = getPriority();
 			pageDescription.childrenCategories = getChildrenCategories(ctx);
 			pageDescription.type = getType();
+			pageDescription.sharedName = getSharedName();
 		}
 		return pageDescription;
 	}
@@ -1065,6 +1080,8 @@ public class MenuElement implements Serializable {
 	private Date validationDate = null;
 
 	private String linkedURL = "";
+	
+	private String sharedName = null;
 
 	private boolean https = false;
 
@@ -3996,5 +4013,13 @@ public class MenuElement implements Serializable {
 
 	public void setType(String type) {
 		this.type = type;
+	}
+
+	public String getSharedName() {
+		return sharedName;
+	}
+
+	public void setSharedName(String sharedName) {
+		this.sharedName = sharedName;
 	}
 }

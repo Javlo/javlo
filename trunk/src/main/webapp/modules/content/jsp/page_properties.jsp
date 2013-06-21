@@ -119,6 +119,13 @@
 
 </c:if>
 
+<c:if test="${globalContext.staticConfig.sharedContent}">
+<div class="line">
+	<label for="shared_name">${i18n.edit['item.shared']}</label>
+	<input type="text" id="shared_name" name="share" ${page.info.visible?'checked="checked"':''} value="${page.info.sharedName}" />
+</div>
+</c:if>
+
 <div class="roles">
 <c:if test="${fn:length(adminRoles) > 0}">
 <div class="one_half">

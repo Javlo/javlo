@@ -1215,5 +1215,9 @@ public class StaticConfig extends Observable {
 	public boolean isFixPreview() {
 		return properties.getBoolean("fix-preview", true);
 	}
+	
+	public boolean isSharedContent() {
+		return properties.getBoolean("shared-content", false);
+	}
 
 }

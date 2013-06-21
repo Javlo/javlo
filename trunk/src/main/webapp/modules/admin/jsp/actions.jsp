@@ -12,6 +12,12 @@
 </div>
 </c:if>
 <c:if test="${info.admin}">
+<c:if test="${not empty context}">
+<div class="link"><a href="${info.contextDownloadURL}/${context}.properites">${context}.properties</a></div>
+<a class="popup cboxElement" title="upload" href="${info.absoluteURLPrefix}${currentModule.path}/jsp/upload.jsp?currentURL=${info.currentURL}&context=${context}">
+</c:if>
+<span>${i18n.edit['admin.link.uploadsite']}</span>
+</a>
 <c:set var="paramContext" value="&context=${context}" />
 <a class="action-button clear-cache" href="${info.currentURL}?webaction=clearcache${not empty context?paramContext:''}"><span>${i18n.edit['admin.clear-cache']}</span></a>
 <a class="action-button clear-cache" href="${info.currentURL}?webaction=clearimagecache${not empty context?paramContext:''}"><span>${i18n.edit['admin.clear-image-cache']}</span></a>

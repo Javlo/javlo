@@ -150,6 +150,7 @@ public class StructuredProperties extends Properties {
 		}
 		bw.write("#" + new Date().toString());
 		bw.newLine();
+		bw.newLine();
 		synchronized (this) {
 
 			List keysList = new LinkedList();

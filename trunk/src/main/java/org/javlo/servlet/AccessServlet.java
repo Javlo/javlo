@@ -62,6 +62,7 @@ import org.javlo.service.ListService;
 import org.javlo.service.RequestService;
 import org.javlo.service.remote.RemoteMessage;
 import org.javlo.service.remote.RemoteMessageService;
+import org.javlo.service.shared.SharedContentService;
 import org.javlo.service.social.SocialService;
 import org.javlo.service.syncro.SynchroThread;
 import org.javlo.template.Template;
@@ -73,6 +74,8 @@ import org.javlo.utils.DebugListening;
 import org.xhtmlrenderer.pdf.ITextRenderer;
 import org.xhtmlrenderer.swing.Java2DRenderer;
 import org.xhtmlrenderer.util.FSImageWriter;
+
+import sun.security.jca.GetInstance;
 
 public class AccessServlet extends HttpServlet implements IVersion {
 
@@ -706,6 +709,10 @@ public class AccessServlet extends HttpServlet implements IVersion {
 
 							if (ctx.getRenderMode() == ContentContext.PREVIEW_MODE && staticConfig.isFixPreview()) {
 								ctx.getRequest().setAttribute("components", ComponentFactory.getComponentForDisplay(ctx));
+								if (ctx.getGlobalContext().getStaticConfig().isSharedContent()) {
+									SharedContentService sharedContentService  = SharedContentService.getInstance(ctx);
+									ctx.getRequest().setAttribute("sharedContent", sharedContentService.getAllSharedContent(ctx));
+								}
 							}
 
 							/*

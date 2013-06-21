@@ -57,11 +57,14 @@ layerOver = function(item, deletable) {
 	var layer = jQuery("#preview-layer");	
 	layer.data("deletable", deletable);
 	var insideLayer = jQuery("#preview-layer span");
-	if (item == null) {		
+	if (item == null) {	
+		console.log("remove layer");
 		layer.css("z-index", -1);
 		layer.css("display", "none");
 		layer.data("compType", null);
+		layer.data("sharedContent", null);
 	} else {
+		console.log("display layer");
 		var comp = jQuery(item);
 		if (layer.width() > 0) {
 			layer.css("z-index", 10000);
@@ -70,8 +73,8 @@ layerOver = function(item, deletable) {
 		layer.css("top", comp.offset().top);
 		layer.css("left", comp.offset().left);
 		
-		layer.css("width", comp.width());			
-		layer.css("height", comp.height());
+		layer.css("width", comp.outerWidth(true));			
+		layer.css("height", comp.outerHeight(true));
 		
 		layer.data("subItem", comp);
 	}
@@ -106,16 +109,17 @@ initPreview = function() {
 		return false;
 	});
 	
-	jQuery(".component-list .component").mouseover(function() {
+	jQuery(".component-list .component, .shared-content .content").mouseover(function() {
 		if (!dragging) {			
 			layerOver(this, false);
 			var layer = jQuery("#preview-layer");
-			layer.data("compType", jQuery(this).data("type"));		
+			layer.data("compType", jQuery(this).data("type"));
+			layer.data("sharedContent", jQuery(this).data("shared"));
 		}
 		return false;
 	});
 	
-	jQuery(".component-list .component").mouseout(function() {
+	jQuery(".component-list .component,  .shared-content .content").mouseout(function() {
 		if (!dragging) {			
 			layerOver(this, false);
 		}
@@ -156,6 +160,7 @@ initPreview = function() {
 	
 	});
 	jQuery("#preview-layer").on('mouseout', function(e) {
+		console.log("mouseout dragging = "+dragging);
 		if (!dragging) {
 			layerOver(null);
 		}
@@ -182,6 +187,7 @@ initPreview = function() {
 							var layer = jQuery("#preview-layer");
 							var comp = layer.data("subItem");							
 							var compType = layer.data("compType");
+							var sharedContent = layer.data("sharedContent");
 							var area = null;
 							if (compType !== undefined && compType != null) {								
 								var previewId = jQuery(this).attr("id").replace("cp_", "");
@@ -193,6 +199,18 @@ initPreview = function() {
 								var ajaxURL = currentURL
 								+ "?webaction_1=edit.insert&webaction_2=data.updateArea&type="
 								+ compType + "&previous=" + previewId
+								+ "&area=" + area+ "&render-mode=3&init=true";
+								ajaxRequest(ajaxURL);
+							} else if (sharedContent != null && sharedContent !== undefined) {
+								var previewId = jQuery(this).attr("id").replace("cp_", "");
+								var parent = jQuery(this).parent();
+								while (jQuery(parent).get(0).tagName.toLowerCase() != "body" && !parent.hasClass("_area")) {									
+									parent = jQuery(parent).parent();									
+								}
+								area = jQuery(parent).attr("id");
+								var ajaxURL = currentURL
+								+ "?webaction_1=edit.insertShared&webaction_2=data.updateArea&sharedContent="
+								+ sharedContent + "&previous=" + previewId
 								+ "&area=" + area+ "&render-mode=3&init=true";
 								ajaxRequest(ajaxURL);
 							} else if (comp !== undefined && jQuery(comp).attr('id') != jQuery(this).attr("id")) {

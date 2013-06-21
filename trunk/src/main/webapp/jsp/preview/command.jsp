@@ -80,6 +80,14 @@ editCtx.setRenderMode(ContentContext.EDIT_MODE);
 					<div id="ajax-loader">&nbsp;</div>
 					<div id="upload-zone" data-url="${info.uploadURL}" class="drop-files"><span>${i18n.edit['preview.upload-here']}</span></div>
 				</div>
+				<c:if test="${globalContext.staticConfig.sharedContent}">
+				<c:if test="${not empty sharedContent}"><fieldset class="shared closable">
+					<legend>${i18n.edit["preview.shared-content"]}</legend>
+					<jsp:include page="shared_content.jsp" />
+				</fieldset>
+				</c:if>
+				
+				</c:if>
 				<c:if test="${not empty components}"><fieldset class="closable">
 					<legend>${i18n.edit["component.choose"]}</legend>
 					<jsp:include page="component.jsp" />

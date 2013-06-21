@@ -2736,4 +2736,21 @@ public class GlobalContext implements Serializable {
 	public Object getLockLoadContent() {
 		return lockLoadContent;
 	}
+	
+	public Map<String,String> getConfig() {
+		Map<String,String> outMap = new HashMap<String, String>();
+		Iterator<String> keys = properties.getKeys();
+		while (keys.hasNext()) {
+			String key = keys.next();
+			outMap.put(key, ""+properties.getProperty(key));
+		}
+		return outMap;
+	}
+	
+	public void setConfig (Map config) {
+		for (Object key : config.keySet()) {			
+			properties.setProperty(""+key, config.get(key));
+			save();
+		}
+	}
 }

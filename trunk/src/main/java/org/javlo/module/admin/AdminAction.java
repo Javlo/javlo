@@ -2,11 +2,13 @@ package org.javlo.module.admin;
 
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
+import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.PrintStream;
 import java.lang.reflect.InvocationTargetException;
+import java.net.URL;
 import java.text.SimpleDateFormat;
 import java.util.Arrays;
 import java.util.Collection;
@@ -23,6 +25,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 
 import org.apache.commons.configuration.ConfigurationException;
+import org.apache.commons.fileupload.FileItem;
 import org.javlo.actions.AbstractModuleAction;
 import org.javlo.component.core.ComponentFactory;
 import org.javlo.component.core.IContentVisualComponent;
@@ -35,6 +38,7 @@ import org.javlo.context.GlobalContextFactory;
 import org.javlo.helper.DebugHelper;
 import org.javlo.helper.LangHelper;
 import org.javlo.helper.PatternHelper;
+import org.javlo.helper.ResourceHelper;
 import org.javlo.helper.StringHelper;
 import org.javlo.helper.URLHelper;
 import org.javlo.i18n.I18nAccess;
@@ -45,6 +49,7 @@ import org.javlo.message.MessageRepository;
 import org.javlo.module.core.Module;
 import org.javlo.module.core.ModuleException;
 import org.javlo.module.core.ModulesContext;
+import org.javlo.module.file.FileModuleContext;
 import org.javlo.service.ContentService;
 import org.javlo.service.LogService;
 import org.javlo.service.RequestService;
@@ -1288,6 +1293,32 @@ public class AdminAction extends AbstractModuleAction {
 				}
 			}
 		}
+		return null;
+	}
+	
+	public static String performUpload(RequestService rs, HttpSession session, ContentContext ctx, MessageRepository messageRepository, I18nAccess i18nAccess) throws IOException, ConfigurationException {
+		GlobalContext currentContext = GlobalContext.getInstance(session, rs.getParameter("context", null));
+		InputStream in = null;
+		for (FileItem file : rs.getAllFileItem()) {
+			in = file.getInputStream();
+		}		
+		String urlStr = rs.getParameter("url", "");
+		if (urlStr.trim().length() > 0) {
+			URL url = new URL(urlStr);
+			in = url.openConnection().getInputStream();
+		}
+
+		try {
+			if (in != null) {
+				Properties prop = new Properties();
+				prop.load(in);
+				currentContext.setConfig(prop);
+			}
+		} finally {
+			ResourceHelper.closeResource(in);
+		}			
+
+		
 		return null;
 	}
 }
