@@ -195,12 +195,13 @@ public class ServerClientService {
 			onSuccess();
 
 			if (response.getStatusLine().getStatusCode() == 200) {
+				I18nService i18n = ServiceFactory.getInstance().getI18n();
 				HttpEntity entity = response.getEntity();
 				String content = EntityUtils.toString(entity);
 				if (server.getCheckPhrase() == null || server.getCheckPhrase().isEmpty()) {
-					onWarning("No check phrase configured!");
+					onWarning(i18n.get("alert.no-checkphrase-configured"));
 				} else if (!content.contains(server.getCheckPhrase())) {
-					onWarning("Check phrase not found!");
+					onWarning(i18n.get("alert.checkphrase-not-found"));
 				}
 			} else {
 				onWarning("HTTP status: " + response.getStatusLine());

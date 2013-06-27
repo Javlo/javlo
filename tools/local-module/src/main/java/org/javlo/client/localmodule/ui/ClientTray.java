@@ -46,7 +46,7 @@ public class ClientTray {
 		ServerStatus worseStatus = ServerStatus.UNKNOWN;
 		ServiceFactory factory = ServiceFactory.getInstance();
 		ConfigService config = factory.getConfig();
-		synchronized (config.getBean()) {
+		synchronized (config) {
 			for (ServerConfig sc : config.getBean().getServers()) {
 				ServerClientService scs = factory.getClient(sc);
 				if (scs.getStatus().compareTo(worseStatus) >= 1) {

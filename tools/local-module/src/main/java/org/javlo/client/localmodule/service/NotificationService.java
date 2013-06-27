@@ -14,7 +14,7 @@ public class NotificationService {
 
 	private List<RemoteNotification> notifications = new LinkedList<RemoteNotification>();
 
-	public void pushNotifications(List<RemoteNotification> notifications) {
+	public void pushNotifications(List<RemoteNotification> notifications, boolean showLastNotif) {
 		boolean doRefreshNotifications = false;
 		RemoteNotification lastNotification = null;
 		for (RemoteNotification notification : notifications) {
@@ -27,7 +27,7 @@ public class NotificationService {
 		if (doRefreshNotifications) {
 			factory.getTray().refreshNotifications(this.notifications);
 		}
-		if (lastNotification != null) {
+		if (showLastNotif && lastNotification != null) {
 			String caption = lastNotification.getTitle();
 			String message = lastNotification.getMessage();
 			MessageType type = translateType(lastNotification.getType());

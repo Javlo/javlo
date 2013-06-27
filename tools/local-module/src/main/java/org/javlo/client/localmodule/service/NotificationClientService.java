@@ -1,14 +1,22 @@
 package org.javlo.client.localmodule.service;
 
+import java.awt.TrayIcon.MessageType;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
+import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.Map;
+import java.util.Map.Entry;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
 import org.javlo.client.localmodule.model.RemoteNotification;
 import org.javlo.client.localmodule.model.ServerConfig;
+import org.javlo.client.localmodule.model.ServerStatus;
 import org.javlo.client.localmodule.model.ServerType;
 
 public class NotificationClientService {
@@ -110,6 +118,11 @@ public class NotificationClientService {
 	}
 
 	private void refreshNotifications() {
+		Map<ServerConfig, ServerStatus> previousStatuses = new HashMap<ServerConfig, ServerStatus>();
+		ConfigService config = factory.getConfig();
+		for (ServerConfig server : config.getBean().getServers()) {
+			previousStatuses.put(server, factory.getClient(server).getStatus());
+		}
 		List<RemoteNotification> allNewNotifications = new ArrayList<RemoteNotification>();
 		for (ServerConfig server : factory.getConfig().getBean().getServers()) {
 			ServerClientService client = factory.getClient(server);
@@ -139,7 +152,32 @@ public class NotificationClientService {
 					return o1.getCreationDate().compareTo(o2.getCreationDate());
 				}
 			});
-			factory.getNotificationService().pushNotifications(allNewNotifications);
 		}
+		Map<ServerConfig, ServerStatus> serverToNotify = new LinkedHashMap<ServerConfig, ServerStatus>();
+		for (ServerConfig server : config.getBean().getServers()) {
+			ServerStatus previousStatus = previousStatuses.get(server);
+			ServerStatus newStatus = factory.getClient(server).getStatus();
+			if (previousStatus != newStatus) {
+				if (newStatus.compareTo(ServerStatus.OK) >= 1) {
+					serverToNotify.put(server, newStatus);
+				}
+			}
+		}
+		boolean showNotif = true;
+		if (!serverToNotify.isEmpty()) {
+			I18nService i18n = factory.getI18n();
+			String msg = "";
+			for (Entry<ServerConfig, ServerStatus> entry : serverToNotify.entrySet()) {
+				msg += entry.getKey().getLabel() + ": " + i18n.get("status.server." + entry.getValue().name().toLowerCase()) + "\n";
+			}
+			factory.getTray().displayMessage(i18n.get("alert.new-troubles"), msg, MessageType.WARNING, false, new ActionListener() {
+				@Override
+				public void actionPerformed(ActionEvent e) {
+					factory.getAction().showStatus();
+				}
+			});
+			showNotif = false;
+		}
+		factory.getNotificationService().pushNotifications(allNewNotifications, showNotif);
 	}
 }
