@@ -33,6 +33,7 @@ import org.javlo.helper.ResourceHelper;
 import org.javlo.helper.ServletHelper;
 import org.javlo.helper.StringHelper;
 import org.javlo.helper.URLHelper;
+import org.javlo.helper.importation.TanukiImportTools;
 import org.javlo.i18n.I18nAccess;
 import org.javlo.macro.ImportJCRPageMacro;
 import org.javlo.message.GenericMessage;
@@ -150,6 +151,9 @@ public class DataAction implements IAction {
 		FileItem imageItem = null;
 		try {
 			for (FileItem item : rs.getAllFileItem()) {
+				
+				logger.info("try to import ("+ctx.getCurrentUserId()+") : "+item.getName());
+				
 				if (StringHelper.isImage(item.getName())) {
 					countImages++;
 					if (imageItem == null) {
@@ -165,6 +169,11 @@ public class DataAction implements IAction {
 					InputStream in = item.getInputStream();
 					ImportJCRPageMacro.importFile(ctx, in, item.getName(), ctx.getCurrentPage());
 					ResourceHelper.closeResource(in);
+					ctx.setNeedRefresh(true);
+				} else if (item.getName().contains("-tanuki-")) {
+					InputStream in = item.getInputStream();
+					TanukiImportTools.createContentFromTanuki(ctx, in, item.getName(), ctx.getRequestContentLanguage());
+					in.close();					
 					ctx.setNeedRefresh(true);
 				} else {
 					String resourceRelativeFolder = URLHelper.mergePath(gc.getStaticConfig().getStaticFolder(), tpl.getImportResourceFolder(), importFolder);

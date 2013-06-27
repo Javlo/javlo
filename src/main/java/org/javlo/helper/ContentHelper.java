@@ -275,6 +275,8 @@ public class ContentHelper {
 
 		return outBeans;
 	}
+	
+	
 
 	private static Locale getLocalBySuffix(String name) {
 		if (name.contains("_")) {

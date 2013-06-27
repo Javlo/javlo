@@ -1,5 +1,6 @@
 package org.javlo.data;
 
+import java.io.File;
 import java.util.Collection;
 import java.util.Date;
 import java.util.HashMap;
@@ -500,5 +501,10 @@ public class InfoBean {
 
 	public void setTools(boolean actionBar) {
 		this.tools = actionBar;
+	}
+	
+	public boolean isLocalModule() {
+		String localModulePath = ctx.getRequest().getSession().getServletContext().getRealPath("/webstart/localmodule.jnlp.jsp");
+		return (new File(localModulePath)).isFile();
 	}
 }

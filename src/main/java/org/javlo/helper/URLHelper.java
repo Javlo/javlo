@@ -955,7 +955,7 @@ public class URLHelper extends ElementaryURLHelper {
 		String path = url.getPath();
 		String[] pathItems = StringUtils.splitByWholeSeparator(path, "/");
 		for (int i = 0; i < pathItems.length; i++) {
-			if (pathItems[i].startsWith("edit-") || pathItems[i].equals("edit") || pathItems[i].startsWith("ajax-") || pathItems[i].equals("ajax") || pathItems[i].equals("preview")) {
+			if (pathItems[i].startsWith("edit-") || pathItems[i].equals("edit") || pathItems[i].equals("view") || pathItems[i].startsWith("ajax-") || pathItems[i].equals("ajax") || pathItems[i].equals("preview")) {
 				pathItems[i] = mode;
 			}
 		}
@@ -963,7 +963,13 @@ public class URLHelper extends ElementaryURLHelper {
 		if (url.getPort() >= 0 && url.getPort() != 80) {
 			port = ":" + url.getPort();
 		}
-		return url.getProtocol() + "://" + url.getHost() + port + '/' + URLHelper.mergePath(pathItems);
+		
+		String query = "";
+		if (url.getQuery() != null) {
+			query = '?'+url.getQuery();
+		}
+		
+		return url.getProtocol() + "://" + url.getHost() + port + '/' + URLHelper.mergePath(pathItems) + query;
 	}
 
 	/**

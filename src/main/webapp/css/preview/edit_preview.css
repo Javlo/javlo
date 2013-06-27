@@ -935,7 +935,7 @@ body.fix-preview {
 
 #preview_command .shared-content {
 	overflow: auto;
-	height: 235px;
+	max-height: 600px;
 }
 
 #preview_command .shared-content .content-wrapper {
