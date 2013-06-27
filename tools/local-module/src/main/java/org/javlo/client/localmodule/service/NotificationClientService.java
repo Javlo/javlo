@@ -9,6 +9,7 @@ import java.util.logging.Logger;
 
 import org.javlo.client.localmodule.model.RemoteNotification;
 import org.javlo.client.localmodule.model.ServerConfig;
+import org.javlo.client.localmodule.model.ServerType;
 
 public class NotificationClientService {
 	private static final Logger logger = Logger.getLogger(NotificationClientService.class.getName());
@@ -103,8 +104,8 @@ public class NotificationClientService {
 				}
 			}
 		} catch (Exception ex) {
-			factory.getTray().displayErrorMessage(factory.getI18n().get("error.synchro.fatal"), ex, false);
-			logger.log(Level.SEVERE, ex.getClass().getSimpleName() + " occured during synchro process", ex);
+			factory.getTray().displayErrorMessage(factory.getI18n().get("error.refresh.fatal"), ex, false);
+			logger.log(Level.SEVERE, ex.getClass().getSimpleName() + " occured during refresh process", ex);
 		}
 	}
 
@@ -112,7 +113,11 @@ public class NotificationClientService {
 		List<RemoteNotification> allNewNotifications = new ArrayList<RemoteNotification>();
 		for (ServerConfig server : factory.getConfig().getBean().getServers()) {
 			ServerClientService client = factory.getClient(server);
-			switch (server.getType()) {
+			ServerType type = server.getType();
+			if (type == null) {
+				type = ServerType.OTHER;
+			}
+			switch (type) {
 			case JAVLO2:
 				List<RemoteNotification> notifications = client.getNewDataNotifications();
 				if (notifications != null && !notifications.isEmpty()) {

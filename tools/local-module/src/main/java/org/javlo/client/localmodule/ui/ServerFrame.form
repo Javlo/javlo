@@ -76,7 +76,7 @@
                               <Component id="txtTitle" max="32767" attributes="1"/>
                           </Group>
                           <EmptySpace max="-2" attributes="0"/>
-                          <Component id="btnTitleAuto" min="-2" max="-2" attributes="0"/>
+                          <Component id="btnExtractData" min="-2" max="-2" attributes="0"/>
                           <EmptySpace min="-2" pref="137" max="-2" attributes="0"/>
                       </Group>
                   </Group>
@@ -94,7 +94,7 @@
                   <Group type="103" groupAlignment="3" attributes="0">
                       <Component id="lblTitle" alignment="3" min="-2" max="-2" attributes="0"/>
                       <Component id="txtTitle" alignment="3" min="-2" max="-2" attributes="0"/>
-                      <Component id="btnTitleAuto" alignment="3" min="-2" max="-2" attributes="0"/>
+                      <Component id="btnExtractData" alignment="3" min="-2" max="-2" attributes="0"/>
                   </Group>
                   <EmptySpace max="-2" attributes="0"/>
                   <Group type="103" groupAlignment="0" attributes="0">
@@ -136,14 +136,14 @@
             <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="cmbTypeActionPerformed"/>
           </Events>
         </Component>
-        <Component class="javax.swing.JButton" name="btnTitleAuto">
+        <Component class="javax.swing.JButton" name="btnExtractData">
           <Properties>
             <Property name="text" type="java.lang.String" editor="org.netbeans.modules.i18n.form.FormI18nStringEditor">
-              <ResourceString bundle="local-module.properties" key="config.server.action.auto-title" replaceFormat="i18n.get(&quot;{key}&quot;)"/>
+              <ResourceString bundle="local-module.properties" key="config.server.action.extract-data" replaceFormat="i18n.get(&quot;{key}&quot;)"/>
             </Property>
           </Properties>
           <Events>
-            <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="btnTitleAutoActionPerformed"/>
+            <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="btnExtractDataActionPerformed"/>
           </Events>
         </Component>
       </SubComponents>
@@ -152,7 +152,7 @@
       <Properties>
         <Property name="border" type="javax.swing.border.Border" editor="org.netbeans.modules.form.editors2.BorderEditor">
           <Border info="org.netbeans.modules.form.compat2.border.TitledBorderInfo">
-            <TitledBorder title="Configuration for &apos;Site monitor&apos; type:">
+            <TitledBorder title="Configuration for &quot;Other&quot; type:">
               <ResourceString PropertyName="titleX" bundle="local-module.properties" key="config.server.site-monitor-config" replaceFormat="i18n.get(&quot;{key}&quot;)"/>
             </TitledBorder>
           </Border>

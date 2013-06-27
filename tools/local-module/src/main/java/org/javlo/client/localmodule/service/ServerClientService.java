@@ -1,6 +1,7 @@
 package org.javlo.client.localmodule.service;
 
 import java.io.IOException;
+import java.text.ParseException;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.LinkedList;
@@ -13,7 +14,6 @@ import org.apache.http.HttpHost;
 import org.apache.http.HttpResponse;
 import org.apache.http.auth.AuthScope;
 import org.apache.http.auth.UsernamePasswordCredentials;
-import org.apache.http.client.ClientProtocolException;
 import org.apache.http.client.methods.HttpGet;
 import org.apache.http.conn.ClientConnectionManager;
 import org.apache.http.conn.ClientConnectionManagerFactory;
@@ -40,7 +40,7 @@ public class ServerClientService {
 
 	private final ServerConfig server;
 
-	private Date lastNotificationDate;
+	private Date lastNotificationsCheckDate;
 
 	private ServerStatus status = ServerStatus.UNKNOWN;
 
@@ -100,14 +100,52 @@ public class ServerClientService {
 
 	public List<RemoteNotification> getNewDataNotifications() {
 		try {
-			List<RemoteNotification> notifications = callDataNotifications(lastNotificationDate);
-			onSuccess();
-			if (notifications != null && !notifications.isEmpty()) {
-				for (RemoteNotification remoteNotification : notifications) {
-					if (lastNotificationDate == null || remoteNotification.getCreationDate().after(lastNotificationDate)) {
-						lastNotificationDate = remoteNotification.getCreationDate();
+			List<RemoteNotification> notifications = null;
+			String url = server.getServerURL();
+			url = URLHelper.changeMode(url, "ajax");
+			if (lastNotificationsCheckDate != null) {
+				url = URLHelper.addParam(url, "webaction", "data.notifications");
+				url = URLHelper.addParam(url, "lastdate", StringHelper.renderFileTime(lastNotificationsCheckDate));
+			}
+			url = URLHelper.addParam(url, "webaction", "data.date");
+			logger.info("Start request to server: " + url);
+			HttpGet httpget = new HttpGet(url);
+			HttpResponse response = httpClient.execute(httpget);
+			HttpEntity entity = response.getEntity();
+
+			if (response.getStatusLine().getStatusCode() == 200) {
+				onSuccess();
+				String content = EntityUtils.toString(entity);
+				logger.info("Server response: " + content);
+
+				JSONMap ajaxMap = JSONMap.parseMap(content);
+
+				String serverDateStr = null;
+				List<NotificationContainer> rawNotifications = null;
+				JSONMap dataMap = ajaxMap.getMap("data");
+				if (dataMap != null) {
+					serverDateStr = dataMap.getValue("date", String.class);
+					rawNotifications = dataMap.getValue("notifications",
+							new TypeToken<List<NotificationContainer>>() {
+							}.getType());
+				}
+
+				if (serverDateStr != null) {
+					try {
+						lastNotificationsCheckDate = StringHelper.parseFileTime(serverDateStr);
+					} catch (ParseException ex) {
+						logger.log(Level.WARNING, "Cannot parse data.date result: " + serverDateStr, ex);
 					}
 				}
+
+				notifications = new LinkedList<RemoteNotification>();
+				if (rawNotifications != null) {
+					for (NotificationContainer rawNotification : rawNotifications) {
+						notifications.add(new RemoteNotification(server, rawNotification));
+					}
+				}
+			} else {
+				onWarning("HTTP status: " + response.getStatusLine());
 			}
 			return notifications;
 		} catch (Exception ex) {
@@ -115,43 +153,6 @@ public class ServerClientService {
 			logger.log(Level.WARNING, "Exception on notification request.", ex);
 			return new ArrayList<RemoteNotification>();
 		}
-	}
-
-	public List<RemoteNotification> callDataNotifications(Date lastDate) throws ClientProtocolException, IOException {
-		String url = URLHelper.addParam(server.getServerURL(), "webaction", "data.notifications");
-		if (lastDate != null) {
-			url = URLHelper.addParam(url, "lastdate", StringHelper.renderFileTime(lastDate));
-		}
-		url = URLHelper.changeMode(url, "ajax");
-		logger.info("Start request to server: " + url);
-		HttpGet httpget = new HttpGet(url);
-		HttpResponse response = httpClient.execute(httpget);
-		HttpEntity entity = response.getEntity();
-
-		if (response.getStatusLine().getStatusCode() == 200) {
-			String content = EntityUtils.toString(entity);
-			logger.info("Server response: " + content);
-
-			JSONMap ajaxMap = JSONMap.parseMap(content);
-
-			List<NotificationContainer> notifications = null;
-			JSONMap dataMap = ajaxMap.getMap("data");
-			if (dataMap != null) {
-				notifications = dataMap.getValue("notifications",
-						new TypeToken<List<NotificationContainer>>() {
-						}.getType());
-			}
-
-			List<RemoteNotification> out = new LinkedList<RemoteNotification>();
-			if (notifications != null) {
-				for (NotificationContainer notificationContainer : notifications) {
-					out.add(new RemoteNotification(server, notificationContainer));
-				}
-			}
-			return out;
-
-		}
-		return null;
 	}
 
 	public String tokenifyUrl(String simpleUrl) {
@@ -196,15 +197,17 @@ public class ServerClientService {
 			if (response.getStatusLine().getStatusCode() == 200) {
 				HttpEntity entity = response.getEntity();
 				String content = EntityUtils.toString(entity);
-				if (!content.contains(server.getCheckPhrase())) {
-					onWarning("CheckPhrase not found!");
+				if (server.getCheckPhrase() == null || server.getCheckPhrase().isEmpty()) {
+					onWarning("No check phrase configured!");
+				} else if (!content.contains(server.getCheckPhrase())) {
+					onWarning("Check phrase not found!");
 				}
 			} else {
 				onWarning("HTTP status: " + response.getStatusLine());
 			}
 		} catch (Exception ex) {
 			onError(ex);
-			logger.log(Level.SEVERE, "Exception retreiving one time token.", ex);
+			logger.log(Level.SEVERE, "Exception retreiving the page.", ex);
 		} finally {
 			safeConsume(response);
 		}
