@@ -115,11 +115,13 @@ public class ConfigService {
 			server.setServerURL(serverURL);
 			server.setTitle(properties.getProperty(base + "title"));
 			String typeRaw = properties.getProperty(base + "type");
-			ServerType type = ServerType.OTHER;
-			try {
-				type = ServerType.valueOf(typeRaw);
-			} catch (Exception ex) {
-				logger.log(Level.WARNING, "Exception parsing server type: " + typeRaw, ex);
+			ServerType type = null;
+			if (typeRaw != null && !typeRaw.isEmpty()) {
+				try {
+					type = ServerType.valueOf(typeRaw);
+				} catch (Exception ex) {
+					logger.log(Level.WARNING, "Exception parsing server type: " + typeRaw, ex);
+				}
 			}
 			server.setType(type);
 			server.setCheckPhrase(properties.getProperty(base + "checkphrase"));
@@ -147,16 +149,24 @@ public class ConfigService {
 		for (int i = 0; i < servers.length; i++) {
 			ServerConfig server = servers[i];
 			String base = "server." + i + ".";
-			out.setProperty(base + "url", server.getServerURL());
-			out.setProperty(base + "title", server.getTitle());
-			out.setProperty(base + "type", server.getType() == null ? null : server.getType().name());
-			out.setProperty(base + "checkphrase", server.getCheckPhrase());
+			setProperty(out, base + "url", server.getServerURL());
+			setProperty(out, base + "title", server.getTitle());
+			setProperty(out, base + "type", server.getType() == null ? null : server.getType().name());
+			setProperty(out, base + "checkphrase", server.getCheckPhrase());
 		}
-		out.setProperty("http.proxyHost", StringHelper.neverNull(bean.getProxyHost()));
-		out.setProperty("http.proxyPort", StringHelper.neverNull(bean.getProxyPort()));
-		out.setProperty("http.proxyUserName", StringHelper.neverNull(bean.getProxyUsername()));
-		out.setProperty("http.proxyPassword", StringHelper.neverNull(bean.getProxyPassword()));
+		setProperty(out, "http.proxyHost", StringHelper.neverNull(bean.getProxyHost()));
+		setProperty(out, "http.proxyPort", StringHelper.neverNull(bean.getProxyPort()));
+		setProperty(out, "http.proxyUserName", StringHelper.neverNull(bean.getProxyUsername()));
+		setProperty(out, "http.proxyPassword", StringHelper.neverNull(bean.getProxyPassword()));
 		return out;
+	}
+
+	private static void setProperty(Properties out, String key, String value) {
+		if (value == null) {
+			out.remove(key);
+		} else {
+			out.setProperty(key, value);
+		}
 	}
 
 }
