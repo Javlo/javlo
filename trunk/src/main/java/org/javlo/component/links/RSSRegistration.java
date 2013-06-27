@@ -80,7 +80,7 @@ public class RSSRegistration extends AbstractPropertiesComponent {
 		List<String> channelsList = NavigationHelper.getAllRSSChannels(ctx, content.getNavigation(ctx));
 		String[] channels = new String[channelsList.size()];
 		channelsList.toArray(channels);
-		finalCode.append(XHTMLHelper.getInputOneSelect(getChannelsName(), channels, channels, getChannel(), "jQuery('#" + getChannelName() + "').val(jQuery('" + getChannelsName() + "').val());"));
+		finalCode.append(XHTMLHelper.getInputOneSelect(getChannelsName(), channels, channels, getChannel(), "jQuery('#" + getChannelName() + "').val(jQuery('#" + getChannelsName() + "').val());"));
 
 		finalCode.append("</div><div class=\"line\"><label for=\"" + getHideInvisibleName() + "\">");
 		finalCode.append(i18nAccess.getText("component.rss.hide-invisible") + " : ");

@@ -73,6 +73,7 @@ public class AdminAction extends AbstractModuleAction {
 		private String key;
 		private String administrator;
 		private String aliasOf;
+		private List<GlobalContextBean> alias = new LinkedList<AdminAction.GlobalContextBean>();
 		private String creationDate;
 		private String latestLoginDate;
 		private String defaultTemplate;
@@ -558,6 +559,14 @@ public class AdminAction extends AbstractModuleAction {
 			this.forcedHost = forcedHost;
 		}
 
+		public List<GlobalContextBean> getAlias() {
+			return alias;
+		}
+
+		public void addAlias(GlobalContextBean context) {
+			alias.add(context);
+		}
+
 	}
 	
 	public static class ComponentBean {
@@ -625,15 +634,25 @@ public class AdminAction extends AbstractModuleAction {
 
 			Collection<GlobalContextBean> ctxAllBean = new LinkedList<GlobalContextBean>();
 			Collection<GlobalContext> allContext = GlobalContextFactory.getAllGlobalContext(request.getSession());
+			Map<String,GlobalContextBean> masterCtx = new HashMap<String, AdminAction.GlobalContextBean>();
 			for (GlobalContext context : allContext) {
 				if (ctx.getCurrentEditUser() != null) {
 					if (adminUserSecurity.isAdmin(ctx.getCurrentEditUser()) || context.getUsersAccess().contains(ctx.getCurrentEditUser().getLogin())) {
-						ctxAllBean.add(new GlobalContextBean(context, ctx.getRequest().getSession()));
+						GlobalContextBean contextBean = new GlobalContextBean(context, ctx.getRequest().getSession());
+						ctxAllBean.add(contextBean);
+						if (context.getAliasOf() == null || context.getAliasOf().length() == 0) {
+							masterCtx.put(context.getContextKey(), contextBean);
+						}
 					}
 				}
-			}
-
-			request.setAttribute("contextList", ctxAllBean);
+			}			
+			for (GlobalContextBean context : ctxAllBean) {
+				if (!masterCtx.containsKey(context.getKey()) && masterCtx.containsKey(context.getAliasOf())) {
+					System.out.println("***** AdminAction.prepare : masterCtx.get(context.getAliasOf()) = "+masterCtx.get(context.getAliasOf()).getKey()); //TODO: remove debug trace
+					masterCtx.get(context.getAliasOf()).addAlias(context);
+				}
+			}			
+			request.setAttribute("contextList", masterCtx.values());
 		}
 
 		String currentContextValue = null;

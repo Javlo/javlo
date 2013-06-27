@@ -317,6 +317,7 @@ a.popup span {
 	width: 16px;
 	height: 16px;
 	background-image: url("../images/icons/small/black/check.png");
+	vertical-align: middle;
 }
 
 .icone_false {
@@ -326,6 +327,7 @@ a.popup span {
 	width: 16px;
 	height: 16px;
 	background-image: url("../images/icons/small/black/close.png");
+	vertical-align: middle;
 }
 
 /*** notification ***/

@@ -1,4 +1,4 @@
-	<%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
+<%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
 <div class="left">
 
 <form id="form-components" action="${info.currentURL}" method="post" class="standard-form">
