@@ -12,6 +12,7 @@ public class URLHelperTest extends TestCase {
 		assertEquals(URLHelper.changeMode("http://www.javlo.org/view/test.html", "preview"),"http://www.javlo.org/preview/test.html");
 		assertEquals(URLHelper.changeMode("http://www.javlo.org/edit/test.html", "view"),"http://www.javlo.org/view/test.html");
 		assertEquals(URLHelper.changeMode("http://www.javlo.org/edit-content/test.html", "view"),"http://www.javlo.org/view/test.html");
+		// local module test
 		assertEquals(URLHelper.changeMode("http://localhost:8080/test/edit-users/fr/root.html?j_token=lUnForoyuXklZYwYTdwhm1ZfMFJfn6I1135780933467136815128", "ajax"),"http://localhost:8080/test/ajax/fr/root.html?j_token=lUnForoyuXklZYwYTdwhm1ZfMFJfn6I1135780933467136815128");		
 	}
 	
