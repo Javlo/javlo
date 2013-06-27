@@ -1,4 +1,5 @@
-<%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
+<%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" 
+%><%@ taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions" %>
 <div class="left">
 
 <table cellpadding="0" cellspacing="0" border="0" class="dyntable" id="sitelist">
@@ -28,8 +29,15 @@
 </colgroup>
 <tbody> 
  <c:forEach var="context" items="${contextList}">
- <tr class="gradeX${context.master?' master':''}">
-     <td class="con0 name"><a href="${info.currentURL}?webaction=changesite&change=true&context=${context.key}">${context.key}</a></td>
+ <tr class="gradeX${context.master?' master':''}${fn:length(context.alias)>0?' as-alias':''}">
+     <td class="con0 name">
+     	<a href="${info.currentURL}?webaction=changesite&change=true&context=${context.key}">${context.key}</a>
+     	<ul>
+ 		<c:forEach var="alias" items="${context.alias}">
+			<li><a href="${info.currentURL}?webaction=changesite&change=true&context=${alias.key}">${alias.key}</a></li>
+		</c:forEach>     	
+     	</ul>
+     </td>
      <td class="con1">${context.administrator}</td>
      <td class="con0">${context.aliasOf}</td>
      <td class="con1">${context.creationDate}</td>
@@ -37,7 +45,7 @@
      <td class="con1">${context.countUser}</td>
      <td class="con0">
      	<c:if test="${context.view eq 'true'}">
-     	<a href="${info.currentURL}?webaction=releaseContent&view=true&context=${context.key}"><span class="icone_true">true</span></a>
+     		<a href="${info.currentURL}?webaction=releaseContent&view=true&context=${context.key}"><span class="icone_true">true</span></a>
      	</c:if> 
      	<c:if test="${context.view eq 'false'}">
      	<span class="icone_false">false</span>
@@ -64,7 +72,7 @@
      		</div>
      	</form>
      </td>          
- </tr>
+ </tr>	
  </c:forEach>
 </tbody>
 <tfoot>

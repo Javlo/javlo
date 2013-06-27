@@ -65,8 +65,8 @@ public class XMLServlet extends HttpServlet {
 
 			ctx.getRequest().setAttribute("imageURL", imageURL);
 			ctx.getRequest().setAttribute("largeImageURL", largeImageURL);
-			ctx.getRequest().setAttribute("imageDescription", imageDescription);
-			ctx.getRequest().setAttribute("text", text);
+			ctx.getRequest().setAttribute("imageDescription", StringHelper.toXMLAttribute(imageDescription));
+			ctx.getRequest().setAttribute("text", StringHelper.toXMLAttribute(text));
 
 			return ServletHelper.executeJSP(ctx, renderer);
 		} else {
@@ -191,7 +191,6 @@ public class XMLServlet extends HttpServlet {
 						out.write("<title>" + globalContext.getGlobalTitle() + " - " + channel + "</title>");
 						out.write("<url>" + template.getRSSImageURL() + "</url>");
 						out.write("</image>");
-
 					}
 
 					for (MenuElement page : pages) {
