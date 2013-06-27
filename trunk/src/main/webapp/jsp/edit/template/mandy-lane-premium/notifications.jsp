@@ -14,8 +14,8 @@ notifService.getNotifications(ctx.getCurrentUserId() , 9999999, true); // mark a
     <ul>
     	<c:forEach var="notif" items="${notifications}">
 			<li class="${notif.notification.typeLabel}${!notif.read?' current':''}">
-				<c:if test="${not empty notif.notification.url}"><a href="${notif.notification.url}">${notif.notification.message}</a></c:if>
-				<c:if test="${empty notif.notification.url}"><span>${notif.notification.message}</span></c:if>        		        		
+				<c:if test="${not empty notif.notification.url}"><a href="${notif.notification.url}">${notif.notification.displayMessage}</a></c:if>
+				<c:if test="${empty notif.notification.url}"><span>${notif.notification.displayMessage}</span></c:if>        		        		
             	<small>${notif.notification.timeLabel}</small>
         </li>
         </c:forEach>

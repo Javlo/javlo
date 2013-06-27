@@ -15,26 +15,51 @@
 			<groupId>org.javlo</groupId>
 			<artifactId>javlo2-local-module</artifactId>
 			<version>${version}</version>
-			<exclusions>
-				<exclusion>
-					<artifactId>itext</artifactId>
-					<groupId>com.lowagie</groupId>
-				</exclusion>
-				<exclusion>
-					<groupId>pdfbox</groupId>
-					<artifactId>pdfbox</artifactId>
-				</exclusion>
-<!-- 				<exclusion> -->
-<!-- 					<groupId>de.java2html</groupId> -->
-<!-- 					<artifactId>java2html</artifactId> -->
-<!-- 				</exclusion> -->
-			</exclusions>
+
+				<exclusions>
+					<exclusion>
+						<groupId>com.lowagie</groupId>
+						<artifactId>itext</artifactId>
+					</exclusion>
+					<exclusion>
+						<groupId>pdfbox</groupId>
+						<artifactId>pdfbox</artifactId>
+					</exclusion>
+					<exclusion>
+						<groupId>org.apache.commons</groupId>
+						<artifactId>commons-vfs2</artifactId>
+					</exclusion>
+					<exclusion>
+						<groupId>net.sf.ehcache</groupId>
+						<artifactId>ehcache-core</artifactId>
+					</exclusion>
+					<exclusion>
+						<groupId>com.jhlabs</groupId>
+						<artifactId>filters</artifactId>
+					</exclusion>
+					<exclusion>
+						<groupId>rome</groupId>
+						<artifactId>rome</artifactId>
+					</exclusion>
+					<exclusion>
+						<groupId>org.xhtmlrenderer</groupId>
+						<artifactId>flying-saucer-pdf</artifactId>
+					</exclusion>
+					<exclusion>
+						<groupId>jjil</groupId>
+						<artifactId>jjil.core</artifactId>
+					</exclusion>
+					<exclusion>
+						<groupId>javax.media.jai</groupId>
+						<artifactId>com.springsource.javax.media.jai.core</artifactId>
+					</exclusion>
+					<exclusion>
+						<groupId>com.github.cage</groupId>
+						<artifactId>cage</artifactId>
+					</exclusion>
+				</exclusions>					
+				
 		</dependency>
-<!-- 		<dependency> -->
-<!-- 			<groupId>de.java2html</groupId> -->
-<!-- 			<artifactId>java2html</artifactId> -->
-<!-- 			<scope>provided</scope> -->
-<!-- 		</dependency> -->
 	</dependencies>
 
 	<build>
