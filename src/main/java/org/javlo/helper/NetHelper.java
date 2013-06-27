@@ -220,9 +220,7 @@ public class NetHelper {
 	}
 
 	public static void main(String[] args) {
-
-		System.out.println(getPageDescription("<meta name=\"description\" content=\"ceci est une description\"><body><img src=\"test.jpg\" alt=\"coucou\" /></body>"));
-
+		System.out.println("***** NetHelper.main : connected: "+isConnected()); //TODO: remove debug trace
 	}
 
 	public static List<Resource> extractImage(URL inURL, String content) {
@@ -600,6 +598,32 @@ public class NetHelper {
 		}
 
 		return urlList;
+	}
+	
+	/**
+	 * check internet connection with stable server.
+	 * @return
+	 */
+	public static boolean isConnected() {		
+		try {
+			(new URL("http://www.google.com")).openConnection();
+			return true;
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+		try {
+			(new URL("http://www.belgium.be")).openConnection();
+			return true;
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+		try {
+			(new URL("http://www.javlo.org")).openConnection();
+			return true;
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+		return false;
 	}
 
 	public static void sendMailToAdministrator(ContentContext ctx, String subject, String content) {
