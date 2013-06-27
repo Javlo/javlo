@@ -15,12 +15,20 @@
 			<groupId>org.javlo</groupId>
 			<artifactId>javlo2-local-module</artifactId>
 			<version>${version}</version>
-<!-- 			<exclusions> -->
+			<exclusions>
+				<exclusion>
+					<artifactId>itext</artifactId>
+					<groupId>com.lowagie</groupId>
+				</exclusion>
+				<exclusion>
+					<groupId>pdfbox</groupId>
+					<artifactId>pdfbox</artifactId>
+				</exclusion>
 <!-- 				<exclusion> -->
 <!-- 					<groupId>de.java2html</groupId> -->
 <!-- 					<artifactId>java2html</artifactId> -->
 <!-- 				</exclusion> -->
-<!-- 			</exclusions> -->
+			</exclusions>
 		</dependency>
 <!-- 		<dependency> -->
 <!-- 			<groupId>de.java2html</groupId> -->
