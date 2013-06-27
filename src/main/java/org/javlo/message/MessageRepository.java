@@ -108,6 +108,26 @@ public class MessageRepository {
 	 * @param globalMessage
 	 *            a global message
 	 */
+	public void setGlobalMessageAndNotificationToAll(ContentContext ctx, GenericMessage globalMessage) {
+		if (this.globalMessage != null) {
+			if (this.globalMessage.getType() == 0 || globalMessage.getType() < this.globalMessage.getType()) {
+				this.globalMessage = globalMessage;
+			}
+		}
+		NotificationService notifService = NotificationService.getInstance(GlobalContext.getInstance(request));
+		String url = globalMessage.getURL();
+		if (url == null) {
+			url = URLHelper.createURL(ctx.getContextWithOtherRenderMode(ContentContext.PREVIEW_MODE).getContextForAbsoluteURL());
+		}
+		notifService.addNotification(globalMessage.getMessage(), url, globalMessage.getType(), ctx.getCurrentUserId(), null);
+	}
+	
+	/**
+	 * set a new global message. if the type of the current message is more important or equal the new message is ignored.
+	 * 
+	 * @param globalMessage
+	 *            a global message
+	 */
 	public void setGlobalMessageAndNotification(ContentContext ctx, GenericMessage globalMessage) {
 		if (this.globalMessage != null) {
 			if (this.globalMessage.getType() == 0 || globalMessage.getType() < this.globalMessage.getType()) {

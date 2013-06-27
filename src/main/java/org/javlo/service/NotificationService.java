@@ -21,9 +21,17 @@ public class NotificationService {
 		private int type;
 		private Date creationDate;
 		private String userId;
+		private String receiver;
 
 		public String getMessage() {
 			return message;
+		}
+		
+		public String getDisplayMessage() {
+			if (getReceiver() == null) {
+				return getMessage() + " ("+getUserId()+')';
+			}
+			return getMessage();
 		}
 
 		public void setMessage(String message) {
@@ -77,6 +85,14 @@ public class NotificationService {
 
 		public String getSortableTimeLabel() {
 			return StringHelper.renderSortableTime(getCreationDate());
+		}
+
+		public String getReceiver() {
+			return receiver;
+		}
+
+		public void setReceiver(String receiver) {
+			this.receiver = receiver;
 		}
 	}
 
@@ -181,7 +197,7 @@ public class NotificationService {
 		int size = 0;
 		synchronized (notifications) {
 			for (Notification notif : notifications) {
-				if (notif.getUserId() == null || notif.getUserId().equals(userId) || notif.getUserId().equals(USER_SYSTEM)) {
+				if (notif.getReceiver() == null || notif.getReceiver().equals(userId) || notif.getUserId().equals(USER_SYSTEM)) {
 					size++;
 					outNotif.add(new NotificationContainer(notif, isAllReadyReaded(notif, userId), userId));
 					if (markRead) {
@@ -244,12 +260,17 @@ public class NotificationService {
 	 *            a notification can be specific for a user or for everybody (userId null)
 	 */
 	public void addNotification(String message, String url, int type, String userId) {
+		addNotification(message, url, type, userId, userId);
+	}
+	
+	public void addNotification(String message, String url, int type, String userId, String receiver) {
 		Notification notif = new Notification();
 		notif.setMessage(message);
 		notif.setUrl(url);
 		notif.setCreationDate(new Date());
 		notif.setType(type);
 		notif.setUserId(userId);
+		notif.setReceiver(receiver);
 		synchronized (notifications) {
 			notifications.add(0, notif);
 		}
