@@ -95,6 +95,11 @@ public class DataAction implements IAction {
 		}
 		return null;
 	}
+	
+	public static String performDate(ContentContext ctx, User user) {
+		ctx.getAjaxData().put("date", StringHelper.renderFileTime(new Date()));
+		return null;
+	}
 
 	public static String performOneTimeToken(ContentContext ctx, User user) {
 		if (user != null) {
