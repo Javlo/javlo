@@ -81,9 +81,9 @@ public abstract class ElementaryURLHelper {
 	 */
 	public static String addParam(String url, String name, String value) {
 		if (url.contains("?")) {
-			return url = url + "&" + name + '=' + value;
+			return url = url + '&' + name + '=' + value;
 		} else {
-			return url = url + "?" + name + '=' + value;
+			return url = url + '?' + name + '=' + value;
 		}
 	}
 
