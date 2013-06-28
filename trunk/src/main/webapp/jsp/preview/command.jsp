@@ -82,7 +82,7 @@ editCtx.setRenderMode(ContentContext.EDIT_MODE);
 				</div>
 				<c:if test="${globalContext.staticConfig.sharedContent}">
 				<c:if test="${not empty sharedContent}"><fieldset class="shared closable">
-					<legend>${i18n.edit["preview.shared-content"]}</legend>
+					<legend>${i18n.edit["preview.shared-content"]}</legend>					
 					<jsp:include page="shared_content.jsp" />
 				</fieldset>
 				</c:if>

@@ -62,11 +62,8 @@
 <legend>${i18n.edit['admin.form.config']}</legend>
 
 <div class="one_half">
-<div class="line">		
-	<label for="administrator">${i18n.edit['admin.adminitrator']}</label>
-	<input type="text" id="administrator" name="administrator" value="${currentContext.administrator}" />	
-</div>
 
+<c:if test="${fn:length(contextList) > 0}">
 <div class="line">		
 	<label for="alias">${i18n.edit['admin.form.alias']}</label>	
 	<select id="alias" name="alias">
@@ -75,6 +72,12 @@
 		<option value="${context.key}" ${context.key eq currentContext.aliasOf?'selected="selected"':''} >${context.key}</option>
 		</c:forEach>
 	</select>	
+</div>
+</c:if>
+
+<div class="line">		
+	<label for="administrator">${i18n.edit['admin.adminitrator']}</label>
+	<input type="text" id="administrator" name="administrator" value="${currentContext.administrator}" />	
 </div>
 
 <div class="line">		

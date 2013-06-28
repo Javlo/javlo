@@ -714,12 +714,13 @@ public class AccessServlet extends HttpServlet implements IVersion {
 									ctx.getRequest().setAttribute("sharedContent", sharedContentService.getAllSharedContent(ctx));
 								}
 							}
-
-							/*
-							 * if (ctx.getRenderMode() == ContentContext.PREVIEW_MODE && staticConfig.isFixPreview() && !StringHelper.isTrue(requestService.getParameter("iframe", null))) { Map<String, String> params = new HashMap<String, String>(); params.put("iframe", "true"); String url = URLHelper.createURL(ctx, params); ctx.getRequest().setAttribute("currentPage", url); getServletContext().getRequestDispatcher("/jsp/preview/fix_preview.jsp").include(request, response); } else {
-							 */
-							getServletContext().getRequestDispatcher(jspPath).include(request, response);
-							/* } */
+							
+							String area = requestService.getParameter("only-area", null);
+							if (area != null) {								
+								getServletContext().getRequestDispatcher("/jsp/view/content_view.jsp?area=" + area).include(request, response);
+							} else {
+								getServletContext().getRequestDispatcher(jspPath).include(request, response);
+							}
 						}
 					}
 					localLogger.endCount("content", "include content");

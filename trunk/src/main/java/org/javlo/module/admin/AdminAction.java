@@ -2,7 +2,6 @@ package org.javlo.module.admin;
 
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
-import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
@@ -13,6 +12,7 @@ import java.text.SimpleDateFormat;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
+import java.util.Comparator;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.LinkedList;
@@ -49,7 +49,6 @@ import org.javlo.message.MessageRepository;
 import org.javlo.module.core.Module;
 import org.javlo.module.core.ModuleException;
 import org.javlo.module.core.ModulesContext;
-import org.javlo.module.file.FileModuleContext;
 import org.javlo.service.ContentService;
 import org.javlo.service.LogService;
 import org.javlo.service.RequestService;
@@ -70,6 +69,14 @@ public class AdminAction extends AbstractModuleAction {
 	private static java.util.logging.Logger logger = java.util.logging.Logger.getLogger(AdminAction.class.getName());
 
 	public static class GlobalContextBean {
+		
+		public static final class SortOnKey implements Comparator<GlobalContextBean> {
+			@Override
+			public int compare(GlobalContextBean o1, GlobalContextBean o2) {
+				return o1.getKey().compareTo(o2.getKey());
+			}
+		}
+		
 		private String key;
 		private String administrator;
 		private String aliasOf;
@@ -647,12 +654,14 @@ public class AdminAction extends AbstractModuleAction {
 				}
 			}			
 			for (GlobalContextBean context : ctxAllBean) {
-				if (!masterCtx.containsKey(context.getKey()) && masterCtx.containsKey(context.getAliasOf())) {
-					System.out.println("***** AdminAction.prepare : masterCtx.get(context.getAliasOf()) = "+masterCtx.get(context.getAliasOf()).getKey()); //TODO: remove debug trace
+				if (!masterCtx.containsKey(context.getKey()) && masterCtx.containsKey(context.getAliasOf())) {					
 					masterCtx.get(context.getAliasOf()).addAlias(context);
 				}
-			}			
-			request.setAttribute("contextList", masterCtx.values());
+			}
+			
+			List<GlobalContextBean> sortedContext = new LinkedList<AdminAction.GlobalContextBean>(masterCtx.values());
+			Collections.sort(sortedContext, new GlobalContextBean.SortOnKey());			
+			request.setAttribute("contextList", sortedContext);
 		}
 
 		String currentContextValue = null;

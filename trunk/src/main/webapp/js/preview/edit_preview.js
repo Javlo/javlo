@@ -57,14 +57,12 @@ layerOver = function(item, deletable) {
 	var layer = jQuery("#preview-layer");	
 	layer.data("deletable", deletable);
 	var insideLayer = jQuery("#preview-layer span");
-	if (item == null) {	
-		console.log("remove layer");
+	if (item == null) {		
 		layer.css("z-index", -1);
 		layer.css("display", "none");
 		layer.data("compType", null);
 		layer.data("sharedContent", null);
-	} else {
-		console.log("display layer");
+	} else {		
 		var comp = jQuery(item);
 		if (layer.width() > 0) {
 			layer.css("z-index", 10000);
@@ -159,14 +157,12 @@ initPreview = function() {
 		layer.css("height", height);
 	
 	});
-	jQuery("#preview-layer").on('mouseout', function(e) {
-		console.log("mouseout dragging = "+dragging);
+	jQuery("#preview-layer").on('mouseout', function(e) {		
 		if (!dragging) {
 			layerOver(null);
 		}
 	});	
-	jQuery("#preview-layer").on('dragenter', function(e) {
-		
+	jQuery("#preview-layer").on('dragenter', function(e) {		
 		e.preventDefault();
 		e.stopPropagation();
 	});

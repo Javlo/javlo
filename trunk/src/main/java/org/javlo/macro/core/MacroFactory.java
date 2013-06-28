@@ -18,6 +18,7 @@ import org.javlo.macro.CreateMonthStructureMacro;
 import org.javlo.macro.CreatePressReleaseHereMacro;
 import org.javlo.macro.CreatePressReleaseTodayHereMacro;
 import org.javlo.macro.CreatePressReleaseTodayMacro;
+import org.javlo.macro.CreateRolesFromUserList;
 import org.javlo.macro.CreateWeekHereMacro;
 import org.javlo.macro.CurrentLgExpandMacro;
 import org.javlo.macro.DeleteBadTemplate;
@@ -49,7 +50,7 @@ public class MacroFactory {
 	private final List<IMacro> macros = new LinkedList<IMacro>();
 
 	private static final List<IMacro> defaultMacros = Arrays.asList(new IMacro[] { new ImportContent(), new CreateArticle(), new ImportHTMLPageMacro(), new ImportJCRPageMacro(), new ImportGalleryMacro(), new CreateDefaultPageStructure(), new CreatePressReleaseTodayMacro(), new CreatePressReleaseHereMacro(), new CreateExternalNewsMacro(), new CreateWeekHereMacro(), new CreateMonthHereMacro(), new CreatePressReleaseTodayHereMacro(), new CreateMonthStructureMacro(), new CreateBaseStructureMacro(), new CreateChildrenStructureMacro(), new DeletePageFromSpecificUser(), new MergeDynamicComponent(), new ReduceSubtitleLevelMacro(), new IncreaseSubtitleLevelMacro(), new CleanResourceNameMacro(), new CopyLanguageStructureMacro(), new CopyLanguageStructureHereMacro(), new ImportDefaultLanguageMacro(), new DeleteSmartExternalLinkMacro(), new ImageAfterDescriptionMacro(), new ImageAfterDescriptionChildrenMacro(), new NoClickableImageMacro(), new CurrentLgExpandMacro(),
-			new EncryptPasswordComponent(), new PasteCopiedElementInAllLanguageMacro(), new ImportDataBase(), new DeleteChildren(), new DeleteBadTemplate(), new DownDateMacro(), new UpDateMacro(), new DeleteChildrenAndContent(), new DeleteSameComponent(), new deleteComponentInBadArea() });
+			new EncryptPasswordComponent(), new CreateRolesFromUserList(), new PasteCopiedElementInAllLanguageMacro(), new ImportDataBase(), new DeleteChildren(), new DeleteBadTemplate(), new DownDateMacro(), new UpDateMacro(), new DeleteChildrenAndContent(), new DeleteSameComponent(), new deleteComponentInBadArea() });
 
 	private static MacroFactory instance = null;
 

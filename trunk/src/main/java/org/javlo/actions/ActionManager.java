@@ -17,6 +17,7 @@ import org.javlo.component.core.ComponentFactory;
 import org.javlo.config.StaticConfig;
 import org.javlo.context.ContentContext;
 import org.javlo.context.GlobalContext;
+import org.javlo.ecom.EcomActions;
 import org.javlo.helper.LangHelper;
 import org.javlo.helper.StringHelper;
 import org.javlo.i18n.I18nAccess;
@@ -149,7 +150,7 @@ public class ActionManager {
 	 * @return a list of IAction implementation
 	 */
 	private static IAction[] getSpecialActionGroup() {
-		IAction[] outActionGroup = new IAction[4];
+		IAction[] outActionGroup = new IAction[5];
 		outActionGroup[0] = new SearchActions();
 		// outActionGroup[1] = new MailingActions();
 		// outActionGroup[2] = new AdminAction();
@@ -157,6 +158,7 @@ public class ActionManager {
 		outActionGroup[1] = new ViewActions();
 		outActionGroup[2] = new TimeTravelerActions();
 		outActionGroup[3] = new DataAction();
+		outActionGroup[4] = new EcomActions();
 		return outActionGroup;
 	}
 

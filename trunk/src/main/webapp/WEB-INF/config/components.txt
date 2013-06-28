@@ -72,6 +72,10 @@ org.javlo.component.container.Box
 org.javlo.component.container.TextDirection
 org.javlo.component.container.RepeatContainer
 
+--content.title.ecom
+
+org.javlo.component.ecom.ProductComponent
+
 --content.title.web2
 
 org.javlo.component.meta.Tags
