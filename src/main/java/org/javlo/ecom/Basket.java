@@ -30,7 +30,7 @@ public class Basket {
 	private String contactPhone="";
 	
 
-	private static final String KEY = Basket.class.getName();
+	private static final String KEY = "basket";
 
 	public static Basket getInstance(ContentContext ctx) {
 		Basket basket = (Basket) ctx.getRequest().getSession().getAttribute(KEY);

@@ -1,11 +1,15 @@
 package org.javlo.service;
 
+import java.io.IOException;
+import java.io.StringReader;
+import java.util.Properties;
 import java.util.logging.Logger;
 
 import org.javlo.component.core.ComponentBean;
 import org.javlo.component.image.GlobalImage;
 import org.javlo.component.links.PageReferenceComponent;
 import org.javlo.component.text.XHTML;
+import org.javlo.component.title.Title;
 import org.javlo.context.ContentContext;
 import org.javlo.context.GlobalContext;
 import org.javlo.message.GenericMessage;
@@ -42,6 +46,18 @@ public class ConvertToCurrentVersion {
 			convertion++;
 			bean.setType(GlobalImage.TYPE);
 			bean.setValue(bean.getValue() + "\n" + GlobalImage.IMAGE_FILTER + "=banner");
+			bean.setModify(true);
+		}
+		if (bean.getType().equals("double-title")) {
+			convertion++;
+			bean.setType(Title.TYPE);
+			Properties prop = new Properties();
+			try {
+				prop.load(new StringReader(bean.getValue()));
+			} catch (IOException e) {
+				e.printStackTrace();
+			}
+			bean.setValue(prop.getProperty("title"));
 			bean.setModify(true);
 		}
 		return convertion;

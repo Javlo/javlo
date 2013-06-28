@@ -144,16 +144,21 @@ jQuery.fn.extend({
 	}
 });
 
-filter = function(filterStr,selector) {
-	jQuery(selector).removeClass("hidden");
+filter = function(filterStr,selector) {	
+	//jQuery(selector).show();
+	if (jQuery(selector).length == 0) {
+		console.log("warning: no filtrable content.");
+	}
 	jQuery(selector).filter(function() {
 		item = jQuery(this);		
-		if (item.text().toLowerCase().indexOf(filterStr.toLowerCase()) >= 0) {			
+		if (item.text().toLowerCase().indexOf(filterStr.toLowerCase()) >= 0) {
+			item.show(400);
 			return false;
-		} else {			
+		} else {
+			item.hide(400);			
 			return true;
 		}
-	}).addClass("hidden");
+	});
 	try {
 		updateLayout();
 	} catch(err) {		

@@ -19,12 +19,6 @@ import org.javlo.service.RequestService;
 
 public class ProductComponent extends AbstractPropertiesComponent {
 
-/*<<<<<<< ProductComponent.java
-	static final List<String> FIELDS = Arrays.asList(new String[] { "name", "price", "vat", "promo", "currency", "offset", "weight", "production", "stock", "virtual" });
-=======
-	static final String[] FIELDS = { "name", "price", "vat", "promo", "currency", "offset", "weight", "production" };
->>>>>>> 1.9*/
-	
 	static final List<String> FIELDS = Arrays.asList(new String[] { "name", "price", "vat", "promo", "currency", "offset", "weight", "production" });
 
 	@Override
@@ -190,18 +184,18 @@ public class ProductComponent extends AbstractPropertiesComponent {
 			out.println("</div>");
 			
 			out.println("<div class=\"line price\">");
-			out.println("<span class=\"label\">" + i18nAccess.getViewText("ecom.price") + "</span><span>"+getPrice() + "&nbsp;" + getCurrency() + "</span>");
+			out.println("<span class=\"label\">" + i18nAccess.getViewText("ecom.price") + "</span> <span>"+getPrice() + "&nbsp;" + getCurrency() + "</span>");
 			out.println("</div>");
 			
 			out.println("<div class=\"line production\">");
-			out.println("<span class=\"label\">" + i18nAccess.getViewText("ecom.production") + "</span><span>" + getProduction() + "</span>");
+			out.println("<span class=\"label\">" + i18nAccess.getViewText("ecom.production") + "</span> <span>" + getProduction() + "</span>");
 			out.println("</div>");
 
 			out.println("<div class=\"line stock\">");
 			if (getVirtualStock(ctx) > 0) {
-				out.println("<span class=\"label\">" + i18nAccess.getViewText("ecom.stock") + "</span><span>" + getVirtualStock(ctx) + "</span>");
+				out.println("<span class=\"label\">" + i18nAccess.getViewText("ecom.stock") + "</span> <span>" + getVirtualStock(ctx) + "</span>");
 			} else {
-				out.println("<span class=\"label\">" + i18nAccess.getViewText("ecom.stock") + "</span><span>SOLD OUT</span>");
+				out.println("<span class=\"label\">" + i18nAccess.getViewText("ecom.stock") + "</span> <span>SOLD OUT</span>");
 			}
 			out.println("</div>");
 
