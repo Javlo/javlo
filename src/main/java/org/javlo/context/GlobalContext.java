@@ -2748,9 +2748,11 @@ public class GlobalContext implements Serializable {
 	}
 	
 	public void setConfig (Map config) {
-		for (Object key : config.keySet()) {			
-			properties.setProperty(""+key, config.get(key));
-			save();
+		for (Object key : config.keySet()) {	
+			if (!key.equals("folder")) {
+				properties.setProperty(""+key, config.get(key));
+			}			
 		}
+		save();
 	}
 }

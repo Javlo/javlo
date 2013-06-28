@@ -75,6 +75,7 @@ org.javlo.component.container.RepeatContainer
 --content.title.ecom
 
 org.javlo.component.ecom.ProductComponent
+org.javlo.component.ecom.EditBasketComponent
 
 --content.title.web2
 
