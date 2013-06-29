@@ -68,7 +68,7 @@ public class ContentService {
 		PersistenceService.getInstance(globalContext).loadVersion();
 		TemplateFactory.clearTemplate(ctx.getRequest().getSession().getServletContext());
 		TemplateFactory.cleanAllRenderer(ctx, false);
-		content.loadViewNav(ctx); // reload the content
+		// content.loadViewNav(ctx); // reload the content
 	}
 
 	public static void main(String[] args) {
@@ -550,7 +550,7 @@ public class ContentService {
 		return res;
 	}
 
-	public void loadViewNav(ContentContext ctx) throws Exception {
+	/*public void loadViewNav(ContentContext ctx) throws Exception {
 		loadViewNav(ctx, GlobalContext.getInstance(ctx.getRequest()));
 	}
 
@@ -580,7 +580,7 @@ public class ContentService {
 			setViewNav(newViewNav);
 			viewGlobalMap = contentAttributeMap;
 		}
-	}
+	}*/
 
 	public void releaseAll(ContentContext ctx, GlobalContext globalContext) throws Exception {
 		components.clear();
