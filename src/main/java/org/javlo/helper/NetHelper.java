@@ -8,8 +8,12 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
+import java.net.NoRouteToHostException;
 import java.net.URL;
 import java.net.URLConnection;
+import java.net.UnknownHostException;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
@@ -219,8 +223,12 @@ public class NetHelper {
 		return userAgent.contains("robo");
 	}
 
-	public static void main(String[] args) {
-		System.out.println("***** NetHelper.main : connected: "+isConnected()); //TODO: remove debug trace
+	public static void main(String[] args) throws IOException, InterruptedException {
+		SimpleDateFormat sdf = new SimpleDateFormat("HH:mm:ss,SSS");
+		while (System.in.available() == 0) {
+			System.out.println("***** NetHelper.main : " + sdf.format(new Date()) + " connected: " + isConnected()); //TODO: remove debug trace
+			Thread.sleep(300);
+		}
 	}
 
 	public static List<Resource> extractImage(URL inURL, String content) {
@@ -604,24 +612,49 @@ public class NetHelper {
 	 * check internet connection with stable server.
 	 * @return
 	 */
-	public static boolean isConnected() {		
+	public static boolean isConnected() {
+		return canReach("http://www.google.com") || canReach("http://www.belgium.be") || canReach("http://www.javlo.org");
+	}
+
+	/**
+	 * check if the given url can be reached.
+	 * @param url
+	 * @return
+	 */
+	public static boolean canReach(String url) {
+		URLConnection c = null;
 		try {
-			(new URL("http://www.google.com")).openConnection();
+			c = (new URL(url)).openConnection();
+			c.setUseCaches(false);
+			c.setAllowUserInteraction(false);
+			c.setConnectTimeout(1000);
+			c.setReadTimeout(1000);
+			c.connect();
 			return true;
-		} catch (IOException e) {
-			e.printStackTrace();
-		}
-		try {
-			(new URL("http://www.belgium.be")).openConnection();
-			return true;
-		} catch (IOException e) {
-			e.printStackTrace();
-		}
-		try {
-			(new URL("http://www.javlo.org")).openConnection();
-			return true;
-		} catch (IOException e) {
-			e.printStackTrace();
+		} catch (UnknownHostException ignored) {
+			// ignored;
+		} catch (NoRouteToHostException ignored) {
+			// ignored;
+		} catch (java.net.SocketTimeoutException ex) {
+			// ignored;
+		} catch (IOException ignored) {
+			// System.err.println(ignored.getClass().getName() + ": " + ignored.getMessage());
+			// ignored;
+		} finally {
+			if (c instanceof HttpURLConnection) {
+				HttpURLConnection hc = (HttpURLConnection) c;
+				try {
+					hc.disconnect();
+				} catch (Exception ignored) {
+					// ignored
+				}
+			} else if (c != null) {
+				try {
+					c.getInputStream().close();
+				} catch (Exception ignored) {
+					// ignored
+				}
+			}
 		}
 		return false;
 	}
