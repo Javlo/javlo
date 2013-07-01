@@ -2291,8 +2291,8 @@ public class StringHelper {
 	public static String toXMLAttribute(String value) {
 		if (value == null) {
 			return "";
-		}
-		value = value.replace("&", "&amp;");
+		}		
+		value = value.replace("&", "&amp;");		
 		// value = value.replace(" ", "%20");
 		return removeTag(value).replace("\"", "&quot;");
 	}
@@ -2699,6 +2699,16 @@ public class StringHelper {
 
 	public static String getNewToken() {
 		return getRandomString(32, KEY_ACCEPTABLE_CHAR) + getRandomId();
+	}
+	
+	public static String escapeHTML(String html) {
+		String outHTML = html;
+		outHTML = outHTML.replaceAll("&scaron;","&#352;");
+		outHTML = outHTML.replaceAll("&ndash;","-");
+		outHTML = outHTML.replaceAll("&laquo;","&#171;");
+		outHTML = outHTML.replaceAll("&raquo;","&#187;");
+		outHTML = outHTML.replaceAll("&oslash;","&#216;");		
+		return outHTML;
 	}
 
 }

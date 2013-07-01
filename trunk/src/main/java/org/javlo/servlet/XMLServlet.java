@@ -66,7 +66,7 @@ public class XMLServlet extends HttpServlet {
 			ctx.getRequest().setAttribute("imageURL", imageURL);
 			ctx.getRequest().setAttribute("largeImageURL", largeImageURL);
 			ctx.getRequest().setAttribute("imageDescription", StringHelper.toXMLAttribute(imageDescription));
-			ctx.getRequest().setAttribute("text", StringHelper.toXMLAttribute(text));
+			ctx.getRequest().setAttribute("text", StringHelper.escapeHTML(StringHelper.toXMLAttribute(text)));
 
 			return ServletHelper.executeJSP(ctx, renderer);
 		} else {
