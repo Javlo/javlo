@@ -2294,7 +2294,7 @@ public class StringHelper {
 		}
 		value = value.replace("&", "&amp;");
 		// value = value.replace(" ", "%20");
-		return value.replace("\"", "&quot;");
+		return removeTag(value).replace("\"", "&quot;");
 	}
 
 	public static String trimAndNullify(String str) {
