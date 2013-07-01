@@ -1,6 +1,7 @@
 package org.javlo.service;
 
 import java.util.Collections;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
@@ -46,8 +47,33 @@ public class IMService {
 			if (receiverUser == null) {
 				receiverUser = ALL_USERS;
 			}
-			IMItem item = new IMItem(++lastMessageId, fromSite, fromUser, receiverSite, receiverUser, message, message.equals(WIZZ_MESSAGE));
+			IMItem item = new IMItem(++lastMessageId, new Date(), fromSite, fromUser, receiverSite, receiverUser, message, message.equals(WIZZ_MESSAGE));
 			messages.put(item.getId(), item);
+		}
+	}
+
+	public void fillMessageList(String site, String username, Date lastDate, List<IMItem> list) {
+		long currentLastMessageId = lastMessageId;
+		long currentId;
+		try {
+			currentId = Collections.min(messages.keySet());
+		} catch (NoSuchElementException e) {
+			currentId = currentLastMessageId + 1;
+		}
+		boolean allSite = site.equals(ALL_SITES);
+		for (; currentId <= currentLastMessageId; currentId++) {
+			IMItem item = messages.get(currentId);
+			if (item != null) {
+				if (lastDate == null || item.getSentDate().after(lastDate)) {
+					boolean currentUserIsSender = item.getFromSite().equals(site) && item.getFromUser().equals(username);
+					if ((allSite
+							|| item.getReceiverSite().equals(ALL_SITES)
+							|| (item.getReceiverSite().equals(site) && (item.getReceiverUser().equals(username) || item.getReceiverUser().equals(ALL_USERS)))
+							) && !currentUserIsSender) {
+						list.add(item);
+					}
+				}
+			}
 		}
 	}
 
@@ -83,7 +109,7 @@ public class IMService {
 					isWizz = isWizz && !receivedIds.contains(item.getId());
 					receivedIds.add(item.getId());
 					if (!Boolean.valueOf(item.isWizz()).equals(isWizz)) {
-						item = new IMItem(item.getId(), item.getFromSite(), item.getFromUser(), item.getReceiverSite(), item.getReceiverUser(), item.getMessage(), isWizz);
+						item = new IMItem(item.getId(), item.getSentDate(), item.getFromSite(), item.getFromUser(), item.getReceiverSite(), item.getReceiverUser(), item.getMessage(), isWizz);
 					}
 					list.add(item);
 				}
@@ -115,6 +141,7 @@ public class IMService {
 	public static class IMItem {
 
 		private final long id;
+		private final Date sentDate;
 		private final String fromSite;
 		private final String fromUser;
 		private final String receiverSite;
@@ -122,9 +149,10 @@ public class IMService {
 		private final String message;
 		private final boolean wizz;
 
-		public IMItem(long id, String fromSite, String fromUser, String receiverSite, String receiverUser, String message, boolean wizz) {
+		public IMItem(long id, Date sentDate, String fromSite, String fromUser, String receiverSite, String receiverUser, String message, boolean wizz) {
 			super();
 			this.id = id;
+			this.sentDate = sentDate;
 			this.fromSite = fromSite;
 			this.fromUser = fromUser;
 			this.receiverSite = receiverSite;
@@ -135,6 +163,10 @@ public class IMService {
 
 		public long getId() {
 			return id;
+		}
+
+		public Date getSentDate() {
+			return sentDate;
 		}
 
 		public String getFromSite() {
