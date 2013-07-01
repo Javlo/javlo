@@ -2289,6 +2289,9 @@ public class StringHelper {
 	 * @return
 	 */
 	public static String toXMLAttribute(String value) {
+		if (value == null) {
+			return "";
+		}
 		value = value.replace("&", "&amp;");
 		// value = value.replace(" ", "%20");
 		return value.replace("\"", "&quot;");

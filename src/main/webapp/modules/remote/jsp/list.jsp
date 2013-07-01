@@ -7,7 +7,7 @@
      <tr>       
        <th class="head0">url</th>                  
        <th class="head1">priority</th>       
-       <th class="head0">valid ?</th>
+       <th class="head0">online ?</th>
        <th class="head1">change date</th>       
        <th class="head0">text</th>
        <th class="head1">message</th>
@@ -58,6 +58,7 @@ jQuery(document).ready(function() {
 		 "sPaginationType": "full_numbers",
 		 "aaSorting": [[ 2, "desc" ]],
 		 "aoColumns": [
+		               null,
 		               null,
 		               null,
 		               null,
