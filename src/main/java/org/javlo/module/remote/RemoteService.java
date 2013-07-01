@@ -6,16 +6,24 @@ import java.io.IOException;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.logging.Logger;
+
+import javax.mail.internet.AddressException;
+import javax.mail.internet.InternetAddress;
 
 import org.apache.commons.io.filefilter.FileFilterUtils;
 import org.javlo.context.ContentContext;
 import org.javlo.context.GlobalContext;
+import org.javlo.helper.PatternHelper;
 import org.javlo.helper.ResourceHelper;
 import org.javlo.helper.URLHelper;
+import org.javlo.mailing.MailService;
 import org.javlo.message.GenericMessage;
 import org.javlo.service.NotificationService;
 
 public class RemoteService {
+	
+	private static Logger logger = Logger.getLogger(RemoteService.class.getName());
 
 	private static final String KEY = RemoteService.class.getName();
 
@@ -30,6 +38,10 @@ public class RemoteService {
 	private String user = null;
 	
 	private String url = null;
+	
+	private String notificationEmail = null;
+	
+	private boolean notificationEmailSended = false;
 
 	public static RemoteService getInstance(ContentContext ctx) throws Exception {
 		RemoteService service = (RemoteService) ctx.getGlobalContext().getAttribute(KEY);
@@ -42,8 +54,8 @@ public class RemoteService {
 			ctx.getGlobalContext().setAttribute(KEY, service);
 			service.url = URLHelper.createInterModuleURL(ctx.getContextForAbsoluteURL().getContextWithOtherRenderMode(ContentContext.EDIT_MODE), "/", "remote");
 			service.remoteThread = new RemoteThread(service);
-			service.remoteThread.start();	
-			
+			service.remoteThread.start();
+			service.notificationEmail = ctx.getGlobalContext().getAdministratorEmail();			
 		}
 		return service;
 	}
@@ -101,16 +113,38 @@ public class RemoteService {
 	}
 
 	void sendNotification() {
-		for(RemoteBean bean : getRemotes()) {
+		boolean errorFound = false;
+		for(RemoteBean bean : getRemotes()) {			
 			if (!bean.isValid()) {
 				NotificationService service = NotificationService.getInstance(globalContext);				
 				service.addNotification("RC Error ("+bean.getUrl()+" : "+bean.getError(), url, GenericMessage.ERROR , user, null);
+				errorFound = true;
 			}
 			try {
 				storeRemote(bean);
 			} catch (IOException e) {
 				e.printStackTrace();
 			}
+		}
+		if (errorFound) {
+			if (!notificationEmailSended) {
+				notificationEmailSended = true;
+				if (PatternHelper.MAIL_PATTERN.matcher(notificationEmail).matches()) {
+					MailService mailService = MailService.getInstance(globalContext.getStaticConfig());
+					InternetAddress admin;
+					try {
+						admin = new InternetAddress(notificationEmail);
+						mailService.sendMail(admin, admin, "remote error on : "+globalContext.getContextKey(), "click here : "+url, false);
+					} catch (Exception e) {
+						e.printStackTrace();
+					}
+					
+				} else {
+					logger.warning("bad email : "+notificationEmail);
+				}
+			}
+		} else {
+			notificationEmailSended = false;
 		}
 	}
 	
