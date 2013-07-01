@@ -52,8 +52,8 @@ public class ActionService {
 
 	public void openUrl(ServerConfig server, String url) {
 		ServerClientService client = factory.getClient(server);
-		url = client.tokenifyUrl(url);
 		try {
+			url = client.tokenifyUrl(url);
 			Desktop.getDesktop().browse(new URI(url));
 		} catch (Exception ex) {
 			tray.displayErrorMessage(i18n.get("error.on-browse"), ex, true);

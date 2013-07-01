@@ -130,19 +130,25 @@ public class NotificationClientService {
 			if (type == null) {
 				type = ServerType.OTHER;
 			}
-			switch (type) {
-			case JAVLO2:
-				List<RemoteNotification> notifications = client.getNewDataNotifications();
-				if (notifications != null && !notifications.isEmpty()) {
-					allNewNotifications.addAll(notifications);
+			try {
+				switch (type) {
+				case JAVLO2:
+					List<RemoteNotification> notifications = client.getNewDataNotifications();
+					if (notifications != null && !notifications.isEmpty()) {
+						allNewNotifications.addAll(notifications);
+					}
+					break;
+				case OTHER:
+					client.checkThePhrase();
+					break;
+				default:
+					logger.warning("Unmanaged enum value: " + server.getType());
+					break;
 				}
-				break;
-			case OTHER:
-				client.checkThePhrase();
-				break;
-			default:
-				logger.warning("Unmanaged enum value: " + server.getType());
-				break;
+			} catch (Exception ex) {
+				if (client.processException(ex)) {
+					//TODO Connection problem: maybe exit loop? grow wait time?
+				}
 			}
 		}
 		if (!allNewNotifications.isEmpty()) {

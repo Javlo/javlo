@@ -42,6 +42,7 @@ public class StatusFrame extends javax.swing.JDialog {
 	public static void onServerStatusChange(ServerConfig server) {
 		if (instance != null) {
 			instance.tblServersModel.fireTableRowsUpdated(instance.factory.getClient(server));
+			instance.tblServers.repaint();
 		}
 	}
 
