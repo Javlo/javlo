@@ -125,8 +125,8 @@ if (globalContext.isCollaborativeMode() && ctx.getRenderMode() == ContentContext
 		request.setAttribute("samePrevious", new Boolean(false));		
 	}	
 	request.setAttribute("creator", elem.getAuthors());
-	request.setAttribute("date", StringHelper.renderTime(elem.getModificationDate()));%><jsp:include page="display_user.jsp"></jsp:include><%=elem.getPrefixViewXHTMLCode(ctx)%><%
-}%><%=elem.getXHTMLCode(ctx)%>
+	request.setAttribute("date", StringHelper.renderTime(elem.getModificationDate()));%><jsp:include page="display_user.jsp"></jsp:include><%
+}%><%=elem.getPrefixViewXHTMLCode(ctx)%><%=elem.getXHTMLCode(ctx)%>
 <%=elem.getSuffixViewXHTMLCode(ctx)%>
 <%
 previousElem = elem;
