@@ -40,7 +40,10 @@ import org.javlo.message.GenericMessage;
 import org.javlo.message.MessageRepository;
 import org.javlo.module.ticket.TicketAction;
 import org.javlo.service.ContentService;
+import org.javlo.service.IMService;
+import org.javlo.service.IMService.IMItem;
 import org.javlo.service.NotificationService;
+import org.javlo.service.NotificationService.Notification;
 import org.javlo.service.NotificationService.NotificationContainer;
 import org.javlo.service.RequestService;
 import org.javlo.template.Template;
@@ -62,14 +65,17 @@ public class DataAction implements IAction {
 	 * @return
 	 * @throws ParseException
 	 */
-	public static String performNotifications(RequestService rs, ContentContext ctx, NotificationService notif, User user) throws ParseException {
+	public static String performNotifications(RequestService rs, ContentContext ctx, GlobalContext globalContext, NotificationService notif, User user, HttpSession session) throws ParseException {
 		if (user != null) {
+			Date lastDate = null;
 			if (rs.getParameter("lastdate", null) != null) {
-				Date lastDate = StringHelper.parseFileTime(rs.getParameter("lastdate", null));
+				lastDate = StringHelper.parseFileTime(rs.getParameter("lastdate", null));
+			}
+			List<NotificationContainer> finalNotifs = new LinkedList<NotificationService.NotificationContainer>();
+			if (lastDate != null) {
 				Calendar startCal = Calendar.getInstance();
 				startCal.setTime(lastDate);
 				List<NotificationContainer> notifs = notif.getNotifications(user.getLogin(), 999, StringHelper.isTrue(rs.getParameter("markread", null)));
-				List<NotificationContainer> finalNotifs = new LinkedList<NotificationService.NotificationContainer>();
 				Calendar cal = Calendar.getInstance();
 				for (NotificationContainer notificationContainer : notifs) {
 					cal.setTime(notificationContainer.getNotification().getCreationDate());
@@ -77,10 +83,31 @@ public class DataAction implements IAction {
 						finalNotifs.add(notificationContainer);
 					}
 				}
-				ctx.getAjaxData().put("notifications", finalNotifs);
 			} else {
-				ctx.getAjaxData().put("notifications", notif.getNotifications(user.getLogin(), 999, StringHelper.isTrue(rs.getParameter("markread", null))));
+				finalNotifs.addAll(notif.getNotifications(user.getLogin(), 999, StringHelper.isTrue(rs.getParameter("markread", null))));
 			}
+			IMService imService = IMService.getInstance(session);
+			String currentSite = globalContext.getContextKey();
+			String currentUser = ctx.getCurrentUserId();
+			List<IMItem> messages = new LinkedList<IMItem>();
+			imService.fillMessageList(currentSite, currentUser, lastDate, messages);
+			if (!messages.isEmpty()) {
+				for (IMItem item : messages) {
+					String msg = item.getFromUser();
+					if (!item.getReceiverUser().equals(IMService.ALL_USERS)) {
+						msg += " > " + item.getReceiverUser();
+					}
+					msg += ": " + item.getMessage();
+					Notification notification = new Notification();
+					notification.setCreationDate(item.getSentDate());
+					notification.setMessage(msg);
+					notification.setReceiver(item.getReceiverUser());
+					notification.setUserId(item.getFromUser());
+					notification.setType(GenericMessage.INFO);
+					finalNotifs.add(new NotificationContainer(notification, false, currentUser));
+				}
+			}
+			ctx.getAjaxData().put("notifications", finalNotifs);
 		} else {
 			return "no access";
 		}
