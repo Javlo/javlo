@@ -58,7 +58,7 @@
 			<input type="password" id="password" name="password" value="" /> 
 		</div>	
 		<div class="line">
-			<label for="password2">${i18n.edit['user.new-password-2']}</label>
+			<label for="password2">${i18n.edit['user.change-password-2']}</label>
 			<input type="password" id="password2" name="password2" value="" />		 
 		</div>
 	</c:if>
