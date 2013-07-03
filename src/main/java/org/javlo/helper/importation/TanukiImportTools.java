@@ -7,6 +7,8 @@ import java.util.zip.ZipEntry;
 import java.util.zip.ZipInputStream;
 
 import org.javlo.component.core.ComponentBean;
+import org.javlo.component.layout.ContentSeparation;
+import org.javlo.component.list.List;
 import org.javlo.component.text.Paragraph;
 import org.javlo.component.text.XHTML;
 import org.javlo.component.title.MenuTitle;
@@ -59,7 +61,8 @@ public class TanukiImportTools {
 			if (childNode.getName().equals("fragment")) {
 				String type = childNode.getAttributeValue("type", null);
 				String lang = childNode.getAttributeValue("language", null);
-				String zone = childNode.getAttributeValue("zone", null);				
+				String zone = childNode.getAttributeValue("zone", null);	
+				boolean repeat = StringHelper.isTrue(childNode.getAttributeValue("to-be-inherited"));
 				if (type != null) {
 					ComponentBean compBean = null;
 					ComponentBean compBeanBis = null;
@@ -68,34 +71,36 @@ public class TanukiImportTools {
 						String variant = childNode.getChild("variant").getContent();
 						if (variant.equals("raw")) {
 							compBean = new ComponentBean(XHTML.TYPE, value, lang);	
+						} else if (variant.equals("list")) {
+							compBean = new ComponentBean(List.TYPE, value, lang);
 						} else {
 							compBean = new ComponentBean(Paragraph.TYPE, value, lang);
 						}						
 					} else if (type.equals("heading")) {
 						String level = childNode.getChild("level").getContent();
 						String value = childNode.getChild("value").getContent();
-						if (level.equals("1")) {
-							compBean = new ComponentBean(Title.TYPE, value, lang);
-						} else {
-							compBean = new ComponentBean(SubTitle.TYPE, value, lang);
-							compBean.setStyle(level);
-						}
+						compBean = new ComponentBean(SubTitle.TYPE, value, lang);
+						compBean.setStyle(""+(Integer.parseInt(level)+1));
+					} else if (type.equals("separation")) {
+						compBean = new ComponentBean(ContentSeparation.TYPE, "", lang);
 					} else if (type.equals("meta")) {
 						String value = childNode.getChild("title").getContent();
 						if (childNode.getChild("nav-title") != null) {
 							compBeanBis = new ComponentBean (MenuTitle.TYPE, value, lang);
 						}
-						compBean = new ComponentBean(PageTitle.TYPE, value, lang);
+						compBean = new ComponentBean(Title.TYPE, value, lang);
 					}
 					if (compBean != null) {
 						compBean.setArea(zone);
 						compBean.setId(StringHelper.getRandomId());
+						compBean.setRepeat(repeat);
 						page.addContent(parentId, compBean);
 						parentId = compBean.getId();						
 					}
 					if (compBeanBis != null) {
 						compBeanBis.setArea(zone);
 						compBeanBis.setId(StringHelper.getRandomId());
+						compBeanBis.setRepeat(repeat);
 						page.addContent(parentId, compBeanBis);
 						parentId = compBean.getId();						
 					}

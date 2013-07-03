@@ -1571,7 +1571,7 @@ public class StringHelper {
 				notTagStr.append(c);
 			}
 		}
-		return XHTMLHelper.escapeXHTML(notTagStr.toString());
+		return notTagStr.toString();
 	}
 
 	/**
@@ -2292,9 +2292,8 @@ public class StringHelper {
 		if (value == null) {
 			return "";
 		}		
-		value = value.replace("&", "&amp;");		
-		// value = value.replace(" ", "%20");
-		return removeTag(value).replace("\"", "&quot;");
+		value = value.replace("&", "&amp;"); 
+		return XHTMLHelper.escapeXML(removeTag(value).replace("\"", "&quot;"));
 	}
 
 	public static String trimAndNullify(String str) {

@@ -60,6 +60,8 @@ import org.javlo.xml.XMLFactory;
 import org.javlo.ztatic.StaticInfo;
 import org.xml.sax.SAXParseException;
 
+import com.sun.org.apache.xerces.internal.util.XMLChar;
+
 public class PersistenceService {
 
 	public static final class MetaPersistenceBean {
@@ -763,8 +765,12 @@ public class PersistenceService {
 		return outBean;
 
 	}
-
+	
 	public MenuElement load(ContentContext ctx, int renderMode, Map<String, String> contentAttributeMap, Date timeTravelDate) throws Exception {
+		return load(ctx,renderMode,contentAttributeMap, timeTravelDate, true);
+	}
+
+	private MenuElement load(ContentContext ctx, int renderMode, Map<String, String> contentAttributeMap, Date timeTravelDate, boolean correctXML) throws Exception {
 		synchronized (ctx.getGlobalContext().getLockLoadContent()) {
 
 			loadVersion();
@@ -798,10 +804,11 @@ public class PersistenceService {
 							}
 							entry = zip.getNextEntry();
 						}
+						zip.close();
 					}
 				}
-				if (in == null) {
-					File file;
+				File file = null;
+				if (in == null) {					
 					if (renderMode == ContentContext.PREVIEW_MODE) {
 						file = new File(getDirectory() + "/content_" + renderMode + '_' + version + ".xml");
 					} else {
@@ -824,7 +831,27 @@ public class PersistenceService {
 				} else {
 					LoadingBean loadBean = load(ctx, in, contentAttributeMap, renderMode);
 					root = loadBean.getRoot();
-					ConvertToCurrentVersion.convert(ctx, loadBean);
+					try {
+						ConvertToCurrentVersion.convert(ctx, loadBean);
+					} catch (Exception e) {
+						e.printStackTrace();
+						if (correctXML && file != null) {
+							logger.info("try to correct xml structure : "+file.getName()+" context : "+ctx.getGlobalContext().getContextKey());
+							String content = ResourceHelper.getFileContent(file);
+							StringBuffer newContent = new StringBuffer();
+							for (char c : content.toCharArray()) {
+								if (XMLChar.isValid(c)) {
+									newContent.append(c);
+								} else {
+									logger.warning("bad char found : "+c);
+									newContent.append('?');
+								}
+							}
+							content = null;
+							ResourceHelper.writeStringToFile(file, newContent.toString(), ContentContext.CHARACTER_ENCODING);							
+							return load(ctx,renderMode,contentAttributeMap,timeTravelDate,false);
+						}
+					}
 
 					/** load linked content **/
 					/*
