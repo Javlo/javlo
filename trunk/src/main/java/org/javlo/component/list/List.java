@@ -13,6 +13,8 @@ import org.javlo.service.ReverseLinkService;
  * @author pvandermaesen
  */
 public class List extends AbstractVisualComponent {
+	
+	public static final String TYPE = "list";
 
 	/**
 	 * @see org.javlo.itf.IContentVisualComponent#getXHTMLCode()
@@ -37,7 +39,7 @@ public class List extends AbstractVisualComponent {
 	}
 
 	public String getType() {
-		return "list";
+		return TYPE;
 	}
 	
 	@Override

@@ -1,6 +1,7 @@
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
 <%@ taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions" %>
 
+<c:if test="${empty webaction}">
 <div class="widgetbox edit-user">
 <h3><span>${i18n.edit['user.change-password']}</span></h3>
 <div class="content">
@@ -24,15 +25,23 @@
 </form>
 </div>
 </div>
+</c:if>
 
 <div class="widgetbox edit-user">
-<h3><span>${i18n.edit['user.title.edit']} : ${user.name}</span></h3>
+<c:if test="${empty webaction}"><h3><span>${i18n.edit['user.title.edit']} : ${user.name}</span></h3></c:if>
 <div class="content">
+<c:if test="${not empty messages.globalMessage && not empty webaction}">
+<div class="message ${messages.globalMessage.typeLabel}">
+	<span>${messages.globalMessage.message}</span>
+</div>
+</c:if>
+
 
 <form id="form-edit-user" class="standard-form" action="${info.currentURL}" method="post">
 
 <div>
-	<input type="hidden" name="webaction" value="updateCurrent" />
+	<c:if test="${empty webaction}"><input type="hidden" name="webaction" value="updateCurrent" /></c:if>
+	<c:if test="${not empty webaction}"><input type="hidden" name="webaction" value="${webaction}" /></c:if>
 	<input type="hidden" name="user" value="${user.name}" />
 </div>
 
@@ -43,6 +52,16 @@
 		<label for="login">login</label>
 		<input type="text" id="login" name="login" value="${userInfoMap["login"]}" /> 
 	</div>
+	<c:if test="${not empty webaction}">
+		<div class="line">
+			<label for="password">${i18n.edit['user.new-password']}</label>
+			<input type="password" id="password" name="password" value="" /> 
+		</div>	
+		<div class="line">
+			<label for="password2">${i18n.edit['user.new-password-2']}</label>
+			<input type="password" id="password2" name="password2" value="" />		 
+		</div>
+	</c:if>
 	<div class="line">
 		<label for="firstName">firstName</label>
 		<input type="text" id="firstName" name="firstName" value="${userInfoMap["firstName"]}" /> 
@@ -70,7 +89,7 @@
 		 </c:if> 
 	</div>
 	<div class="line">
-		<label for="function">function</label>
+		<label for="function">area of specialisation</label>
 		<c:if test="${empty list.functions}">
 		<input type="text" id="function" name="function" value="${userInfoMap["function"]}" />
 		</c:if>
@@ -123,6 +142,7 @@
 		<label for="preferredLanguageRaw">preferred Language</label>
 		<input type="text" id="preferredLanguageRaw" name="preferredLanguageRaw" value="${userInfoMap["preferredLanguageRaw"]}" /> 
 	</div>
+	<c:if test="${empty webaction}">
 	<div class="line">
 		<label for="token">token</label>
 		<c:if test="${fn:length(userInfoMap['token']) > 0}">
@@ -135,12 +155,21 @@
 			<input class="action-button" type="submit" name="notoken" value="${i18n.edit['global.delete']}" />
 		</c:if>
 	</div>
+	</c:if>
 	<div class="line">
 		<label for="info">info</label>
 		<textarea id="info" name="info">${userInfoMap["info"]}</textarea>
 	</div>
 </div>
 </fieldset>
+
+<c:if test="${not empty webaction}">
+	<div class="line">
+		<label for="message">you message to the administrator of the site :</label>
+		<textarea id="info" name="message">${param.message}</textarea>
+	</div>
+</c:if>
+
 
 <fieldset>
 <legend>${i18n.edit['user.social']}</legend>

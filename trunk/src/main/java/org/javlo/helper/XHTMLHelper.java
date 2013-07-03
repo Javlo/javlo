@@ -190,6 +190,13 @@ public class XHTMLHelper {
 		}
 		return StringEscapeUtils.escapeHtml(xhtml);
 	}
+	
+	public static String escapeXML(String xhtml) {
+		if (xhtml == null) {
+			return "";
+		}
+		return StringEscapeUtils.escapeXml(xhtml);
+	}
 
 	public static String extractTitle(String xhtml) {
 		int startTitle = xhtml.toLowerCase().indexOf("<title>");

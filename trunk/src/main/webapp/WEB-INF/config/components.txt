@@ -105,3 +105,4 @@ org.javlo.component.portlet.PortletWrapperComponent
 org.javlo.component.links.UserInfoLink
 org.javlo.component.form.FormMailingComponent
 org.javlo.component.users.UserSearch
+org.javlo.component.users.UserRegistration

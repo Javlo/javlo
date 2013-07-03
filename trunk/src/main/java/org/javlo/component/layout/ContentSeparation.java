@@ -12,6 +12,8 @@ import org.javlo.i18n.I18nAccess;
  * @author pvandermaesen 
  */
 public class ContentSeparation extends AbstractVisualComponent {
+	
+	public static final String TYPE = "separation";
 
 	@Override
 	public String getLastSufix(ContentContext ctx) {
@@ -35,7 +37,7 @@ public class ContentSeparation extends AbstractVisualComponent {
 	}
 
 	public String getType() {
-		return "separation";
+		return TYPE;
 	}
 
 	/**

@@ -19,6 +19,8 @@ import org.javlo.helper.XMLHelper;
 import org.javlo.navigation.MenuElement;
 import org.javlo.servlet.zip.ZipManagement;
 
+import com.sun.org.apache.xerces.internal.util.XMLChar;
+
 public class PersistenceThread extends Thread {
 
 	private static Logger logger = Logger.getLogger(PersistenceThread.class.getName());
@@ -155,7 +157,7 @@ public class PersistenceThread extends Thread {
 			}
 		}
 	}
-
+	
 	void storeCurrentView() throws IOException {
 		File file = new File(persistenceService.getDirectory() + "/content_" + ContentContext.VIEW_MODE + ".xml");
 
