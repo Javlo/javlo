@@ -122,7 +122,7 @@ for (IContentVisualComponent comp : components) {
 	}
 	String readOnlyClass= "";
 	String authors = "";
-	if (globalContext.isOnlyCreatorModify() && !comp.getAuthors().equals(ctx.getCurrentEditUser().getLogin())) {
+	if (!AdminUserSecurity.getInstance().canModifyConponent(ctx, comp.getId())) {
 		readOnlyClass = "readonly ";
 		authors = " <span class=\"authors\"> - "+comp.getAuthors()+"</span>";
 	}
@@ -138,7 +138,7 @@ for (IContentVisualComponent comp : components) {
           <%if (admin) {%><li><a href="#tab4<%=inputSuffix%>">raw</a></li><%}%>
       </ul>
       <div class="header-action">
-      	<a class="delete ajax" title="${i18n.edit['global.delete']}" href="${info.currentURL}?webaction=delete&id=<%=comp.getId()%>"></a>
+      	<%if (AdminUserSecurity.getInstance().canModifyConponent(ctx, comp.getId())) {%><a class="delete ajax" title="${i18n.edit['global.delete']}" href="${info.currentURL}?webaction=delete&id=<%=comp.getId()%>"></a><%}%>
       	<a class="copy ajax" title="${i18n.edit['content.copy']}" href="${info.currentURL}?webaction=copy&id=<%=comp.getId()%>"></a>
       </div>
       <div class="header-info">

@@ -9,6 +9,8 @@ public interface IUserInfo {
 	public static final String PREFERRED_LANGUAGE_SEPARATOR = ",";
 
 	public String getLogin();
+	
+	public String getEncryptLogin();
 
 	public String getTitle();
 

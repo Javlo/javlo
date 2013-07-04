@@ -8,6 +8,10 @@ import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 
+import org.javlo.component.core.IContentVisualComponent;
+import org.javlo.context.ContentContext;
+import org.javlo.service.ContentService;
+
 public class AdminUserSecurity implements Serializable {
 
 	private static final long serialVersionUID = 1L;
@@ -110,7 +114,7 @@ public class AdminUserSecurity implements Serializable {
 	public boolean haveRight(User user, String... inRights) {
 		for (String right : inRights) {
 			if (user != null) {
-				Set<String> roles = user.getRoles();
+				Set<String> roles = user.getRoles();				
 				for (String role : roles) {
 					if (role.equals(FULL_CONTROL_ROLE)) {
 						return true;
@@ -126,34 +130,7 @@ public class AdminUserSecurity implements Serializable {
 		}
 		return false;
 	}
-
-	/**
-	 * check right (admin have all right)
-	 * 
-	 * @param user
-	 * @param right
-	 * @return
-	 */
-	public boolean haveAllRight(User user, String... inRights) {
-		for (String right : inRights) {
-			if (user != null) {
-				Set<String> roles = user.getRoles();
-				for (String role : roles) {
-					if (role.equals(FULL_CONTROL_ROLE)) {
-						return true;
-					}
-					Set<String> rightsRole = rights.get(role);
-					if (rightsRole != null) {
-						if (!rightsRole.contains(right.toLowerCase())) {
-							return false;
-						}
-					}
-				}
-			}
-		}
-		return false;
-	}
-
+	
 	public boolean haveRole(User user, String inRole) {
 		if (user != null) {
 			Set<String> roles = user.getRoles();
@@ -197,6 +174,24 @@ public class AdminUserSecurity implements Serializable {
 			return false;
 		}
 		return user.getRoles().contains(MASTER);
+	}
+	
+	public final boolean canModifyConponent (ContentContext ctx, String compId) throws Exception {
+		if (ctx.getCurrentEditUser() == null) {
+			return false;
+		}
+		ContentService content = ContentService.getInstance(ctx.getRequest());
+		IContentVisualComponent comp = content.getComponent(ctx, compId);
+		if (isAdmin(ctx.getCurrentEditUser())) {
+			return true;
+		} else {
+			if (ctx.getGlobalContext().isOnlyCreatorModify() && (comp != null && comp.getAuthors().equals(ctx.getCurrentEditUser().getLogin()))) {				
+				if (haveRole(ctx.getCurrentEditUser(), CONTENT_ROLE)) {
+					return true;
+				}
+			}
+		}
+		return false;
 	}
 
 }

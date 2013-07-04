@@ -691,15 +691,21 @@ public class Edit extends AbstractModuleAction {
 			messageRepository.setGlobalMessageAndNotification(ctx, new GenericMessage(i18nAccess.getText("action.block"), GenericMessage.ERROR));
 			return null;
 		}
-
+		
 		String id = request.getParameter("id");
 		if (id != null) {
+			
+			if (!AdminUserSecurity.getInstance().canModifyConponent(ctx, id)) {
+				logger.warning("user : "+ctx.getCurrentUserId()+" can't delete component : "+id);
+				return "security error";
+			}
+			
 			ClipBoard clipBoard = ClipBoard.getInstance(request);
 			if (id.equals(clipBoard.getCopied())) {
 				clipBoard.clear();
 			}
 			MenuElement elem = ctx.getCurrentPage();
-
+			
 			elem.removeContent(ctx, id);
 			GlobalContext globalContext = GlobalContext.getInstance(request);
 			PersistenceService persistenceService = PersistenceService.getInstance(globalContext);
@@ -739,7 +745,7 @@ public class Edit extends AbstractModuleAction {
 		for (String compId : components) {
 			IContentVisualComponent elem = content.getComponent(ctx, compId);
 			if (elem != null && StringHelper.isTrue(requestService.getParameter("id-" + elem.getId(), null))) {
-				if (!globalContext.isOnlyCreatorModify() || elem.getAuthors().equals(ctx.getCurrentEditUser().getLogin())) {
+				if (AdminUserSecurity.getInstance().canModifyConponent(ctx, compId)) {
 					elem.performConfig(ctx);
 					elem.performEdit(ctx);
 					if (ctx.isEditPreview()) {
