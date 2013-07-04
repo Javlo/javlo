@@ -79,8 +79,7 @@ public class ResourceServlet extends HttpServlet {
 						if ((fileStream != null)) {
 							ResourceHelper.writeStreamToStream(fileStream, response.getOutputStream());
 						}
-					} else {
-						System.out.println("***** ResourceServlet.processRequest : not found : "+finalName); //TODO: remove debug trace
+					} else {						
 						response.setStatus(404, "not found : " + filePath);
 						return;
 					}
