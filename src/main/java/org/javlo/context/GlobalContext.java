@@ -246,13 +246,7 @@ public class GlobalContext implements Serializable {
 	}
 
 	public static GlobalContext getSessionContext(HttpSession session) {
-		String contextKey = (String) session.getAttribute(KEY);
-		try {
-			return GlobalContext.getInstance(session, contextKey);
-		} catch (Exception e) {
-			e.printStackTrace();
-			return null;
-		}
+		return (GlobalContext) session.getAttribute(KEY);
 	}
 
 	public static String getSessionContextKey(HttpSession session) {
