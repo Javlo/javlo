@@ -3507,6 +3507,7 @@ public class MenuElement implements Serializable {
 			boolean delete = false;
 			for (int i = 0; i < componentBean.length; i++) {
 				IContentVisualComponent comp = ComponentFactory.getComponentWithType(ctx, componentBean[i].getType());
+				
 				if (!componentBean[i].getId().equals(id)) {
 					if (!delete) {
 						outList.add(componentBean[i]);

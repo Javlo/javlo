@@ -470,4 +470,9 @@ public class UserInfo implements Comparable<IUserInfo>, IUserInfo, Serializable 
 	public String getAvatarURL() {
 		return null;
 	}
+
+	@Override
+	public String getEncryptLogin() {
+		return StringHelper.encryptPassword(getLogin());
+	}
 }

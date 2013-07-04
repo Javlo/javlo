@@ -81,11 +81,20 @@ public class UserAction extends AbstractModuleAction {
 			ctx.getRequest().setAttribute("users", userContext.getUserFactory(ctx).getUserInfoList());
 		}
 
-		if ((requestService.getParameter("user", null) == null || requestService.getParameter("back", null) != null) && !userContext.getMode().equals(UserModuleContext.VIEW_MY_SELF)) {
+		if (((requestService.getParameter("user", null) == null && requestService.getParameter("cuser", null) == null) || requestService.getParameter("back", null) != null) && !userContext.getMode().equals(UserModuleContext.VIEW_MY_SELF)) {
 			moduleContext.getCurrentModule().restoreAll();
 		} else {
-			User user = userFactory.getUser(requestService.getParameter("user", null));
-
+			User user = null;
+			if (requestService.getParameter("user", null) != null) {
+				user = userFactory.getUser(requestService.getParameter("user", null));
+			} else if (requestService.getParameter("cuser", null) != null) {
+				String cuser = requestService.getParameter("cuser", null);
+				for (IUserInfo userInfo : userContext.getUserFactory(ctx).getUserInfoList()) {
+					if (userInfo.getEncryptLogin().equals(cuser)) {
+						user = userFactory.getUser(userInfo.getLogin());
+					}
+				}
+			}			
 			if (userContext.getMode().equals(UserModuleContext.VIEW_MY_SELF)) {
 				Module currentModule = moduleContext.getCurrentModule();
 				currentModule.setToolsRenderer(null);
@@ -103,6 +112,9 @@ public class UserAction extends AbstractModuleAction {
 			ctx.getRequest().setAttribute("userInfoMap", userInfoMap);
 			List<String> keys = new LinkedList<String>(userInfoMap.keySet());
 			Collections.sort(keys);
+			keys.remove("avatarURL");
+			keys.remove("encryptLogin");
+			keys.remove("rolesRaw");
 			ctx.getRequest().setAttribute("userInfoKeys", keys);
 
 		}

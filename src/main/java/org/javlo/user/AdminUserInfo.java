@@ -41,9 +41,9 @@ public class AdminUserInfo extends UserInfo {
 
 	@Override
 	public String getAvatarURL() {
-		if (getFacebook() != null) {
+		if (getFacebook() != null && getFacebook().trim().length() > 0) {
 			return getFacebook().replace("//www.", "//graph.") + "/picture?type=small";
-		} else if (getTwitter() != null) {
+		} else if (getTwitter() != null && getTwitter().trim().length() > 0) {
 			return "https://api.twitter.com/1/users/profile_image?screen_name=" + getTwitter().replaceAll("https://twitter.com/", "") + "&size=normal";
 		} else {
 			return null;

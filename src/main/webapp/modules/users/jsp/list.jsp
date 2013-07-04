@@ -27,8 +27,7 @@
 				<c:forEach var="user" items="${users}">
 					<tr class="gradeX">
 						<td class="con0"><input type="checkbox" name="${user.login}" /> </td>
-						<td class="con1"><a
-							href="${info.currentURL}?webaction=edit&user=${user.login}">${user.login}</a></td>
+						<td class="con1"><a href="${info.currentURL}?webaction=edit&cuser=${user.encryptLogin}">${user.login}</a></td>
 						<td class="con0"><c:out value="${user.firstName}" default="" /></td>
 						<td class="con1">${user.lastName}</td>
 						<td class="con0"><a href="mailto:${user.email}">${user.email}</a></td>
@@ -59,7 +58,7 @@
 									.dataTable(
 											{
 												"sPaginationType" : "full_numbers",
-												"aaSorting" : [ [ 1, "desc" ] ],
+												"aaSorting" : [ [ 1, "asc" ] ],
 												"aoColumns" : [ null, null,	null, null, null ],
 												"oLanguage" : {
 													"sUrl" : "${info.editTemplateURL}/js/plugins/i18n/datatable_${info.editLanguage}.txt"
