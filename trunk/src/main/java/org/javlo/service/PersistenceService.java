@@ -229,6 +229,8 @@ public class PersistenceService {
 
 	private GlobalContext globalContext = null;
 
+	private static final Object LOCK_LOAD = new Object();
+
 	public boolean canRedo() {
 		return versionExist(version + 1) && canRedo;
 	}
@@ -771,7 +773,7 @@ public class PersistenceService {
 	}
 
 	private MenuElement load(ContentContext ctx, int renderMode, Map<String, String> contentAttributeMap, Date timeTravelDate, boolean correctXML) throws Exception {
-		synchronized (ctx.getGlobalContext().getLockLoadContent()) {
+		synchronized (LOCK_LOAD ) { // load only one content both
 
 			loadVersion();
 
@@ -863,7 +865,7 @@ public class PersistenceService {
 				ResourceHelper.closeResource(in);
 				ResourceHelper.closeResource(in2);
 			}
-
+			
 			return root;
 		}
 	}
