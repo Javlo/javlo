@@ -145,6 +145,7 @@ public class UserAction extends AbstractModuleAction {
 			}
 			ctx.getRequest().setAttribute("CSVLink", CSVLink);
 			ctx.getRequest().setAttribute("CSVName", URLHelper.extractFileName(CSVLink));
+			ctx.getRequest().setAttribute("ExcelLink", URLHelper.addParam(CSVLink, "excel", "true"));
 		}
 
 		return super.prepare(ctx, moduleContext);
