@@ -2,7 +2,7 @@
 %><%@ taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions" %>
 <a class="action-button delete" onclick="document.getElementById('form-select-user').submit(); return false;" href="#"><span>${i18n.edit['edit-users.action.delete']}</span></a>
 <c:if test="${not empty CSVLink}">
-	<div class="link"><a href="${CSVLink}">${CSVName}</a></div>
+	<div class="link"><a href="${CSVLink}">${CSVName}</a><c:if test="${not empty ExcelLink}"> - <a href="${ExcelLink}">[excel]</a></c:if></div>
 </c:if>
 <div class="link"><a class="popup" href="${info.absoluteURLPrefix}${currentModule.path}/jsp/upload.jsp?admin=${admin}&currentURL=${info.currentURL}" title="${i18n.edit['edit.action.upload']}"><span>${i18n.edit['edit.action.upload']}</span></a></div>
 

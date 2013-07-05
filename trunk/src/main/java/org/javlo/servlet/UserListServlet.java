@@ -82,11 +82,15 @@ public class UserListServlet extends HttpServlet {
         			String[] labels = BeanHelper.getAllLabels(userInfo);
                     String[][] usersArray = new String[users.size() + 1][labels.length];
                     usersArray[0] = labels;
+                    String separtor = ",";
                     CSVFactory cvsFact = new CSVFactory(usersArray);
+                    if (StringHelper.isTrue(requestService.getParameter("excel",null))) {
+                    	separtor = ";";
+                    }
                     
                     UserEditFilter userFilter = editContext.getUserEditFilter();
 
-                    cvsFact.exportRowCSV(response.getOutputStream(), labels);
+                    cvsFact.exportRowCSV(response.getOutputStream(), separtor, labels);
 
                     for (IUserInfo localUserInfo : users) {
                         String[] values = (String[]) BeanHelper.getAllValues(localUserInfo);
@@ -98,8 +102,7 @@ public class UserListServlet extends HttpServlet {
                                 if (labels[j].equals("rolesRaw")) {
                                     labels[j] = "roles";
                                 }
-                                if (userFilter.getFieldContain(labels[j]).trim().length() > 0) {
-                                    
+                                if (userFilter.getFieldContain(labels[j]).trim().length() > 0) {                                    
                                     if (labels[j].equals("roles")) {
                                     	String rolesRow = StringHelper.collectionToString(localUserInfo.getRoles(), ""+IUserInfo.ROLES_SEPARATOR);
                                         if (rolesRow.toLowerCase().indexOf(userFilter.getFieldContain(labels[j]).toLowerCase()) < 0) {
@@ -115,7 +118,7 @@ public class UserListServlet extends HttpServlet {
                         }
 
                         if (printRow) {
-                            cvsFact.exportRowCSV(response.getOutputStream(), values);
+                            cvsFact.exportRowCSV(response.getOutputStream(), separtor, values);
                         }
                     }
                     response.getOutputStream().flush();
