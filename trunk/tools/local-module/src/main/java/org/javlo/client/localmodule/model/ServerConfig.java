@@ -13,9 +13,9 @@ public class ServerConfig {
 	public String getLabel() {
 		if (label == null) {
 			label = title;
-			if (label == null) {
+			if (label == null || label.trim().isEmpty()) {
 				label = getLabelFromUrl(serverURL);
-				if (label == null) {
+				if (label == null || label.trim().isEmpty()) {
 					label = serverURL;
 				}
 			}
