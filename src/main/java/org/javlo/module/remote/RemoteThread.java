@@ -6,7 +6,7 @@ public class RemoteThread extends Thread {
 	
 	private static Logger logger = Logger.getLogger(RemoteThread.class.getName());
 
-	private long TIME_BETWEEN_CHECK = 60 * 100; // 10 sec
+	private long TIME_BETWEEN_CHECK = 10000; // 10 sec
 
 	private boolean stop = false;
 	private long countCheck = 0;
