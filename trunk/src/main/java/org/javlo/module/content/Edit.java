@@ -547,7 +547,7 @@ public class Edit extends AbstractModuleAction {
 
 		if (ctx.getCurrentTemplate() == null) {
 			MessageRepository messageRepository = MessageRepository.getInstance(ctx);
-			messageRepository.setGlobalMessageAndNotification(ctx, new GenericMessage("no template found on this page.", GenericMessage.ALERT));
+			messageRepository.setGlobalMessage(new GenericMessage("no template found on this page.", GenericMessage.ALERT));
 			return null;
 		}
 
