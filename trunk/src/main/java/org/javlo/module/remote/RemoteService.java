@@ -8,7 +8,6 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.logging.Logger;
 
-import javax.mail.internet.AddressException;
 import javax.mail.internet.InternetAddress;
 
 import org.apache.commons.io.filefilter.FileFilterUtils;
@@ -20,6 +19,7 @@ import org.javlo.helper.URLHelper;
 import org.javlo.mailing.MailService;
 import org.javlo.message.GenericMessage;
 import org.javlo.service.NotificationService;
+import org.javlo.utils.TimeMap;
 
 public class RemoteService {
 	
@@ -42,6 +42,8 @@ public class RemoteService {
 	private String notificationEmail = null;
 	
 	private boolean notificationEmailSended = false;
+	
+	private Map<String, String> sendedNotification = new TimeMap<String, String>();
 
 	public static RemoteService getInstance(ContentContext ctx) throws Exception {
 		RemoteService service = (RemoteService) ctx.getGlobalContext().getAttribute(KEY);
@@ -115,10 +117,11 @@ public class RemoteService {
 	void sendNotification() {
 		boolean errorFound = false;
 		for(RemoteBean bean : getRemotes()) {			
-			if (!bean.isValid()) {
+			if (!bean.isValid() && !sendedNotification.containsKey(bean.getId())) {
 				NotificationService service = NotificationService.getInstance(globalContext);				
 				service.addNotification("RC Error ("+bean.getUrl()+" : "+bean.getError(), url, GenericMessage.ERROR , user, null);
 				errorFound = true;
+				sendedNotification.put(bean.getId(), bean.getId());
 			}
 			try {
 				storeRemote(bean);
