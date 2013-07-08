@@ -110,6 +110,7 @@ public class ConfigFrame extends javax.swing.JDialog {
 		}
 
 		//Store
+		boolean saved;
 		synchronized (config) {
 			AppConfig configBean = config.getBean();
 			configBean.setServers(servers.toArray(new ServerConfig[servers.size()]));
@@ -120,18 +121,22 @@ public class ConfigFrame extends javax.swing.JDialog {
 			configBean.setProxyPassword(StringHelper.trimAndNullify(new String(txtProxyPassword.getPassword())));
 			try {
 				config.save();
-				ServiceFactory.getInstance().onConfigChange();
-				return true;
+				saved = true;
 			} catch (Exception ex) {
 				logger.log(Level.SEVERE, "Exception during save config.", ex);
 				try {
 					config.reload();
 				} catch (Exception ex2) {
 				}
-				JOptionPane.showMessageDialog(this, i18n.get("error.config-op"), i18n.get("error"), JOptionPane.ERROR_MESSAGE);
-				return false;
+				saved = false;
 			}
 		}
+		if (!saved) {
+			JOptionPane.showMessageDialog(this, i18n.get("error.config-op"), i18n.get("error"), JOptionPane.ERROR_MESSAGE);
+		} else {
+			ServiceFactory.getInstance().onConfigChange();
+		}
+		return saved;
 	}
 
 	public void onServerUpdate(ServerConfig serverConfig) {

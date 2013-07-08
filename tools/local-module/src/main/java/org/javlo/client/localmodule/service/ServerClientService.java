@@ -174,6 +174,7 @@ public class ServerClientService {
 				}
 			}
 			onSuccess();
+			logger.info("New notification found: " + notifications.size() + " for server: " + server.getLabel());
 			return notifications;
 		}
 		return null;

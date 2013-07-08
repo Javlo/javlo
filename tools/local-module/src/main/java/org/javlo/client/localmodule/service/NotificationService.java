@@ -1,18 +1,24 @@
 package org.javlo.client.localmodule.service;
 
 import java.awt.TrayIcon.MessageType;
-import java.util.LinkedList;
+import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.Map;
 
 import org.javlo.client.localmodule.model.RemoteNotification;
 import org.javlo.client.localmodule.ui.NotificationActionListener;
 import org.javlo.message.GenericMessage;
+import org.javlo.utils.TimeMap;
 
 public class NotificationService {
 
+
 	private ServiceFactory factory = ServiceFactory.getInstance();
 
-	private List<RemoteNotification> notifications = new LinkedList<RemoteNotification>();
+	private static final int TIME_MAP_DEFAULT = 10 * 60; //10 min
+
+	private Map<Object, RemoteNotification> notifications = new TimeMap<Object, RemoteNotification>(
+			new LinkedHashMap<Object, RemoteNotification>(), TIME_MAP_DEFAULT);
 
 	public void pushNotifications(List<RemoteNotification> notifications, boolean showLastNotif) {
 		boolean doRefreshNotifications = false;
@@ -21,11 +27,11 @@ public class NotificationService {
 			if (!notification.isRead()) {
 				lastNotification = notification;
 			}
-			this.notifications.add(notification);
+			this.notifications.put(notification, notification);
 			doRefreshNotifications = true;
 		}
 		if (doRefreshNotifications) {
-			factory.getTray().refreshNotifications(this.notifications);
+			factory.getTray().refreshNotifications(this.notifications.values());
 		}
 		if (showLastNotif && lastNotification != null) {
 			String caption = lastNotification.getTitle();
@@ -61,7 +67,7 @@ public class NotificationService {
 		boolean doRefreshNotifications = !notifications.isEmpty();
 		if (doRefreshNotifications) {
 			notifications.clear();
-			factory.getTray().refreshNotifications(this.notifications);
+			factory.getTray().refreshNotifications(this.notifications.values());
 		}
 	}
 

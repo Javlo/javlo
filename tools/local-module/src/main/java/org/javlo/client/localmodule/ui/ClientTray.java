@@ -9,7 +9,7 @@ import java.awt.TrayIcon;
 import java.awt.TrayIcon.MessageType;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.util.List;
+import java.util.Collection;
 import java.util.logging.Logger;
 
 import javax.swing.ImageIcon;
@@ -193,19 +193,21 @@ public class ClientTray {
 		}
 	}
 
-	public void refreshNotifications(List<RemoteNotification> notifications) {
+	public void refreshNotifications(Collection<RemoteNotification> notifications) {
 		notificationsItem.removeAll();
-		if (notifications.size() > MAX_NOTIFICATIONS) {
-			notifications = notifications.subList(0, MAX_NOTIFICATIONS);
-		}
 		if (notifications.isEmpty()) {
 			notificationsItem.add(emptyNotification);
 		} else {
+			int startPoint = notifications.size() - MAX_NOTIFICATIONS;
+			int i = 0;
 			for (RemoteNotification notification : notifications) {
-				MenuItem mi = new MenuItem();
-				mi.setLabel(notification.getMenuLabel());
-				mi.addActionListener(new NotificationActionListener(notification));
-				notificationsItem.insert(mi, 0);
+				if (i >= startPoint) {
+					MenuItem mi = new MenuItem();
+					mi.setLabel(notification.getMenuLabel());
+					mi.addActionListener(new NotificationActionListener(notification));
+					notificationsItem.add(mi);
+				}
+				i++;
 			}
 //			notificationsItem.addSeparator();
 //			notificationsItem.add(showAllNotifications);

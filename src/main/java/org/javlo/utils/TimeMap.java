@@ -16,18 +16,28 @@ import java.util.Set;
  */
 public class TimeMap<K, V> implements Map<K, V> {
 
-	private final Map<K, V> internalMap = new HashMap<K, V>();
+	private final Map<K, V> internalMap;
 	private final Map<K, Calendar> internalTimeMap = new HashMap<K, Calendar>();
 	private int defaultTimeLiveValue = Integer.MAX_VALUE;
 
 	public TimeMap() {
+		this(Integer.MAX_VALUE);
 	}
 
 	/**
 	 * set the default time of the attribute live in second
 	 */
 	public TimeMap(int inDefaultTimeLiveValueSecond) {
-		defaultTimeLiveValue = inDefaultTimeLiveValueSecond;
+		this(new HashMap<K, V>(), inDefaultTimeLiveValueSecond);
+	}
+
+	public TimeMap(Map<K, V> internalMap) {
+		this(internalMap, Integer.MAX_VALUE);
+	}
+
+	public TimeMap(Map<K, V> internalMap, int inDefaultTimeLiveValueSecond) {
+		this.internalMap = internalMap;
+		this.defaultTimeLiveValue = inDefaultTimeLiveValueSecond;
 	}
 
 	public int getDefaultTimeValue() {
