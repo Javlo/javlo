@@ -182,7 +182,7 @@ public class AdminUserSecurity implements Serializable {
 		}
 		ContentService content = ContentService.getInstance(ctx.getRequest());
 		IContentVisualComponent comp = content.getComponent(ctx, compId);
-		if (isAdmin(ctx.getCurrentEditUser())) {
+		if (isAdmin(ctx.getCurrentEditUser()) || !ctx.getGlobalContext().isOnlyCreatorModify()) {
 			return true;
 		} else {
 			if (ctx.getGlobalContext().isOnlyCreatorModify() && (comp != null && comp.getAuthors().equals(ctx.getCurrentEditUser().getLogin()))) {				
