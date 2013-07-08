@@ -43,7 +43,7 @@ public class RemoteService {
 	
 	private boolean notificationEmailSended = false;
 	
-	private Map<String, String> sendedNotification = new TimeMap<String, String>();
+	private Map<String, String> sendedNotification = new TimeMap<String, String>(60*10);
 
 	public static RemoteService getInstance(ContentContext ctx) throws Exception {
 		RemoteService service = (RemoteService) ctx.getGlobalContext().getAttribute(KEY);
