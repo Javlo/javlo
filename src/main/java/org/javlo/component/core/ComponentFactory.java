@@ -456,7 +456,7 @@ public class ComponentFactory {
 						if (components[i].isMetaTitle()) {
 							titleWrapper = compWrapper;
 						}
-						if (comp.getType().equals(editCtx.getActiveType())) {
+						if (comp.getType() != null && comp.getType().equals(editCtx.getActiveType())) {
 							compWrapper.setSelected(true);
 							if (titleWrapper != null) {
 								{
