@@ -162,7 +162,7 @@ public class ContentContext {
 
 	public void setUser() {
 		/** set user **/
-		GlobalContext globalContext = GlobalContext.getInstance(getRequest());
+		GlobalContext globalContext = getGlobalContext();
 		IUserFactory fact = UserFactory.createUserFactory(globalContext, getRequest().getSession());
 		currentUser = fact.getCurrentUser(request.getSession());
 		fact = AdminUserFactory.createUserFactory(globalContext, getRequest().getSession());

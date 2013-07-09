@@ -199,7 +199,7 @@ public class PersistenceService {
 		return instance;
 	}
 
-	private static String getKey(GlobalContext globalContext) {
+	public static String getKey(GlobalContext globalContext) {
 		return KEY + globalContext.getContextKey();
 	}
 
@@ -629,8 +629,17 @@ public class PersistenceService {
 
 		return page;
 	}
-
-	private LoadingBean load(ContentContext ctx, InputStream in, Map<String, String> contentAttributeMap, int renderMode) throws ServiceException {
+	
+	/**
+	 * load data from InputStream of Reader
+	 * @param ctx
+	 * @param in can Reader of InputStream
+	 * @param contentAttributeMap
+	 * @param renderMode
+	 * @return
+	 * @throws ServiceException
+	 */
+	protected LoadingBean load(ContentContext ctx, Object in, Map<String, String> contentAttributeMap, int renderMode) throws ServiceException {
 		GlobalContext globalContext = GlobalContext.getInstance(ctx.getRequest());
 		MenuElement root = MenuElement.getInstance(globalContext);
 
@@ -639,7 +648,12 @@ public class PersistenceService {
 		LoadingBean outBean = new LoadingBean();
 
 		try {
-			NodeXML firstNode = XMLFactory.getFirstNode(in);
+			NodeXML firstNode;
+			if (in instanceof InputStream) {
+				firstNode = XMLFactory.getFirstNode((InputStream)in);
+			} else {
+				firstNode = XMLFactory.getFirstNode((Reader)in);
+			}
 
 			NodeXML page = firstNode.getChild("page");
 
@@ -755,6 +769,7 @@ public class PersistenceService {
 			root.setPriority(10);
 			root.setVisible(true);
 		} catch (Exception e) {
+			e.printStackTrace();
 			MessageRepository.getInstance(ctx).setGlobalMessageAndNotification(ctx, new GenericMessage("error XML loading : " + e.getMessage(), GenericMessage.ERROR));
 			root.setId("0");
 			root.setName("root");
@@ -772,7 +787,7 @@ public class PersistenceService {
 		return load(ctx,renderMode,contentAttributeMap, timeTravelDate, true);
 	}
 
-	private MenuElement load(ContentContext ctx, int renderMode, Map<String, String> contentAttributeMap, Date timeTravelDate, boolean correctXML) throws Exception {
+	protected MenuElement load(ContentContext ctx, int renderMode, Map<String, String> contentAttributeMap, Date timeTravelDate, boolean correctXML) throws Exception {
 		synchronized (LOCK_LOAD ) { // load only one content both
 
 			loadVersion();

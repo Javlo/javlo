@@ -87,7 +87,10 @@ public class StaticConfig extends Observable {
 	}
 
 	public static StaticConfig getInstance(ServletContext application) {
-		StaticConfig outCfg = (StaticConfig) application.getAttribute(KEY);
+		StaticConfig outCfg = null;
+		if (application != null) {
+			outCfg = (StaticConfig) application.getAttribute(KEY);
+		}
 		if (outCfg == null) {
 			outCfg = new StaticConfig(application);
 		}
@@ -117,22 +120,24 @@ public class StaticConfig extends Observable {
 		try {
 			synchronized (FILE_NAME) {
 				Properties webappProps = new Properties();
-				InputStream in = application.getResourceAsStream(StaticConfig.WEBAPP_CONFIG_FILE);
-				try {
-					webappProps.load(in);
-				} finally {
-					ResourceHelper.closeResource(in);
-				}
-
-				InputStream inSpec = application.getResourceAsStream(StaticConfig.SPECIFIC_WEBAPP_CONFIG_FILE);
-				if (inSpec != null) {
-					Properties specificWebappProps = new Properties();
+				if (application != null) {
+					InputStream in = application.getResourceAsStream(StaticConfig.WEBAPP_CONFIG_FILE);
 					try {
-						specificWebappProps.load(inSpec);
+						webappProps.load(in);
 					} finally {
-						ResourceHelper.closeResource(inSpec);
+						ResourceHelper.closeResource(in);
 					}
-					webappProps.putAll(specificWebappProps);
+
+					InputStream inSpec = application.getResourceAsStream(StaticConfig.SPECIFIC_WEBAPP_CONFIG_FILE);
+					if (inSpec != null) {
+						Properties specificWebappProps = new Properties();
+						try {
+							specificWebappProps.load(inSpec);
+						} finally {
+							ResourceHelper.closeResource(inSpec);
+						}
+						webappProps.putAll(specificWebappProps);
+					}
 				}
 
 				/** LOAD GOD USERS * */
@@ -159,32 +164,39 @@ public class StaticConfig extends Observable {
 
 				/** LOAD STATIC CONFIG FILE LOCATION * */
 				staticConfigLocalisation = webappProps.getProperty(STATIC_CONFIG_KEY);
-				if (staticConfigLocalisation == null || staticConfigLocalisation.trim().length() == 0 || staticConfigLocalisation.contains("${")) {
-					staticConfigLocalisation = application.getRealPath(DEFAULT_CONFIG_DIR + "/" + FILE_NAME);
-				} else {
-					staticConfigLocalisation = ElementaryURLHelper.mergePath(staticConfigLocalisation, FILE_NAME);
+				if (application != null) {
+					if (staticConfigLocalisation == null || staticConfigLocalisation.trim().length() == 0 || staticConfigLocalisation.contains("${")) {
+						staticConfigLocalisation = application.getRealPath(DEFAULT_CONFIG_DIR + "/" + FILE_NAME);
+					} else {
+						staticConfigLocalisation = ElementaryURLHelper.mergePath(staticConfigLocalisation, FILE_NAME);
 
-					boolean staticConfigRelative = Boolean.parseBoolean(webappProps.getProperty(STATIC_CONFIG_RELATIVE_KEY));
-					if (staticConfigRelative) {
-						staticConfigLocalisation = application.getRealPath(staticConfigLocalisation);
+						boolean staticConfigRelative = Boolean.parseBoolean(webappProps.getProperty(STATIC_CONFIG_RELATIVE_KEY));
+						if (staticConfigRelative) {
+							staticConfigLocalisation = application.getRealPath(staticConfigLocalisation);
+						}
 					}
 				}
 
 				staticConfigLocalisation = replaceFolderVariable(staticConfigLocalisation);
 
-				File file = new File(staticConfigLocalisation);
-				logger.info("load static config : " + file);
-				if (!file.exists()) {
-					if (!file.getParentFile().exists()) {
-						file.getParentFile().mkdirs();
+				if (staticConfigLocalisation != null) {
+					File file = new File(staticConfigLocalisation);
+					logger.info("load static config : " + file);
+					if (!file.exists()) {
+						if (!file.getParentFile().exists()) {
+							file.getParentFile().mkdirs();
+						}
+						file.createNewFile();
 					}
-					file.createNewFile();
+					properties.setDelimiterParsingDisabled(true);
+					properties.setFile(file);
+					properties.load();
 				}
-				properties.setDelimiterParsingDisabled(true);
-				properties.setFile(file);
-				properties.load();
+				
 			}
-			application.setAttribute(KEY, this);
+			if (application != null) {
+				application.setAttribute(KEY, this);
+			}
 		} catch (Exception e) {
 			logger.log(Level.WARNING, "static config file location not found (" + staticConfigLocalisation + "), using default location inside webapp", e);
 		}
@@ -250,7 +262,7 @@ public class StaticConfig extends Observable {
 	public String getAllDataFolder() {
 		String folder = properties.getString("data-folder", "/WEB-INF/data-ctx/");
 		folder = replaceFolderVariable(folder);
-		if (isDataFolderRelative()) {
+		if (isDataFolderRelative() && application != null) {
 			folder = application.getRealPath(folder);
 		}
 		return folder;
@@ -343,7 +355,8 @@ public class StaticConfig extends Observable {
 	}
 
 	/*
-	 * public boolean isAccessLogger() { return properties.getBoolean("logger.access", true); }
+	 * public boolean isAccessLogger() { return
+	 * properties.getBoolean("logger.access", true); }
 	 */
 
 	public String getDBDriver() {
@@ -435,7 +448,9 @@ public class StaticConfig extends Observable {
 	}
 
 	/**
-	 * config the device. device config strucure : device.[device code].[config] sample : device.phone = iphone device.phone = htc device.phone.pointer-device = false
+	 * config the device. device config strucure : device.[device code].[config]
+	 * sample : device.phone = iphone device.phone = htc
+	 * device.phone.pointer-device = false
 	 * 
 	 * @return
 	 */
@@ -467,7 +482,8 @@ public class StaticConfig extends Observable {
 
 	public Map<String, User> getEditUsers() {
 		/*
-		 * System.out.println("*** edit user : "); for (User user : editUsers.values()) { System.out.println("* user : "+user); }
+		 * System.out.println("*** edit user : "); for (User user :
+		 * editUsers.values()) { System.out.println("* user : "+user); }
 		 */
 		return editUsers;
 	}
@@ -499,7 +515,7 @@ public class StaticConfig extends Observable {
 	public String getFileFolder() {
 		return ElementaryURLHelper.mergePath(getStaticFolder(), properties.getString("file-folder", "files"));
 	}
-	
+
 	public String getImageCacheFolder() {
 		return ElementaryURLHelper.mergePath(getStaticFolder(), properties.getString("image-cache-folder", FileCache.BASE_DIR));
 	}
@@ -530,7 +546,7 @@ public class StaticConfig extends Observable {
 
 	public String getI18nEditFile() {
 		String file = replaceFolderVariable(properties.getString("i18n.file.edit", "/WEB-INF/i18n/edit_"));
-		if (isI18nFileRelative()) {
+		if (isI18nFileRelative() && application != null) {
 			file = application.getRealPath(file);
 		}
 		return file;
@@ -540,7 +556,7 @@ public class StaticConfig extends Observable {
 
 	public String getI18nSpecificEditFile() {
 		String file = replaceFolderVariable(properties.getString("i18n.file.specific-edit", "/WEB-INF/i18n/specific_edit_"));
-		if (isI18nFileRelative()) {
+		if (isI18nFileRelative() && application != null) {
 			file = application.getRealPath(file);
 		}
 		return file;
@@ -548,7 +564,7 @@ public class StaticConfig extends Observable {
 
 	public String getI18nSpecificViewFile() {
 		String file = replaceFolderVariable(properties.getString("i18n.file.specific-view", "/WEB-INF/i18n/specific_view_"));
-		if (isI18nFileRelative()) {
+		if (isI18nFileRelative() && application != null) {
 			file = application.getRealPath(file);
 		}
 		return file;
@@ -556,7 +572,7 @@ public class StaticConfig extends Observable {
 
 	public String getI18nViewFile() {
 		String file = replaceFolderVariable(properties.getString("i18n.file.view", "/WEB-INF/i18n/view_"));
-		if (isI18nFileRelative()) {
+		if (isI18nFileRelative() && application != null) {
 			file = application.getRealPath(file);
 		}
 		return file;
@@ -717,7 +733,13 @@ public class StaticConfig extends Observable {
 	}
 
 	public long getMinFreeSpaceOnDataFolder() {
-		return properties.getLong("system.min-free-space.data", 1024L * 1024L * 10L); // 1 Giga minimum size on the system
+		return properties.getLong("system.min-free-space.data", 1024L * 1024L * 10L); // 1
+																						// Giga
+																						// minimum
+																						// size
+																						// on
+																						// the
+																						// system
 	}
 
 	public Level getNavigationLogLevel() {
@@ -984,7 +1006,8 @@ public class StaticConfig extends Observable {
 	}
 
 	public boolean isAutoCreation() {
-		if (isHostDefineSite()) { // if host don't define site we can create it automaticely.
+		if (isHostDefineSite()) { // if host don't define site we can create it
+									// automaticely.
 			return properties.getBoolean("auto-creation", true);
 		} else {
 			return false;
@@ -994,9 +1017,10 @@ public class StaticConfig extends Observable {
 	public boolean isCorporate() {
 		return properties.getBoolean("admin.corporate", true);
 	}
-	
+
 	/**
-	 * cancul account size of true.  Account size is always -1 if false.
+	 * cancul account size of true. Account size is always -1 if false.
+	 * 
 	 * @return
 	 */
 	public boolean isAccountSize() {
@@ -1079,7 +1103,9 @@ public class StaticConfig extends Observable {
 	}
 
 	public String replaceFolderVariable(String folder) {
-		folder = folder.replace("$HOME", HOME);
+		if (folder != null) {
+			folder = folder.replace("$HOME", HOME);
+		}
 		return folder;
 	}
 
@@ -1215,7 +1241,7 @@ public class StaticConfig extends Observable {
 	public boolean isFixPreview() {
 		return properties.getBoolean("fix-preview", true);
 	}
-	
+
 	public boolean isSharedContent() {
 		return properties.getBoolean("shared-content", false);
 	}

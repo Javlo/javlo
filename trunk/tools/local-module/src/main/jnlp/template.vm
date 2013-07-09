@@ -16,11 +16,13 @@ ctx.setAbsoluteURL(true);
 		<description kind="one-line">Javlo LocalModule</description>
 		<description kind="short">Javlo LocalModule</description>
 		<description kind="tooltip">Javlo LocalModule</description>
-		<icon href="icon.png" kind="default" />
-		<shortcut online="true">
+		<icon href="icon.ico" kind="default" />
+		<icon href="splash.png" kind="splash" />
+		<shortcut online="false">
 			<desktop />
 			<menu submenu="Javlo LocalModule" />
 		</shortcut>
+		<offline-allowed />
 	</information>
 	<security>
 		<all-permissions />

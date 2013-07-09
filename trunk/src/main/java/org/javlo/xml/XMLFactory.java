@@ -5,6 +5,7 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.Reader;
 import java.net.URL;
 
 import javax.xml.parsers.DocumentBuilder;
@@ -27,11 +28,22 @@ public class XMLFactory {
 	/**
 	 * get the root node from an input stream (grh)
 	 */
-	public static NodeXML getFirstNode(InputStream isXML) throws Exception {
+	public static NodeXML getFirstNode(InputStream inXML) throws Exception {
 		DocumentBuilderFactory docBuilderFactory = DocumentBuilderFactory.newInstance();
 		// docBuilderFactory.setNamespaceAware(false);
 		DocumentBuilder docBuilder = docBuilderFactory.newDocumentBuilder();
-		Document doc = docBuilder.parse(new InputSource(isXML));
+		Document doc = docBuilder.parse(new InputSource(inXML));
+		return new NodeXML(doc);
+	}
+	
+	/**
+	 * get the root node from an input stream (pvdm)
+	 */
+	public static NodeXML getFirstNode(Reader inXML) throws Exception {
+		DocumentBuilderFactory docBuilderFactory = DocumentBuilderFactory.newInstance();
+		// docBuilderFactory.setNamespaceAware(false);
+		DocumentBuilder docBuilder = docBuilderFactory.newDocumentBuilder();
+		Document doc = docBuilder.parse(new InputSource(inXML));
 		return new NodeXML(doc);
 	}
 

@@ -36,6 +36,8 @@
 
 <code>request.getLocalName()  </code> : <%=request.getLocalName() %><br /><br />
 
+<code>request.getContentType()  </code> : <%=request.getContentType() %><br /><br />
+
 <h2>Header :</h2>
 
 <ul>
