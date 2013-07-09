@@ -456,7 +456,7 @@ public class ComponentFactory {
 						if (components[i].isMetaTitle()) {
 							titleWrapper = compWrapper;
 						}
-						if( comp.getType() != null ) {
+						if( comp.getType() == null ) {
 							System.out.println("***** ComponentFactory.getComponentForDisplay : comp null : "+comp); //TODO: remove debug trace
 						}
 						if (comp.getType() != null && comp.getType().equals(editCtx.getActiveType())) {
