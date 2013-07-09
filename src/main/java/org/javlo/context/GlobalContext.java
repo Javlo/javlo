@@ -190,7 +190,7 @@ public class GlobalContext implements Serializable {
 
 	public static GlobalContext getInstance(HttpServletRequest request) {
 		try {
-			String contextURI;
+			String contextURI;			
 			GlobalContext globalContext = (GlobalContext) request.getAttribute(KEY);
 			if (globalContext == null) {
 				StaticConfig staticConfig = StaticConfig.getInstance(request.getSession().getServletContext());
@@ -465,7 +465,7 @@ public class GlobalContext implements Serializable {
 
 	private String adminUserFactoryClassName = "";
 
-	private StaticConfig staticConfig = null;
+	public StaticConfig staticConfig = null;
 
 	private Map<String, String> uriAlias = null;
 
@@ -2739,6 +2739,10 @@ public class GlobalContext implements Serializable {
 			outMap.put(key, ""+properties.getProperty(key));
 		}
 		return outMap;
+	}
+	
+	public void setApplication(ServletContext application) {
+		this.application = application;
 	}
 	
 	public void setConfig (Map config) {
