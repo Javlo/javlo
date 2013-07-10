@@ -34,7 +34,7 @@
 </div>
 <div class="macro-interface">
 <jsp:include page="${macroRenderer}"></jsp:include>
-</c:if>
 </div>
+</c:if>
 </div>
  

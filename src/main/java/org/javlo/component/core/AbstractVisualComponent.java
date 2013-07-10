@@ -16,6 +16,7 @@ import java.io.PrintStream;
 import java.io.PrintWriter;
 import java.io.StringReader;
 import java.io.StringWriter;
+import java.lang.reflect.InvocationTargetException;
 import java.util.Calendar;
 import java.util.Collection;
 import java.util.Collections;
@@ -42,6 +43,7 @@ import org.javlo.context.ContentContext;
 import org.javlo.context.EditContext;
 import org.javlo.context.GlobalContext;
 import org.javlo.exception.ResourceNotFoundException;
+import org.javlo.helper.BeanHelper;
 import org.javlo.helper.ConfigHelper;
 import org.javlo.helper.ResourceHelper;
 import org.javlo.helper.ServletHelper;
@@ -238,16 +240,14 @@ public abstract class AbstractVisualComponent implements IContentVisualComponent
 	 *            can be null;
 	 */
 	@Override
-	public ComponentBean getBean(ContentContext ctx) {
-		User authors = null;
-		if (ctx != null) {
-			authors = ctx.getCurrentEditUser();
+	public ComponentBean getBean(ContentContext ctx) {		
+		ComponentBean beanCopy = new ComponentBean();
+		try {
+			BeanHelper.copy(beanCopy, this);
+		} catch (Exception e) {
+			e.printStackTrace();
+			return null;
 		}
-		ComponentBean beanCopy = new ComponentBean(componentBean.getId(), componentBean.getType(), componentBean.getValue(), componentBean.getLanguage(), componentBean.isRepeat(), authors);
-		beanCopy.setList(componentBean.isList());
-		beanCopy.setStyle(componentBean.getStyle());
-		beanCopy.setArea(componentBean.getArea());
-		beanCopy.setRenderer(componentBean.getRenderer());
 		return beanCopy;
 	}
 
@@ -390,7 +390,7 @@ public abstract class AbstractVisualComponent implements IContentVisualComponent
 
 	@Override
 	public String getCurrentRenderer(ContentContext ctx) {
-		if (getBean(ctx).getRenderer() == null && getRenderes(ctx).size() > 0) {
+		if (componentBean.getRenderer() == null && getRenderes(ctx).size() > 0) {
 			String defaultRenderer = getConfig(ctx).getDefaultRenderer();
 			if (defaultRenderer != null) {
 				return defaultRenderer;
@@ -398,7 +398,7 @@ public abstract class AbstractVisualComponent implements IContentVisualComponent
 				return getRenderes(ctx).keySet().iterator().next();
 			}
 		} else {
-			return getBean(ctx).getRenderer();
+			return componentBean.getRenderer();
 		}
 	}
 
@@ -699,11 +699,11 @@ public abstract class AbstractVisualComponent implements IContentVisualComponent
 	@Override
 	public String getLastSufix(ContentContext ctx) {
 		if (previousComponent != null) {
-			if (previousComponent.getBean(ctx).isList() && previousComponent.getType().equals(getType())) {
+			if (((AbstractVisualComponent)previousComponent).componentBean.isList() && previousComponent.getType().equals(getType())) {
 				return "</ul>";
 			}
 		}
-		if (getBean(ctx).isList()) {
+		if (componentBean.isList()) {
 			return "</ul>";
 		}
 		return "";
@@ -1770,12 +1770,12 @@ public abstract class AbstractVisualComponent implements IContentVisualComponent
 
 	@Override
 	public Date getCreationDate() {
-		return getBean(null).getCreationDate();
+		return componentBean.getCreationDate();
 	}
 
 	@Override
 	public Date getModificationDate() {
-		return getBean(null).getModificationDate();
+		return componentBean.getModificationDate();
 	}
 	// generate compilation error : use for refactoring
 

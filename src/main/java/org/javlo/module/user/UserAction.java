@@ -25,6 +25,7 @@ import org.javlo.context.EditContext;
 import org.javlo.context.GlobalContext;
 import org.javlo.helper.BeanHelper;
 import org.javlo.helper.JavaHelper;
+import org.javlo.helper.LangHelper;
 import org.javlo.helper.RequestParameterMap;
 import org.javlo.helper.ResourceHelper;
 import org.javlo.helper.StringHelper;
@@ -36,6 +37,7 @@ import org.javlo.module.core.Module;
 import org.javlo.module.core.ModulesContext;
 import org.javlo.service.RequestService;
 import org.javlo.user.AdminUserFactory;
+import org.javlo.user.AdminUserInfo;
 import org.javlo.user.AdminUserSecurity;
 import org.javlo.user.IUserFactory;
 import org.javlo.user.IUserInfo;
@@ -106,7 +108,8 @@ public class UserAction extends AbstractModuleAction {
 				return "user not found : " + requestService.getParameter("user", null);
 			}
 
-			Map<String, String> userInfoMap = BeanHelper.bean2Map(user.getUserInfo());
+			Map<String, String> userInfoMap = BeanHelper.bean2Map(user.getUserInfo());			
+			ctx.getRequest().setAttribute("functions", LangHelper.collectionToMap(StringHelper.stringToCollection(userInfoMap.get("function"),";")));
 
 			ctx.getRequest().setAttribute("user", user);
 			ctx.getRequest().setAttribute("userInfoMap", userInfoMap);
@@ -181,6 +184,12 @@ public class UserAction extends AbstractModuleAction {
 			try {
 
 				BeanHelper.copy(new RequestParameterMap(ctx.getRequest()), userInfo);
+				
+				List<String> functions = requestService.getParameterListValues("function", Collections.EMPTY_LIST);
+				if (functions.size() > 0 && userInfo instanceof AdminUserInfo) {
+					((AdminUserInfo)userInfo).setFunction(StringHelper.collectionToString(functions, ";"));
+				}
+				
 				if (requestService.getParameter("token", null) != null) {
 					logger.info("token reset for : " + userInfo.getLogin());
 					userInfo.setToken(StringHelper.getNewToken());

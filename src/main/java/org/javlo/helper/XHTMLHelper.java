@@ -2052,6 +2052,30 @@ public class XHTMLHelper {
 		}
 		return "";
 	}
+	
+	/**
+	 * transform a value to a span with key as class and value inside.
+	 * 
+	 * @param list
+	 * @param key
+	 * @return the key if list null, and empty string if key not found in the list.
+	 */
+	public static String renderMultiListItem(List<ListService.Item> list, Collection<String> keys) {
+		if (list == null) {
+			return StringHelper.collectionToString(keys,";");
+		}
+		ByteArrayOutputStream outStream = new ByteArrayOutputStream();
+		PrintStream out = new PrintStream(outStream);
+		out.println("<ul>");
+		for (ListService.Item item : list) {
+			if (keys.contains(item.getKey())) {
+				out.println("<li class=\"" + item.getKey() + "\">" + item.getValue() + "</li>");
+			}
+		}
+		out.println("</ul>");
+		out.close();
+		return new String(outStream.toByteArray());
+	}
 
 	private XHTMLHelper() {
 	}

@@ -38,7 +38,7 @@ public class ComponentBean implements Serializable {
 
 	private String area = DEFAULT_AREA;
 
-	public ComponentBean() {
+	public ComponentBean() {		
 		id = "";
 		type = "";
 		value = "";
@@ -153,7 +153,7 @@ public class ComponentBean implements Serializable {
 	}
 
 	public void setModify(boolean modify) {
-		if (modify) {
+		if (modify) {			
 			modificationDate = new Date();
 		}
 		this.modify = modify;

@@ -11,6 +11,7 @@ import org.javlo.component.core.IContentVisualComponent;
 import org.javlo.context.ContentContext;
 import org.javlo.context.GlobalContext;
 import org.javlo.helper.BeanHelper;
+import org.javlo.helper.StringHelper;
 import org.javlo.helper.XHTMLHelper;
 import org.javlo.i18n.I18nAccess;
 import org.javlo.message.MessageRepository;
@@ -107,7 +108,7 @@ public class UserSearch extends AbstractVisualComponent implements IAction {
 						oddEven = "even";
 					}
 					String country = XHTMLHelper.renderListItem(countries, user.getCountry());
-					String function = XHTMLHelper.renderListItem(functions, user.getFunction());
+					String function = XHTMLHelper.renderMultiListItem(functions, StringHelper.stringToCollection(user.getFunction(),";"));
 					String organization = XHTMLHelper.renderListItem(organizations, user.getOrganization());
 					String avatar = "&nbsp;";
 					if (user.getAvatarURL() != null) {

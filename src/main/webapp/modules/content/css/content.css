@@ -192,8 +192,7 @@ li.line {
 }
 
 .roles input {
-	display: inline-block;
-	margin: 0 30px 0 10px;		
+	display: inline-block;			
 }
 
 .roles .one_half {

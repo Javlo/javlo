@@ -95,9 +95,9 @@
 	<input type="text" id="content-languages" name="content-languages" value="${currentContext.contentLanguages}" />
 </div>
 
-<div class="line">		
-	<label for="switch-default-language">${i18n.edit['admin.form.switch-default-language']}</label>
+<div class="line">	
 	<input type="checkbox" id="switch-default-language" name="switch-default-language" ${currentContext.autoSwitchToDefaultLanguage?'checked="checked"':""}" />
+	<label class="suffix" for="switch-default-language">${i18n.edit['admin.form.switch-default-language']}</label>
 </div>
 
 <div class="line">		
@@ -149,29 +149,29 @@
 	<input type="text" id="nopup-domain" name="nopup-domain" value="${currentContext.noPopupDomain}" />	
 </div>
 
-<div class="line">		
-	<label for="link-as-popup">${i18n.edit['admin.form.external-link-popup']}</label>
-	<input type="checkbox" id="link-as-popup" name="link-as-popup" ${currentContext.openExternalLinkAsPopup?'checked="checked"':""}" />	
+<div class="line">
+	<input type="checkbox" id="link-as-popup" name="link-as-popup" ${currentContext.openExternalLinkAsPopup?'checked="checked"':""}" />
+	<label class="suffix" for="link-as-popup">${i18n.edit['admin.form.external-link-popup']}</label>	
 </div>
 
-<div class="line">		
-	<label for="file-as-popup">${i18n.edit['admin.form.file-popup']}</label>
-	<input type="checkbox" id="file-as-popup" name="file-as-popup" ${currentContext.openFileAsPopup?'checked="checked"':""}" />	
+<div class="line">	
+	<input type="checkbox" id="file-as-popup" name="file-as-popup" ${currentContext.openFileAsPopup?'checked="checked"':""}" />
+	<label class="suffix" for="file-as-popup">${i18n.edit['admin.form.file-popup']}</label>	
 </div>
 
-<div class="line">		
-	<label for="extend-menu">${i18n.edit['admin.form.extend-menu']}</label>
-	<input type="checkbox" id="extend-menu" name="extend-menu" ${currentContext.extendMenu?'checked="checked"':""}" />	
+<div class="line">	
+	<input type="checkbox" id="extend-menu" name="extend-menu" ${currentContext.extendMenu?'checked="checked"':""}" />
+	<label class="suffix" for="extend-menu">${i18n.edit['admin.form.extend-menu']}</label>	
 </div>
 
-<div class="line">		
-	<label for="preview-mode">${i18n.edit['admin.form.preview-mode']}</label>
-	<input type="checkbox" id="preview-mode" name="preview-mode" ${currentContext.previewMode?'checked="checked"':""}" />	
+<div class="line">	
+	<input type="checkbox" id="preview-mode" name="preview-mode" ${currentContext.previewMode?'checked="checked"':""}" />
+	<label class="suffix" for="preview-mode">${i18n.edit['admin.form.preview-mode']}</label>	
 </div>
 
-<div class="line">		
-	<label for="wizz">${i18n.edit['admin.form.wizz']}</label>
-	<input type="checkbox" id="wizz" name="wizz" ${currentContext.wizz?'checked="checked"':""}" />	
+<div class="line">	
+	<input type="checkbox" id="wizz" name="wizz" ${currentContext.wizz?'checked="checked"':""}" />
+	<label class="suffix" for="wizz">${i18n.edit['admin.form.wizz']}</label>	
 </div>
 
 <div class="line">		
@@ -225,13 +225,13 @@
 <div class="one_half">
 
 <div class="line">		
-	<label for="only-creator-modify">${i18n.edit['admin.form.only-creator-modify']}</label>
 	<input type="checkbox" id="only-creator-modify" name="only-creator-modify" ${currentContext.onlyCreatorModify?'checked="checked"':""}" />
+	<label class="suffix" for="only-creator-modify">${i18n.edit['admin.form.only-creator-modify']}</label>
 </div>
 
-<div class="line">		
-	<label for="collaborative-mode">${i18n.edit['admin.form.collaborative-mode']}</label>
+<div class="line">	
 	<input type="checkbox" id="collaborative-mode" name="collaborative-mode" ${currentContext.collaborativeMode?'checked="checked"':""}" />
+	<label class="suffix" for="collaborative-mode">${i18n.edit['admin.form.collaborative-mode']}</label>
 </div>
 
 
@@ -249,7 +249,7 @@
 	<div class="inline">
 		<input type="checkbox" id="${macro}" name="${macro}" ${not empty selectedMacros[macro]?'checked="checked"':''}/>
 		<c:set var="i18nKey" value="macro.${macro}" />
-		<label for="${macro}">${not empty i18n.edit[i18nKey]?i18n.edit[i18nKey]:macro}</label>		
+		<label class="suffix" for="${macro}">${not empty i18n.edit[i18nKey]?i18n.edit[i18nKey]:macro}</label>		
 	</div>
 </c:forEach>
 </fieldset>
@@ -306,7 +306,7 @@
 <c:forEach var="plugin" items="${templatePlugins}">
 	<div class="inline">
 		<input type="checkbox" id="${plugin.id}" name="${plugin.id}" ${not empty selectedTemplatePlugins[plugin.id]?'checked="checked"':''}/>
-		<label for="${plugin.id}">${plugin.label} - ${plugin.version}</label>		
+		<label class="suffix" for="${plugin.id}">${plugin.label} - ${plugin.version}</label>		
 	</div>
 </c:forEach>
 
