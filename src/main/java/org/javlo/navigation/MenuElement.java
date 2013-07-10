@@ -36,6 +36,7 @@ import org.javlo.component.core.ILink;
 import org.javlo.component.core.IPageRank;
 import org.javlo.component.dynamic.DynamicComponent;
 import org.javlo.component.image.IImageTitle;
+import org.javlo.component.image.ImageBean;
 import org.javlo.component.image.ImageTitleBean;
 import org.javlo.component.meta.Category;
 import org.javlo.component.meta.DateComponent;
@@ -704,6 +705,14 @@ public class MenuElement implements Serializable {
 				logger.warning(e.getMessage());
 				return null;
 			}
+		}
+		
+		public Collection<ImageBean> getImagesBean() {
+			Collection<ImageBean> outImages = new LinkedList<ImageBean>();
+			for (IImageTitle image : getImages()) {
+				outImages.add(new ImageBean(URLHelper.createResourceURL(ctx, image.getResourceURL(ctx)), image.getImageDescription(ctx), image.getImageLinkURL(ctx)));
+			}
+			return outImages;
 		}
 
 		@Override
