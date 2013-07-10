@@ -26,7 +26,7 @@ public class TestContentContext extends ContentContext {
 		
 		try {
 			FakeHttpContext httpContext = FakeHttpContext.getInstance();
-			HttpServletRequest request = httpContext.getRequest("http://demo.javlo.org/en/media.html?webaction=test");
+			HttpServletRequest request = httpContext.getRequest("http://demo.javlo.org/view/en/media.html?webaction=test");
 			System.out.println("request = "+request);
 			ContentContext ctx = ContentContext.getContentContext(request, httpContext.getResponse());
 			MenuElement root = ContentService.getInstance(ctx.getGlobalContext()).getNavigation(ctx);

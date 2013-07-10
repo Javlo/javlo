@@ -226,7 +226,7 @@ public class TestRequest implements HttpServletRequest {
 
 	@Override
 	public Enumeration getHeaderNames() {
-		return Collections.emptyEnumeration();
+		return new IteratorAsEnumeration(Collections.emptyList().iterator());
 	}
 
 	@Override

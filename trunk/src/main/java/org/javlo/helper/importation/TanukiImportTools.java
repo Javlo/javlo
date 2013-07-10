@@ -3,6 +3,8 @@ package org.javlo.helper.importation;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.Date;
+import java.util.logging.Logger;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipInputStream;
 
@@ -12,7 +14,6 @@ import org.javlo.component.list.List;
 import org.javlo.component.text.Paragraph;
 import org.javlo.component.text.XHTML;
 import org.javlo.component.title.MenuTitle;
-import org.javlo.component.title.PageTitle;
 import org.javlo.component.title.SubTitle;
 import org.javlo.component.title.Title;
 import org.javlo.context.ContentContext;
@@ -27,6 +28,8 @@ import org.javlo.xml.NodeXML;
 import org.javlo.xml.XMLFactory;
 
 public class TanukiImportTools {
+	
+	private static Logger logger = Logger.getLogger(TanukiImportTools.class.getName());
 	
 	/**
 	 * import a zip entry localy.
@@ -111,6 +114,7 @@ public class TanukiImportTools {
 	
 	private static void importChildren (ContentContext ctx, MenuElement page, NodeXML node, String depth) throws Exception {
 		ContentService content = ContentService.getInstance(ctx.getRequest());
+		int priority = 10;
 		for (NodeXML childNode : node.getChildren()) {
 			if (childNode.getName().equals("page")) {
 				String pageName = childNode.getAttributeValue("name", "no-name");
@@ -126,16 +130,22 @@ public class TanukiImportTools {
 				MenuElement newChild = MenuElement.getInstance(ctx.getGlobalContext());
 				newChild.setName(finalPageName);				
 				newChild.setCreator(ctx.getCurrentUserId());
-				newChild.setVisible(ctx.getGlobalContext().isNewPageVisible());
+				
+				Date date = StringHelper.parseDate(childNode.getAttributeValue("date"), "dd/MM/yyyy HH:mm");;
+				newChild.setVisible(date.before(new Date()));
+				
+				newChild.setPriority(priority);
 				page.addChildMenuElement(newChild);			
 				page.releaseCache();
 				importContent(ctx, newChild, childNode);
 				importChildren(ctx, newChild, childNode, depth+"   ");
+				priority+=10;
 			}
 		}
 	}
 	
 	public static void createContentFromTanuki(ContentContext ctx, InputStream in, String name, String lang) throws Exception {
+		logger.info("import tanuki content : "+name);
 		MenuElement page = ctx.getCurrentPage();
 		ZipInputStream zipIn = new ZipInputStream(in);
 		ZipEntry entry = zipIn.getNextEntry();
@@ -145,10 +155,12 @@ public class TanukiImportTools {
 				importZipEntryToDataFolder(ctx.getGlobalContext(), entry, zipIn, URLHelper.mergePath(ctx.getGlobalContext().getStaticConfig().getImageFolder(), baseStaticFolder));
 			} else if (entry.getName().endsWith("live.xml")) {				
 				NodeXML root = XMLFactory.getFirstNode(new UnclosableInputStream(zipIn));
+				root = root.getChild("page");
 				importChildren(ctx, ctx.getCurrentPage(), root, "   ");
 			}
 			entry = zipIn.getNextEntry();
 		}
+		zipIn.close();
 	}
 
 }
