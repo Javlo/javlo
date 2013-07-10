@@ -231,11 +231,11 @@ public class XMLHelper {
 				template = page.getTemplateId();
 			}
 			StringBuffer rolesRaw = new StringBuffer();
-			String creationDate = PersistenceService.persitenceDateFormat.format(page.getCreationDate());
-			String modificationDate = PersistenceService.persitenceDateFormat.format(page.getModificationDate());
+			String creationDate = PersistenceService.renderDate(page.getCreationDate());
+			String modificationDate = PersistenceService.renderDate(page.getModificationDate());
 			String validationDate = "";
 			if (page.getValidationDate() != null) {
-				validationDate = PersistenceService.persitenceDateFormat.format(page.getValidationDate());
+				validationDate = PersistenceService.renderDate(page.getValidationDate());
 			}
 			String creator = page.getCreator();
 			if (creator == null) {

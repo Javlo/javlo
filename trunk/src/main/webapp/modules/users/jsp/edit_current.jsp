@@ -47,6 +47,7 @@
 
 <fieldset>
 <legend>${i18n.edit['user.info']}</legend>
+<div class="cols">
 <div class="one_half">
 	<div class="line">
 		<label for="login">login</label>
@@ -84,20 +85,6 @@
 		 		<option></option>
 		 		<c:forEach var="organization" items="${list.organization}">
 		 			<option value="${organization.key}"${userInfoMap["organization"] == organization.key?' selected="selected"':''}>${organization.value}</option>
-		 		</c:forEach>		 		
-		 	</select>
-		 </c:if> 
-	</div>
-	<div class="line">
-		<label for="function">area of specialisation</label>
-		<c:if test="${empty list.functions}">
-		<input type="text" id="function" name="function" value="${userInfoMap["function"]}" />
-		</c:if>
-		 <c:if test="${not empty list.functions}">
-		 	<select id="function" name="function">
-		 		<option></option>
-		 		<c:forEach var="function" items="${list.functions}">
-		 			<option value="${function.key}"${userInfoMap["function"] == function.key?' selected="selected"':''}>${function.value}</option>
 		 		</c:forEach>		 		
 		 	</select>
 		 </c:if> 
@@ -161,6 +148,20 @@
 		<textarea id="info" name="info">${userInfoMap["info"]}</textarea>
 	</div>
 </div>
+</div>
+<div class="line">
+		<label for="function">area of specialisation</label>
+		<c:if test="${empty list.functions}">
+		<input type="text" id="function" name="function" value="${userInfoMap["function"]}" />
+		</c:if>
+		 <c:if test="${not empty list.functions}">		 	
+	 		<c:forEach var="function" items="${list.functions}" varStatus="status">
+	 		<div class="inline-line">
+	 			<input type="checkbox" name="function" id="function-${status.index}" value="${function.key}" ${not empty functions[function.key]?' checked="checked"':''}/><label class="suffix" for="function-${status.index}">${function.value}</label>
+			</div>	 			
+	 		</c:forEach>	 		
+		 </c:if> 
+	</div>
 </fieldset>
 
 <c:if test="${not empty webaction}">

@@ -32,9 +32,9 @@
 	<fieldset>
 		<legend>choose group (no selection = everybody)</legend>		
 		<c:forEach var="role" items="${adminRoles}">
-			<div class="inline">
-			<label for="role-${role}">${role}</label>
-			<input type="checkbox" id="role-${role}" name="role-${role}" />
+			<div class="inline">			
+				<input type="checkbox" id="role-${role}" name="role-${role}" />
+				<label class="suffix" for="role-${role}">${role}</label>
 			</div>
 		</c:forEach>
 	</fieldset>

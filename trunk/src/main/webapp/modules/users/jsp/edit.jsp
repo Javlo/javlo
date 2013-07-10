@@ -40,7 +40,7 @@
  		 </c:if>
 	</c:forEach>
 	<input type="checkbox" id="role-${role}" name="role-${role}" <c:if test="${contains}">checked="checked"</c:if> />
-	<label for="role-${role}">${role}</label>
+	<label class="suffix" for="role-${role}">${role}</label>
 </div>
 
 </c:forEach>
@@ -61,7 +61,7 @@
  		 </c:if>
 	</c:forEach>
 	<input type="checkbox" id="role-${role}" name="role-${role}" <c:if test="${contains}">checked="checked"</c:if> />
-	<label for="role-${role}">${role}</label>
+	<label class="suffix" for="role-${role}">${role}</label>
 </div>
 
 </c:forEach>

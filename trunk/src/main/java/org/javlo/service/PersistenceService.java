@@ -166,7 +166,7 @@ public class PersistenceService {
 	 */
 	protected static Logger logger = Logger.getLogger(PersistenceService.class.getName());
 
-	public static SimpleDateFormat persitenceDateFormat = new SimpleDateFormat("yyyy/MM/dd HH:mm:ss");
+	public static SimpleDateFormat PERSISTENCE_DATE_FORMAT = new SimpleDateFormat("yyyy/MM/dd HH:mm:ss");
 
 	private static String KEY = PersistenceService.class.getName();
 
@@ -179,6 +179,23 @@ public class PersistenceService {
 	public static final String GLOBAL_MAP_NAME = "global";
 
 	private static int UNDO_DEPTH = 16;
+	
+	public static final Date parseDate(String date) throws ParseException {
+		synchronized (PERSISTENCE_DATE_FORMAT) {
+			try {
+				return PERSISTENCE_DATE_FORMAT.parse(date);
+			} catch (ParseException e) {
+				e.printStackTrace();
+				return null;
+			}
+		}
+	}
+	
+	public static final String renderDate(Date date) {
+		synchronized (PERSISTENCE_DATE_FORMAT) {
+			return PERSISTENCE_DATE_FORMAT.format(date);
+		}
+	}
 
 	public static final PersistenceService getInstance(GlobalContext globalContext) throws ServiceException {
 		PersistenceService instance = (PersistenceService) globalContext.getAttribute(getKey(globalContext));
@@ -493,6 +510,11 @@ public class PersistenceService {
 			bean.setArea(contentNode.getAttributeValue("area", ComponentBean.DEFAULT_AREA));
 			bean.setRenderer(renderer);
 			bean.setAuthors(authors);
+			try {
+				bean.setModificationDate(parseDate(contentNode.getAttributeValue("modificationDate", "01/01/1970")));
+			} catch (ParseException e) {
+				e.printStackTrace();
+			}
 			contentList.add(bean);
 
 			/*
@@ -542,7 +564,7 @@ public class PersistenceService {
 		String creationDateStr = pageXML.getAttributeValue("creationDate");
 		if (creationDateStr != null) {
 			try {
-				creationDate = persitenceDateFormat.parse(creationDateStr);
+				creationDate = parseDate(creationDateStr);
 			} catch (ParseException e) {
 				throw new StructureException(e.getMessage());
 			}
@@ -552,7 +574,7 @@ public class PersistenceService {
 		String modificationDateStr = pageXML.getAttributeValue("modificationDate");
 		if (modificationDateStr != null) {
 			try {
-				modificationDate = persitenceDateFormat.parse(modificationDateStr);
+				modificationDate = parseDate(modificationDateStr);
 			} catch (ParseException e) {
 				throw new StructureException(e.getMessage());
 			}
@@ -562,7 +584,7 @@ public class PersistenceService {
 		String validationDateStr = pageXML.getAttributeValue("validationDate");
 		if (validationDateStr != null) {
 			try {
-				validationDate = persitenceDateFormat.parse(validationDateStr);
+				validationDate = parseDate(validationDateStr);
 			} catch (ParseException e) {
 				// no validation date
 				// throw new StructureException(e.getMessage());
@@ -709,21 +731,21 @@ public class PersistenceService {
 				if (creationDate == null) {
 					root.setCreationDate(new Date());
 				} else {
-					root.setCreationDate(persitenceDateFormat.parse(creationDate));
+					root.setCreationDate(parseDate(creationDate));
 				}
 
 				String modificationDate = page.getAttributeValue("modificationDate");
 				if (modificationDate == null) {
 					root.setModificationDate(new Date());
 				} else {
-					root.setModificationDate(persitenceDateFormat.parse(modificationDate));
+					root.setModificationDate(parseDate(modificationDate));
 				}
 
 				String validationDate = page.getAttributeValue("validationDate", "");
 				if (validationDate.trim().length() == 0) {
 					root.setValidationDate(null);
 				} else {
-					root.setValidationDate(persitenceDateFormat.parse(validationDate));
+					root.setValidationDate(parseDate(validationDate));
 				}
 
 				insertContent(page, root, defaultLg);

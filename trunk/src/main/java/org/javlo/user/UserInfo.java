@@ -32,6 +32,7 @@ public class UserInfo implements Comparable<IUserInfo>, IUserInfo, Serializable 
 	};
 
 	private String login = "";
+	private String encryptLogin = StringHelper.getRandomId();
 	private String password;
 	private String title = "";
 	private String firstName = "";
@@ -470,9 +471,12 @@ public class UserInfo implements Comparable<IUserInfo>, IUserInfo, Serializable 
 	public String getAvatarURL() {
 		return null;
 	}
-
+	
+	/**
+	 * return the encrypt login the encrypt login can change when we restart. 
+	 */
 	@Override
 	public String getEncryptLogin() {
-		return StringHelper.encryptPassword(getLogin());
+		return encryptLogin;
 	}
 }

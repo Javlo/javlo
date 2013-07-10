@@ -1,5 +1,9 @@
 /*** general ***/
 
+.cols {
+	overflow: hidden;
+}
+
 input, textarea, select {	
 	box-shadow: 1px 1px 3px #CCCCCC inset;
 }
@@ -192,7 +196,13 @@ a.popup span {
 }
 
 .standard-form .line {
-	min-height: 36px;
+	margin: 3px 0;
+	overflow: hidden;
+}
+
+.standard-form .template.line label {
+	margin-top: 6px;
+	display: inline-block;
 }
 
 .standard-form .line .action {
@@ -214,19 +224,40 @@ a.popup span {
 }
 
 .standard-form .line label,.standard-form .inline label {
-	display: inline-block;
+	display: block;
 	width: 170px;
 	vertical-align: middle;
+	font-style: italic;	
+}
+
+.standard-form label.suffix,.standard-form label.suffix {
+	display: inline-block;
+}
+
+.standard-form .inline-line label {
+	font-weight: normal;	
 }
 
 .macros .inline label {
 	width: 235px;
+	font-weight: normal;	
 }
 
-.standard-form input,.standard-form select {
+.standard-form input[type=text],.standard-form select {
 	display: inline-block;
 	vertical-align: text-top;
 	width: 220px;
+}
+
+.standard-form .line label.suffix {
+	display: inline-block;
+	padding-left: 3px;
+	padding-right: 12px;
+	width: auto;
+}
+
+.standard-form .line .inline-line {
+	display: inline-block;
 }
 
 .standard-form table input,.standard-form table select {
@@ -946,7 +977,7 @@ ul,li {
 
 .line.template {
 	display: block;
-	margin: 0 0px 0 -8px;
+	margin: 0 290px 0 -8px;
 	padding: 2px 0 1px 8px;
 	border-radius: 3px 3px 3px 3px;
 	border: 1px solid #CCCCCC;

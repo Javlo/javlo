@@ -10,6 +10,9 @@ public interface IUserInfo {
 
 	public String getLogin();
 	
+	/**
+	 * return the encrypt login the encrypt login can change when we restart. 
+	 */
 	public String getEncryptLogin();
 
 	public String getTitle();
