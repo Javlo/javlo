@@ -40,9 +40,9 @@
 #sitelist ul li {
 	overflow: visible;
 	width: 10px;
-	height: 9px;
+	height: 10px;
 	border-bottom: 1px #dddddd solid;
-	margin-bottom: 6px;	
+	margin-bottom: 4px;	
 }
 
 #sitelist ul li a {	

@@ -2,7 +2,12 @@ package org.javlo.helper;
 
 import java.net.MalformedURLException;
 
+import javax.servlet.http.HttpServletRequest;
+
 import junit.framework.TestCase;
+
+import org.javlo.context.ContentContext;
+import org.javlo.test.servlet.FakeHttpContext;
 
 public class URLHelperTest extends TestCase {
 	
@@ -19,6 +24,19 @@ public class URLHelperTest extends TestCase {
 	public void testAddParam() {
 		assertTrue(URLHelper.addParam("http://www.javlo.org/test.html", "val", "test").equals("http://www.javlo.org/test.html?val=test"));
 		assertTrue(URLHelper.addParam("http://www.javlo.org/test.html?user=admin", "val", "test").equals("http://www.javlo.org/test.html?user=admin&val=test"));
+	}
+	
+	public void testCreateURL() throws Exception {
+		FakeHttpContext httpContext = FakeHttpContext.getInstance();
+		HttpServletRequest request = httpContext.getRequest("http://demo.javlo.org/view/en/media.html?webaction=test");		
+		ContentContext ctx = ContentContext.getContentContext(request, httpContext.getResponse());
+		
+		assertEquals(URLHelper.createURL(ctx, "/page"), "/en/page.html");
+		assertEquals(URLHelper.createURL(ctx, "/page/subpage"), "/en/page/subpage.html");
+		ctx.setAllLangauge("fr");		
+		assertEquals(URLHelper.createURL(ctx, "/page"), "/fr/page.html");
+		ctx.setLanguage("en");
+		assertEquals(URLHelper.createURL(ctx, "/page"), "/en-fr/page.html");
 	}
 
 }

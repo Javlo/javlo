@@ -432,7 +432,7 @@ public class DynamicComponent extends AbstractVisualComponent implements IStatic
 
 	@Override
 	public String getType() {
-		return properties.getProperty("component.type");
+		return properties.getProperty("component.type", "undefined dynamic component");
 	}
 
 	public void storeProperties() {
