@@ -511,7 +511,7 @@ public class PersistenceService {
 			bean.setRenderer(renderer);
 			bean.setAuthors(authors);
 			try {
-				bean.setModificationDate(parseDate(contentNode.getAttributeValue("modificationDate", "01/01/1970")));
+				bean.setModificationDate(parseDate(contentNode.getAttributeValue("modificationDate", "01/01/1970 00:00:00")));
 			} catch (ParseException e) {
 				e.printStackTrace();
 			}
