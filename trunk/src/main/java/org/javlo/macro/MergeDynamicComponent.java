@@ -5,6 +5,7 @@ import java.util.Enumeration;
 import java.util.Map;
 import java.util.Properties;
 
+import org.javlo.component.core.ComponentBean;
 import org.javlo.component.core.ComponentFactory;
 import org.javlo.component.core.ContentElementList;
 import org.javlo.component.core.IContentVisualComponent;
@@ -50,7 +51,7 @@ public class MergeDynamicComponent extends AbstractMacro {
 					if (comp instanceof DynamicComponent) {
 						DynamicComponent dynComp = (DynamicComponent) comp;
 						DynamicComponent newComp = (DynamicComponent) ComponentFactory.getComponentWithType(ctxLg, dynComp.getType());
-						newComp.init(dynComp.getBean(ctxLg), ctxLg);
+						newComp.init(new ComponentBean(dynComp.getComponentBean()), ctxLg);
 						Properties compProp = dynComp.getProperties();
 						Properties newProp = newComp.getProperties();
 						Enumeration<Object> keys = newProp.keys();

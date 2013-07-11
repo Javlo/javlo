@@ -3,6 +3,7 @@ package org.javlo.macro;
 import java.util.Date;
 import java.util.Map;
 
+import org.javlo.component.core.ComponentBean;
 import org.javlo.component.core.ContentElementList;
 import org.javlo.component.core.IContentVisualComponent;
 import org.javlo.component.text.Description;
@@ -39,7 +40,7 @@ public class ImageAfterDescriptionMacro extends AbstractMacro {
 		if (imageComp != null && descriptionComp != null) {
 			Date modifDate = currentPage.getModificationDate();
 			currentPage.removeContent(ctx, imageComp.getId());
-			currentPage.addContent(descriptionComp.getId(), imageComp.getBean(ctx));
+			currentPage.addContent(descriptionComp.getId(), new ComponentBean(imageComp.getComponentBean()));
 			currentPage.setModificationDate(modifDate);
 			msg = "image moved.";
 			imageMoved = true;

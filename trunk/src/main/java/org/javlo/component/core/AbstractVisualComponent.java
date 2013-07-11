@@ -16,7 +16,6 @@ import java.io.PrintStream;
 import java.io.PrintWriter;
 import java.io.StringReader;
 import java.io.StringWriter;
-import java.lang.reflect.InvocationTargetException;
 import java.util.Calendar;
 import java.util.Collection;
 import java.util.Collections;
@@ -57,7 +56,6 @@ import org.javlo.navigation.MenuElement;
 import org.javlo.rendering.Device;
 import org.javlo.service.RequestService;
 import org.javlo.user.AdminUserSecurity;
-import org.javlo.user.User;
 import org.javlo.utils.DebugListening;
 import org.javlo.utils.SuffixPrefix;
 
@@ -232,23 +230,6 @@ public abstract class AbstractVisualComponent implements IContentVisualComponent
 		GlobalContext globalContext = GlobalContext.getInstance(ctx.getRequest());
 		String helpURL = globalContext.getHelpURL().replace("${language}", globalContext.getEditLanguage(ctx.getRequest().getSession()));
 		return helpURL;
-	}
-
-	/**
-	 * @see org.javlo.itf.IContentVisualComponent#getBean()
-	 * @param ctx
-	 *            can be null;
-	 */
-	@Override
-	public ComponentBean getBean(ContentContext ctx) {		
-		ComponentBean beanCopy = new ComponentBean();
-		try {
-			BeanHelper.copy(beanCopy, this);
-		} catch (Exception e) {
-			e.printStackTrace();
-			return null;
-		}
-		return beanCopy;
 	}
 
 	@Override

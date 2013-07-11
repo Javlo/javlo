@@ -41,6 +41,7 @@ import org.javlo.message.MessageRepository;
 import org.javlo.module.ticket.TicketAction;
 import org.javlo.service.ContentService;
 import org.javlo.service.IMService;
+import org.javlo.service.PersistenceService;
 import org.javlo.service.IMService.IMItem;
 import org.javlo.service.NotificationService;
 import org.javlo.service.NotificationService.Notification;
@@ -304,6 +305,10 @@ public class DataAction implements IAction {
 					cs.createContent(ctx, multimedia, previousId, true);
 
 					ctx.setNeedRefresh(true);
+				}
+				
+				if (ctx.isNeedRefresh()) { // if there are modification >>> store new contnet.
+					PersistenceService.getInstance(ctx.getGlobalContext()).store(ctx);
 				}
 
 			}

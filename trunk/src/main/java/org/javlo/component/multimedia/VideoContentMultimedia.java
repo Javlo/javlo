@@ -142,7 +142,7 @@ public class VideoContentMultimedia extends Multimedia {
 		resource.setFullDate(StringHelper.renderDate(resource.getDate(), globalContext.getFullDateFormat()));
 
 		resource.setURL(video.getURL(ctx));
-		resource.setLanguage(video.getBean(ctx).getLanguage());
+		resource.setLanguage(video.getComponentBean().getLanguage());
 		resource.setPreviewURL(video.getPreviewURL(ctx));
 		return resource;
 	}
@@ -173,7 +173,7 @@ public class VideoContentMultimedia extends Multimedia {
 		for (TranslatedVideo tVideo : translatedVideo.values()) {
 			if (tVideo.getTranslation().size() > 0) {
 				for (Video video : tVideo.getTranslation()) {
-					if (video.getBean(ctx).getLanguage().equals(ctx.getRequestContentLanguage())) { // if current language is in translation, switch the video.
+					if (video.getComponentBean().getLanguage().equals(ctx.getRequestContentLanguage())) { // if current language is in translation, switch the video.
 						mustBeRemovedVideo.add(tVideo.getVideo().getId());
 						TranslatedVideo currentLangVideo = new TranslatedVideo();
 						currentLangVideo.setVideo(video);
