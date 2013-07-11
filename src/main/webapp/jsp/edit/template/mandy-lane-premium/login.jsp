@@ -31,12 +31,15 @@
 <c:if test="${not empty info.globalMessage && not empty info.globalMessage.message}">
     	<div class="notification notifyError loginNotify">${info.globalMessage}</div>
 </c:if>
-<form id="loginform" action="${info.currentURL}" method="post">
+<form id="loginform" action="${info.currentEditURL}" method="post">
 <div class="loginbox">
 	<div class="loginbox_inner">
     	<div class="loginbox_content">
     		<input type="hidden" value="adminlogin" name="login-type" />
-    		<input type="hidden" value="edit-login" name="edit-login" />    		
+    		<input type="hidden" value="edit-login" name="edit-login" />
+    		<c:if test="${not empty param.previewEdit}">
+    		<input type="hidden" name="previewEdit" value="${param.previewEdit}" />
+    		</c:if>    		
             <input class="username" id="j_username" type="text" name="j_username" />
             <input class="password" id="j_password" type="password" name="j_password"  />
             <button name="submit" class="submit" >Login</button>

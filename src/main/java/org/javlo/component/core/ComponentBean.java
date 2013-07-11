@@ -4,8 +4,11 @@
 package org.javlo.component.core;
 
 import java.io.Serializable;
+import java.lang.reflect.InvocationTargetException;
 import java.util.Date;
 
+import org.apache.commons.beanutils.BeanUtils;
+import org.javlo.helper.BeanHelper;
 import org.javlo.helper.StringHelper;
 import org.javlo.user.User;
 
@@ -60,6 +63,10 @@ public class ComponentBean implements Serializable {
 		if (authors != null) {
 			this.authors = authors.getLogin();
 		}
+	}
+	
+	public ComponentBean(ComponentBean bean) throws SecurityException, IllegalArgumentException, IllegalAccessException, InvocationTargetException {
+		BeanUtils.copyProperties(this, bean);
 	}
 
 	/**

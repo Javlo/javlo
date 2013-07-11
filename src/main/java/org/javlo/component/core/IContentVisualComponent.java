@@ -229,13 +229,6 @@ public interface IContentVisualComponent {
 	public String getErrorMessage(String fieldName) throws ResourceNotFoundException;
 
 	/**
-	 * get <b>a copy</b> of the content of the component
-	 * 
-	 * @return a bean
-	 */
-	public ComponentBean getBean(ContentContext ctx);
-
-	/**
 	 * get the internal data
 	 * 
 	 * @return

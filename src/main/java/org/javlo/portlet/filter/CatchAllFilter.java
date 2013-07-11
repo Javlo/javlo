@@ -172,13 +172,13 @@ public class CatchAllFilter implements Filter {
 
 		if (editURI.startsWith("/edit-") || editURI.startsWith("/ajax-") || editURI.startsWith("/preview-edit")) {
 			boolean editPreview = false;
-			if (editURI.startsWith("/preview-edit")) {
+			if (editURI.startsWith("/preview-edit") ) {
 				editPreview = true;
-				editURI = editURI.replaceFirst("/preview-", "/");
+				editURI = editURI.replaceFirst("/preview-", "/");				
 				if (newUser) {
-					try {
+					try {						
 						ContentContext ctx = ContentContext.getContentContext(httpRequest, (HttpServletResponse) response);
-						ctx.setClosePopup(true);
+						ctx.setClosePopup(true);						
 					} catch (Exception e) {
 						e.printStackTrace();
 					}

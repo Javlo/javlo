@@ -1296,7 +1296,7 @@ public class Edit extends AbstractModuleAction {
 
 		int c = 0;
 		while (elems.hasNext(ctx)) {
-			ComponentBean bean = elems.next(ctx).getBean(ctx);
+			ComponentBean bean = new ComponentBean(elems.next(ctx).getComponentBean());
 			// bean.setArea(ctx.getArea()); the source component is always in the same area
 			bean.setLanguage(ctx.getRequestContentLanguage());
 			parentId = content.createContent(ctx, bean, parentId, true);
@@ -1329,7 +1329,7 @@ public class Edit extends AbstractModuleAction {
 		if (comp == null) {
 			return "component not found : " + compId;
 		} else {
-			clipBoard.copy(comp.getBean(ctx));
+			clipBoard.copy(new ComponentBean(comp.getComponentBean()));
 			messageRepository.setGlobalMessageAndNotification(ctx, new GenericMessage(i18nAccess.getText("edit.message.copy", new String[][] { { "type", "" + comp.getType() } }), GenericMessage.INFO));
 			prepareUpdateInsertLine(ctx);
 		}
