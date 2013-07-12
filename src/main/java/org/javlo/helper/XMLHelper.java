@@ -9,6 +9,7 @@ import java.io.Writer;
 import java.text.SimpleDateFormat;
 import java.util.Arrays;
 import java.util.Collection;
+import java.util.Date;
 import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
@@ -376,7 +377,7 @@ public class XMLHelper {
 		PrintWriter out = new PrintWriter(inOut, true);
 
 		out.println("<?xml version=\"1.0\" encoding=\"" + ContentContext.CHARACTER_ENCODING + "\"?>");
-		out.println("<content cmsversion=\"" + AccessServlet.VERSION + "\" version=\"" + version + "\">");
+		out.println("<content cmsversion=\"" + AccessServlet.VERSION + "\" version=\"" + version + "\" date=\""+PersistenceService.renderDate(new Date())+"\">");
 		insertXMLPage(out, Arrays.asList(new MenuElement[] { menu }), defaultLg);
 		insertMap(out, contentMap, PersistenceService.GLOBAL_MAP_NAME);
 		out.println("</content>");
