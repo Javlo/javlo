@@ -173,7 +173,8 @@ public class FreeTextList extends Paragraph {
 		super.initContent(ctx);
 		ByteArrayOutputStream outStream = new ByteArrayOutputStream();
 		PrintStream out = new PrintStream(outStream);
-		for (int i = 0; i < 7; i++) {
+		out.println(LoremIpsumGenerator.getParagraph(8, true, false) + '.');
+		for (int i = 0; i < 4; i++) {
 			out.println(LoremIpsumGenerator.getParagraph(8, false, false) + '.');
 		}
 		out.close();

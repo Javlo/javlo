@@ -96,7 +96,7 @@ public class Paragraph extends AbstractVisualComponent {
 
 	@Override
 	public boolean initContent(ContentContext ctx) {
-		setValue(LoremIpsumGenerator.getParagraph(80, false, true));
+		setValue(LoremIpsumGenerator.getParagraph(80, true, true));
 		setModify();
 		return true;
 	}

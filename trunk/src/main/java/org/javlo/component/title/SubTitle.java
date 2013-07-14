@@ -115,7 +115,7 @@ public class SubTitle extends AbstractVisualComponent {
 
 	@Override
 	public boolean initContent(ContentContext ctx) {
-		setValue(LoremIpsumGenerator.getParagraph(6, false, true));
+		setValue(LoremIpsumGenerator.getParagraph(6, true, true));
 		setModify();
 		return true;
 	}
