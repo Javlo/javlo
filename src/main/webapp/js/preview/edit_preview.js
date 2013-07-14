@@ -225,7 +225,7 @@ initPreview = function() {
 									}
 									area = jQuery(parent).attr("id");
 									var ajaxURL = currentURL
-											+ "?webaction_1=edit.moveComponent&webaction_2=edit.updateArea&comp-id="
+											+ "?webaction_1=edit.moveComponent&webaction_2=date.updateArea&comp-id="
 											+ compId + "&previous=" + previewId
 											+ "&area=" + area+ "&render-mode=3";
 								}
