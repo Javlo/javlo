@@ -81,7 +81,7 @@ public class Title extends AbstractVisualComponent {
 
 	@Override
 	public boolean initContent(ContentContext ctx) {
-		setValue(LoremIpsumGenerator.getParagraph(4, false, true));
+		setValue(LoremIpsumGenerator.getParagraph(4, true, true));
 		setModify();
 		return true;
 	}

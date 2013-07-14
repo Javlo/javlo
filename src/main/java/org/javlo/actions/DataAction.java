@@ -164,7 +164,7 @@ public class DataAction implements IAction {
 		ctx.getAjaxInsideZone().put(area, ServletHelper.executeJSP(ctx, "/jsp/view/content_view.jsp?area=" + areaKey));
 		return null;
 	}
-
+	
 	public static String performTickets(ContentContext ctx) throws ConfigurationException, IOException {
 		ctx.getAjaxData().put("tickets", TicketAction.getMyTicket(ctx));
 		return null;
