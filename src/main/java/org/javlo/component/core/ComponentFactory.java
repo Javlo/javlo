@@ -70,7 +70,12 @@ public class ComponentFactory {
 	 * @throws Exception
 	 */
 	public static IContentVisualComponent[] getComponents(ContentContext ctx, MenuElement page) throws Exception {
-		String key = "__components_request_key_" + page.getId() + '_' + ctx.getRenderMode();
+		String key;
+		if (page == null) {
+			key = "__components_request_key_nopage_" + ctx.getRenderMode();
+		} else {
+			key = "__components_request_key_" + page.getId() + '_' + ctx.getRenderMode();
+		}		
 		IContentVisualComponent[] outComp = (IContentVisualComponent[]) ctx.getRequest().getAttribute(key);
 		if (outComp == null) {
 			Template template = null;
