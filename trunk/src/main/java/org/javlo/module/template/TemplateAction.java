@@ -548,7 +548,7 @@ public class TemplateAction extends AbstractModuleAction {
 				if (rs.getParameter("text", null) != null) {
 					File htmlFile = new File(URLHelper.mergePath(template.getSourceFolder().getAbsolutePath(), rs.getParameter("file", "")));
 					if (htmlFile.exists() && htmlFile.isFile()) {
-						ResourceHelper.writeStringToFile(htmlFile, rs.getParameter("text", null));
+						ResourceHelper.writeStringToFile(htmlFile, rs.getParameter("text", null), ContentContext.CHARACTER_ENCODING);
 					} else {
 						return "file not found : " + htmlFile;
 					}
@@ -579,7 +579,7 @@ public class TemplateAction extends AbstractModuleAction {
 				if (rs.getParameter("text", null) != null) {
 					File cssFile = new File(URLHelper.mergePath(template.getSourceFolder().getAbsolutePath(), rs.getParameter("file", "")));
 					if (cssFile.exists() && cssFile.isFile()) {
-						ResourceHelper.writeStringToFile(cssFile, rs.getParameter("text", null));
+						ResourceHelper.writeStringToFile(cssFile, rs.getParameter("text", null), ContentContext.CHARACTER_ENCODING);
 					} else {
 						return "file not found : " + cssFile;
 					}

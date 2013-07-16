@@ -19,6 +19,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import org.apache.commons.fileupload.FileItem;
+import org.javlo.context.ContentContext;
 import org.javlo.helper.ResourceHelper;
 import org.javlo.helper.StringHelper;
 import org.javlo.helper.URLHelper;
@@ -206,7 +207,7 @@ public abstract class ELFinder {
 		ELFile file = hashToFile(fileHash);
 		if (file.getFile().exists()) {
 			if (content != null) {
-				ResourceHelper.writeStringToFile(file.getFile(), content);
+				ResourceHelper.writeStringToFile(file.getFile(), content, ContentContext.CHARACTER_ENCODING);
 				apiResponse.put("changed", printFiles(Arrays.asList(new ELFile[] { file })));
 			}
 

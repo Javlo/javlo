@@ -692,9 +692,9 @@ public class XMLManipulationHelper {
 				String msg = i18nAccess.getText("template.error.xml", params);
 				GenericMessage outMsg = new GenericMessage(msg, GenericMessage.ERROR);
 				messages.add(outMsg);
-				ResourceHelper.writeStringToFile(jspFile, outMsg.getMessage());
+				ResourceHelper.writeStringToFile(jspFile, outMsg.getMessage(), ContentContext.CHARACTER_ENCODING);
 			} else {
-				ResourceHelper.writeStringToFile(jspFile, e.getMessage());
+				ResourceHelper.writeStringToFile(jspFile, e.getMessage(), ContentContext.CHARACTER_ENCODING);
 			}
 			e.printStackTrace();
 		}
