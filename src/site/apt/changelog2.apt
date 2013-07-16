@@ -129,3 +129,11 @@ change log
  * shared content
  
 * 2.0.2.4 21/6/2013
+
+ * access image with jstl
+
+ * change wisiwig editor option
+
+ * getBean in abstractVisualComponent without duplication
+ 
+ * encode all files with default encoding
