@@ -20,6 +20,7 @@ import javax.servlet.http.HttpSession;
 
 import org.apache.commons.lang.StringUtils;
 import org.javlo.component.core.ComponentBean;
+import org.javlo.component.core.ComponentFactory;
 import org.javlo.component.core.ContentElementList;
 import org.javlo.component.core.IContentVisualComponent;
 import org.javlo.config.StaticConfig;
@@ -211,12 +212,12 @@ public class ContentService {
 		if (lg == null) {
 			lg = ctx.getRequestContentLanguage();
 		}
-		ComponentBean bean = new ComponentBean(id, inBean.getType(), inBean.getValue(), lg, false, ctx.getCurrentEditUser());
-		bean.setList(inBean.isList());
-		bean.setStyle(inBean.getStyle());
-		bean.setArea(inBean.getArea());
-		bean.setRepeat(inBean.isRepeat());
-		bean.setRenderer(inBean.getRenderer());
+		ComponentBean bean = new ComponentBean(inBean);
+		bean.setId(id);
+		if (bean.getArea() == null) {
+			System.out.println("***** ContentService.createContent : area = "+ctx.getArea()); //TODO: remove debug trace
+			bean.setArea(ctx.getArea());
+		}
 		page.addContent(parentId, bean, releaseCache);
 		return id;
 	}
@@ -260,10 +261,13 @@ public class ContentService {
 
 	public String createContent(ContentContext ctx, MenuElement page, Collection<ComponentBean> inBean, String parentId, boolean releaseCache) throws Exception {
 		for (ComponentBean bean : inBean) {
-			parentId = createContent(ctx, page, bean, parentId, false);
+			IContentVisualComponent comp = ComponentFactory.createComponent(ctx, bean, null, null, null);
+			if (!comp.isUnique() || page.getContentByType(ctx, comp.getType()).size() == 0) {
+				parentId = createContent(ctx, page, bean, parentId, false);
+			}
 		}
 		if (releaseCache) {
-			ctx.getCurrentPage().releaseCache();
+			page.releaseCache();
 		}
 		return parentId;
 	}

@@ -1245,9 +1245,9 @@ public class MenuElement implements Serializable {
 					if (element.getId().equals(parentId)) {
 						newBean[j] = element;
 						j++;
-						newBean[j] = bean;
-						parentFound = true;
-						if (newBean[j].getArea() != null) {
+						newBean[j] = bean;						
+						parentFound = true;						
+						if (newBean[j].getArea() != null) {							
 							bean.setArea(newBean[j].getArea());
 						}
 					} else {
@@ -1257,6 +1257,7 @@ public class MenuElement implements Serializable {
 				}
 				if (!parentFound) { // component not found
 					newBean[0] = bean;
+					System.out.println("***** MenuElement.addContent : area = "+bean.getArea()); //TODO: remove debug trace
 					for (int i = 0; i < componentBean.length; i++) {
 						newBean[i + 1] = componentBean[i];
 					}
@@ -3480,10 +3481,9 @@ public class MenuElement implements Serializable {
 		return comp.getId();
 	}
 
-	public void releaseCache() {
-		// pageInfinityCache.clear();
+	public void releaseCache() {		
 		releaseCache = true;
-		getContentElementListMap().clear();
+		getContentElementListMap().clear();		
 		getLocalContentElementListMap().clear();
 	}
 

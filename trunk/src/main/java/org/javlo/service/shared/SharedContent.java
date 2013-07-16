@@ -1,5 +1,6 @@
 package org.javlo.service.shared;
 
+import java.util.LinkedList;
 import java.util.List;
 
 import org.javlo.component.core.ComponentBean;
@@ -17,10 +18,15 @@ public class SharedContent {
 	
 	private final List<ComponentBean> content;
 	
-	public SharedContent (ContentContext ctx, String id, List<ComponentBean> content) {
+	public SharedContent (ContentContext ctx, String id, List<ComponentBean> content) throws Exception {
 		this.id = id;
-		this.content = content;		
-		for (ComponentBean componentBean : content) {
+		this.content = new LinkedList<ComponentBean>();
+		for (ComponentBean bean : content) {	
+			ComponentBean newBean = new ComponentBean(bean);
+			newBean.setArea(null);
+			this.content.add(newBean);			
+		}
+		for (ComponentBean componentBean : this.content) {
 			if (componentBean.getType().equals(Title.TYPE)) {
 				title = componentBean.getValue();
 			} else if (componentBean.getType().equals(Description.TYPE)) {

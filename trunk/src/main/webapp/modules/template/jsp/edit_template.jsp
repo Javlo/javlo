@@ -54,7 +54,7 @@
 				<c:if test="${currentTemplate.areasMap[area] eq htmlID}">
 					<c:set var="areaFound" value="true" scope="page" />	
 				</c:if>
-				<li><input ${currentTemplate.areasMap[area] eq htmlID?'checked="checked"':''} type="radio" name="area-${area}" id="_${area}_${htmlID}" value="${htmlID}" /> <label for="_${area}_${htmlID}">${htmlID}</label></li>
+				<li><input ${currentTemplate.areasMap[area] eq htmlID?'checked="checked"':''} type="radio" name="area-${area}" id="_${area}_${htmlID}" value="${htmlID}" /> <label class="suffix" for="_${area}_${htmlID}">${htmlID}</label></li>
 			</c:forEach>
 			<li><input type="text" name="free-area-${area}" value="${areaFound eq 'false'?currentTemplate.areasMap[area]:'' }" /></li>
 			<c:set var="areaFound" value="false" scope="page" />			
@@ -70,7 +70,7 @@
 				<c:if test="${currentTemplate.areasMap[area] eq htmlID}">
 					<c:set var="areaFound" value="true" scope="page" />	
 				</c:if>
-				<li><input ${currentTemplate.areasMap[area] eq htmlID?'checked="checked"':''} type="radio" name="newarea-id" id="_new_${htmlID}" value="${htmlID}" /> <label for="_new_${htmlID}">${htmlID}</label></li>
+				<li><input ${currentTemplate.areasMap[area] eq htmlID?'checked="checked"':''} type="radio" name="newarea-id" id="_new_${htmlID}" value="${htmlID}" /> <label class="suffix" for="_new_${htmlID}">${htmlID}</label></li>
 			</c:forEach>
 			<li><input type="text" name="free-area-new" value="${areaFound eq 'false'?currentTemplate.areasMap[area]:'' }" /></li>
 			<c:set var="areaFound" value="false" scope="page" />			

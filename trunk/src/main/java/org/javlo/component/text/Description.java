@@ -116,5 +116,10 @@ public class Description extends AbstractVisualComponent {
 		setModify();
 		return true;
 	}
+	
+	@Override
+	public boolean isUnique() {
+		return true;
+	}
 
 }
