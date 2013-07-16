@@ -12,6 +12,7 @@ import java.util.LinkedList;
 import java.util.Properties;
 import java.util.Queue;
 
+import org.javlo.context.ContentContext;
 import org.javlo.helper.ResourceHelper;
 
 
@@ -88,7 +89,7 @@ public class MergeProperties {
 			pos = pos + 1;
 		}
 		out2.close();
-		ResourceHelper.writeStringToFile(file2, outStr2.toString());
+		ResourceHelper.writeStringToFile(file2, outStr2.toString(), ContentContext.CHARACTER_ENCODING);
 	}
 	
 	public static void main(String[] args) {
