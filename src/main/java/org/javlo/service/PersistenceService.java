@@ -676,7 +676,7 @@ public class PersistenceService {
 			} else {
 				firstNode = XMLFactory.getFirstNode((Reader)in);
 			}
-
+			
 			NodeXML page = firstNode.getChild("page");
 
 			outBean.setCmsVersion(firstNode.getAttributeValue("cmsversion"));
@@ -805,8 +805,8 @@ public class PersistenceService {
 
 	}
 	
-	public MenuElement load(ContentContext ctx, int renderMode, Map<String, String> contentAttributeMap, Date timeTravelDate) throws Exception {
-		return load(ctx,renderMode,contentAttributeMap, timeTravelDate, true);
+	public MenuElement load(ContentContext ctx, int renderMode, Map<String, String> contentAttributeMap, Date timeTravelDate) throws Exception {		
+		return load(ctx,renderMode,contentAttributeMap, timeTravelDate, true);		
 	}
 
 	protected MenuElement load(ContentContext ctx, int renderMode, Map<String, String> contentAttributeMap, Date timeTravelDate, boolean correctXML) throws Exception {
@@ -869,7 +869,7 @@ public class PersistenceService {
 					 */
 				} else {
 					LoadingBean loadBean = load(ctx, in, contentAttributeMap, renderMode);
-					root = loadBean.getRoot();
+					root = loadBean.getRoot();					
 					try {
 						ConvertToCurrentVersion.convert(ctx, loadBean);
 					} catch (Exception e) {
@@ -902,7 +902,6 @@ public class PersistenceService {
 				ResourceHelper.closeResource(in);
 				ResourceHelper.closeResource(in2);
 			}
-			
 			return root;
 		}
 	}

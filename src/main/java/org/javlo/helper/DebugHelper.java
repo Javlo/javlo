@@ -18,7 +18,6 @@ import org.javlo.portlet.filter.CatchAllFilter;
 import org.javlo.service.syncro.SynchronisationService;
 import org.javlo.servlet.AccessServlet;
 import org.javlo.servlet.ImageTransformServlet;
-import org.javlo.servlet.MailingServlet;
 import org.javlo.user.AdminUserFactory;
 import org.javlo.user.UserFactory;
 
@@ -118,8 +117,7 @@ public class DebugHelper {
 	public static void updateLoggerLevel(ServletContext application) throws Exception {
 		StaticConfig staticConfig = StaticConfig.getInstance(application);
 		Logger.getLogger("").setLevel(staticConfig.getAllLogLevel());
-		AccessServlet.logger.setLevel(staticConfig.getAccessLogLevel());
-		MailingServlet.logger.setLevel(staticConfig.getAccessLogLevel());
+		AccessServlet.logger.setLevel(staticConfig.getAccessLogLevel());		
 		ImageTransformServlet.logger.setLevel(staticConfig.getAccessLogLevel());
 		CatchAllFilter.logger.setLevel(staticConfig.getAccessLogLevel());
 		MenuElement.logger.setLevel(staticConfig.getNavigationLogLevel());

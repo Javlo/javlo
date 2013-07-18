@@ -50,6 +50,7 @@ function openEditor(textarea) {
 	});	
 	
 	jQuery("#ace-text-editor").height(box.height()/2);
+	jQuery("#ace-text-editor").val(editor.getValue());
 	
 }
 

@@ -184,16 +184,6 @@
 	</servlet-mapping>
 
 	<servlet>
-		<servlet-name>mailing</servlet-name>
-		<servlet-class>org.javlo.servlet.MailingServlet</servlet-class>
-		<load-on-startup>0</load-on-startup>
-	</servlet>
-	<servlet-mapping>
-		<servlet-name>mailing</servlet-name>
-		<url-pattern>/mailing/*</url-pattern>
-	</servlet-mapping>
-	
-	<servlet>
 		<servlet-name>context</servlet-name>
 		<servlet-class>org.javlo.servlet.ContextServlet</servlet-class>
 		<load-on-startup>0</load-on-startup>
