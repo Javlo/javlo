@@ -137,3 +137,7 @@ change log
  * getBean in abstractVisualComponent without duplication
  
  * encode all files with default encoding
+ 
+ * remove mailing servelt
+ 
+ * bug correction : file explorer file cleared if no change done.
