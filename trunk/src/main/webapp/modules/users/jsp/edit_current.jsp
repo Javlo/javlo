@@ -55,11 +55,11 @@
 	</div>
 	<c:if test="${not empty webaction}">
 		<div class="line">
-			<label for="password">${i18n.edit['user.new-password']}</label>
+			<label for="password">${i18n.view['form.password']}</label>
 			<input type="password" id="password" name="password" value="" /> 
 		</div>	
 		<div class="line">
-			<label for="password2">${i18n.edit['user.change-password-2']}</label>
+			<label for="password2">${i18n.view['form.password2']}</label>
 			<input type="password" id="password2" name="password2" value="" />		 
 		</div>
 	</c:if>
