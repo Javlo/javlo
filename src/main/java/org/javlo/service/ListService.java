@@ -176,7 +176,9 @@ public class ListService {
 				}
 			}
 		}
-		Collections.sort(outList, new OrderList());
+		if (outList != null) {
+			Collections.sort(outList, new OrderList());
+		}
 		return outList;
 	}
 

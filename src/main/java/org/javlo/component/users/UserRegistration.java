@@ -92,6 +92,9 @@ public class UserRegistration extends AbstractVisualComponent implements IAction
 		}
 		try {
 			BeanHelper.copy(new RequestParameterMap(ctx.getRequest()), userInfo);
+			if (globalContext.getStaticConfig().isPasswordEncryt()) {
+				userInfo.setPassword(StringHelper.encryptPassword(userInfo.getPassword()));
+			}
 			userFactory.addUserInfo(userInfo);
 			userFactory.store();
 			ctx.getRequest().setAttribute("registration-message", i18nAccess.getViewText("registration.message.registred", "Thanks for you registration."));
