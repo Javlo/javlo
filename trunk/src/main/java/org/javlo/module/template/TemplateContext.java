@@ -8,6 +8,7 @@ import java.util.List;
 import javax.servlet.http.HttpSession;
 
 import org.javlo.bean.ParentLink;
+import org.javlo.context.EditContext;
 import org.javlo.context.GlobalContext;
 import org.javlo.i18n.I18nAccess;
 import org.javlo.module.core.Module;
@@ -21,6 +22,7 @@ public class TemplateContext {
 	public static ParentLink ALL_TEMPLATES_LINK = null;
 	private I18nAccess i18nAccess = null;	
 	private String currentLink;
+	private boolean editPreview = false;
 	
 	private TemplateContext() {};
 	
@@ -33,6 +35,10 @@ public class TemplateContext {
 			TemplateContext.ALL_TEMPLATES_LINK = new ParentLink("allmtemplates", outCtx.i18nAccess.getText("template.renderer.all"));
 			session.setAttribute(KEY, outCtx);
 		}
+		
+		EditContext editContext = EditContext.getInstance(globalContext, session);
+		outCtx.editPreview = editContext.isEditPreview();		
+
 		return outCtx;
 	}
 	
@@ -44,7 +50,7 @@ public class TemplateContext {
 	}
 	
 	public String getCurrentLink() {
-		if (currentLink == null) {
+		if (currentLink == null || editPreview) {
 			return MY_TEMPLATES_LINK.getUrl();
 		}
 		return currentLink;

@@ -19,8 +19,8 @@
 
 <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
 <title>Javlo : ${currentModule.title}</title>
-<link rel="stylesheet" media="screen" href="${info.editTemplateURL}/css/style.css" />
-<link rel="stylesheet" media="screen" href="${info.editTemplateURL}/css/javlo.css" />
+<link rel="stylesheet" media="screen" href="${info.editTemplateURL}/css/style.css?ts=${info.ts}" />
+<link rel="stylesheet" media="screen" href="${info.editTemplateURL}/css/javlo.css?ts=${info.ts}" />
 <link rel="stylesheet" media="screen" href="${info.editTemplateURL}/css/plugins/colorbox.css" />
 <c:if test="${not empty specificCSS}">
 <link rel="stylesheet" media="screen" href="${specificCSS}" />
@@ -48,19 +48,19 @@
 <script type="text/javascript" src="${info.editTemplateURL}/js/plugins/jquery.form.js"></script>
 <script type="text/javascript" src="${info.editTemplateURL}/js/plugins/jquery.elastic.source.js"></script>
 <script type="text/javascript" src="${info.editTemplateURL}/js/custom/gallery.js"></script>
-<script type="text/javascript" src="<jv:url value='/js/edit/ajax.js' />"></script>
-<script type="text/javascript" src="<jv:url value='/js/edit/core.js' />"></script>
-<script type="text/javascript" src="${info.editTemplateURL}/js/javlo/core.js"></script>
+<script type="text/javascript" src="<jv:url value='/js/edit/ajax.js?ts=${info.ts}' />"></script>
+<script type="text/javascript" src="<jv:url value='/js/edit/core.js?ts=${info.ts}' />"></script>
+<script type="text/javascript" src="${info.editTemplateURL}/js/javlo/core.js?ts=${info.ts}"></script>
 <c:if test="${not info.editLanguage eq 'en'}"><script type="text/javascript" src="${info.editTemplateURL}/js/plugins/jquery.ui.datepicker-${info.editLanguage}.js"></script></c:if>
-<script type="text/javascript" src="${info.editTemplateURL}/js/custom/general.js"></script>
+<script type="text/javascript" src="${info.editTemplateURL}/js/custom/general.js?ts=${info.ts}"></script>
 
 
 <!-- module '${currentModule.name}' CSS --><c:forEach var="css" items="${currentModule.CSS}">
-<link rel="stylesheet" href="<jv:url value='${css}' />"/>
+<link rel="stylesheet" href="<jv:url value='${css}?ts=${info.ts}' />"/>
 </c:forEach>
 
 <!-- module '${currentModule.name}' JS --><c:forEach var="js" items="${currentModule.JS}">
-<script type="text/javascript" src="<jv:url value='${js}' />"></script>
+<script type="text/javascript" src="<jv:url value='${js}?ts=${info.ts}' />"></script>
 </c:forEach>
 
 </head>

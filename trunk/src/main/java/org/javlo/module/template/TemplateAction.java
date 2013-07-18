@@ -624,7 +624,7 @@ public class TemplateAction extends AbstractModuleAction {
 			newFile = ResourceHelper.getFreeFileName(newFile);			
 			InputStream in = file.getInputStream();
 			try {
-				if (!uploadTemplate(ctx,in,newFile)) {
+				if (!uploadTemplate(ctx,in,newFile) && in != null && file.getName().trim().length() > 0) {
 					messageRepository.setGlobalMessage(new GenericMessage(i18nAccess.getText("template.error.bad-template-file"), GenericMessage.ERROR));					
 				}
 			} finally {

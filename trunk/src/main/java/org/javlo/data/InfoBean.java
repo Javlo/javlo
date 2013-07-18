@@ -32,6 +32,8 @@ import org.javlo.user.User;
 import org.javlo.user.UserFactory;
 
 public class InfoBean {
+	
+	private static final String ts = ""+System.currentTimeMillis();
 
 	public static final String REQUEST_KEY = "info";
 
@@ -506,5 +508,13 @@ public class InfoBean {
 	public boolean isLocalModule() {
 		String localModulePath = ctx.getRequest().getSession().getServletContext().getRealPath("/webstart/localmodule.jnlp.jsp");
 		return (new File(localModulePath)).isFile();
+	}
+	
+	/**
+	 * timestamp initialised when java VM is staded.
+	 * @return
+	 */
+	public String getTs() {
+		return ts;
 	}
 }
