@@ -1206,22 +1206,6 @@ public class GlobalContext implements Serializable {
 		return properties.getString("date.medium", staticConfig.getDefaultDateFormat());
 	}
 
-	public MenuElement getPage(ContentContext ctx, String url, boolean useURLCreator) throws Exception {
-		MenuElement elem = getPageIfExist(ctx, url, useURLCreator);
-		if (elem == null) {
-			if (ctx.isPageRequest() && ctx.getPath().equals(url)) {
-				logger.info("page not found : " + url + " (ctx=" + ctx + ')');
-				ctx.getResponse().setStatus(HttpServletResponse.SC_NOT_FOUND, "page not found : " + url);
-			}
-			MenuElement root = ContentService.getInstance(ctx.getRequest()).getNavigation(ctx);
-			elem = root.searchChildFromName("404");
-			if (elem == null) {
-				elem = root;
-			}
-		}
-		return elem;
-	}
-
 	public MenuElement getPageIfExist(ContentContext ctx, String url, boolean useURLCreator) throws Exception {
 		IURLFactory urlCreator = getURLFactory(ctx);
 		Map<String, MenuElement> localViewPages = viewPages;

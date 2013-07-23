@@ -282,8 +282,6 @@ public class ContentContext {
 
 	private String requestContentLanguage = null;
 
-	boolean mailing = false;
-
 	boolean array = false;
 
 	int renderMode = VIEW_MODE;
@@ -362,6 +360,8 @@ public class ContentContext {
 
 	private Map<? extends Object, ? extends Object> ajaxMap = null;
 
+	private boolean contentFound = true;
+
 	public ContentContext(ContentContext ctx) {
 		path = ctx.path;
 		language = ctx.language;
@@ -392,6 +392,8 @@ public class ContentContext {
 		ajaxInsideZone = ctx.ajaxInsideZone;
 		ajaxData = ctx.ajaxData;
 		scheduledAjaxInsideZone = ctx.scheduledAjaxInsideZone;
+		
+		currentPageCached = ctx.currentPageCached;
 	}
 
 	public String getArea() {
@@ -583,9 +585,10 @@ public class ContentContext {
 		} else {
 			if (getPath().trim().length() > 0) {
 				MenuElement elem = globalContext.getPageIfExist(this, getPath(), urlFacotry);
-				if (elem != null) {
+				if (elem != null) {					
 					setCurrentPageCached(elem);
 				} else {
+					setContentFound(false);
 					elem = root;
 					setPath(root.getPath());
 				}
@@ -614,9 +617,6 @@ public class ContentContext {
 		if (currentTemplate == null) {
 			Template template = null;
 
-			if (getRenderMode() == ContentContext.PAGE_MODE) {
-				mailing = true;
-			}
 			String forceTemplate = getRequest().getParameter(Template.FORCE_TEMPLATE_PARAM_NAME);
 			GlobalContext globalContext = GlobalContext.getInstance(getRequest());
 			if (forceTemplate != null) {
@@ -1401,5 +1401,13 @@ public class ContentContext {
 
 	public GlobalContext getGlobalContext() {
 		return GlobalContext.getInstance(request);
+	}
+
+	public boolean isContentFound() {
+		return contentFound;
+	}
+
+	public void setContentFound(boolean contentFound) {
+		this.contentFound = contentFound;
 	}
 }

@@ -70,7 +70,7 @@ public class InternalLink extends ComplexPropertiesLink implements IInternalLink
 		if (linkIdStr != null) {
 			// MenuElement elemChild = content.getNavigation(ctx).searchChildFromId(linkIdStr);
 			GlobalContext globalContext = GlobalContext.getInstance(ctx.getRequest());
-			NavigationService navigationService = NavigationService.getInstance(globalContext, ctx.getRequest().getSession());
+			NavigationService navigationService = NavigationService.getInstance(globalContext);
 			MenuElement elemChild = navigationService.getPage(ctx, linkIdStr);
 			if (elemChild != null) {
 				link = elemChild.getPath();
@@ -158,7 +158,7 @@ public class InternalLink extends ComplexPropertiesLink implements IInternalLink
 		NavigationService navigationService;
 		try {
 			GlobalContext globalContext = GlobalContext.getInstance(ctx.getRequest());
-			navigationService = NavigationService.getInstance(globalContext, ctx.getRequest().getSession());
+			navigationService = NavigationService.getInstance(globalContext);
 			MenuElement child = navigationService.getPage(ctx, linkId);
 			if (child != null) {
 				String link = "#";
@@ -228,7 +228,7 @@ public class InternalLink extends ComplexPropertiesLink implements IInternalLink
 
 		// MenuElement child = nav.searchChildFromId(linkId);
 		GlobalContext globalContext = GlobalContext.getInstance(ctx.getRequest());
-		NavigationService navigationService = NavigationService.getInstance(globalContext, ctx.getRequest().getSession());
+		NavigationService navigationService = NavigationService.getInstance(globalContext);
 		MenuElement child = navigationService.getPage(ctx, linkId);
 		if (child != null) {
 			String link = "#";
@@ -381,7 +381,7 @@ public class InternalLink extends ComplexPropertiesLink implements IInternalLink
 
 		// MenuElement child = nav.searchChildFromId(linkId);
 		GlobalContext globalContext = GlobalContext.getInstance(ctx.getRequest());
-		NavigationService navigationService = NavigationService.getInstance(globalContext, ctx.getRequest().getSession());
+		NavigationService navigationService = NavigationService.getInstance(globalContext);
 		MenuElement child = navigationService.getPage(ctx, linkId);
 		if (child != null) {
 			return URLHelper.createURL(ctx, child);

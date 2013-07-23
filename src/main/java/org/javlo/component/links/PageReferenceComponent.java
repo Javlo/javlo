@@ -1220,7 +1220,7 @@ public class PageReferenceComponent extends ComplexPropertiesLink implements IAc
 		int firstPageNumber = getFirstPageNumber();
 		int lastPageNumber = getLastPageNumber();
 		GlobalContext globalContext = GlobalContext.getInstance(ctx.getRequest());
-		NavigationService navigationService = NavigationService.getInstance(globalContext, ctx.getRequest().getSession());
+		NavigationService navigationService = NavigationService.getInstance(globalContext);
 		for (String pageId : selectedPage) {
 			MenuElement page = navigationService.getPage(ctx, pageId);
 			ContentContext lgCtx = page.getContentContextWithContent(ctx);

@@ -19,7 +19,7 @@ public class DeleteChildren extends AbstractMacro {
 	@Override
 	public String perform(ContentContext ctx, Map<String, Object> params) throws Exception {
 		GlobalContext globalContext = GlobalContext.getInstance(ctx.getRequest());
-		NavigationService service = NavigationService.getInstance(globalContext, ctx.getRequest().getSession());
+		NavigationService service = NavigationService.getInstance(globalContext);
 
 		Collection<MenuElement> pages = ctx.getCurrentPage().getChildMenuElements();
 		for (MenuElement menuElement : pages) {

@@ -1245,5 +1245,9 @@ public class StaticConfig extends Observable {
 	public boolean isSharedContent() {
 		return properties.getBoolean("shared-content", false);
 	}
+	
+	public String get404PageName() {
+		return properties.getString("404-name", "404");
+	}
 
 }

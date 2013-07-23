@@ -104,6 +104,10 @@ public class InfoBean {
 	public String getCurrentPreviewURL() {
 		return URLHelper.createURL(ctx.getContextWithOtherRenderMode(ContentContext.PREVIEW_MODE).getFreeContentContext());
 	}
+	
+	public String getCurrentPageURL() {
+		return URLHelper.createURL(ctx.getContextWithOtherRenderMode(ContentContext.PAGE_MODE).getFreeContentContext());
+	}
 
 	public String getCurrentAjaxURL() {
 		return URLHelper.createAjaxURL(ctx, ctx.getPath());

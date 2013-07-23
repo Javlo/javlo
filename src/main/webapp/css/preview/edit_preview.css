@@ -13,6 +13,14 @@
 	font-weight: bold;
 }
 
+#preview_command.edit table {
+	width: 100%;
+}
+
+#preview_command table caption {
+	display: none;
+}
+
 #one-component-edit {
 	font-size: 11px;
 }
@@ -568,9 +576,8 @@ body.fix-preview {
 }
 
 #preview_command .pc_command form {
-	margin: 1px 21px 3px 3px;
-	padding: 0;
-	float: left;
+	margin: 0 6px 3px 6px;
+	padding: 0;	
 	width: 16px;
 	height: 16px;
 }

@@ -3568,7 +3568,8 @@ public class MenuElement implements Serializable {
 		 * if (path.equals("/")) { return this; } else { Collection<MenuElement> pastNode = new LinkedList<MenuElement>(); return searchChild(this, ctx, path, pastNode); }
 		 */
 		GlobalContext globalContext = GlobalContext.getInstance(ctx.getRequest());
-		return globalContext.getPage(ctx, path, false);
+		MenuElement page = globalContext.getPageIfExist(ctx, path, false);
+		return page;
 	}
 
 	/**

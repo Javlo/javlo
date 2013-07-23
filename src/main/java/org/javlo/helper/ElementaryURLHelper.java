@@ -152,8 +152,12 @@ public abstract class ElementaryURLHelper {
 			if (urlCreator != null) {
 				try {
 					uri = uri.substring(0, uri.lastIndexOf("."));
-					MenuElement page = globalContext.getPage(ctx, uri, false);
-					uri = urlCreator.createURL(ctx, page);
+					MenuElement page = globalContext.getPageIfExist(ctx, uri, false);
+					if (page == null) {
+						uri = "/404";							
+					} else {
+						uri = urlCreator.createURL(ctx, page);
+					}
 				} catch (Exception e) {
 					e.printStackTrace();
 				}

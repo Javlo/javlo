@@ -75,8 +75,6 @@ import org.xhtmlrenderer.pdf.ITextRenderer;
 import org.xhtmlrenderer.swing.Java2DRenderer;
 import org.xhtmlrenderer.util.FSImageWriter;
 
-import sun.security.jca.GetInstance;
-
 public class AccessServlet extends HttpServlet implements IVersion {
 
 	private static final DecimalFormat df = new DecimalFormat("#####0.00");
@@ -712,6 +710,17 @@ public class AccessServlet extends HttpServlet implements IVersion {
 								if (ctx.getGlobalContext().getStaticConfig().isSharedContent()) {
 									SharedContentService sharedContentService  = SharedContentService.getInstance(ctx);
 									ctx.getRequest().setAttribute("sharedContent", sharedContentService.getAllSharedContent(ctx));
+								}
+							}
+							
+							/** check content **/
+							if (!ctx.isContentFound()) {
+								ctx.getResponse().setStatus(HttpServletResponse.SC_NOT_FOUND, "page not found : " + ctx.getPath());								
+								if (ctx.isAsViewMode()) {
+									MenuElement page404 = content.getNavigation(ctx).searchChildFromName(staticConfig.get404PageName());									
+									if (page404 != null) {
+										ctx.setCurrentPageCached(page404);
+									}									
 								}
 							}
 							

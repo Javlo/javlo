@@ -5,7 +5,6 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.logging.Logger;
 
-import javax.servlet.http.HttpSession;
 
 import org.javlo.cache.ICache;
 import org.javlo.context.ContentContext;
@@ -24,7 +23,7 @@ public class NavigationService {
 
 	private Object lock;
 
-	public static NavigationService getInstance(GlobalContext globalContext, HttpSession session) throws ServiceException {
+	public static NavigationService getInstance(GlobalContext globalContext) throws ServiceException {
 		NavigationService service = (NavigationService) globalContext.getAttribute(KEY);
 		if (service == null) {
 			service = new NavigationService();

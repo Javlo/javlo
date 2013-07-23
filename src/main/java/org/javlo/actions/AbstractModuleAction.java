@@ -82,7 +82,7 @@ public abstract class AbstractModuleAction implements IModuleAction {
 			step--;
 		}
 		step = Math.max(step, 1);
-		step = Math.min(step, b.getSteps().size());
+		step = Math.min(step, b.getSteps().size());		
 		moduleContext.setWizardStep(boxName, step);
 		BoxStep s = b.getSteps().get(step - 1);
 		b.setTitle(s.getTitle());

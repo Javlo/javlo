@@ -1,10 +1,11 @@
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/functions" prefix="fn" %>
-<div class="content">
-	<form class="ajax standard-form" action="${info.currentURL}" method="post">
+<div class="${contentContext.editPreview?'preview ':'edit '}content wizard">
+	<form class="${contentContext.editPreview?'':'ajax '} standard-form" action="${info.currentURL}" method="post">
 		<div>
 			<input type="hidden" name="webaction" value="wizard" />
 			<input type="hidden" name="box" value="sendwizard" />
+			<c:if test="${contentContext.editPreview}"><input type="hidden" name="previewEdit" value="true" /></c:if>
 		</div>
 		<div class="line">
 			<label for="mailing-sender">${i18n.edit['mailing.form.sender']}</label>
@@ -30,12 +31,12 @@
 			<label for="mailing-recipients">${i18n.edit['mailing.form.recipients']}</label>
 			<textarea id="mailing-recipients" name="recipients"><c:out value="${mailing.recipients}" escapeXml="true" /></textarea>
 		</div>
-		<div class="inline">
-			<label for="mailing-test-mailing">${i18n.edit['mailing.form.test-mailing']}</label>
+		<div class="inline">		
 			<input type="checkbox" id="mailing-test-mailing" name="test-mailing" ${mailing.isTestMailing()?'checked="checked"':''} />
+			<label class="suffix" for="mailing-test-mailing">${i18n.edit['mailing.form.test-mailing']}</label>
 		</div>
-		<div>
-			<input type="submit" name="previous" value="Previous" />
+		<div class="action">
+			<c:if test="${!contentContext.editPreview}"><input type="submit" name="previous" value="Previous" /></c:if>
 			<input type="submit" name="next" value="Next" />
 		</div>
 	</form>

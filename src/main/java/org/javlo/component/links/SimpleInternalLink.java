@@ -78,7 +78,7 @@ public class SimpleInternalLink extends ComplexPropertiesLink implements IIntern
 		String linkId = properties.getProperty(LINK_KEY, "/");
 
 		GlobalContext globalContext = GlobalContext.getInstance(ctx.getRequest());
-		NavigationService navigationService = NavigationService.getInstance(globalContext, ctx.getRequest().getSession());
+		NavigationService navigationService = NavigationService.getInstance(globalContext);
 		MenuElement child = navigationService.getPage(ctx, linkId);
 		if (child != null) {
 			String link = "#";
@@ -139,7 +139,7 @@ public class SimpleInternalLink extends ComplexPropertiesLink implements IIntern
 		String link = "/";
 		if (linkIdStr != null) {
 			GlobalContext globalContext = GlobalContext.getInstance(ctx.getRequest());
-			NavigationService navigationService = NavigationService.getInstance(globalContext, ctx.getRequest().getSession());
+			NavigationService navigationService = NavigationService.getInstance(globalContext);
 			MenuElement elemChild = navigationService.getPage(ctx, linkIdStr);
 			if (elemChild != null) {
 				link = elemChild.getPath();
@@ -285,7 +285,7 @@ public class SimpleInternalLink extends ComplexPropertiesLink implements IIntern
 		NavigationService navigationService;
 		try {
 			GlobalContext globalContext = GlobalContext.getInstance(ctx.getRequest());
-			navigationService = NavigationService.getInstance(globalContext, ctx.getRequest().getSession());
+			navigationService = NavigationService.getInstance(globalContext);
 			MenuElement child = navigationService.getPage(ctx, linkId);
 			if (child != null) {
 				String link = "#";

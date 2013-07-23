@@ -42,6 +42,8 @@ public class MailingAction extends AbstractModuleAction {
 	private static Logger logger = Logger.getLogger(MailingAction.class.getName());
 
 	public static final String SEND_WIZARD_BOX = "sendwizard";
+	
+	public static final String SEND_WIZARD_BOX_PREVIEW = "main-renderer";
 
 	@Override
 	public String getActionGroupName() {
@@ -71,6 +73,21 @@ public class MailingAction extends AbstractModuleAction {
 
 		MailingModuleContext mailingContext = MailingModuleContext.getInstance(request);
 		request.setAttribute("mailing", mailingContext);
+		
+		Module currentModule = modulesContext.getCurrentModule();
+		if (ctx.isEditPreview()) {						
+			if (mailingContext.getWizardStep(SEND_WIZARD_BOX) == 1) {
+				mailingContext.setWizardStep(SEND_WIZARD_BOX,2);
+				mailingContext.setCurrentTemplate(ctx.getCurrentTemplate().getId());				
+				currentModule.setRenderer("/jsp/step2.jsp");
+				request.setAttribute("currentTemplate", mailingContext.getCurrentTemplate());
+			} else {				
+				currentModule.setRenderer("/jsp/step"+mailingContext.getWizardStep(SEND_WIZARD_BOX)+".jsp");				
+			}
+		} else {
+			currentModule.restoreRenderer();
+		}
+		
 		switch (mailingContext.getWizardStep(SEND_WIZARD_BOX)) {
 		case 1:
 			Collection<Template> allTemplate = TemplateFactory.getAllDiskTemplates(ctx.getRequest().getSession().getServletContext());
@@ -150,7 +167,11 @@ public class MailingAction extends AbstractModuleAction {
 	public String performSelectMailingTemplate(ContentContext ctx, RequestService rs, Module currentModule, MailingModuleContext mailingContext) throws Exception {
 		mailingContext.setCurrentTemplate(rs.getParameter("name", null));
 		if (ctx.isAjax()) {
-			currentModule.getBox(SEND_WIZARD_BOX).update(ctx);
+			if (ctx.isEditPreview()) {
+				currentModule.getBox(SEND_WIZARD_BOX_PREVIEW).update(ctx);
+			} else {
+				currentModule.getBox(SEND_WIZARD_BOX).update(ctx);
+			}
 			currentModule.updateMainRenderer(ctx);
 		}
 		return null;
