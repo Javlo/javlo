@@ -23,7 +23,7 @@ public class DeletePageFromSpecificUser extends AbstractMacro {
 
 		ContentService content = ContentService.getInstance(ctx.getRequest());
 		GlobalContext globalContext = GlobalContext.getInstance(ctx.getRequest());
-		NavigationService service = NavigationService.getInstance(globalContext, ctx.getRequest().getSession());
+		NavigationService service = NavigationService.getInstance(globalContext);
 
 		MenuElement[] pages = content.getNavigation(ctx).getAllChildren();
 		for (MenuElement page : pages) {

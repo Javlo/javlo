@@ -2,6 +2,7 @@ package org.javlo.module.template;
 
 import java.awt.image.RenderedImage;
 import java.io.File;
+import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.FileReader;
 import java.io.FileWriter;
@@ -41,8 +42,10 @@ import org.javlo.image.ImageConfig;
 import org.javlo.message.GenericMessage;
 import org.javlo.message.MessageRepository;
 import org.javlo.module.core.Module;
+import org.javlo.module.core.ModuleException;
 import org.javlo.module.core.ModulesContext;
 import org.javlo.module.file.FileModuleContext;
+import org.javlo.module.mailing.MailingModuleContext;
 import org.javlo.module.template.remote.IRemoteResourcesFactory;
 import org.javlo.module.template.remote.RemoteTemplateFactoryManager;
 import org.javlo.navigation.MenuElement;
@@ -426,9 +429,12 @@ public class TemplateAction extends AbstractModuleAction {
 		return null;
 	}
 
-	public static String performSelectTemplate(RequestService rs, ContentContext ctx, EditContext editContext, MenuElement currentPage, MessageRepository messageRepository, I18nAccess i18nAccess) {
+	public static String performSelectTemplate(RequestService rs, ContentContext ctx, EditContext editContext, MenuElement currentPage, MessageRepository messageRepository, I18nAccess i18nAccess) throws FileNotFoundException, InstantiationException, IllegalAccessException, ModuleException, IOException {
 		String templateName = rs.getParameter("templateid", null);
 		currentPage.setTemplateName(templateName);
+		
+		MailingModuleContext mailingCtx = MailingModuleContext.getInstance(ctx.getRequest());
+		mailingCtx.setCurrentTemplate(null);
 
 		if (editContext.isEditPreview()) {
 			ctx.setClosePopup(true);

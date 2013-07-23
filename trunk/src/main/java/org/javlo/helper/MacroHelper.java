@@ -281,7 +281,7 @@ public class MacroHelper {
 			}
 			ctx.setPath(newPage.getPath());
 
-			NavigationService navigationService = NavigationService.getInstance(globalContext, ctx.getRequest().getSession());
+			NavigationService navigationService = NavigationService.getInstance(globalContext);
 			navigationService.clearAllPage();
 
 			I18nAccess i18nAccess = I18nAccess.getInstance(ctx.getRequest());
@@ -393,7 +393,7 @@ public class MacroHelper {
 			PersistenceService persistenceService = PersistenceService.getInstance(globalContext);
 			persistenceService.store(ctx);
 			ctx.setPath(newPage.getPath());
-			NavigationService navigationService = NavigationService.getInstance(globalContext, ctx.getRequest().getSession());
+			NavigationService navigationService = NavigationService.getInstance(globalContext);
 			navigationService.clearAllPage();
 		} else {
 		}

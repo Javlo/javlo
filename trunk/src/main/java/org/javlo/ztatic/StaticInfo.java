@@ -771,7 +771,7 @@ public class StaticInfo {
 		if (getLinkedPageId(ctx) != null && linkedPage == null) {
 			try {
 				GlobalContext globalContext = GlobalContext.getInstance(ctx.getRequest());
-				NavigationService navigationService = NavigationService.getInstance(globalContext, ctx.getRequest().getSession());
+				NavigationService navigationService = NavigationService.getInstance(globalContext);
 				linkedPage = navigationService.getPage(ctx, getLinkedPageId(ctx));
 				// linkedPage = content.getNavigation(ctx).searchChildFromId(getLinkedPageId(ctx));
 			} catch (Exception e) {

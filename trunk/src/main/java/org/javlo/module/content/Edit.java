@@ -48,6 +48,7 @@ import org.javlo.module.core.Module;
 import org.javlo.module.core.Module.Box;
 import org.javlo.module.core.ModulesContext;
 import org.javlo.module.file.FileModuleContext;
+import org.javlo.module.mailing.MailingModuleContext;
 import org.javlo.navigation.IURLFactory;
 import org.javlo.navigation.MenuElement;
 import org.javlo.search.SearchResult;
@@ -797,7 +798,7 @@ public class Edit extends AbstractModuleAction {
 		PersistenceService.getInstance(globalContext).store(ctx);
 
 		if (message == null) {
-			NavigationService navigationService = NavigationService.getInstance(globalContext, ctx.getRequest().getSession());
+			NavigationService navigationService = NavigationService.getInstance(globalContext);
 			navigationService.clearPage(ctx);
 
 			messageRepository.setGlobalMessage(new GenericMessage(i18nAccess.getText("action.updated"), GenericMessage.INFO));
@@ -924,6 +925,8 @@ public class Edit extends AbstractModuleAction {
 
 			String templateName = requestService.getParameter("template", null);
 			if (templateName != null) {
+				MailingModuleContext mailingCtx = MailingModuleContext.getInstance(ctx.getRequest());
+				mailingCtx.setCurrentTemplate(null);
 				if (templateName.length() > 1) {
 					Template template = TemplateFactory.getTemplates(application).get(templateName);
 					if (template != null && ctx.getCurrentTemplates().contains(template)) { // TODO:
@@ -1025,7 +1028,7 @@ public class Edit extends AbstractModuleAction {
 				persistenceService.store(ctx);
 				autoPublish(ctx.getRequest(), ctx.getResponse());
 
-				NavigationService navigationService = NavigationService.getInstance(globalContext, ctx.getRequest().getSession());
+				NavigationService navigationService = NavigationService.getInstance(globalContext);
 				navigationService.clearPage(ctx);
 
 				String msg = i18nAccess.getText("action.add.new-page", new String[][] { { "path", path } });
@@ -1096,7 +1099,7 @@ public class Edit extends AbstractModuleAction {
 
 				performSynchro(application, staticConfig, globalContext);
 
-				NavigationService navigationService = NavigationService.getInstance(globalContext, request.getSession());
+				NavigationService navigationService = NavigationService.getInstance(globalContext);
 				navigationService.clearAllViewPage();
 
 				// clean component list when publish
@@ -1182,7 +1185,7 @@ public class Edit extends AbstractModuleAction {
 				synchronized (menuElement) {
 					menuElement.clearVirtualParent();
 				}
-				NavigationService service = NavigationService.getInstance(globalContext, ctx.getRequest().getSession());
+				NavigationService service = NavigationService.getInstance(globalContext);
 				service.removeNavigation(ctx, menuElement);
 				String msg = i18nAccess.getText("action.remove.deleted", new String[][] { { "path", path } });
 				MessageRepository.getInstance(ctx).setGlobalMessage(new GenericMessage(msg, GenericMessage.INFO));
@@ -1192,7 +1195,7 @@ public class Edit extends AbstractModuleAction {
 
 		ctx.setPath(newPath);
 
-		NavigationService navigationService = NavigationService.getInstance(globalContext, ctx.getRequest().getSession());
+		NavigationService navigationService = NavigationService.getInstance(globalContext);
 		navigationService.clearPage(ctx);
 
 		return message;

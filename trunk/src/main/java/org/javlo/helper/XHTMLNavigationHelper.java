@@ -240,7 +240,7 @@ public class XHTMLNavigationHelper {
 		PrintWriter out = new PrintWriter(res);
 
 		GlobalContext globalContext = GlobalContext.getInstance(ctx.getRequest());
-		NavigationService navigationService = NavigationService.getInstance(globalContext, ctx.getRequest().getSession());
+		NavigationService navigationService = NavigationService.getInstance(globalContext);
 		MenuElement menu = navigationService.getPage(ctx, parentId);
 
 		if (menu == null) {

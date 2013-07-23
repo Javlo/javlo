@@ -26,8 +26,7 @@
 #preview_command input[type=submit] {
 	background: url("../images/bgbutton4.png") repeat-x scroll left top transparent;
     border: 1px solid #CCCCCC;
-    border-radius: 3px 3px 3px 3px;
-    box-shadow: 1px 1px 0 #F7F7F7;
+    border-radius: 3px 3px 3px 3px;    
     color: #333333;
     display: inline-block;
     margin: 2px;
@@ -74,6 +73,10 @@
 
 #preview_command .pc_command #pc_user_info {
 	background-image: url('../images/icons/small/black/user.png');
+}
+
+#preview_command .pc_command #pc_mailing {
+	background-image: url('../images/icons/small/black/mail.png');
 }
 
 #preview_command .pc_command #pc_page_properties {

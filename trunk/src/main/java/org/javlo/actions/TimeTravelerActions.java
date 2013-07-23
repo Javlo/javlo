@@ -118,7 +118,7 @@ public class TimeTravelerActions implements IAction {
 		ContentContext editCtx = ctx.getContextWithOtherRenderMode(ContentContext.EDIT_MODE);
 		ContentService content = ContentService.getInstance(request);
 
-		NavigationService navigationService = NavigationService.getInstance(globalContext, ctx.getRequest().getSession());
+		NavigationService navigationService = NavigationService.getInstance(globalContext);
 
 		MenuElement timeCurrentPage = timeCtx.getCurrentPage();
 		MenuElement editCurrentPage = content.getNavigation(editCtx);

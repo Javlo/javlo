@@ -141,3 +141,7 @@ change log
  * remove mailing servelt
  
  * bug correction : file explorer file cleared if no change done.
+ 
+ * send mailing from preview
+ 
+ * 404 management

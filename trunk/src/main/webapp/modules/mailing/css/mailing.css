@@ -1,0 +1,58 @@
+.maincontent .left { 
+    padding: 0 15px;
+}
+
+.content form {
+	min-height: 45px;
+}
+
+.content form h4 {
+	margin-top: 10px;
+}
+
+#gallery {
+	overflow: hidden;
+	margin-right: -15px;
+}
+
+#gallery ul {
+	margin: 0;	
+}
+
+.gallery .thumbview .thumb {
+	padding: 8px;
+}
+
+#mail-list {
+	margin-top: 24px;
+	padding: 3px;
+	overflow: auto;
+    background-color: #F7F7F7;
+    border-radius: 2px 2px 2px 2px;
+    border: 1px solid #DDDDDD;
+    font-size: 11px;    
+}
+
+.edit #mail-list {
+	max-height: 500px;
+}
+
+.content #mail-list {
+	margin-left: 0;
+}
+
+.preview #mail-list {
+	width: 25%;
+	float: left;
+}
+
+.mailing-preview {
+	margin: 0 30px 30px 30px;
+	width: 70%;
+	float: left;
+}
+
+.mailing-preview iframe {
+	width: 100%;
+}
+

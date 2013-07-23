@@ -1427,3 +1427,36 @@ body.previewEdit {
      border-right: 1px solid #CCCCCC;
      border-left: 1px solid #CCCCCC;
 }
+
+.widgetbox2 {
+	position: relative;
+	padding-top: 43px;
+}
+
+.widgetbox2 h3 {
+	position: absolute;
+	top: 0;
+	left: 0;
+	width: 100%;
+	z-index: 5;
+}
+
+.widgetbox2 .content.wizard {
+	overflow: visible;
+}
+
+.content.wizard {
+	position: relative;
+}
+
+.content.wizard .action {
+	position: absolute;
+	top: -42px;
+	right: 10px;
+	z-index: 10;
+}
+
+.content.wizard.preview .action {
+	top: 0;
+	right: 0;
+}

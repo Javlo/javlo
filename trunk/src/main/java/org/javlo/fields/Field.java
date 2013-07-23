@@ -22,6 +22,7 @@ import org.javlo.helper.StringHelper;
 import org.javlo.helper.XHTMLHelper;
 import org.javlo.i18n.I18nAccess;
 import org.javlo.navigation.MenuElement;
+import org.javlo.service.ContentService;
 import org.javlo.service.RequestService;
 import org.javlo.service.ReverseLinkService;
 
@@ -176,9 +177,9 @@ public class Field implements Cloneable {
 		keyValue = new LinkedHashMap<String, String>();
 
 		String path = properties.getProperty("list." + listName + ".path");
-		if (path != null) {
-			GlobalContext globalContext = GlobalContext.getInstance(ctx.getRequest());
-			MenuElement page = globalContext.getPage(ctx, path, false);
+		if (path != null) {		
+			ContentService content = ContentService.getInstance(ctx.getRequest());
+			MenuElement page = content.getNavigation(ctx).searchChild(ctx, path);
 			if (page != null) {
 				Collection<MenuElement> children = page.getChildMenuElements();
 				for (MenuElement child : children) {

@@ -582,7 +582,7 @@ public class URLHelper extends ElementaryURLHelper {
 
 	public static String createURLFromPageName(ContentContext ctx, String pageName) throws Exception {
 		GlobalContext globalContext = GlobalContext.getInstance(ctx.getRequest());
-		NavigationService navService = NavigationService.getInstance(globalContext, ctx.getRequest().getSession());
+		NavigationService navService = NavigationService.getInstance(globalContext);
 		MenuElement page = navService.getPage(ctx, pageName);
 		if (page != null) {
 			return createURL(ctx, page.getPath());
