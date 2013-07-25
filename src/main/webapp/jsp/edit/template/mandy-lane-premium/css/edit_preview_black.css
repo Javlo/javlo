@@ -226,6 +226,10 @@ body.preview-only {
 	display: block;
 }
 
+#preview_command .navigation .sortable li.current a {
+	background-image: url("../images/preview/drag-active.png");
+}
+
 #preview-layer span {
 	background-color: #6f6f6f;
 }
@@ -240,6 +244,10 @@ body.preview-only {
 	background-image: url('../images/icons/droppable.png');
 	background-position: center center;
 	background-repeat: no-repeat;
+}
+
+.drop-zone span,.free-edit-zone.drop-selected span {
+	background-image: url('../images/icons/drop.png');
 }
 
 .drop-zone span,.free-edit-zone.drop-selected span {
