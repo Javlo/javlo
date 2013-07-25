@@ -8,8 +8,6 @@ import java.util.Map;
 import org.javlo.context.ContentContext;
 import org.javlo.navigation.MenuElement;
 import org.javlo.service.PersistenceService;
-import org.javlo.xml.NodeXML;
-import org.javlo.xml.XMLFactory;
 
 public class TestPersistenceService extends PersistenceService {
 	
@@ -22,18 +20,5 @@ public class TestPersistenceService extends PersistenceService {
 		in.close();
 		return bean.getRoot();
 	}
-	
-	public static void main(String[] args) {
-		System.out.println(data);
-		Reader in = new StringReader(data);
-		try {
-			NodeXML node = XMLFactory.getFirstNode(in);
-			System.out.println("done");
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
-		
-	}
-	
 
 }

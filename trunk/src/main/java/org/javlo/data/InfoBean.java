@@ -265,9 +265,8 @@ public class InfoBean {
 		return globalContext.getLanguages();
 	}
 
-	public String getEditTemplateURL() {
-		EditContext editContext = EditContext.getInstance(globalContext, ctx.getRequest().getSession());
-		return URLHelper.createStaticURL(ctx, editContext.getEditTemplateFolder());
+	public String getEditTemplateURL() {		
+		return URLHelper.createStaticURL(ctx, ctx.getGlobalContext().getStaticConfig().getEditTemplateFolder());
 	}
 
 	public String getStaticRootURL() {

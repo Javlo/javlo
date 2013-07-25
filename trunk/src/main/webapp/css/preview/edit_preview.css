@@ -333,14 +333,14 @@
 *************************/
 
 /*** RESETER ***/
-#preview_command figure, #preview_command .content, #preview_command .description, #preview_command,#preview_command h1, #preview_command h2, #preview_command h3, #preview_command h4, #preview_command li, #preview_command ul,#preview_command label,#preview_command img,#preview_command div,#preview_command a,#preview_command span,#preview_command input,#preview_command fieldset,#preview_command legend,#preview_command form,#preview_command select,#preview_command option,#preview_command .navigation
+#preview_command figure, #preview_command .version, #preview_command .content, #preview_command .description, #preview_command,#preview_command h1, #preview_command h2, #preview_command h3, #preview_command h4, #preview_command li, #preview_command ul,#preview_command label,#preview_command img,#preview_command div,#preview_command a,#preview_command span,#preview_command input,#preview_command fieldset,#preview_command legend,#preview_command form,#preview_command select,#preview_command option,#preview_command .navigation
 	{
 	margin: 0;
 	border: 0 none;
 	padding: 0;
 	background-color: transparent;
 	background-image: none;
-	font-size: 11px;
+	font-size: 10px;
 	font-family: Verdana, Arial, Helvetica, sans-serif;
 	text-transform: none;
 	color: #000000;
@@ -351,6 +351,7 @@
 	height: auto;
 	text-shadow: none;
 	line-height: normal; 
+	text-align: left;
 }
 
 #message-container .notification {

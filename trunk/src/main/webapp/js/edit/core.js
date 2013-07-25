@@ -190,8 +190,9 @@ function closableFieldSet(items) {
 	items.each(function(){
 		var hash = "closable_"+hashItem(this);		
 		var initVal = jQuery.cookie(hash);		
+		
 		if (initVal == "close") {
-			jQuery(this).prepend('<a class="closable_action close" href="#">#</a>');
+			jQuery(this).prepend('<a class="closable_action close" href="#">#</a>');			
 			jQuery(this).children().each(function(){
 				var child = jQuery(this);					
 				if (!child.hasClass("closable_action") && this.nodeName.toLowerCase() != "legend") {
@@ -201,38 +202,51 @@ function closableFieldSet(items) {
 		} else {
 			jQuery(this).prepend('<a class="closable_action open" href="#">_</a>');
 		}
+
 		jQuery(this).find(".closable_action").each(function(){
 			jQuery(this).click(function() {
-				var hash = "closable_"+hashItem(jQuery(this).parent());				
-				var link = jQuery(this);
-				if (link.hasClass("open")) {
-					$.cookie(hash, "close", { path: '/',  expires: 365 });
-					jQuery.cookie(hash);
-					link.removeClass("open");
-					link.addClass("close");
-					link.html("#");				
-					link.parent().children().each(function(){
-						var child = jQuery(this);					
-						if (!child.hasClass("closable_action") && this.nodeName.toLowerCase() != "legend") {
-							child.hide();
-						}
-					});				
-				} else {
-					$.cookie(hash, "open", { path: '/',  expires: 365 });
-					link.removeClass("close");
-					link.addClass("open");
-					link.html("_");	
-					
-					link.parent().children().each(function(){
-						var child = jQuery(this);
-						if (!child.hasClass("closable_action") && this.nodeName.toLowerCase() != "legend") {
-							child.show();
-						}
-					});
-				}
+				clickFieldSet(this, jQuery(this).parent());
 			});
 		});
+		jQuery(this).find("legend").wrapInner('<a href="#"/>');
+		jQuery(this).find("legend a").each(function(){
+			jQuery(this).click(function() {
+				clickFieldSet(jQuery(this).parent().parent().find(".closable_action"), jQuery(this).parent().parent());
+			});
+		});		
 	});
+	
+}
+
+function clickFieldSet(link,fieldset) {
+	console.log(fieldset);
+	var hash = "closable_"+hashItem(fieldset);				
+	var link = jQuery(link);
+	if (link.hasClass("open")) {
+		$.cookie(hash, "close", { path: '/',  expires: 365 });
+		jQuery.cookie(hash);
+		link.removeClass("open");
+		link.addClass("close");
+		link.html("#");				
+		link.parent().children().each(function(){
+			var child = jQuery(this);					
+			if (!child.hasClass("closable_action") && this.nodeName.toLowerCase() != "legend") {
+				child.hide();
+			}
+		});				
+	} else {
+		$.cookie(hash, "open", { path: '/',  expires: 365 });
+		link.removeClass("close");
+		link.addClass("open");
+		link.html("_");	
+		
+		link.parent().children().each(function(){
+			var child = jQuery(this);
+			if (!child.hasClass("closable_action") && this.nodeName.toLowerCase() != "legend") {
+				child.show();
+			}
+		});
+	}
 }
 
 

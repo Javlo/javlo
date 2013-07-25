@@ -96,8 +96,6 @@ public class EditContext implements Serializable {
 
 	Set<String> licence = new HashSet<String>();
 
-	private String editTemplateFolder = "/jsp/edit/template/mandy-lane-premium";
-
 	String editTemplate = "index.jsp";
 
 	String messageTemplate = "message.jsp";
@@ -417,19 +415,19 @@ public class EditContext implements Serializable {
 	}
 
 	public String getEditTemplate() {
-		return URLHelper.mergePath(getEditTemplateFolder(), editTemplate);
+		return URLHelper.mergePath(staticConfig.getEditTemplateFolder(), editTemplate);
 	}
 
 	public String getMessageTemplate() {
-		return URLHelper.mergePath(getEditTemplateFolder(), messageTemplate);
+		return URLHelper.mergePath(staticConfig.getEditTemplateFolder(), messageTemplate);
 	}
 
 	public String getBoxTemplate() {
-		return URLHelper.mergePath(getEditTemplateFolder(), boxTemplate);
+		return URLHelper.mergePath(staticConfig.getEditTemplateFolder(), boxTemplate);
 	}
 
 	public String getBreadcrumbsTemplate() {
-		return URLHelper.mergePath(getEditTemplateFolder(), breadcrumbsTemplate);
+		return URLHelper.mergePath(staticConfig.getEditTemplateFolder(), breadcrumbsTemplate);
 	}
 
 	public void setMessageTemplate(String messageTemplate) {
@@ -437,7 +435,7 @@ public class EditContext implements Serializable {
 	}
 
 	public String getLoginRenderer() {
-		return URLHelper.mergePath(getEditTemplateFolder(), loginRenderer);
+		return URLHelper.mergePath(staticConfig.getEditTemplateFolder(), loginRenderer);
 	}
 
 	public void setLoginRenderer(String loginRenderer) {
@@ -565,13 +563,5 @@ public class EditContext implements Serializable {
 
 	public void setEditPreview(boolean editPreview) {
 		this.editPreview = editPreview;
-	}
-
-	public String getEditTemplateFolder() {
-		return editTemplateFolder;
-	}
-
-	public void setEditTemplateFolder(String editTemplateFolder) {
-		this.editTemplateFolder = editTemplateFolder;
 	}
 }
