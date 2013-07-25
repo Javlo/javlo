@@ -71,8 +71,8 @@ layerOver = function(item, deletable) {
 		layer.css("top", comp.offset().top);
 		layer.css("left", comp.offset().left);
 		
-		layer.css("width", comp.outerWidth(true));			
-		layer.css("height", comp.outerHeight(true));
+		layer.css("width", comp.outerWidth(false));			
+		layer.css("height", comp.outerHeight(false));
 		
 		layer.data("subItem", comp);
 	}
@@ -256,15 +256,6 @@ initPreview = function() {
 										+ "px");
 							}
 							jQuery("#preview-layer").addClass("drop-up");
-							/*dropLayer.animate({
-								"top" : target.offset().top,
-								"left" : target.offset().left,
-								"width" : target.outerWidth(),
-								"height" : target.outerHeight()
-							}, 50);*/
-							/*layer.animate({
-								"width" : target.parent().width()
-							}, 150);*/
 						},
 						out : function(event,ui) {
 							jQuery(this).find(".drop-zone").remove();
@@ -283,7 +274,7 @@ initPreview = function() {
 			jQuery(".free-edit-zone").addClass("droppable");			
 			if (jQuery(this).data("deletable") !== undefined && jQuery(this).data("deletable")) {
 				jQuery("#preview-delete-zone").removeClass("hidden");
-				jQuery("#preview_command .pc_body").addClass("hidden");
+				//jQuery("#preview_command .pc_body").addClass("hidden");
 			}
 			if (jQuery(this).height() < 40) {			
 				jQuery(this).height(40);
@@ -295,7 +286,7 @@ initPreview = function() {
 			dragging = false;
 			jQuery(".free-edit-zone").removeClass("droppable");
 			if (jQuery(this).data("deletable") !== undefined && jQuery(this).data("deletable")) {
-				jQuery("#preview_command .pc_body").removeClass("hidden");
+				//jQuery("#preview_command .pc_body").removeClass("hidden");
 				jQuery("#preview-delete-zone").addClass("hidden");
 			}
 			layerOver(null);

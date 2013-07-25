@@ -3,11 +3,16 @@
     background: url("../images/tabmenubg.png") repeat-x scroll left top #4B6592;
     border: 1px solid #DDDDDD;
     padding: 10px;
-    color: #ffffff;
+}
+
+#preview_command .pc_header span {
+	display: inline;
+	color: #ffffff;
     font-size: 12px;
     font-weight: normal;
     text-shadow: 1px 1px #4B6592;
     text-transform: uppercase;
+	
 }
 
 #preview_command input, #preview_command select, #preview_command textarea, #preview_command button {
@@ -45,6 +50,14 @@
 
 #preview_command .pc_command input {
 	background-color: #EFEFEF;
+}
+
+#preview_command .pc_command label {
+	display: none;
+}
+
+#preview_command .pc_command li {
+	float: left;
 }
 
 #preview_command .pc_command #pc_edit_button {

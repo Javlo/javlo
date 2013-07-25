@@ -1249,5 +1249,17 @@ public class StaticConfig extends Observable {
 	public String get404PageName() {
 		return properties.getString("404-name", "404");
 	}
-
+	
+	public String getEditTemplateFolder() {
+		return properties.getString("edit-template.folder", "/jsp/edit/template/mandy-lane-premium");
+	}
+	
+	/**
+	 * mode of the edit template, can be used in template renderer for include special css or js.
+	 * preview css is : edit_preview_[mode].css
+	 * @return
+	 */
+	public String getEditTemplateMode() {
+		return properties.getString("edit-template.mode", "default");
+	}
 }

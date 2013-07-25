@@ -7,15 +7,15 @@
 
 <ul class="navigation">
 	<c:if test="${not empty info.parent && page.url eq info.currentURL}">
-		<li class="parent"><a href="${info.parent.url}">${info.parent.info.title}</a></li>
+		<li class="parent"><span><a href="${info.parent.url}">${info.parent.info.title}</a></span></li>
 	</c:if>
 	<li class="${page.url eq info.currentURL?'current ':''}">	
-		<a class="editor" title="parent page" href="${page.url}">${page.info.title}</a>
+		<span><a class="editor" title="parent page" href="${page.url}">${page.info.title}</span></a>
 	</li>
 	<li><ul class="children sortable">
 	<c:forEach var="child" items="${page.children}">	
-	<li id="page-${child.name}" class="${child.url eq info.currentURL?'current ':''}${child.info.realContent?'real-content':''} ${fn:length(child.children) > 0?'have-children ':''}">
-	<a href="${child.url}">${child.info.title}</a>
+	<li id="page-${child.name}" data-name="${child.name}" class="${child.url eq info.currentURL?'current ':''}${child.info.realContent?'real-content':''} ${fn:length(child.children) > 0?'have-children ':''}">
+	<span><a href="${child.url}">${child.info.title}</a></span>
 	</li>
 	</c:forEach>	
 	</ul>	

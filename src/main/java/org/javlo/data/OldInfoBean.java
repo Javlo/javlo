@@ -130,8 +130,7 @@ public class OldInfoBean {
 			}
 		}
 
-		EditContext editContext = EditContext.getInstance(globalContext, ctx.getRequest().getSession());
-		info.setEditTemplateURL(URLHelper.createStaticURL(ctx, editContext.getEditTemplateFolder()));
+		info.setEditTemplateURL(URLHelper.createStaticURL(ctx, globalContext.getStaticConfig().getEditTemplateFolder()));
 
 		return info;
 	}

@@ -457,6 +457,8 @@ public class XMLManipulationHelper {
 						String contentZone = getValue(options, AREA_PREFIX + "content", null);
 						String cssClass = StringHelper.neverNull(tags[i].getAttributes().get("class"));
 						cssClass = cssClass + " " + "<%if (ctx.getRenderMode() == ContentContext.PREVIEW_MODE) { if(ctx.getGlobalContext().getStaticConfig().isFixPreview() ) {%>fix-preview<%} else {%>floating-preview<%} }%>";
+						cssClass = cssClass + " " + "<%if (ctx.getRenderMode() == ContentContext.PREVIEW_MODE) { if(EditContext.getInstance(globalContext, request.getSession()).isEditPreview() ) {%>edit-preview<%} else {%>preview-only<%} }%>";
+						cssClass = cssClass + " " + "<%if (ctx.getRenderMode() == ContentContext.PREVIEW_MODE) { if(ctx.getCurrentEditUser() == null) {%>preview-notlogged<%} else {%>preview-logged<%} }%>";
 						tags[i].getAttributes().put("class", cssClass.trim());
 						remplacement.addReplacement(tags[i].getOpenStart(), tags[i].getOpenEnd() + 1, tags[i].renderOpen());
 						if (contentZone != null) {
@@ -891,7 +893,7 @@ public class XMLManipulationHelper {
 		out.newLine();
 		out.append("<%=(ctx.isInteractiveMode() ? \"<link rel=\\\"stylesheet\\\" type=\\\"text/css\\\" href=\\\"\"+URLHelper.createStaticURL(ctx,\"/css/preview/edit_preview.css\")+\"\\\"></link>\" : \"\")  %>");
 		out.newLine();
-		out.append("<%String cssPreviewURL = URLHelper.mergePath(URLHelper.createStaticURL(ctx,\"/\"), editCtx.getEditTemplateFolder(), \"/css/edit_preview.css\");%>");
+		out.append("<%String cssPreviewURL = URLHelper.mergePath(URLHelper.createStaticURL(ctx,\"/\"), globalContext.getStaticConfig().getEditTemplateFolder(), \"/css/edit_preview_\"+globalContext.getStaticConfig().getEditTemplateMode()+\".css\");%>");
 		out.append("<%=(ctx.isInteractiveMode() ? \"<link rel=\\\"stylesheet\\\" type=\\\"text/css\\\" href=\\\"\"+cssPreviewURL+\"\\\"></link>\" : \"\")  %>");
 		out.newLine();
 		out.append("<%=(ctx.isInteractiveMode() ? \"<script type=\\\"text/javascript\\\" src=\\\"\"+URLHelper.createStaticURL(ctx,\"/js/preview/edit_preview.js\")+\"\\\"></script>\" : \"\")  %>");
