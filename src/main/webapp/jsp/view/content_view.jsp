@@ -33,7 +33,7 @@ if (ctx.getRenderMode() == ContentContext.PREVIEW_MODE && specificComp == null) 
 
 if (ctx.getRenderMode() == ContentContext.PREVIEW_MODE && specificComp == null) {
 	%><div id="comp_0" class="free-edit-zone editable-component"><span>&nbsp;</span></div><%
-}
+} 
 
 String area = request.getParameter("area");
 if (area != null) {

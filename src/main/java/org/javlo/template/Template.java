@@ -874,7 +874,7 @@ public class Template implements Comparable<Template> {
 		Iterator<String> keys = properties.getKeys();
 		while (keys.hasNext()) {
 			String key = keys.next();
-			if (key.startsWith(XMLManipulationHelper.AREA_PREFIX) && !key.endsWith(".navigation")) {
+			if (key.startsWith(XMLManipulationHelper.AREA_PREFIX) && !key.substring(XMLManipulationHelper.AREA_PREFIX.length()).contains(".")) {
 				areas.put(key.substring(XMLManipulationHelper.AREA_PREFIX.length()), properties.getString(key));
 			}
 		}

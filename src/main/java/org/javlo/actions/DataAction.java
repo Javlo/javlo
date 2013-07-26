@@ -142,18 +142,14 @@ public class DataAction implements IAction {
 
 	public static String performUpdateArea(RequestService rs, ContentContext ctx, MessageRepository messageRepository, I18nAccess i18nAccess) throws Exception {
 
-		String areaKey = null;
 		String area = rs.getParameter("area", null);
-		if (area != null) {
-			for (Map.Entry<String, String> areaId : ctx.getCurrentTemplate().getAreasMap().entrySet()) {
-				if (areaId.getValue().equals(area)) {
-					areaKey = areaId.getKey();
-				}
+		Collection<String> areas = new LinkedList<String>();
+		
+		Map<String,String> areaMap = ctx.getCurrentTemplate().getAreasMap();
+		for (Map.Entry<String, String> areaId : areaMap.entrySet()) {
+			if (area == null || areaId.getValue().equals(area)) {					
+				areas.add(areaId.getKey());
 			}
-		}
-
-		if (areaKey == null) {
-			return "area not found : " + area;
 		}
 
 		String mode = rs.getParameter("render-mode", null);
@@ -161,7 +157,36 @@ public class DataAction implements IAction {
 		if (mode != null) {
 			ctx.setRenderMode(Integer.parseInt(mode));
 		}
-		ctx.getAjaxInsideZone().put(area, ServletHelper.executeJSP(ctx, "/jsp/view/content_view.jsp?area=" + areaKey));
+		
+		ctx.getRequest().removeAttribute("specific-comp");
+		
+		for (String areaKey : areas) {
+			ctx.getAjaxInsideZone().put(areaMap.get(areaKey), ServletHelper.executeJSP(ctx, "/jsp/view/content_view.jsp?area=" + areaKey));	
+		}
+		
+		return null;
+	}
+	
+	public static String performUpdateAllArea(RequestService rs, ContentContext ctx, MessageRepository messageRepository, I18nAccess i18nAccess) throws Exception {
+
+		Collection<String> areas = new LinkedList<String>();
+		Map<String,String> areaMap = ctx.getCurrentTemplate().getAreasMap();
+		for (Map.Entry<String, String> areaId : areaMap.entrySet()) {								
+			areas.add(areaId.getKey());			
+		}
+	
+		String mode = rs.getParameter("render-mode", null);
+
+		if (mode != null) {
+			ctx.setRenderMode(Integer.parseInt(mode));
+		}
+		
+		ctx.getRequest().removeAttribute("specific-comp");
+		
+		for (String areaKey : areas) {
+			ctx.getAjaxInsideZone().put(areaMap.get(areaKey), ServletHelper.executeJSP(ctx, "/jsp/view/content_view.jsp?area=" + areaKey));	
+		}
+		
 		return null;
 	}
 	
