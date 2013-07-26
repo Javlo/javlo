@@ -195,7 +195,7 @@ initPreview = function() {
 								var ajaxURL = currentURL
 								+ "?webaction_1=edit.insert&webaction_2=data.updateArea&type="
 								+ compType + "&previous=" + previewId
-								+ "&_area=" + area+ "&render-mode=3&init=true";
+								+ "&area=" + area+ "&render-mode=3&init=true";
 								ajaxRequest(ajaxURL);
 							} else if (sharedContent != null && sharedContent !== undefined) {
 								var previewId = jQuery(this).attr("id").replace("cp_", "");
