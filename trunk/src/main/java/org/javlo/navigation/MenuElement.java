@@ -1256,8 +1256,7 @@ public class MenuElement implements Serializable {
 					j++;
 				}
 				if (!parentFound) { // component not found
-					newBean[0] = bean;
-					System.out.println("***** MenuElement.addContent : area = "+bean.getArea()); //TODO: remove debug trace
+					newBean[0] = bean;					
 					for (int i = 0; i < componentBean.length; i++) {
 						newBean[i + 1] = componentBean[i];
 					}

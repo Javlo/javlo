@@ -195,7 +195,7 @@ initPreview = function() {
 								var ajaxURL = currentURL
 								+ "?webaction_1=edit.insert&webaction_2=data.updateArea&type="
 								+ compType + "&previous=" + previewId
-								+ "&area=" + area+ "&render-mode=3&init=true";
+								+ "&_area=" + area+ "&render-mode=3&init=true";
 								ajaxRequest(ajaxURL);
 							} else if (sharedContent != null && sharedContent !== undefined) {
 								var previewId = jQuery(this).attr("id").replace("cp_", "");
@@ -225,7 +225,7 @@ initPreview = function() {
 									}
 									area = jQuery(parent).attr("id");
 									var ajaxURL = currentURL
-											+ "?webaction_1=edit.moveComponent&webaction_2=date.updateArea&comp-id="
+											+ "?webaction_1=edit.moveComponent&webaction_2=data.updateAllArea&comp-id="
 											+ compId + "&previous=" + previewId
 											+ "&area=" + area+ "&render-mode=3";
 								}
