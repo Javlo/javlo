@@ -1,3 +1,8 @@
+#preview_command {
+	height: 100%;
+}
+
+
 #preview_command .pc_header {
 	margin: -1px -1px 0 -1px;
     background: url("../images/tabmenubg.png") repeat-x scroll left top #4B6592;
@@ -223,4 +228,25 @@
 
 #preview-layer span {
 	background-color: #777777;
+}
+
+/** footer **/
+
+#preview_command .pc_footer {
+	position: fixed;
+	bottom: 0;
+    border-top: 1px solid #aaaaaa;
+    overflow: hidden;
+    padding: 3px;
+    display: block;
+    width: 254px;
+}
+
+#preview_command .pc_footer a {
+	float: left;
+}
+
+#preview_command .pc_footer .version {
+	float: right;	
+	text-align: right;
 }

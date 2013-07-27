@@ -19,6 +19,7 @@ import javax.servlet.http.HttpSession;
 import org.javlo.context.ContentContext;
 import org.javlo.context.GlobalContext;
 import org.javlo.context.UserInterfaceContext;
+import org.javlo.helper.StringHelper;
 import org.javlo.helper.URLHelper;
 import org.javlo.i18n.I18nAccess;
 import org.javlo.service.RequestService;
@@ -33,7 +34,7 @@ public class ModulesContext {
 		public int compare(Module m1, Module m2) {
 			// TODO Auto-generated method stub
 			if (m1.getOrder() == m2.getOrder()) {
-				return m1.getName().compareTo(m2.getName());
+				return StringHelper.neverNull(m1.getName()).compareTo( StringHelper.neverNull(m2.getName()));
 			}
 			return m1.getOrder() - m2.getOrder();
 		}

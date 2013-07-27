@@ -14,6 +14,15 @@
 	padding: 0;
 }
 
+#preview_command a.central-button {	
+	padding: 0;
+	border: 0px none;
+	margin: 0;
+	
+	position: absolute;
+}
+ 
+
 body.preview-only {
     margin-left: 0;
 }
@@ -148,7 +157,7 @@ body.preview-only {
 
 #preview_command input[type=text] {
 	margin: 4px 4px 4px 0;
-	padding: 4px;
+	padding: 3px;
 	color: #afafaf;
 	background-color: #232323;
 	border: 1px #5b5b5b solid;
@@ -162,7 +171,7 @@ body.preview-only {
 }
 
 .fix-preview #preview_command .add-page input[type="text"] {
-	width: 218px;
+	width: 210px;
 }
 
 .add-page {
