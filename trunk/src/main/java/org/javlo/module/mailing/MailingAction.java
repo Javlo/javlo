@@ -158,6 +158,9 @@ public class MailingAction extends AbstractModuleAction {
 				if (ctx.isAjax()) {
 					currentModule.getBox(SEND_WIZARD_BOX).update(ctx);
 				}
+				if (ctx.isEditPreview()) {
+					ctx.setClosePopup(true);
+				}
 			}
 			break;
 		}

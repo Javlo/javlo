@@ -31,6 +31,8 @@ import org.javlo.i18n.I18nAccess;
 import org.javlo.message.GenericMessage;
 import org.javlo.message.MessageRepository;
 import org.javlo.module.file.FileAction;
+import org.javlo.navigation.MenuElement;
+import org.javlo.service.ContentService;
 import org.javlo.service.RequestService;
 import org.javlo.template.Template;
 
@@ -487,6 +489,18 @@ public class GlobalImage extends Image {
 	@Override
 	public String getURL(ContentContext ctx) {
 		if (getLink() != null && getLink().trim().length() > 0) {
+			if (!StringHelper.isURL(getLink())) {
+				ContentService content = ContentService.getInstance(ctx.getRequest());
+				MenuElement targetPage;
+				try {
+					targetPage = content.getNavigation(ctx).searchChildFromName(getLink());
+					if (targetPage != null) {
+						return URLHelper.createURL(ctx, targetPage);
+					}
+				} catch (Exception e) {
+					e.printStackTrace();
+				}
+			}
 			return getLink();
 		} else if (getFileName() != null) {
 			String fileLink = getResourceURL(ctx, getFileName());
