@@ -380,7 +380,11 @@ public class Edit extends AbstractModuleAction {
 	}
 
 	private static void loadComponentList(ContentContext ctx) throws Exception {
-		ctx.getRequest().setAttribute("components", ComponentFactory.getComponentForDisplay(ctx));
+		Collection<Edit.ComponentWrapper> comps =  ComponentFactory.getComponentForDisplay(ctx);
+		/*for (IContentComponentsList iContentComponentsList : comps) {
+			System.out.println("***** Edit.loadComponentList : iContentComponentsList = "+iContentComponentsList); //TODO: remove debug trace
+		}*/
+		ctx.getRequest().setAttribute("components",comps);
 	}
 
 	/**

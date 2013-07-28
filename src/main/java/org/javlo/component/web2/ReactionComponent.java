@@ -72,9 +72,9 @@ public class ReactionComponent extends DynamicComponent implements IAction {
 
 			@Override
 			public int compare(Reaction reaction1, Reaction reaction2) {
-				if (!reaction1.isValid() && reaction2.isValid()) {
+				if (!reaction1.isValidReaction() && reaction2.isValidReaction()) {
 					return order;
-				} else if (reaction1.isValid() && !reaction2.isValid()) {
+				} else if (reaction1.isValidReaction() && !reaction2.isValidReaction()) {
 					return -order;
 				} else {
 					return reaction1.getDate().compareTo(reaction2.getDate()) * order;
@@ -88,7 +88,7 @@ public class ReactionComponent extends DynamicComponent implements IAction {
 		private String authors = "";
 		private String text = "";
 		private String email = "";
-		private boolean valid = false;
+		private boolean validReaction = false;
 		private Date date = new Date();
 
 		public void fromString(String content) {
@@ -104,7 +104,7 @@ public class ReactionComponent extends DynamicComponent implements IAction {
 				} catch (ParseException e) {
 					e.printStackTrace();
 				}
-				setValid(StringHelper.isTrue(contentArray[6]));
+				setValidReaction(StringHelper.isTrue(contentArray[6]));
 			} else {
 				logger.warning("bad format reaction  found in : " + content);
 			}
@@ -134,8 +134,8 @@ public class ReactionComponent extends DynamicComponent implements IAction {
 			return title;
 		}
 
-		public boolean isValid() {
-			return valid;
+		public boolean isValidReaction() {
+			return validReaction;
 		}
 
 		public void setAuthors(String author) {
@@ -158,13 +158,13 @@ public class ReactionComponent extends DynamicComponent implements IAction {
 			this.title = title;
 		}
 
-		public void setValid(boolean valid) {
-			this.valid = valid;
+		public void setValidReaction(boolean valid) {
+			this.validReaction = valid;
 		}
 
 		@Override
 		public String toString() {
-			return getId() + '|' + getTitle() + '|' + getAuthors() + '|' + getText() + '|' + getEmail() + '|' + StringHelper.renderSortableTime(getDate()) + '|' + isValid();
+			return getId() + '|' + getTitle() + '|' + getAuthors() + '|' + getText() + '|' + getEmail() + '|' + StringHelper.renderSortableTime(getDate()) + '|' + isValidReaction();
 		}
 
 		public String getDisplayableDate() {
@@ -298,7 +298,7 @@ public class ReactionComponent extends DynamicComponent implements IAction {
 			}
 
 		} else {
-			reaction.setValid(true);
+			reaction.setValidReaction(true);
 		}
 
 		Collection<Reaction> reactions = getReactions(ctx);
@@ -306,7 +306,7 @@ public class ReactionComponent extends DynamicComponent implements IAction {
 			reactions.add(reaction);
 			setReactions(ctx, reactions);
 		}
-		return reaction.isValid();
+		return reaction.isValidReaction();
 	}
 
 	@Override
@@ -366,7 +366,7 @@ public class ReactionComponent extends DynamicComponent implements IAction {
 			out.println("<div class=\"line\">");
 			out.println("<input type=\"checkbox\" id=\"" + getDeleteName(reaction) + "\" name=\"" + getDeleteName(reaction) + "\" /><label for=\"" + getDeleteName(reaction) + "\"> " + i18nAccess.getText("global.delete") + "</label>");
 			out.println("</div>");
-			if (!reaction.isValid()) {
+			if (!reaction.isValidReaction()) {
 				out.println("<div class=\"line\">");
 				out.println("<input type=\"checkbox\" id=\"" + getAcceptName(reaction) + "\" name=\"" + getAcceptName(reaction) + "\" /> <label for=\"" + getAcceptName(reaction) + "\"> " + i18nAccess.getText("global.accept") + "</label>");
 				out.println("</div>");
@@ -540,7 +540,7 @@ public class ReactionComponent extends DynamicComponent implements IAction {
 		int i = 0;
 		out.println("<ul>");
 		for (Reaction reaction : reactions) {
-			if (reaction.isValid()) {
+			if (reaction.isValidReaction()) {
 				i++;
 				out.println("<li id=\"message-" + i + "\" class=\"comment-entry\">");
 
@@ -629,7 +629,7 @@ public class ReactionComponent extends DynamicComponent implements IAction {
 					reactionToBeDeleted.add(reaction);
 				}
 				if (requestService.getParameter(getAcceptName(reaction), null) != null) {
-					reaction.setValid(true);
+					reaction.setValidReaction(true);
 					setReactions(ctx, reactions);
 					setNeedRefresh(true);
 				}
@@ -662,7 +662,7 @@ public class ReactionComponent extends DynamicComponent implements IAction {
 		Collection<Reaction> reactions = getReactions(ctx);
 		for (Reaction reaction : reactions) {
 			if (reaction.getId().equals(id)) {
-				reaction.setValid(true);
+				reaction.setValidReaction(true);
 				setReactions(ctx, reactions);
 			}
 		}
