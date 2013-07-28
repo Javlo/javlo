@@ -105,10 +105,8 @@ public class RequestHelper {
 			throw new Exception();
 		} catch (Exception e) {
 			e.printStackTrace();
-		}
-		System.out.println("***** RequestHelper.setCookieValue : path = " + path); // TODO: remove debug trace
-		Cookie cokkie = new PathCookie(key, value, path);
-		System.out.println("***** RequestHelper.setCookieValue : cookie path = " + cokkie.getPath()); // TODO: remove debug trace
+		}		
+		Cookie cokkie = new PathCookie(key, value, path);		
 		cokkie.setMaxAge(expiry);
 		response.addCookie(cokkie);
 	}

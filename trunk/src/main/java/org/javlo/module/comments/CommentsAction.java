@@ -63,7 +63,7 @@ public class CommentsAction extends AbstractModuleAction {
 		public int getCountUnvalid() {
 			int i = 0;
 			for (Reaction reaction : reactions.getReactions(ctx)) {
-				if (!reaction.isValid()) {
+				if (!reaction.isValidReaction()) {
 					i++;
 				}
 			}
@@ -73,7 +73,7 @@ public class CommentsAction extends AbstractModuleAction {
 		public boolean isNeedValidation() {
 			Collection<Reaction> reactions = getComments();
 			for (Reaction reaction : reactions) {
-				if (!reaction.isValid()) {
+				if (!reaction.isValidReaction()) {
 					return true;
 				}
 			}

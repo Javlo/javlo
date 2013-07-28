@@ -8,6 +8,8 @@ import java.io.IOException;
 import java.lang.reflect.Field;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collection;
+import java.util.Collections;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Properties;
@@ -69,20 +71,20 @@ public class ComponentFactory {
 	 * @return list of application component + template components
 	 * @throws Exception
 	 */
-	public static IContentVisualComponent[] getComponents(ContentContext ctx, MenuElement page) throws Exception {
+	public static List<IContentVisualComponent> getComponents(ContentContext ctx, MenuElement page) throws Exception {
 		String key;
 		if (page == null) {
 			key = "__components_request_key_nopage_" + ctx.getRenderMode();
 		} else {
 			key = "__components_request_key_" + page.getId() + '_' + ctx.getRenderMode();
-		}		
-		IContentVisualComponent[] outComp = (IContentVisualComponent[]) ctx.getRequest().getAttribute(key);
+		}
+		List<IContentVisualComponent> array = Collections.EMPTY_LIST;
+		List<IContentVisualComponent> outComp = (List<IContentVisualComponent>) ctx.getRequest().getAttribute(key);
 		if (outComp == null) {
 			Template template = null;
 			GlobalContext globalContext = GlobalContext.getInstance(ctx.getRequest());
-			IContentVisualComponent[] components = getComponents(globalContext);
-			ArrayList<IContentVisualComponent> array = new ArrayList<IContentVisualComponent>();
-			array.addAll(Arrays.asList(components));
+			array = new ArrayList<IContentVisualComponent>();
+			array.addAll(Arrays.asList(getComponents(globalContext)));
 			if (page != null) {
 				template = TemplateFactory.getTemplate(ctx, page);
 				if (template != null) {
@@ -110,15 +112,11 @@ public class ComponentFactory {
 					logger.fine("no template found for page : " + page.getName());
 				}
 			}
-			components = new IContentVisualComponent[array.size()];
-			array.toArray(components);
-			outComp = components;
-			// if (template != null) { // don't cache if no template
-			ctx.getRequest().setAttribute(key, outComp);
-			// }
+			ctx.getRequest().setAttribute(key, array);
+		} else {
+			array = outComp;
 		}
-
-		return outComp;
+		return array;
 
 	}
 
@@ -171,7 +169,6 @@ public class ComponentFactory {
 					array.add(new MetaTitle(classe.substring(2).trim()));
 				} else {
 					try {
-
 						String className = classe;
 						boolean visible = true;
 						boolean hidden = false;
@@ -333,7 +330,7 @@ public class ComponentFactory {
 	public static IContentVisualComponent getComponentWithType(ContentContext ctx, String type) {
 		IContentVisualComponent outComponent = null;
 		try {
-			IContentVisualComponent[] components = getComponents(ctx, ctx.getCurrentPage());
+			Collection<IContentVisualComponent> components = getComponents(ctx, ctx.getCurrentPage());
 			for (IContentVisualComponent component : components) {
 				if ((component.getType().equals(type))) {
 					outComponent = component;
@@ -348,6 +345,13 @@ public class ComponentFactory {
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
+
+		if (outComponent == null) {
+			System.out.println("***** ComponentFactory.getComponentWithType : ********** NULL : " + type); // TODO:
+																											// remove
+																											// debug
+																											// trace
+		}
 		return outComponent;
 	}
 
@@ -361,7 +365,7 @@ public class ComponentFactory {
 		GlobalContext globalContext = GlobalContext.getInstance(ctx.getRequest());
 		List<String> selectedComponents = globalContext.getComponents();
 
-		IContentVisualComponent[] components = getComponents(ctx, inPage);
+		Collection<IContentVisualComponent> components = getComponents(ctx, inPage);
 		AbstractVisualComponent component = null;
 		for (IContentVisualComponent component2 : components) {
 			if (component2 != null && bean != null && component2.getType() != null) {
@@ -387,7 +391,16 @@ public class ComponentFactory {
 	}
 
 	/*
-	 * public Map<IContentVisualComponent, MenuElement> getContentByType(ContentContext ctx, String type) throws Exception { Content content = Content.createContent(ctx.getRequest()); MenuElement currentPage = content.getNavigation(ctx).getCurrentPage(ctx); Map<IContentVisualComponent, MenuElement> outMap = new HashMap<IContentVisualComponent, MenuElement>(); Collection<MenuElement> pages = currentPage.getAllChildsWithComponentType(ctx, type); for (MenuElement page : pages) { Collection<IContentVisualComponent> comps = currentPage.getContentByType(ctx, type); for (IContentVisualComponent comp : comps) { outMap.put(comp, page); } } return outMap; }
+	 * public Map<IContentVisualComponent, MenuElement>
+	 * getContentByType(ContentContext ctx, String type) throws Exception {
+	 * Content content = Content.createContent(ctx.getRequest()); MenuElement
+	 * currentPage = content.getNavigation(ctx).getCurrentPage(ctx);
+	 * Map<IContentVisualComponent, MenuElement> outMap = new
+	 * HashMap<IContentVisualComponent, MenuElement>(); Collection<MenuElement>
+	 * pages = currentPage.getAllChildsWithComponentType(ctx, type); for
+	 * (MenuElement page : pages) { Collection<IContentVisualComponent> comps =
+	 * currentPage.getContentByType(ctx, type); for (IContentVisualComponent
+	 * comp : comps) { outMap.put(comp, page); } } return outMap; }
 	 */
 
 	public static List<ComponentBean> getContentByType(ContentContext ctx, String type) throws Exception {
@@ -443,7 +456,7 @@ public class ComponentFactory {
 		EditContext editCtx = EditContext.getInstance(ctx.getGlobalContext(), ctx.getRequest().getSession());
 		ComponentWrapper titleWrapper = null;
 
-		IContentVisualComponent[] components = getComponents(ctx, ctx.getCurrentPage());
+		List<IContentVisualComponent> components = getComponents(ctx, ctx.getCurrentPage());
 
 		if (ctx.getCurrentTemplate() != null) {
 			Set<String> inludeComponents = null;
@@ -453,12 +466,25 @@ public class ComponentFactory {
 				excludeComponents = ctx.getCurrentTemplate().getComponentsExcludeForArea(editCtx.getCurrentArea());
 			}
 
-			for (int i = 0; i < components.length - 1; i++) { // remove title without component
-				if (!components[i].isMetaTitle() || !components[i + 1].isMetaTitle()) { // if next component is title too so the component group is empty
-					IContentVisualComponent comp = components[i];
-					if (comp.isMetaTitle() || ctx.getGlobalContext().getComponents().contains(comp.getClass().getName()) || comp instanceof DynamicComponent) {
+			for (int i = 0; i < components.size() - 1; i++) { // remove title
+																// without
+																// component
+				if (!components.get(i).isMetaTitle() || !components.get(i + 1).isMetaTitle()) { // if
+																								// next
+																								// component
+																								// is
+																								// title
+																								// too
+																								// so
+																								// the
+																								// component
+																								// group
+																								// is
+																								// empty
+					IContentVisualComponent comp = components.get(i);
+					if (comp.isMetaTitle() || ctx.getGlobalContext().getComponents().contains(comp.getClass().getName()) || comp.getClass().equals(DynamicComponent.class)) {
 						ComponentWrapper compWrapper = new ComponentWrapper(comp.getType(), comp.getComponentLabel(ctx, ctx.getGlobalContext().getEditLanguage(ctx.getRequest().getSession())), comp.getValue(ctx), comp.getHexColor(), comp.getComplexityLevel(ctx), comp.isMetaTitle());
-						if (components[i].isMetaTitle()) {
+						if (components.get(i).isMetaTitle()) {
 							titleWrapper = compWrapper;
 						}
 						if (comp.getType() == null) {
@@ -483,15 +509,17 @@ public class ComponentFactory {
 			}
 		}
 
-		if (!components[components.length - 1].isMetaTitle()) {
-			IContentVisualComponent comp = components[components.length - 1];
-			ComponentWrapper compWrapper = new ComponentWrapper(comp.getType(), comp.getComponentLabel(ctx, ctx.getGlobalContext().getEditLanguage(ctx.getRequest().getSession())), comp.getValue(ctx), comp.getHexColor(), comp.getComplexityLevel(null), comp.isMetaTitle());
-			comps.add(compWrapper);
-			if (comp.getType().equals(editCtx.getActiveType())) {
-				compWrapper.setSelected(true);
-				if (titleWrapper != null) {
-					{
-						titleWrapper.setSelected(true);
+		if (!components.get(components.size() - 1).isMetaTitle()) {
+			IContentVisualComponent comp = components.get(components.size() - 1);
+			if (comp.isMetaTitle() || ctx.getGlobalContext().getComponents().contains(comp.getClass().getName()) || comp.getClass().equals(DynamicComponent.class)) {
+				ComponentWrapper compWrapper = new ComponentWrapper(comp.getType(), comp.getComponentLabel(ctx, ctx.getGlobalContext().getEditLanguage(ctx.getRequest().getSession())), comp.getValue(ctx), comp.getHexColor(), comp.getComplexityLevel(null), comp.isMetaTitle());
+				comps.add(compWrapper);
+				if (comp.getType().equals(editCtx.getActiveType())) {
+					compWrapper.setSelected(true);
+					if (titleWrapper != null) {
+						{
+							titleWrapper.setSelected(true);
+						}
 					}
 				}
 			}

@@ -63,7 +63,7 @@ public class ThreadManager extends Thread {
 
 		/*** start by big sleep, wait web site loading ***/
 		try {
-			Thread.sleep(2 * 60 * 1000); // wait 2 minutes before run thread
+			Thread.sleep(15 * 1000); // wait 15 secs before run thread
 		} catch (InterruptedException e1) {
 			e1.printStackTrace();
 		}

@@ -4,7 +4,6 @@ import java.io.ByteArrayOutputStream;
 import java.io.PrintStream;
 import java.util.Collections;
 import java.util.List;
-import java.util.Map;
 
 import javax.mail.internet.InternetAddress;
 
