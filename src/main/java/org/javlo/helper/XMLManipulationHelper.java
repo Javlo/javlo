@@ -749,7 +749,7 @@ public class XMLManipulationHelper {
 	private static String getEscapeMenu(String contentId) throws IOException {
 		StringWriter outString = new StringWriter();
 		BufferedWriter out = new BufferedWriter(outString);
-		out.append("<div style=\"position: absolute; top: -100px;\" id=\"jv_escape_menu\">");
+		out.append("<%if (ctx.isAsViewMode()) {%><div style=\"position: absolute; top: -100px;\" id=\"jv_escape_menu\">");
 		out.newLine();
 		out.append("<ul>");
 		out.append("<li><a href=\"#" + contentId + "\"><%=i18nAccess.getViewText(\"wai.to_content\")%></a></li>");
@@ -757,6 +757,7 @@ public class XMLManipulationHelper {
 		out.newLine();
 		out.append("</div>");
 		out.newLine();
+		out.append("<%}%>");
 		out.close();
 		return outString.toString();
 	}

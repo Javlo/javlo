@@ -172,6 +172,7 @@ body.preview-only {
 
 .fix-preview #preview_command .add-page input[type="text"] {
 	width: 210px;
+	text-transform: none;
 }
 
 .add-page {

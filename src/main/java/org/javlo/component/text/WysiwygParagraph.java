@@ -60,5 +60,9 @@ public class WysiwygParagraph extends AbstractVisualComponent {
 		setModify();
 		return true;
 	}
+	
+	protected String getTag(ContentContext ctx) {
+		return getConfig(ctx).getProperty("tag", "p");
+	}
 
 }
