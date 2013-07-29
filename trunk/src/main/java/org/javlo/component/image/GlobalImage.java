@@ -23,6 +23,7 @@ import org.javlo.component.core.IReverseLinkComponent;
 import org.javlo.config.StaticConfig;
 import org.javlo.context.ContentContext;
 import org.javlo.context.GlobalContext;
+import org.javlo.helper.ElementaryURLHelper;
 import org.javlo.helper.NetHelper;
 import org.javlo.helper.StringHelper;
 import org.javlo.helper.URLHelper;
@@ -239,6 +240,10 @@ public class GlobalImage extends Image {
 		filesParams.put("path", path);
 		filesParams.put("webaction", "changeRenderer");
 		filesParams.put("page", "meta");
+		
+		String backURL = StringHelper.toHTMLAttribute(URLHelper.createModuleURL(ctx, ctx.getPath(), "content"));
+		filesParams.put(ElementaryURLHelper.BACK_PARAM_NAME, backURL);
+		
 		String staticURL = URLHelper.createModuleURL(ctx, ctx.getPath(), "file", filesParams);
 		finalCode.append("<a class=\"" + EDIT_ACTION_CSS_CLASS + "\" href=\"" + staticURL + "\">&nbsp;");
 		finalCode.append(i18nAccess.getText("content.goto-static"));

@@ -187,6 +187,48 @@ body.preview-only {
 	color: #afafaf;
 }
 
+#preview_command .navigation li:hover #breadcrumb {
+	display: block;
+}
+
+#preview_command .navigation li #breadcrumb {
+	display: none;
+}
+
+#preview_command #breadcrumb {
+	position: absolute;
+	width: 100%;
+}
+
+#preview_command .breadcrumb-wrapper {
+	position: relative;
+}
+
+#preview_command .breadcrumb {
+	background-color: #333333;
+	padding: 1px;
+	border: 1px #ffffff solid;
+	border-radius: 3px;		
+	margin-bottom: -28px;
+	margin-left: -3px;	
+	width: 248px;	
+	position: absolute;
+	bottom: 0;
+	left: 1px;
+}
+
+#preview_command .navigation li .breadcrumb span {
+	margin: 4px 0 4px 0;
+}
+
+#preview_command .breadcrumb li {
+	margin-left: 4px;
+}
+
+#preview_command .breadcrumb a {
+	color: #ffffff;
+}
+
 #preview_command .navigation span:hover,#preview_command .macro-list a:hover,#preview_command .pc_command .pc_line:hover, #preview_command .macro-list input:hover
 	{
 	background-color: #AFAFAF;

@@ -41,6 +41,7 @@ import org.javlo.context.GlobalContext;
 import org.javlo.context.GlobalContextFactory;
 import org.javlo.data.InfoBean;
 import org.javlo.helper.DebugHelper;
+import org.javlo.helper.ElementaryURLHelper;
 import org.javlo.helper.RequestHelper;
 import org.javlo.helper.ServletHelper;
 import org.javlo.helper.StringHelper;
@@ -129,6 +130,9 @@ public class AccessServlet extends HttpServlet implements IVersion {
 	@Override
 	public void init() throws ServletException {
 		super.init();
+		
+		/** JSTL Constant **/
+		getServletContext().setAttribute("BACK_PARAM_NAME", ElementaryURLHelper.BACK_PARAM_NAME);
 
 		try {
 			DebugHelper.updateLoggerLevel(getServletContext());

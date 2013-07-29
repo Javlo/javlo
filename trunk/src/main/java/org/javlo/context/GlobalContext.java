@@ -113,9 +113,7 @@ public class GlobalContext implements Serializable {
 					e.printStackTrace();
 				}
 			}
-
 		}
-
 	}
 
 	public static void main(String[] args) {

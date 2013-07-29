@@ -751,6 +751,18 @@ ul,li {
 		5px;
 }
 
+.action-button.back span {
+	padding-left: 26px;
+	background: url("../images/icons/small/black/back.png") no-repeat scroll
+		5px;
+}
+
+.action-button.back:hover span {
+	background: url("../images/icons/small/white/back.png") no-repeat scroll
+		5px;
+}
+
+
 .action-button.publish span {
 	padding-left: 26px;
 	background: url("../images/icons/small/black/publish.png") no-repeat

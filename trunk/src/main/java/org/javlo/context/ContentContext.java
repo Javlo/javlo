@@ -23,6 +23,8 @@ import org.javlo.config.StaticConfig;
 import org.javlo.helper.AjaxHelper.ScheduledRender;
 import org.javlo.helper.StringHelper;
 import org.javlo.helper.URLHelper;
+import org.javlo.message.GenericMessage;
+import org.javlo.message.MessageRepository;
 import org.javlo.navigation.IURLFactory;
 import org.javlo.navigation.MenuElement;
 import org.javlo.rendering.Device;
@@ -721,7 +723,16 @@ public class ContentContext {
 	public HttpServletResponse getResponse() {
 		return response;
 	}
-
+	
+	/**
+	 * redirect.
+	 * @param url
+	 * @throws IOException 
+	 */
+	public void sendRedirect(String url) throws IOException {
+		response.sendRedirect(url);		
+	}
+	
 	public String getSpecialContentRenderer() {
 		return specialContentRenderer;
 	}

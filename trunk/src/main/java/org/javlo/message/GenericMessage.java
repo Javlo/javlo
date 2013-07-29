@@ -5,7 +5,10 @@ package org.javlo.message;
 
 import java.io.ByteArrayOutputStream;
 import java.io.PrintStream;
+import java.util.Arrays;
+import java.util.List;
 
+import org.javlo.helper.StringHelper;
 import org.javlo.helper.XHTMLHelper;
 
 /**
@@ -25,11 +28,27 @@ public class GenericMessage {
 	String URL = null;
 
 	public static final GenericMessage EMPTY_MESSAGE = new GenericMessage("", null, 0);
+	
+	/***
+	 * create generic message from raw
+	 * @param rawMessage
+	 */
+	public GenericMessage(String rawMessage) {
+		List<String> data = StringHelper.stringToCollection(rawMessage, ",");
+		type = Integer.parseInt(data.get(0));
+		message = data.get(1);
+		if (data.get(2).length() > 0) {
+			key = data.get(2);		
+		}
+		if (data.get(3).length() > 0) {
+			URL = data.get(3);
+		}
+	}
 
 	public GenericMessage(String msg, int newType) {
 		this(msg, null, newType);
 	}
-
+	
 	public GenericMessage(String msg, int newType, String url) {
 		this(msg, null, newType, url);
 	}
@@ -43,7 +62,6 @@ public class GenericMessage {
 		key = inKey;
 		type = newType;
 		URL = inURL;
-
 	}
 
 	public String getKey() {
@@ -112,6 +130,10 @@ public class GenericMessage {
 		}
 		out.close();
 		return new String(outStream.toByteArray());
+	}
+	
+	public String getRawMessage() {
+		return StringHelper.collectionToString(Arrays.asList(new String[] {""+type,message,StringHelper.neverNull(key),StringHelper.neverNull(URL)}),",");
 	}
 
 	@Override

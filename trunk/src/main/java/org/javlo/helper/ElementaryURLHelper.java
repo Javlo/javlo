@@ -75,6 +75,8 @@ public abstract class ElementaryURLHelper {
 	// public static final String URL_SUFFIX = ".html";
 
 	public static final String SPACIAL_RIGHT_CODE_KEY = "special-right-code";
+	
+	public static final String BACK_PARAM_NAME = "__back";
 
 	/**
 	 * add get param to a url

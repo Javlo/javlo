@@ -15,6 +15,7 @@ import java.io.PrintStream;
 import java.io.StringReader;
 import java.io.StringWriter;
 import java.io.UnsupportedEncodingException;
+import java.net.URLEncoder;
 import java.nio.ByteBuffer;
 import java.nio.charset.CharacterCodingException;
 import java.nio.charset.Charset;
@@ -28,7 +29,6 @@ import java.text.NumberFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Calendar;
 import java.util.Collection;
 import java.util.Collections;
@@ -57,7 +57,7 @@ import org.javlo.i18n.I18nAccess;
  * @author pvandermaesen
  */
 public class StringHelper {
-
+	
 	/**
 	 * create a static logger.
 	 */
@@ -78,6 +78,8 @@ public class StringHelper {
 	public static String specialChar = " &\u00e9\"'(\u00a7\u00e8!\u00e7\u00e0)-^$\u00f9\u00b5=:;,+/.?\u00a3%*\u00a8_\u00b0\u00b2\u00b3|@#{[^\u00e8!{})";
 
 	public static String DEFAULT_SEPARATOR = "?";
+	
+	private static final char DEFAULT_ESCAPE = '\\';
 
 	public static final String[][] TXT2HTML = { { "\u00c1", "&Aacute;" }, { "\u00e1", "&aacute;" }, { "\u00c0", "&Agrave;" }, { "\u00e0", "&agrave;" }, { "\u00e7", "&ccedil;" }, { "\u00c7", "&Ccedil;" }, { "\u00c9", "&Eacute;" }, { "\u00e9", "&eacute;" }, { "\u00c8", "&Egrave;" }, { "\u00e8", "&egrave;" }, { "\u00ca", "&Ecirc;" }, { "\u00ea", "&ecirc;" }, { "\u00cf", "&Iuml;" }, { "\u00ef", "&iuml;" }, { "\u00f9", "&ugrave;" }, { "\u00d9", "&Ugrave;" }, { "\u2019", "'" }, { "\u00D6", "&Ouml;" }, { "\u00F6", "&ouml;" } };
 
@@ -159,7 +161,8 @@ public class StringHelper {
 	}
 
 	/**
-	 * convert a collection to text. Each item of the collection will be a line if the text.
+	 * convert a collection to text. Each item of the collection will be a line
+	 * if the text.
 	 * 
 	 * @param col
 	 * @return
@@ -178,16 +181,7 @@ public class StringHelper {
 	}
 
 	public static String collectionToString(Collection<?> col, String inSep) {
-		if (col == null) {
-			return null;
-		}
-		StringBuffer out = new StringBuffer();
-		String sep = "";
-		for (Object object : col) {
-			out.append(sep + object.toString());
-			sep = inSep;
-		}
-		return out.toString();
+		return concat(col,  inSep, DEFAULT_ESCAPE);
 	}
 
 	public static String colorToHexString(Color color) {
@@ -203,7 +197,9 @@ public class StringHelper {
 	}
 
 	/**
-	 * convert a string to another string if math pattern1 and convert to pattern2. pattern is a String with one '*' for any characters. sample : /*, /test/*, /view/fr --> /test/view/fr
+	 * convert a string to another string if math pattern1 and convert to
+	 * pattern2. pattern is a String with one '*' for any characters. sample :
+	 * /*, /test/*, /view/fr --> /test/view/fr
 	 * 
 	 * @param pattern1
 	 *            a pattern with one '*'
@@ -399,7 +395,9 @@ public class StringHelper {
 	}
 
 	/**
-	 * convert a file name with space, accent and other bad character to a acceptable name. sample: "l'\u00e9l\u00e9phant rose.odt" -> "l_elephant_rose.odt"
+	 * convert a file name with space, accent and other bad character to a
+	 * acceptable name. sample: "l'\u00e9l\u00e9phant rose.odt" ->
+	 * "l_elephant_rose.odt"
 	 * 
 	 * @param fileName
 	 *            a bad file name
@@ -443,7 +441,8 @@ public class StringHelper {
 	}
 
 	/**
-	 * cut the end of a xhtml code. sample: "aaa&acute;coucou", 5 = "aaa&acute;c"
+	 * cut the end of a xhtml code. sample: "aaa&acute;coucou", 5 =
+	 * "aaa&acute;c"
 	 * 
 	 * @param str
 	 *            the string
@@ -626,7 +625,8 @@ public class StringHelper {
 	}
 
 	/**
-	 * split a String, if there are no character between two token this method place a empty String ( != String.split )
+	 * split a String, if there are no character between two token this method
+	 * place a empty String ( != String.split )
 	 * 
 	 * @param str
 	 *            a standard str
@@ -1000,7 +1000,8 @@ public class StringHelper {
 	}
 
 	/**
-	 * return true if the filename in a image for wcms (sp. : tif or psd in not a image).
+	 * return true if the filename in a image for wcms (sp. : tif or psd in not
+	 * a image).
 	 * 
 	 * @param fileName
 	 *            file name with extension
@@ -1428,9 +1429,11 @@ public class StringHelper {
 	}
 
 	/*
-	 * public static String encodeBase64ToURLParam(String base64Code) { return base64Code.replace('+', '_').replace('/', '-').replace('=','*'); }
+	 * public static String encodeBase64ToURLParam(String base64Code) { return
+	 * base64Code.replace('+', '_').replace('/', '-').replace('=','*'); }
 	 * 
-	 * public static String decodeURLParamToBase64(String urlParam) { return urlParam.replace('_', '+').replace('-', '/').replace('*','='); }
+	 * public static String decodeURLParamToBase64(String urlParam) { return
+	 * urlParam.replace('_', '+').replace('-', '/').replace('*','='); }
 	 */
 
 	public static Date parseTime(String inDate) throws ParseException {
@@ -1519,7 +1522,8 @@ public class StringHelper {
 	}
 
 	/**
-	 * remove sequence from a string. sample : removeSequence ("slkqfj #dlskj# sdljf", "#", "#") -> slkqfj sdljf.
+	 * remove sequence from a string. sample : removeSequence
+	 * ("slkqfj #dlskj# sdljf", "#", "#") -> slkqfj sdljf.
 	 * 
 	 * @param text
 	 *            a simple text
@@ -1958,7 +1962,8 @@ public class StringHelper {
 	}
 
 	/**
-	 * split a String, if there are no character between two token this method place a empty String ( != String.split )
+	 * split a String, if there are no character between two token this method
+	 * place a empty String ( != String.split )
 	 * 
 	 * @param str
 	 *            a standard str
@@ -1982,7 +1987,8 @@ public class StringHelper {
 	}
 
 	/**
-	 * split a String, if there are no character between two token this method place a empty String ( != String.split )
+	 * split a String, if there are no character between two token this method
+	 * place a empty String ( != String.split )
 	 * 
 	 * @param str
 	 *            a standard str
@@ -2009,7 +2015,8 @@ public class StringHelper {
 	}
 
 	/**
-	 * split a String, if there are no character between two token this method place a empty String ( != String.split )
+	 * split a String, if there are no character between two token this method
+	 * place a empty String ( != String.split )
 	 * 
 	 * @param str
 	 *            a standard str
@@ -2087,13 +2094,7 @@ public class StringHelper {
 	}
 
 	public static List<String> stringToCollection(String str, String token) {
-		if (str == null) {
-			return null;
-		}
-		if (str.trim().length() == 0) {
-			return Collections.emptyList();
-		}
-		return Arrays.asList(StringUtils.split(str, token));
+		return splitAsList(str, token, DEFAULT_ESCAPE);
 	}
 
 	public static String stringToFileName(String inStr) {
@@ -2124,9 +2125,12 @@ public class StringHelper {
 
 	/**
 	 * @param sep
-	 *            separation between title and text. sample "1.2 great section" sep=" " -> "1.2" is title and "great section" is text.
+	 *            separation between title and text. sample "1.2 great section"
+	 *            sep=" " -> "1.2" is title and "great section" is text.
 	 * @param layout
-	 *            the layout of the list : ("ul-ul", "ol-ol", "ul-ol", "ol-ul") the first element is the first level and the next is all the next level.
+	 *            the layout of the list : ("ul-ul", "ol-ol", "ul-ol", "ol-ul")
+	 *            the first element is the first level and the next is all the
+	 *            next level.
 	 * @return a xhtml list.
 	 */
 	public static String textToList(String text, String sep, String layout, boolean autoLink, GlobalContext globalContext) {
@@ -2262,7 +2266,8 @@ public class StringHelper {
 	}
 
 	/**
-	 * transform a String to a max size. sample: "Welcome in the new wave party" --> "Welcome in the..."
+	 * transform a String to a max size. sample: "Welcome in the new wave party"
+	 * --> "Welcome in the..."
 	 * 
 	 * @param str
 	 *            the string must be cut.
@@ -2281,7 +2286,7 @@ public class StringHelper {
 		}
 		return res;
 	}
-
+	
 	/**
 	 * transform a free value to a attribute xml value
 	 * 
@@ -2294,6 +2299,25 @@ public class StringHelper {
 		}		
 		value = value.replace("&", "&amp;"); 
 		return XHTMLHelper.escapeXML(removeTag(value).replace("\"", "&quot;"));
+	}
+
+
+	/**
+	 * transform a free value to a attribute xml value
+	 * 
+	 * @param value
+	 * @return
+	 */
+	public static String toHTMLAttribute(String value) {
+		if (value == null) {
+			return "";
+		}
+		try {
+			return URLEncoder.encode(value, ContentContext.CHARACTER_ENCODING);
+		} catch (UnsupportedEncodingException e) {
+			e.printStackTrace();
+			return null;
+		}
 	}
 
 	public static String trimAndNullify(String str) {
@@ -2568,7 +2592,8 @@ public class StringHelper {
 	}
 
 	/**
-	 * check if a text contains uppercase char. test > false, Test > true, TEST > true
+	 * check if a text contains uppercase char. test > false, Test > true, TEST
+	 * > true
 	 * 
 	 * @param text
 	 * @return
@@ -2583,7 +2608,8 @@ public class StringHelper {
 	}
 
 	/**
-	 * Method copied from the private method java.util.Properties#saveConvert(...)
+	 * Method copied from the private method
+	 * java.util.Properties#saveConvert(...)
 	 * 
 	 * @param theString
 	 * @param escapeSpace
@@ -2699,15 +2725,66 @@ public class StringHelper {
 	public static String getNewToken() {
 		return getRandomString(32, KEY_ACCEPTABLE_CHAR) + getRandomId();
 	}
-	
+
 	public static String escapeHTML(String html) {
 		String outHTML = html;
-		outHTML = outHTML.replaceAll("&scaron;","&#352;");
-		outHTML = outHTML.replaceAll("&ndash;","-");
-		outHTML = outHTML.replaceAll("&laquo;","&#171;");
-		outHTML = outHTML.replaceAll("&raquo;","&#187;");
-		outHTML = outHTML.replaceAll("&oslash;","&#216;");		
+		outHTML = outHTML.replaceAll("&scaron;", "&#352;");
+		outHTML = outHTML.replaceAll("&ndash;", "-");
+		outHTML = outHTML.replaceAll("&laquo;", "&#171;");
+		outHTML = outHTML.replaceAll("&raquo;", "&#187;");
+		outHTML = outHTML.replaceAll("&oslash;", "&#216;");
 		return outHTML;
 	}
+
+	private static boolean isEscaped(String in, int index, char escape) {
+		if (index < 0) {
+			return false;
+		}
+		if (in.charAt(index) == escape) {
+			return !isEscaped(in, index - 1, escape);
+		} else {
+			return false;
+		}
+	}
+
+	private static List<String> splitAsList(String in, String delimiter, char escape) {
+		List<String> out = new LinkedList<String>();
+		if (in != null && in.length() > 0) {
+			int pos = 0, last = 0, len = in.length();
+			boolean isOut = false;
+			while (pos >= 0 && !isOut) {
+				pos = in.indexOf(delimiter, pos);
+				if (pos == -1) {
+					pos = len;
+					isOut = true;
+				}
+				if (!isEscaped(in, pos - 1, escape)) {
+					String s = in.substring(last, pos);
+					s = StringUtils.replace(s, "" + escape + delimiter, "" + delimiter);
+					s = StringUtils.replace(s, "" + escape + escape, "" + escape);
+					out.add(s);
+					last = pos + delimiter.length(); // length of delimiter
+				}
+				pos = pos + delimiter.length(); // length of delimiter
+			}
+		}
+		return out;
+	}
+	
+	private static String concat(Iterable<?> in, String delimiter, char escape) {
+	        StringWriter out = new StringWriter();
+	        if (in != null) {
+	            String actDelimiter = "";
+	            for (Object s : in) {
+	                s = StringUtils.replace(""+s, "" + escape, "" + escape + escape);
+	                s = StringUtils.replace(""+s, "" + delimiter, "" + escape + delimiter);
+	                out.write(actDelimiter);
+	                out.write(""+s);
+	                actDelimiter = "" + delimiter;
+	            }
+	        }
+	        return out.toString();
+	    }
+
 
 }

@@ -2,6 +2,9 @@
 	height: 100%;
 }
 
+#preview_command #breadcrumb {
+	display: none;
+}
 
 #preview_command .pc_header {
 	margin: -1px -1px 0 -1px;

@@ -14,6 +14,7 @@ import org.javlo.config.StaticConfig;
 import org.javlo.context.ContentContext;
 import org.javlo.context.EditContext;
 import org.javlo.context.GlobalContext;
+import org.javlo.helper.ElementaryURLHelper;
 import org.javlo.helper.StringHelper;
 import org.javlo.helper.URLHelper;
 import org.javlo.message.GenericMessage;
@@ -22,6 +23,7 @@ import org.javlo.navigation.MenuElement;
 import org.javlo.navigation.MenuElement.PageBean;
 import org.javlo.rendering.Device;
 import org.javlo.service.PersistenceService;
+import org.javlo.service.RequestService;
 import org.javlo.service.exception.ServiceException;
 import org.javlo.servlet.AccessServlet;
 import org.javlo.template.Template;
@@ -520,4 +522,10 @@ public class InfoBean {
 	public String getTs() {
 		return ts;
 	}
+	
+	public String getBackURL() {
+		RequestService requestService = RequestService.getInstance(ctx.getRequest());
+		return requestService.getParameter(ElementaryURLHelper.BACK_PARAM_NAME, null);
+	}
+	
 }
