@@ -149,3 +149,7 @@ change log
  * black preview template + edit template mode
  
 * 2.0.2.5 25/07/2013
+
+ * String to collection with escape separator + test
+
+ * back mecanism + forward message
