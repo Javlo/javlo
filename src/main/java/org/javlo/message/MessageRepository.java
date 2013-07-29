@@ -13,9 +13,12 @@ import javax.servlet.http.HttpServletRequest;
 import org.apache.commons.configuration.ConfigurationException;
 import org.javlo.context.ContentContext;
 import org.javlo.context.GlobalContext;
+import org.javlo.helper.StringHelper;
 import org.javlo.helper.URLHelper;
 import org.javlo.i18n.I18nMessage;
 import org.javlo.service.NotificationService;
+import org.javlo.service.RequestService;
+import org.pdfbox.util.operator.SetGraphicsStateParameters;
 
 /**
  * contain the list of message.
@@ -50,9 +53,26 @@ public class MessageRepository {
 		MessageRepository outRep = (MessageRepository) request.getAttribute(KEY);
 		if (outRep == null) {
 			outRep = new MessageRepository(request);
+			RequestService requestService = RequestService.getInstance(request);
+			if (requestService.getParameter("_msg", null) != null) {
+				outRep.setGlobalMessage(new GenericMessage(requestService.getParameter("_msg", null)));
+			}
 			request.setAttribute(KEY, outRep);
 		}
 		return outRep;
+	}
+	
+	/**
+	 * forward the main globalMessage to the next request (for forwarding).
+	 * @param url a url to page
+	 * @return the same url with globalmessage as parameter
+	 */
+	public String forwardMessage(String url) {		
+		if (globalMessage != null) {
+			return URLHelper.addParam(url, "_msg", StringHelper.toHTMLAttribute(globalMessage.getRawMessage()));
+		} else  {
+			return url;
+		}
 	}
 
 	public void addMessage(GenericMessage msg) {

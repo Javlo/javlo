@@ -26,6 +26,7 @@ import org.javlo.config.StaticConfig;
 import org.javlo.context.ContentContext;
 import org.javlo.context.GlobalContext;
 import org.javlo.exception.ResourceNotFoundException;
+import org.javlo.helper.ElementaryURLHelper;
 import org.javlo.helper.PaginationContext;
 import org.javlo.helper.ResourceHelper;
 import org.javlo.helper.StringHelper;
@@ -401,6 +402,10 @@ public class Multimedia extends TimeRangeComponent implements IImageTitle {
 		filesParams.put("path", URLHelper.mergePath(FileAction.getPathPrefix(ctx), getCurrentRootFolder()));
 		filesParams.put("webaction", "changeRenderer");
 		filesParams.put("page", "meta");
+		
+		String backURL = StringHelper.toHTMLAttribute(URLHelper.createModuleURL(ctx, ctx.getPath(), "content"));
+		filesParams.put(ElementaryURLHelper.BACK_PARAM_NAME, backURL);
+		
 		String staticURL = URLHelper.createModuleURL(ctx, ctx.getPath(), "file", filesParams);
 		out.println("<a class=\"" + EDIT_ACTION_CSS_CLASS + "\" href=\"" + staticURL + "\">&nbsp;");
 		out.println(i18nAccess.getText("content.goto-static"));

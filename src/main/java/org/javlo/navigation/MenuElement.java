@@ -79,8 +79,6 @@ public class MenuElement implements Serializable {
 
 	public static final String PAGE_TYPE_DEFAULT = "default";
 
-	private static final String NO_LANG = "no-lang";
-
 	private static final long serialVersionUID = 1L;
 
 	/**
@@ -111,6 +109,20 @@ public class MenuElement implements Serializable {
 				e.printStackTrace();
 				return null;
 			}
+		}
+		
+		public PageBean getParent() {
+			return new PageBean(ctx,page.getParent());
+		}
+		
+		public List<PageBean> getParents() {
+			List<PageBean> outParents = new LinkedList<MenuElement.PageBean>();
+			MenuElement parent = page.getParent();
+			while (parent != null) {
+				outParents.add(0,new PageBean(ctx, parent));
+				parent = parent.getParent();
+			}
+			return outParents;
 		}
 
 		public String getUrl() {

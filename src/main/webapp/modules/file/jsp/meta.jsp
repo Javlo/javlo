@@ -5,6 +5,7 @@
 <form id="form-meta" action="${info.currentURL}" method="post">
 
 <input type="hidden" name="webaction" value="updateMeta" />
+<c:if test="${not empty param[BACK_PARAM_NAME]}"><input type="hidden" name="${BACK_PARAM_NAME}" value="${param[BACK_PARAM_NAME]}" /></c:if>
 
 <ul>
 <c:forEach var="file" items="${files}">

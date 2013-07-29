@@ -7,9 +7,37 @@
 
 <ul class="navigation">
 	<c:if test="${not empty info.parent && page.url eq info.currentURL}">
-		<li class="parent"><span><a href="${info.parent.url}">${info.parent.info.title}</a></span></li>
+		<li class="parent">
+		
+			<c:if test="${not empty info.parent.parent}">
+				<div id="breadcrumb"><div class="breadcrumb-wrapper"><div class="breadcrumb">
+					<c:forEach var="parent" items="${info.parent.parents}">
+					<ul><li><a href="${parent.url}">${parent.info.title}</a>
+					</c:forEach>
+					<c:forEach var="parent" items="${info.parent.parents}">
+					</li></ul>
+					</c:forEach>
+					<span><a href="${info.parent.url}">${info.parent.info.title}</a></span>
+				</div></div></div>		
+			</c:if>
+		
+			<span><a href="${info.parent.url}">${info.parent.info.title}</a></span>			
+		</li>
 	</c:if>
-	<li class="${page.url eq info.currentURL?'current ':''}">	
+	<li class="${page.url eq info.currentURL?'current ':''}">
+	
+		<c:if test="${page.url != info.currentURL}">
+		<div id="breadcrumb"><div class="breadcrumb-wrapper"><div class="breadcrumb">
+			<c:forEach var="parent" items="${info.parent.parents}">
+			<ul><li><a href="${parent.url}">${parent.info.title}</a>
+			</c:forEach>
+			<c:forEach var="parent" items="${info.parent.parents}">
+			</li></ul>
+			</c:forEach>
+			<span><a class="editor" title="parent page" href="${page.url}">${page.info.title}</span></a>
+		</div></div></div>	
+		</c:if>
+	
 		<span><a class="editor" title="parent page" href="${page.url}">${page.info.title}</span></a>
 	</li>
 	<li><ul class="children sortable">

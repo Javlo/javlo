@@ -34,6 +34,7 @@ import org.javlo.context.UserInterfaceContext;
 import org.javlo.data.InfoBean;
 import org.javlo.helper.ComponentHelper;
 import org.javlo.helper.DebugHelper;
+import org.javlo.helper.ElementaryURLHelper;
 import org.javlo.helper.LangHelper;
 import org.javlo.helper.NavigationHelper;
 import org.javlo.helper.ResourceHelper;
@@ -976,9 +977,14 @@ public class Edit extends AbstractModuleAction {
 			}
 			ctx.setContentLanguage(lg);
 			ctx.setRequestContentLanguage(lg);
-			messageRepository.setGlobalMessage(new GenericMessage(i18nAccess.getText("edit.message.new-language") + lg, GenericMessage.INFO));
+			messageRepository.setGlobalMessage(new GenericMessage(i18nAccess.getText("edit.message.new-language") +' '+lg, GenericMessage.INFO));
 			String newURL = URLHelper.createURL(ctx);
-			ctx.getResponse().sendRedirect(newURL);
+			
+			if (requestService.getParameter(ElementaryURLHelper.BACK_PARAM_NAME, null) != null) {
+				newURL = URLHelper.addParam(newURL, ElementaryURLHelper.BACK_PARAM_NAME, requestService.getParameter(ElementaryURLHelper.BACK_PARAM_NAME, null));
+			}			
+			newURL = messageRepository.forwardMessage(newURL);			
+			ctx.sendRedirect(newURL);
 		} else {
 			return "bad request structure : 'language' not found.";
 		}

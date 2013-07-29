@@ -1,5 +1,10 @@
 package org.javlo.helper;
 
+import java.util.Arrays;
+import java.util.List;
+
+import org.apache.commons.lang.StringUtils;
+
 import junit.framework.TestCase;
 
 public class StringHelperTest extends TestCase {
@@ -25,5 +30,35 @@ public class StringHelperTest extends TestCase {
 	  assertTrue(StringHelper.getLanguageFromFileName(null) == null);
   }
   
-
+  public void testStringToCollection() throws Exception {	  
+		List<String> testList = Arrays.asList(new String[] { "item1", "item\\, 2", "item3\\" });
+		String rawTest = StringHelper.collectionToString(testList, ", ");
+		assertEquals(rawTest, "item1, item\\\\\\, 2, item3\\\\");
+		List<String> list = StringHelper.stringToCollection(rawTest, ", ");
+		int i = 0;
+		for (String item : list) {
+			assertEquals(item, testList.get(i));
+			i++;
+		}
+		
+		testList = Arrays.asList(new String[] { "item1", "item2", "item3", "item4" });
+		rawTest = StringHelper.collectionToString(testList, ",");
+		assertEquals(rawTest, "item1,item2,item3,item4");
+		list = StringHelper.stringToCollection(rawTest, ",");
+		i = 0;
+		for (String item : list) {
+			assertEquals(item, testList.get(i));
+			i++;
+		}
+		
+		testList = Arrays.asList(new String[] { });
+		rawTest = StringHelper.collectionToString(testList, ",");
+		assertEquals(rawTest, "");		
+		
+		list = StringHelper.stringToCollection("item1,,,item4", ",");
+		assertEquals(list.get(0), "item1");
+		assertEquals(list.get(1), "");
+		assertEquals(list.get(2), "");
+		assertEquals(list.get(3), "item4");		
+  }
 }
