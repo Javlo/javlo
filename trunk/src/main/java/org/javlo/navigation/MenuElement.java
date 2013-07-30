@@ -2504,7 +2504,7 @@ public class MenuElement implements Serializable {
 	 */
 	private ContentElementList getLocalContent(ContentContext ctx) throws Exception {
 		ContentElementList localContentElementList = getContentElementListMap().get(ctx.getRequestContentLanguage());
-		if (localContentElementList == null) {
+		if (localContentElementList == null || !ctx.isAsViewMode()) {
 			localContentElementList = new ContentElementList(componentBean, ctx, this, false);
 
 			if (!ctx.isFree()) { // no reference to template >>> some component can be absent

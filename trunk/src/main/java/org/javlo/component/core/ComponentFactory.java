@@ -419,7 +419,7 @@ public class ComponentFactory {
 		return outComp;
 	}
 
-	public static List<IContentVisualComponent> getAllComonentFromContext(ContentContext ctx) throws Exception {
+	public static List<IContentVisualComponent> getAllComponentsFromContext(ContentContext ctx) throws Exception {
 		ContentService content = ContentService.getInstance(ctx.getRequest());
 		MenuElement rootPage = content.getNavigation(ctx);
 		List<IContentVisualComponent> outComp = new LinkedList<IContentVisualComponent>();

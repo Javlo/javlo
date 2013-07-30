@@ -237,6 +237,7 @@ public class JavloELFinder extends ELFinder {
 			} else {
 				ContentContext ctx = ContentContext.getContentContext(request, response);
 				StaticInfo staticInfo = StaticInfo.getInstance(ctx, file.getFile());
+				ResourceHelper.renameResource(ctx,file.getFile(),newFile);
 				file.getFile().renameTo(newFile);
 				staticInfo.renameFile(ctx, newFile);
 				GlobalContext globalContext = GlobalContext.getInstance(request);
