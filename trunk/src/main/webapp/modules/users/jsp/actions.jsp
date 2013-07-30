@@ -4,7 +4,14 @@
 <c:if test="${not empty CSVLink}">
 	<div class="link"><a href="${CSVLink}">${CSVName}</a><c:if test="${not empty ExcelLink}"> - <a href="${ExcelLink}">[excel]</a></c:if></div>
 </c:if>
-<div class="link"><a class="popup" href="${info.absoluteURLPrefix}${currentModule.path}/jsp/upload.jsp?admin=${admin}&currentURL=${info.currentURL}" title="${i18n.edit['edit.action.upload']}"><span>${i18n.edit['edit.action.upload']}</span></a></div>
+<c:url value="${info.absoluteURLPrefix}${currentModule.path}/jsp/upload.jsp" var="uploadURL">
+	<c:param name="admin" value="${admin}" />
+	<c:param name="currentURL" value="${info.currentURL}" />
+	<c:if test="${not empty userContext.currentRole}">
+		<c:param name="role" value="${userContext.currentRole}" />
+	</c:if>
+</c:url>
+<div class="link"><a class="popup" href="${uploadURL}" title="${i18n.edit['edit.action.upload']}"><span>${i18n.edit['edit.action.upload']}</span></a></div>
 
 <div class="special">
 <c:if test="${fn:length(roles)>0}">

@@ -1,5 +1,6 @@
 package org.javlo.xml;
 
+import java.io.StringReader;
 import java.util.Collection;
 import java.util.LinkedList;
 
@@ -279,6 +280,45 @@ public class NodeXML extends Object implements Cloneable {
 			return null;
 		}
 	}
+	
+	public String getContentPrefix() {
+		String res = "";
+		Node node = this.node;
+		node = node.getFirstChild();
+		while (node != null) {
+			if (node instanceof Text || node instanceof CDATASection) {
+				res = res + node.getNodeValue();
+			} else {
+				return res;
+			}
+			node = node.getNextSibling();
+		}
+		if (res.length() > 0) {
+			return res;
+		} else {
+			return null;
+		}
+	}
+	
+	public String getContentSuffix() {
+		String res = "";
+		Node node = this.node;
+		node = node.getFirstChild();
+		while (node != null) {
+			if (node instanceof Text || node instanceof CDATASection) {
+				res = res + node.getNodeValue();
+			} else {
+				res = "";
+			}
+			node = node.getNextSibling();
+
+		}
+		if (res.length() > 0) {
+			return res;
+		} else {
+			return null;
+		}
+	}
 
 	public Document getOwnerDocument() {
 		return document;
@@ -397,5 +437,18 @@ public class NodeXML extends Object implements Cloneable {
 		}
 		return -1;
 	}
-
+	
+	public static void main(String[] args) {
+		String xml = "<content>prefix content<p>pprv<span>span content</span>psfx</p>content suffix</content>";
+		
+		try {
+			NodeXML node = XMLFactory.getFirstNode(new StringReader(xml));
+			System.out.println("content : "+node.getContent());
+			System.out.println("prefix : "+node.getContentPrefix());
+			System.out.println("suffix : "+node.getContentSuffix());
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		
+	}
 }

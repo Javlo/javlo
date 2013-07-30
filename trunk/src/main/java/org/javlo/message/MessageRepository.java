@@ -29,6 +29,8 @@ public class MessageRepository {
 
 	public static final String KEY = "messages";
 
+	private static final String PARAMETER_NAME = "_msg";
+
 	private final Collection<GenericMessage> messagesWithoutKey = new LinkedList<GenericMessage>();
 	private final Map<String, GenericMessage> messagesWithKey = new HashMap<String, GenericMessage>();
 
@@ -53,26 +55,43 @@ public class MessageRepository {
 		MessageRepository outRep = (MessageRepository) request.getAttribute(KEY);
 		if (outRep == null) {
 			outRep = new MessageRepository(request);
-			RequestService requestService = RequestService.getInstance(request);
-			if (requestService.getParameter("_msg", null) != null) {
-				outRep.setGlobalMessage(new GenericMessage(requestService.getParameter("_msg", null)));
+			RequestService requestService = RequestService.getInstance(request);			
+			
+			System.out.println("***** MessageRepository.getInstance : requestService.getParameter(PARAMETER_NAME, null) = "+requestService.getParameter(PARAMETER_NAME, null)); //TODO: remove debug trace
+			
+			if (requestService.getParameter(PARAMETER_NAME, null) != null) {
+				outRep.setGlobalMessage(new GenericMessage(requestService.getParameter(PARAMETER_NAME, null)));
 			}
 			request.setAttribute(KEY, outRep);
 		}
 		return outRep;
 	}
-	
+
 	/**
 	 * forward the main globalMessage to the next request (for forwarding).
-	 * @param url a url to page
+	 * 
+	 * @param url
+	 *            a url to page
 	 * @return the same url with globalmessage as parameter
 	 */
-	public String forwardMessage(String url) {		
+	public String forwardMessage(String url) {
 		if (globalMessage != null) {
-			return URLHelper.addParam(url, "_msg", StringHelper.toHTMLAttribute(globalMessage.getRawMessage()));
-		} else  {
+			return URLHelper.addParam(url, PARAMETER_NAME, getRawGlobalMessage());
+		} else {
 			return url;
 		}
+	}
+
+	public String getRawGlobalMessage() {
+		if (globalMessage != null && globalMessage != GenericMessage.EMPTY_MESSAGE) {
+			return StringHelper.toHTMLAttribute(globalMessage.getRawMessage());
+		} else {
+			return null;
+		}
+	}
+
+	public String getParameterName() {
+		return PARAMETER_NAME;
 	}
 
 	public void addMessage(GenericMessage msg) {
@@ -107,7 +126,8 @@ public class MessageRepository {
 	}
 
 	/**
-	 * set a new global message. if the type of the current message is more important or equal the new message is ignored.
+	 * set a new global message. if the type of the current message is more
+	 * important or equal the new message is ignored.
 	 * 
 	 * @param globalMessage
 	 *            a global message
@@ -123,7 +143,8 @@ public class MessageRepository {
 	}
 
 	/**
-	 * set a new global message. if the type of the current message is more important or equal the new message is ignored.
+	 * set a new global message. if the type of the current message is more
+	 * important or equal the new message is ignored.
 	 * 
 	 * @param globalMessage
 	 *            a global message
@@ -141,9 +162,10 @@ public class MessageRepository {
 		}
 		notifService.addNotification(globalMessage.getMessage(), url, globalMessage.getType(), ctx.getCurrentUserId(), null);
 	}
-	
+
 	/**
-	 * set a new global message. if the type of the current message is more important or equal the new message is ignored.
+	 * set a new global message. if the type of the current message is more
+	 * important or equal the new message is ignored.
 	 * 
 	 * @param globalMessage
 	 *            a global message

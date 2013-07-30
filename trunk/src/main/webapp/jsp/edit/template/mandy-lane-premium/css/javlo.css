@@ -131,6 +131,10 @@ a.button {
 	width: auto;
 }
 
+.popup textarea {
+	margin-bottom: 12px;
+}
+
 a.popup span {
 	font-style: italic;
 	padding-right: 20px;

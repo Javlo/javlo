@@ -124,7 +124,7 @@ public class MailingAction extends AbstractModuleAction {
 		return msg;
 	}
 
-	public String performWizard(ContentContext ctx, GlobalContext globalContext, HttpServletRequest request, RequestService rs, Module currentModule, MailingModuleContext mailingContext, I18nAccess i18nAccess) throws Exception {
+	public String performWizard(ContentContext ctx, GlobalContext globalContext, HttpServletRequest request, RequestService rs, Module currentModule, MessageRepository messageRepository, MailingModuleContext mailingContext, I18nAccess i18nAccess) throws Exception {
 		switch (mailingContext.getWizardStep(SEND_WIZARD_BOX)) {
 		case 1:
 			if (mailingContext.getCurrentTemplate() == null) {
@@ -152,14 +152,17 @@ public class MailingAction extends AbstractModuleAction {
 			if (rs.getParameter("send", null) != null) {
 				mailingContext.sendMailing(ctx);
 				String msg = i18nAccess.getText("mailing.message.sent");
-				MessageRepository.getInstance(ctx).setGlobalMessageAndNotification(ctx, new GenericMessage(msg, GenericMessage.SUCCESS));
+				messageRepository.setGlobalMessageAndNotification(ctx, new GenericMessage(msg, GenericMessage.SUCCESS));
 				mailingContext.reset();
 				mailingContext.setWizardStep(SEND_WIZARD_BOX, null);
 				if (ctx.isAjax()) {
 					currentModule.getBox(SEND_WIZARD_BOX).update(ctx);
 				}
-				if (ctx.isEditPreview()) {
+				if (ctx.isEditPreview()) {					
 					ctx.setClosePopup(true);
+					if (ctx.getParentURL() != null) {
+						ctx.setParentURL(messageRepository.forwardMessage(ctx.getParentURL()));
+					}
 				}
 			}
 			break;

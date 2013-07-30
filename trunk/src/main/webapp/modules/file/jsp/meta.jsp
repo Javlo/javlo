@@ -11,7 +11,19 @@
 <c:forEach var="file" items="${files}">
 	<li class="${file.directory?'directory':'file'}">
 	    <c:set var="popularity" value=" - #${file.popularity}" />
-		<div class="title"><span><a href="${file.URL}">${file.name}</a></span><span class="size">${file.size} ${info.admin?popularity:''}</span><span class="last">${file.manType}</span></div>
+		<div class="title">
+			<span><a href="${file.URL}">${file.name}</a></span>
+			<c:url value="${info.currentURL}" var="deleteURL">
+				<c:param name="webaction" value="file.delete" />
+				<c:param name="file" value="${file.path}" />
+				<c:if test="${not empty param[BACK_PARAM_NAME]}">
+					<c:param name="${BACK_PARAM_NAME}" value="${param[BACK_PARAM_NAME]}" />
+				</c:if>
+			</c:url>
+			<span class="delete"><a class="needconfirm" href="${deleteURL}">X</a></span>
+			<span class="size">${file.size} ${info.admin?popularity:''}</span>
+			<span class="last">${file.manType}</span>
+		</div>
 		<div class="body">
 		<c:if test="${file.image}">		
 		<div class="download picture">

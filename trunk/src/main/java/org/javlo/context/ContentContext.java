@@ -23,8 +23,6 @@ import org.javlo.config.StaticConfig;
 import org.javlo.helper.AjaxHelper.ScheduledRender;
 import org.javlo.helper.StringHelper;
 import org.javlo.helper.URLHelper;
-import org.javlo.message.GenericMessage;
-import org.javlo.message.MessageRepository;
 import org.javlo.navigation.IURLFactory;
 import org.javlo.navigation.MenuElement;
 import org.javlo.rendering.Device;
@@ -303,6 +301,8 @@ public class ContentContext {
 	private boolean export = false;
 
 	public Boolean contentExistForContext = null;
+	
+	public Boolean editPreview = null;
 
 	/** cache **/
 
@@ -396,6 +396,8 @@ public class ContentContext {
 		scheduledAjaxInsideZone = ctx.scheduledAjaxInsideZone;
 		
 		currentPageCached = ctx.currentPageCached;
+		
+		editPreview = ctx.editPreview;
 	}
 
 	public String getArea() {
@@ -1385,7 +1387,15 @@ public class ContentContext {
 	}
 
 	public boolean isEditPreview() {
-		return isEditPreview(request);
+		if (editPreview == null) {
+			return isEditPreview(request);
+		} else {
+			return editPreview;
+		}
+	}
+	
+	public void setEditPreview(boolean editPreview) {
+		this.editPreview = editPreview;
 	}
 
 	public static boolean isEditPreview(HttpServletRequest request) {

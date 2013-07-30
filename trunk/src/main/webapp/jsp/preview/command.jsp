@@ -1,3 +1,4 @@
+<%@page import="org.javlo.message.MessageRepository"%>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c"
 %><%@ taglib uri="/WEB-INF/javlo.tld" prefix="jv"
 %><%@page contentType="text/html" import="
@@ -13,11 +14,14 @@
 ContentContext ctx = ContentContext.getContentContext(request, response);
 ContentContext editCtx = new ContentContext(ctx);
 editCtx.setRenderMode(ContentContext.EDIT_MODE);
+ContentContext returnEditCtx = new ContentContext(editCtx);
+returnEditCtx.setEditPreview(false);
 GlobalContext globalContext = GlobalContext.getInstance(request);
 ModulesContext moduleContext = ModulesContext.getInstance(request.getSession(), globalContext);
+MessageRepository.getInstance(request); // load request message
 %>
 <div id="preview_command" lang="${info.editLanguage}" class="edit-${not empty currentUser} ${editPreview == 'true'?'edit':'preview'}">
-	<div class="pc_header"><span class="title">${i18n.edit["preview.command"]}</span><c:if test="${!userInterface.contributor}"><a id="pc_edit_mode_button" title="${i18n.edit['global.exit']}" href="<%=URLHelper.createURL(editCtx)%>?module=content&webaction=previewEdit&preview=false">X</a></c:if></div>
+	<div class="pc_header"><span class="title">${i18n.edit["preview.command"]}</span><c:if test="${!userInterface.contributor}"><a id="pc_edit_mode_button" title="${i18n.edit['global.exit']}" href="<%=URLHelper.createURL(returnEditCtx)%>?module=content&webaction=previewEdit&preview=false">X</a></c:if></div>
 	<div class="pc_body">		    
 			<c:if test="${not empty messages.globalMessage && messages.globalMessage.type > 0 && not empty messages.globalMessage.message}">
 				<div class="message msg${messages.globalMessage.typeLabel}">${messages.globalMessage.message}</div>
