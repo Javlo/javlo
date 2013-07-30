@@ -159,7 +159,6 @@ public class GlobalImage extends Image {
 
 	@Override
 	protected String getEditXHTMLCode(ContentContext ctx) throws Exception {
-
 		StringBuffer finalCode = new StringBuffer();
 		finalCode.append(getSpecialInputTag());
 
@@ -245,7 +244,7 @@ public class GlobalImage extends Image {
 		filesParams.put(ElementaryURLHelper.BACK_PARAM_NAME, backURL);
 		
 		String staticURL = URLHelper.createModuleURL(ctx, ctx.getPath(), "file", filesParams);
-		finalCode.append("<a class=\"" + EDIT_ACTION_CSS_CLASS + "\" href=\"" + staticURL + "\">&nbsp;");
+		finalCode.append("<a class=\"" + EDIT_ACTION_CSS_CLASS + "\" href=\"" + staticURL + "\">");
 		finalCode.append(i18nAccess.getText("content.goto-static"));
 		finalCode.append("</a>");
 		finalCode.append("</div>");
@@ -544,7 +543,7 @@ public class GlobalImage extends Image {
 	 */
 	@Override
 	public String getViewXHTMLCode(ContentContext ctx) throws Exception {
-
+		
 		String filter = getFilter(ctx);
 		if (HIDDEN.equals(filter)) {
 			return "";

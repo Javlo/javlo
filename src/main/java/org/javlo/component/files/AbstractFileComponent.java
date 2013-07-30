@@ -255,6 +255,7 @@ public abstract class AbstractFileComponent extends AbstractVisualComponent impl
 		String dir = properties.getProperty(DIR_KEY, "");
 		if (dir.length() > 1 && dir.startsWith("/")) {
 			dir = dir.substring(1);
+			setDirSelected(dir);
 		}
 		return dir;
 	}

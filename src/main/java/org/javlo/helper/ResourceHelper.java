@@ -883,10 +883,11 @@ public class ResourceHelper {
 	public static void renameResource(ContentContext ctx, File file, File newFile) throws Exception {
 		GlobalContext globalContext = GlobalContext.getInstance(ctx.getRequest());
 		ContentContext lgCtx = new ContentContext(ctx);
-		Collection<String> lgs = globalContext.getContentLanguages();
+		lgCtx.setRenderMode(ContentContext.EDIT_MODE);
+		Collection<String> lgs = globalContext.getContentLanguages();		
 		for (String lg : lgs) {
 			lgCtx.setRequestContentLanguage(lg);
-			List<IContentVisualComponent> comps = ComponentFactory.getAllComonentFromContext(lgCtx);
+			List<IContentVisualComponent> comps = ComponentFactory.getAllComponentsFromContext(lgCtx);
 			for (IContentVisualComponent comp : comps) {
 				if (comp instanceof IStaticContainer) {
 					((IStaticContainer) comp).renameResource(ctx, file, newFile);
