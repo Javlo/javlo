@@ -57,8 +57,6 @@ public class MessageRepository {
 			outRep = new MessageRepository(request);
 			RequestService requestService = RequestService.getInstance(request);			
 			
-			System.out.println("***** MessageRepository.getInstance : requestService.getParameter(PARAMETER_NAME, null) = "+requestService.getParameter(PARAMETER_NAME, null)); //TODO: remove debug trace
-			
 			if (requestService.getParameter(PARAMETER_NAME, null) != null) {
 				outRep.setGlobalMessage(new GenericMessage(requestService.getParameter(PARAMETER_NAME, null)));
 			}
