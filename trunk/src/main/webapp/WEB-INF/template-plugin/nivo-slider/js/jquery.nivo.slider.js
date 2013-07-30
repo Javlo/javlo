@@ -659,4 +659,4 @@
 
     $.fn._reverse = [].reverse;
     
-})(jQuery);
+})(nivoJQ);

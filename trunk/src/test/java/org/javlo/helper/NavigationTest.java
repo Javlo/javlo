@@ -16,10 +16,11 @@ public class NavigationTest extends TestCase {
 		ContentContext ctx = ContentContext.getContentContext(request, httpContext.getResponse());		
 		GlobalContext globalContext = GlobalContext.getInstance(request);
 		
-		/*assertNull(globalContext.getPageIfExist(ctx, "/no_exist", true));
-		assertNotNull(globalContext.getPageIfExist(ctx, "/page", true));
-		assertNotNull(globalContext.getPageIfExist(ctx, "/page/subpage", true));*/
+		System.out.println("***** NavigationTest.testGetPageIfExist : 1."+globalContext.getPageIfExist(ctx, "/page", true)); //TODO: remove debug trace
 		
+		assertNull(globalContext.getPageIfExist(ctx, "/no_exist", true));
+		assertNotNull(globalContext.getPageIfExist(ctx, "/page", true));
+		assertNotNull(globalContext.getPageIfExist(ctx, "/page/subpage", true));
 	}
 
 }
