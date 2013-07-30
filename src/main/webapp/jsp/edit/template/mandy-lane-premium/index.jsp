@@ -11,6 +11,13 @@
     <c:if test="${not empty contentContext.parentURL}">
     	url = "${contentContext.parentURL}";
     </c:if>
+    <c:if test="${not empty messages.rawGlobalMessage}">
+    	if (url.indexOf("?")>=0) {
+    		url = url + "&${messages.parameterName}=${messages.rawGlobalMessage}";
+    	} else {
+    		url = url + "?${messages.parameterName}=${messages.rawGlobalMessage}";
+    	}
+    </c:if>
     if (url != null) {
 		top.location.href=url; // close iframe and refresh parent frame
     }
@@ -22,6 +29,7 @@
 <link rel="stylesheet" media="screen" href="${info.editTemplateURL}/css/style.css?ts=${info.ts}" />
 <link rel="stylesheet" media="screen" href="${info.editTemplateURL}/css/javlo.css?ts=${info.ts}" />
 <link rel="stylesheet" media="screen" href="${info.editTemplateURL}/css/plugins/colorbox.css" />
+<link rel="stylesheet" media="screen" href="${info.editTemplateURL}/css/edit_${globalContext.editTemplateMode}.css" />
 <c:if test="${not empty specificCSS}">
 <link rel="stylesheet" media="screen" href="${specificCSS}" />
 </c:if>

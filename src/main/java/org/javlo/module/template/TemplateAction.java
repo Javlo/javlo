@@ -436,7 +436,7 @@ public class TemplateAction extends AbstractModuleAction {
 		MailingModuleContext mailingCtx = MailingModuleContext.getInstance(ctx.getRequest());
 		mailingCtx.setCurrentTemplate(null);
 
-		if (editContext.isEditPreview()) {
+		if (ctx.isEditPreview()) {
 			ctx.setClosePopup(true);
 		}
 

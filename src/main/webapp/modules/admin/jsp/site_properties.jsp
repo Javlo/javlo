@@ -125,6 +125,12 @@
 	<input type="text" id="full-date" name="full-date" value="${currentContext.fullDateFormat}" />	
 </div>
 
+<div class="line">		
+	<label for="template-mode">${i18n.edit['admin.title.template-mode']}</label>
+	<input type="text" id="template-mode" name="template-mode" value="${currentContext.editTemplateMode}" />	
+</div>
+
+
 </div>
 
 <div class="one_half">

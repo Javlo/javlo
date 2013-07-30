@@ -10,7 +10,13 @@
             	<img src="${template.previewUrl}" alt="${template.name}" />
             </c:if>
             <c:if test="${not empty param.previewEdit}">
-            	<a href="${info.currentURL}?webaction=selectTemplate&templateid=${template.name}&previewEdit=true">
+            
+             	<c:url value="${info.currentURL}" var="selectURL">
+                    	<c:param name="webaction" value="selectTemplate" />
+                    	<c:param name="templateid" value="${template.name}" />
+                    </c:url>  
+            
+            	<a href="${selectURL}">
             	<img src="${template.previewUrl}" alt="${template.name}" />
            		<div class="info">
 				   <p>
@@ -55,14 +61,32 @@
                 </p>                
                 <p class="menu">                	
                     <a href="${template.viewUrl}" class="view" title="${template.name}"></a>
-                    <a href="${info.currentURL}?webaction=goEditTemplate&templateid=${template.name}" class="edit"></a>
-                    <a href="${info.currentURL}?webaction=delete&templateid=${template.name}" class="delete"></a>
+                    
+                    <c:url value="${info.currentURL}" var="editURL">
+                    	<c:param name="webaction" value="goEditTemplate" />
+                    	<c:param name="templateid" value="${template.name}" />
+                    </c:url>                    
+                    <a href="${editURL}" class="edit"></a>
+
+                    <c:url value="${info.currentURL}" var="deleteURL">
+                    	<c:param name="webaction" value="delete" />
+                    	<c:param name="templateid" value="${template.name}" />
+                    </c:url>
+                    <a href="${deleteURL}" class="delete"></a>
+                    
                     <c:if test="${not empty selectUrl}">
+                    
                     <a href="${selectUrl}&template=${template.name}&mailing=${template.mailing}" class="select" title="select"></a>
                     </c:if>
+                    
                     <c:if test="${not template.valid}">
-                    <a href="${info.currentURL}?webaction=validate&templateid=${template.name}" class="validate" title="validate"></a>
+                    <c:url value="${info.currentURL}" var="validURL">
+                    	<c:param name="webaction" value="validate" />
+                    	<c:param name="templateid" value="${template.name}" />
+                    </c:url>
+                    <a href="${validURL}" class="validate" title="validate"></a>
                     </c:if>
+                    
                 </p>                
             </div><!--info-->
             </c:if>

@@ -69,14 +69,14 @@ public class AdminAction extends AbstractModuleAction {
 	private static java.util.logging.Logger logger = java.util.logging.Logger.getLogger(AdminAction.class.getName());
 
 	public static class GlobalContextBean {
-		
+
 		public static final class SortOnKey implements Comparator<GlobalContextBean> {
 			@Override
 			public int compare(GlobalContextBean o1, GlobalContextBean o2) {
 				return o1.getKey().compareTo(o2.getKey());
 			}
 		}
-		
+
 		private String key;
 		private String administrator;
 		private String aliasOf;
@@ -111,6 +111,7 @@ public class AdminAction extends AbstractModuleAction {
 		private String URIAlias;
 		private boolean master = false;
 		private String forcedHost = "";
+		private String editTemplateMode = null;
 
 		private String shortDateFormat;
 		private String mediumDateFormat;
@@ -153,8 +154,10 @@ public class AdminAction extends AbstractModuleAction {
 
 			setHelpURL(globalContext.getHelpURL());
 			setPrivateHelpURL(globalContext.getPrivateHelpURL());
-			
+
 			setForcedHost(globalContext.getForcedHost());
+
+			setEditTemplateMode(globalContext.getEditTemplateMode());
 
 			setSize(StringHelper.renderSize(globalContext.getAccountSize()));
 			setGlobalTitle(globalContext.getGlobalTitle());
@@ -574,34 +577,42 @@ public class AdminAction extends AbstractModuleAction {
 			alias.add(context);
 		}
 
+		public String getEditTemplateMode() {
+			return editTemplateMode;
+		}
+
+		public void setEditTemplateMode(String editTemplateMode) {
+			this.editTemplateMode = editTemplateMode;
+		}
+
 	}
-	
+
 	public static class ComponentBean {
-		
+
 		ContentContext ctx;
 		IContentVisualComponent comp;
-		
-		public ComponentBean (ContentContext ctx, IContentVisualComponent comp) {
+
+		public ComponentBean(ContentContext ctx, IContentVisualComponent comp) {
 			this.ctx = ctx;
 			this.comp = comp;
 		}
-		
+
 		public IContentVisualComponent getComponent() {
 			return comp;
 		}
-		
+
 		public int getComplexityLevel() {
 			return comp.getComplexityLevel(ctx);
 		}
-		
+
 		public boolean isListable() {
 			return comp.isListable();
 		}
-		
+
 		public String getType() {
 			return comp.getType();
 		}
-		
+
 		public String getHexColor() {
 			return comp.getHexColor();
 		}
@@ -641,7 +652,7 @@ public class AdminAction extends AbstractModuleAction {
 
 			Collection<GlobalContextBean> ctxAllBean = new LinkedList<GlobalContextBean>();
 			Collection<GlobalContext> allContext = GlobalContextFactory.getAllGlobalContext(request.getSession());
-			Map<String,GlobalContextBean> masterCtx = new HashMap<String, AdminAction.GlobalContextBean>();
+			Map<String, GlobalContextBean> masterCtx = new HashMap<String, AdminAction.GlobalContextBean>();
 			for (GlobalContext context : allContext) {
 				if (ctx.getCurrentEditUser() != null) {
 					if (adminUserSecurity.isAdmin(ctx.getCurrentEditUser()) || context.getUsersAccess().contains(ctx.getCurrentEditUser().getLogin())) {
@@ -652,15 +663,15 @@ public class AdminAction extends AbstractModuleAction {
 						}
 					}
 				}
-			}			
+			}
 			for (GlobalContextBean context : ctxAllBean) {
-				if (!masterCtx.containsKey(context.getKey()) && masterCtx.containsKey(context.getAliasOf())) {					
+				if (!masterCtx.containsKey(context.getKey()) && masterCtx.containsKey(context.getAliasOf())) {
 					masterCtx.get(context.getAliasOf()).addAlias(context);
 				}
 			}
-			
+
 			List<GlobalContextBean> sortedContext = new LinkedList<AdminAction.GlobalContextBean>(masterCtx.values());
-			Collections.sort(sortedContext, new GlobalContextBean.SortOnKey());			
+			Collections.sort(sortedContext, new GlobalContextBean.SortOnKey());
 			request.setAttribute("contextList", sortedContext);
 		}
 
@@ -889,7 +900,7 @@ public class AdminAction extends AbstractModuleAction {
 					} else {
 						return "uri-alias parameter not found.";
 					}
-					
+
 					String forcedHost = requestService.getParameter("forced-host", "");
 					if (forcedHost.trim().length() > 0) {
 						currentGlobalContext.setForcedHost(forcedHost);
@@ -908,6 +919,8 @@ public class AdminAction extends AbstractModuleAction {
 					currentGlobalContext.setNoPopupDomainRAW(requestService.getParameter("nopup-domain", ""));
 
 					currentGlobalContext.setPreviewMode(requestService.getParameter("preview-mode", null) != null);
+
+					currentGlobalContext.setEditTemplateMode(requestService.getParameter("template-mode", null));
 
 					currentGlobalContext.setWizz(requestService.getParameter("wizz", null) != null);
 
@@ -1310,7 +1323,6 @@ public class AdminAction extends AbstractModuleAction {
 
 	public static String performComponentsForAll(RequestService rs, HttpSession session, AdminUserSecurity adminUserSecurity, ContentContext ctx, MessageRepository messageRepository, I18nAccess i18nAccess) throws ConfigurationException, IOException, NoSuchMethodException, ClassNotFoundException, IllegalArgumentException, InstantiationException, IllegalAccessException, InvocationTargetException {
 		GlobalContext currentContext = GlobalContext.getInstance(session, rs.getParameter("context", null));
-		Collection<GlobalContextBean> ctxAllBean = new LinkedList<GlobalContextBean>();
 		Collection<GlobalContext> allContext = GlobalContextFactory.getAllGlobalContext(session);
 		for (GlobalContext context : allContext) {
 			if (ctx.getCurrentEditUser() != null) {
@@ -1323,20 +1335,19 @@ public class AdminAction extends AbstractModuleAction {
 		}
 		return null;
 	}
-	
+
 	public static String performUpload(RequestService rs, HttpSession session, ContentContext ctx, MessageRepository messageRepository, I18nAccess i18nAccess) throws IOException, ConfigurationException {
 		GlobalContext currentContext = GlobalContext.getInstance(session, rs.getParameter("context", null));
 		InputStream in = null;
-		for (FileItem file : rs.getAllFileItem()) {
-			in = file.getInputStream();
-		}		
-		String urlStr = rs.getParameter("url", "");
-		if (urlStr.trim().length() > 0) {
-			URL url = new URL(urlStr);
-			in = url.openConnection().getInputStream();
-		}
-
 		try {
+			for (FileItem file : rs.getAllFileItem()) {
+				in = file.getInputStream();
+			}
+			String urlStr = rs.getParameter("url", "");
+			if (urlStr.trim().length() > 0) {
+				URL url = new URL(urlStr);
+				in = url.openConnection().getInputStream();
+			}
 			if (in != null) {
 				Properties prop = new Properties();
 				prop.load(in);
@@ -1344,9 +1355,7 @@ public class AdminAction extends AbstractModuleAction {
 			}
 		} finally {
 			ResourceHelper.closeResource(in);
-		}			
-
-		
+		}
 		return null;
 	}
 }

@@ -83,9 +83,9 @@ public abstract class ElementaryURLHelper {
 	 */
 	public static String addParam(String url, String name, String value) {
 		if (url.contains("?")) {
-			return url = url + '&' + name + '=' + value;
+			return url = url + '&' + name + '=' + StringHelper.neverNull(value);
 		} else {
-			return url = url + '?' + name + '=' + value;
+			return url = url + '?' + name + '=' + StringHelper.neverNull(value);
 		}
 	}
 
@@ -232,6 +232,10 @@ public abstract class ElementaryURLHelper {
 		// force mode for ajax request
 		if (ajax) {
 			url = URLHelper.addParam(url, ContentContext.FORCE_MODE_PARAMETER_NAME, "" + ctx.getRenderMode());
+		}
+		
+		if (ctx.isEditPreview()) {
+			url = URLHelper.addParam(url, "editPreview", "true");
 		}
 
 		return url;

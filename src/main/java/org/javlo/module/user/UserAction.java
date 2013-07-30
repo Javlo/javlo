@@ -327,7 +327,7 @@ public class UserAction extends AbstractModuleAction {
 
 	}
 
-	public static String performChangePassword(RequestService rs, ContentContext ctx, GlobalContext globalContext, HttpSession session, StaticConfig staticConfig, MessageRepository messageRepository, I18nAccess i18nAccess) {
+	public static String performChangePassword(RequestService rs, ContentContext ctx, EditContext editContext, GlobalContext globalContext, HttpSession session, StaticConfig staticConfig, MessageRepository messageRepository, I18nAccess i18nAccess) {
 		String pwd = rs.getParameter("password", null);
 		String newPwd = rs.getParameter("newpassword", null);
 
@@ -352,6 +352,11 @@ public class UserAction extends AbstractModuleAction {
 					userFactory.updateUserInfo(ui);
 					userFactory.store();
 					messageRepository.setGlobalMessage(new GenericMessage(i18nAccess.getText("user.message.ok-change-password"), GenericMessage.INFO));
+					
+					if (editContext.isEditPreview()) {
+						ctx.setClosePopup(true);
+					}
+					
 				} catch (IOException e) {
 					e.printStackTrace();
 					return e.getMessage();
@@ -383,7 +388,7 @@ public class UserAction extends AbstractModuleAction {
 		if (!AdminUserSecurity.getInstance().haveRight(user, AdminUserSecurity.USER_ROLE)) {
 			return "security error.";
 		}
-
+		
 		boolean admin = StringHelper.isTrue(rs.getParameter("admin", null));
 		IUserFactory userFact;
 		if (admin) {
@@ -395,30 +400,28 @@ public class UserAction extends AbstractModuleAction {
 		Collection<FileItem> fileItems = rs.getAllFileItem();
 		String msg = null;
 		for (FileItem item : fileItems) {
-			if (item.getFieldName().trim().length() > 1) {
+			InputStream in = item.getInputStream();
+			
+			if (item.getFieldName().trim().length() > 1 && item.getSize() > 0 && in != null) {
 
 				Charset charset = Charset.forName(ContentContext.CHARACTER_ENCODING);
 				if (StringHelper.getFileExtension(item.getName()).equals("txt")) { // hack
 					charset = Charset.forName("utf-16");
 				}
-
-				InputStream in = item.getInputStream();
-				if (in == null) {
-					return null;
-				}
+				
 				CSVFactory csvFact;
 				try {
 					csvFact = new CSVFactory(in, null, charset);
 				} finally {
 					ResourceHelper.closeResource(in);
 				}
-				String[][] usersArrays = csvFact.getArray();
-				if (usersArrays.length < 2) {
+				String[][] usersArrays = csvFact.getArray();				
+				if (usersArrays == null || usersArrays.length < 1) {
 					msg = i18nAccess.getText("global.message.file-format-error");
 					MessageRepository.getInstance(ctx).setGlobalMessage(new GenericMessage(msg, GenericMessage.ERROR));
 					return null;
 				} else {
-					if (usersArrays[1].length < 5) {
+					if (usersArrays[0].length < 5) {
 						msg = i18nAccess.getText("global.message.file-format-error");
 						MessageRepository.getInstance(ctx).setGlobalMessage(new GenericMessage(msg, GenericMessage.ERROR));
 						return null;
@@ -437,7 +440,7 @@ public class UserAction extends AbstractModuleAction {
 					}
 				}
 
-				if (userInfoList.size() > 0) {
+				//if (userInfoList.size() > 0) {
 					userFact.clearUserInfoList();
 					for (Object element2 : userInfoList) {
 						IUserInfo element = (IUserInfo) element2;
@@ -448,10 +451,37 @@ public class UserAction extends AbstractModuleAction {
 						}
 					}
 					userFact.store();
-				}
+				//}
 
 			}
 		}
+		
+		/** vrac import **/
+		String vrac = rs.getParameter("vrac", "");
+		int countUserInsered = 0;
+		if (vrac.trim().length() > 0) {
+			String role = rs.getParameter("role", "");
+			Collection<String> emails = StringHelper.searchEmail(vrac);
+			for (String email : emails) {
+				IUserInfo userInfo = userFact.createUserInfos();
+				userInfo.setLogin(email);
+				userInfo.setEmail(email);
+				if (role.trim().length() > 0) {
+					userInfo.setRoles(new HashSet(Arrays.asList(new String[] {role})));
+				}
+				try {
+					userFact.addUserInfo(userInfo);
+					countUserInsered++;
+				} catch (UserAllreadyExistException e) {
+				}
+			}
+			userFact.store();
+			
+			MessageRepository.getInstance(ctx).setGlobalMessage(new GenericMessage(i18nAccess.getText("global.message.imported")+countUserInsered, GenericMessage.INFO));
+			
+			logger.info("vrac user imported : "+countUserInsered);
+		}
+
 
 		return msg;
 	}

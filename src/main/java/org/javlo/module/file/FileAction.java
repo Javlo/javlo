@@ -100,7 +100,7 @@ public class FileAction extends AbstractModuleAction {
 					if (AdminUserSecurity.getInstance().isGod(ctx.getCurrentEditUser())) {
 						path = URLHelper.mergePath("/" + globalContext.getStaticConfig().getStaticFolder(), staticInfo.getStaticURL());
 					}
-					return currentURL + "?path=" + path;
+					return URLHelper.addParam(currentURL, "path", path);
 				} catch (Exception e) {
 					e.printStackTrace();
 				}
@@ -198,6 +198,10 @@ public class FileAction extends AbstractModuleAction {
 				e.printStackTrace();
 				return 0;
 			}
+		}
+		
+		public String getPath() {
+			return staticInfo.getStaticURL();
 		}
 
 	}
@@ -535,6 +539,17 @@ public class FileAction extends AbstractModuleAction {
 			}			
 		}
 		
+		return null;
+	}
+	
+	public static String performDelete(GlobalContext globalContext, RequestService rs, ContentContext ctx, MessageRepository messageRepository, I18nAccess i18nAccess) {		
+		String filePath = rs.getParameter("file", null);
+		if (filePath == null) {
+			return "bad request structure : need file parameter.";
+		} else {			
+			File file = new File(URLHelper.mergePath(globalContext.getStaticFolder(), filePath));
+			file.delete();
+		}		
 		return null;
 	}
 	

@@ -1255,7 +1255,7 @@ public class StaticConfig extends Observable {
 	}
 	
 	/**
-	 * mode of the edit template, can be used in template renderer for include special css or js.
+	 * default mode of the edit template (mode is defined in GlobalContext), can be used in template renderer for include special css or js.
 	 * preview css is : edit_preview_[mode].css
 	 * @return
 	 */

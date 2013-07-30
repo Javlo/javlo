@@ -153,3 +153,13 @@ change log
  * String to collection with escape separator + test
 
  * back mecanism + forward message
+ 
+ * light template + template mode in globalContext
+ 
+ * vrac user import
+ 
+ * import .odt optimisation
+ 
+ * editPreview manage in URLHelper
+ 
+ * forward message

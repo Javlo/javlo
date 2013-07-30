@@ -11,6 +11,7 @@ import java.text.SimpleDateFormat;
 import java.util.Collection;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Locale;
@@ -119,15 +120,28 @@ public class ContentHelper {
 	public static void main(String[] args) {
 		try {
 			/*
-			 * String html = ResourceHelper.loadStringFromFile(new File("d:/trans/test_doc.htm")); List<ComponentBean> content = createContentWithHTML(html, "en"); for (ComponentBean componentBean : content) { System.out.println("**** " + componentBean.getType()); // TODO: remove debug trace System.out.println(componentBean.getValue()); // TODO: remove debug trace System.out.println(""); }
+			 * String html = ResourceHelper.loadStringFromFile(new
+			 * File("d:/trans/test_doc.htm")); List<ComponentBean> content =
+			 * createContentWithHTML(html, "en"); for (ComponentBean
+			 * componentBean : content) { System.out.println("**** " +
+			 * componentBean.getType()); // TODO: remove debug trace
+			 * System.out.println(componentBean.getValue()); // TODO: remove
+			 * debug trace System.out.println(""); }
 			 */
 
 			List<ComponentBean> content = createContentFromODT(null, new FileInputStream(new File("d:/trans/mep_test.odt")), "map_test.odt", "fr");
-			System.out.println("***** ContentHelper.main : imported : " + content.size()); // TODO: remove debug trace
+			System.out.println("***** ContentHelper.main : imported : " + content.size()); // TODO:
+																							// remove
+																							// debug
+																							// trace
 			for (ComponentBean componentBean : content) {
-				System.out.println("**** " + componentBean.getType()); // TODO: remove debug trace
-				//System.out.println(componentBean.getValue()); // TODO: remove debug trace
-				//System.out.println("");
+				System.out.println("**** " + componentBean.getType()); // TODO:
+																		// remove
+																		// debug
+																		// trace
+				// System.out.println(componentBean.getValue()); // TODO: remove
+				// debug trace
+				// System.out.println("");
 			}
 		} catch (Exception e) {
 			e.printStackTrace();
@@ -160,21 +174,51 @@ public class ContentHelper {
 		}
 
 	}
+	
+	private static String getContentODTNode(NodeXML node, Collection<NodeXML> nodeDone) {
+		ByteArrayOutputStream outStream = new ByteArrayOutputStream();
+		PrintStream out = new PrintStream(outStream);
+		if (node.getContentPrefix() != null) {
+			out.print(node.getContentPrefix());	
+		}		
+		boolean firstPara = true;
+		for (NodeXML child : node.getAllChildren()) {
+			if (child.getName().endsWith(":span")) {
+				out.print(StringHelper.neverNull(child.getContent())+' ');
+				nodeDone.add(child);
+			} else if (child.getName().endsWith(":p")) {
+				if (firstPara) {
+					out.print(StringHelper.neverNull(child.getContent()));
+				} else {
+					out.println(StringHelper.neverNull(child.getContent()));
+				}
+				firstPara = false;
+				nodeDone.add(child);
+			}
+		}		
+		if (node.getContentSuffix() != null) {
+			out.print(node.getContentSuffix());	
+		}	
+		out.close();
+		return new String(outStream.toByteArray());
+	}
 
 	public static List<ComponentBean> createContentFromODT(GlobalContext gc, InputStream in, String name, String lang) throws Exception {
 		List<ComponentBean> outBeans = new LinkedList<ComponentBean>();
 		ZipInputStream zipIn = new ZipInputStream(in);
 		ZipEntry entry = zipIn.getNextEntry();
 		String baseStaticFolder = "/import/" + name;
+
 		while (entry != null) {
 			if (gc != null && StringHelper.isImage(entry.getName())) {
 				importZipEntryToDataFolder(gc, entry, zipIn, URLHelper.mergePath(gc.getStaticConfig().getImageFolder(), baseStaticFolder));
 			} else if (entry.getName().equals("content.xml")) {
 				NodeXML root = XMLFactory.getFirstNode(new UnclosableInputStream(zipIn));
-				// Collection<NodeXML> nodes = root.searchChildren("//p|//h|//image");
+				// Collection<NodeXML> nodes =
+				// root.searchChildren("//p|//h|//image");
 				Collection<NodeXML> nodes = root.searchChildren("//*");
 				String title = null;
-				Map<String,String> stylesTree = new HashMap<String, String>();
+				Map<String, String> stylesTree = new HashMap<String, String>();
 				for (NodeXML node : nodes) {
 					if (node.getName().endsWith(":style")) {
 						if (node.getAttributeValue("style:parent-style-name") != null) {
@@ -182,90 +226,97 @@ public class ContentHelper {
 						}
 					}
 				}
+				Collection<NodeXML> nodeDone = new HashSet<NodeXML>();
 				for (NodeXML node : nodes) {
-					String value = StringHelper.removeTag(node.getContent()).trim();
-					ComponentBean bean = null;
-					if (node.getName().endsWith(":a")) {
-						String href = node.getAttributeValue("xlink:href");
-						String label = StringHelper.removeTag(node.getContent()).trim();
-						if (href.contains("youtube.com")) {
-							label = NetHelper.getPageTitle(new URL(href));
-							bean = new ComponentBean(Video.TYPE, StringHelper.writeLines("title=" + label, "link=" + href), lang);
-						} else {
-							bean = new ComponentBean(ExternalLink.TYPE, StringHelper.writeLines("label=" + label, "link=" + href), lang);
-						}
-					}
-					if (value.length() > 0 || node.getName().endsWith(":image") || node.getName().endsWith(":list")) {
-						if (node.getName().endsWith(":h") || "title".equalsIgnoreCase(stylesTree.get(node.getAttributeValue("text:style-name")))) {
-							if (node.getAttributeValue("text:outline-level", "1").equals("1") || "title".equalsIgnoreCase(stylesTree.get(node.getAttributeValue("text:style-name")))) {
-								bean = new ComponentBean(Title.TYPE, value, lang);
-								title = value;
+					if (!nodeDone.contains(node)) {
+						String value = StringHelper.removeTag(node.getContent()).trim();
+						ComponentBean bean = null;
+						if (node.getName().endsWith(":a")) {
+							String href = node.getAttributeValue("xlink:href");
+							String label = StringHelper.removeTag(node.getContent()).trim();
+							if (href.contains("youtube.com")) {
+								label = NetHelper.getPageTitle(new URL(href));
+								bean = new ComponentBean(Video.TYPE, StringHelper.writeLines("title=" + label, "link=" + href), lang);
 							} else {
-								bean = new ComponentBean(SubTitle.TYPE, value, lang);
+								bean = new ComponentBean(ExternalLink.TYPE, StringHelper.writeLines("label=" + label, "link=" + href), lang);
+							}
+							nodeDone.add(node);
+						}
+						if (value.length() > 0 || node.getName().endsWith(":image") || node.getName().endsWith(":list")) {
+							if (node.getName().endsWith(":h") || "title".equalsIgnoreCase(stylesTree.get(node.getAttributeValue("text:style-name")))) {
+								if (node.getAttributeValue("text:outline-level", "1").equals("1") || "title".equalsIgnoreCase(stylesTree.get(node.getAttributeValue("text:style-name")))) {
+									bean = new ComponentBean(Title.TYPE,  getContentODTNode(node, nodeDone), lang);
+									title = value;
+								} else {
+									bean = new ComponentBean(SubTitle.TYPE,  getContentODTNode(node, nodeDone), lang);
+									bean.setStyle(node.getAttributeValue("text:outline-level", "2"));
+								}
+								nodeDone.add(node);
+							}
+
+							if (node.getParent() != null && node.getParent().getAttributeValue("text:style-name", "").equalsIgnoreCase("subtitle")) {
+								bean = new ComponentBean(SubTitle.TYPE,  getContentODTNode(node, nodeDone), lang);
 								bean.setStyle(node.getAttributeValue("text:outline-level", "2"));
+								nodeDone.add(node);
 							}
-						}
-						
-						if (node.getParent() != null && node.getParent().getAttributeValue("text:style-name","").equalsIgnoreCase("subtitle")) {
-							bean = new ComponentBean(SubTitle.TYPE, value, lang);
-							bean.setStyle(node.getAttributeValue("text:outline-level", "2"));						
-						}
 
-						if (bean == null && node.getName().endsWith(":p") && !node.getParent().getName().endsWith(":list-item")) {
-							bean = new ComponentBean(Paragraph.TYPE, value, lang);
-						} else if (node.getName().endsWith(":list")) {
-							NodeXML parent = node.getParent();
-							boolean subList = false;
-							while (parent != null) {
-								if (parent.getName().endsWith(":list")) {
-									subList = true;
-								}
-								parent = parent.getParent();
-							}
-							if (!subList) {
-								ByteArrayOutputStream outStream = new ByteArrayOutputStream();
-								PrintStream out = new PrintStream(outStream);
-								Collection<NodeXML> children = node.getAllChildren();
-								for (NodeXML child : children) {
-									if (child.getContent() != null && child.getContent().trim().length() > 0) {
-										int parentDistance = child.getParentDistance(node);
-										String prefix = "";
-										if (parentDistance > 2) {
-											for (int i = 0; i < (parentDistance - 2) / 2; i++) {
-												prefix = prefix + '-';
-											}
-										}
-
-										out.println(prefix + child.getContent());
+							if (bean == null && node.getName().endsWith(":p") && !node.getParent().getName().endsWith(":list-item")) {								
+								bean = new ComponentBean(Paragraph.TYPE, getContentODTNode(node, nodeDone), lang);
+								nodeDone.add(node);
+							} else if (node.getName().endsWith(":list")) {
+								NodeXML parent = node.getParent();
+								boolean subList = false;
+								while (parent != null) {
+									if (parent.getName().endsWith(":list")) {
+										subList = true;
 									}
+									parent = parent.getParent();
 								}
-								out.close();
-								value = new String(outStream.toByteArray());
-								bean = new ComponentBean(FreeTextList.TYPE, value, lang);
-							}
-						} else if (node.getName().endsWith(":image")) {
-							if (node.getAttributeValue("xlink:href") != null) {
-								ByteArrayOutputStream outStream = new ByteArrayOutputStream();
-								PrintStream out = new PrintStream(outStream);
-								File file = new File(node.getAttributeValue("xlink:href"));
-								String folder = "";
-								if (file.getParentFile() != null) {
-									folder = file.getParentFile().getPath();
+								if (!subList) {
+									ByteArrayOutputStream outStream = new ByteArrayOutputStream();
+									PrintStream out = new PrintStream(outStream);									
+									for (NodeXML child : node.getAllChildren()) {
+										if (child.getName().endsWith(":list-item")) {
+											int parentDistance = child.getParentDistance(node);
+											String prefix = "";
+											if (parentDistance > 2) {
+												for (int i = 0; i < (parentDistance - 2) / 2; i++) {
+													prefix = prefix + '-';
+												}
+											}
+											out.println(prefix +  getContentODTNode(child, nodeDone));
+											nodeDone.add(child);
+										}
+									}
+									out.close();
+									value = new String(outStream.toByteArray());
+									bean = new ComponentBean(FreeTextList.TYPE, value, lang);
 								}
-								out.println("dir=" + URLHelper.mergePath(baseStaticFolder, folder));
-								out.println("file-name=" + file.getName());
-								out.println(GlobalImage.IMAGE_FILTER + "=full");
-								if (title != null) {
-									out.println("label=" + title);
+							} else if (node.getName().endsWith(":image")) {
+								if (node.getAttributeValue("xlink:href") != null) {
+									ByteArrayOutputStream outStream = new ByteArrayOutputStream();
+									PrintStream out = new PrintStream(outStream);
+									File file = new File(node.getAttributeValue("xlink:href"));
+									String folder = "";
+									if (file.getParentFile() != null) {
+										folder = file.getParentFile().getPath();
+									}
+									out.println("dir=" + URLHelper.mergePath(baseStaticFolder, folder));
+									out.println("file-name=" + file.getName());
+									out.println(GlobalImage.IMAGE_FILTER + "=full");
+									if (title != null) {
+										out.println("label=" + title);
+									}
+									out.close();
+									value = new String(outStream.toByteArray());
+									bean = new ComponentBean(GlobalImage.TYPE, value, lang);
+									nodeDone.add(node);
 								}
-								out.close();
-								value = new String(outStream.toByteArray());
-								bean = new ComponentBean(GlobalImage.TYPE, value, lang);
 							}
 						}
-					}
-					if (bean != null) {
-						outBeans.add(bean);
+						if (bean != null) {
+							outBeans.add(bean);
+						}
 					}
 				}
 			}
@@ -275,8 +326,6 @@ public class ContentHelper {
 
 		return outBeans;
 	}
-	
-	
 
 	private static Locale getLocalBySuffix(String name) {
 		if (name.contains("_")) {
@@ -299,7 +348,9 @@ public class ContentHelper {
 	public static String importJCRFile(ContentContext ctx, InputStream in, String name, MenuElement page, String titleXPath, String dateXPath, String dateFormat, String contentXPath, String pageRootXPath, boolean explodeHTML) throws ZipException, IOException {
 		ZipInputStream zipIn = new ZipInputStream(in);
 		/*
-		 * Enumeration<? extends ZipEntry> entries = zipIn.getNextEntry(); String pageName = StringHelper.getFileNameWithoutExtension(zip.getName());
+		 * Enumeration<? extends ZipEntry> entries = zipIn.getNextEntry();
+		 * String pageName =
+		 * StringHelper.getFileNameWithoutExtension(zip.getName());
 		 */
 		GlobalContext gc = GlobalContext.getInstance(ctx.getRequest());
 		String pageName = StringHelper.createFileName(StringHelper.getFileNameWithoutExtension(name));

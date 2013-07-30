@@ -36,7 +36,7 @@ body.preview-only {
 }
 
 .fix-preview #preview_command input[type="text"] {
- 	width:250px;
+ 	width:242px;
  	display: block;
 }
 
@@ -171,7 +171,7 @@ body.preview-only {
 }
 
 .fix-preview #preview_command .add-page input[type="text"] {
-	width: 210px;
+	width: 204px;
 	text-transform: none;
 }
 

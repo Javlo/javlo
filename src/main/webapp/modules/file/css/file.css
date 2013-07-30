@@ -36,3 +36,15 @@
 .elfinder-cwd-icon-jsp {
 	background-position: 0 -550px;
 }
+
+
+.form-list .title span.delete {
+	float: right;
+	color: #333333;
+	background-image: none;
+	padding: 6px;
+}
+
+.form-list .title span.size {
+	padding: 6px 0 6px 6px;
+}

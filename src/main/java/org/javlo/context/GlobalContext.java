@@ -2735,4 +2735,21 @@ public class GlobalContext implements Serializable {
 		}
 		save();
 	}
+	
+	/**
+	 * mode of the edit template, can be used in template renderer for include special css or js.
+	 * preview css is : edit_preview_[mode].css
+	 * @return
+	 */
+	public String getEditTemplateMode() {
+		return properties.getString("edit-template.mode", staticConfig.getEditTemplateMode());	
+	}
+	
+	public void setEditTemplateMode(String mode) {
+		synchronized (properties) {
+			properties.setProperty("edit-template.mode", mode);
+			save();
+		}
+	}
+
 }

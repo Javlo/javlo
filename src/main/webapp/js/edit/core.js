@@ -206,12 +206,14 @@ function closableFieldSet(items) {
 		jQuery(this).find(".closable_action").each(function(){
 			jQuery(this).click(function() {
 				clickFieldSet(this, jQuery(this).parent());
+				return false;
 			});
 		});
 		jQuery(this).find("legend").wrapInner('<a href="#"/>');
 		jQuery(this).find("legend a").each(function(){
 			jQuery(this).click(function() {
 				clickFieldSet(jQuery(this).parent().parent().find(".closable_action"), jQuery(this).parent().parent());
+				return false;
 			});
 		});		
 	});
