@@ -286,16 +286,16 @@ public abstract class AbstractVisualComponent implements IContentVisualComponent
 	}
 
 	@Override
-	public ComponentConfig getConfig(ContentContext ctx) {
+	public ComponentConfig getConfig(ContentContext ctx) {		
 		if (config != null) {
 			return config;
 		}
-		if ((ctx == null) || (ctx.getRequest() == null) || ((ctx.getRequest().getSession() == null))) {
+		if ((ctx == null) || (ctx.getRequest() == null) || ((ctx.getRequest().getSession() == null))) {			
 			return ComponentConfig.getInstance();
 		}
 
 		ComponentConfig outConfig = ComponentConfig.getInstance(ctx, getType());
-		if (ctx.isAsViewMode() && outConfig != ComponentConfig.EMPTY_INSTANCE) {
+		if (ctx.isAsViewMode() && outConfig != ComponentConfig.EMPTY_INSTANCE) {			
 			config = outConfig;
 		}
 		return outConfig;
@@ -377,6 +377,9 @@ public abstract class AbstractVisualComponent implements IContentVisualComponent
 		}
 	}
 
+	/**
+	 * get current renderer key
+	 */
 	@Override
 	public String getCurrentRenderer(ContentContext ctx) {
 		if (componentBean.getRenderer() == null && getRenderes(ctx).size() > 0) {
@@ -787,22 +790,25 @@ public abstract class AbstractVisualComponent implements IContentVisualComponent
 		return getConfig(ctx).getRenderes();
 	}
 
+	/**
+	 * get current renderer file.
+	 */
 	@Override
 	public String getRenderer(ContentContext ctx) {
 		String renderer;
-		String currentRenderer = getCurrentRenderer(ctx);
+		String currentRenderer = getCurrentRenderer(ctx);		
 		Map<String, String> renderers = getRenderes(ctx);
-		if (renderers == null || renderers.size() == 0) {
+		if (renderers == null || renderers.size() == 0 && currentRenderer == null) {			
 			renderer = getDefaultRenderer(ctx);
-		} else if (renderers.size() == 1 || currentRenderer == null) {
+		} else if (renderers.size() == 1 || currentRenderer == null) {			
 			renderer = renderers.values().iterator().next();
 		} else {
 			renderer = renderers.get(currentRenderer+ '.' + ctx.getArea());
 			if (renderer == null) {
-				renderer = renderers.get(currentRenderer);
+				renderer = renderers.get(currentRenderer);				
 			}
 			if (renderer == null) {
-				renderer = renderers.values().iterator().next();
+				renderer = renderers.values().iterator().next();				
 			}
 		}
 		try {
@@ -1313,6 +1319,7 @@ public abstract class AbstractVisualComponent implements IContentVisualComponent
 	protected void init() throws ResourceNotFoundException {
 		// loadViewData();
 		msg = null;
+		config = null;
 	}
 
 	protected void init(ComponentBean bean, ContentContext ctx) throws Exception {
