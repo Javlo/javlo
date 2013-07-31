@@ -396,6 +396,7 @@ public class ContentContext {
 		scheduledAjaxInsideZone = ctx.scheduledAjaxInsideZone;
 		
 		currentPageCached = ctx.currentPageCached;
+		currentTemplate = ctx.currentTemplate;
 		
 		editPreview = ctx.editPreview;
 	}
@@ -1253,6 +1254,27 @@ public class ContentContext {
 	 */
 	public void setFormat(String format) {
 		this.format = format;
+	}
+	
+	/**
+	 * set the current template with id.
+	 * @param templateId
+	 * @return false if template not found else true
+	 */
+	public boolean setCurrentTemplateId(String templateId) {
+		Template template;
+		try {
+			template = TemplateFactory.getDiskTemplates(request.getSession().getServletContext()).get(templateId);
+		} catch (IOException e) {
+			e.printStackTrace();
+			return false;
+		}
+		if (template == null) {
+			return false;
+		} else {
+			setCurrentTemplate(template);
+			return true;
+		}
 	}
 
 	public void setCurrentTemplate(Template template) {

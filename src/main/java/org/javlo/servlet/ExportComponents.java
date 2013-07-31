@@ -23,6 +23,7 @@ import org.javlo.helper.ResourceHelper;
 import org.javlo.helper.StringHelper;
 import org.javlo.service.ContentService;
 import org.javlo.service.RequestService;
+import org.javlo.template.TemplateFactory;
 import org.javlo.utils.CSVFactory;
 
 public class ExportComponents extends HttpServlet {
@@ -57,6 +58,8 @@ public class ExportComponents extends HttpServlet {
 					String compId = StringHelper.getFileNameWithoutExtension(StringHelper.getFileNameFromPath(request.getRequestURI()));
 					ContentService content = ContentService.getInstance(ctx.getRequest());
 					IContentVisualComponent comp = content.getComponent(ctx, compId);
+					ctx.setFree(false);
+					comp.initContent(ctx);
 					String xhtml = comp.getXHTMLCode(ctx);
 					ResourceHelper.writeStringToStream(xhtml, response.getOutputStream());
 				} else {
