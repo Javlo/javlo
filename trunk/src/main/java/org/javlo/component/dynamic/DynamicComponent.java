@@ -696,10 +696,8 @@ public class DynamicComponent extends AbstractVisualComponent implements IStatic
 	@Override
 	public boolean initContent(ContentContext ctx) throws Exception {
 		reloadProperties();
-		boolean outInit = false;
-		System.out.println("***** DynamicComponent.initContent : size = "+getFields(ctx).size()); //TODO: remove debug trace
-		for (Field field : getFields(ctx)) {
-			System.out.println("***** DynamicComponent.initContent : field = "+field.getName()); //TODO: remove debug trace
+		boolean outInit = false;		
+		for (Field field : getFields(ctx)) {			
 			if (field.initContent(ctx)) {
 				outInit = true;
 			}
