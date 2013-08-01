@@ -17,7 +17,8 @@ import org.javlo.service.ContentService;
 import org.javlo.service.PersistenceService;
 
 /**
- * merge component meta data defined in the template and meta data define in content (only meta data, don't touch to data)
+ * merge component meta data defined in the template and meta data define in
+ * content (only meta data, don't touch to data)
  * 
  * @author pvandermaesen
  * 
@@ -55,12 +56,16 @@ public class MergeDynamicComponent extends AbstractMacro {
 						Properties compProp = dynComp.getProperties();
 						Properties newProp = newComp.getProperties();
 						Enumeration<Object> keys = newProp.keys();
-						while (keys.hasMoreElements()) {
-							String key = (String) keys.nextElement();
-							if (compProp != null && compProp.get(key) != null) {
-								compProp.remove(key);
-								compProp.put(key, newProp.get(key));
-								dynComp.setModify();
+						if (compProp != null) {
+							while (keys.hasMoreElements()) {
+								String key = (String) keys.nextElement();
+								if (compProp.get(key) != null) {
+									compProp.remove(key);
+									compProp.put(key, newProp.get(key));
+									dynComp.setModify();
+								} else if (!key.endsWith(".value")){
+									compProp.put(key, newProp.get(key));
+								}
 							}
 						}
 						dynComp.storeProperties();
