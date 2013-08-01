@@ -18,6 +18,10 @@ import org.javlo.utils.SuffixPrefix;
 public class WysiwygParagraph extends AbstractVisualComponent {
 
 	public static final String TYPE = "wysiwyg-paragraph";
+	
+	private String getEditorComplexity(ContentContext ctx) {
+		return getConfig(ctx).getProperty("complexity", "light");
+	}
 
 	@Override
 	protected String getEditXHTMLCode(ContentContext ctx) throws Exception {
@@ -28,7 +32,7 @@ public class WysiwygParagraph extends AbstractVisualComponent {
 		finalCode.append(" rows=\"" + 30 + "\">");
 		finalCode.append(getValue());
 		finalCode.append("</textarea>");
-		finalCode.append("<script type=\"text/javascript\">jQuery(document).ready(loadWysiwyg('#" + getContentName() + "'));</script>");
+		finalCode.append("<script type=\"text/javascript\">jQuery(document).ready(loadWysiwyg('#" + getContentName() + "','"+getEditorComplexity(ctx)+"'));</script>");
 		return finalCode.toString();
 	}
 
