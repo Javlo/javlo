@@ -7,15 +7,45 @@ jQuery(document).ready(function(){
 	jQuery(".readonly input, .readonly textarea, .readonly select").attr("readonly", "readonly");
 });
 
-function loadWysiwyg(cssQuery) {
-	tinyMCE.init({
-	mode : "specific_textareas",
-	theme : "modern",
-	add_form_submit_trigger: true,	
-	menubar : false,
-	selector: cssQuery,
-	toolbar: "undo redo | bold italic | alignleft aligncenter alignright alignjustify | bullist numlist outdent indent"
-	});	 
+function loadWysiwyg(cssQuery, complexity) {	
+	if (complexity == "middle") {
+		tinymce.init({
+		    selector: cssQuery,
+		    plugins: [
+		        "advlist autolink lists link image charmap print preview anchor",
+		        "searchreplace visualblocks code fullscreen",
+		        "insertdatetime media table contextmenu paste"
+		    ],
+		    toolbar: "insertfile undo redo | styleselect | bold italic | alignleft aligncenter alignright alignjustify | bullist numlist outdent indent | link image"
+		});
+	} else if (complexity == "high") {		
+		tinymce.init({
+		    selector: cssQuery,
+		    theme: "modern",
+		    plugins: [
+		        "advlist autolink lists link image charmap print preview hr anchor pagebreak",
+		        "searchreplace wordcount visualblocks visualchars code fullscreen",
+		        "insertdatetime media nonbreaking save table contextmenu directionality",
+		        "emoticons template paste textcolor"
+		    ],
+		    toolbar1: "insertfile undo redo | styleselect | bold italic | alignleft aligncenter alignright alignjustify | bullist numlist outdent indent | link image",
+		    toolbar2: "print preview media | forecolor backcolor emoticons",
+		    image_advtab: true,
+		    templates: [
+		        {title: 'Test template 1', content: 'Test 1'},
+		        {title: 'Test template 2', content: 'Test 2'}
+		    ]
+		});	
+	} else {
+		tinyMCE.init({
+		mode : "specific_textareas",
+		theme : "modern",
+		add_form_submit_trigger: true,	
+		menubar : false,
+		selector: cssQuery,
+		toolbar: "undo redo | bold italic | alignleft aligncenter alignright alignjustify | bullist numlist outdent indent"
+		});	 
+	}
 }
 
 function clipboardCopy(text) {
