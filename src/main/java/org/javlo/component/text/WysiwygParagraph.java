@@ -65,8 +65,35 @@ public class WysiwygParagraph extends AbstractVisualComponent {
 		return true;
 	}
 	
+	@Override
+	public String getPrefixViewXHTMLCode(ContentContext ctx) {
+		if (ctx.isAsViewMode() && getValue().contains("</p>")) {
+			return "";
+		} else {
+			return super.getPrefixViewXHTMLCode(ctx);
+		}
+	}
+	
+	@Override
+	public String getSuffixViewXHTMLCode(ContentContext ctx) {
+		if (ctx.isAsViewMode() && getValue().contains("</p>")) {
+			return "";
+		} else {
+			return super.getSuffixViewXHTMLCode(ctx);
+		}
+	}
+	
 	protected String getTag(ContentContext ctx) {
-		return getConfig(ctx).getProperty("tag", "p");
+		String defaultTag = "p";
+		if (getValue().contains("</p>")) {
+			defaultTag = "div";
+		}
+		return getConfig(ctx).getProperty("tag", defaultTag);
+	}
+	
+	@Override
+	public boolean isContentCachable(ContentContext ctx) {	
+		return true;
 	}
 
 }
