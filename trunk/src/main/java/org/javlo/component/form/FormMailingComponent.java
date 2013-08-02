@@ -42,7 +42,8 @@ import org.javlo.user.exception.UserAllreadyExistException;
 /**
  * This class is use for register a user :</h4>
  * <ul>
- * <li>{@link Boolean} name : true if contributor need first name and laste name</li>
+ * <li>{@link Boolean} name : true if contributor need first name and laste name
+ * </li>
  * </ul>
  * 
  * @author Patrick Vandermaesen
@@ -64,7 +65,7 @@ public class FormMailingComponent extends AbstractVisualComponent implements IAc
 	public String getType() {
 		return "form-mailing";
 	}
-	
+
 	public String _getViewXHTMLCode(ContentContext ctx) throws Exception {
 		ctx.getRequest().setAttribute("comp", this);
 		needForm = true;
@@ -73,7 +74,8 @@ public class FormMailingComponent extends AbstractVisualComponent implements IAc
 
 	/**
 	 * 
-	 * @see org.javlo.component.AbstractVisualComponent#init(java.lang.String, java.lang.String, org.javlo.ContentContext)
+	 * @see org.javlo.component.AbstractVisualComponent#init(java.lang.String,
+	 *      java.lang.String, org.javlo.ContentContext)
 	 */
 	@Override
 	protected void init(ComponentBean bean, ContentContext ctx) throws Exception {
@@ -196,8 +198,8 @@ public class FormMailingComponent extends AbstractVisualComponent implements IAc
 		out.println("<label for=\"" + getInputConfirmEmailName() + "\">");
 		out.print(i18n.getText("content.form-mailing.confirm-email"));
 		out.println("</label>");
-		out.println("<textarea id=\"" + getInputConfirmEmailName() + "\" name=\"" + getInputConfirmEmailName() + "\">");
-		out.println(StringHelper.neverEmpty(getConfirmEmail(), ""));
+		out.println("<textarea id=\"" + getInputConfirmEmailName() + "\" rows=\"6\" cols=\"60\" name=\"" + getInputConfirmEmailName() + "\">");
+		out.println(StringHelper.escapeHTML(StringHelper.neverEmpty(getConfirmEmail(), "")));
 		out.println("</textarea>");
 		out.println("</div>");
 
@@ -286,14 +288,22 @@ public class FormMailingComponent extends AbstractVisualComponent implements IAc
 			urlParam.append("&" + COMP_ID_REQUEST_PARAM + '=' + compId);
 			urlParam.append("&direct=d");
 			StaticConfig staticConfig = StaticConfig.getInstance(ctx.getRequest().getSession().getServletContext());
-			// String encodedParam = StringHelper.encodeBase64ToURLParam(StringSecurityUtil.encode(urlParam.toString(), staticConfig.getSecretKey()));
+			// String encodedParam =
+			// StringHelper.encodeBase64ToURLParam(StringSecurityUtil.encode(urlParam.toString(),
+			// staticConfig.getSecretKey()));
 			String encodedParam = StringSecurityUtil.encode(urlParam.toString(), staticConfig.getSecretKey());
 			ContentContext absURLCtx = new ContentContext(ctx);
 			absURLCtx.setAbsoluteURL(true);
 			String registerURL = URLHelper.createURL(absURLCtx) + '?' + RequestHelper.CRYPTED_PARAM_NAME + "=" + encodedParam + "#reg_" + comp.getId();
-			confirmEmail = confirmEmail.replace("##URL##", registerURL);
-			confirmEmail = confirmEmail.replace("##firstname##", firstName);
-			confirmEmail = confirmEmail.replace("##lastname##", lastName);
+			if (registerURL != null) {
+				confirmEmail = confirmEmail.replace("##URL##", registerURL);
+			}
+			if (firstName != null) {
+				confirmEmail = confirmEmail.replace("##firstname##", firstName);
+			}
+			if (lastName != null) {
+				confirmEmail = confirmEmail.replace("##lastname##", lastName);
+			}
 
 			// DEBUG = FileUtils.writeStringToFile(new File ("/tmp/mail.html"),
 			// confirmEmail);
@@ -306,7 +316,10 @@ public class FormMailingComponent extends AbstractVisualComponent implements IAc
 
 			comp.needForm = false;
 
-		} else if (comp.getConfirmEmail() == null || request.getAttribute(StringSecurityUtil.REQUEST_ATT_FOR_SECURITY_FORWARD) != null) { // only from crypted param
+		} else if (comp.getConfirmEmail() == null || request.getAttribute(StringSecurityUtil.REQUEST_ATT_FOR_SECURITY_FORWARD) != null) { // only
+																																			// from
+																																			// crypted
+																																			// param
 			if (!PatternHelper.MAIL_PATTERN.matcher(email).matches()) {
 				GenericMessage msg = new GenericMessage(i18nAccess.getContentViewText("mailing.error.email"), GenericMessage.ERROR);
 				messageRepository.setGlobalMessage(msg);
@@ -364,7 +377,9 @@ public class FormMailingComponent extends AbstractVisualComponent implements IAc
 				return "";
 			}
 			/*
-			 * if (fact.getCurrentUser() == null) { fact.login(GlobalContext.getInstance(request), userInfo.getLogin(), userInfo.getPassword()); }
+			 * if (fact.getCurrentUser() == null) {
+			 * fact.login(GlobalContext.getInstance(request),
+			 * userInfo.getLogin(), userInfo.getPassword()); }
 			 */
 
 		}
