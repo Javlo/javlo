@@ -19,8 +19,8 @@ import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 
-import org.apache.commons.lang.StringUtils;
 import org.javlo.context.ContentContext;
+import org.javlo.helper.NetHelper;
 import org.javlo.test.javlo.TestGlobalContext;
 import org.javlo.utils.IteratorAsEnumeration;
 
@@ -34,10 +34,9 @@ public class TestRequest implements HttpServletRequest {
 	public TestRequest(HttpSession inSession, String inURL) throws MalformedURLException {
 		url = new URL(inURL);
 		String q = url.getQuery();
-		for (String param : StringUtils.split(q, '&')) {
-			String[] splittedParam = StringUtils.split(q, '=');
-			parameters.put(splittedParam[0], splittedParam[1]);
-		}
+		
+		parameters.putAll(NetHelper.getParams(url));
+		
 		session = inSession;
 	}
 

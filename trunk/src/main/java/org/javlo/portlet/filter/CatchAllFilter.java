@@ -1,6 +1,7 @@
 package org.javlo.portlet.filter;
 
 import java.io.IOException;
+import java.net.URL;
 import java.security.Principal;
 import java.util.Collection;
 import java.util.Map;
@@ -64,7 +65,6 @@ public class CatchAllFilter implements Filter {
 
 	@Override
 	public void doFilter(ServletRequest request, ServletResponse response, FilterChain next) throws IOException, ServletException {
-
 		logger.fine("start catch all servelt.");
 
 		HttpServletRequest httpRequest = (HttpServletRequest) request;
@@ -113,7 +113,8 @@ public class CatchAllFilter implements Filter {
 						}
 						newURI = URLHelper.addParam(newURI, "__check_context", "false");
 
-						// newURI = ((HttpServletResponse) response).encodeURL(newURI);
+						// newURI = ((HttpServletResponse)
+						// response).encodeURL(newURI);
 
 						forwardURI = newURI;
 					}
@@ -121,7 +122,8 @@ public class CatchAllFilter implements Filter {
 					globalContext = GlobalContext.getInstance(httpRequest);
 				}
 			}
-			if (globalContext == null) { // if no context found search a host context.
+			if (globalContext == null) { // if no context found search a host
+											// context.
 				if (StringHelper.isTrue(requestService.getParameter("__check_context", "false"))) {
 					globalContext = GlobalContext.getInstance(httpRequest);
 				}
@@ -172,13 +174,13 @@ public class CatchAllFilter implements Filter {
 
 		if (editURI.startsWith("/edit-") || editURI.startsWith("/ajax-") || editURI.startsWith("/preview-edit")) {
 			boolean editPreview = false;
-			if (editURI.startsWith("/preview-edit") ) {
+			if (editURI.startsWith("/preview-edit")) {
 				editPreview = true;
-				editURI = editURI.replaceFirst("/preview-", "/");				
+				editURI = editURI.replaceFirst("/preview-", "/");
 				if (newUser) {
-					try {						
+					try {
 						ContentContext ctx = ContentContext.getContentContext(httpRequest, (HttpServletResponse) response);
-						ctx.setClosePopup(true);						
+						ctx.setClosePopup(true);
 					} catch (Exception e) {
 						e.printStackTrace();
 					}
@@ -228,134 +230,150 @@ public class CatchAllFilter implements Filter {
 				String cryptedData = request.getParameter(RequestHelper.CRYPTED_PARAM_NAME);
 				String decryptedData = StringSecurityUtil.decode(cryptedData, staticConfig.getSecretKey());
 				request.setAttribute(StringSecurityUtil.REQUEST_ATT_FOR_SECURITY_FORWARD, "true");
-				String url = ((HttpServletRequest) request).getRequestURI();
+				String url = httpRequest.getRequestURL().toString();
 				if (request.getAttribute(MailingAction.MAILING_FEEDBACK_PARAM_NAME) != null) {
 					url = URLHelper.addParam(url, MailingAction.MAILING_FEEDBACK_PARAM_NAME, "" + request.getAttribute(MailingAction.MAILING_FEEDBACK_PARAM_NAME));
 				}
-				httpRequest.getRequestDispatcher(url + decryptedData).forward(httpRequest, response);
-				return;
+
+				URL newURL = new URL(url + decryptedData);
+				for (Map.Entry<String, String> entry : NetHelper.getParams(newURL).entrySet()) {
+					requestService.putParameter(entry.getKey(), entry.getValue());
+				}
+
+				// httpRequest.getRequestDispatcher(url +
+				// decryptedData).forward(request, response);
+				// return;
 			} catch (Exception e) {
 				e.printStackTrace();
 			}
-		} else {
+		}
 
-			/******************/
-			/**** SHORT URL ***/
-			/******************/
+		/******************/
+		/**** SHORT URL ***/
+		/******************/
 
-			String shortURI = uri;
-			if (shortURI.startsWith('/' + globalContext.getContextKey())) {
-				if (shortURI.length() > globalContext.getContextKey().length() + 2) {
-					shortURI = shortURI.substring(globalContext.getContextKey().length() + 2);
-				} else {
-					shortURI = "";
+		String shortURI = uri;
+		if (shortURI.startsWith('/' + globalContext.getContextKey())) {
+			if (shortURI.length() > globalContext.getContextKey().length() + 2) {
+				shortURI = shortURI.substring(globalContext.getContextKey().length() + 2);
+			} else {
+				shortURI = "";
+			}
+		}
+
+		if (shortURI.length() == globalContext.getStaticConfig().getShortURLSize() + 1 && shortURI.startsWith("U")) {
+			ContentContext ctx = null;
+			try {
+				ctx = ContentContext.getContentContext((HttpServletRequest) request, (HttpServletResponse) response);
+				if (ctx.isAsViewMode()) {
+					ContentService content = ContentService.getInstance(globalContext);
+					MenuElement page = content.getPageWithShortURL(ctx, shortURI);
+					if (page != null) {
+						String newURL = URLHelper.createURLWithtoutEncodeURL(ctx, page.getPath());
+						NetHelper.sendRedirectPermanently((HttpServletResponse) response, newURL);
+						return;
+					}
+
 				}
+			} catch (Exception e1) {
+				e1.printStackTrace();
 			}
 
-			if (shortURI.length() == globalContext.getStaticConfig().getShortURLSize() + 1 && shortURI.startsWith("U")) {
-				ContentContext ctx = null;
-				try {
-					ctx = ContentContext.getContentContext((HttpServletRequest) request, (HttpServletResponse) response);
-					if (ctx.isAsViewMode()) {
-						ContentService content = ContentService.getInstance(globalContext);
-						MenuElement page = content.getPageWithShortURL(ctx, shortURI);
-						if (page != null) {
-							String newURL = URLHelper.createURLWithtoutEncodeURL(ctx, page.getPath());
+		}
+
+		globalContext = GlobalContext.getInstance(httpRequest);
+
+		if (!ContentManager.isEdit(httpRequest, !hostDefineSite) && !ContentManager.isPreview(httpRequest, !hostDefineSite)) {
+			Map<String, String> uriAlias = globalContext.getURIAlias();
+			Collection<Map.Entry<String, String>> entries = uriAlias.entrySet();
+			for (Map.Entry<String, String> entry : entries) {
+				String cmsURI = uri;
+				if (ContentContext.getPathPrefix((HttpServletRequest) request) != null && ContentContext.getPathPrefix((HttpServletRequest) request).length() > 0) {
+					cmsURI = cmsURI.replaceFirst("/" + ContentContext.getPathPrefix((HttpServletRequest) request), "");
+				}
+				if (cmsURI.length() > 1) {
+					String pattern1 = entry.getKey();
+					String pattern2 = entry.getValue();
+					if (!pattern1.contains("*")) {
+						if (cmsURI.equals(pattern1)) {
+							pattern2 = URLHelper.mergePath("/", ContentContext.getPathPrefix((HttpServletRequest) request), pattern2);
+							NetHelper.sendRedirectPermanently((HttpServletResponse) response, pattern2);
+							return;
+						}
+					} else {
+						String newURL = StringHelper.convertString(pattern1, pattern2, cmsURI);
+						if (!newURL.equals(cmsURI)) {
+							newURL = URLHelper.mergePath("/", ContentContext.getPathPrefix((HttpServletRequest) request), newURL);
 							NetHelper.sendRedirectPermanently((HttpServletResponse) response, newURL);
 							return;
 						}
-
-					}
-				} catch (Exception e1) {
-					e1.printStackTrace();
-				}
-
-			}
-
-			globalContext = GlobalContext.getInstance(httpRequest);
-
-			if (!ContentManager.isEdit(httpRequest, !hostDefineSite) && !ContentManager.isPreview(httpRequest, !hostDefineSite)) {
-				Map<String, String> uriAlias = globalContext.getURIAlias();
-				Collection<Map.Entry<String, String>> entries = uriAlias.entrySet();
-				for (Map.Entry<String, String> entry : entries) {
-					String cmsURI = uri;
-					if (ContentContext.getPathPrefix((HttpServletRequest) request) != null && ContentContext.getPathPrefix((HttpServletRequest) request).length() > 0) {
-						cmsURI = cmsURI.replaceFirst("/" + ContentContext.getPathPrefix((HttpServletRequest) request), "");
-					}
-					if (cmsURI.length() > 1) {
-						String pattern1 = entry.getKey();
-						String pattern2 = entry.getValue();
-						if (!pattern1.contains("*")) {
-							if (cmsURI.equals(pattern1)) {
-								pattern2 = URLHelper.mergePath("/", ContentContext.getPathPrefix((HttpServletRequest) request), pattern2);
-								NetHelper.sendRedirectPermanently((HttpServletResponse) response, pattern2);
-								return;
-							}
-						} else {
-							String newURL = StringHelper.convertString(pattern1, pattern2, cmsURI);
-							if (!newURL.equals(cmsURI)) {
-								newURL = URLHelper.mergePath("/", ContentContext.getPathPrefix((HttpServletRequest) request), newURL);
-								NetHelper.sendRedirectPermanently((HttpServletResponse) response, newURL);
-								return;
-							}
-						}
 					}
 				}
 			}
+		}
 
-			/******************/
-			/**** ADD VIEW ****/
-			/******************/
+		/******************/
+		/**** ADD VIEW ****/
+		/******************/
 
-			if (!staticConfig.isViewPrefix()) {
-				String viewURI = uri;
-				if (forwardURI != null) {
-					viewURI = forwardURI;
-				}
-				if (viewURI.length() > 2) {
-					char sep = '/';
-					if (viewURI.length() > 3) {
-						sep = viewURI.charAt(3);
-					}
-					if (sep == '/' || sep == '-' || sep == '?' || viewURI.length() == 3) {
-						String lg = viewURI.substring(1, 3).toLowerCase();
-						if (globalContext.getContentLanguages().contains(lg)) {
-							String newPath = "/view" + viewURI;
-							if (httpRequest.getSession().isNew() || StringHelper.isTrue(request.getParameter(InfoBean.NEW_SESSION_PARAM))) {
-								newPath = URLHelper.addParam(newPath, InfoBean.NEW_SESSION_PARAM, "true");
-							}
-							httpRequest.getRequestDispatcher(newPath).forward(httpRequest, response);
-							return;
-						}
-					}
-				}
-			}
-
-			/*
-			 * try {
-			 * 
-			 * if (request.getParameter("webaction") != null && request.getParameter("webaction").equals("view.language")) { String lang = request.getParameter("lg"); if (lang != null) { ContentContext ctx = ContentContext.getContentContext((HttpServletRequest) request, (HttpServletResponse) response); if (globalContext.getLanguages().contains(lang)) { ctx.setAllLanguage(lang); ctx.setCookieLanguage(lang); } String newURL = URLHelper.createURL(ctx); System.out.println("***** CatchAllFilter.doFilter : newURL = " + newURL); // TODO: remove debug trace NetHelper.sendRedirectTemporarily((HttpServletResponse) response, newURL); return; } }
-			 * 
-			 * initElements(request, response);
-			 * 
-			 * } catch (Exception e) { e.printStackTrace(); }
-			 */
-
-			if (httpRequest.getUserPrincipal() != null) {
-				logger.fine("principal user found : " + httpRequest.getUserPrincipal());
-				globalContext.addPrincipal(new UserPrincipal(httpRequest.getUserPrincipal()));
-			}
-
+		if (!staticConfig.isViewPrefix()) {
+			String viewURI = uri;
 			if (forwardURI != null) {
-
-				if (httpRequest.getSession().isNew() || StringHelper.isTrue(request.getParameter(InfoBean.NEW_SESSION_PARAM))) {
-					forwardURI = URLHelper.addParam(forwardURI, InfoBean.NEW_SESSION_PARAM, "true");
-				}
-				httpRequest.getRequestDispatcher(forwardURI).forward(httpRequest, response);
-			} else {
-				next.doFilter(httpRequest, response);
+				viewURI = forwardURI;
 			}
+			if (viewURI.length() > 2) {
+				char sep = '/';
+				if (viewURI.length() > 3) {
+					sep = viewURI.charAt(3);
+				}
+				if (sep == '/' || sep == '-' || sep == '?' || viewURI.length() == 3) {
+					String lg = viewURI.substring(1, 3).toLowerCase();
+					if (globalContext.getContentLanguages().contains(lg)) {
+						String newPath = "/view" + viewURI;
+						if (httpRequest.getSession().isNew() || StringHelper.isTrue(request.getParameter(InfoBean.NEW_SESSION_PARAM))) {
+							newPath = URLHelper.addParam(newPath, InfoBean.NEW_SESSION_PARAM, "true");
+						}
+						httpRequest.getRequestDispatcher(newPath).forward(httpRequest, response);
+						return;
+					}
+				}
+			}
+		}
 
+		/*
+		 * try {
+		 * 
+		 * if (request.getParameter("webaction") != null &&
+		 * request.getParameter("webaction").equals("view.language")) { String
+		 * lang = request.getParameter("lg"); if (lang != null) { ContentContext
+		 * ctx = ContentContext.getContentContext((HttpServletRequest) request,
+		 * (HttpServletResponse) response); if
+		 * (globalContext.getLanguages().contains(lang)) {
+		 * ctx.setAllLanguage(lang); ctx.setCookieLanguage(lang); } String
+		 * newURL = URLHelper.createURL(ctx);
+		 * System.out.println("***** CatchAllFilter.doFilter : newURL = " +
+		 * newURL); // TODO: remove debug trace
+		 * NetHelper.sendRedirectTemporarily((HttpServletResponse) response,
+		 * newURL); return; } }
+		 * 
+		 * initElements(request, response);
+		 * 
+		 * } catch (Exception e) { e.printStackTrace(); }
+		 */
+
+		if (httpRequest.getUserPrincipal() != null) {
+			logger.fine("principal user found : " + httpRequest.getUserPrincipal());
+			globalContext.addPrincipal(new UserPrincipal(httpRequest.getUserPrincipal()));
+		}
+
+		if (forwardURI != null) {
+
+			if (httpRequest.getSession().isNew() || StringHelper.isTrue(request.getParameter(InfoBean.NEW_SESSION_PARAM))) {
+				forwardURI = URLHelper.addParam(forwardURI, InfoBean.NEW_SESSION_PARAM, "true");
+			}
+			httpRequest.getRequestDispatcher(forwardURI).forward(httpRequest, response);
+		} else {
+			next.doFilter(httpRequest, response);
 		}
 	}
 

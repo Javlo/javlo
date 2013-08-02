@@ -32,7 +32,7 @@ public class RequestService {
 	private HttpServletRequest request;
 
 	// todo: use this method for optimisation.
-	private void putParameter(String key, String value) {
+	public void putParameter(String key, String value) {
 		String[] values = parameters.get(key);
 		if (values == null) {
 			values = new String[0];
