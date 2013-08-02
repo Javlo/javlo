@@ -793,7 +793,7 @@ public class MacroHelper {
 				parentId = MacroHelper.addContent(lg, newPage, parentId, Paragraph.TYPE, "", ctx.getCurrentEditUser());
 			}
 		} else {
-			MacroHelper.createPageStructure(ctx, newPage, pressReleaseStructure, StringHelper.isTrue(pressReleaseStructure.get("fake-content")));
+			MacroHelper.createPageStructure(ctx, newPage, pressReleaseStructure, StringHelper.isTrue(pressReleaseStructure.get("fake-content")), date, tags);
 		}
 
 		PersistenceService persistenceService = PersistenceService.getInstance(globalContext);
