@@ -807,7 +807,7 @@ public abstract class AbstractVisualComponent implements IContentVisualComponent
 			if (renderer == null) {
 				renderer = renderers.get(currentRenderer);				
 			}
-			if (renderer == null) {
+			if (renderer == null && renderers.size() > 0) {
 				renderer = renderers.values().iterator().next();				
 			}
 		}
