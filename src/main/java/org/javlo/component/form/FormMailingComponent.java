@@ -191,7 +191,7 @@ public class FormMailingComponent extends AbstractVisualComponent implements IAc
 		out.println("<label for=\"" + getInputEmailSubjectName() + "\">");
 		out.print(i18n.getText("field.subject"));
 		out.println("</label>");
-		out.println("<input id=\"" + getInputEmailSubjectName() + "\" name=\"" + getInputEmailSubjectName() + "\" value=\"" + StringHelper.escapeHTML(getEmailSubject()) + "\" />");
+		out.println("<input id=\"" + getInputEmailSubjectName() + "\" name=\"" + getInputEmailSubjectName() + "\" value=\"" + StringHelper.toHTMLAttribute(getEmailSubject()) + "\" />");
 		out.println("</div>");
 
 		out.println("<div class=\"line\">");
