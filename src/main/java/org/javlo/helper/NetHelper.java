@@ -14,15 +14,18 @@ import java.net.URLConnection;
 import java.net.UnknownHostException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Map;
 import java.util.zip.CRC32;
 
 import javax.imageio.ImageIO;
 import javax.mail.internet.InternetAddress;
 import javax.servlet.http.HttpServletResponse;
 
+import org.apache.commons.lang.StringUtils;
 import org.javlo.config.StaticConfig;
 import org.javlo.context.ContentContext;
 import org.javlo.context.GlobalContext;
@@ -680,6 +683,16 @@ public class NetHelper {
 		response.setStatus(HttpServletResponse.SC_MOVED_TEMPORARILY);
 		response.setHeader("Location", url);
 		response.setHeader("Connection", "close");
+	}
+	
+	public static Map<String,String> getParams(URL url) {
+		Map<String,String> outParams = new HashMap<String, String>();
+		String q = url.getQuery();
+		for (String param : StringUtils.split(q, '&')) {
+			String[] splittedParam = StringUtils.split(param, '=');
+			outParams.put(splittedParam[0], splittedParam[1]);
+		}
+		return outParams;
 	}
 
 }

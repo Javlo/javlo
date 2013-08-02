@@ -270,7 +270,7 @@ public class FormMailingComponent extends AbstractVisualComponent implements IAc
 		String firstName = requestService.getParameter("firstname", null);
 		String lastName = requestService.getParameter("lastname", null);
 		String compId = requestService.getParameter(COMP_ID_REQUEST_PARAM, null);
-
+		
 		ContentContext ctx = ContentContext.getContentContext(request, response);
 		GlobalContext globalContext = GlobalContext.getInstance(request);
 		I18nAccess i18nAccess = I18nAccess.getInstance(globalContext, request.getSession());
@@ -279,18 +279,19 @@ public class FormMailingComponent extends AbstractVisualComponent implements IAc
 		FormMailingComponent comp = (FormMailingComponent) ContentService.getInstance(request).getComponent(ctx, compId);
 
 		String confirmEmail = comp.getConfirmEmail();
-		if (confirmEmail != null && request.getParameter("direct") == null) {
+		if (confirmEmail != null && requestService.getParameter("direct",null) == null) {
 			StringBuffer urlParam = new StringBuffer("?webaction=" + comp.getActionGroupName() + ".submit");
 			logger.info("send email confirmation to : " + email + " (" + firstName + ' ' + lastName + ')');
 			urlParam.append("&email=" + email);
-			urlParam.append("&firstname=" + firstName);
-			urlParam.append("&lastname=" + lastName);
+			if (firstName != null) {
+				urlParam.append("&firstname=" + firstName);
+			}
+			if (lastName != null) {
+				urlParam.append("&lastname=" + lastName);
+			}
 			urlParam.append("&" + COMP_ID_REQUEST_PARAM + '=' + compId);
 			urlParam.append("&direct=d");
 			StaticConfig staticConfig = StaticConfig.getInstance(ctx.getRequest().getSession().getServletContext());
-			// String encodedParam =
-			// StringHelper.encodeBase64ToURLParam(StringSecurityUtil.encode(urlParam.toString(),
-			// staticConfig.getSecretKey()));
 			String encodedParam = StringSecurityUtil.encode(urlParam.toString(), staticConfig.getSecretKey());
 			ContentContext absURLCtx = new ContentContext(ctx);
 			absURLCtx.setAbsoluteURL(true);
@@ -305,9 +306,6 @@ public class FormMailingComponent extends AbstractVisualComponent implements IAc
 				confirmEmail = confirmEmail.replace("##lastname##", lastName);
 			}
 
-			// DEBUG = FileUtils.writeStringToFile(new File ("/tmp/mail.html"),
-			// confirmEmail);
-
 			MailService mailService = MailService.getInstance(staticConfig);
 			mailService.sendMail(new InternetAddress(globalContext.getAdministratorEmail()), new InternetAddress(email), comp.getEmailSubject(), confirmEmail, true);
 
@@ -316,10 +314,7 @@ public class FormMailingComponent extends AbstractVisualComponent implements IAc
 
 			comp.needForm = false;
 
-		} else if (comp.getConfirmEmail() == null || request.getAttribute(StringSecurityUtil.REQUEST_ATT_FOR_SECURITY_FORWARD) != null) { // only
-																																			// from
-																																			// crypted
-																																			// param
+		} else if (comp.getConfirmEmail() == null || StringHelper.isTrue(request.getAttribute(StringSecurityUtil.REQUEST_ATT_FOR_SECURITY_FORWARD))) {
 			if (!PatternHelper.MAIL_PATTERN.matcher(email).matches()) {
 				GenericMessage msg = new GenericMessage(i18nAccess.getContentViewText("mailing.error.email"), GenericMessage.ERROR);
 				messageRepository.setGlobalMessage(msg);
