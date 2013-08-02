@@ -1,6 +1,8 @@
 package org.javlo.macro;
 
+import java.util.Arrays;
 import java.util.Calendar;
+import java.util.Collection;
 import java.util.Collections;
 import java.util.Date;
 import java.util.HashMap;
@@ -75,6 +77,11 @@ public class CreateArticle implements IInteractiveMacro, IAction {
 		}
 		ctx.getRequest().setAttribute("pages", rootPages);
 		
+		GlobalContext globalContext = GlobalContext.getInstance(ctx.getRequest());
+		if (globalContext.getTags().size() > 0) {
+			ctx.getRequest().setAttribute("tags", globalContext.getTags());
+		}
+		
 		List<String> roles = new LinkedList<String>();
 		Set<String> roleSet = new HashSet<String>();
 		for (String role : ctx.getGlobalContext().getAdminUserRoles()) {
@@ -127,8 +134,18 @@ public class CreateArticle implements IInteractiveMacro, IAction {
 				if (mountPage != null) {
 					MenuElement newPage = MacroHelper.createArticlePageName(ctx, mountPage);
 					if (newPage != null) {
-						if (create) {
-							MacroHelper.addContentInPage(ctx, newPage, rootPage.getName().toLowerCase());
+						if (create) {							
+							GlobalContext globalContext = GlobalContext.getInstance(ctx.getRequest());
+							Collection<String> tags = null;
+							if (globalContext.getTags().size()>0) {
+								tags = new LinkedList<String>();
+								for (String tag : globalContext.getTags()) {
+									if (rs.getParameter("tag-"+tag, null) != null) {
+										tags.add(tag);
+									}
+								}
+							}
+							MacroHelper.addContentInPage(ctx, newPage, rootPage.getName().toLowerCase(), articleDate, tags);
 						}
 						newURL = URLHelper.createURL(ctx.getContextWithOtherRenderMode(ContentContext.PREVIEW_MODE), newPage);
 						

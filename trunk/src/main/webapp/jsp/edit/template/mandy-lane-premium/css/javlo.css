@@ -236,6 +236,7 @@ a.popup span {
 
 .standard-form label.suffix,.standard-form label.suffix {
 	display: inline-block;
+	float: none;
 }
 
 .standard-form .inline-line label {

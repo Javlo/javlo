@@ -1,5 +1,6 @@
 package org.javlo.helper;
 
+import java.awt.Component;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.PrintWriter;
@@ -27,6 +28,7 @@ import org.javlo.component.core.ContentElementList;
 import org.javlo.component.core.IContentVisualComponent;
 import org.javlo.component.image.GlobalImage;
 import org.javlo.component.meta.DateComponent;
+import org.javlo.component.meta.Tags;
 import org.javlo.component.text.Description;
 import org.javlo.component.text.Paragraph;
 import org.javlo.component.title.SubTitle;
@@ -714,8 +716,12 @@ public class MacroHelper {
 		}
 		return outPages;
 	}
-
+	
 	public static void createPageStructure(ContentContext ctx, MenuElement page, Map componentsType, boolean fakeContent) throws Exception {
+		createPageStructure(ctx,page,componentsType,fakeContent,null,null);
+	}
+
+	public static void createPageStructure(ContentContext ctx, MenuElement page, Map componentsType, boolean fakeContent, Date date, Collection<String> tags) throws Exception {
 		GlobalContext globalContext = GlobalContext.getInstance(ctx.getRequest());
 		Collection<String> lgs = globalContext.getContentLanguages();
 		if (!StringHelper.isTrue("" + componentsType.get("all-languages"))) {
@@ -744,13 +750,22 @@ public class MacroHelper {
 							value = LoremIpsumGenerator.getParagraph(50, false, true);
 						}
 					}
+					if (type.equals(DateComponent.TYPE) && date != null) {
+						value = StringHelper.renderTime(date);						
+					} else if (type.equals(Tags.TYPE) && tags != null) {
+						value = StringHelper.collectionToString(tags,";");
+					}
 					parentId = MacroHelper.addContent(lg, page, parentId, type, style, area, value, asList, ctx.getCurrentEditUser());
 				}
 			}
 		}
 	}
-
+	
 	public static void addContentInPage(ContentContext ctx, MenuElement newPage, String pageStructureName) throws IOException, Exception {
+		addContentInPage(ctx,newPage,pageStructureName,null,null);
+	}
+
+	public static void addContentInPage(ContentContext ctx, MenuElement newPage, String pageStructureName, Date date, Collection<String> tags) throws IOException, Exception {
 		newPage.setVisible(true);
 
 		GlobalContext globalContext = GlobalContext.getInstance(ctx.getRequest());
@@ -764,7 +779,14 @@ public class MacroHelper {
 			Collection<String> lgs = globalContext.getContentLanguages();
 			for (String lg : lgs) {
 				String parentId = "0";
-				parentId = MacroHelper.addContent(lg, newPage, parentId, DateComponent.TYPE, "", ctx.getCurrentEditUser());
+				String dateValue = "";
+				if (date != null) {
+					dateValue = StringHelper.renderTime(date);
+				}
+				parentId = MacroHelper.addContent(lg, newPage, parentId, DateComponent.TYPE, dateValue, ctx.getCurrentEditUser());
+				if (tags != null) {
+					parentId = MacroHelper.addContent(lg, newPage, parentId, Tags.TYPE, StringHelper.collectionToString(tags,";"), ctx.getCurrentEditUser());
+				}
 				parentId = MacroHelper.addContent(lg, newPage, parentId, Title.TYPE, "", ctx.getCurrentEditUser());
 				parentId = MacroHelper.addContent(lg, newPage, parentId, Description.TYPE, "", ctx.getCurrentEditUser());
 				parentId = MacroHelper.addContent(lg, newPage, parentId, GlobalImage.TYPE, "", ctx.getCurrentEditUser());
