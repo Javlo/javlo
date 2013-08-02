@@ -18,6 +18,19 @@
 	<label for="date">date</label>
 	<input type="text" class="datepicker" id="date" name="date" />
 </div>
+<c:if test="${not empty tags}">
+
+<fieldset>
+<legend>tags</legend>
+<c:forEach var="tag" items="${tags}">
+<div class="inline">		
+	<input type="checkbox" class="tag" id="tag-${tag}" name="tag-${tag}" />
+	<label class="suffix" for="tag-${tag}">${tag}</label>
+</div>
+</c:forEach>
+</fieldset>
+
+</c:if>
 <div class="line">
 	<label for="create">create structure</label>
 	<input type="checkbox" id="create" name="create" checked="checked" />
