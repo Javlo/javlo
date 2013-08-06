@@ -836,7 +836,7 @@ public abstract class AbstractVisualComponent implements IContentVisualComponent
 	}
 
 	protected String getSelectRendererXHTML(ContentContext ctx) throws Exception, IOException {
-		if (getCurrentRenderer(ctx) == null && getRenderer(ctx).length() <= 1) { // for use getChooseRendererXHTML you must implement method getSelectedRenderer and return empty string if empty and not null (default value).
+		if (getCurrentRenderer(ctx) == null && (getRenderer(ctx) == null || getRenderer(ctx).length() <= 1)) { // for use getChooseRendererXHTML you must implement method getSelectedRenderer and return empty string if empty and not null (default value).
 			return "";
 		}
 
