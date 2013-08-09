@@ -121,6 +121,8 @@
  	background-repeat: no-repeat;
  	background-position: center center;
  	text-align: center;
+ 	float: none;
+ 	font-size: 0;
  }
  
  #preview_command #preview-delete-zone.hidden {
