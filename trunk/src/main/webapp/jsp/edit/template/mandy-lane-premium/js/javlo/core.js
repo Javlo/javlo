@@ -63,11 +63,14 @@ jQuery(document).bind("ajaxUpdate",function () {
 	breadcrumb();
 	
 	var touchedAutogrow = "touched-autogrow"
-	jQuery(".resizable-textarea, .autogrow, [id^=raw_value_]")
+		
+	jQuery(".resizable-textarea, .autogrow, [id^=raw_value_]").autosize();
+		
+	/*jQuery(".resizable-textarea, .autogrow, [id^=raw_value_]")
 		.not("."+touchedAutogrow)
 		.addClass(touchedAutogrow)
 		.css("resize", "none")
-		.elastic();
+		.elastic();*/
 });
 
 function fullHeight() {
