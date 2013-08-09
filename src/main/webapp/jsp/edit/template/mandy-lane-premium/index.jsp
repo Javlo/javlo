@@ -61,6 +61,7 @@
 <script type="text/javascript" src="${info.editTemplateURL}/js/javlo/core.js?ts=${info.ts}"></script>
 <c:if test="${not info.editLanguage eq 'en'}"><script type="text/javascript" src="${info.editTemplateURL}/js/plugins/jquery.ui.datepicker-${info.editLanguage}.js"></script></c:if>
 <script type="text/javascript" src="${info.editTemplateURL}/js/custom/general.js?ts=${info.ts}"></script>
+<script type="text/javascript" src="${info.editTemplateURL}/js/plugins/jquery.autosize-min.js?ts=${info.ts}"></script>
 
 
 <!-- module '${currentModule.name}' CSS --><c:forEach var="css" items="${currentModule.CSS}">
