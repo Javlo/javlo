@@ -1445,19 +1445,6 @@ body.previewEdit {
      border-left: 1px solid #CCCCCC;
 }
 
-.widgetbox2 {
-	position: relative;
-	padding-top: 43px;
-}
-
-.widgetbox2 h3 {
-	position: absolute;
-	top: 0;
-	left: 0;
-	width: 100%;
-	z-index: 5;
-}
-
 .widgetbox2 .content.wizard {
 	overflow: visible;
 }
