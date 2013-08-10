@@ -108,9 +108,37 @@ body.preview-only {
 	background-color: #fcfcfc;
 }
 
+/** NOTIFICATION MESSAGES (login.html, dashboard.html) **/
+
 #preview_command .message {
-	color: #ffffff;
-	text-align: center;
+	padding: 6px 6px 6px 42px;
+	margin: 4px;
+	-moz-border-radius: 2px;
+	-webkit-border-radius: 2px;
+	border-radius: 2px;
+	position: relative;	
+	color: #333333;
+}
+
+#preview_command .msgalert {
+	border: 1px solid #eac572; 
+	background: #ffe9ad url(../images/icons/warning.png) no-repeat 10px	center;
+}
+
+#preview_command .msginfo {
+	border: 1px solid #99c4ea;
+	background: #d1e4f3 url(../images/icons/info.png) no-repeat 10px center;
+}
+
+#preview_command .msgsuccess {
+	border: 1px solid #c1d779;
+	background: #effeb9 url(../images/icons/success.png) no-repeat 10px
+		center;
+}
+
+#preview_command .msgerror {
+	border: 1px solid #e18b7c;
+	background: #fad5cf url(../images/icons/error.png) no-repeat 10px center;
 }
 
 #pc_upload #upload-zone span, #preview_command #preview-delete-zone {
