@@ -2,6 +2,7 @@ package org.javlo.ztatic;
 
 import java.awt.image.BufferedImage;
 import java.io.File;
+import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.io.StringWriter;
@@ -38,6 +39,13 @@ import org.javlo.service.PersistenceService;
 import org.javlo.service.exception.ServiceException;
 import org.javlo.ztatic.InitInterest.Point;
 
+import com.drew.imaging.ImageMetadataReader;
+import com.drew.imaging.ImageProcessingException;
+import com.drew.metadata.Directory;
+import com.drew.metadata.Metadata;
+import com.drew.metadata.Tag;
+import com.drew.metadata.exif.ExifSubIFDDirectory;
+
 public class StaticInfo {
 
 	public static final String _STATIC_INFO_DIR = null;
@@ -54,10 +62,17 @@ public class StaticInfo {
 	public static final class StaticInfoBean {
 		private final ContentContext ctx;
 		private final StaticInfo staticInfo;
+		private final StaticInfoBean folder;
+		private String key = null;
 
-		public StaticInfoBean(ContentContext ctx, StaticInfo staticInfo) {
+		public StaticInfoBean(ContentContext ctx, StaticInfo staticInfo) throws Exception {
 			this.ctx = ctx;
 			this.staticInfo = staticInfo;
+			if (staticInfo.getFile().isFile()) {
+				this.folder = new StaticInfoBean(ctx, StaticInfo.getInstance(ctx, staticInfo.getFile().getParentFile()));
+			} else {
+				this.folder = null;
+			}
 		}
 
 		public String getTitle() {
@@ -70,6 +85,15 @@ public class StaticInfo {
 
 		public String getLocation() {
 			return staticInfo.getManualLocation(ctx);
+		}
+
+		public String getFullTitle() {
+			try {
+				return staticInfo.getFullTitle(ctx);
+			} catch (Exception e) {
+				e.printStackTrace();
+				return null;
+			}
 		}
 
 		public String getShortDate() {
@@ -89,6 +113,33 @@ public class StaticInfo {
 			}
 			return null;
 		}
+
+		public StaticInfo getStaticInfo() {
+			return staticInfo;
+		}
+
+		/**
+		 * get manual key (jstl)
+		 * 
+		 * @return
+		 */
+		public String getKey() {
+			return key;
+		}
+
+		/**
+		 * set manual key (jstl)
+		 * 
+		 * @param key
+		 */
+		public void setKey(String key) {
+			this.key = key;
+		}
+
+		public StaticInfoBean getFolder() {
+			return folder;
+		}
+
 	}
 
 	public static class StaticSort implements Comparator<String> {
@@ -345,7 +396,14 @@ public class StaticInfo {
 
 	private Date date;
 
+	/**
+	 * false if date come from last modified of the file.
+	 */
+	private boolean dateFromData = true;
+
 	private int accessFromSomeDays = -1;
+
+	private Metadata imageMetadata = null;
 
 	/**
 	 * instance of static info sur shared file
@@ -416,7 +474,12 @@ public class StaticInfo {
 
 			File file = new File(realPath);
 			/*
-			 * if (!file.exists()) { logger.fine("could not instancied resource because file does'nt exist : " + file + " context name : " + globalContext.getContextKey()); } else if (file.isDirectory()) { if (!staticInfo.staticURL.endsWith("/")) { staticInfo.staticURL = staticInfo.staticURL + '/'; } }
+			 * if (!file.exists()) { logger.fine(
+			 * "could not instancied resource because file does'nt exist : " +
+			 * file + " context name : " + globalContext.getContextKey()); }
+			 * else if (file.isDirectory()) { if
+			 * (!staticInfo.staticURL.endsWith("/")) { staticInfo.staticURL =
+			 * staticInfo.staticURL + '/'; } }
 			 */
 			staticInfo.setFile(file);
 			staticInfo.size = file.length();
@@ -460,7 +523,12 @@ public class StaticInfo {
 		}
 
 		/*
-		 * if (getDescription() != null && getDescription().trim().length() > 0) { String description = getDescription().trim(); if (description.charAt(description.length() - 1) == '.') { description = description.substring(0, description.length() - 1); } if (getTitle() != null && getTitle().trim().length() > 0) { out.print(". "); } out.print(description); }
+		 * if (getDescription() != null && getDescription().trim().length() > 0)
+		 * { String description = getDescription().trim(); if
+		 * (description.charAt(description.length() - 1) == '.') { description =
+		 * description.substring(0, description.length() - 1); } if (getTitle()
+		 * != null && getTitle().trim().length() > 0) { out.print(". "); }
+		 * out.print(description); }
 		 */
 
 		String sufix = "";
@@ -511,14 +579,16 @@ public class StaticInfo {
 	public void setDescription(ContentContext ctx, String description) {
 		ContentService content = ContentService.getInstance(ctx.getRequest());
 		content.setAttribute(ctx, getKey("description-" + ctx.getRequestContentLanguage()), description);
-		// properties.setProperty("description-" + ctx.getRequestContentLanguage(), description);
+		// properties.setProperty("description-" +
+		// ctx.getRequestContentLanguage(), description);
 
 	}
 
 	public String getManualLocation(ContentContext ctx) {
 		ContentService content = ContentService.getInstance(ctx.getRequest());
 		return content.getAttribute(ctx, getKey("location-" + ctx.getRequestContentLanguage()), "");
-		// return properties.getString("location-" + ctx.getRequestContentLanguage(), "");
+		// return properties.getString("location-" +
+		// ctx.getRequestContentLanguage(), "");
 	}
 
 	public String getLocation(ContentContext ctx) {
@@ -533,7 +603,8 @@ public class StaticInfo {
 		ContentService content = ContentService.getInstance(ctx.getRequest());
 		content.setAttribute(ctx, getKey("location-" + ctx.getRequestContentLanguage()), location);
 
-		// properties.setProperty("location-" + ctx.getRequestContentLanguage(), location);
+		// properties.setProperty("location-" + ctx.getRequestContentLanguage(),
+		// location);
 		// save();
 	}
 
@@ -552,13 +623,15 @@ public class StaticInfo {
 		String key = getKey("title-" + ctx.getRequestContentLanguage());
 		String title = content.getAttribute(ctx, key, "");
 		return title;
-		// return properties.getString("title-" + ctx.getRequestContentLanguage(), "");
+		// return properties.getString("title-" +
+		// ctx.getRequestContentLanguage(), "");
 	}
 
 	public void setTitle(ContentContext ctx, String title) {
 		ContentService content = ContentService.getInstance(ctx.getRequest());
 		content.setAttribute(ctx, getKey("title-" + ctx.getRequestContentLanguage()), title);
-		// properties.setProperty("title-" + ctx.getRequestContentLanguage(), title);
+		// properties.setProperty("title-" + ctx.getRequestContentLanguage(),
+		// title);
 		// save();
 	}
 
@@ -579,11 +652,16 @@ public class StaticInfo {
 			if (getManualDate(ctx) != null) {
 				date = getManualDate(ctx);
 			} else {
-				Date linkedDate = getLinkedDate(ctx);
-				if (linkedDate == null) {
-					date = getFileDate(ctx);
+				if (getExifDate() != null) {
+					date = getExifDate();
 				} else {
-					date = linkedDate;
+					Date linkedDate = getLinkedDate(ctx);
+					if (linkedDate == null) {
+						dateFromData = false;
+						date = getFileDate(ctx);
+					} else {
+						date = linkedDate;
+					}
 				}
 			}
 		}
@@ -663,7 +741,8 @@ public class StaticInfo {
 	}
 
 	/**
-	 * return the focus point of a image. Return always the focus point of edit mode (problem with image cache).
+	 * return the focus point of a image. Return always the focus point of edit
+	 * mode (problem with image cache).
 	 * 
 	 * @param ctx
 	 * @return
@@ -703,7 +782,8 @@ public class StaticInfo {
 	}
 
 	/**
-	 * return the focus point of a image. Return always the focus point of edit mode (problem with image cache).
+	 * return the focus point of a image. Return always the focus point of edit
+	 * mode (problem with image cache).
 	 * 
 	 * @param ctx
 	 * @return
@@ -773,7 +853,8 @@ public class StaticInfo {
 				GlobalContext globalContext = GlobalContext.getInstance(ctx.getRequest());
 				NavigationService navigationService = NavigationService.getInstance(globalContext);
 				linkedPage = navigationService.getPage(ctx, getLinkedPageId(ctx));
-				// linkedPage = content.getNavigation(ctx).searchChildFromId(getLinkedPageId(ctx));
+				// linkedPage =
+				// content.getNavigation(ctx).searchChildFromId(getLinkedPageId(ctx));
 			} catch (Exception e) {
 				e.printStackTrace();
 			}
@@ -924,13 +1005,29 @@ public class StaticInfo {
 	}
 
 	public static void main(String[] args) {
-		Calendar cal = Calendar.getInstance();
-		for (int i = 0; i < 10; i++) {
-			cal.roll(Calendar.DATE, false);
-			// System.out.println("*** cal day = "+cal.get(Calendar.DAY_OF_MONTH));
-			String key = getAccessKey(cal.getTime());
-			System.out.println("** key = " + key);
+		File jpegFile = new File("c:/trans/test.jpg");
+		Metadata metadata;
+		try {
+			metadata = ImageMetadataReader.readMetadata(jpegFile);
+			for (Directory directory : metadata.getDirectories()) {
+				for (Tag tag : directory.getTags()) {
+					System.out.println(tag);
+				}
+			}
+
+			ExifSubIFDDirectory directory = metadata.getDirectory(ExifSubIFDDirectory.class);
+			// query the tag's value
+			if (directory != null) {
+				System.out.println("date : " + directory.getDate(ExifSubIFDDirectory.TAG_DATETIME_ORIGINAL));
+			}
+		} catch (ImageProcessingException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
 		}
+
 	}
 
 	private static String getAccessKey(Date date) {
@@ -1009,4 +1106,108 @@ public class StaticInfo {
 	public String getVersionHash() {
 		return versionHash + getCRC32();
 	}
+
+	private Metadata getImageMetadata() {
+		if (imageMetadata == null) {
+			if (StringHelper.isImage(getFile().getName())) {
+				try {
+					imageMetadata = ImageMetadataReader.readMetadata(getFile());
+				} catch (ImageProcessingException e) {
+					e.printStackTrace();
+				} catch (IOException e) {
+					e.printStackTrace();
+				}
+			}
+		}
+		return imageMetadata;
+	}
+
+	public Date getExifDate() {
+		Metadata md = getImageMetadata();
+		if (md != null) {
+			// obtain the Exif directory
+			ExifSubIFDDirectory directory = md.getDirectory(ExifSubIFDDirectory.class);
+			// query the tag's value
+			if (directory != null) {
+				return directory.getDate(ExifSubIFDDirectory.TAG_DATETIME_ORIGINAL);
+			}
+		}
+		return null;
+	}
+
+	public String getFullHTMLTitle(ContentContext ctx) throws Exception {
+		String title = getTitle(ctx);
+		StaticInfo folder = StaticInfo.getInstance(ctx, file.getParentFile());
+		if (title == null || title.trim().length() > 0) {
+			title = folder.getTitle(ctx);
+		}
+		String location = getLocation(ctx);
+		if (location == null || location.trim().length() > 0) {
+			location = folder.getLocation(ctx);
+		}
+		String date = null;
+		try {
+			if (dateFromData) {
+				date = StringHelper.renderShortDate(ctx, getDate(ctx));
+			} else if (folder.dateFromData) {
+				date = StringHelper.renderShortDate(ctx, folder.getDate(ctx));
+			}
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+
+		String sep = "";
+
+		if (title != null && title.trim().length() > 0) {
+			title = "<span class=\"title\">" + title + "</span>";
+			sep = " - ";
+		}
+
+		if (location != null && location.trim().length() > 0) {
+			title = title + "<span class=\"location\">" + sep + location + "</span>";
+			sep = " - ";
+		}
+		if (date != null) {
+			title = title + "<span class=\"date\">" + sep + date + "</span>";
+		}
+		return title;
+	}
+
+	public String getFullTitle(ContentContext ctx) throws Exception {
+		String title = getTitle(ctx);
+		StaticInfo folder = StaticInfo.getInstance(ctx, file.getParentFile());
+		if (title == null || title.trim().length() == 0) {
+			title = folder.getTitle(ctx);
+		}
+		String location = getLocation(ctx);
+		if (location == null || location.trim().length() == 0) {
+			location = folder.getLocation(ctx);
+		}
+		String date = null;
+		try {
+			if (dateFromData) {
+				date = StringHelper.renderShortDate(ctx, getDate(ctx));
+			} else if (folder.dateFromData) {
+				date = StringHelper.renderShortDate(ctx, folder.getDate(ctx));
+			}
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+
+		String sep = "";
+
+		if (title != null && title.trim().length() > 0) {
+			sep = " - ";
+		}
+
+		if (location != null && location.trim().length() > 0) {
+			title = title + sep + location;
+			sep = " - ";
+		}
+		if (date != null) {
+			title = title + sep + date;
+		}
+		return title;
+	}
+
 }
