@@ -1018,7 +1018,7 @@ public class StringHelper {
 		res = res || ext.equalsIgnoreCase("png");
 		return res;
 	}
-
+	
 	/**
 	 * return true if the filename in a document (sp. : word, libreoffice...).
 	 * 
