@@ -15,6 +15,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.logging.Logger;
 
+import javax.imageio.metadata.IIOMetadata;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
@@ -144,20 +145,24 @@ public abstract class ELFinder {
 	protected void transformFile(String fileHash, String mode, int width, int height, int x, int y, int degree, Map<String, Object> apiResponse) throws Exception {
 		ELFile file = hashToFile(fileHash);
 		if (file.getFile().exists()) {
+			IIOMetadata metadata = ResourceHelper.getImageMetadata(file.getFile());
 			if ("resize".equals(mode)) {
 				BufferedImage img = ImageEngine.loadImage(file.getFile());
 				img = ImageEngine.resizeImage(img, width, height);
 				ImageEngine.storeImage(img, file.getFile());
+				ResourceHelper.writeImageMetadata(metadata, file.getFile());
 				apiResponse.put("changed", printFiles(Arrays.asList(new ELFile[] { file })));
 			} else if ("crop".equals(mode)) {
 				BufferedImage img = ImageEngine.loadImage(file.getFile());
 				img = ImageEngine.cropImage(img, width, height, x, y);
 				ImageEngine.storeImage(img, file.getFile());
+				ResourceHelper.writeImageMetadata(metadata, file.getFile());
 				apiResponse.put("changed", printFiles(Arrays.asList(new ELFile[] { file })));
 			} else if ("rotate".equals(mode)) {
-				BufferedImage img = ImageEngine.loadImage(file.getFile());
+				BufferedImage img = ImageEngine.loadImage(file.getFile());				
 				img = ImageEngine.rotate(img, degree, null);
 				ImageEngine.storeImage(img, file.getFile());
+				ResourceHelper.writeImageMetadata(metadata, file.getFile());
 				apiResponse.put("changed", printFiles(Arrays.asList(new ELFile[] { file })));
 			}
 		}
