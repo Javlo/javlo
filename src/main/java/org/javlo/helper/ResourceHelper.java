@@ -3,6 +3,7 @@
  */
 package org.javlo.helper;
 
+import java.awt.image.BufferedImage;
 import java.beans.XMLDecoder;
 import java.beans.XMLEncoder;
 import java.io.BufferedReader;
@@ -35,6 +36,7 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.Comparator;
+import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
@@ -43,6 +45,13 @@ import java.util.TreeSet;
 import java.util.zip.CRC32;
 import java.util.zip.CheckedInputStream;
 
+import javax.imageio.IIOImage;
+import javax.imageio.ImageIO;
+import javax.imageio.ImageReader;
+import javax.imageio.ImageWriter;
+import javax.imageio.metadata.IIOMetadata;
+import javax.imageio.stream.FileImageInputStream;
+import javax.imageio.stream.FileImageOutputStream;
 import javax.servlet.ServletContext;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
@@ -126,7 +135,9 @@ public class ResourceHelper {
 
 	/**
 	 * Return the standard checksum of the specified file. <br/>
-	 * The following functions are complementary: {@link #getChecksumInputStream(InputStream)}, {@link #getChecksumResult(InputStream)}, {@link #formatChecksum(long)}
+	 * The following functions are complementary:
+	 * {@link #getChecksumInputStream(InputStream)},
+	 * {@link #getChecksumResult(InputStream)}, {@link #formatChecksum(long)}
 	 * 
 	 * @param file
 	 * @return the standard checksum of the specified file
@@ -195,7 +206,8 @@ public class ResourceHelper {
 	 *            the servlet context.
 	 * @param fullPath
 	 *            a full path
-	 * @return retrun a relative path (sample: /var/data/static/test.png -> /static/test.png)
+	 * @return retrun a relative path (sample: /var/data/static/test.png ->
+	 *         /static/test.png)
 	 */
 	public static String extractNotStaticDir(StaticConfig staticConfig, GlobalContext globalContext, String fullPath) {
 		String realPath = globalContext.getDataFolder();
@@ -216,7 +228,9 @@ public class ResourceHelper {
 	 *            the servlet context.
 	 * @param fullPath
 	 *            a full path
-	 * @return retrun a relative path (sample: /opt/tomcat/webapps/dc/WEB-INF/static/images -> /WEB-INF/static/images)
+	 * @return retrun a relative path (sample:
+	 *         /opt/tomcat/webapps/dc/WEB-INF/static/images ->
+	 *         /WEB-INF/static/images)
 	 */
 	public static String extractRelativeDir(ServletContext application, String fullPath) {
 		String realPath = application.getRealPath("");
@@ -233,7 +247,8 @@ public class ResourceHelper {
 	 *            the servlet context.
 	 * @param fullPath
 	 *            a full path
-	 * @return retrun a relative path (sample: /var/data/static/test.png -> /test.png)
+	 * @return retrun a relative path (sample: /var/data/static/test.png ->
+	 *         /test.png)
 	 */
 	public static String extractResourceDir(StaticConfig staticConfig, GlobalContext globalContext, String fullPath) {
 		String realPath = URLHelper.mergePath(globalContext.getDataFolder(), staticConfig.getStaticFolder());
@@ -286,7 +301,9 @@ public class ResourceHelper {
 
 	/**
 	 * Standart method to format the checksum into a {@link String}. <br/>
-	 * This method is private because, only the following functions can call it: {@link #getChecksumInputStream(InputStream)}, {@link #getChecksumResult(InputStream)}, {@link #computeChecksum(File)} <br/>
+	 * This method is private because, only the following functions can call it:
+	 * {@link #getChecksumInputStream(InputStream)},
+	 * {@link #getChecksumResult(InputStream)}, {@link #computeChecksum(File)} <br/>
 	 * and because the implementation of the format can be changed in future.
 	 * 
 	 * @param crc32
@@ -383,7 +400,12 @@ public class ResourceHelper {
 	}
 
 	/*
-	 * public static final int writeStreamToStream(InputStream in, OutputStream out) throws IOException { int read = in.read(); int size = 0; while (read >= 0) { size++; out.write(read); byte[] buffer = new byte[in.available()]; read = in.read(buffer); if (read >= 0) { out.write(buffer); size = size + buffer.length; read = in.read(); } } return size; }
+	 * public static final int writeStreamToStream(InputStream in, OutputStream
+	 * out) throws IOException { int read = in.read(); int size = 0; while (read
+	 * >= 0) { size++; out.write(read); byte[] buffer = new
+	 * byte[in.available()]; read = in.read(buffer); if (read >= 0) {
+	 * out.write(buffer); size = size + buffer.length; read = in.read(); } }
+	 * return size; }
 	 */
 
 	public static Collection<File> getAllResources(ContentContext ctx) {
@@ -401,22 +423,32 @@ public class ResourceHelper {
 
 	/**
 	 * Add a checksum computing layer to the given {@link InputStream}. <br/>
-	 * Give the returned {@link InputStream} to {@link #getChecksumResult(InputStream)} to retrieve the checksum result. <br/>
-	 * The following functions are complementary: {@link #getChecksumResult(InputStream)}, {@link #computeChecksum(File)}, {@link #formatChecksum(long)}
+	 * Give the returned {@link InputStream} to
+	 * {@link #getChecksumResult(InputStream)} to retrieve the checksum result. <br/>
+	 * The following functions are complementary:
+	 * {@link #getChecksumResult(InputStream)}, {@link #computeChecksum(File)},
+	 * {@link #formatChecksum(long)}
 	 * 
 	 * @param in
-	 * @return an {@link InputStream} computing the checksum during the read, call {@link #getChecksumResult(InputStream)} to retrieve the checksum result.
+	 * @return an {@link InputStream} computing the checksum during the read,
+	 *         call {@link #getChecksumResult(InputStream)} to retrieve the
+	 *         checksum result.
 	 */
 	public static InputStream getChecksumInputStream(InputStream in) {
 		return new CheckedInputStream(in, new CRC32());
 	}
 
 	/**
-	 * Exctract the result from a {@link InputStream} returned by {@link #getChecksumInputStream(InputStream)}. <br/>
-	 * The following functions are complementary: {@link #getChecksumInputStream(InputStream)}, {@link #computeChecksum(File)}, {@link #formatChecksum(long)}
+	 * Exctract the result from a {@link InputStream} returned by
+	 * {@link #getChecksumInputStream(InputStream)}. <br/>
+	 * The following functions are complementary:
+	 * {@link #getChecksumInputStream(InputStream)},
+	 * {@link #computeChecksum(File)}, {@link #formatChecksum(long)}
 	 * 
 	 * @param chkIn
-	 * @return the standard checksum of readed bytes from the given {@link InputStream} previously wrapped by {@link #getChecksumInputStream(InputStream)}
+	 * @return the standard checksum of readed bytes from the given
+	 *         {@link InputStream} previously wrapped by
+	 *         {@link #getChecksumInputStream(InputStream)}
 	 */
 	public static String getChecksumResult(InputStream chkIn) {
 		long crc32 = ((CheckedInputStream) chkIn).getChecksum().getValue();
@@ -575,7 +607,8 @@ public class ResourceHelper {
 	}
 
 	/**
-	 * convert a path to a correct path for current OS. sample: /static/images on windows -> \static\images and on unix no change.
+	 * convert a path to a correct path for current OS. sample: /static/images
+	 * on windows -> \static\images and on unix no change.
 	 * 
 	 * @param path
 	 *            a path to a file
@@ -588,7 +621,8 @@ public class ResourceHelper {
 	}
 
 	/**
-	 * convert a path to a correct path for current OS. sample: /static/images on windows -> \static\images and on unix no change.
+	 * convert a path to a correct path for current OS. sample: /static/images
+	 * on windows -> \static\images and on unix no change.
 	 * 
 	 * @param path
 	 *            a path to a file
@@ -682,7 +716,8 @@ public class ResourceHelper {
 	}
 
 	/**
-	 * with iexplorer the name of the file is all the path this method extract the file name from a windows path
+	 * with iexplorer the name of the file is all the path this method extract
+	 * the file name from a windows path
 	 */
 	public static String getWindowsFileName(String fileName) {
 		String name = fileName;
@@ -694,12 +729,14 @@ public class ResourceHelper {
 	}
 
 	/**
-	 * check if a file (or a folder) is under a folder. sample : /tmp/test/me.jpg with /tmp retrun true
+	 * check if a file (or a folder) is under a folder. sample :
+	 * /tmp/test/me.jpg with /tmp retrun true
 	 * 
 	 * @param file
 	 *            a file, this file must be a real file or method return false.
 	 * @param folder
-	 *            a folder (if file -> return false), this file must be a real file or method return false.
+	 *            a folder (if file -> return false), this file must be a real
+	 *            file or method return false.
 	 * @return true if the file is under the folder.
 	 * @throws IOException
 	 */
@@ -805,7 +842,11 @@ public class ResourceHelper {
 			}
 
 			/*
-			 * final byte[] buffer = new byte[1024 * 4]; int size = 0; int byteReaded = in.read(buffer); while (byteReaded > 0) { size = size + byteReaded; System.out.write(buffer, 0, byteReaded); byteReaded = in.read(buffer); } System.out.println("*** byteReaded = "+byteReaded);
+			 * final byte[] buffer = new byte[1024 * 4]; int size = 0; int
+			 * byteReaded = in.read(buffer); while (byteReaded > 0) { size =
+			 * size + byteReaded; System.out.write(buffer, 0, byteReaded);
+			 * byteReaded = in.read(buffer); }
+			 * System.out.println("*** byteReaded = "+byteReaded);
 			 */
 			in.close();
 
@@ -824,7 +865,8 @@ public class ResourceHelper {
 	 * 
 	 * @param staticConfig
 	 * @param fileOrFolder
-	 * @return <code>true</code> if origin doesn't exist; or the result of {@link File#renameTo(File)}.
+	 * @return <code>true</code> if origin doesn't exist; or the result of
+	 *         {@link File#renameTo(File)}.
 	 */
 	public static boolean moveToGlobalTrash(StaticConfig staticConfig, String fileOrFolder) {
 		File file = new File(fileOrFolder);
@@ -845,7 +887,8 @@ public class ResourceHelper {
 	}
 
 	/**
-	 * remove the data folder directory this method is used for obtain a relative file path from a ablute file path.
+	 * remove the data folder directory this method is used for obtain a
+	 * relative file path from a ablute file path.
 	 * 
 	 * @param path
 	 * @return
@@ -859,7 +902,8 @@ public class ResourceHelper {
 	}
 
 	/**
-	 * remove the path from a string this method is used for obtain a relative file path from a ablute file path.
+	 * remove the path from a string this method is used for obtain a relative
+	 * file path from a ablute file path.
 	 * 
 	 * @param path
 	 * @return
@@ -873,7 +917,8 @@ public class ResourceHelper {
 	}
 
 	/**
-	 * change all the reference to a resource when a resource path or name if changed
+	 * change all the reference to a resource when a resource path or name if
+	 * changed
 	 * 
 	 * @param ctx
 	 * @param oldName
@@ -884,7 +929,7 @@ public class ResourceHelper {
 		GlobalContext globalContext = GlobalContext.getInstance(ctx.getRequest());
 		ContentContext lgCtx = new ContentContext(ctx);
 		lgCtx.setRenderMode(ContentContext.EDIT_MODE);
-		Collection<String> lgs = globalContext.getContentLanguages();		
+		Collection<String> lgs = globalContext.getContentLanguages();
 		for (String lg : lgs) {
 			lgCtx.setRequestContentLanguage(lg);
 			List<IContentVisualComponent> comps = ComponentFactory.getAllComponentsFromContext(lgCtx);
@@ -903,7 +948,8 @@ public class ResourceHelper {
 	}
 
 	/**
-	 * Close streams, writers, readers, etc without any exception even if they are <code>null</code>.
+	 * Close streams, writers, readers, etc without any exception even if they
+	 * are <code>null</code>.
 	 * 
 	 * @param closeables
 	 *            the objects to close
@@ -1180,7 +1226,8 @@ public class ResourceHelper {
 
 	public static String storeBeanFromXML(Serializable bean) {
 		ByteArrayOutputStream out = new ByteArrayOutputStream();
-		// XMLEncoder encoder = new XMLEncoder(out, ContentContext.CHARACTER_ENCODING, false, 0);
+		// XMLEncoder encoder = new XMLEncoder(out,
+		// ContentContext.CHARACTER_ENCODING, false, 0);
 		XMLEncoder encoder = new XMLEncoder(out);
 		encoder.writeObject(bean);
 		encoder.flush();
@@ -1200,6 +1247,39 @@ public class ResourceHelper {
 		return out.toByteArray();
 	}
 
+	public static IIOMetadata getImageMetadata(File image) throws IOException {
+		Iterator readers = ImageIO.getImageReadersBySuffix(StringHelper.getFileExtension(image.getName()));
+		if (StringHelper.isImage(image.getName())) {
+			if (!readers.hasNext()) {
+				return null;
+			} else {
+				ImageReader imageReader = (ImageReader) readers.next();
+				FileImageInputStream in = new FileImageInputStream(image);
+				try {
+					imageReader.setInput(in);
+					return imageReader.getImageMetadata(0);
+				} finally {
+					ResourceHelper.closeResource(in);
+				}
+			}
+		} else {
+			return null;
+		}
+	}
+
+	public static boolean writeImageMetadata(IIOMetadata imageMetadata, File target) throws IOException {
+		Iterator writers = ImageIO.getImageWritersBySuffix(StringHelper.getFileExtension(target.getName()));
+		if (!writers.hasNext()) {
+			return false;
+		} else {
+			ImageWriter writer = (ImageWriter) writers.next();
+			writer.setOutput(new FileImageOutputStream(target));
+			BufferedImage image = ImageIO.read(target);
+			writer.write(null, new IIOImage(image, null, imageMetadata), null);
+			return true;
+		}
+	}
+
 	public static void main(String[] args) {
 		TicketBean bean = new TicketBean();
 		bean.setAuthors("patrick");
@@ -1208,6 +1288,9 @@ public class ResourceHelper {
 		String xml = storeBeanFromXML(bean);
 		System.out.println(xml);
 		TicketBean bean2 = (TicketBean) loadBeanFromXML(xml);
-		System.out.println("***** ResourceHelper.main : authors = " + bean2.getAuthors()); // TODO: remove debug trace
+		System.out.println("***** ResourceHelper.main : authors = " + bean2.getAuthors()); // TODO:
+																							// remove
+																							// debug
+																							// trace
 	}
 }
