@@ -173,6 +173,10 @@ public class IMService {
 			return fromSite;
 		}
 
+		public boolean isFromAllSites() {
+			return IMService.ALL_SITES.equals(fromSite);
+		}
+
 		public String getFromUser() {
 			return fromUser;
 		}
@@ -181,8 +185,16 @@ public class IMService {
 			return receiverSite;
 		}
 
+		public boolean isToAllSites() {
+			return IMService.ALL_SITES.equals(receiverSite);
+		}
+
 		public String getReceiverUser() {
 			return receiverUser;
+		}
+
+		public boolean isToAllUsers() {
+			return IMService.ALL_USERS.equals(receiverUser);
 		}
 
 		public String getMessage() {
