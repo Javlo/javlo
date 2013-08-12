@@ -1,6 +1,6 @@
 package org.javlo.module.communication;
 
-public class IMUser {
+public class CommunicationUserBean {
 
 	private String site;
 	private String username;

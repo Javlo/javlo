@@ -1,0 +1,23 @@
+.cim-messages {
+	height: 300px;
+	overflow: auto;	
+}
+.cim-messages .user {
+	font-weight: bold;
+}
+.cim-messages .message {
+	Zpadding-left: 10px;
+}
+.cim-messages .to {
+	font-weight: bold;
+}
+.cim-messages .to:after {
+	Zcontent: '> ';
+}
+.cim-messages .announce {
+	font-style: italic;
+}
+
+.cim-form input {
+	width:  80%;
+}
