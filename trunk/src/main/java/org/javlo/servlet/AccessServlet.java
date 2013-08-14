@@ -63,6 +63,8 @@ import org.javlo.service.ListService;
 import org.javlo.service.RequestService;
 import org.javlo.service.remote.RemoteMessage;
 import org.javlo.service.remote.RemoteMessageService;
+import org.javlo.service.shared.ISharedContentProvider;
+import org.javlo.service.shared.SharedContentContext;
 import org.javlo.service.shared.SharedContentService;
 import org.javlo.service.social.SocialService;
 import org.javlo.service.syncro.SynchroThread;
@@ -72,6 +74,7 @@ import org.javlo.thread.AbstractThread;
 import org.javlo.thread.ThreadManager;
 import org.javlo.tracking.Tracker;
 import org.javlo.utils.DebugListening;
+import org.xhtmlrenderer.layout.SharedContext;
 import org.xhtmlrenderer.pdf.ITextRenderer;
 import org.xhtmlrenderer.swing.Java2DRenderer;
 import org.xhtmlrenderer.util.FSImageWriter;
@@ -711,10 +714,18 @@ public class AccessServlet extends HttpServlet implements IVersion {
 
 							if (ctx.getRenderMode() == ContentContext.PREVIEW_MODE && staticConfig.isFixPreview()) {
 								ctx.getRequest().setAttribute("components", ComponentFactory.getComponentForDisplay(ctx));
-								if (ctx.getGlobalContext().getStaticConfig().isSharedContent()) {
+								ModulesContext modulesContext = ModulesContext.getInstance(request.getSession(), globalContext);
+								if (modulesContext.searchModule("shared-content") != null) {									
 									SharedContentService sharedContentService  = SharedContentService.getInstance(ctx);
-									ctx.getRequest().setAttribute("sharedContent", sharedContentService.getAllSharedContent(ctx));
-								}
+									SharedContentContext sharedContentContext = SharedContentContext.getInstance(request.getSession());
+									
+									ctx.getRequest().setAttribute("sharedContentProviders", sharedContentService.getAllProvider(ctx));
+									ISharedContentProvider provider = sharedContentService.getProvider(ctx,sharedContentContext.getProvider());
+									if (provider != null) {
+										ctx.getRequest().setAttribute("sharedContent", provider.getContent(sharedContentContext.getCategories()));
+										ctx.getRequest().setAttribute("sharedContentCategories", provider.getCategories().entrySet());
+									}
+								} 
 							}
 							
 							/** check content **/

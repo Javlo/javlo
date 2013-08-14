@@ -113,6 +113,14 @@ public class XMLManipulationHelper {
 		public Map<String, String> getAttributes() {
 			return attributes;
 		}
+		
+		public String getAttribute(String key, String defaultValue) {
+			String value = getAttributes().get(key);
+			if (value == null) {
+				value = defaultValue;
+			}
+			return value;
+		}
 
 		public int getCloseEnd() {
 			return closeEnd;

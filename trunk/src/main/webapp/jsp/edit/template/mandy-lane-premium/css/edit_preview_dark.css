@@ -183,13 +183,17 @@ body.preview-only {
 	text-shadow: 1px -1px 0 #333333;
 }
 
-#preview_command input[type=text] {
+#preview_command input[type=text], #preview_command select {
 	margin: 4px 4px 4px 0;
 	padding: 3px;
 	color: #afafaf;
 	background-color: #232323;
 	border: 1px #5b5b5b solid;
 	border-radius: 3px;
+}
+
+.fix-preview #preview_command select {
+	width: 250px;
 }
 
 #preview_command input[type="text"] {

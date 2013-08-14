@@ -3,8 +3,6 @@ package org.javlo.helper;
 import java.util.Arrays;
 import java.util.List;
 
-import org.apache.commons.lang.StringUtils;
-
 import junit.framework.TestCase;
 
 public class StringHelperTest extends TestCase {
@@ -60,5 +58,12 @@ public class StringHelperTest extends TestCase {
 		assertEquals(list.get(1), "");
 		assertEquals(list.get(2), "");
 		assertEquals(list.get(3), "item4");		
+  }
+  
+  public void testGetFileNameFromPath() throws Exception {
+	  assertEquals(StringHelper.getFileNameFromPath("/folder/file.jpg"), "file.jpg");
+	  assertEquals(StringHelper.getFileNameFromPath("/folder/file.jpg?param=value"), "file.jpg");
+	  assertEquals(StringHelper.getFileNameFromPath("http://host.com/folder/file.jpg?param=value"), "file.jpg");
+	  assertEquals(StringHelper.getFileNameFromPath("http://host.com/folder/1234"), "1234");
   }
 }

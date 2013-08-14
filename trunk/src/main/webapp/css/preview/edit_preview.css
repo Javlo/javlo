@@ -21,6 +21,10 @@
 	display: none;
 }
 
+#preview_command .placeholder {
+	font-style: italic;
+}
+
 #one-component-edit {
 	font-size: 11px;
 }
@@ -679,10 +683,6 @@ body.fix-preview {
 	width: 160px;
 }
 
-#preview_command select {
-	font-size: 0.8em;
-}
-
 #children_list {
 	text-align: left;
 }
@@ -978,3 +978,12 @@ body.fix-preview {
 	height: 75px;
 	overflow: hidden;
 }
+
+#preview_command .shared-content .without-description {
+	text-align: center;
+}
+
+#preview_command .shared-content .without-description img {
+	width: 236px;
+	display: inline;
+} 

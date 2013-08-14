@@ -133,23 +133,17 @@ public class ImportHelper {
 					}
 					if (imageURL != null) {
 						String remoteFileName = StringHelper.getFileNameFromPath(imageURL.getFile());
-
 						String fileName = URLHelper.extractFileName(remoteFileName);
-
 						File folder = new File(URLHelper.mergePath(globalContext.getDataFolder(), globalContext.getStaticConfig().getImageFolder(), selector.getDir()));
-
 						folder.mkdirs();
 						File localFile = new File(URLHelper.mergePath(folder.getAbsolutePath(), fileName));
-
 						if (!localFile.exists()) {
 							localFile.createNewFile();
 							InputStream inImage = imageURL.openStream();
 							ResourceHelper.writeStreamToFile(inImage, localFile);
 							inImage.close();
 						}
-
 						latestComponentId = MacroHelper.addContentIfNotExist(ctx, page, latestComponentId, GlobalImage.TYPE, "file-name=" + remoteFileName + "\ndir=" + selector.getDir() + "\nlabel=" + imageTitle, "image-center");
-
 					}
 				}
 			}

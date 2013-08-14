@@ -1,6 +1,7 @@
 <%@page import="org.javlo.message.MessageRepository"%>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c"
 %><%@ taglib uri="/WEB-INF/javlo.tld" prefix="jv"
+%><%@ taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions" 
 %><%@page contentType="text/html" import="
     	    org.javlo.helper.XHTMLHelper,
     	    org.javlo.helper.URLHelper,
@@ -107,8 +108,8 @@ MessageRepository.getInstance(request); // load request message
 					<div id="upload-zone" data-url="${info.uploadURL}" class="drop-files"><span>${i18n.edit['preview.upload-here']}</span></div>
 				</div>
 				</fieldset>
-				<c:if test="${globalContext.staticConfig.sharedContent}">
-				<c:if test="${not empty sharedContent}"><fieldset class="shared closable">
+				<c:if test="${not empty sharedContentProviders}">
+				<c:if test="${fn:length(sharedContentProviders) > 0}"><fieldset class="shared closable">
 					<legend>${i18n.edit["preview.shared-content"]}</legend>					
 					<div class="shared-wrapper"><jsp:include page="shared_content.jsp" /></div>
 				</fieldset>

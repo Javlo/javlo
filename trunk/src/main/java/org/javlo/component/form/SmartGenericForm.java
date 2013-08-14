@@ -119,7 +119,7 @@ public class SmartGenericForm extends AbstractVisualComponent implements IAction
 		}
 
 		public void setName(String name) {
-			this.name = StringHelper.createASCIIString(name);
+			this.name = StringHelper.createASCIIString(name).replace(' ', '_');
 		}
 		
 		@Override
