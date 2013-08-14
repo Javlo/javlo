@@ -346,12 +346,6 @@ public class ComponentFactory {
 			e.printStackTrace();
 		}
 
-		if (outComponent == null) {
-			System.out.println("***** ComponentFactory.getComponentWithType : ********** NULL : " + type); // TODO:
-																											// remove
-																											// debug
-																											// trace
-		}
 		return outComponent;
 	}
 

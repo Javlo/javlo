@@ -23,6 +23,7 @@ import org.javlo.component.core.IReverseLinkComponent;
 import org.javlo.config.StaticConfig;
 import org.javlo.context.ContentContext;
 import org.javlo.context.GlobalContext;
+import org.javlo.exception.ResourceNotFoundException;
 import org.javlo.helper.ElementaryURLHelper;
 import org.javlo.helper.NetHelper;
 import org.javlo.helper.StringHelper;
@@ -72,6 +73,14 @@ public class GlobalImage extends Image {
 	private static final String TITLE = "title";
 
 	private GenericMessage msg;
+	
+	public GlobalImage() {
+		try {
+			init();
+		} catch (ResourceNotFoundException e) { 
+			e.printStackTrace();
+		}
+	}
 
 	@Override
 	protected boolean canUpload(ContentContext ctx) {
@@ -615,19 +624,28 @@ public class GlobalImage extends Image {
 		}
 		return res.toString();
 	}
-
+	
 	@Override
-	public void init(ComponentBean bean, ContentContext newContext) throws Exception {
-		super.init(bean, newContext);
-		properties.load(stringToStream(getValue()));
+	protected void init() throws ResourceNotFoundException {	
+		super.init();
+		try {
+			properties.load(stringToStream(getValue()));
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
 
 		if (isMeta()) {
 			if (getLabel().trim().length() > 0 && getTitle().trim().length() == 0) {
 				setTitle(getLabel());
 			}
 		}
-
 	}
+
+	/*@Override
+	public void init(ComponentBean bean, ContentContext newContext) throws Exception {
+		super.init(bean, newContext);
+
+	}*/
 
 	@Override
 	public boolean isContentCachable(ContentContext ctx) {

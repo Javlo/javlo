@@ -1,12 +1,9 @@
 package org.javlo.service.shared;
 
-import java.util.Arrays;
 import java.util.LinkedList;
 import java.util.List;
 
 import org.javlo.context.ContentContext;
-import org.javlo.navigation.MenuElement;
-import org.javlo.service.ContentService;
 
 public class SharedContentService {
 	
@@ -14,22 +11,28 @@ public class SharedContentService {
 		return new SharedContentService();
 	}
 	
-	public List<SharedContent> getAllSharedContent(ContentContext ctx) {
-		List<SharedContent> outContent = new LinkedList<SharedContent>();
-		ContentService content = ContentService.getInstance(ctx.getRequest());
-		
-		try {
-			for (MenuElement page : content.getNavigation(ctx).getAllChildren()) {
-				if (page.getSharedName() != null && page.getSharedName().length() > 0) {
-					SharedContent sharedContent = new SharedContent(ctx, page.getSharedName(), Arrays.asList(page.getContent()));
-					outContent.add(sharedContent);
-				}
+	private List<SharedContent> getAllSharedContent(ContentContext ctx) {
+		List<SharedContent> outContent = new LinkedList<SharedContent>();		
+		for (ISharedContentProvider provider : getAllProvider(ctx)) {
+			if (provider instanceof JavloSharedContentProvider) {
+				((JavloSharedContentProvider)provider).setContentContext(ctx);
 			}
-		} catch (Exception e) {
-			e.printStackTrace();
+			outContent.addAll(provider.getContent());
 		}
-		
 		return outContent;
+	}
+	
+	public List<ISharedContentProvider> getAllProvider(ContentContext ctx) {		
+		return SharedContentProviderFactory.getInstance(ctx).getAllSharedContentProvider(ctx);
+	}
+	
+	public ISharedContentProvider getProvider(ContentContext ctx, String name) {
+		for (ISharedContentProvider provider : getAllProvider(ctx)) {
+			if (provider.getName().equals(name)) {
+				return provider;
+			}
+		}
+		return null;
 	}
 	
 	public SharedContent getSharedContent(ContentContext ctx, String id) {

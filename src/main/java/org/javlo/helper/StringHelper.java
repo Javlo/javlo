@@ -767,9 +767,9 @@ public class StringHelper {
 		}
 		String outExt = path;
 		path = path.replace('\\', '/');
-		int dotIndex = path.lastIndexOf('/');
-		if (dotIndex >= 0) {
-			outExt = path.substring(dotIndex + 1, path.length());
+		int slashIndex = path.lastIndexOf('/');
+		if (slashIndex >= 0) {
+			outExt = path.substring(slashIndex + 1, path.length());
 		}
 		return outExt;
 	}

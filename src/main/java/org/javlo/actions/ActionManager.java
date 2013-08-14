@@ -28,6 +28,7 @@ import org.javlo.message.MessageRepository;
 import org.javlo.module.core.Module;
 import org.javlo.module.core.ModuleException;
 import org.javlo.module.core.ModulesContext;
+import org.javlo.service.shared.SharedContentAction;
 import org.javlo.user.AdminUserFactory;
 import org.javlo.user.AdminUserSecurity;
 import org.javlo.user.User;
@@ -158,7 +159,7 @@ public class ActionManager {
 		outActionGroup[1] = new ViewActions();
 		outActionGroup[2] = new TimeTravelerActions();
 		outActionGroup[3] = new DataAction();
-		outActionGroup[4] = new EcomActions();
+		outActionGroup[4] = new EcomActions();		
 		return outActionGroup;
 	}
 

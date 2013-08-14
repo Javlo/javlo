@@ -1512,11 +1512,12 @@ public class Edit extends AbstractModuleAction {
 				}
 				ctx = ctx.getContextWithArea(areaKey);
 				editContext.setCurrentArea(areaKey);
-			}
-			System.out.println("***** Edit.performInsertShared : area = "+areaKey); //TODO: remove debug trace
+			}			
 			if (areaKey != null) {
 				ctx = ctx.getContextWithArea(areaKey);
 			}
+			
+			sharedContent.loadContent(ctx);
 			content.createContent(ctx, sharedContent.getContent(), previousId, true);
 			
 			PersistenceService.getInstance(globalContext).store(ctx);
