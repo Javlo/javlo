@@ -7,6 +7,14 @@ import java.util.Map;
 
 public interface ISharedContentProvider {
 	
+	public static final String TYPE_DEFAULT = "default";
+	
+	public static final String TYPE_TEXT = "text";
+	
+	public static final String TYPE_IMAGE = "image";
+	
+	public static final String TYPE_MULTIMEDIA = "text";
+	
 	public String getName();
 	
 	public String getLabel(Locale locale);
@@ -35,5 +43,7 @@ public interface ISharedContentProvider {
 	 * refresh the content list and the list of categories
 	 */
 	public void refresh();
+	
+	public String getType();
 
 }

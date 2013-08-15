@@ -9,7 +9,7 @@
 
 	<div>
 		<input type="hidden" name="webaction" value="editTemplate" />
-		<input type="hidden" name="name" value="${currentTemplate.name}" />
+		<input type="hidden" name="name" value="${currentTemplate.name}" />		
 	</div>
 	
 	<div class="properties">

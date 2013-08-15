@@ -164,7 +164,7 @@ change log
  
  * forward message
  
- * no cache in menu element exept in view mode (MenuElement.java line 2507 (add !ctx..)  : if (localContentElementList == null || !ctx.isAsViewMode()) {
+ * no cache in menu element exept in view mode (MenuElement.java line 2507)
  
  * site map module
  

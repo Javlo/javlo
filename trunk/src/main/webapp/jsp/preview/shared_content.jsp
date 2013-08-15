@@ -20,8 +20,8 @@
 		<input type="submit" />
 	</div>
 </form>
-<c:if test="${not empty sharedContent}">
-<div class="content shared-content">
+<c:if test="${not empty provider}">
+<div class="content shared-content ${provider.type}">
 <c:forEach var="content" items="${sharedContent}">
 <div class="content-wrapper ${not empty content.description?'width-description':'without-description'}">
 <div class="content" data-shared="${content.id}">
