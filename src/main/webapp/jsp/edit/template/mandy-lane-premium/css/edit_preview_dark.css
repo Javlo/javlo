@@ -485,6 +485,10 @@ body.edit-preview {
     background-position: 0 -2897px;
 }
 
+#preview_command #pc_command.pc_command #export_pdf_button {
+    background-position: 0 -3058px;
+}
+
 #preview_command #pc_command.pc_command #pc_user_info {
     background-position: 0 -233px;
 }

@@ -74,6 +74,14 @@ MessageRepository.getInstance(request); // load request message
 						</div>
 					</form></li><%
 					}%>
+					<%if (ctx.getCurrentTemplate().isPDFRenderer()) {%>
+					<li><form id="export_pdf_page_form" action="${info.currentPDFURL}" method="post" target="_blanck">
+						<div class="pc_line">
+							<input id="export_pdf_button" type="submit" value="${i18n.edit['preview.label.pdf']}" title="${i18n.edit['preview.label.pdf']}" />
+							<label for="export_pdf_button">${i18n.edit['preview.label.pdf']}</label>
+						</div>
+					</form></li>
+					<%}%>
 					<li><form id="pc_del_page_form" action="${info.currentURL}" method="post">
 						<div class="pc_line">
 							<input type="hidden" value="${info.pageID}" name="page"/>

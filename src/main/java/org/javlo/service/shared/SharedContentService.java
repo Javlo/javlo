@@ -7,6 +7,8 @@ import org.javlo.context.ContentContext;
 
 public class SharedContentService {
 	
+	
+	
 	public static SharedContentService getInstance(ContentContext ctx) {
 		return new SharedContentService();
 	}
@@ -43,5 +45,7 @@ public class SharedContentService {
 		}
 		return null;
 	}
+	
+	
 
 }

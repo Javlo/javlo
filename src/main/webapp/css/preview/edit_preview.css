@@ -954,6 +954,11 @@ body.fix-preview {
 	display: block;
 }
 
+#preview_command .shared-content.image .content-wrapper {
+	width: 43%;
+	float: left;
+}
+
 #preview_command .shared-content .content {
 	display: block;	
 	overflow: hidden;
@@ -965,6 +970,8 @@ body.fix-preview {
 	margin: 0 0 3px 0;
 	padding: 0;
 	font-weight: bold;
+	height: 14px;
+	overflow: hidden;
 }
 
 #preview_command .shared-content .content figure {
@@ -972,6 +979,7 @@ body.fix-preview {
 	padding: 0;
 	float: left;
 	margin-right: 5px;
+	width: 100%;
 }
 
 #preview_command .shared-content .content .description {
@@ -984,6 +992,6 @@ body.fix-preview {
 }
 
 #preview_command .shared-content .without-description img {
-	width: 236px;
+	width: 100%;
 	display: inline;
 } 

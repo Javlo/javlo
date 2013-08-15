@@ -38,7 +38,6 @@ import javax.mail.MessagingException;
 import javax.mail.internet.InternetAddress;
 import javax.servlet.ServletContext;
 import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
 import net.sf.ehcache.Cache;
@@ -685,6 +684,10 @@ public class GlobalContext implements Serializable {
 	public Object getAttribute(String key) {
 		return attributes.get(key);
 	}
+	
+	public Set<Object> getAttributesKeys() {
+		return attributes.keySet();
+	}
 
 	public ICache getCache(String cacheName) {
 		if (staticConfig.useEhCache()) {
@@ -867,6 +870,26 @@ public class GlobalContext implements Serializable {
 			prop = initDataFile();
 		}
 		return prop.keySet();
+	}
+	
+	/**
+	 * delete a group of data with the prefix of the key.
+	 * @param prefix
+	 * @return true if one or more items was deleted.
+	 */
+	public synchronized boolean deletedDateFromKeyPrefix(String prefix) {
+		boolean deleted = false;
+		Collection<Object> keysToDelete = new LinkedHashSet<Object>();		
+		for (Object key : dataProperties.keySet()) {			
+			if (key.toString().startsWith(prefix)) {
+				deleted = true;
+				keysToDelete.add(key);				
+			}
+		}
+		for (Object object : keysToDelete) {
+			dataProperties.remove(object);
+		}
+		return deleted;
 	}
 
 	/**

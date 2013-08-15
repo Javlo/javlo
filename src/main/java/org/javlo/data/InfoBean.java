@@ -88,6 +88,12 @@ public class InfoBean {
 	public String getCurrentURL() {
 		return URLHelper.createURL(ctx);
 	}
+	
+	public String getCurrentPDFURL() {
+		ContentContext pdfCtx = ctx.getFreeContentContext();
+		pdfCtx.setFormat("pdf");
+		return URLHelper.createURL(pdfCtx);
+	}
 
 	public String getUploadURL() {
 		Map<String, String> params = new HashMap<String, String>();

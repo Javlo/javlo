@@ -1,11 +1,15 @@
 package org.javlo.service.shared;
 
+import java.io.ByteArrayOutputStream;
+import java.io.PrintStream;
+import java.net.URL;
 import java.util.Collection;
 
 import javax.servlet.http.HttpSession;
 
 import org.javlo.actions.AbstractModuleAction;
 import org.javlo.context.ContentContext;
+import org.javlo.context.GlobalContext;
 import org.javlo.i18n.I18nAccess;
 import org.javlo.message.MessageRepository;
 import org.javlo.module.core.ModulesContext;
@@ -27,6 +31,14 @@ public class SharedContentAction extends AbstractModuleAction {
 				((JavloSharedContentProvider)iSharedContentProvider).setContentContext(ctx);
 			}
 		}
+		ByteArrayOutputStream outStream = new ByteArrayOutputStream();
+		PrintStream out = new PrintStream(outStream);
+		for (URL url : SharedContentProviderFactory.getInstance(ctx).getURLList(ctx.getGlobalContext())) {
+			out.println(url);
+		}
+		out.close();
+		ctx.getRequest().setAttribute("urls", new String(outStream.toByteArray()));
+		
 		ctx.getRequest().setAttribute("providers", contentProviders);
 		return msg;
 	}
@@ -49,6 +61,15 @@ public class SharedContentAction extends AbstractModuleAction {
 		if (provider != null) {
 			provider.refresh();
 		}
+		return null;
+	}
+	
+	public static String performURLList(RequestService rs, GlobalContext globalContext, ContentContext ctx, MessageRepository messageRepository, I18nAccess i18nAccess) {
+		String urlList = rs.getParameter("url-list", null);
+		if (urlList == null) {			
+			return "param 'url-list' not found.";
+		}
+		SharedContentProviderFactory.getInstance(ctx).setURLList(globalContext, urlList);
 		return null;
 	}
 	

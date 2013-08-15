@@ -96,4 +96,10 @@ public class FotogrphSharedContentProvider extends AbstractSharedContentProvider
 			e.printStackTrace();
 		}
 	}
+	
+	@Override
+	public String getType() {	
+		return TYPE_IMAGE;
+	}
+
 }

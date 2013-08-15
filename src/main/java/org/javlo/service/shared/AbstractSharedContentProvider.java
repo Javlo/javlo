@@ -87,5 +87,10 @@ public abstract class AbstractSharedContentProvider implements ISharedContentPro
 	@Override
 	public void refresh() {
 	}
+	
+	@Override
+	public String getType() {	
+		return TYPE_DEFAULT;
+	}
 
 }

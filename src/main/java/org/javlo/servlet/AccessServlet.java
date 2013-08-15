@@ -655,7 +655,7 @@ public class AccessServlet extends HttpServlet implements IVersion {
 						ITextRenderer pdfRenderer = new ITextRenderer();
 						logger.info("create PDF : " + url);
 						pdfRenderer.setDocument(url);
-						pdfRenderer.layout();
+						pdfRenderer.layout();						
 						pdfRenderer.createPDF(out);
 					} else if (ctx.getFormat().equalsIgnoreCase("cxml")) {
 
@@ -722,8 +722,9 @@ public class AccessServlet extends HttpServlet implements IVersion {
 									ctx.getRequest().setAttribute("sharedContentProviders", sharedContentService.getAllProvider(ctx));
 									ISharedContentProvider provider = sharedContentService.getProvider(ctx,sharedContentContext.getProvider());
 									if (provider != null) {
+										ctx.getRequest().setAttribute("provider", provider);
 										ctx.getRequest().setAttribute("sharedContent", provider.getContent(sharedContentContext.getCategories()));
-										ctx.getRequest().setAttribute("sharedContentCategories", provider.getCategories().entrySet());
+										ctx.getRequest().setAttribute("sharedContentCategories", provider.getCategories().entrySet());										
 									}
 								} 
 							}

@@ -149,11 +149,12 @@ public class TemplateAction extends AbstractModuleAction {
 				fileModuleContext.setRoot(template.getTemplateRealPath());
 				fileModuleContext.setTitle("<a href=\"" + URLHelper.createModuleURL(ctx, ctx.getPath(), TemplateContext.NAME, params) + "\">" + template.getId() + "</a>");
 				I18nAccess i18nAccess = I18nAccess.getInstance(ctx.getRequest());
+				
+				ImageConfig imageConfig = ImageConfig.getNewInstance(globalContext, ctx.getRequest().getSession(), template);
+				ImageConfig parentImageConfig = ImageConfig.getNewInstance(globalContext, ctx.getRequest().getSession(), template.getParent());
+				ctx.getRequest().setAttribute("filters", imageConfig.getFilters());
+				
 				if (requestService.getParameter("filter", null) != null && requestService.getParameter("back", null) == null) {
- 
-					ImageConfig imageConfig = ImageConfig.getNewInstance(globalContext, ctx.getRequest().getSession(), template);
-					ImageConfig parentImageConfig = ImageConfig.getNewInstance(globalContext, ctx.getRequest().getSession(), template.getParent());
-					ctx.getRequest().setAttribute("filters", imageConfig.getFilters());
 
 					ctx.getRequest().setAttribute("areas", template.getAreas());
 					ctx.getRequest().setAttribute("textProperties", getTextProperties());
@@ -234,8 +235,11 @@ public class TemplateAction extends AbstractModuleAction {
 	}
 
 	public String performEditTemplate(ServletContext application, StaticConfig staticConfig, ContentContext ctx, RequestService requestService, Module module, I18nAccess i18nAccess, MessageRepository messageRepository) throws IOException {
-		String msg = null;
-		Template template = TemplateFactory.getDiskTemplate(application, requestService.getParameter("templateid", null));
+		String msg = null;		
+		Template template = TemplateFactory.getDiskTemplate(application, requestService.getParameter("name", null));
+		if (template == null) {
+			return "template not found : "+requestService.getParameter("name", null);
+		}
 		if (requestService.getParameter("back", null) != null) {			
 			module.restoreAll();
 		} else {

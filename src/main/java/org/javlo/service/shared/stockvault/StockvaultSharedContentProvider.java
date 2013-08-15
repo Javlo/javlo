@@ -109,5 +109,10 @@ public class StockvaultSharedContentProvider extends AbstractSharedContentProvid
 			e.printStackTrace();
 		}
 	}
+	
+	@Override
+	public String getType() {	
+		return TYPE_IMAGE;
+	}
 
 }

@@ -15,5 +15,16 @@
 </c:forEach>
 </tbody>
 </table>
+</div>
+<div class="content">
+
+<form class="standard-form" action="${info.currentURL}" method="post">
+	<fieldset>	
+	<legend>Automatic gallery importation (URL list)</legend>
+	<input type="hidden" name="webaction" value="shared-content.URLList" />
+	<textarea name="url-list" name="" rows="20" cols="120">${urls}</textarea>
+	<input type="submit" />
+	</fieldset>
+</form>
 
 </div>
