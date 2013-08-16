@@ -366,6 +366,9 @@ public class URLHelper extends ElementaryURLHelper {
 	}
 
 	public static String createStaticTemplateURLWithoutContext(ContentContext ctx, Template template, String url) throws Exception {
+		if (url == null) {
+			return null;
+		}
 		GlobalContext globalContext = GlobalContext.getInstance(ctx.getRequest());
 		if (template == null) {
 			MenuElement elem = ctx.getCurrentPage();
