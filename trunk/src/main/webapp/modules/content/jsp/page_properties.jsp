@@ -124,7 +124,7 @@
 </div>
 </c:if>
 
-<c:if test="${globalContext.staticConfig.sharedContent}">
+<c:if test="${sharedContent}">
 <div class="line">
 	<label for="shared_name">${i18n.edit['item.shared']}</label>
 	<input type="text" id="shared_name" name="share" ${page.info.visible?'checked="checked"':''} value="${page.info.sharedName}" />
