@@ -442,6 +442,10 @@ public class Edit extends AbstractModuleAction {
 		GlobalContext globalContext = GlobalContext.getInstance(ctx.getRequest());
 
 		Module currentModule = modulesContext.getCurrentModule();
+		
+		if (modulesContext.searchModule("shared-content") != null) {
+			ctx.getRequest().setAttribute("sharedContent", "true");
+		}
 
 		if (ResourceStatus.isInstance(ctx.getRequest().getSession())) {
 			ResourceStatus resourceStatus = ResourceStatus.getInstance(ctx.getRequest().getSession());
