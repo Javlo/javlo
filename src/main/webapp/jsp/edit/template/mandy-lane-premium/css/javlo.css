@@ -471,13 +471,19 @@ ul,li {
 }
 
 .tabmenu ul li.module .subname {
-	position: absolute;
-	right: 16px;
-	top: 20px;
+	float: right;
+	padding: 0;
+	margin: -18px 15px 0 15px;
+	text-transform: none;
 	font-size: 0.9em;
+	height: 18px;
+	overflow: hidden;
+	text-align: right;
+	white-space: nowrap;
 }
 
-.tabmenu ul li.module a span {
+.tabmenu ul li.module a .title {
+	text-align: right;
 	background: url("../images/icons/small/white/star.png") no-repeat scroll
 		15px 12px transparent;
 }
@@ -492,72 +498,72 @@ ul,li {
 	color: #eeeeee;
 }
 
-.tabmenu ul ul.subnav li a span, .tabmenu ul li.current ul.subnav li a span {
+.tabmenu ul ul.subnav li a .title, .tabmenu ul li.current ul.subnav li a .title {
 	background: none;
 }
 
-.tabmenu ul li.module.current a span {
+.tabmenu ul li.module.current a .title {
 	background: url("../images/icons/small/black/star.png") no-repeat scroll
 		15px 12px transparent;
 }
 
-.tabmenu ul li.content a span {
+.tabmenu ul li.content a .title {
 	background: url("../images/icons/small/white/edit.png") no-repeat scroll
 		15px 12px transparent;
 }
 
-.tabmenu ul li.content.current a span {
+.tabmenu ul li.content.current a .title {
 	background: url("../images/icons/small/black/edit.png") no-repeat scroll
 		15px 12px transparent;
 }
 
-.tabmenu ul li.dashboard a span {
+.tabmenu ul li.dashboard a .title {
 	background: url("../images/icons/small/white/home.png") no-repeat scroll
 		15px 12px transparent;
 }
 
-.tabmenu ul li.dashboard.current a span {
+.tabmenu ul li.dashboard.current a .title {
 	background: url("../images/icons/small/black/home.png") no-repeat scroll
 		15px 12px transparent;
 }
 
 
-.tabmenu ul li.template  a span {
+.tabmenu ul li.template  a .title {
 	background: url("../images/icons/small/white/document.png") no-repeat
 		scroll 15px 12px transparent;
 }
 
-.tabmenu ul li.template.current a span {
+.tabmenu ul li.template.current a .title {
 	background: url("../images/icons/small/black/document.png") no-repeat
 		scroll 15px 12px transparent;
 }
 
-.tabmenu ul li.admin a span {
+.tabmenu ul li.admin a .title {
 	background: url("../images/icons/small/white/settings.png") no-repeat
 		scroll 15px 12px transparent;
 }
 
-.tabmenu ul li.admin.current a span {
+.tabmenu ul li.admin.current a .title {
 	background: url("../images/icons/small/black/settings.png") no-repeat
 		scroll 15px 12px transparent;
 }
 
-.tabmenu ul li.file a span {
+.tabmenu ul li.file a .title {
 	background: url("../images/icons/small/white/save.png") no-repeat scroll
 		15px 12px transparent;
 }
 
-.tabmenu ul li.file.current a span {
+.tabmenu ul li.file.current a .title {
 	background: url("../images/icons/small/black/save.png") no-repeat scroll
 		15px 12px transparent;
 }
 
-.tabmenu ul li.users a span {
+.tabmenu ul li.users a .title {
 	background: url("../images/icons/small/white/user.png") no-repeat scroll
 		15px 12px transparent;
 }
 
-.tabmenu ul li.users.current a span {
+.tabmenu ul li.users.current a .title {
 	background: url("../images/icons/small/black/user.png") no-repeat scroll
 		15px 12px transparent;
 }
