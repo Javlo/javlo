@@ -14,7 +14,7 @@ public abstract class AbstractSharedContentProvider implements ISharedContentPro
 
 	private String name;
 	private URL url;
-	private Map<String,String> categories = Collections.EMPTY_MAP;
+	private Map<String, String> categories = Collections.EMPTY_MAP;
 
 	@Override
 	public String getName() {
@@ -39,14 +39,19 @@ public abstract class AbstractSharedContentProvider implements ISharedContentPro
 	public abstract Collection<SharedContent> getContent();
 
 	@Override
-	public Collection<SharedContent> searchContent(String query) {		
+	public Collection<SharedContent> searchContent(String query) {
 		Collection<SharedContent> outList = new HashSet<SharedContent>();
 		query = StringHelper.createFileName(query);
 		for (SharedContent content : getContent()) {
-			for (ComponentBean bean : content.getContent()) {
-				if (!outList.contains(content) && StringHelper.createFileName(bean.getValue()).contains(query)) {
-					outList.add(content);
+			if (content.getContent() != null) {
+				for (ComponentBean bean : content.getContent()) {
+					if (bean != null && !outList.contains(content) && StringHelper.createFileName(bean.getValue()).contains(query)) {
+						outList.add(content);
+					}
 				}
+			}
+			if (!outList.contains(content) && StringHelper.createFileName(content.getTitle() + ' ' + content.getDescription()).contains(query)) {
+				outList.add(content);
 			}
 		}
 		return outList;
@@ -55,42 +60,47 @@ public abstract class AbstractSharedContentProvider implements ISharedContentPro
 	public void setName(String name) {
 		this.name = name;
 	}
-	
+
 	@Override
-	public Map<String,String> getCategories() {
+	public Map<String, String> getCategories() {
 		return categories;
 	}
-	
+
 	public void setCategories(Map<String, String> categories) {
 		this.categories = categories;
 	}
-	
+
 	@Override
 	public Collection<SharedContent> getContent(Collection<String> categories) {
-		if (getCategories().size()<=1 || categories == null || categories.size() == 0) {
+		if (getCategories().size() <= 1 || categories == null || categories.size() == 0) {
 			return getContent();
 		}
-		Collection<SharedContent> outList = new HashSet<SharedContent>();	
-		for (SharedContent content : getContent()) {			
+		Collection<SharedContent> outList = new HashSet<SharedContent>();
+		for (SharedContent content : getContent()) {
 			if (!Collections.disjoint(content.getCategories(), categories)) {
 				outList.add(content);
 			}
 		}
 		return outList;
 	}
-	
+
 	@Override
-	public boolean isEmpty() {	
+	public boolean isEmpty() {
 		return getContent().size() == 0;
 	}
-	
+
 	@Override
 	public void refresh() {
 	}
+
+	@Override
+	public String getType() {
+		return TYPE_DEFAULT;
+	}
 	
 	@Override
-	public String getType() {	
-		return TYPE_DEFAULT;
+	public boolean isSearch() {	
+		return true;
 	}
 
 }

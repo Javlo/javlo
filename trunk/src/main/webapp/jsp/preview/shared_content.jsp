@@ -1,6 +1,16 @@
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
 <%@ taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions" %>
-<input class="filter" type="text" placeholder="${i18n.edit['global.filter']}" onkeyup="filter(this.value, '#preview_command .shared-content .content-wrapper');" />
+<c:if test="${not empty provider && provider.search}">
+<form id="shared-content-search-form" class="ajax" action="${info.currentURL}" method="post">
+<div>
+	<input type="hidden" name="webaction" value="shared-content.search" />
+	<input type="hidden" name="provider" value="${provider.name}" />
+	<input type="text" name="query" placeholder="${i18n.edit['content.search']}" />
+	<input type="submit" value="${i18n.edit['global.ok']}" />
+</div>
+</form>
+</c:if>
+<!-- input class="filter" type="text" placeholder="${i18n.edit['global.filter']}" onkeyup="filter(this.value, '#preview_command .shared-content .content-wrapper');" / -->
 <form id="shared-content-form" class="js-submit" action="${info.currentURL}" method="post">
 	<div>
 		<input type="hidden" name="webaction" value="shared-content.choose" />
@@ -21,17 +31,7 @@
 	</div>
 </form>
 <c:if test="${not empty provider}">
-<div class="content shared-content ${provider.type}">
-<c:forEach var="content" items="${sharedContent}">
-<div class="content-wrapper ${not empty content.description?'width-description':'without-description'}">
-<div class="content" data-shared="${content.id}">
-	<h4><span>${content.title}</span></h4>
-	<figure><img src="${content.imageURL}" /></figure>
-	<c:if test="${not empty content.description}">
-		<div class="description">${content.description}</div>
-	</c:if>	
-</div>
-</div>
-</c:forEach>
+<div id="shared-content-result" class="content shared-content ${provider.type} ajax-loader">
+<jsp:include page="shared_content_result.jsp"></jsp:include>
 </div>
 </c:if>

@@ -758,8 +758,11 @@ public class ResourceHelper {
 	public static Properties loadProperties(File file) throws IOException {
 		Properties properties = new Properties();
 		InputStream in = new FileInputStream(file);
-		properties.load(in);
-		in.close();
+		try { 
+			properties.load(in);
+		} finally {
+			ResourceHelper.closeResource(in);
+		}
 		return properties;
 	}
 
@@ -1279,7 +1282,7 @@ public class ResourceHelper {
 			return true;
 		}
 	}
-
+	
 	public static void main(String[] args) {
 		TicketBean bean = new TicketBean();
 		bean.setAuthors("patrick");

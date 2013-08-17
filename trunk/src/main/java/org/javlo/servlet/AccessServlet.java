@@ -64,6 +64,7 @@ import org.javlo.service.RequestService;
 import org.javlo.service.remote.RemoteMessage;
 import org.javlo.service.remote.RemoteMessageService;
 import org.javlo.service.shared.ISharedContentProvider;
+import org.javlo.service.shared.JavloSharedContentProvider;
 import org.javlo.service.shared.SharedContentContext;
 import org.javlo.service.shared.SharedContentService;
 import org.javlo.service.social.SocialService;
@@ -715,14 +716,21 @@ public class AccessServlet extends HttpServlet implements IVersion {
 							if (ctx.getRenderMode() == ContentContext.PREVIEW_MODE && staticConfig.isFixPreview()) {
 								ctx.getRequest().setAttribute("components", ComponentFactory.getComponentForDisplay(ctx));
 								ModulesContext modulesContext = ModulesContext.getInstance(request.getSession(), globalContext);
+								
+								/************************/
+								/**** Shared Content ****/
+								/************************/								
+								
 								if (modulesContext.searchModule("shared-content") != null) {									
 									SharedContentService sharedContentService  = SharedContentService.getInstance(ctx);
-									SharedContentContext sharedContentContext = SharedContentContext.getInstance(request.getSession());
-									
+									SharedContentContext sharedContentContext = SharedContentContext.getInstance(request.getSession());									
 									ctx.getRequest().setAttribute("sharedContentProviders", sharedContentService.getAllProvider(ctx));
 									ISharedContentProvider provider = sharedContentService.getProvider(ctx,sharedContentContext.getProvider());
 									if (provider != null) {
 										ctx.getRequest().setAttribute("provider", provider);
+										if (provider instanceof JavloSharedContentProvider) {
+											((JavloSharedContentProvider)provider).setContentContext(ctx);
+										}
 										ctx.getRequest().setAttribute("sharedContent", provider.getContent(sharedContentContext.getCategories()));
 										ctx.getRequest().setAttribute("sharedContentCategories", provider.getCategories().entrySet());										
 									}

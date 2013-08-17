@@ -129,6 +129,8 @@ public class I18nAccess implements Serializable {
 	private boolean templateImported = false;
 
 	private Properties moduleEdit = null;
+	
+	private Properties contextEdit = null;
 
 	private ReadOnlyMultiMap propViewMap = null;
 
@@ -295,6 +297,13 @@ public class I18nAccess implements Serializable {
 				}
 			}
 		}
+		
+		if (contextEdit != null) {
+			Set<?> keysList = contextEdit.keySet();
+			for (Object key : keysList) {
+				propEditMap.put(key.toString(), "" + contextEdit.getProperty((String) key));
+			}
+		}
 
 		return propEditMap;
 	}
@@ -369,9 +378,11 @@ public class I18nAccess implements Serializable {
 	/* VIEW */
 
 	public String getText(String key, String notFoundValue) {
+		
 		if (displayKey) {
 			return key;
 		}
+		
 		String text = propEdit.getString(key);
 		if (text == null) {
 			if (moduleEdit != null) {
@@ -380,6 +391,14 @@ public class I18nAccess implements Serializable {
 				text = notFoundValue;
 			}
 		}
+		
+		if (contextEdit != null) {
+			String contextText = contextEdit.getProperty(text);
+			if (contextText != null) {
+				text = contextText;	
+			}
+		}
+		
 		return text;
 	}
 
@@ -534,8 +553,10 @@ public class I18nAccess implements Serializable {
 			propEdit = i18nResource.getEditFile(newEditLg, true);
 			if (currentModule != null) {
 				moduleEdit = currentModule.loadEditI18n(globalContext, session);
-			}
+			}			
+			contextEdit = i18nResource.getContextI18nFile(ContentContext.EDIT_MODE, newEditLg, true);			
 		}
+		
 	}
 
 	private void initView(String newViewLg) throws IOException, ConfigurationException {
