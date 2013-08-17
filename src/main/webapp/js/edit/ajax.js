@@ -41,6 +41,7 @@ jQuery(document).ready(function() {
 		if (ajaxSubmit) {			
 			event.preventDefault();
 			jQuery("#ajax-loader").addClass("active");
+			jQuery(".ajax-loader").addClass("active");
 			var queryString = jQuery(this).attr("action"); 
 			ajaxRequest(queryString, this);
 			return false;
@@ -229,6 +230,7 @@ var ajaxLoading = 0;
 function startAjaxLoading() {
 	ajaxLoading++;
 	jQuery("#ajax-loader").addClass("active");
+	jQuery(".ajax-loader").addClass("active");
 	jQuery("#upload-zone").addClass("hidden");
 }
 
@@ -236,6 +238,7 @@ function endAjaxLoading() {
 	ajaxLoading--;	
 	if (ajaxLoading == 0) {
 		jQuery("#ajax-loader").removeClass("active");
+		jQuery(".ajax-loader").removeClass("active");
 		jQuery("#upload-zone").removeClass("hidden");
 	}
 }

@@ -54,42 +54,44 @@ public class StockvaultSharedContentProvider extends AbstractSharedContentProvid
 	public void refresh() {
 		content = null;
 	}
-
-
+	
 	@Override
-	public Collection<SharedContent> getContent() {		
+	public Collection<SharedContent> getContent() {	
+		return getContent(getURL());
+	}
+	
+	@Override
+	public Collection<SharedContent> searchContent(String query) {
+		try {
+			Collection<SharedContent> outContent = new LinkedList<SharedContent>();
+			for (int page=1; page<4; page++) { // read 3 pages
+				URL url = new URL(URLHelper.addAllParams(URLHelper.mergePath(getURL().toString(),"/search/"), "query="+StringHelper.toHTMLAttribute(query), "page="+page));				
+				try {
+					outContent.addAll(readURL(url));
+				} catch (Exception e) {
+					e.printStackTrace();
+				}
+			}
+			
+			return outContent;
+		} catch (MalformedURLException e) {
+			e.printStackTrace();
+			return null;
+		}		
+	}
+	
+	private Collection<SharedContent> getContent(URL url) {		
 		if (content == null) {
 			content = new LinkedList<SharedContent>();
 			for (Map.Entry<String, String> category : getCategories().entrySet()) {
 				logger.info("Stockvault load category : "+category.getValue());
 				try {
-					URL catURL = new URL(URLHelper.mergePath(getURL().toString(), category.getKey()));
-					Parser htmlParser = new Parser(catURL.openConnection());
-					NodeFilter cssFilter = new CssSelectorNodeFilter(".row_images2 li img");
-					NodeList nodeList = htmlParser.extractAllNodesThatMatch(cssFilter);
-					if (nodeList.size() == 0) {
-						logger.severe("bad structure no images found.");
+					URL catURL = new URL(URLHelper.mergePath(url.toString(), category.getKey()));
+					Collection<SharedContent> result = readURL(catURL);
+					for (SharedContent sharedContent : result) {
+						sharedContent.addCategory(category.getKey());
 					}
-					for (int i = 0; i < nodeList.size(); i++) {
-						if (nodeList.elementAt(i) instanceof TagNode) {
-							TagNode tag = (TagNode) nodeList.elementAt(i);
-							String[] splitedSrc = tag.getAttribute("src").split("/");
-							if (splitedSrc.length > 0) {
-								String id = StringHelper.getFileNameWithoutExtension(splitedSrc[splitedSrc.length - 1]);
-								StockvaultSharedContent sharedContent = new StockvaultSharedContent(id, null);
-								sharedContent.addCategory(category.getKey());
-								String title = tag.getAttribute("alt");
-								String[] splitedTitle = title.split("-");
-								if (splitedTitle.length > 0) {
-									title = splitedTitle[1];
-								}
-								sharedContent.setTitle(title.trim());
-								sharedContent.setImageUrl(URLHelper.mergePath(getURL().toString(), "data/s/", id + ".jpg"));
-								sharedContent.setRemoteImageUrl(URLHelper.mergePath(getURL().toString(), "/photo/download/", id));
-								content.add(sharedContent);
-							}
-						}
-					}
+					content.addAll(result);
 				} catch (Exception e) {
 					e.printStackTrace();
 				}
@@ -97,6 +99,37 @@ public class StockvaultSharedContentProvider extends AbstractSharedContentProvid
 			}
 		}
 		return content;
+	}
+	
+	private Collection<SharedContent> readURL(URL url) throws Exception {
+		Collection<SharedContent> outSharedContent = new LinkedList<SharedContent>();
+		
+		Parser htmlParser = new Parser(url.openConnection());
+		NodeFilter cssFilter = new CssSelectorNodeFilter(".row_images2 li img");
+		NodeList nodeList = htmlParser.extractAllNodesThatMatch(cssFilter);
+		if (nodeList.size() == 0) {
+			logger.severe("bad structure no images found.");
+		}
+		for (int i = 0; i < nodeList.size(); i++) {
+			if (nodeList.elementAt(i) instanceof TagNode) {
+				TagNode tag = (TagNode) nodeList.elementAt(i);
+				String[] splitedSrc = tag.getAttribute("src").split("/");
+				if (splitedSrc.length > 0) {
+					String id = StringHelper.getFileNameWithoutExtension(splitedSrc[splitedSrc.length - 1]);
+					StockvaultSharedContent sharedContent = new StockvaultSharedContent(id, null);					
+					String title = tag.getAttribute("alt");
+					String[] splitedTitle = title.split("-");
+					if (splitedTitle.length > 0) {
+						title = splitedTitle[1];
+					}
+					sharedContent.setTitle(title.trim());
+					sharedContent.setImageUrl(URLHelper.mergePath(getURL().toString(), "data/s/", id + ".jpg"));
+					sharedContent.setRemoteImageUrl(URLHelper.mergePath(getURL().toString(), "/photo/download/", id));
+					outSharedContent.add(sharedContent);
+				}
+			}
+		}		
+		return outSharedContent;
 	}
 
 	public static void main(String[] args) {

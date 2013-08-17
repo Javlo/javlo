@@ -166,11 +166,24 @@ body.preview-only {
 #preview_command #ajax-loader {  
 	margin: 12px 0;
 	font-size: 16px;
-    background-image: url("../images/loaders/loader3.gif");
+    background-image: url("../images/loaders/dark-loader.gif");
     background-position: center center;
     background-repeat: no-repeat;
     display: none;
     height: 16px;        
+}
+
+#preview_command .ajax-loader.active {
+	margin: 12px 0;
+	font-size: 16px;
+    background-image: url("../images/loaders/grey-loader.gif");
+    background-position: center center;
+    background-repeat: no-repeat;    
+    height: 16px;	
+}
+
+#preview_command .ajax-loader.active .content-wrapper {
+	display: none;
 }
 
 #preview_command #ajax-loader.active {

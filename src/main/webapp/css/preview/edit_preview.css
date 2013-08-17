@@ -946,6 +946,20 @@ body.fix-preview {
 	max-height: 600px;
 }
 
+#preview_command #shared-content-search-form input {
+	display: inline;
+}
+
+#preview_command #shared-content-search-form input[type=text] {
+	width: 210px;
+	text-transform: none;
+}
+
+#preview_command #shared-content-search-form input[type=submit] {
+	float: right;
+	padding: 2px;
+}
+
 #preview_command .shared-content .content-wrapper {
 	margin: 5px 0;
 	border-bottom: 1px solid #AAAAAA;
@@ -978,8 +992,7 @@ body.fix-preview {
 	margin: 0;
 	padding: 0;
 	float: left;
-	margin-right: 5px;
-	width: 100%;
+	margin-right: 5px;	
 }
 
 #preview_command .shared-content .content .description {

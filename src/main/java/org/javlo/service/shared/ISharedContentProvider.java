@@ -34,6 +34,12 @@ public interface ISharedContentProvider {
 	public Map<String,String> getCategories();
 	
 	/**
+	 * return true if search is possible.
+	 * @return
+	 */
+	public boolean isSearch();
+	
+	/**
 	 * return true if provider have no content.
 	 * @return
 	 */

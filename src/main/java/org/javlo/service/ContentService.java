@@ -30,6 +30,7 @@ import org.javlo.context.GlobalContext;
 import org.javlo.context.GlobalContextFactory;
 import org.javlo.data.InfoBean;
 import org.javlo.helper.StringHelper;
+import org.javlo.i18n.I18nResource;
 import org.javlo.navigation.MenuElement;
 import org.javlo.template.TemplateFactory;
 
@@ -592,6 +593,7 @@ public class ContentService {
 		components.clear();
 		releasePreviewNav(ctx);
 		releaseViewNav(ctx, globalContext);
+		I18nResource.getInstance(globalContext).clearAllCache();
 	}
 
 	/**

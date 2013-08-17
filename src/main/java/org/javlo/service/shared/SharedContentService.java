@@ -1,16 +1,24 @@
 package org.javlo.service.shared;
 
+import java.util.Collection;
 import java.util.LinkedList;
 import java.util.List;
 
 import org.javlo.context.ContentContext;
 
 public class SharedContentService {
+
+	private static final String KEY = SharedContentService.class.getName();
 	
-	
+	private Collection<SharedContent> latestReturnedContent = null;
 	
 	public static SharedContentService getInstance(ContentContext ctx) {
-		return new SharedContentService();
+		SharedContentService instance = (SharedContentService)ctx.getRequest().getSession().getAttribute(KEY);
+		if (instance == null) {
+			instance = new SharedContentService();
+			ctx.getRequest().getSession().setAttribute(KEY, instance);
+		}
+		return instance;
 	}
 	
 	private List<SharedContent> getAllSharedContent(ContentContext ctx) {
@@ -38,7 +46,10 @@ public class SharedContentService {
 	}
 	
 	public SharedContent getSharedContent(ContentContext ctx, String id) {
-		for (SharedContent sharedContent : getAllSharedContent(ctx)) {
+		if (latestReturnedContent == null) {
+			latestReturnedContent = getAllSharedContent(ctx);
+		}
+		for (SharedContent sharedContent : latestReturnedContent) {
 			if (sharedContent.getId().equals(id)) {
 				return sharedContent;
 			}
@@ -46,6 +57,9 @@ public class SharedContentService {
 		return null;
 	}
 	
-	
+	public Collection<SharedContent> searchContent (ISharedContentProvider provider, String query) {
+		latestReturnedContent = provider.searchContent(query);
+		return latestReturnedContent;
+	}
 
 }

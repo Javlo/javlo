@@ -97,5 +97,10 @@ public class URLImageSharedContentProvider extends AbstractSharedContentProvider
 	public String getType() {	
 		return TYPE_IMAGE;
 	}
+	
+	@Override
+	public boolean isSearch() {
+		return getContent().size() > 30;
+	}
 }
 
