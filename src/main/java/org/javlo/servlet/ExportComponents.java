@@ -53,15 +53,30 @@ public class ExportComponents extends HttpServlet {
 
 			String componentType = request.getPathInfo();
 			if (!componentType.toLowerCase().endsWith(".csv")) {
-				if (componentType.toLowerCase().endsWith(".html")) {
+				if (componentType.toLowerCase().endsWith(".html") || componentType.toLowerCase().endsWith(".js")) { // js
+																													// use
+																													// for
+																													// jsonp
 					ctx.setRenderMode(ContentContext.VIEW_MODE);
 					String compId = StringHelper.getFileNameWithoutExtension(StringHelper.getFileNameFromPath(request.getRequestURI()));
 					ContentService content = ContentService.getInstance(ctx.getRequest());
 					IContentVisualComponent comp = content.getComponent(ctx, compId);
-					ctx.setFree(false);
-					comp.initContent(ctx);
-					String xhtml = comp.getXHTMLCode(ctx);
-					ResourceHelper.writeStringToStream(xhtml, response.getOutputStream());
+					
+					if (comp == null) {
+						response.setStatus(HttpServletResponse.SC_NOT_FOUND);
+						return;
+					} else {						
+						ctx.setFree(false);
+						ctx.setCurrentTemplate(TemplateFactory.getTemplate(ctx, comp.getPage()));
+						comp.initContent(ctx);
+						String xhtml = comp.getXHTMLCode(ctx);
+						if (xhtml == null) {
+							logger.severe("content not found on component : "+compId);
+							response.setStatus(HttpServletResponse.SC_NOT_FOUND);
+							return;							
+						}
+						ResourceHelper.writeStringToStream(xhtml, response.getOutputStream());
+					}
 				} else {
 					logger.warning("bad format : " + componentType);
 					response.setStatus(HttpServletResponse.SC_NOT_FOUND);

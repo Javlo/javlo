@@ -56,6 +56,7 @@ org.javlo.component.links.AnchorComponent
 org.javlo.component.links.AnchorLink
 org.javlo.component.links.SmartLink
 org.javlo.component.links.UnsubsribeLink
+org.javlo.component.links.TwitterReader
 
 --content.title.graphic
 
