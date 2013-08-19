@@ -20,18 +20,16 @@
 
 			</c:if>
 			<c:if test="${comm.allSites}">
-				<option value="_ALL::_ALL">All sites</option>
+				<option value="_ALL::_ALL">${i18n.edit['communication.all-sites']}</option>
 				<c:forEach var="site" items="${comm.sites}">
-					<optgroup label="${site.label}">
-
-						<option value="${site.key}::_ALL">All users of ${site.label}</option>
+					<c:if test="${!empty site.users}">
+						<option value="${site.key}::_ALL" class="cim-site">${site.label}</option>
 						<c:forEach var="user" items="${site.users}">
 							<c:if test="${user.username != comm.currentUser}">
-								<option style="color: ${user.color};" value="${site.key}::${user.username}">${user.username}</option>
+								<option style="color: ${user.color};" value="${site.key}::${user.username}" class="cim-site-user">${user.username}</option>
 							</c:if>
 						</c:forEach>
-
-					</optgroup>
+					</c:if>
 				</c:forEach>
 			</c:if>
 		</select>
