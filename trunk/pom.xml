@@ -138,13 +138,13 @@
 			<artifactId>pdfbox</artifactId>
 			<version>0.7.3</version>
 		</dependency>
-		
+
 		<dependency>
 			<groupId>org.apache.poi</groupId>
 			<artifactId>poi-scratchpad</artifactId>
 			<version>3.9</version>
 		</dependency>
-            
+
 		<dependency>
 			<groupId>org.apache.poi</groupId>
 			<artifactId>poi-ooxml</artifactId>
@@ -274,7 +274,7 @@
 		<dependency>
 			<groupId>jjil</groupId>
 			<artifactId>jjil.core</artifactId>
-			<version>0.1</version>			
+			<version>0.1</version>
 		</dependency>
 
 		<dependency>
@@ -289,11 +289,17 @@
 			<version>4.11</version>
 			<scope>test</scope>
 		</dependency>
-		
+
 		<dependency>
 			<groupId>com.drewnoakes</groupId>
 			<artifactId>metadata-extractor</artifactId>
 			<version>2.6.2</version>
+		</dependency>
+
+		<dependency>
+			<groupId>org.jsoup</groupId>
+			<artifactId>jsoup</artifactId>
+			<version>1.7.2</version>
 		</dependency>
 
 	</dependencies>
