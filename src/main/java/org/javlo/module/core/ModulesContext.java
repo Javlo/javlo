@@ -214,13 +214,17 @@ public class ModulesContext {
 		setCurrentModule((Module) null);
 		for (Module module : modules) {
 			if (module.getName().equals(moduleName)) {
-				setCurrentModule(module);
+				this.currentModule = module;
 			}
 		}
 	}
 
 	private void setCurrentModule(Module currentModule) {
-		this.currentModule = currentModule;
+		if (currentModule == null){
+			this.currentModule = null;
+		} else {
+			setCurrentModule(currentModule.getName());
+		}
 	}
 
 	/**
