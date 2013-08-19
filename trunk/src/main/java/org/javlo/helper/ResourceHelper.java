@@ -1262,7 +1262,13 @@ public class ResourceHelper {
 					imageReader.setInput(in);
 					return imageReader.getImageMetadata(0);
 				} finally {
-					ResourceHelper.closeResource(in);
+					if (in != null) {
+						try {
+							in.close();
+						} catch (Exception e) {
+							e.printStackTrace();
+						}
+					}
 				}
 			}
 		} else {
