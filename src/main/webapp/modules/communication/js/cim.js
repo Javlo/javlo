@@ -35,21 +35,20 @@
 
 		jQuery(".cim-form [type=submit]").hide()
 
-		jQuery("body").on("mouseenter", ".cim-messages [data-user]:not(.touchedDataUser)", function(e) {
+		jQuery("body").on("mouseenter", ".cim-messages [data-user]", function(e) {
 			var $this = jQuery(this);
 			var user = $this.data("user");
-			$this.addClass("touchedDataUser");
-			$this.css("cursor", "default")
+			var available = false;
 			jQuery(".cim-form [name=receiver] option").each(function() {
 				var option = jQuery(this);
 				if (option.val() == user) {
-					$this.css("cursor", "pointer")
-					$this.addClass("data-user-available");
+					available = true;
 					return false;
 				}
 			});
+			$this.toggleClass("data-user-available", available);
 		});
-		jQuery("body").on("click", ".cim-messages .data-user-available[data-user]", function(e) {
+		jQuery("body").on("click", ".cim-messages [data-user].data-user-available", function(e) {
 			e.preventDefault();
 			jQuery(".cim-form [name=receiver]").val(jQuery(this).data("user"));
 		});
