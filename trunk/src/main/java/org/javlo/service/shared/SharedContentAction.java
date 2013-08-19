@@ -1,12 +1,10 @@
 package org.javlo.service.shared;
 
 import java.io.ByteArrayOutputStream;
-import java.io.IOException;
 import java.io.PrintStream;
 import java.net.URL;
 import java.util.Collection;
 
-import javax.servlet.ServletException;
 import javax.servlet.http.HttpSession;
 
 import org.javlo.actions.AbstractModuleAction;
@@ -17,8 +15,6 @@ import org.javlo.i18n.I18nAccess;
 import org.javlo.message.MessageRepository;
 import org.javlo.module.core.ModulesContext;
 import org.javlo.service.RequestService;
-
-import com.sun.tracing.ProviderFactory;
 
 public class SharedContentAction extends AbstractModuleAction {
 
