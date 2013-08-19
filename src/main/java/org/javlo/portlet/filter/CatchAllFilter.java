@@ -340,28 +340,7 @@ public class CatchAllFilter implements Filter {
 			}
 		}
 
-		/*
-		 * try {
-		 * 
-		 * if (request.getParameter("webaction") != null &&
-		 * request.getParameter("webaction").equals("view.language")) { String
-		 * lang = request.getParameter("lg"); if (lang != null) { ContentContext
-		 * ctx = ContentContext.getContentContext((HttpServletRequest) request,
-		 * (HttpServletResponse) response); if
-		 * (globalContext.getLanguages().contains(lang)) {
-		 * ctx.setAllLanguage(lang); ctx.setCookieLanguage(lang); } String
-		 * newURL = URLHelper.createURL(ctx);
-		 * System.out.println("***** CatchAllFilter.doFilter : newURL = " +
-		 * newURL); // TODO: remove debug trace
-		 * NetHelper.sendRedirectTemporarily((HttpServletResponse) response,
-		 * newURL); return; } }
-		 * 
-		 * initElements(request, response);
-		 * 
-		 * } catch (Exception e) { e.printStackTrace(); }
-		 */
-
-		if (httpRequest.getUserPrincipal() != null) {
+		if (httpRequest.getUserPrincipal() != null) {			
 			logger.fine("principal user found : " + httpRequest.getUserPrincipal());
 			globalContext.addPrincipal(new UserPrincipal(httpRequest.getUserPrincipal()));
 		}
@@ -489,7 +468,7 @@ public class CatchAllFilter implements Filter {
 						globalContext.addPrincipal(principalUser);
 						newUser = true;
 						if (request.getParameter("edit-login") != null) {
-							adminFactory.autoLogin(httpRequest, principalUser.getLogin());
+							adminFactory.autoLogin(httpRequest, principalUser.getLogin());							
 							globalContext.addPrincipal(principalUser);
 							globalContext.eventLogin(principalUser.getLogin());
 						}
@@ -531,6 +510,8 @@ public class CatchAllFilter implements Filter {
 						String msg = i18nAccess.getText("user.error.msg");
 						MessageRepository messageRepository = MessageRepository.getInstance(((HttpServletRequest) request));
 						messageRepository.setGlobalMessage(new GenericMessage(msg, GenericMessage.ERROR));
+					} else {
+						globalContext.addPrincipal(user);
 					}
 				}
 				UserInterfaceContext.getInstance(((HttpServletRequest) request).getSession(), globalContext);

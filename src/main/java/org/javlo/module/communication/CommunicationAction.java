@@ -96,7 +96,7 @@ public class CommunicationAction extends AbstractModuleAction {
 	private void prepareSite(GlobalContext context, CommunicationBean comm, AdminUserSecurity adminUserSecurity, IMService imService) {
 		CommunicationSiteBean site = new CommunicationSiteBean();
 		site.setKey(context.getContextKey());
-		List<Principal> list = context.getAllPrincipals();
+		List<Principal> list = context.getAllPrincipals();		
 		for (Principal principal : list) {
 			CommunicationUserBean user = new CommunicationUserBean();
 			user.setSite(context.getContextKey());

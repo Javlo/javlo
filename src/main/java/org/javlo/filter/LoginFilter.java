@@ -136,7 +136,7 @@ public class LoginFilter implements Filter {
 					if (autoLoginUser != null) {
 						IUserFactory adminFactory = AdminUserFactory.createUserFactory(globalContext, httpRequest.getSession());
 						User principalUser = adminFactory.autoLogin(httpRequest, autoLoginUser);
-						if (principalUser != null) {
+						if (principalUser != null) {							
 							globalContext.addPrincipal(principalUser);
 						}
 					}

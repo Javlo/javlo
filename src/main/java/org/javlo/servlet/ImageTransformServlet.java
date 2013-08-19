@@ -16,6 +16,7 @@ import java.util.concurrent.ConcurrentHashMap;
 import java.util.logging.Logger;
 
 import javax.imageio.ImageIO;
+import javax.imageio.metadata.IIOMetadata;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
@@ -56,7 +57,7 @@ import com.jhlabs.image.GrayscaleFilter;
  */
 public class ImageTransformServlet extends HttpServlet {
 
-	private final String[] IMAGES_EXTENSION = { "jpg", "png", "gif", "jpeg" };
+	private static final String TEMP_IMAGE_FILTER = "__TEMP_IMAGE_FILTER";
 
 	public static final class ImageTransforming {
 		private final File file;
@@ -182,7 +183,7 @@ public class ImageTransformServlet extends HttpServlet {
 		return lm;
 	}
 
-	private void imageTransform(ContentContext ctx, ImageConfig config, StaticInfo staticInfo, String filter, String area, Template template, String realFile, File imageFile, String imageName, String inFileExtention) throws IOException {
+	private void imageTransform(ContentContext ctx, ImageConfig config, StaticInfo staticInfo, String filter, String area, Template template, File imageFile, String imageName, String inFileExtention) throws IOException {
 
 		String fileSize = StringHelper.renderSize(imageFile.length());
 
@@ -221,6 +222,7 @@ public class ImageTransformServlet extends HttpServlet {
 		// org.javlo.helper.Logger.stepCount("transform", "start - transformation - 1");
 
 		BufferedImage img = ImageIO.read(imageFile);
+		IIOMetadata metadata = ResourceHelper.getImageMetadata(imageFile);
 
 		// org.javlo.helper.Logger.stepCount("transform", "start - transformation - 2 (src image size : "+img.getWidth()+","+img.getHeight()+")");
 
@@ -358,7 +360,7 @@ public class ImageTransformServlet extends HttpServlet {
 		// org.javlo.helper.Logger.stepCount("transform", "start - transformation - 7");
 
 		if (img == null) {
-			logger.severe("image : " + realFile + " could not be resized.");
+			logger.severe("image : " + imageFile + " could not be resized.");
 		} else {
 			/* create cache image */
 			FileCache fc = FileCache.getInstance(getServletContext());
@@ -369,7 +371,7 @@ public class ImageTransformServlet extends HttpServlet {
 			GlobalContext globalContext = GlobalContext.getInstance(ctx.getRequest());
 			String dir = ImageHelper.createSpecialDirectory(globalContext.getContextKey(), filter, area, deviceCode, template);
 			OutputStream outImage = fc.saveFile(dir, imageName);
-
+			
 			try {
 				String fileExtension = config.getFileExtension(ctx.getDevice(), filter, area);
 				if (fileExtension == null) {
@@ -385,6 +387,7 @@ public class ImageTransformServlet extends HttpServlet {
 					img = ImageEngine.removeAlpha(img);
 				}
 				ImageIO.write(img, fileExtension, outImage);
+				ResourceHelper.writeImageMetadata(metadata, fc.getFileName(dir, dir).getCanonicalFile());
 			} finally {
 				outImage.close();
 			}
@@ -549,24 +552,18 @@ public class ImageTransformServlet extends HttpServlet {
 					baseFolder = getServletContext().getRealPath("");
 				}
 
-				String realFile = URLHelper.mergePath(baseFolder, imageName);
-
-				File imageFile = new File(realFile);
-				String baseExtension = StringHelper.getFileExtension(realFile);
+				File imageFile = new File(URLHelper.mergePath(baseFolder, imageName));
+				String baseExtension = StringHelper.getFileExtension(imageFile.getName());
 
 				if (!imageFile.exists() || imageFile.isDirectory()) {
 					File newImageFile = null;
-					/*
-					 * for (String ext : IMAGES_EXTENSION) { imageFile = new File(StringHelper.getFileNameWithoutExtension(imageFile.getAbsolutePath()) + '.' + ext); if (imageFile.exists()) { newImageFile = imageFile; } }
-					 */
 					if (newImageFile == null) {
 						logger.warning("file not found : " + imageFile);
 						response.setStatus(HttpServletResponse.SC_NOT_FOUND);
 						return;
 					} else {
-						imageFile = newImageFile;
-						realFile = imageFile.getAbsolutePath();
-						imageName = StringHelper.getFileNameWithoutExtension(imageName) + '.' + StringHelper.getFileExtension(realFile);
+						imageFile = newImageFile;						
+						imageName = StringHelper.getFileNameWithoutExtension(imageName) + '.' + StringHelper.getFileExtension(imageFile.getName());
 					}
 				}
 
@@ -659,7 +656,7 @@ public class ImageTransformServlet extends HttpServlet {
 						if ((fileStream == null)) {
 							long currentTime = System.currentTimeMillis();
 							synchronized (imageTransforming.get(imageKey)) {
-								imageTransform(ctx, ImageConfig.getNewInstance(globalContext, request.getSession(), template), staticInfo, filter, area, template, realFile, imageFile, imageName, baseExtension);
+								imageTransform(ctx, ImageConfig.getNewInstance(globalContext, request.getSession(), template), staticInfo, filter, area, template, imageFile, imageName, baseExtension);
 							}
 							logger.info("transform image (" + StringHelper.renderSize(size) + ") : '" + imageName + "' in site '" + globalContext.getContextKey() + "' page : " + ctx.getRequestContentLanguage() + ctx.getPath() + " time : " + StringHelper.renderTimeInSecond(System.currentTimeMillis() - currentTime) + " sec.  #transformation:" + imageTransforming.size());
 							fileStream = loadFileFromDisk(globalContext, imageName, filter, area, ctx.getDevice(), template, imageFile.lastModified());
