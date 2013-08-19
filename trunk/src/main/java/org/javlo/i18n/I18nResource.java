@@ -132,10 +132,7 @@ public class I18nResource {
 	}
 
 	public Properties getContextI18nFile(int mode, String lg, boolean reload) throws IOException, ConfigurationException {
-		System.out.println("***** I18nResource.getContextI18nFile : START"); //TODO: remove debug trace
-		System.out.println("***** I18nResource.getContextI18nFile : contextI18nFolder"); //TODO: remove debug trace
 		if (!contextI18nFolder.exists()) {
-			System.out.println("***** I18nResource.getContextI18nFile : contextI18nFolder NOT FOUND"); //TODO: remove debug trace
 			return null;
 		} else {
 			String key = lg + '-' + mode;
@@ -152,12 +149,10 @@ public class I18nResource {
 				i18nFile = new File(URLHelper.mergePath(contextI18nFolder.getAbsolutePath(), "view_" + lg + ".properties"));
 			}
 			if (i18nFile.exists()) {
-				System.out.println("***** I18nResource.getContextI18nFile : load : "+i18nFile); //TODO: remove debug trace
 				Properties prop = ResourceHelper.loadProperties(i18nFile);				
 				contextFiles.put(key, prop);
 				return prop;
 			} else {
-				System.out.println("***** I18nResource.getContextI18nFile : i18nFile not found : "+i18nFile); //TODO: remove debug trace
 				return null;
 			}
 		}

@@ -633,6 +633,7 @@ public class AdminAction extends AbstractModuleAction {
 
 		ContentContext viewCtx = new ContentContext(ctx);
 		Module currentModule = moduleContext.getCurrentModule();
+		
 		String msg = "";
 		viewCtx.setRenderMode(ContentContext.VIEW_MODE);
 
@@ -678,7 +679,7 @@ public class AdminAction extends AbstractModuleAction {
 		String currentContextValue = null;
 		if (globalContext.isMaster()) {
 			currentContextValue = request.getParameter("context");
-		}
+		}		
 		if (currentContextValue != null || request.getAttribute("prepareContext") != null || !globalContext.isMaster()) {
 			GlobalContext currentGlobalContext;
 			if (currentContextValue != null) {
@@ -805,13 +806,13 @@ public class AdminAction extends AbstractModuleAction {
 
 	public static final String performChangeSite(HttpServletRequest request, RequestService requestService, ContentContext ctx, Module currentModule) throws FileNotFoundException, IOException, NoSuchMethodException, ClassNotFoundException, IllegalArgumentException, InstantiationException, IllegalAccessException, InvocationTargetException {
 		if (requestService.getParameter("change", null) != null) {
-			editGlobalContext(ctx, currentModule, null);
-		} else if (requestService.getParameter("components", null) != null) {
+			editGlobalContext(ctx, currentModule, null);			
+		} else if (requestService.getParameter("components", null) != null) {			
 			currentModule.setRenderer("/jsp/components.jsp");
 			currentModule.setToolsRenderer("/jsp/components_actions.jsp");
 			String uri = request.getRequestURI();
 			currentModule.pushBreadcrumb(new Module.HtmlLink(uri, I18nAccess.getInstance(request).getText("command.admin.components") + " : " + request.getParameter("context"), ""));
-		} else if (requestService.getParameter("modules", null) != null) {
+		} else if (requestService.getParameter("modules", null) != null) {			
 			currentModule.setRenderer("/jsp/modules.jsp");
 			currentModule.setToolsRenderer(null);
 			String uri = request.getRequestURI();
