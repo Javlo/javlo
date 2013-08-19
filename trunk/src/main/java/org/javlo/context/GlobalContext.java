@@ -528,7 +528,7 @@ public class GlobalContext implements Serializable {
 		return StringHelper.renderSize(getAccountSize());
 	}
 
-	public void addPrincipal(User principal) {
+	public void addPrincipal(User principal) {		
 		synchronized (allUsers) {
 			allUsers.put(principal.getName(), new WeakReference<User>(principal));
 		}

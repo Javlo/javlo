@@ -29,6 +29,10 @@
 	width:  80%;
 }
 
+.header .messagenotify {
+	display: none;
+}
+
 .cim-form option.cim-site {
 	font-weight: bold;
 }
