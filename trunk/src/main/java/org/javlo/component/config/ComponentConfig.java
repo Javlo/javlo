@@ -212,5 +212,13 @@ public class ComponentConfig {
 		}
 		return StringHelper.isTrue(properties.getString("comp.js", "true"));
 	}
+	
+	public boolean isPreviewEditable() {
+		if (properties == null || properties.getString("edit.preview", null) == null) {
+			return true;
+		}
+		return StringHelper.isTrue(properties.getString("edit.preview", null));
+
+	}
 
 }

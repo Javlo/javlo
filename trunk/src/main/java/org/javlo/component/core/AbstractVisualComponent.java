@@ -901,7 +901,7 @@ public abstract class AbstractVisualComponent implements IContentVisualComponent
 				if (!globalContext.isOnlyCreatorModify() || (ctx.getCurrentEditUser() != null && (AdminUserSecurity.getInstance().isAdmin(ctx.getCurrentEditUser()) || getAuthors().equals(ctx.getCurrentEditUser().getLogin())))) {
 					classPrefix = "";
 				}
-				if (editCtx.isEditPreview() && (!isRepeat() || getPage().equals(ctx.getCurrentPage()))) {
+				if (getConfig(ctx).isPreviewEditable() && editCtx.isEditPreview() && (!isRepeat() || getPage().equals(ctx.getCurrentPage()))) {
 					return " class=\""+classPrefix+"editable-component" + currentClass + "\"";
 				}
 			} catch (Exception e) {
