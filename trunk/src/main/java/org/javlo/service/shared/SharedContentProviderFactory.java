@@ -42,12 +42,12 @@ public class SharedContentProviderFactory {
 			addContentProvider(staticContentProviders,new JavloSharedContentProvider(ctx));
 			addContentProvider(staticContentProviders, new LocalImageSharedContentProvider(ctx));
 			try {				
-				//addContentProvider(staticContentProviders,new StockvaultSharedContentProvider());
+				addContentProvider(staticContentProviders,new StockvaultSharedContentProvider());
 			} catch (Exception e) {
 				e.printStackTrace();
 			}
 			try {				
-				//addContentProvider(staticContentProviders,new FotogrphSharedContentProvider());
+				addContentProvider(staticContentProviders,new FotogrphSharedContentProvider());
 			} catch (Exception e) {
 				e.printStackTrace();
 			}
