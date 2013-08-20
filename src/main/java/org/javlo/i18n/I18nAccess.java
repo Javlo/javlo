@@ -393,7 +393,7 @@ public class I18nAccess implements Serializable {
 		}
 		
 		if (contextEdit != null) {
-			String contextText = contextEdit.getProperty(text);
+			String contextText = contextEdit.getProperty(key);
 			if (contextText != null) {
 				text = contextText;	
 			}
