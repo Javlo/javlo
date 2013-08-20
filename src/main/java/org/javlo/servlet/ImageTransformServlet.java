@@ -222,7 +222,13 @@ public class ImageTransformServlet extends HttpServlet {
 		// org.javlo.helper.Logger.stepCount("transform", "start - transformation - 1");
 
 		BufferedImage img = ImageIO.read(imageFile);
-		IIOMetadata metadata = ResourceHelper.getImageMetadata(imageFile);
+		IIOMetadata metadata = null;
+		 
+		try {
+			metadata = ResourceHelper.getImageMetadata(imageFile);
+		} catch (Exception e) {
+			logger.warning(e.getMessage());
+		}
 
 		// org.javlo.helper.Logger.stepCount("transform", "start - transformation - 2 (src image size : "+img.getWidth()+","+img.getHeight()+")");
 
@@ -387,7 +393,9 @@ public class ImageTransformServlet extends HttpServlet {
 					img = ImageEngine.removeAlpha(img);
 				}
 				ImageIO.write(img, fileExtension, outImage);
-				ResourceHelper.writeImageMetadata(metadata, fc.getFileName(dir, dir).getCanonicalFile());
+				if (metadata != null) {
+					ResourceHelper.writeImageMetadata(metadata, fc.getFileName(dir, dir).getCanonicalFile());
+				}
 			} finally {
 				outImage.close();
 			}
