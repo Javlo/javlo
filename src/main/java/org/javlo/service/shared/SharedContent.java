@@ -1,5 +1,6 @@
 package org.javlo.service.shared;
 
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.HashSet;
 import java.util.LinkedList;
@@ -21,8 +22,16 @@ public class SharedContent {
 	private Collection<String> categories = new HashSet<String>();	
 
 	protected List<ComponentBean> content;
-
+	
+	public SharedContent(String id, ComponentBean content) throws Exception {
+		init(id, Arrays.asList(new ComponentBean[] {content}));		
+	}
+	
 	public SharedContent(String id, Collection<ComponentBean> content) throws Exception {
+		init(id, content);
+	}
+
+	private void init(String id, Collection<ComponentBean> content) throws Exception {
 		this.id = id;		
 		if (content != null) {
 			this.content = new LinkedList<ComponentBean>();

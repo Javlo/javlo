@@ -28,9 +28,7 @@ public class SharedContentAction extends AbstractModuleAction {
 		String msg = super.prepare(ctx, modulesContext);
 		Collection<ISharedContentProvider> contentProviders = SharedContentService.getInstance(ctx).getAllProvider(ctx);
 		for (ISharedContentProvider iSharedContentProvider : contentProviders) {
-			if (iSharedContentProvider instanceof JavloSharedContentProvider) {
-				((JavloSharedContentProvider) iSharedContentProvider).setContentContext(ctx);
-			}
+			ctx.setContentContextIfNeeded(iSharedContentProvider);
 		}
 		ByteArrayOutputStream outStream = new ByteArrayOutputStream();
 		PrintStream out = new PrintStream(outStream);
