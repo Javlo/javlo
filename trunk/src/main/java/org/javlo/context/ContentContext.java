@@ -1453,4 +1453,18 @@ public class ContentContext {
 	public void setContentFound(boolean contentFound) {
 		this.contentFound = contentFound;
 	}
+	
+	/**
+	 * set content context if Object implement interface INeedContentContext.
+	 * @param object a object, if object don't implement INeedContentContext interface this method do nothing.
+	 * @return true if object implement INeedContentContext, false otherwise.
+	 */
+	public boolean setContentContextIfNeeded(Object object) {
+		if (object instanceof INeedContentContext) {
+			((INeedContentContext)object).setContentContext(this);
+			return true;
+		} else {
+			return false;
+		}
+	}
 }

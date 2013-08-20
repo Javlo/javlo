@@ -217,8 +217,7 @@ public class ContentService {
 		}
 		ComponentBean bean = new ComponentBean(inBean);
 		bean.setId(id);
-		if (bean.getArea() == null) {
-			System.out.println("***** ContentService.createContent : area = "+ctx.getArea()); //TODO: remove debug trace
+		if (bean.getArea() == null) {			
 			bean.setArea(ctx.getArea());
 		}
 		page.addContent(parentId, bean, releaseCache);

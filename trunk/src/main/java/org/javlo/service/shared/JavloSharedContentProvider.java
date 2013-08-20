@@ -8,10 +8,11 @@ import java.util.List;
 import org.javlo.component.core.ComponentBean;
 import org.javlo.component.image.GlobalImage;
 import org.javlo.context.ContentContext;
+import org.javlo.context.INeedContentContext;
 import org.javlo.navigation.MenuElement;
 import org.javlo.service.ContentService;
 
-public class JavloSharedContentProvider extends AbstractSharedContentProvider {
+public class JavloSharedContentProvider extends AbstractSharedContentProvider implements INeedContentContext {
 
 	private ContentContext ctx;
 	
@@ -22,6 +23,7 @@ public class JavloSharedContentProvider extends AbstractSharedContentProvider {
 		this.ctx = ctx;
 	}
 
+	@Override
 	public void setContentContext(ContentContext ctx) {
 		this.ctx = ctx;
 	}
@@ -54,5 +56,10 @@ public class JavloSharedContentProvider extends AbstractSharedContentProvider {
 			e.printStackTrace();
 		}
 		return outContent;
+	}
+
+	@Override
+	public ContentContext getContentContext() {
+		return ctx;
 	}
 }

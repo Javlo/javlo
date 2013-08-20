@@ -727,9 +727,7 @@ public class AccessServlet extends HttpServlet implements IVersion {
 									ISharedContentProvider provider = sharedContentService.getProvider(ctx,sharedContentContext.getProvider());
 									if (provider != null) {
 										ctx.getRequest().setAttribute("provider", provider);
-										if (provider instanceof JavloSharedContentProvider) {
-											((JavloSharedContentProvider)provider).setContentContext(ctx);
-										}
+										ctx.setContentContextIfNeeded(provider);
 										ctx.getRequest().setAttribute("sharedContent", provider.getContent(sharedContentContext.getCategories()));
 										ctx.getRequest().setAttribute("sharedContentCategories", provider.getCategories().entrySet());										
 									}

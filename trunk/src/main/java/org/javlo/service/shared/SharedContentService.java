@@ -24,9 +24,7 @@ public class SharedContentService {
 	private List<SharedContent> getAllSharedContent(ContentContext ctx) {
 		List<SharedContent> outContent = new LinkedList<SharedContent>();		
 		for (ISharedContentProvider provider : getAllProvider(ctx)) {
-			if (provider instanceof JavloSharedContentProvider) {
-				((JavloSharedContentProvider)provider).setContentContext(ctx);
-			}
+			ctx.setContentContextIfNeeded(provider);
 			outContent.addAll(provider.getContent());
 		}
 		return outContent;

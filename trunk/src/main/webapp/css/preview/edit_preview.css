@@ -971,6 +971,7 @@ body.fix-preview {
 #preview_command .shared-content.image .content-wrapper {
 	width: 43%;
 	float: left;
+	overflow: hidden;
 }
 
 #preview_command .shared-content .content {
@@ -986,6 +987,7 @@ body.fix-preview {
 	font-weight: bold;
 	height: 14px;
 	overflow: hidden;
+	width: 100px;
 }
 
 #preview_command .shared-content .content figure {
