@@ -534,4 +534,8 @@ public class InfoBean {
 		return requestService.getParameter(ElementaryURLHelper.BACK_PARAM_NAME, null);
 	}
 	
+	public String getRootURL() {
+		return URLHelper.createURL(ctx,"/");
+	}
+	
 }

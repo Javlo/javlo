@@ -49,8 +49,14 @@ MessageRepository.getInstance(request); // load request message
 								<label for="pc_edit_button">${i18n.edit['preview.label.not-edit-page']}</label>
 							</c:if>
 						</div>				
-					</form></li>
+					</form></li>					
 					<c:if test='${editPreview == "true"}'>
+					<li><form id="home_form" action="${info.rootURL}" method="post">
+						<div class="pc_line">							
+							<input id="home_button" type="submit" value="${i18n.edit['command.home']}" title="${i18n.edit['command.home']}" />
+							<label for="home_button">${i18n.edit['command.home']}</label>
+						</div>
+					</form></li>
 					<li><form id="pc_publish_form" action="${info.currentURL}" method="post">
 						<div class="pc_line">
 							<input type="hidden" name="webaction" value="edit.publish" />

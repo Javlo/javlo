@@ -84,6 +84,10 @@
 	background-image: url('../images/icons/small/black/publish.png');
 }
 
+#preview_command .pc_command #home_button {
+	background-image: url('../images/icons/small/black/home.png');
+}
+
 #preview_command .pc_command #pc_del_page_button {
 	background-image: url('../images/icons/small/black/trash.png');
 }
