@@ -514,6 +514,15 @@ body.edit-preview {
     background-position: 0 -755px;
 }
 
+#preview_command #pc_command.pc_command #home_button {
+    background-position: 0 -611px;
+    height: 16px;
+}
+
+#preview_command #home_form label {
+	display: none;
+}
+
 #preview_command #pc_edit_mode_button {
    	background-image: url("../images/preview/ico.png");
 	background-position: 0 -3236px;
