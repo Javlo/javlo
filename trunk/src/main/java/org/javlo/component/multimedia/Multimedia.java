@@ -66,6 +66,7 @@ public class Multimedia extends TimeRangeComponent implements IImageTitle {
 	protected static final String IMAGE_AFTER_EXEPT_FIRST = "only first item with image first";
 
 	protected static final String ORDER_BY_ACCESS = "order by access";
+	protected static final String REVERSE_ORDER = "reverse order";
 
 	public static final String ALL = "all";
 	public static final String IMAGE = "image";
@@ -427,19 +428,24 @@ public class Multimedia extends TimeRangeComponent implements IImageTitle {
 		out.println("<label for=\"" + getInputPageSizeName() + "\">" + i18nAccess.getText("content.multimedia-gallery.page-size") + "</label>");
 		out.println(" : <input style=\"width: 120px;\" type=\"text\" id=\"" + getInputPageSizeName() + "\" name=\"" + getInputPageSizeName() + "\" value=\"" + getPageSize() + "\"/>");
 		out.println("</div>");
-
-		Map<String, String> renderers = getConfig(ctx).getRenderes();
-		if (renderers.size() > 1) {
-			out.println("<div class=\"line\">");
-			out.print("<input type=\"checkbox\" name=\"" + getInputNameOrderByAccess() + "\" id=\"" + getInputNameOrderByAccess() + "\" ");
-			if (isOrderByAccess(ctx)) {
-				out.print("checked=\"checked\" ");
-			}
-			out.print("/>");
-			out.println("<label for=\"" + getInputNameOrderByAccess() + "\"> order by access.</label>");
-			out.println("</div>");
-
+				
+		out.println("<div class=\"line\">");
+		out.print("<input type=\"checkbox\" name=\"" + getInputNameReverseOrder() + "\" id=\"" + getInputNameReverseOrder() + "\" ");
+		if (isReverseOrder(ctx)) {
+			out.print("checked=\"checked\" ");
 		}
+		out.print("/>");
+		out.println("<label for=\"" + getInputNameReverseOrder() + "\"> reverse order.</label>");
+		out.println("</div>");
+		
+		out.println("<div class=\"line\">");
+		out.print("<input type=\"checkbox\" name=\"" + getInputNameOrderByAccess() + "\" id=\"" + getInputNameOrderByAccess() + "\" ");
+		if (isOrderByAccess(ctx)) {
+			out.print("checked=\"checked\" ");
+		}
+		out.print("/>");
+		out.println("<label for=\"" + getInputNameOrderByAccess() + "\"> order by access.</label>");
+		out.println("</div>");
 
 		/* tags */
 		Collection<String> tags = globalContext.getTags();
@@ -514,6 +520,10 @@ public class Multimedia extends TimeRangeComponent implements IImageTitle {
 
 	protected String getInputNameOrderByAccess() {
 		return "order_by_access_" + getId();
+	}
+	
+	protected String getInputNameReverseOrder() {
+		return "reverse_order_" + getId();
 	}
 
 	protected String getItemCssClass() {
@@ -779,8 +789,8 @@ public class Multimedia extends TimeRangeComponent implements IImageTitle {
 
 		if (isOrderByAccess(ctx)) {
 			Collections.sort(allResource, new MultimediaResource.SortByIndex(true));
-		} else {
-			Collections.sort(allResource, new MultimediaResource.SortByDate(false));
+		} else {			
+			Collections.sort(allResource, new MultimediaResource.SortByDate(isReverseOrder(ctx)));
 		}
 
 		int max = Math.min(getMaxListSize(), allResource.size());
@@ -842,6 +852,10 @@ public class Multimedia extends TimeRangeComponent implements IImageTitle {
 	public boolean isOrderByAccess(ContentContext ctx) {
 		return getValue(ctx).endsWith(ORDER_BY_ACCESS);
 	}
+	
+	public boolean isReverseOrder(ContentContext ctx) {
+		return getValue(ctx).endsWith(REVERSE_ORDER);
+	}
 
 	protected boolean isRenderInfo(ContentContext ctx) {
 		return true;
@@ -870,6 +884,7 @@ public class Multimedia extends TimeRangeComponent implements IImageTitle {
 		if (newStartDate != null && newEndDate != null && newListSizeDate != null) {
 
 			boolean isOrderByAcess = requestService.getParameter(getInputNameOrderByAccess(), null) != null;
+			boolean isReverseOrder = requestService.getParameter(getInputNameReverseOrder(), null) != null;
 
 			Date startDate = StringHelper.parseDateOrTime(newStartDate);
 			Date endDate = StringHelper.parseDateOrTime(newEndDate);
@@ -889,6 +904,9 @@ public class Multimedia extends TimeRangeComponent implements IImageTitle {
 			String multimediaInfo = StringHelper.neverNull(StringHelper.renderTime(startDate)) + VALUE_SEPARATOR + StringHelper.neverNull(StringHelper.renderTime(endDate)) + VALUE_SEPARATOR + newPageSize + ',' + newListSizeDate + VALUE_SEPARATOR + folder + VALUE_SEPARATOR + newDisplayType + VALUE_SEPARATOR + StringHelper.collectionToString(selectedTags) + VALUE_SEPARATOR + title;
 			if (isOrderByAcess) {
 				multimediaInfo = multimediaInfo + VALUE_SEPARATOR + ORDER_BY_ACCESS;
+			}
+			if (isReverseOrder) {
+				multimediaInfo = multimediaInfo + VALUE_SEPARATOR + REVERSE_ORDER;
 			}
 			if (!multimediaInfo.equals(getValue())) {
 				setValue(multimediaInfo);
