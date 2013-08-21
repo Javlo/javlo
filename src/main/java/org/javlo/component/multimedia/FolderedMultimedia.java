@@ -1,7 +1,6 @@
 package org.javlo.component.multimedia;
 
 import java.io.File;
-import java.io.FileFilter;
 import java.io.PrintWriter;
 import java.io.StringWriter;
 import java.util.Calendar;
@@ -19,7 +18,6 @@ import java.util.Map;
 import javax.servlet.http.HttpServletRequest;
 
 import org.apache.commons.io.FilenameUtils;
-import org.apache.commons.io.filefilter.FileFilterUtils;
 import org.javlo.component.core.AbstractVisualComponent;
 import org.javlo.component.core.ContentElementList;
 import org.javlo.component.core.IContentVisualComponent;
@@ -68,6 +66,7 @@ public class FolderedMultimedia extends TimeRangeComponent implements IImageTitl
 	protected static final String IMAGE_AFTER_EXEPT_FIRST = "only first item with image first";
 
 	protected static final String ORDER_BY_ACCESS = "order by access";
+	protected static final String REVERSE_ORDER = "reverse order";
 
 	public static final String ALL = "all";
 	public static final String IMAGE = "image";
@@ -76,7 +75,7 @@ public class FolderedMultimedia extends TimeRangeComponent implements IImageTitl
 	public static final String EMBED = "embed";
 
 	Collection<File> multimediaFolder;
-	
+
 	protected Date getStartDate(HttpServletRequest request) {
 		try {
 			if (request != null && request.getParameter("startdate") != null && request.getParameter("startdate").length() > 0) {
@@ -84,13 +83,13 @@ public class FolderedMultimedia extends TimeRangeComponent implements IImageTitl
 			} else {
 				return super.getStartDate();
 			}
-			
+
 		} catch (Throwable t) {
-			//t.printStackTrace();
+			// t.printStackTrace();
 			return super.getStartDate();
-		}		
+		}
 	}
-	
+
 	protected Date getEndDate(HttpServletRequest request) {
 		try {
 			if (request != null && request.getParameter("enddate") != null && request.getParameter("enddate").length() > 0) {
@@ -98,11 +97,11 @@ public class FolderedMultimedia extends TimeRangeComponent implements IImageTitl
 			} else {
 				return super.getEndDate();
 			}
-			
+
 		} catch (Throwable t) {
-			//t.printStackTrace();
+			// t.printStackTrace();
 			return super.getEndDate();
-		}		
+		}
 	}
 
 	protected boolean acceptStaticInfo(ContentContext ctx, StaticInfo info) {
@@ -126,7 +125,7 @@ public class FolderedMultimedia extends TimeRangeComponent implements IImageTitl
 		} else {
 			startDate.setTime(getStartDate(ctx.getRequest()));
 		}
-		
+
 		Calendar endDate = GregorianCalendar.getInstance();
 		if (getEndDate(ctx.getRequest()) == null) {
 			endDate = null;
@@ -312,8 +311,8 @@ public class FolderedMultimedia extends TimeRangeComponent implements IImageTitl
 	public Collection<File> getAllMultimediaFiles(ContentContext ctx, String relativeFolder) {
 		List<File> files = new LinkedList<File>();
 		Collection<String> filesName = new HashSet<String>();
-		
-		File dir = new File(URLHelper.mergePath(getBaseStaticDir(ctx), getCurrentRootFolder(), relativeFolder));		
+
+		File dir = new File(URLHelper.mergePath(getBaseStaticDir(ctx), getCurrentRootFolder(), relativeFolder));
 
 		if (dir != null) {
 			for (File file : ResourceHelper.getAllFilesList(dir)) {
@@ -422,18 +421,23 @@ public class FolderedMultimedia extends TimeRangeComponent implements IImageTitl
 		out.println(" : <input style=\"width: 120px;\" type=\"text\" id=\"" + getInputPageSizeName() + "\" name=\"" + getInputPageSizeName() + "\" value=\"" + getPageSize() + "\"/>");
 		out.println("</div>");
 
-		Map<String, String> renderers = getConfig(ctx).getRenderes();
-		if (renderers.size() > 1) {
-			out.println("<div class=\"line\">");
-			out.print("<input type=\"checkbox\" name=\"" + getInputNameOrderByAccess() + "\" id=\"" + getInputNameOrderByAccess() + "\" ");
-			if (isOrderByAccess(ctx)) {
-				out.print("checked=\"checked\" ");
-			}
-			out.print("/>");
-			out.println("<label for=\"" + getInputNameOrderByAccess() + "\"> order by access.</label>");
-			out.println("</div>");
-
+		out.println("<div class=\"line\">");
+		out.print("<input type=\"checkbox\" name=\"" + getInputNameReverseOrder() + "\" id=\"" + getInputNameReverseOrder() + "\" ");
+		if (isReverseOrder(ctx)) {
+			out.print("checked=\"checked\" ");
 		}
+		out.print("/>");
+		out.println("<label for=\"" + getInputNameReverseOrder() + "\"> reverse order.</label>");
+		out.println("</div>");
+
+		out.println("<div class=\"line\">");
+		out.print("<input type=\"checkbox\" name=\"" + getInputNameOrderByAccess() + "\" id=\"" + getInputNameOrderByAccess() + "\" ");
+		if (isOrderByAccess(ctx)) {
+			out.print("checked=\"checked\" ");
+		}
+		out.print("/>");
+		out.println("<label for=\"" + getInputNameOrderByAccess() + "\"> order by access.</label>");
+		out.println("</div>");
 
 		/* tags */
 		Collection<String> tags = globalContext.getTags();
@@ -507,6 +511,14 @@ public class FolderedMultimedia extends TimeRangeComponent implements IImageTitl
 
 	protected String getInputNameOrderByAccess() {
 		return "order_by_access_" + getId();
+	}
+	
+	protected String getInputNameReverseOrder() {
+		return "reverse_order_" + getId();
+	}
+	
+	public boolean isReverseOrder(ContentContext ctx) {
+		return getValue(ctx).endsWith(REVERSE_ORDER);
 	}
 
 	protected String getItemCssClass() {
@@ -785,14 +797,13 @@ public class FolderedMultimedia extends TimeRangeComponent implements IImageTitl
 		if (isOrderByAccess(ctx)) {
 			Collections.sort(allResource, new MultimediaResource.SortByIndex(true));
 		} else {
-			Collections.sort(allResource, new MultimediaResource.SortByDate(false));
+			Collections.sort(allResource, new MultimediaResource.SortByDate(isReverseOrder(ctx)));
 		}
-		
+
 		if (currentResource == null && allResource.size() > 0) {
 			currentResource = allResource.get(0);
 		}
 		ctx.getRequest().setAttribute("currentResource", currentResource);
-
 
 		int max = Math.min(getMaxListSize(), allResource.size());
 		ctx.getRequest().setAttribute("title", getTitle());
@@ -869,7 +880,7 @@ public class FolderedMultimedia extends TimeRangeComponent implements IImageTitl
 
 	@Override
 	public void performEdit(ContentContext ctx) throws Exception {
-		
+
 		RequestService requestService = RequestService.getInstance(ctx.getRequest());
 		String folder = requestService.getParameter(getInputBaseFolderName(), null);
 		String newStartDate = requestService.getParameter(getInputStartDateName(), null);
@@ -882,6 +893,7 @@ public class FolderedMultimedia extends TimeRangeComponent implements IImageTitl
 		if (newStartDate != null && newEndDate != null && newListSizeDate != null) {
 
 			boolean isOrderByAcess = requestService.getParameter(getInputNameOrderByAccess(), null) != null;
+			boolean isReverseOrder = requestService.getParameter(getInputNameReverseOrder(), null) != null;
 
 			Date startDate = StringHelper.parseDateOrTime(newStartDate);
 			Date endDate = StringHelper.parseDateOrTime(newEndDate);
@@ -901,6 +913,9 @@ public class FolderedMultimedia extends TimeRangeComponent implements IImageTitl
 			String multimediaInfo = StringHelper.neverNull(StringHelper.renderTime(startDate)) + VALUE_SEPARATOR + StringHelper.neverNull(StringHelper.renderTime(endDate)) + VALUE_SEPARATOR + newPageSize + ',' + newListSizeDate + VALUE_SEPARATOR + folder + VALUE_SEPARATOR + newDisplayType + VALUE_SEPARATOR + StringHelper.collectionToString(selectedTags) + VALUE_SEPARATOR + title;
 			if (isOrderByAcess) {
 				multimediaInfo = multimediaInfo + VALUE_SEPARATOR + ORDER_BY_ACCESS;
+			}
+			if (isReverseOrder) {
+				multimediaInfo = multimediaInfo + VALUE_SEPARATOR + REVERSE_ORDER;
 			}
 			if (!multimediaInfo.equals(getValue())) {
 				setValue(multimediaInfo);
