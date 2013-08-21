@@ -12,6 +12,7 @@ import java.util.logging.Logger;
 import org.htmlparser.util.ParserException;
 import org.javlo.component.core.AbstractVisualComponent;
 import org.javlo.context.ContentContext;
+import org.javlo.helper.StringHelper;
 import org.javlo.utils.JSONMap;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
@@ -30,7 +31,8 @@ public class TwitterReader extends AbstractVisualComponent {
 	public static class TwitterBean {
 		private String authors;
 		private String message;
-		private String fullName;		
+		private String fullName;
+		private String displayName;
 		private String id;
 		private Date date;
 
@@ -39,15 +41,19 @@ public class TwitterReader extends AbstractVisualComponent {
 		}
 
 		public void setAuthors(String authors) {
-			this.authors = authors;
+			this.authors = StringHelper.txt2htmlCR(authors);
+			if (displayName == null && authors != null && authors.length() > 1) {
+				displayName = StringHelper.txt2htmlCR(authors.substring(1));
+			}
+			
 		}
 
 		public String getMessage() {
 			return message;
 		}
 
-		public void setMessage(String message) {
-			this.message = message;
+		public void setMessage(String message) {			
+			this.message = StringHelper.txt2htmlCR(message);
 		}
 
 		public Date getDate() {
@@ -59,7 +65,7 @@ public class TwitterReader extends AbstractVisualComponent {
 		}
 
 		public String getFullName() {
-			return fullName;
+			return StringHelper.txt2htmlCR(fullName);
 		}
 
 		public void setFullName(String fullName) {
@@ -75,11 +81,11 @@ public class TwitterReader extends AbstractVisualComponent {
 		}
 
 		public String getDisplayName() {
-			if (authors != null) {
-				return authors.replace("@", "");
-			} else {
-				return null;
-			}
+			return displayName;
+		}
+
+		public void setDisplayName(String displayName) {
+			this.displayName = displayName;
 		}
 
 	}
