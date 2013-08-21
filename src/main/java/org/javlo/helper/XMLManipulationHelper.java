@@ -625,7 +625,7 @@ public class XMLManipulationHelper {
 					if (tags[i].getName().equalsIgnoreCase("script")) {
 						if (!srcValue.toLowerCase().startsWith("https")) {
 							String newLinkGeneratorIf = "<%if (!XHTMLHelper.allReadyInsered(ctx, \"" + srcValue + "\")) {%>";
-							if (!StringHelper.isURL(srcValue)) {
+							if (!StringHelper.isURL(srcValue) && !srcValue.trim().startsWith("${")) {
 								attributes.put("src", "<%=URLHelper.createStaticTemplateURL(ctx,\"/" + srcValue + "\")%>");
 							}
 							remplacement.addReplacement(tags[i].getOpenStart(), tags[i].getOpenEnd() + 1, newLinkGeneratorIf + tags[i].toString() + "<%}%>");
