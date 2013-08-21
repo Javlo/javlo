@@ -30,7 +30,7 @@ public class TwitterReader extends AbstractVisualComponent {
 	public static class TwitterBean {
 		private String authors;
 		private String message;
-		private String fullName;
+		private String fullName;		
 		private String id;
 		private Date date;
 
@@ -72,6 +72,14 @@ public class TwitterReader extends AbstractVisualComponent {
 
 		public void setId(String id) {
 			this.id = id;
+		}
+
+		public String getDisplayName() {
+			if (authors != null) {
+				return authors.replace("@", "");
+			} else {
+				return null;
+			}
 		}
 
 	}
