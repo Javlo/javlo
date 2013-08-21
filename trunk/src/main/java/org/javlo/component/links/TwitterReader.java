@@ -20,11 +20,11 @@ import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
 
 public class TwitterReader extends AbstractVisualComponent {
-	
+
 	private static Logger logger = Logger.getLogger(TwitterReader.class.getName());
 
 	private long latestLoad = 0;
-	private Map<String,TwitterBean> tweets = null;
+	private Map<String, TwitterBean> tweets = null;
 
 	public static final String TYPE = "twitter-reader";
 
@@ -45,14 +45,14 @@ public class TwitterReader extends AbstractVisualComponent {
 			if (displayName == null && authors != null && authors.length() > 1) {
 				displayName = StringHelper.txt2htmlCR(authors.substring(1));
 			}
-			
+
 		}
 
 		public String getMessage() {
 			return message;
 		}
 
-		public void setMessage(String message) {			
+		public void setMessage(String message) {
 			this.message = StringHelper.txt2htmlCR(message);
 		}
 
@@ -89,39 +89,68 @@ public class TwitterReader extends AbstractVisualComponent {
 		}
 
 	}
+	
+	private static class ReadTweetThread extends Thread {
+		
+		private TwitterReader comp;
+		
+		ReadTweetThread(TwitterReader comp) {
+			this.comp = comp;
+		}
+		
+		@Override
+		public void run() {			
+			try {
+				Map<String, TwitterBean> newTweets  = TwitterReader.readTweet(new URL(comp.getValue()));
+				comp.tweets = newTweets;				
+			} catch (Exception e) { 
+				e.printStackTrace();
+			}
+		}
+		
+	}
 
-	private Map<String,TwitterBean> readTweet(URL url) throws ParserException, IOException {
-		if (tweets == null || latestLoad < (System.currentTimeMillis() - (60 * 1000))) { // refresh all minute
-			logger.info("load tweets on : "+url);
+	private synchronized Map<String, TwitterBean> getTweet(URL url) throws ParserException, IOException {
+		if (tweets == null) {
+			tweets = readTweet(url);
 			latestLoad = System.currentTimeMillis();
-			Map<String,TwitterBean> newList = new HashMap<String,TwitterBean>();			
-			Document doc = Jsoup.connect(url.toString()).get();
-			Elements newsHeadlines = doc.select(".expanding-stream-item");
-			Iterator<Element> allItems = newsHeadlines.iterator();
-			while (allItems.hasNext()) {
-				Element item = allItems.next();				
-				Elements authorsItem = item.select(".username");
-				if (authorsItem != null) {
-					TwitterBean bean = new TwitterBean();
-					bean.setId(item.attr("data-item-id"));
-					bean.setAuthors(authorsItem.text());
-					Elements textItem = item.select(".tweet-text");
-					if (textItem != null) {
-						bean.setMessage(textItem.text());
-						Elements dateItem = item.select("._timestamp");
-						if (dateItem != null) {
-							Long time = Long.parseLong(dateItem.first().attr("data-time"));
-							bean.setDate(new Date(time * 1000));
-							Elements fullName = item.select(".fullname");
-							if (fullName != null) {
-								bean.setFullName(fullName.text());
-								newList.put(bean.getId(),bean);
-							}
+		} else if (latestLoad < (System.currentTimeMillis() - (30 * 1000))) {
+			latestLoad = System.currentTimeMillis();
+			new ReadTweetThread(this).start();
+		}
+		return tweets;
+	}
+
+	private static Map<String, TwitterBean> readTweet(URL url) throws ParserException, IOException {
+		Map<String, TwitterBean> tweets = new HashMap<String, TwitterReader.TwitterBean>();
+		logger.info("load tweets on : " + url);
+		Map<String, TwitterBean> newList = new HashMap<String, TwitterBean>();
+		Document doc = Jsoup.connect(url.toString()).get();
+		Elements newsHeadlines = doc.select(".expanding-stream-item");
+		Iterator<Element> allItems = newsHeadlines.iterator();
+		while (allItems.hasNext()) {
+			Element item = allItems.next();
+			Elements authorsItem = item.select(".username");
+			if (authorsItem != null) {
+				TwitterBean bean = new TwitterBean();
+				bean.setId(item.attr("data-item-id"));
+				bean.setAuthors(authorsItem.text());
+				Elements textItem = item.select(".tweet-text");
+				if (textItem != null) {
+					bean.setMessage(textItem.text());
+					Elements dateItem = item.select("._timestamp");
+					if (dateItem != null) {
+						Long time = Long.parseLong(dateItem.first().attr("data-time"));
+						bean.setDate(new Date(time * 1000));
+						Elements fullName = item.select(".fullname");
+						if (fullName != null) {
+							bean.setFullName(fullName.text());
+							newList.put(bean.getId(), bean);
 						}
 					}
 				}
 			}
-			tweets = newList;			
+			tweets = newList;
 		}
 		return tweets;
 	}
@@ -135,8 +164,8 @@ public class TwitterReader extends AbstractVisualComponent {
 	public void prepareView(ContentContext ctx) throws Exception {
 		super.prepareView(ctx);
 		URL url = new URL(getValue());
-		Map<String,TwitterBean> maps = readTweet(url);
-		ctx.getRequest().setAttribute("tweets", maps.values());		
+		Map<String, TwitterBean> maps = getTweet(url);
+		ctx.getRequest().setAttribute("tweets", maps.values());
 		StringWriter strWriter = new StringWriter();
 		JSONMap.JSON.toJson(maps, strWriter);
 		ctx.getRequest().setAttribute("json", strWriter.toString());
