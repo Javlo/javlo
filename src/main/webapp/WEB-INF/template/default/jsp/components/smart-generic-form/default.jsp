@@ -16,8 +16,8 @@
 <c:if test="${comp.captcha}">
 <div class="line captcha">			
 	<div class="${not empty requestService.parameterMap.webaction && empty requestService.parameterMap.captcha || not empty error_captcha?'error':''}">
-		<label for="captcha"><img src="${info.captchaURL}" alt="captcha" /></label>
-		<label for="captcha">${ci18n['label.captcha']}*</label>
+		<label for="captcha"><img src="${info.captchaURL}" alt="captcha" /></label>		
+		<label for="captcha">${ci18n['label.captcha']}<abbr title="${ci18n['message.required']}" class="require">*</abbr></label>
 		<input type="text" id="captcha" name="captcha" value="" />
 	</div>
 </div>
