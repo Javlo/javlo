@@ -2,6 +2,7 @@ package org.javlo.component.links;
 
 import java.io.IOException;
 import java.io.StringWriter;
+import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.Date;
 import java.util.HashMap;
@@ -12,7 +13,9 @@ import java.util.logging.Logger;
 import org.htmlparser.util.ParserException;
 import org.javlo.component.core.AbstractVisualComponent;
 import org.javlo.context.ContentContext;
+import org.javlo.data.InfoBean;
 import org.javlo.helper.StringHelper;
+import org.javlo.service.social.SocialService;
 import org.javlo.utils.JSONMap;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
@@ -93,30 +96,46 @@ public class TwitterReader extends AbstractVisualComponent {
 	private static class ReadTweetThread extends Thread {
 		
 		private TwitterReader comp;
+		private URL url;
 		
-		ReadTweetThread(TwitterReader comp) {
+		ReadTweetThread(TwitterReader comp, URL url) {
 			this.comp = comp;
+			this.url = url;
 		}
 		
 		@Override
 		public void run() {			
-			try {
-				Map<String, TwitterBean> newTweets  = TwitterReader.readTweet(new URL(comp.getValue()));
-				comp.tweets = newTweets;				
+			try {				
+				if (url != null) {
+					Map<String, TwitterBean> newTweets  = TwitterReader.readTweet(url);
+					comp.tweets = newTweets;
+				}
 			} catch (Exception e) { 
 				e.printStackTrace();
 			}
 		}
 		
 	}
+	
+	private URL getURL(ContentContext ctx) throws MalformedURLException {
+		if (getValue().trim().length() > 0) {
+			return new URL(getValue());
+		} else {
+			String twitterURL = SocialService.getInstance(ctx.getGlobalContext()).getTwitter().getURL();
+			if (twitterURL != null && twitterURL.trim().length() > 0) {
+				return new URL(twitterURL);
+			}
+		}
+		return null;
+	}
 
 	private synchronized Map<String, TwitterBean> getTweet(URL url) throws ParserException, IOException {
 		if (tweets == null) {
 			tweets = readTweet(url);
 			latestLoad = System.currentTimeMillis();
-		} else if (latestLoad < (System.currentTimeMillis() - (30 * 1000))) {
+		} else if (url != null && latestLoad < (System.currentTimeMillis() - (30 * 1000))) {
 			latestLoad = System.currentTimeMillis();
-			new ReadTweetThread(this).start();
+			new ReadTweetThread(this, url).start();
 		}
 		return tweets;
 	}
@@ -162,9 +181,8 @@ public class TwitterReader extends AbstractVisualComponent {
 
 	@Override
 	public void prepareView(ContentContext ctx) throws Exception {
-		super.prepareView(ctx);
-		URL url = new URL(getValue());
-		Map<String, TwitterBean> maps = getTweet(url);
+		super.prepareView(ctx);		
+		Map<String, TwitterBean> maps = getTweet(getURL(ctx));
 		ctx.getRequest().setAttribute("tweets", maps.values());
 		StringWriter strWriter = new StringWriter();
 		JSONMap.JSON.toJson(maps, strWriter);

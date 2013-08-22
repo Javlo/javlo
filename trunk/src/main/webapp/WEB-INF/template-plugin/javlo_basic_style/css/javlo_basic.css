@@ -54,14 +54,14 @@ figure {
 /****************/
 /*** messages ***/
 /****************/
-#content .message .error,#content .message .warning {
+.message .error,.message .warning {
 	background-color: #FFDDDD;
 	border: 1px solid #FF3333;
 	margin: 5px;
 	padding: 5px;
 }
 
-#content .message .info,#content .message .help {
+.message .info,.message .help {
 	background-color: #bbffbb;
 	border: 1px solid #33ee33;
 	margin: 5px;
@@ -69,12 +69,12 @@ figure {
 	display: block;
 }
 
-#content .message img {
+.message img {
 	margin-right: 5px;
 	vertical-align: bottom;
 }
 
-#content .message p {
+.message p {
 	margin: 0px;
 	padding: 0px;
 	text-align: center;
