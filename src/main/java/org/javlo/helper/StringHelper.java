@@ -2444,8 +2444,8 @@ public class StringHelper {
 		}
 	}
 
-	public static boolean isEmpty(String value) {
-		return (value == null || value.trim().length() == 0);
+	public static boolean isEmpty(Object value) {
+		return (value == null || value.toString().trim().length() == 0);
 	}
 
 	/**
