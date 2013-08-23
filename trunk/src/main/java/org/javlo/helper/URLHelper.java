@@ -1008,5 +1008,36 @@ public class URLHelper extends ElementaryURLHelper {
 		outURL = outURL.replace("$DATA", globalContext.getDataFolder());
 		return outURL;
 	}
+	
+	/**
+	 * transform text to url.
+	 * if absolute url >> return same link, if contains '/' >> search on path, don't contains '/' >> search as page name.
+	 * @param ctx
+	 * @param link
+	 * @return
+	 * @throws Exception 
+	 */
+	public static String smartLink(ContentContext ctx, String link) throws Exception {
+		if (link == null) {
+			return null;
+		}
+		if (URLHelper.isAbsoluteURL(link)) {
+			return link;
+		} if (link.contains("/")) {
+			String url = URLHelper.createURL(ctx, link);
+			if (url != null) {
+				return url;
+			} else {
+				return link;
+			}
+		} else {
+			String url = URLHelper.createURLFromPageName(ctx, link);
+			if (url != null) {
+				return url;
+			} else {
+				return link;
+			}
+		}
+	}
 
 }
