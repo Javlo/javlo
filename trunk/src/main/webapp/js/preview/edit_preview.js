@@ -21,6 +21,10 @@ jQuery(document).ready(
 			jQuery("body").mouseover(function() {				
 				return true;
 			});
+			jQuery(window).scroll(function() {				
+				layerOver(null, false);
+				return true;
+			});
 			jQuery("#preview-layer").click(
 					function() {
 						layerOver(null);

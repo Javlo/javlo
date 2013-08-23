@@ -390,7 +390,7 @@ public class TemplateAction extends AbstractModuleAction {
 	}
 
 	public String performValidate(RequestService requestService, HttpSession session, ContentContext ctx) throws IOException {
-		Template template = TemplateFactory.getDiskTemplate(session.getServletContext(), requestService.getParameter("templateid", null));
+		Template template = TemplateFactory.getDiskTemplate(session.getServletContext(), requestService.getParameter("id", null));
 		if (template == null) {
 			Collection<Template> templates;
 			templates = TemplateFactory.getAllDiskTemplates(session.getServletContext());
@@ -404,7 +404,7 @@ public class TemplateAction extends AbstractModuleAction {
 	}
 
 	public String performDelete(RequestService requestService, HttpSession session, ContentContext ctx) throws IOException {
-		Template template = TemplateFactory.getDiskTemplate(session.getServletContext(), requestService.getParameter("templateid", null));
+		Template template = TemplateFactory.getDiskTemplate(session.getServletContext(), requestService.getParameter("id", null));
 		if (template != null) {
 			template.delete();
 		}

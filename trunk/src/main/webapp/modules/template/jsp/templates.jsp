@@ -70,7 +70,7 @@
 
                     <c:url value="${info.currentURL}" var="deleteURL">
                     	<c:param name="webaction" value="delete" />
-                    	<c:param name="templateid" value="${template.name}" />
+                    	<c:param name="id" value="${template.name}" />
                     </c:url>
                     <a href="${deleteURL}" class="delete"></a>
                     
@@ -82,7 +82,7 @@
                     <c:if test="${not template.valid}">
                     <c:url value="${info.currentURL}" var="validURL">
                     	<c:param name="webaction" value="validate" />
-                    	<c:param name="templateid" value="${template.name}" />
+                    	<c:param name="id" value="${template.name}" />
                     </c:url>
                     <a href="${validURL}" class="validate" title="validate"></a>
                     </c:if>
