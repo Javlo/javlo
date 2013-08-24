@@ -658,17 +658,17 @@ public abstract class AbstractFileComponent extends AbstractVisualComponent impl
 			properties.setProperty(LABEL_KEY, label);
 			properties.setProperty(DESCRIPTION_KEY, description);
 		}
-
-		if (canUpload(ctx)) {
-			if (isFileNameValid(fileName)) {
-				try {
-					uploadFiles(ctx, requestService);
-				} catch (IOException e) {
-					MessageRepository messageRepository = MessageRepository.getInstance(ctx);
-					messageRepository.setGlobalMessage(new GenericMessage(i18nAccess.getText("content.file.exist"), GenericMessage.ERROR));
-				}
+		
+		//if (canUpload(ctx)) {
+		if (isFileNameValid(fileName)) {
+			try {
+				uploadFiles(ctx, requestService);
+			} catch (IOException e) {
+				MessageRepository messageRepository = MessageRepository.getInstance(ctx);
+				messageRepository.setGlobalMessage(new GenericMessage(i18nAccess.getText("content.file.exist"), GenericMessage.ERROR));
 			}
 		}
+		//}
 
 		if (isModify()) {
 			setNeedRefresh(true);

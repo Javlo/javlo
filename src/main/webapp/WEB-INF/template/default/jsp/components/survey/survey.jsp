@@ -2,7 +2,7 @@
 <%@ taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions" %>
 <div class="survey">
 
-	<form id="survey-form">
+	<form id="survey-form" method="post" action="${info.currentURL}">
 	<fieldset>
 		<legend>${ci18n['label.legend']}</legend>
 		<input type="hidden" name="webaction" value="survey.submit" />
@@ -16,8 +16,8 @@
 			<c:if test="${!question.done}">
 			<ul class="responses">
 			<c:forEach var="response" items="${question.responses}" varStatus="rs">
-				<li><input type="checkbox" name="q${qs.index}r${rs.index}" id="q${rs.index}r${rs.index}" />
-				<label for="q${rs.index}r${rs.index}">${response}</label></li>
+				<li><input type="checkbox" name="q${qs.index}r${rs.index}" id="q${qs.index}r${rs.index}" />
+				<label for="q${qs.index}r${rs.index}">${response}</label></li>
 			</c:forEach>
 			</ul>
 			</c:if>
@@ -26,7 +26,7 @@
 				<c:if test="${not empty question.conclusion.link}">
 					<a href="${question.conclusion.link}">
 				</c:if>
-				<p class="conclusion">${question.conclusion.text}</p>
+				<p class="conclusion count-${fn:length(question.conclusions)}">${question.conclusion.text}</p>
 				<c:if test="${not empty question.conclusion.link}">
 					</a>
 				</c:if>				
