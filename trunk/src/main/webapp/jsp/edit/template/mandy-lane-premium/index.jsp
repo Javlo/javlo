@@ -258,7 +258,7 @@
     		<span id="preview-version">${info.previewVersion}</span> - 
     		<span id="server-time">${info.serverTime}</span>
     		<c:if test="${info.localModule}">
-    			<span class="localmodule"><a href="${info.staticRootURL}/webstart/localmodule.jnlp.jsp">Local Module</a></span>
+    			<span class="localmodule"><a href="${info.staticRootURL}webstart/localmodule.jnlp.jsp">Local Module</a></span>
     		</c:if>
     	</c:if>
     </div><!-- footerinner -->
