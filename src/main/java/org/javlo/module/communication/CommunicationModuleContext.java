@@ -4,6 +4,7 @@ import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.util.Collection;
 import java.util.HashSet;
+import java.util.LinkedHashSet;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Set;
@@ -28,8 +29,7 @@ public class CommunicationModuleContext extends AbstractModuleContext {
 	public static final String MODULE_NAME = "communication";
 
 	private LinkToRenderer homeLink = null;
-	private final List<LinkToRenderer> navigation = new LinkedList<LinkToRenderer>();
-
+	private List<LinkToRenderer> navigation = new LinkedList<LinkToRenderer>();
 	private Set<String> canSpeakSites = new HashSet<String>();
 
 	/**
@@ -46,11 +46,9 @@ public class CommunicationModuleContext extends AbstractModuleContext {
 	}
 
 	public void loadNavigation(ContentContext ctx) throws ServiceException, Exception {
-		if (navigation.size() > 0) {
-			return;
-		}
-		navigation.clear();
-		canSpeakSites.clear();
+		List<LinkToRenderer> navigation = new LinkedList<LinkToRenderer>();
+		Set<String> canSpeakSites = new LinkedHashSet<String>();
+		LinkToRenderer homeLink = null;
 
 		HttpServletRequest request = ctx.getRequest();
 
@@ -65,12 +63,14 @@ public class CommunicationModuleContext extends AbstractModuleContext {
 			for (GlobalContext context : allContext) {
 				if (context.getAliasOf() == null || context.getAliasOf().trim().isEmpty()) {
 					String contextKey = context.getContextKey();
-					LinkToRenderer link = new LinkToRenderer(contextKey, contextKey, "jsp/empty.jsp");
-					if (currentSite.equals(contextKey)) {
-						homeLink = link;
-					}
-					navigation.add(link);
 					canSpeakSites.add(contextKey);
+					if (!context.getAllPrincipals().isEmpty()) {
+						LinkToRenderer link = new LinkToRenderer(contextKey, contextKey, "jsp/empty.jsp");
+						if (currentSite.equals(contextKey)) {
+							homeLink = link;
+						}
+						navigation.add(link);
+					}
 				}
 			}
 			navigation.add(new LinkToRenderer(I18nAccess.getInstance(ctx).getText("communication.all-sites"),
@@ -84,6 +84,10 @@ public class CommunicationModuleContext extends AbstractModuleContext {
 		if (getCurrentLink() == null) {
 			setCurrentLink(currentSite);
 		}
+
+		this.navigation = navigation;
+		this.homeLink = homeLink;
+		this.canSpeakSites = canSpeakSites;
 	}
 
 	@Override
