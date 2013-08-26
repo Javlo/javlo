@@ -1330,8 +1330,7 @@ public class Template implements Comparable<Template> {
 		return Arrays.asList(propertiesFile);
 	}
 
-	public Properties getMacroProperties(GlobalContext globalContext, String macroKey) throws IOException {
-		System.out.println("***** Template.getMacroProperties : macroKey = "+macroKey); //TODO: remove debug trace
+	public Properties getMacroProperties(GlobalContext globalContext, String macroKey) throws IOException {		
 		synchronized (globalContext.getLockImportTemplate()) {
 			List<File> macroFiles = getMacroFile(globalContext);
 			for (File pFile : macroFiles) {
