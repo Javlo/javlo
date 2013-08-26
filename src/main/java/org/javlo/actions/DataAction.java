@@ -29,6 +29,7 @@ import org.javlo.component.title.Title;
 import org.javlo.context.ContentContext;
 import org.javlo.context.GlobalContext;
 import org.javlo.helper.ContentHelper;
+import org.javlo.helper.LangHelper;
 import org.javlo.helper.ResourceHelper;
 import org.javlo.helper.ServletHelper;
 import org.javlo.helper.StringHelper;
@@ -41,11 +42,11 @@ import org.javlo.message.MessageRepository;
 import org.javlo.module.ticket.TicketAction;
 import org.javlo.service.ContentService;
 import org.javlo.service.IMService;
-import org.javlo.service.PersistenceService;
 import org.javlo.service.IMService.IMItem;
 import org.javlo.service.NotificationService;
 import org.javlo.service.NotificationService.Notification;
 import org.javlo.service.NotificationService.NotificationContainer;
+import org.javlo.service.PersistenceService;
 import org.javlo.service.RequestService;
 import org.javlo.template.Template;
 import org.javlo.user.User;
@@ -93,6 +94,8 @@ public class DataAction implements IAction {
 			List<IMItem> messages = new LinkedList<IMItem>();
 			imService.fillMessageList(currentSite, currentUser, lastDate, messages);
 			if (!messages.isEmpty()) {
+				ContentContext absoluteCtx = ctx.getContextForAbsoluteURL();
+				absoluteCtx.setRenderMode(ContentContext.EDIT_MODE);
 				for (IMItem item : messages) {
 					String msg = item.getFromUser();
 					if (!item.getReceiverUser().equals(IMService.ALL_USERS)) {
@@ -105,6 +108,9 @@ public class DataAction implements IAction {
 					notification.setReceiver(item.getReceiverUser());
 					notification.setUserId(item.getFromUser());
 					notification.setType(GenericMessage.INFO);
+					notification.setUrl(URLHelper.createModuleURL(absoluteCtx, "", "communication", LangHelper.objStr(
+							LangHelper.entry("webaction", "changeRenderer"),
+							LangHelper.entry("page", currentSite))));
 					finalNotifs.add(new NotificationContainer(notification, false, currentUser));
 				}
 			}
