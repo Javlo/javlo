@@ -1107,7 +1107,7 @@ public class Edit extends AbstractModuleAction {
 				content.releaseViewNav(ctx, globalContext);
 
 				String msg = i18nAccess.getText("content.published");
-				MessageRepository.getInstance(ctx).setGlobalMessageAndNotificationToAll(ctx, new GenericMessage(msg, GenericMessage.INFO));
+				MessageRepository.getInstance(ctx).setGlobalMessageAndNotificationToAll(ctx.getContextWithOtherRenderMode(ContentContext.VIEW_MODE), new GenericMessage(msg, GenericMessage.INFO));
 				// MessageRepository.getInstance(ctx).setGlobalMessage(new
 				// GenericMessage(msg, GenericMessage.INFO));
 
