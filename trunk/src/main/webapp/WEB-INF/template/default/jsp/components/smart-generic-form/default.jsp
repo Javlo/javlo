@@ -24,6 +24,7 @@
 </c:if>
 
 <div class="line action">
+	<a href="${info.currentURL}" class="input">${ci18n['message.reset']}</a>
 	<input type="submit" value="${i18n.view['global.send']}"/>
 </div>
 </form>

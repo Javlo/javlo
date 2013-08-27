@@ -2,6 +2,8 @@ package org.javlo.module.core;
 
 import java.io.File;
 import java.io.IOException;
+import java.net.URL;
+import java.net.URLClassLoader;
 import java.util.Collection;
 import java.util.Comparator;
 import java.util.HashMap;
@@ -16,6 +18,11 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
+import org.apache.commons.vfs2.AllFileSelector;
+import org.apache.commons.vfs2.FileObject;
+import org.apache.commons.vfs2.FileSystemManager;
+import org.apache.commons.vfs2.VFS;
+import org.javlo.actions.IModuleAction;
 import org.javlo.context.ContentContext;
 import org.javlo.context.GlobalContext;
 import org.javlo.context.UserInterfaceContext;
@@ -34,7 +41,7 @@ public class ModulesContext {
 		public int compare(Module m1, Module m2) {
 			// TODO Auto-generated method stub
 			if (m1.getOrder() == m2.getOrder()) {
-				return StringHelper.neverNull(m1.getName()).compareTo( StringHelper.neverNull(m2.getName()));
+				return StringHelper.neverNull(m1.getName()).compareTo(StringHelper.neverNull(m2.getName()));
 			}
 			return m1.getOrder() - m2.getOrder();
 		}
@@ -45,6 +52,8 @@ public class ModulesContext {
 
 	static final String MODULES_FOLDER = "/modules";
 
+	static final String EXTERNAL_MODULES_FOLDER = "/external-modules";
+
 	private static final String KEY = "modulesContext";
 
 	private Module currentModule;
@@ -53,15 +62,36 @@ public class ModulesContext {
 	Collection<Module> modules = new TreeSet<Module>(new ModuleOrderComparator());
 	Collection<Module> allModules = new TreeSet<Module>(new ModuleOrderComparator());
 
+	private Map<String, IModuleAction> actionClass = new HashMap<String, IModuleAction>();
+
 	private Object siteKey;
 
 	private ModulesContext(HttpSession session, GlobalContext globalContext) throws ModuleException {
 		loadModule(session, globalContext);
 	}
 
+	private static void explodeJar(File targetFolder, File jarFile) throws IOException {
+
+		targetFolder.mkdirs();
+
+		FileSystemManager vfsManager = VFS.getManager();
+		FileObject jarVfs = vfsManager.resolveFile(jarFile.getAbsolutePath());
+		jarVfs = vfsManager.createFileSystem(jarVfs);
+		FileObject jarRoot = jarVfs.resolveFile("/META-INF/resources");
+		FileObject targetRoot = vfsManager.resolveFile(targetFolder.getAbsolutePath());
+		if (!jarRoot.exists()) {
+			logger.warning("addon resource folder not found : " + jarRoot);
+			return;
+		}
+		logger.info("import addon resources from '" + jarRoot + "' to '" + targetFolder + "'");
+		targetRoot.copyFrom(jarRoot, new AllFileSelector());
+	}
+
 	public void loadModule(HttpSession session, GlobalContext globalContext) throws ModuleException {
 		IUserFactory userFactory = AdminUserFactory.createUserFactory(globalContext, session);
 		File modulesFolder = new File(session.getServletContext().getRealPath(MODULES_FOLDER));
+		File externalModulesFolder = new File(session.getServletContext().getRealPath(EXTERNAL_MODULES_FOLDER));
+		externalModulesFolder.mkdirs(); // TODO: remove this
 
 		List<Module> localModules = new LinkedList<Module>();
 
@@ -98,6 +128,33 @@ public class ModulesContext {
 				}
 			}
 
+			if (externalModulesFolder != null) {
+				for (File extFile : externalModulesFolder.listFiles()) {
+					if (StringHelper.getFileExtension(extFile.getName()).toLowerCase().equals("jar")) {
+						File targetFolder = new File(URLHelper.mergePath(modulesFolder.getAbsolutePath(), StringHelper.getFileNameWithoutExtension(extFile.getName())));
+						if (targetFolder.exists()) {
+							logger.severe("folder : " + targetFolder + " all ready exist.");
+						} else {
+							try {
+								explodeJar(targetFolder, extFile);
+								File configFile = new File(targetFolder, "config.properties");
+								if (configFile.exists()) {
+									Module module = new Module(configFile, new Locale(globalContext.getEditLanguage(session)), targetFolder.getAbsolutePath(), globalContext.getPathPrefix());
+									module.setAction(getExternalActionModule(module.getActionName(), extFile));
+									if (module.haveRight(session, userFactory.getCurrentUser(session)) && globalContext.getModules().contains(module.getName())) {
+										localModules.add(module);
+									}
+								} else {
+									logger.warning("bad external module format : " + extFile);
+								}
+							} catch (IOException e) {
+								e.printStackTrace();
+							}
+						}
+					}
+				}
+			}
+
 			// load module needed
 			List<Module> neededModules = new LinkedList<Module>();
 			for (Module module : localModules) {
@@ -123,7 +180,9 @@ public class ModulesContext {
 				throw new ModuleException("javlo need at least one module.");
 			}
 
-			if (localModules.size() == 0) { // if no module defined >>>> add admin and user module for config javlo.
+			if (localModules.size() == 0) { // if no module defined >>>> add
+											// admin and user module for config
+											// javlo.
 				logger.warning("no module defined for : " + globalContext.getContextKey());
 				for (Module module : allModules) {
 					if (module.getName().equals("admin") || module.getName().equals("user")) {
@@ -158,6 +217,20 @@ public class ModulesContext {
 				}
 			}
 		}
+	}
+
+	private IModuleAction getExternalActionModule(String actionName, File jarFile) {
+		IModuleAction outAction = actionClass.get(actionName);
+		if (outAction == null) {
+			try {
+				URLClassLoader child = new URLClassLoader(new URL[] { jarFile.toURL() }, this.getClass().getClassLoader());
+				outAction = (IModuleAction) Class.forName(actionName, true, child).newInstance();
+				actionClass.put(actionName, outAction);
+			} catch (Exception ex) {
+				ex.printStackTrace();
+			}
+		}
+		return outAction;
 	}
 
 	public static final ModulesContext getInstance(HttpSession session, GlobalContext globalContext) throws ModuleException {
@@ -220,7 +293,7 @@ public class ModulesContext {
 	}
 
 	private void setCurrentModule(Module currentModule) {
-		if (currentModule == null){
+		if (currentModule == null) {
 			this.currentModule = null;
 		} else {
 			setCurrentModule(currentModule.getName());
@@ -228,7 +301,9 @@ public class ModulesContext {
 	}
 
 	/**
-	 * returns the module that called the current module, null if nobody as call the module, just click on menu. as exemple : for choose templates you can call template module from admin module.
+	 * returns the module that called the current module, null if nobody as call
+	 * the module, just click on menu. as exemple : for choose templates you can
+	 * call template module from admin module.
 	 * 
 	 * @return
 	 */

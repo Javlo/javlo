@@ -237,6 +237,7 @@ public class SmartGenericForm extends AbstractVisualComponent implements IAction
 		out.println(XHTMLHelper.renderLine("error required :", getInputName("error-required"), getLocalConfig(false).getProperty("error.required", "")));
 		out.println(XHTMLHelper.renderLine("thanks :", getInputName("message-thanks"), getLocalConfig(false).getProperty("message.thanks", "")));
 		out.println(XHTMLHelper.renderLine("error :", getInputName("message-error"), getLocalConfig(false).getProperty("message.error", "")));
+		out.println(XHTMLHelper.renderLine("reset :", getInputName("message-reset"), getLocalConfig(false).getProperty("message.reset", "")));
 		if (isCaptcha()) {
 			out.println(XHTMLHelper.renderLine("captcha :", getInputName("label-captcha"), getLocalConfig(false).getProperty("label.captcha", "")));
 		}
@@ -390,8 +391,8 @@ public class SmartGenericForm extends AbstractVisualComponent implements IAction
 		getLocalConfig(false).setProperty("error.required", rs.getParameter(getInputName("error-required"), ""));
 		getLocalConfig(false).setProperty("message.thanks", rs.getParameter(getInputName("message-thanks"), ""));
 		getLocalConfig(false).setProperty("message.error", rs.getParameter(getInputName("message-error"), ""));
+		getLocalConfig(false).setProperty("message.reset", rs.getParameter(getInputName("message-reset"), ""));
 		
-
 		if (isCaptcha()) {
 			getLocalConfig(false).setProperty("label.captcha", rs.getParameter(getInputName("label-captcha"), ""));
 		}

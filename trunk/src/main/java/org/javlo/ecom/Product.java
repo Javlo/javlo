@@ -66,6 +66,10 @@ public class Product {
 	public double getPrice() {
 		return comp.getPrice();
 	}
+	public double getTotal() {
+		double outTotal = getPrice() * getQuantity() * (1 - getReduction());		
+		return outTotal;
+	}
 	public double getReduction() {
 		return comp.getReduction();
 	}
@@ -95,6 +99,8 @@ public class Product {
 	public String getCurrencyCode() {
 		return "EUR";
 	}
+	
+	
 	
 //	@Override
 //	public int hashCode() {

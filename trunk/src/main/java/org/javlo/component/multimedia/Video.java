@@ -183,7 +183,7 @@ public class Video extends GlobalImage implements IAction, IVideo {
 	@Override
 	public String getCurrentRenderer(ContentContext ctx) {
 		if (getStyle().equals(LINK) && !StringHelper.isTrue(ctx.getRequest().getParameter(FORCE_EMBED_PARAM))) {
-			return "link";
+			return super.getCurrentRenderer(ctx);
 		} else {
 			if (getEmbedCode().trim().length() == 0) {
 				String videoRenderer = getLinkVideoName(getLink());
@@ -561,7 +561,7 @@ public class Video extends GlobalImage implements IAction, IVideo {
 			filter = getImageFilter(ctx);
 		}
 		try {
-			String decoImage = getDecorationImage();
+			String decoImage = getDecorationImage();			
 			if (decoImage != null && decoImage.trim().length() > 0) {
 				String imageLink = getResourceURL(ctx, getDecorationImage());
 				return URLHelper.createTransformURL(ctx, imageLink, filter);
