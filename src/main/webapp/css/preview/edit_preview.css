@@ -968,9 +968,15 @@ body.fix-preview {
 	display: block;
 }
 
+#preview_command #shared-content-result .cols {
+	-moz-column-count:2; /* Firefox */
+	-webkit-column-count:2; /* Safari and Chrome */
+	column-count:2;	
+}
+
 #preview_command .shared-content.image .content-wrapper {
-	width: 43%;
-	float: left;
+	width: 90%;
+	display: block;
 	overflow: hidden;
 }
 
