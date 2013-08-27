@@ -33,6 +33,13 @@ import org.javlo.service.RequestService;
  * @author pvandermaesen
  */
 public class EditBasketComponent extends AbstractPropertiesComponent {
+	
+	@Override
+	public void prepareView(ContentContext ctx) throws Exception {	
+		super.prepareView(ctx);
+		Basket basket = Basket.getInstance(ctx);
+		ctx.getRequest().setAttribute("basket", basket);
+	}
 
 	public void renderBasket(ContentContext ctx, PrintStream out, boolean interactive) throws Exception {
 		I18nAccess i18nAccess = I18nAccess.getInstance(ctx.getRequest());
@@ -61,8 +68,6 @@ public class EditBasketComponent extends AbstractPropertiesComponent {
 			if (hasReduction) {
 				out.println("<th class=\"reduction\">" + i18nAccess.getViewText("ecom.reduction") + "</th>");
 			}
-//			out.println("<th class=\"total-evat\">" + i18nAccess.getViewText("ecom.total_evat") + "</th>");
-//			out.println("<th class=\"vat\">" + i18nAccess.getViewText("ecom.vat") + "</th>");
 			out.println("<th class=\"total-vat\" colspan=\"2\">" + i18nAccess.getViewText("ecom.total_vat") + "</th>");
 			out.println("</tr>");
 			int c = 0;
@@ -97,14 +102,6 @@ public class EditBasketComponent extends AbstractPropertiesComponent {
 					out.println(StringHelper.renderDoubleAsPercentage(product.getReduction()));
 					out.println("</td>");
 				}
-//				out.println("<td class=\"total-evat\">");
-//				out.println(StringHelper.renderDouble(product.getPrice() * product.getQuantity() * (1 - product.getReduction()) / (1 + product.getVAT()), 2)
-//						+ " " + product.getCurrencyCode());
-//				
-//				out.println("</td>");
-//				out.println("<td class=\"vat\">");
-//				out.println(StringHelper.renderDoubleAsPercentage(product.getVAT()));
-//				out.println("</td>");
 				out.println("<td class=\"total-vat\">");
 				double produtTotal = product.getPrice() * product.getQuantity() * (1 - product.getReduction());
 				out.println(StringHelper.renderDouble(produtTotal, 2) + " " + product.getCurrencyCode());
@@ -129,13 +126,6 @@ public class EditBasketComponent extends AbstractPropertiesComponent {
 				out.println("<td>&nbsp;</td>");
 				out.println("<td>" + i18nAccess.getViewText("ecom.delivery") + "</td>");
 				out.println("<td colspan=\"2\">&nbsp;</td>");
-//				out.println("<td class=\"total-evat\">");
-//				out.println(StringHelper.renderDouble(basket.getDeliveryExcludingVAT(), 2) + " " + basket.getCurrencyCode());
-//				out.println("</td>");
-//				out.println("<td class=\"vat\">");
-//				out.println(StringHelper.renderDoubleAsPercentage(0.21));
-//				out.println("</td>");
-
 				out.println("<td colspan=\"2\">" + StringHelper.renderDouble(delivery, 2) + " " + basket.getCurrencyCode() + "</td>");
 				out.println("</tr>");
 			}
@@ -165,13 +155,9 @@ public class EditBasketComponent extends AbstractPropertiesComponent {
 						out.println("<input type=\"hidden\" name=\"business\" value=\"info@volpaiole.com\">");
 					}
 					out.println("<input type=\"hidden\" name=\"cmd\" value=\"_xclick\">");
-
-//					out.println("<input type=\"hidden\" name=\"bn\" value=\"FuoriMondo_BuyNow_WPS_BE\">");
 					out.println("<input type=\"hidden\" name=\"no_shipping\" value=\"1\">");
 					out.println("<input type=\"hidden\" name=\"no_note\" value=\"1\">");
-
 					out.println("<input type=\"hidden\" name=\"lc\" value=\"" + ctx.getLanguage() + "\">");
-//					out.println("<input type=\"hidden\" name=\"charset\" value=\"" + ContentContext.CHARACTER_ENCODING + "\">");
 					ContentContext tmpCtx = new ContentContext(ctx);
 					tmpCtx.setAbsoluteURL(true);
 					
@@ -179,9 +165,6 @@ public class EditBasketComponent extends AbstractPropertiesComponent {
 					out.println("<input type=\"hidden\" name=\"return\" value=\"" + URLHelper.createURL(tmpCtx, "/ecom/checkout/paypal-ok") + "\">");
 					out.println("<input type=\"hidden\" name=\"cancel_return\" value=\"" + URLHelper.createURL(tmpCtx, "/ecom/checkout/reserve-ok") + "\">");
 					out.println("<input type=\"hidden\" name=\"rm\" value=\"2\">");
-
-					// ecom.basket-title=panier de ##website## avec
-					// ##product_count## articles.
 
 					GlobalContext globalCtx = GlobalContext.getInstance(ctx.getRequest());
 					String[][] params = new String[][] { { "website", globalCtx.getGlobalTitle() }, { "product_count", "" + basket.getProductCount() } };

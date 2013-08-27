@@ -159,7 +159,7 @@ public class GlobalImage extends Image {
 		}
 		if (getFilter(ctx).equals(RAW_FILTER)) {
 			ctx.getRequest().setAttribute("previewURL", URLHelper.createResourceURL(ctx, getResourceURL(ctx, getFileName())));
-		} else {
+		} else {			
 			ctx.getRequest().setAttribute("previewURL", getPreviewURL(ctx, getFilter(ctx)));
 		}
 		ctx.getRequest().setAttribute("media", this);

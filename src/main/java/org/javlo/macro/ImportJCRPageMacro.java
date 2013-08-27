@@ -49,7 +49,7 @@ public class ImportJCRPageMacro implements IInteractiveMacro, IAction {
 			}
 		}
 
-		private static File getImportFolder(ContentContext ctx) throws Exception {
+		static File getImportFolder(ContentContext ctx) throws Exception {
 			Properties config = getConfig(ctx);
 			StaticConfig staticConfig = StaticConfig.getInstance(ctx.getRequest().getSession());
 			File dir = new File(URLHelper.replaceFolderVariable(ctx, "$HOME/data/import"));
