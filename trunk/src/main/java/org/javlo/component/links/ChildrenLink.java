@@ -403,11 +403,6 @@ public class ChildrenLink extends AbstractVisualComponent implements IImageTitle
 
 	@Override
 	protected void init() throws ResourceNotFoundException {
-
-		if (!isLabelListed() && !isDescription() && !isImage() && !isCombo()) {
-			setValue(LABEL);
-		}
-
 		if (getValue() == null) {
 			setValue(LABEL);
 		}
@@ -479,6 +474,9 @@ public class ChildrenLink extends AbstractVisualComponent implements IImageTitle
 		if (!newValue.equals(getValue())) {
 			setValue(newValue);
 			setModify();
+			System.out.println("***** ChildrenLink.performEdit : MODIF"); //TODO: remove debug trace
+		} else {
+			System.out.println("***** ChildrenLink.setChildImageComponent : NOT MODIF"); //TODO: remove debug trace
 		}
 	}
 
