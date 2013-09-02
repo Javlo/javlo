@@ -863,6 +863,30 @@ public class GlobalContext implements Serializable {
 		}
 		return prop.getProperty(key);
 	}
+	
+	public void removeData(String key) {
+		synchronized (lockDataFile) {
+			if (dataProperties.containsKey(key)) {				
+				dataProperties.remove(key);
+				askStoreData();
+			}
+		}
+	}
+	
+	/**
+	 * get data with specified prefix
+	 * @param prefix
+	 * @return
+	 */
+	public Map<String,String> getDataWidthKeyPrefix(String prefix) {
+		Map<String,String> outData = new HashMap<String,String>(); 
+		for (Object key : getDataKeys()) {
+			if (key.toString().startsWith(prefix)) {
+				outData.put(key.toString(), getData(key.toString()));
+			}
+		}
+		return outData;
+	}
 
 	public Collection<Object> getDataKeys() {
 		Properties prop = dataProperties;
@@ -878,6 +902,9 @@ public class GlobalContext implements Serializable {
 	 * @return true if one or more items was deleted.
 	 */
 	public synchronized boolean deletedDateFromKeyPrefix(String prefix) {
+		if (dataProperties == null) {
+			initDataFile();
+		}
 		boolean deleted = false;
 		Collection<Object> keysToDelete = new LinkedHashSet<Object>();		
 		for (Object key : dataProperties.keySet()) {			
@@ -888,6 +915,9 @@ public class GlobalContext implements Serializable {
 		}
 		for (Object object : keysToDelete) {
 			dataProperties.remove(object);
+		}
+		if (deleted) {
+			askStoreData();
 		}
 		return deleted;
 	}

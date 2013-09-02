@@ -45,6 +45,7 @@ import org.javlo.context.ContentContext;
 import org.javlo.context.EditContext;
 import org.javlo.context.GlobalContext;
 import org.javlo.data.InfoBean;
+import org.javlo.ecom.Basket;
 import org.javlo.exception.ResourceNotFoundException;
 import org.javlo.helper.XMLManipulationHelper.BadXMLException;
 import org.javlo.helper.XMLManipulationHelper.TagDescription;
@@ -1878,6 +1879,17 @@ public class XHTMLHelper {
 				xhtml = xhtml.replace(jstlStr, properties.get(key).toString());
 			}
 		}
+		
+		if (Basket.isInstance(ctx)) {
+			properties = BeanUtils.describe(Basket.getInstance(ctx));
+			for (String key : properties.keySet()) {
+				String jstlStr = "${" + Basket.KEY + '.' + key + '}';
+				if (properties.get(key) != null) {
+					xhtml = xhtml.replace(jstlStr, properties.get(key).toString());
+				}
+			}
+		}
+		
 		return xhtml;
 	}
 

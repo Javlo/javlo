@@ -53,11 +53,13 @@ import org.javlo.context.GlobalContext;
 import org.javlo.helper.Comparator.StringComparator;
 import org.javlo.i18n.I18nAccess;
 
+import com.beust.jcommander.ParameterException;
+
 /**
  * @author pvandermaesen
  */
 public class StringHelper {
-	
+
 	/**
 	 * create a static logger.
 	 */
@@ -78,7 +80,7 @@ public class StringHelper {
 	public static String specialChar = " &\u00e9\"'(\u00a7\u00e8!\u00e7\u00e0)-^$\u00f9\u00b5=:;,+/.?\u00a3%*\u00a8_\u00b0\u00b2\u00b3|@#{[^\u00e8!{})";
 
 	public static String DEFAULT_SEPARATOR = "?";
-	
+
 	private static final char DEFAULT_ESCAPE = '\\';
 
 	public static final String[][] TXT2HTML = { { "\u00c1", "&Aacute;" }, { "\u00e1", "&aacute;" }, { "\u00c0", "&Agrave;" }, { "\u00e0", "&agrave;" }, { "\u00e7", "&ccedil;" }, { "\u00c7", "&Ccedil;" }, { "\u00c9", "&Eacute;" }, { "\u00e9", "&eacute;" }, { "\u00c8", "&Egrave;" }, { "\u00e8", "&egrave;" }, { "\u00ca", "&Ecirc;" }, { "\u00ea", "&ecirc;" }, { "\u00cf", "&Iuml;" }, { "\u00ef", "&iuml;" }, { "\u00f9", "&ugrave;" }, { "\u00d9", "&Ugrave;" }, { "\u2019", "'" }, { "\u00D6", "&Ouml;" }, { "\u00F6", "&ouml;" } };
@@ -96,6 +98,8 @@ public class StringHelper {
 	public static final String DEFAULT_LIST_SEPARATOR = "?";
 
 	private static long previousRandomId = System.currentTimeMillis();
+	
+	private static long previousShortRandomId = 0;
 
 	private static String previousDateId = "";
 
@@ -181,7 +185,7 @@ public class StringHelper {
 	}
 
 	public static String collectionToString(Collection<?> col, String inSep) {
-		return concat(col,  inSep, DEFAULT_ESCAPE);
+		return concat(col, inSep, DEFAULT_ESCAPE);
 	}
 
 	public static String colorToHexString(Color color) {
@@ -848,6 +852,41 @@ public class StringHelper {
 	public synchronized static String getRandomId() {
 		return getRandomIdBase10();
 	}
+	
+	/**
+	 * return a short id (length 10 chars).
+	 * @return
+	 */
+	public synchronized static String getShortRandomId() {
+		long newId = Math.round(System.currentTimeMillis()/10000);
+		if (newId <= previousShortRandomId) {	
+			logger.warning("to mutch random is generated : "+previousRandomId);
+			newId = previousShortRandomId + 1;
+		}
+		previousShortRandomId = newId;
+		String shortBase10 = "" + newId + Math.round(Math.random() * 9);
+		return shortBase10;
+	}
+	
+	/**
+	 * transform a string of number (length 10) to a structured communication, last number is the mod 97 of the first number
+	 * @param code a string of length 10 with only number
+	 * @return a string on length 12 with the the last number is the mod 97
+	 */
+	public static String encodeAsStructuredCommunicationMod97(String code) {
+		if (code.length() != 10) {
+			throw new ParameterException("length of code must be 10.");
+		} else {
+			Long codeAsLong = Long.parseLong(code);
+			Long mod = codeAsLong%97;
+			code = code.substring(0, 3)+'/'+code.substring(3,7)+'/'+code.substring(7);			
+			if (mod<10) {
+				return code+'0'+mod;
+			} else {
+				return code+mod;
+			}
+		}
+	}
 
 	/**
 	 * generate a id in a String.
@@ -1018,7 +1057,7 @@ public class StringHelper {
 		res = res || ext.equalsIgnoreCase("png");
 		return res;
 	}
-	
+
 	/**
 	 * return true if the filename in a document (sp. : word, libreoffice...).
 	 * 
@@ -2286,7 +2325,7 @@ public class StringHelper {
 		}
 		return res;
 	}
-	
+
 	/**
 	 * transform a free value to a attribute xml value
 	 * 
@@ -2296,11 +2335,10 @@ public class StringHelper {
 	public static String toXMLAttribute(String value) {
 		if (value == null) {
 			return "";
-		}		
-		value = value.replace("&", "&amp;"); 
+		}
+		value = value.replace("&", "&amp;");
 		return XHTMLHelper.escapeXML(removeTag(value).replace("\"", "&quot;"));
 	}
-
 
 	/**
 	 * transform a free value to a attribute xml value
@@ -2770,21 +2808,24 @@ public class StringHelper {
 		}
 		return out;
 	}
-	
+
 	private static String concat(Iterable<?> in, String delimiter, char escape) {
-	        StringWriter out = new StringWriter();
-	        if (in != null) {
-	            String actDelimiter = "";
-	            for (Object s : in) {
-	                s = StringUtils.replace(""+s, "" + escape, "" + escape + escape);
-	                s = StringUtils.replace(""+s, "" + delimiter, "" + escape + delimiter);
-	                out.write(actDelimiter);
-	                out.write(""+s);
-	                actDelimiter = "" + delimiter;
-	            }
-	        }
-	        return out.toString();
-	    }
-
-
-}
+		StringWriter out = new StringWriter();
+		if (in != null) {
+			String actDelimiter = "";
+			for (Object s : in) {
+				s = StringUtils.replace("" + s, "" + escape, "" + escape + escape);
+				s = StringUtils.replace("" + s, "" + delimiter, "" + escape + delimiter);
+				out.write(actDelimiter);
+				out.write("" + s);
+				actDelimiter = "" + delimiter;
+			}
+		}
+		return out.toString();
+	}
+	
+	public static String renderPrice (double price, String currency) {
+		return String.format("%.2f%n "+currency, price);
+	}
+	
+	}

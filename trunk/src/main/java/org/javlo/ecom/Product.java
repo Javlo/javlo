@@ -1,5 +1,6 @@
 package org.javlo.ecom;
 
+import org.apache.commons.lang.StringUtils;
 import org.javlo.component.ecom.ProductComponent;
 import org.javlo.component.image.IImageTitle;
 import org.javlo.component.image.ImageTitleBean;
@@ -100,17 +101,17 @@ public class Product {
 		return "EUR";
 	}
 	
+	public String getPriceString() {
+		return StringHelper.renderPrice(getPrice(), getCurrencyCode());	
+	}
+	
+	public String getReductionString() {
+		return Math.round(getReduction()*100) + " %";
+	}
+	
+	public String getTotalString() {
+		return  StringHelper.renderPrice(getTotal(), getCurrencyCode());			
+	}
 	
 	
-//	@Override
-//	public int hashCode() {
-//		return getId().hashCode();
-//	}
-//	@Override
-//	public boolean equals(Object obj) {
-//		if (obj instanceof Product) {
-//			return ((Product) obj).getId().equals(this.getId());
-//		}
-//		return false;
-//	}
 }

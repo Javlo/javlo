@@ -18,28 +18,67 @@ import org.javlo.utils.CSVFactory;
 
 
 public class Basket {
-
+	
 	private List<Product> products = new LinkedList<Product>();
 
 	private boolean valid = false;
 	private boolean confirm = false;
 	
-	private String id = StringHelper.getRandomId();
-//	private String contactName="";
+	private String id = StringHelper.getShortRandomId();	
 	private String contactEmail="";
 	private String contactPhone="";
 	
+	private int step = 1;	
 
-	private static final String KEY = "basket";
+	public static final String KEY = "basket";
+	
+	public static class PayementServiceBean {
+		private PayementExternalService service;
+		private String url;
+		
+		private PayementServiceBean (PayementExternalService inService, String inURL) {
+			this.service = inService;
+			this.url = inURL;
+		}
+		
+		public String getName() {
+			return service.getName();
+		}
+		
+		public String getURL() {
+			if (url == null) {
+				return service.getURL();
+			} else {
+				return url;
+			}			
+		}
+	}
+	
+	private final List<PayementServiceBean> payementServices = new LinkedList<Basket.PayementServiceBean>();
 
 	public static Basket getInstance(ContentContext ctx) {
 		Basket basket = (Basket) ctx.getRequest().getSession().getAttribute(KEY);
 		if (basket == null) {
 			basket = new Basket();
-			
+			for (PayementExternalService service : EcomService.getInstance(ctx.getGlobalContext(), ctx.getRequest().getSession()).getExternalService()) {
+				String url = service.getURL();
+				if ((url == null || url.trim().length() == 0) && service.getReturnPage() != null && service.getReturnPage().trim().length() > 0) {
+					try {
+						url = URLHelper.createURLFromPageName(ctx, service.getReturnPage());
+					} catch (Exception e) {
+						e.printStackTrace();
+					}
+				}
+				basket.payementServices.add(new PayementServiceBean(service, url));
+			}
 			ctx.getRequest().getSession().setAttribute(KEY, basket);
 		}
+		 
 		return basket;
+	}
+	
+	public static boolean isInstance(ContentContext ctx) {
+		return ctx.getRequest().getSession().getAttribute(KEY) != null;
 	}
 
 	public void reserve(ContentContext ctx) {
@@ -99,13 +138,21 @@ public class Basket {
 		}
 		return result + getDeliveryIncludingVAT();
 	}
+	
+	public String getTotalIncludingVATString() {
+		return StringHelper.renderPrice(getTotalIncludingVAT(), getCurrencyCode());
+	}
 
 	public double getTotalExcludingVAT() {
 		double result = 0;
 		for (Product product : products) {
-			result = result + (((product.getPrice()) * (1 - product.getReduction()) * product.getQuantity()) / (1 + product.getVAT()));
+			result = result + (((product.getPrice()) * (1 - product.getReduction()) * product.getQuantity()) / (1 + product.getVAT()));			
 		}
 		return result + getDeliveryExcludingVAT();
+	}
+	
+	public String getTotalExcludingVATString() {
+		return StringHelper.renderPrice(getTotalExcludingVAT(), getCurrencyCode());		
 	}
 
 	public double getDeliveryIncludingVAT() {
@@ -159,15 +206,14 @@ public class Basket {
 
 	public void init(ContentContext ctx) {
 		ctx.getRequest().getSession().removeAttribute(KEY);
-//		setValid(false);
-//		setConfirm(false);
-//		setDeliveryZone(null);
-//		products.clear();
-//		id = StringHelper.getRandomId();
 	}
 
 	public String getId() {
 		return id;
+	}
+	
+	public String getStructutedCommunication() {
+		return StringHelper.encodeAsStructuredCommunicationMod97(getId());
 	}
 
 	public void setId(String id) {
@@ -313,4 +359,30 @@ public String getFirstName() {
 		}
 		return zones;
 	}
+
+	public int getStep() {
+		return step;
+	}
+
+	public void setStep(int step) {
+		this.step = step;
+	}
+	
+	public List<PayementServiceBean> getServices() {
+		return payementServices;
+	}
+	
+	public static void main(String[] args) {
+		String id = StringHelper.getShortRandomId();
+		System.out.println("***** Basket.main : id = "+id); //TODO: remove debug trace
+		System.out.println("***** Basket.main : lg = "+id.length()); //TODO: remove debug trace
+		id = StringHelper.getShortRandomId();
+		System.out.println("***** Basket.main : id = "+id); //TODO: remove debug trace
+		System.out.println("***** Basket.main : lg = "+id.length()); //TODO: remove debug trace
+		id = StringHelper.getShortRandomId();
+		System.out.println("***** Basket.main : id = "+id); //TODO: remove debug trace
+		System.out.println("***** Basket.main : lg = "+id.length()); //TODO: remove debug trace
+	}
+	
+	
 }
