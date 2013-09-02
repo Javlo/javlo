@@ -171,3 +171,5 @@ change log
  * autosize plugin for textarea (thanks : http://www.jacklmoore.com/autosize/)
  
  * shared content provider (http://www.stockvault.net/ and http://fotogrph.com/)
+ 
+ * ecom refactoring + externals modules
