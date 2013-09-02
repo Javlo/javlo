@@ -473,10 +473,7 @@ public class ChildrenLink extends AbstractVisualComponent implements IImageTitle
 
 		if (!newValue.equals(getValue())) {
 			setValue(newValue);
-			setModify();
-			System.out.println("***** ChildrenLink.performEdit : MODIF"); //TODO: remove debug trace
-		} else {
-			System.out.println("***** ChildrenLink.setChildImageComponent : NOT MODIF"); //TODO: remove debug trace
+			setModify();			
 		}
 	}
 
