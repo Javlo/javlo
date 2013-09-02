@@ -26,9 +26,9 @@ import org.javlo.actions.IModuleAction;
 import org.javlo.context.ContentContext;
 import org.javlo.context.GlobalContext;
 import org.javlo.context.UserInterfaceContext;
-import org.javlo.helper.ResourceHelper;
 import org.javlo.helper.StringHelper;
 import org.javlo.helper.URLHelper;
+import org.javlo.helper.VFSHelper;
 import org.javlo.i18n.I18nAccess;
 import org.javlo.service.RequestService;
 import org.javlo.user.AdminUserFactory;
@@ -74,33 +74,27 @@ public class ModulesContext {
 	}
 
 	private static void explodeJar(File targetFolder, File jarFile) throws IOException {
-
 		targetFolder.mkdirs();
-		FileObject jarVfs = null;
-		FileObject jarRoot = null;
+
+		FileSystemManager manager = null;
+		FileObject jarFS = null;
 		FileObject targetRoot = null;
 		try {
-			FileSystemManager vfsManager = VFS.getManager();
-			jarVfs = vfsManager.resolveFile(jarFile.getAbsolutePath());
-			jarVfs = vfsManager.createFileSystem(jarVfs);
-			jarRoot = jarVfs.resolveFile("/META-INF/resources");
-			targetRoot = vfsManager.resolveFile(targetFolder.getAbsolutePath());
-			if (!jarRoot.exists()) {
-				logger.warning("addon resource folder not found : " + jarRoot);
+			manager = VFS.getManager();
+			FileObject jar = manager.resolveFile(jarFile.getAbsolutePath());
+			jarFS = manager.createFileSystem(jar);
+			FileObject resourcesRoot = jarFS.resolveFile("/META-INF/resources");
+			targetRoot = manager.resolveFile(targetFolder.getAbsolutePath());
+			if (!resourcesRoot.exists()) {
+				logger.warning("addon resource folder not found : " + resourcesRoot);
 			} else {
-				logger.info("import addon resources from '" + jarRoot + "' to '" + targetFolder + "'");
-				targetRoot.copyFrom(jarRoot, new AllFileSelector());
+				logger.info("import addon resources from '" + resourcesRoot + "' to '" + targetFolder + "'");
+				targetRoot.copyFrom(resourcesRoot, new AllFileSelector());
 			}
 		} finally {
-			if (jarRoot != null) {
-				jarRoot.close();
-			}
-			if (jarVfs != null) {
-				jarVfs.close();
-			}
-			if (targetRoot != null) {
-				targetRoot.close();
-			}
+			VFSHelper.closeFileSystem(jarFS);
+			VFSHelper.closeFileSystem(targetRoot);
+			VFSHelper.closeManager(manager);
 		}
 	}
 
