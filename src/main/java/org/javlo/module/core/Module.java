@@ -327,7 +327,7 @@ public class Module {
 	private String toolsTitle = null;
 	private String toolsRenderer = null;
 	private String defaultToolsRenderer = null;
-	private IModuleAction action = emptyAction;
+	protected IModuleAction action = emptyAction;
 	private final Collection<String> cssURI = new LinkedList<String>();
 	private final Collection<String> jsURI = new LinkedList<String>();
 	private String renderer;
@@ -429,7 +429,7 @@ public class Module {
 			Arrays.sort(cssFiles, new FileComparator(FileComparator.NAME, true));
 			for (File file : cssFiles) {
 				if (file.isFile() && StringHelper.getFileExtension(file.getName()).equalsIgnoreCase("css")) {
-					String url = URLHelper.mergePath("/", ModulesContext.MODULES_FOLDER + '/' + getName() + '/' + CSS_FOLDER + '/' + file.getName());
+					String url = URLHelper.mergePath("/", getModuleFolder() + '/' + getName() + '/' + CSS_FOLDER + '/' + file.getName());
 					cssURI.add(url);
 				}
 			}
@@ -560,6 +560,10 @@ public class Module {
 		defaultSideBoxes = new LinkedList<Module.Box>(sideBoxes);
 		defaultBoxes = new HashMap<String, Box>(boxes);
 
+		loadAction();
+	}
+	
+	protected void loadAction() {
 		/* action */
 		String actionName = config.get("class.action");
 		if (actionName != null) {
@@ -568,9 +572,13 @@ public class Module {
 			} catch (Exception e) {
 				e.printStackTrace();
 			}
-		}
+		}		
 	}
-	
+
+	public String getModuleFolder() {
+		return ModulesContext.MODULES_FOLDER;
+	}
+
 	public String getActionName() {
 		return config.get("class.action");
 	}
@@ -741,13 +749,6 @@ public class Module {
 		return false;
 	}
 
-	public IModuleAction getAction() {
-		return action;
-	}
-	
-	public void setAction(IModuleAction action) {
-		this.action = action;
-	}
 
 	public boolean isBreadcrumb() {
 		return breadcrumb;
@@ -919,6 +920,10 @@ public class Module {
 
 	public String getDescription() {
 		return description;
+	}
+	
+	public IModuleAction getAction() {
+		return action;
 	}
 
 	public boolean haveRight(HttpSession session, User user) throws ModuleException {

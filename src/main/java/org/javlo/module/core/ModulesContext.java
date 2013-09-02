@@ -26,6 +26,7 @@ import org.javlo.actions.IModuleAction;
 import org.javlo.context.ContentContext;
 import org.javlo.context.GlobalContext;
 import org.javlo.context.UserInterfaceContext;
+import org.javlo.helper.ResourceHelper;
 import org.javlo.helper.StringHelper;
 import org.javlo.helper.URLHelper;
 import org.javlo.i18n.I18nAccess;
@@ -54,6 +55,8 @@ public class ModulesContext {
 
 	static final String EXTERNAL_MODULES_FOLDER = "/external-modules";
 
+	static final String EXTERNAL_MODULES_FOLDER_JAR = "/external-modules-jar";
+
 	private static final String KEY = "modulesContext";
 
 	private Module currentModule;
@@ -73,25 +76,41 @@ public class ModulesContext {
 	private static void explodeJar(File targetFolder, File jarFile) throws IOException {
 
 		targetFolder.mkdirs();
-
-		FileSystemManager vfsManager = VFS.getManager();
-		FileObject jarVfs = vfsManager.resolveFile(jarFile.getAbsolutePath());
-		jarVfs = vfsManager.createFileSystem(jarVfs);
-		FileObject jarRoot = jarVfs.resolveFile("/META-INF/resources");
-		FileObject targetRoot = vfsManager.resolveFile(targetFolder.getAbsolutePath());
-		if (!jarRoot.exists()) {
-			logger.warning("addon resource folder not found : " + jarRoot);
-			return;
+		FileObject jarVfs = null;
+		FileObject jarRoot = null;
+		FileObject targetRoot = null;
+		try {
+			FileSystemManager vfsManager = VFS.getManager();
+			jarVfs = vfsManager.resolveFile(jarFile.getAbsolutePath());
+			jarVfs = vfsManager.createFileSystem(jarVfs);
+			jarRoot = jarVfs.resolveFile("/META-INF/resources");
+			targetRoot = vfsManager.resolveFile(targetFolder.getAbsolutePath());
+			if (!jarRoot.exists()) {
+				logger.warning("addon resource folder not found : " + jarRoot);
+			} else {
+				logger.info("import addon resources from '" + jarRoot + "' to '" + targetFolder + "'");
+				targetRoot.copyFrom(jarRoot, new AllFileSelector());
+			}
+		} finally {
+			if (jarRoot != null) {
+				jarRoot.close();
+			}
+			if (jarVfs != null) {
+				jarVfs.close();
+			}
+			if (targetRoot != null) {
+				targetRoot.close();
+			}
 		}
-		logger.info("import addon resources from '" + jarRoot + "' to '" + targetFolder + "'");
-		targetRoot.copyFrom(jarRoot, new AllFileSelector());
 	}
 
 	public void loadModule(HttpSession session, GlobalContext globalContext) throws ModuleException {
 		IUserFactory userFactory = AdminUserFactory.createUserFactory(globalContext, session);
 		File modulesFolder = new File(session.getServletContext().getRealPath(MODULES_FOLDER));
 		File externalModulesFolder = new File(session.getServletContext().getRealPath(EXTERNAL_MODULES_FOLDER));
-		externalModulesFolder.mkdirs(); // TODO: remove this
+
+		File externalModulesFolderJar = new File(session.getServletContext().getRealPath(EXTERNAL_MODULES_FOLDER_JAR));
+		externalModulesFolderJar.mkdirs(); // TODO: remove this
 
 		List<Module> localModules = new LinkedList<Module>();
 
@@ -103,13 +122,14 @@ public class ModulesContext {
 
 			localModules.clear();
 			allModules.clear();
-
+			
+			String webappRoot = session.getServletContext().getRealPath("/");
 			for (File dir : allModulesFolder) {
 				if (dir.isDirectory()) {
 					File configFile = new File(URLHelper.mergePath(dir.getAbsolutePath(), "config.properties"));
 					if (configFile.exists()) {
 						try {
-							String webappRoot = session.getServletContext().getRealPath("/");
+							
 							String moduleRoot = dir.getAbsolutePath().replace(webappRoot, "/");
 							Module module = new Module(configFile, new Locale(globalContext.getEditLanguage(session)), moduleRoot, globalContext.getPathPrefix());
 
@@ -128,28 +148,26 @@ public class ModulesContext {
 				}
 			}
 
-			if (externalModulesFolder != null) {
-				for (File extFile : externalModulesFolder.listFiles()) {
+			if (externalModulesFolderJar != null) {
+				for (File extFile : externalModulesFolderJar.listFiles()) {
 					if (StringHelper.getFileExtension(extFile.getName()).toLowerCase().equals("jar")) {
-						File targetFolder = new File(URLHelper.mergePath(modulesFolder.getAbsolutePath(), StringHelper.getFileNameWithoutExtension(extFile.getName())));
-						if (targetFolder.exists()) {
-							logger.severe("folder : " + targetFolder + " all ready exist.");
-						} else {
-							try {
-								explodeJar(targetFolder, extFile);
-								File configFile = new File(targetFolder, "config.properties");
-								if (configFile.exists()) {
-									Module module = new Module(configFile, new Locale(globalContext.getEditLanguage(session)), targetFolder.getAbsolutePath(), globalContext.getPathPrefix());
-									module.setAction(getExternalActionModule(module.getActionName(), extFile));
-									if (module.haveRight(session, userFactory.getCurrentUser(session)) && globalContext.getModules().contains(module.getName())) {
-										localModules.add(module);
-									}
-								} else {
-									logger.warning("bad external module format : " + extFile);
+						File targetFolder = new File(URLHelper.mergePath(externalModulesFolder.getAbsolutePath(), StringHelper.getFileNameWithoutExtension(extFile.getName())));
+						try {
+							explodeJar(targetFolder, extFile);
+							File configFile = new File(targetFolder, "config.properties");
+							if (configFile.exists()) {
+								String moduleRoot = targetFolder.getAbsolutePath().replace(webappRoot, "/");
+								ExternalModule module = new ExternalModule(configFile, new Locale(globalContext.getEditLanguage(session)), moduleRoot, globalContext.getPathPrefix());
+								module.setAction(getExternalActionModule(module.getActionName(), extFile));
+								if (module.haveRight(session, userFactory.getCurrentUser(session)) && globalContext.getModules().contains(module.getName())) {
+									localModules.add(module);
 								}
-							} catch (IOException e) {
-								e.printStackTrace();
+								allModules.add(module);
+							} else {
+								logger.warning("bad external module format : " + extFile);
 							}
+						} catch (IOException e) {
+							e.printStackTrace();
 						}
 					}
 				}

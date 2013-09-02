@@ -5,7 +5,9 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.util.Date;
+import java.util.LinkedList;
 import java.util.List;
+import java.util.Map;
 
 import javax.servlet.http.HttpSession;
 
@@ -14,14 +16,18 @@ import org.javlo.context.GlobalContext;
 import org.javlo.helper.StringHelper;
 import org.javlo.helper.URLHelper;
 import org.javlo.utils.CSVFactory;
+import org.javlo.utils.TimeMap;
 
 
 public class EcomService {
 	
 	private static final String KEY = EcomService.class.getName();
 	private static final String COMMAND_FILE = "/ecom/commands.csv";
+	private static final String PAYEMENT_PREFIX = "__PAY_SRV_";
 	
 	private File commandsFile = null;
+	
+	private GlobalContext globalContext;
 	
 	public static EcomService getInstance(GlobalContext globalContext, HttpSession session) {
 		
@@ -31,9 +37,10 @@ public class EcomService {
 		if (ecomService == null) {
 			ecomService = new EcomService();
 			ecomService.commandsFile = new File(URLHelper.mergePath(URLHelper.mergePath(globalContext.getDataFolder(), staticConfig.getStaticFolder()), COMMAND_FILE));
-			ecomService.commandsFile.getParentFile().mkdirs();
+			ecomService.commandsFile.getParentFile().mkdirs();			
 			session.setAttribute(KEY, ecomService);
 		}
+		ecomService.globalContext = globalContext;
 		return ecomService;
 	}
 	
@@ -120,6 +127,67 @@ public class EcomService {
 				e.printStackTrace();
 			}			
 		}
+	}
+	
+	private Map<String, PayementContext> getPayementsMap() {
+		final String KEY = "_payement";
+		Map<String, PayementContext> allPayements = (Map<String, PayementContext>)globalContext.getAttribute(KEY);
+		if (allPayements == null) {
+			allPayements = new TimeMap<String, PayementContext>(24*60*60); // payement live 1 day
+			globalContext.setAttribute(KEY, allPayements);
+		}
+		return allPayements;
+	}
+	
+	/**
+	 * get the payement context.
+	 * @param id the payement id, create a new context if id is null.
+	 * @return a new context if id is null.
+	 */
+	public PayementContext getPayementContext(String id) {
+		if (id == null) {
+			PayementContext payementContext = new PayementContext();
+			getPayementsMap().put(payementContext.getId(), payementContext);
+			return payementContext;
+		} else {
+			return getPayementsMap().get(id);
+		}
+		
+	}
+	
+	/**
+	 * return the external service (as paypal, Ogone...) for pay on the site.
+	 * @return
+	 */
+	public List<PayementExternalService> getExternalService() {
+		List<PayementExternalService> outServices = new LinkedList<PayementExternalService>();
+		Map<String,String> payementList = globalContext.getDataWidthKeyPrefix(PAYEMENT_PREFIX);
+		for (String payementServiceRAW : payementList.values()) {			
+			PayementExternalService service = new PayementExternalService(payementServiceRAW);
+			outServices.add(service);
+		}		
+		return outServices;
+	}
+	
+	public PayementExternalService getExternalService(String name) {
+		for (PayementExternalService service : getExternalService()) {
+			if (service.getName().equals(name)) {
+				return service;
+			}
+		}
+		return null;
+	}
+	
+	public void storePayementService(PayementExternalService service) {
+		if (!service.getName().equals(PAYEMENT_PREFIX+service.getInitialName())) {
+			globalContext.removeData(PAYEMENT_PREFIX+service.getInitialName());
+		}
+		globalContext.setData(PAYEMENT_PREFIX+service.getName(), service.toString());
+	}
+	
+	public void deletePayementService(String name) {
+		System.out.println("***** EcomService.deletePayementService : name = "+name); //TODO: remove debug trace
+		globalContext.removeData(PAYEMENT_PREFIX+name);
 	}
 
 }

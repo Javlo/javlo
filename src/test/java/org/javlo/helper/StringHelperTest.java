@@ -66,4 +66,9 @@ public class StringHelperTest extends TestCase {
 	  assertEquals(StringHelper.getFileNameFromPath("http://host.com/folder/file.jpg?param=value"), "file.jpg");
 	  assertEquals(StringHelper.getFileNameFromPath("http://host.com/folder/1234"), "1234");
   }
+  
+  public void testEncodeAsStructuredCommunicationMod97() throws Exception {
+	  assertEquals(StringHelper.encodeAsStructuredCommunicationMod97("3542232806"), "354/2232/80695");
+	  assertEquals(StringHelper.encodeAsStructuredCommunicationMod97("0000000007"), "000/0000/00707");
+  }
 }

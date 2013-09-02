@@ -16,28 +16,37 @@ import java.util.logging.Level;
 import javax.net.ssl.HttpsURLConnection;
 
 import org.apache.commons.lang.StringUtils;
+import org.javlo.actions.IAction;
 import org.javlo.component.properties.AbstractPropertiesComponent;
 import org.javlo.context.ContentContext;
 import org.javlo.context.GlobalContext;
 import org.javlo.ecom.Basket;
-import org.javlo.ecom.EcomActions;
 import org.javlo.ecom.Product;
 import org.javlo.helper.StringHelper;
 import org.javlo.helper.URLHelper;
 import org.javlo.helper.XHTMLHelper;
 import org.javlo.i18n.I18nAccess;
+import org.javlo.message.MessageRepository;
+import org.javlo.module.ecom.EcomAction;
 import org.javlo.service.RequestService;
 
 
 /**
  * @author pvandermaesen
  */
-public class EditBasketComponent extends AbstractPropertiesComponent {
+public class EditBasketComponent extends AbstractPropertiesComponent implements IAction {
 	
 	@Override
 	public void prepareView(ContentContext ctx) throws Exception {	
 		super.prepareView(ctx);
 		Basket basket = Basket.getInstance(ctx);
+		boolean reduction = false;
+		for (Product product : basket.getProducts()) {
+			if (product.getReduction() > 0) {
+				reduction = true;
+			}
+		}
+		ctx.getRequest().setAttribute("reduction", reduction);
 		ctx.getRequest().setAttribute("basket", basket);
 	}
 
@@ -240,7 +249,7 @@ public class EditBasketComponent extends AbstractPropertiesComponent {
 			String resp = sb.toString().toLowerCase();
 			
 			if (resp.contains("success")) {
-				EcomActions.performValidbasket(ctx.getRequest(), ctx.getResponse(), true, paypalTX);
+				EcomAction.performValidbasket(ctx.getRequest(), ctx.getResponse(), true, paypalTX);
 				aTag = "<p class=\"message\">payment succeeded</p>";
 			} else if (resp.contains("fail")) {
 				basket.setConfirm(false);
@@ -483,6 +492,12 @@ public class EditBasketComponent extends AbstractPropertiesComponent {
 		setCheckedString(newValue);
 		storeProperties();
 	}
+	
+	public static String performConfirm(RequestService rs, ContentContext ctx, MessageRepository messageRepository, I18nAccess i18nAccess) {
+		Basket basket = Basket.getInstance(ctx);
+		basket.setStep(2);
+		return null;
+	}
 
 	@Override
 	public List<String> getFields(ContentContext ctx) {
@@ -492,6 +507,11 @@ public class EditBasketComponent extends AbstractPropertiesComponent {
 	@Override
 	public String getHeader() {
 		return "basket component";
+	}
+
+	@Override
+	public String getActionGroupName() {
+		return "basket";
 	}
 
 }

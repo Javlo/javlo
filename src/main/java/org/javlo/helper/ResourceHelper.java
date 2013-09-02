@@ -1209,20 +1209,29 @@ public class ResourceHelper {
 
 	public static String createModulePath(ContentContext ctx, String path) throws ModuleException, Exception {
 		Module currentModule = ModulesContext.getInstance(ctx.getRequest().getSession(), GlobalContext.getInstance(ctx.getRequest())).getCurrentModule();
-		String insideModulePath = URLHelper.mergePath("/modules", currentModule.getName(), path);
+		String insideModulePath = URLHelper.mergePath("/"+currentModule.getModuleFolder(), currentModule.getName(), path);
 		return insideModulePath;
 	}
 
 	public static Serializable loadBeanFromXML(String xml) {
+		return loadBeanFromXML(xml, ResourceHelper.class.getClassLoader());
+	}
+	
+	public static Serializable loadBeanFromXML(String xml, ClassLoader cl) {
 		Serializable obj;
 		InputStream in;
+		XMLDecoder decoder = null;
 		try {
 			in = new ByteArrayInputStream(xml.getBytes(ContentContext.CHARACTER_ENCODING));
-			XMLDecoder decoder = new XMLDecoder(in);
+			decoder = new XMLDecoder(in,cl);
 			obj = (Serializable) decoder.readObject();
 			return obj;
 		} catch (UnsupportedEncodingException e) {
 			e.printStackTrace();
+		} finally {
+			if (decoder != null) {
+				decoder.close();
+			}
 		}
 		return null;
 	}
