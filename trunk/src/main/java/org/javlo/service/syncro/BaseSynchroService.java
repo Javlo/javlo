@@ -18,8 +18,6 @@ import org.apache.http.HttpStatus;
 import org.apache.http.StatusLine;
 import org.apache.http.client.methods.HttpGet;
 import org.apache.http.client.methods.HttpPost;
-import org.apache.http.entity.mime.MultipartEntity;
-import org.apache.http.entity.mime.content.FileBody;
 import org.javlo.context.ContentContext;
 import org.javlo.helper.ResourceHelper;
 import org.javlo.helper.StringHelper;
@@ -103,7 +101,7 @@ public abstract class BaseSynchroService extends AbstractSynchroService<BaseSync
 			break;
 		case COPY_TO_DISTANT: {
 			FileInfo localInfo = context.getInfo(SynchroSide.LOCAL, path);
-			copyLocalToDistant(context, localInfo);
+			// copyLocalToDistant(context, localInfo); TODO: update new http client
 		}
 			break;
 		case DELETE_LOCAL: {
@@ -130,7 +128,7 @@ public abstract class BaseSynchroService extends AbstractSynchroService<BaseSync
 			String newPath = buildConflictPath(path);
 			FileInfo movedInfo = moveLocalFile(context, localInfo, newPath);
 			if (movedInfo != null) {
-				copyLocalToDistant(context, movedInfo);
+				//copyLocalToDistant(context, movedInfo); TODO: update to new HttpClient
 				copyDistantToLocal(context, distantInfo);
 			}
 		}
@@ -164,7 +162,7 @@ public abstract class BaseSynchroService extends AbstractSynchroService<BaseSync
 		}
 	}
 
-	private boolean copyLocalToDistant(BaseSynchroContext context, FileInfo localInfo) throws SynchroNonFatalException {
+	/*private boolean copyLocalToDistant(BaseSynchroContext context, FileInfo localInfo) throws SynchroNonFatalException {
 
 		if (localInfo.isDirectory()) {
 			//logger.fine("push directory " + localInfo);
@@ -216,7 +214,7 @@ public abstract class BaseSynchroService extends AbstractSynchroService<BaseSync
 				httpClientService.safeConsume(resp);
 			}
 		}
-	}
+	}*/
 
 	private boolean copyDistantToLocal(BaseSynchroContext context, FileInfo distantInfo) throws SynchroNonFatalException {
 
