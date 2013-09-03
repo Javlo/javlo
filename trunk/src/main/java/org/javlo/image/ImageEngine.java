@@ -270,7 +270,7 @@ public class ImageEngine {
 
 	public static BufferedImage resizeIn(BufferedImage bi, int width, int height) {
 
-		logger.info("resizeIn width:" + width + " height:" + height);
+		logger.fine("resizeIn width:" + width + " height:" + height);
 
 		if (width < 0) {
 			return resizeHeight(bi, height, null);
@@ -289,28 +289,9 @@ public class ImageEngine {
 	}
 
 	public static BufferedImage resizeHeight(BufferedImage bi, int height, Color bgColor) {
-
-		logger.info("resizeWidth height:" + height + " bgColor:" + bgColor);
-
-		if ((float) height / (float) bi.getHeight() < 0.5) {
-			bi = lightBlurring(bi);
-		}
-
 		int width = Math.round(bi.getWidth() * ((float) height / (float) bi.getHeight()));
 		height = Math.round(bi.getHeight() * ((float) width / (float) bi.getWidth()));
-
-		/*
-		 * if (width > height) { width = height; height = Math.round((float) bi.getHeight() ((float) width / (float) bi.getWidth())); }
-		 */
-
-		AffineTransform tx = new AffineTransform();
-		double xsc = (width) / ((double) bi.getWidth());
-		double ysc = (height) / ((double) bi.getHeight());
-		tx.scale(xsc, ysc);
-
-		AffineTransformOp op = new AffineTransformOp(tx, AffineTransformOp.TYPE_BICUBIC);
-
-		BufferedImage image = op.filter(bi, null);
+		BufferedImage image = resize(bi,width,height);
 
 		if (bgColor != null && image.getColorModel().hasAlpha()) {
 			BufferedImage imgNew;
@@ -327,13 +308,6 @@ public class ImageEngine {
 			}
 			image = imgNew;
 		}
-		// if (bgColor != null) {
-		// imgNew.setRGB(x, y, replaceAlpha(new Color(rgb, true), bgColor).getRGB());
-		// } else {
-		// imgNew.setRGB(x, y, rgb);
-		// }
-		// return imgNew;
-
 		return image;
 	}
 
@@ -342,34 +316,9 @@ public class ImageEngine {
 	}
 
 	public static BufferedImage resizeWidth(BufferedImage bi, int width, int mt, int mr, int ml, int mb, Color bgColor) {
-
-		logger.info("resizeWidth with:" + width + " bgColor:" + bgColor);
-
-		if ((float) width / (float) bi.getWidth() < 0.5) {
-			bi = lightBlurring(bi);
-		}
-
 		int height = Math.round(bi.getHeight() * ((float) width / (float) bi.getWidth()));
 		width = Math.round(bi.getWidth() * ((float) height / (float) bi.getHeight()));
-
-		/*
-		 * if (height > width) { height = width; width = Math.round((float) bi.getWidth() ((float) height / (float) bi.getHeight())); }
-		 */
-
-		AffineTransform tx = new AffineTransform();
-		double xsc = (width) / ((double) bi.getWidth());
-		double ysc = (height) / ((double) bi.getHeight());
-		tx.scale(xsc, ysc);
-
-		AffineTransformOp op = new AffineTransformOp(tx, AffineTransformOp.TYPE_BICUBIC);
-
-		BufferedImage image = op.filter(bi, null);
-
-		// if (bgColor != null) {
-		// imgNew.setRGB(x, y, replaceAlpha(new Color(rgb, true), bgColor).getRGB());
-		// } else {
-		// imgNew.setRGB(x, y, rgb);
-		// }
+		BufferedImage image = resize(bi, width, height);
 
 		if (bgColor != null && image.getColorModel().hasAlpha() && (mt > 0 || ml > 0 || mr > 0 || mb > 0)) {
 			int inWidth = image.getWidth() + ml + mr;
@@ -386,11 +335,8 @@ public class ImageEngine {
 					outImage.setRGB(x, y, mixedColor.getRGB());
 				}
 			}
-			// imgNew = outImage;
 			image = outImage;
 		}
-
-		// return imgNew;
 		return image;
 	}
 
@@ -641,7 +587,7 @@ public class ImageEngine {
 	 */
 	public static BufferedImage resize(BufferedImage source, int inWidth, int inHeight, boolean cropResize, boolean addBorder, int mt, int ml, int mr, int mb, Color bgColor, int interestX, int interestY, boolean focusZone) {
 
-		logger.info("resize with:" + inWidth + " height:" + inHeight + " bgColor:" + bgColor);
+		logger.fine("resize with:" + inWidth + " height:" + inHeight + " bgColor:" + bgColor);
 
 		if (inWidth < 0) {
 			inWidth = Math.abs(source.getWidth() * inHeight / source.getHeight());
@@ -763,7 +709,7 @@ public class ImageEngine {
 
 	public static BufferedImage resizeImage(BufferedImage in, int width, int height) throws IOException {
 
-		logger.info("resizeImage with:" + width + " height:" + height);
+		logger.fine("resizeImage with:" + width + " height:" + height);
 
 		int imageWidth = in.getWidth();
 		int imageHeight = in.getHeight();
