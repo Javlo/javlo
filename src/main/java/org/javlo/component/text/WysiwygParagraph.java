@@ -53,7 +53,7 @@ public class WysiwygParagraph extends AbstractVisualComponent {
 	public String getViewXHTMLCode(ContentContext ctx) throws Exception {
 		GlobalContext globalContext = GlobalContext.getInstance(ctx.getRequest());
 		ReverseLinkService reverserLinkService = ReverseLinkService.getInstance(globalContext);		
-		return XHTMLHelper.escapeXHTML(reverserLinkService.replaceLink(ctx, getValue()));
+		return reverserLinkService.replaceLink(ctx, getValue());
 	}
 
 	@Override
