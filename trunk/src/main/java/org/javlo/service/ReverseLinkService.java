@@ -220,6 +220,7 @@ public class ReverseLinkService {
 							replace = false;
 						}
 						if (replace) {
+							url = StringHelper.toXMLAttribute(url);
 							if (ctx.getRenderMode() == ContentContext.PREVIEW_MODE) {
 								StringBuffer linkInfo = new StringBuffer();
 								String randomId = StringHelper.getRandomId();
