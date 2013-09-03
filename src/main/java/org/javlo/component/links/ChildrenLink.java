@@ -83,8 +83,8 @@ public class ChildrenLink extends AbstractVisualComponent implements IImageTitle
 		public ImageBean getImage() throws Exception {
 			IImageTitle image = child.getImage(ctx);
 			if (image != null) {
-				String imageURL = URLHelper.createTransformURL(ctx, image.getResourceURL(ctx),getConfig(ctx).getProperty("filter", "list"));
-				return new ImageBean(imageURL, image.getImageDescription(ctx),image.getImageLinkURL(ctx));
+				String imageURL = URLHelper.createTransformURL(ctx, image.getResourceURL(ctx), getConfig(ctx).getProperty("filter", "list"));
+				return new ImageBean(imageURL, image.getImageDescription(ctx), image.getImageLinkURL(ctx));
 			} else {
 				return null;
 			}
@@ -273,7 +273,7 @@ public class ChildrenLink extends AbstractVisualComponent implements IImageTitle
 		String renderer = getRenderer(ctx);
 		if (renderer != null) {
 			List<ChildLinkBean> childrenList = new LinkedList<ChildLinkBean>();
-			for (MenuElement element : children) {				
+			for (MenuElement element : children) {
 				if ((element.isVisible(ctx) ^ showOnlyNotVisible) || showAll) {
 					ChildLinkBean bean = new ChildLinkBean(ctx, element, currentPage);
 					childrenList.add(bean);
@@ -473,7 +473,7 @@ public class ChildrenLink extends AbstractVisualComponent implements IImageTitle
 
 		if (!newValue.equals(getValue())) {
 			setValue(newValue);
-			setModify();			
+			setModify();
 		}
 	}
 

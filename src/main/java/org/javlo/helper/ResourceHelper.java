@@ -11,6 +11,7 @@ import java.io.BufferedWriter;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.Closeable;
+import java.io.DataOutputStream;
 import java.io.File;
 import java.io.FileFilter;
 import java.io.FileInputStream;
@@ -30,6 +31,7 @@ import java.io.Reader;
 import java.io.Serializable;
 import java.io.UnsupportedEncodingException;
 import java.io.Writer;
+import java.net.HttpURLConnection;
 import java.net.URL;
 import java.nio.charset.Charset;
 import java.util.ArrayList;
@@ -56,6 +58,7 @@ import javax.servlet.ServletContext;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 
+import org.apache.commons.codec.binary.Base64;
 import org.apache.commons.configuration.ConfigurationException;
 import org.apache.commons.configuration.PropertiesConfiguration;
 import org.apache.commons.fileupload.FileItem;
@@ -758,7 +761,7 @@ public class ResourceHelper {
 	public static Properties loadProperties(File file) throws IOException {
 		Properties properties = new Properties();
 		InputStream in = new FileInputStream(file);
-		try { 
+		try {
 			properties.load(in);
 		} finally {
 			ResourceHelper.closeResource(in);
@@ -1017,6 +1020,12 @@ public class ResourceHelper {
 		return countByte;
 	}
 
+	public static final String writeStreamToString(InputStream in, String encoding) throws IOException {
+		ByteArrayOutputStream out = new ByteArrayOutputStream();
+		writeStreamToStream(in, out);
+		return new String(out.toByteArray(), Charset.forName(encoding));
+	}
+
 	public static final int writeFileToFile(File fileIn, File file) throws IOException {
 		InputStream in = null;
 		try {
@@ -1209,21 +1218,21 @@ public class ResourceHelper {
 
 	public static String createModulePath(ContentContext ctx, String path) throws ModuleException, Exception {
 		Module currentModule = ModulesContext.getInstance(ctx.getRequest().getSession(), GlobalContext.getInstance(ctx.getRequest())).getCurrentModule();
-		String insideModulePath = URLHelper.mergePath("/"+currentModule.getModuleFolder(), currentModule.getName(), path);
+		String insideModulePath = URLHelper.mergePath("/" + currentModule.getModuleFolder(), currentModule.getName(), path);
 		return insideModulePath;
 	}
 
 	public static Serializable loadBeanFromXML(String xml) {
 		return loadBeanFromXML(xml, ResourceHelper.class.getClassLoader());
 	}
-	
+
 	public static Serializable loadBeanFromXML(String xml, ClassLoader cl) {
 		Serializable obj;
 		InputStream in;
 		XMLDecoder decoder = null;
 		try {
 			in = new ByteArrayInputStream(xml.getBytes(ContentContext.CHARACTER_ENCODING));
-			decoder = new XMLDecoder(in,cl);
+			decoder = new XMLDecoder(in, cl);
 			obj = (Serializable) decoder.readObject();
 			return obj;
 		} catch (UnsupportedEncodingException e) {
@@ -1297,7 +1306,68 @@ public class ResourceHelper {
 			return true;
 		}
 	}
-	
+
+	public static String excutePost(String targetURL, String urlParameters) {
+		return excutePost(targetURL, urlParameters, "application/x-www-form-urlencoded", "en-US", null, null);
+	}
+
+	public static String excutePost(String targetURL, String urlParameters, String contentType, String lang, String user, String pwd) {
+		URL url;
+		HttpURLConnection connection = null;
+		BufferedReader rd = null;
+		
+		if (urlParameters == null) {
+			urlParameters = "";
+		}
+		
+		try {
+			// Create connection
+			url = new URL(targetURL);			
+			connection = (HttpURLConnection) url.openConnection();
+			connection.setRequestMethod("POST");
+			connection.setRequestProperty("Content-Type", contentType);
+
+			connection.setRequestProperty("Content-Length", "" + Integer.toString(urlParameters.getBytes().length));
+			connection.setRequestProperty("Content-Language", lang);
+
+			connection.setUseCaches(false);
+			//connection.setDoInput(true);
+			connection.setDoOutput(true);
+
+			// user authentification
+			if (user != null && pwd != null) {
+				connection.setAllowUserInteraction(true);
+				connection.setRequestProperty("Authorization", "Basic " + Base64.encodeBase64URLSafeString((user + ':' + pwd).getBytes()));
+			}
+
+			// Send request
+			DataOutputStream wr = new DataOutputStream(connection.getOutputStream());
+			wr.writeBytes(urlParameters);
+			wr.flush();
+			wr.close();
+
+			// Get Response
+			InputStream is = connection.getInputStream();
+			String line;
+			rd = new BufferedReader(new InputStreamReader(is));
+			ByteArrayOutputStream outStream = new ByteArrayOutputStream();
+			PrintStream out = new PrintStream(outStream);
+			while ((line = rd.readLine()) != null) {
+				out.println(line);
+			}
+			out.close();
+			return new String(outStream.toByteArray());
+		} catch (Exception e) {
+			e.printStackTrace();
+			return null;
+		} finally {
+			closeResource(rd);
+			if (connection != null) {
+				connection.disconnect();
+			}
+		}
+	}
+
 	public static void main(String[] args) {
 		TicketBean bean = new TicketBean();
 		bean.setAuthors("patrick");

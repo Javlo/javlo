@@ -1,7 +1,10 @@
 package org.javlo.module.ecom;
 
 import java.io.ByteArrayOutputStream;
+import java.io.InputStream;
 import java.io.PrintStream;
+import java.net.HttpURLConnection;
+import java.net.URL;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -9,7 +12,13 @@ import javax.mail.internet.InternetAddress;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import org.apache.commons.codec.binary.Base64;
 import org.apache.commons.lang.StringUtils;
+import org.apache.http.HttpEntity;
+import org.apache.http.HttpResponse;
+import org.apache.http.client.methods.HttpPost;
+import org.apache.http.impl.client.CloseableHttpClient;
+import org.apache.http.impl.client.HttpClients;
 import org.javlo.actions.AbstractModuleAction;
 import org.javlo.component.core.IContentVisualComponent;
 import org.javlo.component.ecom.EditBasketComponent;
@@ -22,8 +31,8 @@ import org.javlo.ecom.DeliveryZone;
 import org.javlo.ecom.EcomService;
 import org.javlo.ecom.PayementExternalService;
 import org.javlo.ecom.Product;
-import org.javlo.ecom.Basket.PayementServiceBean;
 import org.javlo.helper.PatternHelper;
+import org.javlo.helper.ResourceHelper;
 import org.javlo.helper.StringHelper;
 import org.javlo.helper.URLHelper;
 import org.javlo.i18n.I18nAccess;
@@ -35,9 +44,9 @@ import org.javlo.service.ContentService;
 import org.javlo.service.RequestService;
 
 public class EcomAction extends AbstractModuleAction {
-	
+
 	private static Logger logger = Logger.getLogger(EcomAction.class.getName());
-	
+
 	@Override
 	public String prepare(ContentContext ctx, ModulesContext modulesContext) throws Exception {
 		String outMsg = super.prepare(ctx, modulesContext);
@@ -50,11 +59,11 @@ public class EcomAction extends AbstractModuleAction {
 	public String getActionGroupName() {
 		return "ecom";
 	}
-	
+
 	public static String performCreate(RequestService rs, ContentContext ctx, GlobalContext globalContext, MessageRepository messageRepository, I18nAccess i18nAccess) {
 		String name = rs.getParameter("name", null);
 		if (name == null) {
-			return "bad request structure, need 'name' as parameter";			
+			return "bad request structure, need 'name' as parameter";
 		} else {
 			PayementExternalService newService = new PayementExternalService();
 			newService.setName(name);
@@ -63,8 +72,8 @@ public class EcomAction extends AbstractModuleAction {
 		}
 		return null;
 	}
-	
-	public static String performUpdateService(RequestService rs, ContentContext ctx, MessageRepository messageRepository, I18nAccess i18nAccess) {		
+
+	public static String performUpdateService(RequestService rs, ContentContext ctx, MessageRepository messageRepository, I18nAccess i18nAccess) {
 		String name = rs.getParameter("name", "");
 		if (name.trim().length() == 0) {
 			return "bad request format name not found or empty.";
@@ -76,18 +85,18 @@ public class EcomAction extends AbstractModuleAction {
 			} else {
 				PayementExternalService service = ecomService.getExternalService(name);
 				if (service != null) {
-					service.setName(rs.getParameter("name",""));
-					service.setAppId(rs.getParameter("appId",""));					
-					service.setSecretKey(rs.getParameter("secretKey",""));
-					service.setURL(rs.getParameter("url",""));
-					service.setReturnPage(rs.getParameter("page",""));
+					service.setName(rs.getParameter("name", ""));
+					service.setAppId(rs.getParameter("appId", ""));
+					service.setSecretKey(rs.getParameter("secretKey", ""));
+					service.setURL(rs.getParameter("url", ""));
+					service.setReturnPage(rs.getParameter("page", ""));
 					ecomService.storePayementService(service);
 				}
 			}
-		}		
+		}
 		return null;
 	}
-	
+
 	public static String performBuy(HttpServletRequest request, HttpServletResponse response) throws Exception {
 		RequestService requestService = RequestService.getInstance(request);
 		ContentContext ctx = ContentContext.getContentContext(request, response);
@@ -273,8 +282,8 @@ public class EcomAction extends AbstractModuleAction {
 
 		String adminEmail = comp.getEmail();
 		MailService mailService = MailService.getInstance(StaticConfig.getInstance(globalContext.getServletContext()));
-		InternetAddress from;		
-		if (adminEmail.trim().length() > 0) {		
+		InternetAddress from;
+		if (adminEmail.trim().length() > 0) {
 			from = new InternetAddress(comp.getEmail());
 		} else {
 			from = new InternetAddress(globalContext.getAdministratorEmail());
@@ -314,9 +323,9 @@ public class EcomAction extends AbstractModuleAction {
 			String mailBody = new String(outStream.toByteArray());
 
 			for (InternetAddress to : tos) {
-				mailService.sendMail(null, from, to, "basket validation from " + globalContext.getGlobalTitle() + " [" + basket.getProductCount() + " products]", mailBody, true);	
+				mailService.sendMail(null, from, to, "basket validation from " + globalContext.getGlobalTitle() + " [" + basket.getProductCount() + " products]", mailBody, true);
 			}
-			
+
 		}
 	}
 
@@ -380,9 +389,15 @@ public class EcomAction extends AbstractModuleAction {
 			for (Product product : basket.getProducts()) {
 				if (product.getQuantity() < 1) {
 					MailService mailer = MailService.getInstance(StaticConfig.getInstance(ctx.getRequest().getSession()));
-					/*InternetAddress sender = InternetAddress.parse("info@fuorimondo.com");
-					InternetAddress recipient = InternetAddress.parse("info@fuorimondo.com");
-					mailer.send(null, sender[0], recipient[0], (InternetAddress[]) null, "[WARNIG] Stock out of bound", basket.getId(), false);*/
+					/*
+					 * InternetAddress sender =
+					 * InternetAddress.parse("info@fuorimondo.com");
+					 * InternetAddress recipient =
+					 * InternetAddress.parse("info@fuorimondo.com");
+					 * mailer.send(null, sender[0], recipient[0],
+					 * (InternetAddress[]) null, "[WARNIG] Stock out of bound",
+					 * basket.getId(), false);
+					 */
 					break;
 				}
 			}
@@ -426,4 +441,47 @@ public class EcomAction extends AbstractModuleAction {
 		return null;
 	}
 
+	public static void main(String[] args) {
+		// URL url = new URL("https://api.sandbox.paypal.com/v1/oauth2/token");
+
+		// HttpRequest request = new BasicHttpRequest("GET", "/",
+		// HttpVersion.HTTP_1_1);
+
+		HttpPost post = new HttpPost("https://api.sandbox.paypal.com/v1/oauth2/token?grant_type=client_credentials");
+		// HttpPost post = new HttpPost("https://www.google.com");
+		/*
+		 * post.addHeader("Accept", "application/json");
+		 * post.addHeader("Accept-Language", "en_US"); String encoding =
+		 * Base64.encodeBase64URLSafeString(
+		 * "AdXPHxByf43Y9wg8YovePiWLpzqi62ow1M3PYQig61f2mQit5E6_E-hGBLca:EFof4xCAgQevlK2AX7XJrhkZgfnUPd8iTVLH5_DsR6TvTn64yHiGBPKaGsh3"
+		 * .getBytes()); post.addHeader("Authorization", "Basic " + encoding);
+		 */
+
+		/*CloseableHttpClient httpclient = HttpClients.createMinimal();
+		HttpResponse response;
+		try {
+			response = httpclient.execute(post);
+			HttpEntity entity = response.getEntity();
+
+			System.out.println("Login form get: " + response.getStatusLine());
+			if (entity != null) {
+				entity.consumeContent();
+				InputStream in = entity.getContent();
+				String content = ResourceHelper.writeStreamToString(in, ContentContext.CHARACTER_ENCODING);
+				
+			}
+		} catch (Exception e) {
+			e.printStackTrace();
+		}*/
+
+		try {
+			String content = ResourceHelper.excutePost("https://api.sandbox.paypal.com/v1/oauth2/token","grant_type=client_credentials","application/json","en_US","AdXPHxByf43Y9wg8YovePiWLpzqi62ow1M3PYQig61f2mQit5E6_E-hGBLca","EFof4xCAgQevlK2AX7XJrhkZgfnUPd8iTVLH5_DsR6TvTn64yHiGBPKaGsh3");
+			//String content = ResourceHelper.excutePost("http://www.javlo.be",null, "application/xhtml+xml", "en_US", null, null);
+			System.out.println("content :");
+			System.out.println(content);
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+
+	}
 }

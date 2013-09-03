@@ -7,7 +7,7 @@
 		</div><div class="one_half">
 	</c:if>	
 	<c:choose>
-		<c:when test="${service.name == 'paypal'}">
+		<c:when test="${service.name == '_paypal'}">
 			<jsp:include page="paypal.jsp"></jsp:include>
 		</c:when>
 		<c:otherwise>
