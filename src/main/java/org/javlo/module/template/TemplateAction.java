@@ -106,7 +106,10 @@ public class TemplateAction extends AbstractModuleAction {
 	@Override
 	public String prepare(ContentContext ctx, ModulesContext moduleContext) throws Exception {
 
-		if (ctx.getRequest().getRequestURL().toString().endsWith(".wav")) { // hack for elfinder js
+		if (ctx.getRequest().getRequestURL().toString().endsWith(".wav")) { // hack
+																			// for
+																			// elfinder
+																			// js
 			return null;
 		}
 
@@ -139,7 +142,7 @@ public class TemplateAction extends AbstractModuleAction {
 		if (templateName != null) {
 			Template template = TemplateFactory.getTemplates(ctx.getRequest().getSession().getServletContext()).get(templateName);
 			if (template == null) {
-				msg = "template not found : " + templateName;				
+				msg = "template not found : " + templateName;
 				module.restoreAll();
 			} else {
 				ctx.getRequest().setAttribute("currentTemplate", new Template.TemplateBean(ctx, template));
@@ -149,11 +152,11 @@ public class TemplateAction extends AbstractModuleAction {
 				fileModuleContext.setRoot(template.getTemplateRealPath());
 				fileModuleContext.setTitle("<a href=\"" + URLHelper.createModuleURL(ctx, ctx.getPath(), TemplateContext.NAME, params) + "\">" + template.getId() + "</a>");
 				I18nAccess i18nAccess = I18nAccess.getInstance(ctx.getRequest());
-				
+
 				ImageConfig imageConfig = ImageConfig.getNewInstance(globalContext, ctx.getRequest().getSession(), template);
 				ImageConfig parentImageConfig = ImageConfig.getNewInstance(globalContext, ctx.getRequest().getSession(), template.getParent());
 				ctx.getRequest().setAttribute("filters", imageConfig.getFilters());
-				
+
 				if (requestService.getParameter("filter", null) != null && requestService.getParameter("back", null) == null) {
 
 					ctx.getRequest().setAttribute("areas", template.getAreas());
@@ -171,11 +174,11 @@ public class TemplateAction extends AbstractModuleAction {
 					module.getMainBoxes().iterator().next().setRenderer("/jsp/images.jsp");
 
 					// module.setRenderer("/jsp/images.jsp");
-				} else if (requestService.getParameter("css", null) != null && requestService.getParameter("back", null) == null) {					
+				} else if (requestService.getParameter("css", null) != null && requestService.getParameter("back", null) == null) {
 					if (module.getMainBoxes().size() > 0) {
 						module.getMainBoxes().iterator().next().setRenderer("/jsp/css.jsp");
-						module.setRenderer(null);						
-					} else {						
+						module.setRenderer(null);
+					} else {
 						module.createMainBox("edit_template", i18nAccess.getText("template.edit.title") + " : " + template.getName(), "/jsp/css.jsp", false);
 						module.setRenderer(null);
 					}
@@ -183,11 +186,11 @@ public class TemplateAction extends AbstractModuleAction {
 					if (module.getMainBoxes().size() > 0) {
 						module.getMainBoxes().iterator().next().setRenderer("/jsp/html.jsp");
 						module.setRenderer(null);
-					} else {						
+					} else {
 						module.createMainBox("edit_template", i18nAccess.getText("template.edit.title") + " : " + template.getName(), "/jsp/html.jsp", false);
 						module.setRenderer(null);
 					}
-				} else if (requestService.getParameter("back", null) != null) {			
+				} else if (requestService.getParameter("back", null) != null) {
 					module.restoreAll();
 					module.createMainBox("edit_template", i18nAccess.getText("template.edit.title") + " : " + template.getName(), "/jsp/edit_template.jsp", false);
 				}
@@ -197,7 +200,7 @@ public class TemplateAction extends AbstractModuleAction {
 			fileModuleContext.clear();
 			fileModuleContext.setRoot(globalContext.getStaticConfig().getTemplateFolder());
 			I18nAccess i18nAccess = I18nAccess.getInstance(ctx.getRequest());
-			fileModuleContext.setTitle("<a href=\"" + URLHelper.createModuleURL(ctx, ctx.getPath(), TemplateContext.NAME, params) + "\">" + i18nAccess.getText("template.action.browse") + "</a>");			
+			fileModuleContext.setTitle("<a href=\"" + URLHelper.createModuleURL(ctx, ctx.getPath(), TemplateContext.NAME, params) + "\">" + i18nAccess.getText("template.action.browse") + "</a>");
 			module.restoreAll();
 		}
 
@@ -228,19 +231,19 @@ public class TemplateAction extends AbstractModuleAction {
 				template.getRenderer(ctx); // prepare ids list
 			} catch (BadXMLException e) {
 				e.printStackTrace();
-			}			
+			}
 			module.createMainBox("edit_template", i18nAccess.getText("template.edit.title") + " : " + template.getName(), "/jsp/edit_template.jsp", false);
 		}
 		return msg;
 	}
 
 	public String performEditTemplate(ServletContext application, StaticConfig staticConfig, ContentContext ctx, RequestService requestService, Module module, I18nAccess i18nAccess, MessageRepository messageRepository) throws IOException {
-		String msg = null;		
-		Template template = TemplateFactory.getDiskTemplate(application, requestService.getParameter("name", null));
+		String msg = null;
+		Template template = TemplateFactory.getTemplates(application).get(requestService.getParameter("templateid", null));
 		if (template == null) {
-			return "template not found : "+requestService.getParameter("name", null);
+			return "template not found : " + requestService.getParameter("templateid", null);
 		}
-		if (requestService.getParameter("back", null) != null) {			
+		if (requestService.getParameter("back", null) != null) {
 			module.restoreAll();
 		} else {
 			try {
@@ -256,11 +259,7 @@ public class TemplateAction extends AbstractModuleAction {
 						areaId = requestService.getParameter("area-" + area, "");
 					}
 					if (areaId.trim().length() > 0 && !template.getAreasMap().get(area).equals(areaId)) {
-						if (template.getAreasMap().values().contains(areaId)) {
-							return i18nAccess.getText("template.error.same-id");
-						} else {
-							template.setArea(area, areaId);
-						}
+						template.setArea(area, areaId);
 					}
 				}
 
@@ -289,6 +288,7 @@ public class TemplateAction extends AbstractModuleAction {
 			} catch (ParseException e) {
 				msg = e.getMessage();
 			}
+			TemplateFactory.clearTemplate(application);
 		}
 		return msg;
 	}
@@ -315,11 +315,11 @@ public class TemplateAction extends AbstractModuleAction {
 				}
 				currentModule.setRenderer("/jsp/remote_templates.jsp");
 				currentModule.createSideBox("sponsors", i18nAccess.getText("global.sponsors"), "/jsp/sponsors.jsp", false);
-			} else {				
+			} else {
 				currentModule.restoreAll();
 			}
-		} else {			
-			currentModule.restoreAll();			
+		} else {
+			currentModule.restoreAll();
 		}
 		return null;
 	}
@@ -369,8 +369,9 @@ public class TemplateAction extends AbstractModuleAction {
 
 				messageRepository.setGlobalMessageAndNotification(ctx, new GenericMessage(i18nAccess.getText("template.message.imported", new String[][] { { "name", newTemplate.getId() } }), GenericMessage.INFO));
 
-				templateContext.setCurrentLink(null); // return to local template list.				
-				currentModule.restoreAll();				
+				templateContext.setCurrentLink(null); // return to local
+														// template list.
+				currentModule.restoreAll();
 
 			} catch (Exception e) {
 				e.printStackTrace();
@@ -436,7 +437,7 @@ public class TemplateAction extends AbstractModuleAction {
 	public static String performSelectTemplate(RequestService rs, ContentContext ctx, EditContext editContext, MenuElement currentPage, MessageRepository messageRepository, I18nAccess i18nAccess) throws FileNotFoundException, InstantiationException, IllegalAccessException, ModuleException, IOException {
 		String templateName = rs.getParameter("templateid", null);
 		currentPage.setTemplateName(templateName);
-		
+
 		MailingModuleContext mailingCtx = MailingModuleContext.getInstance(ctx.getRequest());
 		mailingCtx.setCurrentTemplate(null);
 
@@ -606,7 +607,7 @@ public class TemplateAction extends AbstractModuleAction {
 		}
 		return null;
 	}
-	
+
 	public static String getContextROOTFolder(ContentContext ctx) {
 		GlobalContext globalContext = GlobalContext.getInstance(ctx.getRequest());
 		if (AdminUserSecurity.getInstance().isGod(ctx.getCurrentEditUser())) {
@@ -615,48 +616,48 @@ public class TemplateAction extends AbstractModuleAction {
 			return URLHelper.mergePath(globalContext.getDataFolder(), globalContext.getStaticConfig().getStaticFolder());
 		}
 	}
-	
-	private static boolean uploadTemplate (ContentContext ctx, InputStream in, File file) throws Exception {
+
+	private static boolean uploadTemplate(ContentContext ctx, InputStream in, File file) throws Exception {
 		if (!StringHelper.getFileExtension(file.getName()).toLowerCase().equals("zip")) {
 			return false;
-		} else {			
+		} else {
 			ZipManagement.uploadZipTemplate(ctx, in, StringHelper.getFileNameWithoutExtension(file.getName()));
 			return true;
-		}		
+		}
 	}
-	
+
 	public static String performUpload(ContentContext ctx, RequestService rs, MessageRepository messageRepository, I18nAccess i18nAccess) throws Exception {
 		String sourceFolder = getContextROOTFolder(ctx);
 		FileModuleContext fileModuleContext = FileModuleContext.getInstance(ctx.getRequest());
 		File folder = new File(sourceFolder, fileModuleContext.getPath());
 		for (FileItem file : rs.getAllFileItem()) {
 			File newFile = new File(URLHelper.mergePath(folder.getAbsolutePath(), StringHelper.createFileName(file.getName())));
-			newFile = ResourceHelper.getFreeFileName(newFile);			
+			newFile = ResourceHelper.getFreeFileName(newFile);
 			InputStream in = file.getInputStream();
 			try {
-				if (!uploadTemplate(ctx,in,newFile) && in != null && file.getName().trim().length() > 0) {
-					messageRepository.setGlobalMessage(new GenericMessage(i18nAccess.getText("template.error.bad-template-file"), GenericMessage.ERROR));					
+				if (!uploadTemplate(ctx, in, newFile) && in != null && file.getName().trim().length() > 0) {
+					messageRepository.setGlobalMessage(new GenericMessage(i18nAccess.getText("template.error.bad-template-file"), GenericMessage.ERROR));
 				}
 			} finally {
 				ResourceHelper.closeResource(in);
 			}
 		}
-		
+
 		String urlStr = rs.getParameter("url", "");
 		if (urlStr.trim().length() > 0) {
 			URL url = new URL(urlStr);
 			InputStream in = url.openConnection().getInputStream();
 			try {
 				File newFile = new File(URLHelper.mergePath(folder.getAbsolutePath(), StringHelper.createFileName(StringHelper.getFileNameFromPath(urlStr))));
-				newFile = ResourceHelper.getFreeFileName(newFile);	
-				if (!uploadTemplate(ctx,in,newFile)) {
-					messageRepository.setGlobalMessage(new GenericMessage(i18nAccess.getText("template.error.bad-template-file"), GenericMessage.ERROR));					
+				newFile = ResourceHelper.getFreeFileName(newFile);
+				if (!uploadTemplate(ctx, in, newFile)) {
+					messageRepository.setGlobalMessage(new GenericMessage(i18nAccess.getText("template.error.bad-template-file"), GenericMessage.ERROR));
 				}
 			} finally {
 				ResourceHelper.closeResource(in);
-			}			
+			}
 		}
-		
+
 		return null;
 	}
 }
