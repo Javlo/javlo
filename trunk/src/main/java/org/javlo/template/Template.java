@@ -306,7 +306,7 @@ public class Template implements Comparable<Template> {
 			imageFilter = template.getImageFiltersRAW();
 			css = template.getCSS();
 			htmls = new LinkedList<String>();
-			htmls.add(template.getHTMLFile(ctx.getDevice()));			
+			htmls.add(template.getHTMLFile(ctx.getDevice()));
 		}
 
 		public String getPreviewUrl() throws Exception {
@@ -724,7 +724,8 @@ public class Template implements Comparable<Template> {
 			messages.add(new GenericMessage(t.getMessage(), GenericMessage.ERROR));
 		}
 
-		if (getParentName() != null) { // parent is valid >> template is valid //TODO: ameliorated this test.
+		if (getParentName() != null) { // parent is valid >> template is valid
+										// //TODO: ameliorated this test.
 			messages = Collections.EMPTY_LIST;
 		}
 
@@ -769,7 +770,8 @@ public class Template implements Comparable<Template> {
 	}
 
 	/*
-	 * public String getDefaultHTMLFile() { return properties.getString("html", "index.html"); }
+	 * public String getDefaultHTMLFile() { return properties.getString("html",
+	 * "index.html"); }
 	 */
 
 	public void enabledAlternativeTemplate(ContentContext ctx) {
@@ -888,6 +890,10 @@ public class Template implements Comparable<Template> {
 
 	public void setArea(String area, String id) {
 		properties.setProperty(XMLManipulationHelper.AREA_PREFIX + area, id);
+		storeProperties();
+	}
+
+	private void storeProperties() {
 		try {
 			properties.save();
 		} catch (ConfigurationException e) {
@@ -897,11 +903,7 @@ public class Template implements Comparable<Template> {
 
 	public void deleteArea(String area) {
 		properties.clearProperty(XMLManipulationHelper.AREA_PREFIX + area);
-		try {
-			properties.save();
-		} catch (ConfigurationException e) {
-			e.printStackTrace();
-		}
+		storeProperties();
 	}
 
 	/**
@@ -982,8 +984,8 @@ public class Template implements Comparable<Template> {
 		String templateFolder = getWorkTemplateFolder();
 		String path = URLHelper.mergePath(URLHelper.mergePath(templateFolder, getFolder(globalContext)), CONFIG_COMPONENTS_PROPERTIES_FOLDER, type + ".properties");
 		File configFile = new File(path);
-		if (configFile.exists()) {			
-			return ResourceHelper.loadProperties(configFile);			
+		if (configFile.exists()) {
+			return ResourceHelper.loadProperties(configFile);
 		}
 		return null;
 	}
@@ -1059,7 +1061,8 @@ public class Template implements Comparable<Template> {
 	}
 
 	/**
-	 * template can be change in some context, call this method for obtain the final Template to be use for rendering.
+	 * template can be change in some context, call this method for obtain the
+	 * final Template to be use for rendering.
 	 * 
 	 * @param ctx
 	 * @return final template for rendering.
@@ -1129,7 +1132,7 @@ public class Template implements Comparable<Template> {
 		return URLHelper.mergePath(getLocalTemplateTargetFolder(globalContext), getHomeRenderer(globalContext));
 	}
 
-	public String getHTMLFile(Device device) {		
+	public String getHTMLFile(Device device) {
 		String deviceRenderer = null;
 		if (device != null) {
 			deviceRenderer = properties.getString("html." + device.getCode(), null);
@@ -1330,7 +1333,7 @@ public class Template implements Comparable<Template> {
 		return Arrays.asList(propertiesFile);
 	}
 
-	public Properties getMacroProperties(GlobalContext globalContext, String macroKey) throws IOException {		
+	public Properties getMacroProperties(GlobalContext globalContext, String macroKey) throws IOException {
 		synchronized (globalContext.getLockImportTemplate()) {
 			List<File> macroFiles = getMacroFile(globalContext);
 			for (File pFile : macroFiles) {
@@ -1352,7 +1355,7 @@ public class Template implements Comparable<Template> {
 	public Mail getMail(ContentContext ctx, String mailName, String lg) throws IOException {
 		String folder = URLHelper.mergePath(getTemplateRealPath(), MAIL_FOLDER);
 		File htmlFile = new File(URLHelper.mergePath(folder, mailName + '-' + lg + ".html"));
-		
+
 		if (!htmlFile.exists()) {
 			logger.warning("html file not found : " + htmlFile);
 			return null;
@@ -1363,7 +1366,7 @@ public class Template implements Comparable<Template> {
 			if (subjectFile.exists()) {
 				subject = FileUtils.readFileToString(subjectFile, ContentContext.CHARACTER_ENCODING);
 			}
-			return new Mail(subject,content);
+			return new Mail(subject, content);
 		}
 	}
 
@@ -1444,7 +1447,10 @@ public class Template implements Comparable<Template> {
 	}
 
 	public void setParentName(String parent) {
-		properties.setProperty("parent", parent);
+		synchronized (properties) {
+			properties.setProperty("parent", parent);
+			storeProperties();
+		}
 	}
 
 	public synchronized String getRenderer(ContentContext ctx) throws IOException, BadXMLException {
@@ -1520,10 +1526,10 @@ public class Template implements Comparable<Template> {
 		}
 		return renderer;
 	}
-	
+
 	protected List<String> getRenderers() {
 		List<String> renderers = new LinkedList<String>();
-		
+
 		return renderers;
 	}
 
@@ -1588,7 +1594,9 @@ public class Template implements Comparable<Template> {
 		if (renderer == null && parent != null) {
 			return parent.getSearchRenderer(ctx);
 		}
-		return URLHelper.createStaticTemplateURLWithoutContext(ctx, ctx.getCurrentTemplate(), renderer); // not this ?
+		return URLHelper.createStaticTemplateURLWithoutContext(ctx, ctx.getCurrentTemplate(), renderer); // not
+																											// this
+																											// ?
 	}
 
 	public String getSelectedClass() {
@@ -1943,11 +1951,7 @@ public class Template implements Comparable<Template> {
 	public void setAuthors(String name) {
 		synchronized (properties) {
 			properties.setProperty("authors", name);
-			try {
-				properties.save();
-			} catch (ConfigurationException e) {
-				e.printStackTrace();
-			}
+			storeProperties();
 		}
 	}
 
@@ -1955,11 +1959,7 @@ public class Template implements Comparable<Template> {
 		if (date != null) {
 			synchronized (properties) {
 				privateProperties.setProperty("creation-date", StringHelper.renderDate(date));
-				try {
-					privateProperties.save();
-				} catch (ConfigurationException e) {
-					e.printStackTrace();
-				}
+				storeProperties();
 			}
 		}
 	}
@@ -1976,11 +1976,7 @@ public class Template implements Comparable<Template> {
 	public void setDominantColor(String color) {
 		synchronized (properties) {
 			properties.setProperty("color.dominant", color);
-			try {
-				properties.save();
-			} catch (ConfigurationException e) {
-				e.printStackTrace();
-			}
+			storeProperties();
 		}
 	}
 
@@ -1996,33 +1992,21 @@ public class Template implements Comparable<Template> {
 	public void setReady(boolean ready) {
 		synchronized (properties) {
 			privateProperties.setProperty("ready", ready);
-			try {
-				privateProperties.save();
-			} catch (ConfigurationException e) {
-				e.printStackTrace();
-			}
+			storeProperties();
 		}
 	}
 
 	public void setSource(String name) {
 		synchronized (properties) {
 			properties.setProperty("source", name);
-			try {
-				properties.save();
-			} catch (ConfigurationException e) {
-				e.printStackTrace();
-			}
+			storeProperties();
 		}
 	}
 
 	public void setValid(boolean inValid) {
 		synchronized (properties) {
 			privateProperties.setProperty("valid", inValid);
-			try {
-				privateProperties.save();
-			} catch (ConfigurationException e) {
-				e.printStackTrace();
-			}
+			storeProperties();
 		}
 	}
 
@@ -2070,11 +2054,7 @@ public class Template implements Comparable<Template> {
 
 	public void setHTMLIDS(Collection<String> ids) {
 		privateProperties.setProperty("html.ids", StringHelper.collectionToString(ids, ","));
-		try {
-			privateProperties.save();
-		} catch (ConfigurationException e) {
-			e.printStackTrace();
-		}
+		storeProperties();
 	}
 
 	public List<String> getHTMLIDS() {
