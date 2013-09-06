@@ -1113,7 +1113,7 @@ public class StaticInfo {
 				try {
 					imageMetadata = ImageMetadataReader.readMetadata(getFile());
 				} catch (ImageProcessingException e) {
-					e.printStackTrace();
+					logger.warning("["+getFile()+"] error : "+e.getMessage());
 				} catch (IOException e) {
 					e.printStackTrace();
 				}

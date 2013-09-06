@@ -9,6 +9,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import org.javlo.component.core.AbstractVisualComponent;
 import org.javlo.component.core.IContentVisualComponent;
 import org.javlo.component.text.DynamicParagraph;
 import org.javlo.context.ContentContext;
@@ -51,6 +52,10 @@ public class ComponentHelper {
 	/*
 	 * public static final boolean DisplayTitle(IContentVisualComponent[] comps, int i) { if (i >= comps.length) { return false; } for (int j = i + 1; (j < comps.length) && !(comps[j] instanceof SpecialTitle); j++) { if (comps[j].isVisible()) { return true; } } return false; }
 	 */
+	
+	public static IContentVisualComponent getComponentFromRequest(ContentContext ctx) throws Exception {
+		return getComponentFromRequest(ctx, IContentVisualComponent.COMP_ID_REQUEST_PARAM);
+	}
 
 	/**
 	 * get a component with the id in the request.

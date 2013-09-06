@@ -3,21 +3,26 @@ package org.javlo.component.users;
 import java.io.ByteArrayOutputStream;
 import java.io.PrintStream;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import javax.mail.internet.InternetAddress;
 
 import org.javlo.actions.IAction;
 import org.javlo.component.core.AbstractVisualComponent;
+import org.javlo.component.core.ComponentBean;
 import org.javlo.context.ContentContext;
 import org.javlo.context.GlobalContext;
 import org.javlo.helper.BeanHelper;
+import org.javlo.helper.ComponentHelper;
 import org.javlo.helper.LangHelper;
 import org.javlo.helper.PatternHelper;
 import org.javlo.helper.RequestParameterMap;
 import org.javlo.helper.ServletHelper;
 import org.javlo.helper.StringHelper;
 import org.javlo.helper.URLHelper;
+import org.javlo.helper.XHTMLHelper;
 import org.javlo.i18n.I18nAccess;
 import org.javlo.mailing.MailService;
 import org.javlo.message.MessageRepository;
@@ -26,14 +31,26 @@ import org.javlo.module.core.ModulesContext;
 import org.javlo.service.RequestService;
 import org.javlo.user.AdminUserFactory;
 import org.javlo.user.AdminUserInfo;
+import org.javlo.user.IUserFactory;
+import org.javlo.user.UserFactory;
 
 public class UserRegistration extends AbstractVisualComponent implements IAction {
+	
+	private static final String ADMIN = "administrators";
 
 	public static final String TYPE = "admin-user-registration";
 
 	@Override
 	public String getType() {
 		return TYPE;
+	}
+	
+	@Override
+	protected void init(ComponentBean bean, ContentContext ctx) throws Exception {	
+		super.init(bean, ctx);
+		if (getValue().trim().length() == 0) {
+			setValue(ADMIN); // admin registration by default.
+		}
 	}
 
 	@Override
@@ -65,9 +82,20 @@ public class UserRegistration extends AbstractVisualComponent implements IAction
 		return "user-registration";
 	}
 
-	public static String performRegister(RequestService rs, GlobalContext globalContext, ContentContext ctx, MessageRepository messageRepository, I18nAccess i18nAccess) {
+	public static String performRegister(RequestService rs, GlobalContext globalContext, ContentContext ctx, MessageRepository messageRepository, I18nAccess i18nAccess) throws Exception {
+		
+		UserRegistration comp = (UserRegistration)ComponentHelper.getComponentFromRequest(ctx);
+		if (comp == null) {
+			return "technical error : component not found.";
+		}
+		
+		IUserFactory userFactory;
+		if (comp.isAdminRegistration()) {
+			userFactory = AdminUserFactory.createUserFactory(globalContext, ctx.getRequest().getSession());
+		} else {
+			userFactory = UserFactory.createUserFactory(globalContext, ctx.getRequest().getSession());
+		}
 
-		AdminUserFactory userFactory = AdminUserFactory.createUserFactory(globalContext, ctx.getRequest().getSession());
 		String login = rs.getParameter("login", "").trim();
 		String password = rs.getParameter("password", "").trim();
 		String password2 = rs.getParameter("password2", "").trim();
@@ -137,4 +165,29 @@ public class UserRegistration extends AbstractVisualComponent implements IAction
 	public boolean isRealContent(ContentContext ctx) {
 		return true;
 	}
+	
+	protected boolean isAdminRegistration() {
+		return getValue().equals(ADMIN);
+	}
+	
+	@Override
+	protected String getEditXHTMLCode(ContentContext ctx) throws Exception {
+		I18nAccess i18nAccess = I18nAccess.getInstance(ctx.getRequest());
+		ByteArrayOutputStream outStream = new ByteArrayOutputStream();
+		PrintStream out = new PrintStream(outStream);
+		
+		out.println("<div class=\"line\">");
+		out.println("<label for=\""+getContentName()+"\">");
+		out.println(i18nAccess.getText("user.registration.select", "Select user type"));
+		out.println("</label>");
+		Map<String,String> selection = new HashMap<String,String>();
+		selection.put(ADMIN, i18nAccess.getText("user.registration.admin", "Administrator"));
+		selection.put("visitors", i18nAccess.getText("user.registration.visotors", "Visitors"));		
+		out.println(XHTMLHelper.getInputOneSelect(getContentName(),selection,getValue()));
+	
+		out.println("</div>");
+		out.close();
+		return new String(outStream.toByteArray());
+	}
+	
 }

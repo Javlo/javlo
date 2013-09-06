@@ -1,10 +1,7 @@
 package org.javlo.module.ecom;
 
 import java.io.ByteArrayOutputStream;
-import java.io.InputStream;
 import java.io.PrintStream;
-import java.net.HttpURLConnection;
-import java.net.URL;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -12,13 +9,7 @@ import javax.mail.internet.InternetAddress;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import org.apache.commons.codec.binary.Base64;
 import org.apache.commons.lang.StringUtils;
-import org.apache.http.HttpEntity;
-import org.apache.http.HttpResponse;
-import org.apache.http.client.methods.HttpPost;
-import org.apache.http.impl.client.CloseableHttpClient;
-import org.apache.http.impl.client.HttpClients;
 import org.javlo.actions.AbstractModuleAction;
 import org.javlo.component.core.IContentVisualComponent;
 import org.javlo.component.ecom.EditBasketComponent;
@@ -32,7 +23,6 @@ import org.javlo.ecom.EcomService;
 import org.javlo.ecom.PayementExternalService;
 import org.javlo.ecom.Product;
 import org.javlo.helper.PatternHelper;
-import org.javlo.helper.ResourceHelper;
 import org.javlo.helper.StringHelper;
 import org.javlo.helper.URLHelper;
 import org.javlo.i18n.I18nAccess;
@@ -447,7 +437,7 @@ public class EcomAction extends AbstractModuleAction {
 		// HttpRequest request = new BasicHttpRequest("GET", "/",
 		// HttpVersion.HTTP_1_1);
 
-		HttpPost post = new HttpPost("https://api.sandbox.paypal.com/v1/oauth2/token?grant_type=client_credentials");
+	//	HttpPost post = new HttpPost("https://api.sandbox.paypal.com/v1/oauth2/token?grant_type=client_credentials");
 		// HttpPost post = new HttpPost("https://www.google.com");
 		/*
 		 * post.addHeader("Accept", "application/json");
@@ -475,13 +465,85 @@ public class EcomAction extends AbstractModuleAction {
 		}*/
 
 		try {
-			String content = ResourceHelper.excutePost("https://api.sandbox.paypal.com/v1/oauth2/token","grant_type=client_credentials","application/json","en_US","AdXPHxByf43Y9wg8YovePiWLpzqi62ow1M3PYQig61f2mQit5E6_E-hGBLca","EFof4xCAgQevlK2AX7XJrhkZgfnUPd8iTVLH5_DsR6TvTn64yHiGBPKaGsh3");
-			//String content = ResourceHelper.excutePost("http://www.javlo.be",null, "application/xhtml+xml", "en_US", null, null);
-			System.out.println("content :");
-			System.out.println(content);
+			
+			String paypalURL = new String("https://api-3t.sandbox.paypal.com/nvp");
+			StringBuffer params = new StringBuffer();
+//			params.append('?');
+			params.append("USER=AZ1_hxCGaj9fSng1Xik5Egr03NqTWMzeiiUDK99dSJ5j6qsEVx1n_rjbu_lm");
+			params.append('&');
+			params.append("PWD=EAPINRCdAaPCf7NmGNDOwsv-bcCWbl1BJS3OYo4eQhv-M5-wmxN22PU0Ds7w");
+			params.append('&');
+			params.append("SIGNATURE=pvandermaesen-facilitator@immanence.be");
+			params.append('&');
+			params.append("METHOD=SetExpressCheckout");
+			params.append('&');
+			params.append("VERSION=93");
+			params.append('&');
+			params.append("PAYMENTREQUEST_0_PAYMENTACTION=SALE");
+			params.append('&');
+			params.append("PAYMENTREQUEST_0_AMT=19.95");
+			params.append('&');
+			params.append("PAYMENTREQUEST_0_CURRENCYCODE=EUR");
+			params.append('&');
+			params.append("RETURNURL=http://www.example.com/success.html");
+			params.append('&');
+			params.append("CANCELURL=http://www.example.com/cancel.html");
+			
+			//HttpPost post = new HttpPost(paypalURL);
+			
+			/*HttpParams httpParams = new SyncBasicHttpParams();
+			httpParams.setParameter("USER", "AZ1_hxCGaj9fSng1Xik5Egr03NqTWMzeiiUDK99dSJ5j6qsEVx1n_rjbu_lm");
+			httpParams.setParameter("PWD", "EAPINRCdAaPCf7NmGNDOwsv-bcCWbl1BJS3OYo4eQhv-M5-wmxN22PU0Ds7w");
+			httpParams.setParameter("SIGNATURE", "pvandermaesen-facilitator@immanence.be");
+			httpParams.setParameter("METHOD", "SetExpressCheckout");
+			httpParams.setParameter("VERSION", "93");
+			httpParams.setParameter("PAYMENTREQUEST_0_PAYMENTACTION", "SALE");
+			httpParams.setParameter("PAYMENTREQUEST_0_AMT", "19.95");
+			httpParams.setParameter("PAYMENTREQUEST_0_CURRENCYCODE", "EUR");
+			httpParams.setParameter("RETURNURL", "http://www.example.com/success.html");
+			httpParams.setParameter("CANCELURL", "http://www.example.com/cancel.htm");
+			post.setParams(httpParams);
+			
+			BasicHttpEntityEnclosingRequest request = new BasicHttpEntityEnclosingRequest("POST","https://api-3t.sandbox.paypal.com/nvp");
+			*/
+			
+			//post.addHeader("Accept", "application/json");
+			//post.addHeader("Accept-Language", "en_US");
+			/*CloseableHttpClient httpclient = HttpClients.createMinimal();			
+			HttpResponse response;
+			try {
+				response = httpclient.execute(post);
+				HttpEntity entity = response.getEntity();
+
+				System.out.println("Login form get: " + response.getStatusLine());
+				if (entity != null) {
+					entity.consumeContent();
+					InputStream in = entity.getContent();
+					String content = ResourceHelper.writeStreamToString(in, ContentContext.CHARACTER_ENCODING);
+					System.out.println(content);
+					
+				}
+			} catch (Exception e) {
+				e.printStackTrace();
+			}*/
+			
+			//String content = NetHelper.readPage(new URL(paypalURL.toString()));
+			
+			//String content = ResourceHelper.excutePost("https://api.sandbox.paypal.com/v1/oauth2/token","grant_type=client_credentials","application/json","en_US","AdXPHxByf43Y9wg8YovePiWLpzqi62ow1M3PYQig61f2mQit5E6_E-hGBLca","EFof4xCAgQevlK2AX7XJrhkZgfnUPd8iTVLH5_DsR6TvTn64yHiGBPKaGsh3");
+			// 
+			
+			
+			
+			
+			
+			
+			
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
+		
+		
 
 	}
+	
 }

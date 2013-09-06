@@ -12,7 +12,11 @@ public class TimeRange implements Serializable {
 
 	public TimeRange(Date startDate, Date endDate) {
 		this.startDateCal.setTime(startDate);
-		this.endDateCal.setTime(endDate);
+		if (endDate != null) {
+			this.endDateCal.setTime(endDate);
+		} else {
+			this.endDateCal.setTime(startDate);
+		}
 	}
 
 	public Date getEndDate() {

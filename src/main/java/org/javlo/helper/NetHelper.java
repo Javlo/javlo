@@ -13,6 +13,7 @@ import java.net.URL;
 import java.net.URLConnection;
 import java.net.UnknownHostException;
 import java.text.SimpleDateFormat;
+import java.util.Collections;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Iterator;
@@ -685,14 +686,6 @@ public class NetHelper {
 		response.setHeader("Connection", "close");
 	}
 	
-	public static Map<String,String> getParams(URL url) {
-		Map<String,String> outParams = new HashMap<String, String>();
-		String q = url.getQuery();
-		for (String param : StringUtils.split(q, '&')) {
-			String[] splittedParam = StringUtils.split(param, '=');
-			outParams.put(splittedParam[0], splittedParam[1]);
-		}
-		return outParams;
-	}
+	
 
 }

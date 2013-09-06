@@ -48,6 +48,7 @@ public class UserInfo implements Comparable<IUserInfo>, IUserInfo, Serializable 
 	private String mobile = "";
 	private String info = "";
 	private String token = "";
+	private String accountType = "default";
 	private String[] preferredLanguage = new String[0];
 	private Set<String> roles = new HashSet<String>();
 	private Date creationDate = new Date();
@@ -478,5 +479,14 @@ public class UserInfo implements Comparable<IUserInfo>, IUserInfo, Serializable 
 	@Override
 	public String getEncryptLogin() {
 		return encryptLogin;
+	}
+	
+	@Override
+	public String getAccountType() {	
+		return accountType;
+	}
+	
+	public void setAccountType(String accountType) {
+		this.accountType = accountType;
 	}
 }

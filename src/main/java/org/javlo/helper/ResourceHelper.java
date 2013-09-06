@@ -11,7 +11,6 @@ import java.io.BufferedWriter;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.Closeable;
-import java.io.DataOutputStream;
 import java.io.File;
 import java.io.FileFilter;
 import java.io.FileInputStream;
@@ -25,7 +24,9 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.ObjectOutputStream;
 import java.io.OutputStream;
+import java.io.OutputStreamWriter;
 import java.io.PrintStream;
+import java.io.PrintWriter;
 import java.io.RandomAccessFile;
 import java.io.Reader;
 import java.io.Serializable;
@@ -33,6 +34,7 @@ import java.io.UnsupportedEncodingException;
 import java.io.Writer;
 import java.net.HttpURLConnection;
 import java.net.URL;
+import java.net.URLEncoder;
 import java.nio.charset.Charset;
 import java.util.ArrayList;
 import java.util.Collection;
@@ -1315,6 +1317,21 @@ public class ResourceHelper {
 		URL url;
 		HttpURLConnection connection = null;
 		BufferedReader rd = null;
+		PrintWriter  writer = null;
+		
+		if (urlParameters == null) {
+			urlParameters = "";
+		}		
+		Map<String,String> params = URLHelper.getParams(urlParameters);
+		StringBuffer encodedParam = new StringBuffer();
+		String sep = "";
+		for (Map.Entry<String, String> param : params.entrySet()) {
+			encodedParam.append(sep);
+			encodedParam.append(param.getKey());
+			encodedParam.append("=");
+			encodedParam.append(URLEncoder.encode(param.getValue()));
+			sep = "&";
+		}
 		
 		if (urlParameters == null) {
 			urlParameters = "";
@@ -1324,27 +1341,19 @@ public class ResourceHelper {
 			// Create connection
 			url = new URL(targetURL);			
 			connection = (HttpURLConnection) url.openConnection();
-			connection.setRequestMethod("POST");
 			connection.setRequestProperty("Content-Type", contentType);
-
-			connection.setRequestProperty("Content-Length", "" + Integer.toString(urlParameters.getBytes().length));
 			connection.setRequestProperty("Content-Language", lang);
-
-			connection.setUseCaches(false);
-			//connection.setDoInput(true);
 			connection.setDoOutput(true);
 
 			// user authentification
-			if (user != null && pwd != null) {
-				connection.setAllowUserInteraction(true);
-				connection.setRequestProperty("Authorization", "Basic " + Base64.encodeBase64URLSafeString((user + ':' + pwd).getBytes()));
+			if (user != null && pwd != null) {			
+				connection.setRequestProperty("Authorization", "Basic " + Base64.encodeBase64((user + ':' + pwd).getBytes()));
 			}
 
 			// Send request
-			DataOutputStream wr = new DataOutputStream(connection.getOutputStream());
-			wr.writeBytes(urlParameters);
-			wr.flush();
-			wr.close();
+			writer = new PrintWriter(connection.getOutputStream());
+			writer.write(encodedParam.toString());
+			writer.flush();			
 
 			// Get Response
 			InputStream is = connection.getInputStream();
@@ -1361,7 +1370,7 @@ public class ResourceHelper {
 			e.printStackTrace();
 			return null;
 		} finally {
-			closeResource(rd);
+			closeResource(rd, writer);
 			if (connection != null) {
 				connection.disconnect();
 			}

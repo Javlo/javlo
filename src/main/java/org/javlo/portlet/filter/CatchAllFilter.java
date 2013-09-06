@@ -236,7 +236,7 @@ public class CatchAllFilter implements Filter {
 				}
 
 				URL newURL = new URL(url + decryptedData);
-				for (Map.Entry<String, String> entry : NetHelper.getParams(newURL).entrySet()) {
+				for (Map.Entry<String, String> entry : URLHelper.getParams(newURL).entrySet()) {
 					requestService.putParameter(entry.getKey(), entry.getValue());
 				}
 

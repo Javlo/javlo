@@ -185,8 +185,7 @@ public class EcomService {
 		globalContext.setData(PAYEMENT_PREFIX+service.getName(), service.toString());
 	}
 	
-	public void deletePayementService(String name) {
-		System.out.println("***** EcomService.deletePayementService : name = "+name); //TODO: remove debug trace
+	public void deletePayementService(String name) {		
 		globalContext.removeData(PAYEMENT_PREFIX+name);
 	}
 

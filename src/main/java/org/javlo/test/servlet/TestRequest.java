@@ -20,7 +20,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 
 import org.javlo.context.ContentContext;
-import org.javlo.helper.NetHelper;
+import org.javlo.helper.URLHelper;
 import org.javlo.test.javlo.TestGlobalContext;
 import org.javlo.utils.IteratorAsEnumeration;
 
@@ -35,7 +35,7 @@ public class TestRequest implements HttpServletRequest {
 		url = new URL(inURL);
 		String q = url.getQuery();
 		
-		parameters.putAll(NetHelper.getParams(url));
+		parameters.putAll(URLHelper.getParams(url));
 		
 		session = inSession;
 	}
