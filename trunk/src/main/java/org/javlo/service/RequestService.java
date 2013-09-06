@@ -125,7 +125,6 @@ public class RequestService {
 			} else {
 				return request.getParameter(key);
 			}
-
 		} else {
 			return values[0];
 		}

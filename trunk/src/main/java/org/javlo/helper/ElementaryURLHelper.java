@@ -2,6 +2,7 @@ package org.javlo.helper;
 
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -75,7 +76,7 @@ public abstract class ElementaryURLHelper {
 	// public static final String URL_SUFFIX = ".html";
 
 	public static final String SPACIAL_RIGHT_CODE_KEY = "special-right-code";
-	
+
 	public static final String BACK_PARAM_NAME = "__back";
 
 	/**
@@ -93,7 +94,8 @@ public abstract class ElementaryURLHelper {
 	 * add get attribute to a url.
 	 * 
 	 * @param params
-	 *            a list of string represent param and value. (sp: name=patrick).
+	 *            a list of string represent param and value. (sp:
+	 *            name=patrick).
 	 * @return a url with new params
 	 */
 	public static String addAllParams(String url, String... params) {
@@ -138,7 +140,9 @@ public abstract class ElementaryURLHelper {
 	}
 
 	/*
-	 * public static String createExternalURL(ServletContext application, String uri) { StaticConfig staticConfig = StaticConfig.getInstance(application); String prefix = staticConfig.getPathPrefix(); return prefix + uri; }
+	 * public static String createExternalURL(ServletContext application, String
+	 * uri) { StaticConfig staticConfig = StaticConfig.getInstance(application);
+	 * String prefix = staticConfig.getPathPrefix(); return prefix + uri; }
 	 */
 
 	public static String createJSPComponentURL(HttpServletRequest request, String url, String componentType) {
@@ -156,7 +160,7 @@ public abstract class ElementaryURLHelper {
 					uri = uri.substring(0, uri.lastIndexOf("."));
 					MenuElement page = globalContext.getPageIfExist(ctx, uri, false);
 					if (page == null) {
-						uri = "/404";							
+						uri = "/404";
 					} else {
 						uri = urlCreator.createURL(ctx, page);
 					}
@@ -233,7 +237,7 @@ public abstract class ElementaryURLHelper {
 		if (ajax) {
 			url = URLHelper.addParam(url, ContentContext.FORCE_MODE_PARAMETER_NAME, "" + ctx.getRenderMode());
 		}
-		
+
 		if (ctx.isEditPreview()) {
 			url = URLHelper.addParam(url, "editPreview", "true");
 		}
@@ -351,7 +355,14 @@ public abstract class ElementaryURLHelper {
 
 		ContentService.getInstance(ctx.getRequest());
 
-		if (template != null || ctx.getRenderMode() == ContentContext.EDIT_MODE) { // TODO: check the second part of the test.
+		if (template != null || ctx.getRenderMode() == ContentContext.EDIT_MODE) { // TODO:
+																					// check
+																					// the
+																					// second
+																					// part
+																					// of
+																					// the
+																					// test.
 			String templateName;
 			if (ctx.getRenderMode() == ContentContext.EDIT_MODE) {
 				templateName = Template.EDIT_TEMPLATE_CODE;
@@ -520,12 +531,20 @@ public abstract class ElementaryURLHelper {
 	 * @return
 	 */
 	/*
-	 * public static String getPathPrefix(ServletContext application) { StaticConfig staticConfig = StaticConfig.getInstance(application); return staticConfig.getPathPrefix(); }
+	 * public static String getPathPrefix(ServletContext application) {
+	 * StaticConfig staticConfig = StaticConfig.getInstance(application); return
+	 * staticConfig.getPathPrefix(); }
 	 */
 
 	public static void main(String[] args) {
 		/*
-		 * String totalURI = "http://localhost:8080/perso/view/fr/test#anchor;jsessionid=C7B2998A8806C17C05CD673F1E09B890?image__142=0&page__142=0" ; String[] splitURI = totalURI.split("\\?|\\#|\\;"); String uri = splitURI[0]; String params = ""; for (int i = 1; i < splitURI.length; i++) { params = params + totalURI.substring(uri.length()); } System.out.println("uri = "+uri); System.out.println("param = "+params);
+		 * String totalURI =
+		 * "http://localhost:8080/perso/view/fr/test#anchor;jsessionid=C7B2998A8806C17C05CD673F1E09B890?image__142=0&page__142=0"
+		 * ; String[] splitURI = totalURI.split("\\?|\\#|\\;"); String uri =
+		 * splitURI[0]; String params = ""; for (int i = 1; i < splitURI.length;
+		 * i++) { params = params + totalURI.substring(uri.length()); }
+		 * System.out.println("uri = "+uri);
+		 * System.out.println("param = "+params);
 		 */
 
 		System.out.println("*** 1. " + mergePath("/test/dc", "/path3"));
@@ -555,7 +574,8 @@ public abstract class ElementaryURLHelper {
 	}
 
 	/**
-	 * merge the path. sample mergePath ("/cat", "element" ) -> /cat/element, mergePath ("/test/", "/google) -> /test/google
+	 * merge the path. sample mergePath ("/cat", "element" ) -> /cat/element,
+	 * mergePath ("/test/", "/google) -> /test/google
 	 * 
 	 * @param path1
 	 * @param path2
@@ -611,6 +631,30 @@ public abstract class ElementaryURLHelper {
 				}
 			}
 		}
+	}
+
+	public static Map<String, String> getParams(URL url) {
+		Map<String, String> outParams = new HashMap<String, String>();
+		String q = url.getQuery();
+		for (String param : StringUtils.split(q, '&')) {
+			String[] splittedParam = StringUtils.split(param, '=');
+			outParams.put(splittedParam[0], splittedParam[1]);
+		}
+		return outParams;
+	}
+
+	public static Map<String, String> getParams(String url) {
+		Map<String, String> outParams = new HashMap<String, String>();
+		int separationIndex = url.indexOf("?");
+		if (separationIndex >= 0) {
+			url = url.substring(separationIndex+1);
+		}
+		for (String param : StringUtils.split(url, '&')) {
+			String[] splittedParam = StringUtils.split(param, '=');
+			outParams.put(splittedParam[0], splittedParam[1]);
+		}
+
+		return outParams;
 	}
 
 }

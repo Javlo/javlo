@@ -72,5 +72,11 @@ public interface IUserInfo {
 	public String[] getAllValues();
 
 	public String getAvatarURL();
+	
+	/**
+	 * get the type of account (default, facebook, google account...)
+	 * @return
+	 */
+	public String getAccountType();
 
 }

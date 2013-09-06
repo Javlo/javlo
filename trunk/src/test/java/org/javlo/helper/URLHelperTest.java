@@ -1,6 +1,7 @@
 package org.javlo.helper;
 
 import java.net.MalformedURLException;
+import java.net.URL;
 
 import javax.servlet.http.HttpServletRequest;
 
@@ -38,5 +39,15 @@ public class URLHelperTest extends TestCase {
 		ctx.setLanguage("en");
 		assertEquals(URLHelper.createURL(ctx, "/page"), "/en-fr/page.html");
 	}
+	
+	public void testGetParams() throws Exception {
+		assertEquals(URLHelper.getParams("?test=test").get("test"), "test");
+		assertEquals(URLHelper.getParams("?test=test&param=value").get("param"), "value");
+		assertEquals(URLHelper.getParams("http://www.javlo.org/?test=test").get("test"), "test");
+		assertEquals(URLHelper.getParams("http://www.javlo.org/?test=test&param=value").get("param"), "value");
+		assertEquals(URLHelper.getParams(new URL("http://www.javlo.org/?test=test")).get("test"), "test");
+		assertEquals(URLHelper.getParams(new URL("http://www.javlo.org/?test=test&param=value")).get("param"), "value");
+	}
+	
 
 }

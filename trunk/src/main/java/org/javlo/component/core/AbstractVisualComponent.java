@@ -439,7 +439,6 @@ public abstract class AbstractVisualComponent implements IContentVisualComponent
 		finalCode.append(" rows=\"" + (countLine() + 1) + "\">");
 		finalCode.append(getValue());
 		finalCode.append("</textarea>");
-
 		return finalCode.toString();
 	}
 

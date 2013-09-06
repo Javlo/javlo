@@ -73,21 +73,28 @@ public class XHTML extends AbstractVisualComponent {
 		StringRemplacementHelper remplacement = new StringRemplacementHelper();
 
 		for (TagDescription tag : tags) {
-			if (tag.getName().equalsIgnoreCase("a")) {
-				if (tag.getName().equalsIgnoreCase("a")) {
-					String hrefValue = tag.getAttributes().get("href");
-					if (hrefValue != null) {
-						if (hrefValue.toLowerCase().startsWith("rss")) {
-							String channel = "";
-							if (hrefValue.contains(":")) {
-								channel = hrefValue.split(":")[1];
-							}
-							hrefValue = URLHelper.createRSSURL(ctx, channel);
-							tag.getAttributes().put("href", hrefValue);
-						} else if ((hrefValue != null) && (!StringHelper.isURL(hrefValue)) && (!StringHelper.isMailURL(hrefValue)) && !hrefValue.contains("${")) {
-							hrefValue = URLHelper.createURLCheckLg(ctx, hrefValue);
-							tag.getAttributes().put("href", hrefValue);
+			if (tag.getName().equalsIgnoreCase("a") || tag.getName().equalsIgnoreCase("area")) {
+				String hrefValue = tag.getAttributes().get("href");
+				if (hrefValue != null) {
+					if (hrefValue.toLowerCase().startsWith("rss")) {
+						String channel = "";
+						if (hrefValue.contains(":")) {
+							channel = hrefValue.split(":")[1];
 						}
+						hrefValue = URLHelper.createRSSURL(ctx, channel);
+						tag.getAttributes().put("href", hrefValue);
+					} else if ((hrefValue != null) && (!StringHelper.isURL(hrefValue)) && (!StringHelper.isMailURL(hrefValue)) && !hrefValue.contains("${")) {
+						hrefValue = URLHelper.createURLCheckLg(ctx, hrefValue);
+						tag.getAttributes().put("href", hrefValue);
+					}
+					remplacement.addReplacement(tag.getOpenStart(), tag.getOpenEnd() + 1, tag.toString());					
+			}
+			} else if (tag.getName().equalsIgnoreCase("img")) {
+				String src = tag.getAttribute("src", null);
+				if (src != null) {
+					if (!StringHelper.isURL(src)) { // relative paths
+						src = URLHelper.createResourceURL(ctx, src);
+						tag.getAttributes().put("src", src);
 						remplacement.addReplacement(tag.getOpenStart(), tag.getOpenEnd() + 1, tag.toString());
 					}
 				}

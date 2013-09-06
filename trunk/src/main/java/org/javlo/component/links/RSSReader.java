@@ -10,18 +10,21 @@ import java.io.StringReader;
 import java.io.StringWriter;
 import java.net.URL;
 import java.text.DateFormat;
+import java.text.SimpleDateFormat;
 import java.util.Arrays;
 import java.util.Calendar;
 import java.util.Collection;
 import java.util.Comparator;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Locale;
 import java.util.TreeSet;
 import java.util.logging.Logger;
 
 import org.javlo.component.core.ComplexPropertiesLink;
 import org.javlo.component.core.ComponentBean;
 import org.javlo.context.ContentContext;
+import org.javlo.context.GlobalContext;
 import org.javlo.helper.PatternHelper;
 import org.javlo.helper.TimeHelper;
 import org.javlo.helper.XHTMLHelper;
@@ -267,11 +270,6 @@ public class RSSReader extends ComplexPropertiesLink {
 		return 99999; /* infinity news if no limit defined (all news included) */
 	}
 
-	@Override
-	public String getPrefixViewXHTMLCode(ContentContext ctx) {
-		return "<div class=\"" + getType() + "\">";
-	}
-
 	public String getRSSContent(DateFormat dateFormat, String rule, String style) throws Exception {
 
 		logger.fine("update RSS content type:" + rule);
@@ -282,12 +280,6 @@ public class RSSReader extends ComplexPropertiesLink {
 			PrintWriter out = new PrintWriter(writer);
 
 			if (getLinksURL() != null && getLinksURL().size() > 0) {
-
-				out.print("<div class=\"" + getType() + "");
-				if (style != null) {
-					out.print(" " + style);
-				}
-				out.println("\">");
 
 				Calendar backDate = getBackDate(rule);
 				int maxNews = getMaxNews(rule);
@@ -323,24 +315,20 @@ public class RSSReader extends ComplexPropertiesLink {
 					int index = 1;
 					for (SyndEntry syndEntry : localEntries) {
 						out.println("<li class=\"item-" + index + "\">");
-						out.println("<h3><a href=\"" + syndEntry.getLink() + "\">" + syndEntry.getTitle() + "</a></h3>");
 						out.println("<div class=\"date\">" + dateFormat.format(syndEntry.getPublishedDate()) + "</div>");
-
+						out.println("<h3><a href=\"" + syndEntry.getLink() + "\">" + syndEntry.getTitle() + "</a></h3>");
 						String description = syndEntry.getDescription().getValue();
-
 						try {
 							description = XHTMLHelper.removeTag(description, "div");
 						} catch (Exception e) {
 							// e.printStackTrace();
 						}
-
 						out.println("<p class=\"description\">" + description + "<div class=\"content_clear\"></div></p>");
 						out.println("</li>");
 						index++;
 					}
 				}
-				out.println("</ul>");
-				out.println("</div>");
+				out.println("</ul>");				
 			}
 
 			out.close();
@@ -387,18 +375,12 @@ public class RSSReader extends ComplexPropertiesLink {
 	}
 
 	@Override
-	public String getSuffixViewXHTMLCode(ContentContext ctx) {
-		return "</div>";
-	}
-
-	@Override
 	public String getType() {
 		return "rss-reader";
 	}
 
 	@Override
 	public String getViewXHTMLCode(ContentContext ctx) throws Exception {
-
 		if (contentThread == null) {
 			contentThread = new ReadRSSThread(this, TimeHelper.getDefaultDateFormat(ctx), getRule(), getStyle(ctx));
 		}
@@ -407,7 +389,8 @@ public class RSSReader extends ComplexPropertiesLink {
 				contentThread = new ReadRSSThread(this, TimeHelper.getDefaultDateFormat(ctx), getRule(), getStyle(ctx));
 				contentThread.start();
 			} else {
-				cachedContent = getRSSContent(TimeHelper.getDefaultDateFormat(ctx), getRule(), getStyle(ctx));
+				GlobalContext globalContext = GlobalContext.getInstance(ctx.getRequest());				
+				cachedContent = getRSSContent(new SimpleDateFormat(globalContext.getMediumDateFormat(), new Locale(ctx.getRequestContentLanguage())), getRule(), getStyle(ctx));
 			}
 		}
 		return cachedContent;

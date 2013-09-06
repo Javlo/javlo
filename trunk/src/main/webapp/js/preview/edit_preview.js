@@ -213,7 +213,7 @@ initPreview = function() {
 								+ sharedContent + "&previous=" + previewId
 								+ "&area=" + area+ "&render-mode=3&init=true";
 								ajaxRequest(ajaxURL);
-							} else if (comp !== undefined && jQuery(comp).attr('id') != jQuery(this).attr("id")) {
+							} else if (comp !== undefined && jQuery(comp).attr("id") != null && jQuery(comp).attr('id') != jQuery(this).attr("id")) {
 								var compId = jQuery(comp).attr("id").replace("cp_", "");
 								if (jQuery(this).attr("id") == "preview-delete-zone") {									
 									var ajaxURL = currentURL

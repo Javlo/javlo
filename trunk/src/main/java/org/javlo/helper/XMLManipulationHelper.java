@@ -504,7 +504,7 @@ public class XMLManipulationHelper {
 						List<TagDescription> children = searchChildren(tags, tags[i]);
 						for (TagDescription tagDescription : children) {
 							if (tagDescription.getName().equalsIgnoreCase("input")) {
-								if ((tagDescription.getAttributes().get("type") != null) && (tagDescription.getAttributes().get("type").equalsIgnoreCase("text"))) {
+								if ((tagDescription.getAttributes().get("type") != null) && (tagDescription.getAttributes().get("type").equalsIgnoreCase("text")) || (tagDescription.getAttributes().get("type").equalsIgnoreCase("search"))) {
 									tagDescription.getAttributes().put("name", "keywords");
 									tagDescription.getAttributes().put("accesskey", "4");
 									// tagDescription.getAttributes().put("value", "<%=i18nAccess.getViewText(\"search.title\")%>");

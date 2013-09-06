@@ -32,6 +32,11 @@ public class TimeRangeComponent extends DateComponent {
 	public String getType() {
 		return TYPE;
 	}
+	
+	@Override
+	public Date getDate() {
+		return getStartDate();
+	}
 
 	@Override
 	protected void init() throws ResourceNotFoundException {
@@ -96,7 +101,7 @@ public class TimeRangeComponent extends DateComponent {
 
 	@Override
 	public String getPrefixViewXHTMLCode(ContentContext ctx) {
-
+		
 		if (getConfig(ctx).getProperty("prefix", null) != null) {
 			return getConfig(ctx).getProperty("prefix", null) + "<div " + getSpecialPreviewCssClass(ctx, "") + getSpecialPreviewCssId(ctx) + ">";
 		}
@@ -106,6 +111,7 @@ public class TimeRangeComponent extends DateComponent {
 
 	@Override
 	public String getSuffixViewXHTMLCode(ContentContext ctx) {
+		
 		if (getConfig(ctx).getProperty("suffix", null) != null) {
 			return "</div>" + getConfig(ctx).getProperty("suffix", null);
 		}
@@ -113,7 +119,10 @@ public class TimeRangeComponent extends DateComponent {
 	}
 
 	@Override
-	public String getViewXHTMLCode(ContentContext ctx) throws Exception {
+	public String getViewXHTMLCode(ContentContext ctx) throws Exception {		
+		if (getCurrentRenderer(ctx).equalsIgnoreCase(HIDDEN)) {
+			return "";
+		}
 		if (getStartDate() != null && getEndDate() != null) {
 			return renderDate(ctx, getStartDate()) + " - " + renderDate(ctx, getEndDate());
 		} else {
@@ -163,6 +172,9 @@ public class TimeRangeComponent extends DateComponent {
 				p.printStackTrace();
 				setNeedRefresh(true);
 			}
+			
+			System.out.println("***** TimeRangeComponent.performEdit : newEndDate = "+newEndDate); //TODO: remove debug trace
+			System.out.println("***** TimeRangeComponent.performEdit : endDate = "+endDate); //TODO: remove debug trace
 
 			String dateStr = StringHelper.renderTime(startDate) + '-' + StringHelper.renderTime(endDate);
 			if (!dateStr.equals(getValue())) {
