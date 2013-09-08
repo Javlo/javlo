@@ -154,12 +154,16 @@ body.preview-only {
 	float: none;
 }
 
+ #preview_command #preview-delete-zone {
+	height: 140px;
+}
+
  #preview_command #preview-delete-zone.hidden {
  	display: none;
  }
 
 #preview_command #preview-delete-zone  {
-	background-image: url("../images/preview/trash.png");
+	background-image: url("../images/preview/big_trash.png");
 	background-repeat: no-repeat;
 	background-position: center center;
 }
