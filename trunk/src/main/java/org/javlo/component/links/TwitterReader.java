@@ -14,8 +14,6 @@ import org.apache.commons.lang.StringEscapeUtils;
 import org.htmlparser.util.ParserException;
 import org.javlo.component.core.AbstractVisualComponent;
 import org.javlo.context.ContentContext;
-import org.javlo.data.InfoBean;
-import org.javlo.helper.StringHelper;
 import org.javlo.service.social.SocialService;
 import org.javlo.utils.JSONMap;
 import org.jsoup.Jsoup;
@@ -45,9 +43,9 @@ public class TwitterReader extends AbstractVisualComponent {
 		}
 
 		public void setAuthors(String authors) {
-			this.authors = StringHelper.txt2htmlCR(authors);
+			this.authors = StringEscapeUtils.escapeHtml(authors);
 			if (displayName == null && authors != null && authors.length() > 1) {
-				displayName = StringEscapeUtils.escapeHtml(authors.substring(1));
+				displayName = authors.substring(1);
 			}
 
 		}
