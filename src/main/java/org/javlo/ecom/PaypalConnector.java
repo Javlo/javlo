@@ -2,44 +2,178 @@ package org.javlo.ecom;
 
 import java.io.BufferedReader;
 import java.io.IOException;
+import java.io.InputStream;
 import java.io.InputStreamReader;
-import java.io.PrintWriter;
+import java.io.OutputStream;
+import java.io.OutputStreamWriter;
+import java.net.HttpURLConnection;
 import java.net.URL;
-import java.net.URLConnection;
+import java.util.LinkedHashMap;
+import java.util.LinkedList;
+import java.util.List;
 import java.util.Map;
 
+import javax.xml.bind.DatatypeConverter;
+
+import org.apache.commons.io.output.ByteArrayOutputStream;
 import org.javlo.helper.ResourceHelper;
-import org.javlo.helper.StringHelper;
-import org.javlo.helper.URLHelper;
+import org.javlo.utils.JSONMap;
+
+import com.google.gson.JsonElement;
+import com.google.gson.JsonObject;
+import com.google.gson.reflect.TypeToken;
 
 public class PaypalConnector {
 
-	private static void testPayPalConnectionSample() throws IOException {
-		URL u = new URL("https://www.paypal.com/cgi-bin/webscr");
-		URLConnection uc = u.openConnection();
-		uc.setDoOutput(true);
-		uc.setRequestProperty("Content-Type","application/x-www-form-urlencoded");
-		PrintWriter pw = new PrintWriter(uc.getOutputStream());
-		pw.println("test=test");
-		pw.close();
+	private static final String CHARSET = "UTF-8";
+	private static final String AUTH_TOKEN_PATH = "/v1/oauth2/token";
+	private static final String CREATE_PAYMENT_PATH = "/v1/payments/payment";
 
-		BufferedReader in = new BufferedReader(
-		new InputStreamReader(uc.getInputStream()));
-		String res = in.readLine();
-		in.close();
+	private String baseUrl;
+	private String user;
+	private String password;
+
+	private String token;
+	private String approvalUrl;
+	private String executeUrl;
+
+	public PaypalConnector(String baseUrl, String user, String password) {
+		this.baseUrl = baseUrl;
+		this.user = user;
+		this.password = password;
 	}
-	
-	private static void testPayPalFromJavlo() throws Exception {
-		String content = ResourceHelper.excutePost("https://api.sandbox.paypal.com/v1/oauth2/token", "grant_type=client_credentials", "application/x-www-form-urlencoded", "en_US", "EOJ2S-Z6OoN_le_KS1d75wsZ6y0SFdVsY9183IvxFyZp","EClusMEUk8e9ihI7ZdVLF5cZ6y0SFdVsY9183IvxFyZp");
-		//String content = ResourceHelper.excutePost("https://google.com", "grant_type=client_credentials", "application/json", "en_US", "EOJ2S-Z6OoN_le_KS1d75wsZ6y0SFdVsY9183IvxFyZp","EClusMEUk8e9ihI7ZdVLF5cZ6y0SFdVsY9183IvxFyZp");
-		
-		System.out.println("content :");
-		Map<String,String> response = URLHelper.getParams(content);
-		System.out.println(content);
-		System.out.println("");
-		System.out.println("ERROR : "+StringHelper.neverNull(response.get("L_LONGMESSAGE0")).replace("%20", " "));
+
+	public String authenticate() throws IOException {
+		String content = excutePost(baseUrl + AUTH_TOKEN_PATH, "grant_type=client_credentials", "application/x-www-form-urlencoded", user, password);
+		JSONMap obj = JSONMap.parseMap(content);
+		token = obj.getValue("access_token", String.class);
+		return token;
 	}
-	
+
+	public String createPayment(String amountIn, String currencyIn, String descriptionIn) throws IOException {
+		String token = authenticate();
+		Map<String, Object> obj = new LinkedHashMap<String, Object>();
+		obj.put("intent", "sale");
+		Map<String, String> urls = new LinkedHashMap<String, String>();
+		obj.put("redirect_urls", urls);
+		urls.put("return_url", "http://localhost:2345/return");
+		urls.put("cancel_url", "http://localhost:2345/cancel");
+		Map<String, String> payer = new LinkedHashMap<String, String>();
+		obj.put("payer", payer);
+		payer.put("payment_method", "paypal");
+		List<Map<String, Object>> transactions = new LinkedList<Map<String, Object>>();
+		obj.put("transactions", transactions);
+		Map<String, Object> transaction = new LinkedHashMap<String, Object>();
+		transactions.add(transaction);
+		Map<String, String> amount = new LinkedHashMap<String, String>();
+		transaction.put("amount", amount);
+		amount.put("total", amountIn);
+		amount.put("currency", currencyIn);
+		transaction.put("description", descriptionIn);
+
+		String reqContent = JSONMap.JSON.toJson(obj);
+		System.out.println("Create request: " + reqContent); //TODO remove
+
+		String content = excutePost(baseUrl + CREATE_PAYMENT_PATH, reqContent, "application/json", null, token);
+		System.out.println("Create response: " + content); //TODO remove
+
+		JSONMap result = JSONMap.parseMap(content);
+		if (!"created".equals(result.getValue("state", String.class))) {
+			throw new IllegalStateException("Payment not created");
+		}
+		List<JsonElement> links = result.getValue("links", new TypeToken<List<JsonElement>>() {
+		}.getType());
+		for (JsonElement linkJson : links) {
+			JsonObject o = linkJson.getAsJsonObject();
+			String rel = o.get("rel").getAsString();
+			if ("approval_url".equals(rel)) {
+				approvalUrl = o.get("href").getAsString();
+			} else if ("execute".equals(rel)) {
+				executeUrl = o.get("href").getAsString();
+			}
+		}
+		return approvalUrl;
+	}
+
+	private String executePayment(String paymentToken, String payerID) throws IOException {
+		//String token = authenticate();
+		Map<String, Object> obj = new LinkedHashMap<String, Object>();
+		obj.put("payer_id", payerID);
+
+		String reqContent = JSONMap.JSON.toJson(obj);
+		System.out.println("Execute request: " + reqContent); //TODO remove
+
+		String content = excutePost(executeUrl, reqContent, "application/json", null, token);
+		System.out.println("Execute response: " + content); //TODO remove
+		JSONMap result = JSONMap.parseMap(content);
+		return result.getValue("state", String.class);
+	}
+
+	private static String excutePost(String targetURL, String content, String contentType, String user, String pwd) throws IOException {
+		if (content == null) {
+			content = "";
+		}
+//		Map<String, String> params = URLHelper.getParams(urlParameters);
+//		StringBuffer encodedParam = new StringBuffer();
+//		String sep = "";
+//		for (Map.Entry<String, String> param : params.entrySet()) {
+//			encodedParam.append(sep);
+//			encodedParam.append(param.getKey());
+//			encodedParam.append("=");
+//			encodedParam.append(URLEncoder.encode(param.getValue()));
+//			sep = "&";
+//		}
+
+		HttpURLConnection connection = null;
+		OutputStream outStream = null;
+		InputStream inStream = null;
+		ByteArrayOutputStream buffer = null;
+		try {
+			// Create connection
+			URL url = new URL(targetURL);
+			connection = (HttpURLConnection) url.openConnection();
+			connection.setRequestProperty("Content-Type", contentType);
+			connection.setRequestProperty("Accept", "application/json");
+			connection.setRequestProperty("Accept-Language", "en_US");
+			connection.setRequestMethod("POST");
+			connection.setDoOutput(true);
+
+			// user authentification
+			if (user != null && pwd != null) {
+				connection.setRequestProperty("Authorization", "Basic " + DatatypeConverter.printBase64Binary((user + ':' + pwd).getBytes()));
+			} else if (pwd != null) {
+				connection.setRequestProperty("Authorization", "Bearer " + pwd);
+			}
+
+			// Send request
+			outStream = connection.getOutputStream();
+			OutputStreamWriter writer = new OutputStreamWriter(connection.getOutputStream(), CHARSET);
+			writer.write(content);
+			writer.flush();
+
+			int responseCode = connection.getResponseCode();
+
+//			if (responseCode >= 200 && responseCode < 300) {
+//				throw new IOException("Unexpected response HTTP Status: " + responseCode + " " + connection.getResponseMessage());
+//			}
+
+			// Get Response
+			inStream = connection.getInputStream();
+			int b = inStream.read();
+			buffer = new ByteArrayOutputStream();
+			while (b >= 0) {
+				buffer.write(b);
+				b = inStream.read();
+			}
+			return new String(buffer.toByteArray(), CHARSET);
+		} finally {
+			ResourceHelper.closeResource(outStream, inStream, buffer);
+			if (connection != null) {
+				connection.disconnect();
+			}
+		}
+	}
+
 	public static void main(String[] args) {
 		try {
 			testPayPalFromJavlo();
@@ -48,4 +182,35 @@ public class PaypalConnector {
 			e.printStackTrace();
 		}
 	}
+
+
+	private static void testPayPalFromJavlo() throws Exception {
+		PaypalConnector c = new PaypalConnector("https://api.sandbox.paypal.com",
+				"AdXPHxByf43Y9wg8YovePiWLpzqi62ow1M3PYQig61f2mQit5E6_E-hGBLca",
+				"EFof4xCAgQevlK2AX7XJrhkZgfnUPd8iTVLH5_DsR6TvTn64yHiGBPKaGsh3");
+		testCreate(c);
+		String token = null;
+		String payerID = null;
+		testExecute(c, token, payerID);
+	}
+
+	private static void testCreate(PaypalConnector c) throws Exception {
+		String approvalUrl = c.createPayment("0.01", "EUR", "Test payment");
+		System.out.println("Token: " + c.token);
+		System.out.println("Approval url: " + approvalUrl);
+		System.out.println("Execute Url: " + c.executeUrl);
+	}
+
+	private static void testExecute(PaypalConnector c, String token, String payerID) throws Exception {
+		if (token == null && payerID == null) {
+			BufferedReader re = new BufferedReader(new InputStreamReader(System.in));
+			System.out.println("'token' parameter:");
+			token = re.readLine();
+			System.out.println("'PayerID' parameter:");
+			payerID = re.readLine();
+		}
+		String out = c.executePayment(token, payerID);
+		System.out.println(out);
+	}
+
 }
