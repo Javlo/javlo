@@ -1,0 +1,250 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<web-app xmlns="http://java.sun.com/xml/ns/javaee" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://java.sun.com/xml/ns/javaee http://java.sun.com/xml/ns/javaee/web-app_2_5.xsd"
+	version="2.5">
+
+	<filter>
+		<filter-name>CharsetFilter</filter-name>
+		<filter-class>org.javlo.servlet.filter.CharsetFilter</filter-class>
+	</filter>
+	<filter-mapping>
+		<filter-name>CharsetFilter</filter-name>
+		<url-pattern>/*</url-pattern>
+	</filter-mapping>
+	
+	<filter>
+		<filter-name>CatchAll</filter-name>
+		<filter-class>org.javlo.portlet.filter.CatchAllFilter</filter-class>
+	</filter>
+	<filter-mapping>
+		<filter-name>CatchAll</filter-name>
+		<url-pattern>/*</url-pattern>
+	</filter-mapping>
+	
+	<servlet>
+		<servlet-name>AccessServlet</servlet-name>
+		<servlet-class>org.javlo.servlet.AccessServlet</servlet-class>
+		<load-on-startup>1</load-on-startup>
+	</servlet>
+	<servlet-mapping>
+		<servlet-name>AccessServlet</servlet-name>
+		<url-pattern>/view/*</url-pattern>
+	</servlet-mapping>
+	<servlet-mapping>
+		<servlet-name>AccessServlet</servlet-name>
+		<url-pattern>/preview/*</url-pattern>
+	</servlet-mapping>
+	<servlet-mapping>
+		<servlet-name>AccessServlet</servlet-name>
+		<url-pattern>/edit/*</url-pattern>
+	</servlet-mapping>
+	<servlet-mapping>
+		<servlet-name>AccessServlet</servlet-name>
+		<url-pattern>/path/*</url-pattern>
+	</servlet-mapping>
+	<servlet-mapping>
+		<servlet-name>AccessServlet</servlet-name>
+		<url-pattern>/time/*</url-pattern>
+	</servlet-mapping>
+
+	<servlet>
+		<servlet-name>AjaxServlet</servlet-name>
+		<servlet-class>org.javlo.servlet.AjaxServlet</servlet-class>
+		<load-on-startup>1</load-on-startup>
+	</servlet>
+	<servlet-mapping>
+		<servlet-name>AjaxServlet</servlet-name>
+		<url-pattern>/ajax/*</url-pattern>
+	</servlet-mapping>
+
+	<servlet>
+		<servlet-name>ContentOnlyServlet</servlet-name>
+		<servlet-class>org.javlo.servlet.ContentOnlyServlet</servlet-class>
+		<load-on-startup>1</load-on-startup>
+	</servlet>
+	<servlet-mapping>
+		<servlet-name>ContentOnlyServlet</servlet-name>
+		<url-pattern>/page/*</url-pattern>
+	</servlet-mapping>
+
+	<servlet>
+		<servlet-name>VFSServlet</servlet-name>
+		<servlet-class>org.javlo.servlet.VFSServlet</servlet-class>
+		<load-on-startup>1</load-on-startup>
+	</servlet>
+	<servlet-mapping>
+		<servlet-name>VFSServlet</servlet-name>
+		<url-pattern>/vfs/*</url-pattern>
+	</servlet-mapping>
+	
+	<servlet>
+		<servlet-name>expcomp</servlet-name>
+		<servlet-class>org.javlo.servlet.ExportComponents</servlet-class>
+		<load-on-startup>1</load-on-startup>
+	</servlet>
+	<servlet-mapping>
+		<servlet-name>expcomp</servlet-name>
+		<url-pattern>/expcomp/*</url-pattern>
+	</servlet-mapping>
+
+	<servlet>
+		<servlet-name>SiteMapServlet</servlet-name>
+		<servlet-class>org.javlo.servlet.SiteMapServlet</servlet-class>
+		<load-on-startup>1</load-on-startup>
+	</servlet>
+	
+	<servlet-mapping>
+		<servlet-name>SiteMapServlet</servlet-name>
+		<url-pattern>/sitemap.xml</url-pattern>
+	</servlet-mapping>
+
+	<servlet>
+		<servlet-name>ZIPServlet</servlet-name>
+		<servlet-class>org.javlo.servlet.ZIPServlet</servlet-class>
+		<load-on-startup>1</load-on-startup>
+	</servlet>
+	<servlet-mapping>
+		<servlet-name>ZIPServlet</servlet-name>
+		<url-pattern>/zip/*</url-pattern>
+	</servlet-mapping>
+
+	<servlet>
+		<servlet-name>SynchronisationServlet</servlet-name>
+		<servlet-class>org.javlo.servlet.SynchronisationServlet</servlet-class>
+		<load-on-startup>0</load-on-startup>
+	</servlet>
+	<servlet-mapping>
+		<servlet-name>SynchronisationServlet</servlet-name>
+		<url-pattern>/synchro/*</url-pattern>
+	</servlet-mapping>
+
+	<servlet>
+		<servlet-name>ImageTransformServlet</servlet-name>
+		<servlet-class>org.javlo.servlet.ImageTransformServlet</servlet-class>
+		<load-on-startup>1</load-on-startup>
+	</servlet>
+	<servlet-mapping>
+		<servlet-name>ImageTransformServlet</servlet-name>
+		<url-pattern>/transform/*</url-pattern>
+	</servlet-mapping>
+
+	<servlet>
+		<servlet-name>UserListServlet</servlet-name>
+		<servlet-class>org.javlo.servlet.UserListServlet</servlet-class>
+		<load-on-startup>1</load-on-startup>
+	</servlet>
+	<servlet-mapping>
+		<servlet-name>UserListServlet</servlet-name>
+		<url-pattern>/users-list/*</url-pattern>
+	</servlet-mapping>
+
+	<servlet>
+		<servlet-name>resource</servlet-name>
+		<servlet-class>org.javlo.servlet.ResourceServlet</servlet-class>
+		<load-on-startup>1</load-on-startup>
+	</servlet>
+	<servlet-mapping>
+		<servlet-name>resource</servlet-name>
+		<url-pattern>/resource/*</url-pattern>
+	</servlet-mapping>
+	<servlet-mapping>
+		<servlet-name>resource</servlet-name>
+		<url-pattern>/favicon.ico</url-pattern>
+	</servlet-mapping>
+
+	<servlet>
+		<servlet-name>ColorServlet</servlet-name>
+		<servlet-class>org.javlo.servlet.ColorServlet</servlet-class>
+		<load-on-startup>0</load-on-startup>
+	</servlet>
+	<servlet-mapping>
+		<servlet-name>ColorServlet</servlet-name>
+		<url-pattern>/color/*</url-pattern>
+	</servlet-mapping>
+
+	<servlet>
+		<servlet-name>feedback</servlet-name>
+		<servlet-class>org.javlo.servlet.FeedbackServlet</servlet-class>
+		<load-on-startup>1</load-on-startup>
+	</servlet>
+	<servlet-mapping>
+		<servlet-name>feedback</servlet-name>
+		<url-pattern>/feedback/*</url-pattern>
+	</servlet-mapping>
+
+	<servlet>
+		<servlet-name>xml</servlet-name>
+		<servlet-class>org.javlo.servlet.XMLServlet</servlet-class>
+		<load-on-startup>1</load-on-startup>
+	</servlet>
+	<servlet-mapping>
+		<servlet-name>xml</servlet-name>
+		<url-pattern>/xml/*</url-pattern>
+	</servlet-mapping>
+
+	<servlet>
+		<servlet-name>context</servlet-name>
+		<servlet-class>org.javlo.servlet.ContextServlet</servlet-class>
+		<load-on-startup>0</load-on-startup>
+	</servlet>
+	<servlet-mapping>
+		<servlet-name>context</servlet-name>
+		<url-pattern>/context/*</url-pattern>
+	</servlet-mapping>
+
+	<!-- REMOTE -->
+	<servlet>
+		<servlet-name>RemoteResourceServlet</servlet-name>
+		<servlet-class>org.javlo.servlet.RemoteResourceServlet</servlet-class>
+		<load-on-startup>0</load-on-startup>
+	</servlet>
+	<servlet-mapping>
+		<servlet-name>RemoteResourceServlet</servlet-name>
+		<url-pattern>/market/*</url-pattern>
+	</servlet-mapping>
+	
+	<servlet>
+		<servlet-name>FolderServlet</servlet-name>
+		<servlet-class>org.javlo.servlet.FolderServlet</servlet-class>
+		<load-on-startup>0</load-on-startup>
+	</servlet>
+	<servlet-mapping>
+		<servlet-name>FolderServlet</servlet-name>
+		<url-pattern>/folder/*</url-pattern>
+	</servlet-mapping>
+	
+	<servlet>
+		<servlet-name>ModuleServlet</servlet-name>
+		<servlet-class>org.javlo.servlet.ModuleServlet</servlet-class>
+		<load-on-startup>1</load-on-startup>
+	</servlet>
+	<servlet-mapping>
+		<servlet-name>ModuleServlet</servlet-name>
+		<url-pattern>/module/*</url-pattern>
+	</servlet-mapping>
+	
+	<servlet>
+		<servlet-name>ClassServlet</servlet-name>
+		<servlet-class>org.javlo.servlet.ClassServlet</servlet-class>
+		<load-on-startup>1</load-on-startup>
+	</servlet>
+	<servlet-mapping>
+		<servlet-name>ClassServlet</servlet-name>
+		<url-pattern>/class/*</url-pattern>
+	</servlet-mapping>
+	
+		<servlet>
+        <servlet-name>captcha</servlet-name>
+        <servlet-class>org.javlo.servlet.ImageCaptchaServlet</servlet-class>
+        <load-on-startup>0</load-on-startup>
+    </servlet>
+
+	<servlet-mapping>
+        <servlet-name>captcha</servlet-name>
+        <url-pattern>/captcha.jpg</url-pattern>
+    </servlet-mapping>
+	
+	
+	
+</web-app>

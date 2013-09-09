@@ -1,0 +1,30 @@
+#main-renderer {
+	margin-top: 20px;
+}
+
+#tools {
+	margin-bottom: 20px;
+}
+
+.valid .valid-cell span {
+    background-color: #74AA27;
+}
+
+.error .valid-cell span {
+    background-color: #E9320F;
+}
+
+.valid-cell {
+	text-align: center;
+}
+
+.valid-cell span {
+    border-radius: 8px 8px 8px 8px;
+    padding: 2px 12px;
+    text-align: center;
+    color: #ffffff;
+}
+
+
+
+

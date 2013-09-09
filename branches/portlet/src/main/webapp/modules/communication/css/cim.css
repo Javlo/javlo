@@ -1,0 +1,42 @@
+.cim-messages {
+	height: 300px;
+	overflow: auto;	
+}
+.cim-messages .user {
+	font-weight: bold;
+}
+.cim-messages .message {
+	Zpadding-left: 10px;
+}
+.cim-messages .to {
+	font-weight: bold;
+}
+.cim-messages .to:after {
+	Zcontent: '> ';
+}
+.cim-messages .announce {
+	font-style: italic;
+}
+
+.cim-messages [data-user] {
+	cursor: default;
+}
+.cim-messages [data-user].data-user-available {
+	cursor: pointer;
+}
+
+.cim-form input {
+	width:  80%;
+}
+
+.header .messagenotify {
+	display: none;
+}
+
+.cim-form option.cim-site {
+	font-weight: bold;
+}
+
+.cim-form option.cim-site-user {
+	padding-left: 20px;
+}

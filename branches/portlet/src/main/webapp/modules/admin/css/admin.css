@@ -1,0 +1,61 @@
+.site-properties .thumbview .info {
+	height: 230px;
+}
+
+.templates-list .template-action {
+	text-align: right;
+	clear: both;
+}
+
+#sitelist .complexity span {
+	padding: 2px 12px;
+	text-align: center;
+	border-radius: 8px;
+}
+
+#sitelist .complexity span.complexity-3 {
+	background-color: #E9320F;
+}
+
+#sitelist .complexity span.complexity-2 {
+	background-color: #F79A0A;
+}
+
+#sitelist .complexity span.complexity-1 {
+	background-color: #74AA27;
+}
+
+#sitelist table li {
+	padding-left: 10px;
+}
+
+#sitelist td {
+	vertical-align: middle;
+}
+
+#sitelist ul {
+	margin-left: 5px;
+}
+
+#sitelist ul li {
+	overflow: visible;
+	width: 10px;
+	height: 10px;
+	border-bottom: 1px #dddddd solid;
+	margin-bottom: 4px;	
+}
+
+#sitelist ul li a {	
+	padding-left: 15px;
+	overflow: hidden;	
+	border-left: 1px #dddddd solid;
+}
+
+#sitelist ul li:last-child {
+	border-left: 1px #dddddd solid;
+}
+
+
+#sitelist ul li:last-child a {
+	border-left: 0 none;
+}

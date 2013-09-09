@@ -1,0 +1,4 @@
+javlo2> mvn -f pom-core.xml clean install
+javlo2/tools/local-module> mvn clean install
+javlo2/tools/local-module> mvn -f pom-jnlp.xml clean install
+javlo2> mvn compile war:exploded -P include-webstart
