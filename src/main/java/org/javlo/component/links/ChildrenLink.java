@@ -41,8 +41,17 @@ public class ChildrenLink extends AbstractVisualComponent implements IImageTitle
 			this.child = child;
 			this.currentPage = currentPage;
 		}
-
+		
 		public boolean isSelected() {
+			try {
+				return currentPage.isSelected(ctx);
+			} catch (Exception e) {
+				e.printStackTrace();
+				return false;
+			}
+		}
+
+		public boolean isLastSelected() {
 			return child.equals(currentPage);
 		}
 
