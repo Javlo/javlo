@@ -7,7 +7,7 @@
 </c:if>
 <ul name="children-link">
 <c:forEach var="child" items="${children}" varStatus="status">
-	<li><a href="${child.url}" ${child.selected?'class="selected"':''}>${child.fullLabel}</a></li>
+	<li${child.selected?' class="selected"':''}><a href="${child.url}">${child.fullLabel}</a></li>
 </c:forEach>
 </ul>
 </c:if>
