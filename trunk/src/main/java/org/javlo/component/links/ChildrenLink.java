@@ -420,7 +420,7 @@ public class ChildrenLink extends AbstractVisualComponent implements IImageTitle
 	@Override
 	protected void init() throws ResourceNotFoundException {
 		if (getValue() == null) {
-			setValue(LABEL);
+			setValue(DATA_SEPARATOR+LABEL);
 		}
 		super.init();
 	}
