@@ -127,7 +127,7 @@ public class ChildrenLink extends AbstractVisualComponent implements IImageTitle
 	@Override
 	protected String getRendererTitle() {
 		String[] values = getValue().split("" + DATA_SEPARATOR);
-		if (values.length >= 1) {
+		if (values.length > 1) {
 			return values[0];
 		} else {
 			return "";
