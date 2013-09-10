@@ -15,7 +15,6 @@ import java.util.List;
 import org.javlo.component.core.AbstractVisualComponent;
 import org.javlo.component.image.IImageTitle;
 import org.javlo.component.image.ImageBean;
-import org.javlo.component.image.ImageTitleBean;
 import org.javlo.context.ContentContext;
 import org.javlo.exception.ResourceNotFoundException;
 import org.javlo.helper.StringHelper;
@@ -79,6 +78,15 @@ public class ChildrenLink extends AbstractVisualComponent implements IImageTitle
 		public boolean isRealContent() throws Exception {
 			return currentPage.isRealContent(ctx);
 		}
+		
+		public boolean isVisible() {
+			try {
+				return currentPage.isVisible(ctx);
+			} catch (Exception e) {
+				e.printStackTrace();
+				return false;
+			}
+		}
 
 		public ImageBean getImage() throws Exception {
 			IImageTitle image = child.getImage(ctx);
@@ -88,6 +96,14 @@ public class ChildrenLink extends AbstractVisualComponent implements IImageTitle
 			} else {
 				return null;
 			}
+		}
+		
+		public List<ChildLinkBean> getChildren() {
+			List<ChildLinkBean> outChildren = new LinkedList<ChildLinkBean>();
+			for (MenuElement subchild : child.getChildMenuElements()) {
+				outChildren.add(new ChildLinkBean(ctx, subchild, child));
+			}
+			return outChildren;	
 		}
 
 	}
