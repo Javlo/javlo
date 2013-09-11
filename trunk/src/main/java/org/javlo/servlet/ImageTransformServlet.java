@@ -250,7 +250,7 @@ public class ImageTransformServlet extends HttpServlet {
 		// org.javlo.helper.Logger.stepCount("transform", "start - transformation - 2.4");
 		if (config.isEmboss(ctx.getDevice(), filter, area)) {
 			img = (new EmbossFilter()).filter(img, null);
-		}
+		}		
 		// org.javlo.helper.Logger.stepCount("transform", "start - transformation - 2.5");
 		img = ImageEngine.RBGAdjust(img, config.getAdjustColor(ctx.getDevice(), filter, area));
 		// org.javlo.helper.Logger.stepCount("transform", "start - transformation - 2.6");
@@ -361,6 +361,11 @@ public class ImageTransformServlet extends HttpServlet {
 		int newHeight = ImageConfig.alignToGrid(img.getHeight(), config.getGridHeight(ctx.getDevice(), filter, area));
 		if (newWidth != img.getWidth() || newHeight != img.getHeight()) {
 			img = ImageEngine.resize(img, newWidth, newHeight, true, false, 0, 0, 0, 0, null, staticInfo.getFocusZoneX(ctx), staticInfo.getFocusZoneY(ctx), config.isFocusZone(ctx.getDevice(), filter, area));
+		}
+		
+		/** dashed after resize **/
+		if (config.getDashed(ctx.getDevice(), filter, area) > 1) {
+			img = ImageEngine.dashed(img, config.getDashed(ctx.getDevice(), filter, area));
 		}
 
 		// org.javlo.helper.Logger.stepCount("transform", "start - transformation - 7");

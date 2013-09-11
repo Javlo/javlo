@@ -18,6 +18,8 @@ import org.apache.http.HttpStatus;
 import org.apache.http.StatusLine;
 import org.apache.http.client.methods.HttpGet;
 import org.apache.http.client.methods.HttpPost;
+import org.apache.http.entity.mime.MultipartEntity;
+import org.apache.http.entity.mime.content.FileBody;
 import org.javlo.context.ContentContext;
 import org.javlo.helper.ResourceHelper;
 import org.javlo.helper.StringHelper;
@@ -29,6 +31,7 @@ import org.javlo.service.syncro.exception.SynchroNonFatalException;
 
 /**
  * Javlo implementation of the {@link AbstractSynchroService}.
+ * 
  * @author bdumont
  */
 public abstract class BaseSynchroService extends AbstractSynchroService<BaseSynchroContext> {
@@ -40,8 +43,8 @@ public abstract class BaseSynchroService extends AbstractSynchroService<BaseSync
 	private File baseFolderFile;
 	private HttpClientService httpClientService;
 
-	//no more supported:
-	//deleteIntraAfterTransfert = true
+	// no more supported:
+	// deleteIntraAfterTransfert = true
 
 	public BaseSynchroService(HttpClientService httpClientService, File baseFolderFile) {
 		this.httpClientService = httpClientService;
@@ -60,6 +63,7 @@ public abstract class BaseSynchroService extends AbstractSynchroService<BaseSync
 	public File buildLocalFile(FileInfo fileInfo) {
 		return buildLocalFile(fileInfo.getPath());
 	}
+
 	public File buildLocalFile(String relativePath) {
 		return new File(baseFolderFile, relativePath);
 	}
@@ -100,14 +104,15 @@ public abstract class BaseSynchroService extends AbstractSynchroService<BaseSync
 		}
 			break;
 		case COPY_TO_DISTANT: {
+			System.out.println("***** BaseSynchroService.applyAction : path = "+path); //TODO: remove debug trace
 			FileInfo localInfo = context.getInfo(SynchroSide.LOCAL, path);
-			// copyLocalToDistant(context, localInfo); TODO: update new http client
+			copyLocalToDistant(context, localInfo);
 		}
 			break;
 		case DELETE_LOCAL: {
 			FileInfo localInfo = context.getInfo(SynchroSide.LOCAL, path);
 			if (localInfo == null) {
-				//In "mark as deleted" case
+				// In "mark as deleted" case
 				localInfo = context.getInfo(SynchroSide.DISTANT, path);
 			}
 			deleteLocalFile(context, localInfo);
@@ -118,17 +123,18 @@ public abstract class BaseSynchroService extends AbstractSynchroService<BaseSync
 			deleteDistantFile(context, distantInfo);
 		}
 			break;
-		//case MOVE_LOCAL:
-		//	break;
-		//case MOVE_DISTANT:
-		//	break;
+		// case MOVE_LOCAL:
+		// break;
+		// case MOVE_DISTANT:
+		// break;
 		case CONFLICT: {
 			FileInfo localInfo = context.getInfo(SynchroSide.LOCAL, path);
 			FileInfo distantInfo = context.getInfo(SynchroSide.DISTANT, path);
 			String newPath = buildConflictPath(path);
 			FileInfo movedInfo = moveLocalFile(context, localInfo, newPath);
 			if (movedInfo != null) {
-				//copyLocalToDistant(context, movedInfo); TODO: update to new HttpClient
+				// copyLocalToDistant(context, movedInfo); TODO: update to new
+				// HttpClient
 				copyDistantToLocal(context, distantInfo);
 			}
 		}
@@ -162,16 +168,17 @@ public abstract class BaseSynchroService extends AbstractSynchroService<BaseSync
 		}
 	}
 
-	/*private boolean copyLocalToDistant(BaseSynchroContext context, FileInfo localInfo) throws SynchroNonFatalException {
+	private boolean copyLocalToDistant(BaseSynchroContext context, FileInfo localInfo) throws SynchroNonFatalException {
 
 		if (localInfo.isDirectory()) {
-			//logger.fine("push directory " + localInfo);
-			//File localFile = buildLocalFile(localInfo);
-			//context.updateOutState(localInfo.getPath(), localFile, localInfo);
+			// logger.fine("push directory " + localInfo);
+			// File localFile = buildLocalFile(localInfo);
+			// context.updateOutState(localInfo.getPath(), localFile,
+			// localInfo);
 			return false;
 		}
 
-		logger.fine("push file " + localInfo);
+		logger.info("push file " + localInfo);
 
 		synchronized (httpClientService.lock) {
 			File localFile = buildLocalFile(localInfo);
@@ -188,7 +195,7 @@ public abstract class BaseSynchroService extends AbstractSynchroService<BaseSync
 					multipart.addPart(localFile.getName(), new FileBody(localFile));
 				}
 				filePost.setEntity(multipart);
-				//client.getHttpConnectionManager().getParams().setConnectionTimeout(5000);
+				// client.getHttpConnectionManager().getParams().setConnectionTimeout(5000);
 				resp = httpClientService.execute(filePost);
 				if (resp.getStatusLine().getStatusCode() == HttpStatus.SC_OK) {
 					context.updateOutState(localInfo.getPath(), localFile, localInfo);
@@ -214,17 +221,18 @@ public abstract class BaseSynchroService extends AbstractSynchroService<BaseSync
 				httpClientService.safeConsume(resp);
 			}
 		}
-	}*/
+	}
 
 	private boolean copyDistantToLocal(BaseSynchroContext context, FileInfo distantInfo) throws SynchroNonFatalException {
 
 		if (distantInfo.isDirectory()) {
-			//logger.fine("create local directory " + distantInfo);
-			//File localFile = buildLocalFile(distantInfo);
-			//if (localFile.exists() || localFile.mkdir()) {
-			//	context.updateOutState(distantInfo.getPath(), localFile, distantInfo);
-			//}
-			//return true;
+			// logger.fine("create local directory " + distantInfo);
+			// File localFile = buildLocalFile(distantInfo);
+			// if (localFile.exists() || localFile.mkdir()) {
+			// context.updateOutState(distantInfo.getPath(), localFile,
+			// distantInfo);
+			// }
+			// return true;
 			return false;
 		}
 
@@ -289,7 +297,7 @@ public abstract class BaseSynchroService extends AbstractSynchroService<BaseSync
 	private boolean deleteLocalFile(BaseSynchroContext context, FileInfo localInfo) {
 
 		if (localInfo.isDirectory()) {
-			//Mark for post process deletion
+			// Mark for post process deletion
 			context.getLocalDirectoryToDelete().add(localInfo);
 			return false;
 		}
@@ -304,7 +312,10 @@ public abstract class BaseSynchroService extends AbstractSynchroService<BaseSync
 
 	private void deleteLocalDirectories(BaseSynchroContext context) {
 		Collections.sort(context.getLocalDirectoryToDelete(), new FileInfoPathComparator());
-		Collections.reverse(context.getLocalDirectoryToDelete()); //To delete childs before parents
+		Collections.reverse(context.getLocalDirectoryToDelete()); // To delete
+																	// childs
+																	// before
+																	// parents
 		for (FileInfo localInfo : context.getLocalDirectoryToDelete()) {
 			File directory = buildLocalFile(localInfo);
 			if (directory.isDirectory()) {
@@ -323,7 +334,7 @@ public abstract class BaseSynchroService extends AbstractSynchroService<BaseSync
 	private boolean deleteDistantFile(BaseSynchroContext context, FileInfo distantInfo) {
 
 		if (distantInfo.isDirectory()) { // no syncro directory
-			//Mark for post process deletion
+			// Mark for post process deletion
 			context.getDistantDirectoryToDelete().add(distantInfo);
 			return false;
 		}
@@ -356,12 +367,15 @@ public abstract class BaseSynchroService extends AbstractSynchroService<BaseSync
 	}
 
 	private void deleteDistantDirectories(BaseSynchroContext context) {
-		//Collections.sort(context.getDistantDirectoryToDelete(), new FileInfoPathComparator());
-		//Collections.reverse(context.getDistantDirectoryToDelete()); //To delete childs before parents
-		//for (FileInfo distantInfo : context.getDistantDirectoryToDelete()) {
-		//	File directory = buildLocalFile(distantInfo);
-		//	context.updateOutState(distantInfo.getPath(), directory, distantInfo);
-		//}
+		// Collections.sort(context.getDistantDirectoryToDelete(), new
+		// FileInfoPathComparator());
+		// Collections.reverse(context.getDistantDirectoryToDelete()); //To
+		// delete childs before parents
+		// for (FileInfo distantInfo : context.getDistantDirectoryToDelete()) {
+		// File directory = buildLocalFile(distantInfo);
+		// context.updateOutState(distantInfo.getPath(), directory,
+		// distantInfo);
+		// }
 	}
 
 	private FileInfo moveLocalFile(BaseSynchroContext context, FileInfo localInfo, String newPath) {
@@ -377,9 +391,9 @@ public abstract class BaseSynchroService extends AbstractSynchroService<BaseSync
 
 	public void pushContext(String context) {
 
-		//System.out.println("******** context **********");
-		//System.out.println(context);
-		//System.out.println("***************************");
+		// System.out.println("******** context **********");
+		// System.out.println(context);
+		// System.out.println("***************************");
 
 		sendCommand("context", context);
 	}

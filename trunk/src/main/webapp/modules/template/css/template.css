@@ -97,3 +97,12 @@ input[readonly] {
 .static-tabs {
 	overflow: hidden;
 }
+
+/** edit images **/
+
+
+.standard-form table input[type="text"] {
+    display: inline-block;
+    vertical-align: text-top;
+    width: 80px;
+}

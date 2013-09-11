@@ -9,6 +9,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 
 import org.apache.commons.configuration.ConfigurationException;
+import org.apache.commons.lang.StringUtils;
 import org.javlo.actions.AbstractModuleAction;
 import org.javlo.context.ContentContext;
 import org.javlo.context.GlobalContext;
@@ -22,7 +23,6 @@ import org.javlo.module.core.ModulesContext;
 import org.javlo.service.IMService;
 import org.javlo.service.RequestService;
 import org.javlo.user.AdminUserSecurity;
-import org.springframework.util.StringUtils;
 
 public class CommunicationAction extends AbstractModuleAction {
 

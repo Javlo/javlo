@@ -21,7 +21,6 @@ import java.util.Set;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
-import javax.portlet.WindowState;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
@@ -30,9 +29,6 @@ import javax.servlet.http.HttpServletResponse;
 import org.apache.commons.io.FileUtils;
 import org.javlo.component.core.ComponentBean;
 import org.javlo.component.core.ComponentFactory;
-import org.javlo.component.core.IContentComponentsList;
-import org.javlo.component.core.IContentVisualComponent;
-import org.javlo.component.portlet.AbstractPortletWrapperComponent;
 import org.javlo.config.StaticConfig;
 import org.javlo.context.ContentContext;
 import org.javlo.context.ContentManager;
@@ -55,7 +51,6 @@ import org.javlo.message.MessageRepository;
 import org.javlo.message.PopupMessage;
 import org.javlo.module.core.ModulesContext;
 import org.javlo.navigation.MenuElement;
-import org.javlo.portlet.PortletWindowImpl;
 import org.javlo.portlet.filter.MultiReadRequestWrapper;
 import org.javlo.rendering.Device;
 import org.javlo.service.ContentService;
@@ -64,7 +59,6 @@ import org.javlo.service.RequestService;
 import org.javlo.service.remote.RemoteMessage;
 import org.javlo.service.remote.RemoteMessageService;
 import org.javlo.service.shared.ISharedContentProvider;
-import org.javlo.service.shared.JavloSharedContentProvider;
 import org.javlo.service.shared.SharedContentContext;
 import org.javlo.service.shared.SharedContentService;
 import org.javlo.service.social.SocialService;
@@ -493,46 +487,6 @@ public class AccessServlet extends HttpServlet implements IVersion {
 
 				if (logger.isLoggable(Level.FINE)) {
 					logger.fine(requestLabel + " : InfoBean " + df.format((double) (System.currentTimeMillis() - startTime) / (double) 1000) + " sec.");
-				}
-
-				/***********/
-				/* PORTLET */
-				/**********/
-
-				String portletId = requestService.getParameter("javlo-portlet-id", null);
-				if (portletId != null) {
-					MenuElement currentPage = ctx.getCurrentPage();
-					if (currentPage != null) {
-						IContentComponentsList contentList = currentPage.getAllContent(ctx);
-						while (contentList.hasNext(ctx)) {
-							IContentVisualComponent comp = contentList.next(ctx);
-							if (comp instanceof AbstractPortletWrapperComponent) {
-								AbstractPortletWrapperComponent portlet = (AbstractPortletWrapperComponent) comp;
-								if (portletId.equals(portlet.getId())) {
-
-									// serves a static resource within a portlet, whatever the mode
-									if (requestService.getParameter("javlo-portlet-resource", null) != null) {
-										portlet.renderPortletResource(ctx);
-										return;
-									} else if (request.getServletPath().equals("/edit")) {
-
-										// render a specific portlet maximized (edit mode only) - plm
-										// TODO: maximized in view
-										PortletWindowImpl pw = portlet.getPortletWindow(ctx);
-
-										// TODO: maximized in edit ?
-										if (WindowState.MAXIMIZED.equals(pw.getWindowState())) {
-											request.setAttribute("portlet", portlet);
-											response.setContentType("text/html; charset=" + ContentContext.CHARACTER_ENCODING);
-											getServletContext().getRequestDispatcher("/jsp/edit/template/portlet_max_edit.jsp").include(request, response);
-
-											return;
-										}
-									}
-								}
-							}
-						}
-					}
 				}
 
 				/* **** */

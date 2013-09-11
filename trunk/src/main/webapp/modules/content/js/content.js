@@ -8,6 +8,11 @@ jQuery(document).ready(function(){
 });
 
 function loadWysiwyg(cssQuery, complexity) {	
+	
+	tinymce.init({
+	    paste_as_text: true
+	});
+	
 	if (complexity == "middle") {
 		tinymce.init({
 		    selector: cssQuery,
@@ -43,7 +48,7 @@ function loadWysiwyg(cssQuery, complexity) {
 		add_form_submit_trigger: true,	
 		menubar : false,
 		selector: cssQuery,
-		toolbar: "undo redo | bold italic | alignleft aligncenter alignright alignjustify | bullist numlist outdent indent"
+		toolbar: "undo redo | bold italic | alignleft aligncenter alignright alignjustify | bullist numlist outdent indent | pastetext"
 		});	 
 	}
 }

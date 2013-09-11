@@ -378,6 +378,12 @@ public class GlobalContext implements Serializable {
 							newInstance.setOpenFileAsPopup(defaultContext.isOpenExternalLinkAsPopup());
 							newInstance.setNoPopupDomainRAW(defaultContext.getNoPopupDomainRAW());
 							newInstance.setModules(defaultContext.getModules());
+							if (defaultContext.getDMZServerInter() != null) {
+								newInstance.setDMZServerInter(defaultContext.getDMZServerInter().toString());
+							}
+							if (defaultContext.getDMZServerIntra() != null) {
+								newInstance.setDMZServerIntra(defaultContext.getDMZServerIntra().toString());
+							}
 
 							String defaultContentFolder = defaultContext.getDataFolder();
 							String newContentFolder = newInstance.getDataFolder();

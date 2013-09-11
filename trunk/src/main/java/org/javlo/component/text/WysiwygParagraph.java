@@ -5,13 +5,10 @@ package org.javlo.component.text;
 
 import java.util.List;
 
-import org.apache.commons.lang.StringEscapeUtils;
 import org.javlo.component.core.AbstractVisualComponent;
 import org.javlo.context.ContentContext;
 import org.javlo.context.GlobalContext;
 import org.javlo.helper.LoremIpsumGenerator;
-import org.javlo.helper.StringHelper;
-import org.javlo.helper.XHTMLHelper;
 import org.javlo.service.ReverseLinkService;
 import org.javlo.utils.SuffixPrefix;
 

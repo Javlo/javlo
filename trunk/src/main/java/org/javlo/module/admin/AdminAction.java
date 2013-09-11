@@ -112,6 +112,8 @@ public class AdminAction extends AbstractModuleAction {
 		private boolean master = false;
 		private String forcedHost = "";
 		private String editTemplateMode = null;
+		private String DMZServerInter = "";
+		private String DMZServerIntra = "";
 
 		private String shortDateFormat;
 		private String mediumDateFormat;
@@ -207,6 +209,15 @@ public class AdminAction extends AbstractModuleAction {
 			/** user engine **/
 			setUserFactoryClassName(globalContext.getUserFactoryClassName());
 			setAdminUserFactoryClassName(globalContext.getAdminUserFactory(session).getClass().getName());
+			
+			/** remote **/
+			if (globalContext.getDMZServerInter() != null) {
+				setDMZServerInter(globalContext.getDMZServerInter().toString());
+			}
+			if (globalContext.getDMZServerIntra() != null) {
+				setDMZServerIntra(globalContext.getDMZServerIntra().toString());
+			}
+			
 		}
 
 		public String getKey() {
@@ -585,6 +596,22 @@ public class AdminAction extends AbstractModuleAction {
 			this.editTemplateMode = editTemplateMode;
 		}
 
+		public String getDMZServerInter() {
+			return DMZServerInter;
+		}
+
+		public void setDMZServerInter(String dMZServerInter) {
+			DMZServerInter = dMZServerInter;
+		}
+
+		public String getDMZServerIntra() {
+			return DMZServerIntra;
+		}
+
+		public void setDMZServerIntra(String dMZServerIntra) {
+			DMZServerIntra = dMZServerIntra;
+		}
+
 	}
 
 	public static class ComponentBean {
@@ -924,6 +951,9 @@ public class AdminAction extends AbstractModuleAction {
 					currentGlobalContext.setEditTemplateMode(requestService.getParameter("template-mode", null));
 
 					currentGlobalContext.setWizz(requestService.getParameter("wizz", null) != null);
+					
+					currentGlobalContext.setDMZServerInter(requestService.getParameter("dmz-inter", ""));
+					currentGlobalContext.setDMZServerIntra(requestService.getParameter("dmz-intra", ""));
 
 					String dateFormat = requestService.getParameter("short-date", null);
 					if (dateFormat != null) {

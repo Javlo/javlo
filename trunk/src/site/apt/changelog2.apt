@@ -173,3 +173,5 @@ change log
  * shared content provider (http://www.stockvault.net/ and http://fotogrph.com/)
  
  * ecom refactoring + externals modules
+ 
+ * remove portlet integration
