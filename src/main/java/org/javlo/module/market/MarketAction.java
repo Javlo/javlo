@@ -136,6 +136,7 @@ public class MarketAction extends AbstractModuleAction {
 				if (resource.getImageURL() != null) {
 					URL imageURL = new URL(resource.getImageURL());
 					File visualFile = new File(URLHelper.mergePath(newTemplate.getTemplateRealPath(), newTemplate.getVisualFile()));
+					
 					RenderedImage image = JAI.create("url", imageURL);
 					out = new FileOutputStream(visualFile);
 					JAI.create("encode", image, out, "png", null);

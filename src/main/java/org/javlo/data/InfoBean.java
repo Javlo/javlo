@@ -2,6 +2,7 @@ package org.javlo.data;
 
 import java.io.File;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.LinkedList;
@@ -10,6 +11,7 @@ import java.util.Map;
 
 import javax.servlet.http.HttpServletRequest;
 
+import org.javlo.component.core.IContentVisualComponent;
 import org.javlo.config.StaticConfig;
 import org.javlo.context.ContentContext;
 import org.javlo.context.EditContext;
@@ -34,12 +36,18 @@ import org.javlo.user.User;
 import org.javlo.user.UserFactory;
 
 public class InfoBean {
-	
-	private static final String ts = ""+System.currentTimeMillis();
+
+	private static final String ts = "" + System.currentTimeMillis();
 
 	public static final String REQUEST_KEY = "info";
 
 	public static final String NEW_SESSION_PARAM = "__new_session";
+
+	private static final Map<String, String> staticData = Collections.unmodifiableMap(new HashMap<String, String>() {
+		{
+			put("compId", IContentVisualComponent.COMP_ID_REQUEST_PARAM);
+		}
+	});
 
 	public static InfoBean getCurrentInfoBean(HttpServletRequest request) {
 		return (InfoBean) request.getAttribute(REQUEST_KEY);
@@ -88,7 +96,7 @@ public class InfoBean {
 	public String getCurrentURL() {
 		return URLHelper.createURL(ctx);
 	}
-	
+
 	public String getCurrentPDFURL() {
 		ContentContext pdfCtx = ctx.getFreeContentContext();
 		pdfCtx.setFormat("pdf");
@@ -112,7 +120,7 @@ public class InfoBean {
 	public String getCurrentPreviewURL() {
 		return URLHelper.createURL(ctx.getContextWithOtherRenderMode(ContentContext.PREVIEW_MODE).getFreeContentContext());
 	}
-	
+
 	public String getCurrentPageURL() {
 		return URLHelper.createURL(ctx.getContextWithOtherRenderMode(ContentContext.PAGE_MODE).getFreeContentContext());
 	}
@@ -273,14 +281,14 @@ public class InfoBean {
 		return globalContext.getLanguages();
 	}
 
-	public String getEditTemplateURL() {		
+	public String getEditTemplateURL() {
 		return URLHelper.createStaticURL(ctx, ctx.getGlobalContext().getStaticConfig().getEditTemplateFolder());
 	}
 
 	public String getStaticRootURL() {
 		return URLHelper.createStaticURL(ctx, "/");
 	}
-	
+
 	public String getContextDownloadURL() {
 		return URLHelper.createStaticURL(ctx, "/context");
 	}
@@ -302,7 +310,7 @@ public class InfoBean {
 		IUserFactory userFactory = UserFactory.createUserFactory(globalContext, ctx.getRequest().getSession());
 		return userFactory.getAllRoles(globalContext, ctx.getRequest().getSession());
 	}
-	
+
 	public MenuElement.PageBean getParent() {
 		if (currentPage.getParent() != null) {
 			try {
@@ -372,7 +380,8 @@ public class InfoBean {
 	}
 
 	/**
-	 * return the name of the first level page active. "root" if current page in root.
+	 * return the name of the first level page active. "root" if current page in
+	 * root.
 	 * 
 	 * @return
 	 * @throws Exception
@@ -455,7 +464,8 @@ public class InfoBean {
 	}
 
 	/**
-	 * this method return true at the first call for current session and false afer.
+	 * this method return true at the first call for current session and false
+	 * afer.
 	 * 
 	 * @return
 	 */
@@ -515,27 +525,32 @@ public class InfoBean {
 	public void setTools(boolean actionBar) {
 		this.tools = actionBar;
 	}
-	
+
 	public boolean isLocalModule() {
 		String localModulePath = ctx.getRequest().getSession().getServletContext().getRealPath("/webstart/localmodule.jnlp.jsp");
 		return (new File(localModulePath)).isFile();
 	}
-	
+
 	/**
 	 * timestamp initialised when java VM is staded.
+	 * 
 	 * @return
 	 */
 	public String getTs() {
 		return ts;
 	}
-	
+
 	public String getBackURL() {
 		RequestService requestService = RequestService.getInstance(ctx.getRequest());
 		return requestService.getParameter(ElementaryURLHelper.BACK_PARAM_NAME, null);
 	}
-	
+
 	public String getRootURL() {
-		return URLHelper.createURL(ctx,"/");
+		return URLHelper.createURL(ctx, "/");
 	}
 	
+	public static Map<String, String> getStaticdata() {
+		return staticData;
+	}
+
 }

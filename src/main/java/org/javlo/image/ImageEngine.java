@@ -372,6 +372,7 @@ public class ImageEngine {
 
 	static Color replaceAlpha(Color color, Color bg) {
 		float alpha = (color.getAlpha()) / 255f;
+		
 		float red = color.getRed() * alpha + bg.getRed() * (1 - alpha);
 		float green = color.getGreen() * alpha + bg.getGreen() * (1 - alpha);
 		float blue = color.getBlue() * alpha + bg.getBlue() * (1 - alpha);
@@ -424,7 +425,7 @@ public class ImageEngine {
 		if (bg == null) {
 			return image;
 		}
-		BufferedImage imgNew = new BufferedImage(image.getWidth(), image.getHeight(), BufferedImage.TYPE_INT_ARGB);
+		BufferedImage imgNew = new BufferedImage(image.getWidth(), image.getHeight(), BufferedImage.TYPE_INT_RGB);
 		for (int x = 0; x < image.getWidth(); x++) {
 			for (int y = 0; y < image.getHeight(); y++) {
 				int rgb = image.getRGB(x, y);
@@ -435,7 +436,7 @@ public class ImageEngine {
 		}
 		return imgNew;
 	}
-
+	
 	public static BufferedImage removeAlpha(BufferedImage image) {
 		BufferedImage imgNew = new BufferedImage(image.getWidth(), image.getHeight(), BufferedImage.TYPE_INT_RGB);
 		for (int x = 0; x < image.getWidth(); x++) {
@@ -881,28 +882,37 @@ public class ImageEngine {
 
 		return outImage.getSubimage(startX, startY, newWidth, newHeight);
 	}
+	
+	/**
+	 * create transparent dash on 1 pixel on 2
+	 * @param image
+	 * @return a image width same width and same height.
+	 */
+	public static BufferedImage dashed(BufferedImage image, int size) {
+		BufferedImage outImage = new BufferedImage(image.getWidth(), image.getHeight(), BufferedImage.TYPE_4BYTE_ABGR);		
+		for (int x=0; x<image.getWidth(); x++) {
+			for (int y=0; y<image.getHeight(); y++) {
+				if (x%size == 0 && y%size==0) {
+					outImage.setRGB(x, y, image.getRGB(x, y));
+				}
+			}
+		}
+		return outImage;
+	}
 
 	/**
 	 * @param args
 	 */
 	public static void main(String[] args) {
-		File source = new File("d:/trans/4.jpg");
-		File target = new File("d:/trans/target.jpg");
+		File source = new File("c:/trans/test.jpg");
+		File target = new File("c:/trans/out.png");
 
 		try {
 			System.out.println("start...");
 			BufferedImage sourceImage = ImageIO.read(source);
-			for (int a = 360; a < 360 * 2; a++) {
-				BufferedImage image = rotate(sourceImage, a, null);
-				ImageIO.write(image, "jpg", new File("d:/trans/rotate/target_" + a + ".jpg"));
-				System.gc();
-			}
-			// image = lightBlurring(image);
-			// image = blurring(image);
-			// image = applyFilter(image,filterImage, true, 50,50,50,50,null);
-			// image = drawBorderCorner (image, Math.min(image.getHeight(),
-			// image.getWidth())/4, Color.RED, 50);
-
+			BufferedImage image = dashed(sourceImage,3);
+			//image = replaceAlpha(image, Color.WHITE);
+			ImageIO.write(image, "png", target);
 			System.out.println("end.");
 		} catch (Exception e) {
 			e.printStackTrace();

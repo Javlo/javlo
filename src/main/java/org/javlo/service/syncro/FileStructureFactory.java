@@ -204,7 +204,7 @@ public class FileStructureFactory {
 		out.add(FileInfo.getFileInfo(relativePath, file, checksum));
 		File[] children = file.listFiles();
 		if (children != null) {
-			for (File child : children) {
+			for (File child : children) {				
 				traverse(relativePath, child, out, previousKnownFiles);
 			}
 		}

@@ -195,6 +195,16 @@
 	<textarea id="uri-alias" name="uri-alias">${currentContext.URIAlias}</textarea>	
 </div>
 
+<div class="line">		
+	<label for="dmz-inter">${i18n.edit['admin.title.dmz-inter']}</label>
+	<input type="text" id="dmz-inter" name="dmz-inter" value="${currentContext.DMZServerInter}" />	
+</div>
+
+<div class="line">		
+	<label for="dmz-intra">${i18n.edit['admin.title.dmz-intra']}</label>
+	<input type="text" id="dmz-intra" name="dmz-intra" value="${currentContext.DMZServerIntra}" />	
+</div>
+
 </div>
 </fieldset>
 

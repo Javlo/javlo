@@ -120,7 +120,7 @@ public class ImageConfig {
 		} else {
 			key = KEY + '-' + template.getId();
 		}
-
+		
 		synchronized (FILE) {
 			outCfg = (ImageConfig) globalContext.getAttribute(key);
 			if (outCfg == null) {
@@ -320,6 +320,11 @@ public class ImageConfig {
 	public boolean isCrystallize(Device device, String filter, String area) {
 		String key = getKey(device, filter, area, "crystallize");
 		return properties.getBoolean(key, false);
+	}
+	
+	public int getDashed(Device device, String filter, String area) {
+		String key = getKey(device, filter, area, "dashed");
+		return properties.getInt(key, 1);
 	}
 
 	public boolean isEdge(Device device, String filter, String area) {

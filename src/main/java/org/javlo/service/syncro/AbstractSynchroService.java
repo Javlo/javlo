@@ -39,7 +39,7 @@ public abstract class AbstractSynchroService<SC extends AbstractSynchroContext> 
 		SC context = null;
 		try {
 			context = newSynchroContext();
-			logger.fine("start synchronisation between '" + getLocalName() + "' and '" + getDistantName() + "'");
+			logger.info("start synchronisation between '" + getLocalName() + "' and '" + getDistantName() + "'");
 			try {
 				initializeContext(context, previousOutState);
 				defineActions(context);
@@ -54,7 +54,7 @@ public abstract class AbstractSynchroService<SC extends AbstractSynchroContext> 
 		} finally {
 			if (context != null) {
 				onShutdown(context);
-				logger.fine("end synchronisation between '" + getLocalName() + "' and '" + getDistantName() + "'");
+				logger.info("end synchronisation between '" + getLocalName() + "' and '" + getDistantName() + "'");
 			}
 		}
 	}
