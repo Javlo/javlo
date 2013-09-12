@@ -453,8 +453,14 @@ body.fix-preview {
 	margin-bottom: 6px;
 }
 
+#preview_command .component-list h4 {
+	clear: both;
+}
+
 #preview_command .component-list .component {
 	line-height: 13px;
+	width: 45%;
+	float: left;
 }
 
 .fix-preview #preview_command .one_half {
