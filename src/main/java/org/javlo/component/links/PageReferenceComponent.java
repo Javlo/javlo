@@ -167,6 +167,8 @@ public class PageReferenceComponent extends ComplexPropertiesLink implements IAc
 			bean.path = page.getPath();
 			bean.creator = page.getCreator();
 			bean.setCategoryKey("category." + StringHelper.neverNull(page.getCategory(ctx)).toLowerCase().replaceAll(" ", ""));
+			
+			bean.publishURL = URLHelper.createAbsoluteViewURL(ctx, page.getPath());
 
 			I18nAccess i18nAccess = I18nAccess.getInstance(ctx.getRequest());
 			ContentContext realContentCtx = new ContentContext(ctx);
@@ -275,6 +277,7 @@ public class PageReferenceComponent extends ComplexPropertiesLink implements IAc
 		private String rawTags = null;
 		private String path = null;
 		private String creator = null;
+		private String publishURL;
 		private boolean realContent = false;
 		private boolean visible = false;
 		private Collection<Link> links = new LinkedList<Link>();
@@ -480,6 +483,14 @@ public class PageReferenceComponent extends ComplexPropertiesLink implements IAc
 
 		public void setContentDate(boolean contentDate) {
 			this.contentDate = contentDate;
+		}
+
+		public String getPublishURL() {
+			return publishURL;
+		}
+
+		public void setPublishURL(String publishURL) {
+			this.publishURL = publishURL;
 		}
 
 	}
