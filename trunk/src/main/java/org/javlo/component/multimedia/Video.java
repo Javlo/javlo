@@ -390,7 +390,6 @@ public class Video extends GlobalImage implements IAction, IVideo {
 	}
 
 	public String renderInline(ContentContext ctx, String width, String height, boolean preview) throws Exception {
-
 		String link = getLink();
 		String imageFilter = getImageFilter(ctx);
 		if (preview) {
@@ -451,10 +450,11 @@ public class Video extends GlobalImage implements IAction, IVideo {
 				ctx.getRequest().setAttribute("width", StringHelper.neverNull(width, getConfig(ctx).getProperty("youyube.width", "420")));
 				ctx.getRequest().setAttribute("height", StringHelper.neverNull(height, getConfig(ctx).getProperty("youyube.height", "315")));
 				return executeJSP(ctx, getConfig(ctx).getRenderes().get("youtube"));
-			} else if (urlCode.equals("dailymotion")) {
+			} else if (urlCode.equals("dailymotion")) {				
 				if (link.split("/").length > 1) {
 					String videoCode = link.split("/")[link.split("/").length - 1];
-					ctx.getRequest().setAttribute("url", "http://www.dailymotion.com/embed/video/" + videoCode);
+					String url = "http://www.dailymotion.com/embed/video/" + videoCode;
+					ctx.getRequest().setAttribute("url", url);
 					ctx.getRequest().setAttribute("width", StringHelper.neverNull(width, getConfig(ctx).getProperty("dailymotion.width", "420")));
 					ctx.getRequest().setAttribute("height", StringHelper.neverNull(height, getConfig(ctx).getProperty("dailymotion.height", "315")));
 					return executeJSP(ctx, getConfig(ctx).getRenderes().get("dailymotion"));
