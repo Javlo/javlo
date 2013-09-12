@@ -164,6 +164,9 @@ public class GlobalImage extends Image {
 		}
 		ctx.getRequest().setAttribute("media", this);
 		ctx.getRequest().setAttribute("shortDate", StringHelper.renderShortDate(ctx, getDate()));
+		if (isMeta()) {
+			ctx.getRequest().setAttribute("label", getTitle());
+		}
 	}
 
 	@Override
