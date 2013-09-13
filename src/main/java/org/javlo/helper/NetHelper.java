@@ -23,6 +23,7 @@ import java.util.Map;
 import java.util.zip.CRC32;
 
 import javax.imageio.ImageIO;
+import javax.mail.internet.AddressException;
 import javax.mail.internet.InternetAddress;
 import javax.servlet.http.HttpServletResponse;
 
@@ -662,13 +663,18 @@ public class NetHelper {
 		}
 		return false;
 	}
+	
+	public static void sendMailToAdministrator(ContentContext ctx, String subject, String content) throws AddressException {
+		GlobalContext globalContext = GlobalContext.getInstance(ctx.getRequest());
+		sendMailToAdministrator(ctx, new InternetAddress(globalContext.getAdministratorEmail()), subject, content);
+	}
 
-	public static void sendMailToAdministrator(ContentContext ctx, String subject, String content) {
+	public static void sendMailToAdministrator( ContentContext ctx, InternetAddress from, String subject, String content) {
 		GlobalContext globalContext = GlobalContext.getInstance(ctx.getRequest());
 		StaticConfig staticConfig = StaticConfig.getInstance(ctx.getRequest().getSession());
 		MailService mailService = MailService.getInstance(staticConfig);
 		try {
-			mailService.sendMail(new InternetAddress(globalContext.getAdministratorEmail()), new InternetAddress(globalContext.getAdministratorEmail()), subject, content, false);
+			mailService.sendMail(from, new InternetAddress(globalContext.getAdministratorEmail()), subject, content, false);
 		} catch (Exception e) {
 			e.printStackTrace();
 		}

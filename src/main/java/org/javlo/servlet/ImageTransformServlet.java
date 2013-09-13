@@ -593,8 +593,8 @@ public class ImageTransformServlet extends HttpServlet {
 				/* last modified management */
 				long lastModified = getLastModified(globalContext, imageName, filter, area, ctx.getDevice(), template);
 				response.setDateHeader(NetHelper.HEADER_LAST_MODIFIED, lastModified);
-				long lastModifiedInBrowser = request.getDateHeader(NetHelper.HEADER_IF_MODIFIED_SINCE);
-				if (lastModified <= lastModifiedInBrowser) {
+				long lastModifiedInBrowser = request.getDateHeader(NetHelper.HEADER_IF_MODIFIED_SINCE);				
+				if (lastModified > 0 && lastModified/1000 <= lastModifiedInBrowser/1000) {					
 					response.setStatus(HttpServletResponse.SC_NOT_MODIFIED);
 					return;
 				}

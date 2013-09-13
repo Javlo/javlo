@@ -341,6 +341,7 @@ public class MenuElement implements Serializable {
 		public boolean visible = false;
 		String referenceLanguage = null;
 		boolean breakRepeat;
+		Boolean cacheable = null;
 		int priority;
 		String type = PAGE_TYPE_DEFAULT;
 		String sharedName = null;
@@ -3909,6 +3910,32 @@ public class MenuElement implements Serializable {
 		}
 
 		return desc.notInSearch;
+	}
+	
+	/**
+	 * check if the page is cacheable (static content)
+	 * @param ctx
+	 * @return
+	 * @throws Exception 
+	 */
+	public boolean isCacheable(ContentContext ctx) throws Exception {
+		PageDescription desc = getPageDescriptionCached(ctx, ctx.getRequestContentLanguage());
+		if (desc.cacheable != null) {
+			return desc.cacheable;
+		}		
+		ContentContext noAreaCtx = new ContentContext(ctx);
+		noAreaCtx.setArea(null);
+		ContentElementList content = getContent(noAreaCtx);
+		while (content.hasNext(noAreaCtx)) {
+			IContentVisualComponent comp = content.next(noAreaCtx);			
+			if (!comp.isContentCachable(noAreaCtx)) {
+				System.out.println("***** MenuElement.isCacheable : comp type = "+comp.getType()); //TODO: remove debug trace
+				desc.cacheable = false;
+				return false;
+			}
+		}
+		desc.cacheable = true;
+		return true;
 	}
 
 	public String getReferenceLanguage() {
