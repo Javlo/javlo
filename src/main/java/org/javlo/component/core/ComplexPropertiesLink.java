@@ -7,6 +7,8 @@ import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.util.Properties;
 
+import org.javlo.context.ContentContext;
+
 /**
  * @author pvandermaesen
  */
@@ -98,6 +100,11 @@ public abstract class ComplexPropertiesLink extends AbstractVisualComponent {
 		eq = properties.equals(comp.properties);
 
 		return eq;
+	}
+	
+	@Override
+	public boolean isContentCachable(ContentContext ctx) {
+		return true;
 	}
 
 }
