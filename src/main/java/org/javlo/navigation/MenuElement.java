@@ -3928,8 +3928,7 @@ public class MenuElement implements Serializable {
 		ContentElementList content = getContent(noAreaCtx);
 		while (content.hasNext(noAreaCtx)) {
 			IContentVisualComponent comp = content.next(noAreaCtx);			
-			if (!comp.isContentCachable(noAreaCtx)) {
-				System.out.println("***** MenuElement.isCacheable : comp type = "+comp.getType()); //TODO: remove debug trace
+			if (!comp.isContentCachable(noAreaCtx)) {				
 				desc.cacheable = false;
 				return false;
 			}
