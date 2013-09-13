@@ -1,6 +1,8 @@
 package org.javlo.module.mailing;
 
+import java.io.ByteArrayOutputStream;
 import java.io.IOException;
+import java.io.PrintStream;
 import java.util.Collection;
 import java.util.HashSet;
 import java.util.LinkedList;
@@ -19,6 +21,7 @@ import org.javlo.actions.AbstractModuleAction;
 import org.javlo.config.StaticConfig;
 import org.javlo.context.ContentContext;
 import org.javlo.context.GlobalContext;
+import org.javlo.helper.NetHelper;
 import org.javlo.helper.StringHelper;
 import org.javlo.helper.URLHelper;
 import org.javlo.i18n.I18nAccess;
@@ -183,12 +186,14 @@ public class MailingAction extends AbstractModuleAction {
 		return null;
 	}
 	
-	public static String performUnsubscribe(ServletContext application, HttpServletRequest request, RequestService rs, ContentContext ctx, MessageRepository messageRepository, I18nAccess i18nAccess) throws IOException {
+	public static String performUnsubscribe(ServletContext application, HttpServletRequest request, RequestService rs, ContentContext ctx, MessageRepository messageRepository, I18nAccess i18nAccess) throws Exception {
 		String mfb = rs.getParameter(MailingAction.MAILING_FEEDBACK_PARAM_NAME, null);
 		if (mfb != null) {
 			DataToIDService serv = DataToIDService.getInstance(application);			
 			Map<String, String> params = StringHelper.uriParamToMap(serv.getData(mfb));
 			String to = params.get("to");
+			GlobalContext globalContext = GlobalContext.getInstance(ctx.getRequest());
+			logger.info("mailing unsubscribe : "+to+" site:"+globalContext.getContextKey());
 			InternetAddress add;
 			try {
 				add = new InternetAddress(to);	
@@ -198,6 +203,19 @@ public class MailingAction extends AbstractModuleAction {
 					Set<String> roles = new HashSet<String>(StringHelper.stringToCollection(rs.getParameter("roles", ""),";"));
 					user.getUserInfo().removeRoles(roles);
 					userFactory.store();
+				} else {
+					ByteArrayOutputStream outStream = new ByteArrayOutputStream();
+					PrintStream out = new PrintStream(outStream);
+					
+					out.println("Site title : "+globalContext.getGlobalTitle());
+					out.println("E-Mail     : "+to);
+					out.println("");
+					out.println("--");
+					out.println("Direct Link : "+URLHelper.createAbsoluteViewURL(ctx, "/"));
+					out.close();
+					String mailContent = new String(outStream.toByteArray());
+					
+					NetHelper.sendMailToAdministrator(ctx, new InternetAddress(to), "Mailing unsubscribe : "+globalContext.getContextKey(), mailContent);
 				}
 			} catch (AddressException e) {
 				// TODO Auto-generated catch block

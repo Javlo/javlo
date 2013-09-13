@@ -55,7 +55,6 @@ public class StaticConfig extends Observable {
 	Map<String, User> editUsers = new HashMap<String, User>();
 
 	public static final String WEBAPP_CONFIG_FILE = "/WEB-INF/config/webapp_config.properties";
-	public static final String SPECIFIC_WEBAPP_CONFIG_FILE = "/WEB-INF/config/specific_webapp_config.properties";
 
 	static final String EDIT_USERS_KEY = "edit.users";
 	static final String DEFAULT_CREDENTIALS = "admin,0DPiKuNIrrVmD8IUCuw1hQxNqZc="; // admin,admin;
@@ -126,17 +125,6 @@ public class StaticConfig extends Observable {
 						webappProps.load(in);
 					} finally {
 						ResourceHelper.closeResource(in);
-					}
-
-					InputStream inSpec = application.getResourceAsStream(StaticConfig.SPECIFIC_WEBAPP_CONFIG_FILE);
-					if (inSpec != null) {
-						Properties specificWebappProps = new Properties();
-						try {
-							specificWebappProps.load(inSpec);
-						} finally {
-							ResourceHelper.closeResource(inSpec);
-						}
-						webappProps.putAll(specificWebappProps);
 					}
 				}
 

@@ -38,6 +38,7 @@ import org.javlo.context.GlobalContextFactory;
 import org.javlo.data.InfoBean;
 import org.javlo.helper.DebugHelper;
 import org.javlo.helper.ElementaryURLHelper;
+import org.javlo.helper.NetHelper;
 import org.javlo.helper.RequestHelper;
 import org.javlo.helper.ServletHelper;
 import org.javlo.helper.StringHelper;
@@ -226,6 +227,17 @@ public class AccessServlet extends HttpServlet implements IVersion {
 							e.printStackTrace();
 						}
 					}
+				}
+			}
+			
+			/** CACHE **/
+			if (ctx.isAsViewMode() && ctx.getCurrentPage().isCacheable(ctx)) {
+				long lastModified = globalContext.getPublishDate().getTime();
+				response.setDateHeader(NetHelper.HEADER_LAST_MODIFIED, lastModified);
+				long lastModifiedInBrowser = request.getDateHeader(NetHelper.HEADER_IF_MODIFIED_SINCE);				
+				if (lastModified > 0 && lastModified/1000 <= lastModifiedInBrowser/1000) {					
+					response.setStatus(HttpServletResponse.SC_NOT_MODIFIED);
+					return;
 				}
 			}
 

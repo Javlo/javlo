@@ -851,8 +851,8 @@ public class XMLManipulationHelper {
 		out.append("%><%=XHTMLNavigationHelper.getRSSHeader(ctx, currentPage)%>");
 		out.newLine();
 
-		out.append("<link rel=\"stylesheet\" type=\"text/css\" href=\"<%=URLHelper.createStaticURL(ctx,\"/jsp/view/components_css.jsp\")%>\" />");
-		out.newLine();
+		/*out.append("<link rel=\"stylesheet\" type=\"text/css\" href=\"<%=URLHelper.createStaticURL(ctx,\"/jsp/view/components_css.jsp\")%>\" />");
+		out.newLine();*/
 		out.append("<link rel=\"shortcut icon\" type=\"image/ico\" href=\"<%=URLHelper.createStaticURL(ctx,\"/favicon.ico\")%>\" />");
 		out.newLine();
 

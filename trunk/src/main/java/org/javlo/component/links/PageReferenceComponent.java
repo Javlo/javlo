@@ -1017,7 +1017,7 @@ public class PageReferenceComponent extends ComplexPropertiesLink implements IAc
 			String prefix = "";
 			if (ctx.isPreview()) {
 				prefix = "<div " + getSpecialPreviewCssClass(ctx, "") + getSpecialPreviewCssId(ctx) + ">";
-			}
+			}			
 			return prefix + getConfig(ctx).getProperty("prefix", null);
 		}
 
