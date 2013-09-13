@@ -119,5 +119,10 @@ public class SubTitle extends AbstractVisualComponent {
 		setModify();
 		return true;
 	}
+	
+	@Override
+	public boolean isContentCachable(ContentContext ctx) {
+		return true;
+	}
 
 }
