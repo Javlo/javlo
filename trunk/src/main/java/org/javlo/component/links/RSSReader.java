@@ -425,6 +425,11 @@ public class RSSReader extends ComplexPropertiesLink {
 			properties.setProperty(RULE_KEY, ALWAYS);
 		}
 	}
+	
+	@Override
+	public boolean isContentCachable(ContentContext ctx) {
+		return false;
+	}
 
 	@Override
 	public boolean isContentTimeCachable(ContentContext ctx) {
