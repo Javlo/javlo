@@ -175,3 +175,5 @@ change log
  * ecom refactoring + externals modules
  
  * remove portlet integration
+ 
+ * cache optimisation (configure Last-Modified header)
