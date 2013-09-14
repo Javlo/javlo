@@ -236,6 +236,20 @@ public class AccessServlet extends HttpServlet implements IVersion {
 				}
 			}
 			
+			/** get info from system to browser **/
+			if (ctx.getCurrentEditUser() != null && request != null && request.getPathInfo() != null && request.getPathInfo().endsWith("info.txt")) {
+				response.setContentType("text/plain");
+				PrintStream out = new PrintStream(response.getOutputStream());
+				writeInfo(out);
+				out.println("");
+				globalContext.writeInfo(request.getSession(), out);
+				out.println("");
+				ContentService content = ContentService.getInstance(globalContext);
+				out.println("latest update by : " + content.getAttribute(ctx, "user.update"));
+				out.close();
+				return;
+			}
+			
 			/** CACHE **/
 			if (ctx.isAsViewMode() && ctx.getCurrentPage().isCacheable(ctx)) {
 				long lastModified = globalContext.getPublishDate().getTime();
@@ -254,21 +268,7 @@ public class AccessServlet extends HttpServlet implements IVersion {
 			if (logger.isLoggable(Level.FINE)) {
 				logger.fine(requestLabel + " : first ContentContext " + df.format((double) (System.currentTimeMillis() - startTime) / (double) 1000) + " sec.");
 				logger.fine("device : " + ctx.getDevice());
-			}
-
-			/** get info from system to browser **/
-			if (request != null && request.getPathInfo() != null && request.getPathInfo().endsWith("info.txt")) {
-				response.setContentType("text/plain");
-				PrintStream out = new PrintStream(response.getOutputStream());
-				writeInfo(out);
-				out.println("");
-				globalContext.writeInfo(request.getSession(), out);
-				out.println("");
-				ContentService content = ContentService.getInstance(globalContext);
-				out.println("latest update by : " + content.getAttribute(ctx, "user.update"));
-				out.close();
-				return;
-			}
+			}			
 
 			I18nAccess i18nAccess = I18nAccess.getInstance(ctx);
 
