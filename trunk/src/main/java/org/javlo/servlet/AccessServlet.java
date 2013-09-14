@@ -75,6 +75,10 @@ import org.xhtmlrenderer.swing.Java2DRenderer;
 import org.xhtmlrenderer.util.FSImageWriter;
 
 public class AccessServlet extends HttpServlet implements IVersion {
+	
+	public static long COUNT_ACCESS = 0;
+	
+	public static long COUNT_304 = 0;
 
 	private static final DecimalFormat df = new DecimalFormat("#####0.00");
 
@@ -187,6 +191,8 @@ public class AccessServlet extends HttpServlet implements IVersion {
 	public void process(HttpServletRequest request, HttpServletResponse response) throws ServletException {
 
 		try {
+			
+			COUNT_ACCESS++;
 
 			logger.fine("uri : " + request.getRequestURI()); // TODO: remove debug trace
 
@@ -235,7 +241,8 @@ public class AccessServlet extends HttpServlet implements IVersion {
 				long lastModified = globalContext.getPublishDate().getTime();
 				response.setDateHeader(NetHelper.HEADER_LAST_MODIFIED, lastModified);
 				long lastModifiedInBrowser = request.getDateHeader(NetHelper.HEADER_IF_MODIFIED_SINCE);				
-				if (lastModified > 0 && lastModified/1000 <= lastModifiedInBrowser/1000) {					
+				if (lastModified > 0 && lastModified/1000 <= lastModifiedInBrowser/1000) {
+					COUNT_304++;
 					response.setStatus(HttpServletResponse.SC_NOT_MODIFIED);
 					return;
 				}

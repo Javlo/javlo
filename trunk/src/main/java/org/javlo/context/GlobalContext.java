@@ -68,6 +68,8 @@ import org.javlo.service.ContentService;
 import org.javlo.service.RequestService;
 import org.javlo.service.ReverseLinkService;
 import org.javlo.service.exception.ServiceException;
+import org.javlo.servlet.AccessServlet;
+import org.javlo.servlet.ImageTransformServlet;
 import org.javlo.template.Template;
 import org.javlo.user.AdminUserFactory;
 import org.javlo.user.IUserFactory;
@@ -2689,10 +2691,18 @@ public class GlobalContext implements Serializable {
 		out.println("****");
 		out.println("****************************************************************");
 		out.println("****************************************************************");
-		if (cacheManager != null) {
-			out.println("****");
-			out.println("**** CACHE INFO ");
-			out.println("****");
+		out.println("****");
+		out.println("**** CACHE INFO ");
+		out.println("****");
+		
+		if (ImageTransformServlet.COUNT_ACCESS > 0) {
+			out.println("**** Resources 304       : " + ImageTransformServlet.COUNT_304 + " on "+ImageTransformServlet.COUNT_ACCESS + " Access ("+Math.round(ImageTransformServlet.COUNT_304*100/ImageTransformServlet.COUNT_ACCESS)+"%).");
+		}
+		if (AccessServlet.COUNT_ACCESS > 0) {
+			out.println("**** Content 304         : " + AccessServlet.COUNT_304 + " on "+AccessServlet.COUNT_ACCESS + " Access ("+Math.round(AccessServlet.COUNT_304*100/AccessServlet.COUNT_ACCESS)+"%).");
+		}
+		
+		if (cacheManager != null) {			
 			String[] cachesName = cacheManager.getCacheNames();
 			for (String cacheName : cachesName) {
 				Cache cache = cacheManager.getCache(cacheName);
@@ -2725,6 +2735,7 @@ public class GlobalContext implements Serializable {
 					out.println("****");
 				}
 			}
+
 			out.println("****************************************************************");
 			out.println("****************************************************************");
 			out.println("attributes : ");
@@ -2735,6 +2746,7 @@ public class GlobalContext implements Serializable {
 			out.println("****************************************************************");
 
 		}
+
 	}
 
 	public String createOneTimeToken(String token) {
