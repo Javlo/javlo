@@ -56,6 +56,10 @@ import com.jhlabs.image.GrayscaleFilter;
  * 
  */
 public class ImageTransformServlet extends HttpServlet {
+	
+	public static long COUNT_ACCESS = 0;
+	
+	public static long COUNT_304 = 0;
 
 	private static final String TEMP_IMAGE_FILTER = "__TEMP_IMAGE_FILTER";
 
@@ -430,6 +434,8 @@ public class ImageTransformServlet extends HttpServlet {
 		// org.javlo.helper.Logger.stepCount("transform", "start");
 
 		servletRun++;
+		
+		COUNT_ACCESS++;
 
 		StaticConfig staticConfig = StaticConfig.getInstance(request.getSession());
 		ContentContext ctx = ContentContext.getFreeContentContext(request, response);
@@ -594,7 +600,8 @@ public class ImageTransformServlet extends HttpServlet {
 				long lastModified = getLastModified(globalContext, imageName, filter, area, ctx.getDevice(), template);
 				response.setDateHeader(NetHelper.HEADER_LAST_MODIFIED, lastModified);
 				long lastModifiedInBrowser = request.getDateHeader(NetHelper.HEADER_IF_MODIFIED_SINCE);
-				if (lastModified > 0 && lastModified/1000 <= lastModifiedInBrowser/1000) {					
+				if (lastModified > 0 && lastModified/1000 <= lastModifiedInBrowser/1000) {
+					COUNT_304++;
 					response.setStatus(HttpServletResponse.SC_NOT_MODIFIED);
 					return;
 				}

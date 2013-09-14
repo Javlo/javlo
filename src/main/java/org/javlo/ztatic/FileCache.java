@@ -74,7 +74,7 @@ public class FileCache {
 		return fc;
 	}
 
-	public String getRelativeFilePath(String key, String fileName) {
+	private String getRelativeFilePath(String key, String fileName) {
 		fileName = fileName.replace('\\', '/');
 		String cacheFileName = baseDirName + '/' + key;
 		if (fileName.startsWith("/")) {
@@ -86,7 +86,15 @@ public class FileCache {
 	}
 
 	public File getFileName(String key, String fileName) {
-		return new File(application.getRealPath(getRelativeFilePath(key, fileName)));
+		
+		fileName = fileName.replace('\\', '/');
+		String cacheFileName = baseDir.getAbsolutePath() + '/' + key;
+		if (fileName.startsWith("/")) {
+			cacheFileName = cacheFileName + fileName;
+		} else {
+			cacheFileName = cacheFileName + '/' + fileName;
+		}
+		return new File(cacheFileName);
 	}
 
 	/**
@@ -332,5 +340,7 @@ public class FileCache {
 			decorder.close();
 		}
 	}
+	
+	
 
 }
