@@ -42,6 +42,7 @@ public abstract class BaseSynchroService extends AbstractSynchroService<BaseSync
 
 	private File baseFolderFile;
 	private HttpClientService httpClientService;
+	private boolean manageDeletedFiles = true;
 
 	// no more supported:
 	// deleteIntraAfterTransfert = true
@@ -49,6 +50,13 @@ public abstract class BaseSynchroService extends AbstractSynchroService<BaseSync
 	public BaseSynchroService(HttpClientService httpClientService, File baseFolderFile) {
 		this.httpClientService = httpClientService;
 		this.baseFolderFile = baseFolderFile;
+	}
+
+	public boolean isManageDeletedFiles() {
+		return manageDeletedFiles;
+	}
+	public void setManageDeletedFiles(boolean manageDeletedFiles) {
+		this.manageDeletedFiles = manageDeletedFiles;
 	}
 
 	@Override
@@ -168,7 +176,7 @@ public abstract class BaseSynchroService extends AbstractSynchroService<BaseSync
 		}
 	}
 
-	private boolean copyLocalToDistant(BaseSynchroContext context, FileInfo localInfo) throws SynchroNonFatalException {
+	protected boolean copyLocalToDistant(BaseSynchroContext context, FileInfo localInfo) throws SynchroNonFatalException {
 
 		if (localInfo.isDirectory()) {
 			// logger.fine("push directory " + localInfo);
@@ -223,7 +231,7 @@ public abstract class BaseSynchroService extends AbstractSynchroService<BaseSync
 		}
 	}
 
-	private boolean copyDistantToLocal(BaseSynchroContext context, FileInfo distantInfo) throws SynchroNonFatalException {
+	protected boolean copyDistantToLocal(BaseSynchroContext context, FileInfo distantInfo) throws SynchroNonFatalException {
 
 		if (distantInfo.isDirectory()) {
 			// logger.fine("create local directory " + distantInfo);
@@ -294,7 +302,7 @@ public abstract class BaseSynchroService extends AbstractSynchroService<BaseSync
 		}
 	}
 
-	private boolean deleteLocalFile(BaseSynchroContext context, FileInfo localInfo) {
+	protected boolean deleteLocalFile(BaseSynchroContext context, FileInfo localInfo) {
 
 		if (localInfo.isDirectory()) {
 			// Mark for post process deletion
@@ -310,7 +318,7 @@ public abstract class BaseSynchroService extends AbstractSynchroService<BaseSync
 		return true;
 	}
 
-	private void deleteLocalDirectories(BaseSynchroContext context) {
+	protected void deleteLocalDirectories(BaseSynchroContext context) {
 		Collections.sort(context.getLocalDirectoryToDelete(), new FileInfoPathComparator());
 		Collections.reverse(context.getLocalDirectoryToDelete()); // To delete
 																	// childs
@@ -331,7 +339,7 @@ public abstract class BaseSynchroService extends AbstractSynchroService<BaseSync
 		}
 	}
 
-	private boolean deleteDistantFile(BaseSynchroContext context, FileInfo distantInfo) {
+	protected boolean deleteDistantFile(BaseSynchroContext context, FileInfo distantInfo) {
 
 		if (distantInfo.isDirectory()) { // no syncro directory
 			// Mark for post process deletion
@@ -366,7 +374,7 @@ public abstract class BaseSynchroService extends AbstractSynchroService<BaseSync
 		}
 	}
 
-	private void deleteDistantDirectories(BaseSynchroContext context) {
+	protected void deleteDistantDirectories(BaseSynchroContext context) {
 		// Collections.sort(context.getDistantDirectoryToDelete(), new
 		// FileInfoPathComparator());
 		// Collections.reverse(context.getDistantDirectoryToDelete()); //To
@@ -378,7 +386,7 @@ public abstract class BaseSynchroService extends AbstractSynchroService<BaseSync
 		// }
 	}
 
-	private FileInfo moveLocalFile(BaseSynchroContext context, FileInfo localInfo, String newPath) {
+	protected FileInfo moveLocalFile(BaseSynchroContext context, FileInfo localInfo, String newPath) {
 
 		logger.fine("move local file '" + localInfo + "' to '" + newPath + "'");
 
@@ -396,6 +404,10 @@ public abstract class BaseSynchroService extends AbstractSynchroService<BaseSync
 		// System.out.println("***************************");
 
 		sendCommand("context", context);
+	}
+
+	public void sendRefresh() {
+		sendCommand("refresh", "true");
 	}
 
 	@Override
