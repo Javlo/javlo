@@ -585,7 +585,7 @@ public class ImageTransformServlet extends HttpServlet {
 						imageName = StringHelper.getFileNameWithoutExtension(imageName) + '.' + StringHelper.getFileExtension(imageFile.getName());
 					}
 				}
-
+				
 				if (returnImageDescription) {
 					StaticInfo info = StaticInfo.getInstance(ctx, imageFile);
 					response.setContentType("text/html");
@@ -598,6 +598,7 @@ public class ImageTransformServlet extends HttpServlet {
 
 				/* last modified management */
 				long lastModified = getLastModified(globalContext, imageName, filter, area, ctx.getDevice(), template);
+				response.setHeader("Cache-Control", "public");				
 				response.setDateHeader(NetHelper.HEADER_LAST_MODIFIED, lastModified);				
 				long lastModifiedInBrowser = request.getDateHeader(NetHelper.HEADER_IF_MODIFIED_SINCE);
 				if (lastModified > 0 && lastModified/1000 <= lastModifiedInBrowser/1000) {
