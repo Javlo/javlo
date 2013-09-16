@@ -54,6 +54,10 @@ public class NetHelper {
 
 	public static final String HEADER_LAST_MODIFIED = "Last-Modified";
 	public static final String HEADER_IF_MODIFIED_SINCE = "If-Modified-Since";
+	
+	public static final String HEADER_ETAG = "ETag";
+	public static final String HEADER_IF_MODIFIED_SINCE_ETAG = "if-None-Match";
+
 
 	public static String readPage(URL url) throws Exception {
 		return readPage(url, false);
