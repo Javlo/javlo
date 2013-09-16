@@ -608,7 +608,7 @@ public class ImageTransformServlet extends HttpServlet {
 				String eTag = ""+lastModified;
 				response.setHeader(NetHelper.HEADER_ETAG, eTag);
 				String lastETag = request.getHeader(NetHelper.HEADER_IF_MODIFIED_SINCE_ETAG);
-				if (lastETag.equals(eTag)) {
+				if (lastETag != null && lastETag.equals(eTag)) {
 					COUNT_304++;
 					response.setStatus(HttpServletResponse.SC_NOT_MODIFIED);
 					return;
