@@ -57,13 +57,13 @@ MessageRepository.getInstance(request); // load request message
 							<label for="home_button">${i18n.edit['command.home']}</label>
 						</div>
 					</form></li>
-					<li><form id="pc_publish_form" action="${info.currentURL}" method="post">
+					<c:if test="${globalContext.previewMode}"><li><form id="pc_publish_form" action="${info.currentURL}" method="post">
 						<div class="pc_line">
 							<input type="hidden" name="webaction" value="edit.publish" />
 							<input id="pc_publish_button" type="submit" value="${i18n.edit['command.publish']}" title="${i18n.edit['command.publish']}" />
 							<label for="pc_publish_button">${i18n.edit['command.publish']}</label>
 						</div>
-					</form></li>
+					</form></li></c:if>
 					<c:if test="${!userInterface.light && !userInterface.contributor}">
 					<li><form class="preview-edit" id="change_template_form" action="<%=URLHelper.createURL(editCtx)%>?module=template&webaction=template.changeFromPreview&previewEdit=true" method="post">
 						<div class="pc_line">							
