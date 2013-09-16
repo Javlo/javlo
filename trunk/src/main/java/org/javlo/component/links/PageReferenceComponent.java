@@ -575,6 +575,8 @@ public class PageReferenceComponent extends ComplexPropertiesLink implements IAc
 	private static final String CHANGE_ORDER_KEY = "reverse-order";
 
 	private static final String WIDTH_EMPTY_PAGE_PROP_KEY = "width_empty";
+	
+	private static final String ONLY_PAGE_WITHOUT_CHILDREN = "only_without_children";
 
 	private static final String INTRANET_MODE_KEY = "intranet_mode";
 
@@ -788,6 +790,10 @@ public class PageReferenceComponent extends ComplexPropertiesLink implements IAc
 		out.println("<div class=\"line\">");
 		out.println(XHTMLHelper.getCheckbox(getWidthEmptyPageInputName(), isWidthEmptyPage()));
 		out.println("<label for=\"" + getWidthEmptyPageInputName() + "\">" + i18nAccess.getText("content.page-teaser.width-empty-page") + "</label></div>");
+		
+		out.println("<div class=\"line\">");
+		out.println(XHTMLHelper.getCheckbox(getOnlyWithoutChildrenInputName(), isOnlyPageWithoutChildren()));
+		out.println("<label for=\"" + getOnlyWithoutChildrenInputName() + "\">" + i18nAccess.getText("content.page-teaser.only-without-children") + "</label></div>");
 
 		if (isUIFilterOnEditUsers(ctx)) {
 			out.println("<div class=\"line\">");
@@ -1129,6 +1135,10 @@ public class PageReferenceComponent extends ComplexPropertiesLink implements IAc
 	protected String getWidthEmptyPageInputName() {
 		return "width-empty-page-" + getId();
 	}
+	
+	protected String getOnlyWithoutChildrenInputName() {
+		return "only-without-children-" + getId();
+	}
 
 	protected String getIntranetModeInputName() {
 		return "intranet-mode-" + getId();
@@ -1191,6 +1201,10 @@ public class PageReferenceComponent extends ComplexPropertiesLink implements IAc
 
 	private boolean isWidthEmptyPage() {
 		return StringHelper.isTrue(properties.getProperty(WIDTH_EMPTY_PAGE_PROP_KEY, "false"));
+	}
+	
+	private boolean isOnlyPageWithoutChildren() {
+		return StringHelper.isTrue(properties.getProperty(ONLY_PAGE_WITHOUT_CHILDREN, "false"));
 	}
 
 	private boolean isIntranetMode() {
@@ -1326,7 +1340,7 @@ public class PageReferenceComponent extends ComplexPropertiesLink implements IAc
 			}
 			if (filterPage(lgCtx, page)) {
 				if (countPage < getMaxNews(lgCtx)) {
-					if ((page.isRealContentAnyLanguage(lgCtx) || isWidthEmptyPage()) && page.getContentDateNeverNull(lgCtx).after(backDate.getTime())) {
+					if ((page.isRealContentAnyLanguage(lgCtx) || isWidthEmptyPage()) && (page.getChildMenuElements().size() > 0 || !isOnlyPageWithoutChildren()) && page.getContentDateNeverNull(lgCtx).after(backDate.getTime())) {
 
 						if (firstPage == null) {
 							firstPage = page;
@@ -1533,7 +1547,13 @@ public class PageReferenceComponent extends ComplexPropertiesLink implements IAc
 				setModify();
 			}
 			setWidthPageEmpty(withEmptyPage);
-
+			
+			boolean onlyWithoutChildren = requestService.getParameter(getOnlyWithoutChildrenInputName(), null) != null;
+			if (onlyWithoutChildren != isOnlyPageWithoutChildren()) {
+				setModify();
+			}
+			setOnlyPageWithoutChildren(onlyWithoutChildren);
+			
 			String basePage = requestService.getParameter(getParentNodeInputName(), "/");
 			if (!basePage.equals(getParentNode())) {
 				setNeedRefresh(true);
@@ -1592,7 +1612,11 @@ public class PageReferenceComponent extends ComplexPropertiesLink implements IAc
 	private void setWidthPageEmpty(boolean selected) {
 		properties.setProperty(WIDTH_EMPTY_PAGE_PROP_KEY, "" + selected);
 	}
-
+	
+	private void setOnlyPageWithoutChildren(boolean selected) {
+		properties.setProperty(ONLY_PAGE_WITHOUT_CHILDREN, "" + selected);
+	}
+	
 	private void visitSorting(ContentContext ctx, List<MenuElement> pages, int pertinentPageToBeSort) throws Exception {
 		int minMaxVisit = 0;
 		TreeSet<MenuElement> maxElement = new TreeSet<MenuElement>(new MenuElementVisitComparator(ctx, false));
