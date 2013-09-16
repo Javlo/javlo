@@ -135,13 +135,6 @@ public class SynchronisationServlet extends HttpServlet {
 				fileName = fileName.substring(1);
 			}
 
-			String host = request.getServerName();
-			if (!GlobalContext.isExist(request, host)) {
-				logger.warning("global context not found for this domain.");
-				response.setStatus(HttpServletResponse.SC_NOT_FOUND);
-				return;
-			}
-
 			logger.info("synchro file : " + fileName);
 
 			GlobalContext globalContext = GlobalContext.getInstance(request);
@@ -157,33 +150,39 @@ public class SynchronisationServlet extends HttpServlet {
 				included.add(folder + "/*");
 			}
 
+			boolean manageDeletedFiles = false; //TODO set back to true
 			if (fileName.startsWith(MAILING_PREFIX)) {
 				fileName = fileName.replace(MAILING_PREFIX, "");
 				baseFolder = staticConfig.getMailingFolder();
+				manageDeletedFiles = false;
 			} else if (fileName.startsWith(MAILING_HISTORY_PREFIX)) {
 				fileName = fileName.replace(MAILING_HISTORY_PREFIX, "");
 				baseFolder = staticConfig.getMailingHistoryFolder();
+				manageDeletedFiles = false;
 			} else if (fileName.startsWith(TEMPLATE_PREFIX)) {
 				fileName = fileName.replace(TEMPLATE_PREFIX, "");
 				baseFolder = staticConfig.getTemplateFolder();
+				manageDeletedFiles = false;
 			} else if (fileName.startsWith(TEMPLATE_MAILING_PREFIX)) {
 				fileName = fileName.replace(TEMPLATE_MAILING_PREFIX, "");
 				baseFolder = staticConfig.getMailingTemplateFolder();
+				manageDeletedFiles = false;
 			} else if (fileName.startsWith(SHARE_PREFIX)) {
 				fileName = fileName.replace(SHARE_PREFIX, "");
 				baseFolder = staticConfig.getShareDataFolder();
+				manageDeletedFiles = false;
 			}
 
 			fileName = URLHelper.cleanPath(fileName, true);
 
 			if (fileName.equals(FILE_INFO)) {
 				FileStructureFactory fsf = FileStructureFactory.getInstance(new File(baseFolder));
-				List<FileInfo> fileTree = fsf.fileTreeToList(true, true);
+				List<FileInfo> fileTree = fsf.fileTreeToList(manageDeletedFiles, manageDeletedFiles);
 				if (included != null) {
 					fileTree = keepOnly(fileTree, included);
 				}
 				if (SynchroHelper.splitBigFiles(new File(baseFolder), FileStructureFactory.asMapByPath(fileTree))) {
-					fileTree = fsf.fileTreeToList(true, true);
+					fileTree = fsf.fileTreeToList(manageDeletedFiles, manageDeletedFiles);
 					if (included != null) {
 						fileTree = keepOnly(fileTree, included);
 					}

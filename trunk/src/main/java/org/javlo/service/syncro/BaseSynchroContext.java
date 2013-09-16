@@ -21,6 +21,8 @@ import org.javlo.servlet.SynchronisationServlet;
  */
 public class BaseSynchroContext extends AbstractSynchroContext {
 
+	private final BaseSynchroService parentService;
+
 	private Map<String, FileInfo> outState;
 	private Map<SynchroSide, Map<String, FileInfo>> infos = new HashMap<SynchroSide, Map<String, FileInfo>>();
 	private List<FileInfo> localDirectoryToDelete = new LinkedList<FileInfo>();
@@ -28,6 +30,7 @@ public class BaseSynchroContext extends AbstractSynchroContext {
 
 	public BaseSynchroContext(BaseSynchroService parentService) {
 		super(parentService);
+		this.parentService = parentService;
 	}
 
 	@Override
@@ -85,7 +88,7 @@ public class BaseSynchroContext extends AbstractSynchroContext {
 	protected Map<String, FileInfo> loadLocalInfo() throws SynchroFatalException {
 		try {
 			FileStructureFactory fsf = FileStructureFactory.getInstance(getParentService().buildLocalFile(""));
-			return fsf.fileTreeToMap(true, true);
+			return fsf.fileTreeToMap(parentService.isManageDeletedFiles(), parentService.isManageDeletedFiles());
 		} catch (Exception ex) {
 			throw new SynchroFatalException("Exception loading local structure", ex);
 		}
