@@ -37,7 +37,7 @@ MessageRepository.getInstance(request); // load request message
 			<fieldset class="pc_command" id="pc_command">
 				<legend>${i18n.edit['global.command']}</legend>
 				<ul class="pc_form_line">						
-					<li class="preview"><form id="pc_form" action="${info.currentURL}" method="post">						
+					<li class="preview"><c:if test="${globalContext.previewMode}"><form id="pc_form" action="${info.currentURL}" method="post">						
 						<div class="pc_line">
 							<input type="hidden" name="webaction" value="edit.previewedit" />
 							<c:if test='${!editPreview}'> 
@@ -49,7 +49,11 @@ MessageRepository.getInstance(request); // load request message
 								<label for="pc_edit_button">${i18n.edit['preview.label.not-edit-page']}</label>
 							</c:if>
 						</div>				
-					</form></li>					
+					</form></c:if>
+					<c:if test="${!globalContext.previewMode}">
+						<a id="pc_edit_button" class="pc_edit_true" href="${info.currentViewURL}" target="_blank">${i18n.edit['preview.label.not-edit-page']}</a>
+					</c:if>
+					</li>					
 					<c:if test='${editPreview == "true"}'>
 					<li><form id="home_form" action="${info.rootURL}" method="post">
 						<div class="pc_line">							

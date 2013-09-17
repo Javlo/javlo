@@ -8,6 +8,7 @@ import java.util.List;
 import javax.servlet.http.HttpSession;
 
 import org.javlo.bean.ParentLink;
+import org.javlo.context.ContentContext;
 import org.javlo.context.EditContext;
 import org.javlo.context.GlobalContext;
 import org.javlo.i18n.I18nAccess;
@@ -47,6 +48,14 @@ public class TemplateContext {
 		outRenderers.add(MY_TEMPLATES_LINK);		
 		outRenderers.add(ALL_TEMPLATES_LINK);
 		return outRenderers;
+	}
+	
+	public void checkEditMode(ContentContext ctx) {
+		if (ctx.isAsEditMode() && !ctx.isEditPreview()) {
+			editPreview = false;
+		} else {
+			editPreview = EditContext.getInstance(ctx.getGlobalContext(), ctx.getRequest().getSession()).isEditPreview();
+		}
 	}
 	
 	public String getCurrentLink() {
