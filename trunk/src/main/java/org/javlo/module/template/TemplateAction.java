@@ -123,6 +123,9 @@ public class TemplateAction extends AbstractModuleAction {
 		Collection<String> contextTemplates = globalContext.getTemplatesNames();
 
 		Collection<Template.TemplateBean> templates = new LinkedList<Template.TemplateBean>();
+		
+		templateContext.checkEditMode(ctx);
+		
 		if (templateContext.getCurrentLink().equals(TemplateContext.MY_TEMPLATES_LINK.getUrl())) {
 			ctx.getRequest().setAttribute("nobrowse", "true");
 		}
@@ -393,10 +396,10 @@ public class TemplateAction extends AbstractModuleAction {
 	}
 
 	public String performValidate(RequestService requestService, HttpSession session, ContentContext ctx) throws IOException {
-		Template template = TemplateFactory.getDiskTemplate(session.getServletContext(), requestService.getParameter("id", null));
+		Template template = TemplateFactory.getTemplates(session.getServletContext()).get(requestService.getParameter("id", null));
 		if (template == null) {
 			Collection<Template> templates;
-			templates = TemplateFactory.getAllDiskTemplates(session.getServletContext());
+			templates = TemplateFactory.getAllTemplates(session.getServletContext());
 			for (Template template2 : templates) {
 				template2.setValid(true);
 			}
@@ -432,7 +435,8 @@ public class TemplateAction extends AbstractModuleAction {
 		return null;
 	}
 
-	public static String performChangeFromPreview(RequestService rs, ContentContext ctx, Module currentModule, MessageRepository messageRepository, I18nAccess i18nAccess) {
+	public static String performChangeFromPreview(RequestService rs, HttpSession session, ContentContext ctx, Module currentModule, MessageRepository messageRepository, I18nAccess i18nAccess) throws FileNotFoundException, IOException {
+		TemplateContext.getInstance(session, ctx.getGlobalContext(), currentModule).checkEditMode(ctx);		
 		return null;
 	}
 

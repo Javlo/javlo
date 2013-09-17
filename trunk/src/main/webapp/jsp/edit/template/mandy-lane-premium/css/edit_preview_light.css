@@ -447,7 +447,7 @@ body.edit-preview {
 	margin-top: 5px;
 }
 
-#preview_command .pc_command label,#preview_command .pc_command input {
+#preview_command .pc_command label,#preview_command .pc_command input, #preview_command .pc_command a {
 	margin: 0;
 	padding: 0;
 	display: block;
@@ -471,6 +471,21 @@ body.edit-preview {
    	background-image: url("../images/preview/ico_little_light.png");
 	background-position: 0 -1511px;
 	background-repeat: no-repeat;	
+}
+
+#preview_command .pc_command a#pc_edit_button.pc_edit_true {
+	padding-left: 20px;
+	padding-right: 4px;
+	background-position: 4px -1506px;	
+	background-color: #3076d4;
+	text-decoration: none;
+	height: 21px;
+}
+
+#preview_command .pc_command a#pc_edit_button.pc_edit_true:hover {
+	background-color: #f5f5f5;
+	text-decoration: none;
+	color: #333333;
 }
 
 #preview_command #pc_command.pc_command #pc_publish_button {

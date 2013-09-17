@@ -523,6 +523,23 @@ body.edit-preview {
     height: 16px;
 }
 
+#preview_command .pc_command a#pc_edit_button.pc_edit_true {
+	padding-top: 2px;
+	padding-left: 20px;
+	padding-right: 4px;
+	background-position: 4px -1506px;	
+	background-color: #333333;
+	text-decoration: none;
+	display: block;
+	height: 19px;
+}
+
+#preview_command .pc_command a#pc_edit_button.pc_edit_true:hover {
+	background-color: #f5f5f5;
+	text-decoration: none;
+	color: #333333;
+}
+
 #preview_command #home_form label {
 	display: none;
 }
