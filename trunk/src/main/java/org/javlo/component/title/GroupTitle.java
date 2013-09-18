@@ -23,8 +23,9 @@ public class GroupTitle extends AbstractVisualComponent {
 	 * @see org.javlo.itf.IContentVisualComponent#getXHTMLCode()
 	 */
 	@Override
-	public String getViewXHTMLCode(ContentContext ctx) throws Exception {
-		return "";
+	public String getViewXHTMLCode(ContentContext ctx) throws Exception {		
+		String tag = getConfig(ctx).getProperty("tag", "h3");
+		return '<'+tag+'>'+getValue()+"</"+tag+'>';
 	}
 
 	public String getType() {
@@ -38,17 +39,7 @@ public class GroupTitle extends AbstractVisualComponent {
 
 	@Override
 	public int getTitleLevel(ContentContext ctx) {
-		return 1;
-	}
-	
-	@Override
-	public boolean isEmpty(ContentContext ctx) {
-		return true;
-	}
-	
-	@Override
-	public boolean isUnique() {
-		return true;
+		return 3;
 	}
 
 }
