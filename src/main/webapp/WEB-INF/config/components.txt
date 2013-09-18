@@ -9,6 +9,7 @@ org.javlo.component.title.Title
 org.javlo.component.title.SubTitle
 org.javlo.component.title.PageTitle
 org.javlo.component.title.MenuTitle
+org.javlo.component.title.GroupTitle
 org.javlo.component.title.WebSiteTitle
 org.javlo.component.meta.DateComponent
 org.javlo.component.meta.LocationComponent
