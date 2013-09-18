@@ -517,7 +517,11 @@ public class GlobalImage extends Image {
 					e.printStackTrace();
 				}
 			}
-			return getLink();
+			String url = getLink();
+			if (!StringHelper.isURL(url)) {
+				url = URLHelper.createResourceURL(ctx, url);
+			}
+			return url;
 		} else if (getFileName() != null) {
 			String fileLink = getResourceURL(ctx, getFileName());
 			return URLHelper.createResourceURL(ctx, getPage(), fileLink).replace('\\', '/');

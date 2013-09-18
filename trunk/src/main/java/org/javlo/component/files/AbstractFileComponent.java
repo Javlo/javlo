@@ -147,10 +147,7 @@ public abstract class AbstractFileComponent extends AbstractVisualComponent impl
 	@Override
 	public void prepareView(ContentContext ctx) throws Exception {
 		super.prepareView(ctx);
-		String url = getURL(ctx);
-		/*if (!StringHelper.isURL(url)) {
-			url = URLHelper.createResourceURL(ctx, url);
-		}*/
+		String url = getURL(ctx);		
 		ctx.getRequest().setAttribute("url", url);
 		ctx.getRequest().setAttribute("blank", ctx.getGlobalContext().isOpenExernalLinkAsPopup(url));
 		ctx.getRequest().setAttribute("descritpion", getDescription());
