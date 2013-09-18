@@ -381,11 +381,14 @@ public class Edit extends AbstractModuleAction {
 	}
 
 	private static void loadComponentList(ContentContext ctx) throws Exception {
-		Collection<Edit.ComponentWrapper> comps =  ComponentFactory.getComponentForDisplay(ctx);
-		/*for (IContentComponentsList iContentComponentsList : comps) {
-			System.out.println("***** Edit.loadComponentList : iContentComponentsList = "+iContentComponentsList); //TODO: remove debug trace
-		}*/
-		ctx.getRequest().setAttribute("components",comps);
+		Collection<Edit.ComponentWrapper> comps = ComponentFactory.getComponentForDisplay(ctx);
+		/*
+		 * for (IContentComponentsList iContentComponentsList : comps) {
+		 * System.out
+		 * .println("***** Edit.loadComponentList : iContentComponentsList = "
+		 * +iContentComponentsList); //TODO: remove debug trace }
+		 */
+		ctx.getRequest().setAttribute("components", comps);
 	}
 
 	/**
@@ -442,7 +445,7 @@ public class Edit extends AbstractModuleAction {
 		GlobalContext globalContext = GlobalContext.getInstance(ctx.getRequest());
 
 		Module currentModule = modulesContext.getCurrentModule();
-		
+
 		if (modulesContext.searchModule("shared-content") != null) {
 			ctx.getRequest().setAttribute("sharedContent", "true");
 		}
@@ -981,13 +984,13 @@ public class Edit extends AbstractModuleAction {
 			}
 			ctx.setContentLanguage(lg);
 			ctx.setRequestContentLanguage(lg);
-			messageRepository.setGlobalMessage(new GenericMessage(i18nAccess.getText("edit.message.new-language") +' '+lg, GenericMessage.INFO));
+			messageRepository.setGlobalMessage(new GenericMessage(i18nAccess.getText("edit.message.new-language") + ' ' + lg, GenericMessage.INFO));
 			String newURL = URLHelper.createURL(ctx);
-			
+
 			if (requestService.getParameter(ElementaryURLHelper.BACK_PARAM_NAME, null) != null) {
 				newURL = URLHelper.addParam(newURL, ElementaryURLHelper.BACK_PARAM_NAME, requestService.getParameter(ElementaryURLHelper.BACK_PARAM_NAME, null));
-			}			
-			newURL = messageRepository.forwardMessage(newURL);			
+			}
+			newURL = messageRepository.forwardMessage(newURL);
 			ctx.sendRedirect(newURL);
 		} else {
 			return "bad request structure : 'language' not found.";
@@ -1215,14 +1218,15 @@ public class Edit extends AbstractModuleAction {
 		return message;
 	}
 
-	public static final String performPreviewedit(RequestService rs, EditContext editCtx) {
-
-		if (rs.getParameter("preview", null) == null) {
-			editCtx.setEditPreview(!editCtx.isEditPreview());
-		} else {
-			editCtx.setEditPreview(StringHelper.isTrue(rs.getParameter("preview", null)));
+	public static final String performPreviewedit(HttpServletRequest request, RequestService rs, EditContext editCtx) {
+		GlobalContext globalContext = GlobalContext.getInstance(request);		
+		if (globalContext.isPreviewMode()) {			
+			if (rs.getParameter("preview", null) == null) {
+				editCtx.setEditPreview(!editCtx.isEditPreview());
+			} else {
+				editCtx.setEditPreview(StringHelper.isTrue(rs.getParameter("preview", null)));
+			}
 		}
-
 		return null;
 	}
 
@@ -1516,16 +1520,16 @@ public class Edit extends AbstractModuleAction {
 				}
 				ctx = ctx.getContextWithArea(areaKey);
 				editContext.setCurrentArea(areaKey);
-			}			
+			}
 			if (areaKey != null) {
 				ctx = ctx.getContextWithArea(areaKey);
 			}
-			
+
 			sharedContent.loadContent(ctx);
 			content.createContent(ctx, sharedContent.getContent(), previousId, true);
-			
+
 			PersistenceService.getInstance(globalContext).store(ctx);
-			
+
 		}
 		return null;
 	}
