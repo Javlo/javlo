@@ -23,7 +23,6 @@ import org.javlo.component.core.ComponentBean;
 import org.javlo.component.core.ComponentFactory;
 import org.javlo.component.core.ContentElementList;
 import org.javlo.component.core.IContentVisualComponent;
-import org.javlo.config.StaticConfig;
 import org.javlo.context.ContentContext;
 import org.javlo.context.EditContext;
 import org.javlo.context.GlobalContext;
@@ -107,15 +106,15 @@ public class ContentService {
 		return getInstance(GlobalContext.getInstance(request));
 	}
 
-	public MenuElement getViewNav() {
+	protected MenuElement getViewNav() {		
 		if (previewMode) {
 			return viewNav;
-		} else {
+		} else {			
 			return previewNav;
 		}
 	}
 
-	public void setViewNav(MenuElement nav) {
+	protected void setViewNav(MenuElement nav) {
 		if (previewMode) {
 			viewNav = nav;
 		}

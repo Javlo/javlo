@@ -227,8 +227,9 @@
 		<dependency>
 			<groupId>com.lowagie</groupId>
 			<artifactId>itext</artifactId>
-			<version>2.1.7</version>
+			<version>4.2.1</version>
 		</dependency>
+
 
 		<dependency>
 			<groupId>org.xhtmlrenderer</groupId>
