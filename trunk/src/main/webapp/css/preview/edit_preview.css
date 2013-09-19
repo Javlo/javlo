@@ -18,7 +18,7 @@
 }
 
 .not-editable-component {
-	cursor: url('../images/preview/lock.png')
+	cursor: url('../images/preview/lock.png');
 }
 
 [draggable] {
