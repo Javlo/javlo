@@ -264,7 +264,7 @@ public class ContentService {
 		for (ComponentBean bean : inBean) {
 			IContentVisualComponent comp = ComponentFactory.createComponent(ctx, bean, null, null, null);
 			if (!comp.isUnique() || page.getContentByType(ctx, comp.getType()).size() == 0) {
-				if (bean.getAuthors() == null && ctx.getCurrentEditUser() != null) {
+				if (bean.getAuthors() == null || bean.getAuthors().length() == 0 && ctx.getCurrentEditUser() != null) {
 					bean.setAuthors(ctx.getCurrentEditUser().getLogin());
 				}
 				parentId = createContent(ctx, page, bean, parentId, false);
