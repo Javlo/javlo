@@ -83,6 +83,10 @@ IContentVisualComponent previousElem = null;
 		%><div lang="<%=ctx.getContentLanguage()%>"><%
 	}
 	
+	if (!elems.hasNext(ctx) && ctx.isAsPreviewMode()) {
+		%><div class="_empty_area"><span><%=ctx.getArea()%></span></div><%
+	}
+	
 	while (specificComp != null || (elems != null && elems.hasNext(ctx))) {
 		pageEmpty = false;
 		if (specificComp == null) {

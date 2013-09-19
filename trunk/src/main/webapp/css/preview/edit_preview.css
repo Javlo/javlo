@@ -1,3 +1,22 @@
+._empty_area {
+	margin: 5px;
+	border: 1px #777777 solid;
+	border-radius: 3px 3px 3px 3px;
+	border: 1px dashed #5B5B5B;
+	padding: 5px;
+	background-color: #EBEBEB;
+	height: 65px;
+	vertical-align: middle;
+	text-align: center;
+	font-family: sans-serif;
+	font-size: 30px;
+	color: #5B5B5B;
+	text-shadow: 1px -1px 0 #ffffff;	
+	width: 100%;
+	display: block;
+	padding-top: 35px;	 
+}
+
 [draggable] {
     -moz-user-select: none;
     -khtml-user-select: none;
