@@ -10,6 +10,24 @@ jQuery(document).ready(
 						'<div id="preview-layer"><span>&nbsp;</span></div>');
 				jQuery("body").append(
 						'<div id="droppable-layer"><span>&nbsp;</span></div>');
+				
+				jQuery( document ).tooltip({
+					position: {
+					my: "center bottom-20",
+					at: "center top",					
+					using: function( position, feedback ) {
+						 jQuery( this ).css( position );
+						 jQuery( "<div>" )
+						 .addClass( "arrow" )
+						 .addClass( feedback.vertical )
+						 .addClass( feedback.horizontal )
+						 .appendTo( this );
+					  }
+					},
+					items: "#preview-layer",
+					show: {delay:500}
+				});
+				 
 			} catch (err) {
 				if (typeof console != 'undefined') {
 					console.log("error on : " + err);
@@ -60,18 +78,27 @@ jQuery(document).ready(
 layerOver = function(item, deletable) {	
 	var layer = jQuery("#preview-layer");	
 	layer.data("deletable", deletable);
+	
 	var insideLayer = jQuery("#preview-layer span");
 	if (item == null) {		
 		layer.css("z-index", -1);
 		layer.css("display", "none");
 		layer.data("compType", null);
 		layer.data("sharedContent", null);
+		layer.attr("title", "");
 	} else {		
 		var comp = jQuery(item);
 		if (layer.width() > 0) {
 			layer.css("z-index", 10000);
 			layer.css("display", "block");
 		}
+		
+		if (comp.hasClass("editable-component")) {
+			layer.attr("title", "move with drag and drop or click to edit.");
+		} else {
+			layer.attr("title", "move with drag and drop.");
+		}
+		
 		layer.css("top", comp.offset().top);
 		layer.css("left", comp.offset().left);
 		
