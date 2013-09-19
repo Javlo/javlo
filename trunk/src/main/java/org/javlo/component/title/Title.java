@@ -15,10 +15,17 @@ import org.javlo.service.ReverseLinkService;
 public class Title extends AbstractVisualComponent {
 
 	public static final String TYPE = "title";
+	
+	private static final String[] STYLES = new String[] {"standard", HIDDEN};
 
 	@Override
 	public int getSearchLevel() {
 		return SEARCH_LEVEL_HIGH;
+	}
+	
+	@Override
+	public String[] getStyleList(ContentContext ctx) {	
+		return STYLES;
 	}
 
 	/**
@@ -26,6 +33,9 @@ public class Title extends AbstractVisualComponent {
 	 */
 	@Override
 	public String getViewXHTMLCode(ContentContext ctx) throws Exception {
+		if (getStyle().equals(HIDDEN)) {
+			return "";
+		}
 		StringBuffer res = new StringBuffer();
 		res.append("<h1 " + getSpecialPreviewCssClass(ctx, getStyle(ctx)) + getSpecialPreviewCssId(ctx) + "><span>");
 

@@ -64,6 +64,8 @@ import org.javlo.message.MessageRepository;
 import org.javlo.service.PersistenceService;
 import org.javlo.service.exception.ServiceException;
 import org.javlo.service.resource.Resource;
+import org.javlo.template.Template;
+import org.javlo.template.TemplateFactory;
 import org.javlo.user.User;
 import org.javlo.utils.CollectionAsMap;
 import org.javlo.utils.TimeRange;
@@ -3343,7 +3345,15 @@ public class MenuElement implements Serializable {
 		}
 
 		ContentContext contentAreaCtx = new ContentContext(ctx);
-		contentAreaCtx.setArea(ComponentBean.DEFAULT_AREA);
+		
+		Template template = TemplateFactory.getTemplate(ctx, this);
+		
+		System.out.println("***** MenuElement.isRealContent : ctx.getCurrentTemplate().isRealContentFromAnyArea() = "+template.isRealContentFromAnyArea()); //TODO: remove debug trace
+		if (template == null || !template.isRealContentFromAnyArea()) {
+			contentAreaCtx.setArea(ComponentBean.DEFAULT_AREA);
+		} else {
+			contentAreaCtx.setArea(null);
+		}
 		ContentElementList comps = getContent(contentAreaCtx);
 		while (comps.hasNext(contentAreaCtx)) {
 			IContentVisualComponent comp = comps.next(contentAreaCtx);

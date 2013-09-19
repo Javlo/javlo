@@ -2111,5 +2111,17 @@ public class Template implements Comparable<Template> {
 	public String getConfigItem(String key, String defaultValue) {
 		return StringHelper.neverNull(properties.getString(key), defaultValue);
 	}
+	
+	/**
+	 * true if all area can be signifiant for read content, false if only main area is signifiant.
+	 * @return
+	 */
+	public boolean isRealContentFromAnyArea() {
+		if (properties.getProperty("real-content-from-any") == null)  {
+			return false;
+		} else {
+			return properties.getBoolean("real-content-from-any", false);
+		}
+	}
 
 }
