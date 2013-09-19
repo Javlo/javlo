@@ -42,7 +42,6 @@ import org.javlo.context.ContentContext;
 import org.javlo.context.EditContext;
 import org.javlo.context.GlobalContext;
 import org.javlo.exception.ResourceNotFoundException;
-import org.javlo.helper.BeanHelper;
 import org.javlo.helper.ConfigHelper;
 import org.javlo.helper.ResourceHelper;
 import org.javlo.helper.ServletHelper;
@@ -331,7 +330,7 @@ public abstract class AbstractVisualComponent implements IContentVisualComponent
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
-		String keySuffix = ctx.getLanguage() + '-' + ctx.getRequestContentLanguage() + '-' + ctx.getRenderMode()+ '-' + templateId;
+		String keySuffix = ctx.getGlobalContext().getContextKey()+'-'+ctx.getLanguage() + '-' + ctx.getRequestContentLanguage() + '-' + ctx.getRenderMode()+ '-' + templateId;
 
 		if (isContentCachableByQuery(ctx)) {
 			keySuffix = keySuffix + '_' + ctx.getRequest().getQueryString();
@@ -1190,7 +1189,7 @@ public abstract class AbstractVisualComponent implements IContentVisualComponent
 				return getEditXHTMLCode(ctx);
 			} else {
 				ctx.getRequest().setAttribute(COMP_ID_REQUEST_PARAM, getId());
-				if (ctx.getRenderMode() == ContentContext.VIEW_MODE && isContentCachable(ctx)) {
+				if (ctx.getRenderMode() == ContentContext.VIEW_MODE && isContentCachable(ctx) && globalContext.isPreviewMode()) {
 					if (getContentCache(ctx) != null) {
 						return getContentCache(ctx);
 					}
@@ -1200,7 +1199,7 @@ public abstract class AbstractVisualComponent implements IContentVisualComponent
 						}
 					}
 				}
-				if (ctx.getRenderMode() == ContentContext.VIEW_MODE && isContentTimeCachable(ctx)) {
+				if (ctx.getRenderMode() == ContentContext.VIEW_MODE && isContentTimeCachable(ctx) && globalContext.isPreviewMode()) {
 					String timeContent = getContentTimeCache(ctx);
 					if (timeContent != null) {
 						return timeContent;
@@ -1212,7 +1211,7 @@ public abstract class AbstractVisualComponent implements IContentVisualComponent
 						}
 					}
 				}
-				if (ctx.getRenderMode() == ContentContext.VIEW_MODE && isContentCachable(ctx)) {
+				if (ctx.getRenderMode() == ContentContext.VIEW_MODE && isContentCachable(ctx) && globalContext.isPreviewMode()) {
 					logger.fine("add content in cache for component " + getType() + " in page : " + ctx.getPath());
 					long beforeTime = System.currentTimeMillis();
 					String content;
@@ -1225,7 +1224,7 @@ public abstract class AbstractVisualComponent implements IContentVisualComponent
 					return content;
 				} else {
 					String content;
-					if (isContentTimeCachable(ctx)) {
+					if (isContentTimeCachable(ctx) && globalContext.isPreviewMode()) {
 						long beforeTime = System.currentTimeMillis();
 						synchronized (getLock(ctx)) {
 							prepareView(ctx);
@@ -1580,6 +1579,9 @@ public abstract class AbstractVisualComponent implements IContentVisualComponent
 	}
 
 	public void setContentCache(ContentContext ctx, String contentCache) {
+		
+		System.out.println("***** AbstractVisualComponent.setContentCache : set content in cache : "+getType()); //TODO: remove debug trace
+		
 		if (contentCache == null) {
 			return;
 		}

@@ -66,10 +66,11 @@ public class FileCache {
 	 *            the ServletContext
 	 * @return a instance in application scope.
 	 */
-	public static final FileCache getInstance(ServletContext inApplication) {
+	public synchronized static final FileCache getInstance(ServletContext inApplication) {
 		FileCache fc = (FileCache) inApplication.getAttribute(KEY);
 		if (fc == null) {
 			fc = new FileCache(inApplication);
+			inApplication.setAttribute(KEY, fc);
 		}
 		return fc;
 	}

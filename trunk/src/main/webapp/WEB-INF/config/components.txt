@@ -34,6 +34,7 @@ org.javlo.component.files.CSVArrayComponent
 org.javlo.component.links.ExternalLink
 org.javlo.component.links.InternalLink
 org.javlo.component.links.SimpleInternalLink
+org.javlo.component.links.PDFLink
 org.javlo.component.links.PageReferenceComponent
 org.javlo.component.links.ChildrenLink
 org.javlo.component.links.Menu
