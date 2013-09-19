@@ -251,7 +251,7 @@ public class AccessServlet extends HttpServlet implements IVersion {
 			}
 			
 			/** CACHE **/
-			if (ctx.isAsViewMode() && ctx.getCurrentPage().isCacheable(ctx)  && globalContext.getPublishDate() != null) {
+			if (ctx.isAsViewMode() && ctx.getCurrentPage().isCacheable(ctx)  && globalContext.isPreviewMode() && globalContext.getPublishDate() != null) {
 				long lastModified = globalContext.getPublishDate().getTime();
 				response.setDateHeader(NetHelper.HEADER_LAST_MODIFIED, lastModified);
 				long lastModifiedInBrowser = request.getDateHeader(NetHelper.HEADER_IF_MODIFIED_SINCE);				
