@@ -39,7 +39,7 @@ public class PDFLink extends AbstractVisualComponent {
 		if (i18nAccess.getViewText("pdf-link.title", (String)null) != null) {
 			linkTitle = " title=\""+StringHelper.toHTMLAttribute(i18nAccess.getViewText("pdf-link.title", ""))+"\"";
 		}
-		return "<a href=\""+getURL(ctx)+"\""+linkTitle+">"+getValue()+"</a>";
+		return "<a href=\""+getURL(ctx.getContextWithOtherRenderMode(ContentContext.VIEW_MODE))+"\""+linkTitle+">"+getValue()+"</a>";
 	}
 
 }
