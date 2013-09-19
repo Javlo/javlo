@@ -17,6 +17,10 @@
 	padding-top: 35px;	 
 }
 
+.not-editable-component {
+	cursor: url('../images/preview/lock.png')
+}
+
 [draggable] {
     -moz-user-select: none;
     -khtml-user-select: none;
@@ -857,7 +861,7 @@ body.fix-preview {
     filter: alpha(opacity=30);
     -khtml-opacity: 0.30;
     -moz-opacity: 0.30;
-    margin-bottom: 4px;
+    margin-bottom: 4px;    
 }
 
 .free-edit-zone.droppable span {
