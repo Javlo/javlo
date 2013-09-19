@@ -5,7 +5,6 @@ import org.javlo.context.ContentContext;
 import org.javlo.helper.StringHelper;
 import org.javlo.helper.URLHelper;
 import org.javlo.i18n.I18nAccess;
-import org.javlo.rendering.Device;
 
 public class PDFLink extends AbstractVisualComponent {
 	
