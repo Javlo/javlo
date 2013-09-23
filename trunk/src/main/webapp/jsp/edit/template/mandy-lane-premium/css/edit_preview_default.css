@@ -1,3 +1,17 @@
+._empty_area {
+	margin: 0;
+	border: 0 none;
+	border-radius: 0 0 0;	
+	padding: 0;
+	background-color: transparent;
+	height: auto;
+	font-size: 0;	 
+	text-shadow: 0 0 0 #ffffff;
+	width: auto;
+	display: block;	
+}
+
+
 #preview_command {
 	height: 100%;
 }
