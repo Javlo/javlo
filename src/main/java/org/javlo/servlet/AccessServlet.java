@@ -674,7 +674,7 @@ public class AccessServlet extends HttpServlet implements IVersion {
 							
 							if (ctx.getGlobalContext().isCollaborativeMode()) {
 								Set<String> pageRoles = ctx.getCurrentPage().getEditorRoles();
-								if (pageRoles.size() > 0 || ctx.getCurrentEditUser() == null) {
+								if ((pageRoles.size() > 0 || ctx.getCurrentEditUser() == null) && !ctx.getCurrentPage().getName().equals("registration")) { // leave access to registration page.
 									if (ctx.getCurrentEditUser() == null || !ctx.getCurrentEditUser().validForRoles(pageRoles)) {
 										ctx.setSpecialContentRenderer("/jsp/view/no_access.jsp");
 									}
