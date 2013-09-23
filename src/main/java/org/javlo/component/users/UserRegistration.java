@@ -138,7 +138,7 @@ public class UserRegistration extends AbstractVisualComponent implements IAction
 			out.println(rs.getParameter("message","" ));
 			out.println("");
 			out.println("");
-			out.println("Access link     : "+URLHelper.createURL(ctx.getContextForAbsoluteURL().getContextWithOtherRenderMode(ContentContext.EDIT_MODE), "/"));
+			out.println("Access link     : "+URLHelper.createURL(ctx.getContextForAbsoluteURL().getContextWithOtherRenderMode(ContentContext.PREVIEW_MODE), "/"));
 			out.println("");
 			out.close();
 			
