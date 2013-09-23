@@ -151,26 +151,32 @@ public class SynchronisationServlet extends HttpServlet {
 			}
 
 			boolean manageDeletedFiles = false; //TODO set back to true
+			boolean splitBigFiles = false; //TODO set back to true
 			if (fileName.startsWith(MAILING_PREFIX)) {
 				fileName = fileName.replace(MAILING_PREFIX, "");
 				baseFolder = staticConfig.getMailingFolder();
 				manageDeletedFiles = false;
+				splitBigFiles = false;
 			} else if (fileName.startsWith(MAILING_HISTORY_PREFIX)) {
 				fileName = fileName.replace(MAILING_HISTORY_PREFIX, "");
 				baseFolder = staticConfig.getMailingHistoryFolder();
 				manageDeletedFiles = false;
+				splitBigFiles = false;
 			} else if (fileName.startsWith(TEMPLATE_PREFIX)) {
 				fileName = fileName.replace(TEMPLATE_PREFIX, "");
 				baseFolder = staticConfig.getTemplateFolder();
 				manageDeletedFiles = false;
+				splitBigFiles = false;
 			} else if (fileName.startsWith(TEMPLATE_MAILING_PREFIX)) {
 				fileName = fileName.replace(TEMPLATE_MAILING_PREFIX, "");
 				baseFolder = staticConfig.getMailingTemplateFolder();
 				manageDeletedFiles = false;
+				splitBigFiles = false;
 			} else if (fileName.startsWith(SHARE_PREFIX)) {
 				fileName = fileName.replace(SHARE_PREFIX, "");
 				baseFolder = staticConfig.getShareDataFolder();
 				manageDeletedFiles = false;
+				splitBigFiles = false;
 			}
 
 			fileName = URLHelper.cleanPath(fileName, true);
@@ -181,7 +187,7 @@ public class SynchronisationServlet extends HttpServlet {
 				if (included != null) {
 					fileTree = keepOnly(fileTree, included);
 				}
-				if (SynchroHelper.splitBigFiles(new File(baseFolder), FileStructureFactory.asMapByPath(fileTree))) {
+				if (splitBigFiles && SynchroHelper.splitBigFiles(new File(baseFolder), FileStructureFactory.asMapByPath(fileTree))) {
 					fileTree = fsf.fileTreeToList(manageDeletedFiles, manageDeletedFiles);
 					if (included != null) {
 						fileTree = keepOnly(fileTree, included);

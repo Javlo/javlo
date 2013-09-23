@@ -43,9 +43,7 @@ public abstract class BaseSynchroService extends AbstractSynchroService<BaseSync
 	private File baseFolderFile;
 	private HttpClientService httpClientService;
 	private boolean manageDeletedFiles = true;
-
-	// no more supported:
-	// deleteIntraAfterTransfert = true
+	private boolean splitBigFiles = true;
 
 	public BaseSynchroService(HttpClientService httpClientService, File baseFolderFile) {
 		this.httpClientService = httpClientService;
@@ -57,6 +55,13 @@ public abstract class BaseSynchroService extends AbstractSynchroService<BaseSync
 	}
 	public void setManageDeletedFiles(boolean manageDeletedFiles) {
 		this.manageDeletedFiles = manageDeletedFiles;
+	}
+
+	public boolean isSplitBigFiles() {
+		return splitBigFiles;
+	}
+	public void setSplitBigFiles(boolean splitBigFiles) {
+		this.splitBigFiles = splitBigFiles;
 	}
 
 	@Override
@@ -89,7 +94,9 @@ public abstract class BaseSynchroService extends AbstractSynchroService<BaseSync
 	protected void initializeContext(BaseSynchroContext context, Object previousState) throws SynchroFatalException {
 		try {
 			Map<String, FileInfo> localInfos = context.loadLocalInfo();
-			SynchroHelper.splitBigFiles(buildLocalFile(""), localInfos);
+			if (splitBigFiles) {
+				SynchroHelper.splitBigFiles(buildLocalFile(""), localInfos);
+			}
 		} catch (Exception ex) {
 			throw new SynchroFatalException("Exception splitting big files", ex);
 		}
@@ -199,7 +206,7 @@ public abstract class BaseSynchroService extends AbstractSynchroService<BaseSync
 			try {
 				HttpPost filePost = new HttpPost(finalURL);
 				MultipartEntity multipart = new MultipartEntity();
-				if (!SynchroHelper.isBigFile(localInfo.getSize())) {
+				if (!(splitBigFiles && SynchroHelper.isBigFile(localInfo.getSize()))) {
 					multipart.addPart(localFile.getName(), new FileBody(localFile));
 				}
 				filePost.setEntity(multipart);
@@ -246,7 +253,7 @@ public abstract class BaseSynchroService extends AbstractSynchroService<BaseSync
 
 		logger.fine("download file " + distantInfo);
 
-		if (SynchroHelper.isBigFile(distantInfo.getSize())) {
+		if (splitBigFiles && SynchroHelper.isBigFile(distantInfo.getSize())) {
 
 			try {
 				SynchroHelper.rebuildSplitted(buildLocalFile("").getAbsolutePath(), distantInfo.getPath(), distantInfo.getChecksum());
