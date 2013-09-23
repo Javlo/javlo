@@ -529,10 +529,7 @@ public class CatchAllFilter implements Filter {
 
 	@Override
 	public void init(FilterConfig config) throws ServletException {
+		DebugListening.getInstance().setAppplication(config.getServletContext());
 	}
 
-	public void initElements(ServletRequest request, ServletResponse response) {
-		HttpServletRequest httpRequest = (HttpServletRequest) request;
-		DebugListening.getInstance().setAppplication(httpRequest.getSession().getServletContext());
-	}
 }
