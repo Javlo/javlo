@@ -3,6 +3,7 @@ package org.javlo.service.syncro;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.PrintWriter;
 import java.net.URLEncoder;
 import java.util.Collections;
 import java.util.Comparator;
@@ -426,9 +427,30 @@ public abstract class BaseSynchroService extends AbstractSynchroService<BaseSync
 	}
 
 	@Override
-	protected void onNonFatalException(BaseSynchroContext context, SynchroNonFatalException ex) {
-		logger.log(Level.WARNING, ex.getMessage(), ex);
-		super.onNonFatalException(context, ex);
+	protected void onNonFatalException(BaseSynchroContext context, SynchroNonFatalException ex, String currentFilePath) {
+		logger.log(Level.WARNING, "Synchro - Non fatal exception on file '" + currentFilePath + "' : " + ex.getMessage(), ex);
+		PrintWriter out = context.getReportWriter();
+		out.println("Non fatal exception on file '" + currentFilePath + "' :");
+		ex.printStackTrace(out);
+		super.onNonFatalException(context, ex, currentFilePath);
+	}
+
+	@Override
+	protected void onFatalException(BaseSynchroContext context, SynchroFatalException ex) {
+		logger.log(Level.SEVERE, "Synchro - Fatal exception: " + ex.getMessage(), ex);
+		PrintWriter out = context.getReportWriter();
+		out.println("Fatal exception in synchronisation: ");
+		ex.printStackTrace(out);
+		super.onFatalException(context, ex);
+	}
+
+	@Override
+	protected void onUncaughtException(BaseSynchroContext context, Throwable ex) {
+		logger.log(Level.SEVERE, "Synchro - Uncaught exception: " + ex.getMessage(), ex);
+		PrintWriter out = context.getReportWriter();
+		out.println("Uncaught exception in synchronisation :");
+		ex.printStackTrace(out);
+		super.onUncaughtException(context, ex);
 	}
 
 	public class FileInfoPathComparator implements Comparator<FileInfo> {

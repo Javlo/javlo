@@ -89,7 +89,7 @@ public abstract class AbstractSynchroService<SC extends AbstractSynchroContext> 
 					context.setAction(path, action);
 				}
 			} catch (SynchroNonFatalException ex) {
-				onNonFatalException(context, ex);
+				onNonFatalException(context, ex, path);
 			}
 		}
 	}
@@ -198,7 +198,7 @@ public abstract class AbstractSynchroService<SC extends AbstractSynchroContext> 
 			try {
 				applyAction(context, path, context.getAction(path));
 			} catch (SynchroNonFatalException ex) {
-				onNonFatalException(context, ex);
+				onNonFatalException(context, ex, path);
 			}
 		}
 	}
@@ -223,8 +223,9 @@ public abstract class AbstractSynchroService<SC extends AbstractSynchroContext> 
 	 * Called when an {@link SynchroNonFatalException} is thrown during the synchro process. Only the current file will be skipped.
 	 * @param context the current {@link AbstractSynchroContext}
 	 * @param ex
+	 * @param currentFilePath 
 	 */
-	protected void onNonFatalException(SC context, SynchroNonFatalException ex) {
+	protected void onNonFatalException(SC context, SynchroNonFatalException ex, String currentFilePath) {
 		context.onError(ex);
 	}
 

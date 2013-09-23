@@ -123,6 +123,8 @@ public abstract class AbstractSynchroContext {
 	}
 
 	public String getReport() {
+		report.flush();
+		reportBuffer.flush();
 		return reportBuffer.toString();
 	}
 
