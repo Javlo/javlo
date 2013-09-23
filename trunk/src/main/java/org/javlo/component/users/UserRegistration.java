@@ -85,12 +85,9 @@ public class UserRegistration extends AbstractVisualComponent implements IAction
 	public static String performRegister(RequestService rs, GlobalContext globalContext, ContentContext ctx, MessageRepository messageRepository, I18nAccess i18nAccess) throws Exception {
 		
 		UserRegistration comp = (UserRegistration)ComponentHelper.getComponentFromRequest(ctx);
-		if (comp == null) {
-			return "technical error : component not found.";
-		}
 		
 		IUserFactory userFactory;
-		if (comp.isAdminRegistration()) {
+		if (comp == null || comp.isAdminRegistration()) {
 			userFactory = AdminUserFactory.createUserFactory(globalContext, ctx.getRequest().getSession());
 		} else {
 			userFactory = UserFactory.createUserFactory(globalContext, ctx.getRequest().getSession());
