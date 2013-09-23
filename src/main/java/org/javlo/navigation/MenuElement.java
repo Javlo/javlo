@@ -3348,7 +3348,7 @@ public class MenuElement implements Serializable {
 		
 		Template template = TemplateFactory.getTemplate(ctx, this);
 		
-		System.out.println("***** MenuElement.isRealContent : ctx.getCurrentTemplate().isRealContentFromAnyArea() = "+template.isRealContentFromAnyArea()); //TODO: remove debug trace
+		System.out.println("***** MenuElement.isRealContent : ctx.getCurrentTemplate().isRealContentFromAnyArea() = " + (template == null ? "null template" : template.isRealContentFromAnyArea())); //TODO: remove debug trace
 		if (template == null || !template.isRealContentFromAnyArea()) {
 			contentAreaCtx.setArea(ComponentBean.DEFAULT_AREA);
 		} else {
