@@ -689,4 +689,6 @@ public interface IContentVisualComponent {
 
 	public Date getModificationDate();
 
+	void setPage(MenuElement inPage);
+
 }

@@ -1580,8 +1580,6 @@ public abstract class AbstractVisualComponent implements IContentVisualComponent
 
 	public void setContentCache(ContentContext ctx, String contentCache) {
 		
-		System.out.println("***** AbstractVisualComponent.setContentCache : set content in cache : "+getType()); //TODO: remove debug trace
-		
 		if (contentCache == null) {
 			return;
 		}
@@ -1641,6 +1639,7 @@ public abstract class AbstractVisualComponent implements IContentVisualComponent
 		this.nextComponent = nextComponent;
 	}
 
+	@Override
 	public void setPage(MenuElement inPage) {
 		page = inPage;
 	}
