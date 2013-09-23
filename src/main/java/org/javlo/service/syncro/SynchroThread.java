@@ -1,5 +1,7 @@
 package org.javlo.service.syncro;
 
+import java.util.logging.Level;
+
 import javax.servlet.ServletContext;
 
 import org.javlo.config.StaticConfig;
@@ -138,42 +140,26 @@ public class SynchroThread extends AbstractThread {
 				ServerSynchroService synchroService = ServerSynchroService.getInstanceForTemplate(getLocalName(), getServerURL(), getProxyHost(), getProxyPort(), getSynchroCode(), getTemplateFolder());
 				synchroService.synchronize();
 			}
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
-		try {
 			if (getDataCtxFolder() != null) {
 				ServerSynchroService synchroService = ServerSynchroService.getInstance(getLocalName(), getServerURL(), getProxyHost(), getProxyPort(), getSynchroCode(), getDataCtxFolder());
 				synchroService.synchronize();
 				synchroService.pushContext(getContext());
 				synchroService.sendRefresh();
 			}
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
-		try {
 			if (getMailingHistoryFolder() != null) {
 				ServerSynchroService synchroService = ServerSynchroService.getInstanceForMailingHistory(getLocalName(), getServerURL(), getProxyHost(), getProxyPort(), getSynchroCode(), getMailingHistoryFolder());
 				synchroService.synchronize();
 			}
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
-		try {
 			if (getMailingFolder() != null) {
 				ServerSynchroService synchroService = ServerSynchroService.getInstanceForMailing(getLocalName(), getServerURL(), getProxyHost(), getProxyPort(), getSynchroCode(), getMailingFolder());
 				synchroService.synchronize();
 			}
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
-		try {
 			if (getShareFolder() != null) {
 				ServerSynchroService synchroService = ServerSynchroService.getInstanceForShareFiles(getLocalName(), getServerURL(), getProxyHost(), getProxyPort(), getSynchroCode(), getShareFolder());
 				synchroService.synchronize();
 			}
 		} catch (Exception e) {
-			e.printStackTrace();
+			logger.log(Level.SEVERE, "Exception in SynchroThread: " + e.getMessage(), e);
 		}
 	}
 
