@@ -62,6 +62,7 @@ public class ServerSynchroService extends BaseSynchroService {
 	protected ServerSynchroService(String localName, String serverURL, String proxyHost, int proxyPort, String synchroCode, String baseFolder) {
 		super(newHttpClientService(serverURL, synchroCode, proxyHost, proxyPort), new File(baseFolder));
 		setManageDeletedFiles(false);
+		setSplitBigFiles(false);
 		this.localName = localName;
 	}
 
@@ -99,7 +100,7 @@ public class ServerSynchroService extends BaseSynchroService {
 			break;
 		case COPY_TO_DISTANT: {
 			if (pushOnDMZ) {
-				System.out.println("***** BaseSynchroService.applyAction : path = " + path); //TODO: remove debug trace
+				System.out.println("***** ServerSynchroService.applyAction : path = " + path); //TODO: remove debug trace
 				FileInfo localInfo = context.getInfo(SynchroSide.LOCAL, path);
 				copyLocalToDistant(context, localInfo);
 				if (deleteIntraAfterTransfert) {
