@@ -120,7 +120,7 @@ public class TimeRangeComponent extends DateComponent {
 
 	@Override
 	public String getViewXHTMLCode(ContentContext ctx) throws Exception {		
-		if (getCurrentRenderer(ctx).equalsIgnoreCase(HIDDEN)) {
+		if (getCurrentRenderer(ctx) != null && getCurrentRenderer(ctx).equalsIgnoreCase(HIDDEN)) {
 			return "";
 		}
 		if (getStartDate() != null && getEndDate() != null) {
