@@ -194,7 +194,7 @@ public abstract class BaseSynchroService extends AbstractSynchroService<BaseSync
 			return false;
 		}
 
-		logger.info("push file " + localInfo);
+		logger.fine("push file " + localInfo);
 
 		synchronized (httpClientService.lock) {
 			File localFile = buildLocalFile(localInfo);

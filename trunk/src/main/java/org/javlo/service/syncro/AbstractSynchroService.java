@@ -34,8 +34,9 @@ public abstract class AbstractSynchroService<SC extends AbstractSynchroContext> 
 
 	/**
 	 * The synchronisation process main method.
+	 * @return <code>true</code> if the synchronisation ended without error.
 	 */
-	public synchronized void synchronize() {
+	public synchronized boolean synchronize() {
 		SC context = null;
 		try {
 			context = newSynchroContext();
@@ -46,6 +47,7 @@ public abstract class AbstractSynchroService<SC extends AbstractSynchroContext> 
 				onActionsDefined(context);
 				applyActions(context);
 				onActionsApplied(context);
+				return !context.isErrorOccured();
 			} catch (SynchroFatalException ex) {
 				onFatalException(context, ex);
 			}
@@ -57,6 +59,7 @@ public abstract class AbstractSynchroService<SC extends AbstractSynchroContext> 
 				logger.info("end synchronisation between '" + getLocalName() + "' and '" + getDistantName() + "'");
 			}
 		}
+		return false;
 	}
 
 	/**
