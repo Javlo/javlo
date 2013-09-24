@@ -13,6 +13,7 @@ import org.javlo.utils.DebugListening;
 public class ServerSynchroService extends BaseSynchroService {
 
 	private final String localName;
+	private String subName;
 
 	private String prefix;
 	private boolean deleteIntraAfterTransfert = false;
@@ -22,6 +23,7 @@ public class ServerSynchroService extends BaseSynchroService {
 
 	public static ServerSynchroService getInstance(String localName, String serverURL, String proxyHost, int proxyPort, String synchroCode, String dataFolder) {
 		ServerSynchroService s = new ServerSynchroService(localName, serverURL, proxyHost, proxyPort, synchroCode, dataFolder);
+		s.subName = "Data Folder";
 		s.prefix = "";
 		s.downloadFromDMZ = false;
 		s.deleteDMZIfNotFoundIntra = true;
@@ -30,6 +32,7 @@ public class ServerSynchroService extends BaseSynchroService {
 
 	public static ServerSynchroService getInstanceForMailing(String localName, String serverURL, String proxyHost, int proxyPort, String synchroCode, String mailingFolder) {
 		ServerSynchroService s = new ServerSynchroService(localName, serverURL, proxyHost, proxyPort, synchroCode, mailingFolder);
+		s.subName = "Mailing";
 		s.prefix = SynchronisationServlet.MAILING_PREFIX;
 		s.deleteIntraAfterTransfert = true;
 		s.downloadFromDMZ = false;
@@ -38,6 +41,7 @@ public class ServerSynchroService extends BaseSynchroService {
 
 	public static ServerSynchroService getInstanceForMailingHistory(String localName, String serverURL, String proxyHost, int proxyPort, String synchroCode, String mailingHistoryFolder) {
 		ServerSynchroService s = new ServerSynchroService(localName, serverURL, proxyHost, proxyPort, synchroCode, mailingHistoryFolder);
+		s.subName = "Mailing History";
 		s.prefix = SynchronisationServlet.MAILING_HISTORY_PREFIX;
 		s.pushOnDMZ = false;
 		return s;
@@ -45,6 +49,7 @@ public class ServerSynchroService extends BaseSynchroService {
 
 	public static ServerSynchroService getInstanceForTemplate(String localName, String serverURL, String proxyHost, int proxyPort, String synchroCode, String templateFolder) {
 		ServerSynchroService s = new ServerSynchroService(localName, serverURL, proxyHost, proxyPort, synchroCode, templateFolder);
+		s.subName = "Template";
 		s.prefix = SynchronisationServlet.TEMPLATE_PREFIX;
 		s.deleteDMZIfNotFoundIntra = true;
 		s.downloadFromDMZ = false;
@@ -53,6 +58,7 @@ public class ServerSynchroService extends BaseSynchroService {
 
 	public static ServerSynchroService getInstanceForShareFiles(String localName, String serverURL, String proxyHost, int proxyPort, String synchroCode, String shareFolder) {
 		ServerSynchroService s = new ServerSynchroService(localName, serverURL, proxyHost, proxyPort, synchroCode, shareFolder);
+		s.subName = "Share files";
 		s.prefix = SynchronisationServlet.SHARE_PREFIX;
 		s.deleteDMZIfNotFoundIntra = true;
 		s.downloadFromDMZ = false;
@@ -79,7 +85,7 @@ public class ServerSynchroService extends BaseSynchroService {
 
 	@Override
 	public String getLocalName() {
-		return localName;
+		return localName + " (" + subName + ")";
 	}
 
 	@Override
@@ -157,6 +163,22 @@ public class ServerSynchroService extends BaseSynchroService {
 		if (context.isErrorOccured()) {
 			DebugListening.getInstance().sendError(context.getReport());
 		}
+	}
+
+	@Override
+	protected void deleteDistantDirectories(BaseSynchroContext context) {
+		// Disabled
+	}
+
+	@Override
+	protected boolean deleteLocalFile(BaseSynchroContext context, FileInfo localInfo) {
+		// Disabled for safety
+		return false;
+	}
+
+	@Override
+	protected void deleteLocalDirectories(BaseSynchroContext context) {
+		// Disabled for safety
 	}
 
 }

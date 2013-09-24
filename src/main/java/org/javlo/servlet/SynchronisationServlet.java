@@ -57,7 +57,7 @@ public class SynchronisationServlet extends HttpServlet {
 
 	public static final String PUSH_RESOURCES_DESCRIPTION_URI = "/synchro";
 
-	private static final Logger logger = Logger.getLogger(SynchronisationServlet.class.getName());
+	public static final Logger logger = Logger.getLogger(SynchronisationServlet.class.getName());
 
 	public static void main(String[] args) {
 		/*

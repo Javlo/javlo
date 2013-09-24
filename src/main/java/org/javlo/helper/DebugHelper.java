@@ -15,9 +15,12 @@ import org.javlo.component.core.ComponentFactory;
 import org.javlo.config.StaticConfig;
 import org.javlo.navigation.MenuElement;
 import org.javlo.portlet.filter.CatchAllFilter;
-import org.javlo.service.syncro.SynchronisationService;
+import org.javlo.service.syncro.AbstractSynchroService;
+import org.javlo.service.syncro.BaseSynchroService;
+import org.javlo.service.syncro.ServerSynchroService;
 import org.javlo.servlet.AccessServlet;
 import org.javlo.servlet.ImageTransformServlet;
+import org.javlo.servlet.SynchronisationServlet;
 import org.javlo.user.AdminUserFactory;
 import org.javlo.user.UserFactory;
 
@@ -121,7 +124,12 @@ public class DebugHelper {
 		ImageTransformServlet.logger.setLevel(staticConfig.getAccessLogLevel());
 		CatchAllFilter.logger.setLevel(staticConfig.getAccessLogLevel());
 		MenuElement.logger.setLevel(staticConfig.getNavigationLogLevel());
-		SynchronisationService.logger.setLevel(staticConfig.getSynchroLogLevel());
+
+		ServerSynchroService.logger.setLevel(staticConfig.getSynchroLogLevel());
+		BaseSynchroService.logger.setLevel(staticConfig.getSynchroLogLevel());
+		AbstractSynchroService.logger.setLevel(staticConfig.getSynchroLogLevel());
+		SynchronisationServlet.logger.setLevel(staticConfig.getSynchroLogLevel());
+
 		ComponentFactory.updateComponentsLogLevel(application, staticConfig.getAllComponentLogLevel());
 		AbstractVisualComponent.logger.setLevel(staticConfig.getAbstractComponentLogLevel());
 		UserFactory.logger.setLevel(staticConfig.getLoginLogLevel());

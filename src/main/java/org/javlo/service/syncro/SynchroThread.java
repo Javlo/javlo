@@ -8,7 +8,6 @@ import org.javlo.config.StaticConfig;
 import org.javlo.context.GlobalContext;
 import org.javlo.thread.AbstractThread;
 
-
 public class SynchroThread extends AbstractThread {
 
 //	private static final String PREVIOUS_STATE_FILENAME_PREFIX = "/WEB-INF/work/synchro/";
@@ -138,28 +137,38 @@ public class SynchroThread extends AbstractThread {
 		try {
 			if (getTemplateFolder() != null) {
 				ServerSynchroService synchroService = ServerSynchroService.getInstanceForTemplate(getLocalName(), getServerURL(), getProxyHost(), getProxyPort(), getSynchroCode(), getTemplateFolder());
-				synchroService.synchronize();
+				if (!synchroService.synchronize()) {
+					return;
+				}
 			}
 			if (getDataCtxFolder() != null) {
 				ServerSynchroService synchroService = ServerSynchroService.getInstance(getLocalName(), getServerURL(), getProxyHost(), getProxyPort(), getSynchroCode(), getDataCtxFolder());
-				synchroService.synchronize();
+				if (!synchroService.synchronize()) {
+					return;
+				}
 				synchroService.pushContext(getContext());
 				synchroService.sendRefresh();
 			}
 			if (getMailingHistoryFolder() != null) {
 				ServerSynchroService synchroService = ServerSynchroService.getInstanceForMailingHistory(getLocalName(), getServerURL(), getProxyHost(), getProxyPort(), getSynchroCode(), getMailingHistoryFolder());
-				synchroService.synchronize();
+				if (!synchroService.synchronize()) {
+					return;
+				}
 			}
 			if (getMailingFolder() != null) {
 				ServerSynchroService synchroService = ServerSynchroService.getInstanceForMailing(getLocalName(), getServerURL(), getProxyHost(), getProxyPort(), getSynchroCode(), getMailingFolder());
-				synchroService.synchronize();
+				if (!synchroService.synchronize()) {
+					return;
+				}
 			}
 			if (getShareFolder() != null) {
 				ServerSynchroService synchroService = ServerSynchroService.getInstanceForShareFiles(getLocalName(), getServerURL(), getProxyHost(), getProxyPort(), getSynchroCode(), getShareFolder());
-				synchroService.synchronize();
+				if (!synchroService.synchronize()) {
+					return;
+				}
 			}
 		} catch (Exception e) {
-			logger.log(Level.SEVERE, "Exception in SynchroThread: " + e.getMessage(), e);
+			logger.log(Level.SEVERE, "Unexcepted exception in SynchroThread: " + e.getMessage(), e);
 		}
 	}
 
