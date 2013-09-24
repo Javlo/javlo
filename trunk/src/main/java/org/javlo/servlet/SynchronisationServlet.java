@@ -228,12 +228,7 @@ public class SynchronisationServlet extends HttpServlet {
 						// BufferedWriter outWrt = new BufferedWriter(response.getWriter());
 						// outWrt.append("syncro servlet : no file found.");
 						// outWrt.close();
-						try {
-							String checksum = requestService.getParameter("checksum", null);
-							SynchroHelper.rebuildSplitted(baseFolder, fileName, checksum);
-						} catch (SynchroNonFatalException ex) {
-							response.sendError(HttpServletResponse.SC_PRECONDITION_FAILED, ex.getMessage());
-						}
+						response.sendError(HttpServletResponse.SC_BAD_REQUEST, "no file found in request.");
 					}
 
 				} else { /* not multipart */
@@ -259,6 +254,13 @@ public class SynchronisationServlet extends HttpServlet {
 						// instance
 						// is DMZ
 						// server
+					} else if (request.getParameter("mergeBigFile") != null) {
+						try {
+							String checksum = requestService.getParameter("checksum", null);
+							SynchroHelper.rebuildSplitted(baseFolder, fileName, checksum);
+						} catch (SynchroNonFatalException ex) {
+							response.sendError(HttpServletResponse.SC_PRECONDITION_FAILED, ex.getMessage());
+						}
 					} else {
 						response.setContentType(ResourceHelper.getFileExtensionToManType(StringHelper.getFileExtension(fileName)));
 						out = response.getOutputStream();

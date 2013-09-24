@@ -19,6 +19,7 @@ import org.apache.http.HttpStatus;
 import org.apache.http.StatusLine;
 import org.apache.http.client.methods.HttpGet;
 import org.apache.http.client.methods.HttpPost;
+import org.apache.http.client.methods.HttpUriRequest;
 import org.apache.http.entity.mime.MultipartEntity;
 import org.apache.http.entity.mime.content.FileBody;
 import org.javlo.context.ContentContext;
@@ -120,7 +121,6 @@ public abstract class BaseSynchroService extends AbstractSynchroService<BaseSync
 		}
 			break;
 		case COPY_TO_DISTANT: {
-			System.out.println("***** BaseSynchroService.applyAction : path = "+path); //TODO: remove debug trace
 			FileInfo localInfo = context.getInfo(SynchroSide.LOCAL, path);
 			copyLocalToDistant(context, localInfo);
 		}
@@ -185,6 +185,9 @@ public abstract class BaseSynchroService extends AbstractSynchroService<BaseSync
 	}
 
 	protected boolean copyLocalToDistant(BaseSynchroContext context, FileInfo localInfo) throws SynchroNonFatalException {
+		return copyLocalToDistant(context, localInfo, 3);
+	}
+	protected boolean copyLocalToDistant(BaseSynchroContext context, FileInfo localInfo, int retry) throws SynchroNonFatalException {
 
 		if (localInfo.isDirectory()) {
 			// logger.fine("push directory " + localInfo);
@@ -201,21 +204,35 @@ public abstract class BaseSynchroService extends AbstractSynchroService<BaseSync
 
 			String relativeURL = buildURL(SynchroHelper.encodeURLPath(localInfo.getPath()));
 			relativeURL = URLHelper.addParam(relativeURL, "checksum", "" + localInfo.getChecksum());
-			String finalURL = httpClientService.encodeURL(relativeURL);
 
 			HttpResponse resp = null;
 			try {
-				HttpPost filePost = new HttpPost(finalURL);
-				MultipartEntity multipart = new MultipartEntity();
-				if (!(splitBigFiles && SynchroHelper.isBigFile(localInfo.getSize()))) {
+				HttpUriRequest request;
+				if (splitBigFiles && SynchroHelper.isBigFile(localInfo.getSize())) {
+					//Just send "mergeBigFile" command
+					relativeURL = URLHelper.addParam(relativeURL, "mergeBigFile", "true");
+					String finalURL = httpClientService.encodeURL(relativeURL);
+					request = new HttpGet(finalURL);
+				} else {
+					//Post file content
+					String finalURL = httpClientService.encodeURL(relativeURL);
+					HttpPost filePost = new HttpPost(finalURL);
+					MultipartEntity multipart = new MultipartEntity();
 					multipart.addPart(localFile.getName(), new FileBody(localFile));
+					filePost.setEntity(multipart);
+					// client.getHttpConnectionManager().getParams().setConnectionTimeout(5000);
+					request = filePost;
 				}
-				filePost.setEntity(multipart);
-				// client.getHttpConnectionManager().getParams().setConnectionTimeout(5000);
-				resp = httpClientService.execute(filePost);
+				resp = httpClientService.execute(request);
 				if (resp.getStatusLine().getStatusCode() == HttpStatus.SC_OK) {
 					context.updateOutState(localInfo.getPath(), localFile, localInfo);
 					return true;
+				} else if (resp.getStatusLine().getStatusCode() == HttpStatus.SC_BAD_REQUEST) {
+					if (retry > 0) {
+						context.report.println("Upload failed : " + localInfo.getPath() + "(" + retry + " retry left)");
+						return copyLocalToDistant(context, localInfo, retry - 1);
+					}
+					throw new SynchroFatalException("Upload failed: " + localInfo.getPath());
 				} else if (resp.getStatusLine().getStatusCode() == HttpStatus.SC_PRECONDITION_FAILED) {
 					throw new SynchroNonFatalException("Rebuild of splitted not done.");
 				} else {
