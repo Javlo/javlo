@@ -668,15 +668,12 @@ public class NetHelper {
 		return false;
 	}
 	
-	public static void sendMailToAdministrator(ContentContext ctx, String subject, String content) throws AddressException {
-		GlobalContext globalContext = GlobalContext.getInstance(ctx.getRequest());
-		sendMailToAdministrator(ctx, new InternetAddress(globalContext.getAdministratorEmail()), subject, content);
+	public static void sendMailToAdministrator(GlobalContext globalContext, String subject, String content) throws AddressException {
+		sendMailToAdministrator(globalContext, new InternetAddress(globalContext.getAdministratorEmail()), subject, content);
 	}
 
-	public static void sendMailToAdministrator( ContentContext ctx, InternetAddress from, String subject, String content) {
-		GlobalContext globalContext = GlobalContext.getInstance(ctx.getRequest());
-		StaticConfig staticConfig = StaticConfig.getInstance(ctx.getRequest().getSession());
-		MailService mailService = MailService.getInstance(staticConfig);
+	public static void sendMailToAdministrator(GlobalContext globalContext, InternetAddress from, String subject, String content) {		
+		MailService mailService = MailService.getInstance(globalContext.getStaticConfig());
 		try {
 			mailService.sendMail(from, new InternetAddress(globalContext.getAdministratorEmail()), subject, content, false);
 		} catch (Exception e) {

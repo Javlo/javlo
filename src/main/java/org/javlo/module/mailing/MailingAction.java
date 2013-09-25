@@ -215,7 +215,7 @@ public class MailingAction extends AbstractModuleAction {
 					out.close();
 					String mailContent = new String(outStream.toByteArray());
 					
-					NetHelper.sendMailToAdministrator(ctx, new InternetAddress(to), "Mailing unsubscribe : "+globalContext.getContextKey(), mailContent);
+					NetHelper.sendMailToAdministrator(ctx.getGlobalContext(), new InternetAddress(to), "Mailing unsubscribe : "+globalContext.getContextKey(), mailContent);
 				}
 			} catch (AddressException e) {
 				// TODO Auto-generated catch block

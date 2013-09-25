@@ -15,6 +15,7 @@ import org.javlo.context.ContentContext;
 import org.javlo.context.EditContext;
 import org.javlo.context.GlobalContext;
 import org.javlo.helper.StringHelper;
+import org.javlo.helper.URLHelper;
 import org.javlo.i18n.I18nAccess;
 import org.javlo.module.content.Edit;
 import org.javlo.navigation.MenuElement;
@@ -22,6 +23,8 @@ import org.javlo.service.ContentService;
 import org.javlo.service.RequestService;
 
 /**
+ * display the list of component create in content area of a other page in place of the mirrotComponent.
+ * use "copy page" for create the link.
  * @author pvandermaesen
  */
 public class PageMirrorComponent extends AbstractVisualComponent {
@@ -53,6 +56,10 @@ public class PageMirrorComponent extends AbstractVisualComponent {
 	public String[] getStyleList(ContentContext ctx) {
 		return STYLES;
 	}
+	
+	protected String getUnlinkAndCopyInputName() {
+		return "unlink-copy-"+getId();
+	}
 
 	@Override
 	protected String getEditXHTMLCode(ContentContext ctx) throws Exception {
@@ -80,7 +87,16 @@ public class PageMirrorComponent extends AbstractVisualComponent {
 			}
 		}
 		if (currentPage != null) {
-			out.println("<div class=\"line\">" + i18nAccess.getText("global.path") + " : " + currentPage.getPath() + "</div>");
+			String pageURL;
+			String target = "";
+			if (ctx.isEditPreview()) {
+				pageURL = URLHelper.createURL(ctx.getContextWithOtherRenderMode(ContentContext.PREVIEW_MODE), currentPage);
+				target = " target=\"_parent\"";
+			} else {
+				pageURL = URLHelper.createURL(ctx, currentPage);
+			}
+			out.println("<div class=\"line\"><a href=\""+pageURL+"\""+target+">" + i18nAccess.getText("global.path") + " : " + currentPage.getPath() + "</a></div>");			
+			out.println("<div class=\"line\"><input name=\""+getUnlinkAndCopyInputName()+"\" type=\"submit\" value=\""+i18nAccess.getText("action.unlink-copy")+"\" /></div>");
 		}
 		out.println("</div>");
 		out.close();
@@ -111,16 +127,6 @@ public class PageMirrorComponent extends AbstractVisualComponent {
 	}
 
 	@Override
-	public String getPrefixViewXHTMLCode(ContentContext ctx) {
-		return "";
-	}
-
-	@Override
-	public String getSuffixViewXHTMLCode(ContentContext ctx) {
-		return "";
-	}
-
-	@Override
 	public String getType() {
 		return TYPE;
 	}
@@ -137,7 +143,22 @@ public class PageMirrorComponent extends AbstractVisualComponent {
 				if (getStyle().equals(WITHOUT_REPEAT)) {
 					suffix = "&_no-repeat=true";
 				}
-				return executeJSP(ctx, Edit.CONTENT_RENDERER + "?_wcms_content_path=" + page.getPath() + suffix);
+				ctx.setVirtualCurrentPage(getPage()); // force page page mirror page as current page
+				String area = ctx.getArea();
+				String path = ctx.getPath();
+				MenuElement currentPage = ctx.getCurrentPage();
+				ctx.setVirtualArea(area);
+				ctx.setArea(ComponentBean.DEFAULT_AREA);				
+				ctx.getRequest().setAttribute(ContentContext.CHANGE_AREA_ATTRIBUTE_NAME, ComponentBean.DEFAULT_AREA);
+				//String xhtml = executeJSP(ctx, Edit.CONTENT_RENDERER + "?_wcms_content_path=" + page.getPath() + suffix+'&'+NOT_EDIT_PREVIEW_PARAM_NAME+"=true");
+				ctx.setPath(page.getPath());
+				String xhtml = executeJSP(ctx, Edit.CONTENT_RENDERER +'?'+NOT_EDIT_PREVIEW_PARAM_NAME+"=true");
+				ctx.setVirtualCurrentPage(null);
+				ctx.setArea(area);
+				ctx.setVirtualArea(null);
+				ctx.setPath(path);
+				ctx.setCurrentPageCached(currentPage);
+				return xhtml;
 			}
 		} else {
 			deleteMySelf(ctx);
@@ -165,6 +186,13 @@ public class PageMirrorComponent extends AbstractVisualComponent {
 				setModify();
 				setNeedRefresh(true);
 			}
+		}
+		if (requestService.getParameter(getUnlinkAndCopyInputName(), null) != null) {
+			String previousId = "0";
+			if (getPreviousComponent() != null) {
+				previousId = getPreviousComponent().getId();
+			}
+			//TODO terminite this method.
 		}
 	}
 

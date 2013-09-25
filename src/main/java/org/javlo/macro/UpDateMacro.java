@@ -26,7 +26,7 @@ public class UpDateMacro extends AbstractMacro {
 			List<IContentVisualComponent> dates = page.getContentByType(ctx, DateComponent.TYPE);
 			for (IContentVisualComponent date : dates) {
 				if (date.getPreviousComponent() != null) {
-					ComponentHelper.moveComponent(ctx, date, date.getPreviousComponent().getPreviousComponent(), date.getArea());
+					ComponentHelper.moveComponent(ctx, date, date.getPreviousComponent().getPreviousComponent(), ctx.getCurrentPage(), date.getArea());
 					i++;
 				}
 			}

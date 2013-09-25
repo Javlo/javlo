@@ -2,6 +2,7 @@ package org.javlo.service;
 
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
+import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileFilter;
 import java.io.FileInputStream;
@@ -12,6 +13,7 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.io.PrintStream;
 import java.io.Reader;
 import java.io.Writer;
 import java.nio.ByteBuffer;
@@ -37,6 +39,9 @@ import java.util.zip.ZipEntry;
 import java.util.zip.ZipInputStream;
 import java.util.zip.ZipOutputStream;
 
+import javax.mail.internet.AddressException;
+import javax.mail.internet.InternetAddress;
+
 import org.apache.commons.configuration.ConfigurationException;
 import org.apache.commons.io.FileUtils;
 import org.javlo.component.core.ComponentBean;
@@ -45,6 +50,7 @@ import org.javlo.context.ContentContext;
 import org.javlo.context.GlobalContext;
 import org.javlo.helper.DebugHelper;
 import org.javlo.helper.DebugHelper.StructureException;
+import org.javlo.helper.NetHelper;
 import org.javlo.helper.ResourceHelper;
 import org.javlo.helper.StringHelper;
 import org.javlo.helper.TimeHelper;
@@ -607,6 +613,8 @@ public class PersistenceService {
 		page.setBlocked(StringHelper.isTrue(pageXML.getAttributeValue("blocked", "false")));
 		page.setBlocker(pageXML.getAttributeValue("blocker", ""));
 		
+		page.setChildrenAssociation(StringHelper.isTrue(pageXML.getAttributeValue("childrenAssociation", null)));
+		
 		page.setSharedName(pageXML.getAttributeValue("sharedName", null));
 
 		String type = pageXML.getAttributeValue("type", null);
@@ -711,6 +719,7 @@ public class PersistenceService {
 				root.setLinkedURL(page.getAttributeValue("linked-url", ""));
 				root.setBreakRepeat(StringHelper.isTrue(page.getAttributeValue("breakrepeat", "false")));
 				root.setShortURL(page.getAttributeValue("shorturl", null));
+				root.setChildrenAssociation(StringHelper.isTrue(page.getAttributeValue("childrenAssociation", null)));
 
 				String[] editorRoles = StringHelper.stringToArray(page.getAttributeValue("editor-roles", ""), "#");
 				if (editorRoles != null) {
@@ -1268,5 +1277,25 @@ public class PersistenceService {
 	private boolean versionExist(int version) {
 		File file = new File(getDirectory() + "/content_" + ContentContext.PREVIEW_MODE + '_' + version + ".xml");
 		return file.exists();
+	}
+	
+	public void sendPersistenceErrorToAdministrator(String message, File file, Throwable e) throws AddressException {
+		ByteArrayOutputStream outStream = new ByteArrayOutputStream();
+		PrintStream out = new PrintStream(outStream);
+		out.println("JAVLO PERSISTENCE ERROR : "+globalContext.getContextKey());
+		out.println("");
+		out.println(message);
+		out.println("");
+		out.println("Server time : "+StringHelper.renderTime(new Date()));
+		out.println("");
+		out.println("Stack Trace :");
+		e.printStackTrace(out);
+		out.close();
+		String content = new String(outStream.toByteArray());
+		if (globalContext.getStaticConfig().getErrorMailReport() != null) {
+			NetHelper.sendMailToAdministrator(globalContext, new InternetAddress(globalContext.getStaticConfig().getErrorMailReport()), "Javlo persistence Error on : "+globalContext.getContextKey(), content);
+		} else {
+			NetHelper.sendMailToAdministrator(globalContext, "Javlo persistence Error on : "+globalContext.getContextKey(), content);
+		}
 	}
 }

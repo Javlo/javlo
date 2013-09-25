@@ -19,7 +19,8 @@ public class SharedContent {
 	private String description = null;
 	private String imageURL = null;
 	private String id = null;
-	private Collection<String> categories = new HashSet<String>();	
+	private Collection<String> categories = new HashSet<String>();
+	private String linkInfo = null;
 
 	protected List<ComponentBean> content;
 	
@@ -103,6 +104,19 @@ public class SharedContent {
 
 	public void addCategory(String category) {
 		getCategories().add(category);
+	}
+
+	/**
+	 * get information for create a linked content.
+	 * A linked content change if the source is modified.
+	 * @return null if content not linkable.
+	 */
+	public String getLinkInfo() {
+		return linkInfo;
+	}
+
+	public void setLinkInfo(String linkInfo) {
+		this.linkInfo = linkInfo;
 	}
 
 }

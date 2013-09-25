@@ -95,8 +95,11 @@ public class ContentOnlyServlet extends HttpServlet {
 				i18nAccess.requestInit(ctx);
 			}
 			
-			getServletContext().getRequestDispatcher(template.getRendererFullName(ctx)+'?'+Template.FORCE_TEMPLATE_PARAM_NAME+'='+template.getId()).include(request, response);
-
+			if (!ctx.getCurrentPage().isChildrenAssociation()) {				
+				getServletContext().getRequestDispatcher(template.getRendererFullName(ctx)+'?'+Template.FORCE_TEMPLATE_PARAM_NAME+'='+template.getId()).include(request, response);
+			} else {
+				getServletContext().getRequestDispatcher("/jsp/view/page_association.jsp").include(request, response);				
+			}
 		} catch (Exception e) {
 			e.printStackTrace();
 		}

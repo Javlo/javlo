@@ -1,6 +1,5 @@
 ._empty_area {
-	margin: 5px;
-	border: 1px #777777 solid;
+	margin: 5px;	
 	border-radius: 3px 3px 3px 3px;
 	border: 1px dashed #5B5B5B;
 	padding: 5px;
@@ -12,7 +11,7 @@
 	font-size: 30px;
 	color: #5B5B5B;
 	text-shadow: 1px -1px 0 #ffffff;
-	width: 100%;
+	width: auto;
 	display: block;
 	padding-top: 35px;
 }
@@ -22,6 +21,21 @@
 	-khtml-user-select: none;
 	-webkit-user-select: none;
 	user-select: none;
+}
+
+._page_associate {
+	border-bottom: 2px #efefef dashed;
+	position: relative;	
+	overflow: hidden;	
+}
+
+._pdf_page_limit {
+	top: 1125px;
+	position: absolute;
+	font-size: 0;
+	height: 0;
+	width: 100%;
+	border-top: 2px #ff5555 dashed;
 }
 
 #preview_command .hidden {
@@ -998,6 +1012,12 @@ body.fix-preview {
 	-moz-column-count: 2; /* Firefox */
 	-webkit-column-count: 2; /* Safari and Chrome */
 	column-count: 2;
+}
+
+#preview_command #shared-content-result .cols.provider-javlo-local {
+	-moz-column-count: 1; /* Firefox */
+	-webkit-column-count: 1; /* Safari and Chrome */
+	column-count: 1;
 }
 
 #preview_command .shared-content.image .content-wrapper {

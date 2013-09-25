@@ -8,15 +8,19 @@ import java.io.OutputStream;
 import java.io.OutputStreamWriter;
 import java.net.HttpURLConnection;
 import java.net.URL;
+import java.text.DecimalFormat;
+import java.text.DecimalFormatSymbols;
 import java.util.LinkedHashMap;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 
 import javax.xml.bind.DatatypeConverter;
 
 import org.apache.commons.io.output.ByteArrayOutputStream;
 import org.javlo.helper.ResourceHelper;
+import org.javlo.helper.StringHelper;
 import org.javlo.utils.JSONMap;
 
 import com.google.gson.JsonElement;
@@ -38,26 +42,29 @@ public class PaypalConnector {
 	private String executeUrl;
 
 	public PaypalConnector(String baseUrl, String user, String password) {
+		System.out.println("***** PaypalConnector.PaypalConnector : baseUrl = "+baseUrl); //TODO: remove debug trace
+		System.out.println("***** PaypalConnector.PaypalConnector : user = "+user); //TODO: remove debug trace
+		System.out.println("***** PaypalConnector.PaypalConnector : password = "+password); //TODO: remove debug trace
 		this.baseUrl = baseUrl;
 		this.user = user;
 		this.password = password;
 	}
 
-	public String authenticate() throws IOException {
+	protected String authenticate() throws IOException {
 		String content = excutePost(baseUrl + AUTH_TOKEN_PATH, "grant_type=client_credentials", "application/x-www-form-urlencoded", user, password);
 		JSONMap obj = JSONMap.parseMap(content);
 		token = obj.getValue("access_token", String.class);
 		return token;
 	}
 
-	public String createPayment(String amountIn, String currencyIn, String descriptionIn) throws IOException {
+	public String createPayment(double amountIn, String currencyIn, String descriptionIn, URL returnURL, URL cancelURL) throws IOException {
 		String token = authenticate();
 		Map<String, Object> obj = new LinkedHashMap<String, Object>();
 		obj.put("intent", "sale");
 		Map<String, String> urls = new LinkedHashMap<String, String>();
 		obj.put("redirect_urls", urls);
-		urls.put("return_url", "http://localhost:2345/return");
-		urls.put("cancel_url", "http://localhost:2345/cancel");
+		urls.put("return_url", returnURL.toString());
+		urls.put("cancel_url", cancelURL.toString());
 		Map<String, String> payer = new LinkedHashMap<String, String>();
 		obj.put("payer", payer);
 		payer.put("payment_method", "paypal");
@@ -67,7 +74,7 @@ public class PaypalConnector {
 		transactions.add(transaction);
 		Map<String, String> amount = new LinkedHashMap<String, String>();
 		transaction.put("amount", amount);
-		amount.put("total", amountIn);
+		amount.put("total", new DecimalFormat("0.00", DecimalFormatSymbols.getInstance(Locale.ENGLISH)).format(amountIn));
 		amount.put("currency", currencyIn);
 		transaction.put("description", descriptionIn);
 
@@ -95,7 +102,7 @@ public class PaypalConnector {
 		return approvalUrl;
 	}
 
-	private String executePayment(String paymentToken, String payerID) throws IOException {
+	public String executePayment(String paymentToken, String payerID) throws IOException {
 		//String token = authenticate();
 		Map<String, Object> obj = new LinkedHashMap<String, Object>();
 		obj.put("payer_id", payerID);
@@ -195,7 +202,7 @@ public class PaypalConnector {
 	}
 
 	private static void testCreate(PaypalConnector c) throws Exception {
-		String approvalUrl = c.createPayment("0.01", "EUR", "Test payment");
+		String approvalUrl = c.createPayment(120, "EUR", "Test payment", new URL("http://localhost:8080/ecom/ok?prout=ettoi"), new URL("http://localhost:8080/ecom/cancel"));
 		System.out.println("Token: " + c.token);
 		System.out.println("Approval url: " + approvalUrl);
 		System.out.println("Execute Url: " + c.executeUrl);

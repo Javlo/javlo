@@ -497,7 +497,7 @@ public class StaticConfig extends Observable {
 	/* mailing */
 
 	public String getErrorMailReport() {
-		return properties.getString("debug.email", "error@javlo.org");
+		return properties.getString("error.email", null);
 	}
 
 	public String getFileFolder() {

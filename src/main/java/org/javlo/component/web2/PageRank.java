@@ -256,7 +256,7 @@ public class PageRank extends AbstractVisualComponent implements IPageRank, IAct
 				out.println("rank : " + currentPage.getPageRank(ctx));
 				out.println("");
 				out.close();
-				NetHelper.sendMailToAdministrator(ctx, "vote on " + globalContext.getContextKey(), writer.toString());
+				NetHelper.sendMailToAdministrator(ctx.getGlobalContext(), "vote on " + globalContext.getContextKey(), writer.toString());
 			}
 		}
 		return null;

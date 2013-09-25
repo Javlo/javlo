@@ -52,7 +52,7 @@ MessageRepository.getInstance(request); // load request message
 					</form></c:if>
 					<c:if test="${!globalContext.previewMode}">
 						<a id="pc_edit_button" class="pc_edit_true" href="${info.currentViewURL}" target="_blank">${i18n.edit['preview.label.not-edit-page']}</a>
-					</c:if>
+					</c:if>					
 					</li>					
 					<c:if test='${editPreview == "true"}'>
 					<li><form id="home_form" action="${info.rootURL}" method="post">

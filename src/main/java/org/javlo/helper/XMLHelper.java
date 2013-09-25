@@ -292,7 +292,11 @@ public class XMLHelper {
 			if (page.isBreakRepeat()) {
 				out.print("\" breakrepeat=\"");
 				out.print(page.isBreakRepeat());
-			}			
+			}	
+			if (page.isChildrenAssociation()) {
+				out.print("\" childrenAssociation=\"");
+				out.print(page.isChildrenAssociation());
+			}	
 			if (page.getSharedName() != null && page.getSharedName().trim().length() > 0) {
 				out.print("\" sharedName=\"");
 				out.print(page.getSharedName());

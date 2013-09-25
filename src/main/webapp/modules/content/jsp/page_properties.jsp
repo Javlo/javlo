@@ -107,9 +107,15 @@
 
 <c:if test="${!userInterface.light}">
 
-<div class="line">	
+<div class="line">
+	<input type="hidden" name="special_input" value="true" />	
 	<input type="checkbox" id="break_repeat" name="break_repeat" ${page.info.breakRepeat?'checked="checked"':''} value="true" />
 	<label class="suffix" for="break_repeat">${i18n.edit['item.break-repeat']}</label>
+</div>
+
+<div class="line">
+	<input type="checkbox" id="association" name="association" ${page.info.childrenAssociation?'checked="checked"':''} value="true" />
+	<label class="suffix" for="association">${i18n.edit['item.children-association']}</label>
 </div>
 
 <div class="line">

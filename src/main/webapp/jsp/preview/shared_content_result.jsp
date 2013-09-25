@@ -1,6 +1,6 @@
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
 <%@ taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions" %>
-<div class="cols">
+<div class="cols provider-${provider.name} privider-type-${provider.type}">
 <c:forEach var="content" items="${sharedContent}">
 <div class="content-wrapper ${not empty content.description?'width-description':'without-description'}">
 <div class="content" data-shared="${content.id}">

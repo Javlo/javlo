@@ -14,8 +14,17 @@
 	</filter-mapping>
 	
 	<filter>
+		<filter-name>CleanHTML</filter-name>
+		<filter-class>org.javlo.filter.CleanHTML</filter-class>
+	</filter>
+	<filter-mapping>
+		<filter-name>CleanHTML</filter-name>
+		<url-pattern>/*</url-pattern>
+	</filter-mapping>
+	
+	<filter>
 		<filter-name>CatchAll</filter-name>
-		<filter-class>org.javlo.portlet.filter.CatchAllFilter</filter-class>
+		<filter-class>org.javlo.filter.CatchAllFilter</filter-class>
 	</filter>
 	<filter-mapping>
 		<filter-name>CatchAll</filter-name>

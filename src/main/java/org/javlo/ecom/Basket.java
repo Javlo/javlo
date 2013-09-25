@@ -17,6 +17,10 @@ import org.javlo.helper.URLHelper;
 import org.javlo.utils.CSVFactory;
 
 public class Basket {
+	
+	public static final int REGISTRATION_STEP = 2;
+	public static final int ORDER_STEP = 3;	
+	public static final int CONFIRMATION_STEP = 4;
 
 	private List<Product> products = new LinkedList<Product>();
 
@@ -75,6 +79,10 @@ public class Basket {
 
 		return basket;
 	}
+	
+	public void reset(ContentContext ctx) {
+		ctx.getRequest().getSession().removeAttribute(KEY);
+	}
 
 	public static boolean isInstance(ContentContext ctx) {
 		return ctx.getRequest().getSession().getAttribute(KEY) != null;
@@ -83,19 +91,6 @@ public class Basket {
 	public void reserve(ContentContext ctx) {
 		for (Product product : products) {
 			product.reserve(ctx);
-		}
-	}
-
-	private String paypalTX = "";
-
-	public String getPaypalTX() {
-		return paypalTX;
-	}
-
-	public void pay(ContentContext ctx, String paypalTX) {
-		this.paypalTX = paypalTX;
-		for (Product product : products) {
-			product.pay(ctx);
 		}
 	}
 

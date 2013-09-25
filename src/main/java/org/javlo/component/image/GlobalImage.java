@@ -37,6 +37,7 @@ import org.javlo.navigation.MenuElement;
 import org.javlo.service.ContentService;
 import org.javlo.service.RequestService;
 import org.javlo.template.Template;
+import org.javlo.template.TemplateFactory;
 
 /**
  * standard image component. <h4>exposed variable :</h4>
@@ -130,7 +131,14 @@ public class GlobalImage extends Image {
 	@Override
 	public String getPreviewURL(ContentContext ctx, String filter) {
 		try {
-			String url = URLHelper.createTransformURL(ctx, getPage(), getResourceURL(ctx, getFileName()), filter);
+			//TODO: check if I can change getPage with ctx.getcurrentPage, I need this for render image with correct filter in PageMirrorComponent.
+			//String url = URLHelper.createTransformURL(ctx, getPage(), getResourceURL(ctx, getFileName()), filter);
+			String url = null;
+			try {				
+				url = URLHelper.createTransformURL(ctx, ctx.getVirtualCurrentPage(), TemplateFactory.getTemplate(ctx, ctx.getVirtualCurrentPage()), getResourceURL(ctx, getFileName()), filter);
+			} catch (Exception e) {
+				e.printStackTrace();
+			}
 			url = URLHelper.addParam(url, "hash", getStaticInfo(ctx).getVersionHash());
 			return url;
 		} catch (Exception e) {

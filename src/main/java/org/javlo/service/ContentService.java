@@ -279,20 +279,25 @@ public class ContentService {
 	public String createContent(ContentContext ctx, Collection<ComponentBean> inBean, String parentId, boolean releaseCache) throws Exception {
 		return createContent(ctx, ctx.getCurrentPage(), inBean, parentId, releaseCache);
 	}
-
-	public String createContent(ContentContext ctx, String parentId, String type, String content, boolean releaseCache) throws Exception {
+	
+	public String createContent(ContentContext ctx, MenuElement page, String area, String parentId, String type, String content, boolean releaseCache) throws Exception {
 		if (content == null) {
 			content = "";
 		}
 		String id = StringHelper.getRandomId();
 		ComponentBean bean = new ComponentBean(id, type, content, ctx.getRequestContentLanguage(), false, ctx.getCurrentEditUser());
+		
+		
+		bean.setArea(area);
+		bean.setAuthors(ctx.getCurrentEditUser().getLogin());
+		page.addContent(parentId, bean, releaseCache);
+		return id;
+	}
+
+	public String createContent(ContentContext ctx, String parentId, String type, String content, boolean releaseCache) throws Exception {
 		GlobalContext globalContext = GlobalContext.getInstance(ctx.getRequest());
 		EditContext editCtx = EditContext.getInstance(globalContext, ctx.getRequest().getSession());
-		bean.setArea(editCtx.getCurrentArea());
-		bean.setAuthors(ctx.getCurrentEditUser().getLogin());
-		MenuElement elem = ctx.getCurrentPage();
-		elem.addContent(parentId, bean, releaseCache);
-		return id;
+		return createContent(ctx, ctx.getCurrentPage(), editCtx.getCurrentArea(), parentId, type, content, releaseCache);
 	}
 
 	public String createContent(ContentContext ctx, String parentId, String type, String content, boolean repeat, String renderer) throws Exception {

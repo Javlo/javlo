@@ -46,6 +46,14 @@ initFocusPoint = function() {
 
 jQuery(document).ready(function() {
 	
+	/** scrol to latest position after refresh **/
+	var scrollTo = getParam(window.location.href, "_scrollTo");
+	if (scrollTo != "") {
+		console.log("scrollTo = "+scrollTo);
+		window.scrollTo(0, scrollTo);		
+	}
+	
+	
 	jQuery("body").addClass("js");
 	
 	closableFieldSet(jQuery("fieldset.closable"));
@@ -286,3 +294,18 @@ escapeHTML = function(string) {
     return htmlEscapes[match];
   });
 };
+
+reloadPage = function() {
+	var doc = document.documentElement, body = document.body;
+	var topScroll = (doc && doc.scrollTop  || body && body.scrollTop  || 0);
+	var currentURL = window.location.href;
+	if (currentURL.indexOf("_scrollTo") >= 1) {
+		currentURL = currentURL.substring(0,currentURL.indexOf("_scrollTo")-1);
+	}
+	if (currentURL.indexOf("?") < 0) {
+		currentURL = currentURL + "?" + "_scrollTo="+topScroll;
+	} else {
+		currentURL = currentURL + "&" + "_scrollTo="+topScroll;
+	}
+	window.location.href=currentURL;
+}
