@@ -177,3 +177,5 @@ change log
  * remove portlet integration
  
  * cache optimisation (configure Last-Modified header)
+ 
+ * children association
