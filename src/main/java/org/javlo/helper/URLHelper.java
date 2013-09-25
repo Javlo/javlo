@@ -460,6 +460,23 @@ public class URLHelper extends ElementaryURLHelper {
 			return createURL(ctx, page.getPath());
 		}
 	}
+	
+	/**
+	 * add suffix to the URL.
+	 * sample (suffix: #suffix) : www.javlo.org >> www.javlo.org#suffix 
+	 * sample 2 (suffix: #suffix) : www.javlo.org?test=test >> www.javlo.org#suffix?test=test
+	 * @param URL
+	 * @param suffix
+	 * @return
+	 */
+	public static String addSuffix(String URL, String suffix) {
+		if (URL.contains("?")) {
+			URL = URL.replace("?", suffix+'?');
+		} else {
+			URL = URL + suffix;
+		}
+		return URL;
+	}
 
 	/**
 	 * create a intern link URL
