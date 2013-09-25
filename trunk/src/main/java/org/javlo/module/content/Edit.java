@@ -24,6 +24,7 @@ import org.javlo.component.core.ComponentFactory;
 import org.javlo.component.core.ContentElementList;
 import org.javlo.component.core.IContentComponentsList;
 import org.javlo.component.core.IContentVisualComponent;
+import org.javlo.component.links.PageMirrorComponent;
 import org.javlo.component.title.Title;
 import org.javlo.config.StaticConfig;
 import org.javlo.context.ContentContext;
@@ -369,8 +370,7 @@ public class Edit extends AbstractModuleAction {
 	 * @param ctx
 	 * @throws Exception
 	 */
-	private static void modifPage(ContentContext ctx) throws Exception {
-		MenuElement currentPage = ctx.getCurrentPage();
+	private static void modifPage(ContentContext ctx, MenuElement currentPage) throws Exception {
 		currentPage.setModificationDate(new Date());
 		GlobalContext globalContext = GlobalContext.getInstance(ctx.getRequest());
 		ContentService.getInstance(globalContext);
@@ -681,19 +681,42 @@ public class Edit extends AbstractModuleAction {
 			if (areaKey == null) {
 				return "area not found : " + area;
 			}
-			ctx = ctx.getContextWithArea(areaKey);
+			// ctx = ctx.getContextWithArea(areaKey);
 			editContext.setCurrentArea(areaKey);
 		}
 
-		String newId = content.createContent(ctx, previousId, type, "", true);
-		if (ctx.isAjax()) {
-			updateComponent(ctx, currentModule, newId, previousId);
+		MenuElement parentPage = ctx.getCurrentPage();
+		MenuElement targetPage = content.getNavigation(ctx).searchChildFromId(rs.getParameter("pageContainerID", null));
+
+		if (targetPage == null) {
+			targetPage = ctx.getCurrentPage();
 		}
+
+		if (areaKey == null) {
+			areaKey = ctx.getArea();
+		}
+
+		String newId = content.createContent(ctx, targetPage, areaKey, previousId, type, "", true);
 
 		if (StringHelper.isTrue(rs.getParameter("init", null))) {
 			IContentVisualComponent comp = content.getComponent(ctx, newId);
 			comp.initContent(ctx);
 		}
+
+		if (ctx.isAjax()) {
+			updateComponent(ctx, currentModule, newId, previousId);
+			String selecterPrefix = "";
+			if (parentPage.isChildrenAssociation()) {
+				selecterPrefix = "#page_" + rs.getParameter("pageContainerID", "#ID_NOT_DEFINED") + " #";
+
+				if (targetPage != null) {
+					ctx.setCurrentPageCached(targetPage);
+				}
+			}
+			ctx.getAjaxInsideZone().put(selecterPrefix + areaKey, ServletHelper.executeJSP(ctx, "/jsp/view/content_view.jsp?area=" + area));
+		}
+
+		ctx.resetCurrentPageCached();
 
 		// String msg = i18nAccess.getText("action.component.created", new
 		// String[][] { { "type", type } });
@@ -702,13 +725,13 @@ public class Edit extends AbstractModuleAction {
 
 		PersistenceService persistenceService = PersistenceService.getInstance(globalContext);
 		persistenceService.store(ctx);
-		modifPage(ctx);
+		modifPage(ctx, targetPage);
 		autoPublish(request, response);
 
 		return null;
 	}
 
-	public static final String performDelete(ContentContext ctx, HttpServletRequest request, EditContext editContext, HttpServletResponse response, I18nAccess i18nAccess, MessageRepository messageRepository) throws Exception {
+	public static final String performDelete(ContentContext ctx, HttpServletRequest request, ContentService content, EditContext editContext, HttpServletResponse response, I18nAccess i18nAccess, MessageRepository messageRepository) throws Exception {
 		if (!canModifyCurrentPage(ctx) || !checkPageSecurity(ctx)) {
 			messageRepository.setGlobalMessageAndNotification(ctx, new GenericMessage(i18nAccess.getText("action.block"), GenericMessage.ERROR));
 			return null;
@@ -716,6 +739,11 @@ public class Edit extends AbstractModuleAction {
 
 		String id = request.getParameter("id");
 		if (id != null) {
+
+			MenuElement targetPage = content.getNavigation(ctx).searchChildFromId(request.getParameter("pageCompID"));
+			if (targetPage == null) {
+				targetPage = ctx.getCurrentPage();
+			}
 
 			if (!AdminUserSecurity.getInstance().canModifyConponent(ctx, id)) {
 				logger.warning("user : " + ctx.getCurrentUserId() + " can't delete component : " + id);
@@ -726,20 +754,11 @@ public class Edit extends AbstractModuleAction {
 			if (id.equals(clipBoard.getCopied())) {
 				clipBoard.clear();
 			}
-			MenuElement elem = ctx.getCurrentPage();
 
-			elem.removeContent(ctx, id);
+			targetPage.removeContent(ctx, id);
 			GlobalContext globalContext = GlobalContext.getInstance(request);
 			PersistenceService persistenceService = PersistenceService.getInstance(globalContext);
 			persistenceService.store(ctx);
-
-			/*
-			 * if (type != null) { String typeName = type; String msg =
-			 * i18nAccess.getText("action.component.removed", new String[][] { {
-			 * "type", typeName } });
-			 * MessageRepository.getInstance(ctx).setGlobalMessageAndNotification
-			 * (ctx, new GenericMessage(msg, GenericMessage.INFO)); }
-			 */
 
 			if (ctx.isAjax()) {
 				ctx.addAjaxZone("comp-" + id, "");
@@ -747,7 +766,7 @@ public class Edit extends AbstractModuleAction {
 				ctx.addAjaxInsideZone("insert-line-" + id, "");
 			}
 
-			modifPage(ctx);
+			modifPage(ctx, targetPage);
 			autoPublish(request, response);
 
 		}
@@ -803,7 +822,7 @@ public class Edit extends AbstractModuleAction {
 		}
 
 		// ctx.setNeedRefresh(needRefresh);
-		modifPage(ctx);
+		modifPage(ctx, ctx.getCurrentPage());
 		if (adminUserFactory.getCurrentUser(ctx.getRequest().getSession()) != null) {
 			content.setAttribute(ctx, "user.update", adminUserFactory.getCurrentUser(ctx.getRequest().getSession()).getLogin());
 		}
@@ -883,9 +902,18 @@ public class Edit extends AbstractModuleAction {
 				}
 			}
 
+			boolean postCheck = requestService.getParameter("special_input", null) != null;
+
 			boolean isBreakRepeat = requestService.getParameter("break_repeat", null) != null;
-			if (page.isBreakRepeat() != isBreakRepeat) {
+			if (postCheck && page.isBreakRepeat() != isBreakRepeat) {
 				page.setBreakRepeat(isBreakRepeat);
+				modify = true;
+			}
+
+			/** children agregator **/
+			boolean childrenAssociation = StringHelper.isTrue(requestService.getParameter("association", null));
+			if (postCheck && page.isChildrenAssociation() != childrenAssociation) {
+				page.setChildrenAssociation(childrenAssociation);
 				modify = true;
 			}
 
@@ -1219,8 +1247,8 @@ public class Edit extends AbstractModuleAction {
 	}
 
 	public static final String performPreviewedit(HttpServletRequest request, RequestService rs, EditContext editCtx) {
-		GlobalContext globalContext = GlobalContext.getInstance(request);		
-		if (globalContext.isPreviewMode()) {			
+		GlobalContext globalContext = GlobalContext.getInstance(request);
+		if (globalContext.isPreviewMode()) {
 			if (rs.getParameter("preview", null) == null) {
 				editCtx.setEditPreview(!editCtx.isEditPreview());
 			} else {
@@ -1307,6 +1335,34 @@ public class Edit extends AbstractModuleAction {
 
 		messageRepository.setGlobalMessageAndNotification(ctx, new GenericMessage(i18nAccess.getText("edit.message.moved", new String[][] { { "name", page.getName() } }), GenericMessage.INFO));
 
+		MenuElement currentPage = ctx.getCurrentPage();
+		
+		if (ctx.isAjax() && currentPage.isChildrenAssociation()) {
+			/*ctx.getRequest().setAttribute("pageAssociation", true);
+			for (MenuElement child : currentPage.getChildMenuElements()) {
+				Template childTemplate = TemplateFactory.getTemplate(ctx, child);
+				ctx.setCurrentPageCached(child);
+				ctx.setCurrentTemplate(childTemplate);
+				String jspURI = childTemplate.getRendererFullName(ctx);
+				if (child.getPreviousBrother() == null && child.getNextBrother() != null) {
+					jspURI = URLHelper.addAllParams(jspURI, "no-close-body=true");
+				} else if (child.getPreviousBrother() != null && child.getNextBrother() == null) {
+					jspURI = URLHelper.addAllParams(jspURI, "no-open-body=true");
+				} else {
+					jspURI = URLHelper.addAllParams(jspURI, "no-close-body=true", "no-open-body=true");
+				}
+
+				String pageContent = ServletHelper.executeJSP(ctx, jspURI);
+				String selecterPrefix = "";
+				if (currentPage.isChildrenAssociation()) {
+					selecterPrefix = "#page_" + child.getId();
+				}
+				ctx.setCurrentPageCached(child);
+				ctx.getAjaxInsideZone().put(selecterPrefix, pageContent);
+			}*/
+			ctx.setNeedRefresh(true);
+		}
+
 		return null;
 	}
 
@@ -1356,7 +1412,7 @@ public class Edit extends AbstractModuleAction {
 				nextParent.setPreviousComponent(newParent);
 			}
 		}
-		modifPage(ctx);
+		modifPage(ctx, ctx.getCurrentPage());
 		PersistenceService.getInstance(globalContext).store(ctx);
 		autoPublish(ctx.getRequest(), ctx.getResponse());
 
@@ -1406,7 +1462,7 @@ public class Edit extends AbstractModuleAction {
 		messageRepository.setGlobalMessageAndNotification(ctx, new GenericMessage(msg, GenericMessage.INFO));
 
 		persistenceService.store(ctx);
-		modifPage(ctx);
+		modifPage(ctx, ctx.getCurrentPage());
 		autoPublish(ctx.getRequest(), ctx.getResponse());
 
 		return null;
@@ -1428,6 +1484,7 @@ public class Edit extends AbstractModuleAction {
 		}
 		IContentVisualComponent comp = content.getComponent(ctx, compId);
 		IContentVisualComponent newPrevious = content.getComponent(ctx, previous);
+
 		if (comp == null) {
 			return "component not found.";
 		}
@@ -1439,17 +1496,57 @@ public class Edit extends AbstractModuleAction {
 			}
 		}
 
-		ComponentHelper.moveComponent(ctx, comp, newPrevious, area);
+		MenuElement targetPage = content.getNavigation(ctx).searchChildFromId(rs.getParameter("pageCompID", null));
+		if (targetPage == null) {
+			targetPage = ctx.getCurrentPage();
+		}
+		ComponentHelper.moveComponent(ctx, comp, newPrevious, targetPage, area);
 
 		if (ctx.isAjax()) {
-			updatePreviewComponent(ctx, currentModule, comp.getId(), previous);
+			// updatePreviewComponent(ctx, currentModule, comp.getId(),
+			// previous);
+
+			MenuElement parentPage = ctx.getCurrentPage();
+
+			List<IContentVisualComponent> areaToBeUpdated = new LinkedList<IContentVisualComponent>();
+			areaToBeUpdated.add(comp);
+			if (newPrevious != null) {
+				areaToBeUpdated.add(newPrevious);
+			}
+
+			Collection<String> areas = new LinkedList<String>();
+			Map<String, String> areaMap = ctx.getCurrentTemplate().getAreasMap();
+			for (Map.Entry<String, String> aID : areaMap.entrySet()) {
+				areas.add(aID.getKey());
+			}
+			for (IContentVisualComponent compToBeUpdated : areaToBeUpdated) {
+
+				String selecterPrefix = "";
+				if (parentPage.isChildrenAssociation()) {
+					selecterPrefix = "#page_" + compToBeUpdated.getPage().getId() + " #";
+					ctx.setCurrentPageCached(compToBeUpdated.getPage());
+				}
+
+				ctx.getAjaxInsideZone().put(selecterPrefix + areaMap.get(compToBeUpdated.getArea()), ServletHelper.executeJSP(ctx, "/jsp/view/content_view.jsp?area=" + compToBeUpdated.getArea()));
+			}
+			String selecterPrefix = "";
+			if (parentPage.isChildrenAssociation()) {
+				selecterPrefix = "#page_" + rs.getParameter("pageCompID", "#ID_NOT_DEFINED") + " #";
+
+				if (targetPage != null) {
+					ctx.setCurrentPageCached(targetPage);
+				}
+			}
+			ctx.getAjaxInsideZone().put(selecterPrefix + areaMap.get(areaId), ServletHelper.executeJSP(ctx, "/jsp/view/content_view.jsp?area=" + areaId));
+
+			ctx.setCurrentPageCached(parentPage);
 		}
 
 		String msg = i18nAccess.getText("action.component.moved", new String[][] { { "type", comp.getType() } });
 		messageRepository.setGlobalMessageAndNotification(ctx, new GenericMessage(msg, GenericMessage.INFO));
 
 		persistenceService.store(ctx);
-		modifPage(ctx);
+		modifPage(ctx, ctx.getCurrentPage());
 		autoPublish(ctx.getRequest(), ctx.getResponse());
 
 		return null;
@@ -1518,15 +1615,36 @@ public class Edit extends AbstractModuleAction {
 				if (areaKey == null) {
 					return "area not found : " + area;
 				}
-				ctx = ctx.getContextWithArea(areaKey);
 				editContext.setCurrentArea(areaKey);
 			}
-			if (areaKey != null) {
-				ctx = ctx.getContextWithArea(areaKey);
+			sharedContent.loadContent(ctx);
+
+			MenuElement parentPage = ctx.getCurrentPage();
+			MenuElement targetPage = content.getNavigation(ctx).searchChildFromId(rs.getParameter("pageContainerID", null));
+			if (targetPage == null) {
+				targetPage = ctx.getCurrentPage();
 			}
 
-			sharedContent.loadContent(ctx);
-			content.createContent(ctx, sharedContent.getContent(), previousId, true);
+			if (sharedContent.getLinkInfo() == null) {
+				content.createContent(ctx, targetPage, sharedContent.getContent(), previousId, true);
+			} else {
+				ComponentBean mirrorBean = new ComponentBean(PageMirrorComponent.TYPE, sharedContent.getLinkInfo(), ctx.getRequestContentLanguage());
+				mirrorBean.setArea(areaKey);
+				content.createContent(ctx, targetPage, mirrorBean, previousId, true);
+			}
+
+			if (ctx.isAjax()) {
+				// updateComponent(ctx, currentModule, newId, previousId);
+				String selecterPrefix = "";
+				if (parentPage.isChildrenAssociation()) {
+					selecterPrefix = "#page_" + rs.getParameter("pageContainerID", "#ID_NOT_DEFINED") + " #";
+
+					if (targetPage != null) {
+						ctx.setCurrentPageCached(targetPage);
+					}
+				}
+				ctx.getAjaxInsideZone().put(selecterPrefix + areaKey, ServletHelper.executeJSP(ctx, "/jsp/view/content_view.jsp?area=" + area));
+			}
 
 			PersistenceService.getInstance(globalContext).store(ctx);
 

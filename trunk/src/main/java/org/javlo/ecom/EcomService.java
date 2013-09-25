@@ -115,8 +115,7 @@ public class EcomService {
 					newData[data.length+i][j] = product.getName();j++;
 					newData[data.length+i][j] = ""+product.getPrice();j++;
 					newData[data.length+i][j] = ""+product.getQuantity();j++;
-					newData[data.length+i][j] = ""+product.getReduction();j++;					
-					newData[data.length+i][j] = ""+basket.getPaypalTX();j++;					
+					newData[data.length+i][j] = ""+product.getReduction();j++;										
 					i++;
 				}
 				fact = new CSVFactory(newData);

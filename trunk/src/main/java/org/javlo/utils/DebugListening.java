@@ -92,11 +92,14 @@ public class DebugListening {
 				out.close();
 
 				if (SEND_ERROR_MAIL) {
-					MailService mailService = MailService.getInstance(staticConfig);
-
-					mailService.sendMail(new InternetAddress(staticConfig.getErrorMailReport()), new InternetAddress(staticConfig.getErrorMailReport()), subject, new String(arrayOut.toByteArray()), false);
-
-					logger.warning("SEND ERROR TO ADMINISTRATOR");
+					if (staticConfig.getErrorMailReport() != null) {
+						MailService mailService = MailService.getInstance(staticConfig);
+						mailService.sendMail(new InternetAddress(staticConfig.getErrorMailReport()), new InternetAddress(staticConfig.getErrorMailReport()), subject, new String(arrayOut.toByteArray()), false);
+						logger.warning("SEND ERROR TO ADMINISTRATOR");
+					} else {
+						logger.warning("no error email defined, the error message will be displayed in log.");
+						logger.warning(new String(arrayOut.toByteArray()));
+					}
 				}
 
 			} catch (Exception e) {
@@ -127,11 +130,16 @@ public class DebugListening {
 			StaticConfig staticConfig = StaticConfig.getInstance(application);
 
 			try {
-				String subject = "wcms error report : " + staticConfig.getInstanceId();
+				if (staticConfig.getErrorMailReport() != null) {
+					String subject = "wcms error report : " + staticConfig.getInstanceId();
 
-				MailService mailService = MailService.getInstance(staticConfig);
+					MailService mailService = MailService.getInstance(staticConfig);
 
-				mailService.sendMail(new InternetAddress(staticConfig.getErrorMailReport()), new InternetAddress(staticConfig.getErrorMailReport()), subject, message, false);
+					mailService.sendMail(new InternetAddress(staticConfig.getErrorMailReport()), new InternetAddress(staticConfig.getErrorMailReport()), subject, message, false);
+				} else {
+					logger.warning("no error email defined, the error message will be displayed in log.");
+					logger.warning(new String(message));
+				}
 
 			} catch (Exception e) {
 				e.printStackTrace();

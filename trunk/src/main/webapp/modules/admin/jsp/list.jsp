@@ -34,7 +34,7 @@
      	<a href="${info.currentURL}?webaction=changesite&change=true&context=${context.key}">${context.key}</a>
      	<ul>
  		<c:forEach var="alias" items="${context.alias}">
-			<li><a href="${info.currentURL}?webaction=changesite&change=true&context=${alias.key}">${alias.key}</a></li>
+			<li><a href="${info.currentURL}?webaction=changesite&change=true&context=${alias.key}" title="${alias.key}">${alias.key}</a></li>
 		</c:forEach>     	
      	</ul>
      </td>

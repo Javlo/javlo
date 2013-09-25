@@ -756,7 +756,7 @@ public class UserRegistrationComponent extends AbstractVisualComponent implement
 				out.println(URLHelper.createURL(absCtx));
 
 				out.close();
-				NetHelper.sendMailToAdministrator(ctx, "registration on " + globalContext.getContextKey() + " : " + firstName + " " + lastName, new String(outStream.toByteArray()));
+				NetHelper.sendMailToAdministrator(ctx.getGlobalContext(), "registration on " + globalContext.getContextKey() + " : " + firstName + " " + lastName, new String(outStream.toByteArray()));
 
 				if (!messageRepository.haveGlobalMessage() && !storeUser) {
 					comp.needForm = false;

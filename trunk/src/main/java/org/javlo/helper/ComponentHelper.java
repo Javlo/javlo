@@ -149,13 +149,16 @@ public class ComponentHelper {
 		res.append("</a>");
 		return res.toString();
 	}
+	
+	
 
-	public static void moveComponent(ContentContext ctx, IContentVisualComponent comp, IContentVisualComponent newPrevious, String area) {
+	public static void moveComponent(ContentContext ctx, IContentVisualComponent comp, IContentVisualComponent newPrevious, MenuElement targetPage, String area) {
 		comp.getPage().removeContent(ctx, comp.getId());
 		if (newPrevious != null) {
 			newPrevious.getPage().addContent(newPrevious.getId(), comp.getComponentBean());
+			comp.setPage(newPrevious.getPage());
 		} else {
-			comp.getPage().addContent("0", comp.getComponentBean());
+			targetPage.addContent("0", comp.getComponentBean());
 		}
 		comp.getComponentBean().setArea(area);
 	}

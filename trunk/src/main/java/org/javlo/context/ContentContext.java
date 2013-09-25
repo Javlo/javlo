@@ -61,6 +61,8 @@ public class ContentContext {
 	public static final String FORWARD_PATH_REQUEST_KEY = "forward-path";
 
 	public static final String FORCE_MODE_PARAMETER_NAME = "_render-mode";
+	
+	public static final String CHANGE_AREA_ATTRIBUTE_NAME = "_change_area";
 
 	public static final String FORCE_ABSOLUTE_URL = "_absolute-url";
 
@@ -76,6 +78,10 @@ public class ContentContext {
 	protected static Logger logger = Logger.getLogger(ContentContext.class.getName());
 
 	public static String CONTEXT_REQUEST_KEY = "contentContext";
+	
+	private MenuElement currentPageCached = null;
+	
+	private MenuElement virtualCurrentPage = null;
 
 	private static ContentContext createContentContext(HttpServletRequest request, HttpServletResponse response, boolean free) {
 		ContentContext ctx = new ContentContext();
@@ -306,7 +312,7 @@ public class ContentContext {
 
 	/** cache **/
 
-	private MenuElement currentPageCached = null;
+	//private MenuElement currentPageCached = null;
 
 	/**
 	 * contain a jsp page to be insered in the content place. content is insered if this attribute is null.
@@ -328,6 +334,8 @@ public class ContentContext {
 	private HttpServletResponse response;;
 
 	private String area = ComponentBean.DEFAULT_AREA;
+	
+	private String virtualArea = null;
 
 	private Template currentTemplate = null;
 
@@ -393,12 +401,14 @@ public class ContentContext {
 		ajaxData = ctx.ajaxData;
 		ajaxInsideZone = ctx.ajaxInsideZone;
 		ajaxData = ctx.ajaxData;
+		ajax = ctx.ajax;
 		scheduledAjaxInsideZone = ctx.scheduledAjaxInsideZone;
 		
-		currentPageCached = ctx.currentPageCached;
 		currentTemplate = ctx.currentTemplate;
 		
 		editPreview = ctx.editPreview;
+		
+		currentPageCached = ctx.currentPageCached;
 	}
 
 	public String getArea() {
@@ -582,7 +592,7 @@ public class ContentContext {
 	private MenuElement getCurrentPage(boolean urlFacotry) throws Exception {
 		if (getCurrentPageCached() != null) {
 			return getCurrentPageCached();
-		}
+		}		
 		GlobalContext globalContext = GlobalContext.getInstance(request);
 		MenuElement root = ContentService.getInstance(globalContext).getNavigation(this);
 		if (getPath().equals("/")) {
@@ -906,7 +916,11 @@ public class ContentContext {
 	}
 
 	public void setCurrentPageCached(MenuElement currentPageCached) {
-		this.currentPageCached = currentPageCached;
+		this.currentPageCached = currentPageCached; 
+	}
+	
+	public void resetCurrentPageCached() {
+		currentPageCached = null;
 	}
 
 	/*
@@ -1470,5 +1484,38 @@ public class ContentContext {
 		} else {
 			return false;
 		}
+	}
+
+	/**
+	 * use for render page with some references to other page (sample : mirrorPage, renderImage with filter rule of the template of mirror component and not source page).
+	 * @return
+	 * @throws Exception
+	 */
+	public MenuElement getVirtualCurrentPage() throws Exception {
+		if (virtualCurrentPage != null) {
+			return virtualCurrentPage;
+		} else {
+			return getCurrentPage();
+		}
+	}
+
+	public void setVirtualCurrentPage(MenuElement virtualCurrentPage) {
+		this.virtualCurrentPage = virtualCurrentPage;
+	}
+
+	/**
+	 * create a area to render content with other rules than area of content.
+	 * @return
+	 */
+	public String getVirtualArea() {
+		if (virtualArea != null) {
+			return virtualArea;
+		} else {
+			return getArea();
+		}
+	}
+
+	public void setVirtualArea(String virtualArea) {
+		this.virtualArea = virtualArea;
 	}
 }

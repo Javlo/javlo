@@ -9,15 +9,24 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.logging.Level;
 
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+
+import org.javlo.actions.IAction;
+import org.javlo.component.core.IContentVisualComponent;
 import org.javlo.component.properties.AbstractPropertiesComponent;
 import org.javlo.context.ContentContext;
+import org.javlo.ecom.Basket;
+import org.javlo.ecom.Product;
 import org.javlo.helper.StringHelper;
 import org.javlo.helper.URLHelper;
 import org.javlo.i18n.I18nAccess;
+import org.javlo.navigation.MenuElement;
+import org.javlo.service.ContentService;
 import org.javlo.service.RequestService;
 
 
-public class ProductComponent extends AbstractPropertiesComponent {
+public class ProductComponent extends AbstractPropertiesComponent implements IAction {
 
 	static final List<String> FIELDS = Arrays.asList(new String[] { "name", "price", "vat", "promo", "currency", "offset", "weight", "production" });
 
@@ -175,7 +184,7 @@ public class ProductComponent extends AbstractPropertiesComponent {
 			PrintStream out = new PrintStream(outStream);
 
 			out.println("<form class=\"add-basket\" id=\"product-"+getName()+"_"+getId()+"\" action=\""+URLHelper.createURL(ctx)+"\">");
-			out.println("<input type=\"hidden\" name=\"webaction\" value=\"ecom.buy\" />");
+			out.println("<input type=\"hidden\" name=\"webaction\" value=\"products.buy\" />");
 			out.println("<input type=\"hidden\" name=\"cid\" value=\""+getId()+"\" />");
 			I18nAccess i18nAccess = I18nAccess.getInstance(ctx);
 			
@@ -221,4 +230,48 @@ public class ProductComponent extends AbstractPropertiesComponent {
 	public String getHexColor() {
 		return ECOM_COLOR;
 	}
+	
+	@Override
+	public String getActionGroupName() {
+		return "products";
+	}
+	
+	public static String performBuy(HttpServletRequest request, HttpServletResponse response) throws Exception {
+		RequestService requestService = RequestService.getInstance(request);
+		ContentContext ctx = ContentContext.getContentContext(request, response);
+		ContentService content = ContentService.getInstance(request);
+		MenuElement currentPage = ctx.getCurrentPage();
+
+		/* information from product */
+		String cid = requestService.getParameter("cid", null);
+		if (cid != null) {
+			IContentVisualComponent comp = content.getComponent(ctx, cid);
+			if ((comp != null) && (comp instanceof ProductComponent)) {
+				ProductComponent pComp = (ProductComponent) comp;
+				Product product = new Product(pComp);
+
+				/* information from page */
+				product.setUrl(URLHelper.createURL(ctx, currentPage.getPath()));
+				product.setShortDescription(currentPage.getTitle(ctx));
+				product.setLongDescription(currentPage.getDescription(ctx));
+				if (currentPage.getImage(ctx) != null) {
+					product.setImage(ctx, currentPage.getImage(ctx));
+				}
+
+				String quantity = requestService.getParameter("quantity", null);
+				if (quantity != null) {
+					int quantityValue = Integer.parseInt(quantity);
+
+					quantityValue = quantityValue - (quantityValue % (int) pComp.getOffset());
+					product.setQuantity(quantityValue);
+
+					Basket basket = Basket.getInstance(ctx);
+					basket.addProduct(product);
+				}
+			}
+		}
+
+		return null;
+	}
+	
 }

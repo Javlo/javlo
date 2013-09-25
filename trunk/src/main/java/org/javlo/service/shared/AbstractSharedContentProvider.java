@@ -3,6 +3,7 @@ package org.javlo.service.shared;
 import java.net.URL;
 import java.util.Collection;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Locale;
 import java.util.Map;
@@ -14,7 +15,7 @@ public abstract class AbstractSharedContentProvider implements ISharedContentPro
 
 	private String name;
 	private URL url;
-	private Map<String, String> categories = Collections.EMPTY_MAP;
+	private Map<String, String> categories = new HashMap<String, String>();
 
 	@Override
 	public String getName() {

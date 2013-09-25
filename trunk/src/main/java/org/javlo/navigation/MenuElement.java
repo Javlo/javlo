@@ -300,6 +300,10 @@ public class MenuElement implements Serializable {
 				return false;
 			}
 		}
+		
+		public boolean isChildrenAssociation() {
+			return page.isChildrenAssociation();
+		}
 
 	}
 
@@ -929,6 +933,10 @@ public class MenuElement implements Serializable {
 		public String getType() {
 			return page.getType();
 		}
+		
+		public boolean isChildrenAssociation() {
+			return page.isChildrenAssociation();
+		}
 
 	}
 
@@ -1051,6 +1059,8 @@ public class MenuElement implements Serializable {
 	int priority = 10;
 
 	String name = null;
+	
+	boolean childrenAssociation = false;
 
 	// String path = null;
 	String id = StringHelper.getRandomId();
@@ -1249,7 +1259,7 @@ public class MenuElement implements Serializable {
 	}
 
 	public void addContent(String parentId, ComponentBean bean, boolean realeaseCache) {
-
+		
 		assert bean != null;
 		synchronized (getLock()) {
 			synchronized (componentBean) {
@@ -3297,6 +3307,16 @@ public class MenuElement implements Serializable {
 				}
 			}
 		}
+		
+		if (isChildrenAssociation()) {
+			for (MenuElement child : getChildMenuElements()) {
+				if (!child.isEmpty(ctxForceArea)) {					
+					desc.setEmpty(area, false);
+					return false;
+				}
+			}
+		}
+		
 		desc.setEmpty(area, true);
 		return true;
 	}
@@ -3334,10 +3354,11 @@ public class MenuElement implements Serializable {
 	}
 
 	public boolean isRealContent(ContentContext ctx) throws Exception {
+		
 		if (!isInsideTimeRange()) {
 			return false;
 		}
-
+		
 		PageDescription desc = getPageDescriptionCached(ctx, ctx.getRequestContentLanguage());
 
 		if (!desc.isRealContentNull()) {			
@@ -3347,8 +3368,6 @@ public class MenuElement implements Serializable {
 		ContentContext contentAreaCtx = new ContentContext(ctx);
 		
 		Template template = TemplateFactory.getTemplate(ctx, this);
-		
-		System.out.println("***** MenuElement.isRealContent : ctx.getCurrentTemplate().isRealContentFromAnyArea() = " + (template == null ? "null template" : template.isRealContentFromAnyArea())); //TODO: remove debug trace
 		if (template == null || !template.isRealContentFromAnyArea()) {
 			contentAreaCtx.setArea(ComponentBean.DEFAULT_AREA);
 		} else {
@@ -3357,9 +3376,18 @@ public class MenuElement implements Serializable {
 		ContentElementList comps = getContent(contentAreaCtx);
 		while (comps.hasNext(contentAreaCtx)) {
 			IContentVisualComponent comp = comps.next(contentAreaCtx);
-			if (comp.isRealContent(contentAreaCtx) && !comp.isRepeat()) {
+			if (comp.isRealContent(contentAreaCtx) && !comp.isRepeat()) {				
 				desc.realContent = true;
 				return true;
+			}
+		}
+		
+		if (isChildrenAssociation()) {
+			for (MenuElement child : getChildMenuElements()) {
+				if (child.isRealContent(contentAreaCtx)) {
+					desc.realContent = true;
+					return true;
+				}
 			}
 		}
 
@@ -3601,7 +3629,8 @@ public class MenuElement implements Serializable {
 	 */
 	public MenuElement searchChildFromId(String id) {
 		if ((id == null) || (id.equals("0"))) {
-			return this;
+			//return this;
+			return null;
 		} else {
 			try {
 				for (MenuElement child : getAllChildren()) {
@@ -4079,5 +4108,14 @@ public class MenuElement implements Serializable {
 
 	public void setSharedName(String sharedName) {
 		this.sharedName = sharedName;
+	}
+	
+	public boolean isChildrenAssociation() {
+		return childrenAssociation;
+	}
+	
+	public void setChildrenAssociation(boolean childrenAssociation) {		
+		this.childrenAssociation = childrenAssociation;
+		releaseCache();
 	}
 }

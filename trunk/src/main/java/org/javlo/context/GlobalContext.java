@@ -1048,7 +1048,7 @@ public class GlobalContext implements Serializable {
 
 	public URL getDMZServerIntra() {
 		String urlStr = properties.getString("dmz-intra.url");
-		if (urlStr != null) {
+		if (urlStr != null && urlStr.trim().length() > 0) {
 			try {
 				return new URL(urlStr);
 			} catch (MalformedURLException e) {

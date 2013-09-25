@@ -12,10 +12,12 @@ import java.lang.management.ManagementFactory;
 import java.lang.management.ThreadMXBean;
 import java.net.URL;
 import java.text.DecimalFormat;
+import java.util.Arrays;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
+import java.util.LinkedList;
 import java.util.Map;
 import java.util.Set;
 import java.util.logging.Level;
@@ -56,6 +58,7 @@ import org.javlo.portlet.filter.MultiReadRequestWrapper;
 import org.javlo.rendering.Device;
 import org.javlo.service.ContentService;
 import org.javlo.service.ListService;
+import org.javlo.service.PDFConvertion;
 import org.javlo.service.RequestService;
 import org.javlo.service.remote.RemoteMessage;
 import org.javlo.service.remote.RemoteMessageService;
@@ -70,7 +73,6 @@ import org.javlo.thread.AbstractThread;
 import org.javlo.thread.ThreadManager;
 import org.javlo.tracking.Tracker;
 import org.javlo.utils.DebugListening;
-import org.xhtmlrenderer.pdf.ITextRenderer;
 import org.xhtmlrenderer.swing.Java2DRenderer;
 import org.xhtmlrenderer.util.FSImageWriter;
 
@@ -622,14 +624,13 @@ public class AccessServlet extends HttpServlet implements IVersion {
 						if (request.getParameter(Template.FORCE_TEMPLATE_PARAM_NAME) != null) {
 							params.put(Template.FORCE_TEMPLATE_PARAM_NAME, request.getParameter(Template.FORCE_TEMPLATE_PARAM_NAME));
 						}
+						
+						params.put("clean-html", "true");
 
 						String url = URLHelper.createURL(viewCtx, params);
+						
+						PDFConvertion.getInstance().convertXHTMLToPDF(url, out);
 
-						ITextRenderer pdfRenderer = new ITextRenderer();
-						logger.info("create PDF : " + url);
-						pdfRenderer.setDocument(url);
-						pdfRenderer.layout();						
-						pdfRenderer.createPDF(out);
 					} else if (ctx.getFormat().equalsIgnoreCase("cxml")) {
 
 						String realPath = ContentManager.getPath(request);
@@ -674,7 +675,7 @@ public class AccessServlet extends HttpServlet implements IVersion {
 							
 							if (ctx.getGlobalContext().isCollaborativeMode()) {
 								Set<String> pageRoles = ctx.getCurrentPage().getEditorRoles();
-								if ((pageRoles.size() > 0 || ctx.getCurrentEditUser() == null) && !ctx.getCurrentPage().getName().equals("registration")) { // leave access to registration page.
+								if ((pageRoles.size() > 0 || ctx.getCurrentEditUser() == null) && !ctx.getCurrentPage().equals("registration")) { // leave access to registration page.
 									if (ctx.getCurrentEditUser() == null || !ctx.getCurrentEditUser().validForRoles(pageRoles)) {
 										ctx.setSpecialContentRenderer("/jsp/view/no_access.jsp");
 									}
@@ -682,8 +683,6 @@ public class AccessServlet extends HttpServlet implements IVersion {
 							}
 
 							ctx.setCurrentTemplate(template);
-
-							String jspPath = template.getRendererFullName(ctx);
 
 							if (ctx.getRenderMode() == ContentContext.PREVIEW_MODE && staticConfig.isFixPreview()) {
 								ctx.getRequest().setAttribute("components", ComponentFactory.getComponentForDisplay(ctx));
@@ -695,10 +694,14 @@ public class AccessServlet extends HttpServlet implements IVersion {
 								
 								if (modulesContext.searchModule("shared-content") != null) {									
 									SharedContentService sharedContentService  = SharedContentService.getInstance(ctx);
-									SharedContentContext sharedContentContext = SharedContentContext.getInstance(request.getSession());									
+									SharedContentContext sharedContentContext = SharedContentContext.getInstance(request.getSession());
 									ctx.getRequest().setAttribute("sharedContentProviders", sharedContentService.getAllProvider(ctx));
 									ISharedContentProvider provider = sharedContentService.getProvider(ctx,sharedContentContext.getProvider());
 									if (provider != null) {
+										// set first category by default
+										if (sharedContentContext.getCategory() == null && provider.getCategories().size() > 0) {
+											sharedContentContext.setCategories(new LinkedList<String>(Arrays.asList(provider.getCategories().keySet().iterator().next())));
+										}
 										ctx.getRequest().setAttribute("provider", provider);
 										ctx.setContentContextIfNeeded(provider);
 										ctx.getRequest().setAttribute("sharedContent", provider.getContent(sharedContentContext.getCategories()));
@@ -721,8 +724,12 @@ public class AccessServlet extends HttpServlet implements IVersion {
 							String area = requestService.getParameter("only-area", null);
 							if (area != null) {								
 								getServletContext().getRequestDispatcher("/jsp/view/content_view.jsp?area=" + area).include(request, response);
-							} else {
+							} else if (!ctx.getCurrentPage().isChildrenAssociation()) {
+								String jspPath = template.getRendererFullName(ctx);
 								getServletContext().getRequestDispatcher(jspPath).include(request, response);
+							} else {
+								getServletContext().getRequestDispatcher("/jsp/view/page_association.jsp").include(request, response);
+								
 							}
 						}
 					}

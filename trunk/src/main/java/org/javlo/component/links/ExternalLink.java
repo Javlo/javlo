@@ -59,6 +59,13 @@ public class ExternalLink extends ComplexPropertiesLink implements IReverseLinkC
 		return false;
 	}
 
+	@Override
+	public void prepareView(ContentContext ctx) throws Exception {
+		super.prepareView(ctx);
+		ctx.getRequest().setAttribute("link", properties.getProperty(LINK_KEY, ""));
+		ctx.getRequest().setAttribute("label", getLabel());
+	}
+
 	/**
 	 * @see org.javlo.itf.IContentVisualComponent#getXHTMLCode()
 	 */
@@ -79,8 +86,6 @@ public class ExternalLink extends ComplexPropertiesLink implements IReverseLinkC
 			if (globalContext.isOpenExernalLinkAsPopup(link)) {
 				target = "target=\"_blank\" ";
 			}
-
-			link = StringHelper.toXMLAttribute(link);
 
 			res.append("<a" + getSpecialPreviewCssClass(ctx, insertCssClass) + getSpecialPreviewCssId(ctx) + " " + target + "href=\"");
 			res.append(link);
@@ -141,7 +146,8 @@ public class ExternalLink extends ComplexPropertiesLink implements IReverseLinkC
 			out.println("<div class=\"edit three-col-layout\"><div class=\"line\">");
 			String reverseLink = properties.getProperty(REVERSE_LINK_KEY, ReverseLinkService.NONE);
 
-			// 1.3 to 1.4 conversion from legacy value "true" to corresponding "all"
+			// 1.3 to 1.4 conversion from legacy value "true" to corresponding
+			// "all"
 			if (StringHelper.isTrue(reverseLink)) {
 				reverseLink = ReverseLinkService.ALL;
 			}
@@ -242,7 +248,8 @@ public class ExternalLink extends ComplexPropertiesLink implements IReverseLinkC
 	public boolean isReverseLink() {
 		String reverseLinkValue = properties.getProperty(REVERSE_LINK_KEY, ReverseLinkService.NONE);
 		boolean outIsReverseLink = ReverseLinkService.LINK_TYPES.contains(reverseLinkValue);
-		// return StringHelper.isTrue(reverseLinkValue) || outIsReverseLink; //TODO: check why we do that ?
+		// return StringHelper.isTrue(reverseLinkValue) || outIsReverseLink;
+		// //TODO: check why we do that ?
 		return outIsReverseLink;
 	}
 

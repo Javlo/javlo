@@ -21,7 +21,8 @@
 		org.javlo.component.core.ComponentBean,				
 		org.javlo.helper.URLHelper"
 %><%
-ContentContext ctx = new ContentContext( ContentContext.getContentContext ( request, response ) );
+ContentContext ctx = ContentContext.getContentContext ( request, response );
+
 GlobalContext globalContext = GlobalContext.getInstance(request);
 boolean pageEmpty = true;
 
@@ -35,7 +36,13 @@ if (ctx.getRenderMode() == ContentContext.PREVIEW_MODE && specificComp == null) 
 	%><div id="comp_0" class="free-edit-zone editable-component"><span>&nbsp;</span></div><%
 } 
 
-String area = request.getParameter("area");
+String area = (String)request.getAttribute(ContentContext.CHANGE_AREA_ATTRIBUTE_NAME);
+if (area==null) {
+	area = request.getParameter("area");
+} else {
+	request.removeAttribute(ContentContext.CHANGE_AREA_ATTRIBUTE_NAME);
+}
+
 if (area != null) {
 	ctx.setArea(area);
 } else {
@@ -49,9 +56,11 @@ if (specificComp != null) {
 request.setAttribute("area", area);
 
 String path = request.getParameter("_wcms_content_path");
-if (path!=null) {
+if (path!=null) {	
 	ctx.setPath(path);
 }
+
+
 
 Boolean removeRepeat = StringHelper.isTrue(request.getParameter("_no-repeat"));
 
@@ -62,10 +71,19 @@ if ( ctx.getSpecialContentRenderer() != null && area.equals(ComponentBean.DEFAUL
 } else if ( ctx.getSpecialContentRenderer() != null) {
 	%><!-- this area is empty because special rederer is defined. --><%
 } else {
+	
 MenuElement currentPage = ctx.getCurrentPage();
 
 Template template = ctx.getCurrentTemplate();
 Stack<IContainer> containers = new Stack<IContainer>();
+
+%><%-- <!-- DEBUG INFO -->
+<ul style="padding: 10px; margin: 10px; border: 2px dashed red;">
+<li>area = <%=area %></li>
+<li>path = <%=ctx.getPath()%></li>
+<li>currentPage = <%=currentPage.getName()%></li>
+<li>template = <%=template.getName()%></li>
+</ul> --%><%
 
 if ( (ctx.getSpecialContentRenderer() == null || !area.equals(ComponentBean.DEFAULT_AREA) ) || template.getAreasForceDisplay().contains(area)) { // display only if page contains only repeat content (supose it is teaser)
 

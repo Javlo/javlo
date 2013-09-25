@@ -104,8 +104,8 @@ public abstract class ElementaryURLHelper {
 			sep = '&';
 		}
 		String allParam = "";
-		for (String param : params) {
-			allParam = allParam + sep + param;
+		for (String param : params) {			 
+			allParam = allParam + sep + param.replace(" ", "%20");
 			sep = '&';
 		}
 		return url + allParam;
@@ -391,7 +391,7 @@ public abstract class ElementaryURLHelper {
 		}
 		url = url.replace('\\', '/');
 		if (templateName != null) {
-			url = ElementaryURLHelper.mergePath(TRANSFORM + '/' + filter + '/' + templateName + '/' + ctx.getArea(), url);
+			url = ElementaryURLHelper.mergePath(TRANSFORM + '/' + filter + '/' + templateName + '/' + ctx.getVirtualArea(), url);
 		} else {
 			url = ElementaryURLHelper.mergePath(TRANSFORM + '/' + filter, url);
 		}

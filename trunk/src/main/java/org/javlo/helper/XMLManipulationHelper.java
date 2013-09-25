@@ -468,10 +468,15 @@ public class XMLManipulationHelper {
 						cssClass = cssClass + " " + "<%if (ctx.getRenderMode() == ContentContext.PREVIEW_MODE) { if(EditContext.getInstance(globalContext, request.getSession()).isEditPreview() ) {%>edit-preview<%} else {%>preview-only<%} }%>";
 						cssClass = cssClass + " " + "<%if (ctx.getRenderMode() == ContentContext.PREVIEW_MODE) { if(ctx.getCurrentEditUser() == null) {%>preview-notlogged<%} else {%>preview-logged<%} }%>";
 						tags[i].getAttributes().put("class", cssClass.trim());
-						remplacement.addReplacement(tags[i].getOpenStart(), tags[i].getOpenEnd() + 1, tags[i].renderOpen());
-						if (contentZone != null) {
-							remplacement.addReplacement(tags[i].getOpenEnd() + 1, tags[i].getOpenEnd() + 1, getPreviewCode() + getEscapeMenu(contentZone) + getResetTemplate() + getAfterBodyCode());
-						}
+						String openPageCode = "<c:if test=\"${pageAssociation}\"><div id=\"page_<%=currentPage.getId()%>\" class=\"_page_associate\"></c:if>";
+						String closePageCode = "<c:if test=\"${pageAssociation}\"></div></c:if>";
+						remplacement.addReplacement(tags[i].getOpenStart(), tags[i].getOpenEnd() + 1, tags[i].renderOpen()+"<%}%>"+openPageCode); // close the remove header for children association						
+						remplacement.addReplacement(tags[i].getCloseStart(), tags[i].getCloseStart(), closePageCode+"<%if (request.getParameter(\"no-close-body\") == null) {%>"); // close the remove header for children agregator
+						String previewCode = "<%if (request.getParameter(\"no-open-body\") == null) {%>"+getPreviewCode()+"<%}%>";
+						remplacement.addReplacement(tags[i].getOpenEnd() + 1, tags[i].getOpenEnd() + 1, previewCode + getEscapeMenu(contentZone) + getResetTemplate() + getAfterBodyCode());
+						//if (contentZone != null) {
+							//remplacement.addReplacement(tags[i].getOpenEnd() + 1, tags[i].getOpenEnd() + 1, getPreviewCode() + getEscapeMenu(contentZone) + getResetTemplate() + getAfterBodyCode());
+						//}
 					}
 				//}
 
@@ -563,7 +568,7 @@ public class XMLManipulationHelper {
 						/** template plugin **/
 						ByteArrayOutputStream outStream = new ByteArrayOutputStream();
 						PrintStream out = new PrintStream(outStream);
-						out.println("");
+						out.println("<%if (ctx.getRenderMode() != ContentContext.PAGE_MODE) {%>");
 						out.println("<!-- template plugins -->");
 						for (TemplatePlugin plugin : templatePlugins) {
 							if (plugin != null) {
@@ -595,6 +600,7 @@ public class XMLManipulationHelper {
 							}
 						}
 						out.println("<!-- end template plugins -->");
+						out.println("<%}%>");
 						out.close();
 
 						remplacement.addReplacement(tags[i].getCloseStart() - 1, tags[i].getCloseStart(), getHTMLSufixHead() + new String(outStream.toByteArray()));
@@ -694,6 +700,8 @@ public class XMLManipulationHelper {
 			newContent = newContent.replaceAll("##mailing.web-view##", "<a href=\"<%=URLHelper.createAbsoluteViewURL(ctx, ctx.getPath())%>\"><%=i18nAccess.getViewText(\"mailing.not-visible\")%></a>");
 
 			if (jspFile != null) {
+				/** remove all html outside body for page agregator **/
+				newContent = newContent+"<%}%>"; // close the only-body mecanism
 				ResourceHelper.writeStringToFile(jspFile, newContent, ContentContext.CHARACTER_ENCODING);
 			}
 		} catch (BadXMLException e) {
@@ -827,6 +835,8 @@ public class XMLManipulationHelper {
 		StringWriter outString = new StringWriter();
 		BufferedWriter out = new BufferedWriter(outString);
 
+		out.append("<%if (ctx.getRenderMode() != ContentContext.PAGE_MODE) {%>");
+		out.newLine();
 		out.append("<script type=\"text/javascript\">");
 		out.newLine();
 		out.append("<!--");
@@ -838,8 +848,9 @@ public class XMLManipulationHelper {
 		out.append("-->");
 		out.newLine();
 		out.append("</script>");
-
-		out.append("<%if (currentPage.getKeywords(ctx).length()>0){%>");
+		out.newLine();
+		out.append("<%}");
+		out.append("if (currentPage.getKeywords(ctx).length()>0){%>");
 		out.newLine();
 		out.append("<meta name=\"keywords\" content=\"<%=currentPage.getKeywords(ctx)%>\" />");
 		out.newLine();
@@ -998,7 +1009,7 @@ public class XMLManipulationHelper {
 		out.newLine();
 		out.append("AdminUserSecurity security = AdminUserSecurity.getInstance();");
 		out.newLine();
-		out.append("%>");
+		out.append("if (request.getParameter(\"no-open-body\") == null) {%>");
 		out.close();
 
 		return outString.toString();
@@ -1007,13 +1018,9 @@ public class XMLManipulationHelper {
 	private static String getPreviewCode() {
 		StringWriter writer = new StringWriter();
 		PrintWriter out = new PrintWriter(writer);
+		out.println("<!-- PREVIEW CODE --!>");
 		out.println("<%if (ctx.isInteractiveMode() && ctx.getRenderMode() == ContentContext.PREVIEW_MODE) {");
 		out.println("%><jsp:include page=\"/jsp/preview/command.jsp\" />");
-		// out.println("<%if (editCtx.isEditPreview()) {");
-		/*
-		 * out.println("<%MessageRepository messageRepository = MessageRepository.getInstance(ctx);"); out.println("	    %><div id=\"message-container\" class=\"standard\"><%"); out.println("   if (messageRepository.getGlobalMessage().getMessage().trim().length() > 0) {%>"); out.println("       <div class=\"notification <%=messageRepository.getGlobalMessage().getTypeLabel()%>\"><%=messageRepository.getGlobalMessage().getMessage()%></div>"); out.println("<%}%></div>");
-		 */
-		// out.println("<%}%>");
 		out.println("<%}%>");
 
 		out.println("<%if (ctx.isInteractiveMode() && ctx.getRenderMode() == ContentContext.TIME_MODE) {%>");

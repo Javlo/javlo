@@ -43,3 +43,6 @@
 </form>
 
 </c:if>
+<c:if test="${fn:length(basket.products) == 0}">
+<p>${i18n.view['ecom.basket-empty']}</p>
+</c:if>

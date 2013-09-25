@@ -1,7 +1,6 @@
 jQuery(document).ready(function() {	
 	jQuery("a.ajax").live("click", function(event) {
-		event.preventDefault();
-						
+		event.preventDefault();						
 		ajaxRequest(jQuery(this).attr('href'));	
 	});	
 	var AJAX_SUBMIT_SHADOW_DATA = "_AjaxSubmitShadow"
@@ -85,14 +84,17 @@ function ajaxRequest(url, form) {
 			jQuery.each(jsonObj.data, function(key, value) {
 				/** need test **/
 				if (key == "need-refresh" && value) {
-					window.location.href=window.location.href;
+					reloadPage();
 				}
 			});
 		}
 		jQuery.each(jsonObj.zone, function(xhtmlId, xhtml) {
-			var item = jQuery("#" + xhtmlId);			
+			if (xhtmlId.indexOf("#") < 0 && xhtmlId.indexOf("#") < 0 && xhtmlId.indexOf(" ") < 0 ) { // if allready select don't add '#'
+				xhtmlId = "#"+xhtmlId;
+			}
+			var item = jQuery(xhtmlId);			
 			if (item != null) {
-				jQuery("#" + xhtmlId).replaceWith(xhtml);
+				jQuery(xhtmlId).replaceWith(xhtml);
 			} else {
 				jQuery.each(jsonObj.data, function(key, value) {				
 			});
@@ -102,7 +104,13 @@ function ajaxRequest(url, form) {
 			}
 		});
 		jQuery.each(jsonObj.insideZone, function(xhtmlId, xhtml) {
-			var item = jQuery("#" + xhtmlId);
+			if (xhtmlId.indexOf("#") < 0 && xhtmlId.indexOf(".") < 0 && xhtmlId.indexOf(" ") < 0 ) { // if allready select don't add '#'
+				console.log("ID FOUND.");
+				xhtmlId = "#"+xhtmlId;
+			}
+			console.log("xhtmlId = "+xhtmlId);
+			var item = jQuery(xhtmlId);
+			console.log("item = "+item)
 			if (item != null) {
 				item.html(xhtml);	
 			} else {

@@ -26,7 +26,7 @@ public class DownDateMacro extends AbstractMacro {
 			List<IContentVisualComponent> dates = page.getContentByType(ctx, DateComponent.TYPE);
 			for (IContentVisualComponent date : dates) {
 				if (date.getNextComponent() != null) {
-					ComponentHelper.moveComponent(ctx, date, date.getNextComponent(), date.getArea());
+					ComponentHelper.moveComponent(ctx, date, date.getNextComponent(), ctx.getCurrentPage(), date.getArea());
 					i++;
 				}
 			}

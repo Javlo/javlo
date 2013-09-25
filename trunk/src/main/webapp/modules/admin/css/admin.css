@@ -45,10 +45,13 @@
 	margin-bottom: 4px;	
 }
 
-#sitelist ul li a {	
+#sitelist ul li a {
+	display: inline-block;
 	padding-left: 15px;
 	overflow: hidden;	
 	border-left: 1px #dddddd solid;
+	width: 150px;	
+	height: 18px; 
 }
 
 #sitelist ul li:last-child {

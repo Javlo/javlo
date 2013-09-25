@@ -13,6 +13,8 @@ import java.util.Map;
 import java.util.logging.Logger;
 import java.util.zip.ZipOutputStream;
 
+import javax.mail.internet.AddressException;
+
 import org.javlo.context.ContentContext;
 import org.javlo.helper.StringHelper;
 import org.javlo.helper.XMLHelper;
@@ -69,14 +71,20 @@ public class PersistenceThread extends Thread {
 
 	@Override
 	public void run() {
+		File file = null;
 		try {
 			logger.info("start persitence thread");
 			synchronized (menuElement.getLock()) {
-				store(menuElement, mode, getDefaultLg());
+				file = store(menuElement, mode, getDefaultLg());
 			}
 			logger.info("end persitence thread");
 		} catch (Exception e) {
 			e.printStackTrace();
+			try {
+				persistenceService.sendPersistenceErrorToAdministrator("Error in PersistanceThread.", file, e);
+			} catch (AddressException e1) {
+				logger.warning(e1.getMessage());
+			}			
 		}
 	}
 
@@ -106,10 +114,10 @@ public class PersistenceThread extends Thread {
 		this.persistenceService = persistenceService;
 	}
 
-	private void store(MenuElement menuElement, int renderMode, String defaultLg) throws Exception {
+	private File store(MenuElement menuElement, int renderMode, String defaultLg) throws Exception {
 
 		if (menuElement == null) {
-			return;
+			return null;
 		}
 		// don't save empty site
 		if ((menuElement.getAllChildren().length > 0) || (menuElement.getContent().length > 0)) {
@@ -121,8 +129,9 @@ public class PersistenceThread extends Thread {
 				persistenceService.canRedo = false;
 
 			}
+			File file;
 			if (renderMode == ContentContext.PREVIEW_MODE) {
-				File file = new File(persistenceService.getDirectory() + "/content_" + ContentContext.PREVIEW_MODE + '_' + localVersion + ".xml");
+				file = new File(persistenceService.getDirectory() + "/content_" + ContentContext.PREVIEW_MODE + '_' + localVersion + ".xml");
 				if (!file.exists()) {
 					file.createNewFile();
 				}
@@ -137,9 +146,9 @@ public class PersistenceThread extends Thread {
 				}
 				persistenceService.version++;
 				persistenceService.saveVersion();
-				persistenceService.cleanFile();
+				persistenceService.cleanFile();				
 			} else {
-				File file = new File(persistenceService.getDirectory() + "/content_" + renderMode + ".xml");
+				file = new File(persistenceService.getDirectory() + "/content_" + renderMode + ".xml");
 				if (file.exists()) {
 					storeCurrentView();
 					file = new File(persistenceService.getDirectory() + "/content_" + renderMode + ".xml");
@@ -152,10 +161,11 @@ public class PersistenceThread extends Thread {
 				} finally {
 					fileWriter.close();
 					fileStream.close();
-				}
-
+				}				
 			}
+			return file;
 		}
+		return null;
 	}
 	
 	void storeCurrentView() throws IOException {

@@ -71,6 +71,8 @@ import org.javlo.utils.SuffixPrefix;
  */
 public abstract class AbstractVisualComponent implements IContentVisualComponent {
 
+	public static final String NOT_EDIT_PREVIEW_PARAM_NAME = "_not_edit_preview";
+
 	public static Logger logger = Logger.getLogger(AbstractVisualComponent.class.getName());
 
 	public static final String COMPONENT_KEY = "wcms_component";
@@ -713,7 +715,7 @@ public abstract class AbstractVisualComponent implements IContentVisualComponent
 	public IContentVisualComponent getNextComponent() {
 		return nextComponent;
 	}
-
+	
 	@Override
 	public MenuElement getPage() {
 		return page;
@@ -899,8 +901,11 @@ public abstract class AbstractVisualComponent implements IContentVisualComponent
 				if (!globalContext.isOnlyCreatorModify() || (ctx.getCurrentEditUser() != null && (AdminUserSecurity.getInstance().isAdmin(ctx.getCurrentEditUser()) || getAuthors().equals(ctx.getCurrentEditUser().getLogin())))) {
 					classPrefix = "";
 				}
-				if (getConfig(ctx).isPreviewEditable() && editCtx.isEditPreview() && (!isRepeat() || getPage().equals(ctx.getCurrentPage()))) {
-					return " class=\""+classPrefix+"editable-component" + currentClass + "\"";
+				RequestService rs = RequestService.getInstance(ctx.getRequest());				
+				if (!StringHelper.isTrue(rs.getParameter(NOT_EDIT_PREVIEW_PARAM_NAME, null))) {
+					if (getConfig(ctx).isPreviewEditable() && editCtx.isEditPreview() && (!isRepeat() || getPage().equals(ctx.getCurrentPage()))) {
+						return " class=\""+classPrefix+"editable-component" + currentClass + "\"";
+					}
 				}
 			} catch (Exception e) {
 				e.printStackTrace();

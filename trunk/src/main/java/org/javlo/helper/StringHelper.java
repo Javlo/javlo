@@ -1219,9 +1219,7 @@ public class StringHelper {
 	}
 
 	public static void main(String[] args) {
-		System.out.println("file time : " + getLanguageFromFileName("view_en.properties"));
-		System.out.println("file time : " + getLanguageFromFileName("view_end.properties"));
-		System.out.println("file time : " + getLanguageFromFileName("view.properties"));
+		System.out.println("***** StringHelper.main : "+renderDouble(120, 2, '.')); //TODO: remove debug trace
 	}
 
 	/**
@@ -2825,7 +2823,7 @@ public class StringHelper {
 	}
 	
 	public static String renderPrice (double price, String currency) {
-		return String.format("%.2f%n "+currency, price);
+		return String.format("%.2f "+currency, price);
 	}
 	
 	}
