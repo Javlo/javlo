@@ -233,6 +233,9 @@ public class ContentService {
 		bean.setRenderer(inBean.getRenderer());
 		bean.setModify(true);
 		MenuElement elem = ctx.getCurrentPage();
+		if (elem.isChildrenAssociation() && elem.getChildMenuElements().size() > 0) {
+			elem = elem.getChildMenuElements().iterator().next();
+		}	
 		elem.addContent(parentId, bean, releaseCache);
 		return id;
 	}
@@ -246,7 +249,10 @@ public class ContentService {
 		bean.setRepeat(inBean.isRepeat());
 		bean.setRenderer(inBean.getRenderer());
 		bean.setModify(true);
-		MenuElement elem = ctx.getCurrentPage();
+		MenuElement elem = ctx.getCurrentPage();	
+		if (elem.isChildrenAssociation() && elem.getChildMenuElements().size() > 0) {
+			elem = elem.getChildMenuElements().iterator().next();
+		}		
 		ContentElementList list = elem.getContent(ctx);
 		IContentVisualComponent comp = list.next(ctx);
 		while (list.hasNext(ctx)) {

@@ -937,6 +937,27 @@ public class MenuElement implements Serializable {
 		public boolean isChildrenAssociation() {
 			return page.isChildrenAssociation();
 		}
+		
+		public Collection<PageBean> getPreviousBrothers() {
+			Collection<PageBean> outBean = new LinkedList<MenuElement.PageBean>();
+			MenuElement previous = page.getPreviousBrother();
+			while (previous != null) {
+				outBean.add(new PageBean(ctx, previous));
+				previous = previous.getPreviousBrother();
+			}
+			return outBean;
+		}
+		
+		public Collection<PageBean> getNextBrothers() {
+			Collection<PageBean> outBean = new LinkedList<MenuElement.PageBean>();
+			MenuElement next = page.getNextBrother();
+			while (next != null) {
+				outBean.add(new PageBean(ctx, next));
+				next = next.getNextBrother();
+			}
+			return outBean;
+		}
+
 
 	}
 

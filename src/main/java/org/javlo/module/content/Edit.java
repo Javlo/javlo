@@ -663,9 +663,13 @@ public class Edit extends AbstractModuleAction {
 			messageRepository.setGlobalMessageAndNotification(ctx, new GenericMessage(i18nAccess.getText("action.block"), GenericMessage.ERROR));
 			return null;
 		}
-		String previousId = rs.getParameter("previous", null);
+		String previousId = rs.getParameter("previous", null);		
 
 		String type = request.getParameter("type");
+		
+		System.out.println("***** Edit.performInsert : type="+type+" previousId="+previousId); //TODO: remove debug trace
+		
+		
 		if (previousId == null || type == null) {
 			return "bad insert request need previousId and component type.";
 		}
@@ -691,11 +695,11 @@ public class Edit extends AbstractModuleAction {
 		if (targetPage == null) {
 			targetPage = ctx.getCurrentPage();
 		}
-
+		
 		if (areaKey == null) {
 			areaKey = ctx.getArea();
 		}
-
+		
 		String newId = content.createContent(ctx, targetPage, areaKey, previousId, type, "", true);
 
 		if (StringHelper.isTrue(rs.getParameter("init", null))) {
@@ -704,7 +708,9 @@ public class Edit extends AbstractModuleAction {
 		}
 
 		if (ctx.isAjax()) {
-			updateComponent(ctx, currentModule, newId, previousId);
+			if (!ctx.isEditPreview()) {				
+				updateComponent(ctx, currentModule, newId, previousId);
+			}
 			String selecterPrefix = "";
 			if (parentPage.isChildrenAssociation()) {
 				selecterPrefix = "#page_" + rs.getParameter("pageContainerID", "#ID_NOT_DEFINED") + " #";
@@ -713,6 +719,12 @@ public class Edit extends AbstractModuleAction {
 					ctx.setCurrentPageCached(targetPage);
 				}
 			}
+			
+			String mode = rs.getParameter("render-mode", null);
+			if (mode != null) {
+				ctx.setRenderMode(Integer.parseInt(mode));
+			}
+			
 			ctx.getAjaxInsideZone().put(selecterPrefix + areaKey, ServletHelper.executeJSP(ctx, "/jsp/view/content_view.jsp?area=" + area));
 		}
 
@@ -1537,6 +1549,11 @@ public class Edit extends AbstractModuleAction {
 					ctx.setCurrentPageCached(targetPage);
 				}
 			}
+			
+			String mode = rs.getParameter("render-mode", null);
+			if (mode != null) {
+				ctx.setRenderMode(Integer.parseInt(mode));
+			}
 			ctx.getAjaxInsideZone().put(selecterPrefix + areaMap.get(areaId), ServletHelper.executeJSP(ctx, "/jsp/view/content_view.jsp?area=" + areaId));
 
 			ctx.setCurrentPageCached(parentPage);
@@ -1642,6 +1659,10 @@ public class Edit extends AbstractModuleAction {
 					if (targetPage != null) {
 						ctx.setCurrentPageCached(targetPage);
 					}
+				}
+				String mode = rs.getParameter("render-mode", null);
+				if (mode != null) {
+					ctx.setRenderMode(Integer.parseInt(mode));
 				}
 				ctx.getAjaxInsideZone().put(selecterPrefix + areaKey, ServletHelper.executeJSP(ctx, "/jsp/view/content_view.jsp?area=" + area));
 			}

@@ -30,6 +30,8 @@ import org.javlo.service.RequestService;
 public class ChildrenLink extends AbstractVisualComponent implements IImageTitle {
 
 	protected static final char DATA_SEPARATOR = ',';
+	
+	public static final String TYPE = "children-link";
 
 	public class ChildLinkBean {
 		private final ContentContext ctx;
@@ -275,7 +277,7 @@ public class ChildrenLink extends AbstractVisualComponent implements IImageTitle
 
 	@Override
 	public String getType() {
-		return "children-link";
+		return TYPE;
 	}
 
 	@Override

@@ -104,11 +104,9 @@ function ajaxRequest(url, form) {
 			}
 		});
 		jQuery.each(jsonObj.insideZone, function(xhtmlId, xhtml) {
-			if (xhtmlId.indexOf("#") < 0 && xhtmlId.indexOf(".") < 0 && xhtmlId.indexOf(" ") < 0 ) { // if allready select don't add '#'
-				console.log("ID FOUND.");
+			if (xhtmlId.indexOf("#") < 0 && xhtmlId.indexOf(".") < 0 && xhtmlId.indexOf(" ") < 0 ) { // if allready select don't add '#'				
 				xhtmlId = "#"+xhtmlId;
-			}
-			console.log("xhtmlId = "+xhtmlId);
+			}			
 			var item = jQuery(xhtmlId);
 			console.log("item = "+item)
 			if (item != null) {

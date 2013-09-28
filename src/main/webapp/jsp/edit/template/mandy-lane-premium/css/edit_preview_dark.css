@@ -6,6 +6,10 @@
 	margin-top: 27px;
 }
 
+#preview_command li.refresh {
+	display: block;
+}
+
 #preview_command figure, #preview_command .content, #preview_command .description, #preview_command, #preview_command h1, #preview_command h2, #preview_command h3, #preview_command h4, #preview_command li, #preview_command ul, #preview_command label, #preview_command img, #preview_command div, #preview_command a, #preview_command span, #preview_command input, #preview_command fieldset, #preview_command legend, #preview_command form, #preview_command select, #preview_command option, #preview_command .navigation {
 	color: #AFAFAF;
 }
@@ -437,7 +441,7 @@ body.edit-preview {
 	background-color: #333333;
 }
 
-#preview_command .pc_command li.preview {
+#preview_command .pc_command li.preview, #preview_command .pc_command li.refresh {
 	float: right;
 	margin-right: 4px;
 }
@@ -532,6 +536,11 @@ body.edit-preview {
     height: 16px;
 }
 
+#preview_command #pc_command.pc_command #refresh_button {
+    background-position: 0 -2447px;
+    height: 16px;
+}
+
 #preview_command .pc_command a#pc_edit_button.pc_edit_true {
 	padding-top: 2px;
 	padding-left: 20px;
@@ -549,7 +558,7 @@ body.edit-preview {
 	color: #333333;
 }
 
-#preview_command #home_form label {
+#preview_command #home_form label, #preview_command #refresh_form label {
 	display: none;
 }
 

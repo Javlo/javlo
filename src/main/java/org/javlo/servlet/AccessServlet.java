@@ -594,6 +594,7 @@ public class AccessServlet extends HttpServlet implements IVersion {
 						if (request.getParameter(Template.FORCE_TEMPLATE_PARAM_NAME) != null) {
 							params.put(Template.FORCE_TEMPLATE_PARAM_NAME, request.getParameter(Template.FORCE_TEMPLATE_PARAM_NAME));
 						}
+						params.put("clean-html", "true");
 						url = URLHelper.createURL(viewCtx, params);
 
 						int width = 1280;
@@ -724,13 +725,10 @@ public class AccessServlet extends HttpServlet implements IVersion {
 							String area = requestService.getParameter("only-area", null);
 							if (area != null) {								
 								getServletContext().getRequestDispatcher("/jsp/view/content_view.jsp?area=" + area).include(request, response);
-							} else if (!ctx.getCurrentPage().isChildrenAssociation()) {
+							} else {
 								String jspPath = template.getRendererFullName(ctx);
 								getServletContext().getRequestDispatcher(jspPath).include(request, response);
-							} else {
-								getServletContext().getRequestDispatcher("/jsp/view/page_association.jsp").include(request, response);
-								
-							}
+							} 
 						}
 					}
 					localLogger.endCount("content", "include content");
