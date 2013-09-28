@@ -1,3 +1,4 @@
+
 ._empty_area {
 	margin: 5px;	
 	border-radius: 3px 3px 3px 3px;
@@ -24,9 +25,17 @@
 }
 
 ._page_associate {
-	border-bottom: 2px #efefef dashed;
+	border-bottom: 2px #3333ef dashed;
 	position: relative;	
 	overflow: hidden;	
+}
+
+.page-break {
+	border-bottom: 2px #33ef33 dashed;
+	font-size: 0;
+	width: 2000px;
+	position: absolute;
+	left: 0;
 }
 
 ._pdf_page_limit {
@@ -36,6 +45,10 @@
 	height: 0;
 	width: 100%;
 	border-top: 2px #ff5555 dashed;
+}
+
+#preview_command li.refresh {
+	display: none;
 }
 
 #preview_command .hidden {

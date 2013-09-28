@@ -275,6 +275,15 @@ function getParam( url, name )
     return results[1];
 }
 
+function addParam( url, params ) {	
+	if (url.indexOf("?")<0) {
+		url = url + "?" + params;
+	} else {
+		url = url + "&" + params;
+	}
+	return url;
+}
+
 //List of HTML entities for escaping.
 var htmlEscapes = {
   '&': '&amp;',

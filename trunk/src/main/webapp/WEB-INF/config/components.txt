@@ -102,6 +102,7 @@ org.javlo.component.web2.Survey
 
 org.javlo.component.layout.ContentSeparation
 org.javlo.component.layout.Space
+org.javlo.component.layout.PageBreak
 org.javlo.component.meta.ForceRealContent
 org.javlo.component.meta.NotSearchPage
 org.javlo.component.form.SearchResultComponent

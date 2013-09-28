@@ -1,7 +1,21 @@
 var dragging = false;
 
+var mouseX = 0;
+var mouseY = 0;
+
 jQuery(document).ready(
 		function() {
+			
+			jQuery( window ).mousemove(function( event ) {
+				mouseX = event.pageX;
+				mouseY = event.pageY;
+				
+				if (!mouseInLayer()) {
+					layerOver(null,false);
+				}
+				
+			});
+			
 			try {
 				jQuery(".floating-preview #preview_command").draggable({
 					handle : ".pc_header"
@@ -10,8 +24,8 @@ jQuery(document).ready(
 						'<div id="preview-layer"><span>&nbsp;</span></div>');
 				jQuery("body").append(
 						'<div id="droppable-layer"><span>&nbsp;</span></div>');
-				jQuery("._page_associate").append('<div class="_pdf_page_limit"><span>&nbsp;</span></div>');
-				
+				updatePDFPosition();
+			
 				jQuery( document ).tooltip({
 					position: {
 					my: "center bottom-20",
@@ -41,16 +55,18 @@ jQuery(document).ready(
 				return true;
 			});
 			jQuery(window).scroll(function() {				
-				layerOver(null, false);
+				if (!dragging) {					
+					layerOver(null, false);
+				}
 				return true;
 			});
 			jQuery("#preview-layer").click(
-					function() {
+					function() {						
 						layerOver(null);
 						jQuery(this).data("subItem").trigger("click",
 								jQuery(this).data("subItem"));
 						return true;
-					});
+					});			
 			jQuery(".preview-edit").click(function() {
 				var elems = jQuery(this);
 				var editURL = elems.attr("action");
@@ -70,20 +86,57 @@ jQuery(document).ready(
 				   placeholder: "sortable-target"
 				   ,stop: function(event, ui) {
 					   var url = jQuery("#children_list").attr("action");
-					   url=url+"?webaction=edit.movePage&page="+jQuery(ui.item).attr("id")+"&previous="+jQuery(ui.item).prev().attr("id");
+					   url=addParam(url,"webaction=edit.movePage&page="+jQuery(ui.item).attr("id")+"&previous="+jQuery(ui.item).prev().attr("id"));
 					   ajaxRequest(url);
 				   }
 			});
+			
+			jQuery(".editable-component.ui-droppable").each(function() {
+				if (jQuery(this).height() == 0) { // don't contains block item
+					jQuery(this).css("float", "left"); // out of the flow
+					jQuery(this).height(jQuery(this).children().height());
+				}				
+			});
+			
 		});
+
+updatePDFPosition = function() {
+	jQuery("._page_associate").each(function() {
+		if (jQuery(this).find("._pdf_page_limit").length == 0) {
+			jQuery(this).append('<div class="_pdf_page_limit"><span>&nbsp;</span></div>');
+		}
+		var pdfLimit = jQuery(this).find("._pdf_page_limit");
+		var pdfHeight = pdfLimit.parents("body, .page_association_fake_body").data("pdfheight");
+		var pageBreak = jQuery(this).find(".page-break");
+		console.log("pdfHeight = "+pdfHeight);
+		console.log("pdfHeight int = "+ parseInt(pdfHeight));
+		if (pageBreak == null) {
+			pdfLimit.css("top", pdfHeight+"px");
+		} else {
+			console.log("top = "+((pageBreak.position().top - jQuery(this).position().top) +  parseInt(pdfHeight)) + "px");
+			pdfLimit.css("top", ((pageBreak.position().top - jQuery(this).position().top) +  parseInt(pdfHeight)) + "px");
+		}
+	});
+}
+
+mouseInLayer = function() {
+	var layer = jQuery("#preview-layer");
+	if (mouseX < layer.position().left || mouseY < layer.position().top) {
+		return false;
+	} else if (mouseX > layer.position().left+layer.width() || mouseY > layer.position().top+layer.height()) {
+		return false;
+	}
+	return true;
+}
 
 layerOver = function(item, deletable) {	
 	var layer = jQuery("#preview-layer");	
 	layer.data("deletable", deletable);
 	
 	var insideLayer = jQuery("#preview-layer span");
-	if (item == null) {		
+	if (item == null) {
 		layer.css("z-index", -1);
-		layer.css("display", "none");
+		layer.css("display", "none");		
 		layer.data("compType", null);
 		layer.data("sharedContent", null);
 		layer.attr("title", "");
@@ -112,8 +165,7 @@ layerOver = function(item, deletable) {
 
 initPreview = function() {
 	
-	jQuery(".editable-component").click(function() {
-
+	jQuery(".editable-component").click(function() {		
 		layerOver(null);
 
 		var elems = jQuery(this);
@@ -143,7 +195,7 @@ initPreview = function() {
 		if (!dragging) {			
 			layerOver(this, false);
 			var layer = jQuery("#preview-layer");
-			layer.data("compType", jQuery(this).data("type"));
+			layer.data("compType", jQuery(this).data("type"));			
 			layer.data("sharedContent", jQuery(this).data("shared"));
 		}
 		return false;
@@ -168,17 +220,17 @@ initPreview = function() {
 		layer.css("height", height);
 	
 	});
-	jQuery("#preview-layer").on('mouseout', function(e) {		
-		if (!dragging) {
+	/*jQuery("#preview-layer").on('mouseout', function(e) {		
+		if (!dragging) {			
 			layerOver(null);
 		}
-	});	
+	});*/	
 	jQuery("#preview-layer").on('dragenter', function(e) {		
 		e.preventDefault();
 		e.stopPropagation();
 	});
 	jQuery("#preview-layer").on('drop', function(e) {
-		layerOver(null);					
+		layerOver(null);		
 		jQuery(this).data("compType", null);
 		e.preventDefault();
 		e.stopPropagation();
@@ -208,7 +260,6 @@ initPreview = function() {
 						greedy : true,
 						tolerance : 'pointer',
 						drop : function(event, ui) {
-							
 							var layer = jQuery("#preview-layer");
 							var comp = layer.data("subItem");
 							
@@ -225,6 +276,7 @@ initPreview = function() {
 							var compType = layer.data("compType");
 							var sharedContent = layer.data("sharedContent");
 							var area = null;
+							
 							if (compType !== undefined && compType != null) {								
 								var previewId = jQuery(this).attr("id").replace("cp_", "");
 								var parent = jQuery(this).parent();
@@ -232,10 +284,9 @@ initPreview = function() {
 									parent = jQuery(parent).parent();									
 								}
 								area = jQuery(parent).attr("id");
-								var ajaxURL = currentURL
-								+ "?webaction=edit.insert&type="
+								var ajaxURL = addParam(currentURL,"webaction=edit.insert&type="
 								+ compType + "&previous=" + previewId
-								+ "&area=" + area+ "&render-mode=3&init=true"+pageIdParam;
+								+ "&area=" + area+ "&render-mode=3&init=true"+pageIdParam);
 								ajaxRequest(ajaxURL);
 							} else if (sharedContent != null && sharedContent !== undefined) {
 								var previewId = jQuery(this).attr("id").replace("cp_", "");
@@ -244,17 +295,14 @@ initPreview = function() {
 									parent = jQuery(parent).parent();									
 								}
 								area = jQuery(parent).attr("id");
-								var ajaxURL = currentURL
-								+ "?webaction=edit.insertShared&sharedContent="
+								var ajaxURL = addParam(currentURL, "webaction=edit.insertShared&sharedContent="
 								+ sharedContent + "&previous=" + previewId
-								+ "&area=" + area+ "&render-mode=3&init=true"+pageIdParam;
+								+ "&area=" + area+ "&render-mode=3&init=true"+pageIdParam);
 								ajaxRequest(ajaxURL);
 							} else if (comp !== undefined && jQuery(comp).attr("id") != null && jQuery(comp).attr('id') != jQuery(this).attr("id")) {
 								var compId = jQuery(comp).attr("id").replace("cp_", "");
 								if (jQuery(this).attr("id") == "preview-delete-zone") {									
-									var ajaxURL = currentURL
-											+ "?webaction=edit.delete&id="
-											+ compId+ "&render-mode=3"+pageIdParam;
+									var ajaxURL = addParam(currentURL,"webaction=edit.delete&id=" + compId + "&render-mode=3"+pageIdParam);
 									jQuery(comp).remove();
 								} else if (comp !== undefined) {
 									jQuery(comp).insertAfter(jQuery(this));
@@ -265,16 +313,16 @@ initPreview = function() {
 									}
 									area = jQuery(parent).attr("id");
 									
-									var ajaxURL = currentURL
-											+ "?webaction=edit.moveComponent&comp-id="
+									var ajaxURL = addParam(currentURL,"webaction=edit.moveComponent&comp-id="
 											+ compId + "&previous=" + previewId
-											+ "&area=" + area + "&render-mode=3" + pageIdParam;
+											+ "&area=" + area + "&render-mode=3" + pageIdParam);
 								}
 								ajaxRequest(ajaxURL);
-							}
+							}							
 							layerOver(null);
 							jQuery(this).find(".drop-zone").remove();
 							jQuery(this).removeClass("drop-selected");
+							updatePDFPosition();
 						},
 						over : function(event, ui) {
 							dragging = true;

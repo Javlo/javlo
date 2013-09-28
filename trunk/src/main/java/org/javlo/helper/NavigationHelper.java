@@ -1,5 +1,7 @@
 package org.javlo.helper;
 
+import java.io.ByteArrayOutputStream;
+import java.io.PrintStream;
 import java.lang.reflect.InvocationTargetException;
 import java.util.Collection;
 import java.util.Collections;
@@ -16,6 +18,7 @@ import org.javlo.component.core.ContentElementList;
 import org.javlo.component.core.IContentVisualComponent;
 import org.javlo.component.core.IInternalLink;
 import org.javlo.component.links.RSSRegistration;
+import org.javlo.component.title.SubTitle;
 import org.javlo.context.ContentContext;
 import org.javlo.context.GlobalContext;
 import org.javlo.navigation.MenuElement;
@@ -396,5 +399,44 @@ public class NavigationHelper {
 			}
 		}
 		return false;
+	}
+	
+	private static void getPageLocalBookmark(PrintStream out, ContentContext ctx, MenuElement page, boolean childPage) throws Exception {
+		String href="#";
+		if (childPage) {
+			href = "#page_"+page.getId();
+		}
+		List<IContentVisualComponent> subtitles = page.getContentByType(ctx, SubTitle.TYPE);
+		
+		out.print("<bookmark name=\""+page.getTitle(ctx).trim()+"\" href=\""+href+"\">");
+		for (IContentVisualComponent iContentVisualComponent : subtitles) {
+			SubTitle subTitle = (SubTitle)iContentVisualComponent;
+			if (subTitle.getTitleLevel(ctx) == 2) {
+				out.println("<bookmark name=\""+subTitle.getValue().trim()+"\" href=\"#"+subTitle.getXHTMLId(ctx)+"\"></bookmark>");
+			}
+		}
+		out.println("</bookmark>");		
+	}
+	
+	/**
+	 * get the page bookmark for the html header.
+	 * used for pdf generation.
+	 * @return
+	 * @throws Exception 
+	 */
+	public static String getPageBookmark(ContentContext ctx, MenuElement page) throws Exception {
+		ByteArrayOutputStream outStream = new ByteArrayOutputStream();
+		PrintStream out = new PrintStream(outStream);
+		out.println("<bookmarks>");
+		if (!page.isChildrenAssociation()) {
+			getPageLocalBookmark(out, ctx, page, false);
+		} else {
+			for (MenuElement child : page.getAllChildren()) {
+				getPageLocalBookmark(out, ctx, child, true);
+			}
+		}
+		out.println("</bookmarks>");
+		out.close();
+		return new String(outStream.toByteArray());
 	}
 }

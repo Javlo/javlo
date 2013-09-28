@@ -24,8 +24,14 @@
 			<span><a href="${info.parent.url}">${info.parent.info.title}</a></span>			
 		</li>
 	</c:if>
-	<li class="${page.url eq info.currentURL?'current ':''}">
 	
+	<c:forEach var="brother" items="${page.info.previousBrothers}">
+		<li>		
+			<span><a class="editor" title="brother page" href="${brother.url}">${brother.info.title}</span></a>
+		</li>
+	</c:forEach>
+	
+	<li class="${page.url eq info.currentURL?'current ':''}">	
 		<c:if test="${page.url != info.currentURL}">
 		<div id="breadcrumb"><div class="breadcrumb-wrapper"><div class="breadcrumb">
 			<c:forEach var="parent" items="${info.parent.parents}">
@@ -48,6 +54,11 @@
 	</c:forEach>	
 	</ul>	
 	</li>
+	<c:forEach var="brother" items="${page.info.nextBrothers}">
+		<li>		
+			<span><a class="editor" title="brother page" href="${brother.url}">${brother.info.title}</span></a>
+		</li>
+	</c:forEach>
 <c:if test="${!userInterface.contributor}">
 	<li class="add-page">
 		<form id="form-add-page" action="${info.currentURL}" method="post">

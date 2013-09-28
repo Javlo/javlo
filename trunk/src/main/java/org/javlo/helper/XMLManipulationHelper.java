@@ -3,6 +3,7 @@ package org.javlo.helper;
 import java.io.BufferedWriter;
 import java.io.ByteArrayOutputStream;
 import java.io.File;
+import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.PrintStream;
 import java.io.PrintWriter;
@@ -19,11 +20,14 @@ import java.util.Map;
 import java.util.Set;
 import java.util.Stack;
 
+import javax.servlet.ServletContext;
+
 import org.apache.commons.io.FileUtils;
 import org.javlo.context.ContentContext;
 import org.javlo.context.GlobalContext;
 import org.javlo.i18n.I18nAccess;
 import org.javlo.message.GenericMessage;
+import org.javlo.template.Template;
 import org.javlo.template.TemplatePlugin;
 
 public class XMLManipulationHelper {
@@ -244,6 +248,11 @@ public class XMLManipulationHelper {
 			}
 			return out.toString();
 		}
+		
+		public void addCssClass(String cssClass) {
+			String css = getAttribute("class", "");
+			attributes.put("class", (css+' '+cssClass).trim());
+		}
 
 	}
 
@@ -291,7 +300,7 @@ public class XMLManipulationHelper {
 	 * @throws IOException
 	 * @throws BadXMLException
 	 */
-	private static int convertHTMLtoJSP(GlobalContext globalContext, I18nAccess i18nAccess, File htmlFile, File jspFile, Map<String, String> options, List<String> areas, List<String> resources, List<TemplatePlugin> templatePlugins, List<GenericMessage> messages, List<String> ids, boolean isMail) throws IOException {
+	private static int convertHTMLtoJSP(GlobalContext globalContext, Template template, I18nAccess i18nAccess, File htmlFile, File jspFile, Map<String, String> options, List<String> areas, List<String> resources, List<TemplatePlugin> templatePlugins, List<GenericMessage> messages, List<String> ids, boolean isMail) throws IOException {
 
 		String templateVersion = StringHelper.getRandomId();
 
@@ -468,11 +477,27 @@ public class XMLManipulationHelper {
 						cssClass = cssClass + " " + "<%if (ctx.getRenderMode() == ContentContext.PREVIEW_MODE) { if(EditContext.getInstance(globalContext, request.getSession()).isEditPreview() ) {%>edit-preview<%} else {%>preview-only<%} }%>";
 						cssClass = cssClass + " " + "<%if (ctx.getRenderMode() == ContentContext.PREVIEW_MODE) { if(ctx.getCurrentEditUser() == null) {%>preview-notlogged<%} else {%>preview-logged<%} }%>";
 						tags[i].getAttributes().put("class", cssClass.trim());
-						String openPageCode = "<c:if test=\"${pageAssociation}\"><div id=\"page_<%=currentPage.getId()%>\" class=\"_page_associate\"></c:if>";
-						String closePageCode = "<c:if test=\"${pageAssociation}\"></div></c:if>";
-						remplacement.addReplacement(tags[i].getOpenStart(), tags[i].getOpenEnd() + 1, tags[i].renderOpen()+"<%}%>"+openPageCode); // close the remove header for children association						
-						remplacement.addReplacement(tags[i].getCloseStart(), tags[i].getCloseStart(), closePageCode+"<%if (request.getParameter(\"no-close-body\") == null) {%>"); // close the remove header for children agregator
-						String previewCode = "<%if (request.getParameter(\"no-open-body\") == null) {%>"+getPreviewCode()+"<%}%>";
+						
+						if (template.isPDFRenderer()) {
+							tags[i].getAttributes().put("data-pdfheight", ""+template.getPDFHeigth());
+						}
+						
+						String mainPageAssociationCode = "<%if (currentPage.isChildrenAssociation()) {%><jsp:include page=\"/jsp/view/page_association.jsp\" /><%} else {%>";
+						
+						String openPageCode = "<c:if test=\"${contentContext.pageAssociation}\"><div id=\"page_<%=currentPage.getId()%>\" class=\"_page_associate\"></c:if>"+mainPageAssociationCode;
+						String closePageCode = "<c:if test=\"${contentContext.pageAssociation}\"></div></c:if><c:if test=\"${not contentContext.pageAssociation}\">";
+						
+						String renderBodyAsBody = tags[i].renderOpen();
+						tags[i].setName("div");
+						tags[i].addCssClass("page_association_fake_body");
+						String renderBodyAsDiv = tags[i].renderOpen();
+						
+						String openBodyCode = "<c:if test=\"${not contentContext.pageAssociation}\">"+renderBodyAsBody+"</c:if><c:if test=\"${contentContext.pageAssociation}\">"+renderBodyAsDiv+"</c:if>";
+						String closeBodyCode = "<%}%><c:if test=\"${not contentContext.pageAssociation}\"></body></c:if><c:if test=\"${contentContext.pageAssociation}\"></div></c:if>";						
+						remplacement.addReplacement(tags[i].getOpenStart(), tags[i].getOpenEnd() + 1, "</c:if>"+openBodyCode+openPageCode); 					
+						remplacement.addReplacement(tags[i].getCloseStart(), tags[i].getCloseEnd() + 1, closeBodyCode+closePageCode); // close the remove header for children agregator
+						 
+						String previewCode = "<c:if test=\"${not contentContext.pageAssociation}\">"+getPreviewCode(globalContext.getServletContext())+"</c:if>";
 						remplacement.addReplacement(tags[i].getOpenEnd() + 1, tags[i].getOpenEnd() + 1, previewCode + getEscapeMenu(contentZone) + getResetTemplate() + getAfterBodyCode());
 						//if (contentZone != null) {
 							//remplacement.addReplacement(tags[i].getOpenEnd() + 1, tags[i].getOpenEnd() + 1, getPreviewCode() + getEscapeMenu(contentZone) + getResetTemplate() + getAfterBodyCode());
@@ -674,7 +699,7 @@ public class XMLManipulationHelper {
 				remplacement.addReplacement(urlIndex + 4, closeIndex, newURL);
 				urlIndex = content.indexOf("url(", closeIndex);
 			}
-			String newContent = getJSPHeader() + remplacement.start(content);
+			String newContent = getJSPHeader(globalContext.getServletContext()) + "<c:if test=\"${not contentContext.pageAssociation}\">" + remplacement.start(content);
 
 			// replace meta data
 			// if (!isMail) {
@@ -699,9 +724,9 @@ public class XMLManipulationHelper {
 
 			newContent = newContent.replaceAll("##mailing.web-view##", "<a href=\"<%=URLHelper.createAbsoluteViewURL(ctx, ctx.getPath())%>\"><%=i18nAccess.getViewText(\"mailing.not-visible\")%></a>");
 
-			if (jspFile != null) {
-				/** remove all html outside body for page agregator **/
-				newContent = newContent+"<%}%>"; // close the only-body mecanism
+			newContent = newContent + "</c:if>"; // close pageAssociation test just after body close
+			
+			if (jspFile != null) {								
 				ResourceHelper.writeStringToFile(jspFile, newContent, ContentContext.CHARACTER_ENCODING);
 			}
 		} catch (BadXMLException e) {
@@ -721,16 +746,16 @@ public class XMLManipulationHelper {
 
 	}
 
-	public static int convertHTMLtoMail(File htmlFile, File jspFile) throws IOException, BadXMLException {
-		return convertHTMLtoJSP(null, null, htmlFile, jspFile, Collections.EMPTY_MAP, Collections.EMPTY_LIST, Collections.EMPTY_LIST, Collections.EMPTY_LIST, null, null, true);
+	public static int convertHTMLtoMail(File htmlFile, Template template, File jspFile) throws IOException, BadXMLException {
+		return convertHTMLtoJSP(null, template, null, htmlFile, jspFile, Collections.EMPTY_MAP, Collections.EMPTY_LIST, Collections.EMPTY_LIST, Collections.EMPTY_LIST, null, null, true);
 	}
 
-	public static int convertHTMLtoTemplate(GlobalContext globalContext, File htmlFile, File jspFile, Map<String, String> tagsID, List<String> areas, List<String> resources, List<TemplatePlugin> templatePlugins, List<String> ids, boolean isMailing) throws IOException, BadXMLException {
-		return convertHTMLtoJSP(globalContext, null, htmlFile, jspFile, tagsID, areas, resources, templatePlugins, null, ids, isMailing);
+	public static int convertHTMLtoTemplate(GlobalContext globalContext, Template template, File htmlFile, File jspFile, Map<String, String> tagsID, List<String> areas, List<String> resources, List<TemplatePlugin> templatePlugins, List<String> ids, boolean isMailing) throws IOException, BadXMLException {
+		return convertHTMLtoJSP(globalContext, template, null, htmlFile, jspFile, tagsID, areas, resources, templatePlugins, null, ids, isMailing);
 	}
 
-	public static int convertHTMLtoTemplate(GlobalContext globalContext, I18nAccess i18nAccess, File htmlFile, File jspFile, Map<String, String> tagsID, List<String> areas, List<String> resources, List<TemplatePlugin> templatePlugins, List<GenericMessage> messages) throws IOException, BadXMLException {
-		return convertHTMLtoJSP(globalContext, i18nAccess, htmlFile, jspFile, tagsID, areas, resources, templatePlugins, messages, null, false);
+	public static int convertHTMLtoTemplate(GlobalContext globalContext, Template template, I18nAccess i18nAccess, File htmlFile, File jspFile, Map<String, String> tagsID, List<String> areas, List<String> resources, List<TemplatePlugin> templatePlugins, List<GenericMessage> messages) throws IOException, BadXMLException {
+		return convertHTMLtoJSP(globalContext, template, i18nAccess, htmlFile, jspFile, tagsID, areas, resources, templatePlugins, messages, null, false);
 	}
 
 	private static String getAfterBodyCode() throws IOException {
@@ -765,7 +790,7 @@ public class XMLManipulationHelper {
 	private static String getEscapeMenu(String contentId) throws IOException {
 		StringWriter outString = new StringWriter();
 		BufferedWriter out = new BufferedWriter(outString);
-		out.append("<%if (ctx.isAsViewMode()) {%><div style=\"position: absolute; top: -100px;\" id=\"jv_escape_menu\">");
+		out.append("<%if (ctx.isAsViewMode() && !ctx.isPageAssociation()) {%><div style=\"position: absolute; top: -100px;\" id=\"jv_escape_menu\">");
 		out.newLine();
 		out.append("<ul>");
 		out.append("<li><a href=\"#" + contentId + "\"><%=i18nAccess.getViewText(\"wai.to_content\")%></a></li>");
@@ -942,99 +967,22 @@ public class XMLManipulationHelper {
 		return outString.toString();
 	}
 
-	private static String getJSPHeader() throws IOException {
-
-		StringWriter outString = new StringWriter();
-		BufferedWriter out = new BufferedWriter(outString);
-
-		out.append("<%@page contentType=\"text/html\" pageEncoding=\"" + ContentContext.CHARACTER_ENCODING + "\"");
-		out.newLine();
-		out.append("	import=\"java.util.Date,");
-		out.newLine();
-		out.append("		org.javlo.helper.URLHelper,");
-		out.newLine();
-		out.append("		org.javlo.context.ContentContext,");
-		out.newLine();
-		out.append("		org.javlo.service.ContentService,");
-		out.newLine();
-		out.append("		org.javlo.data.InfoBean,");
-		out.newLine();
-		out.append("		org.javlo.i18n.I18nAccess,");
-		out.newLine();
-		out.append("		org.javlo.helper.StringHelper,");
-		out.newLine();
-		out.append("		org.javlo.user.User,");
-		out.newLine();
-		out.append("		org.javlo.context.EditContext,");
-		out.newLine();
-		out.append("		org.javlo.helper.XHTMLHelper,");
-		out.newLine();
-		out.append("		org.javlo.message.MessageRepository,");
-		out.newLine();
-		out.append("		org.javlo.user.AdminUserSecurity,");
-		out.newLine();
-		out.append("		org.javlo.navigation.MenuElement,");
-		out.newLine();
-		out.append("		org.javlo.helper.XHTMLNavigationHelper,");
-		out.newLine();
-		out.append("		org.javlo.context.GlobalContext\"");
-		out.newLine();
-		out.append("%>");
-		out.newLine();
-		out.append("<%@taglib prefix=\"c\" uri=\"http://java.sun.com/jsp/jstl/core\"%><%@ taglib prefix=\"fn\" uri=\"http://java.sun.com/jsp/jstl/functions\"%><%@ taglib uri=\"/WEB-INF/javlo.tld\" prefix=\"jv\" %>");
-		out.newLine();
-		out.append("<%");
-		out.newLine();
-		out.append("ContentContext ctx = ContentContext.getContentContext(request, response);");
-		out.newLine();
-		out.append("ContentService content = ContentService.getInstance(request);");
-		out.newLine();
-		out.append("GlobalContext globalContext = GlobalContext.getInstance(request); ");
-		out.newLine();
-		out.append("MenuElement currentPage = ctx.getCurrentPage();");
-		out.newLine();
-		out.append("InfoBean infoBean = InfoBean.getCurrentInfoBean(request);");
-		out.newLine();
-		out.append("String currentTitle = currentPage.getPageTitle(ctx);");
-		out.newLine();
-		out.append("String pageName = currentPage.getName();");
-		out.newLine();
-		out.newLine();
-		out.append("String globalTitle = currentPage.getGlobalTitle(ctx);");
-		out.append("if (globalTitle == null) {");
-		out.append("	globalTitle = globalContext.getGlobalTitle();");
-		out.append("}");
-		out.newLine();
-		out.append("I18nAccess i18nAccess = I18nAccess.getInstance(request);");
-		out.newLine();
-		out.append("AdminUserSecurity security = AdminUserSecurity.getInstance();");
-		out.newLine();
-		out.append("if (request.getParameter(\"no-open-body\") == null) {%>");
-		out.close();
-
-		return outString.toString();
+	private static String getJSPHeader(ServletContext application) throws IOException {
+		File headerFile = new File(application.getRealPath("/jsp/view/page/header.jsp"));
+		if (!headerFile.exists()) {
+			return "<!-- header file not found : '"+headerFile+"' -->";
+		} else {
+			return ResourceHelper.getFileContent(headerFile);
+		}
 	}
 
-	private static String getPreviewCode() {
-		StringWriter writer = new StringWriter();
-		PrintWriter out = new PrintWriter(writer);
-		out.println("<!-- PREVIEW CODE --!>");
-		out.println("<%if (ctx.isInteractiveMode() && ctx.getRenderMode() == ContentContext.PREVIEW_MODE) {");
-		out.println("%><jsp:include page=\"/jsp/preview/command.jsp\" />");
-		out.println("<%}%>");
-
-		out.println("<%if (ctx.isInteractiveMode() && ctx.getRenderMode() == ContentContext.TIME_MODE) {%>");
-		out.println("<jsp:include page=\"/jsp/time-traveler/command.jsp\" />");
-		out.println("<%MessageRepository messageRepository = MessageRepository.getInstance(ctx);");
-		out.println("	    %><div id=\"message-container\" class=\"standard\"><%");
-		out.println("   if (messageRepository.getGlobalMessage().getMessage().trim().length() > 0) {%>");
-		out.println("       <div class=\"notification <%=messageRepository.getGlobalMessage().getTypeLabel()%>\"><%=messageRepository.getGlobalMessage().getMessage()%></div>");
-		out.println("<%}%></div>");
-
-		out.println("<%}%>");
-
-		out.close();
-		return writer.toString();
+	private static String getPreviewCode(ServletContext application) throws FileNotFoundException, IOException {
+		File headerFile = new File(application.getRealPath("/jsp/view/page/preview.jsp"));
+		if (!headerFile.exists()) {
+			return "<!-- preview file not found : '"+headerFile+"' -->";
+		} else {
+			return ResourceHelper.getFileContent(headerFile);
+		}
 	}
 
 	private static String getResetTemplate() throws IOException {

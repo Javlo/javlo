@@ -2,10 +2,8 @@ package org.javlo.service.shared;
 
 import java.util.Arrays;
 import java.util.Collection;
-import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
-import java.util.Map;
 
 import org.javlo.component.core.ComponentBean;
 import org.javlo.component.image.GlobalImage;

@@ -82,6 +82,8 @@ public class ContentContext {
 	private MenuElement currentPageCached = null;
 	
 	private MenuElement virtualCurrentPage = null;
+	
+	private boolean pageAssociation = false;
 
 	private static ContentContext createContentContext(HttpServletRequest request, HttpServletResponse response, boolean free) {
 		ContentContext ctx = new ContentContext();
@@ -409,6 +411,8 @@ public class ContentContext {
 		editPreview = ctx.editPreview;
 		
 		currentPageCached = ctx.currentPageCached;
+		
+		pageAssociation = ctx.pageAssociation;
 	}
 
 	public String getArea() {
@@ -1517,5 +1521,13 @@ public class ContentContext {
 
 	public void setVirtualArea(String virtualArea) {
 		this.virtualArea = virtualArea;
+	}
+
+	public boolean isPageAssociation() {
+		return pageAssociation;
+	}
+
+	public void setPageAssociation(boolean pageAssociation) {
+		this.pageAssociation = pageAssociation;
 	}
 }

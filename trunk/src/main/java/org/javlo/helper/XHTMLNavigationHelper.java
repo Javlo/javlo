@@ -284,11 +284,6 @@ public class XHTMLNavigationHelper {
 		return res.toString();
 	}
 
-	public static String renderImageMenu(ContentContext ctx, int fromDepth, int toDepth) throws Exception {
-		ContentService content = ContentService.getInstance(ctx.getRequest());
-		return renderMenu(ctx, content.getNavigation(ctx), fromDepth, toDepth, true, 0, false, true, true, false, false, null, null);
-	}
-
 	public static String renderMenu(ContentContext ctx, int fromDepth, int toDepth) throws Exception {
 		ContentService content = ContentService.getInstance(ctx.getRequest());
 		return renderMenu(ctx, content.getNavigation(ctx), fromDepth, toDepth, true, 0, false, false, true, false, false, null, null);
@@ -309,158 +304,169 @@ public class XHTMLNavigationHelper {
 
 	private static String renderMenu(ContentContext ctx, MenuElement menu, int fromDepth, int toDepth, boolean onlyVisible, int depth, boolean extended, boolean image, boolean withVirtual, boolean selecteableItem, Boolean selectableBetween, List<MenuElement> values, MenuElement value) throws Exception {
 
-		I18nAccess i18nAccess = I18nAccess.getInstance(ctx.getRequest());
-
-		StringWriter res = new StringWriter();
-		PrintWriter out = new PrintWriter(res);
-
-		if (menu == null) {
-			return "";
+		if (ctx.getCurrentTemplate() != null && ctx.getCurrentTemplate().getMenuRenderer(ctx.getDevice()) != null && !ctx.isAsEditMode()) {
+			ctx.getRequest().setAttribute("fromDepth", fromDepth);
+			ctx.getRequest().setAttribute("toDepth", toDepth);
+			ctx.getRequest().setAttribute("onlyVisible", onlyVisible);
+			ctx.getRequest().setAttribute("depth", depth);
+			ctx.getRequest().setAttribute("extended", extended);
+			ctx.getRequest().setAttribute("image", image);			
+			return ServletHelper.executeJSP(ctx, ctx.getCurrentTemplate().getMenuRenderer(ctx.getDevice()));			
 		} else {
-			Collection<MenuElement> elems;
-			if (withVirtual) {
-				elems = menu.getChildMenuElementsWithVirtual(ctx, onlyVisible, false);
-			} else {
-				elems = menu.getChildMenuElements(ctx, onlyVisible);
-			}
 
-			if (elems.size() == 0 && !selectableBetween) {
+			I18nAccess i18nAccess = I18nAccess.getInstance(ctx.getRequest());
+
+			StringWriter res = new StringWriter();
+			PrintWriter out = new PrintWriter(res);
+
+			if (menu == null) {
 				return "";
-			}
-
-			boolean print = (depth >= fromDepth) && (depth <= toDepth);
-
-			if (print) {
-				out.println("<ul>");
-			}
-
-			MenuElement currentPage = ctx.getCurrentPage();
-			Template currentTemplate = ctx.getCurrentTemplate();
-
-			if (print && selectableBetween) {
-				out.print("<li id=\"page_" + menu.getName() + "\"><div class=\"selection\"><input type=\"submit\" value=\"" + i18nAccess.getText("global.move-here", new String[][] { { "item", currentPage.getLabel(ctx) } }) + "\" name=\"P_" + menu.getId() + "\"/></div></li>");
-			}
-
-			int i = 0;
-			for (MenuElement page : elems) {
-				String selected = "";
-				String cssClass = page.getName().toLowerCase();
-				if (page.isSelected(ctx)) {
-					String cssClassSelected = currentTemplate.getSelectedClass();
-					if (page.isLastSelected(ctx)) {
-						cssClassSelected = (cssClassSelected + " " + currentTemplate.getLastSelectedClass()).trim();
-					}
-					selected = "class=\"" + cssClassSelected + "\"";
-					cssClass = cssClass + ' ' + cssClassSelected;
+			} else {
+				Collection<MenuElement> elems;
+				if (withVirtual) {
+					elems = menu.getChildMenuElementsWithVirtual(ctx, onlyVisible, false);
+				} else {
+					elems = menu.getChildMenuElements(ctx, onlyVisible);
 				}
 
-				if (i == 0) {
-					cssClass = cssClass + " first";
-				} else if (i == elems.size() - 1) {
-					cssClass = cssClass + " last";
+				if (elems.size() == 0 && !selectableBetween) {
+					return "";
 				}
-				String att = "";
+
+				boolean print = (depth >= fromDepth) && (depth <= toDepth);
+
 				if (print) {
-					String visualCode = page.getLabel(ctx);
-					if (image && (page.getImage(ctx) != null)) {
-						String imageURL = URLHelper.createTransformURL(ctx, page.getImage(ctx).getResourceURL(ctx), "menu");
-						String imageDescription = page.getImage(ctx).getImageDescription(ctx);
-						String imageUnselectedURL = URLHelper.createTransformURL(ctx, page.getImage(ctx).getResourceURL(ctx), currentTemplate.getUnSelectedClass());
+					out.println("<ul>");
+				}
 
-						String url = imageUnselectedURL;
-						if (page.isSelected(ctx)) {
-							url = imageURL;
+				MenuElement currentPage = ctx.getCurrentPage();
+				Template currentTemplate = ctx.getCurrentTemplate();
+
+				if (print && selectableBetween) {
+					out.print("<li id=\"page_" + menu.getName() + "\"><div class=\"selection\"><input type=\"submit\" value=\"" + i18nAccess.getText("global.move-here", new String[][] { { "item", currentPage.getLabel(ctx) } }) + "\" name=\"P_" + menu.getId() + "\"/></div></li>");
+				}
+
+				int i = 0;
+				for (MenuElement page : elems) {
+					String selected = "";
+					String cssClass = page.getName().toLowerCase();
+					if (page.isSelected(ctx)) {
+						String cssClassSelected = currentTemplate.getSelectedClass();
+						if (page.isLastSelected(ctx)) {
+							cssClassSelected = (cssClassSelected + " " + currentTemplate.getLastSelectedClass()).trim();
 						}
-
-						String imgName = "img_" + StringHelper.getRandomId();
-						String startJS = "document.images['" + imgName + "'].src=";
-
-						att = "onMouseover=\"" + startJS + "'" + imageURL + "'\" onMouseout=\"" + startJS + "'" + url + "'\"";
-
-						visualCode = "<img src=\"" + url + "\" alt=\"" + imageDescription + "\" name=\"" + imgName + "\" class=\"autoMouseOver\" /><span class=\"text\">" + page.getLabel(ctx) + "</span>";
+						selected = "class=\"" + cssClassSelected + "\"";
+						cssClass = cssClass + ' ' + cssClassSelected;
 					}
-					String selectedStrIn = "";
-					String selectedStrBetween = "";
-					String checked = "";
-					String inputDisabled = "";
-					String type = null;
-					if (selecteableItem) {
-						if (values != null) {
-							if (values.contains(page)) {
-								checked = " checked=\"checked\"";
+
+					if (i == 0) {
+						cssClass = cssClass + " first";
+					} else if (i == elems.size() - 1) {
+						cssClass = cssClass + " last";
+					}
+					String att = "";
+					if (print) {
+						String visualCode = page.getLabel(ctx);
+						if (image && (page.getImage(ctx) != null)) {
+							String imageURL = URLHelper.createTransformURL(ctx, page.getImage(ctx).getResourceURL(ctx), "menu");
+							String imageDescription = page.getImage(ctx).getImageDescription(ctx);
+							String imageUnselectedURL = URLHelper.createTransformURL(ctx, page.getImage(ctx).getResourceURL(ctx), currentTemplate.getUnSelectedClass());
+
+							String url = imageUnselectedURL;
+							if (page.isSelected(ctx)) {
+								url = imageURL;
 							}
-							type = "checkbox";
-						} else if (value != null) {
-							if (value.equals(page)) {
-								checked = " checked=\"checked\"";
+
+							String imgName = "img_" + StringHelper.getRandomId();
+							String startJS = "document.images['" + imgName + "'].src=";
+
+							att = "onMouseover=\"" + startJS + "'" + imageURL + "'\" onMouseout=\"" + startJS + "'" + url + "'\"";
+
+							visualCode = "<img src=\"" + url + "\" alt=\"" + imageDescription + "\" name=\"" + imgName + "\" class=\"autoMouseOver\" /><span class=\"text\">" + page.getLabel(ctx) + "</span>";
+						}
+						String selectedStrIn = "";
+						String selectedStrBetween = "";
+						String checked = "";
+						String inputDisabled = "";
+						String type = null;
+						if (selecteableItem) {
+							if (values != null) {
+								if (values.contains(page)) {
+									checked = " checked=\"checked\"";
+								}
+								type = "checkbox";
+							} else if (value != null) {
+								if (value.equals(page)) {
+									checked = " checked=\"checked\"";
+								}
+								type = "radio";
 							}
+							selectedStrIn = "<input type=\"" + type + "\" name=\"parent\" value=\"" + page.getId() + "\"" + checked + "/> ";
+						}
+						if (selectableBetween) {
 							type = "radio";
-						}
-						selectedStrIn = "<input type=\"" + type + "\" name=\"parent\" value=\"" + page.getId() + "\"" + checked + "/> ";
-					}
-					if (selectableBetween) {
-						type = "radio";
-						if (values != null) {
-							if (values.contains(page)) {
-								checked = " checked=\"checked\"";
+							if (values != null) {
+								if (values.contains(page)) {
+									checked = " checked=\"checked\"";
+								}
+								type = "checkbox";
+							} else if (value != null) {
+								if (value.equals(page)) {
+									checked = " checked=\"checked\"";
+									inputDisabled = " disabled=\"disabled\"";
+								}
 							}
-							type = "checkbox";
-						} else if (value != null) {
-							if (value.equals(page)) {
-								checked = " checked=\"checked\"";
-								inputDisabled = " disabled=\"disabled\"";
+							String disabled = "";
+							if (page.equals(currentPage)) {
+								disabled = " disabled=\"disabled\"";
 							}
+							selectedStrBetween = "<input" + disabled + " type=\"submit\" name=\"N_" + page.getId() + "\"" + checked + inputDisabled + " value=\"" + i18nAccess.getText("global.move-here", new String[][] { { "item", currentPage.getLabel(ctx) } }) + "\"/>";
 						}
-						String disabled = "";
-						if (page.equals(currentPage)) {
-							disabled = " disabled=\"disabled\"";
+
+						if (page.getChildMenuElements(ctx, true).size() > 0) {
+							cssClass = cssClass + " have-children";
 						}
-						selectedStrBetween = "<input" + disabled + " type=\"submit\" name=\"N_" + page.getId() + "\"" + checked + inputDisabled + " value=\"" + i18nAccess.getText("global.move-here", new String[][] { { "item", currentPage.getLabel(ctx) } }) + "\"/>";
-					}
 
-					if (page.getChildMenuElements(ctx, true).size() > 0) {
-						cssClass = cssClass + " have-children";
-					}
+						out.println("<li class=\"" + cssClass + "\">");
 
-					out.println("<li class=\"" + cssClass + "\">");
-
-					String title = page.getTitle(ctx);
-					String fullTitleHTML = "";
-					if (!title.equals(visualCode) && !title.equals(page.getName())) {
-						title = StringHelper.removeTag(title).replace("\"", "&quot;");
-						fullTitleHTML = " title=\"" + title + "\"";
-					}
-					out.print(selectedStrIn + "<a " + selected + " href=\"" + URLHelper.createURL(ctx, page) + "\" " + fullTitleHTML + " " + att + "><span><span>" + visualCode + "</span></span></a>");
-					if (selectableBetween) {
-						out.print("<div class=\"selection\">" + selectedStrBetween + "</div>");
-					}
-
-				}
-
-				if (elems.size() > 0) {
-					if (depth < toDepth) {
-						/*
-						 * if (print) { out.println("<li>"); }
-						 */
-						if (page.isSelected(ctx) || (extended && print)) {
-							out.print(renderMenu(ctx, page, fromDepth, toDepth, onlyVisible, depth + 1, extended, image, withVirtual, selecteableItem, selectableBetween, values, value));
+						String title = page.getTitle(ctx);
+						String fullTitleHTML = "";
+						if (!title.equals(visualCode) && !title.equals(page.getName())) {
+							title = StringHelper.removeTag(title).replace("\"", "&quot;");
+							fullTitleHTML = " title=\"" + title + "\"";
 						}
-						/*
-						 * if (print) { out.println("</li>"); }
-						 */
+						out.print(selectedStrIn + "<a " + selected + " href=\"" + URLHelper.createURL(ctx, page) + "\" " + fullTitleHTML + " " + att + "><span><span>" + visualCode + "</span></span></a>");
+						if (selectableBetween) {
+							out.print("<div class=\"selection\">" + selectedStrBetween + "</div>");
+						}
+
 					}
+
+					if (elems.size() > 0) {
+						if (depth < toDepth) {
+							/*
+							 * if (print) { out.println("<li>"); }
+							 */
+							if (page.isSelected(ctx) || (extended && print)) {
+								out.print(renderMenu(ctx, page, fromDepth, toDepth, onlyVisible, depth + 1, extended, image, withVirtual, selecteableItem, selectableBetween, values, value));
+							}
+							/*
+							 * if (print) { out.println("</li>"); }
+							 */
+						}
+					}
+					if (print) {
+						out.print("</li>");
+					}
+					i++;
 				}
 				if (print) {
-					out.print("</li>");
+					out.println("</ul>");
 				}
-				i++;
 			}
-			if (print) {
-				out.println("</ul>");
-			}
+			out.close();
+			return res.toString();
 		}
-		out.close();
-		return res.toString();
 	}
 
 	public static String renderPageStructure(ContentContext ctx, MenuElement page) throws Exception {

@@ -57,6 +57,11 @@ public class DefaultTemplate extends Template {
 	public String getHTMLFile() {
 		return "index.html";
 	}
+	
+	@Override
+	public String getMenuRenderer(Device device) {
+		return null;
+	}
 
 	@Override
 	public String getHTMLHomeFile() {

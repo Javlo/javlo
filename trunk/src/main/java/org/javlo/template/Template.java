@@ -719,7 +719,7 @@ public class Template implements Comparable<Template> {
 
 		try {
 			TemplatePluginFactory templatePluginFactory = TemplatePluginFactory.getInstance(globalContext.getServletContext());
-			XMLManipulationHelper.convertHTMLtoTemplate(globalContext, i18nAccess, HTMLFile, null, getMap(), getAreas(), resources, templatePluginFactory.getAllTemplatePlugin(globalContext.getTemplatePlugin()), messages);
+			XMLManipulationHelper.convertHTMLtoTemplate(globalContext, this, i18nAccess, HTMLFile, null, getMap(), getAreas(), resources, templatePluginFactory.getAllTemplatePlugin(globalContext.getTemplatePlugin()), messages);
 		} catch (Throwable t) {
 			messages.add(new GenericMessage(t.getMessage(), GenericMessage.ERROR));
 		}
@@ -1110,7 +1110,7 @@ public class Template implements Comparable<Template> {
 			try {
 				List<String> resources = new LinkedList<String>();
 				TemplatePluginFactory templatePluginFactory = TemplatePluginFactory.getInstance(globalContext.getServletContext());
-				int depth = XMLManipulationHelper.convertHTMLtoTemplate(globalContext, HTMLFile, jspFile, getMap(), getAreas(), resources, templatePluginFactory.getAllTemplatePlugin(globalContext.getTemplatePlugin()), null, false);
+				int depth = XMLManipulationHelper.convertHTMLtoTemplate(globalContext, this, HTMLFile, jspFile, getMap(), getAreas(), resources, templatePluginFactory.getAllTemplatePlugin(globalContext.getTemplatePlugin()), null, false);
 				setDepth(depth);
 			} catch (Exception e) {
 				e.printStackTrace();
@@ -1143,6 +1143,24 @@ public class Template implements Comparable<Template> {
 		} else {
 			String defaultRenderer = properties.getString("html", getParent().getHTMLFile(device));
 			return defaultRenderer;
+		}
+	}
+	
+	public String getMenuRenderer(Device device) {
+		String menuRenderer = null;
+		if (device != null) {
+			menuRenderer = properties.getString("menu." + device.getCode(), null);
+		}
+		if (menuRenderer != null) {
+			logger.fine("device renderer found : " + menuRenderer + " (template:" + getId() + "");			
+		} else {
+			String defaultRenderer = properties.getString("menu", getParent().getMenuRenderer(device));
+			menuRenderer = defaultRenderer;
+		}
+		if (menuRenderer == null) {
+			return null;
+		} else {
+			return URLHelper.mergePath(getFolder().getAbsolutePath(),menuRenderer);
 		}
 	}
 
@@ -1380,7 +1398,7 @@ public class Template implements Comparable<Template> {
 			if (jspFile.exists()) {
 				return jspFile;
 			} else {
-				XMLManipulationHelper.convertHTMLtoMail(htmlFile, jspFile);
+				XMLManipulationHelper.convertHTMLtoMail(htmlFile, this, jspFile);
 				return jspFile;
 			}
 		}
@@ -1473,7 +1491,7 @@ public class Template implements Comparable<Template> {
 				List<String> resources = new LinkedList<String>();
 				TemplatePluginFactory templatePluginFactory = TemplatePluginFactory.getInstance(globalContext.getServletContext());
 				List<String> ids = new LinkedList<String>();
-				int depth = XMLManipulationHelper.convertHTMLtoTemplate(globalContext, HTMLFile, jspFile, getMap(), getAreas(), resources, templatePluginFactory.getAllTemplatePlugin(globalContext.getTemplatePlugin()), ids, isMailing());
+				int depth = XMLManipulationHelper.convertHTMLtoTemplate(globalContext, this, HTMLFile, jspFile, getMap(), getAreas(), resources, templatePluginFactory.getAllTemplatePlugin(globalContext.getTemplatePlugin()), ids, isMailing());
 				setHTMLIDS(ids);
 				setDepth(depth);
 			}
@@ -2122,6 +2140,10 @@ public class Template implements Comparable<Template> {
 		} else {
 			return properties.getBoolean("real-content-from-any", false);
 		}
+	}
+	
+	public int getPDFHeigth() {
+		return properties.getInt("pdf.height", 1125);
 	}
 
 }

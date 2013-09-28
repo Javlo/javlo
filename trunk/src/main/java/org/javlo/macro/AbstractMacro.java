@@ -1,8 +1,10 @@
 package org.javlo.macro;
 
+import java.io.IOException;
 import java.util.Collection;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Properties;
 
 import org.javlo.component.core.ContentElementList;
 import org.javlo.component.core.IContentVisualComponent;
@@ -16,6 +18,10 @@ public abstract class AbstractMacro implements IMacro {
 	@Override
 	public String toString() {
 		return getName();
+	}
+	
+	protected Properties getMacroProperties(ContentContext ctx) throws IOException, Exception {
+		return ctx.getCurrentTemplate().getMacroProperties(ctx.getGlobalContext(), getName() );
 	}
 
 	public List<IContentVisualComponent> getAllComponent(ContentContext ctx) throws Exception {
