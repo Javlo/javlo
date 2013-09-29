@@ -179,3 +179,11 @@ change log
  * cache optimisation (configure Last-Modified header)
  
  * children association
+ 
+ * auto close tag management (hr, input, link...)
+ 
+ * possibility to define other template than current for mobile device
+ 
+ * XMLManipulationHelper test case
+ 
+* 2.0.2.6 29/09/2013
