@@ -800,6 +800,19 @@ public class Template implements Comparable<Template> {
 	private String getAlternativeTemplateName() {
 		return properties.getString("template.alternative", null);
 	}
+	
+	private Template getMobileTemplate(StaticConfig config, ContentContext ctx) throws IOException, ConfigurationException {
+		Template aTemplate = this;
+		String alternativeTemplate = getMobileTemplate();
+		if (alternativeTemplate != null) {
+			aTemplate = Template.getInstance(config, ctx, alternativeTemplate, false);
+		}
+		return aTemplate;
+	}
+
+	private String getMobileTemplate() {
+		return properties.getString("template.mobile", null);
+	}
 
 	@SuppressWarnings("unchecked")
 	public List<String> getAreas() {
@@ -1078,6 +1091,12 @@ public class Template implements Comparable<Template> {
 						return altTemplate;
 					}
 				}
+			}
+		}
+		if (getMobileTemplate() != null && ctx.getDevice().isMobileDevice()) {
+			Template mobileTemplate = getMobileTemplate(ctx.getGlobalContext().getStaticConfig(), ctx);
+			if (mobileTemplate != null) {
+				return mobileTemplate;
 			}
 		}
 		return this;

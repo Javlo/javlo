@@ -23,6 +23,7 @@ public class Device implements Serializable {
 		if (currentDevice == null) {
 			StaticConfig staticConfig = StaticConfig.getInstance(request.getSession());
 			String userAgent = request.getHeader("User-Agent");
+			System.out.println("***** Device.getDevice : userAgent = "+userAgent); //TODO: remove debug trace
 			currentDevice = new Device();
 			currentDevice.devices = staticConfig.getDevices();
 			currentDevice.setUserAgent(userAgent);
@@ -106,6 +107,15 @@ public class Device implements Serializable {
 
 		if (pointerDevice == null) {
 			return true;
+		}
+		return StringHelper.isTrue(pointerDevice);
+	}
+	
+	public boolean isMobileDevice() {
+		String pointerDevice = devices.get(getCode() + '.' + "mobile");
+
+		if (pointerDevice == null) {
+			return false;
 		}
 		return StringHelper.isTrue(pointerDevice);
 	}
