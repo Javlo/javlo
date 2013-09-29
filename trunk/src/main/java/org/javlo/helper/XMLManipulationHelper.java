@@ -9,10 +9,12 @@ import java.io.PrintStream;
 import java.io.PrintWriter;
 import java.io.StringWriter;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.LinkedHashSet;
 import java.util.LinkedList;
 import java.util.List;
@@ -31,6 +33,8 @@ import org.javlo.template.Template;
 import org.javlo.template.TemplatePlugin;
 
 public class XMLManipulationHelper {
+
+	private static final Set<String> autoCloseTag = new HashSet<String>(Arrays.asList(new String[] { "input", "meta", "link", "script", "img", "hr" }));
 
 	public static class BadXMLException extends Exception {
 
@@ -86,7 +90,17 @@ public class XMLManipulationHelper {
 	/*
 	 * private static String getGoogleAnalyticsCode() throws IOException {
 	 * 
-	 * StringWriter outString = new StringWriter(); BufferedWriter out = new BufferedWriter(outString);out.append( "<%if ((globalContext.getGoogleAnalyticsUACCT().trim().length() > 3)&&(ctx.getRenderMode() == ContentContext.VIEW_MODE)) {%>" );out.append( " src=\"http://www.google-analytics.com/urchin.js\" type=\"text/javascript\">" ); out.newLine(); out.append("</script>"); out.newLine(); out.append("<script type=\"text/javascript\">"); out.newLine(); out.append("_uacct = \"<%=globalContext.getGoogleAnalyticsUACCT()%>\";"); out.newLine(); out.append("urchinTracker();"); out.newLine(); out.append("</script>"); out.newLine(); out.append("<%}%>"); out.newLine(); out.close();
+	 * StringWriter outString = new StringWriter(); BufferedWriter out = new
+	 * BufferedWriter(outString);out.append(
+	 * "<%if ((globalContext.getGoogleAnalyticsUACCT().trim().length() > 3)&&(ctx.getRenderMode() == ContentContext.VIEW_MODE)) {%>"
+	 * );out.append(
+	 * " src=\"http://www.google-analytics.com/urchin.js\" type=\"text/javascript\">"
+	 * ); out.newLine(); out.append("</script>"); out.newLine();
+	 * out.append("<script type=\"text/javascript\">"); out.newLine();
+	 * out.append("_uacct = \"<%=globalContext.getGoogleAnalyticsUACCT()%>\";");
+	 * out.newLine(); out.append("urchinTracker();"); out.newLine();
+	 * out.append("</script>"); out.newLine(); out.append("<%}%>");
+	 * out.newLine(); out.close();
 	 * 
 	 * return outString.toString(); }
 	 */
@@ -117,7 +131,7 @@ public class XMLManipulationHelper {
 		public Map<String, String> getAttributes() {
 			return attributes;
 		}
-		
+
 		public String getAttribute(String key, String defaultValue) {
 			String value = getAttributes().get(key);
 			if (value == null) {
@@ -248,10 +262,10 @@ public class XMLManipulationHelper {
 			}
 			return out.toString();
 		}
-		
+
 		public void addCssClass(String cssClass) {
 			String css = getAttribute("class", "");
-			attributes.put("class", (css+' '+cssClass).trim());
+			attributes.put("class", (css + ' ' + cssClass).trim());
 		}
 
 	}
@@ -288,7 +302,8 @@ public class XMLManipulationHelper {
 	 * @param htmlFile
 	 *            the source file
 	 * @param jspFile
-	 *            if jsp null no file is create -> just for test the HTML structure
+	 *            if jsp null no file is create -> just for test the HTML
+	 *            structure
 	 * @param options
 	 * @param areas
 	 * @param resources
@@ -469,47 +484,68 @@ public class XMLManipulationHelper {
 				}
 
 				/* insert before all */
-				//if (!isMail) {
-					if (tags[i].getName().equalsIgnoreCase("body")) {
-						String contentZone = getValue(options, AREA_PREFIX + "content", null);
-						String cssClass = StringHelper.neverNull(tags[i].getAttributes().get("class"));
-						cssClass = cssClass + " " + "<%if (ctx.getRenderMode() == ContentContext.PREVIEW_MODE) { if(ctx.getGlobalContext().getStaticConfig().isFixPreview() ) {%>fix-preview<%} else {%>floating-preview<%} }%>";
-						cssClass = cssClass + " " + "<%if (ctx.getRenderMode() == ContentContext.PREVIEW_MODE) { if(EditContext.getInstance(globalContext, request.getSession()).isEditPreview() ) {%>edit-preview<%} else {%>preview-only<%} }%>";
-						cssClass = cssClass + " " + "<%if (ctx.getRenderMode() == ContentContext.PREVIEW_MODE) { if(ctx.getCurrentEditUser() == null) {%>preview-notlogged<%} else {%>preview-logged<%} }%>";
-						tags[i].getAttributes().put("class", cssClass.trim());
-						
-						if (template.isPDFRenderer()) {
-							tags[i].getAttributes().put("data-pdfheight", ""+template.getPDFHeigth());
-						}
-						
-						String mainPageAssociationCode = "<%if (currentPage.isChildrenAssociation()) {%><jsp:include page=\"/jsp/view/page_association.jsp\" /><%} else {%>";
-						
-						String openPageCode = "<c:if test=\"${contentContext.pageAssociation}\"><div id=\"page_<%=currentPage.getId()%>\" class=\"_page_associate\"></c:if>"+mainPageAssociationCode;
-						String closePageCode = "<c:if test=\"${contentContext.pageAssociation}\"></div></c:if><c:if test=\"${not contentContext.pageAssociation}\">";
-						
-						String renderBodyAsBody = tags[i].renderOpen();
-						tags[i].setName("div");
-						tags[i].addCssClass("page_association_fake_body");
-						String renderBodyAsDiv = tags[i].renderOpen();
-						
-						String openBodyCode = "<c:if test=\"${not contentContext.pageAssociation}\">"+renderBodyAsBody+"</c:if><c:if test=\"${contentContext.pageAssociation}\">"+renderBodyAsDiv+"</c:if>";
-						String closeBodyCode = "<%}%><c:if test=\"${not contentContext.pageAssociation}\"></body></c:if><c:if test=\"${contentContext.pageAssociation}\"></div></c:if>";						
-						remplacement.addReplacement(tags[i].getOpenStart(), tags[i].getOpenEnd() + 1, "</c:if>"+openBodyCode+openPageCode); 					
-						remplacement.addReplacement(tags[i].getCloseStart(), tags[i].getCloseEnd() + 1, closeBodyCode+closePageCode); // close the remove header for children agregator
-						 
-						String previewCode = "<c:if test=\"${not contentContext.pageAssociation}\">"+getPreviewCode(globalContext.getServletContext())+"</c:if>";
-						remplacement.addReplacement(tags[i].getOpenEnd() + 1, tags[i].getOpenEnd() + 1, previewCode + getEscapeMenu(contentZone) + getResetTemplate() + getAfterBodyCode());
-						//if (contentZone != null) {
-							//remplacement.addReplacement(tags[i].getOpenEnd() + 1, tags[i].getOpenEnd() + 1, getPreviewCode() + getEscapeMenu(contentZone) + getResetTemplate() + getAfterBodyCode());
-						//}
+				// if (!isMail) {
+				if (tags[i].getName().equalsIgnoreCase("body")) {
+					String contentZone = getValue(options, AREA_PREFIX + "content", null);
+					String cssClass = StringHelper.neverNull(tags[i].getAttributes().get("class"));
+					cssClass = cssClass + " " + "<%if (ctx.getRenderMode() == ContentContext.PREVIEW_MODE) { if(ctx.getGlobalContext().getStaticConfig().isFixPreview() ) {%>fix-preview<%} else {%>floating-preview<%} }%>";
+					cssClass = cssClass + " " + "<%if (ctx.getRenderMode() == ContentContext.PREVIEW_MODE) { if(EditContext.getInstance(globalContext, request.getSession()).isEditPreview() ) {%>edit-preview<%} else {%>preview-only<%} }%>";
+					cssClass = cssClass + " " + "<%if (ctx.getRenderMode() == ContentContext.PREVIEW_MODE) { if(ctx.getCurrentEditUser() == null) {%>preview-notlogged<%} else {%>preview-logged<%} }%>";
+					tags[i].getAttributes().put("class", cssClass.trim());
+
+					if (template.isPDFRenderer()) {
+						tags[i].getAttributes().put("data-pdfheight", "" + template.getPDFHeigth());
 					}
-				//}
+
+					String mainPageAssociationCode = "<%if (currentPage.isChildrenAssociation()) {%><jsp:include page=\"/jsp/view/page_association.jsp\" /><%} else {%>";
+
+					String openPageCode = "<c:if test=\"${contentContext.pageAssociation}\"><div id=\"page_<%=currentPage.getId()%>\" class=\"_page_associate\"></c:if>" + mainPageAssociationCode;
+					String closePageCode = "<c:if test=\"${contentContext.pageAssociation}\"></div></c:if><c:if test=\"${not contentContext.pageAssociation}\">";
+
+					String renderBodyAsBody = tags[i].renderOpen();
+					tags[i].setName("div");
+					tags[i].addCssClass("page_association_fake_body");
+					String renderBodyAsDiv = tags[i].renderOpen();
+
+					String openBodyCode = "<c:if test=\"${not contentContext.pageAssociation}\">" + renderBodyAsBody + "</c:if><c:if test=\"${contentContext.pageAssociation}\">" + renderBodyAsDiv + "</c:if>";
+					String closeBodyCode = "<%}%><c:if test=\"${not contentContext.pageAssociation}\"></body></c:if><c:if test=\"${contentContext.pageAssociation}\"></div></c:if>";
+					remplacement.addReplacement(tags[i].getOpenStart(), tags[i].getOpenEnd() + 1, "</c:if>" + openBodyCode + openPageCode);
+					remplacement.addReplacement(tags[i].getCloseStart(), tags[i].getCloseEnd() + 1, closeBodyCode + closePageCode); // close
+																																	// the
+																																	// remove
+																																	// header
+																																	// for
+																																	// children
+																																	// agregator
+
+					String previewCode = "<c:if test=\"${not contentContext.pageAssociation}\">" + getPreviewCode(globalContext.getServletContext()) + "</c:if>";
+					remplacement.addReplacement(tags[i].getOpenEnd() + 1, tags[i].getOpenEnd() + 1, previewCode + getEscapeMenu(contentZone) + getResetTemplate() + getAfterBodyCode());
+					// if (contentZone != null) {
+					// remplacement.addReplacement(tags[i].getOpenEnd() + 1,
+					// tags[i].getOpenEnd() + 1, getPreviewCode() +
+					// getEscapeMenu(contentZone) + getResetTemplate() +
+					// getAfterBodyCode());
+					// }
+				}
+				// }
 
 				/* link - StyleSheet */
 				if (tags[i].getName().equalsIgnoreCase("link")) {
 					String hrefValue = attributes.get("href");
 
-					if ((hrefValue != null) && !hrefValue.contains("${") && (!StringHelper.isURL(hrefValue)) && !hrefValue.toLowerCase().startsWith("https")) { // don't modify https because it is external api as facebook and not library
+					if ((hrefValue != null) && !hrefValue.contains("${") && (!StringHelper.isURL(hrefValue)) && !hrefValue.toLowerCase().startsWith("https")) { // don't
+																																								// modify
+																																								// https
+																																								// because
+																																								// it
+																																								// is
+																																								// external
+																																								// api
+																																								// as
+																																								// facebook
+																																								// and
+																																								// not
+																																								// library
 						String newLinkGeneratorIf = "<%if (!XHTMLHelper.allReadyInsered(ctx, \"" + hrefValue + "\")) {%>";
 						resources.add(hrefValue);
 						attributes.put("href", "<%=URLHelper.createStaticTemplateURL(ctx,\"/" + hrefValue + "\", \"" + templateVersion + "\")%>");
@@ -537,8 +573,10 @@ public class XMLManipulationHelper {
 								if ((tagDescription.getAttributes().get("type") != null) && (tagDescription.getAttributes().get("type").equalsIgnoreCase("text")) || (tagDescription.getAttributes().get("type").equalsIgnoreCase("search"))) {
 									tagDescription.getAttributes().put("name", "keywords");
 									tagDescription.getAttributes().put("accesskey", "4");
-									// tagDescription.getAttributes().put("value", "<%=i18nAccess.getViewText(\"search.title\")%>");
-									// tagDescription.getAttributes().put("onfocus", "if (this.value == '<%=i18nAccess.getViewText(\"search.title\")%>'){this.value='';}");
+									// tagDescription.getAttributes().put("value",
+									// "<%=i18nAccess.getViewText(\"search.title\")%>");
+									// tagDescription.getAttributes().put("onfocus",
+									// "if (this.value == '<%=i18nAccess.getViewText(\"search.title\")%>'){this.value='';}");
 									remplacement.addReplacement(tagDescription.getOpenStart(), tagDescription.getCloseEnd() + 1, tagDescription.render(null));
 									remplacement.addReplacement(tagDescription.getOpenEnd() + 1, tagDescription.getOpenEnd() + 1, searchInput);
 								}
@@ -581,56 +619,67 @@ public class XMLManipulationHelper {
 				}
 
 				/* head - StyleSheet */
-				//if (!isMail) {
-					if (tags[i].getName().equalsIgnoreCase("head")) {
+				// if (!isMail) {
+				if (tags[i].getName().equalsIgnoreCase("head")) {
 
-						if (content.indexOf(HEADER_ZONE) > 0) {
-							remplacement.addReplacement(content.indexOf(HEADER_ZONE), content.indexOf(HEADER_ZONE) + HEADER_ZONE.length(), getHTMLPrefixHead());
-						} else {
-							remplacement.addReplacement(tags[i].getOpenEnd() + 1, tags[i].getOpenEnd() + 1, getHTMLPrefixHead());
-						}
+					if (content.indexOf(HEADER_ZONE) > 0) {
+						remplacement.addReplacement(content.indexOf(HEADER_ZONE), content.indexOf(HEADER_ZONE) + HEADER_ZONE.length(), getHTMLPrefixHead());
+					} else {
+						remplacement.addReplacement(tags[i].getOpenEnd() + 1, tags[i].getOpenEnd() + 1, getHTMLPrefixHead());
+					}
 
-						/** template plugin **/
-						ByteArrayOutputStream outStream = new ByteArrayOutputStream();
-						PrintStream out = new PrintStream(outStream);
-						out.println("<%if (ctx.getRenderMode() != ContentContext.PAGE_MODE) {%>");
-						out.println("<!-- template plugins -->");
-						for (TemplatePlugin plugin : templatePlugins) {
-							if (plugin != null) {
-								String headHTML = plugin.getHTMLHead(globalContext);
-								TagDescription[] pluginTags = searchAllTag(headHTML, false);
-								for (TagDescription tag : pluginTags) {
-									String resource = null;
-									if (tag.getAttributes().get("src") != null) {
-										resource = new File(tag.getAttributes().get("src")).getName(); // for js take only the name of js file.
-										tag.getAttributes().put("src", "<%=URLHelper.createStaticTemplatePluginURL(ctx, \"" + tag.getAttributes().get("src") + "\", \"" + plugin.getFolder() + "\")%>");
-									}
-									if (tag.getAttributes().get("href") != null) {
-										resource = tag.getAttributes().get("href");
-										tag.getAttributes().put("href", "<%=URLHelper.createStaticTemplatePluginURL(ctx, \"" + tag.getAttributes().get("href") + "\", \"" + plugin.getFolder() + "\")%>");
-									}
-									String inside = tag.getInside(headHTML);
-									if (tag.getName().equalsIgnoreCase("link")) { // auto close link tag
-										inside = null;
-									}
-									String outHead = tag.render(inside);
-									if (resource != null && !resource.toLowerCase().startsWith("https")) {
-										outHead = "<%if (!XHTMLHelper.allReadyInsered(ctx,\"" + resource + "\")) { %>" + outHead + "<%} else {%><!-- resource allready insered: " + resource + " --><%}%>";
-									}
-									String homeRendercode = "<%=URLHelper.createStaticTemplatePluginURL(ctx, \"/\", \"" + plugin.getFolder() + "\")%>";
-									outHead = outHead.replace(TemplatePlugin.HOME_KEY, homeRendercode);
-
-									out.println(outHead);
+					/** template plugin **/
+					ByteArrayOutputStream outStream = new ByteArrayOutputStream();
+					PrintStream out = new PrintStream(outStream);
+					out.println("<%if (ctx.getRenderMode() != ContentContext.PAGE_MODE) {%>");
+					out.println("<!-- template plugins -->");
+					for (TemplatePlugin plugin : templatePlugins) {
+						if (plugin != null) {
+							String headHTML = plugin.getHTMLHead(globalContext);
+							TagDescription[] pluginTags = searchAllTag(headHTML, false);
+							for (TagDescription tag : pluginTags) {
+								String resource = null;
+								if (tag.getAttributes().get("src") != null) {
+									resource = new File(tag.getAttributes().get("src")).getName(); // for
+																									// js
+																									// take
+																									// only
+																									// the
+																									// name
+																									// of
+																									// js
+																									// file.
+									tag.getAttributes().put("src", "<%=URLHelper.createStaticTemplatePluginURL(ctx, \"" + tag.getAttributes().get("src") + "\", \"" + plugin.getFolder() + "\")%>");
 								}
+								if (tag.getAttributes().get("href") != null) {
+									resource = tag.getAttributes().get("href");
+									tag.getAttributes().put("href", "<%=URLHelper.createStaticTemplatePluginURL(ctx, \"" + tag.getAttributes().get("href") + "\", \"" + plugin.getFolder() + "\")%>");
+								}
+								String inside = tag.getInside(headHTML);
+								if (tag.getName().equalsIgnoreCase("link")) { // auto
+																				// close
+																				// link
+																				// tag
+									inside = null;
+								}
+								String outHead = tag.render(inside);
+								if (resource != null && !resource.toLowerCase().startsWith("https")) {
+									outHead = "<%if (!XHTMLHelper.allReadyInsered(ctx,\"" + resource + "\")) { %>" + outHead + "<%} else {%><!-- resource allready insered: " + resource + " --><%}%>";
+								}
+								String homeRendercode = "<%=URLHelper.createStaticTemplatePluginURL(ctx, \"/\", \"" + plugin.getFolder() + "\")%>";
+								outHead = outHead.replace(TemplatePlugin.HOME_KEY, homeRendercode);
+
+								out.println(outHead);
 							}
 						}
-						out.println("<!-- end template plugins -->");
-						out.println("<%}%>");
-						out.close();
-
-						remplacement.addReplacement(tags[i].getCloseStart() - 1, tags[i].getCloseStart(), getHTMLSufixHead() + new String(outStream.toByteArray()));
 					}
-				//}
+					out.println("<!-- end template plugins -->");
+					out.println("<%}%>");
+					out.close();
+
+					remplacement.addReplacement(tags[i].getCloseStart() - 1, tags[i].getCloseStart(), getHTMLSufixHead() + new String(outStream.toByteArray()));
+				}
+				// }
 
 				/* title */
 				if (!isMail) {
@@ -724,9 +773,10 @@ public class XMLManipulationHelper {
 
 			newContent = newContent.replaceAll("##mailing.web-view##", "<a href=\"<%=URLHelper.createAbsoluteViewURL(ctx, ctx.getPath())%>\"><%=i18nAccess.getViewText(\"mailing.not-visible\")%></a>");
 
-			newContent = newContent + "</c:if>"; // close pageAssociation test just after body close
-			
-			if (jspFile != null) {								
+			newContent = newContent + "</c:if>"; // close pageAssociation test
+													// just after body close
+
+			if (jspFile != null) {
 				ResourceHelper.writeStringToFile(jspFile, newContent, ContentContext.CHARACTER_ENCODING);
 			}
 		} catch (BadXMLException e) {
@@ -809,7 +859,16 @@ public class XMLManipulationHelper {
 		PrintWriter out = new PrintWriter(writer);
 
 		/*
-		 * out.println("<script type=\"text/javascript\">"); out.println("var gaJsHost = ((\"https:\" == document.location.protocol) ? \"https://ssl.\" : \"http://www.\");"); out.println("document.write(unescape(\"%3Cscript src='\" + gaJsHost + \"google-analytics.com/ga.js' type='text/javascript'%3E%3C/script%3E\"));"); out.println("</script>"); out.println("<script type=\"text/javascript\">"); out.println("try {"); out.println("var pageTracker = _gat._getTracker(\"<%=globalContext.getGoogleAnalyticsUACCT()%>\");"); out.println("pageTracker._trackPageview();"); out.println("} catch(err) {}</script>");
+		 * out.println("<script type=\"text/javascript\">"); out.println(
+		 * "var gaJsHost = ((\"https:\" == document.location.protocol) ? \"https://ssl.\" : \"http://www.\");"
+		 * ); out.println(
+		 * "document.write(unescape(\"%3Cscript src='\" + gaJsHost + \"google-analytics.com/ga.js' type='text/javascript'%3E%3C/script%3E\"));"
+		 * ); out.println("</script>");
+		 * out.println("<script type=\"text/javascript\">");
+		 * out.println("try {"); out.println(
+		 * "var pageTracker = _gat._getTracker(\"<%=globalContext.getGoogleAnalyticsUACCT()%>\");"
+		 * ); out.println("pageTracker._trackPageview();");
+		 * out.println("} catch(err) {}</script>");
 		 */
 
 		out.println("<%if (globalContext.getGoogleAnalyticsUACCT().length() > 4) {%><script type=\"text/javascript\">");
@@ -887,8 +946,11 @@ public class XMLManipulationHelper {
 		out.append("%><%=XHTMLNavigationHelper.getRSSHeader(ctx, currentPage)%>");
 		out.newLine();
 
-		/*out.append("<link rel=\"stylesheet\" type=\"text/css\" href=\"<%=URLHelper.createStaticURL(ctx,\"/jsp/view/components_css.jsp\")%>\" />");
-		out.newLine();*/
+		/*
+		 * out.append(
+		 * "<link rel=\"stylesheet\" type=\"text/css\" href=\"<%=URLHelper.createStaticURL(ctx,\"/jsp/view/components_css.jsp\")%>\" />"
+		 * ); out.newLine();
+		 */
 		out.append("<link rel=\"shortcut icon\" type=\"image/ico\" href=\"<%=URLHelper.createStaticURL(ctx,\"/favicon.ico\")%>\" />");
 		out.newLine();
 
@@ -970,7 +1032,7 @@ public class XMLManipulationHelper {
 	private static String getJSPHeader(ServletContext application) throws IOException {
 		File headerFile = new File(application.getRealPath("/jsp/view/page/header.jsp"));
 		if (!headerFile.exists()) {
-			return "<!-- header file not found : '"+headerFile+"' -->";
+			return "<!-- header file not found : '" + headerFile + "' -->";
 		} else {
 			return ResourceHelper.getFileContent(headerFile);
 		}
@@ -979,7 +1041,7 @@ public class XMLManipulationHelper {
 	private static String getPreviewCode(ServletContext application) throws FileNotFoundException, IOException {
 		File headerFile = new File(application.getRealPath("/jsp/view/page/preview.jsp"));
 		if (!headerFile.exists()) {
-			return "<!-- preview file not found : '"+headerFile+"' -->";
+			return "<!-- preview file not found : '" + headerFile + "' -->";
 		} else {
 			return ResourceHelper.getFileContent(headerFile);
 		}
@@ -989,7 +1051,16 @@ public class XMLManipulationHelper {
 		StringWriter outString = new StringWriter();
 		BufferedWriter out = new BufferedWriter(outString);
 		/*
-		 * out.append("<%if (request.getParameter(PageConfiguration.FORCE_TEMPLATE_PARAM_NAME) != null) {%>"); out.append("<div id=\"_reset_template\">"); out.append("<a href=\"<%=URLHelper.createURLNoForceTemplate(ctx)%>\"><%=i18nAccess.getViewText(\"template.clean-force-template\")%> : <%=request.getParameter(PageConfiguration.FORCE_TEMPLATE_PARAM_NAME)%></a>"); out.append("<div class=\"_reset_template-close\">"); out.append("<%=XHTMLHelper.getIconesCode(ctx, \"close.gif\", \"start\")%>"); out.append("<a href=\"#\" onclick=\"document.getElementById('_reset_template').style.visibility='hidden';; return false;\">"); out.append("</a></div>"); out.append("</div>"); out.append("<%}%>"); out.newLine();
+		 * out.append(
+		 * "<%if (request.getParameter(PageConfiguration.FORCE_TEMPLATE_PARAM_NAME) != null) {%>"
+		 * ); out.append("<div id=\"_reset_template\">"); out.append(
+		 * "<a href=\"<%=URLHelper.createURLNoForceTemplate(ctx)%>\"><%=i18nAccess.getViewText(\"template.clean-force-template\")%> : <%=request.getParameter(PageConfiguration.FORCE_TEMPLATE_PARAM_NAME)%></a>"
+		 * ); out.append("<div class=\"_reset_template-close\">"); out.append(
+		 * "<%=XHTMLHelper.getIconesCode(ctx, \"close.gif\", \"start\")%>");
+		 * out.append(
+		 * "<a href=\"#\" onclick=\"document.getElementById('_reset_template').style.visibility='hidden';; return false;\">"
+		 * ); out.append("</a></div>"); out.append("</div>");
+		 * out.append("<%}%>"); out.newLine();
 		 */
 		out.close();
 		return outString.toString();
@@ -1006,7 +1077,12 @@ public class XMLManipulationHelper {
 
 	public static void main(String[] args) {
 		/*
-		 * try { List<String> areas = new LinkedList<String>(); areas.add("mainCol"); convertHTMLtoTemplate(new File("c:/trans/index.html"), new File("c:/trans/index.jsp"), new HashMap(), areas, new LinkedList<String>()); System.out.println("done."); } catch (Exception e) { e.printStackTrace(); }
+		 * try { List<String> areas = new LinkedList<String>();
+		 * areas.add("mainCol"); convertHTMLtoTemplate(new
+		 * File("c:/trans/index.html"), new File("c:/trans/index.jsp"), new
+		 * HashMap(), areas, new LinkedList<String>());
+		 * System.out.println("done."); } catch (Exception e) {
+		 * e.printStackTrace(); }
 		 */
 		try {
 
@@ -1140,27 +1216,37 @@ public class XMLManipulationHelper {
 							System.out.println("-- bad close tag : " + tagName);
 						} else {
 							TagDescription openedTag = stack.pop();
-							if (!tagName.equals(openedTag.getName())) {
+
+							/** manage auto close tag **/
+							while (openedTag != null && !tagName.equals(openedTag.getName()) && autoCloseTag.contains(openedTag.getName().toLowerCase())) {
+								openedTag.setCloseStart(openedTag.getOpenStart());
+								openedTag.setCloseEnd(openedTag.getOpenEnd());
+								openedTag = stack.pop();
+							}
+							if (openedTag != null) {
 								if (!tagName.equals(openedTag.getName())) {
-									if (validation) {
+									if (!tagName.equals(openedTag.getName())) {
+										if (validation) {
+											int length = 50;
+											int start = i - length;
+											int end = i + length;
+											if (length > i) {
+												start = 0;
+											}
+											if (end >= xml.length()) {
+												end = xml.length() - 1;
+											}
+											String msg = "tag '" + tagName + "' close the tag '" + openedTag.getName() + "' char localistaion : " + i + " [" + xml.substring(start, end) + "]";
 
-										int length = 50;
-										int start = i - length;
-										int end = i + length;
-										if (length > i) {
-											start = 0;
+											throw new BadXMLException(msg, line, openedTag.getName(), xml.substring(start, end));
 										}
-										if (end >= xml.length()) {
-											end = xml.length() - 1;
-										}
-										String msg = "tag '" + tagName + "' close the tag '" + openedTag.getName() + "' char localistaion : " + i + " [" + xml.substring(start, end) + "]";
-
-										throw new BadXMLException(msg, line, openedTag.getName(), xml.substring(start, end));
 									}
 								}
+								openedTag.setCloseStart(openTag);
+								openedTag.setCloseEnd(closeTag);
+							} else {
+								System.out.println("-- bad close tag : " + tagName);
 							}
-							openedTag.setCloseStart(openTag);
-							openedTag.setCloseEnd(closeTag);
 						}
 
 					} else {

@@ -664,7 +664,7 @@ public class ContentContext {
 				template.importTemplateInWebapp(globalContext.getStaticConfig(), this);
 			}
 
-			currentTemplate = template;
+			currentTemplate = template.getFinalTemplate(this);
 		}
 
 		return currentTemplate;
