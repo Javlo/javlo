@@ -310,8 +310,11 @@ public class XHTMLNavigationHelper {
 			ctx.getRequest().setAttribute("onlyVisible", onlyVisible);
 			ctx.getRequest().setAttribute("depth", depth);
 			ctx.getRequest().setAttribute("extended", extended);
-			ctx.getRequest().setAttribute("image", image);			
-			return ServletHelper.executeJSP(ctx, ctx.getCurrentTemplate().getMenuRenderer(ctx.getDevice()));			
+			ctx.getRequest().setAttribute("image", image);		
+			
+			String jspURL = URLHelper.createStaticTemplateURLWithoutContext(ctx, ctx.getCurrentTemplate(), ctx.getCurrentTemplate().getMenuRenderer(ctx.getDevice()));
+			
+			return ServletHelper.executeJSP(ctx, jspURL);			
 		} else {
 
 			I18nAccess i18nAccess = I18nAccess.getInstance(ctx.getRequest());
@@ -514,3 +517,4 @@ public class XHTMLNavigationHelper {
 	}
 
 }
+
