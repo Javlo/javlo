@@ -1160,7 +1160,7 @@ public class Template implements Comparable<Template> {
 		if (menuRenderer == null) {
 			return null;
 		} else {
-			return URLHelper.mergePath(getFolder().getAbsolutePath(),menuRenderer);
+			return menuRenderer;
 		}
 	}
 
