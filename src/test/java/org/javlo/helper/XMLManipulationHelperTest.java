@@ -32,7 +32,7 @@ public class XMLManipulationHelperTest extends TestCase {
 		out.println("</ul>");
 		out.println("<div class=\"wrapped-content\">");
 		out.println("<p>");
-		out.println("We’re not living in the “post-PC” era. Not by a long shot. As more of us work from home, or the plane, or the <a href=\"#\">coffee shop</a>, laptops might be more. Aside post format. Important than they’ve ever been. They’ve also <strong>become harder</strong> and harder to buy, as hardware specs have hit.");
+		out.println("We're not living in the post-PC era. Not by a long shot. As more of us work from home, or the plane, or the <a href=\"#\">coffee shop</a>, laptops might be more. Aside post format. Important than they've ever been. They've also <strong>become harder</strong> and harder to buy, as hardware specs have hit.");
 		out.println("</p>");
 		out.println("<hr>");
 		out.println("<p class=\"read-more\"><a href=\"blog-single.html\">Read More</a></p>");
