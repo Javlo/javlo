@@ -22,8 +22,7 @@ public class Device implements Serializable {
 		Device currentDevice = (Device) request.getSession().getAttribute(Device.class.getCanonicalName());
 		if (currentDevice == null) {
 			StaticConfig staticConfig = StaticConfig.getInstance(request.getSession());
-			String userAgent = request.getHeader("User-Agent");
-			System.out.println("***** Device.getDevice : userAgent = "+userAgent); //TODO: remove debug trace
+			String userAgent = request.getHeader("User-Agent");			
 			currentDevice = new Device();
 			currentDevice.devices = staticConfig.getDevices();
 			currentDevice.setUserAgent(userAgent);
