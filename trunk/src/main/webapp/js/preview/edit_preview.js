@@ -101,21 +101,19 @@ jQuery(document).ready(
 		});
 
 updatePDFPosition = function() {
-	jQuery("._page_associate").each(function() {
-		if (jQuery(this).find("._pdf_page_limit").length == 0) {
-			jQuery(this).append('<div class="_pdf_page_limit"><span>&nbsp;</span></div>');
+	var pdfHeight = jQuery(".page_association_fake_body").data("pdfheight");
+	console.log("pdfHeight = "+pdfHeight);
+	var previousBreak = null;
+	jQuery(".page-break, ._page_associate").each(function() {
+		var currentBreak = jQuery(this);		
+		if (previousBreak != null) {
+			if ((currentBreak.position().top - previousBreak.position().top) > pdfHeight) {		
+				previousBreak.append('<div class="_pdf_page_limit"><span>&nbsp;</span></div>');
+				var pdfLimit = jQuery(this).find("._pdf_page_limit");
+				pdfLimit.css('top',(previousBreak.position().top+pdfHeight)+'px');
+			}
 		}
-		var pdfLimit = jQuery(this).find("._pdf_page_limit");
-		var pdfHeight = pdfLimit.parents("body, .page_association_fake_body").data("pdfheight");
-		var pageBreak = jQuery(this).find(".page-break");
-		console.log("pdfHeight = "+pdfHeight);
-		console.log("pdfHeight int = "+ parseInt(pdfHeight));
-		if (pageBreak == null) {
-			pdfLimit.css("top", pdfHeight+"px");
-		} else {
-			console.log("top = "+((pageBreak.position().top - jQuery(this).position().top) +  parseInt(pdfHeight)) + "px");
-			pdfLimit.css("top", ((pageBreak.position().top - jQuery(this).position().top) +  parseInt(pdfHeight)) + "px");
-		}
+		previousBreak = currentBreak;
 	});
 }
 
@@ -148,9 +146,17 @@ layerOver = function(item, deletable) {
 		}
 		
 		if (comp.hasClass("editable-component")) {
-			layer.attr("title", "move with drag and drop or click to edit.");
+			if (comp.data("hint")) {
+				layer.attr("title", comp.data("hint"));
+			} else {
+				layer.attr("title", "move with drag and drop or click to edit.");
+			}
 		} else {
-			layer.attr("title", "move with drag and drop.");
+			if (comp.data("hint")) {
+				layer.attr("title", comp.data("hint"));
+			} else {
+				layer.attr("title", "move with drag and drop.");
+			}
 		}
 		
 		layer.css("top", comp.offset().top);

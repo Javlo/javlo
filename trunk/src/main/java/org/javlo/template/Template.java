@@ -800,7 +800,7 @@ public class Template implements Comparable<Template> {
 	private String getAlternativeTemplateName() {
 		return properties.getString("template.alternative", null);
 	}
-	
+
 	private Template getMobileTemplate(StaticConfig config, ContentContext ctx) throws IOException, ConfigurationException {
 		Template aTemplate = this;
 		String alternativeTemplate = getMobileTemplate();
@@ -1129,7 +1129,7 @@ public class Template implements Comparable<Template> {
 			try {
 				List<String> resources = new LinkedList<String>();
 				TemplatePluginFactory templatePluginFactory = TemplatePluginFactory.getInstance(globalContext.getServletContext());
-				int depth = XMLManipulationHelper.convertHTMLtoTemplate(globalContext, this, HTMLFile, jspFile, getMap(), getAreas(), resources, templatePluginFactory.getAllTemplatePlugin(globalContext.getTemplatePlugin()), null, false);
+				int depth = XMLManipulationHelper.convertHTMLtoTemplate(globalContext, this, HTMLFile, jspFile, getMap(), getAreas(), resources, getTemplatePugin(globalContext), null, false);
 				setDepth(depth);
 			} catch (Exception e) {
 				e.printStackTrace();
@@ -1164,14 +1164,14 @@ public class Template implements Comparable<Template> {
 			return defaultRenderer;
 		}
 	}
-	
+
 	public String getMenuRenderer(Device device) {
 		String menuRenderer = null;
 		if (device != null) {
 			menuRenderer = properties.getString("menu." + device.getCode(), null);
 		}
 		if (menuRenderer != null) {
-			logger.fine("device renderer found : " + menuRenderer + " (template:" + getId() + "");			
+			logger.fine("device renderer found : " + menuRenderer + " (template:" + getId() + "");
 		} else {
 			String defaultRenderer = properties.getString("menu", getParent().getMenuRenderer(device));
 			menuRenderer = defaultRenderer;
@@ -1508,14 +1508,20 @@ public class Template implements Comparable<Template> {
 					logger.warning(HTMLFile + " not found.");
 				}
 				List<String> resources = new LinkedList<String>();
-				TemplatePluginFactory templatePluginFactory = TemplatePluginFactory.getInstance(globalContext.getServletContext());
 				List<String> ids = new LinkedList<String>();
-				int depth = XMLManipulationHelper.convertHTMLtoTemplate(globalContext, this, HTMLFile, jspFile, getMap(), getAreas(), resources, templatePluginFactory.getAllTemplatePlugin(globalContext.getTemplatePlugin()), ids, isMailing());
+				int depth = XMLManipulationHelper.convertHTMLtoTemplate(globalContext, this, HTMLFile, jspFile, getMap(), getAreas(), resources, getTemplatePugin(globalContext), ids, isMailing());
 				setHTMLIDS(ids);
 				setDepth(depth);
 			}
 			return renderer;
 		}
+	}
+	
+	private List<TemplatePlugin> getTemplatePugin(GlobalContext globalContext) throws IOException {
+		TemplatePluginFactory templatePluginFactory = TemplatePluginFactory.getInstance(globalContext.getServletContext());
+		List<String> plugins = new LinkedList<String>(globalContext.getTemplatePlugin());
+		plugins.addAll(getPlugins());
+		return templatePluginFactory.getAllTemplatePlugin(plugins);
 	}
 
 	public synchronized String getRenderer(ContentContext ctx, String file) throws Exception {
@@ -2102,6 +2108,15 @@ public class Template implements Comparable<Template> {
 		List<String> ids = StringHelper.stringToCollection(htmlIds, ",");
 		return ids;
 	}
+	
+	public List<String> getPlugins() {
+		String plugins = properties.getString("plugins",null);
+		if (plugins == null) {
+			return Collections.EMPTY_LIST;
+		}
+		List<String> ids = StringHelper.stringToCollection(plugins, ",");
+		return ids;
+	}
 
 	public String getDeployId() {
 		return deployId;
@@ -2148,19 +2163,21 @@ public class Template implements Comparable<Template> {
 	public String getConfigItem(String key, String defaultValue) {
 		return StringHelper.neverNull(properties.getString(key), defaultValue);
 	}
-	
+
 	/**
-	 * true if all area can be signifiant for read content, false if only main area is signifiant.
+	 * true if all area can be signifiant for read content, false if only main
+	 * area is signifiant.
+	 * 
 	 * @return
 	 */
 	public boolean isRealContentFromAnyArea() {
-		if (properties.getProperty("real-content-from-any") == null)  {
+		if (properties.getProperty("real-content-from-any") == null) {
 			return false;
 		} else {
 			return properties.getBoolean("real-content-from-any", false);
 		}
 	}
-	
+
 	public int getPDFHeigth() {
 		return properties.getInt("pdf.height", 1125);
 	}
