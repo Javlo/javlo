@@ -904,7 +904,10 @@ public abstract class AbstractVisualComponent implements IContentVisualComponent
 				RequestService rs = RequestService.getInstance(ctx.getRequest());				
 				if (!StringHelper.isTrue(rs.getParameter(NOT_EDIT_PREVIEW_PARAM_NAME, null))) {
 					if (getConfig(ctx).isPreviewEditable() && editCtx.isEditPreview() && (!isRepeat() || getPage().equals(ctx.getCurrentPage()))) {
-						return " class=\""+classPrefix+"editable-component" + currentClass + "\"";
+						I18nAccess i18nAccess = I18nAccess.getInstance(ctx.getRequest());
+						String type = i18nAccess.getText("content."+getType());
+						String hint = "<b>"+type+"</b><br />"+i18nAccess.getViewText("preview.hint", "click for edit or drag and drop to move.");
+						return " class=\""+classPrefix+"editable-component" + currentClass + "\" data-hint=\""+hint+"\"";
 					}
 				}
 			} catch (Exception e) {

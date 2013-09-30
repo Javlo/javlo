@@ -122,7 +122,12 @@ public class TemplatePlugin {
 	protected Properties loadConfig (String config) {
 		Properties outConfig = new Properties();		
 		try {
-			outConfig.load(new StringReader(config));
+			ByteArrayOutputStream outStream = new ByteArrayOutputStream();
+			PrintStream out = new PrintStream(outStream);
+			out.println(config);
+			out.println(this.config.getProperty("template.plugins.config", ""));
+			out.close();			
+			outConfig.load(new StringReader(new String(outStream.toByteArray())));
 		} catch (IOException e) { // impossible width a string ?		
 			e.printStackTrace();
 		}
