@@ -6,3 +6,7 @@
 .standard-form input[type="text"] {
 	width: 96%;
 }
+
+.actions form {
+	display: inline-block;
+}

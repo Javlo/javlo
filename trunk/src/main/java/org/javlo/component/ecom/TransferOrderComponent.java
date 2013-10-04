@@ -6,9 +6,10 @@ import java.io.PrintStream;
 import org.javlo.actions.IAction;
 import org.javlo.component.core.IContentVisualComponent;
 import org.javlo.context.ContentContext;
+import org.javlo.context.GlobalContext;
 import org.javlo.ecom.Basket;
+import org.javlo.ecom.BasketPersistenceService;
 import org.javlo.exception.ResourceNotFoundException;
-import org.javlo.helper.ComponentHelper;
 import org.javlo.helper.URLHelper;
 import org.javlo.helper.XHTMLHelper;
 import org.javlo.i18n.I18nAccess;
@@ -85,7 +86,7 @@ public class TransferOrderComponent extends AbstractOrderComponent implements IA
 
 		ByteArrayOutputStream outStream = new ByteArrayOutputStream();
 		PrintStream out = new PrintStream(outStream);		
-		out.println("<form class=\"paypal\" action\""+URLHelper.createURL(ctx)+"\">");
+		out.println("<form class=\"transfer\" action\""+URLHelper.createURL(ctx)+"\">");
 		out.println("<fieldset>");		
 		out.println("<input type=\"hidden\" name=\""+IContentVisualComponent.COMP_ID_REQUEST_PARAM+"\" value=\""+getId()+"\" />");
 		out.println("<input type=\"hidden\" name=\"webaction\" value=\"transfer.pay\" />");
@@ -96,15 +97,11 @@ public class TransferOrderComponent extends AbstractOrderComponent implements IA
 		return new String(outStream.toByteArray());	
 	}
 	
-	public static String performPay(RequestService rs, ContentContext ctx, MessageRepository messageRepository, I18nAccess i18nAccess) throws Exception {
-		
-		TransferOrderComponent comp = (TransferOrderComponent)ComponentHelper.getComponentFromRequest(ctx);
-		
+	public static String performPay(RequestService rs, ContentContext ctx, GlobalContext globalContext, MessageRepository messageRepository, I18nAccess i18nAccess) throws Exception {
 		Basket basket = Basket.getInstance(ctx);
-		basket.setStep(Basket.CONFIRMATION_STEP);
-		
-		System.out.println(comp.getContent(basket));
-		
+		basket.setStep(Basket.CONFIRMATION_STEP);		
+		basket.setStatus(Basket.STATUS_WAIT_PAY);
+		BasketPersistenceService.getInstance(globalContext).storeBasket(basket);
 		return null;	
 	}
 	

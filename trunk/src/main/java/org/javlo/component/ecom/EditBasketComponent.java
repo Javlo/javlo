@@ -28,6 +28,9 @@ public class EditBasketComponent extends AbstractVisualComponent implements IAct
 				reduction = true;
 			}
 		}
+		if (basket.getStep() == Basket.FINAL_STEP) {
+			Basket.setInstance(ctx, null); // dusplay final step and remove 
+		}
 		ctx.getRequest().setAttribute("reduction", reduction);
 		ctx.getRequest().setAttribute("basket", basket);
 	}
@@ -56,6 +59,11 @@ public class EditBasketComponent extends AbstractVisualComponent implements IAct
 	@Override
 	public String getActionGroupName() {
 		return "basket";
+	}
+	
+	@Override
+	public boolean isRealContent(ContentContext ctx) {	
+		return true;
 	}
 
 }

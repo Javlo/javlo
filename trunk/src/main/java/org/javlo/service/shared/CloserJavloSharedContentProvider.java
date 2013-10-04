@@ -78,13 +78,13 @@ public class CloserJavloSharedContentProvider extends AbstractSharedContentProvi
 					List<ComponentBean> beans = Arrays.asList(page.getContent());
 					SharedContent sharedContent = new SharedContent(getSharedName(page, i), beans);
 					for (ComponentBean bean : beans) {
+						sharedContent.setLinkInfo(page.getId());
 						if (bean.getType().equals(GlobalImage.TYPE)) {
 							try {
 								GlobalImage image = new GlobalImage();
 								image.init(bean, ctx);
 								String imageURL = image.getPreviewURL(ctx, "shared-preview");
-								sharedContent.setImageUrl(imageURL);
-								sharedContent.setLinkInfo(page.getId());
+								sharedContent.setImageUrl(imageURL);								
 								if (page.getParent() != null) {
 									if (!getCategories().containsKey(page.getParent().getName())) {
 										getCategories().put(page.getParent().getName(), page.getParent().getTitle(ctx));

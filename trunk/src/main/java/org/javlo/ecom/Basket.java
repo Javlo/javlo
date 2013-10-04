@@ -1,8 +1,13 @@
 package org.javlo.ecom;
 
+import java.beans.Transient;
+import java.io.ByteArrayOutputStream;
 import java.io.InputStream;
+import java.io.PrintStream;
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.LinkedList;
@@ -12,26 +17,46 @@ import java.util.Set;
 import java.util.TreeSet;
 
 import org.javlo.context.ContentContext;
+import org.javlo.helper.ResourceHelper;
 import org.javlo.helper.StringHelper;
 import org.javlo.helper.URLHelper;
 import org.javlo.utils.CSVFactory;
 
-public class Basket {
+public class Basket implements Serializable {
 	
+	public static final int START_STEP = 1;
 	public static final int REGISTRATION_STEP = 2;
 	public static final int ORDER_STEP = 3;	
 	public static final int CONFIRMATION_STEP = 4;
+	public static final int FINAL_STEP = 5;
+	public static final int ERROR_STEP = 99;
+	
+	public static final String STATUS_UNVALIDED = "unvalided";
+	public static final String STATUS_VALIDED = "valided";
+	public static final String STATUS_PAYED = "payed";	
+	public static final String STATUS_MANUAL_PAYED = "manual_payed";
+	public static final String STATUS_NEW = "new";
+	public static final String STATUS_WAIT_PAY = "wait_pay";
+	public static final String STATUS_SENDED = "sended";
 
 	private List<Product> products = new LinkedList<Product>();
 
 	private boolean valid = false;
 	private boolean confirm = false;
 
-	private String id = StringHelper.getShortRandomId();
+	private String id = null;
 	private String contactEmail = "";
 	private String contactPhone = "";
+	private Date date = new Date();
+	private String status = STATUS_NEW;
+	private List<Product.ProductBean> productsBean = null;
+	private String token;
+	private String payerID;
+	private String validationInfo;
+	private transient Object transactionManager;
+	private boolean deleted;
 
-	private int step = 1;
+	private int step = START_STEP;
 
 	public static final String KEY = "basket";
 
@@ -58,6 +83,10 @@ public class Basket {
 	}
 
 	private final List<PayementServiceBean> payementServices = new LinkedList<Basket.PayementServiceBean>();
+	
+	public static void setInstance(ContentContext ctx, Basket basket) {
+		ctx.getRequest().getSession().setAttribute(KEY, basket);
+	}
 
 	public static Basket getInstance(ContentContext ctx) {
 		Basket basket = (Basket) ctx.getRequest().getSession().getAttribute(KEY);
@@ -76,8 +105,15 @@ public class Basket {
 			}
 			ctx.getRequest().getSession().setAttribute(KEY, basket);
 		}
-
 		return basket;
+	}
+	
+	public String getStatus() {
+		return status;
+	}
+
+	public void setStatus(String status) {
+		this.status = status;
 	}
 	
 	public void reset(ContentContext ctx) {
@@ -94,11 +130,13 @@ public class Basket {
 		}
 	}
 
+	@Transient
 	public List<Product> getProducts() {
-		return Collections.unmodifiableList(products);
+		return products;
 	}
-
+	
 	public void addProduct(Product product) {
+		productsBean = null;
 		setValid(false);
 		for (Product item : products) {
 			if (item.getName().equals(product.getName()) && item.getPrice() == product.getPrice()) {
@@ -129,7 +167,7 @@ public class Basket {
 
 	public double getTotalIncludingVAT() {
 		double result = 0;
-		for (Product product : products) {
+		for (Product.ProductBean product : getProductsBean()) {
 			result = result + (product.getPrice() * (1 - product.getReduction()) * product.getQuantity());
 		}
 		return result + getDeliveryIncludingVAT();
@@ -140,8 +178,8 @@ public class Basket {
 	}
 
 	public double getTotalExcludingVAT() {
-		double result = 0;
-		for (Product product : products) {
+		double result = 0;		
+		for (Product.ProductBean product : getProductsBean()) {
 			result = result + (((product.getPrice()) * (1 - product.getReduction()) * product.getQuantity()) / (1 + product.getVAT()));
 		}
 		return result + getDeliveryExcludingVAT();
@@ -207,6 +245,9 @@ public class Basket {
 	}
 
 	public String getId() {
+		if (id == null) {
+			id = StringHelper.getShortRandomId();
+		}
 		return id;
 	}
 
@@ -220,7 +261,7 @@ public class Basket {
 
 	public String getCurrencyCode() {
 		String currencyCode = null;
-		for (Product product : products) {
+		for (Product.ProductBean product : getProductsBean()) {
 			if ((currencyCode != null) && (!currencyCode.equals(product.getCurrencyCode()))) {
 				return null;
 			}
@@ -366,7 +407,7 @@ public class Basket {
 		return step;
 	}
 
-	public void setStep(int step) {
+	public void setStep(int step) {		
 		this.step = step;
 	}
 
@@ -374,28 +415,98 @@ public class Basket {
 		return payementServices;
 	}
 
-	public static void main(String[] args) {
-		String id = StringHelper.getShortRandomId();
-		System.out.println("***** Basket.main : id = " + id); // TODO: remove
-																// debug trace
-		System.out.println("***** Basket.main : lg = " + id.length()); // TODO:
-																		// remove
-																		// debug
-																		// trace
-		id = StringHelper.getShortRandomId();
-		System.out.println("***** Basket.main : id = " + id); // TODO: remove
-																// debug trace
-		System.out.println("***** Basket.main : lg = " + id.length()); // TODO:
-																		// remove
-																		// debug
-																		// trace
-		id = StringHelper.getShortRandomId();
-		System.out.println("***** Basket.main : id = " + id); // TODO: remove
-																// debug trace
-		System.out.println("***** Basket.main : lg = " + id.length()); // TODO:
-																		// remove
-																		// debug
-																		// trace
+	public Date getDate() {
+		return date;
+	}
+	
+	public String getDateString() {
+		return StringHelper.renderSortableTime(date);
 	}
 
+	public void setDate(Date date) {
+		this.date = date;
+	}
+	
+	public static void main(String[] args) {
+		Basket basket = new Basket();
+		Product product = new Product(null);
+		product.setFakeName("article-1");
+		basket.addProduct(product);
+		product = new Product(null);
+		product.setFakeName("article-2");		
+		basket.addProduct(product);
+		System.out.println("size:"+basket.getProductsBean().size());
+		System.out.println(ResourceHelper.storeBeanFromXML(basket));
+		System.out.println();
+		//System.out.println(ResourceHelper.storeBeanFromXML(basket.getProductsBean().iterator().next()));
+	}
+
+	public List<Product.ProductBean> getProductsBean() {
+		if (productsBean == null) {
+			productsBean = new LinkedList<Product.ProductBean>();
+			for (Product product : getProducts()) {
+				productsBean.add(product.getBean());
+			}
+		}
+		return productsBean;
+	}
+	
+	public String getProductsBeanToString() {
+		ByteArrayOutputStream outStream = new ByteArrayOutputStream();
+		PrintStream out = new PrintStream(outStream);		
+		for (Product.ProductBean product : getProductsBean()) {
+			out.print("["+product.getQuantity()+"-"+product.getName()+"] ");
+		}
+		out.close();
+		return new String(outStream.toByteArray());
+	}
+
+	public void setProductsBean(List<Product.ProductBean> productsBean) {
+		this.productsBean = productsBean;
+	}
+
+	public String getToken() {
+		return token;
+	}
+
+	public void setToken(String token) {
+		this.token = token;
+	}
+
+	public String getPayerID() {
+		return payerID;
+	}
+
+	public void setPayerID(String payerID) {
+		this.payerID = payerID;
+	}
+
+	public String getValidationInfo() {
+		return validationInfo;
+	}
+
+	public void setValidationInfo(String validationInfo) {
+		this.validationInfo = validationInfo;
+	}
+
+	/**
+	 * reference to the ecom transaction manager (transiant)
+	 * @return
+	 */
+	public Object getTransactionManager() {
+		return transactionManager;
+	}
+
+	public void setTransactionManager(Object transactionManager) {
+		this.transactionManager = transactionManager;
+	}
+
+	public boolean isDeleted() {
+		return deleted;
+	}
+
+	public void setDeleted(boolean deleted) {
+		this.deleted = deleted;
+	}
+	
 }

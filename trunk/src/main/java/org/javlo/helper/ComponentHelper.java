@@ -5,11 +5,12 @@ package org.javlo.helper;
 
 import java.io.PrintWriter;
 import java.io.StringWriter;
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import org.javlo.component.core.AbstractVisualComponent;
+import org.javlo.component.core.ComponentBean;
 import org.javlo.component.core.IContentVisualComponent;
 import org.javlo.component.text.DynamicParagraph;
 import org.javlo.context.ContentContext;
@@ -150,8 +151,6 @@ public class ComponentHelper {
 		return res.toString();
 	}
 	
-	
-
 	public static void moveComponent(ContentContext ctx, IContentVisualComponent comp, IContentVisualComponent newPrevious, MenuElement targetPage, String area) {
 		comp.getPage().removeContent(ctx, comp.getId());
 		if (newPrevious != null) {
@@ -161,5 +160,16 @@ public class ComponentHelper {
 			targetPage.addContent("0", comp.getComponentBean());
 		}
 		comp.getComponentBean().setArea(area);
+	}
+	
+	/**
+	 * change all area of a componentBean list.
+	 * @param beans list of content.
+	 * @param newArea new area, can be null.
+	 */
+	public static void changeAllArea(Collection<ComponentBean> beans, String newArea) {
+		for (ComponentBean bean : beans) {
+			bean.setArea(newArea);
+		}
 	}
 }

@@ -36,7 +36,12 @@ MessageRepository.getInstance(request); // load request message
 				</form>						
 			<fieldset class="pc_command" id="pc_command">
 				<legend>${i18n.edit['global.command']}</legend>
-				<ul class="pc_form_line">										
+				<ul class="pc_form_line"><li class="refresh"><form id="refresh_form" action="${info.currentURL}" method="post">
+						<div class="pc_line">							
+							<input id="refresh_button" type="submit" value="${i18n.edit['command.refresh']}" title="${i18n.edit['command.refresh']}" />
+							<label for="refresh_button">${i18n.edit['command.refresh']}</label>
+						</div>
+					</form></li>									
 					<li class="preview"><c:if test="${globalContext.previewMode}"><form id="pc_form" action="${info.currentURL}" method="post">						
 						<div class="pc_line">
 							<input type="hidden" name="webaction" value="edit.previewedit" />
@@ -53,12 +58,7 @@ MessageRepository.getInstance(request); // load request message
 					<c:if test="${!globalContext.previewMode}">
 						<a id="pc_edit_button" class="pc_edit_true" href="${info.currentViewURL}" target="_blank">${i18n.edit['preview.label.not-edit-page']}</a>
 					</c:if>					
-					</li><li class="refresh"><form id="refresh_form" action="${info.currentURL}" method="post">
-						<div class="pc_line">							
-							<input id="refresh_button" type="submit" value="${i18n.edit['command.refresh']}" title="${i18n.edit['command.refresh']}" />
-							<label for="refresh_button">${i18n.edit['command.refresh']}</label>
-						</div>
-					</form></li>
+					</li>
 					<c:if test='${editPreview == "true"}'>
 					<li><form id="home_form" action="${info.rootURL}" method="get">
 						<div class="pc_line">							
@@ -66,7 +66,7 @@ MessageRepository.getInstance(request); // load request message
 							<label for="home_button">${i18n.edit['command.home']}</label>
 						</div>
 					</form></li>					
-					<c:if test="${globalContext.previewMode}"><li><form id="pc_publish_form" action="${info.currentURL}" method="post">
+					<c:if test="${globalContext.previewMode}"><li class="publish"><form id="pc_publish_form" action="${info.currentURL}" method="post">
 						<div class="pc_line">
 							<input type="hidden" name="webaction" value="edit.publish" />
 							<input id="pc_publish_button" type="submit" value="${i18n.edit['command.publish']}" title="${i18n.edit['command.publish']}" />
@@ -116,8 +116,7 @@ MessageRepository.getInstance(request); // load request message
 							<input id="pc_page_properties" type="submit" value="${i18n.edit['global.page-properties']}" title="${i18n.edit['global.page-properties']}" class="pc_edit_true" />
 							<label for="pc_page_properties">${i18n.edit['global.page-properties']}</label>
 						</div>
-					</form></li>					
-										
+					</form></li>										
 					</c:if>
 				</ul>			
 			</fieldset>
@@ -144,6 +143,7 @@ MessageRepository.getInstance(request); // load request message
 					<jsp:include page="component.jsp" />
 				</fieldset>
 				</c:if>
+				<div class="subblock">
 				<form id="children_list" action="${info.currentURL}" method="post">
 					<fieldset class="closable">
 						<legend>${i18n.edit['content.navigation']}</legend>
@@ -156,6 +156,7 @@ MessageRepository.getInstance(request); // load request message
 						<%=MacroHelper.getXHTMLMacroSelection(ctx, false, true)%>
 					</fieldset>
 				</form>	
+				</div>
 			</c:if>			
 		</c:if><c:if test="${empty currentUser}">		
 			    <a class="login action-button central-button" href="${info.currentEditURL}" onclick="jQuery.colorbox({href : '${info.currentEditURL}?previewEdit=true',opacity : 0.6,iframe : true,width : '95%',	height : '95%'}); return false;"><span>${i18n.edit['global.login']}</span></a>

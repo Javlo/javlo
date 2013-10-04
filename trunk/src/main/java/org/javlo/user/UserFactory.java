@@ -452,7 +452,7 @@ public class UserFactory implements IUserFactory, Serializable {
 	 * @see org.javlo.user.IUserFactory#logout()
 	 */
 	@Override
-	public void logout(HttpSession session) {
+	public void logout(HttpSession session) {		
 		session.removeAttribute(SESSION_KEY);
 	}
 

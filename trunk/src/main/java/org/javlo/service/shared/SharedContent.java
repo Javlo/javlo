@@ -8,6 +8,7 @@ import java.util.List;
 
 import org.javlo.component.core.ComponentBean;
 import org.javlo.component.text.Description;
+import org.javlo.component.title.SubTitle;
 import org.javlo.component.title.Title;
 import org.javlo.context.ContentContext;
 
@@ -46,6 +47,8 @@ public class SharedContent {
 					title = componentBean.getValue();
 				} else if (componentBean.getType().equals(Description.TYPE)) {
 					description = componentBean.getValue();
+				} else if (componentBean.getType().equals(SubTitle.TYPE) && title == null) {
+					title = componentBean.getValue();
 				}
 			}
 		}

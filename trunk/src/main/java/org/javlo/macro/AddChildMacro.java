@@ -27,12 +27,14 @@ public class AddChildMacro extends AbstractMacro {
 			newPageName = currentPage.getName()+'-'+index;
 			index++;
 		}		
-		MenuElement newPage = MacroHelper.addPageIfNotExist(ctx, ctx.getCurrentPage(),newPageName, false, true);	
-		
+		MenuElement newPage = MacroHelper.addPageIfNotExist(ctx, ctx.getCurrentPage(),newPageName, false, true);		
 		if (currentPage.isChildrenAssociation()) {			
 			String newURL = URLHelper.createURL(ctx, currentPage)+"#page_"+newPage.getId();
 			NetHelper.sendRedirectTemporarily(ctx.getResponse(), newURL);
-		}		
+		} else {
+			String newURL = URLHelper.createURL(ctx, newPage);
+			NetHelper.sendRedirectTemporarily(ctx.getResponse(), newURL);			
+		}
 		
 		return null;
 	}

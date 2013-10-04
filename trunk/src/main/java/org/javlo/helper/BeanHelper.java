@@ -3,15 +3,19 @@
  */
 package org.javlo.helper;
 
+import java.io.File;
+import java.io.IOException;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.Collection;
 import java.util.Hashtable;
 import java.util.Iterator;
 import java.util.LinkedList;
+import java.util.List;
 import java.util.Map;
 
 import org.apache.commons.beanutils.BeanUtils;
+import org.javlo.utils.CSVFactory;
 
 /**
  * @author pvandermaesen
@@ -107,6 +111,8 @@ public class BeanHelper {
 	public static Map bean2Map(Object bean) throws IllegalArgumentException, IllegalAccessException, InvocationTargetException {
 		Map res = new Hashtable();
 		Method[] methods = bean.getClass().getMethods();
+		System.out.println("***** BeanHelper.bean2Map : class name = "+bean.getClass().getName()); //TODO: remove debug trace
+		System.out.println("***** BeanHelper.bean2Map : methods size = "+methods.length); //TODO: remove debug trace
 		for (Method method : methods) {
 			if (method.getName().startsWith("get")) {
 				if (method.getReturnType().equals(String.class)) {
@@ -239,6 +245,15 @@ public class BeanHelper {
 		String[] res = new String[labels.size()];
 		labels.toArray(res);
 		return res;
+	}
+	
+	public static void storeBeanToCSV(File file, Collection<Object> beans) throws IllegalArgumentException, IllegalAccessException, InvocationTargetException, IOException {
+		List<Map<String,String>> allMap = new LinkedList<Map<String,String>>();
+		for (Object object : beans) {
+			Map map = bean2Map(object);
+			allMap.add(map);
+		}
+		CSVFactory.storeContentAsMap(file, allMap);
 	}
 
 	public static Object[] getAllValues(Object bean) {

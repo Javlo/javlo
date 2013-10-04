@@ -1621,6 +1621,9 @@ public class Edit extends AbstractModuleAction {
 			return "bad request structure, need sharedData and previousId as parameter.";
 		} else {
 			SharedContent sharedContent = sharedContentService.getSharedContent(ctx, sharedData);
+			if (sharedContent == null) {
+				return "error : shared content not found : "+sharedData;
+			}
 			String areaKey = null;
 			String area = rs.getParameter("area", null);
 			if (area != null) {
@@ -1641,13 +1644,13 @@ public class Edit extends AbstractModuleAction {
 			if (targetPage == null) {
 				targetPage = ctx.getCurrentPage();
 			}
-
+			
 			if (sharedContent.getLinkInfo() == null) {
 				content.createContent(ctx, targetPage, sharedContent.getContent(), previousId, true);
 			} else {
 				ComponentBean mirrorBean = new ComponentBean(PageMirrorComponent.TYPE, sharedContent.getLinkInfo(), ctx.getRequestContentLanguage());
 				mirrorBean.setArea(areaKey);
-				content.createContent(ctx, targetPage, mirrorBean, previousId, true);
+				content.createContent(ctx, targetPage, mirrorBean, previousId, true);				
 			}
 
 			if (ctx.isAjax()) {

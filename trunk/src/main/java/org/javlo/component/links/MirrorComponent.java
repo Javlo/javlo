@@ -16,7 +16,6 @@ import org.javlo.context.ContentContext;
 import org.javlo.helper.StringHelper;
 import org.javlo.helper.URLHelper;
 import org.javlo.i18n.I18nAccess;
-import org.javlo.navigation.MenuElement;
 import org.javlo.service.ClipBoard;
 import org.javlo.service.ContentService;
 import org.javlo.service.RequestService;
@@ -32,13 +31,6 @@ public class MirrorComponent extends AbstractVisualComponent {
 	 * create a static logger.
 	 */
 	protected static Logger logger = Logger.getLogger(MirrorComponent.class.getName());
-
-	private void deleteMySelf(ContentContext ctx) throws Exception {
-		ContentService.getInstance(ctx.getRequest());
-		MenuElement elem = ctx.getCurrentPage();
-		elem.removeContent(ctx, getId());
-		logger.warning("delete miror component url : " + getId());
-	}
 
 	public String getCurrentInputName() {
 		return "linked-comp-" + getId();

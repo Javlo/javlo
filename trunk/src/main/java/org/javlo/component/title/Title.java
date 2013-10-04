@@ -27,6 +27,16 @@ public class Title extends AbstractVisualComponent {
 	public String[] getStyleList(ContentContext ctx) {	
 		return STYLES;
 	}
+	
+	@Override
+	public String getPrefixViewXHTMLCode(ContentContext ctx) {
+		return "";
+	}
+	
+	@Override
+	public String getSuffixViewXHTMLCode(ContentContext ctx) {
+		return "";
+	}
 
 	/**
 	 * @see org.javlo.itf.IContentVisualComponent#getXHTMLCode()

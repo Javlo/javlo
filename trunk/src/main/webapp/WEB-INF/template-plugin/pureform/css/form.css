@@ -145,6 +145,7 @@ input[type="text"], input[type="password"], input[type="email"], input[type="url
 
 input[type="submit"] {
 	margin-top: 0.5em;
+	margin-left: 0.5em;
 	background-color: #E6E6E6;
     border: 0 none transparent;
     border-radius: 2px 2px 2px 2px;

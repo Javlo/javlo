@@ -1,0 +1,1 @@
+<p class="error">Une erreur à été enregistrer lors de votre payement.  Veuillez réessayer plus tard.</p>

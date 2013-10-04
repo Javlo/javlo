@@ -20,7 +20,6 @@ import javax.xml.bind.DatatypeConverter;
 
 import org.apache.commons.io.output.ByteArrayOutputStream;
 import org.javlo.helper.ResourceHelper;
-import org.javlo.helper.StringHelper;
 import org.javlo.utils.JSONMap;
 
 import com.google.gson.JsonElement;
@@ -56,7 +55,7 @@ public class PaypalConnector {
 		token = obj.getValue("access_token", String.class);
 		return token;
 	}
-
+	
 	public String createPayment(double amountIn, String currencyIn, String descriptionIn, URL returnURL, URL cancelURL) throws IOException {
 		String token = authenticate();
 		Map<String, Object> obj = new LinkedHashMap<String, Object>();
@@ -69,14 +68,15 @@ public class PaypalConnector {
 		obj.put("payer", payer);
 		payer.put("payment_method", "paypal");
 		List<Map<String, Object>> transactions = new LinkedList<Map<String, Object>>();
-		obj.put("transactions", transactions);
-		Map<String, Object> transaction = new LinkedHashMap<String, Object>();
-		transactions.add(transaction);
-		Map<String, String> amount = new LinkedHashMap<String, String>();
-		transaction.put("amount", amount);
+		
+		Map<String, Object> transaction = new LinkedHashMap<String, Object>();		
+		Map<String, String> amount = new LinkedHashMap<String, String>();		
 		amount.put("total", new DecimalFormat("0.00", DecimalFormatSymbols.getInstance(Locale.ENGLISH)).format(amountIn));
 		amount.put("currency", currencyIn);
+		transaction.put("amount", amount);		
 		transaction.put("description", descriptionIn);
+		transactions.add(transaction);
+		obj.put("transactions", transactions);
 
 		String reqContent = JSONMap.JSON.toJson(obj);
 		System.out.println("Create request: " + reqContent); //TODO remove
@@ -106,12 +106,8 @@ public class PaypalConnector {
 		//String token = authenticate();
 		Map<String, Object> obj = new LinkedHashMap<String, Object>();
 		obj.put("payer_id", payerID);
-
 		String reqContent = JSONMap.JSON.toJson(obj);
-		System.out.println("Execute request: " + reqContent); //TODO remove
-
-		String content = excutePost(executeUrl, reqContent, "application/json", null, token);
-		System.out.println("Execute response: " + content); //TODO remove
+		String content = excutePost(executeUrl, reqContent, "application/json", null, token);		
 		JSONMap result = JSONMap.parseMap(content);
 		return result.getValue("state", String.class);
 	}

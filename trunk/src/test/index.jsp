@@ -17,11 +17,11 @@
 %>
 <%@taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core"%>
 <%
-ContentContext ctx = ContentContext.getContentContext(request, response);
+	ContentContext ctx = ContentContext.getContentContext(request, response);
 Content content = Content.createContent(request);
 GlobalContext globalContext = GlobalContext.getInstance(request.getSession());
 MenuElement currentPage = ctx.getCurrentPage();
-String currentTitle = currentPage.getContent(ctx).getPageTitle();
+String currentTitle = currentPage.getCopiedPageContent(ctx).getPageTitle();
 
 String globalTitle = currentPage.getGlobalTitle(ctx);if (globalTitle == null) {	globalTitle = globalContext.getGlobalTitle();}
 I18nAccess i18nAccess = I18nAccess.getInstance(request);

@@ -22,8 +22,6 @@ jQuery(document).ready(
 				});
 				jQuery("body").append(
 						'<div id="preview-layer"><span>&nbsp;</span></div>');
-				jQuery("body").append(
-						'<div id="droppable-layer"><span>&nbsp;</span></div>');
 				updatePDFPosition();
 			
 				jQuery( document ).tooltip({
@@ -92,7 +90,7 @@ jQuery(document).ready(
 			});
 			
 			jQuery(".editable-component.ui-droppable").each(function() {
-				if (jQuery(this).height() == 0) { // don't contains block item
+				if (jQuery(this).height() == 0 && jQuery(this).children().height() > 0) { // don't contains block item
 					jQuery(this).css("float", "left"); // out of the flow
 					jQuery(this).height(jQuery(this).children().height());
 				}				
@@ -101,15 +99,21 @@ jQuery(document).ready(
 		});
 
 updatePDFPosition = function() {
-	var pdfHeight = jQuery(".page_association_fake_body").data("pdfheight");
+	var pdfHeight = parseInt(jQuery(".page_association_fake_body").data("pdfheight"));
 	console.log("pdfHeight = "+pdfHeight);
 	var previousBreak = null;
 	jQuery(".page-break, ._page_associate").each(function() {
 		var currentBreak = jQuery(this);		
 		if (previousBreak != null) {
 			if ((currentBreak.position().top - previousBreak.position().top) > pdfHeight) {		
-				previousBreak.append('<div class="_pdf_page_limit"><span>&nbsp;</span></div>');
-				var pdfLimit = jQuery(this).find("._pdf_page_limit");
+				previousBreak.prepend('<div class="_pdf_page_limit"><span>&nbsp;</span></div>');
+				
+				var pdfLimit = jQuery(previousBreak.children()[0]);
+
+				console.log("previousBreak.position().top+pdfHeight = "+(previousBreak.position().top+pdfHeight));
+				console.log("pdfLimit = "+pdfLimit.attr("class"));
+				console.log("previousBreak.position().top = "+previousBreak.position().top);
+				
 				pdfLimit.css('top',(previousBreak.position().top+pdfHeight)+'px');
 			}
 		}
