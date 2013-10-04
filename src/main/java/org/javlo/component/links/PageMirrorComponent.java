@@ -7,13 +7,18 @@ import java.io.PrintWriter;
 import java.io.StringWriter;
 import java.util.Collection;
 import java.util.Collections;
+import java.util.LinkedList;
+import java.util.List;
 import java.util.logging.Logger;
 
 import org.javlo.component.core.AbstractVisualComponent;
 import org.javlo.component.core.ComponentBean;
+import org.javlo.component.core.ContentElementList;
 import org.javlo.context.ContentContext;
 import org.javlo.context.EditContext;
 import org.javlo.context.GlobalContext;
+import org.javlo.helper.ComponentHelper;
+import org.javlo.helper.ContentHelper;
 import org.javlo.helper.StringHelper;
 import org.javlo.helper.URLHelper;
 import org.javlo.i18n.I18nAccess;
@@ -23,8 +28,9 @@ import org.javlo.service.ContentService;
 import org.javlo.service.RequestService;
 
 /**
- * display the list of component create in content area of a other page in place of the mirrotComponent.
- * use "copy page" for create the link.
+ * display the list of component create in content area of a other page in place
+ * of the mirrotComponent. use "copy page" for create the link.
+ * 
  * @author pvandermaesen
  */
 public class PageMirrorComponent extends AbstractVisualComponent {
@@ -42,12 +48,6 @@ public class PageMirrorComponent extends AbstractVisualComponent {
 	 */
 	protected static Logger logger = Logger.getLogger(PageMirrorComponent.class.getName());
 
-	private void deleteMySelf(ContentContext ctx) throws Exception {
-		MenuElement elem = ctx.getCurrentPage();
-		elem.removeContent(ctx, getId());
-		logger.warning("delete mirror page component url : " + getId());
-	}
-
 	public String getCurrentInputName() {
 		return "linked-comp-" + getId();
 	}
@@ -56,9 +56,9 @@ public class PageMirrorComponent extends AbstractVisualComponent {
 	public String[] getStyleList(ContentContext ctx) {
 		return STYLES;
 	}
-	
+
 	protected String getUnlinkAndCopyInputName() {
-		return "unlink-copy-"+getId();
+		return "unlink-copy-" + getId();
 	}
 
 	@Override
@@ -95,8 +95,8 @@ public class PageMirrorComponent extends AbstractVisualComponent {
 			} else {
 				pageURL = URLHelper.createURL(ctx, currentPage);
 			}
-			out.println("<div class=\"line\"><a href=\""+pageURL+"\""+target+">" + i18nAccess.getText("global.path") + " : " + currentPage.getPath() + "</a></div>");			
-			out.println("<div class=\"line\"><input name=\""+getUnlinkAndCopyInputName()+"\" type=\"submit\" value=\""+i18nAccess.getText("action.unlink-copy")+"\" /></div>");
+			out.println("<div class=\"line\"><a href=\"" + pageURL + "\"" + target + ">" + i18nAccess.getText("global.path") + " : " + currentPage.getPath() + "</a></div>");
+			out.println("<div class=\"line\"><input name=\"" + getUnlinkAndCopyInputName() + "\" type=\"submit\" value=\"" + i18nAccess.getText("action.unlink-copy") + "\" /></div>");
 		}
 		out.println("</div>");
 		out.close();
@@ -143,16 +143,19 @@ public class PageMirrorComponent extends AbstractVisualComponent {
 				if (getStyle().equals(WITHOUT_REPEAT)) {
 					suffix = "&_no-repeat=true";
 				}
-				ctx.setVirtualCurrentPage(getPage()); // force page page mirror page as current page
+				ctx.setVirtualCurrentPage(getPage()); // force page page mirror
+														// page as current page
 				String area = ctx.getArea();
 				String path = ctx.getPath();
 				MenuElement currentPage = ctx.getCurrentPage();
 				ctx.setVirtualArea(area);
-				ctx.setArea(ComponentBean.DEFAULT_AREA);				
+				ctx.setArea(ComponentBean.DEFAULT_AREA);
 				ctx.getRequest().setAttribute(ContentContext.CHANGE_AREA_ATTRIBUTE_NAME, ComponentBean.DEFAULT_AREA);
-				//String xhtml = executeJSP(ctx, Edit.CONTENT_RENDERER + "?_wcms_content_path=" + page.getPath() + suffix+'&'+NOT_EDIT_PREVIEW_PARAM_NAME+"=true");
+				// String xhtml = executeJSP(ctx, Edit.CONTENT_RENDERER +
+				// "?_wcms_content_path=" + page.getPath() +
+				// suffix+'&'+NOT_EDIT_PREVIEW_PARAM_NAME+"=true");
 				ctx.setPath(page.getPath());
-				String xhtml = executeJSP(ctx, Edit.CONTENT_RENDERER +'?'+NOT_EDIT_PREVIEW_PARAM_NAME+"=true");
+				String xhtml = executeJSP(ctx, Edit.CONTENT_RENDERER + '?' + NOT_EDIT_PREVIEW_PARAM_NAME + "=true");
 				ctx.setVirtualCurrentPage(null);
 				ctx.setArea(area);
 				ctx.setVirtualArea(null);
@@ -176,6 +179,17 @@ public class PageMirrorComponent extends AbstractVisualComponent {
 		return false;
 	}
 
+	private List<ComponentBean> getCopiedPageContent(ContentContext ctx) throws Exception {
+		List<ComponentBean> outBeans = new LinkedList<ComponentBean>();
+		MenuElement copiedPage = getMirrorPage(ctx);				
+		ctx.setArea(ComponentBean.DEFAULT_AREA);		
+		ContentElementList content = copiedPage.getContent(ctx);
+		while (content.hasNext(ctx)) {
+			outBeans.add(new ComponentBean(content.next(ctx).getComponentBean()));
+		}
+		return outBeans;
+	}
+
 	@Override
 	public void performEdit(ContentContext ctx) throws Exception {
 		RequestService requestService = RequestService.getInstance(ctx.getRequest());
@@ -191,8 +205,18 @@ public class PageMirrorComponent extends AbstractVisualComponent {
 			String previousId = "0";
 			if (getPreviousComponent() != null) {
 				previousId = getPreviousComponent().getId();
+			}	
+			
+			List<ComponentBean> data = getCopiedPageContent(new ContentContext(ctx));			
+			ContentService content = ContentService.getInstance(ctx.getRequest());			
+			ComponentHelper.changeAllArea(data, getArea()); // same area than page mirror component.
+			String id = content.createContent(ctx, getPage(), data, previousId, true);
+			deleteMySelf(ctx);
+			setNeedRefresh(true);
+			if (ctx.isEditPreview()) {
+				ctx.setClosePopup(true);
 			}
-			//TODO terminite this method.
+
 		}
 	}
 

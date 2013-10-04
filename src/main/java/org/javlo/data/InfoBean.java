@@ -24,6 +24,7 @@ import org.javlo.message.GenericMessage;
 import org.javlo.message.MessageRepository;
 import org.javlo.navigation.MenuElement;
 import org.javlo.navigation.MenuElement.PageBean;
+import org.javlo.navigation.NavigationMapByName;
 import org.javlo.rendering.Device;
 import org.javlo.service.PersistenceService;
 import org.javlo.service.RequestService;
@@ -550,7 +551,7 @@ public class InfoBean {
 		return URLHelper.createURL(ctx, "/");
 	}
 	
-	public static Map<String, String> getStaticdata() {
+	public Map<String, String> getStaticData() {
 		return staticData;
 	}
 	
@@ -558,6 +559,15 @@ public class InfoBean {
 		try {
 			return NavigationHelper.getPageBookmark(ctx, currentPage);
 		} catch (Exception e) {
+			e.printStackTrace();
+			return null;
+		}
+	}
+	
+	public Map<String,PageBean> getPageByName() {
+		try {
+			return new NavigationMapByName(ctx,ctx.getCurrentPage().getRoot());
+		} catch (Exception e) {		
 			e.printStackTrace();
 			return null;
 		}

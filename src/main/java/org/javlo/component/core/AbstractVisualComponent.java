@@ -128,6 +128,11 @@ public abstract class AbstractVisualComponent implements IContentVisualComponent
 		IContentVisualComponent res = (IContentVisualComponent) request.getAttribute(COMPONENT_KEY);
 		return res;
 	}
+	
+	protected void deleteMySelf(ContentContext ctx) throws Exception {
+		MenuElement elem = getPage();
+		elem.removeContent(ctx, getId());		
+	}
 
 	protected String applyReplacement(String content) {
 		Map<String, String> remp = getRemplacement();

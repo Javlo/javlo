@@ -1228,6 +1228,32 @@ public class ResourceHelper {
 		return loadBeanFromXML(xml, ResourceHelper.class.getClassLoader());
 	}
 
+	public static Serializable loadBeanFromXML(File file) throws FileNotFoundException {
+		InputStream in = new FileInputStream(file);
+		try {
+			return loadBeanFromXML(in);
+		} finally {
+			closeResource(in);
+		}
+	}
+
+	public static Serializable loadBeanFromXML(InputStream in) {
+		Serializable obj;
+		XMLDecoder decoder = null;
+		try {
+			decoder = new XMLDecoder(in, ResourceHelper.class.getClassLoader());
+			obj = (Serializable) decoder.readObject();
+			return obj;
+		} catch (Exception e) {
+			e.printStackTrace();
+		} finally {
+			if (decoder != null) {
+				decoder.close();
+			}
+		}
+		return null;
+	}
+
 	public static Serializable loadBeanFromXML(String xml, ClassLoader cl) {
 		Serializable obj;
 		InputStream in;
@@ -1246,7 +1272,7 @@ public class ResourceHelper {
 		}
 		return null;
 	}
-
+	
 	public static String storeBeanFromXML(Serializable bean) {
 		ByteArrayOutputStream out = new ByteArrayOutputStream();
 		// XMLEncoder encoder = new XMLEncoder(out,
@@ -1317,12 +1343,12 @@ public class ResourceHelper {
 		URL url;
 		HttpURLConnection connection = null;
 		BufferedReader rd = null;
-		PrintWriter  writer = null;
-		
+		PrintWriter writer = null;
+
 		if (urlParameters == null) {
 			urlParameters = "";
-		}		
-		Map<String,String> params = URLHelper.getParams(urlParameters);
+		}
+		Map<String, String> params = URLHelper.getParams(urlParameters);
 		StringBuffer encodedParam = new StringBuffer();
 		String sep = "";
 		for (Map.Entry<String, String> param : params.entrySet()) {
@@ -1332,28 +1358,28 @@ public class ResourceHelper {
 			encodedParam.append(URLEncoder.encode(param.getValue()));
 			sep = "&";
 		}
-		
+
 		if (urlParameters == null) {
 			urlParameters = "";
 		}
-		
+
 		try {
 			// Create connection
-			url = new URL(targetURL);			
+			url = new URL(targetURL);
 			connection = (HttpURLConnection) url.openConnection();
 			connection.setRequestProperty("Content-Type", contentType);
 			connection.setRequestProperty("Content-Language", lang);
 			connection.setDoOutput(true);
 
 			// user authentification
-			if (user != null && pwd != null) {			
+			if (user != null && pwd != null) {
 				connection.setRequestProperty("Authorization", "Basic " + Base64.encodeBase64((user + ':' + pwd).getBytes()));
 			}
 
 			// Send request
 			writer = new PrintWriter(connection.getOutputStream());
 			writer.write(encodedParam.toString());
-			writer.flush();			
+			writer.flush();
 
 			// Get Response
 			InputStream is = connection.getInputStream();
