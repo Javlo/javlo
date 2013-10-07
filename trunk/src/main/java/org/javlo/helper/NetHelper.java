@@ -54,10 +54,9 @@ public class NetHelper {
 
 	public static final String HEADER_LAST_MODIFIED = "Last-Modified";
 	public static final String HEADER_IF_MODIFIED_SINCE = "If-Modified-Since";
-	
+
 	public static final String HEADER_ETAG = "ETag";
 	public static final String HEADER_IF_MODIFIED_SINCE_ETAG = "if-None-Match";
-
 
 	public static String readPage(URL url) throws Exception {
 		return readPage(url, false);
@@ -235,7 +234,10 @@ public class NetHelper {
 	public static void main(String[] args) throws IOException, InterruptedException {
 		SimpleDateFormat sdf = new SimpleDateFormat("HH:mm:ss,SSS");
 		while (System.in.available() == 0) {
-			System.out.println("***** NetHelper.main : " + sdf.format(new Date()) + " connected: " + isConnected()); //TODO: remove debug trace
+			System.out.println("***** NetHelper.main : " + sdf.format(new Date()) + " connected: " + isConnected()); // TODO:
+																														// remove
+																														// debug
+																														// trace
 			Thread.sleep(300);
 		}
 	}
@@ -445,7 +447,8 @@ public class NetHelper {
 					}
 
 					imgBuffer.close();
-					// BufferedImage img = ImageIO.read(new ByteArrayInputStream(imgBuffer.toByteArray()));
+					// BufferedImage img = ImageIO.read(new
+					// ByteArrayInputStream(imgBuffer.toByteArray()));
 
 					byte[] imageArray = imgBuffer.toByteArray();
 					ImageSize img = ImageHelper.getExifSize(new ByteArrayInputStream(imageArray));
@@ -465,7 +468,10 @@ public class NetHelper {
 
 						// DEBUG
 						/*
-						 * File imgDir = new File("/tmp/tmp-images"); imgDir.mkdirs(); ImageIO.write(img, "jpg", new File("/tmp/tmp-images/img_"+StringHelper.getRandomId()+".jpg"));
+						 * File imgDir = new File("/tmp/tmp-images");
+						 * imgDir.mkdirs(); ImageIO.write(img, "jpg", new
+						 * File("/tmp/tmp-images/img_"
+						 * +StringHelper.getRandomId()+".jpg"));
 						 */
 
 						if ((float) img.getWidth() / (float) img.getHeight() > 0.40) { // no
@@ -616,9 +622,10 @@ public class NetHelper {
 
 		return urlList;
 	}
-	
+
 	/**
 	 * check internet connection with stable server.
+	 * 
 	 * @return
 	 */
 	public static boolean isConnected() {
@@ -627,6 +634,7 @@ public class NetHelper {
 
 	/**
 	 * check if the given url can be reached.
+	 * 
 	 * @param url
 	 * @return
 	 */
@@ -647,7 +655,8 @@ public class NetHelper {
 		} catch (java.net.SocketTimeoutException ex) {
 			// ignored;
 		} catch (IOException ignored) {
-			// System.err.println(ignored.getClass().getName() + ": " + ignored.getMessage());
+			// System.err.println(ignored.getClass().getName() + ": " +
+			// ignored.getMessage());
 			// ignored;
 		} finally {
 			if (c instanceof HttpURLConnection) {
@@ -667,15 +676,24 @@ public class NetHelper {
 		}
 		return false;
 	}
-	
+
 	public static void sendMailToAdministrator(GlobalContext globalContext, String subject, String content) throws AddressException {
 		sendMailToAdministrator(globalContext, new InternetAddress(globalContext.getAdministratorEmail()), subject, content);
 	}
 
-	public static void sendMailToAdministrator(GlobalContext globalContext, InternetAddress from, String subject, String content) {		
+	public static void sendMailToAdministrator(GlobalContext globalContext, InternetAddress from, String subject, String content) {
 		MailService mailService = MailService.getInstance(globalContext.getStaticConfig());
 		try {
 			mailService.sendMail(from, new InternetAddress(globalContext.getAdministratorEmail()), subject, content, false);
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+	}
+
+	public static void sendMail(GlobalContext globalContext, InternetAddress from, InternetAddress to, InternetAddress cc, InternetAddress bcc, String subject, String content) {
+		MailService mailService = MailService.getInstance(globalContext.getStaticConfig());
+		try {
+			mailService.sendMail(null, from, to, cc, bcc, subject, content, false);
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
@@ -692,7 +710,5 @@ public class NetHelper {
 		response.setHeader("Location", url);
 		response.setHeader("Connection", "close");
 	}
-	
-	
 
 }

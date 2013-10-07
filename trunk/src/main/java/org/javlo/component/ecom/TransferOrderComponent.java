@@ -3,6 +3,8 @@ package org.javlo.component.ecom;
 import java.io.ByteArrayOutputStream;
 import java.io.PrintStream;
 
+import javax.mail.internet.InternetAddress;
+
 import org.javlo.actions.IAction;
 import org.javlo.component.core.IContentVisualComponent;
 import org.javlo.context.ContentContext;
@@ -10,6 +12,8 @@ import org.javlo.context.GlobalContext;
 import org.javlo.ecom.Basket;
 import org.javlo.ecom.BasketPersistenceService;
 import org.javlo.exception.ResourceNotFoundException;
+import org.javlo.helper.NetHelper;
+import org.javlo.helper.StringHelper;
 import org.javlo.helper.URLHelper;
 import org.javlo.helper.XHTMLHelper;
 import org.javlo.i18n.I18nAccess;
@@ -77,6 +81,26 @@ public class TransferOrderComponent extends AbstractOrderComponent implements IA
 		Basket basket = Basket.getInstance(ctx);		
 		if (basket.getStep() == Basket.CONFIRMATION_STEP) {			
 			String msg = XHTMLHelper.textToXHTML(getContent(basket));
+			
+			/** send email **/
+			String subject = getData().getProperty("mail.subject");			 
+			InternetAddress bcc = null;
+			String bccString = getData().getProperty("mail.bcc");
+			if(bccString  != null && StringHelper.isMail(bccString)) {
+				bcc = new InternetAddress(getData().getProperty("mail.bcc"));
+			}
+			InternetAddress from;
+			String fromString = getData().getProperty("mail.from");
+			if( fromString != null && StringHelper.isMail(fromString)) {
+				from = new InternetAddress(fromString);
+			} else {
+				from = new InternetAddress(ctx.getGlobalContext().getAdministratorEmail());
+			}	
+			InternetAddress to = new InternetAddress(basket.getContactEmail());
+			 
+			
+			NetHelper.sendMail(ctx.getGlobalContext(), from, to, null, bcc, subject, getContent(basket));
+			
 			basket.reset(ctx);
 			return msg;			
 		}
@@ -102,6 +126,11 @@ public class TransferOrderComponent extends AbstractOrderComponent implements IA
 		basket.setStep(Basket.CONFIRMATION_STEP);		
 		basket.setStatus(Basket.STATUS_WAIT_PAY);
 		BasketPersistenceService.getInstance(globalContext).storeBasket(basket);
+		
+		
+		
+		NetHelper.sendMailToAdministrator(globalContext, "basket confirmed with transfert : "+globalContext.getContextKey(), basket.toString());
+		
 		return null;	
 	}
 	

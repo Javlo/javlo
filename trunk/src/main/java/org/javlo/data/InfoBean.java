@@ -356,6 +356,15 @@ public class InfoBean {
 		}
 		return null;
 	}
+	
+	public String getRootTemplateFolder() {
+		try {
+			return URLHelper.mergePath(ctx.getCurrentTemplate().getLocalWorkTemplateFolder(),getTemplateFolder());
+		} catch (Exception e) {
+			e.printStackTrace();
+			return null;
+		}
+	}
 
 	public String getAbsoluteTemplateFolder() {
 		try {

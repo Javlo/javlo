@@ -860,7 +860,7 @@ public class StringHelper {
 	public synchronized static String getShortRandomId() {
 		long newId = Math.round(System.currentTimeMillis()/10000);
 		if (newId <= previousShortRandomId) {	
-			logger.warning("to mutch random is generated : "+previousRandomId);
+			logger.fine("to mutch random is generated : "+previousRandomId);
 			newId = previousShortRandomId + 1;
 		}
 		previousShortRandomId = newId;

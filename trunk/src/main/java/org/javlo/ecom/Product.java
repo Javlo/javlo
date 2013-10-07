@@ -37,6 +37,11 @@ public class Product {
 			this.reduction = reduction;
 			this.vat = vat;
 		}
+		
+		@Override
+		public String toString() {
+			return getName()+" ("+getId()+")   Quantity:"+getQuantity()+"   Price:"+getPrice()+"   Reduction:"+getReduction()+"   vat:"+getVAT();
+		}
 
 		public String getId() {
 			return id;
