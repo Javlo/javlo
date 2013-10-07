@@ -59,37 +59,37 @@
 		</div>
 	</c:if>
 	<div class="line">
-		<label for="firstName">firstName</label>
+		<label for="firstName">${i18n.view['form.firstName']}</label>
 		<input type="text" id="firstName" name="firstName" value="${userInfoMap["firstName"]}" /> 
 	</div>
 	<div class="line">
-		<label for="lastName">lastName</label>
+		<label for="lastName">${i18n.view['form.lastName']}</label>
 		<input type="text" id="lastName" name="lastName" value="${userInfoMap["lastName"]}" /> 
 	</div>
 	<div class="line">
-		<label for="email">email</label>
+		<label for="email">${i18n.view['form.email']}</label>
 		<input type="text" id="email" name="email" value="${userInfoMap["email"]}" /> 
 	</div>	
 	<div class="line">
-		<label for="mobile">mobile/phone</label>
+		<label for="mobile">${i18n.view['form.adress.phone']}</label>
 		<input type="text" id="mobile" name="mobile" value="${userInfoMap["mobile"]}" /> 
 	</div>
 </div>
 <div class="one_half">
 	<div class="line">
-		<label for="address">address</label>
+		<label for="address">${i18n.view['form.adress']}</label>
 		<input type="text" id="address" name="address" value="${userInfoMap["address"]}" /> 
 	</div>
 	<div class="line">
-		<label for="postCode">postCode</label>
+		<label for="postCode">${i18n.view['form.adress.zip']}</label>
 		<input type="text" id="postCode" name="postCode" value="${userInfoMap["postCode"]}" /> 
 	</div>
 	<div class="line">
-		<label for="city">city</label>
+		<label for="city">${i18n.view['form.adress.city']}</label>
 		<input type="text" id="city" name="city" value="${userInfoMap["city"]}" /> 
 	</div>
 	<div class="line">
-		<label for="country">country</label>
+		<label for="country">${i18n.view['form.adress.country']}</label>
 		<c:if test="${empty list.countries}">
 			<input type="text" id="country" name="country" value="${userInfoMap["country"]}" />
 		</c:if>
