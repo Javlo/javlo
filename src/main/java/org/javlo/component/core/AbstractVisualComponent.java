@@ -891,12 +891,24 @@ public abstract class AbstractVisualComponent implements IContentVisualComponent
 		finalCode.append("\"/>");
 		return finalCode.toString();
 	}
+	
+	/**
+	 * override this method for add specific class to prefix.
+	 * @return
+	 */
+	public String getSpecificClass() {
+		return null;
+	}
 
 	public final String getSpecialPreviewCssClass(ContentContext ctx, String currentClass) {
 		if (currentClass == null) {
 			currentClass = "";
 		} else {
 			currentClass = ' ' + currentClass.trim();
+		}
+		String specificClass = "";
+		if (getSpecificClass() != null) {
+			specificClass = getSpecificClass()+' ';
 		}
 		if (ctx.getRenderMode() == ContentContext.PREVIEW_MODE) {
 			GlobalContext globalContext = GlobalContext.getInstance(ctx.getRequest());
@@ -911,8 +923,8 @@ public abstract class AbstractVisualComponent implements IContentVisualComponent
 					if (getConfig(ctx).isPreviewEditable() && editCtx.isEditPreview() && (!isRepeat() || getPage().equals(ctx.getCurrentPage()))) {
 						I18nAccess i18nAccess = I18nAccess.getInstance(ctx.getRequest());
 						String type = i18nAccess.getText("content."+getType());
-						String hint = "<b>"+type+"</b><br />"+i18nAccess.getViewText("preview.hint", "click for edit or drag and drop to move.");
-						return " class=\""+classPrefix+"editable-component" + currentClass + "\" data-hint=\""+hint+"\"";
+						String hint = "<b>"+type+"</b><br />"+i18nAccess.getViewText("preview.hint", "click for edit or drag and drop to move.");						
+						return " class=\""+specificClass+classPrefix+"editable-component" + currentClass + "\" data-hint=\""+hint+"\"";
 					}
 				}
 			} catch (Exception e) {
@@ -920,7 +932,7 @@ public abstract class AbstractVisualComponent implements IContentVisualComponent
 			}
 		}
 		if (currentClass != null && currentClass.trim().length() > 0) {
-			return " class=\"" + currentClass.trim() + "\"";
+			return " class=\"" + specificClass + currentClass.trim() + "\"";
 		}
 
 		return "";

@@ -17,23 +17,24 @@ import java.util.Set;
 import java.util.TreeSet;
 
 import org.javlo.context.ContentContext;
+import org.javlo.ecom.Product.ProductBean;
 import org.javlo.helper.ResourceHelper;
 import org.javlo.helper.StringHelper;
 import org.javlo.helper.URLHelper;
 import org.javlo.utils.CSVFactory;
 
 public class Basket implements Serializable {
-	
+
 	public static final int START_STEP = 1;
 	public static final int REGISTRATION_STEP = 2;
-	public static final int ORDER_STEP = 3;	
+	public static final int ORDER_STEP = 3;
 	public static final int CONFIRMATION_STEP = 4;
 	public static final int FINAL_STEP = 5;
 	public static final int ERROR_STEP = 99;
-	
+
 	public static final String STATUS_UNVALIDED = "unvalided";
 	public static final String STATUS_VALIDED = "valided";
-	public static final String STATUS_PAYED = "payed";	
+	public static final String STATUS_PAYED = "payed";
 	public static final String STATUS_MANUAL_PAYED = "manual_payed";
 	public static final String STATUS_NEW = "new";
 	public static final String STATUS_WAIT_PAY = "wait_pay";
@@ -55,6 +56,18 @@ public class Basket implements Serializable {
 	private String validationInfo;
 	private transient Object transactionManager;
 	private boolean deleted;
+	private String firstName = "";
+	private String lastName = "";
+	private String organization = "";
+	private String vatNumber = "";
+	private boolean pickup = false;
+	private String address = "";
+	private String country;
+	private String zip;
+	private String city;
+	private String info;
+	private boolean transfertAddress = false;
+
 
 	private int step = START_STEP;
 
@@ -83,7 +96,7 @@ public class Basket implements Serializable {
 	}
 
 	private final List<PayementServiceBean> payementServices = new LinkedList<Basket.PayementServiceBean>();
-	
+
 	public static void setInstance(ContentContext ctx, Basket basket) {
 		ctx.getRequest().getSession().setAttribute(KEY, basket);
 	}
@@ -107,7 +120,7 @@ public class Basket implements Serializable {
 		}
 		return basket;
 	}
-	
+
 	public String getStatus() {
 		return status;
 	}
@@ -115,7 +128,7 @@ public class Basket implements Serializable {
 	public void setStatus(String status) {
 		this.status = status;
 	}
-	
+
 	public void reset(ContentContext ctx) {
 		ctx.getRequest().getSession().removeAttribute(KEY);
 	}
@@ -134,7 +147,7 @@ public class Basket implements Serializable {
 	public List<Product> getProducts() {
 		return products;
 	}
-	
+
 	public void addProduct(Product product) {
 		productsBean = null;
 		setValid(false);
@@ -178,7 +191,7 @@ public class Basket implements Serializable {
 	}
 
 	public double getTotalExcludingVAT() {
-		double result = 0;		
+		double result = 0;
 		for (Product.ProductBean product : getProductsBean()) {
 			result = result + (((product.getPrice()) * (1 - product.getReduction()) * product.getQuantity()) / (1 + product.getVAT()));
 		}
@@ -294,13 +307,6 @@ public class Basket implements Serializable {
 		this.contactPhone = contactPhone;
 	}
 
-	private String firstName = "";
-	private String lastName = "";
-	private String organization = "";
-	private String vatNumber = "";
-	private boolean pickup = false;
-	private String address = "";
-
 	public String getFirstName() {
 		return firstName;
 	}
@@ -402,12 +408,74 @@ public class Basket implements Serializable {
 		}
 		return zones;
 	}
+	
+	
+
+	public String getVatNumber() {
+		return vatNumber;
+	}
+
+	public void setVatNumber(String vatNumber) {
+		this.vatNumber = vatNumber;
+	}
+
+	public String getCountry() {
+		return country;
+	}
+
+	public void setCountry(String country) {
+		this.country = country;
+	}
+
+	public String getZip() {
+		return zip;
+	}
+
+	public void setZip(String zip) {
+		this.zip = zip;
+	}
+
+	public String getCity() {
+		return city;
+	}
+
+	public void setCity(String city) {
+		this.city = city;
+	}
+
+	public String getInfo() {
+		return info;
+	}
+
+	public void setInfo(String info) {
+		this.info = info;
+	}
+
+	public DeliveryZone getZone() {
+		return zone;
+	}
+
+	public void setZone(DeliveryZone zone) {
+		this.zone = zone;
+	}
+
+	public List<DeliveryZone> getZones() {
+		return zones;
+	}
+
+	public void setZones(List<DeliveryZone> zones) {
+		this.zones = zones;
+	}
+
+	public void setProducts(List<Product> products) {
+		this.products = products;
+	}
 
 	public int getStep() {
 		return step;
 	}
 
-	public void setStep(int step) {		
+	public void setStep(int step) {
 		this.step = step;
 	}
 
@@ -418,7 +486,7 @@ public class Basket implements Serializable {
 	public Date getDate() {
 		return date;
 	}
-	
+
 	public String getDateString() {
 		return StringHelper.renderSortableTime(date);
 	}
@@ -426,19 +494,19 @@ public class Basket implements Serializable {
 	public void setDate(Date date) {
 		this.date = date;
 	}
-	
+
 	public static void main(String[] args) {
 		Basket basket = new Basket();
 		Product product = new Product(null);
 		product.setFakeName("article-1");
 		basket.addProduct(product);
 		product = new Product(null);
-		product.setFakeName("article-2");		
+		product.setFakeName("article-2");
 		basket.addProduct(product);
-		System.out.println("size:"+basket.getProductsBean().size());
+		System.out.println("size:" + basket.getProductsBean().size());
 		System.out.println(ResourceHelper.storeBeanFromXML(basket));
 		System.out.println();
-		//System.out.println(ResourceHelper.storeBeanFromXML(basket.getProductsBean().iterator().next()));
+		// System.out.println(ResourceHelper.storeBeanFromXML(basket.getProductsBean().iterator().next()));
 	}
 
 	public List<Product.ProductBean> getProductsBean() {
@@ -451,11 +519,13 @@ public class Basket implements Serializable {
 		return productsBean;
 	}
 	
+	
+
 	public String getProductsBeanToString() {
 		ByteArrayOutputStream outStream = new ByteArrayOutputStream();
-		PrintStream out = new PrintStream(outStream);		
+		PrintStream out = new PrintStream(outStream);
 		for (Product.ProductBean product : getProductsBean()) {
-			out.print("["+product.getQuantity()+"-"+product.getName()+"] ");
+			out.print("[" + product.getQuantity() + "-" + product.getName() + "] ");
 		}
 		out.close();
 		return new String(outStream.toByteArray());
@@ -491,6 +561,7 @@ public class Basket implements Serializable {
 
 	/**
 	 * reference to the ecom transaction manager (transiant)
+	 * 
 	 * @return
 	 */
 	public Object getTransactionManager() {
@@ -509,4 +580,54 @@ public class Basket implements Serializable {
 		this.deleted = deleted;
 	}
 	
+	
+
+	@Override
+	public String toString() {
+		ByteArrayOutputStream outStream = new ByteArrayOutputStream();
+		PrintStream out = new PrintStream(outStream);
+		out.println("basket");
+		out.println("======");
+		out.println("");
+		out.println("id : "+getId());
+		out.println("total Ex. VAT : "+getTotalExcludingVATString());
+		out.println("total In. VAT : "+getTotalIncludingVATString());
+		out.println("Currency : "+getCurrencyCode());
+		out.println("Date : "+StringHelper.renderSortableTime(getDate()));
+		out.println("Step : "+getStep());
+		out.println("Size : "+getSize());
+		out.println("Status : "+getStatus());
+		out.println("");
+		out.println("User:");
+		out.println("  firstName : "+getFirstName());
+		out.println("  lastName : "+getLastName());
+		out.println("  email : "+getContactEmail());
+		out.println("  phone : "+getContactPhone());
+		out.println("  adress : "+getAddress());		
+		out.println("  zip : "+getZip());
+		out.println("  city : "+getCity());
+		out.println("  country : "+getCountry());
+		out.println("");
+		out.println("Product :");
+		for (ProductBean product : getProductsBean()) {
+			out.println("   "+product);
+		}
+		out.println("");
+		out.println("Current Time : "+StringHelper.renderSortableTime(new Date()));
+		out.println("");		
+		
+		out.close();
+		return new String(outStream.toByteArray());
+	}
+
+	public boolean isTransfertAddress() {
+		return transfertAddress;
+	}
+
+	public void setTransfertAddress(boolean transfertAddress) {
+		this.transfertAddress = transfertAddress;
+	}
+
 }
+
+

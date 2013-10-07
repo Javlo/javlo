@@ -56,6 +56,10 @@ public class PaypalConnector {
 		return token;
 	}
 	
+	public static String formatDouble(double dbl) {
+		return new DecimalFormat("0.00", DecimalFormatSymbols.getInstance(Locale.ENGLISH)).format(dbl);
+	}
+	
 	public String createPayment(double amountIn, String currencyIn, String descriptionIn, URL returnURL, URL cancelURL) throws IOException {
 		String token = authenticate();
 		Map<String, Object> obj = new LinkedHashMap<String, Object>();
@@ -71,7 +75,7 @@ public class PaypalConnector {
 		
 		Map<String, Object> transaction = new LinkedHashMap<String, Object>();		
 		Map<String, String> amount = new LinkedHashMap<String, String>();		
-		amount.put("total", new DecimalFormat("0.00", DecimalFormatSymbols.getInstance(Locale.ENGLISH)).format(amountIn));
+		amount.put("total", formatDouble(amountIn));
 		amount.put("currency", currencyIn);
 		transaction.put("amount", amount);		
 		transaction.put("description", descriptionIn);
@@ -107,6 +111,7 @@ public class PaypalConnector {
 		Map<String, Object> obj = new LinkedHashMap<String, Object>();
 		obj.put("payer_id", payerID);
 		String reqContent = JSONMap.JSON.toJson(obj);
+		System.out.println("***** PaypalConnector.executePayment : executeUrl = "+executeUrl); //TODO: remove debug trace
 		String content = excutePost(executeUrl, reqContent, "application/json", null, token);		
 		JSONMap result = JSONMap.parseMap(content);
 		return result.getValue("state", String.class);
@@ -191,7 +196,7 @@ public class PaypalConnector {
 		PaypalConnector c = new PaypalConnector("https://api.sandbox.paypal.com",
 				"AdXPHxByf43Y9wg8YovePiWLpzqi62ow1M3PYQig61f2mQit5E6_E-hGBLca",
 				"EFof4xCAgQevlK2AX7XJrhkZgfnUPd8iTVLH5_DsR6TvTn64yHiGBPKaGsh3");
-		testCreate(c);
+		testCreate(c);		
 		String token = null;
 		String payerID = null;
 		testExecute(c, token, payerID);

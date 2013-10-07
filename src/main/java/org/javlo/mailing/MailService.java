@@ -271,6 +271,18 @@ public class MailService {
 		}
 		sendMail(transport, sender, recipients, ccRecipients, bccRecipients, subject, content, isHTML);
 	}
+	
+	public void sendMail(Transport transport, InternetAddress sender, InternetAddress recipient, InternetAddress ccRecipient, InternetAddress bccRecipient, String subject, String content, boolean isHTML) throws MessagingException {
+		List<InternetAddress> ccRecipientsList = new LinkedList<InternetAddress>();
+		if (ccRecipient != null) {
+			ccRecipientsList.add(ccRecipient);
+		}
+		List<InternetAddress> bccRecipientsList = new LinkedList<InternetAddress>();
+		if (bccRecipient != null) {
+			bccRecipientsList.add(bccRecipient);
+		}
+		sendMail(transport, sender, recipient, ccRecipientsList, bccRecipientsList, subject, content, isHTML);
+	}
 
 	/**
 	 * Send one mail to one recipient.
@@ -293,11 +305,11 @@ public class MailService {
 	 *             if no recipient provided or no sender
 	 */
 	public void sendMail(Transport transport, InternetAddress sender, InternetAddress recipient, String subject, String content, boolean isHTML) throws MessagingException {
-		sendMail(transport, sender, recipient, null, null, subject, content, isHTML);
+		sendMail(transport, sender, recipient, (List<InternetAddress>)null, (List<InternetAddress>)null, subject, content, isHTML);
 	}
 
 	public void sendMail(InternetAddress sender, InternetAddress recipient, String subject, String content, boolean isHTML) throws MessagingException {
-		sendMail(null, sender, recipient, null, null, subject, content, isHTML);
+		sendMail(null, sender, recipient, (List<InternetAddress>)null, (List<InternetAddress>)null, subject, content, isHTML);
 	}
 
 }

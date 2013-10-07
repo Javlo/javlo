@@ -17,5 +17,9 @@ public abstract class AbstractOrderComponent extends AbstractVisualComponent {
 		}
 		return prop;
 	}
-
+	
+	@Override
+	public String getSpecificClass() {
+		return "order";
+	}
 }
