@@ -22,6 +22,7 @@ import org.javlo.helper.URLHelper;
 import org.javlo.i18n.I18nAccess;
 import org.javlo.message.GenericMessage;
 import org.javlo.message.MessageRepository;
+import org.javlo.service.PersistenceService;
 import org.javlo.service.RequestService;
 
 public class PaypalOrderComponent extends AbstractOrderComponent implements IAction {
@@ -74,7 +75,7 @@ public class PaypalOrderComponent extends AbstractOrderComponent implements IAct
 		return getData().getProperty("password");
 	}
 
-	private String getDirectPayForm(ContentContext ctx) throws MalformedURLException {
+	private String getDirectPayForm(ContentContext ctx) throws IOException {
 		Basket basket = Basket.getInstance(ctx);
 		ByteArrayOutputStream outStream = new ByteArrayOutputStream();
 		PrintStream out = new PrintStream(outStream);
@@ -91,9 +92,10 @@ public class PaypalOrderComponent extends AbstractOrderComponent implements IAct
 		URL cancelReturnURL = new URL(URLHelper.addParam(returnURL, "webaction", "paypal.cancel"));
 		URL notifyURL = new URL(URLHelper.addParam(returnURL, "webaction", "paypal.notify"));
 		
-		out.println("<input type=\"hidden\" name=\"return_url\" value=\""+validReturnURL+"\" />");
-		out.println("<input type=\"hidden\" name=\"cancel_url\" value=\""+cancelReturnURL+"\" />");
+		out.println("<input type=\"hidden\" name=\"return\" value=\""+validReturnURL+"\" />");
+		out.println("<input type=\"hidden\" name=\"cancel_return\" value=\""+cancelReturnURL+"\" />");
 		out.println("<input type=\"hidden\" name=\"notify_url\" value=\""+notifyURL+"\" />");
+		//out.println("<p><a href=\""+notifyURL+"\">"+notifyURL+"</a></p>");
 		
 		int index = 1;
 		for (Product product : basket.getProducts()) {
@@ -118,6 +120,10 @@ public class PaypalOrderComponent extends AbstractOrderComponent implements IAct
 		out.println("<input type=\"hidden\" name=\"country\" id=\"zip\" value=\""+basket.getCountry()+"\" />");*/
 		out.println("<a href=\"#\" onclick=\"document.getElementById('paypal-form').submit(); return false;\"><img  src=\"https://www.paypal.com/fr_XC/i/btn/btn_xpressCheckout.gif\" align=\"left\" style=\"margin-right:7px;\"></a>");
 		out.close();
+		
+		BasketPersistenceService basketPersitenceService = BasketPersistenceService.getInstance(ctx.getGlobalContext());
+		basketPersitenceService.storeBasket(basket);
+		
 		return new String(outStream.toByteArray());
 	}
 	
@@ -128,7 +134,7 @@ public class PaypalOrderComponent extends AbstractOrderComponent implements IAct
 		if (basket.getStep() != Basket.ORDER_STEP) {
 			return "";
 		}
-		return getTransactionalPayement(ctx);
+		return getDirectPayForm(ctx);
 	}
 	
 	private String getTransactionalPayement(ContentContext ctx) throws Exception {
@@ -161,7 +167,8 @@ public class PaypalOrderComponent extends AbstractOrderComponent implements IAct
 		BasketPersistenceService basketPersistenceService = BasketPersistenceService.getInstance(ctx.getGlobalContext());
 		PaypalConnector connector = new PaypalConnector(comp.getBaseURL(), comp.getUser(), comp.getPassword());
 		basket.setTransactionManager(connector);
-		String url = connector.createPayment(basket.getTotalIncludingVAT(), basket.getCurrencyCode(), ctx.getGlobalContext().getGlobalTitle(), validReturnURL, cancelReturnURL);		
+		//String url = connector.createPayment(basket.getTotalIncludingVAT(), basket.getCurrencyCode(), ctx.getGlobalContext().getGlobalTitle(), validReturnURL, cancelReturnURL);		
+		String url = connector.createPaypalPayment(basket, validReturnURL, cancelReturnURL);
 		basketPersistenceService.storeBasket(basket);
 
 		NetHelper.sendRedirectTemporarily(ctx.getResponse(), url);
@@ -194,7 +201,7 @@ public class PaypalOrderComponent extends AbstractOrderComponent implements IAct
 				return "Fatal error : dead transaction, please try again.";
 			}
 			logger.info("basket:"+basket.getId()+"total tvac:"+basket.getTotalIncludingVATString()+" token:"+token+" payerID="+payerID);			
-			String validInfo = connector.executePayment(token, payerID);
+			String validInfo = connector.executePaypalPayment(token, payerID);
 			logger.info(" validInfo:"+validInfo);
 			basket.setToken(token);
 			basket.setPayerID(payerID);
@@ -212,36 +219,26 @@ public class PaypalOrderComponent extends AbstractOrderComponent implements IAct
 	}
 	
 	public static String performValidDirect(RequestService rs, ContentContext ctx, MessageRepository messageRepository, I18nAccess i18nAccess) throws Exception {
+		
+		System.out.println("***** PaypalOrderComponent.performValidDirect : START"); //TODO: remove debug trace
+		
 		PaypalOrderComponent comp = (PaypalOrderComponent) ComponentHelper.getComponentFromRequest(ctx);
 		BasketPersistenceService basketPersistenceService = BasketPersistenceService.getInstance(ctx.getGlobalContext());		
 		Basket basket = basketPersistenceService.getBasket(rs.getParameter("basket", null));
-		String token = rs.getParameter("token", null);
-		String payerID = rs.getParameter("PayerID", null);
 		if (basket == null || comp == null) {
 			String error;
 			if (basket != null) {
-				error = "comp not found : token="+token+"  -  payerID="+payerID;	
+				error = "comp not found.";	
 			} else {
-				error = "basket not found : token="+token+"  -  payerID="+payerID;
+				error = "basket not found.";
 			}			
 			logger.severe(error);
 			NetHelper.sendMailToAdministrator(ctx.getGlobalContext(), "ecom error on paypal payement (performValid) : "+ctx.getGlobalContext().getContextKey(), error); 
 			return "Ecom datal error : please try again.";
 		} else {
-			PaypalConnector connector = (PaypalConnector)basket.getTransactionManager();
-			if (connector == null) {
-				String error = "no transaction manager found : token="+token+"  -  payerID="+payerID+ " - context:"+ctx.getGlobalContext().getContextKey();
-				logger.severe(error);
-				NetHelper.sendMailToAdministrator(ctx.getGlobalContext(), "ecom error on paypal payement (performValid) : "+ctx.getGlobalContext().getContextKey(), error);
-				return "Fatal error : dead transaction, please try again.";
-			}
-			logger.info("basket:"+basket.getId()+"total tvac:"+basket.getTotalIncludingVATString()+" token:"+token+" payerID="+payerID);			
-			String validInfo = connector.executePayment(token, payerID);
-			logger.info(" validInfo:"+validInfo);
-			basket.setToken(token);
-			basket.setPayerID(payerID);
+			logger.info("basket:"+basket.getId()+" - total tvac:"+basket.getTotalIncludingVATString());			
 			basket.setStatus(Basket.STATUS_VALIDED);
-			basket.setValidationInfo(validInfo);			
+			basket.setValidationInfo("paypal direct payement");			
 			basket.setTransactionManager(null); // remove reference to PaypalConnector
 			
 			messageRepository.setGlobalMessage(new GenericMessage(i18nAccess.getViewText("ecom.message.final"), GenericMessage.INFO));
@@ -264,9 +261,10 @@ public class PaypalOrderComponent extends AbstractOrderComponent implements IAct
 	}
 	
 	public static String performNotify(RequestService rs, ContentContext ctx, MessageRepository messageRepository, I18nAccess i18nAccess) throws IOException {
-		BasketPersistenceService basketPersistenceService = BasketPersistenceService.getInstance(ctx.getGlobalContext());
+		System.out.println("***** PaypalOrderComponent.performNotify : START NOTIFY..."); //TODO: remove debug trace
+		/*BasketPersistenceService basketPersistenceService = BasketPersistenceService.getInstance(ctx.getGlobalContext());
 		Basket basket = basketPersistenceService.getBasket(rs.getParameter("basket", null));
-		System.out.println("***** PaypalOrderComponent.performNotify : basket = "+basket.getId()); //TODO: remove debug trace		
+		System.out.println("***** PaypalOrderComponent.performNotify : basket = "+basket.getId()); //TODO: remove debug trace*/		
 		return null;
 	}
 
