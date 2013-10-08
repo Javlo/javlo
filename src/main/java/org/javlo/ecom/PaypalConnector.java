@@ -21,6 +21,7 @@ import java.util.Properties;
 import javax.xml.bind.DatatypeConverter;
 
 import org.apache.commons.io.output.ByteArrayOutputStream;
+import org.javlo.ecom.Product.ProductBean;
 import org.javlo.helper.ResourceHelper;
 import org.javlo.utils.JSONMap;
 
@@ -30,8 +31,8 @@ import com.google.gson.reflect.TypeToken;
 import com.paypal.api.payments.Address;
 import com.paypal.api.payments.Amount;
 import com.paypal.api.payments.AmountDetails;
-import com.paypal.api.payments.CreditCard;
-import com.paypal.api.payments.FundingInstrument;
+import com.paypal.api.payments.Item;
+import com.paypal.api.payments.ItemList;
 import com.paypal.api.payments.Link;
 import com.paypal.api.payments.Payer;
 import com.paypal.api.payments.PayerInfo;
@@ -185,6 +186,20 @@ public class PaypalConnector {
 		Transaction transaction = new Transaction();
 		transaction.setAmount(amount);
 		transaction.setDescription("Total: " + amount.getTotal() + ' ' + amount.getCurrency());
+		
+		ItemList itemList = new ItemList();
+		List<Item> items = new LinkedList<Item>();
+		for (ProductBean product : basket.getProductsBean()) {
+			Item item = new Item();
+			item.setCurrency(product.getCurrencyCode());
+			item.setName(product.getName());
+			item.setPrice(formatDouble(product.getPrice()));
+			item.setQuantity(""+product.getQuantity());
+			items.add(item);
+		}
+		itemList.setItems(items);		
+		
+		transaction.setItemList(itemList);
 
 		List<Transaction> transactions = new ArrayList<Transaction>();
 		transactions.add(transaction);
