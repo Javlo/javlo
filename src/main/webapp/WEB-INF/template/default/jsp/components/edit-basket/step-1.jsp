@@ -9,7 +9,7 @@
 		<td class="price">${i18n.view["ecom.price"]}</td>
 		<td class="quantity">${i18n.view["ecom.quantity"]}</td>		
 		<c:if test="${reduction}"><td class="reduction">${i18n.view["ecom.reduction"]}</td></c:if>
-		<td class="total-vat">${i18n.view["ecom.total_vat"]}</td>
+		<td class="total-vat">${i18n.view["ecom.total"]}</td>
 	</tr>
 </thead>
 <c:forEach var="product" items="${basket.products}">
@@ -24,11 +24,11 @@
 
 <tfoot>
 	<tr>
-		<th colspan="${reduction?'4':'3'}">${i18n.view['ecom.totalevta']}</th>
+		<th colspan="${reduction?'4':'3'}">${i18n.view['ecom.total_evat']}</th>
 		<td>${basket.totalExcludingVATString}</td>
 	</tr>
 	<tr>
-		<th colspan="${reduction?'4':'3'}">${i18n.view['ecom.totalvta']}</th>
+		<th colspan="${reduction?'4':'3'}">${i18n.view['ecom.total_vat']}</th>
 		<td>${basket.totalIncludingVATString}</td>
 	</tr>
 </tfoot>

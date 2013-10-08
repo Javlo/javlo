@@ -106,7 +106,7 @@ public class SubTitle extends AbstractVisualComponent {
 	@Override
 	public int getTitleLevel(ContentContext ctx) {
 		try {
-			return Integer.parseInt(getStyle(ctx));
+			return Integer.parseInt(getStyle());
 		} catch (NumberFormatException e) {
 			e.printStackTrace();
 		}

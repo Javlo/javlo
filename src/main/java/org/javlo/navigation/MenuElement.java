@@ -3396,7 +3396,7 @@ public class MenuElement implements Serializable {
 		}
 		ContentElementList comps = getContent(contentAreaCtx);
 		while (comps.hasNext(contentAreaCtx)) {
-			IContentVisualComponent comp = comps.next(contentAreaCtx);
+			IContentVisualComponent comp = comps.next(contentAreaCtx);			
 			if (comp.isRealContent(contentAreaCtx) && !comp.isRepeat()) {				
 				desc.realContent = true;
 				return true;
@@ -3413,7 +3413,7 @@ public class MenuElement implements Serializable {
 		}
 
 		desc.realContent = false;
-
+		
 		return false;
 
 	}
