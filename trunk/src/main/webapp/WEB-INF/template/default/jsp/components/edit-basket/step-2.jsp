@@ -27,7 +27,7 @@
 				<label for="email">${i18n.view["field.email"]}<span class="compulsory-star">*</span></label>
 				<input type="text" id="email" name="email" value="${basket.contactEmail}" />
 			</div><div class="line">
-				<label for="phone">${i18n.view["form.address.phone"]}<span class="compulsory-star">*</span></label>
+				<label for="phone">${i18n.view["form.address.phone"]}</label>
 				<input type="text" id="phone" name="phone" value="${basket.contactPhone}" />
 			</div>
 			</div><div class="one_half last">
