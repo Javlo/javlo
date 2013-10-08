@@ -3,8 +3,6 @@ package org.javlo.component.ecom;
 import java.io.ByteArrayOutputStream;
 import java.io.PrintStream;
 
-import javax.mail.internet.InternetAddress;
-
 import org.javlo.actions.IAction;
 import org.javlo.component.core.IContentVisualComponent;
 import org.javlo.context.ContentContext;
@@ -13,7 +11,6 @@ import org.javlo.ecom.Basket;
 import org.javlo.ecom.BasketPersistenceService;
 import org.javlo.exception.ResourceNotFoundException;
 import org.javlo.helper.NetHelper;
-import org.javlo.helper.StringHelper;
 import org.javlo.helper.URLHelper;
 import org.javlo.helper.XHTMLHelper;
 import org.javlo.i18n.I18nAccess;
@@ -25,27 +22,6 @@ public class TransferOrderComponent extends AbstractOrderComponent implements IA
 	@Override
 	public String getType() {
 		return "transfer-order";
-	}
-	
-	@Override
-	protected void init() throws ResourceNotFoundException { 
-		super.init();
-		if (getValue().isEmpty()) {
-			ByteArrayOutputStream outStream = new ByteArrayOutputStream();
-			PrintStream out = new PrintStream(outStream);
-			out.println("button=");
-			out.println("mail.from=");
-			out.println("mail.bcc=");
-			out.println("mail.subject=");
-			out.println("mail.body=");
-			out.println("mail.signature=");
-			out.println("order.title=");
-			out.println("order.account=");
-			out.println("order.total=");
-			out.println("order.communication=");
-			out.close();
-			setValue(new String(outStream.toByteArray()));
-		}
 	}
 	
 	protected String getBaseURL() {
@@ -60,47 +36,12 @@ public class TransferOrderComponent extends AbstractOrderComponent implements IA
 		return getData().getProperty("password");
 	}
 	
-	protected String getContent(Basket basket) {
-		ByteArrayOutputStream outStream = new ByteArrayOutputStream();
-		PrintStream out = new PrintStream(outStream);
-		out.println(getData().get("mail.body"));
-		out.println("");
-		out.println(getData().get("order.title"));
-		out.println(getData().get("order.account"));		
-		out.println(getData().get("order.total")+basket.getTotalIncludingVATString());
-		out.println(getData().get("order.communication")+basket.getStructutedCommunication());
-		out.println("");
-		out.println(getData().get("mail.signature"));		
-		out.println("");
-		out.close();
-		return new String(outStream.toByteArray());
-	}
-	
 	@Override
 	public String getViewXHTMLCode(ContentContext ctx) throws Exception {
 		Basket basket = Basket.getInstance(ctx);		
 		if (basket.getStep() == Basket.CONFIRMATION_STEP) {			
-			String msg = XHTMLHelper.textToXHTML(getContent(basket));
-			
-			/** send email **/
-			String subject = getData().getProperty("mail.subject");			 
-			InternetAddress bcc = null;
-			String bccString = getData().getProperty("mail.bcc");
-			if(bccString  != null && StringHelper.isMail(bccString)) {
-				bcc = new InternetAddress(getData().getProperty("mail.bcc"));
-			}
-			InternetAddress from;
-			String fromString = getData().getProperty("mail.from");
-			if( fromString != null && StringHelper.isMail(fromString)) {
-				from = new InternetAddress(fromString);
-			} else {
-				from = new InternetAddress(ctx.getGlobalContext().getAdministratorEmail());
-			}	
-			InternetAddress to = new InternetAddress(basket.getContactEmail());
-			 
-			
-			NetHelper.sendMail(ctx.getGlobalContext(), from, to, null, bcc, subject, getContent(basket));
-			
+			String msg = XHTMLHelper.textToXHTML(getConfirmationEmail(basket));			
+			sendConfirmationEmail(ctx, basket);			
 			basket.reset(ctx);
 			return msg;			
 		}

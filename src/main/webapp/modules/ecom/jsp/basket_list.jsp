@@ -87,6 +87,9 @@ jQuery(document).ready(function() {
 		               null,
 		               null,
 		               null,
+		               null,
+		               null,
+		               null,
 		               null
 		           ],
 		 "oLanguage": {"sUrl": "${info.editTemplateURL}/js/plugins/i18n/datatable_${info.editLanguage}.txt"},

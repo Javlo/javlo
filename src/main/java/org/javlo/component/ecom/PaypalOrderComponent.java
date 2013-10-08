@@ -4,7 +4,6 @@ import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.PrintStream;
 import java.io.StringReader;
-import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.Properties;
 
@@ -22,7 +21,6 @@ import org.javlo.helper.URLHelper;
 import org.javlo.i18n.I18nAccess;
 import org.javlo.message.GenericMessage;
 import org.javlo.message.MessageRepository;
-import org.javlo.service.PersistenceService;
 import org.javlo.service.RequestService;
 
 public class PaypalOrderComponent extends AbstractOrderComponent implements IAction {
@@ -35,16 +33,19 @@ public class PaypalOrderComponent extends AbstractOrderComponent implements IAct
 	@Override
 	protected void init() throws ResourceNotFoundException {
 		super.init();
-		if (getValue().isEmpty()) {
-			ByteArrayOutputStream outStream = new ByteArrayOutputStream();
-			PrintStream out = new PrintStream(outStream);
-			out.println("button=Paypal");
-			out.println("url=https://api.sandbox.paypal.com");
-			out.println("user=AdXPHxByf43Y9wg8YovePiWLpzqi62ow1M3PYQig61f2mQit5E6_E-hGBLca");
-			out.println("password=EFof4xCAgQevlK2AX7XJrhkZgfnUPd8iTVLH5_DsR6TvTn64yHiGBPKaGsh3");
-			out.close();
-			setValue(new String(outStream.toByteArray()));
+
+		ByteArrayOutputStream outStream = new ByteArrayOutputStream();
+		PrintStream out = new PrintStream(outStream);
+		if (!getValue().isEmpty()) {
+			out.println(getValue());
 		}
+		out.println("button=Paypal");
+		out.println("url=https://api.sandbox.paypal.com");
+		out.println("user=AdXPHxByf43Y9wg8YovePiWLpzqi62ow1M3PYQig61f2mQit5E6_E-hGBLca");
+		out.println("password=EFof4xCAgQevlK2AX7XJrhkZgfnUPd8iTVLH5_DsR6TvTn64yHiGBPKaGsh3");
+		out.close();
+		setValue(new String(outStream.toByteArray()));
+
 	}
 
 	protected Properties getData() {
@@ -65,7 +66,7 @@ public class PaypalOrderComponent extends AbstractOrderComponent implements IAct
 		String user = getData().getProperty("user");
 		return user;
 	}
-	
+
 	protected String getUserEMail() {
 		String user = getData().getProperty("email");
 		return user;
@@ -82,61 +83,67 @@ public class PaypalOrderComponent extends AbstractOrderComponent implements IAct
 		out.println("<form id=\"paypal-form\" method=\"post\" action=\"https://www.sandbox.paypal.com/cgi-bin/webscr\" class=\"place\"><input type=\"hidden\" name=\"cmd\" id=\"cmd\" value=\"_cart\" />");
 		out.println("<input type=\"hidden\" name=\"charset\" id=\"charset\" value=\"utf-8\" />");
 		out.println("<input type=\"hidden\" name=\"upload\" id=\"upload\" value=\"1\" />");
-		out.println("<input type=\"hidden\" name=\"currency_code\" id=\"currency_code\" value=\""+basket.getCurrencyCode()+"\" />");
-		out.println("<input type=\"hidden\" name=\"business\" id=\"business\" value=\""+getUserEMail()+"\" />");
-		
+		out.println("<input type=\"hidden\" name=\"currency_code\" id=\"currency_code\" value=\"" + basket.getCurrencyCode() + "\" />");
+		out.println("<input type=\"hidden\" name=\"business\" id=\"business\" value=\"" + getUserEMail() + "\" />");
+
 		String returnURL = URLHelper.createURL(ctx.getContextForAbsoluteURL());
 		returnURL = URLHelper.addParam(returnURL, IContentVisualComponent.COMP_ID_REQUEST_PARAM, getId());
 		returnURL = URLHelper.addParam(returnURL, "basket", basket.getId());
 		URL validReturnURL = new URL(URLHelper.addParam(returnURL, "webaction", "paypal.validDirect"));
 		URL cancelReturnURL = new URL(URLHelper.addParam(returnURL, "webaction", "paypal.cancel"));
 		URL notifyURL = new URL(URLHelper.addParam(returnURL, "webaction", "paypal.notify"));
-		
-		out.println("<input type=\"hidden\" name=\"return\" value=\""+validReturnURL+"\" />");
-		out.println("<input type=\"hidden\" name=\"cancel_return\" value=\""+cancelReturnURL+"\" />");
-		out.println("<input type=\"hidden\" name=\"notify_url\" value=\""+notifyURL+"\" />");
-		//out.println("<p><a href=\""+notifyURL+"\">"+notifyURL+"</a></p>");
-		
+
+		out.println("<input type=\"hidden\" name=\"return\" value=\"" + validReturnURL + "\" />");
+		out.println("<input type=\"hidden\" name=\"cancel_return\" value=\"" + cancelReturnURL + "\" />");
+		out.println("<input type=\"hidden\" name=\"notify_url\" value=\"" + notifyURL + "\" />");
+		// out.println("<p><a href=\""+notifyURL+"\">"+notifyURL+"</a></p>");
+
 		int index = 1;
 		for (Product product : basket.getProducts()) {
-			out.println("<input type=\"hidden\" name=\"item_name_"+index+"\" id=\""+index+"\" value=\""+product.getName()+"\" />");
-			out.println("<input type=\"hidden\" name=\"amount_"+index+"\" id=\"amount_"+index+"\" value=\""+PaypalConnector.formatDouble(product.getPrice())+"\" type=\"number\" />");
-			out.println("<input type=\"hidden\" name=\"quantity_"+index+"\" id=\"quantity"+index+"\" value=\""+product.getQuantity()+"\" />");
+			out.println("<input type=\"hidden\" name=\"item_name_" + index + "\" id=\"" + index + "\" value=\"" + product.getName() + "\" />");
+			out.println("<input type=\"hidden\" name=\"amount_" + index + "\" id=\"amount_" + index + "\" value=\"" + PaypalConnector.formatDouble(product.getPrice()) + "\" type=\"number\" />");
+			out.println("<input type=\"hidden\" name=\"quantity_" + index + "\" id=\"quantity" + index + "\" value=\"" + product.getQuantity() + "\" />");
 			index++;
 		}
-		
-		out.println("<input type=\"hidden\" name=\"invoice\" id=\"invoice\" value=\""+basket.getId()+"\" />");		
-		//out.println("<input type=\"hidden\" name=\"quantity\" id=\"quantity\" value=\"${model.quantity}\" />");
 
-		out.println("<input type=\"hidden\" name=\"lc\" id=\"lc\" value=\""+ctx.getRequestContentLanguage()+"\" />");
+		out.println("<input type=\"hidden\" name=\"invoice\" id=\"invoice\" value=\"" + basket.getId() + "\" />");
+		// out.println("<input type=\"hidden\" name=\"quantity\" id=\"quantity\" value=\"${model.quantity}\" />");
+
+		out.println("<input type=\"hidden\" name=\"lc\" id=\"lc\" value=\"" + ctx.getRequestContentLanguage() + "\" />");
 
 		out.println("<input type=\"hidden\" name=\"address_override\" id=\"address_override\" value=\"1\" />");
-		out.println("<input type=\"hidden\" name=\"email\" id=\"email\" value=\""+basket.getContactEmail()+"\" />");
-		out.println("<input type=\"hidden\" name=\"first_name\" id=\"first_name\" value=\""+basket.getFirstName()+"\" />");
-		out.println("<input type=\"hidden\" name=\"last_name\" id=\"last_name\" value=\""+basket.getLastName()+"\" />");
-		/*out.println("<input type=\"hidden\" name=\"address1\" id=\"address1\" value=\""+basket.getAddress()+"\" />");
-		out.println("<input type=\"hidden\" name=\"city\" id=\"city\" value=\""+basket.getCity()+"\" />");
-		out.println("<input type=\"hidden\" name=\"zip\" id=\"zip\" value=\""+basket.getZip()+"\" />");
-		out.println("<input type=\"hidden\" name=\"country\" id=\"zip\" value=\""+basket.getCountry()+"\" />");*/
+		out.println("<input type=\"hidden\" name=\"email\" id=\"email\" value=\"" + basket.getContactEmail() + "\" />");
+		out.println("<input type=\"hidden\" name=\"first_name\" id=\"first_name\" value=\"" + basket.getFirstName() + "\" />");
+		out.println("<input type=\"hidden\" name=\"last_name\" id=\"last_name\" value=\"" + basket.getLastName() + "\" />");
+		/*
+		 * out.println(
+		 * "<input type=\"hidden\" name=\"address1\" id=\"address1\" value=\""
+		 * +basket.getAddress()+"\" />");
+		 * out.println("<input type=\"hidden\" name=\"city\" id=\"city\" value=\""
+		 * +basket.getCity()+"\" />");
+		 * out.println("<input type=\"hidden\" name=\"zip\" id=\"zip\" value=\""
+		 * +basket.getZip()+"\" />");
+		 * out.println("<input type=\"hidden\" name=\"country\" id=\"zip\" value=\""
+		 * +basket.getCountry()+"\" />");
+		 */
 		out.println("<a href=\"#\" onclick=\"document.getElementById('paypal-form').submit(); return false;\"><img  src=\"https://www.paypal.com/fr_XC/i/btn/btn_xpressCheckout.gif\" align=\"left\" style=\"margin-right:7px;\"></a>");
 		out.close();
-		
+
 		BasketPersistenceService basketPersitenceService = BasketPersistenceService.getInstance(ctx.getGlobalContext());
 		basketPersitenceService.storeBasket(basket);
-		
+
 		return new String(outStream.toByteArray());
 	}
-	
-	
+
 	@Override
 	public String getViewXHTMLCode(ContentContext ctx) throws Exception {
 		Basket basket = Basket.getInstance(ctx);
 		if (basket.getStep() != Basket.ORDER_STEP) {
 			return "";
 		}
-		return getDirectPayForm(ctx);
+		return getTransactionalPayement(ctx);
 	}
-	
+
 	private String getTransactionalPayement(ContentContext ctx) throws Exception {
 		ByteArrayOutputStream outStream = new ByteArrayOutputStream();
 		PrintStream out = new PrintStream(outStream);
@@ -167,7 +174,9 @@ public class PaypalOrderComponent extends AbstractOrderComponent implements IAct
 		BasketPersistenceService basketPersistenceService = BasketPersistenceService.getInstance(ctx.getGlobalContext());
 		PaypalConnector connector = new PaypalConnector(comp.getBaseURL(), comp.getUser(), comp.getPassword());
 		basket.setTransactionManager(connector);
-		//String url = connector.createPayment(basket.getTotalIncludingVAT(), basket.getCurrencyCode(), ctx.getGlobalContext().getGlobalTitle(), validReturnURL, cancelReturnURL);		
+		// String url = connector.createPayment(basket.getTotalIncludingVAT(),
+		// basket.getCurrencyCode(), ctx.getGlobalContext().getGlobalTitle(),
+		// validReturnURL, cancelReturnURL);
 		String url = connector.createPaypalPayment(basket, validReturnURL, cancelReturnURL);
 		basketPersistenceService.storeBasket(basket);
 
@@ -178,75 +187,84 @@ public class PaypalOrderComponent extends AbstractOrderComponent implements IAct
 
 	public static String performValid(RequestService rs, ContentContext ctx, MessageRepository messageRepository, I18nAccess i18nAccess) throws Exception {
 		PaypalOrderComponent comp = (PaypalOrderComponent) ComponentHelper.getComponentFromRequest(ctx);
-		BasketPersistenceService basketPersistenceService = BasketPersistenceService.getInstance(ctx.getGlobalContext());		
+		BasketPersistenceService basketPersistenceService = BasketPersistenceService.getInstance(ctx.getGlobalContext());
 		Basket basket = basketPersistenceService.getBasket(rs.getParameter("basket", null));
 		String token = rs.getParameter("token", null);
 		String payerID = rs.getParameter("PayerID", null);
 		if (basket == null || comp == null) {
 			String error;
 			if (basket != null) {
-				error = "comp not found : token="+token+"  -  payerID="+payerID;	
+				error = "comp not found : token=" + token + "  -  payerID=" + payerID;
 			} else {
-				error = "basket not found : token="+token+"  -  payerID="+payerID;
-			}			
+				error = "basket not found : token=" + token + "  -  payerID=" + payerID;
+			}
 			logger.severe(error);
-			NetHelper.sendMailToAdministrator(ctx.getGlobalContext(), "ecom error on paypal payement (performValid) : "+ctx.getGlobalContext().getContextKey(), error); 
+			NetHelper.sendMailToAdministrator(ctx.getGlobalContext(), "ecom error on paypal payement (performValid) : " + ctx.getGlobalContext().getContextKey(), error);
 			return "Ecom datal error : please try again.";
 		} else {
-			PaypalConnector connector = (PaypalConnector)basket.getTransactionManager();
+			PaypalConnector connector = (PaypalConnector) basket.getTransactionManager();
 			if (connector == null) {
-				String error = "no transaction manager found : token="+token+"  -  payerID="+payerID+ " - context:"+ctx.getGlobalContext().getContextKey();
+				String error = "no transaction manager found : token=" + token + "  -  payerID=" + payerID + " - context:" + ctx.getGlobalContext().getContextKey();
 				logger.severe(error);
-				NetHelper.sendMailToAdministrator(ctx.getGlobalContext(), "ecom error on paypal payement (performValid) : "+ctx.getGlobalContext().getContextKey(), error);
+				NetHelper.sendMailToAdministrator(ctx.getGlobalContext(), "ecom error on paypal payement (performValid) : " + ctx.getGlobalContext().getContextKey(), error);
 				return "Fatal error : dead transaction, please try again.";
 			}
-			logger.info("basket:"+basket.getId()+"total tvac:"+basket.getTotalIncludingVATString()+" token:"+token+" payerID="+payerID);			
-			String validInfo = connector.executePaypalPayment(token, payerID);
-			logger.info(" validInfo:"+validInfo);
-			basket.setToken(token);
-			basket.setPayerID(payerID);
-			basket.setStatus(Basket.STATUS_VALIDED);
-			basket.setValidationInfo(validInfo);			
-			basket.setTransactionManager(null); // remove reference to PaypalConnector
-			
-			messageRepository.setGlobalMessage(new GenericMessage(i18nAccess.getViewText("ecom.message.final"), GenericMessage.INFO));
-			
-			basket.setStep(Basket.FINAL_STEP);
-			basketPersistenceService.storeBasket(basket);
-			Basket.setInstance(ctx, basket);
-		}		
+			logger.info("basket:" + basket.getId() + "total tvac:" + basket.getTotalIncludingVATString() + " token:" + token + " payerID=" + payerID);
+			try {
+				String url = connector.executePaypalPayment(token, payerID);
+
+				String baskResponse = NetHelper.readPage(new URL(url));
+
+				logger.info(" validInfo:" + baskResponse);
+				basket.setToken(token);
+				basket.setPayerID(payerID);
+				basket.setStatus(Basket.STATUS_VALIDED);
+				basket.setValidationInfo(baskResponse);
+				basket.setTransactionManager(null);
+
+				messageRepository.setGlobalMessage(new GenericMessage(i18nAccess.getViewText("ecom.message.final"), GenericMessage.INFO));
+
+				basket.setStep(Basket.FINAL_STEP);
+				basketPersistenceService.storeBasket(basket);
+				Basket.setInstance(ctx, basket);
+
+				comp.sendConfirmationEmail(ctx, basket);
+
+			} catch (Exception e) {
+				e.printStackTrace();
+				return i18nAccess.getViewText("ecom.message.error");
+			}
+		}
 		return null;
 	}
-	
+
 	public static String performValidDirect(RequestService rs, ContentContext ctx, MessageRepository messageRepository, I18nAccess i18nAccess) throws Exception {
-		
-		System.out.println("***** PaypalOrderComponent.performValidDirect : START"); //TODO: remove debug trace
-		
 		PaypalOrderComponent comp = (PaypalOrderComponent) ComponentHelper.getComponentFromRequest(ctx);
-		BasketPersistenceService basketPersistenceService = BasketPersistenceService.getInstance(ctx.getGlobalContext());		
+		BasketPersistenceService basketPersistenceService = BasketPersistenceService.getInstance(ctx.getGlobalContext());
 		Basket basket = basketPersistenceService.getBasket(rs.getParameter("basket", null));
 		if (basket == null || comp == null) {
 			String error;
 			if (basket != null) {
-				error = "comp not found.";	
+				error = "comp not found.";
 			} else {
 				error = "basket not found.";
-			}			
+			}
 			logger.severe(error);
-			NetHelper.sendMailToAdministrator(ctx.getGlobalContext(), "ecom error on paypal payement (performValid) : "+ctx.getGlobalContext().getContextKey(), error); 
+			NetHelper.sendMailToAdministrator(ctx.getGlobalContext(), "ecom error on paypal payement (performValid) : " + ctx.getGlobalContext().getContextKey(), error);
 			return "Ecom datal error : please try again.";
 		} else {
-			logger.info("basket:"+basket.getId()+" - total tvac:"+basket.getTotalIncludingVATString());			
+			logger.info("basket:" + basket.getId() + " - total tvac:" + basket.getTotalIncludingVATString());
 			basket.setStatus(Basket.STATUS_VALIDED);
-			basket.setValidationInfo("paypal direct payement");			
-			basket.setTransactionManager(null); // remove reference to PaypalConnector
-			
+			basket.setValidationInfo("paypal direct payement");
+			basket.setTransactionManager(null); // remove reference to
+												// PaypalConnector
+
 			messageRepository.setGlobalMessage(new GenericMessage(i18nAccess.getViewText("ecom.message.final"), GenericMessage.INFO));
-			
+
 			basket.setStep(Basket.FINAL_STEP);
 			basketPersistenceService.storeBasket(basket);
 			Basket.setInstance(ctx, basket);
-		}		
+		}
 		return null;
 	}
 
@@ -259,12 +277,20 @@ public class PaypalOrderComponent extends AbstractOrderComponent implements IAct
 		basketPersistenceService.storeBasket(basket);
 		return null;
 	}
-	
+
 	public static String performNotify(RequestService rs, ContentContext ctx, MessageRepository messageRepository, I18nAccess i18nAccess) throws IOException {
-		System.out.println("***** PaypalOrderComponent.performNotify : START NOTIFY..."); //TODO: remove debug trace
-		/*BasketPersistenceService basketPersistenceService = BasketPersistenceService.getInstance(ctx.getGlobalContext());
-		Basket basket = basketPersistenceService.getBasket(rs.getParameter("basket", null));
-		System.out.println("***** PaypalOrderComponent.performNotify : basket = "+basket.getId()); //TODO: remove debug trace*/		
+		System.out.println("***** PaypalOrderComponent.performNotify : START NOTIFY..."); // TODO:
+																							// remove
+																							// debug
+																							// trace
+		/*
+		 * BasketPersistenceService basketPersistenceService =
+		 * BasketPersistenceService.getInstance(ctx.getGlobalContext()); Basket
+		 * basket = basketPersistenceService.getBasket(rs.getParameter("basket",
+		 * null));
+		 * System.out.println("***** PaypalOrderComponent.performNotify : basket = "
+		 * +basket.getId()); //TODO: remove debug trace
+		 */
 		return null;
 	}
 

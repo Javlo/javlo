@@ -54,6 +54,9 @@ public class EditBasketComponent extends AbstractVisualComponent implements IAct
 		ctx.getRequest().setAttribute("basket", basket);
 		
 		if (basket.getStep() >= Basket.FINAL_STEP) {
+			if (basket.getStep() == Basket.FINAL_STEP) {
+				
+			}
 			Basket.setInstance(ctx, null); // display final step and remove			
 		}
 	}

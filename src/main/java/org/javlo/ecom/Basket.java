@@ -66,6 +66,7 @@ public class Basket implements Serializable {
 	private String zip;
 	private String city;
 	private String info;
+	private String user;
 	private boolean transfertAddress = false;
 
 
@@ -105,6 +106,7 @@ public class Basket implements Serializable {
 		Basket basket = (Basket) ctx.getRequest().getSession().getAttribute(KEY);
 		if (basket == null) {
 			basket = new Basket();
+			basket.setUser(ctx.getCurrentUserId());
 			for (PayementExternalService service : EcomService.getInstance(ctx.getGlobalContext(), ctx.getRequest().getSession()).getExternalService()) {
 				String url = service.getURL();
 				if ((url == null || url.trim().length() == 0) && service.getReturnPage() != null && service.getReturnPage().trim().length() > 0) {
@@ -580,8 +582,6 @@ public class Basket implements Serializable {
 		this.deleted = deleted;
 	}
 	
-	
-
 	@Override
 	public String toString() {
 		ByteArrayOutputStream outStream = new ByteArrayOutputStream();
@@ -626,6 +626,14 @@ public class Basket implements Serializable {
 
 	public void setTransfertAddress(boolean transfertAddress) {
 		this.transfertAddress = transfertAddress;
+	}
+
+	public String getUser() {
+		return user;
+	}
+
+	public void setUser(String user) {
+		this.user = user;
 	}
 
 }
