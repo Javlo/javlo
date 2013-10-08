@@ -6,7 +6,7 @@
 <ul class="menu">	
 	<c:forEach var="page" items="${page.children}" varStatus="status">
 		<c:if test="${page.info.visible}">
-  				<c:if test="${page.info.depth <= end}">				
+  				<c:if test="${page.info.depth <= end && page.visible}">				
 				<li class="depth-${page.info.depth} ${page.lastSelected ? "current" : "not-current" } ${page.name}">
 					<a href="${page.url}" title="${page.info.title}" ><span>${page.info.label}</span></a>				
     				<c:set var="page" value="${page}" scope="request" />		 

@@ -105,8 +105,7 @@ public class Basket implements Serializable {
 	public static Basket getInstance(ContentContext ctx) {
 		Basket basket = (Basket) ctx.getRequest().getSession().getAttribute(KEY);
 		if (basket == null) {
-			basket = new Basket();
-			basket.setUser(ctx.getCurrentUserId());
+			basket = new Basket();			
 			for (PayementExternalService service : EcomService.getInstance(ctx.getGlobalContext(), ctx.getRequest().getSession()).getExternalService()) {
 				String url = service.getURL();
 				if ((url == null || url.trim().length() == 0) && service.getReturnPage() != null && service.getReturnPage().trim().length() > 0) {
@@ -120,6 +119,7 @@ public class Basket implements Serializable {
 			}
 			ctx.getRequest().getSession().setAttribute(KEY, basket);
 		}
+		basket.setUser(ctx.getCurrentUserId());
 		return basket;
 	}
 
@@ -590,6 +590,7 @@ public class Basket implements Serializable {
 		out.println("======");
 		out.println("");
 		out.println("id : "+getId());
+		out.println("user : "+getUser());
 		out.println("total Ex. VAT : "+getTotalExcludingVATString());
 		out.println("total In. VAT : "+getTotalIncludingVATString());
 		out.println("Currency : "+getCurrencyCode());

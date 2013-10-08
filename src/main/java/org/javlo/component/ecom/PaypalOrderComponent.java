@@ -229,6 +229,8 @@ public class PaypalOrderComponent extends AbstractOrderComponent implements IAct
 				Basket.setInstance(ctx, basket);
 
 				comp.sendConfirmationEmail(ctx, basket);
+				
+				NetHelper.sendMailToAdministrator(ctx.getGlobalContext(), "basket confirmed on "+ctx.getGlobalContext().getContextKey(), ""+basket);
 
 			} catch (Exception e) {
 				e.printStackTrace();
