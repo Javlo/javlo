@@ -88,7 +88,7 @@ public class EditBasketComponent extends AbstractVisualComponent implements IAct
 		String zip = rs.getParameter("zip", "").trim();
 		String city = rs.getParameter("city", "").trim();
 
-		if (firstName.length() == 0 || lastName.length() == 0 || email.length() == 0 || phone.length() == 0 || country.length() == 0 || address.length() == 0 || zip.length() == 0 || city.length() == 0) {
+		if (firstName.length() == 0 || lastName.length() == 0 || email.length() == 0 || country.length() == 0 || address.length() == 0 || zip.length() == 0 || city.length() == 0) {
 			messageRepository.setGlobalMessage(new GenericMessage(i18nAccess.getViewText("global.compulsory-field"), GenericMessage.ERROR));
 		} else {
 			if (!StringHelper.isMail(email)) {
