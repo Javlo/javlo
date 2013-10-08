@@ -658,7 +658,7 @@ public class Edit extends AbstractModuleAction {
 		return message;
 	}
 
-	public static final String performInsert(HttpServletRequest request, HttpServletResponse response, RequestService rs, GlobalContext globalContext, EditContext editContext, ContentContext ctx, ContentService content, Module currentModule, I18nAccess i18nAccess, MessageRepository messageRepository) throws Exception {
+	public static final String performInsert(HttpServletRequest request, HttpServletResponse response, RequestService rs, GlobalContext globalContext, HttpSession session, EditContext editContext, ContentContext ctx, ContentService content, Module currentModule, I18nAccess i18nAccess, MessageRepository messageRepository) throws Exception {
 		if (!canModifyCurrentPage(ctx) || !checkPageSecurity(ctx)) {
 			messageRepository.setGlobalMessageAndNotification(ctx, new GenericMessage(i18nAccess.getText("action.block"), GenericMessage.ERROR));
 			return null;
@@ -697,7 +697,7 @@ public class Edit extends AbstractModuleAction {
 		}
 		
 		if (areaKey == null) {
-			areaKey = ctx.getArea();
+			areaKey = EditContext.getInstance(globalContext, session).getCurrentArea();
 		}
 		
 		String newId = content.createContent(ctx, targetPage, areaKey, previousId, type, "", true);
