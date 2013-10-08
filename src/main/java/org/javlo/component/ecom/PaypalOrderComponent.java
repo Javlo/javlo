@@ -36,15 +36,17 @@ public class PaypalOrderComponent extends AbstractOrderComponent implements IAct
 
 		ByteArrayOutputStream outStream = new ByteArrayOutputStream();
 		PrintStream out = new PrintStream(outStream);
-		if (!getValue().isEmpty()) {
-			out.println(getValue());
+		if (!getValue().contains("user")) {
+			if (!getValue().isEmpty()) {
+				out.println(getValue());
+			}
+			out.println("button=Paypal");
+			out.println("url=https://api.sandbox.paypal.com");
+			out.println("user=AdXPHxByf43Y9wg8YovePiWLpzqi62ow1M3PYQig61f2mQit5E6_E-hGBLca");
+			out.println("password=EFof4xCAgQevlK2AX7XJrhkZgfnUPd8iTVLH5_DsR6TvTn64yHiGBPKaGsh3");
+			out.close();
+			setValue(new String(outStream.toByteArray()));
 		}
-		out.println("button=Paypal");
-		out.println("url=https://api.sandbox.paypal.com");
-		out.println("user=AdXPHxByf43Y9wg8YovePiWLpzqi62ow1M3PYQig61f2mQit5E6_E-hGBLca");
-		out.println("password=EFof4xCAgQevlK2AX7XJrhkZgfnUPd8iTVLH5_DsR6TvTn64yHiGBPKaGsh3");
-		out.close();
-		setValue(new String(outStream.toByteArray()));
 
 	}
 
@@ -229,8 +231,8 @@ public class PaypalOrderComponent extends AbstractOrderComponent implements IAct
 				Basket.setInstance(ctx, basket);
 
 				comp.sendConfirmationEmail(ctx, basket);
-				
-				NetHelper.sendMailToAdministrator(ctx.getGlobalContext(), "basket confirmed on "+ctx.getGlobalContext().getContextKey(), ""+basket);
+
+				NetHelper.sendMailToAdministrator(ctx.getGlobalContext(), "basket confirmed on " + ctx.getGlobalContext().getContextKey(), "" + basket);
 
 			} catch (Exception e) {
 				e.printStackTrace();
