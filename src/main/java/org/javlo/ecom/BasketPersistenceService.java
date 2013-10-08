@@ -47,7 +47,9 @@ public class BasketPersistenceService {
 			if (file.isFile() && file.getName().endsWith(".xml")) {
 				try {
 					Basket basket = loadBasket(file);
-					baskets.put(basket.getId(), basket);
+					if (basket != null) {
+						baskets.put(basket.getId(), basket);
+					}
 				} catch (FileNotFoundException e) {
 					e.printStackTrace();
 				}
