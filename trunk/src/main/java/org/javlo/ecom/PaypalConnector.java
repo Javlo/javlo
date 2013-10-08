@@ -74,24 +74,23 @@ public class PaypalConnector {
 		this.baseUrl = baseUrl;
 		this.user = user;
 		this.password = password;
-		
-		
+
 		Properties prop = new Properties();
 		prop.setProperty("service.EndPoint", baseUrl);
 		prop.setProperty("clientID", user);
 		prop.setProperty("clientSecret", password);
-		
+
 		prop.setProperty("http.ConnectionTimeOut", "5000");
-		
+
 		prop.setProperty("http.Retry", "1");
 		prop.setProperty("http.ReadTimeOut", "30000");
 		prop.setProperty("http.MaxConnection", "100");
-		
+
 		prop.setProperty("http.ProxyPort", "8080");
 		prop.setProperty("http.ProxyHost", "127.0.0.1");
 		prop.setProperty("http.ProxyUserName", "null");
 		prop.setProperty("http.ProxyPassword", "null");
-		
+
 		prop.setProperty("http.GoogleAppEngine", "false");
 
 		Payment.initConfig(prop);
@@ -111,12 +110,12 @@ public class PaypalConnector {
 	public static String formatDouble(double dbl) {
 		return new DecimalFormat("0.00", DecimalFormatSymbols.getInstance(Locale.ENGLISH)).format(dbl);
 	}
-	
+
 	public String createTestPaypalPayment(Basket basket, URL returnURL, URL cancelURL) throws Exception {
 		OAuthTokenCredential tokenCredential = new OAuthTokenCredential(user, password);
 
 		String accessToken = tokenCredential.getAccessToken();
-		
+
 		AmountDetails amountDetails = new AmountDetails();
 		amountDetails.setSubtotal("7.41");
 		amountDetails.setTax("0.03");
@@ -126,7 +125,7 @@ public class PaypalConnector {
 		amount.setTotal("7.47");
 		amount.setCurrency("USD");
 		amount.setDetails(amountDetails);
-				
+
 		Transaction transaction = new Transaction();
 		transaction.setAmount(amount);
 		transaction.setDescription("This is the payment transaction description.");
@@ -148,10 +147,16 @@ public class PaypalConnector {
 		payment = payment.create(accessToken);
 
 		String finalLink = null;
-		
+
 		for (Link link : payment.getLinks()) {
-			System.out.println("***** PaypalConnector.createTestPaypalPayment : href = "+link.getHref()); //TODO: remove debug trace
-			System.out.println("***** PaypalConnector.createPaypalPayment : link.getRel() = "+link.getRel()); //TODO: remove debug trace
+			System.out.println("***** PaypalConnector.createTestPaypalPayment : href = " + link.getHref()); // TODO:
+																											// remove
+																											// debug
+																											// trace
+			System.out.println("***** PaypalConnector.createPaypalPayment : link.getRel() = " + link.getRel()); // TODO:
+																												// remove
+																												// debug
+																												// trace
 			if (link.getRel().equals("approval_url")) {
 				finalLink = link.getHref();
 			}
@@ -164,7 +169,7 @@ public class PaypalConnector {
 		OAuthTokenCredential tokenCredential = new OAuthTokenCredential(user, password);
 
 		String accessToken = tokenCredential.getAccessToken();
-		
+
 		Address billingAddress = new Address();
 		billingAddress.setLine1(basket.getAddress());
 		billingAddress.setCity(basket.getCity());
@@ -172,34 +177,29 @@ public class PaypalConnector {
 		billingAddress.setPostalCode(basket.getZip());
 		billingAddress.setCity(basket.getCity());
 
-		AmountDetails amountDetails = new AmountDetails();
-		amountDetails.setSubtotal("7.41");
-		amountDetails.setTax("0.03");
-		amountDetails.setShipping("0.03");		
-
 		Amount amount = new Amount();
-		amount.setTotal("7.47");
+		amount.setTotal(formatDouble(basket.getTotalIncludingVAT()));
 		amount.setCurrency(basket.getCurrencyCode());
-		amount.setDetails(amountDetails);
+		// amount.setDetails(amountDetails);
 
 		Transaction transaction = new Transaction();
 		transaction.setAmount(amount);
-		transaction.setDescription("PPP - test descrioption");		
+		transaction.setDescription("Total: " + amount.getTotal() + ' ' + amount.getCurrency());
 
 		List<Transaction> transactions = new ArrayList<Transaction>();
 		transactions.add(transaction);
 
 		Payer payer = new Payer();
-		payer.setPaymentMethod("paypal");		
+		payer.setPaymentMethod("paypal");
 		PayerInfo payerInfo = new PayerInfo();
 		payerInfo.setFirstName(basket.getFirstName());
 		payerInfo.setLastName(basket.getLastName());
 		payerInfo.setEmail(basket.getContactEmail());
 		payerInfo.setPhone(basket.getContactPhone());
 		payerInfo.setShippingAddress(billingAddress);
-		//payer.setPayerInfo(payerInfo);
+		// payer.setPayerInfo(payerInfo);
 
-		payment = new Payment();		
+		payment = new Payment();
 		payment.setIntent("sale");
 		payment.setPayer(payer);
 		payment.setTransactions(transactions);
@@ -208,12 +208,18 @@ public class PaypalConnector {
 		urls.setReturnUrl(returnURL.toString());
 		payment.setRedirectUrls(urls);
 		payment = payment.create(accessToken);
-		
+
 		String finalLink = null;
-		
+
 		for (Link link : payment.getLinks()) {
-			System.out.println("***** PaypalConnector.createPaypalPayment : link.getRel() = "+link.getHref()); //TODO: remove debug trace
-			System.out.println("***** PaypalConnector.createPaypalPayment : link.getRel() = "+link.getRel()); //TODO: remove debug trace
+			System.out.println("***** PaypalConnector.createPaypalPayment : link.getRel() = " + link.getHref()); // TODO:
+																													// remove
+																													// debug
+																													// trace
+			System.out.println("***** PaypalConnector.createPaypalPayment : link.getRel() = " + link.getRel()); // TODO:
+																												// remove
+																												// debug
+																												// trace
 			if (link.getRel().equals("approval_url")) {
 				finalLink = link.getHref();
 			}
@@ -221,20 +227,17 @@ public class PaypalConnector {
 
 		return finalLink;
 	}
-	
-	public String executePaypalPayment(String paymentToken, String payerID) throws IOException, PayPalRESTException {
+
+	public String executePaypalPayment(String paymentToken, String payerID) throws PayPalRESTException {
 		OAuthTokenCredential tokenCredential = new OAuthTokenCredential(user, password);
 		String accessToken = tokenCredential.getAccessToken();
 		PaymentExecution paymentExecution = new PaymentExecution();
 		paymentExecution.setPayerId(payerID);
 		Payment newPayment = payment.execute(accessToken, paymentExecution);
-
 		for (Link link : newPayment.getLinks()) {
-			System.out.println("***** PaypalConnector.createPaypalPayment : link.getRel() = "+link.getHref()); //TODO: remove debug trace
-			System.out.println("***** PaypalConnector.createPaypalPayment : link.getRel() = "+link.getRel()); //TODO: remove debug trace
+			return link.getHref();
 		}
-		
-		return "";
+		return null;
 	}
 
 	public String createPayment(double amountIn, String currencyIn, String descriptionIn, URL returnURL, URL cancelURL) throws IOException {
@@ -282,7 +285,7 @@ public class PaypalConnector {
 		}
 		return approvalUrl;
 	}
-	
+
 	public String executePayment(String paymentToken, String payerID) throws IOException {
 		// String token = authenticate();
 		Map<String, Object> obj = new LinkedHashMap<String, Object>();
@@ -367,12 +370,11 @@ public class PaypalConnector {
 		try {
 			String user = "AZ1_hxCGaj9fSng1Xik5Egr03NqTWMzeiiUDK99dSJ5j6qsEVx1n_rjbu_lm";
 			String pwd = "EAPINRCdAaPCf7NmGNDOwsv-bcCWbl1BJS3OYo4eQhv-M5-wmxN22PU0Ds7w";
-			
-			Basket basket = new TestBasket();			
+
+			Basket basket = new TestBasket();
 			PaypalConnector conn = new PaypalConnector("https://api.sandbox.paypal.com", user, pwd);
-			System.out.println("***** PaypalConnector.main : url = "+conn.createTestPaypalPayment(basket, new URL("http://www.javlo.org/valid"), new URL("http://www.javlo.org/not_valid")));
-			
-			
+			System.out.println("***** PaypalConnector.main : url = " + conn.createTestPaypalPayment(basket, new URL("http://www.javlo.org/valid"), new URL("http://www.javlo.org/not_valid")));
+
 		} catch (Exception e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
