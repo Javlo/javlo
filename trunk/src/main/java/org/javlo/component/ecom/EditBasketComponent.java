@@ -108,6 +108,12 @@ public class EditBasketComponent extends AbstractVisualComponent implements IAct
 
 		return null;
 	}
+	
+	public static String performReset(RequestService rs, ContentContext ctx, MessageRepository messageRepository, I18nAccess i18nAccess) {
+		Basket basket = Basket.getInstance(ctx);
+		basket.reset(ctx);
+		return null;
+	}
 
 	public static String performBack(RequestService rs, ContentContext ctx, MessageRepository messageRepository, I18nAccess i18nAccess) {
 		Basket basket = Basket.getInstance(ctx);
