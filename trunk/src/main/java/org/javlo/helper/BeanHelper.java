@@ -111,8 +111,6 @@ public class BeanHelper {
 	public static Map bean2Map(Object bean) throws IllegalArgumentException, IllegalAccessException, InvocationTargetException {
 		Map res = new Hashtable();
 		Method[] methods = bean.getClass().getMethods();
-		System.out.println("***** BeanHelper.bean2Map : class name = "+bean.getClass().getName()); //TODO: remove debug trace
-		System.out.println("***** BeanHelper.bean2Map : methods size = "+methods.length); //TODO: remove debug trace
 		for (Method method : methods) {
 			if (method.getName().startsWith("get")) {
 				if (method.getReturnType().equals(String.class)) {
