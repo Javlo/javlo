@@ -12,7 +12,7 @@
 				</a>
 				<figcaption>
 					<a title="${page.title}" href="${page.url}"><h4>${page.title}</h4></a>
-					<p>${page.description}</p>
+					<c:if test="${not empty page.description}"><p>${page.description}</p></c:if>
 				</figcaption>
 			</figure>			
 		</li>
