@@ -2709,9 +2709,6 @@ public class MenuElement implements Serializable {
 
 	PageDescription getPageDescriptionCached(ContentContext ctx, String lg) {
 		String key = getCacheKey(ctx, lg);
-		
-		
-		
 		PageDescription outDesc = (PageDescription) getCache(ctx).get(key);
 		if (outDesc == null) {
 			outDesc = new PageDescription();
@@ -3380,22 +3377,30 @@ public class MenuElement implements Serializable {
 			return false;
 		}
 		
-		PageDescription desc = getPageDescriptionCached(ctx, ctx.getRequestContentLanguage());
-
-		if (!desc.isRealContentNull()) {			
-			return desc.isRealContent();
-		}
-
+		Template template = TemplateFactory.getTemplate(ctx, this);
+		
 		ContentContext contentAreaCtx = new ContentContext(ctx);
 		
-		Template template = TemplateFactory.getTemplate(ctx, this);
 		if (template == null || !template.isRealContentFromAnyArea()) {
 			contentAreaCtx.setArea(ComponentBean.DEFAULT_AREA);
 		} else {
 			contentAreaCtx.setArea(null);
 		}
-		ContentElementList comps = getContent(contentAreaCtx);
-		while (comps.hasNext(contentAreaCtx)) {
+		
+		PageDescription desc = getPageDescriptionCached(ctx, contentAreaCtx.getRequestContentLanguage()); // warning: setArea can change request language.
+
+		if (!desc.isRealContentNull()) {
+			return desc.isRealContent();
+		}
+		
+		if (template == null || !template.isRealContentFromAnyArea()) {
+			contentAreaCtx.setArea(ComponentBean.DEFAULT_AREA);
+		} else {
+			contentAreaCtx.setArea(null);
+		}
+		
+		ContentElementList comps = getContent(contentAreaCtx);		
+		while (comps.hasNext(contentAreaCtx)) {			
 			IContentVisualComponent comp = comps.next(contentAreaCtx);			
 			if (comp.isRealContent(contentAreaCtx) && !comp.isRepeat()) {				
 				desc.realContent = true;
