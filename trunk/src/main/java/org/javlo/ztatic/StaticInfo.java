@@ -1109,7 +1109,7 @@ public class StaticInfo {
 
 	private Metadata getImageMetadata() {
 		if (imageMetadata == null) {
-			if (StringHelper.isImage(getFile().getName())) {
+			if (StringHelper.isImage(getFile().getName()) && getFile().exists()) {
 				try {
 					imageMetadata = ImageMetadataReader.readMetadata(getFile());
 				} catch (ImageProcessingException e) {
