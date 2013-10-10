@@ -331,9 +331,11 @@ public class CatchAllFilter implements Filter {
 					String lg = viewURI.substring(1, 3).toLowerCase();
 					if (globalContext.getContentLanguages().contains(lg)) {
 						String newPath = "/view" + viewURI;
-						if (httpRequest.getSession().isNew() || StringHelper.isTrue(request.getParameter(InfoBean.NEW_SESSION_PARAM))) {
-							newPath = URLHelper.addParam(newPath, InfoBean.NEW_SESSION_PARAM, "true");
-						}
+						if (httpRequest.getSession().isNew()) {
+							System.out.println("***** CatchAllFilter.doFilter : 1.TRUE"); //TODO: remove debug trace
+							httpRequest.getSession().setAttribute(InfoBean.NEW_SESSION_PARAM, true);
+							//newPath = URLHelper.addParam(newPath, InfoBean.NEW_SESSION_PARAM, "true");
+						} 
 						httpRequest.getRequestDispatcher(newPath).forward(httpRequest, response);
 						return;
 					}
@@ -348,9 +350,11 @@ public class CatchAllFilter implements Filter {
 
 		if (forwardURI != null) {
 
-			if (httpRequest.getSession().isNew() || StringHelper.isTrue(request.getParameter(InfoBean.NEW_SESSION_PARAM))) {
-				forwardURI = URLHelper.addParam(forwardURI, InfoBean.NEW_SESSION_PARAM, "true");
-			}
+			if (httpRequest.getSession().isNew()) {
+				httpRequest.getSession().setAttribute(InfoBean.NEW_SESSION_PARAM, true);
+				System.out.println("***** CatchAllFilter.doFilter : 2.TRUE"); //TODO: remove debug trace
+				//forwardURI = URLHelper.addParam(forwardURI, InfoBean.NEW_SESSION_PARAM, "true");
+			} 
 			httpRequest.getRequestDispatcher(forwardURI).forward(httpRequest, response);
 		} else {
 			next.doFilter(httpRequest, response);
