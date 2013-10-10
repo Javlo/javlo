@@ -467,7 +467,8 @@ public class InfoBean {
 	}
 
 	public boolean isNewSession() {
-		if (StringHelper.isTrue(ctx.getRequest().getParameter(NEW_SESSION_PARAM))) {
+		System.out.println("***** InfoBean.isNewSession : TEST : "+ctx.getRequest().getSession().getAttribute(NEW_SESSION_PARAM)); //TODO: remove debug trace
+		if (StringHelper.isTrue(ctx.getRequest().getSession().getAttribute(NEW_SESSION_PARAM))) {
 			return true;
 		} else {
 			return ctx.getRequest().getSession().isNew();
