@@ -743,7 +743,6 @@ public class AccessServlet extends HttpServlet implements IVersion {
 				}
 				
 				if (StringHelper.isTrue(request.getSession().getAttribute(InfoBean.NEW_SESSION_PARAM))) {
-					System.out.println("***** CatchAllFilter.doFilter : 3.REMOVE"); //TODO: remove debug trace
 					request.getSession().removeAttribute(InfoBean.NEW_SESSION_PARAM);
 				}
 
