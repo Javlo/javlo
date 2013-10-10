@@ -136,6 +136,18 @@ public class PaypalConnector {
 
 		Payer payer = new Payer();
 		payer.setPaymentMethod("paypal");
+		/*PayerInfo payerInfo = new PayerInfo();
+		payerInfo.setFirstName(basket.getFirstName());
+		payerInfo.setLastName(basket.getLastName());
+		payerInfo.setEmail(basket.getContactEmail());
+		payerInfo.setPhone(basket.getContactPhone());
+		Address address = new Address();
+		address.setCity(basket.getCity());
+		address.setCountryCode(basket.getCountry());
+		address.setLine1(basket.getAddress());
+		address.setPostalCode(basket.getZip());
+		payerInfo.setShippingAddress(address);
+		payer.setPayerInfo(payerInfo);*/
 
 		Payment payment = new Payment();
 		payment.setIntent("sale");
@@ -146,7 +158,7 @@ public class PaypalConnector {
 		payment.setRedirectUrls(urls);
 		payment.setTransactions(transactions);
 		payment = payment.create(accessToken);
-
+		
 		String finalLink = null;
 
 		for (Link link : payment.getLinks()) {
