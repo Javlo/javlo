@@ -491,7 +491,15 @@ public class StaticConfig extends Observable {
 	}
 
 	public String getEnv() {
-		return properties.getString("deploy.env", "local");
+		return properties.getString("deploy.env", "prod");
+	}
+	
+	public boolean testInstance() {
+		return getEnv().equals("dev") || getEnv().equals("local");
+	}
+	
+	public boolean isLessCache() {
+		return properties.getBoolean("less.cache", testInstance());
 	}
 
 	/* mailing */

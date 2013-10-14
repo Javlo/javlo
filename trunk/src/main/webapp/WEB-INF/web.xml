@@ -23,6 +23,15 @@
 	</filter-mapping>
 	
 	<filter>
+		<filter-name>cssLess</filter-name>
+		<filter-class>org.javlo.filter.CssLess</filter-class>
+	</filter>
+	<filter-mapping>
+		<filter-name>cssLess</filter-name>
+		<url-pattern>*.css</url-pattern>
+	</filter-mapping>
+	
+	<filter>
 		<filter-name>CatchAll</filter-name>
 		<filter-class>org.javlo.filter.CatchAllFilter</filter-class>
 	</filter>
