@@ -675,6 +675,21 @@ public class ContentContext {
 	public Device getDevice() {
 		return device;
 	}
+	
+	/**
+	 * get all device accessible from current template.
+	 * @return
+	 * @throws Exception 
+	 */
+	public List<String> getDeviceNames() throws Exception {
+		List<String> deviceNames = new LinkedList<String>(getCurrentTemplate().getRenderers());
+		for (int i=0; i<deviceNames.size(); i++) {
+			if (deviceNames.get(i).trim().length() == 0) {
+				deviceNames.set(i, Device.DEFAULT);
+			}
+		}
+		return deviceNames;
+	}
 
 	public URL getDMZServerInter() {
 		return dmzServerInter;

@@ -15,7 +15,9 @@ import org.javlo.helper.StringHelper;
 public class Device implements Serializable {
 
 	public static final String FORCE_DEVICE_PARAMETER_NAME = "force-device-code";
-
+	
+	public static final String DEFAULT = "default";
+	
 	private static Logger logger = Logger.getLogger(Device.class.getName());
 
 	public static final Device getDevice(HttpServletRequest request) {
@@ -31,7 +33,11 @@ public class Device implements Serializable {
 		}
 		String forcedCode = request.getParameter(FORCE_DEVICE_PARAMETER_NAME);
 		if (forcedCode != null) {
-			currentDevice.setForcedCode(forcedCode);
+			if (forcedCode.equals(DEFAULT)) {
+				currentDevice.setForcedCode(null );
+			} else {
+				currentDevice.setForcedCode(forcedCode);
+			}
 		}
 		return currentDevice;
 	}

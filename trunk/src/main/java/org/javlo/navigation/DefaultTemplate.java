@@ -329,5 +329,10 @@ public class DefaultTemplate extends Template {
 	public String getPageTypesRAW() {
 		return MenuElement.PAGE_TYPE_DEFAULT;
 	}
+	
+	@Override
+	public int getPDFHeigth() {
+		return 1024;
+	}
 
 }
