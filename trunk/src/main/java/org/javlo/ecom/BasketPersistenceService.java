@@ -50,7 +50,7 @@ public class BasketPersistenceService {
 					if (basket != null) {
 						baskets.put(basket.getId(), basket);
 					}
-				} catch (FileNotFoundException e) {
+				} catch (Exception e) {
 					e.printStackTrace();
 				}
 			}
