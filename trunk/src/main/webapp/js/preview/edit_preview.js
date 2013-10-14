@@ -102,8 +102,7 @@ jQuery(document).ready(
 			
 		});
 
-function updatePDFPosition() {
-	console.log("Update PDF.");
+function updatePDFPosition() {	
 	jQuery("._pdf_page_limit").remove();
 	var pdfHeight = parseInt(jQuery(".page_association_fake_body").data("pdfheight"));	
 	var previousBreak = null;
@@ -376,6 +375,8 @@ initPreview = function() {
 			
 			jQuery(".free-edit-zone").addClass("droppable");
 			
+			jQuery("._pdf_page_limit").hide();
+			
 			if (jQuery(this).data("deletable") !== undefined && jQuery(this).data("deletable")) {
 				jQuery("#preview-delete-zone").removeClass("hidden");
 				//jQuery("#preview_command .pc_body").addClass("hidden");
@@ -389,6 +390,9 @@ initPreview = function() {
 
 		},
 		stop : function(event, ui) {
+			
+			jQuery("._pdf_page_limit").show();
+			
 			/* stable scroll */
 			var height = jQuery("body").height();
 			var scroll = jQuery(window).scrollTop();
