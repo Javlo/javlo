@@ -16,7 +16,6 @@ import org.javlo.context.GlobalContext;
 import org.javlo.helper.StringHelper;
 import org.javlo.helper.URLHelper;
 import org.javlo.utils.CSVFactory;
-import org.javlo.utils.TimeMap;
 
 
 public class EcomService {
@@ -126,32 +125,6 @@ public class EcomService {
 				e.printStackTrace();
 			}			
 		}
-	}
-	
-	private Map<String, PayementContext> getPayementsMap() {
-		final String KEY = "_payement";
-		Map<String, PayementContext> allPayements = (Map<String, PayementContext>)globalContext.getAttribute(KEY);
-		if (allPayements == null) {
-			allPayements = new TimeMap<String, PayementContext>(24*60*60); // payement live 1 day
-			globalContext.setAttribute(KEY, allPayements);
-		}
-		return allPayements;
-	}
-	
-	/**
-	 * get the payement context.
-	 * @param id the payement id, create a new context if id is null.
-	 * @return a new context if id is null.
-	 */
-	public PayementContext getPayementContext(String id) {
-		if (id == null) {
-			PayementContext payementContext = new PayementContext();
-			getPayementsMap().put(payementContext.getId(), payementContext);
-			return payementContext;
-		} else {
-			return getPayementsMap().get(id);
-		}
-		
 	}
 	
 	/**
