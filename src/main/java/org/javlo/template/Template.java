@@ -1516,7 +1516,7 @@ public class Template implements Comparable<Template> {
 			return renderer;
 		}
 	}
-	
+
 	private List<TemplatePlugin> getTemplatePugin(GlobalContext globalContext) throws IOException {
 		TemplatePluginFactory templatePluginFactory = TemplatePluginFactory.getInstance(globalContext.getServletContext());
 		List<String> plugins = new LinkedList<String>(globalContext.getTemplatePlugin());
@@ -1570,10 +1570,22 @@ public class Template implements Comparable<Template> {
 		return renderer;
 	}
 
-	protected List<String> getRenderers() {
-		List<String> renderers = new LinkedList<String>();
-
-		return renderers;
+	/**
+	 * return all renderer defined in the template.
+	 * 
+	 * @return
+	 */
+	public List<String> getRenderers() {
+		List<String> outRenderes = new LinkedList<String>();
+		Iterator keys = properties.getKeys();
+		outRenderes.add("");
+		while (keys.hasNext()) {
+			String key = (String) keys.next();
+			if (key.startsWith("html.")) {
+				outRenderes.add(key.replaceFirst("html.", ""));
+			}
+		}
+		return outRenderes;
 	}
 
 	public String getRendererFullName(ContentContext ctx) throws ServiceException {
@@ -2108,9 +2120,9 @@ public class Template implements Comparable<Template> {
 		List<String> ids = StringHelper.stringToCollection(htmlIds, ",");
 		return ids;
 	}
-	
+
 	public List<String> getPlugins() {
-		String plugins = properties.getString("plugins",null);
+		String plugins = properties.getString("plugins", null);
 		if (plugins == null) {
 			return Collections.EMPTY_LIST;
 		}
@@ -2178,8 +2190,8 @@ public class Template implements Comparable<Template> {
 		}
 	}
 
-	public int getPDFHeigth() {
-		return properties.getInt("pdf.height", 1125);
+	public int getPDFHeigth() {		
+		return properties.getInt("pdf.height", getParent().getPDFHeigth());
 	}
 
 }

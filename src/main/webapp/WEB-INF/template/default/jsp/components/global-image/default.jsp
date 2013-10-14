@@ -11,7 +11,9 @@
 </c:when>
 <c:otherwise>
 <figure>
-<a rel="${fn:startsWith(url,'http://')?'external':'shadowbox'}" class="${type}" href="${url}" title="${not empty label?label:description}">
+<c:set var="rel" value="${fn:startsWith(url,'http://')?'external':'shadowbox'}" />
+<c:set var="rel" value="${fn:endsWith(url,'.pdf')?'pdf':rel}" />
+<a rel="${rel}" class="${type}" href="${url}" title="${not empty label?label:description}">
 	<img src="${previewURL}" alt="${not empty description?description:label}" />
 	<c:if test="${empty param.nolabel}"><figcaption>${not empty label?label:description}</figcaption></c:if>
 </a>

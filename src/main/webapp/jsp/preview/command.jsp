@@ -41,7 +41,7 @@ MessageRepository.getInstance(request); // load request message
 							<input id="refresh_button" type="submit" value="${i18n.edit['command.refresh']}" title="${i18n.edit['command.refresh']}" />
 							<label for="refresh_button">${i18n.edit['command.refresh']}</label>
 						</div>
-					</form></li>									
+					</form></li>														
 					<li class="preview"><c:if test="${globalContext.previewMode}"><form id="pc_form" action="${info.currentURL}" method="post">						
 						<div class="pc_line">
 							<input type="hidden" name="webaction" value="edit.previewedit" />
@@ -59,6 +59,24 @@ MessageRepository.getInstance(request); // load request message
 						<a id="pc_edit_button" class="pc_edit_true" href="${info.currentViewURL}" target="_blank">${i18n.edit['preview.label.not-edit-page']}</a>
 					</c:if>					
 					</li>
+					<li class="renderers"><form id="renderers_form" action="${info.currentURL}" method="get">
+						<div class="pc_line">
+							<c:url var="url" value="${info.currentURL}">
+								<c:param name="${info.staticData.forceDeviceParameterName}" value=""></c:param>
+							</c:url>
+							<!-- <select id="renderers_button" onchange="jQuery('#renderers_form').attr('action','${url}'+jQuery('#renderers_button option:selected').val()); console.log('lg='+jQuery('#renderers_form').attr('action')); jQuery('#renderers_form').submit();"> -->
+							<select id="renderers_button" onchange="window.location='${url}'+jQuery('#renderers_button option:selected').val();">
+								<c:forEach var="renderer" items="${contentContext.deviceNames}">
+									<c:url var="url" value="${info.currentURL}">
+										<c:param name="${info.staticData.forceDeviceParameterName}" value="${renderer}"></c:param>
+									</c:url>
+									 
+									<option${info.device.code eq renderer?' selected="selected"':''}>${renderer}</option>
+								</c:forEach>
+							</select>
+							<label for="renderers_button">${i18n.edit['command.renderers']}</label>
+						</div>
+					</form></li>
 					<c:if test='${editPreview == "true"}'>
 					<li><form id="home_form" action="${info.rootURL}" method="get">
 						<div class="pc_line">							

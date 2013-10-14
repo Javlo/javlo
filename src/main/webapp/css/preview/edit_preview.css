@@ -46,6 +46,21 @@
 	border-top: 2px #ff5555 dashed;
 }
 
+#preview_command .pc_command select {
+	width: auto;
+    margin: 0;
+    padding: 4px 4px 3px;
+    border-radius: 3px 3px 3px 3px;
+    box-shadow: 1px 1px 3px #CCCCCC inset;    
+    border: 1px solid #CCCCCC;
+    font-size: 12px;
+    outline: medium none;    
+}
+
+.fix-preview #preview_command #renderers_form label {
+	display: none;
+}
+
 #preview_command li.refresh {
 	display: none;
 }
@@ -871,7 +886,7 @@ body.fix-preview {
 }
 
 .free-edit-zone {
-	display: none;
+	display: none !important;
 }
 
 .free-edit-zone.droppable {

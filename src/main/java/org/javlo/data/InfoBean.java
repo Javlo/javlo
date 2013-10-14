@@ -48,6 +48,8 @@ public class InfoBean {
 	private static final Map<String, String> staticData = Collections.unmodifiableMap(new HashMap<String, String>() {
 		{
 			put("compId", IContentVisualComponent.COMP_ID_REQUEST_PARAM);
+			put("forceTemplateParamName", Template.FORCE_TEMPLATE_PARAM_NAME);
+			put("forceDeviceParameterName", Device.FORCE_DEVICE_PARAMETER_NAME);
 		}
 	});
 
