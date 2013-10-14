@@ -68,6 +68,7 @@ public class Basket implements Serializable {
 	private String info;
 	private String user;
 	private boolean transfertAddress = false;
+	private String description;
 
 
 	private int step = START_STEP;
@@ -116,6 +117,7 @@ public class Basket implements Serializable {
 					}
 				}
 				basket.payementServices.add(new PayementServiceBean(service, url));
+				basket.setDescription(ctx.getGlobalContext().getGlobalTitle());
 			}
 			ctx.getRequest().getSession().setAttribute(KEY, basket);
 		}
@@ -635,6 +637,14 @@ public class Basket implements Serializable {
 
 	public void setUser(String user) {
 		this.user = user;
+	}
+
+	public String getDescription() {
+		return description;
+	}
+
+	public void setDescription(String description) {
+		this.description = description;
 	}
 
 }
