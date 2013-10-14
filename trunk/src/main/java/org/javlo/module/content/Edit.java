@@ -1645,8 +1645,12 @@ public class Edit extends AbstractModuleAction {
 				targetPage = ctx.getCurrentPage();
 			}
 			
-			if (sharedContent.getLinkInfo() == null) {
-				content.createContent(ctx, targetPage, sharedContent.getContent(), previousId, true);
+			if (sharedContent.getLinkInfo() == null) {		
+				List<ComponentBean> beans = new LinkedList<ComponentBean>(sharedContent.getContent());
+				for (ComponentBean componentBean : beans) {
+					componentBean.setArea(areaKey);
+				}
+				content.createContent(ctx, targetPage, beans, previousId, true);
 			} else {
 				ComponentBean mirrorBean = new ComponentBean(PageMirrorComponent.TYPE, sharedContent.getLinkInfo(), ctx.getRequestContentLanguage());
 				mirrorBean.setArea(areaKey);
