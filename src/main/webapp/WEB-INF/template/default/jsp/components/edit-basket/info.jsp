@@ -19,4 +19,4 @@
 <c:if test="${basket.productCount == 0}">
 <p>${i18n.view['ecom.basket-empty']}</p>
 </c:if>
-<c:if test="${not empty basketPage}"><span class="link">${ecom.confirm}</span></a></c:if>
+<c:if test="${not empty basketPage}"><span class="link">${i18n.view['ecom.confirm']}</span></a></c:if>
