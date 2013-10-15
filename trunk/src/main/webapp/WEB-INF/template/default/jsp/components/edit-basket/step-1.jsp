@@ -44,8 +44,8 @@
 
 <form id="reset-basket-form" action="${info.currentURL}" method="post">
 	<div>
-		<input type="hidden" name="webaction" value="basket.reset" />
-		<input type="submit" value="${i18n.view['ecom.reset-basket']}" /> 
+		<input class="reset" type="hidden" name="webaction" value="basket.reset" />
+		<input class="confirm" type="submit" value="${i18n.view['ecom.reset-basket']}" /> 
 	</div>
 </form>
 
