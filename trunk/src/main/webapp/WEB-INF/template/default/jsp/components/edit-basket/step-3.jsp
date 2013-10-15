@@ -40,4 +40,4 @@
 	</div>
 </fieldset>
 </form>
-<jsp:include page="info.jsp"></jsp:include>
+<jsp:include page="info.jsp?basketLink=true"></jsp:include>
