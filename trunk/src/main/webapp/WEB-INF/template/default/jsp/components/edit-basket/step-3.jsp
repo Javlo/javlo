@@ -35,7 +35,7 @@
 	</div>
 	<div class="action">
 		<input type="hidden" name="webaction" value="basket.back" />
-		<input type="submit" value="${i18n.view["ecom.modify-address"]}" />
+		<input type="submit" value="${i18n.view["global.back"]}" />
 	</div>
 	</div>
 </fieldset>
