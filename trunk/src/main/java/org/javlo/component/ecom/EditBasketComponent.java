@@ -78,6 +78,13 @@ public class EditBasketComponent extends AbstractVisualComponent implements IAct
 
 	public static String performRegistration(RequestService rs, ContentContext ctx, MessageRepository messageRepository, I18nAccess i18nAccess) {
 		Basket basket = Basket.getInstance(ctx);
+		
+		if (rs.getParameter("back", null) != null) {
+			if (basket.getStep() > 1) {
+				basket.setStep(basket.getStep()-1);
+			}
+			return null;
+		}
 
 		String firstName = rs.getParameter("firstName", "").trim();
 		String lastName = rs.getParameter("lastName", "").trim();

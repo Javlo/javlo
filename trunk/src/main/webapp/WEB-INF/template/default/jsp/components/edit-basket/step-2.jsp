@@ -57,7 +57,8 @@
 			</div>
 			</div>
 			<div class="action">			
-				<input type="submit" value="next" />
+				<input type="submit" name="back" value="${i18n.view["global.back"]}" />
+				<input type="submit" value="${i18n.view["global.next"]}" />
 			</div>		
 	</fieldset>
 </form>
