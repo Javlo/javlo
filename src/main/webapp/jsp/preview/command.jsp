@@ -58,7 +58,7 @@ MessageRepository.getInstance(request); // load request message
 					<c:if test="${!globalContext.previewMode}">
 						<a id="pc_edit_button" class="pc_edit_true" href="${info.currentViewURL}" target="_blank">${i18n.edit['preview.label.not-edit-page']}</a>
 					</c:if>					
-					</li>
+					</li><c:if test="${fn:length(contentContext.deviceNames)>1}">
 					<li class="renderers"><form id="renderers_form" action="${info.currentURL}" method="get">
 						<div class="pc_line">
 							<c:url var="url" value="${info.currentURL}">
@@ -76,7 +76,7 @@ MessageRepository.getInstance(request); // load request message
 							</select>
 							<label for="renderers_button">${i18n.edit['command.renderers']}</label>
 						</div>
-					</form></li>
+					</form></li></c:if>
 					<c:if test='${editPreview == "true"}'>
 					<li><form id="home_form" action="${info.rootURL}" method="get">
 						<div class="pc_line">							
