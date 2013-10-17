@@ -9,6 +9,6 @@
 <div class="step step-${basket.step}">
 <jsp:include page="step-${basket.step}.jsp" />
 </div>
-<c:if test="${not empty shippingMessage}"><p class="shipping-message">${shippingMessage}</p></c:if>
+<c:if test="${not empty shippingMessage}"><p class="step-${basket.step} shipping-message">${shippingMessage}</p></c:if>
 </c:if>
 </div>
