@@ -55,7 +55,7 @@
 				<label for="city">${i18n.view["form.address.city"]}<span class="compulsory-star">*</span></label>
 				<input type="text" id="city" name="city" value="${basket.city}" />
 			</div>
-			</div>
+			</div>			
 			<div class="action">			
 				<input type="submit" name="back" value="${i18n.view["global.back"]}" />
 				<input type="submit" value="${i18n.view["global.next"]}" />

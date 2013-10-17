@@ -1,2 +1,3 @@
-<h3>Merci pour votre command.</h3>
-<p>Votre transaction à réussit.</p>
+<%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c"
+%><%@ taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions"
+%><p>${i18n.view[""ecom.basket-confirmed"])</p>

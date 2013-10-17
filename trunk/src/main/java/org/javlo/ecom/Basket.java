@@ -134,6 +134,7 @@ public class Basket implements Serializable {
 	}
 
 	public void reset(ContentContext ctx) {
+		ctx.getRequest().setAttribute("reset", "true");
 		ctx.getRequest().getSession().removeAttribute(KEY);
 	}
 
@@ -645,6 +646,10 @@ public class Basket implements Serializable {
 
 	public void setDescription(String description) {
 		this.description = description;
+	}
+	
+	public boolean isDisplayInfo() {
+		return getStep() < FINAL_STEP;
 	}
 
 }

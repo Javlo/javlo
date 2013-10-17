@@ -100,7 +100,7 @@ public class PaypalConnector {
 		}
 		itemList.setItems(items);
 		
-		ShippingAddress shippingAddress = new ShippingAddress();
+		/*ShippingAddress shippingAddress = new ShippingAddress();
 		shippingAddress.setRecipientName(basket.getFirstName()+' '+basket.getLastName());
 		shippingAddress.setPhone(basket.getContactPhone());
 		shippingAddress.setLine1(basket.getAddress());
@@ -110,7 +110,7 @@ public class PaypalConnector {
 		shippingAddress.setPostalCode(basket.getZip());
 		shippingAddress.setCity(basket.getCity());
 		shippingAddress.setType("residential");
-		itemList.setShippingAddress(shippingAddress);
+		itemList.setShippingAddress(shippingAddress);*/
 		
 		transaction.setItemList(itemList);
 
@@ -119,9 +119,6 @@ public class PaypalConnector {
 
 		Payer payer = new Payer();
 		payer.setPaymentMethod("paypal");
-		
-		CreditCard cc = new CreditCard();
-		cc.setBillingAddress(shippingAddress);
 		
 		/*PayerInfo payerInfo = new PayerInfo();
 		payerInfo.setFirstName(basket.getFirstName());

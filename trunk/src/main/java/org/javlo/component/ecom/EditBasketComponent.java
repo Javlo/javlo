@@ -9,6 +9,7 @@ import org.javlo.context.ContentContext;
 import org.javlo.ecom.Basket;
 import org.javlo.ecom.Product;
 import org.javlo.helper.StringHelper;
+import org.javlo.helper.XHTMLHelper;
 import org.javlo.i18n.I18nAccess;
 import org.javlo.message.GenericMessage;
 import org.javlo.message.MessageRepository;
@@ -54,10 +55,11 @@ public class EditBasketComponent extends AbstractVisualComponent implements IAct
 		ctx.getRequest().setAttribute("basket", basket);
 		
 		if (basket.getStep() >= Basket.FINAL_STEP) {
-			if (basket.getStep() == Basket.FINAL_STEP) {
-				
-			}
+			System.out.println("***** EditBasketComponent.prepareView : RESET"); //TODO: remove debug trace
+			ctx.getRequest().setAttribute("reset", "true");
 			Basket.setInstance(ctx, null); // display final step and remove			
+		} else {
+			ctx.getRequest().setAttribute("shippingMessage", XHTMLHelper.textToXHTML(getValue(), ctx.getGlobalContext()));
 		}
 	}
 

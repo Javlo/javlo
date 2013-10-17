@@ -120,7 +120,7 @@ public class PaypalOrderComponent extends AbstractOrderComponent implements IAct
 		out.println("<input type=\"hidden\" name=\"address1\" id=\"address1\" value=\""+basket.getAddress()+"\" />");
 		out.println("<input type=\"hidden\" name=\"city\" id=\"city\" value=\""+basket.getCity()+"\" />");
 		out.println("<input type=\"hidden\" name=\"zip\" id=\"zip\" value=\""+basket.getZip()+"\" />");
-		out.println("<input type=\"hidden\" name=\"country\" id=\"country\" value=\""+basket.getCountry()+"\" />");
+		out.println("<input type=\"hidden\" name=\"country\" id=\"country\" value=\""+basket.getCountry().toUpperCase()+"\" />");
 		 
 		out.println("<a href=\"#\" onclick=\"document.getElementById('paypal-form').submit(); return false;\"><img  src=\"https://www.paypal.com/fr_XC/i/btn/btn_xpressCheckout.gif\" align=\"left\" style=\"margin-right:7px;\"></a>");
 		out.close();
@@ -137,8 +137,8 @@ public class PaypalOrderComponent extends AbstractOrderComponent implements IAct
 		if (basket.getStep() != Basket.ORDER_STEP) {
 			return "";
 		}
-		//return getDirectPayForm(ctx);
-		return getTransactionalPayement(ctx);
+		return getDirectPayForm(ctx);
+		//return getTransactionalPayement(ctx);
 	}
 
 	private String getTransactionalPayement(ContentContext ctx) throws Exception {
