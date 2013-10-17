@@ -6,9 +6,9 @@
 <div class="message ${messages.globalMessage.typeLabel}"><span>${messages.globalMessage.message}</span></div>
 </c:if>
 <c:if test="${empty reset}">
-<div class="step-${basket.step}">
+<div class="step step-${basket.step}">
 <jsp:include page="step-${basket.step}.jsp" />
-<c:if test="${not empty shippingMessage}"><p class="shipping-message">${shippingMessage}</p></c:if>
 </div>
+<c:if test="${not empty shippingMessage}"><p class="shipping-message">${shippingMessage}</p></c:if>
 </c:if>
 </div>
