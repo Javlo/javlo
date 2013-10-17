@@ -9,7 +9,7 @@ import org.javlo.context.ContentContext;
 import org.javlo.context.GlobalContext;
 import org.javlo.ecom.Basket;
 import org.javlo.ecom.BasketPersistenceService;
-import org.javlo.exception.ResourceNotFoundException;
+import org.javlo.helper.ComponentHelper;
 import org.javlo.helper.NetHelper;
 import org.javlo.helper.URLHelper;
 import org.javlo.helper.XHTMLHelper;
@@ -38,12 +38,10 @@ public class TransferOrderComponent extends AbstractOrderComponent implements IA
 	
 	@Override
 	public String getViewXHTMLCode(ContentContext ctx) throws Exception {
-		Basket basket = Basket.getInstance(ctx);		
-		if (basket.getStep() == Basket.CONFIRMATION_STEP) {			
-			String msg = XHTMLHelper.textToXHTML(getConfirmationEmail(basket));			
-			sendConfirmationEmail(ctx, basket);			
-			basket.reset(ctx);
-			return msg;			
+		Basket basket = Basket.getInstance(ctx);
+		
+		if (ctx.getRequest().getAttribute("msg") != null) {			
+			return ctx.getRequest().getAttribute("msg").toString();			
 		}
 		if (basket.getStep() != Basket.ORDER_STEP) {
 			return "";
@@ -64,11 +62,20 @@ public class TransferOrderComponent extends AbstractOrderComponent implements IA
 	
 	public static String performPay(RequestService rs, ContentContext ctx, GlobalContext globalContext, MessageRepository messageRepository, I18nAccess i18nAccess) throws Exception {
 		Basket basket = Basket.getInstance(ctx);
-		basket.setStep(Basket.CONFIRMATION_STEP);		
+		basket.setStep(Basket.FINAL_STEP);		
 		basket.setStatus(Basket.STATUS_WAIT_PAY);
 		BasketPersistenceService.getInstance(globalContext).storeBasket(basket);
 		
+		AbstractOrderComponent comp = (AbstractOrderComponent) ComponentHelper.getComponentFromRequest(ctx);
 		
+		String msg = XHTMLHelper.textToXHTML(comp.getConfirmationEmail(basket));
+		
+		msg = "<p>" + i18nAccess.getViewText("ecom.basket-confirmed") + "</p><p>" + msg + "</p>";
+		
+		comp.sendConfirmationEmail(ctx, basket);
+		ctx.getRequest().setAttribute("msg", msg);		
+		
+		basket.reset(ctx);
 		
 		NetHelper.sendMailToAdministrator(globalContext, "basket confirmed with transfert : "+globalContext.getContextKey(), basket.toString());
 		

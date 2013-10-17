@@ -93,11 +93,6 @@ public abstract class AbstractOrderComponent extends AbstractVisualComponent {
 			from = new InternetAddress(ctx.getGlobalContext().getAdministratorEmail());
 		}	
 		InternetAddress to = new InternetAddress(basket.getContactEmail());
-		
-		System.out.println("***** AbstractOrderComponent.sendConfirmationEmail : from = "+from); //TODO: remove debug trace
-		System.out.println("***** AbstractOrderComponent.sendConfirmationEmail : to = "+to); //TODO: remove debug trace
-		System.out.println("***** AbstractOrderComponent.sendConfirmationEmail : bcc = "+bcc); //TODO: remove debug trace
-		
 		NetHelper.sendMail(ctx.getGlobalContext(), from, to, null, bcc, subject, getConfirmationEmail(basket));
 	}
 	
