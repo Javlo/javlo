@@ -18,12 +18,11 @@ import org.javlo.helper.StringHelper;
 
 import com.paypal.api.payments.Address;
 import com.paypal.api.payments.Amount;
-import com.paypal.api.payments.AmountDetails;
+import com.paypal.api.payments.CreditCard;
 import com.paypal.api.payments.Item;
 import com.paypal.api.payments.ItemList;
 import com.paypal.api.payments.Link;
 import com.paypal.api.payments.Payer;
-import com.paypal.api.payments.PayerInfo;
 import com.paypal.api.payments.Payment;
 import com.paypal.api.payments.PaymentExecution;
 import com.paypal.api.payments.RedirectUrls;
@@ -78,12 +77,7 @@ public class PaypalConnector {
 
 		String accessToken = tokenCredential.getAccessToken();
 
-		Address billingAddress = new Address();
-		billingAddress.setLine1(basket.getAddress());
-		billingAddress.setCity(basket.getCity());
-		billingAddress.setCountryCode(basket.getCountry());
-		billingAddress.setPostalCode(basket.getZip());
-		billingAddress.setCity(basket.getCity());
+		
 
 		Amount amount = new Amount();
 		amount.setTotal(formatDouble(basket.getTotalIncludingVAT()));
@@ -105,8 +99,9 @@ public class PaypalConnector {
 			items.add(item);
 		}
 		itemList.setItems(items);
+		
 		ShippingAddress shippingAddress = new ShippingAddress();
-		shippingAddress.setRecipientName(basket.getLastName() + " " + basket.getFirstName());
+		shippingAddress.setRecipientName(basket.getFirstName()+' '+basket.getLastName());
 		shippingAddress.setPhone(basket.getContactPhone());
 		shippingAddress.setLine1(basket.getAddress());
 		shippingAddress.setCity(basket.getCity());
@@ -114,6 +109,7 @@ public class PaypalConnector {
 		shippingAddress.setState(basket.getCity());
 		shippingAddress.setPostalCode(basket.getZip());
 		shippingAddress.setCity(basket.getCity());
+		shippingAddress.setType("residential");
 		itemList.setShippingAddress(shippingAddress);
 		
 		transaction.setItemList(itemList);
@@ -123,18 +119,22 @@ public class PaypalConnector {
 
 		Payer payer = new Payer();
 		payer.setPaymentMethod("paypal");
-		PayerInfo payerInfo = new PayerInfo();
+		
+		CreditCard cc = new CreditCard();
+		cc.setBillingAddress(shippingAddress);
+		
+		/*PayerInfo payerInfo = new PayerInfo();
 		payerInfo.setFirstName(basket.getFirstName());
 		payerInfo.setLastName(basket.getLastName());
 		payerInfo.setEmail(basket.getContactEmail());
-		payerInfo.setPhone(basket.getContactPhone());
+		payerInfo.setPhone(basket.getContactPhone());	
 		payerInfo.setShippingAddress(billingAddress);
-		// payer.setPayerInfo(payerInfo);
+		payer.setPayerInfo(payerInfo);*/
 
 		payment = new Payment();
 		payment.setIntent("sale");
 		payment.setPayer(payer);
-		payment.setTransactions(transactions);
+		payment.setTransactions(transactions);		
 		RedirectUrls urls = new RedirectUrls();
 		urls.setCancelUrl(cancelURL.toString());
 		urls.setReturnUrl(returnURL.toString());
@@ -142,6 +142,12 @@ public class PaypalConnector {
 		payment = payment.create(accessToken);
 
 		String finalLink = null;
+		
+		String json = payment.toJSON();
+		System.out.println("");
+		System.out.println("json");
+		System.out.println(json);
+		System.out.println("");
 
 		for (Link link : payment.getLinks()) {
 			if (link.getRel().equals("approval_url")) {

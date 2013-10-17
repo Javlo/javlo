@@ -117,17 +117,11 @@ public class PaypalOrderComponent extends AbstractOrderComponent implements IAct
 		out.println("<input type=\"hidden\" name=\"email\" id=\"email\" value=\"" + basket.getContactEmail() + "\" />");
 		out.println("<input type=\"hidden\" name=\"first_name\" id=\"first_name\" value=\"" + basket.getFirstName() + "\" />");
 		out.println("<input type=\"hidden\" name=\"last_name\" id=\"last_name\" value=\"" + basket.getLastName() + "\" />");
-		/*
-		 * out.println(
-		 * "<input type=\"hidden\" name=\"address1\" id=\"address1\" value=\""
-		 * +basket.getAddress()+"\" />");
-		 * out.println("<input type=\"hidden\" name=\"city\" id=\"city\" value=\""
-		 * +basket.getCity()+"\" />");
-		 * out.println("<input type=\"hidden\" name=\"zip\" id=\"zip\" value=\""
-		 * +basket.getZip()+"\" />");
-		 * out.println("<input type=\"hidden\" name=\"country\" id=\"zip\" value=\""
-		 * +basket.getCountry()+"\" />");
-		 */
+		out.println("<input type=\"hidden\" name=\"address1\" id=\"address1\" value=\""+basket.getAddress()+"\" />");
+		out.println("<input type=\"hidden\" name=\"city\" id=\"city\" value=\""+basket.getCity()+"\" />");
+		out.println("<input type=\"hidden\" name=\"zip\" id=\"zip\" value=\""+basket.getZip()+"\" />");
+		out.println("<input type=\"hidden\" name=\"country\" id=\"country\" value=\""+basket.getCountry()+"\" />");
+		 
 		out.println("<a href=\"#\" onclick=\"document.getElementById('paypal-form').submit(); return false;\"><img  src=\"https://www.paypal.com/fr_XC/i/btn/btn_xpressCheckout.gif\" align=\"left\" style=\"margin-right:7px;\"></a>");
 		out.close();
 
@@ -143,6 +137,7 @@ public class PaypalOrderComponent extends AbstractOrderComponent implements IAct
 		if (basket.getStep() != Basket.ORDER_STEP) {
 			return "";
 		}
+		//return getDirectPayForm(ctx);
 		return getTransactionalPayement(ctx);
 	}
 

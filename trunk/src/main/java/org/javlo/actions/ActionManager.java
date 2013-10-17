@@ -27,6 +27,7 @@ import org.javlo.message.MessageRepository;
 import org.javlo.module.core.Module;
 import org.javlo.module.core.ModuleException;
 import org.javlo.module.core.ModulesContext;
+import org.javlo.service.exception.ServiceException;
 import org.javlo.user.AdminUserFactory;
 import org.javlo.user.AdminUserSecurity;
 import org.javlo.user.User;
@@ -270,8 +271,14 @@ public class ActionManager {
 				message = e.getCause().getMessage();
 				logger.warning(message);
 			} else {
-				e.printStackTrace();
-				message = "error for method : " + methodName + " on : " + action.getClass().getCanonicalName() + "  msg:" + e.getMessage();
+				e.printStackTrace();				
+				message = "error - method : " + methodName + " on : " + action.getClass().getCanonicalName() + "  msg:" + e.getMessage();
+				try {
+					I18nAccess i18nAccess = I18nAccess.getInstance(ContentContext.getContentContext(request, response));
+					message = i18nAccess.getViewText("message.error.technical-error", message);
+				} catch (Exception e1) {					
+					e1.printStackTrace();
+				}				
 				logger.fine(message);
 			}
 		}

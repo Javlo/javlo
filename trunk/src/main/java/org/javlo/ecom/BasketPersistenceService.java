@@ -70,7 +70,7 @@ public class BasketPersistenceService {
 		if (file.exists()) {
 			file.createNewFile();
 		}
-		ResourceHelper.writeStringToFile(file, ResourceHelper.storeBeanFromXML(basket));
+		ResourceHelper.storeBean(basket, file);
 		if (baskets != null) {
 			if (baskets.containsKey(basket.getId())) {
 				baskets.remove(basket.getId());

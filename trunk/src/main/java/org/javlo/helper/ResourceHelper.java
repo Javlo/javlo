@@ -1272,12 +1272,11 @@ public class ResourceHelper {
 		}
 		return null;
 	}
-	
+
 	public static String storeBeanFromXML(Serializable bean) {
 		ByteArrayOutputStream out = new ByteArrayOutputStream();
-		// XMLEncoder encoder = new XMLEncoder(out,
-		// ContentContext.CHARACTER_ENCODING, false, 0);
-		XMLEncoder encoder = new XMLEncoder(out);
+		XMLEncoder encoder = new XMLEncoder(out, ContentContext.CHARACTER_ENCODING, true, 0);
+		// XMLEncoder encoder = new XMLEncoder(out);
 		encoder.writeObject(bean);
 		encoder.flush();
 		encoder.close();
@@ -1285,6 +1284,36 @@ public class ResourceHelper {
 			return new String(out.toByteArray(), ContentContext.CHARACTER_ENCODING);
 		} catch (UnsupportedEncodingException e) {
 			e.printStackTrace();
+		}
+		return null;
+	}
+
+	public static String storeBean(Serializable bean, OutputStream out) {
+		XMLEncoder encoder = null;
+		try {
+			encoder = new XMLEncoder(out, ContentContext.CHARACTER_ENCODING, true, 0);
+			encoder.writeObject(bean);
+			encoder.flush();
+		} finally {
+			if (encoder != null) {
+				encoder.close();
+			}
+		}
+		return null;
+	}
+	
+	public static String storeBean(Serializable bean, File file) throws FileNotFoundException {
+		OutputStream out = new FileOutputStream(file);
+		XMLEncoder encoder = null;		
+		try {
+			encoder = new XMLEncoder(out, ContentContext.CHARACTER_ENCODING, true, 0);
+			encoder.writeObject(bean);
+			encoder.flush();
+		} finally {
+			closeResource(out);
+			if (encoder != null) {
+				encoder.close();
+			}
 		}
 		return null;
 	}
