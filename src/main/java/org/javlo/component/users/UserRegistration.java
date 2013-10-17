@@ -65,7 +65,7 @@ public class UserRegistration extends AbstractVisualComponent implements IAction
 			ctx.getRequest().setAttribute("user", ctx.getCurrentUser());
 			ctx.getRequest().setAttribute("userInfoMap", ctx.getCurrentUser().getUserInfo());
 		}
-		
+
 	}
 
 	@Override
@@ -124,11 +124,11 @@ public class UserRegistration extends AbstractVisualComponent implements IAction
 
 		IUserFactory userFactory;
 		UserInfo userInfo;
-		
+
 		if (comp == null) {
 			return "Error component not found.";
 		}
-		
+
 		if (comp.isAdminRegistration()) {
 			userFactory = AdminUserFactory.createUserFactory(globalContext, ctx.getRequest().getSession());
 			userInfo = new AdminUserInfo();
@@ -174,18 +174,27 @@ public class UserRegistration extends AbstractVisualComponent implements IAction
 			PrintStream out = new PrintStream(outStream);
 			out.println("Registration on : " + globalContext.getGlobalTitle());
 			out.println("");
-			out.println("login           : " + userInfo.getLogin());
-			out.println("firstname       : " + userInfo.getFirstName());
-			out.println("lastname        : " + userInfo.getLastName());
-			out.println("email           : " + userInfo.getEmail());
-			out.println("country         : " + userInfo.getCountry());
-			out.println("orgnization     : " + userInfo.getOrganization());
+
+			out.println(i18nAccess.getViewText("form.login") + " : " + userInfo.getLogin());
+			out.println(i18nAccess.getViewText("form.firstName") + " : " + userInfo.getFirstName());
+			out.println(i18nAccess.getViewText("form.lastName") + " : " + userInfo.getLastName());
+			out.println(i18nAccess.getViewText("form.email") + " : " + userInfo.getEmail());
+			out.println(i18nAccess.getViewText("form.address.country") + " : " + userInfo.getCountry());
+			if (userInfo.getOrganization().trim().length() > 0) {
+				out.println(i18nAccess.getViewText("form.organization") + " : " + userInfo.getOrganization());
+			}
+			if (rs.getParameter("message", "").trim().length() > 0) {
+				out.println("");
+				out.println(i18nAccess.getViewText("form.comment") + " : ");
+				out.println(rs.getParameter("message", ""));
+				out.println("");
+			}
 			out.println("");
-			out.println("message         : ");
-			out.println(rs.getParameter("message", ""));
-			out.println("");
-			out.println("");
-			out.println("Access link     : " + URLHelper.createURL(ctx.getContextForAbsoluteURL().getContextWithOtherRenderMode(ContentContext.PREVIEW_MODE), "/"));
+			if (globalContext.isCollaborativeMode()) {
+				out.println(URLHelper.createURL(ctx.getContextForAbsoluteURL().getContextWithOtherRenderMode(ContentContext.PREVIEW_MODE), "/"));
+			} else {
+				out.println(URLHelper.createURL(ctx.getContextForAbsoluteURL().getContextWithOtherRenderMode(ContentContext.VIEW_MODE), "/"));
+			}
 			out.println("");
 			out.close();
 
@@ -194,8 +203,8 @@ public class UserRegistration extends AbstractVisualComponent implements IAction
 			InternetAddress admin = new InternetAddress(globalContext.getAdministratorEmail());
 
 			mailService.sendMail(newUser, admin, "new user : " + userInfo.getLogin(), new String(outStream.toByteArray()), false);
-			mailService.sendMail(admin, newUser, "you new account on : " + globalContext.getGlobalTitle(), new String(outStream.toByteArray()), false);
-			
+			mailService.sendMail(admin, newUser, i18nAccess.getViewText("user.new-account") + globalContext.getGlobalTitle(), new String(outStream.toByteArray()), false);
+
 			ctx.getRequest().setAttribute("noform", "true");
 
 		} catch (Exception e) {
@@ -229,12 +238,12 @@ public class UserRegistration extends AbstractVisualComponent implements IAction
 				return i18nAccess.getViewText("registration.error.password_size", "password must be at least 3 characters.");
 			}
 		}
-		
+
 		messageRepository.setGlobalMessage(new GenericMessage(i18nAccess.getViewText("registration.message.registred", "Password changed."), GenericMessage.INFO));
 
 		return null;
 	}
-	
+
 	public static String performLogout(RequestService rs, ContentContext ctx, GlobalContext globalContext, HttpSession session, MessageRepository messageRepository, I18nAccess i18nAccess) throws Exception {
 		if (rs.getParameter("logout", null) != null) {
 			UserRegistration comp = (UserRegistration) ComponentHelper.getComponentFromRequest(ctx);
