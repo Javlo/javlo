@@ -263,6 +263,10 @@ public class PaypalOrderComponent extends AbstractOrderComponent implements IAct
 			basket.setStep(Basket.FINAL_STEP);
 			basketPersistenceService.storeBasket(basket);
 			Basket.setInstance(ctx, basket);
+			
+			comp.sendConfirmationEmail(ctx, basket);
+
+			NetHelper.sendMailToAdministrator(ctx.getGlobalContext(), "basket confirmed on " + ctx.getGlobalContext().getContextKey(), "" + basket);
 		}
 		return null;
 	}

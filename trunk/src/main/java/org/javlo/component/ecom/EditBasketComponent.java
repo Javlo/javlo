@@ -54,8 +54,7 @@ public class EditBasketComponent extends AbstractVisualComponent implements IAct
 		ctx.getRequest().setAttribute("reduction", reduction);
 		ctx.getRequest().setAttribute("basket", basket);
 		
-		if (basket.getStep() >= Basket.FINAL_STEP) {
-			System.out.println("***** EditBasketComponent.prepareView : RESET"); //TODO: remove debug trace
+		if (basket.getStep() >= Basket.FINAL_STEP) {			
 			ctx.getRequest().setAttribute("reset", "true");
 			Basket.setInstance(ctx, null); // display final step and remove			
 		} else {
