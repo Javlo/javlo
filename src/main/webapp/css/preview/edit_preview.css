@@ -891,7 +891,7 @@ body.fix-preview {
 
 .free-edit-zone.droppable {
 	padding: 4px;
-	display: block;
+	display: block !important;
 	border-radius: 3px 3px 3px 3px;
 	background-color: #aaaaaa;
 	opacity: .30;
