@@ -82,7 +82,7 @@ public class PaypalOrderComponent extends AbstractOrderComponent implements IAct
 		Basket basket = Basket.getInstance(ctx);
 		ByteArrayOutputStream outStream = new ByteArrayOutputStream();
 		PrintStream out = new PrintStream(outStream);
-		out.println("<form id=\"paypal-form\" method=\"post\" action=\"https://www.sandbox.paypal.com/cgi-bin/webscr\" class=\"place\"><input type=\"hidden\" name=\"cmd\" id=\"cmd\" value=\"_cart\" />");
+		out.println("<form id=\"paypal-form\" method=\"post\" action=\""+getBaseURL()+"/cgi-bin/webscr\" class=\"place\"><input type=\"hidden\" name=\"cmd\" id=\"cmd\" value=\"_cart\" />");
 		out.println("<input type=\"hidden\" name=\"charset\" id=\"charset\" value=\"utf-8\" />");
 		out.println("<input type=\"hidden\" name=\"upload\" id=\"upload\" value=\"1\" />");
 		out.println("<input type=\"hidden\" name=\"currency_code\" id=\"currency_code\" value=\"" + basket.getCurrencyCode() + "\" />");
