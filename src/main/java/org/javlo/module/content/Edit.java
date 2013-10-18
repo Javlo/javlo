@@ -1654,6 +1654,7 @@ public class Edit extends AbstractModuleAction {
 			} else {
 				ComponentBean mirrorBean = new ComponentBean(PageMirrorComponent.TYPE, sharedContent.getLinkInfo(), ctx.getRequestContentLanguage());
 				mirrorBean.setArea(areaKey);
+				mirrorBean.setAuthors(ctx.getCurrentUserId());
 				content.createContent(ctx, targetPage, mirrorBean, previousId, true);				
 			}
 
@@ -1662,7 +1663,6 @@ public class Edit extends AbstractModuleAction {
 				String selecterPrefix = "";
 				if (parentPage.isChildrenAssociation()) {
 					selecterPrefix = "#page_" + rs.getParameter("pageContainerID", "#ID_NOT_DEFINED") + " #";
-
 					if (targetPage != null) {
 						ctx.setCurrentPageCached(targetPage);
 					}
