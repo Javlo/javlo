@@ -636,7 +636,7 @@ public class Template implements Comparable<Template> {
 	}
 
 	private static Template getInstance(StaticConfig config, ContentContext ctx, String templateDir, boolean alternativeTemplate) throws ConfigurationException, IOException {
-
+		
 		if (config == null) {
 			throw new RuntimeException("StaticConfig can not be null.");
 		}
@@ -650,9 +650,9 @@ public class Template implements Comparable<Template> {
 		template.dir = new File(templateFolder);
 		template.config = config;
 
-		if (!template.isTemplateInWebapp(ctx)) {
+		/*if (!template.isTemplateInWebapp(ctx)) {
 			template.importTemplateInWebapp(config, ctx);
-		}
+		}*/
 
 		File configFile = new File(URLHelper.mergePath(templateFolder, CONFIG_FILE));
 		File privateConfigFile = new File(URLHelper.mergePath(templateFolder, PRIVATE_CONFIG_FILE));
@@ -661,6 +661,7 @@ public class Template implements Comparable<Template> {
 			if (!configFile.exists()) {
 				configFile.createNewFile();
 			}
+			
 			template.properties.setFile(configFile);
 			template.properties.load();
 
@@ -676,7 +677,7 @@ public class Template implements Comparable<Template> {
 			// TODO Auto-generated catch block
 			// logger.warning("problem with file : " +
 			// configFile.getAbsolutePath());
-			// t.printStackTrace();
+		//	t.printStackTrace();
 		}
 
 		template.parent = template.getParent(config, ctx);
@@ -1095,7 +1096,7 @@ public class Template implements Comparable<Template> {
 		}
 		if (getMobileTemplate() != null && ctx.getDevice().isMobileDevice()) {
 			Template mobileTemplate = getMobileTemplate(ctx.getGlobalContext().getStaticConfig(), ctx);
-			if (mobileTemplate != null) {
+			if (mobileTemplate != null) {				
 				return mobileTemplate;
 			}
 		}
@@ -1468,12 +1469,15 @@ public class Template implements Comparable<Template> {
 
 	private Template getParent(StaticConfig config, ContentContext ctx) throws IOException, ConfigurationException {
 		Template parent = null;
-		String parentId = getParentName();
+		String parentId = getParentName();		
 		if (parentId != null && !parentId.equals(getName())) {
 			if (ctx == null) {
 				parent = Template.getInstance(config, ctx, parentId, false);
 			} else {
 				parent = TemplateFactory.getTemplates(ctx.getRequest().getSession().getServletContext()).get(parentId);
+			}
+			if (parent == null) {
+				throw new ConfigurationException ("parent not found : "+parent);
 			}
 		}
 		return parent;
