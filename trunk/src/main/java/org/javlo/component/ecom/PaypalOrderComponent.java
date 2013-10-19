@@ -287,6 +287,7 @@ public class PaypalOrderComponent extends AbstractOrderComponent implements IAct
 																							// remove
 																							// debug
 																							// trace
+		System.out.println("***** PaypalOrderComponent.performValidDirect : ctx.getRequest().getQueryString() = "+ctx.getRequest().getQueryString()); //TODO: remove debug trace
 		/*
 		 * BasketPersistenceService basketPersistenceService =
 		 * BasketPersistenceService.getInstance(ctx.getGlobalContext()); Basket
