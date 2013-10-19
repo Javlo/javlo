@@ -33,8 +33,8 @@ public class Basket implements Serializable {
 	public static final int ERROR_STEP = 99;
 
 	public static final String STATUS_UNVALIDED = "unvalided";
-	public static final String STATUS_VALIDED = "valided";
-	public static final String STATUS_PAYED = "payed";
+	public static final String STATUS_VALIDED = "valided";	
+	public static final String STATUS_TO_BE_VERIFIED = "to_be_verified";
 	public static final String STATUS_MANUAL_PAYED = "manual_payed";
 	public static final String STATUS_NEW = "new";
 	public static final String STATUS_WAIT_PAY = "wait_pay";
@@ -69,6 +69,7 @@ public class Basket implements Serializable {
 	private String user;
 	private boolean transfertAddress = false;
 	private String description;
+	private boolean presumptiveFraud = false;
 
 
 	private int step = START_STEP;
@@ -650,6 +651,18 @@ public class Basket implements Serializable {
 	
 	public boolean isDisplayInfo() {
 		return getStep() < FINAL_STEP;
+	}
+	
+	public boolean isReadyToSend() {
+		return getStatus().equals(STATUS_VALIDED) || getStatus().equals(STATUS_MANUAL_PAYED);
+	}
+
+	public boolean isPresumptiveFraud() {
+		return presumptiveFraud;
+	}
+
+	public void setPresumptiveFraud(boolean presumptiveFraud) {
+		this.presumptiveFraud = presumptiveFraud;
 	}
 
 }

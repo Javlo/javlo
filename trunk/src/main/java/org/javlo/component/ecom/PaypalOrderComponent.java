@@ -1,10 +1,17 @@
 package org.javlo.component.ecom;
 
+import java.io.BufferedReader;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
+import java.io.InputStreamReader;
 import java.io.PrintStream;
+import java.io.PrintWriter;
 import java.io.StringReader;
+import java.net.MalformedURLException;
 import java.net.URL;
+import java.net.URLConnection;
+import java.net.URLEncoder;
+import java.util.Enumeration;
 import java.util.Properties;
 
 import org.javlo.actions.IAction;
@@ -22,6 +29,8 @@ import org.javlo.i18n.I18nAccess;
 import org.javlo.message.GenericMessage;
 import org.javlo.message.MessageRepository;
 import org.javlo.service.RequestService;
+
+import com.sun.corba.se.spi.legacy.connection.GetEndPointInfoAgainException;
 
 public class PaypalOrderComponent extends AbstractOrderComponent implements IAction {
 
@@ -88,7 +97,8 @@ public class PaypalOrderComponent extends AbstractOrderComponent implements IAct
 		out.println("<input type=\"hidden\" name=\"currency_code\" id=\"currency_code\" value=\"" + basket.getCurrencyCode() + "\" />");
 		out.println("<input type=\"hidden\" name=\"business\" id=\"business\" value=\"" + getUserEMail() + "\" />");
 
-		String returnURL = URLHelper.createURL(ctx.getContextForAbsoluteURL());
+		//String returnURL = URLHelper.createURL(ctx.getContextForAbsoluteURL());
+		String returnURL = "http://pvdm.myqnapcloud.com:8080/24h01/fr/basket.html";
 		returnURL = URLHelper.addParam(returnURL, IContentVisualComponent.COMP_ID_REQUEST_PARAM, getId());
 		returnURL = URLHelper.addParam(returnURL, "basket", basket.getId());
 		URL validReturnURL = new URL(URLHelper.addParam(returnURL, "webaction", "paypal.validDirect"));
@@ -97,7 +107,7 @@ public class PaypalOrderComponent extends AbstractOrderComponent implements IAct
 
 		out.println("<input type=\"hidden\" name=\"return\" value=\"" + validReturnURL + "\" />");
 		out.println("<input type=\"hidden\" name=\"cancel_return\" value=\"" + cancelReturnURL + "\" />");
-		//out.println("<input type=\"hidden\" name=\"notify_url\" value=\"" + notifyURL + "\" />");
+		out.println("<input type=\"hidden\" name=\"notify_url\" value=\"" + notifyURL + "\" />");
 		// out.println("<p><a href=\""+notifyURL+"\">"+notifyURL+"</a></p>");
 
 		int index = 1;
@@ -238,7 +248,7 @@ public class PaypalOrderComponent extends AbstractOrderComponent implements IAct
 	}
 
 	public static String performValidDirect(RequestService rs, ContentContext ctx, MessageRepository messageRepository, I18nAccess i18nAccess) throws Exception {
-		/*PaypalOrderComponent comp = (PaypalOrderComponent) ComponentHelper.getComponentFromRequest(ctx);
+		PaypalOrderComponent comp = (PaypalOrderComponent) ComponentHelper.getComponentFromRequest(ctx);
 		BasketPersistenceService basketPersistenceService = BasketPersistenceService.getInstance(ctx.getGlobalContext());
 		Basket basket = basketPersistenceService.getBasket(rs.getParameter("basket", null));
 		if (basket == null || comp == null) {
@@ -249,32 +259,22 @@ public class PaypalOrderComponent extends AbstractOrderComponent implements IAct
 				error = "basket not found.";
 			}
 			logger.severe(error);
-			NetHelper.sendMailToAdministrator(ctx.getGlobalContext(), "ecom error on paypal payement (performValid) : " + ctx.getGlobalContext().getContextKey(), error);
 			return "Ecom datal error : please try again.";
 		} else {
-			logger.info("basket:" + basket.getId() + " - total tvac:" + basket.getTotalIncludingVATString());
-			basket.setStatus(Basket.STATUS_VALIDED);
-			basket.setValidationInfo("paypal direct payement");
-			basket.setTransactionManager(null); // remove reference to
-												// PaypalConnector
-
+			logger.info("basket returned :" + basket.getId() + " - total tvac:" + basket.getTotalIncludingVATString());
 			messageRepository.setGlobalMessage(new GenericMessage(i18nAccess.getViewText("ecom.message.final"), GenericMessage.INFO));
 
 			basket.setStep(Basket.FINAL_STEP);
 			basketPersistenceService.storeBasket(basket);
 			Basket.setInstance(ctx, basket);
 			
-			comp.sendConfirmationEmail(ctx, basket);
-
-			NetHelper.sendMailToAdministrator(ctx.getGlobalContext(), "basket confirmed on " + ctx.getGlobalContext().getContextKey(), "" + basket);
-		}*/
-		System.out.println("***** PaypalOrderComponent.performValidDirect : ctx.getRequest().getQueryString() = "+ctx.getRequest().getQueryString()); //TODO: remove debug trace
+		}		
 		return null;
 	}
 
 	public static String performCancel(RequestService rs, ContentContext ctx, MessageRepository messageRepository, I18nAccess i18nAccess) throws IOException {
 		BasketPersistenceService basketPersistenceService = BasketPersistenceService.getInstance(ctx.getGlobalContext());
-		Basket basket = basketPersistenceService.getBasket(rs.getParameter("basket", null));
+		Basket basket = basketPersistenceService.getBasket(rs.getParameter("basket", null));		
 		messageRepository.setGlobalMessage(new GenericMessage(i18nAccess.getViewText("ecom.message.error"), GenericMessage.ERROR));
 		basket.setStep(Basket.ERROR_STEP);
 		basket.setValidationInfo("unvalid.");
@@ -282,12 +282,82 @@ public class PaypalOrderComponent extends AbstractOrderComponent implements IAct
 		return null;
 	}
 
-	public static String performNotify(RequestService rs, ContentContext ctx, MessageRepository messageRepository, I18nAccess i18nAccess) throws IOException {
-		System.out.println("***** PaypalOrderComponent.performNotify : START NOTIFY..."); // TODO:
-																							// remove
-																							// debug
-																							// trace
-		System.out.println("***** PaypalOrderComponent.performValidDirect : ctx.getRequest().getQueryString() = "+ctx.getRequest().getQueryString()); //TODO: remove debug trace
+	public static String performNotify(RequestService rs, ContentContext ctx, MessageRepository messageRepository, I18nAccess i18nAccess) throws Exception {		
+		BasketPersistenceService basketPersistenceService = BasketPersistenceService.getInstance(ctx.getGlobalContext());
+		Basket basket = basketPersistenceService.getBasket(rs.getParameter("basket", null));
+		PaypalOrderComponent comp = (PaypalOrderComponent) ComponentHelper.getComponentFromRequest(ctx);
+		
+		Enumeration en = ctx.getRequest().getParameterNames();
+		String str = "cmd=_notify-validate";
+		
+		String fraud = null;
+		
+		while (en.hasMoreElements()) {
+			String paramName = (String) en.nextElement();			
+			String paramValue = ctx.getRequest().getParameter(paramName);
+			if (paramName.equals("receiver_email")) {
+				if (!paramValue.equals(comp.getUserEMail())) {
+					fraud = "bad receiver email : "+paramName.equals("receiver_email");
+				}
+			}
+			str = str + "&" + paramName + "=" + URLEncoder.encode(paramValue);
+		}
+		
+		// DEV https://www.sandbox.paypal.com/cgi-bin/webscr
+		// PROD https://www.paypal.com/cgi-bin/webscr
+		String payPalUrl = "https://www.paypal.com/cgi-bin/webscr";
+		logger.info("Sending request to PayPal IPN: " + payPalUrl + '?' + str);
+		
+		String res = null;
+		try {
+			// Send request to PayPal for validation
+			URL u = new URL(payPalUrl);
+			URLConnection uc = u.openConnection();
+			uc.setDoOutput(true);
+			uc.setRequestProperty("Content-Type","application/x-www-form-urlencoded");
+			PrintWriter pw = new PrintWriter(uc.getOutputStream());
+			pw.println(str);
+			pw.close();
+			
+			BufferedReader in = new BufferedReader(new InputStreamReader(uc.getInputStream()));
+			res = in.readLine();
+			in.close();
+			
+			logger.info("paypal return : "+res+" [bakset:"+rs.getParameter("basket", null)+" fraud:"+fraud+"]");
+			
+			basket.setInfo("paypal return : "+res);
+			basket.setPresumptiveFraud(fraud != null);
+			if ("VERIFIED".equals(res)) {
+				basket.setStatus(Basket.STATUS_VALIDED);
+			} else  {
+				basket.setStatus(Basket.STATUS_TO_BE_VERIFIED);
+			}
+			basketPersistenceService.storeBasket(basket);
+			
+			comp.sendConfirmationEmail(ctx, basket);
+			
+			ByteArrayOutputStream outStream = new ByteArrayOutputStream();
+			PrintStream out = new PrintStream(outStream);
+			out.println("paypal return : "+res);
+			out.println("presumptive fraud : "+(fraud != null));
+			if (fraud != null) {
+				out.println("fraud msg : "+fraud);
+			}
+			out.println("");
+			out.println(basket);
+			out.close();
+			String subject = "basket confirmed on " + ctx.getGlobalContext().getContextKey();
+			if (fraud != null) {
+				subject = subject + " - Presumptive Fraud -";
+			}
+			NetHelper.sendMailToAdministrator(ctx.getGlobalContext(), subject, new String(outStream.toByteArray()));
+
+		} catch (MalformedURLException ex) {
+			ex.printStackTrace();			
+		} catch (IOException ex) {
+			ex.printStackTrace();			
+		}
+		
 		/*
 		 * BasketPersistenceService basketPersistenceService =
 		 * BasketPersistenceService.getInstance(ctx.getGlobalContext()); Basket
