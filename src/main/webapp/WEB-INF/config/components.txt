@@ -74,6 +74,7 @@ org.javlo.component.text.XHTML
 org.javlo.component.container.Box
 org.javlo.component.container.TextDirection
 org.javlo.component.container.RepeatContainer
+org.javlo.component.core.MessageContainer
 
 --content.title.ecom
 

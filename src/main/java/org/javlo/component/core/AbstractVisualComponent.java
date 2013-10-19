@@ -1169,6 +1169,11 @@ public abstract class AbstractVisualComponent implements IContentVisualComponent
 		if (getRenderer(ctx) != null) {
 			return executeCurrentRenderer(ctx);
 		} else {
+			if (isNeedRenderer()) {
+				if (ctx.isAsPreviewMode()) {
+					return "<div class=\"error\">No renderer found for '"+getType()+"' in template '"+ctx.getCurrentTemplate().getName()+"'.</div>";
+				}
+			}
 			return getViewXHTMLCode(ctx);
 		}
 	}
@@ -1797,6 +1802,14 @@ public abstract class AbstractVisualComponent implements IContentVisualComponent
 	@Override
 	public Date getModificationDate() {
 		return componentBean.getModificationDate();
+	}
+	
+	/**
+	 * return true if this component need renderer from template.
+	 * @return
+	 */
+	protected boolean isNeedRenderer() {
+		return false;
 	}
 	// generate compilation error : use for refactoring
 
