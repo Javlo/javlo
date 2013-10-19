@@ -30,8 +30,6 @@ import org.javlo.message.GenericMessage;
 import org.javlo.message.MessageRepository;
 import org.javlo.service.RequestService;
 
-import com.sun.corba.se.spi.legacy.connection.GetEndPointInfoAgainException;
-
 public class PaypalOrderComponent extends AbstractOrderComponent implements IAction {
 
 	@Override
@@ -291,6 +289,7 @@ public class PaypalOrderComponent extends AbstractOrderComponent implements IAct
 		String str = "cmd=_notify-validate";
 		
 		String fraud = null;
+		String ipnTrackID = null;		
 		
 		while (en.hasMoreElements()) {
 			String paramName = (String) en.nextElement();			
@@ -298,6 +297,15 @@ public class PaypalOrderComponent extends AbstractOrderComponent implements IAct
 			if (paramName.equals("receiver_email")) {
 				if (!paramValue.equals(comp.getUserEMail())) {
 					fraud = "bad receiver email : "+paramName.equals("receiver_email");
+				}
+			}
+			if (paramName.equals("ipn_track_id")) {
+				ipnTrackID = paramValue;
+			}
+			if (paramName.equals("mc_gross")) {
+				double total = Double.parseDouble(paramValue);
+				if (total != basket.getTotalIncludingVAT()) {
+					fraud = "mc_gross != TotalIncludingVAT  ("+paramValue+" != "+PaypalConnector.formatDouble(basket.getTotalIncludingVAT())+")";
 				}
 			}
 			str = str + "&" + paramName + "=" + URLEncoder.encode(paramValue);
@@ -338,7 +346,8 @@ public class PaypalOrderComponent extends AbstractOrderComponent implements IAct
 			
 			ByteArrayOutputStream outStream = new ByteArrayOutputStream();
 			PrintStream out = new PrintStream(outStream);
-			out.println("paypal return : "+res);
+			out.println("paypal return     : "+res);
+			out.println("paypal ipnTrackID : "+ipnTrackID);			
 			out.println("presumptive fraud : "+(fraud != null));
 			if (fraud != null) {
 				out.println("fraud msg : "+fraud);
