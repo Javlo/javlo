@@ -238,7 +238,7 @@ public class PaypalOrderComponent extends AbstractOrderComponent implements IAct
 	}
 
 	public static String performValidDirect(RequestService rs, ContentContext ctx, MessageRepository messageRepository, I18nAccess i18nAccess) throws Exception {
-		PaypalOrderComponent comp = (PaypalOrderComponent) ComponentHelper.getComponentFromRequest(ctx);
+		/*PaypalOrderComponent comp = (PaypalOrderComponent) ComponentHelper.getComponentFromRequest(ctx);
 		BasketPersistenceService basketPersistenceService = BasketPersistenceService.getInstance(ctx.getGlobalContext());
 		Basket basket = basketPersistenceService.getBasket(rs.getParameter("basket", null));
 		if (basket == null || comp == null) {
@@ -267,7 +267,8 @@ public class PaypalOrderComponent extends AbstractOrderComponent implements IAct
 			comp.sendConfirmationEmail(ctx, basket);
 
 			NetHelper.sendMailToAdministrator(ctx.getGlobalContext(), "basket confirmed on " + ctx.getGlobalContext().getContextKey(), "" + basket);
-		}
+		}*/
+		System.out.println("***** PaypalOrderComponent.performValidDirect : ctx.getRequest().getQueryString() = "+ctx.getRequest().getQueryString()); //TODO: remove debug trace
 		return null;
 	}
 
