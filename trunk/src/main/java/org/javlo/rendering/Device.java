@@ -159,6 +159,10 @@ public class Device implements Serializable {
 	public boolean isHuman() {
 		return !NetHelper.isUserAgentRobot(getUserAgent());
 	}
+	
+	public boolean isForced() {
+		return forcedCode != null;
+	}
 
 	public void unforceDefault() {
 		forcedCode = null;

@@ -244,6 +244,8 @@ public class AccessServlet extends HttpServlet implements IVersion {
 				PrintStream out = new PrintStream(response.getOutputStream());
 				writeInfo(out);
 				out.println("");
+				out.println("User-Agent : "+request.getHeader("User-Agent"));
+				out.println("");
 				globalContext.writeInfo(request.getSession(), out);
 				out.println("");
 				ContentService content = ContentService.getInstance(globalContext);

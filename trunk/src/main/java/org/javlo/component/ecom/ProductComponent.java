@@ -21,6 +21,8 @@ import org.javlo.ecom.Product;
 import org.javlo.helper.StringHelper;
 import org.javlo.helper.URLHelper;
 import org.javlo.i18n.I18nAccess;
+import org.javlo.message.GenericMessage;
+import org.javlo.message.MessageRepository;
 import org.javlo.navigation.MenuElement;
 import org.javlo.service.ContentService;
 import org.javlo.service.RequestService;
@@ -28,7 +30,7 @@ import org.javlo.service.RequestService;
 
 public class ProductComponent extends AbstractPropertiesComponent implements IAction {
 
-	static final List<String> FIELDS = Arrays.asList(new String[] { "name", "price", "vat", "promo", "currency", "offset", "weight", "production" });
+	static final List<String> FIELDS = Arrays.asList(new String[] { "name", "price", "vat", "promo", "currency", "offset", "weight", "production", "basket-page" });
 
 	@Override
 	public String getHeader() {
@@ -62,6 +64,10 @@ public class ProductComponent extends AbstractPropertiesComponent implements IAc
 	
 	public String getCurrency() {
 		return getFieldValue("currency", "EUR");
+	}
+	
+	public String getBasketPage() {
+		return getFieldValue("basket-page", "");
 	}
 
 	public long getOffset() {
@@ -182,8 +188,21 @@ public class ProductComponent extends AbstractPropertiesComponent implements IAc
 		if (getOffset() > 0) {
 			ByteArrayOutputStream outStream = new ByteArrayOutputStream();
 			PrintStream out = new PrintStream(outStream);
+			
+			String action;
+			if (getBasketPage().trim().length() > 0) {
+				ContentService content = ContentService.getInstance(ctx.getRequest());
+				MenuElement page = content.getNavigation(ctx).searchChildFromName(getBasketPage());
+				if (page != null) {
+					action = URLHelper.createURL(ctx,page);
+				} else {
+					action = URLHelper.createURL(ctx);
+				}
+			} else {
+				action = URLHelper.createURL(ctx);
+			}
 
-			out.println("<form class=\"add-basket\" id=\"product-"+getName()+"_"+getId()+"\" action=\""+URLHelper.createURL(ctx)+"\">");
+			out.println("<form class=\"add-basket\" id=\"product-"+getName()+"_"+getId()+"\" method=\"post\" action=\""+action+"\">");
 			out.println("<input type=\"hidden\" name=\"webaction\" value=\"products.buy\" />");
 			out.println("<input type=\"hidden\" name=\"cid\" value=\""+getId()+"\" />");
 			I18nAccess i18nAccess = I18nAccess.getInstance(ctx);
@@ -236,14 +255,13 @@ public class ProductComponent extends AbstractPropertiesComponent implements IAc
 		return "products";
 	}
 	
-	public static String performBuy(HttpServletRequest request, HttpServletResponse response) throws Exception {
-		RequestService requestService = RequestService.getInstance(request);
-		ContentContext ctx = ContentContext.getContentContext(request, response);
-		ContentService content = ContentService.getInstance(request);
+	public static String performBuy(RequestService rs, ContentContext ctx, MessageRepository messageRepository, I18nAccess i18nAccess) throws Exception {		
+		
+		ContentService content = ContentService.getInstance(ctx.getRequest());
 		MenuElement currentPage = ctx.getCurrentPage();
 
 		/* information from product */
-		String cid = requestService.getParameter("cid", null);
+		String cid = rs.getParameter("cid", null);
 		if (cid != null) {
 			IContentVisualComponent comp = content.getComponent(ctx, cid);
 			if ((comp != null) && (comp instanceof ProductComponent)) {
@@ -258,7 +276,7 @@ public class ProductComponent extends AbstractPropertiesComponent implements IAc
 					product.setImage(ctx, currentPage.getImage(ctx));
 				}
 
-				String quantity = requestService.getParameter("quantity", null);
+				String quantity = rs.getParameter("quantity", null);
 				if (quantity != null) {
 					int quantityValue = Integer.parseInt(quantity);
 
@@ -267,6 +285,9 @@ public class ProductComponent extends AbstractPropertiesComponent implements IAc
 
 					Basket basket = Basket.getInstance(ctx);
 					basket.addProduct(product);
+					
+					String msg = i18nAccess.getViewText("ecom.product.add", new String[][] {{"product", pComp.getName()}});					
+					messageRepository.setGlobalMessage(new GenericMessage(msg, GenericMessage.INFO));
 				}
 			}
 		}
