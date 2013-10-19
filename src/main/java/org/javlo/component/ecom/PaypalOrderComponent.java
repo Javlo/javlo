@@ -95,9 +95,9 @@ public class PaypalOrderComponent extends AbstractOrderComponent implements IAct
 		URL cancelReturnURL = new URL(URLHelper.addParam(returnURL, "webaction", "paypal.cancel"));
 		URL notifyURL = new URL(URLHelper.addParam(returnURL, "webaction", "paypal.notify"));
 
-		/*out.println("<input type=\"hidden\" name=\"return\" value=\"" + validReturnURL + "\" />");
+		out.println("<input type=\"hidden\" name=\"return\" value=\"" + validReturnURL + "\" />");
 		out.println("<input type=\"hidden\" name=\"cancel_return\" value=\"" + cancelReturnURL + "\" />");
-		out.println("<input type=\"hidden\" name=\"notify_url\" value=\"" + notifyURL + "\" />");*/
+		//out.println("<input type=\"hidden\" name=\"notify_url\" value=\"" + notifyURL + "\" />");
 		// out.println("<p><a href=\""+notifyURL+"\">"+notifyURL+"</a></p>");
 
 		int index = 1;
