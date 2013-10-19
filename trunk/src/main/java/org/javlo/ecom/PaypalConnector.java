@@ -71,7 +71,7 @@ public class PaypalConnector {
 	public static String formatDouble(double dbl) {
 		return new DecimalFormat("0.00", DecimalFormatSymbols.getInstance(Locale.ENGLISH)).format(dbl);
 	}
-
+	
 	public String createPaypalPayment(Basket basket, URL returnURL, URL cancelURL) throws Exception {
 		OAuthTokenCredential tokenCredential = new OAuthTokenCredential(user, password);
 

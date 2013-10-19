@@ -27,7 +27,7 @@
 <tbody> 
 	<c:forEach var="basket" items="${baskets}" varStatus="status">
 	<c:if test="${not basket.deleted}">
-		<tr>
+		<tr class="${basket.readyToSend?'ready-to-send ':''}${basket.status}">
 			<td class="id">${basket.id}</td>
 			<td class="total">${basket.totalExcludingVATString}</td>
 			<td class="total">${basket.totalIncludingVATString}</td>
