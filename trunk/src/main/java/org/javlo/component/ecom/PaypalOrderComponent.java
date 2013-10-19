@@ -97,8 +97,8 @@ public class PaypalOrderComponent extends AbstractOrderComponent implements IAct
 		out.println("<input type=\"hidden\" name=\"currency_code\" id=\"currency_code\" value=\"" + basket.getCurrencyCode() + "\" />");
 		out.println("<input type=\"hidden\" name=\"business\" id=\"business\" value=\"" + getUserEMail() + "\" />");
 
-		//String returnURL = URLHelper.createURL(ctx.getContextForAbsoluteURL());
-		String returnURL = "http://pvdm.myqnapcloud.com:8080/24h01/fr/basket.html";
+		String returnURL = URLHelper.createURL(ctx.getContextForAbsoluteURL());
+		//String returnURL = "http://pvdm.myqnapcloud.com:8080/24h01/fr/basket.html";
 		returnURL = URLHelper.addParam(returnURL, IContentVisualComponent.COMP_ID_REQUEST_PARAM, getId());
 		returnURL = URLHelper.addParam(returnURL, "basket", basket.getId());
 		URL validReturnURL = new URL(URLHelper.addParam(returnURL, "webaction", "paypal.validDirect"));
