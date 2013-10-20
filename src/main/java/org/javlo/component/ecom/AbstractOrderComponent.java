@@ -4,20 +4,17 @@ import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.PrintStream;
 import java.io.StringReader;
-import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Properties;
 
-import javax.mail.internet.AddressException;
 import javax.mail.internet.InternetAddress;
 
 import org.javlo.component.core.AbstractVisualComponent;
 import org.javlo.context.ContentContext;
 import org.javlo.ecom.Basket;
 import org.javlo.exception.ResourceNotFoundException;
-import org.javlo.helper.ImportHelper.ContentSelector;
 import org.javlo.helper.NetHelper;
 import org.javlo.helper.StringHelper;
 import org.javlo.helper.URLHelper;
@@ -99,6 +96,10 @@ public abstract class AbstractOrderComponent extends AbstractVisualComponent {
 			params.put("body", getConfirmationEmail(basket));
 			params.put("total", basket.getTotalIncludingVATString());
 			params.put("communication", basket.getStructutedCommunication());
+			params.put("firstName", basket.getFirstName());
+			params.put("lastName", basket.getLastName());
+			params.put("basketSize", ""+basket.getSize());
+			params.put("currencyCode", ""+basket.getCurrencyCode());
 			params.putAll(new ReadOnlyPropertiesMap(getData()));
 			String pageURL = URLHelper.createURL(ctx.getContextForAbsoluteURL().getContextWithOtherRenderMode(ContentContext.PAGE_MODE), page.getPath(), params);
 			try {
