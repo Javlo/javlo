@@ -7,6 +7,7 @@ import java.io.File;
 import java.io.IOException;
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.net.URLEncoder;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
@@ -516,7 +517,7 @@ public class URLHelper extends ElementaryURLHelper {
 			finalURL.append(sep);
 			finalURL.append(key);
 			finalURL.append('=');
-			finalURL.append(value);
+			finalURL.append(URLEncoder.encode(value));
 			sep = '&';
 		}
 		return createURL(ctx, finalURL.toString());
