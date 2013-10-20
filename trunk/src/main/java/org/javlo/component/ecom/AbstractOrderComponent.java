@@ -63,6 +63,7 @@ public abstract class AbstractOrderComponent extends AbstractVisualComponent {
 		if (getData().get("order.account") != null && getData().get("order.account").toString().trim().length() > 0) {
 			out.println(getData().get("order.account"));		
 		}
+		out.println("");
 		out.println(getData().get("order.total")+basket.getTotalIncludingVATString());
 		if (getData().get("order.communication") != null && getData().get("order.communication").toString().trim().length() > 0) {
 			out.println(getData().get("order.communication")+basket.getStructutedCommunication());
