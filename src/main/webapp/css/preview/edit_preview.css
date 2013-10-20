@@ -1,3 +1,6 @@
+body.edit-preview {
+	min-height: 700px;
+}
 
 ._empty_area {
 	margin: 5px;	

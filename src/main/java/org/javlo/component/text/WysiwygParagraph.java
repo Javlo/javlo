@@ -9,6 +9,7 @@ import org.javlo.component.core.AbstractVisualComponent;
 import org.javlo.context.ContentContext;
 import org.javlo.context.GlobalContext;
 import org.javlo.helper.LoremIpsumGenerator;
+import org.javlo.helper.XHTMLHelper;
 import org.javlo.service.ReverseLinkService;
 import org.javlo.utils.SuffixPrefix;
 
@@ -50,7 +51,7 @@ public class WysiwygParagraph extends AbstractVisualComponent {
 	public String getViewXHTMLCode(ContentContext ctx) throws Exception {
 		GlobalContext globalContext = GlobalContext.getInstance(ctx.getRequest());
 		ReverseLinkService reverserLinkService = ReverseLinkService.getInstance(globalContext);		
-		return reverserLinkService.replaceLink(ctx, getValue());
+		return XHTMLHelper.replaceJSTLData(ctx, reverserLinkService.replaceLink(ctx, getValue()));
 	}
 
 	@Override

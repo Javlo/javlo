@@ -698,6 +698,15 @@ public class NetHelper {
 			e.printStackTrace();
 		}
 	}
+	
+	public static void sendMail(GlobalContext globalContext, InternetAddress from, InternetAddress to, InternetAddress cc, InternetAddress bcc, String subject, String content, boolean isHTML) {
+		MailService mailService = MailService.getInstance(globalContext.getStaticConfig());
+		try {
+			mailService.sendMail(null, from, to, cc, bcc, subject, content, isHTML);
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+	}
 
 	public static void sendRedirectPermanently(HttpServletResponse response, String url) {
 		response.setStatus(HttpServletResponse.SC_MOVED_PERMANENTLY);
