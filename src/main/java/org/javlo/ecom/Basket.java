@@ -106,7 +106,7 @@ public class Basket implements Serializable {
 	
 	public static String renderPrice (ContentContext ctx, double price, String currency) {
 		if (currency.equalsIgnoreCase("EUR")) {
-			currency = "€";
+			currency = "\u20AC";
 		} else if (currency.equalsIgnoreCase("USD")) {
 			currency = "$";
 		}
