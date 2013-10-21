@@ -138,6 +138,17 @@ public class TemplateFactory {
 		Collections.sort(outList, Template.TemplateDateComparator.instance);
 		return outList;
 	}
+	
+	public static List<Template> getAllTemplatesFromContext(GlobalContext context) throws IOException {
+		List<Template> outTemplates = new LinkedList<Template>();
+		Set<String> templatesName = new HashSet<String>(context.getTemplatesNames());
+		for (Template template : TemplateFactory.getAllTemplates(context.getServletContext())) {
+			if (templatesName.contains(template.getName())) {
+				outTemplates.add(template);
+			}
+		}
+		return outTemplates;
+	}
 
 	private static void getTemplateChildren(List<Template> outList, ServletContext application, Template template) throws IOException {
 		if (template != DefaultTemplate.INSTANCE) {
