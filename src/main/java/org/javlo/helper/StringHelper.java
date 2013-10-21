@@ -1219,7 +1219,7 @@ public class StringHelper {
 	}
 
 	public static void main(String[] args) {
-		System.out.println("***** StringHelper.main : "+renderDouble(120, 2, '.')); //TODO: remove debug trace
+		
 	}
 
 	/**

@@ -14,6 +14,7 @@ import java.net.URLEncoder;
 import java.util.Enumeration;
 import java.util.Properties;
 
+import org.apache.commons.lang.StringEscapeUtils;
 import org.javlo.actions.IAction;
 import org.javlo.component.core.IContentVisualComponent;
 import org.javlo.context.ContentContext;
@@ -123,11 +124,11 @@ public class PaypalOrderComponent extends AbstractOrderComponent implements IAct
 		out.println("<input type=\"hidden\" name=\"lc\" id=\"lc\" value=\"" + ctx.getRequestContentLanguage() + "\" />");
 
 		out.println("<input type=\"hidden\" name=\"address_override\" id=\"address_override\" value=\"1\" />");
-		out.println("<input type=\"hidden\" name=\"email\" id=\"email\" value=\"" + StringHelper.toHTMLAttribute(basket.getContactEmail()) + "\" />");
-		out.println("<input type=\"hidden\" name=\"first_name\" id=\"first_name\" value=\"" + StringHelper.toHTMLAttribute(basket.getFirstName()) + "\" />");
-		out.println("<input type=\"hidden\" name=\"last_name\" id=\"last_name\" value=\"" + StringHelper.toHTMLAttribute(basket.getLastName()) + "\" />");
-		out.println("<input type=\"hidden\" name=\"address1\" id=\"address1\" value=\""+StringHelper.toHTMLAttribute(basket.getAddress())+"\" />");
-		out.println("<input type=\"hidden\" name=\"city\" id=\"city\" value=\""+StringHelper.toHTMLAttribute(basket.getCity())+"\" />");
+		out.println("<input type=\"hidden\" name=\"email\" id=\"email\" value=\"" + StringEscapeUtils.escapeHtml(basket.getContactEmail()) + "\" />");
+		out.println("<input type=\"hidden\" name=\"first_name\" id=\"first_name\" value=\"" +StringEscapeUtils.escapeHtml(basket.getFirstName()) + "\" />");
+		out.println("<input type=\"hidden\" name=\"last_name\" id=\"last_name\" value=\"" + StringEscapeUtils.escapeHtml(basket.getLastName()) + "\" />");
+		out.println("<input type=\"hidden\" name=\"address1\" id=\"address1\" value=\""+StringEscapeUtils.escapeHtml(basket.getAddress())+"\" />");
+		out.println("<input type=\"hidden\" name=\"city\" id=\"city\" value=\""+StringEscapeUtils.escapeHtml(basket.getCity())+"\" />");
 		out.println("<input type=\"hidden\" name=\"zip\" id=\"zip\" value=\""+basket.getZip()+"\" />");
 		out.println("<input type=\"hidden\" name=\"country\" id=\"country\" value=\""+basket.getCountry().toUpperCase()+"\" />");
 		 
