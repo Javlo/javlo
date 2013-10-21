@@ -168,9 +168,11 @@ document.getElementById('forget-password-id').style.display="block";
 </div>
 
 <c:if test="${empty param.pwkey}">
+<div class="one_half">
 <div class="line">
 	<label for="password">${i18n.view['user.current-password']}</label>
 	<input type="password" id="password" name="password" value="" /> 
+</div>
 </div>
 </c:if>
 <c:if test="${not empty param.pwkey}">
