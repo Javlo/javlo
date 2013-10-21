@@ -103,6 +103,15 @@ public class Basket implements Serializable {
 	public static void setInstance(ContentContext ctx, Basket basket) {
 		ctx.getRequest().getSession().setAttribute(KEY, basket);
 	}
+	
+	public static String renderPrice (ContentContext ctx, double price, String currency) {
+		if (currency.equalsIgnoreCase("EUR")) {
+			currency = "€";
+		} else if (currency.equalsIgnoreCase("USD")) {
+			currency = "$";
+		}
+		return StringHelper.renderDouble(price, ctx.getLocale())+' '+currency;
+	}
 
 	public static Basket getInstance(ContentContext ctx) {
 		Basket basket = (Basket) ctx.getRequest().getSession().getAttribute(KEY);

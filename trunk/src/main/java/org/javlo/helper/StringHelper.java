@@ -1724,6 +1724,11 @@ public class StringHelper {
 	public static String renderDouble(double value, int precision) {
 		return renderDouble(value, precision, ',');
 	}
+	
+	public static String renderDouble(double value, Locale locale) {
+		NumberFormat f = NumberFormat.getInstance(locale);
+		return f.format(value);		
+	}
 
 	public static String renderDouble(double value, int precision, char sep) {
 		long deca = Math.round(Math.pow(10, precision));

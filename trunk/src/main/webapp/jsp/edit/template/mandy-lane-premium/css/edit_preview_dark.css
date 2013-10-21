@@ -3,7 +3,7 @@
 	color: #AFAFAF;
 	box-shadow: 0 0 7px #333333;
 	height: 100%;
-	margin-top: 27px;
+	margin-top: 27px !important;
 }
 
 body.fix-preview {

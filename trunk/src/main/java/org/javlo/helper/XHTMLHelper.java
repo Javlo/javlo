@@ -16,7 +16,10 @@ import java.io.PrintStream;
 import java.io.PrintWriter;
 import java.io.StringReader;
 import java.io.StringWriter;
+import java.io.UnsupportedEncodingException;
 import java.lang.reflect.InvocationTargetException;
+import java.net.URLDecoder;
+import java.net.URLEncoder;
 import java.util.Arrays;
 import java.util.Calendar;
 import java.util.Collection;
@@ -1864,11 +1867,11 @@ public class XHTMLHelper {
 		return writer.toString();
 	}
 
-	public static String replaceJSTLData(ContentContext ctx, String xhtml) throws IllegalAccessException, InvocationTargetException, NoSuchMethodException {
+	public static String replaceJSTLData(ContentContext ctx, String xhtml) throws IllegalAccessException, InvocationTargetException, NoSuchMethodException, UnsupportedEncodingException {
 		Collection<String> params = StringHelper.extractItem(xhtml, "${param.", "}");
 		RequestService requestService = RequestService.getInstance(ctx.getRequest());
 		for (String param : params) {
-			xhtml = xhtml.replace("${param." + param + "}", requestService.getParameter(param, ""));
+			xhtml = xhtml.replace("${param." + param + "}", URLDecoder.decode(requestService.getParameter(param, ""), ContentContext.CHARACTER_ENCODING));
 		}
 
 		InfoBean infoBean = InfoBean.getCurrentInfoBean(ctx.getRequest());
