@@ -7,14 +7,14 @@
 </div>
 </c:if>
 
-<c:if test="${empty user}">
-<jsp:include page="${info.rootTemplateFolder}/jsp/login.jsp" />
-</c:if>
+<c:if test="${empty param.pwkey}">
 
 <c:if test="${not empty user}">
 <form id="user-logout" class="standard-form" action="${info.currentURL}" method="post">
 <div>
-	<div class="one_half"><h3>${i18n.view['user.welcome']}, <span>${user.name}</span></h3></div>
+	<div class="one_half">
+		<h3>${i18n.view['user.welcome']}, <span>${user.name}</span></h3>		
+	</div>
 	<div class="one_half last">
 	<input type="hidden" name="${info.staticData.compId}" value="${comp.id}" />
 	<input type="hidden" name="webaction" value="user-registration.logout" />
@@ -22,6 +22,41 @@
 	</div>
 </div>
 </form>
+</c:if>
+
+<c:if test="${empty user}">
+<jsp:include page="${info.rootTemplateFolder}/jsp/login.jsp" />
+<c:if test="${empty user}">
+<a id="forget-password-id" href="#" onclick="javascript:hideshow(document.getElementById('forget-password-id'));javascript:hideshow(document.getElementById('reset-password-with-email'));return false;">${i18n.view['user.message.forget-password']}</a>
+<div id="reset-password-with-email" class="reset-password">	
+	<form name="reset-password" method="post">
+	<fieldset>
+	<legend>${i18n.view['user.reset-password']}</legend>
+	<input type="hidden" name="webaction" value="user-registration.resetPasswordWithEmail" />	
+	<div class="line">
+		<label for="login">${i18n.view['form.email']}</label>
+	    <div class="input"><input id="reset-email" type="text" name="email" value="" /></div>
+	</div>
+	<div class="action">
+		<input type="submit" value="${i18n.view['form.submit']}" />
+	</div>	
+	</fieldset>
+	</form>
+</div>
+<script type="text/javascript">
+function hideshow(which){
+if (!document.getElementById)
+return
+if (which.style.display=="block")
+which.style.display="none"
+else
+which.style.display="block"
+}
+document.getElementById('reset-password-with-email').style.display="none";
+document.getElementById('forget-password-id').style.display="block";
+</script>
+</c:if>
+
 </c:if>
 
 <div class="widgetbox edit-user">
@@ -119,7 +154,9 @@
 
 </c:if>
 
-<c:if test="${not empty user}">
+</c:if>
+
+<c:if test="${not empty user || not empty param.pwkey}">
 
 <div class="widgetbox edit-user">
 <h3><span>${i18n.view['user.change-password']}</span></h3>
@@ -130,10 +167,15 @@
 	<input type="hidden" name="user" value="${user.name}" />
 </div>
 
+<c:if test="${empty param.pwkey}">
 <div class="line">
 	<label for="password">${i18n.view['user.current-password']}</label>
 	<input type="password" id="password" name="password" value="" /> 
 </div>
+</c:if>
+<c:if test="${not empty param.pwkey}">
+	<input type="hidden" id="pwkey" name="pwkey" value="${param.pwkey}" />
+</c:if>
 <div class="one_half">
 <div class="line">
 	<label for="newpassword1">${i18n.view['user.new-password']}</label>

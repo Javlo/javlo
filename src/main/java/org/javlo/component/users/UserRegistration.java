@@ -7,6 +7,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import javax.mail.internet.AddressException;
 import javax.mail.internet.InternetAddress;
 import javax.servlet.http.HttpSession;
 
@@ -18,6 +19,7 @@ import org.javlo.context.GlobalContext;
 import org.javlo.helper.BeanHelper;
 import org.javlo.helper.ComponentHelper;
 import org.javlo.helper.LangHelper;
+import org.javlo.helper.NetHelper;
 import org.javlo.helper.PatternHelper;
 import org.javlo.helper.RequestParameterMap;
 import org.javlo.helper.ServletHelper;
@@ -220,15 +222,15 @@ public class UserRegistration extends AbstractVisualComponent implements IAction
 
 		UserRegistration comp = (UserRegistration) ComponentHelper.getComponentFromRequest(ctx);
 
-		IUserFactory userFactory;
+		UserFactory userFactory;
 		if (comp == null || comp.isAdminRegistration()) {
-			userFactory = AdminUserFactory.createUserFactory(globalContext, ctx.getRequest().getSession());
+			userFactory = (UserFactory)AdminUserFactory.createUserFactory(globalContext, ctx.getRequest().getSession());
 		} else {
-			userFactory = UserFactory.createUserFactory(globalContext, ctx.getRequest().getSession());
+			userFactory = (UserFactory)UserFactory.createUserFactory(globalContext, ctx.getRequest().getSession());
 		}
 
 		if (rs.getParameter("logout", null) != null) {
-			userFactory.logout(session);
+			userFactory.logout(session);			
 		} else {
 			String password = rs.getParameter("newpassword1", "").trim();
 			String password2 = rs.getParameter("newpassword2", "").trim();
@@ -236,11 +238,26 @@ public class UserRegistration extends AbstractVisualComponent implements IAction
 				return i18nAccess.getViewText("registration.error.password_notsame", "2 passwords must be the same.");
 			} else if (password.length() < 3) {
 				return i18nAccess.getViewText("registration.error.password_size", "password must be at least 3 characters.");
+			}			
+			IUserInfo userInfo;
+			if (rs.getParameter("pwkey", "").trim().length() > 2) {
+				userInfo = userFactory.getPasswordChangeWidthKey(rs.getParameter("pwkey", ""));
+				if (userInfo == null) {
+					return i18nAccess.getViewText("user.message.bad-password-key");
+				}				
+			} else {				
+				if (!ctx.getCurrentUser().isRightPassword(rs.getParameter("password", null), globalContext.getStaticConfig().isPasswordEncryt())) {
+					return i18nAccess.getViewText("user.message.bad-password");				
+				}  
+				userInfo = ctx.getCurrentUser().getUserInfo();
 			}
+			if (globalContext.getStaticConfig().isPasswordEncryt()) {
+				password = StringHelper.encryptPassword(password2);
+			}
+			userInfo.setPassword(password);
+			userFactory.store();
+			messageRepository.setGlobalMessage(new GenericMessage(i18nAccess.getViewText("registration.message.password_changed", "Password changed."), GenericMessage.INFO));
 		}
-
-		messageRepository.setGlobalMessage(new GenericMessage(i18nAccess.getViewText("registration.message.registred", "Password changed."), GenericMessage.INFO));
-
 		return null;
 	}
 
@@ -258,6 +275,31 @@ public class UserRegistration extends AbstractVisualComponent implements IAction
 			ctx.setUser();
 		}
 		return null;
+	}
+	
+	public static String performResetPasswordWithEmail(RequestService rs, GlobalContext globalContext, ContentContext ctx, MessageRepository messageRepository, I18nAccess i18nAccess) throws AddressException {		
+		UserFactory userFactory = (UserFactory)UserFactory.createUserFactory(globalContext, ctx.getRequest().getSession());
+		String email = rs.getParameter("email", "").trim();		
+		String passwordRetrieveKey = null;
+		if (StringHelper.isMail(email)) {
+			for(IUserInfo user : userFactory.getUserInfoList()) {
+				if (user.getEmail().equals(email)) {
+					passwordRetrieveKey = userFactory.createPasswordChangeKey(user);
+					Map<String,String> params = new HashMap<String, String>();
+					params.put("pwkey", passwordRetrieveKey);					
+					String url = URLHelper.createURL(ctx.getContextForAbsoluteURL(), params);					
+					String subject = i18nAccess.getViewText("user.mail.reset-password-subject");					
+					InternetAddress from = new InternetAddress(globalContext.getAdministratorEmail());
+					InternetAddress to = new InternetAddress(email);
+					NetHelper.sendMail(globalContext, from, to, null, null, subject+' '+globalContext.getGlobalTitle(), url);
+					messageRepository.setGlobalMessage(new GenericMessage(i18nAccess.getViewText("user.message.change-password-link"), GenericMessage.INFO));
+					return null;
+				}
+			}
+			return i18nAccess.getViewText("user.message.error.change-mail-not-found");
+		} else {
+			return i18nAccess.getViewText("form.error.email");
+		}		
 	}
 
 	@Override

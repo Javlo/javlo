@@ -9,6 +9,8 @@ import java.util.Arrays;
 import java.util.HashSet;
 import java.util.Set;
 
+import org.javlo.helper.StringHelper;
+
 /**
  * @author pvandermaesen
  */
@@ -105,6 +107,13 @@ public class User implements Principal, Serializable {
 
 	public void setContext(String context) {
 		this.context = context;
+	}
+	
+	public boolean isRightPassword(String pwd, boolean encrypt) {
+		if (encrypt) {
+			pwd = StringHelper.encryptPassword(pwd);
+		}
+		return getPassword().equals(pwd);
 	}
 
 }
