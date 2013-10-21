@@ -679,7 +679,7 @@ public class AdminAction extends AbstractModuleAction {
 			}
 
 			Collection<GlobalContextBean> ctxAllBean = new LinkedList<GlobalContextBean>();
-			Collection<GlobalContext> allContext = GlobalContextFactory.getAllGlobalContext(request.getSession());
+			Collection<GlobalContext> allContext = GlobalContextFactory.getAllGlobalContext(request.getSession().getServletContext());
 			Map<String, GlobalContextBean> masterCtx = new HashMap<String, AdminAction.GlobalContextBean>();
 			for (GlobalContext context : allContext) {
 				if (ctx.getCurrentEditUser() != null) {
@@ -861,7 +861,7 @@ public class AdminAction extends AbstractModuleAction {
 		}
 
 		try {
-			Collection<GlobalContext> allContext = GlobalContextFactory.getAllGlobalContext(session);
+			Collection<GlobalContext> allContext = GlobalContextFactory.getAllGlobalContext(session.getServletContext());
 			for (GlobalContext globalContext : allContext) {
 				if (globalContext.getUsersAccess().contains(user.getLogin())) {
 					return true;
@@ -1354,7 +1354,7 @@ public class AdminAction extends AbstractModuleAction {
 
 	public static String performComponentsForAll(RequestService rs, HttpSession session, AdminUserSecurity adminUserSecurity, ContentContext ctx, MessageRepository messageRepository, I18nAccess i18nAccess) throws ConfigurationException, IOException, NoSuchMethodException, ClassNotFoundException, IllegalArgumentException, InstantiationException, IllegalAccessException, InvocationTargetException {
 		GlobalContext currentContext = GlobalContext.getInstance(session, rs.getParameter("context", null));
-		Collection<GlobalContext> allContext = GlobalContextFactory.getAllGlobalContext(session);
+		Collection<GlobalContext> allContext = GlobalContextFactory.getAllGlobalContext(session.getServletContext());
 		for (GlobalContext context : allContext) {
 			if (ctx.getCurrentEditUser() != null) {
 				if (adminUserSecurity.isAdmin(ctx.getCurrentEditUser()) || context.getUsersAccess().contains(ctx.getCurrentEditUser().getLogin())) {

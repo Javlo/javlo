@@ -59,7 +59,7 @@ public class CommunicationModuleContext extends AbstractModuleContext {
 		boolean canListAll = adminUserSecurity.isMaster(ctx.getCurrentEditUser()) || adminUserSecurity.isGod(ctx.getCurrentEditUser());
 
 		if (canListAll) {
-			Collection<GlobalContext> allContext = GlobalContextFactory.getAllGlobalContext(request.getSession());
+			Collection<GlobalContext> allContext = GlobalContextFactory.getAllGlobalContext(request.getSession().getServletContext());
 			for (GlobalContext context : allContext) {
 				if (context.getAliasOf() == null || context.getAliasOf().trim().isEmpty()) {
 					String contextKey = context.getContextKey();
