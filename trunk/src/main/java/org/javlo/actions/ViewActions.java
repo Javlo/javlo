@@ -3,6 +3,9 @@
  */
 package org.javlo.actions;
 
+import java.util.Calendar;
+import java.util.Date;
+import java.util.LinkedList;
 import java.util.logging.Logger;
 
 import javax.servlet.http.HttpServletRequest;
@@ -15,13 +18,19 @@ import org.javlo.helper.NetHelper;
 import org.javlo.helper.PaginationContext;
 import org.javlo.helper.URLHelper;
 import org.javlo.i18n.I18nAccess;
+import org.javlo.mailing.MailingBuilder;
+import org.javlo.navigation.MenuElement;
 import org.javlo.rendering.Device;
+import org.javlo.service.ContentService;
 import org.javlo.template.Template;
 
 /**
  * @author pvandermaesen list of actions for search in cms.
  */
 public class ViewActions implements IAction {
+
+	private static final String CHANGES_NOTIFICATION_TIME_A = ViewActions.class.getName() + ".TIME_A";
+	private static final String CHANGES_NOTIFICATION_TIME_B = ViewActions.class.getName() + ".TIME_B";
 
 	/**
 	 * create a static logger.
@@ -113,6 +122,59 @@ public class ViewActions implements IAction {
 			logger.fine("new page selected : " + paginationContext.getPage());
 		}
 		return null;
+	}
+
+	/**
+	 * Send notifications for pages modified between TimeA and TimeB. The timeline is TimeB -> TimeA -> Now .
+	 * <br/>After the process: TimeA become TimeB and Now become TimeA. 
+	 * @param ctx
+	 * @param globalContext
+	 * @param content
+	 * @return
+	 */
+	public static String performCheckChangesAndNotify(ContentContext ctx, GlobalContext globalContext, ContentService content) {
+		Date now = new Date();
+		Date timeA = (Date) globalContext.getAttribute(CHANGES_NOTIFICATION_TIME_A);
+		Date timeB = (Date) globalContext.getAttribute(CHANGES_NOTIFICATION_TIME_B);
+		if (timeA == null || timeB == null) {
+			Calendar cal = Calendar.getInstance();
+			cal.setTime(now);
+			int interval = globalContext.getStaticConfig().getTimeBetweenChangeNotification();
+			cal.add(Calendar.MINUTE, -interval);
+			timeA = cal.getTime();
+			cal.add(Calendar.MINUTE, -interval);
+			timeB = cal.getTime();
+		}
+		try {
+			for (MenuElement page : content.getNavigation(ctx).getAllChildren()) {
+				Date mod = page.getModificationDate();
+				if (mod != null && mod.after(timeB) && !mod.after(timeA)) {
+					sendPageChangeNotification(ctx, page);
+				}
+			}
+		} catch (Exception ex) {
+			ex.printStackTrace();
+		}
+		timeB = timeA;
+		timeA = now;
+		globalContext.setAttribute(CHANGES_NOTIFICATION_TIME_A, timeA);
+		globalContext.setAttribute(CHANGES_NOTIFICATION_TIME_B, timeB);
+
+		return null;
+	}
+	private static void sendPageChangeNotification(ContentContext ctx, MenuElement page) throws Exception {
+		ctx = ctx.getContextOnPage(page);
+		GlobalContext globalContext = ctx.getGlobalContext();
+
+		I18nAccess i18nAccess = I18nAccess.getInstance(ctx);
+
+		MailingBuilder mb = new MailingBuilder();
+		mb.setSender(globalContext.getAdministratorEmail());
+		mb.setEditorGroups(new LinkedList<String>(page.getEditorRoles()));
+		mb.getExcludedUsers().add(page.getLatestEditor());
+		mb.setSubject(i18nAccess.getText("collaborative.mail.modified", "Page modified: ") + page.getTitle(ctx));
+		mb.prepare(ctx);
+		mb.sendMailing(ctx);
 	}
 
 	@Override

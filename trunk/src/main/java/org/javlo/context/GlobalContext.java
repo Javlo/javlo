@@ -64,6 +64,7 @@ import org.javlo.module.core.ModuleException;
 import org.javlo.module.core.ModulesContext;
 import org.javlo.navigation.IURLFactory;
 import org.javlo.navigation.MenuElement;
+import org.javlo.navigation.URLTriggerThread;
 import org.javlo.service.ContentService;
 import org.javlo.service.RequestService;
 import org.javlo.service.ReverseLinkService;
@@ -143,6 +144,8 @@ public class GlobalContext implements Serializable {
 	private final SmartMap frontCache = new SmartMap();
 
 	private ServletContext application;
+
+	private URLTriggerThread changeNotificationThread;
 
 	/**
 	 * create a static logger.
@@ -428,12 +431,31 @@ public class GlobalContext implements Serializable {
 	public void initExternalService(ContentContext ctx) {
 		if (!externalServiceInitalized) {
 			externalServiceInitalized = true;
-			// put here code to initialize external services 
+			// put here code to initialize external services
+			if (isCollaborativeMode()) {
+				int minBetweenCheck = getStaticConfig().getTimeBetweenChangeNotification();
+				Map<String, String> params = new HashMap<String, String>();
+				params.put("webaction", "view.checkChangesAndNotify");
+				ContentContext absoluteCtx = ctx.getContextForAbsoluteURL();
+				absoluteCtx.setAjax(true);
+				absoluteCtx.setRenderMode(ContentContext.VIEW_MODE);
+				String url = URLHelper.createURL(absoluteCtx, "/", params);
+				try {
+					URL urlToTrigger = new URL(url);
+					changeNotificationThread = new URLTriggerThread(minBetweenCheck, urlToTrigger);
+					changeNotificationThread.start();
+				} catch (MalformedURLException ex) {
+					ex.printStackTrace();
+				}
+			}
 		}
 	}
 
 	public void destroy() {
 		// put here code to destroy the global context 
+		if (changeNotificationThread != null) {
+			changeNotificationThread.stopThread();
+		}
 	}
 
 	/**
