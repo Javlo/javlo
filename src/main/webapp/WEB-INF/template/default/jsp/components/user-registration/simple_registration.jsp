@@ -173,7 +173,7 @@ document.getElementById('forget-password-id').style.display="block";
 	<label for="password">${i18n.view['user.current-password']}</label>
 	<input type="password" id="password" name="password" value="" /> 
 </div>
-</div>
+</div><div class="one_half last">&nbsp;</div>
 </c:if>
 <c:if test="${not empty param.pwkey}">
 	<input type="hidden" id="pwkey" name="pwkey" value="${param.pwkey}" />
