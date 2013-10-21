@@ -29,6 +29,7 @@ import org.javlo.user.IUserFactory;
 import org.javlo.user.IUserInfo;
 import org.javlo.user.UserFactory;
 
+//TODO Use MailingBuilder
 public class MailingModuleContext extends AbstractModuleContext {
 
 	private static final String MODULE_NAME = "mailing";

@@ -1254,4 +1254,8 @@ public class StaticConfig extends Observable {
 	public String getEditTemplateMode() {
 		return properties.getString("edit-template.mode", "default");
 	}
+
+	public int getTimeBetweenChangeNotification() {
+		return Integer.parseInt(properties.getString("time-between-change-notification", "5"));
+	}
 }
