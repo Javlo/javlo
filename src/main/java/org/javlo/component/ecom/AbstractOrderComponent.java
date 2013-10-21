@@ -131,17 +131,16 @@ public abstract class AbstractOrderComponent extends AbstractVisualComponent {
 			params.put("body", getConfirmationEmail(basket));
 			params.put("total", basket.getTotalIncludingVATString());
 			params.put("communication", basket.getStructutedCommunication());
-			params.put("firstName", basket.getFirstName());
-			params.put("lastName", basket.getLastName());
+			params.put("firstName", StringHelper.toHTMLAttribute(basket.getFirstName()));
+			params.put("lastName", StringHelper.toHTMLAttribute(basket.getLastName()));
 			params.put("basketSize", ""+basket.getSize());
 			params.put("basketId", ""+basket.getId());
-			String basketTable = URLEncoder.encode(renderBasket(ctx, basket), ContentContext.CHARACTER_ENCODING);
-			System.out.println("***** AbstractOrderComponent.sendConfirmationEmail : basketTable = "+basketTable); //TODO: remove debug trace
+			String basketTable = URLEncoder.encode(renderBasket(ctx, basket), ContentContext.CHARACTER_ENCODING);			
 			params.put("basketTable", basketTable);
-			params.put("address", basket.getAddress());
-			params.put("city", basket.getCity());
+			params.put("address", StringHelper.toHTMLAttribute(basket.getAddress()));
+			params.put("city", StringHelper.toHTMLAttribute(basket.getCity()));
 			params.put("zip", basket.getZip());
-			params.put("country", new Locale(ctx.getRequestContentLanguage(), basket.getCountry()).getDisplayCountry(ctx.getLocale()));
+			params.put("country", StringHelper.toHTMLAttribute(new Locale(ctx.getRequestContentLanguage(), basket.getCountry()).getDisplayCountry(ctx.getLocale())));
 			params.put("currencyCode", ""+basket.getCurrencyCode());
 			params.putAll(new ReadOnlyPropertiesMap(getData()));
 			String pageURL = URLHelper.createURL(ctx.getContextForAbsoluteURL().getContextWithOtherRenderMode(ContentContext.PAGE_MODE), page.getPath(), params);
