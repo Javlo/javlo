@@ -44,7 +44,7 @@ public class ContentService {
 	protected static Logger logger = Logger.getLogger(ContentService.class.getName());
 
 	public static void clearAllContextCache(ContentContext ctx) throws Exception {
-		Collection<GlobalContext> allContext = GlobalContextFactory.getAllGlobalContext(ctx.getRequest().getSession());
+		Collection<GlobalContext> allContext = GlobalContextFactory.getAllGlobalContext(ctx.getRequest().getSession().getServletContext());
 		for (GlobalContext globalContext : allContext) {
 			logger.info("refresh context : " + globalContext.getContextKey());
 			ContentService content = ContentService.getInstance(globalContext);

@@ -138,6 +138,8 @@ public class GlobalContext implements Serializable {
 
 	private boolean urlFromFactoryImported = false;
 
+	private boolean externalServiceInitalized = false;
+
 	private final SmartMap frontCache = new SmartMap();
 
 	private ServletContext application;
@@ -421,6 +423,17 @@ public class GlobalContext implements Serializable {
 
 			return newInstance;
 		}
+	}
+
+	public void initExternalService(ContentContext ctx) {
+		if (!externalServiceInitalized) {
+			externalServiceInitalized = true;
+			// put here code to initialize external services 
+		}
+	}
+
+	public void destroy() {
+		// put here code to destroy the global context 
 	}
 
 	/**

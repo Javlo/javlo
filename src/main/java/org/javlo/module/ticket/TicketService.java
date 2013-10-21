@@ -84,7 +84,7 @@ public class TicketService {
 
 	public static List<TicketBean> getAllTickets(ContentContext ctx) throws IOException, ConfigurationException {
 		List<TicketBean> allTickets = new LinkedList<TicketBean>();
-		Collection<GlobalContext> allContext = GlobalContextFactory.getAllGlobalContext(ctx.getRequest().getSession());
+		Collection<GlobalContext> allContext = GlobalContextFactory.getAllGlobalContext(ctx.getRequest().getSession().getServletContext());
 		for (GlobalContext gc : allContext) {
 			TicketService ticketService = TicketService.getInstance(gc);
 			allTickets.addAll(ticketService.getTickets());

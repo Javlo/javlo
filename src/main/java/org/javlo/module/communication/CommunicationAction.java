@@ -65,7 +65,7 @@ public class CommunicationAction extends AbstractModuleAction {
 		comm.setCurrentUser(ctx.getCurrentUserId());
 
 		if (comm.isAllSites()) {
-			Collection<GlobalContext> allContext = GlobalContextFactory.getAllGlobalContext(request.getSession());
+			Collection<GlobalContext> allContext = GlobalContextFactory.getAllGlobalContext(request.getSession().getServletContext());
 			for (GlobalContext context : allContext) {
 				if (context.getAliasOf() == null || context.getAliasOf().trim().isEmpty()) {
 					prepareSite(context, comm, adminUserSecurity, imService);
