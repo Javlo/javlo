@@ -1590,7 +1590,7 @@ public class XHTMLHelper {
 	}
 
 	public static void main(String[] args) {
-		System.out.println("***** XHTMLHelper.main : xhtml = "+StringEscapeUtils.escapeHtml("été à moi.")); //TODO: remove debug trace
+
 	}
 
 	public static String removeTag(String html, String tag) throws BadXMLException {
