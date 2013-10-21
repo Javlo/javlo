@@ -32,6 +32,7 @@ import org.javlo.helper.StringHelper;
 import org.javlo.helper.URLHelper;
 import org.javlo.user.exception.UserAllreadyExistException;
 import org.javlo.utils.CSVFactory;
+import org.javlo.utils.TimeMap;
 
 /**
  * @author pvandermaesen
@@ -54,6 +55,8 @@ public class UserFactory implements IUserFactory, Serializable {
 	public static final String USER_FACTORY_KEY = "_user_factory_";
 
 	private String userInfoFile = null;
+	
+	private static Map<String,IUserInfo> changePasswordReference = new TimeMap<String, IUserInfo>();
 
 	protected List<IUserInfo> userInfoList = null; // TODO: create a external
 	// application scope class
@@ -582,6 +585,22 @@ public class UserFactory implements IUserFactory, Serializable {
 			}
 		}
 
+	}
+	
+	/**
+	 * retrieve user for change password width special code.
+	 * Used when user had forget password.
+	 * @param passwordChangeCode
+	 * @return
+	 */
+	public IUserInfo getPasswordChangeWidthKey(String passwordChangeCode) {		
+		return changePasswordReference.get(passwordChangeCode);
+	}
+	
+	public String createPasswordChangeKey(IUserInfo user) {
+		String passwordCode = StringHelper.getRandomString(64,"0123456789abcdefghijklmnopqrstuvwxyz");
+		changePasswordReference.put(passwordCode, user);
+		return passwordCode;
 	}
 
 }
