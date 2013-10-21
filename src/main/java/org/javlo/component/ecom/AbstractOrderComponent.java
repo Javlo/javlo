@@ -1,11 +1,14 @@
 package org.javlo.component.ecom;
 
 import java.io.ByteArrayOutputStream;
+import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.PrintStream;
 import java.io.StringReader;
 import java.net.URL;
+import java.net.URLEncoder;
 import java.util.HashMap;
+import java.util.Locale;
 import java.util.Map;
 import java.util.Properties;
 
@@ -14,10 +17,12 @@ import javax.mail.internet.InternetAddress;
 import org.javlo.component.core.AbstractVisualComponent;
 import org.javlo.context.ContentContext;
 import org.javlo.ecom.Basket;
+import org.javlo.ecom.Product;
 import org.javlo.exception.ResourceNotFoundException;
 import org.javlo.helper.NetHelper;
 import org.javlo.helper.StringHelper;
 import org.javlo.helper.URLHelper;
+import org.javlo.i18n.I18nAccess;
 import org.javlo.navigation.MenuElement;
 import org.javlo.service.ContentService;
 import org.javlo.utils.ReadOnlyPropertiesMap;
@@ -79,7 +84,37 @@ public abstract class AbstractOrderComponent extends AbstractVisualComponent {
 		out.println("");
 		out.close();
 		return new String(outStream.toByteArray());
-	}	
+	}
+	
+	protected static String renderBasket(ContentContext ctx, Basket basket) throws FileNotFoundException, IOException {
+		ByteArrayOutputStream outStream = new ByteArrayOutputStream();
+		PrintStream out = new PrintStream(outStream);
+		I18nAccess i18nAccess = I18nAccess.getInstance(ctx.getRequest());
+		
+		out.println("<table id=\"basket-details\">");
+		out.println("<thead>");
+		out.println("<tr>");
+		out.println("<td>"+i18nAccess.getViewText("ecom.product")+"</td>");
+		out.println("<td>"+i18nAccess.getViewText("ecom.quantity")+"</td>");
+		out.println("<td>"+i18nAccess.getViewText("ecom.total_evat")+"</td>");
+		out.println("<td>"+i18nAccess.getViewText("ecom.total_vat")+"</td>");
+		out.println("</tr>");
+		out.println("</thead>");		
+		
+		for (Product product : basket.getProducts()) {
+			out.println("<tr>");
+			out.println("<td>"+product.getName()+"</td>");
+			out.println("<td>"+product.getQuantity()+"</td>");
+			out.println("<td>"+Basket.renderPrice(ctx,product.getPrice()-(product.getPrice()*product.getVAT()),product.getCurrencyCode())+"</td>");
+			out.println("<td>"+Basket.renderPrice(ctx,product.getPrice(),product.getCurrencyCode())+"</td>");			
+			out.println("</tr>");
+		}
+		
+		out.println("</table>");
+		
+		out.close();
+		return new String(outStream.toByteArray());
+	}
 	
 	protected void sendConfirmationEmail(ContentContext ctx, Basket basket) throws Exception {
 		/** send email **/
@@ -99,6 +134,14 @@ public abstract class AbstractOrderComponent extends AbstractVisualComponent {
 			params.put("firstName", basket.getFirstName());
 			params.put("lastName", basket.getLastName());
 			params.put("basketSize", ""+basket.getSize());
+			params.put("basketId", ""+basket.getId());
+			String basketTable = URLEncoder.encode(renderBasket(ctx, basket), ContentContext.CHARACTER_ENCODING);
+			System.out.println("***** AbstractOrderComponent.sendConfirmationEmail : basketTable = "+basketTable); //TODO: remove debug trace
+			params.put("basketTable", basketTable);
+			params.put("address", basket.getAddress());
+			params.put("city", basket.getCity());
+			params.put("zip", basket.getZip());
+			params.put("country", new Locale(ctx.getRequestContentLanguage(), basket.getCountry()).getDisplayCountry(ctx.getLocale()));
 			params.put("currencyCode", ""+basket.getCurrencyCode());
 			params.putAll(new ReadOnlyPropertiesMap(getData()));
 			String pageURL = URLHelper.createURL(ctx.getContextForAbsoluteURL().getContextWithOtherRenderMode(ContentContext.PAGE_MODE), page.getPath(), params);
