@@ -75,6 +75,13 @@ public class ContentOnlyServlet extends HttpServlet {
 				if (templateID == null) {
 					if (ctx.getCurrentTemplate() != null) {
 						template = ctx.getCurrentTemplate();
+						if (!template.isMailing()) {
+							for (Template mailingTemplate : TemplateFactory.getAllTemplatesFromContext(globalContext)){
+								if (mailingTemplate.isMailing()) {
+									templateID = mailingTemplate.getId();
+								}
+							}
+						}
 					} else {
 						Iterator<Template> ite = ctx.getCurrentTemplates().iterator();
 						Template t = ite.next();
