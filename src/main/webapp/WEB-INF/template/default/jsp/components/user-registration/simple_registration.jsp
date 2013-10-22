@@ -25,17 +25,22 @@
 </c:if>
 
 <c:if test="${empty user}">
+<c:if test="${empty user}"><jsp:include page="fb_login.jsp" /></c:if>
 <jsp:include page="${info.rootTemplateFolder}/jsp/login.jsp" />
 <c:if test="${empty user}">
 <a id="forget-password-id" href="#" onclick="javascript:hideshow(document.getElementById('forget-password-id'));javascript:hideshow(document.getElementById('reset-password-with-email'));return false;">${i18n.view['user.message.forget-password']}</a>
-<div id="reset-password-with-email" class="reset-password">	
+<div id="reset-password-with-email" class="reset-password">
 	<form name="reset-password" method="post">
 	<fieldset>
 	<legend>${i18n.view['user.reset-password']}</legend>
-	<input type="hidden" name="webaction" value="user-registration.resetPasswordWithEmail" />	
+	<input type="hidden" name="webaction" value="user-registration.resetPasswordWithEmail" />
+	<div class="cols">
+	<div class="one_half">		
 	<div class="line">
 		<label for="login">${i18n.view['form.email']}</label>
 	    <div class="input"><input id="reset-email" type="text" name="email" value="" /></div>
+	</div>
+	</div>
 	</div>
 	<div class="action">
 		<input type="submit" value="${i18n.view['form.submit']}" />

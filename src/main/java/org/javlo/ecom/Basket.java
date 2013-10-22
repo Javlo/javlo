@@ -67,7 +67,7 @@ public class Basket implements Serializable {
 	private String city;
 	private String info;
 	private String user;
-	private boolean transfertAddress = false;
+	private String transfertAddressLogin = null;
 	private String description;
 	private boolean presumptiveFraud = false;
 
@@ -634,12 +634,16 @@ public class Basket implements Serializable {
 		return new String(outStream.toByteArray());
 	}
 
-	public boolean isTransfertAddress() {
-		return transfertAddress;
+	public String getTransfertAddressLogin() {
+		return transfertAddressLogin;
 	}
 
-	public void setTransfertAddress(boolean transfertAddress) {
-		this.transfertAddress = transfertAddress;
+	/**
+	 * set the username of user that we have transfert address info.
+	 * @param login
+	 */
+	public void setTransfertAddressLogin(String login) {
+		this.transfertAddressLogin = login;
 	}
 
 	public String getUser() {

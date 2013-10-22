@@ -14,7 +14,7 @@ public class SocialService {
 
 	private GlobalContext globalContext;
 
-	private ISocialNetwork facebook;
+	private Facebook facebook;
 	private ISocialNetwork twitter;
 
 	public static SocialService getInstance(GlobalContext globalContext) {
@@ -57,7 +57,7 @@ public class SocialService {
 		return null;
 	}
 
-	public ISocialNetwork getFacebook() {
+	public Facebook getFacebook() {
 		if (facebook == null) {
 			facebook = new Facebook();
 			initSocialNetwork(facebook);

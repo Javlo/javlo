@@ -17,17 +17,19 @@ import com.google.gson.GsonBuilder;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
+import com.google.gson.reflect.TypeToken;
 
 public class JSONMap implements Map<String, Object> {
 
 	public static final Gson JSON = new GsonBuilder().setDateFormat("yyyy-MM-dd_HH-mm-ss-SSS ").create();
 
 	public static JSONMap parseMap(String jsonStr) {
-		return transformMap(JSON.fromJson(jsonStr, JsonElement.class));
+		return transformMap(JSON.fromJson(jsonStr, JsonArray.class));
 	}
 
 	public static Object parse(String jsonStr) {
-		return transform(JSON.fromJson(jsonStr, JsonElement.class));
+		JsonElement jsonElement = JSON.fromJson(jsonStr, JsonElement.class);
+		return transform(jsonElement);
 	}
 
 	public static JSONMap transformMap(JsonElement element) {
@@ -59,8 +61,6 @@ public class JSONMap implements Map<String, Object> {
 		private Object value;
 
 		public JSONMapEntry(String key, Object value) {
-			System.out.println("***** JSONMap.JSONMapEntry.JSONMapEntry : key = " + key); // TODO: remove debug trace
-			System.out.println("***** JSONMap.JSONMapEntry.JSONMapEntry : value =  " + value); // TODO: remove debug trace
 			this.key = key;
 			this.value = value;
 		}
@@ -204,7 +204,10 @@ public class JSONMap implements Map<String, Object> {
 
 		// {"images":{"url1":"url 2","url":"url 1"}}
 
-		JSONMap obj = (JSONMap) parse("{'images':[{'url':'http://123fetiche.com/photos/MetArt-35-203//004.jpg'},{'url':'http://123fetiche.com/photos/MetArt-35-203//004.jpg'}]}");
-		System.out.println("***** JSONMap.main : images = " + obj.get("images").getClass()); // TODO: remove debug trace
+		String data = "[{\"name\":\"Patrick Vandermaesen\",\"first_name\":\"Patrick\",\"last_name\":\"Vandermaesen\",\"uid\":\"693608149\",\"email\":\"pvandermaesen\u0040noctis.be\"}]";
+		TypeToken<ArrayList<Map<String,String>>> list = new TypeToken<ArrayList<Map<String,String>>>(){};
+		ArrayList<Map<String,String>> info = (ArrayList<Map<String,String>>)JSONMap.JSON.fromJson(data,list.getType());
+		
+		System.out.println("***** JSONMap.main : name = " + info.get(0).get("name")); // TODO: remove debug trace
 	}
 }

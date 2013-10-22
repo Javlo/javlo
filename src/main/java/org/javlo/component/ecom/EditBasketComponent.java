@@ -34,7 +34,7 @@ public class EditBasketComponent extends AbstractVisualComponent implements IAct
 		}
 
 		if (ctx.getCurrentUser() != null) {
-			if (!basket.isTransfertAddress()) {
+			if (!basket.getTransfertAddressLogin().equals(ctx.getCurrentUser().getLogin())) {
 				IUserInfo iui = ctx.getCurrentUser().getUserInfo();
 				if (iui instanceof UserInfo) {
 					UserInfo ui = (UserInfo) iui;
@@ -46,7 +46,7 @@ public class EditBasketComponent extends AbstractVisualComponent implements IAct
 					basket.setCountry(ui.getCountry());
 					basket.setContactEmail(ui.getEmail());
 					basket.setContactPhone(ui.getMobile());
-					basket.setTransfertAddress(true);
+					basket.setTransfertAddressLogin(ctx.getCurrentUser().getLogin());
 				}
 			}
 		}

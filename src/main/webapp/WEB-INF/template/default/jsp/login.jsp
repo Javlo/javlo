@@ -6,8 +6,8 @@
 	<legend>${i18n.view['user.login']}</legend>
 	<div class="one_half">
 	<div class="line">
-		<label for="login">${i18n.view['form.login']}</label>
-	    <div class="input"><input id="login" type="text" name="j_username" value="" /></div>
+		<label for="j_username">${i18n.view['form.login']}</label>
+	    <div class="input"><input id="j_username" type="text" name="j_username" value="" /></div>
 	</div>
 	</div><div class="one_half last">
 	<div class="line">
