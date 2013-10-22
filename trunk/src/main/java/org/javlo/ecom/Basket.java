@@ -67,7 +67,7 @@ public class Basket implements Serializable {
 	private String city;
 	private String info;
 	private String user;
-	private String transfertAddressLogin = null;
+	private String transfertAddressLogin = "";
 	private String description;
 	private boolean presumptiveFraud = false;
 
