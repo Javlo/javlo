@@ -1058,6 +1058,10 @@ public class StaticConfig extends Observable {
 	public boolean isMailingThread() {
 		return StringHelper.isTrue(properties.getString("mailing.thread", "true"));
 	}
+	
+	public boolean isNotificationThread() {
+		return StringHelper.isTrue(properties.getString("noctification.thread", "false"));
+	}
 
 	public boolean isPasswordEncryt() {
 		return properties.getBoolean("security.encrypt-password", true);
