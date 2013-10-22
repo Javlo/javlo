@@ -33,10 +33,13 @@ import org.javlo.message.MessageRepository;
 import org.javlo.module.core.Module;
 import org.javlo.module.core.ModulesContext;
 import org.javlo.service.RequestService;
+import org.javlo.service.social.Facebook;
+import org.javlo.service.social.SocialService;
 import org.javlo.user.AdminUserFactory;
 import org.javlo.user.AdminUserInfo;
 import org.javlo.user.IUserFactory;
 import org.javlo.user.IUserInfo;
+import org.javlo.user.User;
 import org.javlo.user.UserFactory;
 import org.javlo.user.UserInfo;
 
@@ -272,6 +275,7 @@ public class UserRegistration extends AbstractVisualComponent implements IAction
 				userFactory = UserFactory.createUserFactory(globalContext, ctx.getRequest().getSession());
 			}
 			userFactory.logout(session);
+			session.setAttribute("logoutDone", "true");			
 			ctx.setUser();
 		}
 		return null;
@@ -300,6 +304,23 @@ public class UserRegistration extends AbstractVisualComponent implements IAction
 		} else {
 			return i18nAccess.getViewText("form.error.email");
 		}		
+	}
+	
+	public static String performFacebookLogin(RequestService rs, ContentContext ctx, HttpSession session, GlobalContext globalContext, MessageRepository messageRepository, I18nAccess i18nAccess) throws Exception {		
+		String token = rs.getParameter("token", null);		
+		Facebook facebook = SocialService.getInstance(globalContext).getFacebook();
+		IUserInfo ui = facebook.getInitialUserInfo(token);		
+		IUserFactory userFactory = UserFactory.createUserFactory(globalContext, session);
+		User user = userFactory.getUser(ui.getLogin());
+		if (user == null) {
+			userFactory.addUserInfo(ui);
+			userFactory.store();
+			messageRepository.setGlobalMessage(new GenericMessage(i18nAccess.getViewText("user.message.facebook-login"), GenericMessage.INFO));			
+		} else {
+			messageRepository.setGlobalMessage(new GenericMessage(i18nAccess.getViewText("user.message.facebook-login"), GenericMessage.INFO));
+		}
+		ctx.setCurrentUser(userFactory.autoLogin(ctx.getRequest(), ui.getLogin()));
+		return null;
 	}
 
 	@Override
