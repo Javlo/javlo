@@ -10,7 +10,7 @@
 </c:if>
 </c:if>
 <c:if test="${not empty contentContext.currentUser}">
-<form>
+<form id="billing-info-form" action="${info.currentURL}" method="post">
 	<fieldset>	
 		<legend>${i18n.view["ecom.delivery-address"]}</legend>
 			<c:set var="user" value="${contentContext.currentUser}" />
