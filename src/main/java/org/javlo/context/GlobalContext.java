@@ -432,7 +432,7 @@ public class GlobalContext implements Serializable {
 		if (!externalServiceInitalized) {
 			externalServiceInitalized = true;
 			// put here code to initialize external services
-			if (isCollaborativeMode()) {
+			if (isCollaborativeMode() && getStaticConfig().isNotificationThread()) {
 				int minBetweenCheck = getStaticConfig().getTimeBetweenChangeNotification();
 				Map<String, String> params = new HashMap<String, String>();
 				params.put("webaction", "view.checkChangesAndNotify");
