@@ -1521,11 +1521,16 @@ public class Template implements Comparable<Template> {
 		}
 	}
 
-	private List<TemplatePlugin> getTemplatePugin(GlobalContext globalContext) throws IOException {
+	private List<String> getAllPluginsName(GlobalContext globalContext) {
 		TemplatePluginFactory templatePluginFactory = TemplatePluginFactory.getInstance(globalContext.getServletContext());
 		List<String> plugins = new LinkedList<String>(globalContext.getTemplatePlugin());
 		plugins.addAll(getPlugins());
-		return templatePluginFactory.getAllTemplatePlugin(plugins);
+		return plugins;
+	}
+	
+	private List<TemplatePlugin> getTemplatePugin(GlobalContext globalContext) throws IOException {
+		TemplatePluginFactory templatePluginFactory = TemplatePluginFactory.getInstance(globalContext.getServletContext());
+		return templatePluginFactory.getAllTemplatePlugin(getAllPluginsName(globalContext));
 	}
 
 	public synchronized String getRenderer(ContentContext ctx, String file) throws Exception {
@@ -1845,7 +1850,7 @@ public class Template implements Comparable<Template> {
 
 			/** plugins **/
 			if (globalContext != null) {
-				Collection<String> currentPlugin = globalContext.getTemplatePlugin();
+				Collection<String> currentPlugin = getAllPluginsName(globalContext);
 				if (currentPlugin.size() > 0) {
 					TemplatePluginFactory templatePluginFactory = TemplatePluginFactory.getInstance(ctx.getRequest().getSession().getServletContext());
 					for (String pluginId : currentPlugin) {
