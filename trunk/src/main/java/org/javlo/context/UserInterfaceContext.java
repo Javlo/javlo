@@ -87,12 +87,14 @@ public class UserInterfaceContext {
 	private void store() throws IOException {
 		AdminUserFactory userFact = AdminUserFactory.createUserFactory(globalContext, session);
 		User user = userFact.getCurrentUser(session);
-		user = userFact.getUser(user.getLogin()); // get real user
 		if (user != null) {
-			// not god user, so storable user
-			IUserInfo ui = user.getUserInfo();
-			ui.setInfo(toString());
-			userFact.updateUserInfo(ui);
+			user = userFact.getUser(user.getLogin()); // get real user
+			if (user != null) {
+				// not god user, so storable user
+				IUserInfo ui = user.getUserInfo();
+				ui.setInfo(toString());
+				userFact.updateUserInfo(ui);
+			}
 		}
 	}
 

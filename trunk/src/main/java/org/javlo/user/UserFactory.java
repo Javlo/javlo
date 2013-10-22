@@ -598,7 +598,7 @@ public class UserFactory implements IUserFactory, Serializable {
 	}
 	
 	public String createPasswordChangeKey(IUserInfo user) {
-		String passwordCode = StringHelper.getRandomString(64,"0123456789abcdefghijklmnopqrstuvwxyz");
+		String passwordCode = StringHelper.getRandomString(32,"0123456789abcdefghijklmnopqrstuvwxyz")+StringHelper.getRandomId();
 		changePasswordReference.put(passwordCode, user);
 		return passwordCode;
 	}

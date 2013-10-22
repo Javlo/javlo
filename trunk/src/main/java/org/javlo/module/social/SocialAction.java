@@ -1,5 +1,7 @@
 package org.javlo.module.social;
 
+import javax.servlet.http.HttpSession;
+
 import org.javlo.actions.AbstractModuleAction;
 import org.javlo.context.ContentContext;
 import org.javlo.context.GlobalContext;
@@ -8,8 +10,13 @@ import org.javlo.message.GenericMessage;
 import org.javlo.message.MessageRepository;
 import org.javlo.module.core.ModulesContext;
 import org.javlo.service.RequestService;
+import org.javlo.service.social.Facebook;
 import org.javlo.service.social.ISocialNetwork;
 import org.javlo.service.social.SocialService;
+import org.javlo.user.IUserFactory;
+import org.javlo.user.IUserInfo;
+import org.javlo.user.User;
+import org.javlo.user.UserFactory;
 
 public class SocialAction extends AbstractModuleAction {
 
@@ -48,6 +55,20 @@ public class SocialAction extends AbstractModuleAction {
 		socialService.store();
 
 		messageRepository.setGlobalMessage(new GenericMessage(i18nAccess.getText("social.message.network-updated"), GenericMessage.INFO));
+		return null;
+	}
+	
+	public static String performFacebookLogin(RequestService rs, ContentContext ctx, HttpSession session, GlobalContext globalContext) throws Exception {
+		String token = rs.getParameter("token", null);
+		Facebook facebook = SocialService.getInstance(globalContext).getFacebook();
+		IUserInfo ui = facebook.getInitialUserInfo(token);		
+		IUserFactory userFactory = UserFactory.createUserFactory(globalContext, session);
+		User user = userFactory.getUser(ui.getLogin());
+		if (user == null) {
+			userFactory.addUserInfo(ui);
+			userFactory.store();
+		}	
+		userFactory.autoLogin(ctx.getRequest(), ui.getLogin());
 		return null;
 	}
 }
