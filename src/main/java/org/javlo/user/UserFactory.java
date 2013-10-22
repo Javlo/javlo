@@ -120,7 +120,7 @@ public class UserFactory implements IUserFactory, Serializable {
 
 		boolean logged = request.getUserPrincipal() != null && request.getUserPrincipal().getName().equals(login);
 		User user = getUser(login);
-
+		
 		if (user == null) {
 			// administrator auto login not possible
 			if (editCtx.getEditUser(login) != null && (logged || editCtx.hardAutoLogin(login))) {
@@ -130,6 +130,7 @@ public class UserFactory implements IUserFactory, Serializable {
 				user = null;
 			}
 		}
+		
 		if (user != null && globalCtx.getAdministrator().equals(user.getLogin())) {
 			user.getUserInfo().addRoles(new HashSet(Arrays.asList(new String[] { AdminUserSecurity.FULL_CONTROL_ROLE })));
 		}
@@ -138,8 +139,9 @@ public class UserFactory implements IUserFactory, Serializable {
 		}
 		if (user != null) {
 			user.setContext(globalContext.getContextKey());
-			request.getSession().setAttribute(SESSION_KEY, user);
+			request.getSession().setAttribute(SESSION_KEY, user);			
 		}
+		
 		return user;
 	}
 

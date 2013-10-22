@@ -27,7 +27,6 @@ import org.javlo.message.MessageRepository;
 import org.javlo.module.core.Module;
 import org.javlo.module.core.ModuleException;
 import org.javlo.module.core.ModulesContext;
-import org.javlo.service.exception.ServiceException;
 import org.javlo.user.AdminUserFactory;
 import org.javlo.user.AdminUserSecurity;
 import org.javlo.user.User;
@@ -85,9 +84,9 @@ public class ActionManager {
 		GlobalContext globalContext = GlobalContext.getInstance(request);
 		ModulesContext moduleContext = ModulesContext.getInstance(request.getSession(), globalContext);
 		Collection<Module> modules = moduleContext.getModules();
-		IAction action = null;
+		IAction action = null;		
 		for (Module module : modules) {
-			action = module.getAction();
+			action = module.getAction();			
 			if (group.equals(action.getActionGroupName())) {
 				return action;
 			}
@@ -201,7 +200,7 @@ public class ActionManager {
 				message = invokeAction(request, response, action, actionName);
 				logger.info("executed action : '" + actionName + "' return : " + message);
 			} else {
-				message = "actions class not found : " + action;
+				message = "actions class not found : " + actionName + " - group:"+group;
 				logger.severe(message);
 			}
 		} catch (Throwable t) {

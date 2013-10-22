@@ -1,11 +1,10 @@
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c"
 %><%@ taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions"
-%><c:if test="${not empty social.facebook.clientId}">
+%><c:if test="${not empty social.facebook.clientId && empty param.token && empty logoutDone}">
 <div id="fb-login-button"></div>
 <form id="fb-login-form" action="${info.currentURL}" method="post">
-<input name="token" type="text" id="fbtoken" />
-<input type="hidden" name="webaction" value="social.facebookLogin" />
-<input type="submit" />
+<input type="hidden" name="token" id="fbtoken" />
+<input type="hidden" name="webaction" value="user-registration.facebookLogin" />
 </form>
 <script src="http://connect.facebook.net/${contentContext.requestContentLanguage}/all.js" ></script>
 <div id="fb-root"></div>
@@ -24,12 +23,10 @@ function handleFacebook() {
 function onStatus(response) {
     console.info('onStatus', response);
     if (response.status === 'connected') {
-    	var uid = response.authResponse.userID;
-    	console.info('uid = '+uid);
     	 if (document.getElementById('fbtoken') != null) {
          	document.getElementById('fbtoken').value = response.authResponse.accessToken;
-         }
-    	showAccountInfo(uid);
+         	document.getElementById('fb-login-form').submit();
+         }    	
     } else {
     	showLoginButton()
     }
@@ -41,10 +38,6 @@ function showLoginButton() {
     var button = '<fb:login-button perms="email,user_birthday" />';
     document.getElementById('fb-login-button').innerHTML = button;
     FB.XFBML.parse(document.getElementById('fb-login-button'));
-}
-function showAccountInfo(uid) {
-	document.getElementById('fbtoken').value = response.authResponse.accessToken;
-	document.getElementById('fb-login-form').submit();	
 }
 handleFacebook();
 showLoginButton();
