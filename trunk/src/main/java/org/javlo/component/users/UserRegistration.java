@@ -61,6 +61,15 @@ public class UserRegistration extends AbstractVisualComponent implements IAction
 			setValue(ADMIN); // admin registration by default.
 		}
 	}
+	
+	@Override
+	public String getRenderer(ContentContext ctx) {
+		if (getValue().equals(ADMIN)) {
+			return null;
+		} else {
+			return super.getRenderer(ctx);
+		}
+	}
 
 	@Override
 	public void prepareView(ContentContext ctx) throws Exception {
@@ -130,11 +139,7 @@ public class UserRegistration extends AbstractVisualComponent implements IAction
 		IUserFactory userFactory;
 		UserInfo userInfo;
 
-		if (comp == null) {
-			return "Error component not found.";
-		}
-
-		if (comp.isAdminRegistration()) {
+		if (comp == null || comp.isAdminRegistration()) {
 			userFactory = AdminUserFactory.createUserFactory(globalContext, ctx.getRequest().getSession());
 			userInfo = new AdminUserInfo();
 		} else {
