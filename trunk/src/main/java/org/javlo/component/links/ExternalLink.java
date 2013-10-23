@@ -5,6 +5,7 @@ package org.javlo.component.links;
 
 import java.io.PrintWriter;
 import java.io.StringWriter;
+import java.net.URL;
 
 import org.javlo.component.core.ComplexPropertiesLink;
 import org.javlo.component.core.ComponentBean;
@@ -12,6 +13,7 @@ import org.javlo.component.core.ILink;
 import org.javlo.component.core.IReverseLinkComponent;
 import org.javlo.context.ContentContext;
 import org.javlo.context.GlobalContext;
+import org.javlo.helper.NetHelper;
 import org.javlo.helper.PatternHelper;
 import org.javlo.helper.StringHelper;
 import org.javlo.helper.XHTMLHelper;
@@ -126,6 +128,10 @@ public class ExternalLink extends ComplexPropertiesLink implements IReverseLinkC
 		return getId() + ID_SEPARATOR + "reverse-lnk";
 	}
 
+	public String getDownloadTitleInputName() {
+		return "download_title" + ID_SEPARATOR + getId();
+	}
+
 	@Override
 	protected String getEditXHTMLCode(ContentContext ctx) throws Exception {
 
@@ -155,12 +161,12 @@ public class ExternalLink extends ComplexPropertiesLink implements IReverseLinkC
 			out.println(XHTMLHelper.getReverlinkSelectType(ctx, getReverseLinkName(), reverseLink));
 			out.println("</div><div class=\"line\">");
 			out.println("<label for=\"" + getLinkName() + "\">" + linkTitle + "</label>");
-			out.print(" : <input id=\"" + getLinkName() + "\" name=\"" + getLinkName() + "\" value=\"");
+			out.print("<input id=\"" + getLinkName() + "\" name=\"" + getLinkName() + "\" value=\"");
 			out.print(link);
 			out.println("\"/></div><div class=\"line\">");
-			out.print("<label for=\"" + getLinkLabelName() + "\">" + labelTitle + "</label>");
-			out.print(" : ");
+			out.print("<label for=\"" + getLinkLabelName() + "\">" + labelTitle + "</label>");			
 			out.println(XHTMLHelper.getTextInput(getLinkLabelName(), label));
+			out.println("<input type=\"submit\" name=\"" + getDownloadTitleInputName() + "\" value=\"" + i18nAccess.getText("action.read-title") + "\" />");
 			out.println("</div></div>");
 		} catch (Exception e) {
 			e.printStackTrace();
@@ -192,6 +198,21 @@ public class ExternalLink extends ComplexPropertiesLink implements IReverseLinkC
 		String label = requestService.getParameter(getLinkLabelName(), null);
 		String link = requestService.getParameter(getLinkName(), "");
 		String reverseLinkName = requestService.getParameter(getReverseLinkName(), ReverseLinkService.NONE);
+
+		if (requestService.getParameter(getDownloadTitleInputName(), null) != null) {
+			String url = link;			
+			if (!StringHelper.isURL(url)) {
+				url = getLinkURL(ctx);
+			}
+			if (StringHelper.isURL(url)) {
+				try {
+					label = NetHelper.getPageTitle(NetHelper.readPage(new URL(url)));
+					setNeedRefresh(true);
+				} catch (Exception e) {
+					e.printStackTrace();
+				}
+			}
+		}
 
 		if (label != null) {
 			if (link != null) {
