@@ -43,9 +43,13 @@ if ((template != null)&&(template.getHomeRenderer(globalContext) != null)) {
 %><jsp:include page="<%=template.getHomeRendererFullName(globalContext)%>"></jsp:include><%	
 } else {
 	ctx.setFormat("html");
+	ctx = new ContentContext(ctx);
+	ctx.setViewPrefix(true);
+	ctx.setForcePathPrefix(request, "");
 	String url = URLHelper.createURLWithtoutEncodeURL(ctx, ctx.getPath());	
 	//request.getRequestDispatcher(url).forward(request, response);
 	//response.sendRedirect(url);
-	NetHelper.sendRedirectTemporarily(response, url);
+	//NetHelper.sendRedirectTemporarily(response, url);
+	request.getRequestDispatcher(url).forward(request, response);
 	%><a href="<%=url%>"><%=url%></a><%
 }%>

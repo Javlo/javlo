@@ -845,6 +845,10 @@ public class ContentContext {
 	public boolean isViewPrefix() {
 		return viewPrefix;
 	}
+	
+	public void setViewPrefix(boolean viewPrefix) {
+		this.viewPrefix = viewPrefix;
+	}
 
 	/**
 	 * @return
