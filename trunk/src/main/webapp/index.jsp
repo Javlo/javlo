@@ -45,8 +45,10 @@ if ((template != null)&&(template.getHomeRenderer(globalContext) != null)) {
 	ctx.setFormat("html");
 	ctx = new ContentContext(ctx);
 	ctx.setViewPrefix(true);
+	String forcePathPreview = ctx.getPathPrefix(request);
 	ctx.setForcePathPrefix(request, "");
-	String url = URLHelper.createURLWithtoutEncodeURL(ctx, ctx.getPath());	
+	String url = URLHelper.createURLWithtoutEncodeURL(ctx, ctx.getPath());
+	ctx.setForcePathPrefix(request,forcePathPreview);
 	//request.getRequestDispatcher(url).forward(request, response);
 	//response.sendRedirect(url);
 	//NetHelper.sendRedirectTemporarily(response, url);
