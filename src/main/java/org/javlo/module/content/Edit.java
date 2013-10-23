@@ -667,9 +667,6 @@ public class Edit extends AbstractModuleAction {
 
 		String type = request.getParameter("type");
 		
-		System.out.println("***** Edit.performInsert : type="+type+" previousId="+previousId); //TODO: remove debug trace
-		
-		
 		if (previousId == null || type == null) {
 			return "bad insert request need previousId and component type.";
 		}
