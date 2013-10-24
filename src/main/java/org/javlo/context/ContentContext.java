@@ -822,6 +822,14 @@ public class ContentContext {
 	public boolean isAsViewMode() {
 		return getRenderMode() == VIEW_MODE || getRenderMode() == TIME_MODE;
 	}
+	
+	/**
+	 * true if the current request must be tracked.
+	 * @return
+	 */
+	public boolean isTrackingContext() {
+		return isAsViewMode();
+	}
 
 	/**
 	 * @return true if editable context
