@@ -482,7 +482,7 @@ public class XMLManipulationHelper {
 						}
 					}
 				}
-
+				
 				/* insert before all */
 				// if (!isMail) {
 				if (tags[i].getName().equalsIgnoreCase("body")) {
@@ -508,7 +508,7 @@ public class XMLManipulationHelper {
 					String renderBodyAsDiv = tags[i].renderOpen();
 
 					String openBodyCode = "<c:if test=\"${not contentContext.pageAssociation}\">" + renderBodyAsBody + "</c:if><c:if test=\"${contentContext.pageAssociation}\">" + renderBodyAsDiv + "</c:if>";
-					String closeBodyCode = "<%}%><c:if test=\"${not contentContext.pageAssociation}\"></body></c:if><c:if test=\"${contentContext.pageAssociation}\"></div></c:if>";
+					String closeBodyCode = "<%}%><c:if test=\"${not contentContext.pageAssociation}\">"+getGoogleAnalyticsCode()+"</body></c:if><c:if test=\"${contentContext.pageAssociation}\"></div></c:if>";
 					remplacement.addReplacement(tags[i].getOpenStart(), tags[i].getOpenEnd() + 1, "</c:if>" + openBodyCode + openPageCode);
 					remplacement.addReplacement(tags[i].getCloseStart(), tags[i].getCloseEnd() + 1, closeBodyCode + closePageCode); // close
 																																	// the
@@ -608,13 +608,6 @@ public class XMLManipulationHelper {
 								remplacement.addReplacement(tags[i].getOpenStart(), tags[i].getOpenEnd() + 1, tags[i].toString());
 							}
 						}
-					}
-				}
-
-				/* insert after body */
-				if (!isMail) {
-					if (tags[i].getName().equalsIgnoreCase("body")) {
-						remplacement.addReplacement(tags[i].getCloseStart(), tags[i].getCloseStart(), getGoogleAnalyticsCode());
 					}
 				}
 
@@ -871,7 +864,7 @@ public class XMLManipulationHelper {
 		 * out.println("} catch(err) {}</script>");
 		 */
 
-		out.println("<%if (globalContext.getGoogleAnalyticsUACCT().length() > 4) {%><script type=\"text/javascript\">");
+		out.print("<%if (globalContext.getGoogleAnalyticsUACCT().length() > 4 && ctx.isTrackingContext()) {%><script type=\"text/javascript\">");
 		out.println("var _gaq = _gaq || [];");
 		out.println("_gaq.push(['_setAccount', '<%=globalContext.getGoogleAnalyticsUACCT()%>']);");
 		out.println("_gaq.push(['_trackPageview']);");
@@ -880,7 +873,7 @@ public class XMLManipulationHelper {
 		out.println("      ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';");
 		out.println("      var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);");
 		out.println("   })();");
-		out.println("</script><%}%>");
+		out.print("</script><%}%>");
 
 		out.close();
 		return writer.toString();
