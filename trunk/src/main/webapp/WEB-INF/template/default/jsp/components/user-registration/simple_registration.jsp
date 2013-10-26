@@ -15,16 +15,16 @@
 	<div class="one_half">
 		<h3>${i18n.view['user.welcome']}, <span>${user.name}</span></h3>		
 	</div>
-	<c:if test="${!user.userInfo.externalLoginUser}">
 	<div class="one_half last">
+	<c:if test="${!user.userInfo.externalLoginUser}">	
 		<input type="hidden" name="${info.staticData.compId}" value="${comp.id}" />
 		<input type="hidden" name="webaction" value="user-registration.logout" />
-		<input type="submit" name="logout" value="${i18n.view['form.logout']}" />
-	</div>
+		<input type="submit" name="logout" value="${i18n.view['form.logout']}" />	
 	</c:if>
 	<c:if test="${user.userInfo.externalLoginUser}">
 		<a class="facebook-app" href="https://www.facebook.com/bookmarks/apps">facebook</a>
 	</c:if>
+	</div>
 </div>
 </form>
 </c:if>
