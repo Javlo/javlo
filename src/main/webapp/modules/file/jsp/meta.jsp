@@ -40,19 +40,19 @@
 		</c:if>
 		<div class="line">
 			<label for="title-${file.id}">${i18n.edit["field.title"]}</label>
-			<input type="text" id="title-${file.id}" name="title-${file.id}" value="${file.title}" />
+			<input class="file-title" type="text" id="title-${file.id}" name="title-${file.id}" value="${file.title}" />
 		</div>
 		<div class="line">
 			<label for="description-${file.id}">${i18n.edit["field.description"]}</label>
-			<textarea id="description-${file.id}" name="description-${file.id}" rows="5" cols="10">${file.description}</textarea>
+			<textarea class="file-description" id="description-${file.id}" name="description-${file.id}" rows="5" cols="10">${file.description}</textarea>
 		</div>
 		<div class="line">
 			<label for="location-${file.id}">${i18n.edit["field.location"]}</label>
-			<input type="text" id="location-${file.id}" name="location-${file.id}" value="${file.location}" />
+			<input class="file-location" type="text" id="location-${file.id}" name="location-${file.id}" value="${file.location}" />
 		</div>
 		<div class="line">
 			<label for="date-${file.id}">${i18n.edit["field.date"]}</label>
-			<input type="text" id="date-${file.id}" name="date-${file.id}" value="${file.manualDate}" />
+			<input class="file-date" type="text" id="date-${file.id}" name="date-${file.id}" value="${file.manualDate}" />
 		</div>
 		<div class="line">
 			<label for="shared-${file.id}">${i18n.edit["field.shared"]}</label>

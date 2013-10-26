@@ -227,22 +227,20 @@ public abstract class ElementaryURLHelper {
 			}
 		}
 
-		String url = newUri;
-
 		if (!ctx.isAbsoluteURL() && widthEncodeURL && ctx.getDevice().isHuman()) {
-			url = ctx.getResponse().encodeURL(newUri);
+			newUri = ctx.getResponse().encodeURL(newUri);
 		}
 
 		// force mode for ajax request
 		if (ajax) {
-			url = URLHelper.addParam(url, ContentContext.FORCE_MODE_PARAMETER_NAME, "" + ctx.getRenderMode());
+			newUri = URLHelper.addParam(newUri, ContentContext.FORCE_MODE_PARAMETER_NAME, "" + ctx.getRenderMode());
 		}
 
 		if (ctx.isEditPreview()) {
-			url = URLHelper.addParam(url, "editPreview", "true");
+			newUri = URLHelper.addParam(newUri, "editPreview", "true");
 		}
 
-		return url;
+		return newUri;
 	}
 
 	public static final String createSSLURL(String uri, ContentContext ctx) {
@@ -440,7 +438,7 @@ public abstract class ElementaryURLHelper {
 			}
 		}
 		String url = createNoProtocolURL(ctx, globalContext, uri, ajax, withPathPrefix, widthEncodeURL);
-
+		
 		if (ctx.isAbsoluteURL()) {
 			if (ctx.getDMZServerInter() == null) {
 				String port = "";

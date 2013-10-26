@@ -1,3 +1,5 @@
+<%@page import="java.util.Map"%>
+<%@page import="java.util.Hashtable"%>
 <%@page contentType="text/html"
         import="
         java.util.Stack,
@@ -137,8 +139,12 @@ for (IContentVisualComponent comp : components) {
           <%if (helpText != null) {%><li><a href="#tab3<%=inputSuffix%>">${i18n.edit["global.help"]}</a></li><%}%>
           <%if (admin) {%><li><a href="#tab4<%=inputSuffix%>">raw</a></li><%}%>
       </ul>
-      <div class="header-action">
-      	<%if (AdminUserSecurity.getInstance().canModifyConponent(ctx, comp.getId())) {%><a class="delete ajax" title="${i18n.edit['global.delete']}" href="${info.currentURL}?webaction=delete&id=<%=comp.getId()%>"></a><%}%>
+      <div class="header-action"><%
+	     Map<String,String> params = new Hashtable<String,String>();
+		 params.put("webaction", "edit.delete");
+		 params.put("id", comp.getId());
+      	 String actionURL = URLHelper.createURL(ctx, params);
+      	 if (AdminUserSecurity.getInstance().canModifyConponent(ctx, comp.getId())) {%><a class="delete ajax" title="${i18n.edit['global.delete']}" href="<%=actionURL%>"></a><%}%>
       	<a class="copy ajax" title="${i18n.edit['content.copy']}" href="${info.currentURL}?webaction=copy&id=<%=comp.getId()%>"></a>
       </div>
       <div class="header-info">

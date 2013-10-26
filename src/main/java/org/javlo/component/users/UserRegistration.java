@@ -42,6 +42,7 @@ import org.javlo.user.IUserInfo;
 import org.javlo.user.User;
 import org.javlo.user.UserFactory;
 import org.javlo.user.UserInfo;
+import org.javlo.user.exception.UserAllreadyExistException;
 
 public class UserRegistration extends AbstractVisualComponent implements IAction {
 
@@ -146,17 +147,24 @@ public class UserRegistration extends AbstractVisualComponent implements IAction
 			userFactory = UserFactory.createUserFactory(globalContext, ctx.getRequest().getSession());
 			userInfo = new UserInfo();
 		}
-
+		
 		String login = rs.getParameter("login", "").trim();
-		String password = rs.getParameter("password", "").trim();
-		String password2 = rs.getParameter("password2", "").trim();
 		String email = rs.getParameter("email", "").trim();
+		
+		String emailLogin = rs.getParameter("email-login", null);
+		if (emailLogin != null) {
+			login = emailLogin;
+			email = emailLogin;
+		}
+		
+		String password = rs.getParameter("password", "").trim();
+		String password2 = rs.getParameter("password2", "").trim();		
 		ctx.getRequest().setAttribute("userInfoMap", new RequestParameterMap(ctx.getRequest()));
 
 		if (login.length() < 3) {
 			return i18nAccess.getViewText("registration.error.login_size", "login must be at least 3 characters.");
 		} else if (userFactory.getUser(login) != null) {
-			return i18nAccess.getViewText("registration.error.login_allreadyexist", "user allready exist.");
+			return i18nAccess.getViewText("registration.error.login_allreadyexist", "user allready exist : ");
 		} else if (!password.equals(password2)) {
 			return i18nAccess.getViewText("registration.error.password_notsame", "2 passwords must be the same.");
 		} else if (password.length() < 3) {
@@ -171,6 +179,10 @@ public class UserRegistration extends AbstractVisualComponent implements IAction
 		}
 		try {
 			BeanHelper.copy(new RequestParameterMap(ctx.getRequest()), userInfo);
+			if (emailLogin != null) {
+				userInfo.setLogin(emailLogin);
+				userInfo.setEmail(emailLogin);
+			}
 			if (globalContext.getStaticConfig().isPasswordEncryt()) {
 				userInfo.setPassword(StringHelper.encryptPassword(userInfo.getPassword()));
 			}
@@ -216,11 +228,10 @@ public class UserRegistration extends AbstractVisualComponent implements IAction
 			mailService.sendMail(admin, newUser, i18nAccess.getViewText("user.new-account") + globalContext.getGlobalTitle(), new String(outStream.toByteArray()), false);
 
 			ctx.getRequest().setAttribute("noform", "true");
-
 		} catch (Exception e) {
-			logger.severe("error on " + ctx.getGlobalContext().getContextKey());
+			logger.severe("error on " + ctx.getGlobalContext().getContextKey()+" login:"+login);
 			e.printStackTrace();
-			return "technical error.";
+			return i18nAccess.getViewText("global.technical-error");
 		}
 
 		return null;
