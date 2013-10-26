@@ -53,7 +53,7 @@ public class UserFactory implements IUserFactory, Serializable {
 	static Object lockStore = new Object();
 
 	public static final String USER_FACTORY_KEY = "_user_factory_";
-
+	
 	private String userInfoFile = null;
 	
 	private static Map<String,IUserInfo> changePasswordReference = new TimeMap<String, IUserInfo>();

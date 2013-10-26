@@ -329,6 +329,7 @@ public class UserRegistration extends AbstractVisualComponent implements IAction
 		IUserFactory userFactory = UserFactory.createUserFactory(globalContext, session);
 		User user = userFactory.getUser(ui.getLogin());
 		if (user == null) {
+			ui.setExternalLoginUser();
 			userFactory.addUserInfo(ui);
 			userFactory.store();
 			messageRepository.setGlobalMessage(new GenericMessage(i18nAccess.getViewText("user.message.facebook-login"), GenericMessage.INFO));			

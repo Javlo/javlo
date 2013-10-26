@@ -22,6 +22,8 @@ import org.javlo.helper.StringHelper;
 public class UserInfo implements Comparable<IUserInfo>, IUserInfo, Serializable {
 
 	private static final long serialVersionUID = 1L;
+	
+	private static final String EXTERNAL_LOGIN = "__EXLOGIN__";
 
 	public UserInfo() {
 	};
@@ -489,4 +491,16 @@ public class UserInfo implements Comparable<IUserInfo>, IUserInfo, Serializable 
 	public void setAccountType(String accountType) {
 		this.accountType = accountType;
 	}
+	
+	@Override
+	public void setExternalLoginUser() {
+		setPassword(EXTERNAL_LOGIN);
+	}
+	
+	@Override
+	public boolean isExternalLogin() {
+		return getPassword().equals(EXTERNAL_LOGIN);
+	}
+	
+	
 }

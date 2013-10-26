@@ -79,4 +79,15 @@ public interface IUserInfo {
 	 */
 	public String getAccountType();
 
+	/**
+	 * define user as outside loged, as facebook or google login.
+	 */
+	void setExternalLoginUser();
+
+	/**
+	 * check if user is logged from external module (as facebook ou google).
+	 * @return true if user logged from external module.
+	 */
+	boolean isExternalLogin();
+
 }
