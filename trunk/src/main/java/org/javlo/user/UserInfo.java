@@ -498,7 +498,7 @@ public class UserInfo implements Comparable<IUserInfo>, IUserInfo, Serializable 
 	}
 	
 	@Override
-	public boolean isExternalLogin() {
+	public boolean isExternalLoginUser() {
 		return getPassword().equals(EXTERNAL_LOGIN);
 	}
 	
