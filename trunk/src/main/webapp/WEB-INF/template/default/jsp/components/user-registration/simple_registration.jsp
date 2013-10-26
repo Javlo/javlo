@@ -22,7 +22,7 @@
 		<input type="submit" name="logout" value="${i18n.view['form.logout']}" />
 	</div>
 	</c:if>
-	<c:if test="${!user.userInfo.externalLoginUser}">
+	<c:if test="${user.userInfo.externalLoginUser}">
 		<a class="facebook-app" href="https://www.facebook.com/bookmarks/apps">facebook</a>
 	</c:if>
 </div>
