@@ -15,14 +15,14 @@
 	<div class="one_half">
 		<h3>${i18n.view['user.welcome']}, <span>${user.name}</span></h3>		
 	</div>
-	<c:if test="${!user.externalLoginUser}">
+	<c:if test="${!user.userInfo.externalLoginUser}">
 	<div class="one_half last">
 		<input type="hidden" name="${info.staticData.compId}" value="${comp.id}" />
 		<input type="hidden" name="webaction" value="user-registration.logout" />
 		<input type="submit" name="logout" value="${i18n.view['form.logout']}" />
 	</div>
 	</c:if>
-	<c:if test="${!user.externalLoginUser}">
+	<c:if test="${!user.userInfo.externalLoginUser}">
 		<a class="facebook-app" href="https://www.facebook.com/bookmarks/apps">facebook</a>
 	</c:if>
 </div>
@@ -40,7 +40,7 @@
 	<legend>${i18n.view['user.reset-password']}</legend>
 	<input type="hidden" name="webaction" value="user-registration.resetPasswordWithEmail" />
 	<div class="cols">
-	<div class="one_half">		
+	<div class="one_half">
 	<div class="line">
 		<label for="login">${i18n.view['form.email']}</label>
 	    <div class="input"><input id="reset-email" type="text" name="email" value="" /></div>
