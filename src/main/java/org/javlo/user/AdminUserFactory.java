@@ -72,7 +72,9 @@ public class AdminUserFactory extends UserFactory {
 				if (master) {
 					user.addRoles(MASTER_ROLES);
 				}
-				return new User(user);
+				User outUser = new User(user);
+				outUser.setEditor(true);
+				return outUser;
 			}
 		}
 		return null;
@@ -91,7 +93,7 @@ public class AdminUserFactory extends UserFactory {
 		} catch (ModuleException e) {
 			e.printStackTrace();
 		}
-
+		outUser.setEditor(true);
 		return outUser;
 	}
 
@@ -101,6 +103,7 @@ public class AdminUserFactory extends UserFactory {
 		GlobalContext globalContext = GlobalContext.getInstance(request);
 		EditContext editContext = EditContext.getInstance(globalContext, request.getSession());
 		editContext.setEditUser(outUser);
+		outUser.setEditor(true);
 		return outUser;
 	}
 
@@ -150,7 +153,7 @@ public class AdminUserFactory extends UserFactory {
 		} catch (ModuleException e) {
 			e.printStackTrace();
 		}
-
+		outUser.setEditor(true);
 		return outUser;
 	}
 

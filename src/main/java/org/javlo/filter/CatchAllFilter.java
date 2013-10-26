@@ -406,7 +406,7 @@ public class CatchAllFilter implements Filter {
 				}
 			}
 
-			if (user != null && editContext.getEditUser() == null) {
+			if (user != null && editContext.getEditUser() == null && user.isEditor()) {
 				editContext.setEditUser(user);
 			}
 

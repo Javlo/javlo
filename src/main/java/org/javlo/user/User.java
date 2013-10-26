@@ -1,5 +1,5 @@
 /*
- * Created on 19-f�vr.-2004
+ * Created on 19-fevr.-2004
  */
 package org.javlo.user;
 
@@ -21,6 +21,7 @@ public class User implements Principal, Serializable {
 	private String context;
 	Set<String> roles = new HashSet<String>();
 	IUserInfo userInfo;
+	private boolean editor = false;
 
 	public User() { // user only for debug
 		login = "debug1";
@@ -114,6 +115,14 @@ public class User implements Principal, Serializable {
 			pwd = StringHelper.encryptPassword(pwd);
 		}
 		return getPassword().equals(pwd);
+	}
+
+	public boolean isEditor() {
+		return editor;
+	}
+
+	public void setEditor(boolean editor) {
+		this.editor = editor;
 	}
 
 }
