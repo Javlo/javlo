@@ -37,7 +37,7 @@ public class URLHelperTest extends TestCase {
 		ctx.setAllLangauge("fr");		
 		assertEquals(URLHelper.createURL(ctx, "/page"), "/fr/page.html");
 		ctx.setLanguage("en");
-		assertEquals(URLHelper.createURL(ctx, "/page"), "/en-fr/page.html");
+		assertEquals(URLHelper.createURL(ctx, "/page"), "/en-fr/page.html");		
 	}
 	
 	public void testGetParams() throws Exception {

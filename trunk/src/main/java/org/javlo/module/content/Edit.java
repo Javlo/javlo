@@ -741,6 +741,7 @@ public class Edit extends AbstractModuleAction {
 	}
 
 	public static final String performDelete(ContentContext ctx, HttpServletRequest request, ContentService content, EditContext editContext, HttpServletResponse response, I18nAccess i18nAccess, MessageRepository messageRepository) throws Exception {
+		
 		if (!canModifyCurrentPage(ctx) || !checkPageSecurity(ctx)) {
 			messageRepository.setGlobalMessageAndNotification(ctx, new GenericMessage(i18nAccess.getText("action.block"), GenericMessage.ERROR));
 			return null;
@@ -773,6 +774,9 @@ public class Edit extends AbstractModuleAction {
 				ctx.addAjaxZone("comp-" + id, "");
 				ctx.addAjaxZone("comp-child-" + id, "");
 				ctx.addAjaxInsideZone("insert-line-" + id, "");
+				if (ctx.isEditPreview()) {
+					ctx.setClosePopup(true);
+				}
 			}
 
 			modifPage(ctx, targetPage);

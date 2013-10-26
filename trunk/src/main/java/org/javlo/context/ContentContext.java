@@ -53,7 +53,7 @@ public class ContentContext {
 
 	public static final int PAGE_MODE = 4;
 
-	public static final int MAILING_MODE = 6;
+	public static final  int MAILING_MODE = 6;
 
 	public static final int TIME_MODE = 7;
 

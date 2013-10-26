@@ -66,7 +66,7 @@ public class Multimedia extends TimeRangeComponent implements IImageTitle {
 	protected static final String IMAGE_AFTER_EXEPT_FIRST = "only first item with image first";
 
 	protected static final String ORDER_BY_ACCESS = "order by access";
-	protected static final String REVERSE_ORDER = "reverse order";
+	protected static final String REVERSE_ORDER = "reverse order";	
 
 	public static final String ALL = "all";
 	public static final String IMAGE = "image";
@@ -830,12 +830,12 @@ public class Multimedia extends TimeRangeComponent implements IImageTitle {
 	}
 
 	protected boolean isCountAccess(ContentContext ctx) {
-		if (getValue(ctx).endsWith(ORDER_BY_ACCESS)) {
+		if (isOrderByAccess(ctx)) {
 			return false;
 		}
 		return true;
 	}
-
+	
 	protected boolean isDisplayOnlyShared() {
 		return true;
 	}

@@ -62,6 +62,11 @@ public class TransferOrderComponent extends AbstractOrderComponent implements IA
 	
 	public static String performPay(RequestService rs, ContentContext ctx, GlobalContext globalContext, MessageRepository messageRepository, I18nAccess i18nAccess) throws Exception {
 		Basket basket = Basket.getInstance(ctx);
+		
+		if (basket.getCurrencyCode() == null) {
+			return i18nAccess.getViewText("ecom.message.error");
+		}
+		
 		basket.setStep(Basket.FINAL_STEP);		
 		basket.setStatus(Basket.STATUS_WAIT_PAY);
 		BasketPersistenceService.getInstance(globalContext).storeBasket(basket);

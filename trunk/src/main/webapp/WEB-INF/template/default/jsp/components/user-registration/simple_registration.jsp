@@ -85,8 +85,8 @@ document.getElementById('forget-password-id').style.display="block";
 <div class="cols">
 <div class="one_half">
 	<div class="line">
-		<label for="login">login</label>
-		<input type="text" id="login" name="login" value="${userInfoMap["login"]}" /> 
+		<label for="email-login">${i18n.view['form.email']}</label>
+		<input type="text" id="email-login" name="email-login" value="${userInfoMap["email"]}" /> 
 	</div>
 	<c:if test="${empty user}">
 		<div class="line">
@@ -105,11 +105,7 @@ document.getElementById('forget-password-id').style.display="block";
 	<div class="line">
 		<label for="lastName">${i18n.view['form.lastName']}</label>
 		<input type="text" id="lastName" name="lastName" value="${userInfoMap["lastName"]}" /> 
-	</div>
-	<div class="line">
-		<label for="email">${i18n.view['form.email']}</label>
-		<input type="text" id="email" name="email" value="${userInfoMap["email"]}" /> 
-	</div>	
+	</div>		
 	<div class="line">
 		<label for="mobile">${i18n.view['form.adress.phone']}</label>
 		<input type="text" id="mobile" name="mobile" value="${userInfoMap["mobile"]}" /> 

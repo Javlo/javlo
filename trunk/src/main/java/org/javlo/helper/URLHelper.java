@@ -441,6 +441,19 @@ public class URLHelper extends ElementaryURLHelper {
 	public static String createURL(ContentContext ctx) {
 		return createURL(ctx, ctx.getPath());
 	}
+	
+	/**
+	 * create URL without context.
+	 * @param ctx
+	 * @return
+	 */
+	public static String createLocalURL(ContentContext ctx) {
+		String pathPrefix = ctx.getPathPrefix(ctx.getRequest());
+		ctx.setForcePathPrefix(ctx.getRequest(),"");
+		String url = createURL(ctx, ctx.getPath());
+		ctx.setForcePathPrefix(ctx.getRequest(), pathPrefix);
+		return url;
+	}
 
 	public static String createURL(ContentContext ctx, Map params) {
 		return createURL(ctx, ctx.getPath(), params);
@@ -493,6 +506,20 @@ public class URLHelper extends ElementaryURLHelper {
 		return createURL(ctx, globalContext, uri, false, false, true, true);
 	}
 
+	/**
+	 * create url without context and without encoreURL (remove jsessionid)
+	 * @param ctx
+	 * @param uri
+	 * @return
+	 */
+	public static String createLocalURLWithtoutEncodeURL(ContentContext ctx, String uri) {
+		String pathPrefix = ctx.getPathPrefix(ctx.getRequest());
+		ctx.setForcePathPrefix(ctx.getRequest(),"");
+		String url = createURLWithtoutEncodeURL(ctx, uri);
+		ctx.setForcePathPrefix(ctx.getRequest(), pathPrefix);
+		return url;
+	}
+	
 	public static String createURLWithtoutEncodeURL(ContentContext ctx, String uri) {
 		GlobalContext globalContext = GlobalContext.getInstance(ctx.getRequest());
 		return createURL(ctx, globalContext, uri, false, false, true, false);
