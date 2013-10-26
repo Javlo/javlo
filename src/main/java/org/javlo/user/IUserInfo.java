@@ -88,6 +88,6 @@ public interface IUserInfo {
 	 * check if user is logged from external module (as facebook ou google).
 	 * @return true if user logged from external module.
 	 */
-	boolean isExternalLogin();
+	boolean isExternalLoginUser();
 
 }
