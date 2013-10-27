@@ -73,6 +73,8 @@ import org.javlo.template.TemplateFactory;
 import org.javlo.thread.AbstractThread;
 import org.javlo.thread.ThreadManager;
 import org.javlo.tracking.Tracker;
+import org.javlo.user.AdminUserFactory;
+import org.javlo.user.AdminUserSecurity;
 import org.javlo.utils.DebugListening;
 import org.xhtmlrenderer.swing.Java2DRenderer;
 import org.xhtmlrenderer.util.FSImageWriter;
@@ -678,12 +680,12 @@ public class AccessServlet extends HttpServlet implements IVersion {
 							/** check page securised **/
 
 							if (ctx.getCurrentPage().getUserRoles().size() > 0) {
-								if (ctx.getCurrentUser() == null) {
+								if (ctx.getCurrentUser() == null) {									
 									ctx.setSpecialContentRenderer("/jsp/view/login.jsp");
-								} else {
+								} else {									
 									Set<String> roles = new HashSet<String>(ctx.getCurrentUser().getRoles());
-									roles.retainAll(ctx.getCurrentPage().getUserRoles());
-									if (roles.size() == 0) {
+									roles.retainAll(ctx.getCurrentPage().getUserRoles());									
+									if (roles.size() == 0 && !(ctx.getCurrentUser().isEditor() && AdminUserSecurity.getInstance().haveRight(ctx.getCurrentUser(), AdminUserSecurity.CONTENT_ROLE))) {
 										ctx.setSpecialContentRenderer("/jsp/view/login.jsp");
 									}
 								}
