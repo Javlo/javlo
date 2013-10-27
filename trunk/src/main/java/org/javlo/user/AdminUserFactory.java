@@ -93,7 +93,9 @@ public class AdminUserFactory extends UserFactory {
 		} catch (ModuleException e) {
 			e.printStackTrace();
 		}
-		outUser.setEditor(true);
+		if (outUser != null) {
+			outUser.setEditor(true);
+		}
 		return outUser;
 	}
 
@@ -103,7 +105,9 @@ public class AdminUserFactory extends UserFactory {
 		GlobalContext globalContext = GlobalContext.getInstance(request);
 		EditContext editContext = EditContext.getInstance(globalContext, request.getSession());
 		editContext.setEditUser(outUser);
-		outUser.setEditor(true);
+		if (outUser != null) {
+			outUser.setEditor(true);
+		}
 		return outUser;
 	}
 
@@ -153,7 +157,9 @@ public class AdminUserFactory extends UserFactory {
 		} catch (ModuleException e) {
 			e.printStackTrace();
 		}
-		outUser.setEditor(true);
+		if (outUser != null) {
+			outUser.setEditor(true);
+		}
 		return outUser;
 	}
 
