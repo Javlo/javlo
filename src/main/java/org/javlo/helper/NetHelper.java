@@ -699,10 +699,10 @@ public class NetHelper {
 		}
 	}
 	
-	public static void sendMail(GlobalContext globalContext, InternetAddress from, InternetAddress to, InternetAddress cc, InternetAddress bcc, String subject, String content, boolean isHTML) {
+	public static void sendMail(GlobalContext globalContext, InternetAddress from, InternetAddress to, InternetAddress cc, InternetAddress bcc, String subject, String content, String contentTxt, boolean isHTML) {
 		MailService mailService = MailService.getInstance(globalContext.getStaticConfig());
 		try {
-			mailService.sendMail(null, from, to, cc, bcc, subject, content, isHTML);
+			mailService.sendMail(null, from, to, cc, bcc, subject, content, contentTxt, isHTML);
 		} catch (Exception e) {
 			e.printStackTrace();
 		}

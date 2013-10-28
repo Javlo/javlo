@@ -105,8 +105,9 @@ public abstract class AbstractOrderComponent extends AbstractVisualComponent {
 			out.println("<tr>");
 			out.println("<td>"+product.getName()+"</td>");
 			out.println("<td>"+product.getQuantity()+"</td>");
-			out.println("<td>"+Basket.renderPrice(ctx,product.getPrice()-(product.getPrice()*product.getVAT()),product.getCurrencyCode())+"</td>");
-			out.println("<td>"+Basket.renderPrice(ctx,product.getPrice(),product.getCurrencyCode())+"</td>");			
+			double total = product.getPrice()*product.getQuantity();
+			out.println("<td>"+Basket.renderPrice(ctx,total-(total*product.getVAT()),product.getCurrencyCode())+"</td>");
+			out.println("<td>"+Basket.renderPrice(ctx,total,product.getCurrencyCode())+"</td>");			
 			out.println("</tr>");
 		}
 		
@@ -125,6 +126,7 @@ public abstract class AbstractOrderComponent extends AbstractVisualComponent {
 		
 		String email = null;
 		String mailingPage = getData().getProperty("mail.page");
+		String pageURL="error:no link.";
 		if (mailingPage != null) {
 			MenuElement page = ContentService.getInstance(ctx.getGlobalContext()).getNavigation(ctx).searchChildFromName(mailingPage);			
 			Map<String,String> params = new HashMap<String,String>();
@@ -143,7 +145,7 @@ public abstract class AbstractOrderComponent extends AbstractVisualComponent {
 			params.put("country", StringHelper.toHTMLAttribute(new Locale(ctx.getRequestContentLanguage(), basket.getCountry()).getDisplayCountry(ctx.getLocale())));
 			params.put("currencyCode", ""+basket.getCurrencyCode());
 			params.putAll(new ReadOnlyPropertiesMap(getData()));
-			String pageURL = URLHelper.createURL(ctx.getContextForAbsoluteURL().getContextWithOtherRenderMode(ContentContext.PAGE_MODE), page.getPath(), params);
+			pageURL = URLHelper.createURL(ctx.getContextForAbsoluteURL().getContextWithOtherRenderMode(ContentContext.PAGE_MODE), page.getPath(), params);
 			try {
 				email = NetHelper.readPage(new URL(pageURL));
 			} catch (Exception e) {
@@ -163,12 +165,14 @@ public abstract class AbstractOrderComponent extends AbstractVisualComponent {
 		} else {
 			from = new InternetAddress(ctx.getGlobalContext().getAdministratorEmail());
 		}	
-		InternetAddress to = new InternetAddress(basket.getContactEmail());
-		boolean isHTML = email != null;
+		InternetAddress to = new InternetAddress(basket.getContactEmail());		
 		if (email == null) {
 			email = getConfirmationEmail(basket);
+			NetHelper.sendMail(ctx.getGlobalContext(), from, to, null, bcc, subject, email, null, false);
+		} else {					
+			NetHelper.sendMail(ctx.getGlobalContext(), from, to, null, bcc, subject, email, getConfirmationEmail(basket), true);
 		}
-		NetHelper.sendMail(ctx.getGlobalContext(), from, to, null, bcc, subject, email, isHTML);
+		
 	}
 	
 	

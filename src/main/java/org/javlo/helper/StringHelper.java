@@ -52,6 +52,7 @@ import org.javlo.context.ContentContext;
 import org.javlo.context.GlobalContext;
 import org.javlo.helper.Comparator.StringComparator;
 import org.javlo.i18n.I18nAccess;
+import org.jsoup.Jsoup;
 
 import com.beust.jcommander.ParameterException;
 
@@ -944,12 +945,8 @@ public class StringHelper {
 		return res.toString();
 	}
 
-	public static String html2txt(String text) {
-		String res = text;
-		for (String[] element : TXT2HTML) {
-			res = res.replaceAll(element[1], element[0]);
-		}
-		return res;
+	public static String html2txt(String html) {
+		return Jsoup.parse(html).text();		
 	}
 
 	/**

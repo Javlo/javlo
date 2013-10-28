@@ -17,10 +17,13 @@ import java.util.logging.Logger;
 
 import javax.mail.Message;
 import javax.mail.MessagingException;
+import javax.mail.Multipart;
 import javax.mail.Session;
 import javax.mail.Transport;
 import javax.mail.internet.InternetAddress;
+import javax.mail.internet.MimeBodyPart;
 import javax.mail.internet.MimeMessage;
+import javax.mail.internet.MimeMultipart;
 
 import org.javlo.config.StaticConfig;
 import org.javlo.context.ContentContext;
@@ -28,7 +31,8 @@ import org.javlo.helper.ResourceHelper;
 import org.javlo.helper.StringHelper;
 
 /**
- * This class, working in a singleton mode, is a utility for sending mail messages.
+ * This class, working in a singleton mode, is a utility for sending mail
+ * messages.
  * 
  * @author plemarchand
  */
@@ -80,10 +84,12 @@ public class MailService {
 	}
 
 	/**
-	 * This method is kept to be able to use this class outside a Servlet context
+	 * This method is kept to be able to use this class outside a Servlet
+	 * context
 	 * 
 	 * @param props
-	 *            Properties with necessary parameters to connect to the smtp server in /WEB-INF/config/mailing.properties
+	 *            Properties with necessary parameters to connect to the smtp
+	 *            server in /WEB-INF/config/mailing.properties
 	 * 
 	 * @return the MailingManager singleton
 	 */
@@ -99,21 +105,33 @@ public class MailService {
 	private static Properties getMailInfo(StaticConfig staticConfig) {
 		Properties finalProps = new Properties();
 
-		if (staticConfig.getSMTPHost() != null) {
-			finalProps.put(MailService.SMTP_HOST_PARAM, staticConfig.getSMTPHost());
-		}
-		if (staticConfig.getSMTPPort() != null) {
-			finalProps.put(MailService.SMTP_PORT_PARAM, staticConfig.getSMTPPort());
-		}
-		if (staticConfig.getSMTPUser() != null) {
-			finalProps.put(MailService.SMTP_USER_PARAM, staticConfig.getSMTPUser());
-		}
-		if (staticConfig.getSMTPPasswordParam() != null) {
-			finalProps.put(MailService.SMTP_PASSWORD_PARAM, staticConfig.getSMTPPasswordParam());
+		if (staticConfig != null) {
+			if (staticConfig.getSMTPHost() != null) {
+				finalProps.put(MailService.SMTP_HOST_PARAM, staticConfig.getSMTPHost());
+			}
+			if (staticConfig.getSMTPPort() != null) {
+				finalProps.put(MailService.SMTP_PORT_PARAM, staticConfig.getSMTPPort());
+			}
+			if (staticConfig.getSMTPUser() != null) {
+				finalProps.put(MailService.SMTP_USER_PARAM, staticConfig.getSMTPUser());
+			}
+			if (staticConfig.getSMTPPasswordParam() != null) {
+				finalProps.put(MailService.SMTP_PASSWORD_PARAM, staticConfig.getSMTPPasswordParam());
+			}
+		} else {
+			finalProps.put(MailService.SMTP_HOST_PARAM, "localhost");
+			finalProps.put(MailService.SMTP_PORT_PARAM, 25);
 		}
 
 		return finalProps;
 
+	}
+
+	private static Properties getMailInfo(String host) {
+		Properties finalProps = new Properties();
+		finalProps.put(MailService.SMTP_HOST_PARAM, host);
+		finalProps.put(MailService.SMTP_PORT_PARAM, 25);
+		return finalProps;
 	}
 
 	public static final Transport getMailTransport(StaticConfig staticConfig) throws MessagingException {
@@ -124,10 +142,12 @@ public class MailService {
 	}
 
 	/**
-	 * Send <strong><em>one</em></strong> mail to multiple recipients and multiple BCC recipients <em>(in one mail)</em>.
+	 * Send <strong><em>one</em></strong> mail to multiple recipients and
+	 * multiple BCC recipients <em>(in one mail)</em>.
 	 * 
 	 * @param transport
-	 *            transport connection, if null transport is create inside the method
+	 *            transport connection, if null transport is create inside the
+	 *            method
 	 * @param sender
 	 *            the "From" field
 	 * @param recipients
@@ -139,13 +159,14 @@ public class MailService {
 	 * @param content
 	 *            the Content of the message
 	 * @param isHTML
-	 *            flag indicating wether the Content is html (<code>true</code>) or text (<code>false</code>)
+	 *            flag indicating wether the Content is html (<code>true</code>)
+	 *            or text (<code>false</code>)
 	 * @throws MessagingException
 	 *             Forwarded exception from javax.mail
 	 * @throws IllegalArgumentException
 	 *             if no recipient provided or no sender
 	 */
-	public void sendMail(Transport transport, InternetAddress sender, List<InternetAddress> recipients, List<InternetAddress> ccRecipients, List<InternetAddress> bccRecipients, String subject, String content, boolean isHTML) throws MessagingException {
+	public void sendMail(Transport transport, InternetAddress sender, List<InternetAddress> recipients, List<InternetAddress> ccRecipients, List<InternetAddress> bccRecipients, String subject, String content, String txtContent, boolean isHTML) throws MessagingException {
 
 		String recipientsStr = new LinkedList<InternetAddress>(recipients).toString();
 
@@ -153,7 +174,9 @@ public class MailService {
 			throw new IllegalArgumentException("Sender null (sender: " + sender + ") or no recipient: " + recipients);
 		}
 
-		logger.info("Sending mail with subject: " + subject + " to: " + recipients.size() + " recipients: " + recipientsStr + "\n" + "Using smtp: " + props.getProperty(SMTP_HOST_PARAM, DEFAULT_SMTP_HOST) + " / " + props.getProperty(SMTP_USER_PARAM) + " / " + props.getProperty(SMTP_PASSWORD_PARAM));
+		if (props != null ) {
+			logger.info("Sending mail with subject: " + subject + " to: " + recipients.size() + " recipients: " + recipientsStr + "\n" + "Using smtp: " + props.getProperty(SMTP_HOST_PARAM, DEFAULT_SMTP_HOST) + " / " + props.getProperty(SMTP_USER_PARAM) + " / " + props.getProperty(SMTP_PASSWORD_PARAM));
+		}
 
 		Date sendDate = new Date();
 
@@ -171,10 +194,41 @@ public class MailService {
 				msg.setRecipients(Message.RecipientType.BCC, bccRecipients.toArray(new InternetAddress[bccRecipients.size()]));
 			}
 			msg.setSubject(subject, ContentContext.CHARACTER_ENCODING);
-			msg.setText(content, ContentContext.CHARACTER_ENCODING, isHTML ? "html" : "plain");
-			// if (isHTML) {
-			// msg.addHeader("Content-Type", "text/html; charset=\"" + ContentContext.CHARACTER_ENCODING + "\"");
-			// }
+
+			if (isHTML) {
+				MimeBodyPart wrap = new MimeBodyPart();
+				MimeMultipart cover = new MimeMultipart("alternative");
+
+				MimeBodyPart bp = new MimeBodyPart();
+				if (txtContent == null) {
+					txtContent = StringHelper.html2txt(content);
+				}
+				bp.setText(txtContent, ContentContext.CHARACTER_ENCODING);
+				// bp.addHeader("Content-Type", "text/plain; charset=\"" +
+				// ContentContext.CHARACTER_ENCODING + "\"");
+				cover.addBodyPart(bp);
+				bp = new MimeBodyPart();
+				bp.setText(content, ContentContext.CHARACTER_ENCODING, "html");
+				// bp.addHeader("Content-Type", "text/html; charset=\"" +
+				// ContentContext.CHARACTER_ENCODING + "\"");
+				cover.addBodyPart(bp);
+
+				wrap.setContent(cover);
+
+				MimeMultipart contentMail = new MimeMultipart("related");
+				contentMail.addBodyPart(wrap);
+				msg.setContent(contentMail);
+				msg.setSentDate(new Date());
+
+			} else {
+				msg.setText(content);
+			}
+
+			/*
+			 * if (isHTML) { msg.addHeader("Content-Type",
+			 * "text/html; charset=\"" + ContentContext.CHARACTER_ENCODING +
+			 * "\""); }
+			 */
 
 			msg.saveChanges();
 
@@ -246,7 +300,8 @@ public class MailService {
 	 * Send one mail to one recipient and multiple BCC recipients (in one mail).
 	 * 
 	 * @param transport
-	 *            transport connection, if null transport is create inside the method
+	 *            transport connection, if null transport is create inside the
+	 *            method
 	 * @param sender
 	 *            the "From" field
 	 * @param recipient
@@ -258,7 +313,8 @@ public class MailService {
 	 * @param content
 	 *            the Content of the message
 	 * @param isHTML
-	 *            flag indicating wether the Content is html (<code>true</code>) or text (<code>false</code>)
+	 *            flag indicating wether the Content is html (<code>true</code>)
+	 *            or text (<code>false</code>)
 	 * @throws MessagingException
 	 *             Forwarded exception from javax.mail
 	 * @throws IllegalArgumentException
@@ -269,9 +325,9 @@ public class MailService {
 		if (recipient != null) {
 			recipients = Arrays.asList(recipient);
 		}
-		sendMail(transport, sender, recipients, ccRecipients, bccRecipients, subject, content, isHTML);
+		sendMail(transport, sender, recipients, ccRecipients, bccRecipients, subject, content, null, isHTML);
 	}
-	
+
 	public void sendMail(Transport transport, InternetAddress sender, InternetAddress recipient, InternetAddress ccRecipient, InternetAddress bccRecipient, String subject, String content, boolean isHTML) throws MessagingException {
 		List<InternetAddress> ccRecipientsList = new LinkedList<InternetAddress>();
 		if (ccRecipient != null) {
@@ -284,11 +340,26 @@ public class MailService {
 		sendMail(transport, sender, recipient, ccRecipientsList, bccRecipientsList, subject, content, isHTML);
 	}
 
+	public void sendMail(Transport transport, InternetAddress sender, InternetAddress recipient, InternetAddress ccRecipient, InternetAddress bccRecipient, String subject, String content, String contentTxt, boolean isHTML) throws MessagingException {
+		List<InternetAddress> ccRecipientsList = new LinkedList<InternetAddress>();
+		if (ccRecipient != null) {
+			ccRecipientsList.add(ccRecipient);
+		}
+		List<InternetAddress> bccRecipientsList = new LinkedList<InternetAddress>();
+		if (bccRecipient != null) {
+			bccRecipientsList.add(bccRecipient);
+		}
+		List<InternetAddress> recipientsList = new LinkedList<InternetAddress>();
+		recipientsList.add(recipient);
+		sendMail(transport, sender, recipientsList, ccRecipientsList, bccRecipientsList, subject, content, contentTxt, isHTML);
+	}
+
 	/**
 	 * Send one mail to one recipient.
 	 * 
 	 * @param transport
-	 *            transport connection, if null transport is create inside the method
+	 *            transport connection, if null transport is create inside the
+	 *            method
 	 * @param sender
 	 *            the "From" field
 	 * @param recipient
@@ -298,18 +369,19 @@ public class MailService {
 	 * @param content
 	 *            the Content of the message
 	 * @param isHTML
-	 *            flag indicating wether the Content is html (<code>true</code>) or text (<code>false</code>)
+	 *            flag indicating wether the Content is html (<code>true</code>)
+	 *            or text (<code>false</code>)
 	 * @throws MessagingException
 	 *             Forwarded exception from javax.mail
 	 * @throws IllegalArgumentException
 	 *             if no recipient provided or no sender
 	 */
 	public void sendMail(Transport transport, InternetAddress sender, InternetAddress recipient, String subject, String content, boolean isHTML) throws MessagingException {
-		sendMail(transport, sender, recipient, (List<InternetAddress>)null, (List<InternetAddress>)null, subject, content, isHTML);
+		sendMail(transport, sender, recipient, (List<InternetAddress>) null, (List<InternetAddress>) null, subject, content, isHTML);
 	}
 
 	public void sendMail(InternetAddress sender, InternetAddress recipient, String subject, String content, boolean isHTML) throws MessagingException {
-		sendMail(null, sender, recipient, (List<InternetAddress>)null, (List<InternetAddress>)null, subject, content, isHTML);
+		sendMail(null, sender, recipient, (List<InternetAddress>) null, (List<InternetAddress>) null, subject, content, isHTML);
 	}
 
 }
