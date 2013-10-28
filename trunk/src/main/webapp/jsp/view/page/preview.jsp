@@ -1,4 +1,3 @@
-<!-- PREVIEW CODE --!>
 <%if (ctx.isInteractiveMode() && ctx.getRenderMode() == ContentContext.PREVIEW_MODE) {
 %><jsp:include page="/jsp/preview/command.jsp" />
 <%}%>
@@ -10,4 +9,3 @@
        <div class="notification <%=messageRepository.getGlobalMessage().getTypeLabel()%>"><%=messageRepository.getGlobalMessage().getMessage()%></div>
 <%}%></div>
 <%}%>
-<!-- /PREVIEW CODE --!>

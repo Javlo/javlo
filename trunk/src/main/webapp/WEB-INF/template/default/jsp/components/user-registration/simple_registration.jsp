@@ -7,6 +7,10 @@
 </div>
 </c:if>
 
+<c:set var="basketPage" value="${info.pageByName.basket}" />
+<c:if test="${not empty basketPage && empty param.basketLink}"><a class="back-basket" href="${basketPage.url}">${i18n.view['ecom.back-basket']}</a></c:if>
+
+
 <c:if test="${empty param.pwkey}">
 
 <c:if test="${not empty user}">
