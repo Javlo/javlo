@@ -50,7 +50,7 @@ public class Mailing {
 	}
 
 	private static final String CONTENT_FILE = "content.txt";
-
+	
 	private static final String FEEDBACK_FILE = "feedback.csv";
 
 	private static final String RECEIVERS_FILE = "receivers.properties";
@@ -591,5 +591,5 @@ public class Mailing {
 		File configFile = new File(dir.getAbsolutePath() + '/' + CONFIG_FILE);
 		return contentFile.exists() && receiversFile.exists() && configFile.exists();
 	}
-
+	
 }
