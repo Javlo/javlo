@@ -17,7 +17,8 @@
 <form id="user-logout" class="standard-form" action="${info.currentURL}" method="post">
 <div>
 	<div class="one_half">
-		<h3>${i18n.view['user.welcome']}, <span>${user.name}</span></h3>		
+		<c:set var="displayName" value="${user.userInfo.firstName} ${user.userInfo.lastName}" />
+		<h3>${i18n.view['user.welcome']}, <span>${empty user.userInfo.firstName && empty user.userInfo.lastName?user.name:displayName}</span></h3>		
 	</div>
 	<div class="one_half last">
 	<c:if test="${!user.userInfo.externalLoginUser}">	

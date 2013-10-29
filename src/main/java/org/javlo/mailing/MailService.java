@@ -9,21 +9,25 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.PrintStream;
 import java.util.Arrays;
+import java.util.Collection;
 import java.util.Date;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Properties;
+import java.util.UUID;
 import java.util.logging.Logger;
 
+import javax.activation.DataHandler;
+import javax.activation.DataSource;
 import javax.mail.Message;
 import javax.mail.MessagingException;
-import javax.mail.Multipart;
 import javax.mail.Session;
 import javax.mail.Transport;
 import javax.mail.internet.InternetAddress;
 import javax.mail.internet.MimeBodyPart;
 import javax.mail.internet.MimeMessage;
 import javax.mail.internet.MimeMultipart;
+import javax.mail.util.ByteArrayDataSource;
 
 import org.javlo.config.StaticConfig;
 import org.javlo.context.ContentContext;
@@ -34,9 +38,36 @@ import org.javlo.helper.StringHelper;
  * This class, working in a singleton mode, is a utility for sending mail
  * messages.
  * 
- * @author plemarchand
+ * @author pvandermaesen
  */
 public class MailService {
+
+	public static class Attachment {
+		private String name;
+		private byte[] data;
+		
+		public Attachment(String name, byte[] data) {
+			super();
+			this.name = name;
+			this.data = data;
+		}
+
+		public String getName() {
+			return name;
+		}
+
+		public void setName(String name) {
+			this.name = name;
+		}
+
+		public byte[] getData() {
+			return data;
+		}
+
+		public void setData(byte[] data) {
+			this.data = data;
+		}
+	}
 
 	public static final String SMTP_HOST_PARAM = "mail.smtp.host";
 	public static final String SMTP_PORT_PARAM = "mail.smtp.port";
@@ -166,7 +197,7 @@ public class MailService {
 	 * @throws IllegalArgumentException
 	 *             if no recipient provided or no sender
 	 */
-	public void sendMail(Transport transport, InternetAddress sender, List<InternetAddress> recipients, List<InternetAddress> ccRecipients, List<InternetAddress> bccRecipients, String subject, String content, String txtContent, boolean isHTML) throws MessagingException {
+	public void sendMail(Transport transport, InternetAddress sender, List<InternetAddress> recipients, List<InternetAddress> ccRecipients, List<InternetAddress> bccRecipients, String subject, String content, String txtContent, boolean isHTML, Collection<Attachment> attachments) throws MessagingException {
 
 		String recipientsStr = new LinkedList<InternetAddress>(recipients).toString();
 
@@ -174,7 +205,7 @@ public class MailService {
 			throw new IllegalArgumentException("Sender null (sender: " + sender + ") or no recipient: " + recipients);
 		}
 
-		if (props != null ) {
+		if (props != null) {
 			logger.info("Sending mail with subject: " + subject + " to: " + recipients.size() + " recipients: " + recipientsStr + "\n" + "Using smtp: " + props.getProperty(SMTP_HOST_PARAM, DEFAULT_SMTP_HOST) + " / " + props.getProperty(SMTP_USER_PARAM) + " / " + props.getProperty(SMTP_PASSWORD_PARAM));
 		}
 
@@ -204,23 +235,39 @@ public class MailService {
 					txtContent = StringHelper.html2txt(content);
 				}
 				bp.setText(txtContent, ContentContext.CHARACTER_ENCODING);
-				// bp.addHeader("Content-Type", "text/plain; charset=\"" +
-				// ContentContext.CHARACTER_ENCODING + "\"");
 				cover.addBodyPart(bp);
 				bp = new MimeBodyPart();
 				bp.setText(content, ContentContext.CHARACTER_ENCODING, "html");
-				// bp.addHeader("Content-Type", "text/html; charset=\"" +
-				// ContentContext.CHARACTER_ENCODING + "\"");
 				cover.addBodyPart(bp);
-
 				wrap.setContent(cover);
 
 				MimeMultipart contentMail = new MimeMultipart("related");
+
+				if (attachments != null) {
+					for (Attachment attach : attachments) {
+						String id = UUID.randomUUID().toString();
+						/*
+						 * sb.append("<img src=\"cid:"); sb.append(id);
+						 * sb.append("\" alt=\"ATTACHMENT\"/>\n");
+						 */
+
+						MimeBodyPart attachment = new MimeBodyPart();
+
+						DataSource fds = new ByteArrayDataSource(attach.getData(), ResourceHelper.getFileExtensionToManType(StringHelper.getFileExtension(attach.getName())));
+						attachment.setDataHandler(new DataHandler(fds));
+						attachment.setHeader("Content-ID", "<" + id + ">");
+						attachment.setFileName(attach.getName());
+
+						contentMail.addBodyPart(attachment);
+					}
+				}
+
 				contentMail.addBodyPart(wrap);
 				msg.setContent(contentMail);
 				msg.setSentDate(new Date());
 
 			} else {
+				assert attachments == null : "no attachements in text format.";
 				msg.setText(content);
 			}
 
@@ -325,7 +372,7 @@ public class MailService {
 		if (recipient != null) {
 			recipients = Arrays.asList(recipient);
 		}
-		sendMail(transport, sender, recipients, ccRecipients, bccRecipients, subject, content, null, isHTML);
+		sendMail(transport, sender, recipients, ccRecipients, bccRecipients, subject, content, null, isHTML, null);
 	}
 
 	public void sendMail(Transport transport, InternetAddress sender, InternetAddress recipient, InternetAddress ccRecipient, InternetAddress bccRecipient, String subject, String content, boolean isHTML) throws MessagingException {
@@ -351,7 +398,7 @@ public class MailService {
 		}
 		List<InternetAddress> recipientsList = new LinkedList<InternetAddress>();
 		recipientsList.add(recipient);
-		sendMail(transport, sender, recipientsList, ccRecipientsList, bccRecipientsList, subject, content, contentTxt, isHTML);
+		sendMail(transport, sender, recipientsList, ccRecipientsList, bccRecipientsList, subject, content, contentTxt, isHTML, null);
 	}
 
 	/**
