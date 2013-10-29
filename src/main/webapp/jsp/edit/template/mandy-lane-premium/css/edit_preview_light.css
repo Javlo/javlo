@@ -35,7 +35,7 @@ html.edit-preview {
 		margin-right: 260px !important;
 		margin-left: 260px !important;
 	}
-	.fix-preview #preview_command .subblock {
+	.edit-preview #preview_command .subblock {
 		left: 0;
 		right: auto;
 		top: 0;
@@ -47,7 +47,7 @@ html.edit-preview {
 		height: 100%;
 		margin-top: 27px;
 	}
-	.fix-preview #preview_command {
+	.edit-preview #preview_command {
 		left: auto;
 		right: 0;
 	}
