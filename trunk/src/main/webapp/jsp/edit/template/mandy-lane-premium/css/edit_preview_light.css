@@ -15,6 +15,7 @@ html.edit-preview {
 .edit-preview #preview_command {
 	left: auto;
 	right: 0;
+	margin-top: 27px !important;
 }
 
 
