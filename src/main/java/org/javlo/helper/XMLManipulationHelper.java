@@ -483,6 +483,13 @@ public class XMLManipulationHelper {
 					}
 				}
 				
+				if (tags[i].getName().equalsIgnoreCase("html")) {
+					String cssClass = StringHelper.neverNull(tags[i].getAttributes().get("class"));
+					cssClass = cssClass + " " + "<%if (ctx.getRenderMode() == ContentContext.PREVIEW_MODE) { if(EditContext.getInstance(globalContext, request.getSession()).isEditPreview() ) {%>edit-preview<%} else {%>preview-only<%} }%>";
+					tags[i].getAttributes().put("class", cssClass.trim());
+					remplacement.addReplacement(tags[i].getOpenStart(), tags[i].getOpenEnd() + 1, tags[i].renderOpen());
+				}
+				
 				/* insert before all */
 				// if (!isMail) {
 				if (tags[i].getName().equalsIgnoreCase("body")) {

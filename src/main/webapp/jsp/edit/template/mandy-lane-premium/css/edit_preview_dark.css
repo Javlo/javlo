@@ -2,24 +2,24 @@
 	background-color: #171717;
 	color: #AFAFAF;
 	box-shadow: 0 0 7px #333333;
-	height: 100%;
+	height: 100%;	
+}
+
+html.edit-preview {
+	margin-right: 260px !important;
+	margin-left: 0;
 	margin-top: 27px !important;
 }
 
-body.fix-preview {
-	margin-right: 260px;
-	margin-left: 0;
-}
-
-.fix-preview #preview_command {
+.edit-preview #preview_command {
 	left: auto;
 	right: 0;
 }
 
 @media screen and (min-width: 1550px) {
-	body.fix-preview {
-		margin-right: 260px;
-		margin-left: 260px;
+	html.edit-preview {
+		margin-right: 260px !important;
+		margin-left: 260px !important;
 	}
 	.fix-preview #preview_command .subblock {
 		left: 0;
@@ -39,8 +39,8 @@ body.fix-preview {
 	}
 }
 
-body.fix-preview {
-	margin-right: 260px;
+html {
+	margin-right: 260px !important;
 }
 
 #preview_command li.refresh {
@@ -479,7 +479,7 @@ body.edit-preview {
 	background-color: #333333;
 }
 
-#preview_command .pc_command li.preview,#preview_command .pc_command li.refresh,#preview_command .pc_command li.publish, .fix-preview #preview_command .renderers
+#preview_command .pc_command li.preview,#preview_command .pc_command li.refresh,#preview_command .pc_command li.publish, .edit-preview #preview_command .renderers
 	{
 	float: right;
 	margin-right: 4px;
