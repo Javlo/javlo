@@ -501,7 +501,7 @@ body.edit-preview {
 	width: 180px;
 }
 
-body.fix-preview {
+html.edit-preview {
 	margin-left: 260px;
 }
 
