@@ -2,7 +2,6 @@ package org.javlo.helper;
 
 import java.net.MalformedURLException;
 import java.net.URL;
-import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -104,7 +103,7 @@ public abstract class ElementaryURLHelper {
 			sep = '&';
 		}
 		String allParam = "";
-		for (String param : params) {			 
+		for (String param : params) {
 			allParam = allParam + sep + param.replace(" ", "%20");
 			sep = '&';
 		}
@@ -183,32 +182,34 @@ public abstract class ElementaryURLHelper {
 			mode = "/";
 		}
 
-		// String mode = "/view/";
-		if (ctx.getRenderMode() == ContentContext.EDIT_MODE) {
-			String previewPrefix = "";
-			if (ctx.isEditPreview()) {
-				previewPrefix = "preview-";
+		if (ctx.getRenderMode() != ContentContext.VIEW_MODE) {
+			if (ctx.getRenderMode() == ContentContext.EDIT_MODE) {
+				String previewPrefix = "";
+				if (ctx.isEditPreview()) {
+					previewPrefix = "preview-";
+				}
+				Module currentModule = null;
+				try {
+					currentModule = ModulesContext.getInstance(ctx.getRequest().getSession(), globalContext).getCurrentModule();
+				} catch (Exception e) {
+					e.printStackTrace();
+				}
+				if (currentModule == null || ctx.getCurrentEditUser() == null) {
+					mode = "/" + previewPrefix + "edit/";
+				} else {
+					mode = "/" + previewPrefix + "edit-" + currentModule.getName() + "/";
+				}
+			} else if (ctx.getRenderMode() == ContentContext.PREVIEW_MODE) {
+				mode = "/preview/";
+			} else if (ctx.getRenderMode() == ContentContext.PAGE_MODE) {
+				mode = "/page/";
+			} else if (ctx.getRenderMode() == ContentContext.MAILING_MODE) {
+				mode = "/mailing/";
+			} else if (ctx.getRenderMode() == ContentContext.TIME_MODE) {
+				mode = "/time/";
 			}
-			Module currentModule = null;
-			try {
-				currentModule = ModulesContext.getInstance(ctx.getRequest().getSession(), globalContext).getCurrentModule();
-			} catch (Exception e) {
-				e.printStackTrace();
-			}
-			if (currentModule == null || ctx.getCurrentEditUser() == null) {
-				mode = "/" + previewPrefix + "edit/";
-			} else {
-				mode = "/" + previewPrefix + "edit-" + currentModule.getName() + "/";
-			}
-		} else if (ctx.getRenderMode() == ContentContext.PREVIEW_MODE) {
-			mode = "/preview/";
-		} else if (ctx.getRenderMode() == ContentContext.PAGE_MODE) {
-			mode = "/page/";
-		} else if (ctx.getRenderMode() == ContentContext.MAILING_MODE) {
-			mode = "/mailing/";
-		} else if (ctx.getRenderMode() == ContentContext.TIME_MODE) {
-			mode = "/time/";
 		}
+		
 		if (ajax) {
 			mode = "/ajax/";
 		}
@@ -438,7 +439,7 @@ public abstract class ElementaryURLHelper {
 			}
 		}
 		String url = createNoProtocolURL(ctx, globalContext, uri, ajax, withPathPrefix, widthEncodeURL);
-		
+
 		if (ctx.isAbsoluteURL()) {
 			if (ctx.getDMZServerInter() == null) {
 				String port = "";
@@ -645,7 +646,7 @@ public abstract class ElementaryURLHelper {
 		Map<String, String> outParams = new HashMap<String, String>();
 		int separationIndex = url.indexOf("?");
 		if (separationIndex >= 0) {
-			url = url.substring(separationIndex+1);
+			url = url.substring(separationIndex + 1);
 		}
 		for (String param : StringUtils.split(url, '&')) {
 			String[] splittedParam = StringUtils.split(param, '=');
