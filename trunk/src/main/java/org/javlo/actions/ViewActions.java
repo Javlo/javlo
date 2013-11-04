@@ -133,6 +133,9 @@ public class ViewActions implements IAction {
 	 * @return
 	 */
 	public static String performCheckChangesAndNotify(ContentContext ctx, GlobalContext globalContext, ContentService content) {
+		if (!globalContext.isCollaborativeMode()) {
+			return "Collaborative mode not enabled.";
+		}
 		Date now = new Date();
 		Date timeA = (Date) globalContext.getAttribute(CHANGES_NOTIFICATION_TIME_A);
 		Date timeB = (Date) globalContext.getAttribute(CHANGES_NOTIFICATION_TIME_B);
@@ -147,9 +150,11 @@ public class ViewActions implements IAction {
 		}
 		try {
 			for (MenuElement page : content.getNavigation(ctx).getAllChildren()) {
-				Date mod = page.getModificationDate();
-				if (mod != null && mod.after(timeB) && !mod.after(timeA)) {
-					sendPageChangeNotification(ctx, page);
+				if (page.isChangeNotification()) {
+					Date mod = page.getModificationDate();
+					if (mod != null && mod.after(timeB) && !mod.after(timeA)) {
+						sendPageChangeNotification(ctx, page);
+					}
 				}
 			}
 		} catch (Exception ex) {

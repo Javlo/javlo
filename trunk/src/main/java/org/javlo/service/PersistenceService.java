@@ -623,6 +623,7 @@ public class PersistenceService {
 		page.setBlocker(pageXML.getAttributeValue("blocker", ""));
 		
 		page.setChildrenAssociation(StringHelper.isTrue(pageXML.getAttributeValue("childrenAssociation", null)));
+		page.setChangeNotification(StringHelper.isTrue(pageXML.getAttributeValue("changeNotification", "true")));
 		
 		page.setSharedName(pageXML.getAttributeValue("sharedName", null));
 
