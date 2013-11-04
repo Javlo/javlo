@@ -139,7 +139,7 @@ public class GlobalContext implements Serializable {
 
 	private boolean urlFromFactoryImported = false;
 
-	private boolean externalServiceInitalized = false;
+	private Boolean externalServiceInitalized = false;
 
 	private final SmartMap frontCache = new SmartMap();
 
@@ -194,7 +194,7 @@ public class GlobalContext implements Serializable {
 
 	public static GlobalContext getInstance(HttpServletRequest request) {
 		try {
-			String contextURI;			
+			String contextURI;
 			GlobalContext globalContext = (GlobalContext) request.getAttribute(KEY);
 			if (globalContext == null) {
 				StaticConfig staticConfig = StaticConfig.getInstance(request.getSession().getServletContext());
@@ -430,29 +430,33 @@ public class GlobalContext implements Serializable {
 
 	public void initExternalService(ContentContext ctx) {
 		if (!externalServiceInitalized) {
-			externalServiceInitalized = true;
-			// put here code to initialize external services
-			if (isCollaborativeMode() && getStaticConfig().isNotificationThread()) {
-				int minBetweenCheck = getStaticConfig().getTimeBetweenChangeNotification();
-				Map<String, String> params = new HashMap<String, String>();
-				params.put("webaction", "view.checkChangesAndNotify");
-				ContentContext absoluteCtx = ctx.getContextForAbsoluteURL();
-				absoluteCtx.setAjax(true);
-				absoluteCtx.setRenderMode(ContentContext.VIEW_MODE);
-				String url = URLHelper.createURL(absoluteCtx, "/", params);
-				try {
-					URL urlToTrigger = new URL(url);
-					changeNotificationThread = new URLTriggerThread(minBetweenCheck, urlToTrigger);
-					changeNotificationThread.start();
-				} catch (MalformedURLException ex) {
-					ex.printStackTrace();
+			synchronized (externalServiceInitalized) {
+				if (!externalServiceInitalized) {
+					externalServiceInitalized = true;
+					// put here code to initialize external services
+					if (isCollaborativeMode() && getStaticConfig().isNotificationThread()) {						
+						int minBetweenCheck = getStaticConfig().getTimeBetweenChangeNotification();
+						Map<String, String> params = new HashMap<String, String>();
+						params.put("webaction", "view.checkChangesAndNotify");
+						ContentContext absoluteCtx = ctx.getContextForAbsoluteURL();
+						absoluteCtx.setAjax(true);
+						absoluteCtx.setRenderMode(ContentContext.VIEW_MODE);
+						String url = URLHelper.createURL(absoluteCtx, "/", params);
+						try {
+							URL urlToTrigger = new URL(url);
+							changeNotificationThread = new URLTriggerThread(minBetweenCheck, urlToTrigger);
+							changeNotificationThread.start();
+						} catch (MalformedURLException ex) {
+							ex.printStackTrace();
+						}
+					}
 				}
 			}
 		}
 	}
 
 	public void destroy() {
-		// put here code to destroy the global context 
+		// put here code to destroy the global context
 		if (changeNotificationThread != null) {
 			changeNotificationThread.stopThread();
 		}
@@ -571,7 +575,7 @@ public class GlobalContext implements Serializable {
 		return StringHelper.renderSize(getAccountSize());
 	}
 
-	public void addPrincipal(User principal) {		
+	public void addPrincipal(User principal) {
 		synchronized (allUsers) {
 			allUsers.put(principal.getName(), new WeakReference<User>(principal));
 		}
@@ -727,7 +731,7 @@ public class GlobalContext implements Serializable {
 	public Object getAttribute(String key) {
 		return attributes.get(key);
 	}
-	
+
 	public Set<Object> getAttributesKeys() {
 		return attributes.keySet();
 	}
@@ -906,23 +910,24 @@ public class GlobalContext implements Serializable {
 		}
 		return prop.getProperty(key);
 	}
-	
+
 	public void removeData(String key) {
 		synchronized (lockDataFile) {
-			if (dataProperties.containsKey(key)) {				
+			if (dataProperties.containsKey(key)) {
 				dataProperties.remove(key);
 				askStoreData();
 			}
 		}
 	}
-	
+
 	/**
 	 * get data with specified prefix
+	 * 
 	 * @param prefix
 	 * @return
 	 */
-	public Map<String,String> getDataWidthKeyPrefix(String prefix) {
-		Map<String,String> outData = new HashMap<String,String>(); 
+	public Map<String, String> getDataWidthKeyPrefix(String prefix) {
+		Map<String, String> outData = new HashMap<String, String>();
 		for (Object key : getDataKeys()) {
 			if (key.toString().startsWith(prefix)) {
 				outData.put(key.toString(), getData(key.toString()));
@@ -938,9 +943,10 @@ public class GlobalContext implements Serializable {
 		}
 		return prop.keySet();
 	}
-	
+
 	/**
 	 * delete a group of data with the prefix of the key.
+	 * 
 	 * @param prefix
 	 * @return true if one or more items was deleted.
 	 */
@@ -949,11 +955,11 @@ public class GlobalContext implements Serializable {
 			initDataFile();
 		}
 		boolean deleted = false;
-		Collection<Object> keysToDelete = new LinkedHashSet<Object>();		
-		for (Object key : dataProperties.keySet()) {			
+		Collection<Object> keysToDelete = new LinkedHashSet<Object>();
+		for (Object key : dataProperties.keySet()) {
 			if (key.toString().startsWith(prefix)) {
 				deleted = true;
-				keysToDelete.add(key);				
+				keysToDelete.add(key);
 			}
 		}
 		for (Object object : keysToDelete) {
@@ -2034,7 +2040,7 @@ public class GlobalContext implements Serializable {
 
 	private void saveData() {
 		if (dataProperties != null) {
-			synchronized (lockDataFile) {				
+			synchronized (lockDataFile) {
 				OutputStream out = null;
 				try {
 					out = new FileOutputStream(getDataFile());
@@ -2729,15 +2735,15 @@ public class GlobalContext implements Serializable {
 		out.println("****");
 		out.println("**** CACHE INFO ");
 		out.println("****");
-		
+
 		if (ImageTransformServlet.COUNT_ACCESS > 0) {
-			out.println("**** Resources 304       : " + ImageTransformServlet.COUNT_304 + " on "+ImageTransformServlet.COUNT_ACCESS + " Access ("+Math.round(ImageTransformServlet.COUNT_304*100/ImageTransformServlet.COUNT_ACCESS)+"%).");
+			out.println("**** Resources 304       : " + ImageTransformServlet.COUNT_304 + " on " + ImageTransformServlet.COUNT_ACCESS + " Access (" + Math.round(ImageTransformServlet.COUNT_304 * 100 / ImageTransformServlet.COUNT_ACCESS) + "%).");
 		}
 		if (AccessServlet.COUNT_ACCESS > 0) {
-			out.println("**** Content 304         : " + AccessServlet.COUNT_304 + " on "+AccessServlet.COUNT_ACCESS + " Access ("+Math.round(AccessServlet.COUNT_304*100/AccessServlet.COUNT_ACCESS)+"%).");
+			out.println("**** Content 304         : " + AccessServlet.COUNT_304 + " on " + AccessServlet.COUNT_ACCESS + " Access (" + Math.round(AccessServlet.COUNT_304 * 100 / AccessServlet.COUNT_ACCESS) + "%).");
 		}
-		
-		if (cacheManager != null) {			
+
+		if (cacheManager != null) {
 			String[] cachesName = cacheManager.getCacheNames();
 			for (String cacheName : cachesName) {
 				Cache cache = cacheManager.getCache(cacheName);
@@ -2817,39 +2823,40 @@ public class GlobalContext implements Serializable {
 	public Object getLockLoadContent() {
 		return lockLoadContent;
 	}
-	
-	public Map<String,String> getConfig() {
-		Map<String,String> outMap = new HashMap<String, String>();
+
+	public Map<String, String> getConfig() {
+		Map<String, String> outMap = new HashMap<String, String>();
 		Iterator<String> keys = properties.getKeys();
 		while (keys.hasNext()) {
 			String key = keys.next();
-			outMap.put(key, ""+properties.getProperty(key));
+			outMap.put(key, "" + properties.getProperty(key));
 		}
 		return outMap;
 	}
-	
+
 	public void setApplication(ServletContext application) {
 		this.application = application;
 	}
-	
-	public void setConfig (Map config) {
-		for (Object key : config.keySet()) {	
+
+	public void setConfig(Map config) {
+		for (Object key : config.keySet()) {
 			if (!key.equals("folder")) {
-				properties.setProperty(""+key, config.get(key));
-			}			
+				properties.setProperty("" + key, config.get(key));
+			}
 		}
 		save();
 	}
-	
+
 	/**
-	 * mode of the edit template, can be used in template renderer for include special css or js.
-	 * preview css is : edit_preview_[mode].css
+	 * mode of the edit template, can be used in template renderer for include
+	 * special css or js. preview css is : edit_preview_[mode].css
+	 * 
 	 * @return
 	 */
 	public String getEditTemplateMode() {
-		return properties.getString("edit-template.mode", staticConfig.getEditTemplateMode());	
+		return properties.getString("edit-template.mode", staticConfig.getEditTemplateMode());
 	}
-	
+
 	public void setEditTemplateMode(String mode) {
 		synchronized (properties) {
 			properties.setProperty("edit-template.mode", mode);
