@@ -495,6 +495,14 @@ public class PersistenceService {
 				isRepeat = StringHelper.isTrue(strRepeat);
 			}
 			String authors = contentNode.getAttributeValue("authors", null);
+			Set<Integer> hiddenModes = null;
+			String hiddenModesStr = contentNode.getAttributeValue("hiddenModes", null);
+			if (hiddenModesStr != null) {
+				hiddenModes = new HashSet<Integer>();
+				for (String modeStr : StringHelper.stringToCollection(hiddenModesStr, ",")) {
+					hiddenModes.add(Integer.parseInt(modeStr.trim()));
+				}
+			}
 
 			String parent = parentMap.get(lg);
 			if (parent == null) {
@@ -515,6 +523,7 @@ public class PersistenceService {
 			bean.setList(StringHelper.isTrue(inlist));
 			bean.setArea(contentNode.getAttributeValue("area", ComponentBean.DEFAULT_AREA));
 			bean.setRenderer(renderer);
+			bean.setHiddenModes(hiddenModes);
 			bean.setAuthors(authors);
 			try {
 				bean.setModificationDate(parseDate(contentNode.getAttributeValue("modificationDate", "01/01/1970 00:00:00")));

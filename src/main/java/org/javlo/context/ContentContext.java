@@ -169,6 +169,27 @@ public class ContentContext {
 		return ctx;
 	}
 
+	public static String getRenderModeKey(int mode) {
+		switch (mode) {
+		case EDIT_MODE:
+			return "edit";
+		case VIEW_MODE:
+			return "view";
+		case PREVIEW_MODE:
+			return "preview";
+		case PAGE_MODE:
+			return "page";
+		case MAILING_MODE:
+			return "mailing";
+		case TIME_MODE:
+			return "time";
+		case MODULE_MODE:
+			return "module";
+		default:
+			return "unknown";
+		}
+	}
+
 	public void setUser() {
 		/** set user **/
 		GlobalContext globalContext = getGlobalContext();

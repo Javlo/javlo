@@ -209,6 +209,10 @@ public class XMLHelper {
 				out.print("\" renderer=\"");
 				out.print(beans[j].getRenderer());
 			}
+			if (beans[j].getHiddenModes() != null && !beans[j].getHiddenModes().isEmpty()) {
+				out.print("\" hiddenModes=\"");
+				out.print(StringHelper.collectionToString(beans[j].getHiddenModes(), ","));
+			}
 			out.print("\" >");
 			out.print("<![CDATA[");
 			out.print(value);

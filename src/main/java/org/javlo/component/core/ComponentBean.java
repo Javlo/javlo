@@ -6,6 +6,7 @@ package org.javlo.component.core;
 import java.io.Serializable;
 import java.lang.reflect.InvocationTargetException;
 import java.util.Date;
+import java.util.Set;
 
 import org.apache.commons.beanutils.BeanUtils;
 import org.javlo.helper.BeanHelper;
@@ -35,6 +36,7 @@ public class ComponentBean implements Serializable {
 
 	private boolean repeat = false;
 	private boolean modify = false;
+	private Set<Integer> hiddenModes;
 
 	private Date creationDate = new Date();
 	private Date modificationDate = new Date();
@@ -138,6 +140,14 @@ public class ComponentBean implements Serializable {
 
 	public void setRenderer(String renderer) {
 		this.renderer = renderer;
+	}
+
+	public Set<Integer> getHiddenModes() {
+		return hiddenModes;
+	}
+
+	public void setHiddenModes(Set<Integer> hiddenModes) {
+		this.hiddenModes = hiddenModes;
 	}
 
 	public void setArea(String area) {
