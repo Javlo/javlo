@@ -930,6 +930,13 @@ public class Edit extends AbstractModuleAction {
 				modify = true;
 			}
 
+			/** change notifications **/
+			boolean changeNotification = StringHelper.isTrue(requestService.getParameter("changeNotification", null));
+			if (postCheck && page.isChangeNotification() != changeNotification) {
+				page.setChangeNotification(changeNotification);
+				modify = true;
+			}
+
 			/** roles **/
 			InfoBean infoBean = InfoBean.getCurrentInfoBean(ctx);
 			Set<String> userRoles = new HashSet<String>();

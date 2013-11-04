@@ -937,7 +937,11 @@ public class MenuElement implements Serializable {
 		public boolean isChildrenAssociation() {
 			return page.isChildrenAssociation();
 		}
-		
+
+		public boolean isChangeNotification() {
+			return page.isChangeNotification();
+		}
+
 		public Collection<PageBean> getPreviousBrothers() {
 			Collection<PageBean> outBean = new LinkedList<MenuElement.PageBean>();
 			MenuElement previous = page.getPreviousBrother();
@@ -1082,6 +1086,8 @@ public class MenuElement implements Serializable {
 	String name = null;
 	
 	boolean childrenAssociation = false;
+
+	boolean changeNotification = true;
 
 	// String path = null;
 	String id = StringHelper.getRandomId();
@@ -4144,4 +4150,13 @@ public class MenuElement implements Serializable {
 		this.childrenAssociation = childrenAssociation;
 		releaseCache();
 	}
+
+	public boolean isChangeNotification() {
+		return changeNotification;
+	}
+
+	public void setChangeNotification(boolean changeNotification) {
+		this.changeNotification = changeNotification;
+	}
+
 }

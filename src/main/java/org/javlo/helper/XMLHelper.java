@@ -301,6 +301,10 @@ public class XMLHelper {
 				out.print("\" childrenAssociation=\"");
 				out.print(page.isChildrenAssociation());
 			}	
+			if (!page.isChangeNotification()) {
+				out.print("\" changeNotification=\"");
+				out.print(page.isChangeNotification());
+			}
 			if (page.getSharedName() != null && page.getSharedName().trim().length() > 0) {
 				out.print("\" sharedName=\"");
 				out.print(page.getSharedName());
