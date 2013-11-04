@@ -21,6 +21,7 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Locale;
@@ -488,6 +489,21 @@ public abstract class AbstractVisualComponent implements IContentVisualComponent
 			 */
 		}
 
+		out.println("<div class=\"line\">");
+		out.println("<label>" + i18nAccess.getText("component.display-modes") + "</label>");
+		for (int mode : new int[] {
+				ContentContext.VIEW_MODE,
+				ContentContext.PREVIEW_MODE,
+				ContentContext.PAGE_MODE,
+				ContentContext.TIME_MODE }) {
+			String id = "display-mode-" + mode + "-" + getId();
+			out.println("<label for=\"" + id + "\">");
+			out.println(XHTMLHelper.getCheckbox(id, !isHiddenInMode(mode)));
+			out.println(ContentContext.getRenderModeKey(mode));
+			out.println("</label>");
+		}
+		out.println("</div>");
+
 		out.close();
 		return new String(outStream.toByteArray());
 	}
@@ -536,6 +552,17 @@ public abstract class AbstractVisualComponent implements IContentVisualComponent
 				setModify();
 				setNeedRefresh(true);
 			}
+		}
+
+		/** display modes**/
+		for (int mode : new int[] {
+				ContentContext.VIEW_MODE,
+				ContentContext.PREVIEW_MODE,
+				ContentContext.PAGE_MODE,
+				ContentContext.TIME_MODE }) {
+			String id = "display-mode-" + mode + "-" + getId();
+			boolean visible = requestService.getParameter(id, null) != null;
+			setHiddenInMode(mode, !visible);
 		}
 
 		return null;
@@ -1218,6 +1245,13 @@ public abstract class AbstractVisualComponent implements IContentVisualComponent
 			if (ctx.getRenderMode() == ContentContext.EDIT_MODE) {
 				return getEditXHTMLCode(ctx);
 			} else {
+				if (isHiddenInMode(ctx.getRenderMode())) {
+					String emptyCode = getEmptyCode(ctx);
+					if (emptyCode == null) {
+						emptyCode = "";
+					}
+					return emptyCode;
+				}
 				ctx.getRequest().setAttribute(COMP_ID_REQUEST_PARAM, getId());
 				if (ctx.getRenderMode() == ContentContext.VIEW_MODE && isContentCachable(ctx) && globalContext.isPreviewMode()) {
 					if (getContentCache(ctx) != null) {
@@ -1803,7 +1837,28 @@ public abstract class AbstractVisualComponent implements IContentVisualComponent
 	public Date getModificationDate() {
 		return componentBean.getModificationDate();
 	}
-	
+
+	public boolean isHiddenInMode(int mode) {
+		if (componentBean.getHiddenModes() == null) {
+			return false;
+		} else {
+			return componentBean.getHiddenModes().contains(mode);
+		}
+	}
+
+	public void setHiddenInMode(int mode, boolean hidden) {
+		if (hidden) {
+			if (componentBean.getHiddenModes() == null) {
+				componentBean.setHiddenModes(new HashSet<Integer>());
+			}
+			componentBean.getHiddenModes().add(mode);
+		} else {
+			if (componentBean.getHiddenModes() != null) {
+				componentBean.getHiddenModes().remove(mode);
+			}
+		}
+	}
+
 	/**
 	 * return true if this component need renderer from template.
 	 * @return
