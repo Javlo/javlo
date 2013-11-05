@@ -10,13 +10,13 @@ public class URLTriggerThread extends Thread {
 	protected static Logger logger = Logger.getLogger(URLTriggerThread.class.getName());
 
 	private URL urlToTrigger;
-	private int minBetweenTrigger;
+	private int secBetweenTrigger;
 
 	private CountDownLatch sleepLatch;
 	private CountDownLatch stoppingLatch;
 
 	public URLTriggerThread(int minBetweenTrigger, URL urlToTrigger) {
-		this.minBetweenTrigger = minBetweenTrigger;
+		this.secBetweenTrigger = minBetweenTrigger;
 		this.urlToTrigger = urlToTrigger;
 		setName(URLTriggerThread.class.getName());
 	}
@@ -36,7 +36,7 @@ public class URLTriggerThread extends Thread {
 					t.printStackTrace();
 				}
 
-				sleepLatch.await(minBetweenTrigger, TimeUnit.MINUTES);
+				sleepLatch.await(secBetweenTrigger, TimeUnit.SECONDS);
 			}
 		} catch (InterruptedException e) {
 			e.printStackTrace();
