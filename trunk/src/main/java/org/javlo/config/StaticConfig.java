@@ -1259,7 +1259,12 @@ public class StaticConfig extends Observable {
 		return properties.getString("edit-template.mode", "default");
 	}
 
+	/**
+	 * return time between 2 modification check in second.
+	 * default : 5 minutes (300 sec.)
+	 * @return
+	 */
 	public int getTimeBetweenChangeNotification() {
-		return Integer.parseInt(properties.getString("time-between-change-notification", "5"));
+		return Integer.parseInt(properties.getString("time-between-change-notification", ""+5*60)); 
 	}
 }
