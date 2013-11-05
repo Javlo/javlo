@@ -86,6 +86,11 @@
 	float: left;
 }
 
+#preview_command .renderers {
+	display: none;
+}
+
+
 #preview_command .pc_command #pc_edit_button {
 	background-image: url('../images/icons/small/black/edit.png');
 }
@@ -104,6 +109,10 @@
 
 #preview_command .pc_command #pc_del_page_button {
 	background-image: url('../images/icons/small/black/trash.png');
+}
+
+#preview_command .pc_command #export_pdf_button {
+	background-image: url('../images/icons/small/black/pdf.png');
 }
 
 #preview_command .pc_command #pc_edit_mode_button {
