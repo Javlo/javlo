@@ -10,6 +10,7 @@ import javax.servlet.http.HttpServletResponse;
 
 import org.javlo.context.ContentContext;
 import org.javlo.context.GlobalContext;
+import org.javlo.data.InfoBean;
 import org.javlo.helper.RequestHelper;
 import org.javlo.i18n.I18nAccess;
 import org.javlo.module.mailing.MailingModuleContext;
@@ -52,6 +53,8 @@ public class ContentOnlyServlet extends HttpServlet {
 		try {
 			response.setContentType("text/html");
 			ContentContext ctx = ContentContext.getContentContext(request, response);
+			
+			InfoBean.updateInfoBean(ctx);
 
 			GlobalContext globalContext = GlobalContext.getInstance(ctx.getRequest());
 

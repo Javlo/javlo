@@ -108,7 +108,6 @@ function ajaxRequest(url, form) {
 				xhtmlId = "#"+xhtmlId;
 			}			
 			var item = jQuery(xhtmlId);
-			console.log("item = "+item)
 			if (item != null) {
 				item.html(xhtml);	
 			} else {
