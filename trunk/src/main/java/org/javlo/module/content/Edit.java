@@ -659,9 +659,10 @@ public class Edit extends AbstractModuleAction {
 	}
 
 	public static final String performInsert(HttpServletRequest request, HttpServletResponse response, RequestService rs, GlobalContext globalContext, HttpSession session, EditContext editContext, ContentContext ctx, ContentService content, Module currentModule, I18nAccess i18nAccess, MessageRepository messageRepository) throws Exception {
+		
 		if (!canModifyCurrentPage(ctx) || !checkPageSecurity(ctx)) {
 			messageRepository.setGlobalMessageAndNotification(ctx, new GenericMessage(i18nAccess.getText("action.block"), GenericMessage.ERROR));
-			return null;
+			return i18nAccess.getText("action.block");
 		}
 		String previousId = rs.getParameter("previous", null);		
 
@@ -673,6 +674,7 @@ public class Edit extends AbstractModuleAction {
 
 		String areaKey = null;
 		String area = rs.getParameter("area", null);
+		
 		if (area != null) {
 			for (Map.Entry<String, String> areaId : ctx.getCurrentTemplate().getAreasMap().entrySet()) {
 				if (areaId.getValue().equals(area)) {
@@ -698,6 +700,8 @@ public class Edit extends AbstractModuleAction {
 		}
 		
 		String newId = content.createContent(ctx, targetPage, areaKey, previousId, type, "", true);
+		
+		System.out.println("***** Edit.performInsert : newId = "+newId); //TODO: remove debug trace
 
 		if (StringHelper.isTrue(rs.getParameter("init", null))) {
 			IContentVisualComponent comp = content.getComponent(ctx, newId);

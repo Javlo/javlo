@@ -96,6 +96,12 @@ public class InfoBean {
 	public String getCurrentAbsoluteURL() {
 		return URLHelper.createURL(ctx.getContextForAbsoluteURL());
 	}
+	
+	public String getCurrentAbsolutePreviewURL() {
+		ContentContext previewCtx = ctx.getContextForAbsoluteURL();
+		previewCtx.setRenderMode(ContentContext.PREVIEW_MODE);
+		return URLHelper.createURL(previewCtx);
+	}
 
 	public String getCurrentURL() {
 		return URLHelper.createURL(ctx);

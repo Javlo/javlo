@@ -263,11 +263,12 @@ initPreview = function() {
 
 	jQuery(".editable-component, .not-editable-component, #preview-delete-zone")
 			.droppable(
-					{
+					{						
 						cursor : 'move',
 						greedy : true,
 						tolerance : 'pointer',
 						drop : function(event, ui) {
+							var currentURL = window.location.href;
 							var layer = jQuery("#preview-layer");
 							var comp = layer.data("subItem");
 							
