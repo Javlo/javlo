@@ -557,10 +557,12 @@ public abstract class AbstractVisualComponent implements IContentVisualComponent
 		}
 
 		/** display modes **/
-		for (int mode : new int[] { ContentContext.VIEW_MODE, ContentContext.PREVIEW_MODE, ContentContext.PAGE_MODE, ContentContext.TIME_MODE }) {
-			String id = "display-mode-" + mode + "-" + getId();
-			boolean visible = requestService.getParameter(id, null) != null;
-			setHiddenInMode(mode, !visible);
+		if (AdminUserSecurity.getInstance().isAdmin(ctx.getCurrentEditUser())) {
+			for (int mode : new int[] { ContentContext.VIEW_MODE, ContentContext.PREVIEW_MODE, ContentContext.PAGE_MODE, ContentContext.TIME_MODE }) {
+				String id = "display-mode-" + mode + "-" + getId();
+				boolean visible = requestService.getParameter(id, null) != null;
+				setHiddenInMode(mode, !visible);
+			}
 		}
 
 		return null;
@@ -923,7 +925,7 @@ public abstract class AbstractVisualComponent implements IContentVisualComponent
 
 			out.println("</fieldset>");
 		} else {
-			out.println("<div class=\"line\"><span class=\"label\">" + i18nAccess.getText("content.page-teaser.display-type") + " : </span><span class=\"value\">"+getCurrentRenderer(ctx)+"</span></div>");
+			out.println("<div class=\"line\"><span class=\"label\">" + i18nAccess.getText("content.page-teaser.display-type") + " : </span><span class=\"value\">" + getCurrentRenderer(ctx) + "</span></div>");
 		}
 
 		out.close();
@@ -1266,6 +1268,10 @@ public abstract class AbstractVisualComponent implements IContentVisualComponent
 				if (editCtx.isEditPreview() && isDefaultValue(ctx)) {
 					String emptyCode = getEmptyCode(ctx);
 					if (emptyCode != null) {
+						System.out.println("***** AbstractVisualComponent.getXHTMLCode : isDefaultValue(ctx) = " + isDefaultValue(ctx)); // TODO:
+																																			// remove
+																																			// debug
+																																			// trace
 						return emptyCode;
 					}
 				}
@@ -1279,6 +1285,10 @@ public abstract class AbstractVisualComponent implements IContentVisualComponent
 					if (emptyCode == null) {
 						emptyCode = "";
 					}
+					System.out.println("***** AbstractVisualComponent.getXHTMLCode : isHiddenInMode(ctx.getRenderMode()) = " + isHiddenInMode(ctx.getRenderMode())); // TODO:
+																																										// remove
+																																										// debug
+																																										// trace
 					return emptyCode;
 				}
 				ctx.getRequest().setAttribute(COMP_ID_REQUEST_PARAM, getId());
