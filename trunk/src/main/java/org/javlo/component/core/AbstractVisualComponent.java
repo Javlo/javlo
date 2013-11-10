@@ -482,11 +482,8 @@ public abstract class AbstractVisualComponent implements IContentVisualComponent
 			out.println("</div>");
 		}
 
-		if (getRenderes(ctx) == null || getRenderes(ctx).size() > 0) {
+		if (getRenderes(ctx) == null || getRenderes(ctx).size() > 0 && AdminUserSecurity.getInstance().isAdmin(ctx.getCurrentEditUser())) {
 			out.println(getSelectRendererXHTML(ctx));
-			/*
-			 * out.println("<label for=\"renderer-" + getId() + "\">" + getRendererTitle() + "</label>"); out.println(XHTMLHelper.getInputOneSelect("style-" + getId(), getRenderes(ctx), getRenderer(ctx))); out.println("</div>");
-			 */
 		}
 
 		out.println("<div class=\"line\">");
