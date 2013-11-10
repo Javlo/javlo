@@ -123,5 +123,10 @@ public class EcomAction extends AbstractModuleAction {
 		}
 		return null;
 	}
+	
+	public static String performImportPayement(RequestService rs, ContentContext ctx, MessageRepository messageRepository, I18nAccess i18nAccess) {
+		
+		return null;
+	}
 
 }
