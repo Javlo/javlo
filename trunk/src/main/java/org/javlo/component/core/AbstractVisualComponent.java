@@ -1268,10 +1268,6 @@ public abstract class AbstractVisualComponent implements IContentVisualComponent
 				if (editCtx.isEditPreview() && isDefaultValue(ctx)) {
 					String emptyCode = getEmptyCode(ctx);
 					if (emptyCode != null) {
-						System.out.println("***** AbstractVisualComponent.getXHTMLCode : isDefaultValue(ctx) = " + isDefaultValue(ctx)); // TODO:
-																																			// remove
-																																			// debug
-																																			// trace
 						return emptyCode;
 					}
 				}
@@ -1285,10 +1281,6 @@ public abstract class AbstractVisualComponent implements IContentVisualComponent
 					if (emptyCode == null) {
 						emptyCode = "";
 					}
-					System.out.println("***** AbstractVisualComponent.getXHTMLCode : isHiddenInMode(ctx.getRenderMode()) = " + isHiddenInMode(ctx.getRenderMode())); // TODO:
-																																										// remove
-																																										// debug
-																																										// trace
 					return emptyCode;
 				}
 				ctx.getRequest().setAttribute(COMP_ID_REQUEST_PARAM, getId());
