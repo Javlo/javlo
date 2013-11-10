@@ -895,29 +895,36 @@ public abstract class AbstractVisualComponent implements IContentVisualComponent
 		GlobalContext globalContext = GlobalContext.getInstance(ctx.getRequest());
 		I18nAccess i18nAccess = I18nAccess.getInstance(globalContext, ctx.getRequest().getSession());
 
-		out.println("<fieldset class=\"display\">");
-		out.println("<legend>" + i18nAccess.getText("content.page-teaser.display-type") + "</legend><div class=\"line\">");
+		if (getRenderes(ctx).size() > 1) {
 
-		if (getRendererTitle() != null) { // for use title you must implement
-											// method getRendererTitle and
-											// return empty string if empty and
-											// not null (default value).
+			out.println("<fieldset class=\"display\">");
+			out.println("<legend>" + i18nAccess.getText("content.page-teaser.display-type") + "</legend><div class=\"line\">");
+
+			if (getRendererTitle() != null) { // for use title you must
+												// implement
+												// method getRendererTitle and
+												// return empty string if empty
+												// and
+												// not null (default value).
+				out.println("<div class=\"line\">");
+				out.println("<label for=\"" + getInputNameRendererTitle() + "\">" + i18nAccess.getText("global.title") + " : </label>");
+				out.println("<input type=\"text\" id=\"" + getInputNameRendererTitle() + "\" name=\"" + getInputNameRendererTitle() + "\" value=\"" + getRendererTitle() + "\"  />");
+				out.println("</div>");
+			}
+
 			out.println("<div class=\"line\">");
-			out.println("<label for=\"" + getInputNameRendererTitle() + "\">" + i18nAccess.getText("global.title") + " : </label>");
-			out.println("<input type=\"text\" id=\"" + getInputNameRendererTitle() + "\" name=\"" + getInputNameRendererTitle() + "\" value=\"" + getRendererTitle() + "\"  />");
-			out.println("</div>");
+			/* display as slide show */
+
+			Map<String, String> renderers = getRenderes(ctx);
+			for (Map.Entry<String, String> entry : renderers.entrySet()) {
+				out.println(XHTMLHelper.getRadio(getInputNameRenderer(), entry.getKey(), getCurrentRenderer(ctx)));
+				out.println("<label for=\"" + entry.getKey() + "\">" + entry.getKey() + "</label></div><div class=\"line\">");
+			}
+
+			out.println("</fieldset>");
+		} else {
+			out.println("<div class=\"line\"><span class=\"label\">" + i18nAccess.getText("content.page-teaser.display-type") + " : </span><span class=\"value\">"+getCurrentRenderer(ctx)+"</span></div>");
 		}
-
-		out.println("<div class=\"line\">");
-		/* display as slide show */
-
-		Map<String, String> renderers = getRenderes(ctx);
-		for (Map.Entry<String, String> entry : renderers.entrySet()) {
-			out.println(XHTMLHelper.getRadio(getInputNameRenderer(), entry.getKey(), getCurrentRenderer(ctx)));
-			out.println("<label for=\"" + entry.getKey() + "\">" + entry.getKey() + "</label></div><div class=\"line\">");
-		}
-
-		out.println("</fieldset>");
 
 		out.close();
 		return new String(outStream.toByteArray());
