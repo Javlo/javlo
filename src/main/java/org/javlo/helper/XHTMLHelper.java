@@ -63,6 +63,10 @@ import org.javlo.service.RequestService;
 import org.javlo.service.ReverseLinkService;
 import org.javlo.utils.SuffixPrefix;
 import org.javlo.ztatic.StaticInfo;
+import org.jsoup.Jsoup;
+import org.jsoup.nodes.Document;
+import org.jsoup.nodes.Entities.EscapeMode;
+import org.jsoup.safety.Whitelist;
 
 /**
  * This class is a helper for construct XHTML code.
@@ -194,7 +198,7 @@ public class XHTMLHelper {
 		}
 		return StringEscapeUtils.escapeHtml(xhtml);
 	}
-	
+
 	public static String escapeXML(String xhtml) {
 		if (xhtml == null) {
 			return "";
@@ -322,7 +326,8 @@ public class XHTMLHelper {
 	 * @param value
 	 *            the current value of the field.
 	 * @param emptyName
-	 *            the name of the first empty element (empty as value), if null no empty element.
+	 *            the name of the first empty element (empty as value), if null
+	 *            no empty element.
 	 * @return XHTML code with a dropdown.
 	 */
 	public static String getDropDownFromMap(String name, Map map, String value, String emptyName, boolean sortValue) {
@@ -639,7 +644,8 @@ public class XHTMLHelper {
 	}
 
 	/**
-	 * call .toString on all object, create String array and call the same method with array as param.
+	 * call .toString on all object, create String array and call the same
+	 * method with array as param.
 	 * 
 	 * @param name
 	 * @param content
@@ -664,7 +670,8 @@ public class XHTMLHelper {
 	}
 
 	/**
-	 * call .toString on all object, create String array and call the same method with array as param.
+	 * call .toString on all object, create String array and call the same
+	 * method with array as param.
 	 * 
 	 * @param name
 	 * @param content
@@ -765,7 +772,8 @@ public class XHTMLHelper {
 	 * @param jsOnChange
 	 * @param sorting
 	 * @param jsOnClick
-	 *            javascript when we click on a link (@value@ for the value of the current line)
+	 *            javascript when we click on a link (@value@ for the value of
+	 *            the current line)
 	 * @return
 	 */
 	public static String getInputMultiSelectList(ContentContext ctx, String[][] content, String value, String jsOnClick) {
@@ -1589,8 +1597,9 @@ public class XHTMLHelper {
 		return res.toString();
 	}
 
-	public static void main(String[] args) {
-
+	public static void main(String[] args) {		 
+		String html = "<html><head><title>test</title></head><body><p>coucou<w:LsdException Locked=\"false\" Priority=\"73\" SemiHidden=\"false\" UnhideWhenUsed=\"false\" Name=\"Colorful Grid Accent 5\"/></p></body></html>";
+		System.out.println(cleanHTML(html));
 	}
 
 	public static String removeTag(String html, String tag) throws BadXMLException {
@@ -1881,7 +1890,7 @@ public class XHTMLHelper {
 				xhtml = xhtml.replace(jstlStr, properties.get(key).toString());
 			}
 		}
-		
+
 		if (Basket.isInstance(ctx)) {
 			properties = BeanUtils.describe(Basket.getInstance(ctx));
 			for (String key : properties.keySet()) {
@@ -1891,7 +1900,7 @@ public class XHTMLHelper {
 				}
 			}
 		}
-		
+
 		return xhtml;
 	}
 
@@ -2053,7 +2062,8 @@ public class XHTMLHelper {
 	 * 
 	 * @param list
 	 * @param key
-	 * @return the key if list null, and empty string if key not found in the list.
+	 * @return the key if list null, and empty string if key not found in the
+	 *         list.
 	 */
 	public static String renderListItem(List<ListService.Item> list, String key) {
 		if (list == null) {
@@ -2066,17 +2076,18 @@ public class XHTMLHelper {
 		}
 		return "";
 	}
-	
+
 	/**
 	 * transform a value to a span with key as class and value inside.
 	 * 
 	 * @param list
 	 * @param key
-	 * @return the key if list null, and empty string if key not found in the list.
+	 * @return the key if list null, and empty string if key not found in the
+	 *         list.
 	 */
 	public static String renderMultiListItem(List<ListService.Item> list, Collection<String> keys) {
 		if (list == null) {
-			return StringHelper.collectionToString(keys,";");
+			return StringHelper.collectionToString(keys, ";");
 		}
 		ByteArrayOutputStream outStream = new ByteArrayOutputStream();
 		PrintStream out = new PrintStream(outStream);
@@ -2093,4 +2104,9 @@ public class XHTMLHelper {
 
 	private XHTMLHelper() {
 	}
+
+	public static String cleanHTML(String html) {
+		return Jsoup.clean(html,Whitelist.relaxed());
+	}
+
 }

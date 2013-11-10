@@ -9,7 +9,9 @@ import org.javlo.component.core.AbstractVisualComponent;
 import org.javlo.context.ContentContext;
 import org.javlo.context.GlobalContext;
 import org.javlo.helper.LoremIpsumGenerator;
+import org.javlo.helper.StringHelper;
 import org.javlo.helper.XHTMLHelper;
+import org.javlo.service.RequestService;
 import org.javlo.service.ReverseLinkService;
 import org.javlo.utils.SuffixPrefix;
 
@@ -101,6 +103,21 @@ public class WysiwygParagraph extends AbstractVisualComponent {
 	@Override
 	public boolean isContentCachable(ContentContext ctx) {	
 		return true;
+	}
+	
+	@Override
+	public void performEdit(ContentContext ctx) throws Exception {	
+		RequestService requestService = RequestService.getInstance(ctx.getRequest());
+		String newContent = requestService.getParameter(getContentName(), null);
+		if (newContent != null) {
+			if (!getValue().equals(newContent)) {
+				if (StringHelper.isTrue(getConfig(ctx).getProperty("clean-html", "true"))) {
+					newContent = XHTMLHelper.cleanHTML(newContent);
+				}
+				setValue(newContent);
+				setModify();
+			}
+		}
 	}
 
 }
