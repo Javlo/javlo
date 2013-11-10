@@ -983,6 +983,8 @@ public abstract class AbstractVisualComponent implements IContentVisualComponent
 						String type = i18nAccess.getText("content." + getType());
 						String hint = "<b>" + type + "</b><br />" + i18nAccess.getViewText("preview.hint", "click for edit or drag and drop to move.");
 						return " class=\"" + specificClass + classPrefix + "editable-component" + currentClass + "\" data-hint=\"" + hint + "\"";
+					} else {
+						return " class=\"" + specificClass + classPrefix + "not-editable-component" + currentClass + "\"";
 					}
 				}
 			} catch (Exception e) {

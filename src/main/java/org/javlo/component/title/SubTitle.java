@@ -24,7 +24,7 @@ public class SubTitle extends AbstractVisualComponent {
 		if (ctx.getRequest().getAttribute("__subtitle__" + getId()) != null) {
 			return (String) ctx.getRequest().getAttribute("__subtitle__" + getId());
 		}
-		String htmlID = StringHelper.createFileName(getValue());
+		String htmlID = StringHelper.createFileName(getValue()).replace('-', '_');
 		if (htmlID.trim().length() == 0) {
 			htmlID = "empty";
 		}
