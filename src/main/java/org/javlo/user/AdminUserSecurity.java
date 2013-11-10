@@ -10,6 +10,11 @@ import java.util.Set;
 
 import org.javlo.component.core.IContentVisualComponent;
 import org.javlo.context.ContentContext;
+import org.javlo.context.GlobalContext;
+import org.javlo.i18n.I18nAccess;
+import org.javlo.message.GenericMessage;
+import org.javlo.message.MessageRepository;
+import org.javlo.navigation.MenuElement;
 import org.javlo.service.ContentService;
 
 public class AdminUserSecurity implements Serializable {
@@ -192,6 +197,38 @@ public class AdminUserSecurity implements Serializable {
 			}
 		}
 		return false;
+	}
+	
+	/**
+	 * check if the currentPage is editable by current user.
+	 * 
+	 * @param ctx
+	 * @return
+	 * @throws Exception
+	 */
+	public static boolean canModifyPage(ContentContext ctx, MenuElement page) throws Exception {		
+		GlobalContext globalContext = GlobalContext.getInstance(ctx.getRequest());
+		IUserFactory adminUserFactory = AdminUserFactory.createUserFactory(globalContext, ctx.getRequest().getSession());
+
+		if (page.isBlocked()) {
+			if (!page.getBlocker().equals(adminUserFactory.getCurrentUser(ctx.getRequest().getSession()).getName())) {
+				return false;
+			}
+		}
+		
+		AdminUserSecurity adminUserSecurity = AdminUserSecurity.getInstance();
+		ContentService.getInstance(globalContext);
+		if (page.getEditorRoles().size() > 0) {
+			if (!adminUserSecurity.haveRight(adminUserFactory.getCurrentUser(ctx.getRequest().getSession()), AdminUserSecurity.FULL_CONTROL_ROLE)) {
+				if (!adminUserFactory.getCurrentUser(ctx.getRequest().getSession()).validForRoles(page.getEditorRoles())) {
+					MessageRepository messageRepository = MessageRepository.getInstance(ctx);
+					I18nAccess i18nAccess = I18nAccess.getInstance(ctx.getRequest());
+					messageRepository.setGlobalMessageAndNotification(ctx, new GenericMessage(i18nAccess.getText("action.security.noright-onpage"), GenericMessage.ERROR));
+					return false;
+				}
+			}
+		}
+		return true;
 	}
 
 }

@@ -46,12 +46,18 @@ public class WysiwygParagraph extends AbstractVisualComponent {
 	public String getType() {
 		return TYPE;
 	}
+	
+	@Override
+	public void prepareView(ContentContext ctx) throws Exception {	
+		super.prepareView(ctx);
+		GlobalContext globalContext = GlobalContext.getInstance(ctx.getRequest());
+		ReverseLinkService reverserLinkService = ReverseLinkService.getInstance(globalContext);
+		ctx.getRequest().setAttribute("text",XHTMLHelper.replaceJSTLData(ctx, reverserLinkService.replaceLink(ctx, getValue())));
+	}
 
 	@Override
 	public String getViewXHTMLCode(ContentContext ctx) throws Exception {
-		GlobalContext globalContext = GlobalContext.getInstance(ctx.getRequest());
-		ReverseLinkService reverserLinkService = ReverseLinkService.getInstance(globalContext);		
-		return XHTMLHelper.replaceJSTLData(ctx, reverserLinkService.replaceLink(ctx, getValue()));
+		return (String)ctx.getRequest().getAttribute("text");
 	}
 
 	@Override
@@ -70,7 +76,7 @@ public class WysiwygParagraph extends AbstractVisualComponent {
 	public String getPrefixViewXHTMLCode(ContentContext ctx) {
 		if (ctx.isAsViewMode() && getValue().contains("</p>")) {
 			return "";
-		} else {
+		} else {			
 			return super.getPrefixViewXHTMLCode(ctx);
 		}
 	}
@@ -79,7 +85,7 @@ public class WysiwygParagraph extends AbstractVisualComponent {
 	public String getSuffixViewXHTMLCode(ContentContext ctx) {
 		if (ctx.isAsViewMode() && getValue().contains("</p>")) {
 			return "";
-		} else {
+		} else {			
 			return super.getSuffixViewXHTMLCode(ctx);
 		}
 	}
