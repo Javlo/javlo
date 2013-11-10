@@ -18,7 +18,6 @@ import org.javlo.context.ContentContext;
 import org.javlo.context.EditContext;
 import org.javlo.context.GlobalContext;
 import org.javlo.helper.ComponentHelper;
-import org.javlo.helper.ContentHelper;
 import org.javlo.helper.StringHelper;
 import org.javlo.helper.URLHelper;
 import org.javlo.i18n.I18nAccess;
@@ -54,7 +53,11 @@ public class PageMirrorComponent extends AbstractVisualComponent {
 
 	@Override
 	public String[] getStyleList(ContentContext ctx) {
-		return STYLES;
+		if (super.getStyleList(ctx) == null || super.getStyleList(ctx).length == 0) {
+			return STYLES;
+		} else {
+			return super.getStyleList(ctx);
+		}
 	}
 
 	protected String getUnlinkAndCopyInputName() {
@@ -135,14 +138,10 @@ public class PageMirrorComponent extends AbstractVisualComponent {
 	 * @see org.javlo.itf.IContentVisualComponent#getXHTMLCode()
 	 */
 	@Override
-	public String getViewXHTMLCode(ContentContext ctx) throws Exception {
+	public void prepareView(ContentContext ctx) throws Exception {		
 		MenuElement page = getMirrorPage(ctx);
 		if (page != null) {
-			if (ctx.getSpecialContentRenderer() == null) {
-				String suffix = "";
-				if (getStyle().equals(WITHOUT_REPEAT)) {
-					suffix = "&_no-repeat=true";
-				}
+			if (ctx.getSpecialContentRenderer() == null) {				
 				ctx.setVirtualCurrentPage(getPage()); // force page page mirror
 														// page as current page
 				String area = ctx.getArea();
@@ -151,9 +150,6 @@ public class PageMirrorComponent extends AbstractVisualComponent {
 				ctx.setVirtualArea(area);
 				ctx.setArea(ComponentBean.DEFAULT_AREA);
 				ctx.getRequest().setAttribute(ContentContext.CHANGE_AREA_ATTRIBUTE_NAME, ComponentBean.DEFAULT_AREA);
-				// String xhtml = executeJSP(ctx, Edit.CONTENT_RENDERER +
-				// "?_wcms_content_path=" + page.getPath() +
-				// suffix+'&'+NOT_EDIT_PREVIEW_PARAM_NAME+"=true");
 				ctx.setPath(page.getPath());
 				String xhtml = executeJSP(ctx, Edit.CONTENT_RENDERER + '?' + NOT_EDIT_PREVIEW_PARAM_NAME + "=true");
 				ctx.setVirtualCurrentPage(null);
@@ -161,13 +157,21 @@ public class PageMirrorComponent extends AbstractVisualComponent {
 				ctx.setVirtualArea(null);
 				ctx.setPath(path);
 				ctx.setCurrentPageCached(currentPage);
-				return xhtml;
+				ctx.getRequest().setAttribute("xhtml", xhtml);				
 			}
 		} else {
 			deleteMySelf(ctx);
-		}
-		return "";
+			ctx.getRequest().setAttribute("xhtml", "");
+		}		
+		super.prepareView(ctx); // set variable for jstl after rendering targeted page.
 	}
+	
+	@Override
+	public String getViewXHTMLCode(ContentContext ctx) throws Exception {		
+		return (String)ctx.getRequest().getAttribute("xhtml");
+	}
+	
+	
 
 	@Override
 	public void init(ComponentBean bean, ContentContext newContext) throws Exception {
