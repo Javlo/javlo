@@ -701,8 +701,6 @@ public class Edit extends AbstractModuleAction {
 		
 		String newId = content.createContent(ctx, targetPage, areaKey, previousId, type, "", true);
 		
-		System.out.println("***** Edit.performInsert : newId = "+newId); //TODO: remove debug trace
-
 		if (StringHelper.isTrue(rs.getParameter("init", null))) {
 			IContentVisualComponent comp = content.getComponent(ctx, newId);
 			comp.initContent(ctx);
