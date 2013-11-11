@@ -19,6 +19,7 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.Stack;
 
 import org.apache.commons.lang.StringUtils;
 import org.javlo.bean.Link;
@@ -680,7 +681,7 @@ public class MenuElement implements Serializable {
 				return null;
 			}
 		}
-
+		
 		@Override
 		public String getSubTitle() {
 			try {
@@ -943,10 +944,10 @@ public class MenuElement implements Serializable {
 		}
 
 		public Collection<PageBean> getPreviousBrothers() {
-			Collection<PageBean> outBean = new LinkedList<MenuElement.PageBean>();
+			LinkedList<PageBean> outBean = new LinkedList<MenuElement.PageBean>();
 			MenuElement previous = page.getPreviousBrother();
 			while (previous != null) {
-				outBean.add(new PageBean(ctx, previous));
+				outBean.add(0,new PageBean(ctx, previous));
 				previous = previous.getPreviousBrother();
 			}
 			return outBean;

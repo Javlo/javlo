@@ -9,7 +9,7 @@
 	<c:if test="${not empty info.parent && page.url eq info.currentURL}">
 		<li class="parent">
 		
-			<c:if test="${not empty info.parent.parent}">
+			<!--<c:if test="${not empty info.parent.parent}">
 				<div id="breadcrumb"><div class="breadcrumb-wrapper"><div class="breadcrumb">
 					<c:forEach var="parent" items="${info.parent.parents}">
 					<ul><li><a href="${parent.url}">${parent.info.title}</a>
@@ -19,7 +19,7 @@
 					</c:forEach>
 					<span><a href="${info.parent.url}">${info.parent.info.title}</a></span>
 				</div></div></div>		
-			</c:if>
+			</c:if>-->
 		
 			<span><a href="${info.parent.url}">${info.parent.info.title}</a></span>			
 		</li>
@@ -35,16 +35,16 @@
 		<c:if test="${page.url != info.currentURL}">
 		<div id="breadcrumb"><div class="breadcrumb-wrapper"><div class="breadcrumb">
 			<c:forEach var="parent" items="${info.parent.parents}">
-			<ul><li><a href="${parent.url}">${parent.info.title}</a>
+			<ul><li><a href="${parent.url}">${parent.info.label}</a>
 			</c:forEach>
 			<c:forEach var="parent" items="${info.parent.parents}">
 			</li></ul>
 			</c:forEach>
-			<span><a class="editor" title="parent page" href="${page.url}">${page.info.title}</span></a>
+			<span><a class="editor" title="parent page" href="${page.url}">${page.info.label}</span></a>
 		</div></div></div>	
 		</c:if>
 	
-		<span><a class="editor" title="parent page" href="${page.url}">${page.info.title}</span></a>
+		<span><a class="editor" title="parent page" href="${page.url}">${page.info.label}</span></a>
 	</li>
 	<li><ul class="children sortable">
 	<c:forEach var="child" items="${page.children}">	
@@ -56,7 +56,7 @@
 	</li>
 	<c:forEach var="brother" items="${page.info.nextBrothers}">
 		<li>		
-			<span><a class="editor" title="brother page" href="${brother.url}">${brother.info.title}</span></a>
+			<span><a class="editor" title="brother page" href="${brother.url}">${brother.info.label}</span></a>
 		</li>
 	</c:forEach>
 <c:if test="${!userInterface.contributor}">

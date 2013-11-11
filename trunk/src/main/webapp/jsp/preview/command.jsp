@@ -1,5 +1,5 @@
-<%@page import="org.javlo.message.MessageRepository"%>
-<%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c"
+<%@page import="org.javlo.message.MessageRepository"
+%><%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c"
 %><%@ taglib uri="/WEB-INF/javlo.tld" prefix="jv"
 %><%@ taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions" 
 %><%@page contentType="text/html" import="
