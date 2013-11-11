@@ -11,10 +11,13 @@ import java.util.Date;
 import org.javlo.component.core.AbstractVisualComponent;
 import org.javlo.component.core.IDate;
 import org.javlo.context.ContentContext;
+import org.javlo.context.EditContext;
+import org.javlo.context.GlobalContext;
 import org.javlo.exception.ResourceNotFoundException;
 import org.javlo.helper.StringHelper;
 import org.javlo.i18n.I18nAccess;
 import org.javlo.service.RequestService;
+import org.javlo.user.AdminUserSecurity;
 
 /**
  * @author pvandermaesen
@@ -71,7 +74,7 @@ public class DateComponent extends AbstractVisualComponent implements IDate {
 		}
 		return "";
 	}
-
+	
 	protected boolean initDate = true;
 
 	@Override
@@ -121,7 +124,7 @@ public class DateComponent extends AbstractVisualComponent implements IDate {
 	public void setDate(Date date) {
 		setValue(StringHelper.renderTime(date));
 	}
-
+	
 	@Override
 	public String getPrefixViewXHTMLCode(ContentContext ctx) {
 		return "<div " + getSpecialPreviewCssClass(ctx, getStyle(ctx) + " " + getType()) + getSpecialPreviewCssId(ctx) + ">";
@@ -192,5 +195,7 @@ public class DateComponent extends AbstractVisualComponent implements IDate {
 	public Date getDate(ContentContext ctx) {
 		return getDate();
 	}
+	
+	
 
 }

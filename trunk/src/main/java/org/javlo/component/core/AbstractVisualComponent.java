@@ -958,7 +958,7 @@ public abstract class AbstractVisualComponent implements IContentVisualComponent
 		return null;
 	}
 
-	public final String getSpecialPreviewCssClass(ContentContext ctx, String currentClass) {
+	public String getSpecialPreviewCssClass(ContentContext ctx, String currentClass) {
 		if (currentClass == null) {
 			currentClass = "";
 		} else {
@@ -967,7 +967,7 @@ public abstract class AbstractVisualComponent implements IContentVisualComponent
 		String specificClass = "";
 		if (getSpecificClass() != null) {
 			specificClass = getSpecificClass() + ' ';
-		}
+		}		
 		if (ctx.getRenderMode() == ContentContext.PREVIEW_MODE) {
 			GlobalContext globalContext = GlobalContext.getInstance(ctx.getRequest());
 			EditContext editCtx = EditContext.getInstance(globalContext, ctx.getRequest().getSession());
@@ -983,14 +983,12 @@ public abstract class AbstractVisualComponent implements IContentVisualComponent
 						String type = i18nAccess.getText("content." + getType());
 						String hint = "<b>" + type + "</b><br />" + i18nAccess.getViewText("preview.hint", "click for edit or drag and drop to move.");
 						return " class=\"" + specificClass + classPrefix + "editable-component" + currentClass + "\" data-hint=\"" + hint + "\"";
-					} else {
-						return " class=\"" + specificClass + classPrefix + "not-editable-component" + currentClass + "\"";
-					}
+					} 
 				}
 			} catch (Exception e) {
 				e.printStackTrace();
 			}
-		}
+		}		
 		if (currentClass != null && currentClass.trim().length() > 0) {
 			return " class=\"" + specificClass + currentClass.trim() + "\"";
 		}
