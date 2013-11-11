@@ -32,7 +32,7 @@
 	</c:forEach>
 	
 	<li class="${page.url eq info.currentURL?'current ':''}">	
-		<c:if test="${page.url != info.currentURL}">
+		<!--<c:if test="${page.url != info.currentURL}">
 		<div id="breadcrumb"><div class="breadcrumb-wrapper"><div class="breadcrumb">
 			<c:forEach var="parent" items="${info.parent.parents}">
 			<ul><li><a href="${parent.url}">${parent.info.label}</a>
@@ -42,7 +42,7 @@
 			</c:forEach>
 			<span><a class="editor" title="parent page" href="${page.url}">${page.info.label}</span></a>
 		</div></div></div>	
-		</c:if>
+		</c:if>-->
 	
 		<span><a class="editor" title="parent page" href="${page.url}">${page.info.label}</span></a>
 	</li>
