@@ -124,5 +124,10 @@ public class SubTitle extends AbstractVisualComponent {
 	public boolean isContentCachable(ContentContext ctx) {
 		return true;
 	}
+	
+	@Override
+	public boolean isLabel() {
+		return true;
+	}
 
 }
