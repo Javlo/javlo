@@ -153,9 +153,9 @@ public class PageMirrorComponent extends AbstractVisualComponent {
 				ctx.setPath(page.getPath());
 				
 				RequestService rs = RequestService.getInstance(ctx.getRequest());
-				rs.putParameter(NOT_EDIT_PREVIEW_PARAM_NAME, "true");
+				rs.setParameter(NOT_EDIT_PREVIEW_PARAM_NAME, "true");
 				String xhtml = executeJSP(ctx, Edit.CONTENT_RENDERER + '?' + NOT_EDIT_PREVIEW_PARAM_NAME + "=true");
-				rs.putParameter(NOT_EDIT_PREVIEW_PARAM_NAME, "false");			
+				rs.setParameter(NOT_EDIT_PREVIEW_PARAM_NAME, "false");			
 				
 				ctx.setVirtualCurrentPage(null);
 				ctx.setArea(area);
