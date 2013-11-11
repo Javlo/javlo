@@ -44,6 +44,10 @@ public class RequestService {
 		newValues[values.length] = value;
 		parameters.put(key, newValues);
 	}
+	
+	public void setParameter(String key, String value) {		
+		parameters.put(key, new String[] {value});
+	}
 
 	@SuppressWarnings("unchecked")
 	public static RequestService getInstance(HttpServletRequest request) {
