@@ -141,7 +141,11 @@ public class PageMirrorComponent extends AbstractVisualComponent {
 	public void prepareView(ContentContext ctx) throws Exception {		
 		MenuElement page = getMirrorPage(ctx);
 		if (page != null) {
-			if (ctx.getSpecialContentRenderer() == null) {				
+			if (ctx.getSpecialContentRenderer() == null) {
+				
+				RequestService rs = RequestService.getInstance(ctx.getRequest());
+				rs.putParameter(NOT_EDIT_PREVIEW_PARAM_NAME, rs.getParameter(NOT_EDIT_PREVIEW_PARAM_NAME, "false")); // overwrite HttpRequest NOT_EDIT_PREVIEW_PARAM_NAME param.
+				
 				ctx.setVirtualCurrentPage(getPage()); // force page page mirror
 														// page as current page
 				String area = ctx.getArea();
@@ -162,7 +166,7 @@ public class PageMirrorComponent extends AbstractVisualComponent {
 		} else {
 			deleteMySelf(ctx);
 			ctx.getRequest().setAttribute("xhtml", "");
-		}		
+		}	
 		super.prepareView(ctx); // set variable for jstl after rendering targeted page.
 	}
 	

@@ -26,6 +26,8 @@ public class RequestService {
 	private static final String KEY = "requestService";
 
 	private final Map<String, String[]> parameters = new HashMap<String, String[]>();
+	
+	private final Map<String, String[]> savedParameters = new HashMap<String, String[]>();
 
 	private final Map<String, FileItem[]> fileItems = new HashMap<String, FileItem[]>();
 
@@ -231,5 +233,32 @@ public class RequestService {
 	public HttpServletRequest getRequest() {
 		return request;
 	}
+	
+	/**
+	 * store parameter interal for restore after operations on request.
+	 */
+	public void saveParameters() {
+		savedParameters.clear();
+		savedParameters.putAll(parameters);
+		
+		for (String key : parameters.keySet()) {
+			System.out.println("***** RequestService.saveParameters : key = "+key); //TODO: remove debug trace
+		}
+		
+		System.out.println("***** RequestService.saveParameters : parameters size = "+parameters.size()); //TODO: remove debug trace
+	}
+	
+	/**
+	 * restore saved parameters after operations on request.
+	 */
+	public void restoreParameters() {
+		parameters.clear();
+		parameters.putAll(savedParameters);
+		for (String key : parameters.keySet()) {
+			System.out.println("***** RequestService.restoreParameters : key = "+key); //TODO: remove debug trace
+		}
+		System.out.println("***** RequestService.restoreParameters : parameters size = "+parameters.size()); //TODO: remove debug trace
+	}
+	
 
 }
