@@ -17,6 +17,10 @@ public class StringHelperTest extends TestCase {
   public void testGetFileExtension() throws Exception {
 	  assertTrue(StringHelper.getFileExtension("test.jpg").equals("jpg"));
 	  assertTrue(StringHelper.getFileExtension("test.xml").equals("xml"));
+	  assertTrue(StringHelper.getFileExtension("test.xml?coucou=test").equals("xml"));
+	  assertTrue(StringHelper.getFileExtension("test.xml;jsessionid=6D7A0CD25887B1A3C4CAECFBA17ACB0D").equals("xml"));
+	  assertTrue(StringHelper.getFileExtension("test.xml;jsessionid=6D7A0CD25887B1A3C4CAECFBA17ACB0D?coucou=test").equals("xml"));
+	  assertTrue(StringHelper.getFileExtension("test.xml?coucou=test;jsessionid=6D7A0CD25887B1A3C4CAECFBA17ACB0D").equals("xml"));
 	  assertTrue(StringHelper.getFileExtension(null).equals(""));
 	  assertTrue(StringHelper.getFileExtension("test").equals(""));
   }
@@ -71,4 +75,6 @@ public class StringHelperTest extends TestCase {
 	  assertEquals(StringHelper.encodeAsStructuredCommunicationMod97("3542232806"), "354/2232/80695");
 	  assertEquals(StringHelper.encodeAsStructuredCommunicationMod97("0000000007"), "000/0000/00707");
   }
+  
+ 
 }

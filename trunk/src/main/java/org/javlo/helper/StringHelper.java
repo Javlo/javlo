@@ -750,12 +750,22 @@ public class StringHelper {
 		String outExt = "";
 		int dotIndex = inFileName.lastIndexOf('.');
 		int endIndex = inFileName.lastIndexOf('?');
+		int jsessionIndex = inFileName.lastIndexOf(';');		
 		if (endIndex <= 0 || endIndex < dotIndex) {
-			endIndex = inFileName.length();
+			if (jsessionIndex > -1) {
+				endIndex = jsessionIndex;	
+			} else {
+				endIndex = inFileName.length();
+			}
+		} else {
+			if (jsessionIndex >= 0 && jsessionIndex < endIndex) {
+				endIndex = jsessionIndex;
+			}
 		}
 		if (dotIndex >= 0) {
 			outExt = inFileName.substring(dotIndex + 1, endIndex);
 		}
+		
 		return outExt;
 	}
 
