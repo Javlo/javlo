@@ -432,7 +432,7 @@ public class GlobalContext implements Serializable {
 		if (!externalServiceInitalized) {
 			synchronized (externalServiceInitalized) {
 				if (!externalServiceInitalized) {
-					externalServiceInitalized = true;
+					externalServiceInitalized = true;					
 					// put here code to initialize external services
 					if (isCollaborativeMode() && getStaticConfig().isNotificationThread()) {						
 						int minBetweenCheck = getStaticConfig().getTimeBetweenChangeNotification();
@@ -446,6 +446,7 @@ public class GlobalContext implements Serializable {
 							URL urlToTrigger = new URL(url);
 							changeNotificationThread = new URLTriggerThread(minBetweenCheck, urlToTrigger);
 							changeNotificationThread.start();
+							logger.info("changeNotificationThread thread started.");
 						} catch (MalformedURLException ex) {
 							ex.printStackTrace();
 						}

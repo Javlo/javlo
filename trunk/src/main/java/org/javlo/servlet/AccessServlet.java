@@ -823,6 +823,8 @@ public class AccessServlet extends HttpServlet implements IVersion {
 		out.println("**** TOTAL MEMORY      :  " + runtime.totalMemory() + " (" + runtime.totalMemory() / 1024 + " KB)" + " (" + runtime.totalMemory() / 1024 / 1024 + " MB)");
 		out.println("**** FREE MEMORY       :  " + runtime.freeMemory() + " (" + runtime.freeMemory() / 1024 + " KB)" + " (" + runtime.freeMemory() / 1024 / 1024 + " MB)");
 		out.println("**** THREAD ****");
+		out.println("**** MODIF. THREAD     :  " + staticConfig.isNotificationThread());		
+		out.println("**** MAILING THREAD    :  " + staticConfig.isMailingThread());		
 		out.println("**** THREAD COUNT      :  " + threads.getThreadCount());
 		out.println("**** THREAD STR COUNT  :  " + threads.getTotalStartedThreadCount());
 		out.println("**** THREAD DMN COUNT  :  " + threads.getDaemonThreadCount());
