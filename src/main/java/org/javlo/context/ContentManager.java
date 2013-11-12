@@ -64,7 +64,7 @@ public class ContentManager {
 	public static String getErrorLg(String lg) {
 		String res = "undefined language";
 		if (lg.equals("fr")) {
-			res = "Désolé, cette page n'est pas encore disponible en français.";
+			res = "D�sol�, cette page n'est pas encore disponible en français.";
 		} else if (lg.equals("en")) {
 			res = "Sorry, this page does not yet exist in english.";
 		} else if (lg.equals("nl")) {
