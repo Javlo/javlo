@@ -99,6 +99,10 @@
 	background-image: url('../images/icons/404.png');
 }
 
+#preview_command .pc_command a#pc_edit_button.pc_edit_true {	
+	display: none;
+}
+
 #preview_command .pc_command #pc_publish_button {
 	background-image: url('../images/icons/small/black/publish.png');
 }
