@@ -56,11 +56,10 @@ if (specificComp != null) {
 request.setAttribute("area", area);
 
 String path = request.getParameter("_wcms_content_path");
-if (path!=null) {	
+if (path!=null) {
+	ctx = new ContentContext(ctx);
 	ctx.setPath(path);
 }
-
-
 
 Boolean removeRepeat = StringHelper.isTrue(request.getParameter("_no-repeat"));
 
