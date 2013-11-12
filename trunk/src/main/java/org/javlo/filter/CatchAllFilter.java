@@ -113,10 +113,6 @@ public class CatchAllFilter implements Filter {
 							newURI = newURI + '?' + httpRequest.getQueryString();
 						}
 						newURI = URLHelper.addParam(newURI, "__check_context", "false");
-
-						// newURI = ((HttpServletResponse)
-						// response).encodeURL(newURI);
-
 						forwardURI = newURI;
 					}
 				} else {
@@ -347,7 +343,6 @@ public class CatchAllFilter implements Filter {
 		}
 
 		if (forwardURI != null) {
-
 			if (httpRequest.getSession().isNew()) {
 				httpRequest.getSession().setAttribute(InfoBean.NEW_SESSION_PARAM, true);
 			} 
