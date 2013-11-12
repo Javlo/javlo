@@ -623,7 +623,7 @@ public class ContentService {
 			this.previewGlobalMap.clear();
 		}
 		if (ctx != null) {
-			ctx.setCurrentPageCached(null);
+			ctx.resetCurrentPageCached();
 			InfoBean.updateInfoBean(ctx);
 		}
 	}
@@ -635,7 +635,7 @@ public class ContentService {
 			this.timeTravelerGlobalMap.clear();
 		}
 		if (ctx != null) {
-			ctx.setCurrentPageCached(null);
+			ctx.resetCurrentPageCached();
 			InfoBean.updateInfoBean(ctx);
 		}
 	}
