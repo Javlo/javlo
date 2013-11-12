@@ -125,9 +125,5 @@ public class SubTitle extends AbstractVisualComponent {
 		return true;
 	}
 	
-	@Override
-	public boolean isLabel() {
-		return true;
-	}
 
 }
