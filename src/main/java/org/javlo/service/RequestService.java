@@ -244,12 +244,6 @@ public class RequestService {
 	public void saveParameters() {
 		savedParameters.clear();
 		savedParameters.putAll(parameters);
-		
-		for (String key : parameters.keySet()) {
-			System.out.println("***** RequestService.saveParameters : key = "+key); //TODO: remove debug trace
-		}
-		
-		System.out.println("***** RequestService.saveParameters : parameters size = "+parameters.size()); //TODO: remove debug trace
 	}
 	
 	/**
@@ -257,11 +251,7 @@ public class RequestService {
 	 */
 	public void restoreParameters() {
 		parameters.clear();
-		parameters.putAll(savedParameters);
-		for (String key : parameters.keySet()) {
-			System.out.println("***** RequestService.restoreParameters : key = "+key); //TODO: remove debug trace
-		}
-		System.out.println("***** RequestService.restoreParameters : parameters size = "+parameters.size()); //TODO: remove debug trace
+		parameters.putAll(savedParameters);		
 	}
 	
 
