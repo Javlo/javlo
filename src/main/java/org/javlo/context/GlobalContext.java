@@ -1306,7 +1306,7 @@ public class GlobalContext implements Serializable {
 		return properties.getString("date.medium", staticConfig.getDefaultDateFormat());
 	}
 
-	public MenuElement getPageIfExist(ContentContext ctx, String url, boolean useURLCreator) throws Exception {
+	public MenuElement getPageIfExist(ContentContext ctx, String url, boolean useURLCreator) throws Exception {		
 		IURLFactory urlCreator = getURLFactory(ctx);
 		Map<String, MenuElement> localViewPages = viewPages;
 		if (ctx.getRenderMode() == ContentContext.VIEW_MODE && urlCreator != null && useURLCreator) {
