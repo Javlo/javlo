@@ -165,6 +165,9 @@ public class ContentElementList implements IContentComponentsList {
 	public String getLabel() {
 		String res = "";
 		Iterator elems = contentElements.iterator();
+		
+		String firstSubtitle = null;
+		
 		while (elems.hasNext()) {
 			IContentVisualComponent comp = (IContentVisualComponent) elems.next();
 			if (comp.isLabel() && !comp.isRepeat()) {
@@ -175,6 +178,9 @@ public class ContentElementList implements IContentComponentsList {
 			}
 			if (comp instanceof MenuTitle && !comp.isRepeat()) {
 				return comp.getTextLabel();
+			}
+			if (firstSubtitle == null && comp instanceof SubTitle) {
+				firstSubtitle = comp.getTextLabel();
 			}
 		}
 		if (res.length() == 0) { // if no element not repeat search with repeat element
@@ -191,6 +197,10 @@ public class ContentElementList implements IContentComponentsList {
 					return comp.getTextLabel();
 				}
 			}
+		}
+		if (res.length() == 0 && firstSubtitle != null) {
+			System.out.println("***** ContentElementList.getLabel : firstSubtitle = "+firstSubtitle); //TODO: remove debug trace
+			return firstSubtitle;
 		}
 		return res;
 	}
