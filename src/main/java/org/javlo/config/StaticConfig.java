@@ -1060,7 +1060,7 @@ public class StaticConfig extends Observable {
 	}
 	
 	public boolean isNotificationThread() {
-		return StringHelper.isTrue(properties.getString("noctification.thread", "false"));
+		return StringHelper.isTrue(properties.getString("noctification.thread", "true"));
 	}
 
 	public boolean isPasswordEncryt() {
