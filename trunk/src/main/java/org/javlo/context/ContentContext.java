@@ -625,14 +625,17 @@ public class ContentContext {
 			return root;
 		} else {
 			if (getPath().trim().length() > 0) {
-				MenuElement elem = globalContext.getPageIfExist(this, getPath(), urlFacotry);
+				if (!getPath().trim().equals("/Home")) {
+					//(new Exception()).printStackTrace();
+				}				
+				MenuElement elem = globalContext.getPageIfExist(this, getPath(), urlFacotry);				
 				if (elem != null) {					
 					setCurrentPageCached(elem);
 				} else {
 					setContentFound(false);
 					elem = root;
 					setPath(root.getPath());
-				}
+				}				
 				return elem;
 			} else {
 				return root;
@@ -886,8 +889,8 @@ public class ContentContext {
 		return visible;
 	}
 
-	protected void resestCache() {
-		setCurrentPageCached(null);
+	protected void resestCache() {		
+		resetCurrentPageCached();
 		setCurrentTemplate(null);
 		contentExistForContext = null;
 	}
@@ -975,10 +978,11 @@ public class ContentContext {
 	}
 
 	public void setCurrentPageCached(MenuElement currentPageCached) {
+		
 		this.currentPageCached = currentPageCached; 
 	}
 	
-	public void resetCurrentPageCached() {
+	public void resetCurrentPageCached() {		
 		currentPageCached = null;
 	}
 
@@ -1047,12 +1051,12 @@ public class ContentContext {
 	 * @param string
 	 *            a logical path
 	 */
-	public void setPath(String newPath) {
-		if (!newPath.equals(path)) {
-			if (newPath.contains(";jsessionid=")) {
-				newPath = newPath.substring(0, newPath.indexOf(";jsessionid="));
-			}
-			path = newPath;
+	public void setPath(String newPath) {		
+		if (newPath.contains(";jsessionid=")) {
+			newPath = newPath.substring(0, newPath.indexOf(";jsessionid="));
+		}
+		if (!newPath.equals(path)) {			
+			path = newPath;			
 			resestCache();
 		}
 	}
@@ -1144,8 +1148,8 @@ public class ContentContext {
 		res.append("area=");
 		res.append(area);
 		res.append(" - ");
-		res.append("hashCode=");
-		res.append(hashCode());
+		res.append("super.toString=");
+		res.append(super.toString());
 		return res.toString();
 	}
 
