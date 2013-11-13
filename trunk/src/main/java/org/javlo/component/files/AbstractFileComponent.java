@@ -27,6 +27,7 @@ import org.javlo.bean.Link;
 import org.javlo.component.core.AbstractVisualComponent;
 import org.javlo.component.core.ComponentBean;
 import org.javlo.component.core.IContentVisualComponent;
+import org.javlo.component.core.ILink;
 import org.javlo.component.core.IReverseLinkComponent;
 import org.javlo.config.StaticConfig;
 import org.javlo.context.ContentContext;
@@ -65,7 +66,7 @@ import org.javlo.ztatic.StaticInfo;
  * 
  * @author pvandermaesen
  */
-public abstract class AbstractFileComponent extends AbstractVisualComponent implements IStaticContainer {
+public abstract class AbstractFileComponent extends AbstractVisualComponent implements IStaticContainer, ILink {
 
 	static final String HEADER_V1_0 = "file storage V.1.1";
 
@@ -138,7 +139,8 @@ public abstract class AbstractFileComponent extends AbstractVisualComponent impl
 		return false;
 	}
 
-	protected String getURL(ContentContext ctx) {
+	@Override
+	public String getURL(ContentContext ctx) {
 		StaticConfig staticConfig = StaticConfig.getInstance(ctx.getRequest().getSession());
 		String fileLink = URLHelper.mergePath(getDirSelected(), getFileName());
 		return URLHelper.createResourceURL(ctx, getPage(), staticConfig.getImageFolder() + '/' + fileLink).replace('\\', '/');

@@ -18,7 +18,6 @@ import java.util.Map;
 import java.util.logging.Logger;
 
 import org.apache.commons.fileupload.FileItem;
-import org.javlo.component.core.ComponentBean;
 import org.javlo.component.core.IReverseLinkComponent;
 import org.javlo.config.StaticConfig;
 import org.javlo.context.ContentContext;
@@ -506,6 +505,7 @@ public class GlobalImage extends Image {
 		return i18nAccess.getText("action.add-image.link");
 	}
 
+	
 	public String getLink() {
 		return properties.getProperty(LINK_KEY, "");
 	}

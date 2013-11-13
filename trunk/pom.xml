@@ -229,7 +229,6 @@
 			<version>4.2.1</version>
 		</dependency>
 
-
 		<dependency>
 			<groupId>org.xhtmlrenderer</groupId>
 			<artifactId>flying-saucer-core</artifactId>
@@ -283,6 +282,12 @@
 			<groupId>org.lesscss</groupId>
 			<artifactId>lesscss</artifactId>
 			<version>1.3.3</version>
+		</dependency>
+
+		<dependency>
+			<groupId>net.glxn</groupId>
+			<artifactId>qrgen</artifactId>
+			<version>1.3</version>
 		</dependency>
 
 	</dependencies>

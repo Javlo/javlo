@@ -16,6 +16,8 @@ import java.util.Set;
 
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.lang.StringUtils;
+import org.javlo.component.core.IContentVisualComponent;
+import org.javlo.component.core.ILink;
 import org.javlo.config.StaticConfig;
 import org.javlo.context.ContentContext;
 import org.javlo.context.GlobalContext;
@@ -153,6 +155,18 @@ public class URLHelper extends ElementaryURLHelper {
 		} else {
 			return createStaticURL(ctx, currentPage, RESOURCE + '/' + url);
 		}
+	}
+	
+	public static String createQRCodeLink(ContentContext ctx, IContentVisualComponent comp) {
+		String command = "link";
+		if (ctx.isAsPreviewMode()) {
+			command = "link_preview";
+		}
+		if (comp == null) {			 
+			return createStaticURL(ctx, "/qrcode/"+command+"/");
+		}
+		return createStaticURL(ctx, "/qrcode/"+command+"/"+comp.getId()+".png");
+		
 	}
 
 	public static String createResourceURL(ContentContext ctx, File file) {

@@ -2202,5 +2202,10 @@ public class Template implements Comparable<Template> {
 	public int getPDFHeigth() {		
 		return properties.getInt("pdf.height", getParent().getPDFHeigth());
 	}
+	
+	public int getQRCodeSize() {		
+		return properties.getInt("qrcode.width", getParent().getQRCodeSize());
+	}
+
 
 }
