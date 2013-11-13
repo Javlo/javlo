@@ -558,6 +558,10 @@ public class InfoBean {
 	public String getTs() {
 		return ts;
 	}
+	
+	public String getQRCodeLinkPrefix() {
+		return URLHelper.createQRCodeLink(ctx, null);
+	}
 
 	public String getBackURL() {
 		RequestService requestService = RequestService.getInstance(ctx.getRequest());

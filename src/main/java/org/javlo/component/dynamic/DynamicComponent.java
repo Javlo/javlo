@@ -26,6 +26,7 @@ import org.javlo.component.core.AbstractVisualComponent;
 import org.javlo.component.core.ComponentBean;
 import org.javlo.component.core.IContentVisualComponent;
 import org.javlo.component.core.IDate;
+import org.javlo.component.core.ILink;
 import org.javlo.config.StaticConfig;
 import org.javlo.context.ContentContext;
 import org.javlo.context.GlobalContext;
@@ -42,7 +43,7 @@ import org.javlo.ztatic.IStaticContainer;
 /**
  * @author pvandermaesen
  */
-public class DynamicComponent extends AbstractVisualComponent implements IStaticContainer, IFieldContainer, IDate {
+public class DynamicComponent extends AbstractVisualComponent implements IStaticContainer, IFieldContainer, IDate, ILink {
 
 	public static final String HIDDEN = "hidden";
 
@@ -703,6 +704,16 @@ public class DynamicComponent extends AbstractVisualComponent implements IStatic
 			}
 		}
 		return outInit;
+	}
+
+	@Override
+	public String getURL(ContentContext ctx) throws Exception {
+		for (Field field : getFields(ctx)) {
+			if (field instanceof ILink) {
+				return ((ILink)field).getURL(ctx);
+			}
+		}
+		return null;
 	}
 
 }

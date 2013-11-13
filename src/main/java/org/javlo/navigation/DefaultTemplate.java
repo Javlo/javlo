@@ -334,5 +334,10 @@ public class DefaultTemplate extends Template {
 	public int getPDFHeigth() {
 		return 1024;
 	}
+	
+	@Override
+	public int getQRCodeSize() {	
+		return 125;
+	}
 
 }

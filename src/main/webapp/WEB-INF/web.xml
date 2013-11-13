@@ -105,6 +105,16 @@
 		<servlet-name>expcomp</servlet-name>
 		<url-pattern>/expcomp/*</url-pattern>
 	</servlet-mapping>
+	
+	<servlet>
+		<servlet-name>QRCode</servlet-name>
+		<servlet-class>org.javlo.servlet.QRCodeServlet</servlet-class>
+		<load-on-startup>1</load-on-startup>
+	</servlet>
+	<servlet-mapping>
+		<servlet-name>QRCode</servlet-name>
+		<url-pattern>/qrcode/*</url-pattern>
+	</servlet-mapping>
 
 	<servlet>
 		<servlet-name>SiteMapServlet</servlet-name>

@@ -6,6 +6,7 @@ import java.util.Locale;
 
 import javax.servlet.http.HttpServletRequest;
 
+import org.javlo.component.core.ILink;
 import org.javlo.context.ContentContext;
 import org.javlo.context.GlobalContext;
 import org.javlo.helper.PatternHelper;
@@ -16,7 +17,25 @@ import org.javlo.navigation.MenuElement;
 import org.javlo.service.ContentService;
 import org.javlo.service.RequestService;
 
-public class FieldExternalLink extends MetaField {
+public class FieldExternalLink extends MetaField implements ILink {
+	
+	public class ExternalLinkBean extends FieldBean {
+
+		public ExternalLinkBean(ContentContext ctx) {
+			super(ctx);
+		}
+		
+		@Override
+		public String getURL() {
+			return getCurrentLink().trim();
+		}
+		
+		public String getTitle() {
+			return getLinkLabel();
+		}
+		
+	}
+
 
 	protected String getLabelLabel() {
 		return getI18nAccess().getText("global.label");
@@ -189,6 +208,16 @@ public class FieldExternalLink extends MetaField {
 			}
 		}
 		return true;
+	}
+
+	@Override
+	public String getURL(ContentContext ctx) throws Exception {
+		return getCurrentLink();
+	}
+	
+	@Override
+	protected FieldBean newFieldBean(ContentContext ctx) {
+		return new ExternalLinkBean(ctx);
 	}
 
 }

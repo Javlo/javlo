@@ -189,3 +189,5 @@ change log
 * 2.0.2.6 29/09/2013
 
  * you can use .less in place of .css
+ 
+ * QRcode generation
