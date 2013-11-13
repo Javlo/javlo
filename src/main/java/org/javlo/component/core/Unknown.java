@@ -39,7 +39,7 @@ public class Unknown extends AbstractVisualComponent {
 		if (ctx.isAsViewMode()) {
 			return "";
 		} else {
-			return super.getViewXHTMLCode(ctx);
+			return "<b>unknow component : " + getComponentBean().getType() + "</b>";
 		}
 	}
 
