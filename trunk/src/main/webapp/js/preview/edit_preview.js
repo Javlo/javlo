@@ -268,7 +268,7 @@ initPreview = function() {
 						greedy : true,
 						tolerance : 'pointer',
 						drop : function(event, ui) {
-							var currentURL = window.location.href;
+							var currentURL = addParam(window.location.href,"previewEdit=true");
 							var layer = jQuery("#preview-layer");
 							var comp = layer.data("subItem");
 							
