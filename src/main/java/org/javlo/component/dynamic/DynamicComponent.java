@@ -166,6 +166,10 @@ public class DynamicComponent extends AbstractVisualComponent implements IStatic
 						field.fillRequest(ctx);
 					}
 				}
+				if (ctx.isAbsoluteURL()) {
+					ctx = new ContentContext(ctx);
+					ctx.setAbsoluteURL(false);
+				}
 				String linkToJSP = URLHelper.createStaticTemplateURLWithoutContext(ctx, ctx.getCurrentTemplate(), "" + getRenderer());
 				return executeJSP(ctx, linkToJSP);
 			}
