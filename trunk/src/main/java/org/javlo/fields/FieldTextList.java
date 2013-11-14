@@ -35,7 +35,7 @@ public class FieldTextList extends FieldLargeText {
 		out.println(StringHelper.textToList(StringHelper.neverNull(getValue()), getMetaData("sep"), null, true, null));
 		out.println("</p>");
 
-		out.close();
+		out.close();		
 		return writer.toString();
 	}
 
