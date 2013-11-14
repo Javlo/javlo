@@ -198,8 +198,7 @@ public class ContentElementList implements IContentComponentsList {
 				}
 			}
 		}
-		if (res.length() == 0 && firstSubtitle != null) {
-			System.out.println("***** ContentElementList.getLabel : firstSubtitle = "+firstSubtitle); //TODO: remove debug trace
+		if (res.length() == 0 && firstSubtitle != null) {			
 			return firstSubtitle;
 		}
 		return res;

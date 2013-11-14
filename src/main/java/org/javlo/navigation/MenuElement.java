@@ -938,6 +938,10 @@ public class MenuElement implements Serializable {
 		public boolean isChildrenAssociation() {
 			return page.isChildrenAssociation();
 		}
+		
+		public boolean isChildrenOfAssociation() {
+			return page.isChildrenOfAssociation();
+		}
 
 		public boolean isChangeNotification() {
 			return page.isChangeNotification();
@@ -3061,7 +3065,11 @@ public class MenuElement implements Serializable {
 
 		if (desc.title != null) {
 			if ((desc.title.trim().length() == 0) && (name != null)) {
-				desc.title = name;
+				if (isChangeNotification() && getChildMenuElements().size() > 0) {
+					desc.title = getChildMenuElements().iterator().next().getTitle(newCtx);
+				} else {
+					desc.title = name;
+				}
 			}
 		}
 		return desc.title;
@@ -4146,6 +4154,23 @@ public class MenuElement implements Serializable {
 	public boolean isChildrenAssociation() {
 		return childrenAssociation;
 	}
+	
+	public boolean isChildrenOfAssociation() {		
+		MenuElement parent = getParent();
+		while(parent != null) {
+			if (parent.isChildrenAssociation()) {
+				return true;
+			}
+			if (parent.getPreviousBrother() != null && parent.getPreviousBrother().isChildrenAssociation()) {
+				return true;
+			}
+			if (parent.getNextBrother() != null && parent.getNextBrother().isChildrenAssociation()) {
+				return true;
+			}
+			parent = parent.getParent();
+		}		
+		return false;
+	}	
 	
 	public void setChildrenAssociation(boolean childrenAssociation) {		
 		this.childrenAssociation = childrenAssociation;

@@ -1518,7 +1518,7 @@ public class Edit extends AbstractModuleAction {
 			}
 		}
 
-		MenuElement targetPage = content.getNavigation(ctx).searchChildFromId(rs.getParameter("pageCompID", null));
+		MenuElement targetPage = content.getNavigation(ctx).searchChildFromId(rs.getParameter("pageContainerID", null));
 		if (targetPage == null) {
 			targetPage = ctx.getCurrentPage();
 		}
@@ -1548,12 +1548,12 @@ public class Edit extends AbstractModuleAction {
 					selecterPrefix = "#page_" + compToBeUpdated.getPage().getId() + " #";
 					ctx.setCurrentPageCached(compToBeUpdated.getPage());
 				}
-
+				ctx.setCurrentPageCached(compToBeUpdated.getPage());
 				ctx.getAjaxInsideZone().put(selecterPrefix + areaMap.get(compToBeUpdated.getArea()), ServletHelper.executeJSP(ctx, "/jsp/view/content_view.jsp?area=" + compToBeUpdated.getArea()));
 			}
 			String selecterPrefix = "";
 			if (parentPage.isChildrenAssociation()) {
-				selecterPrefix = "#page_" + rs.getParameter("pageCompID", "#ID_NOT_DEFINED") + " #";
+				selecterPrefix = "#page_" + rs.getParameter("pageContainerID", "#ID_NOT_DEFINED") + " #";
 
 				if (targetPage != null) {
 					ctx.setCurrentPageCached(targetPage);

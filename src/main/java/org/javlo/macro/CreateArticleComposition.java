@@ -137,14 +137,12 @@ public class CreateArticleComposition implements IInteractiveMacro, IAction {
 				if (mountPage != null) {
 					MenuElement newPage = MacroHelper.createArticlePageName(ctx, mountPage);
 					if (newPage != null) {													
-						String id = MacroHelper.addContent(ctx.getRequestContentLanguage(), newPage, "0", Title.TYPE, "New letter titile : "+StringHelper.renderTime(new Date()), ctx.getCurrentEditUser());						
-						MenuElement layoutPage = MacroHelper.addPageIfNotExist(ctx, newPage.getName(), newPage.getName()+"-composition", false);
-						MacroHelper.addContent(ctx.getRequestContentLanguage(), newPage, id, ChildrenLink.TYPE, "", ctx.getCurrentEditUser());
+						String id = MacroHelper.addContent(ctx.getRequestContentLanguage(), newPage, "0", Title.TYPE, "New letter title : "+StringHelper.renderTime(new Date()), ctx.getCurrentEditUser());						
+						MenuElement layoutPage = MacroHelper.addPageIfNotExist(ctx, newPage.getName(), newPage.getName()+"-composition", false);						
 						newPage.setTemplateName(config.getProperty("template.article","mailing_one_area"));
 						layoutPage.setTemplateName(config.getProperty("template.composition", "mailing"));
 						layoutPage.setChildrenAssociation(true);
-						MacroHelper.addPageIfNotExist(ctx, layoutPage.getName(), layoutPage.getName()+"-1", false);
-						MacroHelper.addContent(ctx.getRequestContentLanguage(), layoutPage, "0", Title.TYPE, "Composition", ctx.getCurrentEditUser());
+						MacroHelper.addPageIfNotExist(ctx, layoutPage.getName(), layoutPage.getName()+"-1", false);						
 						MenuElement articlePage = MacroHelper.addPageIfNotExist(ctx, newPage.getName(), newPage.getName()+"-article", false);
 						articlePage.setSharedName(articlePage.getName());
 						articlePage.setTemplateName(config.getProperty("template.article","mailing_one_area"));

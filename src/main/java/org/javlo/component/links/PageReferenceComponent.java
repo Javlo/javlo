@@ -166,6 +166,7 @@ public class PageReferenceComponent extends ComplexPropertiesLink implements IAc
 			bean.visible = page.isVisible();
 			bean.path = page.getPath();
 			bean.creator = page.getCreator();
+			bean.childrenOfAssociation = page.isChildrenOfAssociation();
 			bean.setCategoryKey("category." + StringHelper.neverNull(page.getCategory(ctx)).toLowerCase().replaceAll(" ", ""));
 			
 			bean.publishURL = URLHelper.createAbsoluteViewURL(ctx, page.getPath());
@@ -278,6 +279,7 @@ public class PageReferenceComponent extends ComplexPropertiesLink implements IAc
 		private String path = null;
 		private String creator = null;
 		private String publishURL;
+		private boolean childrenOfAssociation = false;
 		private boolean realContent = false;
 		private boolean visible = false;
 		private Collection<Link> links = new LinkedList<Link>();
@@ -491,6 +493,14 @@ public class PageReferenceComponent extends ComplexPropertiesLink implements IAc
 
 		public void setPublishURL(String publishURL) {
 			this.publishURL = publishURL;
+		}
+
+		public boolean isChildrenOfAssociation() {
+			return childrenOfAssociation;
+		}
+
+		public void setChildrenOfAssociation(boolean childrenOfAssociation) {
+			this.childrenOfAssociation = childrenOfAssociation;
 		}
 
 	}
@@ -1334,18 +1344,21 @@ public class PageReferenceComponent extends ComplexPropertiesLink implements IAc
 		 */
 
 		for (MenuElement page : pages) {
+			
 			ContentContext lgCtx = new ContentContext(ctx);
 			if (GlobalContext.getInstance(ctx.getRequest()).isAutoSwitchToDefaultLanguage()) {
 				lgCtx = new ContentContext(page.getContentContextWithContent(ctx));
 			}
+			
 			if (filterPage(lgCtx, page)) {
 				if (countPage < getMaxNews(lgCtx)) {
-					if ((page.isRealContentAnyLanguage(lgCtx) || isWidthEmptyPage()) && (page.getChildMenuElements().size() == 0 || !isOnlyPageWithoutChildren()) && page.getContentDateNeverNull(lgCtx).after(backDate.getTime())) {
-
+					if ((page.isRealContentAnyLanguage(lgCtx) || isWidthEmptyPage()) && ((page.getChildMenuElements().size() == 0 || page.isChildrenAssociation()) || !isOnlyPageWithoutChildren()) && page.getContentDateNeverNull(lgCtx).after(backDate.getTime())) {
+						
 						if (firstPage == null) {
 							firstPage = page;
 						}
-
+						
+						
 						if (page.isRealContent(lgCtx)) {
 							realContentSize++;
 						}
