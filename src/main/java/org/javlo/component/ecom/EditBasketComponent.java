@@ -140,5 +140,10 @@ public class EditBasketComponent extends AbstractVisualComponent implements IAct
 	public boolean isRealContent(ContentContext ctx) {
 		return true;
 	}
+	
+	@Override
+	public boolean isEmpty(ContentContext ctx) {	
+		return false;
+	}
 
 }

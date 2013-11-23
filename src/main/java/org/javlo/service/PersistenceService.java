@@ -13,6 +13,7 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.io.OutputStreamWriter;
 import java.io.PrintStream;
 import java.io.Reader;
 import java.io.Writer;
@@ -111,6 +112,7 @@ public class PersistenceService {
 		private int version;
 		private String cmsVersion;
 		private MenuElement root;
+		private boolean error = false;
 
 		public int getVersion() {
 			return version;
@@ -134,6 +136,14 @@ public class PersistenceService {
 
 		public void setRoot(MenuElement root) {
 			this.root = root;
+		}
+
+		public boolean isError() {
+			return error;
+		}
+
+		public void setError(boolean error) {
+			this.error = error;
 		}
 	}
 
@@ -185,7 +195,7 @@ public class PersistenceService {
 	public static final String GLOBAL_MAP_NAME = "global";
 
 	private static int UNDO_DEPTH = 16;
-	
+
 	public static final Date parseDate(String date) throws ParseException {
 		synchronized (PERSISTENCE_DATE_FORMAT) {
 			try {
@@ -196,7 +206,7 @@ public class PersistenceService {
 			}
 		}
 	}
-	
+
 	public static final String renderDate(Date date) {
 		synchronized (PERSISTENCE_DATE_FORMAT) {
 			return PERSISTENCE_DATE_FORMAT.format(date);
@@ -533,7 +543,10 @@ public class PersistenceService {
 			contentList.add(bean);
 
 			/*
-			 * st.setString(1, pageId); st.setString(2, parent); st.setString(3, type); st.setString(4, content); st.setString(5, id); st.setString(6, lg); if (isRepeat) { st.setInt(7, 1); } else { st.setInt(7, 0); } st.setString(8, style);
+			 * st.setString(1, pageId); st.setString(2, parent); st.setString(3,
+			 * type); st.setString(4, content); st.setString(5, id);
+			 * st.setString(6, lg); if (isRepeat) { st.setInt(7, 1); } else {
+			 * st.setInt(7, 0); } st.setString(8, style);
 			 */
 
 			parentMap.put(lg, id);
@@ -621,10 +634,10 @@ public class PersistenceService {
 		page.setValidationDate(validationDate);
 		page.setBlocked(StringHelper.isTrue(pageXML.getAttributeValue("blocked", "false")));
 		page.setBlocker(pageXML.getAttributeValue("blocker", ""));
-		
+
 		page.setChildrenAssociation(StringHelper.isTrue(pageXML.getAttributeValue("childrenAssociation", null)));
 		page.setChangeNotification(StringHelper.isTrue(pageXML.getAttributeValue("changeNotification", "true")));
-		
+
 		page.setSharedName(pageXML.getAttributeValue("sharedName", null));
 
 		String type = pageXML.getAttributeValue("type", null);
@@ -669,11 +682,13 @@ public class PersistenceService {
 
 		return page;
 	}
-	
+
 	/**
 	 * load data from InputStream of Reader
+	 * 
 	 * @param ctx
-	 * @param in can Reader of InputStream
+	 * @param in
+	 *            can Reader of InputStream
 	 * @param contentAttributeMap
 	 * @param renderMode
 	 * @return
@@ -690,11 +705,11 @@ public class PersistenceService {
 		try {
 			NodeXML firstNode;
 			if (in instanceof InputStream) {
-				firstNode = XMLFactory.getFirstNode((InputStream)in);
+				firstNode = XMLFactory.getFirstNode((InputStream) in);
 			} else {
-				firstNode = XMLFactory.getFirstNode((Reader)in);
+				firstNode = XMLFactory.getFirstNode((Reader) in);
 			}
-			
+
 			NodeXML page = firstNode.getChild("page");
 
 			outBean.setCmsVersion(firstNode.getAttributeValue("cmsversion"));
@@ -803,19 +818,21 @@ public class PersistenceService {
 			}
 
 		} catch (SAXParseException e) {
-			e.printStackTrace();
-			MessageRepository.getInstance(ctx).setGlobalMessageAndNotification(ctx, new GenericMessage("error XML parsing (line:" + e.getLineNumber() + " col:" + e.getColumnNumber() + "): " + e.getMessage(), GenericMessage.ERROR));
+			//e.printStackTrace();
+			MessageRepository.getInstance(ctx).setGlobalMessageAndNotification(ctx, new GenericMessage("error XML parsing (line:" + e.getLineNumber() + " col:" + e.getColumnNumber() + "): " + e.getMessage(), GenericMessage.ERROR, ""));
 			root.setId("0");
 			root.setName("root");
 			root.setPriority(10);
 			root.setVisible(true);
+			outBean.setError(true);
 		} catch (Exception e) {
-			e.printStackTrace();
-			MessageRepository.getInstance(ctx).setGlobalMessageAndNotification(ctx, new GenericMessage("error XML loading : " + e.getMessage(), GenericMessage.ERROR));
+			//e.printStackTrace();
+			MessageRepository.getInstance(ctx).setGlobalMessageAndNotification(ctx, new GenericMessage("error XML loading : " + e.getMessage(), GenericMessage.ERROR, ""));
 			root.setId("0");
 			root.setName("root");
 			root.setPriority(10);
 			root.setVisible(true);
+			outBean.setError(true);
 		}
 
 		outBean.setRoot(root);
@@ -823,13 +840,13 @@ public class PersistenceService {
 		return outBean;
 
 	}
-	
-	public MenuElement load(ContentContext ctx, int renderMode, Map<String, String> contentAttributeMap, Date timeTravelDate) throws Exception {		
-		return load(ctx,renderMode,contentAttributeMap, timeTravelDate, true);		
+
+	public MenuElement load(ContentContext ctx, int renderMode, Map<String, String> contentAttributeMap, Date timeTravelDate) throws Exception {
+		return load(ctx, renderMode, contentAttributeMap, timeTravelDate, true);
 	}
 
 	protected MenuElement load(ContentContext ctx, int renderMode, Map<String, String> contentAttributeMap, Date timeTravelDate, boolean correctXML) throws Exception {
-		synchronized (LOCK_LOAD ) { // load only one content both
+		synchronized (LOCK_LOAD) { // load only one content both
 
 			loadVersion();
 
@@ -840,7 +857,8 @@ public class PersistenceService {
 			try {
 
 				if (timeTravelDate != null) {
-					// An other render mode than VIEW_MODE is not supported with a timeTravelDate.
+					// An other render mode than VIEW_MODE is not supported with
+					// a timeTravelDate.
 					Map<File, Date> backups = getBackupFiles();
 					long minDiff = Long.MIN_VALUE;
 					Entry<File, Date> minBackup = null;
@@ -866,7 +884,7 @@ public class PersistenceService {
 					}
 				}
 				File file = null;
-				if (in == null) {					
+				if (in == null) {
 					if (renderMode == ContentContext.PREVIEW_MODE) {
 						file = new File(getDirectory() + "/content_" + renderMode + '_' + version + ".xml");
 					} else {
@@ -884,36 +902,36 @@ public class PersistenceService {
 					root.setPriority(1);
 					root.setId("0");
 					/*
-					 * file.createNewFile(); BufferedWriter out = new BufferedWriter(new FileWriter(file)); out.write("<content version=\"" + version + "\"><page id=\"0\" name=\"root\" priority=\"1\" visible=\"true\" userRoles=\"\" /></content>" ); out.close();
+					 * file.createNewFile(); BufferedWriter out = new
+					 * BufferedWriter(new FileWriter(file));
+					 * out.write("<content version=\"" + version +
+					 * "\"><page id=\"0\" name=\"root\" priority=\"1\" visible=\"true\" userRoles=\"\" /></content>"
+					 * ); out.close();
 					 */
 				} else {
-					LoadingBean loadBean = load(ctx, in, contentAttributeMap, renderMode);
-					root = loadBean.getRoot();					
+					LoadingBean loadBean = load(ctx, in, contentAttributeMap, renderMode);					
+					if (loadBean.isError() && correctXML) {
+						correctCharacterEncoding(file);
+						in.close();
+						in = new FileInputStream(file);						
+						loadBean = load(ctx, in, contentAttributeMap, renderMode);
+					}
+					root = loadBean.getRoot();
 					try {
 						ConvertToCurrentVersion.convert(ctx, loadBean);
 					} catch (Exception e) {
 						e.printStackTrace();
-						if (correctXML && file != null) {
-							logger.info("try to correct xml structure : "+file.getName()+" context : "+ctx.getGlobalContext().getContextKey());
-							String content = ResourceHelper.getFileContent(file);
-							StringBuffer newContent = new StringBuffer();
-							for (char c : content.toCharArray()) {
-								if (XMLChar.isValid(c)) {
-									newContent.append(c);
-								} else {
-									logger.warning("bad char found : "+c);
-									newContent.append('?');
-								}
-							}
-							content = null;
-							ResourceHelper.writeStringToFile(file, newContent.toString(), ContentContext.CHARACTER_ENCODING);							
-							return load(ctx,renderMode,contentAttributeMap,timeTravelDate,false);
+						if (correctXML) {
+							correctCharacterEncoding(file);
 						}
+						return load(ctx, renderMode, contentAttributeMap, timeTravelDate, false);
 					}
 
 					/** load linked content **/
 					/*
-					 * MenuElement[] children = root.getAllChilds(); root.updateLinkedData(ctx); for (MenuElement page : children) { page.updateLinkedData(ctx); }
+					 * MenuElement[] children = root.getAllChilds();
+					 * root.updateLinkedData(ctx); for (MenuElement page :
+					 * children) { page.updateLinkedData(ctx); }
 					 */
 				}
 
@@ -924,7 +942,62 @@ public class PersistenceService {
 			return root;
 		}
 	}
+	
+	
 
+	private synchronized static void correctCharacterEncoding(File file) throws FileNotFoundException, IOException {
+		if (file != null) {
+			logger.info("try to correct xml structure : " + file.getAbsolutePath());
+			String content = ResourceHelper.loadStringFromFile(file);
+			FileUtils.copyFile(file, new File(file.getAbsolutePath() + ".error"));
+			BufferedWriter writer = null;
+			try {
+				writer = new BufferedWriter(new OutputStreamWriter(new FileOutputStream(file),ContentContext.CHARACTER_ENCODING));
+				for (char c : content.toCharArray()) {				
+					if (XMLChar.isValid(c)) {
+						writer.write(c);
+					} else {
+						logger.warning("bad char found : " + c);
+						writer.write('?');
+					}
+				}
+			} finally {
+				ResourceHelper.closeResource(writer);
+			}
+		}
+	}
+	
+	public static void main(String[] args) {
+		File file = new File ("c:/trans/content_3_5000.xml");
+		
+		try {
+			NodeXML nodeXML = XMLFactory.getFirstNode(file);
+			System.out.println("***** PersistenceService.main : size = "+nodeXML.getChildren().size()); //TODO: remove debug trace
+		} catch (Exception e1) {
+			// TODO Auto-generated catch block
+			e1.printStackTrace();
+		}
+		
+		
+		File finalFile = new File ("c:/trans/content_2_corrected.xml");
+		
+		try {
+			FileUtils.copyFile(file, finalFile);
+			correctCharacterEncoding(finalFile);
+		} catch (IOException e) { 
+			e.printStackTrace();
+		}	
+		
+		
+		try {
+			NodeXML nodeXML = XMLFactory.getFirstNode(finalFile);
+			System.out.println("***** PersistenceService.main : final size = "+nodeXML.getChildren().size()); //TODO: remove debug trace
+		} catch (Exception e1) {
+			// TODO Auto-generated catch block
+			e1.printStackTrace();
+		}
+	}
+	
 	/**
 	 * load current version of preview content.
 	 * 
@@ -1104,7 +1177,8 @@ public class PersistenceService {
 	 * 
 	 * @param version
 	 *            a content version
-	 * @return true if version has changed and false if this version doens'nt exist.
+	 * @return true if version has changed and false if this version doens'nt
+	 *         exist.
 	 */
 	public boolean setVersion(int version) {
 		if (versionExist(version)) {
@@ -1279,33 +1353,45 @@ public class PersistenceService {
 	}
 
 	/*
-	 * public static void main(String[] args) { File file = new File("C:/Apache/Tomcat 6.0/webapps/dc/WEB-INF/data-ctx/ctx-121395557182868827380/persitence/content_3_2.xml");
+	 * public static void main(String[] args) { File file = new File(
+	 * "C:/Apache/Tomcat 6.0/webapps/dc/WEB-INF/data-ctx/ctx-121395557182868827380/persitence/content_3_2.xml"
+	 * );
 	 * 
-	 * int read; try { InputStream in = new FileInputStream(file); StringBuffer outFile = new StringBuffer(); read = in.read(); int pos = 0; boolean error = false; while (read >= 0) { if (read == 0) { error = true; } else { outFile.append((char) read); } Character character = new Character((char) read); Charset charset = Charset.forName(ContentContext.CHARACTER_ENCODING); ByteBuffer buf = ByteBuffer.allocate(4); buf.put(("" + character).getBytes()); charset.decode(buf); pos++; read = in.read(); } if (error) { FileUtils.writeStringToFile(file, outFile.toString()); } in.close(); } catch (IOException e) { // TODO Auto-generated catch block e.printStackTrace(); } System.out.println("end."); }
+	 * int read; try { InputStream in = new FileInputStream(file); StringBuffer
+	 * outFile = new StringBuffer(); read = in.read(); int pos = 0; boolean
+	 * error = false; while (read >= 0) { if (read == 0) { error = true; } else
+	 * { outFile.append((char) read); } Character character = new
+	 * Character((char) read); Charset charset =
+	 * Charset.forName(ContentContext.CHARACTER_ENCODING); ByteBuffer buf =
+	 * ByteBuffer.allocate(4); buf.put(("" + character).getBytes());
+	 * charset.decode(buf); pos++; read = in.read(); } if (error) {
+	 * FileUtils.writeStringToFile(file, outFile.toString()); } in.close(); }
+	 * catch (IOException e) { // TODO Auto-generated catch block
+	 * e.printStackTrace(); } System.out.println("end."); }
 	 */
 
 	private boolean versionExist(int version) {
 		File file = new File(getDirectory() + "/content_" + ContentContext.PREVIEW_MODE + '_' + version + ".xml");
 		return file.exists();
 	}
-	
+
 	public void sendPersistenceErrorToAdministrator(String message, File file, Throwable e) throws AddressException {
 		ByteArrayOutputStream outStream = new ByteArrayOutputStream();
 		PrintStream out = new PrintStream(outStream);
-		out.println("JAVLO PERSISTENCE ERROR : "+globalContext.getContextKey());
+		out.println("JAVLO PERSISTENCE ERROR : " + globalContext.getContextKey());
 		out.println("");
 		out.println(message);
 		out.println("");
-		out.println("Server time : "+StringHelper.renderTime(new Date()));
+		out.println("Server time : " + StringHelper.renderTime(new Date()));
 		out.println("");
 		out.println("Stack Trace :");
 		e.printStackTrace(out);
 		out.close();
 		String content = new String(outStream.toByteArray());
 		if (globalContext.getStaticConfig().getErrorMailReport() != null) {
-			NetHelper.sendMailToAdministrator(globalContext, new InternetAddress(globalContext.getStaticConfig().getErrorMailReport()), "Javlo persistence Error on : "+globalContext.getContextKey(), content);
+			NetHelper.sendMailToAdministrator(globalContext, new InternetAddress(globalContext.getStaticConfig().getErrorMailReport()), "Javlo persistence Error on : " + globalContext.getContextKey(), content);
 		} else {
-			NetHelper.sendMailToAdministrator(globalContext, "Javlo persistence Error on : "+globalContext.getContextKey(), content);
+			NetHelper.sendMailToAdministrator(globalContext, "Javlo persistence Error on : " + globalContext.getContextKey(), content);
 		}
 	}
 }

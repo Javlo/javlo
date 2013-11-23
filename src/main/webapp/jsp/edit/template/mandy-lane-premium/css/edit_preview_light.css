@@ -1,7 +1,7 @@
 #preview_command {
 	background-color: #eeeeef;
 	color: #AFAFAF;
-	box-shadow: 0 0 7px #fcfcfc;
+	box-shadow: 0 0 7px #333333;
 	height: 100%;
 	margin-top: 27px;
 }
@@ -140,13 +140,15 @@ body.preview-only {
 	font-weight: bold;
 	text-decoration: none;
 	width: 100%;
+	color: #ffffff;
 }
 
 #preview_command .component,#preview_command .navigation li span,#preview_command input[type=submit],#preview_command .macro-list a, #preview_command .shared .content-wrapper, #preview_command .message 
 	{
 	margin: 0 4px 4px 0;
 	padding: 3px;
-	color: #afafaf;
+	 color: #505050;
+    text-shadow: 1px -1px 0 #FCFCFC;
 	background-color: #eeeeee;
 	border: 1px #cccccc solid;
 	border-radius: 3px;	
@@ -366,6 +368,13 @@ body.preview-only {
 	margin-left: 3px;
 	padding-right: 10px;
 	display: block;
+	color: #505050;
+    text-shadow: 1px -1px 0 #FCFCFC;
+}
+
+#preview_command .navigation .sortable li.current a {
+	text-shadow: none;
+	color: #ffffff;
 }
 
 #preview_command .navigation .sortable li.current a {
