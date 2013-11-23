@@ -48,10 +48,13 @@ import org.apache.commons.codec.binary.Base64;
 import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.lang.RandomStringUtils;
 import org.apache.commons.lang.StringUtils;
+import org.codehaus.plexus.util.StringInputStream;
 import org.javlo.context.ContentContext;
 import org.javlo.context.GlobalContext;
 import org.javlo.helper.Comparator.StringComparator;
 import org.javlo.i18n.I18nAccess;
+import org.javlo.xml.NodeXML;
+import org.javlo.xml.XMLFactory;
 import org.jsoup.Jsoup;
 
 import com.beust.jcommander.ParameterException;
@@ -99,7 +102,7 @@ public class StringHelper {
 	public static final String DEFAULT_LIST_SEPARATOR = "?";
 
 	private static long previousRandomId = System.currentTimeMillis();
-	
+
 	private static long previousShortRandomId = 0;
 
 	private static String previousDateId = "";
@@ -750,10 +753,10 @@ public class StringHelper {
 		String outExt = "";
 		int dotIndex = inFileName.lastIndexOf('.');
 		int endIndex = inFileName.lastIndexOf('?');
-		int jsessionIndex = inFileName.lastIndexOf(';');		
+		int jsessionIndex = inFileName.lastIndexOf(';');
 		if (endIndex <= 0 || endIndex < dotIndex) {
 			if (jsessionIndex > -1) {
-				endIndex = jsessionIndex;	
+				endIndex = jsessionIndex;
 			} else {
 				endIndex = inFileName.length();
 			}
@@ -765,7 +768,7 @@ public class StringHelper {
 		if (dotIndex >= 0) {
 			outExt = inFileName.substring(dotIndex + 1, endIndex);
 		}
-		
+
 		return outExt;
 	}
 
@@ -863,25 +866,29 @@ public class StringHelper {
 	public synchronized static String getRandomId() {
 		return getRandomIdBase10();
 	}
-	
+
 	/**
 	 * return a short id (length 10 chars).
+	 * 
 	 * @return
 	 */
 	public synchronized static String getShortRandomId() {
-		long newId = Math.round(System.currentTimeMillis()/10000);
-		if (newId <= previousShortRandomId) {	
-			logger.fine("to mutch random is generated : "+previousRandomId);
+		long newId = Math.round(System.currentTimeMillis() / 10000);
+		if (newId <= previousShortRandomId) {
+			logger.fine("to mutch random is generated : " + previousRandomId);
 			newId = previousShortRandomId + 1;
 		}
 		previousShortRandomId = newId;
 		String shortBase10 = "" + newId + Math.round(Math.random() * 9);
 		return shortBase10;
 	}
-	
+
 	/**
-	 * transform a string of number (length 10) to a structured communication, last number is the mod 97 of the first number
-	 * @param code a string of length 10 with only number
+	 * transform a string of number (length 10) to a structured communication,
+	 * last number is the mod 97 of the first number
+	 * 
+	 * @param code
+	 *            a string of length 10 with only number
 	 * @return a string on length 12 with the the last number is the mod 97
 	 */
 	public static String encodeAsStructuredCommunicationMod97(String code) {
@@ -889,12 +896,12 @@ public class StringHelper {
 			throw new ParameterException("length of code must be 10.");
 		} else {
 			Long codeAsLong = Long.parseLong(code);
-			Long mod = codeAsLong%97;
-			code = code.substring(0, 3)+'/'+code.substring(3,7)+'/'+code.substring(7);			
-			if (mod<10) {
-				return code+'0'+mod;
+			Long mod = codeAsLong % 97;
+			code = code.substring(0, 3) + '/' + code.substring(3, 7) + '/' + code.substring(7);
+			if (mod < 10) {
+				return code + '0' + mod;
 			} else {
-				return code+mod;
+				return code + mod;
 			}
 		}
 	}
@@ -956,7 +963,7 @@ public class StringHelper {
 	}
 
 	public static String html2txt(String html) {
-		return Jsoup.parse(html).text();		
+		return Jsoup.parse(html).text();
 	}
 
 	/**
@@ -1226,7 +1233,7 @@ public class StringHelper {
 	}
 
 	public static void main(String[] args) {
-		
+
 	}
 
 	/**
@@ -1731,10 +1738,10 @@ public class StringHelper {
 	public static String renderDouble(double value, int precision) {
 		return renderDouble(value, precision, ',');
 	}
-	
+
 	public static String renderDouble(double value, Locale locale) {
 		NumberFormat f = NumberFormat.getInstance(locale);
-		return f.format(value);		
+		return f.format(value);
 	}
 
 	public static String renderDouble(double value, int precision, char sep) {
@@ -2833,9 +2840,9 @@ public class StringHelper {
 		}
 		return out.toString();
 	}
-	
-	public static String renderPrice (double price, String currency) {
-		return String.format("%.2f "+currency, price);
+
+	public static String renderPrice(double price, String currency) {
+		return String.format("%.2f " + currency, price);
 	}
-	
-	}
+
+}

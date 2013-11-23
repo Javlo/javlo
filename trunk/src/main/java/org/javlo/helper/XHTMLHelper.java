@@ -1864,12 +1864,12 @@ public class XHTMLHelper {
 		out.println("<div class=\"resource-special-links\"><a class=\"hd\" href=\"" + URLHelper.createResourceURL(ctx, multimediaFileURL) + "\" title=\"" + StringHelper.removeTag(staticInfo.getFullDescription(ctx)) + "\">");
 		out.println("HD");
 		out.println("</a>");
-		if (staticInfo.getLinkedPage(ctx) != null) {
+		/*if (staticInfo.getLinkedPage(ctx) != null) {
 			String pageURL = URLHelper.createURL(ctx, staticInfo.getLinkedPage(ctx).getPath());
 			out.println("<a class=\"linked-page\" href=\"" + pageURL + "\" title=\"" + StringHelper.removeTag(staticInfo.getLinkedPage(ctx).getTitle(ctx)) + "\">");
 			out.println(staticInfo.getLinkedPage(ctx).getTitle(ctx));
 			out.println("</a>");
-		}
+		}*/
 		out.println("</div>");
 		out.close();
 		return writer.toString();
