@@ -1,7 +1,6 @@
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
 <%@ taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions" %>
-
-<c:if test="${not empty messages.globalMessage}">
+ <c:if test="${not empty messages.globalMessage}">
 <div class="message ${messages.globalMessage.typeLabel}">
 	<span>${messages.globalMessage.message}</span>
 </div>
@@ -115,7 +114,15 @@ document.getElementById('forget-password-id').style.display="block";
 	<div class="line">
 		<label for="lastName">${i18n.view['form.lastName']}</label>
 		<input type="text" id="lastName" name="lastName" value="${userInfoMap["lastName"]}" /> 
-	</div>		
+	</div>	
+	<c:if test="${not empty param.company}"><div class="line">
+		<label for="organization">${i18n.view['form.company']}</label>
+		<input type="text" id="organization" name="organization" value="${userInfoMap["organization"]}" /> 
+	</div>
+	<div class="line">
+		<label for="vat">${i18n.view['form.vat']}</label>
+		<input type="text" id="vat" name="vat" value="${userInfoMap["vat"]}" /> 
+	</div></c:if>
 	<div class="line">
 		<label for="mobile">${i18n.view['form.adress.phone']}</label>
 		<input type="text" id="mobile" name="mobile" value="${userInfoMap["mobile"]}" /> 

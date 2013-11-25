@@ -1,0 +1,1 @@
+<jsp:include page="simple_registration.jsp?company=true" />
