@@ -157,6 +157,9 @@ public class PageReferenceComponent extends ComplexPropertiesLink implements IAc
 			PageBean bean = new PageBean();
 			bean.language = ctx.getRequestContentLanguage();
 			bean.title = page.getTitle(ctx);
+			if (page.isChildrenAssociation() && page.getChildMenuElements().size() > 0) {
+				bean.title = page.getChildMenuElements().iterator().next().getTitle(ctx);
+			} 
 			bean.subTitle = page.getSubTitle(ctx);
 			bean.realContent = page.isRealContent(ctx);
 			bean.attTitle = XHTMLHelper.stringToAttribute(page.getTitle(ctx));

@@ -3065,11 +3065,7 @@ public class MenuElement implements Serializable {
 
 		if (desc.title != null) {
 			if ((desc.title.trim().length() == 0) && (name != null)) {
-				if (isChildrenAssociation() && getChildMenuElements().size() > 0) {
-					desc.title = getChildMenuElements().iterator().next().getTitle(newCtx);
-				} else {
-					desc.title = name;
-				}
+				desc.title = name;
 			}
 		}
 		return desc.title;
