@@ -11,14 +11,25 @@
 	</div><div class="line">
 		<label for="lastName">${i18n.view["field.lastname"]}</label>
 		<span class="value">${basket.lastName}</span>
-	</div><div class="line">
+	</div><div class="line"><c:if test="${comp.style == 'company'}"><div class="line">
+				<label for="organization">${i18n.view['form.company']}</label>
+				<span class="value">${basket.organization}</span> 
+			</div>
+			<div class="line">
+				<label for="vat">${i18n.view['form.vat']}</label>
+				<span class="value">${basket.VATNumber}</span> 
+			</div></c:if>
 		<label for="email">${i18n.view["field.email"]}</label>
 		<span class="value">${basket.contactEmail}</span>
-	</div><div class="line">
+	</div><c:if test="${comp.style == 'company'}">
+			</div><div class="one_half last">
+	</c:if><div class="line">
 		<label for="phone">${i18n.view["form.address.phone"]}</label>
 		<span class="value">${basket.contactPhone}</span>
 	</div>
-	</div><div class="one_half last">
+	<c:if test="${comp.style != 'company'}">
+		</div><div class="one_half last">
+	</c:if>
 	<div class="line">
 		<label for="country">${i18n.view["form.address.country"]}</label>
 		<span class="value">${basket.country}</span>
