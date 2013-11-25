@@ -47,6 +47,8 @@ public class EditBasketComponent extends AbstractVisualComponent implements IAct
 					basket.setContactEmail(ui.getEmail());
 					basket.setContactPhone(ui.getMobile());
 					basket.setTransfertAddressLogin(ctx.getCurrentUser().getLogin());
+					basket.setOrganization(ui.getOrganization());
+					basket.setVATNumber(ui.getVat());
 				}
 			}
 		}
