@@ -23,7 +23,7 @@
 			</div><div class="line">
 				<label for="lastName">${i18n.view["field.lastname"]}<span class="compulsory-star">*</span></label>
 				<input type="text" id="lastName" name="lastName" value="${basket.lastName}" />
-			</div>type=${comp.type}<c:if test="${comp.type == 'company'}"><div class="line">
+			</div><c:if test="${comp.style == 'company'}"><div class="line">
 				<label for="organization">${i18n.view['form.company']}</label>
 				<input type="text" id="organization" name="organization" value="${userInfoMap["organization"]}" /> 
 			</div>
@@ -33,11 +33,17 @@
 			</div></c:if><div class="line">
 				<label for="email">${i18n.view["field.email"]}<span class="compulsory-star">*</span></label>
 				<input type="text" id="email" name="email" value="${basket.contactEmail}" />
-			</div><div class="line">
+			</div>
+			<c:if test="${comp.style == 'company'}">
+			</div><div class="one_half last">
+			</c:if>
+			<div class="line">
 				<label for="phone">${i18n.view["form.address.phone"]}</label>
 				<input type="text" id="phone" name="phone" value="${basket.contactPhone}" />
 			</div>
+			<c:if test="${comp.style != 'company'}">
 			</div><div class="one_half last">
+			</c:if>
 			<div class="line">
 				<label for="country">${i18n.view["form.address.country"]}<span class="compulsory-star">*</span></label>
 				<c:if test="${empty list.countries}">
