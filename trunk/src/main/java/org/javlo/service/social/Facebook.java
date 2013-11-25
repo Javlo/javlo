@@ -51,6 +51,9 @@ public class Facebook extends AbstractSocialNetwork {
 	public IUserInfo getInitialUserInfo(String accessToken) throws Exception {
 		URL url;
 		url = new URL("https://api-read.facebook.com/restserver.php?access_token="+accessToken+"&api_key="+getClientId()+"&format=json-strings&method=fql.query&pretty=0&query=SELECT%20name%2C%20first_name%2C%20last_name%2C%20uid%2C%20email%20FROM%20user%20WHERE%20uid%3D693608149&sdk=joey");
+		
+		logger.info("read info from DB : "+url);
+		
 		String jsonStr = NetHelper.readPage(url);
 		
 		TypeToken<ArrayList<Map<String,String>>> list = new TypeToken<ArrayList<Map<String,String>>>(){};
