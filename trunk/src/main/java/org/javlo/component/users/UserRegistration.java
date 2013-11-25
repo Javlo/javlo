@@ -325,7 +325,10 @@ public class UserRegistration extends AbstractVisualComponent implements IAction
 	public static String performFacebookLogin(RequestService rs, ContentContext ctx, HttpSession session, GlobalContext globalContext, MessageRepository messageRepository, I18nAccess i18nAccess) throws Exception {		
 		String token = rs.getParameter("token", null);		
 		Facebook facebook = SocialService.getInstance(globalContext).getFacebook();
-		IUserInfo ui = facebook.getInitialUserInfo(token);		
+		IUserInfo ui = facebook.getInitialUserInfo(token);
+		if (!StringHelper.isMail(ui.getEmail())) {
+			return "technical error : facebook have not returned a valid email ("+ui.getEmail()+')';
+		}
 		IUserFactory userFactory = UserFactory.createUserFactory(globalContext, session);
 		User user = userFactory.getUser(ui.getLogin());
 		if (user == null) {
