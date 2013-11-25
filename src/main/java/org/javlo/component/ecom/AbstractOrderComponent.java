@@ -128,7 +128,10 @@ public abstract class AbstractOrderComponent extends AbstractVisualComponent {
 		String mailingPage = getData().getProperty("mail.page");
 		String pageURL="error:no link.";
 		if (mailingPage != null) {
-			MenuElement page = ContentService.getInstance(ctx.getGlobalContext()).getNavigation(ctx).searchChildFromName(mailingPage);			
+			MenuElement page = ContentService.getInstance(ctx.getGlobalContext()).getNavigation(ctx).searchChildFromName(mailingPage);	
+			if (page == null) {
+				logger.warning("page not found : "+mailingPage);
+			}
 			Map<String,String> params = new HashMap<String,String>();
 			params.put("body", getConfirmationEmail(basket));
 			params.put("total", basket.getTotalIncludingVATString());
@@ -148,7 +151,7 @@ public abstract class AbstractOrderComponent extends AbstractVisualComponent {
 				params.put("organization",basket.getOrganization());
 			}
 			if (basket.getVATNumber() != null && basket.getVATNumber().trim().length() > 0) {
-				params.put("VAT Number",basket.getVATNumber());
+				params.put("vat",basket.getVATNumber());
 			}
 			params.putAll(new ReadOnlyPropertiesMap(getData()));
 			pageURL = URLHelper.createURL(ctx.getContextForAbsoluteURL().getContextWithOtherRenderMode(ContentContext.PAGE_MODE), page.getPath(), params);
