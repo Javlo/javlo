@@ -25,11 +25,11 @@
 				<input type="text" id="lastName" name="lastName" value="${basket.lastName}" />
 			</div><c:if test="${comp.style == 'company'}"><div class="line">
 				<label for="organization">${i18n.view['form.company']}</label>
-				<input type="text" id="organization" name="organization" value="${userInfoMap["organization"]}" /> 
+				<input type="text" id="organization" name="organization" value="${basket.organization}" /> 
 			</div>
 			<div class="line">
 				<label for="vat">${i18n.view['form.vat']}</label>
-				<input type="text" id="vat" name="vat" value="${userInfoMap["vat"]}" /> 
+				<input type="text" id="vat" name="vat" value="${basket.VATNumber}" /> 
 			</div></c:if><div class="line">
 				<label for="email">${i18n.view["field.email"]}<span class="compulsory-star">*</span></label>
 				<input type="text" id="email" name="email" value="${basket.contactEmail}" />
