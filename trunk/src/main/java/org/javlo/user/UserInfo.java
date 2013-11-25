@@ -41,6 +41,7 @@ public class UserInfo implements Comparable<IUserInfo>, IUserInfo, Serializable 
 	private String lastName = "";
 	private String email = "";
 	private String organization = "";
+	private String vat = "";
 	private String function = "";
 	private String address = "";
 	private String postCode = "";
@@ -500,6 +501,14 @@ public class UserInfo implements Comparable<IUserInfo>, IUserInfo, Serializable 
 	@Override
 	public boolean isExternalLoginUser() {
 		return getPassword() != null && getPassword().equals(EXTERNAL_LOGIN);
+	}
+
+	public String getVat() {
+		return vat;
+	}
+
+	public void setVat(String vat) {
+		this.vat = vat;
 	}
 	
 	

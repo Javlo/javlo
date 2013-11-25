@@ -95,6 +95,9 @@ public class EditBasketComponent extends AbstractVisualComponent implements IAct
 		String address = rs.getParameter("address", "").trim();
 		String zip = rs.getParameter("zip", "").trim();
 		String city = rs.getParameter("city", "").trim();
+		
+		String vta = rs.getParameter("vat", "").trim();
+		String company = rs.getParameter("company", "").trim();
 
 		if (firstName.length() == 0 || lastName.length() == 0 || email.length() == 0 || country.length() == 0 || address.length() == 0 || zip.length() == 0 || city.length() == 0) {
 			messageRepository.setGlobalMessage(new GenericMessage(i18nAccess.getViewText("global.compulsory-field"), GenericMessage.ERROR));
@@ -111,6 +114,9 @@ public class EditBasketComponent extends AbstractVisualComponent implements IAct
 				basket.setZip(zip);
 				basket.setCity(city);
 				basket.setStep(Basket.ORDER_STEP);
+				
+				basket.setVATNumber(vta);
+				basket.setOrganization(company);
 			}
 		}
 

@@ -144,6 +144,12 @@ public abstract class AbstractOrderComponent extends AbstractVisualComponent {
 			params.put("zip", basket.getZip());
 			params.put("country", StringHelper.toHTMLAttribute(new Locale(ctx.getRequestContentLanguage(), basket.getCountry()).getDisplayCountry(ctx.getLocale())));
 			params.put("currencyCode", ""+basket.getCurrencyCode());
+			if (basket.getOrganization() != null && basket.getOrganization().trim().length() > 0) {
+				params.put("organization",basket.getOrganization());
+			}
+			if (basket.getVATNumber() != null && basket.getVATNumber().trim().length() > 0) {
+				params.put("VAT Number",basket.getVATNumber());
+			}
 			params.putAll(new ReadOnlyPropertiesMap(getData()));
 			pageURL = URLHelper.createURL(ctx.getContextForAbsoluteURL().getContextWithOtherRenderMode(ContentContext.PAGE_MODE), page.getPath(), params);
 			try {

@@ -621,6 +621,12 @@ public class Basket implements Serializable {
 		out.println("  zip : "+getZip());
 		out.println("  city : "+getCity());
 		out.println("  country : "+getCountry());
+		if (getOrganization() != null && getOrganization().trim().length() > 0) {
+			out.println("  Organization : "+getOrganization());
+		}
+		if (getVATNumber() != null && getVATNumber().trim().length() > 0) {
+			out.println("  VAT Number : "+getVATNumber());
+		}
 		out.println("");
 		out.println("Product :");
 		for (ProductBean product : getProductsBean()) {

@@ -23,7 +23,14 @@
 			</div><div class="line">
 				<label for="lastName">${i18n.view["field.lastname"]}<span class="compulsory-star">*</span></label>
 				<input type="text" id="lastName" name="lastName" value="${basket.lastName}" />
-			</div><div class="line">
+			</div>type=${comp.type}<c:if test="${comp.type == 'company'}"><div class="line">
+				<label for="organization">${i18n.view['form.company']}</label>
+				<input type="text" id="organization" name="organization" value="${userInfoMap["organization"]}" /> 
+			</div>
+			<div class="line">
+				<label for="vat">${i18n.view['form.vat']}</label>
+				<input type="text" id="vat" name="vat" value="${userInfoMap["vat"]}" /> 
+			</div></c:if><div class="line">
 				<label for="email">${i18n.view["field.email"]}<span class="compulsory-star">*</span></label>
 				<input type="text" id="email" name="email" value="${basket.contactEmail}" />
 			</div><div class="line">
