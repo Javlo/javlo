@@ -261,7 +261,7 @@ initPreview = function() {
 		return null;
 	}
 
-	jQuery(".editable-component, .not-editable-component, #preview-delete-zone")
+	jQuery(".editable-component, .not-editable-component, #preview-delete-zone, ._empty_area")
 			.droppable(
 					{						
 						cursor : 'move',
@@ -286,8 +286,11 @@ initPreview = function() {
 							var sharedContent = layer.data("sharedContent");
 							var area = null;
 							
-							if (compType !== undefined && compType != null) {								
-								var previewId = jQuery(this).attr("id").replace("cp_", "");
+							if (compType !== undefined && compType != null) {
+								var previewId = "0";
+								if (jQuery(this).attr("id")) {
+									var previewId = jQuery(this).attr("id").replace("cp_", "");
+								}
 								var parent = jQuery(this).parent();
 								while (jQuery(parent).get(0).tagName.toLowerCase() != "body" && !parent.hasClass("_area")) {									
 									parent = jQuery(parent).parent();									
@@ -297,8 +300,11 @@ initPreview = function() {
 								+ compType + "&previous=" + previewId
 								+ "&area=" + area+ "&render-mode=3&init=true"+pageIdParam);
 								ajaxRequest(ajaxURL);
-							} else if (sharedContent != null && sharedContent !== undefined) {
-								var previewId = jQuery(this).attr("id").replace("cp_", "");
+							} else if (sharedContent != null && sharedContent !== undefined) {								
+								var previewId = "0";
+								if (jQuery(this).attr("id")) {
+									var previewId = jQuery(this).attr("id").replace("cp_", "");
+								}
 								var parent = jQuery(this).parent();
 								while (jQuery(parent).get(0).tagName.toLowerCase() != "body" && !parent.hasClass("_area")) {									
 									parent = jQuery(parent).parent();									
@@ -308,14 +314,17 @@ initPreview = function() {
 								+ sharedContent + "&previous=" + previewId
 								+ "&area=" + area+ "&render-mode=3&init=true"+pageIdParam);
 								ajaxRequest(ajaxURL);
-							} else if (comp !== undefined && jQuery(comp).attr("id") != null && jQuery(comp).attr('id') != jQuery(this).attr("id")) {
+							} else if (comp !== undefined && jQuery(comp).attr("id") != null && jQuery(comp).attr('id') != jQuery(this).attr("id")) {								
 								var compId = jQuery(comp).attr("id").replace("cp_", "");
 								if (jQuery(this).attr("id") == "preview-delete-zone") {									
 									var ajaxURL = addParam(currentURL,"webaction=edit.delete&id=" + compId + "&render-mode=3"+pageIdParam);
 									jQuery(comp).remove();
 								} else if (comp !== undefined) {
 									jQuery(comp).insertAfter(jQuery(this));
-									var previewId = jQuery(this).attr("id").replace("cp_", "");									
+									var previewId = "0";
+									if (jQuery(this).attr("id")) {
+										var previewId = jQuery(this).attr("id").replace("cp_", "");
+									}								
 									var parent = jQuery(comp).parent();
 									while (parent !== undefined && !parent.hasClass("_area")) {
 										parent = jQuery(parent).parent();
@@ -339,7 +348,7 @@ initPreview = function() {
 							var layer = jQuery("#preview-layer");
 							var target = jQuery(this);
 							
-							if (!target.hasClass("free-edit-zone")) {
+							if (!target.hasClass("free-edit-zone") && !target.hasClass("_empty_area")) {
 								if (target.find(".drop-zone").length == 0) {
 									target.append('<div class="drop-zone"><span>&nbsp;</span></div>');
 								}

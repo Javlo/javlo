@@ -3,12 +3,15 @@ body.edit-preview {
 }
 
 ._empty_area {
-	margin: 5px;	
+	margin: 5px;
 	border-radius: 3px 3px 3px 3px;
 	border: 1px dashed #5B5B5B;
 	padding: 5px;
-	background-color: #EBEBEB;
-	height: 65px;
+	background-color: #EBEBEB;	
+}
+
+._empty_area span {	
+	height: 40px;
 	vertical-align: middle;
 	text-align: center;
 	font-family: sans-serif;
@@ -17,7 +20,8 @@ body.edit-preview {
 	text-shadow: 1px -1px 0 #ffffff;
 	width: auto;
 	display: block;
-	padding-top: 35px;
+	padding-top: 30px;
+	border: 2px #eeeeee dashed;
 }
 
 [draggable] {
@@ -914,18 +918,21 @@ html.edit-preview {
 .drop-zone {
 	margin-bottom: 4px;
 	padding: 2px;
-	display: block;
+	display: block;	
+	overflow: hidden;	
+}
+
+.drop-zone, ._empty_area.drop-selected {
 	border-radius: 3px 3px 3px 3px;
 	background-color: #aaaaaa;
 	opacity: .30;
 	-ms-filter: "progid:DXImageTransform.Microsoft.Alpha(Opacity=30)";
 	filter: alpha(opacity = 30);
 	-khtml-opacity: 0.30;
-	-moz-opacity: 0.30;
-	overflow: hidden;
+	-moz-opacity: 0.30;	
 }
 
-.drop-zone span,.free-edit-zone.drop-selected span {
+.drop-zone span,.free-edit-zone.drop-selected span, ._empty_area.drop-selected span {
 	display: block;
 	border: 2px #eeeeee dashed;
 	border-radius: 3px 3px 3px 3px;
