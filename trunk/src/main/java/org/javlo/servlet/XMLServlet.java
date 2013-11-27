@@ -2,6 +2,7 @@ package org.javlo.servlet;
 
 import java.io.Writer;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Date;
 import java.util.Iterator;
 import java.util.LinkedList;
@@ -22,6 +23,7 @@ import org.javlo.context.GlobalContext;
 import org.javlo.helper.ServletHelper;
 import org.javlo.helper.StringHelper;
 import org.javlo.helper.URLHelper;
+import org.javlo.navigation.ContentDateComparator;
 import org.javlo.navigation.MenuElement;
 import org.javlo.service.ContentService;
 import org.javlo.template.Template;
@@ -192,6 +194,8 @@ public class XMLServlet extends HttpServlet {
 						out.write("<url>" + template.getRSSImageURL() + "</url>");
 						out.write("</image>");
 					}
+					
+					Collections.sort(pages, new ContentDateComparator(ctx, false));
 
 					for (MenuElement page : pages) {
 						ContentContext lgCtx = ctx;
@@ -237,7 +241,7 @@ public class XMLServlet extends HttpServlet {
 										out.write("<enclosure url=\"" + pdfLink + "\" type=\"application/pdf\" />");
 									}
 									out.write("<authors>" + page.getCreator() + "</authors>");
-									out.write("<pubDate>" + StringHelper.renderDateAsRFC822String(page.getModificationDate()) + "</pubDate>");
+									out.write("<pubDate>" + StringHelper.renderDateAsRFC822String(page.getContentDateNeverNull(lgCtx)) + "</pubDate>");
 									out.write("<link><![CDATA[ " + URLHelper.createURL(lgCtx.getContextWithOtherFormat("html"), page.getPath()) + "]]> </link>");
 									out.write("</item>");
 								}
