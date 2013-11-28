@@ -2,6 +2,8 @@ package org.javlo.ecom;
 
 import java.beans.Transient;
 import java.io.ByteArrayOutputStream;
+import java.io.File;
+import java.io.FileInputStream;
 import java.io.InputStream;
 import java.io.PrintStream;
 import java.io.Serializable;
@@ -33,7 +35,7 @@ public class Basket implements Serializable {
 	public static final int ERROR_STEP = 99;
 
 	public static final String STATUS_UNVALIDED = "unvalided";
-	public static final String STATUS_VALIDED = "valided";	
+	public static final String STATUS_VALIDED = "valided";
 	public static final String STATUS_TO_BE_VERIFIED = "to_be_verified";
 	public static final String STATUS_MANUAL_PAYED = "manual_payed";
 	public static final String STATUS_NEW = "new";
@@ -71,7 +73,6 @@ public class Basket implements Serializable {
 	private String description;
 	private boolean presumptiveFraud = false;
 
-
 	private int step = START_STEP;
 
 	public static final String KEY = "basket";
@@ -103,20 +104,20 @@ public class Basket implements Serializable {
 	public static void setInstance(ContentContext ctx, Basket basket) {
 		ctx.getRequest().getSession().setAttribute(KEY, basket);
 	}
-	
-	public static String renderPrice (ContentContext ctx, double price, String currency) {
-		if (currency.equalsIgnoreCase("EUR")) {
+
+	public static String renderPrice(ContentContext ctx, double price, String currency) {
+		if (currency == null || currency.equalsIgnoreCase("EUR")) {
 			currency = "\u20AC";
 		} else if (currency.equalsIgnoreCase("USD")) {
 			currency = "$";
 		}
-		return StringHelper.renderDouble(price, ctx.getLocale())+' '+currency;
+		return StringHelper.renderDouble(price, ctx.getLocale()) + ' ' + currency;
 	}
 
 	public static Basket getInstance(ContentContext ctx) {
 		Basket basket = (Basket) ctx.getRequest().getSession().getAttribute(KEY);
 		if (basket == null) {
-			basket = new Basket();			
+			basket = new Basket();
 			for (PayementExternalService service : EcomService.getInstance(ctx.getGlobalContext(), ctx.getRequest().getSession()).getExternalService()) {
 				String url = service.getURL();
 				if ((url == null || url.trim().length() == 0) && service.getReturnPage() != null && service.getReturnPage().trim().length() > 0) {
@@ -220,32 +221,37 @@ public class Basket implements Serializable {
 	public double getDeliveryIncludingVAT() {
 		double result = 0;
 		if (!pickup) {
-			if (getDeliveryZone() != null && getDeliveryZone().getPrices() != null && getDeliveryZone().getPrices().size() > 0) {
+			if (getDeliveryZone() == null || getDeliveryZone().getPrices() != null && getDeliveryZone().getPrices().size() > 0) {
 
 				// pick url should exist here, assert ?
-				int number = 0;
-				for (Product product : products) {
-					number = number + (product.getQuantity() * (int) product.getWeight());
-					// result = result + ((product.getPrice() / (1 +
-					// product.getVAT())) * (1 -
-					// product.getReduction())*product.getQuantity());
-				}
+				if (getDeliveryZone() != null) {
+					int number = 0;
+					for (Product product : products) {
+						number = number + (product.getQuantity() * (int) product.getWeight());
+						// result = result + ((product.getPrice() / (1 +
+						// product.getVAT())) * (1 -
+						// product.getReduction())*product.getQuantity());
+					}
 
-				// TODO: ensure increasing order in zones file
-				Set<Integer> offsets = new TreeSet<Integer>(getDeliveryZone().getPrices().keySet());
-				int up = 0;
-				for (int offset : offsets) {
-					up = offset;
-					if (up >= number) {
-						break;
+					// TODO: ensure increasing order in zones file
+
+					Set<Integer> offsets = new TreeSet<Integer>(getDeliveryZone().getPrices().keySet());
+					int up = 0;
+					for (int offset : offsets) {
+						up = offset;
+						if (up >= number) {
+							break;
+						}
 					}
-				}
-				if (up > 0) {
-					int units = number / up;
-					if (number > up) {
-						units = units + 1;
+					if (up > 0) {
+						int units = number / up;
+						if (number > up) {
+							units = units + 1;
+						}
+						result = units * getDeliveryZone().getPrices().get(up);
 					}
-					result = units * getDeliveryZone().getPrices().get(up);
+				} else {
+					return defaultDeleviry;
 				}
 			}
 		}
@@ -381,12 +387,18 @@ public class Basket implements Serializable {
 	}
 
 	private List<DeliveryZone> zones;
+	
+	private double defaultDeleviry = 0;
 
 	public List<DeliveryZone> getDeliveryZones(ContentContext ctx) {
+		
 		if (zones == null) {
 			try {
-				String productsPath = URLHelper.createStaticTemplateURL(ctx, ctx.getCurrentTemplate(), "ecom_zones.csv");
-				InputStream in = ctx.getRequest().getSession().getServletContext().getResourceAsStream(productsPath);
+				File zoneFile = new File(URLHelper.mergePath(ctx.getCurrentTemplate().getTemplateRealPath(),"ecom_zones.csv"));;
+				if (!zoneFile.exists()) {
+					return null;
+				}
+				InputStream in = new FileInputStream(zoneFile);
 
 				CSVFactory fact = new CSVFactory(in);
 				String[][] csv = fact.getArray();
@@ -395,8 +407,8 @@ public class Basket implements Serializable {
 				int i = 1;
 				while (i < csv.length) {
 					String zone = csv[i][0];
-					String pickupURL = csv[i][4];
-					if (!csv[i][1].equals("")) {
+					String pickupURL = csv[i][4];								
+					if (!csv[i][1].trim().equals("")) {
 						zones.add(new DeliveryZone(zone, csv[i][1], ctx));
 						i++;
 					} else {
@@ -405,8 +417,11 @@ public class Basket implements Serializable {
 							int offset = Integer.valueOf(csv[i][2]);
 							float price = Float.valueOf(csv[i][3]);
 							prices.put(offset, price);
-
-							i++;
+							i++;	
+							
+							if (zone.trim().toLowerCase().equals("default")) {
+								defaultDeleviry = price;
+							}							
 						} while (i < csv.length && csv[i][0].equals(""));
 						DeliveryZone newZone = new DeliveryZone(zone, prices, ctx);
 						if (pickupURL != null && pickupURL.length() > 0) {
@@ -423,8 +438,6 @@ public class Basket implements Serializable {
 		}
 		return zones;
 	}
-	
-	
 
 	public String getVatNumber() {
 		return vatNumber;
@@ -533,8 +546,6 @@ public class Basket implements Serializable {
 		}
 		return productsBean;
 	}
-	
-	
 
 	public String getProductsBeanToString() {
 		ByteArrayOutputStream outStream = new ByteArrayOutputStream();
@@ -594,7 +605,7 @@ public class Basket implements Serializable {
 	public void setDeleted(boolean deleted) {
 		this.deleted = deleted;
 	}
-	
+
 	@Override
 	public String toString() {
 		ByteArrayOutputStream outStream = new ByteArrayOutputStream();
@@ -602,40 +613,40 @@ public class Basket implements Serializable {
 		out.println("basket");
 		out.println("======");
 		out.println("");
-		out.println("id : "+getId());
-		out.println("user : "+getUser());
-		out.println("total Ex. VAT : "+getTotalExcludingVATString());
-		out.println("total In. VAT : "+getTotalIncludingVATString());
-		out.println("Currency : "+getCurrencyCode());
-		out.println("Date : "+StringHelper.renderSortableTime(getDate()));
-		out.println("Step : "+getStep());
-		out.println("Size : "+getSize());
-		out.println("Status : "+getStatus());
+		out.println("id : " + getId());
+		out.println("user : " + getUser());
+		out.println("total Ex. VAT : " + getTotalExcludingVATString());
+		out.println("total In. VAT : " + getTotalIncludingVATString());
+		out.println("Currency : " + getCurrencyCode());
+		out.println("Date : " + StringHelper.renderSortableTime(getDate()));
+		out.println("Step : " + getStep());
+		out.println("Size : " + getSize());
+		out.println("Status : " + getStatus());
 		out.println("");
 		out.println("User:");
-		out.println("  firstName : "+getFirstName());
-		out.println("  lastName : "+getLastName());
-		out.println("  email : "+getContactEmail());
-		out.println("  phone : "+getContactPhone());
-		out.println("  adress : "+getAddress());		
-		out.println("  zip : "+getZip());
-		out.println("  city : "+getCity());
-		out.println("  country : "+getCountry());
+		out.println("  firstName : " + getFirstName());
+		out.println("  lastName : " + getLastName());
+		out.println("  email : " + getContactEmail());
+		out.println("  phone : " + getContactPhone());
+		out.println("  adress : " + getAddress());
+		out.println("  zip : " + getZip());
+		out.println("  city : " + getCity());
+		out.println("  country : " + getCountry());
 		if (getOrganization() != null && getOrganization().trim().length() > 0) {
-			out.println("  Organization : "+getOrganization());
+			out.println("  Organization : " + getOrganization());
 		}
 		if (getVATNumber() != null && getVATNumber().trim().length() > 0) {
-			out.println("  VAT Number : "+getVATNumber());
+			out.println("  VAT Number : " + getVATNumber());
 		}
 		out.println("");
 		out.println("Product :");
 		for (ProductBean product : getProductsBean()) {
-			out.println("   "+product);
+			out.println("   " + product);
 		}
 		out.println("");
-		out.println("Current Time : "+StringHelper.renderSortableTime(new Date()));
-		out.println("");		
-		
+		out.println("Current Time : " + StringHelper.renderSortableTime(new Date()));
+		out.println("");
+
 		out.close();
 		return new String(outStream.toByteArray());
 	}
@@ -646,6 +657,7 @@ public class Basket implements Serializable {
 
 	/**
 	 * set the username of user that we have transfert address info.
+	 * 
 	 * @param login
 	 */
 	public void setTransfertAddressLogin(String login) {
@@ -667,11 +679,11 @@ public class Basket implements Serializable {
 	public void setDescription(String description) {
 		this.description = description;
 	}
-	
+
 	public boolean isDisplayInfo() {
 		return getStep() < FINAL_STEP;
 	}
-	
+
 	public boolean isReadyToSend() {
 		return getStatus().equals(STATUS_VALIDED) || getStatus().equals(STATUS_MANUAL_PAYED);
 	}
@@ -685,5 +697,3 @@ public class Basket implements Serializable {
 	}
 
 }
-
-
