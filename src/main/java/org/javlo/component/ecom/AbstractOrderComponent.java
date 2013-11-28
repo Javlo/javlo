@@ -150,14 +150,10 @@ public abstract class AbstractOrderComponent extends AbstractVisualComponent {
 			if (basket.getOrganization() != null && basket.getOrganization().trim().length() > 0) {
 				params.put("organization",basket.getOrganization());
 			}
-			double delivery = basket.getDeliveryIncludingVAT();
-			if (delivery > 0) {
-				params.put("delivery", Basket.renderPrice(ctx, delivery, basket.getCurrencyCode()));
-				if (delivery > 0) {
-					params.put("delivery", Basket.renderPrice(ctx, delivery, basket.getCurrencyCode()));
-
-				}
-			}
+			
+			double delivery = basket.getDeliveryIncludingVAT();			
+			params.put("delivery", Basket.renderPrice(ctx, delivery, basket.getCurrencyCode()));
+			
 			if (basket.getVATNumber() != null && basket.getVATNumber().trim().length() > 0) {
 				params.put("vat",basket.getVATNumber());
 			}
