@@ -26,6 +26,7 @@ public class EditBasketComponent extends AbstractVisualComponent implements IAct
 	public void prepareView(ContentContext ctx) throws Exception {
 		super.prepareView(ctx);
 		Basket basket = Basket.getInstance(ctx);
+		basket.getDeliveryZones(ctx);
 		boolean reduction = false;
 		for (Product product : basket.getProducts()) {
 			if (product.getReduction() > 0) {
@@ -52,13 +53,21 @@ public class EditBasketComponent extends AbstractVisualComponent implements IAct
 				}
 			}
 		}
-		
+
 		ctx.getRequest().setAttribute("reduction", reduction);
 		ctx.getRequest().setAttribute("basket", basket);
-		
-		if (basket.getStep() >= Basket.FINAL_STEP) {			
+		double delivery = basket.getDeliveryIncludingVAT();
+		if (delivery > 0) {
+			ctx.getRequest().setAttribute("deliveryStr", Basket.renderPrice(ctx, delivery, basket.getCurrencyCode()));
+			if (delivery > 0) {
+				ctx.getRequest().setAttribute("deliveryStr", Basket.renderPrice(ctx, delivery, basket.getCurrencyCode()));
+
+			}
+		}
+
+		if (basket.getStep() >= Basket.FINAL_STEP) {
 			ctx.getRequest().setAttribute("reset", "true");
-			Basket.setInstance(ctx, null); // display final step and remove			
+			Basket.setInstance(ctx, null); // display final step and remove
 		} else {
 			ctx.getRequest().setAttribute("shippingMessage", XHTMLHelper.textToXHTML(getValue(), ctx.getGlobalContext()));
 		}
@@ -81,10 +90,10 @@ public class EditBasketComponent extends AbstractVisualComponent implements IAct
 
 	public static String performRegistration(RequestService rs, ContentContext ctx, MessageRepository messageRepository, I18nAccess i18nAccess) {
 		Basket basket = Basket.getInstance(ctx);
-		
+
 		if (rs.getParameter("back", null) != null) {
 			if (basket.getStep() > 1) {
-				basket.setStep(basket.getStep()-1);
+				basket.setStep(basket.getStep() - 1);
 			}
 			return null;
 		}
@@ -97,7 +106,7 @@ public class EditBasketComponent extends AbstractVisualComponent implements IAct
 		String address = rs.getParameter("address", "").trim();
 		String zip = rs.getParameter("zip", "").trim();
 		String city = rs.getParameter("city", "").trim();
-		
+
 		String vta = rs.getParameter("vat", "").trim();
 		String company = rs.getParameter("organization", "").trim();
 
@@ -116,7 +125,6 @@ public class EditBasketComponent extends AbstractVisualComponent implements IAct
 				basket.setZip(zip);
 				basket.setCity(city);
 				basket.setStep(Basket.ORDER_STEP);
-				
 				basket.setVATNumber(vta);
 				basket.setOrganization(company);
 			}
@@ -124,7 +132,7 @@ public class EditBasketComponent extends AbstractVisualComponent implements IAct
 
 		return null;
 	}
-	
+
 	public static String performReset(RequestService rs, ContentContext ctx, MessageRepository messageRepository, I18nAccess i18nAccess) {
 		Basket basket = Basket.getInstance(ctx);
 		basket.reset(ctx);
@@ -148,9 +156,9 @@ public class EditBasketComponent extends AbstractVisualComponent implements IAct
 	public boolean isRealContent(ContentContext ctx) {
 		return true;
 	}
-	
+
 	@Override
-	public boolean isEmpty(ContentContext ctx) {	
+	public boolean isEmpty(ContentContext ctx) {
 		return false;
 	}
 
