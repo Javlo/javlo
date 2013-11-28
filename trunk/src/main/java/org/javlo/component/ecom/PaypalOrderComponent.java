@@ -44,14 +44,14 @@ public class PaypalOrderComponent extends AbstractOrderComponent implements IAct
 
 		ByteArrayOutputStream outStream = new ByteArrayOutputStream();
 		PrintStream out = new PrintStream(outStream);
-		if (!getValue().contains("user")) {
+		if (!getValue().contains("url")) {
 			if (!getValue().isEmpty()) {
 				out.println(getValue());
 			}
 			out.println("button=Paypal");
 			out.println("url=https://api.sandbox.paypal.com");
-			out.println("user=AdXPHxByf43Y9wg8YovePiWLpzqi62ow1M3PYQig61f2mQit5E6_E-hGBLca");
-			out.println("password=EFof4xCAgQevlK2AX7XJrhkZgfnUPd8iTVLH5_DsR6TvTn64yHiGBPKaGsh3");
+			out.println("user=###");
+			out.println("password=###");
 			out.close();
 			setValue(new String(outStream.toByteArray()));
 		}
@@ -95,20 +95,15 @@ public class PaypalOrderComponent extends AbstractOrderComponent implements IAct
 		out.println("<input type=\"hidden\" name=\"upload\" id=\"upload\" value=\"1\" />");
 		out.println("<input type=\"hidden\" name=\"currency_code\" id=\"currency_code\" value=\"" + basket.getCurrencyCode() + "\" />");
 		out.println("<input type=\"hidden\" name=\"business\" id=\"business\" value=\"" + getUserEMail() + "\" />");
-
 		String returnURL = URLHelper.createURL(ctx.getContextForAbsoluteURL());
-		//String returnURL = "http://pvdm.myqnapcloud.com:8080/24h01/fr/basket.html";
 		returnURL = URLHelper.addParam(returnURL, IContentVisualComponent.COMP_ID_REQUEST_PARAM, getId());
 		returnURL = URLHelper.addParam(returnURL, "basket", basket.getId());
 		URL validReturnURL = new URL(URLHelper.addParam(returnURL, "webaction", "paypal.validDirect"));
 		URL cancelReturnURL = new URL(URLHelper.addParam(returnURL, "webaction", "paypal.cancel"));
 		URL notifyURL = new URL(URLHelper.addParam(returnURL, "webaction", "paypal.notify"));
-
 		out.println("<input type=\"hidden\" name=\"return\" value=\"" + validReturnURL + "\" />");
 		out.println("<input type=\"hidden\" name=\"cancel_return\" value=\"" + cancelReturnURL + "\" />");
 		out.println("<input type=\"hidden\" name=\"notify_url\" value=\"" + notifyURL + "\" />");
-		// out.println("<p><a href=\""+notifyURL+"\">"+notifyURL+"</a></p>");
-
 		int index = 1;
 		for (Product product : basket.getProducts()) {
 			out.println("<input type=\"hidden\" name=\"item_name_" + index + "\" id=\"" + index + "\" value=\"" + product.getName() + "\" />");
@@ -116,12 +111,8 @@ public class PaypalOrderComponent extends AbstractOrderComponent implements IAct
 			out.println("<input type=\"hidden\" name=\"quantity_" + index + "\" id=\"quantity" + index + "\" value=\"" + product.getQuantity() + "\" />");
 			index++;
 		}
-
 		out.println("<input type=\"hidden\" name=\"invoice\" id=\"invoice\" value=\"" + basket.getId() + "\" />");
-		// out.println("<input type=\"hidden\" name=\"quantity\" id=\"quantity\" value=\"${model.quantity}\" />");
-
 		out.println("<input type=\"hidden\" name=\"lc\" id=\"lc\" value=\"" + ctx.getRequestContentLanguage() + "\" />");
-
 		out.println("<input type=\"hidden\" name=\"address_override\" id=\"address_override\" value=\"1\" />");
 		out.println("<input type=\"hidden\" name=\"email\" id=\"email\" value=\"" + StringEscapeUtils.escapeHtml(basket.getContactEmail()) + "\" />");
 		out.println("<input type=\"hidden\" name=\"first_name\" id=\"first_name\" value=\"" +StringEscapeUtils.escapeHtml(basket.getFirstName()) + "\" />");
@@ -129,14 +120,11 @@ public class PaypalOrderComponent extends AbstractOrderComponent implements IAct
 		out.println("<input type=\"hidden\" name=\"address1\" id=\"address1\" value=\""+StringEscapeUtils.escapeHtml(basket.getAddress())+"\" />");
 		out.println("<input type=\"hidden\" name=\"city\" id=\"city\" value=\""+StringEscapeUtils.escapeHtml(basket.getCity())+"\" />");
 		out.println("<input type=\"hidden\" name=\"zip\" id=\"zip\" value=\""+basket.getZip()+"\" />");
-		out.println("<input type=\"hidden\" name=\"country\" id=\"country\" value=\""+basket.getCountry().toUpperCase()+"\" />");
-		 
+		out.println("<input type=\"hidden\" name=\"country\" id=\"country\" value=\""+basket.getCountry().toUpperCase()+"\" />");		 
 		out.println("<a href=\"#\" onclick=\"document.getElementById('paypal-form').submit(); return false;\"><img  src=\"https://www.paypal.com/fr_XC/i/btn/btn_xpressCheckout.gif\" align=\"left\" style=\"margin-right:7px;\"></a>");
 		out.close();
-
 		BasketPersistenceService basketPersitenceService = BasketPersistenceService.getInstance(ctx.getGlobalContext());
 		basketPersitenceService.storeBasket(basket);
-
 		return new String(outStream.toByteArray());
 	}
 
