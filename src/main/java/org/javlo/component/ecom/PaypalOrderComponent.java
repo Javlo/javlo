@@ -114,6 +114,13 @@ public class PaypalOrderComponent extends AbstractOrderComponent implements IAct
 			out.println("<input type=\"hidden\" name=\"quantity_" + index + "\" id=\"quantity" + index + "\" value=\"" + product.getQuantity() + "\" />");
 			index++;
 		}
+		if (basket.getDeliveryIncludingVAT() > 0) {
+			I18nAccess i18nAccess = I18nAccess.getInstance(ctx.getRequest());
+			out.println("<input type=\"hidden\" name=\"item_name_" + index + "\" id=\"" + index + "\" value=\"" + i18nAccess.getViewText("ecom.shipping") + "\" />");
+			out.println("<input type=\"hidden\" name=\"amount_" + index + "\" id=\"amount_" + index + "\" value=\"" + PaypalConnector.formatDouble(basket.getDeliveryIncludingVAT())  + "\" type=\"number\" />");
+			out.println("<input type=\"hidden\" name=\"quantity_" + index + "\" id=\"quantity" + index + "\" value=\"1\" />");
+		}
+
 		out.println("<input type=\"hidden\" name=\"invoice\" id=\"invoice\" value=\"" + basket.getId() + "\" />");
 		out.println("<input type=\"hidden\" name=\"lc\" id=\"lc\" value=\"" + ctx.getRequestContentLanguage() + "\" />");
 		out.println("<input type=\"hidden\" name=\"address_override\" id=\"address_override\" value=\"1\" />");
