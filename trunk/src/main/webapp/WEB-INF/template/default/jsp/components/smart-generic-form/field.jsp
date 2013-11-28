@@ -12,8 +12,8 @@
 		</c:when>
 		<c:when test="${field.type eq 'yes-no'}">
 			<label for="${field.name}">${field.label} ${field.require?requireHTML:''}</label>
-			<input type="radio" name="${field.name}" value="yes" id="${field.name}-yes" /><label class="line-label" for="${field.name}-yes">${i18n.view["global.yes"]}</label>
-			<input type="radio" name="${field.name}" value="no" id="${field.name}-no" /><label class="line-label" for="${field.name}-no">${i18n.view["global.no"]}</label>
+			<input type="radio" name="${field.name}" value="yes" id="${field.name}-yes"${requestService.parameterMap[field.name] eq 'yes'?' checked="checked"':''} /><label class="line-label" for="${field.name}-yes">${i18n.view["global.yes"]}</label>
+			<input type="radio" name="${field.name}" value="no" id="${field.name}-no"${requestService.parameterMap[field.name] eq 'no'?' checked="checked"':''} /><label class="line-label" for="${field.name}-no">${i18n.view["global.no"]}</label>
 		</c:when>	
 		<c:when test="${field.type eq 'file'}">
 			<label for="${field.name}">${field.label} ${field.require?requireHTML:''}</label>
@@ -23,7 +23,7 @@
 			<label for="${field.name}">${field.label} ${field.require?requireHTML:''}</label>
 			<select name="${field.name}">
 				<c:forEach var="item" items="${field.list}"> 
-					<option${requestService.parameterMap[field.name] eq item?requireHTML:''}>${item}</option> 
+					<option${requestService.parameterMap[field.name] eq item?' selected="selected"':''}>${item}</option> 
 				</c:forEach>
 			</select>
 		</c:when>		
