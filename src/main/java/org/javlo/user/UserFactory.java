@@ -255,6 +255,17 @@ public class UserFactory implements IUserFactory, Serializable {
 		}
 		return null;
 	}
+	
+	@Override
+	public User getUserByEmail(String email) {
+		List<IUserInfo> users = getUserInfoList();
+		for (IUserInfo user : users) {
+			if (user.getEmail().equals(email)) {
+				return new User(user);
+			}
+		}
+		return null;
+	}
 
 	@Override
 	public User login(HttpServletRequest request, String token) {
@@ -396,6 +407,9 @@ public class UserFactory implements IUserFactory, Serializable {
 
 		boolean logged = request.getUserPrincipal() != null && request.getUserPrincipal().getName().equals(login);
 		User user = getUser(login);
+		if (user == null) {
+			user = getUserByEmail(login);
+		}
 
 		boolean passwordEqual = false;
 		StaticConfig staticConfig = StaticConfig.getInstance(request.getSession());

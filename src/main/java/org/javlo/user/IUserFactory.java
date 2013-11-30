@@ -67,4 +67,6 @@ public interface IUserFactory {
 	 */
 	public abstract boolean isStandardStorage();
 
+	User getUserByEmail(String email);
+
 }

@@ -21,7 +21,7 @@ public class ContentDateComparator implements Comparator<MenuElement> {
 				return page1.getContentDateNeverNull(ctx).compareTo(page2.getContentDateNeverNull(ctx));
 
 			} else {
-				return -page1.getContentDateNeverNull(ctx).compareTo(page2.getContentDateNeverNull(ctx));
+				return page1.getContentDateNeverNull(ctx).compareTo(page2.getContentDateNeverNull(ctx));
 			}
 		} catch (Exception e) {
 			e.printStackTrace();
