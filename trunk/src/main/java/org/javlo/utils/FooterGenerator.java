@@ -44,12 +44,13 @@ public class FooterGenerator {
 						out.println("</li></ul></li>");
 					}
 					if (countGroup == 1 || countGroup == 4 || countGroup == 6 || countGroup == 8 || countGroup == 10) {
-						out.println("<ul><li>"+title+"<ul><li>");
+						out.println("<ul><li>"+title+"<ul>");
 					} else {
-						out.println("<li>"+title+"<ul><li>");	
+						out.println("<li>"+title+"<ul>");	
 					}
 					countGroup++;
 				} else {
+					out.print("<li>");
 					if (sheet.getCellAt("B" + indice).getValue().toString().trim().length() > 0) {
 						String url = sheet.getCellAt("B" + indice).getValue().toString().replace("xx", "${info.language}");
 						if (!url.startsWith("http://")) {
@@ -59,16 +60,18 @@ public class FooterGenerator {
 					}
 					out.print(title);
 					if (sheet.getCellAt("B" + indice).getValue().toString().trim().length() > 0) {
-						out.println("</a>");
+						out.println("</a></li>");
 					} else {
 						out.println("");
 					}
+					out.println("</li>");
 				}				
+				
 				
 			/*	System.out.println(title);
 				System.out.println(style); */
 			}
-			out.println("</li></ul></li></ul>");  
+			out.println("</ul></li></ul>");  
 			out.println("</div>");
 			out.close();
 
