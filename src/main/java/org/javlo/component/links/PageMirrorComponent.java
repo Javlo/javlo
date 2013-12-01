@@ -25,6 +25,8 @@ import org.javlo.module.content.Edit;
 import org.javlo.navigation.MenuElement;
 import org.javlo.service.ContentService;
 import org.javlo.service.RequestService;
+import org.javlo.template.Template;
+import org.javlo.template.TemplateFactory;
 
 /**
  * display the list of component create in content area of a other page in place
@@ -146,10 +148,13 @@ public class PageMirrorComponent extends AbstractVisualComponent {
 														// page as current page
 				String area = ctx.getArea();
 				String path = ctx.getPath();
-				MenuElement currentPage = ctx.getCurrentPage();
-				ctx.setVirtualArea(area);
-				ctx.setArea(ComponentBean.DEFAULT_AREA);
-				ctx.getRequest().setAttribute(ContentContext.CHANGE_AREA_ATTRIBUTE_NAME, ComponentBean.DEFAULT_AREA);
+				MenuElement currentPage = ctx.getCurrentPage();				
+				Template pageTemplate = TemplateFactory.getTemplate(ctx, page);
+				if (!pageTemplate.getAreas().contains(area)) {
+					ctx.setVirtualArea(area);
+					ctx.setArea(ComponentBean.DEFAULT_AREA);
+					ctx.getRequest().setAttribute(ContentContext.CHANGE_AREA_ATTRIBUTE_NAME, ComponentBean.DEFAULT_AREA);
+				}				
 				ctx.setPath(page.getPath());
 				
 				RequestService rs = RequestService.getInstance(ctx.getRequest());
