@@ -705,7 +705,7 @@ public class Edit extends AbstractModuleAction {
 			IContentVisualComponent comp = content.getComponent(ctx, newId);
 			comp.initContent(ctx);
 		}
-
+		
 		if (ctx.isAjax()) {
 			if (!ctx.isEditPreview()) {				
 				updateComponent(ctx, currentModule, newId, previousId);
@@ -724,7 +724,9 @@ public class Edit extends AbstractModuleAction {
 				ctx.setRenderMode(Integer.parseInt(mode));
 			}
 			
-			ctx.getAjaxInsideZone().put(selecterPrefix + areaKey, ServletHelper.executeJSP(ctx, "/jsp/view/content_view.jsp?area=" + area));
+			logger.info("update : "+selecterPrefix + area);
+			
+			ctx.getAjaxInsideZone().put(selecterPrefix + area, ServletHelper.executeJSP(ctx, "/jsp/view/content_view.jsp?area=" + areaKey));
 		}
 
 		ctx.resetCurrentPageCached();
@@ -1674,7 +1676,7 @@ public class Edit extends AbstractModuleAction {
 						areaKey = areaId.getKey();
 					}
 				}
-				if (areaKey == null) {
+				if (areaKey == null) {					
 					return "area not found : " + area;
 				}
 				editContext.setCurrentArea(areaKey);
@@ -1692,14 +1694,16 @@ public class Edit extends AbstractModuleAction {
 				for (ComponentBean componentBean : beans) {
 					componentBean.setArea(areaKey);
 				}
-				content.createContent(ctx, targetPage, beans, previousId, true);
+				String parentID = content.createContent(ctx, targetPage, beans, previousId, true);
 			} else {
 				ComponentBean mirrorBean = new ComponentBean(PageMirrorComponent.TYPE, sharedContent.getLinkInfo(), ctx.getRequestContentLanguage());
 				mirrorBean.setArea(areaKey);
 				mirrorBean.setAuthors(ctx.getCurrentUserId());
 				content.createContent(ctx, targetPage, mirrorBean, previousId, true);				
 			}
-
+			
+			PersistenceService.getInstance(globalContext).store(ctx);
+			
 			if (ctx.isAjax()) {
 				// updateComponent(ctx, currentModule, newId, previousId);
 				String selecterPrefix = "";
@@ -1713,10 +1717,11 @@ public class Edit extends AbstractModuleAction {
 				if (mode != null) {
 					ctx.setRenderMode(Integer.parseInt(mode));
 				}
-				ctx.getAjaxInsideZone().put(selecterPrefix + areaKey, ServletHelper.executeJSP(ctx, "/jsp/view/content_view.jsp?area=" + area));
+				logger.info("update area : "+selecterPrefix + area);
+				ctx.getAjaxInsideZone().put(selecterPrefix + area, ServletHelper.executeJSP(ctx, "/jsp/view/content_view.jsp?area=" + areaKey));
 			}
 
-			PersistenceService.getInstance(globalContext).store(ctx);
+			
 
 		}
 		return null;
