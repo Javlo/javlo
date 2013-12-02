@@ -11,7 +11,7 @@
 <c:forEach var="content" items="${sharedContent}">
 <div class="content-wrapper ${not empty content.description?'width-description':'without-description'}">
 <div class="content" data-shared="${content.id}">
-	<h4><span>${content.title}</span></h4>
+	<h3><span>${content.title}</span></h3>
 	<c:if test="${not empty content.imageURL}">
 		<figure><img src="${content.imageURL}" /></figure>
 	</c:if>
