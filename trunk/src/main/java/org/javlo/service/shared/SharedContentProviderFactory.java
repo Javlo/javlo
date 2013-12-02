@@ -11,6 +11,8 @@ import java.util.List;
 
 import org.javlo.context.ContentContext;
 import org.javlo.context.GlobalContext;
+import org.javlo.service.shared.fotogrph.FotogrphSharedContentProvider;
+import org.javlo.service.shared.stockvault.StockvaultSharedContentProvider;
 import org.javlo.service.shared.url.URLImageSharedContentProvider;
 
 public class SharedContentProviderFactory {
@@ -41,12 +43,12 @@ public class SharedContentProviderFactory {
 			addContentProvider(staticContentProviders,new CloserJavloSharedContentProvider(ctx));
 			addContentProvider(staticContentProviders,new LocalImageSharedContentProvider(ctx));
 			try {				
-				//addContentProvider(staticContentProviders,new StockvaultSharedContentProvider());
+				addContentProvider(staticContentProviders,new StockvaultSharedContentProvider());
 			} catch (Exception e) {
 				e.printStackTrace();
 			}
 			try {				
-				//addContentProvider(staticContentProviders,new FotogrphSharedContentProvider());
+				addContentProvider(staticContentProviders,new FotogrphSharedContentProvider());
 			} catch (Exception e) {
 				e.printStackTrace();
 			}
