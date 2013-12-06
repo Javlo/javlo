@@ -15,10 +15,11 @@ public class FieldTextList extends FieldLargeText {
 	 * 
 	 * @param locale
 	 * @return
+	 * @throws Exception 
 	 */
 	@Override
-	public String getDisplayValue(ContentContext ctx, Locale locale) {
-		return XHTMLHelper.textToXHTML(getValue());
+	public String getDisplayValue(ContentContext ctx, Locale locale) throws Exception {
+		return XHTMLHelper.textToXHTML(super.getDisplayValue(ctx, locale));
 	}
 
 	@Override

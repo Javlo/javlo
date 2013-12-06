@@ -396,12 +396,22 @@ public class DynamicComponent extends AbstractVisualComponent implements IStatic
 		}
 
 		if (allValid) {
-			out.println("<div class=\"dynamic-component valid\">");
+			out.println("<div class=\"dynamic-component valid cols\">");
 		} else {
-			out.println("<div class=\"dynamic-component not-valid\">");
+			out.println("<div class=\"dynamic-component not-valid cols\">");
 		}
+		int colSize = 0;
 		for (Field field : fields) {
 			if (field != null) {
+				
+				colSize = colSize+field.getColsWidth(ctx);
+				String last="";
+				if (colSize >= 12) {
+					colSize = 0;
+					last="lastcol ";
+				}
+				out.println("<div class=\""+last+"col"+field.getColsWidth(ctx)+"\">");
+				
 				if (field.getTranslation() != null) {
 					I18nAccess i18nAccess = I18nAccess.getInstance(ctx.getRequest());
 					out.println("<fieldset><legend>" + i18nAccess.getText("field.translated") + "</legend>");
@@ -417,6 +427,7 @@ public class DynamicComponent extends AbstractVisualComponent implements IStatic
 
 				for (Locale locale : translatedField) {
 					if (locale != null) {
+						
 						out.println("<fieldset><legend>" + locale.getDisplayLanguage(new Locale(GlobalContext.getInstance(ctx.getRequest()).getEditLanguage(ctx.getRequest().getSession()))) + "</legend>");
 					}
 					field.setCurrentLocale(locale);
@@ -428,6 +439,8 @@ public class DynamicComponent extends AbstractVisualComponent implements IStatic
 				if (field.getTranslation() != null) {
 					out.println("</fieldset>");
 				}
+				out.println("</div>");
+				
 			}
 		}
 		out.println("</div>");
@@ -697,12 +710,12 @@ public class DynamicComponent extends AbstractVisualComponent implements IStatic
 		}
 		return outText.toString();
 	}
-	
+
 	@Override
 	public boolean initContent(ContentContext ctx) throws Exception {
 		reloadProperties();
-		boolean outInit = false;		
-		for (Field field : getFields(ctx)) {			
+		boolean outInit = false;
+		for (Field field : getFields(ctx)) {
 			if (field.initContent(ctx)) {
 				outInit = true;
 			}
@@ -710,11 +723,17 @@ public class DynamicComponent extends AbstractVisualComponent implements IStatic
 		return outInit;
 	}
 
+	public void reload(ContentContext ctx) throws FileNotFoundException, IOException {
+		for (Field field : getFields(ctx)) {
+			field.reload(ctx);
+		}
+	}
+
 	@Override
 	public String getURL(ContentContext ctx) throws Exception {
 		for (Field field : getFields(ctx)) {
 			if (field instanceof ILink) {
-				return ((ILink)field).getURL(ctx);
+				return ((ILink) field).getURL(ctx);
 			}
 		}
 		return null;

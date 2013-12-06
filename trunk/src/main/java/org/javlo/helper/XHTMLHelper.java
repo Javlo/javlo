@@ -1949,6 +1949,7 @@ public class XHTMLHelper {
 
 	// cssClass and popup not used
 	public static String textToXHTML(String text, String cssClass, GlobalContext globalContext) {
+		
 		String res = autoLink(text, globalContext);
 
 		ByteArrayOutputStream outStream = new ByteArrayOutputStream();

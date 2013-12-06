@@ -856,6 +856,7 @@ public abstract class AbstractVisualComponent implements IContentVisualComponent
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
+		
 		return renderer;
 	}
 

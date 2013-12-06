@@ -19,8 +19,7 @@ body.edit-preview {
 	color: #5B5B5B;
 	text-shadow: 1px -1px 0 #ffffff;
 	width: auto;
-	display: block;
-	padding-top: 30px;
+	display: block;	
 	border: 2px #eeeeee dashed;
 }
 

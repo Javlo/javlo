@@ -764,7 +764,7 @@ public class AdminAction extends AbstractModuleAction {
 						}
 						selectedTemplate.add(new Template.TemplateBean(ctx, template));
 					} else {
-						currentGlobalContext.removeTemplate(name, false);
+						currentGlobalContext.removeTemplate(name);
 						logger.warning("template not found : " + name);
 					}
 				}
@@ -1205,8 +1205,8 @@ public class AdminAction extends AbstractModuleAction {
 			if (currentGlobalContext != null) {
 				checkRight(ctx, currentGlobalContext);
 				String templateName = requestService.getParameter("template", null);
-				if (templateName != null) {
-					currentGlobalContext.addTemplate(templateName, StringHelper.isTrue(requestService.getParameter("mailing", null)));
+				if (templateName != null) {					
+					currentGlobalContext.addTemplate(templateName);
 					messageRepository.setGlobalMessageAndNotification(ctx, new GenericMessage(i18nAccess.getText("admin.message.linked-template") + ' ' + templateName, GenericMessage.INFO));
 				} else {
 					return "bad request structure : need 'template' as parameter";
@@ -1229,7 +1229,7 @@ public class AdminAction extends AbstractModuleAction {
 				checkRight(ctx, currentGlobalContext);
 				String templateName = requestService.getParameter("template", null);
 				if (templateName != null) {
-					currentGlobalContext.removeTemplate(templateName, StringHelper.isTrue(requestService.getParameter("mailing", null)));
+					currentGlobalContext.removeTemplate(templateName);
 					messageRepository.setGlobalMessageAndNotification(ctx, new GenericMessage(i18nAccess.getText("admin.message.unlinked-template") + ' ' + templateName, GenericMessage.INFO));
 				} else {
 					return "bad request structure : need 'template' as parameter";

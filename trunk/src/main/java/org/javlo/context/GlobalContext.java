@@ -432,9 +432,9 @@ public class GlobalContext implements Serializable {
 		if (!externalServiceInitalized) {
 			synchronized (externalServiceInitalized) {
 				if (!externalServiceInitalized) {
-					externalServiceInitalized = true;					
+					externalServiceInitalized = true;
 					// put here code to initialize external services
-					if (isCollaborativeMode() && getStaticConfig().isNotificationThread()) {						
+					if (isCollaborativeMode() && getStaticConfig().isNotificationThread()) {
 						int minBetweenCheck = getStaticConfig().getTimeBetweenChangeNotification();
 						Map<String, String> params = new HashMap<String, String>();
 						params.put("webaction", "view.checkChangesAndNotify");
@@ -597,40 +597,24 @@ public class GlobalContext implements Serializable {
 		}
 	}
 
-	public void addTemplate(String templateId, boolean mailing) {
+	public void addTemplate(String templateId) {
 		synchronized (properties) {
 			List<String> templates;
-			if (mailing) {
-				templates = getMailingTemplates();
-			} else {
-				templates = getTemplatesNames();
-			}
+			templates = getTemplatesNames();
 			if (!templates.contains(templateId)) {
 				templates.add(templateId);
-				if (mailing) {
-					setMailingTemplates(templates);
-				} else {
-					setTemplatesNames(templates);
-				}
+				setTemplatesNames(templates);
 			}
 		}
 	}
 
-	public void removeTemplate(String templateId, boolean mailing) {
+	public void removeTemplate(String templateId) {
 		synchronized (properties) {
 			List<String> templates;
-			if (mailing) {
-				templates = getMailingTemplates();
-			} else {
-				templates = getTemplatesNames();
-			}
+			templates = getTemplatesNames();
 			if (templates.contains(templateId)) {
 				templates.remove(templateId);
-				if (mailing) {
-					setMailingTemplates(templates);
-				} else {
-					setTemplatesNames(templates);
-				}
+				setTemplatesNames(templates);
 			}
 		}
 	}
@@ -1296,18 +1280,11 @@ public class GlobalContext implements Serializable {
 		return properties.getString("mailing.subject", "");
 	}
 
-	public List<String> getMailingTemplates() {
-		List<String> templates = new LinkedList<String>();
-		String templatesRaw = properties.getString("mailing-templates", "");
-		templates.addAll(StringHelper.stringToCollection(templatesRaw));
-		return templates;
-	}
-
 	public String getMediumDateFormat() {
 		return properties.getString("date.medium", staticConfig.getDefaultDateFormat());
 	}
 
-	public MenuElement getPageIfExist(ContentContext ctx, String url, boolean useURLCreator) throws Exception {		
+	public MenuElement getPageIfExist(ContentContext ctx, String url, boolean useURLCreator) throws Exception {
 		IURLFactory urlCreator = getURLFactory(ctx);
 		Map<String, MenuElement> localViewPages = viewPages;
 		if (ctx.getRenderMode() == ContentContext.VIEW_MODE && urlCreator != null && useURLCreator) {

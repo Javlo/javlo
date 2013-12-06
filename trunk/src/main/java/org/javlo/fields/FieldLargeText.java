@@ -40,7 +40,7 @@ public class FieldLargeText extends Field {
 	 */
 	@Override
 	public String getDisplayValue(ContentContext ctx, Locale locale) throws Exception {
-		return XHTMLHelper.textToXHTML(super.getDisplayValue(ctx, locale));
+		return XHTMLHelper.textToXHTML( super.getDisplayValue(ctx, locale));
 	}
 
 	@Override

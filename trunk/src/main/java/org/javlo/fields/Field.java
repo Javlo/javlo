@@ -4,6 +4,7 @@ import java.io.PrintWriter;
 import java.io.StringWriter;
 import java.util.Arrays;
 import java.util.Collection;
+import java.util.HashMap;
 import java.util.Iterator;
 import java.util.LinkedHashMap;
 import java.util.LinkedList;
@@ -14,6 +15,7 @@ import java.util.Properties;
 
 import javax.servlet.http.HttpServletRequest;
 
+import org.codehaus.plexus.util.StringUtils;
 import org.javlo.config.StaticConfig;
 import org.javlo.context.ContentContext;
 import org.javlo.context.GlobalContext;
@@ -146,7 +148,8 @@ public class Field implements Cloneable {
 	protected transient I18nAccess i18nAccess;
 	private boolean needRefresh = false;
 	private Map<String, String> keyValue = null;
-	private Locale currentLocale = null;
+	private Map<String, String> replacementCode = null;
+	private Locale currentLocale = null;	
 
 	/**
 	 * Filed can only be create with FieldFactory
@@ -271,6 +274,10 @@ public class Field implements Cloneable {
 			return prefix;
 		}
 	}
+	
+	public int getColsWidth(ContentContext ctx) {		
+		return Integer.parseInt(properties.getProperty("field." + getUnicName() + ".col-width", "12"));
+	}
 
 	public String getViewXHTMLCode(ContentContext ctx) throws Exception {
 		StringWriter writer = new StringWriter();
@@ -317,6 +324,7 @@ public class Field implements Cloneable {
 	 * @throws Exception
 	 */
 	public String getDisplayValue(ContentContext ctx, Locale locale) throws Exception {
+		String outValue;
 		if (getTranslation() != null) {
 			String key = createKey("value");
 			if (getCurrentLocale() != null) {
@@ -328,12 +336,22 @@ public class Field implements Cloneable {
 				}
 				String value = getValue();
 				setCurrentLocale(currentLocale);
-				return value;
+				outValue = value;
 			} else {
-				return properties.getProperty(key);
+				outValue = properties.getProperty(key);
+			}
+		} else {
+			outValue = getValue();
+		}
+		if (getRemplacementCode().size()>0) {
+			for (Map.Entry<String, String> entry : getRemplacementCode().entrySet()) {
+				String value = XHTMLHelper.textToXHTML(entry.getValue());
+				value = XHTMLHelper.replaceJSTLData(ctx, value);
+				value = StringUtils.replace(value, "${source}", ""+entry.getKey());
+				outValue = StringUtils.replace(outValue, entry.getKey(),value);
 			}
 		}
-		return getValue();
+		return outValue;
 	}
 
 	public String getFieldSuffix(ContentContext ctx) {
@@ -650,8 +668,27 @@ public class Field implements Cloneable {
 	
 	public boolean initContent(ContentContext ctx) throws Exception {
 		String initialValue = getLabel(new Locale(ctx.getRequestContentLanguage()));		
-		setValue(initialValue);
+		setValue(initialValue);		
 		return true;
+	}
+	
+	public Map<String, String> getRemplacementCode() {
+		if (replacementCode == null) {
+			replacementCode = new HashMap<String, String>();
+			String keyPrefix = createKey("replacement-");
+			for (int i=0; i<1000; i++) {
+				String source = properties.getProperty(keyPrefix+i+".source");
+				String target = properties.getProperty(keyPrefix+i+".target");
+				if (source != null && target != null) {
+					replacementCode.put(source, target);
+				}
+			}			
+		}
+		return replacementCode;
+	}
+	
+	public void reload(ContentContext ctx) {
+		replacementCode = null;
 	}
 
 }
