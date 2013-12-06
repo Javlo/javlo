@@ -143,7 +143,7 @@ public class MarketAction extends AbstractModuleAction {
 					out.close();
 				}
 				newTemplate.getRenderer(ctx); // deploy template
-				globalContext.addTemplate(newTemplate.getName(), false);
+				globalContext.addTemplate(newTemplate.getName());
 				imported = true;
 			} catch (Exception e) {
 				e.printStackTrace();

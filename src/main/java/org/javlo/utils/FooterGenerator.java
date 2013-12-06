@@ -39,18 +39,18 @@ public class FooterGenerator {
 				if (style.equalsIgnoreCase("ce7") || style.equalsIgnoreCase("ce9")) {
 					//System.out.println(title+" >> "+style);	
 					if (countGroup == 4 || countGroup == 6 || countGroup == 8 || countGroup == 10) {
-						out.println("</li></ul></li></ul>"); 
+						out.println("</ul></li></ul>"); 
 					} else if (countGroup>1) {
-						out.println("</li></ul></li>");
+						out.println("</ul></li>");
 					}
 					if (countGroup == 1 || countGroup == 4 || countGroup == 6 || countGroup == 8 || countGroup == 10) {
-						out.println("<ul><li>"+title+"<ul>");
+						out.println("<ul><li><div class=\"ep-title\">"+title+"</div><ul>");
 					} else {
-						out.println("<li>"+title+"<ul>");	
+						out.println("<li><div class=\"ep-title\">"+title+"</div><ul>");	
 					}
 					countGroup++;
 				} else {
-					out.print("<li>");
+					out.println("<li>");
 					if (sheet.getCellAt("B" + indice).getValue().toString().trim().length() > 0) {
 						String url = sheet.getCellAt("B" + indice).getValue().toString().replace("xx", "${info.language}");
 						if (!url.startsWith("http://")) {
@@ -60,7 +60,7 @@ public class FooterGenerator {
 					}
 					out.print(title);
 					if (sheet.getCellAt("B" + indice).getValue().toString().trim().length() > 0) {
-						out.println("</a></li>");
+						out.println("</a>");
 					} else {
 						out.println("");
 					}

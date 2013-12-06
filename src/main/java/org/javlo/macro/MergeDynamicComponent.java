@@ -68,7 +68,7 @@ public class MergeDynamicComponent extends AbstractMacro {
 								}
 							}
 						}
-						dynComp.storeProperties();
+						dynComp.reload(ctx);						
 					}
 				}
 			}

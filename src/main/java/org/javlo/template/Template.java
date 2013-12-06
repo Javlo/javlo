@@ -259,7 +259,7 @@ public class Template implements Comparable<Template> {
 		String type;
 		String parent;
 		String imageFilter;
-		List<String> htmls;
+		List<String> htmls;		
 
 		public TemplateBean() {
 		};
@@ -307,6 +307,8 @@ public class Template implements Comparable<Template> {
 			css = template.getCSS();
 			htmls = new LinkedList<String>();
 			htmls.add(template.getHTMLFile(ctx.getDevice()));
+			mailing = template.isMailing();
+			
 		}
 
 		public String getPreviewUrl() throws Exception {

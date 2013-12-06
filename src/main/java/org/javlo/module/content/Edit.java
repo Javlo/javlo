@@ -1666,7 +1666,9 @@ public class Edit extends AbstractModuleAction {
 		} else {
 			SharedContent sharedContent = sharedContentService.getSharedContent(ctx, sharedData);
 			if (sharedContent == null) {
-				return "error : shared content not found : "+sharedData;
+				String msg ="error : shared content not found : "+sharedData;
+				logger.warning(msg);;
+				return msg;
 			}
 			String areaKey = null;
 			String area = rs.getParameter("area", null);
