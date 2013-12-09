@@ -386,6 +386,7 @@ public class ContentContext {
 
 	private Map<String, String> ajaxInsideZone = new HashMap<String, String>();
 	private Map<String, Object> ajaxData = new HashMap<String, Object>();
+	private String specificJson = null;
 	private Map<String, ScheduledRender> scheduledAjaxInsideZone = new HashMap<String, ScheduledRender>();
 	private final Map<String, String> ajaxZone = new HashMap<String, String>();;
 
@@ -1588,5 +1589,17 @@ public class ContentContext {
 
 	public void setPageAssociation(boolean pageAssociation) {
 		this.pageAssociation = pageAssociation;
+	}
+
+	/**
+	 * for return a specific ajax respones from dedicaded action.
+	 * @return
+	 */
+	public String getSpecificJson() {
+		return specificJson;
+	}
+
+	public void setSpecificJson(String specifixAjax) {
+		this.specificJson = specifixAjax;
 	}
 }

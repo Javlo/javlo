@@ -84,32 +84,39 @@ public class AjaxServlet extends HttpServlet {
 			Map<String, Object> outMap = new HashMap<String, Object>();
 			StringWriter strWriter = new StringWriter();
 
-			if (ctx.getAjaxMap() == null) {
-				String msgXhtml = ServletHelper.executeJSP(ctx, editCtx.getMessageTemplate());
-				ctx.addAjaxInsideZone("message-container", msgXhtml);
-				if (editCtx.getUserPrincipal() != null) {
-					int unreadNotification = NotificationService.getInstance(globalContext).getUnreadNotificationSize(editCtx.getUserPrincipal().getName(), 99);
-					ctx.addAjaxInsideZone("notification-count", "" + unreadNotification);
+			if (ctx.getSpecificJson() == null) {
+				if (ctx.getAjaxMap() == null) {
+					String msgXhtml = ServletHelper.executeJSP(ctx, editCtx.getMessageTemplate());
+					ctx.addAjaxInsideZone("message-container", msgXhtml);
+					if (editCtx.getUserPrincipal() != null) {
+						int unreadNotification = NotificationService.getInstance(globalContext).getUnreadNotificationSize(editCtx.getUserPrincipal().getName(), 99);
+						ctx.addAjaxInsideZone("notification-count", "" + unreadNotification);
+					}
+					AjaxHelper.render(ctx, ctx.getAjaxInsideZone(), ctx.getScheduledAjaxInsideZone());
+					if (!onlyData) {
+						outMap.put("insideZone", ctx.getAjaxInsideZone());
+						outMap.put("zone", ctx.getAjaxZone());
+					}
+					if (ctx.getAjaxData().size() > 0) {
+						outMap.put("data", ctx.getAjaxData());
+					}
+					JSONMap.JSON.toJson(outMap, strWriter);
+				} else {
+					for (Object key : ctx.getAjaxMap().keySet()) {
+						outMap.put("" + key, ctx.getAjaxMap().get(key));
+					}
+					JSONMap.JSON.toJson(outMap, strWriter);
 				}
-				AjaxHelper.render(ctx, ctx.getAjaxInsideZone(), ctx.getScheduledAjaxInsideZone());
-				if (!onlyData) {
-					outMap.put("insideZone", ctx.getAjaxInsideZone());
-					outMap.put("zone", ctx.getAjaxZone());
-				}
-				if (ctx.getAjaxData().size() > 0) {
-					outMap.put("data", ctx.getAjaxData());
-				}
-				JSONMap.JSON.toJson(outMap, strWriter);
-			} else {
-				for (Object key : ctx.getAjaxMap().keySet()) {
-					outMap.put("" + key, ctx.getAjaxMap().get(key));
-				}
-				JSONMap.JSON.toJson(outMap, strWriter);
+				strWriter.flush();
 			}
-			strWriter.flush();
+			
 			response.setContentType("application/json");
 			String jsonResult = strWriter.toString();
-			response.getWriter().write(jsonResult);
+			if (ctx.getSpecificJson() != null) {
+				response.getWriter().write(ctx.getSpecificJson());
+			} else {
+				response.getWriter().write(jsonResult);
+			}
 			response.flushBuffer();
 
 		} catch (Throwable t) {
