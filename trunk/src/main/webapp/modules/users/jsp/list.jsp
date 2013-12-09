@@ -9,11 +9,12 @@
 			id="sitelist">
 			<thead>
 				<tr>
-					<th class="head0">&nbsp;</th>
+					<th width="13" class="head0">&nbsp;</th>
 					<th class="head1">${i18n.edit['user.login']}</th>
 					<th class="head0">${i18n.edit['user.firstname']}</th>
 					<th class="head1">${i18n.edit['user.lastname']}</th>
-					<th class="head0">${i18n.edit['user.email']}</th>					
+					<th class="head0">${i18n.edit['user.email']}</th>	
+					<th width="120" class="head1">${i18n.edit['user.creationdate']}</th>				
 				</tr>
 			</thead>
 			<colgroup>
@@ -22,18 +23,10 @@
 				<col class="con0" />
 				<col class="con1" />
 				<col class="con0" />
+				<col class="con1" />
 			</colgroup>
 			<tbody>
-				<c:forEach var="user" items="${users}">
-					<tr class="gradeX">
-						<td class="con0"><input type="checkbox" name="${user.login}" /> </td>
-						<td class="con1"><a href="${info.currentURL}?webaction=edit&cuser=${user.encryptLogin}">${user.login}</a></td>
-						<td class="con0"><c:out value="${user.firstName}" default="" /></td>
-						<td class="con1">${user.lastName}</td>
-						<td class="con0"><a href="mailto:${user.email}">${user.email}</a></td>
-						
-					</tr>
-				</c:forEach>
+				
 			</tbody>
 			<tfoot>
 				<tr>
@@ -42,6 +35,7 @@
 					<th class="head0">${i18n.edit['user.firstname']}</th>
 					<th class="head1">${i18n.edit['user.lastname']}</th>
 					<th class="head0">${i18n.edit['user.email']}</th>	
+					<th class="head1">${i18n.edit['user.creationdate']}</th>
 				</tr>
 			</tfoot>
 		</table>
@@ -59,11 +53,14 @@
 											{
 												"sPaginationType" : "full_numbers",
 												"aaSorting" : [ [ 1, "asc" ] ],
-												"aoColumns" : [ null, null,	null, null, null ],
+												"aoColumns" : [  { "bSortable": false }, null,	null, null, null, null ],
 												"oLanguage" : {
 													"sUrl" : "${info.editTemplateURL}/js/plugins/i18n/datatable_${info.editLanguage}.txt"
 												},
-												"fnInitComplete" : updateLayout
+												"fnInitComplete" : updateLayout,
+												"bProcessing": true,
+												"bServerSide": true,
+												"sAjaxSource": "${info.currentAjaxURL}&webaction=user.ajaxUserList"												
 											});
 
 						});

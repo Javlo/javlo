@@ -1,12 +1,15 @@
 package org.javlo.module.user;
 
+import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.PrintStream;
 import java.lang.reflect.InvocationTargetException;
 import java.nio.charset.Charset;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
@@ -43,6 +46,7 @@ import org.javlo.user.IUserFactory;
 import org.javlo.user.IUserInfo;
 import org.javlo.user.User;
 import org.javlo.user.UserFactory;
+import org.javlo.user.UserInfoSorting;
 import org.javlo.user.exception.UserAllreadyExistException;
 import org.javlo.utils.CSVFactory;
 
@@ -96,7 +100,7 @@ public class UserAction extends AbstractModuleAction {
 						user = userFactory.getUser(userInfo.getLogin());
 					}
 				}
-			}			
+			}
 			if (userContext.getMode().equals(UserModuleContext.VIEW_MY_SELF)) {
 				Module currentModule = moduleContext.getCurrentModule();
 				currentModule.setToolsRenderer(null);
@@ -108,8 +112,8 @@ public class UserAction extends AbstractModuleAction {
 				return "user not found : " + requestService.getParameter("user", null);
 			}
 
-			Map<String, String> userInfoMap = BeanHelper.bean2Map(user.getUserInfo());			
-			ctx.getRequest().setAttribute("functions", LangHelper.collectionToMap(StringHelper.stringToCollection(userInfoMap.get("function"),";")));
+			Map<String, String> userInfoMap = BeanHelper.bean2Map(user.getUserInfo());
+			ctx.getRequest().setAttribute("functions", LangHelper.collectionToMap(StringHelper.stringToCollection(userInfoMap.get("function"), ";")));
 
 			ctx.getRequest().setAttribute("user", user);
 			ctx.getRequest().setAttribute("userInfoMap", userInfoMap);
@@ -124,7 +128,7 @@ public class UserAction extends AbstractModuleAction {
 
 		List<String> roles = new LinkedList<String>(userFactory.getAllRoles(globalContext, ctx.getRequest().getSession()));
 		Collections.sort(roles);
-		
+
 		if (userFactory instanceof AdminUserFactory) {
 			for (String adminRole : globalContext.getAdminUserRoles()) {
 				roles.remove(adminRole);
@@ -133,7 +137,7 @@ public class UserAction extends AbstractModuleAction {
 			Collections.sort(contextRoles);
 			ctx.getRequest().setAttribute("contextRoles", contextRoles);
 		}
-		
+
 		ctx.getRequest().setAttribute("roles", roles);
 
 		if (userContext.getMode().equals(UserModuleContext.ADMIN_USERS_LIST)) {
@@ -184,12 +188,12 @@ public class UserAction extends AbstractModuleAction {
 			try {
 
 				BeanHelper.copy(new RequestParameterMap(ctx.getRequest()), userInfo);
-				
+
 				List<String> functions = requestService.getParameterListValues("function", Collections.EMPTY_LIST);
 				if (functions.size() > 0 && userInfo instanceof AdminUserInfo) {
-					((AdminUserInfo)userInfo).setFunction(StringHelper.collectionToString(functions, ";"));
+					((AdminUserInfo) userInfo).setFunction(StringHelper.collectionToString(functions, ";"));
 				}
-				
+
 				if (requestService.getParameter("token", null) != null) {
 					logger.info("token reset for : " + userInfo.getLogin());
 					userInfo.setToken(StringHelper.getNewToken());
@@ -352,11 +356,11 @@ public class UserAction extends AbstractModuleAction {
 					userFactory.updateUserInfo(ui);
 					userFactory.store();
 					messageRepository.setGlobalMessage(new GenericMessage(i18nAccess.getText("user.message.ok-change-password"), GenericMessage.INFO));
-					
+
 					if (editContext.isEditPreview()) {
 						ctx.setClosePopup(true);
 					}
-					
+
 				} catch (IOException e) {
 					e.printStackTrace();
 					return e.getMessage();
@@ -388,7 +392,7 @@ public class UserAction extends AbstractModuleAction {
 		if (!AdminUserSecurity.getInstance().haveRight(user, AdminUserSecurity.USER_ROLE)) {
 			return "security error.";
 		}
-		
+
 		boolean admin = StringHelper.isTrue(rs.getParameter("admin", null));
 		IUserFactory userFact;
 		if (admin) {
@@ -401,21 +405,21 @@ public class UserAction extends AbstractModuleAction {
 		String msg = null;
 		for (FileItem item : fileItems) {
 			InputStream in = item.getInputStream();
-			
+
 			if (item.getFieldName().trim().length() > 1 && item.getSize() > 0 && in != null) {
 
 				Charset charset = Charset.forName(ContentContext.CHARACTER_ENCODING);
 				if (StringHelper.getFileExtension(item.getName()).equals("txt")) { // hack
 					charset = Charset.forName("utf-16");
 				}
-				
+
 				CSVFactory csvFact;
 				try {
 					csvFact = new CSVFactory(in, null, charset);
 				} finally {
 					ResourceHelper.closeResource(in);
 				}
-				String[][] usersArrays = csvFact.getArray();				
+				String[][] usersArrays = csvFact.getArray();
 				if (usersArrays == null || usersArrays.length < 1) {
 					msg = i18nAccess.getText("global.message.file-format-error");
 					MessageRepository.getInstance(ctx).setGlobalMessage(new GenericMessage(msg, GenericMessage.ERROR));
@@ -440,22 +444,22 @@ public class UserAction extends AbstractModuleAction {
 					}
 				}
 
-				//if (userInfoList.size() > 0) {
-					userFact.clearUserInfoList();
-					for (Object element2 : userInfoList) {
-						IUserInfo element = (IUserInfo) element2;
-						try {
-							userFact.addUserInfo(element);
-						} catch (UserAllreadyExistException e) {
-							logger.warning("error on : " + element.getLogin() + " : " + e.getMessage());
-						}
+				// if (userInfoList.size() > 0) {
+				userFact.clearUserInfoList();
+				for (Object element2 : userInfoList) {
+					IUserInfo element = (IUserInfo) element2;
+					try {
+						userFact.addUserInfo(element);
+					} catch (UserAllreadyExistException e) {
+						logger.warning("error on : " + element.getLogin() + " : " + e.getMessage());
 					}
-					userFact.store();
-				//}
+				}
+				userFact.store();
+				// }
 
 			}
 		}
-		
+
 		/** vrac import **/
 		String vrac = rs.getParameter("vrac", "");
 		int countUserInsered = 0;
@@ -467,7 +471,7 @@ public class UserAction extends AbstractModuleAction {
 				userInfo.setLogin(email);
 				userInfo.setEmail(email);
 				if (role.trim().length() > 0) {
-					userInfo.setRoles(new HashSet(Arrays.asList(new String[] {role})));
+					userInfo.setRoles(new HashSet(Arrays.asList(new String[] { role })));
 				}
 				try {
 					userFact.addUserInfo(userInfo);
@@ -476,12 +480,11 @@ public class UserAction extends AbstractModuleAction {
 				}
 			}
 			userFact.store();
-			
-			MessageRepository.getInstance(ctx).setGlobalMessage(new GenericMessage(i18nAccess.getText("global.message.imported")+countUserInsered, GenericMessage.INFO));
-			
-			logger.info("vrac user imported : "+countUserInsered);
-		}
 
+			MessageRepository.getInstance(ctx).setGlobalMessage(new GenericMessage(i18nAccess.getText("global.message.imported") + countUserInsered, GenericMessage.INFO));
+
+			logger.info("vrac user imported : " + countUserInsered);
+		}
 
 		return msg;
 	}
@@ -496,5 +499,105 @@ public class UserAction extends AbstractModuleAction {
 		messageRepository.setGlobalMessage(new GenericMessage(i18nAccess.getText("user.message.ok-change-role") + ' ' + role, GenericMessage.INFO));
 		return null;
 
+	}
+
+	public static String performAjaxUserList(RequestService rs, HttpSession session, ContentContext ctx, MessageRepository messageRepository, I18nAccess i18nAccess) {
+		UserModuleContext userContext = UserModuleContext.getInstance(ctx.getRequest());
+
+		GlobalContext globalContext = GlobalContext.getInstance(ctx.getRequest());
+		IUserFactory userFactory = userContext.getUserFactory(ctx);
+
+		if (userFactory.getCurrentUser(ctx.getRequest().getSession()) == null || !AdminUserSecurity.getInstance().haveRight(userFactory.getCurrentUser(ctx.getRequest().getSession()), AdminUserSecurity.USER_ROLE)) {
+			return "no access";
+		}
+
+		if (userContext.getCurrentRole() != null && !userFactory.getAllRoles(globalContext, ctx.getRequest().getSession()).contains(userContext.getCurrentRole())) {
+			userContext.setCurrentRole(null);
+		}
+
+		List<IUserInfo> users = null;
+		if (userContext.getCurrentRole() != null) {
+			users = new LinkedList<IUserInfo>();
+			for (IUserInfo user : userContext.getUserFactory(ctx).getUserInfoList()) {
+				if (user.getRoles().contains(userContext.getCurrentRole())) {
+					users.add(user);
+				}
+			}
+		} else {
+			users = userContext.getUserFactory(ctx).getUserInfoList();
+		}
+
+		ByteArrayOutputStream outStream = new ByteArrayOutputStream();
+		PrintStream out = new PrintStream(outStream);
+
+		int pageSize = Integer.parseInt(rs.getParameter("iDisplayLength", "10"));
+		int displayStart = Integer.parseInt(rs.getParameter("iDisplayStart", "0"));
+		int sortingCol = Integer.parseInt(rs.getParameter("iSortingCols", "0"));
+		boolean ascSorting = rs.getParameter("sSortDir_0",  "asc").equals("asc");
+		
+		switch (sortingCol) {
+		case 1:
+			Collections.sort(users, new UserInfoSorting(UserInfoSorting.LOGIN, ascSorting));
+			break;
+		case 2:
+			Collections.sort(users, new UserInfoSorting(UserInfoSorting.FIRSTNAME, ascSorting));
+			break;
+		case 3:
+			Collections.sort(users, new UserInfoSorting(UserInfoSorting.LASTNAME, ascSorting));
+			break;
+		case 4:
+			Collections.sort(users, new UserInfoSorting(UserInfoSorting.EMAIL, ascSorting));
+			break;
+		case 5:
+			Collections.sort(users, new UserInfoSorting(UserInfoSorting.CREATION_DATE, ascSorting));
+			break;
+		default:
+			break;
+		}
+		
+		String query = rs.getParameter("sSearch", null);
+		if (query != null && query.trim().length() == 0) {
+			query = null;
+		}
+
+		out.println("{");
+		out.print("\"aaData\": [");
+		String sep = "";
+		int record = 0;
+
+		for (IUserInfo userInfo : users) {
+			if (query == null || StringHelper.arrayToString(userInfo.getAllValues()).contains(query)) {				
+				if (record >= displayStart && record < displayStart + pageSize) {
+					out.print(sep + '[' + '"' + "<input type=\\\"checkbox\\\" name=\\\""+userInfo.getLogin()+"\\\" />" + '"' + ',');
+					Map<String,String> params = new HashMap<String, String>();
+					params.put("webaction", "edit");
+					params.put("cuser", userInfo.getEncryptLogin());
+					String editURL = URLHelper.createURL(ctx.getContextWithOtherRenderMode(ContentContext.EDIT_MODE), params);
+					out.print('"' + "<a href=\\\""+editURL+"\\\">" + userInfo.getLogin() + "</a>" + '"' + ',');
+					out.print('"' + userInfo.getFirstName() + '"' + ',');
+					out.print('"' + userInfo.getLastName() + '"' + ',');
+					out.print('"' + userInfo.getEmail() + '"' + ',');					
+					out.print('"' + StringHelper.renderSortableTime(userInfo.getCreationDate()) + '"' + ']');
+					sep = ",";
+				}
+				record++;
+			}
+		}
+		out.println("],");
+		Integer sEcho = (Integer) session.getAttribute("sEcho");
+		if (sEcho == null) {
+			sEcho = 0;
+		}
+		sEcho++;
+		session.setAttribute("sEcho", sEcho);
+		out.println("\"sEcho\": " + sEcho + ",");
+		out.println("\"iTotalRecords\": \"" + users.size() + "\",");
+		out.println("\"iTotalDisplayRecords\": \"" + record + "\"}");
+
+		out.close();
+		String json = new String(outStream.toByteArray());
+		ctx.setSpecificJson(json);
+
+		return null;
 	}
 }
