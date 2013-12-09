@@ -1,3 +1,4 @@
+<%@page import="org.javlo.i18n.I18nAccess"%>
 <%@page contentType="text/html"
         import="
         java.util.Map,
@@ -147,7 +148,14 @@ if (globalContext.isCollaborativeMode() && ctx.getRenderMode() == ContentContext
 	}	
 	request.setAttribute("creator", elem.getAuthors());	
 	request.setAttribute("date", StringHelper.renderTime(elem.getModificationDate()));%><jsp:include page="display_user.jsp"></jsp:include><%
-}%><%=elem.getPrefixViewXHTMLCode(ctx)%><%=elem.getXHTMLCode(ctx)%>
+}
+String xhtmlCode = elem.getXHTMLCode(ctx);
+if (xhtmlCode.trim().length() == 0 && ctx.isEditPreview()) {
+	I18nAccess i18nAccess = I18nAccess.getInstance(ctx);
+	xhtmlCode = '['+i18nAccess.getText("content."+elem.getType(), elem.getType())+']';
+}
+
+%><%=elem.getPrefixViewXHTMLCode(ctx)%><%=xhtmlCode%>
 <%=elem.getSuffixViewXHTMLCode(ctx)%>
 <%
 previousElem = elem;

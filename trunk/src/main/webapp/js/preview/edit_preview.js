@@ -102,19 +102,19 @@ jQuery(document).ready(
 			
 		});
 
-function updatePDFPosition() {	
-	jQuery("._pdf_page_limit").remove();
+function updatePDFPosition() {		
 	var pdfHeight = parseInt(jQuery(".page_association_fake_body").data("pdfheight"));	
-	var previousBreak = null;
-	jQuery(".page-break, ._page_associate").each(function() {
-		var currentBreak = jQuery(this);		
-		if (previousBreak != null) {
-			if ((currentBreak.position().top - previousBreak.position().top) > pdfHeight) {		
+	var previousBreak = null;	
+	jQuery(".page-break, ._page_associate").each(function() {		
+		var currentBreak = jQuery(this);
+		console.log("previousBreak = "+previousBreak);
+		if (previousBreak != null) {			
+			if ((currentBreak.position().top - previousBreak.position().top) > pdfHeight) {				
 				previousBreak.prepend('<div class="_pdf_page_limit"><span>&nbsp;</span></div>');
-				var pdfLimit = jQuery(previousBreak.children()[0]);
-				pdfLimit.css('top',(previousBreak.position().top+pdfHeight)+'px');
+				var pdfLimit = jQuery(previousBreak.children()[0]);				
+				pdfLimit.css('top',(previousBreak.position().top+pdfHeight)+'px');				
 			}
-		}
+		}		
 		previousBreak = currentBreak;
 	});
 }
@@ -299,7 +299,7 @@ initPreview = function() {
 								var ajaxURL = addParam(currentURL,"webaction=edit.insert&type="
 								+ compType + "&previous=" + previewId
 								+ "&area=" + area+ "&render-mode=3&init=true"+pageIdParam);
-								ajaxRequest(ajaxURL);
+								ajaxRequest(ajaxURL,null,updatePDFPosition);
 							} else if (sharedContent != null && sharedContent !== undefined) {								
 								var previewId = "0";
 								if (jQuery(this).attr("id")) {
@@ -313,7 +313,7 @@ initPreview = function() {
 								var ajaxURL = addParam(currentURL, "webaction=edit.insertShared&sharedContent="
 								+ sharedContent + "&previous=" + previewId
 								+ "&area=" + area+ "&render-mode=3&init=true"+pageIdParam);
-								ajaxRequest(ajaxURL);
+								ajaxRequest(ajaxURL,null,updatePDFPosition);
 							} else if (comp !== undefined && jQuery(comp).attr("id") != null && jQuery(comp).attr('id') != jQuery(this).attr("id")) {								
 								var compId = jQuery(comp).attr("id").replace("cp_", "");
 								if (jQuery(this).attr("id") == "preview-delete-zone") {									
@@ -335,12 +335,11 @@ initPreview = function() {
 											+ compId + "&previous=" + previewId
 											+ "&area=" + area + "&render-mode=3" + pageIdParam);
 								}
-								ajaxRequest(ajaxURL);
+								ajaxRequest(ajaxURL,null,updatePDFPosition);
 							}							
 							layerOver(null);
 							jQuery(this).find(".drop-zone").remove();
-							jQuery(this).removeClass("drop-selected");
-							updatePDFPosition();
+							jQuery(this).removeClass("drop-selected");							
 						},
 						over : function(event, ui) {
 							dragging = true;
