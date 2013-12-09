@@ -56,7 +56,7 @@ jQuery(document).ready(function() {
 
 
 
-function ajaxRequest(url, form) {	
+function ajaxRequest(url, form, doneFunction) {	
 	if (url.indexOf("/edit-")>=0) {
 		url = url.replace("/edit-", "/ajax-");
 	} else {
@@ -125,7 +125,10 @@ function ajaxRequest(url, form) {
 			if (console) {
 				console.log(ex);
 			}
-		}		
+		}
+		if (doneFunction != null) {			
+			doneFunction();
+		}
 	});	
 }
 
