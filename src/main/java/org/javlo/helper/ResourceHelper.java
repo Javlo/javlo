@@ -283,7 +283,7 @@ public class ResourceHelper {
 		FileUtils.writeStringToFile(file2, content, ContentContext.CHARACTER_ENCODING);
 	}
 
-	public static void filteredFileCopyEscapeScriplet(File file1, File file2, Map<String, String> filter) throws IOException {
+	public static void filteredFileCopyEscapeScriplet(File file1, File file2, Map<String, String> filter) throws IOException {		
 		if (!file2.exists()) {
 			file2.getParentFile().mkdirs();
 			file2.createNewFile();
@@ -296,7 +296,7 @@ public class ResourceHelper {
 
 		Collection<String> keys = filter.keySet();
 		for (String key : keys) {
-			if (filter.get(key) != null) {
+			if (filter.get(key) != null) {				
 				content = content.replace(key, filter.get(key));
 				content = content.replace(key.toUpperCase(), filter.get(key));
 			}

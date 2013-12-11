@@ -99,9 +99,8 @@ IContentVisualComponent previousElem = null;
 	boolean languageChange = !ctx.getContentLanguage().equals(ctx.getLanguage()); 
 	if (languageChange) {
 		%><div lang="<%=ctx.getContentLanguage()%>"><%
-	}
-	
-	if (!elems.hasNext(ctx) && ctx.isAsPreviewMode()) {
+	}	
+	if (!elems.hasNext(ctx) && EditContext.getInstance(globalContext, session).isEditPreview()) {
 		%><div class="_empty_area"><span><%=ctx.getArea()%></span></div><%
 	}
 	

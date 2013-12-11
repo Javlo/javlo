@@ -37,25 +37,25 @@ public class Image extends AbstractFileComponent implements IImageTitle, IPrevie
 
 	@Override
 	public String[] getStyleList(ContentContext ctx) {
-		return new String[] { "image-left", "image-right", STYLE_CENTER, HIDDEN };
+		return new String[] { STYLE_CENTER, "image-left", "image-right", HIDDEN };
 	}
 
 	@Override
 	public String[] getStyleLabelList(ContentContext ctx) {
-		String left = "left";
-		String right = "right";
 		String center = "center";
+		String left = "left";
+		String right = "right";		
 		String hidden = "hidden";
 		try {
 			I18nAccess i18n = I18nAccess.getInstance(ctx.getRequest());
-			left = i18n.getText("global.left");
-			right = i18n.getText("global.right");
 			center = i18n.getText("global.center");
+			left = i18n.getText("global.left");
+			right = i18n.getText("global.right");			
 			hidden = i18n.getText("global.hidden");
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
-		return new String[] { left, right, center, hidden };
+		return new String[] { center, left, right, hidden };
 	}
 
 	@Override
@@ -73,7 +73,6 @@ public class Image extends AbstractFileComponent implements IImageTitle, IPrevie
 	public void init(ComponentBean bean, ContentContext ctx) throws Exception {
 		super.init(bean, ctx);
 		GlobalContext globalContext = GlobalContext.getInstance(ctx.getRequest());
-		// Warning : with javlo 1.4 this line has use a other ImageConfig from component.config package, check if regression
 		config = ImageConfig.getInstance(globalContext, ctx.getRequest().getSession(), ctx.getCurrentTemplate());
 	}
 
@@ -118,7 +117,6 @@ public class Image extends AbstractFileComponent implements IImageTitle, IPrevie
 		if (staticInfo != null) {
 			ctx.getRequest().setAttribute("file", new StaticInfo.StaticInfoBean(ctx, staticInfo));
 		}
-
 	}
 
 	@Override
