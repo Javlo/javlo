@@ -41,6 +41,7 @@ import org.javlo.config.StaticConfig;
 import org.javlo.context.ContentContext;
 import org.javlo.context.GlobalContext;
 import org.javlo.filter.PropertiesFilter;
+import org.javlo.helper.LangHelper;
 import org.javlo.helper.ResourceHelper;
 import org.javlo.helper.StringHelper;
 import org.javlo.helper.URLHelper;
@@ -82,6 +83,7 @@ public class Template implements Comparable<Template> {
 		private Color link = null;
 		private String toolsServer = null;
 		private String logo = null;
+		private Map<String, String> freeData = null;
 
 		public TemplateData() {
 		};
@@ -230,6 +232,14 @@ public class Template implements Comparable<Template> {
 			return out.toString();
 		}
 
+		public Map<String, String> getFreeData() {
+			return freeData;
+		}
+
+		public void setFreeData(Map<String, String> freeData) {
+			this.freeData = freeData;
+		}
+
 	}
 
 	public static final class TemplateBean implements IRemoteResource {
@@ -259,7 +269,7 @@ public class Template implements Comparable<Template> {
 		String type;
 		String parent;
 		String imageFilter;
-		List<String> htmls;		
+		List<String> htmls;
 
 		public TemplateBean() {
 		};
@@ -308,7 +318,7 @@ public class Template implements Comparable<Template> {
 			htmls = new LinkedList<String>();
 			htmls.add(template.getHTMLFile(ctx.getDevice()));
 			mailing = template.isMailing();
-			
+
 		}
 
 		public String getPreviewUrl() throws Exception {
@@ -638,7 +648,7 @@ public class Template implements Comparable<Template> {
 	}
 
 	private static Template getInstance(StaticConfig config, ContentContext ctx, String templateDir, boolean alternativeTemplate) throws ConfigurationException, IOException {
-		
+
 		if (config == null) {
 			throw new RuntimeException("StaticConfig can not be null.");
 		}
@@ -652,9 +662,10 @@ public class Template implements Comparable<Template> {
 		template.dir = new File(templateFolder);
 		template.config = config;
 
-		/*if (!template.isTemplateInWebapp(ctx)) {
-			template.importTemplateInWebapp(config, ctx);
-		}*/
+		/*
+		 * if (!template.isTemplateInWebapp(ctx)) {
+		 * template.importTemplateInWebapp(config, ctx); }
+		 */
 
 		File configFile = new File(URLHelper.mergePath(templateFolder, CONFIG_FILE));
 		File privateConfigFile = new File(URLHelper.mergePath(templateFolder, PRIVATE_CONFIG_FILE));
@@ -663,7 +674,7 @@ public class Template implements Comparable<Template> {
 			if (!configFile.exists()) {
 				configFile.createNewFile();
 			}
-			
+
 			template.properties.setFile(configFile);
 			template.properties.load();
 
@@ -679,7 +690,7 @@ public class Template implements Comparable<Template> {
 			// TODO Auto-generated catch block
 			// logger.warning("problem with file : " +
 			// configFile.getAbsolutePath());
-		//	t.printStackTrace();
+			// t.printStackTrace();
 		}
 
 		template.parent = template.getParent(config, ctx);
@@ -917,6 +928,14 @@ public class Template implements Comparable<Template> {
 		}
 	}
 
+	private void storePrivateProperties() {
+		try {
+			privateProperties.save();
+		} catch (ConfigurationException e) {
+			e.printStackTrace();
+		}
+	}
+
 	public void deleteArea(String area) {
 		properties.clearProperty(XMLManipulationHelper.AREA_PREFIX + area);
 		storeProperties();
@@ -1098,7 +1117,7 @@ public class Template implements Comparable<Template> {
 		}
 		if (getMobileTemplate() != null && ctx.getDevice().isMobileDevice()) {
 			Template mobileTemplate = getMobileTemplate(ctx.getGlobalContext().getStaticConfig(), ctx);
-			if (mobileTemplate != null) {				
+			if (mobileTemplate != null) {
 				return mobileTemplate;
 			}
 		}
@@ -1471,7 +1490,7 @@ public class Template implements Comparable<Template> {
 
 	private Template getParent(StaticConfig config, ContentContext ctx) throws IOException, ConfigurationException {
 		Template parent = null;
-		String parentId = getParentName();		
+		String parentId = getParentName();
 		if (parentId != null && !parentId.equals(getName())) {
 			if (ctx == null) {
 				parent = Template.getInstance(config, ctx, parentId, false);
@@ -1479,7 +1498,7 @@ public class Template implements Comparable<Template> {
 				parent = TemplateFactory.getTemplates(ctx.getRequest().getSession().getServletContext()).get(parentId);
 			}
 			if (parent == null) {
-				throw new ConfigurationException ("parent not found : "+parent);
+				throw new ConfigurationException("parent not found : " + parent);
 			}
 		}
 		return parent;
@@ -1529,7 +1548,7 @@ public class Template implements Comparable<Template> {
 		plugins.addAll(getPlugins());
 		return plugins;
 	}
-	
+
 	private List<TemplatePlugin> getTemplatePugin(GlobalContext globalContext) throws IOException {
 		TemplatePluginFactory templatePluginFactory = TemplatePluginFactory.getInstance(globalContext.getServletContext());
 		return templatePluginFactory.getAllTemplatePlugin(getAllPluginsName(globalContext));
@@ -1693,7 +1712,7 @@ public class Template implements Comparable<Template> {
 		return properties.getString("special-renderer.template", null);
 	}
 
-	public TemplateData getTemplateData() {
+	public TemplateData getTemplateData() {		
 		TemplateData templateData = new TemplateData();
 		String background = properties.getString("data.color.background", null);
 		if (background != null) {
@@ -1739,6 +1758,21 @@ public class Template implements Comparable<Template> {
 			templateData.setLogo(logo);
 		}
 
+		String freeDataPrefix = "data.free.";
+		Iterator keys = properties.getKeys();
+		Map<String, String> freeData = new HashMap<String, String>();
+		while (keys.hasNext()) {
+			String key = "" + keys.next();
+			if (key.startsWith(freeDataPrefix)) {
+				String value = "" + properties.getProperty(key);
+				key = key.substring(freeDataPrefix.length());				
+				if (!freeData.containsKey(key)) {
+					freeData.put(key, value);
+				}
+			}
+		}
+		templateData.setFreeData(freeData);
+
 		return templateData;
 	}
 
@@ -1749,6 +1783,7 @@ public class Template implements Comparable<Template> {
 		TemplateData templateDataUser = globalContext.getTemplateData();
 		Map<String, String> templateDataMap = new HashMap<String, String>();
 		TemplateData templateData = getTemplateData();
+		templateDataMap.putAll(templateData.getFreeData());
 		if (templateData.getBackground() != null) {
 			templateDataMap.put(StringHelper.colorToHexStringNotNull(templateData.getBackground()), StringHelper.colorToHexStringNotNull(templateDataUser.getBackground()));
 		}
@@ -1829,7 +1864,7 @@ public class Template implements Comparable<Template> {
 					File templateTgt = new File(getTemplateTargetFolder(globalContext));
 					logger.info("copy template from '" + templateSrc + "' to '" + templateTgt + "'");
 					FileUtils.deleteDirectory(templateTgt);
-					importTemplateInWebapp(config, ctx, globalContext, templateTgt);
+					importTemplateInWebapp(config, ctx, globalContext, templateTgt, null);
 				} else {
 					logger.severe("folder not found : " + templateSrc);
 					templateImportationError = true;
@@ -1838,9 +1873,13 @@ public class Template implements Comparable<Template> {
 		}
 	}
 
-	protected void importTemplateInWebapp(StaticConfig config, ContentContext ctx, GlobalContext globalContext, File templateTarget) throws IOException {
+	protected void importTemplateInWebapp(StaticConfig config, ContentContext ctx, GlobalContext globalContext, File templateTarget, Map<String,String> childrenData) throws IOException {		
 		if (isParent()) {
-			getParent().importTemplateInWebapp(config, ctx, globalContext, templateTarget);
+			if (childrenData == null) {
+				childrenData = new HashMap<String, String>();
+			}			
+			LangHelper.putAllIfNotExist(childrenData, getTemplateDataMap(globalContext));
+			getParent().importTemplateInWebapp(config, ctx, globalContext, templateTarget, childrenData);
 		}
 		String templateFolder = config.getTemplateFolder();
 		File templateSrc = new File(URLHelper.mergePath(templateFolder, getSourceFolderName()));
@@ -1848,7 +1887,7 @@ public class Template implements Comparable<Template> {
 			logger.info("copy parent template from '" + templateSrc + "' to '" + templateTarget + "'");
 			FileUtils.copyDirectory(templateSrc, templateTarget, new WEBFileFilter(this, false, jsp, true), false);
 			/** filter html and css **/
-			Iterator<File> files = FileUtils.iterateFiles(templateSrc, new String[] { "html", "htm", "jsp", "js", "css" }, true);
+			Iterator<File> files = FileUtils.iterateFiles(templateSrc, new String[] { "html", "htm", "jsp", "js", "css", "less" }, true);
 
 			/** plugins **/
 			if (globalContext != null) {
@@ -1864,34 +1903,36 @@ public class Template implements Comparable<Template> {
 				}
 			}
 
+			Map<String, String> map = getTemplateDataMap(globalContext);
+			if (childrenData != null) {
+				map.putAll(childrenData);
+			} 
+			if (globalContext != null && globalContext.getTemplateData() != null) {
+				String newLogo = globalContext.getTemplateData().getLogo();
+				if (newLogo != null) {
+					StaticConfig staticConfig = StaticConfig.getInstance(ctx.getRequest().getSession());
+					ContentContext absoluteURLCtx = new ContentContext(ctx);
+					absoluteURLCtx.setAbsoluteURL(true);
+					String newLogoURL;
+					try {
+						String templateName = getName();
+						newLogoURL = URLHelper.createTransformURL(absoluteURLCtx, null, URLHelper.mergePath(staticConfig.getStaticFolder(), newLogo), "logo", templateName);
+					} catch (Exception e) {
+						throw new IOException(e);
+					}
+					String srcLogo = getTemplateData().getLogo();
+					if (srcLogo != null) {
+						map.put(srcLogo, newLogoURL);
+					}
+				}
+			} else {
+				logger.warning("no template data for : " + this);
+			}
+			
 			while (files.hasNext()) {
 				File file = files.next();
-				File targetFile = new File(file.getAbsolutePath().replace(templateSrc.getAbsolutePath(), templateTarget.getAbsolutePath()));
-				Map<String, String> map = getTemplateDataMap(globalContext);
+				File targetFile = new File(file.getAbsolutePath().replace(templateSrc.getAbsolutePath(), templateTarget.getAbsolutePath()));				
 				if (ctx != null) {
-					if (globalContext != null && globalContext.getTemplateData() != null) {
-						String newLogo = globalContext.getTemplateData().getLogo();
-						if (newLogo != null) {
-							StaticConfig staticConfig = StaticConfig.getInstance(ctx.getRequest().getSession());
-							ContentContext absoluteURLCtx = new ContentContext(ctx);
-							absoluteURLCtx.setAbsoluteURL(true);
-							String newLogoURL;
-							try {
-								String templateName = getName();
-								newLogoURL = URLHelper.createTransformURL(absoluteURLCtx, null, URLHelper.mergePath(staticConfig.getStaticFolder(), newLogo), "logo", templateName);
-
-							} catch (Exception e) {
-								throw new IOException(e);
-							}
-							String srcLogo = getTemplateData().getLogo();
-							if (srcLogo != null) {
-								map.put(srcLogo, newLogoURL);
-							}
-						}
-					} else {
-						logger.warning("no template data for : " + this);
-					}
-
 					if (FilenameUtils.getExtension(file.getName()).equalsIgnoreCase("jsp")) {
 						ResourceHelper.filteredFileCopyEscapeScriplet(file, targetFile, map);
 					} else {
@@ -2025,18 +2066,14 @@ public class Template implements Comparable<Template> {
 		if (date != null) {
 			synchronized (properties) {
 				privateProperties.setProperty("creation-date", StringHelper.renderDate(date));
-				storeProperties();
+				storePrivateProperties();
 			}
 		}
 	}
 
 	public void setDepth(int depth) {
 		privateProperties.setProperty("depth", depth);
-		try {
-			privateProperties.save();
-		} catch (ConfigurationException e) {
-			e.printStackTrace();
-		}
+		storePrivateProperties();
 	}
 
 	public void setDominantColor(String color) {
@@ -2048,17 +2085,13 @@ public class Template implements Comparable<Template> {
 
 	public void setOwner(String owner) {
 		privateProperties.setProperty("owner", owner);
-		try {
-			privateProperties.save();
-		} catch (ConfigurationException e) {
-			e.printStackTrace();
-		}
+		storePrivateProperties();
 	}
 
 	public void setReady(boolean ready) {
 		synchronized (properties) {
 			privateProperties.setProperty("ready", ready);
-			storeProperties();
+			storePrivateProperties();
 		}
 	}
 
@@ -2072,7 +2105,7 @@ public class Template implements Comparable<Template> {
 	public void setValid(boolean inValid) {
 		synchronized (properties) {
 			privateProperties.setProperty("valid", inValid);
-			storeProperties();
+			storePrivateProperties();
 		}
 	}
 
@@ -2201,13 +2234,12 @@ public class Template implements Comparable<Template> {
 		}
 	}
 
-	public int getPDFHeigth() {		
+	public int getPDFHeigth() {
 		return properties.getInt("pdf.height", getParent().getPDFHeigth());
 	}
-	
-	public int getQRCodeSize() {		
+
+	public int getQRCodeSize() {
 		return properties.getInt("qrcode.width", getParent().getQRCodeSize());
 	}
-
 
 }

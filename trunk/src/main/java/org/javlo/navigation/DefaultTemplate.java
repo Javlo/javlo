@@ -7,6 +7,7 @@ import java.util.Collections;
 import java.util.Date;
 import java.util.List;
 import java.util.Locale;
+import java.util.Map;
 import java.util.Properties;
 import java.util.logging.Logger;
 
@@ -311,7 +312,7 @@ public class DefaultTemplate extends Template {
 	}
 
 	@Override
-	protected void importTemplateInWebapp(StaticConfig config, ContentContext ctx, GlobalContext globalContext, File templateTarget) throws IOException {
+	protected void importTemplateInWebapp(StaticConfig config, ContentContext ctx, GlobalContext globalContext, File templateTarget, Map<String,String> childrenData) throws IOException {
 		return;
 	}
 

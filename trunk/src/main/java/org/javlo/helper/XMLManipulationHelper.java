@@ -273,6 +273,8 @@ public class XMLManipulationHelper {
 	public static final String AREA_PREFIX = "area.";
 
 	public static final String AREA_VIEW_PREFIX = "area-view-if-empty.";
+	
+	public static final String AREA_VIEW_CONTAINER = "area-container.";
 
 	public static final String HEADER_ZONE = "<!-- INSERT HEADER HERE -->";
 
@@ -374,14 +376,17 @@ public class XMLManipulationHelper {
 				}
 
 				/* area */
-				// if (!isMail) {
 				for (String area : areas) {
 					String areaValue = getValue(options, AREA_PREFIX + area, area);
 					boolean displayIfEmpty = StringHelper.isTrue(getValue(options, AREA_VIEW_PREFIX + area, "true"));
+					String areaContainer = getValue(options, AREA_VIEW_CONTAINER+area, null);
+					if (areaContainer != null) {
+						displayIfEmpty = false;
+					}
 					String prefix = "";
 					String sufix = "";
 					if (!displayIfEmpty) {
-						prefix = "<%if (!currentPage.isEmpty(ctx, \"" + area + "\")) {%>";
+						prefix = "<%if (!currentPage.isEmpty(ctx, \"" + area + "\") || EditContext.getInstance(globalContext, session).isEditPreview()) {%>";
 						sufix = "<%}%>";
 					}
 					if ((idValue != null) && (idValue.trim().equals(areaValue))) {
@@ -389,12 +394,14 @@ public class XMLManipulationHelper {
 						remplacement.addReplacement(tags[i].getOpenEnd() + 1, tags[i].getCloseStart(), "<jsp:include page=\"/jsp/view/content_view.jsp?area=" + area + "\" />");
 						remplacement.addReplacement(tags[i].getCloseEnd() + 1, tags[i].getCloseEnd() + 1, sufix);
 						String cssClass = StringHelper.neverNull(tags[i].getAttributes().get("class"));
-
 						tags[i].getAttributes().put("class", (cssClass + " _area").trim());
+						remplacement.addReplacement(tags[i].getOpenStart(), tags[i].getOpenEnd() + 1, tags[i].renderOpen());
+					} else if (idValue != null && areaContainer != null && idValue.trim().equals(areaContainer)) {
+						remplacement.addReplacement(tags[i].getOpenStart() - 1, tags[i].getOpenStart() - 1, prefix);						
+						remplacement.addReplacement(tags[i].getCloseEnd() + 1, tags[i].getCloseEnd() + 1, sufix);
 						remplacement.addReplacement(tags[i].getOpenStart(), tags[i].getOpenEnd() + 1, tags[i].renderOpen());
 					}
 				}
-				// }
 
 				/* languages */
 				if (!isMail) {

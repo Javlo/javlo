@@ -174,6 +174,7 @@ public class GlobalImage extends Image {
 		if (isMeta()) {
 			ctx.getRequest().setAttribute("label", getTitle());
 		}
+		ctx.getRequest().setAttribute("filter", getFilter(ctx));
 	}
 
 	@Override

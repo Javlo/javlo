@@ -187,6 +187,14 @@ public class LangHelper {
 		}
 		return out;
 	}
+	
+	public static void putAllIfNotExist(Map map1, Map map2) {
+		for (Object key : map2.keySet()) {
+			if (!map1.containsKey(key)) {
+				map1.put(key, map2.get(key));
+			}
+		}
+	}
 
 	public static ObjectBuilder object() {
 		return new ObjectBuilder();
