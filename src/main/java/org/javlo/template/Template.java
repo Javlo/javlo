@@ -82,8 +82,7 @@ public class Template implements Comparable<Template> {
 		private Color border = null;
 		private Color link = null;
 		private String toolsServer = null;
-		private String logo = null;
-		private Map<String, String> freeData = null;
+		private String logo = null;		
 
 		public TemplateData() {
 		};
@@ -231,15 +230,7 @@ public class Template implements Comparable<Template> {
 			out.append(getLogo());
 			return out.toString();
 		}
-
-		public Map<String, String> getFreeData() {
-			return freeData;
-		}
-
-		public void setFreeData(Map<String, String> freeData) {
-			this.freeData = freeData;
-		}
-
+		
 	}
 
 	public static final class TemplateBean implements IRemoteResource {
@@ -270,6 +261,7 @@ public class Template implements Comparable<Template> {
 		String parent;
 		String imageFilter;
 		List<String> htmls;
+		private Map<String, String> s = null;
 
 		public TemplateBean() {
 		};
@@ -316,7 +308,7 @@ public class Template implements Comparable<Template> {
 			imageFilter = template.getImageFiltersRAW();
 			css = template.getCSS();
 			htmls = new LinkedList<String>();
-			htmls.add(template.getHTMLFile(ctx.getDevice()));
+			htmls.add(template.getHTMLFile(ctx.getDevice()));			
 			mailing = template.isMailing();
 
 		}
@@ -506,6 +498,7 @@ public class Template implements Comparable<Template> {
 			return htmls;
 		}
 
+		
 	}
 
 	public static class TemplateDateComparator implements Comparator<Template> {
@@ -612,6 +605,8 @@ public class Template implements Comparable<Template> {
 	private final Set<String> contextWithTemplateImported = new HashSet<String>();
 
 	private final Map<String, Map> i18n = new HashMap<String, Map>();
+	
+	private Map<String, String> freeData = null;
 
 	public static Template getApplicationInstance(ServletContext application, ContentContext ctx, String templateDir) throws ConfigurationException, IOException {
 
@@ -1771,7 +1766,7 @@ public class Template implements Comparable<Template> {
 				}
 			}
 		}
-		templateData.setFreeData(freeData);
+		setFreeData(freeData);
 
 		return templateData;
 	}
@@ -1783,7 +1778,7 @@ public class Template implements Comparable<Template> {
 		TemplateData templateDataUser = globalContext.getTemplateData();
 		Map<String, String> templateDataMap = new HashMap<String, String>();
 		TemplateData templateData = getTemplateData();
-		templateDataMap.putAll(templateData.getFreeData());
+		templateDataMap.putAll(getFreeData());
 		if (templateData.getBackground() != null) {
 			templateDataMap.put(StringHelper.colorToHexStringNotNull(templateData.getBackground()), StringHelper.colorToHexStringNotNull(templateDataUser.getBackground()));
 		}
@@ -2240,6 +2235,14 @@ public class Template implements Comparable<Template> {
 
 	public int getQRCodeSize() {
 		return properties.getInt("qrcode.width", getParent().getQRCodeSize());
+	}
+
+	public Map<String, String> getFreeData() {
+		return freeData;
+	}
+	
+	public void setFreeData(Map<String, String> freeData) {
+		this.freeData = freeData;
 	}
 
 }

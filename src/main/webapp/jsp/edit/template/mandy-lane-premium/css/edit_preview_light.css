@@ -390,21 +390,6 @@ body.preview-only {
 	background: #fad5cf url(../images/icons/error.png) no-repeat 10px center;
 }
 
-.free-edit-zone.droppable span,.drop-zone span {
-	height: 40px;
-	background-image: url('../images/icons/droppable.png');
-	background-position: center center;
-	background-repeat: no-repeat;
-}
-
-.drop-zone span,.free-edit-zone.drop-selected span {
-	background-image: url('../images/icons/drop.png');
-}
-
-.drop-zone span,.free-edit-zone.drop-selected span {
-	background-image: url('../images/icons/drop.png');
-}
-
 #preview-layer.ui-draggable-dragging {
 	/*border: 4px #777777 solid;*/
 	height: 50px;
