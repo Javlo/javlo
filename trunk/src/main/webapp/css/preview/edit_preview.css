@@ -695,7 +695,7 @@ html.edit-preview {
 	border: 0 none;
 	background-repeat: none;
 	width: 16px;
-	height: 16px;
+	height: 16px;	
 }
 
 #preview_command .pc_command #tc_replace_current_page_button {
@@ -704,7 +704,7 @@ html.edit-preview {
 
 #preview_command .pc_command #tc_replace_current_page_and_children_button
 	{
-	background-image: url('../../images/icons/add_page.png');
+	background-image: url('../../images/icons/add_page.png');	
 }
 
 #preview_command fieldset {
@@ -886,37 +886,48 @@ html.edit-preview {
 	background-color: #E3364A;
 }
 
+.free-edit-zone {
+	display: none !important;
+}
+
+.droppable, .drop-zone {
+	padding: 16px 8px 4px 40px;
+	display: block !important;
+	border-radius: 3px 3px 3px 3px;
+	background-color: #aaaaaa;
+	opacity: .60;
+	-ms-filter: "progid:DXImageTransform.Microsoft.Alpha(Opacity=30)";
+	filter: alpha(opacity = 60);
+	-khtml-opacity: 0.60;
+	-moz-opacity: 0.60;
+	margin-bottom: -36px;
+}
+
+.free-edit-zone.droppable {
+	background-image: url('../../images/icons/droppable.png');
+	background-position: 3px 3px;
+	background-repeat: no-repeat;
+}
+
+.free-edit-zone.drop-selected,.drop-zone {
+	background-image: url('../../images/icons/drop.png');
+	background-position: 3px 3px;
+	background-repeat: no-repeat;
+}
+
 #droppable-layer span {
 	background-color: #36E34A;
 	border: none;
 }
 
-.free-edit-zone {
-	display: none !important;
-}
-
-.free-edit-zone.droppable {
-	padding: 4px;
-	display: block !important;
-	border-radius: 3px 3px 3px 3px;
-	background-color: #aaaaaa;
-	opacity: .30;
-	-ms-filter: "progid:DXImageTransform.Microsoft.Alpha(Opacity=30)";
-	filter: alpha(opacity = 30);
-	-khtml-opacity: 0.30;
-	-moz-opacity: 0.30;
-	margin-bottom: 4px;
-}
-
-.free-edit-zone.droppable span {
+.free-edit-zone.droppable span, .drop-zone span {
 	display: block;
-	border: 2px #777777 dashed;
-	border-radius: 3px 3px 3px 3px;
+	border-top: 2px #777777 dashed;
+	background-color: #aaaaaa;		
 }
 
 .drop-zone {
-	margin-bottom: 4px;
-	padding: 2px;
+	margin-bottom: 0;	
 	display: block;	
 	overflow: hidden;	
 }
@@ -929,12 +940,6 @@ html.edit-preview {
 	filter: alpha(opacity = 30);
 	-khtml-opacity: 0.30;
 	-moz-opacity: 0.30;	
-}
-
-.drop-zone span,.free-edit-zone.drop-selected span, ._empty_area.drop-selected span {
-	display: block;
-	border: 2px #eeeeee dashed;
-	border-radius: 3px 3px 3px 3px;
 }
 
 #pc_upload #upload-zone {

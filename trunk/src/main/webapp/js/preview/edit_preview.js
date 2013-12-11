@@ -10,9 +10,10 @@ jQuery(document).ready(
 				mouseX = event.pageX;
 				mouseY = event.pageY;
 				
-				if (!mouseInLayer()) {
+				/*if (!mouseInLayer()) {
+					console.log("RESET");
 					layerOver(null,false);
-				}
+				}*/
 				
 			});
 			
@@ -64,6 +65,12 @@ jQuery(document).ready(
 						jQuery(this).data("subItem").trigger("click",
 								jQuery(this).data("subItem"));
 						return true;
+					});		
+			jQuery("#preview-layer").mouseout(
+					function() {						
+						if (!dragging) {					
+							layerOver(null, false);
+						}
 					});			
 			jQuery(".preview-edit").click(function() {
 				var elems = jQuery(this);
@@ -106,8 +113,7 @@ function updatePDFPosition() {
 	var pdfHeight = parseInt(jQuery(".page_association_fake_body").data("pdfheight"));	
 	var previousBreak = null;	
 	jQuery(".page-break, ._page_associate").each(function() {		
-		var currentBreak = jQuery(this);
-		console.log("previousBreak = "+previousBreak);
+		var currentBreak = jQuery(this);		
 		if (previousBreak != null) {			
 			if ((currentBreak.position().top - previousBreak.position().top) > pdfHeight) {				
 				previousBreak.prepend('<div class="_pdf_page_limit"><span>&nbsp;</span></div>');
@@ -121,11 +127,12 @@ function updatePDFPosition() {
 
 mouseInLayer = function() {
 	var layer = jQuery("#preview-layer");
-	if (mouseX < layer.position().left || mouseY < layer.position().top) {
+	if (mouseX < layer.position().left || mouseY < layer.position().top) {	
 		return false;
 	} else if (mouseX > layer.position().left+layer.width() || mouseY > layer.position().top+layer.height()) {
+	
 		return false;
-	}
+	}	
 	return true;
 }
 
@@ -134,7 +141,7 @@ layerOver = function(item, deletable) {
 	layer.data("deletable", deletable);
 	
 	var insideLayer = jQuery("#preview-layer span");
-	if (item == null) {
+	if (item == null) {		
 		layer.css("z-index", -1);
 		layer.css("display", "none");		
 		layer.data("compType", null);
@@ -225,8 +232,7 @@ initPreview = function() {
 		if (height < 40) {
 			height = 40;
 		}					
-		layer.css("height", height);
-	
+		layer.css("height", height);	
 	});
 	/*jQuery("#preview-layer").on('mouseout', function(e) {		
 		if (!dragging) {			
@@ -237,8 +243,8 @@ initPreview = function() {
 		e.preventDefault();
 		e.stopPropagation();
 	});
-	jQuery("#preview-layer").on('drop', function(e) {
-		layerOver(null);		
+	jQuery("#preview-layer").on('drop', function(e) {		
+		layerOver(null,false);
 		jQuery(this).data("compType", null);
 		e.preventDefault();
 		e.stopPropagation();
@@ -267,7 +273,7 @@ initPreview = function() {
 						cursor : 'move',
 						greedy : true,
 						tolerance : 'pointer',
-						drop : function(event, ui) {
+						drop : function(event, ui) {							
 							var currentURL = addParam(window.location.href,"previewEdit=true");
 							var layer = jQuery("#preview-layer");
 							var comp = layer.data("subItem");
@@ -361,7 +367,7 @@ initPreview = function() {
 								dropLayer.css("left", "" + target.offset().left
 										+ "px");
 							}
-							jQuery("#preview-layer").addClass("drop-up");
+							jQuery("#preview-layer").addClass("drop-up");	
 						},
 						out : function(event,ui) {
 							jQuery(this).find(".drop-zone").remove();
@@ -393,6 +399,10 @@ initPreview = function() {
 			if (jQuery(this).height() < 40) {			
 				jQuery(this).height(40);
 			};
+			/*jQuery(this).height(40);
+			jQuery(this).width(40);			
+			console.log("mouseX = "+mouseX);
+			jQuery(this).offset({ top: mouseY, left: mouseX});*/
 			
 			/* stable scroll */			
 			jQuery(window).scrollTop(scroll*jQuery("body").height()/height);

@@ -37,6 +37,7 @@ import java.net.URL;
 import java.net.URLEncoder;
 import java.nio.charset.Charset;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.Comparator;
@@ -273,7 +274,12 @@ public class ResourceHelper {
 			file2.createNewFile();
 		}
 		String content = FileUtils.readFileToString(file1, ContentContext.CHARACTER_ENCODING);
-		Collection<String> keys = filter.keySet();
+		List<String> keys = new LinkedList<String>(filter.keySet());
+		Collections.sort(keys, new Comparator<String>() {			
+			public int compare(String s1, String s2) {
+				return s2.length() - s1.length();
+			}			
+		});
 		for (String key : keys) {
 			if (filter.get(key) != null) {
 				content = content.replace(key, filter.get(key));
@@ -294,9 +300,15 @@ public class ResourceHelper {
 		content = content.replace("<%", errorMsg);
 		content = content.replace(errorMsg + '@', "<%@");
 
-		Collection<String> keys = filter.keySet();
-		for (String key : keys) {
-			if (filter.get(key) != null) {				
+		List<String> keys = new LinkedList<String>(filter.keySet());
+		// sort because big key must be replaced before little key.
+		Collections.sort(keys, new Comparator<String>() {			
+			public int compare(String s1, String s2) {
+				return s2.length() - s1.length();
+			}			
+		});		
+		for (String key : keys) {			
+			if (filter.get(key) != null) {			
 				content = content.replace(key, filter.get(key));
 				content = content.replace(key.toUpperCase(), filter.get(key));
 			}
@@ -835,37 +847,6 @@ public class ResourceHelper {
 		writer.write(line);
 		writer.newLine();
 		closeResource(writer);
-	}
-
-	public static void main2(String[] args) {
-
-		try {
-			URL url = new URL("http://twitter.com/statuses/user_timeline/104782747.rss");
-
-			InputStream in = url.openStream();
-			int read = in.read();
-			while (read >= 0) {
-				System.out.print((char) read);
-				read = in.read();
-			}
-
-			/*
-			 * final byte[] buffer = new byte[1024 * 4]; int size = 0; int
-			 * byteReaded = in.read(buffer); while (byteReaded > 0) { size =
-			 * size + byteReaded; System.out.write(buffer, 0, byteReaded);
-			 * byteReaded = in.read(buffer); }
-			 * System.out.println("*** byteReaded = "+byteReaded);
-			 */
-			in.close();
-
-			// String content = NetHelper.readPage(url);
-
-			// +System.out.println(content);
-
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
-
 	}
 
 	/**
@@ -1433,16 +1414,14 @@ public class ResourceHelper {
 	}
 
 	public static void main(String[] args) {
-		TicketBean bean = new TicketBean();
-		bean.setAuthors("patrick");
-		bean.addComments(new Comment("patrick", "coucou"));
-		bean.addComments(new Comment("catherine", "coucou bis"));
-		String xml = storeBeanFromXML(bean);
-		System.out.println(xml);
-		TicketBean bean2 = (TicketBean) loadBeanFromXML(xml);
-		System.out.println("***** ResourceHelper.main : authors = " + bean2.getAuthors()); // TODO:
-																							// remove
-																							// debug
-																							// trace
+		List<String> keys = new LinkedList<String>(Arrays.asList(new String[] {"patrick", "pat", "Patrick Vandermaesen" }));
+		Collections.sort(keys, new Comparator<String>() {			
+			public int compare(String s1, String s2) {
+				return s2.length() - s1.length();
+			}			
+		});
+		for (String string : keys) {
+			System.out.println(string);
+		}
 	}
 }
