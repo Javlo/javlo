@@ -377,9 +377,10 @@ initPreview = function() {
 					});
 
 	dragging = false;
-
+	
 	jQuery("#preview-layer").draggable({
 		cursor : "move",
+		tolerance: "pointer",
 		start : function(event, ui) {
 			dragging = true;
 			var layer = jQuery("#preview-layer");
