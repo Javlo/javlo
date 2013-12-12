@@ -55,9 +55,11 @@ public class SimpleInternalLink extends ComplexPropertiesLink implements IIntern
 	@Override
 	protected String getTag(ContentContext ctx) {
 		String style = getStyle();
-		for (int i = 2; i < 7; i++) {
-			if (style.toLowerCase().contains("h" + i)) {
-				return "h" + i;
+		if (style != null) {
+			for (int i = 2; i < 7; i++) {
+				if (style.toLowerCase().contains("h" + i)) {
+					return "h" + i;
+				}
 			}
 		}
 		return super.getTag(ctx);
@@ -312,6 +314,13 @@ public class SimpleInternalLink extends ComplexPropertiesLink implements IIntern
 	@Override
 	public boolean isOnlyThisPage() {
 		return properties.getProperty(REVERSE_LINK_KEY, "none").equals(ReverseLinkService.ONLY_THIS_PAGE);
+	}
+	
+	@Override
+	public boolean initContent(ContentContext ctx) throws Exception {
+		properties.setProperty(LINK_KEY, "0");		
+		properties.setProperty(LABEL_KEY, getType());
+		return true;
 	}
 
 }
