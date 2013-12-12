@@ -229,7 +229,6 @@ function closableFieldSet(items) {
 }
 
 function clickFieldSet(link,fieldset) {
-	console.log(fieldset);
 	var hash = "closable_"+hashItem(fieldset);				
 	var link = jQuery(link);
 	if (link.hasClass("open")) {
