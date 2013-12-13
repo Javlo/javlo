@@ -9,6 +9,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 
 import org.apache.commons.lang.StringUtils;
+import org.javlo.component.core.ComponentBean;
 import org.javlo.config.StaticConfig;
 import org.javlo.context.ContentContext;
 import org.javlo.context.EditContext;
@@ -392,7 +393,7 @@ public abstract class ElementaryURLHelper {
 		if (templateName != null) {
 			url = ElementaryURLHelper.mergePath(TRANSFORM + '/' + filter + '/' + templateName + '/' + ctx.getVirtualArea(), url);
 		} else {
-			url = ElementaryURLHelper.mergePath(TRANSFORM + '/' + filter, url);
+			url = ElementaryURLHelper.mergePath(TRANSFORM + '/' + filter + "/[edit]/"+ComponentBean.DEFAULT_AREA + '/', url);
 		}
 
 		return createStaticURL(ctx, referencePage, url, true);

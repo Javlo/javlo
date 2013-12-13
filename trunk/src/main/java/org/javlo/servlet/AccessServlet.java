@@ -73,7 +73,6 @@ import org.javlo.template.TemplateFactory;
 import org.javlo.thread.AbstractThread;
 import org.javlo.thread.ThreadManager;
 import org.javlo.tracking.Tracker;
-import org.javlo.user.AdminUserFactory;
 import org.javlo.user.AdminUserSecurity;
 import org.javlo.utils.DebugListening;
 import org.xhtmlrenderer.swing.Java2DRenderer;

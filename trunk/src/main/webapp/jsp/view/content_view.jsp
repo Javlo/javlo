@@ -33,10 +33,6 @@ if (ctx.getRenderMode() == ContentContext.PREVIEW_MODE && specificComp == null) 
 	%><div id="one-component-edit"></div><%
 }
 
-if (ctx.getRenderMode() == ContentContext.PREVIEW_MODE && specificComp == null) {
-	%><div id="comp_0" class="free-edit-zone editable-component"><span>&nbsp;</span></div><%
-} 
-
 String area = (String)request.getAttribute(ContentContext.CHANGE_AREA_ATTRIBUTE_NAME);
 if (area==null) {
 	area = request.getParameter("area");
@@ -102,6 +98,10 @@ IContentVisualComponent previousElem = null;
 	}	
 	if (!elems.hasNext(ctx) && EditContext.getInstance(globalContext, session).isEditPreview()) {
 		%><div class="_empty_area"><span><%=ctx.getArea()%></span></div><%
+	} else {
+		if (ctx.getRenderMode() == ContentContext.PREVIEW_MODE && specificComp == null) {
+			%><div id="comp_0" class="free-edit-zone editable-component"><span>&nbsp;</span></div><%
+		}
 	}
 	
 	while (specificComp != null || (elems != null && elems.hasNext(ctx))) {

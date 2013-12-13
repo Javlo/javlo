@@ -34,7 +34,7 @@
 </c:if>
 
 <c:if test="${empty user}">
-<c:if test="${empty user}"><jsp:include page="fb_login.jsp" /></c:if>
+<jsp:include page="fb_login.jsp" />
 <jsp:include page="${info.rootTemplateFolder}/jsp/login.jsp" />
 <c:if test="${empty user}">
 <a id="forget-password-id" href="#" onclick="javascript:hideshow(document.getElementById('forget-password-id'));javascript:hideshow(document.getElementById('reset-password-with-email'));return false;">${i18n.view['user.message.forget-password']}</a>

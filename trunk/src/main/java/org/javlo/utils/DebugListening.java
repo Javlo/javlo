@@ -39,7 +39,7 @@ public class DebugListening {
 
 	private static final long DELTA_SEND = 10000;
 
-	public static final boolean SEND_ERROR_MAIL = false;
+	public static final boolean SEND_ERROR_MAIL = true;
 
 	private ServletContext application;
 
@@ -59,7 +59,7 @@ public class DebugListening {
 			PrintStream out = new PrintStream(arrayOut);
 
 			try {
-				String subject = "wcms error in : " + request.getRemoteHost();
+				String subject = "Javlo error : " + globalContext.getContextKey() + "  host:" + request.getRemoteHost();
 				out.println(subject);
 				out.println("");
 				out.println("local addr           : " + request.getLocalAddr());

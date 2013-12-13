@@ -2845,4 +2845,24 @@ public class StringHelper {
 		return String.format("%.2f " + currency, price);
 	}
 
+	/**
+	 * parse error without fault, return null if color is unidentified.
+	 * 
+	 * @param color
+	 * @return
+	 */
+	public static Color parseColor(String color) {
+		try {
+			color = color.trim();
+			if (!color.startsWith("#")) {
+				color = '#' + color;
+			}
+			Color outColor = Color.decode(color);
+			return outColor;
+		} catch (Throwable t) {
+			logger.warning(t.getMessage());
+			return null;
+		}
+	}
+
 }

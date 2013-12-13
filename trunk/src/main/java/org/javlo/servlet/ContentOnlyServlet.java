@@ -103,12 +103,13 @@ public class ContentOnlyServlet extends HttpServlet {
 				ctx.setCurrentTemplate(template);
 				I18nAccess i18nAccess = I18nAccess.getInstance(ctx.getRequest());
 				i18nAccess.requestInit(ctx);
-			}
-			
-			if (!ctx.getCurrentPage().isChildrenAssociation()) {				
-				getServletContext().getRequestDispatcher(template.getRendererFullName(ctx)+'?'+Template.FORCE_TEMPLATE_PARAM_NAME+'='+template.getId()).include(request, response);
+			}			
+			String area = requestService.getParameter("only-area", null);
+			if (area != null) {
+				getServletContext().getRequestDispatcher("/jsp/view/content_view.jsp?area=" + area).include(request, response);
 			} else {
-				getServletContext().getRequestDispatcher("/jsp/view/page_association.jsp").include(request, response);				
+				String jspPath = template.getRendererFullName(ctx);
+				getServletContext().getRequestDispatcher(jspPath).include(request, response);
 			}
 		} catch (Exception e) {
 			e.printStackTrace();
