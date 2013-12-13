@@ -14,14 +14,12 @@ function handleFacebook() {
     FB.getLoginStatus(function(response) {
             onStatus(response); // once on page load
             FB.Event.subscribe('auth.statusChange', onStatus); // every status change
-        });
- 
+    }); 
 }
 /**
 * This will be called once on page load, and every time the status changes.
 */
-function onStatus(response) {
-    console.info('onStatus', response);
+function onStatus(response) {    
     if (response.status === 'connected') {
     	 if (document.getElementById('fbtoken') != null) {
          	document.getElementById('fbtoken').value = response.authResponse.accessToken;

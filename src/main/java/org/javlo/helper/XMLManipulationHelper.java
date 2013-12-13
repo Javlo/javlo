@@ -647,16 +647,10 @@ public class XMLManipulationHelper {
 							for (TagDescription tag : pluginTags) {
 								String resource = null;
 								if (tag.getAttributes().get("src") != null) {
-									resource = new File(tag.getAttributes().get("src")).getName(); // for
-																									// js
-																									// take
-																									// only
-																									// the
-																									// name
-																									// of
-																									// js
-																									// file.
-									tag.getAttributes().put("src", "<%=URLHelper.createStaticTemplatePluginURL(ctx, \"" + tag.getAttributes().get("src") + "\", \"" + plugin.getFolder() + "\")%>");
+									resource = new File(tag.getAttributes().get("src")).getName(); 
+									if (!tag.getAttributes().get("src").toLowerCase().startsWith("http://")) {
+										tag.getAttributes().put("src", "<%=URLHelper.createStaticTemplatePluginURL(ctx, \"" + tag.getAttributes().get("src") + "\", \"" + plugin.getFolder() + "\")%>");
+									}
 								}
 								if (tag.getAttributes().get("href") != null) {
 									resource = tag.getAttributes().get("href");
@@ -718,7 +712,9 @@ public class XMLManipulationHelper {
 							remplacement.addReplacement(tags[i].getOpenStart(), tags[i].getOpenEnd() + 1, newLinkGeneratorIf + tags[i].toString() + "<%}%>");
 						}
 					} else {
-						attributes.put("src", "<%=URLHelper.createStaticTemplateURL(ctx,\"/" + srcValue + "\")%>");
+						if (!attributes.get("src").toLowerCase().startsWith("http://")) {
+							attributes.put("src", "<%=URLHelper.createStaticTemplateURL(ctx,\"/" + srcValue + "\")%>");
+						}
 						remplacement.addReplacement(tags[i].getOpenStart(), tags[i].getOpenEnd() + 1, tags[i].toString());
 					}
 				}
@@ -981,6 +977,8 @@ public class XMLManipulationHelper {
 		out.append("<%=XHTMLHelper.renderHeaderResourceInsertion(ctx, \"/js/lib/jquery.cookie.js\")%>");
 		out.newLine();
 		out.append("<%=XHTMLHelper.renderHeaderResourceInsertion(ctx, \"/css/lib/colorbox/colorbox.css\")%>");
+		out.newLine();
+		out.append("<%=XHTMLHelper.renderHeaderResourceInsertion(ctx, \"/css/edit_preview.css\")%>");
 		out.newLine();
 		out.append("<%  }%>");
 		out.newLine();

@@ -124,7 +124,7 @@ body.preview-only {
 #preview_command .component,#preview_command .navigation li span,#preview_command input[type=submit],#preview_command .macro-list a,#preview_command .shared .content-wrapper,#preview_command .message
 	{
 	margin: 0 4px 4px 0;
-	padding: 3px;
+	padding: 1px;
 	color: #afafaf;
 	background-color: #494949;
 	border: 1px #5b5b5b solid;

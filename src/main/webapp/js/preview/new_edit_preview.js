@@ -355,12 +355,21 @@ initPreview = function() {
 							var layer = jQuery("#preview-layer");
 							var target = jQuery(this);
 							
-							if (!target.hasClass("free-edit-zone") && !target.hasClass("_empty_area")) {
-								if (target.find(".drop-zone").length == 0 && !target.parent().data("drop-selected") && !target.parent().data("drop-selected")) {
-									target.append('<div class="drop-zone"><span>&nbsp;</span></div>');
+							if (!target.hasClass("free-edit-zone")) {
+								if (target.find(".drop-zone").length == 0 && !target.hasClass("_empty_area") && !target.parent().data("drop-selected")) {
+									target.append('<div class="drop-zone"><span>&nbsp;</span></div>');									
 								}
 							} else {
 								target.parent().data("drop-selected", true);
+								target.addClass("drop-selected");
+								target.addClass("drop-ones");								
+							}
+							
+							if (!target.hasClass("free-edit-zone") && !target.hasClass("_empty_area")) {
+								if (target.find(".drop-zone").length == 0 && !target.parent().data("drop-selected")) {
+									target.append('<div class="drop-zone"><span>&nbsp;</span></div>');
+								}
+							} else {
 								target.addClass("drop-selected");
 								target.addClass("drop-ones");
 							}

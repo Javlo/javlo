@@ -11,7 +11,7 @@
 </div>
 </c:if>
 	
-<form id="form-page-properties" class="standard-form js-change-submit" action="${info.currentURL}" method="post">
+<form id="form-page-properties" class="standard-form js-change-submit" action="${info.currentURL}" method="post" enctype="multipart/form-data">
 
 <div>
 	<input type="hidden" name="webaction" value="updateGlobalContext" />
@@ -330,6 +330,33 @@
 <legend>${i18n.edit['admin.title.template-plugin-config']}</legend>
 <textarea rows="10" cols="10" name="template-plugin-config">${templatePluginConfig}</textarea>
 </fieldset>
+</fieldset>
+
+<fieldset>
+<legend>${i18n.edit['admin.title.graphic-charter']}</legend>
+
+<div class="cols">
+<div class="one_half">
+<jsp:include page="template_data.jsp?name=background&value=${currentContext.templateData.background}" />
+<jsp:include page="template_data.jsp?name=backgroundMenu&value=${currentContext.templateData.backgroundMenu}" />
+<jsp:include page="template_data.jsp?name=foreground&value=${currentContext.templateData.foreground}" />
+<jsp:include page="template_data.jsp?name=border&value=${currentContext.templateData.border}" />
+<jsp:include page="template_data.jsp?name=textMenu&value=${currentContext.templateData.textMenu}" />
+<jsp:include page="template_data.jsp?name=text&value=${currentContext.templateData.text}" />
+<jsp:include page="template_data.jsp?name=title&value=${currentContext.templateData.title}" />
+<jsp:include page="template_data.jsp?name=link&value=${currentContext.templateData.link}" />
+<jsp:include page="template_data.jsp?name=special&value=${currentContext.templateData.special}" />
+</div><div class="one_half last">
+<div class="line">
+	<label for="logo">logo : </label>
+	<input type="file" name="logo" id="logo" />
+</div>
+<c:if test="${not empty logoPreview}">
+	<img alt="logo" src="${logoPreview}" />
+</c:if>
+</div>
+</div>
+
 </fieldset>
 
 <div class="action">

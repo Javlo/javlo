@@ -19,6 +19,7 @@ if (ctx.isInteractiveMode() && ctx.getRenderMode() == ContentContext.PREVIEW_MOD
 
 MenuElement currentPage = ctx.getCurrentPage();
 boolean savePageAssocitation = ctx.isPageAssociation();
+
 ctx.setPageAssociation(true);
 
 /** remove preview command **/

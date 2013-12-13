@@ -85,6 +85,9 @@ public class DefaultTemplate extends Template {
 
 	@Override
 	public String getWorkTemplateFolder() {
+		if (config == null) {
+			return null;
+		}
 		return config.getRealPath(getLocalWorkTemplateFolder());
 	}
 

@@ -2,6 +2,7 @@ package org.javlo.module.admin;
 
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
+import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
@@ -38,6 +39,7 @@ import org.javlo.context.GlobalContextFactory;
 import org.javlo.helper.DebugHelper;
 import org.javlo.helper.LangHelper;
 import org.javlo.helper.PatternHelper;
+import org.javlo.helper.RequestHelper;
 import org.javlo.helper.ResourceHelper;
 import org.javlo.helper.StringHelper;
 import org.javlo.helper.URLHelper;
@@ -53,6 +55,7 @@ import org.javlo.service.ContentService;
 import org.javlo.service.LogService;
 import org.javlo.service.RequestService;
 import org.javlo.template.Template;
+import org.javlo.template.Template.TemplateData;
 import org.javlo.template.TemplateFactory;
 import org.javlo.template.TemplatePlugin;
 import org.javlo.template.TemplatePluginFactory;
@@ -130,6 +133,8 @@ public class AdminAction extends AbstractModuleAction {
 		private String userFactoryClassName = "";
 		private String adminUserFactoryClassName = "";
 
+		private TemplateData templateData = null;
+
 		public GlobalContextBean(GlobalContext globalContext, HttpSession session) throws NoSuchMethodException, ClassNotFoundException, IllegalArgumentException, InstantiationException, IllegalAccessException, InvocationTargetException {
 			if (globalContext == null) {
 				return;
@@ -183,6 +188,8 @@ public class AdminAction extends AbstractModuleAction {
 			setOnlyCreatorModify(globalContext.isOnlyCreatorModify());
 			setCollaborativeMode(globalContext.isCollaborativeMode());
 
+			setTemplateData(globalContext.getTemplateData());
+
 			Properties properties = new Properties();
 			properties.putAll(globalContext.getURIAlias());
 			ByteArrayOutputStream outStream = new ByteArrayOutputStream();
@@ -209,7 +216,7 @@ public class AdminAction extends AbstractModuleAction {
 			/** user engine **/
 			setUserFactoryClassName(globalContext.getUserFactoryClassName());
 			setAdminUserFactoryClassName(globalContext.getAdminUserFactory(session).getClass().getName());
-			
+
 			/** remote **/
 			if (globalContext.getDMZServerInter() != null) {
 				setDMZServerInter(globalContext.getDMZServerInter().toString());
@@ -217,7 +224,7 @@ public class AdminAction extends AbstractModuleAction {
 			if (globalContext.getDMZServerIntra() != null) {
 				setDMZServerIntra(globalContext.getDMZServerIntra().toString());
 			}
-			
+
 		}
 
 		public String getKey() {
@@ -612,6 +619,14 @@ public class AdminAction extends AbstractModuleAction {
 			DMZServerIntra = dMZServerIntra;
 		}
 
+		public TemplateData getTemplateData() {
+			return templateData;
+		}
+
+		public void setTemplateData(TemplateData templateData) {
+			this.templateData = templateData;
+		}
+
 	}
 
 	public static class ComponentBean {
@@ -660,7 +675,7 @@ public class AdminAction extends AbstractModuleAction {
 
 		ContentContext viewCtx = new ContentContext(ctx);
 		Module currentModule = moduleContext.getCurrentModule();
-		
+
 		String msg = "";
 		viewCtx.setRenderMode(ContentContext.VIEW_MODE);
 
@@ -706,7 +721,7 @@ public class AdminAction extends AbstractModuleAction {
 		String currentContextValue = null;
 		if (globalContext.isMaster()) {
 			currentContextValue = request.getParameter("context");
-		}		
+		}
 		if (currentContextValue != null || request.getAttribute("prepareContext") != null || !globalContext.isMaster()) {
 			GlobalContext currentGlobalContext;
 			if (currentContextValue != null) {
@@ -804,6 +819,18 @@ public class AdminAction extends AbstractModuleAction {
 				ctx.getRequest().setAttribute("selectedTemplatePlugins", selectedPlugin);
 				ctx.getRequest().setAttribute("templatePluginConfig", currentGlobalContext.getTemplatePluginConfig());
 
+				if (currentGlobalContext.getTemplateData().getLogo() != null && currentGlobalContext.getTemplateData().getLogo().trim().length() > 0) {
+					ContentContext absoluteURLCtx = new ContentContext(ctx);
+					absoluteURLCtx.setAbsoluteURL(true);
+					String newLogoURL;
+					try {
+						newLogoURL = URLHelper.createTransformURL(absoluteURLCtx, null, URLHelper.mergePath(globalContext.getStaticConfig().getStaticFolder(), currentGlobalContext.getTemplateData().getLogo()), "logo", null);
+						ctx.getRequest().setAttribute("logoPreview", newLogoURL);
+					} catch (Exception e) {
+						throw new IOException(e);
+					}
+				}
+
 			} else {
 				msg = "bad context : " + currentContextValue;
 				currentModule.restoreRenderer();
@@ -833,13 +860,13 @@ public class AdminAction extends AbstractModuleAction {
 
 	public static final String performChangeSite(HttpServletRequest request, RequestService requestService, ContentContext ctx, Module currentModule) throws FileNotFoundException, IOException, NoSuchMethodException, ClassNotFoundException, IllegalArgumentException, InstantiationException, IllegalAccessException, InvocationTargetException {
 		if (requestService.getParameter("change", null) != null) {
-			editGlobalContext(ctx, currentModule, null);			
-		} else if (requestService.getParameter("components", null) != null) {			
+			editGlobalContext(ctx, currentModule, null);
+		} else if (requestService.getParameter("components", null) != null) {
 			currentModule.setRenderer("/jsp/components.jsp");
 			currentModule.setToolsRenderer("/jsp/components_actions.jsp");
 			String uri = request.getRequestURI();
 			currentModule.pushBreadcrumb(new Module.HtmlLink(uri, I18nAccess.getInstance(request).getText("command.admin.components") + " : " + request.getParameter("context"), ""));
-		} else if (requestService.getParameter("modules", null) != null) {			
+		} else if (requestService.getParameter("modules", null) != null) {
 			currentModule.setRenderer("/jsp/modules.jsp");
 			currentModule.setToolsRenderer(null);
 			String uri = request.getRequestURI();
@@ -951,7 +978,7 @@ public class AdminAction extends AbstractModuleAction {
 					currentGlobalContext.setEditTemplateMode(requestService.getParameter("template-mode", null));
 
 					currentGlobalContext.setWizz(requestService.getParameter("wizz", null) != null);
-					
+
 					currentGlobalContext.setDMZServerInter(requestService.getParameter("dmz-inter", ""));
 					currentGlobalContext.setDMZServerIntra(requestService.getParameter("dmz-intra", ""));
 
@@ -1047,6 +1074,38 @@ public class AdminAction extends AbstractModuleAction {
 						currentGlobalContext.setTemplatePlugin(templatePluginsSelection);
 						importTemplate = true;
 					}
+
+					/** template data **/
+					TemplateData td = currentGlobalContext.getTemplateData();
+					td.setBackground(StringHelper.parseColor(requestService.getParameter("background", "" + td.getBackground())));
+					td.setForeground(StringHelper.parseColor(requestService.getParameter("foreground", "" + td.getForeground())));
+					td.setBorder(StringHelper.parseColor(requestService.getParameter("border", "" + td.getBorder())));
+					td.setBackgroundMenu(StringHelper.parseColor(requestService.getParameter("backgroundMenu", "" + td.getBackgroundMenu())));
+					td.setText(StringHelper.parseColor(requestService.getParameter("text", "" + td.getText())));
+					td.setTextMenu(StringHelper.parseColor(requestService.getParameter("textMenu", "" + td.getTextMenu())));
+					td.setLink(StringHelper.parseColor(requestService.getParameter("link", "" + td.getLink())));
+					td.setTitle(StringHelper.parseColor(requestService.getParameter("title", "" + td.getTitle())));
+					td.setSpecial(StringHelper.parseColor(requestService.getParameter("special", "" + td.getSpecial())));
+
+					for (FileItem file : requestService.getAllFileItem()) {
+						if (file.getFieldName().equals("logo")) {
+							File oldLogo = null;
+							if (td.getLink() != null) {
+								oldLogo = new File(URLHelper.mergePath(currentGlobalContext.getStaticFolder(), td.getLogo()));
+							}
+							if (file.getName().trim().length() > 0) {
+								String logoPath = URLHelper.mergePath("logo", file.getName());
+								File logo = new File(URLHelper.mergePath(currentGlobalContext.getStaticFolder(), logoPath));
+								td.setLogo(logoPath);
+								ResourceHelper.writeStreamToFile(file.getInputStream(), logo);
+								if (oldLogo != null && oldLogo.exists()) {
+									oldLogo.delete();
+								}
+							}
+						}
+					}
+
+					currentGlobalContext.setTemplateData(td);
 
 					if (importTemplate) {
 						TemplateFactory.cleanRenderer(ctx, currentGlobalContext.getTemplatesNames(), true);
@@ -1205,7 +1264,7 @@ public class AdminAction extends AbstractModuleAction {
 			if (currentGlobalContext != null) {
 				checkRight(ctx, currentGlobalContext);
 				String templateName = requestService.getParameter("template", null);
-				if (templateName != null) {					
+				if (templateName != null) {
 					currentGlobalContext.addTemplate(templateName);
 					messageRepository.setGlobalMessageAndNotification(ctx, new GenericMessage(i18nAccess.getText("admin.message.linked-template") + ' ' + templateName, GenericMessage.INFO));
 				} else {

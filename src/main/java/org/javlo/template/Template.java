@@ -40,6 +40,7 @@ import org.javlo.component.core.ComponentBean;
 import org.javlo.config.StaticConfig;
 import org.javlo.context.ContentContext;
 import org.javlo.context.GlobalContext;
+import org.javlo.css.CssColor;
 import org.javlo.filter.PropertiesFilter;
 import org.javlo.helper.LangHelper;
 import org.javlo.helper.ResourceHelper;
@@ -74,15 +75,17 @@ public class Template implements Comparable<Template> {
 
 	public static class TemplateData {
 		public static final TemplateData EMPTY = new TemplateData();
-		private Color background = null;
-		private Color foreground = null;
-		private Color text = null;
-		private Color backgroundMenu = null;
-		private Color textMenu = null;
-		private Color border = null;
-		private Color link = null;
+		private CssColor background = null;
+		private CssColor foreground = null;
+		private CssColor text = null;
+		private CssColor title = null;
+		private CssColor special = null;
+		private CssColor backgroundMenu = null;
+		private CssColor textMenu = null;
+		private CssColor border = null;
+		private CssColor link = null;
 		private String toolsServer = null;
-		private String logo = null;		
+		private String logo = null;
 
 		public TemplateData() {
 		};
@@ -115,11 +118,17 @@ public class Template implements Comparable<Template> {
 					if (data[i].length() > 0) {
 						setBorder(Color.decode('#' + data[i]));
 					}
-					if (data.length > 8) {
-						i++;
-						if (data[i].length() > 0) {
-							setLink(Color.decode('#' + data[i]));
-						}
+					i++;
+					if (data[i].length() > 0) {
+						setLink(Color.decode('#' + data[i]));
+					}
+					i++;
+					if (data[i].length() > 0) {
+						setTitle(Color.decode('#' + data[i]));
+					}
+					i++;
+					if (data[i].length() > 0) {
+						setSpecial(Color.decode('#' + data[i]));
 					}
 					i++;
 					if (data[i].length() > 0) {
@@ -173,23 +182,23 @@ public class Template implements Comparable<Template> {
 		}
 
 		public void setBackground(Color background) {
-			this.background = background;
+			this.background = CssColor.getInstance(background);
 		}
 
 		public void setBackgroundMenu(Color backgroundMenu) {
-			this.backgroundMenu = backgroundMenu;
+			this.backgroundMenu = CssColor.getInstance(backgroundMenu);
 		}
 
 		public void setBorder(Color border) {
-			this.border = border;
+			this.border = CssColor.getInstance(border);
 		}
 
 		public void setForeground(Color foreGround) {
-			foreground = foreGround;
+			foreground = CssColor.getInstance(foreGround);
 		}
 
 		public void setLink(Color link) {
-			this.link = link;
+			this.link = CssColor.getInstance(link);
 		}
 
 		public void setLogo(String logo) {
@@ -197,15 +206,31 @@ public class Template implements Comparable<Template> {
 		}
 
 		public void setText(Color text) {
-			this.text = text;
+			this.text = CssColor.getInstance(text);
 		}
 
 		public void setTextMenu(Color textMenu) {
-			this.textMenu = textMenu;
+			this.textMenu = CssColor.getInstance(textMenu);
 		}
 
 		public void setToolsServer(String toolsServer) {
 			this.toolsServer = toolsServer;
+		}
+		
+		public CssColor getTitle() {
+			return title;
+		}
+
+		public void setTitle(Color title) {
+			this.title = CssColor.getInstance(title);
+		}
+
+		public CssColor getSpecial() {
+			return special;
+		}
+
+		public void setSpecial(Color special) {
+			this.special = CssColor.getInstance(special);			
 		}
 
 		@Override
@@ -224,6 +249,10 @@ public class Template implements Comparable<Template> {
 			out.append(StringHelper.colorToHexStringNotNull(getBorder()));
 			out.append(';');
 			out.append(StringHelper.colorToHexStringNotNull(getLink()));
+			out.append(';');
+			out.append(StringHelper.colorToHexStringNotNull(getTitle()));
+			out.append(';');
+			out.append(StringHelper.colorToHexStringNotNull(getSpecial()));
 			out.append(';');
 			out.append(getToolsServer());
 			out.append(';');
@@ -308,7 +337,7 @@ public class Template implements Comparable<Template> {
 			imageFilter = template.getImageFiltersRAW();
 			css = template.getCSS();
 			htmls = new LinkedList<String>();
-			htmls.add(template.getHTMLFile(ctx.getDevice()));			
+			htmls.add(template.getHTMLFile(ctx.getDevice()));
 			mailing = template.isMailing();
 
 		}
@@ -498,7 +527,6 @@ public class Template implements Comparable<Template> {
 			return htmls;
 		}
 
-		
 	}
 
 	public static class TemplateDateComparator implements Comparator<Template> {
@@ -605,7 +633,7 @@ public class Template implements Comparable<Template> {
 	private final Set<String> contextWithTemplateImported = new HashSet<String>();
 
 	private final Map<String, Map> i18n = new HashMap<String, Map>();
-	
+
 	private Map<String, String> freeData = null;
 
 	public static Template getApplicationInstance(ServletContext application, ContentContext ctx, String templateDir) throws ConfigurationException, IOException {
@@ -1707,7 +1735,7 @@ public class Template implements Comparable<Template> {
 		return properties.getString("special-renderer.template", null);
 	}
 
-	public TemplateData getTemplateData() {		
+	public TemplateData getTemplateData() {
 		TemplateData templateData = new TemplateData();
 		String background = properties.getString("data.color.background", null);
 		if (background != null) {
@@ -1739,6 +1767,16 @@ public class Template implements Comparable<Template> {
 			Color color = Color.decode('#' + backgroundMenu);
 			templateData.setBackgroundMenu(color);
 		}
+		String title = properties.getString("data.color.title", null);
+		if (title != null) {
+			Color color = Color.decode('#' + title);
+			templateData.setTitle(color);
+		}
+		String special = properties.getString("data.color.special", null);
+		if (special != null) {
+			Color color = Color.decode('#' + special);
+			templateData.setSpecial(color);		
+		}
 		String link = properties.getString("data.color.link", null);
 		if (link != null) {
 			Color color = Color.decode('#' + link);
@@ -1760,7 +1798,7 @@ public class Template implements Comparable<Template> {
 			String key = "" + keys.next();
 			if (key.startsWith(freeDataPrefix)) {
 				String value = "" + properties.getProperty(key);
-				key = key.substring(freeDataPrefix.length());				
+				key = key.substring(freeDataPrefix.length());
 				if (!freeData.containsKey(key)) {
 					freeData.put(key, value);
 				}
@@ -1787,7 +1825,7 @@ public class Template implements Comparable<Template> {
 		}
 		if (templateData.getText() != null) {
 			templateDataMap.put(StringHelper.colorToHexStringNotNull(templateData.getText()), StringHelper.colorToHexStringNotNull(templateDataUser.getText()));
-		}
+		}		
 		if (templateData.getBackgroundMenu() != null) {
 			templateDataMap.put(StringHelper.colorToHexStringNotNull(templateData.getBackgroundMenu()), StringHelper.colorToHexStringNotNull(templateDataUser.getBackgroundMenu()));
 		}
@@ -1799,6 +1837,12 @@ public class Template implements Comparable<Template> {
 		}
 		if (templateData.getBorder() != null) {
 			templateDataMap.put(StringHelper.colorToHexStringNotNull(templateData.getBorder()), StringHelper.colorToHexStringNotNull(templateDataUser.getBorder()));
+		}
+		if (templateData.getTitle() != null) {
+			templateDataMap.put(StringHelper.colorToHexStringNotNull(templateData.getTitle()), StringHelper.colorToHexStringNotNull(templateDataUser.getTitle()));
+		}		
+		if (templateData.getSpecial() != null) {
+			templateDataMap.put(StringHelper.colorToHexStringNotNull(templateData.getSpecial()), StringHelper.colorToHexStringNotNull(templateDataUser.getSpecial()));
 		}
 		if (templateData.getToolsServer() != null) {
 			templateDataMap.put(templateData.getToolsServer(), templateDataUser.getToolsServer());
@@ -1868,11 +1912,11 @@ public class Template implements Comparable<Template> {
 		}
 	}
 
-	protected void importTemplateInWebapp(StaticConfig config, ContentContext ctx, GlobalContext globalContext, File templateTarget, Map<String,String> childrenData) throws IOException {		
+	protected void importTemplateInWebapp(StaticConfig config, ContentContext ctx, GlobalContext globalContext, File templateTarget, Map<String, String> childrenData) throws IOException {
 		if (isParent()) {
 			if (childrenData == null) {
 				childrenData = new HashMap<String, String>();
-			}			
+			}
 			LangHelper.putAllIfNotExist(childrenData, getTemplateDataMap(globalContext));
 			getParent().importTemplateInWebapp(config, ctx, globalContext, templateTarget, childrenData);
 		}
@@ -1901,7 +1945,7 @@ public class Template implements Comparable<Template> {
 			Map<String, String> map = getTemplateDataMap(globalContext);
 			if (childrenData != null) {
 				map.putAll(childrenData);
-			} 
+			}
 			if (globalContext != null && globalContext.getTemplateData() != null) {
 				String newLogo = globalContext.getTemplateData().getLogo();
 				if (newLogo != null) {
@@ -1923,10 +1967,10 @@ public class Template implements Comparable<Template> {
 			} else {
 				logger.warning("no template data for : " + this);
 			}
-			
+
 			while (files.hasNext()) {
 				File file = files.next();
-				File targetFile = new File(file.getAbsolutePath().replace(templateSrc.getAbsolutePath(), templateTarget.getAbsolutePath()));				
+				File targetFile = new File(file.getAbsolutePath().replace(templateSrc.getAbsolutePath(), templateTarget.getAbsolutePath()));
 				if (ctx != null) {
 					if (FilenameUtils.getExtension(file.getName()).equalsIgnoreCase("jsp")) {
 						ResourceHelper.filteredFileCopyEscapeScriplet(file, targetFile, map);
@@ -2240,7 +2284,7 @@ public class Template implements Comparable<Template> {
 	public Map<String, String> getFreeData() {
 		return freeData;
 	}
-	
+
 	public void setFreeData(Map<String, String> freeData) {
 		this.freeData = freeData;
 	}

@@ -5,7 +5,7 @@
 <h3><span>${i18n.edit['user.title.edit']} : ${user.name}</span></h3>
 <div class="content">
 
-<form id="form-edit-user" class="standard-form" action="${info.currentURL}" method="post">
+<form id="form-edit-user" class="standard-form" action="${info.currentURL}" method="post" enctype="multipart/form-data">
 
 <div>
 	<input type="hidden" name="webaction" value="update" />
