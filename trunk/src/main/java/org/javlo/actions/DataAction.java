@@ -251,7 +251,7 @@ public class DataAction implements IAction {
 						PrintStream out = new PrintStream(outStream);
 						String dir = resourceRelativeFolder.replaceFirst(gc.getStaticConfig().getFileFolder(), "");
 						out.println("dir=" + dir);
-						out.println("file-name=" + newFile.getName());
+						out.println("file-name=" + StringHelper.getFileNameFromPath(newFile.getName()));
 						out.close();
 						ComponentBean bean = new ComponentBean(GenericFile.TYPE, new String(outStream.toByteArray()), ctx.getRequestContentLanguage());
 						cs.createContentAtEnd(ctx, bean, true);
@@ -276,7 +276,7 @@ public class DataAction implements IAction {
 					PrintStream out = new PrintStream(outStream);
 					String dir = imageRelativeFolder.replaceFirst(gc.getStaticConfig().getImageFolder(), "");
 					out.println("dir=" + dir);
-					out.println("file-name=" + imageItem.getName());
+					out.println("file-name=" + StringHelper.getFileNameFromPath(imageItem.getName()));
 					out.println(GlobalImage.IMAGE_FILTER + "=full");
 					out.close();
 					ComponentBean image = new ComponentBean(GlobalImage.TYPE, new String(outStream.toByteArray()), ctx.getRequestContentLanguage());
