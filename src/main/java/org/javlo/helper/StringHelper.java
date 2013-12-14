@@ -784,7 +784,7 @@ public class StringHelper {
 			path = path.substring(0, path.indexOf('?'));
 		}
 		String outExt = path;
-		path = path.replace('\\', '/');
+		path = StringUtils.replace(path, "\\",  "/");
 		int slashIndex = path.lastIndexOf('/');
 		if (slashIndex >= 0) {
 			outExt = path.substring(slashIndex + 1, path.length());

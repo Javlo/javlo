@@ -587,8 +587,8 @@ public abstract class ElementaryURLHelper {
 		} else if (path2 == null) {
 			return path1;
 		}
-		path1 = path1.replace('\\', '/');
-		path2 = path2.replace('\\', '/');
+		path1 = StringUtils.replace(path1, "\\", "/");
+		path2 = StringUtils.replace(path2, "\\", "/");
 		if ((path1 == null) || (path1.trim().length() == 0)) {
 			return path2;
 		} else if ((path2 == null) || (path2.trim().length() == 0)) {
