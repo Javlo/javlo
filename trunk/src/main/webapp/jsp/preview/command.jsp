@@ -141,7 +141,7 @@ MessageRepository.getInstance(request); // load request message
 			
 			<c:if test='${editPreview}'>
 				<!--<a class="action-button central-button" href="${info.currentEditURL}?module=content&previewEdit=true" onclick="jQuery.colorbox({href : '${info.currentEditURL}?module=content&previewEdit=true',opacity : 0.6,iframe : true,width : '95%',	height : '95%'}); return false;">${i18n.edit['preview.label.edit-components']}</a> -->
-				<fieldset class="closable">
+				<fieldset id="upload-zone" class="closable">
 				<legend>${i18n.edit['preview.upload-here']}</legend>				
 				<div id="pc_upload">
 					<div id="ajax-loader">&nbsp;</div>
@@ -168,12 +168,12 @@ MessageRepository.getInstance(request); // load request message
 						<jsp:include page="navigation.jsp"></jsp:include>
 					</fieldset>
 				</form>				
-				<form id="pc_macro" action="${info.currentURL}" method="post">
+				<div id="pc_macro">
 					<fieldset class="closable">
 						<legend>${i18n.edit['command.macro']}</legend>
 						<%=MacroHelper.getXHTMLMacroSelection(ctx, false, true)%>
 					</fieldset>
-				</form>	
+				</div>	
 				</div>
 			</c:if>			
 		</c:if><c:if test="${empty currentUser}">		
@@ -193,5 +193,10 @@ MessageRepository.getInstance(request); // load request message
 	if (top.location != document.location) { // iframe ?		
 		var olddiv = document.getElementById('preview_command');
 		olddiv.parentNode.removeChild(olddiv);
-	}
+	}	
 </script>
+<!--[if lt IE 10]>
+<script type="text/javascript">	
+jQuery("#upload-zone").remove();
+</script>	
+<![endif]--> 

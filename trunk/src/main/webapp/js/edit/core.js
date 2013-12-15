@@ -48,15 +48,13 @@ jQuery(document).ready(function() {
 	
 	/** scrol to latest position after refresh **/
 	var scrollTo = getParam(window.location.href, "_scrollTo");
-	if (scrollTo != "") {
-		console.log("scrollTo = "+scrollTo);
+	if (scrollTo != "") {	
 		window.scrollTo(0, scrollTo);		
-	}
-	
+	}	
 	
 	jQuery("body").addClass("js");
 	
-	closableFieldSet(jQuery("fieldset.closable"));
+	closableFieldSet(jQuery(".closable"));
 	
 	jQuery("input.label-inside").each(function(){				
 		var input = jQuery(this);		
@@ -194,11 +192,10 @@ function hashItem(item) {
 	return path;
 }
 
-function closableFieldSet(items) {
+function closableFieldSet(items) {	
 	items.each(function(){
 		var hash = "closable_"+hashItem(this);		
 		var initVal = jQuery.cookie(hash);		
-		
 		if (initVal == "close") {
 			jQuery(this).prepend('<a class="closable_action close" href="#">#</a>');			
 			jQuery(this).children().each(function(){
