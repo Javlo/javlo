@@ -1,3 +1,7 @@
+.mceEditor img {
+	max-width: none; /* hack ie 9 */
+}
+
 #jv_escape_menu {
 	display: none;
 }
@@ -15,7 +19,6 @@ ul.menu {
 	padding: 0;
 	margin-top: 0;
 	margin-bottom: 8px;
-	
 }
 
 .children {
@@ -27,12 +30,12 @@ ul.menu {
 }
 
 .navigation li a.editor {
-    background-image: url("images/page.png");
-    background-position: 7px center;
-    background-repeat: no-repeat;
+	background-image: url("images/page.png");
+	background-position: 7px center;
+	background-repeat: no-repeat;
 }
 
-.navigation li.add-page, .navigation li.insert-page {
+.navigation li.add-page,.navigation li.insert-page {
 	margin-left: 20px;
 }
 
@@ -47,13 +50,13 @@ ul.menu {
 }
 
 .component-title a {
-	display: block;	
+	display: block;
 	float: left;
-	padding: 0 12px;	
+	padding: 0 12px;
 	border-top: 1px solid #CCCCCC;
 	border-left: 1px solid #CCCCCC;
 	border-right: 1px solid #CCCCCC;
-	background-color: #ffffff;	
+	background-color: #ffffff;
 	margin-left: 12px;
 	box-shadow: inset 0 -2px 2px #dddddd;
 }
@@ -69,7 +72,8 @@ ul.menu {
 	background-position: right center;
 }
 
-.component.tabs ul { /* for place a not selectable title before jquery ui tabs */
+.component.tabs ul {
+	/* for place a not selectable title before jquery ui tabs */
 	position: static;
 }
 
@@ -85,11 +89,12 @@ ul.menu {
 	overflow: hidden;
 }
 
-.component input, .component textarea, .component select {
+.component input,.component textarea,.component select {
 	width: 60%;
 }
 
-.component table input, .component table textarea, .component table select {
+.component table input,.component table textarea,.component table select
+	{
 	width: auto;
 }
 
@@ -120,22 +125,23 @@ ul.menu {
 
 .line-inline label {
 	display: inline-block;
-	width: auto;	
+	width: auto;
 }
 
 .line-full input {
 	width: 100%;
 }
 
-.component input[type="radio"], .component input[type="checkbox"] {
-	width: auto;
-} 
-
-#content-edit input[type=submit], #content-edit input[type=button] {
+.component input[type="radio"],.component input[type="checkbox"] {
 	width: auto;
 }
 
-#content-edit table input, #content-edit table select, #content-edit table textarea, #content-edit table a  {
+#content-edit input[type=submit],#content-edit input[type=button] {
+	width: auto;
+}
+
+#content-edit table input,#content-edit table select,#content-edit table textarea,#content-edit table a
+	{
 	display: inline-block;
 	margin-left: 6px;
 }
@@ -147,8 +153,7 @@ ul.menu {
 /** components **/
 
 /*** css for design component in edit mode ***/
-
-#content-edit {		
+#content-edit {
 	padding-right: 2px;
 	min-height: 480px;
 }
@@ -157,12 +162,12 @@ ul.menu {
 	padding: 0;
 }
 
-.navigation .parent a {	
+.navigation .parent a {
 	margin-left: 15px;
-	padding-left: 10px;	
+	padding-left: 10px;
 	background-image: url("images/back.png");
-    background-position: 0 center;
-    background-repeat: no-repeat;
+	background-position: 0 center;
+	background-repeat: no-repeat;
 }
 
 li.line {
@@ -171,15 +176,16 @@ li.line {
 }
 
 .component li.line label {
-    float: none;
-    width: auto;
-    display: inline-block;
-    margin-left: 10px;
+	float: none;
+	width: auto;
+	display: inline-block;
+	margin-left: 10px;
 }
 
 .insert-page input[type='submit'] {
-    background: url("images/icon_arrow_3.png") no-repeat scroll 5px -31px #FFFFFF;
-    padding-left: 26px;
+	background: url("images/icon_arrow_3.png") no-repeat scroll 5px -31px
+		#FFFFFF;
+	padding-left: 26px;
 }
 
 .roles .inline label {
@@ -188,15 +194,15 @@ li.line {
 }
 
 .roles {
-	overflow: hidden;	
+	overflow: hidden;
 }
 
 .roles input {
-	display: inline-block;			
+	display: inline-block;
 }
 
 .roles .one_half {
-    width: 46%;
+	width: 46%;
 }
 
 #content-edit .box {
@@ -217,19 +223,17 @@ li.line {
 	color: #dddddd;
 	position: absolute;
 	/*writing-mode:tb-rl;*/
-    /*-webkit-transform:rotate(90deg);
+	/*-webkit-transform:rotate(90deg);
     -moz-transform:rotate(90deg);*/
-    white-space:nowrap;
-    display:block;    
-    /*width:20px;*/
-    /*height:20px;*/
-    font-family: Arial, Verdana, Helvetica, sans-serif;
-    font-size:40px;
-    font-weight:normal;
-    right: 36px;
+	white-space: nowrap;
+	display: block;
+	/*width:20px;*/
+	/*height:20px;*/
+	font-family: Arial, Verdana, Helvetica, sans-serif;
+	font-size: 40px;
+	font-weight: normal;
+	right: 36px;
 }
-
-
 
 .confirm-replace fieldset {
 	padding: 12px;
@@ -247,12 +251,12 @@ li.line {
 }
 
 /* cols */
-
 .cols {
 	overflow: hidden;
 }
 
-.cols .col1, .cols .col2, .cols .col3, .cols .col4, .cols .col5, .cols .col6, .cols .col7, .cols .col8, .cols .col9, .cols .col10, .cols .col11, .cols .col12 {
+.cols .col1,.cols .col2,.cols .col3,.cols .col4,.cols .col5,.cols .col6,.cols .col7,.cols .col8,.cols .col9,.cols .col10,.cols .col11,.cols .col12
+	{
 	float: left;
 	margin: 0 3% 0 0;
 }
@@ -261,23 +265,59 @@ li.line {
 	margin: 0;
 }
 
-.cols .col1 { width: 5.5%; }
-.cols .col2 { width: 14%; }
-.cols .col3 { width: 22.5%; }
-.cols .col4 { width: 31%; }
-.cols .col5 { width: 39.5%; }
-.cols .col6 { width: 48%; }
-.cols .col7 { width: 56.5%; }
-.cols .col8 { width: 65%; }
-.cols .col9 { width: 73.5%; }
-.cols .col10 { width: 82%; }
-.cols .col11 { width: 90.5%; }
-.cols .col12 { width: 99%; margin: 0; }
+.cols .col1 {
+	width: 5.5%;
+}
+
+.cols .col2 {
+	width: 14%;
+}
+
+.cols .col3 {
+	width: 22.5%;
+}
+
+.cols .col4 {
+	width: 31%;
+}
+
+.cols .col5 {
+	width: 39.5%;
+}
+
+.cols .col6 {
+	width: 48%;
+}
+
+.cols .col7 {
+	width: 56.5%;
+}
+
+.cols .col8 {
+	width: 65%;
+}
+
+.cols .col9 {
+	width: 73.5%;
+}
+
+.cols .col10 {
+	width: 82%;
+}
+
+.cols .col11 {
+	width: 90.5%;
+}
+
+.cols .col12 {
+	width: 99%;
+	margin: 0;
+}
 
 @media all and (max-width: 1260px) {
-	.cols .col1, .cols .col2, .cols .col3, .cols .col4, .cols .col5, .cols .col6, .cols .col7, .cols .col8, .cols .col9, .cols .col10, .cols .col11, .cols .col12 {
+	.cols .col1,.cols .col2,.cols .col3,.cols .col4,.cols .col5,.cols .col6,.cols .col7,.cols .col8,.cols .col9,.cols .col10,.cols .col11,.cols .col12
+		{
 		float: none;
 		width: 99%;
 	}
 }
-

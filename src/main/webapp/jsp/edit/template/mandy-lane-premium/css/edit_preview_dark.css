@@ -91,11 +91,15 @@ body.preview-only {
 }
 
 #preview_command fieldset.closable .closable_action.open {
-	background-image: url('../images/preview/open.png')
+	background-image: url('../images/preview/open.png');
+	background-repeat: no-repeat;
+	background-position: left center;
 }
 
 #preview_command fieldset.closable .closable_action.close {
-	background-image: url('../images/preview/close.png')
+	background-image: url('../images/preview/close.png');
+	background-repeat: no-repeat;
+	background-position: left center;
 }
 
 #preview_command fieldset {
