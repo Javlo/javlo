@@ -6,6 +6,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.PrintStream;
 import java.text.ParseException;
+import java.util.Arrays;
 import java.util.Calendar;
 import java.util.Collection;
 import java.util.Date;
@@ -34,6 +35,7 @@ import org.javlo.helper.ResourceHelper;
 import org.javlo.helper.ServletHelper;
 import org.javlo.helper.StringHelper;
 import org.javlo.helper.URLHelper;
+import org.javlo.helper.importation.ImportConfigBean;
 import org.javlo.helper.importation.TanukiImportTools;
 import org.javlo.i18n.I18nAccess;
 import org.javlo.macro.ImportJCRPageMacro;
@@ -62,7 +64,8 @@ public class DataAction implements IAction {
 	}
 
 	/**
-	 * get the list of modification. option for request : markread=true, mark all notification returned as read. this method need user logger.
+	 * get the list of modification. option for request : markread=true, mark
+	 * all notification returned as read. this method need user logger.
 	 * 
 	 * @return
 	 * @throws ParseException
@@ -108,9 +111,7 @@ public class DataAction implements IAction {
 					notification.setReceiver(item.getReceiverUser());
 					notification.setUserId(item.getFromUser());
 					notification.setType(GenericMessage.INFO);
-					notification.setUrl(URLHelper.createModuleURL(absoluteCtx, "", "communication", LangHelper.objStr(
-							LangHelper.entry("webaction", "changeRenderer"),
-							LangHelper.entry("page", currentSite))));
+					notification.setUrl(URLHelper.createModuleURL(absoluteCtx, "", "communication", LangHelper.objStr(LangHelper.entry("webaction", "changeRenderer"), LangHelper.entry("page", currentSite))));
 					finalNotifs.add(new NotificationContainer(notification, false, currentUser));
 				}
 			}
@@ -129,7 +130,7 @@ public class DataAction implements IAction {
 		}
 		return null;
 	}
-	
+
 	public static String performDate(ContentContext ctx, User user) {
 		ctx.getAjaxData().put("date", StringHelper.renderFileTime(new Date()));
 		return null;
@@ -150,10 +151,10 @@ public class DataAction implements IAction {
 
 		String area = rs.getParameter("area", null);
 		Collection<String> areas = new LinkedList<String>();
-		
-		Map<String,String> areaMap = ctx.getCurrentTemplate().getAreasMap();
+
+		Map<String, String> areaMap = ctx.getCurrentTemplate().getAreasMap();
 		for (Map.Entry<String, String> areaId : areaMap.entrySet()) {
-			if (area == null || areaId.getValue().equals(area)) {					
+			if (area == null || areaId.getValue().equals(area)) {
 				areas.add(areaId.getKey());
 			}
 		}
@@ -163,51 +164,156 @@ public class DataAction implements IAction {
 		if (mode != null) {
 			ctx.setRenderMode(Integer.parseInt(mode));
 		}
-		
+
 		ctx.getRequest().removeAttribute("specific-comp");
-		
+
 		for (String areaKey : areas) {
-			ctx.getAjaxInsideZone().put(areaMap.get(areaKey), ServletHelper.executeJSP(ctx, "/jsp/view/content_view.jsp?area=" + areaKey));	
+			ctx.getAjaxInsideZone().put(areaMap.get(areaKey), ServletHelper.executeJSP(ctx, "/jsp/view/content_view.jsp?area=" + areaKey));
 		}
-		
+
 		return null;
 	}
-	
+
 	public static String performUpdateAllArea(RequestService rs, ContentContext ctx, MessageRepository messageRepository, I18nAccess i18nAccess) throws Exception {
 
 		Collection<String> areas = new LinkedList<String>();
-		Map<String,String> areaMap = ctx.getCurrentTemplate().getAreasMap();
-		for (Map.Entry<String, String> areaId : areaMap.entrySet()) {								
-			areas.add(areaId.getKey());			
+		Map<String, String> areaMap = ctx.getCurrentTemplate().getAreasMap();
+		for (Map.Entry<String, String> areaId : areaMap.entrySet()) {
+			areas.add(areaId.getKey());
 		}
-	
+
 		String mode = rs.getParameter("render-mode", null);
 
 		if (mode != null) {
 			ctx.setRenderMode(Integer.parseInt(mode));
 		}
-		
+
 		ctx.getRequest().removeAttribute("specific-comp");
-		
+
 		for (String areaKey : areas) {
-			ctx.getAjaxInsideZone().put(areaMap.get(areaKey), ServletHelper.executeJSP(ctx, "/jsp/view/content_view.jsp?area=" + areaKey));	
+			ctx.getAjaxInsideZone().put(areaMap.get(areaKey), ServletHelper.executeJSP(ctx, "/jsp/view/content_view.jsp?area=" + areaKey));
 		}
-		
+
 		return null;
 	}
-	
+
 	public static String performTickets(ContentContext ctx) throws ConfigurationException, IOException {
 		ctx.getAjaxData().put("tickets", TicketAction.getMyTicket(ctx));
 		return null;
 	}
 
 	public static String performUpload(RequestService rs, ContentContext ctx, GlobalContext gc, ContentService cs, User user, MessageRepository messageRepository, I18nAccess i18nAccess) throws Exception {
+		return uploadContent(rs, ctx, gc, cs, user, messageRepository, i18nAccess, new ImportConfigBean());
+	}
+
+	protected static void createImage(ContentContext ctx, String importFolder, FileItem imageItem, ImportConfigBean config) throws Exception {
+
+		GlobalContext gc = ctx.getGlobalContext();
+
+		String imageRelativeFolder = URLHelper.mergePath(gc.getStaticConfig().getStaticFolder(), ctx.getCurrentTemplate().getImportImageFolder(), importFolder);
+		File targetFolder = new File(URLHelper.mergePath(gc.getDataFolder(), imageRelativeFolder));
+		if (!targetFolder.exists()) {
+			targetFolder.mkdirs();
+		}
+		File newFile = ResourceHelper.writeFileItemToFolder(imageItem, targetFolder, false, true);
+		if (newFile != null && newFile.exists()) {
+			ContentService cs = ContentService.getInstance(gc);
+			String dir = imageRelativeFolder.replaceFirst(gc.getStaticConfig().getImageFolder(), "");
+			ByteArrayOutputStream outStream = new ByteArrayOutputStream();
+			PrintStream out = new PrintStream(outStream);
+			out.println("dir=" + dir);
+			out.println("file-name=" + StringHelper.getFileNameFromPath(imageItem.getName()));
+			out.println(GlobalImage.IMAGE_FILTER + "=full");
+			out.close();
+			ComponentBean image = new ComponentBean(GlobalImage.TYPE, new String(outStream.toByteArray()), ctx.getRequestContentLanguage());
+			image.setStyle(Image.STYLE_CENTER);
+			
+
+			Collection<IContentVisualComponent> titles = ctx.getCurrentPage().getContentByType(ctx, Title.TYPE);
+			String previousId = "0";
+			if (titles.size() > 0) {
+				previousId = titles.iterator().next().getId();
+			}		
+			image.setArea(config.getArea());
+			if (config.isBeforeContent()) {
+				cs.createContent(ctx.getContextWithArea(config.getArea()), image, previousId, true);
+			} else {				
+				cs.createContentAtEnd(ctx.getContextWithArea(config.getArea()), image, true);
+			}
+		}
+	}
+
+	protected static void createOrUpdateGallery(ContentContext ctx, File targetFolder, String importFolder, Collection<FileItem> imageItem, ImportConfigBean config) throws Exception {
+		Collection<IContentVisualComponent> mediaComps = ctx.getCurrentPage().getContentByType(ctx, Multimedia.TYPE);
+		boolean galleryFound = false;
+		Template tpl = ctx.getCurrentTemplate();
+		GlobalContext gc = ctx.getGlobalContext();
+		ContentService cs = ContentService.getInstance(gc);
+		String galleryRelativeFolder = null;
+		if (mediaComps.size() > 0) {
+			for (IContentVisualComponent comp : mediaComps) {
+				Multimedia multimedia = (Multimedia) comp;
+				if (multimedia.getCurrentRootFolder().length() > tpl.getImportGalleryFolder().length()) {
+					galleryRelativeFolder = URLHelper.mergePath(gc.getStaticConfig().getStaticFolder(), multimedia.getCurrentRootFolder());
+					galleryFound = true;
+					ctx.setNeedRefresh(true);
+				}
+			}
+
+		}
+		if (galleryRelativeFolder == null) {
+			String galFolder = importFolder;
+			if (galFolder.trim().length() == 0) {
+				galFolder = "images";
+			}
+			galleryRelativeFolder = URLHelper.mergePath(gc.getStaticConfig().getStaticFolder(), tpl.getImportGalleryFolder(), importFolder);
+		}
+		targetFolder = new File(URLHelper.mergePath(gc.getDataFolder(), galleryRelativeFolder));
+
+		if (!targetFolder.exists()) {
+			targetFolder.mkdirs();
+		}
+		for (FileItem item : imageItem) {
+			if (StringHelper.isImage(item.getName())) {
+				if (ResourceHelper.writeFileItemToFolder(item, targetFolder, false, true) == null) {
+					logger.warning("Could'nt upload : " + item.getName());
+				}
+			}
+		}
+
+		if (!galleryFound) {
+			ComponentBean multimedia = new ComponentBean(Multimedia.TYPE, "--12,128-" + galleryRelativeFolder.replaceFirst(gc.getStaticConfig().getStaticFolder(), "") + "---", ctx.getRequestContentLanguage());
+			multimedia.setStyle(Multimedia.IMAGE);
+
+			Collection<IContentVisualComponent> titles = ctx.getCurrentPage().getContentByType(ctx, Title.TYPE);
+			String previousId = "0";
+			if (titles.size() > 0) {
+				previousId = titles.iterator().next().getId();
+			}
+			multimedia.setArea(config.getArea());
+			if (config.isBeforeContent()) {
+				cs.createContent(ctx.getContextWithArea(config.getArea()), multimedia, previousId, true);
+			} else {
+				cs.createContentAtEnd(ctx.getContextWithArea(config.getArea()), multimedia, true);
+			}
+			
+			ctx.setNeedRefresh(true);
+		}
+
+		if (ctx.isNeedRefresh()) { // if there are modification >>>
+									// store new contnet.
+			PersistenceService.getInstance(ctx.getGlobalContext()).store(ctx);
+		}
+	}
+
+	public static String uploadContent(RequestService rs, ContentContext ctx, GlobalContext gc, ContentService cs, User user, MessageRepository messageRepository, I18nAccess i18nAccess, ImportConfigBean config) throws Exception {
 		if (user == null) {
 			return "Please, login before upload files.";
 		}
 		Template tpl = ctx.getCurrentTemplate();
 		// Calendar cal = Calendar.getInstance();
-		// String importFolder = "" + (cal.get(Calendar.MONTH) + 1) + '_' + cal.get(Calendar.YEAR);
+		// String importFolder = "" + (cal.get(Calendar.MONTH) + 1) + '_' +
+		// cal.get(Calendar.YEAR);
 		String importFolder = StringHelper.createFileName(ctx.getCurrentPage().getTitle(ctx.getContextForDefaultLanguage()));
 		importFolder = StringHelper.trimOn(importFolder, "-");
 		importFolder = importFolder.replace('-', '_');
@@ -215,9 +321,9 @@ public class DataAction implements IAction {
 		FileItem imageItem = null;
 		try {
 			for (FileItem item : rs.getAllFileItem()) {
-				
-				logger.info("try to import ("+ctx.getCurrentUserId()+") : "+item.getName());
-				
+
+				logger.info("try to import (" + ctx.getCurrentUserId() + ") : " + item.getName());
+
 				if (StringHelper.isImage(item.getName())) {
 					countImages++;
 					if (imageItem == null) {
@@ -237,7 +343,7 @@ public class DataAction implements IAction {
 				} else if (item.getName().contains("-tanuki-")) {
 					InputStream in = item.getInputStream();
 					TanukiImportTools.createContentFromTanuki(ctx, in, item.getName(), ctx.getRequestContentLanguage());
-					in.close();					
+					in.close();
 					ctx.setNeedRefresh(true);
 				} else {
 					String resourceRelativeFolder = URLHelper.mergePath(gc.getStaticConfig().getStaticFolder(), tpl.getImportResourceFolder(), importFolder);
@@ -257,7 +363,8 @@ public class DataAction implements IAction {
 						cs.createContentAtEnd(ctx, bean, true);
 						ctx.setNeedRefresh(true);
 						StaticInfo staticInfo = StaticInfo.getInstance(ctx, newFile);
-						staticInfo.setShared(ctx, false); // by default a simple image is'nt share
+						staticInfo.setShared(ctx, false); // by default a simple
+															// image is'nt share
 					} else {
 						return "error upload file : " + item.getName();
 					}
@@ -265,83 +372,20 @@ public class DataAction implements IAction {
 			}
 			File targetFolder = null;
 			if (countImages == 1) {
-				String imageRelativeFolder = URLHelper.mergePath(gc.getStaticConfig().getStaticFolder(), tpl.getImportImageFolder(), importFolder);
-				targetFolder = new File(URLHelper.mergePath(gc.getDataFolder(), imageRelativeFolder));
-				if (!targetFolder.exists()) {
-					targetFolder.mkdirs();
-				}
-				File newFile = ResourceHelper.writeFileItemToFolder(imageItem, targetFolder, false, true);
-				if (newFile != null && newFile.exists()) {
-					ByteArrayOutputStream outStream = new ByteArrayOutputStream();
-					PrintStream out = new PrintStream(outStream);
-					String dir = imageRelativeFolder.replaceFirst(gc.getStaticConfig().getImageFolder(), "");
-					out.println("dir=" + dir);
-					out.println("file-name=" + StringHelper.getFileNameFromPath(imageItem.getName()));
-					out.println(GlobalImage.IMAGE_FILTER + "=full");
-					out.close();
-					ComponentBean image = new ComponentBean(GlobalImage.TYPE, new String(outStream.toByteArray()), ctx.getRequestContentLanguage());
-					image.setStyle(Image.STYLE_CENTER);
-					// cs.createContent(ctx, image, "0", true);
-					cs.createContentAtEnd(ctx, image, true);
-					ctx.setNeedRefresh(true);
+				if (!config.isImagesAsGallery()) {
+					createImage(ctx, importFolder, imageItem, config);
 				} else {
-					return "error on file : " + imageItem.getName();
+					createOrUpdateGallery(ctx, targetFolder, importFolder, Arrays.asList(new FileItem[] { imageItem }), config);
 				}
+				ctx.setNeedRefresh(true);
 			} else if (countImages > 1) { // gallery
-
-				Collection<IContentVisualComponent> mediaComps = ctx.getCurrentPage().getContentByType(ctx, Multimedia.TYPE);
-				boolean galleryFound = false;
-
-				String galleryRelativeFolder = null;
-				if (mediaComps.size() > 0) {
-					for (IContentVisualComponent comp : mediaComps) {
-						Multimedia multimedia = (Multimedia) comp;
-						if (multimedia.getCurrentRootFolder().length() > tpl.getImportGalleryFolder().length()) {
-							galleryRelativeFolder = URLHelper.mergePath(gc.getStaticConfig().getStaticFolder(), multimedia.getCurrentRootFolder());
-							galleryFound = true;
-							ctx.setNeedRefresh(true);
-						}
-					}
-
-				}
-				if (galleryRelativeFolder == null) {
-					String galFolder = importFolder;
-					if (galFolder.trim().length() == 0) {
-						galFolder = "images";
-					}
-					galleryRelativeFolder = URLHelper.mergePath(gc.getStaticConfig().getStaticFolder(), tpl.getImportGalleryFolder(), importFolder);
-				}
-				targetFolder = new File(URLHelper.mergePath(gc.getDataFolder(), galleryRelativeFolder));
-
-				if (!targetFolder.exists()) {
-					targetFolder.mkdirs();
-				}
-				for (FileItem item : rs.getAllFileItem()) {
-					if (StringHelper.isImage(item.getName())) {
-						if (ResourceHelper.writeFileItemToFolder(item, targetFolder, false, true) == null) {
-							logger.warning("Could'nt upload : " + item.getName());
-						}
+				if (!config.isImagesAsImages()) {
+					createOrUpdateGallery(ctx, targetFolder, importFolder, rs.getAllFileItem(), config);
+				} else {
+					for (FileItem file : rs.getAllFileItem()) {
+						createImage(ctx, importFolder, file, config);
 					}
 				}
-
-				if (!galleryFound) {
-					ComponentBean multimedia = new ComponentBean(Multimedia.TYPE, "--12,128-" + galleryRelativeFolder.replaceFirst(gc.getStaticConfig().getStaticFolder(), "") + "---", ctx.getRequestContentLanguage());
-					multimedia.setStyle(Multimedia.IMAGE);
-
-					Collection<IContentVisualComponent> titles = ctx.getCurrentPage().getContentByType(ctx, Title.TYPE);
-					String previousId = "0";
-					if (titles.size() > 0) {
-						previousId = titles.iterator().next().getId();
-					}
-					cs.createContent(ctx, multimedia, previousId, true);
-
-					ctx.setNeedRefresh(true);
-				}
-				
-				if (ctx.isNeedRefresh()) { // if there are modification >>> store new contnet.
-					PersistenceService.getInstance(ctx.getGlobalContext()).store(ctx);
-				}
-
 			}
 		} catch (FileExistsException e) {
 			messageRepository.setGlobalMessage(new GenericMessage(i18nAccess.getText("data.file-allready-exist", "file allready exist."), GenericMessage.ERROR));
