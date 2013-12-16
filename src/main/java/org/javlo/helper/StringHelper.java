@@ -1196,6 +1196,9 @@ public class StringHelper {
 
 	// TODO: create a better method
 	public static boolean isURL(String url) {
+		if (url == null) {
+			return false;
+		}
 		return url.contains("://");
 	}
 
