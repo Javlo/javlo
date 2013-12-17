@@ -556,6 +556,18 @@ public class Edit extends AbstractModuleAction {
 			String templateImageURL = URLHelper.createTransformStaticTemplateURL(ctx, ctx.getCurrentTemplate(), "template", ctx.getCurrentTemplate().getVisualFile());
 			request.setAttribute("templateImageUrl", templateImageURL);
 		}
+		
+		Template inheritedTemplate = null;
+		if (ctx.getCurrentPage().getParent() != null) {
+			inheritedTemplate = TemplateFactory.getTemplate(ctx, ctx.getCurrentPage().getParent());
+		}
+		if (inheritedTemplate != null) {
+			ctx.getRequest().setAttribute("inheritedTemplate", inheritedTemplate);
+		} else {
+			if (globalContext.getDefaultTemplate() != null) {
+				ctx.getRequest().setAttribute("inheritedTemplate", TemplateFactory.getTemplates(ctx.getRequest().getSession().getServletContext()).get(globalContext.getDefaultTemplate()));
+			}
+		}
 
 		if (ctx.getCurrentPage() == null) {
 			I18nAccess i18nAccess = I18nAccess.getInstance(ctx.getRequest());
