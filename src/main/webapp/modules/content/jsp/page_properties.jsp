@@ -21,7 +21,9 @@
 <div class="line template">		
 	<label for="template">${i18n.edit['item.template']}</label>	
 	<select id="template" name="template">
-		<option value="">${i18n.edit['global.inherited']}</option>
+		<c:if test="${not empty inheritedTemplate}">
+		<option value="">${i18n.edit['global.inherited']} (${inheritedTemplate.name})</option>
+		</c:if>
 		<c:forEach var="template" items="${templates}">
 		<option value="${template.name}" ${template.name eq page.templateId?'selected="selected"':''} >${template.name}</option>
 		</c:forEach>
