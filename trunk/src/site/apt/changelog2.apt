@@ -191,3 +191,15 @@ change log
  * you can use .less in place of .css
  
  * QRcode generation
+ 
+ * preview two cols on 1280
+ 
+ * mailing template inside specific window
+ 
+ * correct RSS order
+ 
+ * import content macro
+ 
+ * cols plugins + 12 cols mecanims for BusinessComponent and smart GenericForm
+ 
+* 2.0.2.7 18/12/2013
