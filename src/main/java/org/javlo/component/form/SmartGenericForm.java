@@ -320,7 +320,7 @@ public class SmartGenericForm extends AbstractVisualComponent implements IAction
 			}
 		}
 		out.println("<td>" + XHTMLHelper.getInputOneSelect(getInputName("type-" + field.getName()), field.getFieldTypes(), field.getType()) + "</td>");
-		out.println("<td><select name=\"" + getInputName("width-" + field.getName()) + "\" />");
+		out.println("<td><select name=\"" + getInputName("width-" + field.getName()) + "\" >");
 		for (int i=1; i<=12; i++) {
 			String selected = "";
 			if (i==field.getWidth()) {
@@ -328,7 +328,7 @@ public class SmartGenericForm extends AbstractVisualComponent implements IAction
 			}
 			out.println("<option"+selected+">"+i+"</option>");
 		}
-		out.println("</td>");
+		out.println("</select></td>");
 		String required = "";
 		if (field.isRequire()) {
 			required = " checked=\"checked\"";
