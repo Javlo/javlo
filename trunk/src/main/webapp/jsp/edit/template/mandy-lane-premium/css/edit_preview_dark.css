@@ -5,20 +5,19 @@
 	height: 100%;	
 }
 
-
 .edit-preview #preview_command {
 	left: auto;
 	right: 0;
 	margin-top: 27px !important;
 }
 
-@media screen and (min-width: 1550px) {
+@media screen and (min-width: 1200px) {
 	
 	.fix-preview #preview_command .subblock {
 		left: 0;
 		right: auto;
 		top: 0;
-		width: 260px;
+		width: 200px;
 		position: fixed;
 		background-color: #171717;
 		box-shadow: 0 0 7px #333333;
@@ -65,7 +64,6 @@ body.preview-only {
 }
 
 .fix-preview #preview_command input[type="text"] {
-	width: 242px;
 	display: block;
 }
 
@@ -73,10 +71,6 @@ body.preview-only {
 	{
 	/* default color, user div for overwrite escape from default preview css file */
 	color: #afafaf;
-}
-
-#preview_command .pc_body fieldset.closable legend {
-	padding-left: 14px;
 }
 
 #preview_command .pc_body fieldset.closable .closable_action {
@@ -106,15 +100,17 @@ body.preview-only {
 	padding: 0;
 	margin: 0;
 	border: 0 none;
+	width: 100%;
+	overflow: hidden;
 }
 
 #preview_command fieldset legend {
-	padding: 4px 3px;
+	padding: 0;
 	text-transform: uppercase;
 	font-weight: bold;
 	display: block;
-	width: 243px;
 	border-top: 1px #3a3a3a solid;
+	width: 100%;
 }
 
 #preview_command fieldset legend a {
@@ -123,6 +119,8 @@ body.preview-only {
 	font-weight: bold;
 	text-decoration: none;
 	width: 100%;
+	margin-left: 14px;
+	padding: 4px 3px;
 }
 
 #preview_command .component,#preview_command .navigation li span,#preview_command input[type=submit],#preview_command .macro-list a,#preview_command .shared .content-wrapper,#preview_command .message
@@ -244,7 +242,7 @@ body.preview-only {
 }
 
 .fix-preview #preview_command select {
-	width: 250px;
+	width: 100%;
 }
 
 #preview_command input[type="text"] {
@@ -254,7 +252,6 @@ body.preview-only {
 }
 
 .fix-preview #preview_command .add-page input[type="text"] {
-	width: 204px;
 	text-transform: none;
 }
 
@@ -628,6 +625,7 @@ body.edit-preview {
 }
 
 #preview_command .pc_footer {
+	margin: 0;
 	position: fixed;
 	bottom: 0;
 	color: #AFAFAF;
@@ -636,7 +634,8 @@ body.edit-preview {
 	overflow: hidden;
 	padding: 3px;
 	display: block;
-	width: 254px;
+	width: 194px;
+	overflow: hidden;
 }
 
 #preview_command .pc_footer a {

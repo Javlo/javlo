@@ -77,10 +77,13 @@ public class SmartGenericForm extends AbstractVisualComponent implements IAction
 		private String list = "";
 		private String registeredList = "";
 		private int order = 0;
+		private int width = 12;
+		private boolean last = false;
+		private boolean first  = false;
 
 		protected static Collection<? extends Object> FIELD_TYPES = Arrays.asList(new String[] { "text", "large-text", "yes-no", "email", "list", "registered-list", "file" });
 
-		public Field(String name, String label, String type, String value, String list, String registeredList, int order) {
+		public Field(String name, String label, String type, String value, String list, String registeredList, int order, int width) {
 			this.name = name;
 			this.label = label;
 			this.type = type;
@@ -88,6 +91,7 @@ public class SmartGenericForm extends AbstractVisualComponent implements IAction
 			this.list = list;
 			this.registeredList = registeredList;
 			this.order = order;
+			this.setWidth(width);
 		}
 
 		public String getLabel() {
@@ -124,7 +128,7 @@ public class SmartGenericForm extends AbstractVisualComponent implements IAction
 		
 		@Override
 		public String toString() {
-			return getLabel() + SEP + getType() + SEP + getValue() + SEP + list + SEP + getOrder() + SEP + getRegisteredList() + SEP + getOrder();
+			return getLabel() + SEP + getType() + SEP + getValue() + SEP + list + SEP + getOrder() + SEP + getRegisteredList() + SEP + getOrder() + SEP + getWidth();
 		}
 
 		public boolean isRequire() {
@@ -178,6 +182,39 @@ public class SmartGenericForm extends AbstractVisualComponent implements IAction
 		public void setRegisteredList(String registeredList) {
 			this.registeredList = registeredList;
 		}
+
+		public int getWidth() {
+			return width;
+		}
+
+		public void setWidth(int width) {
+			this.width = width;
+		}
+
+		/**
+		 * is the last element of cols sequence.  That mean width with next field is greater than 12.
+		 * @return
+		 */
+		public boolean isLast() {
+			return last;
+		}
+
+		public void setLast(boolean last) {
+			this.last = last;
+		}
+
+		/**
+		 * is the first element of cols sequence.
+		 * @return
+		 */
+		public boolean isFirst() {
+			return first;
+		}
+
+		public void setFirst(boolean first) {
+			this.first = first;
+		}
+		
 	}
 	
 	public Properties getLocalConfig(boolean reload) {
@@ -253,7 +290,7 @@ public class SmartGenericForm extends AbstractVisualComponent implements IAction
 			if (isList()) {
 				listTitle = "<td>list</td>";
 			}
-			out.println("<thead><tr><td>name</td><td>label</td>" + listTitle + "<td>type</td><td>required</td><td>action</td></tr></thead>");
+			out.println("<thead><tr><td>name</td><td>label</td>" + listTitle + "<td>type</td><td>width</td><td>required</td><td>action</td></tr></thead>");
 			out.println("<tbody>");
 			List<Field> fields = getFields();
 			for (Field field : fields) {
@@ -283,10 +320,19 @@ public class SmartGenericForm extends AbstractVisualComponent implements IAction
 			}
 		}
 		out.println("<td>" + XHTMLHelper.getInputOneSelect(getInputName("type-" + field.getName()), field.getFieldTypes(), field.getType()) + "</td>");
+		out.println("<td><select name=\"" + getInputName("width-" + field.getName()) + "\" />");
+		for (int i=1; i<=12; i++) {
+			String selected = "";
+			if (i==field.getWidth()) {
+				selected = " selected=\"selected\"";
+			}
+			out.println("<option"+selected+">"+i+"</option>");
+		}
+		out.println("</td>");
 		String required = "";
 		if (field.isRequire()) {
 			required = " checked=\"checked\"";
-		}
+		}		
 		out.println("<td><input type=\"checkbox\" name=\"" + getInputName("require-" + field.getName()) + "\"" + required + " /></td>");
 		out.println("<td><div  class=\"action\">");
 		out.println("  <input class=\"up\" type=\"submit\" name=\"" + getInputName("up-" + field.getName()) + "\" value=\"up\" />");
@@ -300,16 +346,22 @@ public class SmartGenericForm extends AbstractVisualComponent implements IAction
 
 	public synchronized List<Field> getFields() {
 		List<Field> fields = new LinkedList<SmartGenericForm.Field>();
-		Properties p = getLocalConfig(false);
+		Properties p = getLocalConfig(false);		
+		int currentWidth = 0;
 		for (Object objKey : p.keySet()) {
 			String key = objKey.toString();
 			if (key.startsWith("field.")) {
 				String name = key.replaceFirst("field.", "").trim();
 				if (name.trim().length() > 0) {
 					String value = p.getProperty(key);
-					String[] data = StringUtils.splitPreserveAllTokens(value, Field.SEP);
-					Field field = new Field(name, (String) LangHelper.arrays(data, 0, ""), (String) LangHelper.arrays(data, 1, ""), (String) LangHelper.arrays(data, 2, ""), (String) LangHelper.arrays(data, 3, ""), (String) LangHelper.arrays(data, 5, ""), Integer.parseInt(""+LangHelper.arrays(data, 6, "0")));
+					String[] data = StringUtils.splitPreserveAllTokens(value, Field.SEP);					
+					Field field = new Field(name, (String) LangHelper.arrays(data, 0, ""), (String) LangHelper.arrays(data, 1, ""), (String) LangHelper.arrays(data, 2, ""), (String) LangHelper.arrays(data, 3, ""), (String) LangHelper.arrays(data, 5, ""), Integer.parseInt(""+LangHelper.arrays(data, 6, "0")), Integer.parseInt(""+LangHelper.arrays(data, 7, "6")));
 					fields.add(field);
+					currentWidth = currentWidth+field.getWidth();
+					if (currentWidth >= 12) {
+						field.setLast(true);												
+						currentWidth = field.getWidth();
+					}					
 				}
 			}
 		}
@@ -417,6 +469,7 @@ public class SmartGenericForm extends AbstractVisualComponent implements IAction
 				field.setRequire(rs.getParameter(getInputName("require-" + oldName), null) != null);
 				field.setLabel(rs.getParameter(getInputName("label-" + oldName), ""));
 				field.setType(rs.getParameter(getInputName("type-" + oldName), ""));
+				field.setWidth(Integer.parseInt(rs.getParameter(getInputName("width-" + oldName), "6")));
 				if (!oldName.equals(field.getName())) {
 					delField(oldName);
 				}
@@ -443,7 +496,7 @@ public class SmartGenericForm extends AbstractVisualComponent implements IAction
 		}
 
 		if (rs.getParameter(getInputName("new-name"), "").trim().length() > 0) {
-			store(new Field(rs.getParameter(getInputName("new-name"), ""), "", "text", "", "", "", pos+20));
+			store(new Field(rs.getParameter(getInputName("new-name"), ""), "", "text", "", "", "", pos+20, 6));
 		}
 
 		store(ctx);

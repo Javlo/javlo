@@ -8,10 +8,12 @@
 <input type="hidden" name="webaction" value="smart-form.submit" />
 <input type="hidden" name="comp_id" value="${comp.id}" />
 
+<div class="cols">
 <c:forEach var="localField" items="${comp.fields}">
-	<c:set var="field" value="${localField}" scope="request" />
+	<c:set var="field" value="${localField}" scope="request" />	
 	<jsp:include page="field.jsp" />
 </c:forEach>
+</div>
 
 <c:if test="${comp.captcha}">
 <div class="line captcha">			

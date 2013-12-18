@@ -475,7 +475,7 @@ body.edit-preview {
 #preview_command .navigation a {
 	color: #3333aa;
 	text-decoration: none;
-	max-width: 220px;
+	max-width: 180px;
 	overflow: hidden;
 	text-overflow: ellipsis;
 	white-space: nowrap;
@@ -507,7 +507,7 @@ body.edit-preview {
 .fix-preview #preview_command {
 	top: 0;
 	left: 0;
-	width: 260px;
+	width: 200px;
 }
 
 #preview_command .component-list {
@@ -531,10 +531,6 @@ body.edit-preview {
 	margin-right: 5px;
 }
 
-.fix-preview #preview_command input[type="text"] {
-	width: 234px;
-}
-
 .fix-preview #preview_command .add-page input[type="text"] {
 	width: 187px;
 	display: inline;
@@ -554,7 +550,7 @@ body.edit-preview {
 }
 
 #preview_command .navigation li {
-	margin-left: 6px;
+	margin-left: 3px;
 }
 
 #preview_command .navigation li.parent {
@@ -1032,7 +1028,6 @@ body.edit-preview {
 }
 
 #preview_command #shared-content-search-form input[type=text] {
-	width: 210px;
 	text-transform: none;
 }
 
