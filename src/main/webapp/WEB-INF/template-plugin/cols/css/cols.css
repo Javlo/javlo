@@ -1,5 +1,5 @@
 /* cols */
-.cols {
+.cols, .cols .col-line {
 	overflow: hidden;
 }
 

@@ -362,6 +362,7 @@ public class SmartGenericForm extends AbstractVisualComponent implements IAction
 		}
 		Collections.sort(fields, new Field.FieldComparator());
 		int currentWidth = 0;
+		Field lastField = null;
 		for (Field field : fields) {
 			if (currentWidth==0) {
 				field.setFirst(true);
@@ -371,6 +372,10 @@ public class SmartGenericForm extends AbstractVisualComponent implements IAction
 				field.setLast(true);												
 				currentWidth = 0;
 			}	
+			lastField = field;
+		}
+		if (lastField != null) {
+			lastField.setLast(true);
 		}
 		return fields;
 	}
