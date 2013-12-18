@@ -1,6 +1,6 @@
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c"
 %>
-<div class="col${field.width}${field.last?' lastcol':''}">
+<div class="col${field.width}${field.last?' lastcol':''}${field.first?' firstcol':''}">
 	<div class="line ${field.type}${not empty errorFields[field.name]?' error':''}">
 		<c:set var="requireHTML"><abbr title="${ci18n['message.required']}" class="require">*</abbr></c:set>
 		<c:choose>	

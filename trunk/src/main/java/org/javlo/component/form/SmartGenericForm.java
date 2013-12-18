@@ -347,7 +347,7 @@ public class SmartGenericForm extends AbstractVisualComponent implements IAction
 	public synchronized List<Field> getFields() {
 		List<Field> fields = new LinkedList<SmartGenericForm.Field>();
 		Properties p = getLocalConfig(false);		
-		int currentWidth = 0;
+		
 		for (Object objKey : p.keySet()) {
 			String key = objKey.toString();
 			if (key.startsWith("field.")) {
@@ -356,16 +356,22 @@ public class SmartGenericForm extends AbstractVisualComponent implements IAction
 					String value = p.getProperty(key);
 					String[] data = StringUtils.splitPreserveAllTokens(value, Field.SEP);					
 					Field field = new Field(name, (String) LangHelper.arrays(data, 0, ""), (String) LangHelper.arrays(data, 1, ""), (String) LangHelper.arrays(data, 2, ""), (String) LangHelper.arrays(data, 3, ""), (String) LangHelper.arrays(data, 5, ""), Integer.parseInt(""+LangHelper.arrays(data, 6, "0")), Integer.parseInt(""+LangHelper.arrays(data, 7, "6")));
-					fields.add(field);
-					currentWidth = currentWidth+field.getWidth();
-					if (currentWidth >= 12) {
-						field.setLast(true);												
-						currentWidth = field.getWidth();
-					}					
+					fields.add(field);									
 				}
 			}
 		}
 		Collections.sort(fields, new Field.FieldComparator());
+		int currentWidth = 0;
+		for (Field field : fields) {
+			if (currentWidth==0) {
+				field.setFirst(true);
+			}
+			currentWidth = currentWidth+field.getWidth();			
+			if (currentWidth >= 12) {
+				field.setLast(true);												
+				currentWidth = 0;
+			}	
+		}
 		return fields;
 	}
 
