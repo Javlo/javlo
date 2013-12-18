@@ -1,5 +1,5 @@
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c"
-%><div class="line ${field.type}${not empty errorFields[field.name]?' error':''}">
+%><div class="line ${field.type}${not empty errorFields[field.name]?' error':''} col${field.width}${field.last?' lastcol':''}">
 	<c:set var="requireHTML"><abbr title="${ci18n['message.required']}" class="require">*</abbr></c:set>
 	<c:choose>	
 		<c:when test="${field.type eq 'text' || field.type eq 'email'}">
