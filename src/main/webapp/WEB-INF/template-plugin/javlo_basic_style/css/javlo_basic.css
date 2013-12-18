@@ -210,8 +210,7 @@ div.debug-note {
 }
 
 .smart-form label {
-	display: inline-block;
-	width: 160px;
+	display: inline-block;	
 }
 
 .smart-form .yes-no .line-label {
