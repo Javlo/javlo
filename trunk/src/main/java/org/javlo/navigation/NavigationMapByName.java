@@ -5,7 +5,6 @@ import java.util.Map;
 import java.util.Set;
 
 import org.javlo.context.ContentContext;
-import org.javlo.navigation.MenuElement.PageBean;
 
 import sun.reflect.generics.reflectiveObjects.NotImplementedException;
 

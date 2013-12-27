@@ -23,8 +23,8 @@ import org.javlo.helper.URLHelper;
 import org.javlo.message.GenericMessage;
 import org.javlo.message.MessageRepository;
 import org.javlo.navigation.MenuElement;
-import org.javlo.navigation.MenuElement.PageBean;
 import org.javlo.navigation.NavigationMapByName;
+import org.javlo.navigation.PageBean;
 import org.javlo.rendering.Device;
 import org.javlo.service.PersistenceService;
 import org.javlo.service.RequestService;
@@ -243,7 +243,7 @@ public class InfoBean {
 		return ctx.getCurrentUserId();
 	}
 
-	public MenuElement.PageBean getPage() {
+	public PageBean getPage() {
 		try {
 			return currentPage.getPageBean(ctx);
 		} catch (Exception e) {
@@ -252,7 +252,7 @@ public class InfoBean {
 		}
 	}
 
-	public MenuElement.PageBean getRoot() {
+	public PageBean getRoot() {
 		try {
 			return currentPage.getRoot().getPageBean(ctx);
 		} catch (Exception e) {
@@ -261,11 +261,11 @@ public class InfoBean {
 		}
 	}
 
-	public List<MenuElement.PageBean> getPagePath() {
+	public List<PageBean> getPagePath() {
 
 		MenuElement page = currentPage;
 
-		List<MenuElement.PageBean> pagePath = new LinkedList<MenuElement.PageBean>();
+		List<PageBean> pagePath = new LinkedList<PageBean>();
 
 		while (page.getParent() != null) {
 			page = page.getParent();
@@ -321,7 +321,7 @@ public class InfoBean {
 		return userFactory.getAllRoles(globalContext, ctx.getRequest().getSession());
 	}
 
-	public MenuElement.PageBean getParent() {
+	public PageBean getParent() {
 		if (currentPage.getParent() != null) {
 			try {
 				return currentPage.getParent().getPageBean(ctx);

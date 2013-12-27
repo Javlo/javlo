@@ -5,6 +5,7 @@ import java.util.LinkedList;
 import org.javlo.component.core.AbstractVisualComponent;
 import org.javlo.context.ContentContext;
 import org.javlo.navigation.MenuElement;
+import org.javlo.navigation.PageBean;
 
 public class Breadcrumb extends AbstractVisualComponent {
 
@@ -23,7 +24,7 @@ public class Breadcrumb extends AbstractVisualComponent {
 	@Override
 	public void prepareView(ContentContext ctx) throws Exception {
 		super.prepareView(ctx);
-		LinkedList<MenuElement.PageBean> pages = new LinkedList<MenuElement.PageBean>();
+		LinkedList<PageBean> pages = new LinkedList<PageBean>();
 		MenuElement page = ctx.getCurrentPage();
 		while (page != null) {
 			pages.add(0, page.getPageBean(ctx));
