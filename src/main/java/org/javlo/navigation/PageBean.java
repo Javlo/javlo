@@ -206,11 +206,9 @@ public class PageBean implements Serializable {
 		try {
 			String title = page.getContentTitle(ctx);
 			
-			if (title == null || title.trim().length() == 0) {
-				System.out.println("***** PageBean.getTitleOrSubtitle : title = "+title); //TODO: remove debug trace
+			if (title == null || title.trim().length() == 0) {				
 				title = page.getSubTitle(ctx);
-				if (title == null || title.trim().length() == 0) {
-					System.out.println("***** PageBean.getTitleOrSubtitle : 2.title = "+title); //TODO: remove debug trace
+				if (title == null || title.trim().length() == 0) {					
 					title = page.getName();
 				}
 			}
