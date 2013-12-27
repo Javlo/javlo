@@ -200,6 +200,22 @@ public class ExternalLink extends ComplexPropertiesLink implements IReverseLinkC
 
 		if (label != null) {
 			if (link != null) {
+
+				link = link.trim();
+				if (StringHelper.isURL(link)) {
+					// Complete url
+				} else if (link.equals("#")) {
+					// Dummy url
+				} else if (link.startsWith("/")) {
+					// Absolute site URL
+				} else if (!link.contains(".") && !link.contains("/")) {
+					// Page name
+				} else {
+					// Bad link
+					link = "http://" + link;
+					setNeedRefresh(true);
+				}
+
 				setModify();
 				properties.setProperty(LINK_KEY, link);
 				properties.setProperty(LABEL_KEY, label);
