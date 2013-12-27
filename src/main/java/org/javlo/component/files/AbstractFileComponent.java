@@ -462,6 +462,11 @@ public abstract class AbstractFileComponent extends AbstractVisualComponent impl
 		return i18nAccess.getText("action.add-image.add");
 	}
 
+	protected String getFileUploadActionTitle(ContentContext ctx) throws FileNotFoundException, IOException {
+		I18nAccess i18nAccess = I18nAccess.getInstance(ctx.getRequest());
+		return i18nAccess.getText("content.upload");
+	}
+
 	protected String getImageDecorativeTitle(ContentContext ctx) throws FileNotFoundException, IOException {
 		I18nAccess i18nAccess = I18nAccess.getInstance(ctx.getRequest());
 		return i18nAccess.getText("action.add-image.add");
@@ -741,7 +746,8 @@ public abstract class AbstractFileComponent extends AbstractVisualComponent impl
 				resouceStatus.setSource(new LocalResource(ctx, tempFile));
 				resouceStatus.setTarget(new LocalResource(ctx, f));
 				// throw new IOException("file allready exist");
-				return null;
+				ctx.setNeedRefresh(true);
+				return fileName;
 			}
 
 			File dir = f.getParentFile();

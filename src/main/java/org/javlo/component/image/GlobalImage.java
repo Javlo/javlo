@@ -310,7 +310,11 @@ public class GlobalImage extends Image {
 
 		if (canUpload(ctx)) {
 			finalCode.append("<div class=\"line\"><label for=\"" + getFileXHTMLInputName() + "\">" + getImageUploadTitle(ctx) + " : </label>");
-			finalCode.append("<input name=\"" + getFileXHTMLInputName() + "\" type=\"file\"/></div>");
+			finalCode.append("<input name=\"" + getFileXHTMLInputName() + "\" type=\"file\"/>");
+			finalCode.append(" <button name=\"upload\" type=\"submit\" clas=\"action-button\" onclick=\"jQuery(this).parent().find('.ajax-loader').addClass('active');\">" + getFileUploadActionTitle(ctx) + "</button>");
+			finalCode.append("<span class=\"ajax-loader\"></span>");
+			finalCode.append("</div>");
+
 		}
 
 		if (isDecorationImage()) {
