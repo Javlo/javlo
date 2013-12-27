@@ -140,6 +140,8 @@ public class PageReferenceComponent extends ComplexPropertiesLink implements IAc
 
 		}
 
+		private MenuElement rootOfChildrenAssociation;
+
 		private static PageBean getInstance(ContentContext ctx, MenuElement page, PageReferenceComponent comp) throws Exception {
 
 			GlobalContext globalContext = GlobalContext.getInstance(ctx.getRequest());
@@ -170,6 +172,7 @@ public class PageReferenceComponent extends ComplexPropertiesLink implements IAc
 			bean.path = page.getPath();
 			bean.creator = page.getCreator();
 			bean.childrenOfAssociation = page.isChildrenOfAssociation();
+			bean.rootOfChildrenAssociation = page.getRootOfChildrenAssociation();
 			bean.setCategoryKey("category." + StringHelper.neverNull(page.getCategory(ctx)).toLowerCase().replaceAll(" ", ""));
 			
 			bean.publishURL = URLHelper.createAbsoluteViewURL(ctx, page.getPath());
@@ -504,6 +507,14 @@ public class PageReferenceComponent extends ComplexPropertiesLink implements IAc
 
 		public void setChildrenOfAssociation(boolean childrenOfAssociation) {
 			this.childrenOfAssociation = childrenOfAssociation;
+		}
+
+		public MenuElement getRootOfChildrenAssociation() {
+			return rootOfChildrenAssociation;
+		}
+
+		public void setRootOfChildrenAssociation(MenuElement rootOfChildrenAssociation) {
+			this.rootOfChildrenAssociation = rootOfChildrenAssociation;
 		}
 
 	}

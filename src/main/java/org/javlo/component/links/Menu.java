@@ -8,7 +8,7 @@ import java.util.List;
 import org.javlo.component.properties.AbstractPropertiesComponent;
 import org.javlo.context.ContentContext;
 import org.javlo.navigation.MenuElement;
-import org.javlo.navigation.MenuElement.PageBean;
+import org.javlo.navigation.PageBean;
 import org.javlo.service.ContentService;
 
 /**

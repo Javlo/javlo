@@ -32,7 +32,7 @@ public class AdminUserSecurity implements Serializable {
 	public static String DESIGN_ROLE = "design";
 
 	public static String MACRO_ROLE = "macro";
-	
+
 	public static String MAILING_ROLE = "mailing";
 
 	public static String LIGHT_INTERFACE_ROLE = "light-interface";
@@ -119,7 +119,7 @@ public class AdminUserSecurity implements Serializable {
 	public boolean haveRight(User user, String... inRights) {
 		for (String right : inRights) {
 			if (user != null) {
-				Set<String> roles = user.getRoles();				
+				Set<String> roles = user.getRoles();
 				for (String role : roles) {
 					if (role.equals(FULL_CONTROL_ROLE)) {
 						return true;
@@ -135,7 +135,22 @@ public class AdminUserSecurity implements Serializable {
 		}
 		return false;
 	}
-	
+
+	public boolean canRole(User user, String inRole) {
+		if (user != null) {
+			if (user != null) {
+				Set<String> roles = user.getRoles();
+				for (String role : roles) {
+					if (role.equals(FULL_CONTROL_ROLE)) {
+						return true;
+					}					
+				}
+				return haveRole(user,inRole);
+			}
+		}
+		return false;
+	}
+
 	public boolean haveRole(User user, String inRole) {
 		if (user != null) {
 			Set<String> roles = user.getRoles();
@@ -180,8 +195,8 @@ public class AdminUserSecurity implements Serializable {
 		}
 		return user.getRoles().contains(MASTER);
 	}
-	
-	public final boolean canModifyConponent (ContentContext ctx, String compId) throws Exception {
+
+	public final boolean canModifyConponent(ContentContext ctx, String compId) throws Exception {
 		if (ctx.getCurrentEditUser() == null) {
 			return false;
 		}
@@ -190,7 +205,7 @@ public class AdminUserSecurity implements Serializable {
 		if (isAdmin(ctx.getCurrentEditUser()) || !ctx.getGlobalContext().isOnlyCreatorModify()) {
 			return true;
 		} else {
-			if (ctx.getGlobalContext().isOnlyCreatorModify() && (comp != null && comp.getAuthors().equals(ctx.getCurrentEditUser().getLogin()))) {				
+			if (ctx.getGlobalContext().isOnlyCreatorModify() && (comp != null && comp.getAuthors().equals(ctx.getCurrentEditUser().getLogin()))) {
 				if (haveRole(ctx.getCurrentEditUser(), CONTENT_ROLE)) {
 					return true;
 				}
@@ -198,7 +213,7 @@ public class AdminUserSecurity implements Serializable {
 		}
 		return false;
 	}
-	
+
 	/**
 	 * check if the currentPage is editable by current user.
 	 * 
@@ -206,7 +221,7 @@ public class AdminUserSecurity implements Serializable {
 	 * @return
 	 * @throws Exception
 	 */
-	public static boolean canModifyPage(ContentContext ctx, MenuElement page) throws Exception {		
+	public static boolean canModifyPage(ContentContext ctx, MenuElement page) throws Exception {
 		GlobalContext globalContext = GlobalContext.getInstance(ctx.getRequest());
 		IUserFactory adminUserFactory = AdminUserFactory.createUserFactory(globalContext, ctx.getRequest().getSession());
 
@@ -215,7 +230,7 @@ public class AdminUserSecurity implements Serializable {
 				return false;
 			}
 		}
-		
+
 		AdminUserSecurity adminUserSecurity = AdminUserSecurity.getInstance();
 		ContentService.getInstance(globalContext);
 		if (page.getEditorRoles().size() > 0) {

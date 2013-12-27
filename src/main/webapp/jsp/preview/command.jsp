@@ -1,4 +1,4 @@
-<%@page import="org.javlo.message.MessageRepository"
+navigation<%@page import="org.javlo.message.MessageRepository"
 %><%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c"
 %><%@ taglib uri="/WEB-INF/javlo.tld" prefix="jv"
 %><%@ taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions" 
@@ -163,9 +163,13 @@ MessageRepository.getInstance(request); // load request message
 				</c:if>
 				<div class="subblock">
 				<form id="children_list" action="${info.currentURL}" method="post">
-					<fieldset class="closable">
-						<legend>${i18n.edit['content.navigation']}</legend>
-						<jsp:include page="navigation.jsp"></jsp:include>
+					
+						<c:if test="${contentContext.currentTemplate.mailing}">							
+							<jsp:include page="navigation_mailing.jsp"></jsp:include>
+						</c:if>
+						<c:if test="${!contentContext.currentTemplate.mailing}">							
+							<jsp:include page="navigation.jsp"></jsp:include>
+						</c:if>
 					</fieldset>
 				</form>				
 				<div id="pc_macro">

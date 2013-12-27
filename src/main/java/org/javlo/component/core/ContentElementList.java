@@ -255,9 +255,9 @@ public class ContentElementList implements IContentComponentsList {
 
 	public String getSubTitle(ContentContext ctx) {
 		String res = "";
-		Iterator elems = contentElements.iterator();
-		while (elems.hasNext() && res.length() == 0) {
-			IContentVisualComponent comp = (IContentVisualComponent) elems.next();
+		Iterator elems = contentElements.iterator();		
+		while (elems.hasNext()) {
+			IContentVisualComponent comp = (IContentVisualComponent) elems.next();			
 			if (comp instanceof SubTitle) {
 				res = comp.getValue(ctx);
 				if (res == null) {

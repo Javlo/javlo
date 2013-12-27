@@ -13,7 +13,7 @@ import org.jopendocument.dom.spreadsheet.SpreadSheet;
 public class FooterGenerator {
 
 	public static void main(String[] args) {
-		File file = new File("c:/trans/footer.ods");
+		File file = new File("C:/Users/pvandermaesen/Dropbox/Documents/pro/pe/siteplanet/footer.ods");
 		File templateFolder = new File("C:/Users/pvandermaesen/Dropbox/work/data/javlo/template/galaxy-template");
 		try {
 			OutputStream outStream = new FileOutputStream(new File(templateFolder.getAbsolutePath() + '/' + "footer_bottom.jsp"));
@@ -33,10 +33,10 @@ public class FooterGenerator {
 						title = title+"<c:when test=\"${info.language == '"+lang+"'}\">"+XHTMLHelper.escapeXHTML(sheet.getCellAt(""+c + indice).getValue().toString())+"</c:when>";
 					}				
 				}
-				title = title+"<c:otherwise>"+sheet.getCellAt("A"+indice).getValue().toString()+"</c:otherwise></c:choose>";
-				System.out.println(title);
+				title = title+"<c:otherwise>"+sheet.getCellAt("A"+indice).getValue().toString()+"</c:otherwise></c:choose>";				
 				String style = sheet.getCellAt("A" + indice).getStyle().getName();
-				if (style.equalsIgnoreCase("ce7") || style.equalsIgnoreCase("ce9")) {
+				System.out.println("***** FooterGenerator.main : style = "+style+" name="+ sheet.getCellAt("A" + indice).getValue()); //TODO: remove debug trace
+				if (style.equalsIgnoreCase("ce8") || style.equalsIgnoreCase("ce6") || style.equalsIgnoreCase("ce11")) {
 					//System.out.println(title+" >> "+style);	
 					if (countGroup == 4 || countGroup == 6 || countGroup == 8 || countGroup == 10) {
 						out.println("</ul></li></ul>"); 
@@ -52,7 +52,7 @@ public class FooterGenerator {
 				} else {
 					out.println("<li>");
 					if (sheet.getCellAt("B" + indice).getValue().toString().trim().length() > 0) {
-						String url = sheet.getCellAt("B" + indice).getValue().toString().replace("xx", "${info.language}");
+						String url = sheet.getCellAt("B" + indice).getValue().toString().replace("xx", "${info.language}").replace("XX", "${info.language}");
 						if (!url.startsWith("http://")) {
 							url = "http://"+url;
 						}
