@@ -32,11 +32,13 @@ jQuery(document).ready(function() {
 	jQuery('form.ajax').live("submit", function(event) {
 		var form = jQuery(this);		
 		var ajaxSubmit = true;
-		jQuery.each(form.find("input[type='file']"), function() {			
-			if (jQuery(this).val().length > 0) {			
-				ajaxSubmit = false;				
-			}
-		});
+		if (!jQuery.isFunction(FormData)) {
+			jQuery.each(form.find("input[type='file']"), function() {			
+				if (jQuery(this).val().length > 0) {			
+					ajaxSubmit = false;				
+				}
+			});
+		}
 		if (ajaxSubmit) {			
 			event.preventDefault();
 			jQuery("#ajax-loader").addClass("active");
@@ -68,25 +70,30 @@ function ajaxRequest(url, form, doneFunction) {
 		}
 	}	
 	var data=null;
+	var formDataSpecific = undefined;
 	if (form != null) {
-		data = jQuery(form).serialize();
+		if (jQuery.isFunction(FormData)) {
+			data = new FormData(form);
+			formDataSpecific = false;
+		} else {
+			data = jQuery(form).serialize();
+		}
 	}
 	startAjaxLoading();
 	jQuery.ajax({
 		url : url,
 		cache : false,
+		contentType: formDataSpecific,
+		processData: formDataSpecific,
 		data : data,
 		type : "post",
 		dataType : "json"
 	}).done(function(jsonObj) {
 		endAjaxLoading();
 		if (jsonObj.data != null) {
-			jQuery.each(jsonObj.data, function(key, value) {
-				/** need test **/
-				if (key == "need-refresh" && value) {
-					reloadPage();
-				}
-			});
+			if (jsonObj.data["need-refresh"]) {
+				reloadPage();
+			}
 		}
 		jQuery.each(jsonObj.zone, function(xhtmlId, xhtml) {
 			if (xhtmlId.indexOf("#") < 0 && xhtmlId.indexOf("#") < 0 && xhtmlId.indexOf(" ") < 0 ) { // if allready select don't add '#'
@@ -123,7 +130,7 @@ function ajaxRequest(url, form, doneFunction) {
 			initPreview();			
 		} catch (ex) {
 			if (console) {
-				console.log(ex);
+				console.log("Exception when calling initPreview()", ex);
 			}
 		}
 		if (doneFunction != null) {			

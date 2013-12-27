@@ -1069,6 +1069,19 @@ ul,li {
 	display: inline-block;
 }
 
+.ajax-loader {
+	background-image: url("../images/loaders/loader3.gif");
+	width: 16px;
+	height: 16px;
+	visibility: hidden;
+}
+.ajax-loader.active {
+	visibility: visible;
+}
+span.ajax-loader {
+	display: inline-block;
+}
+
 /**** search ****/
 #search-result h1 {
 	margin: 0 0 20px 0;

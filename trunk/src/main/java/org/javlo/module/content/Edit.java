@@ -885,7 +885,8 @@ public class Edit extends AbstractModuleAction {
 			messageRepository.setGlobalMessage(new GenericMessage(i18nAccess.getText("action.not-updated"), GenericMessage.ALERT));
 		}
 
-		if (requestService.getParameter("save", null) != null && editContext.isEditPreview() && !ResourceStatus.isInstance(ctx.getRequest().getSession())) {
+		if (requestService.getParameter("save", null) != null && editContext.isEditPreview() && !ResourceStatus.isInstance(ctx.getRequest().getSession())
+				&& requestService.getParameter("upload", null) == null) {
 			ctx.setClosePopup(true);
 		}
 
