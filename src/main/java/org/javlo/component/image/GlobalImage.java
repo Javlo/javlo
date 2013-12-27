@@ -723,12 +723,24 @@ public class GlobalImage extends Image {
 		if (link != null) {
 			if (!link.equals(getLink())) {
 
-				if (!StringHelper.isURL(link) && !link.trim().equals("#")) {
-					MessageRepository.getInstance(ctx).setGlobalMessage(new GenericMessage("bad link.", GenericMessage.ALERT));
+				link = link.trim();
+				if (StringHelper.isURL(link)) {
+					// Complete url
+				} else if (link.equals("#")) {
+					// Dummy url
+				} else if (link.startsWith("/")) {
+					// Absolute site URL
+				} else if (!link.contains(".") && !link.contains("/")) {
+					// Page name
 				} else {
-					if (!isLinkValid(link)) {
-						MessageRepository.getInstance(ctx).setGlobalMessage(new GenericMessage("link to video work only with youtube, dailymotioin or europartv.", GenericMessage.ALERT));
-					}
+					// Bad link
+					// MessageRepository.getInstance(ctx).setGlobalMessage(new GenericMessage("bad link.", GenericMessage.ALERT));
+					link = "http://" + link;
+					setNeedRefresh(true);
+				}
+
+				if (!isLinkValid(link)) {
+					MessageRepository.getInstance(ctx).setGlobalMessage(new GenericMessage("link to video work only with youtube, dailymotion or europarltv.", GenericMessage.ALERT));
 				}
 
 				try {
