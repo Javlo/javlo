@@ -162,6 +162,13 @@ MessageRepository.getInstance(request); // load request message
 				</fieldset>
 				</c:if>
 				<div class="subblock">
+				<div id="pc_macro">
+					<fieldset class="closable">
+						<legend>${i18n.edit['command.macro']}</legend>
+						<%=MacroHelper.getXHTMLMacroSelection(ctx, false, true)%>
+					</fieldset>
+				</div>	
+				
 				<form id="children_list" action="${info.currentURL}" method="post">
 					
 						<c:if test="${contentContext.currentTemplate.mailing}">							
@@ -172,12 +179,6 @@ MessageRepository.getInstance(request); // load request message
 						</c:if>
 					</fieldset>
 				</form>				
-				<div id="pc_macro">
-					<fieldset class="closable">
-						<legend>${i18n.edit['command.macro']}</legend>
-						<%=MacroHelper.getXHTMLMacroSelection(ctx, false, true)%>
-					</fieldset>
-				</div>	
 				</div>
 			</c:if>			
 		</c:if><c:if test="${empty currentUser}">		

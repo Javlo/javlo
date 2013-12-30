@@ -1490,7 +1490,7 @@ public class ContentContext {
 		this.closePopup = closePopup;
 	}
 
-	public boolean isEditPreview() {		
+	public boolean isEditPreview() {	
 		if (editPreview == null) {
 			return isEditPreview(request);
 		} else {

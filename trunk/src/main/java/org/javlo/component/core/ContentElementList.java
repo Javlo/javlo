@@ -420,7 +420,7 @@ public class ContentElementList implements IContentComponentsList {
 		}
 		if (!(allArea || ctx.getArea() == null)) {
 			outVisibility = outVisibility && comp.getArea().equals(ctx.getArea());
-		}
+		}		
 		return outVisibility;
 
 	}

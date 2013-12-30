@@ -1131,6 +1131,10 @@ public class Edit extends AbstractModuleAction {
 					elem.setPriority(0);
 					parent.addChildMenuElement(elem);
 				}
+				
+				if (parentName != null) { // if parentpage defined new page become the active page.
+					ctx.setPath(elem.getPath());
+				}
 
 				path = path + "/" + nodeName;
 

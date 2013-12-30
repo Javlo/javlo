@@ -2,7 +2,7 @@
 %><%@ taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions" %>
 <c:set var="rootAssociation" value="${info.page.rootOfChildrenAssociation}" />
 <c:if test="${not empty rootAssociation}">
-<fieldset class="closable">
+<fieldset class="closable composition">
 	<legend>${i18n.edit['content.navigation']}</legend>
 	   <ul class="navigation pages">
 	   <li class="${rootAssociation.associationPage.url eq info.currentURL?'current ':''}${rootAssociation.associationPage.info.realContent?'real-content':''}"><span><a class="construction" href="${rootAssociation.associationPage.url}">composition</a></span></li>
@@ -20,15 +20,15 @@
 	   			<div>
 	   				<input type="hidden" value="edit.addPage" name="webaction" />				
 					<input type="hidden" name="parent" value="${rootAssociation.associationPage.name}" />
-	   				<input type="submit" value="+" />
+	   				<input type="submit" value="+" title="create page" />
 	   			</div>
 	   		</form>	   		
 	   </div>	   	
 	   </li>
 	   </ul>
 	   <ul class="navigation articles">
-	   <li class="${rootAssociation.articleRoot.url eq info.currentURL?'current ':''}${rootAssociation.associationPage.info.realContent?'real-content':''}">
-	   	<span><a class="article" href="${rootAssociation.articleRoot.url}">articles</a></span>
+	   <li>
+	   	<h4>articles</h4>
 	   </li>
 	   <li><ul class="children sortable"><c:forEach var="page" items="${rootAssociation.articles}" varStatus="bcl">
 	   			<li id="page-${page.name}" data-name="${page.name}" class="${page.url eq info.currentURL?'current ':''}${page.info.realContent?'real-content':''}">
@@ -43,7 +43,7 @@
 	   			<div>	   			
 					<input type="hidden" value="edit.addPage" name="webaction" />				
 					<input type="hidden" name="parent" value="${rootAssociation.articleRoot.name}" />
-		   			<input type="submit" value="+" />
+		   			<input type="submit" value="+" title="create article" />
 	   			</div>
 	   		</form>	   		
 	   </div>

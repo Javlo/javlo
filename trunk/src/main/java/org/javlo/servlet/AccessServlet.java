@@ -459,7 +459,7 @@ public class AccessServlet extends HttpServlet implements IVersion {
 							}
 							if (!content.contentExistForContext(newCtx)) {
 								logger.info("content not found in " + ctx.getPath() + " lg:" + ctx.getRequestContentLanguage());
-								ctx.setSpecialContentRenderer("/jsp/view/content_not_found.jsp");
+								//ctx.setSpecialContentRenderer("/jsp/view/content_not_found.jsp");
 							} else {
 								ctx = newCtx;
 								ctx.storeInRequest(request);
