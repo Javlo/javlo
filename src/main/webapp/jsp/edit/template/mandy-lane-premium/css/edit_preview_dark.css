@@ -123,14 +123,19 @@ body.preview-only {
 	padding: 4px 3px;
 }
 
-#preview_command .component,#preview_command .navigation li span,#preview_command input[type=submit],#preview_command .macro-list a,#preview_command .shared .content-wrapper,#preview_command .message
-	{
+#preview_command .component,#preview_command .navigation li span,#preview_command input[type=submit],#preview_command .macro-list a,#preview_command .shared .content-wrapper,#preview_command .message	{
 	margin: 0 4px 4px 0;
 	padding: 1px;
 	color: #afafaf;
 	background-color: #494949;
 	border: 1px #5b5b5b solid;
 	border-radius: 3px;
+}
+
+#preview_command input[type=submit]:hover {
+	background-color: #AFAFAF;
+	text-decoration: none;
+	color: #ffffff;
 }
 
 #pc_upload #upload-zone {
@@ -337,6 +342,11 @@ body.preview-only {
 	overflow: hidden;
 }
 
+#preview_command .composition .navigation {
+	border: 0 none;
+}
+
+
 #preview_command .component-list h4 {
 	margin-right: 4px;
 	font-style: italic;
@@ -512,6 +522,13 @@ body.edit-preview {
 	text-transform: uppercase;
 	text-shadow: 1px -1px 0 #333333;
 }
+
+#preview_command .component-list .component {
+	line-height: 13px;
+	width: auto;
+	float: none;
+}
+
 
 /** icones **/
 #preview_command #pc_command.pc_command input {

@@ -14,7 +14,6 @@ import java.util.Set;
 import java.util.logging.Logger;
 
 import org.javlo.actions.IAction;
-import org.javlo.component.links.ChildrenLink;
 import org.javlo.component.title.Title;
 import org.javlo.context.ContentContext;
 import org.javlo.context.EditContext;
@@ -136,19 +135,22 @@ public class CreateArticleComposition implements IInteractiveMacro, IAction {
 				MenuElement mountPage = ContentService.getInstance(ctx.getRequest()).getNavigation(ctx).searchChildFromName(mountPageName);
 				if (mountPage != null) {
 					MenuElement newPage = MacroHelper.createArticlePageName(ctx, mountPage);
-					if (newPage != null) {													
-						String id = MacroHelper.addContent(ctx.getRequestContentLanguage(), newPage, "0", Title.TYPE, "New letter title : "+StringHelper.renderTime(new Date()), ctx.getCurrentEditUser());						
+					if (newPage != null) {				
 						MenuElement layoutPage = MacroHelper.addPageIfNotExist(ctx, newPage.getName(), newPage.getName()+"-composition", false);						
 						newPage.setTemplateName(config.getProperty("template.article","mailing_one_area"));
 						layoutPage.setTemplateName(config.getProperty("template.composition", "mailing"));
 						layoutPage.setChildrenAssociation(true);
-						MacroHelper.addPageIfNotExist(ctx, layoutPage.getName(), layoutPage.getName()+"-1", false);						
+						
+						MenuElement page1 = MacroHelper.addPageIfNotExist(ctx, layoutPage.getName(), layoutPage.getName()+"-1", false);
+						String title = rs.getParameter("title", "New letter title : "+StringHelper.renderTime(new Date()));
+						MacroHelper.addContent(ctx.getRequestContentLanguage(), page1, "0", Title.TYPE, title, ctx.getCurrentEditUser());						
+						
 						MenuElement articlePage = MacroHelper.addPageIfNotExist(ctx, newPage.getName(), newPage.getName()+"-article", false);
 						articlePage.setSharedName(articlePage.getName());
 						articlePage.setTemplateName(config.getProperty("template.article","mailing_one_area"));
 						MacroHelper.addContent(ctx.getRequestContentLanguage(), articlePage, "0", Title.TYPE, "Articles", ctx.getCurrentEditUser());
 						
-						newURL = URLHelper.createURL(ctx.getContextWithOtherRenderMode(ContentContext.PREVIEW_MODE), newPage);
+						newURL = URLHelper.createURL(ctx.getContextWithOtherRenderMode(ContentContext.PREVIEW_MODE), layoutPage);
 						
 						List<String> selectedRole = new LinkedList<String>();
 						for (String role :roles) {

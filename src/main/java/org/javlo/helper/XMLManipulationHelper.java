@@ -386,7 +386,7 @@ public class XMLManipulationHelper {
 					String prefix = "";
 					String sufix = "";
 					if (!displayIfEmpty) {
-						prefix = "<%if (!currentPage.isEmpty(ctx, \"" + area + "\") || EditContext.getInstance(globalContext, session).isEditPreview()) {%>";
+						prefix = "<%if (!currentPage.isEmpty(ctx, \"" + area + "\") || (EditContext.getInstance(globalContext, session).isEditPreview() && ctx.isAsPreviewMode())) {%>";
 						sufix = "<%}%>";
 					}
 					if ((idValue != null) && (idValue.trim().equals(areaValue))) {

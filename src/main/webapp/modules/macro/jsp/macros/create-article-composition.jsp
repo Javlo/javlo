@@ -6,6 +6,8 @@
 <legend>Create article</legend>
 <input type="hidden" name="webaction" value="macro-create-article-composition.create" />
 <input type="hidden" name="module" value="content" />
+
+<c:if test="${fn:length(pages)>1}">
 <div class="line">
 <label for="root">group</label>
 <select id="root" name="root">
@@ -14,10 +16,24 @@
 </c:forEach>
 </select>
 </div>
+</c:if>
+
+<c:if test="${fn:length(pages)==1}">
+<c:forEach var="page" items="${pages}">
+<input type="hidden" name="root" value="${page.key}" />
+</c:forEach>
+</c:if>
+
+<div class="line">
+	<label for="title">title</label>
+	<input type="text" id="title" name="title" />
+</div>
+
 <div class="line">
 	<label for="date">date</label>
 	<input type="text" class="datepicker" id="date" name="date" />
 </div>
+
 <div class="action">
 	<input type="submit" value="create" />
 </div>
