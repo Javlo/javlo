@@ -747,7 +747,10 @@ public class XMLManipulationHelper {
 					url = url.substring(1, url.length() - 1);
 				}
 				resources.add(url);
-				String newURL = "'<%=URLHelper.createStaticTemplateURL(ctx,\"" + url + "\")%>'";
+				String newURL = url;
+				if (!StringHelper.isURL(url)) {
+					newURL = "'<%=URLHelper.createStaticTemplateURL(ctx,\"" + url + "\")%>'";
+				}
 				remplacement.addReplacement(urlIndex + 4, closeIndex, newURL);
 				urlIndex = content.indexOf("url(", closeIndex);
 			}
