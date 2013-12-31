@@ -74,7 +74,7 @@ public class DeleteDynamicComponent implements IInteractiveMacro, IAction {
 								deleteField++;
 							} else {
 								realDeleteField++;
-								comp.delete(ctx);
+								comp.getPage().removeContent(ctx, comp.getId());								
 							}
 						}
 					}
