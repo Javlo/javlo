@@ -69,7 +69,7 @@ public class DeleteDynamicComponent implements IInteractiveMacro, IAction {
 				foundField++;
 				for (Field field : comp.getFields(ctx)) {
 					if (prop.containsKey(field.getName())) {
-						if (!field.getValue().contains(prop.getProperty(field.getName()))) {
+						if (field != null && field.getValue() != null && !field.getValue().contains(prop.getProperty(field.getName()))) {
 							if (confirm == null) {
 								deleteField++;
 							} else {
