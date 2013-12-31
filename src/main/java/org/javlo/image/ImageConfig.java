@@ -306,6 +306,23 @@ public class ImageConfig {
 			return null;
 		}
 	}
+	
+	public Color getAlpha(Device device, String filter, String area) {
+
+		String key = getKey(device, filter, area, "alpha");
+
+		String deviceValue = properties.getString(key, null);
+		if (deviceValue != null) {
+			try {
+				return Color.decode(deviceValue);
+			} catch (NumberFormatException e) {
+				logger.warning("bad alpha color found in image config file (filter: " + filter + ", device: " + deviceValue + ", area: " + area + ") : " + deviceValue);
+				return null;
+			}
+		} else {
+			return null;
+		}
+	}
 
 	public boolean isRoundCorner(Device device, String filter, String area) {
 		String key = getKey(device, filter, area, "round-corner");
