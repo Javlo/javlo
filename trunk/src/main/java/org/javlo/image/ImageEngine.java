@@ -437,6 +437,31 @@ public class ImageEngine {
 		return imgNew;
 	}
 	
+	/**
+	 * replace bg color with transparency
+	 * @param image
+	 * @param bg
+	 * @return image with transparency
+	 */
+	public static BufferedImage createAlpha(BufferedImage image, Color bg) {
+		if (bg == null) {
+			return image;
+		}
+		BufferedImage imgNew = new BufferedImage(image.getWidth(), image.getHeight(), BufferedImage.TYPE_INT_ARGB);
+		for (int x = 0; x < image.getWidth(); x++) {
+			for (int y = 0; y < image.getHeight(); y++) {
+				int rgb = image.getRGB(x, y);
+				Color color = new Color(rgb);				
+				if (color.getRed() == bg.getRed() && color.getGreen() == bg.getGreen() && color.getBlue() == bg.getBlue()) {
+					color = new Color(color.getRed(), color.getGreen(), color.getBlue(), 0);
+				}
+				
+				imgNew.setRGB(x, y,color.getRGB());
+			}
+		}
+		return imgNew;
+	}
+	
 	public static BufferedImage removeAlpha(BufferedImage image) {
 		BufferedImage imgNew = new BufferedImage(image.getWidth(), image.getHeight(), BufferedImage.TYPE_INT_RGB);
 		for (int x = 0; x < image.getWidth(); x++) {
@@ -909,9 +934,8 @@ public class ImageEngine {
 
 		try {
 			System.out.println("start...");
-			BufferedImage sourceImage = ImageIO.read(source);
-			BufferedImage image = dashed(sourceImage,3);
-			//image = replaceAlpha(image, Color.WHITE);
+			BufferedImage sourceImage = ImageIO.read(source);			 
+			BufferedImage image = createAlpha(sourceImage, Color.WHITE);
 			ImageIO.write(image, "png", target);
 			System.out.println("end.");
 		} catch (Exception e) {

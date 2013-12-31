@@ -260,7 +260,7 @@ public class ImageTransformServlet extends HttpServlet {
 		// org.javlo.helper.Logger.stepCount("transform", "start - transformation - 2.6");
 		img = ImageEngine.replaceAlpha(img, config.getReplaceAlpha(ctx.getDevice(), filter, area));
 		// org.javlo.helper.Logger.stepCount("transform", "start - transformation - 2.7");
-
+		img = ImageEngine.createAlpha(img, config.getAlpha(ctx.getDevice(), filter, area));
 		// org.javlo.helper.Logger.stepCount("transform", "start - transformation - 3");
 
 		if (img.getType() == BufferedImage.TYPE_CUSTOM) {
