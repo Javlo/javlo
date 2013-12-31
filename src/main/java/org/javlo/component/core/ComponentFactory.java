@@ -152,6 +152,30 @@ public class ComponentFactory {
 			}
 		}
 	}
+	
+	public static List<DynamicComponent> getAllDynamicComponents(ContentContext ctx) throws Exception {	
+		ContentContext noAreaCtx = ctx.getContextWithArea(null);
+		List<DynamicComponent> outComps = new LinkedList<DynamicComponent>();
+		ContentService content = ContentService.getInstance(ctx.getGlobalContext());
+		MenuElement root = content.getNavigation(noAreaCtx);
+		ContentElementList pageContent = root.getContent(noAreaCtx);
+		while (pageContent.hasNext(noAreaCtx)) {
+			IContentVisualComponent comp = pageContent.next(noAreaCtx);
+			if (comp instanceof DynamicComponent) {
+				outComps.add((DynamicComponent)comp);
+			}
+		}
+		for (MenuElement page : root.getAllChildren()) {
+			pageContent = page.getContent(noAreaCtx);
+			while (pageContent.hasNext(noAreaCtx)) {
+				IContentVisualComponent comp = pageContent.next(noAreaCtx);
+				if (comp instanceof DynamicComponent) {
+					outComps.add((DynamicComponent)comp);
+				}
+			}
+		}
+		return outComps;
+	}
 
 	public static IContentVisualComponent[] getComponents(GlobalContext globalContext) throws IOException, ClassNotFoundException, InstantiationException, IllegalAccessException {
 		String key = getKey(globalContext.getContextKey());
