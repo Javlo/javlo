@@ -342,12 +342,16 @@ body.preview-only {
 	overflow: hidden;
 }
 
+#preview_command .composition {
+	background-color: #333333;
+}
+
 #preview_command .composition .navigation {
 	border: 0 none;
 }
 
 
-#preview_command .component-list h4 {
+#preview_command h4 {
 	margin-right: 4px;
 	font-style: italic;
 	border-bottom: 1px #484848 solid;
