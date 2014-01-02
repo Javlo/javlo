@@ -345,15 +345,15 @@ public class TemplateFactory {
 			return (Template) ctx.getRequest().getAttribute(key);
 		}
 		Template template = null;
-		if (elem != null) {
-			template = getTemplates(ctx.getRequest().getSession().getServletContext()).get(elem.getTemplateId());
-			if (template == null || !template.exist()) {
-				while (elem.getParent() != null && ((template == null) || (!template.exist()) || (template.getRendererFullName(ctx) == null))) {
-					elem = elem.getParent();
-					template = TemplateFactory.getTemplates(ctx.getRequest().getSession().getServletContext()).get(elem.getTemplateId());
-				}
+		
+		template = getTemplates(ctx.getRequest().getSession().getServletContext()).get(elem.getTemplateId());
+		if (template == null || !template.exist()) {
+			while (elem.getParent() != null && ((template == null) || (!template.exist()) || (template.getRendererFullName(ctx) == null))) {
+				elem = elem.getParent();
+				template = TemplateFactory.getTemplates(ctx.getRequest().getSession().getServletContext()).get(elem.getTemplateId());
 			}
 		}
+	
 		if (template == null) {
 			GlobalContext globalContext = GlobalContext.getInstance(ctx.getRequest());
 			template = TemplateFactory.getTemplates(ctx.getRequest().getSession().getServletContext()).get(globalContext.getDefaultTemplate());
