@@ -26,10 +26,8 @@
 	   </div>	   	
 	   </li>
 	   </ul>
+	   <h4><span>articles</span></h4>
 	   <ul class="navigation articles">
-	   <li>
-	   	<h4>articles</h4>
-	   </li>
 	   <li><ul class="children sortable"><c:forEach var="page" items="${rootAssociation.articles}" varStatus="bcl">
 	   			<li id="page-${page.name}" data-name="${page.name}" class="${page.url eq info.currentURL?'current ':''}${page.info.realContent?'real-content':''}">
 	   				<span><a href="${page.url}" title="${page.pageTitle}">${page.titleOrSubtitle}</a></span>

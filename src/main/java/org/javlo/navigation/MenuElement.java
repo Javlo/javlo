@@ -1799,14 +1799,23 @@ public class MenuElement implements Serializable {
 		while (isEmpty(localContext) && defaultLgs.hasNext()) {
 			localContext.setRequestContentLanguage(defaultLgs.next());
 		}
-		if (!isEmpty(localContext)) {
-			ContentElementList contentList = getAllContent(localContext); // search date in all area
-			while (contentList.hasNext(ctx)) {
-				IContentVisualComponent comp = contentList.next(ctx);
-				if (comp.getType() == DateComponent.TYPE) {
-					return ((DateComponent) comp).getDate();
-				} else if (comp.getType() == TimeRangeComponent.TYPE) {
-					return ((TimeRangeComponent) comp).getStartDate();
+		if (isChildrenAssociation()) {
+			for (MenuElement child : getChildMenuElements()) {
+				Date contentDate = child.getContentDate(ctx);
+				if (contentDate != null) {
+					return contentDate;
+				}
+			}
+		} else {
+			if (!isEmpty(localContext)) {
+				ContentElementList contentList = getAllContent(localContext); // search date in all area
+				while (contentList.hasNext(ctx)) {
+					IContentVisualComponent comp = contentList.next(ctx);
+					if (comp.getType() == DateComponent.TYPE) {
+						return ((DateComponent) comp).getDate();
+					} else if (comp.getType() == TimeRangeComponent.TYPE) {
+						return ((TimeRangeComponent) comp).getStartDate();
+					}
 				}
 			}
 		}
