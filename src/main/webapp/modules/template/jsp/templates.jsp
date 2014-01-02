@@ -3,6 +3,16 @@
 <div id="gallery" class="gallery main-template full-height">
 <div id="gridview" class="thumbview">
 <c:set var="mailingFound" value="${false}" />
+<c:set var="webFound" value="${false}" />
+<c:forEach var="tpl" items="${templates}">
+<c:if test="${tpl.mailing}">
+<c:set var="mailingFound" value="${true}" />
+</c:if>
+<c:if test="${!tpl.mailing}">
+<c:set var="webFound" value="${true}" />
+</c:if>
+</c:forEach>
+<c:if test="${webFound}">
 <div class="widgetbox">
 <h3><span>web</span></h3>
 <div class="content">
@@ -12,13 +22,11 @@
 <c:set var="template" value="${tpl}" scope="request" />
 <jsp:include page="template.jsp" />
 </c:if>
-<c:if test="${tpl.mailing}">
-<c:set var="mailingFound" value="${true}" />
-</c:if>
 </c:forEach>
 </ul>
 </div>
 </div>
+</c:if>
 <c:if test="${mailingFound}">
 <div class="widgetbox">
 <h3><span>mail</span></h3>
