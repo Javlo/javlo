@@ -50,6 +50,8 @@ import org.javlo.navigation.MenuElement;
 import org.javlo.service.ContentService;
 import org.javlo.service.NavigationService;
 import org.javlo.service.RequestService;
+import org.javlo.template.Template;
+import org.javlo.template.TemplateFactory;
 
 /**
  * list of links to a subset of pages. <h4>exposed variable :</h4>
@@ -147,6 +149,8 @@ public class PageReferenceComponent extends ComplexPropertiesLink implements IAc
 			GlobalContext globalContext = GlobalContext.getInstance(ctx.getRequest());
 
 			Iterator<String> defaultLg = globalContext.getDefaultLanguages().iterator();
+			
+			Template pageTemplate = TemplateFactory.getTemplate(ctx, page);
 
 			defaultLg = globalContext.getContentLanguages().iterator();
 			ContentContext tagCtx = new ContentContext(ctx);
@@ -172,6 +176,9 @@ public class PageReferenceComponent extends ComplexPropertiesLink implements IAc
 			bean.path = page.getPath();
 			bean.creator = page.getCreator();
 			bean.childrenOfAssociation = page.isChildrenOfAssociation();
+			if (pageTemplate != null) {
+				bean.mailing = pageTemplate.isMailing();
+			}
 			bean.rootOfChildrenAssociation = page.getRootOfChildrenAssociation();
 			bean.setCategoryKey("category." + StringHelper.neverNull(page.getCategory(ctx)).toLowerCase().replaceAll(" ", ""));
 			
@@ -293,6 +300,7 @@ public class PageReferenceComponent extends ComplexPropertiesLink implements IAc
 		private String creator = null;
 		private String publishURL;
 		private boolean childrenOfAssociation = false;
+		private boolean mailing = false;
 		private boolean realContent = false;
 		private boolean visible = false;
 		private Collection<Link> links = new LinkedList<Link>();
@@ -546,6 +554,14 @@ public class PageReferenceComponent extends ComplexPropertiesLink implements IAc
 
 		public void setSortableCreationDate(String sortableCreationDate) {
 			this.sortableCreationDate = sortableCreationDate;
+		}
+
+		public boolean isMailing() {
+			return mailing;
+		}
+
+		public void setMailing(boolean mailing) {
+			this.mailing = mailing;
 		}
 
 	}
