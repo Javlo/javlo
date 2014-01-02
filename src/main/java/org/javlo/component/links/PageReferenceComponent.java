@@ -176,6 +176,7 @@ public class PageReferenceComponent extends ComplexPropertiesLink implements IAc
 			bean.path = page.getPath();
 			bean.creator = page.getCreator();
 			bean.childrenOfAssociation = page.isChildrenOfAssociation();
+			bean.childrenAssociation = page.isChildrenAssociation();
 			if (pageTemplate != null) {
 				bean.mailing = pageTemplate.isMailing();
 			}
@@ -300,6 +301,7 @@ public class PageReferenceComponent extends ComplexPropertiesLink implements IAc
 		private String creator = null;
 		private String publishURL;
 		private boolean childrenOfAssociation = false;
+		private boolean childrenAssociation = false;
 		private boolean mailing = false;
 		private boolean realContent = false;
 		private boolean visible = false;
@@ -562,6 +564,14 @@ public class PageReferenceComponent extends ComplexPropertiesLink implements IAc
 
 		public void setMailing(boolean mailing) {
 			this.mailing = mailing;
+		}
+
+		public boolean isChildrenAssociation() {
+			return childrenAssociation;
+		}
+
+		public void setChildrenAssociation(boolean childrenAssociation) {
+			this.childrenAssociation = childrenAssociation;
 		}
 
 	}
