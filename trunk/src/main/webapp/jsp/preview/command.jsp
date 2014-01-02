@@ -1,4 +1,4 @@
-navigation<%@page import="org.javlo.message.MessageRepository"
+<%@page import="org.javlo.message.MessageRepository"
 %><%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c"
 %><%@ taglib uri="/WEB-INF/javlo.tld" prefix="jv"
 %><%@ taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions" 
@@ -22,7 +22,10 @@ ModulesContext moduleContext = ModulesContext.getInstance(request.getSession(), 
 MessageRepository.getInstance(request); // load request message
 %>
 <div id="preview_command" lang="${info.editLanguage}" class="edit-${not empty currentUser} ${editPreview == 'true'?'edit':'preview'}">
-	<div class="pc_header"><span class="title">${i18n.edit["preview.command"]}</span><c:if test="${!userInterface.contributor}"><a id="pc_edit_mode_button" title="${i18n.edit['global.exit']}" href="<%=URLHelper.createURL(returnEditCtx)%>?module=content&webaction=previewEdit&preview=false">X</a></c:if></div>
+	<div class="pc_header"><span class="title">${i18n.edit["preview.command"]}</span>
+	<c:if test="${!userInterface.contributor}"><a id="pc_edit_mode_button" title="${i18n.edit['global.exit']}" href="<%=URLHelper.createURL(returnEditCtx)%>?module=content&webaction=previewEdit&preview=false">X</a></c:if>
+	<c:if test="${userInterface.contributor}"><a id="pc_edit_mode_button" class="logout" title="${i18n.edit['global.logout']}" href="<%=URLHelper.createURL(returnEditCtx)%>?edit-logout=true">X</a></c:if>	
+	</div>
 	<div class="pc_body">		    
 			<c:if test="${not empty messages.globalMessage && messages.globalMessage.type > 0 && not empty messages.globalMessage.message}">
 				<div class="message msg${messages.globalMessage.typeLabel}">${messages.globalMessage.message}</div>
