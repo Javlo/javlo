@@ -193,11 +193,15 @@ public class PageReferenceComponent extends ComplexPropertiesLink implements IAc
 			bean.name = page.getName();
 			bean.selected = page.isSelected(ctx);
 			bean.linkOn = page.getLinkOn(ctx);
+			bean.creationDate = StringHelper.renderShortDate(ctx, page.getCreationDate());
+			bean.sortableCreationDate = StringHelper.renderSortableDate(page.getCreationDate());
 			if (page.getContentDate(ctx) != null) {
 				bean.date = StringHelper.renderShortDate(ctx, page.getContentDate(ctx));
+				bean.sortableDate = StringHelper.renderSortableDate(page.getContentDate(ctx));
 				bean.contentDate = true;
 			} else {
 				bean.date = StringHelper.renderShortDate(ctx, page.getModificationDate());
+				bean.sortableDate = StringHelper.renderSortableDate(page.getModificationDate());				
 				bean.contentDate = false;
 			}
 			if (page.getTimeRange(ctx) != null) {
@@ -275,6 +279,9 @@ public class PageReferenceComponent extends ComplexPropertiesLink implements IAc
 		private String imagePath = null;
 		private String imageDescription = null;
 		private String date = null;
+		private String sortableDate = null;
+		private String creationDate = null;
+		private String sortableCreationDate = null;
 		private String startDate = null;
 		private String endDate = null;
 		private String url = null;
@@ -515,6 +522,30 @@ public class PageReferenceComponent extends ComplexPropertiesLink implements IAc
 
 		public void setRootOfChildrenAssociation(MenuElement rootOfChildrenAssociation) {
 			this.rootOfChildrenAssociation = rootOfChildrenAssociation;
+		}
+
+		public String getCreationDate() {
+			return creationDate;
+		}
+
+		public void setCreationDate(String creationDate) {
+			this.creationDate = creationDate;
+		}
+
+		public String getSortableDate() {
+			return sortableDate;
+		}
+
+		public void setSortableDate(String sortableDate) {
+			this.sortableDate = sortableDate;
+		}
+
+		public String getSortableCreationDate() {
+			return sortableCreationDate;
+		}
+
+		public void setSortableCreationDate(String sortableCreationDate) {
+			this.sortableCreationDate = sortableCreationDate;
 		}
 
 	}
