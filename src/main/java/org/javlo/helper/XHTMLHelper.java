@@ -1687,7 +1687,7 @@ public class XHTMLHelper {
 	}
 
 	public static boolean allReadyInsered(ContentContext ctx, String resource) {
-		if (resource.contains("jquery-1") || resource.contains("jquery-2") || resource.contains("jquery.min")) {
+		if (resource.contains("jquery-1") || resource.contains("jquery-2") || resource.contains("jquery.min") || resource.endsWith("jquery.js")) {
 			resource = "_jquery-library_";
 		} else if (resource.contains("jquery-ui")) {
 			resource = "_jquery-ui_";

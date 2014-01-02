@@ -618,6 +618,10 @@ body.edit-preview {
 	text-shadow: 1px -1px 0 #333333;
 }
 
+#preview_command #pc_edit_mode_button.logout {
+	background-position: 0 -3127px;
+}
+
 .preview-notlogged #preview_command .login span {
 	display: block;
 	background-image: url("../images/preview/ico.png");
