@@ -61,7 +61,7 @@ public abstract class AbstractOrderComponent extends AbstractVisualComponent {
 	}
 	
 	@Override
-	public String getSpecificClass() {
+	public String getSpecificClass(ContentContext ctx) {
 		return "order";
 	}
 	

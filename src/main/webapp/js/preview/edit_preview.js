@@ -5,7 +5,6 @@ var mouseY = 0;
 
 jQuery(document).ready(
 		function() {
-			
 			jQuery( window ).mousemove(function( event ) {
 				mouseX = event.pageX;
 				mouseY = event.pageY;
@@ -209,7 +208,7 @@ initPreview = function() {
 	});
 	
 	jQuery(".component-list .component, .shared-content .content").mouseover(function() {
-		if (!dragging) {			
+		if (!dragging) {		
 			layerOver(this, false);
 			var layer = jQuery("#preview-layer");
 			layer.data("compType", jQuery(this).data("type"));			
@@ -349,24 +348,23 @@ initPreview = function() {
 							jQuery(this).removeClass("drop-selected");	
 							jQuery(this).parent().data("drop-selected", false);
 						},
-						over : function(event, ui) {
+						over : function(event, ui) {	
 							dragging = true;
 							var dropLayer = jQuery("#droppable-layer");
 							var layer = jQuery("#preview-layer");
 							var target = jQuery(this);
 							
 							if (!target.hasClass("free-edit-zone") && !target.hasClass("_empty_area")) {
-								if (target.find(".drop-zone").length == 0 && !target.parent().data("drop-selected") && !target.parent().data("drop-selected")) {
+								if (target.find(".drop-zone").length == 0 && !target.parent().data("drop-selected") && !target.parent().data("drop-selected")) {									
 									target.append('<div class="drop-zone"><span>&nbsp;</span></div>');
 								}
 							} else {
 								target.parent().data("drop-selected", true);
 								target.addClass("drop-selected");
 								target.addClass("drop-ones");
-							}
+							}							
 							
-							
-							if (dropLayer.offset.top < 0) {
+							if (dropLayer.offset.top < 0) {								
 								dropLayer.css("top", "" + target.offset().top
 										+ "px");
 								dropLayer.css("left", "" + target.offset().left
