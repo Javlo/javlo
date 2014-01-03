@@ -102,6 +102,11 @@ public class GlobalImage extends Image {
 	public String getCSSClassName(ContentContext ctx) {
 		return getType();
 	}
+	
+	@Override
+	public String getSpecificClass(ContentContext ctx) {	
+		return getFilter(ctx);
+	}
 
 	protected boolean isImageFilter() {
 		return true;

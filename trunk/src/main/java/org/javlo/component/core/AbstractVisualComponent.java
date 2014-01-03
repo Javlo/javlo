@@ -955,7 +955,7 @@ public abstract class AbstractVisualComponent implements IContentVisualComponent
 	 * 
 	 * @return
 	 */
-	public String getSpecificClass() {
+	public String getSpecificClass(ContentContext ctx) {
 		return null;
 	}
 
@@ -966,8 +966,8 @@ public abstract class AbstractVisualComponent implements IContentVisualComponent
 			currentClass = ' ' + currentClass.trim();
 		}
 		String specificClass = "";
-		if (getSpecificClass() != null) {
-			specificClass = getSpecificClass() + ' ';
+		if (getSpecificClass(ctx) != null) {
+			specificClass = getSpecificClass(ctx) + ' ';
 		}		
 		if (ctx.getRenderMode() == ContentContext.PREVIEW_MODE) {
 			GlobalContext globalContext = GlobalContext.getInstance(ctx.getRequest());

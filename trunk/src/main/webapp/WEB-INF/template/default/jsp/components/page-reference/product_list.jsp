@@ -17,7 +17,7 @@
 				<c:set var="image" value="${page.images[0]}" />
 			</c:if>
 			<!-- portfolio item -->
-			<li><c:if test="${not empty image}">
+			<li class="item-${status.index+1}"><c:if test="${not empty image}">
 					<figure>
 						<a title="${page.title}" href="${page.url}"> <img
 							src="${image.url}" class="frame" alt="${image.description}" />

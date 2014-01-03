@@ -33,11 +33,11 @@ public class Description extends AbstractVisualComponent {
 	}
 
 	@Override
-	public String getPrefixViewXHTMLCode(ContentContext ctx) {
+	public String getTag(ContentContext ctx) {
 		if (!isNotDisplayHTML(ctx)) {
-			return "<p " + getSpecialPreviewCssClass(ctx, getType() + " " + getStyle(ctx)) + getSpecialPreviewCssId(ctx) + " >";
+			return "p";
 		} else {
-			return "";
+			return "span";
 		}
 	}
 
@@ -63,15 +63,6 @@ public class Description extends AbstractVisualComponent {
 	@Override
 	public String getStyleTitle(ContentContext ctx) {
 		return "position";
-	}
-
-	@Override
-	public String getSuffixViewXHTMLCode(ContentContext ctx) {
-		if (!isNotDisplayHTML(ctx)) {
-			return "</p>";
-		} else {
-			return "";
-		}
 	}
 
 	/*

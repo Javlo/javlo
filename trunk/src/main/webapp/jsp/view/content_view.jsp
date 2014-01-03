@@ -1,4 +1,6 @@
-<%@page import="org.javlo.i18n.I18nAccess"%>
+<%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c"
+%><%@ taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions"
+%><%@page import="org.javlo.i18n.I18nAccess"%>
 <%@page contentType="text/html"
         import="
         java.util.Map,
@@ -149,12 +151,11 @@ if (globalContext.isCollaborativeMode() && ctx.getRenderMode() == ContentContext
 	request.setAttribute("date", StringHelper.renderTime(elem.getModificationDate()));%><jsp:include page="display_user.jsp"></jsp:include><%
 }
 String xhtmlCode = elem.getXHTMLCode(ctx);
-if (xhtmlCode.trim().length() == 0 && ctx.isEditPreview()) {
+%><c:if test="${editPreview}"><%
+if (StringHelper.removeTag(xhtmlCode).trim().length() == 0 && !xhtmlCode.toLowerCase().contains("<img")) {
 	I18nAccess i18nAccess = I18nAccess.getInstance(ctx);
 	xhtmlCode = '['+i18nAccess.getText("content."+elem.getType(), elem.getType())+']';
-}
-
-%><%=elem.getPrefixViewXHTMLCode(ctx)%><%=xhtmlCode%>
+}%></c:if><%=elem.getPrefixViewXHTMLCode(ctx)%><%=xhtmlCode%>
 <%=elem.getSuffixViewXHTMLCode(ctx)%>
 <%
 previousElem = elem;

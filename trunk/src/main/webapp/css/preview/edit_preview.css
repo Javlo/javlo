@@ -905,10 +905,10 @@ body.edit-preview {
 	margin-bottom: -36px;
 }
 
-.free-edit-zone.droppable {
-	background-image: url('../../images/icons/droppable.png');
-	background-position: 3px 3px;
-	background-repeat: no-repeat;	
+.droppable {
+	padding: 5px;
+	margin-bottom: -12px;
+	display: block;
 }
 
 .free-edit-zone.drop-ones {
@@ -926,10 +926,24 @@ body.edit-preview {
 	border: none;
 }
 
-.free-edit-zone.droppable span, .drop-zone span {
+.drop-zone span {
 	display: block;
 	border-top: 2px #777777 dashed;
 	background-color: #aaaaaa;		
+}
+
+.free-edit-zone.droppable span {
+	display: block;
+	border-top: 2px #777777 dashed;
+	background-color: #aaaaaa;	
+	font-size: 0;
+}
+
+.free-edit-zone.droppable.drop-selected span {
+	border-top: 2px #ffffff dashed;
+}
+
+.free-edit-zone.droppable span {
 }
 
 .drop-zone {
