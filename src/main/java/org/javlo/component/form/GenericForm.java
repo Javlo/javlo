@@ -369,6 +369,12 @@ public class GenericForm extends AbstractVisualComponent implements IAction {
 					GenericMessage msg = new GenericMessage(comp.getLocalConfig(false).getProperty("error.required", "please could you fill all required fields."), GenericMessage.ERROR);
 					request.setAttribute("msg", msg);
 				}
+				
+				if (finalValue.trim().length() == 0 && key.toLowerCase().trim().equals("email")) { // valid email field
+					errorFields.add(key);
+					GenericMessage msg = new GenericMessage(comp.getLocalConfig(false).getProperty("error.email-format", "your email format is'nt correct."), GenericMessage.ERROR);
+					request.setAttribute("msg", msg);
+				}
 
 				if (value instanceof Object[]) {
 					finalValue = StringHelper.arrayToString((Object[]) params.get(key), ",");
