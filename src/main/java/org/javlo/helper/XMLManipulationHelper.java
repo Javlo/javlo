@@ -981,8 +981,6 @@ public class XMLManipulationHelper {
 		out.newLine();
 		out.append("<%=XHTMLHelper.renderHeaderResourceInsertion(ctx, \"/css/lib/colorbox/colorbox.css\")%>");
 		out.newLine();
-		out.append("<%=XHTMLHelper.renderHeaderResourceInsertion(ctx, \"/css/edit_preview.css\")%>");
-		out.newLine();
 		out.append("<%  }%>");
 		out.newLine();
 		out.append("<%}%>");
