@@ -1597,7 +1597,7 @@ public class XHTMLHelper {
 		return res.toString();
 	}
 
-	public static void main(String[] args) {		 
+	public static void main(String[] args) {
 		String html = "<html><head><title>test</title></head><body><p>coucou<w:LsdException Locked=\"false\" Priority=\"73\" SemiHidden=\"false\" UnhideWhenUsed=\"false\" Name=\"Colorful Grid Accent 5\"/></p></body></html>";
 		System.out.println(cleanHTML(html));
 	}
@@ -1699,6 +1699,26 @@ public class XHTMLHelper {
 			ctx.getRequest().setAttribute(attKey, "1");
 			return false;
 		}
+	}
+
+	/**
+	 * return false if a tag is open but not closed.
+	 * @param ctx
+	 * @param resource
+	 * @return true if tag is'nt closed but opened.
+	 */
+	public static boolean allReadyClosedIfOpen(ContentContext ctx, String resource) {
+		String openKey = "_ari_" + resource;
+		String closeKey = "_arc_" + resource;
+		if (ctx.getRequest().getAttribute(openKey) != null) {
+			if (ctx.getRequest().getAttribute(closeKey) != null) {
+				return true;
+			} else {
+				ctx.getRequest().setAttribute(closeKey, "1");
+				return false;
+			}
+		}
+		return true;
 	}
 
 	public static String renderHeaderResourceInsertion(ContentContext ctx, String resource) {
@@ -1864,12 +1884,15 @@ public class XHTMLHelper {
 		out.println("<div class=\"resource-special-links\"><a class=\"hd\" href=\"" + URLHelper.createResourceURL(ctx, multimediaFileURL) + "\" title=\"" + StringHelper.removeTag(staticInfo.getFullDescription(ctx)) + "\">");
 		out.println("HD");
 		out.println("</a>");
-		/*if (staticInfo.getLinkedPage(ctx) != null) {
-			String pageURL = URLHelper.createURL(ctx, staticInfo.getLinkedPage(ctx).getPath());
-			out.println("<a class=\"linked-page\" href=\"" + pageURL + "\" title=\"" + StringHelper.removeTag(staticInfo.getLinkedPage(ctx).getTitle(ctx)) + "\">");
-			out.println(staticInfo.getLinkedPage(ctx).getTitle(ctx));
-			out.println("</a>");
-		}*/
+		/*
+		 * if (staticInfo.getLinkedPage(ctx) != null) { String pageURL =
+		 * URLHelper.createURL(ctx, staticInfo.getLinkedPage(ctx).getPath());
+		 * out.println("<a class=\"linked-page\" href=\"" + pageURL +
+		 * "\" title=\"" +
+		 * StringHelper.removeTag(staticInfo.getLinkedPage(ctx).getTitle(ctx)) +
+		 * "\">"); out.println(staticInfo.getLinkedPage(ctx).getTitle(ctx));
+		 * out.println("</a>"); }
+		 */
 		out.println("</div>");
 		out.close();
 		return writer.toString();
@@ -1949,7 +1972,7 @@ public class XHTMLHelper {
 
 	// cssClass and popup not used
 	public static String textToXHTML(String text, String cssClass, GlobalContext globalContext) {
-		
+
 		String res = autoLink(text, globalContext);
 
 		ByteArrayOutputStream outStream = new ByteArrayOutputStream();
@@ -2107,7 +2130,7 @@ public class XHTMLHelper {
 	}
 
 	public static String cleanHTML(String html) {
-		return Jsoup.clean(html,Whitelist.relaxed());
+		return Jsoup.clean(html, Whitelist.relaxed());
 	}
 
 }

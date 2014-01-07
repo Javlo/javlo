@@ -139,6 +139,17 @@ public class MessageRepository {
 			this.globalMessage = globalMessage;
 		}
 	}
+	
+	/**
+	 * set a new global message. if the type of the current message is more
+	 * important or equal the new message is ignored.
+	 * 
+	 * @param globalMessage
+	 *            a global message
+	 */
+	public void setGlobalMessageForced(GenericMessage globalMessage) {
+		this.globalMessage = globalMessage;
+	}
 
 	/**
 	 * set a new global message. if the type of the current message is more

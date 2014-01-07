@@ -2427,8 +2427,20 @@ public class MenuElement implements Serializable {
 		}
 	}
 
+	/**
+	 * reutrn the name, formated as "file name", without space and special char.
+	 * @return
+	 */
 	public String getName() {
-		return name;
+		return StringHelper.createFileName(name);
+	}
+	
+	/**
+	 * return the name, as create by user.
+	 * @return
+	 */
+	public String getHumanName() {
+		return name;		
 	}
 
 	/**
@@ -3479,6 +3491,7 @@ public class MenuElement implements Serializable {
 	 * @Deprecated use NavigationService.getPage(ContentContext, pageKey)
 	 */
 	public MenuElement searchChildFromName(String name) {
+		name = StringHelper.createFileName(name);
 		if (name.equals(this.getName())) {
 			return this;
 		} else {

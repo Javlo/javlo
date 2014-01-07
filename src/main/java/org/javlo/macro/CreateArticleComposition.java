@@ -22,14 +22,13 @@ import org.javlo.helper.MacroHelper;
 import org.javlo.helper.StringHelper;
 import org.javlo.helper.URLHelper;
 import org.javlo.i18n.I18nAccess;
-import org.javlo.macro.core.IInteractiveMacro;
 import org.javlo.message.MessageRepository;
 import org.javlo.module.macro.MacroModuleContext;
 import org.javlo.navigation.MenuElement;
 import org.javlo.service.ContentService;
 import org.javlo.service.RequestService;
 
-public class CreateArticleComposition implements IInteractiveMacro, IAction {
+public class CreateArticleComposition extends AbstractInteractiveMacro implements IAction {
 	
 	private static Logger logger = Logger.getLogger(CreateArticleComposition.class.getName());
 	
@@ -61,7 +60,7 @@ public class CreateArticleComposition implements IInteractiveMacro, IAction {
 	}
 
 	@Override
-	public String prepare(ContentContext ctx) {
+	public String prepare(ContentContext ctx) {	
 		Map<String, String> rootPages = new HashMap<String, String>();
 		try {
 			for (MenuElement page : MacroHelper.searchArticleRoot(ctx)) {
@@ -95,17 +94,32 @@ public class CreateArticleComposition implements IInteractiveMacro, IAction {
 
 	public static String performCreate(RequestService rs, EditContext editCtx, ContentContext ctx, MessageRepository messageRepository, I18nAccess i18nAccess) throws IOException, Exception {
 		
+		initInteractiveMacro (ctx, NAME);
+		
 		Properties config = ctx.getCurrentTemplate().getMacroProperties(ctx.getGlobalContext(), NAME);
 		if (config == null) {
 			config = new Properties();
 		}
 		
-		String pageName = rs.getParameter("root", null);
+		String rootPageName = rs.getParameter("root", null);
 		String date = rs.getParameter("date", null);
+		
+		String pageName = rs.getParameter("title", null);
+		if (pageName == null || pageName.trim().length() ==  0) {
+			return "page name not defined.";
+		}
+		
+		if (ContentService.getInstance(ctx.getRequest()).getNavigation(ctx).searchChildFromName(pageName) != null)  {
+			return "page name allready exist.";
+		}	
+		
+		if (date == null || date.trim().length() == 0) {
+			return "please choose a date.";
+		}
 		
 		String message = null;
 		String newURL = null;
-		if (pageName == null) {
+		if (rootPageName == null) {
 			return "page or date not found.";
 		}
 		try {
@@ -117,7 +131,7 @@ public class CreateArticleComposition implements IInteractiveMacro, IAction {
 			}
 			Calendar cal = Calendar.getInstance();
 			cal.setTime(articleDate);
-			MenuElement rootPage = ContentService.getInstance(ctx.getRequest()).getNavigation(ctx).searchChildFromName(pageName);
+			MenuElement rootPage = ContentService.getInstance(ctx.getRequest()).getNavigation(ctx).searchChildFromName(rootPageName);
 			if (rootPage != null) {				
 				List<String> roles = new LinkedList<String>();
 				Set<String> roleSet = new HashSet<String>();
@@ -134,7 +148,7 @@ public class CreateArticleComposition implements IInteractiveMacro, IAction {
 				String mountPageName = MacroHelper.getMonthPageName(ctx, yearPage.getName(), articleDate);
 				MenuElement mountPage = ContentService.getInstance(ctx.getRequest()).getNavigation(ctx).searchChildFromName(mountPageName);
 				if (mountPage != null) {
-					MenuElement newPage = MacroHelper.createArticlePageName(ctx, mountPage);
+					MenuElement newPage = MacroHelper.addPageIfNotExist(ctx, mountPage, pageName, true, false);
 					if (newPage != null) {				
 						MenuElement layoutPage = MacroHelper.addPageIfNotExist(ctx, newPage.getName(), newPage.getName()+"-composition", false);						
 						newPage.setTemplateName(config.getProperty("template.article","mailing_one_area"));
@@ -142,8 +156,6 @@ public class CreateArticleComposition implements IInteractiveMacro, IAction {
 						layoutPage.setChildrenAssociation(true);
 						
 						MenuElement page1 = MacroHelper.addPageIfNotExist(ctx, layoutPage.getName(), layoutPage.getName()+"-1", false);
-						String title = rs.getParameter("title", "New letter title : "+StringHelper.renderTime(new Date()));
-						MacroHelper.addContent(ctx.getRequestContentLanguage(), page1, "0", Title.TYPE, title, ctx.getCurrentEditUser());						
 						
 						MenuElement articlePage = MacroHelper.addPageIfNotExist(ctx, newPage.getName(), newPage.getName()+"-article", false);
 						articlePage.setSharedName(articlePage.getName());
@@ -164,7 +176,7 @@ public class CreateArticleComposition implements IInteractiveMacro, IAction {
 					message = "mount page not found : " + mountPageName;
 				}
 			} else {
-				message = pageName + " not found.";
+				message = rootPageName + " not found.";
 			}
 			MacroModuleContext.getInstance(ctx.getRequest()).setActiveMacro(null);
 			if (ctx.isEditPreview()) {

@@ -342,7 +342,7 @@ body.preview-only {
 	overflow: hidden;
 }
 
-#preview_command .composition {
+#preview_command .composition .body {
 	background-color: #333333;
 }
 
@@ -525,6 +525,10 @@ body.edit-preview {
 	vertical-align: middle;
 	text-transform: uppercase;
 	text-shadow: 1px -1px 0 #333333;
+}
+
+#preview_command .no-access label,#preview_command .no-access input {
+	opacity: 0.3;
 }
 
 #preview_command .component-list .component {

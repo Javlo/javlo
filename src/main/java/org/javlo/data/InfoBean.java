@@ -220,6 +220,10 @@ public class InfoBean {
 	public String getPageName() {
 		return currentPage.getName();
 	}
+	
+	public String getPageHumanName() {
+		return currentPage.getHumanName();
+	}
 
 	public String getPageTitle() {
 		try {

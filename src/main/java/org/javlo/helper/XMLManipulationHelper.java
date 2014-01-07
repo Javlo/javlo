@@ -657,10 +657,7 @@ public class XMLManipulationHelper {
 									tag.getAttributes().put("href", "<%=URLHelper.createStaticTemplatePluginURL(ctx, \"" + tag.getAttributes().get("href") + "\", \"" + plugin.getFolder() + "\")%>");
 								}
 								String inside = tag.getInside(headHTML);
-								if (tag.getName().equalsIgnoreCase("link")) { // auto
-																				// close
-																				// link
-																				// tag
+								if (tag.getName().equalsIgnoreCase("link")) { // auto close link tag
 									inside = null;
 								}
 								String outHead = tag.render(inside);
@@ -710,12 +707,16 @@ public class XMLManipulationHelper {
 								attributes.put("src", "<%=URLHelper.createStaticTemplateURL(ctx,\"/" + srcValue + "\")%>");
 							}
 							remplacement.addReplacement(tags[i].getOpenStart(), tags[i].getOpenEnd() + 1, newLinkGeneratorIf + tags[i].toString() + "<%}%>");
-						}
+							if (!tags[i].isAutoClose()) {
+								newLinkGeneratorIf = "<%if (!XHTMLHelper.allReadyClosedIfOpen(ctx, \"" + srcValue + "\")) {%>";
+								remplacement.addReplacement(tags[i].getCloseStart(), tags[i].getCloseEnd() + 1, newLinkGeneratorIf + "</"+tags[i].getName() + "><%}%>");
+							}
+						}						
 					} else {
 						if (!attributes.get("src").toLowerCase().startsWith("http://")) {
 							attributes.put("src", "<%=URLHelper.createStaticTemplateURL(ctx,\"/" + srcValue + "\")%>");
 						}
-						remplacement.addReplacement(tags[i].getOpenStart(), tags[i].getOpenEnd() + 1, tags[i].toString());
+						remplacement.addReplacement(tags[i].getOpenStart(), tags[i].getOpenEnd() + 1, tags[i].toString());						
 					}
 				}
 
@@ -1004,10 +1005,10 @@ public class XMLManipulationHelper {
 		out.newLine();
 		out.append("EditContext editCtx = EditContext.getInstance(globalContext, request.getSession());%>");
 		out.newLine();
-		out.append("<%=(ctx.isInteractiveMode() ? \"<link rel=\\\"stylesheet\\\" type=\\\"text/css\\\" href=\\\"\"+URLHelper.createStaticURL(ctx,\"/css/preview/edit_preview.css\")+\"?ts=\"+infoBean.getTs()+\"\\\"></link>\" : \"\")  %>");
+		out.append("<%=(ctx.isInteractiveMode() ? \"<link rel=\\\"stylesheet\\\" type=\\\"text/css\\\" href=\\\"\"+URLHelper.createStaticURL(ctx,\"/css/preview/edit_preview.css\")+\"?ts=\"+infoBean.getTs()+\"\\\" />\" : \"\")  %>");
 		out.newLine();
 		out.append("<%String cssPreviewURL = URLHelper.mergePath(URLHelper.createStaticURL(ctx,\"/\"), globalContext.getStaticConfig().getEditTemplateFolder(), \"/css/edit_preview_\"+globalContext.getEditTemplateMode()+\".css\");%>");
-		out.append("<%=(ctx.isInteractiveMode() ? \"<link rel=\\\"stylesheet\\\" type=\\\"text/css\\\" href=\\\"\"+cssPreviewURL+\"?ts=\"+infoBean.getTs()+\"\\\"></link>\" : \"\")  %>");
+		out.append("<%=(ctx.isInteractiveMode() ? \"<link rel=\\\"stylesheet\\\" type=\\\"text/css\\\" href=\\\"\"+cssPreviewURL+\"?ts=\"+infoBean.getTs()+\"\\\" />\" : \"\")  %>");
 		out.newLine();
 		out.append("<%=(ctx.isInteractiveMode() ? \"<script type=\\\"text/javascript\\\" src=\\\"\"+URLHelper.createStaticURL(ctx,\"/js/preview/edit_preview.js\")+\"\\\"></script>\" : \"\")  %>");
 		out.newLine();
