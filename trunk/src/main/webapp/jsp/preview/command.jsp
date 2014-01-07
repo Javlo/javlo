@@ -1,5 +1,5 @@
-<%@page import="org.javlo.message.MessageRepository"
-%><%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c"
+<%@page import="org.javlo.message.GenericMessage"%>
+<%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c"
 %><%@ taglib uri="/WEB-INF/javlo.tld" prefix="jv"
 %><%@ taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions" 
 %><%@page contentType="text/html" import="
@@ -10,7 +10,9 @@
     	    org.javlo.helper.XHTMLNavigationHelper,
     	    org.javlo.context.ContentContext,
     	    org.javlo.module.core.ModulesContext,
-    	    org.javlo.context.GlobalContext"
+    	    org.javlo.context.GlobalContext,
+    	    org.javlo.module.content.Edit,
+    	    org.javlo.message.MessageRepository"
 %><%
 ContentContext ctx = ContentContext.getContentContext(request, response);
 ContentContext editCtx = new ContentContext(ctx);
@@ -19,7 +21,19 @@ ContentContext returnEditCtx = new ContentContext(editCtx);
 returnEditCtx.setEditPreview(false);
 GlobalContext globalContext = GlobalContext.getInstance(request);
 ModulesContext moduleContext = ModulesContext.getInstance(request.getSession(), globalContext);
-MessageRepository.getInstance(request); // load request message
+MessageRepository msgRepo = MessageRepository.getInstance(request); // load request message
+
+GenericMessage msg = msgRepo.getGlobalMessage();
+boolean rightOnPage = Edit.checkPageSecurity(ctx);
+msgRepo.setGlobalMessageForced(msg);
+String readOnlyPageHTML = "";
+String readOnlyClass = "access";
+String accessType = "submit";
+if (!rightOnPage) {
+	readOnlyPageHTML = " disabled";
+	readOnlyClass = "no-access";
+	accessType = "button";
+}
 %>
 <div id="preview_command" lang="${info.editLanguage}" class="edit-${not empty currentUser} ${editPreview == 'true'?'edit':'preview'}">
 	<div class="pc_header"><span class="title">${i18n.edit["preview.command"]}</span>
@@ -72,8 +86,7 @@ MessageRepository.getInstance(request); // load request message
 								<c:forEach var="renderer" items="${contentContext.deviceNames}">
 									<c:url var="url" value="${info.currentURL}">
 										<c:param name="${info.staticData.forceDeviceParameterName}" value="${renderer}"></c:param>
-									</c:url>
-									 
+									</c:url>									 
 									<option${info.device.code eq renderer?' selected="selected"':''}>${renderer}</option>
 								</c:forEach>
 							</select>
@@ -95,17 +108,17 @@ MessageRepository.getInstance(request); // load request message
 						</div>
 					</form></li></c:if>
 					<c:if test="${!userInterface.light}">
-					<li><form class="preview-edit" id="change_template_form" action="<%=URLHelper.createURL(editCtx)%>?module=template&webaction=template.changeFromPreview&previewEdit=true" method="post">
+					<li><form class="preview-edit <%=readOnlyClass%>" id="change_template_form" action="<%=URLHelper.createURL(editCtx)%>?module=template&webaction=template.changeFromPreview&previewEdit=true" method="post">
 						<div class="pc_line">							
-							<input id="pc_change_template" type="submit" value="${i18n.edit['preview.label.choose-template']}" title="${i18n.edit['preview.label.choose-template']}" class="pc_edit_true" />
+							<input id="pc_change_template" type="<%=accessType%>" value="${i18n.edit['preview.label.choose-template']}" title="${i18n.edit['preview.label.choose-template']}" class="pc_edit_true"<%=readOnlyPageHTML%> />
 							<label for="pc_change_template">${i18n.edit['preview.label.choose-template']}</label>
 						</div>
 					</form></li>
 					</c:if>
 					<%if ( moduleContext.searchModule("mailing") != null ) {%>
-					<li><form class="preview-edit" id="mailing_form" action="<%=URLHelper.createURL(editCtx)%>?module=mailing&previewEdit=true" method="post">
+					<li><form class="preview-edit <%=readOnlyClass%>" id="mailing_form" action="<%=URLHelper.createURL(editCtx)%>?module=mailing&previewEdit=true" method="post">
 						<div class="pc_line">							
-							<input id="pc_mailing" type="submit" value="${i18n.edit['preview.label.mailing']}" title="${i18n.edit['preview.label.mailing']}" class="pc_edit_true" />
+							<input id="pc_mailing" type="<%=accessType%>" value="${i18n.edit['preview.label.mailing']}" title="${i18n.edit['preview.label.mailing']}" class="pc_edit_true"<%=readOnlyPageHTML%> />
 							<label for="pc_mailing">${i18n.edit['preview.label.mailing']}</label>
 						</div>
 					</form></li><%
@@ -118,11 +131,11 @@ MessageRepository.getInstance(request); // load request message
 						</div>
 					</form></li>
 					<%}%>
-					<li><form id="pc_del_page_form" action="${info.currentURL}" method="post">
+					<li><form id="pc_del_page_form" class="<%=readOnlyClass%>" action="${info.currentURL}" method="post">
 						<div class="pc_line">
 							<input type="hidden" value="${info.pageID}" name="page"/>
 							<input type="hidden" value="edit.deletePage" name="webaction"/>
-							<input id="pc_del_page_button" type="submit" value="${i18n.edit['menu.delete']}" title="${i18n.edit['menu.delete']}" onclick="if (!confirm('${i18n.edit['menu.confirm-page']}')) return false;"/>
+							<input id="pc_del_page_button" type="<%=accessType%>" value="${i18n.edit['menu.delete']}" title="${i18n.edit['menu.delete']}" onclick="if (!confirm('${i18n.edit['menu.confirm-page']}')) return false;"<%=readOnlyPageHTML%> />
 							<label for="pc_del_page_button">${i18n.edit['menu.delete']}</label>
 						</div>
 					</form></li>
@@ -132,9 +145,9 @@ MessageRepository.getInstance(request); // load request message
 							<label for="pc_user_info">${i18n.edit['global.account-setting']}</label>
 						</div>
 					</form></li>
-					<li><form class="preview-edit" id="page_properties" action="<%=URLHelper.createURL(editCtx)%>?module=content&webaction=changeMode&mode=3&previewEdit=true" method="post">
+					<li><form class="preview-edit <%=readOnlyClass%>" id="page_properties" action="<%=URLHelper.createURL(editCtx)%>?module=content&webaction=changeMode&mode=3&previewEdit=true" method="post">
 						<div class="pc_line">							
-							<input id="pc_page_properties" type="submit" value="${i18n.edit['global.page-properties']}" title="${i18n.edit['global.page-properties']}" class="pc_edit_true" />
+							<input id="pc_page_properties" type="<%=accessType%>" value="${i18n.edit['global.page-properties']}" title="${i18n.edit['global.page-properties']}" class="pc_edit_true"<%=readOnlyPageHTML%> />
 							<label for="pc_page_properties">${i18n.edit['global.page-properties']}</label>
 						</div>
 					</form></li>										
@@ -170,10 +183,8 @@ MessageRepository.getInstance(request); // load request message
 						<legend>${i18n.edit['command.macro']}</legend>
 						<%=MacroHelper.getXHTMLMacroSelection(ctx, false, true)%>
 					</fieldset>
-				</div>	
-				
-				<form id="children_list" action="${info.currentURL}" method="post">
-					
+				</div>				
+				<form id="children_list" action="${info.currentURL}" method="post">					
 						<c:if test="${contentContext.currentTemplate.mailing}">							
 							<jsp:include page="navigation_mailing.jsp"></jsp:include>
 						</c:if>

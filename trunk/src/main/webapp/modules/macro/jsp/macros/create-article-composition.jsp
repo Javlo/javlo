@@ -5,7 +5,7 @@
 <fieldset>
 <legend>Create article</legend>
 <input type="hidden" name="webaction" value="macro-create-article-composition.create" />
-<input type="hidden" name="module" value="content" />
+<input type="hidden" name="module" value="macro" />
 
 <c:if test="${fn:length(pages)>1}">
 <div class="line">
@@ -25,13 +25,13 @@
 </c:if>
 
 <div class="line">
-	<label for="title">title</label>
-	<input type="text" id="title" name="title" />
+	<label for="title">name</label>
+	<input type="text" id="title" name="title" value="${param.title}"/>
 </div>
 
 <div class="line">
 	<label for="date">date</label>
-	<input type="text" class="datepicker" id="date" name="date" />
+	<input type="text" class="datepicker" id="date" name="date" value="${param.date}"/>
 </div>
 
 <div class="action">

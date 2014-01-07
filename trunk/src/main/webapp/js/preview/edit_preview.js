@@ -74,6 +74,9 @@ jQuery(document).ready(
 						}
 					});			
 			jQuery(".preview-edit").click(function() {
+				if (jQuery(this).hasClass("no-access")) {
+					return false;
+				}
 				var elems = jQuery(this);
 				var editURL = elems.attr("action");
 				var param = "";

@@ -336,6 +336,9 @@ public class Edit extends AbstractModuleAction {
 		AdminUserSecurity adminUserSecurity = AdminUserSecurity.getInstance();
 		GlobalContext globalContext = GlobalContext.getInstance(ctx.getRequest());
 		IUserFactory adminUserFactory = AdminUserFactory.createUserFactory(globalContext, ctx.getRequest().getSession());
+		if (adminUserFactory.getCurrentUser(ctx.getRequest().getSession()) == null) {
+			return false;
+		}
 		ContentService.getInstance(globalContext);
 		if (page.getEditorRoles().size() > 0) {
 			if (!adminUserSecurity.haveRight(adminUserFactory.getCurrentUser(ctx.getRequest().getSession()), AdminUserSecurity.FULL_CONTROL_ROLE)) {
@@ -1132,10 +1135,6 @@ public class Edit extends AbstractModuleAction {
 					parent.addChildMenuElement(elem);
 				}
 				
-				if (parentName != null) { // if parentpage defined new page become the active page.
-					ctx.setPath(elem.getPath());
-				}
-
 				path = path + "/" + nodeName;
 
 				/** initial content **/
@@ -1157,6 +1156,14 @@ public class Edit extends AbstractModuleAction {
 
 				String msg = i18nAccess.getText("action.add.new-page", new String[][] { { "path", path } });
 				MessageRepository.getInstance(ctx).setGlobalMessage(new GenericMessage(msg, GenericMessage.INFO));
+				
+				if (parentName != null) { // if parentpage defined new page become the active page.
+					ctx.setPath(elem.getPath());
+					String forwardURL = ctx.getResponse().encodeRedirectURL(URLHelper.createURL(ctx));
+					System.out.println("***** Edit.performAddPage : forward = "+forwardURL); //TODO: remove debug trace
+					ctx.getResponse().sendRedirect(forwardURL);
+					//ctx.getRequest().getRequestDispatcher(forwardURL).forward(ctx.getRequest(), ctx.getResponse());
+				}
 			}
 
 		} catch (Exception e) {
