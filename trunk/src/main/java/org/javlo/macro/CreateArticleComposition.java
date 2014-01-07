@@ -94,8 +94,6 @@ public class CreateArticleComposition extends AbstractInteractiveMacro implement
 
 	public static String performCreate(RequestService rs, EditContext editCtx, ContentContext ctx, MessageRepository messageRepository, I18nAccess i18nAccess) throws IOException, Exception {
 		
-		initInteractiveMacro (ctx, NAME);
-		
 		Properties config = ctx.getCurrentTemplate().getMacroProperties(ctx.getGlobalContext(), NAME);
 		if (config == null) {
 			config = new Properties();
