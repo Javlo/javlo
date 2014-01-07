@@ -228,7 +228,7 @@ public class XMLHelper {
 				pageList.add(page);
 			}
 			String id = page.getId();
-			String name = page.getName();
+			String name = page.getHumanName();
 			int priority = page.getPriority();
 			Collection<String> roles = page.getUserRoles();
 			String template = "";

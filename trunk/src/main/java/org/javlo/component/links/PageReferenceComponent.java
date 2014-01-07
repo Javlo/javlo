@@ -143,6 +143,7 @@ public class PageReferenceComponent extends ComplexPropertiesLink implements IAc
 		}
 
 		private MenuElement rootOfChildrenAssociation;
+		private String humanName;
 
 		private static PageBean getInstance(ContentContext ctx, MenuElement page, PageReferenceComponent comp) throws Exception {
 
@@ -183,7 +184,7 @@ public class PageReferenceComponent extends ComplexPropertiesLink implements IAc
 			bean.rootOfChildrenAssociation = page.getRootOfChildrenAssociation();
 			bean.setCategoryKey("category." + StringHelper.neverNull(page.getCategory(ctx)).toLowerCase().replaceAll(" ", ""));
 			
-			bean.publishURL = URLHelper.createAbsoluteViewURL(ctx, page.getPath());
+			
 
 			I18nAccess i18nAccess = I18nAccess.getInstance(ctx.getRequest());
 			ContentContext realContentCtx = new ContentContext(ctx);
@@ -199,6 +200,7 @@ public class PageReferenceComponent extends ComplexPropertiesLink implements IAc
 
 			bean.id = page.getId();
 			bean.name = page.getName();
+			bean.humanName = page.getHumanName();
 			bean.selected = page.isSelected(ctx);
 			bean.linkOn = page.getLinkOn(ctx);
 			bean.creationDate = StringHelper.renderShortDate(ctx, page.getCreationDate());
@@ -219,7 +221,18 @@ public class PageReferenceComponent extends ComplexPropertiesLink implements IAc
 				bean.startDate = bean.date;
 				bean.endDate = bean.date;
 			}
-			bean.url = URLHelper.createURL(ctx, page.getPath());
+			
+			/**
+			 * for association link to association page and not root.
+			 */
+			MenuElement firstChild = page.getFirstChild();
+			if (firstChild != null && firstChild.isChildrenAssociation()) {
+				bean.url = URLHelper.createURL(ctx, firstChild.getPath());
+				bean.publishURL = URLHelper.createAbsoluteViewURL(ctx, firstChild.getPath());
+			} else {
+				bean.url = URLHelper.createURL(ctx, page.getPath());
+				bean.publishURL = URLHelper.createAbsoluteViewURL(ctx, page.getPath());
+			}
 
 			String filter = comp.getConfig(ctx).getProperty("filter-image", "reference-list");
 
@@ -572,6 +585,14 @@ public class PageReferenceComponent extends ComplexPropertiesLink implements IAc
 
 		public void setChildrenAssociation(boolean childrenAssociation) {
 			this.childrenAssociation = childrenAssociation;
+		}
+
+		public String getHumanName() {
+			return humanName;
+		}
+
+		public void setHumanName(String humanName) {
+			this.humanName = humanName;
 		}
 
 	}
@@ -1344,7 +1365,7 @@ public class PageReferenceComponent extends ComplexPropertiesLink implements IAc
 				pageCal.setTime(pageDate);
 				if (todayCal.after(pageCal)) {
 					ascending = true;
-				}
+				}				
 				pages.add(page);
 			} else {
 				logger.warning("page not found : " + pageId);
@@ -1423,8 +1444,7 @@ public class PageReferenceComponent extends ComplexPropertiesLink implements IAc
 			
 			if (filterPage(lgCtx, page)) {
 				if (countPage < getMaxNews(lgCtx)) {
-					if ((page.isRealContentAnyLanguage(lgCtx) || isWidthEmptyPage()) && ((page.getChildMenuElements().size() == 0 || page.isChildrenAssociation()) || !isOnlyPageWithoutChildren()) && page.getContentDateNeverNull(lgCtx).after(backDate.getTime())) {
-						
+					if ((page.isRealContentAnyLanguage(lgCtx) || isWidthEmptyPage()) && ((page.getChildMenuElements().size() > 0 || page.isChildrenAssociation()) || !isOnlyPageWithoutChildren()) && page.getContentDateNeverNull(lgCtx).after(backDate.getTime())) {
 						if (firstPage == null) {
 							firstPage = page;
 						}

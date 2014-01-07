@@ -350,10 +350,9 @@ body.preview-only {
 	border: 0 none;
 }
 
-
 #preview_command h4 {
 	margin-right: 4px;
-	font-style: italic;
+	font-style: italic;	
 	border-bottom: 1px #484848 solid;
 }
 

@@ -3,8 +3,8 @@
 <c:set var="rootAssociation" value="${info.page.rootOfChildrenAssociation}" />
 <c:if test="${not empty rootAssociation}">
 <fieldset class="closable composition">
-	<legend>${i18n.edit['content.navigation']}</legend>
-	<div class="body">
+	<legend>${info.page.rootOfChildrenAssociation.title}</legend>
+	<div class="body">	   
 	   <ul class="navigation pages">
 	   <li class="${rootAssociation.associationPage.url eq info.currentURL?'current ':''}${rootAssociation.associationPage.info.realContent?'real-content':''}"><span><a class="construction" href="${rootAssociation.associationPage.url}">composition</a></span></li>
 	   <li><ul class="children sortable"><c:forEach var="page" items="${rootAssociation.pages}" varStatus="bcl">
