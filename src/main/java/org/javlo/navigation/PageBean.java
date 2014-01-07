@@ -111,6 +111,10 @@ public class PageBean implements Serializable {
 	public String getName() {
 		return page.getName();
 	}
+	
+	public String getHumanName() {
+		return page.getHumanName();
+	}
 
 	public String getPath() {
 		return page.getPath();

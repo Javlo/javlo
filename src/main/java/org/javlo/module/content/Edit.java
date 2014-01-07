@@ -926,8 +926,8 @@ public class Edit extends AbstractModuleAction {
 		} else {
 			String errorMessage = null;
 			boolean modify = false;
-			if (!pageName.equals(newName)) {
-				errorMessage = validNodeName(newName, i18nAccess);
+			if (!pageName.equals(StringHelper.createFileName(newName))) {
+				//errorMessage = validNodeName(newName, i18nAccess);
 
 				if (nameExist(ctx, newName)) {
 					errorMessage = i18nAccess.getText("action.validation.name-allready-exist", new String[][] { { "name", pageName } });

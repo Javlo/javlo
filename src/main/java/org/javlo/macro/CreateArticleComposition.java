@@ -14,6 +14,7 @@ import java.util.Set;
 import java.util.logging.Logger;
 
 import org.javlo.actions.IAction;
+import org.javlo.component.meta.ForceRealContent;
 import org.javlo.component.title.Title;
 import org.javlo.context.ContentContext;
 import org.javlo.context.EditContext;
@@ -147,14 +148,14 @@ public class CreateArticleComposition extends AbstractInteractiveMacro implement
 				MenuElement mountPage = ContentService.getInstance(ctx.getRequest()).getNavigation(ctx).searchChildFromName(mountPageName);
 				if (mountPage != null) {
 					MenuElement newPage = MacroHelper.addPageIfNotExist(ctx, mountPage, pageName, true, false);
+					MacroHelper.addContent(ctx.getRequestContentLanguage(), newPage, "0", ForceRealContent.TYPE, "", ctx.getCurrentEditUser());
 					if (newPage != null) {				
 						MenuElement layoutPage = MacroHelper.addPageIfNotExist(ctx, newPage.getName(), newPage.getName()+"-composition", false);						
 						newPage.setTemplateName(config.getProperty("template.article","mailing_one_area"));
 						layoutPage.setTemplateName(config.getProperty("template.composition", "mailing"));
 						layoutPage.setChildrenAssociation(true);
 						
-						MenuElement page1 = MacroHelper.addPageIfNotExist(ctx, layoutPage.getName(), layoutPage.getName()+"-1", false);
-						
+						MacroHelper.addPageIfNotExist(ctx, layoutPage.getName(), layoutPage.getName()+"-1", false);
 						MenuElement articlePage = MacroHelper.addPageIfNotExist(ctx, newPage.getName(), newPage.getName()+"-article", false);
 						articlePage.setSharedName(articlePage.getName());
 						articlePage.setTemplateName(config.getProperty("template.article","mailing_one_area"));

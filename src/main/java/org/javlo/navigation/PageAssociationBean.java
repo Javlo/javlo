@@ -72,5 +72,9 @@ public class PageAssociationBean {
 	public PageBean getArticleRoot() throws Exception {
 		return getArticlesRootInternal().getPageBean(ctx);
 	}
+	
+	public String getTitle() {
+		return root.getHumanName();
+	}
 
 }

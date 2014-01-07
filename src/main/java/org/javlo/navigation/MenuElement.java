@@ -375,11 +375,11 @@ public class MenuElement implements Serializable {
 		public void setType(String type) {
 			this.type = type;
 		}
-		
+
 		public String getSharedName() {
 			return StringHelper.neverNull(sharedName);
 		}
-		
+
 		public void setSharedName(String sharedName) {
 			this.sharedName = sharedName;
 		}
@@ -455,7 +455,7 @@ public class MenuElement implements Serializable {
 				return null;
 			}
 		}
-		
+
 		@Override
 		public String getSubTitle() {
 			try {
@@ -500,7 +500,7 @@ public class MenuElement implements Serializable {
 				return null;
 			}
 		}
-		
+
 		public Collection<ImageBean> getImagesBean() {
 			Collection<ImageBean> outImages = new LinkedList<ImageBean>();
 			for (IImageTitle image : getImages()) {
@@ -698,7 +698,7 @@ public class MenuElement implements Serializable {
 				return null;
 			}
 		}
-		
+
 		@Override
 		public String getSharedName() {
 			return page.getSharedName();
@@ -708,11 +708,11 @@ public class MenuElement implements Serializable {
 		public String getType() {
 			return page.getType();
 		}
-		
+
 		public boolean isChildrenAssociation() {
 			return page.isChildrenAssociation();
 		}
-		
+
 		public boolean isChildrenOfAssociation() {
 			return page.isChildrenOfAssociation();
 		}
@@ -725,12 +725,12 @@ public class MenuElement implements Serializable {
 			LinkedList<PageBean> outBean = new LinkedList<PageBean>();
 			MenuElement previous = page.getPreviousBrother();
 			while (previous != null) {
-				outBean.add(0,new PageBean(ctx, previous));
+				outBean.add(0, new PageBean(ctx, previous));
 				previous = previous.getPreviousBrother();
 			}
 			return outBean;
 		}
-		
+
 		public Collection<PageBean> getNextBrothers() {
 			Collection<PageBean> outBean = new LinkedList<PageBean>();
 			MenuElement next = page.getNextBrother();
@@ -741,7 +741,7 @@ public class MenuElement implements Serializable {
 			return outBean;
 		}
 	}
- 
+
 	// private GlobalContext globalContext;;
 
 	protected PageDescription getPageDescription(ContentContext ctx) throws Exception {
@@ -861,7 +861,7 @@ public class MenuElement implements Serializable {
 	int priority = 10;
 
 	String name = null;
-	
+
 	boolean childrenAssociation = false;
 
 	boolean changeNotification = true;
@@ -918,7 +918,7 @@ public class MenuElement implements Serializable {
 	private Date validationDate = null;
 
 	private String linkedURL = "";
-	
+
 	private String sharedName = null;
 
 	private boolean https = false;
@@ -934,17 +934,24 @@ public class MenuElement implements Serializable {
 
 	private boolean breakRepeat = false;
 
-	// private final Map<String, PageDescription> pageInfinityCache = new HashMap<String, PageDescription>();
+	// private final Map<String, PageDescription> pageInfinityCache = new
+	// HashMap<String, PageDescription>();
 
 	protected boolean releaseCache = false;
 
-	// private final TimeMap<String, Object> pageTimeCache = new TimeMap<String, Object>(60 * (int) Math.round(((Math.random() + 1) * 60))); // cache between 1u and 2u, all cache can not be updated at the same time
+	// private final TimeMap<String, Object> pageTimeCache = new TimeMap<String,
+	// Object>(60 * (int) Math.round(((Math.random() + 1) * 60))); // cache
+	// between 1u and 2u, all cache can not be updated at the same time
 
 	private final Map<String, String> replacement = new HashMap<String, String>();
 
 	private final Collection<String> compToBeDeleted = new LinkedList<String>();
 
-	private final Map<String, ComponentBean> contentToBeAdded = new HashMap<String, ComponentBean>(); // key is parent component id
+	private final Map<String, ComponentBean> contentToBeAdded = new HashMap<String, ComponentBean>(); // key
+																										// is
+																										// parent
+																										// component
+																										// id
 
 	private final Set<String> editGroups = new HashSet<String>();
 
@@ -1063,7 +1070,7 @@ public class MenuElement implements Serializable {
 	}
 
 	public void addContent(String parentId, ComponentBean bean, boolean realeaseCache) {
-		
+
 		assert bean != null;
 		synchronized (getLock()) {
 			synchronized (componentBean) {
@@ -1074,9 +1081,9 @@ public class MenuElement implements Serializable {
 					if (element.getId().equals(parentId)) {
 						newBean[j] = element;
 						j++;
-						newBean[j] = bean;						
-						parentFound = true;						
-						if (newBean[j].getArea() != null) {							
+						newBean[j] = bean;
+						parentFound = true;
+						if (newBean[j].getArea() != null) {
 							bean.setArea(newBean[j].getArea());
 						}
 					} else {
@@ -1085,7 +1092,7 @@ public class MenuElement implements Serializable {
 					j++;
 				}
 				if (!parentFound) { // component not found
-					newBean[0] = bean;					
+					newBean[0] = bean;
 					for (int i = 0; i < componentBean.length; i++) {
 						newBean[i + 1] = componentBean[i];
 					}
@@ -1148,7 +1155,9 @@ public class MenuElement implements Serializable {
 						out.println("page : " + getPath());
 						out.println("");
 						out.close();
-						// NetHelper.sendMailToAdministrator(ctx, "bad structure in contentToBeAdded : more that one parent id not found", writer.toString());
+						// NetHelper.sendMailToAdministrator(ctx,
+						// "bad structure in contentToBeAdded : more that one parent id not found",
+						// writer.toString());
 						logger.warning(writer.toString());
 					} else {
 						newBean = new ComponentBean[workBean.length];
@@ -1170,7 +1179,8 @@ public class MenuElement implements Serializable {
 						out.println("error on bean : " + i);
 						out.println("");
 						out.close();
-						// NetHelper.sendMailToAdministrator(ctx, "error null bean found.", writer.toString());
+						// NetHelper.sendMailToAdministrator(ctx,
+						// "error null bean found.", writer.toString());
 						logger.warning(writer.toString());
 					}
 				}
@@ -1461,7 +1471,8 @@ public class MenuElement implements Serializable {
 	}
 
 	/**
-	 * get the content in current language and in default languages order if not exist.
+	 * get the content in current language and in default languages order if not
+	 * exist.
 	 */
 	public ContentElementList getBestLanguageContent(ContentContext ctx) throws Exception {
 		if (isRealContent(ctx)) {
@@ -1510,7 +1521,13 @@ public class MenuElement implements Serializable {
 		ContentContext noAreaCtx = ctx.getContextWithoutArea();
 
 		if (noAreaCtx.getRenderMode() == ContentContext.EDIT_MODE) {
-			noAreaCtx.setRenderMode(ContentContext.PREVIEW_MODE); // get info for preview mode (with repeat elements)
+			noAreaCtx.setRenderMode(ContentContext.PREVIEW_MODE); // get info
+																	// for
+																	// preview
+																	// mode
+																	// (with
+																	// repeat
+																	// elements)
 		}
 
 		IContentComponentsList contentList = getContent(noAreaCtx);
@@ -1558,7 +1575,14 @@ public class MenuElement implements Serializable {
 	}
 
 	/*
-	 * static MenuElement searchChild(MenuElement elem, ContentContext ctx, String path, int depth) { if (depth > MAX_SEARCH_DEPTH) { return null; } MenuElement res = null; List<MenuElement> children = elem.getChildMenuElementsWithVirtualList(false, false); for (MenuElement menuElement : children) { List<String> paths = menuElement.getAllVirtualPath(ctx); if (paths.contains(path)) { return menuElement; } else { res = searchChild(menuElement, ctx, path, depth+1); if (res != null) { return res; } } }
+	 * static MenuElement searchChild(MenuElement elem, ContentContext ctx,
+	 * String path, int depth) { if (depth > MAX_SEARCH_DEPTH) { return null; }
+	 * MenuElement res = null; List<MenuElement> children =
+	 * elem.getChildMenuElementsWithVirtualList(false, false); for (MenuElement
+	 * menuElement : children) { List<String> paths =
+	 * menuElement.getAllVirtualPath(ctx); if (paths.contains(path)) { return
+	 * menuElement; } else { res = searchChild(menuElement, ctx, path, depth+1);
+	 * if (res != null) { return res; } } }
 	 * 
 	 * return res; }
 	 */
@@ -1732,9 +1756,11 @@ public class MenuElement implements Serializable {
 	}
 
 	/**
-	 * return a language with content. If there are content in current language, it is returned.
+	 * return a language with content. If there are content in current language,
+	 * it is returned.
 	 * 
-	 * @return a ContentContext with content or current context if there are no content in any language.
+	 * @return a ContentContext with content or current context if there are no
+	 *         content in any language.
 	 * @throws Exception
 	 */
 	public ContentContext getContentContextWithContent(ContentContext ctx) throws Exception {
@@ -1750,7 +1776,8 @@ public class MenuElement implements Serializable {
 				Collection<String> defaultLgs = globalContext.getDefaultLanguages();
 				for (String lg : defaultLgs) {
 					/*
-					 * if (globalContext.getLanguages().contains(lg)) { // if content lg exist as lgCtx.setLanguage(lg); }
+					 * if (globalContext.getLanguages().contains(lg)) { // if
+					 * content lg exist as lgCtx.setLanguage(lg); }
 					 */
 					lgCtx.setContentLanguage(lg);
 					lgCtx.setRequestContentLanguage(lg);
@@ -1763,7 +1790,8 @@ public class MenuElement implements Serializable {
 				Collection<String> languages = globalContext.getContentLanguages();
 				for (String lg : languages) {
 					/*
-					 * if (globalContext.getLanguages().contains(lg)) { // if content lg exist as lgCtx.setLanguage(lg); }
+					 * if (globalContext.getLanguages().contains(lg)) { // if
+					 * content lg exist as lgCtx.setLanguage(lg); }
 					 */
 					lgCtx.setContentLanguage(lg);
 					lgCtx.setRequestContentLanguage(lg);
@@ -1808,7 +1836,11 @@ public class MenuElement implements Serializable {
 			}
 		} else {
 			if (!isEmpty(localContext)) {
-				ContentElementList contentList = getAllContent(localContext); // search date in all area
+				ContentElementList contentList = getAllContent(localContext); // search
+																				// date
+																				// in
+																				// all
+																				// area
 				while (contentList.hasNext(ctx)) {
 					IContentVisualComponent comp = contentList.next(ctx);
 					if (comp.getType() == DateComponent.TYPE) {
@@ -1876,7 +1908,10 @@ public class MenuElement implements Serializable {
 		newCtx.setArea(null);
 
 		if (newCtx.getRenderMode() == ContentContext.EDIT_MODE) {
-			newCtx.setRenderMode(ContentContext.PREVIEW_MODE); // get info for preview mode (with repeat elements)
+			newCtx.setRenderMode(ContentContext.PREVIEW_MODE); // get info for
+																// preview mode
+																// (with repeat
+																// elements)
 		}
 
 		IContentComponentsList contentList = getAllContent(newCtx);
@@ -1919,7 +1954,8 @@ public class MenuElement implements Serializable {
 	}
 
 	/**
-	 * return the field value of the first component match with the component type
+	 * return the field value of the first component match with the component
+	 * type
 	 * 
 	 * @param ctx
 	 * @param componentType
@@ -2140,7 +2176,19 @@ public class MenuElement implements Serializable {
 	}
 
 	/*
-	 * public ContentElementList getViewContent(ContentContext ctx, int format) throws Exception { ContentElementList contentElementList = contentElementListMap.get(ctx.getRequestContentLanguage()); if (contentElementList == null) { Content content = Content.createContent(ctx.getRequest()); ContentContext localContext = new ContentContext(ctx); if (!content.contentExistForContext(ctx)) { GlobalContext globalCotext = GlobalContext.getInstance(ctx.getRequest()); Set<String> lgs = globalCotext.getContentLanguages(); for (String lg : lgs) { localContext.setLanguage(lg); if (content.contentExistForContext(localContext)) { break; } } } contentElementList = new ContentElementList(componentBean, localContext, this); contentElementListMap.put(ctx.getRequestContentLanguage(), contentElementList); }
+	 * public ContentElementList getViewContent(ContentContext ctx, int format)
+	 * throws Exception { ContentElementList contentElementList =
+	 * contentElementListMap.get(ctx.getRequestContentLanguage()); if
+	 * (contentElementList == null) { Content content =
+	 * Content.createContent(ctx.getRequest()); ContentContext localContext =
+	 * new ContentContext(ctx); if (!content.contentExistForContext(ctx)) {
+	 * GlobalContext globalCotext = GlobalContext.getInstance(ctx.getRequest());
+	 * Set<String> lgs = globalCotext.getContentLanguages(); for (String lg :
+	 * lgs) { localContext.setLanguage(lg); if
+	 * (content.contentExistForContext(localContext)) { break; } } }
+	 * contentElementList = new ContentElementList(componentBean, localContext,
+	 * this); contentElementListMap.put(ctx.getRequestContentLanguage(),
+	 * contentElementList); }
 	 * 
 	 * return contentElementList; }
 	 */
@@ -2333,7 +2381,8 @@ public class MenuElement implements Serializable {
 		if (localContentElementList == null || !ctx.isAsViewMode()) {
 			localContentElementList = new ContentElementList(componentBean, ctx, this, false);
 
-			if (!ctx.isFree()) { // no reference to template >>> some component can be absent
+			if (!ctx.isFree()) { // no reference to template >>> some component
+									// can be absent
 				getContentElementListMap().put(ctx.getRequestContentLanguage(), localContentElementList);
 			}
 
@@ -2391,7 +2440,8 @@ public class MenuElement implements Serializable {
 	}
 
 	/**
-	 * get the description for meta tag (if no meta description defined return the description)
+	 * get the description for meta tag (if no meta description defined return
+	 * the description)
 	 * 
 	 * @param ctx
 	 * @return
@@ -2429,24 +2479,27 @@ public class MenuElement implements Serializable {
 
 	/**
 	 * reutrn the name, formated as "file name", without space and special char.
+	 * 
 	 * @return
 	 */
 	public String getName() {
 		return StringHelper.createFileName(name);
 	}
-	
+
 	/**
 	 * return the name, as create by user.
+	 * 
 	 * @return
 	 */
 	public String getHumanName() {
-		return name;		
+		return name;
 	}
 
 	/**
 	 * get the previous menu element in the child list
 	 * 
-	 * @return a MenuElement with the same depth, null if current is the first element.
+	 * @return a MenuElement with the same depth, null if current is the first
+	 *         element.
 	 */
 	public MenuElement getNextBrother() {
 		if (getParent() == null) {
@@ -2498,7 +2551,12 @@ public class MenuElement implements Serializable {
 
 	protected ICache getCache(ContentContext ctx) {
 		/*
-		 * GlobalContext globalContext = GlobalContext.getInstance(ctx.getRequest()); ICache cache = globalContext.getCache("navigation"); if (releaseCache) { String prefix = getCacheKey(""); for (String key : cache.getKeys()) { if (key.startsWith(prefix)) { cache.removeItem(key); } } releaseCache = false; } return cache;
+		 * GlobalContext globalContext =
+		 * GlobalContext.getInstance(ctx.getRequest()); ICache cache =
+		 * globalContext.getCache("navigation"); if (releaseCache) { String
+		 * prefix = getCacheKey(""); for (String key : cache.getKeys()) { if
+		 * (key.startsWith(prefix)) { cache.removeItem(key); } } releaseCache =
+		 * false; } return cache;
 		 */
 
 		if (localCache == null) {
@@ -2581,7 +2639,8 @@ public class MenuElement implements Serializable {
 	}
 
 	/**
-	 * get the title of the page define in the content, empty string if no title defined.
+	 * get the title of the page define in the content, empty string if no title
+	 * defined.
 	 * 
 	 * @param ctx
 	 * @return
@@ -2658,7 +2717,8 @@ public class MenuElement implements Serializable {
 	/**
 	 * get the previous menu element in the child list
 	 * 
-	 * @return a MenuElement with the same depth, null if current is the first element.
+	 * @return a MenuElement with the same depth, null if current is the first
+	 *         element.
 	 */
 	public MenuElement getPreviousBrother() {
 		if (getParent() == null) {
@@ -2719,7 +2779,8 @@ public class MenuElement implements Serializable {
 	}
 
 	/**
-	 * return the depth of the selection. sample: if the first selected element have children and sedond not the depth is 2.
+	 * return the depth of the selection. sample: if the first selected element
+	 * have children and sedond not the depth is 2.
 	 * 
 	 * @return a depth
 	 * @throws Exception
@@ -2752,7 +2813,7 @@ public class MenuElement implements Serializable {
 		ContentContext newCtx = new ContentContext(ctx);
 
 		PageDescription desc = getPageDescriptionCached(ctx, newCtx.getRequestContentLanguage());
-		
+
 		if (desc.subTitle != null) {
 			return desc.subTitle;
 		}
@@ -2779,7 +2840,13 @@ public class MenuElement implements Serializable {
 		lgDefaultCtx.setArea(null);
 
 		if (lgDefaultCtx.getRenderMode() == ContentContext.EDIT_MODE) {
-			lgDefaultCtx.setRenderMode(ContentContext.PREVIEW_MODE); // get info for preview mode (with repeat elements)
+			lgDefaultCtx.setRenderMode(ContentContext.PREVIEW_MODE); // get info
+																		// for
+																		// preview
+																		// mode
+																		// (with
+																		// repeat
+																		// elements)
 		}
 
 		GlobalContext globalContext = GlobalContext.getInstance(ctx.getRequest());
@@ -2843,12 +2910,13 @@ public class MenuElement implements Serializable {
 
 		return desc.timeRange;
 	}
-	
+
 	/**
 	 * get the real content title.
+	 * 
 	 * @param ctx
 	 * @return null if no title found in content.
-	 * @throws Exception 
+	 * @throws Exception
 	 */
 	public String getContentTitle(ContentContext ctx) throws Exception {
 		return getContent(ctx).getTitle();
@@ -3015,7 +3083,9 @@ public class MenuElement implements Serializable {
 				if (globalContext.isAutoSwitchToDefaultLanguage() && ctx.getRenderMode() != ContentContext.EDIT_MODE) {
 					ContentContext defaultLgCtx = new ContentContext(ctx);
 					/*
-					 * defaultLgCtx.setContentLanguage(globalContext.getDefaultLanguage ()); if (element.isVisible(defaultLgCtx)) { res.add(element); }
+					 * defaultLgCtx.setContentLanguage(globalContext.
+					 * getDefaultLanguage ()); if
+					 * (element.isVisible(defaultLgCtx)) { res.add(element); }
 					 */
 
 					Iterator<String> defaultLgs = globalContext.getDefaultLanguages().iterator();
@@ -3073,7 +3143,8 @@ public class MenuElement implements Serializable {
 		return getChildMenuElements().equals(elem.getChildMenuElements());
 	}
 
-	// TODO: change this method with a method in the component, it return is date if visible of not.
+	// TODO: change this method with a method in the component, it return is
+	// date if visible of not.
 	public boolean isContentDateVisible(ContentContext ctx) throws Exception {
 		PageDescription desc = getPageDescriptionCached(ctx, ctx.getRequestContentLanguage());
 		if (desc.contentDateVisible != null) {
@@ -3087,7 +3158,11 @@ public class MenuElement implements Serializable {
 			localContext.setRequestContentLanguage(defaultLgs.next());
 		}
 		if (!isEmpty(localContext)) {
-			ContentElementList contentList = getAllContent(localContext); // search date in all area
+			ContentElementList contentList = getAllContent(localContext); // search
+																			// date
+																			// in
+																			// all
+																			// area
 			while (contentList.hasNext(ctx)) {
 				IContentVisualComponent comp = contentList.next(ctx);
 				if (comp.getType() == DateComponent.TYPE) {
@@ -3131,7 +3206,10 @@ public class MenuElement implements Serializable {
 		while ((contentList.hasNext(ctxForceArea))) {
 			IContentVisualComponent component = contentList.next(ctxForceArea);
 			if (component != null) {
-				if (!component.isEmpty(ctxForceArea) || ctx.getCurrentTemplate().isMailing()) { // mailing is never empty
+				if (!component.isEmpty(ctxForceArea) || ctx.getCurrentTemplate().isMailing()) { // mailing
+																								// is
+																								// never
+																								// empty
 					if (!component.isRepeat()) {
 						desc.setEmpty(area, false);
 						return false;
@@ -3139,16 +3217,16 @@ public class MenuElement implements Serializable {
 				}
 			}
 		}
-		
+
 		if (isChildrenAssociation()) {
 			for (MenuElement child : getChildMenuElements()) {
-				if (!child.isEmpty(ctxForceArea)) {					
+				if (!child.isEmpty(ctxForceArea)) {
 					desc.setEmpty(area, false);
 					return false;
 				}
 			}
 		}
-		
+
 		desc.setEmpty(area, true);
 		return true;
 	}
@@ -3186,42 +3264,47 @@ public class MenuElement implements Serializable {
 	}
 
 	public boolean isRealContent(ContentContext ctx) throws Exception {
-		
+
 		if (!isInsideTimeRange()) {
 			return false;
 		}
-		
+
 		Template template = TemplateFactory.getTemplate(ctx, this);
-		
+
 		ContentContext contentAreaCtx = new ContentContext(ctx);
-		
+
 		if (template == null || !template.isRealContentFromAnyArea()) {
 			contentAreaCtx.setArea(ComponentBean.DEFAULT_AREA);
 		} else {
 			contentAreaCtx.setArea(null);
 		}
-		
-		PageDescription desc = getPageDescriptionCached(ctx, contentAreaCtx.getRequestContentLanguage()); // warning: setArea can change request language.
+
+		PageDescription desc = getPageDescriptionCached(ctx, contentAreaCtx.getRequestContentLanguage()); // warning:
+																											// setArea
+																											// can
+																											// change
+																											// request
+																											// language.
 
 		if (!desc.isRealContentNull()) {
 			return desc.isRealContent();
 		}
-		
+
 		if (template == null || !template.isRealContentFromAnyArea()) {
 			contentAreaCtx.setArea(ComponentBean.DEFAULT_AREA);
 		} else {
 			contentAreaCtx.setArea(null);
 		}
-		
-		ContentElementList comps = getContent(contentAreaCtx);		
-		while (comps.hasNext(contentAreaCtx)) {			
-			IContentVisualComponent comp = comps.next(contentAreaCtx);			
-			if (comp.isRealContent(contentAreaCtx) && !comp.isRepeat()) {				
+
+		ContentElementList comps = getContent(contentAreaCtx);
+		while (comps.hasNext(contentAreaCtx)) {
+			IContentVisualComponent comp = comps.next(contentAreaCtx);
+			if (comp.isRealContent(contentAreaCtx) && !comp.isRepeat()) {
 				desc.realContent = true;
 				return true;
 			}
 		}
-		
+
 		if (isChildrenAssociation()) {
 			for (MenuElement child : getChildMenuElements()) {
 				if (child.isRealContent(contentAreaCtx)) {
@@ -3232,7 +3315,7 @@ public class MenuElement implements Serializable {
 		}
 
 		desc.realContent = false;
-		
+
 		return false;
 
 	}
@@ -3255,7 +3338,9 @@ public class MenuElement implements Serializable {
 	}
 
 	/*
-	 * public boolean isSelected(ContentContext ctx) { String[] pathElems = ctx.getPath().split("\\/"); for (String pathElem : pathElems) { if (name.equals(pathElem)) { return true; } } return false; }
+	 * public boolean isSelected(ContentContext ctx) { String[] pathElems =
+	 * ctx.getPath().split("\\/"); for (String pathElem : pathElems) { if
+	 * (name.equals(pathElem)) { return true; } } return false; }
 	 */
 
 	public boolean isRemote() {
@@ -3302,13 +3387,13 @@ public class MenuElement implements Serializable {
 			ContentContext contentAreaCtx = new ContentContext(ctx);
 			contentAreaCtx.setArea(ComponentBean.DEFAULT_AREA);
 			ContentElementList content = this.getContent(contentAreaCtx);
-			
+
 			if (ctx.getGlobalContext().isCollaborativeMode() && ctx.getCurrentEditUser() != null) {
-				if (getEditorRoles().size() > 0 && !ctx.getCurrentEditUser().validForRoles(getEditorRoles())) {	
+				if (getEditorRoles().size() > 0 && !ctx.getCurrentEditUser().validForRoles(getEditorRoles())) {
 					return false;
 				}
 			}
-			
+
 			while (content.hasNext(contentAreaCtx)) {
 				IContentVisualComponent comp = content.next(contentAreaCtx);
 				if (!comp.isEmpty(contentAreaCtx)) {
@@ -3320,7 +3405,14 @@ public class MenuElement implements Serializable {
 			for (MenuElement child : children) {
 				content = child.getContent(ctx);
 				while (content.hasNext(contentAreaCtx)) {
-					if (!content.next(contentAreaCtx).isEmpty(contentAreaCtx) /* && child.isVisible() */) { // TODO:
+					if (!content.next(contentAreaCtx).isEmpty(contentAreaCtx) /*
+																			 * &&
+																			 * child
+																			 * .
+																			 * isVisible
+																			 * (
+																			 * )
+																			 */) { // TODO:
 						return isInsideTimeRange();
 					}
 				}
@@ -3371,9 +3463,9 @@ public class MenuElement implements Serializable {
 		return comp.getId();
 	}
 
-	public void releaseCache() {		
+	public void releaseCache() {
 		releaseCache = true;
-		getContentElementListMap().clear();		
+		getContentElementListMap().clear();
 		getLocalContentElementListMap().clear();
 	}
 
@@ -3396,7 +3488,8 @@ public class MenuElement implements Serializable {
 	 * remove a component on the page
 	 * 
 	 * @param releaseCache
-	 *            true if you want release the page cache after deleted component
+	 *            true if you want release the page cache after deleted
+	 *            component
 	 * @return the type of the component, null if not found
 	 */
 	public String removeContent(ContentContext ctx, String id, boolean releaseCache) {
@@ -3406,7 +3499,7 @@ public class MenuElement implements Serializable {
 			boolean delete = false;
 			for (int i = 0; i < componentBean.length; i++) {
 				IContentVisualComponent comp = ComponentFactory.getComponentWithType(ctx, componentBean[i].getType());
-				
+
 				if (!componentBean[i].getId().equals(id)) {
 					if (!delete) {
 						outList.add(componentBean[i]);
@@ -3444,9 +3537,15 @@ public class MenuElement implements Serializable {
 	}
 
 	/*
-	 * public boolean needJavaScript(ContentContext ctx) throws Exception { PageDescription desc = getPageDescriptionCached(ctx,ctx.getRequestContentLanguage()); if (desc.needJavaScript != null) { return desc.needJavaScript; }
+	 * public boolean needJavaScript(ContentContext ctx) throws Exception {
+	 * PageDescription desc =
+	 * getPageDescriptionCached(ctx,ctx.getRequestContentLanguage()); if
+	 * (desc.needJavaScript != null) { return desc.needJavaScript; }
 	 * 
-	 * ContentElementList content = getAllContent(ctx); while (content.hasNext()) { IContentVisualComponent comp = content.next(); if (comp.needJavaScript()) { desc.needJavaScript = true; return true; } } desc.needJavaScript = false; return false; }
+	 * ContentElementList content = getAllContent(ctx); while
+	 * (content.hasNext()) { IContentVisualComponent comp = content.next(); if
+	 * (comp.needJavaScript()) { desc.needJavaScript = true; return true; } }
+	 * desc.needJavaScript = false; return false; }
 	 */
 
 	public MenuElement searchChild(ContentContext ctx) throws Exception {
@@ -3455,7 +3554,9 @@ public class MenuElement implements Serializable {
 
 	public MenuElement searchChild(ContentContext ctx, String path) throws Exception {
 		/*
-		 * if (path.equals("/")) { return this; } else { Collection<MenuElement> pastNode = new LinkedList<MenuElement>(); return searchChild(this, ctx, path, pastNode); }
+		 * if (path.equals("/")) { return this; } else { Collection<MenuElement>
+		 * pastNode = new LinkedList<MenuElement>(); return searchChild(this,
+		 * ctx, path, pastNode); }
 		 */
 		GlobalContext globalContext = GlobalContext.getInstance(ctx.getRequest());
 		MenuElement page = globalContext.getPageIfExist(ctx, path, false);
@@ -3469,7 +3570,7 @@ public class MenuElement implements Serializable {
 	 */
 	public MenuElement searchChildFromId(String id) {
 		if ((id == null) || (id.equals("0"))) {
-			//return this;
+			// return this;
 			return null;
 		} else {
 			try {
@@ -3593,7 +3694,17 @@ public class MenuElement implements Serializable {
 	}
 
 	/*
-	 * public int getLastAccess(ContentContext ctx) throws ServiceException { String accessPageKey = "access-page-" + ctx.getLanguage(); Integer lastMonthAccess = (Integer) pageTimeCache.get(accessPageKey); if (lastMonthAccess == null) { synchronized (pageTimeCache) { Tracker tracker = Tracker.getTracker(ctx.getRequest().getSession()); StaticConfig staticConfig = StaticConfig.getInstance(ctx.getRequest().getSession()); int outLastMonthAccess = tracker.getPathCountAccess(staticConfig.getLastAccessPage(), URLHelper.mergePath(ctx.getLanguage(), getPath())); pageTimeCache.put(accessPageKey, new Integer(outLastMonthAccess)); return outLastMonthAccess; } } else { return lastMonthAccess; } }
+	 * public int getLastAccess(ContentContext ctx) throws ServiceException {
+	 * String accessPageKey = "access-page-" + ctx.getLanguage(); Integer
+	 * lastMonthAccess = (Integer) pageTimeCache.get(accessPageKey); if
+	 * (lastMonthAccess == null) { synchronized (pageTimeCache) { Tracker
+	 * tracker = Tracker.getTracker(ctx.getRequest().getSession()); StaticConfig
+	 * staticConfig = StaticConfig.getInstance(ctx.getRequest().getSession());
+	 * int outLastMonthAccess =
+	 * tracker.getPathCountAccess(staticConfig.getLastAccessPage(),
+	 * URLHelper.mergePath(ctx.getLanguage(), getPath()));
+	 * pageTimeCache.put(accessPageKey, new Integer(outLastMonthAccess)); return
+	 * outLastMonthAccess; } } else { return lastMonthAccess; } }
 	 */
 
 	public void setName(String name) {
@@ -3791,24 +3902,25 @@ public class MenuElement implements Serializable {
 
 		return desc.notInSearch;
 	}
-	
+
 	/**
 	 * check if the page is cacheable (static content)
+	 * 
 	 * @param ctx
 	 * @return
-	 * @throws Exception 
+	 * @throws Exception
 	 */
 	public boolean isCacheable(ContentContext ctx) throws Exception {
 		PageDescription desc = getPageDescriptionCached(ctx, ctx.getRequestContentLanguage());
 		if (desc.cacheable != null) {
 			return desc.cacheable;
-		}		
+		}
 		ContentContext noAreaCtx = new ContentContext(ctx);
 		noAreaCtx.setArea(null);
 		ContentElementList content = getContent(noAreaCtx);
 		while (content.hasNext(noAreaCtx)) {
-			IContentVisualComponent comp = content.next(noAreaCtx);			
-			if (!comp.isContentCachable(noAreaCtx)) {				
+			IContentVisualComponent comp = content.next(noAreaCtx);
+			if (!comp.isContentCachable(noAreaCtx)) {
 				desc.cacheable = false;
 				return false;
 			}
@@ -3882,7 +3994,8 @@ public class MenuElement implements Serializable {
 	}
 
 	/**
-	 * return true if time range can modify the status of the page in the future.
+	 * return true if time range can modify the status of the page in the
+	 * future.
 	 * 
 	 * @return
 	 */
@@ -3950,46 +4063,45 @@ public class MenuElement implements Serializable {
 	public void setSharedName(String sharedName) {
 		this.sharedName = sharedName;
 	}
-	
+
 	public boolean isChildrenAssociation() {
 		return childrenAssociation;
 	}
-	
+
 	/**
 	 * check if this page is a part of page association
+	 * 
 	 * @return
 	 */
-	public boolean isChildrenOfAssociation() {		
-		MenuElement parent = getParent();
-		while(parent != null) {
-			if (parent.isChildrenAssociation()) {
-				return true;
+	public boolean isChildrenOfAssociation() {
+		MenuElement root = getRootOfChildrenAssociation();
+		if (root != null) {
+			String rootId = root.getId();
+			MenuElement parent = getParent();
+			while (parent != null) {
+				if (parent.getId().equals(rootId)) {
+					return true;
+				}
+				parent = parent.getParent();
 			}
-			if (parent.getPreviousBrother() != null && parent.getPreviousBrother().isChildrenAssociation()) {
-				return true;
-			}
-			if (parent.getNextBrother() != null && parent.getNextBrother().isChildrenAssociation()) {
-				return true;
-			}
-			parent = parent.getParent();
-		}		
+		}
 		return false;
-	}	
-	
-	public MenuElement getRootOfChildrenAssociation() {		
+	}
+
+	public MenuElement getRootOfChildrenAssociation() {
 		MenuElement parent = this;
-		while (parent != null) {			
+		while (parent != null) {
 			for (MenuElement child : parent.getChildMenuElements()) {
 				if (child.isChildrenAssociation()) {
 					return parent;
 				}
-			}			
+			}
 			parent = parent.getParent();
 		}
 		return null;
 	}
-	
-	public void setChildrenAssociation(boolean childrenAssociation) {		
+
+	public void setChildrenAssociation(boolean childrenAssociation) {
 		this.childrenAssociation = childrenAssociation;
 		releaseCache();
 	}
@@ -4000,6 +4112,14 @@ public class MenuElement implements Serializable {
 
 	public void setChangeNotification(boolean changeNotification) {
 		this.changeNotification = changeNotification;
+	}
+	
+	public MenuElement getFirstChild() {
+		if (childMenuElements.size() > 0) {
+			return childMenuElements.get(0);	
+		} else {
+			return null;
+		}		
 	}
 
 }
