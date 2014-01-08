@@ -1708,6 +1708,11 @@ public class XHTMLHelper {
 	 * @return true if tag is'nt closed but opened.
 	 */
 	public static boolean allReadyClosedIfOpen(ContentContext ctx, String resource) {
+		if (resource.contains("jquery-1") || resource.contains("jquery-2") || resource.contains("jquery.min") || resource.endsWith("jquery.js")) {
+			resource = "_jquery-library_";
+		} else if (resource.contains("jquery-ui")) {
+			resource = "_jquery-ui_";
+		}
 		String openKey = "_ari_" + resource;
 		String closeKey = "_arc_" + resource;
 		if (ctx.getRequest().getAttribute(openKey) != null) {

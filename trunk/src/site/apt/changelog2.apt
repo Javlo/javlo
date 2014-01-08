@@ -203,3 +203,7 @@ change log
  * cols plugins + 12 cols mecanims for BusinessComponent and smart GenericForm
  
 * 2.0.2.7 18/12/2013
+
+ * child association
+
+ * name of page can be human readable.
