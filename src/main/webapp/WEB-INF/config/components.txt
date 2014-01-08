@@ -109,9 +109,9 @@ org.javlo.component.meta.NotSearchPage
 org.javlo.component.form.SearchResultComponent
 org.javlo.component.form.GenericFormForRegistering
 org.javlo.component.container.DynamicComponentList
-org.javlo.component.portlet.PortletWrapperComponent
 org.javlo.component.links.UserInfoLink
 org.javlo.component.form.FormMailingComponent
 org.javlo.component.users.UserSearch
 org.javlo.component.users.UserRegistration
 org.javlo.component.ecom.MoneybookersPayement
+org.javlo.component.core.RendererReferenceComponent

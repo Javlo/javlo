@@ -66,7 +66,8 @@ public class Multimedia extends TimeRangeComponent implements IImageTitle {
 	protected static final String IMAGE_AFTER_EXEPT_FIRST = "only first item with image first";
 
 	protected static final String ORDER_BY_ACCESS = "order by access";
-	protected static final String REVERSE_ORDER = "reverse order";	
+	protected static final String REVERSE_ORDER = "reverse order";
+	protected static final String NAME_ORDER = "name order";	
 
 	public static final String ALL = "all";
 	public static final String IMAGE = "image";
@@ -439,6 +440,16 @@ public class Multimedia extends TimeRangeComponent implements IImageTitle {
 		out.println("</div>");
 		
 		out.println("<div class=\"line\">");
+		out.print("<input type=\"checkbox\" name=\"" + getInputNameNameOrder() + "\" id=\"" + getInputNameNameOrder() + "\" ");
+		if (isNameOrder(ctx)) {
+			out.print("checked=\"checked\" ");
+		}
+		out.print("/>");
+		out.println("<label for=\"" + getInputNameNameOrder() + "\"> order by name.</label>");
+		out.println("</div>");
+		
+		
+		out.println("<div class=\"line\">");
 		out.print("<input type=\"checkbox\" name=\"" + getInputNameOrderByAccess() + "\" id=\"" + getInputNameOrderByAccess() + "\" ");
 		if (isOrderByAccess(ctx)) {
 			out.print("checked=\"checked\" ");
@@ -524,6 +535,10 @@ public class Multimedia extends TimeRangeComponent implements IImageTitle {
 	
 	protected String getInputNameReverseOrder() {
 		return "reverse_order_" + getId();
+	}
+	
+	protected String getInputNameNameOrder() {
+		return getInputName("name_order");
 	}
 
 	protected String getItemCssClass() {
@@ -789,8 +804,12 @@ public class Multimedia extends TimeRangeComponent implements IImageTitle {
 
 		if (isOrderByAccess(ctx)) {
 			Collections.sort(allResource, new MultimediaResource.SortByIndex(true));
-		} else {			
-			Collections.sort(allResource, new MultimediaResource.SortByDate(isReverseOrder(ctx)));
+		} else {
+			if (isNameOrder(ctx)) {
+				Collections.sort(allResource, new MultimediaResource.SortByName(isReverseOrder(ctx)));
+			} else {
+				Collections.sort(allResource, new MultimediaResource.SortByDate(isReverseOrder(ctx)));
+			}
 		}
 
 		int max = Math.min(getMaxListSize(), allResource.size());
@@ -850,11 +869,15 @@ public class Multimedia extends TimeRangeComponent implements IImageTitle {
 	}
 
 	public boolean isOrderByAccess(ContentContext ctx) {
-		return getValue(ctx).endsWith(ORDER_BY_ACCESS);
+		return getValue(ctx).contains(ORDER_BY_ACCESS);
 	}
 	
 	public boolean isReverseOrder(ContentContext ctx) {
 		return getValue(ctx).endsWith(REVERSE_ORDER);
+	}
+	
+	public boolean 	isNameOrder(ContentContext ctx) {
+		return getValue(ctx).contains(NAME_ORDER);
 	}
 
 	protected boolean isRenderInfo(ContentContext ctx) {
@@ -885,6 +908,7 @@ public class Multimedia extends TimeRangeComponent implements IImageTitle {
 
 			boolean isOrderByAcess = requestService.getParameter(getInputNameOrderByAccess(), null) != null;
 			boolean isReverseOrder = requestService.getParameter(getInputNameReverseOrder(), null) != null;
+			boolean isNameOrder = requestService.getParameter(getInputNameNameOrder(), null) != null;
 
 			Date startDate = StringHelper.parseDateOrTime(newStartDate);
 			Date endDate = StringHelper.parseDateOrTime(newEndDate);
@@ -902,12 +926,15 @@ public class Multimedia extends TimeRangeComponent implements IImageTitle {
 			}
 
 			String multimediaInfo = StringHelper.neverNull(StringHelper.renderTime(startDate)) + VALUE_SEPARATOR + StringHelper.neverNull(StringHelper.renderTime(endDate)) + VALUE_SEPARATOR + newPageSize + ',' + newListSizeDate + VALUE_SEPARATOR + folder + VALUE_SEPARATOR + newDisplayType + VALUE_SEPARATOR + StringHelper.collectionToString(selectedTags) + VALUE_SEPARATOR + title;
-			if (isOrderByAcess) {
+			if (isNameOrder) {
+				multimediaInfo = multimediaInfo + VALUE_SEPARATOR + NAME_ORDER;
+			}
+			if (isOrderByAcess && !isNameOrder) {
 				multimediaInfo = multimediaInfo + VALUE_SEPARATOR + ORDER_BY_ACCESS;
 			}
 			if (isReverseOrder) {
 				multimediaInfo = multimediaInfo + VALUE_SEPARATOR + REVERSE_ORDER;
-			}
+			}			
 			if (!multimediaInfo.equals(getValue())) {
 				setValue(multimediaInfo);
 				setModify();

@@ -2483,7 +2483,7 @@ public class MenuElement implements Serializable {
 	 * @return
 	 */
 	public String getName() {
-		return StringHelper.createFileName(name);
+		return StringHelper.createFileName(name).trim();
 	}
 
 	/**
