@@ -29,21 +29,12 @@ public class MenuElementPopularityComparator implements Comparator<MenuElement> 
 	
 	public int compare(MenuElement elem1, MenuElement elem2) {
 		try {
-			/*if (elem1.isRealContent(ctx) && !elem2.isRealContent(ctx)) {				
-				return multiply;
-			} else if (!elem1.isRealContent(ctx) && elem2.isRealContent(ctx)) {
-				return -multiply;
-			}
-			if (elem1.getPageRank(ctx) == elem2.getPageRank(ctx)) {
-				return MenuElementVisitComparator.compareVisit(ctx, multiply, elem1, elem2);
-			} else {*/
 			int outComp = (int)Math.round((elem1.getPageRank(ctx)-elem2.getPageRank(ctx))*100)*multiply;
 			if (outComp != 0) {// no equality
 				return outComp;
 			} else {
 				return 1;
 			}
-			//}
 		} catch (Exception e) { 
 			e.printStackTrace();
 		}

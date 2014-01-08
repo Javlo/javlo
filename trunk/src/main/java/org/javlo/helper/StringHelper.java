@@ -780,6 +780,9 @@ public class StringHelper {
 	 * @return a file name
 	 */
 	public static String getFileNameFromPath(String path) {
+		if (path == null) {
+			return null;
+		}
 		if (path.contains("?")) {
 			path = path.substring(0, path.indexOf('?'));
 		}
