@@ -9,6 +9,10 @@
 	margin: 0 3% 0 0;
 }
 
+.cols input, .cols select, .cols textarea {
+	width: 100%;
+}
+
 .cols .firstcol {
 	clear: left;
 }
