@@ -204,24 +204,3 @@ div.debug-note {
 .multimedia .info {
 	text-align: center;
 }
-
-.smart-form .line {
-	margin: 12px 0;
-}
-
-.smart-form label {
-	display: inline-block;	
-}
-
-.smart-form .yes-no .line-label {
-	width: auto;
-}
-
-.smart-form input {
-	vertical-align: middle;
-}
-
-.smart-form .captcha label {
-	display: block;
-}
-
