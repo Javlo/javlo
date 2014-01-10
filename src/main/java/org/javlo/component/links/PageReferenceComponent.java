@@ -1312,12 +1312,12 @@ public class PageReferenceComponent extends ComplexPropertiesLink implements IAc
 		boolean dynOrderDefined = false;
 		if (isDynamicOrder(ctx)) {
 			for (Object param : ctx.getRequest().getParameterMap().keySet()) {
-				if (param != null && param.toString().endsWith("-order") && !param.equals("reverse-order")) {
+				if (param != null && param.toString().endsWith("_order") && !param.equals("reverse_order")) {
 					dynOrderDefined = true;
 				}
 			}
 		}
-		if (StringHelper.isTrue(ctx.getRequest().getParameter(orderName+"-order"))) {
+		if (StringHelper.isTrue(ctx.getRequest().getParameter(orderName+"_order"))) {
 			return true;
 		} else {
 			if (!dynOrderDefined) {
@@ -1345,7 +1345,7 @@ public class PageReferenceComponent extends ComplexPropertiesLink implements IAc
 	}
 
 	protected boolean isReverseOrder(ContentContext ctx) {
-		if (isDynamicOrder(ctx) && StringHelper.isTrue(ctx.getRequest().getParameter("reverse-order"))) {
+		if (isDynamicOrder(ctx) && StringHelper.isTrue(ctx.getRequest().getParameter("reverse_order"))) {
 			return true;
 		} else {
 			return StringHelper.isTrue(properties.getProperty(CHANGE_ORDER_KEY, "false"));
