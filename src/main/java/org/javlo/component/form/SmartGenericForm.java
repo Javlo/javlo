@@ -789,4 +789,14 @@ public class SmartGenericForm extends AbstractVisualComponent implements IAction
 	public String getActionGroupName() {
 		return "smart-form";
 	}
+	
+	@Override
+	public boolean isRealContent(ContentContext ctx) {
+		return true;
+	}
+	
+	@Override
+	public boolean isEmpty(ContentContext ctx) {
+		return false;
+	}
 }
