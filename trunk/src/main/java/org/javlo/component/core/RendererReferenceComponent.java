@@ -52,7 +52,7 @@ public class RendererReferenceComponent extends AbstractVisualComponent {
 		
 		out.println("<div class=\"line\">");
 		out.println("<label for=\""+getConfigInputName()+"\">config</label>");
-		out.println("<textarea id=\""+getConfigInputName()+"\" name=\""+getConfigInputName()+"\" >"+getValue(ctx)+"</textarea>");
+		out.println("<textarea id=\""+getConfigInputName()+"\" name=\""+getConfigInputName()+"\" cols=\"70\" rows=\"10\">"+getValue(ctx)+"</textarea>");
 		out.println("</div>");
 
 		
