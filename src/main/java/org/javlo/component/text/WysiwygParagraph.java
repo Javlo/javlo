@@ -130,7 +130,7 @@ public class WysiwygParagraph extends AbstractVisualComponent {
 		if (newContent != null) {
 			
 			String hostPrefix = InfoBean.getCurrentInfoBean(ctx).getAbsoluteURLPrefix();		
-			newContent = newContent.replace(hostPrefix, "${info.hostURLPrefix}");
+			newContent = newContent.replace(hostPrefix, "${info.absoluteURLPrefix}");
 			
 			if (!getValue().equals(newContent)) {
 				if (StringHelper.isTrue(getConfig(ctx).getProperty("clean-html", "true"))) {
