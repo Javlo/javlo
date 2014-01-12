@@ -23,6 +23,7 @@ org.javlo.component.meta.PageWeight
 
 org.javlo.component.text.Paragraph
 org.javlo.component.text.WysiwygParagraph
+org.javlo.component.text.FullWysiwygParagraph
 org.javlo.component.list.FreeTextList
 org.javlo.component.text.ContactText
 org.javlo.component.core.DebugNote

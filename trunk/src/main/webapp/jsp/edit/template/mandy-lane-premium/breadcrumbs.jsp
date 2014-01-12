@@ -74,7 +74,15 @@
 			<div class="container">
 				<ul>
 				<c:forEach var="child" items="${link.children}">
-					<li><c:if test="${not empty child.url}"><a href="${child.url}" title="${child.title}"></c:if>${child.legend}<c:if test="${not empty child.url}"></a></c:if></li>
+					<c:url var="url" value="${child.url}">
+						<c:if test="${not empty param[BACK_PARAM_NAME]}">
+							<c:param name="${BACK_PARAM_NAME}" value="${param[BACK_PARAM_NAME]}" />
+						</c:if>
+						<c:if test="${not empty param['select']}">
+							<c:param name="select" value="${param['select']}" />
+						</c:if>	
+					</c:url>
+					<li><c:if test="${not empty child.url}"><a href="${url}" title="${child.title}"></c:if>${child.legend}<c:if test="${not empty child.url}"></a></c:if></li>
 				</c:forEach>
 				</ul>
 			</div>
