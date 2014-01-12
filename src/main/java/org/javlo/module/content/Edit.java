@@ -1159,10 +1159,8 @@ public class Edit extends AbstractModuleAction {
 				
 				if (parentName != null) { // if parentpage defined new page become the active page.
 					ctx.setPath(elem.getPath());
-					String forwardURL = ctx.getResponse().encodeRedirectURL(URLHelper.createURL(ctx));
-					System.out.println("***** Edit.performAddPage : forward = "+forwardURL); //TODO: remove debug trace
-					ctx.getResponse().sendRedirect(forwardURL);
-					//ctx.getRequest().getRequestDispatcher(forwardURL).forward(ctx.getRequest(), ctx.getResponse());
+					String forwardURL = ctx.getResponse().encodeRedirectURL(URLHelper.createURL(ctx));					
+					ctx.getResponse().sendRedirect(forwardURL);					
 				}
 			}
 
@@ -1324,10 +1322,15 @@ public class Edit extends AbstractModuleAction {
 			}
 		}
 
-		ctx.setPath(newPath);
+		
 
 		NavigationService navigationService = NavigationService.getInstance(globalContext);
 		navigationService.clearPage(ctx);
+		
+		
+		ctx.setPath(newPath);
+		String forwardURL = ctx.getResponse().encodeRedirectURL(URLHelper.createURL(ctx));					
+		ctx.getResponse().sendRedirect(forwardURL);					
 
 		return message;
 	}
