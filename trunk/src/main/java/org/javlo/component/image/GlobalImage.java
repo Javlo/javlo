@@ -241,8 +241,6 @@ public class GlobalImage extends Image {
 		finalCode.append("<div class=\"line\"><label for=\"new_dir_" + getId() + "\">");
 		finalCode.append(getNewDirLabelTitle(ctx));
 		finalCode.append(" : </label><input id=\"new_dir_" + getId() + "\" name=\"" + getNewDirInputName() + "\" type=\"text\"/></div>");
-
-		
 		finalCode.append("<div class=\"line\"><label for=\"" + getDirInputName() + "\">");
 		finalCode.append(getDirLabelTitle(ctx));
 		finalCode.append(" : </label>");
@@ -265,7 +263,7 @@ public class GlobalImage extends Image {
 		filesParams.put("webaction", "changeRenderer");
 		filesParams.put("page", "meta");
 		
-		String backURL = StringHelper.toHTMLAttribute(URLHelper.createModuleURL(ctx, ctx.getPath(), "content"));
+		String backURL = URLHelper.createModuleURL(ctx, ctx.getPath(), "content");		
 		filesParams.put(ElementaryURLHelper.BACK_PARAM_NAME, backURL);
 		
 		String staticURL = URLHelper.createModuleURL(ctx, ctx.getPath(), "file", filesParams);

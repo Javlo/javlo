@@ -41,6 +41,7 @@ import org.javlo.module.core.Module.Box;
 import org.javlo.module.core.Module.HtmlLink;
 import org.javlo.module.core.ModuleException;
 import org.javlo.module.core.ModulesContext;
+import org.javlo.navigation.MenuElement;
 import org.javlo.service.PersistenceService;
 import org.javlo.service.RequestService;
 import org.javlo.user.AdminUserFactory;
@@ -123,6 +124,11 @@ public class FileAction extends AbstractModuleAction {
 		public String getThumbURL() throws Exception {
 			GlobalContext globalContext = GlobalContext.getInstance(ctx.getRequest());
 			return URLHelper.createTransformURL(ctx, globalContext.getStaticConfig().getStaticFolder() + staticInfo.getStaticURL(), "list") + "?ts=" + staticInfo.getFile().lastModified();
+		}
+		
+		public String getFreeURL() throws Exception {
+			GlobalContext globalContext = GlobalContext.getInstance(ctx.getRequest());			
+			return URLHelper.createTransformURL(ctx.getContextWithOtherRenderMode(ContentContext.VIEW_MODE), null, globalContext.getStaticConfig().getStaticFolder() + staticInfo.getStaticURL(), "free", "${info.templateName}");
 		}
 
 		public StaticInfo getStaticInfo() {

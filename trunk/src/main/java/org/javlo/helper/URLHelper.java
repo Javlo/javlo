@@ -17,7 +17,6 @@ import java.util.Set;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.lang.StringUtils;
 import org.javlo.component.core.IContentVisualComponent;
-import org.javlo.component.core.ILink;
 import org.javlo.config.StaticConfig;
 import org.javlo.context.ContentContext;
 import org.javlo.context.GlobalContext;
@@ -515,7 +514,7 @@ public class URLHelper extends ElementaryURLHelper {
 	 *            the current context of the content.
 	 * @return a URL
 	 */
-	public static String createURL(ContentContext ctx, String uri) {
+	public static String createURL(ContentContext ctx, String uri) {		
 		GlobalContext globalContext = GlobalContext.getInstance(ctx.getRequest());
 		return createURL(ctx, globalContext, uri, false, false, true, true);
 	}
@@ -554,7 +553,6 @@ public class URLHelper extends ElementaryURLHelper {
 		while (keys.hasNext()) {
 			String key = (String) keys.next();
 			String value = (String) params.get(key);
-
 			finalURL.append(sep);
 			finalURL.append(key);
 			finalURL.append('=');
