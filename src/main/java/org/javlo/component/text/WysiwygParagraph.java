@@ -28,7 +28,7 @@ public class WysiwygParagraph extends AbstractVisualComponent {
 
 	public static final String TYPE = "wysiwyg-paragraph";
 	
-	private String getEditorComplexity(ContentContext ctx) {
+	protected String getEditorComplexity(ContentContext ctx) {
 		return getConfig(ctx).getProperty("complexity", "light");
 	}
 

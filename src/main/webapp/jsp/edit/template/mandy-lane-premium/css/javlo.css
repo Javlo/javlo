@@ -1218,6 +1218,15 @@ body.previewEdit {
     display: inline-block;
     margin-right: 0;
     padding: 6px 16px;
+    max-width: 70%;
+    overflow: hidden;
+}
+
+.form-list .title span a {
+	display: inline-block;
+	max-width: 156px;
+	height: 21px;
+    overflow: hidden;
 }
 
 .form-list .title span.last {

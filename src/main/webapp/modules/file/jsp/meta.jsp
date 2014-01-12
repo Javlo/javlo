@@ -12,7 +12,7 @@
 	<li class="${file.directory?'directory':'file'} ${not empty param.select?'select':'no-select'}">
 	    <c:set var="popularity" value=" - #${file.popularity}" />
 		<div class="title">
-			<span><a href="${file.URL}">${file.name}</a></span>
+			<span><a href="${file.URL}" title="${file.name}">${file.name}</a></span>
 			<c:if test="${empty param.select}">
 				<c:url value="${info.currentURL}" var="deleteURL">
 					<c:param name="webaction" value="file.delete" />
