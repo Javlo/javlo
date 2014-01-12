@@ -405,7 +405,7 @@ public class Multimedia extends TimeRangeComponent implements IImageTitle {
 		filesParams.put("webaction", "changeRenderer");
 		filesParams.put("page", "meta");
 		
-		String backURL = StringHelper.toHTMLAttribute(URLHelper.createModuleURL(ctx, ctx.getPath(), "content"));
+		String backURL = URLHelper.createModuleURL(ctx, ctx.getPath(), "content");
 		filesParams.put(ElementaryURLHelper.BACK_PARAM_NAME, backURL);
 		
 		String staticURL = URLHelper.createModuleURL(ctx, ctx.getPath(), "file", filesParams);

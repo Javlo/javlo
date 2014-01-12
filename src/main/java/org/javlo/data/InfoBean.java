@@ -436,6 +436,14 @@ public class InfoBean {
 			return null;
 		}
 	}
+	
+	public String getTemplateName() {
+		try {
+			return ctx.getCurrentTemplate().getName();
+		} catch (Exception e) {
+			return null;
+		}
+	}
 
 	public String getPathPrefix() {
 		return URLHelper.getPathPrefix(ctx);
@@ -536,6 +544,21 @@ public class InfoBean {
 	public String getAbsoluteURLPrefix() {
 		return URLHelper.createStaticURL(ctx.getContextForAbsoluteURL(), "/");
 	}
+	
+	public String getHostURLPrefix() {
+		String url = getAbsoluteURLPrefix();
+		String noProtocol = url.substring(url.indexOf("//")+2);		
+		if (noProtocol.contains("/")) {
+			noProtocol = noProtocol.substring(noProtocol.indexOf('/'));
+			if (noProtocol.length()>1) {
+				url = url.substring(0, url.indexOf(noProtocol));
+			}
+		}
+		if (url.endsWith("/")) {
+			url = url.substring(0, url.length()-1);
+		}
+		return url;
+	}
 
 	public String getServerTime() {
 		return StringHelper.renderTime(new Date());
@@ -597,5 +620,16 @@ public class InfoBean {
 			return null;
 		}
 	}
+	
+	public int getHostPort() {
+		return ctx.getHostPort();
+	}
+	
+	public static void main(String[] args) {
+		String url = "http://localhost:8080";		
+		
+		System.out.println(url);		
+	}
+	
 
 }

@@ -3,14 +3,20 @@
  */
 package org.javlo.component.text;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import org.javlo.component.core.AbstractVisualComponent;
+import org.javlo.config.StaticConfig;
 import org.javlo.context.ContentContext;
 import org.javlo.context.GlobalContext;
+import org.javlo.data.InfoBean;
 import org.javlo.helper.LoremIpsumGenerator;
 import org.javlo.helper.StringHelper;
+import org.javlo.helper.URLHelper;
 import org.javlo.helper.XHTMLHelper;
+import org.javlo.module.file.FileAction;
 import org.javlo.service.RequestService;
 import org.javlo.service.ReverseLinkService;
 import org.javlo.utils.SuffixPrefix;
@@ -33,9 +39,21 @@ public class WysiwygParagraph extends AbstractVisualComponent {
 		finalCode.append(getSpecialInputTag());
 		finalCode.append("<textarea class=\"tinymce-light\" id=\"" + getContentName() + "\" name=\"" + getContentName() + "\"");
 		finalCode.append(" rows=\"" + 30 + "\">");
-		finalCode.append(getValue());
+		
+		String hostPrefix = InfoBean.getCurrentInfoBean(ctx).getAbsoluteURLPrefix();		
+		finalCode.append(getValue().replace("${info.hostURLPrefix}", hostPrefix));
 		finalCode.append("</textarea>");
-		finalCode.append("<script type=\"text/javascript\">jQuery(document).ready(loadWysiwyg('#" + getContentName() + "','"+getEditorComplexity(ctx)+"'));</script>");
+		
+		Map<String, String> filesParams = new HashMap<String, String>();
+		String path = URLHelper.mergePath(FileAction.getPathPrefix(ctx), StaticConfig.getInstance(ctx.getRequest().getSession()).getImageFolderName());
+		filesParams.put("path", path);
+		filesParams.put("webaction", "changeRenderer");
+		filesParams.put("page", "meta");
+		filesParams.put("select", "true");
+		
+		String chooseImageURL = URLHelper.createModuleURL(ctx, ctx.getPath(), "file", filesParams);		
+		
+		finalCode.append("<script type=\"text/javascript\">jQuery(document).ready(loadWysiwyg('#" + getContentName() + "','"+getEditorComplexity(ctx)+"','"+chooseImageURL+"'));</script>");
 		return finalCode.toString();
 	}
 
@@ -59,7 +77,7 @@ public class WysiwygParagraph extends AbstractVisualComponent {
 
 	@Override
 	public String getViewXHTMLCode(ContentContext ctx) throws Exception {
-		return (String)ctx.getRequest().getAttribute("text");
+		return XHTMLHelper.replaceJSTLData(ctx, (String)ctx.getRequest().getAttribute("text"));
 	}
 
 	@Override
@@ -110,6 +128,10 @@ public class WysiwygParagraph extends AbstractVisualComponent {
 		RequestService requestService = RequestService.getInstance(ctx.getRequest());
 		String newContent = requestService.getParameter(getContentName(), null);
 		if (newContent != null) {
+			
+			String hostPrefix = InfoBean.getCurrentInfoBean(ctx).getAbsoluteURLPrefix();		
+			newContent = newContent.replace(hostPrefix, "${info.hostURLPrefix}");
+			
 			if (!getValue().equals(newContent)) {
 				if (StringHelper.isTrue(getConfig(ctx).getProperty("clean-html", "true"))) {
 					newContent = XHTMLHelper.cleanHTML(newContent);

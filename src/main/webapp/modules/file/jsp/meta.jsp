@@ -9,21 +9,34 @@
 
 <ul>
 <c:forEach var="file" items="${files}">
-	<li class="${file.directory?'directory':'file'}">
+	<li class="${file.directory?'directory':'file'} ${not empty param.select?'select':'no-select'}">
 	    <c:set var="popularity" value=" - #${file.popularity}" />
 		<div class="title">
 			<span><a href="${file.URL}">${file.name}</a></span>
-			<c:url value="${info.currentURL}" var="deleteURL">
-				<c:param name="webaction" value="file.delete" />
-				<c:param name="file" value="${file.path}" />
-				<c:if test="${not empty param[BACK_PARAM_NAME]}">
-					<c:param name="${BACK_PARAM_NAME}" value="${param[BACK_PARAM_NAME]}" />
-				</c:if>
-			</c:url>
-			<span class="delete"><a class="needconfirm" href="${deleteURL}">X</a></span>
-			<span class="size">${file.size} ${info.admin?popularity:''}</span>
+			<c:if test="${empty param.select}">
+				<c:url value="${info.currentURL}" var="deleteURL">
+					<c:param name="webaction" value="file.delete" />
+					<c:param name="file" value="${file.path}" />
+					<c:if test="${not empty param[BACK_PARAM_NAME]}">
+						<c:param name="${BACK_PARAM_NAME}" value="${param[BACK_PARAM_NAME]}" />
+					</c:if>
+				</c:url>			
+				<span class="delete"><a class="needconfirm" href="${deleteURL}">X</a></span>
+			</c:if>
+			<span class="size">${file.size} <span class="popularity">${info.admin?popularity:''}</span></span>
 			<span class="last">${file.manType}</span>
 		</div>
+		<c:if test="${not empty param.select}">		
+				<div class="special-action">	
+					<c:if test="${file.image}">			
+						<input class="select-item mce-close" type="button" value="select" data-url="${info.hostURLPrefix}${file.freeURL}" />						
+					</c:if>
+					<c:if test="${!file.image}">
+						<span>unselectable</span>
+					</c:if>					
+				</div>
+			</c:if>						
+		
 		<div class="body">
 		<c:if test="${file.image}">		
 		<div class="download picture">
@@ -32,11 +45,16 @@
 			<div class="focus-point">x</div>			
 			<input class="posx" type="hidden" name="posx-${file.id}" value="${file.focusZoneX}" />
 			<input class="posy" type="hidden" name="posy-${file.id}" value="${file.focusZoneY}" />
-			</div>			
+			</div>	
 		</div>
 		</c:if>
 		<c:if test="${not file.image}">
-		<div class="download file ${file.type}"><a href="${file.URL}">${file.name}</a></div>
+		<c:url var="fileURL" value="${file.URL}">
+			<c:if test="${not empty param.select}">
+				<c:param name="select" value="${param.select}"></c:param>
+			</c:if>
+		</c:url>
+		<div class="download file ${file.type}"><a href="${fileURL}">${file.name}</a></div>
 		</c:if>
 		<div class="line">
 			<label for="title-${file.id}">${i18n.edit["field.title"]}</label>
@@ -76,6 +94,17 @@
 	<input class="action-button" type="submit" value="${i18n.edit['global.save']}"/> 
 </div>
 
-</from>
+</form>
 
 </div>
+
+<c:if test="${not empty param.select}">
+	<script type="text/javascript">
+		jQuery(".select-item").click(function() {
+			var fieldName = parent.jQuery("body").data("fieldName");
+			var url = jQuery(this).data("url");
+			parent.jQuery("#"+fieldName).val(url);
+			parent.tinyMCE.activeEditor.windowManager.close(window);
+		});
+	</script>	
+</c:if>

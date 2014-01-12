@@ -7,7 +7,7 @@ jQuery(document).ready(function(){
 	jQuery(".readonly input, .readonly textarea, .readonly select").attr("readonly", "readonly");
 });
 
-function loadWysiwyg(cssQuery, complexity) {	
+function loadWysiwyg(cssQuery, complexity, chooseFileURL) {	
 	
 	tinymce.init({
 	    paste_as_text: true
@@ -36,6 +36,24 @@ function loadWysiwyg(cssQuery, complexity) {
 		    toolbar1: "insertfile undo redo | styleselect | bold italic | alignleft aligncenter alignright alignjustify | bullist numlist outdent indent | link image",
 		    toolbar2: "print preview media | forecolor backcolor emoticons",
 		    image_advtab: true,
+		    file_browser_callback: function(field_name, url, type, win) {
+		    	
+	    	 	jQuery("body").data("fieldName", field_name);
+	    	 	
+		    	tinyMCE.activeEditor.windowManager.open({
+		            file : chooseFileURL,
+		            title : 'Select image',
+		            width : jQuery(document).width()-100,  // Your dimensions may differ - toy around with them!
+		            height :  jQuery(document).height()-150,
+		            resizable : "yes",
+		            inline : "yes",  // This parameter only has an effect if you use the inlinepopups plugin!
+		            close_previous : "no"
+		        }, {
+		            window : win,
+		            input : field_name
+		        });
+		    	
+		    },
 		    templates: [
 		        {title: 'Test template 1', content: 'Test 1'},
 		        {title: 'Test template 2', content: 'Test 2'}
