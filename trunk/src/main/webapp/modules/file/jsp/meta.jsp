@@ -29,7 +29,7 @@
 		<c:if test="${not empty param.select}">		
 				<div class="special-action">	
 					<c:if test="${file.image}">			
-						<input class="select-item mce-close" type="button" value="select" data-url="${info.hostURLPrefix}${file.freeURL}" />						
+						<input class="select-item mce-close" type="button" value="select" data-url="${file.freeURL}" />						
 					</c:if>
 					<c:if test="${!file.image}">
 						<span>unselectable</span>

@@ -129,11 +129,13 @@ public class WysiwygParagraph extends AbstractVisualComponent {
 		String newContent = requestService.getParameter(getContentName(), null);
 		if (newContent != null) {
 			
-			String hostPrefix = InfoBean.getCurrentInfoBean(ctx).getAbsoluteURLPrefix();		
-			newContent = newContent.replace(hostPrefix, "${info.absoluteURLPrefix}");
+			/*String hostPrefix = InfoBean.getCurrentInfoBean(ctx).getAbsoluteURLPrefix();		
+			newContent = newContent.replace(hostPrefix, "${info.absoluteURLPrefix}");*/
+			
+			System.out.println(newContent);
 			
 			if (!getValue().equals(newContent)) {
-				if (StringHelper.isTrue(getConfig(ctx).getProperty("clean-html", "true"))) {
+				if (StringHelper.isTrue(getConfig(ctx).getProperty("clean-html", "false"))) {
 					newContent = XHTMLHelper.cleanHTML(newContent);
 				}
 				setValue(newContent);
