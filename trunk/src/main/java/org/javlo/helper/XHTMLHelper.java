@@ -9,6 +9,7 @@ import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.CharArrayReader;
 import java.io.File;
+import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStreamReader;
@@ -19,7 +20,6 @@ import java.io.StringWriter;
 import java.io.UnsupportedEncodingException;
 import java.lang.reflect.InvocationTargetException;
 import java.net.URLDecoder;
-import java.net.URLEncoder;
 import java.util.Arrays;
 import java.util.Calendar;
 import java.util.Collection;
@@ -34,6 +34,9 @@ import java.util.Locale;
 import java.util.Map;
 import java.util.Set;
 import java.util.TreeSet;
+import java.util.logging.Level;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import javax.servlet.ServletContext;
 
@@ -64,9 +67,9 @@ import org.javlo.service.ReverseLinkService;
 import org.javlo.utils.SuffixPrefix;
 import org.javlo.ztatic.StaticInfo;
 import org.jsoup.Jsoup;
-import org.jsoup.nodes.Document;
-import org.jsoup.nodes.Entities.EscapeMode;
 import org.jsoup.safety.Whitelist;
+
+import com.yahoo.platform.yui.compressor.CssCompressor;
 
 /**
  * This class is a helper for construct XHTML code.
@@ -81,6 +84,21 @@ public class XHTMLHelper {
 	protected static java.util.logging.Logger logger = java.util.logging.Logger.getLogger(XHTMLHelper.class.getName());
 
 	private static final String[] TEXT_COLORS = { "#005", "#050", "#500", "#505", "#550", "#055", "#555" };;
+
+	private static final Pattern CSS_IMPORT_PATTERN = Pattern.compile(
+			"@import\\s+" +
+
+					// optional 'url(' part (non capturing subpattern) with optional quote
+					"(?:url\\(\\s*)?" + "[\"']?" +
+
+					// file path ending with '.css' in capturing subpattern 1
+					// word characters, slashes, dash, underscore, dot,
+					// colon and question mark (possible for absolute urls) are allowed
+					"([\\w\\\\/\\-_.:?]+?\\.css)" +
+
+					// the rest of the line until semicolon or line break
+					"[^;$]*?(;|$)",
+			Pattern.MULTILINE);
 
 	public static String _textToXHTML(String text, boolean popup) {
 		String res = autoLink(text);
@@ -2136,6 +2154,98 @@ public class XHTMLHelper {
 
 	public static String cleanHTML(String html) {
 		return Jsoup.clean(html, Whitelist.relaxed());
+	}
+
+	public static void expandCSSImports(File css) throws IOException {
+		String expandedCSS;
+		try {
+			expandedCSS = expandCSSIncludesToString(css);
+		} catch (IOException ex) {
+			logger.log(Level.WARNING, "Expand CSS imports failed for '" + css + "'.", ex);
+			return; //Don't write on error, let the original as it is.
+		}
+		ResourceHelper.writeStringToFile(css, expandedCSS);
+	}
+
+	public static String expandCSSIncludesToString(File css) throws IOException {
+		String content = ResourceHelper.loadStringFromFile(css);
+		Matcher m = CSS_IMPORT_PATTERN.matcher(content);
+		StringBuffer sb = new StringBuffer();
+		while (m.find()) {
+			String fileName = m.group(1);
+			if (!fileName.contains("/") && !fileName.contains("\\")) {
+				File importedFile = new File(css.getParentFile(), fileName);
+				if (importedFile.exists()) {
+					m.appendReplacement(sb, "");
+					sb.append("/* START " + fileName + " */\r\n");
+					sb.append(expandCSSIncludesToString(importedFile));
+					sb.append("/* END " + fileName + " */");
+					continue;
+				}
+			}
+			m.appendReplacement(sb, "$0");
+		}
+		m.appendTail(sb);
+		return sb.toString();
+	}
+
+	public static void compressCSS(File targetFile) throws IOException {
+		String newContent;
+		FileInputStream in = null;
+		StringWriter out = null;
+		try {
+			in = new FileInputStream(targetFile);
+			InputStreamReader reader = new InputStreamReader(in, ContentContext.CHARACTER_ENCODING);
+			out = new StringWriter();
+			new CssCompressor(reader).compress(out, 0);
+			newContent = out.toString();
+		} catch (Exception ex) {
+			logger.log(Level.WARNING, "Compress CSS failed for '" + targetFile + "'.", ex);
+			return; //Don't write on error, let the original as it is.
+		} finally {
+			ResourceHelper.closeResource(in);
+			ResourceHelper.closeResource(out);
+		}
+		ResourceHelper.writeStringToFile(targetFile, newContent, ContentContext.CHARACTER_ENCODING);
+	}
+
+	public static void compressJS(final File targetFile) throws IOException {
+//Disabled to wait right YUI dependency
+//		String newContent;
+//		FileInputStream in = null;
+//		StringWriter out = null;
+//		try {
+//			in = new FileInputStream(targetFile);
+//			InputStreamReader reader = new InputStreamReader(in, ContentContext.CHARACTER_ENCODING);
+//			out = new StringWriter();
+//			ErrorReporter reporter = new ErrorReporter() {
+//				
+//				@Override
+//				public void warning(String message, String sourceName, int line, String lineSource, int lineOffset) {
+//					logger.warning("JS compressor warning: " + message + " (" + targetFile + " L:" + line + " C:" + lineOffset + ")");
+//				}
+//				
+//				@Override
+//				public EvaluatorException runtimeError(String message, String sourceName, int line, String lineSource, int lineOffset) {
+//					logger.warning("JS compressor runtimeError: " + message + " (" + targetFile + " L:" + line + " C:" + lineOffset + ")");
+//					return new EvaluatorException(message, sourceName, line, lineSource, lineOffset);
+//				}
+//				
+//				@Override
+//				public void error(String message, String sourceName, int line, String lineSource, int lineOffset) {
+//					logger.warning("JS compressor error: " + message + " (" + targetFile + " L:" + line + " C:" + lineOffset + ")");
+//				}
+//			};
+//			new JavaScriptCompressor(reader, reporter).compress(out, 0, false, false, false, false);
+//			newContent = out.toString();
+//		}catch (Exception ex) {
+//			logger.log(Level.WARNING, "Compress JS failed for '" + targetFile + "'.", ex);
+//			return; //Don't write on error, let the original as it is.
+//		} finally {
+//			ResourceHelper.closeResource(in);
+//			ResourceHelper.closeResource(out);
+//		}
+//		ResourceHelper.writeStringToFile(targetFile, newContent, ContentContext.CHARACTER_ENCODING);
 	}
 
 }

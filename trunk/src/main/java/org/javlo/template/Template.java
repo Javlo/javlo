@@ -46,6 +46,7 @@ import org.javlo.helper.LangHelper;
 import org.javlo.helper.ResourceHelper;
 import org.javlo.helper.StringHelper;
 import org.javlo.helper.URLHelper;
+import org.javlo.helper.XHTMLHelper;
 import org.javlo.helper.XMLManipulationHelper;
 import org.javlo.helper.XMLManipulationHelper.BadXMLException;
 import org.javlo.i18n.I18nAccess;
@@ -1976,14 +1977,31 @@ public class Template implements Comparable<Template> {
 						ResourceHelper.filteredFileCopyEscapeScriplet(file, targetFile, map);
 					} else {
 						ResourceHelper.filteredFileCopy(file, targetFile, map);
-						if (targetFile.getName().toLowerCase().endsWith(".css") || targetFile.getName().toLowerCase().endsWith(".js")) {
-							File gzTargetFile = new File(targetFile.getAbsoluteFile().getAbsolutePath() + "." + GZ_FILE_EXT);
-							ZipManagement.gzipFile(gzTargetFile, targetFile);
-						}
 					}
 				}
 			}
 		}
+		if (isCompressResources()) {
+			Iterator<File> targetFiles = FileUtils.iterateFiles(templateTarget, new String[] { "js", "css" }, true);
+			while (targetFiles.hasNext()) {
+				File targetFile = targetFiles.next();
+				String targetFileNameLowerCase = targetFile.getName().toLowerCase();
+				boolean isCss = targetFileNameLowerCase.endsWith(".css");
+				boolean isJs = targetFileNameLowerCase.endsWith(".js");
+				if (isCss) {
+					XHTMLHelper.expandCSSImports(targetFile);
+					XHTMLHelper.compressCSS(targetFile);
+				}
+				if (isJs) {
+					XHTMLHelper.compressJS(targetFile);
+				}
+				if (isCss || isJs) {
+					File gzTargetFile = new File(targetFile.getAbsoluteFile().getAbsolutePath() + "." + GZ_FILE_EXT);
+					ZipManagement.gzipFile(gzTargetFile, targetFile);
+				}
+			}
+		}
+
 		deployId = StringHelper.getRandomId();
 		if (config != null) {
 			TemplateFactory.clearTemplate(config.getServletContext());
