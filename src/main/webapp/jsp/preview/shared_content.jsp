@@ -17,7 +17,8 @@
 		<select name="provider">
 			<option class="placeholder" value="">${i18n.edit["preview.choose-provider"]}</option>
 			<c:forEach var="provider" items="${sharedContentProviders}">
-				<option ${sharedContentContext.provider eq provider.name?'selected="selected"':''}>${provider.name}</option>
+				<c:set var="key" value="shared.${provider.name}" />
+				<option value="${provider.name}" ${sharedContentContext.provider eq provider.name?'selected="selected"':''}>${i18n.edit[key]}</option>
 			</c:forEach>
 		</select>
 		<c:if test="${fn:length(sharedContentCategories)>0}">
