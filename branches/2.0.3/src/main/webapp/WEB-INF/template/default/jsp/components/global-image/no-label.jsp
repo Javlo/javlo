@@ -1,0 +1,1 @@
+<jsp:include page="default.jsp?nolabel=true"></jsp:include>

@@ -1,0 +1,114 @@
+/*
+ * Created on 19-sept.-2003 
+ */
+package org.javlo.component.text;
+
+import java.io.PrintWriter;
+import java.io.StringWriter;
+
+import org.javlo.component.core.AbstractVisualComponent;
+import org.javlo.context.ContentContext;
+import org.javlo.helper.StringHelper;
+import org.javlo.helper.StringRemplacementHelper;
+import org.javlo.helper.URLHelper;
+import org.javlo.helper.XHTMLHelper;
+import org.javlo.helper.XMLManipulationHelper;
+import org.javlo.helper.XMLManipulationHelper.TagDescription;
+
+/**
+ * @author pvandermaesen
+ */
+public class XHTML extends AbstractVisualComponent {
+
+	public static final String TYPE = "xhtml";
+
+	public static final String XHTML_RESOURCE_FOLDER = "_xhtml_resources";
+
+	@Override
+	public int getComplexityLevel(ContentContext ctx) {
+		return COMPLEXITY_EASY;
+	}
+
+	@Override
+	protected String getEditXHTMLCode(ContentContext ctx) throws Exception {
+		StringWriter writer = new StringWriter();
+		PrintWriter out = new PrintWriter(writer);
+
+		out.println(getSpecialInputTag());
+		out.println("<textarea class=\"resizable-textarea\" id=\"" + getContentName() + "\" name=\"" + getContentName() + "\"");
+		out.println(" rows=\"" + (countLine() + 1) + "\">");
+		out.println(XHTMLHelper.escapeXHTML(getValue()));
+		out.println("</textarea>");
+
+		out.close();
+		return writer.toString();
+	}
+
+	@Override
+	public String getHexColor() {
+		return GRAPHIC_COLOR;
+	}
+
+	/*@Override
+	public String getPrefixViewXHTMLCode(ContentContext ctx) {
+		return "";
+	}
+
+	@Override
+	public String getSuffixViewXHTMLCode(ContentContext ctx) {
+		return "";
+	}*/
+
+	@Override
+	public String getType() {
+		return TYPE;
+	}
+
+	@Override
+	public String getViewXHTMLCode(ContentContext ctx) throws Exception {
+
+		String outContent = getValue();
+
+		TagDescription[] tags = XMLManipulationHelper.searchAllTag(outContent, false);
+		StringRemplacementHelper remplacement = new StringRemplacementHelper();
+
+		for (TagDescription tag : tags) {
+			if (tag.getName().equalsIgnoreCase("a") || tag.getName().equalsIgnoreCase("area")) {
+				String hrefValue = tag.getAttributes().get("href");
+				if (hrefValue != null) {
+					if (hrefValue.toLowerCase().startsWith("rss")) {
+						String channel = "";
+						if (hrefValue.contains(":")) {
+							channel = hrefValue.split(":")[1];
+						}
+						hrefValue = URLHelper.createRSSURL(ctx, channel);
+						tag.getAttributes().put("href", hrefValue);
+					} else if ((hrefValue != null) && (!StringHelper.isURL(hrefValue)) && (!StringHelper.isMailURL(hrefValue)) && !hrefValue.contains("${")) {
+						hrefValue = URLHelper.createURLCheckLg(ctx, hrefValue);
+						tag.getAttributes().put("href", hrefValue);
+					}
+					remplacement.addReplacement(tag.getOpenStart(), tag.getOpenEnd() + 1, tag.toString());					
+			}
+			} else if (tag.getName().equalsIgnoreCase("img")) {
+				String src = tag.getAttribute("src", null);
+				if (src != null) {
+					if (!StringHelper.isURL(src)) { // relative paths
+						src = URLHelper.createResourceURL(ctx, src);
+						tag.getAttributes().put("src", src);
+						remplacement.addReplacement(tag.getOpenStart(), tag.getOpenEnd() + 1, tag.toString());
+					}
+				}
+			}
+		}
+
+		outContent = remplacement.start(outContent);
+
+		return XHTMLHelper.replaceJSTLData(ctx, outContent);
+	}
+
+	@Override
+	public boolean isContentCachable(ContentContext ctx) {
+		return !isRepeat();
+	}
+
+}

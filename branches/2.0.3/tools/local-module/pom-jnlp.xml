@@ -1,0 +1,114 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd"
+>
+
+	<modelVersion>4.0.0</modelVersion>
+	<groupId>org.javlo</groupId>
+	<artifactId>javlo2-local-module-jnlp</artifactId>
+	<version>2.0</version>
+	<packaging>pom</packaging>
+
+	<name>Javlo 2 - Local module (Webstart package)</name>
+
+	<dependencies>
+		<dependency>
+			<groupId>org.javlo</groupId>
+			<artifactId>javlo2-local-module</artifactId>
+			<version>${version}</version>
+
+				<exclusions>
+					<exclusion>
+						<groupId>com.lowagie</groupId>
+						<artifactId>itext</artifactId>
+					</exclusion>
+					<exclusion>
+						<groupId>pdfbox</groupId>
+						<artifactId>pdfbox</artifactId>
+					</exclusion>
+					<exclusion>
+						<groupId>org.apache.commons</groupId>
+						<artifactId>commons-vfs2</artifactId>
+					</exclusion>
+					<exclusion>
+						<groupId>net.sf.ehcache</groupId>
+						<artifactId>ehcache-core</artifactId>
+					</exclusion>
+					<exclusion>
+						<groupId>com.jhlabs</groupId>
+						<artifactId>filters</artifactId>
+					</exclusion>
+					<exclusion>
+						<groupId>rome</groupId>
+						<artifactId>rome</artifactId>
+					</exclusion>
+					<exclusion>
+						<groupId>org.xhtmlrenderer</groupId>
+						<artifactId>flying-saucer-pdf</artifactId>
+					</exclusion>
+					<exclusion>
+						<groupId>jjil</groupId>
+						<artifactId>jjil.core</artifactId>
+					</exclusion>
+					<exclusion>
+						<groupId>javax.media.jai</groupId>
+						<artifactId>com.springsource.javax.media.jai.core</artifactId>
+					</exclusion>
+					<exclusion>
+						<groupId>com.github.cage</groupId>
+						<artifactId>cage</artifactId>
+					</exclusion>
+				</exclusions>					
+				
+		</dependency>
+	</dependencies>
+
+	<build>
+		<plugins>
+			<plugin>
+				<groupId>org.codehaus.mojo</groupId>
+				<artifactId>webstart-maven-plugin</artifactId>
+				<version>1.0-beta-3</version>
+				<executions>
+					<execution>
+						<phase>compile</phase>
+						<goals>
+							<goal>jnlp-inline</goal>
+						</goals>
+					</execution>
+				</executions>
+				<configuration>
+					<jnlp>
+						<outputFile>localmodule.jnlp.jsp</outputFile>
+						<mainClass>org.javlo.client.localmodule.LocalModule</mainClass>
+					</jnlp>
+					<libPath>lib</libPath>
+					<sign>
+						<keystore>${basedir}/target/javlo-localmodule.jks</keystore>
+						<keypass>fvgqvdkchqsdc</keypass>
+						<storepass>qslijqlzeucqlsdb</storepass>
+						<storetype>jks</storetype>
+						<alias>javlo-localmodule</alias>
+
+						<validity>365</validity>
+
+						<dnameCn>Javlo.org</dnameCn>
+						<dnameOu>Javlo.org</dnameOu>
+						<dnameO>Javlo.org</dnameO>
+						<dnameL>Brussels</dnameL>
+						<dnameSt>Brussels</dnameSt>
+						<dnameC>BE</dnameC>
+
+						<verify>true</verify>
+
+						<keystoreConfig>
+							<delete>true</delete>
+							<gen>true</gen>
+						</keystoreConfig>
+					</sign>
+					<outputJarVersions>false</outputJarVersions>
+					<verbose>true</verbose>
+				</configuration>
+			</plugin>
+		</plugins>
+	</build>
+</project>

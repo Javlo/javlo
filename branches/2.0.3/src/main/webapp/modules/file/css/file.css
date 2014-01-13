@@ -1,0 +1,50 @@
+@import url("elfinder/smoothness/jquery-ui-1.8.19.custom.css");
+@import url("elfinder/elfinder.min.css");
+@import url("elfinder/theme.css");
+
+/** break elfinder **/
+
+#tools {
+	margin-bottom: 10px;
+}
+
+.elfinder-cwd-view-icons .elfinder-cwd-file-wrapper {
+	width: 118px;
+	height: 118px;	
+}
+
+.elfinder-cwd-view-icons .elfinder-cwd-icon {
+	margin: 34px 0 0 34px;	
+}
+
+.elfinder-cwd-view-icons .elfinder-cwd-icon-image {
+	margin: 0;
+	width: 118px;	
+	height: 118px;
+	background: url("img/icons-big-image.png") no-repeat scroll 34px 34px padding-box transparent;
+}
+
+.elfinder-cwd-view-icons .elfinder-cwd-file {
+    height: 140px;
+    width: 160px;
+}
+
+.maincontent.file .left {
+	padding: 20px 15px 20px 15px;
+}
+
+.elfinder-cwd-icon-jsp {
+	background-position: 0 -550px;
+}
+
+
+.form-list .title span.delete {
+	float: right;
+	color: #333333;
+	background-image: none;
+	padding: 6px;
+}
+
+.form-list .title span.size {
+	padding: 6px 0 6px 6px;
+}

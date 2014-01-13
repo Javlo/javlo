@@ -1,0 +1,7 @@
+.maincontent .left { 
+    padding: 0 15px;
+}
+
+a.token {
+	font-style: italic;
+}

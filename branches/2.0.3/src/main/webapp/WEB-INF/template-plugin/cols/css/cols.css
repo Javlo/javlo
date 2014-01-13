@@ -1,0 +1,79 @@
+/* cols */
+.cols, .cols .col-line {
+	overflow: hidden;
+}
+
+.cols .col1,.cols .col2,.cols .col3,.cols .col4,.cols .col5,.cols .col6,.cols .col7,.cols .col8,.cols .col9,.cols .col10,.cols .col11,.cols .col12
+	{
+	float: left;
+	margin: 0 3% 0 0;
+}
+
+.cols input, .cols select, .cols textarea {
+	width: 100%;
+}
+
+.cols .firstcol {
+	clear: left;
+}
+
+.cols .lastcol {
+	margin: 0;	
+}
+
+.cols .col1 {
+	width: 5.5%;
+}
+
+.cols .col2 {
+	width: 14%;
+}
+
+.cols .col3 {
+	width: 22.5%;
+}
+
+.cols .col4 {
+	width: 31%;
+}
+
+.cols .col5 {
+	width: 39.5%;
+}
+
+.cols .col6 {
+	width: 48%;
+}
+
+.cols .col7 {
+	width: 56.5%;
+}
+
+.cols .col8 {
+	width: 65%;
+}
+
+.cols .col9 {
+	width: 73.5%;
+}
+
+.cols .col10 {
+	width: 82%;
+}
+
+.cols .col11 {
+	width: 90.5%;
+}
+
+.cols .col12 {
+	width: 99%;
+	margin: 0;
+}
+
+@media all and (max-width: 800px) {
+	.cols .col1,.cols .col2,.cols .col3,.cols .col4,.cols .col5,.cols .col6,.cols .col7,.cols .col8,.cols .col9,.cols .col10,.cols .col11,.cols .col12
+		{
+		float: none;
+		width: 99%;
+	}
+}

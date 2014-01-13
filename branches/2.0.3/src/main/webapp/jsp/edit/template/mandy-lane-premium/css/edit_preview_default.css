@@ -1,0 +1,263 @@
+._empty_area {
+	margin: 0;
+	border: 0 none;
+	border-radius: 0 0 0;	
+	padding: 0;
+	background-color: transparent;
+	height: auto;
+	font-size: 0;	 
+	text-shadow: 0 0 0 #ffffff;
+	width: auto;
+	display: block;	
+}
+
+
+#preview_command {
+	height: 100%;
+}
+
+#preview_command #breadcrumb {
+	display: none;
+}
+
+#preview_command .pc_header {
+	margin: -1px -1px 0 -1px;
+    background: url("../images/tabmenubg.png") repeat-x scroll left top #4B6592;
+    border: 1px solid #DDDDDD;
+    padding: 10px;
+}
+
+#preview_command .login span {
+	text-align: center;
+}
+
+#preview_command .pc_header span {
+	display: inline;
+	color: #ffffff;
+    font-size: 12px;
+    font-weight: normal;
+    text-shadow: 1px 1px #4B6592;
+    text-transform: uppercase;
+	
+}
+
+#preview_command input, #preview_command select, #preview_command textarea, #preview_command button {
+    border: 1px solid #CCCCCC;
+    border-radius: 3px 3px 3px 3px;    
+
+    padding: 3px;
+    
+    background: none repeat scroll 0 0 #FCFCFC;
+    
+    font-family: DroidSansRegular,"Lucida Sans Unicode","Lucida Grande",sans-serif;
+    font-size: 12px;
+    outline: medium none;
+}
+
+#preview_command input[type=submit] {
+	background: url("../images/bgbutton4.png") repeat-x scroll left top transparent;
+    border: 1px solid #CCCCCC;
+    border-radius: 3px 3px 3px 3px;    
+    color: #333333;
+    display: inline-block;
+    margin: 2px;
+    padding: 2px 5px;    
+}
+
+
+#preview_command input[type=submit]:hover { 
+ 	background: url("../images/buttonbg3.png") repeat-x scroll left top	transparent;	
+	color: #FFFFFF;	
+}
+
+#preview_command .pc_line input {
+	border: 0 none;
+}
+
+#preview_command .pc_command input {
+	background-color: #EFEFEF;
+}
+
+#preview_command .pc_command label {
+	display: none;
+}
+
+#preview_command .pc_command li {
+	float: left;
+}
+
+#preview_command .renderers {
+	display: none;
+}
+
+
+#preview_command .pc_command #pc_edit_button {
+	background-image: url('../images/icons/small/black/edit.png');
+}
+
+#preview_command .pc_command #pc_edit_button.pc_edit_true {
+	background-image: url('../images/icons/404.png');
+}
+
+#preview_command .pc_command a#pc_edit_button.pc_edit_true {	
+	display: none;
+}
+
+#preview_command .pc_command #pc_publish_button {
+	background-image: url('../images/icons/small/black/publish.png');
+}
+
+#preview_command .pc_command #home_button {
+	background-image: url('../images/icons/small/black/home.png');
+}
+
+#preview_command .pc_command #pc_del_page_button {
+	background-image: url('../images/icons/small/black/trash.png');
+}
+
+#preview_command .pc_command #export_pdf_button {
+	background-image: url('../images/icons/small/black/pdf.png');
+}
+
+#preview_command .pc_command #pc_edit_mode_button {
+	background-image: url('../images/icons/small/black/edit.png');
+}
+
+#preview_command .pc_command #pc_change_template {
+	background-image: url('../images/icons/small/black/document.png');
+}
+
+#preview_command .pc_command #pc_user_info {
+	background-image: url('../images/icons/small/black/user.png');
+}
+
+#preview_command .pc_command #pc_mailing {
+	background-image: url('../images/icons/small/black/mail.png');
+}
+
+#preview_command .pc_command #pc_page_properties {
+	background-image: url('../images/icons/small/black/page_properties.png');
+}
+
+#preview_command #pc_edit_mode_button {
+	background-image: url('../images/icons/small/white/popin.png');
+}
+
+ #preview_command #preview-delete-zone {
+    display: block;
+ 	width: auto;
+ 	height: 180px;
+ 	margin: 5px;
+ 	background-image: url('../images/icons/big-trash.png');
+ 	background-repeat: no-repeat;
+ 	background-position: center center;
+ 	text-align: center;
+ 	float: none;
+ 	font-size: 0;
+ }
+ 
+ #preview_command #preview-delete-zone.hidden {
+ 	display: none;
+ }
+ 
+ #preview_command #preview-delete-zone:hover {
+	background-image: url('../images/icons/big-trash-hover.png');
+}
+
+#preview_command .macro-list .action-button { 	
+ 	margin: 2px;
+ 	padding: 2px;
+ 	display: block;
+}
+
+#preview_command .action-button {
+    background: url("../images/bgbutton4.png") repeat-x scroll left top transparent;
+    border: 1px solid #CCCCCC;
+    border-radius: 3px 3px 3px 3px;
+    box-shadow: 1px 1px 0 #F7F7F7;
+    color: #333333;
+    display: inline-block;
+    margin: 2px;
+    padding: 2px 5px;    
+    text-align: center;
+}
+
+#preview_command .action-button:hover {
+	background: url("../images/buttonbg3.png") repeat-x scroll left top
+		transparent;
+	border: 1px solid #304978;
+	color: #FFFFFF;
+	text-shadow: 1px 1px #aaaaaa;
+}
+
+#preview_command #ajax-loader {  
+	margin: 12px 0;
+	font-size: 16px;
+    background-image: url("../images/loaders/loader3.gif");
+    background-position: center center;
+    background-repeat: no-repeat;
+    display: none;
+    height: 16px;        
+}
+
+#preview_command #ajax-loader.active {
+	display: block;
+}
+
+/** NOTIFICATION MESSAGES (login.html, dashboard.html) **/
+
+#preview_command .message {
+	padding: 5px 5px 5px 30px;
+	margin: 0 0 4px 0;
+	-moz-border-radius: 2px;
+	-webkit-border-radius: 2px;
+	border-radius: 2px;
+	position: relative;
+}
+
+#preview_command .msgalert {
+	border: 1px solid #eac572; 
+	background: #ffe9ad url(../images/icons/warning.png) no-repeat 10px
+		center;
+}
+
+#preview_command .msginfo {
+	border: 1px solid #99c4ea;
+	background: #d1e4f3 url(../images/icons/info.png) no-repeat 10px center;
+}
+
+#preview_command .msgsuccess {
+	border: 1px solid #c1d779;
+	background: #effeb9 url(../images/icons/success.png) no-repeat 10px
+		center;
+}
+
+#preview_command .msgerror {
+	border: 1px solid #e18b7c;
+	background: #fad5cf url(../images/icons/error.png) no-repeat 10px center;
+}
+
+#preview-layer span {
+	background-color: #777777;
+}
+
+/** footer **/
+
+#preview_command .pc_footer {
+	position: fixed;
+	bottom: 0;
+    border-top: 1px solid #aaaaaa;
+    overflow: hidden;
+    padding: 3px;
+    display: block;
+    width: 254px;
+}
+
+#preview_command .pc_footer a {
+	float: left;
+}
+
+#preview_command .pc_footer .version {
+	float: right;	
+	text-align: right;
+}

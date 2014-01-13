@@ -1,0 +1,20 @@
+.mainBox {
+    margin-top: 0;
+}
+
+
+.standard-form input[type="text"] {
+	width: 96%;
+}
+
+.actions form {
+	display: inline-block;
+}
+
+.ready-to-send {
+	background-color: #B0DE26;
+}
+
+.sended {
+	background-color: #33DEDE;
+}
