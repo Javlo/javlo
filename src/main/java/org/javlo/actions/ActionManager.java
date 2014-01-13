@@ -162,8 +162,6 @@ public class ActionManager {
 
 	static public final String perform(String actionName, HttpServletRequest request, HttpServletResponse response) throws Exception {
 		
-		System.out.println("***** ActionManager.perform : actionName = "+actionName); //TODO: remove debug trace
-
 		GlobalContext globalContext = GlobalContext.getInstance(request);
 		logger.fine("perform action : " + actionName);
 
