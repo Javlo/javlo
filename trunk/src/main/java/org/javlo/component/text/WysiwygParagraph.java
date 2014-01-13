@@ -50,6 +50,7 @@ public class WysiwygParagraph extends AbstractVisualComponent {
 		filesParams.put("webaction", "changeRenderer");
 		filesParams.put("page", "meta");
 		filesParams.put("select", "true");
+		filesParams.put("previewEdit", "true");
 		
 		String chooseImageURL = URLHelper.createModuleURL(ctx, ctx.getPath(), "file", filesParams);		
 		

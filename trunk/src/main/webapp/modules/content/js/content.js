@@ -44,7 +44,7 @@ function loadWysiwyg(cssQuery, complexity, chooseFileURL) {
 		    	tinyMCE.activeEditor.windowManager.open({
 		            file : chooseFileURL,
 		            title : 'Select image',
-		            width : jQuery(document).width()-100,  // Your dimensions may differ - toy around with them!
+		            width : jQuery(document).width()-100,  // Your dimensions may differ - toy around with them
 		            height :  jQuery(document).height()-150,
 		            resizable : "yes",
 		            inline : "yes",  // This parameter only has an effect if you use the inlinepopups plugin!
