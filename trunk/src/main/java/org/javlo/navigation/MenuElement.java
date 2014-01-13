@@ -3206,10 +3206,7 @@ public class MenuElement implements Serializable {
 		while ((contentList.hasNext(ctxForceArea))) {
 			IContentVisualComponent component = contentList.next(ctxForceArea);
 			if (component != null) {
-				if (!component.isEmpty(ctxForceArea) || ctx.getCurrentTemplate().isMailing()) { // mailing
-																								// is
-																								// never
-																								// empty
+				if (!component.isEmpty(ctxForceArea) || (ctx.getCurrentTemplate() != null && ctx.getCurrentTemplate().isMailing())) { // mailing never empty
 					if (!component.isRepeat()) {
 						desc.setEmpty(area, false);
 						return false;
