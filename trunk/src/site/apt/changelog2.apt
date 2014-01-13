@@ -207,3 +207,9 @@ change log
  * child association
 
  * name of page can be human readable.
+ 
+ * import local image in wysiwyg
+ 
+* 2.0.3 13/01/2014
+
+ * minimize js + compress css + resolve @import when import template (if option checked in template config)
