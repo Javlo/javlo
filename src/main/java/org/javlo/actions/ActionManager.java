@@ -161,6 +161,8 @@ public class ActionManager {
 	}
 
 	static public final String perform(String actionName, HttpServletRequest request, HttpServletResponse response) throws Exception {
+		
+		System.out.println("***** ActionManager.perform : actionName = "+actionName); //TODO: remove debug trace
 
 		GlobalContext globalContext = GlobalContext.getInstance(request);
 		logger.fine("perform action : " + actionName);
@@ -179,12 +181,12 @@ public class ActionManager {
 				action = moduleContext.getCurrentModule().getAction();
 			} else {
 				action = getAction(request, group);
-			}
+			}			
+			User currentUser = AdminUserFactory.createAdminUserFactory(globalContext, request.getSession()).getCurrentUser(request.getSession());			
 			if (action != null) {
-				/** security **/
-				if (action instanceof IModuleAction) { // if module action
-					User currentUser = AdminUserFactory.createAdminUserFactory(globalContext, request.getSession()).getCurrentUser(request.getSession());
-					ContentContext ctx = ContentContext.getContentContext(request, response);
+				/** security **/				
+				if (action instanceof IModuleAction) { // if module action					
+					ContentContext ctx = ContentContext.getContentContext(request, response);			
 					if (currentUser == null) {
 						ctx.setNeedRefresh(true);
 					}
@@ -202,6 +204,11 @@ public class ActionManager {
 			} else {
 				message = "actions class not found : " + actionName + " - group:"+group;
 				logger.severe(message);
+				
+				ContentContext ctx = ContentContext.getContentContext(request, response);
+				if (!ctx.isAsViewMode() && currentUser == null && actionName != null) {					
+					ctx.setNeedRefresh(true);
+				}
 			}
 		} catch (Throwable t) {
 			if (t.getCause() instanceof JavloSecurityException) {

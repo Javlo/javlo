@@ -26,6 +26,7 @@ function loadWysiwyg(cssQuery, complexity, chooseFileURL) {
 	} else if (complexity == "high") {		
 		tinymce.init({
 		    selector: cssQuery,
+		    relative_urls: false,
 		    theme: "modern",
 		    plugins: [
 		        "advlist autolink lists link image charmap print preview hr anchor pagebreak",
