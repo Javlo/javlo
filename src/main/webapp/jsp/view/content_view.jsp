@@ -1,10 +1,11 @@
+<%@page import="org.javlo.component.links.PageMirrorComponent"%>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c"
 %><%@ taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions"
-%><%@page import="org.javlo.i18n.I18nAccess"%>
-<%@page contentType="text/html"
+%><%@page contentType="text/html"
         import="
         java.util.Map,
         java.util.Stack,
+        org.javlo.i18n.I18nAccess,
         org.javlo.helper.StringHelper,        
         org.javlo.context.ContentContext,
         org.javlo.context.EditContext,
@@ -29,9 +30,11 @@ ContentContext ctx = ContentContext.getContentContext ( request, response );
 GlobalContext globalContext = GlobalContext.getInstance(request);
 boolean pageEmpty = true;
 
+boolean editPage = !StringHelper.isTrue(request.getParameter(PageMirrorComponent.NOT_EDIT_PREVIEW_PARAM_NAME));
+
 IContentVisualComponent specificComp = (IContentVisualComponent)request.getAttribute("specific-comp");
 
-if (ctx.getRenderMode() == ContentContext.PREVIEW_MODE && specificComp == null) {
+if (ctx.getRenderMode() == ContentContext.PREVIEW_MODE && specificComp == null && editPage) {
 	%><div id="one-component-edit"></div><%
 }
 
@@ -98,10 +101,10 @@ IContentVisualComponent previousElem = null;
 	if (languageChange) {
 		%><div lang="<%=ctx.getContentLanguage()%>"><%
 	}	
-	if (!elems.hasNext(ctx) && EditContext.getInstance(globalContext, session).isEditPreview() && ctx.isAsPreviewMode()) {
+	if (!elems.hasNext(ctx) && EditContext.getInstance(globalContext, session).isEditPreview() && ctx.isAsPreviewMode() && editPage) {
 		%><div class="_empty_area"><span><%=ctx.getArea()%></span></div><%
 	} else {
-		if (ctx.getRenderMode() == ContentContext.PREVIEW_MODE && specificComp == null) {
+		if (ctx.getRenderMode() == ContentContext.PREVIEW_MODE && specificComp == null && editPage) {
 			%><div id="comp_0" class="free-edit-zone editable-component"><span>&nbsp;</span></div><%
 		}
 	}
