@@ -736,4 +736,8 @@ public class ReactionComponent extends DynamicComponent implements IAction {
 	public boolean isCaptcha(ContentContext ctx) {
 		return StringHelper.isTrue(getConfig(ctx).getProperty("captcha", null));
 	}
+	
+	public int getReactionSize(ContentContext ctx) {
+		return getReactions(ctx).size();
+	}
 }
