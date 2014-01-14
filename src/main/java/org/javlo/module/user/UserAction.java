@@ -389,7 +389,7 @@ public class UserAction extends AbstractModuleAction {
 
 	public static String performUpload(RequestService rs, HttpSession session, User user, ContentContext ctx, GlobalContext globalContext, MessageRepository messageRepository, I18nAccess i18nAccess) throws IOException {
 
-		if (!AdminUserSecurity.getInstance().haveRight(user, AdminUserSecurity.USER_ROLE)) {
+		if (!AdminUserSecurity.getInstance().canRole(user, AdminUserSecurity.USER_ROLE)) {
 			return "security error.";
 		}
 

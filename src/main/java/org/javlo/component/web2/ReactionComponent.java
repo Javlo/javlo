@@ -34,6 +34,7 @@ import org.javlo.component.dynamic.DynamicComponent;
 import org.javlo.config.StaticConfig;
 import org.javlo.context.ContentContext;
 import org.javlo.context.GlobalContext;
+import org.javlo.data.InfoBean;
 import org.javlo.exception.ResourceNotFoundException;
 import org.javlo.fields.Field;
 import org.javlo.fields.FieldFactory;
@@ -397,14 +398,14 @@ public class ReactionComponent extends DynamicComponent implements IAction {
 		}
 		return null;
 	}
-	
+
 	protected String getTitle(ContentContext ctx) {
 		Collection<Field> fields;
 		try {
 			fields = getFields(ctx);
 			for (Field field : fields) {
 				if (field.getName().equalsIgnoreCase("title")) {
-					return field.getValue();					
+					return field.getValue();
 				}
 			}
 		} catch (Exception e) {
@@ -514,7 +515,8 @@ public class ReactionComponent extends DynamicComponent implements IAction {
 
 			IUserFactory userFactory = UserFactory.createUserFactory(globalContext, ctx.getRequest().getSession());
 			if (userFactory.getCurrentUser(ctx.getRequest().getSession()) != null) {
-				// getProperties().setProperty("field.nickname.value", userFactory.getCurrentUser(ctx.getRequest().getSession()).getLogin());
+				// getProperties().setProperty("field.nickname.value",
+				// userFactory.getCurrentUser(ctx.getRequest().getSession()).getLogin());
 				Field field = FieldFactory.getField(this, staticConfig, globalContext, i18nAccess, null, i18nAccess.getContentViewText("global.nickname"), "nickname", "text", getId());
 				// field.setReadOnly(true);
 				viewField.add(field);
@@ -539,12 +541,6 @@ public class ReactionComponent extends DynamicComponent implements IAction {
 
 		String id = "react-" + getId();
 
-		out.println("<div id=\"" + id + "\" class=\"" + getType() + "\">");
-
-		I18nAccess i18nAccess = I18nAccess.getInstance(ctx.getRequest());
-
-		Collection<Reaction> reactions = getReactions(ctx);
-
 		MessageRepository messageRepository = MessageRepository.getInstance(ctx);
 		if (messageRepository.getGlobalMessage() != null && messageRepository.getGlobalMessage().getTypeLabel() != null) {
 			out.println("<div class=\"message\">");
@@ -552,10 +548,16 @@ public class ReactionComponent extends DynamicComponent implements IAction {
 			out.println("</div>");
 		}
 
+		out.println("<div id=\"" + id + "\" class=\"" + getType() + "\">");
+
+		I18nAccess i18nAccess = I18nAccess.getInstance(ctx.getRequest());
+
+		Collection<Reaction> reactions = getReactions(ctx);
+
 		int i = 0;
 		String title = getTitle(ctx);
 		if (title != null && title.trim().length() > 0) {
-			out.println("<h3><span>"+title+"</span></h3>");
+			out.println("<h3><span>" + title + "</span></h3>");
 		}
 		out.println("<ul>");
 		for (Reaction reaction : reactions) {
@@ -574,7 +576,7 @@ public class ReactionComponent extends DynamicComponent implements IAction {
 				}
 
 				out.println("<div class=\"text\">");
-				out.println(XHTMLHelper.textToXHTML(StringHelper.removeTag(reaction.getText())));
+				out.println(XHTMLHelper.textToXHTML(StringHelper.removeTag(reaction.getText()), true, ctx.getGlobalContext()));
 				out.println("</div>");
 
 				out.println("<div class=\"metapost\"><span class=\"first date\">");
@@ -598,6 +600,14 @@ public class ReactionComponent extends DynamicComponent implements IAction {
 				out.println("field not found : " + field.getName());
 				out.println("</div>");
 			}
+		}
+
+		if (isCaptcha(ctx)) {
+			out.println("<div class=\"line captcha\">");
+			InfoBean info = InfoBean.getCurrentInfoBean(ctx);
+			out.println("<label for=\"captcha-" + getId() + "\" ><span>"+i18nAccess.getViewText("global.captcha")+"</span><img src=\"" + info.getCaptchaURL() + "\" alt=\"captcha\" /></label>");
+			out.println("<input id=\"captcha-" + getId() + "\" type=\"text\" name=\"captcha\" value=\"\" />");
+			out.println("</div>");
 		}
 
 		out.println("<div style=\"height: 0; width: 0; position: absolute; left: -9999px;\">");
@@ -712,5 +722,9 @@ public class ReactionComponent extends DynamicComponent implements IAction {
 	@Override
 	public int getComplexityLevel(ContentContext ctx) {
 		return AbstractVisualComponent.COMPLEXITY_STANDARD;
+	}
+
+	public boolean isCaptcha(ContentContext ctx) {
+		return StringHelper.isTrue(getConfig(ctx).getProperty("captcha", null));
 	}
 }

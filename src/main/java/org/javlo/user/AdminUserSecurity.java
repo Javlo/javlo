@@ -81,6 +81,11 @@ public class AdminUserSecurity implements Serializable {
 		String[] designRights = { "changeview", "goEditTemplate", "changeRenderer", "validate", "browse", "delete" };
 		Set<String> designRightsSet = new HashSet<String>(Arrays.asList(designRights));
 		rights.put(DESIGN_ROLE, designRightsSet);
+		
+		/* USER RIGHT */
+		String[] userRights = { "upload", "ajaxUserList" };
+		Set<String> userRightsSet = new HashSet<String>(Arrays.asList(userRights));
+		rights.put(USER_ROLE, userRightsSet);
 
 	}
 
