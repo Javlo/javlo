@@ -66,7 +66,7 @@ public class ResourceServlet extends HttpServlet {
 	 */
 	protected void processRequest(HttpServletRequest request, HttpServletResponse response) throws ServletException {
 
-		if (request.getServletPath().equals("/favicon.ico")) {
+		if (request.getServletPath().equals("/favicon.ico") || request.getServletPath().equals("/robots.txt")) {
 			GlobalContext globalContext = GlobalContext.getSessionContext(request.getSession());
 			if (globalContext != null) {
 				String filePath = URLHelper.mergePath(globalContext.getStaticConfig().getStaticFolder(), request.getServletPath());
