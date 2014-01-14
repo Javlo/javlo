@@ -1938,6 +1938,7 @@ public class MenuElement implements Serializable {
 	public int getReactionSize(ContentContext ctx) throws Exception {
 		ContentContext newCtx = new ContentContext(ctx);
 		newCtx.setArea(null);
+		newCtx.setCurrentPageCached(this);
 
 		IContentComponentsList contentList = getAllContent(newCtx);
 		while (contentList.hasNext(newCtx)) {

@@ -174,8 +174,8 @@ public class ReactionComponent extends DynamicComponent implements IAction {
 		}
 	}
 
-	private static final String REACTIONS_PREFIX = "reactions-";
-	private static final String DELETEED_REACTION_PREFIX = "del-reactions-";
+	private static final String REACTIONS_PREFIX_KEY = "reactions-";
+	private static final String DELETEED_REACTION_PREFIX_KEY = "del-reactions-";
 
 	private static String getAcceptName(Reaction reaction) {
 		return "accept-" + reaction.getId();
@@ -319,6 +319,23 @@ public class ReactionComponent extends DynamicComponent implements IAction {
 		}
 		return reaction.isValidReaction();
 	}
+	
+	protected String getReactionPrefix(ContentContext ctx) {
+		if (isRepeat()) {
+			try {
+				return REACTIONS_PREFIX_KEY+ctx.getCurrentPage().getId()+'-';
+			} catch (Exception e) {
+				e.printStackTrace();
+				return null;
+			}
+		} else {
+			return REACTIONS_PREFIX_KEY;
+		}
+	}
+	
+	protected String getDelReactionPrefix(ContentContext ctx) {
+		return DELETEED_REACTION_PREFIX_KEY;
+	}
 
 	@Override
 	protected String getEditXHTMLCode(ContentContext ctx) throws Exception {
@@ -460,7 +477,7 @@ public class ReactionComponent extends DynamicComponent implements IAction {
 			outReactions = new TreeSet<Reaction>(new Reaction.OrderCreation(true));
 			if (getViewData(ctx) != null) {
 				for (Object key : getViewData(ctx).keySet()) {
-					if (key.toString().startsWith(REACTIONS_PREFIX)) {
+					if (key.toString().startsWith(getReactionPrefix(ctx))) {
 						Reaction reaction = new Reaction();
 						reaction.fromString("" + getViewData(ctx).getProperty("" + key));
 						outReactions.add(reaction);
@@ -480,7 +497,7 @@ public class ReactionComponent extends DynamicComponent implements IAction {
 			outReactions = new TreeSet<Reaction>(new Reaction.OrderCreation(true));
 			if (getViewData(ctx) != null) {
 				for (Object key : getViewData(ctx).keySet()) {
-					if (key.toString().startsWith(DELETEED_REACTION_PREFIX)) {
+					if (key.toString().startsWith(getDelReactionPrefix(ctx))) {
 						Reaction reaction = new Reaction();
 						reaction.fromString("" + getViewData(ctx).getProperty("" + key));
 						outReactions.add(reaction);
@@ -691,8 +708,8 @@ public class ReactionComponent extends DynamicComponent implements IAction {
 	}
 
 	public void deleteReaction(ContentContext ctx, String id) throws IOException {
-		getViewData(ctx).put(DELETEED_REACTION_PREFIX + id, getViewData(ctx).getProperty(REACTIONS_PREFIX + id));
-		getViewData(ctx).remove(REACTIONS_PREFIX + id);
+		getViewData(ctx).put(getDelReactionPrefix(ctx) + id, getViewData(ctx).getProperty(getReactionPrefix(ctx) + id));
+		getViewData(ctx).remove(getReactionPrefix(ctx) + id);
 		storeViewData(ctx);
 	}
 
@@ -708,7 +725,7 @@ public class ReactionComponent extends DynamicComponent implements IAction {
 
 	private void setReactions(ContentContext ctx, Collection<Reaction> reactions) throws IOException {
 		for (Reaction reaction : reactions) {
-			getViewData(ctx).setProperty(REACTIONS_PREFIX + reaction.getId(), reaction.toString());
+			getViewData(ctx).setProperty(getReactionPrefix(ctx) + reaction.getId(), reaction.toString());
 		}
 		storeViewData(ctx);
 	}
