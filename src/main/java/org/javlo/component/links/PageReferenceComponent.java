@@ -47,6 +47,7 @@ import org.javlo.helper.Comparator.MenuElementVisitComparator;
 import org.javlo.i18n.I18nAccess;
 import org.javlo.module.content.Edit;
 import org.javlo.navigation.MenuElement;
+import org.javlo.navigation.ReactionMenuElementComparator;
 import org.javlo.service.ContentService;
 import org.javlo.service.NavigationService;
 import org.javlo.service.RequestService;
@@ -178,6 +179,7 @@ public class PageReferenceComponent extends ComplexPropertiesLink implements IAc
 			bean.creator = page.getCreator();
 			bean.childrenOfAssociation = page.isChildrenOfAssociation();
 			bean.childrenAssociation = page.isChildrenAssociation();
+			bean.reactionSize = page.getReactionSize(ctx);
 			if (pageTemplate != null) {
 				bean.mailing = pageTemplate.isMailing();
 			}
@@ -319,6 +321,7 @@ public class PageReferenceComponent extends ComplexPropertiesLink implements IAc
 		private Collection<Link> links = new LinkedList<Link>();
 		private Collection<Link> staticResources = new LinkedList<Link>();
 		private final Collection<Image> images = new LinkedList<Image>();
+		private int reactionSize = 0;
 
 		private Collection<String> tags = new LinkedList<String>();
 		private final Collection<String> tagsLabel = new LinkedList<String>();
@@ -606,6 +609,14 @@ public class PageReferenceComponent extends ComplexPropertiesLink implements IAc
 
 		public void setHumanName(String humanName) {
 			this.humanName = humanName;
+		}
+
+		public int getReactionSize() {
+			return reactionSize;
+		}
+
+		public void setReactionSize(int reactionSize) {
+			this.reactionSize = reactionSize;
 		}
 
 	}
@@ -1335,6 +1346,10 @@ public class PageReferenceComponent extends ComplexPropertiesLink implements IAc
 	private boolean isDateOrder(ContentContext ctx) {
 		return checkOrder(ctx, "date");
 	}
+	
+	private boolean isReactionOrder(ContentContext ctx) {
+		return checkOrder(ctx, "reaction");
+	}
 
 	private boolean isNoOrder(ContentContext ctx) {
 		return checkOrder(ctx, "no");		
@@ -1432,7 +1447,9 @@ public class PageReferenceComponent extends ComplexPropertiesLink implements IAc
 		}
 
 		if (!isNoOrder(ctx)) {
-			if (isDateOrder(ctx)) {
+			if (isReactionOrder(ctx)) {
+				Collections.sort(pages, new ReactionMenuElementComparator(ctx, ascending));
+			} else if (isDateOrder(ctx)) {
 				Collections.sort(pages, new MenuElementGlobalDateComparator(ctx, ascending));
 			} else if (isCreationOrder(ctx)) {
 				Collections.sort(pages, new MenuElementCreationDateComparator(ascending));
@@ -1491,12 +1508,10 @@ public class PageReferenceComponent extends ComplexPropertiesLink implements IAc
 		 */
 
 		for (MenuElement page : pages) {
-
 			ContentContext lgCtx = new ContentContext(ctx);
 			if (GlobalContext.getInstance(ctx.getRequest()).isAutoSwitchToDefaultLanguage()) {
 				lgCtx = new ContentContext(page.getContentContextWithContent(ctx));
 			}
-
 			if (filterPage(lgCtx, page)) {
 				if (countPage < getMaxNews(lgCtx)) {
 					if ((page.isRealContentAnyLanguage(lgCtx) || isWidthEmptyPage()) && (page.getChildMenuElements().size() == 0 || page.isChildrenAssociation() || !isOnlyPageWithoutChildren()) && page.getContentDateNeverNull(lgCtx).after(backDate.getTime())) {
