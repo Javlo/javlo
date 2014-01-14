@@ -1369,6 +1369,10 @@ public class ContentContext {
 	 * @throws Exception
 	 */
 	public boolean isResourceGZip() throws Exception {
+		
+		if (!getGlobalContext().getStaticConfig().isProd()) {
+			return false;
+		}
 
 		if (!isAsViewMode()) {
 			return false;

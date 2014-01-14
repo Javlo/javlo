@@ -494,6 +494,10 @@ public class StaticConfig extends Observable {
 		return properties.getString("deploy.env", "prod");
 	}
 	
+	public boolean isProd() {
+		return getEnv().equalsIgnoreCase("prod");
+	}
+	
 	public boolean testInstance() {
 		return getEnv().equals("dev") || getEnv().equals("local");
 	}

@@ -1981,7 +1981,7 @@ public class Template implements Comparable<Template> {
 				}
 			}
 		}
-		if (isCompressResources()) {
+		if (isCompressResources() && globalContext.getStaticConfig().isProd()) {
 			Iterator<File> targetFiles = FileUtils.iterateFiles(templateTarget, new String[] { "js", "css" }, true);
 			while (targetFiles.hasNext()) {
 				File targetFile = targetFiles.next();
