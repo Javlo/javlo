@@ -47,6 +47,7 @@ import org.javlo.i18n.I18nAccess;
 import org.javlo.mailing.MailService;
 import org.javlo.message.GenericMessage;
 import org.javlo.message.MessageRepository;
+import org.javlo.service.CaptchaService;
 import org.javlo.service.ContentService;
 import org.javlo.service.RequestService;
 import org.javlo.user.IUserFactory;
@@ -205,6 +206,15 @@ public class ReactionComponent extends DynamicComponent implements IAction {
 			List<Field> fields = reactionComp.getViewFields(ctx);
 			Reaction reaction = new Reaction();
 			boolean validReaction = false;
+			
+			if (reactionComp.isCaptcha(ctx)) {
+				String captcha = requestService.getParameter("captcha", "");
+				if (!CaptchaService.getInstance(request.getSession()).getCurrentCaptchaCode().equals(captcha)) {
+					I18nAccess i18nAccess = I18nAccess.getInstance(ctx.getRequest());
+					return i18nAccess.getViewText("message.error.bad-captcha");
+				}
+			}
+			
 			for (Field field : fields) {
 				field.process(request);
 				if (field.getName().equals("title")) {
@@ -541,13 +551,6 @@ public class ReactionComponent extends DynamicComponent implements IAction {
 
 		String id = "react-" + getId();
 
-		MessageRepository messageRepository = MessageRepository.getInstance(ctx);
-		if (messageRepository.getGlobalMessage() != null && messageRepository.getGlobalMessage().getTypeLabel() != null) {
-			out.println("<div class=\"message\">");
-			out.println("<div class=\"" + messageRepository.getGlobalMessage().getTypeLabel() + "\">" + messageRepository.getGlobalMessage().getMessage() + "</div>");
-			out.println("</div>");
-		}
-
 		out.println("<div id=\"" + id + "\" class=\"" + getType() + "\">");
 
 		I18nAccess i18nAccess = I18nAccess.getInstance(ctx.getRequest());
@@ -588,6 +591,12 @@ public class ReactionComponent extends DynamicComponent implements IAction {
 		}
 		out.println("</ul>");
 		out.println("<div class=\"reaction-form\">");
+		MessageRepository messageRepository = MessageRepository.getInstance(ctx);
+		if (messageRepository.getGlobalMessage() != null && messageRepository.getGlobalMessage().getTypeLabel() != null) {
+			out.println("<div class=\"message\">");
+			out.println("<div class=\"" + messageRepository.getGlobalMessage().getTypeLabel() + "\">" + messageRepository.getGlobalMessage().getMessage() + "</div>");
+			out.println("</div>");
+		}
 		out.println("<form id=\"reaction-" + getId() + "\" method=\"post\" action=\"" + URLHelper.createURL(ctx) + "#" + id + "\" class=\"big_form\" >");
 		out.println("<input type=\"hidden\" name=\"webaction\" value=\"reaction.add\" />");
 		out.println("<input type=\"hidden\" name=\"comp\" value=\"" + getId() + "\" />");
