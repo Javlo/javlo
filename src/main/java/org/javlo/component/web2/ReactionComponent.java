@@ -397,6 +397,20 @@ public class ReactionComponent extends DynamicComponent implements IAction {
 		}
 		return null;
 	}
+	
+	protected String getTitle(ContentContext ctx) {
+		Collection<Field> fields;
+		try {
+			fields = getFields(ctx);
+			for (Field field : fields) {
+				if (field.getName().equalsIgnoreCase("title")) {
+					return field.getValue();					
+				}
+			}
+		} catch (Exception e) {
+		}
+		return null;
+	}
 
 	@Override
 	public java.util.List<Field> getFields(ContentContext ctx) throws FileNotFoundException, IOException {
@@ -407,6 +421,7 @@ public class ReactionComponent extends DynamicComponent implements IAction {
 		java.util.List<Field> outFields = new LinkedList<Field>();
 
 		outFields.add(FieldFactory.getField(this, staticConfig, globalContext, i18nAccess, getProperties(), i18nAccess.getText("global.email"), "email", "text", getId()));
+		outFields.add(FieldFactory.getField(this, staticConfig, globalContext, i18nAccess, getProperties(), i18nAccess.getText("global.title"), "title", "text", getId()));
 
 		Collections.sort(outFields, new FieldOrderComparator());
 		return outFields;
@@ -531,13 +546,17 @@ public class ReactionComponent extends DynamicComponent implements IAction {
 		Collection<Reaction> reactions = getReactions(ctx);
 
 		MessageRepository messageRepository = MessageRepository.getInstance(ctx);
-		if (messageRepository.getGlobalMessage() != null) {
+		if (messageRepository.getGlobalMessage() != null && messageRepository.getGlobalMessage().getTypeLabel() != null) {
 			out.println("<div class=\"message\">");
 			out.println("<div class=\"" + messageRepository.getGlobalMessage().getTypeLabel() + "\">" + messageRepository.getGlobalMessage().getMessage() + "</div>");
 			out.println("</div>");
 		}
 
 		int i = 0;
+		String title = getTitle(ctx);
+		if (title != null && title.trim().length() > 0) {
+			out.println("<h3><span>"+title+"</span></h3>");
+		}
 		out.println("<ul>");
 		for (Reaction reaction : reactions) {
 			if (reaction.isValidReaction()) {

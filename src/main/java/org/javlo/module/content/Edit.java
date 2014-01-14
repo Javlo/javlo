@@ -702,7 +702,7 @@ public class Edit extends AbstractModuleAction {
 			// ctx = ctx.getContextWithArea(areaKey);
 			editContext.setCurrentArea(areaKey);
 		}
-
+		
 		MenuElement parentPage = ctx.getCurrentPage();
 		MenuElement targetPage = content.getNavigation(ctx).searchChildFromId(rs.getParameter("pageContainerID", null));
 
@@ -713,14 +713,14 @@ public class Edit extends AbstractModuleAction {
 		if (areaKey == null) {
 			areaKey = EditContext.getInstance(globalContext, session).getCurrentArea();
 		}
-
+		
 		String newId = content.createContent(ctx, targetPage, areaKey, previousId, type, "", true);
 
 		if (StringHelper.isTrue(rs.getParameter("init", null))) {
 			IContentVisualComponent comp = content.getComponent(ctx, newId);
 			comp.initContent(ctx);
 		}
-
+		
 		if (ctx.isAjax()) {
 			if (!ctx.isEditPreview()) {
 				updateComponent(ctx, currentModule, newId, previousId);
@@ -738,24 +738,15 @@ public class Edit extends AbstractModuleAction {
 			if (mode != null) {
 				ctx.setRenderMode(Integer.parseInt(mode));
 			}
-
-			logger.info("update : " + selecterPrefix + area);
-
+			
 			ctx.getAjaxInsideZone().put(selecterPrefix + area, ServletHelper.executeJSP(ctx, "/jsp/view/content_view.jsp?area=" + areaKey));
 		}
-
 		ctx.resetCurrentPageCached();
-
-		// String msg = i18nAccess.getText("action.component.created", new
-		// String[][] { { "type", type } });
-		// messageRepository.setGlobalMessageAndNotification(ctx, new
-		// GenericMessage(msg, GenericMessage.INFO));
-
 		PersistenceService persistenceService = PersistenceService.getInstance(globalContext);
 		persistenceService.store(ctx);
 		modifPage(ctx, targetPage);
 		autoPublish(request, response);
-
+		
 		return null;
 	}
 

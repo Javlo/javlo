@@ -861,6 +861,8 @@ public class MenuElement implements Serializable {
 	int priority = 10;
 
 	String name = null;
+	
+	String nameKey = null;
 
 	boolean childrenAssociation = false;
 
@@ -2483,7 +2485,10 @@ public class MenuElement implements Serializable {
 	 * @return
 	 */
 	public String getName() {
-		return StringHelper.createFileName(name).trim();
+		if (nameKey == null) {
+			nameKey = StringHelper.createFileName(name).trim(); 
+		}
+		return nameKey;
 	}
 
 	/**
@@ -3704,8 +3709,9 @@ public class MenuElement implements Serializable {
 	 * outLastMonthAccess; } } else { return lastMonthAccess; } }
 	 */
 
-	public void setName(String name) {
+	public void setName(String name) {		
 		this.name = name;
+		nameKey = null;
 	}
 
 	/**
