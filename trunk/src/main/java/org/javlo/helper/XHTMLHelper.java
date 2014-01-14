@@ -85,20 +85,18 @@ public class XHTMLHelper {
 
 	private static final String[] TEXT_COLORS = { "#005", "#050", "#500", "#505", "#550", "#055", "#555" };;
 
-	private static final Pattern CSS_IMPORT_PATTERN = Pattern.compile(
-			"@import\\s+" +
+	private static final Pattern CSS_IMPORT_PATTERN = Pattern.compile("@import\\s+" +
 
-					// optional 'url(' part (non capturing subpattern) with optional quote
-					"(?:url\\(\\s*)?" + "[\"']?" +
+	// optional 'url(' part (non capturing subpattern) with optional quote
+			"(?:url\\(\\s*)?" + "[\"']?" +
 
-					// file path ending with '.css' in capturing subpattern 1
-					// word characters, slashes, dash, underscore, dot,
-					// colon and question mark (possible for absolute urls) are allowed
-					"([\\w\\\\/\\-_.:?]+?\\.css)" +
+			// file path ending with '.css' in capturing subpattern 1
+			// word characters, slashes, dash, underscore, dot,
+			// colon and question mark (possible for absolute urls) are allowed
+			"([\\w\\\\/\\-_.:?]+?\\.css)" +
 
-					// the rest of the line until semicolon or line break
-					"[^;$]*?(;|$)",
-			Pattern.MULTILINE);
+			// the rest of the line until semicolon or line break
+			"[^;$]*?(;|$)", Pattern.MULTILINE);
 
 	public static String _textToXHTML(String text, boolean popup) {
 		String res = autoLink(text);
@@ -149,10 +147,18 @@ public class XHTMLHelper {
 	}
 
 	public static String autoLink(String content) {
-		return autoLink(content, null);
+		return autoLink(content, false, null);
+	}
+
+	public static String autoLink(String content, boolean notfollow) {
+		return autoLink(content, notfollow, null);
 	}
 
 	public static String autoLink(String content, GlobalContext globalContext) {
+		return autoLink(content, false, globalContext);
+	}
+
+	public static String autoLink(String content, boolean notFollow, GlobalContext globalContext) {
 		if (content == null) {
 			return "";
 		}
@@ -166,7 +172,7 @@ public class XHTMLHelper {
 				String[] splitLine = StringHelper.splitStaySeparator(line, " ,;()[]{}<>\n");
 
 				for (String element : splitLine) {
-					writer.append(createHTMLLink(element, globalContext));
+					writer.append(createHTMLLink(element, notFollow, globalContext));
 				}
 				line = reader.readLine();
 				if (line != null) {
@@ -180,7 +186,7 @@ public class XHTMLHelper {
 		return out.toString();
 	}
 
-	private static String createHTMLLink(String url, GlobalContext globalContext) {
+	private static String createHTMLLink(String url, boolean notFollow, GlobalContext globalContext) {
 		String suffix = "";
 		if (url.endsWith(".")) {
 			url = url.substring(0, url.length() - 1);
@@ -197,15 +203,20 @@ public class XHTMLHelper {
 			cssClass = cssClass + " web file-" + StringHelper.getFileExtension(url);
 		}
 
+		String notFollowAttr = "";
+		if (notFollow) {
+			notFollowAttr = " rel=\"nofollow\"";
+		}
+
 		if (url.contains("@")) {
 			if (PatternHelper.MAIL_PATTERN.matcher(url).matches()) {
 				cssClass = "auto-link mail";
 				outXHTML = "<a class=\"" + cssClass + "\" href=\"mailto:" + url.trim() + "\">" + url + "</a>";
 			}
 		} else if (url.startsWith("http://") || url.startsWith("https://") || url.startsWith("ftp://")) {
-			outXHTML = "<a class=\"" + cssClass + "\" href=\"" + url.trim() + "\"" + target + ">" + url + "</a>";
+			outXHTML = "<a class=\"" + cssClass + "\" href=\"" + url.trim() + "\"" + target + "" + notFollowAttr + ">" + url + "</a>";
 		} else if (url.startsWith("www.")) {
-			outXHTML = "<a class=\"" + cssClass + "\" href=\"http://" + url.trim() + "\"" + target + ">" + url + "</a>";
+			outXHTML = "<a class=\"" + cssClass + "\" href=\"http://" + url.trim() + "\"" + target + "" + notFollowAttr + ">" + url + "</a>";
 		}
 		return outXHTML + suffix;
 	}
@@ -1721,6 +1732,7 @@ public class XHTMLHelper {
 
 	/**
 	 * return false if a tag is open but not closed.
+	 * 
 	 * @param ctx
 	 * @param resource
 	 * @return true if tag is'nt closed but opened.
@@ -1986,17 +1998,25 @@ public class XHTMLHelper {
 	}
 
 	public static String textToXHTML(String text) {
-		return textToXHTML(text, null, (GlobalContext) null);
+		return textToXHTML(text, false, null, (GlobalContext) null);
+	}
+
+	public static String textToXHTML(String text, boolean notFollow) {
+		return textToXHTML(text, notFollow, null, (GlobalContext) null);
 	}
 
 	public static String textToXHTML(String text, GlobalContext globalContext) {
-		return textToXHTML(text, null, globalContext);
+		return textToXHTML(text, false, null, globalContext);
+	}
+	
+	public static String textToXHTML(String text, boolean notFollow, GlobalContext globalContext) {
+		return textToXHTML(text, notFollow, null, globalContext);
 	}
 
 	// cssClass and popup not used
-	public static String textToXHTML(String text, String cssClass, GlobalContext globalContext) {
+	public static String textToXHTML(String text, boolean notFollow, String cssClass, GlobalContext globalContext) {
 
-		String res = autoLink(text, globalContext);
+		String res = autoLink(text, notFollow, globalContext);
 
 		ByteArrayOutputStream outStream = new ByteArrayOutputStream();
 		PrintStream out = new PrintStream(outStream);
@@ -2162,7 +2182,7 @@ public class XHTMLHelper {
 			expandedCSS = expandCSSIncludesToString(css);
 		} catch (IOException ex) {
 			logger.log(Level.WARNING, "Expand CSS imports failed for '" + css + "'.", ex);
-			return; //Don't write on error, let the original as it is.
+			return; // Don't write on error, let the original as it is.
 		}
 		ResourceHelper.writeStringToFile(css, expandedCSS);
 	}
@@ -2201,7 +2221,7 @@ public class XHTMLHelper {
 			newContent = out.toString();
 		} catch (Exception ex) {
 			logger.log(Level.WARNING, "Compress CSS failed for '" + targetFile + "'.", ex);
-			return; //Don't write on error, let the original as it is.
+			return; // Don't write on error, let the original as it is.
 		} finally {
 			ResourceHelper.closeResource(in);
 			ResourceHelper.closeResource(out);
@@ -2210,42 +2230,53 @@ public class XHTMLHelper {
 	}
 
 	public static void compressJS(final File targetFile) throws IOException {
-//Disabled to wait right YUI dependency
-//		String newContent;
-//		FileInputStream in = null;
-//		StringWriter out = null;
-//		try {
-//			in = new FileInputStream(targetFile);
-//			InputStreamReader reader = new InputStreamReader(in, ContentContext.CHARACTER_ENCODING);
-//			out = new StringWriter();
-//			ErrorReporter reporter = new ErrorReporter() {
-//				
-//				@Override
-//				public void warning(String message, String sourceName, int line, String lineSource, int lineOffset) {
-//					logger.warning("JS compressor warning: " + message + " (" + targetFile + " L:" + line + " C:" + lineOffset + ")");
-//				}
-//				
-//				@Override
-//				public EvaluatorException runtimeError(String message, String sourceName, int line, String lineSource, int lineOffset) {
-//					logger.warning("JS compressor runtimeError: " + message + " (" + targetFile + " L:" + line + " C:" + lineOffset + ")");
-//					return new EvaluatorException(message, sourceName, line, lineSource, lineOffset);
-//				}
-//				
-//				@Override
-//				public void error(String message, String sourceName, int line, String lineSource, int lineOffset) {
-//					logger.warning("JS compressor error: " + message + " (" + targetFile + " L:" + line + " C:" + lineOffset + ")");
-//				}
-//			};
-//			new JavaScriptCompressor(reader, reporter).compress(out, 0, false, false, false, false);
-//			newContent = out.toString();
-//		}catch (Exception ex) {
-//			logger.log(Level.WARNING, "Compress JS failed for '" + targetFile + "'.", ex);
-//			return; //Don't write on error, let the original as it is.
-//		} finally {
-//			ResourceHelper.closeResource(in);
-//			ResourceHelper.closeResource(out);
-//		}
-//		ResourceHelper.writeStringToFile(targetFile, newContent, ContentContext.CHARACTER_ENCODING);
+		// Disabled to wait right YUI dependency
+		// String newContent;
+		// FileInputStream in = null;
+		// StringWriter out = null;
+		// try {
+		// in = new FileInputStream(targetFile);
+		// InputStreamReader reader = new InputStreamReader(in,
+		// ContentContext.CHARACTER_ENCODING);
+		// out = new StringWriter();
+		// ErrorReporter reporter = new ErrorReporter() {
+		//
+		// @Override
+		// public void warning(String message, String sourceName, int line,
+		// String lineSource, int lineOffset) {
+		// logger.warning("JS compressor warning: " + message + " (" +
+		// targetFile + " L:" + line + " C:" + lineOffset + ")");
+		// }
+		//
+		// @Override
+		// public EvaluatorException runtimeError(String message, String
+		// sourceName, int line, String lineSource, int lineOffset) {
+		// logger.warning("JS compressor runtimeError: " + message + " (" +
+		// targetFile + " L:" + line + " C:" + lineOffset + ")");
+		// return new EvaluatorException(message, sourceName, line, lineSource,
+		// lineOffset);
+		// }
+		//
+		// @Override
+		// public void error(String message, String sourceName, int line, String
+		// lineSource, int lineOffset) {
+		// logger.warning("JS compressor error: " + message + " (" + targetFile
+		// + " L:" + line + " C:" + lineOffset + ")");
+		// }
+		// };
+		// new JavaScriptCompressor(reader, reporter).compress(out, 0, false,
+		// false, false, false);
+		// newContent = out.toString();
+		// }catch (Exception ex) {
+		// logger.log(Level.WARNING, "Compress JS failed for '" + targetFile +
+		// "'.", ex);
+		// return; //Don't write on error, let the original as it is.
+		// } finally {
+		// ResourceHelper.closeResource(in);
+		// ResourceHelper.closeResource(out);
+		// }
+		// ResourceHelper.writeStringToFile(targetFile, newContent,
+		// ContentContext.CHARACTER_ENCODING);
 	}
 
 }
