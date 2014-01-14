@@ -49,6 +49,7 @@ import org.javlo.component.meta.TimeRangeComponent;
 import org.javlo.component.text.Description;
 import org.javlo.component.title.GroupTitle;
 import org.javlo.component.title.WebSiteTitle;
+import org.javlo.component.web2.ReactionComponent;
 import org.javlo.config.StaticConfig;
 import org.javlo.context.ContentContext;
 import org.javlo.context.ContentManager;
@@ -118,7 +119,7 @@ public class MenuElement implements Serializable {
 		TimeRange timeRange = null;
 		Boolean contentDateVisible = null;
 		Boolean notInSearch = null;
-		int depth = 0;
+		int depth = 0;		
 		public boolean visible = false;
 		String referenceLanguage = null;
 		boolean breakRepeat;
@@ -1926,6 +1927,27 @@ public class MenuElement implements Serializable {
 		desc.description = StringUtils.replace(res, "\"", "&quot;");
 		return desc.description;
 	}
+	
+	/**
+	 * get number of reactions of the page (description component)
+	 * 
+	 * @param ctx
+	 * @return
+	 * @throws Exception
+	 */
+	public int getReactionSize(ContentContext ctx) throws Exception {
+		ContentContext newCtx = new ContentContext(ctx);
+		newCtx.setArea(null);
+
+		IContentComponentsList contentList = getAllContent(newCtx);
+		while (contentList.hasNext(newCtx)) {
+			IContentVisualComponent elem = contentList.next(newCtx);
+			if (elem.getType().equals(ReactionComponent.TYPE)) {
+				return ((ReactionComponent)elem).getReactionSize(newCtx);
+			}
+		}
+		return 0;
+	}
 
 	public Set<String> getEditorRoles() {
 		return editGroups;
@@ -3131,10 +3153,10 @@ public class MenuElement implements Serializable {
 	 *            a page of the navigation.
 	 * @return true if page found in paternity
 	 */
-	public boolean isChildOf(MenuElement parent) {
-		if (getParent() == null) {
+	public boolean isChildOf(MenuElement parent) {		
+		if (getParent() == null || parent == null) {
 			return false;
-		} else if (getParent().equals(parent)) {
+		} else if (getParent().getId().equals(parent.getId())) {
 			return true;
 		} else {
 			return getParent().isChildOf(parent);
@@ -3251,7 +3273,7 @@ public class MenuElement implements Serializable {
 	public boolean isLastSelected(ContentContext ctx) {
 		String[] pathElems = ctx.getPath().split("\\/");
 		if (pathElems.length > 0) {
-			if (name.equals(pathElems[pathElems.length - 1])) {
+			if (getName().equals(pathElems[pathElems.length - 1])) {
 				return true;
 			}
 		}
@@ -3262,7 +3284,7 @@ public class MenuElement implements Serializable {
 		if (elem == null) {
 			return false;
 		}
-		return name.equals(elem.getName()) && visible == elem.visible && userRoles.equals(elem.userRoles) && priority == elem.priority;
+		return getName().equals(elem.getName()) && visible == elem.visible && userRoles.equals(elem.userRoles) && priority == elem.priority;
 	}
 
 	public boolean isRealContent(ContentContext ctx) throws Exception {
