@@ -4,12 +4,10 @@
 <h3><span>${i18n.edit['item.title']}</span></h3>
 <div class="content">
 
-<c:if test="${!userInterface.light}">
 <div class="template-preview">
 	<img src="${templateImageUrl}" alt="template preview" lang="en" />
 </div>
-</c:if>
-	
+
 <form id="form-page-properties" class="standard-form js-change-submit" action="${info.currentURL}" method="post">
 
 <div>
@@ -29,6 +27,11 @@
 		</c:forEach>
 	</select>	
 </div>
+</c:if>
+<c:if test="${userInterface.light}">
+<c:forEach var="template" items="${templates}">
+<c:if test="${template.name eq page.templateId}"><div class="line"><label>${i18n.edit['item.template']} : </label>${template.name}</div></c:if>
+</c:forEach>
 </c:if>
 
 <div class="line">
