@@ -295,6 +295,19 @@ public class MultimediaResource {
 			return "unknow";
 		}
 	}
+	
+	public boolean isImage() {
+		return getType().equals("image");
+	}
+	
+	public boolean isVideo() {
+		return getType().equals("video");
+	}
+	
+	public boolean isHtml() {
+		return getType().equals("html");
+	}
+
 
 	public String getId() {
 		return id;

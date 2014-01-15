@@ -2221,9 +2221,13 @@ public class Template implements Comparable<Template> {
 		List<String> ids = StringHelper.stringToCollection(htmlIds, ",");
 		return ids;
 	}
+	
+	protected String getRAWPlugins() {
+		return properties.getString("plugins", getParent().getRAWPlugins());
+	}
 
 	public List<String> getPlugins() {
-		String plugins = properties.getString("plugins", null);
+		String plugins = getRAWPlugins();
 		if (plugins == null) {
 			return Collections.EMPTY_LIST;
 		}

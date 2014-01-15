@@ -2,7 +2,6 @@ package org.javlo.ztatic;
 
 import java.awt.image.BufferedImage;
 import java.io.File;
-import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.io.StringWriter;
@@ -602,10 +601,6 @@ public class StaticInfo {
 	public void setLocation(ContentContext ctx, String location) {
 		ContentService content = ContentService.getInstance(ctx.getRequest());
 		content.setAttribute(ctx, getKey("location-" + ctx.getRequestContentLanguage()), location);
-
-		// properties.setProperty("location-" + ctx.getRequestContentLanguage(),
-		// location);
-		// save();
 	}
 
 	public String getTitle(ContentContext ctx) {
@@ -613,9 +608,6 @@ public class StaticInfo {
 			return getManualTitle(ctx);
 		}
 		return "";
-		/*
-		 * else { return getLinkedTitle(ctx); }
-		 */
 	}
 
 	public String getManualTitle(ContentContext ctx) {
@@ -623,16 +615,11 @@ public class StaticInfo {
 		String key = getKey("title-" + ctx.getRequestContentLanguage());
 		String title = content.getAttribute(ctx, key, "");
 		return title;
-		// return properties.getString("title-" +
-		// ctx.getRequestContentLanguage(), "");
 	}
 
 	public void setTitle(ContentContext ctx, String title) {
 		ContentService content = ContentService.getInstance(ctx.getRequest());
 		content.setAttribute(ctx, getKey("title-" + ctx.getRequestContentLanguage()), title);
-		// properties.setProperty("title-" + ctx.getRequestContentLanguage(),
-		// title);
-		// save();
 	}
 
 	public Date getManualDate(ContentContext ctx) {

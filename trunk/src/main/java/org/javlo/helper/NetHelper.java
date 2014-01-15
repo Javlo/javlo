@@ -3,6 +3,7 @@ package org.javlo.helper;
 import java.awt.image.BufferedImage;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
+import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
@@ -12,14 +13,9 @@ import java.net.NoRouteToHostException;
 import java.net.URL;
 import java.net.URLConnection;
 import java.net.UnknownHostException;
-import java.text.SimpleDateFormat;
-import java.util.Collections;
-import java.util.Date;
-import java.util.HashMap;
 import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
-import java.util.Map;
 import java.util.zip.CRC32;
 
 import javax.imageio.ImageIO;
@@ -27,7 +23,7 @@ import javax.mail.internet.AddressException;
 import javax.mail.internet.InternetAddress;
 import javax.servlet.http.HttpServletResponse;
 
-import org.apache.commons.lang.StringUtils;
+import org.apache.http.client.methods.HttpGet;
 import org.javlo.config.StaticConfig;
 import org.javlo.context.ContentContext;
 import org.javlo.context.GlobalContext;
@@ -59,13 +55,13 @@ public class NetHelper {
 	public static final String HEADER_IF_MODIFIED_SINCE_ETAG = "if-None-Match";
 
 	public static String readPage(URL url) throws Exception {
-		return readPage(url, false);
+		return readPage(url, false, null);
 	}
 
 	public static String readPage(String inURL, boolean cssInline) throws Exception {
-		return readPage(new URL(inURL), cssInline);
+		return readPage(new URL(inURL), cssInline, null);
 	}
-
+	
 	/**
 	 * read a page a put content in a String.
 	 * 
@@ -74,21 +70,26 @@ public class NetHelper {
 	 * @return code returned by the http request on the URL.
 	 * @throws IOException
 	 */
-	public static String readPage(URL url, boolean cssInline) throws Exception {
+	public static String readPage(URL url, boolean cssInline, String userAgent) throws Exception {		
 
 		if (StringHelper.isVideo(url.getPath())) {
 			return "";
 		}
 
-		ByteArrayOutputStream out = new ByteArrayOutputStream();
+		ByteArrayOutputStream out = new ByteArrayOutputStream(); 
 
 		InputStream in = null;
 		try {
 			URLConnection conn = url.openConnection();
-
+			
 			if (conn instanceof HttpURLConnection) {
 				HttpURLConnection httpConn = (HttpURLConnection) conn;
-				httpConn.setInstanceFollowRedirects(true);
+				if (userAgent != null) {
+					httpConn.setRequestProperty("User-Agent", userAgent);
+				}				
+				httpConn.setDoInput(true);
+				httpConn.setAllowUserInteraction(true);
+				httpConn.setInstanceFollowRedirects(true);				
 				if (httpConn.getResponseCode() != HttpURLConnection.HTTP_OK && httpConn.getResponseCode() != HttpURLConnection.HTTP_MOVED_TEMP && httpConn.getResponseCode() != HttpURLConnection.HTTP_MOVED_PERM) {
 					logger.warning("help url '" + url + "' return error code : " + ((HttpURLConnection) conn).getResponseCode());
 					return null;
@@ -232,14 +233,13 @@ public class NetHelper {
 	}
 
 	public static void main(String[] args) throws IOException, InterruptedException {
-		SimpleDateFormat sdf = new SimpleDateFormat("HH:mm:ss,SSS");
-		while (System.in.available() == 0) {
-			System.out.println("***** NetHelper.main : " + sdf.format(new Date()) + " connected: " + isConnected()); // TODO:
-																														// remove
-																														// debug
-																														// trace
-			Thread.sleep(300);
+		try {
+			String page = readPage(new URL("http://www.lavenir.net/article/detail.aspx?articleid=DMF20140115_00417298&_section=61332904&utm_source=lavenir&utm_medium=newsletter&utm_campaign=regio"), false, "Mozilla/5.0 (Windows NT 6.3; WOW64; rv:26.0) Gecko/20100101 Firefox/26.0");
+			ResourceHelper.writeStringToFile(new File("c:/trans/readpage.html"), page);
+		} catch (Exception e) {
+			e.printStackTrace();
 		}
+		
 	}
 
 	public static List<Resource> extractImage(URL inURL, String content) {
