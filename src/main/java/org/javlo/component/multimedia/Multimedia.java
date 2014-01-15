@@ -699,6 +699,8 @@ public class Multimedia extends TimeRangeComponent implements IImageTitle {
 		List<MultimediaResource> allResource = new LinkedList<MultimediaResource>();
 		Map<String, MultimediaResource> allURL = new HashMap<String, MultimediaResource>();
 
+		boolean countAccess = isCountAccess(ctx);
+		
 		for (File file : mulFiles) {
 
 			String cssClass = "embed";
@@ -740,14 +742,14 @@ public class Multimedia extends TimeRangeComponent implements IImageTitle {
 				String previewURL = multimediaURL;
 				String fileName = ResourceHelper.removeDataFolderDir(globalContext, file.getAbsolutePath());
 				if (StringHelper.isImage(file.getName())) {
-					if (isCountAccess(ctx)) {
+					if (countAccess) {
 						previewURL = URLHelper.createTransformURL(lgCtx, getPage(), getImageFilePath(ctx, fileName), getPreviewFilter(file));
 					} else {
 						previewURL = URLHelper.createTransformURLWithoutCountAccess(lgCtx, getImageFilePath(ctx, fileName), getPreviewFilter(file));
 					}
 				} else if (StringHelper.isVideo(file.getName())) {
 					String imageName = StringHelper.getFileNameWithoutExtension(fileName) + ".jpg";
-					if (isCountAccess(ctx)) {
+					if (countAccess) {
 						previewURL = URLHelper.createTransformURL(lgCtx, getPage(), getImageFilePath(ctx, imageName), getPreviewFilter(file));
 					} else {
 						previewURL = URLHelper.createTransformURLWithoutCountAccess(lgCtx, getImageFilePath(ctx, imageName), getPreviewFilter(file));

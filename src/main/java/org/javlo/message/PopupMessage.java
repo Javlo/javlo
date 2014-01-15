@@ -29,7 +29,7 @@ public class PopupMessage {
 	}
 	
 	public static void setPopupMessage (HttpSession session, URL url) throws Exception {
-		String body = NetHelper.readPage(url, false);
+		String body = NetHelper.readPage(url, false, null);
 		String title = XHTMLHelper.extractTitle(body);
 		setPopupMessage(session, title, XHTMLHelper.extractBody(body));
 	}

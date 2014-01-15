@@ -48,7 +48,7 @@ public class SmartLink extends ComplexPropertiesLink implements ILink, IAction {
 	public String getTitleInputName() {
 		return "title_" + getId();
 	}
-
+	
 	public String getDateInputName() {
 		return "date_" + getId();
 	}
@@ -175,7 +175,7 @@ public class SmartLink extends ComplexPropertiesLink implements ILink, IAction {
 			SmartLink comp = (SmartLink) content.getComponent(ctx, rs.getParameter("comp_id", null));
 			if (comp != null) {
 				URL sourceURL = new URL(url);
-				String remoteXHTML = NetHelper.readPage(sourceURL);
+				String remoteXHTML = NetHelper.readPage(sourceURL,false,ctx.getRequest().getHeader("User-Agent"));
 				ctx.getRequest().setAttribute("title", NetHelper.getPageTitle(remoteXHTML));
 				ctx.getRequest().setAttribute("description", NetHelper.getPageDescription(remoteXHTML));
 				ctx.getRequest().setAttribute("images", NetHelper.extractImage(sourceURL, remoteXHTML));

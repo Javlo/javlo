@@ -343,5 +343,10 @@ public class DefaultTemplate extends Template {
 	public int getQRCodeSize() {	
 		return 125;
 	}
+	
+	@Override
+	protected String getRAWPlugins() {
+		return null;
+	}
 
 }

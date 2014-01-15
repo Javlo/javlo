@@ -64,6 +64,7 @@ org.javlo.component.links.TwitterReader
 
 org.javlo.component.image.GlobalImage
 org.javlo.component.multimedia.Multimedia
+org.javlo.component.multimedia.Gallery
 org.javlo.component.multimedia.FolderedMultimedia
 org.javlo.component.multimedia.Video
 org.javlo.component.multimedia.EmbedVideo
