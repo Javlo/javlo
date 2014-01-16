@@ -12,6 +12,22 @@ public class StringHelperTest extends TestCase {
 	  assertTrue(StringHelper.isImage("test.png"));
 	  assertTrue(StringHelper.isImage("test.gif"));
 	  assertTrue(!StringHelper.isImage("test.xml"));
+	  assertTrue(!StringHelper.isImage("/test.xml?param=value"));
+	  assertTrue(!StringHelper.isImage("/test"));
+	  assertTrue(!StringHelper.isImage(""));
+	  assertTrue(!StringHelper.isImage("/"));
+	  assertTrue(!StringHelper.isImage("http://host.com/rss/rss.html;jsessionid=97F113FC3A1036324B2889FD5E795F8E.node1"));	  
+	  assertTrue(!StringHelper.isImage(null));
+  }
+  
+  public void testIsVideo() throws Exception {
+	  assertTrue(StringHelper.isVideo("test.mp4"));
+	  assertTrue(!StringHelper.isVideo("test.xml"));
+	  assertTrue(!StringHelper.isVideo("/test.xml?param=value"));
+	  assertTrue(!StringHelper.isVideo("/test"));
+	  assertTrue(!StringHelper.isVideo(""));
+	  assertTrue(!StringHelper.isVideo("/"));
+	  assertTrue(!StringHelper.isVideo(null));
   }
   
   public void testGetFileExtension() throws Exception {

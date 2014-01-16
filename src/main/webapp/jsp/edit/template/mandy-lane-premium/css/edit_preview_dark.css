@@ -67,6 +67,10 @@ body.preview-only {
 	display: block;
 }
 
+#preview_command input[type="text"] {
+    width: 140px;
+}
+
 #preview_command div,#preview_command div legend,#preview_command div a
 	{
 	/* default color, user div for overwrite escape from default preview css file */
@@ -130,6 +134,10 @@ body.preview-only {
 	background-color: #494949;
 	border: 1px #5b5b5b solid;
 	border-radius: 3px;
+}
+
+#preview_command #shared-content-search-form input {
+	margin: 4px;
 }
 
 #preview_command input[type=submit]:hover {
