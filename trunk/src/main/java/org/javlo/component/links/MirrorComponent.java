@@ -146,7 +146,7 @@ public class MirrorComponent extends AbstractVisualComponent {
 		AbstractVisualComponent comp = (AbstractVisualComponent) getMirrorComponent(ctx);
 		if (comp != null) {
 			comp.prepareView(ctx);
-			return comp.getViewXHTMLCode(ctx);
+			return comp.getXHTMLCode(ctx);
 		} else {
 			deleteMySelf(ctx);
 		}
