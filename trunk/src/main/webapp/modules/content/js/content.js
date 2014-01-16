@@ -27,6 +27,7 @@ function loadWysiwyg(cssQuery, complexity, chooseFileURL) {
 		tinymce.init({
 		    selector: cssQuery,
 		    relative_urls: false,
+		    menubar : false,
 		    theme: "modern",
 		    plugins: [
 		        "advlist autolink lists link image charmap print preview hr anchor pagebreak",
@@ -34,8 +35,7 @@ function loadWysiwyg(cssQuery, complexity, chooseFileURL) {
 		        "insertdatetime media nonbreaking save table contextmenu directionality",
 		        "emoticons template paste textcolor"
 		    ],
-		    toolbar1: "insertfile undo redo | styleselect | bold italic | alignleft aligncenter alignright alignjustify | bullist numlist outdent indent | link image",
-		    toolbar2: "print preview media | forecolor backcolor emoticons",
+		    toolbar1: "bold italic | alignleft aligncenter alignright alignjustify | bullist numlist outdent indent | link image | forecolor backcolor | table charmap",		    
 		    image_advtab: true,
 		    file_browser_callback: function(field_name, url, type, win) {
 		    	
@@ -43,7 +43,7 @@ function loadWysiwyg(cssQuery, complexity, chooseFileURL) {
 	    	 	
 		    	tinyMCE.activeEditor.windowManager.open({
 		            file : chooseFileURL,
-		            title : 'Select image',
+		            title : 'Select resouce',
 		            width : jQuery(document).width()-100,  // Your dimensions may differ - toy around with them
 		            height :  jQuery(document).height()-150,
 		            resizable : "yes",

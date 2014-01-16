@@ -754,6 +754,9 @@ public class StringHelper {
 		int dotIndex = inFileName.lastIndexOf('.');
 		int endIndex = inFileName.lastIndexOf('?');
 		int jsessionIndex = inFileName.lastIndexOf(';');
+		if (jsessionIndex >= 0 && dotIndex > jsessionIndex) {
+			dotIndex = inFileName.substring(0, jsessionIndex).lastIndexOf('.');
+		}
 		if (endIndex <= 0 || endIndex < dotIndex) {
 			if (jsessionIndex > -1) {
 				endIndex = jsessionIndex;
@@ -763,7 +766,7 @@ public class StringHelper {
 		} else {
 			if (jsessionIndex >= 0 && jsessionIndex < endIndex) {
 				endIndex = jsessionIndex;
-			}
+			} 
 		}
 		if (dotIndex >= 0) {
 			outExt = inFileName.substring(dotIndex + 1, endIndex);
@@ -1064,6 +1067,9 @@ public class StringHelper {
 	 * @return true if file name is a image
 	 */
 	public static final boolean isImage(String fileName) {
+		if (fileName == null) {
+			return false;
+		}
 		if (fileName.contains("?")) {
 			fileName = fileName.substring(0, fileName.indexOf('?'));
 		}
@@ -1225,7 +1231,7 @@ public class StringHelper {
 	 *            file name with extension
 	 * @return true if file name is a video
 	 */
-	public static final boolean isVideo(String fileName) {
+	public static final boolean isVideo(String fileName) {		
 		String ext = getFileExtension(fileName);
 		boolean res = ext.equalsIgnoreCase("wmv");
 		res = res || ext.equalsIgnoreCase("avi");
@@ -1238,8 +1244,8 @@ public class StringHelper {
 		return res;
 	}
 
-	public static void main(String[] args) {
-
+	public static void main(String[] args) {		
+		System.out.println(StringHelper.getFileExtension("http://host.com/rss/rss.html;jsessionid=97F113FC3A1036324B2889FD5E795F8E.node1"));
 	}
 
 	/**

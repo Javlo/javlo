@@ -28,10 +28,10 @@
 		</div>
 		<c:if test="${not empty param.select}">		
 				<div class="special-action">	
-					<c:if test="${file.image}">			
+					<c:if test="${!file.directory}">			
 						<input class="select-item mce-close" type="button" value="select" data-url="${file.freeURL}" />						
 					</c:if>
-					<c:if test="${!file.image}">
+					<c:if test="${file.directory}">
 						<span>unselectable</span>
 					</c:if>					
 				</div>

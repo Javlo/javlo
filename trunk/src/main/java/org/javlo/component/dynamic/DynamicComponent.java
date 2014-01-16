@@ -129,6 +129,9 @@ public class DynamicComponent extends AbstractVisualComponent implements IStatic
 	}
 
 	public String getViewXHTMLCode(ContentContext ctx, boolean asList) throws Exception {
+		
+		System.out.println("***** DynamicComponent.getViewXHTMLCode : renderer : "+getRenderer()); //TODO: remove debug trace
+		
 		if (getStyle(ctx).equals(HIDDEN)) {
 			String emptyCode = getEmptyCode(ctx);
 			if (emptyCode != null) {
@@ -170,7 +173,7 @@ public class DynamicComponent extends AbstractVisualComponent implements IStatic
 					ctx = new ContentContext(ctx);
 					ctx.setAbsoluteURL(false);
 				}
-				String linkToJSP = URLHelper.createStaticTemplateURLWithoutContext(ctx, ctx.getCurrentTemplate(), "" + getRenderer());
+				String linkToJSP = URLHelper.createStaticTemplateURLWithoutContext(ctx, ctx.getCurrentTemplate(), "" + getRenderer());				
 				return executeJSP(ctx, linkToJSP);
 			}
 		}
