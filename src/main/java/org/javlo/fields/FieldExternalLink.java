@@ -3,6 +3,7 @@ package org.javlo.fields;
 import java.io.PrintWriter;
 import java.io.StringWriter;
 import java.util.Locale;
+import java.util.logging.Logger;
 
 import javax.servlet.http.HttpServletRequest;
 
@@ -18,24 +19,25 @@ import org.javlo.service.ContentService;
 import org.javlo.service.RequestService;
 
 public class FieldExternalLink extends MetaField implements ILink {
-	
+
+	private static Logger logger = Logger.getLogger(FieldExternalLink.class.getName());
+
 	public class ExternalLinkBean extends FieldBean {
 
 		public ExternalLinkBean(ContentContext ctx) {
 			super(ctx);
 		}
-		
+
 		@Override
 		public String getURL() {
 			return getCurrentLink().trim();
 		}
-		
+
 		public String getTitle() {
 			return getLinkLabel();
 		}
-		
-	}
 
+	}
 
 	protected String getLabelLabel() {
 		return getI18nAccess().getText("global.label");
@@ -201,7 +203,11 @@ public class FieldExternalLink extends MetaField implements ILink {
 			try {
 				link = XHTMLHelper.replaceJSTLData(ctx, link);
 				MenuElement page = ContentService.getInstance(GlobalContext.getInstance(ctx.getRequest())).getNavigation(ctx).searchRealChild(ctx, link);
-				return page != null && page.isRealContent(ctx);
+				boolean published = page != null && page.isRealContent(ctx);
+				if (!published) {
+					logger.warning("page not found with content : " + link);
+				}
+				return published;
 			} catch (Exception ex) {
 				ex.printStackTrace();
 				return false;
@@ -214,7 +220,7 @@ public class FieldExternalLink extends MetaField implements ILink {
 	public String getURL(ContentContext ctx) throws Exception {
 		return getCurrentLink();
 	}
-	
+
 	@Override
 	protected FieldBean newFieldBean(ContentContext ctx) {
 		return new ExternalLinkBean(ctx);
