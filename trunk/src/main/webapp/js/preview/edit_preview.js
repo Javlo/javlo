@@ -116,13 +116,15 @@ jQuery(document).ready(
 function updatePDFPosition() {		
 	var pdfHeight = parseInt(jQuery(".page_association_fake_body").data("pdfheight"));	
 	var previousBreak = null;	
+	jQuery("._pdf_page_limit").remove();
 	jQuery(".page-break, ._page_associate").each(function() {		
 		var currentBreak = jQuery(this);		
 		if (previousBreak != null) {			
-			if ((currentBreak.position().top - previousBreak.position().top) > pdfHeight) {				
+			if ((currentBreak.position().top - previousBreak.position().top) > pdfHeight) {
+				previousBreak.css("position", "relative");
 				previousBreak.prepend('<div class="_pdf_page_limit"><span>&nbsp;</span></div>');
 				var pdfLimit = jQuery(previousBreak.children()[0]);				
-				pdfLimit.css('top',(previousBreak.position().top+pdfHeight)+'px');				
+				pdfLimit.css('top',pdfHeight+'px');				
 			}
 		}		
 		previousBreak = currentBreak;
@@ -286,8 +288,10 @@ initPreview = function() {
 							if (pageId != null) {								
 								pageIdParam = "&pageCompID="+pageId;
 							}
-							pageId = searchPageId(this);							
-							if (pageId != null) {								
+							var containerId = searchPageId(this);							
+							if (containerId != null) {								
+								pageIdParam = pageIdParam+"&pageContainerID="+containerId;
+							} else {
 								pageIdParam = pageIdParam+"&pageContainerID="+pageId;
 							}
 							

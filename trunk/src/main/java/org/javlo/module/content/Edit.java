@@ -795,7 +795,6 @@ public class Edit extends AbstractModuleAction {
 				String selecterPrefix = "";
 				if (ctx.getCurrentPage().isChildrenAssociation()) {
 					selecterPrefix = "#page_" + rs.getParameter("pageContainerID", "#ID_NOT_DEFINED") + " #";
-
 					if (targetPage != null) {
 						ctx.setCurrentPageCached(targetPage);
 					}
