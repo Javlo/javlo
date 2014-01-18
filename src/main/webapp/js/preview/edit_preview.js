@@ -291,8 +291,6 @@ initPreview = function() {
 							var containerId = searchPageId(this);							
 							if (containerId != null) {								
 								pageIdParam = pageIdParam+"&pageContainerID="+containerId;
-							} else {
-								pageIdParam = pageIdParam+"&pageContainerID="+pageId;
 							}
 							
 							var compType = layer.data("compType");

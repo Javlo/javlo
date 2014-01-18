@@ -793,8 +793,10 @@ public class Edit extends AbstractModuleAction {
 				ctx.addAjaxInsideZone("insert-line-" + id, "");
 
 				String selecterPrefix = "";
-				if (ctx.getCurrentPage().isChildrenAssociation()) {
-					selecterPrefix = "#page_" + rs.getParameter("pageContainerID", "#ID_NOT_DEFINED") + " #";
+				if (ctx.getCurrentPage().isChildrenAssociation()) {					
+					if (rs.getParameter("pageCompID", null) != null) {
+						selecterPrefix = "#page_" + rs.getParameter("pageCompID", "#ID_NOT_DEFINED") + " #";
+					}
 					if (targetPage != null) {
 						ctx.setCurrentPageCached(targetPage);
 					}
