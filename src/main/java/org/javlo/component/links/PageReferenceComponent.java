@@ -974,18 +974,18 @@ public class PageReferenceComponent extends ComplexPropertiesLink implements IAc
 		out.println("<fieldset class=\"order\">");
 		out.println("<legend>" + i18nAccess.getText("global.order") + "</legend>");
 		
-		out.println("<div class=\"line\">");
+		out.println("<div class=\"line dynamic\">");
 		out.println(XHTMLHelper.getCheckbox(getDynamicOrderInput(), isDynamicOrder(ctx)));
 		out.println("<label for=\"" + getDynamicOrderInput() + "\">" + i18nAccess.getText("content.page-teaser.dynamic-order") + "</label></div>");
 
-		out.println("<div class=\"line\">");
+		out.println("<div class=\"line reverse\">");
 		out.println(XHTMLHelper.getCheckbox(getReverseOrderInput(), isReverseOrder(ctx)));
 		out.println("<label for=\"" + getReverseOrderInput() + "\">" + i18nAccess.getText("content.page-teaser.reverse-order") + "</label></div>");
 
-		out.println("<div class=\"line\">");
+		out.println("<div class=\"line no\">");
 		out.println(XHTMLHelper.getRadio(getOrderInputName(), "no-order", getOrder()));
 		out.println("<label for=\"date\">" + i18nAccess.getText("content.page-teaser.no-order") + "</label></div>");
-		out.println("<div class=\"line\">");
+		out.println("<div class=\"line date\">");
 		out.println(XHTMLHelper.getRadio(getOrderInputName(), "date", getOrder()));
 		out.println("<label for=\"date\">" + i18nAccess.getText("content.page-teaser.order-date") + "</label></div>");
 		if (isUILargeSorting(ctx)) {
