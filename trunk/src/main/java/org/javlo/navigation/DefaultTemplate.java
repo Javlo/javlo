@@ -82,6 +82,11 @@ public class DefaultTemplate extends Template {
 	public String getLocalWorkTemplateFolder() {
 		return "/work_template";
 	}
+	
+	@Override
+	public String getWysiwygCss() {
+		return null;
+	}
 
 	@Override
 	public String getWorkTemplateFolder() {

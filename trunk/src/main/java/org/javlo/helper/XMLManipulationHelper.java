@@ -634,10 +634,22 @@ public class XMLManipulationHelper {
 					} else {
 						remplacement.addReplacement(tags[i].getOpenEnd() + 1, tags[i].getOpenEnd() + 1, getHTMLPrefixHead());
 					}
+					
+					
 
 					/** template plugin **/
 					ByteArrayOutputStream outStream = new ByteArrayOutputStream();
 					PrintStream out = new PrintStream(outStream);
+					
+					/** wysiwyg init css **/
+					if (template.getWysiwygCss() != null) {
+						out.println("<%if (ctx.getRenderMode() == ContentContext.PREVIEW_MODE) {%>");
+						out.println("<script type=\"text/javascript\">");
+						out.println("var wysiwygCss = '<%=URLHelper.createStaticTemplateURL(ctx,\""+template.getWysiwygCss()+"\")%>';");
+						out.println("</script>");
+						out.println("<%}%>");
+					}
+					
 					out.println("<%if (ctx.getRenderMode() != ContentContext.PAGE_MODE) {%>");
 					out.println("<!-- template plugins -->");
 					for (TemplatePlugin plugin : templatePlugins) {
