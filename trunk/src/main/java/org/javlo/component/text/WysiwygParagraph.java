@@ -93,7 +93,7 @@ public class WysiwygParagraph extends AbstractVisualComponent {
 		return true;
 	}
 	
-	@Override
+	/*@Override
 	public String getPrefixViewXHTMLCode(ContentContext ctx) {
 		if (ctx.isAsViewMode() && getValue().contains("</p>")) {
 			return "";
@@ -109,7 +109,7 @@ public class WysiwygParagraph extends AbstractVisualComponent {
 		} else {			
 			return super.getSuffixViewXHTMLCode(ctx);
 		}
-	}
+	}*/
 	
 	protected String getTag(ContentContext ctx) {
 		String defaultTag = "p";
