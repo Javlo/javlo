@@ -1038,6 +1038,11 @@ public class Template implements Comparable<Template> {
 		Collections.sort(css);
 		return css;
 	}
+	
+	/** return the css for wysiwyg layout **/
+	public String getWysiwygCss() {
+		return properties.getString("wysiwyg.css", getParent().getWysiwygCss());		
+	}
 
 	public Properties getConfigComponentFile(GlobalContext globalContext, String type) throws IOException {
 		String templateFolder = getWorkTemplateFolder();

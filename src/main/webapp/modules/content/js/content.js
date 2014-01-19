@@ -7,7 +7,16 @@ jQuery(document).ready(function(){
 	jQuery(".readonly input, .readonly textarea, .readonly select").attr("readonly", "readonly");
 });
 
-function loadWysiwyg(cssQuery, complexity, chooseFileURL) {	
+function loadWysiwyg(cssQuery, complexity, chooseFileURL) {
+	
+	var wysiwygCss = null;
+	if (typeof parent.wysiwygCss === 'undefined') {
+	    
+	} else {
+		wysiwygCss = parent.wysiwygCss;
+	}
+	
+	console.log("wysiwygCss = "+parent.wysiwygCss);
 	
 	tinymce.init({
 	    paste_as_text: true
@@ -16,6 +25,7 @@ function loadWysiwyg(cssQuery, complexity, chooseFileURL) {
 	if (complexity == "middle") {
 		tinymce.init({
 		    selector: cssQuery,
+		    content_css: wysiwygCss,
 		    plugins: [
 		        "advlist autolink lists link image charmap print preview anchor",
 		        "searchreplace visualblocks code fullscreen",
@@ -29,6 +39,7 @@ function loadWysiwyg(cssQuery, complexity, chooseFileURL) {
 		    relative_urls: false,
 		    menubar : false,
 		    theme: "modern",
+		    content_css: wysiwygCss,
 		    plugins: [
 		        "advlist autolink lists link image charmap print preview hr anchor pagebreak",
 		        "searchreplace wordcount visualblocks visualchars code fullscreen",
@@ -64,6 +75,7 @@ function loadWysiwyg(cssQuery, complexity, chooseFileURL) {
 		tinyMCE.init({
 		mode : "specific_textareas",
 		theme : "modern",
+		content_css: wysiwygCss,
 		add_form_submit_trigger: true,	
 		menubar : false,
 		selector: cssQuery,
