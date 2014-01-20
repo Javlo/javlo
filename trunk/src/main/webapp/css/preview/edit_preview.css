@@ -1044,7 +1044,7 @@ body.edit-preview {
 
 #preview_command .shared-content {
 	overflow: auto;
-	max-height: 600px;
+	max-height: 400px;
 }
 
 #preview_command #shared-content-search-form input {

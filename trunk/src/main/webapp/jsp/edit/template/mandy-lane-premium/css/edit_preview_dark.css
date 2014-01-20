@@ -683,3 +683,9 @@ body.edit-preview {
 	color: #AFAFAF;
 	text-align: right;
 }
+
+#preview_command .shared-content.image .content-wrapper.without-description {
+	width: 80px;
+	float: left;
+	overflow: hidden;
+}
