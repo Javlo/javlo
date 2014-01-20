@@ -44,7 +44,7 @@ function loadWysiwyg(cssQuery, complexity, chooseFileURL) {
 		        "insertdatetime media nonbreaking save table contextmenu directionality",
 		        "emoticons template paste textcolor"
 		    ],
-		    toolbar1: "bold italic | alignleft aligncenter alignright alignjustify | bullist numlist outdent indent | link image | forecolor backcolor | table charmap",		    
+		    toolbar1: "bold italic underline strikethrough | alignleft aligncenter alignright alignjustify | bullist numlist outdent indent | link image | forecolor backcolor | table charmap code",		    
 		    image_advtab: true,
 		    file_browser_callback: function(field_name, url, type, win) {
 		    	

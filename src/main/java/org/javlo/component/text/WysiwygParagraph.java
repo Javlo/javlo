@@ -73,12 +73,12 @@ public class WysiwygParagraph extends AbstractVisualComponent {
 		super.prepareView(ctx);
 		GlobalContext globalContext = GlobalContext.getInstance(ctx.getRequest());
 		ReverseLinkService reverserLinkService = ReverseLinkService.getInstance(globalContext);
-		ctx.getRequest().setAttribute("text",XHTMLHelper.replaceJSTLData(ctx, reverserLinkService.replaceLink(ctx, getValue())));
+		ctx.getRequest().setAttribute("text",XHTMLHelper.replaceLinks(ctx,XHTMLHelper.replaceJSTLData(ctx, reverserLinkService.replaceLink(ctx, getValue()))));
 	}
 
 	@Override
 	public String getViewXHTMLCode(ContentContext ctx) throws Exception {
-		return XHTMLHelper.replaceJSTLData(ctx, (String)ctx.getRequest().getAttribute("text"));
+		return (String)ctx.getRequest().getAttribute("text");
 	}
 
 	@Override
@@ -129,12 +129,6 @@ public class WysiwygParagraph extends AbstractVisualComponent {
 		RequestService requestService = RequestService.getInstance(ctx.getRequest());
 		String newContent = requestService.getParameter(getContentName(), null);
 		if (newContent != null) {
-			
-			/*String hostPrefix = InfoBean.getCurrentInfoBean(ctx).getAbsoluteURLPrefix();		
-			newContent = newContent.replace(hostPrefix, "${info.absoluteURLPrefix}");*/
-			
-			System.out.println(newContent);
-			
 			if (!getValue().equals(newContent)) {
 				if (StringHelper.isTrue(getConfig(ctx).getProperty("clean-html", "false"))) {
 					newContent = XHTMLHelper.cleanHTML(newContent);
