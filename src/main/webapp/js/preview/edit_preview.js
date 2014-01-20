@@ -129,6 +129,13 @@ function updatePDFPosition() {
 		}		
 		previousBreak = currentBreak;
 	});
+	//latest page
+	if (previousBreak != null  && previousBreak.height() > pdfHeight) {
+		previousBreak.css("position", "relative");
+		previousBreak.prepend('<div class="_pdf_page_limit"><span>&nbsp;</span></div>');
+		var pdfLimit = jQuery(previousBreak.children()[0]);				
+		pdfLimit.css('top',pdfHeight+'px');
+	}
 }
 
 mouseInLayer = function() {

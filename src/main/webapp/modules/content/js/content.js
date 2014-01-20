@@ -16,8 +16,6 @@ function loadWysiwyg(cssQuery, complexity, chooseFileURL) {
 		wysiwygCss = parent.wysiwygCss;
 	}
 	
-	console.log("wysiwygCss = "+parent.wysiwygCss);
-	
 	tinymce.init({
 	    paste_as_text: true
 	});
