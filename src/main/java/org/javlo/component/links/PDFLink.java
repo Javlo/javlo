@@ -40,5 +40,12 @@ public class PDFLink extends AbstractVisualComponent {
 		}
 		return "<a href=\""+getURL(ctx.getContextWithOtherRenderMode(ContentContext.VIEW_MODE))+"\""+linkTitle+">"+getValue()+"</a>";
 	}
+	
+	@Override
+	public boolean initContent(ContentContext ctx) throws Exception {	
+		super.initContent(ctx);
+		setValue("pdf");
+		return true;
+	}
 
 }

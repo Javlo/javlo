@@ -36,7 +36,7 @@
 
 <div class="line">
 	<label for="new_name">${i18n.edit['item.name']}</label>
-	<input type="text" id="new_name" name="new_name" value="${page.name}" />
+	<input type="text" id="new_name" name="new_name" value="${page.humanName}" />
 </div>
 
 <fieldset>

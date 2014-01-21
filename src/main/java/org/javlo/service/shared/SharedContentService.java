@@ -1,10 +1,12 @@
 package org.javlo.service.shared;
 
 import java.util.Collection;
+import java.util.Collections;
 import java.util.LinkedList;
 import java.util.List;
 
 import org.javlo.context.ContentContext;
+import org.javlo.helper.StringHelper;
 
 public class SharedContentService {
 
@@ -32,6 +34,19 @@ public class SharedContentService {
 	
 	public List<ISharedContentProvider> getAllProvider(ContentContext ctx) {		
 		return SharedContentProviderFactory.getInstance(ctx).getAllSharedContentProvider(ctx);
+	}
+	
+	public List<ISharedContentProvider> getAllActiveProvider(ContentContext ctx) {		
+		return SharedContentProviderFactory.getInstance(ctx).getAllSharedContentProvider(ctx);
+	}
+	
+	public List<String> getActiveProviderNames(ContentContext ctx) {
+		 List<String> outActive = StringHelper.stringToCollection(ctx.getGlobalContext().getData("shared-content-active"));
+		 if (outActive != null) {
+			 return outActive;
+		 } else {
+			 return Collections.EMPTY_LIST;
+		 }
 	}
 	
 	public ISharedContentProvider getProvider(ContentContext ctx, String name) {

@@ -37,7 +37,6 @@ public class SharedContentAction extends AbstractModuleAction {
 		}
 		out.close();
 		ctx.getRequest().setAttribute("urls", new String(outStream.toByteArray()));
-
 		ctx.getRequest().setAttribute("providers", contentProviders);
 		return msg;
 	}

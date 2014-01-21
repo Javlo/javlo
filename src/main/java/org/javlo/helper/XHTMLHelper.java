@@ -15,6 +15,7 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.PrintStream;
 import java.io.PrintWriter;
+import java.io.Reader;
 import java.io.StringReader;
 import java.io.StringWriter;
 import java.io.UnsupportedEncodingException;
@@ -39,6 +40,7 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import javax.servlet.ServletContext;
+import javax.servlet.ServletException;
 
 import org.apache.commons.beanutils.BeanUtils;
 import org.apache.commons.configuration.ConfigurationException;
@@ -67,6 +69,8 @@ import org.javlo.service.ReverseLinkService;
 import org.javlo.utils.SuffixPrefix;
 import org.javlo.ztatic.StaticInfo;
 import org.jsoup.Jsoup;
+import org.jsoup.nodes.Document;
+import org.jsoup.nodes.Entities.EscapeMode;
 import org.jsoup.safety.Whitelist;
 
 import com.yahoo.platform.yui.compressor.CssCompressor;
@@ -2008,7 +2012,7 @@ public class XHTMLHelper {
 	public static String textToXHTML(String text, GlobalContext globalContext) {
 		return textToXHTML(text, false, null, globalContext);
 	}
-	
+
 	public static String textToXHTML(String text, boolean notFollow, GlobalContext globalContext) {
 		return textToXHTML(text, notFollow, null, globalContext);
 	}
@@ -2172,9 +2176,10 @@ public class XHTMLHelper {
 	private XHTMLHelper() {
 	}
 
-	public static String cleanHTML(String html) {
-		return Jsoup.clean(html, Whitelist.relaxed());
-	}
+	/*
+	 * public static String cleanHTML(String html) { return Jsoup.clean(html,
+	 * Whitelist.relaxed()); }
+	 */
 
 	public static void expandCSSImports(File css) throws IOException {
 		String expandedCSS;
@@ -2208,9 +2213,10 @@ public class XHTMLHelper {
 		m.appendTail(sb);
 		return sb.toString();
 	}
-	
+
 	/**
 	 * replace link in xhtml with createURL call.
+	 * 
 	 * @param ctx
 	 * @param content
 	 * @return
@@ -2220,7 +2226,7 @@ public class XHTMLHelper {
 		String outContent = content;
 		TagDescription[] tags = XMLManipulationHelper.searchAllTag(outContent, false);
 		StringRemplacementHelper remplacement = new StringRemplacementHelper();
-		
+
 		for (TagDescription tag : tags) {
 			if (tag.getName().equalsIgnoreCase("a") || tag.getName().equalsIgnoreCase("area")) {
 				String hrefValue = tag.getAttributes().get("href");
@@ -2236,15 +2242,15 @@ public class XHTMLHelper {
 						hrefValue = URLHelper.createURLCheckLg(ctx, hrefValue);
 						tag.getAttributes().put("href", hrefValue);
 					}
-					remplacement.addReplacement(tag.getOpenStart(), tag.getOpenEnd() + 1, tag.toString());					
-			}
+					remplacement.addReplacement(tag.getOpenStart(), tag.getOpenEnd() + 1, tag.toString());
+				}
 			} else if (tag.getName().equalsIgnoreCase("img")) {
 				String src = tag.getAttribute("src", null);
 				if (src != null) {
 					if (!StringHelper.isURL(src)) { // relative paths
-						if (src.startsWith('/'+ctx.getGlobalContext().getContextKey()+'/')) {
+						if (src.startsWith('/' + ctx.getGlobalContext().getContextKey() + '/')) {
 							InfoBean info = InfoBean.getCurrentInfoBean(ctx);
-							src =  URLHelper.mergePath(info.getHostURLPrefix(),src);
+							src = URLHelper.mergePath(info.getHostURLPrefix(), src);
 						} else {
 							src = URLHelper.createResourceURL(ctx, src);
 						}
@@ -2277,6 +2283,13 @@ public class XHTMLHelper {
 			ResourceHelper.closeResource(out);
 		}
 		ResourceHelper.writeStringToFile(targetFile, newContent, ContentContext.CHARACTER_ENCODING);
+	}
+
+	public static String cleanHTML(String html) {
+		Document doc = Jsoup.parse(html);
+		EscapeMode.xhtml.getMap().put('\u00A0', "#160");
+		doc.outputSettings().escapeMode(EscapeMode.xhtml);
+		return doc.outerHtml();
 	}
 
 	public static void compressJS(final File targetFile) throws IOException {

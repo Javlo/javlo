@@ -919,7 +919,6 @@ public class Edit extends AbstractModuleAction {
 			String errorMessage = null;
 			boolean modify = false;
 			if (!pageName.equals(StringHelper.createFileName(newName))) {
-				//errorMessage = validNodeName(newName, i18nAccess);
 
 				if (nameExist(ctx, newName)) {
 					errorMessage = i18nAccess.getText("action.validation.name-allready-exist", new String[][] { { "name", pageName } });
@@ -1041,15 +1040,17 @@ public class Edit extends AbstractModuleAction {
 					messageRepository.setGlobalMessageAndNotification(ctx, new GenericMessage(i18nAccess.getText("message.update-page-properties"), GenericMessage.INFO));
 				}
 			}
-
+			
+			page.clearPageBean(ctx);
+			PersistenceService.getInstance(globalContext).store(ctx);
+			
 			if (editCtx.isEditPreview()) {
+				String url = URLHelper.createURL(ctx.getContextWithOtherRenderMode(ContentContext.PREVIEW_MODE), page.getPath());
+				ctx.setParentURL(url);
 				ctx.setClosePopup(true);
 			}
+
 		}
-
-		page.clearPageBean(ctx);
-
-		PersistenceService.getInstance(globalContext).store(ctx);
 
 		return null;
 	}
