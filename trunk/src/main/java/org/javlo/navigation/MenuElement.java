@@ -3331,12 +3331,7 @@ public class MenuElement implements Serializable {
 		}
 
 		if (isChildrenAssociation()) {
-			for (MenuElement child : getChildMenuElements()) {
-				if (child.isRealContent(contentAreaCtx)) {
-					desc.realContent = true;
-					return true;
-				}
-			}
+			return true;
 		}
 
 		desc.realContent = false;

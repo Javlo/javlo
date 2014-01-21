@@ -712,7 +712,7 @@ public class AccessServlet extends HttpServlet implements IVersion {
 								if (modulesContext.searchModule("shared-content") != null) {
 									SharedContentService sharedContentService = SharedContentService.getInstance(ctx);
 									SharedContentContext sharedContentContext = SharedContentContext.getInstance(request.getSession());
-									ctx.getRequest().setAttribute("sharedContentProviders", sharedContentService.getAllProvider(ctx));
+									ctx.getRequest().setAttribute("sharedContentProviders", sharedContentService.getAllActiveProvider(ctx));
 									ISharedContentProvider provider = sharedContentService.getProvider(ctx, sharedContentContext.getProvider());
 									if (provider != null) {
 										// set first category by default

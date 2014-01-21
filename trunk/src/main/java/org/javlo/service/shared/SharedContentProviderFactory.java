@@ -11,8 +11,6 @@ import java.util.List;
 
 import org.javlo.context.ContentContext;
 import org.javlo.context.GlobalContext;
-import org.javlo.service.shared.fotogrph.FotogrphSharedContentProvider;
-import org.javlo.service.shared.stockvault.StockvaultSharedContentProvider;
 import org.javlo.service.shared.url.URLImageSharedContentProvider;
 
 public class SharedContentProviderFactory {
