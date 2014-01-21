@@ -88,7 +88,7 @@ public class WysiwygParagraph extends AbstractVisualComponent {
 
 	@Override
 	public boolean initContent(ContentContext ctx) {
-		setValue(LoremIpsumGenerator.getParagraph(120, true, true));
+		setValue("<p>"+LoremIpsumGenerator.getParagraph(120, true, true)+"</p>");
 		setModify();
 		return true;
 	}
@@ -111,13 +111,13 @@ public class WysiwygParagraph extends AbstractVisualComponent {
 		}
 	}*/
 	
-	/*protected String getTag(ContentContext ctx) {
+	protected String getTag(ContentContext ctx) {
 		String defaultTag = "p";
-		if (getValue().contains("</p>")) {
+		if (getValue().contains("</p>") || getValue().contains("</table>")) {
 			defaultTag = "div";
 		}
 		return getConfig(ctx).getProperty("tag", defaultTag);
-	}*/
+	}
 	
 	@Override
 	public boolean isContentCachable(ContentContext ctx) {	
