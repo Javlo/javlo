@@ -14,6 +14,8 @@ public class SharedContentService {
 	
 	private Collection<SharedContent> latestReturnedContent = null;
 	
+	private List<ISharedContentProvider> sharedContentProvider = null;
+	
 	public static SharedContentService getInstance(ContentContext ctx) {
 		SharedContentService instance = (SharedContentService)ctx.getRequest().getSession().getAttribute(KEY);
 		if (instance == null) {
@@ -36,17 +38,31 @@ public class SharedContentService {
 		return SharedContentProviderFactory.getInstance(ctx).getAllSharedContentProvider(ctx);
 	}
 	
-	public List<ISharedContentProvider> getAllActiveProvider(ContentContext ctx) {		
-		return SharedContentProviderFactory.getInstance(ctx).getAllSharedContentProvider(ctx);
+	public List<ISharedContentProvider> getAllActiveProvider(ContentContext ctx) {
+		if (sharedContentProvider == null) {
+			sharedContentProvider = new LinkedList<ISharedContentProvider>();
+			Collection<String> active = getActiveProviderNames(ctx);
+			for (ISharedContentProvider sharedContent : getAllProvider(ctx)) {
+				if (active.contains(sharedContent.getName())) {
+					sharedContentProvider.add(sharedContent);
+				}
+			}
+		}
+		return sharedContentProvider;
 	}
 	
 	public List<String> getActiveProviderNames(ContentContext ctx) {
-		 List<String> outActive = StringHelper.stringToCollection(ctx.getGlobalContext().getData("shared-content-active"));
-		 if (outActive != null) {
+		 List<String> outActive = StringHelper.stringToCollection(ctx.getGlobalContext().getData("shared-content-active"),";");
+		 if (outActive != null) {			 
 			 return outActive;
 		 } else {
 			 return Collections.EMPTY_LIST;
 		 }
+	}
+	
+	public void setActiveProviderNames(ContentContext ctx, Collection<String> active) {
+		sharedContentProvider = null;
+		ctx.getGlobalContext().setData("shared-content-active", StringHelper.collectionToString(active,";"));
 	}
 	
 	public ISharedContentProvider getProvider(ContentContext ctx, String name) {
