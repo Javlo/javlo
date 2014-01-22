@@ -14,7 +14,7 @@
 		<div class="title">
 			<span><a href="${file.URL}" title="${file.name}">${file.name}</a></span>
 			<c:if test="${empty param.select}">
-				<c:url value="${info.currentURL}" var="deleteURL">
+				<c:url value="${info.currentURL}" var="deleteURL" context="/">
 					<c:param name="webaction" value="file.delete" />
 					<c:param name="file" value="${file.path}" />
 					<c:if test="${not empty param[BACK_PARAM_NAME]}">
@@ -49,12 +49,12 @@
 		</div>
 		</c:if>
 		<c:if test="${not file.image}">
-		<c:url var="fileURL" value="${file.URL}">
+		<c:url var="fileURL" value="${file.URL}" context="/">
 			<c:if test="${not empty param.select}">
 				<c:param name="select" value="${param.select}"></c:param>
 			</c:if>
 		</c:url>
-		<div class="download file ${file.type}"><a href="${fileURL}">${file.name}</a></div>
+		<div class="download file ${file.type}"><a href="${fileURL}"><span>${file.name}</span></a></div>
 		</c:if>
 		<div class="line">
 			<label for="title-${file.id}">${i18n.edit["field.title"]}</label>

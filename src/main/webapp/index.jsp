@@ -52,6 +52,6 @@ if ((template != null)&&(template.getHomeRenderer(globalContext) != null)) {
 	//request.getRequestDispatcher(url).forward(request, response);
 	//response.sendRedirect(url);
 	//NetHelper.sendRedirectTemporarily(response, url);
-	request.getRequestDispatcher(url).forward(request, response);
+	request.getRequestDispatcher(URLHelper.createForwardURL(ctx, url)).forward(request, response);
 	%><a href="<%=url%>"><%=url%></a><%
 }%>

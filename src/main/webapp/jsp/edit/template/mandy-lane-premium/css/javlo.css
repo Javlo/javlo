@@ -1210,6 +1210,7 @@ body.previewEdit {
 
 .form-list .title {
 	border-bottom: 1px #cccccc solid;
+	position: relative;
 }
 
 .form-list .title span {
@@ -1220,12 +1221,18 @@ body.previewEdit {
     padding: 6px 16px;
     max-width: 70%;
     overflow: hidden;
+    vertical-align: middle;
 }
+
+.form-list .title .popularity {
+	overflow: visible;
+	padding-top: 0;
+	padding-bottom: 0;
+} 
 
 .form-list .title span a {
 	display: inline-block;
-	max-width: 156px;
-	height: 21px;
+	max-width: 220px;	
     overflow: hidden;
 }
 
@@ -1275,6 +1282,10 @@ body.previewEdit {
 .form-list li.select .line, .form-list li.select .last, .form-list li.select .popularity {
 	display: none;
 	
+}
+
+.form-list .title span a {
+	max-width: 155px;
 }
 
 .form-list li.hidden {
@@ -1415,6 +1426,13 @@ body.previewEdit {
 
 .directory .download.file a {
 	background-position: center -50px;	
+}
+
+.directory .download a span {
+	overflow: hidden;
+	width: 100%;
+	height: 125px;
+	display: inline-block;
 }
 
 .download.xml a {

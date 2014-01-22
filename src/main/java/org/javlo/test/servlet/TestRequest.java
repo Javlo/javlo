@@ -30,6 +30,7 @@ public class TestRequest implements HttpServletRequest {
 	private Map<String, String> parameters = new HashMap<String, String>();
 	private URL url;
 	private HttpSession session;
+	private String contextPath = "";
 
 	public TestRequest(HttpSession inSession, String inURL) throws MalformedURLException {
 		url = new URL(inURL);
@@ -205,7 +206,7 @@ public class TestRequest implements HttpServletRequest {
 
 	@Override
 	public String getContextPath() {
-		return "";
+		return contextPath;
 	}
 
 	@Override
@@ -337,6 +338,10 @@ public class TestRequest implements HttpServletRequest {
 	public boolean isUserInRole(String arg0) {
 		// TODO Auto-generated method stub
 		return false;
+	}
+
+	public void setContextPath(String contextPath) {
+		this.contextPath = contextPath;
 	}
 
 }

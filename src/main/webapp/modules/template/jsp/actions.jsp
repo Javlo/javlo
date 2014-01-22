@@ -13,7 +13,7 @@
    	<a class="action-button more" href="${info.currentURL}?html=${currentTemplate.htmls[0]}&templateid=${currentTemplate.name}&webaction=editHTML"><span>${i18n.edit['template.action.html']}</span></a>
    </c:if>    
    
-   <c:url var="commit" value="${info.currentURL}" >	
+   <c:url var="commit" value="${info.currentURL}" context="/">	
        <c:param name="webaction" value="commit"></c:param>
        <c:param name="templateid" value="${currentTemplate.name}"></c:param>       
        <c:if test="${not empty param.css}">
@@ -36,7 +36,7 @@
    
     
    
-   <c:url var="commitChildren" value="${info.currentURL}" >	
+   <c:url var="commitChildren" value="${info.currentURL}" context="/">	
        <c:param name="webaction" value="commitChildren"></c:param>
        <c:param name="templateid" value="${currentTemplate.name}"></c:param>       
        <c:if test="${not empty param.css}">

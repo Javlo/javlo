@@ -1,6 +1,6 @@
-<%@page import="java.util.Map"%>
-<%@page import="java.util.Hashtable"%>
-<%@page contentType="text/html"
+<%@page import="java.util.Map"
+%><%@page import="java.util.Hashtable"
+%><%@page contentType="text/html"
         import="
         java.util.Stack,
         java.util.LinkedList,
@@ -108,8 +108,7 @@ components = allComponents;
 }
 
 if (components.size() > 60 && request.getParameter("display-all") == null) {
-	  %>
-	  <div class="insert-line">
+	  %><div class="insert-line">
 		<a class="action-button warning" href="${info.currentURL}?${info.editPreview?'previewEdit=true&':''}display-all=true">${i18n.edit["edit.message.display-all-components"]}</a>
 	  </div><%	
 } else {
@@ -144,8 +143,8 @@ for (IContentVisualComponent comp : components) {
 		 params.put("webaction", "edit.delete");
 		 params.put("id", comp.getId());
       	 String actionURL = URLHelper.createURL(ctx, params);
-      	 if (AdminUserSecurity.getInstance().canModifyConponent(ctx, comp.getId())) {%><a class="delete ajax" title="${i18n.edit['global.delete']}" href="<%=actionURL%>"></a><%}%>
-      	<a class="copy ajax" title="${i18n.edit['content.copy']}" href="${info.currentURL}?webaction=copy&id=<%=comp.getId()%>"></a>
+      	 if (!ctx.isEditPreview() && AdminUserSecurity.getInstance().canModifyConponent(ctx, comp.getId())) {%><a class="delete ajax" title="${i18n.edit['global.delete']}" href="<%=actionURL%>"></a><%}
+      	 if (!ctx.isEditPreview()) {%><a class="copy ajax" title="${i18n.edit['content.copy']}" href="${info.currentURL}?webaction=copy&id=<%=comp.getId()%>"></a><%}%>
       </div>
       <div class="header-info">
       	<%if (comp.isRepeat()) {%><span class="repeat" title="${i18n.edit['content.repeat']}"></span><%}

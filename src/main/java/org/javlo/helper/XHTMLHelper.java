@@ -2247,8 +2247,9 @@ public class XHTMLHelper {
 			} else if (tag.getName().equalsIgnoreCase("img")) {
 				String src = tag.getAttribute("src", null);
 				if (src != null) {
-					if (!StringHelper.isURL(src)) { // relative paths
-						if (src.startsWith('/' + ctx.getGlobalContext().getContextKey() + '/')) {
+					if (!StringHelper.isURL(src)) { // relative path
+						String urlPrefix = URLHelper.mergePath("/",ctx.getRequest().getContextPath(), ctx.getPathPrefix(), "/");
+						if (src.startsWith(urlPrefix)) {
 							InfoBean info = InfoBean.getCurrentInfoBean(ctx);
 							src = URLHelper.mergePath(info.getHostURLPrefix(), src);
 						} else {

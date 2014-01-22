@@ -13,7 +13,7 @@
 			<div class="container">
 				<ul>
 				<c:forEach var="child" items="${page.children}">
-					<c:url var="url" value="${child.url}">
+					<c:url var="url" value="${child.url}" context="/">
 						<c:if test="${not empty param[BACK_PARAM_NAME]}">
 							<c:param name="${BACK_PARAM_NAME}" value="${param[BACK_PARAM_NAME]}" />
 						</c:if>
@@ -37,7 +37,7 @@
 			<div class="container">
 				<ul>
 				<c:forEach var="child" items="${info.page.children}">
-				<c:url var="url" value="${child.url}">
+				<c:url var="url" value="${child.url}" context="/">
 						<c:if test="${not empty param[BACK_PARAM_NAME]}">
 							<c:param name="${BACK_PARAM_NAME}" value="${param[BACK_PARAM_NAME]}" />
 						</c:if>
@@ -55,7 +55,7 @@
 <c:if test="${not empty currentModule.breadcrumbList}">
 	<c:forEach var="link" items="${currentModule.breadcrumbList}" varStatus="status">	
 		<c:if test="${not empty link.url}">	
-			<c:url var="url" value="${link.url}">
+			<c:url var="url" value="${link.url}" context="/">
 				<c:if test="${not empty param[BACK_PARAM_NAME]}">
 					<c:param name="${BACK_PARAM_NAME}" value="${param[BACK_PARAM_NAME]}" />
 				</c:if>
@@ -74,7 +74,7 @@
 			<div class="container">
 				<ul>
 				<c:forEach var="child" items="${link.children}">
-					<c:url var="url" value="${child.url}">
+					<c:url var="url" value="${child.url}" context="/">
 						<c:if test="${not empty param[BACK_PARAM_NAME]}">
 							<c:param name="${BACK_PARAM_NAME}" value="${param[BACK_PARAM_NAME]}" />
 						</c:if>

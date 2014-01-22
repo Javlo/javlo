@@ -78,13 +78,13 @@ if (!rightOnPage) {
 					</li><c:if test="${fn:length(contentContext.deviceNames)>1}">
 					<li class="renderers"><form id="renderers_form" action="${info.currentURL}" method="get">
 						<div class="pc_line">
-							<c:url var="url" value="${info.currentURL}">
+							<c:url var="url" value="${info.currentURL}" context="/">
 								<c:param name="${info.staticData.forceDeviceParameterName}" value=""></c:param>
 							</c:url>
 							<!-- <select id="renderers_button" onchange="jQuery('#renderers_form').attr('action','${url}'+jQuery('#renderers_button option:selected').val()); console.log('lg='+jQuery('#renderers_form').attr('action')); jQuery('#renderers_form').submit();"> -->
 							<select id="renderers_button" onchange="window.location='${url}'+jQuery('#renderers_button option:selected').val();">
 								<c:forEach var="renderer" items="${contentContext.deviceNames}">
-									<c:url var="url" value="${info.currentURL}">
+									<c:url var="url" value="${info.currentURL}" context="/">
 										<c:param name="${info.staticData.forceDeviceParameterName}" value="${renderer}"></c:param>
 									</c:url>									 
 									<option${info.device.code eq renderer?' selected="selected"':''}>${renderer}</option>
