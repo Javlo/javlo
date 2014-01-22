@@ -9,6 +9,7 @@ import junit.framework.TestCase;
 
 import org.javlo.context.ContentContext;
 import org.javlo.test.servlet.FakeHttpContext;
+import org.javlo.test.servlet.TestRequest;
 
 public class URLHelperTest extends TestCase {
 	
@@ -47,6 +48,15 @@ public class URLHelperTest extends TestCase {
 		assertEquals(URLHelper.getParams("http://www.javlo.org/?test=test&param=value").get("param"), "value");
 		assertEquals(URLHelper.getParams(new URL("http://www.javlo.org/?test=test")).get("test"), "test");
 		assertEquals(URLHelper.getParams(new URL("http://www.javlo.org/?test=test&param=value")).get("param"), "value");
+	}
+	
+	public void testCreateForwardURL() throws Exception {
+		FakeHttpContext httpContext = FakeHttpContext.getInstance();
+		TestRequest request = httpContext.getRequest("http://demo.javlo.org/javlo/view/en/media.html?webaction=test");		
+		ContentContext ctx = ContentContext.getContentContext(request, httpContext.getResponse());	
+		assertEquals(URLHelper.createForwardURL(ctx, "/javlo/view/fr/index.html"), "/javlo/view/fr/index.html");
+		request.setContextPath("/javlo");
+		assertEquals(URLHelper.createForwardURL(ctx, "/javlo/view/fr/index.html"), "/view/fr/index.html");
 	}
 	
 

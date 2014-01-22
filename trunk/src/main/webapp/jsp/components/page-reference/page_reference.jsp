@@ -21,14 +21,14 @@
 			<span class="img ${groupClass}"> <!-- Gallerie de l'élément -->
 				<c:forEach items="${page.images}" var="image" varStatus="status">
 				
-				   <c:url value="" var="linkURL" />
+				   <c:url value="" var="linkURL" context="/"/>
 				   <c:if test="${empty image.linkURL}">
 				     <c:if test="${not empty image.viewURL}">
 				       <c:url value="${image.viewURL}" var="linkURL" context="/" />
 		             </c:if>
 		           </c:if>
 			       <c:if test="${not empty image.linkURL}">
-				     <c:url value="${image.linkURL}" var="linkURL" />
+				     <c:url value="${image.linkURL}" var="linkURL" context="/" />
 			       </c:if>
 			       						       
 			       <c:if test="${fn:contains(linkURL,'?')}">
@@ -68,7 +68,7 @@
 		             </c:if>
 		           </c:if>
 			     <c:if test="${not empty image.linkURL}">
-				   <c:url value="${image.linkURL}" var="linkURL">
+				   <c:url value="${image.linkURL}" var="linkURL" context="/">
 				     <c:param name="epbox" value="" />
 				     <c:param name="gallery" value="gal${page.id}" />
 				   </c:url>

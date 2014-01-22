@@ -656,5 +656,25 @@ public abstract class ElementaryURLHelper {
 
 		return outParams;
 	}
+	
+	/**
+	 * remove context from url if exist.
+	 * @param ctx
+	 * @param url
+	 * @return
+	 */
+	public static String createForwardURL(ContentContext ctx, String url) {
+		if (ctx.getRequest().getContextPath() != null && ctx.getRequest().getContextPath().length() > 1) {
+			if (!url.startsWith("/")) {
+				return url;
+			} else {
+				url = url.substring(1);
+				if (url.contains("/")) {
+					url = url.substring(url.indexOf('/'));
+				}
+			}
+		}
+		return url;
+	}
 
 }

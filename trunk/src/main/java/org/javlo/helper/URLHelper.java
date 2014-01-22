@@ -1065,6 +1065,7 @@ public class URLHelper extends ElementaryURLHelper {
 		outURL = outURL.replace("$DATA", globalContext.getDataFolder());
 		return outURL;
 	}
+
 	
 	/**
 	 * transform text to url.

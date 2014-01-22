@@ -30,7 +30,7 @@
 	<c:if test="${display}">
 	<div class="item">
 			<div class="preview ${resource.cssClass}">
-			    <c:url value="${info.currentURL}" var="resourceURL">
+			    <c:url value="${info.currentURL}" var="resourceURL" context="/">
 			    	<c:param name="resource" value="${resource.id}" />
 			    	<c:if test="${not empty param.folder}">
 			    		<c:param name="folder" value="${param.folder}" />

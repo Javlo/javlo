@@ -19,7 +19,7 @@ public class FakeHttpContext {
 		return new FakeHttpContext();
 	}
 
-	public HttpServletRequest getRequest(String url) throws MalformedURLException {
+	public TestRequest getRequest(String url) throws MalformedURLException {
 		return new TestRequest(session, url);
 	}
 

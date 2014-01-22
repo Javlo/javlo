@@ -7,7 +7,7 @@
             </c:if>
             <c:if test="${not empty param.previewEdit}">
             
-             	<c:url value="${info.currentURL}" var="selectURL">
+             	<c:url value="${info.currentURL}" var="selectURL" context="/">
                     	<c:param name="webaction" value="selectTemplate" />
                     	<c:param name="templateid" value="${template.name}" />
                     </c:url>  
@@ -58,13 +58,13 @@
                 <p class="menu">                	
                     <a href="${template.viewUrl}" class="view" title="${template.name}"></a>
                     
-                    <c:url value="${info.currentURL}" var="editURL">
+                    <c:url value="${info.currentURL}" var="editURL" context="/">
                     	<c:param name="webaction" value="goEditTemplate" />
                     	<c:param name="templateid" value="${template.name}" />
                     </c:url>                    
                     <a href="${editURL}" class="edit"></a>
 
-                    <c:url value="${info.currentURL}" var="deleteURL">
+                    <c:url value="${info.currentURL}" var="deleteURL" context="/">
                     	<c:param name="webaction" value="delete" />
                     	<c:param name="id" value="${template.name}" />
                     </c:url>
@@ -76,7 +76,7 @@
                     </c:if>
                     
                     <c:if test="${not template.valid}">
-                    <c:url value="${info.currentURL}" var="validURL">
+                    <c:url value="${info.currentURL}" var="validURL" context="/">
                     	<c:param name="webaction" value="validate" />
                     	<c:param name="id" value="${template.name}" />
                     </c:url>
