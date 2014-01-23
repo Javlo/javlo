@@ -1245,6 +1245,18 @@ public class StaticConfig extends Observable {
 	public boolean isFixPreview() {
 		return properties.getBoolean("fix-preview", true);
 	}
+	
+	protected String getPlatformType() {
+		return properties.getString("platform.type", "web");
+	}
+	
+	public boolean isMailingPlatform() {
+		return getPlatformType().equals("mailing");			
+	}
+	
+	public boolean isWebPlatform() {
+		return getPlatformType().equals("web");			
+	}
 
 	public String get404PageName() {
 		return properties.getString("404-name", "404");

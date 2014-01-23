@@ -580,6 +580,9 @@ public class StringHelper {
 	}
 
 	public synchronized static String encryptPassword(String plaintext) {
+		if (plaintext == null) {
+			return null;
+		}
 		MessageDigest md = null;
 		try {
 			md = MessageDigest.getInstance("SHA"); // step 2

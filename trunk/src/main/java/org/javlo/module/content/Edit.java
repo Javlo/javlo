@@ -821,6 +821,8 @@ public class Edit extends AbstractModuleAction {
 			messageRepository.setGlobalMessageAndNotification(ctx, new GenericMessage(i18nAccess.getText("action.block"), GenericMessage.ERROR));
 			return null;
 		}
+		
+		org.javlo.helper.Logger.forceStartCount("save");
 
 		String message = null;
 
@@ -871,11 +873,10 @@ public class Edit extends AbstractModuleAction {
 		PersistenceService.getInstance(globalContext).store(ctx);
 
 		if (message == null) {
-			NavigationService navigationService = NavigationService.getInstance(globalContext);
-			navigationService.clearPage(ctx);
-
+			//NavigationService navigationService = NavigationService.getInstance(globalContext);			
+			// navigationService.clearPage(ctx);
 			messageRepository.setGlobalMessage(new GenericMessage(i18nAccess.getText("action.updated"), GenericMessage.INFO));
-			autoPublish(ctx.getRequest(), ctx.getResponse());
+			autoPublish(ctx.getRequest(), ctx.getResponse());			
 		} else {
 			messageRepository.setGlobalMessage(new GenericMessage(i18nAccess.getText("action.not-updated"), GenericMessage.ALERT));
 		}
@@ -884,7 +885,7 @@ public class Edit extends AbstractModuleAction {
 				&& requestService.getParameter("upload", null) == null) {
 			ctx.setClosePopup(true);
 		}
-
+		
 		if (ctx.isEditPreview() && componentContext.getNewComponents() != null && componentContext.getNewComponents().size() == 1) {
 			InfoBean.getCurrentInfoBean(ctx).setTools(false);
 			ctx.getRequest().setAttribute("noinsert", "true");
