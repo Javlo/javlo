@@ -32,7 +32,7 @@
 			<textarea id="mailing-recipients" name="recipients"><c:out value="${mailing.recipients}" escapeXml="true" /></textarea>
 		</div>
 		<div class="inline">		
-			<input type="checkbox" id="mailing-test-mailing" name="test-mailing" ${mailing.isTestMailing()?'checked="checked"':''} />
+			<input type="checkbox" id="mailing-test-mailing" name="test-mailing" ${mailing.testMailing?'checked="checked"':''} />
 			<label class="suffix" for="mailing-test-mailing">${i18n.edit['mailing.form.test-mailing']}</label>
 		</div>
 		<div class="action">

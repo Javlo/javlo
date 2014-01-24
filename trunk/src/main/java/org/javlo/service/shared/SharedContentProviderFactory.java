@@ -29,9 +29,7 @@ public class SharedContentProviderFactory {
 	}
 	
 	private static void addContentProvider (List<ISharedContentProvider> contentProviders, ISharedContentProvider provider) {
-		if (!provider.isEmpty()) {
-			contentProviders.add(provider);
-		}
+		contentProviders.add(provider);
 	}
 
 	public List<ISharedContentProvider> getAllSharedContentProvider(ContentContext ctx) {
