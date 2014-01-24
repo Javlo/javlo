@@ -5,6 +5,7 @@ package org.javlo.component.title;
 
 import org.javlo.component.core.AbstractVisualComponent;
 import org.javlo.context.ContentContext;
+import org.javlo.context.EditContext;
 import org.javlo.context.GlobalContext;
 import org.javlo.helper.LoremIpsumGenerator;
 import org.javlo.service.ReverseLinkService;
@@ -15,26 +16,37 @@ import org.javlo.service.ReverseLinkService;
 public class Title extends AbstractVisualComponent {
 
 	public static final String TYPE = "title";
-	
-	private static final String[] STYLES = new String[] {"standard", HIDDEN};
+
+	private static final String[] STYLES = new String[] { "standard", HIDDEN };
 
 	@Override
 	public int getSearchLevel() {
 		return SEARCH_LEVEL_HIGH;
 	}
-	
+
 	@Override
-	public String[] getStyleList(ContentContext ctx) {	
+	public String[] getStyleList(ContentContext ctx) {
 		return STYLES;
 	}
-	
+
 	@Override
 	public String getPrefixViewXHTMLCode(ContentContext ctx) {
+		/* editable if hidden */
+		if (HIDDEN.equals(getStyle(ctx))) {
+			if (ctx.getRenderMode() == ContentContext.PREVIEW_MODE && EditContext.getInstance(GlobalContext.getInstance(ctx.getRequest()), ctx.getRequest().getSession()).isEditPreview()) {
+				return super.getPrefixViewXHTMLCode(ctx);
+			}
+		}
 		return "";
 	}
-	
+
 	@Override
 	public String getSuffixViewXHTMLCode(ContentContext ctx) {
+		if (HIDDEN.equals(getStyle(ctx))) {
+			if (ctx.getRenderMode() == ContentContext.PREVIEW_MODE && EditContext.getInstance(GlobalContext.getInstance(ctx.getRequest()), ctx.getRequest().getSession()).isEditPreview()) {
+				return super.getSuffixViewXHTMLCode(ctx);
+			}
+		}
 		return "";
 	}
 
@@ -91,7 +103,8 @@ public class Title extends AbstractVisualComponent {
 
 	@Override
 	public boolean isDefaultValue(ContentContext ctx) {
-		return super.isEmpty(ctx); // this component is never not empty -> use empty parent method
+		return super.isEmpty(ctx); // this component is never not empty -> use
+									// empty parent method
 	}
 
 	@Override
@@ -105,7 +118,7 @@ public class Title extends AbstractVisualComponent {
 		setModify();
 		return true;
 	}
-	
+
 	@Override
 	public boolean isContentCachable(ContentContext ctx) {
 		return true;

@@ -7,6 +7,10 @@ body,html {
 	display: none;
 }
 
+.edit-preview .hidden {
+	display: block;
+}
+
 p.important {
 	font-weight: bold;
 }
@@ -25,10 +29,6 @@ figure {
 /***************/
 /*** GALLERY ***/
 /***************/
-
-.hidden {
-	display: none;
-}
 
 .multimedia {
 	overflow: hidden;
