@@ -140,48 +140,55 @@ public class PageMirrorComponent extends AbstractVisualComponent {
 	 * @see org.javlo.itf.IContentVisualComponent#getXHTMLCode()
 	 */
 	@Override
-	public void prepareView(ContentContext ctx) throws Exception {		
+	public void prepareView(ContentContext ctx) throws Exception {
 		MenuElement page = getMirrorPage(ctx);
 		if (page != null) {
 			if (ctx.getSpecialContentRenderer() == null) {
-				ctx.setVirtualCurrentPage(getPage()); // force page page mirror
-														// page as current page
-				String area = ctx.getArea();
-				String path = ctx.getPath();
-				MenuElement currentPage = ctx.getCurrentPage();				
-				Template pageTemplate = TemplateFactory.getTemplate(ctx, page);
-				if (!pageTemplate.getAreas().contains(area)) {
-					ctx.setVirtualArea(area);
-					ctx.setArea(ComponentBean.DEFAULT_AREA);
-					ctx.getRequest().setAttribute(ContentContext.CHANGE_AREA_ATTRIBUTE_NAME, ComponentBean.DEFAULT_AREA);
-				}				
-				ctx.setPath(page.getPath());
-				
-				RequestService rs = RequestService.getInstance(ctx.getRequest());
-				rs.setParameter(NOT_EDIT_PREVIEW_PARAM_NAME, "true");
-				String xhtml = executeJSP(ctx, Edit.CONTENT_RENDERER + '?' + NOT_EDIT_PREVIEW_PARAM_NAME + "=true");
-				rs.setParameter(NOT_EDIT_PREVIEW_PARAM_NAME, "false");			
-				
-				ctx.setVirtualCurrentPage(null);
-				ctx.setArea(area);
-				ctx.setVirtualArea(null);
-				ctx.setPath(path);
-				ctx.setCurrentPageCached(currentPage);
-				ctx.getRequest().setAttribute("xhtml", xhtml);				
+
+				if (page.getId() == getPage().getId()) {
+					ctx.getRequest().setAttribute("xhtml", "[!!! RECURSIVE MIRROR CALL !!!]");
+				} else {
+
+					ctx.setVirtualCurrentPage(getPage()); // force page page
+															// mirror
+															// page as current
+															// page
+					String area = ctx.getArea();
+					String path = ctx.getPath();
+					MenuElement currentPage = ctx.getCurrentPage();
+					Template pageTemplate = TemplateFactory.getTemplate(ctx, page);
+					if (!pageTemplate.getAreas().contains(area)) {
+						ctx.setVirtualArea(area);
+						ctx.setArea(ComponentBean.DEFAULT_AREA);
+						ctx.getRequest().setAttribute(ContentContext.CHANGE_AREA_ATTRIBUTE_NAME, ComponentBean.DEFAULT_AREA);
+					}
+					ctx.setPath(page.getPath());
+
+					RequestService rs = RequestService.getInstance(ctx.getRequest());
+					rs.setParameter(NOT_EDIT_PREVIEW_PARAM_NAME, "true");
+					String xhtml = executeJSP(ctx, Edit.CONTENT_RENDERER + '?' + NOT_EDIT_PREVIEW_PARAM_NAME + "=true");
+					rs.setParameter(NOT_EDIT_PREVIEW_PARAM_NAME, "false");
+
+					ctx.setVirtualCurrentPage(null);
+					ctx.setArea(area);
+					ctx.setVirtualArea(null);
+					ctx.setPath(path);
+					ctx.setCurrentPageCached(currentPage);
+					ctx.getRequest().setAttribute("xhtml", xhtml);
+				}
 			}
 		} else {
 			deleteMySelf(ctx);
 			ctx.getRequest().setAttribute("xhtml", "");
-		}	
-		super.prepareView(ctx); // set variable for jstl after rendering targeted page.
+		}
+		super.prepareView(ctx); // set variable for jstl after rendering
+								// targeted page.
 	}
-	
+
 	@Override
-	public String getViewXHTMLCode(ContentContext ctx) throws Exception {		
-		return (String)ctx.getRequest().getAttribute("xhtml");
+	public String getViewXHTMLCode(ContentContext ctx) throws Exception {
+		return (String) ctx.getRequest().getAttribute("xhtml");
 	}
-	
-	
 
 	@Override
 	public void init(ComponentBean bean, ContentContext newContext) throws Exception {
@@ -195,8 +202,8 @@ public class PageMirrorComponent extends AbstractVisualComponent {
 
 	private List<ComponentBean> getCopiedPageContent(ContentContext ctx) throws Exception {
 		List<ComponentBean> outBeans = new LinkedList<ComponentBean>();
-		MenuElement copiedPage = getMirrorPage(ctx);				
-		ctx.setArea(ComponentBean.DEFAULT_AREA);		
+		MenuElement copiedPage = getMirrorPage(ctx);
+		ctx.setArea(ComponentBean.DEFAULT_AREA);
 		ContentElementList content = copiedPage.getContent(ctx);
 		while (content.hasNext(ctx)) {
 			outBeans.add(new ComponentBean(content.next(ctx).getComponentBean()));
@@ -219,11 +226,13 @@ public class PageMirrorComponent extends AbstractVisualComponent {
 			String previousId = "0";
 			if (getPreviousComponent() != null) {
 				previousId = getPreviousComponent().getId();
-			}	
-			
-			List<ComponentBean> data = getCopiedPageContent(new ContentContext(ctx));			
-			ContentService content = ContentService.getInstance(ctx.getRequest());			
-			ComponentHelper.changeAllArea(data, getArea()); // same area than page mirror component.
+			}
+
+			List<ComponentBean> data = getCopiedPageContent(new ContentContext(ctx));
+			ContentService content = ContentService.getInstance(ctx.getRequest());
+			ComponentHelper.changeAllArea(data, getArea()); // same area than
+															// page mirror
+															// component.
 			String id = content.createContent(ctx, getPage(), data, previousId, true);
 			deleteMySelf(ctx);
 			setNeedRefresh(true);

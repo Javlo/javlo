@@ -212,7 +212,9 @@ public class MailingModuleContext extends AbstractModuleContext {
 		m.setSubject(subject);
 		m.setAdminEmail(globalContext.getAdministratorEmail());
 		m.setNotif(new InternetAddress(reportTo));
-		m.setContent(NetHelper.readPage(url, true));
+		String content = NetHelper.readPage(url, true);
+		System.out.println("***** MailingModuleContext.sendMailing : content = "+content); //TODO: remove debug trace
+		m.setContent(content);
 		m.setHtml(true);
 		m.setRoles(groups);
 		m.store(ctx.getRequest().getSession().getServletContext());
