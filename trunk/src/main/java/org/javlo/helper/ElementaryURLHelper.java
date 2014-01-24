@@ -290,14 +290,7 @@ public abstract class ElementaryURLHelper {
 		}
 
 		if (newCtx.isAbsoluteURL()) {
-			if (!url.startsWith("/")) {
-				url = url + '/';
-			}
-			String port = "";
-			if (newCtx.getHostPort() != 80) {
-				port = ":" + newCtx.getHostPort();
-			}
-			url = newCtx.getURLProtocolPrefix() + "://" + newCtx.getHostName() + port + url;
+			url = addHost(ctx,url);
 		}
 		url = url.replace('\\', '/');
 		return url;
@@ -442,15 +435,7 @@ public abstract class ElementaryURLHelper {
 		String url = createNoProtocolURL(ctx, globalContext, uri, ajax, withPathPrefix, widthEncodeURL);
 
 		if (ctx.isAbsoluteURL()) {
-			if (ctx.getDMZServerInter() == null) {
-				String port = "";
-				if (ctx.getHostPort() != 80) {
-					port = ":" + ctx.getHostPort();
-				}
-				url = ctx.getURLProtocolPrefix() + "://" + ctx.getHostName() + port + url;
-			} else {
-				url = mergePath(ctx.getDMZServerInter().toString(), url);
-			}
+			url = addHost(ctx,url);
 		}
 
 		if (url.contains("?")) {
@@ -469,6 +454,25 @@ public abstract class ElementaryURLHelper {
 			}
 		}
 
+		return url;
+	}
+	
+	protected static String addHost(ContentContext ctx, String url) {
+		if (ctx.getDMZServerInter() == null) {
+			String port = "";
+			if (ctx.getHostPort() != 80) {
+				port = ":" + ctx.getHostPort();
+			}
+			url = ctx.getURLProtocolPrefix() + "://" + ctx.getHostName() + port + url;
+		} else {
+			if (ctx.getPathPrefix() != null && ctx.getPathPrefix().length()>0) {
+				String prefix = '/'+ctx.getPathPrefix()+'/';
+				if (url.startsWith(prefix)) {
+					url = url.substring(prefix.length());
+				}
+			}
+			url = mergePath(ctx.getDMZServerInter().toString(), url);
+		}
 		return url;
 	}
 
