@@ -111,14 +111,6 @@ public class WysiwygParagraph extends AbstractVisualComponent {
 		}
 	}*/
 	
-	protected String getTag(ContentContext ctx) {
-		String defaultTag = "p";
-		if (getValue().contains("</p>") || getValue().contains("</table>")) {
-			defaultTag = "div";
-		}
-		return getConfig(ctx).getProperty("tag", defaultTag);
-	}
-	
 	@Override
 	public boolean isContentCachable(ContentContext ctx) {	
 		return true;
