@@ -5,6 +5,7 @@ import java.util.Collection;
 import java.util.LinkedList;
 import java.util.logging.Logger;
 
+import org.javlo.context.ContentContext;
 import org.javlo.helper.NetHelper;
 import org.javlo.helper.StringHelper;
 import org.javlo.helper.URLHelper;
@@ -25,12 +26,12 @@ public class URLImageSharedContentProvider extends AbstractSharedContentProvider
 	}
 
 	@Override
-	public void refresh() {
+	public void refresh(ContentContext ctx) {
 		content = null;
 	}
 
 	@Override
-	public Collection<SharedContent> getContent() {
+	public Collection<SharedContent> getContent(ContentContext ctx) {
 		if (content == null) {
 			content = new LinkedList<SharedContent>();
 			try {
@@ -81,18 +82,6 @@ public class URLImageSharedContentProvider extends AbstractSharedContentProvider
 		return content;
 	}
 
-	public static void main(String[] args) {
-		try {
-			URL url = new URL("http://teenkasia.com/hosted/030_red_and_black_schoolgirl/2312040");
-			URLImageSharedContentProvider provider = new URLImageSharedContentProvider(url);
-			for (SharedContent content : provider.getContent()) {
-				System.out.println(content.getImageURL());
-			}
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
-	}
-	
 	@Override
 	public String getType() {	
 		return TYPE_IMAGE;
@@ -100,7 +89,7 @@ public class URLImageSharedContentProvider extends AbstractSharedContentProvider
 	
 	@Override
 	public boolean isSearch() {
-		return getContent().size() > 30;
+		return true;
 	}
 }
 

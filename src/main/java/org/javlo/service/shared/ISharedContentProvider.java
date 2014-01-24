@@ -5,6 +5,8 @@ import java.util.Collection;
 import java.util.Locale;
 import java.util.Map;
 
+import org.javlo.context.ContentContext;
+
 public interface ISharedContentProvider {
 	
 	public static final String TYPE_DEFAULT = "default";
@@ -25,13 +27,13 @@ public interface ISharedContentProvider {
 	 */
 	public URL getURL();
 	
-	public Collection<SharedContent> getContent();
+	public Collection<SharedContent> getContent(ContentContext ctx);
 	
-	public Collection<SharedContent> searchContent(String query);
+	public Collection<SharedContent> searchContent(ContentContext ctx, String query);
 	
-	public Collection<SharedContent> getContent(Collection<String> categories);
+	public Collection<SharedContent> getContent(ContentContext ctx, Collection<String> categories);
 	
-	public Map<String,String> getCategories();
+	public Map<String,String> getCategories(ContentContext ctx);
 	
 	/**
 	 * return true if search is possible.
@@ -43,17 +45,17 @@ public interface ISharedContentProvider {
 	 * return true if provider have no content.
 	 * @return
 	 */
-	public boolean isEmpty();
+	public boolean isEmpty(ContentContext ctx);
 	
 	/**
 	 * refresh the content list and the list of categories
 	 */
-	public void refresh();
+	public void refresh(ContentContext ctx);
 	
 	public String getType();
 	
-	public int getCategoriesSize();
+	public int getCategoriesSize(ContentContext ctx);
 	
-	public int getContentSize();
+	public int getContentSize(ContentContext ctx);
 
 }

@@ -6,6 +6,7 @@ import java.util.Collection;
 import java.util.LinkedList;
 import java.util.logging.Logger;
 
+import org.javlo.context.ContentContext;
 import org.javlo.helper.NetHelper;
 import org.javlo.helper.StringHelper;
 import org.javlo.helper.URLHelper;
@@ -32,13 +33,13 @@ public class FotogrphSharedContentProvider extends AbstractSharedContentProvider
 	}
 
 	@Override
-	public void refresh() {
+	public void refresh(ContentContext ctx) {
 		content = null;
-		getContent();
+		getContent(ctx);
 	}
 
 	@Override
-	public Collection<SharedContent> getContent() {
+	public Collection<SharedContent> getContent(ContentContext ctx) {
 		if (content == null) {
 			content = new LinkedList<SharedContent>();
 			try {
@@ -87,35 +88,24 @@ public class FotogrphSharedContentProvider extends AbstractSharedContentProvider
 		return content;
 	}
 
-	public static void main(String[] args) {
-		try {
-			FotogrphSharedContentProvider provider = new FotogrphSharedContentProvider();
-			for (SharedContent content : provider.getContent()) {
-				System.out.println(content.getTitle());
-			}
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
-	}
-
 	@Override
 	public String getType() {
 		return TYPE_IMAGE;
 	}
 
 	@Override
-	public int getContentSize() {
+	public int getContentSize(ContentContext ctx) {
 		if (content != null) {
-			return super.getContentSize();
+			return super.getContentSize(ctx);
 		} else {
 			return -1;
 		}
 	}
 
 	@Override
-	public int getCategoriesSize() {
+	public int getCategoriesSize(ContentContext ctx) {
 		if (content != null) {
-			return super.getCategoriesSize();
+			return super.getCategoriesSize(ctx);
 		} else {
 			return -1;
 		}

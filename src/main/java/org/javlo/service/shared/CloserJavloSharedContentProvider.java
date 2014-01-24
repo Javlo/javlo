@@ -18,20 +18,12 @@ import org.javlo.navigation.MenuElement;
  * @author pvandermaesen
  * 
  */
-public class CloserJavloSharedContentProvider extends AbstractSharedContentProvider implements INeedContentContext {
-
-	private ContentContext ctx;
+public class CloserJavloSharedContentProvider extends AbstractSharedContentProvider {
 
 	public static final String NAME = "closer-javlo-local";
 
-	public CloserJavloSharedContentProvider(ContentContext ctx) {
-		setName(NAME);
-		this.ctx = ctx;
-	}
-
-	@Override
-	public void setContentContext(ContentContext ctx) {
-		this.ctx = ctx;
+	public CloserJavloSharedContentProvider() {
+		setName(NAME);		
 	}
 
 	private static String getSharedName(MenuElement page, int i) {
@@ -46,7 +38,7 @@ public class CloserJavloSharedContentProvider extends AbstractSharedContentProvi
 	}
 
 	@Override
-	public Collection<SharedContent> getContent() {
+	public Collection<SharedContent> getContent(ContentContext ctx) {
 
 		MenuElement currentPage;
 		try {
@@ -70,7 +62,7 @@ public class CloserJavloSharedContentProvider extends AbstractSharedContentProvi
 
 		List<SharedContent> outContent = new LinkedList<SharedContent>();
 		try {
-			getCategories().clear();
+			getCategories(ctx).clear();
 			int i = 0;
 			for (MenuElement page : rootPage.getAllChildren()) {
 				i++;
@@ -86,8 +78,8 @@ public class CloserJavloSharedContentProvider extends AbstractSharedContentProvi
 								String imageURL = image.getPreviewURL(ctx, "shared-preview");
 								sharedContent.setImageUrl(imageURL);								
 								if (page.getParent() != null) {
-									if (!getCategories().containsKey(page.getParent().getName())) {
-										getCategories().put(page.getParent().getName(), page.getParent().getTitle(ctx));
+									if (!getCategories(ctx).containsKey(page.getParent().getName())) {
+										getCategories(ctx).put(page.getParent().getName(), page.getParent().getTitle(ctx));
 									}
 									sharedContent.addCategory(page.getParent().getName());
 								}
@@ -105,16 +97,11 @@ public class CloserJavloSharedContentProvider extends AbstractSharedContentProvi
 		return outContent;
 	}
 
-	@Override
-	public ContentContext getContentContext() {
-		return ctx;
-	}
-
 	/**
 	 * never empty because dynamic
 	 */
 	@Override
-	public boolean isEmpty() {
+	public boolean isEmpty(ContentContext ctx) {
 		return false;
 	}
 

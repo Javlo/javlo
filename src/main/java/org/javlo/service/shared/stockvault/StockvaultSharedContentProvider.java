@@ -15,6 +15,7 @@ import org.htmlparser.filters.CssSelectorNodeFilter;
 import org.htmlparser.nodes.TagNode;
 import org.htmlparser.util.NodeList;
 import org.htmlparser.util.ParserException;
+import org.javlo.context.ContentContext;
 import org.javlo.helper.StringHelper;
 import org.javlo.helper.URLHelper;
 import org.javlo.service.shared.AbstractSharedContentProvider;
@@ -36,18 +37,18 @@ public class StockvaultSharedContentProvider extends AbstractSharedContentProvid
 	}
 
 	@Override
-	public void refresh() {		
+	public void refresh(ContentContext ctx) {		
 		content = null;
-		getContent();
+		getContent(ctx);
 	}
 
 	@Override
-	public Collection<SharedContent> getContent() {
-		return getContent(getURL());
+	public Collection<SharedContent> getContent(ContentContext ctx) {
+		return getContent(ctx, getURL());
 	}
 
 	@Override
-	public Collection<SharedContent> searchContent(String query) {
+	public Collection<SharedContent> searchContent(ContentContext ctx, String query) {
 		try {
 			Collection<SharedContent> outContent = new LinkedList<SharedContent>();
 			for (int page = 1; page < 4; page++) { // read 3 pages
@@ -86,12 +87,12 @@ public class StockvaultSharedContentProvider extends AbstractSharedContentProvid
 		setCategories(categories);
 	}
 
-	private Collection<SharedContent> getContent(URL url) {
+	private Collection<SharedContent> getContent(ContentContext ctx, URL url) {
 		if (content == null) {
 			try {
 				init();
 				content = new LinkedList<SharedContent>();
-				for (Map.Entry<String, String> category : getCategories().entrySet()) {
+				for (Map.Entry<String, String> category : getCategories(ctx).entrySet()) {
 					logger.info("Stockvault load category : " + category.getValue());
 					try {
 						URL catURL = new URL(URLHelper.mergePath(url.toString(), category.getKey()));
@@ -144,32 +145,21 @@ public class StockvaultSharedContentProvider extends AbstractSharedContentProvid
 	}
 	
 	@Override
-	public int getContentSize() {
+	public int getContentSize(ContentContext ctx) {
 		if (content != null) {
-			return super.getContentSize();
+			return super.getContentSize(ctx);
 		} else {
 			return -1;
 		}
 	}
 
 	@Override
-	public int getCategoriesSize() {
+	public int getCategoriesSize(ContentContext ctx) {
 		if (content != null) {
-			return super.getCategoriesSize();
+			return super.getCategoriesSize(ctx);
 		} else {
 			return -1;
 		}
-	}
-
-	public static void main(String[] args) {
-		// TODO Auto-generated method stub
-		String src = "/./data/2009/07/22/109588/thumbnail.jpg";
-		String[] splitedSrc = src.split("/");
-		String id = StringHelper.getFileNameWithoutExtension(splitedSrc[splitedSrc.length - 2]);
-		System.out.println("***** StockvaultSharedContentProvider._main : id = "+id); //TODO: remove debug trace
-		System.out.println("***** StockvaultSharedContentProvider.data url : "+URLHelper.mergePath("http://www.stockvault.net/" , "/photo/download/", id)); //TODO: remove debug trace
-
-		
 	}
 
 	@Override
