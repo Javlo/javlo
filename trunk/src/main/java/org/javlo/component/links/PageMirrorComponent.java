@@ -145,7 +145,7 @@ public class PageMirrorComponent extends AbstractVisualComponent {
 		if (page != null) {
 			if (ctx.getSpecialContentRenderer() == null) {
 
-				if (page.getId() == getPage().getId() || page.getId() == ctx.getCurrentPage().getId()) {
+				if (page.getId().equals(getPage().getId()) || page.getId().equals(ctx.getCurrentPage().getId())) {
 					ctx.getRequest().setAttribute("xhtml", "[!!! RECURSIVE MIRROR CALL !!!]");
 				} else {
 
