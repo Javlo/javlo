@@ -12,28 +12,20 @@ import org.javlo.context.INeedContentContext;
 import org.javlo.navigation.MenuElement;
 import org.javlo.service.ContentService;
 
-public class JavloSharedContentProvider extends AbstractSharedContentProvider implements INeedContentContext {
+public class JavloSharedContentProvider extends AbstractSharedContentProvider {
 
-	private ContentContext ctx;
-	
 	public static final String NAME  = "javlo-local";
 
-	public JavloSharedContentProvider(ContentContext ctx) {
+	public JavloSharedContentProvider() {
 		setName(NAME);
-		this.ctx = ctx;
 	}
 
 	@Override
-	public void setContentContext(ContentContext ctx) {
-		this.ctx = ctx;
-	}
-
-	@Override
-	public Collection<SharedContent> getContent() {
+	public Collection<SharedContent> getContent(ContentContext ctx) {
 		List<SharedContent> outContent = new LinkedList<SharedContent>();
 		ContentService content = ContentService.getInstance(ctx.getRequest());
 		try {
-			getCategories().clear();
+			getCategories(ctx).clear();
 			for (MenuElement page : content.getNavigation(ctx).getAllChildren()) {
 				if (page.getSharedName() != null && page.getSharedName().length() > 0 && page.isRealContent(ctx)) {
 					List<ComponentBean> beans = Arrays.asList(page.getContent());
@@ -47,8 +39,8 @@ public class JavloSharedContentProvider extends AbstractSharedContentProvider im
 								sharedContent.setImageUrl(imageURL);
 								sharedContent.setLinkInfo(page.getId());
 								if (page.getParent() != null) {
-									if (!getCategories().containsKey(page.getParent().getName())) {
-										getCategories().put(page.getParent().getName(), page.getParent().getTitle(ctx));
+									if (!getCategories(ctx).containsKey(page.getParent().getName())) {
+										getCategories(ctx).put(page.getParent().getName(), page.getParent().getTitle(ctx));
 									}
 									sharedContent.addCategory(page.getParent().getName());
 								}
@@ -65,10 +57,4 @@ public class JavloSharedContentProvider extends AbstractSharedContentProvider im
 		}
 		return outContent;
 	}
-
-	@Override
-	public ContentContext getContentContext() {
-		return ctx;
-	}
-	
 }

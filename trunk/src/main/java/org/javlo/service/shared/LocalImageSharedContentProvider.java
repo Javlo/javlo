@@ -11,25 +11,21 @@ import org.javlo.component.core.ComponentBean;
 import org.javlo.component.image.GlobalImage;
 import org.javlo.context.ContentContext;
 import org.javlo.context.GlobalContext;
-import org.javlo.context.INeedContentContext;
 import org.javlo.filter.ImageFileFilter;
 import org.javlo.helper.ResourceHelper;
 import org.javlo.helper.URLHelper;
 import org.javlo.ztatic.StaticInfo;
 
-public class LocalImageSharedContentProvider extends AbstractSharedContentProvider implements INeedContentContext {
-	
-	private ContentContext ctx;
+public class LocalImageSharedContentProvider extends AbstractSharedContentProvider {
 	
 	private Collection<SharedContent> content = new LinkedList<SharedContent>();
 	
-	LocalImageSharedContentProvider(ContentContext ctx) {
-		this.ctx = ctx;
+	LocalImageSharedContentProvider() {
 		setName("local-image");
 	}
 
 	@Override
-	public Collection<SharedContent> getContent() {		
+	public Collection<SharedContent> getContent(ContentContext ctx) {		
 		setCategories(new HashMap<String, String>());
 		content.clear();
 		GlobalContext globalContext = GlobalContext.getInstance(ctx.getRequest());
@@ -64,8 +60,8 @@ public class LocalImageSharedContentProvider extends AbstractSharedContentProvid
 				sharedContent.setDescription(staticInfo.getTitle(ctx));
 				sharedContent.setImageUrl(imageURL);
 				
-				if (!getCategories().containsKey(category)) {
-					getCategories().put(category, category);
+				if (!getCategories(ctx).containsKey(category)) {
+					getCategories(ctx).put(category, category);
 				}
 			} catch (Exception e) {				
 				e.printStackTrace();
@@ -74,16 +70,6 @@ public class LocalImageSharedContentProvider extends AbstractSharedContentProvid
 		return content;
 	}
 
-	@Override
-	public ContentContext getContentContext() {
-		return ctx;
-	}
-
-	@Override
-	public void setContentContext(ContentContext ctx) {
-		this.ctx = ctx;
-	}
-	
 	@Override
 	public String getType() {	
 		return TYPE_IMAGE;

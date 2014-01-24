@@ -9,6 +9,7 @@ import java.util.Locale;
 import java.util.Map;
 
 import org.javlo.component.core.ComponentBean;
+import org.javlo.context.ContentContext;
 import org.javlo.helper.StringHelper;
 
 public abstract class AbstractSharedContentProvider implements ISharedContentProvider {
@@ -37,13 +38,13 @@ public abstract class AbstractSharedContentProvider implements ISharedContentPro
 	}
 
 	@Override
-	public abstract Collection<SharedContent> getContent();
+	public abstract Collection<SharedContent> getContent(ContentContext ctx);
 
 	@Override
-	public Collection<SharedContent> searchContent(String query) {
+	public Collection<SharedContent> searchContent(ContentContext ctx, String query) {
 		Collection<SharedContent> outList = new HashSet<SharedContent>();
 		query = StringHelper.createFileName(query);
-		for (SharedContent content : getContent()) {
+		for (SharedContent content : getContent(ctx)) {
 			if (content.getContent() != null) {
 				for (ComponentBean bean : content.getContent()) {
 					if (bean != null && !outList.contains(content) && StringHelper.createFileName(bean.getValue()).contains(query)) {
@@ -63,7 +64,7 @@ public abstract class AbstractSharedContentProvider implements ISharedContentPro
 	}
 
 	@Override
-	public Map<String, String> getCategories() {
+	public Map<String, String> getCategories(ContentContext ctx) {
 		return categories;
 	}
 
@@ -72,12 +73,12 @@ public abstract class AbstractSharedContentProvider implements ISharedContentPro
 	}
 
 	@Override
-	public Collection<SharedContent> getContent(Collection<String> categories) {
-		if (getCategories().size() <= 1 || categories == null || categories.size() == 0) {
-			return getContent();
+	public Collection<SharedContent> getContent(ContentContext ctx, Collection<String> categories) {
+		if (getCategories(ctx).size() <= 1 || categories == null || categories.size() == 0) {
+			return getContent(ctx);
 		}
 		Collection<SharedContent> outList = new HashSet<SharedContent>();
-		for (SharedContent content : getContent()) {
+		for (SharedContent content : getContent(ctx)) {
 			if (!Collections.disjoint(content.getCategories(), categories)) {
 				outList.add(content);
 			}
@@ -86,12 +87,12 @@ public abstract class AbstractSharedContentProvider implements ISharedContentPro
 	}
 
 	@Override
-	public boolean isEmpty() {
-		return getContent().size() == 0;
+	public boolean isEmpty(ContentContext ctx) {
+		return getContent(ctx).size() == 0;
 	}
 
 	@Override
-	public void refresh() {
+	public void refresh(ContentContext ctx) {
 	}
 
 	@Override
@@ -105,13 +106,13 @@ public abstract class AbstractSharedContentProvider implements ISharedContentPro
 	}
 	
 	@Override
-	public int getContentSize() {
-		return getContent().size();
+	public int getContentSize(ContentContext ctx) {
+		return getContent(ctx).size();
 	};
 	
 	@Override
-	public int getCategoriesSize() {
-		return getCategories().size();
+	public int getCategoriesSize(ContentContext ctx) {
+		return getCategories(ctx).size();
 	}
 
 }

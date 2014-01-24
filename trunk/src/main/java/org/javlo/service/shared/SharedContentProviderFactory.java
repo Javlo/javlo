@@ -41,9 +41,9 @@ public class SharedContentProviderFactory {
 	public List<ISharedContentProvider> getAllSharedContentProvider(ContentContext ctx) {
 		if (staticContentProviders == null) {
 			staticContentProviders = new LinkedList<ISharedContentProvider>();
-			addContentProvider(ctx, staticContentProviders,new JavloSharedContentProvider(ctx));
-			addContentProvider(ctx, staticContentProviders,new CloserJavloSharedContentProvider(ctx));
-			addContentProvider(ctx, staticContentProviders,new LocalImageSharedContentProvider(ctx));
+			addContentProvider(ctx, staticContentProviders,new JavloSharedContentProvider());
+			addContentProvider(ctx, staticContentProviders,new CloserJavloSharedContentProvider());
+			addContentProvider(ctx, staticContentProviders,new LocalImageSharedContentProvider());
 			try {				
 				addContentProvider(ctx, staticContentProviders,new StockvaultSharedContentProvider());
 			} catch (Exception e) {

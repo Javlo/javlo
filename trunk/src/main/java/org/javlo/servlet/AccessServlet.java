@@ -716,13 +716,13 @@ public class AccessServlet extends HttpServlet implements IVersion {
 									ISharedContentProvider provider = sharedContentService.getProvider(ctx, sharedContentContext.getProvider());
 									if (provider != null) {
 										// set first category by default
-										if (sharedContentContext.getCategory() == null && provider.getCategories().size() > 0) {
-											sharedContentContext.setCategories(new LinkedList<String>(Arrays.asList(provider.getCategories().keySet().iterator().next())));
+										if (sharedContentContext.getCategory() == null && provider.getCategories(ctx).size() > 0) {
+											sharedContentContext.setCategories(new LinkedList<String>(Arrays.asList(provider.getCategories(ctx).keySet().iterator().next())));
 										}
 										ctx.getRequest().setAttribute("provider", provider);
 										ctx.setContentContextIfNeeded(provider);
-										ctx.getRequest().setAttribute("sharedContent", provider.getContent(sharedContentContext.getCategories()));
-										ctx.getRequest().setAttribute("sharedContentCategories", provider.getCategories().entrySet());
+										ctx.getRequest().setAttribute("sharedContent", provider.getContent(ctx,sharedContentContext.getCategories()));
+										ctx.getRequest().setAttribute("sharedContentCategories", provider.getCategories(ctx).entrySet());
 									}
 								}
 							}

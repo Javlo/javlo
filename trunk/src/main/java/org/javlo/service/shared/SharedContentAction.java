@@ -38,20 +38,20 @@ public class SharedContentAction extends AbstractModuleAction {
 			return contentProvider.getURL();
 		}
 
-		public Collection<SharedContent> getContent() {
-			return contentProvider.getContent();
+		public Collection<SharedContent> getContent(ContentContext ctx) {
+			return contentProvider.getContent(ctx);
 		}
 
-		public Map<String, String> getCategories() {
-			return contentProvider.getCategories();
+		public Map<String, String> getCategories(ContentContext ctx) {
+			return contentProvider.getCategories(ctx);
 		}
 
 		public boolean isSearch() {
 			return contentProvider.isSearch();
 		}
 
-		public boolean isEmpty() {
-			return contentProvider.isEmpty();
+		public boolean isEmpty(ContentContext ctx) {
+			return contentProvider.isEmpty(ctx);
 		}
 
 		public String getType() {
@@ -66,12 +66,12 @@ public class SharedContentAction extends AbstractModuleAction {
 			this.active = active;
 		}
 		
-		public int getContentSize() {
-			return contentProvider.getContentSize();
+		public int getContentSize(ContentContext ctx) {
+			return contentProvider.getContentSize(ctx);
 		}
 		
-		public int getCategoriesSize() {
-			return contentProvider.getCategoriesSize();
+		public int getCategoriesSize(ContentContext ctx) {
+			return contentProvider.getCategoriesSize(ctx);
 		}
 		
 	}
@@ -126,7 +126,7 @@ public class SharedContentAction extends AbstractModuleAction {
 		String providerName = rs.getParameter("provider", "");
 		ISharedContentProvider provider = SharedContentService.getInstance(ctx).getProvider(ctx, providerName);
 		if (provider != null) {
-			provider.refresh();
+			provider.refresh(ctx);
 		}
 		return null;
 	}
@@ -146,7 +146,7 @@ public class SharedContentAction extends AbstractModuleAction {
 		if (provider == null) {
 			return "provider not found : " + providerName;
 		} else {
-			Collection<SharedContent> sharedContent = SharedContentService.getInstance(ctx).searchContent(provider, rs.getParameter("query", ""));		
+			Collection<SharedContent> sharedContent = SharedContentService.getInstance(ctx).searchContent(ctx, provider, rs.getParameter("query", ""));		
 			ctx.getRequest().setAttribute("sharedContent", sharedContent);
 			if (ctx.isAjax()) {
 				String result;
