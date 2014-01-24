@@ -51,5 +51,9 @@ public interface ISharedContentProvider {
 	public void refresh();
 	
 	public String getType();
+	
+	public int getCategoriesSize();
+	
+	public int getContentSize();
 
 }

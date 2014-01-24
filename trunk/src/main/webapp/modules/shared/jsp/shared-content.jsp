@@ -10,8 +10,8 @@
 <c:forEach var="provider" items="${providers}">
 	<tr>
 		<td>${provider.name}</td>
-		<td>${fn:length(provider.categories)}</td>
-		<td>${fn:length(provider.content)}</td>
+		<td>${provider.categoriesSize}</td>
+		<td>${provider.contentSize}</td>
 		<td><a href="${provider.URL}">${provider.URL}</a></td>
 		<td><input type="checkbox" name="active-${provider.name}" ${provider.active?'checked="checked"':''}/></td>
 		<td><a class="action-button" href="${info.currentURL}?webaction=shared-content.refresh&provider=${provider.name}">refresh</a></td>

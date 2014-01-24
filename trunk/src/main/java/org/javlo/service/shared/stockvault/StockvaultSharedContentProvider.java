@@ -1,5 +1,6 @@
 package org.javlo.service.shared.stockvault;
 
+import java.io.IOException;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.Collection;
@@ -13,6 +14,7 @@ import org.htmlparser.Parser;
 import org.htmlparser.filters.CssSelectorNodeFilter;
 import org.htmlparser.nodes.TagNode;
 import org.htmlparser.util.NodeList;
+import org.htmlparser.util.ParserException;
 import org.javlo.helper.StringHelper;
 import org.javlo.helper.URLHelper;
 import org.javlo.service.shared.AbstractSharedContentProvider;
@@ -30,29 +32,13 @@ public class StockvaultSharedContentProvider extends AbstractSharedContentProvid
 			setName("stockvault.net");
 		} catch (MalformedURLException e) {
 			e.printStackTrace();
-		}
-		Parser htmlParser = new Parser(getURL().openConnection());
-		NodeFilter cssFilter = new CssSelectorNodeFilter(".sidebar li a");
-		NodeList nodeList = htmlParser.extractAllNodesThatMatch(cssFilter);
-		Map<String, String> categories = new HashMap<String, String>();
-		for (int i = 0; i < nodeList.size(); i++) {
-			if (nodeList.elementAt(i) instanceof TagNode) {
-				TagNode tag = (TagNode) nodeList.elementAt(i);
-				String label = tag.toPlainTextString().trim();
-				String href = tag.getAttribute("href").trim();
-				if (label.length() > 0 && href.length() > 0) {
-					categories.put(href, label);
-				}
-			} else {
-				logger.severe("bad tag format found, check html on : " + getURL());
-			}
-		}
-		setCategories(categories);
+		}		
 	}
 
 	@Override
-	public void refresh() {
+	public void refresh() {		
 		content = null;
+		getContent();
 	}
 
 	@Override
@@ -79,23 +65,47 @@ public class StockvaultSharedContentProvider extends AbstractSharedContentProvid
 			return null;
 		}
 	}
+	
+	private void init() throws ParserException, IOException {
+		Parser htmlParser = new Parser(getURL().openConnection());
+		NodeFilter cssFilter = new CssSelectorNodeFilter(".sidebar li a");
+		NodeList nodeList = htmlParser.extractAllNodesThatMatch(cssFilter);
+		Map<String, String> categories = new HashMap<String, String>();
+		for (int i = 0; i < nodeList.size(); i++) {
+			if (nodeList.elementAt(i) instanceof TagNode) {
+				TagNode tag = (TagNode) nodeList.elementAt(i);
+				String label = tag.toPlainTextString().trim();
+				String href = tag.getAttribute("href").trim();
+				if (label.length() > 0 && href.length() > 0) {
+					categories.put(href, label);
+				}
+			} else {
+				logger.severe("bad tag format found, check html on : " + getURL());
+			}
+		}
+		setCategories(categories);
+	}
 
 	private Collection<SharedContent> getContent(URL url) {
 		if (content == null) {
-			content = new LinkedList<SharedContent>();
-			for (Map.Entry<String, String> category : getCategories().entrySet()) {
-				logger.info("Stockvault load category : " + category.getValue());
-				try {
-					URL catURL = new URL(URLHelper.mergePath(url.toString(), category.getKey()));
-					Collection<SharedContent> result = readURL(catURL);
-					for (SharedContent sharedContent : result) {
-						sharedContent.addCategory(category.getKey());
+			try {
+				init();
+				content = new LinkedList<SharedContent>();
+				for (Map.Entry<String, String> category : getCategories().entrySet()) {
+					logger.info("Stockvault load category : " + category.getValue());
+					try {
+						URL catURL = new URL(URLHelper.mergePath(url.toString(), category.getKey()));
+						Collection<SharedContent> result = readURL(catURL);
+						for (SharedContent sharedContent : result) {
+							sharedContent.addCategory(category.getKey());
+						}
+						content.addAll(result);
+					} catch (Exception e) {
+						e.printStackTrace();
 					}
-					content.addAll(result);
-				} catch (Exception e) {
-					e.printStackTrace();
 				}
-
+			} catch (Exception e1) {
+				e1.printStackTrace();
 			}
 		}
 		return content;
@@ -132,6 +142,24 @@ public class StockvaultSharedContentProvider extends AbstractSharedContentProvid
 		}
 		return outSharedContent;
 	}
+	
+	@Override
+	public int getContentSize() {
+		if (content != null) {
+			return super.getContentSize();
+		} else {
+			return -1;
+		}
+	}
+
+	@Override
+	public int getCategoriesSize() {
+		if (content != null) {
+			return super.getCategoriesSize();
+		} else {
+			return -1;
+		}
+	}
 
 	public static void main(String[] args) {
 		// TODO Auto-generated method stub
@@ -141,6 +169,7 @@ public class StockvaultSharedContentProvider extends AbstractSharedContentProvid
 		System.out.println("***** StockvaultSharedContentProvider._main : id = "+id); //TODO: remove debug trace
 		System.out.println("***** StockvaultSharedContentProvider.data url : "+URLHelper.mergePath("http://www.stockvault.net/" , "/photo/download/", id)); //TODO: remove debug trace
 
+		
 	}
 
 	@Override
