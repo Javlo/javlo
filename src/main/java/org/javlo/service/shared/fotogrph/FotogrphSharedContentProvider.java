@@ -30,10 +30,11 @@ public class FotogrphSharedContentProvider extends AbstractSharedContentProvider
 			e.printStackTrace();
 		}
 	}
-	
+
 	@Override
 	public void refresh() {
 		content = null;
+		getContent();
 	}
 
 	@Override
@@ -62,7 +63,7 @@ public class FotogrphSharedContentProvider extends AbstractSharedContentProvider
 						TagDescription parent = XMLManipulationHelper.searchParent(tags, tag);
 						if (tag.getName().toLowerCase().equals("img") && parent.getAttribute("class", "").equals("thumbnail")) {
 							imagePreviewURL = URLHelper.mergePath(getURL().toString(), tag.getAttribute("src", null));
-							id = StringHelper.getFileNameFromPath(imagePreviewURL);							
+							id = StringHelper.getFileNameFromPath(imagePreviewURL);
 							imageURL = URLHelper.mergePath(getURL().toString(), parent.getAttribute("href", null), "download");
 							for (TagDescription child : XMLManipulationHelper.searchChildren(tags, parent)) {
 								if (child.getName().toLowerCase().equals("h3")) {
@@ -96,10 +97,28 @@ public class FotogrphSharedContentProvider extends AbstractSharedContentProvider
 			e.printStackTrace();
 		}
 	}
-	
+
 	@Override
-	public String getType() {	
+	public String getType() {
 		return TYPE_IMAGE;
+	}
+
+	@Override
+	public int getContentSize() {
+		if (content != null) {
+			return super.getContentSize();
+		} else {
+			return -1;
+		}
+	}
+
+	@Override
+	public int getCategoriesSize() {
+		if (content != null) {
+			return super.getCategoriesSize();
+		} else {
+			return -1;
+		}
 	}
 
 }

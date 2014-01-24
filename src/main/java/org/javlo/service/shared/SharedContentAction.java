@@ -66,7 +66,13 @@ public class SharedContentAction extends AbstractModuleAction {
 			this.active = active;
 		}
 		
+		public int getContentSize() {
+			return contentProvider.getContentSize();
+		}
 		
+		public int getCategoriesSize() {
+			return contentProvider.getCategoriesSize();
+		}
 		
 	}
 
@@ -160,8 +166,7 @@ public class SharedContentAction extends AbstractModuleAction {
 		Collection<ISharedContentProvider> contentProviders = SharedContentService.getInstance(ctx).getAllProvider(ctx);		
 		List<String> activeProvider = new LinkedList<String>();
 		for (ISharedContentProvider contentProvider : contentProviders) {			
-			if (rs.getParameter("active-"+contentProvider.getName(), null) != null) {
-				System.out.println("***** SharedContentAction.performUpdateActive : contentProvider.getName() = "+contentProvider.getName()); //TODO: remove debug trace
+			if (rs.getParameter("active-"+contentProvider.getName(), null) != null) {				
 				activeProvider.add(contentProvider.getName());
 			}			
 		}
