@@ -202,6 +202,7 @@ public class MailingModuleContext extends AbstractModuleContext {
 	public void sendMailing(ContentContext ctx) throws Exception {
 		ContentContext pageCtx = ctx.getContextWithOtherRenderMode(ContentContext.PAGE_MODE);
 		pageCtx.setAbsoluteURL(true);
+		pageCtx.resetDMZServerInter();
 		String url = URLHelper.createURL(pageCtx) + ";jsessionid=" + ctx.getRequest().getRequestedSessionId();
 
 		GlobalContext globalContext = GlobalContext.getInstance(ctx.getRequest());
@@ -213,7 +214,6 @@ public class MailingModuleContext extends AbstractModuleContext {
 		m.setAdminEmail(globalContext.getAdministratorEmail());
 		m.setNotif(new InternetAddress(reportTo));
 		String content = NetHelper.readPage(url, true);
-		System.out.println("***** MailingModuleContext.sendMailing : content = "+content); //TODO: remove debug trace
 		m.setContent(content);
 		m.setHtml(true);
 		m.setRoles(groups);

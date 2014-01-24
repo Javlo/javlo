@@ -105,8 +105,7 @@ public class ServerSynchroService extends BaseSynchroService {
 		}
 			break;
 		case COPY_TO_DISTANT: {
-			if (pushOnDMZ) {
-				System.out.println("***** ServerSynchroService.applyAction : path = " + path); //TODO: remove debug trace
+			if (pushOnDMZ) {				
 				FileInfo localInfo = context.getInfo(SynchroSide.LOCAL, path);
 				copyLocalToDistant(context, localInfo);
 				if (deleteIntraAfterTransfert) {

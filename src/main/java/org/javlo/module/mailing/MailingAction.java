@@ -1,9 +1,9 @@
 package org.javlo.module.mailing;
 
 import java.io.ByteArrayOutputStream;
-import java.io.IOException;
 import java.io.PrintStream;
 import java.util.Collection;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
@@ -32,6 +32,8 @@ import org.javlo.module.core.Module;
 import org.javlo.module.core.ModulesContext;
 import org.javlo.service.DataToIDService;
 import org.javlo.service.RequestService;
+import org.javlo.service.syncro.SynchroHelper;
+import org.javlo.servlet.ContentOnlyServlet;
 import org.javlo.template.Template;
 import org.javlo.template.TemplateFactory;
 import org.javlo.user.IUserFactory;
@@ -72,7 +74,9 @@ public class MailingAction extends AbstractModuleAction {
 		GlobalContext globalContext = GlobalContext.getSessionInstance(session);
 		I18nAccess i18nAccess = I18nAccess.getInstance(ctx);
 
-		request.setAttribute("previewURL", URLHelper.createURL(ctx.getContextWithOtherRenderMode(ContentContext.PAGE_MODE)));
+		HashMap<String, String> params = new HashMap<String, String>();
+		params.put(ContentOnlyServlet.NO_DMZ_PARAM_NAME, "true");
+		request.setAttribute("previewURL", URLHelper.createURL(ctx.getContextWithOtherRenderMode(ContentContext.PAGE_MODE),params));
 
 		MailingModuleContext mailingContext = MailingModuleContext.getInstance(request);
 		request.setAttribute("mailing", mailingContext);
@@ -127,7 +131,7 @@ public class MailingAction extends AbstractModuleAction {
 		return msg;
 	}
 
-	public String performWizard(ContentContext ctx, GlobalContext globalContext, HttpServletRequest request, RequestService rs, Module currentModule, MessageRepository messageRepository, MailingModuleContext mailingContext, I18nAccess i18nAccess) throws Exception {
+	public String performWizard(ContentContext ctx, GlobalContext globalContext, ServletContext application, StaticConfig staticConfig, HttpServletRequest request, RequestService rs, Module currentModule, MessageRepository messageRepository, MailingModuleContext mailingContext, I18nAccess i18nAccess) throws Exception {
 		switch (mailingContext.getWizardStep(SEND_WIZARD_BOX)) {
 		case 1:
 			if (mailingContext.getCurrentTemplate() == null) {
@@ -167,6 +171,7 @@ public class MailingAction extends AbstractModuleAction {
 						ctx.setParentURL(messageRepository.forwardMessage(ctx.getParentURL()));
 					}
 				}
+				SynchroHelper.performSynchro(application, staticConfig, globalContext);
 			}
 			break;
 		}

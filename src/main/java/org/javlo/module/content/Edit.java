@@ -64,6 +64,7 @@ import org.javlo.service.RequestService;
 import org.javlo.service.resource.ResourceStatus;
 import org.javlo.service.shared.SharedContent;
 import org.javlo.service.shared.SharedContentService;
+import org.javlo.service.syncro.SynchroHelper;
 import org.javlo.service.syncro.SynchroThread;
 import org.javlo.template.Template;
 import org.javlo.template.TemplateFactory;
@@ -1178,15 +1179,6 @@ public class Edit extends AbstractModuleAction {
 		return null;
 	}
 
-	public static String performSynchro(ServletContext application, StaticConfig staticConfig, GlobalContext globalContext) throws Exception {
-		if (globalContext.getDMZServerIntra() != null) {
-			SynchroThread synchro = (SynchroThread) AbstractThread.createInstance(staticConfig.getThreadFolder(), SynchroThread.class);
-			synchro.initSynchronisationThread(staticConfig, globalContext, application);
-			synchro.store();
-		}
-		return null;
-	}
-
 	public static String performPublish(ServletContext application, HttpServletRequest request, StaticConfig staticConfig, GlobalContext globalContext, ContentService content, ContentContext ctx, I18nAccess i18nAccess) throws Exception {
 
 		synchronized (content.getNavigation(ctx).getLock()) {
@@ -1220,7 +1212,7 @@ public class Edit extends AbstractModuleAction {
 				// MessageRepository.getInstance(ctx).setGlobalMessage(new
 				// GenericMessage(msg, GenericMessage.INFO));
 
-				performSynchro(application, staticConfig, globalContext);
+				SynchroHelper.performSynchro(application, staticConfig, globalContext);
 
 				NavigationService navigationService = NavigationService.getInstance(globalContext);
 				navigationService.clearAllViewPage();

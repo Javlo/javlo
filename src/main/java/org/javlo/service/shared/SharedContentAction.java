@@ -25,9 +25,11 @@ public class SharedContentAction extends AbstractModuleAction {
 		
 		private ISharedContentProvider contentProvider;
 		private boolean active = false;
+		private ContentContext ctx;
 		
-		public SharedContentBean (ISharedContentProvider inContentProvider) {
+		public SharedContentBean (ContentContext ctx, ISharedContentProvider inContentProvider) {
 			contentProvider = inContentProvider;
+			this.ctx = ctx;
 		}
 
 		public String getName() {
@@ -38,11 +40,11 @@ public class SharedContentAction extends AbstractModuleAction {
 			return contentProvider.getURL();
 		}
 
-		public Collection<SharedContent> getContent(ContentContext ctx) {
+		public Collection<SharedContent> getContent() {
 			return contentProvider.getContent(ctx);
 		}
 
-		public Map<String, String> getCategories(ContentContext ctx) {
+		public Map<String, String> getCategories() {
 			return contentProvider.getCategories(ctx);
 		}
 
@@ -50,7 +52,7 @@ public class SharedContentAction extends AbstractModuleAction {
 			return contentProvider.isSearch();
 		}
 
-		public boolean isEmpty(ContentContext ctx) {
+		public boolean isEmpty() {
 			return contentProvider.isEmpty(ctx);
 		}
 
@@ -66,11 +68,11 @@ public class SharedContentAction extends AbstractModuleAction {
 			this.active = active;
 		}
 		
-		public int getContentSize(ContentContext ctx) {
+		public int getContentSize() {
 			return contentProvider.getContentSize(ctx);
 		}
 		
-		public int getCategoriesSize(ContentContext ctx) {
+		public int getCategoriesSize() {
 			return contentProvider.getCategoriesSize(ctx);
 		}
 		
@@ -92,7 +94,7 @@ public class SharedContentAction extends AbstractModuleAction {
 		List<SharedContentBean> beans = new LinkedList<SharedContentAction.SharedContentBean>();
 		for (ISharedContentProvider iSharedContentProvider : contentProviders) {
 			ctx.setContentContextIfNeeded(iSharedContentProvider);
-			SharedContentBean bean = new SharedContentBean(iSharedContentProvider);
+			SharedContentBean bean = new SharedContentBean(ctx,iSharedContentProvider);
 			if (activeProvider.contains(bean.getName())) {				
 				bean.setActive(true);
 			}

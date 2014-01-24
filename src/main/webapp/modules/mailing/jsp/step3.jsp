@@ -35,7 +35,7 @@
 	
 	<c:if test="${contentContext.editPreview}">
 	<div class="mailing-preview">
-		<iframe id="mailing-preview-frame" src="${info.currentPageURL}" onload="autoIframe('mailing-preview-frame');"></iframe>
+		<iframe id="mailing-preview-frame" src="${previewURL}" onload="autoIframe('mailing-preview-frame');"></iframe>
 	</div>
 	</c:if>
 	

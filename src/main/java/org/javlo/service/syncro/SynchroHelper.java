@@ -24,11 +24,16 @@ import java.util.Set;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
+import javax.servlet.ServletContext;
+
+import org.javlo.config.StaticConfig;
 import org.javlo.context.ContentContext;
+import org.javlo.context.GlobalContext;
 import org.javlo.helper.ResourceHelper;
 import org.javlo.helper.StringHelper;
 import org.javlo.helper.URLHelper;
 import org.javlo.service.syncro.exception.SynchroNonFatalException;
+import org.javlo.thread.AbstractThread;
 
 public class SynchroHelper {
 
@@ -287,6 +292,15 @@ public class SynchroHelper {
 			path = path.replace(repl[1], repl[2]);
 		}
 		return path;
+	}
+	
+	public static String performSynchro(ServletContext application, StaticConfig staticConfig, GlobalContext globalContext) throws Exception {
+		if (globalContext.getDMZServerIntra() != null) {
+			SynchroThread synchro = (SynchroThread) AbstractThread.createInstance(staticConfig.getThreadFolder(), SynchroThread.class);
+			synchro.initSynchronisationThread(staticConfig, globalContext, application);
+			synchro.store();
+		}
+		return null;
 	}
 
 }

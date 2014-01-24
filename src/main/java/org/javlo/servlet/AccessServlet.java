@@ -800,6 +800,7 @@ public class AccessServlet extends HttpServlet implements IVersion {
 		out.println("**** PROXY HOST        :  " + staticConfig.getProxyHost());
 		out.println("**** PROXY PORT        :  " + staticConfig.getProxyPort());
 		out.println("**** DIR RELATIVE      :  " + staticConfig.isDataFolderRelative());
+		out.println("**** AUTO CREATION     :  " + staticConfig.isAutoCreation());
 		out.println("**** CONTEXT DIR       :  " + staticConfig.getContextFolder());
 		out.println("**** DATA DIR          :  " + staticConfig.getAllDataFolder());
 		out.println("**** MAILING DIR       :  " + staticConfig.getMailingFolder());
