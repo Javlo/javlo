@@ -11,6 +11,7 @@ import java.util.List;
 
 import org.javlo.context.ContentContext;
 import org.javlo.context.GlobalContext;
+import org.javlo.context.INeedContentContext;
 import org.javlo.service.shared.fotogrph.FotogrphSharedContentProvider;
 import org.javlo.service.shared.stockvault.StockvaultSharedContentProvider;
 import org.javlo.service.shared.url.URLImageSharedContentProvider;
@@ -30,23 +31,26 @@ public class SharedContentProviderFactory {
 		return instance;
 	}
 	
-	private static void addContentProvider (List<ISharedContentProvider> contentProviders, ISharedContentProvider provider) {
+	private static void addContentProvider (ContentContext ctx, List<ISharedContentProvider> contentProviders, ISharedContentProvider provider) {
+		if (provider instanceof INeedContentContext) {
+			((INeedContentContext)provider).setContentContext(ctx);
+		}
 		contentProviders.add(provider);
 	}
 
 	public List<ISharedContentProvider> getAllSharedContentProvider(ContentContext ctx) {
 		if (staticContentProviders == null) {
 			staticContentProviders = new LinkedList<ISharedContentProvider>();
-			addContentProvider(staticContentProviders,new JavloSharedContentProvider(ctx));
-			addContentProvider(staticContentProviders,new CloserJavloSharedContentProvider(ctx));
-			addContentProvider(staticContentProviders,new LocalImageSharedContentProvider(ctx));
+			addContentProvider(ctx, staticContentProviders,new JavloSharedContentProvider(ctx));
+			addContentProvider(ctx, staticContentProviders,new CloserJavloSharedContentProvider(ctx));
+			addContentProvider(ctx, staticContentProviders,new LocalImageSharedContentProvider(ctx));
 			try {				
-				addContentProvider(staticContentProviders,new StockvaultSharedContentProvider());
+				addContentProvider(ctx, staticContentProviders,new StockvaultSharedContentProvider());
 			} catch (Exception e) {
 				e.printStackTrace();
 			}
 			try {				
-				addContentProvider(staticContentProviders,new FotogrphSharedContentProvider());
+				addContentProvider(ctx, staticContentProviders,new FotogrphSharedContentProvider());
 			} catch (Exception e) {
 				e.printStackTrace();
 			}
@@ -55,7 +59,7 @@ public class SharedContentProviderFactory {
 			contentProviders = new LinkedList<ISharedContentProvider>();
 			contentProviders.addAll(staticContentProviders);
 			for (URL url : getURLList(ctx.getGlobalContext())) {
-				addContentProvider(contentProviders, new URLImageSharedContentProvider(url));
+				addContentProvider(ctx, contentProviders, new URLImageSharedContentProvider(url));
 			}
 		}
 		return contentProviders;
