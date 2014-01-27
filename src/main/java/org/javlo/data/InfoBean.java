@@ -631,5 +631,9 @@ public class InfoBean {
 		System.out.println(url);		
 	}
 	
+	public String getAjaxLoaderURL() {
+		return URLHelper.createStaticURL(ctx,"/images/ajax_loader.gif");
+	}
+	
 
 }

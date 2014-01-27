@@ -8,7 +8,6 @@ import java.util.List;
 import org.javlo.component.core.ComponentBean;
 import org.javlo.component.image.GlobalImage;
 import org.javlo.context.ContentContext;
-import org.javlo.context.INeedContentContext;
 import org.javlo.navigation.MenuElement;
 import org.javlo.service.ContentService;
 
@@ -30,20 +29,21 @@ public class JavloSharedContentProvider extends AbstractSharedContentProvider {
 				if (page.getSharedName() != null && page.getSharedName().length() > 0 && page.isRealContent(ctx)) {
 					List<ComponentBean> beans = Arrays.asList(page.getContent());
 					SharedContent sharedContent = new SharedContent(page.getSharedName(), beans);
+					if (page.getParent() != null) {
+						if (!getCategories(ctx).containsKey(page.getParent().getName())) {
+							getCategories(ctx).put(page.getParent().getName(), page.getParent().getTitle(ctx));
+						}
+						sharedContent.addCategory(page.getParent().getName());
+					}
 					for (ComponentBean bean : beans) {
-						if (bean.getType().equals(GlobalImage.TYPE)) {
+						if (bean.getType().equals(GlobalImage.TYPE) && (sharedContent.getImageURL() == null || sharedContent.getImageURL().trim().length() == 0)) {
 							try {
 								GlobalImage image = new GlobalImage();
 								image.init(bean, ctx);
 								String imageURL = image.getPreviewURL(ctx, "shared-preview");
 								sharedContent.setImageUrl(imageURL);
 								sharedContent.setLinkInfo(page.getId());
-								if (page.getParent() != null) {
-									if (!getCategories(ctx).containsKey(page.getParent().getName())) {
-										getCategories(ctx).put(page.getParent().getName(), page.getParent().getTitle(ctx));
-									}
-									sharedContent.addCategory(page.getParent().getName());
-								}
+								
 							} catch (Exception e) {
 								e.printStackTrace();
 							}

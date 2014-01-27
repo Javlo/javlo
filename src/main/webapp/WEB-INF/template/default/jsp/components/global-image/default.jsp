@@ -14,7 +14,15 @@
 <c:set var="rel" value="${fn:startsWith(url,'http://')?'external':'shadowbox'}" />
 <c:set var="rel" value="${fn:endsWith(url,'.pdf')?'pdf':rel}" />
 <a rel="${rel}" class="${type}" href="${url}" title="${not empty label?label:description}">
-	<img src="${previewURL}" alt="${not empty description?description:label}" />
+	<c:if test="${contentContext.asPreviewMode}">
+		<img id="img-${compid}" src="${info.ajaxLoaderURL}" alt="${not empty description?description:label}" />
+		<script type="text/javascript">
+			jQuery("#img-${compid}").attr("src", "${previewURL}");
+		</script>	
+	</c:if>
+	<c:if test="${not contentContext.asPreviewMode}">
+		<img src="${previewURL}" alt="${not empty description?description:label}" />
+	</c:if>
 	<c:if test="${empty param.nolabel}"><figcaption>${not empty label?label:description}</figcaption></c:if>
 </a>
 </figure>
