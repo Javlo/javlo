@@ -379,7 +379,7 @@ public class DataAction implements IAction {
 				}
 				ctx.setNeedRefresh(true);
 			} else if (countImages > 1) { // gallery
-				if (!config.isImagesAsImages()) {
+				if (!config.isImagesAsImages() && ctx.getGlobalContext().getComponents().contains(Multimedia.class.getName())) {
 					createOrUpdateGallery(ctx, targetFolder, importFolder, rs.getAllFileItem(), config);
 				} else {
 					for (FileItem file : rs.getAllFileItem()) {

@@ -157,7 +157,7 @@ if (!rightOnPage) {
 			
 			<c:if test='${editPreview}'>
 				<!--<a class="action-button central-button" href="${info.currentEditURL}?module=content&previewEdit=true" onclick="jQuery.colorbox({href : '${info.currentEditURL}?module=content&previewEdit=true',opacity : 0.6,iframe : true,width : '95%',	height : '95%'}); return false;">${i18n.edit['preview.label.edit-components']}</a> -->
-				<fieldset id="upload-zone" class="closable">
+				<fieldset id="upload-area" class="closable">
 				<legend>${i18n.edit['preview.upload-here']}</legend>				
 				<div id="pc_upload">
 					<div id="ajax-loader">&nbsp;</div>
