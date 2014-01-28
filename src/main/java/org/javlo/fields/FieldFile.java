@@ -313,6 +313,7 @@ public class FieldFile extends Field implements IStaticContainer {
 		}
 
 		if (newFileName.trim().length() > 0) {
+			newFileName = StringHelper.createFileName(newFileName);
 			Collection<FileItem> fileItems = requestService.getAllFileItem();
 			try {
 				for (FileItem fileItem : fileItems) {
