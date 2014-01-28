@@ -41,6 +41,7 @@ import org.javlo.i18n.I18nAccess;
 import org.javlo.macro.ImportJCRPageMacro;
 import org.javlo.message.GenericMessage;
 import org.javlo.message.MessageRepository;
+import org.javlo.module.content.Edit;
 import org.javlo.module.ticket.TicketAction;
 import org.javlo.service.ContentService;
 import org.javlo.service.IMService;
@@ -310,6 +311,11 @@ public class DataAction implements IAction {
 		if (user == null) {
 			return "Please, login before upload files.";
 		}
+		
+		if (!Edit.checkPageSecurity(ctx)) {
+			return "no suffisant right.";
+		}
+		
 		Template tpl = ctx.getCurrentTemplate();
 		// Calendar cal = Calendar.getInstance();
 		// String importFolder = "" + (cal.get(Calendar.MONTH) + 1) + '_' +

@@ -27,7 +27,7 @@ body.edit-preview {
 	text-align: center;
 	margin: 0 auto;
 	width: 100%;
-	display: inline;
+	display: inline-block;
 }
 
 [draggable] {

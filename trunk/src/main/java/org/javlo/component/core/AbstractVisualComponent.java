@@ -42,6 +42,7 @@ import org.javlo.component.config.ComponentConfig;
 import org.javlo.context.ContentContext;
 import org.javlo.context.EditContext;
 import org.javlo.context.GlobalContext;
+import org.javlo.context.UserInterfaceContext;
 import org.javlo.exception.ResourceNotFoundException;
 import org.javlo.helper.ConfigHelper;
 import org.javlo.helper.ResourceHelper;
@@ -462,9 +463,17 @@ public abstract class AbstractVisualComponent implements IContentVisualComponent
 		PrintStream out = new PrintStream(outStream);
 
 		I18nAccess i18nAccess = I18nAccess.getInstance(ctx.getRequest());
+		
+		String repeatHidden = "";
+		if (ctx.getGlobalContext().getStaticConfig().isMailingPlatform()) {
+			UserInterfaceContext uiContext = UserInterfaceContext.getInstance(ctx.getRequest().getSession(), ctx.getGlobalContext());
+			if (uiContext.isLight()) {
+				repeatHidden = " hidden";
+			}
+		}
 
 		if (isRepeatable()) {
-			out.println("<div class=\"line\">");
+			out.println("<div class=\"line"+repeatHidden+"\">");
 			out.println("<label for=\"repeat-" + getId() + "\">" + i18nAccess.getText("content.repeat") + "</label>");
 			out.println(XHTMLHelper.getCheckbox("repeat-" + getId(), isRepeat()));
 			out.println("</div>");
