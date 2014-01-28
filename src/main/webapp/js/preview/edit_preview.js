@@ -48,6 +48,15 @@ jQuery(document).ready(
 					console.log("error on : " + err);
 				}
 			}
+			
+			jQuery(".reverse-link-preview").mouseover(function() {
+				var link = jQuery(this);
+				var popup = jQuery("#box-"+link.attr("id"));				
+				popup.css("display", "block");
+				popup.mouseleave(function() {
+					jQuery(this).css("display", "none");
+				});
+			});
 
 			initPreview();
 
