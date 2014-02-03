@@ -60,21 +60,11 @@ public class FieldImage extends FieldFile {
 			return "";
 		}
 
-		String relativePath = URLHelper.mergePath(getFileTypeFolder(), getCurrentFolder());
 		if (getCurrentFile() != null && getCurrentFile().trim().length() > 0) {
-			String fileURL = URLHelper.mergePath(relativePath, getCurrentFile());
-
-			String img;
-			if (StringHelper.isImage(getCurrentFile())) {
-				img = URLHelper.createTransformURL(ctx, '/' + fileURL, getFilter());
-			} else {
-				img = XHTMLHelper.getFileBigIcone(ctx, fileURL);
-			}
-
 			if (getCurrentLink() != null && getCurrentLink().trim().length() > 0) {
 				out.println("<a href=\"" + getCurrentLink() + "\">");
 			}
-			out.println("<img src=\"" + img + "\" alt=\"" + getCurrentLabel() + "\"/>");
+			out.println("<img src=\"" + getPreviewURL(ctx) + "\" alt=\"" + getCurrentLabel() + "\"/>");
 			if (isDisplayLabel()) {
 				out.println("<span class=\"label\">" + getCurrentLabel() + "</span>");
 			}
@@ -85,6 +75,20 @@ public class FieldImage extends FieldFile {
 
 		out.close();
 		return writer.toString();
+	}
+	
+	public String getPreviewURL(ContentContext ctx) throws Exception {
+		String fileURL = getFileURL(ctx);
+		if (StringHelper.isImage(getCurrentFile())) {
+			return URLHelper.createTransformURL(ctx, '/' + fileURL, getFilter());
+		} else {
+			return XHTMLHelper.getFileBigIcone(ctx, fileURL);
+		}		
+	}
+	
+	public String getFileURL(ContentContext ctx) {
+		String relativePath = URLHelper.mergePath(getFileTypeFolder(), getCurrentFolder());
+		return URLHelper.mergePath(relativePath, getCurrentFile());
 	}
 	
 	protected FieldBean newFieldBean(ContentContext ctx) {

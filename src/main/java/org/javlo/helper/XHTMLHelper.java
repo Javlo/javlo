@@ -15,7 +15,6 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.PrintStream;
 import java.io.PrintWriter;
-import java.io.Reader;
 import java.io.StringReader;
 import java.io.StringWriter;
 import java.io.UnsupportedEncodingException;
@@ -40,7 +39,6 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import javax.servlet.ServletContext;
-import javax.servlet.ServletException;
 
 import org.apache.commons.beanutils.BeanUtils;
 import org.apache.commons.configuration.ConfigurationException;
@@ -71,7 +69,6 @@ import org.javlo.ztatic.StaticInfo;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Entities.EscapeMode;
-import org.jsoup.safety.Whitelist;
 
 import com.yahoo.platform.yui.compressor.CssCompressor;
 
@@ -94,10 +91,10 @@ public class XHTMLHelper {
 	// optional 'url(' part (non capturing subpattern) with optional quote
 			"(?:url\\(\\s*)?" + "[\"']?" +
 
-			// file path ending with '.css' in capturing subpattern 1
+			// file path ending with '.?ss' in capturing subpattern 1
 			// word characters, slashes, dash, underscore, dot,
 			// colon and question mark (possible for absolute urls) are allowed
-			"([\\w\\\\/\\-_.:?]+?\\.css)" +
+			"([\\w\\\\/\\-_.:?]+?\\.?ss)" +
 
 			// the rest of the line until semicolon or line break
 			"[^;$]*?(;|$)", Pattern.MULTILINE);
@@ -1631,8 +1628,12 @@ public class XHTMLHelper {
 	}
 
 	public static void main(String[] args) {
-		String html = "<html><head><title>test</title></head><body><p>coucou<w:LsdException Locked=\"false\" Priority=\"73\" SemiHidden=\"false\" UnhideWhenUsed=\"false\" Name=\"Colorful Grid Accent 5\"/></p></body></html>";
-		System.out.println(cleanHTML(html));
+		
+		String import1 = "@import 'variables.css';";
+		String import2 = "@import url('test.css');";
+		
+		System.out.println("***** XHTMLHelper.main : 1 =  "+CSS_IMPORT_PATTERN.matcher(import1).matches());		
+		System.out.println("***** XHTMLHelper.main : 2 =  "+CSS_IMPORT_PATTERN.matcher(import2).matches());
 	}
 
 	public static String removeTag(String html, String tag) throws BadXMLException {

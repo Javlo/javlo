@@ -1,6 +1,6 @@
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c"
 %><%@ taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions"
-%><fieldset class="closable">
+%><form id="children_list" action="${info.currentURL}" method="post">	<fieldset class="closable">
 <legend>${i18n.edit['content.navigation']}</legend>
 <c:set var="page" value="${info.page}" />
 <c:if test="${fn:length(page.children) == 0 and not empty info.parent}">
@@ -47,4 +47,4 @@
 		</li>	
 	</c:if>	
 </ul>
-</fieldset>
+</fieldset></form>	

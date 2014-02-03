@@ -46,6 +46,18 @@ initFocusPoint = function() {
 
 jQuery(document).ready(function() {
 	
+	if (jQuery('.color').length > 0) {
+		jQuery('.color').ColorPicker({		
+			onSubmit: function(hsb, hex, rgb, el) {
+				jQuery(el).val('#'+hex);
+				jQuery(el).ColorPickerHide();
+			},
+			onBeforeShow: function () {
+				jQuery(this).ColorPickerSetColor(this.value);
+			}		
+		});
+	}
+	
 	/** scrol to latest position after refresh **/
 	var scrollTo = getParam(window.location.href, "_scrollTo");
 	if (scrollTo != "") {	

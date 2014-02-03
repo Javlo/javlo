@@ -27,11 +27,13 @@ import org.javlo.component.core.ComponentBean;
 import org.javlo.component.core.IContentVisualComponent;
 import org.javlo.component.core.IDate;
 import org.javlo.component.core.ILink;
+import org.javlo.component.image.IImageTitle;
 import org.javlo.config.StaticConfig;
 import org.javlo.context.ContentContext;
 import org.javlo.context.GlobalContext;
 import org.javlo.fields.Field;
 import org.javlo.fields.FieldFactory;
+import org.javlo.fields.FieldImage;
 import org.javlo.fields.IFieldContainer;
 import org.javlo.fields.MetaField;
 import org.javlo.helper.StringHelper;
@@ -43,7 +45,7 @@ import org.javlo.ztatic.IStaticContainer;
 /**
  * @author pvandermaesen
  */
-public class DynamicComponent extends AbstractVisualComponent implements IStaticContainer, IFieldContainer, IDate, ILink {
+public class DynamicComponent extends AbstractVisualComponent implements IStaticContainer, IFieldContainer, IDate, ILink, IImageTitle {
 
 	public static final String HIDDEN = "hidden";
 
@@ -738,6 +740,55 @@ public class DynamicComponent extends AbstractVisualComponent implements IStatic
 			}
 		}
 		return null;
+	}
+	
+	protected FieldImage getImageField(ContentContext ctx) {
+		try {
+			for (Field field : getFields(ctx)) {
+				if (field instanceof FieldImage) {
+					return (FieldImage) field;
+				}
+			}
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		return null;
+	}
+
+	@Override
+	public String getImageDescription(ContentContext ctx) {
+		FieldImage image = getImageField(ctx);
+		if (image != null) {
+			return image.getLabel();
+		}
+		return null;
+	}
+
+	@Override
+	public String getResourceURL(ContentContext ctx) {
+		FieldImage image = getImageField(ctx);
+		if (image != null) {
+			try {
+				return image.getFileURL(ctx);
+			} catch (Exception e) {
+				e.printStackTrace();
+			}
+		}		
+		return null;
+	}
+
+	@Override
+	public String getImageLinkURL(ContentContext ctx) {
+		FieldImage image = getImageField(ctx);
+		if (image != null) {
+			image.getCurrentLink();
+		}	
+		return null;
+	}
+
+	@Override
+	public boolean isImageValid(ContentContext ctx) {
+		return getImageField(ctx) != null;
 	}
 
 }

@@ -8,6 +8,10 @@ input, textarea, select {
 	box-shadow: 1px 1px 3px #CCCCCC inset;
 }
 
+.colorpicker input, .colorpicker textarea, .colorpicker select {
+	box-shadow: 0 0 0;
+}
+
 body.js #form-select-role input[type=submit] {
 	display: none;
 }

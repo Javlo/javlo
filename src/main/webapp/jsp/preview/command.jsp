@@ -1,5 +1,5 @@
-<%@page import="org.javlo.message.GenericMessage"%>
-<%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c"
+<%@page import="org.javlo.message.GenericMessage"
+%><%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c"
 %><%@ taglib uri="/WEB-INF/javlo.tld" prefix="jv"
 %><%@ taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions" 
 %><%@page contentType="text/html" import="
@@ -107,7 +107,7 @@ if (!rightOnPage) {
 							<label for="pc_publish_button">${i18n.edit['command.publish']}</label>
 						</div>
 					</form></li></c:if>
-					<c:if test="${!userInterface.light}">
+					<c:if test="${!userInterface.light || globalContext.staticConfig.mailingPlatform}">
 					<li><form class="preview-edit <%=readOnlyClass%>" id="change_template_form" action="<%=URLHelper.createURL(editCtx)%>?module=template&webaction=template.changeFromPreview&previewEdit=true" method="post">
 						<div class="pc_line">							
 							<input id="pc_change_template" type="<%=accessType%>" value="${i18n.edit['preview.label.choose-template']}" title="${i18n.edit['preview.label.choose-template']}" class="pc_edit_true"<%=readOnlyPageHTML%> />
@@ -184,15 +184,14 @@ if (!rightOnPage) {
 						<%=MacroHelper.getXHTMLMacroSelection(ctx, false, true)%>
 					</fieldset>
 				</div>				
-				<form id="children_list" action="${info.currentURL}" method="post">					
-						<c:if test="${contentContext.currentTemplate.mailing}">							
-							<jsp:include page="navigation_mailing.jsp"></jsp:include>
-						</c:if>
-						<c:if test="${!contentContext.currentTemplate.mailing}">							
-							<jsp:include page="navigation.jsp"></jsp:include>
-						</c:if>
-					</fieldset>
-				</form>				
+								
+				<c:if test="${contentContext.currentTemplate.mailing}">							
+					<jsp:include page="navigation_mailing.jsp"></jsp:include>
+				</c:if>
+				<c:if test="${!contentContext.currentTemplate.mailing}">							
+					<jsp:include page="navigation.jsp"></jsp:include>
+				</c:if>
+							
 				</div>
 			</c:if>			
 		</c:if><c:if test="${empty currentUser}">		

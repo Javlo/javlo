@@ -2270,6 +2270,20 @@ public class MenuElement implements Serializable {
 				}
 			}
 		}
+		if (res.size() == 0 && isChildrenAssociation()) {
+			for (MenuElement child : getAllChildren()) {
+				contentList = child.getAllContent(ctx);
+				while (contentList.hasNext(ctx)) {
+					IContentVisualComponent elem = contentList.next(ctx);
+					if ((elem instanceof IImageTitle) && (!elem.isEmpty(ctx)) && (!elem.isRepeat())) {
+						IImageTitle imageComp = (IImageTitle) elem;
+						if (imageComp.isImageValid(ctx)) {
+							res.add(new ImageTitleBean(imageComp.getImageDescription(ctx), imageComp.getResourceURL(ctx), imageComp.getImageLinkURL(ctx)));
+						}
+					}
+				}
+			}
+		}
 		desc.images = res;
 		return desc.images;
 	}
@@ -3730,6 +3744,7 @@ public class MenuElement implements Serializable {
 	public void setName(String name) {		
 		this.name = name;
 		nameKey = null;
+		releaseCache();
 	}
 
 	/**

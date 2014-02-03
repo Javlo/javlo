@@ -4,6 +4,14 @@
 <c:if test="${not empty rootAssociation}">
 <fieldset class="closable composition">
 	<legend>${info.page.rootOfChildrenAssociation.title}</legend>
+	
+	<form class="preview-edit" id="page_properties_composition" action="${rootAssociation.page.editUrl}?module=content&webaction=changeMode&mode=3&previewEdit=true" method="post">
+		<div class="pc_line">							
+			<input type="submit" value="${i18n.edit['global.page-properties']}" title="${i18n.edit['global.page-properties']}" title="${i18n.edit['global.page-properties']}" />
+		</div>
+	</form>
+	
+	<form id="children_list" action="${info.currentURL}" method="post">
 	<div class="body">	   
 	   <ul class="navigation pages">
 	   <li class="${rootAssociation.associationPage.url eq info.currentURL?'current ':''}${rootAssociation.associationPage.info.realContent?'real-content':''}"><span><a class="construction" href="${rootAssociation.associationPage.url}">composition</a></span></li>
@@ -50,5 +58,6 @@
 	   </li>
 	   </ul>
     </div>
+    </form>
 </fieldset>
 </c:if><c:if test="${empty rootAssociation}"><jsp:include page="navigation.jsp" /></c:if>

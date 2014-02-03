@@ -60,6 +60,10 @@ public class PageBean implements Serializable {
 	public String getUrl() {
 		return URLHelper.createURL(ctx, page);
 	}
+	
+	public String getEditUrl() {
+		return URLHelper.createURL(ctx.getContextWithOtherRenderMode(ContentContext.EDIT_MODE), page);
+	}
 
 	public boolean isSelected() {
 		try {

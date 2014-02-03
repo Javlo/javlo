@@ -1987,11 +1987,11 @@ public class Template implements Comparable<Template> {
 			}
 		}
 		if (isCompressResources() && globalContext.getStaticConfig().isProd()) {
-			Iterator<File> targetFiles = FileUtils.iterateFiles(templateTarget, new String[] { "js", "css" }, true);
+			Iterator<File> targetFiles = FileUtils.iterateFiles(templateTarget, new String[] { "js", "css", "less" }, true);
 			while (targetFiles.hasNext()) {
 				File targetFile = targetFiles.next();
 				String targetFileNameLowerCase = targetFile.getName().toLowerCase();
-				boolean isCss = targetFileNameLowerCase.endsWith(".css");
+				boolean isCss = targetFileNameLowerCase.endsWith(".css") || targetFileNameLowerCase.endsWith(".less");
 				boolean isJs = targetFileNameLowerCase.endsWith(".js");
 				if (isCss) {
 					XHTMLHelper.expandCSSImports(targetFile);

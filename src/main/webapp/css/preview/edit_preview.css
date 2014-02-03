@@ -422,7 +422,7 @@ body.edit-preview {
 	text-transform: none;
 	color: #000000;
 	display: block;
-	list-style: none;
+	list-style: none;	
 	font-weight: normal;
 	width: auto;
 	height: auto;
@@ -507,7 +507,7 @@ body.edit-preview {
 #preview_command {
 	position: fixed;
 	background-color: #eeeeee;
-	z-index: 999;
+	z-index: 2000;
 	text-align: center;
 	box-shadow: 0px 0px 7px #999;
 	-moz-box-shadow: 0px 0px 7px #999;

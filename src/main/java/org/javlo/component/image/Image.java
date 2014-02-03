@@ -37,30 +37,45 @@ public class Image extends AbstractFileComponent implements IImageTitle, IPrevie
 
 	@Override
 	public String[] getStyleList(ContentContext ctx) {
-		return new String[] { STYLE_CENTER, "image-left", "image-right", HIDDEN };
+		String[] superList = super.getStyleList(ctx);
+		if (superList != null && superList.length > 0) {
+			return superList;
+		} else {
+			return new String[] { STYLE_CENTER, "image-left", "image-right", HIDDEN };
+		}
 	}
 
 	@Override
 	public String[] getStyleLabelList(ContentContext ctx) {
-		String center = "center";
-		String left = "left";
-		String right = "right";		
-		String hidden = "hidden";
-		try {
-			I18nAccess i18n = I18nAccess.getInstance(ctx.getRequest());
-			center = i18n.getText("global.center");
-			left = i18n.getText("global.left");
-			right = i18n.getText("global.right");			
-			hidden = i18n.getText("global.hidden");
-		} catch (Exception e) {
-			e.printStackTrace();
+		String[] superList = super.getStyleLabelList(ctx);
+		if (superList != null && superList.length > 0) {
+			return superList;
+		} else {
+			String center = "center";
+			String left = "left";
+			String right = "right";
+			String hidden = "hidden";
+			try {
+				I18nAccess i18n = I18nAccess.getInstance(ctx.getRequest());
+				center = i18n.getText("global.center");
+				left = i18n.getText("global.left");
+				right = i18n.getText("global.right");
+				hidden = i18n.getText("global.hidden");
+			} catch (Exception e) {
+				e.printStackTrace();
+			}
+			return new String[] { center, left, right, hidden };
 		}
-		return new String[] { center, left, right, hidden };
 	}
 
 	@Override
 	public String getStyleTitle(ContentContext ctx) {
-		return "position";
+		String superTitle = super.getStyleTitle(ctx);
+		if (superTitle != null) {
+			return superTitle;
+		} else {
+			return "position";
+		}
 	}
 
 	public String getCSSClassName(ContentContext ctx) {
@@ -227,7 +242,8 @@ public class Image extends AbstractFileComponent implements IImageTitle, IPrevie
 
 		// TODO : create this javascrit method with a other mecanism
 		/*
-		 * out.println("<script language=\"javascript\">"); out.println("autoScroll.delay(250);"); out.println("</script>");
+		 * out.println("<script language=\"javascript\">");
+		 * out.println("autoScroll.delay(250);"); out.println("</script>");
 		 */
 		out.close();
 		return res.toString();

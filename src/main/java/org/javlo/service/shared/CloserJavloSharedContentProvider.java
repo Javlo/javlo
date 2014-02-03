@@ -9,7 +9,6 @@ import java.util.List;
 import org.javlo.component.core.ComponentBean;
 import org.javlo.component.image.GlobalImage;
 import org.javlo.context.ContentContext;
-import org.javlo.context.INeedContentContext;
 import org.javlo.navigation.MenuElement;
 
 /**
@@ -69,6 +68,10 @@ public class CloserJavloSharedContentProvider extends AbstractSharedContentProvi
 				if (getSharedName(page, i) != null && page.isRealContent(ctx)) {
 					List<ComponentBean> beans = Arrays.asList(page.getContent());
 					SharedContent sharedContent = new SharedContent(getSharedName(page, i), beans);
+					sharedContent.setTitle(page.getContentTitle(ctx));
+					if (sharedContent.getTitle() == null || sharedContent.getTitle().trim().length() == 0) {
+						sharedContent.setTitle(getSharedName(page, i));
+					}
 					for (ComponentBean bean : beans) {
 						sharedContent.setLinkInfo(page.getId());
 						if (bean.getType().equals(GlobalImage.TYPE)) {

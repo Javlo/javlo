@@ -106,6 +106,8 @@ public class StringHelper {
 	private static long previousShortRandomId = 0;
 
 	private static String previousDateId = "";
+	
+	public static final String[] EMPTY_STRING_ARRAY = new String[0];
 
 	public static String addSufixToFileName(String fileName, String sufix) {
 		return FilenameUtils.removeExtension(fileName) + sufix + "." + FilenameUtils.getExtension(fileName);

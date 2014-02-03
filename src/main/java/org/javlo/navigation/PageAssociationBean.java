@@ -76,5 +76,9 @@ public class PageAssociationBean {
 	public String getTitle() {
 		return root.getHumanName();
 	}
+	
+	public PageBean getPage() {
+		return new PageBean(ctx, root);
+	}
 
 }
