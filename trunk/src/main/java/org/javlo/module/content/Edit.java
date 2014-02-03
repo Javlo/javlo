@@ -1046,8 +1046,11 @@ public class Edit extends AbstractModuleAction {
 			page.clearPageBean(ctx);
 			PersistenceService.getInstance(globalContext).store(ctx);
 			
-			if (editCtx.isEditPreview()) {
+			if (editCtx.isEditPreview()) {				
 				String url = URLHelper.createURL(ctx.getContextWithOtherRenderMode(ContentContext.PREVIEW_MODE), page.getPath());
+				if (page.getChildMenuElements().size() > 0 && page.getChildMenuElements().iterator().next().isChildrenAssociation()) {
+					url = URLHelper.createURL(ctx.getContextWithOtherRenderMode(ContentContext.PREVIEW_MODE), page.getChildMenuElements().iterator().next().getPath());
+				}
 				ctx.setParentURL(url);
 				ctx.setClosePopup(true);
 			}

@@ -677,6 +677,15 @@ public class AccessServlet extends HttpServlet implements IVersion {
 							}
 
 							/** check page securised **/
+							
+							if (globalContext.getActivationKey() != null) {
+								String activationKey = requestService.getParameter("activation-key", null);
+								if (activationKey != null && activationKey.equals(globalContext.getActivationKey())) {
+									globalContext.setActivationKey(null);
+								} else {
+									ctx.setSpecialContentRenderer("/jsp/view/activation.jsp");
+								}
+							}
 
 							if (ctx.getCurrentPage().getUserRoles().size() > 0) {
 								if (ctx.getCurrentUser() == null) {									

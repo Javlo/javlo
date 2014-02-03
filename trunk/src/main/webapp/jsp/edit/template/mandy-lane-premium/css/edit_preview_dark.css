@@ -561,6 +561,27 @@ body.edit-preview {
 	background-repeat: no-repeat;
 }
 
+#preview_command #page_properties_composition {
+	background-image: url("../images/preview/ico_little.png");
+	background-position: 0 -751px;
+	background-repeat: no-repeat;
+	float: right;
+	margin-top: -19px;
+	width: 16px;
+	height: 16px;
+	font-size: 0;
+	text-indent: 100px;
+	overflow: hidden;
+}
+
+#preview_command #page_properties_composition:HOVER {
+	cursor: pointer;
+}
+
+#preview_command #page_properties_composition .pc_line {
+	display: none;
+}
+
 #preview_command .pc_command #pc_edit_button.pc_edit_true {
 	background-image: url("../images/preview/ico_little.png");
 	background-position: 0 -1511px;

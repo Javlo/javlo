@@ -160,22 +160,22 @@ public class ComponentConfig {
 
 	public String[] getStyleLabelList() {
 		if (properties == null) {
-			return new String[0];
+			return StringHelper.EMPTY_STRING_ARRAY;
 		}
 		String styleListLabel = properties.getString("style-list-label", null);
 		if (styleListLabel == null) {
-			return new String[0];
+			return StringHelper.EMPTY_STRING_ARRAY;
 		}
 		return StringHelper.stringToArray(styleListLabel, ";");
 	}
 
 	public String[] getStyleList() {
 		if (properties == null) {
-			return new String[0];
+			return StringHelper.EMPTY_STRING_ARRAY;
 		}
 		String styleList = properties.getString("style-list", null);
 		if (styleList == null) {
-			return new String[0];
+			return StringHelper.EMPTY_STRING_ARRAY;
 		}
 		return StringHelper.stringToArray(styleList, ";");
 	}

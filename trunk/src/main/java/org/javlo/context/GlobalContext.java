@@ -2841,5 +2841,23 @@ public class GlobalContext implements Serializable {
 			save();
 		}
 	}
+	
+	public String getActivationKey() {
+		return properties.getString("activation-key");
+	}
+	
+	public void setActivationKey(String value) {
+		
+		String key = "activation-key";
+		synchronized (properties) {
+			if (value == null) {
+				properties.clearProperty(key);
+			} else {
+				properties.setProperty(key, value);
+			}
+			save();
+		}
+		
+	}
 
 }

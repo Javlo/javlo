@@ -502,10 +502,6 @@ public class StaticConfig extends Observable {
 		return getEnv().equals("dev") || getEnv().equals("local");
 	}
 	
-	public boolean isLessCache() {
-		return properties.getBoolean("less.cache", testInstance());
-	}
-
 	/* mailing */
 
 	public String getErrorMailReport() {

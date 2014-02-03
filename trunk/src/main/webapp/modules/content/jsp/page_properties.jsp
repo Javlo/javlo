@@ -29,9 +29,13 @@
 </div>
 </c:if>
 <c:if test="${userInterface.light}">
+<c:set var="found" value="false" />
 <c:forEach var="template" items="${templates}">
-<c:if test="${template.name eq page.templateId}"><div class="line"><label>${i18n.edit['item.template']} : </label>${template.name}</div></c:if>
+<c:if test="${template.name eq page.templateId}"><div class="line"><label>${i18n.edit['item.template']} : </label>${template.name}</div><c:set var="found" value="true" /></c:if>
 </c:forEach>
+<c:if test="${not found}">
+<div class="line"><label>${i18n.edit['item.template']} : </label>${i18n.edit['global.inherited']} (${inheritedTemplate.name})</div>
+</c:if>
 </c:if>
 
 <div class="line">

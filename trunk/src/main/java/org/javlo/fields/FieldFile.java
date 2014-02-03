@@ -209,7 +209,7 @@ public class FieldFile extends Field implements IStaticContainer {
 		return writer.toString();
 	}
 
-	protected String getCurrentLink() {
+	public String getCurrentLink() {
 		return properties.getProperty("field." + getUnicName() + ".value.link", "");
 	}
 

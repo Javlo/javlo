@@ -58,6 +58,8 @@
 <script type="text/javascript" src="${info.editTemplateURL}/js/custom/gallery.js"></script>
 <script type="text/javascript" src="<jv:url value='/js/edit/ajax.js?ts=${info.ts}' />"></script>
 <script type="text/javascript" src="<jv:url value='/js/edit/core.js?ts=${info.ts}' />"></script>
+<script type="text/javascript" src="<jv:url value='/js/lib/colorpicker/js/colorpicker.js?ts=${info.ts}' />"></script>
+<link rel="stylesheet" media="screen" type="text/css" href="<jv:url value='/js/lib/colorpicker/css/colorpicker.css?ts=${info.ts}' />" />
 <script type="text/javascript" src="${info.editTemplateURL}/js/javlo/core.js?ts=${info.ts}"></script>
 <c:if test="${not info.editLanguage eq 'en'}"><script type="text/javascript" src="${info.editTemplateURL}/js/plugins/jquery.ui.datepicker-${info.editLanguage}.js"></script></c:if>
 <script type="text/javascript" src="${info.editTemplateURL}/js/custom/general.js?ts=${info.ts}"></script>
