@@ -215,3 +215,5 @@ change log
  * minimize js + compress css + resolve @import when import template (if option checked in template config)
  
  * robots.txt
+ 
+ * import docx
