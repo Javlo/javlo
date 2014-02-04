@@ -341,6 +341,15 @@ public class DataAction implements IAction {
 					in.close();
 					cs.createContent(ctx, beans, "0", true);
 					ctx.setNeedRefresh(true);
+				} else if (StringHelper.getFileExtension(item.getName()).equalsIgnoreCase("docx")) {
+					InputStream in = item.getInputStream();
+					Collection<ComponentBean> beans = ContentHelper.createContentFromDocx(gc, in, item.getName(), ctx.getRequestContentLanguage());
+					
+					System.out.println("***** DataAction.uploadContent : beans = "+beans.size()); //TODO: remove debug trace
+					
+					in.close();
+					cs.createContent(ctx, beans, "0", true);
+					ctx.setNeedRefresh(true);
 				} else if (StringHelper.getFileExtension(item.getName()).equalsIgnoreCase("zip") && item.getName().startsWith("export_")) { // JCR
 					InputStream in = item.getInputStream();
 					ImportJCRPageMacro.importFile(ctx, in, item.getName(), ctx.getCurrentPage());
