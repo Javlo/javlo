@@ -1,5 +1,6 @@
 package org.javlo.helper;
 
+import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileInputStream;
@@ -37,6 +38,7 @@ import org.javlo.helper.XMLManipulationHelper.BadXMLException;
 import org.javlo.helper.XMLManipulationHelper.TagDescription;
 import org.javlo.navigation.MenuElement;
 import org.javlo.service.ContentService;
+import org.javlo.utils.DocxUtils;
 import org.javlo.utils.UnclosableInputStream;
 import org.javlo.xml.NodeXML;
 import org.javlo.xml.XMLFactory;
@@ -325,6 +327,31 @@ public class ContentHelper {
 		}
 
 		return outBeans;
+	}
+	
+	public static List<ComponentBean> createContentFromDocx(GlobalContext gc, InputStream in, String name, String lang) throws Exception {
+		
+		ByteArrayOutputStream out = new ByteArrayOutputStream();
+		ResourceHelper.writeStreamToStream(in, out);
+		
+		ZipInputStream zipIn = new ZipInputStream(new ByteArrayInputStream(out.toByteArray()));
+		ZipEntry entry = zipIn.getNextEntry();
+		String baseStaticFolder = "/import/" + name;
+
+		// import static images
+		while (entry != null) {
+			if (gc != null && StringHelper.isImage(entry.getName())) {
+				importZipEntryToDataFolder(gc, entry, zipIn, URLHelper.mergePath(gc.getStaticConfig().getImageFolder(), baseStaticFolder));
+			}
+			entry = zipIn.getNextEntry();
+		}
+		
+		// import content
+		List<ComponentBean> beans = DocxUtils.extractContent(new ByteArrayInputStream(out.toByteArray()), baseStaticFolder);
+		for (ComponentBean bean : beans) {
+			bean.setLanguage(lang);
+		}
+		return beans;
 	}
 
 	private static Locale getLocalBySuffix(String name) {

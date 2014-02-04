@@ -266,17 +266,50 @@
 		<url-pattern>/class/*</url-pattern>
 	</servlet-mapping>
 	
-		<servlet>
+	
+	<servlet>
         <servlet-name>captcha</servlet-name>
         <servlet-class>org.javlo.servlet.ImageCaptchaServlet</servlet-class>
         <load-on-startup>0</load-on-startup>
     </servlet>
-
-	<servlet-mapping>
+    
+    <servlet-mapping>
         <servlet-name>captcha</servlet-name>
         <url-pattern>/captcha.jpg</url-pattern>
     </servlet-mapping>
+    
+    
+     <!-- <security-constraint>
+        <web-resource-collection>
+          <web-resource-name>Javlo Administration</web-resource-name>
+          <url-pattern>/*</url-pattern>
+        </web-resource-collection>
+     </security-constraint>
+
+
+    <login-config>
+        <auth-method>EPAUTH</auth-method>
+        <realm-name>epauth</realm-name>
+    </login-config> -->
 	
+    
+    <!-- security-constraint>
+    	<web-resource-collection>
+    		<web-resource-name>Security</web-resource-name>
+    		<url-pattern>/*</url-pattern>
+    		<http-method>GET</http-method>
+    		<http-method>POST</http-method>
+    	</web-resource-collection>
+    	<auth-constraint>
+    		<role-name>javlo</role-name>
+    	</auth-constraint>
+    	<user-data-constraint>
+    		<transport-guarantee>NONE</transport-guarantee>
+    	</user-data-constraint>
+    </security-constraint>   
 	
+	<login-config>
+		<auth-method>BASIC</auth-method>
+	</login-config  -->
 	
 </web-app>
