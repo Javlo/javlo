@@ -7,6 +7,7 @@ import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.PrintStream;
+import java.util.Arrays;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -34,7 +35,7 @@ public class DocxUtils {
 
 	public static void main(String[] args) {
 		try {
-			InputStream in = new FileInputStream(new File("c:/trans/test.docx"));
+			InputStream in = new FileInputStream(new File("c:/trans/histoire.docx"));
 			for (ComponentBean bean : extractContent(in, "/")) {
 				System.out.println(bean.getType());
 			}
@@ -53,12 +54,16 @@ public class DocxUtils {
 		if (cssClass == null || cssClass.trim().length() == 0) {
 			return 0;
 		} else {
-			for (String item : cssClass.split(" ")) {
-				item = item.trim();
-				if (item.length() > 0) {
-					char lastChar = item.charAt(item.length() - 1);
-					if (Character.isDigit(lastChar)) {
-						return Integer.parseInt("" + lastChar);
+			String[] allCss = cssClass.split(" ");
+			if (allCss.length > 1) {			
+				allCss = Arrays.copyOfRange(allCss, 1, allCss.length);
+				for (String item : allCss) {
+					item = item.trim();
+					if (item.length() > 0) {
+						char lastChar = item.charAt(item.length() - 1);
+						if (Character.isDigit(lastChar)) {
+							return Integer.parseInt("" + lastChar);
+						}
 					}
 				}
 			}
@@ -87,7 +92,7 @@ public class DocxUtils {
 		ByteArrayOutputStream out = new ByteArrayOutputStream();
 		converter.convert(in, out, options);
 
-		//ResourceHelper.writeStreamToFile(new ByteArrayInputStream(out.toByteArray()), new File("c:/trans/docx/text.html"));
+		ResourceHelper.writeStreamToFile(new ByteArrayInputStream(out.toByteArray()), new File("c:/trans/docx/histoire.html"));
 
 		List<ComponentBean> outContent = new LinkedList<ComponentBean>();
 
