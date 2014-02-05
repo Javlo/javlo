@@ -1766,6 +1766,7 @@ public class XHTMLHelper {
 			if (StringHelper.getFileExtension(resource).equalsIgnoreCase("css")) {
 				return "<link rel=\"stylesheet\" type=\"text/css\" href=\"" + URLHelper.createStaticURL(ctx, resource) + "\" />";
 			} else if (StringHelper.getFileExtension(resource).equalsIgnoreCase("js")) {
+				allReadyClosedIfOpen(ctx,resource); // close </script>
 				return "<script src=\"" + URLHelper.createStaticURL(ctx, resource) + "\" type=\"text/javascript\"></script>";
 			} else {
 				return "<!-- resource type not identified : " + resource + " -->";
