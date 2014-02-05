@@ -455,9 +455,14 @@ body.edit-preview {
 	height: 27px;
 	position: fixed;
 	top: 0;
-	right: 0;
-	width: 100%;
+	left: 0;
 	background-color: #171717;
+	overflow: hidden;
+}
+
+.preview-only #preview_command .pc_command {
+	left: auto;
+	right: 0;
 }
 
 #preview_command .pc_command ul {
@@ -475,7 +480,7 @@ body.edit-preview {
 	background-color: #333333;
 }
 
-#preview_command .pc_command li.preview,#preview_command .pc_command li.refresh,#preview_command .pc_command li.publish, .edit-preview #preview_command .renderers
+#preview_command .pc_command li.slide, #preview_command .pc_command li.preview,#preview_command .pc_command li.refresh,#preview_command .pc_command li.publish, .edit-preview #preview_command .renderers
 	{
 	float: right;
 	margin-right: 4px;
@@ -560,6 +565,35 @@ body.edit-preview {
 	background-position: 0 -3077px;
 	background-repeat: no-repeat;
 }
+
+#preview_command #pc_command.pc_command .slide {
+	display: block;
+}
+
+.preview-only #preview_command #pc_command.pc_command .slide {
+	display: none;
+}
+
+
+#preview_command #pc_command.pc_command .slide a {
+	background-image: url("../images/preview/ico_little.png");
+	background-position: 0 -3397px;
+	background-repeat: no-repeat;
+	background-color: #333333;
+	display: block;
+	height: 21px;
+	width: 12px;
+	font-size: 0;
+}
+
+#preview_command #pc_command.pc_command.reduce .slide a {
+	background-position: 0 -3451px;
+}
+
+#preview_command #pc_command.pc_command.reduce ul {
+	margin: 0;
+}
+
 
 #preview_command #page_properties_composition {
 	background-image: url("../images/preview/ico_little.png");

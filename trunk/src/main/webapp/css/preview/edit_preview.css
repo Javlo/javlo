@@ -7,10 +7,10 @@ body.edit-preview {
 	border-radius: 3px 3px 3px 3px;
 	border: 1px dashed #5B5B5B;
 	padding: 5px;
-	background-color: #EBEBEB;	
+	background-color: #EBEBEB;
 }
 
-._empty_area span {	
+._empty_area span {
 	height: 40px;
 	vertical-align: middle;
 	text-align: center;
@@ -19,7 +19,7 @@ body.edit-preview {
 	color: #5B5B5B;
 	text-shadow: 1px -1px 0 #ffffff;
 	width: auto;
-	display: block;	
+	display: block;
 	border: 2px #eeeeee dashed;
 }
 
@@ -38,8 +38,8 @@ body.edit-preview {
 }
 
 ._page_associate {
-	border-bottom: 2px #3333ef dashed;		
-	overflow: hidden;	
+	border-bottom: 2px #3333ef dashed;
+	overflow: hidden;
 }
 
 .page-break {
@@ -61,13 +61,17 @@ body.edit-preview {
 
 #preview_command .pc_command select {
 	width: auto;
-    margin: 0;
-    padding: 4px 4px 3px;
-    border-radius: 3px 3px 3px 3px;
-    box-shadow: 1px 1px 3px #CCCCCC inset;    
-    border: 1px solid #CCCCCC;
-    font-size: 12px;
-    outline: medium none;    
+	margin: 0;
+	padding: 4px 4px 3px;
+	border-radius: 3px 3px 3px 3px;
+	box-shadow: 1px 1px 3px #CCCCCC inset;
+	border: 1px solid #CCCCCC;
+	font-size: 12px;
+	outline: medium none;
+}
+
+#preview_command #pc_command.pc_command .slide {
+	display: none;
 }
 
 .fix-preview #preview_command #renderers_form label {
@@ -422,13 +426,14 @@ body.edit-preview {
 	text-transform: none;
 	color: #000000;
 	display: block;
-	list-style: none;	
+	list-style: none;
 	font-weight: normal;
 	width: auto;
 	height: auto;
 	text-shadow: none;
 	line-height: normal;
 	text-align: left;
+	-moz-box-sizing: inherit;
 }
 
 #message-container .notification {
@@ -494,9 +499,8 @@ body.edit-preview {
 
 #preview_command .navigation .actions input {
 	padding: 2px 6px;
-	float: right;	
+	float: right;
 }
-
 
 #pc_login label {
 	display: block;
@@ -584,7 +588,7 @@ body.edit-preview {
 
 #preview_command fieldset.closable .closable_action.open {
 	border: 2px #B1B1B1 solid;
-	height: 6px;
+	height: 6px; /
 	width: 6px;
 	top: 2px;
 }
@@ -669,7 +673,7 @@ body.edit-preview {
 }
 
 #preview_command .pc_command .pc_form_line input,#preview_command .pc_command .pc_form_line input:hover
-	{ 
+	{
 	text-indent: -10000px; /* remove text on firefox */
 	font-size: 0px;
 	border: 0 none;
@@ -704,7 +708,7 @@ body.edit-preview {
 	border: 0 none;
 	background-repeat: none;
 	width: 16px;
-	height: 16px;	
+	height: 16px;
 }
 
 #preview_command .pc_command #tc_replace_current_page_button {
@@ -713,7 +717,7 @@ body.edit-preview {
 
 #preview_command .pc_command #tc_replace_current_page_and_children_button
 	{
-	background-image: url('../../images/icons/add_page.png');	
+	background-image: url('../../images/icons/add_page.png');
 }
 
 #preview_command fieldset {
@@ -872,7 +876,7 @@ body.edit-preview {
 	height: 40px;
 	opacity: .60;
 	-ms-filter: "progid:DXImageTransform.Microsoft.Alpha(Opacity=60)";
-	filter: alpha(opacity = 60);
+	filter: alpha(opacity =     60);
 	-khtml-opacity: 0.60;
 	-moz-opacity: 0.60;
 }
@@ -886,7 +890,7 @@ body.edit-preview {
 	height: 9999px;
 	opacity: .30;
 	-ms-filter: "progid:DXImageTransform.Microsoft.Alpha(Opacity=30)";
-	filter: alpha(opacity = 30);
+	filter: alpha(opacity =     30);
 	-khtml-opacity: 0.30;
 	-moz-opacity: 0.30;
 }
@@ -899,14 +903,14 @@ body.edit-preview {
 	display: none;
 }
 
-.droppable, .drop-zone {
+.droppable,.drop-zone {
 	padding: 16px 8px 4px 40px;
 	display: block;
 	border-radius: 3px 3px 3px 3px;
 	background-color: #aaaaaa;
 	opacity: .60;
 	-ms-filter: "progid:DXImageTransform.Microsoft.Alpha(Opacity=30)";
-	filter: alpha(opacity = 60);
+	filter: alpha(opacity =     60);
 	-khtml-opacity: 0.60;
 	-moz-opacity: 0.60;
 	margin-bottom: -36px;
@@ -925,7 +929,7 @@ body.edit-preview {
 .free-edit-zone.drop-selected,.drop-zone {
 	background-image: url('../../images/icons/drop.png');
 	background-position: 3px 3px;
-	background-repeat: no-repeat;	
+	background-repeat: no-repeat;
 }
 
 #droppable-layer span {
@@ -936,13 +940,13 @@ body.edit-preview {
 .drop-zone span {
 	display: block;
 	border-top: 2px #777777 dashed;
-	background-color: #aaaaaa;		
+	background-color: #aaaaaa;
 }
 
 .free-edit-zone.droppable span {
 	display: block;
 	border-top: 2px #777777 dashed;
-	background-color: #aaaaaa;	
+	background-color: #aaaaaa;
 	font-size: 0;
 }
 
@@ -951,22 +955,23 @@ body.edit-preview {
 }
 
 .free-edit-zone.droppable span {
+	
 }
 
 .drop-zone {
-	margin-bottom: 0;	
-	display: block;	
-	overflow: hidden;	
+	margin-bottom: 0;
+	display: block;
+	overflow: hidden;
 }
 
-.drop-zone, ._empty_area.drop-selected {
+.drop-zone,._empty_area.drop-selected {
 	border-radius: 3px 3px 3px 3px;
 	background-color: #aaaaaa;
 	opacity: .30;
 	-ms-filter: "progid:DXImageTransform.Microsoft.Alpha(Opacity=30)";
-	filter: alpha(opacity = 30);
+	filter: alpha(opacity =     30);
 	-khtml-opacity: 0.30;
-	-moz-opacity: 0.30;	
+	-moz-opacity: 0.30;
 }
 
 #pc_upload #upload-zone {
@@ -1030,7 +1035,6 @@ body.edit-preview {
 	{
 	display: none;
 }*/
-
 .jcreator a {
 	color: #0000ff;
 }
@@ -1131,22 +1135,21 @@ body.edit-preview {
 }
 
 /*** tooltips ***/
-
 .ui-tooltip,.arrow:after {
 	background-color: #494949;
 	border: 1px solid #5B5B5B;
 }
 
-.ui-tooltip {			
-	font: bold 12px "Helvetica Neue", Sans-Serif;	
+.ui-tooltip {
+	font: bold 12px "Helvetica Neue", Sans-Serif;
 	box-shadow: 0 0 7px black;
 	width: 220px;
-	z-index: 1000;
+	z-index: 2500;
 	text-align: center;
-    border-radius: 3px 3px 3px 3px;
-    color: #FFFFFF;
-    margin: 0 4px 4px 0;
-    padding: 3px;
+	border-radius: 3px 3px 3px 3px;
+	color: #FFFFFF;
+	margin: 0 4px 4px 0;
+	padding: 3px;
 }
 
 .arrow {
