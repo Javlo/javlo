@@ -29,6 +29,7 @@ jQuery(document).ready(
 				}				
 			});
 			
+			updateImagePreview();
 			
 			try {
 				jQuery(".floating-preview #preview_command").draggable({
@@ -136,6 +137,18 @@ jQuery(document).ready(
 			});
 			
 		});
+
+function updateImagePreview() {
+	jQuery(".image-preview-loading").each(function() {
+		var image = jQuery(this);
+		image.load(function() {
+			if (jQuery(this).attr("src") == jQuery(this).data("src")) {
+				jQuery(this).removeClass("image-preview-loading");
+			}
+		});
+		image.attr("src", image.data("src"));
+	});
+}
 
 function updatePDFPosition() {		
 	var pdfHeight = parseInt(jQuery(".page_association_fake_body").data("pdfheight"));	

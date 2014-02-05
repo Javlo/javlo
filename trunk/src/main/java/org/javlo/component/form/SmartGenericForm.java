@@ -260,6 +260,9 @@ public class SmartGenericForm extends AbstractVisualComponent implements IAction
 		out.println(XHTMLHelper.renderLine("title", getInputName("title"), getLocalConfig(false).getProperty("title", "")));
 		out.println(XHTMLHelper.renderLine("filename", getInputName("filename"), getLocalConfig(false).getProperty("filename", "")));
 		out.println(XHTMLHelper.renderLine("captcha", getInputName("captcha"), StringHelper.isTrue(getLocalConfig(false).getProperty("captcha", null))));
+		if (isFile()) {
+			out.println(XHTMLHelper.renderLine("max file size (Kb)", getInputName("filesize"), ""+getMaxFileSize() ));
+		}
 		out.println("<div class=\"col-group\"><div class=\"one_half\"><fieldset><legend>e-mail</legend>");
 		out.println(XHTMLHelper.renderLine("mail to :", getInputName("to"), getLocalConfig(false).getProperty("mail.to", "")));
 		out.println(XHTMLHelper.renderLine("mail cc :", getInputName("cc"), getLocalConfig(false).getProperty("mail.cc", "")));
@@ -435,6 +438,15 @@ public class SmartGenericForm extends AbstractVisualComponent implements IAction
 		super.prepareView(ctx);
 		ctx.getRequest().setAttribute("ci18n", getLocalConfig(false));
 	}
+	
+	protected long getMaxFileSize() {
+		String fileSize = getLocalConfig(false).getProperty("file.max-size");
+		if (StringHelper.isDigit(fileSize)) {
+			return Long.parseLong(fileSize);
+		} else {
+			return 0;
+		}
+	}
 
 	@Override
 	public void performEdit(ContentContext ctx) throws Exception {
@@ -442,6 +454,7 @@ public class SmartGenericForm extends AbstractVisualComponent implements IAction
 		getLocalConfig(false).setProperty("title", rs.getParameter(getInputName("title"), ""));
 		getLocalConfig(false).setProperty("filename", rs.getParameter(getInputName("filename"), ""));
 		getLocalConfig(false).setProperty("captcha", rs.getParameter(getInputName("captcha"), ""));
+		getLocalConfig(false).setProperty("file.max-size", rs.getParameter(getInputName("filesize"), ""));
 		getLocalConfig(false).setProperty("mail.to", rs.getParameter(getInputName("to"), ""));
 		getLocalConfig(false).setProperty("mail.cc", rs.getParameter(getInputName("cc"), ""));
 		getLocalConfig(false).setProperty("mail.bcc", rs.getParameter(getInputName("bcc"), ""));
@@ -454,7 +467,7 @@ public class SmartGenericForm extends AbstractVisualComponent implements IAction
 		getLocalConfig(false).setProperty("error.required", rs.getParameter(getInputName("error-required"), ""));
 		getLocalConfig(false).setProperty("message.thanks", rs.getParameter(getInputName("message-thanks"), ""));
 		getLocalConfig(false).setProperty("message.error", rs.getParameter(getInputName("message-error"), ""));
-		getLocalConfig(false).setProperty("message.reset", rs.getParameter(getInputName("message-reset"), ""));
+		getLocalConfig(false).setProperty("message.reset", rs.getParameter(getInputName("message-reset"), ""));		
 		
 		if (isCaptcha()) {
 			getLocalConfig(false).setProperty("label.captcha", rs.getParameter(getInputName("label-captcha"), ""));
@@ -594,7 +607,6 @@ public class SmartGenericForm extends AbstractVisualComponent implements IAction
 		GlobalContext globalContext = GlobalContext.getInstance(ctx.getRequest());
 
 		String subject = "GenericForm submit : '" + globalContext.getGlobalTitle() + "' ";
-
 		String subjectField = comp.getLocalConfig(false).getProperty("mail.subject.field", null);
 		if (subjectField != null && requestService.getParameter(subjectField, null) != null) {
 			subject = comp.getLocalConfig(false).getProperty("mail.subject", "") + requestService.getParameter(subjectField, null);
@@ -624,9 +636,8 @@ public class SmartGenericForm extends AbstractVisualComponent implements IAction
 		Map<String, String> specialValues = new HashMap<String, String>();
 
 		String badFileFormatRAW = comp.getLocalConfig(false).getProperty("file.bad-file", "exe,bat,scr,bin,obj,lib,dll,bat,sh,com,cmd,msi,jsp,xml,html,htm,vbe,wsf,wsc,asp");
-		List<String> badFileFormat = StringHelper.stringToCollection(badFileFormatRAW, ",");
-		String maxFileSizeRAW = comp.getLocalConfig(false).getProperty("file.max-size", "" + (10 * 1024 * 1024));
-		long maxFileSize = Long.parseLong(maxFileSizeRAW);
+		List<String> badFileFormat = StringHelper.stringToCollection(badFileFormatRAW, ",");	
+		long maxFileSize = comp.getMaxFileSize();
 
 		for (FileItem file : requestService.getAllFileItem()) {
 			String ext = StringHelper.getFileExtension(file.getName()).toLowerCase();

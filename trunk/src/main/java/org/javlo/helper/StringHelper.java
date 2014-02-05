@@ -106,7 +106,7 @@ public class StringHelper {
 	private static long previousShortRandomId = 0;
 
 	private static String previousDateId = "";
-	
+
 	public static final String[] EMPTY_STRING_ARRAY = new String[0];
 
 	public static String addSufixToFileName(String fileName, String sufix) {
@@ -771,7 +771,7 @@ public class StringHelper {
 		} else {
 			if (jsessionIndex >= 0 && jsessionIndex < endIndex) {
 				endIndex = jsessionIndex;
-			} 
+			}
 		}
 		if (dotIndex >= 0) {
 			outExt = inFileName.substring(dotIndex + 1, endIndex);
@@ -795,7 +795,7 @@ public class StringHelper {
 			path = path.substring(0, path.indexOf('?'));
 		}
 		String outExt = path;
-		path = StringUtils.replace(path, "\\",  "/");
+		path = StringUtils.replace(path, "\\", "/");
 		int slashIndex = path.lastIndexOf('/');
 		if (slashIndex >= 0) {
 			outExt = path.substring(slashIndex + 1, path.length());
@@ -1040,6 +1040,19 @@ public class StringHelper {
 		}
 	}
 
+	public static boolean isDigit(String str) {
+		if (str == null || str.length() == 0) {
+			return false;
+		} else {
+			for (char c : str.toCharArray()) {
+				if (!isDigit(c)) {
+					return false;
+				}
+			}
+			return true;
+		}
+	}
+
 	/**
 	 * return true if the filename in a html image).
 	 * 
@@ -1236,7 +1249,7 @@ public class StringHelper {
 	 *            file name with extension
 	 * @return true if file name is a video
 	 */
-	public static final boolean isVideo(String fileName) {		
+	public static final boolean isVideo(String fileName) {
 		String ext = getFileExtension(fileName);
 		boolean res = ext.equalsIgnoreCase("wmv");
 		res = res || ext.equalsIgnoreCase("avi");
@@ -1249,7 +1262,7 @@ public class StringHelper {
 		return res;
 	}
 
-	public static void main(String[] args) {		
+	public static void main(String[] args) {
 		System.out.println(StringHelper.getFileExtension("http://host.com/rss/rss.html;jsessionid=97F113FC3A1036324B2889FD5E795F8E.node1"));
 	}
 
