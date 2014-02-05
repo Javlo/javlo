@@ -33,9 +33,7 @@ public class FileComparator implements Comparator<File> {
 		switch (sortType) {
 		case NAME:
 			int diff = file1.getName().compareTo(file2.getName());
-			if (diff == 0) {
-				diff = 1;
-			}
+			
 			if (ascending) {
 				return diff;
 			} else {
@@ -43,9 +41,7 @@ public class FileComparator implements Comparator<File> {
 			}
 		case LASTMODIFIED:
 			diff = (int) (file1.lastModified() - file2.lastModified());
-			if (diff == 0) {
-				diff = 1;
-			}
+			
 			if (ascending) {
 				return diff;
 			} else {
@@ -54,9 +50,7 @@ public class FileComparator implements Comparator<File> {
 		case SIZE:
 			if (ascending) {
 				diff = (int) (file1.length() - file2.length());
-				if (diff == 0) {
-					diff = 1;
-				}
+				
 				if (ascending) {
 					return diff;
 				} else {

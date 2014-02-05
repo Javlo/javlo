@@ -40,6 +40,7 @@ import org.javlo.component.image.ImageBean;
 import org.javlo.component.image.ImageTitleBean;
 import org.javlo.component.meta.Category;
 import org.javlo.component.meta.DateComponent;
+import org.javlo.component.meta.ForceRealContent;
 import org.javlo.component.meta.Keywords;
 import org.javlo.component.meta.LocationComponent;
 import org.javlo.component.meta.MetaDescription;
@@ -3244,12 +3245,12 @@ public class MenuElement implements Serializable {
 		ContentContext ctxForceArea = new ContentContext(ctx);
 		ctxForceArea.setArea(area);
 
-		IContentComponentsList contentList = getLocalContent(ctxForceArea);
+		IContentComponentsList contentList = getContent(ctxForceArea);
 		while ((contentList.hasNext(ctxForceArea))) {
 			IContentVisualComponent component = contentList.next(ctxForceArea);
 			if (component != null) {
 				if (!component.isEmpty(ctxForceArea) || (ctx.getCurrentTemplate() != null && ctx.getCurrentTemplate().isMailing())) { // mailing never empty
-					if (!component.isRepeat()) {
+					if (!component.isRepeat() || component.getType() == ForceRealContent.TYPE) {
 						desc.setEmpty(area, false);
 						return false;
 					}

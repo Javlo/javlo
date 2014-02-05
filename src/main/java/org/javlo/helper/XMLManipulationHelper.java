@@ -983,7 +983,7 @@ public class XMLManipulationHelper {
 		out.append("<%=XHTMLHelper.renderHeaderResourceInsertion(ctx, \"/js/lib/jquery-1.8.3.min.js\")%>");
 		out.newLine();
 		out.append("<%=XHTMLHelper.renderHeaderResourceInsertion(ctx, \"/js/lib/jquery-ui-1.9.2.custom.min.js\")%>");
-		out.newLine();
+		out.newLine();		
 		out.append("<%EditContext editCtx = EditContext.getInstance(globalContext, request.getSession());%>");
 		out.newLine();
 		out.append("<%if (ctx.isPreview()) {%>");

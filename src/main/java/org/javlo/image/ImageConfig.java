@@ -189,8 +189,8 @@ public class ImageConfig {
 
 			String key = getKey(device, filter, area, "width");
 
-			int deviceWith = properties.getInt(key, -1);
-			if (deviceWith != -1) {
+			int deviceWith = properties.getInt(key, -2);
+			if (deviceWith != -2) {
 				return deviceWith;
 			}
 		}
@@ -205,8 +205,8 @@ public class ImageConfig {
 	public int getHeight(Device device, String filter, String area) {
 		if (device != null) {
 			String key = getKey(device, filter, area, "height");
-			int deviceHeigth = properties.getInt(key, -1);
-			if (deviceHeigth != -1) {
+			int deviceHeigth = properties.getInt(key, -2);
+			if (deviceHeigth != -2) {
 				return deviceHeigth;
 			}
 		}
@@ -253,7 +253,9 @@ public class ImageConfig {
 
 	public boolean isBackGroudColor(Device device, String filter, String area) {
 		String key = getKey(device, filter, area, "background-color");
-		return properties.getString(key, null) != null;
+		String bg = properties.getString(key, null);
+		return  bg != null && !bg.equals("transparent");
+		
 	}
 
 	public Color getBGColor(Device device, String filter, String area) {
