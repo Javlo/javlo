@@ -33,7 +33,7 @@ public class Paragraph extends AbstractVisualComponent {
 		} else {
 			style = "";
 		}
-		return "<p" + getSpecialPreviewCssClass(ctx, style + getType()) + getSpecialPreviewCssId(ctx) + ">";
+		return "<p" + getSpecialPreviewCssClass(ctx, style + getType()) + getSpecialPreviewCssId(ctx) + " "+getInlineStyle(ctx)+">";
 	}
 
 	@Override

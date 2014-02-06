@@ -35,7 +35,7 @@ public class DocxUtils {
 
 	public static void main(String[] args) {
 		try {
-			InputStream in = new FileInputStream(new File("c:/trans/histoire.docx"));
+			InputStream in = new FileInputStream(new File("c:/trans/test.docx"));
 			for (ComponentBean bean : extractContent(in, "/")) {
 				System.out.println(bean.getType());
 			}
@@ -92,7 +92,7 @@ public class DocxUtils {
 		ByteArrayOutputStream out = new ByteArrayOutputStream();
 		converter.convert(in, out, options);
 
-		//ResourceHelper.writeStreamToFile(new ByteArrayInputStream(out.toByteArray()), new File("c:/trans/docx/histoire.html"));
+		//ResourceHelper.writeStreamToFile(new ByteArrayInputStream(out.toByteArray()), new File("c:/trans/docx/test.html"));
 
 		List<ComponentBean> outContent = new LinkedList<ComponentBean>();
 
@@ -159,7 +159,7 @@ public class DocxUtils {
 		if (listBean != null) {
 			outContent.add(listBean);
 		}
-		//System.out.println("***** DocxUtils.extractContent : size = " + outContent.size()); // TODO:
+		System.out.println("***** DocxUtils.extractContent : size = " + outContent.size()); // TODO:
 																							// remove
 																							// debug
 																							// trace

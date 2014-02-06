@@ -3,6 +3,7 @@
  */
 package org.javlo.component.core;
 
+import java.awt.Color;
 import java.io.BufferedReader;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
@@ -485,6 +486,22 @@ public abstract class AbstractVisualComponent implements IContentVisualComponent
 			out.println(XHTMLHelper.getCheckbox("inlist-" + getId(), isList(ctx)));
 			out.println("</div>");
 		}
+		
+		if (getConfig(ctx).isChooseBackgoundColor()) {
+			out.println("<div class=\"line\">");
+			String bgColInputName = "bgcol-" + getId();
+			out.println("<label for=\"" + bgColInputName + "\">" + i18nAccess.getText("component.background-color") + "</label>");
+			out.println("<input id=\"" + bgColInputName + "\" name=\"" + bgColInputName + "\" class=\"color\" type=\"text\" value=\""+StringHelper.neverNull(getBackgroundColor())+"\" />");
+			out.println("</div>");
+		}
+		
+		if (getConfig(ctx).isChooseTextColor()) {
+			out.println("<div class=\"line\">");
+			String textColInputName = "textcol-" + getId();
+			out.println("<label for=\"" + textColInputName + "\">" + i18nAccess.getText("component.text-color") + "</label>");
+			out.println("<input id=\"" + textColInputName + "\" name=\"" + textColInputName + "\" class=\"color\" type=\"text\" value=\""+StringHelper.neverNull(getTextColor())+"\" />");
+			out.println("</div>");
+		}
 
 		String[] styles = getStyleList(ctx);
 		if (styles.length > 1) {
@@ -536,6 +553,30 @@ public abstract class AbstractVisualComponent implements IContentVisualComponent
 			setModify();
 			setNeedRefresh(true);
 		}
+		
+		String bgCol = requestService.getParameter("bgcol-" + getId(), null);		
+		if (bgCol != null && !bgCol.equals(getBackgroundColor())) {
+			try {				
+				Color.getColor(bgCol);				
+				setBackgroundColor(bgCol);
+				setModify();
+				setNeedRefresh(true);
+			} catch (Exception e) {
+				logger.warning(e.getLocalizedMessage());
+			}		
+		}
+		
+		String textCol = requestService.getParameter("textcol-" + getId(), null);
+		if (textCol != null && !textCol.equals(getTextColor())) {
+			try {
+				Color.getColor(textCol);
+				setTextColor(textCol);
+				setModify();
+				setNeedRefresh(true);
+			} catch (Exception e) {
+				logger.warning(e.getLocalizedMessage());
+			}	
+		}
 
 		/** renderer **/
 		String renderer = requestService.getParameter(getInputNameRenderer(), null);
@@ -549,7 +590,7 @@ public abstract class AbstractVisualComponent implements IContentVisualComponent
 
 		/** style **/
 		String newStyle = requestService.getParameter("style-" + getId(), null);
-		if (newStyle != null && !newStyle.equals(getStyle(ctx))) {
+		if (newStyle != null && !newStyle.equals(getStyle())) {
 			setStyle(ctx, newStyle);
 			setModify();
 			setNeedRefresh(true);
@@ -784,12 +825,27 @@ public abstract class AbstractVisualComponent implements IContentVisualComponent
 		if (getPreviousComponent() == null || !getPreviousComponent().isList(ctx) || !getPreviousComponent().getType().equals(getType())) {
 			style = style + " first ";
 		}
-
+		
 		if (!componentBean.isList()) {
-			return "<" + getTag(ctx) + " " + getSpecialPreviewCssClass(ctx, style + getType()) + getSpecialPreviewCssId(ctx) + " >";
+			return "<" + getTag(ctx) + " " + getSpecialPreviewCssClass(ctx, style + getType()) + getSpecialPreviewCssId(ctx) + " "+getInlineStyle(ctx)+">";
 		} else {
 			return "<li" + getSpecialPreviewCssClass(ctx, style + getType()) + getSpecialPreviewCssId(ctx) + " >";
 		}
+	}
+	
+	protected String getInlineStyle(ContentContext ctx) {
+		String inlineStyle = "";
+		if (getBackgroundColor() != null && getBackgroundColor().length() > 2) {
+			inlineStyle = " background-color: "+getBackgroundColor()+';';
+		}
+		if (getTextColor() != null && getTextColor().length() > 2) {
+			inlineStyle = inlineStyle+" color: "+getTextColor()+';';
+		}
+		
+		if (inlineStyle.length()>0) {
+			inlineStyle = " style=\""+inlineStyle+"\"";
+		}
+		return inlineStyle;
 	}
 
 	@Override
@@ -1147,6 +1203,14 @@ public abstract class AbstractVisualComponent implements IContentVisualComponent
 	public String getValue() {
 		return componentBean.getValue();
 	}
+	
+	public String getBackgroundColor() {
+		return componentBean.getBackgroundColor();
+	}
+	
+	public String getTextColor() {
+		return componentBean.getTextColor();
+	}
 
 	@Override
 	public String getValue(ContentContext ctx) {
@@ -1227,7 +1291,7 @@ public abstract class AbstractVisualComponent implements IContentVisualComponent
 	}
 
 	protected String renderViewXHTMLCode(ContentContext ctx) throws Exception {
-		if (HIDDEN.equals(getStyle(ctx))) {
+		if (HIDDEN.equals(getStyle())) {
 			if (ctx.getRenderMode() == ContentContext.PREVIEW_MODE && EditContext.getInstance(GlobalContext.getInstance(ctx.getRequest()), ctx.getRequest().getSession()).isEditPreview()) {
 				return '[' + getType() + ']';
 			} else {
@@ -1368,7 +1432,7 @@ public abstract class AbstractVisualComponent implements IContentVisualComponent
 		if (logger.isLoggable(Level.FINE)) {
 			logger.fine("load : " + getType() + " on : " + URLHelper.createURL(ctx));
 		}
-		ctx.getRequest().setAttribute("style", getStyle(ctx));
+		ctx.getRequest().setAttribute("style", getStyle());
 		ctx.getRequest().setAttribute("value", getValue());
 		ctx.getRequest().setAttribute("type", getType());
 		ctx.getRequest().setAttribute("compid", getId());
@@ -1630,7 +1694,7 @@ public abstract class AbstractVisualComponent implements IContentVisualComponent
 	 */
 	protected String processView(ContentContext ctx) throws Exception {
 		ctx.getRequest().setAttribute("config", getConfig(ctx));
-		ctx.getRequest().setAttribute("style", getStyle(ctx));
+		ctx.getRequest().setAttribute("style", getStyle());
 		// ctx.getRequest().setAttribute("viewXHTML", getViewXHTMLCode(ctx));
 		return null;
 	}
@@ -1726,6 +1790,14 @@ public abstract class AbstractVisualComponent implements IContentVisualComponent
 	public void setList(boolean inList) {
 		componentBean.setList(inList);
 	}
+	
+	public void setBackgroundColor(String bgcol) {
+		componentBean.setBackgroundColor(bgcol);
+	}
+	
+	public void setTextColor(String textcol) {
+		componentBean.setTextColor(textcol);
+	}
 
 	public void setMessage(GenericMessage inMsg) {
 		msg = inMsg;
@@ -1769,7 +1841,7 @@ public abstract class AbstractVisualComponent implements IContentVisualComponent
 	@Override
 	public void setStyle(ContentContext ctx, String inStyle) {
 		boolean styleModify = false;
-		if ((getStyle(ctx) != null) && (!getStyle(ctx).equals(inStyle))) {
+		if ((getStyle() != null) && (!getStyle().equals(inStyle))) {
 			styleModify = true;
 		}
 		if (getStyle(ctx) == null && inStyle != null) {
