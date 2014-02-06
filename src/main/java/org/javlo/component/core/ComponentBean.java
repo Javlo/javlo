@@ -9,7 +9,6 @@ import java.util.Date;
 import java.util.Set;
 
 import org.apache.commons.beanutils.BeanUtils;
-import org.javlo.helper.BeanHelper;
 import org.javlo.helper.StringHelper;
 import org.javlo.user.User;
 
@@ -33,6 +32,8 @@ public class ComponentBean implements Serializable {
 	private String language;
 	private String renderer;
 	private String authors = "";
+	private String backgroundColor = null;
+	private String textColor = null;
 
 	private boolean repeat = false;
 	private boolean modify = false;
@@ -214,6 +215,22 @@ public class ComponentBean implements Serializable {
 
 	public void setModificationDate(Date modificationDate) {
 		this.modificationDate = modificationDate;
+	}
+
+	public String getBackgroundColor() {
+		return backgroundColor;
+	}
+
+	public void setBackgroundColor(String backgroundColor) {
+		this.backgroundColor = backgroundColor;
+	}
+
+	public String getTextColor() {
+		return textColor;
+	}
+
+	public void setTextColor(String textColor) {
+		this.textColor = textColor;
 	}
 
 }

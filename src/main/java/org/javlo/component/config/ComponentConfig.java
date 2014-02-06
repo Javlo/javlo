@@ -213,6 +213,20 @@ public class ComponentConfig {
 		return StringHelper.isTrue(properties.getString("comp.js", "true"));
 	}
 	
+	public boolean isChooseBackgoundColor() {
+		if (properties == null) {
+			return false;
+		}
+		return StringHelper.isTrue(properties.getString("comp.color.background", null));
+	}
+	
+	public boolean isChooseTextColor() {
+		if (properties == null) {
+			return false;
+		}
+		return StringHelper.isTrue(properties.getString("comp.color.text", null));
+	}
+	
 	public boolean isPreviewEditable() {
 		if (properties == null || properties.getString("edit.preview", null) == null) {
 			return true;

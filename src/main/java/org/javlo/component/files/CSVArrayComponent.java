@@ -191,7 +191,7 @@ public class CSVArrayComponent extends AbstractFileComponent {
 
 		String colTH = "th";
 		String rowTH = "th";
-		String style = getStyle(ctx);
+		String style = getStyle();
 		boolean autoColSpan = true;
 		if (style != null) {
 			if (style.equals("th-td")) {

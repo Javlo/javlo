@@ -421,6 +421,31 @@
 								</resources>
 							</configuration>
 						</execution>
+						
+						<execution>
+							<id>filter-webxml</id>
+							<phase>process-resources</phase>
+							<goals>
+								<goal>copy-resources</goal>
+							</goals>
+							<configuration>
+								<outputDirectory>${project.build.directory}/${project.build.finalName}/WEB-INF</outputDirectory>
+								<resources>
+									<resource>
+										<directory>src/main/webapp/WEB-INF</directory>
+										<filtering>true</filtering>
+										<includes>
+						  					<include>*.xml</include>
+						  				</includes>
+									</resource>
+								</resources>
+							</configuration>
+						</execution>
+						
+						
+						
+						
+						
 						<execution>
 							<id>deploy local lib</id>
 							<phase>process-resources</phase>
@@ -449,7 +474,8 @@
 				<version>1.0-beta-5</version>
 			</extension>
 		</extensions>
-
+								
+		
 	</build>
 
 	<profiles>

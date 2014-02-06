@@ -201,6 +201,14 @@ public class XMLHelper {
 				out.print("\" style=\"");
 				out.print(StringHelper.toXMLAttribute(style));
 			}
+			if (beans[j].getBackgroundColor() != null && beans[j].getBackgroundColor().trim().length() > 0) {
+				out.print("\" bgcol=\"");
+				out.print(beans[j].getBackgroundColor());
+			}
+			if (beans[j].getTextColor() != null && beans[j].getTextColor().trim().length() > 0) {
+				out.print("\" txtcol=\"");
+				out.print(beans[j].getTextColor());
+			}
 			if (StringHelper.isTrue(repeat)) {
 				out.print("\" repeat=\"");
 				out.print(repeat);

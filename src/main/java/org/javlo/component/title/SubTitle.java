@@ -17,7 +17,7 @@ public class SubTitle extends AbstractVisualComponent {
 
 	@Override
 	public String getPrefixViewXHTMLCode(ContentContext ctx) {
-		return "<div " + getSpecialPreviewCssClass(ctx, "") + getSpecialPreviewCssId(ctx) + " >";
+		return "<div " + getSpecialPreviewCssClass(ctx, "") + getSpecialPreviewCssId(ctx) + " "+getInlineStyle(ctx)+">";
 	}
 
 	public String getXHTMLId(ContentContext ctx) {

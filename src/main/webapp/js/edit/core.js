@@ -44,6 +44,52 @@ initFocusPoint = function() {
 	});
 }
 
+function setInputColor(input) {
+	var color = jQuery(input);
+	if (color.val().length == 7) {
+		color.css("background-color", color.val());
+		var colorPower = parseInt("0x"+color.val().substring(1,3))+parseInt("0x"+color.val().substring(3,5))+parseInt("0x"+color.val().substring(5,7));
+		if (colorPower > 128*3) {
+			color.css("color", "#000000");
+		} else {
+			color.css("color", "#ffffff");
+		}
+	}
+	color.change(function() {
+		if (color.val().length == 7) {
+			color.css("background-color", color.val());
+			var colorPower = parseInt("0x"+color.val().substring(1,3))+parseInt("0x"+color.val().substring(3,5))+parseInt("0x"+color.val().substring(5,7));
+			if (colorPower > 128*3) {
+				color.css("color", "#000000");
+			} else {
+				color.css("color", "#ffffff");
+			}
+		}
+	});
+	color.keyup(function() {
+		if (color.val().length == 7) {
+			color.css("background-color", color.val());
+			var colorPower = parseInt("0x"+color.val().substring(1,3))+parseInt("0x"+color.val().substring(3,5))+parseInt("0x"+color.val().substring(5,7));
+			if (colorPower > 128*3) {
+				color.css("color", "#000000");
+			} else {
+				color.css("color", "#ffffff");
+			}
+		}
+	});
+	color.focus(function() {
+		if (color.val().length == 7) {
+			color.css("background-color", color.val());
+			var colorPower = parseInt("0x"+color.val().substring(1,3))+parseInt("0x"+color.val().substring(3,5))+parseInt("0x"+color.val().substring(5,7));
+			if (colorPower > 128*3) {
+				color.css("color", "#000000");
+			} else {
+				color.css("color", "#ffffff");
+			}
+		}
+	});
+}
+
 jQuery(document).ready(function() {
 	
 	if (jQuery('.color').length > 0) {
@@ -51,12 +97,17 @@ jQuery(document).ready(function() {
 			onSubmit: function(hsb, hex, rgb, el) {
 				jQuery(el).val('#'+hex);
 				jQuery(el).ColorPickerHide();
+				setInputColor(el);
 			},
 			onBeforeShow: function () {
 				jQuery(this).ColorPickerSetColor(this.value);
 			}		
 		});
 	}
+	
+	jQuery('.color').each(function() {
+		setInputColor(this);
+	});
 	
 	/** scrol to latest position after refresh **/
 	var scrollTo = getParam(window.location.href, "_scrollTo");
