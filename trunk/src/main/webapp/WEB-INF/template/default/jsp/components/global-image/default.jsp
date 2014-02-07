@@ -15,13 +15,8 @@
 <c:set var="rel" value="${fn:endsWith(url,'.pdf')?'pdf':rel}" />
 <a rel="${rel}" class="${type}" href="${url}" title="${not empty label?label:description}">
 	<c:if test="${contentContext.asPreviewMode}">
-		<img class="image-preview-loading" id="img-${compid}" src="${info.ajaxLoaderURL}" alt="${not empty description?description:label}" />
-		<script type="text/javascript">
-			jQuery("#img-${compid}").attr("src", "${previewURL}");
-			jQuery("#img-${compid}").onload(function() {
-				jQuery(this).removeClass("image-preview-loading");
-			});
-		</script>	
+		<img class="image-preview-loading" id="img-${compid}" src="${info.ajaxLoaderURL}" data-src="${previewURL}" alt="${not empty description?description:label}" />
+		<script type="text/javascript">updateImagePreview();</script>
 	</c:if>
 	<c:if test="${not contentContext.asPreviewMode}">
 		<img src="${previewURL}" alt="${not empty description?description:label}" />
