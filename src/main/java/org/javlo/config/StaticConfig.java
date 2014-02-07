@@ -649,6 +649,10 @@ public class StaticConfig extends Observable {
 		path = replaceFolderVariable(path);
 		return path;
 	}
+	
+	public boolean isCreateContentOnImportImage() {
+		return properties.getBoolean("import.image.content", false);
+	}
 
 	public String getLocalTempDir() {
 		String path = properties.getString("temp-folder", null);

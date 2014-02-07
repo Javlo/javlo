@@ -62,15 +62,14 @@ public class SmartImport implements IInteractiveMacro, IAction {
 			
 		}
 
-		ImportConfigBean config = new ImportConfigBean();
+		ImportConfigBean config = new ImportConfigBean(gc.getStaticConfig());
 		if (rs.getParameter("image", "").equals("gallery")) {
 			config.setImagesAsGallery(true);
 		} else if (rs.getParameter("image", "").equals("image")) {
 			config.setImagesAsImages(true);
 		}
 		config.setArea(rs.getParameter("area", ComponentBean.DEFAULT_AREA));
-		if (rs.getParameter("after", null) != null) {
-			System.out.println("***** SmartImport.performUpload : after"); //TODO: remove debug trace
+		if (rs.getParameter("after", null) != null) {			
 			config.setBeforeContent(false);
 		}
 		

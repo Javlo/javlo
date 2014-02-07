@@ -20,6 +20,7 @@ import javax.servlet.http.HttpSession;
 import org.apache.commons.configuration.ConfigurationException;
 import org.apache.commons.fileupload.FileItem;
 import org.apache.commons.io.FileExistsException;
+import org.codehaus.plexus.util.StringUtils;
 import org.javlo.component.core.ComponentBean;
 import org.javlo.component.core.IContentVisualComponent;
 import org.javlo.component.files.GenericFile;
@@ -51,6 +52,9 @@ import org.javlo.service.NotificationService.Notification;
 import org.javlo.service.NotificationService.NotificationContainer;
 import org.javlo.service.PersistenceService;
 import org.javlo.service.RequestService;
+import org.javlo.service.shared.LocalImageSharedContentProvider;
+import org.javlo.service.shared.SharedContentContext;
+import org.javlo.service.shared.SharedContentService;
 import org.javlo.template.Template;
 import org.javlo.user.User;
 import org.javlo.ztatic.StaticInfo;
@@ -204,13 +208,21 @@ public class DataAction implements IAction {
 	}
 
 	public static String performUpload(RequestService rs, ContentContext ctx, GlobalContext gc, ContentService cs, User user, MessageRepository messageRepository, I18nAccess i18nAccess) throws Exception {
-		return uploadContent(rs, ctx, gc, cs, user, messageRepository, i18nAccess, new ImportConfigBean());
+		return uploadContent(rs, ctx, gc, cs, user, messageRepository, i18nAccess, new ImportConfigBean(gc.getStaticConfig()));
 	}
 
-	protected static void createImage(ContentContext ctx, String importFolder, FileItem imageItem, ImportConfigBean config) throws Exception {
-
+	/**
+	 * upload image and return the local file.
+	 * 
+	 * @param ctx
+	 * @param importFolder
+	 * @param imageItem
+	 * @param config
+	 * @return
+	 * @throws Exception
+	 */
+	protected static File createImage(ContentContext ctx, String importFolder, FileItem imageItem, ImportConfigBean config) throws Exception {
 		GlobalContext gc = ctx.getGlobalContext();
-
 		String imageRelativeFolder = URLHelper.mergePath(gc.getStaticConfig().getStaticFolder(), ctx.getCurrentTemplate().getImportImageFolder(), importFolder);
 		File targetFolder = new File(URLHelper.mergePath(gc.getDataFolder(), imageRelativeFolder));
 		if (!targetFolder.exists()) {
@@ -226,25 +238,37 @@ public class DataAction implements IAction {
 			out.println("file-name=" + StringHelper.getFileNameFromPath(imageItem.getName()));
 			out.println(GlobalImage.IMAGE_FILTER + "=full");
 			out.close();
-			ComponentBean image = new ComponentBean(GlobalImage.TYPE, new String(outStream.toByteArray()), ctx.getRequestContentLanguage());
-			image.setStyle(Image.STYLE_CENTER);
-			
-
-			Collection<IContentVisualComponent> titles = ctx.getCurrentPage().getContentByType(ctx, Title.TYPE);
-			String previousId = "0";
-			if (titles.size() > 0) {
-				previousId = titles.iterator().next().getId();
-			}		
-			image.setArea(config.getArea());
-			if (config.isBeforeContent()) {
-				cs.createContent(ctx.getContextWithArea(config.getArea()), image, previousId, true);
-			} else {				
-				cs.createContentAtEnd(ctx.getContextWithArea(config.getArea()), image, true);
+			if (config.isCreateContentOnImportImage()) {
+				ComponentBean image = new ComponentBean(GlobalImage.TYPE, new String(outStream.toByteArray()), ctx.getRequestContentLanguage());
+				image.setStyle(Image.STYLE_CENTER);
+				Collection<IContentVisualComponent> titles = ctx.getCurrentPage().getContentByType(ctx, Title.TYPE);
+				String previousId = "0";
+				if (titles.size() > 0) {
+					previousId = titles.iterator().next().getId();
+				}
+				image.setArea(config.getArea());
+				if (config.isBeforeContent()) {
+					cs.createContent(ctx.getContextWithArea(config.getArea()), image, previousId, true);
+				} else {
+					cs.createContentAtEnd(ctx.getContextWithArea(config.getArea()), image, true);
+				}
 			}
 		}
+		return newFile;
 	}
 
-	protected static void createOrUpdateGallery(ContentContext ctx, File targetFolder, String importFolder, Collection<FileItem> imageItem, ImportConfigBean config) throws Exception {
+	/**
+	 * create image and return the local folder.
+	 * 
+	 * @param ctx
+	 * @param targetFolder
+	 * @param importFolder
+	 * @param imageItem
+	 * @param config
+	 * @return
+	 * @throws Exception
+	 */
+	protected static File createOrUpdateGallery(ContentContext ctx, File targetFolder, String importFolder, Collection<FileItem> imageItem, ImportConfigBean config) throws Exception {
 		Collection<IContentVisualComponent> mediaComps = ctx.getCurrentPage().getContentByType(ctx, Multimedia.TYPE);
 		boolean galleryFound = false;
 		Template tpl = ctx.getCurrentTemplate();
@@ -282,7 +306,7 @@ public class DataAction implements IAction {
 			}
 		}
 
-		if (!galleryFound) {
+		if (!galleryFound && config.isCreateContentOnImportImage()) {
 			ComponentBean multimedia = new ComponentBean(Multimedia.TYPE, "--12,128-" + galleryRelativeFolder.replaceFirst(gc.getStaticConfig().getStaticFolder(), "") + "---", ctx.getRequestContentLanguage());
 			multimedia.setStyle(Multimedia.IMAGE);
 
@@ -297,7 +321,7 @@ public class DataAction implements IAction {
 			} else {
 				cs.createContentAtEnd(ctx.getContextWithArea(config.getArea()), multimedia, true);
 			}
-			
+
 			ctx.setNeedRefresh(true);
 		}
 
@@ -305,17 +329,19 @@ public class DataAction implements IAction {
 									// store new contnet.
 			PersistenceService.getInstance(ctx.getGlobalContext()).store(ctx);
 		}
+
+		return targetFolder;
 	}
 
 	public static String uploadContent(RequestService rs, ContentContext ctx, GlobalContext gc, ContentService cs, User user, MessageRepository messageRepository, I18nAccess i18nAccess, ImportConfigBean config) throws Exception {
 		if (user == null) {
 			return "Please, login before upload files.";
 		}
-		
+
 		if (!Edit.checkPageSecurity(ctx)) {
 			return "no suffisant right.";
 		}
-		
+
 		Template tpl = ctx.getCurrentTemplate();
 		// Calendar cal = Calendar.getInstance();
 		// String importFolder = "" + (cal.get(Calendar.MONTH) + 1) + '_' +
@@ -344,9 +370,6 @@ public class DataAction implements IAction {
 				} else if (StringHelper.getFileExtension(item.getName()).equalsIgnoreCase("docx")) {
 					InputStream in = item.getInputStream();
 					Collection<ComponentBean> beans = ContentHelper.createContentFromDocx(gc, in, item.getName(), ctx.getRequestContentLanguage());
-					
-					System.out.println("***** DataAction.uploadContent : beans = "+beans.size()); //TODO: remove debug trace
-					
 					in.close();
 					cs.createContent(ctx, beans, "0", true);
 					ctx.setNeedRefresh(true);
@@ -386,21 +409,43 @@ public class DataAction implements IAction {
 				}
 			}
 			File targetFolder = null;
+
+			File folderSelection = null;
+
 			if (countImages == 1) {
 				if (!config.isImagesAsGallery()) {
-					createImage(ctx, importFolder, imageItem, config);
+					folderSelection = createImage(ctx, importFolder, imageItem, config);
+					if (folderSelection != null) {
+						folderSelection = folderSelection.getParentFile();
+					}
 				} else {
-					createOrUpdateGallery(ctx, targetFolder, importFolder, Arrays.asList(new FileItem[] { imageItem }), config);
+					folderSelection = createOrUpdateGallery(ctx, targetFolder, importFolder, Arrays.asList(new FileItem[] { imageItem }), config);
 				}
 				ctx.setNeedRefresh(true);
 			} else if (countImages > 1) { // gallery
 				if (!config.isImagesAsImages() && ctx.getGlobalContext().getComponents().contains(Multimedia.class.getName())) {
-					createOrUpdateGallery(ctx, targetFolder, importFolder, rs.getAllFileItem(), config);
+					folderSelection = createOrUpdateGallery(ctx, targetFolder, importFolder, rs.getAllFileItem(), config);
 				} else {
 					for (FileItem file : rs.getAllFileItem()) {
-						createImage(ctx, importFolder, file, config);
+						folderSelection = createImage(ctx, importFolder, file, config);
+						if (folderSelection != null) {
+							folderSelection = folderSelection.getParentFile();
+						}
 					}
 				}
+			}
+			if (!config.isCreateContentOnImportImage()) {
+				SharedContentContext sharedContentContext = SharedContentContext.getInstance(ctx.getRequest().getSession());
+				sharedContentContext.setProvider(LocalImageSharedContentProvider.NAME);
+				String prefix = URLHelper.mergePath(gc.getDataFolder(), gc.getStaticConfig().getImageFolder()).replace('\\', '/');
+				String currentPath = folderSelection.getAbsolutePath().replace('\\', '/');
+				String cat = StringUtils.replace(currentPath, prefix, "");				
+				if (cat.length() > 1) { // remove '/'
+					cat = cat.substring(1);
+				}
+				sharedContentContext.setCategories(Arrays.asList(new String[] { cat }));
+				ctx.setNeedRefresh(true);
+				SharedContentService.getInstance(ctx).clearCache();
 			}
 		} catch (FileExistsException e) {
 			messageRepository.setGlobalMessage(new GenericMessage(i18nAccess.getText("data.file-allready-exist", "file allready exist."), GenericMessage.ERROR));
