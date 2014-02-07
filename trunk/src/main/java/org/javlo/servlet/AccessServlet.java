@@ -721,6 +721,7 @@ public class AccessServlet extends HttpServlet implements IVersion {
 								if (modulesContext.searchModule("shared-content") != null) {
 									SharedContentService sharedContentService = SharedContentService.getInstance(ctx);
 									SharedContentContext sharedContentContext = SharedContentContext.getInstance(request.getSession());
+									System.out.println("***** AccessServlet.process : provider = "+sharedContentContext.getProvider()); //TODO: remove debug trace
 									ctx.getRequest().setAttribute("sharedContentProviders", sharedContentService.getAllActiveProvider(ctx));
 									ISharedContentProvider provider = sharedContentService.getProvider(ctx, sharedContentContext.getProvider());
 									if (provider != null) {
@@ -732,6 +733,8 @@ public class AccessServlet extends HttpServlet implements IVersion {
 										ctx.setContentContextIfNeeded(provider);
 										ctx.getRequest().setAttribute("sharedContent", provider.getContent(ctx,sharedContentContext.getCategories()));
 										ctx.getRequest().setAttribute("sharedContentCategories", provider.getCategories(ctx).entrySet());
+									} else {
+										logger.warning("shared content not found = "+sharedContentContext.getProvider());
 									}
 								}
 							}

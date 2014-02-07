@@ -18,10 +18,12 @@ import org.javlo.ztatic.StaticInfo;
 
 public class LocalImageSharedContentProvider extends AbstractSharedContentProvider {
 	
+	public static final String NAME = "local-image";
+	
 	private Collection<SharedContent> content = new LinkedList<SharedContent>();
 	
 	LocalImageSharedContentProvider() {
-		setName("local-image");
+		setName(NAME);
 	}
 
 	@Override
@@ -30,8 +32,7 @@ public class LocalImageSharedContentProvider extends AbstractSharedContentProvid
 		content.clear();
 		GlobalContext globalContext = GlobalContext.getInstance(ctx.getRequest());
 		File imageFolder = new File(URLHelper.mergePath(globalContext.getDataFolder(), globalContext.getStaticConfig().getImageFolder()));
-		for (File imageFile : ResourceHelper.getAllFiles(imageFolder, new ImageFileFilter() ) ) {
-			
+		for (File imageFile : ResourceHelper.getAllFiles(imageFolder, new ImageFileFilter() ) ) {			
 			String category = imageFile.getParentFile().getAbsolutePath().replace(imageFolder.getAbsolutePath(), "");
 			category = category.replace('\\', '/');
 			if (category.startsWith("/")) {
@@ -50,8 +51,7 @@ public class LocalImageSharedContentProvider extends AbstractSharedContentProvid
 			try {
 				sharedContent = new SharedContent(""+imageFile.hashCode(), imageBean);
 				sharedContent.addCategory(category);
-				content.add(sharedContent);
-				
+				content.add(sharedContent);				
 				GlobalImage image = new GlobalImage();
 				image.init(imageBean, ctx);
 				String imageURL = image.getPreviewURL(ctx, "shared-preview");
@@ -74,5 +74,5 @@ public class LocalImageSharedContentProvider extends AbstractSharedContentProvid
 	public String getType() {	
 		return TYPE_IMAGE;
 	}
-
+	
 }

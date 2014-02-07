@@ -99,17 +99,17 @@ public abstract class AbstractSharedContentProvider implements ISharedContentPro
 	public String getType() {
 		return TYPE_DEFAULT;
 	}
-	
+
 	@Override
-	public boolean isSearch() {	
+	public boolean isSearch() {
 		return true;
 	}
-	
+
 	@Override
 	public int getContentSize(ContentContext ctx) {
 		return getContent(ctx).size();
 	};
-	
+
 	@Override
 	public int getCategoriesSize(ContentContext ctx) {
 		return getCategories(ctx).size();

@@ -42,8 +42,7 @@ public class JavloSharedContentProvider extends AbstractSharedContentProvider {
 								image.init(bean, ctx);
 								String imageURL = image.getPreviewURL(ctx, "shared-preview");
 								sharedContent.setImageUrl(imageURL);
-								sharedContent.setLinkInfo(page.getId());
-								
+								sharedContent.setLinkInfo(page.getId());								
 							} catch (Exception e) {
 								e.printStackTrace();
 							}

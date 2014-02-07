@@ -91,5 +91,9 @@ public class SharedContentService {
 		latestReturnedContent = provider.searchContent(ctx,query);
 		return latestReturnedContent;
 	}
+	
+	public void clearCache() {
+		latestReturnedContent = null;
+	}
 
 }

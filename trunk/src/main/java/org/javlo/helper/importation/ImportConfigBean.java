@@ -1,6 +1,7 @@
 package org.javlo.helper.importation;
 
 import org.javlo.component.core.ComponentBean;
+import org.javlo.config.StaticConfig;
 
 public class ImportConfigBean {
 	
@@ -8,9 +9,15 @@ public class ImportConfigBean {
 	
 	private boolean imagesAsImages = false;
 	
+	private boolean createContentOnImportImage = false;
+	
 	private String area = ComponentBean.DEFAULT_AREA;
 	
 	private boolean beforeContent = true;
+	
+	public ImportConfigBean(StaticConfig staticConfig) {
+		createContentOnImportImage = staticConfig.isCreateContentOnImportImage();
+	}
 
 	public boolean isImagesAsGallery() {
 		return imagesAsGallery;
@@ -39,6 +46,10 @@ public class ImportConfigBean {
 	public boolean isBeforeContent() {
 		return beforeContent;
 	}
+	
+	public boolean isCreateContentOnImportImage() {
+		return createContentOnImportImage;
+	} 
 
 	public void setBeforeContent(boolean beforeContent) {
 		this.beforeContent = beforeContent;
