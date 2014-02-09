@@ -762,7 +762,7 @@ public class SmartExternalLink extends ComplexPropertiesLink implements IReverse
 		String description = requestService.getParameter(getDescriptionInputName(), null);
 
 		String currentLink = properties.getProperty(LINK_KEY, "");
-		String CurrentImageLink = properties.getProperty(IMAGE_LINK_KEY, "");
+		String currentImageLink = properties.getProperty(IMAGE_LINK_KEY, "");
 
 		boolean reverseLinkName = requestService.getParameter(getReverseLinkName(), null) != null;
 		if (imageLink != null) {
@@ -777,7 +777,7 @@ public class SmartExternalLink extends ComplexPropertiesLink implements IReverse
 					storeViewData(ctx);
 					setModify();
 				}
-				if (!imageLink.equals(CurrentImageLink) || !link.equals(currentLink)) {
+				if (!imageLink.equals(currentImageLink) || !link.equals(currentLink)) {
 					deleteImage(ctx);
 					removeValidConnection(ctx);
 					getViewData(ctx).setProperty(VALID_LINK, "false");
@@ -793,6 +793,9 @@ public class SmartExternalLink extends ComplexPropertiesLink implements IReverse
 						ReverseLinkService reverlinkService = ReverseLinkService.getInstance(globalContext);
 						reverlinkService.clearCache();
 					}
+				} else if (!imageLink.equals(currentImageLink)) {
+					properties.setProperty(IMAGE_LINK_KEY, imageLink);
+					setModify();
 				}
 			}
 		}
