@@ -14,7 +14,7 @@
 	<form id="children_list" action="${info.currentURL}" method="post">
 	<div class="body">	   
 	   <ul class="navigation pages">
-	   <li class="${rootAssociation.associationPage.url eq info.currentURL?'current ':''}${rootAssociation.associationPage.info.realContent?'real-content':''}"><span><a class="construction" href="${rootAssociation.associationPage.url}">composition</a></span></li>
+	   <li class="${rootAssociation.associationPage.url eq info.currentURL?'current ':''}${rootAssociation.associationPage.info.realContent?'real-content':''}"><span><a class="construction" href="${rootAssociation.associationPage.url}">${i18n.edit["composition.main-title"]}</a></span></li>
 	   <li><ul class="children sortable"><c:forEach var="page" items="${rootAssociation.pages}" varStatus="bcl">
 	   			<li id="page-${page.name}" data-name="${page.name}" class="${page.url eq info.currentURL?'current ':''}${page.info.realContent?'real-content':''}">
 	   				<span><a href="${page.url}" title="${page.pageTitle}">page-${bcl.index+1}</a></span>

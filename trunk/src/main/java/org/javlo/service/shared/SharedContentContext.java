@@ -1,7 +1,7 @@
 package org.javlo.service.shared;
 
 import java.util.Collection;
-import java.util.HashSet;
+import java.util.LinkedList;
 
 import javax.servlet.http.HttpSession;
 
@@ -10,7 +10,7 @@ public class SharedContentContext {
 	private static final String KEY = "sharedContentContext";
 	
 	private String provider = null;
-	private Collection<String> categories = new HashSet<String>();
+	private Collection<String> categories = new LinkedList<String>();
 	
 	public static final SharedContentContext getInstance(HttpSession session) {
 		SharedContentContext outContext = (SharedContentContext)session.getAttribute(KEY);

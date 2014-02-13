@@ -21,12 +21,13 @@ jQuery(document).ready(
 				var command = jQuery("#preview_command .pc_command");
 				if (command.hasClass("reduce")) {
 					command.animate({marginLeft: 0},300);
-					command.removeClass("reduce");
+					command.removeClass("reduce");					
 				} else {
 					command.animate({marginLeft: -(jQuery("#preview_command .pc_command").width()-200)+"px"},300);
 					command.addClass("reduce");					
 					command.addClass("reduce");
-				}				
+				}
+				return false;
 			});
 			
 			updateImagePreview();

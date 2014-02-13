@@ -5,14 +5,23 @@
 <form id="form-meta" action="${info.currentURL}" method="post">
 
 <input type="hidden" name="webaction" value="updateMeta" />
+<c:if test="${not empty param.select}">
+	<input type="hidden" name="select" value="${param.select}" />	
+</c:if>
 <c:if test="${not empty param[BACK_PARAM_NAME]}"><input type="hidden" name="${BACK_PARAM_NAME}" value="${param[BACK_PARAM_NAME]}" /></c:if>
 
 <ul>
 <c:forEach var="file" items="${files}">
+	<c:url var="fileURL" value="${file.URL}" context="/">
+		<c:if test="${not empty param.select}">
+			<c:param name="select" value="${param.select}"></c:param>
+		</c:if>
+	</c:url>
 	<li class="${file.directory?'directory':'file'} ${not empty param.select?'select':'no-select'}">
-	    <c:set var="popularity" value=" - #${file.popularity}" />
+		<c:if test="${param.select != 'image' || file.image || file.directory}">
+	    <c:set var="popularity" value=" - #${file.popularity}" />	    
 		<div class="title">
-			<span><a href="${file.URL}" title="${file.name}">${file.name}</a></span>
+			<span><a href="${fileURL}" title="${file.name}">${file.name}</a></span>
 			<c:if test="${empty param.select}">
 				<c:url value="${info.currentURL}" var="deleteURL" context="/">
 					<c:param name="webaction" value="file.delete" />
@@ -25,36 +34,34 @@
 			</c:if>
 			<span class="size">${file.size} <span class="popularity">${info.admin?popularity:''}</span></span>
 			<span class="last">${file.manType}</span>
-		</div>
-		<c:if test="${not empty param.select}">		
-				<div class="special-action">	
-					<c:if test="${!file.directory}">			
-						<input class="select-item mce-close" type="button" value="select" data-url="${file.freeURL}" />						
-					</c:if>
-					<c:if test="${file.directory}">
-						<span>unselectable</span>
-					</c:if>					
-				</div>
-			</c:if>						
-		
+		</div>		
 		<div class="body">
 		<c:if test="${file.image}">		
 		<div class="download picture">
 			<div class="focus-zone">
+			<c:if test="${empty param.select}">	
 			<a rel="image" href="${file.URL}"><img src="${file.thumbURL}" />&nbsp;</a>
+			</c:if>
+			<c:if test="${not empty param.select}">	
+			<a class="select-item" href="${file.URL}" data-url="${file.freeURL}"><img src="${file.thumbURL}" />&nbsp;</a>
+			</c:if>
 			<div class="focus-point">x</div>			
 			<input class="posx" type="hidden" name="posx-${file.id}" value="${file.focusZoneX}" />
 			<input class="posy" type="hidden" name="posy-${file.id}" value="${file.focusZoneY}" />
 			</div>	
 		</div>
 		</c:if>
-		<c:if test="${not file.image}">
-		<c:url var="fileURL" value="${file.URL}" context="/">
-			<c:if test="${not empty param.select}">
-				<c:param name="select" value="${param.select}"></c:param>
-			</c:if>
-		</c:url>
-		<div class="download file ${file.type}"><a href="${fileURL}"><span>${file.name}</span></a></div>
+		<c:if test="${not file.image}">		
+			
+			<div class="download file ${file.type}">
+			<c:if test="${empty param.select || file.type == 'directory'}">	
+				<a href="${fileURL}"><span>${file.name}</span></a>
+				</c:if>
+				<c:if test="${not empty param.select && file.type != 'directory'}">	
+				<a class="select-item"  data-url="${fileURL}" href="${fileURL}"><span>${file.name}</span></a>
+				</c:if>
+			</div>
+			
 		</c:if>
 		<div class="line">
 			<label for="title-${file.id}">${i18n.edit["field.title"]}</label>
@@ -86,6 +93,7 @@
 		</fieldset>
 		</c:if>
 		</div>
+		</c:if>
 	</li>
 </c:forEach>
 </ul>
@@ -101,10 +109,14 @@
 <c:if test="${not empty param.select}">
 	<script type="text/javascript">
 		jQuery(".select-item").click(function() {
-			var fieldName = parent.jQuery("body").data("fieldName");
-			var url = jQuery(this).data("url");
-			parent.jQuery("#"+fieldName).val(url);
-			parent.tinyMCE.activeEditor.windowManager.close(window);
+			if (parent.tinyMCE !== undefined) {
+				var fieldName = parent.jQuery("body").data("fieldName");
+				var url = jQuery(this).data("url");
+				parent.jQuery("#"+fieldName).val(url);
+				parent.tinyMCE.activeEditor.windowManager.close(window);
+			} else {
+				
+			}
 		});
 	</script>	
 </c:if>

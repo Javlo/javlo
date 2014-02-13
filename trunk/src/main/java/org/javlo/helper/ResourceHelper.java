@@ -771,6 +771,11 @@ public class ResourceHelper {
 		file = StringHelper.getFileNameFromPath(file);
 		return file.startsWith("content_" + ContentContext.PREVIEW_MODE);
 	}
+	
+	public static boolean isResourceURL(ContentContext ctx, String url) {
+		String startURL = URLHelper.createResourceURL(ctx, "/");
+		return url.startsWith(startURL);
+	}
 
 	public static Properties loadProperties(File file) throws IOException {
 		Properties properties = new Properties();

@@ -162,7 +162,7 @@ public class DynamicComponent extends AbstractVisualComponent implements IStatic
 				return executeJSP(ctx, linkToJSP);
 			}
 		} else {
-			if (getRenderer() != null) {
+			if (getDynamicRenderer(ctx) != null) {
 				for (Field field : fields) {
 					if (field != null) {
 						field.fillRequest(ctx);
@@ -172,7 +172,7 @@ public class DynamicComponent extends AbstractVisualComponent implements IStatic
 					ctx = new ContentContext(ctx);
 					ctx.setAbsoluteURL(false);
 				}
-				String linkToJSP = URLHelper.createStaticTemplateURLWithoutContext(ctx, ctx.getCurrentTemplate(), "" + getRenderer());
+				String linkToJSP = URLHelper.createStaticTemplateURLWithoutContext(ctx, ctx.getCurrentTemplate(), "" + getDynamicRenderer(ctx));
 				return executeJSP(ctx, linkToJSP);
 			}
 		}
@@ -325,8 +325,13 @@ public class DynamicComponent extends AbstractVisualComponent implements IStatic
 		return StringHelper.isTrue(properties.getProperty("component.wrapped", "true"));
 	}
 
-	private String getRenderer() {
-		return properties.getProperty("component.renderer", null);
+	private String getDynamicRenderer(ContentContext ctx) {
+		String deviceRenderer = properties.getProperty("component.renderer."+ctx.getDevice().getCode());
+		if (deviceRenderer != null) {
+			return deviceRenderer;
+		} else {
+			return properties.getProperty("component.renderer", null);
+		}
 	}
 
 	private String getListRenderer() {

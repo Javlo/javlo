@@ -45,11 +45,11 @@ public class WysiwygParagraph extends AbstractVisualComponent {
 		finalCode.append("</textarea>");
 		
 		Map<String, String> filesParams = new HashMap<String, String>();
-		String path = URLHelper.mergePath(FileAction.getPathPrefix(ctx), StaticConfig.getInstance(ctx.getRequest().getSession()).getImageFolderName());
+		String path = FileAction.getPathPrefix(ctx);
 		filesParams.put("path", path);
 		filesParams.put("webaction", "changeRenderer");
 		filesParams.put("page", "meta");
-		filesParams.put("select", "true");
+		filesParams.put("select", "_TYPE_");
 		filesParams.put("previewEdit", "true");
 		
 		String chooseImageURL = URLHelper.createModuleURL(ctx, ctx.getPath(), "file", filesParams);		

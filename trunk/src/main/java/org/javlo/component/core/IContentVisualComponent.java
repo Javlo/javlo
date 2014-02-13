@@ -80,6 +80,13 @@ public interface IContentVisualComponent {
 	 * @return
 	 */
 	public String getXHTMLConfig(ContentContext ctx) throws Exception;
+	
+	/**
+	 * return true if there the component is configurable.
+	 * @param ctx
+	 * @return
+	 */
+	public boolean isConfig(ContentContext ctx);
 
 	/**
 	 * action to manage the config, call when global content form is saved.

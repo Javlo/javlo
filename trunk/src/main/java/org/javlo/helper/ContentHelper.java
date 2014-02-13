@@ -7,6 +7,7 @@ import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.PrintStream;
+import java.lang.reflect.InvocationTargetException;
 import java.net.URL;
 import java.text.SimpleDateFormat;
 import java.util.Collection;
@@ -440,4 +441,16 @@ public class ContentHelper {
 		}
 		return null;
 	}
+	
+	public static void copyPage(MenuElement source, MenuElement target) throws SecurityException, IllegalArgumentException, IllegalAccessException, InvocationTargetException {
+		ComponentBean[] beans = source.getContent();
+		ComponentBean[] newBeans = new ComponentBean[beans.length];		
+		for (int i=0; i<beans.length; i++) {
+			newBeans[i] = new ComponentBean(beans[i]);
+			newBeans[i].setId(StringHelper.getRandomId());
+		}
+		target.setContent(newBeans);
+		target.setTemplateName(source.getTemplateId());
+	}
+	
 }

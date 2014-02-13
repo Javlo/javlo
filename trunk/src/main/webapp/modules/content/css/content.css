@@ -93,6 +93,10 @@ ul.menu {
 	width: 60%;
 }
 
+.component input.color {
+	width: auto;
+}
+
 .component table input,.component table textarea,.component table select
 	{
 	width: auto;

@@ -268,6 +268,10 @@ public class PageBean implements Serializable {
 			return null;
 		}
 	}
+	
+	public MenuElement getPage() {
+		return page;
+	}
 
 }
 

@@ -146,12 +146,14 @@ if (!rightOnPage) {
 							<label for="pc_user_info">${i18n.edit['global.account-setting']}</label>
 						</div>
 					</form></li>
-					<li><form class="preview-edit <%=readOnlyClass%>" id="page_properties" action="<%=URLHelper.createURL(editCtx)%>?module=content&webaction=changeMode&mode=3&previewEdit=true" method="post">
-						<div class="pc_line">							
-							<input id="pc_page_properties" type="<%=accessType%>" value="${i18n.edit['global.page-properties']}" title="${i18n.edit['global.page-properties']}" class="pc_edit_true"<%=readOnlyPageHTML%> />
-							<label for="pc_page_properties">${i18n.edit['global.page-properties']}</label>
-						</div>
-					</form></li>										
+					<c:if test="${!contentContext.currentTemplate.mailing || !userInterface.light}">
+						<li><form class="preview-edit <%=readOnlyClass%>" id="page_properties" action="<%=URLHelper.createURL(editCtx)%>?module=content&webaction=changeMode&mode=3&previewEdit=true" method="post">
+							<div class="pc_line">							
+								<input id="pc_page_properties" type="<%=accessType%>" value="${i18n.edit['global.page-properties']}" title="${i18n.edit['global.page-properties']}" class="pc_edit_true"<%=readOnlyPageHTML%> />
+								<label for="pc_page_properties">${i18n.edit['global.page-properties']}</label>
+							</div>
+						</form></li>	
+					</c:if>									
 					</c:if>					
 				</ul>			
 			</fieldset>

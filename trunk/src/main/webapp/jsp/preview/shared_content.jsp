@@ -20,11 +20,11 @@
 				<c:set var="key" value="shared.${provider.name}" />
 				<option value="${provider.name}" ${sharedContentContext.provider eq provider.name?'selected="selected"':''}>${i18n.edit[key]}</option>
 			</c:forEach>
-		</select>
+		</select>		
 		<c:if test="${fn:length(sharedContentCategories)>0}">
 		<select name="category">
 			<c:forEach var="category" items="${sharedContentCategories}">
-				<option ${sharedContentContext.category eq category.key?'selected="selected"':''} value="${category.key}">${category.value}</option>
+				<option ${currentCategory eq category.key?'selected="selected"':''} value="${category.key}">${category.value}</option>
 			</c:forEach>
 		</select>		
 		</c:if>

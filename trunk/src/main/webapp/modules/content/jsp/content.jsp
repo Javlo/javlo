@@ -134,7 +134,13 @@ for (IContentVisualComponent comp : components) {
  <div class="tabs component"> 	    	  
       <ul>      	  	
           <li><a href="#tab1<%=inputSuffix%>">${i18n.edit["global.content"]}</a></li>
-          <li><a href="#tab2<%=inputSuffix%>">${i18n.edit["global.config"]}</a></li>          
+          <%
+          String linkTag = " href=\"#tab2"+inputSuffix+"\"";
+          if (!comp.isConfig(ctx)) {
+        	  linkTag = "";
+          }
+          %>
+          <li class="<%if (!comp.isConfig(ctx)) {%>disabled<%} else {%>enabled<%}%>"><a class="link"<%=linkTag%>>${i18n.edit["global.config"]}</a></li>          
           <%if (helpText != null) {%><li><a href="#tab3<%=inputSuffix%>">${i18n.edit["global.help"]}</a></li><%}%>
           <%if (admin) {%><li><a href="#tab4<%=inputSuffix%>">raw</a></li><%}%>
       </ul>
@@ -171,6 +177,7 @@ for (IContentVisualComponent comp : components) {
   </div><%
   if (!StringHelper.isTrue(request.getParameter("noinsert")) && !StringHelper.isTrue(request.getAttribute("noinsert")) && !StringHelper.isTrue(request.getAttribute("lightInterface"))) {%>  
   <div class="insert-line" id="insert-line-<%=comp.getId()%>">
+  
 	<a class="action-button ajax" onclick="scrollToFirstQuarter(jQuery('#content-edit'),this);" href="${info.currentURL}?${info.editPreview?'previewEdit=true&':''}webaction=insert&previous=<%=comp.getId()%>&type=<%=currentTypeComponent.getType()%>"><%=insertHere%></a><%
 	if (pastePageHere != null) {
 	%><a class="action-button" onclick="scrollToFirstQuarter(jQuery('#content-edit'),this);" href="${info.currentURL}?${info.editPreview?'previewEdit=true&':''}webaction=pastePage&previous=<%=comp.getId()%>"><%=pastePageHere%></a><%

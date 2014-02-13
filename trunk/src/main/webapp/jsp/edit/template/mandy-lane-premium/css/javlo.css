@@ -1101,6 +1101,11 @@ span.ajax-loader {
 	padding: 6px 16px;
 }
 
+.ui-tabs-nav li.disabled a {
+	color: #cccccc;
+	text-shadow: 1px 1px white;
+}
+
 .ui-tabs-nav {
 	height: 33px;
 }
