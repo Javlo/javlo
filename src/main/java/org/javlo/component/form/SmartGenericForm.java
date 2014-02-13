@@ -81,7 +81,7 @@ public class SmartGenericForm extends AbstractVisualComponent implements IAction
 		private boolean last = false;
 		private boolean first  = false;
 
-		protected static Collection<? extends Object> FIELD_TYPES = Arrays.asList(new String[] { "text", "large-text", "yes-no", "email", "list", "registered-list", "file" });
+		protected static Collection<? extends Object> FIELD_TYPES = Arrays.asList(new String[] { "text", "large-text", "yes-no", "email", "list", "registered-list", "file", "validation" });
 
 		public Field(String name, String label, String type, String value, String list, String registeredList, int order, int width) {
 			this.name = name;
