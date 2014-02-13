@@ -763,7 +763,7 @@ public class SmartExternalLink extends ComplexPropertiesLink implements IReverse
 
 		String currentLink = properties.getProperty(LINK_KEY, "");
 		String currentImageLink = properties.getProperty(IMAGE_LINK_KEY, "");
-
+		
 		boolean reverseLinkName = requestService.getParameter(getReverseLinkName(), null) != null;
 		if (imageLink != null) {
 			if (link != null) {

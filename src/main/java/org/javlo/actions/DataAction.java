@@ -52,6 +52,7 @@ import org.javlo.service.NotificationService.Notification;
 import org.javlo.service.NotificationService.NotificationContainer;
 import org.javlo.service.PersistenceService;
 import org.javlo.service.RequestService;
+import org.javlo.service.shared.ISharedContentProvider;
 import org.javlo.service.shared.LocalImageSharedContentProvider;
 import org.javlo.service.shared.SharedContentContext;
 import org.javlo.service.shared.SharedContentService;
@@ -435,8 +436,12 @@ public class DataAction implements IAction {
 				}
 			}
 			if (!config.isCreateContentOnImportImage()) {
-				SharedContentContext sharedContentContext = SharedContentContext.getInstance(ctx.getRequest().getSession());
+				SharedContentContext sharedContentContext = SharedContentContext.getInstance(ctx.getRequest().getSession());				
 				sharedContentContext.setProvider(LocalImageSharedContentProvider.NAME);
+				SharedContentService.getInstance(ctx).clearCache();
+				ISharedContentProvider provider = SharedContentService.getInstance(ctx).getProvider(ctx, sharedContentContext.getProvider());
+				provider.refresh(ctx);
+				provider.getContent(ctx); // refresh categories list
 				String prefix = URLHelper.mergePath(gc.getDataFolder(), gc.getStaticConfig().getImageFolder()).replace('\\', '/');
 				String currentPath = folderSelection.getAbsolutePath().replace('\\', '/');
 				String cat = StringUtils.replace(currentPath, prefix, "");				
@@ -444,8 +449,7 @@ public class DataAction implements IAction {
 					cat = cat.substring(1);
 				}
 				sharedContentContext.setCategories(Arrays.asList(new String[] { cat }));
-				ctx.setNeedRefresh(true);
-				SharedContentService.getInstance(ctx).clearCache();
+				ctx.setNeedRefresh(true);				
 			}
 		} catch (FileExistsException e) {
 			messageRepository.setGlobalMessage(new GenericMessage(i18nAccess.getText("data.file-allready-exist", "file allready exist."), GenericMessage.ERROR));

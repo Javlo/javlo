@@ -6,7 +6,6 @@
 		<c:set var="colsClass" value="no-cols" />
 	</c:if>
 </c:forEach>
-
 <div class="${colsClass} provider-${provider.name} privider-type-${provider.type}">
 <c:forEach var="content" items="${sharedContent}">
 <div class="content-wrapper ${not empty content.description?'width-description':'without-description'}">

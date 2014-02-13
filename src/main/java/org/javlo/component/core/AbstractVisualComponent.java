@@ -466,16 +466,20 @@ public abstract class AbstractVisualComponent implements IContentVisualComponent
 		I18nAccess i18nAccess = I18nAccess.getInstance(ctx.getRequest());
 		
 		String repeatHidden = "";
+		boolean showRepeat = true;
 		if (ctx.getGlobalContext().getStaticConfig().isMailingPlatform()) {
 			UserInterfaceContext uiContext = UserInterfaceContext.getInstance(ctx.getRequest().getSession(), ctx.getGlobalContext());
 			if (uiContext.isLight()) {
 				repeatHidden = " hidden";
+				showRepeat = false;
 			}
 		}
 
 		if (isRepeatable()) {
 			out.println("<div class=\"line"+repeatHidden+"\">");
-			out.println("<label for=\"repeat-" + getId() + "\">" + i18nAccess.getText("content.repeat") + "</label>");
+			if (showRepeat) {
+				out.println("<label for=\"repeat-" + getId() + "\">" + i18nAccess.getText("content.repeat") + "</label>");
+			}
 			out.println(XHTMLHelper.getCheckbox("repeat-" + getId(), isRepeat()));
 			out.println("</div>");
 		}
@@ -534,6 +538,15 @@ public abstract class AbstractVisualComponent implements IContentVisualComponent
 
 		out.close();
 		return new String(outStream.toByteArray());
+	}
+	
+	public boolean isConfig(ContentContext ctx) {
+		try {			
+			return StringHelper.removeTag(getXHTMLConfig(ctx)).trim().length() > 0;
+		} catch (Exception e) {
+			e.printStackTrace();
+			return false;
+		}
 	}
 
 	@Override

@@ -79,7 +79,7 @@ public abstract class AbstractSharedContentProvider implements ISharedContentPro
 		}
 		Collection<SharedContent> outList = new HashSet<SharedContent>();
 		for (SharedContent content : getContent(ctx)) {
-			if (!Collections.disjoint(content.getCategories(), categories)) {
+			if (!Collections.disjoint(content.getCategories(), categories)) {							
 				outList.add(content);
 			}
 		}

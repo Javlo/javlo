@@ -50,8 +50,12 @@ function loadWysiwyg(cssQuery, complexity, chooseFileURL) {
 		    	
 	    	 	jQuery("body").data("fieldName", field_name);
 	    	 	
+	    	 	
+	    	 	var fileURL = chooseFileURL.replace("_TYPE_",type);
+	    	 	console.log("fileURL = "+fileURL);
+	    	 	
 		    	tinyMCE.activeEditor.windowManager.open({
-		            file : chooseFileURL,
+		            file : fileURL,
 		            title : 'Select resouce',
 		            width : jQuery(document).width()-100,  // Your dimensions may differ - toy around with them
 		            height :  jQuery(document).height()-150,

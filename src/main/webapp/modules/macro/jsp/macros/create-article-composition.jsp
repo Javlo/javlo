@@ -34,9 +34,17 @@
 	<input type="text" class="datepicker" id="date" name="date" value="${param.date}"/>
 </div>
 
+<c:if test="${not empty info.page.rootOfChildrenAssociation}">
+<div class="line">
+	<label for="duplicate">Duplicate current structure</label>
+	<input type="checkbox" id="duplicate" name="duplicate" />
+</div>
+</c:if>
+
 <div class="action">
 	<input type="submit" value="create" />
 </div>
+
 </fieldset>
 </form>
 

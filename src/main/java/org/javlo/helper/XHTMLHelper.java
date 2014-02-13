@@ -2240,7 +2240,7 @@ public class XHTMLHelper {
 						}
 						hrefValue = URLHelper.createRSSURL(ctx, channel);
 						tag.getAttributes().put("href", hrefValue);
-					} else if ((hrefValue != null) && (!StringHelper.isURL(hrefValue)) && (!StringHelper.isMailURL(hrefValue)) && !hrefValue.contains("${")) {
+					} else if ((hrefValue != null) && (!StringHelper.isURL(hrefValue)) && (!StringHelper.isMailURL(hrefValue)) && !hrefValue.contains("${") && !ResourceHelper.isResourceURL(ctx, hrefValue)) {
 						hrefValue = URLHelper.createURLCheckLg(ctx, hrefValue);
 						tag.getAttributes().put("href", hrefValue);
 					}
