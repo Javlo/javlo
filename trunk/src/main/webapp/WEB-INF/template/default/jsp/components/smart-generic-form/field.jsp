@@ -9,11 +9,11 @@
 		<c:choose>	
 			<c:when test="${field.type eq 'text' || field.type eq 'email'}">
 				<label for="${field.name}">${field.label} ${field.require?requireHTML:''}</label>
-				<input type="text" name="${field.name}" value="${requestService.parameterMap[field.name]}" />
+				<input type="text" name="${field.name}" id="${field.name}" value="${requestService.parameterMap[field.name]}" />
 			</c:when>
 			<c:when test="${field.type eq 'large-text'}">
 				<label for="${field.name}">${field.label} ${field.require?requireHTML:''}</label>
-				<textarea name="${field.name}">${requestService.parameterMap[field.name]}</textarea>
+				<textarea name="${field.name}" id="${field.name}">${requestService.parameterMap[field.name]}</textarea>
 			</c:when>
 			<c:when test="${field.type eq 'yes-no'}">
 				<label for="${field.name}">${field.label} ${field.require?requireHTML:''}</label>
@@ -22,11 +22,11 @@
 			</c:when>	
 			<c:when test="${field.type eq 'file'}">
 				<label for="${field.name}">${field.label} ${field.require?requireHTML:''}</label>
-				<input type="file" name="${field.name}" />
+				<input type="file" name="${field.name}" id="${field.name}" />
 			</c:when>	
 			<c:when test="${field.type eq 'list'}">
 				<label for="${field.name}">${field.label} ${field.require?requireHTML:''}</label>
-				<select name="${field.name}">
+				<select name="${field.name}" id="${field.name}">
 					<c:forEach var="item" items="${field.list}"> 
 						<option${requestService.parameterMap[field.name] eq item?' selected="selected"':''}>${item}</option> 
 					</c:forEach>
@@ -34,11 +34,15 @@
 			</c:when>		
 			<c:when test="${field.type eq 'registered-list'}">
 				<label for="${field.name}">${field.label} ${field.require?requireHTML:''}</label>
-				<select name="${field.name}">
+				<select name="${field.name}" id="${field.name}">
 					<c:forEach var="item" items="${list[field.registeredList]}"> 
 						<option${requestService.parameterMap[field.name] eq item?' selected="selected"':''} value="${item.key}">${item.value}</option> 
 					</c:forEach>
 				</select>
+			</c:when>
+			<c:when test="${field.type eq 'validation'}">				
+				<input type="checkbox" name="${field.name}" id="${field.name}" ${not empty requestService.parameterMap[field.name]?'checked="checked"':''} />
+				<label for="${field.name}">${field.label} ${field.require?requireHTML:''}</label>
 			</c:when>
 		</c:choose>
 	</div>

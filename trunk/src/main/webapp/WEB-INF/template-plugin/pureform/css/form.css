@@ -175,6 +175,14 @@ label {
 	display: block;
 }
 
+.line.validation {
+	padding: 4px 0;
+}
+
+.line.validation label {
+	display: inline;
+}
+
 label.checkbox {
 	display: inline-block;
 }
