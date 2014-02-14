@@ -59,7 +59,7 @@ public class UserListServlet extends HttpServlet {
         			
         			boolean admin = requestService.getParameter("admin", null) != null;
         			
-            		if (!AdminUserSecurity.getInstance().haveRight(user, AdminUserSecurity.USER_ROLE) && !AdminUserSecurity.getInstance().haveRight(user, AdminUserSecurity.ADMIN_USER_ROLE)) {
+            		if (!AdminUserSecurity.getInstance().canRole(user, AdminUserSecurity.USER_ROLE) && !AdminUserSecurity.getInstance().haveRight(user, AdminUserSecurity.ADMIN_USER_ROLE)) {
             			throw new ServletException("user:"+user.getLogin()+" have no suffisant right.");
             		}
             		
