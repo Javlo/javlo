@@ -173,9 +173,10 @@ public class CreateArticleComposition extends AbstractInteractiveMacro implement
 				if (mountPage != null) {
 					MenuElement newPage = MacroHelper.addPageIfNotExist(ctx, mountPage, pageName, true, false);
 					MacroHelper.addContent(ctx.getRequestContentLanguage(), newPage, "0", ForceRealContent.TYPE, "", ctx.getCurrentEditUser());
-					if (newPage != null) {
+					if (newPage != null) {						
 						MenuElement layoutPage = MacroHelper.addPageIfNotExist(ctx, newPage.getName(), newPage.getName() + "-composition", false);						
 						if (assBean != null) {
+							newPage.setTemplateName(assBean.getPage().getTemplateId());
 							ContentService content = ContentService.getInstance(ctx.getRequest());
 							ContentHelper.copyPage (assBean.getAssociationPage().getPage(), layoutPage);
 							layoutPage.setChildrenAssociation(true);

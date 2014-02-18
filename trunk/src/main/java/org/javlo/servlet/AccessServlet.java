@@ -204,11 +204,11 @@ public class AccessServlet extends HttpServlet implements IVersion {
 	}
 
 	public void process(HttpServletRequest request, HttpServletResponse response) throws ServletException {
-
+		
 		try {
 
 			COUNT_ACCESS++;
-
+			
 			logger.fine("uri : " + request.getRequestURI()); // TODO: remove debug trace
 
 			StaticConfig staticConfig = StaticConfig.getInstance(getServletContext());
@@ -231,6 +231,9 @@ public class AccessServlet extends HttpServlet implements IVersion {
 			Thread.currentThread().setName("AccessServlet-" + globalContext.getContextKey());
 
 			ContentContext ctx = ContentContext.getContentContext(request, response);
+			
+			ctx.toStream(System.out);
+			
 			globalContext.initExternalService(ctx);
 
 			if (FIRST_REQUEST) {

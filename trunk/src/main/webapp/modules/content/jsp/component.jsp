@@ -1,8 +1,6 @@
-<%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
-<%@ taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions" %>
-<div class="close-component">
-<a class="close" href="${info.currentURL}?webaction=displayComponentsList">x</a>
-</div>
+<%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c"
+%><%@ taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions"
+%><div class="close-component"><a class="close" href="${info.currentURL}?webaction=displayComponentsList">x</a></div>
 <div class="content component-list"> <!-- components -->
 <div class="one_half">
 <c:set var="closeAccordion" value="" />
@@ -15,7 +13,7 @@
 </c:if><h4 style="color: #${comp.hexColor}">${i18n.edit[comp.value]}</h4>
 <div><ul><c:set var="closeAccordion" value="</ul></div>"
 /></c:if><c:if test="${!comp.metaTitle}"
-><li${comp.selected?' class="selected"':''}><a class="ajax" href="${info.currentURL}?webaction=changeComponent&type=${comp.type}">${comp.label}</a></li>
+><li${comp.selected?' class="selected"':''}><a class="ajax" href="${info.currentURL}?webaction=changeComponent&type=${comp.type}&render-mode=${contentContext.editMode}">${comp.label}</a></li>
 </c:if></c:forEach>
 ${closeAccordion}
 </div>
