@@ -49,15 +49,15 @@ public class AjaxServlet extends HttpServlet {
 
 	private void process(HttpServletRequest request, HttpServletResponse response) throws ServletException {
 
-		try {
-
+		try {			
 			ContentContext ctx = ContentContext.getContentContext(request, response);
+			ctx.toStream(System.out);
 
 			Tracker.trace(request, response);
 
 			RequestService rs = RequestService.getInstance(request);
-			if (rs.getParameter("render-mode", null) != null) {
-				ctx.setRenderMode(Integer.parseInt(rs.getParameter("render-mode", null)));
+			if (rs.getParameter(ContentContext.FORCE_MODE_PARAMETER_NAME, null) != null) {
+				ctx.setRenderMode(Integer.parseInt(rs.getParameter(ContentContext.FORCE_MODE_PARAMETER_NAME, null)));
 			} else {
 				ctx.setRenderMode(ContentContext.PREVIEW_MODE);
 			}

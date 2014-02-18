@@ -4,6 +4,8 @@
 package org.javlo.context;
 
 import java.io.IOException;
+import java.io.OutputStream;
+import java.io.PrintStream;
 import java.net.URL;
 import java.nio.charset.Charset;
 import java.util.Collection;
@@ -61,7 +63,7 @@ public class ContentContext {
 
 	public static final String FORWARD_PATH_REQUEST_KEY = "forward-path";
 
-	public static final String FORCE_MODE_PARAMETER_NAME = "_render-mode";
+	public static final String FORCE_MODE_PARAMETER_NAME = "render-mode";
 	
 	public static final String CHANGE_AREA_ATTRIBUTE_NAME = "_change_area";
 
@@ -1160,6 +1162,28 @@ public class ContentContext {
 		res.append(super.toString());
 		return res.toString();
 	}
+	
+	/**
+	 * trace info on stream
+	 * @param out
+	 */
+	public void toStream(OutputStream outStream) {
+		PrintStream out = new PrintStream(outStream);
+		out.println();
+		out.println(getClass().getCanonicalName());
+		out.println("--");
+		out.println("uri : "+request.getRequestURI());
+		out.println("path : "+getPath());
+		out.println("render mode : "+getRenderMode());
+		out.println("edit preview : "+isEditPreview());
+		out.println("area : "+getArea());
+		out.println("edit user : "+getCurrentEditUser());
+		out.println("lg : "+getLanguage());
+		out.println("visible : "+isVisible());
+		out.println("--");
+		out.println("");
+		out.close();		
+	}
 
 	public User getCurrentUser() {
 		return currentUser;
@@ -1612,5 +1636,9 @@ public class ContentContext {
 
 	public void setSpecificJson(String specifixAjax) {
 		this.specificJson = specifixAjax;
+	}
+	
+	public int getEditMode() {
+		return EDIT_MODE;
 	}
 }

@@ -2315,5 +2315,41 @@ public class Template implements Comparable<Template> {
 	public void setFreeData(Map<String, String> freeData) {
 		this.freeData = freeData;
 	}
+	
+	protected void loadTemplatePart(TemplatePart part, String prefix) {
+		part.setBackgroundColor(properties.getString(prefix+".background-color"));
+		part.setBorderColor(properties.getString(prefix+".border-color"));
+		part.setBorderSize(properties.getString(prefix+".border-size"));
+		part.setFont(properties.getString(prefix+".font"));
+		part.setHeight(properties.getString(prefix+".height"));
+		part.setMargin(properties.getString(prefix+".margin"));
+		part.setPadding(properties.getString(prefix+".padding"));
+		part.setTextColor(properties.getString(prefix+".text-color"));
+		part.setTextSize(properties.getString(prefix+".text-size"));
+		part.setWidth(properties.getString(prefix+".width"));
+	}
+	
+	public Collection<Row> getRow() {
+		List<Area> outArea = new LinkedList<Area>();	
+		
+		Map<String,Row> rows = new HashMap<String, Row>();		
+		for (String area : getAreas()) {
+			String rowName = properties.getString("area."+area+".row","");
+			if (rowName.trim().length() > 0) {
+				Row row = rows.get(rowName);
+				if (row == null) {
+					row = new Row();
+					row.setName(rowName);
+					loadTemplatePart(row, "row."+rowName);
+				}
+				Area newArea = new Area();
+				newArea.setName(area);
+				loadTemplatePart(newArea,"area."+area);
+				outArea.add(newArea);
+			}
+		}
+	
+		return rows.values();
+	}
 
 }

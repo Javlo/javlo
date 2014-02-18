@@ -26,6 +26,8 @@ import org.javlo.template.Template;
  */
 public abstract class ElementaryURLHelper {
 
+	private static java.util.logging.Logger logger = java.util.logging.Logger.getLogger(ElementaryURLHelper.class.getName());
+
 	public static class Code {
 		private String code = null;
 
@@ -182,7 +184,7 @@ public abstract class ElementaryURLHelper {
 		} else {
 			mode = "/";
 		}
-
+		
 		if (ctx.getRenderMode() != ContentContext.VIEW_MODE) {
 			if (ctx.getRenderMode() == ContentContext.EDIT_MODE) {
 				String previewPrefix = "";
@@ -241,7 +243,6 @@ public abstract class ElementaryURLHelper {
 		if (ctx.isEditPreview()) {
 			newUri = URLHelper.addParam(newUri, "editPreview", "true");
 		}
-
 		return newUri;
 	}
 
@@ -290,7 +291,7 @@ public abstract class ElementaryURLHelper {
 		}
 
 		if (newCtx.isAbsoluteURL()) {
-			url = addHost(ctx,url);
+			url = addHost(ctx, url);
 		}
 		url = url.replace('\\', '/');
 		return url;
@@ -386,7 +387,7 @@ public abstract class ElementaryURLHelper {
 		if (templateName != null) {
 			url = ElementaryURLHelper.mergePath(TRANSFORM + '/' + filter + '/' + templateName + '/' + ctx.getVirtualArea(), url);
 		} else {
-			url = ElementaryURLHelper.mergePath(TRANSFORM + '/' + filter + "/[edit]/"+ComponentBean.DEFAULT_AREA + '/', url);
+			url = ElementaryURLHelper.mergePath(TRANSFORM + '/' + filter + "/[edit]/" + ComponentBean.DEFAULT_AREA + '/', url);
 		}
 
 		return createStaticURL(ctx, referencePage, url, true);
@@ -435,7 +436,7 @@ public abstract class ElementaryURLHelper {
 		String url = createNoProtocolURL(ctx, globalContext, uri, ajax, withPathPrefix, widthEncodeURL);
 
 		if (ctx.isAbsoluteURL()) {
-			url = addHost(ctx,url);
+			url = addHost(ctx, url);
 		}
 
 		if (url.contains("?")) {
@@ -456,7 +457,7 @@ public abstract class ElementaryURLHelper {
 
 		return url;
 	}
-	
+
 	protected static String addHost(ContentContext ctx, String url) {
 		if (ctx.getDMZServerInter() == null) {
 			String port = "";
@@ -465,8 +466,8 @@ public abstract class ElementaryURLHelper {
 			}
 			url = ctx.getURLProtocolPrefix() + "://" + ctx.getHostName() + port + url;
 		} else {
-			if (ctx.getPathPrefix() != null && ctx.getPathPrefix().length()>0) {
-				String prefix = '/'+ctx.getPathPrefix()+'/';
+			if (ctx.getPathPrefix() != null && ctx.getPathPrefix().length() > 0) {
+				String prefix = '/' + ctx.getPathPrefix() + '/';
 				if (url.startsWith(prefix)) {
 					url = url.substring(prefix.length());
 				}
@@ -660,9 +661,10 @@ public abstract class ElementaryURLHelper {
 
 		return outParams;
 	}
-	
+
 	/**
 	 * remove context from url if exist.
+	 * 
 	 * @param ctx
 	 * @param url
 	 * @return

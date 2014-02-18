@@ -657,9 +657,9 @@ public class Edit extends AbstractModuleAction {
 			// String[][] { { "type", newType } });
 			// MessageRepository.getInstance(ctx).setGlobalMessage(new
 			// GenericMessage(msg, GenericMessage.INFO));
-			if (requestService.getParameter("comp_id", null) != null) {
+			if (requestService.getParameter("comp_id", null) != null) {				
 				prepareUpdateInsertLine(ctx);
-				return performEditpreview(requestService, ctx, componentContext, editCtx, ContentService.getInstance(globalContext), ModulesContext.getInstance(ctx.getRequest().getSession(), globalContext), modCtx);
+				//return performEditpreview(requestService, ctx, componentContext, editCtx, ContentService.getInstance(globalContext), ModulesContext.getInstance(ctx.getRequest().getSession(), globalContext), modCtx);
 			} else {
 				Box componentBox = currentModule.getBox("components");
 				if (componentBox != null) {
@@ -1046,7 +1046,7 @@ public class Edit extends AbstractModuleAction {
 			page.clearPageBean(ctx);
 			PersistenceService.getInstance(globalContext).store(ctx);
 			
-			if (editCtx.isEditPreview()) {				
+			if (ctx.isEditPreview()) {				
 				String url = URLHelper.createURL(ctx.getContextWithOtherRenderMode(ContentContext.PREVIEW_MODE), page.getPath());
 				if (page.getChildMenuElements().size() > 0 && page.getChildMenuElements().iterator().next().isChildrenAssociation()) {
 					url = URLHelper.createURL(ctx.getContextWithOtherRenderMode(ContentContext.PREVIEW_MODE), page.getChildMenuElements().iterator().next().getPath());
