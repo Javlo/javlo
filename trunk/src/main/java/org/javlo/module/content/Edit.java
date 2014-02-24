@@ -723,7 +723,7 @@ public class Edit extends AbstractModuleAction {
 		}
 		
 		if (ctx.isAjax()) {
-			if (!ctx.isEditPreview()) {
+			if (!ctx.isEditPreview()) {	
 				updateComponent(ctx, currentModule, newId, previousId);
 			}
 			String selecterPrefix = "";

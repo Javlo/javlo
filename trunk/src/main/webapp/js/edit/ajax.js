@@ -1,10 +1,10 @@
 jQuery(document).ready(function() {	
-	jQuery("a.ajax").on("click", function(event) {
+	jQuery("a.ajax").live("click", function(event) {
 		event.preventDefault();						
 		ajaxRequest(jQuery(this).attr('href'));	
 	});	
 	var AJAX_SUBMIT_SHADOW_DATA = "_AjaxSubmitShadow"
-	jQuery('form.ajax :submit').on("click", function(event) {		
+	jQuery('form.ajax :submit').live("click", function(event) {		
 		var submit = jQuery(this);
 		if (submit.attr("name") != null) {
 			var shadow = submit.data(AJAX_SUBMIT_SHADOW_DATA);
@@ -19,7 +19,7 @@ jQuery(document).ready(function() {
 			submit.removeAttr("name");
 		}
 	});
-	jQuery('form.ajax :submit').on("blur", function(event) {
+	jQuery('form.ajax :submit').live("blur", function(event) {
 		var submit = jQuery(this);
 		var shadow = submit.data(AJAX_SUBMIT_SHADOW_DATA);
 		if (shadow != null) {
@@ -29,7 +29,7 @@ jQuery(document).ready(function() {
 			}
 		}
 	});
-	jQuery('form.ajax').on("submit", function(event) {
+	jQuery('form.ajax').live("submit", function(event) {
 		var form = jQuery(this);		
 		var ajaxSubmit = true;
 		if (!jQuery.isFunction(FormData)) {
@@ -141,17 +141,17 @@ function ajaxRequest(url, form, doneFunction) {
 
 function initDropFile() {
 	jQuery.event.props.push('dataTransfer');
-	jQuery(".drop-files").on('dragover', function(e) {		
+	jQuery(".drop-files").live('dragover', function(e) {		
 		jQuery(this).addClass("dragover");
 		doNothing(e);
 	});
-	jQuery(".drop-files").on('dragout', function(ev, drag) {		
+	jQuery(".drop-files").live('dragout', function(ev, drag) {		
 		jQuery(this).removeClass("dragover");		
 	 });
-	jQuery(".drop-files").on('dragenter', function(e) {
+	jQuery(".drop-files").live('dragenter', function(e) {
 		doNothing(e);
 	});
-	jQuery(".drop-files").on('drop', function(e) {		
+	jQuery(".drop-files").live('drop', function(e) {		
 		doNothing(e);
 		jQuery(this).removeClass("dragover");	
 		var url  = jQuery(this).data("url");		
