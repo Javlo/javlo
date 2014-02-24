@@ -134,7 +134,7 @@ jQuery(document).ready(
 			});
 			
 			jQuery(document).on("ajaxUpdate", function() {
-				updatePDFPosition();
+				//	updatePDFPosition();
 			});
 			
 		});
@@ -151,25 +151,24 @@ function updateImagePreview() {
 	});
 }
 
-function updatePDFPosition() {		
+function updatePDFPosition() {	
 	var pdfHeight = parseInt(jQuery(".page_association_fake_body").data("pdfheight"));	
 	var previousBreak = null;	
 	jQuery("._pdf_page_limit").remove();
-	jQuery(".page-break, ._page_associate").each(function() {		
-		var currentBreak = jQuery(this);		
-		if (previousBreak != null) {			
+	jQuery(".page-break, ._page_associate").each(function() {	
+		var currentBreak = jQuery(this);
+		if (previousBreak != null) {	
 			if ((currentBreak.position().top - previousBreak.position().top) > pdfHeight) {
-				previousBreak.css("position", "relative");
 				previousBreak.prepend('<div class="_pdf_page_limit"><span>&nbsp;</span></div>');
 				var pdfLimit = jQuery(previousBreak.children()[0]);				
-				pdfLimit.css('top',pdfHeight+'px');				
+				pdfLimit.css('top',(previousBreak.position().top+pdfHeight)+'px');				
 			}
 		}		
 		previousBreak = currentBreak;
 	});
 	//latest page
 	if (previousBreak != null  && previousBreak.height() > pdfHeight) {
-		previousBreak.css("position", "relative");
+		//previousBreak.css("position", "relative");
 		previousBreak.prepend('<div class="_pdf_page_limit"><span>&nbsp;</span></div>');
 		var pdfLimit = jQuery(previousBreak.children()[0]);				
 		pdfLimit.css('top',pdfHeight+'px');
@@ -293,7 +292,7 @@ initPreview = function() {
 		e.preventDefault();
 		e.stopPropagation();
 	});
-	jQuery("#preview-layer").on('drop', function(e) {		
+	jQuery("#preview-layer").on('drop', function(e) {
 		layerOver(null,false);
 		jQuery(this).data("compType", null);
 		e.preventDefault();
@@ -323,7 +322,7 @@ initPreview = function() {
 						cursor : 'move',
 						greedy : true,
 						tolerance : 'pointer',
-						drop : function(event, ui) {							
+						drop : function(event, ui) {
 							var currentURL = addParam(window.location.href,"previewEdit=true");
 							var layer = jQuery("#preview-layer");
 							var comp = layer.data("subItem");
@@ -355,7 +354,7 @@ initPreview = function() {
 								var ajaxURL = addParam(currentURL,"webaction=edit.insert&type="
 								+ compType + "&previous=" + previewId
 								+ "&area=" + area+ "&render-mode=3&init=true"+pageIdParam);
-								ajaxRequest(ajaxURL,null,updatePDFPosition);
+								ajaxRequest(ajaxURL,null,updatePDFPosition());
 							} else if (sharedContent != null && sharedContent !== undefined) {								
 								var previewId = "0";
 								if (jQuery(this).attr("id")) {
@@ -369,7 +368,7 @@ initPreview = function() {
 								var ajaxURL = addParam(currentURL, "webaction=edit.insertShared&sharedContent="
 								+ sharedContent + "&previous=" + previewId
 								+ "&area=" + area+ "&render-mode=3&init=true"+pageIdParam);
-								ajaxRequest(ajaxURL,null,updatePDFPosition);
+								ajaxRequest(ajaxURL,null,updatePDFPosition());
 							} else if (comp !== undefined && jQuery(comp).attr("id") != null && jQuery(comp).attr('id') != jQuery(this).attr("id")) {								
 								var compId = jQuery(comp).attr("id").replace("cp_", "");
 								if (jQuery(this).attr("id") == "preview-delete-zone") {									
@@ -391,7 +390,7 @@ initPreview = function() {
 											+ compId + "&previous=" + previewId
 											+ "&area=" + area + "&render-mode=3" + pageIdParam);
 								}
-								ajaxRequest(ajaxURL,null,updatePDFPosition);
+								ajaxRequest(ajaxURL,null,updatePDFPosition());
 							}							
 							layerOver(null);
 							jQuery(this).find(".drop-zone").remove();

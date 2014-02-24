@@ -16,6 +16,7 @@ import java.util.Properties;
 import javax.servlet.http.HttpServletRequest;
 
 import org.codehaus.plexus.util.StringUtils;
+import org.javlo.component.core.IContentVisualComponent;
 import org.javlo.config.StaticConfig;
 import org.javlo.context.ContentContext;
 import org.javlo.context.GlobalContext;
@@ -149,7 +150,8 @@ public class Field implements Cloneable {
 	private boolean needRefresh = false;
 	private Map<String, String> keyValue = null;
 	private Map<String, String> replacementCode = null;
-	private Locale currentLocale = null;	
+	private Locale currentLocale = null;
+	private IContentVisualComponent comp = null;
 
 	/**
 	 * Filed can only be create with FieldFactory
@@ -157,13 +159,14 @@ public class Field implements Cloneable {
 	Field() {
 	};
 
-	public Field newInstance() {
+	public Field newInstance(IContentVisualComponent inComp) {
 		Field newInstance;
 		try {
 			newInstance = (Field) this.clone();
 			newInstance.staticConfig = staticConfig;
 			newInstance.globalContext = globalContext;
 			newInstance.i18nAccess = i18nAccess;
+			newInstance.comp = inComp;
 			return newInstance;
 		} catch (CloneNotSupportedException e) {
 			e.printStackTrace();
@@ -292,7 +295,7 @@ public class Field implements Cloneable {
 		if (!displayStr.toLowerCase().contains("<a")) {
 			displayStr = XHTMLHelper.autoLink(displayStr);
 		}
-		displayStr = reverserLinkService.replaceLink(ctx, displayStr);
+		displayStr = reverserLinkService.replaceLink(ctx, comp, displayStr);
 
 		if (isWrapped()) {
 			out.println("<" + getTag() + " class=\"field-value\">" + displayStr + "</" + getTag() + ">");

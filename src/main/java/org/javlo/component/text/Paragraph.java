@@ -64,7 +64,7 @@ public class Paragraph extends AbstractVisualComponent {
 		GlobalContext globalContext = GlobalContext.getInstance(ctx.getRequest());
 		String value = XHTMLHelper.textToXHTML(content, false, getType(), globalContext);
 		ReverseLinkService reverserLinkService = ReverseLinkService.getInstance(globalContext);
-		value = reverserLinkService.replaceLink(ctx, value);
+		value = reverserLinkService.replaceLink(ctx, this, value);
 
 		return value;
 	}

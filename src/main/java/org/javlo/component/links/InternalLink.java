@@ -313,12 +313,17 @@ public class InternalLink extends ComplexPropertiesLink implements IInternalLink
 	@Override
 	public boolean isOnlyFirstOccurrence() {
 		return properties.getProperty(REVERSE_LINK_KEY, "none").equals(ReverseLinkService.ONLY_FIRST);
-	}
+	}	
 
 	@Override
 	public boolean isOnlyThisPage() {
 		return properties.getProperty(REVERSE_LINK_KEY, "none").equals(ReverseLinkService.ONLY_THIS_PAGE);
 	}
+	
+	@Override
+	public boolean isOnlyPreviousComponent() {
+		return properties.getProperty(REVERSE_LINK_KEY, "none").equals(ReverseLinkService.ONLY_PREVIOUS_COMPONENT);
+	}	
 
 	@Override
 	public boolean isReverseLink() {

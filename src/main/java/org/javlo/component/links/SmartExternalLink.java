@@ -711,6 +711,11 @@ public class SmartExternalLink extends ComplexPropertiesLink implements IReverse
 		// TODO Auto-generated method stub
 		return false;
 	}
+	
+	@Override
+	public boolean isOnlyPreviousComponent() {
+		return properties.getProperty(REVERSE_LINK_KEY, "none").equals(ReverseLinkService.ONLY_PREVIOUS_COMPONENT);
+	}	
 
 	@Override
 	public boolean isOnlyThisPage() {

@@ -39,4 +39,10 @@ public interface IReverseLinkComponent {
 	 * @return
 	 */
 	public boolean isOnlyThisPage();
+
+	/**
+	 * change only the component juste before link component
+	 * @return
+	 */
+	boolean isOnlyPreviousComponent();
 }

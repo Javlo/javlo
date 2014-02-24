@@ -64,7 +64,7 @@ public class Title extends AbstractVisualComponent {
 		String value = getValue();
 		GlobalContext globalContext = GlobalContext.getInstance(ctx.getRequest());
 		ReverseLinkService reverserLinkService = ReverseLinkService.getInstance(globalContext);
-		value = reverserLinkService.replaceLink(ctx, value);
+		value = reverserLinkService.replaceLink(ctx, this, value);
 
 		res.append(value);
 		res.append("</span></h1>");

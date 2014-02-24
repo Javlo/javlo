@@ -278,7 +278,23 @@
         <url-pattern>/captcha.jpg</url-pattern>
     </servlet-mapping>
     
+    <!-- <security-constraint>
+        <web-resource-collection>
+          <web-resource-name>Javlo Administration</web-resource-name>
+                        <url-pattern>/*</url-pattern>
+                <http-method>GET</http-method>
+                <http-method>POST</http-method>
+        </web-resource-collection>
+        <auth-constraint>
+           <role-name>javlousers</role-name>
+        </auth-constraint>
+     </security-constraint>
 
+    
+    <login-config>
+        <auth-method>EPAUTH</auth-method>
+        <realm-name>epauth</realm-name>
+    </login-config>  -->
     
     
      <!-- <security-constraint>
@@ -292,10 +308,10 @@
     <login-config>
         <auth-method>EPAUTH</auth-method>
         <realm-name>epauth</realm-name>
-    </login-config> -->
+    </login-config>-->
 	
     
-    <!-- security-constraint>
+   <!-- <security-constraint>
     	<web-resource-collection>
     		<web-resource-name>Security</web-resource-name>
     		<url-pattern>/*</url-pattern>
@@ -312,6 +328,6 @@
 	
 	<login-config>
 		<auth-method>BASIC</auth-method>
-	</login-config  -->
+	</login-config>-->
 	
 </web-app>

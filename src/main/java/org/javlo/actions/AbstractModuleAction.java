@@ -27,7 +27,9 @@ public abstract class AbstractModuleAction implements IModuleAction {
 
 	@Override
 	public String prepare(ContentContext ctx, ModulesContext modulesContext) throws Exception {
-		getModuleContext(ctx.getRequest().getSession(), modulesContext.getCurrentModule()); // load module context
+		getModuleContext(ctx.getRequest().getSession(), modulesContext.getCurrentModule()); // load
+																							// module
+																							// context
 		GlobalContext globalContext = GlobalContext.getInstance(ctx.getRequest());
 		I18nAccess i18nAccess = I18nAccess.getInstance(ctx.getRequest());
 		if (i18nAccess.getCurrentModule() == null || !i18nAccess.getCurrentModule().equals(modulesContext.getCurrentModule())) {
@@ -50,12 +52,15 @@ public abstract class AbstractModuleAction implements IModuleAction {
 		if (page == null) {
 			return "bad request structure : need 'page' parameter.";
 		}
-		List<LinkToRenderer> links = getModuleContext(rs.getRequest().getSession(), currentModule).getFlatNavigation();
-		for (LinkToRenderer linkToRenderer : links) {
-			if (page.equals(linkToRenderer.getName())) {
-				getModuleContext(rs.getRequest().getSession(), currentModule).setCurrentLink(linkToRenderer.getName());
-				getModuleContext(rs.getRequest().getSession(), currentModule).setRendererFromNavigation(linkToRenderer.getRenderer());
-				return null;
+		AbstractModuleContext modCtx = getModuleContext(rs.getRequest().getSession(), currentModule);
+		if (modCtx != null) {
+			List<LinkToRenderer> links = modCtx.getFlatNavigation();
+			for (LinkToRenderer linkToRenderer : links) {
+				if (page.equals(linkToRenderer.getName())) {
+					getModuleContext(rs.getRequest().getSession(), currentModule).setCurrentLink(linkToRenderer.getName());
+					getModuleContext(rs.getRequest().getSession(), currentModule).setRendererFromNavigation(linkToRenderer.getRenderer());
+					return null;
+				}
 			}
 		}
 		return "page not found : " + page;
@@ -82,7 +87,7 @@ public abstract class AbstractModuleAction implements IModuleAction {
 			step--;
 		}
 		step = Math.max(step, 1);
-		step = Math.min(step, b.getSteps().size());		
+		step = Math.min(step, b.getSteps().size());
 		moduleContext.setWizardStep(boxName, step);
 		BoxStep s = b.getSteps().get(step - 1);
 		b.setTitle(s.getTitle());

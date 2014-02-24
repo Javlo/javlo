@@ -24,7 +24,7 @@ public class List extends AbstractVisualComponent {
 		GlobalContext globalContext = GlobalContext.getInstance(ctx.getRequest());
 		ReverseLinkService reverserLinkService = ReverseLinkService.getInstance(globalContext);
 		String value = textToXHTML(getValue());
-		value = reverserLinkService.replaceLink(ctx, value);
+		value = reverserLinkService.replaceLink(ctx, this, value);
 		return value;
 	}
 	

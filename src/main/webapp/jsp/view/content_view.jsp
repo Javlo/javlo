@@ -64,6 +64,7 @@ if (path!=null) {
 }
 
 Boolean removeRepeat = StringHelper.isTrue(request.getParameter("_no-repeat"));
+Boolean displayZone = StringHelper.isTrue(request.getParameter("_display-zone"));
 
 AdminUserSecurity security = AdminUserSecurity.getInstance();
 
@@ -101,7 +102,7 @@ IContentVisualComponent previousElem = null;
 	if (languageChange) {
 		%><div lang="<%=ctx.getContentLanguage()%>"><%
 	}	
-	if (!elems.hasNext(ctx) && EditContext.getInstance(globalContext, session).isEditPreview() && ctx.isAsPreviewMode() && editPage) {
+	if (!elems.hasNext(ctx) && EditContext.getInstance(globalContext, session).isEditPreview() && ctx.isAsPreviewMode() && editPage || displayZone) {
 		%><div class="_empty_area"><span><%=ctx.getArea()%></span></div><%
 	} else {
 		if (ctx.getRenderMode() == ContentContext.PREVIEW_MODE && specificComp == null && editPage) {
@@ -109,6 +110,7 @@ IContentVisualComponent previousElem = null;
 		}
 	}
 	
+	if (!displayZone) {
 	while (specificComp != null || (elems != null && elems.hasNext(ctx))) {
 		pageEmpty = false;
 		if (specificComp == null) {
@@ -178,6 +180,7 @@ if (elems != null) {%><%=elems.getSufixXHTMLCode(ctx)
 			}
 		}	
 	}
+}
 	while (!containers.empty()) {
 		%><%=containers.pop().getCloseCode(ctx)%><%
 	}

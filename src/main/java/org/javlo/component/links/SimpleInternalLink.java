@@ -317,6 +317,11 @@ public class SimpleInternalLink extends ComplexPropertiesLink implements IIntern
 	}
 	
 	@Override
+	public boolean isOnlyPreviousComponent() {
+		return properties.getProperty(REVERSE_LINK_KEY, "none").equals(ReverseLinkService.ONLY_PREVIOUS_COMPONENT);
+	}	
+	
+	@Override
 	public boolean initContent(ContentContext ctx) throws Exception {
 		properties.setProperty(LINK_KEY, "0");		
 		properties.setProperty(LABEL_KEY, getType());

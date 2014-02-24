@@ -217,3 +217,7 @@ change log
  * robots.txt
  
  * import docx
+ 
+* 2.0.3.1 (20/02/2014)
+
+ * reverse link : only on previous component

@@ -50,8 +50,7 @@ public class AjaxServlet extends HttpServlet {
 	private void process(HttpServletRequest request, HttpServletResponse response) throws ServletException {
 
 		try {			
-			ContentContext ctx = ContentContext.getContentContext(request, response);
-			ctx.toStream(System.out);
+			ContentContext ctx = ContentContext.getContentContext(request, response);			
 
 			Tracker.trace(request, response);
 

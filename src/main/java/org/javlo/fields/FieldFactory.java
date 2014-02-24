@@ -15,7 +15,7 @@ public class FieldFactory {
 		for (Field field : fields) {
 			if (field.getType().equals(type)) {
 				try {
-					Field newField = field.newInstance();
+					Field newField = field.newInstance(component);
 					newField.setId(id);
 					newField.setName(name);
 					if (properties != null) {

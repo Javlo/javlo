@@ -287,7 +287,7 @@ public abstract class ElementaryURLHelper {
 		String url = inUrl;
 		if (withPathPrefix) {
 			String pathPrefix = getPathPrefix(ctx);
-			url = ElementaryURLHelper.mergePath(pathPrefix, inUrl);
+			url = URLHelper.mergePath("/",pathPrefix, inUrl);
 		}
 
 		if (newCtx.isAbsoluteURL()) {
