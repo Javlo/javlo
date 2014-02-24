@@ -407,7 +407,6 @@ public class CatchAllFilter implements Filter {
 			}
 
 			if (fact.getCurrentUser(((HttpServletRequest) request).getSession()) == null) {
-
 				String loginType = requestService.getParameter("login-type", null);
 
 				if ((loginType == null || !loginType.equals("adminlogin")) && logoutUser == null) {
@@ -474,7 +473,7 @@ public class CatchAllFilter implements Filter {
 				UserInterfaceContext.getInstance(((HttpServletRequest) request).getSession(), globalContext);
 			}
 
-			if (request.getParameter("edit-login") != null || request.getParameter("j_token") != null || (httpRequest.getUserPrincipal() != null && logoutUser == null)) {
+			if (request.getParameter("edit-login") != null || request.getParameter("j_token") != null || (httpRequest.getUserPrincipal() != null && fact.getCurrentUser(((HttpServletRequest) request).getSession()) == null && logoutUser == null)) {
 				String login = request.getParameter("j_username");
 
 				if (login == null && httpRequest.getUserPrincipal() != null) {
@@ -493,7 +492,7 @@ public class CatchAllFilter implements Filter {
 					globalContext.eventLogin(editUser.getLogin());
 					newUser = true;
 
-					logger.info(login + " is logged roles : [" + StringHelper.collectionToString(editUser.getRoles(), ",") + ']');
+					logger.fine(login + " is logged roles : [" + StringHelper.collectionToString(editUser.getRoles(), ",") + ']');
 
 				} else {
 					String token = request.getParameter("j_token");

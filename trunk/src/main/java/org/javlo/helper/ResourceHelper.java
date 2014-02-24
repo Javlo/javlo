@@ -773,7 +773,14 @@ public class ResourceHelper {
 	}
 	
 	public static boolean isResourceURL(ContentContext ctx, String url) {
-		String startURL = URLHelper.createResourceURL(ctx, "/");
+		String startURL = URLHelper.createResourceURL(ctx, "/");		
+		return url.startsWith(startURL);
+	}
+	
+	public static boolean isTransformURL(ContentContext ctx, String url) throws Exception {
+		final String FAKE_FILTER = "___FAKE_FILTER___";
+		String startURL = URLHelper.createTransformURL(ctx, "/", FAKE_FILTER);
+		startURL = startURL.substring(0, startURL.indexOf(FAKE_FILTER));		
 		return url.startsWith(startURL);
 	}
 

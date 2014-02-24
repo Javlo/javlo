@@ -84,7 +84,7 @@ public class Description extends AbstractVisualComponent {
 		if (!isNotDisplayHTML(ctx)) {
 			GlobalContext globalContext = GlobalContext.getInstance(ctx.getRequest());
 			ReverseLinkService reverserLinkService = ReverseLinkService.getInstance(globalContext);
-			content = reverserLinkService.replaceLink(ctx, content);
+			content = reverserLinkService.replaceLink(ctx, this, content);
 			content = XHTMLHelper.replaceJSTLData(ctx, content);
 			content = XHTMLHelper.textToXHTML(content, globalContext);
 			finalCode.append(content);

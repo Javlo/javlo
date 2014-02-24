@@ -7,7 +7,7 @@ public class TemplatePart {
 	private String height = null;
 	private String padding = null;
 	private String margin = null;
-	private String borderSize = null;
+	private String borderWidth = null;
 	private String borderColor = null;
 	private String textColor = null;
 	private String backgroundColor = null;
@@ -38,11 +38,11 @@ public class TemplatePart {
 	public void setMargin(String margin) {
 		this.margin = margin;
 	}
-	public String getBorderSize() {
-		return borderSize;
+	public String getBorderWidth() {
+		return borderWidth;
 	}
-	public void setBorderSize(String borderSize) {
-		this.borderSize = borderSize;
+	public void setBorderWidth(String borderWidth) {
+		this.borderWidth = borderWidth;
 	}
 	public String getBorderColor() {
 		return borderColor;

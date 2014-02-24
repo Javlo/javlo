@@ -232,8 +232,6 @@ public class AccessServlet extends HttpServlet implements IVersion {
 
 			ContentContext ctx = ContentContext.getContentContext(request, response);
 			
-			ctx.toStream(System.out);
-			
 			globalContext.initExternalService(ctx);
 
 			if (FIRST_REQUEST) {

@@ -2319,37 +2319,43 @@ public class Template implements Comparable<Template> {
 	protected void loadTemplatePart(TemplatePart part, String prefix) {
 		part.setBackgroundColor(properties.getString(prefix+".background-color"));
 		part.setBorderColor(properties.getString(prefix+".border-color"));
-		part.setBorderSize(properties.getString(prefix+".border-size"));
+		part.setBorderWidth(properties.getString(prefix+".border-width"));
 		part.setFont(properties.getString(prefix+".font"));
 		part.setHeight(properties.getString(prefix+".height"));
 		part.setMargin(properties.getString(prefix+".margin"));
 		part.setPadding(properties.getString(prefix+".padding"));
-		part.setTextColor(properties.getString(prefix+".text-color"));
+		part.setTextColor(properties.getString(prefix+".color"));
 		part.setTextSize(properties.getString(prefix+".text-size"));
 		part.setWidth(properties.getString(prefix+".width"));
 	}
 	
-	public Collection<Row> getRow() {
-		List<Area> outArea = new LinkedList<Area>();	
-		
+	public Collection<Row> getRows() {
 		Map<String,Row> rows = new HashMap<String, Row>();		
-		for (String area : getAreas()) {
-			String rowName = properties.getString("area."+area+".row","");
+		for (String area : getAreas()) {			
+			String rowName = properties.getString("area."+area+".row","");			
 			if (rowName.trim().length() > 0) {
 				Row row = rows.get(rowName);
 				if (row == null) {
 					row = new Row();
 					row.setName(rowName);
 					loadTemplatePart(row, "row."+rowName);
+					rows.put(rowName, row);
 				}
 				Area newArea = new Area();
 				newArea.setName(area);
 				loadTemplatePart(newArea,"area."+area);
-				outArea.add(newArea);
+				row.addArea(newArea);				
 			}
-		}
-	
+		}		
 		return rows.values();
+	}
+	
+	public boolean isEditable() {
+		if (getParent() != null && getParent().isEditable()) {
+			return true;
+		} else {
+			return getRows().size() > 0;
+		}
 	}
 
 }

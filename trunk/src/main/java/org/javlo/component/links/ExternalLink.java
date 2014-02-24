@@ -283,6 +283,11 @@ public class ExternalLink extends ComplexPropertiesLink implements IReverseLinkC
 	public boolean isOnlyThisPage() {
 		return properties.getProperty(REVERSE_LINK_KEY, "none").equals(ReverseLinkService.ONLY_THIS_PAGE);
 	}
+	
+	@Override
+	public boolean isOnlyPreviousComponent() {
+		return properties.getProperty(REVERSE_LINK_KEY, "none").equals(ReverseLinkService.ONLY_PREVIOUS_COMPONENT);
+	}	
 
 	@Override
 	public String getURL(ContentContext ctx) {

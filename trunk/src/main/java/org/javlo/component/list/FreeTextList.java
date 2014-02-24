@@ -82,7 +82,7 @@ public class FreeTextList extends Paragraph {
 	public String getViewXHTMLCode(ContentContext ctx) throws Exception {
 		GlobalContext globalContext = GlobalContext.getInstance(ctx.getRequest());
 		ReverseLinkService reverserLinkService = ReverseLinkService.getInstance(globalContext);
-		String value = reverserLinkService.replaceLink(ctx, getValue());
+		String value = reverserLinkService.replaceLink(ctx, this, getValue());
 		String sep = "";
 		if (value.length() > 3) {
 			if (value.startsWith("{")) {

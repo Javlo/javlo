@@ -5,6 +5,7 @@ import java.io.IOException;
 import java.net.URL;
 import java.net.URLClassLoader;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.Comparator;
 import java.util.HashMap;
 import java.util.LinkedList;
@@ -63,7 +64,7 @@ public class ModulesContext {
 	private Module fromModule;
 
 	Collection<Module> modules = new TreeSet<Module>(new ModuleOrderComparator());
-	Collection<Module> allModules = new TreeSet<Module>(new ModuleOrderComparator());
+	List<Module> allModules = new LinkedList<Module>();
 
 	private Map<String, IModuleAction> actionClass = new HashMap<String, IModuleAction>();
 
@@ -122,23 +123,22 @@ public class ModulesContext {
 				if (dir.isDirectory()) {
 					File configFile = new File(URLHelper.mergePath(dir.getAbsolutePath(), "config.properties"));
 					if (configFile.exists()) {
-						try {
-							
+						try {							
 							String moduleRoot = dir.getAbsolutePath().replace(webappRoot, "/");
 							Module module = new Module(configFile, new Locale(globalContext.getEditLanguage(session)), moduleRoot, globalContext.getPathPrefix());
-
 							if (module.haveRight(session, userFactory.getCurrentUser(session)) && globalContext.getModules().contains(module.getName())) {
 								localModules.add(module);
 							}
-
 							allModules.add(module);
 						} catch (IOException e) {
 							logger.severe(e.getMessage());
 							e.printStackTrace();
 						}
 					} else {
-						logger.warning("module, bad folder structure : no 'config.properties' in " + dir + " folder.");
+						logger.severe("module, bad folder structure : no 'config.properties' in " + dir + " folder.");
 					}
+				} else {
+					logger.warning("file found in modules folder : "+dir);
 				}
 			}
 
@@ -155,8 +155,10 @@ public class ModulesContext {
 								module.setAction(getExternalActionModule(module.getActionName(), extFile));
 								if (module.haveRight(session, userFactory.getCurrentUser(session)) && globalContext.getModules().contains(module.getName())) {
 									localModules.add(module);
+								} else {
+									logger.info("user no right for module : "+module.getName());
 								}
-								allModules.add(module);
+								allModules.add(module);								
 							} else {
 								logger.warning("bad external module format : " + extFile);
 							}
@@ -166,14 +168,24 @@ public class ModulesContext {
 					}
 				}
 			}
-
+			
+			if (allModules.size() == 0) {
+				/*System.out.println("***** ModulesContext.loadModule : globalContext = "+globalContext.getContextKey()); //TODO: remove debug trace
+				System.out.println("***** ModulesContext.loadModule : user = "+userFactory.getCurrentUser(session)); //TODO: remove debug trace
+				System.out.println("***** ModulesContext.loadModule : SESSION = "+session); //TODO: remove debug trace
+				System.out.println("***** ModulesContext.loadModule : allModulesFolder length = "+allModulesFolder.length); //TODO: remove debug trace*/
+				throw new ModuleException("javlo need at least one module.");
+			}
+			
+			Collections.sort(allModules, new ModuleOrderComparator());
 			// load module needed
 			List<Module> neededModules = new LinkedList<Module>();
+			List<Module> localAllModules = new LinkedList<Module>(allModules);
 			for (Module module : localModules) {
 				Collection<String> neededModulesName = module.getNeeded();
 				if (neededModulesName != null) {
 					for (String needed : neededModulesName) {
-						for (Module mod : allModules) {
+						for (Module mod : localAllModules) {
 							if (mod.getName().equals(needed)) {
 								neededModules.add(mod);
 							}
@@ -187,10 +199,7 @@ public class ModulesContext {
 					localModules.add(module);
 				}
 			}
-
-			if (allModules.size() == 0) {
-				throw new ModuleException("javlo need at least one module.");
-			}
+			
 
 			if (localModules.size() == 0) { // if no module defined >>>> add
 											// admin and user module for config

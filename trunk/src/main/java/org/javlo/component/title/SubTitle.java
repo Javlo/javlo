@@ -55,7 +55,7 @@ public class SubTitle extends AbstractVisualComponent {
 			if (level.equals("7") || level.equals("8") || level.equals("9")) {
 				res.append("<div id=\"" + getXHTMLId(ctx) + "\" class=\"subtitle-" + level + "\">");
 				ReverseLinkService reverserLinkService = ReverseLinkService.getInstance(globalContext);
-				value = reverserLinkService.replaceLink(ctx, value);
+				value = reverserLinkService.replaceLink(ctx, this, value);
 				res.append(XHTMLHelper.textToXHTML(value));
 				res.append("</div>");
 			} else {
@@ -65,7 +65,7 @@ public class SubTitle extends AbstractVisualComponent {
 				}
 				res.append("<h" + level + " id=\"" + getXHTMLId(ctx) + "\" class=\"subtitle\""+style+">");
 				ReverseLinkService reverserLinkService = ReverseLinkService.getInstance(globalContext);
-				value = reverserLinkService.replaceLink(ctx, value);
+				value = reverserLinkService.replaceLink(ctx, this, value);
 				res.append(XHTMLHelper.textToXHTML(value));
 				res.append("</h" + level + ">");
 			}

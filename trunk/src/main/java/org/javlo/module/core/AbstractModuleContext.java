@@ -16,7 +16,9 @@ import org.javlo.context.GlobalContext;
 import org.javlo.i18n.I18nAccess;
 
 /**
- * represent the context of a module, for create a context extends this class and for instanciate you class use getInstance with you class for implementationClass param.
+ * represent the context of a module, for create a context extends this class
+ * and for instanciate you class use getInstance with you class for
+ * implementationClass param.
  * 
  * @author Patrick Vandermaesen
  * 
@@ -75,8 +77,11 @@ public abstract class AbstractModuleContext {
 
 	public List<LinkToRenderer> getFlatNavigation() {
 		List<LinkToRenderer> flatNavigation = new LinkedList<LinkToRenderer>();
-		for (LinkToRenderer link : getNavigation()) {
-			createFlatNavigation(flatNavigation, link);
+		List<LinkToRenderer> renderers = getNavigation();
+		if (renderers != null) {
+			for (LinkToRenderer link : renderers) {
+				createFlatNavigation(flatNavigation, link);
+			}
 		}
 		return flatNavigation;
 	}
@@ -102,7 +107,9 @@ public abstract class AbstractModuleContext {
 	}
 
 	/**
-	 * when user click on a generic navigation, navigation engine call this method for change the renderer, by default module.setRenderer is called but it can be the renderer of a box.
+	 * when user click on a generic navigation, navigation engine call this
+	 * method for change the renderer, by default module.setRenderer is called
+	 * but it can be the renderer of a box.
 	 * 
 	 * @param renderer
 	 *            link to a jsp file.
