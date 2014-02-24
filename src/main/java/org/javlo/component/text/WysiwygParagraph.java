@@ -8,7 +8,6 @@ import java.util.List;
 import java.util.Map;
 
 import org.javlo.component.core.AbstractVisualComponent;
-import org.javlo.config.StaticConfig;
 import org.javlo.context.ContentContext;
 import org.javlo.context.GlobalContext;
 import org.javlo.data.InfoBean;
@@ -51,9 +50,8 @@ public class WysiwygParagraph extends AbstractVisualComponent {
 		filesParams.put("page", "meta");
 		filesParams.put("select", "_TYPE_");
 		filesParams.put("previewEdit", "true");
-		
-		String chooseImageURL = URLHelper.createModuleURL(ctx, ctx.getPath(), "file", filesParams);		
-		
+				
+		String chooseImageURL = URLHelper.createModuleURL(ctx, ctx.getPath(), "file", filesParams);
 		finalCode.append("<script type=\"text/javascript\">jQuery(document).ready(loadWysiwyg('#" + getContentName() + "','"+getEditorComplexity(ctx)+"','"+chooseImageURL+"'));</script>");
 		return finalCode.toString();
 	}
@@ -119,7 +117,7 @@ public class WysiwygParagraph extends AbstractVisualComponent {
 	@Override
 	public void performEdit(ContentContext ctx) throws Exception {	
 		RequestService requestService = RequestService.getInstance(ctx.getRequest());
-		String newContent = requestService.getParameter(getContentName(), null);
+		String newContent = requestService.getParameter(getContentName(), null);		
 		if (newContent != null) {
 			if (!getValue().equals(newContent)) {
 				if (StringHelper.isTrue(getConfig(ctx).getProperty("clean-html", "false"))) {

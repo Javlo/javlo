@@ -151,14 +151,14 @@ jQuery(document).ready(function() {
 	
 	jQuery(".js-change-submit select").each(function(){				
 		var item = jQuery(this);
-		item.on("change",function() {
+		item.live("change",function() {
 			jQuery(this.form).trigger("submit");
 		});
 	});
 	
 	jQuery(".js-submit select").each(function(){				
 		var item = jQuery(this);
-		item.on("change", function() {
+		item.live("change", function() {
 			jQuery(this.form).trigger("submit");
 		});
 	});
@@ -170,7 +170,7 @@ jQuery(document).ready(function() {
 	
 	
 	jQuery(".submit_on_change").each(function(){
-		jQuery(this).on("change",function() {
+		jQuery(this).live("change",function() {
 			jQuery(this.form).trigger("submit");
 		});
 	});
