@@ -1,8 +1,8 @@
-<%@page import="java.util.Map"
-%><%@page import="java.util.Hashtable"
-%><%@page contentType="text/html"
+<%@page contentType="text/html"
         import="
         java.util.Stack,
+        java.util.Map,
+        java.util.Hashtable,
         java.util.LinkedList,
         java.util.Collection,
         org.javlo.service.ClipBoard,

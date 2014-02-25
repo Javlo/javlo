@@ -344,7 +344,7 @@ public abstract class AbstractFileComponent extends AbstractVisualComponent impl
 
 			finalCode.append(XHTMLHelper.getInputOneSelect(getSelectXHTMLInputName(), fileListBlanck, getFileName(), getJSOnChange(ctx), true));
 
-			if (ctx.getRenderMode() == ContentContext.EDIT_MODE) {
+			if (ctx.getRenderMode() == ContentContext.EDIT_MODE && !ctx.isEditPreview()) {
 				if (isLinkToStatic()) {
 
 					Map<String, String> filesParams = new HashMap<String, String>();

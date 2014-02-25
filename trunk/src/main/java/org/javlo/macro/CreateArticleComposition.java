@@ -146,7 +146,7 @@ public class CreateArticleComposition extends AbstractInteractiveMacro implement
 			}
 			Calendar cal = Calendar.getInstance();
 			cal.setTime(articleDate);
-			MenuElement rootPage = ContentService.getInstance(ctx.getRequest()).getNavigation(ctx).searchChildFromName(rootPageName);
+			MenuElement rootPage = ContentService.getInstance(ctx.getRequest()).getNavigation(ctx).searchChildFromName(rootPageName);			
 			if (rootPage != null) {
 				List<String> roles = new LinkedList<String>();
 				Set<String> roleSet = new HashSet<String>();
@@ -156,15 +156,13 @@ public class CreateArticleComposition extends AbstractInteractiveMacro implement
 					if (ctx.getCurrentEditUser().validForRoles(roleSet)) {
 						roles.add(role);
 					}
-				}
-				
+				}				
 				PageAssociationBean assBean = null;
 				if (duplicate) {
 					if (ctx.getCurrentPage().getRootOfChildrenAssociation() != null) {
 						assBean = new PageAssociationBean(ctx, ctx.getCurrentPage().getRootOfChildrenAssociation());
 					} 
-				}
-				
+				}				
 				String yearPageName = rootPage.getName() + "-" + cal.get(Calendar.YEAR);
 				MenuElement yearPage = MacroHelper.addPageIfNotExist(ctx, rootPage.getName(), yearPageName, true);
 				MacroHelper.createMonthStructure(ctx, yearPage);

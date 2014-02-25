@@ -1,6 +1,6 @@
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c"
 %><%@ taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions" %>
-<li class="${template.valid?'valid':'unvalid'}">
+<li class="${template.valid?'valid':'unvalid'}${info.page.templateId == template.name?' active':''}">
         <div class="thumb">
         	<c:if test="${empty param.previewEdit}">
             	<img src="${template.previewUrl}" alt="${template.name}" />

@@ -1014,6 +1014,10 @@ ul,li {
 	z-index: 10;
 }
 
+.gallery .thumbview .active .thumb, .action-button.active {    
+    border: 1px solid #FE5A00;
+}
+
 /*** preview ***/
 .box.preview {
 	margin-top: 20px;

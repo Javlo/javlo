@@ -263,7 +263,9 @@ public class GlobalImage extends Image {
 		filesParams.put("webaction", "changeRenderer");
 		filesParams.put("page", "meta");
 		
-		String backURL = URLHelper.createModuleURL(ctx, ctx.getPath(), "content");		
+		String backURL = URLHelper.createModuleURL(ctx, ctx.getPath(), "content");	
+		backURL = URLHelper.addParam(backURL, "comp_id", "cp_"+getId());
+		backURL = URLHelper.addParam(backURL, "webaction", "editPreview");
 		filesParams.put(ElementaryURLHelper.BACK_PARAM_NAME, backURL);
 		
 		String staticURL = URLHelper.createModuleURL(ctx, ctx.getPath(), "file", filesParams);
