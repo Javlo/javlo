@@ -294,22 +294,7 @@
     <login-config>
         <auth-method>EPAUTH</auth-method>
         <realm-name>epauth</realm-name>
-    </login-config>  -->
-    
-    
-     <!-- <security-constraint>
-        <web-resource-collection>
-          <web-resource-name>Javlo Administration</web-resource-name>
-          <url-pattern>/*</url-pattern>
-        </web-resource-collection>
-     </security-constraint>
-
-
-    <login-config>
-        <auth-method>EPAUTH</auth-method>
-        <realm-name>epauth</realm-name>
-    </login-config>-->
-	
+    </login-config>  -->	
     
    <!-- <security-constraint>
     	<web-resource-collection>

@@ -2510,11 +2510,24 @@ public class MenuElement implements Serializable {
 	}
 
 	public Date getModificationDate() {
+		Date pageDate; 
 		if (getManualModificationDate() != null) {
-			return getManualModificationDate();
+			pageDate = getManualModificationDate();
 		} else {
-			return getRealModificationDate();
+			pageDate = getRealModificationDate();
 		}
+		Calendar cal = Calendar.getInstance();
+		cal.setTime(pageDate);
+		if (isChildrenAssociation()) {
+			for (MenuElement child : getChildMenuElements()) {				
+				Calendar childCat = Calendar.getInstance();
+				childCat.setTime(child.getModificationDate());
+				if (childCat.after(cal)) {
+					cal = childCat;
+				}
+			}
+		}
+		return cal.getTime();
 	}
 
 	/**

@@ -82,15 +82,34 @@ public class SubTitle extends AbstractVisualComponent {
 	public int getSearchLevel() {
 		return SEARCH_LEVEL_HIGH;
 	}
+	
+	/**
+	 * get the max level of the subtitle.
+	 * @param ctx
+	 * @return
+	 */
+	protected int getMaxLevel(ContentContext ctx) {
+		return Integer.parseInt(getConfig(ctx).getProperty("max-level", "7"));
+	}
 
 	@Override
 	public String[] getStyleList(ContentContext ctx) {
-		return new String[] { "2", "3", "4", "5", "6", "7", "8", "9" };
+		int maxLevel = getMaxLevel(ctx);
+		String[] outStyleList = new String[maxLevel-1];
+		for (int i=2; i<=maxLevel; i++) {
+			outStyleList[i-2]  = ""+i;
+		}
+		return outStyleList;
 	}
 
 	@Override
 	public String[] getStyleLabelList(ContentContext ctx) {
-		return new String[] { "level-2", "level-3", "level-4", "level-5", "level-6", "level-7", "level-8", "level-9" };
+		int maxLevel = getMaxLevel(ctx);
+		String[] outStyleList = new String[maxLevel-1];
+		for (int i=2; i<=maxLevel; i++) {
+			outStyleList[i-2]  = "level-"+i;
+		}
+		return outStyleList;		
 	}
 
 	@Override

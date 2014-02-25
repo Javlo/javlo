@@ -16,6 +16,9 @@
 		<c:if test="${not empty param.select}">
 			<c:param name="select" value="${param.select}"></c:param>
 		</c:if>
+		<c:if test="${not empty param[BACK_PARAM_NAME]}">
+			<c:param name="${BACK_PARAM_NAME}" value="${param[BACK_PARAM_NAME]}" />
+		</c:if>
 	</c:url>
 	<li class="${file.directory?'directory':'file'} ${not empty param.select?'select':'no-select'}">
 		<c:if test="${param.select != 'image' || file.image || file.directory}">

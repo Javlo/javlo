@@ -204,6 +204,8 @@ public class PageReferenceComponent extends ComplexPropertiesLink implements IAc
 			bean.selected = page.isSelected(ctx);
 			bean.linkOn = page.getLinkOn(ctx);
 			bean.creationDate = StringHelper.renderShortDate(ctx, page.getCreationDate());
+			bean.modificationDate = StringHelper.renderShortDate(ctx, page.getModificationDate());
+			bean.sortableModificationDate = StringHelper.renderShortDate(ctx, page.getModificationDate());
 			bean.sortableCreationDate = StringHelper.renderSortableDate(page.getCreationDate());
 			if (page.getContentDate(ctx) != null) {
 				bean.date = StringHelper.renderShortDate(ctx, page.getContentDate(ctx));
@@ -221,6 +223,7 @@ public class PageReferenceComponent extends ComplexPropertiesLink implements IAc
 				bean.startDate = bean.date;
 				bean.endDate = bean.date;
 			}
+			
 
 			/**
 			 * for association link to association page and not root.
@@ -228,6 +231,8 @@ public class PageReferenceComponent extends ComplexPropertiesLink implements IAc
 			MenuElement firstChild = page.getFirstChild();
 			if (firstChild != null && firstChild.isChildrenAssociation()) {
 				bean.url = URLHelper.createURL(ctx, firstChild.getPath());
+				bean.modificationDate = StringHelper.renderShortDate(ctx, firstChild.getModificationDate());
+				bean.sortableModificationDate = StringHelper.renderShortDate(ctx, firstChild.getModificationDate());
 				bean.publishURL = URLHelper.createAbsoluteViewURL(ctx, firstChild.getPath());
 			} else {
 				bean.url = URLHelper.createURL(ctx, page.getPath());
@@ -302,6 +307,8 @@ public class PageReferenceComponent extends ComplexPropertiesLink implements IAc
 		private String date = null;
 		private String sortableDate = null;
 		private String creationDate = null;
+		private String modificationDate = null;
+		private String sortableModificationDate = null;
 		private String sortableCreationDate = null;
 		private String startDate = null;
 		private String endDate = null;
@@ -617,6 +624,22 @@ public class PageReferenceComponent extends ComplexPropertiesLink implements IAc
 
 		public void setReactionSize(int reactionSize) {
 			this.reactionSize = reactionSize;
+		}
+
+		public String getModificationDate() {
+			return modificationDate;
+		}
+
+		public void setModificationDate(String modificationDate) {
+			this.modificationDate = modificationDate;
+		}
+
+		public String getSortableModificationDate() {
+			return sortableModificationDate;
+		}
+
+		public void setSortableModificationDate(String sortableModificationDate) {
+			this.sortableModificationDate = sortableModificationDate;
 		}
 
 	}
