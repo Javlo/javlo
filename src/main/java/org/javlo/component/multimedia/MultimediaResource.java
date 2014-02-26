@@ -8,6 +8,7 @@ import java.util.List;
 
 import org.javlo.context.ContentContext;
 import org.javlo.helper.StringHelper;
+import org.javlo.helper.URLHelper;
 
 public class MultimediaResource {
 
@@ -42,7 +43,7 @@ public class MultimediaResource {
 		}
 
 	}
-	
+
 	public static class SortByName implements Comparator<MultimediaResource> {
 
 		boolean reverse = false;
@@ -54,10 +55,10 @@ public class MultimediaResource {
 		@Override
 		public int compare(MultimediaResource o1, MultimediaResource o2) {
 			int out = 0;
-			
+
 			String name1 = StringHelper.getFileNameFromPath(o1.getURL());
 			String name2 = StringHelper.getFileNameFromPath(o2.getURL());
-			
+
 			if (name1 != null || name2 != null) {
 				if (name1 == null) {
 					out = 1;
@@ -295,19 +296,77 @@ public class MultimediaResource {
 			return "unknow";
 		}
 	}
+
+	/**
+	 * return type : unknow, html, youtube, vimeo, dailymotion, europarltv, mp4,
+	 * jpg, gif, png, image-unkown
+	 * 
+	 * @return
+	 */
+	public String getSubType() {
+		String url = getURL();
+		if (url == null) {
+			return "unknow";
+		}
+		String lowerURL = url.trim().toLowerCase();
+		if (StringHelper.isImage(url)) {
+			if (lowerURL.endsWith(".jpg") || lowerURL.endsWith(".jpeg")) {
+				return "jpg";
+			} else if (lowerURL.endsWith(".png")) {
+				return "png";
+			} else if (lowerURL.endsWith(".gif")) {
+				return "gif";
+			} else {
+				return "image-unkown";
+			}
+		}
+		if (lowerURL.endsWith(".mp4")) {
+			return "mp4";
+		} else {
+			if (lowerURL.contains("vimeo.")) {
+				return "vimeo";
+			} else if (lowerURL.contains("dailymotion.")) {
+				return "dailymotion";
+			} else if (lowerURL.contains("europarltv.")) {
+				return "europarltv";
+			} else if (lowerURL.contains("youtu")) {
+				return "youtube";
+			}
+		}
+		if (StringHelper.isURL(url) || StringHelper.isHTML(url)) {
+			return "html";
+		} else {
+			return "unknow";
+		}
+	}
 	
+	/**
+	 * get code of the video (sp. v=code in youtube video).
+	 * @return
+	 */
+	public String getCode() {
+		String subtype = getSubType();
+		if (subtype.equals("youtube")) {
+			return URLHelper.getParams(getURL()).get("v");
+		} else if (subtype.equals("dailymotion") || subtype.equals("video")) {
+			String code = getURL();
+			code = StringHelper.getFileNameFromPath(code);
+			return code;
+		}
+		return null;
+	}
+
 	public boolean isImage() {
 		return getType().equals("image");
 	}
-	
+
 	public boolean isVideo() {
 		return getType().equals("video");
 	}
-	
+
 	public boolean isHtml() {
 		return getType().equals("html");
 	}
-
 
 	public String getId() {
 		return id;
