@@ -120,7 +120,7 @@ public class MenuElement implements Serializable {
 		TimeRange timeRange = null;
 		Boolean contentDateVisible = null;
 		Boolean notInSearch = null;
-		int depth = 0;		
+		int depth = 0;
 		public boolean visible = false;
 		String referenceLanguage = null;
 		boolean breakRepeat;
@@ -863,7 +863,7 @@ public class MenuElement implements Serializable {
 	int priority = 10;
 
 	String name = null;
-	
+
 	String nameKey = null;
 
 	boolean childrenAssociation = false;
@@ -1839,21 +1839,20 @@ public class MenuElement implements Serializable {
 				}
 			}
 		} else {
-			if (!isEmpty(localContext)) {
-				ContentElementList contentList = getAllContent(localContext); // search
-																				// date
-																				// in
-																				// all
-																				// area
-				while (contentList.hasNext(ctx)) {
-					IContentVisualComponent comp = contentList.next(ctx);
-					if (comp.getType() == DateComponent.TYPE) {
-						return ((DateComponent) comp).getDate();
-					} else if (comp.getType() == TimeRangeComponent.TYPE) {
-						return ((TimeRangeComponent) comp).getStartDate();
-					}
+			ContentElementList contentList = getAllContent(localContext); // search
+																			// date
+																			// in
+																			// all
+																			// area
+			while (contentList.hasNext(ctx)) {
+				IContentVisualComponent comp = contentList.next(ctx);
+				if (comp.getType() == DateComponent.TYPE) {
+					return ((DateComponent) comp).getDate();
+				} else if (comp.getType() == TimeRangeComponent.TYPE) {
+					return ((TimeRangeComponent) comp).getStartDate();
 				}
 			}
+
 		}
 		return null;
 	}
@@ -1928,7 +1927,7 @@ public class MenuElement implements Serializable {
 		desc.description = StringUtils.replace(res, "\"", "&quot;");
 		return desc.description;
 	}
-	
+
 	/**
 	 * get number of reactions of the page (description component)
 	 * 
@@ -1945,7 +1944,7 @@ public class MenuElement implements Serializable {
 		while (contentList.hasNext(newCtx)) {
 			IContentVisualComponent elem = contentList.next(newCtx);
 			if (elem.getType().equals(ReactionComponent.TYPE)) {
-				return ((ReactionComponent)elem).getReactionSize(newCtx);
+				return ((ReactionComponent) elem).getReactionSize(newCtx);
 			}
 		}
 		return 0;
@@ -2510,7 +2509,7 @@ public class MenuElement implements Serializable {
 	}
 
 	public Date getModificationDate() {
-		Date pageDate; 
+		Date pageDate;
 		if (getManualModificationDate() != null) {
 			pageDate = getManualModificationDate();
 		} else {
@@ -2519,7 +2518,7 @@ public class MenuElement implements Serializable {
 		Calendar cal = Calendar.getInstance();
 		cal.setTime(pageDate);
 		if (isChildrenAssociation()) {
-			for (MenuElement child : getChildMenuElements()) {				
+			for (MenuElement child : getChildMenuElements()) {
 				Calendar childCat = Calendar.getInstance();
 				childCat.setTime(child.getModificationDate());
 				if (childCat.after(cal)) {
@@ -2537,7 +2536,7 @@ public class MenuElement implements Serializable {
 	 */
 	public String getName() {
 		if (nameKey == null) {
-			nameKey = StringHelper.createFileName(name).trim(); 
+			nameKey = StringHelper.createFileName(name).trim();
 		}
 		return nameKey;
 	}
@@ -3182,7 +3181,7 @@ public class MenuElement implements Serializable {
 	 *            a page of the navigation.
 	 * @return true if page found in paternity
 	 */
-	public boolean isChildOf(MenuElement parent) {		
+	public boolean isChildOf(MenuElement parent) {
 		if (getParent() == null || parent == null) {
 			return false;
 		} else if (getParent().getId().equals(parent.getId())) {
@@ -3262,7 +3261,9 @@ public class MenuElement implements Serializable {
 		while ((contentList.hasNext(ctxForceArea))) {
 			IContentVisualComponent component = contentList.next(ctxForceArea);
 			if (component != null) {
-				if (!component.isEmpty(ctxForceArea) || (ctx.getCurrentTemplate() != null && ctx.getCurrentTemplate().isMailing())) { // mailing never empty
+				if (!component.isEmpty(ctxForceArea) || (ctx.getCurrentTemplate() != null && ctx.getCurrentTemplate().isMailing())) { // mailing
+																																		// never
+																																		// empty
 					if (!component.isRepeat() || component.getType() == ForceRealContent.TYPE) {
 						desc.setEmpty(area, false);
 						return false;
@@ -3755,7 +3756,7 @@ public class MenuElement implements Serializable {
 	 * outLastMonthAccess; } } else { return lastMonthAccess; } }
 	 */
 
-	public void setName(String name) {		
+	public void setName(String name) {
 		this.name = name;
 		nameKey = null;
 		releaseCache();
@@ -4163,13 +4164,13 @@ public class MenuElement implements Serializable {
 	public void setChangeNotification(boolean changeNotification) {
 		this.changeNotification = changeNotification;
 	}
-	
+
 	public MenuElement getFirstChild() {
 		if (childMenuElements.size() > 0) {
-			return childMenuElements.get(0);	
+			return childMenuElements.get(0);
 		} else {
 			return null;
-		}		
+		}
 	}
 
 }
