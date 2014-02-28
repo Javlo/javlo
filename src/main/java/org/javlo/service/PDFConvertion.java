@@ -7,6 +7,7 @@ import java.util.logging.Logger;
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 
+import org.javlo.helper.StringHelper;
 import org.w3c.dom.Document;
 import org.xhtmlrenderer.resource.FSEntityResolver;
 
@@ -29,6 +30,8 @@ public class PDFConvertion {
 	}
 
 	public void convertXHTMLToPDF(URL url, final String userName, final String password, OutputStream out) {
+		
+		logger.info("create PDF from : "+url+"  user:"+userName+"  password found:"+(StringHelper.neverNull(password).length()>1));
 
 		if (null != userName && userName.trim().length() != 0
 

@@ -65,7 +65,7 @@ public class ContentService {
 	}
 
 	public static void clearAllCache(ContentContext ctx, GlobalContext globalContext) throws Exception {
-		logger.info("refresh context, content and template");
+		logger.info("refresh context, content and template : " + globalContext.getContextKey());
 		ContentService content = ContentService.getInstance(globalContext);
 		content.releaseAll(ctx, globalContext);
 		PersistenceService.getInstance(globalContext).loadVersion();

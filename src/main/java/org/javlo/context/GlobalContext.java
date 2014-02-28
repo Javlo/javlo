@@ -59,6 +59,7 @@ import org.javlo.helper.ResourceHelper;
 import org.javlo.helper.ServletHelper;
 import org.javlo.helper.StringHelper;
 import org.javlo.helper.URLHelper;
+import org.javlo.io.TransactionFile;
 import org.javlo.mailing.MailService;
 import org.javlo.module.core.ModuleException;
 import org.javlo.module.core.ModulesContext;
@@ -1844,10 +1845,23 @@ public class GlobalContext implements Serializable {
 	}
 
 	public void save() {
+		TransactionFile tf = null;
 		try {
 			synchronized (properties) {
 				if (getFolder() != null && getFolder().trim().length() > 0) {
-					properties.save(contextFile);
+					try {
+						tf = new TransactionFile(contextFile);
+						properties.save(tf.getOutputStream());
+						tf.commit();
+					} catch (IOException e) {						
+						e.printStackTrace();
+						try {
+							tf.rollback();
+						} catch (IOException e1) {						
+							e1.printStackTrace();
+						}
+					}
+					
 				} else {
 					logger.severe("no folder found for : " + getContextKey() + " context not stored, try to reload.");
 					reload();
@@ -2019,21 +2033,24 @@ public class GlobalContext implements Serializable {
 	private void saveData() {
 		if (dataProperties != null) {
 			synchronized (lockDataFile) {
-				OutputStream out = null;
+				TransactionFile tf = null;
 				try {
-					out = new FileOutputStream(getDataFile());
 					long startTime = System.currentTimeMillis();
+					
 					logger.finest("start storage data of context " + getContextKey());
-					dataProperties.store(out, getContextKey());
+					
+					tf = new TransactionFile(getDataFile());
+					dataProperties.store(tf.getOutputStream(), getContextKey());
+					tf.commit();
+					
 					logger.fine("store data for : " + getContextKey() + " size:" + dataProperties.size() + " time:" + StringHelper.renderTimeInSecond(System.currentTimeMillis() - startTime));
 				} catch (Exception e) {
-					e.printStackTrace();
-				} finally {
 					try {
-						out.close();
-					} catch (Throwable e) {
-						e.printStackTrace();
+						tf.rollback();
+					} catch (IOException e1) {
+						e1.printStackTrace();
 					}
+					e.printStackTrace();
 				}
 			}
 		}

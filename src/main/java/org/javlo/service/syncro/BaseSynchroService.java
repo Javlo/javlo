@@ -46,6 +46,7 @@ public abstract class BaseSynchroService extends AbstractSynchroService<BaseSync
 	private HttpClientService httpClientService;
 	private boolean manageDeletedFiles = true;
 	private boolean splitBigFiles = true;
+	private boolean refreshAll = false;
 
 	public BaseSynchroService(HttpClientService httpClientService, File baseFolderFile) {
 		this.httpClientService = httpClientService;
@@ -439,7 +440,11 @@ public abstract class BaseSynchroService extends AbstractSynchroService<BaseSync
 	protected void onActionsApplied(BaseSynchroContext context) {
 		super.onActionsApplied(context);
 		if (context.isChangeOccured()) {
-			sendCommand("refresh", "true");
+			if (isRefreshAll()) {				
+				sendCommand("refresh-all", "true");
+			} else {				
+				sendCommand("refresh", "true");
+			}
 		}
 	}
 
@@ -468,6 +473,14 @@ public abstract class BaseSynchroService extends AbstractSynchroService<BaseSync
 		out.println("Uncaught exception in synchronisation :");
 		ex.printStackTrace(out);
 		super.onUncaughtException(context, ex);
+	}
+
+	public boolean isRefreshAll() {
+		return refreshAll;
+	}
+
+	public void setRefreshAll(boolean refreshAll) {
+		this.refreshAll = refreshAll;
 	}
 
 	public class FileInfoPathComparator implements Comparator<FileInfo> {

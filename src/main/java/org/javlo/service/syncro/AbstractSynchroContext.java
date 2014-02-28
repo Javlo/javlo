@@ -38,7 +38,7 @@ public abstract class AbstractSynchroContext {
 	protected final PrintWriter report = new PrintWriter(reportBuffer);
 
 	protected boolean errorOccured = false;
-	protected boolean changeOccured = false;
+	protected boolean changeOccured = false;	
 
 	protected final Map<String, SynchroAction> actions = new HashMap<String, SynchroAction>();
 	private final AbstractSynchroService<?> parentService;
@@ -138,5 +138,4 @@ public abstract class AbstractSynchroContext {
 			//Ignore exception
 		}
 	}
-
 }

@@ -1889,7 +1889,7 @@ public class Template implements Comparable<Template> {
 		return config.getRealPath(getLocalWorkTemplateFolder());
 	}
 
-	public void importTemplateInWebapp(StaticConfig config, ContentContext ctx) throws IOException {
+	public void importTemplateInWebapp(StaticConfig config, ContentContext ctx) throws IOException {		
 		if (templateImportationError) {
 			return;
 		}
