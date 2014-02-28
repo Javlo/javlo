@@ -164,6 +164,7 @@ public class PageReferenceComponent extends ComplexPropertiesLink implements IAc
 
 			PageBean bean = new PageBean();
 			bean.language = ctx.getRequestContentLanguage();
+			ctx.setRequestContentLanguage(bean.language); // fix requestContentLanguage in case of navigation area
 			bean.title = page.getTitle(ctx);
 			if (page.isChildrenAssociation() && page.getChildMenuElements().size() > 0) {
 				bean.title = page.getChildMenuElements().iterator().next().getTitle(ctx);

@@ -26,8 +26,6 @@ import org.javlo.ztatic.StaticInfo;
  */
 public class GenericFile extends AbstractFileComponent implements IReverseLinkComponent {
 
-	private static final String SHADOW_STYLE = "shadow";
-
 	public static final String TYPE = "file";
 
 	private static final String HIDDEN = "hidden";
@@ -114,7 +112,7 @@ public class GenericFile extends AbstractFileComponent implements IReverseLinkCo
 		I18nAccess i18nAccess;
 		try {
 			i18nAccess = I18nAccess.getInstance(ctx.getRequest());
-			return new String[] { "standard", SHADOW_STYLE, i18nAccess.getText("global.hidden") };
+			return new String[] { "standard", i18nAccess.getText("global.hidden") };
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
@@ -132,7 +130,7 @@ public class GenericFile extends AbstractFileComponent implements IReverseLinkCo
 
 	@Override
 	public String[] getStyleList(ContentContext ctx) {
-		return new String[] { "standard", SHADOW_STYLE, HIDDEN };
+		return new String[] { "standard", HIDDEN };
 	}
 
 	@Override
@@ -165,11 +163,7 @@ public class GenericFile extends AbstractFileComponent implements IReverseLinkCo
 			String url = ElementaryURLHelper.mergePath(getDirSelected(), getFileName());
 			url = URLHelper.createResourceURL(ctx, getPage(), staticConfig.getFileFolder() + '/' + url);
 
-			String rel = "";
-			if (getStyle(ctx).equals(SHADOW_STYLE)) {
-				rel = "rel=\"shadowbox\" ";
-			}
-
+			String rel = "";			
 			GlobalContext globalContext = GlobalContext.getInstance(ctx.getRequest());
 			String openAsPopup = "";
 			if (globalContext.isOpenFileAsPopup()) {
