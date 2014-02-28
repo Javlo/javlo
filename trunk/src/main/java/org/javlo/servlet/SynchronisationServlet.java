@@ -239,6 +239,9 @@ public class SynchronisationServlet extends HttpServlet {
 						ResourceHelper.deleteFileAndParentDir(new File(fileName));
 					} else if (request.getParameter("refresh") != null) {
 						ContentContext ctx = ContentContext.getContentContext(request, response);
+						ContentService.clearCache(ctx, globalContext);
+					} else if (request.getParameter("refresh-all") != null) {
+						ContentContext ctx = ContentContext.getContentContext(request, response);
 						ContentService.clearAllCache(ctx, globalContext);
 					} else if (request.getParameter("context") != null) {
 						// System.out.println("****************************");

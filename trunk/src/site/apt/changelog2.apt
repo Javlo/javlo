@@ -223,3 +223,5 @@ change log
  * reverse link : only on previous component
  
  * update tinymce 4.0.16 (2014-01-31) - replace .on to .live - pdfUpdate algo revision
+ 
+ * transaction writing of globalcontext + synchro optimisation

@@ -137,6 +137,7 @@ public class SynchroThread extends AbstractThread {
 		try {
 			if (getTemplateFolder() != null) {
 				ServerSynchroService synchroService = ServerSynchroService.getInstanceForTemplate(getLocalName(), getServerURL(), getProxyHost(), getProxyPort(), getSynchroCode(), getTemplateFolder());
+				synchroService.setRefreshAll(true);
 				if (!synchroService.synchronize()) {
 					return;
 				}

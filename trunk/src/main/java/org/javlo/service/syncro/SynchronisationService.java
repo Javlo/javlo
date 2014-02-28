@@ -55,6 +55,8 @@ public class SynchronisationService {
 	private boolean downloadFromDMZ = true;
 
 	private boolean refreshDMZContent = false;
+	
+	private boolean fullRefreshDMZContent = false;
 
 	private final boolean uploadPreviewFile = true;
 
@@ -149,6 +151,7 @@ public class SynchronisationService {
 		outService.serverURL = serverURL;
 		outService.baseFolderFile = new File(baseFolderFile);
 		outService.URI_PREFIX = SynchronisationServlet.TEMPLATE_PREFIX;
+		outService.fullRefreshDMZContent = true;
 		outService.deleteDMZItNotFoundIntra = true;
 		outService.synchroCode = synchroCode;
 		outService.proxyHost = proxyHost;
@@ -161,6 +164,7 @@ public class SynchronisationService {
 		SynchronisationService outService = new SynchronisationService();
 		outService.serverURL = serverURL;
 		outService.baseFolderFile = new File(baseFolderFile);
+		outService.fullRefreshDMZContent = true;
 		outService.URI_PREFIX = SynchronisationServlet.TEMPLATE_MAILING_PREFIX;
 		outService.deleteDMZItNotFoundIntra = true;
 		outService.synchroCode = synchroCode;
@@ -331,6 +335,8 @@ public class SynchronisationService {
 	}
 
 	public String syncroResource(String previousResult) throws IOException {
+		
+		System.out.println("***** SynchronisationService.syncroResource : START."); //TODO: remove debug trace
 
 		if (serverURL == null) {
 			throw new NullPointerException("serverURL is null");
@@ -342,6 +348,7 @@ public class SynchronisationService {
 		PrintWriter out = new PrintWriter(writer);
 
 		boolean noError = true;
+		boolean needRefresh = false;
 		try {
 
 			out.println("Error on syncronisation.");
@@ -370,13 +377,12 @@ public class SynchronisationService {
 			ResourceHelper.closeResource(in);
 
 			Enumeration<Object> keys;
-
+			
 			// Browsing intra structure
 			keys = intraProp.keys();
 			while (keys.hasMoreElements()) {
 				String intraKey = (String) keys.nextElement();
 				String intraFileInfoStr = intraProp.getProperty(intraKey);
-
 				FileInfo intraFileInfo = new FileInfo(intraFileInfoStr);
 				FileInfo dmzFileInfo = null;
 				if (dmzProp.get(intraKey) == null) {
@@ -403,6 +409,7 @@ public class SynchronisationService {
 									if (!pushFile(intraFileInfo, out)) {
 										noError = false;
 									}
+									needRefresh = true;
 								} else {
 									// Intra = Exist, DMZ = Deleted, Saved = Exist > delete
 									realFile.delete();
@@ -412,6 +419,7 @@ public class SynchronisationService {
 					} else {
 						// Intra = Exist, DMZ = Exist ...
 						if (!ResourceHelper.checksumEquals(dmzFileInfo.getChecksum(), intraFileInfo.getChecksum())) {
+							needRefresh = true;
 							// ... Intra or DMZ = Modified ...
 							FileInfo savedFileInfo = null;
 							if (savedProp != null) {
@@ -453,7 +461,6 @@ public class SynchronisationService {
 			while (keys.hasMoreElements()) {
 				String dmzKey = (String) keys.nextElement();
 				String dmzFileInfoStr = dmzProp.getProperty(dmzKey);
-
 				FileInfo dmzFileInfo = new FileInfo(dmzFileInfoStr);
 				if (intraProp.get(dmzKey) == null) {
 					if (!dmzFileInfo.isDeleted()) {
@@ -469,10 +476,14 @@ public class SynchronisationService {
 					// Intra = Exist, DMZ = Exist > The process is already done in the first loop.
 				}
 			}
-
+			System.out.println("***** SynchronisationService.syncroResource : 1.needRefresh = "+needRefresh); //TODO: remove debug trace
 		} finally {
-			if (refreshDMZContent) {
+			System.out.println("***** SynchronisationService.syncroResource : 2.needRefresh = "+needRefresh); //TODO: remove debug trace
+			if (needRefresh && refreshDMZContent) {
 				sendCommand("refresh", "true");
+			}
+			if (needRefresh && fullRefreshDMZContent) {
+				sendCommand("refresh-all", "true");
 			}
 			out.close();
 			if (!noError) {
