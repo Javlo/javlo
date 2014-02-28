@@ -646,8 +646,13 @@ public class AccessServlet extends HttpServlet implements IVersion {
 						params.put("clean-html", "true");
 
 						String url = URLHelper.createURL(viewCtx, params);
+						
+						if (staticConfig.getApplicationLogin() != null) {
+							url = URLHelper.addCredential(url, staticConfig.getApplicationLogin(), staticConfig.getApplicationPassword());
+						}
 
-						PDFConvertion.getInstance().convertXHTMLToPDF(url, out);
+						//PDFConvertion.getInstance().convertXHTMLToPDF(url, out);
+						PDFConvertion.getInstance().convertXHTMLToPDF(new URL(url), staticConfig.getApplicationLogin(), staticConfig.getApplicationPassword(), out);
 
 					} else if (ctx.getFormat().equalsIgnoreCase("cxml")) {
 

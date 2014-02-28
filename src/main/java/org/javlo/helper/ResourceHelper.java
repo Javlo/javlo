@@ -1030,6 +1030,16 @@ public class ResourceHelper {
 			ResourceHelper.closeResource(in);
 		}
 	}
+	
+	public static final int writeFileToStream(File fileIn, OutputStream out) throws IOException {
+		InputStream in = null;
+		try {
+			in = new FileInputStream(fileIn);
+			return writeStreamToStream(in, out);
+		} finally {
+			ResourceHelper.closeResource(in);
+		}
+	}
 
 	public static final File writeFileItemToFolder(FileItem fileItem, File folder, boolean overwrite, boolean rename) throws IOException {
 		if (!folder.isDirectory()) {

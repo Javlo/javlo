@@ -55,7 +55,7 @@ public class ContentContext {
 
 	public static final int PAGE_MODE = 4;
 
-	public static final  int MAILING_MODE = 6;
+	public static final int MAILING_MODE = 6;
 
 	public static final int TIME_MODE = 7;
 
@@ -64,7 +64,7 @@ public class ContentContext {
 	public static final String FORWARD_PATH_REQUEST_KEY = "forward-path";
 
 	public static final String FORCE_MODE_PARAMETER_NAME = "render-mode";
-	
+
 	public static final String CHANGE_AREA_ATTRIBUTE_NAME = "_change_area";
 
 	public static final String FORCE_ABSOLUTE_URL = "_absolute-url";
@@ -81,11 +81,11 @@ public class ContentContext {
 	protected static Logger logger = Logger.getLogger(ContentContext.class.getName());
 
 	public static String CONTEXT_REQUEST_KEY = "contentContext";
-	
+
 	private MenuElement currentPageCached = null;
-	
+
 	private MenuElement virtualCurrentPage = null;
-	
+
 	private boolean pageAssociation = false;
 
 	private static ContentContext createContentContext(HttpServletRequest request, HttpServletResponse response, boolean free) {
@@ -96,7 +96,8 @@ public class ContentContext {
 	}
 
 	/**
-	 * return free content ctx, context not linked to a specific page, use in imagetransform servlet or something like that.
+	 * return free content ctx, context not linked to a specific page, use in
+	 * imagetransform servlet or something like that.
 	 * 
 	 * @param request
 	 * @param response
@@ -117,7 +118,8 @@ public class ContentContext {
 	 * @param request
 	 * @param response
 	 * @param correctPath
-	 *            true for search real page and construct new path with this page.
+	 *            true for search real page and construct new path with this
+	 *            page.
 	 * @return
 	 * @throws Exception
 	 */
@@ -140,7 +142,7 @@ public class ContentContext {
 
 		GlobalContext globalContext = GlobalContext.getInstance(ctx.getRequest());
 		EditContext editContext = EditContext.getInstance(globalContext, ctx.getRequest().getSession());
-		
+
 		if (globalContext.getForcedHost().length() > 0) {
 			ctx.setHostName(globalContext.getForcedHost());
 		}
@@ -333,15 +335,16 @@ public class ContentContext {
 	private boolean export = false;
 
 	public Boolean contentExistForContext = null;
-	
+
 	public Boolean editPreview = null;
 
 	/** cache **/
 
-	//private MenuElement currentPageCached = null;
+	// private MenuElement currentPageCached = null;
 
 	/**
-	 * contain a jsp page to be insered in the content place. content is insered if this attribute is null.
+	 * contain a jsp page to be insered in the content place. content is insered
+	 * if this attribute is null.
 	 */
 	private String specialContentRenderer = null;
 
@@ -360,7 +363,7 @@ public class ContentContext {
 	private HttpServletResponse response;;
 
 	private String area = ComponentBean.DEFAULT_AREA;
-	
+
 	private String virtualArea = null;
 
 	private Template currentTemplate = null;
@@ -430,13 +433,13 @@ public class ContentContext {
 		ajaxData = ctx.ajaxData;
 		ajax = ctx.ajax;
 		scheduledAjaxInsideZone = ctx.scheduledAjaxInsideZone;
-		
+
 		currentTemplate = ctx.currentTemplate;
-		
+
 		editPreview = ctx.editPreview;
-		
+
 		currentPageCached = ctx.currentPageCached;
-		
+
 		pageAssociation = ctx.pageAssociation;
 	}
 
@@ -511,7 +514,9 @@ public class ContentContext {
 	}
 
 	/**
-	 * return a context with language (if exist), it can be change the language (and only this) of the current context). this method use only the default language list.
+	 * return a context with language (if exist), it can be change the language
+	 * (and only this) of the current context). this method use only the default
+	 * language list.
 	 * 
 	 * @return null if no content found.
 	 * @throws Exception
@@ -534,7 +539,9 @@ public class ContentContext {
 	}
 
 	/**
-	 * return a context with language (if exist), it can be change the language (and only this) of the current context). this method use only the default language list.
+	 * return a context with language (if exist), it can be change the language
+	 * (and only this) of the current context). this method use only the default
+	 * language list.
 	 * 
 	 * @return null if no content found.
 	 * @throws Exception
@@ -621,7 +628,7 @@ public class ContentContext {
 	private MenuElement getCurrentPage(boolean urlFacotry) throws Exception {
 		if (getCurrentPageCached() != null) {
 			return getCurrentPageCached();
-		}		
+		}
 		GlobalContext globalContext = GlobalContext.getInstance(request);
 		MenuElement root = ContentService.getInstance(globalContext).getNavigation(this);
 		if (getPath().equals("/")) {
@@ -629,16 +636,16 @@ public class ContentContext {
 		} else {
 			if (getPath().trim().length() > 0) {
 				if (!getPath().trim().equals("/Home")) {
-					//(new Exception()).printStackTrace();
-				}				
-				MenuElement elem = globalContext.getPageIfExist(this, getPath(), urlFacotry);				
-				if (elem != null) {					
+					// (new Exception()).printStackTrace();
+				}
+				MenuElement elem = globalContext.getPageIfExist(this, getPath(), urlFacotry);
+				if (elem != null) {
 					setCurrentPageCached(elem);
 				} else {
 					setContentFound(false);
 					elem = root;
 					setPath(root.getPath());
-				}				
+				}
 				return elem;
 			} else {
 				return root;
@@ -703,15 +710,16 @@ public class ContentContext {
 	public Device getDevice() {
 		return device;
 	}
-	
+
 	/**
 	 * get all device accessible from current template.
+	 * 
 	 * @return
-	 * @throws Exception 
+	 * @throws Exception
 	 */
 	public List<String> getDeviceNames() throws Exception {
 		List<String> deviceNames = new LinkedList<String>(getCurrentTemplate().getRenderers());
-		for (int i=0; i<deviceNames.size(); i++) {
+		for (int i = 0; i < deviceNames.size(); i++) {
 			if (deviceNames.get(i).trim().length() == 0) {
 				deviceNames.set(i, Device.DEFAULT);
 			}
@@ -722,7 +730,7 @@ public class ContentContext {
 	public URL getDMZServerInter() {
 		return dmzServerInter;
 	}
-	
+
 	/**
 	 * reset DMZ for force local absolute URL.
 	 */
@@ -750,7 +758,7 @@ public class ContentContext {
 	public String getLanguage() {
 		return language;
 	}
-	
+
 	public Locale getLocale() {
 		return new Locale(getRequestContentLanguage());
 	}
@@ -778,10 +786,8 @@ public class ContentContext {
 			return getContentLanguage();
 		} else {
 			try {
-				if (getCurrentTemplate() != null) {
-					if (getCurrentTemplate() != null && getCurrentTemplate().isNavigationArea(getArea())) {
-						return getLanguage();
-					}
+				if (getCurrentTemplate() != null && getCurrentTemplate().isNavigationArea(getArea())) {
+					return getLanguage();
 				}
 			} catch (Exception e) {
 				e.printStackTrace();
@@ -796,16 +802,17 @@ public class ContentContext {
 	public HttpServletResponse getResponse() {
 		return response;
 	}
-	
+
 	/**
 	 * redirect.
+	 * 
 	 * @param url
-	 * @throws IOException 
+	 * @throws IOException
 	 */
 	public void sendRedirect(String url) throws IOException {
-		response.sendRedirect(url);		
+		response.sendRedirect(url);
 	}
-	
+
 	public String getSpecialContentRenderer() {
 		return specialContentRenderer;
 	}
@@ -844,7 +851,7 @@ public class ContentContext {
 	public boolean isArray() {
 		return array;
 	}
-	
+
 	public boolean isAsPreviewMode() {
 		return getRenderMode() == PREVIEW_MODE;
 	}
@@ -856,9 +863,10 @@ public class ContentContext {
 	public boolean isAsViewMode() {
 		return getRenderMode() == VIEW_MODE || getRenderMode() == TIME_MODE;
 	}
-	
+
 	/**
 	 * true if the current request must be tracked.
+	 * 
 	 * @return
 	 */
 	public boolean isTrackingContext() {
@@ -887,7 +895,7 @@ public class ContentContext {
 	public boolean isViewPrefix() {
 		return viewPrefix;
 	}
-	
+
 	public void setViewPrefix(boolean viewPrefix) {
 		this.viewPrefix = viewPrefix;
 	}
@@ -899,7 +907,7 @@ public class ContentContext {
 		return visible;
 	}
 
-	protected void resestCache() {		
+	protected void resestCache() {
 		resetCurrentPageCached();
 		setCurrentTemplate(null);
 		contentExistForContext = null;
@@ -914,7 +922,8 @@ public class ContentContext {
 	}
 
 	/**
-	 * return if the current request is for a page access and not a resource (jsp, img, js...)
+	 * return if the current request is for a page access and not a resource
+	 * (jsp, img, js...)
 	 * 
 	 * @return
 	 */
@@ -988,16 +997,17 @@ public class ContentContext {
 	}
 
 	public void setCurrentPageCached(MenuElement currentPageCached) {
-		
-		this.currentPageCached = currentPageCached; 
+
+		this.currentPageCached = currentPageCached;
 	}
-	
-	public void resetCurrentPageCached() {		
+
+	public void resetCurrentPageCached() {
 		currentPageCached = null;
 	}
 
 	/*
-	 * public void setCurrentTemplate(Template currentTemplate) { this.currentTemplate = currentTemplate; }
+	 * public void setCurrentTemplate(Template currentTemplate) {
+	 * this.currentTemplate = currentTemplate; }
 	 */
 
 	public void setDevice(Device device) {
@@ -1061,12 +1071,12 @@ public class ContentContext {
 	 * @param string
 	 *            a logical path
 	 */
-	public void setPath(String newPath) {		
+	public void setPath(String newPath) {
 		if (newPath.contains(";jsessionid=")) {
 			newPath = newPath.substring(0, newPath.indexOf(";jsessionid="));
 		}
-		if (!newPath.equals(path)) {			
-			path = newPath;			
+		if (!newPath.equals(path)) {
+			path = newPath;
 			resestCache();
 		}
 	}
@@ -1162,9 +1172,10 @@ public class ContentContext {
 		res.append(super.toString());
 		return res.toString();
 	}
-	
+
 	/**
 	 * trace info on stream
+	 * 
 	 * @param out
 	 */
 	public void toStream(OutputStream outStream) {
@@ -1172,17 +1183,17 @@ public class ContentContext {
 		out.println();
 		out.println(getClass().getCanonicalName());
 		out.println("--");
-		out.println("uri : "+request.getRequestURI());
-		out.println("path : "+getPath());
-		out.println("render mode : "+getRenderMode());
-		out.println("edit preview : "+isEditPreview());
-		out.println("area : "+getArea());
-		out.println("edit user : "+getCurrentEditUser());
-		out.println("lg : "+getLanguage());
-		out.println("visible : "+isVisible());
+		out.println("uri : " + request.getRequestURI());
+		out.println("path : " + getPath());
+		out.println("render mode : " + getRenderMode());
+		out.println("edit preview : " + isEditPreview());
+		out.println("area : " + getArea());
+		out.println("edit user : " + getCurrentEditUser());
+		out.println("lg : " + getLanguage());
+		out.println("visible : " + isVisible());
 		out.println("--");
 		out.println("");
-		out.close();		
+		out.close();
 	}
 
 	public User getCurrentUser() {
@@ -1262,7 +1273,8 @@ public class ContentContext {
 	}
 
 	/**
-	 * Schedule an ajax zone for update. The uri will be called after the prepare() of the current module actions.
+	 * Schedule an ajax zone for update. The uri will be called after the
+	 * prepare() of the current module actions.
 	 * 
 	 * @param id
 	 *            a xhtml id
@@ -1368,9 +1380,10 @@ public class ContentContext {
 	public void setFormat(String format) {
 		this.format = format;
 	}
-	
+
 	/**
 	 * set the current template with id.
+	 * 
 	 * @param templateId
 	 * @return false if template not found else true
 	 */
@@ -1400,7 +1413,7 @@ public class ContentContext {
 	 * @throws Exception
 	 */
 	public boolean isResourceGZip() throws Exception {
-		
+
 		if (!getGlobalContext().getStaticConfig().isProd()) {
 			return false;
 		}
@@ -1525,14 +1538,14 @@ public class ContentContext {
 		this.closePopup = closePopup;
 	}
 
-	public boolean isEditPreview() {	
+	public boolean isEditPreview() {
 		if (editPreview == null) {
 			return isEditPreview(request);
 		} else {
 			return editPreview;
 		}
 	}
-	
+
 	public void setEditPreview(boolean editPreview) {
 		this.editPreview = editPreview;
 	}
@@ -1570,15 +1583,18 @@ public class ContentContext {
 	public void setContentFound(boolean contentFound) {
 		this.contentFound = contentFound;
 	}
-	
+
 	/**
 	 * set content context if Object implement interface INeedContentContext.
-	 * @param object a object, if object don't implement INeedContentContext interface this method do nothing.
+	 * 
+	 * @param object
+	 *            a object, if object don't implement INeedContentContext
+	 *            interface this method do nothing.
 	 * @return true if object implement INeedContentContext, false otherwise.
 	 */
 	public boolean setContentContextIfNeeded(Object object) {
 		if (object instanceof INeedContentContext) {
-			((INeedContentContext)object).setContentContext(this);
+			((INeedContentContext) object).setContentContext(this);
 			return true;
 		} else {
 			return false;
@@ -1586,7 +1602,10 @@ public class ContentContext {
 	}
 
 	/**
-	 * use for render page with some references to other page (sample : mirrorPage, renderImage with filter rule of the template of mirror component and not source page).
+	 * use for render page with some references to other page (sample :
+	 * mirrorPage, renderImage with filter rule of the template of mirror
+	 * component and not source page).
+	 * 
 	 * @return
 	 * @throws Exception
 	 */
@@ -1604,6 +1623,7 @@ public class ContentContext {
 
 	/**
 	 * create a area to render content with other rules than area of content.
+	 * 
 	 * @return
 	 */
 	public String getVirtualArea() {
@@ -1628,6 +1648,7 @@ public class ContentContext {
 
 	/**
 	 * for return a specific ajax respones from dedicaded action.
+	 * 
 	 * @return
 	 */
 	public String getSpecificJson() {
@@ -1637,7 +1658,7 @@ public class ContentContext {
 	public void setSpecificJson(String specifixAjax) {
 		this.specificJson = specifixAjax;
 	}
-	
+
 	public int getEditMode() {
 		return EDIT_MODE;
 	}

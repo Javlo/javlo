@@ -1283,4 +1283,12 @@ public class StaticConfig extends Observable {
 	public int getTimeBetweenChangeNotification() {
 		return Integer.parseInt(properties.getString("time-between-change-notification", ""+5*60)); 
 	}
+	
+	public String getApplicationLogin() {
+		return properties.getString("security.application-login", null);
+	}
+	
+	public String getApplicationPassword() {
+		return properties.getString("security.application-password", null);
+	}
 }

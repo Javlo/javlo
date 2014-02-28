@@ -1050,12 +1050,9 @@ public class URLHelper extends ElementaryURLHelper {
 	}
 
 	public static void main(String[] args) {
-		try {
-			System.out.println("***** URLHelper.main : url  = " + changeMode("http://www.javlo.org/demo/edit-user/home.html", "ajax"));
-		} catch (MalformedURLException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		} // TODO: remove debug trace
+		
+			System.out.println("***** URLHelper.main : "+addCredential("http://www.javlo.org","admin", "adminpwd")); //TODO: remove debug trace
+		
 	}
 
 	public static String replaceFolderVariable(ContentContext ctx, String url) {
@@ -1095,6 +1092,21 @@ public class URLHelper extends ElementaryURLHelper {
 			} else {
 				return link;
 			}
+		}
+	}
+	
+	/**
+	 * transform url with credential.  semple : http://www.javlo.be >> http://login:password@www.javlo.be
+	 * @param url
+	 * @param login
+	 * @param password
+	 * @return
+	 */
+	public static String addCredential(String url, String login, String password) {
+		if (url != null && StringHelper.isURL(url)) {
+			return url.replace("http://", "http://"+login+':'+password+"@");
+		} else {
+			return url;
 		}
 	}
 
