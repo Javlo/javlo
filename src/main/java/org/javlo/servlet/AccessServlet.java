@@ -631,6 +631,7 @@ public class AccessServlet extends HttpServlet implements IVersion {
 						ContentContext viewCtx = ctx.getContextWithOtherRenderMode(ContentContext.VIEW_MODE);
 						viewCtx.setAbsoluteURL(true);
 						viewCtx.setFormat("html");
+						viewCtx.resetDMZServerInter();
 
 						Map<String, String> params = new HashMap<String, String>();
 						params.put(Device.FORCE_DEVICE_PARAMETER_NAME, "pdf");
