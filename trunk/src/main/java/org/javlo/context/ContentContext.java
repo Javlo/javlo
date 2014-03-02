@@ -730,7 +730,7 @@ public class ContentContext {
 	public URL getDMZServerInter() {
 		return dmzServerInter;
 	}
-
+	
 	/**
 	 * reset DMZ for force local absolute URL.
 	 */
