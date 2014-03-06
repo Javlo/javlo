@@ -61,7 +61,7 @@
    <a class="action-button" href="${commitChildren}"><span>${i18n.edit['template.action.commit-children']}</span></a>   
 </c:if>
 <c:if test="${empty param.templateid and empty nobrowse}">
-<a href="${info.absoluteURLPrefix}${currentModule.path}/jsp/upload.jsp" class="popup cboxElement action-button"><span>${i18n.edit['action.add-template']}</span></a>
+<a href="${info.absoluteLocalURLPrefix}${currentModule.path}/jsp/upload.jsp" class="popup cboxElement action-button"><span>${i18n.edit['action.add-template']}</span></a>
 <a class="action-button more" href="${fileURL}"><span>${i18n.edit['template.action.browse']}...</span></a>
 </c:if>
 
