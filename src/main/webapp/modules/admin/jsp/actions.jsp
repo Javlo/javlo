@@ -14,7 +14,7 @@
 <c:if test="${info.admin}">
 <c:if test="${not empty context}">
 <div class="link"><a href="${info.contextDownloadURL}/${context}.properites">${context}.properties</a></div>
-<a class="popup cboxElement" title="upload" href="${info.absoluteURLPrefix}${currentModule.path}/jsp/upload.jsp?currentURL=${info.currentURL}&context=${context}">
+<a class="popup cboxElement" title="upload" href="${info.absoluteLocalURLPrefix}${currentModule.path}/jsp/upload.jsp?currentURL=${info.currentURL}&context=${context}">
 <span>${i18n.edit['admin.link.uploadsite']}</span>
 </a>
 </c:if>

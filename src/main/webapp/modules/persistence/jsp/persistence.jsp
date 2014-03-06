@@ -13,7 +13,7 @@
 		<c:if test="${not empty token}"><a class="token" href="${downloadAll}?j_token=${token}">[${i18n.edit['edit.link.token-download']}]</a></c:if>
 	</li>
 	<li>
-		<a class="popup" href="${info.absoluteURLPrefix}${currentModule.path}/jsp/upload.jsp?editTemplateURL=${info.editTemplateURL}&currentURL=${info.currentURL}" title="${i18n.edit['edit.action.upload']}"><span>${i18n.edit['edit.action.upload']}</span></a>
+		<a class="popup" href="${info.absoluteLocalURLPrefix}${currentModule.path}/jsp/upload.jsp?editTemplateURL=${info.editTemplateURL}&currentURL=${info.currentURL}" title="${i18n.edit['edit.action.upload']}"><span>${i18n.edit['edit.action.upload']}</span></a>
 	</li>		
 </ul>
 </fieldset>

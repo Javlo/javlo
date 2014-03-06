@@ -545,6 +545,12 @@ public class InfoBean {
 		return URLHelper.createStaticURL(ctx.getContextForAbsoluteURL(), "/");
 	}
 	
+	public String getAbsoluteLocalURLPrefix() {
+		ContentContext localCtx = new ContentContext(ctx);
+		localCtx.resetDMZServerInter();
+		return URLHelper.createStaticURL(localCtx.getContextForAbsoluteURL(), "/");
+	}
+	
 	public String getHostURLPrefix() {
 		String url = getAbsoluteURLPrefix();
 		String noProtocol = url.substring(url.indexOf("//")+2);		
