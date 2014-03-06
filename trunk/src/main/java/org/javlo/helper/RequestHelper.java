@@ -100,12 +100,7 @@ public class RequestHelper {
 		return null;
 	}
 
-	public static void setCookieValue(HttpServletResponse response, String key, String value, int expiry, String path) {
-		try {
-			throw new Exception();
-		} catch (Exception e) {
-			e.printStackTrace();
-		}		
+	public static void setCookieValue(HttpServletResponse response, String key, String value, int expiry, String path) {				
 		Cookie cokkie = new PathCookie(key, value, path);		
 		cokkie.setMaxAge(expiry);
 		response.addCookie(cokkie);

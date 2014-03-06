@@ -184,7 +184,7 @@ public abstract class ElementaryURLHelper {
 		} else {
 			mode = "/";
 		}
-		
+
 		if (ctx.getRenderMode() != ContentContext.VIEW_MODE) {
 			if (ctx.getRenderMode() == ContentContext.EDIT_MODE) {
 				String previewPrefix = "";
@@ -212,7 +212,7 @@ public abstract class ElementaryURLHelper {
 				mode = "/time/";
 			}
 		}
-		
+
 		if (ajax) {
 			mode = "/ajax/";
 		}
@@ -287,7 +287,7 @@ public abstract class ElementaryURLHelper {
 		String url = inUrl;
 		if (withPathPrefix) {
 			String pathPrefix = getPathPrefix(ctx);
-			url = URLHelper.mergePath("/",pathPrefix, inUrl);
+			url = URLHelper.mergePath("/", pathPrefix, inUrl);
 		}
 
 		if (newCtx.isAbsoluteURL()) {
@@ -466,10 +466,21 @@ public abstract class ElementaryURLHelper {
 			}
 			url = ctx.getURLProtocolPrefix() + "://" + ctx.getHostName() + port + url;
 		} else {
+			if (ctx.getRequest().getContextPath() != null && ctx.getRequest().getContextPath().length() > 0) {
+				String prefix = ctx.getRequest().getContextPath() + '/';
+				if (url.startsWith(prefix)) {
+					url = url.substring(prefix.length());
+				}
+			}
 			if (ctx.getPathPrefix() != null && ctx.getPathPrefix().length() > 0) {
 				String prefix = '/' + ctx.getPathPrefix() + '/';
 				if (url.startsWith(prefix)) {
 					url = url.substring(prefix.length());
+				} else {
+					prefix = ctx.getPathPrefix() + '/';
+					if (url.startsWith(prefix)) {
+						url = url.substring(prefix.length());
+					}
 				}
 			}
 			url = mergePath(ctx.getDMZServerInter().toString(), url);

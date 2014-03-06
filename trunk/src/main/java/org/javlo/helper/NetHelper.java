@@ -23,7 +23,6 @@ import javax.mail.internet.AddressException;
 import javax.mail.internet.InternetAddress;
 import javax.servlet.http.HttpServletResponse;
 
-import org.apache.http.client.methods.HttpGet;
 import org.javlo.config.StaticConfig;
 import org.javlo.context.ContentContext;
 import org.javlo.context.GlobalContext;
@@ -55,11 +54,23 @@ public class NetHelper {
 	public static final String HEADER_IF_MODIFIED_SINCE_ETAG = "if-None-Match";
 
 	public static String readPage(URL url) throws Exception {
-		return readPage(url, false, null);
+		return readPage(url, false, null, null,null);
+	}
+	
+	public static String readPage(URL url,final String userName, final String password) throws Exception {
+		return readPage(url, false, null, userName,password);
+	}
+	
+	public static String readPage(URL url, boolean cssInline,final String userName, final String password) throws Exception {
+		return readPage(url, cssInline, null, userName,password);
 	}
 
 	public static String readPage(String inURL, boolean cssInline) throws Exception {
-		return readPage(new URL(inURL), cssInline, null);
+		return readPage(new URL(inURL), cssInline, null, null, null);
+	}
+	
+	public static String readPage(URL url, boolean cssInline, String userAgent) throws Exception {
+		return readPage(url, cssInline, userAgent, null, null);		
 	}
 	
 	/**
@@ -70,7 +81,24 @@ public class NetHelper {
 	 * @return code returned by the http request on the URL.
 	 * @throws IOException
 	 */
-	public static String readPage(URL url, boolean cssInline, String userAgent) throws Exception {		
+	private static String readPage(URL url, boolean cssInline, String userAgent, final String userName, final String password) throws Exception {
+		
+		logger.info("create PDF from : "+url+"  user:"+userName+"  password found:"+(StringHelper.neverNull(password).length()>1));
+
+		if (null != userName && userName.trim().length() != 0 && null != password && password.trim().length() != 0)	{
+
+			java.net.Authenticator.setDefault(new java.net.Authenticator() {
+
+				protected java.net.PasswordAuthentication getPasswordAuthentication() {
+
+					return new java.net.PasswordAuthentication(userName, password.toCharArray());
+
+				}
+
+			});
+
+		}
+		
 
 		if (StringHelper.isVideo(url.getPath())) {
 			return "";
@@ -234,7 +262,7 @@ public class NetHelper {
 
 	public static void main(String[] args) throws IOException, InterruptedException {
 		try {
-			String page = readPage(new URL("http://www.lavenir.net/article/detail.aspx?articleid=DMF20140115_00417298&_section=61332904&utm_source=lavenir&utm_medium=newsletter&utm_campaign=regio"), false, "Mozilla/5.0 (Windows NT 6.3; WOW64; rv:26.0) Gecko/20100101 Firefox/26.0");
+			String page = readPage(new URL("http://www.lavenir.net/article/detail.aspx?articleid=DMF20140115_00417298&_section=61332904&utm_source=lavenir&utm_medium=newsletter&utm_campaign=regio"), false, "Mozilla/5.0 (Windows NT 6.3; WOW64; rv:26.0) Gecko/20100101 Firefox/26.0", null, null);
 			ResourceHelper.writeStringToFile(new File("c:/trans/readpage.html"), page);
 		} catch (Exception e) {
 			e.printStackTrace();

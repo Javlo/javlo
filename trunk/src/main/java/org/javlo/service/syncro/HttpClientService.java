@@ -6,6 +6,7 @@ import java.util.logging.Logger;
 
 import org.apache.commons.httpclient.HttpHost;
 import org.apache.commons.httpclient.HttpStatus;
+import org.apache.commons.httpclient.params.HttpParams;
 import org.apache.commons.httpclient.protocol.Protocol;
 import org.apache.http.HttpEntity;
 import org.apache.http.HttpResponse;
@@ -16,6 +17,7 @@ import org.apache.http.client.methods.HttpUriRequest;
 import org.apache.http.conn.ClientConnectionManager;
 import org.apache.http.conn.ClientConnectionManagerFactory;
 import org.apache.http.conn.params.ConnRoutePNames;
+import org.apache.http.conn.params.ConnRouteParams;
 import org.apache.http.conn.scheme.SchemeRegistry;
 import org.apache.http.impl.client.DefaultHttpClient;
 import org.apache.http.impl.conn.tsccm.ThreadSafeClientConnManager;
@@ -167,9 +169,41 @@ public class HttpClientService {
 			safeConsume(resp);
 		}
 	}
+	
+	/** 
+	 * correct the proxy class.
+	 * @param params
+	 * @return return the org.apache.commons.httpclient.HttpHost if found.
+	 */
+	private org.apache.commons.httpclient.HttpHost proxyCorrection(org.apache.http.params.HttpParams params) {
+		Object proxy = params.getParameter(ConnRouteParams.DEFAULT_PROXY);
+		//System.out.println("***** HttpClientService.correctProxy : proxy = "+proxy); //TODO: remove debug trace
+		if (proxy != null) {
+			if (proxy instanceof org.apache.commons.httpclient.HttpHost) {
+				org.apache.commons.httpclient.HttpHost badProxy = (org.apache.commons.httpclient.HttpHost)proxy;
+				org.apache.http.HttpHost rightProxy = new org.apache.http.HttpHost(badProxy.getHostName(), badProxy.getPort());
+				//System.out.println("***** HttpClientService.correctProxy : new proxy = "+rightProxy); //TODO: remove debug trace
+				params.setParameter(ConnRouteParams.DEFAULT_PROXY, rightProxy);
+				return badProxy;
+			}
+		}
+		return null;
+	}
+	
+	private void restoreProxy (org.apache.http.params.HttpParams params, org.apache.commons.httpclient.HttpHost proxy) {
+		params.setParameter(ConnRouteParams.DEFAULT_PROXY, proxy);
+	}
 
 	public HttpResponse execute(HttpUriRequest request) throws ClientProtocolException, IOException {
-		HttpResponse resp = getClient().execute(request, getContext());
+		HttpContext context = getContext();
+		DefaultHttpClient client = getClient();	
+		org.apache.http.params.HttpParams params = client.getParams();
+		org.apache.commons.httpclient.HttpHost badProxy = proxyCorrection(params);
+		if (badProxy != null) {
+			logger.warning("proxy class switched.");
+		}
+		HttpResponse resp = client.execute(request, context);
+		
 		if (resp.getStatusLine().getStatusCode() == HttpStatus.SC_UNAUTHORIZED) {
 			safeConsume(resp);
 			logger.info("auto login " + username + " on " + getServerURL());
@@ -180,6 +214,11 @@ public class HttpClientService {
 			}
 			resp = getClient().execute(request, getContext());
 		}
+		
+		if (badProxy != null) {
+			restoreProxy(params, badProxy);
+		}
+		
 		return resp;
 	}
 
@@ -200,6 +239,9 @@ public class HttpClientService {
 		HttpResponse resp = null;
 		try {
 			String relativeURL = "/jsp/remoteservice/remote_login.jsp";
+			if (username == null || password == null) {
+				throw new IOException("no credential for retreive login id.");
+			}
 			relativeURL = URLHelper.addParam(relativeURL, "login", URLEncoder.encode(username, ContentContext.CHARACTER_ENCODING));
 			relativeURL = URLHelper.addParam(relativeURL, "password", URLEncoder.encode(password, ContentContext.CHARACTER_ENCODING));
 

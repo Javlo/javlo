@@ -47,6 +47,8 @@ import org.javlo.i18n.I18nAccess;
 import org.javlo.mailing.MailService;
 import org.javlo.message.GenericMessage;
 import org.javlo.message.MessageRepository;
+import org.javlo.navigation.MenuElement;
+import org.javlo.navigation.PageBean;
 import org.javlo.service.CaptchaService;
 import org.javlo.service.ContentService;
 import org.javlo.service.RequestService;
@@ -92,6 +94,8 @@ public class ReactionComponent extends DynamicComponent implements IAction {
 		private String email = "";
 		private boolean validReaction = false;
 		private Date date = new Date();
+		private String url = null;
+		private String pageTitle = null;
 
 		public void fromString(String content) {
 			String[] contentArray = StringUtils.splitPreserveAllTokens(content, '|');
@@ -172,6 +176,23 @@ public class ReactionComponent extends DynamicComponent implements IAction {
 		public String getDisplayableDate() {
 			return StringHelper.renderSortableTime((getDate()));
 		}
+
+		public String getUrl() {
+			return url;
+		}
+
+		public void setUrl(String url) {
+			this.url = url;
+		}
+
+		public String getPageTitle() {
+			return pageTitle;
+		}
+
+		public void setPageTitle(String pageTitle) {
+			this.pageTitle = pageTitle;
+		}
+
 	}
 
 	private static final String REACTIONS_PREFIX_KEY = "reactions-";
@@ -206,7 +227,7 @@ public class ReactionComponent extends DynamicComponent implements IAction {
 			List<Field> fields = reactionComp.getViewFields(ctx);
 			Reaction reaction = new Reaction();
 			boolean validReaction = false;
-			
+
 			if (reactionComp.isCaptcha(ctx)) {
 				String captcha = requestService.getParameter("captcha", "");
 				if (!CaptchaService.getInstance(request.getSession()).getCurrentCaptchaCode().equals(captcha)) {
@@ -214,7 +235,7 @@ public class ReactionComponent extends DynamicComponent implements IAction {
 					return i18nAccess.getViewText("message.error.bad-captcha");
 				}
 			}
-			
+
 			for (Field field : fields) {
 				field.process(request);
 				if (field.getName().equals("title")) {
@@ -319,11 +340,11 @@ public class ReactionComponent extends DynamicComponent implements IAction {
 		}
 		return reaction.isValidReaction();
 	}
-	
+
 	protected String getReactionPrefix(ContentContext ctx) {
 		if (isRepeat()) {
 			try {
-				return REACTIONS_PREFIX_KEY+ctx.getCurrentPage().getId()+'-';
+				return REACTIONS_PREFIX_KEY + ctx.getCurrentPage().getId() + '-';
 			} catch (Exception e) {
 				e.printStackTrace();
 				return null;
@@ -332,7 +353,18 @@ public class ReactionComponent extends DynamicComponent implements IAction {
 			return REACTIONS_PREFIX_KEY;
 		}
 	}
-	
+
+	protected static String readPageIdFromKey(String key) {
+		if (key == null || key.indexOf('-') < 0) {
+			return null;
+		}
+		key = key.substring(key.indexOf('-') + 1);
+		if (key.indexOf('-') < 0) {
+			return null;
+		}
+		return key.substring(0, key.indexOf('-'));
+	}
+
 	protected String getDelReactionPrefix(ContentContext ctx) {
 		return DELETEED_REACTION_PREFIX_KEY;
 	}
@@ -470,17 +502,63 @@ public class ReactionComponent extends DynamicComponent implements IAction {
 		return getClass().getName();
 	}
 
+	public Collection<Reaction> getAllReactions(ContentContext ctx) {
+		Collection<Reaction> outReactions = null;
+		try {
+			loadViewData(ctx);
+			outReactions = new TreeSet<Reaction>(new Reaction.OrderCreation(true));
+			if (getViewData(ctx) != null) {
+				ContentService content = ContentService.getInstance(ctx.getRequest());
+				for (Object key : getViewData(ctx).keySet()) {
+					if (key.toString().startsWith(REACTIONS_PREFIX_KEY)) {
+						Reaction reaction = new Reaction();
+						reaction.fromString("" + getViewData(ctx).getProperty("" + key));
+						String pageId = readPageIdFromKey("" + key);
+						if (pageId != null) {
+							try {
+								MenuElement targetPage = content.getNavigation(ctx).searchChildFromId(pageId);
+								if (targetPage != null) {
+									reaction.setUrl(URLHelper.createURL(ctx.getContextWithOtherRenderMode(ContentContext.VIEW_MODE), targetPage));
+									reaction.setPageTitle(targetPage.getTitle(ctx));
+								}
+							} catch (Exception e) {
+								e.printStackTrace();
+							}
+						}
+						outReactions.add(reaction);
+					}
+				}
+			}
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+		return outReactions;
+	}
+
 	public Collection<Reaction> getReactions(ContentContext ctx) {
 		Collection<Reaction> outReactions = null;
 		try {
 			loadViewData(ctx);
 			outReactions = new TreeSet<Reaction>(new Reaction.OrderCreation(true));
 			if (getViewData(ctx) != null) {
+				ContentService content = ContentService.getInstance(ctx.getRequest());
 				for (Object key : getViewData(ctx).keySet()) {
 					if (key.toString().startsWith(getReactionPrefix(ctx))) {
 						Reaction reaction = new Reaction();
 						reaction.fromString("" + getViewData(ctx).getProperty("" + key));
 						outReactions.add(reaction);
+						String pageId = readPageIdFromKey("" + key);
+						if (pageId != null) {
+							try {
+								MenuElement targetPage = content.getNavigation(ctx).searchChildFromId(pageId);
+								if (targetPage != null) {
+									reaction.setUrl(URLHelper.createURL(ctx.getContextWithOtherRenderMode(ContentContext.VIEW_MODE), targetPage));
+									reaction.setPageTitle(targetPage.getTitle(ctx));
+								}
+							} catch (Exception e) {
+								e.printStackTrace();
+							}
+						}
 					}
 				}
 			}
@@ -496,9 +574,55 @@ public class ReactionComponent extends DynamicComponent implements IAction {
 			loadViewData(ctx);
 			outReactions = new TreeSet<Reaction>(new Reaction.OrderCreation(true));
 			if (getViewData(ctx) != null) {
+				ContentService content = ContentService.getInstance(ctx.getRequest());
 				for (Object key : getViewData(ctx).keySet()) {
 					if (key.toString().startsWith(getDelReactionPrefix(ctx))) {
 						Reaction reaction = new Reaction();
+						reaction.fromString("" + getViewData(ctx).getProperty("" + key));
+						String pageId = readPageIdFromKey("" + key);
+						if (pageId != null) {
+							try {
+								MenuElement targetPage = content.getNavigation(ctx).searchChildFromId(pageId);
+								if (targetPage != null) {
+									reaction.setUrl(URLHelper.createURL(ctx.getContextWithOtherRenderMode(ContentContext.VIEW_MODE), targetPage));
+									reaction.setPageTitle(targetPage.getTitle(ctx));
+								}
+							} catch (Exception e) {
+								e.printStackTrace();
+							}
+						}
+						outReactions.add(reaction);
+					}
+				}
+			}
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+		return outReactions;
+	}
+
+	public Collection<Reaction> getAllDeletedReactions(ContentContext ctx) {
+		Collection<Reaction> outReactions = null;
+		try {
+			loadViewData(ctx);
+			outReactions = new TreeSet<Reaction>(new Reaction.OrderCreation(true));
+			if (getViewData(ctx) != null) {
+				ContentService content = ContentService.getInstance(ctx.getRequest());
+				for (Object key : getViewData(ctx).keySet()) {
+					if (key.toString().startsWith(DELETEED_REACTION_PREFIX_KEY)) {
+						Reaction reaction = new Reaction();
+						String pageId = readPageIdFromKey("" + key);
+						if (pageId != null) {
+							try {
+								MenuElement targetPage = content.getNavigation(ctx).searchChildFromId(pageId);
+								if (targetPage != null) {
+									reaction.setUrl(URLHelper.createURL(ctx.getContextWithOtherRenderMode(ContentContext.VIEW_MODE), targetPage));
+									reaction.setPageTitle(targetPage.getTitle(ctx));
+								}
+							} catch (Exception e) {
+								e.printStackTrace();
+							}
+						}
 						reaction.fromString("" + getViewData(ctx).getProperty("" + key));
 						outReactions.add(reaction);
 					}
@@ -631,7 +755,7 @@ public class ReactionComponent extends DynamicComponent implements IAction {
 		if (isCaptcha(ctx)) {
 			out.println("<div class=\"line captcha\">");
 			InfoBean info = InfoBean.getCurrentInfoBean(ctx);
-			out.println("<label for=\"captcha-" + getId() + "\" ><span>"+i18nAccess.getViewText("global.captcha")+"</span><img src=\"" + info.getCaptchaURL() + "\" alt=\"captcha\" /></label>");
+			out.println("<label for=\"captcha-" + getId() + "\" ><span>" + i18nAccess.getViewText("global.captcha") + "</span><img src=\"" + info.getCaptchaURL() + "\" alt=\"captcha\" /></label>");
 			out.println("<input id=\"captcha-" + getId() + "\" type=\"text\" name=\"captcha\" value=\"\" />");
 			out.println("</div>");
 		}
@@ -708,13 +832,25 @@ public class ReactionComponent extends DynamicComponent implements IAction {
 	}
 
 	public void deleteReaction(ContentContext ctx, String id) throws IOException {
-		getViewData(ctx).put(getDelReactionPrefix(ctx) + id, getViewData(ctx).getProperty(getReactionPrefix(ctx) + id));
-		getViewData(ctx).remove(getReactionPrefix(ctx) + id);
-		storeViewData(ctx);
+		if (getViewData(ctx) != null) {
+			for (Object key : getViewData(ctx).keySet()) {
+				if (key.toString().startsWith(REACTIONS_PREFIX_KEY)) {
+					Reaction reaction = new Reaction();
+					reaction.fromString("" + getViewData(ctx).getProperty("" + key));
+					if (reaction.getId().equals(id)) {
+						getViewData(ctx).remove(key);
+						String delKey = ((String) key).replaceFirst(REACTIONS_PREFIX_KEY, DELETEED_REACTION_PREFIX_KEY);
+						getViewData(ctx).setProperty(delKey, reaction.toString());
+						storeViewData(ctx);
+						return;
+					}
+				}
+			}
+		}
 	}
 
 	public void validReaction(ContentContext ctx, String id) throws IOException {
-		Collection<Reaction> reactions = getReactions(ctx);
+		Collection<Reaction> reactions = getAllReactions(ctx);
 		for (Reaction reaction : reactions) {
 			if (reaction.getId().equals(id)) {
 				reaction.setValidReaction(true);
@@ -753,8 +889,16 @@ public class ReactionComponent extends DynamicComponent implements IAction {
 	public boolean isCaptcha(ContentContext ctx) {
 		return StringHelper.isTrue(getConfig(ctx).getProperty("captcha", null));
 	}
-	
+
 	public int getReactionSize(ContentContext ctx) {
 		return getReactions(ctx).size();
+	}
+
+	public static void main(String[] args) {
+		String pageid = readPageIdFromKey("prefix-0912309-tralala-troiulou");
+		System.out.println("***** ReactionComponent.main : pageid = " + pageid); // TODO:
+																					// remove
+																					// debug
+																					// trace
 	}
 }

@@ -53,11 +53,11 @@ public class CommentsAction extends AbstractModuleAction {
 		}
 
 		public Collection<Reaction> getComments() {
-			return reactions.getReactions(ctx);
+			return reactions.getAllReactions(ctx);
 		}
 
 		public Collection<Reaction> getDeletedComments() {
-			return reactions.getDeletedReactions(ctx);
+			return reactions.getAllDeletedReactions(ctx);
 		}
 
 		public int getCountUnvalid() {

@@ -3,9 +3,11 @@ package org.javlo.module.mailing;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
+import java.net.URL;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Set;
+import java.util.logging.Logger;
 
 import javax.mail.internet.AddressException;
 import javax.mail.internet.InternetAddress;
@@ -13,6 +15,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 
 import org.javlo.bean.LinkToRenderer;
+import org.javlo.config.StaticConfig;
 import org.javlo.context.ContentContext;
 import org.javlo.context.GlobalContext;
 import org.javlo.helper.NetHelper;
@@ -31,6 +34,8 @@ import org.javlo.user.UserFactory;
 
 //TODO Use MailingBuilder
 public class MailingModuleContext extends AbstractModuleContext {
+	
+	private static Logger logger = Logger.getLogger(MailingModuleContext.class.getName());
 
 	private static final String MODULE_NAME = "mailing";
 
@@ -203,7 +208,7 @@ public class MailingModuleContext extends AbstractModuleContext {
 		ContentContext pageCtx = ctx.getContextWithOtherRenderMode(ContentContext.PAGE_MODE);
 		pageCtx.setAbsoluteURL(true);
 		pageCtx.resetDMZServerInter();
-		String url = URLHelper.createURL(pageCtx) + ";jsessionid=" + ctx.getRequest().getRequestedSessionId();
+		URL url = new URL(URLHelper.createURL(pageCtx) + ";jsessionid=" + ctx.getRequest().getRequestedSessionId());
 
 		GlobalContext globalContext = GlobalContext.getInstance(ctx.getRequest());
 
@@ -213,7 +218,11 @@ public class MailingModuleContext extends AbstractModuleContext {
 		m.setSubject(subject);
 		m.setAdminEmail(globalContext.getAdministratorEmail());
 		m.setNotif(new InternetAddress(reportTo));
-		String content = NetHelper.readPage(url, true);
+		StaticConfig sc = ctx.getGlobalContext().getStaticConfig();
+		String content = NetHelper.readPage(url, true, sc.getApplicationLogin(), sc.getApplicationPassword());
+		if (content == null) {
+			logger.severe("error on read : "+url);
+		}
 		m.setContent(content);
 		m.setHtml(true);
 		m.setRoles(groups);

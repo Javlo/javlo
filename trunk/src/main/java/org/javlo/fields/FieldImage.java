@@ -27,6 +27,14 @@ public class FieldImage extends FieldFile {
 			}
 		}
 		
+		public String getLink() {
+			return FieldImage.this.getCurrentLink();
+		}
+		
+		public String getAlt() {
+			return FieldImage.this.getCurrentLabel();
+		}
+		
 	}
 
 	protected String getFilter() {

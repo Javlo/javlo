@@ -423,8 +423,7 @@ public class CatchAllFilter implements Filter {
 
 							if (login == null && httpRequest.getUserPrincipal() != null) {
 								login = httpRequest.getUserPrincipal().getName();
-							}
-							if (fact.login(httpRequest, login, request.getParameter("j_password")) == null) {
+							} else if (fact.login(httpRequest, login, request.getParameter("j_password")) == null) {
 								String msg = i18nAccess.getText("user.error.msg");
 								MessageRepository messageRepository = MessageRepository.getInstance(((HttpServletRequest) request));
 								messageRepository.setGlobalMessage(new GenericMessage(msg, GenericMessage.ERROR));
