@@ -443,12 +443,14 @@ public class DataAction implements IAction {
 				provider.refresh(ctx);
 				provider.getContent(ctx); // refresh categories list
 				String prefix = URLHelper.mergePath(gc.getDataFolder(), gc.getStaticConfig().getImageFolder()).replace('\\', '/');
-				String currentPath = folderSelection.getAbsolutePath().replace('\\', '/');
-				String cat = StringUtils.replace(currentPath, prefix, "");				
-				if (cat.length() > 1) { // remove '/'
-					cat = cat.substring(1);
+				if (folderSelection != null) {
+					String currentPath = folderSelection.getAbsolutePath().replace('\\', '/');				
+					String cat = StringUtils.replace(currentPath, prefix, "");				
+					if (cat.length() > 1) { // remove '/'
+						cat = cat.substring(1);
+					}
+					sharedContentContext.setCategories(new LinkedList<String>(Arrays.asList(new String[] { cat })));
 				}
-				sharedContentContext.setCategories(new LinkedList<String>(Arrays.asList(new String[] { cat })));
 				ctx.setNeedRefresh(true);				
 			}
 		} catch (FileExistsException e) {
