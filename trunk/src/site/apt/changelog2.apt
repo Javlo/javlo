@@ -225,3 +225,5 @@ change log
  * update tinymce 4.0.16 (2014-01-31) - replace .on to .live - pdfUpdate algo revision
  
  * transaction writing of globalcontext + synchro optimisation
+ 
+ * pdf rendering with xhtml parser + local article id correction + comment component reapeat correction
