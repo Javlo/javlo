@@ -55,7 +55,8 @@ if (!rightOnPage) {
 				<legend>${i18n.edit['global.command']}</legend>
 				<ul class="pc_form_line">
 				<li class="slide"><a href="#">x</a></li><li class="refresh"><form id="refresh_form" action="${info.currentURL}" method="post">
-						<div class="pc_line">							
+						<div class="pc_line">	
+						    <input type="hidden" name="webaction" value="edit.refresh" />						
 							<input id="refresh_button" type="submit" value="${i18n.edit['command.refresh']}" title="${i18n.edit['command.refresh']}" />
 							<label for="refresh_button">${i18n.edit['command.refresh']}</label>
 						</div>

@@ -65,10 +65,8 @@ import org.javlo.service.resource.ResourceStatus;
 import org.javlo.service.shared.SharedContent;
 import org.javlo.service.shared.SharedContentService;
 import org.javlo.service.syncro.SynchroHelper;
-import org.javlo.service.syncro.SynchroThread;
 import org.javlo.template.Template;
 import org.javlo.template.TemplateFactory;
-import org.javlo.thread.AbstractThread;
 import org.javlo.user.AdminUserFactory;
 import org.javlo.user.AdminUserSecurity;
 import org.javlo.user.IUserFactory;
@@ -1693,16 +1691,24 @@ public class Edit extends AbstractModuleAction {
 	}
 
 	public static String performInsertShared(RequestService rs, ContentContext ctx, GlobalContext globalContext, EditContext editContext, ContentService content, SharedContentService sharedContentService, Module currentModule, MessageRepository messageRepository, I18nAccess i18nAccess) throws Exception {
+		
+		System.out.println("");
+		System.out.println("");
+		
 		String sharedData = rs.getParameter("sharedContent", null);
 		String previousId = rs.getParameter("previous", null);
+		
+		System.out.println("sharedData = "+sharedData);
+		System.out.println("previousId = "+previousId);
+		
 		if (sharedData == null || previousId == null) {
 			return "bad request structure, need sharedData and previousId as parameter.";
 		} else {
+			sharedContentService.clearCache();
 			SharedContent sharedContent = sharedContentService.getSharedContent(ctx, sharedData);
 			if (sharedContent == null) {
 				String msg = "error : shared content not found : " + sharedData;
-				logger.warning(msg);
-				;
+				logger.warning(msg);				
 				return msg;
 			}
 			String areaKey = null;
@@ -1732,7 +1738,7 @@ public class Edit extends AbstractModuleAction {
 					componentBean.setArea(areaKey);
 				}
 				String parentID = content.createContent(ctx, targetPage, beans, previousId, true);
-			} else {
+			} else {				
 				ComponentBean mirrorBean = new ComponentBean(PageMirrorComponent.TYPE, sharedContent.getLinkInfo(), ctx.getRequestContentLanguage());
 				mirrorBean.setArea(areaKey);
 				mirrorBean.setAuthors(ctx.getCurrentUserId());
@@ -1759,6 +1765,16 @@ public class Edit extends AbstractModuleAction {
 			}
 
 		}
+		
+		System.out.println("");
+		System.out.println("");
+		
+		return null;
+	}
+	
+	public static String performRefresh(StaticConfig staticConfig, ServletContext application, GlobalContext globalContext) throws Exception {
+		SynchroHelper.performSynchro(application, staticConfig, globalContext);
 		return null;
 	}
 }
+

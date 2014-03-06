@@ -33,11 +33,7 @@ public class PDFConvertion {
 		
 		logger.info("create PDF from : "+url+"  user:"+userName+"  password found:"+(StringHelper.neverNull(password).length()>1));
 
-		if (null != userName && userName.trim().length() != 0
-
-		&& null != password && password.trim().length() != 0)
-
-		{
+		if (null != userName && userName.trim().length() != 0 && null != password && password.trim().length() != 0)	{
 
 			java.net.Authenticator.setDefault(new java.net.Authenticator() {
 

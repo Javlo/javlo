@@ -448,7 +448,7 @@ public class DataAction implements IAction {
 				if (cat.length() > 1) { // remove '/'
 					cat = cat.substring(1);
 				}
-				sharedContentContext.setCategories(Arrays.asList(new String[] { cat }));
+				sharedContentContext.setCategories(new LinkedList<String>(Arrays.asList(new String[] { cat })));
 				ctx.setNeedRefresh(true);				
 			}
 		} catch (FileExistsException e) {

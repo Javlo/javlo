@@ -1246,7 +1246,7 @@ public class StaticConfig extends Observable {
 		return properties.getBoolean("fix-preview", true);
 	}
 	
-	protected String getPlatformType() {
+	public String getPlatformType() {
 		return properties.getString("platform.type", "web");
 	}
 	

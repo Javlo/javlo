@@ -635,5 +635,9 @@ public class InfoBean {
 		return URLHelper.createStaticURL(ctx,"/images/ajax_loader.gif");
 	}
 	
+	public String getRandomId() {
+		return StringHelper.getRandomId();
+	}
+	
 
 }

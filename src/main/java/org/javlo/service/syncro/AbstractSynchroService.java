@@ -42,10 +42,15 @@ public abstract class AbstractSynchroService<SC extends AbstractSynchroContext> 
 			context = newSynchroContext();
 			logger.info("start synchronisation between '" + getLocalName() + "' and '" + getDistantName() + "'");
 			try {
+				logger.info("initializeContext");
 				initializeContext(context, previousOutState);
+				logger.info("defineActions");
 				defineActions(context);
+				logger.info("onActionsDefined");
 				onActionsDefined(context);
+				logger.info("applyActions");
 				applyActions(context);
+				logger.info("onActionsApplied ("+this.getClass().getName()+')');
 				onActionsApplied(context);
 				return !context.isErrorOccured();
 			} catch (SynchroFatalException ex) {

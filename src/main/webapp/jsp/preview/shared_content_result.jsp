@@ -13,9 +13,9 @@
 	<h3><span>${content.title}</span></h3>
 	<c:if test="${not empty content.imageURL}">
 		<figure><img src="${content.imageURL}" /></figure>
-	</c:if>
+	</c:if>	
 	<c:if test="${not empty content.description}">
-		<div class="description">${content.description}</div>
+		<div class="description"> ${content.description}</div>
 	</c:if>	
 </div>
 </div>

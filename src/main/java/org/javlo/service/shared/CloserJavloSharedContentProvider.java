@@ -29,11 +29,16 @@ public class CloserJavloSharedContentProvider extends AbstractSharedContentProvi
 		/*
 		 * if (page.getSharedName() != null && page.getSharedName().length() >
 		 * 0) { return page.getSharedName(); } else
-		 */if (page.getParent() != null && page.getParent().getSharedName() != null && page.getParent().getSharedName().length() > 0) {
-			return page.getParent().getSharedName() + '-' + i;
+		 */
+		
+		if (page.getParent() != null && page.getParent().getSharedName() != null && page.getParent().getSharedName().length() > 0) {
+			//return page.getParent().getSharedName() + '-' + i;
+			return page.getName();
 		} else {
 			return null;
 		}
+		
+		
 	}
 
 	@Override
@@ -72,8 +77,8 @@ public class CloserJavloSharedContentProvider extends AbstractSharedContentProvi
 					if (sharedContent.getTitle() == null || sharedContent.getTitle().trim().length() == 0) {
 						sharedContent.setTitle(getSharedName(page, i));
 					}
-					for (ComponentBean bean : beans) {
-						sharedContent.setLinkInfo(page.getId());
+					sharedContent.setLinkInfo(page.getId());
+					for (ComponentBean bean : beans) {						
 						if (bean.getType().equals(GlobalImage.TYPE)) {
 							try {
 								GlobalImage image = new GlobalImage();

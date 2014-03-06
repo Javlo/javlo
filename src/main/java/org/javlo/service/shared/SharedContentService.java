@@ -27,7 +27,7 @@ public class SharedContentService {
 	
 	private List<SharedContent> getAllSharedContent(ContentContext ctx) {
 		List<SharedContent> outContent = new LinkedList<SharedContent>();		
-		for (ISharedContentProvider provider : getAllActiveProvider(ctx)) {
+		for (ISharedContentProvider provider : getAllActiveProvider(ctx)) {			
 			ctx.setContentContextIfNeeded(provider);
 			outContent.addAll(provider.getContent(ctx));
 		}
@@ -76,7 +76,7 @@ public class SharedContentService {
 	}
 	
 	public SharedContent getSharedContent(ContentContext ctx, String id) {
-		if (latestReturnedContent == null) {
+		if (latestReturnedContent == null) {			
 			latestReturnedContent = getAllSharedContent(ctx);
 		}
 		for (SharedContent sharedContent : latestReturnedContent) {

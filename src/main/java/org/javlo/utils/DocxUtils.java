@@ -15,6 +15,7 @@ import org.javlo.component.core.ComponentBean;
 import org.javlo.component.image.GlobalImage;
 import org.javlo.component.list.FreeTextList;
 import org.javlo.component.text.Paragraph;
+import org.javlo.component.text.WysiwygParagraph;
 import org.javlo.component.title.SubTitle;
 import org.javlo.component.title.Title;
 import org.javlo.context.ContentContext;
@@ -123,7 +124,7 @@ public class DocxUtils {
 				if (text.trim().length() > 0 && item.tagName().equals("p")) {
 					int titleLevel = getTitleLevel(cssClass);
 					if (titleLevel == 0) {
-						bean.setType(Paragraph.TYPE);
+						bean.setType(WysiwygParagraph.TYPE);
 						bean.setValue(text);
 					} else {
 						if (titleLevel == 1) {

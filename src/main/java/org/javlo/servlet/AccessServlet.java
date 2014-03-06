@@ -813,6 +813,7 @@ public class AccessServlet extends HttpServlet implements IVersion {
 		out.println("**** System encoding   :  " + System.getProperty("file.encoding"));
 		out.println("**** CMS encoding      :  " + ContentContext.CHARACTER_ENCODING);
 		out.println("**** VERSION           :  " + VERSION);
+		out.println("**** Platform type     :  " + staticConfig.getPlatformType());	
 		out.println("**** ENV               :  " + staticConfig.getEnv());
 		out.println("**** STATIC CONFIG DIR :  " + staticConfig.getStaticConfigLocalisation());
 		out.println("**** PROXY HOST        :  " + staticConfig.getProxyHost());
