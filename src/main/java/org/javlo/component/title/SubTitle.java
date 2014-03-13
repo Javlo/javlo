@@ -47,13 +47,20 @@ public class SubTitle extends AbstractVisualComponent {
 		} else {
 			StringBuffer res = new StringBuffer();
 			String level = "2";
-			if (getStyle(ctx) != null) {
-				level = getStyle(ctx);
+			if (getStyle() != null) {
+				level = getStyle();
 			}
 			String value = getValue();
 			GlobalContext globalContext = GlobalContext.getInstance(ctx.getRequest());
+			
+			String colored = "";
+			if (isColored()) {
+				colored = " colored";
+			}
+			
 			if (level.equals("7") || level.equals("8") || level.equals("9")) {
-				res.append("<div id=\"" + getXHTMLId(ctx) + "\" class=\"subtitle-" + level + "\">");
+				
+				res.append("<div id=\"" + getXHTMLId(ctx) + "\" class=\"subtitle-" + level + colored + "\">");
 				ReverseLinkService reverserLinkService = ReverseLinkService.getInstance(globalContext);
 				value = reverserLinkService.replaceLink(ctx, this, value);
 				res.append(XHTMLHelper.textToXHTML(value));
@@ -63,7 +70,7 @@ public class SubTitle extends AbstractVisualComponent {
 				if (getTextColor() != null && getTextColor().length() > 3) {
 					style=" style=\"color:"+getTextColor()+'"';
 				}
-				res.append("<h" + level + " id=\"" + getXHTMLId(ctx) + "\" class=\"subtitle\""+style+">");
+				res.append("<h" + level + " id=\"" + getXHTMLId(ctx) + "\" class=\"subtitle"+colored+"\""+style+">");
 				ReverseLinkService reverserLinkService = ReverseLinkService.getInstance(globalContext);
 				value = reverserLinkService.replaceLink(ctx, this, value);
 				res.append(XHTMLHelper.textToXHTML(value));

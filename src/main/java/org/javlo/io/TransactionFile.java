@@ -8,6 +8,7 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.logging.Logger;
 
+import org.apache.commons.io.FileUtils;
 import org.javlo.helper.ResourceHelper;
 import org.javlo.helper.StringHelper;
 
@@ -45,7 +46,8 @@ public class TransactionFile {
 		try {
 			out.close();
 			targetFile.delete();
-			tempFile.renameTo(targetFile);
+			//tempFile.renameTo(targetFile);
+			FileUtils.moveFile(tempFile, targetFile);
 			tempFile = null;
 		} finally {
 			if (tempFile != null) {

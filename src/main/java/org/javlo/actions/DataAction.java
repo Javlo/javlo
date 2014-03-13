@@ -463,4 +463,9 @@ public class DataAction implements IAction {
 		ctx.getAjaxData().put("sessionId", session.getId());
 		return null;
 	}
+	
+	public static String performTab(RequestService rs, HttpSession session) {
+		session.setAttribute("tab", rs.getParameter("tab", null));
+		return null;
+	}
 }

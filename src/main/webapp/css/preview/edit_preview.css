@@ -424,6 +424,7 @@ body.edit-preview {
 	font-size: 10px;
 	font-family: Verdana, Arial, Helvetica, sans-serif;
 	text-transform: none;
+	letter-spacing: 0;
 	color: #000000;
 	display: block;
 	list-style: none;

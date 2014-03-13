@@ -18,11 +18,14 @@ import java.util.Map;
 import java.util.logging.Logger;
 
 import org.apache.commons.fileupload.FileItem;
+import org.javlo.component.core.ComponentContext;
 import org.javlo.component.core.IReverseLinkComponent;
 import org.javlo.config.StaticConfig;
 import org.javlo.context.ContentContext;
+import org.javlo.context.EditContext;
 import org.javlo.context.GlobalContext;
 import org.javlo.exception.ResourceNotFoundException;
+import org.javlo.helper.ComponentHelper;
 import org.javlo.helper.ElementaryURLHelper;
 import org.javlo.helper.NetHelper;
 import org.javlo.helper.StringHelper;
@@ -31,12 +34,15 @@ import org.javlo.helper.XHTMLHelper;
 import org.javlo.i18n.I18nAccess;
 import org.javlo.message.GenericMessage;
 import org.javlo.message.MessageRepository;
+import org.javlo.module.content.Edit;
+import org.javlo.module.core.Module;
 import org.javlo.module.file.FileAction;
 import org.javlo.navigation.MenuElement;
 import org.javlo.service.ContentService;
 import org.javlo.service.RequestService;
 import org.javlo.template.Template;
 import org.javlo.template.TemplateFactory;
+import org.javlo.user.AdminUserFactory;
 
 /**
  * standard image component. <h4>exposed variable :</h4>
@@ -514,7 +520,6 @@ public class GlobalImage extends Image {
 		I18nAccess i18nAccess = I18nAccess.getInstance(ctx.getRequest());
 		return i18nAccess.getText("action.add-image.link");
 	}
-
 	
 	public String getLink() {
 		return properties.getProperty(LINK_KEY, "");
@@ -779,6 +784,11 @@ public class GlobalImage extends Image {
 				setEmbedCode(embedCode);
 			}
 		}
+		
+		if (isModify()) {
+			setFirstText(null);
+			setSecondText(null);
+		}
 
 		super.performEdit(ctx);
 
@@ -866,5 +876,60 @@ public class GlobalImage extends Image {
 		} else {
 			return false;
 		}
+	}
+	
+	public int getHeight() {
+		return Integer.parseInt(properties.getProperty("height", "-1"));
+	}
+	
+	public String getFirstText() {
+		return properties.getProperty("first-text", getLabel());
+	}
+	
+	public void setFirstText(String text) {
+		if (text == null) {
+			properties.remove("first-text");
+		} else {
+			properties.setProperty("first-text", text);
+		}
+	}
+	
+	public String getSecondText() {
+		return properties.getProperty("second-text", "");
+	}
+	
+	public void setSecondText(String text) {
+		if (text == null) {
+			properties.remove("second-text");
+		} else {
+			properties.setProperty("second-text", text);
+		}
+	}
+	
+	public void setHeight(int height) {
+		if (getHeight() != height) {
+			properties.setProperty("height", ""+height);
+			setModify();
+		}
+	}
+	
+	@Override
+	public String getActionGroupName() {	
+		return "global-image";
+	}
+	
+	public static String performUpdateSection(ContentContext ctx, EditContext editContext, GlobalContext globalContext, ContentService content, ComponentContext componentContext, RequestService rs, I18nAccess i18nAccess, MessageRepository messageRepository, Module currentModule, AdminUserFactory adminUserFactory) throws Exception {
+		GlobalImage image = (GlobalImage)ComponentHelper.getComponentFromRequest(ctx);
+		String firstText = rs.getParameter("first-text", null);
+		String secondText = rs.getParameter("second-text", null);
+		String height = rs.getParameter("height", null);
+		if (firstText != null && secondText != null && height != null) {
+			image.setFirstText(firstText);
+			image.setSecondText(secondText);
+			image.setHeight(Integer.parseInt(height));			
+			image.storeProperties();
+			Edit.performSave(ctx, editContext, globalContext, content, componentContext, rs, i18nAccess, messageRepository, currentModule, adminUserFactory);
+		}		
+		return null;
 	}
 }

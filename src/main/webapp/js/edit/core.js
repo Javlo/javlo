@@ -90,8 +90,7 @@ function setInputColor(input) {
 	});
 }
 
-jQuery(document).ready(function() {
-	
+function updateColorInput() {
 	if (jQuery('.color').length > 0) {
 		jQuery('.color').ColorPicker({		
 			onSubmit: function(hsb, hex, rgb, el) {
@@ -104,10 +103,14 @@ jQuery(document).ready(function() {
 			}		
 		});
 	}
-	
 	jQuery('.color').each(function() {
 		setInputColor(this);
 	});
+}
+
+jQuery(document).ready(function() {
+	
+	updateColorInput();
 	
 	/** scrol to latest position after refresh **/
 	var scrollTo = getParam(window.location.href, "_scrollTo");

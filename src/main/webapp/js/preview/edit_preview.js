@@ -3,6 +3,36 @@ var dragging = false;
 var mouseX = 0;
 var mouseY = 0;
 
+var floatZone = function(zone1, zone2, image){
+	var zone1 = jQuery(zone1);	
+	var zone2 = jQuery(zone2);	
+	var image = jQuery(image);
+	
+	var html = zone1.text()+zone2.text();
+	console.log(html);
+	
+	var sep = html.length;
+	zone1.html(html);
+	zone2.html('');
+	while (sep > 0 && zone1.height() > image.height()) {
+		sep = sep-1;
+		while (sep > 0 && html[sep] != ' ') {
+			sep = sep - 1;			
+		}	
+		
+		var calcul = 10;
+		for (var i=0; i<2000; i++) {
+			calcul = calcul*54;
+		}
+		
+		zone1.html(html.substring(0,sep));
+		zone2.html(html.substring(sep, html.length));
+	}	
+	//image.css("height", zone1.height()+"px");
+	
+	return sep;
+};
+
 jQuery(document).ready(
 		function() {
 			jQuery( window ).mousemove(function( event ) {

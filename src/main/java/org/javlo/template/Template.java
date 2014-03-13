@@ -217,7 +217,7 @@ public class Template implements Comparable<Template> {
 		public void setToolsServer(String toolsServer) {
 			this.toolsServer = toolsServer;
 		}
-		
+
 		public CssColor getTitle() {
 			return title;
 		}
@@ -231,7 +231,7 @@ public class Template implements Comparable<Template> {
 		}
 
 		public void setSpecial(Color special) {
-			this.special = CssColor.getInstance(special);			
+			this.special = CssColor.getInstance(special);
 		}
 
 		@Override
@@ -260,7 +260,7 @@ public class Template implements Comparable<Template> {
 			out.append(getLogo());
 			return out.toString();
 		}
-		
+
 	}
 
 	public static final class TemplateBean implements IRemoteResource {
@@ -637,6 +637,10 @@ public class Template implements Comparable<Template> {
 
 	private Map<String, String> freeData = null;
 
+	private Map<String, Row> rows = null;
+	
+	private TemplateStyle style = null;
+
 	public static Template getApplicationInstance(ServletContext application, ContentContext ctx, String templateDir) throws ConfigurationException, IOException {
 
 		Template outTemplate = null;
@@ -964,6 +968,55 @@ public class Template implements Comparable<Template> {
 		properties.clearProperty(XMLManipulationHelper.AREA_PREFIX + area);
 		storeProperties();
 	}
+	
+	public void addArea(String rowName) {
+		if (rowName.indexOf("-")>=0) {
+			int rowNumber = Integer.parseInt(rowName.substring(rowName.indexOf("-")+1));
+			String prefixName = "area-"+rowNumber+'-';
+			int areaNumber = 1;
+			String areaName = prefixName+areaNumber;
+			while (properties.getProperty("area."+areaName) != null) {
+				areaNumber++;
+				areaName = prefixName+areaNumber;				
+			}
+			properties.setProperty("area."+areaName, areaName);
+			properties.setProperty("area."+areaName+".row", rowName);
+			storeProperties();
+			resetRows();
+		}
+	}
+	
+	public Row getRow(String name) {
+		for (Row row : getRows()) {
+			if (row.getName().equals(name)) {
+				return row;
+			}
+		}
+		return null;
+	}
+	
+	public void addRow() {
+		String rowName = null;
+		int rowNumber = 0;
+		String newRowName = null;
+		for (int i=1; i<9999&&newRowName == null; i++) {
+			rowName = "row-"+i;
+			if (getRow(rowName) == null) {
+				newRowName = rowName;
+				rowNumber = i;
+			}
+		}
+		List<Row> rows = getRows();
+		Row row = new Row();
+		rows.add(row);		
+		row.setName(newRowName);
+		Area area = new Area();
+		area.setName("area-"+rowNumber+"-1");
+		area.setRow(row);
+		row.addArea(area);
+		storeRows(rows);
+		resetRows();
+	}
 
 	/**
 	 * this area is display if specialrendere is defined
@@ -1038,10 +1091,10 @@ public class Template implements Comparable<Template> {
 		Collections.sort(css);
 		return css;
 	}
-	
+
 	/** return the css for wysiwyg layout **/
 	public String getWysiwygCss() {
-		return properties.getString("wysiwyg.css", getParent().getWysiwygCss());		
+		return properties.getString("wysiwyg.css", getParent().getWysiwygCss());
 	}
 
 	public Properties getConfigComponentFile(GlobalContext globalContext, String type) throws IOException {
@@ -1781,7 +1834,7 @@ public class Template implements Comparable<Template> {
 		String special = properties.getString("data.color.special", null);
 		if (special != null) {
 			Color color = Color.decode('#' + special);
-			templateData.setSpecial(color);		
+			templateData.setSpecial(color);
 		}
 		String link = properties.getString("data.color.link", null);
 		if (link != null) {
@@ -1831,7 +1884,7 @@ public class Template implements Comparable<Template> {
 		}
 		if (templateData.getText() != null) {
 			templateDataMap.put(StringHelper.colorToHexStringNotNull(templateData.getText()), StringHelper.colorToHexStringNotNull(templateDataUser.getText()));
-		}		
+		}
 		if (templateData.getBackgroundMenu() != null) {
 			templateDataMap.put(StringHelper.colorToHexStringNotNull(templateData.getBackgroundMenu()), StringHelper.colorToHexStringNotNull(templateDataUser.getBackgroundMenu()));
 		}
@@ -1846,7 +1899,7 @@ public class Template implements Comparable<Template> {
 		}
 		if (templateData.getTitle() != null) {
 			templateDataMap.put(StringHelper.colorToHexStringNotNull(templateData.getTitle()), StringHelper.colorToHexStringNotNull(templateDataUser.getTitle()));
-		}		
+		}
 		if (templateData.getSpecial() != null) {
 			templateDataMap.put(StringHelper.colorToHexStringNotNull(templateData.getSpecial()), StringHelper.colorToHexStringNotNull(templateDataUser.getSpecial()));
 		}
@@ -1889,7 +1942,7 @@ public class Template implements Comparable<Template> {
 		return config.getRealPath(getLocalWorkTemplateFolder());
 	}
 
-	public void importTemplateInWebapp(StaticConfig config, ContentContext ctx) throws IOException {		
+	public void importTemplateInWebapp(StaticConfig config, ContentContext ctx) throws IOException {
 		if (templateImportationError) {
 			return;
 		}
@@ -2226,7 +2279,7 @@ public class Template implements Comparable<Template> {
 		List<String> ids = StringHelper.stringToCollection(htmlIds, ",");
 		return ids;
 	}
-	
+
 	protected String getRAWPlugins() {
 		return properties.getString("plugins", getParent().getRAWPlugins());
 	}
@@ -2315,41 +2368,121 @@ public class Template implements Comparable<Template> {
 	public void setFreeData(Map<String, String> freeData) {
 		this.freeData = freeData;
 	}
-	
+
 	protected void loadTemplatePart(TemplatePart part, String prefix) {
-		part.setBackgroundColor(properties.getString(prefix+".background-color"));
-		part.setBorderColor(properties.getString(prefix+".border-color"));
-		part.setBorderWidth(properties.getString(prefix+".border-width"));
-		part.setFont(properties.getString(prefix+".font"));
-		part.setHeight(properties.getString(prefix+".height"));
-		part.setMargin(properties.getString(prefix+".margin"));
-		part.setPadding(properties.getString(prefix+".padding"));
-		part.setTextColor(properties.getString(prefix+".color"));
-		part.setTextSize(properties.getString(prefix+".text-size"));
-		part.setWidth(properties.getString(prefix+".width"));
+		part.setBackgroundColor(properties.getString(prefix + ".background-color"));
+		part.setBorderColor(properties.getString(prefix + ".border-color"));
+		part.setBorderWidth(properties.getString(prefix + ".border-width"));
+		part.setFont(properties.getString(prefix + ".font"));
+		part.setHeight(properties.getString(prefix + ".height"));
+		part.setMargin(properties.getString(prefix + ".margin"));
+		part.setPadding(properties.getString(prefix + ".padding"));
+		part.setTextColor(properties.getString(prefix + ".color"));
+		part.setTextSize(properties.getString(prefix + ".text-size"));
+		part.setWidth(properties.getString(prefix + ".width"));
+	}
+
+	protected void saveTemplatePart(TemplatePart part, String prefix) {
+		properties.setProperty(prefix + ".background-color", part.getBackgroundColor());
+		properties.setProperty(prefix + ".border-color", part.getBorderColor());
+		properties.setProperty(prefix + ".border-width", part.getBorderWidth());
+		properties.setProperty(prefix + ".font", part.getFont());
+		properties.setProperty(prefix + ".height", part.getHeight());
+		properties.setProperty(prefix + ".margin", part.getMargin());
+		properties.setProperty(prefix + ".padding", part.getPadding());
+		properties.setProperty(prefix + ".color", part.getTextColor());
+		properties.setProperty(prefix + ".text-size", part.getTextSize());
+		properties.setProperty(prefix + ".width", part.getWidth());
 	}
 	
-	public Collection<Row> getRows() {
-		Map<String,Row> rows = new HashMap<String, Row>();		
-		for (String area : getAreas()) {			
-			String rowName = properties.getString("area."+area+".row","");			
-			if (rowName.trim().length() > 0) {
-				Row row = rows.get(rowName);
-				if (row == null) {
-					row = new Row();
-					row.setName(rowName);
-					loadTemplatePart(row, "row."+rowName);
-					rows.put(rowName, row);
+	public synchronized TemplateStyle getStyle() {
+		if (style == null) {
+			style = new TemplateStyle();
+			style.setName(getName());
+			loadTemplatePart(style, "style");
+		}
+		return style;
+	}
+	
+	public void storeStyle(TemplateStyle style) {
+		saveTemplatePart(style,"style");
+		style = null;
+		storeProperties();
+	}
+
+	public synchronized List<Row> getRows() {
+		if (rows == null) {
+			rows = new HashMap<String, Row>();
+			for (String area : getAreas()) {
+				String rowName = properties.getString("area." + area + ".row", "");
+				if (rowName.trim().length() > 0) {
+					Row row = rows.get(rowName);
+					if (row == null) {
+						row = new Row();
+						row.setName(rowName);
+						loadTemplatePart(row, "row." + rowName);
+						rows.put(rowName, row);
+					}
+					Area newArea = new Area();
+					newArea.setRow(row);
+					newArea.setName(area);
+					loadTemplatePart(newArea, "area." + area);
+					row.addArea(newArea);
 				}
-				Area newArea = new Area();
-				newArea.setName(area);
-				loadTemplatePart(newArea,"area."+area);
-				row.addArea(newArea);				
 			}
-		}		
-		return rows.values();
+		}
+		List<Row> outRows = new LinkedList(rows.values());
+		Collections.sort(outRows, new TemplatePart.SortByName());
+		return outRows;
 	}
 	
+	public void resetRows() {
+		rows = null;
+	}
+	
+	public static Area getArea(Collection<Row> rows, String name) {
+		for (Row row : rows) {
+			for (Area area : row.getAreas()) {
+				if (area.getName().equals(name)) {
+					return area;
+				}
+			}
+		}
+		return null;
+	}
+	
+	public void deleteRow(String name) {
+		Collection<Row> newRows = new LinkedList<Row>();
+		for (Row row : getRows()) {
+			if (!row.equals(name)) {
+				newRows.add(row);
+			}
+		}
+		storeRows(newRows);
+		resetRows();
+	}
+
+	public void storeRows(Collection<Row> rows) {
+		Iterator keys = properties.getKeys();
+		while (keys.hasNext()) {
+			String key = (String) keys.next();
+			if (key.startsWith("row.") || key.startsWith("area.")) {
+				properties.clearProperty(key);
+			}
+		}
+		for (Row row : rows) {
+			saveTemplatePart(row, "row." + row.getName());
+			for (Area area : row.getAreas()) {
+				System.out.println("***** Template.storeRows : area = "+area.getName()); //TODO: remove debug trace
+				properties.setProperty("area."+area.getName(), area);
+				properties.setProperty("area."+area.getName()+".row", row.getName());
+				saveTemplatePart(area, "area." + area.getName());
+			}
+		}
+		storeProperties();
+		this.rows = null;
+	}
+
 	public boolean isEditable() {
 		if (getParent() != null && getParent().isEditable()) {
 			return true;

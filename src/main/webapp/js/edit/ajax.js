@@ -56,8 +56,6 @@ jQuery(document).ready(function() {
 	jQuery(document).trigger("ajaxUpdate");
 });
 
-
-
 function ajaxRequest(url, form, doneFunction) {	
 	if (url.indexOf("/edit-")>=0) {
 		url = url.replace("/edit-", "/ajax-");
@@ -257,7 +255,3 @@ function endAjaxLoading() {
 		jQuery("#upload-zone").removeClass("hidden");
 	}
 }
-
-
-
-

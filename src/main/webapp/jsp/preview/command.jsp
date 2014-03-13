@@ -207,7 +207,7 @@ if (!rightOnPage) {
 		<a id="preview-delete-zone" href="#" class="hidden">&nbsp;</a>
 		<a href="http://www.javlo.org">javlo.org</a>
     	<c:if test="${!userInterface.light}">    		 
-    		<span class="version">2013 - v ${info.version} - ${info.previewVersion}</span> 
+    		<span class="version">2014 - v ${info.version} - ${info.previewVersion}</span> 
     	</c:if>
 	</div>
 </div>
