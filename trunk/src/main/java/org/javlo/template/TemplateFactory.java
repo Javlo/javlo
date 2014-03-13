@@ -294,6 +294,7 @@ public class TemplateFactory {
 		StaticConfig staticConfig = StaticConfig.getInstance(application);
 		File templateFolder = new File(URLHelper.mergePath(staticConfig.getTemplateFolder(), StringHelper.createFileName(name)));
 		if (templateFolder.exists()) {
+			logger.warning("Folder exist : "+templateFolder);
 			return null;
 		}
 		File defaultTemplate = new File(staticConfig.getDefaultTemplateFolder());
@@ -304,6 +305,7 @@ public class TemplateFactory {
 			configFile.getParentFile().mkdirs();
 			configFile.createNewFile();
 		}
+		TemplateFactory.clearTemplate(application);
 		return getDiskTemplates(application).get(name);
 	}
 

@@ -1853,15 +1853,15 @@ public class GlobalContext implements Serializable {
 						tf = new TransactionFile(contextFile);
 						properties.save(tf.getOutputStream());
 						tf.commit();
-					} catch (IOException e) {						
+					} catch (IOException e) {
 						e.printStackTrace();
 						try {
 							tf.rollback();
-						} catch (IOException e1) {						
+						} catch (IOException e1) {
 							e1.printStackTrace();
 						}
 					}
-					
+
 				} else {
 					logger.severe("no folder found for : " + getContextKey() + " context not stored, try to reload.");
 					reload();
@@ -2036,13 +2036,13 @@ public class GlobalContext implements Serializable {
 				TransactionFile tf = null;
 				try {
 					long startTime = System.currentTimeMillis();
-					
+
 					logger.finest("start storage data of context " + getContextKey());
-					
+
 					tf = new TransactionFile(getDataFile());
 					dataProperties.store(tf.getOutputStream(), getContextKey());
 					tf.commit();
-					
+
 					logger.fine("store data for : " + getContextKey() + " size:" + dataProperties.size() + " time:" + StringHelper.renderTimeInSecond(System.currentTimeMillis() - startTime));
 				} catch (Exception e) {
 					try {
@@ -2711,11 +2711,13 @@ public class GlobalContext implements Serializable {
 		out.println("**** Alias of           :  " + getAliasOf());
 		out.println("**** User Factory       :  " + getUserFactoryClassName());
 		out.println("**** Admin User Factory :  " + getAdminUserFactoryClassName());
-		try {
-			out.println("**** Modules            :  " + StringHelper.collectionToString(ModulesContext.getInstance(session, this).getAllModules(), ", "));
-		} catch (ModuleException e) {
-			out.println("**** Error load Modules :  " + e.getMessage());
-			e.printStackTrace();
+		if (session != null) {
+			try {
+				out.println("**** Modules            :  " + StringHelper.collectionToString(ModulesContext.getInstance(session, this).getAllModules(), ", "));
+			} catch (ModuleException e) {
+				out.println("**** Error load Modules :  " + e.getMessage());
+				e.printStackTrace();
+			}
 		}
 		out.println("**** # attributes       :  " + attributes.size());
 		out.println("**** # time attributes  :  " + timeAttributes.size());
@@ -2858,13 +2860,13 @@ public class GlobalContext implements Serializable {
 			save();
 		}
 	}
-	
+
 	public String getActivationKey() {
 		return properties.getString("activation-key");
 	}
-	
+
 	public void setActivationKey(String value) {
-		
+
 		String key = "activation-key";
 		synchronized (properties) {
 			if (value == null) {
@@ -2874,7 +2876,7 @@ public class GlobalContext implements Serializable {
 			}
 			save();
 		}
-		
+
 	}
 
 }

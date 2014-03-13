@@ -1106,11 +1106,19 @@ public abstract class AbstractVisualComponent implements IContentVisualComponent
 				if (getPage() != null && getPage().equals(ctx.getCurrentPage())) {
 					style = style + " first-repeat";
 				}
+				
 			} catch (Exception e) {
 				e.printStackTrace();
 			}
 		}
+		if (isColored()) {
+			style = style + " colored";
+		}
 		return style.trim();
+	}
+
+	public boolean isColored() { 
+		return (getBackgroundColor() != null && getBackgroundColor().length() > 2) || (getTextColor() != null && getTextColor().length() > 2);
 	}
 
 	@Override

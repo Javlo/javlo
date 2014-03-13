@@ -81,14 +81,17 @@ public class DebugListening {
 
 				out.println("info                  : " + info);
 				out.println("");
+				out.println("CONTEXT INFO : ");
+				globalContext.writeInfo(session, out);
+				out.println("");
+				out.println("STACK TRACE : ");
 				if (t != null) {
 					out.println("message : " + t.getMessage());
 					t.printStackTrace(out);
 				} else {
 					out.println("message : NO STACK TRACE.");
 				}
-				out.println("");
-				out.println("STACK TRACE : ");
+				
 				out.close();
 
 				if (SEND_ERROR_MAIL) {

@@ -1,6 +1,17 @@
 package org.javlo.template;
 
+import java.util.Comparator;
+
 public class TemplatePart {
+	
+	public static class SortByName implements Comparator<TemplatePart> {
+
+		@Override
+		public int compare(TemplatePart o1, TemplatePart o2) {
+			return o1.getName().compareTo(o2.getName());
+		}
+		
+	}
 	
 	private String name = null;
 	private String width = null;
@@ -15,7 +26,7 @@ public class TemplatePart {
 	private String textSize = null;
 	
 	public String getWidth() {
-		return width;
+		return width;		
 	}
 	public void setWidth(String width) {
 		this.width = width;

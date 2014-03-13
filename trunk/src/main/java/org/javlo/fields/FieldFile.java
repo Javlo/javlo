@@ -16,6 +16,7 @@ import java.util.Locale;
 import javax.servlet.http.HttpServletRequest;
 
 import org.apache.commons.fileupload.FileItem;
+import org.codehaus.plexus.util.StringUtils;
 import org.javlo.bean.Link;
 import org.javlo.config.StaticConfig;
 import org.javlo.context.ContentContext;
@@ -80,6 +81,10 @@ public class FieldFile extends Field implements IStaticContainer {
 		return this.properties.getProperty("field." + getName() + ".file.type", "file");
 	}
 
+	protected boolean isCategoryRecursive() {
+		return StringHelper.isTrue(this.properties.getProperty("field." + getName() + ".recursive", null));
+	}
+
 	protected String getFileTypeFolder() {
 		return getStaticConfig().getFileFolder();
 	}
@@ -94,12 +99,17 @@ public class FieldFile extends Field implements IStaticContainer {
 		list.add("");
 		if (dir.exists()) {
 			File[] files = dir.listFiles(new DirectoryFilter());
-
-			Comparator fileComparator = new FileComparator(FileComparator.NAME, true);
-			Arrays.sort(files, fileComparator);
-
-			for (File file : files) {
-				list.add(file.getName());
+			if (!isCategoryRecursive()) {
+				Comparator fileComparator = new FileComparator(FileComparator.NAME, true);
+				Arrays.sort(files, fileComparator);
+				for (File file : files) {
+					list.add(file.getName());
+				}
+			} else {
+				for (File file : ResourceHelper.getAllDirList(dir)) {
+					String name = StringUtils.replaceOnce(file.getAbsolutePath(), dir.getAbsolutePath(), "");					
+					list.add(name);
+				}
 			}
 		}
 		return list;

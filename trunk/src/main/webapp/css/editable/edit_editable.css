@@ -1,0 +1,7 @@
+._empty_area:HOVER {
+	border-color: #FF5A00;
+}
+
+.area_active ._empty_area span {
+	color: #FF5A00;
+}

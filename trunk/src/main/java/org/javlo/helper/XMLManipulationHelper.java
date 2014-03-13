@@ -439,13 +439,10 @@ public class XMLManipulationHelper {
 				}
 
 				/* breadcrumb */// TODO: not language but breadcrumb ???
-				// if (!isMail) {
 				if ((idValue != null) && (idValue.trim().equals(getValue(options, "tagid.breadcrumb", "breadcrumb")))) {
 					remplacement.addReplacement(tags[i].getOpenEnd() + 1, tags[i].getCloseStart(), "<%=XHTMLNavigationHelper.getBreadcrumbList(ctx)%>");
 				}
-				// }
 
-				// if (!isMail) {
 				Collection<String> keys = options.keySet();
 				for (String key : keys) {
 					if ((key != null) && key.startsWith("tagid.menu-")) {
@@ -472,7 +469,6 @@ public class XMLManipulationHelper {
 							remplacement.addReplacement(tags[i].getOpenEnd() + 1, tags[i].getCloseStart(), stringBuffer.toString());
 						}
 					}
-					// }
 				}
 
 				if (!isMail) {
@@ -498,7 +494,6 @@ public class XMLManipulationHelper {
 				}
 				
 				/* insert before all */
-				// if (!isMail) {
 				if (tags[i].getName().equalsIgnoreCase("body")) {
 					String contentZone = getValue(options, AREA_PREFIX + "content", null);
 					String cssClass = StringHelper.neverNull(tags[i].getAttributes().get("class"));
@@ -534,14 +529,7 @@ public class XMLManipulationHelper {
 
 					String previewCode = "<c:if test=\"${not contentContext.pageAssociation}\">" + getPreviewCode(globalContext.getServletContext()) + "</c:if>";
 					remplacement.addReplacement(tags[i].getOpenEnd() + 1, tags[i].getOpenEnd() + 1, previewCode + getEscapeMenu(contentZone) + getResetTemplate() + getAfterBodyCode());
-					// if (contentZone != null) {
-					// remplacement.addReplacement(tags[i].getOpenEnd() + 1,
-					// tags[i].getOpenEnd() + 1, getPreviewCode() +
-					// getEscapeMenu(contentZone) + getResetTemplate() +
-					// getAfterBodyCode());
-					// }
 				}
-				// }
 
 				/* link - StyleSheet */
 				if (tags[i].getName().equalsIgnoreCase("link")) {
@@ -587,10 +575,6 @@ public class XMLManipulationHelper {
 								if ((tagDescription.getAttributes().get("type") != null) && (tagDescription.getAttributes().get("type").equalsIgnoreCase("text")) || (tagDescription.getAttributes().get("type").equalsIgnoreCase("search"))) {
 									tagDescription.getAttributes().put("name", "keywords");
 									tagDescription.getAttributes().put("accesskey", "4");
-									// tagDescription.getAttributes().put("value",
-									// "<%=i18nAccess.getViewText(\"search.title\")%>");
-									// tagDescription.getAttributes().put("onfocus",
-									// "if (this.value == '<%=i18nAccess.getViewText(\"search.title\")%>'){this.value='';}");
 									remplacement.addReplacement(tagDescription.getOpenStart(), tagDescription.getCloseEnd() + 1, tagDescription.render(null));
 									remplacement.addReplacement(tagDescription.getOpenEnd() + 1, tagDescription.getOpenEnd() + 1, searchInput);
 								}
@@ -626,7 +610,6 @@ public class XMLManipulationHelper {
 				}
 
 				/* head - StyleSheet */
-				// if (!isMail) {
 				if (tags[i].getName().equalsIgnoreCase("head")) {
 
 					if (content.indexOf(HEADER_ZONE) > 0) {
@@ -687,9 +670,8 @@ public class XMLManipulationHelper {
 					out.println("<%}%>");
 					out.close();
 
-					remplacement.addReplacement(tags[i].getCloseStart() - 1, tags[i].getCloseStart(), getHTMLSufixHead() + new String(outStream.toByteArray()));
+					remplacement.addReplacement(tags[i].getCloseStart() - 1, tags[i].getCloseStart(), getHTMLSufixHead(template) + new String(outStream.toByteArray()));
 				}
-				// }
 
 				/* title */
 				if (!isMail) {
@@ -1008,11 +990,18 @@ public class XMLManipulationHelper {
 		return outString.toString();
 	}
 
-	private static String getHTMLSufixHead() throws IOException {
+	private static String getHTMLSufixHead(Template template) throws IOException {
 
 		StringWriter outString = new StringWriter();
 		BufferedWriter out = new BufferedWriter(outString);
 
+		if (template.isEditable()) {
+			out.append("<%if (StringHelper.isTrue(request.getParameter(\"_display-zone\"))) {%><link rel=\"stylesheet\" type=\"text/css\" href=\"<%=URLHelper.createStaticURL(ctx,\"/css/editable/edit_editable.css\")+\"?ts=\"+infoBean.getTs()%>\" /><%}%>");
+			out.newLine();
+			out.append("<%if (StringHelper.isTrue(request.getParameter(\"_display-zone\"))) {%><script type=\"text/javascript\" src=\"<%=URLHelper.createStaticURL(ctx,\"/js/editable/edit_editable.js\")%>\"></script><%}%>");
+			out.newLine();
+		}
+		
 		out.append("<%if (StringHelper.isTrue(request.getParameter(\"_display-zone\"))) {%><link rel=\"stylesheet\" type=\"text/css\" href=\"<%=URLHelper.createStaticURL(ctx,\"/css/preview/edit_preview.css\")+\"?ts=\"+infoBean.getTs()%>\" /><%}%>");
 		out.newLine();
 		out.append("<%if (ctx.getRenderMode() == ContentContext.PREVIEW_MODE || ctx.getRenderMode() == ContentContext.TIME_MODE) {");
