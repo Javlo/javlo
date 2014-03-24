@@ -13,6 +13,7 @@ import java.util.Map;
 import java.util.Set;
 import java.util.TreeSet;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.logging.Level;
 import java.util.logging.Logger;
 
 import javax.imageio.ImageIO;
@@ -22,6 +23,8 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import org.javlo.component.core.IContentVisualComponent;
+import org.javlo.component.core.IImageFilter;
 import org.javlo.config.StaticConfig;
 import org.javlo.context.ContentContext;
 import org.javlo.context.GlobalContext;
@@ -33,6 +36,7 @@ import org.javlo.image.ImageConfig;
 import org.javlo.image.ImageEngine;
 import org.javlo.image.ImageHelper;
 import org.javlo.rendering.Device;
+import org.javlo.service.ContentService;
 import org.javlo.template.Template;
 import org.javlo.template.TemplateFactory;
 import org.javlo.tracking.Track;
@@ -62,6 +66,8 @@ public class ImageTransformServlet extends HttpServlet {
 	public static long COUNT_304 = 0;
 
 	private static final String TEMP_IMAGE_FILTER = "__TEMP_IMAGE_FILTER";
+
+	public static final String COMPONENT_ID_URL_DIR_PREFIX = "/comp-";
 
 	public static final class ImageTransforming {
 		private final File file;
@@ -177,17 +183,17 @@ public class ImageTransformServlet extends HttpServlet {
 		}
 	}
 
-	public long getLastModified(GlobalContext globalContext, String name, String filter, String area, Device device, Template template) throws FileNotFoundException {
+	public long getLastModified(GlobalContext globalContext, String name, String filter, String area, Device device, Template template, IImageFilter comp) throws FileNotFoundException {
 		String deviceCode = "no-device";
 		if (device != null) {
 			deviceCode = device.getCode();
 		}
 		FileCache fc = FileCache.getInstance(getServletContext());
-		long lm = fc.getLastModified(ImageHelper.createSpecialDirectory(globalContext.getContextKey(), filter, area, deviceCode, template), name);
+		long lm = fc.getLastModified(ImageHelper.createSpecialDirectory(globalContext.getContextKey(), filter, area, deviceCode, template, comp), name);
 		return lm;
 	}
 
-	private void imageTransform(ContentContext ctx, ImageConfig config, StaticInfo staticInfo, String filter, String area, Template template, File imageFile, String imageName, String inFileExtention) throws IOException {
+	private void imageTransform(ContentContext ctx, ImageConfig config, StaticInfo staticInfo, String filter, String area, Template template, IImageFilter comp, File imageFile, String imageName, String inFileExtention) throws IOException {
 
 		String fileSize = StringHelper.renderSize(imageFile.length());
 
@@ -384,7 +390,7 @@ public class ImageTransformServlet extends HttpServlet {
 				deviceCode = ctx.getDevice().getCode();
 			}
 			GlobalContext globalContext = GlobalContext.getInstance(ctx.getRequest());
-			String dir = ImageHelper.createSpecialDirectory(globalContext.getContextKey(), filter, area, deviceCode, template);
+			String dir = ImageHelper.createSpecialDirectory(globalContext.getContextKey(), filter, area, deviceCode, template, comp);
 			OutputStream outImage = fc.saveFile(dir, imageName);
 			
 			try {
@@ -401,6 +407,9 @@ public class ImageTransformServlet extends HttpServlet {
 				if (!"png".equals(fileExtension) && !"gif".equals(fileExtension)) {
 					img = ImageEngine.removeAlpha(img);
 				}
+				if (comp != null && StringHelper.trimAndNullify(comp.getImageFilterKey()) != null) {
+					img = ((IImageFilter) comp).filterImage(img);
+				}
 				ImageIO.write(img, fileExtension, outImage);
 				if (metadata != null) {
 					ResourceHelper.writeImageMetadata(metadata, fc.getFileName(dir, dir).getCanonicalFile());
@@ -413,13 +422,13 @@ public class ImageTransformServlet extends HttpServlet {
 
 	}
 
-	private InputStream loadFileFromDisk(GlobalContext globalContext, String name, String filter, String area, Device device, Template template, long lastModificationDate) throws IOException {
+	private InputStream loadFileFromDisk(GlobalContext globalContext, String name, String filter, String area, Device device, Template template, IImageFilter comp, long lastModificationDate) throws IOException {
 		String deviceCode = "no-device";
 		if (device != null) {
 			deviceCode = device.getCode();
 		}
 		FileCache fc = FileCache.getInstance(getServletContext());
-		InputStream stream = fc.getFileInputStream(ImageHelper.createSpecialDirectory(globalContext.getContextKey(), filter, area, deviceCode, template), name, lastModificationDate);
+		InputStream stream = fc.getFileInputStream(ImageHelper.createSpecialDirectory(globalContext.getContextKey(), filter, area, deviceCode, template, comp), name, lastModificationDate);
 		return stream;
 	}
 
@@ -483,6 +492,7 @@ public class ImageTransformServlet extends HttpServlet {
 			String filter = "default";
 			String area = null;
 			Template template = null;
+			IImageFilter comp = null;
 			int slachIndex = pathInfo.indexOf('/');
 			if (slachIndex > 0) {
 				try {
@@ -497,6 +507,21 @@ public class ImageTransformServlet extends HttpServlet {
 						slachIndex = pathInfo.indexOf('/');
 						area = pathInfo.substring(0, slachIndex);
 						pathInfo = pathInfo.substring(slachIndex);
+					}
+
+					if (pathInfo.startsWith(COMPONENT_ID_URL_DIR_PREFIX)) {
+						slachIndex = pathInfo.indexOf('/', 1);
+						String compId = pathInfo.substring(COMPONENT_ID_URL_DIR_PREFIX.length(), slachIndex);
+						pathInfo = pathInfo.substring(slachIndex);
+						IContentVisualComponent c = null;
+						try {
+							c = ContentService.getInstance(globalContext).getComponent(ctx, compId);
+						} catch (Exception ex) {
+							logger.log(Level.SEVERE, "Exception when retreiving component to transform image.", ex);
+						}
+						if (c instanceof IImageFilter) {
+							comp = (IImageFilter) c;
+						}
 					}
 
 					try {
@@ -596,7 +621,7 @@ public class ImageTransformServlet extends HttpServlet {
 				}
 
 				/* last modified management */
-				long lastModified = getLastModified(globalContext, imageName, filter, area, ctx.getDevice(), template);
+				long lastModified = getLastModified(globalContext, imageName, filter, area, ctx.getDevice(), template, comp);
 				response.setHeader("Cache-Control", "public");				
 				response.setDateHeader(NetHelper.HEADER_LAST_MODIFIED, lastModified);				
 				long lastModifiedInBrowser = request.getDateHeader(NetHelper.HEADER_IF_MODIFIED_SINCE);
@@ -620,7 +645,7 @@ public class ImageTransformServlet extends HttpServlet {
 				}
 
 				FileCache fc = FileCache.getInstance(getServletContext());
-				String key = ImageHelper.createSpecialDirectory(globalContext.getContextKey(), filter, area, deviceCode, template);
+				String key = ImageHelper.createSpecialDirectory(globalContext.getContextKey(), filter, area, deviceCode, template, comp);
 				if (fc.getFileName(key, imageName + '.' + baseExtension).exists()) {
 					InputStream in = null;
 					try {
@@ -633,7 +658,7 @@ public class ImageTransformServlet extends HttpServlet {
 
 				}
 
-				InputStream fileStream = loadFileFromDisk(globalContext, imageName, filter, area, ctx.getDevice(), template, imageFile.lastModified());
+				InputStream fileStream = loadFileFromDisk(globalContext, imageName, filter, area, ctx.getDevice(), template, comp, imageFile.lastModified());
 				if ((fileStream != null)) {
 					try {
 						ResourceHelper.writeStreamToStream(fileStream, out);
@@ -650,6 +675,12 @@ public class ImageTransformServlet extends HttpServlet {
 						templateId = template.getId();
 					}
 					imageKey = imageFile.getAbsolutePath() + '_' + filter + '_' + area + '_' + ctx.getDevice() + '_' + templateId;
+					if (comp != null) {
+						String compFilterKey = StringHelper.trimAndNullify(comp.getImageFilterKey());
+						if (compFilterKey != null) {
+							imageKey = imageKey + "_" + compFilterKey;
+						}
+					}
 
 					long size = imageFile.length();
 					boolean foundInSet = false;
@@ -680,20 +711,20 @@ public class ImageTransformServlet extends HttpServlet {
 					}
 
 					if (!foundInSet) {
-						fileStream = loadFileFromDisk(globalContext, imageName, filter, area, ctx.getDevice(), template, imageFile.lastModified());
+						fileStream = loadFileFromDisk(globalContext, imageName, filter, area, ctx.getDevice(), template, comp, imageFile.lastModified());
 						if ((fileStream == null)) {
 							long currentTime = System.currentTimeMillis();
 							synchronized (imageTransforming.get(imageKey)) {
-								imageTransform(ctx, ImageConfig.getNewInstance(globalContext, request.getSession(), template), staticInfo, filter, area, template, imageFile, imageName, baseExtension);
+								imageTransform(ctx, ImageConfig.getNewInstance(globalContext, request.getSession(), template), staticInfo, filter, area, template, comp, imageFile, imageName, baseExtension);
 							}
 							logger.info("transform image (" + StringHelper.renderSize(size) + ") : '" + imageName + "' in site '" + globalContext.getContextKey() + "' page : " + ctx.getRequestContentLanguage() + ctx.getPath() + " time : " + StringHelper.renderTimeInSecond(System.currentTimeMillis() - currentTime) + " sec.  #transformation:" + imageTransforming.size());
-							fileStream = loadFileFromDisk(globalContext, imageName, filter, area, ctx.getDevice(), template, imageFile.lastModified());
+							fileStream = loadFileFromDisk(globalContext, imageName, filter, area, ctx.getDevice(), template, comp, imageFile.lastModified());
 						}
 						imageTransforming.remove(imageKey);
 						imageKey = null;
 					} else {
 						synchronized (imageTransforming.get(imageKey)) {
-							fileStream = loadFileFromDisk(globalContext, imageName, filter, area, ctx.getDevice(), template, imageFile.lastModified());
+							fileStream = loadFileFromDisk(globalContext, imageName, filter, area, ctx.getDevice(), template, comp, imageFile.lastModified());
 							if (fileStream == null) {
 								logger.severe("problem on loading from cache : " + imageFile);
 							}

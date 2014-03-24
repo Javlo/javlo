@@ -24,6 +24,7 @@ import javax.servlet.ServletContext;
 import javax.servlet.http.HttpServletRequest;
 
 import org.apache.commons.lang.StringUtils;
+import org.javlo.component.core.IImageFilter;
 import org.javlo.helper.LangHelper;
 import org.javlo.helper.ResourceHelper;
 import org.javlo.helper.StringHelper;
@@ -64,13 +65,24 @@ public class ImageHelper {
 		return createSpecialDirectory(width, 0);
 	}
 
-	public static String createSpecialDirectory(String context, String filter, String area, String deviceCode, Template template) {
+	public static String createSpecialDirectory(String context, String filter, String area, String deviceCode, Template template, IImageFilter comp) {
 		context = StringHelper.createFileName(context);
+		String out = context + '/' + filter + '/' + deviceCode + '/' + area + '/';
 		if (template == null) {
-			return context + '/' + filter + '/' + deviceCode + '/' + area + '/' + Template.EDIT_TEMPLATE_CODE;
+			out += Template.EDIT_TEMPLATE_CODE;
 		} else {
-			return context + '/' + filter + '/' + deviceCode + '/' + area + '/' + template.getId();
+			out += template.getId();
 		}
+		String compFilterKey = null;
+		if (comp != null) {
+			compFilterKey = StringHelper.trimAndNullify(comp.getImageFilterKey());
+		}
+		if (compFilterKey == null) {
+			out += "/none";
+		} else {
+			out += "/" + StringHelper.createFileName(compFilterKey);
+		}
+		return out;
 	}
 
 	public static String createSpecialDirectory(int width, int filter) {
