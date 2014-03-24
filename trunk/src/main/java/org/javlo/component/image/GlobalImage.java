@@ -3,6 +3,7 @@
  */
 package org.javlo.component.image;
 
+import java.awt.image.BufferedImage;
 import java.io.ByteArrayOutputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
@@ -21,6 +22,7 @@ import java.util.logging.Logger;
 
 import org.apache.commons.fileupload.FileItem;
 import org.javlo.component.core.ComponentContext;
+import org.javlo.component.core.IImageFilter;
 import org.javlo.component.core.IReverseLinkComponent;
 import org.javlo.config.StaticConfig;
 import org.javlo.context.ContentContext;
@@ -55,7 +57,7 @@ import org.javlo.user.AdminUserFactory;
  * 
  * @author pvandermaesen
  */
-public class GlobalImage extends Image {
+public class GlobalImage extends Image implements IImageFilter {
 
 	/**
 	 * create a static logger.
@@ -149,7 +151,7 @@ public class GlobalImage extends Image {
 			//String url = URLHelper.createTransformURL(ctx, getPage(), getResourceURL(ctx, getFileName()), filter);
 			String url = null;
 			try {				
-				url = URLHelper.createTransformURL(ctx, ctx.getVirtualCurrentPage(), TemplateFactory.getTemplate(ctx, ctx.getVirtualCurrentPage()), getResourceURL(ctx, getFileName()), filter);
+				url = URLHelper.createTransformURL(ctx, ctx.getVirtualCurrentPage(), TemplateFactory.getTemplate(ctx, ctx.getVirtualCurrentPage()), getResourceURL(ctx, getFileName()), filter, this);
 			} catch (Exception e) {
 				e.printStackTrace();
 			}
@@ -1050,4 +1052,14 @@ public class GlobalImage extends Image {
 		out.close();
 		return new String(outStream.toByteArray());
 	}
+
+	@Override
+	public String getImageFilterKey() {
+		return null;
+	}
+
+	public BufferedImage filterImage(BufferedImage image) {
+		return image;
+	}
+
 }
