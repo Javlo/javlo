@@ -513,7 +513,7 @@ public class StaticConfig extends Observable {
 	}
 
 	public String getImageCacheFolder() {
-		return ElementaryURLHelper.mergePath(getStaticFolder(), properties.getString("image-cache-folder", FileCache.BASE_DIR));
+		return properties.getString("image-cache-folder", FileCache.BASE_DIR);
 	}
 
 	public String getFlashFolder() {
