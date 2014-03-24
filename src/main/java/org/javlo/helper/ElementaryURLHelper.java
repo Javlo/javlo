@@ -10,6 +10,7 @@ import javax.servlet.http.HttpSession;
 
 import org.apache.commons.lang.StringUtils;
 import org.javlo.component.core.ComponentBean;
+import org.javlo.component.core.IImageFilter;
 import org.javlo.config.StaticConfig;
 import org.javlo.context.ContentContext;
 import org.javlo.context.EditContext;
@@ -19,6 +20,7 @@ import org.javlo.module.core.ModulesContext;
 import org.javlo.navigation.IURLFactory;
 import org.javlo.navigation.MenuElement;
 import org.javlo.service.ContentService;
+import org.javlo.servlet.ImageTransformServlet;
 import org.javlo.template.Template;
 
 /**
@@ -342,6 +344,10 @@ public abstract class ElementaryURLHelper {
 	}
 
 	public static String createTransformURL(ContentContext ctx, MenuElement referencePage, Template template, String url, String filter) throws Exception {
+		return createTransformURL(ctx, referencePage, template, url, filter, null);
+	}
+
+	public static String createTransformURL(ContentContext ctx, MenuElement referencePage, Template template, String url, String filter, IImageFilter comp) throws Exception {
 		if (url == null) {
 			return null;
 		}
@@ -363,7 +369,7 @@ public abstract class ElementaryURLHelper {
 			} else {
 				templateName = template.getId();
 			}
-			url = createTransformURL(ctx, referencePage, url, filter, templateName);
+			url = createTransformURLInternal(ctx, referencePage, url, filter, templateName, comp);
 		} else {
 			if (filter.equals("template")) {
 				url = ElementaryURLHelper.mergePath(TRANSFORM + '/' + filter, url);
@@ -376,19 +382,28 @@ public abstract class ElementaryURLHelper {
 	}
 
 	public static String createTransformURL(ContentContext ctx, MenuElement referencePage, String url, String filter) throws Exception {
-		return createTransformURL(ctx, referencePage, ctx.getCurrentTemplate(), url, filter);
+		return createTransformURL(ctx, referencePage, ctx.getCurrentTemplate(), url, filter, null);
 	}
 
 	public static String createTransformURL(ContentContext ctx, MenuElement referencePage, String url, String filter, String templateName) throws Exception {
+		return createTransformURLInternal(ctx, referencePage, url, filter, templateName, null);
+	}
+
+	private static String createTransformURLInternal(ContentContext ctx, MenuElement referencePage, String url, String filter, String templateName, IImageFilter comp) throws Exception {
 		if (url == null) {
 			return null;
 		}
 		url = url.replace('\\', '/');
+		String baseUrl = TRANSFORM + '/' + filter;
 		if (templateName != null) {
-			url = ElementaryURLHelper.mergePath(TRANSFORM + '/' + filter + '/' + templateName + '/' + ctx.getVirtualArea(), url);
+			baseUrl = baseUrl + '/' + templateName + '/' + ctx.getVirtualArea();
 		} else {
-			url = ElementaryURLHelper.mergePath(TRANSFORM + '/' + filter + "/[edit]/" + ComponentBean.DEFAULT_AREA + '/', url);
+			baseUrl = baseUrl + "/[edit]/" + ComponentBean.DEFAULT_AREA;
 		}
+		if (comp != null) {
+			baseUrl = baseUrl + ImageTransformServlet.COMPONENT_ID_URL_DIR_PREFIX + comp.getId();
+		}
+		url = ElementaryURLHelper.mergePath(baseUrl, url);
 
 		return createStaticURL(ctx, referencePage, url, true);
 	}
