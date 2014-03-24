@@ -638,6 +638,8 @@ public class SmartGenericForm extends AbstractVisualComponent implements IAction
 		String badFileFormatRAW = comp.getLocalConfig(false).getProperty("file.bad-file", "exe,bat,scr,bin,obj,lib,dll,bat,sh,com,cmd,msi,jsp,xml,html,htm,vbe,wsf,wsc,asp");
 		List<String> badFileFormat = StringHelper.stringToCollection(badFileFormatRAW, ",");	
 		long maxFileSize = comp.getMaxFileSize();
+		
+		System.out.println("***** SmartGenericForm.performSubmit : maxFileSize = "+maxFileSize); //TODO: remove debug trace
 
 		for (FileItem file : requestService.getAllFileItem()) {
 			String ext = StringHelper.getFileExtension(file.getName()).toLowerCase();

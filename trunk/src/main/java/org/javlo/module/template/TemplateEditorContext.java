@@ -11,6 +11,7 @@ public class TemplateEditorContext {
 	
 	private Template currentTemplate;
 	private String area;
+	private boolean showContent = false;
 	
 	public static TemplateEditorContext getInstance(HttpSession session) {
 		final String KEY = "templateEditorContext";
@@ -45,6 +46,14 @@ public class TemplateEditorContext {
 
 	public void setArea(String area) {
 		this.area = area;
+	}
+
+	public boolean isShowContent() {
+		return showContent;
+	}
+
+	public void setShowContent(boolean showContent) {
+		this.showContent = showContent;
 	}
 
 }

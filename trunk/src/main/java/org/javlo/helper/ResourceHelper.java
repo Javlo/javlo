@@ -989,6 +989,8 @@ public class ResourceHelper {
 	}
 
 	public static final int writeStreamToFile(InputStream in, File file, long maxSize) throws IOException {
+		
+		System.out.println("***** ResourceHelper.writeStreamToFile : maxSize = "+maxSize); //TODO: remove debug trace
 
 		int countByte = 0;
 

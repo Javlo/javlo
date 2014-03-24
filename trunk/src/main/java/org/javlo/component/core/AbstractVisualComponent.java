@@ -1996,6 +1996,16 @@ public abstract class AbstractVisualComponent implements IContentVisualComponent
 			}
 		}
 	}
+	
+	@Override
+	public String getSpecialTagTitle(ContentContext ctx) throws Exception {
+		return null;
+	}
+	
+	@Override
+	public String getSpecialTagXHTML(ContentContext ctx) throws Exception {
+		return null;
+	}
 
 	/**
 	 * return true if this component need renderer from template.

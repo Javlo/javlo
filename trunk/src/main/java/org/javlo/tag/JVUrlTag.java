@@ -23,12 +23,9 @@ public class JVUrlTag extends TagSupport {
 	public int doStartTag() throws JspException {
 		try {
 			JspWriter out = pageContext.getOut();
-
 			ContentContext ctx;
-
 			ctx = ContentContext.getContentContext((HttpServletRequest) pageContext.getRequest(), (HttpServletResponse) pageContext.getResponse());
 			out.print(URLHelper.createStaticURL(ctx, value));
-
 		} catch (Exception ioe) {
 			throw new JspException("Error: " + ioe.getMessage());
 		}

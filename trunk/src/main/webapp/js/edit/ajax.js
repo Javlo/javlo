@@ -120,7 +120,6 @@ function ajaxRequest(url, form, doneFunction) {
 					console.log("warning : component "+xhtmlId+" not found for insideZone.");
 				}
 			}
-
 		});
 		jQuery(form).trigger("ajaxUpdate");
 		jQuery(document).trigger("ajaxUpdate");		

@@ -353,5 +353,10 @@ public class DefaultTemplate extends Template {
 	protected String getRAWPlugins() {
 		return null;
 	}
+	
+	@Override
+	public boolean isMailing() {	
+		return false;
+	}
 
 }

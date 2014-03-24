@@ -83,7 +83,7 @@ public class ContentOnlyServlet extends HttpServlet {
 
 			Template template = null;
 
-			if (templateID == null) {
+			if (templateID == null) {			
 				templateID = mailingCtx.getCurrentTemplate();
 				if (templateID == null) {
 					if (ctx.getCurrentTemplate() != null) {

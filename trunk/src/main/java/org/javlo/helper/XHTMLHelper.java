@@ -84,7 +84,9 @@ public class XHTMLHelper {
 	 */
 	protected static java.util.logging.Logger logger = java.util.logging.Logger.getLogger(XHTMLHelper.class.getName());
 
-	private static final String[] TEXT_COLORS = { "#005", "#050", "#500", "#505", "#550", "#055", "#555" };;
+	private static final String[] TEXT_COLORS = { "#005", "#050", "#500", "#505", "#550", "#055", "#555" };
+	
+	public static final String[] WEB_FONTS = {"Georgia, serif","Palatino Linotype","Book Antiqua","Palatino,serif","Times New Roman, serif","Arial","Helvetica, sans-serif","cursive, sans-serif","Impact, Charcoal, sans-serif","Lucida Sans Unicode,Lucida Grande, sans-serif","Tahoma, Geneva, sans-serif","Verdana, Geneva, sans-serif","Courier, monospace","Lucida Console, Monaco, monospace"};
 
 	private static final Pattern CSS_IMPORT_PATTERN = Pattern.compile("@import\\s+" +
 

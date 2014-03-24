@@ -325,3 +325,38 @@ li.line {
 		width: 99%;
 	}
 }
+
+.component .text {
+	overflow: hidden;
+}
+
+.component .text .group {
+	overflow: hidden;
+}
+
+.component .text .first-text {
+	float: left;
+	overflow: hidden;
+}
+
+.component .first-text label, .component .second-text label, .component .label-text label {
+	display: none;	
+}
+
+.component .text-image {
+	float: left;
+	width: 20%;
+}
+
+.component .first-text {
+	width: 80%;
+}
+
+.component .text textarea {
+	width: 98%;
+	height: 160px;
+}
+
+.text img {
+	float: left;
+}

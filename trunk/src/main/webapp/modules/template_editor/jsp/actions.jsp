@@ -20,8 +20,9 @@
 <input type="submit" value="add area" class="action-button">
 </div>
 </form>
+<a target="_blanck" class="action-button preview" href="${info.currentViewURL}?force-template=${templateEditorContext.currentTemplate.name}">preview</a>
 </div>
-<form method="post" action="${info.currentEditURL}" id="form-change-template1" class="js-submit">
+<form method="post" action="${info.currentEditURL}" id="form-change-template" class="js-submit">
 <div class="line">
 	<input type="hidden" name="webaction" value="changeTemplate" />
 	<label for="template">choose template</label>
@@ -30,8 +31,13 @@
 		<option${templateEditorContext.currentTemplate.name == template?' selected="selected"':''} value="${template}">${template}</option>
 	</c:forEach>
 	</select>
-</div>
+	<input type="hidden" name="webaction" value="showContent" />
+	<label for="show-content">show content</label>
+	<input type="checkbox" id="show-content" name="show-content" ${templateEditorContext.showContent?'checked="checked"':''} onchange="this.form.submit();" />
+</div>	
 </form>
+
+
 <div class="clear">&nbsp;</div>
 
 

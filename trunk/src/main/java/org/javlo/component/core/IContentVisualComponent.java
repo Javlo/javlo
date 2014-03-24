@@ -65,7 +65,10 @@ public interface IContentVisualComponent {
 	 * 
 	 * @throws Exception
 	 */
-	public void performEdit(ContentContext ctx) throws Exception; // TODO: change name with "perform"
+	public void performEdit(ContentContext ctx) throws Exception; // TODO:
+																	// change
+																	// name with
+																	// "perform"
 
 	/**
 	 * the code for view the element in XHTML environment.
@@ -80,9 +83,10 @@ public interface IContentVisualComponent {
 	 * @return
 	 */
 	public String getXHTMLConfig(ContentContext ctx) throws Exception;
-	
+
 	/**
 	 * return true if there the component is configurable.
+	 * 
 	 * @param ctx
 	 * @return
 	 */
@@ -136,7 +140,8 @@ public interface IContentVisualComponent {
 	public String getComponentLabel(ContentContext ctx, String lg);
 
 	/**
-	 * get the level of the title (1,2,3...). return 0 if the component is not a title
+	 * get the level of the title (1,2,3...). return 0 if the component is not a
+	 * title
 	 * 
 	 * @return the level of the title, 0 if the component is not a title.
 	 */
@@ -179,14 +184,16 @@ public interface IContentVisualComponent {
 	public boolean isUnique();
 
 	/**
-	 * check if the component content pertinent content. Some component as title is never pertinent.
+	 * check if the component content pertinent content. Some component as title
+	 * is never pertinent.
 	 * 
 	 * @return true if component don't content pertinent content
 	 */
 	public boolean isEmpty(ContentContext ctx);
 
 	/**
-	 * return true if component is considered as realContent and the page that contain the component is also considered as real content.
+	 * return true if component is considered as realContent and the page that
+	 * contain the component is also considered as real content.
 	 * 
 	 * @param ctx
 	 *            current context
@@ -261,7 +268,8 @@ public interface IContentVisualComponent {
 	public void setRepeat(boolean newRepeat);
 
 	/**
-	 * return true if this component is the label of the page. this label is set in the navigation
+	 * return true if this component is the label of the page. this label is set
+	 * in the navigation
 	 * 
 	 * @return a boolean, true if the component is the label of the page
 	 */
@@ -275,9 +283,11 @@ public interface IContentVisualComponent {
 	public String getJSOnSubmit();
 
 	/**
-	 * return a text represent the content of the component. sample all the content :-)
+	 * return a text represent the content of the component. sample all the
+	 * content :-)
 	 * 
-	 * @return a text represent the content of the component for the search module
+	 * @return a text represent the content of the component for the search
+	 *         module
 	 */
 	public String getTextForSearch();
 
@@ -426,12 +436,14 @@ public interface IContentVisualComponent {
 	public void setPreviousComponent(IContentVisualComponent nextComponent);
 
 	/**
-	 * get the prefix must be insered before a list of the current component (warning: one element is a list) #return XHTML code of prefix
+	 * get the prefix must be insered before a list of the current component
+	 * (warning: one element is a list) #return XHTML code of prefix
 	 */
 	public String getFirstPrefix(ContentContext ctx);
 
 	/**
-	 * get the sufix before must be insered after a list of the current component.
+	 * get the sufix before must be insered after a list of the current
+	 * component.
 	 * 
 	 * @return XHTML code of sufix.
 	 */
@@ -447,7 +459,8 @@ public interface IContentVisualComponent {
 	/**
 	 * get a message for the component.
 	 * 
-	 * @return a generic message (error, info, warning, help), null if no message.
+	 * @return a generic message (error, info, warning, help), null if no
+	 *         message.
 	 */
 	public GenericMessage getMessage();
 
@@ -489,7 +502,8 @@ public interface IContentVisualComponent {
 	public void setList(boolean inList);
 
 	/**
-	 * return true if the modifition of the component need a refresh of the edit page (ajax).
+	 * return true if the modifition of the component need a refresh of the edit
+	 * page (ajax).
 	 */
 	public boolean isNeedRefresh();
 
@@ -553,14 +567,17 @@ public interface IContentVisualComponent {
 
 	/**
 	 * return the complexity level of the component.
-	 * @param ctx TODO
+	 * 
+	 * @param ctx
+	 *            TODO
 	 * 
 	 * @return see contant
 	 */
 	public int getComplexityLevel(ContentContext ctx);
 
 	/**
-	 * true if component marked as hidden (in components.txt the class name start with '.')
+	 * true if component marked as hidden (in components.txt the class name
+	 * start with '.')
 	 * 
 	 * @return
 	 */
@@ -663,7 +680,9 @@ public interface IContentVisualComponent {
 	public String getClassName();
 
 	/**
-	 * return the version of the component : A.B.C A : major version, no compatibility with the older data B : new function but compatibilty with older data C : bug correction
+	 * return the version of the component : A.B.C A : major version, no
+	 * compatibility with the older data B : new function but compatibilty with
+	 * older data C : bug correction
 	 * 
 	 * @return ? if version undefined.
 	 */
@@ -684,7 +703,8 @@ public interface IContentVisualComponent {
 	public String getAuthors();
 
 	/**
-	 * init the content with a default value. sample : "lorem ipsum" for text component.
+	 * init the content with a default value. sample : "lorem ipsum" for text
+	 * component.
 	 * 
 	 * @param ctx
 	 * @return true if content is create.
@@ -697,5 +717,9 @@ public interface IContentVisualComponent {
 	public Date getModificationDate();
 
 	void setPage(MenuElement inPage);
+
+	public String getSpecialTagTitle(ContentContext ctx) throws Exception;
+
+	public String getSpecialTagXHTML(ContentContext ctx) throws Exception;
 
 }

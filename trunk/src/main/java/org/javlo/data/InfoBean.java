@@ -1,6 +1,7 @@
 package org.javlo.data;
 
 import java.io.File;
+import java.util.Calendar;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.Date;
@@ -629,6 +630,18 @@ public class InfoBean {
 	
 	public int getHostPort() {
 		return ctx.getHostPort();
+	}
+	
+	public int getCurrentYear() {
+		return Calendar.getInstance().get(Calendar.YEAR);
+	}
+	
+	public int getCurrentDay() {
+		return Calendar.getInstance().get(Calendar.DAY_OF_MONTH);
+	}
+	
+	public int getCurrentMount() {
+		return Calendar.getInstance().get(Calendar.MONTH);
 	}
 	
 	public static void main(String[] args) {

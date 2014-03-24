@@ -24,7 +24,12 @@
 			<div class="line">
 				<label for="parent">${i18n.edit['template.label.parent']}</label>
 				<input type="text" id="parent" name="parent" value="${currentTemplate.parent}" />
-			</div>	
+			</div>
+			
+			<div class="line">
+				<label for="valid">${i18n.edit['template.label.valided']}</label>
+				<input type="checkbox" id="valid" name="valid" ${currentTemplate.valid?'checked="checked"':''} />
+			</div>		
 			
 		</div><div class="one_half">
 		

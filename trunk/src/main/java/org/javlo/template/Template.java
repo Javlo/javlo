@@ -969,16 +969,20 @@ public class Template implements Comparable<Template> {
 		storeProperties();
 	}
 	
+	protected String getNewAreaName() {
+		String prefixName = "zone";
+		int areaNumber = 0;
+		String areaName = prefixName+StringHelper.getNumberAsAlphabetic(areaNumber);
+		while (properties.getProperty("area."+areaName) != null) {
+			areaNumber++;
+			areaName = prefixName+StringHelper.getNumberAsAlphabetic(areaNumber);				
+		}
+		return areaName;
+	}
+	
 	public void addArea(String rowName) {
-		if (rowName.indexOf("-")>=0) {
-			int rowNumber = Integer.parseInt(rowName.substring(rowName.indexOf("-")+1));
-			String prefixName = "area-"+rowNumber+'-';
-			int areaNumber = 1;
-			String areaName = prefixName+areaNumber;
-			while (properties.getProperty("area."+areaName) != null) {
-				areaNumber++;
-				areaName = prefixName+areaNumber;				
-			}
+		if (rowName.indexOf("-")>=0) {		
+			String areaName = getNewAreaName();
 			properties.setProperty("area."+areaName, areaName);
 			properties.setProperty("area."+areaName+".row", rowName);
 			storeProperties();
@@ -1011,7 +1015,7 @@ public class Template implements Comparable<Template> {
 		rows.add(row);		
 		row.setName(newRowName);
 		Area area = new Area();
-		area.setName("area-"+rowNumber+"-1");
+		area.setName(getNewAreaName());
 		area.setRow(row);
 		row.addArea(area);
 		storeRows(rows);
@@ -1929,6 +1933,10 @@ public class Template implements Comparable<Template> {
 	public String getVisualFile() {
 		return properties.getString("file.visual", getParent().getVisualFile());
 	}
+	
+	public File getVisualAbsoluteFile() {
+		return new File(dir.getAbsolutePath(), getVisualFile());
+	}
 
 	public String getVisualPDFile() {
 		return properties.getString("file.pdf", getParent().getVisualPDFile());
@@ -2084,7 +2092,7 @@ public class Template implements Comparable<Template> {
 	}
 
 	public boolean isMailing() {
-		return properties.getBoolean("mailing", false);
+		return properties.getBoolean("mailing", getParent().isMailing());
 	}
 
 	public boolean isNavigationArea(String area) {
@@ -2437,7 +2445,7 @@ public class Template implements Comparable<Template> {
 	}
 	
 	public void resetRows() {
-		rows = null;
+		rows = null;		
 	}
 	
 	public static Area getArea(Collection<Row> rows, String name) {
@@ -2472,9 +2480,8 @@ public class Template implements Comparable<Template> {
 		}
 		for (Row row : rows) {
 			saveTemplatePart(row, "row." + row.getName());
-			for (Area area : row.getAreas()) {
-				System.out.println("***** Template.storeRows : area = "+area.getName()); //TODO: remove debug trace
-				properties.setProperty("area."+area.getName(), area);
+			for (Area area : row.getAreas()) {				
+				properties.setProperty("area."+area.getName(), area.getName());
 				properties.setProperty("area."+area.getName()+".row", row.getName());
 				saveTemplatePart(area, "area." + area.getName());
 			}

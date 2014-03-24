@@ -5,7 +5,8 @@
 %><%@page import="org.javlo.template.Template"
 %><%@page import="org.javlo.context.ContentContext"
 %><%
-ContentContext ctx = ContentContext.getContentContext(request, response);
+ContentContext ctx = new ContentContext(ContentContext.getContentContext(request, response));
+ctx.setAbsoluteURL(false);
 Template template = ctx.getCurrentTemplate();
 Collection<Row> rows = template.getRows();
 InfoBean bean = InfoBean.getCurrentInfoBean(ctx);
