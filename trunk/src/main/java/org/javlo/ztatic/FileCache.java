@@ -49,6 +49,7 @@ public class FileCache {
 		try {
 			baseDir = new File(application.getRealPath(baseDirName)).getCanonicalFile();
 		} catch (IOException e) {
+			logger.severe("problem create baseDir width : "+baseDirName);
 			e.printStackTrace();
 		}
 		
