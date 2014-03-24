@@ -255,6 +255,7 @@ public class TemplateAction extends AbstractModuleAction {
 				template.setAuthors(requestService.getParameter("author", template.getAuthors()));
 				Date date = StringHelper.parseDate(requestService.getParameter("creation-date", null), staticConfig.getDefaultDateFormat());
 				template.setCreationDate(date);
+				template.setValid(requestService.getParameter("valid", null) != null);
 				messageRepository.setGlobalMessageAndNotification(ctx, new GenericMessage(i18nAccess.getText("template.message.updated"), GenericMessage.INFO));
 
 				Collection<String> areas = template.getAreas();

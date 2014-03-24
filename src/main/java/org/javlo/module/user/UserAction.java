@@ -250,8 +250,10 @@ public class UserAction extends AbstractModuleAction {
 						newRoles.add(role);
 					}
 				}
+				
+				boolean admin = userFactory instanceof AdminUserFactory;				
 				IUserInfo ui = user.getUserInfo();
-				if (adminUserSecurity.haveRight(adminUserFactory.getCurrentUser(ctx.getRequest().getSession()), AdminUserSecurity.ADMIN_USER_ROLE, AdminUserSecurity.GENERAL_ADMIN)) {
+				if (!admin || adminUserSecurity.haveRight(adminUserFactory.getCurrentUser(ctx.getRequest().getSession()), AdminUserSecurity.ADMIN_USER_ROLE, AdminUserSecurity.GENERAL_ADMIN)) {
 					ui.setRoles(newRoles);
 					userFactory.updateUserInfo(ui);
 				} else {

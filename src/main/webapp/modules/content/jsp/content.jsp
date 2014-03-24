@@ -139,6 +139,10 @@ for (IContentVisualComponent comp : components) {
           if (!comp.isConfig(ctx)) {
         	  linkTag = "";
           }
+          String tabTitle = comp.getSpecialTagTitle(ctx);
+          if (tabTitle != null) {
+        	%><li><a href="#tab11<%=inputSuffix%>"><%=tabTitle%></a></li><% 
+          }
           %>
           <li class="<%if (!comp.isConfig(ctx)) {%>disabled<%} else {%>enabled<%}%>"><a class="link"<%=linkTag%>>${i18n.edit["global.config"]}</a></li>          
           <%if (helpText != null) {%><li><a href="#tab3<%=inputSuffix%>">${i18n.edit["global.help"]}</a></li><%}%>
@@ -162,7 +166,12 @@ for (IContentVisualComponent comp : components) {
       </div>
       <div id="tab1<%=inputSuffix%>">
           <%=comp.getXHTMLCode(ctx)%>
-      </div>
+      </div><%
+      if (tabTitle != null) {%>
+      <div id="tab11<%=inputSuffix%>">
+          <%=comp.getSpecialTagXHTML(ctx)%>
+      </div><%
+      }%>
       <div id="tab2<%=inputSuffix%>" class="config">
       	<%=comp.getXHTMLConfig(ctx)%>
       </div>
@@ -191,7 +200,6 @@ for (IContentVisualComponent comp : components) {
  if (comp instanceof IContainer && !((IContainer)comp).isOpen(ctx) && closeContainerStack.size() > 0) {
 	 closeContainerStack.pop();
     %><%=((IContainer)comp).getCloseCode(ctx)%><%
-
 }
 %>
  <div class="new-component-container" id="comp-child-<%=comp.getId()%>"></div><%

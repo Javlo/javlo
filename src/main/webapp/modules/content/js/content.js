@@ -173,3 +173,16 @@ function imageChoice(compId) {
 		index++;
 	});
 }
+
+function switchClass (class1, class2) {
+	var selector1 = "."+class1;
+	var selector2 = "."+class2;
+	var tempClass = "___temp_switch_class___";
+	
+	jQuery(selector2).addClass(tempClass);
+	jQuery(selector1).addClass(class2);
+	jQuery(selector1).removeClass(class1);	
+	jQuery("."+tempClass).addClass(class1);
+	jQuery("."+tempClass).removeClass(class2);
+	jQuery("."+tempClass).removeClass(tempClass);
+}

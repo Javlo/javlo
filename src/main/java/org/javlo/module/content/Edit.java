@@ -140,13 +140,11 @@ public class Edit extends AbstractModuleAction {
 	 *            the id, null for update and previous component for insert.
 	 * @throws Exception
 	 */
-	private static void updateComponent(ContentContext ctx, Module currentModule, String newId, String previousId) throws Exception {
+	public static void updateComponent(ContentContext ctx, Module currentModule, String newId, String previousId) throws Exception {
 		ComponentContext compCtx = ComponentContext.getInstance(ctx.getRequest());
 		GlobalContext globalContext = GlobalContext.getInstance(ctx.getRequest());
 		ContentService content = ContentService.getInstance(globalContext);
-		compCtx.addNewComponent(content.getComponent(ctx, newId)); // prepare
-																	// ajax
-																	// rendering
+		compCtx.addNewComponent(content.getComponent(ctx, newId)); // prepare ajax rendering
 		String componentRenderer = URLHelper.mergePath(currentModule.getPath() + "/jsp/content.jsp");
 		String newComponentXHTML = ServletHelper.executeJSP(ctx, componentRenderer);
 		compCtx.clearComponents();

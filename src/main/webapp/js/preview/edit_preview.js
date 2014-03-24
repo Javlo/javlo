@@ -3,14 +3,58 @@ var dragging = false;
 var mouseX = 0;
 var mouseY = 0;
 
-var floatZone = function(zone1, zone2, image){
+function splitHtml(text,cutPos) {
+	var stackTags = [];
+	var insideTag = false;
+	var currentTag = "";
+	var textPos = 0;
+	
+	for (var pos=0; pos<text.length && textPos<cutPos; pos++) {			
+		if (!insideTag && text[pos] == '<') {
+			insideTag = true;				
+		}
+		if (insideTag && text[pos] == '>') {				
+			if (currentTag[0] == '/') {				
+				stackTags.pop();
+			} else {				
+				stackTags.push(currentTag);
+			}
+			currentTag = "";
+			insideTag = false;	
+		}
+		if (insideTag && text[pos] != '<') {
+			currentTag = currentTag + text[pos];
+		}
+		if (!insideTag && text[pos] != '<' && text[pos] != '>') {
+			textPos++;
+		}
+	}
+	
+	while (textPos > 0 && text[pos] != ' ' && text[pos] != '>') {
+		pos--;
+	}
+	pos++;
+	
+	var firstText = text.substring(0,pos);
+	var secondText = text.substring(pos,text.length);
+	
+	for (i=stackTags.length-1; i>=0; i--) {
+		firstText = firstText+"</"+stackTags[i]+">";
+		secondText = "<"+stackTags[i]+">"+secondText;
+	}
+	
+	var outText = new Array();
+	outText[0] = firstText;
+	outText[1] = secondText;
+	return outText;
+}	
+
+var floatZone = function(source, zone1, zone2, image){
 	var zone1 = jQuery(zone1);	
 	var zone2 = jQuery(zone2);	
 	var image = jQuery(image);
 	
-	var html = zone1.text()+zone2.text();
-	console.log(html);
-	
+	var html = jQuery(source).html();
 	var sep = html.length;
 	zone1.html(html);
 	zone2.html('');
@@ -18,15 +62,12 @@ var floatZone = function(zone1, zone2, image){
 		sep = sep-1;
 		while (sep > 0 && html[sep] != ' ') {
 			sep = sep - 1;			
-		}	
-		
-		var calcul = 10;
-		for (var i=0; i<2000; i++) {
-			calcul = calcul*54;
 		}
 		
-		zone1.html(html.substring(0,sep));
-		zone2.html(html.substring(sep, html.length));
+		var outText = splitHtml(html, sep);
+		
+		zone1.html(outText[0]);
+		zone2.html(outText[1]);
 	}	
 	//image.css("height", zone1.height()+"px");
 	
@@ -293,11 +334,18 @@ layerOver = function(item, deletable) {
 	}
 }
 
+var initPreviewDone = false;
+
 initPreview = function() {
 	
-	jQuery(".editable-component").click(function() {		
+	jQuery(".editable-component").click(function() {
+		
+		if (initPreviewDone) {
+			return false;
+		}
+		initPreviewDone=true;
+		
 		layerOver(null);
-
 		var elems = jQuery(this);
 		var editURL = editPreviewURL + "&comp_id=" + elems.attr("id");
 		var param = "";
@@ -309,7 +357,10 @@ initPreview = function() {
 			opacity : 0.6,
 			iframe : true,
 			width : "95%",
-			height : "95%"
+			height : "95%",
+			onComplete : function() {
+				initPreviewDone = false;
+			}
 		});
 		return false;
 	});
@@ -599,4 +650,4 @@ if ( browser.chrome ) {
     browser.safari = true;
 }
 
-jQuery.browser = browser;*/
+jQuery.browser = browser;*/	

@@ -12,6 +12,11 @@ input, textarea, select {
 	box-shadow: 0 0 0;
 }
 
+.disabled-zone {
+	filter : alpha(opacity=30);
+    opacity : 0.3;
+}
+
 body.js #form-select-role input[type=submit] {
 	display: none;
 }
@@ -636,10 +641,10 @@ ul,li {
 }
 
 
-#tools input {
+/*#tools input {
 	display: block;
 	float: right;
-}
+}*/
 
 #tools .special input {
 	float: none;

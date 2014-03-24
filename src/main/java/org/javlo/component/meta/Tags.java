@@ -102,6 +102,8 @@ public class Tags extends ComplexPropertiesLink {
 		}
 	}
 
+	
+
 	/**
 	 * @see org.javlo.itf.IContentVisualComponent#getXHTMLCode()
 	 */

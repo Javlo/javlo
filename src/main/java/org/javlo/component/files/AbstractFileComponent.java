@@ -71,7 +71,7 @@ public abstract class AbstractFileComponent extends AbstractVisualComponent impl
 	static final String HEADER_V1_0 = "file storage V.1.1";
 
 	public static final String LABEL_KEY = "label";
-
+	
 	public static final String DIR_KEY = "dir";
 
 	public static final String FILE_NAME_KEY = "file-name";
@@ -491,6 +491,18 @@ public abstract class AbstractFileComponent extends AbstractVisualComponent impl
 	protected String getLabelXHTMLInputName() {
 		return getId() + ID_SEPARATOR + "label_name";
 	}
+	
+	protected String getTextAutoInputName() {
+		return getId() + ID_SEPARATOR + "manuel";
+	}
+	
+	protected String getFirstTextInputName() {
+		return getId() + ID_SEPARATOR + "first_text";
+	}
+	
+	protected String getSecondTextInputName() {
+		return getId() + ID_SEPARATOR + "second_text";
+	}
 
 	protected String getNewDirInputName() {
 		return getId() + ID_SEPARATOR + "new_dir_name";
@@ -661,8 +673,8 @@ public abstract class AbstractFileComponent extends AbstractVisualComponent impl
 			}
 
 			setDirSelected(selectedDir);
-			setFileName(fileName);
-			properties.setProperty(LABEL_KEY, label);
+			setFileName(fileName);			
+			setLabel(label);
 			properties.setProperty(DESCRIPTION_KEY, description);
 		}
 		
@@ -682,6 +694,10 @@ public abstract class AbstractFileComponent extends AbstractVisualComponent impl
 		}
 
 		storeProperties();
+	}
+
+	protected void setLabel(String label) {
+		properties.setProperty(LABEL_KEY, label);		
 	}
 
 	protected void reloadProperties() {

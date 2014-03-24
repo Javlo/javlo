@@ -3,8 +3,10 @@
  */
 package org.javlo.component.image;
 
+import java.io.ByteArrayOutputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.io.PrintStream;
 import java.net.URL;
 import java.text.ParseException;
 import java.util.ArrayList;
@@ -77,6 +79,8 @@ public class GlobalImage extends Image {
 	private static final String LOCATION = "location";
 
 	private static final String TITLE = "title";
+	
+	private static final String AUTO_LABEL = "auto";
 
 	private GenericMessage msg;
 	
@@ -208,7 +212,7 @@ public class GlobalImage extends Image {
 
 		if (!isMeta()) {
 			finalCode.append("<label for=\"" + getLabelXHTMLInputName() + "\">" + getImageLabelTitle(ctx) + " : </label>");
-			String[][] params = { { "rows", "1" } };
+			String[][] params = { { "rows", "3" }, { "cols", "40" } };			
 			finalCode.append(XHTMLHelper.getTextArea(getLabelXHTMLInputName(), getLabel(), params));
 			finalCode.append("<br />");
 		}
@@ -693,6 +697,27 @@ public class GlobalImage extends Image {
 		String title = requestService.getParameter(getInputNameTitle(), null);
 		String translationOf = requestService.getParameter(getInputNameTranslation(), null);
 		String embedCode = requestService.getParameter(getEmbedCodeName(), null);
+		String auto = requestService.getParameter(getTextAutoInputName(), null);
+		
+		if (isFloatText(ctx)) {
+			setTextAuto(StringHelper.isTrue(auto));
+		}
+		
+		setFirstText(requestService.getParameter(getFirstTextInputName(), ""));
+		setSecondText(requestService.getParameter(getSecondTextInputName(), ""));
+		
+		String label = requestService.getParameter(getLabelXHTMLInputName(), "");
+		String textLabel = requestService.getParameter(getLabelTextInputName(), "");		
+		if (!label.equals(getLabel())) {
+			setFirstText(null);
+			setSecondText(null);	
+		} else if (!textLabel.equals(getLabel())) {
+			setLabel(textLabel);			
+			requestService.setParameter(getLabelXHTMLInputName(), getLabel());
+			setFirstText(null);
+			setSecondText(null);
+			setModify();
+		}
 
 		if (title != null) {
 			if (!title.equals(getTitle())) {
@@ -785,11 +810,6 @@ public class GlobalImage extends Image {
 			}
 		}
 		
-		if (isModify()) {
-			setFirstText(null);
-			setSecondText(null);
-		}
-
 		super.performEdit(ctx);
 
 	}
@@ -922,6 +942,8 @@ public class GlobalImage extends Image {
 		GlobalImage image = (GlobalImage)ComponentHelper.getComponentFromRequest(ctx);
 		String firstText = rs.getParameter("first-text", null);
 		String secondText = rs.getParameter("second-text", null);
+		String compId = rs.getParameter("comp-id", null);
+		
 		String height = rs.getParameter("height", null);
 		if (firstText != null && secondText != null && height != null) {
 			image.setFirstText(firstText);
@@ -929,7 +951,103 @@ public class GlobalImage extends Image {
 			image.setHeight(Integer.parseInt(height));			
 			image.storeProperties();
 			Edit.performSave(ctx, editContext, globalContext, content, componentContext, rs, i18nAccess, messageRepository, currentModule, adminUserFactory);
+			//Edit.updateComponent(ctx.getContextWithOtherRenderMode(ContentContext.PREVIEW_MODE), currentModule, compId, null);
 		}		
 		return null;
+	}
+	
+	public boolean isFloatText(ContentContext ctx) {
+		return getCurrentRenderer(ctx).contains("float");
+	}
+	
+	@Override
+	public String getSpecialTagTitle(ContentContext ctx) {		
+		if (isFloatText(ctx)) {
+			return "text";
+		} else {
+			return null;
+		}
+	}
+	
+	public boolean isTextAuto() {
+		if (properties == null || properties.getProperty(AUTO_LABEL, null) == null) {
+			return true; // default value
+		}
+		return StringHelper.isTrue(properties.getProperty(AUTO_LABEL, null));
+	}
+	
+	public void setTextAuto(boolean auto) {
+		properties.setProperty(AUTO_LABEL, ""+auto);
+	}
+	
+	protected String getLabelTextInputName() {
+		return getId() + ID_SEPARATOR + "label-text";
+	}
+	
+	@Override
+	public String getSpecialTagXHTML(ContentContext ctx) throws Exception {
+		ByteArrayOutputStream outStream = new ByteArrayOutputStream();
+		PrintStream out = new PrintStream(outStream);
+		
+		Map<String, String> filesParams = new HashMap<String, String>();
+		String path = FileAction.getPathPrefix(ctx);
+		filesParams.put("path", path);
+		filesParams.put("webaction", "changeRenderer");
+		filesParams.put("page", "meta");
+		filesParams.put("select", "_TYPE_");
+		filesParams.put("previewEdit", "true");
+		String chooseImageURL = URLHelper.createModuleURL(ctx, ctx.getPath(), "file", filesParams);
+		
+		out.println("<div class=\"text\">");
+		
+		String disabled = " enabled-zone";
+		if (!isTextAuto()) {
+			disabled = " disabled-zone";
+		}
+		
+		out.println("<div class=\"line label-text"+disabled+"\"><label for=\"" + getLabelTextInputName() + "\">label text : </label>");
+		String id = "special-label-"+getId();
+		String[][] paramsLabelText = new String[][] { { "rows", "3" }, { "cols", "100" }, {"class","tinymce-light"}, {"id",id} };
+		out.println(XHTMLHelper.getTextArea(getLabelTextInputName(), getLabel(), paramsLabelText));
+		out.println("<script type=\"text/javascript\">jQuery(document).ready(loadWysiwyg('#" + id + "','light','"+chooseImageURL+"'));</script>");		
+		out.println("</div>");		
+		
+		out.println("<div class=\"line\">");
+		out.println("<label for=\"" + getTextAutoInputName() + "\">Auto : </label>");
+		String checked ="";	
+		if (isTextAuto()) {
+			checked = " checked=\"checked\"";
+		}		
+		out.println("<input type=\"checkbox\" id=\""+getTextAutoInputName()+"\" name=\""+getTextAutoInputName()+"\""+checked+" onchange=\"switchClass('enabled-zone','disabled-zone');\" />");
+		out.println("</div>");		
+		String url = URLHelper.createTransformURL(ctx, getPage(), getResourceURL(ctx, getFileName()), "list");
+		
+		disabled = " enabled-zone";
+		if (isTextAuto()) {
+			disabled = " disabled-zone";
+		}
+		
+		out.println("<div class=\"group\">");
+		out.println("<div class=\"text-image\"><img src=\""+url+"\" /></div>");
+		out.println("<div class=\"line first-text"+disabled+"\">");
+		out.println("<label for=\"" + getFirstTextInputName() + "\">first text : </label>");
+		id = "first-text-"+getId();
+		String[][] paramsFirstText = new String[][] { { "rows", "3" }, { "cols", "100" }, {"class","tinymce-light"}, {"id",id} };
+		out.println(XHTMLHelper.getTextArea(getFirstTextInputName(), getFirstText(), paramsFirstText));
+		out.println("<script type=\"text/javascript\">jQuery(document).ready(loadWysiwyg('#" + id + "','light','"+chooseImageURL+"'));</script>");
+		
+		out.println("</div>");
+		out.println("</div>");
+		out.println("<div class=\"line second-text"+disabled+"\"><label for=\"" + getSecondTextInputName() + "\">second text : </label>");
+		id = "second-text-"+getId();
+		String[][] paramsSecondText = new String[][] { { "rows", "3" }, { "cols", "100" }, {"class","tinymce-light"}, {"id",id} };
+		out.println(XHTMLHelper.getTextArea(getSecondTextInputName(), getSecondText(), paramsSecondText));		
+		out.println("<script type=\"text/javascript\">jQuery(document).ready(loadWysiwyg('#" + id + "','light','"+chooseImageURL+"'));</script>");
+		
+		out.println("</div>");
+		out.println("</div>");
+		
+		out.close();
+		return new String(outStream.toByteArray());
 	}
 }

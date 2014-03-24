@@ -1263,7 +1263,13 @@ public class StringHelper {
 	}
 
 	public static void main(String[] args) {
-		System.out.println(StringHelper.getFileExtension("http://host.com/rss/rss.html;jsessionid=97F113FC3A1036324B2889FD5E795F8E.node1"));
+		System.out.println("getNumberAsAlphabetic 12 = "+getNumberAsAlphabetic(12));
+		System.out.println("getNumberAsAlphabetic 26 = "+getNumberAsAlphabetic(26));
+		System.out.println("getNumberAsAlphabetic 125 = "+getNumberAsAlphabetic(125));
+		System.out.println("getNumberAsAlphabetic 126 = "+getNumberAsAlphabetic(126));
+		System.out.println("getNumberAsAlphabetic 127 = "+getNumberAsAlphabetic(127));
+		System.out.println("getNumberAsAlphabetic 540 = "+getNumberAsAlphabetic(540));
+		System.out.println("getNumberAsAlphabetic 540 = "+getNumberAsAlphabetic(258));
 	}
 
 	/**
@@ -2873,6 +2879,17 @@ public class StringHelper {
 
 	public static String renderPrice(double price, String currency) {
 		return String.format("%.2f " + currency, price);
+	}
+	
+	public static String getNumberAsAlphabetic(int number) {
+		StringBuffer outStr = new StringBuffer();
+		while (number > 25) {
+			int modNumber = number%25;
+			number = number-26;
+			outStr.insert(0,StringHelper.alphabet.charAt(modNumber));
+		}
+		outStr.insert(0,StringHelper.alphabet.charAt(number));
+		return outStr.toString();
 	}
 
 	/**

@@ -86,8 +86,7 @@ public class FileCache {
 		return cacheFileName;
 	}
 
-	public File getFileName(String key, String fileName) {
-		
+	public File getFileName(String key, String fileName) {		
 		fileName = fileName.replace('\\', '/');
 		String cacheFileName = baseDir.getAbsolutePath() + '/' + key;
 		if (fileName.startsWith("/")) {
