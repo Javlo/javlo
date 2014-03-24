@@ -46,6 +46,7 @@ public class FileCache {
 	
 		StaticConfig staticConfig = StaticConfig.getInstance(application);
 		baseDirName = staticConfig.getImageCacheFolder();
+		System.out.println("***** FileCache.FileCache : baseDirName = "+baseDirName); //TODO: remove debug trace
 		try {
 			baseDir = new File(application.getRealPath(baseDirName)).getCanonicalFile();
 		} catch (IOException e) {
