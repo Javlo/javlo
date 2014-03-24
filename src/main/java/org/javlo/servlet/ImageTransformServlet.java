@@ -510,10 +510,9 @@ public class ImageTransformServlet extends HttpServlet {
 				} catch (NumberFormatException e1) {
 					e1.printStackTrace();
 				}
-			}
+			} 
 
 			boolean localFile = false;
-
 			StaticInfo staticInfo = null;
 
 			if (imageName.substring(1).startsWith(staticConfig.getShareDataFolderKey())) {

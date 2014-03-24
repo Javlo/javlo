@@ -36,6 +36,7 @@ import org.javlo.helper.StringHelper;
 import org.javlo.helper.URLHelper;
 import org.javlo.helper.XHTMLHelper;
 import org.javlo.i18n.I18nAccess;
+import org.javlo.image.ImageEngine;
 import org.javlo.message.GenericMessage;
 import org.javlo.message.MessageRepository;
 import org.javlo.module.content.Edit;
@@ -904,6 +905,10 @@ public class GlobalImage extends Image implements IImageFilter {
 		return Integer.parseInt(properties.getProperty("height", "-1"));
 	}
 	
+	public int getWidth() {
+		return Integer.parseInt(properties.getProperty("width", "-1"));
+	}
+	
 	public String getFirstText() {
 		return properties.getProperty("first-text", getLabel());
 	}
@@ -935,6 +940,13 @@ public class GlobalImage extends Image implements IImageFilter {
 		}
 	}
 	
+	public void setWidth(int width) {
+		if (getHeight() != width) {
+			properties.setProperty("width", ""+width);
+			setModify();
+		}
+	}
+	
 	@Override
 	public String getActionGroupName() {	
 		return "global-image";
@@ -944,13 +956,13 @@ public class GlobalImage extends Image implements IImageFilter {
 		GlobalImage image = (GlobalImage)ComponentHelper.getComponentFromRequest(ctx);
 		String firstText = rs.getParameter("first-text", null);
 		String secondText = rs.getParameter("second-text", null);
-		String compId = rs.getParameter("comp-id", null);
-		
 		String height = rs.getParameter("height", null);
+		String width = rs.getParameter("width", null);
 		if (firstText != null && secondText != null && height != null) {
 			image.setFirstText(firstText);
 			image.setSecondText(secondText);
-			image.setHeight(Integer.parseInt(height));			
+			image.setHeight(Integer.parseInt(height));
+			image.setWidth(Integer.parseInt(width));
 			image.storeProperties();
 			Edit.performSave(ctx, editContext, globalContext, content, componentContext, rs, i18nAccess, messageRepository, currentModule, adminUserFactory);
 			//Edit.updateComponent(ctx.getContextWithOtherRenderMode(ContentContext.PREVIEW_MODE), currentModule, compId, null);
@@ -1055,11 +1067,12 @@ public class GlobalImage extends Image implements IImageFilter {
 
 	@Override
 	public String getImageFilterKey() {
-		return null;
+		return ""+getWidth();
 	}
 
-	public BufferedImage filterImage(BufferedImage image) {
-		return image;
+	@Override
+	public BufferedImage filterImage(BufferedImage image) {		 
+		return ImageEngine.resizeWidth(image, getWidth());
 	}
 
 }

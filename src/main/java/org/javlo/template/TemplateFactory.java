@@ -263,7 +263,7 @@ public class TemplateFactory {
 	 * @return
 	 * @throws IOException
 	 */
-	public static Map<String, Template> getDiskTemplates(ServletContext application) throws IOException {
+	public synchronized static Map<String, Template> getDiskTemplates(ServletContext application) throws IOException {
 		StaticConfig staticConfig = StaticConfig.getInstance(application);
 		File templateFolder = new File(staticConfig.getTemplateFolder());
 		File[] allTemplateFile = templateFolder.listFiles(new VisibleDirectoryFilter());
