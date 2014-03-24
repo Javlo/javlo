@@ -9,12 +9,12 @@ import java.util.List;
 
 import javax.imageio.ImageIO;
 import javax.servlet.ServletContext;
-import javax.servlet.ServletException;
 import javax.servlet.http.HttpSession;
 
 import org.apache.commons.fileupload.FileItem;
 import org.javlo.actions.AbstractModuleAction;
 import org.javlo.component.core.ComponentBean;
+import org.javlo.config.StaticConfig;
 import org.javlo.context.ContentContext;
 import org.javlo.helper.ServletHelper;
 import org.javlo.helper.StringHelper;
@@ -220,7 +220,7 @@ public class TemplateEditorAction extends AbstractModuleAction {
 		return null;
 	}
 
-	public static String performCreateTemplate(RequestService rs, ContentContext ctx, ServletContext application, MessageRepository messageRepository, I18nAccess i18nAccess) throws IOException {
+	public static String performCreateTemplate(RequestService rs, ContentContext ctx, StaticConfig staticConfig, ServletContext application, MessageRepository messageRepository, I18nAccess i18nAccess) throws IOException {
 		String templateName = rs.getParameter("template", "");
 		if (templateName.trim().length() < 3) {
 			return "template name must be at least 4 chars.";
@@ -235,8 +235,9 @@ public class TemplateEditorAction extends AbstractModuleAction {
 			List<Row> rows = new LinkedList<Row>();
 			rows.add(row);
 			newTemplate.storeRows(rows);
-			TemplateEditorContext editorContext = TemplateEditorContext.getInstance(ctx.getRequest().getSession());
-			editorContext.setCurrentTemplate(newTemplate);
+			Template template = TemplateFactory.getTemplates(application).get(newTemplate.getName());
+			TemplateEditorContext editorContext = TemplateEditorContext.getInstance(ctx.getRequest().getSession());			
+			editorContext.setCurrentTemplate(template);
 		}
 		return null;
 	}
