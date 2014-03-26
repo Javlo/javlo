@@ -144,15 +144,10 @@ public class PageMirrorComponent extends AbstractVisualComponent {
 		MenuElement page = getMirrorPage(ctx);
 		if (page != null) {
 			if (ctx.getSpecialContentRenderer() == null) {
-
 				if (page.getId().equals(getPage().getId()) || page.getId().equals(ctx.getCurrentPage().getId())) {
 					ctx.getRequest().setAttribute("xhtml", "[!!! RECURSIVE MIRROR CALL !!!]");
 				} else {
-
-					ctx.setVirtualCurrentPage(getPage()); // force page page
-															// mirror
-															// page as current
-															// page
+					ctx.setVirtualCurrentPage(getPage()); 
 					String area = ctx.getArea();
 					String path = ctx.getPath();
 					MenuElement currentPage = ctx.getCurrentPage();
@@ -163,7 +158,6 @@ public class PageMirrorComponent extends AbstractVisualComponent {
 						ctx.getRequest().setAttribute(ContentContext.CHANGE_AREA_ATTRIBUTE_NAME, ComponentBean.DEFAULT_AREA);
 					}
 					ctx.setPath(page.getPath());
-
 					RequestService rs = RequestService.getInstance(ctx.getRequest());
 					rs.setParameter(NOT_EDIT_PREVIEW_PARAM_NAME, "true");
 					String xhtml = executeJSP(ctx, Edit.CONTENT_RENDERER + '?' + NOT_EDIT_PREVIEW_PARAM_NAME + "=true");

@@ -82,15 +82,15 @@ public class GlobalImage extends Image implements IImageFilter {
 	private static final String LOCATION = "location";
 
 	private static final String TITLE = "title";
-	
+
 	private static final String AUTO_LABEL = "auto";
 
 	private GenericMessage msg;
-	
+
 	public GlobalImage() {
 		try {
 			init();
-		} catch (ResourceNotFoundException e) { 
+		} catch (ResourceNotFoundException e) {
 			e.printStackTrace();
 		}
 	}
@@ -115,9 +115,9 @@ public class GlobalImage extends Image implements IImageFilter {
 	public String getCSSClassName(ContentContext ctx) {
 		return getType();
 	}
-	
+
 	@Override
-	public String getSpecificClass(ContentContext ctx) {	
+	public String getSpecificClass(ContentContext ctx) {
 		return getFilter(ctx);
 	}
 
@@ -148,10 +148,13 @@ public class GlobalImage extends Image implements IImageFilter {
 	@Override
 	public String getPreviewURL(ContentContext ctx, String filter) {
 		try {
-			//TODO: check if I can change getPage with ctx.getcurrentPage, I need this for render image with correct filter in PageMirrorComponent.
-			//String url = URLHelper.createTransformURL(ctx, getPage(), getResourceURL(ctx, getFileName()), filter);
+			// TODO: check if I can change getPage with ctx.getcurrentPage, I
+			// need this for render image with correct filter in
+			// PageMirrorComponent.
+			// String url = URLHelper.createTransformURL(ctx, getPage(),
+			// getResourceURL(ctx, getFileName()), filter);
 			String url = null;
-			try {				
+			try {
 				url = URLHelper.createTransformURL(ctx, ctx.getVirtualCurrentPage(), TemplateFactory.getTemplate(ctx, ctx.getVirtualCurrentPage()), getResourceURL(ctx, getFileName()), filter, this);
 			} catch (Exception e) {
 				e.printStackTrace();
@@ -176,7 +179,8 @@ public class GlobalImage extends Image implements IImageFilter {
 	}
 
 	@Override
-	public void prepareView(ContentContext ctx) throws Exception {
+	public void prepareView(ContentContext ctx) throws Exception {		
+		ctx.setCurrentTemplate(null); // reset template
 		super.prepareView(ctx);
 		String imageURL = getImageURL(ctx);
 		if (imageURL != null) {
@@ -184,7 +188,7 @@ public class GlobalImage extends Image implements IImageFilter {
 		}
 		if (getFilter(ctx).equals(RAW_FILTER)) {
 			ctx.getRequest().setAttribute("previewURL", URLHelper.createResourceURL(ctx, getResourceURL(ctx, getFileName())));
-		} else {			
+		} else {
 			ctx.getRequest().setAttribute("previewURL", getPreviewURL(ctx, getFilter(ctx)));
 		}
 		ctx.getRequest().setAttribute("media", this);
@@ -215,7 +219,7 @@ public class GlobalImage extends Image implements IImageFilter {
 
 		if (!isMeta()) {
 			finalCode.append("<label for=\"" + getLabelXHTMLInputName() + "\">" + getImageLabelTitle(ctx) + " : </label>");
-			String[][] params = { { "rows", "3" }, { "cols", "40" } };			
+			String[][] params = { { "rows", "3" }, { "cols", "40" } };
 			finalCode.append(XHTMLHelper.getTextArea(getLabelXHTMLInputName(), getLabel(), params));
 			finalCode.append("<br />");
 		}
@@ -257,7 +261,7 @@ public class GlobalImage extends Image implements IImageFilter {
 		finalCode.append("<div class=\"line\"><label for=\"" + getDirInputName() + "\">");
 		finalCode.append(getDirLabelTitle(ctx));
 		finalCode.append(" : </label>");
-		if ((getDirList(getFileDirectory(ctx)) != null) && (getDirList(getFileDirectory(ctx)).length > 0)) {			
+		if ((getDirList(getFileDirectory(ctx)) != null) && (getDirList(getFileDirectory(ctx)).length > 0)) {
 			Collection<String> dirsCol = new LinkedList<String>();
 			dirsCol.add("");
 			String[] dirs = getDirList(getFileDirectory(ctx));
@@ -269,18 +273,18 @@ public class GlobalImage extends Image implements IImageFilter {
 			}
 			finalCode.append(XHTMLHelper.getInputOneSelect(getDirInputName(), dirsCol, getDirSelected(), getJSOnChange(ctx), true));
 		}
-		
+
 		Map<String, String> filesParams = new HashMap<String, String>();
 		String path = URLHelper.mergePath(FileAction.getPathPrefix(ctx), StaticConfig.getInstance(ctx.getRequest().getSession()).getImageFolderName(), getDirSelected());
 		filesParams.put("path", path);
 		filesParams.put("webaction", "changeRenderer");
 		filesParams.put("page", "meta");
-		
-		String backURL = URLHelper.createModuleURL(ctx, ctx.getPath(), "content");	
-		backURL = URLHelper.addParam(backURL, "comp_id", "cp_"+getId());
+
+		String backURL = URLHelper.createModuleURL(ctx, ctx.getPath(), "content");
+		backURL = URLHelper.addParam(backURL, "comp_id", "cp_" + getId());
 		backURL = URLHelper.addParam(backURL, "webaction", "editPreview");
 		filesParams.put(ElementaryURLHelper.BACK_PARAM_NAME, backURL);
-		
+
 		String staticURL = URLHelper.createModuleURL(ctx, ctx.getPath(), "file", filesParams);
 		finalCode.append("<a class=\"" + EDIT_ACTION_CSS_CLASS + "\" href=\"" + staticURL + "\">");
 		finalCode.append(i18nAccess.getText("content.goto-static"));
@@ -372,7 +376,8 @@ public class GlobalImage extends Image implements IImageFilter {
 		}
 
 		if (isEmbedCode()) {
-			// String descriptionTitle = i18nAccess.getText("component.link.description");
+			// String descriptionTitle =
+			// i18nAccess.getText("component.link.description");
 			finalCode.append("<div class=\"embed\">");
 			finalCode.append("<label style=\"margin-bottom: 3px;\" for=\"" + getEmbedCodeName() + "\">");
 			finalCode.append("embed code");
@@ -527,7 +532,7 @@ public class GlobalImage extends Image implements IImageFilter {
 		I18nAccess i18nAccess = I18nAccess.getInstance(ctx.getRequest());
 		return i18nAccess.getText("action.add-image.link");
 	}
-	
+
 	public String getLink() {
 		return properties.getProperty(LINK_KEY, "");
 	}
@@ -589,7 +594,7 @@ public class GlobalImage extends Image implements IImageFilter {
 	 */
 	@Override
 	public String getViewXHTMLCode(ContentContext ctx) throws Exception {
-		
+
 		String filter = getFilter(ctx);
 		if (HIDDEN.equals(filter)) {
 			return "";
@@ -661,9 +666,9 @@ public class GlobalImage extends Image implements IImageFilter {
 		}
 		return res.toString();
 	}
-	
+
 	@Override
-	protected void init() throws ResourceNotFoundException {	
+	protected void init() throws ResourceNotFoundException {
 		super.init();
 		try {
 			properties.load(stringToStream(getValue()));
@@ -678,11 +683,12 @@ public class GlobalImage extends Image implements IImageFilter {
 		}
 	}
 
-	/*@Override
-	public void init(ComponentBean bean, ContentContext newContext) throws Exception {
-		super.init(bean, newContext);
-
-	}*/
+	/*
+	 * @Override public void init(ComponentBean bean, ContentContext newContext)
+	 * throws Exception { super.init(bean, newContext);
+	 * 
+	 * }
+	 */
 
 	@Override
 	public boolean isContentCachable(ContentContext ctx) {
@@ -701,21 +707,21 @@ public class GlobalImage extends Image implements IImageFilter {
 		String translationOf = requestService.getParameter(getInputNameTranslation(), null);
 		String embedCode = requestService.getParameter(getEmbedCodeName(), null);
 		String auto = requestService.getParameter(getTextAutoInputName(), null);
-		
+
 		if (isFloatText(ctx)) {
 			setTextAuto(StringHelper.isTrue(auto));
 		}
-		
+
 		setFirstText(requestService.getParameter(getFirstTextInputName(), ""));
 		setSecondText(requestService.getParameter(getSecondTextInputName(), ""));
-		
+
 		String label = requestService.getParameter(getLabelXHTMLInputName(), "");
-		String textLabel = requestService.getParameter(getLabelTextInputName(), "");		
+		String textLabel = requestService.getParameter(getLabelTextInputName(), "");
 		if (!label.equals(getLabel())) {
 			setFirstText(null);
-			setSecondText(null);	
+			setSecondText(null);
 		} else if (!textLabel.equals(getLabel())) {
-			setLabel(textLabel);			
+			setLabel(textLabel);
 			requestService.setParameter(getLabelXHTMLInputName(), getLabel());
 			setFirstText(null);
 			setSecondText(null);
@@ -776,7 +782,8 @@ public class GlobalImage extends Image implements IImageFilter {
 					// Page name
 				} else {
 					// Bad link
-					// MessageRepository.getInstance(ctx).setGlobalMessage(new GenericMessage("bad link.", GenericMessage.ALERT));
+					// MessageRepository.getInstance(ctx).setGlobalMessage(new
+					// GenericMessage("bad link.", GenericMessage.ALERT));
 					link = "http://" + link;
 					setNeedRefresh(true);
 				}
@@ -812,7 +819,7 @@ public class GlobalImage extends Image implements IImageFilter {
 				setEmbedCode(embedCode);
 			}
 		}
-		
+
 		super.performEdit(ctx);
 
 	}
@@ -900,19 +907,19 @@ public class GlobalImage extends Image implements IImageFilter {
 			return false;
 		}
 	}
-	
+
 	public int getHeight() {
 		return Integer.parseInt(properties.getProperty("height", "-1"));
 	}
-	
+
 	public int getWidth() {
 		return Integer.parseInt(properties.getProperty("width", "-1"));
 	}
-	
+
 	public String getFirstText() {
 		return properties.getProperty("first-text", getLabel());
 	}
-	
+
 	public void setFirstText(String text) {
 		if (text == null) {
 			properties.remove("first-text");
@@ -920,11 +927,11 @@ public class GlobalImage extends Image implements IImageFilter {
 			properties.setProperty("first-text", text);
 		}
 	}
-	
+
 	public String getSecondText() {
 		return properties.getProperty("second-text", "");
 	}
-	
+
 	public void setSecondText(String text) {
 		if (text == null) {
 			properties.remove("second-text");
@@ -932,77 +939,93 @@ public class GlobalImage extends Image implements IImageFilter {
 			properties.setProperty("second-text", text);
 		}
 	}
-	
+
 	public void setHeight(int height) {
 		if (getHeight() != height) {
-			properties.setProperty("height", ""+height);
+			properties.setProperty("height", "" + height);
 			setModify();
 		}
 	}
-	
+
 	public void setWidth(int width) {
 		if (getHeight() != width) {
-			properties.setProperty("width", ""+width);
+			properties.setProperty("width", "" + width);
 			setModify();
 		}
 	}
-	
+
 	@Override
-	public String getActionGroupName() {	
+	public String getActionGroupName() {
 		return "global-image";
 	}
-	
-	public static String performUpdateSection(ContentContext ctx, EditContext editContext, GlobalContext globalContext, ContentService content, ComponentContext componentContext, RequestService rs, I18nAccess i18nAccess, MessageRepository messageRepository, Module currentModule, AdminUserFactory adminUserFactory) throws Exception {
-		GlobalImage image = (GlobalImage)ComponentHelper.getComponentFromRequest(ctx);
-		String firstText = rs.getParameter("first-text", null);
-		String secondText = rs.getParameter("second-text", null);
-		String height = rs.getParameter("height", null);
-		String width = rs.getParameter("width", null);
-		if (firstText != null && secondText != null && height != null) {
-			image.setFirstText(firstText);
-			image.setSecondText(secondText);
-			image.setHeight(Integer.parseInt(height));
-			image.setWidth(Integer.parseInt(width));
-			image.storeProperties();
-			Edit.performSave(ctx, editContext, globalContext, content, componentContext, rs, i18nAccess, messageRepository, currentModule, adminUserFactory);
-			//Edit.updateComponent(ctx.getContextWithOtherRenderMode(ContentContext.PREVIEW_MODE), currentModule, compId, null);
-		}		
+
+	public static String performDataFeedBack(ContentContext ctx, EditContext editContext, GlobalContext globalContext, ContentService content, ComponentContext componentContext, RequestService rs, I18nAccess i18nAccess, MessageRepository messageRepository, Module currentModule, AdminUserFactory adminUserFactory) throws Exception {
+		GlobalImage image = (GlobalImage) ComponentHelper.getComponentFromRequest(ctx);
+		if (image.getConfig(ctx).isDataFeedBack()) {			
+			logger.info("exec data feed back (template:"+ctx.getCurrentTemplate().getName()+").");
+			String firstText = rs.getParameter("first-text", null);
+			String secondText = rs.getParameter("second-text", null);
+			String height = rs.getParameter("height", null);
+			String width = rs.getParameter("width", null);
+			if (firstText != null && !firstText.equals(image.getFirstText())) {
+				image.setModify();
+				image.setFirstText(firstText);
+			}
+			if (secondText != null && !secondText.equals(image.getSecondText())) {
+				image.setModify();
+				image.setSecondText(secondText);
+			}
+			if (height != null && !height.equals(image.getHeight())) {
+				image.setModify();
+				image.setHeight(Integer.parseInt(height));
+			}			
+			if (width != null && !width.equals(image.getWidth())) {				
+				image.setModify();
+				image.setWidth(Integer.parseInt(width));
+			} 
+			if (image.isModify()) {
+				image.storeProperties();
+				Edit.performSave(ctx, editContext, globalContext, content, componentContext, rs, i18nAccess, messageRepository, currentModule, adminUserFactory);
+			}
+		} else {
+			logger.info("stop data feed back (template:"+ctx.getCurrentTemplate().getName()+").");
+		}
 		return null;
 	}
-	
+
 	public boolean isFloatText(ContentContext ctx) {
 		return getCurrentRenderer(ctx).contains("float");
 	}
-	
+
 	@Override
-	public String getSpecialTagTitle(ContentContext ctx) {		
+	public String getSpecialTagTitle(ContentContext ctx) {
 		if (isFloatText(ctx)) {
 			return "text";
 		} else {
 			return null;
 		}
 	}
-	
+
 	public boolean isTextAuto() {
 		if (properties == null || properties.getProperty(AUTO_LABEL, null) == null) {
 			return true; // default value
 		}
 		return StringHelper.isTrue(properties.getProperty(AUTO_LABEL, null));
 	}
-	
+
 	public void setTextAuto(boolean auto) {
-		properties.setProperty(AUTO_LABEL, ""+auto);
+		properties.setProperty(AUTO_LABEL, "" + auto);
 	}
-	
+
 	protected String getLabelTextInputName() {
 		return getId() + ID_SEPARATOR + "label-text";
 	}
-	
+
 	@Override
 	public String getSpecialTagXHTML(ContentContext ctx) throws Exception {
 		ByteArrayOutputStream outStream = new ByteArrayOutputStream();
 		PrintStream out = new PrintStream(outStream);
-		
+
 		Map<String, String> filesParams = new HashMap<String, String>();
 		String path = FileAction.getPathPrefix(ctx);
 		filesParams.put("path", path);
@@ -1011,67 +1034,72 @@ public class GlobalImage extends Image implements IImageFilter {
 		filesParams.put("select", "_TYPE_");
 		filesParams.put("previewEdit", "true");
 		String chooseImageURL = URLHelper.createModuleURL(ctx, ctx.getPath(), "file", filesParams);
-		
+
 		out.println("<div class=\"text\">");
-		
+
 		String disabled = " enabled-zone";
 		if (!isTextAuto()) {
 			disabled = " disabled-zone";
 		}
-		
-		out.println("<div class=\"line label-text"+disabled+"\"><label for=\"" + getLabelTextInputName() + "\">label text : </label>");
-		String id = "special-label-"+getId();
-		String[][] paramsLabelText = new String[][] { { "rows", "3" }, { "cols", "100" }, {"class","tinymce-light"}, {"id",id} };
+
+		out.println("<div class=\"line label-text" + disabled + "\"><label for=\"" + getLabelTextInputName() + "\">label text : </label>");
+		String id = "special-label-" + getId();
+		String[][] paramsLabelText = new String[][] { { "rows", "3" }, { "cols", "100" }, { "class", "tinymce-light" }, { "id", id } };
 		out.println(XHTMLHelper.getTextArea(getLabelTextInputName(), getLabel(), paramsLabelText));
-		out.println("<script type=\"text/javascript\">jQuery(document).ready(loadWysiwyg('#" + id + "','light','"+chooseImageURL+"'));</script>");		
-		out.println("</div>");		
-		
+		out.println("<script type=\"text/javascript\">jQuery(document).ready(loadWysiwyg('#" + id + "','light','" + chooseImageURL + "'));</script>");
+		out.println("</div>");
+
 		out.println("<div class=\"line\">");
 		out.println("<label for=\"" + getTextAutoInputName() + "\">Auto : </label>");
-		String checked ="";	
+		String checked = "";
 		if (isTextAuto()) {
 			checked = " checked=\"checked\"";
-		}		
-		out.println("<input type=\"checkbox\" id=\""+getTextAutoInputName()+"\" name=\""+getTextAutoInputName()+"\""+checked+" onchange=\"switchClass('enabled-zone','disabled-zone');\" />");
-		out.println("</div>");		
+		}
+		out.println("<input type=\"checkbox\" id=\"" + getTextAutoInputName() + "\" name=\"" + getTextAutoInputName() + "\"" + checked + " onchange=\"switchClass('enabled-zone','disabled-zone');\" />");
+		out.println("</div>");
 		String url = URLHelper.createTransformURL(ctx, getPage(), getResourceURL(ctx, getFileName()), "list");
-		
+
 		disabled = " enabled-zone";
 		if (isTextAuto()) {
 			disabled = " disabled-zone";
 		}
-		
+
 		out.println("<div class=\"group\">");
-		out.println("<div class=\"text-image\"><img src=\""+url+"\" /></div>");
-		out.println("<div class=\"line first-text"+disabled+"\">");
+		out.println("<div class=\"text-image\"><img src=\"" + url + "\" /></div>");
+		out.println("<div class=\"line first-text" + disabled + "\">");
 		out.println("<label for=\"" + getFirstTextInputName() + "\">first text : </label>");
-		id = "first-text-"+getId();
-		String[][] paramsFirstText = new String[][] { { "rows", "3" }, { "cols", "100" }, {"class","tinymce-light"}, {"id",id} };
+		id = "first-text-" + getId();
+		String[][] paramsFirstText = new String[][] { { "rows", "3" }, { "cols", "100" }, { "class", "tinymce-light" }, { "id", id } };
 		out.println(XHTMLHelper.getTextArea(getFirstTextInputName(), getFirstText(), paramsFirstText));
-		out.println("<script type=\"text/javascript\">jQuery(document).ready(loadWysiwyg('#" + id + "','light','"+chooseImageURL+"'));</script>");
-		
+		out.println("<script type=\"text/javascript\">jQuery(document).ready(loadWysiwyg('#" + id + "','light','" + chooseImageURL + "'));</script>");
+
 		out.println("</div>");
 		out.println("</div>");
-		out.println("<div class=\"line second-text"+disabled+"\"><label for=\"" + getSecondTextInputName() + "\">second text : </label>");
-		id = "second-text-"+getId();
-		String[][] paramsSecondText = new String[][] { { "rows", "3" }, { "cols", "100" }, {"class","tinymce-light"}, {"id",id} };
-		out.println(XHTMLHelper.getTextArea(getSecondTextInputName(), getSecondText(), paramsSecondText));		
-		out.println("<script type=\"text/javascript\">jQuery(document).ready(loadWysiwyg('#" + id + "','light','"+chooseImageURL+"'));</script>");
-		
+		out.println("<div class=\"line second-text" + disabled + "\"><label for=\"" + getSecondTextInputName() + "\">second text : </label>");
+		id = "second-text-" + getId();
+		String[][] paramsSecondText = new String[][] { { "rows", "3" }, { "cols", "100" }, { "class", "tinymce-light" }, { "id", id } };
+		out.println(XHTMLHelper.getTextArea(getSecondTextInputName(), getSecondText(), paramsSecondText));
+		out.println("<script type=\"text/javascript\">jQuery(document).ready(loadWysiwyg('#" + id + "','light','" + chooseImageURL + "'));</script>");
+
 		out.println("</div>");
 		out.println("</div>");
-		
+
 		out.close();
 		return new String(outStream.toByteArray());
 	}
 
 	@Override
 	public String getImageFilterKey() {
-		return ""+getWidth();
+		if (getWidth() < 0) {
+			return null;
+		} else {
+			return "" + getWidth();
+		}
 	}
 
 	@Override
-	public BufferedImage filterImage(BufferedImage image) {		 
+	public BufferedImage filterImage(BufferedImage image) {
+		reloadProperties();
 		return ImageEngine.resizeWidth(image, getWidth());
 	}
 
