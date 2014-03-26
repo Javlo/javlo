@@ -23,7 +23,7 @@ public class FieldLargeText extends Field {
 		if (isReadOnly()) {
 			readOnlyHTML = " readonly=\"readonly\"";
 		}
-		out.print("<textarea" + readOnlyHTML + " id=\"" + getInputName() + "\" name=\"" + getInputName() + "\">");
+		out.print("<textarea" + readOnlyHTML + " id=\"" + getInputName() + "\" name=\"" + getInputName() + "\" rows=\"10\" cols=\"20\">");
 		out.print(StringHelper.neverNull(getValue()));
 		out.println("</textarea>");
 		out.println("</div>");

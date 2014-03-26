@@ -234,5 +234,9 @@ public class ComponentConfig {
 		return StringHelper.isTrue(properties.getString("edit.preview", null));
 
 	}
+	
+	public boolean isDataFeedBack() {
+		return StringHelper.isTrue(properties.getString("comp.data.feedBack", null));
+	}
 
 }

@@ -78,7 +78,7 @@ public class TemplateEditorAction extends AbstractModuleAction {
 		Template.TemplateBean templateBean = new Template.TemplateBean(ctx, editorContext.getCurrentTemplate());
 		ctx.getRequest().setAttribute("template", templateBean);
 		ctx.getRequest().setAttribute("fonts", XHTMLHelper.WEB_FONTS);
-		
+
 		if (editorContext.getCurrentTemplate() == null) {
 			return "no current template found.";
 		}
@@ -125,23 +125,28 @@ public class TemplateEditorAction extends AbstractModuleAction {
 		TemplateEditorContext editorContext = TemplateEditorContext.getInstance(ctx.getRequest().getSession());
 		Collection<Row> rows = editorContext.getCurrentTemplate().getRows();
 		Row row = Template.getArea(rows, editorContext.getArea().getName()).getRow();
-		if (row == null) {
-			return "no active area.";
+		if (rs.getParameter("delete", null) != null) {
+			editorContext.getCurrentTemplate().deleteRow(editorContext.getArea().getRow().getName());
+			editorContext.setArea(ComponentBean.DEFAULT_AREA);
 		} else {
-			if (rs.getParameter("delete", null) != null) {
-				editorContext.getCurrentTemplate().deleteRow(row.getName());
+			if (row == null) {
+				return "no active area.";
 			} else {
-				row.setWidth(rs.getParameter("width", ""));
-				row.setHeight(rs.getParameter("height", ""));
-				row.setMargin(rs.getParameter("margin", ""));
-				row.setPadding(rs.getParameter("padding", ""));
-				row.setBorderWidth(rs.getParameter("borderWidth", ""));
-				row.setBorderColor(rs.getParameter("borderColor", ""));
-				row.setTextColor(rs.getParameter("textColor", ""));
-				row.setTextSize(rs.getParameter("textSize", ""));
-				row.setFont(rs.getParameter("font", ""));
-				row.setBackgroundColor(rs.getParameter("backgroundColor", ""));
-				editorContext.getCurrentTemplate().storeRows(rows);
+				if (rs.getParameter("delete", null) != null) {
+					editorContext.getCurrentTemplate().deleteRow(row.getName());
+				} else {
+					row.setWidth(rs.getParameter("width", ""));
+					row.setHeight(rs.getParameter("height", ""));
+					row.setMargin(rs.getParameter("margin", ""));
+					row.setPadding(rs.getParameter("padding", ""));
+					row.setBorderWidth(rs.getParameter("borderWidth", ""));
+					row.setBorderColor(rs.getParameter("borderColor", ""));
+					row.setTextColor(rs.getParameter("textColor", ""));
+					row.setTextSize(rs.getParameter("textSize", ""));
+					row.setFont(rs.getParameter("font", ""));
+					row.setBackgroundColor(rs.getParameter("backgroundColor", ""));
+					editorContext.getCurrentTemplate().storeRows(rows);
+				}
 			}
 		}
 		editorContext.getCurrentTemplate().clearRenderer(ctx);
@@ -236,7 +241,7 @@ public class TemplateEditorAction extends AbstractModuleAction {
 			rows.add(row);
 			newTemplate.storeRows(rows);
 			Template template = TemplateFactory.getTemplates(application).get(newTemplate.getName());
-			TemplateEditorContext editorContext = TemplateEditorContext.getInstance(ctx.getRequest().getSession());			
+			TemplateEditorContext editorContext = TemplateEditorContext.getInstance(ctx.getRequest().getSession());
 			editorContext.setCurrentTemplate(template);
 		}
 		return null;

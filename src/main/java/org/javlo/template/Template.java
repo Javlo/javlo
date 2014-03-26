@@ -1701,6 +1701,9 @@ public class Template implements Comparable<Template> {
 				outRenderes.add(key.replaceFirst("html.", ""));
 			}
 		}
+		if (outRenderes.size() == 1) {
+			return getParent().getRenderers();
+		}
 		return outRenderes;
 	}
 
@@ -2311,7 +2314,7 @@ public class Template implements Comparable<Template> {
 	 * @return true if PDF renderer defined.
 	 */
 	public boolean isPDFRenderer() {
-		return properties.getString("html.pdf") != null;
+		return getRenderers().contains("pdf");
 	}
 
 	/**
@@ -2459,10 +2462,10 @@ public class Template implements Comparable<Template> {
 		return null;
 	}
 	
-	public void deleteRow(String name) {
+	public void deleteRow(String name) {		
 		Collection<Row> newRows = new LinkedList<Row>();
 		for (Row row : getRows()) {
-			if (!row.equals(name)) {
+			if (!row.getName().equals(name)) {
 				newRows.add(row);
 			}
 		}

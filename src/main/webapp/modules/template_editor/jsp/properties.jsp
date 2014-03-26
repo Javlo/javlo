@@ -4,7 +4,7 @@
 	<div class="tabs">
 	<c:if test="${not empty templateEditorContext.area}">
 	
-		<c:url var="taburl" value="${info.currentURL}">
+		<c:url var="taburl" value="${info.currentURL}" context="/">
 			<c:param name="webaction" value="data.tab"></c:param>
 		</c:url>
 	
@@ -37,7 +37,7 @@
 	</c:if>
 	</div>
 
-	<c:url var="url" value="${info.currentURL}">
+	<c:url var="url" value="${info.currentURL}" context="/">
 		<c:param name="webaction" value="selectArea"></c:param>
 	</c:url>
 	

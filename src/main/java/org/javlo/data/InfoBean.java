@@ -137,7 +137,15 @@ public class InfoBean {
 	}
 
 	public String getCurrentAjaxURL() {
-		return URLHelper.createAjaxURL(ctx, ctx.getPath());
+		String path = ctx.getPath();
+		try {
+			if (ctx.getVirtualCurrentPage() != null) {
+				path = ctx.getVirtualCurrentPage().getPath();
+			}
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		return URLHelper.createAjaxURL(ctx, path);
 	}
 
 	public String getPDFURL() {

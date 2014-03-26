@@ -358,5 +358,10 @@ public class DefaultTemplate extends Template {
 	public boolean isMailing() {	
 		return false;
 	}
+	
+	@Override
+	public List<String> getRenderers() {
+		return Collections.EMPTY_LIST;
+	}
 
 }

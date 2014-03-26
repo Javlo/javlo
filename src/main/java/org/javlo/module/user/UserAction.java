@@ -284,6 +284,9 @@ public class UserAction extends AbstractModuleAction {
 		IUserInfo newUserInfo = userFactory.createUserInfos();
 		newUserInfo.setId(newUser);
 		newUserInfo.setLogin(newUser);
+		if (StringHelper.isMail(newUser)) {
+			newUserInfo.setEmail(newUser);
+		}
 		if (userContext.getCurrentRole() != null) {
 			newUserInfo.setRoles(new HashSet<String>(Arrays.asList(new String[] { userContext.getCurrentRole() })));
 		}

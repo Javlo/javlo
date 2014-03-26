@@ -670,15 +670,21 @@ public class ContentContext {
 
 		if (currentTemplate == null) {
 			Template template = null;
+			
+			RequestService rs = RequestService.getInstance(request);
 
-			String forceTemplate = getRequest().getParameter(Template.FORCE_TEMPLATE_PARAM_NAME);
+			String forceTemplate = rs.getParameter(Template.FORCE_TEMPLATE_PARAM_NAME,null);
 			GlobalContext globalContext = GlobalContext.getInstance(getRequest());
 			if (forceTemplate != null) {
 				logger.info("force template : " + forceTemplate);
 				template = Template.getApplicationInstance(getRequest().getSession().getServletContext(), this, forceTemplate);
 			}
 			if (template == null) {
-				template = TemplateFactory.getTemplate(this, getCurrentPage());
+				if (getVirtualCurrentPage() == null) {					
+					template = TemplateFactory.getTemplate(this, getCurrentPage());
+				} else {
+					template = TemplateFactory.getTemplate(this, getVirtualCurrentPage());
+				}
 			}
 
 			if ((template == null) || !template.exist()) {
@@ -1618,6 +1624,7 @@ public class ContentContext {
 	}
 
 	public void setVirtualCurrentPage(MenuElement virtualCurrentPage) {
+		this.currentTemplate = null;
 		this.virtualCurrentPage = virtualCurrentPage;
 	}
 
