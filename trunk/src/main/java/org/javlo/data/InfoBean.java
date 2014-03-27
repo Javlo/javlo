@@ -13,6 +13,7 @@ import java.util.Map;
 import javax.servlet.http.HttpServletRequest;
 
 import org.javlo.component.core.IContentVisualComponent;
+import org.javlo.component.links.RSSRegistration;
 import org.javlo.config.StaticConfig;
 import org.javlo.context.ContentContext;
 import org.javlo.context.EditContext;
@@ -27,6 +28,7 @@ import org.javlo.navigation.MenuElement;
 import org.javlo.navigation.NavigationMapByName;
 import org.javlo.navigation.PageBean;
 import org.javlo.rendering.Device;
+import org.javlo.service.ContentService;
 import org.javlo.service.PersistenceService;
 import org.javlo.service.RequestService;
 import org.javlo.service.exception.ServiceException;
@@ -97,7 +99,7 @@ public class InfoBean {
 	public String getCurrentAbsoluteURL() {
 		return URLHelper.createURL(ctx.getContextForAbsoluteURL());
 	}
-	
+
 	public String getCurrentAbsolutePreviewURL() {
 		ContentContext previewCtx = ctx.getContextForAbsoluteURL();
 		previewCtx.setRenderMode(ContentContext.PREVIEW_MODE);
@@ -229,7 +231,7 @@ public class InfoBean {
 	public String getPageName() {
 		return currentPage.getName();
 	}
-	
+
 	public String getPageHumanName() {
 		return currentPage.getHumanName();
 	}
@@ -377,10 +379,10 @@ public class InfoBean {
 		}
 		return null;
 	}
-	
+
 	public String getRootTemplateFolder() {
 		try {
-			return URLHelper.mergePath(ctx.getCurrentTemplate().getLocalWorkTemplateFolder(),getTemplateFolder());
+			return URLHelper.mergePath(ctx.getCurrentTemplate().getLocalWorkTemplateFolder(), getTemplateFolder());
 		} catch (Exception e) {
 			e.printStackTrace();
 			return null;
@@ -445,7 +447,7 @@ public class InfoBean {
 			return null;
 		}
 	}
-	
+
 	public String getTemplateName() {
 		try {
 			return ctx.getCurrentTemplate().getName();
@@ -553,24 +555,24 @@ public class InfoBean {
 	public String getAbsoluteURLPrefix() {
 		return URLHelper.createStaticURL(ctx.getContextForAbsoluteURL(), "/");
 	}
-	
+
 	public String getAbsoluteLocalURLPrefix() {
 		ContentContext localCtx = new ContentContext(ctx);
 		localCtx.resetDMZServerInter();
 		return URLHelper.createStaticURL(localCtx.getContextForAbsoluteURL(), "/");
 	}
-	
+
 	public String getHostURLPrefix() {
 		String url = getAbsoluteURLPrefix();
-		String noProtocol = url.substring(url.indexOf("//")+2);		
+		String noProtocol = url.substring(url.indexOf("//") + 2);
 		if (noProtocol.contains("/")) {
 			noProtocol = noProtocol.substring(noProtocol.indexOf('/'));
-			if (noProtocol.length()>1) {
+			if (noProtocol.length() > 1) {
 				url = url.substring(0, url.indexOf(noProtocol));
 			}
 		}
 		if (url.endsWith("/")) {
-			url = url.substring(0, url.length()-1);
+			url = url.substring(0, url.length() - 1);
 		}
 		return url;
 	}
@@ -600,7 +602,7 @@ public class InfoBean {
 	public String getTs() {
 		return ts;
 	}
-	
+
 	public String getQRCodeLinkPrefix() {
 		return URLHelper.createQRCodeLink(ctx, null);
 	}
@@ -613,11 +615,11 @@ public class InfoBean {
 	public String getRootURL() {
 		return URLHelper.createURL(ctx, "/");
 	}
-	
+
 	public Map<String, String> getStaticData() {
 		return staticData;
 	}
-	
+
 	public String getPageBookmark() {
 		try {
 			return NavigationHelper.getPageBookmark(ctx, currentPage);
@@ -626,45 +628,58 @@ public class InfoBean {
 			return null;
 		}
 	}
-	
-	public Map<String,PageBean> getPageByName() {
+
+	public Map<String, PageBean> getPageByName() {
 		try {
-			return new NavigationMapByName(ctx,ctx.getCurrentPage().getRoot());
-		} catch (Exception e) {		
+			return new NavigationMapByName(ctx, ctx.getCurrentPage().getRoot());
+		} catch (Exception e) {
 			e.printStackTrace();
 			return null;
 		}
 	}
-	
+
 	public int getHostPort() {
 		return ctx.getHostPort();
 	}
-	
+
 	public int getCurrentYear() {
 		return Calendar.getInstance().get(Calendar.YEAR);
 	}
-	
+
 	public int getCurrentDay() {
 		return Calendar.getInstance().get(Calendar.DAY_OF_MONTH);
 	}
-	
+
 	public int getCurrentMount() {
 		return Calendar.getInstance().get(Calendar.MONTH);
 	}
-	
+
 	public static void main(String[] args) {
-		String url = "http://localhost:8080";		
-		
-		System.out.println(url);		
+		String url = "http://localhost:8080";
+
+		System.out.println(url);
 	}
-	
+
 	public String getAjaxLoaderURL() {
-		return URLHelper.createStaticURL(ctx,"/images/ajax_loader.gif");
+		return URLHelper.createStaticURL(ctx, "/images/ajax_loader.gif");
 	}
-	
+
 	public String getRandomId() {
 		return StringHelper.getRandomId();
 	}
-	
+
+	public boolean isRSSFeed() {
+		final String RSS_SESSION_KEY = "__RSS_SESSION_KEY";
+		if (ctx.getRequest().getSession().getAttribute(RSS_SESSION_KEY) == null) {
+			ContentService content = ContentService.getInstance(ctx.getRequest());
+			try {
+				ctx.getRequest().getSession().setAttribute(RSS_SESSION_KEY, content.getNavigation(ctx).getAllChildrenWithComponentType(ctx, RSSRegistration.TYPE).size() > 0);
+			} catch (Exception e) {
+				e.printStackTrace();
+				return false;
+			}
+		}
+		return (Boolean)ctx.getRequest().getSession().getAttribute(RSS_SESSION_KEY);
+	}
 
 }
