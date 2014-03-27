@@ -5,6 +5,11 @@
 		<iframe id="template-iframe" style="width: 100%; height: 800px;" src="${templateURL}"></iframe>
 	</c:if>
 	<c:if test="${empty templateURL}">
-		<p>no template found.</p>
+		<br />
+		<div id="message-container">
+			<div class="notification msgalert">				
+				no editable template found, create one.
+			</div>
+		</div>
 	</c:if>
 </div>

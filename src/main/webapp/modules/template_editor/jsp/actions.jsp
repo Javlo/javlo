@@ -8,6 +8,7 @@
 <input type="submit" class="action-button add-user" value="${i18n.edit['global.ok']}" />
 </div>
 </form>
+<c:if test="${not empty template}">
 <form method="post" action="${info.currentEditURL}" id="form-create-row" class="form_default">
 <div>
 <input type="hidden" value="createRow" name="webaction">
@@ -21,7 +22,9 @@
 </div>
 </form>
 <a target="_blanck" class="action-button preview" href="${info.currentViewURL}?force-template=${templateEditorContext.currentTemplate.name}">preview</a>
+</c:if>
 </div>
+<c:if test="${not empty template}">
 <form method="post" action="${info.currentEditURL}" id="form-change-template" class="js-submit">
 <div class="line">
 	<input type="hidden" name="webaction" value="changeTemplate" />
@@ -36,8 +39,7 @@
 	<input type="checkbox" id="show-content" name="show-content" ${templateEditorContext.showContent?'checked="checked"':''} onchange="this.form.submit();" />
 </div>	
 </form>
-
-
+</c:if>
 <div class="clear">&nbsp;</div>
 
 
