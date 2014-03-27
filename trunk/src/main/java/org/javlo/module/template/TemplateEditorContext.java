@@ -41,6 +41,9 @@ public class TemplateEditorContext {
 	}
 
 	public Area getArea() {
+		if (currentTemplate == null) {
+			return null;
+		}
 		return currentTemplate.getArea(currentTemplate.getRows(), area);
 	}
 

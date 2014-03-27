@@ -60,9 +60,11 @@ public class TemplateEditorAction extends AbstractModuleAction {
 		}
 		ctx.getRequest().setAttribute("templates", editableTemplate);
 
-		Template.TemplateBean templateBean = new Template.TemplateBean(ctx, editorCtx.getCurrentTemplate());
-		ctx.getRequest().setAttribute("template", templateBean);
-		ctx.getRequest().setAttribute("fonts", XHTMLHelper.WEB_FONTS);
+		if (editorCtx.getCurrentTemplate() != null) {
+			Template.TemplateBean templateBean = new Template.TemplateBean(ctx, editorCtx.getCurrentTemplate());
+			ctx.getRequest().setAttribute("template", templateBean);
+			ctx.getRequest().setAttribute("fonts", XHTMLHelper.WEB_FONTS);
+		}
 
 		return msg;
 	}
