@@ -5,7 +5,7 @@
 <c:if test="${not empty messages.globalMessage}">
 	${messages.globalMessage.xhtml}
 </c:if>
-<c:if test="${empty messages.globalMessage || messages.globalMessage.type == 1 || messages.globalMessage.type == 2 || messages.globalMessage.type == 5}">
+<c:if test="${empty messages.globalMessage || messages.globalMessage.type == 0 || messages.globalMessage.type == 1 || messages.globalMessage.type == 2 || messages.globalMessage.type == 5}">
 <form method="post">
 <div class="line">
 	<input class="hidden" name="comp-id" value="${comp.id}" />
