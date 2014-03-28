@@ -137,8 +137,8 @@ public class ChildrenLink extends AbstractVisualComponent implements IImageTitle
 
 	@Override
 	protected String getRendererTitle() {
-		String[] values = getValue().split("" + DATA_SEPARATOR);
-		if (values.length > 1) {
+		String[] values = getValue().split("" + DATA_SEPARATOR);		
+		if (values.length >= 1) {
 			return values[0];
 		} else {
 			return "";
@@ -496,6 +496,7 @@ public class ChildrenLink extends AbstractVisualComponent implements IImageTitle
 			newValue = newValue + DATA_SEPARATOR + LOCK_PARENT_PAGE;
 		}
 		String rendererTitle = requestService.getParameter(getInputNameRendererTitle(), "");
+		
 		newValue = rendererTitle + DATA_SEPARATOR + newValue;
 
 		if (!newValue.equals(getValue())) {
