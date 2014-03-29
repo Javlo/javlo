@@ -4,7 +4,7 @@
 <c:if test="${not empty CSVLink}">
 	<div class="link"><a href="${CSVLink}">${CSVName}</a><c:if test="${not empty ExcelLink}"> - <a href="${ExcelLink}">[excel]</a></c:if></div>
 </c:if>
-<c:url value="${info.absoluteLocalURLPrefix}${currentModule.path}/jsp/upload.jsp" var="uploadURL" context="/">
+<c:url value="${info.currentModuleURL}/jsp/upload.jsp" var="uploadURL" context="/">
 	<c:param name="admin" value="${admin}" />
 	<c:param name="currentURL" value="${info.currentURL}" />
 	<c:if test="${not empty userContext.currentRole}">
