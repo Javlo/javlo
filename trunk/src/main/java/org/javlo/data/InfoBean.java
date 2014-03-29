@@ -24,6 +24,8 @@ import org.javlo.helper.StringHelper;
 import org.javlo.helper.URLHelper;
 import org.javlo.message.GenericMessage;
 import org.javlo.message.MessageRepository;
+import org.javlo.module.core.ModuleException;
+import org.javlo.module.core.ModulesContext;
 import org.javlo.navigation.MenuElement;
 import org.javlo.navigation.NavigationMapByName;
 import org.javlo.navigation.PageBean;
@@ -108,6 +110,17 @@ public class InfoBean {
 
 	public String getCurrentURL() {
 		return URLHelper.createURL(ctx);
+	}
+	
+	public String getCurrentModuleURL() {
+		ModulesContext modulesCtx;
+		try {
+			modulesCtx = ModulesContext.getInstance(ctx.getRequest().getSession(), globalContext);
+			return URLHelper.mergePath(URLHelper.createStaticURL(ctx, "/"),modulesCtx.getCurrentModule().getPath());
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		return null;
 	}
 
 	public String getCurrentPDFURL() {
