@@ -994,6 +994,9 @@ public class GlobalImage extends Image implements IImageFilter {
 	}
 
 	public boolean isFloatText(ContentContext ctx) {
+		if (getCurrentRenderer(ctx) == null) {
+			return false;
+		}
 		return getCurrentRenderer(ctx).contains("float");
 	}
 
