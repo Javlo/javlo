@@ -1,4 +1,4 @@
-change log
+7777change log
 
 * 2.0 [15/06/2012]
 
@@ -233,3 +233,5 @@ change log
  * if login is email, the email is copied in email field.
  
  * template editor module
+ 
+ * tinymce 4.0.20 + clean folder list in dynamicComponent
