@@ -1444,8 +1444,8 @@ public class PageReferenceComponent extends ComplexPropertiesLink implements IAc
 		NavigationService navigationService = NavigationService.getInstance(globalContext);
 		for (String pageId : selectedPage) {
 			MenuElement page = navigationService.getPage(ctx, pageId);
-			ContentContext lgCtx = page.getContentContextWithContent(ctx);
 			if (page != null) {
+				ContentContext lgCtx = page.getContentContextWithContent(ctx);
 				Date pageDate = page.getModificationDate();
 				Date contentDate;
 				contentDate = page.getContentDate(lgCtx);
