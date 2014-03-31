@@ -245,6 +245,7 @@ public class TemplateEditorAction extends AbstractModuleAction {
 			Template template = TemplateFactory.getTemplates(application).get(newTemplate.getName());
 			TemplateEditorContext editorContext = TemplateEditorContext.getInstance(ctx.getRequest().getSession());
 			editorContext.setCurrentTemplate(template);
+			newTemplate.importTemplateInWebapp(staticConfig, ctx);
 		}
 		return null;
 	}
