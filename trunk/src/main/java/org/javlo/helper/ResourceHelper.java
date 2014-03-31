@@ -1449,4 +1449,26 @@ public class ResourceHelper {
 			System.out.println(string);
 		}
 	}
+	
+	
+	/**
+	 * clear a folder list, remove '/' if found as first char and replace '\' by '/'
+	 * @param folders
+	 * @return
+	 */
+	public static List<String> cleanFolderList(Collection<String> folders) {
+		List<String> outFolders = new LinkedList<String>();
+		for (String folder : folders) {
+			if (folder != null) {
+			folder = folder.replace('\\', '/');
+			while (folder.length() > 0 && folder.startsWith("/")) {
+				folder = folder.substring(1);
+			}
+			outFolders.add(folder);
+			} else {
+				outFolders.add(null);
+			}
+		}
+		return outFolders;		
+	}	
 }
