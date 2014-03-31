@@ -194,7 +194,7 @@ public class PersistenceService {
 
 	public static final String GLOBAL_MAP_NAME = "global";
 
-	private static int UNDO_DEPTH = 16;
+	private static int UNDO_DEPTH = 1024;
 
 	public static final Date parseDate(String date) throws ParseException {
 		synchronized (PERSISTENCE_DATE_FORMAT) {

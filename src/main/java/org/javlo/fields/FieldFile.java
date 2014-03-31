@@ -111,8 +111,8 @@ public class FieldFile extends Field implements IStaticContainer {
 					list.add(name);
 				}
 			}
-		}
-		return list;
+		}		
+		return ResourceHelper.cleanFolderList(list);
 	}
 
 	protected List<String> getFileList() {
@@ -300,6 +300,7 @@ public class FieldFile extends Field implements IStaticContainer {
 			}
 		}
 
+		String currentFolder = getCurrentFolder();
 		if (newFolderName.trim().length() > 0) {
 			File newFolder = new File(URLHelper.mergePath(getFileDirectory(), newFolderName));
 			newFolder.mkdirs();
@@ -312,7 +313,7 @@ public class FieldFile extends Field implements IStaticContainer {
 				modify = true;
 				setNeedRefresh(true);
 			}
-		} else if (!getCurrentFolder().equals(folder)) {
+		} else if (!currentFolder.equals(folder)) {
 			setCurrentFolder(folder);
 			setCurrentFile("");
 			setCurrentLabel("");
