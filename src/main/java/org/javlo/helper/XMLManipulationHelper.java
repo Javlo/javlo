@@ -1143,7 +1143,7 @@ public class XMLManipulationHelper {
 					Map<String, String> attributes = tag.getAttributes();
 					boolean inValue = false;
 					boolean inCharSequence = false;
-					while ((xml.charAt(i) != '>') && (xml.charAt(i) != '<') && (i < xml.length())) {
+					while ((xml.charAt(i) != '>' || inCharSequence) && (xml.charAt(i) != '<') && (i < xml.length())) {
 						if ((xml.charAt(i) == '"')) {
 							inCharSequence = !inCharSequence;
 						}

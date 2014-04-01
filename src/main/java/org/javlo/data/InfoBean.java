@@ -24,7 +24,6 @@ import org.javlo.helper.StringHelper;
 import org.javlo.helper.URLHelper;
 import org.javlo.message.GenericMessage;
 import org.javlo.message.MessageRepository;
-import org.javlo.module.core.ModuleException;
 import org.javlo.module.core.ModulesContext;
 import org.javlo.navigation.MenuElement;
 import org.javlo.navigation.NavigationMapByName;
@@ -693,6 +692,25 @@ public class InfoBean {
 			}
 		}
 		return (Boolean)ctx.getRequest().getSession().getAttribute(RSS_SESSION_KEY);
+	}
+	
+	/**
+	 * get the current total depth of navigation.
+	 * @return
+	 * @throws Exception 
+	 */
+	public int getCurrentDepth() throws Exception {
+		int depth = 0;
+		MenuElement parent = ctx.getCurrentPage().getParent();
+		while (parent != null) {
+			parent = parent.getParent();
+			depth++;
+		}
+		if (getPage().isVisibleChildren()) {
+			return depth+1;
+		} else {
+			return depth;
+		}
 	}
 
 }

@@ -261,6 +261,24 @@ public class PageBean implements Serializable {
 		return page.isChildrenAssociation();
 	}
 	
+	public boolean isVisibleChildren() throws Exception {
+		for (MenuElement child : page.getChildMenuElements()) {
+			if (child.isVisible() && child.isRealContent(ctx)) {
+				return true;
+			}
+		}
+		return false;
+	}
+	
+	public boolean isRealContentChildren() throws Exception {
+		for (MenuElement child : page.getChildMenuElements()) {
+			if (child.isRealContent(ctx)) {
+				return true;
+			}
+		}
+		return false;
+	}
+	
 	public PageAssociationBean getRootOfChildrenAssociation() throws Exception {
 		if (page.getRootOfChildrenAssociation() != null) {
 			return new PageAssociationBean(ctx, page.getRootOfChildrenAssociation());
