@@ -378,6 +378,7 @@ public abstract class ElementaryURLHelper {
 			}
 			url = createStaticURL(ctx, referencePage, url, true);
 		}
+		url = URLHelper.addMailingFeedback(ctx, url);
 		return url;
 	}
 

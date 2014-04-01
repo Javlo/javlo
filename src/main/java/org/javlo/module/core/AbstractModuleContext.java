@@ -114,7 +114,7 @@ public abstract class AbstractModuleContext {
 	 * @param renderer
 	 *            link to a jsp file.
 	 */
-	public void setRendererFromNavigation(String renderer) {
+	public void setRendererFromNavigation(String renderer) {		
 		module.setRenderer(renderer);
 		this.renderer = renderer;
 	}

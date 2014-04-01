@@ -235,3 +235,5 @@ change log
  * template editor module
  
  * tinymce 4.0.20 + clean folder list in dynamicComponent
+ 
+ * mailing feedback + history

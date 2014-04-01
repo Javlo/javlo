@@ -25,6 +25,8 @@ import org.javlo.helper.NetHelper;
 import org.javlo.helper.StringHelper;
 import org.javlo.helper.URLHelper;
 import org.javlo.i18n.I18nAccess;
+import org.javlo.mailing.MailingFactory;
+import org.javlo.mailing.MailingThread;
 import org.javlo.message.GenericMessage;
 import org.javlo.message.MessageRepository;
 import org.javlo.module.core.AbstractModuleContext;
@@ -92,7 +94,20 @@ public class MailingAction extends AbstractModuleAction {
 				currentModule.setRenderer("/jsp/step"+mailingContext.getWizardStep(SEND_WIZARD_BOX)+".jsp");				
 			}
 		} else {
-			currentModule.restoreRenderer();
+			if (mailingContext.getCurrentLink().equals("send")) {
+				currentModule.setSidebar(true);
+				currentModule.setBreadcrumb(true);
+				currentModule.restoreRenderer();
+			} else {
+				currentModule.setSidebar(false);
+				currentModule.setBreadcrumb(false);
+				MailingFactory mailingFactory = MailingFactory.getInstance(session.getServletContext());
+				if (!globalContext.isMaster()) {
+					request.setAttribute("allMailing", mailingFactory.getOldMailingListByContext(globalContext.getContextKey()));
+				} else {
+					request.setAttribute("allMailing", mailingFactory.getOldMailingList());
+				}
+			}
 		}
 		
 		switch (mailingContext.getWizardStep(SEND_WIZARD_BOX)) {
@@ -146,7 +161,7 @@ public class MailingAction extends AbstractModuleAction {
 			mailingContext.setReportTo(rs.getParameter("report-to", null));
 			mailingContext.setGroups(rs.getParameterListValues("groups", new LinkedList<String>()));
 			mailingContext.setRecipients(rs.getParameter("recipients", null));
-			mailingContext.setTestMailing(rs.getParameter("test-mailing", null) != null);
+			mailingContext.setTestMailing(rs.getParameter("test-mailing", null) != null);			
 			boolean isValid = mailingContext.validate(ctx);
 			if (ctx.isAjax()) {
 				currentModule.getBox(SEND_WIZARD_BOX).update(ctx);

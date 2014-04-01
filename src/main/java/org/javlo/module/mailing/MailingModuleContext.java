@@ -4,7 +4,9 @@ import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 import java.net.URL;
+import java.util.Date;
 import java.util.LinkedHashSet;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Set;
 import java.util.logging.Logger;
@@ -21,6 +23,7 @@ import org.javlo.context.GlobalContext;
 import org.javlo.helper.NetHelper;
 import org.javlo.helper.StringHelper;
 import org.javlo.helper.URLHelper;
+import org.javlo.i18n.I18nAccess;
 import org.javlo.mailing.Mailing;
 import org.javlo.message.GenericMessage;
 import org.javlo.message.MessageRepository;
@@ -34,7 +37,7 @@ import org.javlo.user.UserFactory;
 
 //TODO Use MailingBuilder
 public class MailingModuleContext extends AbstractModuleContext {
-	
+
 	private static Logger logger = Logger.getLogger(MailingModuleContext.class.getName());
 
 	private static final String MODULE_NAME = "mailing";
@@ -43,7 +46,17 @@ public class MailingModuleContext extends AbstractModuleContext {
 		GlobalContext globalContext = GlobalContext.getInstance(request);
 		HttpSession session = request.getSession();
 		Module module = ModulesContext.getInstance(session, globalContext).searchModule(MODULE_NAME);
-		return (MailingModuleContext) AbstractModuleContext.getInstance(session, globalContext, module, MailingModuleContext.class);
+
+		MailingModuleContext outContext = (MailingModuleContext) AbstractModuleContext.getInstance(session, globalContext, module, MailingModuleContext.class);
+
+		if (outContext.navigation.size() == 0) {
+			LinkToRenderer defaultNav = new LinkToRenderer(I18nAccess.getInstance(request).getText("mailing.title.send"), "send", "../content/jsp/preview.jsp");			
+			outContext.navigation.add(defaultNav);
+			outContext.navigation.add(new LinkToRenderer(I18nAccess.getInstance(request).getText("mailing.title.history"), "history", "jsp/history.jsp"));
+			outContext.setCurrentLink(defaultNav.getName());
+		}
+
+		return outContext;
 	}
 
 	private String currentTemplate;
@@ -54,10 +67,11 @@ public class MailingModuleContext extends AbstractModuleContext {
 	private String recipients;
 	private boolean isTestMailing;
 	private Set<InternetAddress> allRecipients = new LinkedHashSet<InternetAddress>();
+	private final List<LinkToRenderer> navigation = new LinkedList<LinkToRenderer>();
 
 	@Override
 	public List<LinkToRenderer> getNavigation() {
-		return null;
+		return navigation;
 	}
 
 	@Override
@@ -218,14 +232,16 @@ public class MailingModuleContext extends AbstractModuleContext {
 		m.setSubject(subject);
 		m.setAdminEmail(globalContext.getAdministratorEmail());
 		m.setNotif(new InternetAddress(reportTo));
+		m.setContextKey(ctx.getGlobalContext().getContextKey());
 		StaticConfig sc = ctx.getGlobalContext().getStaticConfig();
 		String content = NetHelper.readPage(url, true, sc.getApplicationLogin(), sc.getApplicationPassword());
 		if (content == null) {
-			logger.severe("error on read : "+url);
+			logger.severe("error on read : " + url);
 		}
 		m.setContent(content);
 		m.setHtml(true);
 		m.setRoles(groups);
+		m.setSendDate(new Date());
 		m.store(ctx.getRequest().getSession().getServletContext());
 	}
 

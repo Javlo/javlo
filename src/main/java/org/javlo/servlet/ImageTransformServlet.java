@@ -29,6 +29,7 @@ import org.javlo.config.StaticConfig;
 import org.javlo.context.ContentContext;
 import org.javlo.context.GlobalContext;
 import org.javlo.helper.NetHelper;
+import org.javlo.helper.RequestHelper;
 import org.javlo.helper.ResourceHelper;
 import org.javlo.helper.StringHelper;
 import org.javlo.helper.URLHelper;
@@ -448,6 +449,7 @@ public class ImageTransformServlet extends HttpServlet {
 
 		StaticConfig staticConfig = StaticConfig.getInstance(request.getSession());
 		ContentContext ctx = ContentContext.getFreeContentContext(request, response);
+		RequestHelper.traceMailingFeedBack(ctx);
 
 		OutputStream out = null;
 

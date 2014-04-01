@@ -15,6 +15,7 @@ import java.util.Collections;
 import java.util.Comparator;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Iterator;
 import java.util.LinkedHashSet;
 import java.util.LinkedList;
@@ -340,8 +341,8 @@ public class Mailing {
 		config.setProperty("send", new Boolean(isSend()));
 		config.setProperty("roles", StringHelper.collectionToString(roles));
 		config.setProperty("encoding", encoding);
-		config.setProperty("date", StringHelper.renderTime(new Date()));
-		config.setProperty("test", TEST);
+		config.setProperty("date", StringHelper.renderTime(new Date()));		
+		config.setProperty("test", TEST);		
 		config.setProperty("context-key", contextKey);
 		if (sendDate != null) {
 			config.setProperty("send-date", StringHelper.renderTime(sendDate));
@@ -531,6 +532,39 @@ public class Mailing {
 		}
 		return outFB;
 	}
+	
+	public int getCountReaders() throws IOException {
+		int c=0;
+		Set<String> allReadyCounted = new HashSet<String>();
+		for (FeedBackMailingBean feedBack : getFeedBack()) {
+			if (!allReadyCounted.contains(feedBack.getEmail())) {
+				c++;
+				allReadyCounted.add(feedBack.getEmail());
+			}
+		}
+		return c;
+	}
+	
+	public int getCountForward() throws IOException {		
+		Map<String,List<String>> mailAgents = new HashMap<String, List<String>>();
+		for (FeedBackMailingBean feedBack : getFeedBack()) {
+			List<String> agents = mailAgents.get(feedBack.getEmail());
+			if (agents == null) {
+				agents = new LinkedList<String>();				
+				mailAgents.put(feedBack.getEmail(), agents);
+			}
+			if (!agents.contains(feedBack.getAgent())) {
+				agents.add(feedBack.getAgent());
+			}
+		}
+		int c=0;
+		for (List<String> agents : mailAgents.values()) {
+			if (agents.size()>1) {
+				c = c+(agents.size()-1);
+			}
+		}
+		return c;
+	}
 
 	public Date getDate() {
 		return date;
@@ -566,6 +600,14 @@ public class Mailing {
 
 	public Date getSendDate() {
 		return sendDate;
+	}
+	
+	public String getDateString() {
+		if (sendDate != null) {
+			return StringHelper.renderSortableTime(sendDate);
+		} else {
+			return StringHelper.renderSortableTime(date);
+		}
 	}
 
 	public void setSendDate(Date sendDate) {
