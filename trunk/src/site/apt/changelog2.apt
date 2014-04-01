@@ -237,3 +237,5 @@ change log
  * tinymce 4.0.20 + clean folder list in dynamicComponent
  
  * mailing feedback + history
+ 
+ * menu generation optimisation + XML parsing correction '>' not considered if inside char sequence
