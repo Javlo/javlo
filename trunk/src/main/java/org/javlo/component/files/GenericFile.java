@@ -176,7 +176,7 @@ public class GenericFile extends AbstractFileComponent implements IReverseLinkCo
 			} else {
 				ContentContext viewCtx = new ContentContext(ctx);
 				viewCtx.setRenderMode(ContentContext.VIEW_MODE);
-				res.append(StringHelper.toXMLAttribute(url) + "?" + MailingAction.MAILING_FEEDBACK_PARAM_NAME + "=##data##");
+				res.append(URLHelper.addMailingFeedback(ctx,StringHelper.toXMLAttribute(url)));
 			}
 			res.append("\">");
 			/*

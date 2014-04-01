@@ -14,7 +14,6 @@ import org.apache.commons.configuration.ConfigurationException;
 import org.javlo.config.StaticConfig;
 import org.javlo.filter.NumericDirectoryFilter;
 
-
 public class MailingFactory {
 
 	/**
@@ -37,7 +36,7 @@ public class MailingFactory {
 			outInstance.mailingFolder = StaticConfig.getInstance(application).getMailingFolder();
 			outInstance.mailingHistoryFolder = StaticConfig.getInstance(application).getMailingHistoryFolder();
 			outInstance.application = application;
-			
+
 			application.setAttribute(KEY, outInstance);
 		}
 		return outInstance;
@@ -49,8 +48,8 @@ public class MailingFactory {
 	 * @throws IOException
 	 * @throws ConfigurationException
 	 */
-	public Mailing[] getMailingList() throws ConfigurationException, IOException {
-		Collection<Mailing> arrayList = new LinkedList<Mailing>();
+	public List<Mailing> getMailingList() throws ConfigurationException, IOException {
+		List<Mailing> outMailing = new LinkedList<Mailing>();
 		File mailingDir = new File(mailingFolder + '/');
 		if (mailingDir.exists()) {
 			File[] currentMailingDir = mailingDir.listFiles(new NumericDirectoryFilter());
@@ -60,15 +59,13 @@ public class MailingFactory {
 				mailing.setId(application, mailingID);
 				if (mailing.isValid()) {
 					mailing.load(application, mailingID);
-					arrayList.add(mailing);
+					outMailing.add(mailing);
 				}
 			}
 		} else {
 			logger.finest("mailing directory: " + mailingDir + " not found.");
 		}
-		Mailing[] outFinal = new Mailing[arrayList.size()];
-		arrayList.toArray(outFinal);
-		return outFinal;
+		return outMailing;
 	}
 
 	/**
@@ -77,8 +74,8 @@ public class MailingFactory {
 	 * @throws IOException
 	 * @throws ConfigurationException
 	 */
-	public Mailing[] getOldMailingList() throws ConfigurationException, IOException {
-		Collection<Mailing> arrayList = new LinkedList<Mailing>();
+	public List<Mailing> getOldMailingList() throws ConfigurationException, IOException {
+		List<Mailing> outMailing = new LinkedList<Mailing>();
 		File mailingDir = new File(mailingHistoryFolder + '/');
 		if (mailingDir.exists()) {
 			File[] currentMailingDir = mailingDir.listFiles(new NumericDirectoryFilter());
@@ -88,22 +85,18 @@ public class MailingFactory {
 				mailing.setId(application, mailingID);
 				if (mailing.isValid()) {
 					mailing.load(application, mailingID);
-					arrayList.add(mailing);
+					outMailing.add(mailing);
 				}
 			}
 		} else {
 			logger.finest("mailing directory: " + mailingDir + " not found.");
 		}
-		Mailing[] outFinal = new Mailing[arrayList.size()];
-		arrayList.toArray(outFinal);
-		Arrays.sort(outFinal, new Mailing.MailingDateSorting());
-		return outFinal;
+		return outMailing;
 	}
 
 	public List<Mailing> getOldMailingList(String sender) throws ConfigurationException, IOException {
 		List<Mailing> outList = new LinkedList<Mailing>();
-		Mailing[] mailingList = getOldMailingList();
-		for (Mailing mailing : mailingList) {
+		for (Mailing mailing : getOldMailingList()) {
 			if (mailing.getFrom().getAddress().equals(sender)) {
 				outList.add(mailing);
 			}
@@ -113,18 +106,20 @@ public class MailingFactory {
 
 	public List<Mailing> getOldMailingListByContext(String contextKey) throws ConfigurationException, IOException {
 		List<Mailing> outList = new LinkedList<Mailing>();
-		Mailing[] mailingList = getOldMailingList();
-		for (Mailing mailing : mailingList) {
-			if (mailing.getContextKey().equals(contextKey)) {
-				outList.add(mailing);
+		for (Mailing mailing : getOldMailingList()) {
+			if (mailing.getContextKey() != null) {
+				if (mailing.getContextKey().equals(contextKey)) {
+					outList.add(mailing);
+				}
+			} else {
+				logger.warning("mailing without context : " + mailing.getSubject());
 			}
 		}
 		return outList;
 	}
 
 	public Mailing getMailing(String id) throws ConfigurationException, IOException {
-		Mailing[] mailingList = getOldMailingList();
-		for (Mailing mailing : mailingList) {
+		for (Mailing mailing : getOldMailingList()) {
 			if (mailing.getId().equals(id)) {
 				return mailing;
 			}

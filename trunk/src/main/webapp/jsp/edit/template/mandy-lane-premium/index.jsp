@@ -217,13 +217,9 @@
 				<div class="content"><jsp:include page="${currentModule.toolsRenderer}" /></div>
 			</div>
 		</c:if>
-	
 		<c:if test="${currentModule.renderer != null}">
-			<div id="main-renderer">			
-			<jsp:include page="${currentModule.renderer}" />
-			</div>
-		</c:if>
-	
+			<div id="main-renderer"><jsp:include page="${currentModule.renderer}" /></div>
+		</c:if>	
 		<c:forEach var="currentBox" items="${currentModule.mainBoxes}">
 			<c:set var="box" value="${currentBox}" scope="request" />
 			<div class="mainBox" id="${box.id}">		

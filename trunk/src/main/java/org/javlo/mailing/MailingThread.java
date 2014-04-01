@@ -46,7 +46,7 @@ public class MailingThread extends Thread {
 	 * @throws IOException
 	 * @throws ConfigurationException
 	 */
-	public Mailing[] getMailingList() throws ConfigurationException, IOException {
+	public List<Mailing> getMailingList() throws ConfigurationException, IOException {
 		return MailingFactory.getInstance(application).getMailingList();
 	}
 
@@ -163,29 +163,29 @@ public class MailingThread extends Thread {
 						logger.warning(e.getMessage());
 					}
 					synchronized (ResourceHelper.SYNCHRO_RESOURCE) {
-						Mailing[] mailing = getMailingList();
-						if (mailing.length > 0) {
-							for (int i = 0; i < mailing.length; i++) {
+						List<Mailing> mailing = getMailingList();
+						if (mailing.size() > 0) {
+							for (Mailing currentMailing : mailing) {
 								boolean itsTime = true;
-								if (mailing[i].getSendDate() != null) {
+								if (currentMailing.getSendDate() != null) {
 									Date currentDate = new Date();
-									if (currentDate.getTime() < mailing[i].getSendDate().getTime()) {
+									if (currentDate.getTime() < currentMailing.getSendDate().getTime()) {
 										itsTime = false;
 									}
 								}
 								if (itsTime) {
-									if (!mailing[i].isSend() && mailing[i].isValid()) {
-										if (!mailing[i].isExistInHistory(application, mailing[i].getId())) {
-											sendMailing(mailing[i]);
-											mailing[i].store(application);
-											sendReport(mailing[i]);
+									if (!currentMailing.isSend() && currentMailing.isValid()) {
+										if (!currentMailing.isExistInHistory(application, currentMailing.getId())) {
+											sendMailing(currentMailing);
+											currentMailing.store(application);
+											sendReport(currentMailing);
 										} else {
-											logger.severe("MailingThread have try to send a mailing founded in the history : " + mailing[i]);
+											logger.severe("MailingThread have try to send a mailing founded in the history : " + currentMailing);
 										}
 									} else {
-										logger.info("mailing not send : " + mailing[i]);
+										logger.info("mailing not send : " + currentMailing);
 									}
-									mailing[i].close(application);
+									currentMailing.close(application);
 								}
 							}
 						}
@@ -198,9 +198,8 @@ public class MailingThread extends Thread {
 						e.printStackTrace();
 					}
 				}
-			}
-			Mailing[] mailing = getMailingList();
-			for (Mailing element : mailing) {
+			}			
+			for (Mailing element : getMailingList()) {
 				element.store(application);
 			}
 		} catch (ConfigurationException e) {

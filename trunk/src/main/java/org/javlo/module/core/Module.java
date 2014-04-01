@@ -663,7 +663,7 @@ public class Module {
 		return helpText;
 	}
 
-	public String getRenderer() {
+	public String getRenderer() {		
 		return renderer;
 	}
 

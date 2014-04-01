@@ -16,6 +16,8 @@ import org.javlo.service.DataToIDService;
 import org.javlo.service.RequestService;
 
 public class RequestHelper {
+	
+	private static java.util.logging.Logger logger = java.util.logging.Logger.getLogger(RequestHelper.class.getName());
 
 	private static class PathCookie extends Cookie {
 
@@ -40,20 +42,24 @@ public class RequestHelper {
 	public static final String CLOSE_WINDOW_PARAMETER = "close-window";
 	public static final String CLOSE_WINDOW_URL_PARAMETER = "close-window-url";
 
-	public static final void traceMailingFeedBack(ContentContext ctx) {
+	public synchronized static final void traceMailingFeedBack(ContentContext ctx) {
 		ServletContext application = ctx.getRequest().getSession().getServletContext();
 		RequestService requestService = RequestService.getInstance(ctx.getRequest());
 		String mfb = requestService.getParameter(MailingAction.MAILING_FEEDBACK_PARAM_NAME, null);
-		if (mfb != null) {
+		if (mfb != null) {			
 			DataToIDService serv = DataToIDService.getInstance(application);
 			Map<String, String> params = StringHelper.uriParamToMap(serv.getData(mfb));
 			String id = params.get("mailing");
+			String ip = ctx.getRequest().getRemoteHost();
 			Enumeration<String> names = ctx.getRequest().getHeaderNames();
 			String userAgent = null;
 			while (names.hasMoreElements()) {
 				String name = names.nextElement();
 				if (name.trim().equalsIgnoreCase("user-agent")) {
 					userAgent = ctx.getRequest().getHeader(name);
+				}
+				if (name.trim().equalsIgnoreCase("x-forwarded-for")) {
+					ip = ctx.getRequest().getHeader(name);; 
 				}
 			}
 			if (id != null) {
@@ -66,6 +72,7 @@ public class RequestHelper {
 						bean.setAgent(userAgent);
 						bean.setDate(new Date());
 						bean.setUrl(ctx.getRequest().getPathInfo());
+						bean.setIp(ip);	
 						mailing.addFeedBack(bean);
 					}
 				} catch (Exception e) {

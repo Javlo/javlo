@@ -21,6 +21,7 @@ import org.javlo.config.StaticConfig;
 import org.javlo.context.ContentContext;
 import org.javlo.context.GlobalContext;
 import org.javlo.module.core.ModulesContext;
+import org.javlo.module.mailing.MailingAction;
 import org.javlo.module.mailing.MailingModuleContext;
 import org.javlo.navigation.MenuElement;
 import org.javlo.service.ContentService;
@@ -1093,6 +1094,14 @@ public class URLHelper extends ElementaryURLHelper {
 				return link;
 			}
 		}
+	}
+	
+	public static String addMailingFeedback(ContentContext ctx, String url) {
+		if (ctx.getRenderMode() == ContentContext.PAGE_MODE && url != null) {
+			return addParam(url, MailingAction.MAILING_FEEDBACK_PARAM_NAME, "##data##");
+		} else {
+			return url;
+		}		
 	}
 	
 	/**
