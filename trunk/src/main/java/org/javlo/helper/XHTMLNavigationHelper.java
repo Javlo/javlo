@@ -157,7 +157,7 @@ public class XHTMLNavigationHelper {
 	}
 
 	public static boolean menuExist(ContentContext ctx, int level) throws Exception {
-		MenuElement currentPage = ctx.getCurrentPage();
+		MenuElement currentPage = ctx.getCurrentPage();		
 		if (currentPage.getDepth() < level - 1) {
 			return false;
 		} else if (currentPage.getDepth() < level) {
