@@ -5,6 +5,7 @@ import java.io.File;
 import java.io.IOException;
 import java.io.PrintStream;
 import java.io.StringReader;
+import java.util.Comparator;
 import java.util.Properties;
 import java.util.logging.Logger;
 
@@ -17,6 +18,16 @@ import org.javlo.helper.URLHelper;
 import org.javlo.helper.filefilter.NoPropertiesFileFilter;
 
 public class TemplatePlugin {
+	
+	public static final class TemplatePluginIdComparator implements Comparator<TemplatePlugin> {
+
+		@Override
+		public int compare(TemplatePlugin o1, TemplatePlugin o2) { 
+			return o1.getId().compareToIgnoreCase(o2.getId());
+		}
+
+		
+	}
 
 	private static Logger logger = Logger.getLogger(TemplatePlugin.class.getName());
 

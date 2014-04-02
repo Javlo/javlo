@@ -56,6 +56,7 @@ public class TemplatePluginFactory {
 				allTemplatePlungin.add(tp);
 			}
 		}
+		Collections.sort(allTemplatePlungin, new TemplatePlugin.TemplatePluginIdComparator());
 		return allTemplatePlungin;
 	}
 
@@ -66,7 +67,11 @@ public class TemplatePluginFactory {
 		List<TemplatePlugin> allTemplatePlungin = new LinkedList<TemplatePlugin>();
 		for (String id : ids) {
 			TemplatePlugin tp = getTemplatePlugin(id);
-			allTemplatePlungin.add(tp);
+			if (tp != null) {				
+				allTemplatePlungin.add(tp);
+			} else {				
+				logger.warning("template plugin not found : " + id);
+			}
 		}
 		return allTemplatePlungin;
 	}

@@ -38,6 +38,7 @@ import org.javlo.i18n.I18nAccess;
 import org.javlo.service.ContentService;
 import org.javlo.service.RequestService;
 import org.javlo.service.resource.Resource;
+import org.javlo.ztatic.StaticInfo;
 
 import com.google.gson.JsonElement;
 
@@ -180,7 +181,7 @@ public class Video extends GlobalImage implements IAction, IVideo {
 		}
 	}
 
-	@Override
+	/*@Override
 	public String getCurrentRenderer(ContentContext ctx) {
 		if (getStyle().equals(LINK) && !StringHelper.isTrue(ctx.getRequest().getParameter(FORCE_EMBED_PARAM))) {
 			return super.getCurrentRenderer(ctx);
@@ -197,7 +198,7 @@ public class Video extends GlobalImage implements IAction, IVideo {
 			}
 		}
 	}
-	
+
 	@Override
 	public String getRenderer(ContentContext ctx) {
 		if (getStyle().equals(LINK) && !StringHelper.isTrue(ctx.getRequest().getParameter(FORCE_EMBED_PARAM)) || getEmbedCode().trim().length() == 0) {
@@ -205,14 +206,13 @@ public class Video extends GlobalImage implements IAction, IVideo {
 		} else {
 			return null;
 		}
-	}
-
-	@Override
+	}*/
+	
 	public String getViewXHTMLCode(ContentContext ctx) throws Exception {
 		if (getEmbedCode() != null && getEmbedCode().trim().length() > 0 && (!getStyle().equals(LINK) || ctx.isExport())) {
 			return getEmbedCode();
 		} else {
-			return renderInline(ctx, null, null, false);
+			return renderInline(ctx, null, null, false, false);
 		}
 	}
 
@@ -253,6 +253,9 @@ public class Video extends GlobalImage implements IAction, IVideo {
 				FileOutputStream out = new FileOutputStream(imageFile);
 				NetHelper.readPage(url, out);
 				ResourceHelper.closeResource(out);
+				StaticInfo youTubeImageInfo = StaticInfo.getInstance(ctx, imageFile);
+				youTubeImageInfo.setShared(ctx, false);
+				youTubeImageInfo.save(ctx);
 			}
 			return URLHelper.createTransformURL(ctx, URLHelper.mergePath(staticConfig.getImageFolder(), "youtube", fileName), getConfig(ctx).getProperty("image.filter", "preview"));
 		}
@@ -277,6 +280,9 @@ public class Video extends GlobalImage implements IAction, IVideo {
 				FileOutputStream out = new FileOutputStream(imageFile);
 				NetHelper.readPage(new URL(imageURL), out);
 				ResourceHelper.closeResource(out);
+				StaticInfo vimeoImageInfo = StaticInfo.getInstance(ctx, imageFile);
+				vimeoImageInfo.setShared(ctx, false);
+				vimeoImageInfo.save(ctx);
 			}
 			return URLHelper.createTransformURL(ctx, URLHelper.mergePath(staticConfig.getImageFolder(), "vimeo", fileName), getConfig(ctx).getProperty("image.filter", "preview"));
 		}
@@ -288,7 +294,7 @@ public class Video extends GlobalImage implements IAction, IVideo {
 		if (getDecorationImage() != null && getDecorationImage().trim().length() > 1) {
 			String imageLink = getResourceURL(ctx, getDecorationImage());
 			return URLHelper.createTransformURL(ctx, imageLink, getConfig(ctx).getProperty("image.filter", "preview"));
-		} else if (getLink() != null && getLink().toLowerCase().contains(YOUTUBE_KEY)) {
+		} else if (isYouTube()) {
 			try {
 				String previewYouTube = getYoutubePreview(ctx, null);
 				return previewYouTube;
@@ -348,6 +354,12 @@ public class Video extends GlobalImage implements IAction, IVideo {
 	}
 
 	@Override
+	public void prepareView(ContentContext ctx) throws Exception {		
+		super.prepareView(ctx);
+		renderInline(ctx, null, null, false, true);
+	}
+
+	@Override
 	public String getURL(ContentContext ctx) {
 		if (getEmbedCode().trim().length() > 0) {
 			String url = "/expcomp/" + getId() + ".html?" + FORCE_EMBED_PARAM + "=true";
@@ -389,7 +401,7 @@ public class Video extends GlobalImage implements IAction, IVideo {
 		return "";
 	}
 
-	public String renderInline(ContentContext ctx, String width, String height, boolean preview) throws Exception {
+	public String renderInline(ContentContext ctx, String width, String height, boolean preview, boolean onlyPrepare) throws Exception {
 		String link = getLink();
 		String imageFilter = getImageFilter(ctx);
 		if (preview) {
@@ -405,6 +417,7 @@ public class Video extends GlobalImage implements IAction, IVideo {
 			renderAsLink = !preview && LINK.equals(getStyle(ctx));
 		}
 		if (renderAsLink) {
+			ctx.getRequest().setAttribute("asLink", true);
 			if (getFileName() != null && getFileName().trim().length() > 0) {
 				String fileLink = getResourceURL(ctx, getFileName());
 				ctx.getRequest().setAttribute("url", URLHelper.createResourceURL(ctx, getPage(), fileLink).replace('\\', '/'));
@@ -425,7 +438,9 @@ public class Video extends GlobalImage implements IAction, IVideo {
 			if (preview) {
 				renderer = "link.jsp";
 			}
-			return executeJSP(ctx, renderer);
+			if (!onlyPrepare) {
+				return executeJSP(ctx, renderer);
+			}
 		} else {
 			String urlCode = getLinkVideoName(link);
 			if (getFileName() != null && getFileName().trim().length() > 0) {
@@ -439,7 +454,9 @@ public class Video extends GlobalImage implements IAction, IVideo {
 				}
 				ctx.getRequest().setAttribute("width", StringHelper.neverNull(width, getConfig(ctx).getProperty("local.width", "420")));
 				ctx.getRequest().setAttribute("height", StringHelper.neverNull(height, getConfig(ctx).getProperty("local.height", "315")));
-				return executeJSP(ctx, getConfig(ctx).getRenderes().get("local"));
+				if (!onlyPrepare) {
+					return executeJSP(ctx, getConfig(ctx).getRenderes().get("local"));
+				}
 			} else if (link.toLowerCase().contains("youtube")) {
 				String videoCode = URLHelper.extractParameterFromURL(link).get("v");
 				if (videoCode == null) {
@@ -449,15 +466,19 @@ public class Video extends GlobalImage implements IAction, IVideo {
 				ctx.getRequest().setAttribute("url", "http://www.youtube.com/embed/" + videoCode);
 				ctx.getRequest().setAttribute("width", StringHelper.neverNull(width, getConfig(ctx).getProperty("youyube.width", "420")));
 				ctx.getRequest().setAttribute("height", StringHelper.neverNull(height, getConfig(ctx).getProperty("youyube.height", "315")));
-				return executeJSP(ctx, getConfig(ctx).getRenderes().get("youtube"));
-			} else if (urlCode.equals("dailymotion")) {				
+				if (!onlyPrepare) {
+					return executeJSP(ctx, getConfig(ctx).getRenderes().get("youtube"));
+				}
+			} else if (urlCode.equals("dailymotion")) {
 				if (link.split("/").length > 1) {
 					String videoCode = link.split("/")[link.split("/").length - 1];
 					String url = "http://www.dailymotion.com/embed/video/" + videoCode;
 					ctx.getRequest().setAttribute("url", url);
 					ctx.getRequest().setAttribute("width", StringHelper.neverNull(width, getConfig(ctx).getProperty("dailymotion.width", "420")));
 					ctx.getRequest().setAttribute("height", StringHelper.neverNull(height, getConfig(ctx).getProperty("dailymotion.height", "315")));
-					return executeJSP(ctx, getConfig(ctx).getRenderes().get("dailymotion"));
+					if (!onlyPrepare) {
+						return executeJSP(ctx, getConfig(ctx).getRenderes().get("dailymotion"));
+					}
 				}
 			} else if (urlCode.equals("europarltv")) {
 				if (link.split("/").length > 1) {
@@ -465,7 +486,9 @@ public class Video extends GlobalImage implements IAction, IVideo {
 					ctx.getRequest().setAttribute("vid", videoCode);
 					ctx.getRequest().setAttribute("width", StringHelper.neverNull(width, getConfig(ctx).getProperty("europarltv.width", "420")));
 					ctx.getRequest().setAttribute("height", StringHelper.neverNull(height, getConfig(ctx).getProperty("europarltv.height", "315")));
-					return executeJSP(ctx, getConfig(ctx).getRenderes().get("europarltv"));
+					if (!onlyPrepare) {
+						return executeJSP(ctx, getConfig(ctx).getRenderes().get("europarltv"));
+					}
 				}
 			} else if (urlCode.equals("vimeo")) {
 				if (link.split("/").length > 1) {
@@ -473,7 +496,9 @@ public class Video extends GlobalImage implements IAction, IVideo {
 					ctx.getRequest().setAttribute("vid", videoCode);
 					ctx.getRequest().setAttribute("width", StringHelper.neverNull(width, getConfig(ctx).getProperty("vimeo.width", "420")));
 					ctx.getRequest().setAttribute("height", StringHelper.neverNull(height, getConfig(ctx).getProperty("vimeo.height", "315")));
-					return executeJSP(ctx, getConfig(ctx).getRenderes().get("vimeo"));
+					if (!onlyPrepare) {
+						return executeJSP(ctx, getConfig(ctx).getRenderes().get("vimeo"));
+					}
 				}
 			}
 		}
@@ -512,14 +537,14 @@ public class Video extends GlobalImage implements IAction, IVideo {
 		return i18nAccess.getText("content.video.label");
 	}
 
-	@Override
+	/*@Override
 	protected String renderViewXHTMLCode(ContentContext ctx) throws Exception {
 		if (getRenderer(ctx) != null && getStyle(ctx).equals(LINK)) {
 			return executeCurrentRenderer(ctx);
 		} else {
 			return getViewXHTMLCode(ctx);
 		}
-	}
+	}*/
 
 	public int getAccess(ContentContext ctx, int days) throws NumberFormatException, IOException {
 		Calendar cal = Calendar.getInstance();
@@ -561,13 +586,13 @@ public class Video extends GlobalImage implements IAction, IVideo {
 			filter = getImageFilter(ctx);
 		}
 		try {
-			String decoImage = getDecorationImage();			
+			String decoImage = getDecorationImage();
 			if (decoImage != null && decoImage.trim().length() > 0) {
 				String imageLink = getResourceURL(ctx, getDecorationImage());
 				return URLHelper.createTransformURL(ctx, imageLink, filter);
-			} else if (getLink() != null && getLink().toLowerCase().contains(YOUTUBE_KEY)) {
+			} else if (isYouTube()) {
 				return getYoutubePreview(ctx, null);
-			} else if (getLink() != null && getLink().toLowerCase().contains("vimeo")) {
+			} else if (isVimeo()) {
 				return getVimeoPreview(ctx, null);
 			}
 		} catch (Exception e) {
@@ -576,6 +601,14 @@ public class Video extends GlobalImage implements IAction, IVideo {
 		}
 
 		return null;
+	}
+
+	private boolean isVimeo() {
+		return getLink() != null && getLink().toLowerCase().contains("vimeo");
+	}
+
+	private boolean isYouTube() {
+		return getLink() != null && getLink().toLowerCase().contains(YOUTUBE_KEY);
 	}
 
 	@Override
@@ -614,5 +647,15 @@ public class Video extends GlobalImage implements IAction, IVideo {
 			e.printStackTrace();
 		}
 		return 0;
+	}
+
+	@Override
+	public void performEdit(ContentContext ctx) throws Exception {
+		super.performEdit(ctx);
+		if (isModify() && isYouTube()) {
+			if (getRenderes(ctx).get("youtube") != null) {
+				setRenderer(ctx, "youtube");
+			}
+		}
 	}
 }
