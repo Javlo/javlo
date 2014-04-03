@@ -183,23 +183,10 @@ public class ResourceServlet extends HttpServlet {
 
 			}
 		} catch (Throwable e) {
+			System.out.println("***** ResourceServlet.processRequest : message = "+e.getMessage()); //TODO: remove debug trace
 			e.printStackTrace();
 		} finally {
 			ResourceHelper.closeResource(fileStream);
-			try {
-				if (out != null) {
-					out.flush();
-				}
-			} catch (Exception e) {
-				e.printStackTrace();
-			}
-			try {
-				if (out != null) {
-					out.close();
-				}
-			} catch (Exception e) {
-				e.printStackTrace();
-			}
 		}
 		servletRun--;
 	}
