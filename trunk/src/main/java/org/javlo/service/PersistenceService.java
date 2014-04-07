@@ -904,7 +904,8 @@ public class PersistenceService {
 			logger.info("load version : " + version + " in mode : " + renderMode);
 
 			MenuElement root;
-			InputStream in = null, in2 = null;
+			InputStream in = null;
+			ZipInputStream zip = null;
 			try {
 
 				if (timeTravelDate != null) {
@@ -921,8 +922,7 @@ public class PersistenceService {
 						}
 					}
 					if (minBackup != null) {
-						in2 = new FileInputStream(minBackup.getKey());
-						ZipInputStream zip = new ZipInputStream(in2);
+						zip = new ZipInputStream(new FileInputStream(minBackup.getKey()));
 						ZipEntry entry = zip.getNextEntry();
 						while (entry != null) {
 							if (ResourceHelper.getFile(entry.getName()).equals("content_" + ContentContext.VIEW_MODE + ".xml")) {
@@ -931,7 +931,6 @@ public class PersistenceService {
 							}
 							entry = zip.getNextEntry();
 						}
-						zip.close();
 					}
 				}
 				File file = null;
@@ -961,7 +960,7 @@ public class PersistenceService {
 					 */
 				} else {
 					LoadingBean loadBean = load(ctx, in, contentAttributeMap, renderMode);
-					if (loadBean.isError() && correctXML) {
+					if (loadBean.isError() && correctXML && file != null) {
 						correctCharacterEncoding(file);
 						in.close();
 						in = new FileInputStream(file);
@@ -988,7 +987,7 @@ public class PersistenceService {
 
 			} finally {
 				ResourceHelper.closeResource(in);
-				ResourceHelper.closeResource(in2);
+				ResourceHelper.closeResource(zip);
 			}
 			return root;
 		}
