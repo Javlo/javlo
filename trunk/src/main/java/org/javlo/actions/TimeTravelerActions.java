@@ -47,14 +47,13 @@ public class TimeTravelerActions implements IAction {
 				currentPageHistory = previousNav.searchChildFromId(ctx.getCurrentPage().getId());
 			}
 			if  (pers.isPreviewVersion(previousVersion)) {
+				replaceCurrentPage(ctx, currentPageHistory, ctx.getCurrentPage().isChildrenAssociation());
+
+				//String msg = i18nAccess.getText("time.message.error.page-deleted");
+				String msg = "new version loading : " + previousVersion + " (from:" + pers.getVersion() + ')';
+				MessageRepository.getInstance(ctx).setGlobalMessage(new GenericMessage(msg, GenericMessage.SUCCESS));
 				
-				if (ctx.getCurrentPage().isChildrenAssociation()) {
-					
-				} else {
-					
-				}
-				
-				return "new version loading : "+previousVersion+" (from:"+pers.getVersion()+')';
+				return null;
 			} else {
 				return "previous version does'nt exist";
 			}
@@ -157,6 +156,7 @@ public class TimeTravelerActions implements IAction {
 			newPage.setParent(null);
 			
 			parent.addChildMenuElement(newPage);
+			parent.clearPageBean(ctx);
 
 		} else {
 			I18nAccess i18nAccess = I18nAccess.getInstance(ctx.getRequest());
@@ -166,7 +166,10 @@ public class TimeTravelerActions implements IAction {
 
 		PersistenceService persistenceService = PersistenceService.getInstance(ctx.getGlobalContext());
 		persistenceService.store(ctx);
-		
+
+		ContentService content = ContentService.getInstance(ctx.getRequest());
+		content.releasePreviewNav(ctx);
+
 		return null;
 		
 	}
