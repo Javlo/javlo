@@ -15,7 +15,7 @@ import org.javlo.user.User;
 /**
  * @author pvandermaesen component state less.
  */
-public class ComponentBean implements Serializable {
+public class ComponentBean implements Serializable, Comparable<ComponentBean> {
 
 	/**
 	 * 
@@ -231,6 +231,11 @@ public class ComponentBean implements Serializable {
 
 	public void setTextColor(String textColor) {
 		this.textColor = textColor;
+	}
+	
+	@Override
+	public int compareTo(ComponentBean bean) {		
+		return getModificationDate().compareTo(bean.getModificationDate());
 	}
 
 }

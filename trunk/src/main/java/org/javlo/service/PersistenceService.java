@@ -844,13 +844,44 @@ public class PersistenceService {
 	}
 
 	public MenuElement load(ContentContext ctx, int renderMode, Map<String, String> contentAttributeMap, Date timeTravelDate) throws Exception {
-		return load(ctx, renderMode, contentAttributeMap, timeTravelDate, true);
+		return load(ctx, renderMode, contentAttributeMap, timeTravelDate, true, null);
+	}
+	
+	/**
+	 * check if a preview version exist on FileSystem.
+	 * @param version
+	 * @return
+	 */
+	public boolean isPreviewVersion(int version) {
+		File file = new File(getDirectory() + "/content_" + ContentContext.PREVIEW_MODE + '_' + version + ".xml");
+		return file.exists();
+	}
+	
+	/**
+	 * load a specific preview version.
+	 * @param ctx
+	 * @param version
+	 * @return
+	 * @throws Exception
+	 */
+	public MenuElement loadPreview(ContentContext ctx, Integer version) throws Exception {
+		return load(ctx, ContentContext.PREVIEW_MODE, null, null, true, version);
 	}
 
-	protected MenuElement load(ContentContext ctx, int renderMode, Map<String, String> contentAttributeMap, Date timeTravelDate, boolean correctXML) throws Exception {
+	protected MenuElement load(ContentContext ctx, int renderMode, Map<String, String> contentAttributeMap, Date timeTravelDate, boolean correctXML, Integer previewVersion) throws Exception {
+		
+		if (contentAttributeMap == null) {
+			contentAttributeMap = new HashMap(); // fake map 
+		}
+		
 		synchronized (LOCK_LOAD) { // load only one content both
 
 			loadVersion();
+			
+			int version = this.version;
+			if (previewVersion != null) {
+				version = previewVersion;
+			}
 
 			logger.info("load version : " + version + " in mode : " + renderMode);
 
@@ -926,7 +957,7 @@ public class PersistenceService {
 						if (correctXML) {
 							correctCharacterEncoding(file);
 						}
-						return load(ctx, renderMode, contentAttributeMap, timeTravelDate, false);
+						return load(ctx, renderMode, contentAttributeMap, timeTravelDate, false, null);
 					}
 
 					/** load linked content **/

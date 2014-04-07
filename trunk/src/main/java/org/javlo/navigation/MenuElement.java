@@ -78,7 +78,7 @@ import org.javlo.ztatic.StaticInfo;
 /**
  * @author pvanderm
  */
-public class MenuElement implements Serializable {
+public class MenuElement implements Serializable, Comparable<MenuElement> {
 
 	public static final String PAGE_TYPE_DEFAULT = "default";
 
@@ -4170,6 +4170,33 @@ public class MenuElement implements Serializable {
 			return childMenuElements.get(0);
 		} else {
 			return null;
+		}
+	}
+
+	@Override
+	public int compareTo(MenuElement page) {
+		try {
+			if (isVisible() != page.isVisible()) {
+				return 1;
+			}
+			if (!getName().equals(page.getName())) {
+				return 1;
+			}
+			ComponentBean[] comps = getContent();
+			ComponentBean[] pageComps = page.getContent();
+			if (comps.length != pageComps.length) {
+				return 1;
+			}
+			for (int i=0; i<comps.length; i++) {
+				int ccomp = comps[i].compareTo(pageComps[i]);
+				if (ccomp != 0) {					
+					return ccomp;
+				}
+			}
+			return 0;
+		} catch (Exception e) {
+			e.printStackTrace();
+			return 1;
 		}
 	}
 
