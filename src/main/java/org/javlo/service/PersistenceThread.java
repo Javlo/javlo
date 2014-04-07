@@ -38,6 +38,8 @@ public class PersistenceThread extends Thread {
 	private String defaultLg = null;
 
 	private PersistenceService persistenceService;
+	
+	private boolean running = true;
 
 	public void addFolderToSave(File file) {
 		folderToSave.add(file);
@@ -83,7 +85,12 @@ public class PersistenceThread extends Thread {
 			} catch (AddressException e1) {
 				logger.warning(e1.getMessage());
 			}			
-		} 
+		} finally {
+			synchronized (this) {
+				running = false;
+				notify();
+			}
+		}
 	}
 
 	public void setDataFolder(String dataFolder) {
@@ -188,6 +195,10 @@ public class PersistenceThread extends Thread {
 		out.close();
 
 		file.delete();
+	}
+
+	public boolean isRunning() {
+		return running;
 	}
 
 }

@@ -263,6 +263,8 @@ public class PersistenceService {
 
 	private GlobalContext globalContext = null;
 
+	private PersistenceThread persThread;
+
 	private static final Object LOCK_LOAD = new Object();
 
 	public boolean canRedo() {
@@ -533,11 +535,11 @@ public class PersistenceService {
 			bean.setStyle(style);
 			bean.setList(StringHelper.isTrue(inlist));
 			bean.setArea(contentNode.getAttributeValue("area", ComponentBean.DEFAULT_AREA));
-			bean.setBackgroundColor(contentNode.getAttributeValue("bgcol",null));
-			bean.setTextColor(contentNode.getAttributeValue("txtcol",null));
-			String layout = contentNode.getAttributeValue("layout",null); 
+			bean.setBackgroundColor(contentNode.getAttributeValue("bgcol", null));
+			bean.setTextColor(contentNode.getAttributeValue("txtcol", null));
+			String layout = contentNode.getAttributeValue("layout", null);
 			if (layout != null) {
-				bean.setLayout(new ComponentLayout(layout)); 
+				bean.setLayout(new ComponentLayout(layout));
 			}
 			bean.setRenderer(renderer);
 			bean.setHiddenModes(hiddenModes);
@@ -700,13 +702,14 @@ public class PersistenceService {
 	 * @param renderMode
 	 * @return
 	 * @throws ServiceException
+	 * @throws InterruptedException
 	 */
-	protected LoadingBean load(ContentContext ctx, Object in, Map<String, String> contentAttributeMap, int renderMode) throws ServiceException {
+	protected LoadingBean load(ContentContext ctx, Object in, Map<String, String> contentAttributeMap, int renderMode) throws ServiceException, InterruptedException {
 		GlobalContext globalContext = GlobalContext.getInstance(ctx.getRequest());
 		MenuElement root = MenuElement.getInstance(globalContext);
 
 		root.setValid(true);
-
+		
 		LoadingBean outBean = new LoadingBean();
 
 		try {
@@ -750,7 +753,7 @@ public class PersistenceService {
 				root.setBlocker(page.getAttributeValue("blocker", ""));
 				root.setLinkedURL(page.getAttributeValue("linked-url", ""));
 				root.setBreakRepeat(StringHelper.isTrue(page.getAttributeValue("breakrepeat", "false")));
-				root.setShortURL(page.getAttributeValue("shorturl", null));				
+				root.setShortURL(page.getAttributeValue("shorturl", null));
 				root.setChildrenAssociation(StringHelper.isTrue(page.getAttributeValue("childrenAssociation", null)));
 
 				String[] editorRoles = StringHelper.stringToArray(page.getAttributeValue("editor-roles", ""), "#");
@@ -825,7 +828,7 @@ public class PersistenceService {
 			}
 
 		} catch (SAXParseException e) {
-			//e.printStackTrace();
+			// e.printStackTrace();
 			MessageRepository.getInstance(ctx).setGlobalMessageAndNotification(ctx, new GenericMessage("error XML parsing (line:" + e.getLineNumber() + " col:" + e.getColumnNumber() + "): " + e.getMessage(), GenericMessage.ERROR, ""));
 			root.setId("0");
 			root.setName("root");
@@ -833,7 +836,7 @@ public class PersistenceService {
 			root.setVisible(true);
 			outBean.setError(true);
 		} catch (Exception e) {
-			//e.printStackTrace();
+			// e.printStackTrace();
 			MessageRepository.getInstance(ctx).setGlobalMessageAndNotification(ctx, new GenericMessage("error XML loading : " + e.getMessage(), GenericMessage.ERROR, ""));
 			root.setId("0");
 			root.setName("root");
@@ -851,9 +854,10 @@ public class PersistenceService {
 	public MenuElement load(ContentContext ctx, int renderMode, Map<String, String> contentAttributeMap, Date timeTravelDate) throws Exception {
 		return load(ctx, renderMode, contentAttributeMap, timeTravelDate, true, null);
 	}
-	
+
 	/**
 	 * check if a preview version exist on FileSystem.
+	 * 
 	 * @param version
 	 * @return
 	 */
@@ -861,9 +865,10 @@ public class PersistenceService {
 		File file = new File(getDirectory() + "/content_" + ContentContext.PREVIEW_MODE + '_' + version + ".xml");
 		return file.exists();
 	}
-	
+
 	/**
 	 * load a specific preview version.
+	 * 
 	 * @param ctx
 	 * @param version
 	 * @return
@@ -874,15 +879,25 @@ public class PersistenceService {
 	}
 
 	protected MenuElement load(ContentContext ctx, int renderMode, Map<String, String> contentAttributeMap, Date timeTravelDate, boolean correctXML, Integer previewVersion) throws Exception {
-		
+
 		if (contentAttributeMap == null) {
-			contentAttributeMap = new HashMap(); // fake map 
+			contentAttributeMap = new HashMap(); // fake map
 		}
 		
-		synchronized (LOCK_LOAD) { // load only one content both
+		if (persThread != null) {
+			while (persThread.isRunning()) {
+				synchronized (persThread) {
+					if (persThread.isRunning()) {
+						persThread.wait();
+					}
+				}
+			}
+		}
 
-			loadVersion();
+		synchronized (LOCK_LOAD) { // load only one content both
 			
+			loadVersion();
+
 			int version = this.version;
 			if (previewVersion != null) {
 				version = previewVersion;
@@ -947,11 +962,11 @@ public class PersistenceService {
 					 * ); out.close();
 					 */
 				} else {
-					LoadingBean loadBean = load(ctx, in, contentAttributeMap, renderMode);					
+					LoadingBean loadBean = load(ctx, in, contentAttributeMap, renderMode);
 					if (loadBean.isError() && correctXML) {
 						correctCharacterEncoding(file);
 						in.close();
-						in = new FileInputStream(file);						
+						in = new FileInputStream(file);
 						loadBean = load(ctx, in, contentAttributeMap, renderMode);
 					}
 					root = loadBean.getRoot();
@@ -980,8 +995,6 @@ public class PersistenceService {
 			return root;
 		}
 	}
-	
-	
 
 	private synchronized static void correctCharacterEncoding(File file) throws FileNotFoundException, IOException {
 		if (file != null) {
@@ -990,8 +1003,8 @@ public class PersistenceService {
 			FileUtils.copyFile(file, new File(file.getAbsolutePath() + ".error"));
 			BufferedWriter writer = null;
 			try {
-				writer = new BufferedWriter(new OutputStreamWriter(new FileOutputStream(file),ContentContext.CHARACTER_ENCODING));
-				for (char c : content.toCharArray()) {				
+				writer = new BufferedWriter(new OutputStreamWriter(new FileOutputStream(file), ContentContext.CHARACTER_ENCODING));
+				for (char c : content.toCharArray()) {
 					if (XMLChar.isValid(c)) {
 						writer.write(c);
 					} else {
@@ -1004,38 +1017,42 @@ public class PersistenceService {
 			}
 		}
 	}
-	
+
 	public static void main(String[] args) {
-		File file = new File ("c:/trans/content_3_5000.xml");
-		
+		File file = new File("c:/trans/content_3_5000.xml");
+
 		try {
 			NodeXML nodeXML = XMLFactory.getFirstNode(file);
-			System.out.println("***** PersistenceService.main : size = "+nodeXML.getChildren().size()); //TODO: remove debug trace
+			System.out.println("***** PersistenceService.main : size = " + nodeXML.getChildren().size()); // TODO:
+																											// remove
+																											// debug
+																											// trace
 		} catch (Exception e1) {
 			// TODO Auto-generated catch block
 			e1.printStackTrace();
 		}
-		
-		
-		File finalFile = new File ("c:/trans/content_2_corrected.xml");
-		
+
+		File finalFile = new File("c:/trans/content_2_corrected.xml");
+
 		try {
 			FileUtils.copyFile(file, finalFile);
 			correctCharacterEncoding(finalFile);
-		} catch (IOException e) { 
+		} catch (IOException e) {
 			e.printStackTrace();
-		}	
-		
-		
+		}
+
 		try {
 			NodeXML nodeXML = XMLFactory.getFirstNode(finalFile);
-			System.out.println("***** PersistenceService.main : final size = "+nodeXML.getChildren().size()); //TODO: remove debug trace
+			System.out.println("***** PersistenceService.main : final size = " + nodeXML.getChildren().size()); // TODO:
+																												// remove
+																												// debug
+																												// trace
 		} catch (Exception e1) {
 			// TODO Auto-generated catch block
 			e1.printStackTrace();
 		}
 	}
-	
+
 	/**
 	 * load current version of preview content.
 	 * 
@@ -1262,9 +1279,17 @@ public class PersistenceService {
 
 		synchronized (ctx.getGlobalContext().getLockLoadContent()) {
 
+			if (persThread != null) {
+				while (persThread.isRunning()) {
+					synchronized (persThread) {
+						persThread.wait();
+					}
+				}
+			}
+
 			logger.info("store in " + renderMode + " mode.");
 
-			PersistenceThread persThread = new PersistenceThread();
+			persThread = new PersistenceThread();
 			ContentService content = ContentService.getInstance(globalContext);
 			MenuElement menuElement = content.getNavigation(ctx);
 			String defaultLg = globalContext.getDefaultLanguages().iterator().next();

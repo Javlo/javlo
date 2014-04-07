@@ -1,8 +1,10 @@
 package org.javlo.component.title;
 
 import org.javlo.component.core.AbstractVisualComponent;
+import org.javlo.component.core.ComponentLayout;
 import org.javlo.context.ContentContext;
 import org.javlo.context.GlobalContext;
+import org.javlo.exception.ResourceNotFoundException;
 import org.javlo.helper.LoremIpsumGenerator;
 import org.javlo.helper.StringHelper;
 import org.javlo.helper.XHTMLHelper;
@@ -19,7 +21,13 @@ public class SubTitle extends AbstractVisualComponent {
 	public String getPrefixViewXHTMLCode(ContentContext ctx) {
 		return "<div " + getSpecialPreviewCssClass(ctx, "") + getSpecialPreviewCssId(ctx) + " "+getInlineStyle(ctx)+">";
 	}
-
+	
+	@Override
+	protected void init() throws ResourceNotFoundException {
+		super.init();
+		getComponentBean().setLayout(new ComponentLayout(""));
+	}
+	
 	public String getXHTMLId(ContentContext ctx) {
 		if (ctx.getRequest().getAttribute("__subtitle__" + getId()) != null) {
 			return (String) ctx.getRequest().getAttribute("__subtitle__" + getId());
