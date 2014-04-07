@@ -1102,7 +1102,7 @@ public class GlobalImage extends Image implements IImageFilter {
 	}
 
 	@Override
-	public BufferedImage filterImage(BufferedImage image) {
+	public BufferedImage filterImage(BufferedImage image) {		
 		reloadProperties();
 		return ImageEngine.resizeWidth(image, getWidth());
 	}

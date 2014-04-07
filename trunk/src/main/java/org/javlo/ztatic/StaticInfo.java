@@ -561,6 +561,16 @@ public class StaticInfo {
 		ContentService content = ContentService.getInstance(ctx.getRequest());
 		return content.getAttribute(ctx, getKey("description-" + ctx.getRequestContentLanguage()), "");
 	}
+	
+	public boolean isResized(ContentContext ctx) {
+		ContentService content = ContentService.getInstance(ctx.getRequest());
+		return StringHelper.isTrue(content.getAttribute(ctx, getKey("resized"), null));
+	}
+	
+	public void setResized(ContentContext ctx, boolean resized) {
+		ContentService content = ContentService.getInstance(ctx.getRequest());
+		content.setAttribute(ctx, getKey("resized"), ""+resized);		
+	}
 
 	public String getDescription(ContentContext ctx) {
 		if (getManualDescription(ctx).length() > 0) {
@@ -1196,5 +1206,4 @@ public class StaticInfo {
 		}
 		return title;
 	}
-
 }

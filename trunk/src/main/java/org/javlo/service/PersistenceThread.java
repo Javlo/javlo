@@ -72,29 +72,28 @@ public class PersistenceThread extends Thread {
 	@Override
 	public void run() {
 		File file = null;
+		try {
+			logger.info("start persitence thread");
+			synchronized (menuElement.getLock()) {
+				file = store(menuElement, mode, getDefaultLg());
+			}
+			logger.info("end persitence thread");
+		} catch (Exception e) {
+			e.printStackTrace();
 			try {
-				logger.info("start persitence thread");			
-				synchronized (menuElement.getLock()) {					
-					file = store(menuElement, mode, getDefaultLg());
-				}
-				logger.info("end persitence thread");
-			} catch (Exception e) {
-				e.printStackTrace();
-				try {
-					persistenceService.sendPersistenceErrorToAdministrator("Error in PersistanceThread.", file, e);
-				} catch (AddressException e1) {
-					logger.warning(e1.getMessage());
-				}
-			} finally {
-				synchronized (this) {				
-				persistenceService.resetThread();				
+				persistenceService.sendPersistenceErrorToAdministrator("Error in PersistanceThread.", file, e);
+			} catch (AddressException e1) {
+				logger.warning(e1.getMessage());
+			}
+		} finally {
+			synchronized (this) {
+				persistenceService.resetThread();
 				running = false;
 				notify();
-				
 			}
 		}
 	}
-	
+
 	public boolean isRunning() {
 		return running;
 	}
