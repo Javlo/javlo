@@ -709,7 +709,7 @@ public class PersistenceService {
 		MenuElement root = MenuElement.getInstance(globalContext);
 
 		root.setValid(true);
-		
+
 		LoadingBean outBean = new LoadingBean();
 
 		try {
@@ -883,7 +883,7 @@ public class PersistenceService {
 		if (contentAttributeMap == null) {
 			contentAttributeMap = new HashMap(); // fake map
 		}
-		
+
 		while (persThread != null) {
 			synchronized (persThread) {
 				if (persThread != null) {
@@ -891,10 +891,9 @@ public class PersistenceService {
 				}
 			}
 		}
-	
 
 		synchronized (LOCK_LOAD) { // load only one content both
-			
+
 			loadVersion();
 
 			int version = this.version;
@@ -1274,17 +1273,17 @@ public class PersistenceService {
 		store(ctx.getContextWithOtherRenderMode(ContentContext.PREVIEW_MODE), ContentContext.PREVIEW_MODE);
 	}
 
-	public void store(ContentContext ctx, int renderMode) throws Exception {
+	public synchronized void store(ContentContext ctx, int renderMode) throws Exception {
 
-		synchronized (ctx.getGlobalContext().getLockLoadContent()) {
-			
-			while (persThread != null) {
-				synchronized (persThread) {
-					if (persThread != null) {
-						persThread.wait();
-					}
+		while (persThread != null) {
+			synchronized (persThread) {
+				if (persThread != null) {
+					persThread.wait();
 				}
 			}
+		}
+
+		synchronized (ctx.getGlobalContext().getLockLoadContent()) {
 
 			logger.info("store in " + renderMode + " mode.");
 
