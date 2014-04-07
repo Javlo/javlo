@@ -617,7 +617,9 @@ public abstract class AbstractVisualComponent implements IContentVisualComponent
 			ComponentLayout layout = new ComponentLayout("");			
 			layout.setLeft(StringHelper.isTrue(requestService.getParameter("layout-left-" + getId(), null)));
 			layout.setRight(StringHelper.isTrue(requestService.getParameter("layout-right-" + getId(), null)));
-			if (getLayout().getLayout().equals(ctx));
+			if (!getLayout().getLayout().equals(layout.getLayout())) {
+				setModify();
+			}
 		}
 		
 

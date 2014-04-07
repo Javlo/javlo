@@ -263,7 +263,7 @@ public class PersistenceService {
 
 	private GlobalContext globalContext = null;
 
-	private PersistenceThread persThread;
+	private PersistenceThread persThread = null;
 
 	private static final Object LOCK_LOAD = new Object();
 
@@ -878,21 +878,15 @@ public class PersistenceService {
 		return load(ctx, ContentContext.PREVIEW_MODE, null, null, true, version);
 	}
 
-	protected MenuElement load(ContentContext ctx, int renderMode, Map<String, String> contentAttributeMap, Date timeTravelDate, boolean correctXML, Integer previewVersion) throws Exception {
+	protected synchronized MenuElement load(ContentContext ctx, int renderMode, Map<String, String> contentAttributeMap, Date timeTravelDate, boolean correctXML, Integer previewVersion) throws Exception {
 
 		if (contentAttributeMap == null) {
 			contentAttributeMap = new HashMap(); // fake map
 		}
+		
+		waitThread();
 
-		while (persThread != null) {
-			synchronized (persThread) {
-				if (persThread != null) {
-					persThread.wait();
-				}
-			}
-		}
-
-		synchronized (LOCK_LOAD) { // load only one content both
+		synchronized (ctx.getGlobalContext().getLockLoadContent()) { // load only one content both
 
 			loadVersion();
 
@@ -1274,15 +1268,9 @@ public class PersistenceService {
 
 	public synchronized void store(ContentContext ctx, int renderMode) throws Exception {
 
-		while (persThread != null) {
-			synchronized (persThread) {
-				if (persThread != null) {
-					persThread.wait();
-				}
-			}
-		}
-
 		synchronized (ctx.getGlobalContext().getLockLoadContent()) {
+			
+			waitThread();
 
 			logger.info("store in " + renderMode + " mode.");
 
@@ -1313,6 +1301,18 @@ public class PersistenceService {
 			persThread.start();
 			// }
 
+		}
+	}
+
+	private void waitThread() throws InterruptedException {
+		PersistenceThread localThread = persThread;
+		while (localThread != null) {			
+			synchronized (localThread) {													
+				if (localThread.isRunning()) {
+					localThread.wait();
+				}				
+			}		
+			localThread = persThread;
 		}
 	}
 

@@ -106,10 +106,10 @@ public class ContentService {
 		return getInstance(GlobalContext.getInstance(request));
 	}
 
-	protected MenuElement getViewNav() {		
+	protected MenuElement getViewNav() {
 		if (previewMode) {
 			return viewNav;
-		} else {			
+		} else {
 			return previewNav;
 		}
 	}
@@ -216,7 +216,7 @@ public class ContentService {
 		}
 		ComponentBean bean = new ComponentBean(inBean);
 		bean.setId(id);
-		if (bean.getArea() == null) {			
+		if (bean.getArea() == null) {
 			bean.setArea(ctx.getArea());
 		}
 		page.addContent(parentId, bean, releaseCache);
@@ -235,7 +235,7 @@ public class ContentService {
 		MenuElement elem = ctx.getCurrentPage();
 		if (elem.isChildrenAssociation() && elem.getChildMenuElements().size() > 0) {
 			elem = elem.getChildMenuElements().iterator().next();
-		}	
+		}
 		elem.addContent(parentId, bean, releaseCache);
 		return id;
 	}
@@ -249,10 +249,10 @@ public class ContentService {
 		bean.setRepeat(inBean.isRepeat());
 		bean.setRenderer(inBean.getRenderer());
 		bean.setModify(true);
-		MenuElement elem = ctx.getCurrentPage();	
+		MenuElement elem = ctx.getCurrentPage();
 		if (elem.isChildrenAssociation() && elem.getChildMenuElements().size() > 0) {
 			elem = elem.getChildMenuElements().iterator().next();
-		}		
+		}
 		ContentElementList list = elem.getContent(ctx);
 		IContentVisualComponent comp = list.next(ctx);
 		while (list.hasNext(ctx)) {
@@ -285,15 +285,14 @@ public class ContentService {
 	public String createContent(ContentContext ctx, Collection<ComponentBean> inBean, String parentId, boolean releaseCache) throws Exception {
 		return createContent(ctx, ctx.getCurrentPage(), inBean, parentId, releaseCache);
 	}
-	
+
 	public String createContent(ContentContext ctx, MenuElement page, String area, String parentId, String type, String content, boolean releaseCache) throws Exception {
 		if (content == null) {
 			content = "";
 		}
 		String id = StringHelper.getRandomId();
 		ComponentBean bean = new ComponentBean(id, type, content, ctx.getRequestContentLanguage(), false, ctx.getCurrentEditUser());
-		
-		
+
 		bean.setArea(area);
 		bean.setAuthors(ctx.getCurrentEditUser().getLogin());
 		page.addContent(parentId, bean, releaseCache);
@@ -370,25 +369,25 @@ public class ContentService {
 			return value;
 		}
 	}
-	
+
 	private static String getComponentKey(ContentContext ctx, String id) {
 		int mode = ctx.getRenderMode();
 		if (mode == ContentContext.PREVIEW_MODE) {
 			mode = ContentContext.EDIT_MODE;
 		}
-		return id+'-'+mode;
+		return id + '-' + mode;
 	}
 
 	public IContentVisualComponent getCachedComponent(ContentContext ctx, String id) throws Exception {
 		if (id == null) {
 			return null;
 		}
-		WeakReference<IContentVisualComponent> ref = components.get(getComponentKey(ctx,id));
+		WeakReference<IContentVisualComponent> ref = components.get(getComponentKey(ctx, id));
 		IContentVisualComponent component = null;
 		if (ref != null) {
 			component = ref.get();
 			if (component == null) {
-				components.remove(getComponentKey(ctx,id));
+				components.remove(getComponentKey(ctx, id));
 			}
 		}
 		return component;
@@ -398,7 +397,7 @@ public class ContentService {
 		if (id == null) {
 			return null;
 		}
-		WeakReference<IContentVisualComponent> ref = components.get(getComponentKey(ctx,id));
+		WeakReference<IContentVisualComponent> ref = components.get(getComponentKey(ctx, id));
 		IContentVisualComponent component = null;
 		if (ref != null) {
 			component = ref.get();
@@ -406,11 +405,11 @@ public class ContentService {
 		if (component == null) {
 			component = searchComponent(ctx, getNavigation(ctx), id);
 			if (component != null) {
-				components.put(getComponentKey(ctx,id), new WeakReference<IContentVisualComponent>(component));
+				components.put(getComponentKey(ctx, id), new WeakReference<IContentVisualComponent>(component));
 			}
 		}
 		if (component == null) {
-			components.remove(getComponentKey(ctx,id));
+			components.remove(getComponentKey(ctx, id));
 		}
 		return component;
 	}
@@ -419,7 +418,7 @@ public class ContentService {
 		if (id == null) {
 			return null;
 		}
-		WeakReference<IContentVisualComponent> ref = components.get(getComponentKey(ctx,id));
+		WeakReference<IContentVisualComponent> ref = components.get(getComponentKey(ctx, id));
 		IContentVisualComponent component = null;
 		if (ref != null) {
 			component = ref.get();
@@ -432,11 +431,11 @@ public class ContentService {
 			localContext.setRequestContentLanguage(languages.next());
 			component = searchComponent(localContext, getNavigation(localContext), id);
 			if (component != null) {
-				components.put(getComponentKey(ctx,id), new WeakReference<IContentVisualComponent>(component));
+				components.put(getComponentKey(ctx, id), new WeakReference<IContentVisualComponent>(component));
 			}
 		}
 		if (component == null) {
-			components.remove(getComponentKey(ctx,id));
+			components.remove(getComponentKey(ctx, id));
 		}
 		return component;
 	}
@@ -475,40 +474,40 @@ public class ContentService {
 		MenuElement res = null;
 		GlobalContext globalContext = GlobalContext.getInstance(ctx.getRequest());
 
-		synchronized (globalContext.getLockLoadContent()) {
-			if (ctx.getRenderMode() == ContentContext.TIME_MODE && globalContext.getTimeTravelerContext().getTravelTime() != null) {
-				if (timeTravelerNav == null) {
-					Date timeTravelDate = globalContext.getTimeTravelerContext().getTravelTime();
-					if (timeTravelDate != null && timeTravelDate.after(globalContext.getPublishDate())) {
-						timeTravelDate = null;
-					}
-					PersistenceService persistenceService = PersistenceService.getInstance(globalContext);
-					Map<String, String> contentAttributeMap = new HashMap<String, String>();
-					timeTravelerNav = persistenceService.load(ctx, ContentContext.VIEW_MODE, contentAttributeMap, timeTravelDate);
-					timeTravelerGlobalMap = contentAttributeMap;
+		if (ctx.getRenderMode() == ContentContext.TIME_MODE && globalContext.getTimeTravelerContext().getTravelTime() != null) {
+			if (timeTravelerNav == null) {
+				Date timeTravelDate = globalContext.getTimeTravelerContext().getTravelTime();
+				if (timeTravelDate != null && timeTravelDate.after(globalContext.getPublishDate())) {
+					timeTravelDate = null;
 				}
-				res = timeTravelerNav;
-			} else if (!ctx.isAsViewMode() || !previewMode) { // TODO: check the test was with : || !previewMode
-				if (previewNav == null) {
-					long startTime = System.currentTimeMillis();
-					PersistenceService persistenceService = PersistenceService.getInstance(globalContext);
-					Map<String, String> contentAttributeMap = new HashMap<String, String>();
-					previewNav = persistenceService.load(ctx, ContentContext.PREVIEW_MODE, contentAttributeMap, null);
-					previewGlobalMap = contentAttributeMap;
-					logger.info("load preview of '" + globalContext.getContextKey() + "' nav in " + StringHelper.renderTimeInSecond((System.currentTimeMillis() - startTime) / 1000) + " sec.");
-				}
-				res = previewNav;
-			} else {
-				if (getViewNav() == null) {
-					long startTime = System.currentTimeMillis();
-					PersistenceService persistenceService = PersistenceService.getInstance(globalContext);
-					Map<String, String> contentAttributeMap = new HashMap<String, String>();
-					setViewNav(persistenceService.load(ctx, ContentContext.VIEW_MODE, contentAttributeMap, null));
-					viewGlobalMap = contentAttributeMap;
-					logger.info("load view of '" + globalContext.getContextKey() + "' nav in " + StringHelper.renderTimeInSecond((System.currentTimeMillis() - startTime) / 1000) + " sec.");
-				}
-				res = getViewNav();
+				PersistenceService persistenceService = PersistenceService.getInstance(globalContext);
+				Map<String, String> contentAttributeMap = new HashMap<String, String>();
+				timeTravelerNav = persistenceService.load(ctx, ContentContext.VIEW_MODE, contentAttributeMap, timeTravelDate);
+				timeTravelerGlobalMap = contentAttributeMap;
 			}
+			res = timeTravelerNav;
+		} else if (!ctx.isAsViewMode() || !previewMode) { // TODO: check the
+															// test was with :
+															// || !previewMode
+			if (previewNav == null) {
+				long startTime = System.currentTimeMillis();
+				PersistenceService persistenceService = PersistenceService.getInstance(globalContext);
+				Map<String, String> contentAttributeMap = new HashMap<String, String>();
+				previewNav = persistenceService.load(ctx, ContentContext.PREVIEW_MODE, contentAttributeMap, null);
+				previewGlobalMap = contentAttributeMap;
+				logger.info("load preview of '" + globalContext.getContextKey() + "' nav in " + StringHelper.renderTimeInSecond((System.currentTimeMillis() - startTime) / 1000) + " sec.");
+			}
+			res = previewNav;
+		} else {
+			if (getViewNav() == null) {
+				long startTime = System.currentTimeMillis();
+				PersistenceService persistenceService = PersistenceService.getInstance(globalContext);
+				Map<String, String> contentAttributeMap = new HashMap<String, String>();
+				setViewNav(persistenceService.load(ctx, ContentContext.VIEW_MODE, contentAttributeMap, null));
+				viewGlobalMap = contentAttributeMap;
+				logger.info("load view of '" + globalContext.getContextKey() + "' nav in " + StringHelper.renderTimeInSecond((System.currentTimeMillis() - startTime) / 1000) + " sec.");
+			}
+			res = getViewNav();
 		}
 
 		return res;
@@ -569,37 +568,31 @@ public class ContentService {
 		return res;
 	}
 
-	/*public void loadViewNav(ContentContext ctx) throws Exception {
-		loadViewNav(ctx, GlobalContext.getInstance(ctx.getRequest()));
-	}
-
-	public void loadViewNav(ContentContext ctx, GlobalContext globalContext) throws Exception {
-		PersistenceService persistenceService = PersistenceService.getInstance(globalContext);
-		Map<String, String> contentAttributeMap = new HashMap<String, String>();
-		MenuElement newViewNav = persistenceService.load(ctx, ContentContext.VIEW_MODE, contentAttributeMap, null);
-
-		StaticConfig staticConfig = StaticConfig.getInstance(ctx.getRequest().getSession());
-		int depth = staticConfig.getPublishLoadingDepth();
-		MenuElement[] children = newViewNav.getAllChildren();
-		ContentContext viewCtx = new ContentContext(ctx);
-		Collection<String> lgs = globalContext.getLanguages();
-		for (String lg : lgs) {
-			viewCtx.setLanguage(lg);
-			viewCtx.setRequestContentLanguage(lg);
-			for (MenuElement menuElement : children) {
-				if (menuElement.getDepth() <= depth) {
-					ContentElementList content = menuElement.getContent(viewCtx);
-					while (content.hasNext(viewCtx)) {
-						content.next(viewCtx).getXHTMLCode(viewCtx); // load cache
-					}
-				}
-			}
-		}
-		synchronized (globalContext.getLockLoadContent()) {
-			setViewNav(newViewNav);
-			viewGlobalMap = contentAttributeMap;
-		}
-	}*/
+	/*
+	 * public void loadViewNav(ContentContext ctx) throws Exception {
+	 * loadViewNav(ctx, GlobalContext.getInstance(ctx.getRequest())); }
+	 * 
+	 * public void loadViewNav(ContentContext ctx, GlobalContext globalContext)
+	 * throws Exception { PersistenceService persistenceService =
+	 * PersistenceService.getInstance(globalContext); Map<String, String>
+	 * contentAttributeMap = new HashMap<String, String>(); MenuElement
+	 * newViewNav = persistenceService.load(ctx, ContentContext.VIEW_MODE,
+	 * contentAttributeMap, null);
+	 * 
+	 * StaticConfig staticConfig =
+	 * StaticConfig.getInstance(ctx.getRequest().getSession()); int depth =
+	 * staticConfig.getPublishLoadingDepth(); MenuElement[] children =
+	 * newViewNav.getAllChildren(); ContentContext viewCtx = new
+	 * ContentContext(ctx); Collection<String> lgs =
+	 * globalContext.getLanguages(); for (String lg : lgs) {
+	 * viewCtx.setLanguage(lg); viewCtx.setRequestContentLanguage(lg); for
+	 * (MenuElement menuElement : children) { if (menuElement.getDepth() <=
+	 * depth) { ContentElementList content = menuElement.getContent(viewCtx);
+	 * while (content.hasNext(viewCtx)) {
+	 * content.next(viewCtx).getXHTMLCode(viewCtx); // load cache } } } }
+	 * synchronized (globalContext.getLockLoadContent()) {
+	 * setViewNav(newViewNav); viewGlobalMap = contentAttributeMap; } }
+	 */
 
 	public void releaseAll(ContentContext ctx, GlobalContext globalContext) throws Exception {
 		components.clear();
@@ -612,7 +605,8 @@ public class ContentService {
 	 * release the preview nav.
 	 * 
 	 * @param ctx
-	 *            if null context will not be updated (and content not reloaded now).
+	 *            if null context will not be updated (and content not reloaded
+	 *            now).
 	 * @throws Exception
 	 */
 	public void releasePreviewNav(ContentContext ctx) throws Exception {
@@ -707,7 +701,7 @@ public class ContentService {
 	}
 
 	public void setCachedComponent(ContentContext ctx, IContentVisualComponent comp) throws Exception {
-		components.put(getComponentKey(ctx,comp.getId()), new WeakReference<IContentVisualComponent>(comp));
+		components.put(getComponentKey(ctx, comp.getId()), new WeakReference<IContentVisualComponent>(comp));
 	}
 
 	public List<IContentVisualComponent> getAllContent(ContentContext ctx) throws Exception {
