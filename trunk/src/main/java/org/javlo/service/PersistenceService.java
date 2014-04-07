@@ -884,15 +884,14 @@ public class PersistenceService {
 			contentAttributeMap = new HashMap(); // fake map
 		}
 		
-		if (persThread != null) {
-			while (persThread.isRunning()) {
-				synchronized (persThread) {
-					if (persThread.isRunning()) {
-						persThread.wait();
-					}
+		while (persThread != null) {
+			synchronized (persThread) {
+				if (persThread != null) {
+					persThread.wait();
 				}
 			}
 		}
+	
 
 		synchronized (LOCK_LOAD) { // load only one content both
 			
@@ -1278,10 +1277,10 @@ public class PersistenceService {
 	public void store(ContentContext ctx, int renderMode) throws Exception {
 
 		synchronized (ctx.getGlobalContext().getLockLoadContent()) {
-
-			if (persThread != null) {
-				while (persThread.isRunning()) {
-					synchronized (persThread) {
+			
+			while (persThread != null) {
+				synchronized (persThread) {
+					if (persThread != null) {
 						persThread.wait();
 					}
 				}
@@ -1456,5 +1455,9 @@ public class PersistenceService {
 		} else {
 			NetHelper.sendMailToAdministrator(globalContext, "Javlo persistence Error on : " + globalContext.getContextKey(), content);
 		}
+	}
+
+	public void resetThread() {
+		persThread = null;
 	}
 }

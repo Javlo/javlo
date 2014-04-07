@@ -39,8 +39,6 @@ public class PersistenceThread extends Thread {
 
 	private PersistenceService persistenceService;
 	
-	private boolean running = true;
-
 	public void addFolderToSave(File file) {
 		folderToSave.add(file);
 	}
@@ -87,7 +85,7 @@ public class PersistenceThread extends Thread {
 			}			
 		} finally {
 			synchronized (this) {
-				running = false;
+				persistenceService.resetThread();
 				notify();
 			}
 		}
@@ -195,10 +193,6 @@ public class PersistenceThread extends Thread {
 		out.close();
 
 		file.delete();
-	}
-
-	public boolean isRunning() {
-		return running;
 	}
 
 }
