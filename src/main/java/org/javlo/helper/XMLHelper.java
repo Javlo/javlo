@@ -217,6 +217,10 @@ public class XMLHelper {
 				out.print("\" renderer=\"");
 				out.print(beans[j].getRenderer());
 			}
+			if (beans[j].getLayout() != null) {
+				out.print("\" layout=\"");
+				out.print(beans[j].getLayout().getLayout());
+			}
 			if (beans[j].getHiddenModes() != null && !beans[j].getHiddenModes().isEmpty()) {
 				out.print("\" hiddenModes=\"");
 				out.print(StringHelper.collectionToString(beans[j].getHiddenModes(), ","));
