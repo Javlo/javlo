@@ -34,6 +34,7 @@ public class ComponentBean implements Serializable, Comparable<ComponentBean> {
 	private String authors = "";
 	private String backgroundColor = null;
 	private String textColor = null;
+	private ComponentLayout layout = null;
 
 	private boolean repeat = false;
 	private boolean modify = false;
@@ -236,6 +237,14 @@ public class ComponentBean implements Serializable, Comparable<ComponentBean> {
 	@Override
 	public int compareTo(ComponentBean bean) {		
 		return getModificationDate().compareTo(bean.getModificationDate());
+	}
+
+	public ComponentLayout getLayout() {
+		return layout;
+	}
+
+	public void setLayout(ComponentLayout layout) {
+		this.layout = layout;
 	}
 
 }
