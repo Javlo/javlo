@@ -22,7 +22,7 @@ import org.javlo.utils.SuffixPrefix;
  * @author pvandermaesen
  * 
  */
-public interface IContentVisualComponent {
+public interface IContentVisualComponent extends Comparable<IContentVisualComponent> {
 
 	public static final String ID_SEPARATOR = "__";
 

@@ -2058,5 +2058,10 @@ public abstract class AbstractVisualComponent implements IContentVisualComponent
 	 * after refactoring; protected final String getFileDirectory(){return
 	 * null;}//TODO: remove after refactoring;
 	 */
+	
+	@Override
+	public int compareTo(IContentVisualComponent comp) {
+		return getModificationDate().compareTo(comp.getModificationDate());
+	}
 
 }

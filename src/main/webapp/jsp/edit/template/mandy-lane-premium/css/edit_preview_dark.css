@@ -479,7 +479,7 @@ body.edit-preview {
 	background-color: #333333;
 }
 
-#preview_command .pc_command li.slide, #preview_command .pc_command li.preview,#preview_command .pc_command li.refresh,#preview_command .pc_command li.publish, .edit-preview #preview_command .renderers
+#preview_command .pc_command li.undo, #preview_command .pc_command li.slide, #preview_command .pc_command li.preview,#preview_command .pc_command li.refresh,#preview_command .pc_command li.publish, .edit-preview #preview_command .renderers
 	{
 	float: right;
 	margin-right: 4px;
@@ -583,6 +583,17 @@ body.edit-preview {
 	height: 21px;
 	width: 12px;
 	font-size: 0;
+}
+
+
+#preview_command #pc_command.pc_command .undo input {
+	background-position: 0 -179px;
+	 height: 16px;
+}
+
+#preview_command #pc_command.pc_command .redo input {
+	background-position: 0 -216px;
+	 height: 16px;
 }
 
 #preview_command #pc_command.pc_command.reduce .slide a {

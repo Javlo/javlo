@@ -21,6 +21,7 @@ import org.javlo.navigation.MenuElement;
 import org.javlo.service.ContentService;
 import org.javlo.service.NavigationService;
 import org.javlo.service.PersistenceService;
+import org.javlo.service.RequestService;
 
 public class TimeTravelerActions implements IAction {
 
@@ -31,6 +32,36 @@ public class TimeTravelerActions implements IAction {
 
 	public String getActionGroupName() {
 		return "time";
+	}
+	
+	public synchronized static String performUndoRedo(RequestService rs, ContentContext ctx, GlobalContext globalContext, MessageRepository messageRepository, I18nAccess i18nAccess) throws Exception {
+		boolean previous = rs.getParameter("previous",null) != null;
+		PersistenceService pers = PersistenceService.getInstance(globalContext);
+		if (previous) {
+			int previousVersion = pers.getVersion()-1;
+			MenuElement previousNav = pers.loadPreview(ctx, previousVersion);
+			MenuElement currentPageHistory = previousNav.searchChildFromId(ctx.getCurrentPage().getId());
+			while (ctx.getCurrentPage().compareTo(currentPageHistory) == 0 && pers.isPreviewVersion(previousVersion-1)) {
+				previousVersion--;
+				previousNav = pers.loadPreview(ctx, previousVersion);
+				currentPageHistory = previousNav.searchChildFromId(ctx.getCurrentPage().getId());
+			}
+			if  (pers.isPreviewVersion(previousVersion)) {
+				
+				if (ctx.getCurrentPage().isChildrenAssociation()) {
+					
+				} else {
+					
+				}
+				
+				return "new version loading : "+previousVersion+" (from:"+pers.getVersion()+')';
+			} else {
+				return "previous version does'nt exist";
+			}
+		} else {
+			
+		}
+		return null;
 	}
 
 	public static String performSettraveltime(HttpServletRequest request, HttpServletResponse response) throws Exception {
@@ -109,6 +140,35 @@ public class TimeTravelerActions implements IAction {
 		persistenceService.store(ctx);
 
 		return null;
+	}
+	
+	public static String replaceCurrentPage(ContentContext ctx, MenuElement newPage, boolean withChildren) throws Exception {
+		
+		MenuElement page = ctx.getCurrentPage();		
+
+		if (page != null) {
+			// Switch parent (Experimental!!)
+			MenuElement parent = page.getParent();
+			parent.removeChild(page);
+			
+			newPage.setParent(parent);
+			newPage.setId(page.getId());
+			newPage.setPriority(page.getPriority());
+			newPage.setParent(null);
+			
+			parent.addChildMenuElement(newPage);
+
+		} else {
+			I18nAccess i18nAccess = I18nAccess.getInstance(ctx.getRequest());
+			String msg = i18nAccess.getText("time.message.error.page-deleted");
+			MessageRepository.getInstance(ctx).setGlobalMessage(new GenericMessage(msg, GenericMessage.ERROR));
+		}
+
+		PersistenceService persistenceService = PersistenceService.getInstance(ctx.getGlobalContext());
+		persistenceService.store(ctx);
+		
+		return null;
+		
 	}
 
 	public static String performReplaceCurrentPageAndChildren(HttpServletRequest request, HttpServletResponse response) throws Exception {

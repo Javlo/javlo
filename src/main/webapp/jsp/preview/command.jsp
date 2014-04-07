@@ -77,7 +77,15 @@ if (!rightOnPage) {
 					<c:if test="${!globalContext.previewMode}">
 						<a id="pc_edit_button" class="pc_edit_true" href="${info.currentViewURL}" target="_blank">${i18n.edit['preview.label.not-edit-page']}</a>
 					</c:if>					
-					</li><c:if test="${fn:length(contentContext.deviceNames)>1}">
+					</li>
+					<li class="undo"><form id="undo_form" action="${info.currentURL}" method="get">
+						<div class="pc_line">	
+							<input type="hidden" name="webaction" value="time.undoRedo" />
+							<input type="submit" name="previous" value="undo" title="undo" />
+						</div>
+						</form>
+					</li>
+					<c:if test="${fn:length(contentContext.deviceNames)>1}">
 					<li class="renderers"><form id="renderers_form" action="${info.currentURL}" method="get">
 						<div class="pc_line">
 							<c:url var="url" value="${info.currentURL}" context="/">
