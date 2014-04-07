@@ -35,10 +35,12 @@ public class PersistenceThread extends Thread {
 
 	private int mode;
 
+	private boolean running = true;
+
 	private String defaultLg = null;
 
 	private PersistenceService persistenceService;
-	
+
 	public void addFolderToSave(File file) {
 		folderToSave.add(file);
 	}
@@ -70,25 +72,31 @@ public class PersistenceThread extends Thread {
 	@Override
 	public void run() {
 		File file = null;
-		try {
-			logger.info("start persitence thread");
-			synchronized (menuElement.getLock()) {
-				file = store(menuElement, mode, getDefaultLg());
-			}
-			logger.info("end persitence thread");
-		} catch (Exception e) {
-			e.printStackTrace();
 			try {
-				persistenceService.sendPersistenceErrorToAdministrator("Error in PersistanceThread.", file, e);
-			} catch (AddressException e1) {
-				logger.warning(e1.getMessage());
-			}			
-		} finally {
-			synchronized (this) {
-				persistenceService.resetThread();
+				logger.info("start persitence thread");			
+				synchronized (menuElement.getLock()) {					
+					file = store(menuElement, mode, getDefaultLg());
+				}
+				logger.info("end persitence thread");
+			} catch (Exception e) {
+				e.printStackTrace();
+				try {
+					persistenceService.sendPersistenceErrorToAdministrator("Error in PersistanceThread.", file, e);
+				} catch (AddressException e1) {
+					logger.warning(e1.getMessage());
+				}
+			} finally {
+				synchronized (this) {				
+				persistenceService.resetThread();				
+				running = false;
 				notify();
+				
 			}
 		}
+	}
+	
+	public boolean isRunning() {
+		return running;
 	}
 
 	public void setDataFolder(String dataFolder) {
@@ -149,7 +157,7 @@ public class PersistenceThread extends Thread {
 				}
 				persistenceService.version++;
 				persistenceService.saveVersion();
-				persistenceService.cleanFile();				
+				persistenceService.cleanFile();
 			} else {
 				file = new File(persistenceService.getDirectory() + "/content_" + renderMode + ".xml");
 				if (file.exists()) {
@@ -164,13 +172,13 @@ public class PersistenceThread extends Thread {
 				} finally {
 					fileWriter.close();
 					fileStream.close();
-				}				
+				}
 			}
 			return file;
 		}
 		return null;
 	}
-	
+
 	void storeCurrentView() throws IOException {
 		File file = new File(persistenceService.getDirectory() + "/content_" + ContentContext.VIEW_MODE + ".xml");
 

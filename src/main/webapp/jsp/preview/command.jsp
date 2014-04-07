@@ -78,7 +78,7 @@ if (!rightOnPage) {
 						<a id="pc_edit_button" class="pc_edit_true" href="${info.currentViewURL}" target="_blank">${i18n.edit['preview.label.not-edit-page']}</a>
 					</c:if>					
 					</li>
-					<li class="undo"><form id="undo_form" action="${info.currentURL}" method="get">
+					<li class="undo"><form id="undo_form" action="${info.currentURL}" method="post">
 						<div class="pc_line">	
 							<input type="hidden" name="webaction" value="time.undoRedo" />
 							<input type="submit" name="previous" value="undo" title="undo" />
