@@ -721,5 +721,11 @@ public interface IContentVisualComponent extends Comparable<IContentVisualCompon
 	public String getSpecialTagTitle(ContentContext ctx) throws Exception;
 
 	public String getSpecialTagXHTML(ContentContext ctx) throws Exception;
+	
+	/**
+	 * get a simple layout for the component.
+	 * @return
+	 */
+	public ComponentLayout getLayout();
 
 }

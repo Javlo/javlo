@@ -61,6 +61,8 @@ import org.javlo.user.AdminUserSecurity;
 import org.javlo.utils.DebugListening;
 import org.javlo.utils.SuffixPrefix;
 
+import com.sun.org.apache.xpath.internal.operations.Equals;
+
 /**
  * This class is the first class for component. <h4>exposed variables :</h4>
  * <ul>
@@ -490,7 +492,27 @@ public abstract class AbstractVisualComponent implements IContentVisualComponent
 			out.println(XHTMLHelper.getCheckbox("inlist-" + getId(), isList(ctx)));
 			out.println("</div>");
 		}
-		
+		if (getLayout() != null) {
+			ComponentLayout layout = getLayout();
+			out.println("<div class=\"line layout\">");			
+			out.println("<div class=\"line\">");
+			out.println("<label>" + i18nAccess.getText("component.layout") + "</label>");
+			
+			String id = "layout-left-"+getId();			
+			out.println("<label for=\"" + id + "\">");
+			out.println(XHTMLHelper.getCheckbox(id, layout.isLeft()));
+			out.println(i18nAccess.getText("component.layout.left"));
+			out.println("</label>");
+			id = "layout-right-"+getId();			
+			out.println("<label for=\"" + id + "\">");
+			out.println(XHTMLHelper.getCheckbox(id, layout.isRight()));
+			out.println(i18nAccess.getText("component.layout.right"));
+			out.println("</label>");
+			
+			out.println("</div>");
+			
+			out.println("</div>");
+		}
 		if (getConfig(ctx).isChooseBackgoundColor()) {
 			out.println("<div class=\"line\">");
 			String bgColInputName = "bgcol-" + getId();
@@ -590,6 +612,14 @@ public abstract class AbstractVisualComponent implements IContentVisualComponent
 				logger.warning(e.getLocalizedMessage());
 			}	
 		}
+		
+		if (getLayout() != null) {
+			ComponentLayout layout = new ComponentLayout("");			
+			layout.setLeft(StringHelper.isTrue(requestService.getParameter("layout-left-" + getId(), null)));
+			layout.setRight(StringHelper.isTrue(requestService.getParameter("layout-right-" + getId(), null)));
+			if (getLayout().getLayout().equals(ctx));
+		}
+		
 
 		/** renderer **/
 		String renderer = requestService.getParameter(getInputNameRenderer(), null);
@@ -2015,53 +2045,15 @@ public abstract class AbstractVisualComponent implements IContentVisualComponent
 	protected boolean isNeedRenderer() {
 		return false;
 	}
-	// generate compilation error : use for refactoring
-
-	/*
-	 * protected final boolean isDefaultValue() {return false;} protected final
-	 * String getHelpURL(String lang) {return null;} //TODO: remove after
-	 * refactoring protected final boolean isEmpty() {return false;}//TODO:
-	 * remove after refactoring; protected final boolean isVisible (int format
-	 * ){return false;}//TODO: remove after refactoring; protected final
-	 * List<SufixPreffix> getMarkerList() {return null;}//TODO: remove after
-	 * refactoring; protected final String getSufixViewXHTMLCode() {return
-	 * null;}//TODO: remove after refactoring; protected final String
-	 * getPrefixViewXHTMLCode() {return null;}//TODO: remove after refactoring;
-	 * protected final boolean isHidden(){return false;}//TODO: remove after
-	 * refactoring; protected final String getFirstPrefix(){return null;}//TODO:
-	 * remove after refactoring; protected final String getViewXHTMLCode()
-	 * throws Exception {return null;}//TODO: remove after refactoring;
-	 * protected final String getEditXHTMLCode() throws Exception {return
-	 * null;}//TODO: remove after refactoring; protected final boolean
-	 * needJavaScript(){return false;}//TODO: remove after refactoring;
-	 * protected final String[] getStyleLabelList() {return null;}//TODO: remove
-	 * after refactoring; protected final String getImageLinkTitle() {return
-	 * null;}//TODO: remove after refactoring; protected final String[]
-	 * getStyleList() {return null;}//TODO: remove after refactoring; protected
-	 * final String getStyleTitle() {return null;}//TODO: remove after
-	 * refactoring; protected final boolean isList(){return false;}//TODO:
-	 * remove after refactoring; protected final boolean
-	 * isContentCachable(){return false;}//TODO: remove after refactoring;
-	 * protected final String getLastSufix() {return null;}//TODO: remove after
-	 * refactoring; protected final String getCSSClassName() {return
-	 * null;}//TODO: remove after refactoring; protected final
-	 * Collection<String> getExternalResources() {return null;}//TODO: remove
-	 * after refactoring; protected final int getTitleLevel() {return 1;}//TODO:
-	 * remove after refactoring; protected final boolean isImageValid() {return
-	 * false;}//TODO: remove after refactoring; protected final String
-	 * getHeaderContent(){return null;}//TODO: remove after refactoring;
-	 * protected final String getImageUploadTitle(){return null;}//TODO: remove
-	 * after refactoring; protected final String getImageChangeTitle() {return
-	 * null;}//TODO: remove after refactoring; protected final String
-	 * getDeleteTitle(){return null;}//TODO: remove after refactoring; protected
-	 * final String createFileURL(String inURL){return null;}//TODO: remove
-	 * after refactoring; protected final String getFileDirectory(){return
-	 * null;}//TODO: remove after refactoring;
-	 */
 	
 	@Override
 	public int compareTo(IContentVisualComponent comp) {
 		return getModificationDate().compareTo(comp.getModificationDate());
 	}
-
+	
+	@Override
+	public ComponentLayout getLayout() {
+		return componentBean.getLayout();
+	}
+	
 }
