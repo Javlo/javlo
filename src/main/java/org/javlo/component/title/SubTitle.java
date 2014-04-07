@@ -74,9 +74,11 @@ public class SubTitle extends AbstractVisualComponent {
 				res.append(XHTMLHelper.textToXHTML(value));
 				res.append("</div>");
 			} else {
-				String style="";
+				String style;
 				if (getTextColor() != null && getTextColor().length() > 3) {
-					style=" style=\"color:"+getTextColor()+'"';
+					style=" style=\"color:"+getTextColor()+getLayout().getStyle()+'"';
+				} else {
+					style=" style=\""+getLayout().getStyle()+'"';
 				}
 				res.append("<h" + level + " id=\"" + getXHTMLId(ctx) + "\" class=\"subtitle"+colored+"\""+style+">");
 				ReverseLinkService reverserLinkService = ReverseLinkService.getInstance(globalContext);

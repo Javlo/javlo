@@ -1291,4 +1291,13 @@ public class StaticConfig extends Observable {
 	public String getApplicationPassword() {
 		return properties.getString("security.application-password", null);
 	}
+	
+	/**
+	 * all image uploaded was resize under this max-size
+	 * @return
+	 */
+	public int getImageMaxWidth() {
+		return properties.getInt("image.max-width", 0);
+	}
+
 }

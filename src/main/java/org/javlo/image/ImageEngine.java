@@ -39,7 +39,10 @@ public class ImageEngine {
 		}
 
 		/*
-		 * public void setCompressionQuality(float quality) { if (quality < 0.0F || quality > 1.0F) { throw new IllegalArgumentException("Quality out-of-bounds!"); } this.compressionQuality = 256 - (quality 256); }
+		 * public void setCompressionQuality(float quality) { if (quality < 0.0F
+		 * || quality > 1.0F) { throw new
+		 * IllegalArgumentException("Quality out-of-bounds!"); }
+		 * this.compressionQuality = 256 - (quality 256); }
 		 */
 
 		public void setCompressionQuality(int quality) {
@@ -59,7 +62,8 @@ public class ImageEngine {
 
 	public static BufferedImage blurring(BufferedImage img) {
 		/*
-		 * float[] matrix = { 0f, 0f, 0f, 1f, 0f, 0f, 0f, 0f, 0f, 0f, 0f, 0f, 0f, 0f, 0f, 0f, };
+		 * float[] matrix = { 0f, 0f, 0f, 1f, 0f, 0f, 0f, 0f, 0f, 0f, 0f, 0f,
+		 * 0f, 0f, 0f, 0f, };
 		 */
 		float[] matrix = new float[400];
 		for (int i = 0; i < matrix.length; i++) {
@@ -118,15 +122,19 @@ public class ImageEngine {
 
 		BufferedImage image = op.filter(bi, null);
 
-		BufferedImage imgNew = new BufferedImage(image.getWidth(), image.getHeight(), BufferedImage.TYPE_4BYTE_ABGR);
-		for (int x = 0; x < image.getWidth(); x++) {
-			for (int y = 0; y < image.getHeight(); y++) {
-				int rgb = image.getRGB(x, y);
-				imgNew.setRGB(x, y, rgb);
-
+		if (bi.getType() == BufferedImage.TYPE_4BYTE_ABGR) {
+			BufferedImage imgNew = new BufferedImage(image.getWidth(), image.getHeight(), BufferedImage.TYPE_4BYTE_ABGR);
+			for (int x = 0; x < image.getWidth(); x++) {
+				for (int y = 0; y < image.getHeight(); y++) {
+					int rgb = image.getRGB(x, y);
+					imgNew.setRGB(x, y, rgb);
+				}
 			}
+			return imgNew;
+		} else {
+			return image;
 		}
-		return imgNew;
+
 	}
 
 	private static BufferedImage resizeBig(BufferedImage in, int width, int height) {
@@ -174,9 +182,13 @@ public class ImageEngine {
 			}
 		}
 
-		BufferedImage out = new BufferedImage(width, height, BufferedImage.TYPE_4BYTE_ABGR);
+		BufferedImage out;
+		if (in.getType() == BufferedImage.TYPE_4BYTE_ABGR) {
+			out = new BufferedImage(width, height, BufferedImage.TYPE_4BYTE_ABGR);
+		} else {
+			out = new BufferedImage(width, height, BufferedImage.TYPE_3BYTE_BGR);
+		}
 		out.setRGB(0, 0, width, height, outPixels, 0, width);
-
 		return out;
 	}
 
@@ -291,7 +303,7 @@ public class ImageEngine {
 	public static BufferedImage resizeHeight(BufferedImage bi, int height, Color bgColor) {
 		int width = Math.round(bi.getWidth() * ((float) height / (float) bi.getHeight()));
 		height = Math.round(bi.getHeight() * ((float) width / (float) bi.getWidth()));
-		BufferedImage image = resize(bi,width,height);
+		BufferedImage image = resize(bi, width, height);
 
 		if (bgColor != null && image.getColorModel().hasAlpha()) {
 			BufferedImage imgNew;
@@ -372,7 +384,7 @@ public class ImageEngine {
 
 	static Color replaceAlpha(Color color, Color bg) {
 		float alpha = (color.getAlpha()) / 255f;
-		
+
 		float red = color.getRed() * alpha + bg.getRed() * (1 - alpha);
 		float green = color.getGreen() * alpha + bg.getGreen() * (1 - alpha);
 		float blue = color.getBlue() * alpha + bg.getBlue() * (1 - alpha);
@@ -436,9 +448,10 @@ public class ImageEngine {
 		}
 		return imgNew;
 	}
-	
+
 	/**
 	 * replace bg color with transparency
+	 * 
 	 * @param image
 	 * @param bg
 	 * @return image with transparency
@@ -451,17 +464,17 @@ public class ImageEngine {
 		for (int x = 0; x < image.getWidth(); x++) {
 			for (int y = 0; y < image.getHeight(); y++) {
 				int rgb = image.getRGB(x, y);
-				Color color = new Color(rgb);				
+				Color color = new Color(rgb);
 				if (color.getRed() == bg.getRed() && color.getGreen() == bg.getGreen() && color.getBlue() == bg.getBlue()) {
 					color = new Color(color.getRed(), color.getGreen(), color.getBlue(), 0);
 				}
-				
-				imgNew.setRGB(x, y,color.getRGB());
+
+				imgNew.setRGB(x, y, color.getRGB());
 			}
 		}
 		return imgNew;
 	}
-	
+
 	public static BufferedImage removeAlpha(BufferedImage image) {
 		BufferedImage imgNew = new BufferedImage(image.getWidth(), image.getHeight(), BufferedImage.TYPE_INT_RGB);
 		for (int x = 0; x < image.getWidth(); x++) {
@@ -489,9 +502,15 @@ public class ImageEngine {
 		} else {
 			workImage = ImageEngine.resize(source, filter.getWidth(), filter.getHeight(), cropResize, addBorder, mt, ml, mr, mb, bgColor, fzx, fzy, isFocus);
 			/*
-			 * if ((float) source.getWidth() / (float) source.getHeight() < (float) workWith / (float) workHeight) { int height = (source.getHeight() * workWith) / source.getWidth(); workImage = resize(source, workWith, height); } else { int width = (source.getWidth() * workHeight) / source.getHeight(); //workImage = resize(source, width, workHeight);
+			 * if ((float) source.getWidth() / (float) source.getHeight() <
+			 * (float) workWith / (float) workHeight) { int height =
+			 * (source.getHeight() * workWith) / source.getWidth(); workImage =
+			 * resize(source, workWith, height); } else { int width =
+			 * (source.getWidth() * workHeight) / source.getHeight();
+			 * //workImage = resize(source, width, workHeight);
 			 * 
-			 * WARNING : test si on fait pas 2x la marge avec cette méthode the resize }
+			 * WARNING : test si on fait pas 2x la marge avec cette méthode the
+			 * resize }
 			 */
 		}
 		BufferedImage outImage = new BufferedImage(filter.getWidth(), filter.getHeight(), BufferedImage.TYPE_4BYTE_ABGR);
@@ -594,7 +613,8 @@ public class ImageEngine {
 	 * @param inHeight
 	 *            new height
 	 * @param cropResize
-	 *            true if image must be croped or false if image must be deformed
+	 *            true if image must be croped or false if image must be
+	 *            deformed
 	 * @param mt
 	 *            margin top
 	 * @param ml
@@ -861,7 +881,8 @@ public class ImageEngine {
 	}
 
 	/**
-	 * rotate the image with angle in degree. note than result can be bigger than source.
+	 * rotate the image with angle in degree. note than result can be bigger
+	 * than source.
 	 * 
 	 * @param image
 	 * @param angle
@@ -907,17 +928,18 @@ public class ImageEngine {
 
 		return outImage.getSubimage(startX, startY, newWidth, newHeight);
 	}
-	
+
 	/**
 	 * create transparent dash on 1 pixel on 2
+	 * 
 	 * @param image
 	 * @return a image width same width and same height.
 	 */
 	public static BufferedImage dashed(BufferedImage image, int size) {
-		BufferedImage outImage = new BufferedImage(image.getWidth(), image.getHeight(), BufferedImage.TYPE_4BYTE_ABGR);		
-		for (int x=0; x<image.getWidth(); x++) {
-			for (int y=0; y<image.getHeight(); y++) {
-				if (x%size == 0 && y%size==0) {
+		BufferedImage outImage = new BufferedImage(image.getWidth(), image.getHeight(), BufferedImage.TYPE_4BYTE_ABGR);
+		for (int x = 0; x < image.getWidth(); x++) {
+			for (int y = 0; y < image.getHeight(); y++) {
+				if (x % size == 0 && y % size == 0) {
 					outImage.setRGB(x, y, image.getRGB(x, y));
 				}
 			}
@@ -934,7 +956,7 @@ public class ImageEngine {
 
 		try {
 			System.out.println("start...");
-			BufferedImage sourceImage = ImageIO.read(source);			 
+			BufferedImage sourceImage = ImageIO.read(source);
 			BufferedImage image = createAlpha(sourceImage, Color.WHITE);
 			ImageIO.write(image, "png", target);
 			System.out.println("end.");

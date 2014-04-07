@@ -56,6 +56,7 @@ import org.javlo.i18n.I18nAccess;
 import org.javlo.message.GenericMessage;
 import org.javlo.navigation.MenuElement;
 import org.javlo.rendering.Device;
+import org.javlo.service.PersistenceService;
 import org.javlo.service.RequestService;
 import org.javlo.user.AdminUserSecurity;
 import org.javlo.utils.DebugListening;
@@ -618,6 +619,7 @@ public abstract class AbstractVisualComponent implements IContentVisualComponent
 			layout.setLeft(StringHelper.isTrue(requestService.getParameter("layout-left-" + getId(), null)));
 			layout.setRight(StringHelper.isTrue(requestService.getParameter("layout-right-" + getId(), null)));
 			if (!getLayout().getLayout().equals(layout.getLayout())) {
+				getComponentBean().setLayout(layout);
 				setModify();
 			}
 		}
@@ -658,6 +660,11 @@ public abstract class AbstractVisualComponent implements IContentVisualComponent
 				boolean visible = requestService.getParameter(id, null) != null;
 				setHiddenInMode(mode, !visible);
 			}
+		}
+		
+		if (isModify()) {
+			System.out.println("***** AbstractVisualComponent.performConfig : STORE CONFIG."); //TODO: remove debug trace
+			PersistenceService.getInstance(ctx.getGlobalContext()).store(ctx);
 		}
 
 		return null;
