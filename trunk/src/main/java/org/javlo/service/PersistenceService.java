@@ -46,6 +46,7 @@ import javax.mail.internet.InternetAddress;
 import org.apache.commons.configuration.ConfigurationException;
 import org.apache.commons.io.FileUtils;
 import org.javlo.component.core.ComponentBean;
+import org.javlo.component.core.ComponentLayout;
 import org.javlo.config.StaticConfig;
 import org.javlo.context.ContentContext;
 import org.javlo.context.GlobalContext;
@@ -534,6 +535,10 @@ public class PersistenceService {
 			bean.setArea(contentNode.getAttributeValue("area", ComponentBean.DEFAULT_AREA));
 			bean.setBackgroundColor(contentNode.getAttributeValue("bgcol",null));
 			bean.setTextColor(contentNode.getAttributeValue("txtcol",null));
+			String layout = contentNode.getAttributeValue("layout",null); 
+			if (layout != null) {
+				bean.setLayout(new ComponentLayout(layout)); 
+			}
 			bean.setRenderer(renderer);
 			bean.setHiddenModes(hiddenModes);
 			bean.setAuthors(authors);
@@ -745,7 +750,7 @@ public class PersistenceService {
 				root.setBlocker(page.getAttributeValue("blocker", ""));
 				root.setLinkedURL(page.getAttributeValue("linked-url", ""));
 				root.setBreakRepeat(StringHelper.isTrue(page.getAttributeValue("breakrepeat", "false")));
-				root.setShortURL(page.getAttributeValue("shorturl", null));
+				root.setShortURL(page.getAttributeValue("shorturl", null));				
 				root.setChildrenAssociation(StringHelper.isTrue(page.getAttributeValue("childrenAssociation", null)));
 
 				String[] editorRoles = StringHelper.stringToArray(page.getAttributeValue("editor-roles", ""), "#");
