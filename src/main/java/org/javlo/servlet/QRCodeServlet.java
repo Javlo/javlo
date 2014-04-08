@@ -1,10 +1,12 @@
 package org.javlo.servlet;
 
+import java.awt.image.BufferedImage;
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
 import java.io.File;
-import java.io.FileOutputStream;
-import java.io.OutputStream;
 import java.util.logging.Logger;
 
+import javax.imageio.ImageIO;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
@@ -23,6 +25,23 @@ import org.javlo.service.ContentService;
 public class QRCodeServlet extends HttpServlet {
 
 	private static Logger logger = Logger.getLogger(QRCodeServlet.class.getName());
+	
+	private static BufferedImage removeBorder(BufferedImage image) {
+		int firstColor = image.getRGB(1, 1);
+		for (int x=0; x<image.getWidth(); x++) {
+			if (image.getRGB(x, 1) != firstColor) {
+				return image; // no border
+			}
+		}
+		for (int x=0; x<image.getWidth(); x++) {
+			for (int y=0; y<image.getWidth(); y++) {				
+				if (image.getRGB(x, y) != firstColor) {					
+					return image.getSubimage(x, x, image.getWidth()-2*x, image.getHeight()-2*x);
+				}
+			}
+		}
+		return image;
+	}
 
 	@Override
 	protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException {
@@ -70,16 +89,13 @@ public class QRCodeServlet extends HttpServlet {
 
 			if (data != null) {				
 				int qrSize = ctx.getCurrentTemplate().getQRCodeSize(); 
-				if (splittedFile[1].equalsIgnoreCase("png")) {
-					QRCode.from(data).to(ImageType.PNG).withSize(qrSize,qrSize).writeTo(response.getOutputStream());
-				} else if (splittedFile[1].equalsIgnoreCase("gif")) {
-					QRCode.from(data).to(ImageType.GIF).withSize(qrSize,qrSize).writeTo(response.getOutputStream());
-				} else if (splittedFile[1].equalsIgnoreCase("jpg")) {
-					QRCode.from(data).to(ImageType.JPG).withSize(qrSize,qrSize).writeTo(response.getOutputStream());
-				} else {
-					logger.warning("bad image format : " + splittedFile[1]);
-					response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
-				}
+				
+				ByteArrayOutputStream out = new ByteArrayOutputStream();
+				QRCode.from(data).to(ImageType.PNG).withSize(qrSize+74,qrSize+74).writeTo(out); //74 = estimation of margin
+				
+				BufferedImage image = ImageIO.read(new ByteArrayInputStream(out.toByteArray()));
+				image = removeBorder(image);
+				ImageIO.write(image, splittedFile[1], response.getOutputStream());
 			}
 
 		} catch (Exception e) {
@@ -91,9 +107,13 @@ public class QRCodeServlet extends HttpServlet {
 	public static void main(String[] args) {
 
 		try {
-			OutputStream out;
-			out = new FileOutputStream(new File("c:/trans/test.png"));
-			QRCode.from("http://www.penthouse.com").to(ImageType.PNG).writeTo(out);
+			//OutputStream out;
+			//out = new FileOutputStream(new File("c:/trans/test.png"));
+			//QRCode.from("http://www.javlo.be").to(ImageType.PNG).writeTo(out);
+			ByteArrayOutputStream out = new ByteArrayOutputStream();
+			QRCode.from("http://www.javlo.be").to(ImageType.PNG).withSize(300, 300).writeTo(out);
+			BufferedImage image = removeBorder(ImageIO.read(new ByteArrayInputStream(out.toByteArray())));
+			ImageIO.write(image, "png", new File("c:/trans/test2.png"));
 			out.close();
 		} catch (Exception e) {
 			e.printStackTrace();

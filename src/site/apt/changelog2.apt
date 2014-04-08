@@ -239,3 +239,7 @@ change log
  * mailing feedback + history
  
  * menu generation optimisation + XML parsing correction '>' not considered if inside char sequence
+ 
+ * undo on current page (by default unactive, active with static-config.properties) !alpha version
+ 
+ * component layout (on title and subtile, only left, right and center)

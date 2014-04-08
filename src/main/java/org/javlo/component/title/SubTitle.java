@@ -25,7 +25,9 @@ public class SubTitle extends AbstractVisualComponent {
 	@Override
 	protected void init() throws ResourceNotFoundException {
 		super.init();
-		getComponentBean().setLayout(new ComponentLayout(""));
+		if (getLayout() == null) {
+			getComponentBean().setLayout(new ComponentLayout(""));
+		}
 	}
 	
 	public String getXHTMLId(ContentContext ctx) {

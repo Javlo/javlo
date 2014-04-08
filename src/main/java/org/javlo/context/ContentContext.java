@@ -30,13 +30,17 @@ import org.javlo.navigation.IURLFactory;
 import org.javlo.navigation.MenuElement;
 import org.javlo.rendering.Device;
 import org.javlo.service.ContentService;
+import org.javlo.service.PersistenceService;
 import org.javlo.service.RequestService;
+import org.javlo.service.exception.ServiceException;
 import org.javlo.template.Template;
 import org.javlo.template.TemplateFactory;
 import org.javlo.user.AdminUserFactory;
 import org.javlo.user.IUserFactory;
 import org.javlo.user.User;
 import org.javlo.user.UserFactory;
+
+import com.sun.org.apache.bcel.internal.generic.GETSTATIC;
 
 /**
  * @author pvanderm
@@ -1668,5 +1672,13 @@ public class ContentContext {
 
 	public int getEditMode() {
 		return EDIT_MODE;
+	}
+	
+	public boolean isCanUndo() throws ServiceException {
+		if (!getGlobalContext().getStaticConfig().isUndo()) {
+			return false;
+		}
+		PersistenceService persistenceService = PersistenceService.getInstance(getGlobalContext());
+		return persistenceService.getVersion() > getGlobalContext().getFirstLoadVersion() && (getGlobalContext().getLatestUndoVersion() == null || persistenceService.getVersion()-1 != getGlobalContext().getLatestUndoVersion());
 	}
 }

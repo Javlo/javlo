@@ -1299,5 +1299,9 @@ public class StaticConfig extends Observable {
 	public int getImageMaxWidth() {
 		return properties.getInt("image.max-width", 0);
 	}
+	
+	public boolean isUndo() {
+		return properties.getBoolean("function.undo", false);
+	}
 
 }
