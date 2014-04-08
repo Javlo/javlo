@@ -37,28 +37,32 @@ public class TimeTravelerActions implements IAction {
 	public synchronized static String performUndoRedo(RequestService rs, ContentContext ctx, GlobalContext globalContext, MessageRepository messageRepository, I18nAccess i18nAccess) throws Exception {
 		boolean previous = rs.getParameter("previous",null) != null;
 		PersistenceService pers = PersistenceService.getInstance(globalContext);
+		
+		final String NOT_FOUND_MSG = "undo could not be done.";
+		
 		if (previous) {
+			if (!ctx.isCanUndo()) {
+				return NOT_FOUND_MSG;
+			}
 			int previousVersion = pers.getVersion()-1;
 			MenuElement previousNav = pers.loadPreview(ctx, previousVersion);
 			MenuElement currentPageHistory = previousNav.searchChildFromId(ctx.getCurrentPage().getId());
-			while (ctx.getCurrentPage().compareTo(currentPageHistory) == 0 && pers.isPreviewVersion(previousVersion-1)) {
-				previousVersion--;
+			while (ctx.getCurrentPage().compareTo(currentPageHistory) == 0 && pers.isPreviewVersion(previousVersion-1)) {				
+				previousVersion = previousVersion-1;
 				previousNav = pers.loadPreview(ctx, previousVersion);
 				currentPageHistory = previousNav.searchChildFromId(ctx.getCurrentPage().getId());
 			}
 			if  (pers.isPreviewVersion(previousVersion)) {
+				globalContext.setLatestUndoVersion(pers.getVersion());
 				replaceCurrentPage(ctx, currentPageHistory, ctx.getCurrentPage().isChildrenAssociation());
-
 				//String msg = i18nAccess.getText("time.message.error.page-deleted");
 				String msg = "new version loading : " + previousVersion + " (from:" + pers.getVersion() + ')';
 				MessageRepository.getInstance(ctx).setGlobalMessage(new GenericMessage(msg, GenericMessage.SUCCESS));
 				
 				return null;
 			} else {
-				return "previous version does'nt exist";
+				return NOT_FOUND_MSG;
 			}
-		} else {
-			
 		}
 		return null;
 	}
@@ -164,7 +168,7 @@ public class TimeTravelerActions implements IAction {
 			MessageRepository.getInstance(ctx).setGlobalMessage(new GenericMessage(msg, GenericMessage.ERROR));
 		}
 
-		PersistenceService persistenceService = PersistenceService.getInstance(ctx.getGlobalContext());
+		PersistenceService persistenceService = PersistenceService.getInstance(ctx.getGlobalContext());				
 		persistenceService.store(ctx);
 
 		ContentService content = ContentService.getInstance(ctx.getRequest());

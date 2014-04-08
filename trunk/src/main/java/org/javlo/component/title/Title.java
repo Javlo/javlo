@@ -4,9 +4,11 @@
 package org.javlo.component.title;
 
 import org.javlo.component.core.AbstractVisualComponent;
+import org.javlo.component.core.ComponentLayout;
 import org.javlo.context.ContentContext;
 import org.javlo.context.EditContext;
 import org.javlo.context.GlobalContext;
+import org.javlo.exception.ResourceNotFoundException;
 import org.javlo.helper.LoremIpsumGenerator;
 import org.javlo.service.ReverseLinkService;
 
@@ -27,6 +29,14 @@ public class Title extends AbstractVisualComponent {
 	@Override
 	public String[] getStyleList(ContentContext ctx) {
 		return STYLES;
+	}
+	
+	@Override
+	protected void init() throws ResourceNotFoundException {	
+		super.init();
+		if (getLayout() == null) {
+			getComponentBean().setLayout(new ComponentLayout(""));
+		}
 	}
 
 	@Override
@@ -59,7 +69,11 @@ public class Title extends AbstractVisualComponent {
 			return "";
 		}
 		StringBuffer res = new StringBuffer();
-		res.append("<h1 " + getSpecialPreviewCssClass(ctx, getStyle(ctx)) + getSpecialPreviewCssId(ctx) + "><span>");
+		String style="";
+		if (getLayout() != null && getLayout().getLayout().length() > 0) {
+			style = " style=\""+getLayout().getStyle()+'"';
+		}
+		res.append("<h1"+style+" " + getSpecialPreviewCssClass(ctx, getStyle(ctx)) + getSpecialPreviewCssId(ctx) + "><span>");
 
 		String value = getValue();
 		GlobalContext globalContext = GlobalContext.getInstance(ctx.getRequest());

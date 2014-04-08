@@ -2,10 +2,8 @@ package org.javlo.context;
 
 import java.io.File;
 import java.io.FileInputStream;
-import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
-import java.io.OutputStream;
 import java.io.PrintStream;
 import java.io.Serializable;
 import java.lang.ref.WeakReference;
@@ -92,7 +90,7 @@ public class GlobalContext implements Serializable {
 	private final Object lockImportTemplate = new Object();
 
 	private final Object lockLoadContent = new Object();
-
+	
 	private class StorePropertyThread extends Thread {
 
 		private static final int SLEEP_BETWEEN_STORAGE = 10 * 1000; // 10 sec
@@ -147,6 +145,10 @@ public class GlobalContext implements Serializable {
 	private ServletContext application;
 
 	private URLTriggerThread changeNotificationThread;
+	
+	private Integer firstLoadVersion = null;
+	
+	private Integer latestUndoVersion = null;
 
 	/**
 	 * create a static logger.
@@ -2877,6 +2879,24 @@ public class GlobalContext implements Serializable {
 			save();
 		}
 
+	}
+	
+	public Integer getFirstLoadVersion() {
+		return firstLoadVersion;
+	}
+
+	public void setFirstLoadVersion(Integer firstLoadVersion) {
+		if (this.firstLoadVersion == null) {
+			this.firstLoadVersion = firstLoadVersion;
+		}
+	}
+
+	public Integer getLatestUndoVersion() {
+		return latestUndoVersion;
+	}
+
+	public void setLatestUndoVersion(Integer latestUndoVersion) {
+		this.latestUndoVersion = latestUndoVersion;
 	}
 
 }

@@ -62,8 +62,6 @@ import org.javlo.user.AdminUserSecurity;
 import org.javlo.utils.DebugListening;
 import org.javlo.utils.SuffixPrefix;
 
-import com.sun.org.apache.xpath.internal.operations.Equals;
-
 /**
  * This class is the first class for component. <h4>exposed variables :</h4>
  * <ul>
@@ -71,6 +69,7 @@ import com.sun.org.apache.xpath.internal.operations.Equals;
  * <li>{@link String} value : the raw value of the component. See
  * {@link #getValue()}</li>
  * <li>{@link String} type : the component type. See {@link #getType()}</li>
+ * <li>{@link String} layout : the layout of the component is css (can be null).</li>
  * <li>{@link String} style : the style selected for the component. See
  * {@link #getStyle(ContentContext)}</li>
  * </ul>
@@ -467,7 +466,7 @@ public abstract class AbstractVisualComponent implements IContentVisualComponent
 		PrintStream out = new PrintStream(outStream);
 
 		I18nAccess i18nAccess = I18nAccess.getInstance(ctx.getRequest());
-		
+
 		String repeatHidden = "";
 		boolean showRepeat = true;
 		if (ctx.getGlobalContext().getStaticConfig().isMailingPlatform()) {
@@ -479,7 +478,7 @@ public abstract class AbstractVisualComponent implements IContentVisualComponent
 		}
 
 		if (isRepeatable()) {
-			out.println("<div class=\"line"+repeatHidden+"\">");
+			out.println("<div class=\"line" + repeatHidden + "\">");
 			if (showRepeat) {
 				out.println("<label for=\"repeat-" + getId() + "\">" + i18nAccess.getText("content.repeat") + "</label>");
 			}
@@ -495,38 +494,44 @@ public abstract class AbstractVisualComponent implements IContentVisualComponent
 		}
 		if (getLayout() != null) {
 			ComponentLayout layout = getLayout();
-			out.println("<div class=\"line layout\">");			
-			out.println("<div class=\"line\">");
+			out.println("<div class=\"line layout\">");
 			out.println("<label>" + i18nAccess.getText("component.layout") + "</label>");
-			
-			String id = "layout-left-"+getId();			
+			String id = "layout-default-" + getId();
+			String name = "layout-align-" + getId();
 			out.println("<label for=\"" + id + "\">");
-			out.println(XHTMLHelper.getCheckbox(id, layout.isLeft()));
+			out.println(XHTMLHelper.getRadio(id, name, "default", !layout.isLeft() && !layout.isRight() && !layout.isCenter()));
+			out.println(i18nAccess.getText("global.default"));
+			out.println("</label>");
+			id = "layout-left-" + getId();
+			out.println("<label for=\"" + id + "\">");			
+			out.println(XHTMLHelper.getRadio(id, name, "left", layout.isLeft()));
 			out.println(i18nAccess.getText("component.layout.left"));
 			out.println("</label>");
-			id = "layout-right-"+getId();			
-			out.println("<label for=\"" + id + "\">");
-			out.println(XHTMLHelper.getCheckbox(id, layout.isRight()));
+			id = "layout-center-" + getId();
+			out.println("<label for=\"" + id + "\">");			
+			out.println(XHTMLHelper.getRadio(id, name, "center", layout.isCenter()));
+			out.println(i18nAccess.getText("component.layout.center"));
+			out.println("</label>");
+			id = "layout-right-" + getId();
+			out.println("<label for=\"" + id + "\">");			
+			out.println(XHTMLHelper.getRadio(id, name, "right", layout.isRight()));
 			out.println(i18nAccess.getText("component.layout.right"));
 			out.println("</label>");
-			
-			out.println("</div>");
-			
 			out.println("</div>");
 		}
 		if (getConfig(ctx).isChooseBackgoundColor()) {
 			out.println("<div class=\"line\">");
 			String bgColInputName = "bgcol-" + getId();
 			out.println("<label for=\"" + bgColInputName + "\">" + i18nAccess.getText("component.background-color") + "</label>");
-			out.println("<input id=\"" + bgColInputName + "\" name=\"" + bgColInputName + "\" class=\"color\" type=\"text\" value=\""+StringHelper.neverNull(getBackgroundColor())+"\" />");
+			out.println("<input id=\"" + bgColInputName + "\" name=\"" + bgColInputName + "\" class=\"color\" type=\"text\" value=\"" + StringHelper.neverNull(getBackgroundColor()) + "\" />");
 			out.println("</div>");
 		}
-		
+
 		if (getConfig(ctx).isChooseTextColor()) {
 			out.println("<div class=\"line\">");
 			String textColInputName = "textcol-" + getId();
 			out.println("<label for=\"" + textColInputName + "\">" + i18nAccess.getText("component.text-color") + "</label>");
-			out.println("<input id=\"" + textColInputName + "\" name=\"" + textColInputName + "\" class=\"color\" type=\"text\" value=\""+StringHelper.neverNull(getTextColor())+"\" />");
+			out.println("<input id=\"" + textColInputName + "\" name=\"" + textColInputName + "\" class=\"color\" type=\"text\" value=\"" + StringHelper.neverNull(getTextColor()) + "\" />");
 			out.println("</div>");
 		}
 
@@ -562,9 +567,9 @@ public abstract class AbstractVisualComponent implements IContentVisualComponent
 		out.close();
 		return new String(outStream.toByteArray());
 	}
-	
+
 	public boolean isConfig(ContentContext ctx) {
-		try {			
+		try {
 			return StringHelper.removeTag(getXHTMLConfig(ctx)).trim().length() > 0;
 		} catch (Exception e) {
 			e.printStackTrace();
@@ -589,19 +594,19 @@ public abstract class AbstractVisualComponent implements IContentVisualComponent
 			setModify();
 			setNeedRefresh(true);
 		}
-		
-		String bgCol = requestService.getParameter("bgcol-" + getId(), null);		
+
+		String bgCol = requestService.getParameter("bgcol-" + getId(), null);
 		if (bgCol != null && !bgCol.equals(getBackgroundColor())) {
-			try {				
-				Color.getColor(bgCol);				
+			try {
+				Color.getColor(bgCol);
 				setBackgroundColor(bgCol);
 				setModify();
 				setNeedRefresh(true);
 			} catch (Exception e) {
 				logger.warning(e.getLocalizedMessage());
-			}		
+			}
 		}
-		
+
 		String textCol = requestService.getParameter("textcol-" + getId(), null);
 		if (textCol != null && !textCol.equals(getTextColor())) {
 			try {
@@ -611,19 +616,19 @@ public abstract class AbstractVisualComponent implements IContentVisualComponent
 				setNeedRefresh(true);
 			} catch (Exception e) {
 				logger.warning(e.getLocalizedMessage());
-			}	
+			}
 		}
-		
+
 		if (getLayout() != null) {
-			ComponentLayout layout = new ComponentLayout("");			
-			layout.setLeft(StringHelper.isTrue(requestService.getParameter("layout-left-" + getId(), null)));
-			layout.setRight(StringHelper.isTrue(requestService.getParameter("layout-right-" + getId(), null)));
+			ComponentLayout layout = new ComponentLayout("");
+			layout.setLeft(requestService.getParameter("layout-align-" + getId(), "").equals("left"));
+			layout.setRight(requestService.getParameter("layout-align-" + getId(), "").equals("right"));
+			layout.setCenter(requestService.getParameter("layout-align-" + getId(), "").equals("center"));
 			if (!getLayout().getLayout().equals(layout.getLayout())) {
 				getComponentBean().setLayout(layout);
 				setModify();
 			}
 		}
-		
 
 		/** renderer **/
 		String renderer = requestService.getParameter(getInputNameRenderer(), null);
@@ -661,9 +666,12 @@ public abstract class AbstractVisualComponent implements IContentVisualComponent
 				setHiddenInMode(mode, !visible);
 			}
 		}
-		
+
 		if (isModify()) {
-			System.out.println("***** AbstractVisualComponent.performConfig : STORE CONFIG."); //TODO: remove debug trace
+			System.out.println("***** AbstractVisualComponent.performConfig : STORE CONFIG."); // TODO:
+																								// remove
+																								// debug
+																								// trace
 			PersistenceService.getInstance(ctx.getGlobalContext()).store(ctx);
 		}
 
@@ -877,25 +885,25 @@ public abstract class AbstractVisualComponent implements IContentVisualComponent
 		if (getPreviousComponent() == null || !getPreviousComponent().isList(ctx) || !getPreviousComponent().getType().equals(getType())) {
 			style = style + " first ";
 		}
-		
+
 		if (!componentBean.isList()) {
-			return "<" + getTag(ctx) + " " + getSpecialPreviewCssClass(ctx, style + getType()) + getSpecialPreviewCssId(ctx) + " "+getInlineStyle(ctx)+">";
+			return "<" + getTag(ctx) + " " + getSpecialPreviewCssClass(ctx, style + getType()) + getSpecialPreviewCssId(ctx) + " " + getInlineStyle(ctx) + ">";
 		} else {
 			return "<li" + getSpecialPreviewCssClass(ctx, style + getType()) + getSpecialPreviewCssId(ctx) + " >";
 		}
 	}
-	
+
 	protected String getInlineStyle(ContentContext ctx) {
 		String inlineStyle = "";
 		if (getBackgroundColor() != null && getBackgroundColor().length() > 2) {
-			inlineStyle = " background-color: "+getBackgroundColor()+';';
+			inlineStyle = " background-color: " + getBackgroundColor() + ';';
 		}
 		if (getTextColor() != null && getTextColor().length() > 2) {
-			inlineStyle = inlineStyle+" color: "+getTextColor()+';';
+			inlineStyle = inlineStyle + " color: " + getTextColor() + ';';
 		}
-		
-		if (inlineStyle.length()>0) {
-			inlineStyle = " style=\""+inlineStyle+"\"";
+
+		if (inlineStyle.length() > 0) {
+			inlineStyle = " style=\"" + inlineStyle + "\"";
 		}
 		return inlineStyle;
 	}
@@ -973,7 +981,7 @@ public abstract class AbstractVisualComponent implements IContentVisualComponent
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
-		
+
 		return renderer;
 	}
 
@@ -1085,7 +1093,7 @@ public abstract class AbstractVisualComponent implements IContentVisualComponent
 		String specificClass = "";
 		if (getSpecificClass(ctx) != null) {
 			specificClass = getSpecificClass(ctx) + ' ';
-		}		
+		}
 		if (ctx.getRenderMode() == ContentContext.PREVIEW_MODE) {
 			GlobalContext globalContext = GlobalContext.getInstance(ctx.getRequest());
 			EditContext editCtx = EditContext.getInstance(globalContext, ctx.getRequest().getSession());
@@ -1101,12 +1109,12 @@ public abstract class AbstractVisualComponent implements IContentVisualComponent
 						String type = i18nAccess.getText("content." + getType(), getType());
 						String hint = "<b>" + type + "</b><br />" + i18nAccess.getViewText("preview.hint", "click for edit or drag and drop to move.");
 						return " class=\"" + specificClass + classPrefix + "editable-component" + currentClass + "\" data-hint=\"" + hint + "\"";
-					} 
+					}
 				}
 			} catch (Exception e) {
 				e.printStackTrace();
 			}
-		}		
+		}
 		if (currentClass != null && currentClass.trim().length() > 0) {
 			return " class=\"" + specificClass + currentClass.trim() + "\"";
 		}
@@ -1145,7 +1153,7 @@ public abstract class AbstractVisualComponent implements IContentVisualComponent
 				if (getPage() != null && getPage().equals(ctx.getCurrentPage())) {
 					style = style + " first-repeat";
 				}
-				
+
 			} catch (Exception e) {
 				e.printStackTrace();
 			}
@@ -1156,7 +1164,7 @@ public abstract class AbstractVisualComponent implements IContentVisualComponent
 		return style.trim();
 	}
 
-	public boolean isColored() { 
+	public boolean isColored() {
 		return (getBackgroundColor() != null && getBackgroundColor().length() > 2) || (getTextColor() != null && getTextColor().length() > 2);
 	}
 
@@ -1263,11 +1271,11 @@ public abstract class AbstractVisualComponent implements IContentVisualComponent
 	public String getValue() {
 		return componentBean.getValue();
 	}
-	
+
 	public String getBackgroundColor() {
 		return componentBean.getBackgroundColor();
 	}
-	
+
 	public String getTextColor() {
 		return componentBean.getTextColor();
 	}
@@ -1440,7 +1448,7 @@ public abstract class AbstractVisualComponent implements IContentVisualComponent
 						}
 					}
 				}
-				if (ctx.getRenderMode() == ContentContext.VIEW_MODE && isContentCachable(ctx) && globalContext.isPreviewMode()) {					
+				if (ctx.getRenderMode() == ContentContext.VIEW_MODE && isContentCachable(ctx) && globalContext.isPreviewMode()) {
 					logger.fine("add content in cache for component " + getType() + " in page : " + ctx.getPath());
 					long beforeTime = System.currentTimeMillis();
 					String content;
@@ -1496,6 +1504,11 @@ public abstract class AbstractVisualComponent implements IContentVisualComponent
 		ctx.getRequest().setAttribute("value", getValue());
 		ctx.getRequest().setAttribute("type", getType());
 		ctx.getRequest().setAttribute("compid", getId());
+		if (getLayout() != null) {
+			ctx.getRequest().setAttribute("layout", getLayout().getStyle());
+		} else {
+			ctx.getRequest().removeAttribute("layout");
+		}
 		if (isValueProperties()) {
 			Properties p = new Properties();
 			p.load(new StringReader(getValue()));
@@ -1850,11 +1863,11 @@ public abstract class AbstractVisualComponent implements IContentVisualComponent
 	public void setList(boolean inList) {
 		componentBean.setList(inList);
 	}
-	
+
 	public void setBackgroundColor(String bgcol) {
 		componentBean.setBackgroundColor(bgcol);
 	}
-	
+
 	public void setTextColor(String textcol) {
 		componentBean.setTextColor(textcol);
 	}
@@ -2035,12 +2048,12 @@ public abstract class AbstractVisualComponent implements IContentVisualComponent
 			}
 		}
 	}
-	
+
 	@Override
 	public String getSpecialTagTitle(ContentContext ctx) throws Exception {
 		return null;
 	}
-	
+
 	@Override
 	public String getSpecialTagXHTML(ContentContext ctx) throws Exception {
 		return null;
@@ -2054,15 +2067,15 @@ public abstract class AbstractVisualComponent implements IContentVisualComponent
 	protected boolean isNeedRenderer() {
 		return false;
 	}
-	
+
 	@Override
 	public int compareTo(IContentVisualComponent comp) {
 		return getModificationDate().compareTo(comp.getModificationDate());
 	}
-	
+
 	@Override
 	public ComponentLayout getLayout() {
 		return componentBean.getLayout();
 	}
-	
+
 }

@@ -1202,6 +1202,25 @@ public class XHTMLHelper {
 		out.close();
 		return res.toString();
 	}
+	
+	public static String getRadio(String id, String field, String value, boolean checked) throws ResourceNotFoundException {
+
+		StringWriter res = new StringWriter();
+		PrintWriter out = new PrintWriter(res);
+
+		String addedTag = "";
+		if (checked) {
+			addedTag = addedTag + " checked=\"checked\" ";
+		}
+
+		out.print("<input id=\"" + id + "\" type=\"radio\" name=\"");
+		out.print(field);
+		out.print("\" value=\"" + value + "\"" + addedTag + "/>");
+
+		out.close();
+		return res.toString();
+	}
+
 
 	public static String getRadioInput(ContentContext ctx, FormComponent formComponent, String field, String choiceValue) {
 		return getRadioInput(ctx, formComponent, field, choiceValue, null);
