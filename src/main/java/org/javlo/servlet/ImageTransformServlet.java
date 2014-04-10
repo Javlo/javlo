@@ -705,12 +705,14 @@ public class ImageTransformServlet extends HttpServlet {
 
 					/*** TRANSFORM IMAGE ***/
 
-					if (staticConfig.getImageMaxWidth() > 0) {
+					int maxWidth = staticConfig.getImageMaxWidth();
+					if (maxWidth > 0) {
 						synchronized (LOCK_LARGE_TRANSFORM) {
 							if (!staticInfo.isResized(ctx)) {
+								logger.info("source image to large resize to "+maxWidth+" : "+imageFile);
 								BufferedImage image = ImageIO.read(imageFile);
-								if (image.getWidth() > staticConfig.getImageMaxWidth()) {
-									image = ImageEngine.resizeWidth(image, staticConfig.getImageMaxWidth());
+								if (image.getWidth() > maxWidth) {
+									image = ImageEngine.resizeWidth(image, maxWidth);
 									ImageIO.write(image, StringHelper.getFileExtension(imageFile.getName().toLowerCase()), imageFile);
 								}
 								staticInfo.setResized(ctx, true);
