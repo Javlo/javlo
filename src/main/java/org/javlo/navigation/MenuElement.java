@@ -78,7 +78,7 @@ import org.javlo.ztatic.StaticInfo;
 /**
  * @author pvanderm
  */
-public class MenuElement implements Serializable, Comparable<MenuElement> {
+public class MenuElement implements Serializable {
 
 	public static final String PAGE_TYPE_DEFAULT = "default";
 
@@ -4173,31 +4173,60 @@ public class MenuElement implements Serializable, Comparable<MenuElement> {
 		}
 	}
 
-	@Override
-	public int compareTo(MenuElement page) {
+	public boolean equals(ContentContext ctx, MenuElement page) {
+		if (page == null) {
+			return false;
+		}
 		try {
 			if (isVisible() != page.isVisible()) {
-				return 1;
+				return false;
 			}
 			if (!getName().equals(page.getName())) {
-				return 1;
+				return false;
 			}
-			ComponentBean[] comps = getContent();
-			ComponentBean[] pageComps = page.getContent();
-			if (comps.length != pageComps.length) {
-				return 1;
+			
+			List<IContentVisualComponent> localComponents = new LinkedList<IContentVisualComponent>();			
+			for (IContentVisualComponent comp : getContent(ctx).getIterable(ctx)) {
+				localComponents.add(comp);
 			}
-			for (int i=0; i<comps.length; i++) {
-				int ccomp = comps[i].compareTo(pageComps[i]);
-				if (ccomp != 0) {					
-					return ccomp;
+			List<IContentVisualComponent> pageComponents = new LinkedList<IContentVisualComponent>();
+			for (IContentVisualComponent comp : page.getContent(ctx).getIterable(ctx)) {
+				pageComponents.add(comp);
+			}
+			
+			if (localComponents.size() != pageComponents.size()) {
+				return false;
+			}
+			for (int i = 0; i < pageComponents.size(); i++) {
+				if (!localComponents.get(i).equals(pageComponents.get(i))) {
+					return false;
 				}
 			}
-			return 0;
+			return true;
 		} catch (Exception e) {
 			e.printStackTrace();
-			return 1;
+			return false;
 		}
+	}
+
+	public boolean equals(ContentContext ctx, MenuElement page, boolean withChildren) {
+		if (page == null) {
+			return false;
+		}
+		if ( !equals(ctx, page) || childMenuElements.size() != page.childMenuElements.size()) {
+			return false;
+		} else if (withChildren) {
+			for (int i = 0; i < childMenuElements.size(); i++) {
+				if (!childMenuElements.get(i).equals(ctx, page.childMenuElements.get(i), true)) {
+					return false;
+				}
+			}
+		}
+		return true;
+	}
+	
+	public void copyChildren(MenuElement page) {
+		childMenuElements = page.childMenuElements;		
 	}
 
 }

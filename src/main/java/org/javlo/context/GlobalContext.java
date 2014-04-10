@@ -65,6 +65,7 @@ import org.javlo.navigation.IURLFactory;
 import org.javlo.navigation.MenuElement;
 import org.javlo.navigation.URLTriggerThread;
 import org.javlo.service.ContentService;
+import org.javlo.service.PersistenceService;
 import org.javlo.service.RequestService;
 import org.javlo.service.ReverseLinkService;
 import org.javlo.service.exception.ServiceException;
@@ -2882,13 +2883,17 @@ public class GlobalContext implements Serializable {
 	}
 	
 	public Integer getFirstLoadVersion() {
+		if (firstLoadVersion == null) {			
+			try {
+				int version = PersistenceService.getInstance(this).getVersion();
+				if (version >= 0) { 
+					firstLoadVersion = version;
+				}				
+			} catch (ServiceException e) {
+				e.printStackTrace();
+			}
+		}		
 		return firstLoadVersion;
-	}
-
-	public void setFirstLoadVersion(Integer firstLoadVersion) {
-		if (this.firstLoadVersion == null) {
-			this.firstLoadVersion = firstLoadVersion;
-		}
 	}
 
 	public Integer getLatestUndoVersion() {

@@ -16,10 +16,58 @@ import org.javlo.context.ContentContext;
 import org.javlo.navigation.MenuElement;
 import org.javlo.service.ContentService;
 
+import sun.reflect.generics.reflectiveObjects.NotImplementedException;
+
 /**
  * @author pvanderm
  */
 public class ContentElementList implements IContentComponentsList {
+	
+	private class ContentElementListIterator implements Iterator<IContentVisualComponent> {
+		
+		private ContentContext ctx;
+		private ContentElementList contentElementList;
+		
+		public ContentElementListIterator(ContentContext ctx, ContentElementList contentElementList) {
+			super();
+			this.ctx = ctx;
+			this.contentElementList = contentElementList;
+		}
+
+		@Override
+		public boolean hasNext() {
+			return contentElementList.hasNext(ctx);
+		}
+
+		@Override
+		public IContentVisualComponent next() {
+			return contentElementList.next(ctx);
+		}
+
+		@Override
+		public void remove() {
+			throw new NotImplementedException();
+		}
+		
+	}
+	
+	private class ContentElementListIterable implements Iterable<IContentVisualComponent> {
+		
+		private ContentContext ctx;
+		private ContentElementList contentElementList;
+
+		public ContentElementListIterable(ContentContext ctx, ContentElementList contentElementList) {
+			super();
+			this.ctx = ctx;
+			this.contentElementList = contentElementList;
+		}
+
+		@Override
+		public Iterator iterator() { 
+			return new ContentElementListIterator(ctx,contentElementList);
+		}
+		
+	}
 
 	private final Set<String> addedElementId = new HashSet<String>();
 
@@ -484,6 +532,10 @@ public class ContentElementList implements IContentComponentsList {
 		}
 
 		return outSize;
+	}
+	
+	public Iterable<IContentVisualComponent> getIterable(ContentContext ctx) {
+		return new ContentElementListIterable(ctx,this);
 	}
 
 }

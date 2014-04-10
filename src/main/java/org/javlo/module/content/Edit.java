@@ -867,7 +867,8 @@ public class Edit extends AbstractModuleAction {
 		if (adminUserFactory.getCurrentUser(ctx.getRequest().getSession()) != null) {
 			content.setAttribute(ctx, "user.update", adminUserFactory.getCurrentUser(ctx.getRequest().getSession()).getLogin());
 		}
-		PersistenceService.getInstance(globalContext).store(ctx);
+		//PersistenceService.getInstance(globalContext).store(ctx);
+		PersistenceService.getInstance(globalContext).setAskStore(true);
 
 		if (message == null) {
 			//NavigationService navigationService = NavigationService.getInstance(globalContext);			

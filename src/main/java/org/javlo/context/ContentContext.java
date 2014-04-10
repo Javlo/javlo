@@ -1675,7 +1675,7 @@ public class ContentContext {
 	}
 	
 	public boolean isCanUndo() throws ServiceException {
-		if (!getGlobalContext().getStaticConfig().isUndo()) {
+		if (!getGlobalContext().getStaticConfig().isUndo() || getGlobalContext().getFirstLoadVersion() == null) {
 			return false;
 		}
 		PersistenceService persistenceService = PersistenceService.getInstance(getGlobalContext());

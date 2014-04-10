@@ -4,7 +4,6 @@ import java.net.MalformedURLException;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import javax.servlet.http.HttpSession;
 
 public class FakeHttpContext {
 	
@@ -15,12 +14,22 @@ public class FakeHttpContext {
 		init();
 	}
 	
-	public static FakeHttpContext getInstance() throws MalformedURLException {
-		return new FakeHttpContext();
+	public static FakeHttpContext getInstance() {
+		try {
+			return new FakeHttpContext();
+		} catch (MalformedURLException e) {
+			e.printStackTrace();
+			return null;
+		}
 	}
 
-	public TestRequest getRequest(String url) throws MalformedURLException {
-		return new TestRequest(session, url);
+	public TestRequest getRequest(String url) {
+		try {
+			return new TestRequest(session, url);
+		} catch (MalformedURLException e) {		
+			e.printStackTrace();
+			return null;
+		}
 	}
 
 	public HttpServletResponse getResponse() {

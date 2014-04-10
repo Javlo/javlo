@@ -33,32 +33,44 @@ public class TimeTravelerActions implements IAction {
 	public String getActionGroupName() {
 		return "time";
 	}
-	
+
 	public synchronized static String performUndoRedo(RequestService rs, ContentContext ctx, GlobalContext globalContext, MessageRepository messageRepository, I18nAccess i18nAccess) throws Exception {
-		boolean previous = rs.getParameter("previous",null) != null;
+		boolean previous = rs.getParameter("previous", null) != null;
 		PersistenceService pers = PersistenceService.getInstance(globalContext);
-		
-		final String NOT_FOUND_MSG = "undo could not be done.";
-		
+
+		final String NOT_FOUND_MSG = i18nAccess.getText("message.error.no-undo");
+
 		if (previous) {
 			if (!ctx.isCanUndo()) {
 				return NOT_FOUND_MSG;
+			}			
+			int previousVersion = pers.getVersion() - 1;
+			
+			int previousUndoVersionMin = 0;			
+			if (globalContext.getLatestUndoVersion() != null) {
+				previousUndoVersionMin = globalContext.getLatestUndoVersion();
+			} else if (globalContext.getFirstLoadVersion() != null) {
+				previousUndoVersionMin = globalContext.getFirstLoadVersion();
 			}
-			int previousVersion = pers.getVersion()-1;
+			
+			
 			MenuElement previousNav = pers.loadPreview(ctx, previousVersion);
 			MenuElement currentPageHistory = previousNav.searchChildFromId(ctx.getCurrentPage().getId());
-			while (ctx.getCurrentPage().compareTo(currentPageHistory) == 0 && pers.isPreviewVersion(previousVersion-1)) {				
-				previousVersion = previousVersion-1;
+			while (ctx.getCurrentPage().equals(ctx, currentPageHistory, ctx.getCurrentPage().isChildrenAssociation()) && pers.isPreviewVersion(previousVersion - 1) && previousVersion-1>previousUndoVersionMin) {
+				previousVersion = previousVersion - 1;
 				previousNav = pers.loadPreview(ctx, previousVersion);
 				currentPageHistory = previousNav.searchChildFromId(ctx.getCurrentPage().getId());
 			}
-			if  (pers.isPreviewVersion(previousVersion)) {
+			if (previousUndoVersionMin >= previousVersion) {
+				return NOT_FOUND_MSG;
+			}
+			if (pers.isPreviewVersion(previousVersion)) {
+				int version = pers.getVersion();
 				globalContext.setLatestUndoVersion(pers.getVersion());
 				replaceCurrentPage(ctx, currentPageHistory, ctx.getCurrentPage().isChildrenAssociation());
-				//String msg = i18nAccess.getText("time.message.error.page-deleted");
-				String msg = "new version loading : " + previousVersion + " (from:" + pers.getVersion() + ')';
-				MessageRepository.getInstance(ctx).setGlobalMessage(new GenericMessage(msg, GenericMessage.SUCCESS));
-				
+				String msg = "new version loading : " + previousVersion + " (from:" + version + ')';
+				logger.info(msg);
+				MessageRepository.getInstance(ctx).setGlobalMessage(new GenericMessage(i18nAccess.getText("message.info.undo"), GenericMessage.SUCCESS));
 				return null;
 			} else {
 				return NOT_FOUND_MSG;
@@ -144,38 +156,42 @@ public class TimeTravelerActions implements IAction {
 
 		return null;
 	}
-	
+
 	public static String replaceCurrentPage(ContentContext ctx, MenuElement newPage, boolean withChildren) throws Exception {
-		
-		MenuElement page = ctx.getCurrentPage();		
+
+		MenuElement page = ctx.getCurrentPage();
 
 		if (page != null) {
 			// Switch parent (Experimental!!)
 			MenuElement parent = page.getParent();
 			parent.removeChild(page);
-			
+
 			newPage.setParent(parent);
 			newPage.setId(page.getId());
 			newPage.setPriority(page.getPriority());
 			newPage.setParent(null);
-			
+
+			if (!withChildren) {
+				newPage.copyChildren(page);
+			}
+
 			parent.addChildMenuElement(newPage);
 			parent.clearPageBean(ctx);
-
+			ctx.setCurrentPageCached(newPage);
 		} else {
 			I18nAccess i18nAccess = I18nAccess.getInstance(ctx.getRequest());
 			String msg = i18nAccess.getText("time.message.error.page-deleted");
 			MessageRepository.getInstance(ctx).setGlobalMessage(new GenericMessage(msg, GenericMessage.ERROR));
 		}
 
-		PersistenceService persistenceService = PersistenceService.getInstance(ctx.getGlobalContext());				
+		PersistenceService persistenceService = PersistenceService.getInstance(ctx.getGlobalContext());
 		persistenceService.store(ctx);
 
 		ContentService content = ContentService.getInstance(ctx.getRequest());
 		content.releasePreviewNav(ctx);
 
 		return null;
-		
+
 	}
 
 	public static String performReplaceCurrentPageAndChildren(HttpServletRequest request, HttpServletResponse response) throws Exception {
@@ -194,9 +210,9 @@ public class TimeTravelerActions implements IAction {
 			editCurrentPage = editCurrentPage.searchChild(editCtx, timeCurrentPage.getPath());
 		}
 
-//		// Recreate object for other users
-//		content.releaseTimeTravelerNav(timeCtx);
-//		content.releasePreviewNav(editCtx);
+		// // Recreate object for other users
+		// content.releaseTimeTravelerNav(timeCtx);
+		// content.releasePreviewNav(editCtx);
 
 		if (editCurrentPage != null) {
 			// Switch parent (Experimental!!)
