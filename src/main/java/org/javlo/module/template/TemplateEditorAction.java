@@ -205,14 +205,14 @@ public class TemplateEditorAction extends AbstractModuleAction {
 	public static String performCreateArea(RequestService rs, ContentContext ctx, MessageRepository messageRepository, I18nAccess i18nAccess) throws IOException {
 		TemplateEditorContext editorContext = TemplateEditorContext.getInstance(ctx.getRequest().getSession());
 		editorContext.getCurrentTemplate().addArea(editorContext.getArea().getRow().getName());
-		editorContext.getCurrentTemplate().importTemplateInWebapp(ctx.getGlobalContext().getStaticConfig(), ctx);
+		editorContext.getCurrentTemplate().clearRenderer(ctx);
 		return null;
 	}
 
 	public static String performCreateRow(RequestService rs, ContentContext ctx, MessageRepository messageRepository, I18nAccess i18nAccess) throws IOException {
 		TemplateEditorContext editorContext = TemplateEditorContext.getInstance(ctx.getRequest().getSession());
 		editorContext.getCurrentTemplate().addRow();
-		editorContext.getCurrentTemplate().importTemplateInWebapp(ctx.getGlobalContext().getStaticConfig(), ctx);
+		editorContext.getCurrentTemplate().clearRenderer(ctx);
 		return null;
 	}
 
@@ -242,10 +242,12 @@ public class TemplateEditorAction extends AbstractModuleAction {
 			List<Row> rows = new LinkedList<Row>();
 			rows.add(row);
 			newTemplate.storeRows(rows);
+			TemplateFactory.clearTemplate(application);
 			Template template = TemplateFactory.getTemplates(application).get(newTemplate.getName());
 			TemplateEditorContext editorContext = TemplateEditorContext.getInstance(ctx.getRequest().getSession());
 			editorContext.setCurrentTemplate(template);
-			newTemplate.importTemplateInWebapp(staticConfig, ctx);
+			template.importTemplateInWebapp(staticConfig, ctx);
+			
 		}
 		return null;
 	}
