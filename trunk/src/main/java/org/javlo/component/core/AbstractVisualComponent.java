@@ -2077,5 +2077,10 @@ public abstract class AbstractVisualComponent implements IContentVisualComponent
 	public ComponentLayout getLayout() {
 		return componentBean.getLayout();
 	}
+	
+	@Override
+	public boolean equals(ContentContext ctx, IContentVisualComponent comp) {		
+		return getComponentBean().compareTo(componentBean) == 0;
+	}
 
 }

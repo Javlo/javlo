@@ -64,6 +64,24 @@ public class User implements Principal, Serializable {
 	public Set<String> getRoles() {
 		return roles;
 	}
+	
+	/**
+	 * check if user can work with this roles.
+	 * admin return always true.
+	 * @param roles
+	 * @return
+	 */
+	public boolean validForRoles(String... roles) {
+		if (AdminUserSecurity.getInstance().isAdmin(this)) {
+			return true;
+		}
+		Set<String> workingRoles = new HashSet<String>();
+		for (String role : roles) {
+			workingRoles.add(role);	
+		}		
+		workingRoles.retainAll(getRoles());
+		return workingRoles.size() > 0;
+	}
 
 	public boolean validForRoles(Set<String> rolesSet) {
 		if (AdminUserSecurity.getInstance().isAdmin(this)) {

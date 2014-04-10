@@ -48,6 +48,8 @@ import org.javlo.service.RequestService;
 import org.javlo.template.Template;
 import org.javlo.template.TemplateFactory;
 import org.javlo.user.AdminUserFactory;
+import org.javlo.user.AdminUserSecurity;
+import org.javlo.user.User;
 
 /**
  * standard image component. <h4>exposed variable :</h4>
@@ -179,7 +181,7 @@ public class GlobalImage extends Image implements IImageFilter {
 	}
 
 	@Override
-	public void prepareView(ContentContext ctx) throws Exception {		
+	public void prepareView(ContentContext ctx) throws Exception {
 		ctx.setCurrentTemplate(null); // reset template
 		super.prepareView(ctx);
 		String imageURL = getImageURL(ctx);
@@ -716,11 +718,11 @@ public class GlobalImage extends Image implements IImageFilter {
 		setSecondText(requestService.getParameter(getSecondTextInputName(), ""));
 
 		String label = requestService.getParameter(getLabelXHTMLInputName(), "");
-		String textLabel = requestService.getParameter(getLabelTextInputName(), "");
+		String textLabel = requestService.getParameter(getLabelTextInputName(), null);
 		if (!label.equals(getLabel())) {
 			setFirstText(null);
 			setSecondText(null);
-		} else if (!textLabel.equals(getLabel())) {
+		} else if (textLabel != null && !textLabel.equals(getLabel())) {
 			setLabel(textLabel);
 			requestService.setParameter(getLabelXHTMLInputName(), getLabel());
 			setFirstText(null);
@@ -959,15 +961,16 @@ public class GlobalImage extends Image implements IImageFilter {
 		return "global-image";
 	}
 
-	public static String performDataFeedBack(ContentContext ctx, EditContext editContext, GlobalContext globalContext, ContentService content, ComponentContext componentContext, RequestService rs, I18nAccess i18nAccess, MessageRepository messageRepository, Module currentModule, AdminUserFactory adminUserFactory) throws Exception {
+	public static String performDataFeedBack(ContentContext ctx, EditContext editContext, GlobalContext globalContext, User currentUser, ContentService content, ComponentContext componentContext, RequestService rs, I18nAccess i18nAccess, MessageRepository messageRepository, Module currentModule, AdminUserFactory adminUserFactory) throws Exception {
+
 		GlobalImage image = (GlobalImage) ComponentHelper.getComponentFromRequest(ctx);
-		if (image.getConfig(ctx).isDataFeedBack()) {			
-			logger.info("exec data feed back (template:"+ctx.getCurrentTemplate().getName()+").");
+		if (image.getConfig(ctx).isDataFeedBack() && currentUser != null && currentUser.validForRoles(AdminUserSecurity.CONTENT_ROLE)) {
+			logger.info("exec data feed back (template:" + ctx.getCurrentTemplate().getName() + ").");
 			String firstText = rs.getParameter("first-text", null);
 			String secondText = rs.getParameter("second-text", null);
 			String height = rs.getParameter("height", null);
 			String width = rs.getParameter("width", null);
-			
+
 			if (firstText != null && !firstText.equals(image.getFirstText())) {
 				image.setModify();
 				image.setFirstText(firstText);
@@ -976,20 +979,28 @@ public class GlobalImage extends Image implements IImageFilter {
 				image.setModify();
 				image.setSecondText(secondText);
 			}
-			if (height != null && !height.equals(image.getHeight())) {
-				image.setModify();
-				image.setHeight(Integer.parseInt(height));
-			}			
-			if (width != null && !width.equals(image.getWidth())) {				
-				image.setModify();
-				image.setWidth(Integer.parseInt(width));
-			} 
+			if (height != null) {
+				int intHeight = Integer.parseInt(height);
+				if (intHeight != image.getHeight()) {
+					image.setModify();
+					image.setHeight(intHeight);
+				}
+			}
+			if (width != null) {
+				int inWidth = Integer.parseInt(width);
+				if (inWidth != image.getWidth()) {
+					image.setModify();
+					image.setWidth(inWidth);
+				}
+			}
 			if (image.isModify()) {
+				System.out.println("");
 				image.storeProperties();
 				Edit.performSave(ctx, editContext, globalContext, content, componentContext, rs, i18nAccess, messageRepository, currentModule, adminUserFactory);
+
 			}
 		} else {
-			logger.info("stop data feed back (template:"+ctx.getCurrentTemplate().getName()+").");
+			logger.info("stop data feed back (template:" + ctx.getCurrentTemplate().getName() + ").");
 		}
 		return null;
 	}
@@ -1102,7 +1113,7 @@ public class GlobalImage extends Image implements IImageFilter {
 	}
 
 	@Override
-	public BufferedImage filterImage(BufferedImage image) {		
+	public BufferedImage filterImage(BufferedImage image) {
 		reloadProperties();
 		return ImageEngine.resizeWidth(image, getWidth());
 	}

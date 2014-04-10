@@ -60,6 +60,7 @@ import org.javlo.rendering.Device;
 import org.javlo.service.ContentService;
 import org.javlo.service.ListService;
 import org.javlo.service.PDFConvertion;
+import org.javlo.service.PersistenceService;
 import org.javlo.service.RequestService;
 import org.javlo.service.remote.RemoteMessage;
 import org.javlo.service.remote.RemoteMessageService;
@@ -794,6 +795,11 @@ public class AccessServlet extends HttpServlet implements IVersion {
 				out.write("</div>");
 
 				DebugListening.getInstance().sendError(request, t, "path=" + request.getRequestURI());
+			} finally {
+				PersistenceService persistenceService = PersistenceService.getInstance(globalContext);
+				if (persistenceService.isAskStore()) {					
+					persistenceService.store(ctx);
+				}
 			}
 		} catch (Exception ioe) {
 			ioe.printStackTrace();

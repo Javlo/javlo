@@ -265,6 +265,8 @@ public class PersistenceService {
 
 	private PersistenceThread persThread = null;
 
+	private boolean askStore;
+
 	private static final Object LOCK_LOAD = new Object();
 
 	public boolean canRedo() {
@@ -1261,6 +1263,20 @@ public class PersistenceService {
 			e.printStackTrace();
 		}
 	}
+	
+	/**
+	 * ask storage of data at the end of request
+	 * @param askStore
+	 */
+	public synchronized void setAskStore(boolean askStore) {
+		this.askStore = askStore;
+	}
+	
+	public synchronized boolean isAskStore() {
+		return askStore;
+	}
+	
+	
 
 	public void store(ContentContext ctx) throws Exception {
 		store(ctx.getContextWithOtherRenderMode(ContentContext.PREVIEW_MODE), ContentContext.PREVIEW_MODE);
@@ -1269,6 +1285,7 @@ public class PersistenceService {
 	public synchronized void store(ContentContext ctx, int renderMode) throws Exception {
 		
 		waitThread();
+		setAskStore(false);
 
 		synchronized (ctx.getGlobalContext().getLockLoadContent()) {
 
@@ -1288,8 +1305,7 @@ public class PersistenceService {
 			persThread.setGlobalContentMap(content.getGlobalMap(ctx));
 
 			GlobalContext globalContext = GlobalContext.getInstance(ctx.getRequest());
-			persThread.setDataFolder(globalContext.getDataFolder());
-			globalContext.setFirstLoadVersion(getVersion());
+			persThread.setDataFolder(globalContext.getDataFolder());			
 
 			StaticConfig staticConfig = StaticConfig.getInstance(ctx.getRequest().getSession().getServletContext());
 			if (StaticInfo._STATIC_INFO_DIR != null) {

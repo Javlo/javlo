@@ -727,5 +727,13 @@ public interface IContentVisualComponent extends Comparable<IContentVisualCompon
 	 * @return
 	 */
 	public ComponentLayout getLayout();
+	
+	/**
+	 * check of component is considered as the same than an other.
+	 * @param ctx
+	 * @param comp
+	 * @return
+	 */
+	public boolean equals(ContentContext ctx, IContentVisualComponent comp);
 
 }
