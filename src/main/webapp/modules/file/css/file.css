@@ -48,3 +48,9 @@
 .form-list .title span.size {
 	padding: 6px 0 6px 6px;
 }
+
+.widgetbox2 .content #form-meta label {
+	/* Override box style to make it compatible with meta list*/
+	float: none;
+	margin-right: 0;
+}

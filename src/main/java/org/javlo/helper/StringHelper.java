@@ -48,13 +48,10 @@ import org.apache.commons.codec.binary.Base64;
 import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.lang.RandomStringUtils;
 import org.apache.commons.lang.StringUtils;
-import org.codehaus.plexus.util.StringInputStream;
 import org.javlo.context.ContentContext;
 import org.javlo.context.GlobalContext;
 import org.javlo.helper.Comparator.StringComparator;
 import org.javlo.i18n.I18nAccess;
-import org.javlo.xml.NodeXML;
-import org.javlo.xml.XMLFactory;
 import org.jsoup.Jsoup;
 
 import com.beust.jcommander.ParameterException;
@@ -2018,6 +2015,13 @@ public class StringHelper {
 	public static Long safeParseLong(String string, Long defaultValue) {
 		try {
 			return Long.parseLong(string);
+		} catch (Throwable e) {
+			return defaultValue;
+		}
+	}
+	public static Integer safeParseInt(String string, Integer defaultValue) {
+		try {
+			return Integer.parseInt(string);
 		} catch (Throwable e) {
 			return defaultValue;
 		}
