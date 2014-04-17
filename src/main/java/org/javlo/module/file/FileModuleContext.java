@@ -23,6 +23,7 @@ public class FileModuleContext extends AbstractModuleContext {
 	private String root;
 	private String title;
 	private String path = "/";
+	private int sort = 1;
 
 	public static final String PAGE_META = "meta";
 
@@ -85,6 +86,14 @@ public class FileModuleContext extends AbstractModuleContext {
 	@Override
 	public LinkToRenderer getHomeLink() {
 		return new LinkToRenderer(i18nAccess.getText("file.navigation.explorer"), "explorer", "/jsp/file.jsp", LangHelper.obj(new LangHelper.MapEntry("path", URLHelper.mergePath("/", getPath()))));
+	}
+
+	public int getSort() {
+		return sort;
+	}
+
+	public void setSort(int sort) {
+		this.sort = sort;
 	}
 
 }

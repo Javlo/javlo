@@ -243,3 +243,9 @@ change log
  * undo on current page (by default unactive, active with static-config.properties) !alpha version
  
  * component layout (on title and subtile, only left, right and center)
+ 
+ * persistence synchronisation, load wait save thread
+ 
+ * change image resize method   
+ 
+ * static file sorting

@@ -655,7 +655,7 @@ ul,li {
 	display: inline-block;
 }
 
-#tools .action-button {
+#tools .action-button, #tools .action-field {
 	float: right;
 }
 

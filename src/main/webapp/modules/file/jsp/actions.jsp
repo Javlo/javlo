@@ -25,8 +25,17 @@
 <a class="action-button ajax" href="${info.currentURL}?webaction=template.commitChildren&webaction=browse&templateid=${param.templateid}&from-module=template"><span>${i18n.edit['template.action.commit-children']}</span></a>
 </c:if>
 
+<form id="form-sorted" action="${info.currentURL}" method="get" class="js-submit">
+<input type="hidden" name="webaction" value="file.order" />
+<select class="action-field" name="order">
+	<option value="1"${sort == '1'?' selected="selected"':''}>${i18n.edit['action.sort.date']}</option>
+	<option value="2"${sort == '2'?' selected="selected"':''}>${i18n.edit['action.sort.name']}</option>	
+	<option value="3"${sort == '3'?' selected="selected"':''}>${i18n.edit['action.sort.title']}</option>		
+</select>
+</form>
+
 <c:if test="${empty param.templateid}">
-<input class="action-button" type="text" name="filter" placeholder="${i18n.edit['global.filter']}" onkeyup="filter(this.value, '#form-meta li');"/>
+<input class="action-field" type="text" name="filter" placeholder="${i18n.edit['global.filter']}" onkeyup="filter(this.value, '#form-meta li');"/>
 <c:if test="${empty param.select}">
 <input type="text" id="allTitle" name="all-title" placeholder="${i18n.edit['action.change-all-title']}" onkeyup="jQuery('.file-title').each(function(){var t = jQuery(this);if (t.val().length == 0 || t.data('empty') == true) {t.data('empty',true);t.val(jQuery('#allTitle').val())}});"/>
 <input type="text" id="allDescription" name="all-descritpion" placeholder="${i18n.edit['action.change-all-description']}" onkeyup="jQuery('.file-description').each(function(){var t = jQuery(this);if (t.val().length == 0 || t.data('empty') == true) {t.data('empty',true);t.val(jQuery('#allDescription').val())}});"/>
