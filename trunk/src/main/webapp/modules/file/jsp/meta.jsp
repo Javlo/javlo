@@ -4,7 +4,7 @@
 
 <form id="form-meta" action="${info.currentURL}" method="post">
 
-<input type="hidden" name="webaction" value="updateMeta" />
+<input type="hidden" name="webaction" value="file.updateMeta" />
 <c:if test="${not empty param.select}">
 	<input type="hidden" name="select" value="${param.select}" />	
 </c:if>

@@ -1,6 +1,7 @@
 package org.javlo.data;
 
 import java.io.File;
+import java.text.DateFormatSymbols;
 import java.util.Calendar;
 import java.util.Collection;
 import java.util.Collections;
@@ -8,6 +9,7 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 
 import javax.servlet.http.HttpServletRequest;
@@ -662,8 +664,13 @@ public class InfoBean {
 		return Calendar.getInstance().get(Calendar.DAY_OF_MONTH);
 	}
 
-	public int getCurrentMount() {
+	public int getCurrentMonth() {
 		return Calendar.getInstance().get(Calendar.MONTH);
+	}
+
+	public String[] getMonths() {
+		String language = globalContext.getEditLanguage(ctx.getRequest().getSession());
+		return DateFormatSymbols.getInstance(new Locale(language)).getMonths();
 	}
 
 	public static void main(String[] args) {
