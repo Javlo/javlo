@@ -8,6 +8,9 @@
 <c:if test="${not empty param.select}">
 	<input type="hidden" name="select" value="${param.select}" />	
 </c:if>
+<c:if test="${not empty param.close}">
+	<input type="hidden" name="close" value="${param.close}" />
+</c:if>
 <c:if test="${not empty param[BACK_PARAM_NAME]}"><input type="hidden" name="${BACK_PARAM_NAME}" value="${param[BACK_PARAM_NAME]}" /></c:if>
 
 <ul>

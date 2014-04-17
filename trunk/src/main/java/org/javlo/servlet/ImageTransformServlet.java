@@ -219,7 +219,7 @@ public class ImageTransformServlet extends HttpServlet {
 		logger.info("image not found in cache (generate it) : " + imageFile);
 		// org.javlo.helper.Logger.stepCount("transform", "start - LOCK");
 		/** only one servlet */
-
+ 
 		// org.javlo.helper.Logger.stepCount("transform",
 		// "start - transformation");
 
@@ -432,7 +432,9 @@ public class ImageTransformServlet extends HttpServlet {
 				logger.info("write image : " + fileExtension + " width: " + img.getWidth() + " height: " + img.getHeight());
 
 				if (comp != null && StringHelper.trimAndNullify(comp.getImageFilterKey()) != null) {
+					System.out.println("***** ImageTransformServlet.imageTransform : start filter"); //TODO: remove debug trace
 					img = ((IImageFilter) comp).filterImage(img);
+					System.out.println("***** ImageTransformServlet.imageTransform : end filter"); //TODO: remove debug trace
 				}
 				if (!"png".equals(fileExtension) && !"gif".equals(fileExtension)) {
 					img = ImageEngine.removeAlpha(img);

@@ -43,6 +43,7 @@ import org.javlo.module.core.ModuleException;
 import org.javlo.module.core.ModulesContext;
 import org.javlo.service.PersistenceService;
 import org.javlo.service.RequestService;
+import org.javlo.service.resource.ResourceStatus;
 import org.javlo.user.AdminUserFactory;
 import org.javlo.user.AdminUserSecurity;
 import org.javlo.user.User;
@@ -422,7 +423,7 @@ public class FileAction extends AbstractModuleAction {
 		}
 	}
 
-	public String performUpdateMeta(RequestService rs, ContentContext ctx, GlobalContext globalContext, FileModuleContext fileModuleContext, I18nAccess i18nAccess, MessageRepository messageRepository) throws Exception {
+	public String performUpdateMeta(RequestService rs, ContentContext ctx, EditContext editContext, GlobalContext globalContext, FileModuleContext fileModuleContext, I18nAccess i18nAccess, MessageRepository messageRepository) throws Exception {
 		File folder = getFolder(ctx);
 		if (folder.exists()) {
 			for (File file : folder.listFiles()) {
@@ -442,7 +443,9 @@ public class FileAction extends AbstractModuleAction {
 					staticInfo.setLocation(ctx, location);
 				}
 				boolean shared = rs.getParameter("shared-" + fileBean.getId(), null) != null;
-				staticInfo.setShared(ctx, shared);
+				if (title != null) {
+					staticInfo.setShared(ctx, shared);
+				}
 
 				String date = rs.getParameter("date-" + fileBean.getId(), null);
 				if (date != null) {
@@ -469,6 +472,10 @@ public class FileAction extends AbstractModuleAction {
 					} else {
 						staticInfo.removeTag(ctx, tag);
 					}
+				}
+				
+				if (editContext.isEditPreview() && StringHelper.isTrue(rs.getParameter("close", null))) {
+					ctx.setClosePopup(true);
 				}
 			}
 			PersistenceService.getInstance(globalContext).store(ctx);

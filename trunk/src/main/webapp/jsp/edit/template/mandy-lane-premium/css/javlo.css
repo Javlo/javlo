@@ -4,6 +4,22 @@
 	overflow: hidden;
 }
 
+.closer .one_half, .closer .one_third, .closer .two_third, .closer .three_fourth, .closer .one_fourth, .closer .one_fifth, .closer .two_fifth, .closer .three_fifth, .closer .four_fifth, .closer .one_sixth, .closer .five_sixth {
+    margin-right: 2%;
+}
+
+.closer .one_half, .closer .one_third, .closer .two_third, .closer .three_fourth, .closer .one_fourth, .closer .one_fifth, .closer .two_fifth, .closer .three_fifth, .closer .four_fifth, .closer .one_sixth, .closer .five_sixth {
+    margin-right: 2%;
+}
+
+.closer .one_third {
+    width: 30.66%;
+}
+
+.closer .two_third {
+    width: 66.33%;
+}
+
 input, textarea, select {	
 	box-shadow: 1px 1px 3px #CCCCCC inset;
 }
@@ -1221,7 +1237,7 @@ body.previewEdit {
 /*** list ****/
 
 .form-list ul {
-	margin: 0;
+	margin: 0 -10px 0 0;
 	padding: 0;
 }
 
