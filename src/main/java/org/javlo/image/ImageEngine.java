@@ -95,18 +95,24 @@ public class ImageEngine {
 		return scale(bi,width,height);
 	}
 	
-	public static BufferedImage scale(BufferedImage img, Integer targetWidth, Integer targetHeight) {
-		
-		if (targetWidth == null && targetHeight == null) {
+	public static BufferedImage scale(BufferedImage img, Integer inTargetWidth, Integer inTargetHeight) {
+				
+		if (inTargetWidth == null && inTargetHeight == null) {
 			return img;			
 		}
 		
-		if (targetWidth == null) {
-			targetWidth = (img.getWidth()*targetHeight)/img.getHeight();
+		int targetWidth;
+		if (inTargetWidth == null) {
+			targetWidth = (img.getWidth()*inTargetHeight)/img.getHeight();
+		} else {
+			targetWidth = inTargetWidth;
 		}
 		
-		if (targetHeight == null) {
+		int targetHeight;
+		if (inTargetHeight == null) {
 			targetHeight = (img.getHeight()*targetWidth)/img.getWidth();
+		} else {
+			targetHeight = inTargetHeight;
 		}
 
 	    int type = (img.getTransparency() == Transparency.OPAQUE) ? BufferedImage.TYPE_INT_RGB : BufferedImage.TYPE_INT_ARGB;
@@ -122,14 +128,14 @@ public class ImageEngine {
 
 	    do {
 	        if (w > targetWidth) {
-	            w /= 2;
-	            w = (w < targetWidth) ? targetWidth : w;
+	            w /= 2;	            
 	        }
+	        w = (w < targetWidth) ? targetWidth : w;
 
 	        if (h > targetHeight) {
-	            h /= 2;
-	            h = (h < targetHeight) ? targetHeight : h;
+	            h /= 2;	            
 	        }
+	        h = (h < targetHeight) ? targetHeight : h;
 
 	        if (scratchImage == null) {
 	            scratchImage = new BufferedImage(w, h, type);
@@ -1013,14 +1019,14 @@ public class ImageEngine {
 	 * @param args
 	 */
 	public static void main(String[] args) {
-		File source = new File("C:/trans/pres.jpg");
-		File target = new File("c:/trans/out.jpg");
+		File source = new File("C:/trans/sexy.jpg");
+		File target = new File("c:/trans/out.png");
 
 		try {
 			System.out.println("start...");
 			BufferedImage sourceImage = ImageIO.read(source);
 			BufferedImage image =  ImageEngine.resizeWidth(sourceImage, 320);
-			ImageIO.write(image, "jpg", target);
+			ImageIO.write(image, "png", target);
 			System.out.println("end.");
 		} catch (Exception e) {
 			e.printStackTrace();

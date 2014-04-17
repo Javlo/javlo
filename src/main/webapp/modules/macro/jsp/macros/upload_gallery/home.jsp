@@ -1,7 +1,7 @@
-<%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
-<%@ taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions" %>
-
-<div class="cols">
+<%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c"
+%><%@ taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions"
+%>
+<div class="cols closer">
 <div class="one_third">
 
 <form method="post" action="${info.currentURL}" class="standard-form" enctype="multipart/form-data">
@@ -38,29 +38,22 @@
 <legend>Default metadata</legend>
 
 <div class="form-list">
-	<div class="line">
-		<label for="title-${file.id}">${i18n.edit["field.title"]}</label>
-		<input class="file-title" type="text" id="title-${file.id}" name="title-${file.id}" value="${file.title}" />
-	</div>
-	<div class="line">
-		<label for="description-${file.id}">${i18n.edit["field.description"]}</label>
-		<textarea class="file-description" id="description-${file.id}" name="description-${file.id}" rows="5" cols="10">${file.description}</textarea>
-	</div>
-	<div class="line">
-		<label for="location-${file.id}">${i18n.edit["field.location"]}</label>
-		<input class="file-location" type="text" id="location-${file.id}" name="location-${file.id}" value="${file.location}" />
-	</div>
-	<div class="line">
-		<label for="date-${file.id}">${i18n.edit["field.date"]}</label>
-		<input class="file-date" type="text" id="date-${file.id}" name="date-${file.id}" value="${file.manualDate}" />
-	</div>
+<div class="line">
+	<input type="text" id="allTitle" name="all-title" placeholder="${i18n.edit['action.change-all-title']}" onkeyup="jQuery('.file-title').each(function(){var t = jQuery(this);if (t.val().length == 0 || t.data('empty') == true) {t.data('empty',true);t.val(jQuery('#allTitle').val())}});"/>
+</div><div class="line">
+	<input type="text" id="allDescription" name="all-descritpion" placeholder="${i18n.edit['action.change-all-description']}" onkeyup="jQuery('.file-description').each(function(){var t = jQuery(this);if (t.val().length == 0 || t.data('empty') == true) {t.data('empty',true);t.val(jQuery('#allDescription').val())}});"/>
+</div><div class="line">
+	<input type="text" id="allLocation" name="all-location" placeholder="${i18n.edit['action.change-all-location']}" onkeyup="jQuery('.file-location').each(function(){var t = jQuery(this);if (t.val().length == 0 || t.data('empty') == true) {t.data('empty',true);t.val(jQuery('#allLocation').val())}});"/>
+</div><div class="line">
+	<input type="text" id="allDate" name="all-date" placeholder="${i18n.edit['action.change-all-date']}" onkeyup="jQuery('.file-date').each(function(){var t = jQuery(this);if (t.val().length == 0 || t.data('empty') == true) {t.data('empty',true);t.val(jQuery('#allDate').val())}});"/>
+</div>
 </div>
 
 </fieldset>
 
 </div>
 <div class="two_third last">
-	<jsp:include page="/modules/file/jsp/meta.jsp" />
+	<jsp:include page="/modules/file/jsp/meta.jsp?close=true" />
 </div>
 </div>
 
