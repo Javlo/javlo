@@ -71,7 +71,7 @@ public class UploadGallery implements IInteractiveMacro, IAction {
 					File file = new File(folder, fileName);
 					fileList.add(new FileBean(ctx, StaticInfo.getInstance(ctx, file)));
 				}
-				Collections.sort(fileList, new FileBean.FileBeanComparator(ctx));
+				Collections.sort(fileList, new FileBean.FileBeanComparator(ctx,1));
 				ctx.getRequest().setAttribute("files", fileList);
 			} catch (Exception e) {
 				throw new RuntimeException("Problem...", e);
