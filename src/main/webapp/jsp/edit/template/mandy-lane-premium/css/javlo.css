@@ -33,6 +33,10 @@ body.js #form-select-role input[type=submit] {
 	overflow: hidden;
 }
 
+.disabled {
+	opacity: 0.3;
+}
+
 .frame {
 	margin: 4px 0;
 	border: 1px solid #CCCCCC;

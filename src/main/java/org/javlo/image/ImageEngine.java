@@ -2,6 +2,8 @@ package org.javlo.image;
 
 import java.awt.Color;
 import java.awt.Graphics2D;
+import java.awt.RenderingHints;
+import java.awt.Transparency;
 import java.awt.geom.AffineTransform;
 import java.awt.image.AffineTransformOp;
 import java.awt.image.BufferedImage;
@@ -89,13 +91,73 @@ public class ImageEngine {
 		return op.filter(img, target);
 	}
 
-	public static BufferedImage resize(BufferedImage bi, int width, int height) {
-		float ratio = ((float) width * (float) height) / ((float) bi.getWidth() * (float) bi.getHeight());
-		if (ratio < 0.5) {
-			return resizeBig(bi, width, height);
-		} else {
-			return resizeSmall(bi, width, height);
+	public static BufferedImage resize(BufferedImage bi, Integer width, Integer height) {		
+		return scale(bi,width,height);
+	}
+	
+	public static BufferedImage scale(BufferedImage img, Integer targetWidth, Integer targetHeight) {
+		
+		if (targetWidth == null && targetHeight == null) {
+			return img;			
 		}
+		
+		if (targetWidth == null) {
+			targetWidth = (img.getWidth()*targetHeight)/img.getHeight();
+		}
+		
+		if (targetHeight == null) {
+			targetHeight = (img.getHeight()*targetWidth)/img.getWidth();
+		}
+
+	    int type = (img.getTransparency() == Transparency.OPAQUE) ? BufferedImage.TYPE_INT_RGB : BufferedImage.TYPE_INT_ARGB;
+	    BufferedImage ret = img;
+	    BufferedImage scratchImage = null;
+	    Graphics2D g2 = null;
+
+	    int w = img.getWidth();
+	    int h = img.getHeight();
+
+	    int prevW = w;
+	    int prevH = h;
+
+	    do {
+	        if (w > targetWidth) {
+	            w /= 2;
+	            w = (w < targetWidth) ? targetWidth : w;
+	        }
+
+	        if (h > targetHeight) {
+	            h /= 2;
+	            h = (h < targetHeight) ? targetHeight : h;
+	        }
+
+	        if (scratchImage == null) {
+	            scratchImage = new BufferedImage(w, h, type);
+	            g2 = scratchImage.createGraphics();
+	        }
+
+	        g2.setRenderingHint(RenderingHints.KEY_INTERPOLATION, RenderingHints.VALUE_INTERPOLATION_BILINEAR);
+	        g2.drawImage(ret, 0, 0, w, h, 0, 0, prevW, prevH, null);
+
+	        prevW = w;
+	        prevH = h;
+	        ret = scratchImage;
+	    } while (w != targetWidth || h != targetHeight);
+
+	    if (g2 != null) {
+	        g2.dispose();
+	    }
+
+	    if (targetWidth != ret.getWidth() || targetHeight != ret.getHeight()) {
+	        scratchImage = new BufferedImage(targetWidth, targetHeight, type);
+	        g2 = scratchImage.createGraphics();
+	        g2.drawImage(ret, 0, 0, null);
+	        g2.dispose();
+	        ret = scratchImage;
+	    }
+
+	    return ret;
+
 	}
 
 	private static BufferedImage resizeSmall(BufferedImage bi, int width, int height) {
@@ -122,7 +184,7 @@ public class ImageEngine {
 
 		BufferedImage image = op.filter(bi, null);
 
-		if (bi.getType() == BufferedImage.TYPE_4BYTE_ABGR) {
+		if (bi.getType() == BufferedImage.TYPE_4BYTE_ABGR) {			
 			BufferedImage imgNew = new BufferedImage(image.getWidth(), image.getHeight(), BufferedImage.TYPE_4BYTE_ABGR);
 			for (int x = 0; x < image.getWidth(); x++) {
 				for (int y = 0; y < image.getHeight(); y++) {
@@ -332,7 +394,7 @@ public class ImageEngine {
 		width = Math.round(bi.getWidth() * ((float) height / (float) bi.getHeight()));
 		BufferedImage image = resize(bi, width, height);
 
-		if (bgColor != null && image.getColorModel().hasAlpha() && (mt > 0 || ml > 0 || mr > 0 || mb > 0)) {
+		if (bgColor != null && image.getColorModel().hasAlpha() && (mt > 0 || ml > 0 || mr > 0 || mb > 0)) {			
 			int inWidth = image.getWidth() + ml + mr;
 			int inHeight = image.getHeight() + mt + mb;
 
@@ -348,7 +410,7 @@ public class ImageEngine {
 				}
 			}
 			image = outImage;
-		}
+		} 
 		return image;
 	}
 
@@ -951,14 +1013,14 @@ public class ImageEngine {
 	 * @param args
 	 */
 	public static void main(String[] args) {
-		File source = new File("c:/trans/test.jpg");
-		File target = new File("c:/trans/out.png");
+		File source = new File("C:/trans/pres.jpg");
+		File target = new File("c:/trans/out.jpg");
 
 		try {
 			System.out.println("start...");
 			BufferedImage sourceImage = ImageIO.read(source);
-			BufferedImage image = createAlpha(sourceImage, Color.WHITE);
-			ImageIO.write(image, "png", target);
+			BufferedImage image =  ImageEngine.resizeWidth(sourceImage, 320);
+			ImageIO.write(image, "jpg", target);
 			System.out.println("end.");
 		} catch (Exception e) {
 			e.printStackTrace();

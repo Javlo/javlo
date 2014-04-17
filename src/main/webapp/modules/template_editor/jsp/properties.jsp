@@ -19,6 +19,7 @@
 			<c:set var="delete" value="&delete=true" />
 		</c:if>
 		<c:set var="part" value="${templateEditorContext.currentTemplate.style}" scope="request" />
+		<c:set var="exclude" value="${templateEditorContext.currentTemplate.templateExcludeProperties}" scope="request" />
 		<div id="template"><jsp:include page="part.jsp?title=template&webaction=updateStyle${delete}&upload=true" /></div>	
 		
 		<c:set var="delete" value="" />
@@ -26,6 +27,7 @@
 			<c:set var="delete" value="&delete=true" />
 		</c:if>	
 		<c:set var="part" value="${templateEditorContext.area}" scope="request" />
+		<c:set var="exclude" value="${templateEditorContext.currentTemplate.areaExcludeProperties}" scope="request" />
 		<div id="area"><jsp:include page="part.jsp?title=area&webaction=updateArea${delete}" /></div>
 		
 		<c:set var="delete" value="" />
@@ -33,6 +35,7 @@
 			<c:set var="delete" value="&delete=true" />
 		</c:if>
 		<c:set var="part" value="${templateEditorContext.area.row}" scope="request" />
+		<c:set var="exclude" value="${templateEditorContext.currentTemplate.rowExcludeProperties}" scope="request" />
 		<div id="row"><jsp:include page="part.jsp?title=row&webaction=updateRow${delete}" /></div>
 	</c:if>
 	</div>

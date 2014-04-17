@@ -400,16 +400,18 @@ public class Multimedia extends TimeRangeComponent implements IImageTitle {
 			out.println(XHTMLHelper.getInputOneSelect(getInputBaseFolderName(), folderSelection, getCurrentRootFolder()));
 		}
 
+		String backURL = URLHelper.createModuleURL(ctx, ctx.getPath(), "content");
+		backURL = URLHelper.addParam(backURL, "comp_id", "cp_" + getId());
+		backURL = URLHelper.addParam(backURL, "webaction", "editPreview");
+		
 		Map<String, String> filesParams = new HashMap<String, String>();
 		filesParams.put("path", URLHelper.mergePath(FileAction.getPathPrefix(ctx), getCurrentRootFolder()));
 		filesParams.put("webaction", "changeRenderer");
 		filesParams.put("page", "meta");
-		
-		String backURL = URLHelper.createModuleURL(ctx, ctx.getPath(), "content");
 		filesParams.put(ElementaryURLHelper.BACK_PARAM_NAME, backURL);
 		
 		String staticURL = URLHelper.createModuleURL(ctx, ctx.getPath(), "file", filesParams);
-		out.println("<a class=\"" + EDIT_ACTION_CSS_CLASS + "\" href=\"" + staticURL + "\">&nbsp;");
+		out.println("&nbsp;<a class=\"" + EDIT_ACTION_CSS_CLASS + "\" href=\"" + staticURL + "\">");
 		out.println(i18nAccess.getText("content.goto-static"));
 		out.println("</a>");
 		out.println("</div>");

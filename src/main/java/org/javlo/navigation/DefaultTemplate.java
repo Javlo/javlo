@@ -363,5 +363,10 @@ public class DefaultTemplate extends Template {
 	public List<String> getRenderers() {
 		return Collections.EMPTY_LIST;
 	}
+	
+	@Override
+	protected String getExcludeProperties(String zone) {
+		return null;
+	}
 
 }

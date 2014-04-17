@@ -2500,5 +2500,50 @@ public class Template implements Comparable<Template> {
 			return getRows().size() > 0;
 		}
 	}
+	
+	public Map<String,String> getTemplateExcludeProperties() {
+		String rawProp = getExcludeProperties("template");
+		if (rawProp == null) {
+			return Collections.EMPTY_MAP;
+		} else {
+			Map<String,String> outMaps = new HashMap<String, String>();
+			for (String prop : StringHelper.stringToCollection(rawProp, ",")) {
+				outMaps.put(prop, prop);
+			}
+			return outMaps;
+		}
+	}
+	
+	public Map<String,String> getAreaExcludeProperties() {
+		String rawProp = getExcludeProperties("area");
+		if (rawProp == null) {
+			return Collections.EMPTY_MAP;
+		} else {
+			Map<String,String> outMaps = new HashMap<String, String>();
+			for (String prop : StringHelper.stringToCollection(rawProp, ",")) {
+				outMaps.put(prop, prop);
+			}
+			return outMaps;
+		}
+	}
+	
+	protected String getExcludeProperties(String zone) {
+		 return properties.getString("exclude-properties."+zone, getParent().getExcludeProperties(zone));
+	}
+	
+	public Map<String,String> getRowExcludeProperties() {
+		String rawProp = getExcludeProperties("row");											   	
+		System.out.println("***** Template.getRowExcludeProperties : rawProp = "+rawProp); //TODO: remove debug trace
+		if (rawProp == null) {
+			return Collections.EMPTY_MAP;
+		} else {
+			Map<String,String> outMaps = new HashMap<String, String>();
+			for (String prop : StringHelper.stringToCollection(rawProp, ",")) {
+				System.out.println("***** Template.getRowExcludeProperties : prop = "+prop); //TODO: remove debug trace
+				outMaps.put(prop, prop);
+			}
+			return outMaps;
+		}
+	}
 
 }
