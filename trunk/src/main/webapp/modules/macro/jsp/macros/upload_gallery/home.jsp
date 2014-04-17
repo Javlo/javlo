@@ -10,11 +10,11 @@
 <legend>Image importation</legend>
 
 <div class="line">
-	<c:set var="selectedMonth" value="${empty selectedMonth ? info.currentMonth : selectedMonth}" />
+	<c:set var="selectedMonth" value="${empty selectedMonth ? (info.currentMonth + 1) : selectedMonth}" />
 	<label for="month">month</label>
-	<select id="month" name="monthIndex">
+	<select id="month" name="month">
 		<c:forEach var="m" items="${info.months}" varStatus="status">
-			<option value="${status.index}" ${selectedMonth eq status.index ? 'selected="selected"' : ''}>${m}</option>
+			<option value="${status.count}" ${selectedMonth eq status.count ? 'selected="selected"' : ''}>${m}</option>
 		</c:forEach>
 	</select>
 </div>
