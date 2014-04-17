@@ -41,7 +41,6 @@ import org.javlo.module.core.Module.Box;
 import org.javlo.module.core.Module.HtmlLink;
 import org.javlo.module.core.ModuleException;
 import org.javlo.module.core.ModulesContext;
-import org.javlo.navigation.MenuElement;
 import org.javlo.service.PersistenceService;
 import org.javlo.service.RequestService;
 import org.javlo.user.AdminUserFactory;
@@ -59,14 +58,22 @@ public class FileAction extends AbstractModuleAction {
 		public static class FileBeanComparator implements Comparator<FileBean> {
 
 			private final ContentContext ctx;
+			private final int sort;
 
-			public FileBeanComparator(ContentContext inCtx) {
+			public FileBeanComparator(ContentContext inCtx, int inSort) {
 				ctx = inCtx;
+				sort = inSort;
 			}
 
 			@Override
 			public int compare(FileBean file1, FileBean file2) {
-				return -file1.getStaticInfo().getDate(ctx).compareTo(file2.getStaticInfo().getDate(ctx));
+				if (sort == 2) {
+					return file1.getStaticInfo().getFile().getName().compareTo(file2.getStaticInfo().getFile().getName());
+				} else if (sort == 3) {
+					return file1.getStaticInfo().getTitle(ctx).compareTo(file2.getStaticInfo().getTitle(ctx));
+				} else {
+					return -file1.getStaticInfo().getDate(ctx).compareTo(file2.getStaticInfo().getDate(ctx));
+				}
 			}
 
 		}
@@ -125,9 +132,9 @@ public class FileAction extends AbstractModuleAction {
 			GlobalContext globalContext = GlobalContext.getInstance(ctx.getRequest());
 			return URLHelper.createTransformURL(ctx, globalContext.getStaticConfig().getStaticFolder() + staticInfo.getStaticURL(), "list") + "?ts=" + staticInfo.getFile().lastModified();
 		}
-		
+
 		public String getFreeURL() throws Exception {
-			GlobalContext globalContext = GlobalContext.getInstance(ctx.getRequest());			
+			GlobalContext globalContext = GlobalContext.getInstance(ctx.getRequest());
 			return URLHelper.createTransformURL(ctx.getContextWithOtherRenderMode(ContentContext.VIEW_MODE), null, globalContext.getStaticConfig().getStaticFolder() + staticInfo.getStaticURL(), "free", "${info.templateName}");
 		}
 
@@ -205,7 +212,7 @@ public class FileAction extends AbstractModuleAction {
 				return 0;
 			}
 		}
-		
+
 		public String getPath() {
 			return staticInfo.getStaticURL();
 		}
@@ -240,6 +247,7 @@ public class FileAction extends AbstractModuleAction {
 		ctx.getRequest().setAttribute("currentModule", modulesContext.getCurrentModule());
 		ctx.getRequest().setAttribute("tags", globalContext.getTags());
 		ctx.getRequest().setAttribute("pathPrefix", getROOTPath(ctx));
+		ctx.getRequest().setAttribute("sort", fileModuleContext.getSort());
 
 		if (ctx.getRequest().getParameter("path") != null) {
 			fileModuleContext.setPath(ctx.getRequest().getParameter("path"));
@@ -260,7 +268,9 @@ public class FileAction extends AbstractModuleAction {
 				fileModuleContext.getNavigation().add(lnk);
 				fileModuleContext.setCurrentLink(lnk.getName());
 				/*
-				 * if (ctx.getRequest().getParameter("name") == null) { modulesContext.getCurrentModule().setToolsRenderer(null); } else {
+				 * if (ctx.getRequest().getParameter("name") == null) {
+				 * modulesContext.getCurrentModule().setToolsRenderer(null); }
+				 * else {
 				 */
 				modulesContext.getCurrentModule().setToolsRenderer("/jsp/actions.jsp");
 				/* } */
@@ -280,7 +290,7 @@ public class FileAction extends AbstractModuleAction {
 				for (File file : folder.listFiles((FileFilter) FileFileFilter.FILE)) {
 					fileList.add(new FileBean(ctx, StaticInfo.getInstance(ctx, file)));
 				}
-				Collections.sort(fileList, new FileBean.FileBeanComparator(ctx));
+				Collections.sort(fileList, new FileBean.FileBeanComparator(ctx, fileModuleContext.getSort()));
 				allFileInfo.addAll(fileList);
 				ctx.getRequest().setAttribute("files", allFileInfo);
 			} else {
@@ -305,7 +315,8 @@ public class FileAction extends AbstractModuleAction {
 		currentModule.clearBreadcrump();
 		currentModule.setBreadcrumbTitle("");
 
-		ctx.setRenderMode(ContentContext.EDIT_MODE); // ajax can preview mode by default
+		ctx.setRenderMode(ContentContext.EDIT_MODE); // ajax can preview mode by
+														// default
 
 		String[] tmpPathItems = URLHelper.cleanPath(fileModuleContext.getPath(), true).split("/");
 		String[] pathItems = new String[tmpPathItems.length + 1];
@@ -392,7 +403,11 @@ public class FileAction extends AbstractModuleAction {
 					staticInfo.setFocusZoneX(ctx, (int) Math.round(Double.parseDouble(newFocusX)));
 					staticInfo.setFocusZoneY(ctx, (int) Math.round(Double.parseDouble(newFocusY)));
 					PersistenceService.getInstance(globalContext).store(ctx);
-					// messageRepository.setGlobalMessageAndNotification(ctx, new GenericMessage(i18nAccess.getText("file.message.updatefocus", new String[][] { { "file", file.getName() } }), GenericMessage.INFO));
+					// messageRepository.setGlobalMessageAndNotification(ctx,
+					// new
+					// GenericMessage(i18nAccess.getText("file.message.updatefocus",
+					// new String[][] { { "file", file.getName() } }),
+					// GenericMessage.INFO));
 
 					FileCache fileCache = FileCache.getInstance(ctx.getRequest().getSession().getServletContext());
 					fileCache.delete(file.getName());
@@ -516,14 +531,14 @@ public class FileAction extends AbstractModuleAction {
 			return URLHelper.mergePath(globalContext.getDataFolder(), globalContext.getStaticConfig().getStaticFolder());
 		}
 	}
-	
+
 	public static String performUpload(ContentContext ctx, RequestService rs) throws FileNotFoundException, InstantiationException, IllegalAccessException, IOException, ModuleException {
 		String sourceFolder = getContextROOTFolder(ctx);
 		FileModuleContext fileModuleContext = FileModuleContext.getInstance(ctx.getRequest());
 		File folder = new File(sourceFolder, fileModuleContext.getPath());
 		for (FileItem file : rs.getAllFileItem()) {
 			File newFile = new File(URLHelper.mergePath(folder.getAbsolutePath(), StringHelper.createFileName(file.getName())));
-			newFile = ResourceHelper.getFreeFileName(newFile);			
+			newFile = ResourceHelper.getFreeFileName(newFile);
 			InputStream in = file.getInputStream();
 			try {
 				ResourceHelper.writeStreamToFile(in, newFile);
@@ -531,33 +546,46 @@ public class FileAction extends AbstractModuleAction {
 				ResourceHelper.closeResource(in);
 			}
 		}
-		
+
 		String urlStr = rs.getParameter("url", "");
 		if (urlStr.trim().length() > 0) {
 			URL url = new URL(urlStr);
 			InputStream in = url.openConnection().getInputStream();
 			try {
 				File newFile = new File(URLHelper.mergePath(folder.getAbsolutePath(), StringHelper.createFileName(StringHelper.getFileNameFromPath(urlStr))));
-				newFile = ResourceHelper.getFreeFileName(newFile);	
+				newFile = ResourceHelper.getFreeFileName(newFile);
 				ResourceHelper.writeStreamToFile(in, newFile);
 			} finally {
 				ResourceHelper.closeResource(in);
-			}			
+			}
 		}
-		
+
 		return null;
 	}
-	
-	public static String performDelete(GlobalContext globalContext, RequestService rs, ContentContext ctx, MessageRepository messageRepository, I18nAccess i18nAccess) {		
+
+	public static String performDelete(GlobalContext globalContext, RequestService rs, ContentContext ctx, MessageRepository messageRepository, I18nAccess i18nAccess) {
 		String filePath = rs.getParameter("file", null);
 		if (filePath == null) {
 			return "bad request structure : need file parameter.";
-		} else {			
+		} else {
 			File file = new File(URLHelper.mergePath(globalContext.getStaticFolder(), filePath));
 			file.delete();
-		}		
+		}
 		return null;
 	}
 	
-	
+	public static String performOrder(RequestService rs, ContentContext ctx, MessageRepository messageRepository, I18nAccess i18nAccess) throws Exception {
+		String order = rs.getParameter("order", null);
+		if (order != null) {
+			int sortNum = Integer.parseInt(order);
+			if (sortNum == 1 || sortNum == 2 || sortNum == 3) {
+				FileModuleContext fileModuleContext = (FileModuleContext) LangHelper.smartInstance(ctx.getRequest(), ctx.getResponse(), FileModuleContext.class);
+				fileModuleContext.setSort(sortNum);
+			}
+		} else {
+			return "bad request structure : need 'sort' param.";
+		}
+		return null;
+	}
+
 }
