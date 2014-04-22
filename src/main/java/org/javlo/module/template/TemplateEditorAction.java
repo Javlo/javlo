@@ -234,7 +234,7 @@ public class TemplateEditorAction extends AbstractModuleAction {
 		} else {
 			Template newTemplate = TemplateFactory.createDiskTemplates(application, templateName);
 			newTemplate.setParentName("editable");
-			Row row = new Row();
+			Row row = new Row(newTemplate);
 			row.setName("row-1");
 			Area area = new Area();
 			area.setName("content");

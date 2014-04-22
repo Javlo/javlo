@@ -486,7 +486,7 @@ public abstract class AbstractVisualComponent implements IContentVisualComponent
 			out.println("</div>");
 		}
 
-		if (isListable()) {
+		if (isListable()) { 
 			out.println("<div class=\"line\">");
 			out.println("<label for=\"inlist-" + getId() + "\">" + i18nAccess.getText("component.inlist") + "</label>");
 			out.println(XHTMLHelper.getCheckbox("inlist-" + getId(), isList(ctx)));
@@ -1044,9 +1044,11 @@ public abstract class AbstractVisualComponent implements IContentVisualComponent
 			/* display as slide show */
 
 			Map<String, String> renderers = getRenderes(ctx);
-			for (Map.Entry<String, String> entry : renderers.entrySet()) {
-				out.println(XHTMLHelper.getRadio(getInputNameRenderer(), entry.getKey(), getCurrentRenderer(ctx)));
-				out.println("<label for=\"" + entry.getKey() + "\">" + entry.getKey() + "</label></div><div class=\"line\">");
+			List<String> keys = new LinkedList<String>(renderers.keySet());
+			Collections.sort(keys);
+			for (String key : keys) {
+				out.println(XHTMLHelper.getRadio(getInputNameRenderer(), key, getCurrentRenderer(ctx)));
+				out.println("<label for=\"" + key + "\">" + key + "</label></div><div class=\"line\">");
 			}
 
 			out.println("</fieldset>");
