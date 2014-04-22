@@ -1011,7 +1011,7 @@ public class Template implements Comparable<Template> {
 			}
 		}
 		List<Row> rows = getRows();
-		Row row = new Row();
+		Row row = new Row(this);
 		rows.add(row);		
 		row.setName(newRowName);
 		Area area = new Area();
@@ -2429,7 +2429,7 @@ public class Template implements Comparable<Template> {
 				if (rowName.trim().length() > 0) {
 					Row row = rows.get(rowName);
 					if (row == null) {
-						row = new Row();
+						row = new Row(this);
 						row.setName(rowName);
 						loadTemplatePart(row, "row." + rowName);
 						rows.put(rowName, row);
@@ -2532,14 +2532,12 @@ public class Template implements Comparable<Template> {
 	}
 	
 	public Map<String,String> getRowExcludeProperties() {
-		String rawProp = getExcludeProperties("row");											   	
-		System.out.println("***** Template.getRowExcludeProperties : rawProp = "+rawProp); //TODO: remove debug trace
+		String rawProp = getExcludeProperties("row");		
 		if (rawProp == null) {
 			return Collections.EMPTY_MAP;
 		} else {
 			Map<String,String> outMaps = new HashMap<String, String>();
-			for (String prop : StringHelper.stringToCollection(rawProp, ",")) {
-				System.out.println("***** Template.getRowExcludeProperties : prop = "+prop); //TODO: remove debug trace
+			for (String prop : StringHelper.stringToCollection(rawProp, ",")) {				
 				outMaps.put(prop, prop);
 			}
 			return outMaps;
