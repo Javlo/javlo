@@ -687,8 +687,16 @@ public class Edit extends AbstractModuleAction {
 		String areaKey = null;
 		String area = rs.getParameter("area", null);
 
+		MenuElement parentPage = ctx.getCurrentPage();
+		MenuElement targetPage = content.getNavigation(ctx).searchChildFromId(rs.getParameter("pageContainerID", null));
+
+		if (targetPage == null) {
+			targetPage = ctx.getCurrentPage();
+		}
+		
 		if (area != null) {
-			for (Map.Entry<String, String> areaId : ctx.getCurrentTemplate().getAreasMap().entrySet()) {
+			Template template = TemplateFactory.getTemplate(ctx, targetPage);
+			for (Map.Entry<String, String> areaId : template.getAreasMap().entrySet()) {
 				if (areaId.getValue().equals(area)) {
 					areaKey = areaId.getKey();
 				}
@@ -698,13 +706,6 @@ public class Edit extends AbstractModuleAction {
 			}
 			// ctx = ctx.getContextWithArea(areaKey);
 			editContext.setCurrentArea(areaKey);
-		}
-		
-		MenuElement parentPage = ctx.getCurrentPage();
-		MenuElement targetPage = content.getNavigation(ctx).searchChildFromId(rs.getParameter("pageContainerID", null));
-
-		if (targetPage == null) {
-			targetPage = ctx.getCurrentPage();
 		}
 
 		if (areaKey == null) {
