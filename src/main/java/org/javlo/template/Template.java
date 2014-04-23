@@ -369,7 +369,6 @@ public class Template implements Comparable<Template> {
 		}
 
 		public Collection<String> getHTMLIDS() {
-
 			return ids;
 		}
 
