@@ -719,5 +719,14 @@ public class InfoBean {
 			return depth;
 		}
 	}
+	
+	public String getLogoUrl() throws Exception {
+		String logo = ctx.getGlobalContext().getTemplateData().getLogo();
+		if (logo == null) {
+			return null;
+		} else {
+			return URLHelper.createTransformURL(ctx, URLHelper.mergePath(ctx.getGlobalContext().getStaticConfig().getStaticFolder(),logo), "logo");
+		}
+	}
 
 }

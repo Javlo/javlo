@@ -24,7 +24,7 @@ public class Row extends TemplatePart {
 	@Override
 	public String getFont() {	
 		String font = super.getFont();
-		if (font == null || font.trim().length() == 0) {
+		if (font == null || font.trim().length() == 0 && template != null) {
 			return template.getStyle().getFont();
 		} else {
 			return font;
@@ -34,7 +34,7 @@ public class Row extends TemplatePart {
 	@Override
 	public String getTextSize() {	
 		String textSize = super.getTextSize();
-		if (textSize == null || textSize.trim().length() == 0) {
+		if (textSize == null || textSize.trim().length() == 0 && template != null) {
 			return template.getStyle().getTextSize();
 		} else {
 			return textSize;

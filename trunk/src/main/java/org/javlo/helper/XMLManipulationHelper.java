@@ -283,10 +283,10 @@ public class XMLManipulationHelper {
 		StringRemplacementHelper remplacement = new StringRemplacementHelper();
 		for (TagDescription tag : tags) {
 			if (tag.getAttributes().get("src") != null) {
-				if (!tag.getAttributes().get("src").contains(":")) {
+				if (!tag.getAttributes().get("src").contains(":") && !tag.getAttributes().get("src").contains("${")) {
 					tag.getAttributes().put("src", URLHelper.mergePath(linkPrefix, tag.getAttributes().get("src")));
-				}
-				remplacement.addReplacement(tag.getOpenStart(), tag.getOpenEnd() + 1, tag.toString());
+					remplacement.addReplacement(tag.getOpenStart(), tag.getOpenEnd() + 1, tag.toString());
+				}				
 			}
 			if (tag.getAttributes().get("href") != null && !tag.getAttributes().get("href").startsWith("#")) {
 				if (!tag.getAttributes().get("href").contains(":")) {
@@ -707,7 +707,7 @@ public class XMLManipulationHelper {
 							}
 						}						
 					} else {
-						if (!attributes.get("src").toLowerCase().startsWith("http://")) {
+						if (!attributes.get("src").toLowerCase().startsWith("http://") && !attributes.get("src").contains("${")) {
 							attributes.put("src", "<%=URLHelper.createStaticTemplateURL(ctx,\"/" + srcValue + "\")%>");
 						}
 						remplacement.addReplacement(tags[i].getOpenStart(), tags[i].getOpenEnd() + 1, tags[i].toString());						

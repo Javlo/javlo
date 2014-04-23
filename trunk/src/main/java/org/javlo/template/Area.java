@@ -15,7 +15,7 @@ public class Area extends TemplatePart {
 	@Override
 	public String getFont() {	
 		String font = super.getFont();
-		if (font == null || font.trim().length() == 0) {
+		if ((font == null || font.trim().length() == 0) && getRow() != null) {
 			return getRow().getFont();
 		} else {
 			return font;
@@ -25,7 +25,7 @@ public class Area extends TemplatePart {
 	@Override
 	public String getTextSize() {	
 		String textSize = super.getTextSize();
-		if (textSize == null || textSize.trim().length() == 0) {
+		if ((textSize == null || textSize.trim().length() == 0) && getRow() != null) {
 			return getRow().getTextSize();
 		} else {
 			return textSize;

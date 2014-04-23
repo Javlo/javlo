@@ -132,32 +132,52 @@ public class TwitterReader extends AbstractVisualComponent {
 		if (tweets == null) {
 			tweets = readTweet(url);
 			latestLoad = System.currentTimeMillis();
-		} else if (url != null && latestLoad < (System.currentTimeMillis() - (30 * 1000))) {
+		} else if (url != null && latestLoad < (System.currentTimeMillis() - (30 * 100))) {
 			latestLoad = System.currentTimeMillis();
 			new ReadTweetThread(this, url).start();
 		}
 		return tweets;
 	}
+	
+	public static void main(String[] args) {
+		try {
+			Map<String,TwitterBean> tweets = readTweet(new URL("https://twitter.com/ep_president"));
+			for (TwitterBean bean : tweets.values()) {
+				System.out.println("");
+				System.out.println("authors : "+bean.getAuthors());
+				System.out.println("message : "+bean.getMessage());
+				System.out.println("date : "+bean.getDate());
+			}
+		} catch (ParserException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (MalformedURLException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+	}
 
 	private static Map<String, TwitterBean> readTweet(URL url) throws ParserException, IOException {
-		Map<String, TwitterBean> tweets = new HashMap<String, TwitterReader.TwitterBean>();
-		logger.info("load tweets on : " + url);
+		Map<String, TwitterBean> tweets = new HashMap<String, TwitterReader.TwitterBean>();		
 		Map<String, TwitterBean> newList = new HashMap<String, TwitterBean>();
 		Document doc = Jsoup.connect(url.toString()).get();
-		Elements newsHeadlines = doc.select(".expanding-stream-item");
+		Elements newsHeadlines = doc.select(".GridTimeline-items .ProfileTweet");
+		logger.info("load tweets on : " + url + " items found:"+newsHeadlines.size());		
 		Iterator<Element> allItems = newsHeadlines.iterator();
 		while (allItems.hasNext()) {
-			Element item = allItems.next();
-			Elements authorsItem = item.select(".username");
-			if (authorsItem != null) {
+			Element item = allItems.next();			
+			if (item != null) {
 				TwitterBean bean = new TwitterBean();
 				bean.setId(item.attr("data-item-id"));
-				bean.setAuthors(authorsItem.text());
-				Elements textItem = item.select(".tweet-text");
+				bean.setAuthors(item.attr("data-name"));
+				Elements textItem = item.select(".ProfileTweet-text");
 				if (textItem != null) {
 					bean.setMessage(textItem.text());
-					Elements dateItem = item.select("._timestamp");
-					if (dateItem != null) {
+					Elements dateItem = item.select(".js-short-timestamp ");
+					if (dateItem != null && dateItem.first() != null && dateItem.first().attr("data-time") != null) {
 						Long time = Long.parseLong(dateItem.first().attr("data-time"));
 						bean.setDate(new Date(time * 1000));
 						Elements fullName = item.select(".fullname");
