@@ -19,6 +19,7 @@ import org.javlo.module.core.Module;
 import org.javlo.module.core.ModulesContext;
 import org.javlo.navigation.IURLFactory;
 import org.javlo.navigation.MenuElement;
+import org.javlo.rendering.Device;
 import org.javlo.service.ContentService;
 import org.javlo.servlet.ImageTransformServlet;
 import org.javlo.template.Template;
@@ -379,6 +380,9 @@ public abstract class ElementaryURLHelper {
 			url = createStaticURL(ctx, referencePage, url, true);
 		}
 		url = URLHelper.addMailingFeedback(ctx, url);
+		if (ctx.getDevice().isForced()) {
+			url = addParam(url, Device.FORCE_DEVICE_PARAMETER_NAME, ctx.getDevice().getCode());
+		}
 		return url;
 	}
 

@@ -913,9 +913,13 @@ public class GlobalImage extends Image implements IImageFilter {
 	public int getHeight() {
 		return Integer.parseInt(properties.getProperty("height", "-1"));
 	}
+	
+	private String getWidthKey(ContentContext ctx) {
+		return "width-"+ctx.getDevice().getCode();
+	}
 
-	public int getWidth() {
-		return Integer.parseInt(properties.getProperty("width", "-1"));
+	public int getWidth(ContentContext ctx) {		
+		return Integer.parseInt(properties.getProperty(getWidthKey(ctx), "-1"));
 	}
 
 	public String getFirstText() {
@@ -949,9 +953,9 @@ public class GlobalImage extends Image implements IImageFilter {
 		}
 	}
 
-	public void setWidth(int width) {
-		if (getHeight() != width) {
-			properties.setProperty("width", "" + width);
+	public void setWidth(ContentContext ctx, int width) {		
+		if (getWidth(ctx) != width) {
+			properties.setProperty(getWidthKey(ctx), "" + width);
 			setModify();
 		}
 	}
@@ -988,13 +992,12 @@ public class GlobalImage extends Image implements IImageFilter {
 			}
 			if (width != null) {
 				int inWidth = Integer.parseInt(width);
-				if (inWidth != image.getWidth()) {
+				if (inWidth != image.getWidth(ctx)) {
 					image.setModify();
-					image.setWidth(inWidth);
+					image.setWidth(ctx, inWidth);
 				}
 			}
-			if (image.isModify()) {
-				System.out.println("");
+			if (image.isModify()) {				
 				image.storeProperties();
 				Edit.performSave(ctx, editContext, globalContext, content, componentContext, rs, i18nAccess, messageRepository, currentModule, adminUserFactory);
 
@@ -1104,20 +1107,18 @@ public class GlobalImage extends Image implements IImageFilter {
 	}
 
 	@Override
-	public String getImageFilterKey() {
-		if (getWidth() < 0) {
+	public String getImageFilterKey(ContentContext ctx) {
+		if (getWidth(ctx) < 0) {
 			return null;
 		} else {
-			return "" + getWidth();
+			return "" + getWidth(ctx);
 		}
 	}
 
 	@Override
-	public BufferedImage filterImage(BufferedImage image) {		
-		System.out.println("***** GlobalImage.filterImage : image = "+getFileName()); //TODO: remove debug trace
-		System.out.println("***** GlobalImage.filterImage : width = "+getWidth()); //TODO: remove debug trace
+	public BufferedImage filterImage(ContentContext ctx, BufferedImage image) {		
 		reloadProperties();
-		return ImageEngine.resizeWidth(image, getWidth());
+		return ImageEngine.resizeWidth(image, getWidth(ctx));
 	}
 
 }
