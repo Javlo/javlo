@@ -232,7 +232,7 @@ public class TemplateEditorAction extends AbstractModuleAction {
 		if (templateName.trim().length() < 3) {
 			return "template name must be at least 4 chars.";
 		} else {
-			Template newTemplate = TemplateFactory.createDiskTemplates(application, templateName);
+			Template newTemplate = TemplateFactory.createDiskTemplates(application, templateName,null);
 			newTemplate.setParentName("editable");
 			Row row = new Row(newTemplate);
 			row.setName("row-1");

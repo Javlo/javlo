@@ -284,7 +284,7 @@ public class TemplateFactory {
 	}
 
 	/**
-	 * get template from disk.
+	 * create new template with parent files.
 	 * 
 	 * @param application
 	 * @return
@@ -300,6 +300,37 @@ public class TemplateFactory {
 		File defaultTemplate = new File(staticConfig.getDefaultTemplateFolder());
 		if (defaultTemplate.exists()) {
 			FileUtils.copyDirectory(defaultTemplate, templateFolder);
+		} else {
+			File configFile = new File(URLHelper.mergePath(templateFolder.getAbsolutePath(), Template.CONFIG_FILE));
+			configFile.getParentFile().mkdirs();
+			configFile.createNewFile();
+		}
+		TemplateFactory.clearTemplate(application);
+		return getDiskTemplates(application).get(name);
+	}
+	
+	/**
+	 * create new template.
+	 * 
+	 * @param application
+	 * @param name name of the new template, if all ready exist return null.
+	 * @param source name of the source template, all files must be copied inside new template (!with config.properties) null = no source template.
+	 * @return
+	 * @throws IOException
+	 */
+	public static Template createDiskTemplates(ServletContext application, String name, String source) throws IOException {
+		StaticConfig staticConfig = StaticConfig.getInstance(application);
+		File templateFolder = new File(URLHelper.mergePath(staticConfig.getTemplateFolder(), StringHelper.createFileName(name)));
+		if (templateFolder.exists()) {
+			logger.warning("Folder exist : "+templateFolder);
+			return null;
+		}
+		File sourceFolder = null;
+		if (source != null) {
+			 sourceFolder = new File(URLHelper.mergePath(staticConfig.getTemplateFolder(), source));
+		}
+		if (sourceFolder != null && sourceFolder.exists()) {
+			FileUtils.copyDirectory(sourceFolder, templateFolder);
 		} else {
 			File configFile = new File(URLHelper.mergePath(templateFolder.getAbsolutePath(), Template.CONFIG_FILE));
 			configFile.getParentFile().mkdirs();
