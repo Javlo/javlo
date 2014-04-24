@@ -1,0 +1,13 @@
+<%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c"
+%><%@ taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions"
+%><c:if test="${not empty template.width}"
+>width: ${template.width};</c:if><c:if test="${not empty template.height}"
+> height: ${template.height};</c:if><c:if test="${not empty template.finalTextColor}"
+> color: ${template.finalTextColor};</c:if><c:if test="${not empty template.backgroundColor}"
+> background-color: ${template.backgroundColor};</c:if><c:if test="${not empty template.padding}"
+> padding: ${template.padding};</c:if><c:if test="${not empty template.margin}"
+> margin: ${template.margin};</c:if><c:if test="${not empty template.borderColor}"
+> border-color: ${template.borderColor};</c:if><c:if test="${not empty template.borderWidth}"
+> border-width: ${template.borderWidth}; border-style: solid;</c:if><c:if test="${not empty template.finalFont}"
+> font-family: ${template.finalFont};</c:if><c:if test="${not empty template.finalTextSize}"
+> font-size: ${template.finalTextSize};</c:if>

@@ -9,9 +9,9 @@
 		</c:url>
 	
 		<ul>
-			<li${tab == 'template'?' class="ui-tabs-selected"':''}><a href="#template" onclick="ajaxRequest('${taburl}&tab=template',null,null);">template</a></li>
-			<li${tab == 'area'?' class="ui-tabs-selected"':''}><a href="#area" onclick="ajaxRequest('${taburl}&tab=area',null,null);">area</a></li>			
+			<li${tab == 'template'?' class="ui-tabs-selected"':''}><a href="#template" onclick="ajaxRequest('${taburl}&tab=template',null,null);">template</a></li>						
 			<li${tab == 'row'?' class="ui-tabs-selected"':''}><a href="#row" onclick="ajaxRequest('${taburl}&tab=row',null,null);">row</a></li>
+			<li${tab == 'area'?' class="ui-tabs-selected"':''}><a href="#area" onclick="ajaxRequest('${taburl}&tab=area',null,null);">area</a></li>
 		</ul>
 	
 		<c:set var="delete" value="" />

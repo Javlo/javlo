@@ -14,7 +14,7 @@
 			<input type="text" id="margin-${part.name}" name="margin" value="${part.margin}" />
 		</div>			
 		<div class="line${not empty exclude.margin?' textSize':''}">
-			<label for="textSize-${part.name}">text size</label>
+			<label for="textSize-${part.name}">text size <c:if test="${not empty part.finalTextSize}"> (${part.finalTextSize})</c:if></label>
 			<input type="text" id="textSize-${part.name}" name="textSize" value="${part.textSize}" />
 		</div>
 		<div class="line ${not empty exclude.backgroundColor?' disabled':''}">
@@ -22,17 +22,17 @@
 			<input class="color" type="text" id="backgroundColor-${part.name}" name="backgroundColor" value="${part.backgroundColor}" />
 		</div>
 		</div>
-		<div class="one_half last">		
-		<div class="line${not empty exclude.height?' disabled':''}">
-			<label for="height-${part.name}">height</label>
-			<input type="text" id="height-${part.name}" name="height" value="${part.height}" />
+		<div class="one_half last">	
+		<div class="line${not empty exclude.titleColor?' disabled':''}">
+			<label for="titleColor-${part.name}">title color<c:if test="${not empty part.finalTitleColor}"> (${part.finalTitleColor})</c:if></label>
+			<input class="color" type="text" id="titleColor-${part.name}" name="titleColor" value="${part.titleColor}" />
 		</div>		
 		<div class="line${not empty exclude.padding?' disabled':''}">
 			<label for="padding-${part.name}">padding</label>
 			<input type="text" id="padding-${part.name}" name="padding" value="${part.padding}" />
 		</div>
 		<div class="line${not empty exclude.textColor?' disabled':''}">
-			<label for="textColor-${part.name}">text color</label>
+			<label for="textColor-${part.name}">text color<c:if test="${not empty part.finalTextColor}"> (${part.finalTextColor})</c:if></label>
 			<input class="color" type="text" id="textColor-${part.name}" name="textColor" value="${part.textColor}" />
 		</div>
 		<fieldset>	
@@ -52,7 +52,7 @@
 		</div>
 		</div>
 		<div class="line${not empty exclude.font?' disabled':''}">
-			<label for="font-${part.name}">font</label>
+			<label for="font-${part.name}">font<c:if test="${not empty part.finalFont}"> (${part.finalFont})</c:if></label>
 			<select name="font" id="font-${part.name}">
 			<option></option>
 			<c:forEach var="font" items="${fonts}"><option style="font-family: ${font};"${part.font == font?' selected=selected':''}>${font}</option></c:forEach>			

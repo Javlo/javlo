@@ -24,6 +24,7 @@ public class TemplatePart {
 	private String backgroundColor = null;
 	private String font = null;
 	private String textSize = null;
+	private String titleColor = null;
 
 	public String getWidth() {
 		return width;
@@ -95,9 +96,25 @@ public class TemplatePart {
 
 	public String getFinalFont() {
 		if (getParent() != null && (font == null || font.trim().length() == 0)) {
-			return getParent().getFont();
+			return getParent().getFinalFont();
 		} else {
 			return font;
+		}
+	}
+	
+	public String getFinalTitleColor() {
+		if (getParent() != null && (titleColor == null || titleColor.trim().length() == 0)) {
+			return getParent().getFinalTitleColor();
+		} else {
+			return titleColor;
+		}
+	}
+	
+	public String getFinalTextColor() {
+		if (getParent() != null && (textColor == null || textColor.trim().length() == 0)) {
+			return getParent().getFinalTextColor();
+		} else {
+			return textColor;
 		}
 	}
 
@@ -118,7 +135,7 @@ public class TemplatePart {
 	
 	public String getFinalTextSize() {
 		if (getParent() != null && (textSize == null || textSize.trim().length() == 0)) {
-			return getParent().getTextSize();
+			return getParent().getFinalTextSize();
 		} else {
 			return textSize;
 		}
@@ -134,6 +151,14 @@ public class TemplatePart {
 
 	public void setName(String name) {
 		this.name = name;
+	}
+
+	public String getTitleColor() {
+		return titleColor;
+	}
+
+	public void setTitleColor(String titleColor) {
+		this.titleColor = titleColor;
 	}
 
 }
