@@ -2390,6 +2390,7 @@ public class Template implements Comparable<Template> {
 		part.setTextColor(properties.getString(prefix + ".color"));
 		part.setTextSize(properties.getString(prefix + ".text-size"));
 		part.setWidth(properties.getString(prefix + ".width"));
+		part.setTitleColor(properties.getString(prefix + ".title-color"));
 	}
 
 	protected void saveTemplatePart(TemplatePart part, String prefix) {
@@ -2403,6 +2404,7 @@ public class Template implements Comparable<Template> {
 		properties.setProperty(prefix + ".color", part.getTextColor());
 		properties.setProperty(prefix + ".text-size", part.getTextSize());
 		properties.setProperty(prefix + ".width", part.getWidth());
+		properties.setProperty(prefix + ".title-color", part.getTitleColor());
 	}
 	
 	public synchronized TemplateStyle getStyle() {
