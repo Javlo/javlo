@@ -7,6 +7,11 @@
 }</c:forEach>
 </c:forEach>
 
+<c:forEach var="row" items="${info.template.rows}">	
+#${row.name} {	<c:set var="template" value="${row}" scope="request" />
+<jsp:include page="styles.jsp" />
+}</c:forEach>
+
 <c:forEach var="row" items="${info.template.rows}"><c:forEach var="area" items="${row.areas}">
 #${area.name} h1, #${area.name} h2, #${area.name} h3, #${area.name} h4, #${area.name} h5, #${area.name} h6 {	
 	color: ${area.finalTitleColor};
