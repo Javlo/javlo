@@ -431,10 +431,8 @@ public class ImageTransformServlet extends HttpServlet {
 				}
 				logger.info("write image : " + fileExtension + " width: " + img.getWidth() + " height: " + img.getHeight());
 
-				if (comp != null && StringHelper.trimAndNullify(comp.getImageFilterKey()) != null) {
-					System.out.println("***** ImageTransformServlet.imageTransform : start filter"); //TODO: remove debug trace
-					img = ((IImageFilter) comp).filterImage(img);
-					System.out.println("***** ImageTransformServlet.imageTransform : end filter"); //TODO: remove debug trace
+				if (comp != null && StringHelper.trimAndNullify(comp.getImageFilterKey()) != null) {					
+					img = ((IImageFilter) comp).filterImage(img);					
 				}
 				if (!"png".equals(fileExtension) && !"gif".equals(fileExtension)) {
 					img = ImageEngine.removeAlpha(img);

@@ -969,7 +969,7 @@ public class GlobalImage extends Image implements IImageFilter {
 			String firstText = rs.getParameter("first-text", null);
 			String secondText = rs.getParameter("second-text", null);
 			String height = rs.getParameter("height", null);
-			String width = rs.getParameter("width", null);
+			String width = rs.getParameter("width", null);			
 
 			if (firstText != null && !firstText.equals(image.getFirstText())) {
 				image.setModify();
@@ -1113,7 +1113,9 @@ public class GlobalImage extends Image implements IImageFilter {
 	}
 
 	@Override
-	public BufferedImage filterImage(BufferedImage image) {
+	public BufferedImage filterImage(BufferedImage image) {		
+		System.out.println("***** GlobalImage.filterImage : image = "+getFileName()); //TODO: remove debug trace
+		System.out.println("***** GlobalImage.filterImage : width = "+getWidth()); //TODO: remove debug trace
 		reloadProperties();
 		return ImageEngine.resizeWidth(image, getWidth());
 	}
