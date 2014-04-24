@@ -233,6 +233,22 @@ a.popup span {
 	overflow: hidden;
 }
 
+.standard-form .checkline {
+	display: block;
+	margin: 3px 0;
+	overflow: hidden;	
+	line-height: 15px;
+}
+
+.standard-form .checkline label  {
+	display: inline;
+	width: auto;	
+}
+
+.standard-form .checkline input {
+	vertical-align: bottom;
+}
+
 .standard-form .template.line label {
 	margin-top: 6px;
 	display: inline-block;

@@ -12,11 +12,7 @@
 		<div class="line ${not empty exclude.margin?' disabled':''}">
 			<label for="margin-${part.name}">margin</label>
 			<input type="text" id="margin-${part.name}" name="margin" value="${part.margin}" />
-		</div>		
-		<div class="line${not empty exclude.borderWidth?' disabled':''}">
-			<label for="borderWidth-${part.name}">border width</label>
-			<input type="text" id="borderWidth-${part.name}" name="borderWidth" value="${part.borderWidth}" />
-		</div>		
+		</div>			
 		<div class="line${not empty exclude.margin?' textSize':''}">
 			<label for="textSize-${part.name}">text size</label>
 			<input type="text" id="textSize-${part.name}" name="textSize" value="${part.textSize}" />
@@ -35,14 +31,24 @@
 			<label for="padding-${part.name}">padding</label>
 			<input type="text" id="padding-${part.name}" name="padding" value="${part.padding}" />
 		</div>
+		<div class="line${not empty exclude.textColor?' disabled':''}">
+			<label for="textColor-${part.name}">text color</label>
+			<input class="color" type="text" id="textColor-${part.name}" name="textColor" value="${part.textColor}" />
+		</div>
+		<fieldset>	
+		<legend>	
+		<div class="checkline${not empty exclude.borderWidth?' disabled':''}">
+			<label for="borderWidth-${part.name}">border</label>
+			<input type="checkbox" id="borderWidth-${part.name}" name="borderWidth" value="1px" ${not empty part.borderWidth?'checked="checked"':''}/>			
+		</div>
+		</legend>
 		<div class="line${not empty exclude.borderColor?' disabled':''}">
 			<label for="borderColor-${part.name}">border color</label>
 			<input class="color" type="text" id="borderColor-${part.name}" name="borderColor" value="${part.borderColor}" />
 		</div>
-		<div class="line${not empty exclude.textColor?' disabled':''}">
-			<label for="textColor-${part.name}">text color</label>
-			<input class="color" type="text" id="textColor-${part.name}" name="textColor" value="${part.textColor}" />
-		</div>		
+		</fieldset>
+		
+		
 		</div>
 		</div>
 		<div class="line${not empty exclude.font?' disabled':''}">
