@@ -160,5 +160,9 @@ public class TemplatePart {
 	public void setTitleColor(String titleColor) {
 		this.titleColor = titleColor;
 	}
+	
+	public String getTextStyle() {
+		return "color: "+getFinalTextColor()+"; font-size:"+getFinalTextSize()+"; font-family:"+getFinalFont()+';';
+	}
 
 }
