@@ -15,7 +15,7 @@
 <img style="width: 100%;" src="${fn:replace(previewURL,'/full/', '/float/')}"${style} />
 </td></tr>
 </c:if>
-<tr><td class="zone2" colspan="2" style="text-align: left;"><span class="container">${comp.secondText}</span></td></tr>
+<tr><td class="zone2" colspan="2" style="text-align: left; ${areaStyle.textStyle}"><span class="container">${comp.secondText}</span></td></tr>
 </c:if>
 <c:if test="${info.device.code == 'pdf'}">
 <tr><td>

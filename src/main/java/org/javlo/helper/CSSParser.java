@@ -6,13 +6,17 @@ import java.util.EmptyStackException;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Stack;
+import java.util.StringTokenizer;
 
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.lang.StringUtils;
 import org.javlo.css.CSSElement;
 import org.javlo.helper.XMLManipulationHelper.BadXMLException;
 import org.javlo.helper.XMLManipulationHelper.TagDescription;
-
+import org.jsoup.Jsoup;
+import org.jsoup.nodes.Document;
+import org.jsoup.nodes.Element;
+import org.jsoup.select.Elements;
 
 public class CSSParser {
 
@@ -96,14 +100,11 @@ public class CSSParser {
 
 	public static void main(String[] args) {
 		try {
-			File testFile = new File("/tmp/test.html");
+			File testFile = new File("c:/trans/test.html");
 			String html = FileUtils.readFileToString(testFile);
-			html = mergeCSS(html);
-			FileUtils.writeStringToFile(new File("/tmp/test_result.html"), html);
+			//html = cssInline(html);
+			FileUtils.writeStringToFile(new File("c:/trans/test_result.html"), html);
 		} catch (IOException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		} catch (BadXMLException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
@@ -151,12 +152,12 @@ public class CSSParser {
 			}
 		}
 		String htmlWithoutCSS = remp.start(html);
-		String cssFinal = StringHelper.removeSequence(css.toString(), "/*", "*/");		
-		
+		String cssFinal = StringHelper.removeSequence(css.toString(), "/*", "*/");
+
 		return mergeCSS(cssFinal, htmlWithoutCSS);
 	}
 
-	public static String mergeCSS(String css, String html) throws BadXMLException {
+	private static String mergeCSS(String css, String html) throws BadXMLException {
 		TagDescription[] tags = XMLManipulationHelper.searchAllTag(html, true);
 		List<CSSElement> cssElems = parseCSS(css);
 
@@ -175,7 +176,11 @@ public class CSSParser {
 						if (!style.endsWith(";")) {
 							style = style + ';';
 						}
-						style = style + ' ' + StringHelper.removeCR(cssElement.getStyle());
+						String newStyle = StringHelper.removeCR(cssElement.getStyle());
+						System.out.println("***** CSSParser.mergeCSS : newStyle = "+newStyle); //TODO: remove debug trace
+						if (!style.contains(newStyle)) {
+							style = style + ' ' + newStyle;
+						}
 					}
 					tags[i].getAttributes().put("style", style);
 					if (!modifiedTag.contains(tags[i])) {
@@ -224,7 +229,32 @@ public class CSSParser {
 		}
 		return remplacement.start(html);
 	}
-	
-	
+
+	public static String _cssInline(String html) throws IOException {
+		final String style = "style";
+		Document doc = Jsoup.parse(html);
+		Elements els = doc.select(style);
+		for (Element e : els) {
+			String styleRules = e.getAllElements().get(0).data().replaceAll("\n", "").trim(), delims = "{}";
+			StringTokenizer st = new StringTokenizer(styleRules, delims);
+			while (st.countTokens() > 1) {
+				String selector = st.nextToken(), properties = st.nextToken();
+				Elements selectedElements = doc.select(selector);
+				for (Element selElem : selectedElements) {
+					String oldProperties = selElem.attr(style);
+					selElem.attr(style, oldProperties.length() > 0 ? concatenateProperties(oldProperties, properties) : properties);
+				}
+			}
+			//e.remove();
+		}
+		return "" + doc;
+	}
+
+	private static String concatenateProperties(String oldProp, String newProp) {
+		oldProp = oldProp.trim();
+		if (!newProp.endsWith(";"))
+			newProp += ";";
+		return newProp + oldProp;
+	}
 
 }

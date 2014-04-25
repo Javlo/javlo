@@ -27,18 +27,27 @@ public class Paragraph extends AbstractVisualComponent {
 
 	@Override
 	public String getPrefixViewXHTMLCode(ContentContext ctx) {
-		String style = getStyle(ctx);
-		if (style != null) {
-			style = style + " ";
+
+		if (getConfig(ctx).getProperty("prefix", null) != null) {
+			return getConfig(ctx).getProperty("prefix", null);
 		} else {
-			style = "";
+			String style = getStyle(ctx);
+			if (style != null) {
+				style = style + " ";
+			} else {
+				style = "";
+			}
+			return "<p" + getSpecialPreviewCssClass(ctx, style + getType()) + getSpecialPreviewCssId(ctx) + " " + getInlineStyle(ctx) + ">";
 		}
-		return "<p" + getSpecialPreviewCssClass(ctx, style + getType()) + getSpecialPreviewCssId(ctx) + " "+getInlineStyle(ctx)+">";
 	}
 
 	@Override
 	public String getSuffixViewXHTMLCode(ContentContext ctx) {
-		return "</p>";
+		if (getConfig(ctx).getProperty("prefix", null) != null) {
+			return getConfig(ctx).getProperty("prefix", null);
+		} else {
+			return "</p>";
+		}
 	}
 
 	protected boolean isPrefixed() {
