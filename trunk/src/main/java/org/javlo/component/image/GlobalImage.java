@@ -1000,7 +1000,6 @@ public class GlobalImage extends Image implements IImageFilter {
 			if (image.isModify()) {				
 				image.storeProperties();
 				Edit.performSave(ctx, editContext, globalContext, content, componentContext, rs, i18nAccess, messageRepository, currentModule, adminUserFactory);
-
 			}
 		} else {
 			logger.info("stop data feed back (template:" + ctx.getCurrentTemplate().getName() + ").");

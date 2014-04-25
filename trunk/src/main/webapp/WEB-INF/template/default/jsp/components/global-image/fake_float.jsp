@@ -24,20 +24,16 @@
 </div><div class="text">${label}</div>
 </td></tr>
 </c:if>
-
 </table>
-
-
 <div class="source" style="display: none;"><span class="container">${label}</span></div>
-<c:if test="${contentContext.asPreviewMode && comp.textAuto && info.device.code != 'pdf'}">
+<c:if test="${contentContext.asPreviewMode && comp.textAuto}">
 <script type="text/javascript">
 jQuery("#comp-${compid} img").load(function() {
 	floatZone("#comp-${compid} .source .container", "#comp-${compid} .zone1 .container", "#comp-${compid} .zone2 .container", "#comp-${compid} img");
-	<c:url var="url" value="${info.currentAjaxURL}">
-		<c:param name="webaction" value="global-image.dataFeedBack" />
-		<c:param name="comp-id" value="${compid}" />
-	</c:url>	
-	var url = "${url}&first-text="+jQuery("#comp-${compid} .zone1 .container").html()+"&second-text="+jQuery("#comp-${compid} .zone2 .container").html()+"&height="+jQuery("#comp-${compid} img").height()+"&width="+jQuery("#comp-${compid} img").width();	
-	ajaxRequest(url, null, null);
+	var firstText=jQuery("#comp-${compid} .zone1 .container").html();
+	var secondText = jQuery("#comp-${compid} .zone2 .container").html();
+	jQuery.post( "${info.currentAjaxURL}", { webaction: "global-image.dataFeedBack", compid: "${compid}", firsttext: firstText, secondtext: secondText, height: jQuery("#comp-${compid} img").height(), width: jQuery("#comp-${compid} img").width()});
+	
+	//ajaxRequest(url, null, null);
 });
 </script></c:if></div>

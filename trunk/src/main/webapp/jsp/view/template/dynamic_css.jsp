@@ -5,11 +5,17 @@
 	color: ${area.finalTitleColor};
 }</c:forEach></c:forEach>
 
-p,ul,.internal-link,.unsubscribe-link,.date,.external-link,.pdf-link,.file,.simple-internal-link,.image-left,.image-right
+p,ul,ol,.internal-link,.unsubscribe-link,.date,.external-link,.pdf-link,.file,.simple-internal-link,.global-image {
+	color: ${info.template.style.finalTextColor};
+	font-size: ${info.template.style.finalTextSize};	
+	font-family: ${info.template.style.finalFont};
+}
 
 <c:forEach var="row" items="${info.template.rows}"><c:forEach var="area" items="${row.areas}">
-#${area.name} p, #${area.name} ul, #${area.name} .internal-link, #${area.name} .unsubscribe-link, #${area.name} .date, #${area.name} .external-link,#${area.name} .pdf-link,#${area.name} .file, #${area.name} .simple-internal-link, #${area.name} .image-left,#${area.name}  .image-right, #${area.name} .global-image {	
+#${area.name} p, #${area.name} ul, #${area.name} ol, #${area.name} .internal-link, #${area.name} .unsubscribe-link, #${area.name} .date, #${area.name} .external-link,#${area.name} .pdf-link,#${area.name} .file, #${area.name} .simple-internal-link, #${area.name} .image-left,#${area.name}  .image-right, #${area.name} .global-image {	
 	color: ${area.finalTextColor};
+	font-size: ${area.finalTextSize};	
+	font-family: ${area.finalFont};
 }</c:forEach></c:forEach>
 
 <c:forEach var="row" items="${info.template.rows}"><c:forEach var="area" items="${row.areas}">
