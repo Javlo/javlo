@@ -896,7 +896,7 @@ public abstract class AbstractVisualComponent implements IContentVisualComponent
 	protected String getInlineStyle(ContentContext ctx) {
 		String inlineStyle = "";
 		if (getBackgroundColor() != null && getBackgroundColor().length() > 2) {
-			inlineStyle = " background-color: " + getBackgroundColor() + ';';
+			inlineStyle = " overflow: hidden; background-color: " + getBackgroundColor() + ';';
 		}
 		if (getTextColor() != null && getTextColor().length() > 2) {
 			inlineStyle = inlineStyle + " color: " + getTextColor() + ';';
