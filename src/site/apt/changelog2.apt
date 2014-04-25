@@ -249,3 +249,5 @@ change log
  * change image resize method   
  
  * static file sorting
+ 
+ * css inliner without repetition
