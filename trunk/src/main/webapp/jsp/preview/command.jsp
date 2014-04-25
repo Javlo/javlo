@@ -136,7 +136,7 @@ if (!rightOnPage) {
 					</form></li><%
 					}%>
 					<%if (ctx.getCurrentTemplate().isPDFRenderer()) {%>
-					<li><form id="export_pdf_page_form" action="${info.currentPDFURL}" method="post" target="_blanck">
+					<li><form id="export_pdf_page_form" action="${info.currentPDFURL}" method="post" target="_blanck" ${info.device.code != 'pdf'?'class="no-access" title="choose pdf renderer."':'class="access"'}>
 						<div class="pc_line">
 							<input id="export_pdf_button" type="submit" value="${i18n.edit['preview.label.pdf']}" title="${i18n.edit['preview.label.pdf']}" />
 							<label for="export_pdf_button">${i18n.edit['preview.label.pdf']}</label>

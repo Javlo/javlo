@@ -9,6 +9,7 @@ import org.javlo.helper.LoremIpsumGenerator;
 import org.javlo.helper.StringHelper;
 import org.javlo.helper.XHTMLHelper;
 import org.javlo.service.ReverseLinkService;
+import org.javlo.template.Area;
 
 /**
  * @author pvandermaesen
@@ -68,8 +69,7 @@ public class SubTitle extends AbstractVisualComponent {
 				colored = " colored";
 			}
 			
-			if (level.equals("7") || level.equals("8") || level.equals("9")) {
-				
+			if (level.equals("7") || level.equals("8") || level.equals("9")) {				
 				res.append("<div id=\"" + getXHTMLId(ctx) + "\" class=\"subtitle-" + level + colored + "\">");
 				ReverseLinkService reverserLinkService = ReverseLinkService.getInstance(globalContext);
 				value = reverserLinkService.replaceLink(ctx, this, value);
@@ -80,7 +80,17 @@ public class SubTitle extends AbstractVisualComponent {
 				if (getTextColor() != null && getTextColor().length() > 3) {
 					style=" style=\"color:"+getTextColor()+getLayout().getStyle()+'"';
 				} else {
-					style=" style=\""+getLayout().getStyle()+'"';
+					String areaColor = "";
+					Area areaStyle = null;
+					if (ctx.getCurrentTemplate().isEditable()) {
+						String area = (String)ctx.getRequest().getAttribute("area");
+						areaStyle = ctx.getCurrentTemplate().getArea(ctx.getCurrentTemplate().getRows(), area);
+					}
+					
+					if (areaStyle != null && areaStyle.getFinalTitleColor() != null && areaStyle.getFinalTitleColor().trim().length() > 0) {
+						areaColor = " color:"+areaStyle.getFinalTitleColor()+';';
+					}
+					style=" style=\""+getLayout().getStyle()+areaColor+'"';
 				}
 				res.append("<h" + level + " id=\"" + getXHTMLId(ctx) + "\" class=\"subtitle"+colored+"\""+style+">");
 				ReverseLinkService reverserLinkService = ReverseLinkService.getInstance(globalContext);
