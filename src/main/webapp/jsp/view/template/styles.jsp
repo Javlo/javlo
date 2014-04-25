@@ -7,6 +7,4 @@
 > padding: ${template.padding};</c:if><c:if test="${not empty template.margin}"
 > margin: ${template.margin};</c:if><c:if test="${not empty template.borderColor}"
 > border-color: ${template.borderColor};</c:if><c:if test="${not empty template.borderWidth}"
-> border-width: ${template.borderWidth}; border-style: solid;</c:if><c:if test="${not empty template.finalFont}"
-> font-family: ${template.finalFont};</c:if><c:if test="${not empty template.finalTextSize}"
-> font-size: ${template.finalTextSize};</c:if>
+> border-width: ${template.borderWidth}; border-style: solid;</c:if>
