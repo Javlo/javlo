@@ -710,7 +710,7 @@ public class GlobalImage extends Image implements IImageFilter {
 		String embedCode = requestService.getParameter(getEmbedCodeName(), null);
 		String auto = requestService.getParameter(getTextAutoInputName(), null);
 
-		if (isFloatText(ctx)) {
+		if (requestService.getParameter(getFirstTextInputName(), null) != null) {
 			setTextAuto(StringHelper.isTrue(auto));
 		}
 
@@ -967,13 +967,13 @@ public class GlobalImage extends Image implements IImageFilter {
 
 	public static String performDataFeedBack(ContentContext ctx, EditContext editContext, GlobalContext globalContext, User currentUser, ContentService content, ComponentContext componentContext, RequestService rs, I18nAccess i18nAccess, MessageRepository messageRepository, Module currentModule, AdminUserFactory adminUserFactory) throws Exception {
 
-		GlobalImage image = (GlobalImage) ComponentHelper.getComponentFromRequest(ctx);
+		GlobalImage image = (GlobalImage) ComponentHelper.getComponentFromRequest(ctx, "compid");
 		if (image.getConfig(ctx).isDataFeedBack() && currentUser != null && currentUser.validForRoles(AdminUserSecurity.CONTENT_ROLE)) {
 			logger.info("exec data feed back (template:" + ctx.getCurrentTemplate().getName() + ").");
-			String firstText = rs.getParameter("first-text", null);
-			String secondText = rs.getParameter("second-text", null);
+			String firstText = rs.getParameter("firsttext", null);
+			String secondText = rs.getParameter("secondtext", null);
 			String height = rs.getParameter("height", null);
-			String width = rs.getParameter("width", null);			
+			String width = rs.getParameter("width", null);
 
 			if (firstText != null && !firstText.equals(image.getFirstText())) {
 				image.setModify();
@@ -1027,7 +1027,7 @@ public class GlobalImage extends Image implements IImageFilter {
 	public boolean isTextAuto() {
 		if (properties == null || properties.getProperty(AUTO_LABEL, null) == null) {
 			return true; // default value
-		}
+		}		
 		return StringHelper.isTrue(properties.getProperty(AUTO_LABEL, null));
 	}
 
