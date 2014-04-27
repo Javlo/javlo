@@ -20,7 +20,11 @@ public class SubTitle extends AbstractVisualComponent {
 
 	@Override
 	public String getPrefixViewXHTMLCode(ContentContext ctx) {
-		return "<div " + getSpecialPreviewCssClass(ctx, "") + getSpecialPreviewCssId(ctx) + " "+getInlineStyle(ctx)+">";
+		String cssClass = getStyle()+"-wrapper";
+		if (isBackgroundColored()) {
+			cssClass = cssClass + " colored-wrapper";
+		}
+		return "<div " + getSpecialPreviewCssClass(ctx, cssClass) + getSpecialPreviewCssId(ctx) + " "+getInlineStyle(ctx)+">";
 	}
 	
 	@Override
