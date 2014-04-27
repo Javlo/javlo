@@ -1169,6 +1169,10 @@ public abstract class AbstractVisualComponent implements IContentVisualComponent
 	public boolean isColored() {
 		return (getBackgroundColor() != null && getBackgroundColor().length() > 2) || (getTextColor() != null && getTextColor().length() > 2);
 	}
+	
+	public boolean isBackgroundColored() {
+		return (getBackgroundColor() != null && getBackgroundColor().length() > 2);
+	}
 
 	@Override
 	public String getStyleLabel(ContentContext ctx) {

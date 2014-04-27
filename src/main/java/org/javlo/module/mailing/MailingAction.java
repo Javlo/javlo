@@ -87,7 +87,7 @@ public class MailingAction extends AbstractModuleAction {
 		if (ctx.isEditPreview()) {						
 			if (mailingContext.getWizardStep(SEND_WIZARD_BOX) == 1) {
 				mailingContext.setWizardStep(SEND_WIZARD_BOX,2);
-				mailingContext.setCurrentTemplate(ctx.getCurrentTemplate().getId());				
+				//mailingContext.setCurrentTemplate(ctx.getCurrentTemplate().getId());				
 				currentModule.setRenderer("/jsp/step2.jsp");
 				request.setAttribute("currentTemplate", mailingContext.getCurrentTemplate());
 			} else {				

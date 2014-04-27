@@ -62,6 +62,65 @@ public class CSSParser {
 			this.clazz = clazz;
 		}
 	}
+	
+	public static class Style {
+		private String attribute = null;
+		private String value = null;
+		
+		/**
+		 * contruct css style with a style as param.
+		 * life 'color: ref'
+		 * @param style
+		 */
+		public Style(String style) {
+			if (style.contains(":")) {
+				style = style.replace(";", "");
+				String[] splitedStyle = style.split(":");
+				if (splitedStyle.length == 2) {
+					attribute = splitedStyle[0].trim();
+					value = splitedStyle[1].trim();
+				}
+			}
+		}
+		
+		public boolean isValid() {
+			return attribute != null && value != null && attribute.length() > 0 && value.length() > 0;
+		}
+		
+		public String getAttribute() {
+			return attribute;
+		}
+		public void setAttribute(String attribute) {
+			this.attribute = attribute;
+		}
+		public String getValue() {
+			return value;
+		}
+		public void setValue(String value) {
+			this.value = value;
+		}
+		
+		@Override
+		public String toString() {
+			if (isValid()) {
+				return getAttribute()+':'+getValue()+';';
+			} else {
+				return ""; 
+			}
+		}
+	}
+	
+	public static List<Style> parseStyle(String style) {
+		List<Style> outStyles = new LinkedList<CSSParser.Style>();
+		String[] allStyle = style.split(";");
+		for (String rawStyle : allStyle) {
+			Style parsedStyle = new Style(rawStyle);
+			if (parsedStyle.isValid()) {
+				outStyles.add(parsedStyle);
+			}
+		}
+		return outStyles;
+	}
 
 	public static List<CSSElement> parseCSS(String css) {
 		boolean inStyle = false;
@@ -176,10 +235,13 @@ public class CSSParser {
 						if (!style.endsWith(";")) {
 							style = style + ';';
 						}
-						String newStyle = StringHelper.removeCR(cssElement.getStyle());
-						System.out.println("***** CSSParser.mergeCSS : newStyle = "+newStyle); //TODO: remove debug trace
-						if (!style.contains(newStyle)) {
-							style = style + ' ' + newStyle;
+						String newStyles = StringHelper.removeCR(cssElement.getStyle());						
+						
+						List<Style> styles = parseStyle(newStyles);
+						for (Style newStyle : styles) {
+							if (!style.contains(newStyle.getAttribute()+':')) {
+								style = style + ' ' + newStyle;
+							}
 						}
 					}
 					tags[i].getAttributes().put("style", style);
