@@ -53,10 +53,10 @@ public class UserFactory implements IUserFactory, Serializable {
 	static Object lockStore = new Object();
 
 	public static final String USER_FACTORY_KEY = "_user_factory_";
-	
+
 	private String userInfoFile = null;
-	
-	private static Map<String,IUserInfo> changePasswordReference = new TimeMap<String, IUserInfo>();
+
+	private static Map<String, IUserInfo> changePasswordReference = new TimeMap<String, IUserInfo>();
 
 	protected List<IUserInfo> userInfoList = null; // TODO: create a external
 	// application scope class
@@ -120,7 +120,7 @@ public class UserFactory implements IUserFactory, Serializable {
 
 		boolean logged = request.getUserPrincipal() != null && request.getUserPrincipal().getName().equals(login);
 		User user = getUser(login);
-		
+
 		if (user == null) {
 			// administrator auto login not possible
 			if (editCtx.getEditUser(login) != null && (logged || editCtx.hardAutoLogin(login))) {
@@ -130,7 +130,7 @@ public class UserFactory implements IUserFactory, Serializable {
 				user = null;
 			}
 		}
-		
+
 		if (user != null && globalCtx.getAdministrator().equals(user.getLogin())) {
 			user.getUserInfo().addRoles(new HashSet(Arrays.asList(new String[] { AdminUserSecurity.FULL_CONTROL_ROLE })));
 		}
@@ -139,9 +139,9 @@ public class UserFactory implements IUserFactory, Serializable {
 		}
 		if (user != null) {
 			user.setContext(globalContext.getContextKey());
-			request.getSession().setAttribute(SESSION_KEY, user);			
+			request.getSession().setAttribute(SESSION_KEY, user);
 		}
-		
+
 		return user;
 	}
 
@@ -202,7 +202,7 @@ public class UserFactory implements IUserFactory, Serializable {
 		EditContext editContext = EditContext.getInstance(globalContext, session);
 		return editContext.getUserRoles();
 	}
-	
+
 	/*
 	 * (non-Javadoc)
 	 * 
@@ -255,7 +255,7 @@ public class UserFactory implements IUserFactory, Serializable {
 		}
 		return null;
 	}
-	
+
 	@Override
 	public User getUserByEmail(String email) {
 		List<IUserInfo> users = getUserInfoList();
@@ -325,40 +325,41 @@ public class UserFactory implements IUserFactory, Serializable {
 	 */
 	@Override
 	public List<IUserInfo> getUserInfoList() {
-		synchronized (lock) {
-			if (userInfoList == null) {
-				String userInfoPath = getFileName();
-				File userInfoFile = new File(userInfoPath);
+		if (userInfoList == null) {
+			synchronized (lock) {
+				if (userInfoList == null) {
+					String userInfoPath = getFileName();
+					File userInfoFile = new File(userInfoPath);
 
-				if (!userInfoFile.exists()) {
-					logger.fine(userInfoFile.getPath() + " not found.");
-					return new LinkedList<IUserInfo>();
-				} else {
-					try {
-						InputStream in = new FileInputStream(userInfoFile);
-						CSVFactory fact;
+					if (!userInfoFile.exists()) {
+						logger.fine(userInfoFile.getPath() + " not found.");
+						return new LinkedList<IUserInfo>();
+					} else {
 						try {
-							fact = new CSVFactory(in);
-						} finally {
-							ResourceHelper.closeResource(in);
+							InputStream in = new FileInputStream(userInfoFile);
+							CSVFactory fact;
+							try {
+								fact = new CSVFactory(in);
+							} finally {
+								ResourceHelper.closeResource(in);
+							}
+							String[][] csvArray = fact.getArray();
+							userInfoList = new LinkedList<IUserInfo>();
+							for (int i = 1; i < csvArray.length; i++) {
+								IUserInfo newUserInfo = createUserInfos();
+								Map<String, String> values = JavaHelper.createMap(csvArray[0], csvArray[i]);
+								BeanHelper.copy(values, newUserInfo);
+								userInfoList.add(newUserInfo);
+							}
+						} catch (Exception e) {
+							Logger.log(e);
+							userInfoList = new LinkedList<IUserInfo>();
 						}
-						String[][] csvArray = fact.getArray();
-						// IUserInfo[] arrayUserInfoList = new IUserInfo[csvArray.length - 1];
-						userInfoList = new LinkedList<IUserInfo>();
-						for (int i = 1; i < csvArray.length; i++) {
-							IUserInfo newUserInfo = createUserInfos();
-							Map<String, String> values = JavaHelper.createMap(csvArray[0], csvArray[i]);
-							BeanHelper.copy(values, newUserInfo);
-							userInfoList.add(newUserInfo);
-						}
-					} catch (Exception e) {
-						Logger.log(e);
-						userInfoList = new LinkedList<IUserInfo>();
 					}
 				}
 			}
-			return userInfoList;
 		}
+		return userInfoList;
 	}
 
 	/*
@@ -414,12 +415,18 @@ public class UserFactory implements IUserFactory, Serializable {
 		boolean passwordEqual = false;
 		StaticConfig staticConfig = StaticConfig.getInstance(request.getSession());
 
-		if (user == null && !globalContext.isMaster()) { // check if user is in master globalContext
+		if (user == null && !globalContext.isMaster()) { // check if user is in
+															// master
+															// globalContext
 			IUserFactory masterUserFactory;
 			try {
 				masterUserFactory = AdminUserFactory.createUserFactory(GlobalContext.getMasterContext(request.getSession()), request.getSession());
 				user = masterUserFactory.getUser(login);
-				UserFactory.createUserFactory(globalContext, request.getSession()); // reset the "real" user factory
+				UserFactory.createUserFactory(globalContext, request.getSession()); // reset
+																					// the
+																					// "real"
+																					// user
+																					// factory
 			} catch (Exception e) {
 				e.printStackTrace();
 			}
@@ -471,7 +478,7 @@ public class UserFactory implements IUserFactory, Serializable {
 	 * @see org.javlo.user.IUserFactory#logout()
 	 */
 	@Override
-	public void logout(HttpSession session) {		
+	public void logout(HttpSession session) {
 		session.removeAttribute(SESSION_KEY);
 	}
 
@@ -602,19 +609,20 @@ public class UserFactory implements IUserFactory, Serializable {
 		}
 
 	}
-	
+
 	/**
-	 * retrieve user for change password width special code.
-	 * Used when user had forget password.
+	 * retrieve user for change password width special code. Used when user had
+	 * forget password.
+	 * 
 	 * @param passwordChangeCode
 	 * @return
 	 */
-	public IUserInfo getPasswordChangeWidthKey(String passwordChangeCode) {		
+	public IUserInfo getPasswordChangeWidthKey(String passwordChangeCode) {
 		return changePasswordReference.get(passwordChangeCode);
 	}
-	
+
 	public String createPasswordChangeKey(IUserInfo user) {
-		String passwordCode = StringHelper.getRandomString(32,"0123456789abcdefghijklmnopqrstuvwxyz")+StringHelper.getRandomId();
+		String passwordCode = StringHelper.getRandomString(32, "0123456789abcdefghijklmnopqrstuvwxyz") + StringHelper.getRandomId();
 		changePasswordReference.put(passwordCode, user);
 		return passwordCode;
 	}

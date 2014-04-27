@@ -208,8 +208,11 @@ public class UserInfo implements Comparable<IUserInfo>, IUserInfo, Serializable 
 	 * @param strings
 	 */
 	@Override
-	public void setRoles(Set<String> inRoles) {
-		roles = inRoles;
+	public synchronized void setRoles(Set<String> inRoles) {
+		roles = new HashSet<String>();
+		for (String role : inRoles) {
+			roles.add(role.trim());
+		}		
 	}
 
 	@Override
@@ -222,7 +225,7 @@ public class UserInfo implements Comparable<IUserInfo>, IUserInfo, Serializable 
 			Set<String> rolesList = new HashSet<String>();
 			rolesList.addAll(roles);
 			rolesList.addAll(strings);
-			newRoles.addAll(rolesList);
+			newRoles.addAll(StringHelper.trimList(rolesList));
 		}
 		roles = newRoles;
 	}
@@ -230,7 +233,7 @@ public class UserInfo implements Comparable<IUserInfo>, IUserInfo, Serializable 
 	public void setRolesRaw(String rolesRaw) {
 		if (rolesRaw != null) {
 			if (rolesRaw.trim().length() > 0) {
-				roles = new HashSet<String>(StringHelper.stringToCollection(rolesRaw, "" + ROLES_SEPARATOR));
+				roles = new HashSet<String>(StringHelper.stringToCollectionTrim(rolesRaw, "" + ROLES_SEPARATOR));
 			}
 		}
 	}
