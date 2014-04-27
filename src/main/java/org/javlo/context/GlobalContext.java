@@ -1540,7 +1540,7 @@ public class GlobalContext implements Serializable {
 		if (roleRaw == null || roleRaw.trim().length() == 0) {
 			return Collections.emptySet();
 		}
-		Set<String> outRole = new HashSet<String>(Arrays.asList(StringHelper.stringToArray(roleRaw)));
+		Set<String> outRole = new HashSet<String>(StringHelper.stringToCollectionTrim(roleRaw));
 		return outRole;
 	}
 
@@ -2500,10 +2500,9 @@ public class GlobalContext implements Serializable {
 	}
 
 	public void setUserRoles(Set<String> roles) {
-		synchronized (properties) {
-			String[] rolesArray = new String[roles.size()];
-			roles.toArray(rolesArray);
-			properties.setProperty("roles", StringHelper.arrayToString(rolesArray));
+		synchronized (properties) {				
+			List<String> rolesList = StringHelper.trimList(roles);
+			properties.setProperty("roles", StringHelper.collectionToString(rolesList));
 			save();
 		}
 	}

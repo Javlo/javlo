@@ -2188,7 +2188,22 @@ public class StringHelper {
 		}
 		return stringToCollection(str, DEFAULT_LIST_SEPARATOR);
 	}
+	
+	public static List<String> stringToCollectionTrim(String str) {
+		if (str == null) {
+			return null;
+		}
+		return stringToCollectionTrim(str, DEFAULT_LIST_SEPARATOR);
+	}
 
+	public static List<String> stringToCollectionTrim(String str, String token) {
+		List<String> listTrim = new LinkedList<String>();
+		for (String item : splitAsList(str, token, DEFAULT_ESCAPE)) {
+			listTrim.add(item.trim());
+		}
+		return listTrim;
+	}
+	
 	public static List<String> stringToCollection(String str, String token) {
 		return splitAsList(str, token, DEFAULT_ESCAPE);
 	}
@@ -2914,6 +2929,19 @@ public class StringHelper {
 			logger.warning(t.getMessage());
 			return null;
 		}
+	}
+	
+	/**
+	 * trim all items of the list.
+	 * @param list
+	 * @return
+	 */
+	public static List<String> trimList(Collection<String> list) {
+		List<String> outList = new LinkedList<String>();
+		for (String item : list) {
+			outList.add(item.trim());
+		}
+		return outList;
 	}
 
 }
