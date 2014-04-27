@@ -913,12 +913,12 @@ public class GlobalImage extends Image implements IImageFilter {
 	public int getHeight() {
 		return Integer.parseInt(properties.getProperty("height", "-1"));
 	}
-	
+
 	private String getWidthKey(ContentContext ctx) {
-		return "width-"+ctx.getDevice().getCode();
+		return "width-" + ctx.getDevice().getCode();
 	}
 
-	public int getWidth(ContentContext ctx) {		
+	public int getWidth(ContentContext ctx) {
 		return Integer.parseInt(properties.getProperty(getWidthKey(ctx), "-1"));
 	}
 
@@ -953,7 +953,7 @@ public class GlobalImage extends Image implements IImageFilter {
 		}
 	}
 
-	public void setWidth(ContentContext ctx, int width) {		
+	public void setWidth(ContentContext ctx, int width) {
 		if (getWidth(ctx) != width) {
 			properties.setProperty(getWidthKey(ctx), "" + width);
 			setModify();
@@ -975,13 +975,15 @@ public class GlobalImage extends Image implements IImageFilter {
 			String height = rs.getParameter("height", null);
 			String width = rs.getParameter("width", null);
 
-			if (firstText != null && !firstText.equals(image.getFirstText())) {
-				image.setModify();
-				image.setFirstText(firstText);
-			}
-			if (secondText != null && !secondText.equals(image.getSecondText())) {
-				image.setModify();
-				image.setSecondText(secondText);
+			if (image.isTextAuto()) {
+				if (firstText != null && !firstText.equals(image.getFirstText())) {
+					image.setModify();
+					image.setFirstText(firstText);
+				}
+				if (secondText != null && !secondText.equals(image.getSecondText())) {
+					image.setModify();
+					image.setSecondText(secondText);
+				}
 			}
 			if (height != null) {
 				int intHeight = Integer.parseInt(height);
@@ -997,7 +999,7 @@ public class GlobalImage extends Image implements IImageFilter {
 					image.setWidth(ctx, inWidth);
 				}
 			}
-			if (image.isModify()) {				
+			if (image.isModify()) {
 				image.storeProperties();
 				Edit.performSave(ctx, editContext, globalContext, content, componentContext, rs, i18nAccess, messageRepository, currentModule, adminUserFactory);
 			}
@@ -1026,7 +1028,7 @@ public class GlobalImage extends Image implements IImageFilter {
 	public boolean isTextAuto() {
 		if (properties == null || properties.getProperty(AUTO_LABEL, null) == null) {
 			return true; // default value
-		}		
+		}
 		return StringHelper.isTrue(properties.getProperty(AUTO_LABEL, null));
 	}
 
@@ -1115,7 +1117,7 @@ public class GlobalImage extends Image implements IImageFilter {
 	}
 
 	@Override
-	public BufferedImage filterImage(ContentContext ctx, BufferedImage image) {		
+	public BufferedImage filterImage(ContentContext ctx, BufferedImage image) {
 		reloadProperties();
 		return ImageEngine.resizeWidth(image, getWidth(ctx));
 	}
