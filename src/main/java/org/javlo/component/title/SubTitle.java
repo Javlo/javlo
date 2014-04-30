@@ -82,7 +82,7 @@ public class SubTitle extends AbstractVisualComponent {
 			} else {
 				String style;
 				if (getTextColor() != null && getTextColor().length() > 3) {
-					style=" style=\"color:"+getTextColor()+getLayout().getStyle()+'"';
+					style=" style=\"color:"+getTextColor()+';'+getLayout().getStyle()+'"';
 				} else {
 					String areaColor = "";
 					Area areaStyle = null;

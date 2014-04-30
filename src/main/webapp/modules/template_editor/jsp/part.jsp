@@ -6,7 +6,7 @@
 		<div class="cols">
 		<div class="one_half">		
 		<div class="line ${not empty exclude.width?' disabled':''}">
-			<label for="width-${part.name}">width</label>
+			<label for="width-${part.name}">width <c:if test="${not empty part.finalWidth}"> (${part.finalWidth})</c:if></label>
 			<input type="text" id="width-${part.name}" name="width" value="${part.width}" />
 		</div>
 		<div class="line ${not empty exclude.margin?' disabled':''}">
@@ -47,8 +47,6 @@
 			<input class="color" type="text" id="borderColor-${part.name}" name="borderColor" value="${part.borderColor}" />
 		</div>
 		</fieldset>
-		
-		
 		</div>
 		</div>
 		<div class="line${not empty exclude.font?' disabled':''}">

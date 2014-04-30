@@ -619,6 +619,7 @@ public class ContentService {
 		if (ctx != null) {
 			ctx.resetCurrentPageCached();
 			InfoBean.updateInfoBean(ctx);
+			ctx.getGlobalContext().releaseAllCache();
 		}
 	}
 

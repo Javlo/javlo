@@ -41,10 +41,10 @@ public class TemplateEditorAction extends AbstractModuleAction {
 		TemplateEditorContext editorContext = TemplateEditorContext.getInstance(ctx.getRequest().getSession());
 
 		for (Template template : TemplateFactory.getAllTemplates(ctx.getRequest().getSession().getServletContext())) {
-			if (template.isEditable() && !template.isValid()) {
+			if (template.isEditable() && !template.isValid() && !template.isDeleted()) {
 				editableTemplate.add(template.getName());
 				// choose first template as current template.
-				if (editorContext.getCurrentTemplate() == null) {
+				if (editorContext.getCurrentTemplate() == null || editorContext.getCurrentTemplate().isValid()  || editorContext.getCurrentTemplate().isDeleted()) {
 					editorContext.setCurrentTemplate(template);
 				}
 			}
@@ -144,7 +144,7 @@ public class TemplateEditorAction extends AbstractModuleAction {
 					row.setPadding(rs.getParameter("padding", ""));
 					row.setBorderWidth(rs.getParameter("borderWidth", ""));
 					row.setBorderColor(rs.getParameter("borderColor", ""));
-					row.setTitleColor(rs.getParameter("titleColor", ""));
+					row.setTitleColor(rs.getParameter("titleColor", ""));					
 					row.setTextColor(rs.getParameter("textColor", ""));
 					row.setTextSize(rs.getParameter("textSize", ""));
 					row.setFont(rs.getParameter("font", ""));
@@ -180,6 +180,7 @@ public class TemplateEditorAction extends AbstractModuleAction {
 				style.setBorderColor(rs.getParameter("borderColor", ""));
 				style.setBorderColor(rs.getParameter("borderColor", ""));
 				style.setTitleColor(rs.getParameter("titleColor", ""));
+				style.setTextColor(rs.getParameter("textColor", ""));
 				style.setTextSize(rs.getParameter("textSize", ""));
 				style.setFont(rs.getParameter("font", ""));
 				style.setBackgroundColor(rs.getParameter("backgroundColor", ""));

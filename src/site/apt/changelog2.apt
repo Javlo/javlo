@@ -253,3 +253,5 @@ change log
  * css inliner without repetition
  
  * trim users roles
+ 
+ * css style parser, don't insert inline two same attribute.

@@ -1922,6 +1922,14 @@ public class Template implements Comparable<Template> {
 		String templateFolder = config.getTemplateFolder();
 		return URLHelper.mergePath(templateFolder, getSourceFolderName());
 	}
+	
+	public boolean isDeleted() {
+		if (dir == null || !dir.exists()) {
+			return true;
+		} else {
+			return false;
+		}
+	}
 
 	private String getTemplateTargetFolder(GlobalContext globalContext) {
 		String templateTgt = URLHelper.mergePath(getWorkTemplateFolder(), getFolder(globalContext));

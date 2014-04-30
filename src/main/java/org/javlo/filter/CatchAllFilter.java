@@ -250,10 +250,11 @@ public class CatchAllFilter implements Filter {
 		/**** SHORT URL ***/
 		/******************/
 
-		String shortURI = uri;
-		if (shortURI.startsWith('/' + globalContext.getContextKey())) {
+		String shortURI = uri;		
+		String contextKey = globalContext.getMainContextKey();		
+		if (shortURI.startsWith('/' + contextKey)) {
 			if (shortURI.length() > globalContext.getContextKey().length() + 2) {
-				shortURI = shortURI.substring(globalContext.getContextKey().length() + 2);
+				shortURI = shortURI.substring(contextKey.length() + 2);
 			} else {
 				shortURI = "";
 			}
