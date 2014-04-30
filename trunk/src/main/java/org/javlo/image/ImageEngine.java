@@ -1025,6 +1025,10 @@ public class ImageEngine {
 		try {
 			System.out.println("start...");
 			BufferedImage sourceImage = ImageIO.read(source);
+			
+			int val = sourceImage.getRGB(0, 0);
+			System.out.println(val);
+			
 			BufferedImage image =  ImageEngine.resizeWidth(sourceImage, 320);
 			ImageIO.write(image, "png", target);
 			System.out.println("end.");

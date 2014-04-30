@@ -91,7 +91,7 @@ public class GlobalContext implements Serializable {
 	private final Object lockImportTemplate = new Object();
 
 	private final Object lockLoadContent = new Object();
-	
+
 	private class StorePropertyThread extends Thread {
 
 		private static final int SLEEP_BETWEEN_STORAGE = 10 * 1000; // 10 sec
@@ -146,9 +146,9 @@ public class GlobalContext implements Serializable {
 	private ServletContext application;
 
 	private URLTriggerThread changeNotificationThread;
-	
+
 	private Integer firstLoadVersion = null;
-	
+
 	private Integer latestUndoVersion = null;
 
 	/**
@@ -272,6 +272,7 @@ public class GlobalContext implements Serializable {
 			String newContextKey = StringHelper.stringToFileName(alias);
 			if (!newContextKey.equals(contextKey)) {
 				newInstance = getRealInstance(session, alias);
+				newInstance.setMainContextKey(contextKey);
 			}
 		}
 		session.setAttribute(KEY, newInstance);
@@ -497,6 +498,8 @@ public class GlobalContext implements Serializable {
 	private final PropertiesConfiguration properties = new PropertiesConfiguration();
 
 	private String contextKey = null;
+
+	private String mainContextKey = null;
 
 	private boolean creation = false;
 
@@ -2500,7 +2503,7 @@ public class GlobalContext implements Serializable {
 	}
 
 	public void setUserRoles(Set<String> roles) {
-		synchronized (properties) {				
+		synchronized (properties) {
 			List<String> rolesList = StringHelper.trimList(roles);
 			properties.setProperty("roles", StringHelper.collectionToString(rolesList));
 			save();
@@ -2880,18 +2883,18 @@ public class GlobalContext implements Serializable {
 		}
 
 	}
-	
+
 	public Integer getFirstLoadVersion() {
-		if (firstLoadVersion == null) {			
+		if (firstLoadVersion == null) {
 			try {
 				int version = PersistenceService.getInstance(this).getVersion();
-				if (version >= 0) { 
+				if (version >= 0) {
 					firstLoadVersion = version;
-				}				
+				}
 			} catch (ServiceException e) {
 				e.printStackTrace();
 			}
-		}		
+		}
 		return firstLoadVersion;
 	}
 
@@ -2901,6 +2904,23 @@ public class GlobalContext implements Serializable {
 
 	public void setLatestUndoVersion(Integer latestUndoVersion) {
 		this.latestUndoVersion = latestUndoVersion;
+	}
+
+	/**
+	 * get the main context (same if no alias defined)
+	 * 
+	 * @return
+	 */
+	public String getMainContextKey() {
+		if (mainContextKey != null) {
+			return mainContextKey;
+		} else {
+			return contextKey;
+		}
+	}
+
+	public void setMainContextKey(String mainContextKey) {
+		this.mainContextKey = mainContextKey;
 	}
 
 }

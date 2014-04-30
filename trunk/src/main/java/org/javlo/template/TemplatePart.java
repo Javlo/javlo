@@ -29,6 +29,10 @@ public class TemplatePart {
 	public String getWidth() {
 		return width;
 	}
+	
+	public String getFinalWidth() {
+		return width;
+	}
 
 	public void setWidth(String width) {
 		this.width = width;

@@ -633,7 +633,7 @@ public abstract class AbstractVisualComponent implements IContentVisualComponent
 		/** renderer **/
 		String renderer = requestService.getParameter(getInputNameRenderer(), null);
 		if (renderer != null) {
-			if (!renderer.equals(getRenderer(ctx))) {
+			if (!renderer.equals(getCurrentRenderer(ctx))) {
 				setRenderer(ctx, renderer);
 				setModify();
 				setNeedRefresh(true);
@@ -646,6 +646,7 @@ public abstract class AbstractVisualComponent implements IContentVisualComponent
 			setStyle(ctx, newStyle);
 			setModify();
 			setNeedRefresh(true);
+			
 		}
 
 		/** in list **/
@@ -668,11 +669,7 @@ public abstract class AbstractVisualComponent implements IContentVisualComponent
 		}
 
 		if (isModify()) {
-			System.out.println("***** AbstractVisualComponent.performConfig : STORE CONFIG."); // TODO:
-																								// remove
-																								// debug
-																								// trace
-			PersistenceService.getInstance(ctx.getGlobalContext()).store(ctx);
+			PersistenceService.getInstance(ctx.getGlobalContext()).setAskStore(true);
 		}
 
 		return null;
