@@ -258,7 +258,9 @@ public class CatchAllFilter implements Filter {
 			} else {
 				shortURI = "";
 			}
-		}
+		} else if (shortURI.startsWith("/")) {
+			shortURI = shortURI.substring(1);
+		}		
 
 		if (shortURI.length() == globalContext.getStaticConfig().getShortURLSize() + 1 && shortURI.startsWith("U")) {
 			ContentContext ctx = null;
@@ -269,7 +271,7 @@ public class CatchAllFilter implements Filter {
 					MenuElement page = content.getPageWithShortURL(ctx, shortURI);
 					if (page != null) {
 						String newURL = URLHelper.createURLWithtoutEncodeURL(ctx, page.getPath());
-						NetHelper.sendRedirectPermanently((HttpServletResponse) response, newURL);
+						NetHelper.sendRedirectTemporarily((HttpServletResponse) response, newURL);
 						return;
 					}
 
