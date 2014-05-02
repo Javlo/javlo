@@ -64,6 +64,10 @@
     padding: 2px 5px;    
 }
 
+.fix-preview #preview_command .add-page input[type="text"] { 
+    width: 130px;
+}
+
 
 #preview_command input[type=submit]:hover { 
  	background: url("../images/buttonbg3.png") repeat-x scroll left top	transparent;	
@@ -100,6 +104,10 @@
 }
 
 #preview_command .pc_command a#pc_edit_button.pc_edit_true {	
+	display: none;
+}
+
+#preview_command .pc_command .undo {
 	display: none;
 }
 
