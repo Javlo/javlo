@@ -284,6 +284,20 @@ public class ImageEngine {
 		}
 		return image.getRGB(x, y);
 	}
+	
+	public static int getColor(BufferedImage image, int x, int y, Color outCol) {
+		if (x < 0) {
+			return outCol.getRGB();
+		} else if (x >= image.getWidth()) {
+			return outCol.getRGB();
+		}
+		if (y < 0) {
+			return outCol.getRGB();
+		} else if (y >= image.getHeight()) {
+			return outCol.getRGB();
+		}
+		return image.getRGB(x, y);
+	}
 
 	private static int getScaleColor(BufferedImage source, BufferedImage target, int x, int y) {
 		double xsc = ((source.getWidth()) / ((double) target.getWidth()));
@@ -786,7 +800,8 @@ public class ImageEngine {
 				int targetX = x - deltaX;
 				Color imageColor = bgColor;
 				if ((targetX >= ml) && (targetX < workWith + ml) && (targetY >= mt) && (targetY < workHeight + mt)) {
-					imageColor = new Color(workImage.getRGB(x - ml, y - mt), true);
+					//imageColor = new Color(workImage.getRGB(x - ml, y - mt), true);
+					imageColor =  new Color(getColor(workImage, x+ml, y+mt, bgColor));
 				}
 				Color mixedColor = imageColor;
 				if (bgColor != null) {
