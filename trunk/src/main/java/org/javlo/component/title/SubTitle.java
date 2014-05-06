@@ -80,7 +80,7 @@ public class SubTitle extends AbstractVisualComponent {
 				res.append(XHTMLHelper.textToXHTML(value));
 				res.append("</div>");
 			} else {
-				String style;
+				String style="";
 				if (getTextColor() != null && getTextColor().length() > 3) {
 					style=" style=\"color:"+getTextColor()+';'+getLayout().getStyle()+'"';
 				} else {
@@ -94,7 +94,10 @@ public class SubTitle extends AbstractVisualComponent {
 					if (areaStyle != null && areaStyle.getFinalTitleColor() != null && areaStyle.getFinalTitleColor().trim().length() > 0) {
 						areaColor = " color:"+areaStyle.getFinalTitleColor()+';';
 					}
-					style=" style=\""+getLayout().getStyle()+areaColor+'"';
+					String cssStyle = getLayout().getStyle()+areaColor;
+					if (cssStyle.trim().length() > 0) {
+						style=" style=\""+cssStyle+'"';
+					}
 				}
 				res.append("<h" + level + " id=\"" + getXHTMLId(ctx) + "\" class=\"subtitle"+colored+"\""+style+">");
 				ReverseLinkService reverserLinkService = ReverseLinkService.getInstance(globalContext);
