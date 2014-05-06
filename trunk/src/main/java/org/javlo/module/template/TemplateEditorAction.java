@@ -39,6 +39,10 @@ public class TemplateEditorAction extends AbstractModuleAction {
 
 		List<String> editableTemplate = new LinkedList<String>();
 		TemplateEditorContext editorContext = TemplateEditorContext.getInstance(ctx.getRequest().getSession());
+		
+		if (editorContext.getCurrentTemplate() != null && (editorContext.getCurrentTemplate().isValid() || editorContext.getCurrentTemplate().isDeleted())) {
+			editorContext.setCurrentTemplate(null);
+		}
 
 		for (Template template : TemplateFactory.getAllTemplates(ctx.getRequest().getSession().getServletContext())) {
 			if (template.isEditable() && !template.isValid() && !template.isDeleted()) {
@@ -201,8 +205,8 @@ public class TemplateEditorAction extends AbstractModuleAction {
 					}
 				}
 			}
-		}
-		editorContext.getCurrentTemplate().clearRenderer(ctx);
+			editorContext.getCurrentTemplate().clearRenderer(ctx);
+		}		
 		return null;
 	}
 
@@ -235,6 +239,8 @@ public class TemplateEditorAction extends AbstractModuleAction {
 		String templateName = rs.getParameter("template", "");
 		if (templateName.trim().length() < 3) {
 			return "template name must be at least 4 chars.";
+		} else if (TemplateFactory.getDiskTemplate(application, templateName) != null) {
+			return "template name '"+templateName+"' allready exist.";
 		} else {
 			Template newTemplate = TemplateFactory.createDiskTemplates(application, templateName,null);
 			newTemplate.setParentName("editable");

@@ -10,6 +10,7 @@ import java.io.PrintStream;
 import java.lang.reflect.InvocationTargetException;
 import java.net.URL;
 import java.text.SimpleDateFormat;
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.Date;
 import java.util.HashMap;
@@ -23,6 +24,7 @@ import java.util.zip.ZipException;
 import java.util.zip.ZipInputStream;
 
 import org.javlo.component.core.ComponentBean;
+import org.javlo.component.core.IContentVisualComponent;
 import org.javlo.component.image.GlobalImage;
 import org.javlo.component.image.Image;
 import org.javlo.component.links.ExternalLink;
@@ -451,6 +453,21 @@ public class ContentHelper {
 		}
 		target.setContent(newBeans);
 		target.setTemplateName(source.getTemplateId());
+	}
+	
+	/**
+	 * get all component in a page and children of the page.
+	 * @param page
+	 * @return
+	 * @throws Exception 
+	 */
+	public static List<ComponentBean> getAllComponentsOfChildren(MenuElement page) throws Exception {
+		List<ComponentBean> comps = new LinkedList<ComponentBean>();
+		comps.addAll(Arrays.asList(page.getContent()));
+		for (MenuElement subPage : page.getAllChildren()) {
+			comps.addAll(Arrays.asList(subPage.getContent()));
+		}
+		return comps;
 	}
 	
 }

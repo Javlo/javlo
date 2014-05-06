@@ -888,12 +888,12 @@ public class AdminAction extends AbstractModuleAction {
 		}
 
 		try {
-			Collection<GlobalContext> allContext = GlobalContextFactory.getAllGlobalContext(session.getServletContext());
+			/*Collection<GlobalContext> allContext = GlobalContextFactory.getAllGlobalContext(session.getServletContext());
 			for (GlobalContext globalContext : allContext) {
 				if (globalContext.getUsersAccess().contains(user.getLogin())) {
 					return true;
 				}
-			}
+			}*/
 		} catch (Exception e) {
 			throw new ModuleException(e.getMessage());
 		}

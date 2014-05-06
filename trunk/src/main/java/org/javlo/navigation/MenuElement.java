@@ -2,6 +2,7 @@ package org.javlo.navigation;
 
 import java.io.ByteArrayInputStream;
 import java.io.InputStream;
+import java.io.PrintStream;
 import java.io.PrintWriter;
 import java.io.Serializable;
 import java.io.StringWriter;
@@ -63,6 +64,7 @@ import org.javlo.helper.XHTMLHelper;
 import org.javlo.helper.XMLManipulationHelper;
 import org.javlo.message.GenericMessage;
 import org.javlo.message.MessageRepository;
+import org.javlo.module.core.IPrintInfo;
 import org.javlo.service.PersistenceService;
 import org.javlo.service.exception.ServiceException;
 import org.javlo.service.resource.Resource;
@@ -78,7 +80,7 @@ import org.javlo.ztatic.StaticInfo;
 /**
  * @author pvanderm
  */
-public class MenuElement implements Serializable {
+public class MenuElement implements Serializable, IPrintInfo {
 
 	public static final String PAGE_TYPE_DEFAULT = "default";
 
@@ -2417,7 +2419,9 @@ public class MenuElement implements Serializable {
 	 */
 	private ContentElementList getLocalContent(ContentContext ctx) throws Exception {
 		ContentElementList localContentElementList = getContentElementListMap().get(ctx.getRequestContentLanguage());
-		if (localContentElementList == null || !ctx.isAsViewMode()) {
+		if (!ctx.isComponentCache()) {
+			localContentElementList = new ContentElementList(componentBean, ctx, this, false);
+		} else if (localContentElementList == null || !ctx.isAsViewMode()) {
 			localContentElementList = new ContentElementList(componentBean, ctx, this, false);
 
 			if (!ctx.isFree()) { // no reference to template >>> some component
@@ -4184,20 +4188,33 @@ public class MenuElement implements Serializable {
 			if (!getName().equals(page.getName())) {
 				return false;
 			}
-			
-			List<IContentVisualComponent> localComponents = new LinkedList<IContentVisualComponent>();			
-			for (IContentVisualComponent comp : getContent(ctx).getIterable(ctx)) {
+			if (isBreakRepeat() != page.isBreakRepeat()) {
+				return false;
+			}
+			if (isBlocked() != page.isBlocked()) {
+				return false;
+			}
+			if (getStartPublishDate() != page.getStartPublishDate() || (getStartPublishDate() != null && !getStartPublishDate().equals(page.getStartPublishDate()))) {
+				return false;
+			}
+			if (getEndPublishDate() != page.getEndPublishDate() || (getEndPublishDate() != null && !getEndPublishDate().equals(page.getEndPublishDate()))) {
+				return false;
+			}
+			ContentContext noAreaCtx = ctx.getContextWithArea(null);
+			noAreaCtx.setComponentCache(false);
+			List<IContentVisualComponent> localComponents = new LinkedList<IContentVisualComponent>();
+			for (IContentVisualComponent comp : getContent(noAreaCtx).getIterable(noAreaCtx)) {
 				localComponents.add(comp);
 			}
 			List<IContentVisualComponent> pageComponents = new LinkedList<IContentVisualComponent>();
-			for (IContentVisualComponent comp : page.getContent(ctx).getIterable(ctx)) {
+			for (IContentVisualComponent comp : page.getContent(noAreaCtx).getIterable(noAreaCtx)) {
 				pageComponents.add(comp);
 			}
 			
 			if (localComponents.size() != pageComponents.size()) {
 				return false;
-			}
-			for (int i = 0; i < pageComponents.size(); i++) {
+			}			
+			for (int i = 0; i < localComponents.size(); i++) {
 				if (!localComponents.get(i).equals(pageComponents.get(i))) {
 					return false;
 				}
@@ -4213,9 +4230,10 @@ public class MenuElement implements Serializable {
 		if (page == null) {
 			return false;
 		}
-		if ( !equals(ctx, page) || childMenuElements.size() != page.childMenuElements.size()) {
+		if (!equals(ctx, page) || childMenuElements.size() != page.childMenuElements.size()) {
 			return false;
-		} else if (withChildren) {
+		}
+		if (withChildren) {
 			for (int i = 0; i < childMenuElements.size(); i++) {
 				if (!childMenuElements.get(i).equals(ctx, page.childMenuElements.get(i), true)) {
 					return false;
@@ -4224,9 +4242,21 @@ public class MenuElement implements Serializable {
 		}
 		return true;
 	}
-	
+
 	public void copyChildren(MenuElement page) {
-		childMenuElements = page.childMenuElements;		
+		childMenuElements = page.childMenuElements;
+	}
+	
+	@Override
+	public void printInfo(ContentContext ctx, PrintStream out) {
+		out.println("****");
+		out.println("**** MenuElement : "+getPath());
+		out.println("****");
+		out.println("**** name                        : "+getName());
+		out.println("**** #componentBean              : "+componentBean.length);
+		out.println("**** #contentElementListMap      : "+contentElementListMap.size());
+		out.println("**** #localContentElementListMap : "+localContentElementListMap.size());
+		out.println("****");		
 	}
 
 }

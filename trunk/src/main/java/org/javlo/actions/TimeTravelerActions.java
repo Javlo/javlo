@@ -54,12 +54,13 @@ public class TimeTravelerActions implements IAction {
 			}
 			
 			
-			MenuElement previousNav = pers.loadPreview(ctx, previousVersion);
-			MenuElement currentPageHistory = previousNav.searchChildFromId(ctx.getCurrentPage().getId());
-			while (ctx.getCurrentPage().equals(ctx, currentPageHistory, ctx.getCurrentPage().isChildrenAssociation()) && pers.isPreviewVersion(previousVersion - 1) && previousVersion-1>previousUndoVersionMin) {
+			MenuElement previousPage = pers.loadPreview(ctx, previousVersion);
+			previousPage = previousPage.searchChildFromId(ctx.getCurrentPage().getId());
+			
+			while (ctx.getCurrentPage().equals(ctx, previousPage, ctx.getCurrentPage().isChildrenAssociation()) && pers.isPreviewVersion(previousVersion - 1) && previousVersion-1>previousUndoVersionMin) {
 				previousVersion = previousVersion - 1;
-				previousNav = pers.loadPreview(ctx, previousVersion);
-				currentPageHistory = previousNav.searchChildFromId(ctx.getCurrentPage().getId());
+				previousPage = pers.loadPreview(ctx, previousVersion);
+				previousPage = previousPage.searchChildFromId(ctx.getCurrentPage().getId());
 			}
 			if (previousUndoVersionMin >= previousVersion) {
 				return NOT_FOUND_MSG;
@@ -67,7 +68,7 @@ public class TimeTravelerActions implements IAction {
 			if (pers.isPreviewVersion(previousVersion)) {
 				int version = pers.getVersion();
 				globalContext.setLatestUndoVersion(pers.getVersion());
-				replaceCurrentPage(ctx, currentPageHistory, ctx.getCurrentPage().isChildrenAssociation());
+				replaceCurrentPage(ctx, previousPage, ctx.getCurrentPage().isChildrenAssociation());
 				String msg = "new version loading : " + previousVersion + " (from:" + version + ')';
 				logger.info(msg);
 				MessageRepository.getInstance(ctx).setGlobalMessage(new GenericMessage(i18nAccess.getText("message.info.undo"), GenericMessage.SUCCESS));
@@ -241,3 +242,4 @@ public class TimeTravelerActions implements IAction {
 	}
 
 }
+
