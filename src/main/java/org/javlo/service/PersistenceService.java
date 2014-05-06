@@ -503,7 +503,7 @@ public class PersistenceService {
 			DebugHelper.checkStructure(type == null, "no type defined in a component.");
 			String inlist = contentNode.getAttributeValue("inlist", "false");
 			String lg = contentNode.getAttributeValue("language", defaultLg);
-			String renderer = contentNode.getAttributeValue("renderer", null);			
+			String renderer = contentNode.getAttributeValue("renderer", null);
 			boolean isRepeat = false;
 			String strRepeat = contentNode.getAttributeValue("repeat", "false");
 			if (strRepeat != null) {
@@ -885,10 +885,14 @@ public class PersistenceService {
 		if (contentAttributeMap == null) {
 			contentAttributeMap = new HashMap(); // fake map
 		}
-		
+
 		waitThread();
 
-		synchronized (ctx.getGlobalContext().getLockLoadContent()) { // load only one content both
+		synchronized (ctx.getGlobalContext().getLockLoadContent()) { // load
+																		// only
+																		// one
+																		// content
+																		// both
 
 			loadVersion();
 
@@ -1052,18 +1056,16 @@ public class PersistenceService {
 	 * @return the current version
 	 * @throws IOException
 	 */
-	public int loadVersion() throws IOException {
-		synchronized (version) {
-			File propFile = new File(getDirectory() + '/' + stateFile);
-			if (propFile.exists()) {
-				Properties prop = new Properties();
-				InputStream in = new FileInputStream(propFile);
-				prop.load(in);
-				in.close();
-				version = Integer.parseInt(prop.getProperty("version", "1"));
-			} else { // set default value
-				version = 1;
-			}
+	public synchronized int loadVersion() throws IOException {
+		File propFile = new File(getDirectory() + '/' + stateFile);
+		if (propFile.exists()) {
+			Properties prop = new Properties();
+			InputStream in = new FileInputStream(propFile);
+			prop.load(in);
+			in.close();
+			version = Integer.parseInt(prop.getProperty("version", "1"));
+		} else { // set default value
+			version = 1;
 		}
 		return version;
 	}
@@ -1263,27 +1265,26 @@ public class PersistenceService {
 			e.printStackTrace();
 		}
 	}
-	
+
 	/**
 	 * ask storage of data at the end of request
+	 * 
 	 * @param askStore
 	 */
 	public synchronized void setAskStore(boolean askStore) {
 		this.askStore = askStore;
 	}
-	
+
 	public synchronized boolean isAskStore() {
 		return askStore;
 	}
-	
-	
 
 	public void store(ContentContext ctx) throws Exception {
 		store(ctx.getContextWithOtherRenderMode(ContentContext.PREVIEW_MODE), ContentContext.PREVIEW_MODE);
 	}
 
 	public synchronized void store(ContentContext ctx, int renderMode) throws Exception {
-		
+
 		waitThread();
 		setAskStore(false);
 
@@ -1305,7 +1306,7 @@ public class PersistenceService {
 			persThread.setGlobalContentMap(content.getGlobalMap(ctx));
 
 			GlobalContext globalContext = GlobalContext.getInstance(ctx.getRequest());
-			persThread.setDataFolder(globalContext.getDataFolder());			
+			persThread.setDataFolder(globalContext.getDataFolder());
 
 			StaticConfig staticConfig = StaticConfig.getInstance(ctx.getRequest().getSession().getServletContext());
 			if (StaticInfo._STATIC_INFO_DIR != null) {
@@ -1323,12 +1324,12 @@ public class PersistenceService {
 
 	private void waitThread() throws InterruptedException {
 		PersistenceThread localThread = persThread;
-		while (localThread != null) {			
-			synchronized (localThread) {													
-				if (localThread.isRunning()) {					
+		while (localThread != null) {
+			synchronized (localThread) {
+				if (localThread.isRunning()) {
 					localThread.wait();
-				}				
-			}		
+				}
+			}
 			localThread = persThread;
 		}
 	}

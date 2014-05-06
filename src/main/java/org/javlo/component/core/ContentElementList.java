@@ -30,7 +30,7 @@ public class ContentElementList implements IContentComponentsList {
 		
 		public ContentElementListIterator(ContentContext ctx, ContentElementList contentElementList) {
 			super();
-			this.ctx = ctx;
+			this.ctx = new ContentContext(ctx);
 			this.contentElementList = contentElementList;
 		}
 

@@ -3,6 +3,7 @@
  */
 package org.javlo.service;
 
+import java.io.PrintStream;
 import java.lang.ref.WeakReference;
 import java.util.Collection;
 import java.util.Collections;
@@ -30,13 +31,14 @@ import org.javlo.context.GlobalContextFactory;
 import org.javlo.data.InfoBean;
 import org.javlo.helper.StringHelper;
 import org.javlo.i18n.I18nResource;
+import org.javlo.module.core.IPrintInfo;
 import org.javlo.navigation.MenuElement;
 import org.javlo.template.TemplateFactory;
 
 /**
  * @author pvanderm represent a content
  */
-public class ContentService {
+public class ContentService implements IPrintInfo {
 
 	/**
 	 * create a static logger.
@@ -379,7 +381,7 @@ public class ContentService {
 	}
 
 	public IContentVisualComponent getCachedComponent(ContentContext ctx, String id) throws Exception {
-		if (id == null) {
+		if (id == null || !ctx.isComponentCache()) {
 			return null;
 		}
 		WeakReference<IContentVisualComponent> ref = components.get(getComponentKey(ctx, id));
@@ -766,5 +768,21 @@ public class ContentService {
 		} else {
 			return null;
 		}
+	}
+	
+	@Override
+	public void printInfo(ContentContext ctx, PrintStream out) {		
+		out.println("****");
+		out.println("**** ContentService print info.");
+		out.println("****");
+		out.println("**** #components            = "+components.size());
+		out.println("**** #viewGlobalMap         = "+viewGlobalMap.size());
+		out.println("**** #previewGlobalMap      = "+previewGlobalMap.size());
+		if (timeTravelerGlobalMap != null) {
+			out.println("**** #timeTravelerGlobalMap = "+timeTravelerGlobalMap.size());
+		} else {
+			out.println("**** #timeTravelerGlobalMap = 0 (null).");
+		}
+		out.println("****");
 	}
 }

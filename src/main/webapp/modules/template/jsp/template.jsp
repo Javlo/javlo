@@ -68,7 +68,7 @@
                     	<c:param name="webaction" value="delete" />
                     	<c:param name="id" value="${template.name}" />
                     </c:url>
-                    <a href="${deleteURL}" class="delete"></a>
+                    <a href="${deleteURL}" class="delete needconfirm"></a>
                     
                     <c:if test="${not empty selectUrl}">
                     

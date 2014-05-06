@@ -53,12 +53,14 @@ import org.javlo.component.core.AbstractVisualComponent;
 import org.javlo.config.StaticConfig;
 import org.javlo.helper.ElementaryURLHelper;
 import org.javlo.helper.ElementaryURLHelper.Code;
+import org.javlo.helper.ContentHelper;
 import org.javlo.helper.ResourceHelper;
 import org.javlo.helper.ServletHelper;
 import org.javlo.helper.StringHelper;
 import org.javlo.helper.URLHelper;
 import org.javlo.io.TransactionFile;
 import org.javlo.mailing.MailService;
+import org.javlo.module.core.IPrintInfo;
 import org.javlo.module.core.ModuleException;
 import org.javlo.module.core.ModulesContext;
 import org.javlo.navigation.IURLFactory;
@@ -80,7 +82,9 @@ import org.javlo.utils.StructuredProperties;
 import org.javlo.utils.TimeMap;
 import org.javlo.ztatic.StaticInfo;
 
-public class GlobalContext implements Serializable {
+public class GlobalContext implements Serializable, IPrintInfo {
+	
+	private static int COUNT_INSTANCE = 0;
 
 	private static final long serialVersionUID = 1L;
 
@@ -169,8 +173,7 @@ public class GlobalContext implements Serializable {
 	public GlobalContext() {
 		properties.setDelimiterParsingDisabled(true);
 		StorePropertyThread storePropertyThread = new StorePropertyThread(this);
-		storePropertyThread.start();
-
+		storePropertyThread.start();		
 	}
 
 	private static void addResources(ContentContext ctx, File dir, Collection<StaticInfo> resources) throws Exception {
@@ -2705,6 +2708,33 @@ public class GlobalContext implements Serializable {
 		String sessionKey = getContextKey() + "___" + key;
 		session.setAttribute(sessionKey, value);
 	}
+	
+	public void writeInstanceInfo(ContentContext ctx, PrintStream out) throws Exception {
+		out.println("****************************************************************");
+		out.println("****************************************************************");
+		out.println("****");
+		out.println("**** INSTANCE INFO ");
+		out.println("****");
+		out.println("**** ContextKey         :  " + getContextKey());
+		out.println("**** Alias of           :  " + getAliasOf());
+		out.println("****");
+		
+		ContentService content = ContentService.getInstance(ctx.getRequest());
+		ContentContext localContext = new ContentContext(ctx);
+		localContext.setRenderMode(ContentContext.VIEW_MODE);
+		MenuElement root = content.getNavigation(ctx);
+		out.println("**** #MenuElement View    :  " + (root.getAllChildren().length+1));
+		out.println("**** #Comp bean View      :  " + (ContentHelper.getAllComponentsOfChildren(root).size()));
+		out.println("**** #Comp icv View       :  " + content.getAllContent(localContext).size());
+		localContext.setRenderMode(ContentContext.PREVIEW_MODE);
+		root = content.getNavigation(ctx);
+		out.println("**** #MenuElement Preview :  " + (root.getAllChildren().length+1));
+		out.println("**** #Comp bean Preview   :  " + (ContentHelper.getAllComponentsOfChildren(root).size()));
+		out.println("**** #Comp icv Preview    :  " + content.getAllContent(localContext).size());
+		out.println("****");
+		printInfo(ctx,out);
+		content.printInfo(ctx, out);	
+	}
 
 	public void writeInfo(HttpSession session, PrintStream out) {
 		out.println("****************************************************************");
@@ -2791,6 +2821,8 @@ public class GlobalContext implements Serializable {
 		}
 
 	}
+	
+	
 
 	public String createOneTimeToken(String token) {
 		String newToken = StringHelper.getRandomIdBase64();
@@ -2921,6 +2953,18 @@ public class GlobalContext implements Serializable {
 
 	public void setMainContextKey(String mainContextKey) {
 		this.mainContextKey = mainContextKey;
+	}
+	
+	@Override
+	public void printInfo(ContentContext ctx, PrintStream out) {		
+		out.println("****");
+		out.println("**** GlobalContext : "+getContextKey());
+		out.println("****");		
+		out.println("**** #cacheMaps        : "+cacheMaps.size());
+		out.println("**** #eternalCacheMaps : "+eternalCacheMaps.size());
+		out.println("**** #viewPages        : "+viewPages.size());
+		out.println("****");		
+		
 	}
 
 }

@@ -40,8 +40,6 @@ import org.javlo.user.IUserFactory;
 import org.javlo.user.User;
 import org.javlo.user.UserFactory;
 
-import com.sun.org.apache.bcel.internal.generic.GETSTATIC;
-
 /**
  * @author pvanderm
  */
@@ -323,12 +321,14 @@ public class ContentContext {
 	boolean array = false;
 
 	int renderMode = VIEW_MODE;
-
+	
 	boolean viewPrefix = false;
 
 	boolean pageRequest = false;
 
 	boolean correctPath = true;
+	
+	private boolean  componentCache = true;
 
 	IURLFactory urlFactory = null;
 	URL dmzServerInter = null;
@@ -445,6 +445,8 @@ public class ContentContext {
 		currentPageCached = ctx.currentPageCached;
 
 		pageAssociation = ctx.pageAssociation;
+		
+		componentCache = ctx.componentCache;
 	}
 
 	public String getArea() {
@@ -1680,5 +1682,13 @@ public class ContentContext {
 		}
 		PersistenceService persistenceService = PersistenceService.getInstance(getGlobalContext());
 		return persistenceService.getVersion() > getGlobalContext().getFirstLoadVersion() && (getGlobalContext().getLatestUndoVersion() == null || persistenceService.getVersion()-1 != getGlobalContext().getLatestUndoVersion());
+	}
+
+	public boolean isComponentCache() {
+		return componentCache;
+	}
+
+	public void setComponentCache(boolean componentCache) {
+		this.componentCache = componentCache;
 	}
 }

@@ -264,14 +264,18 @@ public class AccessServlet extends HttpServlet implements IVersion {
 				out.println("");
 				globalContext.writeInfo(request.getSession(), out);
 				out.println("");
+				globalContext.writeInstanceInfo(ctx, out);
 				ContentService content = ContentService.getInstance(globalContext);
+				out.println("");
+				ctx.getCurrentPage().printInfo(ctx, out);
+				out.println("");
 				out.println("latest update by : " + content.getAttribute(ctx, "user.update"));
 				out.close();
 				return;
 			}
 
 			/** CACHE **/
-			if (ctx.isAsViewMode() && ctx.getCurrentPage().isCacheable(ctx) && globalContext.isPreviewMode() && globalContext.getPublishDate() != null) {
+			if (ctx.isAsViewMode() && ctx.getCurrentPage().isCacheable(ctx) && globalContext.isPreviewMode() && globalContext.getPublishDate() != null && request.getMethod().equalsIgnoreCase("get") && request.getParameter("webaction") == null) {				
 				long lastModified = globalContext.getPublishDate().getTime();
 				response.setDateHeader(NetHelper.HEADER_LAST_MODIFIED, lastModified);
 				long lastModifiedInBrowser = request.getDateHeader(NetHelper.HEADER_IF_MODIFIED_SINCE);
