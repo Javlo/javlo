@@ -419,6 +419,7 @@ public class StringHelper {
 	}
 
 	public static String createI18NURL(String value) {
+		value = value.trim();
 		return createCleanName(value, EU_ACCEPTABLE_CHAR_NO_POINT, '-').replace("--", "-").toLowerCase();
 	}
 
