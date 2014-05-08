@@ -260,4 +260,6 @@ change log
  
  * add editable template as default template
  
+ * import default template on clear cache.
+ 
  
