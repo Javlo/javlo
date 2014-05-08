@@ -255,3 +255,9 @@ change log
  * trim users roles
  
  * css style parser, don't insert inline two same attribute.
+ 
+ * stat. mailing active
+ 
+ * add editable template as default template
+ 
+ 

@@ -61,8 +61,6 @@ import org.javlo.servlet.zip.ZipManagement;
 
 public class Template implements Comparable<Template> {
 
-	public static final String DEFAULT_TEMPLATE_FOLDER = "default";
-
 	public static final String FORCE_TEMPLATE_PARAM_NAME = "force-template";
 
 	private static class TemplateComparator implements Comparator<Template> {
