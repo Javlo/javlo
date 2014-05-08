@@ -190,23 +190,7 @@ public class AccessServlet extends HttpServlet implements IVersion {
 		}
 
 		MultiReadRequestWrapper.clearTempDir(getServletContext());
-
-		File defaultTemplateFolder = new File(getServletContext().getRealPath("/WEB-INF/template/"));
-		for (File template : defaultTemplateFolder.listFiles()) {
-			if (template.isDirectory()) {
-				File templateFolder = new File(URLHelper.mergePath(staticConfig.getTemplateFolder(), template.getName()));
-				if (!templateFolder.exists()) {
-					templateFolder.getParentFile().mkdirs();
-					logger.info("import default template : " + template.getName());
-					try {
-						FileUtils.copyDirectory(template, templateFolder);
-					} catch (IOException e) {
-						e.printStackTrace();
-					}
-				}
-			}
-		}
-
+		TemplateFactory.copyDefaultTemplate(getServletContext());
 	}
 
 	public void process(HttpServletRequest request, HttpServletResponse response) throws ServletException {

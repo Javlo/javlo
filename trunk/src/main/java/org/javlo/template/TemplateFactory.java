@@ -395,4 +395,22 @@ public class TemplateFactory {
 		}
 		return template;
 	}
+	
+	public static void copyDefaultTemplate(ServletContext application) {
+		File defaultTemplateFolder = new File(application.getRealPath("/WEB-INF/template/"));
+		for (File template : defaultTemplateFolder.listFiles()) {
+			if (template.isDirectory()) {
+				File templateFolder = new File(URLHelper.mergePath(StaticConfig.getInstance(application).getTemplateFolder(), template.getName()));
+				if (!templateFolder.exists()) {
+					templateFolder.getParentFile().mkdirs();
+					logger.info("import default template : " + template.getName());
+					try {
+						FileUtils.copyDirectory(template, templateFolder);
+					} catch (IOException e) {
+						e.printStackTrace();
+					}
+				}
+			}
+		}
+	}
 }
