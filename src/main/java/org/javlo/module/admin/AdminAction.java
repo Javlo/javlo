@@ -1233,6 +1233,8 @@ public class AdminAction extends AbstractModuleAction {
 
 		AdminUserFactory.createUserFactory(globalContext, session).reload(globalContext, session);
 		UserFactory.createUserFactory(globalContext, session).reload(globalContext, session);
+		
+		TemplateFactory.copyDefaultTemplate(session.getServletContext());
 
 		System.gc();
 		return null;
