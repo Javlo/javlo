@@ -1,0 +1,133 @@
+* {
+	line-height: 131%;
+}
+
+.ExternalClass {
+	width: 100%;
+}
+
+.ExternalClass,.ExternalClass p,.ExternalClass span,.ExternalClass font,.ExternalClass td,.ExternalClass div
+	{
+	line-height: 100%;
+}
+
+span.yshortcuts {
+	color: #000;
+	background-color: none;
+	border: none;
+}
+
+body {
+	-webkit-text-size-adjust: none;
+	-ms-text-size-adjust: none;
+}
+
+a {
+	color: #0000ff;
+}
+
+ul,ol {
+	margin-left: 20px;
+	padding: 0;
+}
+
+p,ul,.global-image,.external-link,.internal-link,.unsubscribe-link,.file
+	{		
+	margin-bottom: 10px;
+}
+
+.ReadMsgBody {
+	width: 100%;
+}
+
+.ExternalClass {
+	width: 100%;
+}
+
+body {
+	width: 100% !important;
+	-webkit-text-size-adjust: none;
+	-ms-text-size-adjust: none;
+	color: #000000;
+	margin: 0;
+	padding: 0;
+}
+
+img,figure {
+	margin: 0;
+	padding: 0;
+	display: block;
+	border: 0 none;
+}
+
+.date {
+	text-align: right;
+	font-style: italic;
+}
+
+.zone1 p {
+	margin-bottom: 0;
+}
+
+.zone2 p {
+	margin-top: 0;
+}
+
+.file .file,.external-link .external-link {
+	margin: 0;
+}
+
+h1,h2,h3,h4,h5,h6 {
+	display: block;	
+}
+
+.colored-wrapper {
+	padding: 8px;
+}
+
+.colored-wrapper h2, .colored-wrapper h3, .colored-wrapper h4, .colored-wrapper h5, .colored-wrapper h6 {
+	margin: 0;
+	padding: 0;
+}
+
+h1 {
+	font-size: 18px;
+}
+
+h2 {
+	font-size: 14px;
+}
+
+h3 {
+	font-size: 13px;
+}
+
+h4,h5,h6 {
+	font-size: 12px;
+}
+
+table {
+	border-collapse: collapse;
+	font-size: inherit;
+	font-style: inherit;
+}
+
+table td,table th {
+	border-collapse: collapse;
+	vertical-align: top;
+}
+
+.global-image.full img, .global-image.banner img {
+	border: 0 none;
+	display: block;
+	width: 100%;
+}
+
+.float-image p {
+	padding: 0;
+	margin: 0;
+}
+
+table.float-image,table.float-image  td,table.float-image  th {
+	border-collapse: separate;
+}
