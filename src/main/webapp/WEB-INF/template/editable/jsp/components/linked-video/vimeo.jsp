@@ -1,0 +1,1 @@
+<iframe src=http://player.vimeo.com/video/${vid}" width="${width}" height="${height}" frameborder="0" webkitAllowFullScreen mozallowfullscreen allowFullScreen></iframe>

@@ -1,0 +1,35 @@
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+<title></title>
+<style type="text/css">
+<jsp:include page="css/pdf.css" />
+<jsp:include page="css/pagination.jsp" />
+
+<jsp:include page="css/dynamic_css.jsp" />
+
+/* PDF : width auto */
+body .wrapper {
+    width: 708px;
+}
+</style>
+</head>
+<body style="-webkit-font-smoothing: antialiased; width: 100% !important; -webkit-text-size-adjust: none; background-color: #ffffff;">
+<table width="100%" border="0" align="center" cellpadding="0" cellspacing="0">
+	<tr>
+		<td width="100%" align="center" valign="top">
+			<div class="wrapper" style="width: 708px;">
+			<table class="main-table" border="0" align="center" cellpadding="0" cellspacing="0">
+				<tr id="header-container">
+					<td align="center">
+						<jsp:include page="/jsp/view/template/dynamic.jsp" />							
+					</td>
+				</tr>
+			</table>
+			</div>
+		</td>
+	</tr>
+</table>
+</body>
+</html>
+
