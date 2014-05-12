@@ -84,13 +84,11 @@ public class ContentOnlyServlet extends HttpServlet {
 			Template template = null;
 
 			if (templateID == null) {			
-				templateID = mailingCtx.getCurrentTemplate();
-				System.out.println("***** ContentOnlyServlet.process : mailing ctx templateID = "+templateID); //TODO: remove debug trace
+				templateID = mailingCtx.getCurrentTemplate();				
 				if (templateID == null) {
 					if (ctx.getCurrentTemplate() != null) {
 						template = ctx.getCurrentTemplate();
-						if (!template.isMailing()) {
-							System.out.println("***** ContentOnlyServlet.process : NOT TEMPLATR MAILING : "+template.getId()); //TODO: remove debug trace
+						if (!template.isMailing()) {							
 							for (Template mailingTemplate : TemplateFactory.getAllTemplatesFromContext(globalContext)){
 								if (mailingTemplate.isMailing()) {
 									templateID = mailingTemplate.getId();
@@ -110,8 +108,7 @@ public class ContentOnlyServlet extends HttpServlet {
 				}
 			}
 
-			if (templateID != null) {
-				System.out.println("***** ContentOnlyServlet.process : templateID = "+templateID); //TODO: remove debug trace
+			if (templateID != null) {				
 				template = TemplateFactory.getTemplates(request.getSession().getServletContext()).get(templateID);
 				ctx.setCurrentTemplate(template);
 				I18nAccess i18nAccess = I18nAccess.getInstance(ctx.getRequest());

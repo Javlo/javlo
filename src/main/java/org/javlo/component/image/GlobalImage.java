@@ -718,11 +718,11 @@ public class GlobalImage extends Image implements IImageFilter {
 		setSecondText(requestService.getParameter(getSecondTextInputName(), ""));
 
 		String label = requestService.getParameter(getLabelXHTMLInputName(), "");
-		String textLabel = requestService.getParameter(getLabelTextInputName(), null);
+		String textLabel = requestService.getParameter(getLabelTextInputName(), null); 
 		if (!label.equals(getLabel())) {
 			setFirstText(null);
 			setSecondText(null);
-		} else if (textLabel != null && !textLabel.equals(getLabel())) {
+		} else if (textLabel != null && !textLabel.equals(getLabel()) && isTextAuto()) {
 			setLabel(textLabel);
 			requestService.setParameter(getLabelXHTMLInputName(), getLabel());
 			setFirstText(null);
@@ -979,7 +979,7 @@ public class GlobalImage extends Image implements IImageFilter {
 				if (firstText != null && !firstText.equals(image.getFirstText())) {
 					image.setModify();
 					image.setFirstText(firstText);
-				}
+				} 
 				if (secondText != null && !secondText.equals(image.getSecondText())) {
 					image.setModify();
 					image.setSecondText(secondText);

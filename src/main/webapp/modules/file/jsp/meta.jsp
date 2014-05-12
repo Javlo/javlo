@@ -70,8 +70,8 @@
 			
 		</c:if>
 		<div class="line">
-			<label for="title-${file.id}">${i18n.edit["field.title"]}</label>
-			<input class="file-title" type="text" id="title-${file.id}" name="title-${file.id}" value="${file.title}" />
+			<label for="title-${file.id}">${i18n.edit["field.title"]}</label>			
+			<input class="file-title" type="text" id="title-${file.id}" name="title-${file.id}" value="<c:out value="${file.title}" escapeXml="true" />" />
 		</div>
 		<div class="line">
 			<label for="description-${file.id}">${i18n.edit["field.description"]}</label>
@@ -79,7 +79,7 @@
 		</div>
 		<div class="line">
 			<label for="location-${file.id}">${i18n.edit["field.location"]}</label>
-			<input class="file-location" type="text" id="location-${file.id}" name="location-${file.id}" value="${file.location}" />
+			<input class="file-location" type="text" id="location-${file.id}" name="location-${file.id}" value="<c:out value="${file.location}" escapeXml="true" />" />
 		</div>
 		<div class="line">
 			<label for="date-${file.id}">${i18n.edit["field.date"]}</label>
