@@ -32,7 +32,7 @@ jQuery(document).ready(function() {
 	jQuery('form.ajax').live("submit", function(event) {
 		var form = jQuery(this);		
 		var ajaxSubmit = true;
-		if (!jQuery.isFunction(FormData)) {
+		if (!canPostDataWithAjax()) {
 			jQuery.each(form.find("input[type='file']"), function() {			
 				if (jQuery(this).val().length > 0) {			
 					ajaxSubmit = false;				
@@ -56,6 +56,22 @@ jQuery(document).ready(function() {
 	jQuery(document).trigger("ajaxUpdate");
 });
 
+function canPostDataWithAjax() {
+	try {
+		if (jQuery.browser.msie && parseInt(jQuery.browser.version, 10) < 10) {
+			return false;
+		} else {
+			if (jQuery.isFunction(FormData)) {
+				return true;
+			} else {
+				return false;
+			}
+		}
+	} catch (e) {
+		return false;
+	}
+}
+
 function ajaxRequest(url, form, doneFunction) {	
 	if (url.indexOf("/edit-")>=0) {
 		url = url.replace("/edit-", "/ajax-");
@@ -70,7 +86,7 @@ function ajaxRequest(url, form, doneFunction) {
 	var data=null;
 	var formDataSpecific = undefined;
 	if (form != null) {
-		if (jQuery.isFunction(FormData)) {
+		if (canPostDataWithAjax()) {
 			data = new FormData(form);
 			formDataSpecific = false;
 		} else {
@@ -169,7 +185,7 @@ function initDropFile() {
 				
 		var i = 0;
 		
-		var fd=new FormData;
+		var fd=new FormData();
 		jQuery.each( e.dataTransfer.files, function(index, file) {
 			startAjaxLoading();
 			if (i==0) {

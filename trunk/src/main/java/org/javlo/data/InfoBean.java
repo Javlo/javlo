@@ -167,6 +167,9 @@ public class InfoBean {
 	public String getPDFURL() {
 		ContentContext pdfCtx = new ContentContext(ctx);
 		pdfCtx.setFormat("pdf");
+		if (pdfCtx.getRenderMode() == ContentContext.PAGE_MODE) {
+			pdfCtx.setRenderMode(ContentContext.VIEW_MODE);
+		}
 		return URLHelper.createURL(pdfCtx);
 	}
 
