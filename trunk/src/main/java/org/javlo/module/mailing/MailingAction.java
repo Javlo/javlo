@@ -77,7 +77,7 @@ public class MailingAction extends AbstractModuleAction {
 		I18nAccess i18nAccess = I18nAccess.getInstance(ctx);
 
 		HashMap<String, String> params = new HashMap<String, String>();
-		params.put(ContentOnlyServlet.NO_DMZ_PARAM_NAME, "true");
+		params.put(ContentContext.NO_DMZ_PARAM_NAME, "true");
 		request.setAttribute("previewURL", URLHelper.createURL(ctx.getContextWithOtherRenderMode(ContentContext.PAGE_MODE),params));
 
 		MailingModuleContext mailingContext = MailingModuleContext.getInstance(request);

@@ -12,7 +12,6 @@ import org.javlo.context.ContentContext;
 import org.javlo.context.GlobalContext;
 import org.javlo.data.InfoBean;
 import org.javlo.helper.RequestHelper;
-import org.javlo.helper.StringHelper;
 import org.javlo.i18n.I18nAccess;
 import org.javlo.module.mailing.MailingModuleContext;
 import org.javlo.service.RequestService;
@@ -23,11 +22,6 @@ public class ContentOnlyServlet extends HttpServlet {
 
 	public static final String TEMPLATE_PARAM_NAME = "template";
 	
-	/**
-	 * param for render content with link to local server and not DMZ server.
-	 */
-	public static final String NO_DMZ_PARAM_NAME = "nodmz";
-
 	private static final long serialVersionUID = 1L;
 
 	/**
@@ -77,10 +71,6 @@ public class ContentOnlyServlet extends HttpServlet {
 			RequestService requestService = RequestService.getInstance(request);
 			String templateID = requestService.getParameter(TEMPLATE_PARAM_NAME, null);
 			
-			if (StringHelper.isTrue(requestService.getParameter(NO_DMZ_PARAM_NAME, null))) {
-				ctx.resetDMZServerInter();
-			}
-
 			Template template = null;
 
 			if (templateID == null) {			

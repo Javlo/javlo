@@ -652,6 +652,7 @@ public class AccessServlet extends HttpServlet implements IVersion {
 						Map<String, String> params = new HashMap<String, String>();
 						params.put(Device.FORCE_DEVICE_PARAMETER_NAME, "pdf");
 						params.put(ContentContext.FORCE_ABSOLUTE_URL, "true");
+						params.put(ContentContext.NO_DMZ_PARAM_NAME, "true");
 						if (!globalContext.isView() && globalContext.getBlockPassword() != null) {
 							params.put("block-password", globalContext.getBlockPassword());
 						}
