@@ -76,6 +76,12 @@ public class ContentContext {
 	public static Charset CHARSET_DEFAULT = Charset.forName(CHARACTER_ENCODING);
 
 	public static String PRODUCT_NAME = "Javlo 2";
+	
+	/**
+	 * param for render content with link to local server and not DMZ server.
+	 */
+	public static final String NO_DMZ_PARAM_NAME = "nodmz";
+
 
 	/**
 	 * create a static logger.
@@ -303,6 +309,9 @@ public class ContentContext {
 			ctx.dmzServerInter = globalContext.getDMZServerInter();
 			if (request.getParameter(FORCE_ABSOLUTE_URL) != null) {
 				ctx.setAbsoluteURL(StringHelper.isTrue(request.getParameter(FORCE_ABSOLUTE_URL)));
+			}
+			if (StringHelper.isTrue(requestService.getParameter(NO_DMZ_PARAM_NAME, null))) {
+				ctx.resetDMZServerInter();
 			}
 		} catch (RuntimeException e) {
 			e.printStackTrace();
