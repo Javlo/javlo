@@ -53,6 +53,16 @@ public class RSSRegistration extends AbstractPropertiesComponent {
 	public String getViewXHTMLCode(ContentContext ctx) throws Exception {
 		return "";
 	}
+	
+	@Override
+	public String getPrefixViewXHTMLCode(ContentContext ctx) {
+		return "";
+	}
+	
+	@Override
+	public String getSuffixViewXHTMLCode(ContentContext ctx) {
+		return "";
+	}
 
 	@Override
 	protected void init() throws ResourceNotFoundException {

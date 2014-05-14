@@ -877,8 +877,12 @@ public abstract class AbstractVisualComponent implements IContentVisualComponent
 			style = "";
 		}
 
-		if (getPreviousComponent() == null || !getPreviousComponent().isList(ctx) || !getPreviousComponent().getType().equals(getType())) {
+		if (getPreviousComponent() == null || !getPreviousComponent().getType().equals(getType())) {
 			style = style + " first ";
+		}
+		
+		if (getNextComponent() == null || !getNextComponent().getType().equals(getType())) {
+			style = style + " last ";
 		}
 
 		if (!componentBean.isList()) {
@@ -990,25 +994,7 @@ public abstract class AbstractVisualComponent implements IContentVisualComponent
 	}
 
 	protected String getSelectRendererXHTML(ContentContext ctx) throws Exception, IOException {
-		if (getCurrentRenderer(ctx) == null && (getRenderer(ctx) == null || getRenderer(ctx).length() <= 1)) { // for
-																												// use
-																												// getChooseRendererXHTML
-																												// you
-																												// must
-																												// implement
-																												// method
-																												// getSelectedRenderer
-																												// and
-																												// return
-																												// empty
-																												// string
-																												// if
-																												// empty
-																												// and
-																												// not
-																												// null
-																												// (default
-																												// value).
+		if (getCurrentRenderer(ctx) == null && (getRenderer(ctx) == null || getRenderer(ctx).length() <= 1)) {
 			return "";
 		}
 
@@ -1023,12 +1009,7 @@ public abstract class AbstractVisualComponent implements IContentVisualComponent
 			out.println("<fieldset class=\"display\">");
 			out.println("<legend>" + i18nAccess.getText("content.page-teaser.display-type") + "</legend><div class=\"line\">");
 
-			if (getRendererTitle() != null) { // for use title you must
-												// implement
-												// method getRendererTitle and
-												// return empty string if empty
-												// and
-												// not null (default value).
+			if (getRendererTitle() != null) { /* for use title you must implement method getRendererTitle and return empty string if empty and not null (default value). */
 				out.println("<div class=\"line\">");
 				out.println("<label for=\"" + getInputNameRendererTitle() + "\">" + i18nAccess.getText("global.title") + " : </label>");
 				out.println("<input type=\"text\" id=\"" + getInputNameRendererTitle() + "\" name=\"" + getInputNameRendererTitle() + "\" value=\"" + getRendererTitle() + "\"  />");
@@ -1042,8 +1023,10 @@ public abstract class AbstractVisualComponent implements IContentVisualComponent
 			List<String> keys = new LinkedList<String>(renderers.keySet());
 			Collections.sort(keys);
 			for (String key : keys) {
-				out.println(XHTMLHelper.getRadio(getInputNameRenderer(), key, getCurrentRenderer(ctx)));
-				out.println("<label for=\"" + key + "\">" + key + "</label></div><div class=\"line\">");
+				if (!key.contains(".")) {
+					out.println(XHTMLHelper.getRadio(getInputNameRenderer(), key, getCurrentRenderer(ctx)));
+					out.println("<label for=\"" + key + "\">" + key + "</label></div><div class=\"line\">");
+				}
 			}
 
 			out.println("</fieldset>");

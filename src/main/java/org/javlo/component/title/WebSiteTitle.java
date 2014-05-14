@@ -19,7 +19,17 @@ public class WebSiteTitle extends AbstractVisualComponent {
 	public int getSearchLevel() {
 		return SEARCH_LEVEL_HIGH;
 	}
-
+	
+	@Override
+	public String getPrefixViewXHTMLCode(ContentContext ctx) {
+		return "";
+	}
+	
+	@Override
+	public String getSuffixViewXHTMLCode(ContentContext ctx) {
+		return "";
+	}
+	
 	/**
 	 * @see org.javlo.itf.IContentVisualComponent#getXHTMLCode()
 	 */

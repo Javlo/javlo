@@ -113,6 +113,10 @@ public class InfoBean {
 		return URLHelper.createURL(ctx);
 	}
 	
+	public String getCurrentAbsoluteURLQRCode() {		
+		return URLHelper.createQRCodeLink(ctx, getShortURL());
+	}
+	
 	public String getCurrentModuleURL() {
 		ModulesContext modulesCtx;
 		try {
@@ -621,7 +625,7 @@ public class InfoBean {
 	}
 
 	public String getQRCodeLinkPrefix() {
-		return URLHelper.createQRCodeLink(ctx, null);
+		return URLHelper.createQRCodeLink(ctx, (IContentVisualComponent)null);
 	}
 
 	public String getBackURL() {
@@ -632,6 +636,11 @@ public class InfoBean {
 	public String getRootURL() {
 		return URLHelper.createURL(ctx, "/");
 	}
+	
+	public String getRootAbsoluteURL() {
+		return URLHelper.createURL(ctx.getContextForAbsoluteURL(), "/");
+	}
+
 
 	public Map<String, String> getStaticData() {
 		return staticData;

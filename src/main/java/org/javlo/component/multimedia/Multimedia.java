@@ -761,11 +761,11 @@ public class Multimedia extends TimeRangeComponent implements IImageTitle {
 				}
 
 				resource.setTitle(info.getTitle(lgCtx));
-				resource.setRelation(getHTMLRelation(ctx));
-				resource.setLocation(info.getLocation(ctx));
+				resource.setRelation(getHTMLRelation(lgCtx));
+				resource.setLocation(info.getLocation(lgCtx));
 				resource.setDescription(info.getDescription(lgCtx));
 				resource.setFullDescription(StringHelper.removeTag(info.getFullDescription(lgCtx)));
-				resource.setDate(info.getDate(ctx));
+				resource.setDate(info.getDate(lgCtx));
 				resource.setShortDate(StringHelper.renderDate(resource.getDate(), globalContext.getShortDateFormat()));
 				resource.setMediumDate(StringHelper.renderDate(resource.getDate(), globalContext.getMediumDateFormat()));
 				resource.setFullDate(StringHelper.renderDate(resource.getDate(), globalContext.getFullDateFormat()));

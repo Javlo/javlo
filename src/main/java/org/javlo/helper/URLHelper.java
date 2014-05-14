@@ -168,6 +168,13 @@ public class URLHelper extends ElementaryURLHelper {
 		return createStaticURL(ctx, "/qrcode/"+command+"/"+comp.getId()+".png");
 		
 	}
+	
+	public static String createQRCodeLink(ContentContext ctx, String data) {
+		String command = "data";
+		String code = StringHelper.getRandomIdBase64();
+		ctx.getGlobalContext().setTimeAttribute(code, data);
+		return createStaticURL(ctx, "/qrcode/"+command+"/"+code+".png");
+	}
 
 	public static String createResourceURL(ContentContext ctx, File file) {
 		GlobalContext globalContext = GlobalContext.getInstance(ctx.getRequest());
