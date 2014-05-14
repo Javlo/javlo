@@ -1,4 +1,4 @@
-package org.javlo.servlet;
+ package org.javlo.servlet;
 
 import java.awt.image.BufferedImage;
 import java.io.ByteArrayInputStream;
@@ -85,6 +85,8 @@ public class QRCodeServlet extends HttpServlet {
 				}
 				ctx = ctx.getContextForAbsoluteURL();
 				data = ((ILink) comp).getURL(ctx);
+			} else if (category.equals("data")) {
+				data = (String)ctx.getGlobalContext().getTimeAttribute(splittedFile[0]);
 			}
 
 			if (data != null) {				

@@ -744,6 +744,34 @@ public class MenuElement implements Serializable, IPrintInfo {
 			}
 			return outBean;
 		}
+		
+		public String getSmallDate() {
+			Date contentDate = getContentDate();
+			if (contentDate == null) {
+				return null;
+			} else {
+				return StringHelper.renderDate(contentDate, ctx.getGlobalContext().getShortDateFormat());
+			}
+		}
+		
+		public String getMediumDate() {
+			Date contentDate = getContentDate();
+			if (contentDate == null) {
+				return null;
+			} else {
+				return StringHelper.renderDate(contentDate, ctx.getGlobalContext().getMediumDateFormat());
+			}
+		}
+		
+		public String getFullDate() {
+			Date contentDate = getContentDate();
+			if (contentDate == null) {
+				return null;
+			} else {
+				return StringHelper.renderDate(contentDate, ctx.getGlobalContext().getFullDateFormat());
+			}
+		}
+
 	}
 
 	// private GlobalContext globalContext;;
