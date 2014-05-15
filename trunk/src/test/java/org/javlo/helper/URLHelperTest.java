@@ -35,7 +35,7 @@ public class URLHelperTest extends TestCase {
 		
 		assertEquals(URLHelper.createURL(ctx, "/page"), "/en/page.html");
 		assertEquals(URLHelper.createURL(ctx, "/page/subpage"), "/en/page/subpage.html");
-		ctx.setAllLangauge("fr");		
+		ctx.setAllLanguage("fr");		
 		assertEquals(URLHelper.createURL(ctx, "/page"), "/fr/page.html");
 		ctx.setLanguage("en");
 		assertEquals(URLHelper.createURL(ctx, "/page"), "/en-fr/page.html");		

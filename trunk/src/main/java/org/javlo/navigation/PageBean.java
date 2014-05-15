@@ -183,6 +183,15 @@ public class PageBean implements Serializable {
 			return null;
 		}
 	}
+	
+	public String getShortLanguageURL() {
+		try {
+			return page.getShortLanguageURL(ctx);
+		} catch (Exception e) {
+			e.printStackTrace();
+			return null;
+		}
+	}
 
 	public String getViewURL() {
 		return URLHelper.createURL(ctx.getContextWithOtherRenderMode(ContentContext.VIEW_MODE), page);

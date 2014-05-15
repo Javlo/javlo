@@ -614,7 +614,7 @@ public class ContentContext {
 	public ContentContext getContextForDefaultLanguage() {
 		GlobalContext globalContext = GlobalContext.getInstance(getRequest());
 		ContentContext defaultLgCtx = new ContentContext(this);
-		defaultLgCtx.setAllLangauge(globalContext.getDefaultLanguage());
+		defaultLgCtx.setAllLanguage(globalContext.getDefaultLanguage());
 		return defaultLgCtx;
 	}
 
@@ -1073,12 +1073,6 @@ public class ContentContext {
 			language = GlobalContext.getInstance(request).getDefaultLanguage();
 		}
 		resestCache();
-	}
-
-	public void setAllLangauge(String lg) {
-		setLanguage(lg);
-		setContentLanguage(lg);
-		setRequestContentLanguage(lg);
 	}
 
 	public void setNeedRefresh(boolean needRefresh) {

@@ -147,6 +147,8 @@
 	<c:if test="${page.allreadyShortURL}">
 		<span class="noclipboard"><a href="${info.shortURL}">${page.shortURL}</a></span>
 		<input class="clipboard" type="button" onclick="clipboardCopy('${info.shortURL}');" value="copy : ${page.shortURL}" />
+		<span class="noclipboard">(${info.requestContentLanguage}:<a href="${info.shortLanguageURL}">${page.shortLanguageURL}</a>)</span>
+		<input class="clipboard" type="button" onclick="clipboardCopy('${info.shortLanguageURL}');" value="copy : ${page.shortLanguageURL}" />		
 	</c:if>
 </div>
 </c:if>
