@@ -670,8 +670,10 @@ public class Field implements Cloneable {
 	}
 	
 	public boolean initContent(ContentContext ctx) throws Exception {
-		String initialValue = getLabel(new Locale(ctx.getRequestContentLanguage()));		
-		setValue(initialValue);		
+		String initialValue = getLabel(new Locale(ctx.getRequestContentLanguage()));	
+		if (getValue() == null || getValue().trim().length() == 0) {
+			setValue(initialValue);		
+		}
 		return true;
 	}
 	

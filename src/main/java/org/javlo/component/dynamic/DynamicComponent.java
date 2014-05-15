@@ -40,6 +40,7 @@ import org.javlo.helper.StringHelper;
 import org.javlo.helper.URLHelper;
 import org.javlo.i18n.I18nAccess;
 import org.javlo.service.resource.Resource;
+import org.javlo.utils.StructuredProperties;
 import org.javlo.ztatic.IStaticContainer;
 
 /**
@@ -533,7 +534,7 @@ public class DynamicComponent extends AbstractVisualComponent implements IStatic
 	@Override
 	public IContentVisualComponent newInstance(ComponentBean bean, ContentContext newCtx) throws Exception {
 		DynamicComponent res = (DynamicComponent) this.clone();
-		Properties newProp = new Properties();
+		Properties newProp = new StructuredProperties();
 		newProp.putAll(getConfigProperties());
 		res.setProperties(newProp); // transfert meta-data of
 		// dynamiccomponent

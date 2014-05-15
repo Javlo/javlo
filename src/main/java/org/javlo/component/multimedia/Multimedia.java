@@ -205,7 +205,7 @@ public class Multimedia extends TimeRangeComponent implements IImageTitle {
 		GlobalContext globalContext = GlobalContext.getInstance(ctx.getRequest());
 		Collection<String> languages = globalContext.getContentLanguages();
 		for (String lg : languages) {
-			lgCtx.setAllLangauge(lg);
+			lgCtx.setAllLanguage(lg);
 			if (video.isRealContent(lgCtx)) {
 				return lgCtx;
 			}

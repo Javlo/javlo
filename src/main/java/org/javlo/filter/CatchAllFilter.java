@@ -66,7 +66,7 @@ public class CatchAllFilter implements Filter {
 
 	@Override
 	public void doFilter(ServletRequest request, ServletResponse response, FilterChain next) throws IOException, ServletException {
-		
+
 		logger.fine("start catch all servelt.");
 
 		HttpServletRequest httpRequest = (HttpServletRequest) request;
@@ -250,8 +250,8 @@ public class CatchAllFilter implements Filter {
 		/**** SHORT URL ***/
 		/******************/
 
-		String shortURI = uri;		
-		String contextKey = globalContext.getMainContextKey();		
+		String shortURI = uri;
+		String contextKey = globalContext.getMainContextKey();
 		if (shortURI.startsWith('/' + contextKey)) {
 			if (shortURI.length() > globalContext.getContextKey().length() + 2) {
 				shortURI = shortURI.substring(contextKey.length() + 2);
@@ -260,8 +260,8 @@ public class CatchAllFilter implements Filter {
 			}
 		} else if (shortURI.startsWith("/")) {
 			shortURI = shortURI.substring(1);
-		}		
-
+		}
+		
 		if (shortURI.length() == globalContext.getStaticConfig().getShortURLSize() + 1 && shortURI.startsWith("U")) {
 			ContentContext ctx = null;
 			try {
@@ -274,12 +274,29 @@ public class CatchAllFilter implements Filter {
 						NetHelper.sendRedirectTemporarily((HttpServletResponse) response, newURL);
 						return;
 					}
-
 				}
 			} catch (Exception e1) {
 				e1.printStackTrace();
 			}
-
+		} else if (shortURI.length() == globalContext.getStaticConfig().getShortURLSize() + 3 && shortURI.startsWith("L")) {
+			String lg = shortURI.substring(1, 3).toLowerCase();
+			shortURI = 'U' + shortURI.substring(3);
+			ContentContext ctx = null;
+			try {
+				ctx = ContentContext.getContentContext((HttpServletRequest) request, (HttpServletResponse) response);
+				ctx.setAllLanguage(lg);
+				if (ctx.isAsViewMode()) {
+					ContentService content = ContentService.getInstance(globalContext);
+					MenuElement page = content.getPageWithShortURL(ctx, shortURI);
+					if (page != null) {
+						String newURL = URLHelper.createURLWithtoutEncodeURL(ctx, page.getPath());
+						NetHelper.sendRedirectTemporarily((HttpServletResponse) response, newURL);
+						return;
+					}
+				}
+			} catch (Exception e1) {
+				e1.printStackTrace();
+			}
 		}
 
 		globalContext = GlobalContext.getInstance(httpRequest);
@@ -331,9 +348,9 @@ public class CatchAllFilter implements Filter {
 					String lg = viewURI.substring(1, 3).toLowerCase();
 					if (globalContext.getContentLanguages().contains(lg)) {
 						String newPath = "/view" + viewURI;
-						if (httpRequest.getSession().isNew()) {							
+						if (httpRequest.getSession().isNew()) {
 							httpRequest.getSession().setAttribute(InfoBean.NEW_SESSION_PARAM, true);
-						} 
+						}
 						httpRequest.getRequestDispatcher(newPath).forward(httpRequest, response);
 						return;
 					}
@@ -341,7 +358,7 @@ public class CatchAllFilter implements Filter {
 			}
 		}
 
-		if (httpRequest.getUserPrincipal() != null) {			
+		if (httpRequest.getUserPrincipal() != null) {
 			logger.fine("principal user found : " + httpRequest.getUserPrincipal());
 			globalContext.addPrincipal(new UserPrincipal(httpRequest.getUserPrincipal()));
 		}
@@ -349,7 +366,7 @@ public class CatchAllFilter implements Filter {
 		if (forwardURI != null) {
 			if (httpRequest.getSession().isNew()) {
 				httpRequest.getSession().setAttribute(InfoBean.NEW_SESSION_PARAM, true);
-			} 
+			}
 			httpRequest.getRequestDispatcher(forwardURI).forward(httpRequest, response);
 		} else {
 			next.doFilter(httpRequest, response);
@@ -466,7 +483,7 @@ public class CatchAllFilter implements Filter {
 						globalContext.addPrincipal(principalUser);
 						newUser = true;
 						if (request.getParameter("edit-login") != null) {
-							adminFactory.autoLogin(httpRequest, principalUser.getLogin());							
+							adminFactory.autoLogin(httpRequest, principalUser.getLogin());
 							globalContext.addPrincipal(principalUser);
 							globalContext.eventLogin(principalUser.getLogin());
 						}

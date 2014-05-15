@@ -114,7 +114,7 @@ public class InfoBean {
 	}
 	
 	public String getCurrentAbsoluteURLQRCode() {		
-		return URLHelper.createQRCodeLink(ctx, getShortURL());
+		return URLHelper.createQRCodeLink(ctx, getShortLanguageURL());
 	}
 	
 	public String getCurrentModuleURL() {
@@ -429,6 +429,16 @@ public class InfoBean {
 			return null;
 		}
 	}
+	
+	public String getShortLanguageURL() {
+		try {
+			return URLHelper.createStaticURL(ctx.getContextForAbsoluteURL(), ctx.getCurrentPage().getShortLanguageURL(ctx));
+		} catch (Exception e) {
+			e.printStackTrace();
+			return null;
+		}
+	}
+
 
 	public Collection<String> getTags() {
 		return globalContext.getTags();

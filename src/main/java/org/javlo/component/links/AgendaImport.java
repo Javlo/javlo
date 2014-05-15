@@ -217,7 +217,7 @@ public class AgendaImport extends AbstractVisualComponent {
 									ctx.getRequest().setAttribute("location", location.getValue());
 								}
 							}
-							out.println(contentVisualComponent.getXHTMLCode(ctx));
+							out.println("<div class=\""+contentVisualComponent.getType()+"\">"+contentVisualComponent.getXHTMLCode(ctx)+"</div>");
 						}
 
 					}

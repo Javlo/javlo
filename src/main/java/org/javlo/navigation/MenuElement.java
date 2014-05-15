@@ -4055,6 +4055,14 @@ public class MenuElement implements Serializable, IPrintInfo {
 		}
 		return shortURL;
 	}
+	
+	public String getShortLanguageURL(ContentContext ctx) throws Exception {
+		String shortURL = getShortURL(ctx);
+		if (shortURL != null && shortURL.length()>1) {
+			shortURL = "L"+ctx.getRequestContentLanguage()+shortURL.substring(1);
+		}
+		return shortURL;
+	}
 
 	public void setShortURL(String shortURL) {
 		this.shortURL = shortURL;

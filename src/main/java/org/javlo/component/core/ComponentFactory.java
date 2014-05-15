@@ -39,6 +39,7 @@ import org.javlo.navigation.MenuElement;
 import org.javlo.service.ContentService;
 import org.javlo.template.Template;
 import org.javlo.template.TemplateFactory;
+import org.javlo.utils.StructuredProperties;
 
 /**
  * @author pvanderm
@@ -101,7 +102,7 @@ public class ComponentFactory {
 					for (Properties properties : propertiesClasses) {
 						logger.fine("load dynamic component : " + properties.getProperty("component.type") + " [total:" + array.size() + "]");
 						DynamicComponent comp = new DynamicComponent();
-						Properties newProp = new Properties();
+						Properties newProp = new StructuredProperties();
 						newProp.putAll(properties);
 						comp.setProperties(newProp);
 						comp.setConfigProperties(properties);
@@ -236,7 +237,7 @@ public class ComponentFactory {
 			for (Properties properties : propertiesClasses) {
 				logger.info("load dynamic component : " + properties.getProperty("component.type") + " [total:" + array.size() + "]");
 				DynamicComponent comp = new DynamicComponent();
-				Properties newProp = new Properties();
+				Properties newProp = new StructuredProperties();
 				newProp.putAll(properties);
 				comp.setProperties(newProp);
 				comp.setConfigProperties(properties);
