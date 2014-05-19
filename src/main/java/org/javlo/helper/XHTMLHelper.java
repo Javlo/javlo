@@ -64,6 +64,7 @@ import org.javlo.service.ContentService;
 import org.javlo.service.ListService;
 import org.javlo.service.RequestService;
 import org.javlo.service.ReverseLinkService;
+import org.javlo.user.User;
 import org.javlo.utils.SuffixPrefix;
 import org.javlo.ztatic.StaticInfo;
 import org.jsoup.Jsoup;
@@ -2194,6 +2195,30 @@ public class XHTMLHelper {
 		out.println("</ul>");
 		out.close();
 		return new String(outStream.toByteArray());
+	}
+
+	public static String renderUserData(ContentContext ctx, User user) {
+		StringWriter writer = new StringWriter();
+		PrintWriter out = new PrintWriter(writer);
+		out.println("<span class=\"user-data\">");
+		String avatar = user.getUserInfo().getAvatarURL();
+		if (avatar != null) {
+			out.println("<img class=\"avatar\" src=\"" + avatar + "\">");
+		}
+		out.println("<span class=\"fullname\">");
+		out.println("<span class=\"lastname\">");
+		out.println(user.getUserInfo().getLastName());
+		out.println("</span>");
+		out.println("<span class=\"firstname\">");
+		out.println(user.getUserInfo().getFirstName());
+		out.println("</span>");
+		out.println("</span>");
+		out.println("<span class=\"email\">");
+		out.println(user.getUserInfo().getEmail());
+		out.println("</span>");
+		out.println("</span>");
+		out.close();
+		return writer.toString();
 	}
 
 	private XHTMLHelper() {

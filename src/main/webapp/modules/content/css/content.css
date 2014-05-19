@@ -360,3 +360,19 @@ li.line {
 .text img {
 	float: left;
 }
+
+.reactions ul {
+	padding-left: 25px;
+}
+
+.reactions ul ul {
+	border-top: 1px solid #000000;
+	border-left: 1px solid #000000;
+	margin-bottom: 15px;
+}
+.reactions ul li {
+	border-top: 1px solid #000000;
+}
+.reactions ul li.first {
+	border-top: 0;
+}

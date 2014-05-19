@@ -1,0 +1,44 @@
+div.reaction ul ul {
+	padding-left: 2%;
+	margin-top: 10px;
+}
+
+div.reaction .user-data .avatar {
+	float: left;
+}
+
+div.reaction .metapost {
+	line-height: normal;
+}
+
+div.reaction .user-data .fullname,
+div.reaction .user-data .email {
+	display: block;
+	margin-left: 60px;
+}
+div.reaction .user-data .fullname{
+	font-weight: bold;
+}
+
+div.reaction .text {
+	clear: left;
+}
+
+div.reaction .date {
+	font-size: 0.7em;;
+	line-height: normal;
+}
+
+div.reaction form {
+	border: 1px solid #CCCCCC;
+	padding: 5px;
+}
+
+div.reaction label {
+	display: block;
+}
+
+div.reaction textarea {
+	height: 50px;
+	width: 98%;
+}
