@@ -1,5 +1,7 @@
 package org.javlo.user;
 
+import org.javlo.helper.StringHelper;
+
 public class AdminUserInfo extends UserInfo {
 
 	private String facebook;
@@ -46,7 +48,7 @@ public class AdminUserInfo extends UserInfo {
 		} else if (getTwitter() != null && getTwitter().trim().length() > 0) {
 			return "https://api.twitter.com/1/users/profile_image?screen_name=" + getTwitter().replaceAll("https://twitter.com/", "") + "&size=normal";
 		} else {
-			return null;
+			return  null;
 		}
 	}
 

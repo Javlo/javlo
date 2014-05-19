@@ -185,6 +185,24 @@ public class InfoBean {
 			return null;
 		}
 	}
+	
+	public String getCurrentDate() {
+		try {
+			return StringHelper.renderDate(new Date(), globalContext.getShortDateFormat());
+		} catch (Exception e) {
+			e.printStackTrace();
+			return null;
+		}
+	}
+	
+	public String getSortableDate() {
+		try {
+			return StringHelper.renderSortableDate(currentPage.getContentDateNeverNull(ctx));	
+		} catch (Exception e) {
+			e.printStackTrace();
+			return null;
+		}
+	}
 
 	public Device getDevice() {
 		return ctx.getDevice();
