@@ -278,7 +278,7 @@ public class PageReferenceComponent extends ComplexPropertiesLink implements IAc
 				ContentContext lgCtx = new ContentContext(ctx);
 				lgCtx.setRequestContentLanguage(lg);
 				lgCtx.setContentLanguage(lg);
-				if (!page.isEmpty(lgCtx)) {
+				if (page.isRealContent(lgCtx)) {
 					Locale locale = new Locale(lg);
 					Link link = new Link(URLHelper.createURL(lgCtx, page.getPath()), lg, lg+" - "+locale.getDisplayLanguage(locale) );
 					bean.links.add(link);

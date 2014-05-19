@@ -57,15 +57,6 @@ public class SubtitleLink extends AbstractVisualComponent {
 	}
 
 	@Override
-	public String getRenderer(ContentContext ctx) {
-		if (getConfig(ctx).getRenderes().size() > 0) {
-			return getConfig(ctx).getRenderes().values().iterator().next();
-		} else {
-			return "subtitle.jsp";
-		}
-	}
-
-	@Override
 	public void prepareView(ContentContext ctx) throws Exception {
 		super.prepareView(ctx);
 		MenuElement myPage = getPage();
