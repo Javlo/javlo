@@ -51,6 +51,7 @@ import org.javlo.navigation.MenuElement;
 import org.javlo.service.CaptchaService;
 import org.javlo.service.ContentService;
 import org.javlo.service.RequestService;
+import org.javlo.user.AdminUserFactory;
 import org.javlo.user.IUserFactory;
 import org.javlo.user.User;
 import org.javlo.user.UserFactory;
@@ -290,6 +291,12 @@ public class ReactionComponent extends DynamicComponent implements IAction {
 					}
 				}
 			}
+
+			User currentUser = getCurrentUser(ctx);
+			if (currentUser != null) {
+				reaction.setAuthors(currentUser.getLogin());
+			}
+
 			MessageRepository messageRepository = MessageRepository.getInstance(ctx);
 			I18nAccess i18nAccess = I18nAccess.getInstance(ctx);
 			if (validReaction) {
@@ -426,14 +433,15 @@ public class ReactionComponent extends DynamicComponent implements IAction {
 
 	private void renderEditReactions(PrintWriter out, String parentReactionId, Collection<Reaction> reactions, ContentContext ctx, I18nAccess i18nAccess) {
 		parentReactionId = StringHelper.neverNull(parentReactionId);
-		out.println("<ul>");
-		String sep = "";
+		boolean first = true;
 		for (Reaction reaction : reactions) {
 			if (!parentReactionId.equals(StringHelper.neverNull(reaction.getReplyOf()))) {
 				continue;
 			}
-			out.print(sep);
-			out.println("<li id=\"reaction-" + reaction.getId() + "\" class=\"reaction\">");
+			if (first) {
+				out.println("<ul>");
+			}
+			out.println("<li id=\"reaction-" + reaction.getId() + "\" class=\"reaction" + (first ? " first" : "") + "\">");
 			out.println("<div class=\"line\">");
 			out.print(i18nAccess.getText("global.date") + " : ");
 			out.println(StringHelper.renderTime(reaction.getDate()));
@@ -460,9 +468,11 @@ public class ReactionComponent extends DynamicComponent implements IAction {
 			}
 			renderEditReactions(out, reaction.getId(), reactions, ctx, i18nAccess);
 			out.println("</li>");
-			sep = "<hr />";
+			first = false;
 		}
-		out.println("</ul>");
+		if (!first) {
+			out.println("</ul>");
+		}
 	}
 
 	protected String getEmail(ContentContext ctx) {
@@ -523,6 +533,34 @@ public class ReactionComponent extends DynamicComponent implements IAction {
 		return false;
 	}
 
+	protected boolean isRequestLoginToView(ContentContext ctx) {
+		Collection<Field> fields;
+		try {
+			fields = getFields(ctx);
+			for (Field field : fields) {
+				if (field.getName().equalsIgnoreCase("requestLoginToView")) {
+					return StringHelper.isTrue(field.getValue());
+				}
+			}
+		} catch (Exception e) {
+		}
+		return false;
+	}
+
+	protected boolean isRequestLoginToAdd(ContentContext ctx) {
+		Collection<Field> fields;
+		try {
+			fields = getFields(ctx);
+			for (Field field : fields) {
+				if (field.getName().equalsIgnoreCase("requestLoginToAdd")) {
+					return StringHelper.isTrue(field.getValue());
+				}
+			}
+		} catch (Exception e) {
+		}
+		return false;
+	}
+
 	@Override
 	public java.util.List<Field> getFields(ContentContext ctx) throws FileNotFoundException, IOException {
 		StaticConfig staticConfig = StaticConfig.getInstance(ctx.getRequest().getSession());
@@ -533,6 +571,8 @@ public class ReactionComponent extends DynamicComponent implements IAction {
 
 		outFields.add(FieldFactory.getField(this, staticConfig, globalContext, i18nAccess, getProperties(), i18nAccess.getText("global.email"), "email", "text", getId()));
 		outFields.add(FieldFactory.getField(this, staticConfig, globalContext, i18nAccess, getProperties(), i18nAccess.getText("global.title"), "title", "text", getId()));
+		outFields.add(FieldFactory.getField(this, staticConfig, globalContext, i18nAccess, getProperties(), i18nAccess.getText("content.reaction.request-login-to-view"), "requestLoginToView", "boolean", getId()));
+		outFields.add(FieldFactory.getField(this, staticConfig, globalContext, i18nAccess, getProperties(), i18nAccess.getText("content.reaction.request-login-to-add"), "requestLoginToAdd", "boolean", getId()));
 		outFields.add(FieldFactory.getField(this, staticConfig, globalContext, i18nAccess, getProperties(), i18nAccess.getText("content.reaction.with-title"), "withTitle", "boolean", getId()));
 		outFields.add(FieldFactory.getField(this, staticConfig, globalContext, i18nAccess, getProperties(), i18nAccess.getText("content.reaction.reply-allowed"), "replyAllowed", "boolean", getId()));
 
@@ -718,7 +758,9 @@ public class ReactionComponent extends DynamicComponent implements IAction {
 				viewField.add(FieldFactory.getField(this, staticConfig, globalContext, i18nAccess, null, i18nAccess.getContentViewText("global.title"), "title", "text", fieldSetId));
 			}
 
-			viewField.add(FieldFactory.getField(this, staticConfig, globalContext, i18nAccess, null, i18nAccess.getContentViewText("global.nickname"), "nickname", "text", fieldSetId));
+			if (!isRequestLoginToAdd(ctx)) {
+				viewField.add(FieldFactory.getField(this, staticConfig, globalContext, i18nAccess, null, i18nAccess.getContentViewText("global.nickname"), "nickname", "text", fieldSetId));
+			}
 
 			viewField.add(FieldFactory.getField(this, staticConfig, globalContext, i18nAccess, null, i18nAccess.getContentViewText("global.text"), "text", "large-text", fieldSetId));
 
@@ -726,8 +768,7 @@ public class ReactionComponent extends DynamicComponent implements IAction {
 		}
 		for (Field field : viewField) {
 			if("nickname".equals(field.getName())) {
-				IUserFactory userFactory = UserFactory.createUserFactory(ctx.getGlobalContext(), ctx.getRequest().getSession());
-				User currentUser = userFactory.getCurrentUser(ctx.getRequest().getSession());
+				User currentUser = getCurrentUser(ctx);
 				if (currentUser != null) {
 					field.setReadOnly(true);
 					field.setValue(currentUser.getLogin());
@@ -737,6 +778,11 @@ public class ReactionComponent extends DynamicComponent implements IAction {
 			}
 		}
 		return viewField;
+	}
+
+	private static User getCurrentUser(ContentContext ctx) {
+		IUserFactory userFactory = UserFactory.createUserFactory(ctx.getGlobalContext(), ctx.getRequest().getSession());
+		return userFactory.getCurrentUser(ctx.getRequest().getSession());
 	}
 
 	/**
@@ -751,36 +797,78 @@ public class ReactionComponent extends DynamicComponent implements IAction {
 
 		out.println("<div id=\"" + id + "\" class=\"" + getType() + "\">");
 
+		User user = getCurrentUser(ctx);
+
+		boolean viewAllowed = isRequestLoginToView(ctx) ? user != null : true;
+		boolean requestLoginToAdd = isRequestLoginToAdd(ctx);
+		boolean addAllowed = viewAllowed && (requestLoginToAdd ? user != null : true);
+		boolean replyAllowed = addAllowed && isReplyAllowed(ctx);
+
+		boolean displayUserInfo = requestLoginToAdd;
+
+		boolean displayTitle = isWithTitle(ctx);
+
 		I18nAccess i18nAccess = I18nAccess.getInstance(ctx.getRequest());
+		if (viewAllowed) {
+			Collection<Reaction> reactions = getReactions(ctx);
 
-		Collection<Reaction> reactions = getReactions(ctx);
-
-		String title = getTitle(ctx);
-		if (title != null && title.trim().length() > 0) {
-			out.println("<h3><span>" + title + "</span></h3>");
+			String title = getTitle(ctx);
+			if (title != null && title.trim().length() > 0) {
+				out.println("<h3><span>" + title + "</span></h3>");
+			}
+			renderReactions(out, id, "", null, reactions, ctx, i18nAccess, displayUserInfo, displayTitle, replyAllowed);
+			if (addAllowed) {
+				renderSendReactionForm(out, id, null, ctx, i18nAccess);
+			} else {
+				out.println("<p>");
+				out.println(i18nAccess.getViewText("reaction.login-to-add"));
+				out.println("</p>");
+			}
+		} else {
+			out.println("<p>");
+			out.println(i18nAccess.getViewText("reaction.login-to-view"));
+			out.println("</p>");
 		}
-		renderReactions(out, id, "", null, reactions, ctx, i18nAccess);
-		renderSendReactionForm(out, id, null, ctx, i18nAccess);
 		out.println("</div>");
 		out.close();
 		return writer.toString();
 	}
 
-	private void renderReactions(PrintWriter out, String id, String parentHtmlIdSuffix, String parentReactionId, Collection<Reaction> reactions, ContentContext ctx, I18nAccess i18nAccess) throws Exception {
+	private void renderReactions(PrintWriter out, String id, String parentHtmlIdSuffix, 
+			String parentReactionId, Collection<Reaction> reactions, 
+			ContentContext ctx, I18nAccess i18nAccess, 
+			boolean displayUserInfo, boolean displayTitle, boolean displayReply) throws Exception {
 		parentReactionId = StringHelper.neverNull(parentReactionId);
 		int i = 0;
-		out.println("<ul>");
+		boolean first = true;
 		for (Reaction reaction : reactions) {
 			if (reaction.isValidReaction() && parentReactionId.equals(StringHelper.neverNull(reaction.getReplyOf()))) {
 				i++;
 				String htmlIdSuffix = parentHtmlIdSuffix + "-" + i;
-				out.println("<li id=\"message" + htmlIdSuffix + "\" class=\"comment-entry\">");
+				if (first) {
+					out.println("<ul>");
+				}
+				out.println("<li id=\"message" + htmlIdSuffix + "\" class=\"comment-entry" + (first ? " first" : "") + "\">");
 
 				out.println("<div class=\"metapost\"><span class=\"authors\">");
-				out.println(StringHelper.removeTag(reaction.getAuthors()));
+				if (displayUserInfo) {
+					IUserFactory userFactory = AdminUserFactory.createUserFactory(ctx.getGlobalContext(), ctx.getRequest().getSession());
+					User user = userFactory.getUser(reaction.getAuthors());
+					if (user == null) {
+						userFactory = UserFactory.createUserFactory(ctx.getGlobalContext(), ctx.getRequest().getSession());
+						user = userFactory.getUser(reaction.getAuthors());
+					}
+					if (user != null) {
+						out.println(XHTMLHelper.renderUserData(ctx, user));
+					} else {
+						out.println(StringHelper.removeTag(reaction.getAuthors()));
+					}
+				} else {
+					out.println(StringHelper.removeTag(reaction.getAuthors()));
+				}
 				out.println("</span></div>");
 
-				if (isWithTitle(ctx)) {
+				if (displayTitle) {
 					out.println("<span class=\"title\">");
 					out.println(StringHelper.removeTag(reaction.getTitle()));
 					out.println("</span>");
@@ -794,14 +882,17 @@ public class ReactionComponent extends DynamicComponent implements IAction {
 				out.println(StringHelper.renderTime(reaction.getDate()));
 				out.println("</span></div>");
 
-				if (isReplyAllowed(ctx)) {
+				if (displayReply) {
 					renderSendReactionForm(out, id, reaction.getId(), ctx, i18nAccess);
 				}
-				renderReactions(out, id, htmlIdSuffix, reaction.getId(), reactions, ctx, i18nAccess);
+				renderReactions(out, id, htmlIdSuffix, reaction.getId(), reactions, ctx, i18nAccess, displayUserInfo, displayTitle, displayReply);
 				out.println("</li>");
+				first = false;
 			}
 		}
-		out.println("</ul>");
+		if (!first) {
+			out.println("</ul>");
+		}
 	}
 
 	private void renderSendReactionForm(PrintWriter out, String id, String reactionId, ContentContext ctx, I18nAccess i18nAccess) throws Exception {
@@ -877,6 +968,7 @@ public class ReactionComponent extends DynamicComponent implements IAction {
 			for (Reaction reaction : reactions) {
 				if (requestService.getParameter(getDeleteName(reaction), null) != null) {
 					reactionToBeDeleted.add(reaction);
+					addChildrenToDelete(reaction, reactions, reactionToBeDeleted);
 				}
 				if (requestService.getParameter(getAcceptName(reaction), null) != null) {
 					reaction.setValidReaction(true);
@@ -900,6 +992,17 @@ public class ReactionComponent extends DynamicComponent implements IAction {
 			}
 		}
 		storeProperties();
+	}
+
+	private void addChildrenToDelete(Reaction parent, Collection<Reaction> reactions, Collection<Reaction> reactionToBeDeleted) {
+		for (Reaction child : reactions) {
+			if (parent.getId().equals(child.getReplyOf())) {
+				if (!reactionToBeDeleted.contains(child)) {
+					reactionToBeDeleted.add(child);
+					addChildrenToDelete(child, reactions, reactionToBeDeleted);
+				}
+			}
+		}
 	}
 
 	public void deleteReaction(ContentContext ctx, String id) throws IOException {
