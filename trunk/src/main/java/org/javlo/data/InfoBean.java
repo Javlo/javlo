@@ -22,6 +22,7 @@ import org.javlo.context.EditContext;
 import org.javlo.context.GlobalContext;
 import org.javlo.helper.ElementaryURLHelper;
 import org.javlo.helper.NavigationHelper;
+import org.javlo.helper.NetHelper;
 import org.javlo.helper.StringHelper;
 import org.javlo.helper.URLHelper;
 import org.javlo.message.GenericMessage;
@@ -35,6 +36,7 @@ import org.javlo.service.ContentService;
 import org.javlo.service.PersistenceService;
 import org.javlo.service.RequestService;
 import org.javlo.service.exception.ServiceException;
+import org.javlo.service.visitors.VisitorsMessageService;
 import org.javlo.servlet.AccessServlet;
 import org.javlo.template.Template;
 import org.javlo.user.AdminUserFactory;
@@ -767,6 +769,13 @@ public class InfoBean {
 		} else {
 			return URLHelper.createTransformURL(ctx, URLHelper.mergePath(ctx.getGlobalContext().getStaticConfig().getStaticFolder(),logo), "logo");
 		}
+	}
+	
+	public boolean isCookiesMessage() throws Exception {
+		if (NetHelper.getCookie(ctx.getRequest(), ctx.getCurrentTemplate().getCookiesMessageName()) != null) {
+			VisitorsMessageService.getInstance(ctx.getRequest().getSession()).markAsDisplayed("cookies");
+		} 
+		return !VisitorsMessageService.getInstance(ctx.getRequest().getSession()).isAllReadyDisplayed("cookies");		
 	}
 
 }

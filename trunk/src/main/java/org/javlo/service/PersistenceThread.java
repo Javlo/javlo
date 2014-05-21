@@ -133,10 +133,10 @@ public class PersistenceThread extends Thread {
 		// don't save empty site
 		if ((menuElement.getAllChildren().length > 0) || (menuElement.getContent().length > 0)) {
 
-			int localVersion = persistenceService.version;
+			int localVersion = persistenceService.getVersion();
 
 			if (renderMode == ContentContext.PREVIEW_MODE) {
-				localVersion = persistenceService.version + 1;
+				localVersion = persistenceService.getVersion() + 1;
 				persistenceService.canRedo = false;
 
 			}
@@ -155,7 +155,7 @@ public class PersistenceThread extends Thread {
 					fileWriter.close();
 					fileStream.close();
 				}
-				persistenceService.version++;
+				persistenceService.setVersion(persistenceService.getVersion()+1);
 				persistenceService.saveVersion();
 				persistenceService.cleanFile();
 			} else {

@@ -76,6 +76,11 @@ public interface IContentVisualComponent extends Comparable<IContentVisualCompon
 	 * @return
 	 */
 	public String getXHTMLCode(ContentContext ctx) throws Exception;
+	
+	/**
+	 * return the code if component contain's no data.
+	 */
+	public String getEmptyXHTMLCode(ContentContext ctx) throws Exception;
 
 	/**
 	 * xhtml code for config the component

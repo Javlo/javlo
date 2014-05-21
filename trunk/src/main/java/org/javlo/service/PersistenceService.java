@@ -224,11 +224,6 @@ public class PersistenceService {
 			dir.mkdirs();
 			dir = new File(instance.getTrackingDirectory());
 			dir.mkdirs();
-			try {
-				instance.loadVersion();
-			} catch (IOException e) {
-				throw new ServiceException(e.getMessage());
-			}
 		}
 		return instance;
 	}
@@ -257,7 +252,7 @@ public class PersistenceService {
 		return outTrack.toString();
 	}
 
-	public Integer version = -1;
+	public Integer __version = -1;
 
 	protected boolean canRedo = false;
 
@@ -270,11 +265,11 @@ public class PersistenceService {
 	private static final Object LOCK_LOAD = new Object();
 
 	public boolean canRedo() {
-		return versionExist(version + 1) && canRedo;
+		return versionExist(getVersion() + 1) && canRedo;
 	}
 
 	public boolean canUndo() {
-		return versionExist(version - 1);
+		return versionExist(getVersion() - 1);
 	}
 
 	protected void cleanFile() {
@@ -305,7 +300,7 @@ public class PersistenceService {
 		}
 
 		if (!canRedo()) {
-			int workVersion = version + 1;
+			int workVersion = getVersion() + 1;
 			File file = new File(getDirectory() + "/content_" + ContentContext.PREVIEW_MODE + '_' + workVersion + ".xml");
 			while (file.exists()) {
 				workVersion++;
@@ -313,7 +308,7 @@ public class PersistenceService {
 				file = new File(getDirectory() + "/content_" + ContentContext.PREVIEW_MODE + '_' + workVersion + ".xml");
 			}
 		}
-		int workVersion = version - UNDO_DEPTH;
+		int workVersion = getVersion() - UNDO_DEPTH;
 		File file = new File(getDirectory() + "/content_" + ContentContext.PREVIEW_MODE + '_' + workVersion + ".xml");
 		while (workVersion > 0) {
 			workVersion--;
@@ -326,7 +321,7 @@ public class PersistenceService {
 
 	public void correctAllFiles() {
 		// synchronized (MenuElement.LOCK_ACCESS) {
-		File currentPreview = new File(getDirectory() + "/content_" + ContentContext.PREVIEW_MODE + '_' + version + ".xml");
+		File currentPreview = new File(getDirectory() + "/content_" + ContentContext.PREVIEW_MODE + '_' + getVersion() + ".xml");
 		File currentView = new File(getDirectory() + "/content_" + ContentContext.VIEW_MODE + ".xml");
 
 		correctFile(currentPreview);
@@ -482,7 +477,33 @@ public class PersistenceService {
 	}
 
 	public int getVersion() {
-		return version;
+		synchronized (__version) {
+			if (__version == -1) {
+				File propFile = new File(getDirectory() + '/' + stateFile);
+				if (propFile.exists()) {
+					try {
+						Properties prop = new Properties();
+						InputStream in = new FileInputStream(propFile);
+						prop.load(in);
+						in.close();
+						__version = Integer.parseInt(prop.getProperty("version", "1"));
+					} catch (NumberFormatException e) {
+						e.printStackTrace();
+					} catch (FileNotFoundException e) {
+						e.printStackTrace();
+					} catch (IOException e) {
+						e.printStackTrace();
+					}
+				} else { // set default value
+					__version = 1;
+				}
+			}
+			return __version;
+		}
+	}
+
+	public void resetVersion() {
+		__version = -1;
 	}
 
 	public void insertContent(NodeXML pageXML, MenuElement elem, String defaultLg) throws StructureException {
@@ -880,23 +901,14 @@ public class PersistenceService {
 		return load(ctx, ContentContext.PREVIEW_MODE, null, null, true, version);
 	}
 
-	protected synchronized MenuElement load(ContentContext ctx, int renderMode, Map<String, String> contentAttributeMap, Date timeTravelDate, boolean correctXML, Integer previewVersion) throws Exception {
-
+	protected MenuElement load(ContentContext ctx, int renderMode, Map<String, String> contentAttributeMap, Date timeTravelDate, boolean correctXML, Integer previewVersion) throws Exception {
 		if (contentAttributeMap == null) {
 			contentAttributeMap = new HashMap(); // fake map
 		}
-
 		waitThread();
+		synchronized (ctx.getGlobalContext().getLockLoadContent()) {
 
-		synchronized (ctx.getGlobalContext().getLockLoadContent()) { // load
-																		// only
-																		// one
-																		// content
-																		// both
-
-			loadVersion();
-
-			int version = this.version;
+			int version = getVersion();
 			if (previewVersion != null) {
 				version = previewVersion;
 			}
@@ -909,7 +921,8 @@ public class PersistenceService {
 			try {
 
 				if (timeTravelDate != null) {
-					// An other render mode than VIEW_MODE is not supported with
+					// An other render mode than VIEW_MODE is not supported
+					// with
 					// a timeTravelDate.
 					Map<File, Date> backups = getBackupFiles();
 					long minDiff = Long.MIN_VALUE;
@@ -1056,19 +1069,14 @@ public class PersistenceService {
 	 * @return the current version
 	 * @throws IOException
 	 */
-	public synchronized int loadVersion() throws IOException {
-		File propFile = new File(getDirectory() + '/' + stateFile);
-		if (propFile.exists()) {
-			Properties prop = new Properties();
-			InputStream in = new FileInputStream(propFile);
-			prop.load(in);
-			in.close();
-			version = Integer.parseInt(prop.getProperty("version", "1"));
-		} else { // set default value
-			version = 1;
-		}
-		return version;
-	}
+	/*
+	 * public synchronized int loadVersion() throws IOException { File propFile
+	 * = new File(getDirectory() + '/' + stateFile); if (propFile.exists()) {
+	 * Properties prop = new Properties(); InputStream in = new
+	 * FileInputStream(propFile); prop.load(in); in.close(); version =
+	 * Integer.parseInt(prop.getProperty("version", "1")); } else { // set
+	 * default value version = 1; } return version; }
+	 */
 
 	public Track[] loadTracks(Date from, Date to, boolean onlyViewClick, boolean onlyResource) {
 
@@ -1207,7 +1215,7 @@ public class PersistenceService {
 
 	public void publishPreviewFile(ContentContext ctx) throws IOException, ParseException {
 		storeCurrentView(ctx);
-		File previewFile = new File(getDirectory() + "/content_" + ContentContext.PREVIEW_MODE + '_' + version + ".xml");
+		File previewFile = new File(getDirectory() + "/content_" + ContentContext.PREVIEW_MODE + '_' + getVersion() + ".xml");
 		File file = new File(getDirectory() + "/content_" + ContentContext.VIEW_MODE + ".xml");
 		if (file.exists()) {
 			file.delete();
@@ -1217,7 +1225,7 @@ public class PersistenceService {
 
 	public void redo() {
 		if (canRedo()) {
-			version++;
+			setVersion(getVersion() + 1);
 			saveVersion();
 		}
 	}
@@ -1231,8 +1239,8 @@ public class PersistenceService {
 	 *         exist.
 	 */
 	public boolean setVersion(int version) {
-		if (versionExist(version)) {
-			this.version = version;
+		if (versionExist(__version)) {
+			this.__version = version;
 			saveVersion();
 			return true;
 		} else {
@@ -1249,20 +1257,22 @@ public class PersistenceService {
 	}
 
 	protected void saveVersion() {
-		try {
-			File propFile = new File(getDirectory() + '/' + stateFile);
-			if (!propFile.exists()) {
-				propFile.createNewFile();
+		synchronized (__version) {
+			try {
+				File propFile = new File(getDirectory() + '/' + stateFile);
+				if (!propFile.exists()) {
+					propFile.createNewFile();
+				}
+				Properties prop = new Properties();
+				prop.setProperty("version", "" + __version);
+				OutputStream out = new FileOutputStream(propFile);
+				prop.store(out, "WCMS PERSISTENCE STATE");
+				out.close();
+			} catch (FileNotFoundException e) {
+				e.printStackTrace();
+			} catch (IOException e) {
+				e.printStackTrace();
 			}
-			Properties prop = new Properties();
-			prop.setProperty("version", "" + version);
-			OutputStream out = new FileOutputStream(propFile);
-			prop.store(out, "WCMS PERSISTENCE STATE");
-			out.close();
-		} catch (FileNotFoundException e) {
-			e.printStackTrace();
-		} catch (IOException e) {
-			e.printStackTrace();
 		}
 	}
 
@@ -1336,9 +1346,9 @@ public class PersistenceService {
 
 	public void store(InputStream in) throws Exception {
 		// synchronized (MenuElement.LOCK_ACCESS) {
-		version++;
+		setVersion(getVersion() + 1);
 		saveVersion();
-		File file = new File(getDirectory() + "/content_" + ContentContext.PREVIEW_MODE + '_' + version + ".xml");
+		File file = new File(getDirectory() + "/content_" + ContentContext.PREVIEW_MODE + '_' + getVersion() + ".xml");
 		if (!file.exists()) {
 			file.createNewFile();
 		}
@@ -1421,12 +1431,11 @@ public class PersistenceService {
 	public void undo() {
 		canRedo = true;
 		if (canUndo()) {
-			version--;
+			setVersion(getVersion() - 1);
 			File file = new File(getDirectory() + "/content_" + ContentContext.PREVIEW_MODE + ".xml");
 			if (file.exists()) {
 				file.delete();
 			}
-			saveVersion();
 		}
 	}
 

@@ -8,6 +8,7 @@ import java.util.Date;
 import java.util.LinkedList;
 import java.util.logging.Logger;
 
+import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
@@ -22,6 +23,7 @@ import org.javlo.mailing.MailingBuilder;
 import org.javlo.navigation.MenuElement;
 import org.javlo.rendering.Device;
 import org.javlo.service.ContentService;
+import org.javlo.service.visitors.VisitorsMessageService;
 import org.javlo.template.Template;
 
 /**
@@ -186,5 +188,15 @@ public class ViewActions implements IAction {
 	public String getActionGroupName() {
 		return "view";
 	}
+	
+	public static String performAcceptCookies(ContentContext ctx) throws Exception {
+		VisitorsMessageService.getInstance(ctx.getRequest().getSession()).markAsDisplayed("cookies");
+		Cookie cookie = new Cookie(ctx.getCurrentTemplate().getCookiesMessageName(), "1");
+		cookie.setPath("/"+ctx.getGlobalContext().getContextKey());
+		cookie.setMaxAge(60*60*24*365); // 1 year
+		ctx.getResponse().addCookie(cookie);
+		return null;
+	}
+	
 
 }
