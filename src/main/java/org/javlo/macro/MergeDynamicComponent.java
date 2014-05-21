@@ -48,19 +48,19 @@ public class MergeDynamicComponent extends AbstractMacro {
 			for (MenuElement page : pages) {
 				ContentElementList comps = page.getContent(ctxLg);
 				while (comps.hasNext(ctxLg)) {
-					IContentVisualComponent comp = comps.next(ctxLg);
-					if (comp instanceof DynamicComponent) {
+					IContentVisualComponent comp = comps.next(ctxLg);					
+					if (comp instanceof DynamicComponent) {						
 						DynamicComponent dynComp = (DynamicComponent) comp;
 						DynamicComponent newComp = (DynamicComponent) ComponentFactory.getComponentWithType(ctxLg, dynComp.getType());
-						newComp.init(new ComponentBean(dynComp.getComponentBean()), ctxLg);
+						//newComp.init(new ComponentBean(dynComp.getComponentBean()), ctxLg);
 						Properties compProp = dynComp.getProperties();
 						Properties newProp = newComp.getProperties();
 						Enumeration<Object> keys = newProp.keys();
 						if (compProp != null) {
 							while (keys.hasMoreElements()) {
-								String key = (String) keys.nextElement();
+								String key = (String) keys.nextElement();	
 								if (compProp.get(key) != null) {
-									compProp.remove(key);
+									compProp.remove(key);									
 									compProp.put(key, newProp.get(key));
 									dynComp.setModify();
 								} else if (!key.endsWith(".value")){
