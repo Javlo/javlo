@@ -19,6 +19,7 @@ import org.javlo.context.ContentContext;
 import org.javlo.context.EditContext;
 import org.javlo.context.GlobalContext;
 import org.javlo.helper.MacroHelper;
+import org.javlo.helper.NetHelper;
 import org.javlo.helper.StringHelper;
 import org.javlo.helper.URLHelper;
 import org.javlo.helper.XHTMLHelper;
@@ -102,6 +103,7 @@ public class CreateArticle implements IInteractiveMacro, IAction {
 		boolean create = rs.getParameter("create", null) != null;
 		String message = null;
 		String newURL = null;
+		String newEditURL = null;
 		if (pageName == null) {
 			return "page or date not found.";
 		}
@@ -147,6 +149,7 @@ public class CreateArticle implements IInteractiveMacro, IAction {
 							MacroHelper.addContentInPage(ctx, newPage, rootPage.getName().toLowerCase(), articleDate, tags);
 						}
 						newURL = URLHelper.createURL(ctx.getContextWithOtherRenderMode(ContentContext.PREVIEW_MODE), newPage);
+						newEditURL = URLHelper.createURL(ctx.getContextWithOtherRenderMode(ContentContext.EDIT_MODE), newPage);
 						
 						List<String> selectedRole = new LinkedList<String>();
 						for (String role :roles) {
@@ -208,10 +211,19 @@ public class CreateArticle implements IInteractiveMacro, IAction {
 			}
 			MacroModuleContext.getInstance(ctx.getRequest()).setActiveMacro(null);
 			if (ctx.isEditPreview()) {
-				ctx.setClosePopup(true);
+				if (newURL != null) {					
+					newEditURL = URLHelper.addParam(newEditURL, "module", "content");
+					newEditURL = URLHelper.addParam(newEditURL, "webaction", "editPreview");
+					newEditURL = URLHelper.addParam(newEditURL, "previewEdit", "true");
+				}				
+				NetHelper.sendRedirectTemporarily(ctx.getResponse(), newEditURL);
+				
+				//ctx.getRequest().getRequestDispatcher(editPressrealseURL).forward(ctx.getRequest(), ctx.getResponse());
+				
+				/*ctx.setClosePopup(true);
 				if (newURL != null) {
 					ctx.setParentURL(newURL);
-				}
+				}*/
 			}
 		} catch (Exception e) {
 			e.printStackTrace();
