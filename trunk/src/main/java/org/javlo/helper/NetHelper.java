@@ -56,25 +56,25 @@ public class NetHelper {
 	public static final String HEADER_IF_MODIFIED_SINCE_ETAG = "if-None-Match";
 
 	public static String readPage(URL url) throws Exception {
-		return readPage(url, false, null, null,null);
+		return readPage(url, false, null, null, null);
 	}
-	
-	public static String readPage(URL url,final String userName, final String password) throws Exception {
-		return readPage(url, false, null, userName,password);
+
+	public static String readPage(URL url, final String userName, final String password) throws Exception {
+		return readPage(url, false, null, userName, password);
 	}
-	
-	public static String readPage(URL url, boolean cssInline,final String userName, final String password) throws Exception {
-		return readPage(url, cssInline, null, userName,password);
+
+	public static String readPage(URL url, boolean cssInline, final String userName, final String password) throws Exception {
+		return readPage(url, cssInline, null, userName, password);
 	}
 
 	public static String readPage(String inURL, boolean cssInline) throws Exception {
 		return readPage(new URL(inURL), cssInline, null, null, null);
 	}
-	
+
 	public static String readPage(URL url, boolean cssInline, String userAgent) throws Exception {
-		return readPage(url, cssInline, userAgent, null, null);		
+		return readPage(url, cssInline, userAgent, null, null);
 	}
-	
+
 	/**
 	 * read a page a put content in a String.
 	 * 
@@ -84,10 +84,10 @@ public class NetHelper {
 	 * @throws IOException
 	 */
 	private static String readPage(URL url, boolean cssInline, String userAgent, final String userName, final String password) throws Exception {
-		
-		logger.info("create PDF from : "+url+"  user:"+userName+"  password found:"+(StringHelper.neverNull(password).length()>1));
 
-		if (null != userName && userName.trim().length() != 0 && null != password && password.trim().length() != 0)	{
+		logger.info("create PDF from : " + url + "  user:" + userName + "  password found:" + (StringHelper.neverNull(password).length() > 1));
+
+		if (null != userName && userName.trim().length() != 0 && null != password && password.trim().length() != 0) {
 
 			java.net.Authenticator.setDefault(new java.net.Authenticator() {
 
@@ -100,26 +100,25 @@ public class NetHelper {
 			});
 
 		}
-		
 
 		if (StringHelper.isVideo(url.getPath())) {
 			return "";
 		}
 
-		ByteArrayOutputStream out = new ByteArrayOutputStream(); 
+		ByteArrayOutputStream out = new ByteArrayOutputStream();
 
 		InputStream in = null;
 		try {
 			URLConnection conn = url.openConnection();
-			
+
 			if (conn instanceof HttpURLConnection) {
 				HttpURLConnection httpConn = (HttpURLConnection) conn;
 				if (userAgent != null) {
 					httpConn.setRequestProperty("User-Agent", userAgent);
-				}				
+				}
 				httpConn.setDoInput(true);
 				httpConn.setAllowUserInteraction(true);
-				httpConn.setInstanceFollowRedirects(true);				
+				httpConn.setInstanceFollowRedirects(true);
 				if (httpConn.getResponseCode() != HttpURLConnection.HTTP_OK && httpConn.getResponseCode() != HttpURLConnection.HTTP_MOVED_TEMP && httpConn.getResponseCode() != HttpURLConnection.HTTP_MOVED_PERM) {
 					logger.warning("help url '" + url + "' return error code : " + ((HttpURLConnection) conn).getResponseCode());
 					return null;
@@ -269,7 +268,7 @@ public class NetHelper {
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
-		
+
 	}
 
 	public static List<Resource> extractImage(URL inURL, String content) {
@@ -728,7 +727,7 @@ public class NetHelper {
 			e.printStackTrace();
 		}
 	}
-	
+
 	public static void sendMail(GlobalContext globalContext, InternetAddress from, InternetAddress to, InternetAddress cc, InternetAddress bcc, String subject, String content, String contentTxt, boolean isHTML) {
 		MailService mailService = MailService.getInstance(globalContext.getStaticConfig());
 		try {
@@ -749,11 +748,13 @@ public class NetHelper {
 		response.setHeader("Location", url);
 		response.setHeader("Connection", "close");
 	}
-	
-	public static Cookie getCookie(HttpServletRequest request, String name) {		
-		for (Cookie cookie : request.getCookies()) {
-			if (cookie != null && cookie.getName() != null && cookie.getName().equals(name)) {
-				return cookie;
+
+	public static Cookie getCookie(HttpServletRequest request, String name) {
+		if (request != null && request.getCookies() != null) {
+			for (Cookie cookie : request.getCookies()) {
+				if (cookie != null && cookie.getName() != null && cookie.getName().equals(name)) {
+					return cookie;
+				}
 			}
 		}
 		return null;
