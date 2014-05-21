@@ -1894,4 +1894,5 @@ public class PageReferenceComponent extends ComplexPropertiesLink implements IAc
 		setValue(new String(outStream.toByteArray()));
 		return true;
 	}
+
 }
