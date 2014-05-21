@@ -690,7 +690,7 @@ public abstract class AbstractVisualComponent implements IContentVisualComponent
 					// the definition
 					// page
 					I18nAccess i18nAccess = I18nAccess.getInstance(ctx.getRequest());
-					return ("<div " + getSpecialPreviewCssClass(ctx, "pc_empty-component") + getSpecialPreviewCssId(ctx) + ">[" + i18nAccess.getText("content." + getType()) + "]</div>");
+					return ("<div " + getSpecialPreviewCssClass(ctx, "pc_empty-component") + getSpecialPreviewCssId(ctx) + ">"+getEmptyXHTMLCode(ctx)+"</div>");
 				}
 			}
 		}
