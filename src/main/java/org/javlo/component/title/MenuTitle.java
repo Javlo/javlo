@@ -49,5 +49,11 @@ public class MenuTitle extends AbstractVisualComponent {
 	public boolean isEmpty(ContentContext ctx) {
 		return true; /* page with only a title is never pertinent */
 	}
+	
+	@Override
+	public String getEmptyXHTMLCode(ContentContext ctx) throws Exception {
+		String emptyCode = super.getEmptyXHTMLCode(ctx);
+		return emptyCode.replace("]", ':'+getValue()+']');
+	}
 
 }
