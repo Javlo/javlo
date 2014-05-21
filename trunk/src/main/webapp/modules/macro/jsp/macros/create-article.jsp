@@ -20,7 +20,7 @@
 </div>
 <c:if test="${not empty tags}">
 
-<fieldset>
+<!-- <fieldset>
 <legend>tags</legend>
 <c:forEach var="tag" items="${tags}">
 <div class="inline">		
@@ -28,7 +28,7 @@
 	<label class="suffix" for="tag-${tag}">${tag}</label>
 </div>
 </c:forEach>
-</fieldset>
+</fieldset>  -->
 
 </c:if>
 <div class="line">
