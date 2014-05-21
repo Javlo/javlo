@@ -2,7 +2,6 @@ package org.javlo.servlet;
 
 import java.awt.image.BufferedImage;
 import java.io.File;
-import java.io.IOException;
 import java.io.OutputStream;
 import java.io.OutputStreamWriter;
 import java.io.PrintStream;
@@ -29,7 +28,6 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import org.apache.commons.io.FileUtils;
 import org.javlo.component.core.ComponentBean;
 import org.javlo.component.core.ComponentFactory;
 import org.javlo.config.StaticConfig;
@@ -80,6 +78,8 @@ import org.xhtmlrenderer.swing.Java2DRenderer;
 import org.xhtmlrenderer.util.FSImageWriter;
 
 public class AccessServlet extends HttpServlet implements IVersion {
+
+	private static final long serialVersionUID = 1L;
 
 	public static long COUNT_ACCESS = 0;
 

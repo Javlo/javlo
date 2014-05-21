@@ -21,6 +21,8 @@ import java.util.zip.CRC32;
 import javax.imageio.ImageIO;
 import javax.mail.internet.AddressException;
 import javax.mail.internet.InternetAddress;
+import javax.servlet.http.Cookie;
+import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import org.javlo.config.StaticConfig;
@@ -746,6 +748,15 @@ public class NetHelper {
 		response.setStatus(HttpServletResponse.SC_MOVED_TEMPORARILY);
 		response.setHeader("Location", url);
 		response.setHeader("Connection", "close");
+	}
+	
+	public static Cookie getCookie(HttpServletRequest request, String name) {		
+		for (Cookie cookie : request.getCookies()) {
+			if (cookie != null && cookie.getName() != null && cookie.getName().equals(name)) {
+				return cookie;
+			}
+		}
+		return null;
 	}
 
 }

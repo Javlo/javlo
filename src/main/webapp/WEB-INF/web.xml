@@ -31,7 +31,6 @@
 		<url-pattern>*.css</url-pattern>
 	</filter-mapping>
 	
-	
 	<filter>
 		<filter-name>CatchAll</filter-name>
 		<filter-class>org.javlo.filter.CatchAllFilter</filter-class>
@@ -276,7 +275,6 @@
 		<servlet-name>ClassServlet</servlet-name>
 		<url-pattern>/class/*</url-pattern>
 	</servlet-mapping>
-	
 	
 	<servlet>
         <servlet-name>captcha</servlet-name>

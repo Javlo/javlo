@@ -51,7 +51,7 @@ public class ContentService implements IPrintInfo {
 			logger.info("refresh context : " + globalContext.getContextKey());
 			ContentService content = ContentService.getInstance(globalContext);
 			content.releaseAll(ctx, globalContext);
-			PersistenceService.getInstance(globalContext).loadVersion();
+			PersistenceService.getInstance(globalContext).resetVersion();
 			NavigationService.getInstance(globalContext).clearAllPage();
 		}
 		TemplateFactory.clearTemplate(ctx.getRequest().getSession().getServletContext());
@@ -62,7 +62,7 @@ public class ContentService implements IPrintInfo {
 		logger.info("refresh context : " + globalContext.getContextKey());
 		ContentService content = ContentService.getInstance(globalContext);
 		content.releaseAll(ctx, globalContext);
-		PersistenceService.getInstance(globalContext).loadVersion();
+		PersistenceService.getInstance(globalContext).resetVersion();
 		NavigationService.getInstance(globalContext).clearAllPage();
 	}
 
@@ -70,7 +70,7 @@ public class ContentService implements IPrintInfo {
 		logger.info("refresh context, content and template : " + globalContext.getContextKey());
 		ContentService content = ContentService.getInstance(globalContext);
 		content.releaseAll(ctx, globalContext);
-		PersistenceService.getInstance(globalContext).loadVersion();
+		PersistenceService.getInstance(globalContext).resetVersion();
 		TemplateFactory.clearTemplate(ctx.getRequest().getSession().getServletContext());
 		TemplateFactory.cleanAllRenderer(ctx, false);
 		// content.loadViewNav(ctx); // reload the content

@@ -2550,5 +2550,9 @@ public class Template implements Comparable<Template> {
 			return outMaps;
 		}
 	}
+	
+	public String getCookiesMessageName() {
+		return properties.getString("acceptcookies.name", "acceptcookies");
+	}
 
 }

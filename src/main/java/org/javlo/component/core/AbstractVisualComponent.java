@@ -1377,7 +1377,7 @@ public abstract class AbstractVisualComponent implements IContentVisualComponent
 
 	@Override
 	public final String getXHTMLCode(ContentContext ctx) {
-
+		
 		setNeedRefresh(false);
 		ctx.getRequest().setAttribute("comp", this);
 
@@ -1388,7 +1388,7 @@ public abstract class AbstractVisualComponent implements IContentVisualComponent
 			}
 
 			GlobalContext globalContext = GlobalContext.getInstance(ctx.getRequest());
-
+			
 			if ((ctx.getRenderMode() == ContentContext.PREVIEW_MODE)) {
 				EditContext editCtx = EditContext.getInstance(globalContext, ctx.getRequest().getSession());
 				if (editCtx.isEditPreview() && isDefaultValue(ctx)) {
@@ -2065,6 +2065,16 @@ public abstract class AbstractVisualComponent implements IContentVisualComponent
 	@Override
 	public boolean equals(ContentContext ctx, IContentVisualComponent comp) {		
 		return getComponentBean().compareTo(componentBean) == 0;
+	}
+	
+	@Override
+	public String getEmptyXHTMLCode(ContentContext ctx) throws Exception {
+		if (isHiddenInMode(ctx.getRenderMode())) {
+			return "";
+		} else {
+			I18nAccess i18nAccess = I18nAccess.getInstance(ctx.getRequest());
+			return '['+i18nAccess.getText("content."+getType(), getType())+']';
+		}
 	}
 
 }

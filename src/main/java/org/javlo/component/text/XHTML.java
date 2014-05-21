@@ -8,12 +8,7 @@ import java.io.StringWriter;
 
 import org.javlo.component.core.AbstractVisualComponent;
 import org.javlo.context.ContentContext;
-import org.javlo.helper.StringHelper;
-import org.javlo.helper.StringRemplacementHelper;
-import org.javlo.helper.URLHelper;
 import org.javlo.helper.XHTMLHelper;
-import org.javlo.helper.XMLManipulationHelper;
-import org.javlo.helper.XMLManipulationHelper.TagDescription;
 
 /**
  * @author pvandermaesen
