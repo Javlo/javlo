@@ -167,5 +167,10 @@ public class RSSRegistration extends AbstractPropertiesComponent {
 	public String getHeader() {
 		return "rss-config";
 	}
+	
+	@Override
+	public boolean isContentCachable(ContentContext ctx) {
+		return true;
+	}
 
 }

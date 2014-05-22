@@ -533,5 +533,4 @@ public class ChildrenLink extends AbstractVisualComponent implements IImageTitle
 			return false;
 		}
 	}
-
 }

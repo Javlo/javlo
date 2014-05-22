@@ -54,6 +54,7 @@ import org.javlo.helper.XHTMLHelper;
 import org.javlo.helper.Comparator.StringSizeComparator;
 import org.javlo.i18n.I18nAccess;
 import org.javlo.message.GenericMessage;
+import org.javlo.module.content.Edit;
 import org.javlo.navigation.MenuElement;
 import org.javlo.rendering.Device;
 import org.javlo.service.PersistenceService;
@@ -688,8 +689,7 @@ public abstract class AbstractVisualComponent implements IContentVisualComponent
 					// is repeated and
 					// user is not on
 					// the definition
-					// page
-					I18nAccess i18nAccess = I18nAccess.getInstance(ctx.getRequest());
+					// page					
 					return ("<div " + getSpecialPreviewCssClass(ctx, "pc_empty-component") + getSpecialPreviewCssId(ctx) + ">"+getEmptyXHTMLCode(ctx)+"</div>");
 				}
 			}
@@ -2068,8 +2068,8 @@ public abstract class AbstractVisualComponent implements IContentVisualComponent
 	}
 	
 	@Override
-	public String getEmptyXHTMLCode(ContentContext ctx) throws Exception {
-		if (isHiddenInMode(ctx.getRenderMode())) {
+	public String getEmptyXHTMLCode(ContentContext ctx) throws Exception {		
+		if (isHiddenInMode(ctx.getRenderMode()) || !AdminUserSecurity.getInstance().canModifyConponent(ctx, getId())) {
 			return "";
 		} else {
 			I18nAccess i18nAccess = I18nAccess.getInstance(ctx.getRequest());

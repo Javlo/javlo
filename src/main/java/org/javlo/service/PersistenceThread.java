@@ -22,6 +22,8 @@ import org.javlo.navigation.MenuElement;
 import org.javlo.servlet.zip.ZipManagement;
 
 public class PersistenceThread extends Thread {
+	
+	private int COUNT_THREAD = 0;
 
 	private static Logger logger = Logger.getLogger(PersistenceThread.class.getName());
 
@@ -70,10 +72,11 @@ public class PersistenceThread extends Thread {
 	}
 
 	@Override
-	public void run() {
+	public void run() {		
+		COUNT_THREAD++;
 		File file = null;
 		try {
-			logger.info("start persitence thread");
+			logger.info("start persitence thread (#THREAD:"+COUNT_THREAD+')');
 			synchronized (menuElement.getLock()) {
 				logger.info("store persitence thread");
 				file = store(menuElement, mode, getDefaultLg());
@@ -90,6 +93,7 @@ public class PersistenceThread extends Thread {
 			synchronized (this) {
 				persistenceService.resetThread();
 				running = false;
+				COUNT_THREAD--;
 				notify();
 			}
 		}

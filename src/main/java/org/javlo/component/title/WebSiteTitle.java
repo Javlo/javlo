@@ -61,5 +61,11 @@ public class WebSiteTitle extends AbstractVisualComponent {
 	public int getComplexityLevel(ContentContext ctx) {
 		return IContentVisualComponent.COMPLEXITY_ADMIN;
 	}
+	
+	@Override
+	public boolean isContentCachable(ContentContext ctx) {
+		return true;
+	}
+
 
 }

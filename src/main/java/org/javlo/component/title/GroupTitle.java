@@ -41,5 +41,10 @@ public class GroupTitle extends AbstractVisualComponent {
 	public int getTitleLevel(ContentContext ctx) {
 		return 3;
 	}
+	
+	@Override
+	public boolean isContentCachable(ContentContext ctx) {
+		return true;
+	}
 
 }

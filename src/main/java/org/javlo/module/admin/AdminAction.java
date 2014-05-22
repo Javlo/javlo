@@ -650,6 +650,10 @@ public class AdminAction extends AbstractModuleAction {
 		public boolean isListable() {
 			return comp.isListable();
 		}
+		
+		public boolean isCacheable() {
+			return comp.isContentCachable(ctx);
+		}
 
 		public String getType() {
 			return comp.getType();

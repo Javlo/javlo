@@ -1122,4 +1122,5 @@ public class GlobalImage extends Image implements IImageFilter {
 		return ImageEngine.resizeWidth(image, getWidth(ctx));
 	}
 
+
 }

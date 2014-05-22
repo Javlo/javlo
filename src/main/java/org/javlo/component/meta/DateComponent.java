@@ -196,6 +196,10 @@ public class DateComponent extends AbstractVisualComponent implements IDate {
 		return getDate();
 	}
 	
-	
+	@Override
+	public boolean isContentCachable(ContentContext ctx) {	
+		return true;
+	}
+
 
 }

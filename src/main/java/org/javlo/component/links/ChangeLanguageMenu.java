@@ -132,7 +132,7 @@ public class ChangeLanguageMenu extends AbstractVisualComponent {
 
 	@Override
 	public boolean isContentCachable(ContentContext ctx) {
-		return false;
+		return true;
 	}
 
 	@Override

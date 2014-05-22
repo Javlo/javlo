@@ -59,5 +59,10 @@ public class MenuTitle extends AbstractVisualComponent {
 			return "";
 		}
 	}
+	
+	@Override
+	public boolean isContentCachable(ContentContext ctx) {
+		return true;
+	}
 
 }

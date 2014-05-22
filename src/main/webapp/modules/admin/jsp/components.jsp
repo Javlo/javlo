@@ -13,7 +13,7 @@
        <th class="head0">type</th>
        <th class="head1">${i18n.edit['global.name']}</th>
        <th class="head0">${i18n.edit['admin.title.color']}</th>
-       <th class="head1">${i18n.edit['content.title.listable']}</th>
+       <th class="head1">${i18n.edit['content.title.cacheable']}</th>
        <th class="head0">${i18n.edit['admin.title.complexity']}</th>
        <th class="head1">class</th>
        <th class="head0">${i18n.edit['global.select']}</th>
@@ -34,7 +34,7 @@
      <c:set var="i18nKey" value="content.${comp.type}"></c:set>
      <td class="con1">${i18n.edit[i18nKey]}</td>
      <td class="con0" style="background-color: #${comp.hexColor}">${comp.hexColor}</td>
-     <td class="con1" align="center"><c:if test="${comp.listable}"><span class="icone_true">${comp.listable}</span></c:if><c:if test="${not comp.listable}">&nbsp;</c:if></td>
+     <td class="con1" align="center"><c:if test="${comp.cacheable}"><span class="icone_true">${comp.cacheable}</span></c:if><c:if test="${not comp.cacheable}">&nbsp;</c:if></td>
      <td class="con0 complexity" align="center"><span class="complexity-${comp.complexityLevel}">${comp.complexityLevel}</span></td>
      <td class="con1">${comp.component.className}</td>
      <td class="con0">
