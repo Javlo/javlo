@@ -65,4 +65,10 @@ public class LocationComponent extends AbstractVisualComponent {
 		return META_COLOR;
 	}	
 	
+	@Override
+	public boolean isContentCachable(ContentContext ctx) {	
+		return true;
+	}
+
+	
 }

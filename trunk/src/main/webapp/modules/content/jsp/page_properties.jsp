@@ -95,7 +95,13 @@
 	<label>${i18n.edit['item.last-access']}</label>
 	<span>${page.lastAccess}</span>
 </div>
+
 </c:if>
+
+<div class="line">
+	<label>Cachable?</label>
+	<span>${page.cacheable} <c:if test="${!page.cacheable}">(${page.notCacheableComponent})</c:if></span>
+</div>
 
 </div>
 <div class="one_half last">

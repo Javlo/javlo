@@ -137,5 +137,11 @@ public class UserInfoLink extends AbstractVisualComponent {
 	public boolean isUnique() {
 		return true;
 	}
+	
+	@Override
+	public boolean isContentCachable(ContentContext ctx) {	
+		return true;
+	}
+
 
 }

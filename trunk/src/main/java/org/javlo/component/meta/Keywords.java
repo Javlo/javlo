@@ -83,5 +83,11 @@ public class Keywords extends AbstractVisualComponent {
 	public String getHexColor() {
 		return META_COLOR;
 	}
+	
+	@Override
+	public boolean isContentCachable(ContentContext ctx) {
+		return true;
+	}
+
 
 }

@@ -4011,6 +4011,19 @@ public class MenuElement implements Serializable, IPrintInfo {
 		desc.cacheable = true;
 		return true;
 	}
+	
+	public IContentVisualComponent getNotCacheableComponent(ContentContext ctx) throws Exception {
+		ContentContext noAreaCtx = new ContentContext(ctx);
+		noAreaCtx.setArea(null);
+		ContentElementList content = getContent(noAreaCtx);
+		while (content.hasNext(noAreaCtx)) {
+			IContentVisualComponent comp = content.next(noAreaCtx);
+			if (!comp.isContentCachable(noAreaCtx)) {
+				return comp;
+			}
+		}
+		return null;
+	}
 
 	public String getReferenceLanguage() {
 		return referenceLanguage;

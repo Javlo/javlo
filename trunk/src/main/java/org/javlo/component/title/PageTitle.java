@@ -72,5 +72,10 @@ public class PageTitle extends AbstractVisualComponent {
 	public int getComplexityLevel(ContentContext ctx) {
 		return IContentVisualComponent.COMPLEXITY_STANDARD;
 	}
+	
+	@Override
+	public boolean isContentCachable(ContentContext ctx) {
+		return true;
+	}
 
 }

@@ -146,5 +146,11 @@ public class Box extends AbstractVisualComponent implements IContainer {
 	public String getHexColor() {
 		return IContentVisualComponent.CONTAINER_COLOR;
 	}
+	
+	@Override
+	public boolean isContentCachable(ContentContext ctx) {
+		return true;
+	}
+
 
 }

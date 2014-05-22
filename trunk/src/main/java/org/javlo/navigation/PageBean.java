@@ -5,9 +5,11 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 
+import org.javlo.component.core.IContentVisualComponent;
 import org.javlo.context.ContentContext;
 import org.javlo.helper.StringHelper;
 import org.javlo.helper.URLHelper;
+import org.javlo.module.content.Edit;
 import org.javlo.navigation.MenuElement.PageDescription;
 import org.javlo.service.exception.ServiceException;
 import org.javlo.utils.CollectionAsMap;
@@ -302,6 +304,32 @@ public class PageBean implements Serializable {
 	
 	public int getDepth() {
 		return page.getDepth();
+	}
+	
+	/**
+	 * is page editable by current User ?
+	 * @return
+	 * @throws Exception 
+	 */
+	public boolean isEditable() throws Exception {
+		if (ctx.getCurrentEditUser() == null) {
+			return false;
+		} else {
+			return Edit.checkPageSecurity(ctx,getPage());
+		}
+	}
+	
+	public boolean isCacheable() throws Exception {
+		return page.isCacheable(ctx);
+	}
+	
+	public String getNotCacheableComponent() throws Exception {
+		IContentVisualComponent comp = page.getNotCacheableComponent(ctx);
+		if (comp != null) {
+			return comp.getType();
+		} else {
+			return "";
+		}
 	}
 
 }

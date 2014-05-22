@@ -497,9 +497,10 @@ public class XMLManipulationHelper {
 				if (tags[i].getName().equalsIgnoreCase("body")) {
 					String contentZone = getValue(options, AREA_PREFIX + "content", null);
 					String cssClass = StringHelper.neverNull(tags[i].getAttributes().get("class"));
-					cssClass = cssClass + " " + "<%if (ctx.getRenderMode() == ContentContext.PREVIEW_MODE) { if(ctx.getGlobalContext().getStaticConfig().isFixPreview() ) {%>fix-preview<%} else {%>floating-preview<%} }%>";
-					cssClass = cssClass + " " + "<%if (ctx.getRenderMode() == ContentContext.PREVIEW_MODE) { if(EditContext.getInstance(globalContext, request.getSession()).isEditPreview() ) {%>edit-preview<%} else {%>preview-only<%} }%>";
-					cssClass = cssClass + " " + "<%if (ctx.getRenderMode() == ContentContext.PREVIEW_MODE) { if(ctx.getCurrentEditUser() == null) {%>preview-notlogged<%} else {%>preview-logged<%} }%>";
+					cssClass = cssClass + ' ' + "<%if (ctx.getRenderMode() == ContentContext.PREVIEW_MODE) { if(ctx.getGlobalContext().getStaticConfig().isFixPreview() ) {%>fix-preview<%} else {%>floating-preview<%} }%>";
+					cssClass = cssClass + ' ' + "<%if (ctx.getRenderMode() == ContentContext.PREVIEW_MODE) { if(EditContext.getInstance(globalContext, request.getSession()).isEditPreview() ) {%>edit-preview<%} else {%>preview-only<%} }%>";
+					cssClass = cssClass + ' ' + "<%if (ctx.getRenderMode() == ContentContext.PREVIEW_MODE) { if(ctx.getCurrentEditUser() == null) {%>preview-notlogged<%} else {%>preview-logged<%} }%>";
+					cssClass = cssClass + ' ' + "${info.preview && !info.page.editable?'not-editable':''}";
 					tags[i].getAttributes().put("class", cssClass.trim());
 
 					if (template.isPDFRenderer()) {

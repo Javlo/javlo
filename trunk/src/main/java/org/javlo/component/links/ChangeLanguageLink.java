@@ -174,5 +174,10 @@ public class ChangeLanguageLink extends ComplexPropertiesLink implements IIntern
 	public int getComplexityLevel(ContentContext ctx) {
 		return AbstractVisualComponent.COMPLEXITY_STANDARD;
 	}
+	
+	@Override
+	public boolean isContentCachable(ContentContext ctx) {	
+		return true;
+	}
 
 }

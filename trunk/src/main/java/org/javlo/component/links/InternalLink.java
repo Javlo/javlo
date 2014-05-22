@@ -399,5 +399,8 @@ public class InternalLink extends ComplexPropertiesLink implements IInternalLink
 	protected Object getLock(ContentContext ctx) {
 		return ctx.getGlobalContext().getLockLoadContent();
 	}
+	
+	
+
 
 }
