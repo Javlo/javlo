@@ -260,6 +260,8 @@ change log
  
  * add editable template as default template
  
+ * optimisation of cache (more components cacheable + display cache status in website management) 
+ 
  * import default template on clear cache.
  
  * tinymce 4.0.26
