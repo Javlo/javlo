@@ -492,22 +492,30 @@ public class ContentService implements IPrintInfo {
 															// test was with :
 															// || !previewMode
 			if (previewNav == null) {
-				long startTime = System.currentTimeMillis();
-				PersistenceService persistenceService = PersistenceService.getInstance(globalContext);
-				Map<String, String> contentAttributeMap = new HashMap<String, String>();
-				previewNav = persistenceService.load(ctx, ContentContext.PREVIEW_MODE, contentAttributeMap, null);
-				previewGlobalMap = contentAttributeMap;
-				logger.info("load preview of '" + globalContext.getContextKey() + "' nav in " + StringHelper.renderTimeInSecond((System.currentTimeMillis() - startTime) / 1000) + " sec.");
+				synchronized (ctx.getGlobalContext().getLockLoadContent()) {
+					if (previewNav == null) {
+						long startTime = System.currentTimeMillis();
+						PersistenceService persistenceService = PersistenceService.getInstance(globalContext);
+						Map<String, String> contentAttributeMap = new HashMap<String, String>();
+						previewNav = persistenceService.load(ctx, ContentContext.PREVIEW_MODE, contentAttributeMap, null);
+						previewGlobalMap = contentAttributeMap;
+						logger.info("load preview of '" + globalContext.getContextKey() + "' nav in " + StringHelper.renderTimeInSecond((System.currentTimeMillis() - startTime) / 1000) + " sec.");
+					}
+				}
 			}
 			res = previewNav;
 		} else {
 			if (getViewNav() == null) {
-				long startTime = System.currentTimeMillis();
-				PersistenceService persistenceService = PersistenceService.getInstance(globalContext);
-				Map<String, String> contentAttributeMap = new HashMap<String, String>();
-				setViewNav(persistenceService.load(ctx, ContentContext.VIEW_MODE, contentAttributeMap, null));
-				viewGlobalMap = contentAttributeMap;
-				logger.info("load view of '" + globalContext.getContextKey() + "' nav in " + StringHelper.renderTimeInSecond((System.currentTimeMillis() - startTime) / 1000) + " sec.");
+				synchronized (ctx.getGlobalContext().getLockLoadContent()) {
+					if (getViewNav() == null) {
+						long startTime = System.currentTimeMillis();
+						PersistenceService persistenceService = PersistenceService.getInstance(globalContext);
+						Map<String, String> contentAttributeMap = new HashMap<String, String>();
+						setViewNav(persistenceService.load(ctx, ContentContext.VIEW_MODE, contentAttributeMap, null));
+						viewGlobalMap = contentAttributeMap;
+						logger.info("load view of '" + globalContext.getContextKey() + "' nav in " + StringHelper.renderTimeInSecond((System.currentTimeMillis() - startTime) / 1000) + " sec.");
+					}
+				}
 			}
 			res = getViewNav();
 		}
@@ -769,17 +777,17 @@ public class ContentService implements IPrintInfo {
 			return null;
 		}
 	}
-	
+
 	@Override
-	public void printInfo(ContentContext ctx, PrintStream out) {		
+	public void printInfo(ContentContext ctx, PrintStream out) {
 		out.println("****");
 		out.println("**** ContentService print info.");
 		out.println("****");
-		out.println("**** #components            = "+components.size());
-		out.println("**** #viewGlobalMap         = "+viewGlobalMap.size());
-		out.println("**** #previewGlobalMap      = "+previewGlobalMap.size());
+		out.println("**** #components            = " + components.size());
+		out.println("**** #viewGlobalMap         = " + viewGlobalMap.size());
+		out.println("**** #previewGlobalMap      = " + previewGlobalMap.size());
 		if (timeTravelerGlobalMap != null) {
-			out.println("**** #timeTravelerGlobalMap = "+timeTravelerGlobalMap.size());
+			out.println("**** #timeTravelerGlobalMap = " + timeTravelerGlobalMap.size());
 		} else {
 			out.println("**** #timeTravelerGlobalMap = 0 (null).");
 		}

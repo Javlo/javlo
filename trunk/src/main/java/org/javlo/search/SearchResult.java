@@ -440,7 +440,7 @@ public class SearchResult {
 			if (result.size() == 0) {
 				I18nAccess i18nAccess = I18nAccess.getInstance(ctx.getRequest());
 				MessageRepository messageRepository = MessageRepository.getInstance(ctx);
-				messageRepository.setGlobalMessageAndNotification(ctx, new GenericMessage(i18nAccess.getText("search.title.no-result") + ' ' + searchText, GenericMessage.ALERT));
+				messageRepository.setGlobalMessage(new GenericMessage(i18nAccess.getText("search.title.no-result") + ' ' + searchText, GenericMessage.ALERT));
 			}
 		}
 	}
@@ -465,7 +465,7 @@ public class SearchResult {
 			if (result.size() == 0) {
 				I18nAccess i18nAccess = I18nAccess.getInstance(ctx.getRequest());
 				MessageRepository messageRepository = MessageRepository.getInstance(ctx);
-				messageRepository.setGlobalMessageAndNotification(ctx, new GenericMessage(i18nAccess.getText("search.title.no-result") + ' ' + searchText, GenericMessage.ALERT));
+				messageRepository.setGlobalMessage(new GenericMessage(i18nAccess.getText("search.title.no-result") + ' ' + searchText, GenericMessage.ALERT));
 			}
 		}
 	}
