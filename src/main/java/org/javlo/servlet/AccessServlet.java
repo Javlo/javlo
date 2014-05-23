@@ -279,12 +279,15 @@ public class AccessServlet extends HttpServlet implements IVersion {
 			if (ctx.isAsViewMode() && ctx.getCurrentPage().isCacheable(ctx) && globalContext.isPreviewMode() && globalContext.getPublishDate() != null && request.getMethod().equalsIgnoreCase("get") && request.getParameter("webaction") == null) {
 				long lastModified = globalContext.getPublishDate().getTime();
 				response.setDateHeader(NetHelper.HEADER_LAST_MODIFIED, lastModified);
+				response.setHeader("Cache-Control", "max-age=60,must-revalidate");
 				long lastModifiedInBrowser = request.getDateHeader(NetHelper.HEADER_IF_MODIFIED_SINCE);
 				if (lastModified > 0 && lastModified / 1000 <= lastModifiedInBrowser / 1000) {
 					COUNT_304++;
 					response.setStatus(HttpServletResponse.SC_NOT_MODIFIED);
 					return;
 				}
+			} else {
+				response.setHeader("Cache-Control", "max-age=0,no-cache");
 			}
 
 			ctx.getCurrentTemplate();
