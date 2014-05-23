@@ -472,6 +472,9 @@ public class ImageTransformServlet extends HttpServlet {
 		servletRun++;
 
 		COUNT_ACCESS++;
+		
+		// cache 
+		response.setHeader("Cache-Control", "max-age=60,must-revalidate"); 
 
 		StaticConfig staticConfig = StaticConfig.getInstance(request.getSession());
 		ContentContext ctx = ContentContext.getFreeContentContext(request, response);

@@ -1261,13 +1261,7 @@ public class StringHelper {
 	}
 
 	public static void main(String[] args) {
-		System.out.println("getNumberAsAlphabetic 12 = "+getNumberAsAlphabetic(12));
-		System.out.println("getNumberAsAlphabetic 26 = "+getNumberAsAlphabetic(26));
-		System.out.println("getNumberAsAlphabetic 125 = "+getNumberAsAlphabetic(125));
-		System.out.println("getNumberAsAlphabetic 126 = "+getNumberAsAlphabetic(126));
-		System.out.println("getNumberAsAlphabetic 127 = "+getNumberAsAlphabetic(127));
-		System.out.println("getNumberAsAlphabetic 540 = "+getNumberAsAlphabetic(540));
-		System.out.println("getNumberAsAlphabetic 540 = "+getNumberAsAlphabetic(258));
+		System.out.println("2034 = "+renderNumber(2034, 4));
 	}
 
 	/**
@@ -1851,7 +1845,8 @@ public class StringHelper {
 	public static String renderNumber(int n, int size) {
 		NumberFormat nf = NumberFormat.getInstance();
 		nf.setMinimumIntegerDigits(size);
-		return nf.format(n).replace(".", "");
+		nf.setGroupingUsed(false);
+		return nf.format(n);
 	}
 
 	public static String renderOnlyTime(Date date) {

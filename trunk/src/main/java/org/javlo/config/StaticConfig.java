@@ -529,7 +529,7 @@ public class StaticConfig extends Observable {
 	}
 
 	public String getGalleryFolder() {
-		return ElementaryURLHelper.mergePath(getStaticFolder(), properties.getString("gallery-folder", "gallery"));
+		return ElementaryURLHelper.mergePath(getStaticFolder(), properties.getString("gallery-folder", "galleries"));
 	}
 
 	public String getHeaderMessage(String lang) {
