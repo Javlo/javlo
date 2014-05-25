@@ -113,6 +113,7 @@ org.javlo.component.meta.NotSearchPage
 org.javlo.component.form.SearchResultComponent
 org.javlo.component.form.GenericFormForRegistering
 org.javlo.component.container.DynamicComponentList
+org.javlo.component.container.DynamicComponentFilter
 org.javlo.component.links.UserInfoLink
 org.javlo.component.form.FormMailingComponent
 org.javlo.component.users.UserSearch

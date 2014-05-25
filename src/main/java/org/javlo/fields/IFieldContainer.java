@@ -3,9 +3,10 @@ package org.javlo.fields;
 import java.util.Locale;
 import java.util.Map;
 
+import org.javlo.component.core.IContentVisualComponent;
 import org.javlo.context.ContentContext;
 
-public interface IFieldContainer {
+public interface IFieldContainer extends IContentVisualComponent {
 	
 	public String getType();
 	

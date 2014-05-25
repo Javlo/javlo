@@ -1068,7 +1068,7 @@ public class ContentContext {
 		}
 		if (availableLanguages.contains(lg)) {
 			language = lg;
-		} else {
+		} else {			
 			logger.warning("language not available : " + lg);
 			language = GlobalContext.getInstance(request).getDefaultLanguage();
 		}

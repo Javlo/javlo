@@ -39,7 +39,8 @@ public class DynamicComponentService {
 		ContentContext lgCtx = new ContentContext(ctx);
 		Collection<String> languages = globalContext.getContentLanguages();
 		for (String lg : languages) {
-			lgCtx.setAllLanguage(lg);
+			lgCtx.setContentLanguage(lg);
+			lgCtx.setRequestContentLanguage(lg);
 			if (page.getContentByImplementation(lgCtx, DynamicComponent.class).size() > 0) {
 				return lgCtx;
 			}
@@ -53,7 +54,6 @@ public class DynamicComponentService {
 		if (outContainer == null) {
 			MenuElement[] children = page.getAllChildren();
 			outContainer = new LinkedList<IFieldContainer>();
-
 			for (MenuElement child : children) {
 				ContentContext ctxWithContent = getContentContextWithContent(ctx, child);
 				if (ctxWithContent != null) {

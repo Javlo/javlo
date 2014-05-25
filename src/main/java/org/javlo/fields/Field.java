@@ -384,6 +384,11 @@ public class Field implements Cloneable {
 		}
 		return properties.getProperty(key);
 	}
+	
+	public boolean isSearch() {
+		String key = createKey("search");
+		return StringHelper.isTrue(properties.getProperty(key));
+	}
 
 	public boolean isNeeded() {
 		return StringHelper.isTrue(properties.getProperty("field." + getUnicName() + ".needed", "false"));
