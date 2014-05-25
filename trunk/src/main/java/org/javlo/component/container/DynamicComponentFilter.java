@@ -2,20 +2,39 @@ package org.javlo.component.container;
 
 import java.io.ByteArrayOutputStream;
 import java.io.PrintStream;
+import java.util.HashMap;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Locale;
+import java.util.Map;
 
+import org.javlo.actions.IAction;
+import org.javlo.component.core.ComponentFactory;
+import org.javlo.component.core.IContentVisualComponent;
+import org.javlo.component.dynamic.DynamicComponent;
 import org.javlo.component.properties.AbstractPropertiesComponent;
 import org.javlo.context.ContentContext;
 import org.javlo.context.GlobalContext;
 import org.javlo.fields.Field;
 import org.javlo.fields.IFieldContainer;
+import org.javlo.helper.ComponentHelper;
+import org.javlo.helper.URLHelper;
 import org.javlo.helper.XHTMLHelper;
 import org.javlo.i18n.I18nAccess;
+import org.javlo.message.MessageRepository;
 import org.javlo.service.ContentService;
 import org.javlo.service.DynamicComponentService;
+import org.javlo.service.RequestService;
 
-public class DynamicComponentFilter extends AbstractPropertiesComponent {
+/**
+ * Display a search for in view mode. <h4>exposed variables :</h4>
+ * <ul>
+ * <li>{@link Field} fields : list of search field.</li>
+ * </ul>
+ * 
+ * @author Patrick Vandermaesen
+ */
+public class DynamicComponentFilter extends AbstractPropertiesComponent implements IAction {
 
 	public static final String TYPE = "dynamic-component-filter";
 
@@ -24,6 +43,12 @@ public class DynamicComponentFilter extends AbstractPropertiesComponent {
 	@Override
 	public String getType() {
 		return TYPE;
+	}
+
+	@Override
+	public void prepareView(ContentContext ctx) throws Exception {
+		super.prepareView(ctx);
+		ctx.getRequest().setAttribute("fields", getSearchField(ctx));
 	}
 
 	@Override
@@ -57,36 +82,61 @@ public class DynamicComponentFilter extends AbstractPropertiesComponent {
 		ByteArrayOutputStream outStream = new ByteArrayOutputStream();
 		PrintStream out = new PrintStream(outStream);
 
+		out.println("<form class=\"standard-form\" id=\"form-filter-" + getId() + "\" name=\"form-filter-" + getId() + "\" action=\"" + URLHelper.createURL(ctx) + "\" method=\"post\">");
+		out.println("<div class=\"fields\"><input type=\"hidden\" name=\"webaction\" value=\"" + getActionGroupName() + ".filter\" />");
+		out.println("<input type=\"hidden\" name=\"" + IContentVisualComponent.COMP_ID_REQUEST_PARAM + "\" value=\"" + getId() + "\">");
+		for (Field field : (List<Field>) ctx.getRequest().getAttribute("fields")) {
+			out.println(field.getEditXHTMLCode(ctx));
+		}
+		I18nAccess i18nAccess = I18nAccess.getInstance(ctx.getRequest());
+		out.println("<div class=\"action\"><input type=\"submit\" name=\"filter\" value=\"" + i18nAccess.getViewText("global.ok") + "\" /></div>");
+		out.println("</div></form>");
+
 		ContentService content = ContentService.getInstance(ctx.getRequest());
 		GlobalContext globalContext = GlobalContext.getInstance(ctx.getRequest());
 		DynamicComponentService service = DynamicComponentService.getInstance(globalContext);
 
 		List<IFieldContainer> containers = service.getFieldContainers(ctx, content.getNavigation(ctx), getSelectedType());
 
-		for (IFieldContainer container : containers) {
-			boolean display = true;
-			List<Field> fields = container.getFields(ctx);
-			for (Field field : fields) {
-				if (!fieldMatch(ctx, field.getName(), field.getValue(new Locale(ctx.getRequestContentLanguage())))) {
-					display = false;
-				}
-			}
-			if (display) {
-				realContent = true;
-				out.println("<div class=\"dynamic-component\">");
-				out.println(container.getViewListXHTMLCode(ctx));
-				out.println("</div>");
+		Map<String, Field> fieldsSearch = new HashMap<String, Field>();
+
+		boolean isFilter = false;
+
+		for (Field field : getSearchField(ctx)) {
+			fieldsSearch.put(field.getName(), field);
+			if (field.getValue() != null && field.getValue().trim().length() > 0) {
+				isFilter = true;
 			}
 		}
+
+		if (isFilter) {
+			out.println("<ul class=\"filter-list\">");
+			for (IFieldContainer container : containers) {
+				boolean display = true;
+				List<Field> fields = container.getFields(ctx);
+				for (Field field : fields) {
+					Field searchField = fieldsSearch.get(field.getName());
+					if (searchField != null && searchField.getValue() != null && searchField.getValue().trim().length() > 0) {
+						if (!field.getValue().toLowerCase().contains(searchField.getValue().toLowerCase().trim())) {
+							display = false;
+						}
+					}
+				}
+				if (display) {
+					realContent = true;
+					out.println("<li class=\"dynamic-component\">");
+					out.println(container.getPrefixViewXHTMLCode(ctx));
+					out.println(container.getViewListXHTMLCode(ctx));
+					out.println(container.getSuffixViewXHTMLCode(ctx));
+					out.println("</li>");
+				}
+			}
+		}
+		out.println("</ul>");
 
 		out.close();
 		return new String(outStream.toByteArray());
 
-	}
-
-	private boolean fieldMatch(ContentContext ctx, String name, String value) {
-		// TODO Auto-generated method stub
-		return false;
 	}
 
 	private String getSelectedType() {
@@ -106,6 +156,22 @@ public class DynamicComponentFilter extends AbstractPropertiesComponent {
 		}
 	}
 
+	protected List<Field> getSearchField(ContentContext ctx) throws Exception {
+		final String KEY = "search-fields-" + getId();
+		List<Field> fields = (List<Field>) ctx.getRequest().getSession().getAttribute(KEY);
+		if (fields == null) {
+			fields = new LinkedList<Field>();
+			DynamicComponent comp = (DynamicComponent) ComponentFactory.getComponentWithType(ctx, getSelectedType());
+			for (Field field : comp.getFields(ctx)) {
+				if (field.isSearch()) {
+					field.setId(getId());
+					fields.add(field);
+				}
+			}
+		}
+		return fields;
+	}
+
 	@Override
 	public String getHeader() {
 		return getType();
@@ -113,15 +179,7 @@ public class DynamicComponentFilter extends AbstractPropertiesComponent {
 
 	@Override
 	public boolean isRealContent(ContentContext ctx) {
-		if (realContent == null) {
-			try {
-				getViewXHTMLCode(ctx);
-			} catch (Exception e) {
-				realContent = false;
-				e.printStackTrace();
-			}
-		}
-		return realContent;
+		return true;
 	}
 
 	@Override
@@ -153,10 +211,22 @@ public class DynamicComponentFilter extends AbstractPropertiesComponent {
 		return COMPLEXITY_STANDARD;
 	}
 
-	@Override
 	public List<String> getFields(ContentContext ctx) throws Exception {
-		// TODO Auto-generated method stub
-		return null;
+		List<String> outList = new LinkedList<String>();
+		outList.add("type");
+		return outList;
 	}
 
+	@Override
+	public String getActionGroupName() {
+		return getType();
+	}
+
+	public static String performFilter(RequestService rs, ContentContext ctx, MessageRepository messageRepository, I18nAccess i18nAccess) throws Exception {
+		DynamicComponentFilter comp = (DynamicComponentFilter) ComponentHelper.getComponentFromRequest(ctx);
+		for (Field field : comp.getSearchField(ctx)) {
+			field.setValue(rs.getParameter(field.getInputName(), ""));
+		}
+		return null;
+	}
 }

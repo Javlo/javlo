@@ -54,7 +54,6 @@ import org.javlo.helper.XHTMLHelper;
 import org.javlo.helper.Comparator.StringSizeComparator;
 import org.javlo.i18n.I18nAccess;
 import org.javlo.message.GenericMessage;
-import org.javlo.module.content.Edit;
 import org.javlo.navigation.MenuElement;
 import org.javlo.rendering.Device;
 import org.javlo.service.PersistenceService;
