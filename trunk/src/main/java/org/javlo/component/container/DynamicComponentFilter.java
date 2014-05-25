@@ -162,13 +162,12 @@ public class DynamicComponentFilter extends AbstractPropertiesComponent implemen
 		if (fields == null) {
 			fields = new LinkedList<Field>();
 			DynamicComponent comp = (DynamicComponent) ComponentFactory.getComponentWithType(ctx, getSelectedType());
-			for (Field field : comp.getFields(ctx)) {
-				if (field.isSearch()) {
-					System.out.println("***** DynamicComponentFilter.getSearchField : field name = "+field.getName()); //TODO: remove debug trace
-					field.setId(getId());
-					fields.add(field);
-				} else {
-					System.out.println("***** DynamicComponentFilter.getSearchField : NOT field name = "+field.getName()); //TODO: remove debug trace
+			if (comp != null) {
+				for (Field field : comp.getFields(ctx)) {
+					if (field.isSearch()) {
+						field.setId(getId());
+						fields.add(field);
+					}
 				}
 			}
 		}
@@ -184,9 +183,9 @@ public class DynamicComponentFilter extends AbstractPropertiesComponent implemen
 	public boolean isRealContent(ContentContext ctx) {
 		return true;
 	}
-	
+
 	@Override
-	public boolean isEmpty(ContentContext ctx) {	
+	public boolean isEmpty(ContentContext ctx) {
 		return false;
 	}
 
@@ -194,7 +193,7 @@ public class DynamicComponentFilter extends AbstractPropertiesComponent implemen
 	public boolean isContentCachable(ContentContext ctx) {
 		return false;
 	}
-	
+
 	@Override
 	public String getHexColor() {
 		return DEFAULT_COLOR;
