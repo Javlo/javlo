@@ -82,7 +82,7 @@ public class DynamicComponentFilter extends AbstractPropertiesComponent implemen
 		ByteArrayOutputStream outStream = new ByteArrayOutputStream();
 		PrintStream out = new PrintStream(outStream);
 
-		out.println("<form class=\"standard-form\" id=\"form-filter-" + getId() + "\" name=\"form-filter-" + getId() + "\" action=\"" + URLHelper.createURL(ctx) + "\" method=\"post\">");
+		out.println("<form class=\"generic-form\" id=\"form-filter-" + getId() + "\" name=\"form-filter-" + getId() + "\" action=\"" + URLHelper.createURL(ctx) + "\" method=\"post\">");
 		out.println("<div class=\"fields\"><input type=\"hidden\" name=\"webaction\" value=\"" + getActionGroupName() + ".filter\" />");
 		out.println("<input type=\"hidden\" name=\"" + IContentVisualComponent.COMP_ID_REQUEST_PARAM + "\" value=\"" + getId() + "\">");
 		for (Field field : (List<Field>) ctx.getRequest().getAttribute("fields")) {
@@ -164,8 +164,11 @@ public class DynamicComponentFilter extends AbstractPropertiesComponent implemen
 			DynamicComponent comp = (DynamicComponent) ComponentFactory.getComponentWithType(ctx, getSelectedType());
 			for (Field field : comp.getFields(ctx)) {
 				if (field.isSearch()) {
+					System.out.println("***** DynamicComponentFilter.getSearchField : field name = "+field.getName()); //TODO: remove debug trace
 					field.setId(getId());
 					fields.add(field);
+				} else {
+					System.out.println("***** DynamicComponentFilter.getSearchField : NOT field name = "+field.getName()); //TODO: remove debug trace
 				}
 			}
 		}
