@@ -192,23 +192,9 @@ public class DynamicComponentFilter extends AbstractPropertiesComponent implemen
 
 	@Override
 	public boolean isContentCachable(ContentContext ctx) {
-		try {
-			IFieldContainer containers = getFieldContainer(ctx);
-			if (containers == null) {
-				return false;
-			}
-			List<Field> fields = containers.getFields(ctx);
-			for (Field field : fields) {
-				if (ctx.getRequest().getParameter(field.getName()) != null) {
-					return false;
-				}
-			}
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
-		return true;
+		return false;
 	}
-
+	
 	@Override
 	public String getHexColor() {
 		return DEFAULT_COLOR;
