@@ -181,6 +181,11 @@ public class DynamicComponentFilter extends AbstractPropertiesComponent implemen
 	public boolean isRealContent(ContentContext ctx) {
 		return true;
 	}
+	
+	@Override
+	public boolean isEmpty(ContentContext ctx) {	
+		return false;
+	}
 
 	@Override
 	public boolean isContentCachable(ContentContext ctx) {
