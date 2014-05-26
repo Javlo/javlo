@@ -92,5 +92,18 @@ public class StringHelperTest extends TestCase {
 	  assertEquals(StringHelper.encodeAsStructuredCommunicationMod97("0000000007"), "000/0000/00707");
   }
   
+  public void testTrim() {
+	  assertEquals(StringHelper.trim("test", ')'),"test");
+	  assertEquals(StringHelper.trim(null, ')'),null);
+	  assertEquals(StringHelper.trim("", ')'),"");	  
+	  assertEquals(StringHelper.trim("(test)", ')'),"(test");
+	  assertEquals(StringHelper.trim("(test)", '('),"test)");
+	  assertEquals(StringHelper.trim("-", '-'),"");
+	  assertEquals(StringHelper.trim("--", '-'),"");
+	  assertEquals(StringHelper.trim("--test-", '-'),"test");
+	  assertEquals(StringHelper.trim("--te-st-", '-'),"te-st");
+	  assertEquals(StringHelper.trim("-test", '-'),"test");
+  }
+  
  
 }
