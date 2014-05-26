@@ -464,10 +464,18 @@ public class ContentContext {
 
 	/**
 	 * @return
+	 * @throws Exception 
 	 * @deprecated Prefer use of {@link #getRequestContentLanguage()}.
 	 */
 	@Deprecated
 	public String getContentLanguage() {
+		try {
+			if (getCurrentTemplate() != null && getCurrentTemplate().isNavigationArea(getArea())) {
+				return getLanguage();
+			}
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
 		return contentLanguage;
 	}
 

@@ -26,7 +26,6 @@
 		org.javlo.helper.URLHelper"
 %><%
 ContentContext ctx = ContentContext.getContentContext ( request, response );
-
 GlobalContext globalContext = GlobalContext.getInstance(request);
 boolean pageEmpty = true;
 
@@ -85,6 +84,7 @@ Stack<IContainer> containers = new Stack<IContainer>();
 <li>path = <%=ctx.getPath()%></li>
 <li>currentPage = <%=currentPage.getName()%></li>
 <li>template = <%=template.getName()%></li>
+<li>area : <%=ctx.getArea()%> - lg:<%=ctx.getRequestContentLanguage()%></li>
 </ul> --%><%
 
 if ( (ctx.getSpecialContentRenderer() == null || !area.equals(ComponentBean.DEFAULT_AREA) ) || template.getAreasForceDisplay().contains(area)) { // display only if page contains only repeat content (supose it is teaser)
