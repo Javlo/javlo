@@ -6,21 +6,21 @@
 
 <c:if test="${info.device.code != 'pdf'}">
 <c:if test="${empty param.right}">
-<tr><td style="width: 50%;" width="50%"><c:set var="style" value="" />
-<img style="width: 100%;" src="${fn:replace(previewURL,'/full/', '/float/')}"${style} />
-</td><td class="zone1" width="50%" style="width: 50%; text-align: left;"><span class="container">${comp.firstText}</span></td></tr>
+<tr><td class="image-wrapper"><c:set var="style" value="" />
+<img src="${fn:replace(previewURL,'/full/', '/float/')}"${style} />
+</td><td class="zone1" style="text-align: left;"><span class="container">${comp.firstText}</span></td></tr>
 </c:if><c:if test="${not empty param.right}">
-<tr><td class="zone1" width="50%" style="width: 50%; text-align: left;"><span class="container">${comp.firstText}</span></td>
-<td style="width: 50%;" width="50%"><c:set var="style" value="" />
-<img style="width: 100%;" src="${fn:replace(previewURL,'/full/', '/float/')}"${style} />
+<tr><td class="zone1" style="text-align: left;"><span class="container">${comp.firstText}</span></td>
+<td><c:set var="style" value="" />
+<img src="${fn:replace(previewURL,'/full/', '/float/')}"${style} />
 </td></tr>
 </c:if>
 <tr><td class="zone2" colspan="2" style="text-align: left; ${areaStyle.textStyle}"><span class="container">${comp.secondText}</span></td></tr>
 </c:if>
 <c:if test="${info.device.code == 'pdf'}">
 <tr><td>
-<div class="image-wrapper" style="width: 50%; float: ${not empty param.right?'right':'left'};">
-<img style="width: 100%;" src="${fn:replace(previewURL,'/full/', '/float/')}" />
+<div class="image-wrapper" style="float: ${not empty param.right?'right':'left'};">
+<img src="${fn:replace(previewURL,'/full/', '/float/')}" />
 </div><div class="text">${label}</div>
 </td></tr>
 </c:if>

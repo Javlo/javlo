@@ -974,6 +974,8 @@ public class GlobalImage extends Image implements IImageFilter {
 			String secondText = rs.getParameter("secondtext", null);
 			String height = rs.getParameter("height", null);
 			String width = rs.getParameter("width", null);
+			
+			System.out.println("***** GlobalImage.performDataFeedBack : width = "+width); //TODO: remove debug trace
 
 			if (image.isTextAuto()) {
 				if (firstText != null && !firstText.equals(image.getFirstText())) {

@@ -17,7 +17,7 @@ public class FieldList extends Field {
 	}
 
 	@Override
-	public String getDisplayValue(ContentContext ctx, Locale locale) throws Exception {
+	public String getDisplayValue(ContentContext ctx, Locale locale) throws Exception {		
 		return "<span class=\"" + StringHelper.createFileName(getValue()) + "\">" + getList(ctx, getListName(), locale).get(getValue()) + "</span>";
 	}
 
