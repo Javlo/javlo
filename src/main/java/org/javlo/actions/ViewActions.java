@@ -48,11 +48,16 @@ public class ViewActions implements IAction {
 			String lang = request.getParameter("lg");
 			if (lang != null) {
 				if (globalContext.getLanguages().contains(lang)) {
+					System.out.println("***** ViewActions.performLanguage : 1.path = "+ctx.getPath()); //TODO: remove debug trace
+					System.out.println("***** ViewActions.performLanguage : 1.current Page = "+ctx.getCurrentPage().getPath()); //TODO: remove debug trace
 					ctx.setAllLanguage(lang);
 					ctx.setCookieLanguage(lang);
 					I18nAccess i18nAccess = I18nAccess.getInstance(globalContext, request.getSession());
 					i18nAccess.changeViewLanguage(ctx);
 					String url = URLHelper.createURL(ctx);
+					System.out.println("***** ViewActions.performLanguage : 2.path = "+ctx.getPath()); //TODO: remove debug trace
+					System.out.println("***** ViewActions.performLanguage : 2.current Page = "+ctx.getCurrentPage().getPath()); //TODO: remove debug trace
+					System.out.println("***** ViewActions.performLanguage : 2.url = "+url); //TODO: remove debug trace
 					NetHelper.sendRedirectTemporarily(response, url);
 				}
 			}

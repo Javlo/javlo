@@ -420,7 +420,35 @@ public class StringHelper {
 
 	public static String createI18NURL(String value) {
 		value = value.trim();
-		return createCleanName(value, EU_ACCEPTABLE_CHAR_NO_POINT, '-').replace("--", "-").toLowerCase();
+		value = createCleanName(value, EU_ACCEPTABLE_CHAR_NO_POINT, '-');
+		return trim(value, '-').toLowerCase();
+	}
+	
+	/**
+	 * replace trimChar at the start and the end of text string.
+	 * sample : --test-, - >>> test
+	 * @param text
+	 * @param trimChar
+	 * @return
+	 */
+	public static String trim(String text, char trimChar) {
+		if (text == null || text.length() == 0 || (text.charAt(0) != trimChar && text.charAt(text.length()-1) != trimChar)) {
+			return text;
+		} else {			
+			int s=0;
+			while (s<text.length() && text.charAt(s) == trimChar) {
+				s++;
+			}
+			int e=text.length()-1;
+			while (e>0 && text.charAt(e) == trimChar) {
+				e--;
+			}
+			if (s>=e) {
+				return "";
+			} else {
+				return text.substring(s,e+1);
+			}
+		}
 	}
 
 	/**

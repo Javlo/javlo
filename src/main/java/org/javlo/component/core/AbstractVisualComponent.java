@@ -338,14 +338,16 @@ public abstract class AbstractVisualComponent implements IContentVisualComponent
 
 	private String getContentCacheKey(ContentContext ctx) {
 		String templateId = "?";
+		String pageId = "?";
 		try {
 			if (ctx.getCurrentTemplate() != null) {
 				templateId = ctx.getCurrentTemplate().getId();
 			}
+			pageId = ctx.getCurrentPage().getId();
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
-		String keySuffix = ctx.getGlobalContext().getContextKey() + '-' + ctx.getLanguage() + '-' + ctx.getRequestContentLanguage() + '-' + ctx.getRenderMode() + '-' + templateId;
+		String keySuffix = ctx.getGlobalContext().getContextKey() + '-' + ctx.getLanguage() + '-' + ctx.getRequestContentLanguage() + '-' + ctx.getRenderMode() + '-' + templateId + '-' + pageId;
 
 		if (isContentCachableByQuery(ctx)) {
 			keySuffix = keySuffix + '_' + ctx.getRequest().getQueryString();
