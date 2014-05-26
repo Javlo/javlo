@@ -128,7 +128,7 @@ if (!rightOnPage) {
 					</form></li>
 					</c:if>
 					<%if ( moduleContext.searchModule("mailing") != null ) {%>
-					<li><form class="preview-edit <%=readOnlyClass%>" id="mailing_form" action="<%=URLHelper.createURL(editCtx)%>?module=mailing&previewEdit=true" method="post">
+					<li><form class="preview-edit <%=readOnlyClass%> ${info.device.code == 'pdf'?'no-access':''} id="mailing_form" action="<%=URLHelper.createURL(editCtx)%>?module=mailing&previewEdit=true" method="post">
 						<div class="pc_line">							
 							<input id="pc_mailing" type="<%=accessType%>" value="${i18n.edit['preview.label.mailing']}" title="${i18n.edit['preview.label.mailing']}" class="pc_edit_true"<%=readOnlyPageHTML%> />
 							<label for="pc_mailing">${i18n.edit['preview.label.mailing']}</label>

@@ -56,6 +56,11 @@ public class Field implements Cloneable {
 			return Field.this.getValue();
 		}
 
+		/**
+		 * i18n value of the field.
+		 * @return
+		 * @throws Exception
+		 */
 		public String getDisplayValue() throws Exception {
 			return getDisplayValue(ctx);
 		}
@@ -175,6 +180,8 @@ public class Field implements Cloneable {
 	}
 
 	public Map<String, String> getList(ContentContext ctx, String listName, Locale locale) throws Exception {
+		
+		System.out.println("***** Field.getList :  locale = "+locale); //TODO: remove debug trace
 
 		if (keyValue != null) {
 			return keyValue;

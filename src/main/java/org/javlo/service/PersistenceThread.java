@@ -23,7 +23,7 @@ import org.javlo.navigation.MenuElement;
 import org.javlo.servlet.zip.ZipManagement;
 
 public class PersistenceThread implements Runnable {
-	
+
 	private static AtomicInteger COUNT_THREAD = new AtomicInteger(0);
 
 	private static Logger logger = Logger.getLogger(PersistenceThread.class.getName());
@@ -86,13 +86,13 @@ public class PersistenceThread implements Runnable {
 		COUNT_THREAD.incrementAndGet();
 		File file = null;
 		try {
-			logger.info("before start persitence thread (#THREAD:"+COUNT_THREAD+')');
+			logger.info("before start persitence thread (#THREAD:" + COUNT_THREAD + ')');
 			synchronized (menuElement.getLock()) {
-				logger.info("start persitence thread (#THREAD:"+COUNT_THREAD+')');
+				logger.info("start persitence thread (#THREAD:" + COUNT_THREAD + ')');
 				long startTime = System.currentTimeMillis();
 				file = store(menuElement, mode, getDefaultLg());
-				logger.info("end persitence thread ("+StringHelper.renderTimeInSecond(System.currentTimeMillis()-startTime)+" sec.).");
-			}			
+				logger.info("end persitence thread (" + StringHelper.renderTimeInSecond(System.currentTimeMillis() - startTime) + " sec.).");
+			}
 		} catch (Exception e) {
 			e.printStackTrace();
 			try {
@@ -139,54 +139,52 @@ public class PersistenceThread implements Runnable {
 	private File store(MenuElement menuElement, int renderMode, String defaultLg) throws Exception {
 
 		if (menuElement == null) {
+			logger.warning("no navigation found.");
 			return null;
 		}
-		// don't save empty site
-		if ((menuElement.getAllChildren().length > 0) || (menuElement.getContent().length > 0)) {
 
-			int localVersion = persistenceService.getVersion();
+		int localVersion = persistenceService.getVersion();
 
-			if (renderMode == ContentContext.PREVIEW_MODE) {
-				localVersion = persistenceService.getVersion() + 1;
-				persistenceService.canRedo = false;
+		if (renderMode == ContentContext.PREVIEW_MODE) {
+			localVersion = persistenceService.getVersion() + 1;
+			persistenceService.canRedo = false;
 
-			}
-			File file;
-			if (renderMode == ContentContext.PREVIEW_MODE) {
-				file = new File(persistenceService.getDirectory() + "/content_" + ContentContext.PREVIEW_MODE + '_' + localVersion + ".xml");
-				if (!file.exists()) {
-					file.createNewFile();
-				}
-
-				FileOutputStream fileStream = new FileOutputStream(file);
-				OutputStreamWriter fileWriter = new OutputStreamWriter(fileStream, ContentContext.CHARACTER_ENCODING);
-				try {
-					XMLHelper.storeXMLContent(fileWriter, menuElement, renderMode, localVersion, defaultLg, getGlobalContentMap());
-				} finally {
-					fileWriter.close();
-					fileStream.close();
-				}
-				persistenceService.setVersion(persistenceService.getVersion()+1);				
-				persistenceService.cleanFile();
-			} else {
-				file = new File(persistenceService.getDirectory() + "/content_" + renderMode + ".xml");
-				if (file.exists()) {
-					storeCurrentView();
-					file = new File(persistenceService.getDirectory() + "/content_" + renderMode + ".xml");
-				}
-				file.createNewFile();
-				FileOutputStream fileStream = new FileOutputStream(file);
-				OutputStreamWriter fileWriter = new OutputStreamWriter(fileStream, ContentContext.CHARACTER_ENCODING);
-				try {
-					XMLHelper.storeXMLContent(fileWriter, menuElement, renderMode, localVersion, defaultLg, getGlobalContentMap());
-				} finally {
-					fileWriter.close();
-					fileStream.close();
-				}
-			}
-			return file;
 		}
-		return null;
+		File file;
+		if (renderMode == ContentContext.PREVIEW_MODE) {
+			file = new File(persistenceService.getDirectory() + "/content_" + ContentContext.PREVIEW_MODE + '_' + localVersion + ".xml");
+			if (!file.exists()) {
+				file.createNewFile();
+			}
+
+			FileOutputStream fileStream = new FileOutputStream(file);
+			OutputStreamWriter fileWriter = new OutputStreamWriter(fileStream, ContentContext.CHARACTER_ENCODING);
+			try {
+				XMLHelper.storeXMLContent(fileWriter, menuElement, renderMode, localVersion, defaultLg, getGlobalContentMap());
+			} finally {
+				fileWriter.close();
+				fileStream.close();
+			}
+			persistenceService.setVersion(persistenceService.getVersion() + 1);
+			persistenceService.cleanFile();
+		} else {
+			file = new File(persistenceService.getDirectory() + "/content_" + renderMode + ".xml");
+			if (file.exists()) {
+				storeCurrentView();
+				file = new File(persistenceService.getDirectory() + "/content_" + renderMode + ".xml");
+			}
+			file.createNewFile();
+			FileOutputStream fileStream = new FileOutputStream(file);
+			OutputStreamWriter fileWriter = new OutputStreamWriter(fileStream, ContentContext.CHARACTER_ENCODING);
+			try {
+				XMLHelper.storeXMLContent(fileWriter, menuElement, renderMode, localVersion, defaultLg, getGlobalContentMap());
+			} finally {
+				fileWriter.close();
+				fileStream.close();
+			}
+		}
+		return file;
+
 	}
 
 	void storeCurrentView() throws IOException {

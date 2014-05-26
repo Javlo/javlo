@@ -304,6 +304,7 @@ public class PersistenceService {
 				file = new File(getDirectory() + "/content_" + ContentContext.PREVIEW_MODE + '_' + workVersion + ".xml");
 			}
 		}
+		
 		int workVersion = getVersion() - UNDO_DEPTH;
 		File file = new File(getDirectory() + "/content_" + ContentContext.PREVIEW_MODE + '_' + workVersion + ".xml");
 		while (workVersion > 0) {
@@ -1234,7 +1235,7 @@ public class PersistenceService {
 	 *         exist.
 	 */
 	public boolean setVersion(int version) {
-		if (versionExist(__version)) {
+		if (versionExist(version)) {
 			this.__version = version;
 			saveVersion();
 			return true;

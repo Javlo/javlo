@@ -123,7 +123,7 @@ ul {
 	margin: 0 15px 5px 15px;
 }
 
-.float-image img {
+.full .float-image img, .banner .float-image img {
 	width: 100%;		
 }
 
@@ -132,7 +132,7 @@ ul {
 	margin: 0;	
 }
 
-.float-image .image-wrapper {
+.full .float-image .image-wrapper, .banner .float-image .image-wrapper {
 	width: 50%;	
 	margin: 0 0 5px 0;	
 }
@@ -143,4 +143,8 @@ ul {
 
 .float-image.right .image-wrapper  {
 	margin-left: 5px;
+}
+
+.pdf-head {
+	margin: 5px 0;
 }

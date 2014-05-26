@@ -5,7 +5,6 @@ package org.javlo.component.layout;
 
 import org.javlo.component.core.AbstractVisualComponent;
 import org.javlo.context.ContentContext;
-import org.javlo.i18n.I18nAccess;
 
 
 /**
@@ -20,7 +19,7 @@ public class PageBreak extends AbstractVisualComponent {
 	 */
 	@Override
 	public String getViewXHTMLCode(ContentContext ctx) throws Exception {
-		StringBuffer finalCode = new StringBuffer();
+		StringBuffer finalCode = new StringBuffer();	
 		finalCode.append("<div class=\"pagebreak\" style=\"page-break-after:always; font-size: 0; height: 0; clear: both; display: block; margin: 0; padding;: 0;\">&nbsp;</div>");
 		return finalCode.toString();
 	}
