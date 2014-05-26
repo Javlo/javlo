@@ -195,7 +195,7 @@ public class PersistenceService {
 
 	public static final String GLOBAL_MAP_NAME = "global";
 
-	private static int UNDO_DEPTH = 1024;
+	private static int UNDO_DEPTH = 255;
 
 	public static final Date parseDate(String date) throws ParseException {
 		synchronized (PERSISTENCE_DATE_FORMAT) {
@@ -258,11 +258,7 @@ public class PersistenceService {
 
 	private GlobalContext globalContext = null;
 
-	private PersistenceThread persThread = null;
-
 	private boolean askStore;
-
-	private static final Object LOCK_LOAD = new Object();
 
 	public boolean canRedo() {
 		return versionExist(getVersion() + 1) && canRedo;
@@ -905,7 +901,6 @@ public class PersistenceService {
 		if (contentAttributeMap == null) {
 			contentAttributeMap = new HashMap(); // fake map
 		}
-		waitThread();
 		synchronized (ctx.getGlobalContext().getLockLoadContent()) {
 
 			int version = getVersion();
@@ -1290,19 +1285,26 @@ public class PersistenceService {
 	}
 
 	public void store(ContentContext ctx) throws Exception {
-		store(ctx.getContextWithOtherRenderMode(ContentContext.PREVIEW_MODE), ContentContext.PREVIEW_MODE);
+		store(ctx, true);
 	}
 
-	public synchronized void store(ContentContext ctx, int renderMode) throws Exception {
+	public void store(ContentContext ctx, boolean async) throws Exception {
+		store(ctx.getContextWithOtherRenderMode(ContentContext.PREVIEW_MODE), ContentContext.PREVIEW_MODE, async);
+	}
 
-		waitThread();
+	public void store(ContentContext ctx, int renderMode) throws Exception {
+		store(ctx, renderMode, true);
+	}
+
+	public synchronized void store(ContentContext ctx, int renderMode, boolean async) throws Exception {
+
 		setAskStore(false);
 
 		synchronized (ctx.getGlobalContext().getLockLoadContent()) {
 
 			logger.info("store in " + renderMode + " mode.");
 
-			persThread = new PersistenceThread();
+			PersistenceThread persThread = new PersistenceThread();
 			ContentService content = ContentService.getInstance(globalContext);
 			MenuElement menuElement = content.getNavigation(ctx);
 			String defaultLg = globalContext.getDefaultLanguages().iterator().next();
@@ -1325,42 +1327,28 @@ public class PersistenceService {
 			}
 			persThread.addFolderToSave(new File(URLHelper.mergePath(globalContext.getDataFolder(), staticConfig.getUserInfoFile())));
 
-			// synchronized (MenuElement.LOCK_ACCESS) {
-			persThread.start();
-			// }
+			persThread.start(async);
 
 		}
 	}
 
-	private void waitThread() throws InterruptedException {
-		PersistenceThread localThread = persThread;
-		while (localThread != null) {
-			synchronized (localThread) {
-				if (localThread.isRunning()) {
-					localThread.wait();
-				}
-			}
-			localThread = persThread;
-		}
-	}
-
-	public void store(InputStream in) throws Exception {
-		// synchronized (MenuElement.LOCK_ACCESS) {
-		setVersion(getVersion() + 1);
-		saveVersion();
-		File file = new File(getDirectory() + "/content_" + ContentContext.PREVIEW_MODE + '_' + getVersion() + ".xml");
-		if (!file.exists()) {
-			file.createNewFile();
-		}
-		FileOutputStream out = new FileOutputStream(file);
-		int read = in.read();
-		while (read >= 0) {
-			out.write(read);
-			read = in.read();
-		}
-		out.close();
-		// }
-	}
+//	public void store(InputStream in) throws Exception {
+//		// synchronized (MenuElement.LOCK_ACCESS) {
+//		setVersion(getVersion() + 1);
+//		saveVersion();
+//		File file = new File(getDirectory() + "/content_" + ContentContext.PREVIEW_MODE + '_' + getVersion() + ".xml");
+//		if (!file.exists()) {
+//			file.createNewFile();
+//		}
+//		FileOutputStream out = new FileOutputStream(file);
+//		int read = in.read();
+//		while (read >= 0) {
+//			out.write(read);
+//			read = in.read();
+//		}
+//		out.close();
+//		// }
+//	}
 
 	public void store(Track track) throws Exception {
 		Calendar cal = GregorianCalendar.getInstance();
@@ -1482,7 +1470,4 @@ public class PersistenceService {
 		}
 	}
 
-	public void resetThread() {
-		persThread = null;
-	}
 }

@@ -10,6 +10,7 @@ import java.util.Date;
 import java.util.Hashtable;
 import java.util.LinkedList;
 import java.util.Map;
+import java.util.concurrent.atomic.AtomicInteger;
 import java.util.logging.Logger;
 import java.util.zip.ZipOutputStream;
 
@@ -21,9 +22,9 @@ import org.javlo.helper.XMLHelper;
 import org.javlo.navigation.MenuElement;
 import org.javlo.servlet.zip.ZipManagement;
 
-public class PersistenceThread extends Thread {
+public class PersistenceThread implements Runnable {
 	
-	private int COUNT_THREAD = 0;
+	private static AtomicInteger COUNT_THREAD = new AtomicInteger(0);
 
 	private static Logger logger = Logger.getLogger(PersistenceThread.class.getName());
 
@@ -71,16 +72,24 @@ public class PersistenceThread extends Thread {
 		return persistenceService;
 	}
 
+	public void start(boolean async) {
+		if (async) {
+			Thread thread = new Thread(this, this.getClass().getSimpleName());
+			thread.start();
+		} else {
+			run();
+		}
+	}
+
 	@Override
-	public void run() {		
-		COUNT_THREAD++;
+	public void run() {
+		COUNT_THREAD.incrementAndGet();
 		File file = null;
 		try {
 			logger.info("before start persitence thread (#THREAD:"+COUNT_THREAD+')');
 			synchronized (menuElement.getLock()) {
 				logger.info("start persitence thread (#THREAD:"+COUNT_THREAD+')');
 				long startTime = System.currentTimeMillis();
-				logger.info("store persitence thread");		
 				file = store(menuElement, mode, getDefaultLg());
 				logger.info("end persitence thread ("+StringHelper.renderTimeInSecond(System.currentTimeMillis()-startTime)+" sec.).");
 			}			
@@ -92,12 +101,8 @@ public class PersistenceThread extends Thread {
 				logger.warning(e1.getMessage());
 			}
 		} finally {
-			synchronized (this) {
-				persistenceService.resetThread();
-				running = false;
-				COUNT_THREAD--;
-				notify();
-			}
+			running = false;
+			COUNT_THREAD.decrementAndGet();
 		}
 	}
 

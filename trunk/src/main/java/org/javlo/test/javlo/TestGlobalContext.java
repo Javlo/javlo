@@ -11,6 +11,10 @@ public class TestGlobalContext extends GlobalContext {
 	
 	private PersistenceService persistenceService = new TestPersistenceService();
 	
+	public TestGlobalContext() {
+		super("Test");
+	}
+
 	@Override
 	public String getContextKey() {
 		return "test";

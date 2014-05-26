@@ -51,9 +51,9 @@ import org.javlo.cache.MapCache;
 import org.javlo.cache.ehCache.EHCacheWrapper;
 import org.javlo.component.core.AbstractVisualComponent;
 import org.javlo.config.StaticConfig;
+import org.javlo.helper.ContentHelper;
 import org.javlo.helper.ElementaryURLHelper;
 import org.javlo.helper.ElementaryURLHelper.Code;
-import org.javlo.helper.ContentHelper;
 import org.javlo.helper.ResourceHelper;
 import org.javlo.helper.ServletHelper;
 import org.javlo.helper.StringHelper;
@@ -103,6 +103,7 @@ public class GlobalContext implements Serializable, IPrintInfo {
 		GlobalContext globalContext = null;
 
 		public StorePropertyThread(GlobalContext globalContext) {
+			super(StorePropertyThread.class.getSimpleName() + "-" + globalContext.getContextKey());
 			this.globalContext = globalContext;
 		}
 
@@ -170,7 +171,8 @@ public class GlobalContext implements Serializable, IPrintInfo {
 
 	public static final String LOGO_FILE_NAME = "dynamic_template/logo.png";
 
-	public GlobalContext() {
+	public GlobalContext(String contextKey) {
+		this.contextKey = contextKey;
 		properties.setDelimiterParsingDisabled(true);
 		StorePropertyThread storePropertyThread = new StorePropertyThread(this);
 		storePropertyThread.start();		
@@ -287,12 +289,11 @@ public class GlobalContext implements Serializable, IPrintInfo {
 		GlobalContext newInstance = (GlobalContext) application.getAttribute(contextKey);
 		if (newInstance == null) {
 			synchronized (LOCK_GLOBAL_CONTEXT_LOAD) {
-				newInstance = new GlobalContext();
+				newInstance = new GlobalContext(contextKey);
 				newInstance.application = application;
 				synchronized (newInstance.properties) {
 					newInstance.staticConfig = staticConfig;
 					application.setAttribute(contextKey, newInstance);
-					newInstance.setContextKey(contextKey);
 					if (configFile.exists()) {
 						newInstance.properties.clear();
 						newInstance.properties.load(configFile);
@@ -328,7 +329,7 @@ public class GlobalContext implements Serializable, IPrintInfo {
 			// ServletContextWeakReference.getInstance(session.getServletContext());
 			GlobalContext newInstance = (GlobalContext) session.getServletContext().getAttribute(contextKey);
 			if (newInstance == null) {
-				newInstance = new GlobalContext();
+				newInstance = new GlobalContext(contextKey);
 				newInstance.staticConfig = staticConfig;
 				newInstance.application = session.getServletContext();
 			} else {
@@ -336,7 +337,6 @@ public class GlobalContext implements Serializable, IPrintInfo {
 				return newInstance;
 			}
 
-			newInstance.setContextKey(contextKey);
 			String fileName = contextKey + ".properties";
 			newInstance.contextFile = new File(ElementaryURLHelper.mergePath(staticConfig.getContextFolder(), fileName));
 			if (!newInstance.contextFile.exists()) {
