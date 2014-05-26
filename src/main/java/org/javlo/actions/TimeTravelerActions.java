@@ -186,7 +186,7 @@ public class TimeTravelerActions implements IAction {
 		}
 
 		PersistenceService persistenceService = PersistenceService.getInstance(ctx.getGlobalContext());
-		persistenceService.store(ctx);
+		persistenceService.store(ctx, false);
 
 		ContentService content = ContentService.getInstance(ctx.getRequest());
 		content.releasePreviewNav(ctx);
