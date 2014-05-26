@@ -21,7 +21,7 @@ public class PageBreak extends AbstractVisualComponent {
 	@Override
 	public String getViewXHTMLCode(ContentContext ctx) throws Exception {
 		StringBuffer finalCode = new StringBuffer();
-		finalCode.append("<div class=\"pagebreak\" style=\"page-break-after:always; font-size: 0; height: 0; clear: both; display: block;\"><span>&nbsp;</span></div>");
+		finalCode.append("<div class=\"pagebreak\" style=\"page-break-after:always; font-size: 0; height: 0; clear: both; display: block; margin: 0; padding;: 0;\">&nbsp;</div>");
 		return finalCode.toString();
 	}
 
