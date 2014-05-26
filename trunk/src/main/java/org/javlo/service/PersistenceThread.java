@@ -76,12 +76,14 @@ public class PersistenceThread extends Thread {
 		COUNT_THREAD++;
 		File file = null;
 		try {
-			logger.info("start persitence thread (#THREAD:"+COUNT_THREAD+')');
+			logger.info("before start persitence thread (#THREAD:"+COUNT_THREAD+')');
 			synchronized (menuElement.getLock()) {
-				logger.info("store persitence thread");
+				logger.info("start persitence thread (#THREAD:"+COUNT_THREAD+')');
+				long startTime = System.currentTimeMillis();
+				logger.info("store persitence thread");		
 				file = store(menuElement, mode, getDefaultLg());
-			}
-			logger.info("end persitence thread");
+				logger.info("end persitence thread ("+StringHelper.renderTimeInSecond(System.currentTimeMillis()-startTime)+" sec.).");
+			}			
 		} catch (Exception e) {
 			e.printStackTrace();
 			try {
@@ -159,8 +161,7 @@ public class PersistenceThread extends Thread {
 					fileWriter.close();
 					fileStream.close();
 				}
-				persistenceService.setVersion(persistenceService.getVersion()+1);
-				persistenceService.saveVersion();
+				persistenceService.setVersion(persistenceService.getVersion()+1);				
 				persistenceService.cleanFile();
 			} else {
 				file = new File(persistenceService.getDirectory() + "/content_" + renderMode + ".xml");
