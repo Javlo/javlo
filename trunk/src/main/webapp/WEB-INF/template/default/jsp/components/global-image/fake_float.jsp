@@ -11,7 +11,7 @@
 </td><td class="zone1" style="text-align: left;"><span class="container">${comp.firstText}</span></td></tr>
 </c:if><c:if test="${not empty param.right}">
 <tr><td class="zone1" style="text-align: left;"><span class="container">${comp.firstText}</span></td>
-<td><c:set var="style" value="" />
+<td class="image-wrapper"><c:set var="style" value="" />
 <img src="${fn:replace(previewURL,'/full/', '/float/')}"${style} />
 </td></tr>
 </c:if>

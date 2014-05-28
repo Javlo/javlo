@@ -2230,6 +2230,10 @@ input[type=radio],input[type=checkbox] {
     background: #83A3CA url("../images/icons/small/white/check.png") no-repeat 4px 4px;
 }
 
+.gallery .thumbview .info .menu a.push {
+    background: url("../images/icons/small/white/push.png") no-repeat scroll 4px 3px #83A3CA;
+}
+
 
 .gallery .thumbview .info .menu a:hover {
 	text-decoration: none;
