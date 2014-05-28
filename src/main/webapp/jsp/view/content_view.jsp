@@ -191,4 +191,4 @@ if (elems != null) {%><%=elems.getSufixXHTMLCode(ctx)
 currentPage.endRendering(ctx);
 } /* end else getSpecialContentRenderer() */
 
-%>
+%><div class="end-area end-area-<%=area%>">&nbsp;</div>
