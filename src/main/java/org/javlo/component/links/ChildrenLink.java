@@ -7,6 +7,7 @@ import java.io.ByteArrayOutputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.PrintStream;
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.Date;
 import java.util.LinkedList;
@@ -30,6 +31,8 @@ import org.javlo.service.RequestService;
 public class ChildrenLink extends AbstractVisualComponent implements IImageTitle {
 
 	protected static final char DATA_SEPARATOR = ',';
+	
+	private static String RECURSIVE = "recursive";
 	
 	public static final String TYPE = "children-link";
 
@@ -249,19 +252,19 @@ public class ChildrenLink extends AbstractVisualComponent implements IImageTitle
 	public String[] getStyleLabelList(ContentContext ctx) {
 		try {
 			I18nAccess i18n = I18nAccess.getInstance(ctx.getRequest());
-			return new String[] { i18n.getText("content.web-map.only-visible"), i18n.getText("content.web-map.only-not-visible"), i18n.getText("content.web-map.all") };
+			return new String[] { i18n.getText("content.web-map.only-visible"), i18n.getText("content.web-map.only-not-visible"), i18n.getText("content.web-map.all"), i18n.getText("content.children-link.recursive") };
 		} catch (FileNotFoundException e) {
 			e.printStackTrace();
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
 
-		return new String[] { "visible", "not-visible", "all" };
+		return new String[] { "visible", "not-visible", "all", RECURSIVE };
 	}
 
 	@Override
 	public String[] getStyleList(ContentContext ctx) {
-		return new String[] { "visible", "not-visible", "all" };
+		return new String[] { "visible", "not-visible", "all", RECURSIVE };
 	}
 
 	@Override
@@ -293,14 +296,19 @@ public class ChildrenLink extends AbstractVisualComponent implements IImageTitle
 		boolean showOnlyNotVisible = false;
 
 		if (getStyle() != null) {
-			showAll = getStyle().equalsIgnoreCase("all");
+			showAll = getStyle().equalsIgnoreCase("all") || getStyle().equalsIgnoreCase(RECURSIVE);
 			showOnlyNotVisible = getStyle().equalsIgnoreCase("not-visible");
 		}
-		Collection<MenuElement> children = parentPage.getChildMenuElementsWithVirtual(ctx, false, false);
+		Collection<MenuElement> children;		
+		if (getStyle().equals(RECURSIVE)) {			
+			children = Arrays.asList(parentPage.getAllChildren());
+		} else {
+			children = parentPage.getChildMenuElementsWithVirtual(ctx, false, false);
+		}		
 		String renderer = getRenderer(ctx);
 		if (renderer != null) {
 			List<ChildLinkBean> childrenList = new LinkedList<ChildLinkBean>();
-			for (MenuElement element : children) {
+			for (MenuElement element : children) {				
 				if ((element.isVisible(ctx) ^ showOnlyNotVisible) || showAll) {
 					ChildLinkBean bean = new ChildLinkBean(ctx, element, currentPage);
 					childrenList.add(bean);
