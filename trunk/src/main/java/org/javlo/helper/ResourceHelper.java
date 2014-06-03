@@ -1085,7 +1085,7 @@ public class ResourceHelper {
 		int byteReaded = in.read(buffer);
 		while (byteReaded >= 0) {
 			size = size + byteReaded;
-			if (size > maxSize) {
+			if (size > maxSize && maxSize>0) {
 				return -1;
 			}
 			out.write(buffer, 0, byteReaded);
