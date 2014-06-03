@@ -42,7 +42,11 @@ public class LocationComponent extends AbstractVisualComponent {
 
 	@Override
 	public String getSuffixViewXHTMLCode(ContentContext ctx) {
-		return "<span class=\"separator\"> - </span></div>";
+		String sep ="";
+		if (getValue().trim().length() > 0) {
+			sep = "<span class=\"separator\"> - </span>";
+		}
+		return sep+"</div>";
 	}
 
 	@Override
