@@ -69,8 +69,8 @@ public class Tags extends ComplexPropertiesLink {
 	}
 
 	@Override
-	public String getPrefixViewXHTMLCode(ContentContext ctx) {
-		return super.getPrefixViewXHTMLCode(ctx) + "<div" + getSpecialPreviewCssClass(ctx, getStyle(ctx)) + getSpecialPreviewCssId(ctx) + ">";
+	public String getPrefixViewXHTMLCode(ContentContext ctx) {		
+		return super.getPrefixViewXHTMLCode(ctx) + "<div" + getSpecialPreviewCssClass(ctx, getStyle(ctx)+" list count"+getTags().size()) + getSpecialPreviewCssId(ctx) + ">";
 	}
 
 	@Override
