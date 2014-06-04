@@ -29,6 +29,7 @@ function loadWysiwyg(cssQuery, complexity, chooseFileURL) {
 		        "searchreplace visualblocks code fullscreen",
 		        "insertdatetime media table contextmenu paste"
 		    ],
+		    paste_word_valid_elements: "b,strong,i,em,h1,h2,h3,h4,h5,h6,table,tr,th,td",
 		    toolbar: "insertfile undo redo | styleselect | bold italic | alignleft aligncenter alignright alignjustify | bullist numlist outdent indent | link image"
 		});
 	} else if (complexity == "high") {		
@@ -46,6 +47,7 @@ function loadWysiwyg(cssQuery, complexity, chooseFileURL) {
 		    ],
 		    toolbar1: "bold italic underline strikethrough | alignleft aligncenter alignright alignjustify | bullist numlist outdent indent | link image | forecolor backcolor | table charmap code",		    
 		    image_advtab: true,
+		    paste_word_valid_elements: "b,strong,i,em,h1,h2,h3,h4,h5,h6,table,tr,th,td",
 		    file_browser_callback: function(field_name, url, type, win) {
 		    	
 	    	 	jQuery("body").data("fieldName", field_name);
@@ -73,6 +75,18 @@ function loadWysiwyg(cssQuery, complexity, chooseFileURL) {
 		        {title: 'Test template 2', content: 'Test 2'}
 		    ]
 		});	
+	} else if (complexity == "soft") {
+		tinyMCE.init({
+		mode : "specific_textareas",
+		theme : "modern",
+		content_css: wysiwygCss,
+		add_form_submit_trigger: true,	
+		menubar : false,
+		selector: cssQuery,
+    	plugins: "paste",
+        paste_word_valid_elements: "b,strong,i,em,h1,h2,h3,h4,h5,h6,table,tr,th,td",
+		toolbar: "undo redo | bold italic | pastetext"
+		});	 
 	} else {
 		tinyMCE.init({
 		mode : "specific_textareas",
@@ -81,6 +95,8 @@ function loadWysiwyg(cssQuery, complexity, chooseFileURL) {
 		add_form_submit_trigger: true,	
 		menubar : false,
 		selector: cssQuery,
+		plugins: "paste",
+		paste_word_valid_elements: "b,strong,i,em,h1,h2,h3,h4,h5,h6,table,tr,th,td",
 		toolbar: "undo redo | bold italic | alignleft aligncenter alignright alignjustify | bullist numlist outdent indent | pastetext"
 		});	 
 	}
