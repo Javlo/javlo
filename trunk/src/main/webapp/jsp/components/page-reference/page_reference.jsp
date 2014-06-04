@@ -41,7 +41,7 @@
 
 				 <c:if test="${status.count == 1}">	
 				   <c:if test="${not empty linkURL}">							
-					 <a class="${image.cssClass}" href="${linkURL}" title="${image.description}" rel="gal-${comp.id}">
+					 <a class="${image.cssClass}" href="${linkURL}" title="${i18n.view['global.gotopage']}" rel="gal-${comp.id}">
 				       <img src="${image.url}" alt="${image.description}" />
 				       <span class="ep_endbox">&nbsp;</span>
 					 </a>
