@@ -242,6 +242,12 @@ public class InternalLink extends ComplexPropertiesLink implements IInternalLink
 				res.append("<div class=\"details\">");
 				res.append("<div class=\"title\">");
 			}
+			
+			String title = I18nAccess.getInstance(ctx).getViewText("global.gotopage","");
+			if (title.trim().length() > 0) {
+				title = " title=\""+StringHelper.toXMLAttribute(title)+"\"";
+			}
+			
 			res.append("<a " + getSpecialPreviewCssClass(ctx, getStyle(ctx)) + getSpecialPreviewCssId(ctx) + " href=\" ");
 			if (ctx.getRenderMode() != ContentContext.PAGE_MODE) {
 				res.append(StringHelper.toXMLAttribute(url));
@@ -255,7 +261,7 @@ public class InternalLink extends ComplexPropertiesLink implements IInternalLink
 					res.append(StringHelper.toXMLAttribute(url) + getParam() + "&" + MailingAction.MAILING_FEEDBACK_PARAM_NAME + "=##data##");
 				}
 			}
-			res.append("\">");
+			res.append("\""+title+">");
 			res.append(label);
 			res.append("</a>");
 			if (style.contains(DESCRIPTION) || style.contains(IMAGE)) {

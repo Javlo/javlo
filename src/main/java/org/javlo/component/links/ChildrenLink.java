@@ -353,6 +353,12 @@ public class ChildrenLink extends AbstractVisualComponent implements IImageTitle
 		}
 
 		if (displayChildren) {
+			
+			String title = I18nAccess.getInstance(ctx).getViewText("global.gotopage","");
+			if (title.trim().length() > 0) {
+				title = " title=\""+StringHelper.toXMLAttribute(title)+"\"";
+			}
+			
 			String select = "";
 			if (isCombo()) {
 				select = " select";
@@ -396,7 +402,7 @@ public class ChildrenLink extends AbstractVisualComponent implements IImageTitle
 						if (page.getContentDate(ctx) != null) {
 							out.print("<span class=\"date\">" + StringHelper.renderUserFriendlyDate(ctx, page.getContentDate(ctx)) + "</span>");
 						}
-						out.print("<a href=\"" + URLHelper.createURL(ctx, page.getVirtualPath(ctx)) + "\">");
+						out.print("<a"+title+" href=\"" + URLHelper.createURL(ctx, page.getVirtualPath(ctx)) + "\">");
 						if (isLabelListed()) {
 							String sep = "";
 							if (isDescription() && page.getDescription(ctx).trim().length() > 0) {

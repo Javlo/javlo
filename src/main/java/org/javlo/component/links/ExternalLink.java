@@ -87,6 +87,10 @@ public class ExternalLink extends ComplexPropertiesLink implements IReverseLinkC
 			GlobalContext globalContext = GlobalContext.getInstance(ctx.getRequest());
 			if (globalContext.isOpenExernalLinkAsPopup(link)) {
 				target = "target=\"_blank\" ";
+				String title = I18nAccess.getInstance(ctx).getViewText("global.newwindow","");
+				if (title.trim().length() > 0) {
+					target = target+"title=\""+title+"\" ";
+				}
 			}
 
 			res.append("<a" + getSpecialPreviewCssClass(ctx, insertCssClass) + getSpecialPreviewCssId(ctx) + " " + target + "href=\"");
