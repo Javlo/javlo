@@ -936,7 +936,7 @@ public class ContentContext {
 		return visible;
 	}
 
-	protected void resestCache() {
+	protected void resetCache() {
 		resetCurrentPageCached();
 		setCurrentTemplate(null);
 		contentExistForContext = null;
@@ -1000,7 +1000,7 @@ public class ContentContext {
 			logger.warning("content language not available : " + lg);
 			contentLanguage = getLanguage();
 		}
-		resestCache();
+		resetCache();
 	}
 
 	public void setCookieLanguage(String lang) {
@@ -1080,7 +1080,7 @@ public class ContentContext {
 			logger.warning("language not available : " + lg);
 			language = GlobalContext.getInstance(request).getDefaultLanguage();
 		}
-		resestCache();
+		resetCache();
 	}
 
 	public void setNeedRefresh(boolean needRefresh) {
@@ -1100,7 +1100,7 @@ public class ContentContext {
 		}
 		if (!newPath.equals(path)) {
 			path = newPath;
-			resestCache();
+			resetCache();
 		}
 	}
 
@@ -1141,7 +1141,7 @@ public class ContentContext {
 			logger.fine("request content language not available : " + lg);
 			requestContentLanguage = getLanguage();
 		}
-		resestCache();
+		resetCache();
 	}
 
 	/**

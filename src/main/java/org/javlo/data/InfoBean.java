@@ -667,6 +667,15 @@ public class InfoBean {
 		return URLHelper.createURL(ctx, "/");
 	}
 	
+	public String getRSSAllURL()  {
+		try {
+			return URLHelper.createRSSURL(ctx, "all");
+		} catch (Exception e) {		
+			e.printStackTrace();
+			return null;
+		}
+	}
+	
 	public String getRootAbsoluteURL() {
 		return URLHelper.createURL(ctx.getContextForAbsoluteURL(), "/");
 	}
