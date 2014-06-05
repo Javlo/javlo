@@ -1533,10 +1533,19 @@ public class PageReferenceComponent extends ComplexPropertiesLink implements IAc
 		 */
 
 		for (MenuElement page : pages) {
-			ContentContext lgCtx = new ContentContext(ctx);
+			ContentContext lgCtx = ctx;		
 			if (GlobalContext.getInstance(ctx.getRequest()).isAutoSwitchToDefaultLanguage()) {
-				lgCtx = new ContentContext(page.getContentContextWithContent(ctx));
+				lgCtx = page.getContentContextWithContent(ctx);
+			} 		
+			
+			if (page.getName().equals("press_release-2014-may-2")) {
+				System.out.println("***** PageReferenceComponent.prepareView : realContent ctx : "+page.isRealContent(ctx)); //TODO: remove debug trace
+				System.out.println("***** PageReferenceComponent.prepareView : realContent lgCtx : "+page.isRealContent(lgCtx)); //TODO: remove debug trace
+				System.out.println("***** PageReferenceComponent.prepareView : lg gl found : "+lgCtx.getLanguage()); //TODO: remove debug trace
+				System.out.println("***** PageReferenceComponent.prepareView : lg cl found : "+lgCtx.getContentLanguage()); //TODO: remove debug trace
+				System.out.println("***** PageReferenceComponent.prepareView : lg rl found : "+lgCtx.getRequestContentLanguage()); //TODO: remove debug trace
 			}
+			
 			if (filterPage(lgCtx, page)) {
 				if (countPage < getMaxNews(lgCtx)) {
 					if ((page.isRealContentAnyLanguage(lgCtx) || isWidthEmptyPage()) && (page.getChildMenuElements().size() == 0 || page.isChildrenAssociation() || !isOnlyPageWithoutChildren()) && page.getContentDateNeverNull(lgCtx).after(backDate.getTime())) {

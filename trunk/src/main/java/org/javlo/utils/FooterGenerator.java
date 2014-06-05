@@ -13,8 +13,11 @@ import org.jopendocument.dom.spreadsheet.SpreadSheet;
 public class FooterGenerator {
 
 	public static void main(String[] args) {
-		File file = new File("C:/Users/pvandermaesen/Dropbox/Documents/pro/pe/siteplanet/footer.ods");
-		File templateFolder = new File("C:/Users/pvandermaesen/Dropbox/work/data/javlo/template/galaxy-template");
+//		File file = new File("C:/Users/pvandermaesen/Dropbox/Documents/pro/pe/siteplanet/footer.ods");
+		//File templateFolder = new File("C:/Users/pvandermaesen/Dropbox/work/data/javlo/template/galaxy-template");
+
+		File file = new File("C:/trans/footer.ods");
+		File templateFolder = new File("C:/work/javlo2/target/javlo/work_template/galaxy-2014/the-president");
 		try {
 			OutputStream outStream = new FileOutputStream(new File(templateFolder.getAbsolutePath() + '/' + "footer_bottom.jsp"));
 			PrintStream out = new PrintStream(outStream);
@@ -52,7 +55,7 @@ public class FooterGenerator {
 				} else {
 					out.println("<li>");
 					if (sheet.getCellAt("B" + indice).getValue().toString().trim().length() > 0) {
-						String url = sheet.getCellAt("B" + indice).getValue().toString().replace("xx", "${info.language}").replace("XX", "${info.language}");
+						String url = sheet.getCellAt("B" + indice).getValue().toString().replace("xx", "${info.language}").replace("XX", "${info.language}").trim();
 						if (!url.startsWith("http://")) {
 							url = "http://"+url;
 						}

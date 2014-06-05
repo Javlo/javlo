@@ -744,7 +744,7 @@ public class MenuElement implements Serializable, IPrintInfo {
 			}
 			return outBean;
 		}
-		
+
 		public String getSmallDate() {
 			Date contentDate = getContentDate();
 			if (contentDate == null) {
@@ -753,7 +753,7 @@ public class MenuElement implements Serializable, IPrintInfo {
 				return StringHelper.renderDate(contentDate, ctx.getGlobalContext().getShortDateFormat());
 			}
 		}
-		
+
 		public String getMediumDate() {
 			Date contentDate = getContentDate();
 			if (contentDate == null) {
@@ -762,7 +762,7 @@ public class MenuElement implements Serializable, IPrintInfo {
 				return StringHelper.renderDate(contentDate, ctx.getGlobalContext().getMediumDateFormat());
 			}
 		}
-		
+
 		public String getFullDate() {
 			Date contentDate = getContentDate();
 			if (contentDate == null) {
@@ -1806,37 +1806,31 @@ public class MenuElement implements Serializable, IPrintInfo {
 			return ctx;
 		} else {
 			ContentContext lgCtx = new ContentContext(ctx);
-			if (globalContext.isAutoSwitchToDefaultLanguage()) {
-				Collection<String> defaultLgs = globalContext.getDefaultLanguages();
-				for (String lg : defaultLgs) {
-					/*
-					 * if (globalContext.getLanguages().contains(lg)) { // if
-					 * content lg exist as lgCtx.setLanguage(lg); }
-					 */
-					lgCtx.setContentLanguage(lg);
-					lgCtx.setRequestContentLanguage(lg);
-					if (isRealContent(lgCtx)) {
-						return lgCtx;
-					}
+			
+
+			Collection<String> defaultLgs = globalContext.getDefaultLanguages();
+			for (String lg : defaultLgs) {
+				lgCtx.setAllLanguage(lg);
+				if (isRealContent(lgCtx)) {
+					return lgCtx;
 				}
 			}
-			if (globalContext.isAutoSwitchToDefaultLanguage()) {
-				Collection<String> languages = globalContext.getContentLanguages();
-				for (String lg : languages) {
-					/*
-					 * if (globalContext.getLanguages().contains(lg)) { // if
-					 * content lg exist as lgCtx.setLanguage(lg); }
-					 */
-					lgCtx.setContentLanguage(lg);
-					lgCtx.setRequestContentLanguage(lg);
-					if (isRealContent(lgCtx)) {
-						return lgCtx;
-					}
+
+			Collection<String> languages = globalContext.getContentLanguages();
+			for (String lg : languages) {
+				/*
+				 * if (globalContext.getLanguages().contains(lg)) { // if
+				 * content lg exist as lgCtx.setLanguage(lg); }
+				 */
+				lgCtx.setContentLanguage(lg);
+				lgCtx.setRequestContentLanguage(lg);
+				if (isRealContent(lgCtx)) {
+					return lgCtx;
 				}
 			}
+
 		}
 		return ctx;
-
 	}
 
 	/**
@@ -4011,7 +4005,7 @@ public class MenuElement implements Serializable, IPrintInfo {
 		desc.cacheable = true;
 		return true;
 	}
-	
+
 	public IContentVisualComponent getNotCacheableComponent(ContentContext ctx) throws Exception {
 		ContentContext noAreaCtx = new ContentContext(ctx);
 		noAreaCtx.setArea(null);
@@ -4068,11 +4062,11 @@ public class MenuElement implements Serializable, IPrintInfo {
 		}
 		return shortURL;
 	}
-	
+
 	public String getShortLanguageURL(ContentContext ctx) throws Exception {
 		String shortURL = getShortURL(ctx);
-		if (shortURL != null && shortURL.length()>1) {
-			shortURL = "L"+ctx.getRequestContentLanguage()+shortURL.substring(1);
+		if (shortURL != null && shortURL.length() > 1) {
+			shortURL = "L" + ctx.getRequestContentLanguage() + shortURL.substring(1);
 		}
 		return shortURL;
 	}
@@ -4259,10 +4253,10 @@ public class MenuElement implements Serializable, IPrintInfo {
 			for (IContentVisualComponent comp : page.getContent(noAreaCtx).getIterable(noAreaCtx)) {
 				pageComponents.add(comp);
 			}
-			
+
 			if (localComponents.size() != pageComponents.size()) {
 				return false;
-			}			
+			}
 			for (int i = 0; i < localComponents.size(); i++) {
 				if (!localComponents.get(i).equals(pageComponents.get(i))) {
 					return false;
@@ -4295,17 +4289,17 @@ public class MenuElement implements Serializable, IPrintInfo {
 	public void copyChildren(MenuElement page) {
 		childMenuElements = page.childMenuElements;
 	}
-	
+
 	@Override
 	public void printInfo(ContentContext ctx, PrintStream out) {
 		out.println("****");
-		out.println("**** MenuElement : "+getPath());
+		out.println("**** MenuElement : " + getPath());
 		out.println("****");
-		out.println("**** name                        : "+getName());
-		out.println("**** #componentBean              : "+componentBean.length);
-		out.println("**** #contentElementListMap      : "+contentElementListMap.size());
-		out.println("**** #localContentElementListMap : "+localContentElementListMap.size());
-		out.println("****");		
+		out.println("**** name                        : " + getName());
+		out.println("**** #componentBean              : " + componentBean.length);
+		out.println("**** #contentElementListMap      : " + contentElementListMap.size());
+		out.println("**** #localContentElementListMap : " + localContentElementListMap.size());
+		out.println("****");
 	}
 
 }
