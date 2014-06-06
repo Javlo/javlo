@@ -2,6 +2,10 @@
 	line-height: 131%;
 }
 
+.colored-wrapper {
+    margin: 0 0 15px 0;
+}
+
 .ExternalClass {
 	width: 100%;
 }
@@ -121,6 +125,18 @@ table td,table th {
 	border: 0 none;
 	display: block;
 	width: 100%;
+}
+
+.float-image.right {
+    width: 100%;
+}
+
+.float-image img {
+    display: inline-block;
+}
+
+.float-image.right .image-wrapper {
+    text-align: right;
 }
 
 .full .float-image .image-wrapper, .banner .float-image .image-wrapper {

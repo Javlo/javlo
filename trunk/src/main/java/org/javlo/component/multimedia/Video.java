@@ -181,7 +181,7 @@ public class Video extends GlobalImage implements IAction, IVideo {
 		}
 	}
 
-	/*@Override
+	@Override
 	public String getCurrentRenderer(ContentContext ctx) {
 		if (getStyle().equals(LINK) && !StringHelper.isTrue(ctx.getRequest().getParameter(FORCE_EMBED_PARAM))) {
 			return super.getCurrentRenderer(ctx);
@@ -206,7 +206,7 @@ public class Video extends GlobalImage implements IAction, IVideo {
 		} else {
 			return null;
 		}
-	}*/
+	}	
 	
 	public String getViewXHTMLCode(ContentContext ctx) throws Exception {
 		if (getEmbedCode() != null && getEmbedCode().trim().length() > 0 && (!getStyle().equals(LINK) || ctx.isExport())) {

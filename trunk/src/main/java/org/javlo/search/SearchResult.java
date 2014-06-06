@@ -107,6 +107,9 @@ public class SearchResult {
 		String name;
 		String title;
 		String url;
+		List<String> tags;
+		String location;
+		String category;
 		String description;
 		String searchRequest;
 		Date date = null;
@@ -120,6 +123,31 @@ public class SearchResult {
 		private List<Component> components;
 
 		// MenuElement page;
+		
+		public String getLocation() {
+			return location;
+		}
+
+		public void setLocation(String location) {
+			this.location = location;
+		}
+		
+		public List<String> getTags() {
+			return tags;
+		}
+
+		public void setTags(List<String> tags) {
+			this.tags = tags;
+		}
+
+		public String getCategory() {
+			return category;
+		}
+
+		public void setCategory(String category) {
+			this.category = category;
+		}
+
 
 		public Date getDate() {
 			return date;
@@ -291,7 +319,14 @@ public class SearchResult {
 		rst.setDescription(description);
 		rst.setPriority(priority);
 		rst.setPath(page.getPath());
-		rst.setComponent(componentsRendered);
+		rst.setComponent(componentsRendered);		
+		try {
+			rst.setLocation(page.getLocation(ctx));
+			rst.setCategory(page.getCategory(ctx));
+			rst.setTags(page.getTags(ctx));
+		} catch (Exception e1) {
+			e1.printStackTrace();
+		}		
 		try {
 			if (page.getContentDateNeverNull(ctx) != null) {
 				Date date = page.getContentDateNeverNull(ctx);
