@@ -147,7 +147,7 @@ public class PageReferenceComponent extends ComplexPropertiesLink implements IAc
 		private String humanName;
 
 		private static PageBean getInstance(ContentContext ctx, MenuElement page, PageReferenceComponent comp) throws Exception {
-
+			
 			GlobalContext globalContext = GlobalContext.getInstance(ctx.getRequest());
 
 			Iterator<String> defaultLg = globalContext.getDefaultLanguages().iterator();
@@ -1060,7 +1060,7 @@ public class PageReferenceComponent extends ComplexPropertiesLink implements IAc
 			newCtx.setArea(null);
 			ContentContext lgCtx = ctx;
 			if (GlobalContext.getInstance(ctx.getRequest()).isAutoSwitchToDefaultLanguage()) {
-				lgCtx = allChildren[i].getContentContextWithContent(ctx);
+				lgCtx = allChildren[i].getContentContextWithContent(ctx, ctx.getCurrentTemplate().isNavigationArea(ctx.getArea()));
 			}
 			if (filterPage(lgCtx, allChildren[i]) && (allChildren[i].getContentDateNeverNull(ctx).after(backDate.getTime()))) {
 				String editPageURL = URLHelper.createEditURL(allChildren[i].getPath(), ctx);
@@ -1446,7 +1446,7 @@ public class PageReferenceComponent extends ComplexPropertiesLink implements IAc
 		for (String pageId : selectedPage) {
 			MenuElement page = navigationService.getPage(ctx, pageId);
 			if (page != null) {
-				ContentContext lgCtx = page.getContentContextWithContent(ctx);
+				ContentContext lgCtx = page.getContentContextWithContent(ctx, ctx.getCurrentTemplate().isNavigationArea(ctx.getArea()));
 				Date pageDate = page.getModificationDate();
 				Date contentDate;
 				contentDate = page.getContentDate(lgCtx);
@@ -1535,28 +1535,17 @@ public class PageReferenceComponent extends ComplexPropertiesLink implements IAc
 		for (MenuElement page : pages) {
 			ContentContext lgCtx = ctx;		
 			if (GlobalContext.getInstance(ctx.getRequest()).isAutoSwitchToDefaultLanguage()) {
-				lgCtx = page.getContentContextWithContent(ctx);
-			} 		
-			
-			if (page.getName().equals("press_release-2014-may-2")) {
-				System.out.println("***** PageReferenceComponent.prepareView : realContent ctx : "+page.isRealContent(ctx)); //TODO: remove debug trace
-				System.out.println("***** PageReferenceComponent.prepareView : realContent lgCtx : "+page.isRealContent(lgCtx)); //TODO: remove debug trace
-				System.out.println("***** PageReferenceComponent.prepareView : lg gl found : "+lgCtx.getLanguage()); //TODO: remove debug trace
-				System.out.println("***** PageReferenceComponent.prepareView : lg cl found : "+lgCtx.getContentLanguage()); //TODO: remove debug trace
-				System.out.println("***** PageReferenceComponent.prepareView : lg rl found : "+lgCtx.getRequestContentLanguage()); //TODO: remove debug trace
-			}
-			
+				lgCtx = page.getContentContextWithContent(ctx, ctx.getCurrentTemplate().isNavigationArea(ctx.getArea()));
+			}			
 			if (filterPage(lgCtx, page)) {
 				if (countPage < getMaxNews(lgCtx)) {
 					if ((page.isRealContentAnyLanguage(lgCtx) || isWidthEmptyPage()) && (page.getChildMenuElements().size() == 0 || page.isChildrenAssociation() || !isOnlyPageWithoutChildren()) && page.getContentDateNeverNull(lgCtx).after(backDate.getTime())) {
 						if (firstPage == null) {
 							firstPage = page;
 						}
-
 						if (page.isRealContent(lgCtx)) {
 							realContentSize++;
 						}
-
 						if (!isIntranetMode() || page.getEditorRoles().size() == 0 || (ctx.getCurrentEditUser() != null && ctx.getCurrentEditUser().validForRoles(page.getEditorRoles()))) {
 							if (page.isRealContent(lgCtx) || isWidthEmptyPage()) {
 								if (tagFilter == null || tagFilter.trim().length() == 0 || page.getTags(lgCtx).contains(tagFilter)) {

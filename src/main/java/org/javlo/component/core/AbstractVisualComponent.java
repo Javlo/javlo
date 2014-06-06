@@ -1829,7 +1829,7 @@ public abstract class AbstractVisualComponent implements IContentVisualComponent
 			return;
 		}
 		if (contentCache.contains(";jsessionid=")) {
-			logger.warning("couldn't put content with jsession id in cache on : " + getPage().getPath() + " - comp:" + getType());
+			logger.fine("couldn't put content with jsession id in cache on : " + getPage().getPath() + " - comp:" + getType());
 			return;
 		}
 		GlobalContext globalContext = GlobalContext.getInstance(ctx.getRequest());
