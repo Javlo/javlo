@@ -1797,7 +1797,7 @@ public class MenuElement implements Serializable, IPrintInfo {
 	 *         content in any language.
 	 * @throws Exception
 	 */
-	public ContentContext getContentContextWithContent(ContentContext ctx) throws Exception {
+	public ContentContext getContentContextWithContent(ContentContext ctx, boolean changeNavigationLanguage) throws Exception {
 		GlobalContext globalContext = GlobalContext.getInstance(ctx.getRequest());
 		if (!globalContext.isAutoSwitchToDefaultLanguage()) {
 			return ctx;
@@ -1806,13 +1806,14 @@ public class MenuElement implements Serializable, IPrintInfo {
 			return ctx;
 		} else {
 			ContentContext lgCtx = new ContentContext(ctx);
-			
 
-			Collection<String> defaultLgs = globalContext.getDefaultLanguages();
-			for (String lg : defaultLgs) {
-				lgCtx.setAllLanguage(lg);
-				if (isRealContent(lgCtx)) {
-					return lgCtx;
+			if (changeNavigationLanguage) {
+				Collection<String> defaultLgs = globalContext.getDefaultLanguages();
+				for (String lg : defaultLgs) {
+					lgCtx.setAllLanguage(lg);
+					if (isRealContent(lgCtx)) {
+						return lgCtx;
+					}
 				}
 			}
 
@@ -3345,13 +3346,19 @@ public class MenuElement implements Serializable, IPrintInfo {
 
 	public boolean isRealContent(ContentContext ctx) throws Exception {
 
-		if (!isInsideTimeRange()) {
+ 		if (!isInsideTimeRange()) {
 			return false;
 		}
 
 		Template template = TemplateFactory.getTemplate(ctx, this);
+		
+		String lang = ctx.getRequestContentLanguage();
+		if (template != null && template.isNavigationArea(ctx.getArea())) {
+			lang = ctx.getLanguage();
+		}
 
 		ContentContext contentAreaCtx = new ContentContext(ctx);
+		
 
 		if (template == null || !template.isRealContentFromAnyArea()) {
 			contentAreaCtx.setArea(ComponentBean.DEFAULT_AREA);
@@ -3359,12 +3366,7 @@ public class MenuElement implements Serializable, IPrintInfo {
 			contentAreaCtx.setArea(null);
 		}
 
-		PageDescription desc = getPageDescriptionCached(ctx, contentAreaCtx.getRequestContentLanguage()); // warning:
-																											// setArea
-																											// can
-																											// change
-																											// request
-																											// language.
+		PageDescription desc = getPageDescriptionCached(ctx, lang); 
 
 		if (!desc.isRealContentNull()) {
 			return desc.isRealContent();
