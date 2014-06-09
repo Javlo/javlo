@@ -90,6 +90,10 @@ public class ChildrenLink extends AbstractVisualComponent implements IImageTitle
 		}
 
 		public boolean isRealContent() throws Exception {
+			return child.isRealContent(ctx);
+		}
+		
+		public boolean isCurrentPageRealContent() throws Exception {
 			return currentPage.isRealContent(ctx);
 		}
 		
