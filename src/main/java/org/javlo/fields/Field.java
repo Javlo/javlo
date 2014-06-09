@@ -181,8 +181,6 @@ public class Field implements Cloneable {
 
 	public Map<String, String> getList(ContentContext ctx, String listName, Locale locale) throws Exception {
 		
-		System.out.println("***** Field.getList :  locale = "+locale); //TODO: remove debug trace
-
 		if (keyValue != null) {
 			return keyValue;
 		}
@@ -200,20 +198,24 @@ public class Field implements Cloneable {
 			}
 		} else {
 			for (int i = 0; i < 9999; i++) {
-				String value = properties.getProperty("list." + listName + "." + i);
+				String value = properties.getProperty("list." + listName + '.' + i);
 				if (value != null) {
 					String key = value;
 					String[] splitedValue = value.split(",");
 					if (splitedValue.length > 1) {
-						if (properties.getProperty("list." + listName + "." + i + "." + locale.getLanguage()) != null) {
-							value = properties.getProperty("list." + listName + "." + i + "." + locale.getLanguage());
+						if (properties.getProperty("list." + listName + "." + i + '.' + locale.getLanguage()) != null) {
+							value = properties.getProperty("list." + listName + '.' + i + '.' + locale.getLanguage());
 						} else {
 							value = splitedValue[1].trim();
 						}
 						keyValue.put(splitedValue[0].trim(), value);
 					} else {
-						if (properties.getProperty("list." + listName + "." + i + "." + locale.getLanguage()) != null) {
-							value = properties.getProperty("list." + listName + "." + i + "." + locale.getLanguage());
+						if (properties.getProperty("list." + listName + '.' + i + ".key") != null) {
+							I18nAccess i18nAccess = I18nAccess.getInstance(ctx.getRequest());
+							value = i18nAccess.getViewText(properties.getProperty("list." + listName + '.' + i + ".key"),(String)null);
+						}
+						if ((value == null || value.trim().length() == 0) && properties.getProperty("list." + listName + '.' + i + '.' + locale.getLanguage()) != null) {
+							value = properties.getProperty("list." + listName + '.' + i + "." + locale.getLanguage());
 						}
 						keyValue.put(key, value);
 					}
