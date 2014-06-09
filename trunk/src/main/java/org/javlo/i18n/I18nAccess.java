@@ -473,9 +473,8 @@ public class I18nAccess implements Serializable {
 			text = "[KEY NOT FOUND : " + key + "]";
 		}
 		return text;
-
 	}
-
+	
 	/**
 	 * replace the balise in text, value of balise is defined in the map. you can defined a balise as : ${balise_name}, this balise is replace with the value of balise name in the map. if the value is not found the balise is not replaced.
 	 * 
