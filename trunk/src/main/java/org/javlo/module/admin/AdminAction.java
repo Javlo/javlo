@@ -39,7 +39,6 @@ import org.javlo.context.GlobalContextFactory;
 import org.javlo.helper.DebugHelper;
 import org.javlo.helper.LangHelper;
 import org.javlo.helper.PatternHelper;
-import org.javlo.helper.RequestHelper;
 import org.javlo.helper.ResourceHelper;
 import org.javlo.helper.StringHelper;
 import org.javlo.helper.URLHelper;
@@ -102,6 +101,7 @@ public class AdminAction extends AbstractModuleAction {
 		private String urlFactory;
 		private String userRoles;
 		private String adminUserRoles;
+		private String proxyPathPrefix;
 		private boolean autoSwitchToDefaultLanguage;
 		private boolean extendMenu;
 		private boolean previewMode;
@@ -189,6 +189,8 @@ public class AdminAction extends AbstractModuleAction {
 			setCollaborativeMode(globalContext.isCollaborativeMode());
 
 			setTemplateData(globalContext.getTemplateData());
+			
+			setProxyPathPrefix(globalContext.getProxyPathPrefix());
 
 			Properties properties = new Properties();
 			properties.putAll(globalContext.getURIAlias());
@@ -627,6 +629,14 @@ public class AdminAction extends AbstractModuleAction {
 			this.templateData = templateData;
 		}
 
+		public String getProxyPathPrefix() {
+			return proxyPathPrefix;
+		}
+
+		public void setProxyPathPrefix(String proxyPathPrefix) {
+			this.proxyPathPrefix = proxyPathPrefix;
+		}
+
 	}
 
 	public static class ComponentBean {
@@ -985,6 +995,8 @@ public class AdminAction extends AbstractModuleAction {
 
 					currentGlobalContext.setDMZServerInter(requestService.getParameter("dmz-inter", ""));
 					currentGlobalContext.setDMZServerIntra(requestService.getParameter("dmz-intra", ""));
+					currentGlobalContext.setProxyPathPrefix(requestService.getParameter("proxy-prefix", ""));
+					
 
 					String dateFormat = requestService.getParameter("short-date", null);
 					if (dateFormat != null) {

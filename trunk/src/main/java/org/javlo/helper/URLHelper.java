@@ -411,7 +411,7 @@ public class URLHelper extends ElementaryURLHelper {
 			return null;
 		}
 		url = url.replace('\\', '/');
-		return createStaticURL(ctx, null, URLHelper.mergePath(templateFullPath, url), false);
+		return createStaticURL(ctx.getContextWithInternalURL(), null, URLHelper.mergePath(templateFullPath, url), false);
 	}
 
 	public static String createTemplateSourceURL(ContentContext ctx, String url) {

@@ -146,16 +146,25 @@ public class PageReferenceComponent extends ComplexPropertiesLink implements IAc
 		private MenuElement rootOfChildrenAssociation;
 		private String humanName;
 
-		private static PageBean getInstance(ContentContext ctx, MenuElement page, PageReferenceComponent comp) throws Exception {
+		/**
+		 * 
+		 * @param ctx the basic context, use for create URL
+		 * @param lgCtx context with language corrected.
+		 * @param page
+		 * @param comp
+		 * @return
+		 * @throws Exception
+		 */
+		private static PageBean getInstance(ContentContext ctx, ContentContext lgCtx, MenuElement page, PageReferenceComponent comp) throws Exception {
 			
-			GlobalContext globalContext = GlobalContext.getInstance(ctx.getRequest());
+			GlobalContext globalContext = GlobalContext.getInstance(lgCtx.getRequest());
 
 			Iterator<String> defaultLg = globalContext.getDefaultLanguages().iterator();
 
-			Template pageTemplate = TemplateFactory.getTemplate(ctx, page);
+			Template pageTemplate = TemplateFactory.getTemplate(lgCtx, page);
 
 			defaultLg = globalContext.getContentLanguages().iterator();
-			ContentContext tagCtx = new ContentContext(ctx);
+			ContentContext tagCtx = new ContentContext(lgCtx);
 			while (page.getContentByType(tagCtx, Tags.TYPE).size() == 0 && defaultLg.hasNext()) {
 				String lg = defaultLg.next();
 				tagCtx.setContentLanguage(lg);
@@ -163,32 +172,32 @@ public class PageReferenceComponent extends ComplexPropertiesLink implements IAc
 			}
 
 			PageBean bean = new PageBean();
-			bean.language = ctx.getRequestContentLanguage();
-			ctx.setRequestContentLanguage(bean.language); // fix requestContentLanguage in case of navigation area
-			bean.title = page.getTitle(ctx);
+			bean.language = lgCtx.getRequestContentLanguage();
+			lgCtx.setRequestContentLanguage(bean.language); // fix requestContentLanguage in case of navigation area
+			bean.title = page.getTitle(lgCtx);
 			if (page.isChildrenAssociation() && page.getChildMenuElements().size() > 0) {
-				bean.title = page.getChildMenuElements().iterator().next().getTitle(ctx);
+				bean.title = page.getChildMenuElements().iterator().next().getTitle(lgCtx);
 			}
-			bean.subTitle = page.getSubTitle(ctx);
-			bean.realContent = page.isRealContent(ctx);
-			bean.attTitle = XHTMLHelper.stringToAttribute(page.getTitle(ctx));
-			bean.description = page.getDescription(ctx);
-			bean.location = page.getLocation(ctx);
-			bean.category = page.getCategory(ctx);
+			bean.subTitle = page.getSubTitle(lgCtx);
+			bean.realContent = page.isRealContent(lgCtx);
+			bean.attTitle = XHTMLHelper.stringToAttribute(page.getTitle(lgCtx));
+			bean.description = page.getDescription(lgCtx);
+			bean.location = page.getLocation(lgCtx);
+			bean.category = page.getCategory(lgCtx);
 			bean.visible = page.isVisible();
 			bean.path = page.getPath();
 			bean.creator = page.getCreator();
 			bean.childrenOfAssociation = page.isChildrenOfAssociation();
 			bean.childrenAssociation = page.isChildrenAssociation();
-			bean.reactionSize = page.getReactionSize(ctx);
+			bean.reactionSize = page.getReactionSize(lgCtx);
 			if (pageTemplate != null) {
 				bean.mailing = pageTemplate.isMailing();
 			}
 			bean.rootOfChildrenAssociation = page.getRootOfChildrenAssociation();
-			bean.setCategoryKey("category." + StringHelper.neverNull(page.getCategory(ctx)).toLowerCase().replaceAll(" ", ""));
+			bean.setCategoryKey("category." + StringHelper.neverNull(page.getCategory(lgCtx)).toLowerCase().replaceAll(" ", ""));
 
-			I18nAccess i18nAccess = I18nAccess.getInstance(ctx.getRequest());
-			ContentContext realContentCtx = new ContentContext(ctx);
+			I18nAccess i18nAccess = I18nAccess.getInstance(lgCtx.getRequest());
+			ContentContext realContentCtx = new ContentContext(lgCtx);
 			realContentCtx.setLanguage(realContentCtx.getRequestContentLanguage());
 			i18nAccess.changeViewLanguage(realContentCtx);
 			bean.categoryLabel = i18nAccess.getViewText(bean.getCategoryKey());
@@ -202,24 +211,24 @@ public class PageReferenceComponent extends ComplexPropertiesLink implements IAc
 			bean.id = page.getId();
 			bean.name = page.getName();
 			bean.humanName = page.getHumanName();
-			bean.selected = page.isSelected(ctx);
-			bean.linkOn = page.getLinkOn(ctx);
-			bean.creationDate = StringHelper.renderShortDate(ctx, page.getCreationDate());
-			bean.modificationDate = StringHelper.renderShortDate(ctx, page.getModificationDate());
-			bean.sortableModificationDate = StringHelper.renderShortDate(ctx, page.getModificationDate());
+			bean.selected = page.isSelected(lgCtx);
+			bean.linkOn = page.getLinkOn(lgCtx);
+			bean.creationDate = StringHelper.renderShortDate(lgCtx, page.getCreationDate());
+			bean.modificationDate = StringHelper.renderShortDate(lgCtx, page.getModificationDate());
+			bean.sortableModificationDate = StringHelper.renderShortDate(lgCtx, page.getModificationDate());
 			bean.sortableCreationDate = StringHelper.renderSortableDate(page.getCreationDate());
-			if (page.getContentDate(ctx) != null) {
-				bean.date = StringHelper.renderShortDate(ctx, page.getContentDate(ctx));
-				bean.sortableDate = StringHelper.renderSortableDate(page.getContentDate(ctx));
+			if (page.getContentDate(lgCtx) != null) {
+				bean.date = StringHelper.renderShortDate(lgCtx, page.getContentDate(lgCtx));
+				bean.sortableDate = StringHelper.renderSortableDate(page.getContentDate(lgCtx));
 				bean.contentDate = true;
 			} else {
-				bean.date = StringHelper.renderShortDate(ctx, page.getModificationDate());
+				bean.date = StringHelper.renderShortDate(lgCtx, page.getModificationDate());
 				bean.sortableDate = StringHelper.renderSortableDate(page.getModificationDate());
 				bean.contentDate = false;
 			}
-			if (page.getTimeRange(ctx) != null) {
-				bean.startDate = StringHelper.renderShortDate(ctx, page.getTimeRange(ctx).getStartDate());
-				bean.endDate = StringHelper.renderShortDate(ctx, page.getTimeRange(ctx).getEndDate());
+			if (page.getTimeRange(lgCtx) != null) {
+				bean.startDate = StringHelper.renderShortDate(lgCtx, page.getTimeRange(lgCtx).getStartDate());
+				bean.endDate = StringHelper.renderShortDate(lgCtx, page.getTimeRange(lgCtx).getEndDate());
 			} else {
 				bean.startDate = bean.date;
 				bean.endDate = bean.date;
@@ -232,32 +241,32 @@ public class PageReferenceComponent extends ComplexPropertiesLink implements IAc
 			MenuElement firstChild = page.getFirstChild();
 			if (firstChild != null && firstChild.isChildrenAssociation()) {
 				bean.url = URLHelper.createURL(ctx, firstChild.getPath());
-				bean.modificationDate = StringHelper.renderShortDate(ctx, firstChild.getModificationDate());
-				bean.sortableModificationDate = StringHelper.renderShortDate(ctx, firstChild.getModificationDate());
-				bean.publishURL = URLHelper.createAbsoluteViewURL(ctx, firstChild.getPath());
+				bean.modificationDate = StringHelper.renderShortDate(lgCtx, firstChild.getModificationDate());
+				bean.sortableModificationDate = StringHelper.renderShortDate(lgCtx, firstChild.getModificationDate());
+				bean.publishURL = URLHelper.createAbsoluteViewURL(lgCtx, firstChild.getPath());
 			} else {
 				bean.url = URLHelper.createURL(ctx, page.getPath());
-				bean.publishURL = URLHelper.createAbsoluteViewURL(ctx, page.getPath());
+				bean.publishURL = URLHelper.createAbsoluteViewURL(lgCtx, page.getPath());
 			}
 
-			String filter = comp.getConfig(ctx).getProperty("filter-image", "reference-list");
+			String filter = comp.getConfig(lgCtx).getProperty("filter-image", "reference-list");
 
-			IImageTitle image = page.getImage(ctx);
+			IImageTitle image = page.getImage(lgCtx);
 			if (image != null) {
-				bean.imagePath = image.getResourceURL(ctx);
-				bean.imageURL = URLHelper.createTransformURL(ctx, page, image.getResourceURL(ctx), filter);
-				bean.viewImageURL = URLHelper.createTransformURL(ctx, page, image.getResourceURL(ctx), "thumb-view");
-				bean.imageDescription = XHTMLHelper.stringToAttribute(image.getImageDescription(ctx));
+				bean.imagePath = image.getResourceURL(lgCtx);
+				bean.imageURL = URLHelper.createTransformURL(lgCtx, page, image.getResourceURL(lgCtx), filter);
+				bean.viewImageURL = URLHelper.createTransformURL(lgCtx, page, image.getResourceURL(lgCtx), "thumb-view");
+				bean.imageDescription = XHTMLHelper.stringToAttribute(image.getImageDescription(lgCtx));
 			}
-			Collection<IImageTitle> images = page.getImages(ctx);
+			Collection<IImageTitle> images = page.getImages(lgCtx);
 
 			for (IImageTitle imageItem : images) {
-				String imagePath = imageItem.getResourceURL(ctx);
-				String imageURL = URLHelper.createTransformURL(ctx, page, imageItem.getResourceURL(ctx), filter);
-				String viewImageURL = URLHelper.createTransformURL(ctx, page, imageItem.getResourceURL(ctx), "thumb-view");
-				String imageDescription = XHTMLHelper.stringToAttribute(imageItem.getImageDescription(ctx));
+				String imagePath = imageItem.getResourceURL(lgCtx);
+				String imageURL = URLHelper.createTransformURL(lgCtx, page, imageItem.getResourceURL(lgCtx), filter);
+				String viewImageURL = URLHelper.createTransformURL(lgCtx, page, imageItem.getResourceURL(lgCtx), "thumb-view");
+				String imageDescription = XHTMLHelper.stringToAttribute(imageItem.getImageDescription(lgCtx));
 				String cssClass = "";
-				String linkURL = imageItem.getImageLinkURL(ctx);
+				String linkURL = imageItem.getImageLinkURL(lgCtx);
 				if (linkURL != null) {
 					if (linkURL.equals(IImageTitle.NO_LINK)) {
 						cssClass = "no-link";
@@ -275,12 +284,12 @@ public class PageReferenceComponent extends ComplexPropertiesLink implements IAc
 
 			Collection<String> lgs = globalContext.getContentLanguages();
 			for (String lg : lgs) {
-				ContentContext lgCtx = new ContentContext(ctx);
-				lgCtx.setRequestContentLanguage(lg);
-				lgCtx.setContentLanguage(lg);
-				if (page.isRealContent(lgCtx)) {
+				ContentContext localLGCtx = new ContentContext(lgCtx);
+				localLGCtx.setRequestContentLanguage(lg);
+				localLGCtx.setContentLanguage(lg);
+				if (page.isRealContent(localLGCtx)) {
 					Locale locale = new Locale(lg);
-					Link link = new Link(URLHelper.createURL(lgCtx, page.getPath()), lg, lg+" - "+locale.getDisplayLanguage(locale) );
+					Link link = new Link(URLHelper.createURL(localLGCtx, page.getPath()), lg, lg+" - "+locale.getDisplayLanguage(locale) );
 					bean.links.add(link);
 				}
 			}
@@ -1562,7 +1571,7 @@ public class PageReferenceComponent extends ComplexPropertiesLink implements IAc
 										if (monthFilter == null || TimeHelper.betweenInDay(page.getContentDateNeverNull(lgCtx), startDate.getTime(), endDate.getTime())) {
 											countPage++;
 											if (countPage >= firstPageNumber && countPage <= lastPageNumber) {
-												pageBeans.add(PageBean.getInstance(lgCtx, page, this));
+												pageBeans.add(PageBean.getInstance(ctx, lgCtx, page, this));
 											}
 										}
 									}
@@ -1888,6 +1897,7 @@ public class PageReferenceComponent extends ComplexPropertiesLink implements IAc
 		out.println("parent-node=/articles");
 		out.println("width_empty=false");
 		out.println("is-def-selected=true");
+		out.println("page-end=32");
 		out.close();
 		setValue(new String(outStream.toByteArray()));
 		return true;

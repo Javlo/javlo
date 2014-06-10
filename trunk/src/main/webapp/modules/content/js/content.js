@@ -29,7 +29,7 @@ function loadWysiwyg(cssQuery, complexity, chooseFileURL) {
 		        "searchreplace visualblocks code fullscreen",
 		        "insertdatetime media table contextmenu paste"
 		    ],
-		    paste_word_valid_elements: "b,strong,i,em,h1,h2,h3,h4,h5,h6,table,tr,th,td",
+		    //paste_word_valid_elements: "b,strong,i,em,h1,h2,h3,h4,h5,h6,table,tr,th,td,ul,ol,li,p,a,div",
 		    toolbar: "insertfile undo redo | styleselect | bold italic | alignleft aligncenter alignright alignjustify | bullist numlist outdent indent | link image"
 		});
 	} else if (complexity == "high") {		
@@ -47,7 +47,7 @@ function loadWysiwyg(cssQuery, complexity, chooseFileURL) {
 		    ],
 		    toolbar1: "bold italic underline strikethrough | alignleft aligncenter alignright alignjustify | bullist numlist outdent indent | link image | forecolor backcolor | table charmap code",		    
 		    image_advtab: true,
-		    paste_word_valid_elements: "b,strong,i,em,h1,h2,h3,h4,h5,h6,table,tr,th,td",
+		    //paste_word_valid_elements: "b,strong,i,em,h1,h2,h3,h4,h5,h6,table,tr,th,td,ul,ol,li,p,a,div",
 		    file_browser_callback: function(field_name, url, type, win) {
 		    	
 	    	 	jQuery("body").data("fieldName", field_name);
@@ -84,7 +84,7 @@ function loadWysiwyg(cssQuery, complexity, chooseFileURL) {
 		menubar : false,
 		selector: cssQuery,
     	plugins: "paste",
-        paste_word_valid_elements: "b,strong,i,em,h1,h2,h3,h4,h5,h6,table,tr,th,td",
+        //paste_word_valid_elements: "b,strong,i,em,h1,h2,h3,h4,h5,h6,table,tr,th,td,ul,ol,li,p,a,div",
 		toolbar: "undo redo | bold italic | pastetext"
 		});	 
 	} else {
@@ -95,9 +95,9 @@ function loadWysiwyg(cssQuery, complexity, chooseFileURL) {
 		add_form_submit_trigger: true,	
 		menubar : false,
 		selector: cssQuery,
-		plugins: "paste",
-		paste_word_valid_elements: "b,strong,i,em,h1,h2,h3,h4,h5,h6,table,tr,th,td",
-		toolbar: "undo redo | bold italic | alignleft aligncenter alignright alignjustify | bullist numlist outdent indent | pastetext"
+		plugins: "paste link",
+		//paste_word_valid_elements: "b,strong,i,em,h1,h2,h3,h4,h5,h6,table,tr,th,td,ul,ol,li,p,a,div",
+		toolbar: "undo redo | bold italic | alignleft aligncenter alignright alignjustify | bullist numlist outdent indent | link pastetext"
 		});	 
 	}
 }

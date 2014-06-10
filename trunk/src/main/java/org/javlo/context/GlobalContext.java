@@ -1355,6 +1355,19 @@ public class GlobalContext implements Serializable, IPrintInfo {
 	public String getPathPrefix() {
 		return pathPrefix;
 	}
+	
+	/**
+	 * set a special path prefix needed by proxy.
+	 * @return
+	 */
+	public void setProxyPathPrefix(String prefix) {
+		properties.setProperty("proxy-path-prefix", prefix);
+		save();
+	}
+	
+	public String getProxyPathPrefix() {
+		return properties.getString("proxy-path-prefix","");
+	}
 
 	public Date getPublishDate() throws ParseException {
 		String dateStr = properties.getString("publish-date", null);
