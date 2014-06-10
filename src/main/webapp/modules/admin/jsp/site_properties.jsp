@@ -205,6 +205,11 @@
 	<input type="text" id="dmz-intra" name="dmz-intra" value="${currentContext.DMZServerIntra}" />	
 </div>
 
+<div class="line">		
+	<label for="proxy-prefix">${i18n.edit['admin.url.proxy-prefix']}</label>
+	<input type="text" id="proxy-prefix" name="proxy-prefix" value="${currentContext.proxyPathPrefix}" />	
+</div>
+
 </div>
 </fieldset>
 

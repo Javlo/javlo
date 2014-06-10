@@ -219,18 +219,23 @@ public abstract class ElementaryURLHelper {
 		if (ajax) {
 			mode = "/ajax/";
 		}
-
-		if (ctx.getContentLanguage().equals(ctx.getLanguage())) {
+		ContentContext noNavigationAreaCheckCtx = new ContentContext(ctx);
+		noNavigationAreaCheckCtx.setCheckContentArea(false);
+		if (uri.contains("press_release-2014-june-1")) {			
+			System.out.println("***** ElementaryURLHelper.createNoProtocolURL : noNavigationAreaCheckCtx.getContentLanguage() = "+noNavigationAreaCheckCtx.getContentLanguage()); //TODO: remove debug trace
+			System.out.println("***** ElementaryURLHelper.createNoProtocolURL : ctx.getContentLanguage() = "+ctx.getContentLanguage()); //TODO: remove debug trace
+		}
+		if (noNavigationAreaCheckCtx.getContentLanguage().equals(noNavigationAreaCheckCtx.getLanguage())) {
 			if (withPathPrefix) {
-				newUri = URLHelper.mergePath(getPathPrefix(ctx), mode, ctx.getLanguage(), uri);
+				newUri = URLHelper.mergePath(getPathPrefix(ctx), mode, noNavigationAreaCheckCtx.getLanguage(), uri);
 			} else {
-				newUri = URLHelper.mergePath(mode, ctx.getLanguage(), uri);
+				newUri = URLHelper.mergePath(mode, noNavigationAreaCheckCtx.getLanguage(), uri);
 			}
 		} else {
 			if (withPathPrefix) {
-				newUri = URLHelper.mergePath(getPathPrefix(ctx), mode, ctx.getLanguage() + '-' + ctx.getContentLanguage(), uri);
+				newUri = URLHelper.mergePath(getPathPrefix(ctx), mode, noNavigationAreaCheckCtx.getLanguage() + '-' + noNavigationAreaCheckCtx.getContentLanguage(), uri);
 			} else {
-				newUri = URLHelper.mergePath(mode, ctx.getLanguage() + '-' + ctx.getContentLanguage(), uri);
+				newUri = URLHelper.mergePath(mode, noNavigationAreaCheckCtx.getLanguage() + '-' + noNavigationAreaCheckCtx.getContentLanguage(), uri);
 			}
 		}
 
@@ -245,6 +250,9 @@ public abstract class ElementaryURLHelper {
 
 		if (ctx.isEditPreview()) {
 			newUri = URLHelper.addParam(newUri, "editPreview", "true");
+		}
+		if (!ctx.isInternalURL() && ctx.getGlobalContext().getProxyPathPrefix().length() > 0) {
+			newUri = URLHelper.mergePath(ctx.getGlobalContext().getProxyPathPrefix(),newUri);
 		}
 		return newUri;
 	}
@@ -297,6 +305,9 @@ public abstract class ElementaryURLHelper {
 			url = addHost(ctx, url);
 		}
 		url = url.replace('\\', '/');
+		if (!ctx.isInternalURL() && ctx.getGlobalContext().getProxyPathPrefix().length() > 0) {
+			url = URLHelper.mergePath(ctx.getGlobalContext().getProxyPathPrefix(),url);
+		}
 		return url;
 	}
 

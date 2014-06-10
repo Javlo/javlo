@@ -350,6 +350,8 @@ public class ContentContext {
 	public Boolean contentExistForContext = null;
 
 	public Boolean editPreview = null;
+	
+	private boolean checkContentArea = true;
 
 	/** cache **/
 
@@ -366,6 +368,8 @@ public class ContentContext {
 	private boolean needRefresh = false;
 
 	private String hostName = null;
+	
+	private boolean internalURL = false;
 
 	private int hostPort = -1;
 
@@ -456,6 +460,10 @@ public class ContentContext {
 		pageAssociation = ctx.pageAssociation;
 		
 		componentCache = ctx.componentCache;
+		
+		internalURL = ctx.internalURL;
+		
+		checkContentArea = ctx.checkContentArea;
 	}
 
 	public String getArea() {
@@ -470,7 +478,7 @@ public class ContentContext {
 	@Deprecated
 	public String getContentLanguage() {
 		try {
-			if (getCurrentTemplate() != null && getCurrentTemplate().isNavigationArea(getArea())) {
+			if (isCheckContentArea() && getCurrentTemplate() != null && getCurrentTemplate().isNavigationArea(getArea())) {
 				return getLanguage();
 			}
 		} catch (Exception e) {
@@ -519,6 +527,12 @@ public class ContentContext {
 	public ContentContext getContextWithOtherRenderMode(int mode) {
 		ContentContext outContext = new ContentContext(this);
 		outContext.setRenderMode(mode);
+		return outContext;
+	}
+	
+	public ContentContext getContextWithInternalURL() {
+		ContentContext outContext = new ContentContext(this);
+		outContext.setInternalURL(true);
 		return outContext;
 	}
 
@@ -815,7 +829,7 @@ public class ContentContext {
 			return getContentLanguage();
 		} else {
 			try {
-				if (getCurrentTemplate() != null && getCurrentTemplate().isNavigationArea(getArea())) {
+				if (isCheckContentArea() && getCurrentTemplate() != null && getCurrentTemplate().isNavigationArea(getArea())) {
 					return getLanguage();
 				}
 			} catch (Exception e) {
@@ -1701,5 +1715,25 @@ public class ContentContext {
 
 	public void setComponentCache(boolean componentCache) {
 		this.componentCache = componentCache;
+	}
+
+	/**
+	 * don't use proxy for rendering (URL don't use getProxyPrefix on globalContext)
+	 * @return
+	 */
+	public boolean isInternalURL() {
+		return internalURL;
+	}
+
+	public void setInternalURL(boolean internalURL) {
+		this.internalURL = internalURL;
+	}
+
+	public boolean isCheckContentArea() {
+		return checkContentArea;
+	}
+
+	public void setCheckContentArea(boolean checkContentArea) {
+		this.checkContentArea = checkContentArea;
 	}
 }

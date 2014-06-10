@@ -6,8 +6,8 @@
 	<h3>${title}</h3>
 </c:if>
 <ul name="children-link">
-<c:forEach var="child" items="${children}" varStatus="status">
+<c:forEach var="child" items="${children}" varStatus="status"><c:if test="${child.realContent}">
 	<li ${child.selected?'class="selected"':'class="unselected"'}><a href="${child.url}">${child.fullLabel}</a></li>
-</c:forEach>
+</c:if></c:forEach>
 </ul>
 </c:if> 
