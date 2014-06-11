@@ -8,8 +8,8 @@
 <c:if test="${empty messages.globalMessage || messages.globalMessage.type == 0 || messages.globalMessage.type == 1 || messages.globalMessage.type == 2 || messages.globalMessage.type == 5}">
 <form method="post">
 <div class="line">
-	<input class="hidden" name="comp-id" value="${comp.id}" />
-	<input class="hidden" name="webaction" value="mailing-registration.submit" />
+	<input type="hidden" name="comp-id" value="${comp.id}" />
+	<input type="hidden" name="webaction" value="mailing-registration.submit" />
 	<label for="email">${i18n.view['field.email']}</label>
 	<input type="text" name="email" placeholder="${i18n.view['field.email']}" />	
 </div>
