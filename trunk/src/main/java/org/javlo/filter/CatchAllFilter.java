@@ -213,6 +213,7 @@ public class CatchAllFilter implements Filter {
 					if (editPreview) {
 						editURI = URLHelper.addParam(editURI, "previewEdit", "true");
 					}
+					System.out.println("***** CatchAllFilter.doFilter : editURI = "+editURI); //TODO: remove debug trace
 					httpRequest.getRequestDispatcher(editURI).forward(request, response);
 					return;
 				}

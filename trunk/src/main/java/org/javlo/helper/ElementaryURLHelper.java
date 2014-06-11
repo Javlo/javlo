@@ -221,10 +221,6 @@ public abstract class ElementaryURLHelper {
 		}
 		ContentContext noNavigationAreaCheckCtx = new ContentContext(ctx);
 		noNavigationAreaCheckCtx.setCheckContentArea(false);
-		if (uri.contains("press_release-2014-june-1")) {			
-			System.out.println("***** ElementaryURLHelper.createNoProtocolURL : noNavigationAreaCheckCtx.getContentLanguage() = "+noNavigationAreaCheckCtx.getContentLanguage()); //TODO: remove debug trace
-			System.out.println("***** ElementaryURLHelper.createNoProtocolURL : ctx.getContentLanguage() = "+ctx.getContentLanguage()); //TODO: remove debug trace
-		}
 		if (noNavigationAreaCheckCtx.getContentLanguage().equals(noNavigationAreaCheckCtx.getLanguage())) {
 			if (withPathPrefix) {
 				newUri = URLHelper.mergePath(getPathPrefix(ctx), mode, noNavigationAreaCheckCtx.getLanguage(), uri);
@@ -393,7 +389,7 @@ public abstract class ElementaryURLHelper {
 		url = URLHelper.addMailingFeedback(ctx, url);
 		if (ctx.getDevice().isForced()) {
 			url = addParam(url, Device.FORCE_DEVICE_PARAMETER_NAME, ctx.getDevice().getCode());
-		}
+		}		
 		return url;
 	}
 
