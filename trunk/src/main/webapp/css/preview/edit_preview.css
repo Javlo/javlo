@@ -59,6 +59,10 @@ body.edit-preview {
 	border-top: 2px #ff5555 dashed;
 }
 
+.edit-preview body {
+	position: static;
+}
+
 #preview_command .pc_command select {
 	width: auto;
 	margin: 0;

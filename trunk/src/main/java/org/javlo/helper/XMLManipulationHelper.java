@@ -696,7 +696,7 @@ public class XMLManipulationHelper {
 				if ((srcValue != null)) {
 					resources.add(srcValue);
 					if (tags[i].getName().equalsIgnoreCase("script")) {
-						if (!srcValue.toLowerCase().startsWith("https")) {
+						//if (!srcValue.toLowerCase().startsWith("https")) { // restore https because sometime template contains reference to https://ajax.googlecode.com...
 							String newLinkGeneratorIf = "<%if (!XHTMLHelper.allReadyInsered(ctx, \"" + srcValue + "\")) {%>";
 							if (!StringHelper.isURL(srcValue) && !srcValue.trim().startsWith("${")) {
 								attributes.put("src", "<%=URLHelper.createStaticTemplateURL(ctx,\"/" + srcValue + "\")%>");
@@ -706,7 +706,7 @@ public class XMLManipulationHelper {
 								newLinkGeneratorIf = "<%if (!XHTMLHelper.allReadyClosedIfOpen(ctx, \"" + srcValue + "\")) {%>";
 								remplacement.addReplacement(tags[i].getCloseStart(), tags[i].getCloseEnd() + 1, newLinkGeneratorIf + "</"+tags[i].getName() + "><%}%>");
 							}
-						}						
+						//}						
 					} else {
 						if (!attributes.get("src").toLowerCase().startsWith("http://") && !attributes.get("src").contains("${")) {
 							attributes.put("src", "<%=URLHelper.createStaticTemplateURL(ctx,\"/" + srcValue + "\")%>");
