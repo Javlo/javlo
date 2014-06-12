@@ -3,7 +3,7 @@
 %><table class="qrcode" width="100%" style="width: 100%;">
 	<tr>
 		<td width="200">
-			<img width="200" src="${previewURL}" alt="${not empty description?description:label}" />
+			<img width="200" src="${previewURL}" />
 		</td>
 		<td width="10">&nbsp;</td>
 		<td>${not empty label?label:description}</td>
