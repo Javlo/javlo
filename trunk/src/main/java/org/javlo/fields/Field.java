@@ -493,20 +493,18 @@ public class Field implements Cloneable {
 			return getLabel();
 		}
 
-		String key = properties.getProperty(createKey("label.key"));
-		String label;
-		if (key != null) {
-			label = i18nAccess.getText(key);
-		} else {
-			label = properties.getProperty(createKey("label." + locale.getLanguage()));
+		String label = properties.getProperty(createKey("label." + locale.getLanguage()));
+		if (label == null) {
+			label = properties.getProperty(createKey("label"));
 			if (label == null) {
-				label = properties.getProperty(createKey("label"));
-				if (label == null) {
-					label = getUnicName();
-				}
+				label = getUnicName();
 			}
 		}
-
+		String key = properties.getProperty(createKey("label.key"));
+		if (key != null) {
+			label = i18nAccess.getAllText(key.trim(),label);
+		}
+		
 		return label;
 	}
 

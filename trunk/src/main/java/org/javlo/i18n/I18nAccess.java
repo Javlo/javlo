@@ -663,4 +663,8 @@ public class I18nAccess implements Serializable {
 
 	}
 
+	public String getAllText(String key, String defautlValue) {
+		return getViewText(key,getText(key, defautlValue));
+	}
+
 }
