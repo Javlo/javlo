@@ -2967,5 +2967,27 @@ public class StringHelper {
 		}
 		return outList;
 	}
+	
+	/**
+	 * get the item from a string with separator.
+	 * sample : text1,text2,text3 getItem(sample,",",1) = text1
+	 * @param text
+	 * @param sep
+	 * @param i 
+	 * @param defaultValue default value if item not found
+	 * @return
+	 */
+	public static String getItem(String text, String sep, int i, String defaultValue) {
+		if (text == null || sep == null || i<1) {
+			return defaultValue;
+		}
+		String[] splitted = StringUtils.split(text, sep);
+		if (splitted.length<i) {
+			return defaultValue;
+		} else {
+			return splitted[i-1];
+		}
+		
+	}
 
 }

@@ -191,6 +191,14 @@ public class SimplePoll extends AbstractVisualComponent implements IAction {
 		finalCode.append("</textarea>");
 		finalCode.append("<fieldset>");
 		finalCode.append("<legend>" + i18nAccess.getText("content.simple-poll.current-result") + "</legend>");
+		finalCode.append("<div class=\"line\">");
+		finalCode.append("<label for=\"" + getDisplayResultInputName() + "\">" + i18nAccess.getText("content.simple-poll.display-result") + " :</label>");
+		String checked="";
+		if (isDisplayResult()) {
+			checked=" checked=\"checked\"";
+		}
+		finalCode.append("<input type=\"checkbox\" id=\"" + getDisplayResultInputName() + "\" name=\"" + getDisplayResultInputName() + "\""+checked+" />");
+		finalCode.append("</div>");
 		finalCode.append(getCurrentResult(ctx));
 		finalCode.append("</fieldset>");
 		return finalCode.toString();
@@ -200,7 +208,7 @@ public class SimplePoll extends AbstractVisualComponent implements IAction {
 		String value = getValue();
 		if (value.indexOf('#') > -1) {
 			try {
-				value = value.substring(0, value.indexOf('#'));
+				value = StringHelper.getItem(value, "#", 1, "");
 			} catch (Throwable e) {
 				return "";
 			}
@@ -209,13 +217,12 @@ public class SimplePoll extends AbstractVisualComponent implements IAction {
 			return "";
 		}
 	}
-
+	
 	protected String getResponses() {
 		String value = getValue();
 		if (value.indexOf('#') > -1) {
-			try {
-				value = value.substring(value.indexOf('#') + 1);
-				value = value.substring(0, value.indexOf('#'));
+			try {				
+				value = StringHelper.getItem(value, "#", 2, "");
 			} catch (Throwable e) {
 				return "";
 			}
@@ -228,17 +235,33 @@ public class SimplePoll extends AbstractVisualComponent implements IAction {
 		if (getValue().indexOf('#') > -1) {
 			try {
 				value = getValue();
-				value = value.substring(value.indexOf('#') + 1);
-				value = value.substring(value.indexOf('#') + 1);
+				value = StringHelper.getItem(value, "#", 3, "");
 			} catch (Throwable e) {
 				return "";
 			}
 		}
 		return value;
 	}
+	
+	public boolean isDisplayResult() {
+		String value = getValue();
+		if (value.indexOf('#') > -1) {
+			try {
+				return StringHelper.isTrue(StringHelper.getItem(value, "#", 4, null));
+			} catch (Throwable e) {
+				return false;
+			}			
+		} else {
+			return false;
+		}
+	}
 
 	public String getSeparatorInputName() {
 		return "separator-" + getId();
+	}
+	
+	public String getDisplayResultInputName() {
+		return "display-result-" + getId();
 	}
 
 	private String getSessionKey() {
@@ -282,7 +305,7 @@ public class SimplePoll extends AbstractVisualComponent implements IAction {
 		StringWriter writer = new StringWriter();
 		PrintWriter out = new PrintWriter(writer);
 
-		out.println("<form id=\"poll-" + getId() + "\" method=\"post\">");
+		out.println("<form class=\"standard-form\" id=\"poll-" + getId() + "\" method=\"post\">");
 		String cssClass = "";
 		if (allReadyVoted(ctx, true) || !getStyle(ctx).equalsIgnoreCase(INTERACTIVE)) {
 			cssClass = " class=\"result\"";
@@ -301,7 +324,7 @@ public class SimplePoll extends AbstractVisualComponent implements IAction {
 			int index = 1;
 			for (String response : responses) {
 				String id = "id_" + StringHelper.getRandomId();
-				out.println("<div class=\"line\"><input type=\"radio\" name=\"response\" id=\"" + id + "\" value=\"" + index + "\" /><label for=\"" + id + "\">" + response + "</label></div>");
+				out.println("<div class=\"line\"><input type=\"radio\" name=\"response\" id=\"" + id + "\" value=\"" + index + "\" /><label class=\"radio\" for=\"" + id + "\">" + response + "</label></div>");
 				index++;
 			}
 			I18nAccess i18nAccess = I18nAccess.getInstance(ctx.getRequest());
@@ -309,7 +332,14 @@ public class SimplePoll extends AbstractVisualComponent implements IAction {
 			out.println("<input type=\"submit\" value=\"" + i18nAccess.getViewText("global.ok") + "\" />");
 			out.println("</div>");
 		} else {
-			out.println(getCurrentResult(ctx));
+			if (isDisplayResult()) {
+				out.println(getCurrentResult(ctx));
+			} else {
+				I18nAccess i18nAccess = I18nAccess.getInstance(ctx.getRequest());
+				out.print("<p>");
+				out.print(i18nAccess.getViewText("content.simple-poll.done"));
+				out.println("</p>");
+			}
 		}
 
 		out.println("</fieldset>");
@@ -413,10 +443,11 @@ public class SimplePoll extends AbstractVisualComponent implements IAction {
 		RequestService requestService = RequestService.getInstance(ctx.getRequest());
 		String newContent = requestService.getParameter(getContentName(), null);
 		String question = requestService.getParameter(getSeparatorInputName(), "");
+		boolean displayResult = requestService.getParameter(getDisplayResultInputName(), null) != null;
 
 		if (newContent != null) {
 			if (question.length() > 0) {
-				newContent = question + '#' + newContent + '#' + getResult();
+				newContent = question + '#' + newContent + '#' + getResult() + '#' + displayResult;
 			}
 			if (!getComponentBean().getValue().equals(newContent)) {
 				getComponentBean().setValue(newContent);

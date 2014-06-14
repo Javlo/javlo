@@ -175,6 +175,10 @@ label {
 	display: block;
 }
 
+.line input {
+	vertical-align: middle;
+}
+
 .line.validation {
 	padding: 4px 0;
 }
@@ -183,7 +187,10 @@ label {
 	display: inline;
 }
 
-label.checkbox {
+label.checkbox, label.radio {	
+	margin: 0 0 0 5px;
+	padding: 0;
+	vertical-align: middle;
 	display: inline-block;
 }
 
