@@ -92,6 +92,15 @@ public class StringHelperTest extends TestCase {
 	  assertEquals(StringHelper.encodeAsStructuredCommunicationMod97("0000000007"), "000/0000/00707");
   }
   
+  public void testGetItem() throws Exception {
+	  assertEquals(StringHelper.getItem("patrick|barbara|catherine", "|", 1, null),"patrick");
+	  assertEquals(StringHelper.getItem("patrick|barbara|catherine", "|", 2, null),"barbara");
+	  assertEquals(StringHelper.getItem("patrick|barbara|catherine", "|", 3, null),"catherine");
+	  assertEquals(StringHelper.getItem("patrick|barbara|catherine", "|", 4, null),null);
+	  assertEquals(StringHelper.getItem("patrick|barbara|catherine", "|", 0, "default"),"default");
+	  assertEquals(StringHelper.getItem("patrick123barbara123catherine", "123", 2, null),"barbara");
+  }
+  
   public void testTrim() {
 	  assertEquals(StringHelper.trim("test", ')'),"test");
 	  assertEquals(StringHelper.trim(null, ')'),null);
