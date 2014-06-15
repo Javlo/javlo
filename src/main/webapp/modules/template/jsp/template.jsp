@@ -78,7 +78,7 @@
                     <a href="${selectUrl}&template=${template.name}" class="select" title="select"></a>
                     </c:if>
                     
-                    <a href="${info.currentURL}?webaction=commitChildren&templateid=galaxy-2014" class="push" title="commit"></a>
+                    <a href="${info.currentURL}?webaction=commitChildren&templateid=${template.name}" class="push" title="commit"></a>
                     
                     <c:if test="${not template.valid}">
                     <c:url value="${info.currentURL}" var="validURL" context="/">

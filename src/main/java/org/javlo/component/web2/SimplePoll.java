@@ -161,12 +161,19 @@ public class SimplePoll extends AbstractVisualComponent implements IAction {
 			String percent = StringHelper.renderDoubleAsPercentage((vote / getVotesCount(ctx)));
 			int percentValue = Integer.parseInt(percent.replace("%", "").trim());
 			GlobalContext globalContext = GlobalContext.getInstance(ctx.getRequest());
-			if (AdminUserFactory.createUserFactory(globalContext, ctx.getRequest().getSession()).getCurrentUser(ctx.getRequest().getSession()) != null) { // if admin logged
+			if (AdminUserFactory.createUserFactory(globalContext, ctx.getRequest().getSession()).getCurrentUser(ctx.getRequest().getSession()) != null) { // if
+																																							// admin
+																																							// logged
 				if (ctx.getRenderMode() == ContentContext.EDIT_MODE) {
 					percent = percent + " (" + Math.round(vote) + '/' + getVotesCount(ctx) + ')';
 				} else if (ctx.getRenderMode() == ContentContext.PREVIEW_MODE) {
 					percent = "" + Math.round(vote) + '/' + getVotesCount(ctx);
 				}
+				
+				if (responses.size() == 1) {
+					percent = ""+getVotesCount(ctx);
+				}
+				
 			}
 			String resultBar = "<div class=\"result-bar\"><span class=\"bar\" style=\"width: " + percentValue + "px;\" ></span></div>";
 			out.println("<div class=\"line\"><label for=\"" + id + "\">" + response + "</label>" + resultBar + percent + "</div>");
@@ -193,11 +200,11 @@ public class SimplePoll extends AbstractVisualComponent implements IAction {
 		finalCode.append("<legend>" + i18nAccess.getText("content.simple-poll.current-result") + "</legend>");
 		finalCode.append("<div class=\"line\">");
 		finalCode.append("<label for=\"" + getDisplayResultInputName() + "\">" + i18nAccess.getText("content.simple-poll.display-result") + " :</label>");
-		String checked="";
+		String checked = "";
 		if (isDisplayResult()) {
-			checked=" checked=\"checked\"";
+			checked = " checked=\"checked\"";
 		}
-		finalCode.append("<input type=\"checkbox\" id=\"" + getDisplayResultInputName() + "\" name=\"" + getDisplayResultInputName() + "\""+checked+" />");
+		finalCode.append("<input type=\"checkbox\" id=\"" + getDisplayResultInputName() + "\" name=\"" + getDisplayResultInputName() + "\"" + checked + " />");
 		finalCode.append("</div>");
 		finalCode.append(getCurrentResult(ctx));
 		finalCode.append("</fieldset>");
@@ -217,11 +224,11 @@ public class SimplePoll extends AbstractVisualComponent implements IAction {
 			return "";
 		}
 	}
-	
+
 	protected String getResponses() {
 		String value = getValue();
 		if (value.indexOf('#') > -1) {
-			try {				
+			try {
 				value = StringHelper.getItem(value, "#", 2, "");
 			} catch (Throwable e) {
 				return "";
@@ -242,7 +249,7 @@ public class SimplePoll extends AbstractVisualComponent implements IAction {
 		}
 		return value;
 	}
-	
+
 	public boolean isDisplayResult() {
 		String value = getValue();
 		if (value.indexOf('#') > -1) {
@@ -250,7 +257,7 @@ public class SimplePoll extends AbstractVisualComponent implements IAction {
 				return StringHelper.isTrue(StringHelper.getItem(value, "#", 4, null));
 			} catch (Throwable e) {
 				return false;
-			}			
+			}
 		} else {
 			return false;
 		}
@@ -259,7 +266,7 @@ public class SimplePoll extends AbstractVisualComponent implements IAction {
 	public String getSeparatorInputName() {
 		return "separator-" + getId();
 	}
-	
+
 	public String getDisplayResultInputName() {
 		return "display-result-" + getId();
 	}
@@ -322,15 +329,22 @@ public class SimplePoll extends AbstractVisualComponent implements IAction {
 			out.println("<input type=\"hidden\" name=\"comp-id\" value=\"" + getId() + "\" />");
 			List<String> responses = StringHelper.textToList(getResponses());
 			int index = 1;
-			for (String response : responses) {
-				String id = "id_" + StringHelper.getRandomId();
-				out.println("<div class=\"line\"><input type=\"radio\" name=\"response\" id=\"" + id + "\" value=\"" + index + "\" /><label class=\"radio\" for=\"" + id + "\">" + response + "</label></div>");
-				index++;
+			if (responses.size() > 1) {
+				for (String response : responses) {
+					String id = "id_" + StringHelper.getRandomId();
+					out.println("<div class=\"line\"><input type=\"radio\" name=\"response\" id=\"" + id + "\" value=\"" + index + "\" /><label class=\"radio\" for=\"" + id + "\">" + response + "</label></div>");
+					index++;
+				}
+			} else if (responses.size() == 1) {
+				String response = responses.iterator().next();				
+				out.println("<div class=\"line\"><input type=\"hidden\" name=\"response\" value=\""+index+"\" /><input type=\"submit\"  value=\"" + response + "\" /></div>");
 			}
 			I18nAccess i18nAccess = I18nAccess.getInstance(ctx.getRequest());
-			out.println("<div class=\"line\">");
-			out.println("<input type=\"submit\" value=\"" + i18nAccess.getViewText("global.ok") + "\" />");
-			out.println("</div>");
+			if (responses.size() > 1) {
+				out.println("<div class=\"line\">");
+				out.println("<input type=\"submit\" value=\"" + i18nAccess.getViewText("global.ok") + "\" />");
+				out.println("</div>");
+			}
 		} else {
 			if (isDisplayResult()) {
 				out.println(getCurrentResult(ctx));
