@@ -357,22 +357,28 @@ public class XMLManipulationHelper {
 			// displayResult(tags, content, System.out);
 
 			StringRemplacementHelper remplacement = new StringRemplacementHelper();
+			
+			PrefixHeadContext headContext = new PrefixHeadContext();
+			/**
+			 * check if description and keyword is allready defined.
+			 */
+			for (int i = 0; i < tags.length; i++) {
+				if (!isMail) {
+					if (tags[i].getName().equalsIgnoreCase("meta")) {
+						if ((tags[i].getAttributes().get("name") != null) && (tags[i].getAttributes().get("name").equalsIgnoreCase("description"))) {
+							headContext.setDescription(false);
+						} else if ((tags[i].getAttributes().get("name") != null) && (tags[i].getAttributes().get("name").equalsIgnoreCase("keywords"))) {
+							headContext.setKeyword(false);
+						}
+					}
+				}
+			}
+			
 			for (int i = 0; i < tags.length; i++) {
 				Map<String, String> attributes = tags[i].getAttributes();
 				String idValue = attributes.get("id");
 				if (ids != null && idValue != null) {
 					ids.add(idValue);
-				}
-
-				/* remove description and keywords from template */
-				if (!isMail) {
-					if (tags[i].getName().equalsIgnoreCase("meta")) {
-						if ((tags[i].getAttributes().get("name") != null) && (tags[i].getAttributes().get("name").equalsIgnoreCase("description"))) {
-							remplacement.addReplacement(tags[i].getOpenStart(), tags[i].getCloseEnd() + 1, "");
-						} else if ((tags[i].getAttributes().get("name") != null) && (tags[i].getAttributes().get("name").equalsIgnoreCase("keywords"))) {
-							remplacement.addReplacement(tags[i].getOpenStart(), tags[i].getCloseEnd() + 1, "");
-						}
-					}
 				}
 
 				/* area */
@@ -614,9 +620,9 @@ public class XMLManipulationHelper {
 				if (tags[i].getName().equalsIgnoreCase("head")) {
 
 					if (content.indexOf(HEADER_ZONE) > 0) {
-						remplacement.addReplacement(content.indexOf(HEADER_ZONE), content.indexOf(HEADER_ZONE) + HEADER_ZONE.length(), getHTMLPrefixHead());
+						remplacement.addReplacement(content.indexOf(HEADER_ZONE), content.indexOf(HEADER_ZONE) + HEADER_ZONE.length(), getHTMLPrefixHead(headContext));
 					} else {
-						remplacement.addReplacement(tags[i].getOpenEnd() + 1, tags[i].getOpenEnd() + 1, getHTMLPrefixHead());
+						remplacement.addReplacement(tags[i].getOpenEnd() + 1, tags[i].getOpenEnd() + 1, getHTMLPrefixHead(headContext));
 					}
 					
 					
@@ -916,7 +922,7 @@ public class XMLManipulationHelper {
 		return "";
 	}
 
-	private static String getHTMLPrefixHead() throws IOException {
+	private static String getHTMLPrefixHead(PrefixHeadContext context) throws IOException {
 
 		StringWriter outString = new StringWriter();
 		BufferedWriter out = new BufferedWriter(outString);
@@ -935,17 +941,21 @@ public class XMLManipulationHelper {
 		out.newLine();
 		out.append("</script>");
 		out.newLine();
-		out.append("<%}");
-		out.append("if (currentPage.getKeywords(ctx).length()>0){%>");
+		out.append("<%}%>");
+		if (context.isKeyword()) {
+			out.append("<%if (currentPage.getKeywords(ctx).length()>0){%>");
+			out.newLine();
+			out.append("<meta name=\"keywords\" content=\"<%=currentPage.getKeywords(ctx)%>\" />");
+			out.newLine();
+			out.append("<%}%>");
+		}		
+		if (context.isDescription()) {
+			out.append("<%if (currentPage.getMetaDescription(ctx).length()>0){%><meta name=\"description\" content=\"<%=currentPage.getMetaDescription(ctx)%>\" />");
+			out.newLine();
+			out.append("<%}%>");
+		}
 		out.newLine();
-		out.append("<meta name=\"keywords\" content=\"<%=currentPage.getKeywords(ctx)%>\" />");
-		out.newLine();
-		out.append("<%}");
-		out.append("%><%if (currentPage.getMetaDescription(ctx).length()>0){%><meta name=\"description\" content=\"<%=currentPage.getMetaDescription(ctx)%>\" />");
-		out.newLine();
-		out.append("<%}");
-		out.newLine();
-		out.append("%><%=XHTMLNavigationHelper.getRSSHeader(ctx, currentPage)%>");
+		out.append("<%=XHTMLNavigationHelper.getRSSHeader(ctx, currentPage)%>");
 		out.newLine();
 
 		/*
