@@ -818,7 +818,7 @@ public class ReactionComponent extends DynamicComponent implements IAction {
 			}
 			renderReactions(out, id, "", null, reactions, ctx, i18nAccess, displayUserInfo, displayTitle, replyAllowed);
 			if (addAllowed) {
-				renderSendReactionForm(out, id, null, ctx, i18nAccess);
+				renderSendReactionForm(out, id, null, null, ctx, i18nAccess);
 			} else {
 				out.println("<p>");
 				out.println(i18nAccess.getViewText("reaction.login-to-add"));
@@ -851,20 +851,24 @@ public class ReactionComponent extends DynamicComponent implements IAction {
 				out.println("<li id=\"message" + htmlIdSuffix + "\" class=\"comment-entry" + (first ? " first" : "") + "\">");
 
 				out.println("<div class=\"metapost\"><span class=\"authors\">");
+				User user;
 				if (displayUserInfo) {
 					IUserFactory userFactory = AdminUserFactory.createUserFactory(ctx.getGlobalContext(), ctx.getRequest().getSession());
-					User user = userFactory.getUser(reaction.getAuthors());
+					user = userFactory.getUser(reaction.getAuthors());
 					if (user == null) {
 						userFactory = UserFactory.createUserFactory(ctx.getGlobalContext(), ctx.getRequest().getSession());
 						user = userFactory.getUser(reaction.getAuthors());
 					}
-					if (user != null) {
-						out.println(XHTMLHelper.renderUserData(ctx, user));
-					} else {
-						out.println(StringHelper.removeTag(reaction.getAuthors()));
-					}
 				} else {
-					out.println(StringHelper.removeTag(reaction.getAuthors()));
+					user = null;
+				}
+				String userDisplayName;
+				if (user != null) {
+					out.println(XHTMLHelper.renderUserData(ctx, user));
+					userDisplayName = user.getUserInfo().getLastName() + " " + user.getUserInfo().getFirstName();
+				} else {
+					userDisplayName = StringHelper.removeTag(reaction.getAuthors());
+					out.println(userDisplayName);
 				}
 				out.println("</span></div>");
 
@@ -887,7 +891,7 @@ public class ReactionComponent extends DynamicComponent implements IAction {
 				out.println("</span></div>");
 
 				if (displayReply) {
-					renderSendReactionForm(out, id, reaction.getId(), ctx, i18nAccess);
+					renderSendReactionForm(out, id, reaction, userDisplayName, ctx, i18nAccess);
 				}
 				renderReactions(out, id, htmlIdSuffix, reaction.getId(), reactions, ctx, i18nAccess, displayUserInfo, displayTitle, displayReply);
 				out.println("</li>");
@@ -899,10 +903,10 @@ public class ReactionComponent extends DynamicComponent implements IAction {
 		}
 	}
 
-	private void renderSendReactionForm(PrintWriter out, String id, String reactionId, ContentContext ctx, I18nAccess i18nAccess) throws Exception {
+	private void renderSendReactionForm(PrintWriter out, String id, Reaction reaction, String replyToUser, ContentContext ctx, I18nAccess i18nAccess) throws Exception {
 		out.println("<div class=\"reaction-form\">");
 		String reactionIdParam = ctx.getRequest().getParameter("reactionId");
-		if ((reactionIdParam == null && reactionId == null) || (reactionIdParam != null && reactionIdParam.equals(reactionId))) {
+		if ((reactionIdParam == null && reaction == null) || (reactionIdParam != null && reaction != null && reactionIdParam.equals(reaction.getId()))) {
 			MessageRepository messageRepository = MessageRepository.getInstance(ctx);
 			if (messageRepository.getGlobalMessage() != null && messageRepository.getGlobalMessage().getTypeLabel() != null) {
 				out.println("<div class=\"message\">");
@@ -910,7 +914,9 @@ public class ReactionComponent extends DynamicComponent implements IAction {
 			out.println("</div>");
 			}
 		}
-		out.println("<form id=\"reaction-" + getId() + "\" method=\"post\" action=\"" + URLHelper.createURL(ctx) + "#" + id + "\" class=\"big_form\" >");
+		String reactionId = reaction == null ? null : reaction.getId();
+		String formTitle = reaction == null ? "" : i18nAccess.getViewText("global.reply-to") + " " + replyToUser;
+		out.println("<form id=\"reaction-" + getId() + "\" method=\"post\" action=\"" + URLHelper.createURL(ctx) + "#" + id + "\" class=\"big_form\" title=\"" + formTitle + "\">");
 		out.println("<input type=\"hidden\" name=\"webaction\" value=\"reaction.add\" />");
 		out.println("<input type=\"hidden\" name=\"comp\" value=\"" + getId() + "\" />");
 		out.println("<input type=\"hidden\" name=\"reactionId\" value=\"" + StringHelper.neverNull(reactionId) + "\" />");
