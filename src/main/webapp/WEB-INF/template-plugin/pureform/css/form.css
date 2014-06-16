@@ -143,7 +143,7 @@ input[type="text"], input[type="password"], input[type="email"], input[type="url
     transition: border 0.3s linear 0s;
 }
 
-input[type="submit"] {
+input[type="submit"],input[type="button"] {
 	margin-top: 0.5em;
 	margin-left: 0.5em;
 	background-color: #E6E6E6;
