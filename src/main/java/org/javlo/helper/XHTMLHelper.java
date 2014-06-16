@@ -70,6 +70,7 @@ import org.javlo.ztatic.StaticInfo;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Entities.EscapeMode;
+import org.jsoup.safety.Whitelist;
 
 import com.yahoo.platform.yui.compressor.CssCompressor;
 
@@ -2224,10 +2225,9 @@ public class XHTMLHelper {
 	private XHTMLHelper() {
 	}
 
-	/*
-	 * public static String cleanHTML(String html) { return Jsoup.clean(html,
-	 * Whitelist.relaxed()); }
-	 */
+	public static String safeHTML(String html) {
+		return Jsoup.clean(html, Whitelist.relaxed());
+	}
 
 	public static void expandCSSImports(File css) throws IOException {
 		String expandedCSS;

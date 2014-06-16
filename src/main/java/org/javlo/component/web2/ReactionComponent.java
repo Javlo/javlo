@@ -795,7 +795,7 @@ public class ReactionComponent extends DynamicComponent implements IAction {
 
 		String id = "react-" + getId();
 
-		out.println("<div id=\"" + id + "\" class=\"" + getType() + "\">");
+		out.println("<div id=\"" + id + "\">");
 
 		User user = getCurrentUser(ctx);
 
@@ -875,7 +875,11 @@ public class ReactionComponent extends DynamicComponent implements IAction {
 				}
 
 				out.println("<div class=\"text\">");
-				out.println(XHTMLHelper.textToXHTML(StringHelper.removeTag(reaction.getText()), true, ctx.getGlobalContext()));
+				if (isAllowHtml(ctx)) {
+					out.println(XHTMLHelper.safeHTML(reaction.getText()));
+				} else {
+					out.println(XHTMLHelper.textToXHTML(StringHelper.removeTag(reaction.getText()), true, ctx.getGlobalContext()));
+				}
 				out.println("</div>");
 
 				out.println("<div class=\"metapost\"><span class=\"first date\">");
@@ -1062,6 +1066,10 @@ public class ReactionComponent extends DynamicComponent implements IAction {
 
 	public boolean isCaptcha(ContentContext ctx) {
 		return StringHelper.isTrue(getConfig(ctx).getProperty("captcha", null));
+	}
+
+	public boolean isAllowHtml(ContentContext ctx) {
+		return StringHelper.isTrue(getConfig(ctx).getProperty("allow-html", null));
 	}
 
 	public int getReactionSize(ContentContext ctx) {
