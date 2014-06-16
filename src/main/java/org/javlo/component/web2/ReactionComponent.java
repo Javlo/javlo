@@ -448,15 +448,19 @@ public class ReactionComponent extends DynamicComponent implements IAction {
 			out.println("</div>");
 			out.println("<div class=\"line\"><b>");
 			out.print(i18nAccess.getText("global.title") + " : </b>");
-			out.println(reaction.getTitle());
+			out.println(StringHelper.removeTag(reaction.getTitle()));
 			out.println("</div>");
 			out.println("<div class=\"line\"><b>");
 			out.print(i18nAccess.getText("global.author") + " : </b>");
-			out.println(reaction.getAuthors());
+			out.println(StringHelper.removeTag(reaction.getAuthors()));
 			out.println("</div>");
 			out.println("<div class=\"line\"><b>");
 			out.print(i18nAccess.getText("global.content") + " : </b>");
-			out.println(reaction.getText());
+			if (isAllowHtml(ctx)) {
+				out.println(XHTMLHelper.safeHTML(reaction.getText()));
+			} else {
+				out.println(XHTMLHelper.textToXHTML(StringHelper.removeTag(reaction.getText()), true, ctx.getGlobalContext()));
+			}
 			out.println("</div>");
 			out.println("<div class=\"line\">");
 			out.println("<input type=\"checkbox\" id=\"" + getDeleteName(reaction) + "\" name=\"" + getDeleteName(reaction) + "\" /><label for=\"" + getDeleteName(reaction) + "\"> " + i18nAccess.getText("global.delete") + "</label>");
