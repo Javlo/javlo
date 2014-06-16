@@ -1,0 +1,24 @@
+.reaction {
+	margin: 12px 0;	
+}
+
+.reaction ul, .reaction li {
+	margin: 0;
+	padding: 0;
+	list-style: none;
+}
+
+.reaction li {
+	margin: 6px;
+	border: 1px #cccccc solid;
+	padding: 6px;
+}
+
+li .reaction-form {
+	margin-left: 12px;
+}
+
+.reaction textarea {
+	width: 100%;
+	height: 65px;
+}
