@@ -16,16 +16,21 @@ public class FooterGenerator {
 //		File file = new File("C:/Users/pvandermaesen/Dropbox/Documents/pro/pe/siteplanet/footer.ods");
 		//File templateFolder = new File("C:/Users/pvandermaesen/Dropbox/work/data/javlo/template/galaxy-template");
 
-		File file = new File("C:/trans/footer.ods");
+		File file = new File("C:/trans/footer_top.ods");
+		//File templateFolder = new File("C:/work/javlo2/target/javlo/work_template/galaxy-2014/the-president");
 		File templateFolder = new File("C:/work/javlo2/target/javlo/work_template/galaxy-2014/the-president");
 		try {
-			OutputStream outStream = new FileOutputStream(new File(templateFolder.getAbsolutePath() + '/' + "footer_bottom.jsp"));
+			OutputStream outStream = new FileOutputStream(new File(templateFolder.getAbsolutePath() + '/' + "footer-top.jsp"));
 			PrintStream out = new PrintStream(outStream);
 			out.println("<%@ taglib uri=\"http://java.sun.com/jsp/jstl/core\" prefix=\"c\"%><div class=\"galaxynav\">");			
 
 			final Sheet sheet = SpreadSheet.createFromFile(file).getSheet(0);
-			int indice = 20;
+			int indice = 3;
 			int countGroup = 1;
+			for (int i=1; i<20; i++) {
+				System.out.println("A"+i+" = "+sheet.getCellAt("A"+i).getValue());
+			}
+			System.out.println("A"+indice+" = "+sheet.getCellAt("A"+indice).getValue());
 			while (sheet.getCellAt("A"+indice).getValue().toString().trim().length() > 0) {
 				indice++;
 				String title = "<c:choose>";				

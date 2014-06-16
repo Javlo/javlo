@@ -44,6 +44,7 @@ org.javlo.component.links.ChangeLanguageMenu
 org.javlo.component.links.SiteMap
 org.javlo.component.links.Breadcrumb
 org.javlo.component.files.GenericFile
+org.javlo.component.files.GenericFileList
 org.javlo.component.links.RSSRegistration
 org.javlo.component.links.RSSLink
 org.javlo.component.links.RSSReader
@@ -120,3 +121,4 @@ org.javlo.component.users.UserSearch
 org.javlo.component.users.UserRegistration
 org.javlo.component.ecom.MoneybookersPayement
 org.javlo.component.core.RendererReferenceComponent
+org.javlo.component.extranet.LaunchMacro

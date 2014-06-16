@@ -1125,5 +1125,11 @@ public class URLHelper extends ElementaryURLHelper {
 			return url;
 		}
 	}
+	
+	public static String getFileURL(ContentContext ctx, File file) {
+		 File rootStatic = new File(ctx.getGlobalContext().getDataFolder());
+		 String relativePath  =  file.getAbsolutePath().replace(rootStatic.getAbsolutePath(),"");
+		 return URLHelper.createResourceURL(ctx, relativePath);
+	}
 
 }
