@@ -2,6 +2,7 @@ package org.javlo.macro;
 
 import java.util.Map;
 
+import org.javlo.component.core.ContentElementList;
 import org.javlo.context.ContentContext;
 import org.javlo.helper.MacroHelper;
 import org.javlo.helper.NetHelper;
@@ -10,6 +11,8 @@ import org.javlo.navigation.MenuElement;
 import org.javlo.service.ContentService;
 
 public class AddChildMacro extends AbstractMacro {
+	
+	private static final String DEFAULT_PAGE_NAME = "default-child-page";
 
 	@Override
 	public String getName() {
@@ -19,6 +22,7 @@ public class AddChildMacro extends AbstractMacro {
 	@Override
 	public String perform(ContentContext ctx, Map<String, Object> params) throws Exception {
 		MenuElement currentPage = ctx.getCurrentPage();
+		
 		ContentService content = ContentService.getInstance(ctx.getRequest());
 		
 		String newPageName = currentPage.getName()+"-1";
@@ -26,8 +30,17 @@ public class AddChildMacro extends AbstractMacro {
 		while (content.getNavigation(ctx).searchChildFromName(newPageName) != null) {
 			newPageName = currentPage.getName()+'-'+index;
 			index++;
-		}		
-		MenuElement newPage = MacroHelper.addPageIfNotExist(ctx, ctx.getCurrentPage(),newPageName, false, true);		
+		}
+		MenuElement defaultPage = content.getNavigation(ctx).searchChildFromName(DEFAULT_PAGE_NAME);
+		MenuElement newPage = MacroHelper.addPageIfNotExist(ctx, ctx.getCurrentPage(),newPageName, false, true);
+		if (defaultPage != null)  {
+			ContentElementList comps = defaultPage.getContent(ctx);
+			String parentId = "0";
+			while (comps.hasNext(ctx)) {
+				parentId = content.createContent(ctx, newPage, comps.next(ctx).getComponentBean(), parentId, false);
+			}
+		}
+		
 		if (currentPage.isChildrenAssociation()) {			
 			String newURL = URLHelper.createURL(ctx, currentPage)+"#page_"+newPage.getId();
 			NetHelper.sendRedirectTemporarily(ctx.getResponse(), newURL);

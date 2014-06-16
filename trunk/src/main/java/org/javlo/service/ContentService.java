@@ -221,9 +221,11 @@ public class ContentService implements IPrintInfo {
 		if (bean.getArea() == null) {
 			bean.setArea(ctx.getArea());
 		}
+		bean.setAuthors(ctx.getCurrentUserId());
 		page.addContent(parentId, bean, releaseCache);
 		return id;
 	}
+	
 
 	public String createContent(ContentContext ctx, ComponentBean inBean, String parentId, boolean releaseCache) throws Exception {
 		String id = StringHelper.getRandomId();
