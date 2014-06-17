@@ -9,6 +9,7 @@ import org.javlo.component.core.IContentVisualComponent;
 import org.javlo.context.ContentContext;
 import org.javlo.context.GlobalContext;
 import org.javlo.helper.URLHelper;
+import org.javlo.i18n.I18nAccess;
 
 /**
  * Links for change language of the current page. <h4>JSTL variable :</h4>
@@ -113,7 +114,9 @@ public class ChangeLanguageMenu extends AbstractVisualComponent {
 			if (!contentLanguages) {
 				lgCtx.setLanguage(lg);
 			}
+			I18nAccess i18nAccess = I18nAccess.getInstance(ctx.getRequest());
 			String label = (new Locale(lg)).getDisplayLanguage(new Locale(lg));
+			label = i18nAccess.getAllText("lang."+lg, label);
 			String translatedLabel = (new Locale(lg)).getDisplayLanguage(new Locale(ctx.getLanguage()));
 			String url = URLHelper.createURL(lgCtx);			
 			LanguageBean bean = new LanguageBean();
