@@ -2110,6 +2110,15 @@ public class Template implements Comparable<Template> {
 		String key = XMLManipulationHelper.AREA_PREFIX + area + ".navigation";
 		return properties.getBoolean(key, false);
 	}
+	
+	public boolean isNosecureArea(String area) {
+		if (area == null) {
+			return false;
+		}
+		String key = XMLManipulationHelper.AREA_PREFIX + area + ".no-secure";
+		return properties.getBoolean(key, false);
+	}
+
 
 	protected boolean isParent() {
 		return getParent() != null && !getParent().getName().equals(DefaultTemplate.NAME);

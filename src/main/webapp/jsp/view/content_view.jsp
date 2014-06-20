@@ -66,11 +66,10 @@ Boolean removeRepeat = StringHelper.isTrue(request.getParameter("_no-repeat"));
 Boolean displayZone = StringHelper.isTrue(request.getParameter("_display-zone"));
 
 AdminUserSecurity security = AdminUserSecurity.getInstance();
-
-if ( ctx.getSpecialContentRenderer() != null && area.equals(ComponentBean.DEFAULT_AREA)) {
+if ( ctx.getSpecialContentRenderer() != null && area.equals(ComponentBean.DEFAULT_AREA) && !ctx.getCurrentTemplate().isNosecureArea(area)) {
 	%><jsp:include page="<%=ctx.getSpecialContentRenderer()%>" /><%
-} else if ( ctx.getSpecialContentRenderer() != null) {
-	%><!-- this area is empty because special rederer is defined. --><%
+} else if ( ctx.getSpecialContentRenderer() != null && !ctx.getCurrentTemplate().isNosecureArea(area)) {
+	%><!-- this area is empty because special renderer is defined. --><%
 } else {
 	
 MenuElement currentPage = ctx.getCurrentPage();

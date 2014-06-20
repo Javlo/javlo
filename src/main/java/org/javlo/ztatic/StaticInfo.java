@@ -643,6 +643,16 @@ public class StaticInfo {
 		}
 		return null;
 	}
+	
+	public String getAuthors(ContentContext ctx) {
+		ContentService content = ContentService.getInstance(ctx.getRequest());
+		return content.getAttribute(ctx, getKey("authors"), "");
+	}
+	
+	public void setAuthors(ContentContext ctx, String authors) {
+		ContentService content = ContentService.getInstance(ctx.getRequest());
+		content.setAttribute(ctx, getKey("authors"), authors);
+	}
 
 	public Date getDate(ContentContext ctx) {
 		if (date == null) {

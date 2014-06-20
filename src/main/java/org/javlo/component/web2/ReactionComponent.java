@@ -300,6 +300,11 @@ public class ReactionComponent extends DynamicComponent implements IAction {
 			MessageRepository messageRepository = MessageRepository.getInstance(ctx);
 			I18nAccess i18nAccess = I18nAccess.getInstance(ctx);
 			if (validReaction) {
+				
+				if (!reactionComp.isWithLink(ctx) && XHTMLHelper.containsLink(reaction.getAuthors()+' '+reaction.getTitle()+' '+reaction.getText())) {
+					return i18nAccess.getViewText("reaction.error.no-link", "Message cound not contains link."); 
+				}
+				
 				if (!reactionComp.addReaction(ctx, reaction)) {
 					messageRepository.setGlobalMessage(new GenericMessage(i18nAccess.getViewText("reaction.added"), GenericMessage.INFO));
 				} else {
@@ -315,6 +320,10 @@ public class ReactionComponent extends DynamicComponent implements IAction {
 		}
 
 		return null;
+	}
+	
+	protected boolean isWithLink(ContentContext ctx) {
+		return StringHelper.isTrue(getConfig(ctx).getProperty("width-link", null));
 	}
 
 	/**
@@ -992,7 +1001,7 @@ public class ReactionComponent extends DynamicComponent implements IAction {
 			}
 			if (reactionToBeDeleted.size() > 0) {
 				for (Reaction reaction : reactionToBeDeleted) {
-					deleteReaction(ctx, reaction.getId());
+					deleteReaction(ctx, reaction.getId(),true);
 				}
 				storeViewData(ctx);
 				setNeedRefresh(true);
@@ -1019,7 +1028,7 @@ public class ReactionComponent extends DynamicComponent implements IAction {
 		}
 	}
 
-	public void deleteReaction(ContentContext ctx, String id) throws IOException {
+	public void deleteReaction(ContentContext ctx, String id, boolean store) throws IOException {
 		if (getViewData(ctx) != null) {
 			for (Object key : getViewData(ctx).keySet()) {
 				if (key.toString().startsWith(REACTIONS_PREFIX_KEY)) {
@@ -1029,7 +1038,9 @@ public class ReactionComponent extends DynamicComponent implements IAction {
 						getViewData(ctx).remove(key);
 						String delKey = ((String) key).replaceFirst(REACTIONS_PREFIX_KEY, DELETEED_REACTION_PREFIX_KEY);
 						getViewData(ctx).setProperty(delKey, reaction.toString());
-						storeViewData(ctx);
+						if (store) {
+							storeViewData(ctx);
+						}
 						return;
 					}
 				}
@@ -1085,7 +1096,7 @@ public class ReactionComponent extends DynamicComponent implements IAction {
 	public int getReactionSize(ContentContext ctx) {
 		return getReactions(ctx).size();
 	}
-
+	
 	public static void main(String[] args) {
 		String pageid = readPageIdFromKey("prefix-0912309-tralala-troiulou");
 		System.out.println("***** ReactionComponent.main : pageid = " + pageid); // TODO:
