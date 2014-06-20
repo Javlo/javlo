@@ -69,7 +69,7 @@ public class GenericFileList extends AbstractVisualComponent implements IAction 
 					params.put(IContentVisualComponent.COMP_ID_REQUEST_PARAM, getId());
 					String link = URLHelper.createURL(ctx, params);
 					I18nAccess i18nAccess = I18nAccess.getInstance(ctx.getRequest());
-					out.println("<a href=\"" + link + "\">" + i18nAccess.getViewText("global.delete") + "</a>");
+					out.println("<a class=\"delete\" href=\"" + link + "\">" + i18nAccess.getViewText("global.delete") + "</a>");
 				} else {
 					out.print("&nbsp;");
 				}
