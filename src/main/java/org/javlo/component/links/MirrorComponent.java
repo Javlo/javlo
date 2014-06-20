@@ -152,6 +152,16 @@ public class MirrorComponent extends AbstractVisualComponent {
 		}
 		return "";
 	}
+	
+	@Override
+	public String getEmptyXHTMLCode(ContentContext ctx) throws Exception {
+		AbstractVisualComponent comp = (AbstractVisualComponent) getMirrorComponent(ctx);
+		if (comp != null) {
+			return comp.getEmptyXHTMLCode(ctx);
+		} else {
+			return super.getEmptyXHTMLCode(ctx);
+		}
+	}
 
 	@Override
 	public int getWordCount(ContentContext ctx) {
