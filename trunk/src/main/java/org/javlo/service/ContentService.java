@@ -357,7 +357,7 @@ public class ContentService implements IPrintInfo {
 				return null;
 			}
 			return timeTravelerGlobalMap.get(key);
-		} else {
+		} else {			
 			if (previewGlobalMap == null) {
 				return null;
 			}
@@ -708,7 +708,7 @@ public class ContentService implements IPrintInfo {
 		} else {
 			if (previewGlobalMap == null) {
 				previewGlobalMap = new HashMap<String, String>();
-			}
+			}			
 			previewGlobalMap.put(key, value);
 		}
 	}

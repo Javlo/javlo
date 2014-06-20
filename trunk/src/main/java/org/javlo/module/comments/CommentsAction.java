@@ -33,7 +33,7 @@ public class CommentsAction extends AbstractModuleAction {
 
 	}
 
-	public class CommentsContainer {
+	public static class CommentsContainer {
 
 		private final ContentContext ctx;
 		private final ReactionComponent reactions;
@@ -131,8 +131,26 @@ public class CommentsAction extends AbstractModuleAction {
 		CommentsService commentsService = CommentsService.getCommentsService(globalContext);
 		for (ReactionComponent reaction : commentsService.getComments(ctx)) {
 			if (reaction.getId().equals(compId)) {
-				reaction.deleteReaction(ctx, commentId);
+				reaction.deleteReaction(ctx, commentId,true);
 			}
+		}		
+		return null;
+	}
+	
+	public static String performDeleteComments(RequestService rs, ContentContext ctx, MessageRepository messageRepository, I18nAccess i18nAccess, GlobalContext globalContext) throws Exception {
+		CommentsService commentsService = CommentsService.getCommentsService(globalContext);
+		String filter = rs.getParameter("filter", "");
+		if (filter.trim().length() == 0) {
+			return "filter could not be empty.";
+		}
+		for (ReactionComponent reactionComp : commentsService.getComments(ctx)) {
+			CommentsContainer comments =  new CommentsContainer(ctx, reactionComp);
+			for (Reaction reaction : comments.getComments()) {
+				if ((reaction.getText()+' '+reaction.getTitle()).contains(filter)) {
+					reactionComp.deleteReaction(ctx, reaction.getId(),false);
+				};
+			}
+			reactionComp.storeViewData(ctx);
 		}
 		return null;
 	}

@@ -150,6 +150,14 @@ public class XHTMLHelper {
 
 		return new String(outStream.toByteArray()).replaceAll("  ", "&nbsp;&nbsp;");
 	}
+	
+	public static boolean containsLink(String content) {
+		if (content == null) {
+			return false;
+		} else {
+			return !content.equals(autoLink(content));
+		}
+	}
 
 	public static String autoLink(String content) {
 		return autoLink(content, false, null);

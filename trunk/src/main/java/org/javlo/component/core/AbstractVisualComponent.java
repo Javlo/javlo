@@ -866,26 +866,21 @@ public abstract class AbstractVisualComponent implements IContentVisualComponent
 
 	@Override
 	public String getPrefixViewXHTMLCode(ContentContext ctx) {
-
 		if (getConfig(ctx).getProperty("prefix", null) != null) {
 			return getConfig(ctx).getProperty("prefix", null);
 		}
-
 		String style = getStyle(ctx);
 		if (style != null) {
 			style = style + ' ';
 		} else {
 			style = "";
 		}
-
 		if (getPreviousComponent() == null || !getPreviousComponent().getType().equals(getType())) {
 			style = style + " first ";
-		}
-		
+		}		
 		if (getNextComponent() == null || !getNextComponent().getType().equals(getType())) {
 			style = style + " last ";
 		}
-
 		if (!componentBean.isList()) {
 			return "<" + getTag(ctx) + " " + getSpecialPreviewCssClass(ctx, style + getType()) + getSpecialPreviewCssId(ctx) + " " + getInlineStyle(ctx) + ">";
 		} else {
@@ -1079,9 +1074,11 @@ public abstract class AbstractVisualComponent implements IContentVisualComponent
 			GlobalContext globalContext = GlobalContext.getInstance(ctx.getRequest());
 			EditContext editCtx = EditContext.getInstance(globalContext, ctx.getRequest().getSession());
 			try {
-				String classPrefix = "not-";
+				String classPrefix = "not-";				
 				if (!globalContext.isOnlyCreatorModify() || (ctx.getCurrentEditUser() != null && (AdminUserSecurity.getInstance().isAdmin(ctx.getCurrentEditUser()) || getAuthors().equals(ctx.getCurrentEditUser().getLogin())))) {
-					classPrefix = "";
+					if (!AdminUserSecurity.getInstance().haveRole(ctx.getCurrentEditUser(), AdminUserSecurity.LIGHT_INTERFACE_ROLE) || getComplexityLevel(ctx) == IContentVisualComponent.COMPLEXITY_EASY) {
+						classPrefix = "";	
+					}					
 				}
 				RequestService rs = RequestService.getInstance(ctx.getRequest());
 				if (!StringHelper.isTrue(rs.getParameter(NOT_EDIT_PREVIEW_PARAM_NAME, null))) {

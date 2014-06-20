@@ -5,6 +5,9 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.io.PrintStream;
+import java.util.Collection;
+import java.util.LinkedList;
+import java.util.Stack;
 
 import org.javlo.helper.XHTMLHelper;
 import org.jopendocument.dom.spreadsheet.Sheet;
@@ -12,76 +15,93 @@ import org.jopendocument.dom.spreadsheet.SpreadSheet;
 
 public class FooterGenerator {
 
-	public static void main(String[] args) {
-//		File file = new File("C:/Users/pvandermaesen/Dropbox/Documents/pro/pe/siteplanet/footer.ods");
-		//File templateFolder = new File("C:/Users/pvandermaesen/Dropbox/work/data/javlo/template/galaxy-template");
+	private static Collection<String> getCols() {
+		Collection<String> cols = new LinkedList<String>();
+		for (char cc : "DEFGHIJKLMNOPQRSTUVWXYZ".toCharArray()) {
+			cols.add("" + cc);
+		}
+		cols.add("AA");
+		return cols;
+	}
 
-		File file = new File("C:/trans/footer_top.ods");
-		//File templateFolder = new File("C:/work/javlo2/target/javlo/work_template/galaxy-2014/the-president");
+	public static void main(String[] args) {
+		// File file = new
+		// File("C:/Users/pvandermaesen/Dropbox/Documents/pro/pe/siteplanet/footer.ods");
+		// File templateFolder = new
+		// File("C:/Users/pvandermaesen/Dropbox/work/data/javlo/template/galaxy-template");
+
+		File file = new File("C:/Users/pvandermaesen/Dropbox/Documents/pro/pe/president_2014/work/footer.ods");
+		// File templateFolder = new
+		// File("C:/work/javlo2/target/javlo/work_template/galaxy-2014/the-president");
 		File templateFolder = new File("C:/work/javlo2/target/javlo/work_template/galaxy-2014/the-president");
 		try {
-			OutputStream outStream = new FileOutputStream(new File(templateFolder.getAbsolutePath() + '/' + "footer-top.jsp"));
+			OutputStream outStream = new FileOutputStream(new File(templateFolder.getAbsolutePath() + '/' + "footer_bottom.jsp"));
 			PrintStream out = new PrintStream(outStream);
-			out.println("<%@ taglib uri=\"http://java.sun.com/jsp/jstl/core\" prefix=\"c\"%><div class=\"galaxynav\">");			
+			out.println("<%@ taglib uri=\"http://java.sun.com/jsp/jstl/core\" prefix=\"c\"%><div class=\"galaxynav\">");
 
 			final Sheet sheet = SpreadSheet.createFromFile(file).getSheet(0);
 			int indice = 3;
-			int countGroup = 1;
-			for (int i=1; i<20; i++) {
-				System.out.println("A"+i+" = "+sheet.getCellAt("A"+i).getValue());
-			}
-			System.out.println("A"+indice+" = "+sheet.getCellAt("A"+indice).getValue());
-			while (sheet.getCellAt("A"+indice).getValue().toString().trim().length() > 0) {
-				indice++;
-				String title = "<c:choose>";				
-				for (char c : "CDEFGHIJKLMNOPQRSTUVWXYZ".toCharArray()) {
-					String lang = sheet.getCellAt(c + "1").getValue().toString();					
+			int col = 1;
+			boolean titleOpen = false;
+			String label = sheet.getCellAt("B" + indice).getValue().toString().trim();
+			
+			String globalCloseCode = "";
+			String localCloseCode = "";
+			while (label.length() > 0) {
+				String title = "<c:choose>";
+				for (String c : getCols()) {
+					String lang = sheet.getCellAt(c + "1").getValue().toString();
 					if (lang.trim().length() > 0) {
 						lang = lang.toLowerCase();
-						title = title+"<c:when test=\"${info.language == '"+lang+"'}\">"+XHTMLHelper.escapeXHTML(sheet.getCellAt(""+c + indice).getValue().toString())+"</c:when>";
-					}				
+						title = title + "<c:when test=\"${info.language == '" + lang + "'}\">" + XHTMLHelper.escapeXHTML(sheet.getCellAt("" + c + indice).getValue().toString()) + "</c:when>";
+					}
 				}
-				title = title+"<c:otherwise>"+sheet.getCellAt("A"+indice).getValue().toString()+"</c:otherwise></c:choose>";				
-				String style = sheet.getCellAt("A" + indice).getStyle().getName();
-				System.out.println("***** FooterGenerator.main : style = "+style+" name="+ sheet.getCellAt("A" + indice).getValue()); //TODO: remove debug trace
-				if (style.equalsIgnoreCase("ce8") || style.equalsIgnoreCase("ce6") || style.equalsIgnoreCase("ce11")) {
-					//System.out.println(title+" >> "+style);	
-					if (countGroup == 4 || countGroup == 6 || countGroup == 8 || countGroup == 10) {
-						out.println("</ul></li></ul>"); 
-					} else if (countGroup>1) {
-						out.println("</ul></li>");
-					}
-					if (countGroup == 1 || countGroup == 4 || countGroup == 6 || countGroup == 8 || countGroup == 10) {
-						out.println("<ul><li><div class=\"ep-title\">"+title+"</div><ul>");
+				title = title + "<c:otherwise>" + sheet.getCellAt("A" + indice).getValue().toString() + "</c:otherwise></c:choose>";
+				//title = label;
+				String style = "" + sheet.getCellAt("A" + indice).getValue();
+				if (style.equalsIgnoreCase("ft") || style.equalsIgnoreCase("t")) {
+					System.out.println(label);
+					out.print(localCloseCode);										
+					if (style.equalsIgnoreCase("ft")) {
+						out.print(globalCloseCode);
+						out.println("<ul class=\"col-"+col+"\"><li><div class=\"ep-title\">" + title + "</div><ul>");
+						globalCloseCode = "</ul>";
+						localCloseCode = "</ul></li>";
+						col++;
 					} else {
-						out.println("<li><div class=\"ep-title\">"+title+"</div><ul>");	
+						out.println("<li><div class=\"ep-title\">" + title + "</div><ul>");
+						localCloseCode = "</ul></li>";
 					}
-					countGroup++;
+					titleOpen = true;				
 				} else {
-					out.println("<li>");
-					if (sheet.getCellAt("B" + indice).getValue().toString().trim().length() > 0) {
-						String url = sheet.getCellAt("B" + indice).getValue().toString().replace("xx", "${info.language}").replace("XX", "${info.language}").trim();
+					System.out.println("   > " + label);
+					out.print("<li>");
+					if (sheet.getCellAt("C" + indice).getValue().toString().trim().length() > 0) {
+						String url = sheet.getCellAt("C" + indice).getValue().toString().replace("xx", "${info.language}").replace("XX", "${info.language}").trim();
 						if (!url.startsWith("http://")) {
-							url = "http://"+url;
+							url = "http://" + url;
 						}
-						out.print("<a href=\""+url+"\">");
+						String linkTitle = "title=\"${i18n.view['link.go-to-the-page']}\"";
+						if (!url.contains("www.europarl.europa.eu")) {
+							linkTitle = "title=\"${i18n.view['global.new-window']}\" target=\"_blank\" ";
+						}
+						out.print("<a "+linkTitle+" href=\"" + url + "\">");
 					}
 					out.print(title);
-					if (sheet.getCellAt("B" + indice).getValue().toString().trim().length() > 0) {
-						out.println("</a>");
+					if (sheet.getCellAt("C" + indice).getValue().toString().trim().length() > 0) {
+						out.print("</a>");
 					} else {
-						out.println("");
+						out.print("");
 					}
 					out.println("</li>");
-				}				
-				
-				
-			/*	System.out.println(title);
-				System.out.println(style); */
+				}
+				indice++;
+				label = sheet.getCellAt("B" + indice).getValue().toString().trim();
 			}
-			out.println("</ul></li></ul>");  
+			out.println("</ul></li></ul>");
 			out.println("</div>");
 			out.close();
+			outStream.close();
 
 		} catch (IOException e) {
 			e.printStackTrace();
