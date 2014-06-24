@@ -95,6 +95,23 @@ public class ImageEngine {
 		return scale(bi,width,height);
 	}
 	
+	public static BufferedImage zoom(BufferedImage img, double zoom, int interestX, int interestY) {
+		
+		int realInterestX = (interestX * img.getWidth()) / 1000;
+		int realInterestY = (interestY * img.getHeight()) / 1000;
+		
+		if (zoom < 1) {
+			return img;
+		}
+		int topX = (int)Math.round(realInterestX-realInterestX/zoom);
+		int bottomX = (int)Math.round(realInterestX+(img.getWidth()-realInterestX)/zoom);
+		
+		int topY = (int)Math.round(realInterestY-realInterestY/zoom);
+		int bottomY = (int)Math.round(realInterestY+(img.getHeight()-realInterestY)/zoom);
+		
+		return cropImage(img, bottomX-topX, bottomY-topY, topX, topY);
+	}
+	
 	public static BufferedImage scale(BufferedImage img, Integer inTargetWidth, Integer inTargetHeight) {
 				
 		if (inTargetWidth == null && inTargetHeight == null) {
@@ -933,8 +950,8 @@ public class ImageEngine {
 		BufferedImage outImage = new BufferedImage(width, height, image.getType());
 		for (int x = 0; x < image.getWidth(); x++) {
 			for (int y = 0; y < image.getHeight(); y++) {
-				if (x > inX && x < inX + width) {
-					if (y > inY && y < inY + height) {
+				if (x >= inX && x < inX + width) {
+					if (y >= inY && y < inY + height) {
 						outImage.setRGB(x - inX, y - inY, image.getRGB(x, y));
 					}
 				}
@@ -1034,8 +1051,8 @@ public class ImageEngine {
 	 * @param args
 	 */
 	public static void main(String[] args) {
-		File source = new File("C:/trans/sexy.jpg");
-		File target = new File("c:/trans/out.png");
+		File source = new File("C:/trans/source.jpg");
+		File target = new File("c:/trans/out.jpg");
 
 		try {
 			System.out.println("start...");
@@ -1044,8 +1061,8 @@ public class ImageEngine {
 			int val = sourceImage.getRGB(0, 0);
 			System.out.println(val);
 			
-			BufferedImage image =  ImageEngine.resizeWidth(sourceImage, 320);
-			ImageIO.write(image, "png", target);
+			BufferedImage image =  ImageEngine.zoom(sourceImage, 2, 565, 165);
+			ImageIO.write(image, "jpg", target);
 			System.out.println("end.");
 		} catch (Exception e) {
 			e.printStackTrace();
