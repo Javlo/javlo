@@ -213,6 +213,18 @@ public class ImageConfig {
 
 		return properties.getInt(filter + ".height", -1);
 	}
+	
+	public double getZoom(Device device, String filter, String area) {
+		if (device != null) {
+			String key = getKey(device, filter, area, "zoom");
+			Double deviceZoom = properties.getDouble(key, null);
+			if (deviceZoom != null) {
+				return deviceZoom;
+			}
+		}
+		return properties.getDouble(filter + ".zoom", 1);
+	}
+
 
 	public int getMaxHeight(Device device, String filter, String area) {
 		String key = getKey(device, filter, area, "max-height");
