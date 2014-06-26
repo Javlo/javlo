@@ -241,6 +241,11 @@ public class ImageTransformServlet extends HttpServlet {
 		// "start - transformation - 1");
 
 		BufferedImage img = ImageIO.read(imageFile);
+		if (img == null) {
+			logger.warning("could'nt read : "+imageFile);
+			ctx.getResponse().setStatus(404);
+			return;
+		}
 		IIOMetadata metadata = null;
 
 		try {
@@ -726,9 +731,13 @@ public class ImageTransformServlet extends HttpServlet {
 							if (!staticInfo.isResized(ctx)) {
 								logger.info("source image to large resize to "+maxWidth+" : "+imageFile);
 								BufferedImage image = ImageIO.read(imageFile);
-								if (image.getWidth() > maxWidth) {
-									image = ImageEngine.resizeWidth(image, maxWidth);
-									ImageIO.write(image, StringHelper.getFileExtension(imageFile.getName().toLowerCase()), imageFile);
+								if (image != null) {
+									if (image.getWidth() > maxWidth) {
+										image = ImageEngine.resizeWidth(image, maxWidth);
+										ImageIO.write(image, StringHelper.getFileExtension(imageFile.getName().toLowerCase()), imageFile);
+									}
+								} else {
+									logger.warning("Could'nt read image : "+imageFile);
 								}
 								staticInfo.setResized(ctx, true);
 							}
