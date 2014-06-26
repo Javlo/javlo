@@ -287,6 +287,17 @@
         <url-pattern>/captcha.jpg</url-pattern>
     </servlet-mapping>
     
+    <servlet>
+		<servlet-name>ServletWrapper</servlet-name>
+		<servlet-class>org.javlo.servlet.servletwrapper.ServletWrapperServlet</servlet-class>
+		<load-on-startup>1</load-on-startup>
+	</servlet>
+
+	<servlet-mapping>
+		<servlet-name>ServletWrapper</servlet-name>
+		<url-pattern>/wrapper/*</url-pattern>
+	</servlet-mapping>
+    
     <!--  <security-constraint>
         <web-resource-collection>
           <web-resource-name>Javlo Administration</web-resource-name>
