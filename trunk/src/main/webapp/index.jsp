@@ -46,13 +46,16 @@ if ((template != null)&&(template.getHomeRenderer(globalContext) != null)) {
 	ctx = new ContentContext(ctx);
 	ctx.setViewPrefix(true);
 	String forcePathPreview = ctx.getPathPrefix(request);
-	ctx.setForcePathPrefix(request, "");
-	ctx.setInternalURL(true);
-	String url = URLHelper.createURLWithtoutEncodeURL(ctx, ctx.getPath());
-	ctx.setForcePathPrefix(request,forcePathPreview);
-	//request.getRequestDispatcher(url).forward(request, response);
+	ctx.setForcePathPrefix("");
+	ctx.setInternalURL(true);	
+	String url = URLHelper.createURLWithtoutContext(ctx, ctx.getPath());
+	/*if (!ctx.getGlobalContext().getStaticConfig().isURIWithContext()) {
+		url = URLHelper.mergePath(request.getContextPath(),url);
+	}*/
+	ctx.setForcePathPrefix(request,forcePathPreview);	
+	request.getRequestDispatcher(url).forward(request, response);
 	//response.sendRedirect(url);
 	//NetHelper.sendRedirectTemporarily(response, url);
-	request.getRequestDispatcher(URLHelper.createForwardURL(ctx, url)).forward(request, response);
+	//request.getRequestDispatcher(URLHelper.createForwardURL(ctx, url)).forward(request, response);
 	%><a href="<%=url%>"><%=url%></a><%
 }%>

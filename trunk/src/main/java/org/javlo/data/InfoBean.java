@@ -813,6 +813,10 @@ public class InfoBean {
 		}
 	}
 	
+	public String getI18nAjaxURL() {
+		return URLHelper.createStaticURL(ctx, "/i18n/"+ctx.getRequestContentLanguage());
+	}
+	
 	public String getLogoUrl() throws Exception {
 		String logo = ctx.getGlobalContext().getTemplateData().getLogo();
 		if (logo == null) {

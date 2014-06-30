@@ -227,6 +227,7 @@ public abstract class ElementaryURLHelper {
 //			System.out.println("***** ElementaryURLHelper.createNoProtocolURL : noNavigationAreaCheckCtx.getContentLanguage() = "+noNavigationAreaCheckCtx.getContentLanguage()); //TODO: remove debug trace			
 //		}
 	
+		System.out.println("***** ElementaryURLHelper.createNoProtocolURL : getPathPrefix(ctx) = "+getPathPrefix(ctx)); //TODO: remove debug trace
 
 		if (noNavigationAreaCheckCtx.getContentLanguage().equals(noNavigationAreaCheckCtx.getLanguage())) {
 			if (withPathPrefix) {
@@ -572,6 +573,11 @@ public abstract class ElementaryURLHelper {
 			ctx.getRequest().setAttribute(CACHE_KEY, res);
 		}
 		return res;
+	}
+	
+	public static void resetPathPrefix(ContentContext ctx) {
+		String CACHE_KEY = "javlo-path-prefix-" + ctx.getPathPrefix();
+		ctx.getRequest().removeAttribute(CACHE_KEY);
 	}
 
 	/**

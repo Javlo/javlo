@@ -1592,8 +1592,13 @@ public class ContentContext {
 		return StringHelper.isTrue(rs.getParameter("previewEdit", null));
 	}
 
-	public static void setForcePathPrefix(ServletRequest request, String forcePathPrefix) {
+	public static void setForcePathPrefix(ServletRequest request, String forcePathPrefix) {		
 		request.setAttribute(FORCE_PATH_PREFIX, forcePathPrefix);
+	}
+	
+	public void setForcePathPrefix(String forcePathPrefix) {		
+		getRequest().setAttribute(FORCE_PATH_PREFIX, forcePathPrefix);
+		URLHelper.resetPathPrefix(this);
 	}
 
 	/**

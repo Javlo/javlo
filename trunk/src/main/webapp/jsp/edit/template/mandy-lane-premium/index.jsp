@@ -20,7 +20,7 @@
     </c:if>
     if (url != null) {
 		top.location.href=url; // close iframe and refresh parent frame
-    }
+    }    
 </script>
 </c:if>
 
@@ -58,13 +58,16 @@
 <script type="text/javascript" src="${info.editTemplateURL}/js/custom/gallery.js"></script>
 <script type="text/javascript" src="<jv:url value='/js/edit/ajax.js?ts=${info.ts}' />"></script>
 <script type="text/javascript" src="<jv:url value='/js/edit/core.js?ts=${info.ts}' />"></script>
-<script type="text/javascript" src="<jv:url value='/js/lib/colorpicker/js/colorpicker.js?ts=${info.ts}' />"></script>
-<link rel="stylesheet" media="screen" type="text/css" href="<jv:url value='/js/lib/colorpicker/css/colorpicker.css?ts=${info.ts}' />" />
+<script type="text/javascript" src="<jv:url value='/js/lib/colorpicker/js/colorpicker.js' />"></script>
+<link rel="stylesheet" media="screen" type="text/css" href="<jv:url value='/js/lib/colorpicker/css/colorpicker.css' />" />
 <script type="text/javascript" src="${info.editTemplateURL}/js/javlo/core.js?ts=${info.ts}"></script>
 <c:if test="${not info.editLanguage eq 'en'}"><script type="text/javascript" src="${info.editTemplateURL}/js/plugins/jquery.ui.datepicker-${info.editLanguage}.js"></script></c:if>
 <script type="text/javascript" src="${info.editTemplateURL}/js/custom/general.js?ts=${info.ts}"></script>
-<script type="text/javascript" src="${info.editTemplateURL}/js/plugins/jquery.autosize-min.js?ts=${info.ts}"></script>
+<script type="text/javascript" src="${info.editTemplateURL}/js/plugins/jquery.autosize-min.js"></script>
 
+
+<link rel="stylesheet" href="<jv:url value='/js/lib/tooltipster-master/css/tooltipster.css' />" />
+<script type="text/javascript" src="<jv:url value='/js/lib/tooltipster-master/js/jquery.tooltipster.min.js' />"></script>
 
 <!-- module '${currentModule.name}' CSS --><c:forEach var="css" items="${currentModule.CSS}">
 <link rel="stylesheet" href="<jv:url value='${css}?ts=${info.ts}' />"/>
@@ -73,6 +76,8 @@
 <!-- module '${currentModule.name}' JS --><c:forEach var="js" items="${currentModule.JS}">
 <script type="text/javascript" src="<jv:url value='${js}?ts=${info.ts}' />"></script>
 </c:forEach>
+
+<script type="text/javascript">var i18nURL = "${info.i18nAjaxURL}";</script>
 
 </head>
 
@@ -262,6 +267,6 @@
     </div><!-- footerinner -->
 </div><!-- footer -->
 </c:if>
-
+<div id="layer">&nbsp;</div>
 </body>
 </html>

@@ -380,3 +380,45 @@ reloadPage = function() {
 	}
 	window.location.href=currentURL;
 }
+
+/** HELP **/
+
+function showHelpButton() {	
+	jQuery(".notebutton").append('<li class="note"><a class="help"><span class="wrap"><span class="thicon helpicon">&nbsp;</span></span></a></li>');
+	jQuery(".note .help").click(function() {
+		showHelp();
+	});
+}
+
+function addToolTips(selector, text) {
+	if (!jQuery(selector).hasClass("show")) {
+		jQuery("body").addClass("help");
+		if (!jQuery(selector).hasClass("tooltipstered")) {
+			jQuery.ajax({	
+				url : i18nURL+"?key="+text,
+				cache : true,
+				type : "get",
+				dataType : "text"
+			}).done(function(data) {
+				jQuery(selector).tooltipster({
+					   position: 'top',
+					   animation: 'grow',
+					   delay: 200,
+					   theme: 'tooltipster-default',
+					   touchDevices: false,
+					   trigger: 'none',
+				       content: data
+				});
+				jQuery(selector).tooltipster("show");
+				jQuery(selector).addClass("show");
+			});				
+		} else {
+			jQuery(selector).tooltipster("show");
+			jQuery(selector).addClass("show");
+		}
+	} else {
+		jQuery("body").removeClass("help");
+		jQuery(selector).removeClass("show");
+		jQuery(selector).tooltipster("hide");
+	}	
+}

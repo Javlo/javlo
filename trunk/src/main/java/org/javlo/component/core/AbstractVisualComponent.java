@@ -246,7 +246,7 @@ public abstract class AbstractVisualComponent implements IContentVisualComponent
 
 	@Override
 	public int getComplexityLevel(ContentContext ctx) {
-		return COMPLEXITY_EASY;
+		return getConfig(ctx).getComplexity(COMPLEXITY_EASY);		
 	}
 
 	@Override

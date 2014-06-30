@@ -1518,6 +1518,7 @@ body.previewEdit {
     right: 220px;
     left: auto;
     margin-top: 0;
+    z-index: 200;
 }
 
 .static-tabs ul {
@@ -1589,4 +1590,21 @@ body.previewEdit {
 .content.wizard.preview .action {
 	top: 0;
 	right: 0;
+}
+
+#layer {
+	display: none;
+}
+
+.help #layer {
+	display: block;
+	position: fixed;
+	top: 0;
+	left: 0;
+	width: 100%;
+	height: 100%;
+	background-color: #ffffff;
+	filter : alpha(opacity=60);
+    opacity : 0.6;
+    z-index: 100;
 }
