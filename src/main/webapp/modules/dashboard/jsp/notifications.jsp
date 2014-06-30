@@ -1,5 +1,5 @@
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
-<div class="content">
+<div id="notification" class="content">
 
 <table cellpadding="0" cellspacing="0" border="0" class="dyntable" id="notifications">
  <thead>

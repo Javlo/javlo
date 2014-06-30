@@ -1,5 +1,5 @@
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
-<div class="content">
+<div id="referers" class="content">
 <div id="referer-chart" class="pie"></div>
 </div>
 <script type="text/javascript">

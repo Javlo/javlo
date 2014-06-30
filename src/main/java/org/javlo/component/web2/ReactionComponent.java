@@ -641,7 +641,7 @@ public class ReactionComponent extends DynamicComponent implements IAction {
 		return outReactions;
 	}
 
-	public Collection<Reaction> getReactions(ContentContext ctx) {
+	public synchronized Collection<Reaction> getReactions(ContentContext ctx) {
 		Collection<Reaction> outReactions = null;
 		try {
 			loadViewData(ctx);

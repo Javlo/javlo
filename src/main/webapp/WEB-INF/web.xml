@@ -294,9 +294,21 @@
 	</servlet>
 
 	<servlet-mapping>
+		<servlet-name>I18n</servlet-name>
+		<url-pattern>/i18n/*</url-pattern>
+	</servlet-mapping>
+	
+	<servlet>
+		<servlet-name>I18n</servlet-name>
+		<servlet-class>org.javlo.servlet.I18n</servlet-class>
+		<load-on-startup>1</load-on-startup>
+	</servlet>
+
+	<servlet-mapping>
 		<servlet-name>ServletWrapper</servlet-name>
 		<url-pattern>/wrapper/*</url-pattern>
 	</servlet-mapping>
+
     
     <!--  <security-constraint>
         <web-resource-collection>

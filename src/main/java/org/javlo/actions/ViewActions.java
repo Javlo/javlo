@@ -198,8 +198,8 @@ public class ViewActions implements IAction {
 	
 	public static String performAcceptCookies(ContentContext ctx) throws Exception {
 		VisitorsMessageService.getInstance(ctx.getRequest().getSession()).markAsDisplayed("cookies");
-		Cookie cookie = new Cookie(ctx.getCurrentTemplate().getCookiesMessageName(), "1");
-		cookie.setPath("/"+ctx.getGlobalContext().getContextKey());
+		Cookie cookie = new Cookie(ctx.getCurrentTemplate().getCookiesMessageName(), "1");		
+		cookie.setPath(URLHelper.createStaticURL(ctx,"/"));
 		cookie.setMaxAge(60*60*24*365); // 1 year
 		ctx.getResponse().addCookie(cookie);
 		return null;

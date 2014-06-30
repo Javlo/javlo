@@ -201,7 +201,7 @@ public class DynamicComponentFilter extends AbstractPropertiesComponent implemen
 
 	@Override
 	public int getComplexityLevel(ContentContext ctx) {
-		return COMPLEXITY_STANDARD;
+		return getConfig(ctx).getComplexity(COMPLEXITY_EASY);
 	}
 
 	public List<String> getFields(ContentContext ctx) throws Exception {
