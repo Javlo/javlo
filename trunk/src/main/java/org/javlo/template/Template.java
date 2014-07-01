@@ -2563,5 +2563,9 @@ public class Template implements Comparable<Template> {
 	public String getCookiesMessageName() {
 		return properties.getString("acceptcookies.name", "acceptcookies");
 	}
+	
+	public String getCookiesMessagePath() {
+		return properties.getString("acceptcookies.path", null);
+	}
 
 }

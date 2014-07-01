@@ -190,8 +190,13 @@ public class ComponentConfig {
 	public int getComplexity(int defaultComplexity) {
 		if (properties == null || properties.getString("complexity") == null) {
 			return defaultComplexity;
-		} else {
-			return Integer.parseInt(properties.getString("complexity"));
+		} else {			
+			String complexity = properties.getString("complexity");
+			if (StringHelper.isDigit(complexity)) {
+				return Integer.parseInt(complexity);	
+			} else {
+				return defaultComplexity;
+			}			
 		}
 	}
 
