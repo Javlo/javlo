@@ -42,20 +42,21 @@ import org.javlo.macro.ImportGalleryMacro;
 import org.javlo.macro.ImportHTMLPageMacro;
 import org.javlo.macro.ImportJCRPageMacro;
 import org.javlo.macro.IncreaseSubtitleLevelMacro;
+import org.javlo.macro.MacroRendererCorrection;
 import org.javlo.macro.MergeDynamicComponent;
 import org.javlo.macro.NoClickableImageMacro;
 import org.javlo.macro.PasteCopiedElementInAllLanguageMacro;
 import org.javlo.macro.ReduceSubtitleLevelMacro;
 import org.javlo.macro.SmartImport;
-import org.javlo.macro.UploadGallery;
 import org.javlo.macro.UpDateMacro;
+import org.javlo.macro.UploadGallery;
 import org.javlo.macro.deleteComponentInBadArea;
 
 public class MacroFactory {
 
 	private final List<IMacro> macros = new LinkedList<IMacro>();
 
-	private static final List<IMacro> defaultMacros = Arrays.asList(new IMacro[] { new DeleteDynamicComponent(), new AddChildMacro(), new ImportContent(), new SmartImport(), new CreateArticle(), new CreateArticleComposition(), new ImportHTMLPageMacro(), new ImportJCRPageMacro(), new ImportGalleryMacro(), new CreateDefaultPageStructure(), new CreatePressReleaseTodayMacro(), new CreatePressReleaseHereMacro(), new CreateExternalNewsMacro(), new CreateWeekHereMacro(), new CreateMonthHereMacro(), new CreatePressReleaseTodayHereMacro(), new CreateMonthStructureMacro(), new CreateBaseStructureMacro(), new CreateChildrenStructureMacro(), new DeletePageFromSpecificUser(), new MergeDynamicComponent(), new ReduceSubtitleLevelMacro(), new IncreaseSubtitleLevelMacro(), new CleanResourceNameMacro(), new CopyLanguageStructureMacro(), new CopyLanguageStructureHereMacro(), new ImportDefaultLanguageMacro(), new DeleteSmartExternalLinkMacro(), new ImageAfterDescriptionMacro(), new ImageAfterDescriptionChildrenMacro(), new NoClickableImageMacro(),
+	private static final List<IMacro> defaultMacros = Arrays.asList(new IMacro[] { new DeleteDynamicComponent(), new AddChildMacro(), new ImportContent(), new SmartImport(), new CreateArticle(), new CreateArticleComposition(), new ImportHTMLPageMacro(), new ImportJCRPageMacro(), new ImportGalleryMacro(), new CreateDefaultPageStructure(), new CreatePressReleaseTodayMacro(), new CreatePressReleaseHereMacro(), new CreateExternalNewsMacro(), new CreateWeekHereMacro(), new CreateMonthHereMacro(), new CreatePressReleaseTodayHereMacro(), new CreateMonthStructureMacro(), new CreateBaseStructureMacro(), new CreateChildrenStructureMacro(), new DeletePageFromSpecificUser(), new MergeDynamicComponent(), new ReduceSubtitleLevelMacro(), new IncreaseSubtitleLevelMacro(), new CleanResourceNameMacro(), new CopyLanguageStructureMacro(), new CopyLanguageStructureHereMacro(), new ImportDefaultLanguageMacro(), new DeleteSmartExternalLinkMacro(), new ImageAfterDescriptionMacro(), new MacroRendererCorrection(), new ImageAfterDescriptionChildrenMacro(), new NoClickableImageMacro(),
 			new CurrentLgExpandMacro(), new EncryptPasswordComponent(), new EncryptVisitorsPasswordMacro(), new CreateRolesFromUserList(), new PasteCopiedElementInAllLanguageMacro(), new ImportDataBase(), new DeleteChildren(), new DeleteBadTemplate(), new DownDateMacro(), new UpDateMacro(), new DeleteChildrenAndContent(), new DeleteSameComponent(), new deleteComponentInBadArea(), new UploadGallery() });
 
 	private static MacroFactory instance = null;
