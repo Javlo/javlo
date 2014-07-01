@@ -221,13 +221,6 @@ public abstract class ElementaryURLHelper {
 		}
 		ContentContext noNavigationAreaCheckCtx = new ContentContext(ctx);
 		noNavigationAreaCheckCtx.setCheckContentArea(false);
-		
-//		if (uri.contains("biography")) {
-//			System.out.println("***** ElementaryURLHelper.createNoProtocolURL : noNavigationAreaCheckCtx.getLanguage() = "+noNavigationAreaCheckCtx.getLanguage()); //TODO: remove debug trace
-//			System.out.println("***** ElementaryURLHelper.createNoProtocolURL : noNavigationAreaCheckCtx.getContentLanguage() = "+noNavigationAreaCheckCtx.getContentLanguage()); //TODO: remove debug trace			
-//		}
-	
-		System.out.println("***** ElementaryURLHelper.createNoProtocolURL : getPathPrefix(ctx) = "+getPathPrefix(ctx)); //TODO: remove debug trace
 
 		if (noNavigationAreaCheckCtx.getContentLanguage().equals(noNavigationAreaCheckCtx.getLanguage())) {
 			if (withPathPrefix) {
