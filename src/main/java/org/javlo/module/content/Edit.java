@@ -24,6 +24,7 @@ import org.javlo.component.core.ComponentFactory;
 import org.javlo.component.core.ContentElementList;
 import org.javlo.component.core.IContentComponentsList;
 import org.javlo.component.core.IContentVisualComponent;
+import org.javlo.component.core.IReverseLinkComponent;
 import org.javlo.component.links.PageMirrorComponent;
 import org.javlo.component.title.Title;
 import org.javlo.config.StaticConfig;
@@ -61,6 +62,7 @@ import org.javlo.service.NavigationService;
 import org.javlo.service.PersistenceService;
 import org.javlo.service.PublishListener;
 import org.javlo.service.RequestService;
+import org.javlo.service.ReverseLinkService;
 import org.javlo.service.resource.ResourceStatus;
 import org.javlo.service.shared.SharedContent;
 import org.javlo.service.shared.SharedContentService;
@@ -838,14 +840,15 @@ public class Edit extends AbstractModuleAction {
 					if (ctx.isEditPreview()) {
 						componentContext.addNewComponent(elem);
 					}
-					if (!elem.isModify()) { // if elem not modified check
-											// modification via rawvalue
+					if (!elem.isModify()) { // if elem not modified check modification via rawvalue
 						String rawValue = requestService.getParameter("raw_value_" + elem.getId(), null);
 						if (rawValue != null && !rawValue.equals(elem.getValue(ctx))) {
 							logger.info("raw value modification for " + elem.getType());
 							elem.setValue(rawValue);
 							elem.setNeedRefresh(true);
 						}
+					} else if (elem instanceof IReverseLinkComponent) {
+						ReverseLinkService.getInstance(globalContext).clearCache();
 					}
 					if (elem.isNeedRefresh() && ctx.isAjax()) {
 						updateComponent(ctx, currentModule, elem.getId(), null);

@@ -132,30 +132,23 @@ public class ReverseLinkService {
 		if ((reversedLinkComponentCache == null) || (!reversedLinkComponentCacheLang.equals(ctx.getRequestContentLanguage()))) {
 			synchronized (lock) {
 				if ((reversedLinkComponentCache == null) || (!reversedLinkComponentCacheLang.equals(ctx.getRequestContentLanguage()))) {
+					ContentContext noAreaCtx = ctx.getContextWithArea(null);
 					reversedLinkComponentCacheLang = ctx.getRequestContentLanguage();
 					reversedLinkComponentCache = new HashMap<String, ComponentPage>();
-					MenuElement[] children = elem.getAllChildren();
+					MenuElement[] children = elem.getAllChildren();					
 					for (MenuElement element : children) {
-						ContentElementList content = element.getLocalContentCopy(ctx);
+						ContentElementList content = element.getLocalContentCopy(noAreaCtx);
 
 						int count = 0; // DEBUG
 
-						while (content.hasNext(ctx) && count < 100000) {
+						while (content.hasNext(noAreaCtx) && count < 100000) {
 
 							count++;
 
-							IContentVisualComponent comp = content.next(ctx);
+							IContentVisualComponent comp = content.next(noAreaCtx);
 							if (comp instanceof IReverseLinkComponent) {
-								/*
-								 * System.out.println("***** name : " +
-								 * ((IReverseLinkComponent)
-								 * comp).getLinkText(ctx));
-								 * System.out.println("**** isReverseLlink : " +
-								 * ((IReverseLinkComponent)
-								 * comp).isReverseLink());
-								 */
 								if (((IReverseLinkComponent) comp).isReverseLink()) {
-									String text = ((IReverseLinkComponent) comp).getLinkText(ctx);
+									String text = ((IReverseLinkComponent) comp).getLinkText(noAreaCtx);
 									ComponentPage componentPage = new ComponentPage();
 									componentPage.setComponent((IReverseLinkComponent) comp);
 									componentPage.setPage(element);
@@ -192,7 +185,7 @@ public class ReverseLinkService {
 		MenuElement parentPage = null;
 
 		StringRemplacementHelper remplacement = new StringRemplacementHelper();
-
+		
 		for (Object element : texts) {
 			String text = (String) element;
 			if (text.trim().length() > 0) {
