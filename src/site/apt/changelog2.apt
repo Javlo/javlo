@@ -273,3 +273,9 @@ change log
  * search real content in navigation area correction + RSS link inside infoBean 
  
  * link in navigation area don't change the navigation language
+ 
+ * help button on interface
+ 
+ * Reverse link correction (remove area)
+ 
+ * tinymce 4.1 
