@@ -73,6 +73,9 @@ public class Paragraph extends AbstractVisualComponent {
 		GlobalContext globalContext = GlobalContext.getInstance(ctx.getRequest());
 		String value = XHTMLHelper.textToXHTML(content, false, getType(), globalContext);
 		ReverseLinkService reverserLinkService = ReverseLinkService.getInstance(globalContext);
+		if (getId().equals("140429514874267763640")) {
+			System.out.println("***** Paragraph.getViewXHTMLCode : COMP FOUND."); //TODO: remove debug trace
+		}
 		value = reverserLinkService.replaceLink(ctx, this, value);
 
 		return value;
