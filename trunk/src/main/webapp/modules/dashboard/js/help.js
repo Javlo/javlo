@@ -9,5 +9,6 @@ function showHelp() {
 	addToolTips("#referers", "help.referers");
 	addToolTips("#notification", "help.notification");
 	addToolTips("#languages", "help.languages");
+	addToolTips("#debug", "help.debug");
 	addToolTips("#transformation", "help.transformation");
 }

@@ -61,7 +61,10 @@ public class ExportComponents extends HttpServlet {
 					String compId = StringHelper.getFileNameWithoutExtension(StringHelper.getFileNameFromPath(request.getRequestURI()));
 					ContentService content = ContentService.getInstance(ctx.getRequest());
 					IContentVisualComponent comp = content.getComponent(ctx, compId);
-					
+					if (comp == null) { // if not found in view mode -> search in preview mode.
+						ctx.setRenderMode(ContentContext.PREVIEW_MODE);
+						comp = content.getComponent(ctx, compId);
+					}					
 					if (comp == null) {
 						response.setStatus(HttpServletResponse.SC_NOT_FOUND);
 						return;
