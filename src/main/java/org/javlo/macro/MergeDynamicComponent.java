@@ -4,8 +4,8 @@ import java.util.Collection;
 import java.util.Enumeration;
 import java.util.Map;
 import java.util.Properties;
+import java.util.logging.Logger;
 
-import org.javlo.component.core.ComponentBean;
 import org.javlo.component.core.ComponentFactory;
 import org.javlo.component.core.ContentElementList;
 import org.javlo.component.core.IContentVisualComponent;
@@ -24,6 +24,8 @@ import org.javlo.service.PersistenceService;
  * 
  */
 public class MergeDynamicComponent extends AbstractMacro {
+	
+	private static Logger logger = Logger.getLogger(MergeDynamicComponent.class.getName());
 
 	@Override
 	public String getName() {
@@ -48,28 +50,33 @@ public class MergeDynamicComponent extends AbstractMacro {
 			for (MenuElement page : pages) {
 				ContentElementList comps = page.getContent(ctxLg);
 				while (comps.hasNext(ctxLg)) {
-					IContentVisualComponent comp = comps.next(ctxLg);					
-					if (comp instanceof DynamicComponent) {						
+					IContentVisualComponent comp = comps.next(ctxLg);
+					if (comp instanceof DynamicComponent) {
 						DynamicComponent dynComp = (DynamicComponent) comp;
-						DynamicComponent newComp = (DynamicComponent) ComponentFactory.getComponentWithType(ctxLg, dynComp.getType());
-						//newComp.init(new ComponentBean(dynComp.getComponentBean()), ctxLg);
-						Properties compProp = dynComp.getProperties();
-						Properties newProp = newComp.getProperties();
-						Enumeration<Object> keys = newProp.keys();
-						if (compProp != null) {
-							while (keys.hasMoreElements()) {
-								String key = (String) keys.nextElement();	
-								if (compProp.get(key) != null) {
-									compProp.remove(key);									
-									compProp.put(key, newProp.get(key));
-									dynComp.setModify();
-								} else if (!key.endsWith(".value")){
-									compProp.put(key, newProp.get(key));
+						DynamicComponent newComp = (DynamicComponent) ComponentFactory.getComponentWithType(ctxLg, comp.getPage(), dynComp.getType());
+						// newComp.init(new
+						// ComponentBean(dynComp.getComponentBean()), ctxLg);
+						if (newComp != null) {
+							Properties compProp = dynComp.getProperties();
+							Properties newProp = newComp.getProperties();
+							Enumeration<Object> keys = newProp.keys();
+							if (compProp != null) {
+								while (keys.hasMoreElements()) {
+									String key = (String) keys.nextElement();
+									if (compProp.get(key) != null) {
+										compProp.remove(key);
+										compProp.put(key, newProp.get(key));
+										dynComp.setModify();
+									} else if (!key.endsWith(".value")) {
+										compProp.put(key, newProp.get(key));
+									}
 								}
 							}
+							dynComp.storeProperties();
+							dynComp.reload(ctx);
+						} else {
+							logger.warning("bad dynamic component : "+dynComp.getType()+ " ("+dynComp.getPage().getPath()+')');
 						}
-						dynComp.storeProperties();
-						dynComp.reload(ctx);						
 					}
 				}
 			}

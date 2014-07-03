@@ -1271,6 +1271,8 @@ public class Edit extends AbstractModuleAction {
 					listener.onPublish(ctx);
 				}
 			}
+			
+			ReverseLinkService.getInstance(globalContext).clearCache();
 
 			return message;
 		}

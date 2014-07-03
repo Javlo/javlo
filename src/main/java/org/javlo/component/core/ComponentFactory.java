@@ -352,10 +352,10 @@ public class ComponentFactory {
 
 	}
 
-	public static IContentVisualComponent getComponentWithType(ContentContext ctx, String type) {
+	public static IContentVisualComponent getComponentWithType(ContentContext ctx, MenuElement page, String type) {
 		IContentVisualComponent outComponent = null;
 		try {
-			Collection<IContentVisualComponent> components = getComponents(ctx, ctx.getCurrentPage());
+			Collection<IContentVisualComponent> components = getComponents(ctx, page);
 			for (IContentVisualComponent component : components) {
 				if ((component.getType().equals(type))) {
 					outComponent = component;
@@ -372,6 +372,15 @@ public class ComponentFactory {
 		}
 
 		return outComponent;
+	}
+	
+	public static IContentVisualComponent getComponentWithType(ContentContext ctx, String type) {
+		try {
+			return getComponentWithType(ctx, ctx.getCurrentPage(), type);
+		} catch (Exception e) {		
+			e.printStackTrace();
+			return null;
+		}
 	}
 
 	public static IContentVisualComponent createComponent(ContentContext ctx, ComponentBean bean, MenuElement inPage, IContentVisualComponent previous, IContentVisualComponent next) throws Exception {
