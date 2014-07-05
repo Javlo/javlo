@@ -202,3 +202,15 @@ function switchClass (class1, class2) {
 	jQuery("."+tempClass).removeClass(class2);
 	jQuery("."+tempClass).removeClass(tempClass);
 }
+
+function filterPage(url, filter, cssSelector) {
+	jQuery.ajax({
+		url : url+'&filter='+filter,
+		cache : false,		
+		type : "post",
+		dataType : "html",
+		contentType : "text/html; charset=UTF-8"
+	}).done(function(html) {
+		jQuery(cssSelector).html(html);
+	});
+}

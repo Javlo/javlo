@@ -1125,12 +1125,10 @@ public class ResourceHelper {
 		out.write(contentByte);
 		out.close();
 	}
-
-	public static final void writeStringToStream(String content, OutputStream out) throws IOException {
-		for (int i = 0; i < content.length(); i++) {
-			out.write(content.charAt(i));
-		}
-		out.close();
+	
+	public static final void writeStringToStream(String content, OutputStream out, String encoding) throws IOException {
+		byte[] contentByte = content.getBytes(encoding);
+		out.write(contentByte);
 	}
 
 	/**
