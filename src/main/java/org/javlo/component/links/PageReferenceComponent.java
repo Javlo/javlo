@@ -912,7 +912,7 @@ public class PageReferenceComponent extends ComplexPropertiesLink implements IAc
 	 */
 	@Override
 	public String getEditXHTMLCode(ContentContext ctx) throws Exception {
-
+		
 		Calendar backDate = getBackDate(ctx);
 
 		ContentService content = ContentService.getInstance(ctx.getRequest());
@@ -1037,7 +1037,6 @@ public class PageReferenceComponent extends ComplexPropertiesLink implements IAc
 			out.println(XHTMLHelper.getRadio(getOrderInputName(), "popularity", getOrder()));
 			out.println("<label for=\"popularity\">" + i18nAccess.getText("content.page-teaser.order-popularity") + "</label></div>");
 		}
-
 		out.println("</fieldset>");
 
 		out.println("<fieldset class=\"page-list\">");
@@ -1048,10 +1047,14 @@ public class PageReferenceComponent extends ComplexPropertiesLink implements IAc
 		String ajaxURL = URLHelper.createExpCompLink(ctx, getId());
 		out.println("<input type=\"text\" placeholder=\"" + i18nAccess.getText("global.filter") + "\" onkeyup=\"filterPage('"+ajaxURL+"',this.value, '." + tableID + " tbody');\"/>");
 		out.println("</div>");
+		
+		MenuElement[] allChildren = menu.getAllChildren();
+		Arrays.sort(allChildren, new MenuElementModificationDateComparator(true));
+		Set<String> currentSelection = getPagesId(ctx, allChildren);
 
 		out.print("<div class=\"page-list-container\"><table class=\"");
 		out.print("page-list" + ' ' + tableID);
-		out.println("\"><thead><tr><th>" + i18nAccess.getText("global.label") + "</th><th>" + i18nAccess.getText("global.date") + "</th><th>" + i18nAccess.getText("global.modification") + "</th><th>" + i18nAccess.getText("content.page-teaser.language") + "</th><th>" + i18nAccess.getText("global.select") + "</th></tr></thead><tbody>");
+		out.println("\"><thead><tr><th>" + i18nAccess.getText("global.label") + "</th><th>" + i18nAccess.getText("global.date") + "</th><th>" + i18nAccess.getText("global.modification") + "</th><th>" + i18nAccess.getText("content.page-teaser.language") + "</th><th>" + i18nAccess.getText("global.select") + " ("+currentSelection.size()+")</th></tr></thead><tbody>");
 
 		MenuElement basePage = null;
 		if (getParentNode().length() > 1) { // if parent node is not root node
@@ -1060,9 +1063,6 @@ public class PageReferenceComponent extends ComplexPropertiesLink implements IAc
 		if (basePage != null) {
 			menu = basePage;
 		}
-		MenuElement[] allChildren = menu.getAllChildren();
-		Arrays.sort(allChildren, new MenuElementModificationDateComparator(true));
-		Set<String> currentSelection = getPagesId(ctx, allChildren);
 
 		int numberOfPage = 16384;
 		if (allChildren.length < numberOfPage) {
@@ -1101,8 +1101,7 @@ public class PageReferenceComponent extends ComplexPropertiesLink implements IAc
 		out.print("<tr class=\"filtered\"><td><a href=\"" + editPageURL + "\">" + page.getFullLabel(ctx) + "</a></td>");
 		out.print("<td>" + StringHelper.neverNull(StringHelper.renderLightDate(page.getContentDate(ctx))) + "</td>");
 		out.println("<td>" + StringHelper.renderLightDate(page.getModificationDate()) + "</td><td>" + ctx.getRequestContentLanguage() + "</td>");
-		String checked;
-		checked = "";
+		String checked = "";		
 		if (currentSelection.contains(page.getId())) {
 			checked = " checked=\"checked\"";
 		}
@@ -1178,6 +1177,7 @@ public class PageReferenceComponent extends ComplexPropertiesLink implements IAc
 		out.addAll(Arrays.asList(deserializedId));
 
 		if (isDefaultSelected()) {
+			System.out.println("***** PageReferenceComponent.getPagesId : DEFAULT SELECTED."); //TODO: remove debug trace
 			Set<String> selectedPage = new TreeSet<String>();
 			MenuElement parentNode = null;
 			if (children.length > 0) {
@@ -1367,7 +1367,7 @@ public class PageReferenceComponent extends ComplexPropertiesLink implements IAc
 	}
 	
 	private boolean isDefaultSelected() {
-		return StringHelper.isTrue(properties.getProperty(DEFAULT_SELECTED_PROP_KEY, "false"));
+		return StringHelper.isTrue(properties.getProperty(DEFAULT_SELECTED_PROP_KEY, null));
 	}
 
 	private boolean isDynamicOrder(ContentContext ctx) {
@@ -1774,7 +1774,7 @@ public class PageReferenceComponent extends ComplexPropertiesLink implements IAc
 				setModify();
 				setNeedRefresh(true);
 				setPageSelected("");
-			}
+			}			
 			setDefaultSelected(defaultSelected);
 
 			boolean withEmptyPage = requestService.getParameter(getWidthEmptyPageInputName(), null) != null;

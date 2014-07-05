@@ -68,7 +68,7 @@ public class ExportComponents extends HttpServlet {
 					} else {						
 						ctx.setFree(false);
 						ctx.setCurrentTemplate(TemplateFactory.getTemplate(ctx, comp.getPage()));
-						comp.initContent(ctx);
+						//comp.initContent(ctx);
 						String xhtml = comp.getXHTMLCode(ctx);
 						if (xhtml == null) {
 							logger.severe("content not found on component : "+compId);
