@@ -53,11 +53,8 @@ public class ExportComponents extends HttpServlet {
 
 			String componentType = request.getPathInfo();
 			if (!componentType.toLowerCase().endsWith(".csv")) {
-				if (componentType.toLowerCase().endsWith(".html") || componentType.toLowerCase().endsWith(".js")) { // js
-																													// use
-																													// for
-																													// jsonp
-					ctx.setRenderMode(ContentContext.VIEW_MODE);
+				if (componentType.toLowerCase().endsWith(".html") || componentType.toLowerCase().endsWith(".js")) {
+					response.setContentType("text/html; charset=" + ContentContext.CHARACTER_ENCODING);
 					String compId = StringHelper.getFileNameWithoutExtension(StringHelper.getFileNameFromPath(request.getRequestURI()));
 					ContentService content = ContentService.getInstance(ctx.getRequest());
 					IContentVisualComponent comp = content.getComponent(ctx, compId);
@@ -78,7 +75,7 @@ public class ExportComponents extends HttpServlet {
 							response.setStatus(HttpServletResponse.SC_NOT_FOUND);
 							return;							
 						}
-						ResourceHelper.writeStringToStream(xhtml, response.getOutputStream());
+						ResourceHelper.writeStringToStream(xhtml, response.getOutputStream(), ContentContext.CHARACTER_ENCODING);
 					}
 				} else {
 					logger.warning("bad format : " + componentType);

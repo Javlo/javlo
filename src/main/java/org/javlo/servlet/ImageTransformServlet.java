@@ -670,7 +670,7 @@ public class ImageTransformServlet extends HttpServlet {
 					response.setCharacterEncoding(ContentContext.CHARACTER_ENCODING);
 					ctx.setRequestContentLanguage(filter);
 					String html = "<html lang=\"" + ctx.getRequestContentLanguage() + "\"><head><meta http-equiv=\"Content-Type\" content=\"text/html; charset=" + ContentContext.CHARACTER_ENCODING + "\" /><title>" + info.getTitle(ctx) + "</title></head><body>" + info.getDescription(ctx) + "</body></html>";
-					ResourceHelper.writeStringToStream(html, response.getOutputStream());
+					ResourceHelper.writeStringToStream(html, response.getOutputStream(), ContentContext.CHARACTER_ENCODING);
 					return;
 				}
 

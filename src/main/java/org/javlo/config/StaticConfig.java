@@ -9,6 +9,7 @@ import java.net.Proxy;
 import java.net.ProxySelector;
 import java.net.URI;
 import java.util.Arrays;
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
@@ -73,6 +74,8 @@ public class StaticConfig extends Observable {
 	private static final String KEY = StaticConfig.class.getName();
 
 	private static final String HOME = System.getProperty("user.home");
+	
+	private Set<String> excludeContextDomain = null;
 
 	/**
 	 * @Deprecated use getInstance (ServletContext application)
@@ -1103,6 +1106,7 @@ public class StaticConfig extends Observable {
 			admimUserFactory = null;
 			adminUserFactoryClassName = "";
 			devices = null;
+			excludeContextDomain = null;
 		}
 	}
 
@@ -1303,5 +1307,18 @@ public class StaticConfig extends Observable {
 	public boolean isUndo() {
 		return properties.getBoolean("function.undo", false);
 	}
+	
+	public boolean isExcludeContextDomain(String domain) {
+		if (excludeContextDomain == null) {
+			excludeContextDomain = new HashSet<String>();
+			String hostNames = properties.getString("url.domain-no-context", null);
+			if (hostNames != null && hostNames.trim().length() > 0) {
+				hostNames = hostNames.trim();
+				excludeContextDomain.addAll(StringHelper.stringToCollection(hostNames, ","));
+			}			
+		}
+		return excludeContextDomain.contains(domain);
+	}
 
+	
 }

@@ -101,7 +101,8 @@ public class CatchAllFilter implements Filter {
 		boolean hostDefineSite = staticConfig.isHostDefineSite();
 		RequestService requestService = RequestService.getInstance(httpRequest);
 		try {
-			if (!hostDefineSite) {
+			String hostName = ServletHelper.getSiteKey(httpRequest);			
+			if (!hostDefineSite && !staticConfig.isExcludeContextDomain(hostName)) {
 				if (StringHelper.isTrue(requestService.getParameter("__check_context", "true"))) {
 					String contextURI = ContentManager.getContextName(httpRequest);
 					if (GlobalContext.isExist(httpRequest, contextURI)) {

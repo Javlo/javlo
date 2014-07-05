@@ -169,6 +169,12 @@ public class URLHelper extends ElementaryURLHelper {
 		
 	}
 	
+	public static String createExpCompLink(ContentContext ctx, String compId) {
+		Map<String,String> params = new HashMap<String, String>();
+		params.put(ContentContext.FORCE_MODE_PARAMETER_NAME, ""+ctx.getRenderMode());
+		return createStaticURL(ctx, "/expcomp/"+compId+".html", params);		
+	}
+	
 	public static String createQRCodeLink(ContentContext ctx, String data) {
 		String command = "data";
 		String code = StringHelper.getRandomIdBase64();
@@ -574,7 +580,7 @@ public class URLHelper extends ElementaryURLHelper {
 		}
 		return createURL(ctx, finalURL.toString());
 	}
-
+	
 	public static String createStaticURL(ContentContext ctx, String path, Map params) {
 		StringBuffer finalURL = new StringBuffer();
 		finalURL.append(path);

@@ -787,7 +787,11 @@ public class PageReferenceComponent extends ComplexPropertiesLink implements IAc
 	 * @return true if page is accepted
 	 * @throws Exception
 	 */
-	protected boolean filterPage(ContentContext ctx, MenuElement page) throws Exception {
+	protected boolean filterPage(ContentContext ctx, MenuElement page, String filter) throws Exception {
+		
+		if (filter != null && !(page.getTitle(ctx)+' '+page.getName()).contains(filter)) {
+			return false;
+		}
 
 		ContentContext lgDefaultCtx = new ContentContext(ctx);
 		GlobalContext globalContext = GlobalContext.getInstance(ctx.getRequest());
@@ -810,7 +814,7 @@ public class PageReferenceComponent extends ComplexPropertiesLink implements IAc
 				if (page.getTimeRange(ctx).isBefore(today)) {
 					timeAccept = true;
 				}
-			}
+			}			
 			if (!timeAccept) {
 				return false;
 			}
@@ -1041,12 +1045,13 @@ public class PageReferenceComponent extends ComplexPropertiesLink implements IAc
 		/* array filter */
 		String tableID = "table-" + getId();
 		out.println("<div class=\"filter line\">");
-		out.println("<input type=\"text\" placeholder=\"" + i18nAccess.getText("global.filter") + "\" onkeyup=\"filter(this.value, '." + tableID + " .filtered');\"/>");
+		String ajaxURL = URLHelper.createExpCompLink(ctx, getId());
+		out.println("<input type=\"text\" placeholder=\"" + i18nAccess.getText("global.filter") + "\" onkeyup=\"filterPage('"+ajaxURL+"',this.value, '." + tableID + " tbody');\"/>");
 		out.println("</div>");
 
 		out.print("<div class=\"page-list-container\"><table class=\"");
 		out.print("page-list" + ' ' + tableID);
-		out.println("\"><tr><th>" + i18nAccess.getText("global.label") + "</th><th>" + i18nAccess.getText("global.date") + "</th><th>" + i18nAccess.getText("global.modification") + "</th><th>" + i18nAccess.getText("content.page-teaser.language") + "</th><th>" + i18nAccess.getText("global.select") + "</th></tr>");
+		out.println("\"><thead><tr><th>" + i18nAccess.getText("global.label") + "</th><th>" + i18nAccess.getText("global.date") + "</th><th>" + i18nAccess.getText("global.modification") + "</th><th>" + i18nAccess.getText("content.page-teaser.language") + "</th><th>" + i18nAccess.getText("global.select") + "</th></tr></thead><tbody>");
 
 		MenuElement basePage = null;
 		if (getParentNode().length() > 1) { // if parent node is not root node
@@ -1064,32 +1069,44 @@ public class PageReferenceComponent extends ComplexPropertiesLink implements IAc
 			numberOfPage = allChildren.length;
 		}
 
-		for (int i = 0; i < numberOfPage; i++) {
-			ContentContext newCtx = new ContentContext(ctx);
-			newCtx.setArea(null);
-			ContentContext lgCtx = ctx;
-			if (GlobalContext.getInstance(ctx.getRequest()).isAutoSwitchToDefaultLanguage()) {
-				lgCtx = allChildren[i].getContentContextWithContent(ctx, ctx.getCurrentTemplate().isNavigationArea(ctx.getArea()));
-			}
-			if (filterPage(lgCtx, allChildren[i]) && (allChildren[i].getContentDateNeverNull(ctx).after(backDate.getTime()))) {
-				String editPageURL = URLHelper.createEditURL(allChildren[i].getPath(), ctx);
-				out.print("<tr class=\"filtered\"><td><a href=\"" + editPageURL + "\">" + allChildren[i].getFullLabel(lgCtx) + "</a></td>");
-				out.print("<td>" + StringHelper.neverNull(StringHelper.renderLightDate(allChildren[i].getContentDate(lgCtx))) + "</td>");
-				out.println("<td>" + StringHelper.renderLightDate(allChildren[i].getModificationDate()) + "</td><td>" + lgCtx.getRequestContentLanguage() + "</td>");
-
-				String checked;
-
-				checked = "";
-				if (currentSelection.contains(allChildren[i].getId())) {
-					checked = " checked=\"checked\"";
-				}
-
-				out.print("<td><input type=\"checkbox\" name=\"" + getPageId(allChildren[i]) + "\" value=\"" + allChildren[i].getId() + "\"" + checked + "/></td></tr>");
-			}
+		if (ctx.isExport()) { // if export mode render only the list of page.
+			outStream = new ByteArrayOutputStream();
+			out = new PrintStream(outStream); 
 		}
-
-		out.println("</tr></table></div></fieldset>");
+		RequestService rs = RequestService.getInstance(ctx.getRequest());
+		String filter = rs.getParameter("filter",null);		
+		if (numberOfPage<50 || filter != null) {
+			for (int i = 0; i < numberOfPage; i++) {
+				ContentContext newCtx = new ContentContext(ctx);
+				newCtx.setArea(null);
+				ContentContext lgCtx = ctx;
+				if (GlobalContext.getInstance(ctx.getRequest()).isAutoSwitchToDefaultLanguage()) {
+					lgCtx = allChildren[i].getContentContextWithContent(ctx, ctx.getCurrentTemplate().isNavigationArea(ctx.getArea()));
+				}
+				if (filterPage(lgCtx, allChildren[i], filter) && (allChildren[i].getContentDateNeverNull(ctx).after(backDate.getTime()))) {
+					renderPageSelectLine(lgCtx, out, currentSelection, allChildren[i]);
+				}
+			}
+		} else {
+			out.println("<td colspan=\"5\" class=\"error\"><div class=\"notification msgalert\">"+i18nAccess.getText("content.page-reference.to-many-pages", "too many pages, fill text in filter field for search a specific page.")+" (#"+numberOfPage+")</div></td>");
+		}
+		if (!ctx.isExport()) { 
+			out.println("</tbody></table></div></fieldset>");
+		}
 		return new String(outStream.toByteArray());
+	}
+	
+	private void renderPageSelectLine(ContentContext ctx, PrintStream out, Collection<String> currentSelection, MenuElement page) throws Exception {		
+		String editPageURL = URLHelper.createEditURL(page.getPath(), ctx);
+		out.print("<tr class=\"filtered\"><td><a href=\"" + editPageURL + "\">" + page.getFullLabel(ctx) + "</a></td>");
+		out.print("<td>" + StringHelper.neverNull(StringHelper.renderLightDate(page.getContentDate(ctx))) + "</td>");
+		out.println("<td>" + StringHelper.renderLightDate(page.getModificationDate()) + "</td><td>" + ctx.getRequestContentLanguage() + "</td>");
+		String checked;
+		checked = "";
+		if (currentSelection.contains(page.getId())) {
+			checked = " checked=\"checked\"";
+		}
+		out.print("<td><input type=\"hidden\" name=\""+getPageDisplayedId(page)+"\" value=\"1\" /><input type=\"checkbox\" name=\"" + getPageId(page) + "\" value=\"" + page.getId() + "\"" + checked + "/></td></tr>");
 	}
 
 	private int getFirstPageNumber() {
@@ -1146,7 +1163,11 @@ public class PageReferenceComponent extends ComplexPropertiesLink implements IAc
 	}
 
 	protected String getPageId(MenuElement page) {
-		return "page_" + getId() + "_" + page.getId();
+		return "p_" + getId() + "_" + page.getId();
+	}
+	
+	protected String getPageDisplayedId(MenuElement page) {
+		return "pd_" + getId() + "_" + page.getId();
 	}
 
 	protected Set<String> getPagesId(ContentContext ctx, MenuElement[] children) throws Exception {
@@ -1546,7 +1567,7 @@ public class PageReferenceComponent extends ComplexPropertiesLink implements IAc
 			if (GlobalContext.getInstance(ctx.getRequest()).isAutoSwitchToDefaultLanguage()) {
 				lgCtx = page.getContentContextWithContent(ctx, ctx.getCurrentTemplate().isNavigationArea(ctx.getArea()));
 			}			
-			if (filterPage(lgCtx, page)) {
+			if (filterPage(lgCtx, page, null)) {
 				if (countPage < getMaxNews(lgCtx)) {
 					if ((page.isRealContentAnyLanguage(lgCtx) || isWidthEmptyPage()) && (page.getChildMenuElements().size() == 0 || page.isChildrenAssociation() || !isOnlyPageWithoutChildren()) && page.getContentDateNeverNull(lgCtx).after(backDate.getTime())) {
 						if (firstPage == null) {
@@ -1662,9 +1683,11 @@ public class PageReferenceComponent extends ComplexPropertiesLink implements IAc
 			String separation = "";
 			for (MenuElement element : allChildren) {
 				String selectedPage = requestService.getParameter(getPageId(element), null);
-				if (isDefaultSelected() ^ (selectedPage != null) && filterPage(ctx, element)) {
-					pagesSelected = pagesSelected + separation + element.getId();
-					separation = ID_SEPARATOR;
+				if (requestService.getParameter(getPageDisplayedId(element), null) != null) {
+					if (isDefaultSelected() ^ (selectedPage != null) && filterPage(ctx, element,null)) {
+						pagesSelected = pagesSelected + separation + element.getId();
+						separation = ID_SEPARATOR;
+					}
 				}
 			}
 
