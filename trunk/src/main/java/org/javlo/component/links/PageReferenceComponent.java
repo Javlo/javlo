@@ -1117,6 +1117,14 @@ public class PageReferenceComponent extends ComplexPropertiesLink implements IAc
 		out.println("<input type=\"text\" placeholder=\"" + i18nAccess.getText("global.filter") + "\" onkeyup=\"filterPage('"+ajaxURL+"',this.value, '." + tableID + " tbody');\"/>");
 		out.println("</div>");
 		
+		MenuElement basePage = null;
+		if (getParentNode().length() > 1) { // if parent node is not root node
+			basePage = menu.searchChild(ctx, getParentNode());
+		}
+		if (basePage != null) {
+			menu = basePage;
+		}
+		
 		MenuElement[] allChildren = menu.getAllChildren();
 		Arrays.sort(allChildren, new MenuElementModificationDateComparator(true));
 		Set<String> currentSelection = getPagesId(ctx, allChildren);
@@ -1126,13 +1134,7 @@ public class PageReferenceComponent extends ComplexPropertiesLink implements IAc
 		String onlyCheckedScript = "if (jQuery('#comp-"+getId()+" .filter input').val().indexOf(':checked')<0) {jQuery('#comp-"+getId()+" .filter input').val(jQuery('#comp-"+getId()+" .filter input').val()+' :checked'); filterPage('"+ajaxURL+"',jQuery('#comp-"+getId()+" .filter input').val(), '." + tableID + " tbody'); return false;}";
 		out.println("\"><thead><tr><th>" + i18nAccess.getText("global.label") + "</th><th>" + i18nAccess.getText("global.date") + "</th><th>" + i18nAccess.getText("global.modification") + "</th><th>" + i18nAccess.getText("content.page-teaser.language") + "</th><th>" + i18nAccess.getText("global.select") + " <a href=\"#\" onclick=\""+onlyCheckedScript+"\">("+currentSelection.size()+")</a></th></tr></thead><tbody>");
 
-		MenuElement basePage = null;
-		if (getParentNode().length() > 1) { // if parent node is not root node
-			basePage = menu.searchChild(ctx, getParentNode());
-		}
-		if (basePage != null) {
-			menu = basePage;
-		}
+		
 
 		int numberOfPage = 16384;
 		if (allChildren.length < numberOfPage) {
