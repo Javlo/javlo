@@ -155,7 +155,11 @@ public class XHTMLHelper {
 		if (content == null) {
 			return false;
 		} else {
-			return !content.equals(autoLink(content));
+			if (content.toLowerCase().contains("http://")) {
+				return true;
+			} else {
+				return !content.equals(autoLink(content));
+			}
 		}
 	}
 

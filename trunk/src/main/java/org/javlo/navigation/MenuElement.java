@@ -2772,6 +2772,26 @@ public class MenuElement implements Serializable, IPrintInfo {
 	public MenuElement getParent() {
 		return parent;
 	}
+	
+	/**
+	 * check if the current page is a child of a page with id or name give in parameter.
+	 * @param page name, id of a page or path of the page.
+	 * @return
+	 */
+	public boolean isChildOf(String page) {
+		if (page == null) {
+			return false;
+		} else {
+			MenuElement parent = getParent();
+			while (parent != null) {
+				if (parent.getId().equals(page) || parent.getName().equals(page) || parent.getPath().equals(page)) {
+					return true;
+				}
+				parent = parent.getParent();
+			}
+		}
+		return false;
+	}
 
 	/**
 	 * return the page of this page

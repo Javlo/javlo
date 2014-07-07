@@ -24,6 +24,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
+import org.apache.commons.lang.StringUtils;
 import org.javlo.actions.IAction;
 import org.javlo.bean.Link;
 import org.javlo.component.core.AbstractVisualComponent;
@@ -53,6 +54,8 @@ import org.javlo.service.NavigationService;
 import org.javlo.service.RequestService;
 import org.javlo.template.Template;
 import org.javlo.template.TemplateFactory;
+
+import com.sun.org.apache.bcel.internal.generic.GETSTATIC;
 
 /**
  * list of links to a subset of pages. <h4>exposed variable :</h4>
@@ -233,7 +236,6 @@ public class PageReferenceComponent extends ComplexPropertiesLink implements IAc
 				bean.startDate = bean.date;
 				bean.endDate = bean.date;
 			}
-			
 
 			/**
 			 * for association link to association page and not root.
@@ -776,6 +778,69 @@ public class PageReferenceComponent extends ComplexPropertiesLink implements IAc
 	public static final void setCurrentYear(HttpSession session, int currentYear) {
 		session.setAttribute("___current-year", currentYear);
 	}
+	
+	private static Collection<String> extractCommandFromFilter(String filter) {	
+		if (filter == null || filter.trim().length() == 0) {
+			return Collections.emptyList();
+		}
+		Collection<String> commands = new HashSet<String>();
+		String[] filterSplited = StringUtils.split(filter, ' ');
+		for (String command : filterSplited) {
+			command = command.trim();
+			if (command.startsWith(":") && command.length()>2) {
+				commands.add(command.substring(1));
+			}			
+		}
+		return commands;		
+	}
+	
+	private static String removeCommandFromFilter(String filter) {	
+		if (filter == null || filter.trim().length() == 0) {
+			return filter;
+		}
+		StringBuffer outFilter = new StringBuffer();
+		String[] filterSplited = StringUtils.split(filter, ' ');
+		for (String command : filterSplited) {
+			String trimCommand = command.trim();
+			if (!(trimCommand.startsWith(":") && trimCommand.length()>2)) {
+				outFilter.append(command);
+				outFilter.append(' ');
+			}			
+		}
+		return outFilter.toString().trim();		
+	}
+	
+	private boolean validPageForCommand(ContentContext ctx, MenuElement page, Collection<String> commands) throws Exception {		
+		Set<String> currentSelection = getPagesId(ctx, page.getRoot().getAllChildren());		
+		for (String command : commands) {			
+			if (command.equals("checked")) {
+				if (!currentSelection.contains(page.getId())) {
+					return false;
+				}
+			} else if (command.equals("unchecked")) {
+				if (currentSelection.contains(page.getId())) {
+					return false;
+				}
+			} if (command.equals("visible")) {
+				if (!page.isVisible()) {
+					return false;
+				}
+			} else if (command.equals("unvisible")) {
+				if (page.isVisible()) {
+					return false;
+				}
+			} else if (command.startsWith("depth")) {
+				for (int i=0; i<100; i++) {
+					if (command.equals("depth"+i)) {
+						if (page.getDepth()!=i) {
+							return false;
+						}
+					}
+				}
+			}
+		}
+		return true;
+	}
 
 	/**
 	 * filter the page
@@ -787,16 +852,22 @@ public class PageReferenceComponent extends ComplexPropertiesLink implements IAc
 	 * @return true if page is accepted
 	 * @throws Exception
 	 */
-	protected boolean filterPage(ContentContext ctx, MenuElement page, String filter) throws Exception {
+	protected boolean filterPage(ContentContext ctx, MenuElement page, String filter) throws Exception {	
+		if (!validPageForCommand(ctx,page,extractCommandFromFilter(filter))) {
+			return false;
+		}
+		filter = removeCommandFromFilter(filter);
 		
 		if (filter != null && !(page.getTitle(ctx)+' '+page.getName()).contains(filter)) {
 			return false;
+		}		
+		if (!page.isChildOf(getParentNode())) {
+			return false;
 		}
-
+		
 		ContentContext lgDefaultCtx = new ContentContext(ctx);
 		GlobalContext globalContext = GlobalContext.getInstance(ctx.getRequest());
 		Iterator<String> contentLg = globalContext.getContentLanguages().iterator();
-
 		if (getTimeSelection() != null) {
 			Date today = new Date();
 			boolean timeAccept = false;
@@ -819,13 +890,11 @@ public class PageReferenceComponent extends ComplexPropertiesLink implements IAc
 				return false;
 			}
 		}
-
 		while (page.getContentByType(lgDefaultCtx, Tags.TYPE).size() == 0 && contentLg.hasNext()) {
 			String lg = contentLg.next();
 			lgDefaultCtx.setContentLanguage(lg);
 			lgDefaultCtx.setRequestContentLanguage(lg);
 		}
-
 		if (getSelectedTag(ctx).length() == 0) {
 			return true;
 		}
@@ -1054,7 +1123,8 @@ public class PageReferenceComponent extends ComplexPropertiesLink implements IAc
 
 		out.print("<div class=\"page-list-container\"><table class=\"");
 		out.print("page-list" + ' ' + tableID);
-		out.println("\"><thead><tr><th>" + i18nAccess.getText("global.label") + "</th><th>" + i18nAccess.getText("global.date") + "</th><th>" + i18nAccess.getText("global.modification") + "</th><th>" + i18nAccess.getText("content.page-teaser.language") + "</th><th>" + i18nAccess.getText("global.select") + " ("+currentSelection.size()+")</th></tr></thead><tbody>");
+		String onlyCheckedScript = "if (jQuery('#comp-"+getId()+" .filter input').val().indexOf(':checked')<0) {jQuery('#comp-"+getId()+" .filter input').val(jQuery('#comp-"+getId()+" .filter input').val()+' :checked'); filterPage('"+ajaxURL+"',jQuery('#comp-"+getId()+" .filter input').val(), '." + tableID + " tbody'); return false;}";
+		out.println("\"><thead><tr><th>" + i18nAccess.getText("global.label") + "</th><th>" + i18nAccess.getText("global.date") + "</th><th>" + i18nAccess.getText("global.modification") + "</th><th>" + i18nAccess.getText("content.page-teaser.language") + "</th><th>" + i18nAccess.getText("global.select") + " <a href=\"#\" onclick=\""+onlyCheckedScript+"\">("+currentSelection.size()+")</a></th></tr></thead><tbody>");
 
 		MenuElement basePage = null;
 		if (getParentNode().length() > 1) { // if parent node is not root node
@@ -1075,7 +1145,7 @@ public class PageReferenceComponent extends ComplexPropertiesLink implements IAc
 		}
 		RequestService rs = RequestService.getInstance(ctx.getRequest());
 		String filter = rs.getParameter("filter",null);		
-		if (numberOfPage<50 || filter != null) {
+		if (numberOfPage<100 || filter != null) {
 			for (int i = 0; i < numberOfPage; i++) {
 				ContentContext newCtx = new ContentContext(ctx);
 				newCtx.setArea(null);
@@ -1087,7 +1157,7 @@ public class PageReferenceComponent extends ComplexPropertiesLink implements IAc
 					renderPageSelectLine(lgCtx, out, currentSelection, allChildren[i]);
 				}
 			}
-		} else {
+		} else {			
 			out.println("<td colspan=\"5\" class=\"error\"><div class=\"notification msgalert\">"+i18nAccess.getText("content.page-reference.to-many-pages", "too many pages, fill text in filter field for search a specific page.")+" (#"+numberOfPage+")</div></td>");
 		}
 		if (!ctx.isExport()) { 
@@ -1176,8 +1246,7 @@ public class PageReferenceComponent extends ComplexPropertiesLink implements IAc
 
 		out.addAll(Arrays.asList(deserializedId));
 
-		if (isDefaultSelected()) {
-			System.out.println("***** PageReferenceComponent.getPagesId : DEFAULT SELECTED."); //TODO: remove debug trace
+		if (isDefaultSelected()) {			
 			Set<String> selectedPage = new TreeSet<String>();
 			MenuElement parentNode = null;
 			if (children.length > 0) {
@@ -1630,24 +1699,10 @@ public class PageReferenceComponent extends ComplexPropertiesLink implements IAc
 	}
 
 	public static void main(String[] args) {
-		Date mount = new Date();
-		Calendar endDate = Calendar.getInstance();
-		endDate.setTime(mount);
-		System.out.println("***** PageReferenceComponent.main : 0 = " + StringHelper.renderTime(endDate.getTime())); // TODO:
-																														// remove
-																														// debug
-																														// trace
-		endDate = TimeHelper.convertRemoveAfterMonth(endDate);
-		System.out.println("***** PageReferenceComponent.main : 1 = " + StringHelper.renderTime(endDate.getTime())); // TODO:
-																														// remove
-																														// debug
-																														// trace
-		endDate.add(Calendar.MONTH, 1);
-		endDate.add(Calendar.SECOND, -1);
-		System.out.println("***** PageReferenceComponent.main : 2 = " + StringHelper.renderTime(endDate.getTime())); // TODO:
-																														// remove
-																														// debug
-																														// trace
+		Collection<String> commands = extractCommandFromFilter(":checked");
+		for (String string : commands) {
+			System.out.println("***** PageReferenceComponent.main : command="+string); //TODO: remove debug trace
+		}
 	}
 
 	private void popularitySorting(ContentContext ctx, List<MenuElement> pages, int pertinentPageToBeSort) throws Exception {
