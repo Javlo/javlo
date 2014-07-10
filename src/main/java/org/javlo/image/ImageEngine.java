@@ -1046,24 +1046,58 @@ public class ImageEngine {
 		}
 		return outImage;
 	}
+	
+	/**
+	 * the "mathematical" distance between two color.
+	 * @param c1
+	 * @param c2
+	 * @return
+	 */
+	public static int getColorDistance(Color c1, Color c2) {
+		return Math.abs(c1.getRed()-c2.getRed())+Math.abs(c1.getGreen()-c2.getGreen())+Math.abs(c1.getBlue()-c2.getBlue());
+	}
+	
+	/**
+	 * search a color inside a image.
+	 * @param image
+	 * @param color
+	 * @return the distance from all pixels to color (0:no difference (all pixel are the same and is exactly the color value) 1 : max difference (image in black and color is white)).
+	 */
+	public static double closeColor(BufferedImage image, Color color) {		
+		double colorDistance = 0;		
+		int STEP = 20;
+		if (image.getWidth()*4<STEP || image.getHeight()*4<STEP) {
+			STEP = 1;
+		}
+		int maxDistance = getColorDistance(Color.WHITE, Color.BLACK);
+		int imageSize = ((STEP+1)*(STEP+1));
+		int c = 0;		
+		for (int x = 0; x < image.getWidth(); x+=image.getWidth()/STEP) {
+			for (int y = 0; y < image.getHeight(); y+=image.getHeight()/STEP) {
+				Color imageColor = new Color(image.getRGB(x, y));				
+				colorDistance = colorDistance + ((double)getColorDistance(color,imageColor)/maxDistance)/imageSize;
+				c++;
+			}
+		}		
+		return colorDistance;
+	}
 
 	/**
 	 * @param args
 	 */
 	public static void main(String[] args) {
-		File source = new File("C:/trans/source.jpg");
+		File source = new File("C:/trans/sexy.jpg");
 		File target = new File("c:/trans/out.jpg");
 
 		try {
 			System.out.println("start...");
 			BufferedImage sourceImage = ImageIO.read(source);
+			System.out.println("RED   = "+closeColor(sourceImage, Color.RED));
+			System.out.println("GREEN = "+closeColor(sourceImage, Color.GREEN));
+			System.out.println("BLUE  = "+closeColor(sourceImage, Color.BLUE));
+			System.out.println("WHITE  = "+closeColor(sourceImage, Color.WHITE));
+			System.out.println("BLACK = "+closeColor(sourceImage, Color.BLACK));
 			
-			int val = sourceImage.getRGB(0, 0);
-			System.out.println(val);
-			
-			BufferedImage image =  ImageEngine.zoom(sourceImage, 2, 565, 165);
-			ImageIO.write(image, "jpg", target);
-			System.out.println("end.");
 		} catch (Exception e) {
 			e.printStackTrace();
 		}

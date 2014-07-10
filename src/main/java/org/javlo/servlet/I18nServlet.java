@@ -10,10 +10,11 @@ import javax.servlet.http.HttpServletResponse;
 
 import org.javlo.context.ContentContext;
 import org.javlo.i18n.I18nAccess;
+import org.javlo.module.core.ModulesContext;
 
-public class I18n extends HttpServlet {
+public class I18nServlet extends HttpServlet {
 
-	public I18n() {
+	public I18nServlet() {
 	}
 	
 	@Override
@@ -25,6 +26,9 @@ public class I18n extends HttpServlet {
 		ContentContext ctx;
 		try {
 			ctx = ContentContext.getContentContext(request, response);
+			ModulesContext moduleContext = ModulesContext.getInstance(request.getSession(), ctx.getGlobalContext());
+			moduleContext.initContext(request, response);
+
 			I18nAccess i18nAccess = I18nAccess.getInstance(ctx.getRequest());		
 			PrintStream out = new PrintStream(response.getOutputStream());
 			if (key != null) {

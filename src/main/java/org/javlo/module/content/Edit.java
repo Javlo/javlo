@@ -156,6 +156,24 @@ public class Edit extends AbstractModuleAction {
 			ctx.addAjaxZone("comp-" + newId, newComponentXHTML);
 		}
 	}
+	
+	/**
+	 * update previous command zone.
+	 * 
+	 * @param ctx
+	 * @param currentModule
+	 * @param newId
+	 *            the id of the component
+	 * @param previousId
+	 *            the id, null for update and previous component for insert.
+	 * @throws Exception
+	 */
+	public static void updatePreviewCommands(ContentContext ctx) throws Exception {
+		ctx.getRequest().setAttribute("editPreview", ctx.isEditPreview());
+		ctx.getRequest().setAttribute("components", ComponentFactory.getComponentForDisplay(ctx));
+		String previewCommandsXHTML = ServletHelper.executeJSP(ctx, "/jsp/preview/command.jsp");		
+		ctx.addAjaxZone("preview_command", previewCommandsXHTML);
+	}
 
 	/**
 	 * update component
@@ -714,7 +732,19 @@ public class Edit extends AbstractModuleAction {
 			areaKey = EditContext.getInstance(globalContext, session).getCurrentArea();
 		}
 		
-		String newId = content.createContent(ctx, targetPage, areaKey, previousId, type, "", true);
+		String newId;
+		if (type.equals("clipboard")) {
+			ClipBoard cb = ClipBoard.getInstance(ctx.getRequest());
+			Object copied = cb.getCopied();
+			if (copied == null || !(copied instanceof ComponentBean)) {
+				return "error no item in clipBoard";
+			} else {
+				ComponentBean bean = (ComponentBean)copied;				
+				newId = content.createContent(ctx, previousId, bean.getType(), bean.getValue(), false, bean.getRenderer());	
+			}			
+		} else {		
+			newId = content.createContent(ctx, targetPage, areaKey, previousId, type, "", true);
+		}
 
 		if (StringHelper.isTrue(rs.getParameter("init", null))) {
 			IContentVisualComponent comp = content.getComponent(ctx, newId);
@@ -761,6 +791,12 @@ public class Edit extends AbstractModuleAction {
 
 		String id = rs.getParameter("id", null);
 		if (id != null) {
+			
+			if (id.equals("clipboard")) {
+				ClipBoard.getInstance(request).clear();
+				updatePreviewCommands(ctx);
+				return null;
+			}
 
 			MenuElement targetPage = content.getNavigation(ctx).searchChildFromId(request.getParameter("pageCompID"));
 			if (targetPage == null) {
@@ -1512,9 +1548,13 @@ public class Edit extends AbstractModuleAction {
 		if (comp == null) {
 			return "component not found : " + compId;
 		} else {
-			clipBoard.copy(new ComponentBean(comp.getComponentBean()));
+			clipBoard.copy(ctx, new ComponentBean(comp.getComponentBean()));
 			messageRepository.setGlobalMessageAndNotification(ctx, new GenericMessage(i18nAccess.getText("edit.message.copy", new String[][] { { "type", "" + comp.getType() } }), GenericMessage.INFO));
 			prepareUpdateInsertLine(ctx);
+		}
+		
+		if (ctx.getRenderMode() == ContentContext.PREVIEW_MODE) {
+			updatePreviewCommands(ctx);
 		}
 
 		return null;

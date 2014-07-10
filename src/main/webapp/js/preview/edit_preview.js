@@ -74,141 +74,139 @@ var floatZone = function(source, zone1, zone2, image){
 	return sep;
 };
 
-jQuery(document).ready(
-		function() {
-			jQuery( window ).mousemove(function( event ) {
-				mouseX = event.pageX;
-				mouseY = event.pageY;
-				
-				/*if (!mouseInLayer()) {
-					console.log("RESET");
-					layerOver(null,false);
-				}*/
-				
-			});
-			
-			jQuery("#preview_command .pc_command .slide").click(function() {
-				var slide = jQuery(this);
-				var command = jQuery("#preview_command .pc_command");
-				if (command.hasClass("reduce")) {
-					command.animate({marginLeft: 0},300);
-					command.removeClass("reduce");					
-				} else {
-					command.animate({marginLeft: -(jQuery("#preview_command .pc_command").width()-200)+"px"},300);
-					command.addClass("reduce");					
-					command.addClass("reduce");
-				}
-				return false;
-			});
-			
-			updateImagePreview();
-			
-			try {
-				jQuery(".floating-preview #preview_command").draggable({
-					handle : ".pc_header"
-				});
-				jQuery("body").append(
-						'<div id="preview-layer"><span>&nbsp;</span></div>');
-				
-				updatePDFPosition();
-				
-			
-				jQuery( document ).tooltip({
-					position: {
-					my: "center bottom-20",
-					at: "center top",					
-					using: function( position, feedback ) {
-						 jQuery( this ).css( position );
-						 jQuery( "<div>" )
-						 .addClass( "arrow" )
-						 .addClass( feedback.vertical )
-						 .addClass( feedback.horizontal )
-						 .appendTo( this );
-					  }
-					},
-					items: "#preview-layer",
-					show: {delay:500}
-				});
-				 
-			} catch (err) {
-				if (typeof console != 'undefined') {
-					console.log("error on : " + err);
-				}
-			}
-			
-			jQuery(".reverse-link-preview").mouseover(function() {
-				var link = jQuery(this);
-				var popup = jQuery("#box-"+link.attr("id"));				
-				popup.css("display", "block");
-				popup.mouseleave(function() {
-					jQuery(this).css("display", "none");
-				});
-			});
+function onreadyPreview() {	
+	
+	closableFieldSet(jQuery(".closable"));
+	
+	jQuery( window ).mousemove(function( event ) {
+		mouseX = event.pageX;
+		mouseY = event.pageY;
+		
+		/*if (!mouseInLayer()) {
+			console.log("RESET");
+			layerOver(null,false);
+		}*/
+		
+	});
+	
+	jQuery("#preview_command .pc_command .slide").click(function() {
+		var slide = jQuery(this);
+		var command = jQuery("#preview_command .pc_command");
+		if (command.hasClass("reduce")) {
+			command.animate({marginLeft: 0},300);
+			command.removeClass("reduce");					
+		} else {
+			command.animate({marginLeft: -(jQuery("#preview_command .pc_command").width()-200)+"px"},300);
+			command.addClass("reduce");					
+			command.addClass("reduce");
+		}
+		return false;
+	});
+	
+	updateImagePreview();
+	
+	try {
+		jQuery(".floating-preview #preview_command").draggable({
+			handle : ".pc_header"
+		});
+		if (jQuery("#preview-layer").length == 0) {
+			jQuery("body").append('<div id="preview-layer"><span>&nbsp;</span></div>');
+		}		
+		updatePDFPosition();				
+	
+		jQuery( document ).tooltip({
+			position: {
+			my: "center bottom-20",
+			at: "center top",					
+			using: function( position, feedback ) {
+				 jQuery( this ).css( position );
+				 jQuery( "<div>" )
+				 .addClass( "arrow" )
+				 .addClass( feedback.vertical )
+				 .addClass( feedback.horizontal )
+				 .appendTo( this );
+			  }
+			},
+			items: "#preview-layer",
+			show: {delay:500}
+		});
+		 
+	} catch (err) {
+		if (typeof console != 'undefined') {
+			console.log("error on : " + err);
+		}
+	}
+	
+	jQuery(".reverse-link-preview").mouseover(function() {
+		var link = jQuery(this);
+		var popup = jQuery("#box-"+link.attr("id"));				
+		popup.css("display", "block");
+		popup.mouseleave(function() {
+			jQuery(this).css("display", "none");
+		});
+	});
 
-			initPreview();
+	initPreview();
 
-			jQuery("body").mouseover(function() {				
+	jQuery("body").mouseover(function() {				
+		return true;
+	});
+	jQuery(window).scroll(function() {				
+		if (!dragging) {					
+			layerOver(null, false);
+		}
+		return true;
+	});
+	jQuery("#preview-layer").click(
+			function() {						
+				layerOver(null);
+				jQuery(this).data("subItem").trigger("click",
+						jQuery(this).data("subItem"));
 				return true;
-			});
-			jQuery(window).scroll(function() {				
+			});		
+	jQuery("#preview-layer").mouseout(
+			function() {						
 				if (!dragging) {					
 					layerOver(null, false);
 				}
-				return true;
-			});
-			jQuery("#preview-layer").click(
-					function() {						
-						layerOver(null);
-						jQuery(this).data("subItem").trigger("click",
-								jQuery(this).data("subItem"));
-						return true;
-					});		
-			jQuery("#preview-layer").mouseout(
-					function() {						
-						if (!dragging) {					
-							layerOver(null, false);
-						}
-					});			
-			jQuery(".preview-edit").click(function() {
-				
-				if (jQuery(this).hasClass("no-access")) {
-					return false;
-				}
-				var elems = jQuery(this);
-				var editURL = elems.attr("action");
-				var param = "";
-				jQuery.colorbox({
-					href : editURL + param,
-					opacity : 0.6,
-					iframe : true,
-					width : "95%",
-					height : "95%"
-				});
-				return false;
-			});
-			
-			/////////// SORTABLE /////////////
-			jQuery(".sortable").sortable({
-				   placeholder: "sortable-target"
-				   ,stop: function(event, ui) {
-					   var url = jQuery("#children_list").attr("action");
-					   url=addParam(url,"webaction=edit.movePage&page="+jQuery(ui.item).attr("id")+"&previous="+jQuery(ui.item).prev().attr("id"));
-					   ajaxRequest(url);
-				   }
-			});
-			
-			jQuery(".editable-component.ui-droppable").each(function() {
-				if (jQuery(this).height() == 0 && jQuery(this).children().height() > 0) { // don't contains block item
-					jQuery(this).css("float", "left"); // out of the flow
-					jQuery(this).height(jQuery(this).children().height());
-				}				
-			});
-			
-			jQuery(document).live("ajaxUpdate", function() {
-				//updatePDFPosition();
-			});
-			
+			});			
+	jQuery(".preview-edit").click(function() {
+		
+		if (jQuery(this).hasClass("no-access")) {
+			return false;
+		}
+		var elems = jQuery(this);
+		var editURL = elems.attr("action");
+		var param = "";
+		jQuery.colorbox({
+			href : editURL + param,
+			opacity : 0.6,
+			iframe : true,
+			width : "95%",
+			height : "95%"
 		});
+		return false;
+	});
+	
+	/////////// SORTABLE /////////////
+	jQuery(".sortable").sortable({
+		   placeholder: "sortable-target"
+		   ,stop: function(event, ui) {
+			   var url = jQuery("#children_list").attr("action");
+			   url=addParam(url,"webaction=edit.movePage&page="+jQuery(ui.item).attr("id")+"&previous="+jQuery(ui.item).prev().attr("id"));
+			   ajaxRequest(url);
+		   }
+	});
+	
+	jQuery(".editable-component.ui-droppable").each(function() {
+		if (jQuery(this).height() == 0 && jQuery(this).children().height() > 0) { // don't contains block item
+			jQuery(this).css("float", "left"); // out of the flow
+			jQuery(this).height(jQuery(this).children().height());
+		}				
+	});
+}
+
+
 
 function updateImagePreview() {
 	jQuery(".image-preview-loading").each(function() {
@@ -432,7 +430,7 @@ initPreview = function() {
 		return null;
 	}
 
-	jQuery(".editable-component, .not-editable-component, #preview-delete-zone, ._empty_area")
+	jQuery(".editable-component, .not-editable-component, #preview-delete-zone,#preview-copy-zone, ._empty_area")
 			.droppable(
 					{						
 						cursor : 'move',
@@ -490,6 +488,8 @@ initPreview = function() {
 								if (jQuery(this).attr("id") == "preview-delete-zone") {									
 									var ajaxURL = addParam(currentURL,"webaction=edit.delete&id=" + compId + "&render-mode=3"+pageIdParam);
 									jQuery(comp).remove();
+								} else if (jQuery(this).attr("id") == "preview-copy-zone") {									
+									var ajaxURL = addParam(currentURL,"webaction=edit.copy&id=" + compId + "&render-mode=3"+pageIdParam);									
 								} else if (comp !== undefined) {
 									jQuery(comp).insertAfter(jQuery(this));
 									var previewId = "0";
@@ -567,6 +567,7 @@ initPreview = function() {
 			
 			if (jQuery(this).data("deletable") !== undefined && jQuery(this).data("deletable")) {
 				jQuery("#preview-delete-zone").removeClass("hidden");
+				jQuery("#preview-copy-zone").removeClass("hidden");
 				//jQuery("#preview_command .pc_body").addClass("hidden");
 			}
 			if (jQuery(this).height() < 40) {			
@@ -596,6 +597,7 @@ initPreview = function() {
 			//if (jQuery(this).data("deletable") !== undefined && jQuery(this).data("deletable")) {
 				//jQuery("#preview_command .pc_body").removeClass("hidden");
 				jQuery("#preview-delete-zone").addClass("hidden");
+				jQuery("#preview-copy-zone").addClass("hidden");
 			//}
 			layerOver(null);
 			

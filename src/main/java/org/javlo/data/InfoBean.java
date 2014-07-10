@@ -27,6 +27,7 @@ import org.javlo.helper.StringHelper;
 import org.javlo.helper.URLHelper;
 import org.javlo.message.GenericMessage;
 import org.javlo.message.MessageRepository;
+import org.javlo.module.core.ModuleException;
 import org.javlo.module.core.ModulesContext;
 import org.javlo.navigation.MenuElement;
 import org.javlo.navigation.NavigationMapByName;
@@ -361,6 +362,10 @@ public class InfoBean {
 
 	public String getCaptchaURL() {
 		return URLHelper.createStaticURL(ctx, "/captcha.jpg");
+	}
+	
+	public String getLogoURL() {
+		return URLHelper.createStaticURL(ctx, "/logo.svg");
 	}
 
 	public int getPreviewVersion() {
@@ -813,8 +818,10 @@ public class InfoBean {
 		}
 	}
 	
-	public String getI18nAjaxURL() {
-		return URLHelper.createStaticURL(ctx, "/i18n/"+ctx.getRequestContentLanguage());
+	public String getI18nAjaxURL() throws ModuleException, Exception {
+		Map<String,String> params = new HashMap<String, String>();		
+		params.put("module", ModulesContext.getInstance(ctx.getRequest().getSession(), ctx.getGlobalContext()).getCurrentModule().getName());
+		return URLHelper.createStaticURL(ctx, "/i18n/"+ctx.getRequestContentLanguage(),params);
 	}
 	
 	public String getLogoUrl() throws Exception {

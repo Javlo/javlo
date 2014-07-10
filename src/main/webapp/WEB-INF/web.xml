@@ -288,6 +288,17 @@
     </servlet-mapping>
     
     <servlet>
+        <servlet-name>logo</servlet-name>
+        <servlet-class>org.javlo.servlet.LogoServlet</servlet-class>
+        <load-on-startup>0</load-on-startup>
+    </servlet>
+    
+    <servlet-mapping>
+        <servlet-name>logo</servlet-name>
+        <url-pattern>/logo.svg</url-pattern>
+    </servlet-mapping>
+    
+    <servlet>
 		<servlet-name>ServletWrapper</servlet-name>
 		<servlet-class>org.javlo.servlet.servletwrapper.ServletWrapperServlet</servlet-class>
 		<load-on-startup>1</load-on-startup>
@@ -300,7 +311,7 @@
 	
 	<servlet>
 		<servlet-name>I18n</servlet-name>
-		<servlet-class>org.javlo.servlet.I18n</servlet-class>
+		<servlet-class>org.javlo.servlet.I18nServlet</servlet-class>
 		<load-on-startup>1</load-on-startup>
 	</servlet>
 

@@ -1134,8 +1134,6 @@ public class PageReferenceComponent extends ComplexPropertiesLink implements IAc
 		String onlyCheckedScript = "if (jQuery('#comp-"+getId()+" .filter input').val().indexOf(':checked')<0) {jQuery('#comp-"+getId()+" .filter input').val(jQuery('#comp-"+getId()+" .filter input').val()+' :checked'); filterPage('"+ajaxURL+"',jQuery('#comp-"+getId()+" .filter input').val(), '." + tableID + " tbody'); return false;}";
 		out.println("\"><thead><tr><th>" + i18nAccess.getText("global.label") + "</th><th>" + i18nAccess.getText("global.date") + "</th><th>" + i18nAccess.getText("global.modification") + "</th><th>" + i18nAccess.getText("content.page-teaser.language") + "</th><th>" + i18nAccess.getText("global.select") + " <a href=\"#\" onclick=\""+onlyCheckedScript+"\">("+currentSelection.size()+")</a></th></tr></thead><tbody>");
 
-		
-
 		int numberOfPage = 16384;
 		if (allChildren.length < numberOfPage) {
 			numberOfPage = allChildren.length;
@@ -1244,6 +1242,9 @@ public class PageReferenceComponent extends ComplexPropertiesLink implements IAc
 	protected Set<String> getPagesId(ContentContext ctx, MenuElement[] children) throws Exception {
 		String value = properties.getProperty(PAGE_REF_PROP_KEY, "");
 		Set<String> out = new TreeSet<String>();
+		if (value.trim().length()==0) {
+			return out;
+		}
 		String[] deserializedId = StringHelper.split(value, PAGE_SEPARATOR);
 
 		out.addAll(Arrays.asList(deserializedId));

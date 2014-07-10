@@ -217,7 +217,7 @@ public class DefaultTemplate extends Template {
 	}
 
 	@Override
-	public Properties getI18nProperties(GlobalContext globalContext, Locale locale) throws IOException {
+	public Properties getI18nProperties(GlobalContext globalContext, Locale locale, int mode) throws IOException {
 		return I18nAccess.FAKE_I18N_FILE;
 	}
 

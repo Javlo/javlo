@@ -590,7 +590,9 @@ public class Template implements Comparable<Template> {
 
 	private static final String CONFIG_COMPONENTS_PROPERTIES_FOLDER = "components-config";
 
-	private static final String I18N_FILE = "view_";
+	private static final String I18N_VIEW_FILE = "view_";
+
+	private static final String I18N_EDIT_FILE = "edit_";
 
 	private static final String LIST_FOLDER = "list";
 
@@ -635,7 +637,7 @@ public class Template implements Comparable<Template> {
 	private Map<String, String> freeData = null;
 
 	private Map<String, Row> rows = null;
-	
+
 	private TemplateStyle style = null;
 
 	public static Template getApplicationInstance(ServletContext application, ContentContext ctx, String templateDir) throws ConfigurationException, IOException {
@@ -965,28 +967,28 @@ public class Template implements Comparable<Template> {
 		properties.clearProperty(XMLManipulationHelper.AREA_PREFIX + area);
 		storeProperties();
 	}
-	
+
 	protected String getNewAreaName() {
 		String prefixName = "zone";
 		int areaNumber = 0;
-		String areaName = prefixName+StringHelper.getNumberAsAlphabetic(areaNumber);
-		while (properties.getProperty("area."+areaName) != null) {
+		String areaName = prefixName + StringHelper.getNumberAsAlphabetic(areaNumber);
+		while (properties.getProperty("area." + areaName) != null) {
 			areaNumber++;
-			areaName = prefixName+StringHelper.getNumberAsAlphabetic(areaNumber);				
+			areaName = prefixName + StringHelper.getNumberAsAlphabetic(areaNumber);
 		}
 		return areaName;
 	}
-	
+
 	public void addArea(String rowName) {
-		if (rowName.indexOf("-")>=0) {		
+		if (rowName.indexOf("-") >= 0) {
 			String areaName = getNewAreaName();
-			properties.setProperty("area."+areaName, areaName);
-			properties.setProperty("area."+areaName+".row", rowName);
+			properties.setProperty("area." + areaName, areaName);
+			properties.setProperty("area." + areaName + ".row", rowName);
 			storeProperties();
 			resetRows();
 		}
 	}
-	
+
 	public Row getRow(String name) {
 		for (Row row : getRows()) {
 			if (row.getName().equals(name)) {
@@ -995,13 +997,13 @@ public class Template implements Comparable<Template> {
 		}
 		return null;
 	}
-	
+
 	public void addRow() {
 		String rowName = null;
 		int rowNumber = 0;
 		String newRowName = null;
-		for (int i=1; i<9999&&newRowName == null; i++) {
-			rowName = "row-"+i;
+		for (int i = 1; i < 9999 && newRowName == null; i++) {
+			rowName = "row-" + i;
 			if (getRow(rowName) == null) {
 				newRowName = rowName;
 				rowNumber = i;
@@ -1009,7 +1011,7 @@ public class Template implements Comparable<Template> {
 		}
 		List<Row> rows = getRows();
 		Row row = new Row(this);
-		rows.add(row);		
+		rows.add(row);
 		row.setName(newRowName);
 		Area area = new Area();
 		area.setName(getNewAreaName());
@@ -1292,23 +1294,37 @@ public class Template implements Comparable<Template> {
 		return properties.getString("home", getParent().getHTMLHomeFile());
 	}
 
-	public synchronized Map getI18nProperties(GlobalContext globalContext, Locale locale) throws IOException {
+	public synchronized Map getI18nProperties(GlobalContext globalContext, Locale locale, int mode) throws IOException {
+		String filePrefix = I18N_VIEW_FILE;
+		if (mode == ContentContext.EDIT_MODE) {
+			filePrefix = I18N_EDIT_FILE;
+		}
 		if (locale == null) {
 			return null;
 		}
-		Map propI18n = i18n.get(locale.getLanguage());
+		Map propI18n = i18n.get(locale.getLanguage()+mode);		
 		if (propI18n == null) {
 			synchronized (globalContext.getLockImportTemplate()) {
-				File i18nFile = new File(URLHelper.mergePath(URLHelper.mergePath(getFolder().getAbsolutePath(), I18N_FILE + locale.getLanguage() + ".properties")));
-				if (i18nFile.exists()) {
-					propI18n = new Properties();
-					Reader reader = new FileReader(i18nFile);
-					((Properties) propI18n).load(reader);
-					reader.close();
-				} else {
-					propI18n = Collections.EMPTY_MAP;
+				if (config != null) {
+					File i18nFile = new File(URLHelper.mergePath(URLHelper.mergePath(getFolder().getAbsolutePath(), filePrefix + locale.getLanguage() + ".properties")));
+					if (i18nFile.exists()) {
+						propI18n = new Properties();
+						Reader reader = new FileReader(i18nFile);
+						((Properties) propI18n).load(reader);
+						reader.close();
+					} else {
+						i18nFile = new File(URLHelper.mergePath(URLHelper.mergePath(getFolder().getAbsolutePath(), "i18n", filePrefix + locale.getLanguage() + ".properties")));
+						if (i18nFile.exists()) {
+							propI18n = new Properties();
+							Reader reader = new FileReader(i18nFile);
+							((Properties) propI18n).load(reader);
+							reader.close();
+						} else {
+							propI18n = Collections.EMPTY_MAP;
+						}
+					}
+					i18n.put(locale.getLanguage()+mode, propI18n);
 				}
-				i18n.put(locale.getLanguage(), propI18n);
 			}
 		}
 		return propI18n;
@@ -1920,7 +1936,7 @@ public class Template implements Comparable<Template> {
 		String templateFolder = config.getTemplateFolder();
 		return URLHelper.mergePath(templateFolder, getSourceFolderName());
 	}
-	
+
 	public boolean isDeleted() {
 		if (dir == null || !dir.exists()) {
 			return true;
@@ -1941,7 +1957,7 @@ public class Template implements Comparable<Template> {
 	public String getVisualFile() {
 		return properties.getString("file.visual", getParent().getVisualFile());
 	}
-	
+
 	public File getVisualAbsoluteFile() {
 		return new File(dir.getAbsolutePath(), getVisualFile());
 	}
@@ -2110,7 +2126,7 @@ public class Template implements Comparable<Template> {
 		String key = XMLManipulationHelper.AREA_PREFIX + area + ".navigation";
 		return properties.getBoolean(key, false);
 	}
-	
+
 	public boolean isNosecureArea(String area) {
 		if (area == null) {
 			return false;
@@ -2118,7 +2134,6 @@ public class Template implements Comparable<Template> {
 		String key = XMLManipulationHelper.AREA_PREFIX + area + ".no-secure";
 		return properties.getBoolean(key, false);
 	}
-
 
 	protected boolean isParent() {
 		return getParent() != null && !getParent().getName().equals(DefaultTemplate.NAME);
@@ -2421,7 +2436,7 @@ public class Template implements Comparable<Template> {
 		properties.setProperty(prefix + ".width", part.getWidth());
 		properties.setProperty(prefix + ".title-color", part.getTitleColor());
 	}
-	
+
 	public synchronized TemplateStyle getStyle() {
 		if (style == null) {
 			style = new TemplateStyle();
@@ -2430,9 +2445,9 @@ public class Template implements Comparable<Template> {
 		}
 		return style;
 	}
-	
+
 	public void storeStyle(TemplateStyle style) {
-		saveTemplatePart(style,"style");
+		saveTemplatePart(style, "style");
 		style = null;
 		storeProperties();
 	}
@@ -2462,11 +2477,11 @@ public class Template implements Comparable<Template> {
 		Collections.sort(outRows, new TemplatePart.SortByName());
 		return outRows;
 	}
-	
+
 	public void resetRows() {
-		rows = null;		
+		rows = null;
 	}
-	
+
 	public static Area getArea(Collection<Row> rows, String name) {
 		for (Row row : rows) {
 			for (Area area : row.getAreas()) {
@@ -2477,8 +2492,8 @@ public class Template implements Comparable<Template> {
 		}
 		return null;
 	}
-	
-	public void deleteRow(String name) {		
+
+	public void deleteRow(String name) {
 		Collection<Row> newRows = new LinkedList<Row>();
 		for (Row row : getRows()) {
 			if (!row.getName().equals(name)) {
@@ -2499,9 +2514,9 @@ public class Template implements Comparable<Template> {
 		}
 		for (Row row : rows) {
 			saveTemplatePart(row, "row." + row.getName());
-			for (Area area : row.getAreas()) {				
-				properties.setProperty("area."+area.getName(), area.getName());
-				properties.setProperty("area."+area.getName()+".row", row.getName());
+			for (Area area : row.getAreas()) {
+				properties.setProperty("area." + area.getName(), area.getName());
+				properties.setProperty("area." + area.getName() + ".row", row.getName());
 				saveTemplatePart(area, "area." + area.getName());
 			}
 		}
@@ -2516,54 +2531,54 @@ public class Template implements Comparable<Template> {
 			return getRows().size() > 0;
 		}
 	}
-	
-	public Map<String,String> getTemplateExcludeProperties() {
+
+	public Map<String, String> getTemplateExcludeProperties() {
 		String rawProp = getExcludeProperties("template");
 		if (rawProp == null) {
 			return Collections.EMPTY_MAP;
 		} else {
-			Map<String,String> outMaps = new HashMap<String, String>();
+			Map<String, String> outMaps = new HashMap<String, String>();
 			for (String prop : StringHelper.stringToCollection(rawProp, ",")) {
 				outMaps.put(prop, prop);
 			}
 			return outMaps;
 		}
 	}
-	
-	public Map<String,String> getAreaExcludeProperties() {
+
+	public Map<String, String> getAreaExcludeProperties() {
 		String rawProp = getExcludeProperties("area");
 		if (rawProp == null) {
 			return Collections.EMPTY_MAP;
 		} else {
-			Map<String,String> outMaps = new HashMap<String, String>();
+			Map<String, String> outMaps = new HashMap<String, String>();
 			for (String prop : StringHelper.stringToCollection(rawProp, ",")) {
 				outMaps.put(prop, prop);
 			}
 			return outMaps;
 		}
 	}
-	
+
 	protected String getExcludeProperties(String zone) {
-		 return properties.getString("exclude-properties."+zone, getParent().getExcludeProperties(zone));
+		return properties.getString("exclude-properties." + zone, getParent().getExcludeProperties(zone));
 	}
-	
-	public Map<String,String> getRowExcludeProperties() {
-		String rawProp = getExcludeProperties("row");		
+
+	public Map<String, String> getRowExcludeProperties() {
+		String rawProp = getExcludeProperties("row");
 		if (rawProp == null) {
 			return Collections.EMPTY_MAP;
 		} else {
-			Map<String,String> outMaps = new HashMap<String, String>();
-			for (String prop : StringHelper.stringToCollection(rawProp, ",")) {				
+			Map<String, String> outMaps = new HashMap<String, String>();
+			for (String prop : StringHelper.stringToCollection(rawProp, ",")) {
 				outMaps.put(prop, prop);
 			}
 			return outMaps;
 		}
 	}
-	
+
 	public String getCookiesMessageName() {
 		return properties.getString("acceptcookies.name", "acceptcookies");
 	}
-	
+
 	public String getCookiesMessagePath() {
 		return properties.getString("acceptcookies.path", null);
 	}

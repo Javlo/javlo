@@ -7,7 +7,9 @@ import java.util.logging.Logger;
 
 import org.javlo.component.core.ComponentBean;
 import org.javlo.component.image.GlobalImage;
+import org.javlo.component.links.ExternalLink;
 import org.javlo.component.links.PageReferenceComponent;
+import org.javlo.component.text.Paragraph;
 import org.javlo.component.text.XHTML;
 import org.javlo.component.title.Title;
 import org.javlo.context.ContentContext;
@@ -21,6 +23,11 @@ public class ConvertToCurrentVersion {
 	private static Logger logger = Logger.getLogger(ConvertToCurrentVersion.class.getName());
 
 	public static int convert(ContentContext ctx, ComponentBean bean, String version) {
+		
+		if (version == null) {
+			version = "1.0";
+		}
+		
 		int convertion = 0;
 		if (bean.getType().equals("page-links")) {
 			bean.setType(PageReferenceComponent.TYPE);
@@ -41,6 +48,44 @@ public class ConvertToCurrentVersion {
 			convertion++;
 			bean.setType(PageReferenceComponent.TYPE);
 			bean.setModify(true);
+		}
+		if (bean.getType().equals("important-message")) {
+			convertion++;
+			bean.setType(Paragraph.TYPE);
+			bean.setStyle("important");
+			bean.setModify(true);
+		}
+		if (bean.getType().equals("note")) {
+			convertion++;
+			bean.setType(Paragraph.TYPE);
+			bean.setStyle("note");
+			bean.setModify(true);
+		}
+		if (bean.getType().equals("email")) {
+			convertion++;
+			bean.setType(ExternalLink.TYPE);			
+			bean.setModify(true);
+		}
+		if (bean.getType().equals("external-describe-link")) {
+			convertion++;
+			bean.setType(ExternalLink.TYPE);			
+			bean.setModify(true);
+		}		
+		if (bean.getType().equals("quotation")) {
+			convertion++;
+			bean.setType(Paragraph.TYPE);
+			bean.setStyle("quotation");
+			bean.setModify(true);
+		}
+		if (bean.getType().equals("middle-image")) {
+			convertion++;
+			bean.setType(GlobalImage.TYPE);			
+			bean.setModify(true);			
+		}
+		if (bean.getType().equals("standard-image-clickable")) {
+			convertion++;
+			bean.setType(GlobalImage.TYPE);			
+			bean.setModify(true);			
 		}
 		if (version.startsWith("1") && bean.getType().equals("banner")) {
 			convertion++;
