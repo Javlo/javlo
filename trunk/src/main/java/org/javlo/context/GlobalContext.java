@@ -574,7 +574,12 @@ public class GlobalContext implements Serializable, IPrintInfo {
 		if (accountSize == null) {
 			File file = new File(getDataFolder());
 			if (getStaticConfig().isAccountSize() && file.exists()) {
-				accountSize = FileUtils.sizeOfDirectory(file);
+				try {
+					accountSize = FileUtils.sizeOfDirectory(file);
+				} catch (Throwable t) {
+					t.printStackTrace();
+					return -1;
+				}
 			} else {
 				return -1;
 			}
