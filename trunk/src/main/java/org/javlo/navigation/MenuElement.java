@@ -2782,8 +2782,11 @@ public class MenuElement implements Serializable, IPrintInfo {
 		if (page == null) {
 			return false;
 		} else {
+			if (page.equals("/")) {
+				return true;
+			}
 			MenuElement parent = getParent();
-			while (parent != null) {
+			while (parent != null) {				
 				if (parent.getId().equals(page) || parent.getName().equals(page) || parent.getPath().equals(page)) {
 					return true;
 				}

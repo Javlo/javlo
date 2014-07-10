@@ -55,8 +55,6 @@ import org.javlo.service.RequestService;
 import org.javlo.template.Template;
 import org.javlo.template.TemplateFactory;
 
-import com.sun.org.apache.bcel.internal.generic.GETSTATIC;
-
 /**
  * list of links to a subset of pages. <h4>exposed variable :</h4>
  * <ul>
@@ -1134,8 +1132,8 @@ public class PageReferenceComponent extends ComplexPropertiesLink implements IAc
 		String onlyCheckedScript = "if (jQuery('#comp-"+getId()+" .filter input').val().indexOf(':checked')<0) {jQuery('#comp-"+getId()+" .filter input').val(jQuery('#comp-"+getId()+" .filter input').val()+' :checked'); filterPage('"+ajaxURL+"',jQuery('#comp-"+getId()+" .filter input').val(), '." + tableID + " tbody'); return false;}";
 		out.println("\"><thead><tr><th>" + i18nAccess.getText("global.label") + "</th><th>" + i18nAccess.getText("global.date") + "</th><th>" + i18nAccess.getText("global.modification") + "</th><th>" + i18nAccess.getText("content.page-teaser.language") + "</th><th>" + i18nAccess.getText("global.select") + " <a href=\"#\" onclick=\""+onlyCheckedScript+"\">("+currentSelection.size()+")</a></th></tr></thead><tbody>");
 
-		int numberOfPage = 16384;
-		if (allChildren.length < numberOfPage) {
+		int numberOfPage = 16384;		
+		if (allChildren.length < numberOfPage) {			
 			numberOfPage = allChildren.length;
 		}
 
@@ -1152,7 +1150,7 @@ public class PageReferenceComponent extends ComplexPropertiesLink implements IAc
 				ContentContext lgCtx = ctx;
 				if (GlobalContext.getInstance(ctx.getRequest()).isAutoSwitchToDefaultLanguage()) {
 					lgCtx = allChildren[i].getContentContextWithContent(ctx, ctx.getCurrentTemplate().isNavigationArea(ctx.getArea()));
-				}
+				}				
 				if (filterPage(lgCtx, allChildren[i], filter) && (allChildren[i].getContentDateNeverNull(ctx).after(backDate.getTime()))) {
 					renderPageSelectLine(lgCtx, out, currentSelection, allChildren[i]);
 				}
