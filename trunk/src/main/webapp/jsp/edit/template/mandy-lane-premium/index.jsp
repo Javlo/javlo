@@ -130,8 +130,7 @@
     
     <!-- logo -->
     <div class="logo">
-	<img src="${info.editTemplateURL}/images/logo2.png" alt="Logo" />
-	<span class="text">${info.cmsName}</span>
+	<img width="120" src="${info.logoURL}?color=cccccc" alt="Javlo" />	
 	</div>
     
     <div class="tabmenu">

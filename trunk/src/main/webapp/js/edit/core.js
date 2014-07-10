@@ -292,6 +292,11 @@ function hashItem(item) {
 
 function closableFieldSet(items) {
 	items.each(function() {
+		
+		if (jQuery(this).find(".closable_action").length > 0) {
+			return;
+		}
+		
 		var hash = "closable_" + hashItem(this);
 		var initVal = jQuery.cookie(hash);
 		if (initVal == "close") {
@@ -446,11 +451,19 @@ function addToolTips(selector, text, position) {
 		if (position == null) {
 			position = "top";
 		}
+		
+		var url = i18nURL;
+		if (i18nURL.indexOf("?")>=0) {
+			url = url +"&key="+text;
+		} else {
+			url = url +"?key="+text;
+		}
+		
 		if (!jQuery(selector).hasClass("show")) {
 			jQuery("body").addClass("help");
 			if (!jQuery(selector).hasClass("tooltipstered")) {
 				jQuery.ajax({
-					url : i18nURL + "?key=" + text,
+					url : url,
 					cache : true,
 					type : "get",
 					dataType : "text"
@@ -468,7 +481,9 @@ function addToolTips(selector, text, position) {
 						jQuery(selector).tooltipster("show");
 						jQuery(selector).addClass("show");
 					} else {
-						alert("null");
+						if(typeof console !== "undefined") {
+							console.log("translation not found : "+text);	
+						}						
 					}
 				});
 			} else {

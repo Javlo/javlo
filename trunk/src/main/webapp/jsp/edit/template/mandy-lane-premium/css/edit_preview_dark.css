@@ -144,6 +144,13 @@ body.preview-only {
 	border-radius: 3px;
 }
 
+#preview_command #paste .component {
+	padding-left: 15px;
+	background-image: url("../images/preview/copy_small.png");
+	background-repeat: no-repeat;
+	background-position: left center;
+}
+
 #preview_command #shared-content-search-form input {
 	margin: 4px;
 }
@@ -193,7 +200,7 @@ body.preview-only {
 	background: #fad5cf url(../images/icons/error.png) no-repeat 10px center;
 }
 
-#pc_upload #upload-zone span,#preview_command #preview-delete-zone {
+#pc_upload #upload-zone span,#preview_command #preview-delete-zone,#preview_command #preview-copy-zone {
 	background-color: #2e2e2e;
 	border: 1px #5b5b5b dashed;
 	border-radius: 3px;
@@ -206,11 +213,11 @@ body.preview-only {
 	float: none;
 }
 
-#preview_command #preview-delete-zone {
+#preview_command #preview-delete-zone, #preview_command #preview-copy-zone {
 	height: 140px;
 }
 
-#preview_command #preview-delete-zone.hidden {
+#preview_command #preview-delete-zone.hidden, #preview_command #preview-copy-zone.hidden {
 	display: none;
 }
 
@@ -219,6 +226,13 @@ body.preview-only {
 	background-repeat: no-repeat;
 	background-position: center center;
 }
+
+#preview_command #preview-copy-zone {
+	background-image: url("../images/preview/copy.png");
+	background-repeat: no-repeat;
+	background-position: center center;
+}
+
 
 #preview_command #ajax-loader {
 	margin: 12px 0;

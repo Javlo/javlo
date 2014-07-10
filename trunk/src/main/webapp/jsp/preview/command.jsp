@@ -187,7 +187,7 @@ if (!rightOnPage) {
 				
 				</c:if>
 				<c:if test="${not empty components}"><fieldset class="closable">
-					<legend>${i18n.edit["component.choose"]}</legend>
+					<legend>${i18n.edit["component.choose"]}</legend>					
 					<jsp:include page="component.jsp" />
 				</fieldset>
 				</c:if>
@@ -214,6 +214,7 @@ if (!rightOnPage) {
 	</div>
 	
 	<div class="pc_footer">
+		<a id="preview-copy-zone" href="#" class="hidden">&nbsp;</a>
 		<a id="preview-delete-zone" href="#" class="hidden">&nbsp;</a>
 		<a href="http://www.javlo.org">javlo.org</a>
     	<c:if test="${!userInterface.light}">    		 
@@ -225,7 +226,11 @@ if (!rightOnPage) {
 	if (top.location != document.location) { // iframe ?		
 		var olddiv = document.getElementById('preview_command');
 		olddiv.parentNode.removeChild(olddiv);
-	}	
+	}
+	jQuery(document).ready(
+			function() {
+				onreadyPreview();
+			});
 </script>
 <!--[if lt IE 10]>
 <script type="text/javascript">	

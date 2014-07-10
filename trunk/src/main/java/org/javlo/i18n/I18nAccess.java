@@ -31,6 +31,7 @@ import org.apache.commons.configuration.ConfigurationException;
 import org.apache.commons.configuration.PropertiesConfiguration;
 import org.javlo.component.core.AbstractVisualComponent;
 import org.javlo.context.ContentContext;
+import org.javlo.context.EditContext;
 import org.javlo.context.GlobalContext;
 import org.javlo.helper.ConfigHelper;
 import org.javlo.helper.ResourceHelper;
@@ -120,13 +121,21 @@ public class I18nAccess implements Serializable {
 
 	private PropertiesConfiguration propContentView = null;
 
-	private String latestTemplateId = "";
+	private String latestViewTemplateId = "";
+	
+	private String latestEditTemplateId = "";
 
-	private String latestTemplateLang = "";
+	private String latestViewTemplateLang = "";
+	
+	private String latestEditTemplateLang = "";
 
 	private final Properties templateView = new Properties();
+	
+	private final Properties templateEdit = new Properties();
 
-	private boolean templateImported = false;
+	private boolean templateViewImported = false;
+	
+	private boolean templateEditImported = false;
 
 	private Properties moduleEdit = null;
 	
@@ -182,12 +191,12 @@ public class I18nAccess implements Serializable {
 
 	public void changeViewLanguage(ContentContext ctx) throws ServiceException, Exception {
 		if (ctx.getLanguage() != null && !ctx.getLanguage().equals(viewLg)) {
-			latestTemplateId = "";
+			latestViewTemplateId = "";
 			initView(ctx.getLanguage());
 			propViewMap = null;
 		}
 		if (ctx.getRequestContentLanguage() != null && !ctx.getRequestContentLanguage().equals(contentViewLg)) {
-			latestTemplateId = "";
+			latestViewTemplateId = "";
 			initContentView(ctx, ctx.getRequestContentLanguage());
 			propViewMap = null;
 		}
@@ -304,6 +313,13 @@ public class I18nAccess implements Serializable {
 				propEditMap.put(key.toString(), "" + contextEdit.getProperty((String) key));
 			}
 		}
+		
+		if (templateEdit != null && !templateEditImported) {
+			for (Object key : templateEdit.keySet()) {
+				propEditMap.put((String)key, (String)templateEdit.get(key));	
+			}			
+			templateEditImported = true;
+		}
 
 		return propEditMap;
 	}
@@ -383,7 +399,14 @@ public class I18nAccess implements Serializable {
 			return key;
 		}
 		
-		String text = propEdit.getString(key);
+		String text;
+		if (templateEdit != null) {
+			text = templateEdit.getProperty(key);
+			if (text != null) {
+				return text;
+			}
+		}		
+		text = propEdit.getString(key);
 		if (text == null) {
 			if (moduleEdit != null) {
 				text = moduleEdit.getProperty(key, notFoundValue);
@@ -442,9 +465,9 @@ public class I18nAccess implements Serializable {
 			}
 		}
 
-		if (templateView != null && !templateImported || createPropViewMap) {
+		if (templateView != null && !templateViewImported || createPropViewMap) {
 			propViewMap.addMap(templateView);
-			templateImported = true;
+			templateViewImported = true;
 		}
 
 		return propViewMap;
@@ -583,37 +606,70 @@ public class I18nAccess implements Serializable {
 		updateTemplate(ctx);
 		changeViewLanguage(ctx);
 	}
-
+	
 	private void updateTemplate(ContentContext ctx) throws ConfigurationException, IOException, ServiceException, Exception {
+		updateTemplate(ctx, ContentContext.EDIT_MODE);
+		updateTemplate(ctx, ContentContext.VIEW_MODE);
+	}
+
+	private void updateTemplate(ContentContext ctx, int mode) throws ConfigurationException, IOException, ServiceException, Exception {
+		String latestTemplateId = latestViewTemplateId;
+		String latestTemplateLang = latestViewTemplateLang;
+		if (mode == ContentContext.EDIT_MODE) {
+			latestTemplateId = latestEditTemplateId;
+			latestTemplateLang = latestEditTemplateLang;			
+		}
+		
 		if (ctx.getLanguage() != null) {
 			GlobalContext globalContext = GlobalContext.getInstance(ctx.getRequest());
 			if (!ctx.isFree()) {
 				Template template = ctx.getCurrentTemplate();
-				if (template != null && template.getId() != null && (!latestTemplateId.equals(template.getId()) || !latestTemplateLang.equals(ctx.getLanguage()))) {
+				
+				String lg = ctx.getLanguage();
+				if (mode == ContentContext.EDIT_MODE) {
+					lg = globalContext.getEditLanguage(ctx.getRequest().getSession());
+				}
+				
+				if (template != null && template.getId() != null && (!latestTemplateId.equals(template.getId()) || !latestTemplateLang.equals(lg))) {
 					propViewMap = null;
 					latestTemplateId = template.getId();
-					latestTemplateLang = ctx.getLanguage();
+					latestTemplateLang = lg;
 					template = template.getFinalTemplate(ctx);
 					if (!template.isTemplateInWebapp(ctx)) {
 						template.importTemplateInWebapp(globalContext.getStaticConfig(), ctx);
 					}
-
-					Stack<Map> stack = new Stack<Map>();
-					stack.push(template.getI18nProperties(globalContext, new Locale(ctx.getLanguage())));
+					Stack<Map> stack = new Stack<Map>();					
+					stack.push(template.getI18nProperties(globalContext, new Locale(lg),mode));
 					Template parent = template.getParent();
 					while (parent != null) {
-						stack.push(parent.getI18nProperties(globalContext, new Locale(ctx.getLanguage())));
+						Map i18n = parent.getI18nProperties(globalContext, new Locale(lg),mode);
+						if (i18n != null) {
+							stack.push(i18n);
+						}
 						parent = parent.getParent();
 					}
-
-					templateView.clear();
-					while (!stack.empty()) {
-						templateView.putAll(stack.pop());
+					if (mode == ContentContext.EDIT_MODE) {
+						templateEdit.clear();
+						while (!stack.empty()) {
+							templateEdit.putAll(stack.pop());
+						}
+					} else {
+						templateView.clear();
+						while (!stack.empty()) {
+							templateView.putAll(stack.pop());
+						}						
 					}
-
-					templateImported = false;
+					templateViewImported = false;
 				}
 			}
+		}
+		
+		if (mode == ContentContext.EDIT_MODE) {
+			latestEditTemplateId = latestTemplateId;
+			latestEditTemplateLang = latestTemplateLang;			
+		} else {
+			latestViewTemplateId = latestTemplateId;
+			latestViewTemplateLang = latestTemplateLang;			
 		}
 	}
 

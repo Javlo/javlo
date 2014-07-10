@@ -60,11 +60,19 @@ public class ExternalLink extends ComplexPropertiesLink implements IReverseLinkC
 		}
 		return false;
 	}
+	
+	private String getLink() {
+		String link = properties.getProperty(LINK_KEY, "");
+		if (link.contains("@")) {
+			link = "mailto:"+link;
+		}
+		return link;
+	}
 
 	@Override
 	public void prepareView(ContentContext ctx) throws Exception {
 		super.prepareView(ctx);
-		ctx.getRequest().setAttribute("link", properties.getProperty(LINK_KEY, ""));
+		ctx.getRequest().setAttribute("link", getLink());
 		ctx.getRequest().setAttribute("label", getLabel());
 	}
 
@@ -74,7 +82,7 @@ public class ExternalLink extends ComplexPropertiesLink implements IReverseLinkC
 	@Override
 	public String getViewXHTMLCode(ContentContext ctx) throws Exception {
 		if (!isHidden(ctx)) {
-			String link = properties.getProperty(LINK_KEY, "");
+			String link = getLink();
 
 			StringBuffer res = new StringBuffer();
 			String cssClass = getStyle(ctx);

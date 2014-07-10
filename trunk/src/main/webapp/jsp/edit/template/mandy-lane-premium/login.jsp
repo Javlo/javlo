@@ -7,6 +7,7 @@
 <meta name="ROBOTS" content="NONE" />
 <title>Javlo 2</title>
 <link rel="stylesheet" media="screen" href="${info.editTemplateURL}/css/style.css" />
+<link rel="stylesheet" media="screen" href="${info.editTemplateURL}/css/javlo.css" />
 <!--[if IE 9]>
     <link rel="stylesheet" media="screen" href="${info.editTemplateURL}/css/ie9.css"/>
 <![endif]-->
@@ -25,7 +26,7 @@
 <body>
 
 <div class="loginlogo">
-	<img src="${info.editTemplateURL}/images/logo.png" alt="Logo Javlo" />
+	<img src="${info.logoURL}?color=cccccc" alt="Logo Javlo" />
 </div><!--loginlogo-->
 
 <c:if test="${not empty info.globalMessage && not empty info.globalMessage.message}">

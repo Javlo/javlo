@@ -1,3 +1,12 @@
+/*** login ***/
+.loginlogo {
+	background-image: none;
+}
+.loginlogo img {	
+	margin-top: 80px;
+}
+ 
+
 /*** general ***/
 
 .cols {
@@ -39,10 +48,13 @@ body.js #form-select-role input[type=submit] {
 
 .logo {
 	overflow: hidden;
+	text-align: center;
+	width: 200px;
+	height: 54px;
 }
 
-.logo img {
-	float: left;
+.logo img {	
+	width: 120px;
 }
 
 .col-container {

@@ -1,7 +1,6 @@
 package org.javlo.servlet;
 
 import java.io.StringWriter;
-import java.io.Writer;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.logging.Logger;
