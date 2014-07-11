@@ -1994,7 +1994,7 @@ public class Template implements Comparable<Template> {
 					File templateTgt = new File(getTemplateTargetFolder(globalContext));
 					logger.info("copy template from '" + templateSrc + "' to '" + templateTgt + "'");
 					FileUtils.deleteDirectory(templateTgt);
-					importTemplateInWebapp(config, ctx, globalContext, templateTgt, null);
+					importTemplateInWebapp(config, ctx, globalContext, templateTgt, null, true);
 				} else {
 					logger.severe("folder not found : " + templateSrc);
 					templateImportationError = true;
@@ -2003,13 +2003,13 @@ public class Template implements Comparable<Template> {
 		}
 	}
 
-	protected void importTemplateInWebapp(StaticConfig config, ContentContext ctx, GlobalContext globalContext, File templateTarget, Map<String, String> childrenData) throws IOException {
+	protected void importTemplateInWebapp(StaticConfig config, ContentContext ctx, GlobalContext globalContext, File templateTarget, Map<String, String> childrenData, boolean compressResource) throws IOException {
 		if (isParent()) {
 			if (childrenData == null) {
 				childrenData = new HashMap<String, String>();
 			}
 			LangHelper.putAllIfNotExist(childrenData, getTemplateDataMap(globalContext));
-			getParent().importTemplateInWebapp(config, ctx, globalContext, templateTarget, childrenData);
+			getParent().importTemplateInWebapp(config, ctx, globalContext, templateTarget, childrenData, false);
 		}
 		String templateFolder = config.getTemplateFolder();
 		File templateSrc = new File(URLHelper.mergePath(templateFolder, getSourceFolderName()));
@@ -2071,7 +2071,7 @@ public class Template implements Comparable<Template> {
 				}
 			}
 		}
-		if (isCompressResources() && globalContext.getStaticConfig().isProd()) {
+		if (compressResource && isCompressResources() && globalContext.getStaticConfig().isProd()) {
 			Iterator<File> targetFiles = FileUtils.iterateFiles(templateTarget, new String[] { "js", "css", "less" }, true);
 			while (targetFiles.hasNext()) {
 				File targetFile = targetFiles.next();
