@@ -742,6 +742,8 @@ public class PageReferenceComponent extends ComplexPropertiesLink implements IAc
 
 	private static final String INTRANET_MODE_KEY = "intranet_mode";
 
+	private static final int MAX_PAGES = 250;
+
 	public static final Integer getCurrentMonth(HttpSession session) {
 		return (Integer) session.getAttribute("___current_month");
 	}
@@ -1112,7 +1114,10 @@ public class PageReferenceComponent extends ComplexPropertiesLink implements IAc
 		String tableID = "table-" + getId();
 		out.println("<div class=\"filter line\">");
 		String ajaxURL = URLHelper.createExpCompLink(ctx, getId());
-		out.println("<input type=\"text\" placeholder=\"" + i18nAccess.getText("global.filter") + "\" onkeyup=\"filterPage('"+ajaxURL+"',this.value, '." + tableID + " tbody');\"/>");
+		out.println("<input class=\"input\" type=\"text\" placeholder=\"" + i18nAccess.getText("global.filter") + "\" onkeyup=\"filterPage('"+ajaxURL+"',this.value, '." + tableID + " tbody');\"/>");
+		String resetFilterScript = "jQuery('#comp-"+getId()+" .filter .input').val(''); filterPage('"+ajaxURL+"',jQuery('#comp-"+getId()+" .filter .input').val(), '." + tableID + " tbody'); return false;";
+		out.println("<input type=\"button\" onclick=\""+resetFilterScript+"\" value=\""+i18nAccess.getText("global.reset")+"\" />");
+		
 		out.println("</div>");
 		
 		MenuElement basePage = null;
@@ -1129,7 +1134,7 @@ public class PageReferenceComponent extends ComplexPropertiesLink implements IAc
 
 		out.print("<div class=\"page-list-container\"><table class=\"");
 		out.print("page-list" + ' ' + tableID);
-		String onlyCheckedScript = "if (jQuery('#comp-"+getId()+" .filter input').val().indexOf(':checked')<0) {jQuery('#comp-"+getId()+" .filter input').val(jQuery('#comp-"+getId()+" .filter input').val()+' :checked'); filterPage('"+ajaxURL+"',jQuery('#comp-"+getId()+" .filter input').val(), '." + tableID + " tbody'); return false;}";
+		String onlyCheckedScript = "if (jQuery('#comp-"+getId()+" .filter .input').val().indexOf(':checked')<0) {jQuery('#comp-"+getId()+" .filter .input').val(jQuery('#comp-"+getId()+" .filter .input').val()+' :checked'); filterPage('"+ajaxURL+"',jQuery('#comp-"+getId()+" .filter .input').val(), '." + tableID + " tbody'); return false;}";
 		out.println("\"><thead><tr><th>" + i18nAccess.getText("global.label") + "</th><th>" + i18nAccess.getText("global.date") + "</th><th>" + i18nAccess.getText("global.modification") + "</th><th>" + i18nAccess.getText("content.page-teaser.language") + "</th><th>" + i18nAccess.getText("global.select") + " <a href=\"#\" onclick=\""+onlyCheckedScript+"\">("+currentSelection.size()+")</a></th></tr></thead><tbody>");
 
 		int numberOfPage = 16384;		
@@ -1143,7 +1148,11 @@ public class PageReferenceComponent extends ComplexPropertiesLink implements IAc
 		}
 		RequestService rs = RequestService.getInstance(ctx.getRequest());
 		String filter = rs.getParameter("filter",null);		
-		if (numberOfPage<100 || filter != null) {
+		
+		if (numberOfPage<MAX_PAGES || filter != null) {
+			ByteArrayOutputStream outStreamTemp = new ByteArrayOutputStream();
+			PrintStream outTemp = new PrintStream(outStreamTemp);
+			int countPage = 0;
 			for (int i = 0; i < numberOfPage; i++) {
 				ContentContext newCtx = new ContentContext(ctx);
 				newCtx.setArea(null);
@@ -1152,12 +1161,20 @@ public class PageReferenceComponent extends ComplexPropertiesLink implements IAc
 					lgCtx = allChildren[i].getContentContextWithContent(ctx, ctx.getCurrentTemplate().isNavigationArea(ctx.getArea()));
 				}				
 				if (filterPage(lgCtx, allChildren[i], filter) && (allChildren[i].getContentDateNeverNull(ctx).after(backDate.getTime()))) {
-					renderPageSelectLine(lgCtx, out, currentSelection, allChildren[i]);
+					renderPageSelectLine(lgCtx, outTemp, currentSelection, allChildren[i]);
+					countPage++;
 				}
 			}
+			if (countPage < MAX_PAGES) {
+				out.print(new String(outStreamTemp.toByteArray()));
+			} else {
+				out.println("<td colspan=\"5\" class=\"error\"><div class=\"notification msgalert\">"+i18nAccess.getText("content.page-reference.too-many-pages", "too many pages, fill text in filter field for search a specific page.")+" (#"+numberOfPage+")</div></td>");
+			}
+				
 		} else {			
-			out.println("<td colspan=\"5\" class=\"error\"><div class=\"notification msgalert\">"+i18nAccess.getText("content.page-reference.to-many-pages", "too many pages, fill text in filter field for search a specific page.")+" (#"+numberOfPage+")</div></td>");
+			out.println("<td colspan=\"5\" class=\"error\"><div class=\"notification msgalert\">"+i18nAccess.getText("content.page-reference.too-many-pages", "too many pages, fill text in filter field for search a specific page.")+" (#"+numberOfPage+")</div></td>");
 		}
+		
 		if (!ctx.isExport()) { 
 			out.println("</tbody></table></div></fieldset>");
 		}

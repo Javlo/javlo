@@ -43,7 +43,6 @@ public class LogoServlet extends HttpServlet {
 		out.println("c-0.7,1.1-1.1,2.4-1.5,3.8s-0.5,3-0.5,4.6c0,2.3,0.4,3.9,1.1,5C348.8,410.9,350,411.4,351.5,411.4z\"/>");
 		out.println("</g>");
 		out.println("</svg>");
-
 		out.close();
 		return new String(outStream.toByteArray());
 
