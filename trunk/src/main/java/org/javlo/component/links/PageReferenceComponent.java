@@ -1168,11 +1168,11 @@ public class PageReferenceComponent extends ComplexPropertiesLink implements IAc
 			if (countPage < MAX_PAGES) {
 				out.print(new String(outStreamTemp.toByteArray()));
 			} else {
-				out.println("<td colspan=\"5\" class=\"error\"><div class=\"notification msgalert\">"+i18nAccess.getText("content.page-reference.too-many-pages", "too many pages, fill text in filter field for search a specific page.")+" (#"+numberOfPage+")</div></td>");
+				out.println("<td colspan=\"5\" class=\"error\"><div class=\"notification msgalert\">"+i18nAccess.getText("content.page-reference.too-many-pages", "Too many pages found, please use the filter above to limit results.")+" (#"+numberOfPage+")</div></td>");
 			}
 				
 		} else {			
-			out.println("<td colspan=\"5\" class=\"error\"><div class=\"notification msgalert\">"+i18nAccess.getText("content.page-reference.too-many-pages", "too many pages, fill text in filter field for search a specific page.")+" (#"+numberOfPage+")</div></td>");
+			out.println("<td colspan=\"5\" class=\"error\"><div class=\"notification msgalert\">"+i18nAccess.getText("content.page-reference.too-many-pages", "Too many pages found, please use the filter above to limit results.")+" (#"+numberOfPage+")</div></td>");
 		}
 		
 		if (!ctx.isExport()) { 
