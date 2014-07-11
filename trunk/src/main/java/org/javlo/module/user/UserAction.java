@@ -1,6 +1,8 @@
 package org.javlo.module.user;
 
+import java.awt.image.BufferedImage;
 import java.io.ByteArrayOutputStream;
+import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.PrintStream;
@@ -17,6 +19,7 @@ import java.util.Map;
 import java.util.Set;
 import java.util.logging.Logger;
 
+import javax.imageio.ImageIO;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 
@@ -34,6 +37,7 @@ import org.javlo.helper.ResourceHelper;
 import org.javlo.helper.StringHelper;
 import org.javlo.helper.URLHelper;
 import org.javlo.i18n.I18nAccess;
+import org.javlo.image.ImageEngine;
 import org.javlo.message.GenericMessage;
 import org.javlo.message.MessageRepository;
 import org.javlo.module.core.Module;
@@ -49,6 +53,7 @@ import org.javlo.user.UserFactory;
 import org.javlo.user.UserInfoSorting;
 import org.javlo.user.exception.UserAllreadyExistException;
 import org.javlo.utils.CSVFactory;
+import org.javlo.ztatic.FileCache;
 
 public class UserAction extends AbstractModuleAction {
 
@@ -202,6 +207,29 @@ public class UserAction extends AbstractModuleAction {
 					logger.info("remove token for : " + userInfo.getLogin());
 					userInfo.setToken("");
 				}
+
+				String avatarFileName = userInfo.getLogin() + ".png";
+				File avatarFile = new File(URLHelper.mergePath(globalContext.getDataFolder(),
+						staticConfig.getAvatarFolder(), avatarFileName));
+				if (StringHelper.isTrue(requestService.getParameter("deleteAvatar", null))) {
+					avatarFile.delete();
+				}
+				FileItem newAvatar = requestService.getFileItem("avatar");
+				if (newAvatar != null && newAvatar.getSize() > 0) {
+					InputStream in = null;
+					try {
+						in = newAvatar.getInputStream();
+						BufferedImage img = ImageIO.read(in);
+						img = ImageEngine.resizeWidth(img, 255);
+						avatarFile.getParentFile().mkdirs();
+						ImageIO.write(img, "png", avatarFile);
+					} finally {
+						ResourceHelper.safeClose(in);
+					}
+					FileCache.getInstance(ctx.getRequest().getSession().getServletContext())
+							.deleteAllFile(globalContext.getContextKey(), avatarFileName);
+				}
+
 				userFactory.updateUserInfo(userInfo);
 				userFactory.store();
 			} catch (Exception e) {

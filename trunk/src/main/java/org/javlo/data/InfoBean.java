@@ -43,6 +43,7 @@ import org.javlo.template.Template;
 import org.javlo.user.AdminUserFactory;
 import org.javlo.user.AdminUserSecurity;
 import org.javlo.user.IUserFactory;
+import org.javlo.user.IUserInfo;
 import org.javlo.user.User;
 import org.javlo.user.UserFactory;
 
@@ -96,6 +97,7 @@ public class InfoBean {
 	private ContentContext ctx;
 	private GlobalContext globalContext;
 	private boolean tools = true;
+	private Map<IUserInfo, String> avatarFakeMap;
 
 	public String getCmsName() {
 		StaticConfig staticConfig = StaticConfig.getInstance(ctx.getRequest().getSession());
@@ -363,7 +365,24 @@ public class InfoBean {
 	public String getCaptchaURL() {
 		return URLHelper.createStaticURL(ctx, "/captcha.jpg");
 	}
-	
+
+	public String getCurrentUserAvatarUrl() {
+		return URLHelper.createAvatarUrl(ctx, ctx.getCurrentUser().getUserInfo());
+	}
+
+	public Map<IUserInfo, String> getAvatarURL() {
+		if (avatarFakeMap == null) {
+			avatarFakeMap = new HashMap<IUserInfo, String>(0) {
+				private static final long serialVersionUID = 1L;
+				@Override
+				public String get(Object key) {
+					return URLHelper.createAvatarUrl(ctx, (IUserInfo) key);
+				}
+			};
+		}
+		return avatarFakeMap;
+	}
+
 	public String getLogoURL() {
 		return URLHelper.createStaticURL(ctx, "/logo.svg");
 	}

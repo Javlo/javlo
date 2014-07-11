@@ -37,7 +37,7 @@
 </c:if>
 
 
-<form id="form-edit-user" class="standard-form" action="${info.currentURL}" method="post">
+<form id="form-edit-user" class="standard-form" action="${info.currentURL}" method="post" enctype="multipart/form-data">
 
 <div>
 	<c:if test="${empty webaction}"><input type="hidden" name="webaction" value="updateCurrent" /></c:if>
@@ -194,6 +194,30 @@
 		<input type="text" id="twitter" name="twitter" value="${userInfoMap["twitter"]}" /> 
 	</div>
 	
+	</div>
+</fieldset>
+
+<fieldset>
+<legend>${i18n.edit['user.avatar']}</legend>
+	<div class="one_half">
+		<div class="line">
+			<label>${i18n.edit['user.current-avatar']}</label>
+			<c:choose>
+				<c:when test="${not empty info.currentUserAvatarUrl}">
+					<img src="${info.currentUserAvatarUrl}?rnd=${info.randomId}" />
+					<label><input type="checkbox" name="deleteAvatar" value="true" />${i18n.edit['global.delete']}</label> 
+				</c:when>
+				<c:otherwise>
+					${i18n.edit['user.no-avatar']} 
+				</c:otherwise>
+			</c:choose>
+		</div>
+	</div>
+	<div class="one_half">
+		<div class="line">
+			<label for="avatar">${i18n.edit['user.new-avatar']}</label>
+			<input type="file" id="avatar" name="avatar" /> 
+		</div>
 	</div>
 </fieldset>
 

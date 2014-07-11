@@ -2214,7 +2214,7 @@ public class XHTMLHelper {
 		StringWriter writer = new StringWriter();
 		PrintWriter out = new PrintWriter(writer);
 		out.println("<span class=\"user-data\">");
-		String avatar = user.getUserInfo().getAvatarURL();
+		String avatar = URLHelper.createAvatarUrl(ctx, user.getUserInfo());
 		if (avatar != null) {
 			out.println("<img class=\"avatar\" src=\"" + avatar + "\">");
 		}
