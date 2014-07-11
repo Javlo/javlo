@@ -9,7 +9,6 @@ import java.net.Proxy;
 import java.net.ProxySelector;
 import java.net.URI;
 import java.util.Arrays;
-import java.util.Collection;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
@@ -587,6 +586,14 @@ public class StaticConfig extends Observable {
 
 	public String getVideoFolder() {
 		return ElementaryURLHelper.mergePath(getStaticFolder(), properties.getString("video-folder", "videos"));
+	}
+
+	public String getAvatarFolder() {
+		return ElementaryURLHelper.mergePath(getStaticFolder(), getAvatarFolderName());
+	}
+
+	public String getAvatarFolderName() {
+		return properties.getString("avatar-folder", "avatars");
 	}
 
 	public String getIMHelpURI(String lang) {

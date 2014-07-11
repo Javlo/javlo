@@ -12,6 +12,7 @@ import org.javlo.context.ContentContext;
 import org.javlo.context.GlobalContext;
 import org.javlo.helper.BeanHelper;
 import org.javlo.helper.StringHelper;
+import org.javlo.helper.URLHelper;
 import org.javlo.helper.XHTMLHelper;
 import org.javlo.i18n.I18nAccess;
 import org.javlo.message.MessageRepository;
@@ -111,8 +112,9 @@ public class UserSearch extends AbstractVisualComponent implements IAction {
 					String function = XHTMLHelper.renderMultiListItem(functions, StringHelper.stringToCollection(user.getFunction(),";"));
 					String organization = XHTMLHelper.renderListItem(organizations, user.getOrganization());
 					String avatar = "&nbsp;";
-					if (user.getAvatarURL() != null) {
-						avatar = "<img src=\""+user.getAvatarURL()+"\" alt=\""+user.getFirstName()+' '+user.getLastName()+"\" />";
+					String avatarURL = URLHelper.createAvatarUrl(ctx, user);
+					if (avatarURL != null) {
+						avatar = "<img src=\"" + avatarURL + "\" alt=\"" + user.getFirstName() + ' ' + user.getLastName() + "\" />";
 					}
 					
 					out.println("<tr class=\"" + oddEven + "\"><td>" + avatar + "</td><td>" + user.getFirstName() + "</td><td>" + user.getLastName() + "</td><td><a href=\"mailto:" + user.getEmail() + "\">contact</a></td><td>" + organization + "</td><td>" + country + "</td><td>" + function + "</td><td>" + user.getPhone() + "</td></tr>");

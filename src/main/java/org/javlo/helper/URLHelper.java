@@ -29,6 +29,8 @@ import org.javlo.service.NavigationService;
 import org.javlo.service.RequestService;
 import org.javlo.template.Template;
 import org.javlo.template.TemplateFactory;
+import org.javlo.user.AdminUserInfo;
+import org.javlo.user.IUserInfo;
 
 /**
  * @author pvanderm
@@ -156,7 +158,27 @@ public class URLHelper extends ElementaryURLHelper {
 			return createStaticURL(ctx, currentPage, RESOURCE + '/' + url);
 		}
 	}
-	
+
+	public static String createAvatarUrl(ContentContext ctx, IUserInfo userInfo) {
+		if (userInfo instanceof AdminUserInfo) {
+			AdminUserInfo adminUserInfo = (AdminUserInfo) userInfo;
+			String url = mergePath(ctx.getGlobalContext().getStaticConfig().getAvatarFolder(),
+					userInfo.getLogin() + ".png");
+			if (new File(mergePath(ctx.getGlobalContext().getDataFolder(), url)).exists()) {
+				try {
+					return createTransformURL(ctx, url, "avatar");
+				} catch (Exception ex) {
+					ex.printStackTrace();
+				}
+			} else if (adminUserInfo.getFacebook() != null && adminUserInfo.getFacebook().trim().length() > 0) {
+				return adminUserInfo.getFacebook().replace("//www.", "//graph.") + "/picture?type=small";
+			} else if (adminUserInfo.getTwitter() != null && adminUserInfo.getTwitter().trim().length() > 0) {
+				return "https://api.twitter.com/1/users/profile_image?screen_name=" + adminUserInfo.getTwitter().replaceAll("https://twitter.com/", "") + "&size=normal";
+			}
+		}
+		return null;
+	}
+
 	public static String createQRCodeLink(ContentContext ctx, IContentVisualComponent comp) {
 		String command = "link";
 		if (ctx.isAsPreviewMode()) {

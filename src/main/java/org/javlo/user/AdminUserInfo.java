@@ -1,6 +1,5 @@
 package org.javlo.user;
 
-import org.javlo.helper.StringHelper;
 
 public class AdminUserInfo extends UserInfo {
 
@@ -39,17 +38,6 @@ public class AdminUserInfo extends UserInfo {
 
 	public void setTwitter(String twitter) {
 		this.twitter = twitter;
-	}
-
-	@Override
-	public String getAvatarURL() {
-		if (getFacebook() != null && getFacebook().trim().length() > 0) {
-			return getFacebook().replace("//www.", "//graph.") + "/picture?type=small";
-		} else if (getTwitter() != null && getTwitter().trim().length() > 0) {
-			return "https://api.twitter.com/1/users/profile_image?screen_name=" + getTwitter().replaceAll("https://twitter.com/", "") + "&size=normal";
-		} else {
-			return  null;
-		}
 	}
 
 }

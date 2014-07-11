@@ -474,11 +474,6 @@ public class UserInfo implements Comparable<IUserInfo>, IUserInfo, Serializable 
 		this.token = token;
 	}
 
-	@Override
-	public String getAvatarURL() {
-		return null;
-	}
-	
 	/**
 	 * return the encrypt login the encrypt login can change when we restart. 
 	 */

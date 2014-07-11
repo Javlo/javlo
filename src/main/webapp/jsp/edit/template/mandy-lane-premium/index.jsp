@@ -157,10 +157,10 @@
     </div><!-- tabmenu -->
     
     <div class="accountinfo">    
-    	<c:if test="${not empty info.editUser.userInfo.avatarURL}">
-    	<img src="${info.editUser.userInfo.avatarURL}" alt="social avatar" lang="en" />
+    	<c:if test="${not empty info.currentUserAvatarUrl}">
+    	<img src="${info.currentUserAvatarUrl}" alt="social avatar" lang="en" />
     	</c:if>
-    	<c:if test="${empty info.editUser.userInfo.avatarURL}">
+    	<c:if test="${empty info.currentUserAvatarUrl}">
     	<img src="${info.editTemplateURL}/images/avatar.png" alt="default avatar" lang="en" />
     	</c:if>
         <div class="info">
