@@ -4,7 +4,10 @@
 <div class="component-list">
 <div id="paste">
 	<c:if test="${not empty clipboard.copied}">
-		<h4><span>${i18n.edit['global.clipboard']}</span></h4>
+		<c:url var="url" value="${info.currentURL}">
+			<c:param name="webaction" value="edit.clearClipboard" />
+		</c:url>
+		<h4><a href="${url}" class="ajax close">X</a><span>${i18n.edit['global.clipboard']}</span></h4>
 		<div class="component" data-type="clipboard" data-deletable="true"><span>${clipboard.label}</span></div>
 	</c:if>
 </div>

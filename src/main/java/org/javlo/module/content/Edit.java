@@ -1692,9 +1692,12 @@ public class Edit extends AbstractModuleAction {
 		return null;
 	}
 
-	public static String performClearClipboard(ClipBoard clipboard, EditContext editCtx) {
+	public static String performClearClipboard(ClipBoard clipboard, ContentContext ctx, EditContext editCtx) throws Exception {
 		editCtx.setPathForCopy(null);
 		clipboard.clear();
+		if (ctx.isAjax()) {			
+			ctx.getAjaxZone().put("paste", "");
+		}
 		return null;
 	}
 
@@ -1739,14 +1742,8 @@ public class Edit extends AbstractModuleAction {
 
 	public static String performInsertShared(RequestService rs, ContentContext ctx, GlobalContext globalContext, EditContext editContext, ContentService content, SharedContentService sharedContentService, Module currentModule, MessageRepository messageRepository, I18nAccess i18nAccess) throws Exception {
 		
-		System.out.println("");
-		System.out.println("");
-		
 		String sharedData = rs.getParameter("sharedContent", null);
 		String previousId = rs.getParameter("previous", null);
-		
-		System.out.println("sharedData = "+sharedData);
-		System.out.println("previousId = "+previousId);
 		
 		if (sharedData == null || previousId == null) {
 			return "bad request structure, need sharedData and previousId as parameter.";
@@ -1812,9 +1809,6 @@ public class Edit extends AbstractModuleAction {
 			}
 
 		}
-		
-		System.out.println("");
-		System.out.println("");
 		
 		return null;
 	}
