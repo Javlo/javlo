@@ -392,6 +392,10 @@ body.preview-only {
 	border-bottom: 1px #242424 solid;
 }
 
+#preview_command h4 .close {
+	float: right;	
+}
+
 #preview_command .component span,#preview_command .navigation .sortable li a
 	{
 	background-image: url("../images/preview/drag.png");
