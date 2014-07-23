@@ -64,7 +64,7 @@ public class PageTitle extends AbstractVisualComponent {
 	}
 	
 	@Override
-	public String getTextTitle() {
+	public String getTextTitle(ContentContext ctx) {
 		return getValue();
 	}
 	

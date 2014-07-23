@@ -1237,7 +1237,7 @@ public abstract class AbstractVisualComponent implements IContentVisualComponent
 	}
 
 	@Override
-	public String getTextTitle() {
+	public String getTextTitle(ContentContext ctx) {
 		return getValue();
 	}
 
@@ -1631,7 +1631,7 @@ public abstract class AbstractVisualComponent implements IContentVisualComponent
 	}
 
 	@Override
-	public boolean isLabel() {
+	public boolean isLabel(ContentContext ctx) {
 		return false;
 	}
 
@@ -2073,6 +2073,11 @@ public abstract class AbstractVisualComponent implements IContentVisualComponent
 			I18nAccess i18nAccess = I18nAccess.getInstance(ctx.getRequest());
 			return '['+i18nAccess.getText("content."+getType(), getType())+']';
 		}
+	}
+	
+	@Override
+	public String getPageDescription(ContentContext ctx) {	
+		return null;
 	}
 
 }

@@ -9,7 +9,7 @@ import org.javlo.i18n.I18nAccess;
 
 public class FieldFactory {
 
-	private static Field[] fields = new Field[] { new Field(), new FieldLargeText(), new FieldDate(), new FieldFile(), new FieldList(), new FieldMultiList(), new FieldImage(), new FieldExternalLink(), new FieldInternalLink(), new FieldEmail(), new FieldTextList(), new FieldBoolean(), new Heading("h1"), new Heading("h2"), new Heading("h3"), new Heading("h4"), new Heading("h5"), new Heading("h6"), new DateOfPublication(), new EndDateOfPublication() };
+	private static Field[] fields = new Field[] { new Field(), new FieldLargeText(), new FieldDescription(), new FieldDate(), new FieldFile(), new FieldList(), new FieldMultiList(), new FieldImage(), new FieldExternalLink(), new FieldInternalLink(), new FieldEmail(), new FieldTextList(), new FieldBoolean(), new Heading("h1"), new Heading("h2"), new Heading("h3"), new Heading("h4"), new Heading("h5"), new Heading("h6"), new DateOfPublication(), new EndDateOfPublication() };
 
 	public static Field getField(IContentVisualComponent component, StaticConfig staticConfig, GlobalContext globalContext, I18nAccess i18nAccess, Properties properties, String label, String name, String type, String id) {
 		for (Field field : fields) {

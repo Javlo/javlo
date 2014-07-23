@@ -131,7 +131,7 @@ public class DynamicComponent extends AbstractVisualComponent implements IStatic
 		return getViewXHTMLCode(ctx, false);
 	}
 
-	public String getViewXHTMLCode(ContentContext ctx, boolean asList) throws Exception {		
+	public String getViewXHTMLCode(ContentContext ctx, boolean asList) throws Exception {
 		if (getStyle().equals(HIDDEN)) {
 			String emptyCode = getEmptyCode(ctx);
 			if (emptyCode != null) {
@@ -327,7 +327,7 @@ public class DynamicComponent extends AbstractVisualComponent implements IStatic
 	}
 
 	private String getDynamicRenderer(ContentContext ctx) {
-		String deviceRenderer = properties.getProperty("component.renderer."+ctx.getDevice().getCode());
+		String deviceRenderer = properties.getProperty("component.renderer." + ctx.getDevice().getCode());
 		if (deviceRenderer != null) {
 			return deviceRenderer;
 		} else {
@@ -411,15 +411,15 @@ public class DynamicComponent extends AbstractVisualComponent implements IStatic
 		int colSize = 0;
 		for (Field field : fields) {
 			if (field != null) {
-				
-				colSize = colSize+field.getColsWidth(ctx);
-				String last="";
+
+				colSize = colSize + field.getColsWidth(ctx);
+				String last = "";
 				if (colSize >= 12) {
 					colSize = 0;
-					last="lastcol ";
+					last = "lastcol ";
 				}
-				out.println("<div class=\""+last+"col"+field.getColsWidth(ctx)+"\">");
-				
+				out.println("<div class=\"" + last + "col" + field.getColsWidth(ctx) + "\">");
+
 				if (field.getTranslation() != null) {
 					I18nAccess i18nAccess = I18nAccess.getInstance(ctx.getRequest());
 					out.println("<fieldset><legend>" + i18nAccess.getText("field.translated") + "</legend>");
@@ -435,7 +435,7 @@ public class DynamicComponent extends AbstractVisualComponent implements IStatic
 
 				for (Locale locale : translatedField) {
 					if (locale != null) {
-						
+
 						out.println("<fieldset><legend>" + locale.getDisplayLanguage(new Locale(GlobalContext.getInstance(ctx.getRequest()).getEditLanguage(ctx.getRequest().getSession()))) + "</legend>");
 					}
 					field.setCurrentLocale(locale);
@@ -448,7 +448,7 @@ public class DynamicComponent extends AbstractVisualComponent implements IStatic
 					out.println("</fieldset>");
 				}
 				out.println("</div>");
-				
+
 			}
 		}
 		out.println("</div>");
@@ -746,7 +746,7 @@ public class DynamicComponent extends AbstractVisualComponent implements IStatic
 		}
 		return null;
 	}
-	
+
 	protected FieldImage getImageField(ContentContext ctx) {
 		try {
 			for (Field field : getFields(ctx)) {
@@ -778,7 +778,7 @@ public class DynamicComponent extends AbstractVisualComponent implements IStatic
 			} catch (Exception e) {
 				e.printStackTrace();
 			}
-		}		
+		}
 		return null;
 	}
 
@@ -787,13 +787,55 @@ public class DynamicComponent extends AbstractVisualComponent implements IStatic
 		FieldImage image = getImageField(ctx);
 		if (image != null) {
 			image.getCurrentLink();
-		}	
+		}
 		return null;
 	}
 
 	@Override
 	public boolean isImageValid(ContentContext ctx) {
 		return getImageField(ctx) != null;
+	}
+
+	@Override
+	public boolean isLabel(ContentContext ctx) {
+		try {
+			for (Field field : getFields(ctx)) {
+				if (field.isTitle()) {
+					return true;
+				}
+			}
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		return false;
+	}
+
+	@Override
+	public String getTextTitle(ContentContext ctx) {
+		try {
+			for (Field field : getFields(ctx)) {
+				if (field.isTitle()) {
+					return field.getValue();
+				}
+			}
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		return null;
+	}
+	
+	@Override
+	public String getPageDescription(ContentContext ctx) {	
+		try {
+			for (Field field : getFields(ctx)) {
+				if (field.getPageDescription() != null) {
+					return field.getPageDescription();
+				}
+			}
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		return null;
 	}
 
 }

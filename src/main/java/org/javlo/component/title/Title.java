@@ -91,7 +91,7 @@ public class Title extends AbstractVisualComponent {
 	}
 
 	@Override
-	public boolean isLabel() {
+	public boolean isLabel(ContentContext ctx) {
 		return true;
 	}
 

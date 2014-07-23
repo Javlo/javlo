@@ -208,7 +208,7 @@ public class ContentElementList implements IContentComponentsList {
 		}
 	}
 
-	public String getLabel() {
+	public String getLabel(ContentContext ctx) {
 		String res = "";
 		Iterator elems = contentElements.iterator();
 		
@@ -216,7 +216,7 @@ public class ContentElementList implements IContentComponentsList {
 		
 		while (elems.hasNext()) {
 			IContentVisualComponent comp = (IContentVisualComponent) elems.next();
-			if (comp.isLabel() && !comp.isRepeat()) {
+			if (comp.isLabel(ctx) && !comp.isRepeat()) {
 				res = comp.getTextLabel();
 				if (res == null) {
 					res = "";
@@ -233,7 +233,7 @@ public class ContentElementList implements IContentComponentsList {
 			elems = contentElements.iterator();
 			while (elems.hasNext()) {
 				IContentVisualComponent comp = (IContentVisualComponent) elems.next();
-				if (comp.isLabel()) {
+				if (comp.isLabel(ctx)) {
 					res = comp.getTextLabel();
 					if (res == null) {
 						res = "";
@@ -259,14 +259,14 @@ public class ContentElementList implements IContentComponentsList {
 		return page;
 	}
 
-	public String getPageTitle() {
+	public String getPageTitle(ContentContext ctx) {
 
 		String res = null;
 		Iterator elems = contentElements.iterator();
 		while (elems.hasNext()) {
 			IContentVisualComponent comp = (IContentVisualComponent) elems.next();
 			if (comp instanceof PageTitle) {
-				res = comp.getTextTitle();
+				res = comp.getTextTitle(ctx);
 				if (res == null) {
 					res = "";
 				}
@@ -334,22 +334,22 @@ public class ContentElementList implements IContentComponentsList {
 		return sufix.toString();
 	}
 
-	public String getTitle() {
-		return getTitle(true);
+	public String getTitle(ContentContext ctx) {
+		return getTitle(ctx,true);
 	}
 
-	public String getLocalTitle() {
-		return getTitle(false);
+	public String getLocalTitle(ContentContext ctx) {
+		return getTitle(ctx,false);
 	}
 
-	private String getTitle(boolean repeat) {
+	private String getTitle(ContentContext ctx, boolean repeat) {
 
 		String res = "";
 		Iterator elems = contentElements.iterator();
 		while (elems.hasNext() && res.length() == 0) {
 			IContentVisualComponent comp = (IContentVisualComponent) elems.next();
-			if (comp.isLabel() && !comp.isRepeat()) {
-				res = comp.getTextTitle();
+			if (comp.isLabel(ctx) && !comp.isRepeat()) {
+				res = comp.getTextTitle(ctx);
 				if (res == null) {
 					res = "";
 				}
@@ -360,8 +360,8 @@ public class ContentElementList implements IContentComponentsList {
 				elems = contentElements.iterator();
 				while (elems.hasNext() && res.length() == 0) {
 					IContentVisualComponent comp = (IContentVisualComponent) elems.next();
-					if (comp.isLabel()) {
-						res = comp.getTextTitle();
+					if (comp.isLabel(ctx)) {
+						res = comp.getTextTitle(ctx);
 						if (res == null) {
 							res = "";
 						}
@@ -375,7 +375,7 @@ public class ContentElementList implements IContentComponentsList {
 				IContentVisualComponent comp = (IContentVisualComponent) elems.next();
 				if (comp.getType().equals(PageTitle.TYPE)) {
 					if (repeat || !comp.isRepeat()) {
-						res = comp.getTextTitle();
+						res = comp.getTextTitle(ctx);
 						if (res == null) {
 							res = "";
 						}
@@ -393,7 +393,7 @@ public class ContentElementList implements IContentComponentsList {
 		Iterator elems = contentElements.iterator();
 		while (elems.hasNext()) {
 			IContentVisualComponent comp = (IContentVisualComponent) elems.next();
-			if (comp.isLabel()) {
+			if (comp.isLabel(ctx)) {
 				res = comp.getXHTMLCode(ctx);
 			}
 
