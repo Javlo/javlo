@@ -50,7 +50,7 @@ public class ImageTitle extends Image {
 	}
 
 	@Override
-	public boolean isLabel() {
+	public boolean isLabel(ContentContext ctx) {
 		return true;
 	}
 	
@@ -159,7 +159,7 @@ public class ImageTitle extends Image {
 	 * @see org.javlo.itf.IContentVisualComponent#getTextLabel()
 	 */
 	@Override
-	public String getTextTitle() {
+	public String getTextTitle(ContentContext ctx) {
 		return getLabel();
 	}
 

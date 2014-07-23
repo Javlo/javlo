@@ -367,7 +367,11 @@ public class InfoBean {
 	}
 
 	public String getCurrentUserAvatarUrl() {
-		return URLHelper.createAvatarUrl(ctx, ctx.getCurrentUser().getUserInfo());
+		if (ctx.getCurrentUser() != null) {
+			return URLHelper.createAvatarUrl(ctx, ctx.getCurrentUser().getUserInfo());
+		} else {
+			return null;
+		}
 	}
 
 	public Map<IUserInfo, String> getAvatarURL() {
@@ -583,6 +587,10 @@ public class InfoBean {
 
 	public boolean isAdmin() {
 		return AdminUserSecurity.getInstance().isAdmin(ctx.getCurrentUser());
+	}
+	
+	public boolean isMaster() {
+		return AdminUserSecurity.getInstance().isMaster(ctx.getCurrentUser());
 	}
 
 	public String getPath() {
@@ -857,6 +865,11 @@ public class InfoBean {
 			VisitorsMessageService.getInstance(ctx.getRequest().getSession()).markAsDisplayed("cookies");
 		} 
 		return !VisitorsMessageService.getInstance(ctx.getRequest().getSession()).isAllReadyDisplayed("cookies");		
+	}
+	
+	public ContentContext getContextForCopy() {
+		EditContext editCtx = EditContext.getInstance(globalContext, ctx.getRequest().getSession());
+		return editCtx.getContextForCopy(ctx);
 	}
 
 }

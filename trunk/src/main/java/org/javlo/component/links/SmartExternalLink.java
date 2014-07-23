@@ -313,8 +313,8 @@ public class SmartExternalLink extends ComplexPropertiesLink implements IReverse
 			}
 		}
 	}
-
-	public String getDescription(ContentContext ctx) throws IOException {
+	
+	private String getLinkDescription(ContentContext ctx) throws IOException {
 		return getViewData(ctx).getProperty(DESCRIPTION_KEY, "");
 	}
 
@@ -372,7 +372,7 @@ public class SmartExternalLink extends ComplexPropertiesLink implements IReverse
 			out.println("</div><br /><div class=\"line\">");
 			out.print("<label for=\"" + getDescriptionInputName() + "\">" + i18nAccess.getText("global.description") + "</label>");
 			out.print(" : ");
-			out.println(XHTMLHelper.getTextArea(getDescriptionInputName(), getDescription(ctx), new String[][] { { "style", "width: 220px; margin-top: 16px;" } }));
+			out.println(XHTMLHelper.getTextArea(getDescriptionInputName(), getLinkDescription(ctx), new String[][] { { "style", "width: 220px; margin-top: 16px;" } }));
 			out.println("</div>");
 			out.println("<div class=\"content_clear\"><span></span></div></div>");
 		} catch (Exception e) {
@@ -582,9 +582,9 @@ public class SmartExternalLink extends ComplexPropertiesLink implements IReverse
 					res.append("<img src=\"" + imageURL + "\" alt=\"" + getTitle(ctx) + "\" />");
 					res.append("</span>");
 				}
-				if (getDescription(ctx) != null) {
+				if (getLinkDescription(ctx) != null) {
 					res.append("<span class=\"description\">");
-					res.append(StringHelper.removeTag(getDescription(ctx)));
+					res.append(StringHelper.removeTag(getLinkDescription(ctx)));
 					res.append("</span>");
 				}
 				res.append("<span class=\"label\">");
@@ -777,7 +777,7 @@ public class SmartExternalLink extends ComplexPropertiesLink implements IReverse
 					storeViewData(ctx);
 					setModify();
 				}
-				if (!description.equals(getDescription(ctx))) {
+				if (!description.equals(getLinkDescription(ctx))) {
 					setDescription(ctx, description);
 					storeViewData(ctx);
 					setModify();

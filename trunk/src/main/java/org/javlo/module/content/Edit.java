@@ -821,7 +821,7 @@ public class Edit extends AbstractModuleAction {
 			targetPage.removeContent(ctx, id);
 			GlobalContext globalContext = GlobalContext.getInstance(request);
 			PersistenceService persistenceService = PersistenceService.getInstance(globalContext);
-			persistenceService.store(ctx);
+			persistenceService.setAskStore(true);
 
 			if (ctx.isAjax()) {
 				ctx.addAjaxZone("comp-" + id, "");
@@ -1508,7 +1508,9 @@ public class Edit extends AbstractModuleAction {
 
 		String parentId = rs.getParameter("previous", null);
 		if (parentId == null) {
-			return "bad request structure : need 'previous' as parameter.";
+			//return "bad request structure : need 'previous' as parameter.";
+			parentId = "0";
+			ctx = ctx.getContextWithArea(null);
 		}
 		IContentVisualComponent parent = content.getComponent(ctx, parentId);
 

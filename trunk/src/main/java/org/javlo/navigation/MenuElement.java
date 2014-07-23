@@ -1936,17 +1936,14 @@ public class MenuElement implements Serializable, IPrintInfo {
 		newCtx.setArea(null);
 
 		if (newCtx.getRenderMode() == ContentContext.EDIT_MODE) {
-			newCtx.setRenderMode(ContentContext.PREVIEW_MODE); // get info for
-																// preview mode
-																// (with repeat
-																// elements)
+			newCtx.setRenderMode(ContentContext.PREVIEW_MODE); // get info for preview mode (with repeat elements)
 		}
 
 		IContentComponentsList contentList = getAllContent(newCtx);
 		while (contentList.hasNext(newCtx)) {
 			IContentVisualComponent elem = contentList.next(newCtx);
-			if (elem.getType().equals(Description.TYPE)) {
-				res = res + elem.getValue(newCtx);
+			if (elem.getPageDescription(ctx) != null) {
+				res = res + elem.getPageDescription(ctx);
 			}
 		}
 		desc.description = StringUtils.replace(res, "\"", "&quot;");
@@ -2072,7 +2069,7 @@ public class MenuElement implements Serializable, IPrintInfo {
 		newCtx.setRequestContentLanguage(ctx.getLanguage()); // label is from
 		// navigation
 		// language
-		desc.label = getContent(newCtx).getLabel();
+		desc.label = getContent(newCtx).getLabel(ctx);
 
 		if (desc.label != null) {
 			if ((desc.label.trim().length() == 0) && (name != null)) {
@@ -2080,7 +2077,7 @@ public class MenuElement implements Serializable, IPrintInfo {
 				if (globalContext.isAutoSwitchToDefaultLanguage()) {
 					ContentContext defaultLgCtx = newCtx.getContextWithContent(this);
 					if (defaultLgCtx != null) {
-						desc.label = getContent(defaultLgCtx).getLabel();
+						desc.label = getContent(defaultLgCtx).getLabel(ctx);
 					}
 					if ((desc.label.trim().length() == 0) && (name != null)) {
 						desc.label = name;
@@ -2738,7 +2735,7 @@ public class MenuElement implements Serializable, IPrintInfo {
 			return desc.forcedPageTitle;
 		}
 
-		desc.forcedPageTitle = getContent(newCtx).getPageTitle();
+		desc.forcedPageTitle = getContent(newCtx).getPageTitle(ctx);
 		if (desc.forcedPageTitle == null) {
 			desc.forcedPageTitle = "";
 		}
@@ -3024,7 +3021,7 @@ public class MenuElement implements Serializable, IPrintInfo {
 	 * @throws Exception
 	 */
 	public String getContentTitle(ContentContext ctx) throws Exception {
-		return getContent(ctx).getTitle();
+		return getContent(ctx).getTitle(ctx);
 	}
 
 	public String getTitle(ContentContext ctx) throws Exception {
@@ -3037,7 +3034,7 @@ public class MenuElement implements Serializable, IPrintInfo {
 			return desc.title;
 		}
 
-		desc.title = getContent(newCtx).getTitle();
+		desc.title = getContent(newCtx).getTitle(ctx);
 
 		if (desc.title != null) {
 			if ((desc.title.trim().length() == 0) && (name != null)) {
@@ -3065,7 +3062,7 @@ public class MenuElement implements Serializable, IPrintInfo {
 			return desc.localTitle;
 		}
 
-		desc.localTitle = getLocalContent(newCtx).getLocalTitle();
+		desc.localTitle = getLocalContent(newCtx).getLocalTitle(ctx);
 
 		if (desc.localTitle != null) {
 			if ((desc.localTitle.trim().length() == 0) && (name != null)) {

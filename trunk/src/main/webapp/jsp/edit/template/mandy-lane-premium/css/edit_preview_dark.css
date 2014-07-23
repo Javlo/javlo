@@ -73,7 +73,7 @@ body.preview-only {
 }
 
 .fix-preview #preview_command .add-page input[type="text"] {
-	width: 157px;
+	width: 149px;
 }
 
 #preview_command input[type="text"] {
@@ -142,6 +142,10 @@ body.preview-only {
 	background-color: #494949;
 	border: 1px #5b5b5b solid;
 	border-radius: 3px;
+}
+
+#preview_command .macro-list form {
+	margin: 0 6px 4px 0;
 }
 
 #preview_command #paste .component {

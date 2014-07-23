@@ -37,6 +37,10 @@ public class Heading extends Field {
 	public String getType() {
 		return tag;
 	}
+	
+	public boolean isTitle() {
+		return tag.equalsIgnoreCase("h1");
+	}
 
 }
 

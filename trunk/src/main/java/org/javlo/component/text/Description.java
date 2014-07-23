@@ -117,6 +117,10 @@ public class Description extends AbstractVisualComponent {
 	public boolean isContentCachable(ContentContext ctx) {	
 		return true;
 	}
-
+	
+	@Override
+	public String getPageDescription(ContentContext ctx) {	
+		return getValue(ctx);
+	}
 
 }

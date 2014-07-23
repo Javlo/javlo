@@ -266,7 +266,7 @@ public interface IContentVisualComponent extends Comparable<IContentVisualCompon
 	 * 
 	 * @return
 	 */
-	public String getTextTitle();
+	public String getTextTitle(ContentContext ctx);
 
 	public boolean isRepeat();
 
@@ -278,7 +278,7 @@ public interface IContentVisualComponent extends Comparable<IContentVisualCompon
 	 * 
 	 * @return a boolean, true if the component is the label of the page
 	 */
-	public boolean isLabel();
+	public boolean isLabel(ContentContext ctx);
 
 	/**
 	 * return the java script code called when global form is submited.
@@ -740,5 +740,11 @@ public interface IContentVisualComponent extends Comparable<IContentVisualCompon
 	 * @return
 	 */
 	public boolean equals(ContentContext ctx, IContentVisualComponent comp);
+	
+	/**
+	 * return the description of the page if this component is or contains description.
+	 * @return
+	 */
+	public String getPageDescription(ContentContext ctx);
 
 }

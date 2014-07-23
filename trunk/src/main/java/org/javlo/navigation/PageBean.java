@@ -262,11 +262,20 @@ public class PageBean implements Serializable {
 
 	public boolean isVisible() {
 		try {
+			return page.isVisible();
+		} catch (Exception e) {
+			return false;
+		}
+	}
+	
+	public boolean isVisibleForContext() {
+		try {
 			return page.isVisible(ctx);
 		} catch (Exception e) {
 			return false;
 		}
 	}
+
 	
 	public boolean isChildrenAssociation() {
 		return page.isChildrenAssociation();
@@ -330,6 +339,10 @@ public class PageBean implements Serializable {
 		} else {
 			return "";
 		}
+	}
+	
+	public boolean isPageEmpty() throws Exception {
+		return page.isEmpty(ctx);
 	}
 
 }

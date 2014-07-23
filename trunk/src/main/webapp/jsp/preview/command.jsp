@@ -111,7 +111,13 @@ if (!rightOnPage) {
 							<input id="home_button" type="submit" value="${i18n.edit['command.home']}" title="${i18n.edit['command.home']}" />
 							<label for="home_button">${i18n.edit['command.home']}</label>
 						</div>
-					</form></li>					
+					</form></li>
+					<li><form class="preview-edit ${info.god || info.master?'no-access':''}" id="user_info" action="<%=URLHelper.createURL(editCtx)%>?module=users&webaction=user.ChangeMode&mode=myself&previewEdit=true" method="post">
+						<div class="pc_line">							
+							<input id="pc_user_info" type="submit" value="${i18n.edit['global.account-setting']}" title="${i18n.edit['global.account-setting']}" class="pc_edit_true" />
+							<label for="pc_user_info">${i18n.edit['global.account-setting']}</label>
+						</div>
+					</form></li>										
 					<c:if test="${globalContext.previewMode}"><li class="publish"><form id="pc_publish_form" action="${info.currentURL}" method="post">
 						<div class="pc_line">
 							<input type="hidden" name="webaction" value="edit.publish" />
@@ -150,13 +156,7 @@ if (!rightOnPage) {
 							<input id="pc_del_page_button" type="<%=accessType%>" value="${i18n.edit['menu.delete']}" title="${i18n.edit['menu.delete']}" onclick="if (!confirm('${i18n.edit['menu.confirm-page']}')) return false;"<%=readOnlyPageHTML%> />
 							<label for="pc_del_page_button">${i18n.edit['menu.delete']}</label>
 						</div>
-					</form></li>
-					<li><form class="preview-edit" id="user_info" action="<%=URLHelper.createURL(editCtx)%>?module=users&webaction=user.ChangeMode&mode=myself&previewEdit=true" method="post">
-						<div class="pc_line">							
-							<input id="pc_user_info" type="submit" value="${i18n.edit['global.account-setting']}" title="${i18n.edit['global.account-setting']}" class="pc_edit_true" />
-							<label for="pc_user_info">${i18n.edit['global.account-setting']}</label>
-						</div>
-					</form></li>
+					</form></li>					
 					<c:if test="${!contentContext.currentTemplate.mailing || !userInterface.light}">
 						<li><form class="preview-edit <%=readOnlyClass%>" id="page_properties" action="<%=URLHelper.createURL(editCtx)%>?module=content&webaction=changeMode&mode=3&previewEdit=true" method="post">
 							<div class="pc_line">							
@@ -164,7 +164,20 @@ if (!rightOnPage) {
 								<label for="pc_page_properties">${i18n.edit['global.page-properties']}</label>
 							</div>
 						</form></li>	
-					</c:if>									
+					</c:if>
+					<li><form class="${info.page.pageEmpty?'no-access':''}" id="copy_page" action="${info.currentURL}?webaction=edit.copyPage" method="post">
+						<div class="pc_line">
+							<input id="pc_copy_page" type="submit" value="${i18n.edit['global.account-setting']}" title="${i18n.edit['action.copy-page']}" class="pc_edit_true" />
+							<label for="pc_copy_page">${i18n.edit['action.copy-page']}</label>
+						</div>
+					</form></li>
+					<li><form class="${empty info.contextForCopy || !info.page.pageEmpty?'no-access':''}" id="paste_page" action="${info.currentURL}" method="post">
+						<div class="pc_line">							
+							<input type="hidden" name="webaction" value="edit.pastePage" />
+							<input id="pc_paste_page" type="submit" value="${i18n.edit['global.account-setting']}" title="${not empty info.contextForCopy?info.contextForCopy.path:''}" class="pc_edit_true" />
+							<label for="pc_paste_page" title="${not empty info.contextForCopy?info.contextForCopy.path:''}">${i18n.edit['action.paste-page-preview']}</label>
+						</div>
+					</form></li>									
 					</c:if>					
 				</ul>			
 			</fieldset>

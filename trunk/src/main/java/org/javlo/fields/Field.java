@@ -710,5 +710,13 @@ public class Field implements Cloneable {
 	public void reload(ContentContext ctx) {
 		replacementCode = null;
 	}
+	
+	public boolean isTitle() {
+		return false;
+	}
+	
+	public String getPageDescription() {
+		return null;
+	}
 
 }
