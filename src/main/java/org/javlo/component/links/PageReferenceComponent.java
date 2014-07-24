@@ -1257,7 +1257,7 @@ public class PageReferenceComponent extends ComplexPropertiesLink implements IAc
 	protected Set<String> getPagesId(ContentContext ctx, MenuElement[] children) throws Exception {
 		String value = properties.getProperty(PAGE_REF_PROP_KEY, "");
 		Set<String> out = new TreeSet<String>();
-		if (value.trim().length()==0) {
+		if (value.trim().length()==0 && !isDefaultSelected()) {
 			return out;
 		}
 		String[] deserializedId = StringHelper.split(value, PAGE_SEPARATOR);
@@ -1553,6 +1553,7 @@ public class PageReferenceComponent extends ComplexPropertiesLink implements IAc
 		Calendar pageCal = Calendar.getInstance();
 
 		Set<String> selectedPage = getPagesId(ctx, allChildren);
+		
 		List<MenuElement> pages = new LinkedList<MenuElement>();
 		List<PageBean> pageBeans = new LinkedList<PageBean>();
 
@@ -1648,7 +1649,7 @@ public class PageReferenceComponent extends ComplexPropertiesLink implements IAc
 		 * ctx.getCurrentUser().getRoles(); } else { roles =
 		 * Collections.EMPTY_LIST; }
 		 */
-
+		
 		for (MenuElement page : pages) {
 			ContentContext lgCtx = ctx;		
 			if (GlobalContext.getInstance(ctx.getRequest()).isAutoSwitchToDefaultLanguage()) {
