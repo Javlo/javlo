@@ -12,16 +12,45 @@ import javax.servlet.ServletRequest;
 import javax.servlet.ServletResponse;
 import javax.servlet.http.HttpServletRequest;
 
+import org.javlo.context.ContentContext;
 import org.javlo.context.GlobalContext;
-import org.javlo.helper.XHTMLHelper;
 import org.lesscss.LessCompiler;
-import org.lesscss.LessException;
 
 public class CssLess implements Filter {
 	
 	private static Logger logger = Logger.getLogger(CssLess.class.getName());
 
-	@Override
+	 @Override
+	public void doFilter(ServletRequest request, ServletResponse response, FilterChain next) throws IOException, ServletException {
+		HttpServletRequest httpRequest = (HttpServletRequest) request;
+		String path = httpRequest.getServletPath();
+		GlobalContext globalContext = GlobalContext.getInstance(httpRequest);
+		if (path.startsWith('/' + globalContext.getContextKey())) {
+			path = path.replaceFirst('/' + globalContext.getContextKey(), "");
+		}
+		File cssFile = new File(httpRequest.getSession().getServletContext().getRealPath(path));
+		if (!cssFile.exists()) {		
+			File lessFile = new File(cssFile.getAbsolutePath().substring(0, cssFile.getAbsolutePath().length() - 4) + ".less");			
+			if (lessFile.exists()) {
+				compile (lessFile, cssFile);
+			}
+		}
+		next.doFilter(request, response);
+	}
+	
+	private static void compile(File lessFile, File cssFile) {
+		//XHTMLHelper.expandCSSImports(lessFile);
+		LessCompiler lessCompiler = new LessCompiler();
+		try {
+			lessCompiler.setEncoding(ContentContext.CHARACTER_ENCODING);					
+			lessCompiler.compile(lessFile, cssFile);
+		} catch (Exception e) {
+			logger.severe("error on less file '"+lessFile+"' : "+e.getMessage());
+			e.printStackTrace();
+		}
+	}
+
+	/*@Override
 	public void doFilter(ServletRequest request, ServletResponse response, FilterChain next) throws IOException, ServletException {
 		HttpServletRequest httpRequest = (HttpServletRequest) request;
 		String path = httpRequest.getServletPath();
@@ -33,18 +62,52 @@ public class CssLess implements Filter {
 		if (!cssFile.exists()) {		
 			File lessFile = new File(cssFile.getAbsolutePath().substring(0, cssFile.getAbsolutePath().length() - 4) + ".less");			
 			if (lessFile.exists()) {				
-				XHTMLHelper.expandCSSImports(lessFile);
-				LessCompiler lessCompiler = new LessCompiler();
-				try {
-					lessCompiler.compile(lessFile, cssFile);
-				} catch (LessException e) {
+				//XHTMLHelper.expandCSSImports(lessFile);
+				InputStream in = null;
+				OutputStream out = null;
+				try {					
+					Less less = Less.compiler();
+					in = new FileInputStream(lessFile);
+					out = new FileOutputStream(cssFile);
+					less.transform(null, in, out);
+					//lessCompiler.compile(null, cssFile);
+					
+				} catch (Exception e) {
 					logger.severe("error on less file '"+lessFile+"' : "+e.getMessage());
+					e.printStackTrace();
+				} finally {
+					ResourceHelper.closeResource(in);
+					ResourceHelper.closeResource(out);
+				}
+			}
+		}
+		next.doFilter(request, response);
+	}*/
+	
+/*	public void doFilter(ServletRequest request, ServletResponse response, FilterChain next) throws IOException, ServletException {
+		HttpServletRequest httpRequest = (HttpServletRequest) request;
+		String path = httpRequest.getServletPath();
+		GlobalContext globalContext = GlobalContext.getInstance(httpRequest);
+		if (path.startsWith('/' + globalContext.getContextKey())) {
+			path = path.replaceFirst('/' + globalContext.getContextKey(), "");
+		}
+		File cssFile = new File(httpRequest.getSession().getServletContext().getRealPath(path));
+		if (!cssFile.exists()) {		
+			File lessFile = new File(cssFile.getAbsolutePath().substring(0, cssFile.getAbsolutePath().length() - 4) + ".less");			
+			if (lessFile.exists()) {				
+				// Instantiates a new LessEngine
+				LessEngine engine = new LessEngine();
+				// Creates a new file containing the compiled content
+				try {
+					engine.compile(lessFile,cssFile);
+				} catch (LessException e) {
+					// TODO Auto-generated catch block
 					e.printStackTrace();
 				}
 			}
 		}
 		next.doFilter(request, response);
-	}
+	} */
 
 	@Override
 	public void init(FilterConfig arg0) throws ServletException {
@@ -55,3 +118,4 @@ public class CssLess implements Filter {
 	}
 
 }
+

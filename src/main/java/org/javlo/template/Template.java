@@ -2076,7 +2076,7 @@ public class Template implements Comparable<Template> {
 			while (targetFiles.hasNext()) {
 				File targetFile = targetFiles.next();
 				String targetFileNameLowerCase = targetFile.getName().toLowerCase();
-				boolean isCss = targetFileNameLowerCase.endsWith(".css") || targetFileNameLowerCase.endsWith(".less");
+				boolean isCss = targetFileNameLowerCase.endsWith(".css");
 				boolean isJs = targetFileNameLowerCase.endsWith(".js");
 				if (isCss) {
 					XHTMLHelper.expandCSSImports(targetFile);
