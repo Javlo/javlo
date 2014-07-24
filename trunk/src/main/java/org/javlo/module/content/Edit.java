@@ -1076,14 +1076,13 @@ public class Edit extends AbstractModuleAction {
 			if (errorMessage != null) {
 				messageRepository.setGlobalMessageAndNotification(ctx, new GenericMessage(errorMessage, GenericMessage.ERROR));
 			} else {
-				if (modify) {
-					PersistenceService.getInstance(globalContext).store(ctx);
+				if (modify) {					
 					messageRepository.setGlobalMessageAndNotification(ctx, new GenericMessage(i18nAccess.getText("message.update-page-properties"), GenericMessage.INFO));
 				}
 			}
 			
 			page.clearPageBean(ctx);
-			PersistenceService.getInstance(globalContext).store(ctx);
+			PersistenceService.getInstance(globalContext).setAskStore(true);
 			
 			if (ctx.isEditPreview()) {				
 				String url = URLHelper.createURL(ctx.getContextWithOtherRenderMode(ContentContext.PREVIEW_MODE), page.getPath());

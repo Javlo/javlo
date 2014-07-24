@@ -45,7 +45,7 @@
 							<c:param name="select" value="${param['select']}" />
 						</c:if>	
 					</c:url>
-					<li ${child.selected?'class="selected"':''}><a href="${url}">${child.info.title}</a></li>
+					<li class="${child.selected?'selected':''} ${child.realContent?'real-content':''}"><a href="${url}">${child.info.title}</a></li>
 				</c:forEach>
 				</ul>
 			</div>
