@@ -72,8 +72,6 @@ import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Entities.EscapeMode;
 import org.jsoup.safety.Whitelist;
 
-import com.yahoo.platform.yui.compressor.CssCompressor;
-
 /**
  * This class is a helper for construct XHTML code.
  * 
@@ -2333,8 +2331,8 @@ public class XHTMLHelper {
 		try {
 			in = new FileInputStream(targetFile);
 			InputStreamReader reader = new InputStreamReader(in, ContentContext.CHARACTER_ENCODING);
-			out = new StringWriter();
-			new CssCompressor(reader).compress(out, 0);
+			out = new StringWriter();			
+			CSSFastMin.minimize(reader, out);
 			newContent = out.toString();
 		} catch (Exception ex) {
 			logger.log(Level.WARNING, "Compress CSS failed for '" + targetFile + "'.", ex);
