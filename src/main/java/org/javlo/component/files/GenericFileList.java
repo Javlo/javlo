@@ -80,13 +80,15 @@ public class GenericFileList extends AbstractVisualComponent implements IAction 
 			}
 			out.println("</table>");
 		}
-		out.println("<form id=\"upload-form-" + getId() + "\" class=\"upload-form\" enctype=\"multipart/form-data\" method=\"post\"><div class=\"field-wrapper\">");
-		out.println("<input type=\"hidden\" name=\"webaction\" value=\"file-list.upload\" />");
-		out.println("<input type=\"hidden\" name=\"" + IContentVisualComponent.COMP_ID_REQUEST_PARAM + "\" value=\"" + getId() + "\" />");
-		out.println("<input type=\"file\" multiple=\"multiple\" name=\"files\" />");
-		I18nAccess i18nAccess = I18nAccess.getInstance(ctx.getRequest());
-		out.println("<input type=\"submit\" value=\"" + i18nAccess.getViewText("global.send") + "\" />");
-		out.println("</div></form>");
+		if (!ctx.isAsPageMode()) {
+			out.println("<form id=\"upload-form-" + getId() + "\" class=\"upload-form\" enctype=\"multipart/form-data\" method=\"post\"><div class=\"field-wrapper\">");
+			out.println("<input type=\"hidden\" name=\"webaction\" value=\"file-list.upload\" />");
+			out.println("<input type=\"hidden\" name=\"" + IContentVisualComponent.COMP_ID_REQUEST_PARAM + "\" value=\"" + getId() + "\" />");
+			out.println("<input type=\"file\" multiple=\"multiple\" name=\"files\" />");
+			I18nAccess i18nAccess = I18nAccess.getInstance(ctx.getRequest());
+			out.println("<input type=\"submit\" value=\"" + i18nAccess.getViewText("global.send") + "\" />");
+			out.println("</div></form>");
+		}
 		out.println("</fieldset>");
 		out.close();
 		return new String(outStream.toByteArray());
@@ -135,9 +137,9 @@ public class GenericFileList extends AbstractVisualComponent implements IAction 
 			try {
 				in = fileItem.getInputStream();
 				ResourceHelper.writeStreamToFile(in, newFile);
-				StaticInfo info = StaticInfo.getInstance(ctx, newFile);				
+				StaticInfo info = StaticInfo.getInstance(ctx, newFile);
 				info.setAuthors(ctx, user.getLogin());
-				PersistenceService.getInstance(ctx.getGlobalContext()).setAskStore(true);				
+				PersistenceService.getInstance(ctx.getGlobalContext()).setAskStore(true);
 			} catch (IOException e) {
 				e.printStackTrace();
 			} finally {

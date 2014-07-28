@@ -60,7 +60,7 @@ import org.javlo.user.UserFactory;
  * @author pvandermaesen
  */
 public class ReactionComponent extends DynamicComponent implements IAction {
-
+	
 	public static String TYPE = "reaction";
 
 	public static class Reaction {
@@ -226,6 +226,7 @@ public class ReactionComponent extends DynamicComponent implements IAction {
 		ContentContext ctx = ContentContext.getContentContext(request, response);
 		ContentService content = ContentService.getInstance(request);
 		IContentVisualComponent comp = content.getComponent(ctx, request.getParameter("comp"));
+		
 		RequestService requestService = RequestService.getInstance(ctx.getRequest());
 
 		if (requestService.getParameter("fdata", "").length() > 0) {
@@ -308,6 +309,7 @@ public class ReactionComponent extends DynamicComponent implements IAction {
 				if (!reactionComp.addReaction(ctx, reaction)) {
 					messageRepository.setGlobalMessage(new GenericMessage(i18nAccess.getViewText("reaction.added"), GenericMessage.INFO));
 				} else {
+					comp.getPage().setModificationDate(new Date());
 					messageRepository.setGlobalMessage(new GenericMessage(i18nAccess.getViewText("reaction.added-novalidation"), GenericMessage.INFO));
 				}
 				for (Field field : fields) {
@@ -831,7 +833,9 @@ public class ReactionComponent extends DynamicComponent implements IAction {
 			}
 			renderReactions(out, id, "", null, reactions, ctx, i18nAccess, displayUserInfo, displayTitle, replyAllowed);
 			if (addAllowed) {
-				renderSendReactionForm(out, id, null, null, ctx, i18nAccess);
+				if (!ctx.isAsPageMode()) {
+					renderSendReactionForm(out, id, null, null, ctx, i18nAccess);
+				}
 			} else {
 				out.println("<p>");
 				out.println(i18nAccess.getViewText("reaction.login-to-add"));
@@ -903,7 +907,7 @@ public class ReactionComponent extends DynamicComponent implements IAction {
 				out.println(StringHelper.renderTime(reaction.getDate()));
 				out.println("</span></div>");
 
-				if (displayReply) {
+				if (displayReply && !ctx.isAsPageMode()) {
 					renderSendReactionForm(out, id, reaction, userDisplayName, ctx, i18nAccess);
 				}
 				renderReactions(out, id, htmlIdSuffix, reaction.getId(), reactions, ctx, i18nAccess, displayUserInfo, displayTitle, displayReply);
@@ -1095,13 +1099,5 @@ public class ReactionComponent extends DynamicComponent implements IAction {
 
 	public int getReactionSize(ContentContext ctx) {
 		return getReactions(ctx).size();
-	}
-	
-	public static void main(String[] args) {
-		String pageid = readPageIdFromKey("prefix-0912309-tralala-troiulou");
-		System.out.println("***** ReactionComponent.main : pageid = " + pageid); // TODO:
-																					// remove
-																					// debug
-																					// trace
 	}
 }
