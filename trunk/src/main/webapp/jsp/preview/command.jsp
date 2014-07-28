@@ -37,8 +37,16 @@ if (!rightOnPage) {
 %>
 <div id="preview_command" lang="${info.editLanguage}" class="edit-${not empty currentUser} ${editPreview == 'true'?'edit':'preview'}">
 	<div class="pc_header"><span class="title">${i18n.edit["preview.command"]}</span>
-	<c:if test="${!userInterface.contributor}"><a id="pc_edit_mode_button" title="${i18n.edit['global.exit']}" href="<%=URLHelper.createURL(returnEditCtx)%>?module=content&webaction=previewEdit&preview=false">X</a></c:if>
-	<c:if test="${userInterface.contributor}"><a id="pc_edit_mode_button" class="logout" title="${i18n.edit['global.logout']}" href="<%=URLHelper.createURL(returnEditCtx)%>?edit-logout=true">X</a></c:if>	
+	<c:url var="url" value="<%=URLHelper.createURL(returnEditCtx)%>" context="/">
+		<c:param name="module" value="content" />
+		<c:param name="webaction" value="previewEdit" />
+		<c:param name="preview" value="false" />
+	</c:url>
+	<c:if test="${!userInterface.contributor}"><a id="pc_edit_mode_button" title="${i18n.edit['global.exit']}" href="${url}">X</a></c:if>
+	<c:url var="url" value="<%=URLHelper.createURL(returnEditCtx)%>" context="/">
+		<c:param name="edit-logout" value="true" />
+	</c:url>
+	<c:if test="${userInterface.contributor}"><a id="pc_edit_mode_button" class="logout" title="${i18n.edit['global.logout']}" href="${url}">X</a></c:if>	
 	</div>
 	<div class="pc_body">		    
 			<c:if test="${not empty messages.globalMessage && messages.globalMessage.type > 0 && not empty messages.globalMessage.message}">
@@ -112,8 +120,14 @@ if (!rightOnPage) {
 							<label for="home_button">${i18n.edit['command.home']}</label>
 						</div>
 					</form></li>
-					<li><form class="preview-edit ${info.god || info.master?'no-access':''}" id="user_info" action="<%=URLHelper.createURL(editCtx)%>?module=users&webaction=user.ChangeMode&mode=myself&previewEdit=true" method="post">
-						<div class="pc_line">							
+					<c:url var="url" value="<%=URLHelper.createURL(editCtx)%>" context="/">	
+						<c:param name="previewEdit" value="true"></c:param>
+					</c:url>
+					<li><form class="preview-edit ${info.god || info.master?'no-access':''}" id="user_info" action="${url}" method="post">
+						<div class="pc_line">
+							<input type="hidden" name="module" value="user" />							
+							<input type="hidden" name="webaction" value="user.ChangeMode" />
+							<input type="hidden" name="mode" value="myself" />							
 							<input id="pc_user_info" type="submit" value="${i18n.edit['global.account-setting']}" title="${i18n.edit['global.account-setting']}" class="pc_edit_true" />
 							<label for="pc_user_info">${i18n.edit['global.account-setting']}</label>
 						</div>
@@ -126,15 +140,24 @@ if (!rightOnPage) {
 						</div>
 					</form></li></c:if>
 					<c:if test="${!userInterface.light || globalContext.staticConfig.mailingPlatform}">
-					<li><form class="preview-edit <%=readOnlyClass%>" id="change_template_form" action="<%=URLHelper.createURL(editCtx)%>?module=template&webaction=template.changeFromPreview&previewEdit=true" method="post">
-						<div class="pc_line">							
+					<c:url var="url" value="<%=URLHelper.createURL(editCtx)%>" context="/">	
+						<c:param name="module" value="template"></c:param>
+						<c:param name="webaction" value="template.changeFromPreview"></c:param>
+						<c:param name="previewEdit" value="true"></c:param>
+					</c:url>					
+					<li><form class="preview-edit <%=readOnlyClass%>" id="change_template_form" action="${url}" method="post">
+						<div class="pc_line">													
 							<input id="pc_change_template" type="<%=accessType%>" value="${i18n.edit['preview.label.choose-template']}" title="${i18n.edit['preview.label.choose-template']}" class="pc_edit_true"<%=readOnlyPageHTML%> />
 							<label for="pc_change_template">${i18n.edit['preview.label.choose-template']}</label>
 						</div>
 					</form></li>
 					</c:if>
 					<%if ( moduleContext.searchModule("mailing") != null ) {%>
-					<li><form class="preview-edit <%=readOnlyClass%> ${info.device.code == 'pdf'?'no-access':''} id="mailing_form" action="<%=URLHelper.createURL(editCtx)%>?module=mailing&previewEdit=true" method="post">
+					<c:url var="url" value="<%=URLHelper.createURL(editCtx)%>" context="/">	
+						<c:param name="previewEdit" value="true"></c:param>
+						<c:param name="module" value="mailing"></c:param>
+					</c:url>
+					<li><form class="preview-edit <%=readOnlyClass%> ${info.device.code == 'pdf'?'no-access':''} id="mailing_form" action="${url}" method="post">
 						<div class="pc_line">							
 							<input id="pc_mailing" type="<%=accessType%>" value="${i18n.edit['preview.label.mailing']}" title="${i18n.edit['preview.label.mailing']}" class="pc_edit_true"<%=readOnlyPageHTML%> />
 							<label for="pc_mailing">${i18n.edit['preview.label.mailing']}</label>
@@ -158,7 +181,13 @@ if (!rightOnPage) {
 						</div>
 					</form></li>					
 					<c:if test="${!contentContext.currentTemplate.mailing || !userInterface.light}">
-						<li><form class="preview-edit <%=readOnlyClass%>" id="page_properties" action="<%=URLHelper.createURL(editCtx)%>?module=content&webaction=changeMode&mode=3&previewEdit=true" method="post">
+						<c:url var="url" value="<%=URLHelper.createURL(editCtx)%>">
+							<c:param name="module" value="content" />
+							<c:param name="webaction" value="changeMode" />
+							<c:param name="mode" value="3" />
+							<c:param name="previewEdit" value="true" />
+						</c:url>
+						<li><form class="preview-edit <%=readOnlyClass%>" id="page_properties" action="${url}" method="post">
 							<div class="pc_line">							
 								<input id="pc_page_properties" type="<%=accessType%>" value="${i18n.edit['global.page-properties']}" title="${i18n.edit['global.page-properties']}" class="pc_edit_true"<%=readOnlyPageHTML%> />
 								<label for="pc_page_properties">${i18n.edit['global.page-properties']}</label>

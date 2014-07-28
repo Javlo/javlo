@@ -354,6 +354,7 @@ public class ModulesContext {
 
 		ContentContext ctx = ContentContext.getContentContext(request, response);
 		GlobalContext globalContext = GlobalContext.getInstance(ctx.getRequest());
+		
 		if (requestService.getParameter("module", null) != null) {
 			UserInterfaceContext uic = UserInterfaceContext.getInstance(request.getSession(), globalContext);
 			uic.setCurrentModule(requestService.getParameter("module", null));
