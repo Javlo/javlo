@@ -1890,25 +1890,25 @@ public class Template implements Comparable<Template> {
 		Map<String, String> templateDataMap = new HashMap<String, String>();
 		TemplateData templateData = getTemplateData();
 		templateDataMap.putAll(getFreeData());
-		if (StringHelper.isEmpty(templateData.getBackground())) {
+		if (templateData.getBackground() != null) {
 			templateDataMap.put(StringHelper.colorToHexStringNotNull(templateData.getBackground()), StringHelper.colorToHexStringNotNull(templateDataUser.getBackground()));
 		}
-		if (StringHelper.isEmpty(templateData.getForeground())) {
+		if (templateData.getForeground() != null) {
 			templateDataMap.put(StringHelper.colorToHexStringNotNull(templateData.getForeground()), StringHelper.colorToHexStringNotNull(templateDataUser.getForeground()));
 		}
-		if (StringHelper.isEmpty(templateData.getText())) {
+		if (templateData.getText() != null) {
 			templateDataMap.put(StringHelper.colorToHexStringNotNull(templateData.getText()), StringHelper.colorToHexStringNotNull(templateDataUser.getText()));
 		}
-		if (StringHelper.isEmpty(templateData.getBackgroundMenu())) {
+		if (templateData.getBackgroundMenu() != null) {
 			templateDataMap.put(StringHelper.colorToHexStringNotNull(templateData.getBackgroundMenu()), StringHelper.colorToHexStringNotNull(templateDataUser.getBackgroundMenu()));
 		}
-		if (StringHelper.isEmpty(templateData.getTextMenu())) {
+		if (templateData.getTextMenu() != null) {
 			templateDataMap.put(StringHelper.colorToHexStringNotNull(templateData.getTextMenu()), StringHelper.colorToHexStringNotNull(templateDataUser.getTextMenu()));
 		}
-		if (StringHelper.isEmpty(templateData.getLink())) {
+		if (templateData.getLink() != null) {
 			templateDataMap.put(StringHelper.colorToHexStringNotNull(templateData.getLink()), StringHelper.colorToHexStringNotNull(templateDataUser.getLink()));
 		}
-		if (StringHelper.isEmpty(templateData.getBorder())) {
+		if (templateData.getBorder() != null) {
 			templateDataMap.put(StringHelper.colorToHexStringNotNull(templateData.getBorder()), StringHelper.colorToHexStringNotNull(templateDataUser.getBorder()));
 		}
 		if (templateData.getTitle() != null) {
