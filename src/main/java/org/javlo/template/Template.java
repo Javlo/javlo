@@ -606,12 +606,6 @@ public class Template implements Comparable<Template> {
 
 	public static final String GZ_FILE_EXT = "httpgz";
 
-	public static void main(String[] args) {
-		TemplateData data = new TemplateData("FFFFFF;000000;787878;787878;FFFFFF;55AA55;5555AA;http://localhost:8080;logo.png");
-		System.out.println("**** background : " + data.getBackground());
-		System.out.println("**** link color : " + data.getLink());
-	}
-
 	private final PropertiesConfiguration properties = new PropertiesConfiguration();
 
 	private final PropertiesConfiguration privateProperties = new PropertiesConfiguration();
