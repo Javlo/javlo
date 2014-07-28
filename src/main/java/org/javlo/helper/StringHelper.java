@@ -1289,7 +1289,7 @@ public class StringHelper {
 	}
 
 	public static void main(String[] args) {
-		System.out.println("2034 = "+renderNumber(2034, 4));
+		System.out.println("***** StringHelper.main : Color decode : "+Color.decode("#")); //TODO: remove debug trace
 	}
 
 	/**
