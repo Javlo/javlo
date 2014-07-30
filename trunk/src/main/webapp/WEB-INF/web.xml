@@ -303,17 +303,17 @@
 		<servlet-class>org.javlo.servlet.servletwrapper.ServletWrapperServlet</servlet-class>
 		<load-on-startup>1</load-on-startup>
 	</servlet>
-
-	<servlet-mapping>
-		<servlet-name>I18n</servlet-name>
-		<url-pattern>/i18n/*</url-pattern>
-	</servlet-mapping>
 	
 	<servlet>
-		<servlet-name>I18n</servlet-name>
+		<servlet-name>i18n</servlet-name>
 		<servlet-class>org.javlo.servlet.I18nServlet</servlet-class>
 		<load-on-startup>1</load-on-startup>
 	</servlet>
+
+	<servlet-mapping>
+		<servlet-name>i18n</servlet-name>
+		<url-pattern>/i18n/*</url-pattern>
+	</servlet-mapping>	
 
 	<servlet-mapping>
 		<servlet-name>ServletWrapper</servlet-name>

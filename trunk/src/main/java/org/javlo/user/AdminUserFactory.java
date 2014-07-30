@@ -66,6 +66,9 @@ public class AdminUserFactory extends UserFactory {
 
 	@Override
 	public User getUser(String login) {
+		if (login == null)  {
+			return null;
+		}
 		List<IUserInfo> users = getUserInfoList();
 		for (IUserInfo user : users) {
 			if (user.getLogin().equals(login)) {

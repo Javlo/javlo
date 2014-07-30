@@ -1,6 +1,7 @@
 package org.javlo.servlet;
 
 import java.util.Iterator;
+import java.util.Set;
 import java.util.logging.Logger;
 
 import javax.servlet.ServletException;
@@ -103,7 +104,17 @@ public class ContentOnlyServlet extends HttpServlet {
 				ctx.setCurrentTemplate(template);
 				I18nAccess i18nAccess = I18nAccess.getInstance(ctx.getRequest());
 				i18nAccess.requestInit(ctx);
-			}			
+			}	
+			
+			if (ctx.getGlobalContext().isCollaborativeMode()) {
+				Set<String> pageRoles = ctx.getCurrentPage().getEditorRoles();
+				if ((pageRoles.size() > 0 || ctx.getCurrentEditUser() == null)) { 
+					if (ctx.getCurrentEditUser() == null || !ctx.getCurrentEditUser().validForRoles(pageRoles)) {
+						ctx.setSpecialContentRenderer("/jsp/view/no_access.jsp");
+					}
+				}
+			}
+			
 			String area = requestService.getParameter("only-area", null);
 			if (area != null) {
 				getServletContext().getRequestDispatcher("/jsp/view/content_view.jsp?area=" + area).include(request, response);

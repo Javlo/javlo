@@ -562,11 +562,7 @@ public class GlobalContext implements Serializable, IPrintInfo {
 
 	private String dataFolder = null;
 
-	private final TimeMap<String, String> oneTimeTokens = new TimeMap<String, String>(60 * 60); // one
-																								// time
-																								// tolen
-																								// live
-																								// 1u
+	private final Map<String, String> oneTimeTokens = Collections.synchronizedMap(new TimeMap<String, String>(60 * 60)); // one time token live 1h
 
 	public final Object RELEASE_CACHE = new Object();
 
@@ -2857,11 +2853,10 @@ public class GlobalContext implements Serializable, IPrintInfo {
 	}
 
 	public String convertOneTimeToken(String token) {
-		String realToken = oneTimeTokens.get(token);
-		if (realToken != null) {
-			oneTimeTokens.remove(token);
+		if (token == null) {
+			return null;
 		}
-		return realToken;
+		return oneTimeTokens.remove(token);		
 	}
 
 	public boolean isEhCache() {

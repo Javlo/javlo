@@ -30,6 +30,7 @@ import org.javlo.user.UserFactory;
 
 public class LoginFilter implements Filter {
 
+	public static final String TOKEN_PARAM = "j_token";
 	/**
 	 * create a static logger.
 	 */
@@ -165,7 +166,7 @@ public class LoginFilter implements Filter {
 					logger.info(login + " is logged roles : [" + StringHelper.collectionToString(editUser.getRoles(), ",") + ']');
 
 				} else {
-					String token = request.getParameter("j_token");
+					String token = request.getParameter(TOKEN_PARAM);
 					if (token != null) {
 						adminFactory.login(httpRequest, token);
 					} else {
