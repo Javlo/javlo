@@ -73,9 +73,9 @@ public class ZipManagement {
 						&& !URLHelper.contains(includes, name, true)) {
 					continue;
 				}
-				ZipEntry entry = new ZipEntry(name);
-				out.putNextEntry(entry);
 				try {
+					ZipEntry entry = new ZipEntry(name);
+					out.putNextEntry(entry);
 					FileInputStream file = new FileInputStream(file2);
 
 					try {

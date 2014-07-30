@@ -48,8 +48,7 @@ public class GenericFileList extends AbstractVisualComponent implements IAction 
 		ByteArrayOutputStream outStream = new ByteArrayOutputStream();
 		PrintStream out = new PrintStream(outStream);
 		out.println("<fieldset>");
-		out.println("<legend>" + getValue() + "</legend>");
-		out.println("<ul class=\"file-list\">");
+		out.println("<legend>" + getValue() + "</legend>");		
 		if (getFolder(ctx).exists()) {
 			out.println("<table class=\"file-list\">");
 			String firstClass = " class=\"first\"";
@@ -62,7 +61,7 @@ public class GenericFileList extends AbstractVisualComponent implements IAction 
 				String authors = info.getAuthors(ctx);
 				out.println("<td class=\"authors\">" + authors + "</td>");
 				out.println("<td class=\"action\">");
-				if (ctx.getCurrentEditUser().getLogin().equals(authors)) {
+				if (ctx.getCurrentEditUser() != null && ctx.getCurrentEditUser().getLogin().equals(authors) && !ctx.isAsPageMode()) {
 					Map<String, String> params = new HashMap<String, String>();
 					params.put("webaction", "file-list.delete");
 					params.put("fileCode", StringHelper.encryptPassword(file.getName()));

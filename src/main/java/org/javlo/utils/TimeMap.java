@@ -79,7 +79,7 @@ public class TimeMap<K, V> implements Map<K, V> {
 		synchronized (internalMap) {
 			Calendar cal = internalTimeMap.get(key);
 			if (cal != null && Calendar.getInstance().after(cal)) {
-				remove(key);
+				internalRemove(key);
 			}
 			return internalMap.get(key);
 		}
@@ -118,11 +118,17 @@ public class TimeMap<K, V> implements Map<K, V> {
 		for (Map.Entry<? extends K, ? extends V> e : m.entrySet())
 			put(e.getKey(), e.getValue());
 	}
+		
+	private V internalRemove(Object key) {		
+		internalTimeMap.remove(key);
+		return internalMap.remove(key);
+	}
 
+	
 	@Override
-	public V remove(Object arg0) {
-		internalTimeMap.remove(arg0);
-		return internalMap.remove(arg0);
+	public V remove(Object key) {
+		clearCache();
+		return internalRemove(key);
 	}
 
 	@Override
@@ -169,7 +175,7 @@ public class TimeMap<K, V> implements Map<K, V> {
 				}
 			}
 			for (Object key : toBoRemoved) {
-				remove(key);
+				internalRemove(key);
 			}
 		}
 	}

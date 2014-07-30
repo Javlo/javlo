@@ -2,13 +2,14 @@ package org.javlo.mailing;
 
 import java.io.UnsupportedEncodingException;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.LinkedHashSet;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
+import java.util.Map.Entry;
 
 import javax.mail.internet.AddressException;
 import javax.mail.internet.InternetAddress;
@@ -16,6 +17,7 @@ import javax.servlet.http.HttpServletRequest;
 
 import org.javlo.context.ContentContext;
 import org.javlo.context.GlobalContext;
+import org.javlo.filter.LoginFilter;
 import org.javlo.helper.NetHelper;
 import org.javlo.helper.StringHelper;
 import org.javlo.helper.URLHelper;
@@ -23,6 +25,7 @@ import org.javlo.servlet.ContentOnlyServlet;
 import org.javlo.user.AdminUserFactory;
 import org.javlo.user.IUserFactory;
 import org.javlo.user.IUserInfo;
+import org.javlo.user.User;
 import org.javlo.user.UserFactory;
 
 public class MailingBuilder {
@@ -36,7 +39,7 @@ public class MailingBuilder {
 	private Collection<String> excludedUsers = new HashSet<String>();
 	private String recipients;
 	private boolean isTestMailing;
-	private Set<InternetAddress> allRecipients = new LinkedHashSet<InternetAddress>();
+	private Map<InternetAddress, String> allRecipients = new HashMap<InternetAddress, String>();
 
 	public void setCurrentTemplate(String currentTemplate) {
 		this.currentTemplate = currentTemplate;
@@ -110,11 +113,11 @@ public class MailingBuilder {
 		this.isTestMailing = isTest;
 	}
 
-	public Set<InternetAddress> getAllRecipients() {
+	public Map<InternetAddress, String> getAllRecipients() {
 		return allRecipients;
 	}
 
-	public void setAllRecipients(Set<InternetAddress> allRecipients) {
+	public void setAllRecipients(Map<InternetAddress, String> allRecipients) {
 		this.allRecipients = allRecipients;
 	}
 
@@ -133,8 +136,8 @@ public class MailingBuilder {
 			if (recipients != null) {
 				for (String fullEmail : StringHelper.searchEmail(recipients)) {
 					InternetAddress email = new InternetAddress(fullEmail);
-					if (!allRecipients.contains(email)) {
-						allRecipients.add(email);
+					if (!allRecipients.containsKey(email)) {
+						allRecipients.put(email, null);
 					}
 				}
 			}
@@ -146,7 +149,7 @@ public class MailingBuilder {
 		}
 	}
 
-	private static void explodeGroups(Set<InternetAddress> allRecipients, Collection<String> groups, Collection<String> excludedUsers, IUserFactory userFactory) throws UnsupportedEncodingException {
+	private static void explodeGroups(Map<InternetAddress, String> allRecipients, Collection<String> groups, Collection<String> excludedUsers, IUserFactory userFactory) throws UnsupportedEncodingException {
 		for (String group : groups) {
 			Collection<IUserInfo> users = userFactory.getUserInfoForRoles(new String[] { group });
 			for (IUserInfo user : users) {
@@ -155,8 +158,8 @@ public class MailingBuilder {
 				}
 				if (!StringHelper.isEmpty(user.getEmail())) {
 					InternetAddress email = new InternetAddress(user.getEmail(), StringHelper.neverNull(user.getFirstName()) + " " + StringHelper.neverNull(user.getLastName()));
-					if (!allRecipients.contains(email)) {
-						allRecipients.add(email);
+					if (!allRecipients.containsKey(email)) {
+						allRecipients.put(email, user.getLogin());
 					}
 				}
 			}
@@ -174,24 +177,37 @@ public class MailingBuilder {
 
 		GlobalContext globalContext = GlobalContext.getInstance(ctx.getRequest());
 
-		Mailing m = new Mailing();
-		m.setFrom(new InternetAddress(sender));
-		m.setReceivers(allRecipients);
-		m.setSubject(subject);
-		m.setAdminEmail(globalContext.getAdministratorEmail());
-		if (reportTo != null) {
-			m.setNotif(new InternetAddress(reportTo));
+		for (Entry<InternetAddress, String> receiver : allRecipients.entrySet()) {
+
+			Mailing m = new Mailing();
+			m.setFrom(new InternetAddress(sender));
+			m.setReceivers(Collections.singleton(receiver.getKey()));
+			m.setSubject(subject);
+			m.setAdminEmail(globalContext.getAdministratorEmail());
+			if (reportTo != null) {
+				m.setNotif(new InternetAddress(reportTo));
+			}
+			User user = AdminUserFactory.createAdminUserFactory(globalContext, ctx.getRequest().getSession()).getUser(receiver.getValue());			 
+			String oneTimeToken = null;
+			try {
+				if (user != null) {
+					oneTimeToken = ctx.getGlobalContext().createOneTimeToken(user.getUserInfo().getToken());
+					url = URLHelper.addParam(url, LoginFilter.TOKEN_PARAM, oneTimeToken);
+				}
+				m.setContent(NetHelper.readPage(url, true));
+			} finally {
+				ctx.getGlobalContext().convertOneTimeToken(oneTimeToken);
+			}			 
+			m.setHtml(true);
+			List<String> roles = new LinkedList<String>();
+			if (editorGroups != null) {
+				roles.addAll(editorGroups);
+			}
+			if (visitorGroups != null) {
+				roles.addAll(visitorGroups);
+			}
+			m.setRoles(roles);
+			m.store(ctx.getRequest().getSession().getServletContext());
 		}
-		m.setContent(NetHelper.readPage(url, true));
-		m.setHtml(true);
-		List<String> roles = new LinkedList<String>();
-		if (editorGroups != null) {
-			roles.addAll(editorGroups);
-		}
-		if (visitorGroups != null) {
-			roles.addAll(visitorGroups);
-		}
-		m.setRoles(roles);
-		m.store(ctx.getRequest().getSession().getServletContext());
 	}
 }
