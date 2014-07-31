@@ -1181,7 +1181,7 @@ public abstract class AbstractVisualComponent implements IContentVisualComponent
 				return getStyleList(ctx);
 			}
 			for (int i = 0; i < styleLabel.length; i++) {
-				styleLabel[i] = i18nAccess.getText(styleLabel[i]);
+				styleLabel[i] = i18nAccess.getText(styleLabel[i],styleLabel[i]);
 			}
 			return styleLabel;
 		} catch (Exception e) {
