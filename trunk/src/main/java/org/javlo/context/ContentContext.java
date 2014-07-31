@@ -1455,7 +1455,7 @@ public class ContentContext {
 	 */
 	public boolean isResourceGZip() throws Exception {
 
-		if (!getGlobalContext().getStaticConfig().isProd()) {
+		/*if (!getGlobalContext().getStaticConfig().isProd()) {
 			return false;
 		}
 
@@ -1471,7 +1471,8 @@ public class ContentContext {
 		if (acceptEncoding != null) {
 			outValue = outValue && acceptEncoding.toLowerCase().contains("gzip");
 		}
-		return outValue;
+		return outValue;*/
+		return false;
 	}
 
 	/**
