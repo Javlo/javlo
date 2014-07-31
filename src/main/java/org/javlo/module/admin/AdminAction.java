@@ -1117,7 +1117,7 @@ public class AdminAction extends AbstractModuleAction {
 								if (oldLogo != null && oldLogo.exists()) {
 									oldLogo.delete();
 								}
-							}
+							}	
 						}
 					}
 

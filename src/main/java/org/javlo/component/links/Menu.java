@@ -26,11 +26,12 @@ public class Menu extends AbstractPropertiesComponent {
 
 	public static final String TYPE = "menu";
 
+	private static final String TITLE = "title";
 	private static final String START_LEVEL = "start-level";
 	private static final String END_LEVEL = "end-level";
 	private static final String ROOT_PAGE = "root-page";
 
-	private static final List<String> FIELDS = Arrays.asList(new String[] { START_LEVEL, END_LEVEL, ROOT_PAGE });
+	private static final List<String> FIELDS = Arrays.asList(new String[] { TITLE, START_LEVEL, END_LEVEL, ROOT_PAGE });
 
 	@Override
 	public List<String> getFields(ContentContext ctx) throws Exception {
@@ -50,6 +51,10 @@ public class Menu extends AbstractPropertiesComponent {
 			setFieldValue(START_LEVEL, ""+startLevel );
 		}
 		return startLevel;
+	}
+	
+	private String getTitle() {
+		return getFieldValue(TITLE);
 	}
 	
 	/**
@@ -94,6 +99,7 @@ public class Menu extends AbstractPropertiesComponent {
 				}
 			}
 		}
+		ctx.getRequest().setAttribute("title", getTitle());
 		ctx.getRequest().setAttribute("page", page.getPageBean(ctx));
 		ctx.getRequest().setAttribute("start", getStartLevel());
 		ctx.getRequest().setAttribute("end", getEndLevel());

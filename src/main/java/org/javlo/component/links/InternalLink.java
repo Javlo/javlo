@@ -182,15 +182,18 @@ public class InternalLink extends ComplexPropertiesLink implements IInternalLink
 	@Override
 	public String[] getStyleLabelList(ContentContext ctx) {
 		try {
-			I18nAccess i18nAccess = I18nAccess.getInstance(ctx.getRequest());
-
-			String pf = "content.internal-link.";
-			String title = i18nAccess.getText(pf + TITLE);
-			String titleImage = i18nAccess.getText(pf + TITLE_IMAGE);
-			String titleCreation = i18nAccess.getText(pf + TITLE_DESCRIPTION);
-			String titleImageDescription = i18nAccess.getText(pf + TITLE_IMAGE_DESCRIPTION);
-			String image = i18nAccess.getText(pf + IMAGE);
+			if (super.getStyleLabelList(ctx).length > 0) {
+				return super.getStyleLabelList(ctx);
+			} else {
+				I18nAccess i18nAccess = I18nAccess.getInstance(ctx.getRequest());
+				String pf = "content.internal-link.";
+				String title = i18nAccess.getText(pf + TITLE);
+				String titleImage = i18nAccess.getText(pf + TITLE_IMAGE);
+				String titleCreation = i18nAccess.getText(pf + TITLE_DESCRIPTION);
+				String titleImageDescription = i18nAccess.getText(pf + TITLE_IMAGE_DESCRIPTION);
+				String image = i18nAccess.getText(pf + IMAGE);
 			return new String[] { title, titleImage, titleCreation, titleImageDescription, image, i18nAccess.getText("global.hidden") };
+			}
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
@@ -199,7 +202,11 @@ public class InternalLink extends ComplexPropertiesLink implements IInternalLink
 
 	@Override
 	public String[] getStyleList(ContentContext ctx) {
-		return new String[] { TITLE, TITLE_IMAGE, TITLE_DESCRIPTION, TITLE_IMAGE_DESCRIPTION, IMAGE, HIDDEN };
+		if (super.getStyleList(ctx).length > 0) {
+			return super.getStyleList(ctx);
+		} else {
+			return new String[] { TITLE, TITLE_IMAGE, TITLE_DESCRIPTION, TITLE_IMAGE_DESCRIPTION, IMAGE, HIDDEN };
+		}
 	}
 
 	@Override
@@ -248,7 +255,7 @@ public class InternalLink extends ComplexPropertiesLink implements IInternalLink
 				title = " title=\""+StringHelper.toXMLAttribute(title)+"\"";
 			}
 			
-			res.append("<a " + getSpecialPreviewCssClass(ctx, getStyle(ctx)) + getSpecialPreviewCssId(ctx) + " href=\" ");
+			res.append("<a " + getSpecialPreviewCssClass(ctx,"") + getSpecialPreviewCssId(ctx) + " href=\" ");
 			if (ctx.getRenderMode() != ContentContext.PAGE_MODE) {
 				res.append(StringHelper.toXMLAttribute(url));
 			} else {
