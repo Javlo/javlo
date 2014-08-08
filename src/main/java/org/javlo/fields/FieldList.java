@@ -30,12 +30,10 @@ public class FieldList extends Field {
 		StringWriter writer = new StringWriter();
 		PrintWriter out = new PrintWriter(writer);
 
-		GlobalContext globalContext = GlobalContext.getInstance(ctx.getRequest());
-
-		out.println("<div class=\"line\">");
+		out.println("<div class=\"line form-group\">");
 		out.println(getEditLabelCode());
-		out.println("	<label for=\"" + getInputName() + "\">" + getLabel(new Locale(globalContext.getEditLanguage(ctx.getRequest().getSession()))) + " : </label>");
-		out.println("	<select id=\"" + getInputName() + "\" name=\"" + getInputName() + "\" value=\"" + StringHelper.neverNull(getValue()) + "\">");
+		out.println("	<label for=\"" + getInputName() + "\">" + getLabel(new Locale(ctx.getContextRequestLanguage())) + " : </label>");
+		out.println("	<select class=\"form-control\" id=\"" + getInputName() + "\" name=\"" + getInputName() + "\" value=\"" + StringHelper.neverNull(getValue()) + "\">");
 		Collection<Map.Entry<String, String>> valuesCol = getList(ctx, getListName(), new Locale(ctx.getContextLanguage())).entrySet();
 		Collection<Map.Entry<String, String>> values = valuesCol;
 

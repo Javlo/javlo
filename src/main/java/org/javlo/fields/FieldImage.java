@@ -17,6 +17,9 @@ public class FieldImage extends FieldFile {
 		}
 		
 		public String getPreviewURL() {
+			if ( FieldImage.this.getCurrentFile() == null &&  FieldImage.this.getCurrentFile().trim().length() == 0) {
+				return null;
+			}
 			String relativePath = URLHelper.mergePath(FieldImage.this.getFileTypeFolder(), FieldImage.this.getCurrentFolder());
 			String fileURL = URLHelper.mergePath(relativePath, FieldImage.this.getCurrentFile());
 			try {

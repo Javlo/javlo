@@ -393,7 +393,7 @@ public class MacroHelper {
 				parentPage.addChildMenuElementAutoPriority(newPage);
 			}
 			PersistenceService persistenceService = PersistenceService.getInstance(globalContext);
-			persistenceService.store(ctx);
+			persistenceService.setAskStore(true);
 			ctx.setPath(newPage.getPath());
 			NavigationService navigationService = NavigationService.getInstance(globalContext);
 			navigationService.clearAllPage();
@@ -797,7 +797,7 @@ public class MacroHelper {
 		}
 
 		PersistenceService persistenceService = PersistenceService.getInstance(globalContext);
-		persistenceService.store(ctx);
+		persistenceService.setAskStore(true);
 	}
 
 	public static String getMonthPageName(ContentContext ctx, String yearPageName, Date date) {

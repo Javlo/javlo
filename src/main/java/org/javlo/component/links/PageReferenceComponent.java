@@ -2003,7 +2003,7 @@ public class PageReferenceComponent extends ComplexPropertiesLink implements IAc
 			out.println("parent-node=" + articles.iterator().next().getPath());
 			out.println("width_empty=false");
 			out.println("is-def-selected=true");
-			out.println("page-end=32");
+			out.println("page-end=5");
 			out.close();
 			setValue(new String(outStream.toByteArray()));
 		}
