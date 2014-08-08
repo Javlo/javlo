@@ -187,11 +187,15 @@ public class Field implements Cloneable {
 		keyValue = new LinkedHashMap<String, String>();
 
 		String path = properties.getProperty("list." + listName + ".path");
+		boolean addEmpty = StringHelper.isTrue(properties.getProperty("list."+listName+".empty", null));
 		if (path != null) {		
 			ContentService content = ContentService.getInstance(ctx.getRequest());
 			MenuElement page = content.getNavigation(ctx).searchChild(ctx, path);
 			if (page != null) {
 				Collection<MenuElement> children = page.getChildMenuElements();
+				if (addEmpty) {
+					keyValue.put("", "");
+				}
 				for (MenuElement child : children) {
 					keyValue.put(child.getName(), child.getTitle(ctx));
 				}
@@ -261,16 +265,15 @@ public class Field implements Cloneable {
 		StringWriter writer = new StringWriter();
 		PrintWriter out = new PrintWriter(writer);
 
-		GlobalContext globalContext = GlobalContext.getInstance(ctx.getRequest());
-
-		out.println("<div class=\"line\">");
+		out.println("<div class=\"line form-group\">");
 		out.println(getEditLabelCode());
-		out.println("	<label for=\"" + getInputName() + "\">" + getLabel(new Locale(globalContext.getEditLanguage(ctx.getRequest().getSession()))) + " : </label>");
+		
+		out.println("	<label for=\"" + getInputName() + "\">" + getLabel(new Locale(ctx.getContextRequestLanguage())) + " : </label>");
 		String readOnlyHTML = "";
 		if (isReadOnly()) {
 			readOnlyHTML = " readonly=\"readonly\"";
 		}
-		out.println("	<input" + readOnlyHTML + " id=\"" + getInputName() + "\" name=\"" + getInputName() + "\" value=\"" + StringHelper.neverNull(getValue()) + "\"/>");
+		out.println("	<input" + readOnlyHTML + " id=\"" + getInputName() + "\" class=\"form-control\" name=\"" + getInputName() + "\" value=\"" + StringHelper.neverNull(getValue()) + "\"/>");
 		if (getMessage() != null && getMessage().trim().length() > 0) {
 			out.println("	<div class=\"message " + getMessageTypeCSSClass() + "\">" + getMessage() + "</div>");
 		}

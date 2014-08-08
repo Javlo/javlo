@@ -387,7 +387,12 @@ public class DynamicComponent extends AbstractVisualComponent implements IStatic
 	}
 
 	protected String getType(String field) {
-		return properties.getProperty("field." + field + ".type");
+		String type = properties.getProperty("field." + field + ".type");
+		if (type != null) {
+			return type.trim();
+		} else {
+			return null;
+		}
 	}
 
 	@Override
@@ -823,9 +828,9 @@ public class DynamicComponent extends AbstractVisualComponent implements IStatic
 		}
 		return null;
 	}
-	
+
 	@Override
-	public String getPageDescription(ContentContext ctx) {	
+	public String getPageDescription(ContentContext ctx) {
 		try {
 			for (Field field : getFields(ctx)) {
 				if (field.getPageDescription() != null) {

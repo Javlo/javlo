@@ -82,14 +82,14 @@ public class DynamicComponentFilter extends AbstractPropertiesComponent implemen
 		ByteArrayOutputStream outStream = new ByteArrayOutputStream();
 		PrintStream out = new PrintStream(outStream);
 
-		out.println("<form class=\"generic-form\" id=\"form-filter-" + getId() + "\" name=\"form-filter-" + getId() + "\" action=\"" + URLHelper.createURL(ctx) + "\" method=\"post\">");
-		out.println("<div class=\"fields\"><input type=\"hidden\" name=\"webaction\" value=\"" + getActionGroupName() + ".filter\" />");
+		out.println("<form role=\"form\" class=\"generic-form panel panel-default\" id=\"form-filter-" + getId() + "\" name=\"form-filter-" + getId() + "\" action=\"" + URLHelper.createURL(ctx) + "\" method=\"post\">");
+		out.println("<div class=\"fields panel-body\"><input type=\"hidden\" name=\"webaction\" value=\"" + getActionGroupName() + ".filter\" />");
 		out.println("<input type=\"hidden\" name=\"" + IContentVisualComponent.COMP_ID_REQUEST_PARAM + "\" value=\"" + getId() + "\">");
 		for (Field field : (List<Field>) ctx.getRequest().getAttribute("fields")) {
 			out.println(field.getEditXHTMLCode(ctx));
 		}
 		I18nAccess i18nAccess = I18nAccess.getInstance(ctx.getRequest());
-		out.println("<div class=\"action\"><input type=\"submit\" name=\"filter\" value=\"" + i18nAccess.getViewText("global.ok") + "\" /></div>");
+		out.println("<div class=\"action\"><input type=\"submit\" class=\"btn btn-default\" name=\"filter\" value=\"" + i18nAccess.getViewText("global.ok") + "\" /></div>");
 		out.println("</div></form>");
 
 		ContentService content = ContentService.getInstance(ctx.getRequest());
@@ -131,8 +131,14 @@ public class DynamicComponentFilter extends AbstractPropertiesComponent implemen
 					out.println("</li>");
 				}
 			}
+			out.println("</ul>");
+			if (!realContent) {
+				out.println("<div class=\"alert alert-warning\" role=\"alert\">"+i18nAccess.getViewText("global.no-result")+"</div>");
+			}
 		}
-		out.println("</ul>");
+		
+		
+		
 
 		out.close();
 		return new String(outStream.toByteArray());
