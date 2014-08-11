@@ -427,13 +427,13 @@ public class UserAction extends AbstractModuleAction {
 		}
 
 		boolean admin = StringHelper.isTrue(rs.getParameter("admin", null));
+		boolean merge = StringHelper.isTrue(rs.getParameter("merge", null));
 		IUserFactory userFact;
 		if (admin) {
 			userFact = AdminUserFactory.createUserFactory(globalContext, session);
 		} else {
 			userFact = UserFactory.createUserFactory(globalContext, session);
 		}
-
 		Collection<FileItem> fileItems = rs.getAllFileItem();
 		String msg = null;
 		for (FileItem item : fileItems) {
@@ -478,7 +478,9 @@ public class UserAction extends AbstractModuleAction {
 				}
 
 				// if (userInfoList.size() > 0) {
-				userFact.clearUserInfoList();
+				if (!merge) {
+					userFact.clearUserInfoList();	
+				}				
 				for (Object element2 : userInfoList) {
 					IUserInfo element = (IUserInfo) element2;
 					try {

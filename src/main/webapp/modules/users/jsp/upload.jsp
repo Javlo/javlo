@@ -12,5 +12,12 @@
 	
 	<input type="file" name="file" />
 	<input type="submit" />
+	
+	<div class="line">
+		<br />
+		<input type="checkbox" id="merge" name="merge" />
+		<label for="merge">merge</label>		
+	</div>
+	
 </form>
 </div>
