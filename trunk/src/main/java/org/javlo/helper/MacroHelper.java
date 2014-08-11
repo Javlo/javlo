@@ -1,6 +1,5 @@
 package org.javlo.helper;
 
-import java.awt.Component;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.PrintWriter;
@@ -50,6 +49,8 @@ import org.javlo.service.PersistenceService;
 import org.javlo.user.User;
 
 public class MacroHelper {
+
+	public static final String ALPHABET = "abcdefghijklmnopqrstuvwxyz";
 
 	private static java.util.logging.Logger logger = java.util.logging.Logger.getLogger(MacroHelper.class.getName());
 
@@ -852,6 +853,21 @@ public class MacroHelper {
 			}
 		}
 		return null;
+	}
+
+	public static String getAlphabeticChildrenName(MenuElement parentPage, Character letter) {
+		return parentPage.getName() + '_' + (letter == null ? "other" : letter.toString());
+	}
+
+	public static void createAlphabeticChildren(ContentContext ctx, MenuElement parentPage) throws Exception {
+		for (char c : ALPHABET.toCharArray()) {
+			String newPageName = getAlphabeticChildrenName(parentPage, c);
+			MenuElement newPage = MacroHelper.addPageIfNotExist(ctx, parentPage.getName(), newPageName, false);
+			for (String lg : ctx.getGlobalContext().getContentLanguages()) {
+				MacroHelper.addContent(lg, newPage, "0", Title.TYPE, "" + c, ctx.getCurrentEditUser());
+			}
+		}
+		PersistenceService.getInstance(ctx.getGlobalContext()).setAskStore(true);
 	}
 
 	public static void main(String[] args) {
