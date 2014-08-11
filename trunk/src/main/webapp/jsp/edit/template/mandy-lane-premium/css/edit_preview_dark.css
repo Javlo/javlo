@@ -785,3 +785,17 @@ body.edit-preview {
 	float: left;
 	overflow: hidden;
 }
+
+.table-component-preview {
+	background-image: url("../images/preview/ico.png");	
+	background-position: 0 -3941px;		
+	background-repeat: no-repeat;
+}
+
+.table-component-preview.table-break {
+	background-position: 1px -3857px;	
+}
+
+.table-component-preview.row-break {
+	background-position: 2px -3804px;	
+}

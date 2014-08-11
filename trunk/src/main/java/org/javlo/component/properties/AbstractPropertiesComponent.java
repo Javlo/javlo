@@ -137,6 +137,8 @@ public abstract class AbstractPropertiesComponent extends AbstractVisualComponen
 					setModify();
 					properties.put(field, fieldValue);
 				}
+			} else {
+				properties.remove(field);
 			}
 		}
 
