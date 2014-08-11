@@ -20,21 +20,20 @@ public class CellBreak extends TableComponent {
 		PrintStream out = new PrintStream(outStream);
 		TableContext tableContext = getContext(ctx);
 		
-		String positionCSS = "";
+		String positionCSS = "";		
 		if (tableContext.isFirst(this)) {
 			positionCSS = "first ";
 		}
 		if (tableContext.isLast(this)) {
 			positionCSS = positionCSS + "last";
 		}
-		if (positionCSS.length() == 0) {
-			positionCSS = "style=\""+positionCSS+"\" ";
-		}
-		
+		if (positionCSS.length() > 0) {
+			positionCSS = "class=\""+positionCSS+"\" ";
+		}		
 		if (tableContext.isTableOpen()) {
 			out.println("</td><td "+positionCSS+"style=\""+getTDStyle(ctx)+"\">");
 		} else {
-			tableContext.setTableOpen(true);
+			tableContext.openTable();
 			String tableStyle = "";
 			String border = "border=\"0\" ";			
 			
@@ -48,6 +47,45 @@ public class CellBreak extends TableComponent {
 		}
 		out.close();
 		return new String(outStream.toByteArray());		
+	}
+	
+	@Override
+	protected String getPadding(ContentContext ctx) {
+		String padding = getFieldValue("padding");
+		if (padding == null || padding.trim().length() == 0) {
+			try {
+				padding = getContext(ctx).getTableBreak().getPadding(ctx);
+			} catch (Exception e) {
+				e.printStackTrace();
+			}
+		}
+		return padding;
+	}
+	
+	@Override
+	protected String getWidth(ContentContext ctx) {
+		String width = getFieldValue("width");
+		if (width == null || width.trim().length() == 0) {
+			try {
+				width = getContext(ctx).getTableBreak().getWidth(ctx);
+			} catch (Exception e) {
+				e.printStackTrace();
+			}
+		}
+		return width;
+	}
+	
+	@Override
+	protected String getVAlign(ContentContext ctx) {
+		String valign = getFieldValue("valign");
+		if (valign == null || valign.trim().length() == 0) {
+			try {
+				valign = getContext(ctx).getTableBreak().getVAlign(ctx);
+			} catch (Exception e) {
+				e.printStackTrace();
+			}
+		}
+		return valign;
 	}
 
 }

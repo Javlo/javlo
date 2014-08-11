@@ -159,8 +159,7 @@ String xhtmlCode = elem.getXHTMLCode(ctx);
 %><c:if test="${editPreview}"><%
 if (xhtmlCode != null && StringHelper.removeTag(xhtmlCode).trim().length() == 0 && !xhtmlCode.toLowerCase().contains("<img")) {
 	I18nAccess i18nAccess = I18nAccess.getInstance(ctx);
-	xhtmlCode = elem.getEmptyXHTMLCode(ctx);
-	xhtmlCode = "<b>type:"+elem.getType()+"</b>";
+	xhtmlCode = elem.getEmptyXHTMLCode(ctx);	
 }%></c:if><%=elem.getPrefixViewXHTMLCode(ctx)%><%=xhtmlCode%>
 <%=elem.getSuffixViewXHTMLCode(ctx)%>
 <%
@@ -180,7 +179,7 @@ if (elems != null) {%><%=elems.getSufixXHTMLCode(ctx)
 
 if (TableContext.isInstance(ctx)) {
 	TableContext tableContext = TableContext.getInstance(ctx, null);
-	if (tableContext.isTableOpen()) {
+	if (tableContext.isTableOpen()) {	
 		%><%=TableBreak.closeTable(ctx, tableContext)%><%
 	}
 }

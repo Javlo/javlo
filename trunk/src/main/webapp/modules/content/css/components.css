@@ -169,6 +169,14 @@
 	width: 160px;
 }
 
+.component .line label.radio {
+	float: none;
+	width: auto;
+	display: inline-block;
+	margin-left: 5px;
+	margin-right: 10px;
+}
+
 .dynamic-component .line textarea {
 	width: 96%;
 }

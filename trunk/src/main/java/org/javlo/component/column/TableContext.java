@@ -21,10 +21,11 @@ public class TableContext {
 	private int rowSize = 0;
 	
 	private boolean tableOpen = false;
+	private boolean cellWidth = false;
 	
 	public static TableContext getInstance(ContentContext ctx, IContentVisualComponent currentComponent) throws Exception {
 		TableContext outCtx = (TableContext) ctx.getRequest().getAttribute(KEY);
-		if (outCtx == null || outCtx.components.size() == 0 && currentComponent != null) {
+		if (outCtx == null) {
 			outCtx = new TableContext();			
 			ContentElementList content = ctx.getCurrentPage().getContent(ctx);			
 			IContentVisualComponent comp = content.next(ctx);
@@ -37,9 +38,12 @@ public class TableContext {
 			while (content.hasNext(ctx) && !(comp instanceof TableBreak)) {
 				comp = content.next(ctx);
 				if (comp instanceof TableComponent) {
+					if (((TableComponent) comp).getWidth(ctx) != null && ((TableComponent) comp).getWidth(ctx).trim().length() > 0) {
+						outCtx.cellWidth = true;
+					}
 					if (comp instanceof CellBreak) {
 						maxRowSize++;						
-					} else if (comp instanceof RowBreak) {
+					} else if (((TableComponent) comp).isRowBreak()) {
 						if (maxRowSize > outCtx.rowSize) {
 							outCtx.rowSize = maxRowSize;
 						}
@@ -48,7 +52,7 @@ public class TableContext {
 							outCtx.last.add(outCtx.components.getLast());
 						}
 					}					
-					if (outCtx.components.getLast() instanceof RowBreak) {
+					if (outCtx.components.getLast().isRowBreak()) {
 						outCtx.first.add((TableComponent)comp);
 					}
 					outCtx.addTableComponent((TableComponent)comp);
@@ -93,16 +97,20 @@ public class TableContext {
 		int size = 1;
 		while (comps.hasNext() && !comp.getId().equals(currentComp.getId())) {
 			comp = comps.next();
+			size++;
+			if (comp.isRowBreak()) {
+				size = 1;
+			}
 		}
 		if (!comps.hasNext()) {
 			return -1;
 		} else {
 			comp = comps.next();
-			while (comps.hasNext() && !(comp instanceof RowBreak)) {
+			while (comps.hasNext() && !(comp.isRowBreak())) {
 				size++;
-				comp = comps.next();				
+				comp = comps.next();	
 			}
-			if (!comps.hasNext() && !(comp instanceof RowBreak)) {
+			if (!comps.hasNext() && !(comp.isRowBreak())) {
 				size++;
 			}
 		}
@@ -112,15 +120,16 @@ public class TableContext {
 	public boolean isTableOpen() {
 		return tableOpen;
 	}
+	
+	public void openTable() {
+		tableOpen = true;
+	}
 
-	public void setTableOpen(boolean tableOpen) {		
-		if (!tableOpen) {
-			components.clear();
-		}
-		this.tableOpen = tableOpen;
+	public void resetTable(ContentContext ctx) {		
+		ctx.getRequest().removeAttribute(KEY);				
 	}
 	
-	public void addTableComponent (TableComponent comp) {
+	private void addTableComponent (TableComponent comp) {
 		components.add(comp);
 	}
 	
@@ -144,6 +153,14 @@ public class TableContext {
 	
 	public int getMaxRowSize() {
 		return rowSize;
+	}
+	
+	/**
+	 * true if there are at least one cell with "width" manually defined.
+	 * @return
+	 */
+	public boolean isCellWidth() {
+		return cellWidth;
 	}
 
 }

@@ -90,7 +90,7 @@ body.preview-only {
 	font-size: 0;
 	height: 7px;
 	width: 7px;
-	top: 8px;
+	top: 0;
 	left: 4px;
 	right: auto;
 	border: 0 none;
@@ -131,7 +131,7 @@ body.preview-only {
 	text-transform: uppercase;
 	font-weight: bold;
 	text-decoration: none;
-	margin-left: 14px;
+	margin-left: 4px;
 	padding: 4px 3px;
 }
 
