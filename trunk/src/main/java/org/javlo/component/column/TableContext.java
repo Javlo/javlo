@@ -1,8 +1,10 @@
 package org.javlo.component.column;
 
+import java.util.Collection;
+import java.util.HashSet;
 import java.util.Iterator;
+import java.util.LinkedList;
 import java.util.List;
-import java.util.Stack;
 
 import org.javlo.component.core.ContentElementList;
 import org.javlo.component.core.IContentVisualComponent;
@@ -12,7 +14,9 @@ public class TableContext {
 	
 	private static final String KEY = TableContext.class.getName();
 	
-	private Stack<TableComponent> components = new Stack<TableComponent>();
+	private LinkedList<TableComponent> components = new LinkedList<TableComponent>();	
+	private Collection<TableComponent> first = new HashSet<TableComponent>();
+	private Collection<TableComponent> last = new HashSet<TableComponent>();
 	
 	private int rowSize = 0;
 	
@@ -21,13 +25,14 @@ public class TableContext {
 	public static TableContext getInstance(ContentContext ctx, IContentVisualComponent currentComponent) throws Exception {
 		TableContext outCtx = (TableContext) ctx.getRequest().getAttribute(KEY);
 		if (outCtx == null || outCtx.components.size() == 0 && currentComponent != null) {
-			outCtx = new TableContext();
+			outCtx = new TableContext();			
 			ContentElementList content = ctx.getCurrentPage().getContent(ctx);			
 			IContentVisualComponent comp = content.next(ctx);
 			while (content.hasNext(ctx) && !comp.getId().equals(currentComponent.getId())) {
 				comp = content.next(ctx);				
 			}
 			outCtx.addTableComponent((TableComponent)comp);
+			outCtx.first.add((TableComponent)comp);
 			int maxRowSize = 1;
 			while (content.hasNext(ctx) && !(comp instanceof TableBreak)) {
 				comp = content.next(ctx);
@@ -39,11 +44,18 @@ public class TableContext {
 							outCtx.rowSize = maxRowSize;
 						}
 						maxRowSize = 1;
+						if (outCtx.components.size() > 0) {
+							outCtx.last.add(outCtx.components.getLast());
+						}
+					}					
+					if (outCtx.components.getLast() instanceof RowBreak) {
+						outCtx.first.add((TableComponent)comp);
 					}
 					outCtx.addTableComponent((TableComponent)comp);
 				}
 			}
-			if (maxRowSize > outCtx.rowSize) {
+			outCtx.last.add(outCtx.components.getLast());
+			if (maxRowSize >  outCtx.rowSize) {
 				outCtx.rowSize = maxRowSize;
 			}			
 			ctx.getRequest().setAttribute(KEY, outCtx);
@@ -51,11 +63,19 @@ public class TableContext {
 			/*System.out.println("");
 			System.out.println("components structure : ");
 			for (TableComponent tComp : outCtx.components) {
-				System.out.println("     "+tComp.getType());
+				System.out.println("     "+tComp.getType()+" - first:"+outCtx.isFirst(tComp)+" - last:"+outCtx.isLast(tComp));
 			}
 			System.out.println("");*/
 		}
 		return outCtx;
+	}
+	
+	public boolean isFirst(TableComponent comp) {
+		return first.contains(comp);
+	}
+	
+	public boolean isLast(TableComponent comp) {
+		return last.contains(comp);
 	}
 	
 	public static boolean isInstance(ContentContext ctx) throws Exception {
@@ -109,7 +129,17 @@ public class TableContext {
 	}
 	
 	public TableComponent getLastComponent() {
-		return components.lastElement();
+		return components.getLast();
+	}
+	
+	public TableBreak getTableBreak() {
+		TableComponent last = getLastComponent();
+		if (last instanceof TableBreak) {
+			return (TableBreak)last;
+		} else {
+			return DefaultTableBreak.instance;
+		}
+		
 	}
 	
 	public int getMaxRowSize() {
