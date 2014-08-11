@@ -87,7 +87,7 @@ public class TableBreak extends RowBreak {
 		return new String(outStream.toByteArray());
 	}
 
-	private boolean isBorder(ContentContext ctx) {
+	public boolean isBorder(ContentContext ctx) {
 		return StringHelper.isTrue(getFieldValue("border"));
 	}
 	

@@ -21,12 +21,22 @@ public abstract class TableComponent extends AbstractPropertiesComponent {
 		return fields;
 	}
 		
-	protected String getTDStyle(ContentContext ctx) {				
+	protected String getTDStyle(ContentContext ctx) throws Exception {				
 		StringBuffer outStyle = new StringBuffer();
+		TableContext tableContext = getContext(ctx);
 		
 		String padding = getPadding(ctx);
 		if (padding != null && padding.trim().length() > 0) {
-			outStyle.append("padding:"+padding+';');
+			if ((tableContext.isFirst(this) || tableContext.isLast(this)) && (tableContext.getTableBreak().isGrid(ctx) || tableContext.getTableBreak().isBorder(ctx))) {
+				if (tableContext.isFirst(this)) {
+					outStyle.append("padding: "+padding+" "+padding+" "+padding+" 0;");
+				}
+				if (tableContext.isLast(this)) {
+					outStyle.append("padding: "+padding+" 0 "+padding+" "+padding+";");
+				}
+			} else {
+				outStyle.append("padding:"+padding+';');
+			}			
 		}
 		String width = getWidth(ctx);
 		if (width != null && width.trim().length() > 0) {
