@@ -339,6 +339,10 @@ public class DynamicComponent extends AbstractVisualComponent implements IStatic
 		return properties.getProperty("component.list-renderer", null);
 	}
 
+	public String getDataPath() {
+		return properties.getProperty("component.data.path", null);
+	}
+
 	@Override
 	public Map<String, String> getList(String listName, Locale locale) {
 		Map<String, String> res = new HashMap<String, String>();
