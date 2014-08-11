@@ -46,7 +46,7 @@ public class PaginationContext {
 			maxPage = inCountElement / elemByPage;
 			if (inCountElement % elemByPage != 0) {
 				maxPage = maxPage + 1;
-			}
+			}			
 		}
 		PaginationContext service = (PaginationContext) request.getAttribute(key);
 		if (service == null) {
@@ -69,7 +69,7 @@ public class PaginationContext {
 		return service;
 	}
 
-	public static PaginationContext getInstance(HttpServletRequest request, int inCountElement, int elemByPage) throws ServiceException {
+	/*public static PaginationContext getInstance(HttpServletRequest request, int inCountElement, int elemByPage) throws ServiceException {
 		int maxPage = inCountElement / elemByPage;
 		if (inCountElement % elemByPage != 0) {
 			maxPage = maxPage + 1;
@@ -79,7 +79,7 @@ public class PaginationContext {
 			service = new PaginationContext();
 			request.setAttribute(KEY, service);
 		}
-		service.maxPage = maxPage;
+		service.maxPage = maxPage+2;
 		service.pageSize = elemByPage;
 
 		if (service.countElement != inCountElement) {
@@ -92,7 +92,7 @@ public class PaginationContext {
 			logger.fine(t.getMessage());
 		}
 		return service;
-	}
+	}*/
 
 	public String transformURLToPage(String url, int page) {
 		char sep = '?';

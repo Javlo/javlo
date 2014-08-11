@@ -294,7 +294,7 @@ layerOver = function(item, deletable) {
 	var layer = jQuery("#preview-layer");	
 	layer.data("deletable", deletable);
 	
-	var insideLayer = jQuery("#preview-layer span");
+	var insideLayer = jQuery("#preview-layer span");	
 	if (item == null) {		
 		layer.css("z-index", -1);
 		layer.css("display", "none");		
@@ -304,11 +304,11 @@ layerOver = function(item, deletable) {
 	} else {		
 		var comp = jQuery(item);
 		if (layer.width() > 0) {
-			layer.css("z-index", 10000);
+			layer.css("z-index", 10010);
 			layer.css("display", "block");
 		}
 		
-		if (comp.hasClass("editable-component")) {
+		if (comp.hasClass("editable-component")) {			
 			if (comp.data("hint")) {
 				layer.attr("title", comp.data("hint"));
 			} else {

@@ -1,4 +1,3 @@
-<%@page import="org.javlo.component.links.PageMirrorComponent"%>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c"
 %><%@ taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions"
 %><%@page contentType="text/html"
@@ -15,8 +14,10 @@
 		org.javlo.component.core.ContentElementList,
 		org.javlo.component.core.IContentComponentsList,
 		org.javlo.component.core.IContentVisualComponent,
-		org.javlo.component.column.ColumnContext,
+		org.javlo.component.links.PageMirrorComponent,		
 		org.javlo.component.container.IContainer,
+		org.javlo.component.column.TableContext,
+		org.javlo.component.column.TableBreak,
 		org.javlo.context.GlobalContext,
 		org.javlo.user.User,
 		org.javlo.user.UserFactory,
@@ -159,24 +160,13 @@ String xhtmlCode = elem.getXHTMLCode(ctx);
 if (xhtmlCode != null && StringHelper.removeTag(xhtmlCode).trim().length() == 0 && !xhtmlCode.toLowerCase().contains("<img")) {
 	I18nAccess i18nAccess = I18nAccess.getInstance(ctx);
 	xhtmlCode = elem.getEmptyXHTMLCode(ctx);
+	xhtmlCode = "<b>type:"+elem.getType()+"</b>";
 }%></c:if><%=elem.getPrefixViewXHTMLCode(ctx)%><%=xhtmlCode%>
 <%=elem.getSuffixViewXHTMLCode(ctx)%>
 <%
 previousElem = elem;
 if (elems != null) {%><%=elems.getSufixXHTMLCode(ctx)
 %><%}%><%		
-			elem.setValue(savedValue);
-			if (elem.next() == null) {
-				ColumnContext columnContext = ColumnContext.getInstance(request);
-				if (columnContext.isOpen()) {
-					if (columnContext.isWithTable()) {
-						%></td></tr></table><%
-					} else {
-						%></div><%
-					}
-				}			
-				
-			}
 		}	
 	}
 }
@@ -187,6 +177,14 @@ if (elems != null) {%><%=elems.getSufixXHTMLCode(ctx)
 		%></div><%
 	}
 }
+
+if (TableContext.isInstance(ctx)) {
+	TableContext tableContext = TableContext.getInstance(ctx, null);
+	if (tableContext.isTableOpen()) {
+		%><%=TableBreak.closeTable(ctx, tableContext)%><%
+	}
+}
+
 currentPage.endRendering(ctx);
 } /* end else getSpecialContentRenderer() */
 

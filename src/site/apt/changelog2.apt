@@ -284,10 +284,14 @@ change log
  
  * exclude context for some domains.
  
-* 2.0.3.3 20/02/2014
+* 2.0.3.3 20/04/2014
 
  * copy and paste component in preview.
 
  * copy and paste page in preview.
  
  * Dynamic Component can be title and description.
+ 
+ * Table component
+ 
+* 2.0.3.6 11/08/2014

@@ -473,7 +473,7 @@ public class FileAction extends AbstractModuleAction {
 						staticInfo.removeTag(ctx, tag);
 					}
 				}
-				
+
 				if (editContext.isEditPreview() && StringHelper.isTrue(rs.getParameter("close", null))) {
 					ctx.setClosePopup(true);
 				}
@@ -541,16 +541,27 @@ public class FileAction extends AbstractModuleAction {
 
 	public static String performUpload(ContentContext ctx, RequestService rs) throws FileNotFoundException, InstantiationException, IllegalAccessException, IOException, ModuleException {
 		String sourceFolder = getContextROOTFolder(ctx);
+
 		FileModuleContext fileModuleContext = FileModuleContext.getInstance(ctx.getRequest());
+		String folderName = rs.getParameter("folder", "").trim();
 		File folder = new File(sourceFolder, fileModuleContext.getPath());
+		if (folderName.length() > 0) {
+			folder = new File(sourceFolder, URLHelper.mergePath(fileModuleContext.getPath(), folderName));
+			if (!folder.exists()) {
+				folder.mkdir();
+			}
+		}
+
 		for (FileItem file : rs.getAllFileItem()) {
-			File newFile = new File(URLHelper.mergePath(folder.getAbsolutePath(), StringHelper.createFileName(file.getName())));
-			newFile = ResourceHelper.getFreeFileName(newFile);
-			InputStream in = file.getInputStream();
-			try {
-				ResourceHelper.writeStreamToFile(in, newFile);
-			} finally {
-				ResourceHelper.closeResource(in);
+			if (file.getName().trim().length() > 0) {
+				File newFile = new File(URLHelper.mergePath(folder.getAbsolutePath(), StringHelper.createFileName(file.getName())));
+				newFile = ResourceHelper.getFreeFileName(newFile);
+				InputStream in = file.getInputStream();
+				try {
+					ResourceHelper.writeStreamToFile(in, newFile);
+				} finally {
+					ResourceHelper.closeResource(in);
+				}
 			}
 		}
 
@@ -580,7 +591,7 @@ public class FileAction extends AbstractModuleAction {
 		}
 		return null;
 	}
-	
+
 	public static String performOrder(RequestService rs, ContentContext ctx, MessageRepository messageRepository, I18nAccess i18nAccess) throws Exception {
 		String order = rs.getParameter("order", null);
 		if (order != null) {

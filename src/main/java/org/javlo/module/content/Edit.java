@@ -1601,7 +1601,15 @@ public class Edit extends AbstractModuleAction {
 		String previous = rs.getParameter("previous", null);
 		String compId = rs.getParameter("comp-id", null);
 		String areaId = rs.getParameter("area", null);
-
+		
+		// only move in one area
+		final String KEY = "component-moved-"+compId;
+		if (ctx.getRequest().getAttribute(KEY) != null) {
+			return null;
+		} else {
+			ctx.getRequest().setAttribute(KEY,KEY);
+		}
+		
 		if (previous == null || compId == null || areaId == null) {
 			return "bad request structure : need 'previous', 'comp-id' and 'area' as parameters.";
 		}
@@ -1612,8 +1620,8 @@ public class Edit extends AbstractModuleAction {
 		if (ctx.getCurrentPage().isChildrenAssociation()) {
 			fromPage = comp.getPage();
 		}
-		String fromArea = comp.getArea();
 
+		String fromArea = comp.getArea();
 		if (comp == null) {
 			return "component not found.";
 		}
