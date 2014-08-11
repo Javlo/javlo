@@ -7,11 +7,12 @@ import java.util.List;
 
 import org.javlo.component.properties.AbstractPropertiesComponent;
 import org.javlo.context.ContentContext;
+import org.javlo.helper.StringHelper;
 import org.javlo.helper.XHTMLHelper;
 
 public abstract class TableComponent extends AbstractPropertiesComponent {
 	
-	private static final List<String> fields = Arrays.asList(new String[] {"padding","width","valign"});
+	private static final List<String> fields = Arrays.asList(new String[] {"padding","width","valign","align"});
 
 	public TableComponent() {		
 	}
@@ -27,7 +28,7 @@ public abstract class TableComponent extends AbstractPropertiesComponent {
 		
 		String padding = getPadding(ctx);
 		if (padding != null && padding.trim().length() > 0) {
-			if ((tableContext.isFirst(this) || tableContext.isLast(this)) && (tableContext.getTableBreak().isGrid(ctx) || tableContext.getTableBreak().isBorder(ctx))) {
+			if ((tableContext.isFirst(this) || tableContext.isLast(this)) && (!tableContext.getTableBreak().isGrid(ctx) && !tableContext.getTableBreak().isBorder(ctx))) {
 				if (tableContext.isFirst(this)) {
 					outStyle.append("padding: "+padding+" "+padding+" "+padding+" 0;");
 				}
@@ -38,11 +39,21 @@ public abstract class TableComponent extends AbstractPropertiesComponent {
 				outStyle.append("padding:"+padding+';');
 			}			
 		}
-		String width = getWidth(ctx);
+		String width = getWidth(ctx);		
 		if (width != null && width.trim().length() > 0) {
 			outStyle.append("width:"+getWidth(ctx)+"%;");
+		} else if (!tableContext.isCellWidth()) {
+			if (tableContext.getRowSize(this) == tableContext.getMaxRowSize()) {
+				String widthStr = StringHelper.renderDouble(((double)100/(double)tableContext.getMaxRowSize()),2,'.');				
+				outStyle.append("width:"+widthStr+"%;");
+			}
 		}
-		outStyle.append("vertical-align:"+getVAlign(ctx)+';');
+		if (getVAlign(ctx).trim().length() > 0) {
+			outStyle.append("vertical-align:"+getVAlign(ctx)+';');
+		}
+		if (getAlign(ctx).trim().length() > 0) {
+			outStyle.append("text-align:"+getAlign(ctx)+';');
+		}
 		return outStyle.toString(); 
 	}
 	
@@ -79,7 +90,11 @@ public abstract class TableComponent extends AbstractPropertiesComponent {
 	}
 	
 	protected String getVAlign(ContentContext ctx) {
-		return getFieldValue("valign","top");
+		return getFieldValue("valign","");
+	}
+	
+	protected String getAlign(ContentContext ctx) {
+		return getFieldValue("align");
 	}
 	
 	@Override
@@ -105,6 +120,11 @@ public abstract class TableComponent extends AbstractPropertiesComponent {
 		return createKeyWithField("valign");
 	}
 	
+	protected String  getAlignInputName() {
+		return createKeyWithField("align");
+	}
+
+	
 	protected String  getWidthInputName() {
 		return createKeyWithField("width");
 	}
@@ -122,11 +142,23 @@ public abstract class TableComponent extends AbstractPropertiesComponent {
 		out.println("<input name=\""+getWidthInputName()+"\" value=\""+getFieldValue("width")+"\" /> %");
 		out.println("</div>");
 		out.println("<div class=\"line\">");
+		out.println("<label for=\""+getAlignInputName()+"\">align : </label>");				
+		out.println(XHTMLHelper.getRadioInput(getAlignInputName(), new String[][] {{"","inherited"}, {"left","left"}, {"right","right"}, {"center","center"}, {"justify","justify"}},getFieldValue("align",""),null));		
+		out.println("</div>");		
+		out.println("<div class=\"line\">");
 		out.println("<label for=\""+getVAlignInputName()+"\">vertical-align : </label>");				
-		out.println(XHTMLHelper.getInputOneSelect(getVAlignInputName(), Arrays.asList(new String[] {"top", "middle", "bottom"}), getVAlign(ctx), false));		
+		out.println(XHTMLHelper.getRadioInput(getVAlignInputName(), new String[][] {{"","inherited"}, {"top","top"}, {"middle","middle"}, {"bottom","bottom"}},getFieldValue("valign",""),null));		
 		out.println("</div>");
 
 		out.close();
 		return new String(outStream.toByteArray());
+	}
+	
+	/**
+	 * return true if the component break the row.
+	 * @return
+	 */
+	public boolean isRowBreak() {
+		return false;
 	}
 }

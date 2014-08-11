@@ -297,12 +297,15 @@ function closableFieldSet(items) {
 			return;
 		}
 		
+		jQuery(this).find("legend").wrapInner('<a class="title" href="#"/>');
+		
 		var hash = "closable_" + hashItem(this);
 		var initVal = jQuery.cookie(hash);
+		var item = jQuery(this);
 		if (initVal == "close") {
-			jQuery(this).prepend(
-					'<a class="closable_action close" href="#">#</a>');
-			jQuery(this).children().each(
+			var legend = item.children("legend");						
+			legend.prepend('<a class="closable_action close" href="#">#</a>');
+			item.children().each(
 					function() {
 						var child = jQuery(this);
 						if (!child.hasClass("closable_action")
@@ -311,24 +314,21 @@ function closableFieldSet(items) {
 						}
 					});
 		} else {
-			jQuery(this).prepend(
-					'<a class="closable_action open" href="#">_</a>');
+			var legend = item.children("legend");		
+			legend.prepend('<a class="closable_action open" href="#">)_</a>');
 		}
 
-		jQuery(this).find(".closable_action").each(function() {
+		item.find(".closable_action").each(function() {
 			jQuery(this).click(function() {
 				clickFieldSet(this, jQuery(this).parent());
 				return false;
 			});
-		});
-		jQuery(this).find("legend").wrapInner('<a href="#"/>');
-		jQuery(this).find("legend a").each(
+		});		
+		item.find("legend .title").each(
 				function() {
 					jQuery(this).click(
 							function() {
-								clickFieldSet(jQuery(this).parent().parent()
-										.find(".closable_action"), jQuery(this)
-										.parent().parent());
+								clickFieldSet(jQuery(this).parent().parent().find(".closable_action"), jQuery(this).parent().parent());
 								return false;
 							});
 				});
@@ -348,7 +348,7 @@ function clickFieldSet(link, fieldset) {
 		link.removeClass("open");
 		link.addClass("close");
 		link.html("#");
-		link.parent().children().each(
+		link.parent().parent().children().each(
 				function() {
 					var child = jQuery(this);
 					if (!child.hasClass("closable_action")
@@ -365,7 +365,7 @@ function clickFieldSet(link, fieldset) {
 		link.addClass("open");
 		link.html("_");
 
-		link.parent().children().each(
+		link.parent().parent().children().each(
 				function() {
 					var child = jQuery(this);
 					if (!child.hasClass("closable_action")

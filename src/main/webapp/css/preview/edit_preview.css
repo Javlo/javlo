@@ -447,6 +447,8 @@ body.edit-preview {
 	line-height: normal;
 	text-align: left;
 	-moz-box-sizing: inherit;
+	opacity: 1;
+	filter : alpha(opacity=100);
 }
 
 #message-container .notification {
@@ -579,10 +581,9 @@ body.edit-preview {
 }
 
 #preview_command fieldset.closable .closable_action {
-	position: absolute;
 	display: block;
-	right: 12px;
-	top: 3px;
+	float: left;
+	margin-top: 3px;
 	font-size: 0;
 	background-color: #EEEEEE;
 }

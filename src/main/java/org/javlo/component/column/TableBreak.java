@@ -8,9 +8,9 @@ import java.util.List;
 import org.javlo.context.ContentContext;
 import org.javlo.helper.StringHelper;
 
-public class TableBreak extends RowBreak {
+public class TableBreak extends TableComponent {
 	
-	private static final List<String> tableFields = Arrays.asList(new String[] {"border", "grid", "spacing"});
+	private static final List<String> tableFields = Arrays.asList(new String[] {"padding","width","valign","align","border","grid","spacing"});
 	
 	private String TYPE = "table-break";
 
@@ -25,13 +25,23 @@ public class TableBreak extends RowBreak {
 	}
 	
 	@Override
-	public String getViewXHTMLCode(ContentContext ctx) throws Exception {
-		return closeTable(ctx, getContext(ctx));
+	public String getViewXHTMLCode(ContentContext ctx) throws Exception {		
+		return "</td></tr></table>";
 	}
 	
 	public static String closeTable(ContentContext ctx, TableContext tableContext) {
-		tableContext.setTableOpen(false); 
+		tableContext.resetTable(ctx); 
 		return "</td></tr></table>";
+	}
+	
+	@Override
+	public String getSuffixViewXHTMLCode(ContentContext ctx) {
+		try {
+			getContext(ctx).resetTable(ctx);
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		return super.getSuffixViewXHTMLCode(ctx);
 	}
 	
 	public String getOpenTableStyle(ContentContext ctx) {
@@ -81,7 +91,11 @@ public class TableBreak extends RowBreak {
 		out.println("<label for=\""+getSpacingInputString()+"\">spacing : </label>");
 		out.println("<input name=\""+getSpacingInputString()+"\" value=\""+getSpacing(ctx)+"\" />");
 		out.println("</div>");
-
+		
+		out.println("<fieldset>");
+		out.println("<legend>default</legend>");
+		out.print(super.getEditXHTMLCode(ctx));
+		out.println("</fieldset>");
 
 		out.close();
 		return new String(outStream.toByteArray());
@@ -98,4 +112,10 @@ public class TableBreak extends RowBreak {
 	public String getSpacing(ContentContext ctx) {
 		return getFieldValue("spacing");
 	}
+	
+	@Override
+	public boolean isRowBreak() {	
+		return true;
+	}
+
 }

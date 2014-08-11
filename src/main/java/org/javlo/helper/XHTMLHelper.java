@@ -1267,8 +1267,8 @@ public class XHTMLHelper {
 		String[][] newValue = new String[values.length][];
 		for (int i = 0; i < values.length; i++) {
 			newValue[i] = new String[2];
-			newValue[i][0] = value;
-			newValue[i][1] = value;
+			newValue[i][0] = values[i];
+			newValue[i][1] = values[i];
 		}
 		return getRadioInput(field, newValue, value, jsOnChange);
 	}
@@ -1279,7 +1279,14 @@ public class XHTMLHelper {
 		PrintWriter out = new PrintWriter(res);
 
 		for (String[] value2 : values) {
-			out.print("<input type=\"radio\" id=\"" + field + "\" name=\"" + field + "\" value=\"" + value2[0] + "\"");
+			
+			String radioID = value2[0];
+			if (radioID == null || radioID.trim().length() == 0) {
+				radioID = "___bl___";
+			}
+			radioID = field+'_'+radioID;		
+			
+			out.print("<input type=\"radio\" id=\"" + radioID + "\" name=\"" + field + "\" value=\"" + value2[0] + "\"");
 
 			if (value2[0].equals(value)) {
 				out.print(" checked=\"checked\"");
@@ -1289,7 +1296,7 @@ public class XHTMLHelper {
 				out.print(" onchange=\"" + jsOnChange + "\"");
 			}
 
-			out.print(" /><label class=\"radio\" for=\"" + field + "\">" + value2[1] + "</label>");
+			out.print(" /><label class=\"radio\" for=\"" + radioID + "\">" + value2[1] + "</label>");
 		}
 
 		return res.toString();
