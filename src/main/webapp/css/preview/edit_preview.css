@@ -1219,7 +1219,8 @@ body.edit-preview {
 
 .editable-component.row-break, .editable-component.cell-break {
 	width: 26px;
-	height: 99%;
+	margin-top: 2px;
+	height: 98%;
 	min-height: 26px;
 	
 	position: absolute;

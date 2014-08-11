@@ -29,30 +29,50 @@ public class TableContext {
 			outCtx = new TableContext();			
 			ContentElementList content = ctx.getCurrentPage().getContent(ctx);			
 			IContentVisualComponent comp = content.next(ctx);
+			IContentVisualComponent firstComp = null;
+			
+			/* search first component of the table contains 'currentComponent' */
 			while (content.hasNext(ctx) && !comp.getId().equals(currentComponent.getId())) {
+				if (firstComp == null && comp instanceof TableComponent) {
+					firstComp = comp;
+				}
+				if (comp instanceof TableBreak) {
+					firstComp = null;
+				}
 				comp = content.next(ctx);				
 			}
+			if (firstComp == null) {
+				firstComp = comp;
+			}
+			/* position content iterator on the firstComp */
+			content.initialize(ctx);
+			comp = content.next(ctx);
+			while (content.hasNext(ctx) && !comp.getId().equals(firstComp.getId())) {
+				comp = content.next(ctx);
+			}
+			
+			ctx.getRequest().setAttribute(KEY, outCtx);
+			
 			outCtx.addTableComponent((TableComponent)comp);
 			outCtx.first.add((TableComponent)comp);
-			int maxRowSize = 1;
+			int maxRowSize = 0;
 			while (content.hasNext(ctx) && !(comp instanceof TableBreak)) {
 				comp = content.next(ctx);
 				if (comp instanceof TableComponent) {
 					if (((TableComponent) comp).getWidth(ctx) != null && ((TableComponent) comp).getWidth(ctx).trim().length() > 0) {
 						outCtx.cellWidth = true;
 					}
-					if (comp instanceof CellBreak) {
-						maxRowSize++;						
-					} else if (((TableComponent) comp).isRowBreak()) {
+					maxRowSize = maxRowSize+((TableComponent) comp).getColspan();						
+					if (((TableComponent) comp).isRowBreak()) {
 						if (maxRowSize > outCtx.rowSize) {
 							outCtx.rowSize = maxRowSize;
 						}
-						maxRowSize = 1;
+						maxRowSize = 0;
 						if (outCtx.components.size() > 0) {
 							outCtx.last.add(outCtx.components.getLast());
 						}
 					}					
-					if (outCtx.components.getLast().isRowBreak()) {
+					if (((TableComponent)comp).isRowBreak()) {
 						outCtx.first.add((TableComponent)comp);
 					}
 					outCtx.addTableComponent((TableComponent)comp);
@@ -61,8 +81,7 @@ public class TableContext {
 			outCtx.last.add(outCtx.components.getLast());
 			if (maxRowSize >  outCtx.rowSize) {
 				outCtx.rowSize = maxRowSize;
-			}			
-			ctx.getRequest().setAttribute(KEY, outCtx);
+			}		
 			
 			/*System.out.println("");
 			System.out.println("components structure : ");
@@ -94,12 +113,13 @@ public class TableContext {
 	public int getRowSize(TableComponent currentComp) {
 		Iterator<TableComponent> comps = components.iterator();
 		TableComponent comp = comps.next();
-		int size = 1;
+		int size = comp.getColspan();
 		while (comps.hasNext() && !comp.getId().equals(currentComp.getId())) {
-			comp = comps.next();
-			size++;
+			comp = comps.next();			
 			if (comp.isRowBreak()) {
-				size = 1;
+				size = comp.getColspan();
+			} else {
+				size=size+comp.getColspan();
 			}
 		}
 		if (!comps.hasNext()) {
@@ -107,11 +127,11 @@ public class TableContext {
 		} else {
 			comp = comps.next();
 			while (comps.hasNext() && !(comp.isRowBreak())) {
-				size++;
+				size=size+comp.getColspan();
 				comp = comps.next();	
 			}
 			if (!comps.hasNext() && !(comp.isRowBreak())) {
-				size++;
+				size=size+comp.getColspan();
 			}
 		}
 		return size; 
