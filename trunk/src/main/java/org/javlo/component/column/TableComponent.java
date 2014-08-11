@@ -12,7 +12,7 @@ import org.javlo.helper.XHTMLHelper;
 
 public abstract class TableComponent extends AbstractPropertiesComponent {
 	
-	private static final List<String> fields = Arrays.asList(new String[] {"padding","width","valign","align"});
+	private static final List<String> fields = Arrays.asList(new String[] {"padding","width","valign","align","colspan"});
 
 	public TableComponent() {		
 	}
@@ -97,6 +97,10 @@ public abstract class TableComponent extends AbstractPropertiesComponent {
 		return getFieldValue("align");
 	}
 	
+	protected int getColspan() {
+		return Integer.parseInt(getFieldValue("colspan","1"));
+	}
+	
 	@Override
 	protected String getEmptyCode(ContentContext ctx) throws Exception {	
 		return getViewXHTMLCode(ctx)+super.getPrefixViewXHTMLCode(ctx)+"<div class=\"table-component-preview "+getType()+"\">"+getType()+"</div>"+super.getSuffixViewXHTMLCode(ctx);
@@ -106,8 +110,14 @@ public abstract class TableComponent extends AbstractPropertiesComponent {
 		TableContext tableContext = getContext(ctx);
 		int colsSpan = (tableContext.getMaxRowSize()-tableContext.getRowSize(this))+1;
 		String colsSpanHTML = "";
-		if (colsSpan > 1) {
+		/*System.out.println("");
+		System.out.println("***** TableComponent.getColSpanHTML : tableContext.getMaxRowSize() = "+tableContext.getMaxRowSize()); //TODO: remove debug trace
+		System.out.println("***** TableComponent.getColSpanHTML : tableContext.getRowSize(this) = "+tableContext.getRowSize(this)); //TODO: remove debug trace
+		System.out.println("***** TableComponent.getColSpanHTML : getColspan() = "+getColspan()); //TODO: remove debug trace*/
+		if (colsSpan > 1 && tableContext.isFirst(this)) {
 			colsSpanHTML=" colspan=\""+colsSpan+"\"";
+		} else if (getColspan() > 1) {
+			colsSpanHTML=" colspan=\""+getColspan()+"\"";
 		}
 		return colsSpanHTML;
 	}
@@ -124,11 +134,14 @@ public abstract class TableComponent extends AbstractPropertiesComponent {
 		return createKeyWithField("align");
 	}
 
-	
 	protected String  getWidthInputName() {
 		return createKeyWithField("width");
 	}
 	
+	protected String  getColspanInputName() {
+		return createKeyWithField("colspan");
+	}
+
 	@Override
 	protected String getEditXHTMLCode(ContentContext ctx) throws Exception {
 		ByteArrayOutputStream outStream = new ByteArrayOutputStream();
@@ -149,6 +162,19 @@ public abstract class TableComponent extends AbstractPropertiesComponent {
 		out.println("<label for=\""+getVAlignInputName()+"\">vertical-align : </label>");				
 		out.println(XHTMLHelper.getRadioInput(getVAlignInputName(), new String[][] {{"","inherited"}, {"top","top"}, {"middle","middle"}, {"bottom","bottom"}},getFieldValue("valign",""),null));		
 		out.println("</div>");
+		out.println("<div class=\"line\">");		
+		out.println("<label for=\""+getColspanInputName()+"\">colspan : </label>");		
+		TableContext tableContext = getContext(ctx);		
+		String[][] colspanChoice = new String[tableContext.getMaxRowSize()-1][];
+		
+		for (int i=1; i<tableContext.getMaxRowSize(); i++) {
+			colspanChoice[i-1] = new String[2];
+			colspanChoice[i-1][0] = ""+i;
+			colspanChoice[i-1][1] = ""+i;
+		}
+		out.println(XHTMLHelper.getRadioInput(getColspanInputName(), colspanChoice,""+getColspan(),null));		
+		out.println("</div>");
+
 
 		out.close();
 		return new String(outStream.toByteArray());
