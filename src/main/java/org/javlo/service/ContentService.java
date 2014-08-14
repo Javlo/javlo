@@ -376,7 +376,9 @@ public class ContentService implements IPrintInfo {
 
 	private static String getComponentKey(ContentContext ctx, String id) {
 		int mode = ctx.getRenderMode();
-		if (mode == ContentContext.PREVIEW_MODE) {
+		if (!ctx.getGlobalContext().isPreviewMode()) {
+			mode = ContentContext.EDIT_MODE;
+		} else if (mode == ContentContext.PREVIEW_MODE) {
 			mode = ContentContext.EDIT_MODE;
 		}
 		return id + '-' + mode;
@@ -490,9 +492,7 @@ public class ContentService implements IPrintInfo {
 				timeTravelerGlobalMap = contentAttributeMap;
 			}
 			res = timeTravelerNav;
-		} else if (!ctx.isAsViewMode() || !previewMode) { // TODO: check the
-															// test was with :
-															// || !previewMode
+		} else if (!ctx.isAsViewMode() || !previewMode) { // TODO: check the test was with : || !previewMode
 			if (previewNav == null) {
 				synchronized (ctx.getGlobalContext().getLockLoadContent()) {
 					if (previewNav == null) {

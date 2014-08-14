@@ -149,6 +149,16 @@ public class AccessServlet extends HttpServlet implements IVersion {
 	public void init() throws ServletException {
 		super.init();
 
+		System.out.println("");
+		System.out.println("");
+		System.out.println("		    _  ____  _     _     ____");
+		System.out.println("		   / |/  _ \\/ \\ |\\/ \\   /  _ \\");
+		System.out.println("		   | || / \\|| | //| |   | / \\|");
+		System.out.println("		/\\_| || |-||| \\// | |_/\\| \\_/|");
+		System.out.println("		\\____/\\_/ \\|\\__/  \\____/\\____/");
+		System.out.println("");
+		System.out.println("");
+
 		/** JSTL Constant **/
 		getServletContext().setAttribute("BACK_PARAM_NAME", ElementaryURLHelper.BACK_PARAM_NAME);
 

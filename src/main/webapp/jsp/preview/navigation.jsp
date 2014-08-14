@@ -1,12 +1,12 @@
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c"
 %><%@ taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions"
-%><form id="children_list" action="${info.currentURL}" method="post">	<fieldset class="closable">
-<legend>${i18n.edit['content.navigation']}</legend>
+%><form class="full-height" id="children_list" action="${info.currentURL}" method="post">	<fieldset class="closable full-height">
+<div class="legend">${i18n.edit['content.navigation']}</div>
 <c:set var="page" value="${info.page}" />
 <c:if test="${fn:length(page.children) == 0 and not empty info.parent}">
 	<c:set var="page" value="${info.parent}" />
 </c:if>
-<ul class="navigation">
+<ul class="navigation auto-scroll">
 	<c:if test="${not empty info.parent && page.url eq info.currentURL}">
 		<li class="parent">
 			<span><a href="${info.parent.url}">${info.parent.info.title}</a></span>			

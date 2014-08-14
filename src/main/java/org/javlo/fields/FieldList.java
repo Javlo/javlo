@@ -7,7 +7,6 @@ import java.util.Locale;
 import java.util.Map;
 
 import org.javlo.context.ContentContext;
-import org.javlo.context.GlobalContext;
 import org.javlo.helper.StringHelper;
 
 public class FieldList extends Field {

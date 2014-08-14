@@ -103,6 +103,7 @@ public class ContentElementList implements IContentComponentsList {
 		for (ComponentBean bean : beans) {
 			if (bean != null && bean.getLanguage() != null && bean.getLanguage().equals(language)) {
 				IContentVisualComponent comp = content.getCachedComponent(ctx, bean.getId());
+				//IContentVisualComponent comp = content.getComponent(ctx, bean.getId());
 				if (comp == null) {
 					comp = ComponentFactory.createComponent(ctx, bean, inPage, previousComponent, null);
 					content.setCachedComponent(ctx,comp);

@@ -73,7 +73,7 @@ body.preview-only {
 }
 
 .fix-preview #preview_command .add-page input[type="text"] {
-	width: 149px;
+	width: 139px;
 }
 
 #preview_command input[type="text"] {
@@ -117,7 +117,7 @@ body.preview-only {
 	overflow: hidden;
 }
 
-#preview_command fieldset legend {
+#preview_command fieldset legend, #preview_command fieldset .legend {
 	padding: 0;
 	text-transform: uppercase;
 	font-weight: bold;
@@ -126,7 +126,7 @@ body.preview-only {
 	width: 100%;
 }
 
-#preview_command fieldset legend a {
+#preview_command fieldset legend a, #preview_command fieldset .legend a {
 	display: block;
 	text-transform: uppercase;
 	font-weight: bold;
@@ -757,8 +757,7 @@ body.edit-preview {
 }
 
 #preview_command .pc_footer {
-	margin: 0;
-	position: fixed;
+	margin: 0;	
 	bottom: 0;
 	color: #AFAFAF;
 	background-color: #333333;

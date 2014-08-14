@@ -115,7 +115,7 @@ function setInputColor(input) {
 }
 
 function updateColorInput() {
-	if (jQuery('.color').length > 0) {
+	if (jQuery('.color').length > 0 && jQuery.isFunction(jQuery.ColorPicker)) {
 		jQuery('.color').ColorPicker({
 			onSubmit : function(hsb, hex, rgb, el) {
 				jQuery(el).val('#' + hex);
@@ -126,10 +126,10 @@ function updateColorInput() {
 				jQuery(this).ColorPickerSetColor(this.value);
 			}
 		});
+		jQuery('.color').each(function() {
+			setInputColor(this);
+		});
 	}
-	jQuery('.color').each(function() {
-		setInputColor(this);
-	});
 }
 
 jQuery(document).ready(function() {
@@ -297,24 +297,23 @@ function closableFieldSet(items) {
 			return;
 		}
 		
-		jQuery(this).find("legend").wrapInner('<a class="title" href="#"/>');
+		jQuery(this).find("legend, .legend").wrapInner('<a class="title" href="#"/>');
 		
 		var hash = "closable_" + hashItem(this);
 		var initVal = jQuery.cookie(hash);
 		var item = jQuery(this);
 		if (initVal == "close") {
-			var legend = item.children("legend");						
+			var legend = item.children("legend, .legend");						
 			legend.prepend('<a class="closable_action close" href="#">#</a>');
 			item.children().each(
 					function() {
 						var child = jQuery(this);
-						if (!child.hasClass("closable_action")
-								&& this.nodeName.toLowerCase() != "legend") {
+						if (!child.hasClass("closable_action") && (this.nodeName.toLowerCase() != "legend" && !child.hasClass("legend"))) {
 							child.hide();
 						}
 					});
 		} else {
-			var legend = item.children("legend");		
+			var legend = item.children("legend, .legend");		
 			legend.prepend('<a class="closable_action open" href="#">)_</a>');
 		}
 
@@ -324,7 +323,7 @@ function closableFieldSet(items) {
 				return false;
 			});
 		});		
-		item.find("legend .title").each(
+		item.find("legend .title, .legend .title").each(
 				function() {
 					jQuery(this).click(
 							function() {
@@ -352,7 +351,7 @@ function clickFieldSet(link, fieldset) {
 				function() {
 					var child = jQuery(this);
 					if (!child.hasClass("closable_action")
-							&& this.nodeName.toLowerCase() != "legend") {
+							&& (this.nodeName.toLowerCase() != "legend" && !child.hasClass("legend"))) {
 						child.hide();
 					}
 				});
@@ -369,7 +368,7 @@ function clickFieldSet(link, fieldset) {
 				function() {
 					var child = jQuery(this);
 					if (!child.hasClass("closable_action")
-							&& this.nodeName.toLowerCase() != "legend") {
+							&& (this.nodeName.toLowerCase() != "legend" && !child.hasClass("legend"))) {
 						child.show();
 					}
 				});

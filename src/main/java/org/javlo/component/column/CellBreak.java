@@ -34,7 +34,7 @@ public class CellBreak extends TableComponent {
 			out.println("</td><td"+getColSpanHTML(ctx)+' '+positionCSS+"style=\""+getTDStyle(ctx)+"\">");
 		} else {
 			tableContext.openTable();
-			String tableStyle = "";
+			String tableStyle = "width:100%;";
 			String border = "border=\"0\" ";			
 			
 			TableBreak tableBreak = tableContext.getTableBreak();

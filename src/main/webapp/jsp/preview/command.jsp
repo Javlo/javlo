@@ -48,7 +48,7 @@ if (!rightOnPage) {
 	</c:url>
 	<c:if test="${userInterface.contributor}"><a id="pc_edit_mode_button" class="logout" title="${i18n.edit['global.logout']}" href="${url}">X</a></c:if>	
 	</div>
-	<div class="pc_body">		    
+	<div class="pc_body full-height">		    
 			<c:if test="${not empty messages.globalMessage && messages.globalMessage.type > 0 && not empty messages.globalMessage.message}">
 				<div class="message msg${messages.globalMessage.typeLabel}">${messages.globalMessage.message}</div>
 			</c:if>
@@ -228,11 +228,19 @@ if (!rightOnPage) {
 				</c:if>
 				
 				</c:if>
-				<c:if test="${not empty components}"><fieldset class="closable">
-					<legend>${i18n.edit["component.choose"]}</legend>					
+				<c:if test="${not empty components}"><fieldset class="closable full-height">
+					<div class="legend">${i18n.edit["component.choose"]}</div>					
 					<jsp:include page="component.jsp" />
 				</fieldset>
 				</c:if>
+				<div class="pc_footer">
+					<a id="preview-copy-zone" href="#" class="hidden">&nbsp;</a>
+					<a id="preview-delete-zone" href="#" class="hidden">&nbsp;</a>
+					<a href="http://www.javlo.org">javlo.org</a>
+    				<c:if test="${!userInterface.light}">    		 
+    					<span class="version">2014 - v ${info.version} - ${info.previewVersion}</span> 
+    				</c:if>
+				</div>				
 				<div class="subblock">
 				<div id="pc_macro">
 					<fieldset class="closable">
@@ -255,14 +263,6 @@ if (!rightOnPage) {
 			</c:if>
 	</div>
 	
-	<div class="pc_footer">
-		<a id="preview-copy-zone" href="#" class="hidden">&nbsp;</a>
-		<a id="preview-delete-zone" href="#" class="hidden">&nbsp;</a>
-		<a href="http://www.javlo.org">javlo.org</a>
-    	<c:if test="${!userInterface.light}">    		 
-    		<span class="version">2014 - v ${info.version} - ${info.previewVersion}</span> 
-    	</c:if>
-	</div>
 </div>
 <script type="text/javascript">
 	if (top.location != document.location) { // iframe ?		
