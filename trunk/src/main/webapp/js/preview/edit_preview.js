@@ -74,9 +74,11 @@ var floatZone = function(source, zone1, zone2, image){
 	return sep;
 };
 
-function onreadyPreview() {	
+function onreadyPreview() {
 	
 	closableFieldSet(jQuery(".closable"));
+	
+	specialScroll();
 	
 	jQuery( window ).mousemove(function( event ) {
 		mouseX = event.pageX;
@@ -169,7 +171,10 @@ function onreadyPreview() {
 				if (!dragging) {					
 					layerOver(null, false);
 				}
-			});			
+			});		
+	jQuery("#preview-layer").scroll( function() {
+		alert("scroll");
+	});
 	jQuery(".preview-edit").click(function() {
 		
 		if (jQuery(this).hasClass("no-access")) {
@@ -568,6 +573,7 @@ initPreview = function() {
 			if (jQuery(this).data("deletable") !== undefined && jQuery(this).data("deletable")) {
 				jQuery("#preview-delete-zone").removeClass("hidden");
 				jQuery("#preview-copy-zone").removeClass("hidden");
+				jQuery("#preview-copy-zone").parent().css("position", "fixed");
 				//jQuery("#preview_command .pc_body").addClass("hidden");
 			}
 			if (jQuery(this).height() < 40) {			
@@ -598,6 +604,7 @@ initPreview = function() {
 				//jQuery("#preview_command .pc_body").removeClass("hidden");
 				jQuery("#preview-delete-zone").addClass("hidden");
 				jQuery("#preview-copy-zone").addClass("hidden");
+				jQuery("#preview-copy-zone").parent().css("position", "static");
 			//}
 			layerOver(null);
 			
@@ -615,6 +622,44 @@ function doNothing(evt) {
 
 function hidePreviewMessage() {
 	jQuery("#pc_message").remove();
+}
+
+jQuery(window).resize(function() {
+	specialScroll();
+});
+
+function specialScroll() {	
+	fullHeight(jQuery(".full-height"));	
+	fullHeight(jQuery(".auto-scroll"));
+	if ($(".auto-scroll.js-scroll").length == 0) {
+		$('.auto-scroll').addClass("js-scroll");
+		$('.auto-scroll').enscroll({
+			showOnHover: true,
+		    verticalTrackClass: 'track',
+		    verticalHandleClass: 'handle'
+		});
+	}
+}
+
+function fullHeight(inItem) {
+	jQuery(inItem).each(function() {
+		console.log("this = ",this);
+		var item = jQuery(this);		
+		var position = item.css("position");
+		item.css("position", "absolute");
+		var fullHeight = item.parent().height();
+		var childHeight = item.parent().outerHeight(true)-item.parent().height();
+		item.parent().children().each(function() {			
+			var child = jQuery(this);			
+			if (child.css("position") == "relative" || child.css("position") == "static" && child != item) {
+				console.log("child  =",this);
+				childHeight = childHeight + child.outerHeight(false);
+			}		
+		});	
+		item.css("position", position);
+		item.css("height",(fullHeight-childHeight-(item.outerHeight(true)-item.height()))+"px");
+		console.log("");
+	});
 }
 
 /** set $.browser for compatibility with jQuery 1.9 and old template lib. */

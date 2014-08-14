@@ -1030,6 +1030,8 @@ public class XMLManipulationHelper {
 		out.newLine();
 		out.append("<%=(ctx.isInteractiveMode() ? \"<script type=\\\"text/javascript\\\" src=\\\"\"+URLHelper.createStaticURL(ctx,\"/js/edit/core.js\")+\"\\\"></script>\" : \"\")  %>");
 		out.newLine();
+		out.append("<%=(ctx.isInteractiveMode() ? \"<script type=\\\"text/javascript\\\" src=\\\"\"+URLHelper.createStaticURL(ctx,\"/js/lib/enscroll-0.6.0.min.js\")+\"\\\"></script>\" : \"\")  %>");
+		out.newLine();
 
 		out.append("<%if ((ctx.isInteractiveMode())&&(security.haveRight((User)editCtx.getUserPrincipal(), \"update\"))) {%><script type=\"text/javascript\">");
 		out.newLine();

@@ -315,6 +315,10 @@ public class PageBean implements Serializable {
 		return page.getDepth();
 	}
 	
+	public boolean isRoot() {
+		return page.isRoot();
+	}
+	
 	/**
 	 * is page editable by current User ?
 	 * @return

@@ -9,6 +9,7 @@ import java.util.List;
 import org.javlo.component.core.ContentElementList;
 import org.javlo.component.core.IContentVisualComponent;
 import org.javlo.context.ContentContext;
+import org.javlo.navigation.MenuElement;
 
 public class TableContext {
 	
@@ -25,9 +26,10 @@ public class TableContext {
 	
 	public static TableContext getInstance(ContentContext ctx, IContentVisualComponent currentComponent) throws Exception {
 		TableContext outCtx = (TableContext) ctx.getRequest().getAttribute(KEY);
-		if (outCtx == null) {
-			outCtx = new TableContext();			
-			ContentElementList content = ctx.getCurrentPage().getContent(ctx);			
+		if (outCtx == null) {			
+			outCtx = new TableContext();
+			MenuElement page = currentComponent.getPage();
+			ContentElementList content = page.getContent(ctx);			
 			IContentVisualComponent comp = content.next(ctx);
 			IContentVisualComponent firstComp = null;
 			
@@ -55,7 +57,7 @@ public class TableContext {
 			
 			outCtx.addTableComponent((TableComponent)comp);
 			outCtx.first.add((TableComponent)comp);
-			int maxRowSize = 0;
+			int maxRowSize = 0;			
 			while (content.hasNext(ctx) && !(comp instanceof TableBreak)) {
 				comp = content.next(ctx);
 				if (comp instanceof TableComponent) {

@@ -2770,6 +2770,10 @@ public class MenuElement implements Serializable, IPrintInfo {
 		return parent;
 	}
 	
+	public boolean isRoot() {
+		return getParent() == null;
+	}
+	
 	/**
 	 * check if the current page is a child of a page with id or name give in parameter.
 	 * @param page name, id of a page or path of the page.
