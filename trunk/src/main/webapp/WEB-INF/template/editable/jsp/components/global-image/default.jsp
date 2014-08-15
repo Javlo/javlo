@@ -19,7 +19,8 @@
 		<img id="${imageId}" src="${info.ajaxLoaderURL}" alt="${not empty description?description:label}" />
 	</c:if>
 	<c:if test="${not contentContext.asPreviewMode}">
-		<img src="${previewURL}" alt="${not empty description?description:label}" />
+		<c:set var="imageWidthTag" value='width="${imageWidth}" ' />
+		<img ${not empty imageWidth?imageWidthTag:''}src="${previewURL}" alt="${not empty description?description:label}" />
 	</c:if>
 	<c:if test="${empty param.nolabel}"><figcaption>${not empty label?label:description}</figcaption></c:if>
 </a>

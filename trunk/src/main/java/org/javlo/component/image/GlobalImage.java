@@ -199,6 +199,7 @@ public class GlobalImage extends Image implements IImageFilter {
 			ctx.getRequest().setAttribute("label", getTitle());
 		}
 		ctx.getRequest().setAttribute("filter", getFilter(ctx));
+		ctx.getRequest().setAttribute("imageWidth", getWidth(ctx));
 	}
 
 	@Override
@@ -718,7 +719,7 @@ public class GlobalImage extends Image implements IImageFilter {
 		setSecondText(requestService.getParameter(getSecondTextInputName(), ""));
 
 		String label = requestService.getParameter(getLabelXHTMLInputName(), "");
-		String textLabel = requestService.getParameter(getLabelTextInputName(), null); 
+		String textLabel = requestService.getParameter(getLabelTextInputName(), null);
 		if (!label.equals(getLabel())) {
 			setFirstText(null);
 			setSecondText(null);
@@ -974,25 +975,25 @@ public class GlobalImage extends Image implements IImageFilter {
 			String secondText = rs.getParameter("secondtext", null);
 			String height = rs.getParameter("height", null);
 			String width = rs.getParameter("width", null);
-			
+
 			if (image.isTextAuto()) {
 				if (firstText != null && !firstText.equals(image.getFirstText())) {
 					image.setModify();
 					image.setFirstText(firstText);
-				} 
+				}
 				if (secondText != null && !secondText.equals(image.getSecondText())) {
 					image.setModify();
 					image.setSecondText(secondText);
 				}
 			}
-			if (height != null && height.trim().length()>0) {
+			if (height != null && height.trim().length() > 0) {
 				int intHeight = Integer.parseInt(height);
 				if (intHeight != image.getHeight()) {
 					image.setModify();
 					image.setHeight(intHeight);
 				}
 			}
-			if (width != null && width.trim().length()>0) {
+			if (width != null && width.trim().length() > 0) {
 				int inWidth = Integer.parseInt(width);
 				if (inWidth != image.getWidth(ctx)) {
 					image.setModify();
@@ -1118,9 +1119,13 @@ public class GlobalImage extends Image implements IImageFilter {
 
 	@Override
 	public BufferedImage filterImage(ContentContext ctx, BufferedImage image) {
-		reloadProperties();
-		return ImageEngine.resizeWidth(image, getWidth(ctx));
+		System.out.println("***** GlobalImage.filterImage : ctx.getDevice().getCode() = "+ctx.getDevice().getCode()); //TODO: remove debug trace
+		if (ctx.getDevice().getCode().equalsIgnoreCase("pdf")) {
+			return image;
+		} else {
+			reloadProperties();
+			return ImageEngine.resizeWidth(image, getWidth(ctx));
+		}
 	}
-
 
 }

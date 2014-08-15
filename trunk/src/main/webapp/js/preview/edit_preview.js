@@ -643,7 +643,6 @@ function specialScroll() {
 
 function fullHeight(inItem) {
 	jQuery(inItem).each(function() {
-		console.log("this = ",this);
 		var item = jQuery(this);		
 		var position = item.css("position");
 		item.css("position", "absolute");
@@ -651,14 +650,12 @@ function fullHeight(inItem) {
 		var childHeight = item.parent().outerHeight(true)-item.parent().height();
 		item.parent().children().each(function() {			
 			var child = jQuery(this);			
-			if (child.css("position") == "relative" || child.css("position") == "static" && child != item) {
-				console.log("child  =",this);
+			if (child.css("position") == "relative" || child.css("position") == "static" && child != item) {				
 				childHeight = childHeight + child.outerHeight(false);
 			}		
 		});	
 		item.css("position", position);
-		item.css("height",(fullHeight-childHeight-(item.outerHeight(true)-item.height()))+"px");
-		console.log("");
+		item.css("height",(fullHeight-childHeight-(item.outerHeight(true)-item.height()))+"px");		
 	});
 }
 
