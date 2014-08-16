@@ -128,9 +128,5 @@ public class WysiwygParagraph extends AbstractVisualComponent {
 			}
 		}
 	}
-	
-	public static void main(String[] args) {
-		System.out.println("peda : "+StringHelper.escapeWordChar(XHTMLHelper.cleanHTML("projet pédagogique")));
-	}
 
 }
