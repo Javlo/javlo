@@ -139,7 +139,8 @@
     		<groupId>org.imgscalr</groupId>
     		<artifactId>imgscalr-lib</artifactId>
     		<version>4.2</version>
-    		<type>jar</type>    		
+    		<type>jar</type>
+    		<scope>compile</scope>
   		</dependency>
 
 		<dependency>
