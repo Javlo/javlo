@@ -121,12 +121,16 @@ public class WysiwygParagraph extends AbstractVisualComponent {
 		if (newContent != null) {
 			if (!getValue().equals(newContent)) {
 				if (StringHelper.isTrue(getConfig(ctx).getProperty("clean-html", "false"))) {
-					newContent = XHTMLHelper.cleanHTML(newContent);
+					newContent = XHTMLHelper.cleanHTML(newContent);					
 				}
-				setValue(newContent);
+				setValue(newContent);				
 				setModify();
 			}
 		}
+	}
+	
+	public static void main(String[] args) {
+		System.out.println("peda : "+StringHelper.escapeWordChar(XHTMLHelper.cleanHTML("projet pédagogique")));
 	}
 
 }

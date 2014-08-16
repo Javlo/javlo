@@ -16,6 +16,7 @@ import org.javlo.context.GlobalContext;
 import org.javlo.helper.StringHelper;
 import org.javlo.helper.StringRemplacementHelper;
 import org.javlo.helper.URLHelper;
+import org.javlo.helper.XHTMLHelper;
 import org.javlo.helper.Comparator.StringSizeComparator;
 import org.javlo.i18n.I18nAccess;
 import org.javlo.navigation.MenuElement;
@@ -151,8 +152,12 @@ public class ReverseLinkService {
 									String text = ((IReverseLinkComponent) comp).getLinkText(noAreaCtx);
 									ComponentPage componentPage = new ComponentPage();
 									componentPage.setComponent((IReverseLinkComponent) comp);
-									componentPage.setPage(element);
+									componentPage.setPage(element);									
 									reversedLinkComponentCache.put(text, componentPage);
+									String transformText = XHTMLHelper.escapeXHTML(text);
+									if (!transformText.equals(text)) {										
+										reversedLinkComponentCache.put(transformText, componentPage);
+									}
 								}
 							}
 						}
