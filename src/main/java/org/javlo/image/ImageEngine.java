@@ -23,6 +23,7 @@ import javax.imageio.ImageWriteParam;
 import javax.imageio.ImageWriter;
 import javax.imageio.plugins.jpeg.JPEGImageWriteParam;
 
+import org.imgscalr.Scalr;
 import org.javlo.helper.StringHelper;
 
 import com.jhlabs.image.RGBAdjustFilter;
@@ -112,7 +113,12 @@ public class ImageEngine {
 		return cropImage(img, bottomX-topX, bottomY-topY, topX, topY);
 	}
 	
-	public static BufferedImage scale(BufferedImage img, Integer inTargetWidth, Integer inTargetHeight) {
+	public static BufferedImage scale(BufferedImage img, Integer inTargetWidth, Integer inTargetHeight) {		
+		BufferedImage outImage = Scalr.resize(img, Scalr.Method.ULTRA_QUALITY, Scalr.Mode.FIT_TO_WIDTH,inTargetWidth, inTargetHeight, Scalr.OP_ANTIALIAS);
+		return outImage;
+	}
+	
+	public static BufferedImage _scale(BufferedImage img, Integer inTargetWidth, Integer inTargetHeight) {
 				
 		if (inTargetWidth == null && inTargetHeight == null) {
 			return img;			
