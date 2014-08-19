@@ -25,11 +25,53 @@ public class TemplatePart {
 	private String font = null;
 	private String textSize = null;
 	private String titleColor = null;
+	private String h1Size = null;
+	private String h2Size = null;
+	private String h3Size = null;
+	private String h4Size = null;
+	private String h5Size = null;
+	private String h6Size = null;
+
+	public String getDefaultH1Size() {
+		return null;
+	}
+
+	public String getDefaultH2Size() {
+		return null;
+	}
+
+	public String getDefaultH3Size() {
+		return null;
+	}
+
+	public String getDefaultH4Size() {
+		return null;
+	}
+
+	public String getDefaultH5Size() {
+		return null;
+	}
+
+	public String getDefaultH6Size() {
+		return null;
+	}
+
+	public String getDefaultFont() {
+		return null;
+	}
+
+	public String getDefaultTextColor() {
+		return null;
+	}
+
+	public String getDefaultTextSize() {
+		return null;
+	}
 
 	public String getWidth() {
 		return width;
 	}
-	
+
 	public String getFinalWidth() {
 		return width;
 	}
@@ -105,7 +147,7 @@ public class TemplatePart {
 			return font;
 		}
 	}
-	
+
 	public String getFinalTitleColor() {
 		if (getParent() != null && (titleColor == null || titleColor.trim().length() == 0)) {
 			return getParent().getFinalTitleColor();
@@ -113,7 +155,7 @@ public class TemplatePart {
 			return titleColor;
 		}
 	}
-	
+
 	public String getFinalTextColor() {
 		if (getParent() != null && (textColor == null || textColor.trim().length() == 0)) {
 			return getParent().getFinalTextColor();
@@ -136,7 +178,7 @@ public class TemplatePart {
 	public String getTextSize() {
 		return textSize;
 	}
-	
+
 	public String getFinalTextSize() {
 		if (getParent() != null && (textSize == null || textSize.trim().length() == 0)) {
 			return getParent().getFinalTextSize();
@@ -164,9 +206,105 @@ public class TemplatePart {
 	public void setTitleColor(String titleColor) {
 		this.titleColor = titleColor;
 	}
-	
+
 	public String getTextStyle() {
-		return "color: "+getFinalTextColor()+"; font-size:"+getFinalTextSize()+"; font-family:"+getFinalFont()+';';
+		return "color: " + getFinalTextColor() + "; font-size:" + getFinalTextSize() + "; font-family:" + getFinalFont() + ';';
+	}
+
+	public String getH1Size() {
+		return h1Size;
+	}
+	
+	public String getFinalH1Size() {
+		if (getParent() != null && (h1Size == null || h1Size.trim().length() == 0)) {
+			return getParent().getFinalH1Size();
+		} else {
+			return h1Size;
+		}
+	}
+
+	public String getFinalH2Size() {
+		if (getParent() != null && (h2Size == null || h2Size.trim().length() == 0)) {
+			return getParent().getFinalH2Size();
+		} else {
+			return h2Size;
+		}
+	}
+	
+	public String getFinalH3Size() {
+		if (getParent() != null && (h3Size == null || h3Size.trim().length() == 0)) {
+			return getParent().getFinalH3Size();
+		} else {
+			return h3Size;
+		}
+	}
+	
+	public String getFinalH4Size() {
+		if (getParent() != null && (h4Size == null || h4Size.trim().length() == 0)) {
+			return getParent().getFinalH4Size();
+		} else {
+			return h4Size;
+		}
+	}
+	
+	public String getFinalH5Size() {
+		if (getParent() != null && (h5Size == null || h5Size.trim().length() == 0)) {
+			return getParent().getFinalH5Size();
+		} else {
+			return h5Size;
+		}
+	}
+	
+	public String getFinalH6Size() {
+		if (getParent() != null && (h6Size == null || h6Size.trim().length() == 0)) {
+			return getParent().getFinalH6Size();
+		} else {
+			return h6Size;
+		}
+	}
+
+	public void setH1Size(String h1Size) {
+		this.h1Size = h1Size;
+	}
+
+	public String getH2Size() {
+		return h2Size;
+	}
+
+	public void setH2Size(String h2Size) {
+		this.h2Size = h2Size;
+	}
+
+	public String getH3Size() {
+		return h3Size;
+	}
+
+	public void setH3Size(String h3Size) {
+		this.h3Size = h3Size;
+	}
+
+	public String getH4Size() {
+		return h4Size;
+	}
+
+	public void setH4Size(String h4Size) {
+		this.h4Size = h4Size;
+	}
+
+	public String getH5Size() {
+		return h5Size;
+	}
+
+	public void setH5Size(String h5Size) {
+		this.h5Size = h5Size;
+	}
+
+	public String getH6Size() {
+		return h6Size;
+	}
+
+	public void setH6Size(String h6Size) {
+		this.h6Size = h6Size;
 	}
 
 }

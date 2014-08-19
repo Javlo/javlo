@@ -220,7 +220,7 @@ public class GlobalImage extends Image implements IImageFilter {
 			finalCode.append("</div>");
 		}
 
-		if (!isMeta()) {
+		if (!isMeta() && !ctx.getGlobalContext().getStaticConfig().isMailingPlatform()) {
 			finalCode.append("<label for=\"" + getLabelXHTMLInputName() + "\">" + getImageLabelTitle(ctx) + " : </label>");
 			String[][] params = { { "rows", "3" }, { "cols", "40" } };
 			finalCode.append(XHTMLHelper.getTextArea(getLabelXHTMLInputName(), getLabel(), params));
@@ -718,9 +718,9 @@ public class GlobalImage extends Image implements IImageFilter {
 		setFirstText(requestService.getParameter(getFirstTextInputName(), ""));
 		setSecondText(requestService.getParameter(getSecondTextInputName(), ""));
 
-		String label = requestService.getParameter(getLabelXHTMLInputName(), "");
+		String label = requestService.getParameter(getLabelXHTMLInputName(), null);
 		String textLabel = requestService.getParameter(getLabelTextInputName(), null);
-		if (!label.equals(getLabel())) {
+		if (label != null && !label.equals(getLabel())) {
 			setFirstText(null);
 			setSecondText(null);
 		} else if (textLabel != null && !textLabel.equals(getLabel()) && isTextAuto()) {
@@ -1019,7 +1019,7 @@ public class GlobalImage extends Image implements IImageFilter {
 
 	@Override
 	public String getSpecialTagTitle(ContentContext ctx) {
-		if (isFloatText(ctx)) {
+		if (ctx.getGlobalContext().getStaticConfig().isMailingPlatform()) {
 			return "text";
 		} else {
 			return null;
@@ -1069,39 +1069,41 @@ public class GlobalImage extends Image implements IImageFilter {
 		out.println("<script type=\"text/javascript\">jQuery(document).ready(loadWysiwyg('#" + id + "','light','" + chooseImageURL + "'));</script>");
 		out.println("</div>");
 
-		out.println("<div class=\"line\">");
-		out.println("<label for=\"" + getTextAutoInputName() + "\">Auto : </label>");
-		String checked = "";
-		if (isTextAuto()) {
-			checked = " checked=\"checked\"";
+		if (isFloatText(ctx)) {
+			out.println("<div class=\"line\">");
+			out.println("<label for=\"" + getTextAutoInputName() + "\">Auto : </label>");
+			String checked = "";
+			if (isTextAuto()) {
+				checked = " checked=\"checked\"";
+			}
+			out.println("<input type=\"checkbox\" id=\"" + getTextAutoInputName() + "\" name=\"" + getTextAutoInputName() + "\"" + checked + " onchange=\"switchClass('enabled-zone','disabled-zone');\" />");
+			out.println("</div>");
+			String url = URLHelper.createTransformURL(ctx, getPage(), getResourceURL(ctx, getFileName()), "list");
+
+			disabled = " enabled-zone";
+			if (isTextAuto()) {
+				disabled = " disabled-zone";
+			}
+
+			out.println("<div class=\"group\">");
+			out.println("<div class=\"text-image\"><img src=\"" + url + "\" /></div>");
+			out.println("<div class=\"line first-text" + disabled + "\">");
+			out.println("<label for=\"" + getFirstTextInputName() + "\">first text : </label>");
+			id = "first-text-" + getId();
+			String[][] paramsFirstText = new String[][] { { "rows", "3" }, { "cols", "100" }, { "class", "tinymce-light" }, { "id", id } };
+			out.println(XHTMLHelper.getTextArea(getFirstTextInputName(), getFirstText(), paramsFirstText));
+			out.println("<script type=\"text/javascript\">jQuery(document).ready(loadWysiwyg('#" + id + "','light','" + chooseImageURL + "'));</script>");
+
+			out.println("</div>");
+			out.println("</div>");
+			out.println("<div class=\"line second-text" + disabled + "\"><label for=\"" + getSecondTextInputName() + "\">second text : </label>");
+			id = "second-text-" + getId();
+			String[][] paramsSecondText = new String[][] { { "rows", "3" }, { "cols", "100" }, { "class", "tinymce-light" }, { "id", id } };
+			out.println(XHTMLHelper.getTextArea(getSecondTextInputName(), getSecondText(), paramsSecondText));
+			out.println("<script type=\"text/javascript\">jQuery(document).ready(loadWysiwyg('#" + id + "','light','" + chooseImageURL + "'));</script>");
+
+			out.println("</div>");
 		}
-		out.println("<input type=\"checkbox\" id=\"" + getTextAutoInputName() + "\" name=\"" + getTextAutoInputName() + "\"" + checked + " onchange=\"switchClass('enabled-zone','disabled-zone');\" />");
-		out.println("</div>");
-		String url = URLHelper.createTransformURL(ctx, getPage(), getResourceURL(ctx, getFileName()), "list");
-
-		disabled = " enabled-zone";
-		if (isTextAuto()) {
-			disabled = " disabled-zone";
-		}
-
-		out.println("<div class=\"group\">");
-		out.println("<div class=\"text-image\"><img src=\"" + url + "\" /></div>");
-		out.println("<div class=\"line first-text" + disabled + "\">");
-		out.println("<label for=\"" + getFirstTextInputName() + "\">first text : </label>");
-		id = "first-text-" + getId();
-		String[][] paramsFirstText = new String[][] { { "rows", "3" }, { "cols", "100" }, { "class", "tinymce-light" }, { "id", id } };
-		out.println(XHTMLHelper.getTextArea(getFirstTextInputName(), getFirstText(), paramsFirstText));
-		out.println("<script type=\"text/javascript\">jQuery(document).ready(loadWysiwyg('#" + id + "','light','" + chooseImageURL + "'));</script>");
-
-		out.println("</div>");
-		out.println("</div>");
-		out.println("<div class=\"line second-text" + disabled + "\"><label for=\"" + getSecondTextInputName() + "\">second text : </label>");
-		id = "second-text-" + getId();
-		String[][] paramsSecondText = new String[][] { { "rows", "3" }, { "cols", "100" }, { "class", "tinymce-light" }, { "id", id } };
-		out.println(XHTMLHelper.getTextArea(getSecondTextInputName(), getSecondText(), paramsSecondText));
-		out.println("<script type=\"text/javascript\">jQuery(document).ready(loadWysiwyg('#" + id + "','light','" + chooseImageURL + "'));</script>");
-
-		out.println("</div>");
 		out.println("</div>");
 
 		out.close();
@@ -1119,7 +1121,6 @@ public class GlobalImage extends Image implements IImageFilter {
 
 	@Override
 	public BufferedImage filterImage(ContentContext ctx, BufferedImage image) {
-		System.out.println("***** GlobalImage.filterImage : ctx.getDevice().getCode() = "+ctx.getDevice().getCode()); //TODO: remove debug trace
 		if (ctx.getDevice().getCode().equalsIgnoreCase("pdf")) {
 			return image;
 		} else {

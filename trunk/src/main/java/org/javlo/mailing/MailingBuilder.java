@@ -1,6 +1,7 @@
 package org.javlo.mailing;
 
 import java.io.UnsupportedEncodingException;
+import java.net.URL;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
@@ -194,7 +195,7 @@ public class MailingBuilder {
 					oneTimeToken = ctx.getGlobalContext().createOneTimeToken(user.getUserInfo().getToken());
 					url = URLHelper.addParam(url, LoginFilter.TOKEN_PARAM, oneTimeToken);
 				}
-				m.setContent(NetHelper.readPage(url, true));
+				m.setContent(NetHelper.readPageForMailing(new URL(url)));
 			} finally {
 				ctx.getGlobalContext().convertOneTimeToken(oneTimeToken);
 			}			 
