@@ -2407,14 +2407,21 @@ public class Template implements Comparable<Template> {
 		part.setBackgroundColor(properties.getString(prefix + ".background-color"));
 		part.setBorderColor(properties.getString(prefix + ".border-color"));
 		part.setBorderWidth(properties.getString(prefix + ".border-width"));
-		part.setFont(properties.getString(prefix + ".font"));
+		part.setFont(properties.getString(prefix + ".font", part.getDefaultFont()));
 		part.setHeight(properties.getString(prefix + ".height"));
 		part.setMargin(properties.getString(prefix + ".margin"));
 		part.setPadding(properties.getString(prefix + ".padding"));
-		part.setTextColor(properties.getString(prefix + ".color"));
-		part.setTextSize(properties.getString(prefix + ".text-size"));
+		part.setTextColor(properties.getString(prefix + ".color", part.getDefaultTextColor()));
+		part.setTextSize(properties.getString(prefix + ".text-size", part.getDefaultTextSize()));
 		part.setWidth(properties.getString(prefix + ".width"));
 		part.setTitleColor(properties.getString(prefix + ".title-color"));
+		
+		part.setH1Size(properties.getString(prefix + ".h1.size", part.getDefaultH1Size()));
+		part.setH2Size(properties.getString(prefix + ".h2.size", part.getDefaultH2Size()));
+		part.setH3Size(properties.getString(prefix + ".h3.size", part.getDefaultH3Size()));
+		part.setH4Size(properties.getString(prefix + ".h4.size", part.getDefaultH4Size()));
+		part.setH5Size(properties.getString(prefix + ".h5.size", part.getDefaultH5Size()));
+		part.setH6Size(properties.getString(prefix + ".h6.size", part.getDefaultH6Size()));
 	}
 
 	protected void saveTemplatePart(TemplatePart part, String prefix) {
@@ -2429,6 +2436,13 @@ public class Template implements Comparable<Template> {
 		properties.setProperty(prefix + ".text-size", part.getTextSize());
 		properties.setProperty(prefix + ".width", part.getWidth());
 		properties.setProperty(prefix + ".title-color", part.getTitleColor());
+		
+		properties.setProperty(prefix + ".h1.size", part.getH1Size());
+		properties.setProperty(prefix + ".h2.size", part.getH2Size());
+		properties.setProperty(prefix + ".h3.size", part.getH3Size());
+		properties.setProperty(prefix + ".h4.size", part.getH4Size());
+		properties.setProperty(prefix + ".h5.size", part.getH5Size());
+		properties.setProperty(prefix + ".h6.size", part.getH6Size());
 	}
 
 	public synchronized TemplateStyle getStyle() {

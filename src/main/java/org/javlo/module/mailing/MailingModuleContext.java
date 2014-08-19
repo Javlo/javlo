@@ -234,7 +234,7 @@ public class MailingModuleContext extends AbstractModuleContext {
 		m.setNotif(new InternetAddress(reportTo));
 		m.setContextKey(ctx.getGlobalContext().getContextKey());
 		StaticConfig sc = ctx.getGlobalContext().getStaticConfig();
-		String content = NetHelper.readPage(url, true, sc.getApplicationLogin(), sc.getApplicationPassword());
+		String content = NetHelper.readPageForMailing(url, sc.getApplicationLogin(), sc.getApplicationPassword());
 		if (content == null) {
 			logger.severe("error on read : " + url);
 		}

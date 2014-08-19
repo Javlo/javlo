@@ -466,6 +466,15 @@ public class InfoBean {
 			return null;
 		}
 	}
+	
+	public String getAbsoluteRootTemplateURL() {
+		try {
+			return URLHelper.createStaticURL(ctx.getContextForAbsoluteURL(), URLHelper.mergePath(ctx.getCurrentTemplate().getLocalWorkTemplateFolder(), getTemplateFolder()));
+		} catch (Exception e) {
+			e.printStackTrace();
+			return null;
+		}
+	}
 
 	public String getAbsoluteTemplateFolder() {
 		try {

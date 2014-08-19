@@ -86,7 +86,7 @@ public class XHTMLHelper {
 
 	private static final String[] TEXT_COLORS = { "#005", "#050", "#500", "#505", "#550", "#055", "#555" };
 	
-	public static final String[] WEB_FONTS = {"Georgia, serif","Palatino Linotype","Book Antiqua","Palatino,serif","Times New Roman, serif","Arial","Helvetica, sans-serif","cursive, sans-serif","Impact, Charcoal, sans-serif","Lucida Sans Unicode,Lucida Grande, sans-serif","Tahoma, Geneva, sans-serif","Verdana, Geneva, sans-serif","Courier, monospace","Lucida Console, Monaco, monospace"};
+	public static final List<String> WEB_FONTS = Arrays.asList(new String[] {"Arial, sans-serif","Book Antiqua, serif","Courier, monospace, serif","Georgia, serif","Helvetica, sans-serif","Impact, Charcoal, sans-serif","Lucida Console, Monaco, monospace, sans-serif","Lucida Sans Unicode,Lucida Grande, sans-serif","Myriad Pro, PT Sans, sans-serif","Palatino Linotype, serif","Palatino,serif","Tahoma, Geneva, sans-serif","Times New Roman, serif","Verdana, Geneva, sans-serif","cursive, sans-serif"});
 
 	private static final Pattern CSS_IMPORT_PATTERN = Pattern.compile("@import\\s+" +
 
@@ -1667,15 +1667,6 @@ public class XHTMLHelper {
 		return res.toString();
 	}
 
-	public static void main(String[] args) {
-		
-		String import1 = "@import 'variables.css';";
-		String import2 = "@import url('test.css');";
-		
-		System.out.println("***** XHTMLHelper.main : 1 =  "+CSS_IMPORT_PATTERN.matcher(import1).matches());		
-		System.out.println("***** XHTMLHelper.main : 2 =  "+CSS_IMPORT_PATTERN.matcher(import2).matches());
-	}
-
 	public static String removeTag(String html, String tag) throws BadXMLException {
 		TagDescription[] tags = XMLManipulationHelper.searchAllTag(html, false);
 		StringRemplacementHelper remplacement = new StringRemplacementHelper();
@@ -2407,5 +2398,63 @@ public class XHTMLHelper {
 		// ResourceHelper.writeStringToFile(targetFile, newContent,
 		// ContentContext.CHARACTER_ENCODING);
 	}
+	
+	private static int listDepth(TagDescription[] tags, TagDescription tag) {
+		int depth=0;
+		for (String parent : XMLManipulationHelper.getAllParentName(tags, tag)) {
+			if (parent.equalsIgnoreCase("ul") || parent.equalsIgnoreCase("ol")) {
+				depth++;
+			}
+		}
+		return depth;
+	}
+	
+	public static String prepareToMailing(String xhtml) throws BadXMLException {
+		TagDescription[] tags = XMLManipulationHelper.searchAllTag(xhtml, false);
+		StringRemplacementHelper remplacement = new StringRemplacementHelper();
+		int[] liNumber = new int[100];		
+		for (TagDescription tag : tags) {
+			if (tag.getName().equalsIgnoreCase("ul") || tag.getName().equalsIgnoreCase("ol")) {
+				if (tag.getName().equalsIgnoreCase("ol")) {
+					liNumber[listDepth(tags, tag)+1] = 1;
+				} else {
+					liNumber[listDepth(tags, tag)+1] = 0;
+				}
+				
+				Set<String> parentsNames = XMLManipulationHelper.getAllParentName(tags, tag);
+				String prefix = "";
+				String suffix = "";
+				if ((parentsNames.contains("ul") || parentsNames.contains("ol")) && !parentsNames.contains("li")) {
+					prefix="<tr class=\"table-li\"><td colspan=\"2\" valign=\"top\">";
+					suffix = "</td></tr>";
+				}						
+				
+				remplacement.addReplacement(tag.getOpenStart(), tag.getOpenEnd() + 1, prefix+"<table class=\"table-"+tag.getName()+"\" border=\"0\" cellspacing=\"0\" cellpadding=\"0\"><tbody>");						
+				remplacement.addReplacement(tag.getCloseStart(), tag.getCloseEnd() + 1, "</tbody></table>"+suffix);
+			} else if (tag.getName().equalsIgnoreCase("li")) {				
+				String bullet = "&bull;";
+				if (liNumber[listDepth(tags, tag)] > 0) {
+					bullet = ""+liNumber[listDepth(tags, tag)]+".";
+					liNumber[listDepth(tags, tag)]++;
+				}					
+				remplacement.addReplacement(tag.getOpenStart(), tag.getOpenEnd() + 1, "<tr class=\"table-li\"><td class=\"bullet\" valign=\"top\" style=\"padding-right:3px; width: 14px;\">"+bullet+"</td><td class=\"text\" valign=\"top\">");						
+				remplacement.addReplacement(tag.getCloseStart(), tag.getCloseEnd() + 1, "</td></tr>");				
+			}
+		}
+		return remplacement.start(xhtml);
+	}
+	
+	public static void main(String[] args) {
+		
+		String xhtml = "<body><ul><li>list 1</li><li>list 2</li></ul></body>";
+		try {
+			System.out.println(prepareToMailing(xhtml));
+		} catch (BadXMLException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		
+	}
+
 
 }

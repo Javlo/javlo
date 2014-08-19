@@ -66,7 +66,7 @@ public class TemplateEditorAction extends AbstractModuleAction {
 
 		if (editorCtx.getCurrentTemplate() != null) {
 			Template.TemplateBean templateBean = new Template.TemplateBean(ctx, editorCtx.getCurrentTemplate());
-			ctx.getRequest().setAttribute("template", templateBean);
+			ctx.getRequest().setAttribute("template", templateBean);			
 			ctx.getRequest().setAttribute("fonts", XHTMLHelper.WEB_FONTS);
 		}
 
@@ -121,6 +121,14 @@ public class TemplateEditorAction extends AbstractModuleAction {
 				area.setTextSize(rs.getParameter("textSize", ""));
 				area.setFont(rs.getParameter("font", ""));
 				area.setBackgroundColor(rs.getParameter("backgroundColor", ""));
+				
+				area.setH1Size(rs.getParameter("h1size",""));
+				area.setH2Size(rs.getParameter("h2size",""));
+				area.setH3Size(rs.getParameter("h3size",""));
+				area.setH4Size(rs.getParameter("h4size",""));
+				area.setH5Size(rs.getParameter("h5size",""));
+				area.setH6Size(rs.getParameter("h6size",""));
+				
 				editorContext.getCurrentTemplate().storeRows(rows);
 			}
 		}
@@ -153,6 +161,14 @@ public class TemplateEditorAction extends AbstractModuleAction {
 					row.setTextSize(rs.getParameter("textSize", ""));
 					row.setFont(rs.getParameter("font", ""));
 					row.setBackgroundColor(rs.getParameter("backgroundColor", ""));
+					
+					row.setH1Size(rs.getParameter("h1size",""));
+					row.setH2Size(rs.getParameter("h2size",""));
+					row.setH3Size(rs.getParameter("h3size",""));
+					row.setH4Size(rs.getParameter("h4size",""));
+					row.setH5Size(rs.getParameter("h5size",""));
+					row.setH6Size(rs.getParameter("h6size",""));					
+					
 					editorContext.getCurrentTemplate().storeRows(rows);
 				}
 			}
@@ -187,6 +203,14 @@ public class TemplateEditorAction extends AbstractModuleAction {
 				style.setTextColor(rs.getParameter("textColor", ""));
 				style.setTextSize(rs.getParameter("textSize", ""));
 				style.setFont(rs.getParameter("font", ""));
+				
+				style.setH1Size(rs.getParameter("h1size",""));
+				style.setH2Size(rs.getParameter("h2size",""));
+				style.setH3Size(rs.getParameter("h3size",""));
+				style.setH4Size(rs.getParameter("h4size",""));
+				style.setH5Size(rs.getParameter("h5size",""));
+				style.setH6Size(rs.getParameter("h6size",""));
+				
 				style.setBackgroundColor(rs.getParameter("backgroundColor", ""));
 				editorContext.getCurrentTemplate().storeStyle(style);
 
