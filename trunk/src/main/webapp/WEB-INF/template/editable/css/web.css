@@ -93,12 +93,13 @@ h1,h2,h3,h4,h5,h6 {
 }
 
 .colored-wrapper {
-	padding: 8px;
+	padding: 0;
 }
 
 .colored-wrapper h2, .colored-wrapper h3, .colored-wrapper h4, .colored-wrapper h5, .colored-wrapper h6 {
-	margin: 0;
-	padding: 0;
+	margin: -1px;	
+	padding: 8px;
+	border: 1px white solid;
 }
 
 h1 {
