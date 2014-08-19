@@ -114,7 +114,7 @@ public class ImageEngine {
 	}
 	
 	public static BufferedImage scale(BufferedImage img, Integer inTargetWidth, Integer inTargetHeight) {		
-		BufferedImage outImage = Scalr.resize(img, Scalr.Method.ULTRA_QUALITY, Scalr.Mode.FIT_TO_WIDTH,inTargetWidth, inTargetHeight, Scalr.OP_ANTIALIAS);
+		BufferedImage outImage = Scalr.resize(img, Scalr.Method.ULTRA_QUALITY, Scalr.Mode.FIT_TO_WIDTH,inTargetWidth, inTargetHeight);
 		return outImage;
 	}
 	
