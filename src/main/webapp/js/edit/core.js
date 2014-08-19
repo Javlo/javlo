@@ -114,8 +114,8 @@ function setInputColor(input) {
 	});
 }
 
-function updateColorInput() {
-	if (jQuery('.color').length > 0 && jQuery.isFunction(jQuery.ColorPicker)) {
+function updateColorInput() {	
+	if (jQuery('.color').length > 0 && jQuery.isFunction(jQuery('.color').ColorPicker)) {		
 		jQuery('.color').ColorPicker({
 			onSubmit : function(hsb, hex, rgb, el) {
 				jQuery(el).val('#' + hex);

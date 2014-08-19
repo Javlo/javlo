@@ -37,8 +37,12 @@ img, figure {
 
 h1,h2,h3,h4,h5,h6 {
     padding: 0;		
-	margin: 15px;	
+	margin: 15px 0;	
 	line-height: normal;
+}
+
+.colored-wrapper h1, .colored-wrapper h2, .colored-wrapper h3, .colored-wrapper h4, .colored-wrapper h5, .colored-wrapper h6 {
+	margin: 15px;
 }
 
 table {
