@@ -96,6 +96,7 @@ org.javlo.component.meta.Tags
 org.javlo.component.meta.Category
 org.javlo.component.gadget.CountAccess
 org.javlo.component.gadget.CountTool
+org.javlo.component.gadget.Map
 org.javlo.component.form.Contact
 org.javlo.component.form.GenericForm
 org.javlo.component.form.SmartGenericForm
@@ -106,6 +107,7 @@ org.javlo.component.web2.ReactionComponent
 org.javlo.component.web2.PageRank
 org.javlo.component.web2.SimplePoll
 org.javlo.component.web2.Survey
+Map
 
 --content.title.special
 
