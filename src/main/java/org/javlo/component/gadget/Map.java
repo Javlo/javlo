@@ -9,6 +9,7 @@ import java.util.logging.Logger;
 
 import org.javlo.component.core.AbstractVisualComponent;
 import org.javlo.context.ContentContext;
+import org.javlo.helper.URLHelper;
 
 /**
  * @author pvandermaesen
@@ -87,8 +88,8 @@ public class Map extends AbstractVisualComponent {
 		out.println("var marker = new google.maps.Marker({");
 		out.println("position: myLatLng,");
 		out.println("map: map,");
-		out.println("title: 'Hello World!',");
-		out.println("icon: \"img/samples/pin.png\"");
+		out.println("title: 'Hello World!',");		
+		out.println("icon: \""+URLHelper.createTemplateResourceURL(ctx, "/img/samples/pin.png")+"\"");
 		out.println("});");
 
 		out.println("google.maps.event.addDomListener(window, 'load', initialize);");
