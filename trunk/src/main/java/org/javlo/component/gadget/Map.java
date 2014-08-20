@@ -88,8 +88,8 @@ public class Map extends AbstractVisualComponent {
 		out.println("var marker = new google.maps.Marker({");
 		out.println("position: myLatLng,");
 		out.println("map: map,");
-		out.println("title: 'Hello World!',");		
-		out.println("icon: \""+URLHelper.createTemplateResourceURL(ctx, "/img/samples/pin.png")+"\"");
+		out.println("title: '"+ctx.getGlobalContext().getGlobalTitle()+"',");		
+		out.println("icon: \""+URLHelper.createStaticTemplateURL(ctx, "/img/pin.png")+"\"");
 		out.println("});");
 
 		out.println("google.maps.event.addDomListener(window, 'load', initialize);");
