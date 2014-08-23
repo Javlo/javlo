@@ -50,7 +50,9 @@ import org.javlo.module.template.remote.IRemoteResourcesFactory;
 import org.javlo.module.template.remote.RemoteTemplateFactoryManager;
 import org.javlo.navigation.MenuElement;
 import org.javlo.remote.IRemoteResource;
+import org.javlo.service.PersistenceService;
 import org.javlo.service.RequestService;
+import org.javlo.service.exception.ServiceException;
 import org.javlo.servlet.zip.ZipManagement;
 import org.javlo.template.Template;
 import org.javlo.template.TemplateFactory;
@@ -441,7 +443,7 @@ public class TemplateAction extends AbstractModuleAction {
 		return null;
 	}
 
-	public static String performSelectTemplate(RequestService rs, ContentContext ctx, EditContext editContext, MenuElement currentPage, MessageRepository messageRepository, I18nAccess i18nAccess) throws FileNotFoundException, InstantiationException, IllegalAccessException, ModuleException, IOException {
+	public static String performSelectTemplate(RequestService rs, ContentContext ctx, EditContext editContext, MenuElement currentPage, MessageRepository messageRepository, I18nAccess i18nAccess) throws FileNotFoundException, InstantiationException, IllegalAccessException, ModuleException, IOException, ServiceException {
 		String templateName = rs.getParameter("templateid", null);
 		currentPage.setTemplateName(templateName);
 
@@ -451,6 +453,8 @@ public class TemplateAction extends AbstractModuleAction {
 		if (ctx.isEditPreview()) {
 			ctx.setClosePopup(true);
 		}
+		
+		PersistenceService.getInstance(ctx.getGlobalContext()).setAskStore(true);
 
 		return null;
 	}

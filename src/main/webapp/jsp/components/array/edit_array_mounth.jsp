@@ -7,14 +7,11 @@
         org.javlo.component.AbstractVisualComponent,
         org.javlo.component.ArrayComponent,
         org.javlo.component.array.Array"
-%><%
-ArrayComponent arrayComponent = (ArrayComponent)AbstractVisualComponent.getRequestComponent ( request );
+%><%ArrayFileComponent arrayComponent = (ArrayFileComponent)AbstractVisualComponent.getRequestComponent ( request );
 Array array = arrayComponent.getArray();
 ContentContext ctx = ContentContext.getContentContext ( request, response );
 
-String[][] TAParam = { { "rows", "1" } };
-
-%><div class="edit">
+String[][] TAParam = { { "rows", "1" } };%><div class="edit">
 <table class="edit-array">
 <tr><%
 	if ( array.getSize() > 0 ) {

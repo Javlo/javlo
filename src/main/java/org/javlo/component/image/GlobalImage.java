@@ -1014,7 +1014,7 @@ public class GlobalImage extends Image implements IImageFilter {
 		if (getCurrentRenderer(ctx) == null) {
 			return false;
 		}
-		return getCurrentRenderer(ctx).contains("float");
+		return getCurrentRenderer(ctx).contains("image-");
 	}
 
 	@Override

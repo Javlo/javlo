@@ -23,6 +23,7 @@ import org.apache.commons.io.FileExistsException;
 import org.codehaus.plexus.util.StringUtils;
 import org.javlo.component.core.ComponentBean;
 import org.javlo.component.core.IContentVisualComponent;
+import org.javlo.component.files.ArrayFileComponent;
 import org.javlo.component.files.GenericFile;
 import org.javlo.component.image.GlobalImage;
 import org.javlo.component.image.Image;
@@ -384,7 +385,8 @@ public class DataAction implements IAction {
 					TanukiImportTools.createContentFromTanuki(ctx, in, item.getName(), ctx.getRequestContentLanguage());
 					in.close();
 					ctx.setNeedRefresh(true);
-				} else {
+				}  else {
+					boolean isArray = StringHelper.getFileExtension(item.getName()).equalsIgnoreCase("xls") || StringHelper.getFileExtension(item.getName()).equalsIgnoreCase("xlsx") || StringHelper.getFileExtension(item.getName()).equalsIgnoreCase("ods") || StringHelper.getFileExtension(item.getName()).equalsIgnoreCase("csv");
 					String resourceRelativeFolder = URLHelper.mergePath(gc.getStaticConfig().getStaticFolder(), tpl.getImportResourceFolder(), importFolder);
 					File targetFolder = new File(URLHelper.mergePath(gc.getDataFolder(), resourceRelativeFolder));
 					if (!targetFolder.exists()) {
@@ -398,7 +400,11 @@ public class DataAction implements IAction {
 						out.println("dir=" + dir);
 						out.println("file-name=" + StringHelper.getFileNameFromPath(newFile.getName()));
 						out.close();
-						ComponentBean bean = new ComponentBean(GenericFile.TYPE, new String(outStream.toByteArray()), ctx.getRequestContentLanguage());
+						String beanType = GenericFile.TYPE;
+						if (isArray) {
+							beanType = ArrayFileComponent.TYPE;
+						}
+						ComponentBean bean = new ComponentBean(beanType, new String(outStream.toByteArray()), ctx.getRequestContentLanguage());
 						cs.createContentAtEnd(ctx, bean, true);
 						ctx.setNeedRefresh(true);
 						StaticInfo staticInfo = StaticInfo.getInstance(ctx, newFile);

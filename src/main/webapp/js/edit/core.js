@@ -1,63 +1,79 @@
+var mouseX = 0;
+var mouseY = 0;
+
 initFocusPoint = function() {
 	/** * focus point ** */
 	jQuery(".focus-point").each(
 			function() {
 				var point = jQuery(this);
-				point.css("display", "none");
-				var container = point.parent();
+				
+				point.parent().find("a.image").click(function() {
+					var img = jQuery(this).find("img");
+					var posx = Math.round(mouseX-img.offset().left);
+					var posy = Math.round(mouseY-img.offset().top);
+					point.css("position", "absolute");
+					point.css("display", "block");
+					point.css("left", posx);
+					point.css("top", posy);
+					sendFocus(point);
+					return false;
+				});
+				
+				point.css("display", "none");		
 				var image = point.parent().find("img");
-				var posx = parseInt(point.parent().find(".posx").val());
-				var posy = parseInt(point.parent().find(".posy").val());
-				image.mouseenter(function() {
-					var image = jQuery(this);
+				image.mouseenter(function() {					
 					if (!(this._init == 'done')) {
 						this._init = "done";
-						posx = image.width() * posx / 1000;
-						posy = image.height() * posy / 1000;
-						var focusImgX = (image.offset().left - container
-								.offset().left)
-								+ posx - point.outerWidth() / 2;
-						var focusImgY = (image.offset().top - container
-								.offset().top)
-								+ posy - point.outerWidth() / 2;
-						point.css("position", "absolute");
-						point.css("display", "block");
-						point.css("left", Math.round(focusImgX));
-						point.css("top", Math.round(focusImgY));
+						focusPosition(point);
 					}
-				});
+				});				
 				point.draggable({
 					containment : image
 				});
 				point.bind("dragstop", function(event, ui) {
-					var point = jQuery(this);
-					var focusRealX = (point.offset().left + point.outerWidth()
-							/ 2 - image.offset().left)
-							* 1000 / image.width();
-					var focusRealY = (point.offset().top + point.outerHeight()
-							/ 2 - image.offset().top)
-							* 1000 / image.height();
-					point.parent().find(".posx").val(focusRealX);
-					point.parent().find(".posy").val(focusRealY);
-					var path = "";
-					if (point.parent().find(".path").length > 0) {
-						path = "&image_path="
-								+ point.parent().find(".path").val();
-					}
-					var url = point.closest("form").attr("action");
-					if (url.indexOf("?") >= 0) {
-						url = url + "&";
-					} else {
-						url = url + "?";
-					}
-					url = url + "webaction=file.updateFocus&"
-							+ point.parent().find(".posx").attr("name") + "="
-							+ focusRealX + "&"
-							+ point.parent().find(".posy").attr("name") + "="
-							+ focusRealY + path;
-					ajaxRequest(url)
+					sendFocus(point);
 				});
 			});
+}
+
+focusPosition = function(point) {	
+	var container = point.parent();
+	var image = point.parent().find("img");
+	var posx = parseInt(point.parent().find(".posx").val());
+	var posy = parseInt(point.parent().find(".posy").val());
+	posx = image.width() * posx / 1000;
+	posy = image.height() * posy / 1000;
+	var focusImgX = (image.offset().left - container.offset().left)	+ posx - point.outerWidth() / 2;
+	var focusImgY = (image.offset().top - container.offset().top) + posy - point.outerWidth() / 2;
+	point.css("position", "absolute");
+	point.css("display", "block");
+	point.css("left", Math.round(focusImgX));
+	point.css("top", Math.round(focusImgY));
+}
+
+sendFocus = function(point) {	
+	var image = point.parent().find("img");
+	var container = point.parent();
+	var focusRealX = (point.offset().left + point.outerWidth() / 2 - image.offset().left) * 1000 / image.width();
+	var focusRealY = (point.offset().top + point.outerHeight() / 2 - image.offset().top) * 1000 / image.height();
+	point.parent().find(".posx").val(focusRealX);
+	point.parent().find(".posy").val(focusRealY);
+	var path = "";
+	if (point.parent().find(".path").length > 0) {
+		path = "&image_path="+ point.parent().find(".path").val();
+	}
+	var url = point.closest("form").attr("action");
+	if (url.indexOf("?") >= 0) {
+		url = url + "&";
+	} else {
+		url = url + "?";
+	}
+	url = url + "webaction=file.updateFocus&"
+			+ point.parent().find(".posx").attr("name") + "="
+			+ focusRealX + "&"
+			+ point.parent().find(".posy").attr("name") + "="
+			+ focusRealY + path;
+	ajaxRequest(url)
 }
 
 function setInputColor(input) {
@@ -133,6 +149,11 @@ function updateColorInput() {
 }
 
 jQuery(document).ready(function() {
+	
+	jQuery( window ).mousemove(function( event ) {
+		mouseX = event.pageX;
+		mouseY = event.pageY;
+	});
 
 	updateColorInput();
 

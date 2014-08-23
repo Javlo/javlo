@@ -7,7 +7,9 @@ import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.Date;
 import java.util.Map;
 import java.util.Set;
@@ -200,6 +202,121 @@ public class ImageTransformServlet extends HttpServlet {
 		return lm;
 	}
 
+	private void folderTransform(ContentContext ctx, ImageConfig config, StaticInfo staticInfo, String filter, String area, Template template, IImageFilter comp, File folderFile, String imageName, String inFileExtention) throws Exception {
+		logger.info("image (folder) not found in cache (generate it) : " + folderFile);
+
+		int w = config.getFolderWidth(ctx.getDevice(), filter, area);
+		int h = config.getFolderHeight(ctx.getDevice(), filter, area);
+
+		if (w <= 0 || h <= 0) {
+			logger.warning("no file defined for render folder image.");
+			return;
+		}
+
+		ArrayList<StaticInfo> children = new ArrayList<StaticInfo>();
+		for (File file : ResourceHelper.getAllFilesList(folderFile)) {
+			if (StringHelper.isImage(file.getName())) {
+				StaticInfo info = StaticInfo.getInstance(ctx, file);
+				if (info.isShared(ctx)) {
+					children.add(info);
+				}
+			}
+		}
+		int thumbWidth = config.getFolderThumbWidth(ctx.getDevice(), filter, area);
+		int thumbHeight = config.getFolderThumbHeight(ctx.getDevice(), filter, area);		
+
+		BufferedImage img = new BufferedImage(thumbWidth * w, thumbHeight * h, BufferedImage.TYPE_4BYTE_ABGR);
+
+		for (int y = 0; y < h; y++) {
+			for (int x = 0; x < w; x++) {				
+				int i = (x + y * w) % children.size();
+				if (config.isFolderThumbShuffle(ctx.getDevice(), filter, area) || i == 0) {
+					Collections.shuffle(children);
+				}				
+				StaticInfo info = children.get(i);
+				BufferedImage image = ImageIO.read(info.getFile());
+				
+				int mt = config.getMarginTop(ctx.getDevice(), filter, area);
+				int ml = config.getMarginLeft(ctx.getDevice(), filter, area);
+				int mr = config.getMarginRigth(ctx.getDevice(), filter, area);
+				int mb = config.getMarginBottom(ctx.getDevice(), filter, area);
+				
+				image = ImageEngine.resize(image, thumbWidth, thumbHeight, config.isCropResize(ctx.getDevice(), filter, area), config.isAddBorder(ctx.getDevice(), filter, area), mt, ml, mr, mb, config.getBGColor(ctx.getDevice(), filter, area), info.getFocusZoneX(ctx), info.getFocusZoneY(ctx), true);
+				ImageEngine.insertImage(image, img, x * thumbWidth, y * thumbHeight);
+			}
+		}
+
+		if (config.isBackGroudColor(ctx.getDevice(), filter, area) && img.getColorModel().hasAlpha()) {
+			img = ImageEngine.applyBgColor(img, config.getBGColor(ctx.getDevice(), filter, area));
+		}
+		// org.javlo.helper.Logger.stepCount("transform",
+		// "start - transformation - 2.1");
+		if (config.isGrayscale(ctx.getDevice(), filter, area)) {
+			img = (new GrayscaleFilter()).filter(img, null);
+		}
+		// org.javlo.helper.Logger.stepCount("transform",
+		// "start - transformation - 2.2");
+		if (config.isCrystallize(ctx.getDevice(), filter, area)) {
+			img = (new CrystallizeFilter()).filter(img, null);
+		}
+		// org.javlo.helper.Logger.stepCount("transform",
+		// "start - transformation - 2.3");
+		if (config.isEdge(ctx.getDevice(), filter, area)) {
+			img = (new EdgeFilter()).filter(img, null);
+		}
+		// org.javlo.helper.Logger.stepCount("transform",
+		// "start - transformation - 2.4");
+		if (config.isEmboss(ctx.getDevice(), filter, area)) {
+			img = (new EmbossFilter()).filter(img, null);
+		}
+		// org.javlo.helper.Logger.stepCount("transform",
+		// "start - transformation - 2.5");
+		img = ImageEngine.RBGAdjust(img, config.getAdjustColor(ctx.getDevice(), filter, area));
+		// org.javlo.helper.Logger.stepCount("transform",
+		// "start - transformation - 2.6");
+		img = ImageEngine.replaceAlpha(img, config.getReplaceAlpha(ctx.getDevice(), filter, area));
+		// org.javlo.helper.Logger.stepCount("transform",
+		// "start - transformation - 2.7");
+		img = ImageEngine.createAlpha(img, config.getAlpha(ctx.getDevice(), filter, area));
+		// org.javlo.helper.Logger.stepCount("transform",
+		// "start - transformation - 3");
+		
+		if (img == null) {
+			logger.severe("image : " + folderFile + " could not be resized.");
+		} else {
+			/* create cache ima8ge */
+			FileCache fc = FileCache.getInstance(getServletContext());
+			String deviceCode = "no-device";
+			if (ctx.getDevice() != null) {
+				deviceCode = ctx.getDevice().getCode();
+			}
+			GlobalContext globalContext = GlobalContext.getInstance(ctx.getRequest());
+			String dir = ImageHelper.createSpecialDirectory(ctx, globalContext.getContextKey(), filter, area, deviceCode, template, comp);
+
+			String fileExtension = config.getFileExtension(ctx.getDevice(), filter, area);
+			if (fileExtension == null) {
+				fileExtension = "jpg";
+			}
+			OutputStream outImage = fc.saveFile(dir, imageName);
+
+			try {
+				logger.info("write image (folder) : " + fileExtension + " width: " + img.getWidth() + " height: " + img.getHeight());
+
+				if (comp != null && StringHelper.trimAndNullify(comp.getImageFilterKey(ctx)) != null) {
+					img = ((IImageFilter) comp).filterImage(ctx, img);
+				}
+				if (!"png".equals(fileExtension) && !"gif".equals(fileExtension)) {
+					img = ImageEngine.removeAlpha(img);
+				}
+				ImageIO.write(img, fileExtension, outImage);
+
+			} finally {
+				outImage.close();
+			}
+
+		}
+	}
+
 	private void imageTransform(ContentContext ctx, ImageConfig config, StaticInfo staticInfo, String filter, String area, Template template, IImageFilter comp, File imageFile, String imageName, String inFileExtention) throws IOException {
 
 		String fileSize = StringHelper.renderSize(imageFile.length());
@@ -219,7 +336,7 @@ public class ImageTransformServlet extends HttpServlet {
 		logger.info("image not found in cache (generate it) : " + imageFile);
 		// org.javlo.helper.Logger.stepCount("transform", "start - LOCK");
 		/** only one servlet */
- 
+
 		// org.javlo.helper.Logger.stepCount("transform",
 		// "start - transformation");
 
@@ -242,7 +359,7 @@ public class ImageTransformServlet extends HttpServlet {
 
 		BufferedImage img = ImageIO.read(imageFile);
 		if (img == null) {
-			logger.warning("could'nt read : "+imageFile);
+			logger.warning("could'nt read : " + imageFile);
 			ctx.getResponse().setStatus(404);
 			return;
 		}
@@ -256,7 +373,7 @@ public class ImageTransformServlet extends HttpServlet {
 
 		// org.javlo.helper.Logger.stepCount("transform",
 		// "start - transformation - 2 (src image size : "+img.getWidth()+","+img.getHeight()+")");
-		
+
 		int focusX = staticInfo.getFocusZoneX(ctx);
 		int focusY = staticInfo.getFocusZoneY(ctx);
 		int firstWidth = img.getWidth();
@@ -265,10 +382,10 @@ public class ImageTransformServlet extends HttpServlet {
 		if (config.getZoom(ctx.getDevice(), filter, area) > 1) {
 			double zoom = config.getZoom(ctx.getDevice(), filter, area);
 			img = ImageEngine.zoom(img, zoom, focusX, focusY);
-			focusX = (int)Math.round(focusX/zoom);
-			focusY = (int)Math.round(focusY/zoom);
+			focusX = (int) Math.round(focusX / zoom);
+			focusY = (int) Math.round(focusY / zoom);
 		}
-		
+
 		if (config.isBackGroudColor(ctx.getDevice(), filter, area) && img.getColorModel().hasAlpha()) {
 			img = ImageEngine.applyBgColor(img, config.getBGColor(ctx.getDevice(), filter, area));
 		}
@@ -448,8 +565,8 @@ public class ImageTransformServlet extends HttpServlet {
 				}
 				logger.info("write image : " + fileExtension + " width: " + img.getWidth() + " height: " + img.getHeight());
 
-				if (comp != null && StringHelper.trimAndNullify(comp.getImageFilterKey(ctx)) != null) {					
-					img = ((IImageFilter) comp).filterImage(ctx,img);					
+				if (comp != null && StringHelper.trimAndNullify(comp.getImageFilterKey(ctx)) != null) {
+					img = ((IImageFilter) comp).filterImage(ctx, img);
 				}
 				if (!"png".equals(fileExtension) && !"gif".equals(fileExtension)) {
 					img = ImageEngine.removeAlpha(img);
@@ -489,13 +606,14 @@ public class ImageTransformServlet extends HttpServlet {
 		servletRun++;
 
 		COUNT_ACCESS++;
-		
-		// cache 
-		response.setHeader("Cache-Control", "max-age=60,must-revalidate"); 
+
+		// cache
+		response.setHeader("Cache-Control", "max-age=60,must-revalidate");
 
 		StaticConfig staticConfig = StaticConfig.getInstance(request.getSession());
 		ContentContext ctx = ContentContext.getFreeContentContext(request, response);
-		ctx.setRenderMode(ContentContext.PREVIEW_MODE); // user for staticInfo storage
+		ctx.setRenderMode(ContentContext.PREVIEW_MODE); // user for staticInfo
+														// storage
 		RequestHelper.traceMailingFeedBack(ctx);
 
 		OutputStream out = null;
@@ -653,14 +771,13 @@ public class ImageTransformServlet extends HttpServlet {
 				String baseExtension = StringHelper.getFileExtension(imageFile.getName());
 
 				if (!imageFile.exists() || imageFile.isDirectory()) {
-					File newImageFile = null;
-					if (newImageFile == null) {
+					File dirFile = new File(StringHelper.getFileNameWithoutExtension(imageFile.getAbsolutePath()));
+					if (!dirFile.exists()) {
 						logger.warning("file not found : " + imageFile);
 						response.setStatus(HttpServletResponse.SC_NOT_FOUND);
 						return;
 					} else {
-						imageFile = newImageFile;
-						imageName = StringHelper.getFileNameWithoutExtension(imageName) + '.' + StringHelper.getFileExtension(imageFile.getName());
+						imageFile = dirFile;
 					}
 				}
 
@@ -728,8 +845,8 @@ public class ImageTransformServlet extends HttpServlet {
 					int maxWidth = staticConfig.getImageMaxWidth();
 					if (maxWidth > 0) {
 						synchronized (LOCK_LARGE_TRANSFORM) {
-							if (!staticInfo.isResized(ctx)) {
-								logger.info("source image to large resize to "+maxWidth+" : "+imageFile);
+							if (!staticInfo.isResized(ctx) && !imageFile.isDirectory()) {
+								logger.info("source image to large resize to " + maxWidth + " : " + imageFile);
 								BufferedImage image = ImageIO.read(imageFile);
 								if (image != null) {
 									if (image.getWidth() > maxWidth) {
@@ -737,7 +854,7 @@ public class ImageTransformServlet extends HttpServlet {
 										ImageIO.write(image, StringHelper.getFileExtension(imageFile.getName().toLowerCase()), imageFile);
 									}
 								} else {
-									logger.warning("Could'nt read image : "+imageFile);
+									logger.warning("Could'nt read image : " + imageFile);
 								}
 								staticInfo.setResized(ctx, true);
 							}
@@ -790,7 +907,11 @@ public class ImageTransformServlet extends HttpServlet {
 						if ((fileStream == null)) {
 							long currentTime = System.currentTimeMillis();
 							synchronized (imageTransforming.get(imageKey)) {
-								imageTransform(ctx, ImageConfig.getNewInstance(globalContext, request.getSession(), template), staticInfo, filter, area, template, comp, imageFile, imageName, baseExtension);
+								if (imageFile.isFile()) {
+									imageTransform(ctx, ImageConfig.getNewInstance(globalContext, request.getSession(), template), staticInfo, filter, area, template, comp, imageFile, imageName, baseExtension);
+								} else {
+									folderTransform(ctx, ImageConfig.getNewInstance(globalContext, request.getSession(), template), staticInfo, filter, area, template, comp, imageFile, imageName, baseExtension);
+								}
 							}
 							logger.info("transform image (" + StringHelper.renderSize(size) + ") : '" + imageName + "' in site '" + globalContext.getContextKey() + "' page : " + ctx.getRequestContentLanguage() + ctx.getPath() + " time : " + StringHelper.renderTimeInSecond(System.currentTimeMillis() - currentTime) + " sec.  #transformation:" + imageTransforming.size());
 							fileStream = loadFileFromDisk(ctx, imageName, filter, area, ctx.getDevice(), template, comp, imageFile.lastModified());
@@ -844,7 +965,21 @@ public class ImageTransformServlet extends HttpServlet {
 	}
 
 	public static void main(String[] args) {
-		File image1 = new File("d:/trans/1.jpg");
+		File image1 = new File("c:/trans/test.jpg");
+		File image2 = new File("c:/trans/test_out.jpg");
+		long time = System.currentTimeMillis();
+		try {
+			BufferedImage image = ImageIO.read(image1);
+			System.out.println("1. read time  : " + StringHelper.renderTimeInSecond(System.currentTimeMillis() - time));
+			time = System.currentTimeMillis();
+			image = ImageEngine.resize(image, 1920, 1200);
+			System.out.println("2. resize     : " + StringHelper.renderTimeInSecond(System.currentTimeMillis() - time));
+			time = System.currentTimeMillis();
+			ImageIO.write(image, "jpg", image2);
+			System.out.println("2. write time : " + StringHelper.renderTimeInSecond(System.currentTimeMillis() - time));
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+
 	}
 }
-

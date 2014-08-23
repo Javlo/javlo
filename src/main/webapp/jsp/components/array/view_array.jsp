@@ -8,17 +8,14 @@
         org.javlo.component.ArrayComponent,
         org.javlo.component.array.Array,
         org.javlo.MenuElement"
-%><%
-ArrayComponent arrayComponent = (ArrayComponent)AbstractVisualComponent.getRequestComponent ( request );
+%><%ArrayFileComponent arrayComponent = (ArrayFileComponent)AbstractVisualComponent.getRequestComponent ( request );
 Array array = arrayComponent.getArray();
 ContentContext ctx = ContentContext.getContentContext ( request, response );
 
 String firstColTag = "th";
 if (!arrayComponent.isFirstColTitle()) {
 	firstColTag = "td";
-}
-
-%>
+}%>
 <div class="<%=arrayComponent.getType()%>"><div class="<%=arrayComponent.getCSSClassName(ctx)%>">
 <table <%=array.getSummary().trim().length()<0?"summary=\""+array.getSummary()+'"':""%>><%
 int startLine = 0;

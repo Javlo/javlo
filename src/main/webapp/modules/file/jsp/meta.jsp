@@ -46,7 +46,7 @@
 		<div class="download picture">
 			<div class="focus-zone">
 			<c:if test="${empty param.select}">	
-			<a rel="image" href="${file.URL}"><img src="${file.thumbURL}" />&nbsp;</a>
+			<a class="image" rel="image" href="${file.URL}"><img src="${file.thumbURL}" />&nbsp;</a>
 			</c:if>
 			<c:if test="${not empty param.select}">	
 			<a class="select-item" href="${file.URL}" data-url="${file.freeURL}"><img src="${file.thumbURL}" />&nbsp;</a>

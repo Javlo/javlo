@@ -33,6 +33,8 @@ public class ImageEngine {
 	private static Logger logger = Logger.getLogger(ImageEngine.class.getName());
 
 	public final static Color NEUTRAL_COLOR = new Color(0.5f, 0.5f, 0.5f);
+	
+	public final static Color TRANSPARENT_COLOR = new Color(0,0,0,0);
 
 	// This class overrides the setCompressionQuality() method to workaround
 	// a problem in compressing JPEG images using the javax.imageio package.
@@ -114,7 +116,7 @@ public class ImageEngine {
 	}
 	
 	public static BufferedImage scale(BufferedImage img, Integer inTargetWidth, Integer inTargetHeight) {		
-		BufferedImage outImage = Scalr.resize(img, Scalr.Method.ULTRA_QUALITY, Scalr.Mode.FIT_TO_WIDTH,inTargetWidth, inTargetHeight);
+		BufferedImage outImage = Scalr.resize(img, Scalr.Method.AUTOMATIC, Scalr.Mode.FIT_TO_WIDTH,inTargetWidth, inTargetHeight);
 		return outImage;
 	}
 	
@@ -308,7 +310,23 @@ public class ImageEngine {
 		return image.getRGB(x, y);
 	}
 	
+	/**
+	 * if color null return transparent.
+	 * @param color
+	 * @return
+	 */
+	public static Color neverNullColor(Color color) {
+		if (color != null) {
+			return color;
+		} else { 
+			return TRANSPARENT_COLOR;
+		}
+	}
+	
 	public static int getColor(BufferedImage image, int x, int y, Color outCol) {
+		if (outCol == null) {
+			outCol = TRANSPARENT_COLOR;
+		}
 		if (x < 0) {
 			return outCol.getRGB();
 		} else if (x >= image.getWidth()) {
@@ -836,6 +854,15 @@ public class ImageEngine {
 			}
 		}
 		return outImage;
+	}
+	
+	public static void insertImage(BufferedImage source, BufferedImage target, int posx, int posy) {
+		for (int x = 0; x < source.getWidth(); x++) {
+			for (int y = 0; y < source.getHeight(); y++) {
+				int rgb = source.getRGB(x, y);
+				target.setRGB(posx+x, posy+y, rgb);					
+			}
+		}
 	}
 
 	public static BufferedImage applyBgColor(BufferedImage image, Color bgColor) {
