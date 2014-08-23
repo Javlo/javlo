@@ -750,7 +750,7 @@ public class XMLManipulationHelper {
 				}
 				resources.add(url);
 				String newURL = url;
-				if (!StringHelper.isURL(url)) {
+				if (!StringHelper.isURL(url) && !url.contains("${")) { // change URL only if no jstl inside url
 					newURL = "'<%=URLHelper.createStaticTemplateURL(ctx,\"" + url + "\")%>'";
 				}
 				remplacement.addReplacement(urlIndex + 4, closeIndex, newURL);

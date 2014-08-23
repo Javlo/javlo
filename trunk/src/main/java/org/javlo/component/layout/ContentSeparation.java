@@ -24,6 +24,11 @@ public class ContentSeparation extends AbstractVisualComponent {
 	public String getRadioName() {
 		return getContentName();
 	}
+	
+	@Override
+	public void prepareView(ContentContext ctx) throws Exception {
+		ctx.getRequest().setAttribute("hidden", getStyle().equals("hidden-separation"));
+	}
 
 	/**
 	 * @see org.javlo.itf.IContentVisualComponent#getXHTMLCode()
@@ -83,6 +88,15 @@ public class ContentSeparation extends AbstractVisualComponent {
 	@Override
 	public boolean isContentCachable(ContentContext ctx) {
 		return true;
+	}
+	
+	@Override
+	public String getEmptyXHTMLCode(ContentContext ctx) throws Exception {
+		if (getStyle().equals("hidden-separation")) {
+			return super.getEmptyXHTMLCode(ctx);
+		} else {
+			return renderViewXHTMLCode(ctx);
+		}
 	}
 
 

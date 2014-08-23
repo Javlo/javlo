@@ -3,15 +3,19 @@
  */
 package org.javlo.component.list;
 
+import java.io.BufferedReader;
 import java.io.ByteArrayOutputStream;
 import java.io.PrintStream;
+import java.io.StringReader;
+import java.util.LinkedList;
 import java.util.List;
 
-import org.javlo.component.text.Paragraph;
+import org.javlo.component.core.AbstractVisualComponent;
 import org.javlo.context.ContentContext;
 import org.javlo.context.GlobalContext;
 import org.javlo.helper.LoremIpsumGenerator;
 import org.javlo.helper.StringHelper;
+import org.javlo.helper.XHTMLHelper;
 import org.javlo.i18n.I18nAccess;
 import org.javlo.service.RequestService;
 import org.javlo.service.ReverseLinkService;
@@ -20,7 +24,7 @@ import org.javlo.utils.SuffixPrefix;
 /**
  * @author pvandermaesen
  */
-public class FreeTextList extends Paragraph {
+public class FreeTextList extends AbstractVisualComponent {
 
 	public static final String NUMBER_LIST = "ol-ol";
 
@@ -70,12 +74,37 @@ public class FreeTextList extends Paragraph {
 
 	@Override
 	public String getPrefixViewXHTMLCode(ContentContext ctx) {
-		return "";
+		if (getRenderer(ctx) != null) {
+			return super.getPrefixViewXHTMLCode(ctx);
+		} else {
+			return "";
+		}
 	}
 
 	@Override
 	public String getSuffixViewXHTMLCode(ContentContext ctx) {
-		return "";
+		if (getRenderer(ctx) != null) {
+			return super.getSuffixViewXHTMLCode(ctx);
+		} else {
+			return "";
+		}
+	}
+
+	@Override
+	public void prepareView(ContentContext ctx) throws Exception {
+		super.prepareView(ctx);
+		if (getRenderer(ctx) != null) {
+			ReverseLinkService reverserLinkService = ReverseLinkService.getInstance(ctx.getGlobalContext());
+			String value = XHTMLHelper.autoLink(reverserLinkService.replaceLink(ctx, this, getValue()));
+			BufferedReader read = new BufferedReader(new StringReader(value));
+			String line = read.readLine();
+			List<String> lines = new LinkedList<String>();
+			while (line != null) {
+				lines.add(line);
+				line = read.readLine();
+			}
+			ctx.getRequest().setAttribute("lines", lines);
+		}
 	}
 
 	@Override
@@ -169,8 +198,7 @@ public class FreeTextList extends Paragraph {
 	}
 
 	@Override
-	public boolean initContent(ContentContext ctx) {
-		super.initContent(ctx);
+	public boolean initContent(ContentContext ctx) {		
 		ByteArrayOutputStream outStream = new ByteArrayOutputStream();
 		PrintStream out = new PrintStream(outStream);
 		out.println(LoremIpsumGenerator.getParagraph(8, true, false) + '.');

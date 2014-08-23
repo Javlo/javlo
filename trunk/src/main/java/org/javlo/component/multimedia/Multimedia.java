@@ -694,8 +694,6 @@ public class Multimedia extends TimeRangeComponent implements IImageTitle {
 		super.prepareView(ctx);
 		GlobalContext globalContext = GlobalContext.getInstance(ctx.getRequest());
 
-		int index = 0;
-
 		Collection<File> mulFiles = getAllMultimediaFiles(ctx);
 
 		List<MultimediaResource> allResource = new LinkedList<MultimediaResource>();
@@ -778,8 +776,7 @@ public class Multimedia extends TimeRangeComponent implements IImageTitle {
 
 				resource.setPreviewURL(previewURL);
 
-				if (isRenderInfo(ctx)) {
-					index++;
+				if (isRenderInfo(ctx)) {					
 					allResource.add(resource);
 				}
 			}
@@ -793,18 +790,15 @@ public class Multimedia extends TimeRangeComponent implements IImageTitle {
 				if (acceptResource(ctx, resource)) {
 					if (allURL.get(resource.getURL()) != null) { // equals and hash is overidded on MultimediaResource -> two "equals" resource can be different (sample : a static resource and a component resource linked with same file).
 						allResource.remove(allURL.get(resource.getURL()));
-					} else {
-						index++;
-					}
+					} 
 					allResource.add(resource);
 					countContentResource++;
-
 				}
 			}
 		}
 		logger.fine("load content resource : " + countContentResource);
 
-		PaginationContext pagination = PaginationContext.getInstance(ctx.getRequest(), getId(), allResource.size(), getPageSize());
+		
 
 		if (isOrderByAccess(ctx)) {
 			Collections.sort(allResource, new MultimediaResource.SortByIndex(true));
@@ -817,6 +811,7 @@ public class Multimedia extends TimeRangeComponent implements IImageTitle {
 		}
 
 		int max = Math.min(getMaxListSize(), allResource.size());
+		PaginationContext pagination = PaginationContext.getInstance(ctx.getRequest(), getId(), max, getPageSize());
 		ctx.getRequest().setAttribute("title", getTitle());
 		ctx.getRequest().setAttribute("pagination", pagination);
 		ctx.getRequest().setAttribute("resources", allResource.subList(0, max));

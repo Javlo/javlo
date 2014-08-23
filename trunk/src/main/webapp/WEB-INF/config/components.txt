@@ -28,6 +28,7 @@ org.javlo.component.list.FreeTextList
 org.javlo.component.text.ContactText
 org.javlo.component.core.DebugNote
 org.javlo.component.files.CSVArrayComponent
+org.javlo.component.files.ArrayFileComponent
 
 
 --content.title.links

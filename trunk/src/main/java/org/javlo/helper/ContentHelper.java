@@ -356,6 +356,23 @@ public class ContentHelper {
 		}
 		return beans;
 	}
+	
+public static List<ComponentBean> createContentFromArray(GlobalContext gc, InputStream in, String name, String lang) throws Exception {
+		
+		ByteArrayOutputStream out = new ByteArrayOutputStream();
+		ResourceHelper.writeStreamToStream(in, out);
+		
+		ZipInputStream zipIn = new ZipInputStream(new ByteArrayInputStream(out.toByteArray()));
+		ZipEntry entry = zipIn.getNextEntry();
+		String baseStaticFolder = "/import/" + name;
+		
+		// import content
+		List<ComponentBean> beans = DocxUtils.extractContent(new ByteArrayInputStream(out.toByteArray()), baseStaticFolder);
+		for (ComponentBean bean : beans) {
+			bean.setLanguage(lang);
+		}
+		return beans;
+	}
 
 	private static Locale getLocalBySuffix(String name) {
 		if (name.contains("_")) {

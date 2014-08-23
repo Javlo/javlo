@@ -10,19 +10,16 @@
         org.javlo.component.array.Array,
         org.javlo.MenuElement,
         org.javlo.Content"
-%><%
-try {
+%><%try {
 
-ArrayComponent arrayComponent = (ArrayComponent)AbstractVisualComponent.getRequestComponent ( request );
+ArrayFileComponent arrayComponent = (ArrayFileComponent)AbstractVisualComponent.getRequestComponent ( request );
 Array array = arrayComponent.getArray();
 
 ContentContext ctx = ContentContext.getContentContext ( request, response );
 I18nAccess i18nAccess = I18nAccess.getInstance(ctx.getRequest());
 Content content = Content.createContent(request);
 
-String[][] TAParam = { { "rows", "2" }, { "cols", "100" } };
-
-%><div class="edit">
+String[][] TAParam = { { "rows", "2" }, { "cols", "100" } };%><div class="edit">
 <div class="summary">
 <div class="row">
 	<label for="<%=arrayComponent.getSummaryInputName()%>"><%=i18nAccess.getText(ctx, "component.array.summary")%>: </label>

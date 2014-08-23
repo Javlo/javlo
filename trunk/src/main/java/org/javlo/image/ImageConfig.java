@@ -196,6 +196,66 @@ public class ImageConfig {
 		}
 		return properties.getInt(filter + ".width", -1);
 	}
+	
+	public int getFolderWidth(Device device, String filter, String area) {
+		if (device != null) {
+
+			String key = getKey(device, filter, area, "folder.width");
+
+			int deviceWith = properties.getInt(key, -2);
+			if (deviceWith != -2) {
+				return deviceWith;
+			}
+		}
+		return properties.getInt(filter + ".folder.width", -1);
+	}
+	
+	public int getFolderHeight(Device device, String filter, String area) {
+		if (device != null) {
+
+			String key = getKey(device, filter, area, "folder.height");
+
+			int deviceWith = properties.getInt(key, -2);
+			if (deviceWith != -2) {
+				return deviceWith;
+			}
+		}
+		return properties.getInt(filter + ".folder.height", -1);
+	}
+	
+	public int getFolderThumbWidth(Device device, String filter, String area) {
+		if (device != null) {
+
+			String key = getKey(device, filter, area, "folder.thumb.width");
+
+			int deviceWith = properties.getInt(key, -2);
+			if (deviceWith != -2) {
+				return deviceWith;
+			}
+		}
+		return properties.getInt(filter + ".folder.thumb.width", 100);
+	}
+	
+	public int getFolderThumbHeight(Device device, String filter, String area) {
+		if (device != null) {
+
+			String key = getKey(device, filter, area, "folder.thumb.height");
+
+			int deviceWith = properties.getInt(key, -2);
+			if (deviceWith != -2) {
+				return deviceWith;
+			}
+		}
+		return properties.getInt(filter + ".folder.thumb.height", 100);
+	}
+	
+	public boolean isFolderThumbShuffle(Device device, String filter, String area) {
+		if (device != null) {
+			String key = getKey(device, filter, area, "folder.thumb.shuffle");
+			return properties.getBoolean(key, properties.getBoolean(filter + "folder.thumb.shuffle", true));
+		}
+		return properties.getBoolean(filter + "folder.thumb.shuffle", true);
+	}
 
 	public int getMaxWidth(Device device, String filter, String area) {
 		String key = getKey(device, filter, area, "max-width");

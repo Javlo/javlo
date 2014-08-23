@@ -30,10 +30,13 @@ public class PaginationContext {
 
 	private String key = null;
 
-	public static PaginationContext getInstance(HttpServletRequest request, String key) throws ServiceException {
+	public static PaginationContext getInstance(HttpServletRequest request, String key) throws ServiceException {		
 		PaginationContext service = (PaginationContext) request.getAttribute(key);
 		try {
-			service.page = Integer.parseInt(request.getParameter("page"));
+			String newPage = request.getParameter("page");
+			if (newPage != null && key.equals(request.getParameter("key"))) {
+				service.page = Integer.parseInt(newPage);
+			}
 		} catch (Throwable t) {
 			logger.fine(t.getMessage());
 		}
@@ -62,37 +65,15 @@ public class PaginationContext {
 			service.setPage(1);
 		}
 		try {
-			service.page = Integer.parseInt(request.getParameter("page"));
+			String newPage = request.getParameter("page");
+			if (newPage != null && key.equals(request.getParameter("key"))) {
+				service.page = Integer.parseInt(newPage);
+			}
 		} catch (Throwable t) {
 			logger.fine(t.getMessage());
 		}
 		return service;
 	}
-
-	/*public static PaginationContext getInstance(HttpServletRequest request, int inCountElement, int elemByPage) throws ServiceException {
-		int maxPage = inCountElement / elemByPage;
-		if (inCountElement % elemByPage != 0) {
-			maxPage = maxPage + 1;
-		}
-		PaginationContext service = (PaginationContext) request.getAttribute(KEY);
-		if (service == null) {
-			service = new PaginationContext();
-			request.setAttribute(KEY, service);
-		}
-		service.maxPage = maxPage+2;
-		service.pageSize = elemByPage;
-
-		if (service.countElement != inCountElement) {
-			service.countElement = inCountElement;
-			service.setPage(1);
-		}
-		try {
-			service.page = Integer.parseInt(request.getParameter("page"));
-		} catch (Throwable t) {
-			logger.fine(t.getMessage());
-		}
-		return service;
-	}*/
 
 	public String transformURLToPage(String url, int page) {
 		char sep = '?';

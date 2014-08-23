@@ -83,12 +83,6 @@ function onreadyPreview() {
 	jQuery( window ).mousemove(function( event ) {
 		mouseX = event.pageX;
 		mouseY = event.pageY;
-		
-		/*if (!mouseInLayer()) {
-			console.log("RESET");
-			layerOver(null,false);
-		}*/
-		
 	});
 	
 	jQuery("#preview_command .pc_command .slide").click(function() {

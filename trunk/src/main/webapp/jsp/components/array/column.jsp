@@ -9,17 +9,14 @@
         org.javlo.component.array.Array,
         org.javlo.MenuElement,
         org.javlo.Content"
-%><%
-try {
-ArrayComponent arrayComponent = (ArrayComponent)AbstractVisualComponent.getRequestComponent ( request );
+%><%try {
+ArrayFileComponent arrayComponent = (ArrayFileComponent)AbstractVisualComponent.getRequestComponent ( request );
 Array array = arrayComponent.getArray();
 
 ContentContext ctx = ContentContext.getContentContext ( request, response );
 Content content = Content.createContent(request);
 
-String[][] TAParam = { { "rows", "2" }, { "cols", "100" } };
-
-%>
+String[][] TAParam = { { "rows", "2" }, { "cols", "100" } };%>
 <div class="edit">
 <table class="edit-array">
 <%
