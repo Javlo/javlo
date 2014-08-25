@@ -9,8 +9,8 @@ import java.util.logging.Logger;
 
 import org.apache.commons.lang3.tuple.Pair;
 import org.javlo.actions.IAction;
+import org.javlo.component.core.ComponentBean;
 import org.javlo.component.core.ComponentFactory;
-import org.javlo.component.core.IContentVisualComponent;
 import org.javlo.component.dynamic.DynamicComponent;
 import org.javlo.context.ContentContext;
 import org.javlo.context.EditContext;
@@ -20,6 +20,7 @@ import org.javlo.helper.URLHelper;
 import org.javlo.i18n.I18nAccess;
 import org.javlo.macro.core.IInteractiveMacro;
 import org.javlo.message.MessageRepository;
+import org.javlo.module.content.Edit.ComponentWrapper;
 import org.javlo.module.macro.MacroModuleContext;
 import org.javlo.navigation.MenuElement;
 import org.javlo.service.ContentService;
@@ -59,13 +60,14 @@ public class CreateBusinessComponent implements IInteractiveMacro, IAction {
 	public String prepare(ContentContext ctx) {
 		try {
 			List<Pair<String, String>> dynamicComponents = new LinkedList<Pair<String, String>>();
-			List<IContentVisualComponent> components = ComponentFactory.getComponents(ctx, ctx.getCurrentPage());
-			for (IContentVisualComponent comp : components) {
-				if (comp instanceof DynamicComponent) {
-					DynamicComponent dynComp = ((DynamicComponent) comp);
-					//TODO if (dynComp.getFieldsNames().contains("name") && dynComp.getDataPath() != null) {
-					dynamicComponents.add(Pair.of(dynComp.getType(), dynComp.getType() /*TODO dynComp.getLabel(ctx)*/));
-					//}
+			List<ComponentWrapper> components = ComponentFactory.getComponentForDisplay(ctx);
+			for (ComponentWrapper wrapper : components) {
+				if (wrapper.isDynamicComponent()) {
+					DynamicComponent dynComp = ((DynamicComponent) wrapper.getComponent());
+					dynComp.init(dynComp.getComponentBean(), ctx);
+					if (dynComp.getFieldsNames().contains("name") && dynComp.getDataPath() != null) {
+						dynamicComponents.add(Pair.of(wrapper.getType(), wrapper.getLabel()));
+					}
 				}
 			}
 			Collections.sort(dynamicComponents, new Comparator<Pair<String, String>>() {
@@ -91,9 +93,10 @@ public class CreateBusinessComponent implements IInteractiveMacro, IAction {
 			DynamicComponent compDef = (DynamicComponent)ComponentFactory.getComponentWithType(ctx, componentType);
 			MenuElement parentPage = contentService.getNavigation(ctx).searchChild(ctx, compDef.getDataPath());
 			MenuElement childPage = getChildPage(ctx, parentPage, name);
-			String compId = contentService.createContent(ctx, childPage, ctx.getArea(), "0", componentType, null, false);
+			String compId = contentService.createContent(ctx, childPage, ComponentBean.DEFAULT_AREA, "0", componentType, "", true);
 			DynamicComponent dynComp = (DynamicComponent) contentService.getComponent(ctx, compId);
 			dynComp.getField(ctx, "name").setValue(name);
+			dynComp.storeProperties();
 			PersistenceService.getInstance(ctx.getGlobalContext()).setAskStore(true);
 			MacroModuleContext.getInstance(ctx.getRequest()).setActiveMacro(null);
 
