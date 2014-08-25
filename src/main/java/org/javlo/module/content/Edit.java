@@ -25,6 +25,7 @@ import org.javlo.component.core.ContentElementList;
 import org.javlo.component.core.IContentComponentsList;
 import org.javlo.component.core.IContentVisualComponent;
 import org.javlo.component.core.IReverseLinkComponent;
+import org.javlo.component.dynamic.DynamicComponent;
 import org.javlo.component.links.PageMirrorComponent;
 import org.javlo.component.title.Title;
 import org.javlo.config.StaticConfig;
@@ -215,55 +216,32 @@ public class Edit extends AbstractModuleAction {
 	}
 
 	public static class ComponentWrapper {
-		private String type;
-		private String label;
-		private String value;
-		private int complexityLevel;
-		private boolean metaTitle;
+		private ContentContext ctx;
+		private IContentVisualComponent comp;
 		private boolean selected;
 		private String hexColor;
-		private boolean dynamicComponent = false;
 
-		public ComponentWrapper(String type, String label, String value, String hexColor, int complexityLevel, boolean metaTitle, boolean dynamicComponent) {
-			this.type = type;
-			this.label = label;
-			this.value = value;
-			this.complexityLevel = complexityLevel;
-			this.metaTitle = metaTitle;
-			this.hexColor = hexColor;
-			this.dynamicComponent = dynamicComponent;
+		public ComponentWrapper(ContentContext ctx, IContentVisualComponent comp) {
+			this.ctx = ctx;
+			this.comp = comp;
+			hexColor = comp.getHexColor();
 		}
 
 		public String getType() {
-			return type;
-		}
-
-		public void setType(String type) {
-			this.type = type;
+			return comp.getType();
 		}
 
 		public String getLabel() {
-			return label;
+			return comp.getComponentLabel(ctx, ctx.getGlobalContext().getEditLanguage(ctx.getRequest().getSession()));
 		}
 
-		public void setLabel(String label) {
-			this.label = label;
-		}
 
 		public String getValue() {
-			return value;
-		}
-
-		public void setValue(String value) {
-			this.value = value;
+			return comp.getValue(ctx);
 		}
 
 		public boolean isMetaTitle() {
-			return metaTitle;
-		}
-
-		public void setMetaTitle(boolean metaTitle) {
-			this.metaTitle = metaTitle;
+			return comp.isMetaTitle();
 		}
 
 		public boolean isSelected() {
@@ -275,28 +253,25 @@ public class Edit extends AbstractModuleAction {
 		}
 
 		public int getComplexityLevel() {
-			return complexityLevel;
+			return comp.getComplexityLevel(ctx);
 		}
 
-		public void setComplexityLevel(int complexityLevel) {
-			this.complexityLevel = complexityLevel;
+		public boolean isDynamicComponent() {
+			return comp instanceof DynamicComponent;
 		}
-
+		
 		public String getHexColor() {
 			return hexColor;
 		}
 
 		public void setHexColor(String hexColor) {
-			this.hexColor = hexColor;
+			this.hexColor = hexColor;			
+		}
+		
+		public IContentVisualComponent getComponent() {
+			return comp;
 		}
 
-		public boolean isDynamicComponent() {
-			return dynamicComponent;
-		}
-
-		public void setDynamicComponent(boolean dynamicComponent) {
-			this.dynamicComponent = dynamicComponent;
-		}
 	}
 
 	@Override
