@@ -511,7 +511,7 @@ public class ComponentFactory {
 																								// empty
 					IContentVisualComponent comp = components.get(i);
 					if (comp.isMetaTitle() || ctx.getGlobalContext().getComponents().contains(comp.getClass().getName()) || comp.getClass().equals(DynamicComponent.class)) {
-						ComponentWrapper compWrapper = new ComponentWrapper(comp.getType(), comp.getComponentLabel(ctx, ctx.getGlobalContext().getEditLanguage(ctx.getRequest().getSession())), comp.getValue(ctx), comp.getHexColor(), comp.getComplexityLevel(ctx), comp.isMetaTitle());
+						ComponentWrapper compWrapper = new ComponentWrapper(comp.getType(), comp.getComponentLabel(ctx, ctx.getGlobalContext().getEditLanguage(ctx.getRequest().getSession())), comp.getValue(ctx), comp.getHexColor(), comp.getComplexityLevel(ctx), comp.isMetaTitle(), comp instanceof DynamicComponent);
 						if (components.get(i).isMetaTitle()) {
 							titleWrapper = compWrapper;
 						}
@@ -540,7 +540,7 @@ public class ComponentFactory {
 		if (!components.get(components.size() - 1).isMetaTitle()) {
 			IContentVisualComponent comp = components.get(components.size() - 1);
 			if (comp.isMetaTitle() || ctx.getGlobalContext().getComponents().contains(comp.getClass().getName()) || comp.getClass().equals(DynamicComponent.class)) {
-				ComponentWrapper compWrapper = new ComponentWrapper(comp.getType(), comp.getComponentLabel(ctx, ctx.getGlobalContext().getEditLanguage(ctx.getRequest().getSession())), comp.getValue(ctx), comp.getHexColor(), comp.getComplexityLevel(null), comp.isMetaTitle());
+				ComponentWrapper compWrapper = new ComponentWrapper(comp.getType(), comp.getComponentLabel(ctx, ctx.getGlobalContext().getEditLanguage(ctx.getRequest().getSession())), comp.getValue(ctx), comp.getHexColor(), comp.getComplexityLevel(null), comp.isMetaTitle(), comp instanceof DynamicComponent);
 				comps.add(compWrapper);
 				if (comp.getType().equals(editCtx.getActiveType())) {
 					compWrapper.setSelected(true);

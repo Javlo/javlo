@@ -222,14 +222,16 @@ public class Edit extends AbstractModuleAction {
 		private boolean metaTitle;
 		private boolean selected;
 		private String hexColor;
+		private boolean dynamicComponent = false;
 
-		public ComponentWrapper(String type, String label, String value, String hexColor, int complexityLevel, boolean metaTitle) {
+		public ComponentWrapper(String type, String label, String value, String hexColor, int complexityLevel, boolean metaTitle, boolean dynamicComponent) {
 			this.type = type;
 			this.label = label;
 			this.value = value;
 			this.complexityLevel = complexityLevel;
 			this.metaTitle = metaTitle;
 			this.hexColor = hexColor;
+			this.dynamicComponent = dynamicComponent;
 		}
 
 		public String getType() {
@@ -286,6 +288,14 @@ public class Edit extends AbstractModuleAction {
 
 		public void setHexColor(String hexColor) {
 			this.hexColor = hexColor;
+		}
+
+		public boolean isDynamicComponent() {
+			return dynamicComponent;
+		}
+
+		public void setDynamicComponent(boolean dynamicComponent) {
+			this.dynamicComponent = dynamicComponent;
 		}
 	}
 
