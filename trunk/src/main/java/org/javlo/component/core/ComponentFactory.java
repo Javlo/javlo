@@ -497,21 +497,10 @@ public class ComponentFactory {
 			for (int i = 0; i < components.size() - 1; i++) { // remove title
 																// without
 																// component
-				if (!components.get(i).isMetaTitle() || !components.get(i + 1).isMetaTitle()) { // if
-																								// next
-																								// component
-																								// is
-																								// title
-																								// too
-																								// so
-																								// the
-																								// component
-																								// group
-																								// is
-																								// empty
+				if (!components.get(i).isMetaTitle() || !components.get(i + 1).isMetaTitle()) { 
 					IContentVisualComponent comp = components.get(i);
 					if (comp.isMetaTitle() || ctx.getGlobalContext().getComponents().contains(comp.getClass().getName()) || comp.getClass().equals(DynamicComponent.class)) {
-						ComponentWrapper compWrapper = new ComponentWrapper(comp.getType(), comp.getComponentLabel(ctx, ctx.getGlobalContext().getEditLanguage(ctx.getRequest().getSession())), comp.getValue(ctx), comp.getHexColor(), comp.getComplexityLevel(ctx), comp.isMetaTitle(), comp instanceof DynamicComponent);
+						ComponentWrapper compWrapper = new ComponentWrapper(ctx, comp);
 						if (components.get(i).isMetaTitle()) {
 							titleWrapper = compWrapper;
 						}
@@ -540,7 +529,7 @@ public class ComponentFactory {
 		if (!components.get(components.size() - 1).isMetaTitle()) {
 			IContentVisualComponent comp = components.get(components.size() - 1);
 			if (comp.isMetaTitle() || ctx.getGlobalContext().getComponents().contains(comp.getClass().getName()) || comp.getClass().equals(DynamicComponent.class)) {
-				ComponentWrapper compWrapper = new ComponentWrapper(comp.getType(), comp.getComponentLabel(ctx, ctx.getGlobalContext().getEditLanguage(ctx.getRequest().getSession())), comp.getValue(ctx), comp.getHexColor(), comp.getComplexityLevel(null), comp.isMetaTitle(), comp instanceof DynamicComponent);
+				ComponentWrapper compWrapper = new ComponentWrapper(ctx, comp);
 				comps.add(compWrapper);
 				if (comp.getType().equals(editCtx.getActiveType())) {
 					compWrapper.setSelected(true);
