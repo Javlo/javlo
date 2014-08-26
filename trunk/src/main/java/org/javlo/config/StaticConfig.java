@@ -1273,6 +1273,14 @@ public class StaticConfig extends Observable {
 		return properties.getString("404-name", "404");
 	}
 	
+	/**
+	 * if page not found, search a page with the same name and redirect to it.
+	 * @return
+	 */
+	public boolean isRedirectWidthName() {
+		return properties.getBoolean("url.redirect-width-name", true);
+	}
+	
 	public String getEditTemplateFolder() {
 		return properties.getString("edit-template.folder", "/jsp/edit/template/mandy-lane-premium");
 	}

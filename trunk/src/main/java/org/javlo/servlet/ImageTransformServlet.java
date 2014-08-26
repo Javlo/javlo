@@ -810,12 +810,13 @@ public class ImageTransformServlet extends HttpServlet {
 					return;
 				}
 
+				/*
 				String deviceCode = "no-device";
 				if (ctx.getDevice() != null) {
 					deviceCode = ctx.getDevice().getCode();
 				}
 
-				FileCache fc = FileCache.getInstance(getServletContext());
+				/*FileCache fc = FileCache.getInstance(getServletContext());
 				String key = ImageHelper.createSpecialDirectory(ctx, globalContext.getContextKey(), filter, area, deviceCode, template, comp);
 				if (fc.getFileName(key, imageName + '.' + baseExtension).exists()) {
 					InputStream in = null;
@@ -827,9 +828,9 @@ public class ImageTransformServlet extends HttpServlet {
 					}
 					return;
 
-				}
+				}*/
 
-				InputStream fileStream = loadFileFromDisk(ctx, imageName, filter, area, ctx.getDevice(), template, comp, imageFile.lastModified());
+				InputStream fileStream = loadFileFromDisk(ctx, imageName, filter, area, ctx.getDevice(), template, comp, imageFile.lastModified());				
 				if ((fileStream != null)) {
 					try {
 						ResourceHelper.writeStreamToStream(fileStream, out);

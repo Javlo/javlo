@@ -1,14 +1,7 @@
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c"
 %>@font-face {
-    font-family: cursive;
-    src: url("fonts/cursive.ttf");
-    -fs-pdf-font-embed: embed;
-    -fs-pdf-font-encoding: Identity-H;
-}
-
-@font-face {
-    font-family: acapella;
-    src: url("fonts/cursive.ttf");
+    font-family: Myriad Pro Regular;
+    src: url("fonts/myriad-web-pro.ttf");
     -fs-pdf-font-embed: embed;
     -fs-pdf-font-encoding: Identity-H;
 }

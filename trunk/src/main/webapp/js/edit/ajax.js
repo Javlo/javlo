@@ -164,7 +164,16 @@ function initDropFile() {
 	jQuery(".drop-files").live('dragenter', function(e) {
 		doNothing(e);
 	});
-	jQuery(".drop-files").live('drop', function(e) {		
+	/*jQuery("._area").live('dragover', function(e) {	
+		doNothing(e);
+	});
+	jQuery("._area").live('drop', function(e) {
+		doNothing(e);
+		console.log("drop area");
+		return false;
+	});*/
+	jQuery(".drop-files").live('drop', function(e) {
+		alert("drop html");
 		doNothing(e);
 		jQuery(this).removeClass("dragover");	
 		var url  = jQuery(this).data("url");		

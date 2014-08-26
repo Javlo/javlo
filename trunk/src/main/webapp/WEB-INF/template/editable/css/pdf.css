@@ -56,6 +56,25 @@ table td, table th {
 	vertical-align: top;
 }
 
+table.table {
+	width: 100%;
+	border-collapse: collapse; 
+}
+
+table.table th {
+	background-color: #dddddd;
+	text-align: center;
+}
+
+table.table td, table.table th {
+	padding: 3px;
+	border-width:1px;
+ 	border-style:solid; 
+	border-color:#bbbbbb; 
+	vertical-align: top;
+}
+
+
 h1 {
 	font-size: 15px;
 }
