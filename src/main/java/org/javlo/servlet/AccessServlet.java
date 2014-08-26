@@ -785,6 +785,18 @@ public class AccessServlet extends HttpServlet implements IVersion {
 
 							/** check content **/
 							if (!ctx.isContentFound()) {
+								
+								if (staticConfig.isRedirectWidthName()) {
+									String pageName = StringHelper.getFileNameWithoutExtension(StringHelper.getFileNameFromPath(request.getRequestURI()));
+									MenuElement newPage = content.getNavigation(ctx).searchChildFromName(pageName);
+									if (newPage != null) {
+										String forwardURL = URLHelper.createURL(ctx, newPage);
+										NetHelper.sendRedirectPermanently(response, forwardURL);
+										logger.info("redirect permanently : "+pageName+" to "+forwardURL);
+										return;
+									} 
+								}
+								
 								ctx.getResponse().setStatus(HttpServletResponse.SC_NOT_FOUND, "page not found : " + ctx.getPath());
 								if (ctx.isAsViewMode()) {
 									MenuElement page404 = content.getNavigation(ctx).searchChildFromName(staticConfig.get404PageName());

@@ -293,5 +293,9 @@ change log
  * Dynamic Component can be title and description.
  
  * Table component
- 
+   
 * 2.0.3.6 11/08/2014
+
+ * forward bad url to same page name url.
+ 
+ * create DynamicComponent macro

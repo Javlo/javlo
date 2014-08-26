@@ -96,7 +96,9 @@ public class ChildrenLink extends AbstractVisualComponent implements IImageTitle
 		public boolean isCurrentPageRealContent() throws Exception {
 			return currentPage.isRealContent(ctx);
 		}
-		
+		public MenuElement getPage() {
+			return child;
+		}		
 		public boolean isVisible() {
 			try {
 				return currentPage.isVisible(ctx);

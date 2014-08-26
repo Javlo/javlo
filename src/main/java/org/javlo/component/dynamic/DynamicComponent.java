@@ -237,7 +237,7 @@ public class DynamicComponent extends AbstractVisualComponent implements IStatic
 		out.close();
 		return writer.toString();
 	}
-
+	
 	@Override
 	public java.util.List<String> getFieldsNames() {
 		java.util.List<String> outFields = new LinkedList<String>();

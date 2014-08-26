@@ -76,6 +76,8 @@ var floatZone = function(source, zone1, zone2, image){
 
 function onreadyPreview() {
 	
+	
+	
 	closableFieldSet(jQuery(".closable"));
 	
 	specialScroll();

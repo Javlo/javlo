@@ -1326,3 +1326,8 @@ table.component-table td {
 #preview_command .track.dragging .handle {
     width: 10px;
 }
+
+.edit-preview .editable-component.hidden {
+	display: block  !important;
+	visibility: visible;
+}
