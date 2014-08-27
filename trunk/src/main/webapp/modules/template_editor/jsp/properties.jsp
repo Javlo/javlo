@@ -20,7 +20,7 @@
 		</c:if>
 		<c:set var="part" value="${templateEditorContext.currentTemplate.style}" scope="request" />
 		<c:set var="exclude" value="${templateEditorContext.currentTemplate.templateExcludeProperties}" scope="request" />
-		<div id="template"><jsp:include page="part.jsp?title=template&webaction=updateStyle${delete}&upload=true" /></div>	
+		<div id="template"><jsp:include page="part.jsp?title=template&webaction=updateStyle${delete}&upload=true&parent=true" /></div>	
 		
 		<c:set var="delete" value="" />
 		<c:if test="${templateEditorContext.area.name != 'content'}">

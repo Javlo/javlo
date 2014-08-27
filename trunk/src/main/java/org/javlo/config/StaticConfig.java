@@ -46,6 +46,10 @@ import org.javlo.user.User;
 import org.javlo.ztatic.FileCache;
 
 public class StaticConfig extends Observable {
+	
+	public static String WEB_PLATFORM = "web";
+	public static String MAILING_PLATFORM = "mailing";
+	private static final List<String> PLATFORMS = new LinkedList<String>(Arrays.asList(new String[] {WEB_PLATFORM, MAILING_PLATFORM}));
 
 	private static final String EHCACHE_FILE = "/WEB-INF/config/ehcache.xml";
 
@@ -1257,18 +1261,14 @@ public class StaticConfig extends Observable {
 		return properties.getBoolean("fix-preview", true);
 	}
 	
+	public List<String> getPlatformTypes() {
+		return PLATFORMS;
+	}
+	
 	public String getPlatformType() {
-		return properties.getString("platform.type", "web");
+		return properties.getString("platform.type", WEB_PLATFORM);
 	}
 	
-	public boolean isMailingPlatform() {
-		return getPlatformType().equals("mailing");			
-	}
-	
-	public boolean isWebPlatform() {
-		return getPlatformType().equals("web");			
-	}
-
 	public String get404PageName() {
 		return properties.getString("404-name", "404");
 	}

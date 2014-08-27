@@ -1150,6 +1150,23 @@ public class GlobalContext implements Serializable, IPrintInfo {
 		}
 		return firstPassWord;
 	}
+	
+	public String getPlatformType() {
+		return properties.getString("platform.type", staticConfig.getPlatformType());
+	}
+	
+	public void setPlatformType(String type) {
+		properties.setProperty("platform.type", type);
+		save();
+	}
+	
+	public boolean isMailingPlatform() {
+		return getPlatformType().equals(StaticConfig.MAILING_PLATFORM);			
+	}
+	
+	public boolean isWebPlatform() {
+		return getPlatformType().equals(StaticConfig.WEB_PLATFORM);			
+	}
 
 	/**
 	 * return the data context folder name.

@@ -7,7 +7,9 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.StringWriter;
 import java.nio.charset.Charset;
+import java.util.HashMap;
 import java.util.Iterator;
+import java.util.Map;
 
 import org.apache.poi.hssf.usermodel.HSSFCell;
 import org.apache.poi.hssf.usermodel.HSSFSheet;
@@ -17,14 +19,18 @@ import org.apache.poi.ss.util.CellRangeAddress;
 import org.apache.poi.xssf.usermodel.XSSFCell;
 import org.apache.poi.xssf.usermodel.XSSFSheet;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
+import org.javlo.component.core.IContentVisualComponent;
+import org.javlo.component.core.IReverseLinkComponent;
 import org.javlo.config.StaticConfig;
 import org.javlo.context.ContentContext;
 import org.javlo.context.GlobalContext;
+import org.javlo.helper.ArrayHelper;
 import org.javlo.helper.ResourceHelper;
 import org.javlo.helper.StringHelper;
 import org.javlo.helper.URLHelper;
 import org.javlo.helper.XHTMLHelper;
 import org.javlo.i18n.I18nAccess;
+import org.javlo.message.GenericMessage;
 import org.javlo.service.ReverseLinkService;
 import org.jopendocument.dom.spreadsheet.MutableCell;
 import org.jopendocument.dom.spreadsheet.Sheet;
@@ -426,11 +432,11 @@ public class ArrayFileComponent extends GenericFile {
 		}
 	}
 	
-	protected static Cell[][] getDEBUGXLSXArray(ContentContext ctx, File xslxFile) throws Exception {
+	protected Cell[][] getXLSArray(ContentContext ctx, File xslxFile) throws Exception {
 		InputStream in = new FileInputStream(xslxFile);
 		try {
-			XSSFWorkbook workbook = new XSSFWorkbook(in);
-			XSSFSheet sheet = workbook.getSheetAt(0);
+			HSSFWorkbook workbook = new HSSFWorkbook(in);
+			HSSFSheet sheet = workbook.getSheetAt(0);
 			Iterator<Row> rowIterator = sheet.iterator();
 			int w = 0;
 			int h = 0;
@@ -441,13 +447,14 @@ public class ArrayFileComponent extends GenericFile {
 					w = row.getLastCellNum();
 				}				
 			}
+			
 			Cell[][] outArray = new Cell[h][];
 			for (int y = 0; y < h; y++) {
 				outArray[y] = new Cell[w];
 				for (int x = 0; x < w; x++) {
-					outArray[x][y] = new Cell(null, outArray, x, y);
+					outArray[y][x] = new Cell(null, outArray, x, y);
 					if (sheet.getRow(x) != null && sheet.getRow(y).getCell(x) != null) {						
-						outArray[y][x].setValue(readExcelCell(ctx, sheet.getRow(y).getCell(x)));
+						outArray[y][x].setValue(renderCell(ctx, readExcelCell(ctx, sheet.getRow(y).getCell(x))));
 					}
 				}
 			}
@@ -467,62 +474,13 @@ public class ArrayFileComponent extends GenericFile {
 					}
 				}
 			}
-
 			
 			return outArray;
 		} finally {
 			ResourceHelper.closeResource(in);
 		}
-	}
-
-	protected Cell[][] getXLSArray(ContentContext ctx, File xslxFile) throws Exception {
-		InputStream in = new FileInputStream(xslxFile);
-		try {
-			HSSFWorkbook workbook = new HSSFWorkbook(in);
-			HSSFSheet sheet = workbook.getSheetAt(0);
-			Iterator<Row> rowIterator = sheet.iterator();
-			int w = 0;
-			int h = 0;
-			while (rowIterator.hasNext()) {
-				h++;
-				Row row = rowIterator.next();
-				if (row.getLastCellNum() > w) {
-					w = row.getLastCellNum();
-				}
-				;
-			}
-			Cell[][] outArray = new Cell[h][];
-			for (int x = 0; x < h; x++) {
-				outArray[x] = new Cell[w];
-				for (int y = 0; y < w; y++) {
-					if (sheet.getRow(x) != null && sheet.getRow(x).getCell(y) != null) {
-						outArray[x][y] = new Cell(renderCell(readExcelCell(ctx, sheet.getRow(x).getCell(y))), outArray, x, y);						
-					}
-				}
-			}
-			return outArray;
-		} finally {
-			ResourceHelper.closeResource(in);
-		}
 
 	}
-
-	/*protected Cell[][] getCSVArray(ContentContext ctx, File csvFile) throws IOException {
-		if (csvFile.exists() && !csvFile.isDirectory()) {
-			CSVFactory csvFactory;
-			InputStream in = new FileInputStream(csvFile);
-			try {
-				csvFactory = new CSVFactory(in, null, getCurrentEncoding(ctx));
-				return csvFactory.getArray();
-			} finally {
-				ResourceHelper.closeResource(in);
-			}
-
-		} else {
-			logger.warning("file not found : " + csvFile);
-			return null;
-		}
-	}*/
 
 	@Override
 	public String getViewXHTMLCode(ContentContext ctx) throws Exception {
@@ -634,21 +592,77 @@ public class ArrayFileComponent extends GenericFile {
 	public boolean isContentCachable(ContentContext ctx) {
 		return true;
 	}
+	
+	@Override
+	protected String getEditXHTMLCode(ContentContext ctx) throws Exception {
 
-	public static void main(String[] args) {
-		File xslxFile = new File("c:/trans/simple_merge.xlsx");
-		InputStream in;
-		try {
-			Cell[][] cells = getDEBUGXLSXArray(null, xslxFile);
-			for (int y = 0; y < cells.length; y++) {			
-				System.out.println("");
-				for (int x = 0; x < cells[y].length; x++) {
-					System.out.print(cells[y][x]+ " * ");
-				}
-			}			
-		} catch (Exception e) {
-			e.printStackTrace();
+		I18nAccess i18nAccess = I18nAccess.getInstance(ctx.getRequest());
+
+		StringBuffer finalCode = new StringBuffer();
+		finalCode.append(getSpecialInputTag());
+
+		
+		finalCode.append("<div class=\"line\"><label for=\"" + getLabelXHTMLInputName() + "\">" + i18nAccess.getText("global.summary") + " : </label>");		
+		String[][] params = { { "rows", "1" } };
+		finalCode.append(XHTMLHelper.getTextArea(getLabelXHTMLInputName(), getLabel(), params));
+		finalCode.append("</div>");
+
+		if (canUpload(ctx)) {
+			finalCode.append("<div class=\"line\"><label for=\"new_dir_" + getId() + "\">");
+			finalCode.append(getNewDirLabelTitle(ctx));
+			finalCode.append(" : </label><input id=\"new_dir_" + getId() + "\" name=\"" + getNewDirInputName() + "\" type=\"text\"/></div>");
 		}
 
+		if ((getDirList(getFileDirectory(ctx)) != null) && (getDirList(getFileDirectory(ctx)).length > 0)) {
+			finalCode.append("<div class=\"line\"><label for=\"" + getDirInputName() + "\">");
+			finalCode.append(getDirLabelTitle(ctx));
+			finalCode.append(" : </label>");
+			finalCode.append(XHTMLHelper.getInputOneSelect(getDirInputName(), ArrayHelper.addFirstElem(getDirList(getFileDirectory(ctx)), ""), getDirSelected(), getJSOnChange(ctx), true));
+			finalCode.append("</div>");
+		}
+
+		if (canUpload(ctx)) {
+			finalCode.append("<div class=\"line\">");
+			String uploadId = "update-"+getId();
+			finalCode.append("<label for=\""+uploadId+"\">"+getImageUploadTitle(ctx)+" :</label>");
+			finalCode.append("<input id=\""+uploadId+"\" name=\"" + getFileXHTMLInputName() + "\" type=\"file\"/>");
+			finalCode.append("</div");
+		}
+
+		String[] fileList = getFileList(getFileDirectory(ctx), getFileFilter());
+		if (fileList.length > 0) {
+
+			finalCode.append(getImageChangeTitle(ctx));
+
+			finalCode.append("<div class=\"line\">");
+			String[] fileListBlanck = new String[fileList.length + 1];
+			fileListBlanck[0] = "";
+			System.arraycopy(fileList, 0, fileListBlanck, 1, fileList.length);
+			
+			finalCode.append("</div><div class=\"line\"><label>&nbsp</label>");
+			finalCode.append(XHTMLHelper.getInputOneSelect(getSelectXHTMLInputName(), fileListBlanck, getFileName(), getJSOnChange(ctx), true));
+			finalCode.append("</div>");
+
+			if (ctx.getRenderMode() == ContentContext.EDIT_MODE && !ctx.isEditPreview()) {
+				if (isLinkToStatic()) {
+
+					Map<String, String> filesParams = new HashMap<String, String>();
+					filesParams.put("path", URLHelper.mergePath("/", getRelativeFileDirectory(ctx), getDirSelected()));
+					String staticURL = URLHelper.createModuleURL(ctx, ctx.getPath(), "file", filesParams);
+
+					finalCode.append("&nbsp;<a class=\"" + IContentVisualComponent.EDIT_ACTION_CSS_CLASS + "\" href=\"" + staticURL + "\" >");
+					finalCode.append(i18nAccess.getText("content.goto-static"));
+					finalCode.append("</a>");
+				}
+			}
+		}
+
+		// validation
+		if (!isFileNameValid(getFileName())) {
+			setMessage(new GenericMessage(i18nAccess.getText("component.error.file"), GenericMessage.ERROR));
+		}
+
+		return finalCode.toString();
 	}
+
 }

@@ -199,7 +199,10 @@ public class GlobalImage extends Image implements IImageFilter {
 			ctx.getRequest().setAttribute("label", getTitle());
 		}
 		ctx.getRequest().setAttribute("filter", getFilter(ctx));
-		ctx.getRequest().setAttribute("imageWidth", getWidth(ctx));
+		int width = getWidth(ctx);
+		if (width>=0) {
+			ctx.getRequest().setAttribute("imageWidth", width);
+		}
 	}
 
 	@Override
@@ -220,7 +223,7 @@ public class GlobalImage extends Image implements IImageFilter {
 			finalCode.append("</div>");
 		}
 
-		if (!isMeta() && !ctx.getGlobalContext().getStaticConfig().isMailingPlatform()) {
+		if (!isMeta() && !ctx.getGlobalContext().isMailingPlatform()) {
 			finalCode.append("<label for=\"" + getLabelXHTMLInputName() + "\">" + getImageLabelTitle(ctx) + " : </label>");
 			String[][] params = { { "rows", "3" }, { "cols", "40" } };
 			finalCode.append(XHTMLHelper.getTextArea(getLabelXHTMLInputName(), getLabel(), params));
@@ -1019,7 +1022,7 @@ public class GlobalImage extends Image implements IImageFilter {
 
 	@Override
 	public String getSpecialTagTitle(ContentContext ctx) {
-		if (ctx.getGlobalContext().getStaticConfig().isMailingPlatform()) {
+		if (ctx.getGlobalContext().isMailingPlatform()) {
 			return "text";
 		} else {
 			return null;

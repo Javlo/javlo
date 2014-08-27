@@ -326,8 +326,7 @@ public class ImageConfig {
 	public boolean isBackGroudColor(Device device, String filter, String area) {
 		String key = getKey(device, filter, area, "background-color");
 		String bg = properties.getString(key, null);
-		return  bg != null && !bg.equals("transparent");
-		
+		return  bg != null && !bg.equals("transparent");	
 	}
 
 	public Color getBGColor(Device device, String filter, String area) {

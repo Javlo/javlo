@@ -34,7 +34,7 @@ public class ImageEngine {
 
 	public final static Color NEUTRAL_COLOR = new Color(0.5f, 0.5f, 0.5f);
 	
-	public final static Color TRANSPARENT_COLOR = new Color(0,0,0,0);
+	public final static Color TRANSPARENT_COLOR = new Color(0,0,0,1);
 
 	// This class overrides the setCompressionQuality() method to workaround
 	// a problem in compressing JPEG images using the javax.imageio package.
@@ -513,6 +513,10 @@ public class ImageEngine {
 		float blue = color.getBlue() * alpha + bg.getBlue() * (1 - alpha);
 		return new Color(red / 255, green / 255, blue / 255);
 	}
+	
+	static Color replaceAlpha(int color, int bg) {
+		return replaceAlpha(new Color(color), new Color(bg));
+	}
 
 	static Color randomColor() {
 		return new Color((float) Math.random(), (float) Math.random(), (float) Math.random());
@@ -725,6 +729,12 @@ public class ImageEngine {
 
 		return workImage;
 	}
+	
+	private static final void fillImage(BufferedImage image, Color color) {
+		Graphics2D graphics = image.createGraphics();
+		graphics.setPaint (color );
+		graphics.fillRect ( 0, 0, image.getWidth(), image.getHeight() );
+	}
 
 	/**
 	 * resize a picture
@@ -782,11 +792,7 @@ public class ImageEngine {
 
 			BufferedImage outImage = new BufferedImage(newWidth, newHeight, BufferedImage.TYPE_4BYTE_ABGR);
 			if (bgColor != null) {
-				for (int x = 0; x < outImage.getWidth(); x++) {
-					for (int y = 0; y < outImage.getHeight(); y++) {
-						outImage.setRGB(x, y, bgColor.getRGB());
-					}
-				}
+				fillImage(outImage, bgColor);
 			}
 
 			for (int x = 0; x < source.getWidth(); x++) {
@@ -794,8 +800,8 @@ public class ImageEngine {
 					int color = source.getRGB(x, y);
 					outImage.setRGB(x + borderWidth, y + borderHeight, color);
 				}
-			}
-			source = outImage;
+			}			
+			source = outImage;			
 		} else if (focusZone) {
 			source = centerInterest(source, interestX, interestY, inWidth, inHeight);
 		}
@@ -806,7 +812,7 @@ public class ImageEngine {
 		int workHeight = inHeight - (mt + mb);
 
 		if (!cropResize) {
-			workImage = resize(source, workWith, workHeight);
+			workImage = resize(source, workWith, workHeight);			
 		} else {
 			if ((float) source.getWidth() / (float) source.getHeight() < (float) workWith / (float) workHeight) {
 				int height = (source.getHeight() * workWith) / source.getWidth();
@@ -839,17 +845,19 @@ public class ImageEngine {
 			for (int y = deltaY; y < inHeight + deltaY; y++) {
 				int targetY = y - deltaY;
 				int targetX = x - deltaX;
-				Color imageColor = bgColor;
-				if ((targetX >= ml) && (targetX < workWith + ml) && (targetY >= mt) && (targetY < workHeight + mt)) {
-					//imageColor = new Color(workImage.getRGB(x - ml, y - mt), true);
-					imageColor =  new Color(getColor(workImage, x+ml, y+mt, bgColor));
-				}
-				Color mixedColor = imageColor;
+				Integer imageColor = null;
 				if (bgColor != null) {
-					mixedColor = replaceAlpha(imageColor, bgColor);
+					imageColor = bgColor.getRGB();
+				}
+				if ((targetX >= ml) && (targetX < workWith + ml) && (targetY >= mt) && (targetY < workHeight + mt)) {					
+					imageColor =  getColor(workImage, x+ml, y+mt, bgColor);
+				}
+				Integer mixedColor = imageColor;
+				if (bgColor != null) {
+					mixedColor = replaceAlpha(new Color(imageColor), bgColor).getRGB();
 				}
 				if (mixedColor != null) {
-					outImage.setRGB(targetX, targetY, mixedColor.getRGB());
+					outImage.setRGB(targetX, targetY, mixedColor);
 				}
 			}
 		}
@@ -1119,18 +1127,12 @@ public class ImageEngine {
 	 * @param args
 	 */
 	public static void main(String[] args) {
-		File source = new File("C:/trans/sexy.jpg");
-		File target = new File("c:/trans/out.jpg");
-
-		try {
-			System.out.println("start...");
+		File source = new File("C:/trans/test.jpg");
+		File target = new File("c:/trans/out.png");
+		try {		
 			BufferedImage sourceImage = ImageIO.read(source);
-			System.out.println("RED   = "+closeColor(sourceImage, Color.RED));
-			System.out.println("GREEN = "+closeColor(sourceImage, Color.GREEN));
-			System.out.println("BLUE  = "+closeColor(sourceImage, Color.BLUE));
-			System.out.println("WHITE  = "+closeColor(sourceImage, Color.WHITE));
-			System.out.println("BLACK = "+closeColor(sourceImage, Color.BLACK));
-			
+			BufferedImage targetImage = ImageEngine.resize(sourceImage, 255, 255, false, true, 0, 0, 0, 0, null, 100, 100, false);
+			ImageIO.write(targetImage, "png", target);
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
