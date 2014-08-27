@@ -130,6 +130,11 @@
 	<input type="text" id="template-mode" name="template-mode" value="${currentContext.editTemplateMode}" />	
 </div>
 
+<div class="line">		
+	<label for="platform">${i18n.edit['admin.title.platform']}</label>
+	<input type="text" id="platform" name="platform" value="${currentContext.platformType}" />	
+</div>
+
 
 </div>
 

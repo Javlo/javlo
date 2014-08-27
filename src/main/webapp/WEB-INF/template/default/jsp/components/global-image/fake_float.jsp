@@ -12,7 +12,8 @@
 </c:if><c:if test="${not empty param.right}">
 <tr><td class="zone1" style="text-align: left;"><span class="container">${comp.firstText}</span></td>
 <td class="image-wrapper"><c:set var="style" value="" />
-<img src="${fn:replace(previewURL,'/full/', '/float/')}"${style} />
+<c:set var="imageWidthTag" value='width="${imageWidth}" ' />
+<img ${not empty imageWidth?imageWidthTag:''}src="${fn:replace(previewURL,'/full/', '/float/')}"${style} />
 </td></tr>
 </c:if>
 <tr><td class="zone2" colspan="2" style="text-align: left; ${areaStyle.textStyle}"><span class="container">${comp.secondText}</span></td></tr>
@@ -20,7 +21,8 @@
 <c:if test="${info.device.code == 'pdf'}">
 <tr><td>
 <div class="image-wrapper" style="float: ${not empty param.right?'right':'left'};">
-<img src="${fn:replace(previewURL,'/full/', '/float/')}" />
+<c:set var="imageWidthTag" value='width="${imageWidth}" ' />
+<img ${not empty imageWidth?imageWidthTag:''}src="${fn:replace(previewURL,'/full/', '/float/')}" />
 </div><div class="text">${label}</div>
 </td></tr>
 </c:if>

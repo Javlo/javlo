@@ -3,8 +3,16 @@
 	<fieldset>
 		<legend>${part.name}</legend>
 		<input type="hidden" name="webaction" value="${param.webaction}" />
+		<c:if test="${param.parent}">
+		<div class="line">
+			<label for="parent-${part.name}">parent :</label>
+			<select name="parent" id="parent-${part.name}">			
+			<c:forEach var="currentTemplate" items="${parentTemplates}"><option ${template.parent == currentTemplate?' selected="selected"':''}>${currentTemplate}</option></c:forEach>			
+			</select>
+		</div>		
+		</c:if>
 		<div class="cols">
-		<div class="one_half">		
+		<div class="one_half">				
 		<div class="line ${not empty exclude.width?' disabled':''}">
 			<label for="width-${part.name}">width <c:if test="${not empty part.finalWidth}"> (${part.finalWidth})</c:if></label>
 			<input type="text" id="width-${part.name}" name="width" value="${part.width}" />
@@ -84,9 +92,8 @@
 			<label for="font-${part.name}">font<c:if test="${not empty part.finalFont}"> (${part.finalFont})</c:if></label>
 			<select name="font" id="font-${part.name}">
 			<option></option>
-			<c:forEach var="font" items="${fonts}"><option style="font-family: ${font};"${part.font == font?' selected=selected':''}>${font}</option></c:forEach>			
-			</select>
-			
+			<c:forEach var="font" items="${fonts}"><option style="font-family: ${font};"${part.font == font?' selected="selected"':''}>${font}</option></c:forEach>			
+			</select>			
 		</div>
 		<c:if test="${not empty param.upload}">
 		<div class="line">

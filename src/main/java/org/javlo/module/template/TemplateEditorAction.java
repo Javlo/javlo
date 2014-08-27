@@ -37,7 +37,8 @@ public class TemplateEditorAction extends AbstractModuleAction {
 	public String prepare(ContentContext ctx, ModulesContext modulesContext) throws Exception {
 		String msg = super.prepare(ctx, modulesContext);
 
-		List<String> editableTemplate = new LinkedList<String>();
+		List<String> editableTemplateUnvalid = new LinkedList<String>();
+		List<String> editableTemplateValid = new LinkedList<String>();
 		TemplateEditorContext editorContext = TemplateEditorContext.getInstance(ctx.getRequest().getSession());
 		
 		if (editorContext.getCurrentTemplate() != null && (editorContext.getCurrentTemplate().isValid() || editorContext.getCurrentTemplate().isDeleted())) {
@@ -46,11 +47,13 @@ public class TemplateEditorAction extends AbstractModuleAction {
 
 		for (Template template : TemplateFactory.getAllTemplates(ctx.getRequest().getSession().getServletContext())) {
 			if (template.isEditable() && !template.isValid() && !template.isDeleted()) {
-				editableTemplate.add(template.getName());
+				editableTemplateUnvalid.add(template.getName());
 				// choose first template as current template.
 				if (editorContext.getCurrentTemplate() == null || editorContext.getCurrentTemplate().isValid()  || editorContext.getCurrentTemplate().isDeleted()) {
 					editorContext.setCurrentTemplate(template);
 				}
+			} else if (template.isEditable() && template.isValid()) {
+				editableTemplateValid.add(template.getName());
 			}
 		}
 
@@ -62,7 +65,8 @@ public class TemplateEditorAction extends AbstractModuleAction {
 			templateURL = URLHelper.addParam(templateURL, "_display-zone", "" + !editorCtx.isShowContent());
 			ctx.getRequest().setAttribute("templateURL", templateURL);
 		}
-		ctx.getRequest().setAttribute("templates", editableTemplate);
+		ctx.getRequest().setAttribute("templates", editableTemplateUnvalid);
+		ctx.getRequest().setAttribute("parentTemplates", editableTemplateValid);
 
 		if (editorCtx.getCurrentTemplate() != null) {
 			Template.TemplateBean templateBean = new Template.TemplateBean(ctx, editorCtx.getCurrentTemplate());
@@ -213,6 +217,9 @@ public class TemplateEditorAction extends AbstractModuleAction {
 				
 				style.setBackgroundColor(rs.getParameter("backgroundColor", ""));
 				editorContext.getCurrentTemplate().storeStyle(style);
+				if (rs.getParameter("parent", null) != null) {
+					editorContext.getCurrentTemplate().setParentName(rs.getParameter("parent", null));
+				}
 
 				FileItem file = rs.getFileItem("image");
 				if (file != null) {

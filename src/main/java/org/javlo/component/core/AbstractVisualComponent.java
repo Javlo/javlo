@@ -469,7 +469,7 @@ public abstract class AbstractVisualComponent implements IContentVisualComponent
 
 		String repeatHidden = "";
 		boolean showRepeat = true;
-		if (ctx.getGlobalContext().getStaticConfig().isMailingPlatform()) {
+		if (ctx.getGlobalContext().isMailingPlatform()) {
 			UserInterfaceContext uiContext = UserInterfaceContext.getInstance(ctx.getRequest().getSession(), ctx.getGlobalContext());
 			if (uiContext.isLight()) {
 				repeatHidden = " hidden";

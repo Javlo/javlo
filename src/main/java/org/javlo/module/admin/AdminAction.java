@@ -117,6 +117,7 @@ public class AdminAction extends AbstractModuleAction {
 		private String editTemplateMode = null;
 		private String DMZServerInter = "";
 		private String DMZServerIntra = "";
+		private String platformType = StaticConfig.WEB_PLATFORM;
 
 		private String shortDateFormat;
 		private String mediumDateFormat;
@@ -154,6 +155,7 @@ public class AdminAction extends AbstractModuleAction {
 			setDefaultTemplate(globalContext.getDefaultTemplate());
 			setExtendMenu(globalContext.isExtendMenu());
 			setPreviewMode(globalContext.isPreviewMode());
+			setPlatformType(globalContext.getPlatformType());
 
 			setShortDateFormat(globalContext.getShortDateFormat());
 			setMediumDateFormat(globalContext.getMediumDateFormat());
@@ -637,6 +639,14 @@ public class AdminAction extends AbstractModuleAction {
 			this.proxyPathPrefix = proxyPathPrefix;
 		}
 
+		public String getPlatformType() {
+			return platformType;
+		}
+
+		public void setPlatformType(String platform) {
+			this.platformType = platform;
+		}
+
 	}
 
 	public static class ComponentBean {
@@ -952,6 +962,7 @@ public class AdminAction extends AbstractModuleAction {
 					currentGlobalContext.setHomePage(requestService.getParameter("homepage", ""));
 					currentGlobalContext.setOnlyCreatorModify(StringHelper.isTrue(requestService.getParameter("only-creator-modify", null)));
 					currentGlobalContext.setCollaborativeMode((StringHelper.isTrue(requestService.getParameter("collaborative-mode", null))));
+					currentGlobalContext.setPlatformType(requestService.getParameter("platform", StaticConfig.MAILING_PLATFORM));
 					try {
 						currentGlobalContext.setURLFactory(requestService.getParameter("urlfactory", ""));
 					} catch (Exception e1) {

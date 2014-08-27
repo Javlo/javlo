@@ -139,7 +139,7 @@ if (!rightOnPage) {
 							<label for="pc_publish_button">${i18n.edit['command.publish']}</label>
 						</div>
 					</form></li></c:if>
-					<c:if test="${!userInterface.light || globalContext.staticConfig.mailingPlatform}">
+					<c:if test="${!userInterface.light || globalContext.mailingPlatform}">
 					<c:url var="url" value="<%=URLHelper.createURL(editCtx)%>" context="/">	
 						<c:param name="module" value="template"></c:param>
 						<c:param name="webaction" value="template.changeFromPreview"></c:param>

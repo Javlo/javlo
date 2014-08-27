@@ -43,7 +43,7 @@
 	<input type="text" id="new_name" name="new_name" value="${page.humanName}" />
 </div>
 
-<c:if test="${not globalContext.staticConfig.mailingPlatform}">
+<c:if test="${not globalContext.mailingPlatform}">
 <fieldset>
 <legend>${i18n.edit['item.time-range']} (${i18n.edit['item.time-published']}:${page.insideTimeRange})</legend>
 <div class="cols">
@@ -90,7 +90,7 @@
 	<label>${i18n.edit['item.path']}</label>
 	<span>${page.path}</span>
 </div>
-<c:if test="${not globalContext.staticConfig.mailingPlatform}">
+<c:if test="${not globalContext.mailingPlatform}">
 <div class="line">
 	<label>${i18n.edit['item.last-access']}</label>
 	<span>${page.lastAccess}</span>
@@ -106,7 +106,7 @@
 </div>
 <div class="one_half last">
 
-<c:if test="${not globalContext.staticConfig.mailingPlatform}">
+<c:if test="${not globalContext.mailingPlatform}">
 <div class="line">
 	<input type="checkbox" id="page_visible" name="view" ${page.info.visible?'checked="checked"':''} value="true" />
 	<label class="suffix" for="page_visible">${i18n.edit['item.visible']}</label>

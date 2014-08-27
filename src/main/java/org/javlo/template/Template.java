@@ -2536,7 +2536,7 @@ public class Template implements Comparable<Template> {
 		if (getParent() != null && getParent().isEditable()) {
 			return true;
 		} else {
-			return getRows().size() > 0;
+			return getName().equalsIgnoreCase("editable");
 		}
 	}
 
