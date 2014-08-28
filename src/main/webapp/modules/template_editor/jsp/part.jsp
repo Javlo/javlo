@@ -43,7 +43,7 @@
 			<input class="color" type="text" id="titleColor-${part.name}" name="titleColor" value="${part.titleColor}" />
 		</div>		
 		<div class="line${not empty exclude.padding?' disabled':''}">
-			<label for="padding-${part.name}">padding</label>
+			<label for="padding-${part.name}">padding <c:if test="${not empty part.finalPadding}"> (${part.finalPadding})</c:if></label>
 			<input type="text" id="padding-${part.name}" name="padding" value="${part.padding}" />
 		</div>
 		<div class="line${not empty exclude.textColor?' disabled':''}">

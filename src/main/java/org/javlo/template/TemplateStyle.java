@@ -42,5 +42,13 @@ public class TemplateStyle extends TemplatePart {
 	public String getDefaultH6Size() {
 		return "12px";
 	}
+	
+	public String getDefaultPadding() {
+		return "5px";
+	}
+	
+	public String getDefaultWidth() {
+		return "550px";
+	}
 
 }
