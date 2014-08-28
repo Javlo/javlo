@@ -6,6 +6,7 @@ import java.io.PrintStream;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.LinkedList;
+import java.util.Map;
 
 import org.javlo.component.core.ComponentBean;
 import org.javlo.component.image.GlobalImage;
@@ -14,6 +15,8 @@ import org.javlo.context.GlobalContext;
 import org.javlo.filter.ImageFileFilter;
 import org.javlo.helper.ResourceHelper;
 import org.javlo.helper.URLHelper;
+import org.javlo.navigation.MenuElement;
+import org.javlo.template.Template;
 import org.javlo.ztatic.StaticInfo;
 
 public class LocalImageSharedContentProvider extends AbstractSharedContentProvider {
@@ -38,6 +41,9 @@ public class LocalImageSharedContentProvider extends AbstractSharedContentProvid
 			if (category.startsWith("/")) {
 				category = category.substring(1);
 			}
+			if (!categories.containsKey(category)) {
+				categories.put(category, category);
+			}
 			ByteArrayOutputStream outStream = new ByteArrayOutputStream();
 			PrintStream out = new PrintStream(outStream);
 			out.println("dir=" + category);
@@ -49,14 +55,15 @@ public class LocalImageSharedContentProvider extends AbstractSharedContentProvid
 			imageBean.setArea(ctx.getArea());
 			SharedContent sharedContent;
 			try {
+				StaticInfo staticInfo = StaticInfo.getInstance(ctx, imageFile);
 				sharedContent = new SharedContent(""+imageFile.hashCode(), imageBean);
 				sharedContent.addCategory(category);
+				sharedContent.setSortOn(staticInfo.getCreationDate(ctx).getTime());
 				content.add(sharedContent);				
 				GlobalImage image = new GlobalImage();
 				image.init(imageBean, ctx);
 				String imageURL = image.getPreviewURL(ctx, "shared-preview");
-				sharedContent.setTitle(imageFile.getName());
-				StaticInfo staticInfo = StaticInfo.getInstance(ctx, imageFile);
+				sharedContent.setTitle(imageFile.getName());				
 				sharedContent.setDescription(staticInfo.getTitle(ctx));
 				sharedContent.setImageUrl(imageURL);
 				
@@ -68,6 +75,31 @@ public class LocalImageSharedContentProvider extends AbstractSharedContentProvid
 			}			
 		}
 		return content;
+	}
+	
+	@Override
+	public Map<String, String> getCategories(ContentContext ctx) {
+		Map<String, String> outCategories = new HashMap<String, String>();
+		MenuElement cp;
+		try {
+			cp = ctx.getCurrentPage();
+			String parentName = cp.getName();
+			Template template = ctx.getCurrentTemplate();
+			if (cp.getParent() != null) {
+				parentName = cp.getParent().getName();
+			}				
+			for (String category : categories.keySet()) {
+				String catKey = category;
+				category = '/'+category;		
+				if (category.contains(cp.getName()) || category.contains(parentName) || !category.startsWith(template.getImportFolder()) && !category.startsWith(template.getImportImageFolder()) && !category.startsWith(template.getImportGalleryFolder()) && !category.startsWith(template.getImportResourceFolder())) {
+					outCategories.put(catKey, catKey);
+				}
+			}
+		} catch (Exception e) {
+			e.printStackTrace();
+			return null;
+		}
+		return outCategories;
 	}
 
 	@Override

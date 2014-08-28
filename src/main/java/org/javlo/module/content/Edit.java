@@ -913,7 +913,6 @@ public class Edit extends AbstractModuleAction {
 		}
 
 		if (requestService.getParameter("save", null) != null && editContext.isEditPreview() && !ResourceStatus.isInstance(ctx.getRequest().getSession()) && requestService.getParameter("upload", null) == null) {
-
 			ctx.setParentURL(URLHelper.createURL(ctx.getContextWithOtherRenderMode(ContentContext.PREVIEW_MODE)));
 			ctx.setClosePopup(true);
 		}

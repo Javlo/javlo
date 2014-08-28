@@ -39,6 +39,7 @@ if (ctx.getRenderMode() == ContentContext.PREVIEW_MODE && specificComp == null &
 }
 
 String area = (String)request.getAttribute(ContentContext.CHANGE_AREA_ATTRIBUTE_NAME);
+
 if (area==null) {
 	area = request.getParameter("area");
 } else {

@@ -1,7 +1,9 @@
 package org.javlo.helper.importation;
 
 import org.javlo.component.core.ComponentBean;
-import org.javlo.config.StaticConfig;
+import org.javlo.context.ContentContext;
+import org.javlo.module.core.ModuleException;
+import org.javlo.module.core.ModulesContext;
 
 public class ImportConfigBean {
 	
@@ -15,8 +17,17 @@ public class ImportConfigBean {
 	
 	private boolean beforeContent = true;
 	
-	public ImportConfigBean(StaticConfig staticConfig) {
-		createContentOnImportImage = staticConfig.isCreateContentOnImportImage();
+	public ImportConfigBean(ContentContext ctx) throws ModuleException {
+		if (ctx.getGlobalContext().getStaticConfig().isCreateContentOnImportImage()) {
+			createContentOnImportImage = true; 
+		} else {
+			ModulesContext modulesContext = ModulesContext.getInstance(ctx.getRequest().getSession(), ctx.getGlobalContext());			
+			if (modulesContext.isModule("shared-content")) {
+				createContentOnImportImage = false;
+			} else {
+				createContentOnImportImage = true;
+			}
+		}		
 	}
 
 	public boolean isImagesAsGallery() {

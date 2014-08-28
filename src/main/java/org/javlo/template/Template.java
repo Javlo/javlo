@@ -259,6 +259,23 @@ public class Template implements Comparable<Template> {
 			return out.toString();
 		}
 
+		@Override
+		public int hashCode() {
+			final int prime = 31;
+			int result = 1;
+			result = prime * result + ((background == null) ? 0 : background.hashCode());
+			result = prime * result + ((backgroundMenu == null) ? 0 : backgroundMenu.hashCode());
+			result = prime * result + ((border == null) ? 0 : border.hashCode());
+			result = prime * result + ((foreground == null) ? 0 : foreground.hashCode());
+			result = prime * result + ((link == null) ? 0 : link.hashCode());
+			result = prime * result + ((logo == null) ? 0 : logo.hashCode());
+			result = prime * result + ((special == null) ? 0 : special.hashCode());
+			result = prime * result + ((text == null) ? 0 : text.hashCode());
+			result = prime * result + ((textMenu == null) ? 0 : textMenu.hashCode());
+			result = prime * result + ((title == null) ? 0 : title.hashCode());
+			result = prime * result + ((toolsServer == null) ? 0 : toolsServer.hashCode());
+			return result;
+		}
 	}
 
 	public static final class TemplateBean implements IRemoteResource {
@@ -1296,7 +1313,7 @@ public class Template implements Comparable<Template> {
 		if (locale == null) {
 			return null;
 		}
-		Map propI18n = i18n.get(locale.getLanguage()+mode);		
+		Map propI18n = i18n.get(locale.getLanguage() + mode);
 		if (propI18n == null) {
 			synchronized (globalContext.getLockImportTemplate()) {
 				if (config != null) {
@@ -1317,7 +1334,7 @@ public class Template implements Comparable<Template> {
 							propI18n = Collections.EMPTY_MAP;
 						}
 					}
-					i18n.put(locale.getLanguage()+mode, propI18n);
+					i18n.put(locale.getLanguage() + mode, propI18n);
 				}
 			}
 		}
@@ -2415,7 +2432,7 @@ public class Template implements Comparable<Template> {
 		part.setTextSize(properties.getString(prefix + ".text-size", part.getDefaultTextSize()));
 		part.setWidth(properties.getString(prefix + ".width"));
 		part.setTitleColor(properties.getString(prefix + ".title-color"));
-		
+
 		part.setH1Size(properties.getString(prefix + ".h1.size", part.getDefaultH1Size()));
 		part.setH2Size(properties.getString(prefix + ".h2.size", part.getDefaultH2Size()));
 		part.setH3Size(properties.getString(prefix + ".h3.size", part.getDefaultH3Size()));
@@ -2436,7 +2453,7 @@ public class Template implements Comparable<Template> {
 		properties.setProperty(prefix + ".text-size", part.getTextSize());
 		properties.setProperty(prefix + ".width", part.getWidth());
 		properties.setProperty(prefix + ".title-color", part.getTitleColor());
-		
+
 		properties.setProperty(prefix + ".h1.size", part.getH1Size());
 		properties.setProperty(prefix + ".h2.size", part.getH2Size());
 		properties.setProperty(prefix + ".h3.size", part.getH3Size());
@@ -2589,6 +2606,25 @@ public class Template implements Comparable<Template> {
 
 	public String getCookiesMessagePath() {
 		return properties.getString("acceptcookies.path", null);
+	}
+
+	@Override
+	public int hashCode() {
+		int hash = super.hashCode();
+		hash = hash + 31 * getName().hashCode();
+		hash = hash + (isValid() ? 1 : 0);
+		if (isEditable()) {
+			for (Row row : getRows()) {
+				hash = hash + row.hashCode();
+			}
+			hash = hash + 31*getStyle().hashCode();
+		} else {
+			for (String area : getAreas()) {
+				hash = hash + area.hashCode();
+			}
+		}		
+		hash = hash + 31*getTemplateData().hashCode();
+		return hash;
 	}
 
 }

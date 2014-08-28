@@ -28,7 +28,7 @@
 		</c:if>	
 		<c:set var="part" value="${templateEditorContext.area}" scope="request" />
 		<c:set var="exclude" value="${templateEditorContext.currentTemplate.areaExcludeProperties}" scope="request" />
-		<div id="area"><jsp:include page="part.jsp?title=area&webaction=updateArea${delete}" /></div>
+		<div id="area"><jsp:include page="part.jsp?title=area&webaction=updateArea${delete}&editName=true" /></div>
 		
 		<c:set var="delete" value="" />
 		<c:if test="${templateEditorContext.area.row.name != 'row-1'}">

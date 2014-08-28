@@ -113,6 +113,23 @@ if (!rightOnPage) {
 							<label for="renderers_button">${i18n.edit['command.renderers']}</label>
 						</div>
 					</form></li></c:if>
+					<c:if test="${fn:length(info.contentLanguages) > 1}">
+					<li class="languages">
+						<div class="special${empty componentsList?' last':''}">
+						<form id="form-languages" action="${info.currentURL}" method="post" class="js-submit">
+						<div class="select-languages form_default">
+							<input type="hidden" name="webaction" value="edit.changeLanguage" />
+							<select name="language">
+							<c:forEach var="lang" items="${info.contentLanguages}">
+								<option value="${lang}"${lang eq info.contentLanguage?' selected="selected"':''}>${lang}</option>
+							</c:forEach>
+							</select>
+							<input class="action-button" type="submit" name="ok" value="${i18n.edit['global.ok']}" />
+						</div>
+						</form>
+						</div>
+					</li>
+					</c:if>
 					<c:if test='${editPreview == "true"}'>
 					<li><form id="home_form" action="${info.rootURL}" method="get">
 						<div class="pc_line">							

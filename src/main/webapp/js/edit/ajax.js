@@ -172,8 +172,7 @@ function initDropFile() {
 		console.log("drop area");
 		return false;
 	});*/
-	jQuery(".drop-files").live('drop', function(e) {
-		alert("drop html");
+	jQuery(".drop-files").live('drop', function(e) {		
 		doNothing(e);
 		jQuery(this).removeClass("dragover");	
 		var url  = jQuery(this).data("url");		

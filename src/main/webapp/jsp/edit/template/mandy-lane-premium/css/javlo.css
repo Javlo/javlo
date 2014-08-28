@@ -1283,7 +1283,11 @@ body.previewEdit {
 
 .form-list .title {
 	border-bottom: 1px #cccccc solid;
-	position: relative;
+	position: relative;	
+}
+
+.form-list .title .filename {
+	white-space: nowrap;
 }
 
 .form-list .title span {
@@ -1400,20 +1404,21 @@ body.previewEdit {
 	padding: 3px 6px;
 }
 
-.form-list fieldset label {
+.form-list fieldset label, .form-list fieldset .label {
 	display: inline-block;
 	margin: 0 6px 0 3px;
 }
 
-.form-list .line input {
+.form-list .line input, .form-list .line .value {
+	display: inline-block;
 	width: 158px;
 }
 
 .form-list .line {
-	margin: 5px 0;	
+	margin: 5px 0 5px 220px;	
 }
 
-.form-list .line label {
+.form-list .line label, .form-list .line .label {
 	display: inline-block;
 	width: 120px;
 }

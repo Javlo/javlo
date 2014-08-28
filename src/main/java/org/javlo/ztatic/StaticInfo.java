@@ -362,6 +362,30 @@ public class StaticInfo {
 		}
 
 	}
+	
+	public static class StaticInfoSortByCreationDate implements Comparator<StaticInfo> {
+		ContentContext ctx;
+		boolean ascending = true;
+
+		public StaticInfoSortByCreationDate(ContentContext inCtx, boolean inAscending) {
+			ctx = inCtx;
+			ascending = inAscending;
+		}
+
+		@Override
+		public int compare(StaticInfo uri1Info, StaticInfo uri2Info) {
+			try {
+				int changeOrder = 1;
+				if (!ascending) {
+					changeOrder = -1;
+				}
+				return uri1Info.getCreationDate(ctx).compareTo(uri2Info.getCreationDate(ctx)) * changeOrder;
+			} catch (Exception e) {
+				e.printStackTrace();
+			}
+			return 0;
+		}
+	}
 
 	private static final String KEY = "staticinfo-";
 
@@ -458,6 +482,8 @@ public class StaticInfo {
 
 		if (outStaticInfo == null) {
 			StaticInfo staticInfo = new StaticInfo();
+			//init creation data
+			staticInfo.getCreationDate(ctx);
 			staticInfo.staticURL = inStaticURL;
 
 			StaticConfig staticConfig = StaticConfig.getInstance(ctx.getRequest().getSession());
@@ -641,6 +667,26 @@ public class StaticInfo {
 			} catch (ParseException e) {
 			}
 		}
+		return null;
+	}
+	
+	public Date getCreationDate(ContentContext ctx) {
+		ContentService content = ContentService.getInstance(ctx.getRequest());
+		String dateStr = content.getAttribute(ctx, getKey("creation-date"), null);
+		if (dateStr == null) {
+			dateStr = StringHelper.renderTime(new Date());
+			content.setAttribute(ctx, getKey("creation-date"), dateStr);
+			try {
+				PersistenceService.getInstance(ctx.getGlobalContext()).setAskStore(true);
+			} catch (ServiceException e) {				
+				e.printStackTrace();
+				return null;
+			}
+		}		
+		try {
+			return StringHelper.parseTime(dateStr);
+		} catch (ParseException e) {
+		}		
 		return null;
 	}
 	
