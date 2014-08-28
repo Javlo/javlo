@@ -8,6 +8,7 @@
 <c:if test="${contentContext.closePopup}">
 <script type="text/javascript">
     var url = top.location.href; // close iframe and refresh parent frame
+    
     <c:if test="${not empty contentContext.parentURL}">
     	url = "${contentContext.parentURL}";
     </c:if>
@@ -19,6 +20,15 @@
     	}
     </c:if>
     if (url != null) {
+        var doc = top.document.documentElement, body = top.document.body;    
+        var topScroll = (doc && doc.scrollTop  || body && body.scrollTop  || 0);
+        if (topScroll>0) {
+        	var sep="?";
+        	if (url.indexOf("?")>=0) {
+        		sep="&";
+        	}
+        	url = url + sep + "_scrollTo=" + topScroll;
+        }
 		top.location.href=url; // close iframe and refresh parent frame
     }    
 </script>

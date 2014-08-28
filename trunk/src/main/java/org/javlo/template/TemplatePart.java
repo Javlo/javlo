@@ -307,4 +307,29 @@ public class TemplatePart {
 		this.h6Size = h6Size;
 	}
 
+	@Override
+	public int hashCode() {
+		final int prime = 31;
+		int result = 1;
+		result = prime * result + ((backgroundColor == null) ? 0 : backgroundColor.hashCode());
+		result = prime * result + ((borderColor == null) ? 0 : borderColor.hashCode());
+		result = prime * result + ((borderWidth == null) ? 0 : borderWidth.hashCode());
+		result = prime * result + ((font == null) ? 0 : font.hashCode());
+		result = prime * result + ((h1Size == null) ? 0 : h1Size.hashCode());
+		result = prime * result + ((h2Size == null) ? 0 : h2Size.hashCode());
+		result = prime * result + ((h3Size == null) ? 0 : h3Size.hashCode());
+		result = prime * result + ((h4Size == null) ? 0 : h4Size.hashCode());
+		result = prime * result + ((h5Size == null) ? 0 : h5Size.hashCode());
+		result = prime * result + ((h6Size == null) ? 0 : h6Size.hashCode());
+		result = prime * result + ((height == null) ? 0 : height.hashCode());
+		result = prime * result + ((margin == null) ? 0 : margin.hashCode());
+		result = prime * result + ((name == null) ? 0 : name.hashCode());
+		result = prime * result + ((padding == null) ? 0 : padding.hashCode());
+		result = prime * result + ((textColor == null) ? 0 : textColor.hashCode());
+		result = prime * result + ((textSize == null) ? 0 : textSize.hashCode());
+		result = prime * result + ((titleColor == null) ? 0 : titleColor.hashCode());
+		result = prime * result + ((width == null) ? 0 : width.hashCode());		
+		return result;
+	}
+
 }

@@ -284,6 +284,20 @@ public class ModulesContext {
 	public Collection<Module> getModules() {
 		return modules;
 	}
+	
+	/**
+	 * check if current site have a specific module active
+	 * @param moduleName
+	 * @return
+	 */
+	public boolean isModule(String moduleName) {
+		for (Module module : getModules()) {			
+			if (module.getName().equals(moduleName)) {
+				return true;
+			}
+		}
+		return false;
+	}
 
 	public Collection<Module> getAllModules() {
 		return allModules;

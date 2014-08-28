@@ -2,6 +2,7 @@ package org.javlo.service.shared;
 
 import java.util.Arrays;
 import java.util.Collection;
+import java.util.Comparator;
 import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
@@ -14,6 +15,28 @@ import org.javlo.context.ContentContext;
 
 public class SharedContent {
 	
+	public static final class SortOnComparator implements Comparator<SharedContent> {
+		
+		private int ascendant = 1;
+		
+		public SortOnComparator(boolean ascendant) {
+			if (!ascendant) {
+				this.ascendant = -1;
+			}
+		}
+
+		@Override
+		public int compare(SharedContent o1, SharedContent o2) {
+			if (o1 == null) {
+				return ascendant;
+			} else if (o2 == null) {
+				return -ascendant;
+			}
+			return (int)(o1.getSortOn()-o2.getSortOn())*ascendant;
+		}
+		
+	}
+	
 	public static final String SHARED_CONTENT_FOLDER = "shared";
 
 	private String title = null;
@@ -22,6 +45,7 @@ public class SharedContent {
 	private String id = null;
 	private Collection<String> categories = new HashSet<String>();
 	private String linkInfo = null;
+	private long sortOn = -1;
 
 	protected List<ComponentBean> content;
 	
@@ -120,6 +144,14 @@ public class SharedContent {
 
 	public void setLinkInfo(String linkInfo) {
 		this.linkInfo = linkInfo;
+	}
+
+	public long getSortOn() {
+		return sortOn;
+	}
+
+	public void setSortOn(long sortOn) {
+		this.sortOn = sortOn;
 	}
 
 }

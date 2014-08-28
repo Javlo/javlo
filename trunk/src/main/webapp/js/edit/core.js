@@ -148,20 +148,22 @@ function updateColorInput() {
 	}
 }
 
+jQuery(window).load(function() {
+	/** scrol to latest position after refresh **/
+	var scrollTo = getParam(window.location.href, "_scrollTo");	
+	if (scrollTo != "") {
+		window.scrollTo(0, scrollTo);
+	}
+});
+
 jQuery(document).ready(function() {
 	
 	jQuery( window ).mousemove(function( event ) {
 		mouseX = event.pageX;
 		mouseY = event.pageY;
 	});
-
+	
 	updateColorInput();
-
-	/** scrol to latest position after refresh * */
-	var scrollTo = getParam(window.location.href, "_scrollTo");
-	if (scrollTo != "") {
-		window.scrollTo(0, scrollTo);
-	}
 
 	jQuery("body").addClass("js");
 

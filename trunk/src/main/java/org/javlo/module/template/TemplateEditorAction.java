@@ -36,7 +36,11 @@ public class TemplateEditorAction extends AbstractModuleAction {
 	@Override
 	public String prepare(ContentContext ctx, ModulesContext modulesContext) throws Exception {
 		String msg = super.prepare(ctx, modulesContext);
-
+		ajaxPrepare(ctx);
+		return msg;
+	}
+	
+	private static void ajaxPrepare(ContentContext ctx) throws Exception {
 		List<String> editableTemplateUnvalid = new LinkedList<String>();
 		List<String> editableTemplateValid = new LinkedList<String>();
 		TemplateEditorContext editorContext = TemplateEditorContext.getInstance(ctx.getRequest().getSession());
@@ -56,6 +60,7 @@ public class TemplateEditorAction extends AbstractModuleAction {
 				editableTemplateValid.add(template.getName());
 			}
 		}
+		ctx.getRequest().setAttribute("parentTemplates", editableTemplateValid);
 
 		TemplateEditorContext editorCtx = TemplateEditorContext.getInstance(ctx.getRequest().getSession());
 		String templateURL = URLHelper.createURL(ctx.getContextWithOtherRenderMode(ContentContext.VIEW_MODE));
@@ -63,18 +68,15 @@ public class TemplateEditorAction extends AbstractModuleAction {
 			editorContext.getCurrentTemplate().resetRows();
 			templateURL = URLHelper.addParam(templateURL, Template.FORCE_TEMPLATE_PARAM_NAME, editorCtx.getCurrentTemplate().getId());
 			templateURL = URLHelper.addParam(templateURL, "_display-zone", "" + !editorCtx.isShowContent());
+			templateURL = URLHelper.addParam(templateURL, "hash", "" + editorCtx.getCurrentTemplate().hashCode());
 			ctx.getRequest().setAttribute("templateURL", templateURL);
 		}
-		ctx.getRequest().setAttribute("templates", editableTemplateUnvalid);
-		ctx.getRequest().setAttribute("parentTemplates", editableTemplateValid);
-
+		ctx.getRequest().setAttribute("templates", editableTemplateUnvalid);		
 		if (editorCtx.getCurrentTemplate() != null) {
 			Template.TemplateBean templateBean = new Template.TemplateBean(ctx, editorCtx.getCurrentTemplate());
 			ctx.getRequest().setAttribute("template", templateBean);			
 			ctx.getRequest().setAttribute("fonts", XHTMLHelper.WEB_FONTS);
 		}
-
-		return msg;
 	}
 
 	@Override
@@ -98,6 +100,7 @@ public class TemplateEditorAction extends AbstractModuleAction {
 			return "area not found : " + areaName;
 		} else {
 			editorContext.setArea(areaName);
+			ajaxPrepare(ctx);
 			ctx.getAjaxZone().put("template-properties", ServletHelper.executeJSP(ctx, "/modules/template_editor/jsp/properties.jsp"));
 			return null;
 		}
@@ -107,6 +110,7 @@ public class TemplateEditorAction extends AbstractModuleAction {
 		TemplateEditorContext editorContext = TemplateEditorContext.getInstance(ctx.getRequest().getSession());
 		Collection<Row> rows = editorContext.getCurrentTemplate().getRows();
 		Area area = Template.getArea(rows, editorContext.getArea().getName());
+		String msg = null;
 		if (rs.getParameter("delete", null) != null) {
 			editorContext.getCurrentTemplate().deleteArea(editorContext.getArea().getName());
 			editorContext.setArea(ComponentBean.DEFAULT_AREA);
@@ -114,6 +118,16 @@ public class TemplateEditorAction extends AbstractModuleAction {
 			if (area == null) {
 				return "no active area.";
 			} else {
+				
+				String newName = rs.getParameter("name", "");
+				if (!area.getName().equals(newName)) {
+					if (area.getName().equals(ComponentBean.DEFAULT_AREA)) {
+						msg = i18nAccess.getText("template.message.error.no-content", "All template need main area : "+ComponentBean.DEFAULT_AREA);
+					}
+					area.setName(newName);					
+					editorContext.setArea(newName);
+				}
+				
 				area.setWidth(rs.getParameter("width", ""));
 				area.setHeight(rs.getParameter("height", ""));
 				area.setMargin(rs.getParameter("margin", ""));
@@ -137,7 +151,7 @@ public class TemplateEditorAction extends AbstractModuleAction {
 			}
 		}
 		editorContext.getCurrentTemplate().clearRenderer(ctx);
-		return null;
+		return msg;
 	}
 
 	public static String performUpdateRow(RequestService rs, ContentContext ctx, MessageRepository messageRepository, I18nAccess i18nAccess) throws IOException {
@@ -186,7 +200,7 @@ public class TemplateEditorAction extends AbstractModuleAction {
 		TemplateStyle style = editorContext.getCurrentTemplate().getStyle();
 
 		if (rs.getParameter("delete", null) != null) {
-			if (editorContext.getCurrentTemplate().getParent().equals("default")) {
+			if (editorContext.getCurrentTemplate().getParent().getName().equals("default")) {
 				return "error you can not delete a basic template.";
 			}
 			editorContext.getCurrentTemplate().delete();

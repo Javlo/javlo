@@ -501,17 +501,25 @@ body.edit-preview {
 	background-color: #333333;
 }
 
-#preview_command .pc_command li.undo, #preview_command .pc_command li.slide, #preview_command .pc_command li.preview,#preview_command .pc_command li.refresh,#preview_command .pc_command li.publish, .edit-preview #preview_command .renderers
+#preview_command .pc_command li.undo, #preview_command .pc_command li.slide, #preview_command .pc_command li.preview,#preview_command .pc_command li.refresh,#preview_command .pc_command li.publish, .edit-preview #preview_command .renderers, .edit-preview #preview_command .languages
 	{
 	float: right;
 	margin-right: 4px;
 }
 
-.fix-preview #preview_command .renderers .pc_line, .fix-preview #preview_command .renderers, .fix-preview #preview_command .renderers form {
+.fix-preview #preview_command .renderers .pc_line, .fix-preview #preview_command .languages .pc_line, .fix-preview #preview_command .renderers, .fix-preview #preview_command .languages, .fix-preview #preview_command .renderers form, .fix-preview #preview_command .languages form {
 	border: 0 none;
 	padding: 0;
 	margin: 0;
 }
+
+ .fix-preview #preview_command .languages {
+ 	padding-right: 15px; 	
+ }
+ 
+ .fix-preview #preview_command .renderers {
+ 	padding-right: 5px;
+ }
 
 #preview_command .pc_command select {
     box-shadow: 1px 1px 3px #333333 inset; 
@@ -783,6 +791,12 @@ body.edit-preview {
 	width: 80px;
 	float: left;
 	overflow: hidden;
+}
+
+#preview_command .shared-content h3 {
+	overflow: hidden;
+  	text-overflow: ellipsis;
+  	white-space: nowrap;
 }
 
 .table-component-preview {

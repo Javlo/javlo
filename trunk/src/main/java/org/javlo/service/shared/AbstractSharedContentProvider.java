@@ -5,6 +5,8 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.LinkedList;
+import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 
@@ -14,9 +16,9 @@ import org.javlo.helper.StringHelper;
 
 public abstract class AbstractSharedContentProvider implements ISharedContentProvider {
 
-	private String name;
-	private URL url;
-	private Map<String, String> categories = new HashMap<String, String>();
+	protected String name;
+	protected URL url;
+	protected Map<String, String> categories = new HashMap<String, String>();
 
 	@Override
 	public String getName() {
@@ -77,12 +79,13 @@ public abstract class AbstractSharedContentProvider implements ISharedContentPro
 		if (getCategories(ctx).size() <= 1 || categories == null || categories.size() == 0) {
 			return getContent(ctx);
 		}
-		Collection<SharedContent> outList = new HashSet<SharedContent>();
+		List<SharedContent> outList = new LinkedList<SharedContent>();
 		for (SharedContent content : getContent(ctx)) {
 			if (!Collections.disjoint(content.getCategories(), categories)) {							
 				outList.add(content);
 			}
-		}
+		}		
+		Collections.sort(outList, new SharedContent.SortOnComparator(false));	
 		return outList;
 	}
 

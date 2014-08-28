@@ -210,7 +210,7 @@ public class DataAction implements IAction {
 	}
 
 	public static String performUpload(RequestService rs, ContentContext ctx, GlobalContext gc, ContentService cs, User user, MessageRepository messageRepository, I18nAccess i18nAccess) throws Exception {
-		return uploadContent(rs, ctx, gc, cs, user, messageRepository, i18nAccess, new ImportConfigBean(gc.getStaticConfig()));
+		return uploadContent(rs, ctx, gc, cs, user, messageRepository, i18nAccess, new ImportConfigBean(ctx));
 	}
 
 	/**
@@ -277,10 +277,16 @@ public class DataAction implements IAction {
 		GlobalContext gc = ctx.getGlobalContext();
 		ContentService cs = ContentService.getInstance(gc);
 		String galleryRelativeFolder = null;
+		
+		String baseGalleryFolder = tpl.getImportGalleryFolder();
+		if (!config.isCreateContentOnImportImage()) {
+			baseGalleryFolder = tpl.getImportImageFolder();
+		}
+		
 		if (mediaComps.size() > 0) {
 			for (IContentVisualComponent comp : mediaComps) {
 				Multimedia multimedia = (Multimedia) comp;
-				if (multimedia.getCurrentRootFolder().length() > tpl.getImportGalleryFolder().length()) {
+				if (multimedia.getCurrentRootFolder().length() > baseGalleryFolder.length()) {
 					galleryRelativeFolder = URLHelper.mergePath(gc.getStaticConfig().getStaticFolder(), multimedia.getCurrentRootFolder());
 					galleryFound = true;
 					ctx.setNeedRefresh(true);
@@ -292,8 +298,8 @@ public class DataAction implements IAction {
 			String galFolder = importFolder;
 			if (galFolder.trim().length() == 0) {
 				galFolder = "images";
-			}
-			galleryRelativeFolder = URLHelper.mergePath(gc.getStaticConfig().getStaticFolder(), tpl.getImportGalleryFolder(), importFolder);
+			}			
+			galleryRelativeFolder = URLHelper.mergePath(gc.getStaticConfig().getStaticFolder(), baseGalleryFolder, importFolder);			
 		}
 		targetFolder = new File(URLHelper.mergePath(gc.getDataFolder(), galleryRelativeFolder));
 
@@ -350,7 +356,7 @@ public class DataAction implements IAction {
 		// cal.get(Calendar.YEAR);
 		String importFolder = StringHelper.createFileName(ctx.getCurrentPage().getTitle(ctx.getContextForDefaultLanguage()));
 		importFolder = StringHelper.trimOn(importFolder, "-");
-		importFolder = importFolder.replace('-', '_');
+		//importFolder = importFolder.replace('-', '_');
 		int countImages = 0;
 		FileItem imageItem = null;
 		try {

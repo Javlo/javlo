@@ -17,7 +17,7 @@ public class Row extends TemplatePart {
 		return areas;
 	}
 
-	public void addArea(Area inArea) {
+	public void addArea(Area inArea) {		
 		areas.add(inArea);
 		boolean freeWidth = true;
 		for (Area area : areas) {
@@ -53,6 +53,16 @@ public class Row extends TemplatePart {
 		} else {
 			return null;
 		}
+	}
+	
+	@Override
+	public int hashCode() {	
+		int hash = super.hashCode();
+		int prime = 15;
+		for (Area area : getAreas()) {
+			hash = hash+prime*area.hashCode();
+		}
+		return hash;
 	}
 
 }

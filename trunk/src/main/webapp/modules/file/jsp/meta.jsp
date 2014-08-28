@@ -27,7 +27,7 @@
 		<c:if test="${param.select != 'image' || file.image || file.directory}">
 	    <c:set var="popularity" value=" - #${file.popularity}" />	    
 		<div class="title">
-			<span><a href="${fileURL}" title="${file.name}">${file.name}</a></span>
+			<span class="filename"><a href="${fileURL}" title="${file.name}">${file.name}</a></span>
 			<c:if test="${empty param.select}">
 				<c:url value="${info.currentURL}" var="deleteURL" context="/">
 					<c:param name="webaction" value="file.delete" />
@@ -84,6 +84,10 @@
 		<div class="line">
 			<label for="date-${file.id}">${i18n.edit["field.date"]}</label>
 			<input class="file-date" type="text" id="date-${file.id}" name="date-${file.id}" value="${file.manualDate}" />
+		</div>
+		<div class="line">
+			<div class="label">${i18n.edit["field.creation-date"]}</div>
+			<div class="value">${file.creationDate}</div>
 		</div>
 		<div class="line">
 			<label for="shared-${file.id}">${i18n.edit["field.shared"]}</label>

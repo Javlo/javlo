@@ -72,6 +72,8 @@ public class FileAction extends AbstractModuleAction {
 					return file1.getStaticInfo().getFile().getName().compareTo(file2.getStaticInfo().getFile().getName());
 				} else if (sort == 3) {
 					return file1.getStaticInfo().getTitle(ctx).compareTo(file2.getStaticInfo().getTitle(ctx));
+				} else if (sort == 3) {
+					return file1.getStaticInfo().getCreationDate(ctx).compareTo(file2.getStaticInfo().getCreationDate(ctx));
 				} else {
 					return -file1.getStaticInfo().getDate(ctx).compareTo(file2.getStaticInfo().getDate(ctx));
 				}
@@ -161,6 +163,10 @@ public class FileAction extends AbstractModuleAction {
 
 		public String getManualDate() {
 			return StringHelper.renderTime(staticInfo.getManualDate(ctx));
+		}
+		
+		public String getCreationDate() {
+			return StringHelper.renderTime(staticInfo.getCreationDate(ctx));
 		}
 
 		public String getTitle() {
@@ -596,7 +602,7 @@ public class FileAction extends AbstractModuleAction {
 		String order = rs.getParameter("order", null);
 		if (order != null) {
 			int sortNum = Integer.parseInt(order);
-			if (sortNum == 1 || sortNum == 2 || sortNum == 3) {
+			if (sortNum == 1 || sortNum == 2 || sortNum == 3 || sortNum == 4) {
 				FileModuleContext fileModuleContext = (FileModuleContext) LangHelper.smartInstance(ctx.getRequest(), ctx.getResponse(), FileModuleContext.class);
 				fileModuleContext.setSort(sortNum);
 			}

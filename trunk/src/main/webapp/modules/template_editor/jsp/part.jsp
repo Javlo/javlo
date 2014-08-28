@@ -1,7 +1,14 @@
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c"
 %><form class="standard-form" id="form-area-${part.name}" action="${info.currentEditURL}" method="post" ${not empty param.upload?'enctype="multipart/form-data"':''}>
 	<fieldset>
-		<legend>${part.name}</legend>
+		<legend>
+		<c:if test="${param.editName}">
+			<input type="text" name="name" value="${part.name}" />
+		</c:if>
+		<c:if test="${not param.editName}">
+			${part.name}
+		</c:if>
+		</legend>
 		<input type="hidden" name="webaction" value="${param.webaction}" />
 		<c:if test="${param.parent}">
 		<div class="line">
