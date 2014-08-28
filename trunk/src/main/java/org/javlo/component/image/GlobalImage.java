@@ -733,6 +733,10 @@ public class GlobalImage extends Image implements IImageFilter {
 			setSecondText(null);
 			setModify();
 		}
+		// if no label force label value for super classes.
+		if (label == null) {
+			requestService.setParameter(getLabelXHTMLInputName(), getLabel());
+		}
 
 		if (title != null) {
 			if (!title.equals(getTitle())) {
