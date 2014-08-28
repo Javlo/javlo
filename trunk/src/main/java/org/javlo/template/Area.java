@@ -4,7 +4,7 @@ public class Area extends TemplatePart {
 	
 	private Row row;
 	private String autoWidth = null;
-
+	
 	public Row getRow() {
 		return row;
 	}

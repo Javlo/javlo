@@ -67,6 +67,14 @@ public class TemplatePart {
 	public String getDefaultTextSize() {
 		return null;
 	}
+	
+	public String getDefaultPadding() {
+		return null;
+	}
+	
+	public String getDefaultWidth() {
+		return null;
+	}
 
 	public String getWidth() {
 		return width;
@@ -90,6 +98,14 @@ public class TemplatePart {
 
 	public String getPadding() {
 		return padding;
+	}
+
+	public String getFinalPadding() {
+		if (getParent() != null && (padding == null || padding.trim().length() == 0)) {
+			return getParent().getFinalPadding();
+		} else {
+			return padding;
+		}
 	}
 
 	public void setPadding(String padding) {
@@ -214,7 +230,7 @@ public class TemplatePart {
 	public String getH1Size() {
 		return h1Size;
 	}
-	
+
 	public String getFinalH1Size() {
 		if (getParent() != null && (h1Size == null || h1Size.trim().length() == 0)) {
 			return getParent().getFinalH1Size();
@@ -230,7 +246,7 @@ public class TemplatePart {
 			return h2Size;
 		}
 	}
-	
+
 	public String getFinalH3Size() {
 		if (getParent() != null && (h3Size == null || h3Size.trim().length() == 0)) {
 			return getParent().getFinalH3Size();
@@ -238,7 +254,7 @@ public class TemplatePart {
 			return h3Size;
 		}
 	}
-	
+
 	public String getFinalH4Size() {
 		if (getParent() != null && (h4Size == null || h4Size.trim().length() == 0)) {
 			return getParent().getFinalH4Size();
@@ -246,7 +262,7 @@ public class TemplatePart {
 			return h4Size;
 		}
 	}
-	
+
 	public String getFinalH5Size() {
 		if (getParent() != null && (h5Size == null || h5Size.trim().length() == 0)) {
 			return getParent().getFinalH5Size();
@@ -254,7 +270,7 @@ public class TemplatePart {
 			return h5Size;
 		}
 	}
-	
+
 	public String getFinalH6Size() {
 		if (getParent() != null && (h6Size == null || h6Size.trim().length() == 0)) {
 			return getParent().getFinalH6Size();
@@ -328,7 +344,7 @@ public class TemplatePart {
 		result = prime * result + ((textColor == null) ? 0 : textColor.hashCode());
 		result = prime * result + ((textSize == null) ? 0 : textSize.hashCode());
 		result = prime * result + ((titleColor == null) ? 0 : titleColor.hashCode());
-		result = prime * result + ((width == null) ? 0 : width.hashCode());		
+		result = prime * result + ((width == null) ? 0 : width.hashCode());
 		return result;
 	}
 
