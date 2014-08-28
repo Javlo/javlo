@@ -7,7 +7,7 @@
 <c:forEach var="cell" items="${row}">	
 	<c:if test="${not empty cell}">		
 		<c:set var="tag" value="td" /><c:if test="${cell != null && cell.firstCol}"><c:set var="tag" value="${rowTag}" /></c:if><c:if test="${cell != null && cell.firstRow && tag eq 'td'}"><c:set var="tag" value="${colTag}" /></c:if>
-		<c:set var="colHTML" value="${colHTML}<${tag}${cell.spanAttributes}>${cell.colTitleHeight}</${tag}>" />
+		<c:set var="colHTML" value="${colHTML}<${tag}${cell.spanAttributes}>${cell.value}</${tag}>" />
 		<c:if test="${not empty cell.value}"><c:set var="rowEmpty" value="false" /><c:set var="rowHTML" value="${rowHTML}${colHTML}" /><c:set var="colHTML" value="" /></c:if>		
 	</c:if>
 </c:forEach>
