@@ -10,6 +10,7 @@ import org.javlo.component.core.ComponentBean;
 import org.javlo.component.image.GlobalImage;
 import org.javlo.context.ContentContext;
 import org.javlo.navigation.MenuElement;
+import org.javlo.navigation.PageBean;
 
 /**
  * get all shared page from parent of the parent (mailing composition)
@@ -73,7 +74,8 @@ public class CloserJavloSharedContentProvider extends AbstractSharedContentProvi
 				if (getSharedName(page, i) != null && page.isRealContent(ctx)) {
 					List<ComponentBean> beans = Arrays.asList(page.getContent());
 					SharedContent sharedContent = new SharedContent(getSharedName(page, i), beans);
-					sharedContent.setTitle(page.getContentTitle(ctx));
+					PageBean pageBean = page.getPageBean(ctx);
+					sharedContent.setTitle(pageBean.getTitleOrSubtitle());
 					if (sharedContent.getTitle() == null || sharedContent.getTitle().trim().length() == 0) {
 						sharedContent.setTitle(getSharedName(page, i));
 					}
