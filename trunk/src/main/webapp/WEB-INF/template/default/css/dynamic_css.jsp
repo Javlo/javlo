@@ -12,7 +12,7 @@ p,ul,ol,.table-li td.internal-link,.unsubscribe-link,.date,.external-link,.pdf-l
 	<c:if test="${not empty info.template.style.finalFont}">font-family: ${info.template.style.finalFont};</c:if>
 }
 
-.visible-separation.separation {
+.visible-separation {
 	margin: 10px 0;
 	padding: 0;
 	font-size: 0;
