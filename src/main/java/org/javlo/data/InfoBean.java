@@ -662,6 +662,10 @@ public class InfoBean {
 	public boolean isEditPreview() {
 		return ctx.isEditPreview();
 	}
+	
+	public boolean isPreviewEdit() {
+		return EditContext.getInstance(globalContext, ctx.getRequest().getSession()).isEditPreview() && ctx.isAsPreviewMode();
+	}
 
 	public PageBean getFirstLevelPage() {
 		MenuElement page;
@@ -833,6 +837,20 @@ public class InfoBean {
 			}
 		}
 		return (Boolean)ctx.getRequest().getSession().getAttribute(RSS_SESSION_KEY);
+	}
+	
+	public Map<String,Boolean> getAreaEmpty() {
+		Map<String,Boolean> emptyArea = new HashMap<String, Boolean>();
+		try {
+			for (String area : ctx.getCurrentTemplate().getAreas()) {
+				if (ctx.getCurrentPage().isEmpty(ctx, area)) {
+					emptyArea.put(area, new Boolean(true));
+				}
+			}
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		return emptyArea;
 	}
 	
 	/**
