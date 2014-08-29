@@ -165,3 +165,11 @@ table.table td, table.table th {
 table.float-image, table.float-image  td, table.float-image  th {
 	border-collapse: separate;
 }
+
+.end-area {
+	font-size: 0;
+	height: 0;
+	border: 0 none;
+	margin: 0;
+	padding: 0;
+}
