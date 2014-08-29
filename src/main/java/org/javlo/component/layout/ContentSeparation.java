@@ -36,7 +36,7 @@ public class ContentSeparation extends AbstractVisualComponent {
 	@Override
 	public String getViewXHTMLCode(ContentContext ctx) throws Exception {
 		StringBuffer finalCode = new StringBuffer();
-		finalCode.append("<div class=\"separation\"><div class=\""+getCSSClassName(ctx)+"\"><span>&nbsp;</span></div></div>");
+		finalCode.append("<span>&nbsp;</span>");
 		return finalCode.toString();
 	}
 
