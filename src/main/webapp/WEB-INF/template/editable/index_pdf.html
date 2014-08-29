@@ -8,24 +8,11 @@
 <jsp:include page="css/pdf.css" />
 <jsp:include page="css/integration.css" />
 <jsp:include page="css/pagination.jsp" />
-
 <c:set var="template" value="${info.template.style}" scope="request" />
 body .wrapper {
 	<jsp:include page="css/styles.jsp" />
 }
-
-<c:forEach var="row" items="${info.template.rows}"><c:forEach var="area" items="${row.areas}">
-#${area.name} {	
-	padding: 15px;
-}</c:forEach></c:forEach>
-
 <jsp:include page="css/dynamic_css.jsp" />
-
-/* PDF : width auto */
-body .wrapper, body .main-table {
-    width: 708px;
-}
-
 </style>
 </head>
 <body class="pdf" style="-webkit-font-smoothing: antialiased; width: 100% !important; -webkit-text-size-adjust: none; background-color: #ffffff;">
