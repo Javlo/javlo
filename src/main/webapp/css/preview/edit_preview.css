@@ -1331,3 +1331,7 @@ table.component-table td {
 	display: block  !important;
 	visibility: visible;
 }
+
+body.edit-preview .visible-separation {
+	height: 3px;
+}
