@@ -7,9 +7,21 @@
 }</c:forEach></c:forEach>
 
 p,ul,ol,.table-li td.internal-link,.unsubscribe-link,.date,.external-link,.pdf-link,.file,.simple-internal-link,.global-image,.gs,.qrcode td,.pdf-head td, .table th, .table td {
-	<c:if test="${not empty area.finalTextColor}">color: ${info.template.style.finalTextColor};</c:if>
-	<c:if test="${not empty area.finalTextSize}">font-size: ${info.template.style.finalTextSize};</c:if>	
-	<c:if test="${not empty area.finalFont}">font-family: ${info.template.style.finalFont};</c:if>
+	<c:if test="${not empty info.template.style.finalTextColor}">color: ${info.template.style.finalTextColor};</c:if>
+	<c:if test="${not empty info.template.style.finalTextSize}">font-size: ${info.template.style.finalTextSize};</c:if>	
+	<c:if test="${not empty info.template.style.finalFont}">font-family: ${info.template.style.finalFont};</c:if>
+}
+
+.visible-separation.separation {
+	margin: 10px 0;
+	padding: 0;
+	font-size: 0;
+	line-height: 0;
+	height: 0;
+	border-top-style: solid;
+	border-top-width: 1px;
+	<c:if test="${not empty info.template.style.finalTextColor}">border-color: ${info.template.style.finalTextColor};</c:if>
+	<c:if test="${empty info.template.style.finalTextColor}">border-color: #000000;</c:if>
 }
 
 <c:forEach var="row" items="${info.template.rows}"><c:forEach var="area" items="${row.areas}">
