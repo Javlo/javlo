@@ -27,8 +27,8 @@
 </td></tr>
 </c:if>
 </table>
-<div class="source" style="display: none;"><span class="container">${label}</span></div>
 <c:if test="${contentContext.asPreviewMode && comp.textAuto}">
+<div class="source" style="display: none;"><span class="container">${label}</span></div>
 <script type="text/javascript">
 jQuery("#comp-${compid} img").load(function() {
 	floatZone("#comp-${compid} .source .container", "#comp-${compid} .zone1 .container", "#comp-${compid} .zone2 .container", "#comp-${compid} img");

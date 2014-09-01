@@ -13,16 +13,16 @@
 <figure>
 <c:set var="rel" value="${fn:startsWith(url,'http://')?'external':'shadowbox'}" />
 <c:set var="rel" value="${fn:endsWith(url,'.pdf')?'pdf':rel}" />
-<a rel="${rel}" class="${type}" href="${url}" title="${not empty label?label:description}">
+<a rel="${rel}" class="${type}" href="${url}" title="${not empty label?label:cleanDescription}">
 	<c:if test="${contentContext.asPreviewMode}">
-		<img class="image-preview-loading" id="img-${info.randomId}" src="${info.ajaxLoaderURL}" data-src="${previewURL}" alt="${not empty description?description:label}" />
+		<img class="image-preview-loading" id="img-${info.randomId}" src="${info.ajaxLoaderURL}" data-src="${previewURL}" alt="${not empty description?cleanDescription:label}" />
 		<script type="text/javascript">updateImagePreview();</script>
 	</c:if>
 	<c:if test="${not contentContext.asPreviewMode}">
 		<img src="${previewURL}" alt="${not empty description?description:label}" />
 	</c:if>
-	<c:if test="${empty param.nolabel}"><figcaption>${not empty label?label:description}</figcaption></c:if>
 </a>
+<c:if test="${empty param.nolabel}"><figcaption>${not empty label?label:description}</figcaption></c:if>
 </figure>
 </c:otherwise>
 </c:choose>
