@@ -43,9 +43,13 @@ li, .table-li {
 	padding-right: 12px;
 }
 
-p, ul, .table-ul, .global-image, .external-link, .internal-link,
+p, ul, .table-list-wrapper, .global-image, .external-link, .internal-link,
 	.unsubscribe-link, .file {
 	margin-bottom: 10px;
+}
+
+ul ul {
+	margin-bottom: 0;
 }
 
 .ReadMsgBody {

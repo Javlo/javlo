@@ -833,8 +833,8 @@ public class XMLManipulationHelper {
 	 * @param tag
 	 * @return
 	 */
-	public static Set<String> getAllParentName(TagDescription[] allTags, TagDescription tag) {
-		Set<String> outParents = new LinkedHashSet<String>();
+	public static List<String> getAllParentName(TagDescription[] allTags, TagDescription tag) {
+		List<String> outParents = new LinkedList<String>();
 
 		TagDescription parent = searchParent(allTags, tag);
 		while (parent != null) {
