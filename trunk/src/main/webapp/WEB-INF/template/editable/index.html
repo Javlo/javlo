@@ -10,8 +10,10 @@
 <jsp:include page="css/integration.css" />
 
 <c:set var="template" value="${info.template.style}" scope="request" />
-body .wrapper {
+body .association-wrapper, body .page-wrapper {    
 	<jsp:include page="css/styles.jsp" />
+	margin-left: auto;
+	margin-right: auto;
 }
 <jsp:include page="css/dynamic_css.jsp" />
 </style>
@@ -22,13 +24,15 @@ body .wrapper {
 <table width="100%" border="0" align="center" cellpadding="0" cellspacing="0">
 	<tr>
 		<td width="100%" align="center" valign="top">
-			<table class="wrapper" border="0" align="center" cellpadding="0" cellspacing="0">
+			<div class="${not param.pageAssociation?'page-wrapper':'inside-wrapper'}">
+			<table border="0" align="center" cellpadding="0" cellspacing="0" style="width: 100%;">
 				<tr id="header-container">
 					<td align="center">
 						<jsp:include page="/jsp/view/template/dynamic.jsp" />							
 					</td>
 				</tr>
 			</table>
+			</div>
 		</td>
 	</tr>
 </table>

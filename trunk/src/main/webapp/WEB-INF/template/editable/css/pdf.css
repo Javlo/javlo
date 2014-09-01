@@ -1,3 +1,11 @@
+._page_associate {
+	page-break-after:always;
+}
+
+._page_associate.last {
+	page-break-after:auto;
+} 
+
 .float-image .image-wrapper {
 	margin-bottom: 5px;	
 }

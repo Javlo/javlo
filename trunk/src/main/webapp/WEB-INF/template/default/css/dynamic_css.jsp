@@ -25,7 +25,7 @@ p,ul,ol,.table-li td.internal-link,.unsubscribe-link,.date,.external-link,.pdf-l
 }
 
 <c:forEach var="row" items="${info.template.rows}"><c:forEach var="area" items="${row.areas}">
-#${area.name} p, #${area.name} ul, #${area.name} ol, #${area.name} .table-li td,#${area.name} .internal-link, #${area.name} .unsubscribe-link, #${area.name} .date, #${area.name} .external-link,#${area.name} .pdf-link,#${area.name} .file, #${area.name} .simple-internal-link, #${area.name} .image-left,#${area.name}  .image-right, #${area.name} .global-image,#${area.name} .global-image,#${area.name} .gs,#${area.name} .qrcode td,#${area.name} .pdf-head td, #${area.name} .float-image .zone1,#${area.name} .float-image .zone2, #${area.name} .table td, #${area.name} .table th {	
+#${area.name} p, #${area.name} ul, #${area.name} ol, #${area.name} .table-li td,#${area.name} .internal-link, #${area.name} .unsubscribe-link, #${area.name} .date, #${area.name} .external-link,#${area.name} .pdf-link,#${area.name} .file, #${area.name} .simple-internal-link, #${area.name} .image-left,#${area.name}  .image-right, #${area.name} .global-image,#${area.name} .global-image,#${area.name} .gs,#${area.name} .qrcode td,#${area.name} .pdf-head td,  #${area.name} .float-image .text,  #${area.name} .float-image .zone1,#${area.name} .float-image .zone2, #${area.name} .table td, #${area.name} .table th {	
 	<c:if test="${not empty area.finalTextColor}">color: ${area.finalTextColor};</c:if>
 	<c:if test="${not empty area.finalTextSize}">font-size: ${area.finalTextSize};</c:if>
 	<c:if test="${not empty area.finalFont}">font-family: ${area.finalFont};</c:if>

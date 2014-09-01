@@ -2400,9 +2400,9 @@ public class XHTMLHelper {
 	}
 	
 	private static int listDepth(TagDescription[] tags, TagDescription tag) {
-		int depth=0;
+		int depth=1;
 		for (String parent : XMLManipulationHelper.getAllParentName(tags, tag)) {
-			if (parent.equalsIgnoreCase("ul") || parent.equalsIgnoreCase("ol")) {
+			if (parent.equalsIgnoreCase("li")) {
 				depth++;
 			}
 		}
@@ -2415,10 +2415,11 @@ public class XHTMLHelper {
 		int[] liNumber = new int[100];		
 		for (TagDescription tag : tags) {
 			if (tag.getName().equalsIgnoreCase("ul") || tag.getName().equalsIgnoreCase("ol")) {
+				int ind = listDepth(tags, tag);				
 				if (tag.getName().equalsIgnoreCase("ol")) {
-					liNumber[listDepth(tags, tag)+1] = 1;
+					liNumber[ind] = 1;
 				} else {
-					liNumber[listDepth(tags, tag)+1] = 0;
+					liNumber[ind] = 0;
 				}
 				
 				Set<String> parentsNames = XMLManipulationHelper.getAllParentName(tags, tag);
@@ -2433,9 +2434,10 @@ public class XHTMLHelper {
 				remplacement.addReplacement(tag.getCloseStart(), tag.getCloseEnd() + 1, "</tbody></table>"+suffix);
 			} else if (tag.getName().equalsIgnoreCase("li")) {				
 				String bullet = "&bull;";
-				if (liNumber[listDepth(tags, tag)] > 0) {
+				int ind = listDepth(tags, tag);				
+				if (liNumber[ind] > 0) {
 					bullet = ""+liNumber[listDepth(tags, tag)]+".";
-					liNumber[listDepth(tags, tag)]++;
+					liNumber[ind]++;
 				}					
 				remplacement.addReplacement(tag.getOpenStart(), tag.getOpenEnd() + 1, "<tr class=\"table-li\"><td class=\"bullet\" valign=\"top\" style=\"padding-right:3px; width: 14px;\">"+bullet+"</td><td class=\"text\" valign=\"top\">");						
 				remplacement.addReplacement(tag.getCloseStart(), tag.getCloseEnd() + 1, "</td></tr>");				
@@ -2445,12 +2447,11 @@ public class XHTMLHelper {
 	}
 	
 	public static void main(String[] args) {
-		
-		String xhtml = "<body><ul><li>list 1</li><li>list 2</li></ul></body>";
-		try {
-			System.out.println(prepareToMailing(xhtml));
-		} catch (BadXMLException e) {
-			// TODO Auto-generated catch block
+		String xhtml = "<body><ol><li>item 1</li><li>item 2<ol><li>item 2.1</li><li>item 2.2</li></ol></li><li>item 3</li></ol></body>";
+		try	{
+			ResourceHelper.writeStringToFile(new File("c:/trans/list.html"), prepareToMailing(xhtml));
+			//System.out.println(prepareToMailing(xhtml));
+		} catch (Exception e) {
 			e.printStackTrace();
 		}
 		

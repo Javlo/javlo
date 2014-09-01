@@ -390,6 +390,21 @@ public class InfoBean {
 	public String getLogoURL() {
 		return URLHelper.createStaticURL(ctx, "/logo.svg");
 	}
+	
+	public String getBackgroundURL() {
+		File bgFile = new File (URLHelper.mergePath(ctx.getGlobalContext().getDataFolder(), ctx.getGlobalContext().getStaticConfig().getStaticFolder(), "background.png"));
+		if (!bgFile.exists()) {
+			bgFile = new File (URLHelper.mergePath(ctx.getGlobalContext().getDataFolder(), ctx.getGlobalContext().getStaticConfig().getStaticFolder(), "background.jpg"));			
+		}
+		if (bgFile.exists()) {
+			try {
+				return URLHelper.createTransformURL(ctx,  "/static/"+bgFile.getName(), "background");
+			} catch (Exception e) { 
+				e.printStackTrace();
+			}
+		}
+		return null;		
+	}
 
 	public int getPreviewVersion() {
 		try {
