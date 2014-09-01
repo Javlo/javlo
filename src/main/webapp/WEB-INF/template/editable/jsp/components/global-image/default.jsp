@@ -16,14 +16,14 @@
 <a rel="${rel}" class="${type}" href="${url}" title="${not empty label?label:description}">
 	<c:if test="${contentContext.asPreviewMode}">
 		<c:set var="imageId" value="i${info.randomId}" />
-		<img id="${imageId}" src="${info.ajaxLoaderURL}" alt="${not empty description?description:label}" />
+		<img id="${imageId}" src="${info.ajaxLoaderURL}" alt="${not empty description?cleanDescription:label}" />
 	</c:if>
 	<c:if test="${not contentContext.asPreviewMode}">
 		<c:set var="imageWidthTag" value='width="${imageWidth}" ' />
-		<img ${not empty imageWidth?imageWidthTag:''}src="${previewURL}" alt="${not empty description?description:label}" />
+		<img ${not empty imageWidth?imageWidthTag:''}src="${previewURL}" alt="${not empty description?cleanDescription:label}" />
 	</c:if>
-	<c:if test="${empty param.nolabel}"><figcaption>${not empty label?label:description}</figcaption></c:if>
 </a>
+<c:if test="${empty param.nolabel}"><figcaption>${not empty label?label:description}</figcaption></c:if>
 </figure>
 </c:otherwise>
 </c:choose>

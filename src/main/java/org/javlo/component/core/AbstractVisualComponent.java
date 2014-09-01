@@ -1138,6 +1138,10 @@ public abstract class AbstractVisualComponent implements IContentVisualComponent
 		if (isColored()) {
 			style = style + " colored";
 		}
+		String currentRenderer = getCurrentRenderer(ctx);
+		if (currentRenderer != null) {
+			style = style + ' ' +currentRenderer;
+		}
 		return style.trim();
 	}
 
