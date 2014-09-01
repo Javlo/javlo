@@ -16,7 +16,7 @@ if (ctx.isInteractiveMode() && ctx.getRenderMode() == ContentContext.PREVIEW_MOD
 		<div class="notification <%=messageRepository.getGlobalMessage().getTypeLabel()%>"><%=messageRepository.getGlobalMessage().getMessage()%></div>
 	<%}%></div><%
 }
-
+%><center><table class="association-wrapper"><tbody><tr><td><%
 MenuElement currentPage = ctx.getCurrentPage();
 boolean savePageAssocitation = ctx.isPageAssociation();
 
@@ -25,7 +25,7 @@ ctx.setPageAssociation(true);
 /** remove preview command **/
 boolean interactiveMode = ctx.isInteractiveMode();
 
-for (MenuElement child : currentPage.getChildMenuElements()) {
+for (MenuElement child : currentPage.getChildMenuElements()) {	
 	Template childTemplate = TemplateFactory.getTemplate(ctx, child);
 	ctx.setCurrentPageCached(child);
 	ctx.setCurrentTemplate(childTemplate);
@@ -34,4 +34,4 @@ for (MenuElement child : currentPage.getChildMenuElements()) {
 	%><jsp:include page="<%=jspURI%>" /><%
 }
 ctx.setPageAssociation(savePageAssocitation);
-%>
+%></td></tr></tbody></table></center>

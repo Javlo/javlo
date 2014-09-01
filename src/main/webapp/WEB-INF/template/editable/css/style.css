@@ -31,11 +31,12 @@ a {
 }
 
 ul, ol, .table-ul, .table-ol {
+	margin-left: 12px;
 	padding: 0;
 }
 
 ul, ol {
-	margin-left: 12px;
+	margin-left: 24px;
 }
 
 li, .table-li {
@@ -172,4 +173,8 @@ table.float-image, table.float-image  td, table.float-image  th {
 	border: 0 none;
 	margin: 0;
 	padding: 0;
+}
+
+._page_associate, .style_wrapper {
+	width: 100%;
 }
