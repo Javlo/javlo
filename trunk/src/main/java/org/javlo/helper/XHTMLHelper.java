@@ -2401,8 +2401,8 @@ public class XHTMLHelper {
 	
 	private static int listDepth(TagDescription[] tags, TagDescription tag) {
 		int depth=1;
-		for (String parent : XMLManipulationHelper.getAllParentName(tags, tag)) {
-			if (parent.equalsIgnoreCase("li")) {
+		for (String parent : XMLManipulationHelper.getAllParentName(tags, tag)) {			
+			if (parent.equalsIgnoreCase("ul") || parent.equalsIgnoreCase("ol")) {
 				depth++;
 			}
 		}
@@ -2413,30 +2413,31 @@ public class XHTMLHelper {
 		TagDescription[] tags = XMLManipulationHelper.searchAllTag(xhtml, false);
 		StringRemplacementHelper remplacement = new StringRemplacementHelper();
 		int[] liNumber = new int[100];		
-		for (TagDescription tag : tags) {
+		for (TagDescription tag : tags) {			
 			if (tag.getName().equalsIgnoreCase("ul") || tag.getName().equalsIgnoreCase("ol")) {
 				int ind = listDepth(tags, tag);				
 				if (tag.getName().equalsIgnoreCase("ol")) {
 					liNumber[ind] = 1;
 				} else {
 					liNumber[ind] = 0;
-				}
-				
-				Set<String> parentsNames = XMLManipulationHelper.getAllParentName(tags, tag);
+				}				
+				List<String> parentsNames = XMLManipulationHelper.getAllParentName(tags, tag);
 				String prefix = "";
 				String suffix = "";
 				if ((parentsNames.contains("ul") || parentsNames.contains("ol")) && !parentsNames.contains("li")) {
 					prefix="<tr class=\"table-li\"><td colspan=\"2\" valign=\"top\">";
 					suffix = "</td></tr>";
-				}						
-				
-				remplacement.addReplacement(tag.getOpenStart(), tag.getOpenEnd() + 1, prefix+"<table class=\"table-"+tag.getName()+"\" border=\"0\" cellspacing=\"0\" cellpadding=\"0\"><tbody>");						
+				} else if (!(parentsNames.contains("ul") || parentsNames.contains("ol"))) {
+					prefix = "<div class=\"table-list-wrapper\">";
+					suffix = "</div>";					
+				}
+				remplacement.addReplacement(tag.getOpenStart(), tag.getOpenEnd() + 1, prefix+"<table class=\"table-"+tag.getName()+"-depth-"+ind+" table-"+tag.getName()+"\" border=\"0\" cellspacing=\"0\" cellpadding=\"0\"><tbody>");						
 				remplacement.addReplacement(tag.getCloseStart(), tag.getCloseEnd() + 1, "</tbody></table>"+suffix);
 			} else if (tag.getName().equalsIgnoreCase("li")) {				
 				String bullet = "&bull;";
-				int ind = listDepth(tags, tag);				
+				int ind = listDepth(tags, tag)-1;				
 				if (liNumber[ind] > 0) {
-					bullet = ""+liNumber[listDepth(tags, tag)]+".";
+					bullet = ""+liNumber[ind]+".";
 					liNumber[ind]++;
 				}					
 				remplacement.addReplacement(tag.getOpenStart(), tag.getOpenEnd() + 1, "<tr class=\"table-li\"><td class=\"bullet\" valign=\"top\" style=\"padding-right:3px; width: 14px;\">"+bullet+"</td><td class=\"text\" valign=\"top\">");						
@@ -2448,7 +2449,16 @@ public class XHTMLHelper {
 	
 	public static void main(String[] args) {
 		String xhtml = "<body><ol><li>item 1</li><li>item 2<ol><li>item 2.1</li><li>item 2.2</li></ol></li><li>item 3</li></ol></body>";
+		
 		try	{
+			
+			TagDescription[] tags = XMLManipulationHelper.searchAllTag(xhtml, false);
+			for (TagDescription tag : tags) {				
+				if (tag.getName().equals("div")) {
+					System.out.println("depth = "+listDepth(tags,tag));
+				}
+			}
+			
 			ResourceHelper.writeStringToFile(new File("c:/trans/list.html"), prepareToMailing(xhtml));
 			//System.out.println(prepareToMailing(xhtml));
 		} catch (Exception e) {
