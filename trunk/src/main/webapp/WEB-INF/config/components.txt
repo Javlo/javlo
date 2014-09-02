@@ -17,6 +17,7 @@ org.javlo.component.meta.TimeRangeComponent
 org.javlo.component.text.Description
 org.javlo.component.meta.Keywords
 org.javlo.component.meta.PageWeight
+org.javlo.component.meta.AutoNumberComponent
 
 
 --content.title.text

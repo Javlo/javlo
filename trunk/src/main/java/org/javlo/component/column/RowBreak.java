@@ -32,7 +32,7 @@ public class RowBreak extends TableComponent {
 	public String getViewXHTMLCode(ContentContext ctx) throws Exception {
 		ByteArrayOutputStream outStream = new ByteArrayOutputStream();
 		PrintStream out = new PrintStream(outStream);
-		out.println("</td></tr><tr><td"+getColSpanHTML(ctx)+" style=\""+getTDStyle(ctx)+"\">");
+		out.println("</div></td></tr><tr><td"+getColSpanHTML(ctx)+" style=\""+getTDStyle(ctx)+"\"><div class=\"cell-wrapper\">");
 		out.close();
 		return new String(outStream.toByteArray());
 	}

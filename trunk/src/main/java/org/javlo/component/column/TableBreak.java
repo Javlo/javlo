@@ -26,12 +26,12 @@ public class TableBreak extends TableComponent {
 	
 	@Override
 	public String getViewXHTMLCode(ContentContext ctx) throws Exception {		
-		return "</td></tr></table>";
+		return "</div></td></tr></table>";
 	}
 	
 	public static String closeTable(ContentContext ctx, TableContext tableContext) {
 		tableContext.resetTable(ctx); 
-		return "</td></tr></table>";
+		return "</div></td></tr></table>";
 	}
 	
 	@Override
