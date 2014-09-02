@@ -796,7 +796,7 @@ body.edit-preview {
 #preview_command .shared-content h3 {
 	overflow: hidden;
   	text-overflow: ellipsis;
-  	white-space: nowrap;
+  	height: 14px;
 }
 
 .table-component-preview {

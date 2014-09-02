@@ -31,7 +31,7 @@ public class CellBreak extends TableComponent {
 			positionCSS = "class=\""+positionCSS+"\" ";
 		}		
 		if (tableContext.isTableOpen()) {
-			out.println("</td><td"+getColSpanHTML(ctx)+' '+positionCSS+"style=\""+getTDStyle(ctx)+"\">");
+			out.println("</div></td><td"+getColSpanHTML(ctx)+' '+positionCSS+"style=\""+getTDStyle(ctx)+"\"><div class=\"cell-wrapper\">");
 		} else {
 			tableContext.openTable();
 			String tableStyle = "width:100%;";
@@ -43,7 +43,7 @@ public class CellBreak extends TableComponent {
 				border = "border=\"1\" ";
 			}
 			
-			out.println("<table "+border+"style=\""+tableStyle+"\" class=\"component-table\"><tr><td"+getColSpanHTML(ctx)+' '+positionCSS+"style=\""+getTDStyle(ctx)+"\">");
+			out.println("<table "+border+"style=\""+tableStyle+"\" class=\"component-table\"><tr><td"+getColSpanHTML(ctx)+' '+positionCSS+"style=\""+getTDStyle(ctx)+"\"><div class=\"cell-wrapper\">");
 		}
 		out.close();
 		return new String(outStream.toByteArray());		

@@ -1263,7 +1263,7 @@ body.edit-preview {
 	border: 1px red solid;
 }
 
-table.component-table td, table.component-table tr {
+table.component-table .cell-wrapper {
 	position: relative;
 }
 
