@@ -1283,6 +1283,20 @@ public class Template implements Comparable<Template> {
 		}
 	}
 
+	public String getHTMLFileParams(Device device) {
+		String deviceRenderer = null;
+		if (device != null) {
+			deviceRenderer = properties.getString("html." + device.getCode() + ".params", null);
+		}
+		if (deviceRenderer != null) {
+			logger.fine("device renderer found : " + deviceRenderer + " (template:" + getId() + "");
+			return deviceRenderer;
+		} else {
+			String defaultRenderer = properties.getString("html.params", getParent().getHTMLFileParams(device));
+			return defaultRenderer;
+		}
+	}
+
 	public String getMenuRenderer(Device device) {
 		String menuRenderer = null;
 		if (device != null) {
@@ -1722,7 +1736,10 @@ public class Template implements Comparable<Template> {
 		while (keys.hasNext()) {
 			String key = (String) keys.next();
 			if (key.startsWith("html.")) {
-				outRenderes.add(key.replaceFirst("html.", ""));
+				String renderer = key.replaceFirst("html.","");
+				if (!renderer.contains(".")) {
+					outRenderes.add(renderer);
+				}
 			}
 		}
 		if (outRenderes.size() == 1) {
@@ -1749,7 +1766,12 @@ public class Template implements Comparable<Template> {
 		if (renderer == null) {
 			throw new ServiceException("renderer not found on template : " + getName() + " (parent:" + getParent() + ")");
 		}
-		return URLHelper.mergePath(getLocalTemplateTargetFolder(globalContext), renderer);
+		String params = "";
+		String templateParams = getHTMLFileParams(ctx.getDevice());
+		if (templateParams != null) {
+			params = '?'+templateParams;
+		}		
+		return URLHelper.mergePath(getLocalTemplateTargetFolder(globalContext), renderer)+params;
 	}
 
 	public List<String> getResources() {
@@ -2617,13 +2639,13 @@ public class Template implements Comparable<Template> {
 			for (Row row : getRows()) {
 				hash = hash + row.hashCode();
 			}
-			hash = hash + 31*getStyle().hashCode();
+			hash = hash + 31 * getStyle().hashCode();
 		} else {
 			for (String area : getAreas()) {
 				hash = hash + area.hashCode();
 			}
-		}		
-		hash = hash + 31*getTemplateData().hashCode();
+		}
+		hash = hash + 31 * getTemplateData().hashCode();
 		return hash;
 	}
 

@@ -2,6 +2,8 @@ package org.javlo.template;
 
 import java.util.Comparator;
 
+import org.javlo.helper.StringHelper;
+
 public class TemplatePart {
 
 	public static class SortByName implements Comparator<TemplatePart> {
@@ -346,6 +348,35 @@ public class TemplatePart {
 		result = prime * result + ((titleColor == null) ? 0 : titleColor.hashCode());
 		result = prime * result + ((width == null) ? 0 : width.hashCode());
 		return result;
+	}
+	
+	/**
+	 * return the Thinckness of the frame (padding+border+margin), if some item is defined without px, return null.
+	 * @return
+	 */
+	public Integer getFrameThickness() {
+		Integer marginSize = 0;
+		Integer borderSize = 0;
+		Integer paddingSize = 0;
+		if (getMargin() != null && getMargin().trim().length()>0) {
+			marginSize = StringHelper.getPixelValue(getMargin());
+			if (marginSize == null) {
+				return null;
+			}
+		}
+		if (getBorderWidth() != null && getBorderWidth().trim().length()>0) {
+			borderSize = StringHelper.getPixelValue(getBorderWidth());
+			if (borderSize == null) {
+				return null;
+			}
+		}
+		if (getPadding() != null && getPadding().trim().length()>0) {
+			paddingSize = StringHelper.getPixelValue(getPadding());
+			if (paddingSize == null) {
+				return null;
+			}
+		}
+		return marginSize+borderSize+paddingSize;
 	}
 
 }

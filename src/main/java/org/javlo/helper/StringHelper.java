@@ -1289,7 +1289,11 @@ public class StringHelper {
 	}
 
 	public static void main(String[] args) {
-		System.out.println("***** StringHelper.main : Color decode : "+Color.decode("#")); //TODO: remove debug trace
+		System.out.println("***** StringHelper.main : "+getPixelValue(" 12px")); //TODO: remove debug trace
+		System.out.println("***** StringHelper.main : "+getPixelValue(" 12 px")); //TODO: remove debug trace
+		System.out.println("***** StringHelper.main : "+getPixelValue(" 12%")); //TODO: remove debug trace
+		System.out.println("***** StringHelper.main : "+getPixelValue(null)); //TODO: remove debug trace
+		System.out.println("***** StringHelper.main : "+getPixelValue("coucou")); //TODO: remove debug trace
 	}
 
 	/**
@@ -2988,6 +2992,27 @@ public class StringHelper {
 			return splitted[i-1];
 		}
 		
+	}
+	
+	/**
+	 * transform a string with size in pixel in integer.
+	 * @param pxSize a size in px (sp. '12px').
+	 * @return null if bad param (sp. 12%, tralala, null) and the value in pixel if corrent param (12px, 0px, 23 px).
+	 */
+	public static Integer getPixelValue(String pxSize) {
+		if (pxSize == null) {
+			return null;
+		}
+		pxSize = pxSize.trim().toLowerCase();
+		if (pxSize.contains("px")) {
+			pxSize = pxSize.replace("px", "");
+			pxSize = pxSize.trim();
+			try {
+				return Integer.parseInt(pxSize);
+			} catch (NumberFormatException e) {
+			}
+		}
+		return null;		
 	}
 
 }

@@ -17,3 +17,8 @@
 .float-image.left .image-wrapper {
 	margin-right: 10px;	
 }
+
+#footer {
+	postition: absolute;
+	bottom: 0;
+}

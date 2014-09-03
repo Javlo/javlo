@@ -350,6 +350,7 @@ public class XMLManipulationHelper {
 			// }
 			// String content = contentBuffered.toString();
 
+			
 			String content = FileUtils.readFileToString(htmlFile, ContentContext.CHARACTER_ENCODING);
 			TagDescription[] tags = new TagDescription[0];
 

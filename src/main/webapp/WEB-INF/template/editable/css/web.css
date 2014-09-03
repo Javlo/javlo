@@ -1,3 +1,11 @@
 * {
 	line-height: 131%;
 }
+
+._page_associate #footer-row {
+	display: none;
+}
+
+._page_associate .last-page #footer-row {
+	display: block;
+}

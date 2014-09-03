@@ -24,13 +24,22 @@ ctx.setPageAssociation(true);
 
 /** remove preview command **/
 boolean interactiveMode = ctx.isInteractiveMode();
-
+int pageNumber = 1;
+int lastPage = currentPage.getChildMenuElements().size();
+String positionStr = " first-page";
 for (MenuElement child : currentPage.getChildMenuElements()) {	
 	Template childTemplate = TemplateFactory.getTemplate(ctx, child);
 	ctx.setCurrentPageCached(child);
 	ctx.setCurrentTemplate(childTemplate);
 	String jspURI = childTemplate.getRendererFullName(ctx);
 	jspURI = URLHelper.addParam(jspURI, "pageAssociation", "true");
+	request.setAttribute("pageClass", "page-"+pageNumber+positionStr);
+	if (pageNumber<lastPage) {
+		positionStr="";
+	} else {
+		positionStr=" last-page";
+	}
+	pageNumber++;
 	%><jsp:include page="<%=jspURI%>" /><%
 }
 ctx.setPageAssociation(savePageAssocitation);
