@@ -1,5 +1,7 @@
 package org.javlo.component.meta;
 
+import java.util.Properties;
+
 import org.javlo.component.core.AbstractVisualComponent;
 import org.javlo.component.core.IContentVisualComponent;
 import org.javlo.context.ContentContext;
@@ -14,28 +16,55 @@ public class AutoNumberComponent extends AbstractVisualComponent {
 		return TYPE;
 	}
 	
+	private String getKey(ContentContext ctx) throws Exception {
+		return "number-"+getValue();
+	}
+	
 	private static synchronized void createNewNumber(ContentContext ctx, AutoNumberComponent currentComp) throws Exception {
 		ContentService content = ContentService.getInstance(ctx.getRequest());
-		int maxNumber = 0;
+		int maxNumber = 1;
 		for (IContentVisualComponent comp : content.getAllContent(ctx.getContextWithArea(null))) {
 			if (comp.getType().equals(TYPE)) {
-				int compNumber = ((AutoNumberComponent)comp).getNumber(ctx);
+				System.out.println("***** AutoNumberComponent.createNewNumber : comp id = "+comp.getId()); //TODO: remove debug trace
+				if (((AutoNumberComponent)comp).isNumber(ctx)) {
+				int compNumber = ((AutoNumberComponent)comp).getNumber(ctx)+1;
+				System.out.println("***** AutoNumberComponent.createNewNumber : compNumber = "+compNumber); //TODO: remove debug trace
 				if (compNumber > maxNumber) {
 					maxNumber = compNumber;
 				}
+				}
+				
 			}
-		}
-		setNumber(maxNumber+1);
+		}		
+		Properties data = currentComp.getViewData(ctx);
+		data.setProperty(currentComp.getKey(ctx), ""+maxNumber);
 	}
 	
-	private static void setNumber(int i) {
-		// TODO Auto-generated method stub
-		
-		
+	protected boolean isNumber(ContentContext ctx) throws Exception {		
+		return getViewData(ctx).getProperty(getKey(ctx)) != null;
 	}
 
-	protected int getNumber(ContentContext ctx) {
-		return -1;
+	protected int getNumber(ContentContext ctx) throws Exception {		
+		Properties data = getViewData(ctx);
+		if (!isNumber(ctx)) {
+			createNewNumber(ctx, this);
+		}
+		System.out.println("***** AutoNumberComponent.getNumber : data.getProperty(\""+getKey(ctx)+"\") = "+data.getProperty(getKey(ctx))); //TODO: remove debug trace
+		return Integer.parseInt(data.getProperty(getKey(ctx)));
+	}
+	
+	@Override
+	public String getViewXHTMLCode(ContentContext ctx) throws Exception {	
+		return getValue()+getNumber(ctx);
+	}
+	
+	@Override
+	public void performEdit(ContentContext ctx) throws Exception {	
+		super.performEdit(ctx);
+		if (isModify()) {
+			getViewData(ctx).clear();
+			storeViewData(ctx);
+		}
 	}
 
 }

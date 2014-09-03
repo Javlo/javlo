@@ -368,5 +368,10 @@ public class DefaultTemplate extends Template {
 	protected String getExcludeProperties(String zone) {
 		return null;
 	}
+	
+	@Override
+	public String getHTMLFileParams(Device device) {	
+		return null;
+	}
 
 }

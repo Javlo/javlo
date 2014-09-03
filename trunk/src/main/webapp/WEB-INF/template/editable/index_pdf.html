@@ -15,20 +15,36 @@ body .wrapper {
 }
 <jsp:include page="css/dynamic_css.jsp" />
 
+@page {	size: A4; }
+
 </style>
 </head>
-<body class="pdf" style="-webkit-font-smoothing: antialiased; width: 100% !important; -webkit-text-size-adjust: none; background-color: #ffffff;">
+<body class="pdf ${pageClass}" style="-webkit-font-smoothing: antialiased; width: 100% !important; -webkit-text-size-adjust: none; background-color: #ffffff;">
 <table width="100%" border="0" align="center" cellpadding="0" cellspacing="0">
 	<tr>
 		<td width="100%" align="center" valign="top">
-			<div class="wrapper" style="width: 686px;">
-			<table width="100%" style="width: 100%" class="main-table" border="0" align="center" cellpadding="0" cellspacing="0">
-				<tr id="header-container">
-					<td align="center">
-						<jsp:include page="/jsp/view/template/dynamic.jsp" />							
-					</td>
-				</tr>
-			</table>
+			<div style="width: 717px; padding:0; margin:0;">
+				<div class="wrapper" style="width: auto;">
+				<table width="100%" style="width: 100%; height: ${1044-(info.template.style.frameThickness*2)}px;" class="main-table" border="0" align="center" cellpadding="0" cellspacing="0">	
+					<c:if test="${empty param.lastRowFooter}">
+					<tr id="header-container">
+						<td align="center">
+							<jsp:include page="/jsp/view/template/dynamic.jsp" />							
+						</td>
+					</tr>					
+					</c:if>				
+					<c:if test="${not empty param.lastRowFooter}">
+					<tr id="header-container">
+						<td align="center">
+							<jsp:include page="/jsp/view/template/dynamic.jsp?lastRow=false" />							
+						</td>
+					</tr>
+					<tr id="footer-row">
+						<td style="vertical-align: bottom;"><jsp:include page="/jsp/view/template/dynamic.jsp?lastRow=true" /></td>
+					</tr>
+					</c:if>
+				</table>
+				</div>
 			</div>
 		</td>
 	</tr>

@@ -50,5 +50,6 @@ public class TemplateStyle extends TemplatePart {
 	public String getDefaultWidth() {
 		return "550px";
 	}
+	
 
 }
