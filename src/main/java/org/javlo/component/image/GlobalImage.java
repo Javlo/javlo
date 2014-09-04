@@ -1132,7 +1132,7 @@ public class GlobalImage extends Image implements IImageFilter {
 			return image;
 		} else {
 			reloadProperties();
-			return ImageEngine.resizeWidth(image, getWidth(ctx));
+			return ImageEngine.resizeWidth(image, getWidth(ctx), false);
 		}
 	}
 
