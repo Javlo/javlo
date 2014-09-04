@@ -424,6 +424,26 @@ public class ImageConfig {
 		return properties.getBoolean(key, false);
 	}
 	
+	public boolean isGlow(Device device, String filter, String area) {
+		String key = getKey(device, filter, area, "glow");
+		return properties.getBoolean(key, false);
+	}
+	
+	public int getSepiaIntensity(Device device, String filter, String area) {
+		String key = getKey(device, filter, area, "sepia");
+		return properties.getInt(key, 0);
+	}
+	
+	public float getConstrast(Device device, String filter, String area) {
+		String key = getKey(device, filter, area, "contrast");
+		return properties.getFloat(key, 1);
+	}
+	
+	public float getBrightness (Device device, String filter, String area) {
+		String key = getKey(device, filter, area, "brightness");
+		return properties.getFloat(key, 1);
+	}
+	
 	public int getDashed(Device device, String filter, String area) {
 		String key = getKey(device, filter, area, "dashed");
 		return properties.getInt(key, 1);

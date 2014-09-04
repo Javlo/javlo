@@ -182,8 +182,9 @@ public class GlobalImage extends Image implements IImageFilter {
 
 	@Override
 	public void prepareView(ContentContext ctx) throws Exception {
-		ctx.setCurrentTemplate(null); // reset template
+		ctx.setCurrentTemplate(null); // reset template		
 		super.prepareView(ctx);
+		ctx.getRequest().setAttribute("link", getLink());
 		String imageURL = getImageURL(ctx);
 		if (imageURL != null) {
 			ctx.getRequest().setAttribute("image", imageURL);
