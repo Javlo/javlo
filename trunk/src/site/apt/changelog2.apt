@@ -299,3 +299,5 @@ change log
  * forward bad url to same page name url.
  
  * create DynamicComponent macro
+ 
+ * image engine high-quality option
