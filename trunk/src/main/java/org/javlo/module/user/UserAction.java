@@ -220,7 +220,7 @@ public class UserAction extends AbstractModuleAction {
 					try {
 						in = newAvatar.getInputStream();
 						BufferedImage img = ImageIO.read(in);
-						img = ImageEngine.resizeWidth(img, 255);
+						img = ImageEngine.resizeWidth(img, 255, true);
 						avatarFile.getParentFile().mkdirs();
 						ImageIO.write(img, "png", avatarFile);
 					} finally {

@@ -14,6 +14,7 @@ import javax.servlet.http.HttpSession;
 import org.apache.commons.configuration.PropertiesConfiguration;
 import org.javlo.context.GlobalContext;
 import org.javlo.helper.ResourceHelper;
+import org.javlo.helper.StringHelper;
 import org.javlo.helper.URLHelper;
 import org.javlo.rendering.Device;
 import org.javlo.template.Template;
@@ -195,6 +196,17 @@ public class ImageConfig {
 			}
 		}
 		return properties.getInt(filter + ".width", -1);
+	}
+	
+	public boolean isHighQuality(Device device, String filter, String area) {
+		if (device != null) {
+			String key = getKey(device, filter, area, "hq");
+			String quality = properties.getString(key, null);
+			if (quality != null) {
+				return StringHelper.isTrue(quality);
+			}
+		}
+		return properties.getBoolean(filter + ".hq", false);
 	}
 	
 	public int getFolderWidth(Device device, String filter, String area) {

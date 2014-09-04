@@ -94,8 +94,8 @@ public class ImageEngine {
 		return op.filter(img, target);
 	}
 
-	public static BufferedImage resize(BufferedImage bi, Integer width, Integer height) {		
-		return scale(bi,width,height);
+	public static BufferedImage resize(BufferedImage bi, Integer width, Integer height, boolean hq) {		
+		return scale(bi,width,height,hq);
 	}
 	
 	public static BufferedImage zoom(BufferedImage img, double zoom, int interestX, int interestY) {
@@ -115,9 +115,12 @@ public class ImageEngine {
 		return cropImage(img, bottomX-topX, bottomY-topY, topX, topY);
 	}
 	
-	public static BufferedImage scale(BufferedImage img, Integer inTargetWidth, Integer inTargetHeight) {		
-		BufferedImage outImage = Scalr.resize(img, Scalr.Method.AUTOMATIC, Scalr.Mode.FIT_TO_WIDTH,inTargetWidth, inTargetHeight);
-		return outImage;
+	public static BufferedImage scale(BufferedImage img, Integer inTargetWidth, Integer inTargetHeight, boolean hq) {
+		if (hq) {		
+			return Scalr.resize(img, Scalr.Method.ULTRA_QUALITY, Scalr.Mode.FIT_TO_WIDTH,inTargetWidth, inTargetHeight);
+		} else {
+			return Scalr.resize(img, Scalr.Method.AUTOMATIC, Scalr.Mode.FIT_TO_WIDTH,inTargetWidth, inTargetHeight);
+		}		
 	}
 	
 	public static BufferedImage _scale(BufferedImage img, Integer inTargetWidth, Integer inTargetHeight) {
@@ -403,30 +406,10 @@ public class ImageEngine {
 
 	}
 
-	public static BufferedImage resizeIn(BufferedImage bi, int width, int height) {
-
-		logger.fine("resizeIn width:" + width + " height:" + height);
-
-		if (width < 0) {
-			return resizeHeight(bi, height, null);
-		} else if (height < 0) {
-			return resizeWidth(bi, height);
-		}
-
-		if ((float) bi.getWidth() / (float) bi.getHeight() > (float) width / (float) height) {
-			int newHeight = (bi.getHeight() * width) / bi.getWidth();
-			return resize(bi, width, newHeight);
-		} else {
-			int newWidth = (bi.getWidth() * height) / bi.getHeight();
-			return resize(bi, newWidth, height);
-		}
-
-	}
-
-	public static BufferedImage resizeHeight(BufferedImage bi, int height, Color bgColor) {
+	public static BufferedImage resizeHeight(BufferedImage bi, int height, Color bgColor, boolean hq) {
 		int width = Math.round(bi.getWidth() * ((float) height / (float) bi.getHeight()));
 		height = Math.round(bi.getHeight() * ((float) width / (float) bi.getWidth()));
-		BufferedImage image = resize(bi, width, height);
+		BufferedImage image = resize(bi, width, height,hq);
 
 		if (bgColor != null && image.getColorModel().hasAlpha()) {
 			BufferedImage imgNew;
@@ -446,14 +429,14 @@ public class ImageEngine {
 		return image;
 	}
 
-	public static BufferedImage resizeWidth(BufferedImage bi, int width) {
-		return resizeWidth(bi, width, 0, 0, 0, 0, null);
+	public static BufferedImage resizeWidth(BufferedImage bi, int width, boolean hq) {
+		return resizeWidth(bi, width, 0, 0, 0, 0, null, hq);
 	}
 
-	public static BufferedImage resizeWidth(BufferedImage bi, int width, int mt, int mr, int ml, int mb, Color bgColor) {
+	public static BufferedImage resizeWidth(BufferedImage bi, int width, int mt, int mr, int ml, int mb, Color bgColor, boolean hq) {
 		int height = Math.round(bi.getHeight() * ((float) width / (float) bi.getWidth()));
 		width = Math.round(bi.getWidth() * ((float) height / (float) bi.getHeight()));
-		BufferedImage image = resize(bi, width, height);
+		BufferedImage image = resize(bi, width, height, hq);
 
 		if (bgColor != null && image.getColorModel().hasAlpha() && (mt > 0 || ml > 0 || mr > 0 || mb > 0)) {			
 			int inWidth = image.getWidth() + ml + mr;
@@ -613,7 +596,7 @@ public class ImageEngine {
 		return imgNew;
 	}
 
-	public static BufferedImage applyFilter(BufferedImage source, BufferedImage filter, boolean cropResize, boolean addBorder, int mt, int ml, int mr, int mb, int fzx, int fzy, boolean isFocus, Color bgColor) {
+	public static BufferedImage applyFilter(BufferedImage source, BufferedImage filter, boolean cropResize, boolean addBorder, int mt, int ml, int mr, int mb, int fzx, int fzy, boolean isFocus, Color bgColor, boolean hq) {
 
 		BufferedImage workImage = null;
 
@@ -625,9 +608,9 @@ public class ImageEngine {
 		int workHeight = filter.getHeight() - (mt + mb);
 
 		if (!cropResize) {
-			workImage = resize(source, workWith, workHeight);
+			workImage = resize(source, workWith, workHeight, hq);
 		} else {
-			workImage = ImageEngine.resize(source, filter.getWidth(), filter.getHeight(), cropResize, addBorder, mt, ml, mr, mb, bgColor, fzx, fzy, isFocus);
+			workImage = ImageEngine.resize(source, filter.getWidth(), filter.getHeight(), cropResize, addBorder, mt, ml, mr, mb, bgColor, fzx, fzy, isFocus, hq);
 			/*
 			 * if ((float) source.getWidth() / (float) source.getHeight() <
 			 * (float) workWith / (float) workHeight) { int height =
@@ -764,7 +747,7 @@ public class ImageEngine {
 	 *            y position of the interest zone in the picture
 	 * @return a resized image
 	 */
-	public static BufferedImage resize(BufferedImage source, int inWidth, int inHeight, boolean cropResize, boolean addBorder, int mt, int ml, int mr, int mb, Color bgColor, int interestX, int interestY, boolean focusZone) {
+	public static BufferedImage resize(BufferedImage source, int inWidth, int inHeight, boolean cropResize, boolean addBorder, int mt, int ml, int mr, int mb, Color bgColor, int interestX, int interestY, boolean focusZone, boolean hq) {
 
 		logger.fine("resize with:" + inWidth + " height:" + inHeight + " bgColor:" + bgColor);
 
@@ -812,14 +795,14 @@ public class ImageEngine {
 		int workHeight = inHeight - (mt + mb);
 
 		if (!cropResize) {
-			workImage = resize(source, workWith, workHeight);			
+			workImage = resize(source, workWith, workHeight, hq);			
 		} else {
 			if ((float) source.getWidth() / (float) source.getHeight() < (float) workWith / (float) workHeight) {
 				int height = (source.getHeight() * workWith) / source.getWidth();
-				workImage = resize(source, workWith, height);
+				workImage = resize(source, workWith, height, hq);
 			} else {
 				int width = (source.getWidth() * workHeight) / source.getHeight();
-				workImage = resize(source, width, workHeight);
+				workImage = resize(source, width, workHeight, hq);
 			}
 		}
 
@@ -1131,7 +1114,7 @@ public class ImageEngine {
 		File target = new File("c:/trans/out.png");
 		try {		
 			BufferedImage sourceImage = ImageIO.read(source);
-			BufferedImage targetImage = ImageEngine.resize(sourceImage, 255, 255, false, true, 0, 0, 0, 0, null, 100, 100, false);
+			BufferedImage targetImage = ImageEngine.resize(sourceImage, 255, 255, false, true, 0, 0, 0, 0, null, 100, 100, false, false);
 			ImageIO.write(targetImage, "png", target);
 		} catch (Exception e) {
 			e.printStackTrace();

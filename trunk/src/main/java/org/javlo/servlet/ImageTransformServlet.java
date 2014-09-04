@@ -241,7 +241,7 @@ public class ImageTransformServlet extends HttpServlet {
 				int mr = config.getMarginRigth(ctx.getDevice(), filter, area);
 				int mb = config.getMarginBottom(ctx.getDevice(), filter, area);
 				
-				image = ImageEngine.resize(image, thumbWidth, thumbHeight, config.isCropResize(ctx.getDevice(), filter, area), config.isAddBorder(ctx.getDevice(), filter, area), mt, ml, mr, mb, config.getBGColor(ctx.getDevice(), filter, area), info.getFocusZoneX(ctx), info.getFocusZoneY(ctx), true);
+				image = ImageEngine.resize(image, thumbWidth, thumbHeight, config.isCropResize(ctx.getDevice(), filter, area), config.isAddBorder(ctx.getDevice(), filter, area), mt, ml, mr, mb, config.getBGColor(ctx.getDevice(), filter, area), info.getFocusZoneX(ctx), info.getFocusZoneY(ctx), true, config.isHighQuality(ctx.getDevice(),filter, area));
 				ImageEngine.insertImage(image, img, x * thumbWidth, y * thumbHeight);
 			}
 		}
@@ -430,6 +430,8 @@ public class ImageTransformServlet extends HttpServlet {
 			}
 			img = newImg;
 		}
+		
+		boolean hq = config.isHighQuality(ctx.getDevice(),filter, area);
 
 		// resize and border
 		if (layer == null) {
@@ -438,16 +440,16 @@ public class ImageTransformServlet extends HttpServlet {
 					// org.javlo.helper.Logger.stepCount("transform",
 					// "start - transformation - 3.1");
 					if ((float) img.getWidth() / (float) width > (float) img.getHeight() / (float) height) {
-						img = ImageEngine.resizeWidth(img, width);
+						img = ImageEngine.resizeWidth(img, width, hq);
 					} else {
-						img = ImageEngine.resizeHeight(img, height, config.getBGColor(ctx.getDevice(), filter, area));
+						img = ImageEngine.resizeHeight(img, height, config.getBGColor(ctx.getDevice(), filter, area), hq);
 					}
 				} else {
 					int mt = config.getMarginTop(ctx.getDevice(), filter, area);
 					int ml = config.getMarginLeft(ctx.getDevice(), filter, area);
 					int mr = config.getMarginRigth(ctx.getDevice(), filter, area);
 					int mb = config.getMarginBottom(ctx.getDevice(), filter, area);
-					img = ImageEngine.resize(img, width, height, config.isCropResize(ctx.getDevice(), filter, area), config.isAddBorder(ctx.getDevice(), filter, area), mt, ml, mr, mb, config.getBGColor(ctx.getDevice(), filter, area), focusX, focusY, config.isFocusZone(ctx.getDevice(), filter, area));
+					img = ImageEngine.resize(img, width, height, config.isCropResize(ctx.getDevice(), filter, area), config.isAddBorder(ctx.getDevice(), filter, area), mt, ml, mr, mb, config.getBGColor(ctx.getDevice(), filter, area), focusX, focusY, config.isFocusZone(ctx.getDevice(), filter, area), hq);
 				}
 			} else {
 				int mt = config.getMarginTop(ctx.getDevice(), filter, area);
@@ -458,20 +460,20 @@ public class ImageTransformServlet extends HttpServlet {
 				if (config.isCropResize(ctx.getDevice(), filter, area)) {
 					// org.javlo.helper.Logger.stepCount("transform",
 					// "start - transformation - 3.3");
-					img = ImageEngine.resize(img, width, height, true, false, mt, ml, mr, mb, null, focusX, focusY, config.isFocusZone(ctx.getDevice(), filter, area));
+					img = ImageEngine.resize(img, width, height, true, false, mt, ml, mr, mb, null, focusX, focusY, config.isFocusZone(ctx.getDevice(), filter, area), hq);
 				} else {
 					if (width > 0) {
 						// org.javlo.helper.Logger.stepCount("transform",
 						// "start - transformation - 3.4");
 
-						img = ImageEngine.resizeWidth(img, width, mt, ml, mr, mb, config.getBGColor(ctx.getDevice(), filter, area));
+						img = ImageEngine.resizeWidth(img, width, mt, ml, mr, mb, config.getBGColor(ctx.getDevice(), filter, area), hq);
 						// org.javlo.helper.Logger.stepCount("transform",
 						// "start - transformation - 3.4.1");
 					}
 					if (height > 0) {
 						// org.javlo.helper.Logger.stepCount("transform",
 						// "start - transformation - 3.5");
-						img = ImageEngine.resizeHeight(img, height, config.getBGColor(ctx.getDevice(), filter, area));
+						img = ImageEngine.resizeHeight(img, height, config.getBGColor(ctx.getDevice(), filter, area), hq);
 					}
 				}
 			}
@@ -488,7 +490,7 @@ public class ImageTransformServlet extends HttpServlet {
 			int ml = config.getMarginLeft(ctx.getDevice(), filter, area);
 			int mr = config.getMarginRigth(ctx.getDevice(), filter, area);
 			int mb = config.getMarginBottom(ctx.getDevice(), filter, area);
-			img = ImageEngine.applyFilter(img, layer, config.isCropResize(ctx.getDevice(), filter, area), config.isAddBorder(ctx.getDevice(), filter, area), mt, ml, mr, mb, focusX, focusY, config.isFocusZone(ctx.getDevice(), filter, area), config.getBGColor(ctx.getDevice(), filter, area));
+			img = ImageEngine.applyFilter(img, layer, config.isCropResize(ctx.getDevice(), filter, area), config.isAddBorder(ctx.getDevice(), filter, area), mt, ml, mr, mb, focusX, focusY, config.isFocusZone(ctx.getDevice(), filter, area), config.getBGColor(ctx.getDevice(), filter, area), hq);
 		}
 
 		// org.javlo.helper.Logger.stepCount("transform",
@@ -509,9 +511,9 @@ public class ImageTransformServlet extends HttpServlet {
 		if (config.getMaxWidth(ctx.getDevice(), filter, area) > 0) {
 			if (img.getWidth() > config.getMaxWidth(ctx.getDevice(), filter, area)) {
 				if (!config.isCropResize(ctx.getDevice(), filter, area)) {
-					img = ImageEngine.resizeWidth(img, config.getMaxWidth(ctx.getDevice(), filter, area));
+					img = ImageEngine.resizeWidth(img, config.getMaxWidth(ctx.getDevice(), filter, area), hq);
 				} else {
-					img = ImageEngine.resize(img, config.getMaxWidth(ctx.getDevice(), filter, area), img.getHeight(), true, false, 0, 0, 0, 0, null, focusX, focusY, config.isFocusZone(ctx.getDevice(), filter, area));
+					img = ImageEngine.resize(img, config.getMaxWidth(ctx.getDevice(), filter, area), img.getHeight(), true, false, 0, 0, 0, 0, null, focusX, focusY, config.isFocusZone(ctx.getDevice(), filter, area), hq);
 				}
 			}
 		}
@@ -519,9 +521,9 @@ public class ImageTransformServlet extends HttpServlet {
 		if (config.getMaxHeight(ctx.getDevice(), filter, area) > 0) {
 			if (img.getHeight() > config.getMaxHeight(ctx.getDevice(), filter, area)) {
 				if (!config.isCropResize(ctx.getDevice(), filter, area)) {
-					img = ImageEngine.resizeHeight(img, config.getMaxHeight(ctx.getDevice(), filter, area), config.getBGColor(ctx.getDevice(), filter, area));
+					img = ImageEngine.resizeHeight(img, config.getMaxHeight(ctx.getDevice(), filter, area), config.getBGColor(ctx.getDevice(), filter, area), hq);
 				} else {
-					img = ImageEngine.resize(img, img.getWidth(), config.getMaxHeight(ctx.getDevice(), filter, area), true, false, 0, 0, 0, 0, null, focusX, focusY, config.isFocusZone(ctx.getDevice(), filter, area));
+					img = ImageEngine.resize(img, img.getWidth(), config.getMaxHeight(ctx.getDevice(), filter, area), true, false, 0, 0, 0, 0, null, focusX, focusY, config.isFocusZone(ctx.getDevice(), filter, area), hq);
 				}
 			}
 		}
@@ -530,7 +532,7 @@ public class ImageTransformServlet extends HttpServlet {
 		int newWidth = ImageConfig.alignToGrid(img.getWidth(), config.getGridWidth(ctx.getDevice(), filter, area));
 		int newHeight = ImageConfig.alignToGrid(img.getHeight(), config.getGridHeight(ctx.getDevice(), filter, area));
 		if (newWidth != img.getWidth() || newHeight != img.getHeight()) {
-			img = ImageEngine.resize(img, newWidth, newHeight, true, false, 0, 0, 0, 0, null, focusX, focusY, config.isFocusZone(ctx.getDevice(), filter, area));
+			img = ImageEngine.resize(img, newWidth, newHeight, true, false, 0, 0, 0, 0, null, focusX, focusY, config.isFocusZone(ctx.getDevice(), filter, area), hq);
 		}
 
 		/** dashed after resize **/
@@ -851,7 +853,7 @@ public class ImageTransformServlet extends HttpServlet {
 								BufferedImage image = ImageIO.read(imageFile);
 								if (image != null) {
 									if (image.getWidth() > maxWidth) {
-										image = ImageEngine.resizeWidth(image, maxWidth);
+										image = ImageEngine.resizeWidth(image, maxWidth,true);
 										ImageIO.write(image, StringHelper.getFileExtension(imageFile.getName().toLowerCase()), imageFile);
 									}
 								} else {
@@ -973,7 +975,7 @@ public class ImageTransformServlet extends HttpServlet {
 			BufferedImage image = ImageIO.read(image1);
 			System.out.println("1. read time  : " + StringHelper.renderTimeInSecond(System.currentTimeMillis() - time));
 			time = System.currentTimeMillis();
-			image = ImageEngine.resize(image, 1920, 1200);
+			image = ImageEngine.resize(image, 1920, 1200, true);
 			System.out.println("2. resize     : " + StringHelper.renderTimeInSecond(System.currentTimeMillis() - time));
 			time = System.currentTimeMillis();
 			ImageIO.write(image, "jpg", image2);
