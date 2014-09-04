@@ -2908,6 +2908,7 @@ public class GlobalContext implements Serializable, IPrintInfo {
 				properties.setProperty("" + key, config.get(key));
 			}
 		}
+		templateData = null; // reset template data
 		save();
 	}
 
