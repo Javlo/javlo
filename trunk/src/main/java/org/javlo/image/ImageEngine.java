@@ -10,6 +10,7 @@ import java.awt.image.BufferedImage;
 import java.awt.image.BufferedImageOp;
 import java.awt.image.ConvolveOp;
 import java.awt.image.Kernel;
+import java.awt.image.WritableRaster;
 import java.io.File;
 import java.io.IOException;
 import java.io.OutputStream;
@@ -26,6 +27,8 @@ import javax.imageio.plugins.jpeg.JPEGImageWriteParam;
 import org.imgscalr.Scalr;
 import org.javlo.helper.StringHelper;
 
+import com.jhlabs.image.ContrastFilter;
+import com.jhlabs.image.GrayscaleFilter;
 import com.jhlabs.image.RGBAdjustFilter;
 
 public class ImageEngine {
@@ -1105,6 +1108,56 @@ public class ImageEngine {
 		}		
 		return colorDistance;
 	}
+	
+	/**
+	*
+	* @param img Image to modify
+	* @param sepiaIntensity From 0-255, 30 produces nice results
+	* @throws Exception
+	*/
+	public static void applySepiaFilter(BufferedImage img, int sepiaIntensity) {
+	    // Play around with this. 20 works well and was recommended
+	    // by another developer. 0 produces black/white image
+	    int sepiaDepth = 20;
+
+	    int w = img.getWidth();
+	    int h = img.getHeight();
+
+	    WritableRaster raster = img.getRaster();
+
+	    // We need 3 integers (for R,G,B color values) per pixel.
+	    int[] pixels = new int[w*h*3];
+	    raster.getPixels(0, 0, w, h, pixels);
+
+	    // Process 3 ints at a time for each pixel.
+	    // Each pixel has 3 RGB colors in array
+	    for (int i=0;i<pixels.length; i+=3) {
+	        int r = pixels[i];
+	        int g = pixels[i+1];
+	        int b = pixels[i+2];
+
+	        int gry = (r + g + b) / 3;
+	        r = g = b = gry;
+	        r = r + (sepiaDepth * 2);
+	        g = g + sepiaDepth;
+
+	        if (r>255) r=255;
+	        if (g>255) g=255;
+	        if (b>255) b=255;
+
+	        // Darken blue color to increase sepia effect
+	        b-= sepiaIntensity;
+
+	        // normalize if out of bounds
+	        if (b<0) b=0;
+	        if (b>255) b=255;
+
+	        pixels[i] = r;
+	        pixels[i+1]= g;
+	        pixels[i+2] = b;
+	    }
+	    raster.setPixels(0, 0, w, h, pixels);
+	}
 
 	/**
 	 * @param args
@@ -1114,8 +1167,15 @@ public class ImageEngine {
 		File target = new File("c:/trans/out.png");
 		try {		
 			BufferedImage sourceImage = ImageIO.read(source);
-			BufferedImage targetImage = ImageEngine.resize(sourceImage, 255, 255, false, true, 0, 0, 0, 0, null, 100, 100, false, false);
-			ImageIO.write(targetImage, "png", target);
+			//ImageEngine.applySepiaFilter(sourceImage, 100);
+			//sourceImage = (new GrayscaleFilter()).filter(sourceImage, null);
+			//sourceImage = ImageEngine.RBGAdjust(sourceImage, Color.decode("#f9fadb"));
+			ContrastFilter filter = new ContrastFilter();
+			filter.setBrightness((float)0.8);
+			filter.setContrast((float)5);
+			sourceImage = filter.filter(sourceImage, null);
+			applySepiaFilter(sourceImage, 30);
+			ImageIO.write(sourceImage, "png", target);
 		} catch (Exception e) {
 			e.printStackTrace();
 		}

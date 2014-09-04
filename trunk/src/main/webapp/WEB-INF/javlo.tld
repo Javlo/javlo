@@ -17,6 +17,24 @@
             <rtexprvalue>true</rtexprvalue>
         </attribute>
     </tag>
+    <tag>
+        <name>pageurl</name>
+        <tag-class>org.javlo.tag.JVPageUrlTag</tag-class>
+        <body-content>empty</body-content>
+        <info>This Tag create a link to a page with the page name.</info>
+        <attribute>
+            <name>name</name>
+            <required>true</required>
+            <description>the name of the target page.</description>
+            <rtexprvalue>true</rtexprvalue>
+        </attribute>
+        <attribute>
+            <name>params</name>
+            <required>false</required>
+            <description>params list sample ("tag=news").</description>
+            <rtexprvalue>true</rtexprvalue>
+        </attribute>
+    </tag>    
      <tag>
         <name>autolink</name>
         <bodycontent>JSP</bodycontent>

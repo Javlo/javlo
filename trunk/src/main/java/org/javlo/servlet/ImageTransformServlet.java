@@ -2,7 +2,6 @@ package org.javlo.servlet;
 
 import java.awt.image.BufferedImage;
 import java.io.File;
-import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
@@ -50,9 +49,11 @@ import org.javlo.user.UserFactory;
 import org.javlo.ztatic.FileCache;
 import org.javlo.ztatic.StaticInfo;
 
+import com.jhlabs.image.ContrastFilter;
 import com.jhlabs.image.CrystallizeFilter;
 import com.jhlabs.image.EdgeFilter;
 import com.jhlabs.image.EmbossFilter;
+import com.jhlabs.image.GlowFilter;
 import com.jhlabs.image.GrayscaleFilter;
 
 /**
@@ -259,6 +260,21 @@ public class ImageTransformServlet extends HttpServlet {
 		if (config.isCrystallize(ctx.getDevice(), filter, area)) {
 			img = (new CrystallizeFilter()).filter(img, null);
 		}
+		if (config.isGlow(ctx.getDevice(), filter, area)) {
+			img = (new GlowFilter()).filter(img, null);
+		}
+		float contrast = config.getConstrast(ctx.getDevice(), filter, area);
+		float brightness = config.getBrightness(ctx.getDevice(), filter, area);
+		if (contrast != 1 || brightness != 1) {
+			ContrastFilter imageFilter = new ContrastFilter();			
+			imageFilter.setContrast(contrast);
+			imageFilter.setBrightness(brightness);
+			img = imageFilter.filter(img, null);
+		}
+		int sepia = config.getSepiaIntensity(ctx.getDevice(), filter, area);
+		if (sepia > 0) {
+			ImageEngine.applySepiaFilter(img, sepia);
+		}
 		// org.javlo.helper.Logger.stepCount("transform",
 		// "start - transformation - 2.3");
 		if (config.isEdge(ctx.getDevice(), filter, area)) {
@@ -398,6 +414,21 @@ public class ImageTransformServlet extends HttpServlet {
 		// "start - transformation - 2.2");
 		if (config.isCrystallize(ctx.getDevice(), filter, area)) {
 			img = (new CrystallizeFilter()).filter(img, null);
+		}
+		if (config.isGlow(ctx.getDevice(), filter, area)) {
+			img = (new GlowFilter()).filter(img, null);
+		}
+		float contrast = config.getConstrast(ctx.getDevice(), filter, area);
+		float brightness = config.getBrightness(ctx.getDevice(), filter, area);
+		if (contrast != 1 || brightness != 1) {
+			ContrastFilter imageFilter = new ContrastFilter();			
+			imageFilter.setContrast(contrast);
+			imageFilter.setBrightness(brightness);
+			img = imageFilter.filter(img, null);
+		}
+		int sepia = config.getSepiaIntensity(ctx.getDevice(), filter, area);
+		if (sepia > 0) {
+			ImageEngine.applySepiaFilter(img, sepia);
 		}
 		// org.javlo.helper.Logger.stepCount("transform",
 		// "start - transformation - 2.3");
