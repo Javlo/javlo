@@ -346,7 +346,7 @@ public class ImageConfig {
 		String key = getKey(device, filter, area, "background-color");
 
 		String deviceValue = properties.getString(key, null);
-		if (deviceValue != null) {
+		if (deviceValue != null && !deviceValue.equals("-1") && !deviceValue.equals("transparent")) {
 			try {
 				return Color.decode(deviceValue);
 			} catch (NumberFormatException e) {
