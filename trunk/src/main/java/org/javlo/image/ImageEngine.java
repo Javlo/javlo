@@ -779,7 +779,7 @@ public class ImageEngine {
 			BufferedImage outImage = new BufferedImage(newWidth, newHeight, BufferedImage.TYPE_4BYTE_ABGR);
 			if (bgColor != null) {
 				fillImage(outImage, bgColor);
-			}
+			} 
 
 			for (int x = 0; x < source.getWidth(); x++) {
 				for (int y = 0; y < source.getHeight(); y++) {
