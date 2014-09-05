@@ -303,3 +303,5 @@ change log
  * image engine high-quality option
  
  * jv:pageurl tag
+ 
+ * Import gallery correction + all prefix in image-config

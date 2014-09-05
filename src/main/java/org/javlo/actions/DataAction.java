@@ -270,7 +270,7 @@ public class DataAction implements IAction {
 	 * @return
 	 * @throws Exception
 	 */
-	protected static File createOrUpdateGallery(ContentContext ctx, File targetFolder, String importFolder, Collection<FileItem> imageItem, ImportConfigBean config) throws Exception {
+	protected static File createOrUpdateGallery(ContentContext ctx, File targetFolder, String importFolder, Collection<FileItem> imageItem, ImportConfigBean config) throws Exception {		
 		Collection<IContentVisualComponent> mediaComps = ctx.getCurrentPage().getContentByType(ctx, Multimedia.TYPE);
 		boolean galleryFound = false;
 		Template tpl = ctx.getCurrentTemplate();
@@ -302,6 +302,7 @@ public class DataAction implements IAction {
 			galleryRelativeFolder = URLHelper.mergePath(gc.getStaticConfig().getStaticFolder(), baseGalleryFolder, importFolder);			
 		}
 		targetFolder = new File(URLHelper.mergePath(gc.getDataFolder(), galleryRelativeFolder));
+		
 
 		if (!targetFolder.exists()) {
 			targetFolder.mkdirs();
@@ -354,9 +355,9 @@ public class DataAction implements IAction {
 		// Calendar cal = Calendar.getInstance();
 		// String importFolder = "" + (cal.get(Calendar.MONTH) + 1) + '_' +
 		// cal.get(Calendar.YEAR);
-		String importFolder = StringHelper.createFileName(ctx.getCurrentPage().getTitle(ctx.getContextForDefaultLanguage()));
-		importFolder = StringHelper.trimOn(importFolder, "-");
-		//importFolder = importFolder.replace('-', '_');
+		String importFolder = StringHelper.createFileName(ctx.getCurrentPage().getTitle(ctx.getContextForDefaultLanguage()));		
+		importFolder = StringHelper.trimOn(importFolder.trim(), "_");		
+		importFolder = importFolder.replace('-', '_');		
 		int countImages = 0;
 		FileItem imageItem = null;
 		try {
