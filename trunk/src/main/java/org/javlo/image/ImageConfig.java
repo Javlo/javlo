@@ -31,6 +31,7 @@ public class ImageConfig {
 	private static final String FILE = "/WEB-INF/config/image-config.properties";
 	private static final String FILE_BASE = "/WEB-INF/config/image-config-base.properties";
 	private static final String KEY = ImageConfig.class.getName();
+	private static final String ALL = "all";
 
 	private List<String> filters = new LinkedList<String>();
 
@@ -133,11 +134,15 @@ public class ImageConfig {
 	}
 
 	private String getKey(Device device, String filter, String area, String param) {
-		String key = filter + '.' + area + '.' + device.getCode() + '.' + param;
+		String deviceCode = Device.DEFAULT;
+		if (device != null) {
+			deviceCode = device.getCode();
+		}
+		String key = filter + '.' + area + '.' + deviceCode + '.' + param;
 		if (properties.containsKey(key)) {
 			return key;
 		} else {
-			key = filter + '.' + device.getCode() + '.' + param;
+			key = filter + '.' + deviceCode + '.' + param;
 			if (properties.containsKey(key)) {
 				return key;
 			} else {
@@ -190,7 +195,7 @@ public class ImageConfig {
 
 			String key = getKey(device, filter, area, "width");
 
-			int deviceWith = properties.getInt(key, -2);
+			int deviceWith = properties.getInt(key, device!=null?getWidth(null, ALL, null):-2);
 			if (deviceWith != -2) {
 				return deviceWith;
 			}
@@ -201,7 +206,7 @@ public class ImageConfig {
 	public boolean isHighQuality(Device device, String filter, String area) {
 		if (device != null) {
 			String key = getKey(device, filter, area, "hq");
-			String quality = properties.getString(key, null);
+			String quality = properties.getString(key, properties.getString(getKey(null, ALL, null, "hq"), null));
 			if (quality != null) {
 				return StringHelper.isTrue(quality);
 			}
@@ -277,19 +282,18 @@ public class ImageConfig {
 	public int getHeight(Device device, String filter, String area) {
 		if (device != null) {
 			String key = getKey(device, filter, area, "height");
-			int deviceHeigth = properties.getInt(key, -2);
+			int deviceHeigth = properties.getInt(key, device!=null?getHeight(null, ALL, null):-2);
 			if (deviceHeigth != -2) {
 				return deviceHeigth;
 			}
 		}
-
 		return properties.getInt(filter + ".height", -1);
 	}
 	
 	public double getZoom(Device device, String filter, String area) {
 		if (device != null) {
 			String key = getKey(device, filter, area, "zoom");
-			Double deviceZoom = properties.getDouble(key, null);
+			Double deviceZoom = properties.getDouble(key, device!=null?getZoom(null, ALL, null):null);
 			if (deviceZoom != null) {
 				return deviceZoom;
 			}
@@ -300,44 +304,44 @@ public class ImageConfig {
 
 	public int getMaxHeight(Device device, String filter, String area) {
 		String key = getKey(device, filter, area, "max-height");
-		return properties.getInt(key, -1);
+		return properties.getInt(key, device!=null?getMaxHeight(null, ALL, null):-1);
 	}
 
 	public int getMarginLeft(Device device, String filter, String area) {
 		String key = getKey(device, filter, area, "margin-left");
-		return properties.getInt(key, 0);
+		return properties.getInt(key, device!=null?getMarginLeft(null, ALL, null):0);
 	}
 
 	public int getMarginRigth(Device device, String filter, String area) {
 		String key = getKey(device, filter, area, "margin-right");
-		return properties.getInt(key, 0);
+		return properties.getInt(key, device!=null?getMarginRigth(null, ALL, null):0);
 	}
 
 	public int getMarginTop(Device device, String filter, String area) {
 		String key = getKey(device, filter, area, "margin-top");
-		return properties.getInt(key, 0);
+		return properties.getInt(key, device!=null?getMarginTop(null, ALL, null):0);
 	}
 
 	public int getMarginBottom(Device device, String filter, String area) {
 		String key = getKey(device, filter, area, "margin-bottom");
-		return properties.getInt(key, 0);
+		return properties.getInt(key, device!=null?getMarginBottom(null, ALL, null):0);
 	}
 
 	public String getFileExtension(Device device, String filter, String area) {
 		String key = getKey(device, filter, area, "file-extension");
-		String deviceValue = properties.getString(key, null);
+		String deviceValue = properties.getString(key, device!=null?getFileExtension(null, ALL, null):null);
 		return deviceValue;
 	}
 
 	public String getLayer(Device device, String filter, String area) {
 		String key = getKey(device, filter, area, "layer");
-		String deviceValue = properties.getString(key, null);
+		String deviceValue = properties.getString(key, device!=null?getLayer(null, ALL, null):null);
 		return deviceValue;
 	}
 
 	public boolean isBackGroudColor(Device device, String filter, String area) {
 		String key = getKey(device, filter, area, "background-color");
-		String bg = properties.getString(key, null);
+		String bg = properties.getString(key,properties.getString(getKey(null, ALL,null, "background-color"),null));
 		return  bg != null && !bg.equals("transparent");	
 	}
 
@@ -345,7 +349,7 @@ public class ImageConfig {
 
 		String key = getKey(device, filter, area, "background-color");
 
-		String deviceValue = properties.getString(key, null);
+		String deviceValue = properties.getString(key, properties.getString(getKey(null, ALL,null, "background-color"),null));
 		if (deviceValue != null && !deviceValue.equals("-1") && !deviceValue.equals("transparent")) {
 			try {
 				return Color.decode(deviceValue);
@@ -362,7 +366,7 @@ public class ImageConfig {
 
 		String key = getKey(device, filter, area, "adjust-color");
 
-		String deviceValue = properties.getString(key, null);
+		String deviceValue = properties.getString(key, properties.getString(getKey(null, ALL,null, "adjust-color"),null));
 		if (deviceValue != null) {
 			try {
 				return Color.decode(deviceValue);
@@ -379,7 +383,7 @@ public class ImageConfig {
 
 		String key = getKey(device, filter, area, "replace-alpha");
 
-		String deviceValue = properties.getString(key, null);
+		String deviceValue = properties.getString(key, properties.getString(getKey(null, ALL,null, "replace-alpha"),null));
 		if (deviceValue != null) {
 			try {
 				return Color.decode(deviceValue);
@@ -396,7 +400,7 @@ public class ImageConfig {
 
 		String key = getKey(device, filter, area, "alpha");
 
-		String deviceValue = properties.getString(key, null);
+		String deviceValue = properties.getString(key, properties.getString(getKey(null, ALL,null, "alpha"),null));
 		if (deviceValue != null) {
 			try {
 				return Color.decode(deviceValue);
@@ -411,87 +415,87 @@ public class ImageConfig {
 
 	public boolean isRoundCorner(Device device, String filter, String area) {
 		String key = getKey(device, filter, area, "round-corner");
-		return properties.getBoolean(key, false);
+		return properties.getBoolean(key, device!=null?isRoundCorner(null, ALL, null):false);
 	}
 
 	public boolean isGrayscale(Device device, String filter, String area) {
 		String key = getKey(device, filter, area, "grayscale");
-		return properties.getBoolean(key, false);
+		return properties.getBoolean(key, device!=null?isGrayscale(null, ALL, null):false);
 	}
 
 	public boolean isCrystallize(Device device, String filter, String area) {
 		String key = getKey(device, filter, area, "crystallize");
-		return properties.getBoolean(key, false);
+		return properties.getBoolean(key, device!=null?isCrystallize(null,ALL,null):false);
 	}
 	
 	public boolean isGlow(Device device, String filter, String area) {
 		String key = getKey(device, filter, area, "glow");
-		return properties.getBoolean(key, false);
+		return properties.getBoolean(key, device!=null?isGlow(null,ALL,null):false);
 	}
 	
 	public int getSepiaIntensity(Device device, String filter, String area) {
 		String key = getKey(device, filter, area, "sepia");
-		return properties.getInt(key, 0);
+		return properties.getInt(key, device!=null?getSepiaIntensity(null,ALL,null):0);
 	}
 	
 	public float getConstrast(Device device, String filter, String area) {
 		String key = getKey(device, filter, area, "contrast");
-		return properties.getFloat(key, 1);
+		return properties.getFloat(key, device!=null?getConstrast(null,ALL,null):1);
 	}
 	
 	public float getBrightness (Device device, String filter, String area) {
 		String key = getKey(device, filter, area, "brightness");
-		return properties.getFloat(key, 1);
+		return properties.getFloat(key, device!=null?getBrightness(null,ALL,null):1);
 	}
 	
 	public int getDashed(Device device, String filter, String area) {
 		String key = getKey(device, filter, area, "dashed");
-		return properties.getInt(key, 1);
+		return properties.getInt(key, device!=null?getDashed(null,ALL,null):1);
 	}
 
 	public boolean isEdge(Device device, String filter, String area) {
 		String key = getKey(device, filter, area, "edge");
-		return properties.getBoolean(key, false);
+		return properties.getBoolean(key, device!=null?isEdge(null,ALL,null):false);
 	}
 
 	public boolean isCropResize(Device device, String filter, String area) {
 		String key = getKey(device, filter, area, "crop-resize");
-		return properties.getBoolean(key, false);
+		return properties.getBoolean(key, device!=null?isCropResize(null,ALL,null):false);
 	}
 
 	public boolean isAddBorder(Device device, String filter, String area) {
 		String key = getKey(device, filter, area, "add-border");
-		return properties.getBoolean(key, false);
+		return properties.getBoolean(key, device!=null?isAddBorder(null,ALL,null):false);
 	}
 
 	public boolean isFocusZone(Device device, String filter, String area) {
 		String key = getKey(device, filter, area, ".focus-zone");
-		return properties.getBoolean(key, false);
+		return properties.getBoolean(key, device!=null?isFocusZone(null,ALL,null):false);
 	}
 
 	public boolean isFraming(Device device, String filter, String area) {
 		String key = getKey(device, filter, area, "framing");
-		return properties.getBoolean(key, false);
+		return properties.getBoolean(key, device!=null?isFraming(null,ALL,null):false);
 	}
 
 	public boolean isEmboss(Device device, String filter, String area) {
 		String key = getKey(device, filter, area, "emboss");
-		return properties.getBoolean(key, false);
+		return properties.getBoolean(key, device!=null?isEmboss(null,ALL,null):false);
 	}
 
 	public boolean isWeb2(Device device, String filter, String area) {
 		String key = getKey(device, filter, area, "web2");
-		return properties.getBoolean(key, false);
+		return properties.getBoolean(key, device!=null?isWeb2(null,ALL,null):false);
 	}
 
 	public int getWeb2Height(Device device, String filter, String area) {
 		String key = getKey(device, filter, area, "web2.height");
-		return properties.getInt(key, -1);
+		return properties.getInt(key, device!=null?getWeb2Height(null,ALL,null):-1);
 	}
 
 	public int getWeb2Separation(Device device, String filter, String area) {
 		String key = getKey(device, filter, area, "web2.separation");
-		return properties.getInt(key, -1);
+		return properties.getInt(key, device!=null?getWeb2Separation(null,ALL,null):-1);
 	}
 
 	public List<String> getFilters() {

@@ -17,7 +17,6 @@ import org.javlo.helper.ElementaryURLHelper;
 import org.javlo.helper.StringHelper;
 import org.javlo.helper.URLHelper;
 import org.javlo.i18n.I18nAccess;
-import org.javlo.module.mailing.MailingAction;
 import org.javlo.service.ReverseLinkService;
 import org.javlo.ztatic.StaticInfo;
 
@@ -109,14 +108,18 @@ public class GenericFile extends AbstractFileComponent implements IReverseLinkCo
 
 	@Override
 	public String[] getStyleLabelList(ContentContext ctx) {
-		I18nAccess i18nAccess;
-		try {
-			i18nAccess = I18nAccess.getInstance(ctx.getRequest());
-			return new String[] { "standard", i18nAccess.getText("global.hidden") };
-		} catch (Exception e) {
-			e.printStackTrace();
+		if (super.getStyleList(ctx).length > 0) {
+			return super.getStyleLabelList(ctx);
+		} else {
+			I18nAccess i18nAccess;
+			try {
+				i18nAccess = I18nAccess.getInstance(ctx.getRequest());
+				return new String[] { "standard", i18nAccess.getText("global.hidden") };
+			} catch (Exception e) {
+				e.printStackTrace();
+			}
+			return getStyleList(ctx);
 		}
-		return getStyleList(ctx);
 	}
 
 	public File getFile(ContentContext ctx) {
@@ -130,7 +133,12 @@ public class GenericFile extends AbstractFileComponent implements IReverseLinkCo
 
 	@Override
 	public String[] getStyleList(ContentContext ctx) {
-		return new String[] { "standard", HIDDEN };
+		System.out.println("***** GenericFile.getStyleList : super.getStyleList(ctx).length = "+super.getStyleList(ctx).length); //TODO: remove debug trace
+		if (super.getStyleList(ctx).length > 0) {
+			return super.getStyleList(ctx);
+		} else {
+			return new String[] { "standard", HIDDEN };
+		}
 	}
 
 	@Override
@@ -144,6 +152,17 @@ public class GenericFile extends AbstractFileComponent implements IReverseLinkCo
 	@Override
 	public String getType() {
 		return TYPE;
+	}
+
+	@Override
+	public void prepareView(ContentContext ctx) throws Exception {
+		super.prepareView(ctx);
+		GlobalContext globalContext = GlobalContext.getInstance(ctx.getRequest());
+		String fullName = ElementaryURLHelper.mergePath(getDirSelected(), getFileName());
+		fullName = ElementaryURLHelper.mergePath(globalContext.getStaticConfig().getFileFolder(), fullName);
+		fullName = ElementaryURLHelper.mergePath(globalContext.getDataFolder(), fullName);
+		ctx.getRequest().setAttribute("ext", StringHelper.getFileExtension(getFileName()));
+		ctx.getRequest().setAttribute("size", StringHelper.getFileSize(fullName));
 	}
 
 	/**
@@ -163,7 +182,7 @@ public class GenericFile extends AbstractFileComponent implements IReverseLinkCo
 			String url = ElementaryURLHelper.mergePath(getDirSelected(), getFileName());
 			url = URLHelper.createResourceURL(ctx, getPage(), staticConfig.getFileFolder() + '/' + url);
 
-			String rel = "";			
+			String rel = "";
 			GlobalContext globalContext = GlobalContext.getInstance(ctx.getRequest());
 			String openAsPopup = "";
 			if (globalContext.isOpenFileAsPopup()) {
@@ -176,11 +195,13 @@ public class GenericFile extends AbstractFileComponent implements IReverseLinkCo
 			} else {
 				ContentContext viewCtx = new ContentContext(ctx);
 				viewCtx.setRenderMode(ContentContext.VIEW_MODE);
-				res.append(URLHelper.addMailingFeedback(ctx,StringHelper.toXMLAttribute(url)));
+				res.append(URLHelper.addMailingFeedback(ctx, StringHelper.toXMLAttribute(url)));
 			}
 			res.append("\">");
 			/*
-			 * if (XHTMLHelper.getFileIcone(ctx, getFileName()).length() > 0) { res.append(XHTMLHelper.getFileIcone(ctx, getFileName()) + "&nbsp;"); }
+			 * if (XHTMLHelper.getFileIcone(ctx, getFileName()).length() > 0) {
+			 * res.append(XHTMLHelper.getFileIcone(ctx, getFileName()) +
+			 * "&nbsp;"); }
 			 */
 			if (getLabel().trim().length() == 0) {
 				res.append(getFileName());
@@ -191,9 +212,19 @@ public class GenericFile extends AbstractFileComponent implements IReverseLinkCo
 			fullName = ElementaryURLHelper.mergePath(staticConfig.getFileFolder(), fullName);
 
 			fullName = ElementaryURLHelper.mergePath(globalContext.getDataFolder(), fullName);
-			res.append(" <span class=\"info\">(<span class=\"format\">" + StringHelper.getFileExtension(getFileName()) + "</span> <span class=\"size\">" + StringHelper.getFileSize(fullName) + "</span>)</span></a>");
+			res.append(" <span class=\"info\">(<span class=\"format\">" + StringHelper.getFileExtension(getFileName()) + "</span> <span class=\"size\">" + ctx.getRequest().getAttribute("size") + "</span>)</span></a>");
 			if ((getDescription().trim().length() > 0) && (ctx.getRenderMode() != ContentContext.EDIT_MODE)) { /*
-																												 * not set description when EDIT_MODE ( see getPreviewCode ( ) method
+																												 * not
+																												 * set
+																												 * description
+																												 * when
+																												 * EDIT_MODE
+																												 * (
+																												 * see
+																												 * getPreviewCode
+																												 * (
+																												 * )
+																												 * method
 																												 */
 				res.append("<span class=\"description\">" + getDescription() + "</span>");
 			}
@@ -217,11 +248,11 @@ public class GenericFile extends AbstractFileComponent implements IReverseLinkCo
 	public boolean isOnlyThisPage() {
 		return properties.getProperty(REVERSE_LINK_KEY, "none").equals(ReverseLinkService.ONLY_THIS_PAGE);
 	}
-	
+
 	@Override
 	public boolean isOnlyPreviousComponent() {
 		return properties.getProperty(REVERSE_LINK_KEY, "none").equals(ReverseLinkService.ONLY_PREVIOUS_COMPONENT);
-	}	
+	}
 
 	@Override
 	public boolean isReverseLink() {
