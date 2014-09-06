@@ -4,10 +4,12 @@ import java.awt.Color;
 import java.awt.Graphics2D;
 import java.awt.RenderingHints;
 import java.awt.Transparency;
+import java.awt.color.ColorSpace;
 import java.awt.geom.AffineTransform;
 import java.awt.image.AffineTransformOp;
 import java.awt.image.BufferedImage;
 import java.awt.image.BufferedImageOp;
+import java.awt.image.ColorConvertOp;
 import java.awt.image.ConvolveOp;
 import java.awt.image.Kernel;
 import java.awt.image.WritableRaster;
@@ -1072,6 +1074,12 @@ public class ImageEngine {
 			}
 		}
 		return outImage;
+	}
+	
+	public static BufferedImage grayscale(BufferedImage inImage) {
+		ColorSpace cs = ColorSpace.getInstance(ColorSpace.CS_GRAY);  
+		ColorConvertOp op = new ColorConvertOp(cs, null);  
+		return op.filter(inImage, null); 
 	}
 	
 	/**

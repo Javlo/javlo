@@ -408,7 +408,8 @@ public class ImageTransformServlet extends HttpServlet {
 		// org.javlo.helper.Logger.stepCount("transform",
 		// "start - transformation - 2.1");
 		if (config.isGrayscale(ctx.getDevice(), filter, area)) {
-			img = (new GrayscaleFilter()).filter(img, null);
+			//img = (new GrayscaleFilter()).filter(img, null);
+			img = ImageEngine.grayscale(img);
 		}
 		// org.javlo.helper.Logger.stepCount("transform",
 		// "start - transformation - 2.2");
