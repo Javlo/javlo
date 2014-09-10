@@ -13,16 +13,33 @@
 <figure>
 <c:set var="rel" value="${fn:startsWith(url,'http://')?'external':'shadowbox'}" />
 <c:set var="rel" value="${fn:endsWith(url,'.pdf')?'pdf':rel}" />
-<a rel="${rel}" class="${type}" href="${url}" title="${not empty label?label:cleanDescription}">
+<a rel="${rel}" class="${type}" href="${url}" title="${not empty label?label:description}">
 	<c:if test="${contentContext.asPreviewMode}">
-		<img class="image-preview-loading" id="img-${info.randomId}" src="${info.ajaxLoaderURL}" data-src="${previewURL}" alt="${not empty description?cleanDescription:label}" />
-		<script type="text/javascript">updateImagePreview();</script>
+		<c:set var="imageId" value="i${info.randomId}" />
+		<img id="${imageId}" src="${info.ajaxLoaderURL}" alt="${not empty description?cleanDescription:label}" />
 	</c:if>
 	<c:if test="${not contentContext.asPreviewMode}">
-		<img src="${previewURL}" alt="${not empty description?description:label}" />
+		<c:set var="imageWidthTag" value='width="${imageWidth}" ' />
+		<img ${not empty imageWidth?imageWidthTag:''}src="${previewURL}" alt="${not empty description?cleanDescription:label}" />
 	</c:if>
 </a>
 <c:if test="${empty param.nolabel}"><figcaption>${not empty label?label:description}</figcaption></c:if>
 </figure>
 </c:otherwise>
 </c:choose>
+
+<c:if test="${contentContext.asPreviewMode}">
+<script type="text/javascript">
+jQuery("#${imageId}").attr("src", "${previewURL}");
+jQuery("#${imageId}").load(function() {	
+	if (jQuery(this).src != "${info.ajaxLoaderURL}" && !jQuery(this).hasClass("refreshed") && jQuery(this).src.indexOf("/transform/")>=0) {
+		console.log("image size");
+		jQuery.post( "${info.currentAjaxURL}", { webaction: "global-image.dataFeedBack", compid: "${compid}", height: jQuery("#${imageId}").height(), width: jQuery("#${imageId}").width()}, {dataType: "json"}).done(function(data) {
+			jQuery("#${imageId}").addClass("refreshed");			
+			console.log("data.data.previewURL = "+data.data.previewURL);
+			jQuery("#${imageId}").attr("src", data.data.previewURL);
+		});
+	}
+});
+</script>
+</c:if>
