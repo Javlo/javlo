@@ -5,6 +5,8 @@ import java.io.PrintStream;
 import java.util.Arrays;
 import java.util.List;
 
+import org.javlo.component.core.ContentElementList;
+import org.javlo.component.core.IContentVisualComponent;
 import org.javlo.component.properties.AbstractPropertiesComponent;
 import org.javlo.context.ContentContext;
 import org.javlo.helper.StringHelper;
@@ -110,10 +112,6 @@ public abstract class TableComponent extends AbstractPropertiesComponent {
 		TableContext tableContext = getContext(ctx);
 		int colsSpan = (tableContext.getMaxRowSize()-tableContext.getRowSize(this))+1;
 		String colsSpanHTML = "";
-		/*System.out.println("");
-		System.out.println("***** TableComponent.getColSpanHTML : tableContext.getMaxRowSize() = "+tableContext.getMaxRowSize()); //TODO: remove debug trace
-		System.out.println("***** TableComponent.getColSpanHTML : tableContext.getRowSize(this) = "+tableContext.getRowSize(this)); //TODO: remove debug trace
-		System.out.println("***** TableComponent.getColSpanHTML : getColspan() = "+getColspan()); //TODO: remove debug trace*/
 		if (colsSpan > 1 && tableContext.isFirst(this)) {
 			colsSpanHTML=" colspan=\""+colsSpan+"\"";
 		} else if (getColspan() > 1) {
@@ -178,6 +176,22 @@ public abstract class TableComponent extends AbstractPropertiesComponent {
 
 		out.close();
 		return new String(outStream.toByteArray());
+	}
+	
+	
+	protected boolean isCellEmpty(ContentContext ctx) throws Exception {		
+		ContentContext ctxCompArea = ctx.getContextWithArea(getArea());
+		ContentElementList content = getPage().getContent(ctxCompArea);
+		while (content.hasNext(ctxCompArea)) {
+			IContentVisualComponent comp = content.next(ctxCompArea);
+			if (comp.getId().equals(getId())) {
+				IContentVisualComponent nextComp = content.next(ctxCompArea);
+				if (nextComp == null || nextComp instanceof TableComponent) {
+					return true;
+				}
+			}
+		}
+		return false;
 	}
 	
 	/**

@@ -212,6 +212,11 @@ public class FileCache {
 			return new FileInputStream(file);
 		}
 	}
+	
+	public File getFile(String key, String fileName, long latestModificationDate) throws IOException {
+		File file = getFileName(key, fileName).getCanonicalFile();
+		return file;
+	}
 
 	/**
 	 * get the last modified of a cached file.

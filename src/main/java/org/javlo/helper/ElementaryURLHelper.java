@@ -378,7 +378,7 @@ public abstract class ElementaryURLHelper {
 			} else {
 				templateName = template.getId();
 			}
-			url = createTransformURLInternal(ctx, referencePage, url, filter, templateName, comp);
+			url = createTransformURLInternal(ctx, referencePage, url, filter, templateName, comp, comp.getImageHash(ctx));
 		} else {
 			if (filter.equals("template")) {
 				url = ElementaryURLHelper.mergePath(TRANSFORM + '/' + filter, url);
@@ -399,10 +399,10 @@ public abstract class ElementaryURLHelper {
 	}
 
 	public static String createTransformURL(ContentContext ctx, MenuElement referencePage, String url, String filter, String templateName) throws Exception {
-		return createTransformURLInternal(ctx, referencePage, url, filter, templateName, null);
+		return createTransformURLInternal(ctx, referencePage, url, filter, templateName, null,null);
 	}
 
-	private static String createTransformURLInternal(ContentContext ctx, MenuElement referencePage, String url, String filter, String templateName, IImageFilter comp) throws Exception {
+	private static String createTransformURLInternal(ContentContext ctx, MenuElement referencePage, String url, String filter, String templateName, IImageFilter comp, String hash) throws Exception {
 		if (url == null) {
 			return null;
 		}
@@ -413,8 +413,11 @@ public abstract class ElementaryURLHelper {
 		} else {
 			baseUrl = baseUrl + "/[edit]/" + ComponentBean.DEFAULT_AREA;
 		}
-		if (comp != null) {
+		if (comp != null) {			
 			baseUrl = baseUrl + ImageTransformServlet.COMPONENT_ID_URL_DIR_PREFIX + comp.getId();
+		}
+		if (hash != null) {
+			baseUrl = baseUrl + ImageTransformServlet.HASH_PREFIX + hash;			
 		}
 		url = ElementaryURLHelper.mergePath(baseUrl, url);
 

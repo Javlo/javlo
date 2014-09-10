@@ -24,7 +24,7 @@ import org.javlo.i18n.I18nAccess;
 import org.javlo.macro.core.IInteractiveMacro;
 import org.javlo.message.GenericMessage;
 import org.javlo.message.MessageRepository;
-import org.javlo.module.file.FileAction.FileBean;
+import org.javlo.module.file.FileBean;
 import org.javlo.module.file.FileModuleContext;
 import org.javlo.service.ContentService;
 import org.javlo.service.RequestService;

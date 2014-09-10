@@ -20,7 +20,7 @@ import org.javlo.helper.URLHelper;
 import org.javlo.i18n.I18nAccess;
 import org.javlo.image.ImageConfig;
 import org.javlo.message.MessageRepository;
-import org.javlo.module.file.FileAction;
+import org.javlo.module.file.FileBean;
 import org.javlo.service.ContentService;
 import org.javlo.service.RequestService;
 import org.javlo.ztatic.StaticInfo;
@@ -169,7 +169,7 @@ public class Image extends AbstractFileComponent implements IImageTitle, IPrevie
 		String currentFileLink = URLHelper.mergePath(getDirSelected(), getFileName());
 		GlobalContext globalContext = GlobalContext.getInstance(ctx.getRequest());
 
-		FileAction.FileBean file = new FileAction.FileBean(ctx, getFile(ctx));
+		FileBean file = new FileBean(ctx, getFile(ctx));
 		Map<String, String> params = new HashMap<String, String>();
 		params.put("webaction", "edit.save");
 		params.put("components", getId());

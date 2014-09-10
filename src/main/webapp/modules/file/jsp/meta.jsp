@@ -102,6 +102,14 @@
 			</c:forEach>
 		</fieldset>
 		</c:if>
+		<c:if test="${fn:length(readRoles) > 0}">
+		<fieldset class="roles">
+		<legend>${i18n.edit["field.read-roles"]}</legend>
+		    <c:forEach var="role" items="${readRoles}">		    	
+				<span><input type="checkbox" id="readrole_${role}_${file.id}" name="readrole_${role}_${file.id}" ${not empty file.readRoles[role]?'checked="checked"':''}/><label for="readrole_${role}_${file.id}">${role}</label></span>
+			</c:forEach>
+		</fieldset>
+		</c:if>
 		</div>
 		</c:if>
 	</li>

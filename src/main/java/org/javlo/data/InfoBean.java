@@ -606,15 +606,15 @@ public class InfoBean {
 	}
 
 	public boolean isGod() {
-		return AdminUserSecurity.getInstance().isGod(ctx.getCurrentUser());
+		return AdminUserSecurity.getInstance().isGod(ctx.getCurrentEditUser());
 	}
 
 	public boolean isAdmin() {
-		return AdminUserSecurity.getInstance().isAdmin(ctx.getCurrentUser());
+		return AdminUserSecurity.getInstance().isAdmin(ctx.getCurrentEditUser());
 	}
 	
 	public boolean isMaster() {
-		return AdminUserSecurity.getInstance().isMaster(ctx.getCurrentUser());
+		return AdminUserSecurity.getInstance().isMaster(ctx.getCurrentEditUser());
 	}
 
 	public String getPath() {

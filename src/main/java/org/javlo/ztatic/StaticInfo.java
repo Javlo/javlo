@@ -406,6 +406,8 @@ public class StaticInfo {
 	private String linkedLocation;
 
 	private List<String> tags = null;
+	
+	private List<String> readRoles = null;
 
 	private long size = -1;
 
@@ -1127,7 +1129,7 @@ public class StaticInfo {
 		}
 		return tags;
 	}
-
+	
 	public void addTag(ContentContext ctx, String tag) {
 		if (tags == null || tags == Collections.EMPTY_LIST) {
 			tags = new LinkedList<String>();
@@ -1144,6 +1146,47 @@ public class StaticInfo {
 		}
 		if (tags.contains(tag)) {
 			tags.remove(tag);
+			storeTags(ctx);
+		}
+	}
+	
+	private void storeReadRoles(ContentContext ctx) {
+		GlobalContext globalContext = GlobalContext.getInstance(ctx.getRequest());
+		String key = getKey("read-roles");
+		String rawRoles = StringHelper.collectionToString(readRoles);
+		globalContext.setData(key, rawRoles);
+	}
+
+	public List<String> getReadRoles(ContentContext ctx) {
+		if (readRoles == null) {
+			String key = getKey("read-roles");
+			GlobalContext globalContext = GlobalContext.getInstance(ctx.getRequest());
+			String rawReadRole = globalContext.getData(key);
+			if (rawReadRole == null) {
+				readRoles = Collections.EMPTY_LIST;
+			} else {
+				readRoles = StringHelper.stringToCollection(rawReadRole);
+			}
+		}
+		return readRoles;
+	}
+	
+	public void addReadRole(ContentContext ctx, String role) {
+		if (readRoles == null || readRoles == Collections.EMPTY_LIST) {
+			readRoles = new LinkedList<String>();
+		}
+		if (!readRoles.contains(role)) {
+			readRoles.add(role);
+			storeReadRoles(ctx);
+		}
+	}
+
+	public void removeReadRole(ContentContext ctx, String roles) {
+		if (readRoles == null || readRoles == Collections.EMPTY_LIST) {
+			readRoles = new LinkedList<String>();
+		}
+		if (readRoles.contains(roles)) {
+			readRoles.remove(roles);
 			storeTags(ctx);
 		}
 	}

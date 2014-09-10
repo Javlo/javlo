@@ -208,7 +208,7 @@ public class ContentContext {
 		IUserFactory fact = UserFactory.createUserFactory(globalContext, getRequest().getSession());
 		currentUser = fact.getCurrentUser(request.getSession());
 		fact = AdminUserFactory.createUserFactory(globalContext, getRequest().getSession());
-		setCurrentEditUser(fact.getCurrentUser(request.getSession()));
+		setCurrentEditUser(fact.getCurrentUser(request.getSession()));		
 		storeInRequest(request);
 	}
 
@@ -1238,7 +1238,11 @@ public class ContentContext {
 	}
 
 	public User getCurrentUser() {
-		return currentUser;
+		if (currentUser != null) {
+			return currentUser;
+		} else {
+			return currentEditUser;
+		}
 	}
 
 	public void setCurrentUser(User currentUser) {

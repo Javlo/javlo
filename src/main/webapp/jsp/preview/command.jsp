@@ -34,8 +34,9 @@ if (!rightOnPage) {
 	readOnlyClass = "no-access";
 	accessType = "button";
 }
+request.setAttribute("editUser", ctx.getCurrentEditUser());
 %>
-<div id="preview_command" lang="${info.editLanguage}" class="edit-${not empty currentUser} ${editPreview == 'true'?'edit':'preview'}">
+<div id="preview_command" lang="${info.editLanguage}" class="edit-${not empty editUser} ${editPreview == 'true'?'edit':'preview'}">
 	<div class="pc_header"><span class="title">${i18n.edit["preview.command"]}</span>
 	<c:url var="url" value="<%=URLHelper.createURL(returnEditCtx)%>" context="/">
 		<c:param name="module" value="content" />
@@ -52,7 +53,7 @@ if (!rightOnPage) {
 			<c:if test="${not empty messages.globalMessage && messages.globalMessage.type > 0 && not empty messages.globalMessage.message}">
 				<div class="message msg${messages.globalMessage.typeLabel}">${messages.globalMessage.message}</div>
 			</c:if>
-			<c:if test="${not empty currentUser}">
+			<c:if test="${not empty editUser}">
 				<form id="formlogout" name="formlogout" method="post" action="${info.currentURL}">			
 				<div class="pc_line">					
 					<input type="hidden" name="edit-logout" value="logout" />
@@ -174,7 +175,7 @@ if (!rightOnPage) {
 						<c:param name="previewEdit" value="true"></c:param>
 						<c:param name="module" value="mailing"></c:param>
 					</c:url>
-					<li><form class="preview-edit <%=readOnlyClass%> ${info.device.code == 'pdf'?'no-access':''} id="mailing_form" action="${url}" method="post">
+					<li><form class="preview-edit <%=readOnlyClass%> ${info.device.code == 'pdf'?'no-access':''}" id="mailing_form" action="${url}" method="post">
 						<div class="pc_line">							
 							<input id="pc_mailing" type="<%=accessType%>" value="${i18n.edit['preview.label.mailing']}" title="${i18n.edit['preview.label.mailing']}" class="pc_edit_true"<%=readOnlyPageHTML%> />
 							<label for="pc_mailing">${i18n.edit['preview.label.mailing']}</label>
@@ -275,7 +276,7 @@ if (!rightOnPage) {
 							
 				</div>
 			</c:if>			
-		</c:if><c:if test="${empty currentUser}">		
+		</c:if><c:if test="${empty editUser}">		
 			    <a class="login action-button central-button" href="${info.currentEditURL}" onclick="jQuery.colorbox({href : '${info.currentEditURL}?previewEdit=true',opacity : 0.6,iframe : true,width : '95%',	height : '95%'}); return false;"><span>${i18n.edit['global.login']}</span></a>
 			</c:if>
 	</div>

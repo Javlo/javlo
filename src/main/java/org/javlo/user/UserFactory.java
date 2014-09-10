@@ -233,7 +233,11 @@ public class UserFactory implements IUserFactory, Serializable {
 	}**/
 	public User getCurrentUser(HttpSession session) {
 		User user = (User) session.getAttribute(SESSION_KEY);
-		return user;
+		if (user != null) {
+			return user;
+		} else {
+			return null;
+		}
 	}
 
 	protected String getFileName() {

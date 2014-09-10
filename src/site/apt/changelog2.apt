@@ -305,3 +305,7 @@ change log
  * jv:pageurl tag
  
  * Import gallery correction + all prefix in image-config
+ 
+ * attach user role to resource
+ 
+ * image cache optimisation

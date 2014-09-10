@@ -11,5 +11,7 @@ public interface IImageFilter {
 	String getImageFilterKey(ContentContext ctx);
 
 	BufferedImage filterImage(ContentContext ctx, BufferedImage image);
+	
+	String getImageHash(ContentContext ctx);
 
 }

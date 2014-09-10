@@ -5,6 +5,7 @@ import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.util.Collections;
 import java.util.logging.Logger;
 
 import javax.servlet.ServletException;
@@ -15,16 +16,19 @@ import javax.servlet.http.HttpServletResponse;
 import org.javlo.config.StaticConfig;
 import org.javlo.context.ContentContext;
 import org.javlo.context.GlobalContext;
+import org.javlo.helper.NetHelper;
 import org.javlo.helper.RequestHelper;
 import org.javlo.helper.ResourceHelper;
 import org.javlo.helper.StringHelper;
 import org.javlo.helper.URLHelper;
+import org.javlo.image.ImageHelper;
 import org.javlo.service.syncro.FileStructureFactory;
 import org.javlo.tracking.Track;
 import org.javlo.tracking.Tracker;
 import org.javlo.user.IUserFactory;
 import org.javlo.user.User;
 import org.javlo.user.UserFactory;
+import org.javlo.user.UserSecurity;
 import org.javlo.ztatic.StaticInfo;
 
 /**
@@ -46,7 +50,8 @@ public class ResourceServlet extends HttpServlet {
 	static int servletRun = 0;
 
 	/**
-	 * @see javax.servlet.http.HttpServlet#doGet(HttpServletRequest, HttpServletResponse)
+	 * @see javax.servlet.http.HttpServlet#doGet(HttpServletRequest,
+	 *      HttpServletResponse)
 	 */
 	@Override
 	protected void doGet(HttpServletRequest httpServletRequest, HttpServletResponse httpServletResponse) throws ServletException, IOException {
@@ -54,7 +59,8 @@ public class ResourceServlet extends HttpServlet {
 	}
 
 	/**
-	 * @see javax.servlet.http.HttpServlet#doPost(HttpServletRequest, HttpServletResponse)
+	 * @see javax.servlet.http.HttpServlet#doPost(HttpServletRequest,
+	 *      HttpServletResponse)
 	 */
 	@Override
 	protected void doPost(HttpServletRequest httpServletRequest, HttpServletResponse httpServletResponse) throws ServletException, IOException {
@@ -66,7 +72,8 @@ public class ResourceServlet extends HttpServlet {
 	 */
 	protected void processRequest(HttpServletRequest request, HttpServletResponse response) throws ServletException {
 
-		if (request.getServletPath().equals("/favicon.ico") || request.getServletPath().equals("/robots.txt")) {
+		if (request.getServletPath().equals("/favicon.ico") || request.getServletPath().equals("/robots.txt")) {			
+			response.setHeader("Cache-Control", "max-age=600,must-revalidate");			
 			GlobalContext globalContext = GlobalContext.getSessionContext(request.getSession());
 			if (globalContext != null) {
 				String filePath = URLHelper.mergePath(globalContext.getStaticConfig().getStaticFolder(), request.getServletPath());
@@ -79,7 +86,7 @@ public class ResourceServlet extends HttpServlet {
 						if ((fileStream != null)) {
 							ResourceHelper.writeStreamToStream(fileStream, response.getOutputStream());
 						}
-					} else {						
+					} else {
 						response.setStatus(404, "not found : " + filePath);
 						return;
 					}
@@ -129,7 +136,9 @@ public class ResourceServlet extends HttpServlet {
 
 		// TODO: check if that work for caching
 		/*
-		 * Date toDay = new Date(); Calendar cal = Calendar.getInstance(); cal.setTime(toDay); cal.roll(Calendar.DAY_OF_YEAR, true); response.setHeader("Expires", cal.getTime().toString());
+		 * Date toDay = new Date(); Calendar cal = Calendar.getInstance();
+		 * cal.setTime(toDay); cal.roll(Calendar.DAY_OF_YEAR, true);
+		 * response.setHeader("Expires", cal.getTime().toString());
 		 */
 
 		InputStream fileStream = null;
@@ -156,6 +165,11 @@ public class ResourceServlet extends HttpServlet {
 			response.setContentType(ResourceHelper.getFileExtensionToManType(StringHelper.getFileExtension(resourceURI)));
 			if (!pathInfo.equals(FILE_INFO)) {
 				File file = new File(URLHelper.mergePath(dataFolder, resourceURI));
+				StaticInfo info = StaticInfo.getInstance(ctx, file);
+				if (!UserSecurity.isCurrentUserCanRead(ctx, info)) {
+					response.setStatus(401);
+					return;
+				}
 				if (file.exists()) {
 					response.setContentLength((int) file.length());
 					StaticInfo.getInstance(ctx, file).addAccess(ctx);
@@ -173,8 +187,21 @@ public class ResourceServlet extends HttpServlet {
 				} else {
 
 					String finalName = URLHelper.mergePath(dataFolder, resourceURI);
-
-					fileStream = new FileInputStream(new File(finalName));
+					
+					
+					File file = new File(finalName);
+					response.setContentType(ResourceHelper.getFileExtensionToManType(StringHelper.getFileExtension(file.getName())));
+					response.setHeader("Cache-Control", "no-cache");
+					response.setHeader("Accept-Ranges", "bytes");
+					response.setDateHeader(NetHelper.HEADER_LAST_MODIFIED, file.lastModified());
+					response.setContentLength((int)file.length());
+					long lastModifiedInBrowser = request.getDateHeader(NetHelper.HEADER_IF_MODIFIED_SINCE);
+					if (file.lastModified() > 0 && file.lastModified() / 1000 <= lastModifiedInBrowser / 1000) {						
+						response.setStatus(HttpServletResponse.SC_NOT_MODIFIED);
+						return;
+					}
+					
+					fileStream = new FileInputStream(file);
 
 					if ((fileStream != null)) {
 						ResourceHelper.writeStreamToStream(fileStream, out);
@@ -182,7 +209,7 @@ public class ResourceServlet extends HttpServlet {
 				}
 
 			}
-		} catch (Throwable e) {			
+		} catch (Throwable e) {
 			e.printStackTrace();
 		} finally {
 			ResourceHelper.closeResource(fileStream);

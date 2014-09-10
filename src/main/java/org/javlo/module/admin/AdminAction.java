@@ -707,6 +707,16 @@ public class AdminAction extends AbstractModuleAction {
 
 		GlobalContext globalContext = GlobalContext.getInstance(ctx.getRequest());
 		if (!globalContext.isMaster()) {
+			
+			User user = ctx.getCurrentEditUser();
+			if (user.getUserInfo().getToken() != null) {
+				Map<String,String> params = new HashMap<String, String>();
+				params.put("j_token", user.getUserInfo().getToken());
+				String editAutoURL = URLHelper.createURL(ctx.getContextForAbsoluteURL(), params);
+				String qrcodeImg = URLHelper.createQRCodeLink(ctx, editAutoURL);
+				ctx.getRequest().setAttribute("qrcode", qrcodeImg);
+			}
+			
 			editGlobalContext(ctx, currentModule, globalContext);
 			currentModule.setBreadcrumb(false);
 		} else {

@@ -352,7 +352,7 @@ public class AccessServlet extends HttpServlet implements IVersion {
 			if (request.getServletPath().equals("/edit")) {
 				EditContext editCtx = EditContext.getInstance(globalContext, request.getSession());
 				ctx.setArea(editCtx.getCurrentArea());
-				if (editCtx.getUserPrincipal() == null) {
+				if (ctx.getCurrentEditUser() == null) {
 					InfoBean.updateInfoBean(ctx);
 					response.setContentType("text/html; charset=" + ContentContext.CHARACTER_ENCODING);
 					String jspForLogin = editCtx.getLoginRenderer();
