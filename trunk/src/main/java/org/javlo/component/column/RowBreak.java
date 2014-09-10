@@ -4,10 +4,11 @@ import java.io.ByteArrayOutputStream;
 import java.io.PrintStream;
 
 import org.javlo.context.ContentContext;
+import org.javlo.context.EditContext;
 
 public class RowBreak extends TableComponent {
 	
-	private static final String TYPE = "row-break";
+	public static final String TYPE = "row-break";
 
 	@Override
 	public String getType() {
@@ -32,7 +33,15 @@ public class RowBreak extends TableComponent {
 	public String getViewXHTMLCode(ContentContext ctx) throws Exception {
 		ByteArrayOutputStream outStream = new ByteArrayOutputStream();
 		PrintStream out = new PrintStream(outStream);
-		out.println("</div></td></tr><tr><td"+getColSpanHTML(ctx)+" style=\""+getTDStyle(ctx)+"\"><div class=\"cell-wrapper\">");
+		String cssClass="";
+		if (isCellEmpty(ctx)) {
+			cssClass = " class=\"empty\"";
+		}
+		out.println("</div></td></tr><tr><td"+getColSpanHTML(ctx)+" style=\""+getTDStyle(ctx)+"\""+cssClass+"><div class=\"cell-wrapper\">");
+		if (isCellEmpty(ctx) && EditContext.getInstance(ctx.getGlobalContext(), ctx.getRequest().getSession()).isEditPreview()) {
+			TableContext tableContext = getContext(ctx);
+			out.print("<span class=\"cell-name\">"+tableContext.getName(this)+"</span>");
+		}
 		out.close();
 		return new String(outStream.toByteArray());
 	}

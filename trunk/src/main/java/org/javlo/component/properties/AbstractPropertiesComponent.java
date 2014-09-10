@@ -86,7 +86,7 @@ public abstract class AbstractPropertiesComponent extends AbstractVisualComponen
 	@Override
 	public String getViewXHTMLCode(ContentContext ctx) throws Exception {
 		List<String> fields = getFields(ctx);
-		if (getRenderer(ctx) != null) {		
+		if (getRenderer(ctx) != null) {
 			for (String field : fields) {
 				ctx.getRequest().setAttribute(field, getFieldValue(field));
 			}
@@ -126,6 +126,10 @@ public abstract class AbstractPropertiesComponent extends AbstractVisualComponen
 		properties.load(stringToStream(getValue()));
 	}
 
+	protected String getListSeparator() {
+		return ",";
+	}
+
 	@Override
 	public void performEdit(ContentContext ctx) throws Exception {
 		RequestService requestService = RequestService.getInstance(ctx.getRequest());
@@ -133,6 +137,11 @@ public abstract class AbstractPropertiesComponent extends AbstractVisualComponen
 		List<String> fields = getFields(ctx);
 		for (String field : fields) {
 			String fieldValue = requestService.getParameter(createKeyWithField(field), null);
+			String[] fieldValues = requestService.getParameterValues(createKeyWithField(field), null);
+			if (fieldValues != null && fieldValues.length > 1) {
+				fieldValue = StringHelper.arrayToString(fieldValues, getListSeparator());
+			}
+
 			if (fieldValue != null) {
 				if (!fieldValue.equals(getFieldValue(field))) {
 					setModify();
@@ -144,6 +153,7 @@ public abstract class AbstractPropertiesComponent extends AbstractVisualComponen
 				}
 				properties.remove(field);
 			}
+
 		}
 
 		if (isModify()) {

@@ -4,10 +4,11 @@ import java.io.ByteArrayOutputStream;
 import java.io.PrintStream;
 
 import org.javlo.context.ContentContext;
+import org.javlo.context.EditContext;
 
 public class CellBreak extends TableComponent {
 	
-	private static final String TYPE = "cell-break";
+	public static final String TYPE = "cell-break";
 
 	@Override
 	public String getType() {
@@ -25,13 +26,19 @@ public class CellBreak extends TableComponent {
 			positionCSS = "first ";
 		}
 		if (tableContext.isLast(this)) {
-			positionCSS = positionCSS + "last";
+			positionCSS = positionCSS + "last ";
+		}
+		if (isCellEmpty(ctx)) {
+			positionCSS = positionCSS + "empty";
 		}
 		if (positionCSS.length() > 0) {
-			positionCSS = "class=\""+positionCSS+"\" ";
+			positionCSS = "class=\""+positionCSS.trim()+"\" ";
 		}		
 		if (tableContext.isTableOpen()) {
 			out.println("</div></td><td"+getColSpanHTML(ctx)+' '+positionCSS+"style=\""+getTDStyle(ctx)+"\"><div class=\"cell-wrapper\">");
+			if (isCellEmpty(ctx) && EditContext.getInstance(ctx.getGlobalContext(), ctx.getRequest().getSession()).isEditPreview()) {
+				out.print("<span class=\"cell-name\">"+tableContext.getName(this)+"</span>");
+			}
 		} else {
 			tableContext.openTable();
 			String tableStyle = "width:100%;";
@@ -44,6 +51,9 @@ public class CellBreak extends TableComponent {
 			}
 			
 			out.println("<table "+border+"style=\""+tableStyle+"\" class=\"component-table\"><tr><td"+getColSpanHTML(ctx)+' '+positionCSS+"style=\""+getTDStyle(ctx)+"\"><div class=\"cell-wrapper\">");
+			if (isCellEmpty(ctx) && EditContext.getInstance(ctx.getGlobalContext(), ctx.getRequest().getSession()).isEditPreview()) {
+				out.print("<span class=\"cell-name\">"+tableContext.getName(this)+"</span>");
+			}
 		}
 		out.close();
 		return new String(outStream.toByteArray());		

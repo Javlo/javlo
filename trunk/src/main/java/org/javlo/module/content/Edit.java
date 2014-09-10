@@ -235,7 +235,6 @@ public class Edit extends AbstractModuleAction {
 			return comp.getComponentLabel(ctx, ctx.getGlobalContext().getEditLanguage(ctx.getRequest().getSession()));
 		}
 
-
 		public String getValue() {
 			return comp.getValue(ctx);
 		}
@@ -259,15 +258,15 @@ public class Edit extends AbstractModuleAction {
 		public boolean isDynamicComponent() {
 			return comp instanceof DynamicComponent;
 		}
-		
+
 		public String getHexColor() {
 			return hexColor;
 		}
 
 		public void setHexColor(String hexColor) {
-			this.hexColor = hexColor;			
+			this.hexColor = hexColor;
 		}
-		
+
 		public IContentVisualComponent getComponent() {
 			return comp;
 		}
@@ -515,15 +514,17 @@ public class Edit extends AbstractModuleAction {
 
 			List<String> roles = new LinkedList<String>();
 			Set<String> roleSet = new HashSet<String>();
-			for (String role : globalContext.getAdminUserRoles()) {
-				roleSet.clear();
-				roleSet.add(role);
-				if (ctx.getCurrentEditUser().validForRoles(roleSet)) {
-					roles.add(role);
+			if (ctx.getCurrentEditUser() != null) {
+				for (String role : globalContext.getAdminUserRoles()) {
+					roleSet.clear();
+					roleSet.add(role);
+					if (ctx.getCurrentEditUser().validForRoles(roleSet)) {
+						roles.add(role);
+					}
 				}
+				Collections.sort(roles);
+				ctx.getRequest().setAttribute("adminRoles", roles);
 			}
-			Collections.sort(roles);
-			ctx.getRequest().setAttribute("adminRoles", roles);
 		}
 
 		ComponentContext componentContext = ComponentContext.getInstance(request);

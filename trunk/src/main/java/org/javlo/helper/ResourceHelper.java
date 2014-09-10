@@ -67,6 +67,7 @@ import org.apache.commons.fileupload.FileItem;
 import org.apache.commons.io.FileExistsException;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.FilenameUtils;
+import org.apache.commons.lang.StringUtils;
 import org.apache.poi.hwpf.extractor.WordExtractor;
 import org.javlo.component.core.ComponentFactory;
 import org.javlo.component.core.IContentVisualComponent;
@@ -337,8 +338,8 @@ public class ResourceHelper {
 	 * @param dir
 	 * @return a list of directories (without files).
 	 */
-	public static Collection<File> getAllDirList(File dir) {
-		Collection<File> res = new LinkedList<File>();
+	public static List<File> getAllDirList(File dir) {
+		List<File> res = new LinkedList<File>();
 		File[] childs = dir.listFiles();
 		if (childs != null) {
 			for (File child : childs) {
@@ -1462,5 +1463,13 @@ public class ResourceHelper {
 			}
 		}
 		return outFolders;		
-	}	
+	}
+	
+	public static List<String> removePrefixFromPathList(Collection<? extends Object> pathList, String prefix) {
+		List<String> outPathList = new LinkedList<String>();
+		for (Object path : pathList) {
+			outPathList.add(StringUtils.replaceOnce(path.toString(), prefix, ""));
+		}
+		return outPathList;
+	}
 }

@@ -136,7 +136,7 @@ public class TemplateAction extends AbstractModuleAction {
 				template.importTemplateInWebapp(StaticConfig.getInstance(ctx.getRequest().getSession().getServletContext()), ctx);
 			}
 			if (!templateContext.getCurrentLink().equals(TemplateContext.MY_TEMPLATES_LINK.getUrl()) || contextTemplates.contains(template.getName())) {
-				if (template.visibleForRoles(ctx.getCurrentUser().getRoles())) {
+				if (template.visibleForRoles(ctx.getCurrentEditUser().getRoles())) {
 					templates.add(new Template.TemplateBean(ctx, template));
 				}
 			}

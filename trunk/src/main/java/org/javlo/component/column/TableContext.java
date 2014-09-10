@@ -9,6 +9,7 @@ import java.util.List;
 import org.javlo.component.core.ContentElementList;
 import org.javlo.component.core.IContentVisualComponent;
 import org.javlo.context.ContentContext;
+import org.javlo.helper.StringHelper;
 import org.javlo.navigation.MenuElement;
 
 public class TableContext {
@@ -103,6 +104,23 @@ public class TableContext {
 		return last.contains(comp);
 	}
 	
+	public String getName(TableComponent inComp) {
+		int row=0;
+		int cell=0;
+		for (TableComponent comp : components) {
+			if (comp instanceof CellBreak) {
+				cell++;
+			} else if (comp instanceof RowBreak) {
+				cell=1;
+				row++;
+			}
+			if (comp == inComp) {
+				return StringHelper.getNumberAsAlphabetic(row).toUpperCase()+cell;		
+			}
+		}
+		return "?";
+	}
+	
 	public static boolean isInstance(ContentContext ctx) throws Exception {
 		return ctx.getRequest().getAttribute(KEY) != null;
 	}
@@ -157,6 +175,10 @@ public class TableContext {
 	
 	public List<TableComponent> getComponents() {
 		return components;
+	}
+	
+	public TableComponent getFirstComponent() {
+		return components.getFirst();
 	}
 	
 	public TableComponent getLastComponent() {

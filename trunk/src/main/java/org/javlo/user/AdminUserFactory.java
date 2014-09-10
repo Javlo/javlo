@@ -113,6 +113,15 @@ public class AdminUserFactory extends UserFactory {
 		}
 		return outUser;
 	}
+	
+	public User getCurrentUser(HttpSession session) {
+		User user = (User) session.getAttribute(SESSION_KEY);
+		if (user != null && user.isEditor()) {
+			return user;
+		} else {
+			return null;
+		}
+	}
 
 	/*
 	 * @Override public User login(GlobalContext globalContext, String login, String password) { User outUser = super.login(globalContext, login, password); EditContext editContext = EditContext.getInstance(session); editContext.setEditUser(outUser); return outUser; }

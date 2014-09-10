@@ -160,12 +160,20 @@ public class GlobalImage extends Image implements IImageFilter {
 				url = URLHelper.createTransformURL(ctx, ctx.getVirtualCurrentPage(), TemplateFactory.getTemplate(ctx, ctx.getVirtualCurrentPage()), getResourceURL(ctx, getFileName()), filter, this);
 			} catch (Exception e) {
 				e.printStackTrace();
-			}
-			url = URLHelper.addParam(url, "hash", getStaticInfo(ctx).getVersionHash());
+			}			
 			return url;
 		} catch (Exception e) {
 			e.printStackTrace();
 			return null;
+		}
+	}
+	
+	@Override
+	public String getImageHash(ContentContext ctx) {
+		if (getWidth(ctx) < 0) {
+			return getStaticInfo(ctx).getVersionHash();
+		} else {
+			return getStaticInfo(ctx).getVersionHash()+'_'+getWidth(ctx);
 		}
 	}
 
@@ -174,7 +182,7 @@ public class GlobalImage extends Image implements IImageFilter {
 		if (decoImage != null && decoImage.trim().length() > 0) {
 			String imageLink = getResourceURL(ctx, getDecorationImage());
 			String imageFilter = getConfig(ctx).getProperty("image.filter", getDefaultFilter());
-			return URLHelper.addParam(URLHelper.createTransformURL(ctx, imageLink, imageFilter), "hash", getStaticInfo(ctx).getVersionHash());
+			return URLHelper.addParam(URLHelper.createTransformURL(ctx, imageLink, imageFilter), "hash", getImageHash(ctx));
 		} else {
 			return null;
 		}
@@ -202,8 +210,8 @@ public class GlobalImage extends Image implements IImageFilter {
 		ctx.getRequest().setAttribute("filter", getFilter(ctx));
 		int width = getWidth(ctx);
 		if (width>=0) {
-			ctx.getRequest().setAttribute("imageWidth", width);
-		}
+			ctx.getRequest().setAttribute("imageWidth", width);			
+		}		
 	}
 
 	@Override
@@ -1005,13 +1013,14 @@ public class GlobalImage extends Image implements IImageFilter {
 				int inWidth = Integer.parseInt(width);
 				if (inWidth != image.getWidth(ctx)) {
 					image.setModify();
-					image.setWidth(ctx, inWidth);
+					image.setWidth(ctx, inWidth);					
 				}
 			}
 			if (image.isModify()) {
 				image.storeProperties();
 				Edit.performSave(ctx, editContext, globalContext, content, componentContext, rs, i18nAccess, messageRepository, currentModule, adminUserFactory);
 			}
+			ctx.getAjaxData().put("previewURL", image.getPreviewURL(ctx, image.getFilter(ctx)));
 		} else {
 			logger.info("stop data feed back (template:" + ctx.getCurrentTemplate().getName() + ").");
 		}

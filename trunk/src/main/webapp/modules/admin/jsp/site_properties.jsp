@@ -260,11 +260,18 @@
 	<label class="suffix" for="collaborative-mode">${i18n.edit['admin.form.collaborative-mode']}</label>
 </div>
 
-
 <div class="line">		
 	<label for="users-access">${i18n.edit['admin.form.users-access']}</label>
 	<textarea id="users-access" name="users-access">${currentContext.usersAccess}</textarea>	
 </div>
+
+<c:if test="${not empty qrcode}">
+<div class="line">
+	<label for="qrcode">${i18n.edit['admin.form.mobil-access']}</label>
+	<img id="qrcode" src="${qrcode}" />
+</div>
+</c:if>
+
 </div>
 
 </fieldset>

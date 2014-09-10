@@ -2,12 +2,14 @@ package org.javlo.servlet;
 
 import java.awt.image.BufferedImage;
 import java.io.File;
+import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Calendar;
 import java.util.Collections;
 import java.util.Date;
 import java.util.Map;
@@ -76,6 +78,8 @@ public class ImageTransformServlet extends HttpServlet {
 	private static final String TEMP_IMAGE_FILTER = "__TEMP_IMAGE_FILTER";
 
 	public static final String COMPONENT_ID_URL_DIR_PREFIX = "/comp-";
+	
+	public static final String HASH_PREFIX = "/hash-";
 
 	public static final class ImageTransforming {
 		private final File file;
@@ -392,8 +396,6 @@ public class ImageTransformServlet extends HttpServlet {
 
 		int focusX = staticInfo.getFocusZoneX(ctx);
 		int focusY = staticInfo.getFocusZoneY(ctx);
-		int firstWidth = img.getWidth();
-		int firstHeight = img.getHeight();
 
 		if (config.getZoom(ctx.getDevice(), filter, area) > 1) {
 			double zoom = config.getZoom(ctx.getDevice(), filter, area);
@@ -617,14 +619,13 @@ public class ImageTransformServlet extends HttpServlet {
 
 	}
 
-	private InputStream loadFileFromDisk(ContentContext ctx, String name, String filter, String area, Device device, Template template, IImageFilter comp, long lastModificationDate) throws IOException {
+	private File loadFileFromDisk(ContentContext ctx, String name, String filter, String area, Device device, Template template, IImageFilter comp, long lastModificationDate) throws IOException {
 		String deviceCode = "no-device";
 		if (device != null) {
 			deviceCode = device.getCode();
 		}
 		FileCache fc = FileCache.getInstance(getServletContext());
-		InputStream stream = fc.getFileInputStream(ImageHelper.createSpecialDirectory(ctx, ctx.getGlobalContext().getContextKey(), filter, area, deviceCode, template, comp), name, lastModificationDate);
-		return stream;
+		return fc.getFile(ImageHelper.createSpecialDirectory(ctx, ctx.getGlobalContext().getContextKey(), filter, area, deviceCode, template, comp), name, lastModificationDate);		
 	}
 
 	/**
@@ -640,9 +641,6 @@ public class ImageTransformServlet extends HttpServlet {
 		servletRun++;
 
 		COUNT_ACCESS++;
-
-		// cache
-		response.setHeader("Cache-Control", "max-age=60,must-revalidate");
 
 		StaticConfig staticConfig = StaticConfig.getInstance(request.getSession());
 		ContentContext ctx = ContentContext.getFreeContentContext(request, response);
@@ -723,6 +721,11 @@ public class ImageTransformServlet extends HttpServlet {
 						if (c instanceof IImageFilter) {
 							comp = (IImageFilter) c;
 						}
+					}
+					
+					if (pathInfo.startsWith(HASH_PREFIX)) { // only use for browser cache
+						slachIndex = pathInfo.indexOf('/', 1);
+						pathInfo = pathInfo.substring(slachIndex);						
 					}
 
 					try {
@@ -827,7 +830,12 @@ public class ImageTransformServlet extends HttpServlet {
 
 				/* last modified management */
 				long lastModified = getLastModified(ctx, imageName, filter, area, ctx.getDevice(), template, comp);
-				response.setHeader("Cache-Control", "public");
+				response.setHeader("Cache-Control", "public,max-age=600,s-max-age=60,must-revalidate");
+				response.setHeader("Accept-Ranges", "bytes");
+				response.setHeader("Transfer-Encoding", null);
+				Calendar cal = Calendar.getInstance();
+				cal.roll(Calendar.MINUTE, 10);
+				response.setDateHeader("Expires", cal.getTimeInMillis());
 				response.setDateHeader(NetHelper.HEADER_LAST_MODIFIED, lastModified);
 				long lastModifiedInBrowser = request.getDateHeader(NetHelper.HEADER_IF_MODIFIED_SINCE);
 				if (lastModified > 0 && lastModified / 1000 <= lastModifiedInBrowser / 1000) {
@@ -835,14 +843,14 @@ public class ImageTransformServlet extends HttpServlet {
 					response.setStatus(HttpServletResponse.SC_NOT_MODIFIED);
 					return;
 				}
-				String eTag = "" + lastModified;
+				/*String eTag = "" + lastModified;
 				response.setHeader(NetHelper.HEADER_ETAG, eTag);
 				String lastETag = request.getHeader(NetHelper.HEADER_IF_MODIFIED_SINCE_ETAG);
 				if (lastETag != null && lastETag.equals(eTag)) {
 					COUNT_304++;
 					response.setStatus(HttpServletResponse.SC_NOT_MODIFIED);
 					return;
-				}
+				}*/
 
 				/*
 				String deviceCode = "no-device";
@@ -864,9 +872,12 @@ public class ImageTransformServlet extends HttpServlet {
 
 				}*/
 
-				InputStream fileStream = loadFileFromDisk(ctx, imageName, filter, area, ctx.getDevice(), template, comp, imageFile.lastModified());				
-				if ((fileStream != null)) {
-					try {
+				InputStream fileStream = null;
+				File file = loadFileFromDisk(ctx, imageName, filter, area, ctx.getDevice(), template, comp, imageFile.lastModified());				
+				if ((file != null)) {
+					response.setContentLength((int)file.length());
+					fileStream = new FileInputStream(file);
+					try {						
 						ResourceHelper.writeStreamToStream(fileStream, out);
 					} finally {
 						ResourceHelper.closeResource(fileStream);
@@ -938,8 +949,8 @@ public class ImageTransformServlet extends HttpServlet {
 					}
 
 					if (!foundInSet) {
-						fileStream = loadFileFromDisk(ctx, imageName, filter, area, ctx.getDevice(), template, comp, imageFile.lastModified());
-						if ((fileStream == null)) {
+						file = loadFileFromDisk(ctx, imageName, filter, area, ctx.getDevice(), template, comp, imageFile.lastModified());
+						if ((file == null)) {
 							long currentTime = System.currentTimeMillis();
 							synchronized (imageTransforming.get(imageKey)) {
 								if (imageFile.isFile()) {
@@ -949,13 +960,13 @@ public class ImageTransformServlet extends HttpServlet {
 								}
 							}
 							logger.info("transform image (" + StringHelper.renderSize(size) + ") : '" + imageName + "' in site '" + globalContext.getContextKey() + "' page : " + ctx.getRequestContentLanguage() + ctx.getPath() + " time : " + StringHelper.renderTimeInSecond(System.currentTimeMillis() - currentTime) + " sec.  #transformation:" + imageTransforming.size());
-							fileStream = loadFileFromDisk(ctx, imageName, filter, area, ctx.getDevice(), template, comp, imageFile.lastModified());
+							file = loadFileFromDisk(ctx, imageName, filter, area, ctx.getDevice(), template, comp, imageFile.lastModified());
 						}
 						imageTransforming.remove(imageKey);
 						imageKey = null;
 					} else {
 						synchronized (imageTransforming.get(imageKey)) {
-							fileStream = loadFileFromDisk(ctx, imageName, filter, area, ctx.getDevice(), template, comp, imageFile.lastModified());
+							file = loadFileFromDisk(ctx, imageName, filter, area, ctx.getDevice(), template, comp, imageFile.lastModified());
 							if (fileStream == null) {
 								logger.severe("problem on loading from cache : " + imageFile);
 							}
@@ -965,6 +976,7 @@ public class ImageTransformServlet extends HttpServlet {
 					/*********************/
 
 					if (fileStream != null) {
+						response.setContentLength((int)file.length());
 						try {
 							ResourceHelper.writeStreamToStream(fileStream, out);
 						} finally {

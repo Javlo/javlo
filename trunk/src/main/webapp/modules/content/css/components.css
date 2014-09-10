@@ -164,7 +164,7 @@
 	overflow: hidden;
 }
 
-.component .line label {
+.component .line label, .component .line .label {
 	float: left;
 	width: 160px;
 }

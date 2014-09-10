@@ -11,6 +11,7 @@ import java.util.List;
 import java.util.Map;
 
 import org.javlo.component.core.ComponentBean;
+import org.javlo.component.core.ContentElementList;
 import org.javlo.component.core.IContentVisualComponent;
 import org.javlo.component.text.DynamicParagraph;
 import org.javlo.context.ContentContext;
@@ -173,4 +174,20 @@ public class ComponentHelper {
 			bean.setArea(newArea);
 		}
 	}
+	
+	public static IContentVisualComponent getPreviousComponent(IContentVisualComponent inComp, ContentContext ctx) throws Exception {		
+		ContentContext ctxCompArea = ctx.getContextWithArea(inComp.getArea());
+		ContentElementList content = inComp.getPage().getContent(ctxCompArea);
+		IContentVisualComponent previousComp = null;
+		IContentVisualComponent comp = null;
+		while (content.hasNext(ctxCompArea)) {
+			previousComp = comp;
+			comp = content.next(ctxCompArea);
+			if (comp.getId().equals(inComp.getId())) {
+				return previousComp;
+			}
+		}
+		return null;
+	}
+
 }
