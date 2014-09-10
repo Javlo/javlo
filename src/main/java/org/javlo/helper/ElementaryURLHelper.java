@@ -395,7 +395,7 @@ public abstract class ElementaryURLHelper {
 	}
 
 	public static String createTransformURL(ContentContext ctx, MenuElement referencePage, String url, String filter) throws Exception {
-		return createTransformURLInternal(ctx, referencePage, url, filter, ctx.getCurrentTemplate().getName(),null,null);
+		return createTransformURL(ctx, referencePage, ctx.getCurrentTemplate(), url, filter, null);
 	}
 
 	public static String createTransformURL(ContentContext ctx, MenuElement referencePage, String url, String filter, String templateName) throws Exception {
