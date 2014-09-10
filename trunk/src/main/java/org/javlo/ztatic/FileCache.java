@@ -215,7 +215,14 @@ public class FileCache {
 	
 	public File getFile(String key, String fileName, long latestModificationDate) throws IOException {
 		File file = getFileName(key, fileName).getCanonicalFile();
-		return file;
+		if (latestModificationDate > file.lastModified()) {
+			return null;
+		}
+		if (!file.exists() || file.isDirectory()) {
+			return null;
+		} else {
+			return file;
+		}
 	}
 
 	/**

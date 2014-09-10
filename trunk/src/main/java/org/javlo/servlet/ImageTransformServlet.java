@@ -960,7 +960,10 @@ public class ImageTransformServlet extends HttpServlet {
 								}
 							}
 							logger.info("transform image (" + StringHelper.renderSize(size) + ") : '" + imageName + "' in site '" + globalContext.getContextKey() + "' page : " + ctx.getRequestContentLanguage() + ctx.getPath() + " time : " + StringHelper.renderTimeInSecond(System.currentTimeMillis() - currentTime) + " sec.  #transformation:" + imageTransforming.size());
-							file = loadFileFromDisk(ctx, imageName, filter, area, ctx.getDevice(), template, comp, imageFile.lastModified());
+							file = loadFileFromDisk(ctx, imageName, filter, area, ctx.getDevice(), template, comp, imageFile.lastModified());							
+							if (file != null) {
+								fileStream = new FileInputStream(file);
+							}
 						}
 						imageTransforming.remove(imageKey);
 						imageKey = null;
