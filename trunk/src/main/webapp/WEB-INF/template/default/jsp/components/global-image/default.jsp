@@ -36,7 +36,6 @@ jQuery("#${imageId}").load(function() {
 		console.log("image size");
 		jQuery.post( "${info.currentAjaxURL}", { webaction: "global-image.dataFeedBack", compid: "${compid}", height: jQuery("#${imageId}").height(), width: jQuery("#${imageId}").width()}, {dataType: "json"}).done(function(data) {
 			jQuery("#${imageId}").addClass("refreshed");			
-			console.log("data.data.previewURL = "+data.data.previewURL);
 			jQuery("#${imageId}").attr("src", data.data.previewURL);
 		});
 	}
