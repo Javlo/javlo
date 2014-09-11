@@ -175,6 +175,15 @@ public class ComponentHelper {
 		}
 	}
 	
+	public static String getPreviousComponentId(IContentVisualComponent inComp, ContentContext ctx) throws Exception {
+		IContentVisualComponent previous = getPreviousComponent(inComp, ctx);
+		if (previous != null) {
+			return previous.getId();
+		} else {
+			return "0";
+		}
+	}
+	
 	public static IContentVisualComponent getPreviousComponent(IContentVisualComponent inComp, ContentContext ctx) throws Exception {		
 		ContentContext ctxCompArea = ctx.getContextWithArea(inComp.getArea());
 		ContentElementList content = inComp.getPage().getContent(ctxCompArea);
@@ -185,6 +194,21 @@ public class ComponentHelper {
 			comp = content.next(ctxCompArea);
 			if (comp.getId().equals(inComp.getId())) {
 				return previousComp;
+			}
+		}
+		return null;
+	}
+	
+	public static IContentVisualComponent getNextComponent(IContentVisualComponent inComp, ContentContext ctx) throws Exception {		
+		ContentContext ctxCompArea = ctx.getContextWithArea(inComp.getArea());
+		ContentElementList content = inComp.getPage().getContent(ctxCompArea);
+		IContentVisualComponent previousComp = null;
+		IContentVisualComponent comp = null;
+		while (content.hasNext(ctxCompArea)) {
+			previousComp = comp;
+			comp = content.next(ctxCompArea);
+			if (previousComp != null && previousComp.getId().equals(inComp.getId())) {
+				return comp;
 			}
 		}
 		return null;

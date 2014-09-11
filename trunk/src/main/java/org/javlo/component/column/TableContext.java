@@ -29,71 +29,75 @@ public class TableContext {
 		TableContext outCtx = (TableContext) ctx.getRequest().getAttribute(KEY);
 		if (outCtx == null) {			
 			outCtx = new TableContext();
-			MenuElement page = currentComponent.getPage();
-			ContentElementList content = page.getContent(ctx);			
-			IContentVisualComponent comp = content.next(ctx);
-			IContentVisualComponent firstComp = null;
-			
-			/* search first component of the table contains 'currentComponent' */
-			while (content.hasNext(ctx) && !comp.getId().equals(currentComponent.getId())) {
-				if (firstComp == null && comp instanceof TableComponent) {
-					firstComp = comp;
-				}
-				if (comp instanceof TableBreak) {
-					firstComp = null;
-				}
-				comp = content.next(ctx);				
-			}
-			if (firstComp == null) {
-				firstComp = comp;
-			}
-			/* position content iterator on the firstComp */
-			content.initialize(ctx);
-			comp = content.next(ctx);
-			while (content.hasNext(ctx) && !comp.getId().equals(firstComp.getId())) {
-				comp = content.next(ctx);
-			}
-			
+			outCtx.refresh(ctx,currentComponent);
 			ctx.getRequest().setAttribute(KEY, outCtx);
-			
-			outCtx.addTableComponent((TableComponent)comp);
-			outCtx.first.add((TableComponent)comp);
-			int maxRowSize = 0;			
-			while (content.hasNext(ctx) && !(comp instanceof TableBreak)) {
-				comp = content.next(ctx);
-				if (comp instanceof TableComponent) {
-					if (((TableComponent) comp).getWidth(ctx) != null && ((TableComponent) comp).getWidth(ctx).trim().length() > 0) {
-						outCtx.cellWidth = true;
-					}
-					maxRowSize = maxRowSize+((TableComponent) comp).getColspan();						
-					if (((TableComponent) comp).isRowBreak()) {
-						if (maxRowSize > outCtx.rowSize) {
-							outCtx.rowSize = maxRowSize;
-						}
-						maxRowSize = 0;
-						if (outCtx.components.size() > 0) {
-							outCtx.last.add(outCtx.components.getLast());
-						}
-					}					
-					if (((TableComponent)comp).isRowBreak()) {
-						outCtx.first.add((TableComponent)comp);
-					}
-					outCtx.addTableComponent((TableComponent)comp);
-				}
-			}
-			outCtx.last.add(outCtx.components.getLast());
-			if (maxRowSize >  outCtx.rowSize) {
-				outCtx.rowSize = maxRowSize;
-			}		
-			
-			/*System.out.println("");
-			System.out.println("components structure : ");
-			for (TableComponent tComp : outCtx.components) {
-				System.out.println("     "+tComp.getType()+" - first:"+outCtx.isFirst(tComp)+" - last:"+outCtx.isLast(tComp));
-			}
-			System.out.println("");*/
 		}
 		return outCtx;
+	}
+	
+	public void refresh(ContentContext ctx , IContentVisualComponent currentComponent) throws Exception {
+		
+		components = new LinkedList<TableComponent>();	
+		first = new HashSet<TableComponent>();
+		last = new HashSet<TableComponent>();		
+		rowSize = 0;		
+		tableOpen = false;
+		cellWidth = false; 
+		
+		MenuElement page = currentComponent.getPage();
+		ContentElementList content = page.getContent(ctx);			
+		IContentVisualComponent comp = content.next(ctx);
+		IContentVisualComponent firstComp = null;
+		
+		/* search first component of the table contains 'currentComponent' */
+		while (content.hasNext(ctx) && !comp.getId().equals(currentComponent.getId())) {
+			if (firstComp == null && comp instanceof TableComponent) {
+				firstComp = comp;
+			}
+			if (comp instanceof TableBreak) {
+				firstComp = null;
+			}
+			comp = content.next(ctx);				
+		}
+		if (firstComp == null) {
+			firstComp = comp;
+		}
+		/* position content iterator on the firstComp */
+		content.initialize(ctx);
+		comp = content.next(ctx);
+		while (content.hasNext(ctx) && !comp.getId().equals(firstComp.getId())) {
+			comp = content.next(ctx);
+		}
+		
+		addTableComponent((TableComponent)comp);
+		first.add((TableComponent)comp);
+		int maxRowSize = 0;			
+		while (content.hasNext(ctx) && !(comp instanceof TableBreak)) {
+			comp = content.next(ctx);
+			if (comp instanceof TableComponent) {
+				if (((TableComponent) comp).isWidth(ctx)) {
+					cellWidth = true;
+				}
+				maxRowSize = maxRowSize+((TableComponent) comp).getColspan();						
+				if (((TableComponent) comp).isRowBreak()) {
+					if (maxRowSize > rowSize) {
+						rowSize = maxRowSize;
+					}
+					maxRowSize = 0;
+					if (components.size() > 0) {
+						last.add(components.getLast());
+					}
+				}					
+				if (((TableComponent)comp).isRowBreak()) {
+					first.add((TableComponent)comp);
+				}
+				addTableComponent((TableComponent)comp);
+			}
+		}
+		last.add(components.getLast());
+		if (maxRowSize >  rowSize) {
+			rowSize = maxRowSize;
+		}	
 	}
 	
 	public boolean isFirst(TableComponent comp) {
@@ -179,6 +183,15 @@ public class TableContext {
 	
 	public TableComponent getFirstComponent() {
 		return components.getFirst();
+	}
+	
+	public String getFirstComponentId() {
+		TableComponent first = getFirstComponent();
+		if (first != null) {
+			return first.getId();
+		} else {
+			return null;
+		}
 	}
 	
 	public TableComponent getLastComponent() {

@@ -39,7 +39,7 @@
 	width: auto;
 	text-align: center;
 	font-family: sans-serif;
-	font-size: 30px;
+	font-size: 15px;
 	color: #5B5B5B;
 	text-shadow: 1px -1px 0 #ffffff;
 	vertical-align: middle;	
@@ -66,9 +66,9 @@
 .edit-preview .cell-name {
 	position: absolute;
 	z-index: 1;
-	top: 2px;
+	top: 10px;
 	left: 50%;
-	margin-left: -19px;	
+	margin-left: -10px;	
 }
 	
 
@@ -1271,6 +1271,10 @@
 .arrow.top:after {
 	bottom: -20px;
 	top: auto;
+}
+
+.not-editable-component {
+	cursor:not-allowed;
 }
 
 .editable-component.table-break {

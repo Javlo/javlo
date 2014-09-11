@@ -32,8 +32,11 @@
 <script type="text/javascript">
 jQuery("#${imageId}").attr("src", "${previewURL}");
 jQuery("#${imageId}").load(function() {	
-	if (jQuery("this").src != "${info.ajaxLoaderURL}") {
-		jQuery.post( "${info.currentAjaxURL}", { webaction: "global-image.dataFeedBack", compid: "${compid}", height: jQuery("#${imageId}").height(), width: jQuery("#${imageId}").width()});
+	if (jQuery(this).src != "${info.ajaxLoaderURL}" && !jQuery(this).hasClass("refreshed") && jQuery(this).attr("src").indexOf("/transform/")>=0) {		
+		jQuery.post( "${info.currentAjaxURL}", { webaction: "global-image.dataFeedBack", compid: "${compid}", height: jQuery("#${imageId}").height(), width: jQuery("#${imageId}").width()}, {dataType: "json"}).done(function(data) {
+			jQuery("#${imageId}").addClass("refreshed");			
+			jQuery("#${imageId}").attr("src", data.data.previewURL);
+		});
 	}
 });
 </script>
