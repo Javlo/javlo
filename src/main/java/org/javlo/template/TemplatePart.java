@@ -1,5 +1,7 @@
 package org.javlo.template;
 
+import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Method;
 import java.util.Comparator;
 
 import org.javlo.helper.StringHelper;
@@ -70,11 +72,11 @@ public class TemplatePart {
 	public String getDefaultTextSize() {
 		return null;
 	}
-	
+
 	public String getDefaultPadding() {
 		return null;
 	}
-	
+
 	public String getDefaultWidth() {
 		return null;
 	}
@@ -182,7 +184,7 @@ public class TemplatePart {
 			return textColor;
 		}
 	}
-	
+
 	public String getFinalLinkColor() {
 		if (getParent() != null && (linkColor == null || linkColor.trim().length() == 0)) {
 			return getParent().getFinalLinkColor();
@@ -359,34 +361,72 @@ public class TemplatePart {
 		result = prime * result + ((width == null) ? 0 : width.hashCode());
 		return result;
 	}
-	
+
 	/**
-	 * return the Thinckness of the frame (padding+border+margin), if some item is defined without px, return null.
+	 * set value of part in empty field, stay not empty field unmodified.
+	 * 
+	 * @param part
+	 * @throws InvocationTargetException 
+	 * @throws IllegalArgumentException 
+	 * @throws IllegalAccessException 
+	 */
+	public void setEmptyField(TemplatePart part) {
+		try {
+			Method[] methods = part.getClass().getMethods();			
+			for (int i = 0; i < methods.length; i++) {
+				if (methods[i].getName().startsWith("get") || methods[i].getName().startsWith("is")) {
+
+					String name = methods[i].getName().substring(3);
+					name = StringHelper.firstLetterLower(name);
+					Object value = methods[i].invoke(part, (Object[]) null);
+					String getTarget = "get" + StringHelper.firstLetterUpper(name);
+					String method2 = "set" + StringHelper.firstLetterUpper(name);
+					try {
+						Method get = this.getClass().getMethod(getTarget, new Class[0]);
+						Object getValue = get.invoke(this, new Object[0]);
+						if (getValue == null || getValue.toString().trim().length() == 0) {
+							Method method = this.getClass().getMethod(method2, new Class[] { String.class });
+							method.invoke(this, new Object[] { value });
+						}
+					} catch (NoSuchMethodException e) {						
+					}
+
+				}
+			}
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+	}
+
+	/**
+	 * return the Thinckness of the frame (padding+border+margin), if some item
+	 * is defined without px, return null.
+	 * 
 	 * @return
 	 */
 	public Integer getFrameThickness() {
 		Integer marginSize = 0;
 		Integer borderSize = 0;
 		Integer paddingSize = 0;
-		if (getMargin() != null && getMargin().trim().length()>0) {
+		if (getMargin() != null && getMargin().trim().length() > 0) {
 			marginSize = StringHelper.getPixelValue(getMargin());
 			if (marginSize == null) {
 				return null;
 			}
 		}
-		if (getBorderWidth() != null && getBorderWidth().trim().length()>0) {
+		if (getBorderWidth() != null && getBorderWidth().trim().length() > 0) {
 			borderSize = StringHelper.getPixelValue(getBorderWidth());
 			if (borderSize == null) {
 				return null;
 			}
 		}
-		if (getPadding() != null && getPadding().trim().length()>0) {
+		if (getPadding() != null && getPadding().trim().length() > 0) {
 			paddingSize = StringHelper.getPixelValue(getPadding());
 			if (paddingSize == null) {
 				return null;
 			}
 		}
-		return marginSize+borderSize+paddingSize;
+		return marginSize + borderSize + paddingSize;
 	}
 
 	public String getLinkColor() {
@@ -395,6 +435,20 @@ public class TemplatePart {
 
 	public void setLinkColor(String linkColor) {
 		this.linkColor = linkColor;
+	}
+	
+	public static void main(String[] args) {
+		TemplateStyle part1 = new TemplateStyle();
+		TemplateStyle part2 = new TemplateStyle();
+		part1.setWidth("100px");
+		part1.setTitleColor("");
+		part2.setWidth("10px");
+		part2.setHeight("10px");
+		part2.setTitleColor("#ffffff;");
+		part1.setEmptyField(part2);
+		System.out.println("***** TemplatePart.main : part1.getWidth() = "+part1.getWidth()); //TODO: remove debug trace
+		System.out.println("***** TemplatePart.main : part2.getHeight() = "+part1.getHeight()); //TODO: remove debug trace
+		System.out.println("***** TemplatePart.main : part2.setTitleColor() = "+part1.getTitleColor()); //TODO: remove debug trace
 	}
 
 }
