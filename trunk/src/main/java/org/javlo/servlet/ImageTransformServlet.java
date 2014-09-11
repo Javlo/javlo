@@ -388,6 +388,7 @@ public class ImageTransformServlet extends HttpServlet {
 		try {
 			metadata = ResourceHelper.getImageMetadata(imageFile);
 		} catch (Exception e) {
+			e.printStackTrace();
 			logger.warning(e.getMessage());
 		}
 
@@ -409,10 +410,7 @@ public class ImageTransformServlet extends HttpServlet {
 		}
 		// org.javlo.helper.Logger.stepCount("transform",
 		// "start - transformation - 2.1");
-		if (config.isGrayscale(ctx.getDevice(), filter, area)) {
-			//img = (new GrayscaleFilter()).filter(img, null);
-			img = ImageEngine.grayscale(img);
-		}
+		
 		// org.javlo.helper.Logger.stepCount("transform",
 		// "start - transformation - 2.2");
 		if (config.isCrystallize(ctx.getDevice(), filter, area)) {
@@ -427,7 +425,11 @@ public class ImageTransformServlet extends HttpServlet {
 			ContrastFilter imageFilter = new ContrastFilter();			
 			imageFilter.setContrast(contrast);
 			imageFilter.setBrightness(brightness);
-			img = imageFilter.filter(img, null);
+			img = imageFilter.filter(img,null);
+		}
+		if (config.isGrayscale(ctx.getDevice(), filter, area)) {
+			//img = (new GrayscaleFilter()).filter(img, null);
+			img = ImageEngine.grayscale(img);
 		}
 		int sepia = config.getSepiaIntensity(ctx.getDevice(), filter, area);
 		if (sepia > 0) {
@@ -1008,7 +1010,7 @@ public class ImageTransformServlet extends HttpServlet {
 				}
 			} catch (Exception e) {
 				logger.warning(e.getMessage());
-				// e.printStackTrace();
+				e.printStackTrace();
 			}
 		}
 		servletRun--;
