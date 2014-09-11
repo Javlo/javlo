@@ -223,7 +223,7 @@ public class ProductComponent extends AbstractPropertiesComponent implements IAc
 			if (getVirtualStock(ctx) > 0) {
 				out.println("<span class=\"label\">" + i18nAccess.getViewText("ecom.stock") + "</span> <span>" + getVirtualStock(ctx) + "</span>");
 			} else {
-				out.println("<span class=\"label\">" + i18nAccess.getViewText("ecom.stock") + "</span> <span>SOLD OUT</span>");
+				out.println("<span class=\"label\">" + i18nAccess.getViewText("ecom.stock") + "</span><span class=\"soldout\">"+i18nAccess.getViewText("ecom.soldout")+"</span>");
 			}
 			out.println("</div>");
 
@@ -235,6 +235,8 @@ public class ProductComponent extends AbstractPropertiesComponent implements IAc
 
 				out.println("<span class=\"buy\"><input class=\"buy\" type=\"submit\" name=\"buy\" value=\""+i18nAccess.getViewText("ecom.buy")+"\" /></span>");
 				out.println("</div>");
+			} else {
+				out.println("<span class=\"soldout\">"+i18nAccess.getViewText("ecom.soldout")+"</span>");
 			}
 			out.println("</form>");
 			
