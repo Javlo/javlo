@@ -22,6 +22,7 @@ public class TemplatePart {
 	private String margin = null;
 	private String borderWidth = null;
 	private String borderColor = null;
+	private String linkColor = null;
 	private String textColor = null;
 	private String backgroundColor = null;
 	private String font = null;
@@ -179,6 +180,14 @@ public class TemplatePart {
 			return getParent().getFinalTextColor();
 		} else {
 			return textColor;
+		}
+	}
+	
+	public String getFinalLinkColor() {
+		if (getParent() != null && (linkColor == null || linkColor.trim().length() == 0)) {
+			return getParent().getFinalLinkColor();
+		} else {
+			return linkColor;
 		}
 	}
 
@@ -344,6 +353,7 @@ public class TemplatePart {
 		result = prime * result + ((name == null) ? 0 : name.hashCode());
 		result = prime * result + ((padding == null) ? 0 : padding.hashCode());
 		result = prime * result + ((textColor == null) ? 0 : textColor.hashCode());
+		result = prime * result + ((linkColor == null) ? 0 : linkColor.hashCode());
 		result = prime * result + ((textSize == null) ? 0 : textSize.hashCode());
 		result = prime * result + ((titleColor == null) ? 0 : titleColor.hashCode());
 		result = prime * result + ((width == null) ? 0 : width.hashCode());
@@ -377,6 +387,14 @@ public class TemplatePart {
 			}
 		}
 		return marginSize+borderSize+paddingSize;
+	}
+
+	public String getLinkColor() {
+		return linkColor;
+	}
+
+	public void setLinkColor(String linkColor) {
+		this.linkColor = linkColor;
 	}
 
 }
