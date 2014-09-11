@@ -31,6 +31,12 @@ p,ul,ol,.table-li td.internal-link,.unsubscribe-link,.date,.external-link,.pdf-l
 	<c:if test="${not empty area.finalFont}">font-family: ${area.finalFont};</c:if>
 }
 
+<c:if test="${not empty area.finalLinkColor}">
+	#${area.name} a {	
+		color: ${area.finalLinkColor};	
+	}
+</c:if>
+
 #${area.name} h1 {	
 	font-size: ${area.finalH1Size};	
 }

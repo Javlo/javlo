@@ -133,9 +133,10 @@ public class TemplateEditorAction extends AbstractModuleAction {
 				area.setMargin(rs.getParameter("margin", ""));
 				area.setPadding(rs.getParameter("padding", ""));
 				area.setBorderWidth(rs.getParameter("borderWidth", ""));
-				area.setBorderColor(rs.getParameter("borderColor", ""));
+				area.setBorderColor(rs.getParameter("borderColor", ""));				
 				area.setTitleColor(rs.getParameter("titleColor", ""));
 				area.setTextColor(rs.getParameter("textColor", ""));
+				area.setLinkColor(rs.getParameter("linkColor", ""));
 				area.setTextSize(rs.getParameter("textSize", ""));
 				area.setFont(rs.getParameter("font", ""));
 				area.setBackgroundColor(rs.getParameter("backgroundColor", ""));
@@ -179,6 +180,7 @@ public class TemplateEditorAction extends AbstractModuleAction {
 					row.setTextSize(rs.getParameter("textSize", ""));
 					row.setFont(rs.getParameter("font", ""));
 					row.setBackgroundColor(rs.getParameter("backgroundColor", ""));
+					row.setLinkColor(rs.getParameter("linkColor", ""));
 					
 					row.setH1Size(rs.getParameter("h1size",""));
 					row.setH2Size(rs.getParameter("h2size",""));
@@ -219,6 +221,7 @@ public class TemplateEditorAction extends AbstractModuleAction {
 				style.setBorderColor(rs.getParameter("borderColor", ""));
 				style.setTitleColor(rs.getParameter("titleColor", ""));
 				style.setTextColor(rs.getParameter("textColor", ""));
+				style.setLinkColor(rs.getParameter("linkColor", ""));
 				style.setTextSize(rs.getParameter("textSize", ""));
 				style.setFont(rs.getParameter("font", ""));
 				

@@ -36,6 +36,10 @@
 			<label for="backgroundColor-${part.name}">background color</label>
 			<input class="color" type="text" id="backgroundColor-${part.name}" name="backgroundColor" value="${part.backgroundColor}" />
 		</div>
+		<div class="line ${not empty exclude.linkColor?' disabled':''}">
+			<label for="linkColor-${link.name}">link color<c:if test="${not empty part.finalLinkColor}"> (${part.finalLinkColor})</c:if></label>
+			<input class="color" type="text" id="linkColor-${part.name}" name="linkColor" value="${part.linkColor}" />
+		</div>
 		</div>
 		<div class="one_half last">	
 		<div class="line${not empty exclude.titleColor?' disabled':''}">
@@ -67,31 +71,31 @@
 		<fieldset class="title-size" class="cols">
 			<legend>title size</legend>
 			<div class="one_half">
-			<div class="line${not empty exclude.textColor?' disabled':''}">
+			<div class="line${not empty exclude.finalH1Size?' disabled':''}">
 				<label for="h1size-${part.name}">h1 size<c:if test="${not empty part.finalH1Size}"> (${part.finalH1Size})</c:if></label>
-				<input class="color" type="text" id="textColor-${part.name}" name="h1size" value="${part.h1Size}" />
+				<input type="text" id="textColor-${part.name}" name="h1size" value="${part.h1Size}" />
 			</div>
-			<div class="line${not empty exclude.textColor?' disabled':''}">
+			<div class="line${not empty exclude.finalH2Size?' disabled':''}">
 				<label for="h1size-${part.name}">h2 size<c:if test="${not empty part.finalH2Size}"> (${part.finalH2Size})</c:if></label>
-				<input class="color" type="text" id="textColor-${part.name}" name="h2size" value="${part.h2Size}" />
+				<input type="text" id="textColor-${part.name}" name="h2size" value="${part.h2Size}" />
 			</div>
-			<div class="line${not empty exclude.textColor?' disabled':''}">
+			<div class="line${not empty exclude.finalH3Size?' disabled':''}">
 				<label for="h3size-${part.name}">h3 size<c:if test="${not empty part.finalH3Size}"> (${part.finalH3Size})</c:if></label>
-				<input class="color" type="text" id="textColor-${part.name}" name="h3size" value="${part.h3Size}" />
+				<input type="text" id="textColor-${part.name}" name="h3size" value="${part.h3Size}" />
 			</div>
 			</div>	
 			<div class="one_half last">				
-			<div class="line${not empty exclude.textColor?' disabled':''}">
+			<div class="line${not empty exclude.finalH4Size?' disabled':''}">
 				<label for="h1size-${part.name}">h4 size<c:if test="${not empty part.finalH4Size}"> (${part.finalH4Size})</c:if></label>
-				<input class="color" type="text" id="textColor-${part.name}" name="h4size" value="${part.h4Size}" />
+				<input type="text" id="textColor-${part.name}" name="h4size" value="${part.h4Size}" />
 			</div>
-			<div class="line${not empty exclude.textColor?' disabled':''}">
+			<div class="line${not empty exclude.finalH5Size?' disabled':''}">
 				<label for="h1size-${part.name}">h5 size<c:if test="${not empty part.finalH5Size}"> (${part.finalH5Size})</c:if></label>
-				<input class="color" type="text" id="textColor-${part.name}" name="h5size" value="${part.h5Size}" />
+				<input type="text" id="textColor-${part.name}" name="h5size" value="${part.h5Size}" />
 			</div>
-			<div class="line${not empty exclude.textColor?' disabled':''}">
+			<div class="line${not empty exclude.finalH6Size?' disabled':''}">
 				<label for="h1size-${part.name}">h6 size<c:if test="${not empty part.finalH6Size}"> (${part.finalH6Size})</c:if></label>
-				<input class="color" type="text" id="textColor-${part.name}" name="h6size" value="${part.h6Size}" />
+				<input type="text" id="textColor-${part.name}" name="h6size" value="${part.h6Size}" />
 			</div>
 			</div>
 		</fieldset>
