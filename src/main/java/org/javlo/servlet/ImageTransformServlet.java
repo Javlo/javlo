@@ -970,6 +970,7 @@ public class ImageTransformServlet extends HttpServlet {
 					} else {
 						synchronized (imageTransforming.get(imageKey)) {
 							file = loadFileFromDisk(ctx, imageName, filter, area, ctx.getDevice(), template, comp, imageFile.lastModified());
+							fileStream= new FileInputStream(file);
 							if (fileStream == null) {
 								logger.severe("problem on loading from cache : " + imageFile);
 							}

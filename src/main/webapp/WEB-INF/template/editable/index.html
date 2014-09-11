@@ -8,7 +8,6 @@
 <jsp:include page="css/style.css" />
 <jsp:include page="css/web.css" />
 <jsp:include page="css/integration.css" />
-
 <c:set var="template" value="${info.template.style}" scope="request" />
 body .association-wrapper, body .page-wrapper {    
 	<jsp:include page="css/styles.jsp" />
@@ -23,9 +22,8 @@ body .association-wrapper, body .page-wrapper {
 <div class="style_wrapper" style="color: ${info.template.style.finalTextColor};	font-size: ${info.template.style.finalTextSize}; font-family: ${info.template.style.finalFont};">
 <table width="100%" border="0" align="center" cellpadding="0" cellspacing="0">
 	<tr>
-		<td width="100%" align="center" valign="top">
-			<div class="${not param.pageAssociation?'page-wrapper':'inside-wrapper'}">
-			<table border="0" align="center" cellpadding="0" cellspacing="0" style="width: 100%;">
+		<td width="100%" align="center" valign="top">		
+			<table class="${not param.pageAssociation?'page-wrapper':'inside-wrapper'}" border="0" align="center" cellpadding="0" cellspacing="0">
 				<c:if test="${empty param.lastRowFooter}">
 				<tr id="header-container">
 					<td align="center">
@@ -43,8 +41,7 @@ body .association-wrapper, body .page-wrapper {
 						<td style="vertical-align: bottom;"><jsp:include page="/jsp/view/template/dynamic.jsp?lastRow=true" /></td>
 					</tr>
 				</c:if>
-			</table>
-			</div>
+			</table>			
 		</td>
 	</tr>
 </table>

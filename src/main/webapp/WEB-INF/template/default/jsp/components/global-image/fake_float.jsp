@@ -31,13 +31,15 @@
 <div class="source" style="display: none;"><span class="container">${label}</span></div>
 <script type="text/javascript">
 jQuery("#comp-${compid} img").load(function() {
-	floatZone("#comp-${compid} .source .container", "#comp-${compid} .zone1 .container", "#comp-${compid} .zone2 .container", "#comp-${compid} img");
-	var firstText=jQuery("#comp-${compid} .zone1 .container").html();
-	var secondText = jQuery("#comp-${compid} .zone2 .container").html();
-	jQuery.post( "${info.currentAjaxURL}", { webaction: "global-image.dataFeedBack", compid: "${compid}", firsttext: firstText, secondtext: secondText, height: jQuery("#comp-${compid} img").height(), width: jQuery("#comp-${compid} img").width()}, {dataType: "json"}).done(function(data) {
-		jQuery("#${imageId}").addClass("refreshed");		
-		jQuery("#${imageId}").attr("src", data.data.previewURL);
-	});	
+	if (jQuery(this).src != "${info.ajaxLoaderURL}" && !jQuery(this).hasClass("refreshed") && jQuery(this).src.indexOf("/transform/")>=0) {
+		floatZone("#comp-${compid} .source .container", "#comp-${compid} .zone1 .container", "#comp-${compid} .zone2 .container", "#comp-${compid} img");
+		var firstText=jQuery("#comp-${compid} .zone1 .container").html();
+		var secondText = jQuery("#comp-${compid} .zone2 .container").html();
+		jQuery.post( "${info.currentAjaxURL}", { webaction: "global-image.dataFeedBack", compid: "${compid}", firsttext: firstText, secondtext: secondText, height: jQuery("#comp-${compid} img").height(), width: jQuery("#comp-${compid} img").width()}, {dataType: "json"}).done(function(data) {
+			jQuery("#comp-${compid} img").addClass("refreshed");		
+			jQuery("#comp-${compid} img").attr("src", data.data.previewURL);
+		});	
+	}
 	//ajaxRequest(url, null, null);
 });
 </script></c:if></div>

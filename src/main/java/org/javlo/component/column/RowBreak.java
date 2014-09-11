@@ -38,7 +38,7 @@ public class RowBreak extends TableComponent {
 			cssClass = " class=\"empty\"";
 		}
 		out.println("</div></td></tr><tr><td"+getColSpanHTML(ctx)+" style=\""+getTDStyle(ctx)+"\""+cssClass+"><div class=\"cell-wrapper\">");
-		if (isCellEmpty(ctx) && EditContext.getInstance(ctx.getGlobalContext(), ctx.getRequest().getSession()).isEditPreview()) {
+		if (isCellEmpty(ctx) && ctx.isAsPreviewMode() && EditContext.getInstance(ctx.getGlobalContext(), ctx.getRequest().getSession()).isEditPreview() ) {
 			TableContext tableContext = getContext(ctx);
 			out.print("<span class=\"cell-name\">"+tableContext.getName(this)+"</span>");
 		}
