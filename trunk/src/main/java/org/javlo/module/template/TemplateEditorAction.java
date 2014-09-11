@@ -232,12 +232,16 @@ public class TemplateEditorAction extends AbstractModuleAction {
 				style.setH5Size(rs.getParameter("h5size",""));
 				style.setH6Size(rs.getParameter("h6size",""));
 				
-				style.setBackgroundColor(rs.getParameter("backgroundColor", ""));
-				editorContext.getCurrentTemplate().storeStyle(style);
-				if (rs.getParameter("parent", null) != null) {
-					editorContext.getCurrentTemplate().setParentName(rs.getParameter("parent", null));
+				style.setBackgroundColor(rs.getParameter("backgroundColor", ""));				
+				String parent = rs.getParameter("parent", null);				
+				if (parent != null && !parent.equals(editorContext.getCurrentTemplate().getParentName())) {
+					Template template = TemplateFactory.getTemplates(ctx.getRequest().getSession().getServletContext()).get(parent);
+					if (template != null) {		
+						style.setEmptyField(template.getStyle());
+						editorContext.getCurrentTemplate().setParentName(parent);
+					}
 				}
-
+				editorContext.getCurrentTemplate().storeStyle(style);
 				FileItem file = rs.getFileItem("image");
 				if (file != null) {
 					InputStream in = file.getInputStream();

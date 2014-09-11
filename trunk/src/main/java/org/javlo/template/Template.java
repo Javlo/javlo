@@ -2451,7 +2451,7 @@ public class Template implements Comparable<Template> {
 		part.setMargin(properties.getString(prefix + ".margin"));
 		part.setPadding(properties.getString(prefix + ".padding", part.getDefaultPadding()));
 		part.setTextColor(properties.getString(prefix + ".color", part.getDefaultTextColor()));
-		part.setLinkColor(properties.getString(prefix + ".link-color", part.getDefaultTextColor()));
+		part.setLinkColor(properties.getString(prefix + ".link-color"));
 		part.setTextSize(properties.getString(prefix + ".text-size", part.getDefaultTextSize()));
 		part.setWidth(properties.getString(prefix + ".width", part.getDefaultWidth()));
 		part.setTitleColor(properties.getString(prefix + ".title-color"));
