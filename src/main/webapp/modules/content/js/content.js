@@ -34,8 +34,7 @@ function loadWysiwyg(cssQuery, complexity, chooseFileURL) {
 		});
 	} else if (complexity == "high") {		
 		tinymce.init({
-		    selector: cssQuery,
-		    relative_urls: false,
+		    selector: cssQuery,		    
 		    menubar : false,
 		    theme: "modern",
 		    content_css: wysiwygCss,
