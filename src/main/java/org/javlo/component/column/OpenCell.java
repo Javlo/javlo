@@ -6,9 +6,9 @@ import java.io.PrintStream;
 import org.javlo.context.ContentContext;
 import org.javlo.context.EditContext;
 
-public class CellBreak extends TableComponent {
+public class OpenCell extends TableComponent {
 	
-	public static final String TYPE = "cell-break";
+	public static final String TYPE = "open-cell";
 
 	@Override
 	public String getType() {

@@ -444,7 +444,7 @@ public class ImageConfig {
 	}
 	
 	public float getBrightness (Device device, String filter, String area) {
-		String key = getKey(device, filter, area, "brightness");
+		String key = getKey(device, filter, area, "brightness");												   
 		return properties.getFloat(key, device!=null?getBrightness(null,ALL,null):1);
 	}
 	

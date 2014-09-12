@@ -9,9 +9,11 @@ import java.io.StringWriter;
 import java.nio.charset.Charset;
 import java.util.HashMap;
 import java.util.Iterator;
+import java.util.Locale;
 import java.util.Map;
 
 import org.apache.poi.hssf.usermodel.HSSFCell;
+import org.apache.poi.hssf.usermodel.HSSFDataFormatter;
 import org.apache.poi.hssf.usermodel.HSSFSheet;
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 import org.apache.poi.ss.usermodel.Row;
@@ -20,7 +22,6 @@ import org.apache.poi.xssf.usermodel.XSSFCell;
 import org.apache.poi.xssf.usermodel.XSSFSheet;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import org.javlo.component.core.IContentVisualComponent;
-import org.javlo.component.core.IReverseLinkComponent;
 import org.javlo.config.StaticConfig;
 import org.javlo.context.ContentContext;
 import org.javlo.context.GlobalContext;
@@ -41,7 +42,7 @@ public class ArrayFileComponent extends GenericFile {
 	public static final String REQUEST_ATTRIBUTE_KEY = "array";
 
 	public static final String TYPE = "array-file";
-	
+
 	public static class Cell {
 		private String value = "";
 		private int rowSpan = 1;
@@ -49,82 +50,94 @@ public class ArrayFileComponent extends GenericFile {
 		private Cell[][] array;
 		private int x;
 		private int y;
-		
+
 		public Cell(String value, Cell[][] arrays, int x, int y) {
 			this.value = value;
 			this.array = arrays;
 			this.x = x;
 			this.y = y;
 		}
+
 		public String getValue() {
 			return value;
 		}
+
 		public void setValue(String value) {
 			this.value = value;
 		}
+
 		public int getRowSpan() {
 			return rowSpan;
 		}
+
 		public void setRowSpan(int rowSpan) {
 			this.rowSpan = rowSpan;
 		}
+
 		public int getColSpan() {
 			return colSpan;
 		}
+
 		public void setColSpan(int colSpan) {
 			this.colSpan = colSpan;
 		}
+
 		public String getSpanAttributes() {
 			String span = "";
-			if (colSpan>1) {
-				span = " colspan=\""+colSpan+"\"";
+			if (colSpan > 1) {
+				span = " colspan=\"" + colSpan + "\"";
 			}
-			if (rowSpan>1) {
-				span = span + " rowspan=\""+rowSpan+"\"";
+			if (rowSpan > 1) {
+				span = span + " rowspan=\"" + rowSpan + "\"";
 			}
 			return span;
 		}
+
 		@Override
 		public String toString() {
 			return value;
 		}
+
 		public Cell[][] getArray() {
 			return array;
 		}
+
 		public int getRowTitleWidth() {
-			int rowTitleHeight=1;
-			for (int r=0; r<array.length; r++) {
-				if (array[r][0] != null && array[r][0].getColSpan()>rowTitleHeight) {
-					rowTitleHeight=array[r][0].getColSpan();
+			int rowTitleHeight = 1;
+			for (int r = 0; r < array.length; r++) {
+				if (array[r][0] != null && array[r][0].getColSpan() > rowTitleHeight) {
+					rowTitleHeight = array[r][0].getColSpan();
 				}
 			}
 			return rowTitleHeight;
 		}
+
 		public int getColTitleHeight() {
-			int colTitleHeight=1;
-			for (int c=0; c<array[0].length; c++) {
-				if (array[0][c] != null && array[0][c].getRowSpan()>colTitleHeight) {
-					colTitleHeight=array[0][c].getRowSpan();
+			int colTitleHeight = 1;
+			for (int c = 0; c < array[0].length; c++) {
+				if (array[0][c] != null && array[0][c].getRowSpan() > colTitleHeight) {
+					colTitleHeight = array[0][c].getRowSpan();
 				}
 			}
 			return colTitleHeight;
 		}
-		public boolean isFirstCol() {						 
-			if (x<=(getRowTitleWidth()-1)) {
+
+		public boolean isFirstCol() {
+			if (x <= (getRowTitleWidth() - 1)) {
 				return true;
 			} else {
 				return false;
 			}
 		}
+
 		public boolean isFirstRow() {
-			if (y<=(getColTitleHeight()-1)) {
+			if (y <= (getColTitleHeight() - 1)) {
 				return true;
 			} else {
 				return false;
 			}
 		}
 	}
-	
 
 	/**
 	 * get the size of empty cell after the current cell (for colspan)
@@ -267,8 +280,8 @@ public class ArrayFileComponent extends GenericFile {
 		super.prepareView(ctx);
 		ctx.getRequest().setAttribute(REQUEST_ATTRIBUTE_KEY, null);
 		ctx.getRequest().setAttribute("summary", getLabel());
+		
 		getArray(ctx);
-
 		ctx.getRequest().setAttribute("colHead", "th");
 		ctx.getRequest().setAttribute("rowHead", "th");
 		ctx.getRequest().setAttribute("tableHead", true);
@@ -294,9 +307,11 @@ public class ArrayFileComponent extends GenericFile {
 			basePath = URLHelper.mergePath(basePath, getFileName());
 			File file = new File(basePath);
 
-			/*if (StringHelper.getFileExtension(file.getName()).equalsIgnoreCase("csv")) {
-				outArray = getCSVArray(ctx, file);
-			} else*/
+			/*
+			 * if
+			 * (StringHelper.getFileExtension(file.getName()).equalsIgnoreCase
+			 * ("csv")) { outArray = getCSVArray(ctx, file); } else
+			 */
 			if (StringHelper.getFileExtension(file.getName()).equalsIgnoreCase("ods")) {
 				outArray = getODSArray(ctx, file);
 			} else if (StringHelper.getFileExtension(file.getName()).equalsIgnoreCase("xlsx")) {
@@ -304,9 +319,32 @@ public class ArrayFileComponent extends GenericFile {
 			} else if (StringHelper.getFileExtension(file.getName()).equalsIgnoreCase("xls")) {
 				outArray = getXLSArray(ctx, file);
 			}
+			optimizeRowSpan(outArray);
 			ctx.getRequest().setAttribute(REQUEST_ATTRIBUTE_KEY, outArray);
 		}
 		return outArray;
+	}
+
+	private static void optimizeRowSpan(Cell[][] outArray) {
+		if (outArray == null) {
+			return;
+		}
+		for (int x = 0; x < outArray.length; x++) {
+			int minRawSpan = Integer.MAX_VALUE;
+			for (int y = 0; y < outArray[x].length; y++) {
+				if (outArray[x][y] != null && outArray[x][y].getRowSpan() < minRawSpan) {
+					minRawSpan = outArray[x][y].getRowSpan();
+				}
+			}
+			if (minRawSpan > 1) {
+				minRawSpan--;
+				for (int y = 0; y < outArray[x].length; y++) {
+					if (outArray[x][y] != null) {
+						outArray[x][y].setRowSpan(outArray[x][y].getRowSpan() - minRawSpan);
+					}
+				}
+			}
+		}
 	}
 
 	private String renderCell(ContentContext ctx, String cell) throws Exception {
@@ -315,9 +353,25 @@ public class ArrayFileComponent extends GenericFile {
 	}
 
 	private static String readExcelCell(ContentContext ctx, XSSFCell cell) {
-		String outCell = cell.toString();
-		if (cell.getCellType() == 1) {
-			outCell = cell.getStringCellValue();
+		HSSFDataFormatter formatter = new HSSFDataFormatter(new Locale(ctx.getRequestContentLanguage()));
+		String outCell;
+		if (cell.getCellType() == HSSFCell.CELL_TYPE_FORMULA) {
+			switch (cell.getCachedFormulaResultType()) {
+			case HSSFCell.CELL_TYPE_STRING:
+				outCell = cell.getStringCellValue();
+				break;
+			case HSSFCell.CELL_TYPE_NUMERIC:
+				outCell = StringHelper.renderDouble(cell.getNumericCellValue(),new Locale(ctx.getRequestContentLanguage()));				
+				break;
+			case HSSFCell.CELL_TYPE_BOOLEAN:
+				outCell = ""+cell.getBooleanCellValue();
+				break;
+			default:
+				outCell = "?";
+				break;
+			}			
+		} else {
+			outCell = formatter.formatCellValue(cell);			
 		}
 		if (cell.getHyperlink() != null) {
 			String target = "";
@@ -331,9 +385,25 @@ public class ArrayFileComponent extends GenericFile {
 	}
 
 	private static String readExcelCell(ContentContext ctx, HSSFCell cell) {
-		String outCell = cell.toString();
-		if (cell.getCellType() == 1) {
-			outCell = cell.getStringCellValue();
+		HSSFDataFormatter formatter = new HSSFDataFormatter(new Locale(ctx.getRequestContentLanguage()));
+		String outCell;
+		if (cell.getCellType() == HSSFCell.CELL_TYPE_FORMULA) {
+			switch (cell.getCachedFormulaResultType()) {
+			case HSSFCell.CELL_TYPE_STRING:
+				outCell = cell.getStringCellValue();
+				break;
+			case HSSFCell.CELL_TYPE_NUMERIC:
+				outCell = StringHelper.renderDouble(cell.getNumericCellValue(),new Locale(ctx.getRequestContentLanguage()));				
+				break;
+			case HSSFCell.CELL_TYPE_BOOLEAN:
+				outCell = ""+cell.getBooleanCellValue();
+				break;
+			default:
+				outCell = "?";
+				break;
+			}			
+		} else {
+			outCell = formatter.formatCellValue(cell);			
 		}
 		if (cell.getHyperlink() != null) {
 			String target = "";
@@ -342,7 +412,6 @@ public class ArrayFileComponent extends GenericFile {
 				target = " target=\"_blank\"";
 			}
 			outCell = "<a class=\"cell-link\" href=\"" + url + "\"" + target + ">" + outCell + "</a>";
-
 		}
 		return outCell;
 	}
@@ -375,7 +444,7 @@ public class ArrayFileComponent extends GenericFile {
 			outArray[x] = new Cell[h];
 			for (int y = 0; y < h; y++) {
 				if (sheet.getCellAt(y, x).getValue() != null) {
-					outArray[x][y] = new Cell(renderCell(readOpenDocCell(sheet.getCellAt(y, x))), outArray, x, y);					
+					outArray[x][y] = new Cell(renderCell(readOpenDocCell(sheet.getCellAt(y, x))), outArray, x, y);
 				}
 			}
 		}
@@ -396,43 +465,96 @@ public class ArrayFileComponent extends GenericFile {
 				Row row = rowIterator.next();
 				if (row.getLastCellNum() > w) {
 					w = row.getLastCellNum();
-				}				
+				}
 			}
-			
+
 			Cell[][] outArray = new Cell[h][];
 			for (int y = 0; y < h; y++) {
 				outArray[y] = new Cell[w];
 				for (int x = 0; x < w; x++) {
 					outArray[y][x] = new Cell(null, outArray, x, y);
-					if (sheet.getRow(x) != null && sheet.getRow(y).getCell(x) != null) {						
+					if (sheet.getRow(x) != null && sheet.getRow(y).getCell(x) != null) {
 						outArray[y][x].setValue(renderCell(ctx, readExcelCell(ctx, sheet.getRow(y).getCell(x))));
 					}
 				}
 			}
-			
-			for (int i=0; i<sheet.getNumMergedRegions();i++) {
+
+			for (int i = 0; i < sheet.getNumMergedRegions(); i++) {
 				CellRangeAddress cellRange = sheet.getMergedRegion(i);
-				for (int x = cellRange.getFirstColumn(); x <= cellRange.getLastColumn(); x++) {					
-					for (int y = cellRange.getFirstRow(); y <= cellRange.getLastRow(); y++) {						
-						if (x>cellRange.getFirstColumn()) {
-							outArray[cellRange.getFirstRow()][cellRange.getFirstColumn()].setColSpan(outArray[cellRange.getFirstRow()][cellRange.getFirstColumn()].getColSpan()+1);
+				for (int x = cellRange.getFirstColumn(); x <= cellRange.getLastColumn(); x++) {
+					for (int y = cellRange.getFirstRow(); y <= cellRange.getLastRow(); y++) {
+						if (x > cellRange.getFirstColumn()) {
+							outArray[cellRange.getFirstRow()][cellRange.getFirstColumn()].setColSpan(outArray[cellRange.getFirstRow()][cellRange.getFirstColumn()].getColSpan() + 1);
 							outArray[y][x] = null;
 						}
-						if (y>cellRange.getFirstRow()) {
-							outArray[cellRange.getFirstRow()][cellRange.getFirstColumn()].setRowSpan(outArray[cellRange.getFirstRow()][cellRange.getFirstColumn()].getRowSpan()+1);
+						if (y > cellRange.getFirstRow()) {
+							outArray[cellRange.getFirstRow()][cellRange.getFirstColumn()].setRowSpan(outArray[cellRange.getFirstRow()][cellRange.getFirstColumn()].getRowSpan() + 1);
 							outArray[y][x] = null;
 						}
 					}
 				}
 			}
-			
+
 			return outArray;
 		} finally {
 			ResourceHelper.closeResource(in);
 		}
 	}
-	
+
 	protected Cell[][] getXLSArray(ContentContext ctx, File xslxFile) throws Exception {
+		InputStream in = new FileInputStream(xslxFile);
+		try {
+			HSSFWorkbook workbook = new HSSFWorkbook(in);
+			HSSFSheet sheet = workbook.getSheetAt(0);
+			
+			
+			
+			Iterator<Row> rowIterator = sheet.iterator();
+			int w = 0;
+			int h = sheet.getLastRowNum()+1;
+			while (rowIterator.hasNext()) {
+				//h++;
+				Row row = rowIterator.next();
+				if (row.getLastCellNum() > w) {
+					w = row.getLastCellNum();
+				}
+			}
+
+			Cell[][] outArray = new Cell[h][];
+			for (int y = 0; y < h; y++) {
+				outArray[y] = new Cell[w];
+				for (int x = 0; x < w; x++) {
+					outArray[y][x] = new Cell(null, outArray, x, y);
+					if (sheet.getRow(y) != null && sheet.getRow(y).getCell(x) != null) {
+						outArray[y][x].setValue(renderCell(ctx, readExcelCell(ctx, sheet.getRow(y).getCell(x))));
+					}
+				}
+			}
+
+			for (int i = 0; i < sheet.getNumMergedRegions(); i++) {
+				CellRangeAddress cellRange = sheet.getMergedRegion(i);
+				for (int x = cellRange.getFirstColumn(); x <= cellRange.getLastColumn(); x++) {
+					for (int y = cellRange.getFirstRow(); y <= cellRange.getLastRow(); y++) {
+						if (x > cellRange.getFirstColumn()) {
+							outArray[cellRange.getFirstRow()][cellRange.getFirstColumn()].setColSpan(outArray[cellRange.getFirstRow()][cellRange.getFirstColumn()].getColSpan() + 1);
+							outArray[y][x] = null;
+						}
+						if (y > cellRange.getFirstRow()) {
+							outArray[cellRange.getFirstRow()][cellRange.getFirstColumn()].setRowSpan(outArray[cellRange.getFirstRow()][cellRange.getFirstColumn()].getRowSpan() + 1);
+							outArray[y][x] = null;
+						}
+					}
+				}
+			}
+
+			return outArray;
+		} finally {
+			ResourceHelper.closeResource(in);
+		}
+
+	}
+
+	protected static Cell[][] TESTgetXLSArray(File xslxFile) throws Exception {
 		InputStream in = new FileInputStream(xslxFile);
 		try {
 			HSSFWorkbook workbook = new HSSFWorkbook(in);
@@ -445,36 +567,46 @@ public class ArrayFileComponent extends GenericFile {
 				Row row = rowIterator.next();
 				if (row.getLastCellNum() > w) {
 					w = row.getLastCellNum();
-				}				
+				}
 			}
-			
+
+			System.out.println("***** ArrayFileComponent.TESTgetXLSArray : w = " + w); // TODO:
+																						// remove
+																						// debug
+																						// trace
+
 			Cell[][] outArray = new Cell[h][];
 			for (int y = 0; y < h; y++) {
 				outArray[y] = new Cell[w];
 				for (int x = 0; x < w; x++) {
 					outArray[y][x] = new Cell(null, outArray, x, y);
-					if (sheet.getRow(x) != null && sheet.getRow(y).getCell(x) != null) {						
-						outArray[y][x].setValue(renderCell(ctx, readExcelCell(ctx, sheet.getRow(y).getCell(x))));
+					if (sheet.getRow(x) != null && sheet.getRow(y).getCell(x) != null) {
+						outArray[y][x].setValue(sheet.getRow(y).getCell(x).toString());
+					} else {
+						System.out.println("***** ArrayFileComponent.TESTgetXLSArray : null on x:" + x + " y:" + y); // TODO:
+																														// remove
+																														// debug
+																														// trace
 					}
 				}
 			}
-			
-			for (int i=0; i<sheet.getNumMergedRegions();i++) {
+
+			for (int i = 0; i < sheet.getNumMergedRegions(); i++) {
 				CellRangeAddress cellRange = sheet.getMergedRegion(i);
-				for (int x = cellRange.getFirstColumn(); x <= cellRange.getLastColumn(); x++) {					
-					for (int y = cellRange.getFirstRow(); y <= cellRange.getLastRow(); y++) {						
-						if (x>cellRange.getFirstColumn()) {
-							outArray[cellRange.getFirstRow()][cellRange.getFirstColumn()].setColSpan(outArray[cellRange.getFirstRow()][cellRange.getFirstColumn()].getColSpan()+1);
+				for (int x = cellRange.getFirstColumn(); x <= cellRange.getLastColumn(); x++) {
+					for (int y = cellRange.getFirstRow(); y <= cellRange.getLastRow(); y++) {
+						if (x > cellRange.getFirstColumn()) {
+							outArray[cellRange.getFirstRow()][cellRange.getFirstColumn()].setColSpan(outArray[cellRange.getFirstRow()][cellRange.getFirstColumn()].getColSpan() + 1);
 							outArray[y][x] = null;
 						}
-						if (y>cellRange.getFirstRow()) {
-							outArray[cellRange.getFirstRow()][cellRange.getFirstColumn()].setRowSpan(outArray[cellRange.getFirstRow()][cellRange.getFirstColumn()].getRowSpan()+1);
+						if (y > cellRange.getFirstRow()) {
+							outArray[cellRange.getFirstRow()][cellRange.getFirstColumn()].setRowSpan(outArray[cellRange.getFirstRow()][cellRange.getFirstColumn()].getRowSpan() + 1);
 							outArray[y][x] = null;
 						}
 					}
 				}
 			}
-			
+
 			return outArray;
 		} finally {
 			ResourceHelper.closeResource(in);
@@ -486,9 +618,9 @@ public class ArrayFileComponent extends GenericFile {
 	public String getViewXHTMLCode(ContentContext ctx) throws Exception {
 		String colTH = "th";
 		String rowTH = "th";
-		String style = getStyle();		
+		String style = getStyle();
 		if (style != null) {
-			if (style.equals("th-td")) {		
+			if (style.equals("th-td")) {
 				rowTH = "td";
 			} else if (style.equals("td-th")) {
 				colTH = "td";
@@ -522,10 +654,10 @@ public class ArrayFileComponent extends GenericFile {
 			}
 			for (int j = 0; j < array[i].length; j++) {
 				String tag = "td";
-				
+
 				Cell cell = array[i][j];
 
-				if (j == 0 || cell.getValue().length() > 0) {					
+				if (cell != null && (j == 0 || cell.getValue().length() > 0)) {
 					if (i == 0) {
 						tag = colTH;
 					} else if (j == 0) {
@@ -543,7 +675,7 @@ public class ArrayFileComponent extends GenericFile {
 						spanHTML = " colspan=\"" + cell.getColSpan() + "\"";
 					}
 					if (cell.getRowSpan() > 1) {
-						spanHTML = spanHTML+" rowspan=\"" + cell.getRowSpan() + "\"";
+						spanHTML = spanHTML + " rowspan=\"" + cell.getRowSpan() + "\"";
 					}
 
 					if (j % 2 == 1) {
@@ -553,6 +685,93 @@ public class ArrayFileComponent extends GenericFile {
 					}
 
 					content = renderCell(content);
+
+					stringWriter.append(content);
+					stringWriter.append("</" + tag + '>');
+				}
+			}
+			stringWriter.append("</tr>");
+		}
+
+		stringWriter.append("</table></div>");
+
+		return stringWriter.toString();
+	}
+
+	public static String renderArray(File file) throws Exception {
+		String colTH = "th";
+		String rowTH = "th";
+		String style = "";
+		if (style != null) {
+			if (style.equals("th-td")) {
+				rowTH = "td";
+			} else if (style.equals("td-th")) {
+				colTH = "td";
+			} else if (style.equals("td-td")) {
+				rowTH = "td";
+				colTH = "td";
+			}
+		}
+
+		StringWriter stringWriter = new StringWriter();
+		stringWriter.append("<div>");
+		stringWriter.append("<table border=\"1\">");
+
+		Cell[][] array = TESTgetXLSArray(file);
+		System.out.println("***** ArrayFileComponent.renderArray : size = " + array[0].length); // TODO:
+																								// remove
+																								// debug
+																								// trace
+
+		optimizeRowSpan(array);
+
+		if (array == null || array.length == 0) {
+			return "<b>WARNING: no data found in file. (col)</b>";
+		} else if (array[0].length == 0) {
+			return "<b>WARNING: no cell found in file. (row)</b>";
+		}
+
+		for (int i = 0; i < array.length; i++) {
+			if (i % 2 == 1) {
+				stringWriter.append("<tr class=\"row-" + i + " odd\">");
+			} else {
+				stringWriter.append("<tr class=\"row-" + i + "\" >");
+			}
+			for (int j = 0; j < array[i].length; j++) {
+				String tag = "td";
+
+				Cell cell = array[i][j];
+
+				System.out.println(i + ',' + j + " = " + cell);
+
+				if (cell != null && cell.getValue() != null && (j == 0 || cell.getValue().length() > 0)) {
+					if (i == 0) {
+						tag = colTH;
+					} else if (j == 0) {
+						tag = rowTH;
+					}
+					String cssClass = "";
+					String content = cell.getValue();
+					if (content == null || content.trim().length() == 0) {
+						cssClass = " empty";
+						content = "";
+					}
+
+					String spanHTML = "";
+					if (cell.getColSpan() > 1) {
+						spanHTML = " colspan=\"" + cell.getColSpan() + "\"";
+					}
+					if (cell.getRowSpan() > 1) {
+						spanHTML = spanHTML + " rowspan=\"" + cell.getRowSpan() + "\"";
+					}
+
+					if (j % 2 == 1) {
+						stringWriter.append('<' + tag + " class=\"odd" + cssClass + "\"" + spanHTML + ">");
+					} else {
+						stringWriter.append('<' + tag + " class=\"even" + cssClass + "\"" + spanHTML + '>');
+					}
+
+					content = content;
 
 					stringWriter.append(content);
 					stringWriter.append("</" + tag + '>');
@@ -592,7 +811,7 @@ public class ArrayFileComponent extends GenericFile {
 	public boolean isContentCachable(ContentContext ctx) {
 		return true;
 	}
-	
+
 	@Override
 	protected String getEditXHTMLCode(ContentContext ctx) throws Exception {
 
@@ -601,8 +820,7 @@ public class ArrayFileComponent extends GenericFile {
 		StringBuffer finalCode = new StringBuffer();
 		finalCode.append(getSpecialInputTag());
 
-		
-		finalCode.append("<div class=\"line\"><label for=\"" + getLabelXHTMLInputName() + "\">" + i18nAccess.getText("global.summary") + " : </label>");		
+		finalCode.append("<div class=\"line\"><label for=\"" + getLabelXHTMLInputName() + "\">" + i18nAccess.getText("global.summary") + " : </label>");
 		String[][] params = { { "rows", "1" } };
 		finalCode.append(XHTMLHelper.getTextArea(getLabelXHTMLInputName(), getLabel(), params));
 		finalCode.append("</div>");
@@ -623,9 +841,9 @@ public class ArrayFileComponent extends GenericFile {
 
 		if (canUpload(ctx)) {
 			finalCode.append("<div class=\"line\">");
-			String uploadId = "update-"+getId();
-			finalCode.append("<label for=\""+uploadId+"\">"+getImageUploadTitle(ctx)+" :</label>");
-			finalCode.append("<input id=\""+uploadId+"\" name=\"" + getFileXHTMLInputName() + "\" type=\"file\"/>");
+			String uploadId = "update-" + getId();
+			finalCode.append("<label for=\"" + uploadId + "\">" + getImageUploadTitle(ctx) + " :</label>");
+			finalCode.append("<input id=\"" + uploadId + "\" name=\"" + getFileXHTMLInputName() + "\" type=\"file\"/>");
 			finalCode.append("</div");
 		}
 
@@ -638,7 +856,7 @@ public class ArrayFileComponent extends GenericFile {
 			String[] fileListBlanck = new String[fileList.length + 1];
 			fileListBlanck[0] = "";
 			System.arraycopy(fileList, 0, fileListBlanck, 1, fileList.length);
-			
+
 			finalCode.append("</div><div class=\"line\"><label>&nbsp</label>");
 			finalCode.append(XHTMLHelper.getInputOneSelect(getSelectXHTMLInputName(), fileListBlanck, getFileName(), getJSOnChange(ctx), true));
 			finalCode.append("</div>");
@@ -663,6 +881,25 @@ public class ArrayFileComponent extends GenericFile {
 		}
 
 		return finalCode.toString();
+	}
+	
+	@Override
+	public boolean isRealContent(ContentContext ctx) {	
+		return getValue().trim().length() > 0;
+	}
+
+	public static void main(String[] args) {
+		File test = new File("c:/trans/book4.xls");
+		File outFile = new File("c:/trans/book4.html");
+		try {
+			ResourceHelper.writeStringToFile(outFile, renderArray(test));
+		} catch (FileNotFoundException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (Exception e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 	}
 
 }

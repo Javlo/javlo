@@ -6,9 +6,9 @@ import java.io.PrintStream;
 import org.javlo.context.ContentContext;
 import org.javlo.context.EditContext;
 
-public class RowBreak extends TableComponent {
+public class OpenRow extends TableComponent {
 	
-	public static final String TYPE = "row-break";
+	public static final String TYPE = "open-row";
 
 	@Override
 	public String getType() {
