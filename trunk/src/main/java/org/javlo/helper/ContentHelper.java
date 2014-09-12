@@ -187,7 +187,7 @@ public class ContentHelper {
 			out.print(node.getContentPrefix());	
 		}		
 		boolean firstPara = true;
-		for (NodeXML child : node.getAllChildren()) {
+		for (NodeXML child : node.getAllChildren()) {			
 			if (child.getName().endsWith(":span")) {
 				out.print(StringHelper.neverNull(child.getContent())+' ');
 				nodeDone.add(child);
@@ -201,10 +201,10 @@ public class ContentHelper {
 				nodeDone.add(child);
 			}
 		}		
-		if (node.getContentSuffix() != null) {
+		if (node.getContentSuffix() != null && !node.getContentSuffix().equals(node.getContentPrefix())) {
 			out.print(node.getContentSuffix());	
 		}	
-		out.close();
+		out.close();		
 		return new String(outStream.toByteArray());
 	}
 

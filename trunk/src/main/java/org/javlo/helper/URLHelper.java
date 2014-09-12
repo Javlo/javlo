@@ -42,7 +42,7 @@ public class URLHelper extends ElementaryURLHelper {
 	public static String VFS_SERVLET_NAME = "vfs";
 
 	public static String TEMPLATE_RESOURCE_PREFIX = "__tpl__";
-
+	
 	public static String cleanPath(String path, boolean trimStartSeparator) {
 		path = path.replaceAll("[/\\\\]+", "/");
 		if (trimStartSeparator) {
@@ -171,10 +171,21 @@ public class URLHelper extends ElementaryURLHelper {
 					ex.printStackTrace();
 				}
 			} else if (adminUserInfo.getFacebook() != null && adminUserInfo.getFacebook().trim().length() > 0) {
-				return adminUserInfo.getFacebook().replace("//www.", "//graph.") + "/picture?type=small";
+				url = adminUserInfo.getFacebook().replace("//www.", "//graph.") + "/picture?type=small";
 			} else if (adminUserInfo.getTwitter() != null && adminUserInfo.getTwitter().trim().length() > 0) {
-				return "https://api.twitter.com/1/users/profile_image?screen_name=" + adminUserInfo.getTwitter().replaceAll("https://twitter.com/", "") + "&size=normal";
+				url = "https://api.twitter.com/1/users/profile_image?screen_name=" + adminUserInfo.getTwitter().replaceAll("https://twitter.com/", "") + "&size=normal";
 			}
+			if (adminUserInfo.getEmail() != null) {
+				try {
+					if (!StringHelper.isURL(url)) {
+						url = URLHelper.createStaticURL(ctx.getContextForAbsoluteURL(), url);
+					}
+					url = URLHelper.getGravatarURL(adminUserInfo.getEmail(), url).toString();
+				} catch (MalformedURLException e) {
+					e.printStackTrace();
+				}
+			}
+			return url;
 		}
 		return null;
 	}

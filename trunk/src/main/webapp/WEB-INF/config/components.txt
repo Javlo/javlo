@@ -81,8 +81,8 @@ org.javlo.component.container.Box
 org.javlo.component.container.TextDirection
 org.javlo.component.container.RepeatContainer
 org.javlo.component.core.MessageContainer
-org.javlo.component.column.CellBreak
-org.javlo.component.column.RowBreak
+org.javlo.component.column.OpenCell
+org.javlo.component.column.OpenRow
 org.javlo.component.column.TableBreak
 
 --content.title.ecom

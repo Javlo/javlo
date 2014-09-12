@@ -423,30 +423,31 @@ public class StringHelper {
 		value = createCleanName(value, EU_ACCEPTABLE_CHAR_NO_POINT, '-');
 		return trim(value, '-').toLowerCase();
 	}
-	
+
 	/**
-	 * replace trimChar at the start and the end of text string.
-	 * sample : --test-, - >>> test
+	 * replace trimChar at the start and the end of text string. sample :
+	 * --test-, - >>> test
+	 * 
 	 * @param text
 	 * @param trimChar
 	 * @return
 	 */
 	public static String trim(String text, char trimChar) {
-		if (text == null || text.length() == 0 || (text.charAt(0) != trimChar && text.charAt(text.length()-1) != trimChar)) {
+		if (text == null || text.length() == 0 || (text.charAt(0) != trimChar && text.charAt(text.length() - 1) != trimChar)) {
 			return text;
-		} else {			
-			int s=0;
-			while (s<text.length() && text.charAt(s) == trimChar) {
+		} else {
+			int s = 0;
+			while (s < text.length() && text.charAt(s) == trimChar) {
 				s++;
 			}
-			int e=text.length()-1;
-			while (e>0 && text.charAt(e) == trimChar) {
+			int e = text.length() - 1;
+			while (e > 0 && text.charAt(e) == trimChar) {
 				e--;
 			}
-			if (s>=e) {
+			if (s >= e) {
 				return "";
 			} else {
-				return text.substring(s,e+1);
+				return text.substring(s, e + 1);
 			}
 		}
 	}
@@ -1289,11 +1290,26 @@ public class StringHelper {
 	}
 
 	public static void main(String[] args) {
-		System.out.println("***** StringHelper.main : "+getPixelValue(" 12px")); //TODO: remove debug trace
-		System.out.println("***** StringHelper.main : "+getPixelValue(" 12 px")); //TODO: remove debug trace
-		System.out.println("***** StringHelper.main : "+getPixelValue(" 12%")); //TODO: remove debug trace
-		System.out.println("***** StringHelper.main : "+getPixelValue(null)); //TODO: remove debug trace
-		System.out.println("***** StringHelper.main : "+getPixelValue("coucou")); //TODO: remove debug trace
+		System.out.println("***** StringHelper.main : " + getPixelValue(" 12px")); // TODO:
+																					// remove
+																					// debug
+																					// trace
+		System.out.println("***** StringHelper.main : " + getPixelValue(" 12 px")); // TODO:
+																					// remove
+																					// debug
+																					// trace
+		System.out.println("***** StringHelper.main : " + getPixelValue(" 12%")); // TODO:
+																					// remove
+																					// debug
+																					// trace
+		System.out.println("***** StringHelper.main : " + getPixelValue(null)); // TODO:
+																				// remove
+																				// debug
+																				// trace
+		System.out.println("***** StringHelper.main : " + getPixelValue("coucou")); // TODO:
+																					// remove
+																					// debug
+																					// trace
 	}
 
 	/**
@@ -2047,6 +2063,7 @@ public class StringHelper {
 			return defaultValue;
 		}
 	}
+
 	public static Integer safeParseInt(String string, Integer defaultValue) {
 		try {
 			return Integer.parseInt(string);
@@ -2216,7 +2233,7 @@ public class StringHelper {
 		}
 		return stringToCollection(str, DEFAULT_LIST_SEPARATOR);
 	}
-	
+
 	public static List<String> stringToCollectionTrim(String str) {
 		if (str == null) {
 			return null;
@@ -2231,7 +2248,7 @@ public class StringHelper {
 		}
 		return listTrim;
 	}
-	
+
 	public static List<String> stringToCollection(String str, String token) {
 		return splitAsList(str, token, DEFAULT_ESCAPE);
 	}
@@ -2927,15 +2944,15 @@ public class StringHelper {
 	public static String renderPrice(double price, String currency) {
 		return String.format("%.2f " + currency, price);
 	}
-	
+
 	public static String getNumberAsAlphabetic(int number) {
 		StringBuffer outStr = new StringBuffer();
 		while (number > 25) {
-			int modNumber = number%25;
-			number = number-26;
-			outStr.insert(0,StringHelper.alphabet.charAt(modNumber));
+			int modNumber = number % 25;
+			number = number - 26;
+			outStr.insert(0, StringHelper.alphabet.charAt(modNumber));
 		}
-		outStr.insert(0,StringHelper.alphabet.charAt(number));
+		outStr.insert(0, StringHelper.alphabet.charAt(number));
 		return outStr.toString();
 	}
 
@@ -2958,9 +2975,10 @@ public class StringHelper {
 			return null;
 		}
 	}
-	
+
 	/**
 	 * trim all items of the list.
+	 * 
 	 * @param list
 	 * @return
 	 */
@@ -2971,33 +2989,38 @@ public class StringHelper {
 		}
 		return outList;
 	}
-	
+
 	/**
-	 * get the item from a string with separator.
-	 * sample : text1,text2,text3 getItem(sample,",",1) = text1
+	 * get the item from a string with separator. sample : text1,text2,text3
+	 * getItem(sample,",",1) = text1
+	 * 
 	 * @param text
 	 * @param sep
-	 * @param i 
-	 * @param defaultValue default value if item not found
+	 * @param i
+	 * @param defaultValue
+	 *            default value if item not found
 	 * @return
 	 */
 	public static String getItem(String text, String sep, int i, String defaultValue) {
-		if (text == null || sep == null || i<1) {
+		if (text == null || sep == null || i < 1) {
 			return defaultValue;
 		}
 		String[] splitted = StringUtils.split(text, sep);
-		if (splitted.length<i) {
+		if (splitted.length < i) {
 			return defaultValue;
 		} else {
-			return splitted[i-1];
+			return splitted[i - 1];
 		}
-		
+
 	}
-	
+
 	/**
 	 * transform a string with size in pixel in integer.
-	 * @param pxSize a size in px (sp. '12px').
-	 * @return null if bad param (sp. 12%, tralala, null) and the value in pixel if corrent param (12px, 0px, 23 px).
+	 * 
+	 * @param pxSize
+	 *            a size in px (sp. '12px').
+	 * @return null if bad param (sp. 12%, tralala, null) and the value in pixel
+	 *         if corrent param (12px, 0px, 23 px).
 	 */
 	public static Integer getPixelValue(String pxSize) {
 		if (pxSize == null) {
@@ -3012,7 +3035,25 @@ public class StringHelper {
 			} catch (NumberFormatException e) {
 			}
 		}
-		return null;		
+		return null;
+	}
+
+	public static String hex(byte[] array) {
+		StringBuffer sb = new StringBuffer();
+		for (int i = 0; i < array.length; ++i) {
+			sb.append(Integer.toHexString((array[i] & 0xFF) | 0x100).substring(1, 3));
+		}
+		return sb.toString();
+	}
+
+	public static String md5Hex(String message) {
+		try {
+			MessageDigest md = MessageDigest.getInstance("MD5");
+			return hex(md.digest(message.getBytes("CP1252")));
+		} catch (NoSuchAlgorithmException e) {
+		} catch (UnsupportedEncodingException e) {
+		}
+		return null;
 	}
 
 }

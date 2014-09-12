@@ -420,10 +420,11 @@ public class ImageTransformServlet extends HttpServlet {
 			img = (new GlowFilter()).filter(img, null);
 		}
 		float contrast = config.getConstrast(ctx.getDevice(), filter, area);
-		float brightness = config.getBrightness(ctx.getDevice(), filter, area);
+		float brightness = config.getBrightness(ctx.getDevice(), filter, area);		
 		if (contrast != 1 || brightness != 1) {
 			ContrastFilter imageFilter = new ContrastFilter();			
 			imageFilter.setContrast(contrast);
+			
 			imageFilter.setBrightness(brightness);
 			img = imageFilter.filter(img,null);
 		}
@@ -684,7 +685,7 @@ public class ImageTransformServlet extends HttpServlet {
 
 		String imageName = pathInfo;
 		imageName = imageName.replace('\\', '/');
-
+		
 		logger.finest("apply fitler on image : " + imageName);
 
 		String imageKey = null;
@@ -838,7 +839,9 @@ public class ImageTransformServlet extends HttpServlet {
 				Calendar cal = Calendar.getInstance();
 				cal.roll(Calendar.MINUTE, 10);
 				response.setDateHeader("Expires", cal.getTimeInMillis());
-				response.setDateHeader(NetHelper.HEADER_LAST_MODIFIED, lastModified);
+				if (lastModified > 0) {
+					response.setDateHeader(NetHelper.HEADER_LAST_MODIFIED, lastModified);
+				}
 				long lastModifiedInBrowser = request.getDateHeader(NetHelper.HEADER_IF_MODIFIED_SINCE);
 				if (lastModified > 0 && lastModified / 1000 <= lastModifiedInBrowser / 1000) {
 					COUNT_304++;
@@ -877,7 +880,9 @@ public class ImageTransformServlet extends HttpServlet {
 				InputStream fileStream = null;
 				File file = loadFileFromDisk(ctx, imageName, filter, area, ctx.getDevice(), template, comp, imageFile.lastModified());				
 				if ((file != null)) {
-					response.setContentLength((int)file.length());
+					if (file.length() > 0) {
+						response.setContentLength((int)file.length());
+					}
 					fileStream = new FileInputStream(file);
 					try {						
 						ResourceHelper.writeStreamToStream(fileStream, out);
@@ -982,7 +987,9 @@ public class ImageTransformServlet extends HttpServlet {
 					/*********************/
 
 					if (fileStream != null) {
-						response.setContentLength((int)file.length());
+						if (file.length() > 0) {
+							response.setContentLength((int)file.length());
+						}
 						try {
 							ResourceHelper.writeStreamToStream(fileStream, out);
 						} finally {

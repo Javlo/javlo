@@ -729,5 +729,21 @@ public abstract class ElementaryURLHelper {
 		}
 		return url;
 	}
+	
+	/**
+	 * creata a URL to gravatar of email, alternativeURL is the url use if no avatar registered on gravatar.
+	 * @param email
+	 * @param alternativeURL
+	 * @return
+	 * @throws MalformedURLException
+	 */
+	public static URL getGravatarURL(String email,String alternativeURL) throws MalformedURLException {
+		if (alternativeURL != null) {
+			return new URL("http://www.gravatar.com/avatar/"+StringHelper.md5Hex(email)+"?d="+alternativeURL);	
+		} else {
+			return new URL("http://www.gravatar.com/avatar/"+StringHelper.md5Hex(email));
+		}
+	}
+
 
 }

@@ -91,7 +91,7 @@ public class TableBreak extends TableComponent {
 		} else {
 			int countRow = 1;
 			for (TableComponent comp : tableContext.getComponents()) {
-				if (comp instanceof RowBreak) {
+				if (comp instanceof OpenRow) {
 					countRow++;
 				}
 			}
@@ -166,16 +166,19 @@ public class TableBreak extends TableComponent {
 		super.initContent(ctx);
 
 		IContentVisualComponent previous = ComponentHelper.getPreviousComponent(this, ctx);
-		while (previous != null && previous instanceof TableComponent) {
+		while (previous != null && !(previous instanceof TableComponent)) {
 			previous = ComponentHelper.getPreviousComponent(previous, ctx);
 		}
 
 		if (previous == null || previous instanceof TableBreak) {
-			String previousId = ComponentHelper.getPreviousComponentId(this, ctx);			
-			MacroHelper.addContent(ctx.getRequestContentLanguage(), getPage(), previousId, CellBreak.TYPE, "", ctx.getCurrentEditUser());
-			MacroHelper.addContent(ctx.getRequestContentLanguage(), getPage(), previousId, RowBreak.TYPE, "", ctx.getCurrentEditUser());
-			MacroHelper.addContent(ctx.getRequestContentLanguage(), getPage(), previousId, CellBreak.TYPE, "", ctx.getCurrentEditUser());
-			MacroHelper.addContent(ctx.getRequestContentLanguage(), getPage(), previousId, CellBreak.TYPE, "", ctx.getCurrentEditUser());
+			String previousId = ComponentHelper.getPreviousComponentId(this, ctx);	
+			System.out.println("***** TableBreak.initContent : CREATE CONTENT previousId="+previousId); //TODO: remove debug trace
+			MacroHelper.addContent(ctx.getRequestContentLanguage(), getPage(), previousId, OpenCell.TYPE, "", getArea(),"",ctx.getCurrentEditUser());
+			MacroHelper.addContent(ctx.getRequestContentLanguage(), getPage(), previousId, OpenRow.TYPE, "", getArea(),"",ctx.getCurrentEditUser());
+			MacroHelper.addContent(ctx.getRequestContentLanguage(), getPage(), previousId, OpenCell.TYPE, "", getArea(),"",ctx.getCurrentEditUser());
+			MacroHelper.addContent(ctx.getRequestContentLanguage(), getPage(), previousId, OpenCell.TYPE, "", getArea(),"",ctx.getCurrentEditUser());
+		} else {
+			System.out.println("***** TableBreak.initContent : previous = "+previous.getType()); //TODO: remove debug trace
 		}
 		return true;
 	}
@@ -195,7 +198,7 @@ public class TableBreak extends TableComponent {
 			TableComponent previewComp = null;
 			List<String> needDel = new LinkedList<String>();
 			for (TableComponent comp : tableContext.getComponents()) {
-				if (previewComp != null && (comp instanceof RowBreak || comp instanceof TableBreak)) {
+				if (previewComp != null && (comp instanceof OpenRow || comp instanceof TableBreak)) {
 					if (tableContext.getRowSize(previewComp) > newCol) {
 						IContentVisualComponent currentComp = previewComp;
 						IContentVisualComponent nextComp = ComponentHelper.getNextComponent(currentComp, ctx);
@@ -217,27 +220,27 @@ public class TableBreak extends TableComponent {
 		for (int i = col; i < newCol; i++) {
 			IContentVisualComponent prvComp = ComponentHelper.getPreviousComponent(this, ctx);
 			while (prvComp != null && !prvComp.getId().equals(tableContext.getFirstComponentId())) {
-				if (prvComp.getType().equals(RowBreak.TYPE)) {
-					MacroHelper.addContent(ctx.getRequestContentLanguage(), getPage(), ComponentHelper.getPreviousComponentId(prvComp, ctx), CellBreak.TYPE, "", ctx.getCurrentEditUser());
+				if (prvComp.getType().equals(OpenRow.TYPE)) {
+					MacroHelper.addContent(ctx.getRequestContentLanguage(), getPage(), ComponentHelper.getPreviousComponentId(prvComp, ctx), OpenCell.TYPE, "", ctx.getCurrentEditUser());
 				}
 				prvComp = ComponentHelper.getPreviousComponent(prvComp, ctx);
 			}
-			MacroHelper.addContent(ctx.getRequestContentLanguage(), getPage(), ComponentHelper.getPreviousComponentId(this, ctx), CellBreak.TYPE, "", ctx.getCurrentEditUser());
+			MacroHelper.addContent(ctx.getRequestContentLanguage(), getPage(), ComponentHelper.getPreviousComponentId(this, ctx), OpenCell.TYPE, "", ctx.getCurrentEditUser());
 		}
 		if (row==0) {
 			row++;
 		}
 		for (int i = row; i < newRow; i++) {			
 			modifContent = true;
-			String rowId = MacroHelper.addContent(ctx.getRequestContentLanguage(), getPage(), ComponentHelper.getPreviousComponentId(this, ctx), RowBreak.TYPE, "", ctx.getCurrentEditUser());
+			String rowId = MacroHelper.addContent(ctx.getRequestContentLanguage(), getPage(), ComponentHelper.getPreviousComponentId(this, ctx), OpenRow.TYPE, "", ctx.getCurrentEditUser());
 			for (int c = 1; c < Math.max(tableContext.getMaxRowSize(),newCol); c++) {
-				MacroHelper.addContent(ctx.getRequestContentLanguage(), getPage(), rowId, CellBreak.TYPE, "", ctx.getCurrentEditUser());
+				MacroHelper.addContent(ctx.getRequestContentLanguage(), getPage(), rowId, OpenCell.TYPE, "", ctx.getCurrentEditUser());
 			}
 		}
 		for (int i = newRow; i < row; i++) {
 			modifContent = true;
 			IContentVisualComponent prvComp = ComponentHelper.getPreviousComponent(this, ctx);
-			while (prvComp != null && !prvComp.getType().equals(RowBreak.TYPE)) {
+			while (prvComp != null && !prvComp.getType().equals(OpenRow.TYPE)) {
 				String id = prvComp.getId();
 				prvComp = ComponentHelper.getPreviousComponent(this, ctx);
 				getPage().removeContent(ctx, id);

@@ -120,13 +120,14 @@ table td, table th {
 	vertical-align: top;
 }
 
-table.table {
+#body table.table {
 	width: 100%;
 	border-collapse: collapse;
 	margin-bottom: 10px;
 }
 
-table.table th {
+#body table.table th {
+	color: #000000;
 	background-color: #dddddd;
 	text-align: center;
 }

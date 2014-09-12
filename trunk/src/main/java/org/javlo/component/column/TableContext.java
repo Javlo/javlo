@@ -112,9 +112,9 @@ public class TableContext {
 		int row=0;
 		int cell=0;
 		for (TableComponent comp : components) {
-			if (comp instanceof CellBreak) {
+			if (comp instanceof OpenCell) {
 				cell++;
-			} else if (comp instanceof RowBreak) {
+			} else if (comp instanceof OpenRow) {
 				cell=1;
 				row++;
 			}
