@@ -1899,7 +1899,7 @@ public class Template implements Comparable<Template> {
 			templateData.setToolsServer(toolsURL);
 		}
 		String logo = properties.getString("data.logo", null);
-		if (logo != null) {
+		if (logo != null && !logo.equals("null")) {
 			templateData.setLogo(logo);
 		}
 
