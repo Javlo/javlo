@@ -895,12 +895,7 @@ public class InfoBean {
 	
 	public String getLogoUrl() throws Exception {
 		String logo = ctx.getGlobalContext().getTemplateData().getLogo();
-		System.out.println("***** InfoBean.getLogoUrl : logo = "+logo); //TODO: remove debug trace
-		if (logo == null) {
-			System.out.println("***** InfoBean.getLogoUrl : null"); //TODO: remove debug trace
-		}
 		if (logo == null || logo.equals("null")) {
-			System.out.println("***** InfoBean.getLogoUrl : RETURN NULL"); //TODO: remove debug trace
 			return null;
 		} else {
 			return URLHelper.createTransformURL(ctx, URLHelper.mergePath(ctx.getGlobalContext().getStaticConfig().getStaticFolder(),logo), "logo");
