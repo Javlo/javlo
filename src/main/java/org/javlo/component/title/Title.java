@@ -19,7 +19,7 @@ public class Title extends AbstractVisualComponent {
 
 	public static final String TYPE = "title";
 
-	private static final String[] STYLES = new String[] { "standard", HIDDEN };
+	private static final String[] STYLES = new String[] { "important", "standard", HIDDEN };
 
 	@Override
 	public int getSearchLevel() {
