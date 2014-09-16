@@ -141,11 +141,14 @@ request.setAttribute("editUser", ctx.getCurrentEditUser());
 					<c:url var="url" value="<%=URLHelper.createURL(editCtx)%>" context="/">	
 						<c:param name="previewEdit" value="true"></c:param>
 					</c:url>
+					<c:url var="url" value="<%=URLHelper.createURL(editCtx)%>" context="/">	
+						<c:param name="module" value="users"></c:param>
+						<c:param name="webaction" value="user.changeMode"></c:param>
+						<c:param name="mode" value="myself"></c:param>
+						<c:param name="previewEdit" value="true"></c:param>
+					</c:url>
 					<li><form class="preview-edit ${info.god || info.master?'no-access':''}" id="user_info" action="${url}" method="post">
 						<div class="pc_line">
-							<input type="hidden" name="module" value="user" />							
-							<input type="hidden" name="webaction" value="user.ChangeMode" />
-							<input type="hidden" name="mode" value="myself" />							
 							<input id="pc_user_info" type="submit" value="${i18n.edit['global.account-setting']}" title="${i18n.edit['global.account-setting']}" class="pc_edit_true" />
 							<label for="pc_user_info">${i18n.edit['global.account-setting']}</label>
 						</div>
@@ -199,7 +202,7 @@ request.setAttribute("editUser", ctx.getCurrentEditUser());
 						</div>
 					</form></li>					
 					<c:if test="${!contentContext.currentTemplate.mailing || !userInterface.light}">
-						<c:url var="url" value="<%=URLHelper.createURL(editCtx)%>">
+						<c:url var="url" value="<%=URLHelper.createURL(editCtx)%>" context="/">
 							<c:param name="module" value="content" />
 							<c:param name="webaction" value="changeMode" />
 							<c:param name="mode" value="3" />
