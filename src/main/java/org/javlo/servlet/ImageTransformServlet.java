@@ -833,9 +833,9 @@ public class ImageTransformServlet extends HttpServlet {
 
 				/* last modified management */
 				long lastModified = getLastModified(ctx, imageName, filter, area, ctx.getDevice(), template, comp);
-				response.setHeader("Cache-Control", "public,max-age=600,s-max-age=60,must-revalidate");
-				response.setHeader("Accept-Ranges", "bytes");
-				response.setHeader("Transfer-Encoding", null);
+				response.setHeader("Cache-Control", "public,max-age=600");
+				//response.setHeader("Accept-Ranges", "bytes");
+				//response.setHeader("Transfer-Encoding", null);
 				Calendar cal = Calendar.getInstance();
 				cal.roll(Calendar.MINUTE, 10);
 				response.setDateHeader("Expires", cal.getTimeInMillis());
