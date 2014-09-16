@@ -47,6 +47,16 @@ public class Unknown extends AbstractVisualComponent {
 	public String getXHTMLConfig(ContentContext ctx) throws Exception {
 		return "?";
 	}
+	
+	@Override
+	public String getPrefixViewXHTMLCode(ContentContext ctx) {
+		return "";
+	}
+	
+	@Override
+	public String getSuffixViewXHTMLCode(ContentContext ctx) {
+		return "";
+	}
 
 	/*
 	 * @see org.javlo.itf.IContentVisualComponent#getType()

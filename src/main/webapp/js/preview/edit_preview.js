@@ -3,6 +3,14 @@ var dragging = false;
 var mouseX = 0;
 var mouseY = 0;
 
+function removeAnchorFromURL(url) {
+	if (url.indexOf("#") < 0) {
+		return url;
+	} else {
+		return url.substring(0,url.indexOf("#"));
+	}
+}
+
 function splitHtml(text,cutPos) {
 	var stackTags = [];
 	var insideTag = false;
@@ -436,7 +444,7 @@ initPreview = function() {
 						greedy : true,
 						tolerance : 'pointer',
 						drop : function(event, ui) {
-							var currentURL = addParam(window.location.href,"previewEdit=true");
+							var currentURL = addParam(removeAnchorFromURL(window.location.href),"previewEdit=true");
 							var layer = jQuery("#preview-layer");
 							var comp = layer.data("subItem");
 							

@@ -832,6 +832,11 @@ public class DynamicComponent extends AbstractVisualComponent implements IStatic
 		}
 		return null;
 	}
+	
+	@Override
+	public String getSpecificClass(ContentContext ctx) {	
+		return "dynamic-component";
+	}
 
 	@Override
 	public String getPageDescription(ContentContext ctx) {
