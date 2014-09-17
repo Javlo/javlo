@@ -136,6 +136,10 @@ public class Field implements Cloneable {
 				return null;
 			}
 		}
+		
+		public boolean isPertinent()  {
+			return Field.this.isPertinent();
+		}
 
 	}
 
