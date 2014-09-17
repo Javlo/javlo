@@ -73,12 +73,10 @@ public class Description extends AbstractVisualComponent {
 	public String getType() {
 		return TYPE;
 	}
-
-	/**
-	 * @see org.javlo.itf.IContentVisualComponent#getXHTMLCode()
-	 */
+	
 	@Override
-	public String getViewXHTMLCode(ContentContext ctx) throws Exception {
+	public void prepareView(ContentContext ctx) throws Exception {
+		super.prepareView(ctx);
 		StringBuffer finalCode = new StringBuffer();
 		String content = applyReplacement(getValue());
 		if (!isNotDisplayHTML(ctx)) {
@@ -89,7 +87,18 @@ public class Description extends AbstractVisualComponent {
 			content = XHTMLHelper.textToXHTML(content, globalContext);
 			finalCode.append(content);
 		}
-		return finalCode.toString();
+		ctx.getRequest().setAttribute("xhtml", finalCode.toString());
+	}
+
+	/**
+	 * @see org.javlo.itf.IContentVisualComponent#getXHTMLCode()
+	 */
+	@Override
+	public String getViewXHTMLCode(ContentContext ctx) throws Exception {
+		if (ctx.getRequest().getAttribute("xhtml") == null) {
+			prepareView(ctx);
+		}
+		return ""+ctx.getRequest().getAttribute("xhtml");
 	}
 
 	private boolean isNotDisplayHTML(ContentContext ctx) {
