@@ -387,7 +387,7 @@ public class FileAction extends AbstractModuleAction {
 		String sourceFolder = getContextROOTFolder(ctx);
 
 		FileModuleContext fileModuleContext = FileModuleContext.getInstance(ctx.getRequest());
-		String folderName = rs.getParameter("folder", "").trim();
+		String folderName = StringHelper.createFileName(rs.getParameter("folder", "").trim());
 		File folder = new File(sourceFolder, fileModuleContext.getPath());
 		if (folderName.length() > 0) {
 			folder = new File(sourceFolder, URLHelper.mergePath(fileModuleContext.getPath(), folderName));
