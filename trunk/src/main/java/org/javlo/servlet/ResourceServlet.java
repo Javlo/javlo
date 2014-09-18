@@ -71,9 +71,8 @@ public class ResourceServlet extends HttpServlet {
 	 * get the text and the picture and build a button
 	 */
 	protected void processRequest(HttpServletRequest request, HttpServletResponse response) throws ServletException {
-
-		if (request.getServletPath().equals("/favicon.ico") || request.getServletPath().equals("/robots.txt")) {			
-			response.setHeader("Cache-Control", "max-age=600,must-revalidate");			
+		if (request.getServletPath().equals("/favicon.ico") || request.getServletPath().equals("/robots.txt")) {
+			response.setHeader("Cache-Control", "max-age=600,must-revalidate");
 			GlobalContext globalContext = GlobalContext.getSessionContext(request.getSession());
 			if (globalContext != null) {
 				String filePath = URLHelper.mergePath(globalContext.getStaticConfig().getStaticFolder(), request.getServletPath());
@@ -187,20 +186,19 @@ public class ResourceServlet extends HttpServlet {
 				} else {
 
 					String finalName = URLHelper.mergePath(dataFolder, resourceURI);
-					
-					
+
 					File file = new File(finalName);
 					response.setContentType(ResourceHelper.getFileExtensionToManType(StringHelper.getFileExtension(file.getName())));
 					response.setHeader("Cache-Control", "no-cache");
 					response.setHeader("Accept-Ranges", "bytes");
 					response.setDateHeader(NetHelper.HEADER_LAST_MODIFIED, file.lastModified());
-					response.setContentLength((int)file.length());
+					response.setContentLength((int) file.length());
 					long lastModifiedInBrowser = request.getDateHeader(NetHelper.HEADER_IF_MODIFIED_SINCE);
-					if (file.lastModified() > 0 && file.lastModified() / 1000 <= lastModifiedInBrowser / 1000) {						
+					if (file.lastModified() > 0 && file.lastModified() / 1000 <= lastModifiedInBrowser / 1000) {
 						response.setStatus(HttpServletResponse.SC_NOT_MODIFIED);
 						return;
 					}
-					
+
 					fileStream = new FileInputStream(file);
 
 					if ((fileStream != null)) {

@@ -1,17 +1,7 @@
 package org.javlo.utils;
 
-import java.io.File;
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.io.OutputStream;
-import java.io.PrintStream;
 import java.util.Collection;
 import java.util.LinkedList;
-import java.util.Stack;
-
-import org.javlo.helper.XHTMLHelper;
-import org.jopendocument.dom.spreadsheet.Sheet;
-import org.jopendocument.dom.spreadsheet.SpreadSheet;
 
 public class FooterGenerator {
 
@@ -30,7 +20,10 @@ public class FooterGenerator {
 		// File templateFolder = new
 		// File("C:/Users/pvandermaesen/Dropbox/work/data/javlo/template/galaxy-template");
 
-		File file = new File("C:/Users/pvandermaesen/Dropbox/Documents/pro/pe/president_2014/work/footer.ods");
+		/*
+		 * 
+		 * File file = new File("C:/Users/pvandermaesen/Dropbox/Documents/pro/pe/president_2014/work/footer.ods");
+		 *
 		// File templateFolder = new
 		// File("C:/work/javlo2/target/javlo/work_template/galaxy-2014/the-president");
 		File templateFolder = new File("C:/work/javlo2/target/javlo/work_template/galaxy-2014/the-president");
@@ -105,6 +98,6 @@ public class FooterGenerator {
 
 		} catch (IOException e) {
 			e.printStackTrace();
-		}
+		}*/
 	}
 }
