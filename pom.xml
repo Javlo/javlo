@@ -134,14 +134,14 @@
 			<version>2.5</version>
 			<scope>provided</scope>
 		</dependency>
-		
+
 		<dependency>
-    		<groupId>org.imgscalr</groupId>
-    		<artifactId>imgscalr-lib</artifactId>
-    		<version>4.2</version>
-    		<type>jar</type>
-    		<scope>compile</scope>
-  		</dependency>
+			<groupId>org.imgscalr</groupId>
+			<artifactId>imgscalr-lib</artifactId>
+			<version>4.2</version>
+			<type>jar</type>
+			<scope>compile</scope>
+		</dependency>
 
 		<dependency>
 			<groupId>commons-configuration</groupId>
@@ -159,6 +159,12 @@
 			<groupId>commons-io</groupId>
 			<artifactId>commons-io</artifactId>
 			<version>2.4</version>
+		</dependency>
+
+		<dependency>
+			<groupId>org.apache.commons</groupId>
+  			<artifactId>commons-lang3</artifactId>
+  			<version>3.3.2</version>
 		</dependency>
 
 		<dependency>
@@ -195,7 +201,7 @@
 			<groupId>commons-httpclient</groupId>
 			<artifactId>commons-httpclient</artifactId>
 			<version>3.1</version>
-			
+
 		</dependency>
 
 		<dependency>
@@ -284,20 +290,14 @@
 		<dependency>
 			<groupId>org.lesscss</groupId>
 			<artifactId>lesscss</artifactId>
-			<version>1.3.3</version>
+			<version>1.7.0.1.0</version>
 		</dependency>
 
-<!-- <dependency>
-   <groupId>org.ocpsoft.rewrite</groupId>
-   <artifactId>rewrite-servlet</artifactId>
-   <version>2.0.12.Final</version>
-</dependency>
-		
-<dependency>
-	<groupId>org.ocpsoft.rewrite</groupId>
-	<artifactId>rewrite-transform-less</artifactId>
-	<version>2.0.12.Final</version>
-</dependency>  -->		
+
+		<!-- <dependency> <groupId>org.ocpsoft.rewrite</groupId> <artifactId>rewrite-servlet</artifactId> 
+			<version>2.0.12.Final</version> </dependency> <dependency> <groupId>org.ocpsoft.rewrite</groupId> 
+			<artifactId>rewrite-transform-less</artifactId> <version>2.0.12.Final</version> 
+			</dependency> -->
 
 		<dependency>
 			<groupId>net.glxn</groupId>
@@ -305,11 +305,11 @@
 			<version>1.3</version>
 		</dependency>
 
-		<dependency>
+		<!-- <dependency>
 			<groupId>org.jopendocument</groupId>
 			<artifactId>jOpenDocument</artifactId>
 			<version>1.3</version>
-		</dependency>
+		</dependency> -->
 
 		<dependency>
 			<groupId>fr.opensagres.xdocreport</groupId>
@@ -321,7 +321,7 @@
 			<groupId>org.apache.poi</groupId>
 			<artifactId>ooxml-schemas</artifactId>
 			<version>1.1</version>
-		</dependency>            
+		</dependency>
 
 	</dependencies>
 
@@ -436,7 +436,7 @@
 								</resources>
 							</configuration>
 						</execution>
-						
+
 						<execution>
 							<id>filter-webxml</id>
 							<phase>process-resources</phase>
@@ -450,17 +450,17 @@
 										<directory>src/main/webapp/WEB-INF</directory>
 										<filtering>true</filtering>
 										<includes>
-						  					<include>*.xml</include>
-						  				</includes>
+											<include>*.xml</include>
+										</includes>
 									</resource>
 								</resources>
 							</configuration>
 						</execution>
-						
-						
-						
-						
-						
+
+
+
+
+
 						<execution>
 							<id>deploy local lib</id>
 							<phase>process-resources</phase>
@@ -482,9 +482,9 @@
 			</plugins>
 		</pluginManagement>
 
-		
-								
-		
+
+
+
 	</build>
 
 	<profiles>

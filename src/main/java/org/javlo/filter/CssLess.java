@@ -38,8 +38,7 @@ public class CssLess implements Filter {
 		next.doFilter(request, response);
 	}
 	
-	private static void compile(File lessFile, File cssFile) {
-		//XHTMLHelper.expandCSSImports(lessFile);
+	private static void compile(File lessFile, File cssFile) {		
 		LessCompiler lessCompiler = new LessCompiler();
 		try {
 			lessCompiler.setEncoding(ContentContext.CHARACTER_ENCODING);					
@@ -115,6 +114,18 @@ public class CssLess implements Filter {
 
 	@Override
 	public void destroy() {
+	}
+	
+	public static void main(String[] args) {
+		// Instantiate the LESS compiler
+		LessCompiler lessCompiler = new LessCompiler();
+		System.out.println("***** CssLess.main : less js = "+lessCompiler.getLesscJs()); //TODO: remove debug tracelessCompiler.getLesscJs();
+		try {			
+			File bootStrap = new File("C:/Users/pvandermaesen/Dropbox/work/data/javlo/template/bootstrap-3.2.0/css/bootstrap.less");			
+			compile(bootStrap, new File("c:/trans/bootstrap.css"));			
+		} catch (Exception e) {		
+			e.printStackTrace();
+		}		
 	}
 
 }

@@ -1,5 +1,6 @@
 package org.javlo.module.content;
 
+import java.io.File;
 import java.io.IOException;
 import java.util.Collection;
 import java.util.Collections;
@@ -74,6 +75,7 @@ import org.javlo.user.AdminUserFactory;
 import org.javlo.user.AdminUserSecurity;
 import org.javlo.user.IUserFactory;
 import org.javlo.ztatic.FileCache;
+import org.lesscss.LessCompiler;
 
 public class Edit extends AbstractModuleAction {
 
@@ -1214,7 +1216,6 @@ public class Edit extends AbstractModuleAction {
 	}
 
 	public static String performPublish(ServletContext application, HttpServletRequest request, StaticConfig staticConfig, GlobalContext globalContext, ContentService content, ContentContext ctx, I18nAccess i18nAccess) throws Exception {
-
 		synchronized (content.getNavigation(ctx).getLock()) {
 
 			DebugHelper.writeInfo(System.out);

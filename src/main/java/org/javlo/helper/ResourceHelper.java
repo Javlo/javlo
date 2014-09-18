@@ -279,7 +279,7 @@ public class ResourceHelper {
 			}			
 		});
 		for (String key : keys) {
-			if (filter.get(key) != null) {
+			if (filter.get(key) != null && filter.get(key).trim().length() > 0) {
 				content = content.replace(key, filter.get(key));
 				content = content.replace(key.toUpperCase(), filter.get(key));
 			}
@@ -306,7 +306,7 @@ public class ResourceHelper {
 			}			
 		});		
 		for (String key : keys) {			
-			if (filter.get(key) != null) {
+			if (filter.get(key) != null && filter.get(key).trim().length() > 0) {
 				content = content.replace(key, filter.get(key));
 				content = content.replace(key.toUpperCase(), filter.get(key));
 			}

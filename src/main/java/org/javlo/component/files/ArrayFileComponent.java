@@ -33,9 +33,7 @@ import org.javlo.helper.XHTMLHelper;
 import org.javlo.i18n.I18nAccess;
 import org.javlo.message.GenericMessage;
 import org.javlo.service.ReverseLinkService;
-import org.jopendocument.dom.spreadsheet.MutableCell;
-import org.jopendocument.dom.spreadsheet.Sheet;
-import org.jopendocument.dom.spreadsheet.SpreadSheet;
+
 
 public class ArrayFileComponent extends GenericFile {
 
@@ -312,9 +310,9 @@ public class ArrayFileComponent extends GenericFile {
 			 * (StringHelper.getFileExtension(file.getName()).equalsIgnoreCase
 			 * ("csv")) { outArray = getCSVArray(ctx, file); } else
 			 */
-			if (StringHelper.getFileExtension(file.getName()).equalsIgnoreCase("ods")) {
+			/*if (StringHelper.getFileExtension(file.getName()).equalsIgnoreCase("ods")) {
 				outArray = getODSArray(ctx, file);
-			} else if (StringHelper.getFileExtension(file.getName()).equalsIgnoreCase("xlsx")) {
+			} else*/ if (StringHelper.getFileExtension(file.getName()).equalsIgnoreCase("xlsx")) {
 				outArray = getXLSXArray(ctx, file);
 			} else if (StringHelper.getFileExtension(file.getName()).equalsIgnoreCase("xls")) {
 				outArray = getXLSArray(ctx, file);
@@ -416,7 +414,7 @@ public class ArrayFileComponent extends GenericFile {
 		return outCell;
 	}
 
-	private static String readOpenDocCell(MutableCell<SpreadSheet> mutableCell) {
+	/*private static String readOpenDocCell(MutableCell<SpreadSheet> mutableCell) {
 		return mutableCell.getValue().toString();
 	}
 
@@ -450,7 +448,7 @@ public class ArrayFileComponent extends GenericFile {
 		}
 
 		return outArray;
-	}
+	}*/
 
 	protected Cell[][] getXLSXArray(ContentContext ctx, File xslxFile) throws Exception {
 		InputStream in = new FileInputStream(xslxFile);
