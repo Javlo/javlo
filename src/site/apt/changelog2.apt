@@ -309,3 +309,11 @@ change log
  * attach user role to resource
  
  * image cache optimisation
+ 
+ * less 1.7 compilation (remove openoffice lib)
+ 
+ * page reference :all filter
+ 
+* 2.0.3.7 22/09/2014
+ 
+ 
