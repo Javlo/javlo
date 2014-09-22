@@ -153,19 +153,24 @@ function ajaxRequest(url, form, doneFunction) {
 }
 
 function initDropFile() {
+	
+	/*jQuery("body").live('dragover', function(e) {
+		console.log("enter with file (body).");
+	});*/
+	
 	jQuery.event.props.push('dataTransfer');
 	jQuery(".drop-files").live('dragover', function(e) {		
 		jQuery(this).addClass("dragover");
 		doNothing(e);
 	});
-	jQuery(".drop-files").live('dragout', function(ev, drag) {		
+	jQuery(".drop-files").live('dragleave', function(ev, drag) {		
 		jQuery(this).removeClass("dragover");		
 	 });
 	jQuery(".drop-files").live('dragenter', function(e) {
 		doNothing(e);
 	});
 	/*jQuery("._area").live('dragover', function(e) {	
-		doNothing(e);
+		doNothing(e);	
 	});
 	jQuery("._area").live('drop', function(e) {
 		doNothing(e);

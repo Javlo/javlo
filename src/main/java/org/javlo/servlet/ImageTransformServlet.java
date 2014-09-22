@@ -20,7 +20,10 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 
 import javax.imageio.ImageIO;
+import javax.imageio.ImageWriteParam;
+import javax.imageio.ImageWriter;
 import javax.imageio.metadata.IIOMetadata;
+import javax.imageio.stream.ImageOutputStream;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
@@ -328,7 +331,17 @@ public class ImageTransformServlet extends HttpServlet {
 				if (!"png".equals(fileExtension) && !"gif".equals(fileExtension)) {
 					img = ImageEngine.removeAlpha(img);
 				}
-				ImageIO.write(img, fileExtension, outImage);
+				if (config.isHighQuality(ctx.getDevice(), filter, area) && fileExtension.equals("jpg")) {					
+					ImageOutputStream  ios =  ImageIO.createImageOutputStream(outImage);
+					ImageWriter writer = ImageIO.getImageWritersByFormatName("jpeg").next();
+					ImageWriteParam param = writer.getDefaultWriteParam();
+					param.setCompressionMode(ImageWriteParam.MODE_EXPLICIT);
+					param.setCompressionQuality(0.99F);
+					writer.setOutput(ios);
+					writer.write(img);	
+				} else {					
+					ImageIO.write(img, fileExtension, outImage);
+				}
 
 			} finally {
 				outImage.close();

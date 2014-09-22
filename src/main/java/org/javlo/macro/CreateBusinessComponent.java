@@ -7,6 +7,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.logging.Logger;
 
+import org.apache.commons.lang3.tuple.Pair;
 import org.javlo.actions.IAction;
 import org.javlo.component.core.ComponentBean;
 import org.javlo.component.core.ComponentFactory;
@@ -28,7 +29,7 @@ import org.javlo.service.RequestService;
 
 public class CreateBusinessComponent implements IInteractiveMacro, IAction {
 
-private static Logger logger = Logger.getLogger(CreateBusinessComponent.class.getName());
+	private static Logger logger = Logger.getLogger(CreateBusinessComponent.class.getName());
 
 	@Override
 	public String getName() {
@@ -54,32 +55,11 @@ private static Logger logger = Logger.getLogger(CreateBusinessComponent.class.ge
 	public String getRenderer() {
 		return "/jsp/macros/create-business-component.jsp";
 	}
-	
-	@Override
-	public boolean isPreview() {
-		return true;
-	}
-	
-	@Override
-		public String prepare(ContentContext ctx) {		
-			return null;
-		}
-	
-	/*
 
 	@Override
 	public String prepare(ContentContext ctx) {
 		try {
 			List<Pair<String, String>> dynamicComponents = new LinkedList<Pair<String, String>>();
-<<<<<<< .mine
-			List<IContentVisualComponent> components = ComponentFactory.getComponents(ctx, ctx.getCurrentPage());
-			for (IContentVisualComponent comp : components) {
-				if (comp instanceof DynamicComponent) {
-					DynamicComponent dynComp = ((DynamicComponent) comp);
-					//TODO if (dynComp.getFieldsNames().contains("name") && dynComp.getDataPath() != null) {
-					dynamicComponents.add(Pair.of(dynComp.getType(), dynComp.getType();
-					//}
-=======
 			List<ComponentWrapper> components = ComponentFactory.getComponentForDisplay(ctx);
 			for (ComponentWrapper wrapper : components) {
 				if (wrapper.isDynamicComponent()) {
@@ -88,7 +68,6 @@ private static Logger logger = Logger.getLogger(CreateBusinessComponent.class.ge
 					if (dynComp.getFieldsNames().contains("name") && dynComp.getDataPath() != null) {
 						dynamicComponents.add(Pair.of(wrapper.getType(), wrapper.getLabel()));
 					}
->>>>>>> .r1746
 				}
 			}
 			Collections.sort(dynamicComponents, new Comparator<Pair<String, String>>() {
@@ -111,7 +90,7 @@ private static Logger logger = Logger.getLogger(CreateBusinessComponent.class.ge
 		String name = rs.getParameter("name", null);
 		try {
 			ContentService contentService = ContentService.getInstance(ctx.getGlobalContext());
-			DynamicComponent compDef = (DynamicComponent)ComponentFactory.getComponentWithType(ctx, componentType);
+			DynamicComponent compDef = (DynamicComponent) ComponentFactory.getComponentWithType(ctx, componentType);
 			MenuElement parentPage = contentService.getNavigation(ctx).searchChild(ctx, compDef.getDataPath());
 			MenuElement childPage = getChildPage(ctx, parentPage, name);
 			String compId = contentService.createContent(ctx, childPage, ComponentBean.DEFAULT_AREA, "0", componentType, "", true);
@@ -162,5 +141,5 @@ private static Logger logger = Logger.getLogger(CreateBusinessComponent.class.ge
 	@Override
 	public boolean isPreview() {
 		return true;
-	}*/
+	}
 }

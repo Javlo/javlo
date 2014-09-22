@@ -457,10 +457,6 @@
 							</configuration>
 						</execution>
 
-
-
-
-
 						<execution>
 							<id>deploy local lib</id>
 							<phase>process-resources</phase>
@@ -481,10 +477,6 @@
 				</plugin>
 			</plugins>
 		</pluginManagement>
-
-
-
-
 	</build>
 
 	<profiles>
