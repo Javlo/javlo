@@ -86,12 +86,17 @@ public class TemplatePluginFactory {
 		return null;
 	}
 
-	public TemplatePlugin getTemplatePlugin(String id) throws IOException {
-		List<TemplatePlugin> plugins = getAllTemplatePlugin();
-		for (TemplatePlugin templatePlugin : plugins) {
-			if (templatePlugin.getId().equals(id)) {
-				return templatePlugin;
+	public TemplatePlugin getTemplatePlugin(String id) {
+		List<TemplatePlugin> plugins;
+		try {
+			plugins = getAllTemplatePlugin();
+			for (TemplatePlugin templatePlugin : plugins) {
+				if (templatePlugin.getId().equals(id)) {
+					return templatePlugin;
+				}
 			}
+		} catch (IOException e) {
+			e.printStackTrace();
 		}
 		return null;
 	}

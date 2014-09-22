@@ -860,9 +860,14 @@ public class PageReferenceComponent extends ComplexPropertiesLink implements IAc
 	 * @throws Exception
 	 */
 	protected boolean filterPage(ContentContext ctx, MenuElement page, String filter) throws Exception {
-		if (!validPageForCommand(ctx, page, extractCommandFromFilter(filter))) {
+		Collection<String> commands = extractCommandFromFilter(filter);
+		
+		if (commands.contains("all")) {
+			return true;
+		}	
+		if (!validPageForCommand(ctx, page, commands)) {
 			return false;
-		}
+		}		
 		filter = removeCommandFromFilter(filter);
 
 		if (filter != null && !(page.getTitle(ctx) + ' ' + page.getName()).contains(filter)) {
@@ -1124,6 +1129,8 @@ public class PageReferenceComponent extends ComplexPropertiesLink implements IAc
 		out.println("<input class=\"input\" type=\"text\" placeholder=\"" + i18nAccess.getText("global.filter") + "\" onkeyup=\"filterPage('" + ajaxURL + "',this.value, '." + tableID + " tbody');\"/>");
 		String resetFilterScript = "jQuery('#comp-" + getId() + " .filter .input').val(''); filterPage('" + ajaxURL + "',jQuery('#comp-" + getId() + " .filter .input').val(), '." + tableID + " tbody'); return false;";
 		out.println("<input type=\"button\" onclick=\"" + resetFilterScript + "\" value=\"" + i18nAccess.getText("global.reset") + "\" />");
+		String allScript = "if (jQuery('#comp-" + getId() + " .filter .input').val().indexOf(':all')<0) {jQuery('#comp-" + getId() + " .filter .input').val(jQuery('#comp-" + getId() + " .filter .input').val()+' :all'); filterPage('" + ajaxURL + "',jQuery('#comp-" + getId() + " .filter .input').val(), '." + tableID + " tbody'); return false;}";
+		out.println("<input type=\"button\" onclick=\"" + allScript + "\" value=\"" + i18nAccess.getText("global.all") + "\" />");
 
 		out.println("</div>");
 
@@ -1172,7 +1179,7 @@ public class PageReferenceComponent extends ComplexPropertiesLink implements IAc
 					countPage++;
 				}
 			}
-			if (countPage < MAX_PAGES) {
+			if (countPage < MAX_PAGES || extractCommandFromFilter(filter).contains("all")) {
 				out.print(new String(outStreamTemp.toByteArray()));
 			} else {
 				out.println("<td colspan=\"5\" class=\"error\"><div class=\"notification msgalert\">" + i18nAccess.getText("content.page-reference.too-many-pages", "Too many pages found, please use the filter above to limit results.") + " (#" + numberOfPage + ")</div></td>");
@@ -1685,7 +1692,7 @@ public class PageReferenceComponent extends ComplexPropertiesLink implements IAc
 										}
 										if (monthFilter == null || TimeHelper.betweenInDay(page.getContentDateNeverNull(lgCtx), startDate.getTime(), endDate.getTime())) {
 											countPage++;
-											if (countPage >= firstPageNumber && countPage <= lastPageNumber) {
+											if (countPage >= firstPageNumber && countPage <= lastPageNumber) {												
 												pageBeans.add(PageBean.getInstance(ctx, lgCtx, page, this));
 											}
 										}
@@ -1762,17 +1769,27 @@ public class PageReferenceComponent extends ComplexPropertiesLink implements IAc
 			ContentService content = ContentService.getInstance(ctx.getRequest());
 			MenuElement menu = content.getNavigation(ctx);
 			MenuElement[] allChildren = menu.getAllChildren();
-			String pagesSelected = "";
-			String separation = "";
+			List<String> currentPageSelected = getPageSelected();			
+			List<String> pagesSelected = new LinkedList<String>();
+			List<String> pagesNotSelected = new LinkedList<String>();
+			
 			for (MenuElement element : allChildren) {
 				String selectedPage = requestService.getParameter(getPageId(element), null);
 				if (requestService.getParameter(getPageDisplayedId(element), null) != null) {
 					if (isDefaultSelected() ^ (selectedPage != null) && filterPage(ctx, element, null)) {
-						pagesSelected = pagesSelected + separation + element.getId();
-						separation = ID_SEPARATOR;
+						pagesSelected.add(element.getId());
+					} else {
+						pagesNotSelected.add(element.getId());
 					}
 				}
 			}
+			pagesSelected.addAll(currentPageSelected);
+			pagesSelected.removeAll(pagesNotSelected);
+			if (!currentPageSelected.equals(pagesSelected)) {
+				setPageSelected(StringHelper.collectionToString(pagesSelected,PAGE_SEPARATOR));
+				setModify();
+			}			
+
 
 			String order = requestService.getParameter(getOrderInputName(), "date");
 			if (!getOrder().equals(order)) {
@@ -1846,12 +1863,11 @@ public class PageReferenceComponent extends ComplexPropertiesLink implements IAc
 			}
 
 			String lastPageNumber = requestService.getParameter(getLastPageNumberInputName(), "");
-			if (!lastPageNumber.equals(getLastPageNumber())) {
+			if (!lastPageNumber.equals(""+getLastPageNumber())) {
 				setLastPageNumber(lastPageNumber);
 				setModify();
 			}
-
-			setPageSelected(pagesSelected);
+			
 			boolean defaultSelected = requestService.getParameter(getDefaultSelectedInputName(), null) != null;
 			if (defaultSelected != isDefaultSelected()) {
 				setModify();
@@ -1909,6 +1925,9 @@ public class PageReferenceComponent extends ComplexPropertiesLink implements IAc
 			setModify();
 		}
 		properties.setProperty(PAGE_REF_PROP_KEY, pagesSelected);
+	}
+	private List<String> getPageSelected() {
+		return StringHelper.stringToCollection(properties.getProperty(PAGE_REF_PROP_KEY, ""), PAGE_SEPARATOR);
 	}
 
 	protected void setParentNode(String node) {
