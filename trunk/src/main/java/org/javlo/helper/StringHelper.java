@@ -2745,6 +2745,23 @@ public class StringHelper {
 			return text;
 		}
 	}
+	
+	/**
+	 * clean path, remove double "/"
+	 * @param path
+	 * @return "//web/path" >> "/web/path"
+	 */
+	public static String cleanPath(String path) {
+		if (path == null) {
+			return null;
+		} else {
+			while (path.indexOf("//") >= 0) {
+				path = path.replace("//", "/");
+			}
+			return path;
+		}
+		
+	}
 
 	/**
 	 * check if a text contains uppercase char. test > false, Test > true, TEST
