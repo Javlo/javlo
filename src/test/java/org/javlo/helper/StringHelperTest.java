@@ -114,5 +114,15 @@ public class StringHelperTest extends TestCase {
 	  assertEquals(StringHelper.trim("-test", '-'),"test");
   }
   
+  public void testCleanPath() {
+	  assertEquals(StringHelper.cleanPath(null), null);
+	  assertEquals(StringHelper.cleanPath("/folder1/folder1"), "/folder1/folder1");	  
+	  assertEquals(StringHelper.cleanPath("/folder1/folder1/"), "/folder1/folder1/");
+	  assertEquals(StringHelper.cleanPath("folder1/folder1/"), "folder1/folder1/");
+	  assertEquals(StringHelper.cleanPath("//folder1/folder1/"), "/folder1/folder1/");
+	  assertEquals(StringHelper.cleanPath("///////folder1///////folder1///"), "/folder1/folder1/");
+	  assertEquals(StringHelper.cleanPath("//folder1//folder1"), "/folder1/folder1");
+  }
+  
  
 }
