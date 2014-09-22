@@ -125,6 +125,8 @@ public class ModulesContext {
 					if (configFile.exists()) {
 						try {							
 							String moduleRoot = dir.getAbsolutePath().replace(webappRoot, "/");
+							System.out.println("***** ModulesContext.loadModule : webappRoot = "+webappRoot); //TODO: remove debug trace
+							System.out.println("***** ModulesContext.loadModule : moduleRoot = "+moduleRoot); //TODO: remove debug trace
 							Module module = new Module(configFile, new Locale(globalContext.getEditLanguage(session)), moduleRoot, globalContext.getPathPrefix());
 							if (module.haveRight(session, userFactory.getCurrentUser(session)) && globalContext.getModules().contains(module.getName())) {
 								localModules.add(module);

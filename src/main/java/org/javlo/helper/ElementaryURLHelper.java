@@ -603,6 +603,8 @@ public abstract class ElementaryURLHelper {
 		System.out.println("*** 2. " + mergePath("/test/dc?ceci=test", "/path3"));
 		System.out.println("*** 3. " + mergePath("/test/dc", "/path3?lavie=moi"));
 		System.out.println("*** 4. " + mergePath("/test/dc?ceci=test", "/path3?moi=patrick"));
+		System.out.println("*** 5. " + mergePath("//","/modules/template"));
+		
 
 		System.out.println("**** remove param : test.html?test=test = " + removeParam("test.html?test=test"));
 		System.out.println("**** remove param : test.html = " + removeParam("test.html"));
