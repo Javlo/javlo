@@ -37,7 +37,7 @@ public class TemplatePluginFactory {
 		return fact;
 	}
 
-	public List<TemplatePlugin> getAllTemplatePlugin() throws IOException {
+	public List<TemplatePlugin> getAllTemplatePlugin() {
 		if (!dir.isDirectory() && !localDir.isDirectory()) {
 			return Collections.EMPTY_LIST;
 		}
@@ -45,15 +45,23 @@ public class TemplatePluginFactory {
 		if (dir.isDirectory()) {
 			File[] templatePluginFolders = dir.listFiles(new DirectoryFilter());
 			for (File folder : templatePluginFolders) {
-				TemplatePlugin tp = TemplatePlugin.getInstance(folder);
-				allTemplatePlungin.add(tp);
+				try {
+					TemplatePlugin tp = TemplatePlugin.getInstance(folder);
+					allTemplatePlungin.add(tp);
+				} catch (IOException e) {
+					e.printStackTrace();
+				}
 			}
 		}
 		if (localDir.isDirectory()) {
 			File[] templatePluginFolders = localDir.listFiles(new DirectoryFilter());
 			for (File folder : templatePluginFolders) {
-				TemplatePlugin tp = TemplatePlugin.getInstance(folder);
-				allTemplatePlungin.add(tp);
+				try {
+					TemplatePlugin tp = TemplatePlugin.getInstance(folder);
+					allTemplatePlungin.add(tp);
+				} catch (IOException e) {
+					e.printStackTrace();
+				}
 			}
 		}
 		Collections.sort(allTemplatePlungin, new TemplatePlugin.TemplatePluginIdComparator());
@@ -67,9 +75,9 @@ public class TemplatePluginFactory {
 		List<TemplatePlugin> allTemplatePlungin = new LinkedList<TemplatePlugin>();
 		for (String id : ids) {
 			TemplatePlugin tp = getTemplatePlugin(id);
-			if (tp != null) {				
+			if (tp != null) {
 				allTemplatePlungin.add(tp);
-			} else {				
+			} else {
 				logger.warning("template plugin not found : " + id);
 			}
 		}
@@ -88,15 +96,11 @@ public class TemplatePluginFactory {
 
 	public TemplatePlugin getTemplatePlugin(String id) {
 		List<TemplatePlugin> plugins;
-		try {
-			plugins = getAllTemplatePlugin();
-			for (TemplatePlugin templatePlugin : plugins) {
-				if (templatePlugin.getId().equals(id)) {
-					return templatePlugin;
-				}
+		plugins = getAllTemplatePlugin();
+		for (TemplatePlugin templatePlugin : plugins) {
+			if (templatePlugin.getId().equals(id)) {
+				return templatePlugin;
 			}
-		} catch (IOException e) {
-			e.printStackTrace();
 		}
 		return null;
 	}
