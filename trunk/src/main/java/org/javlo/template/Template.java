@@ -1367,15 +1367,25 @@ public class Template implements Comparable<Template> {
 			for (File list : listFolder.listFiles((FilenameFilter) new FileFilterUtils().suffixFileFilter(".properties"))) {
 				String lg = StringHelper.getLanguageFromFileName(list.getName());
 				if (list.isFile() && (lg == null || lg.equals(locale.getLanguage()))) {
-					Properties listProp = new Properties();
-					Reader reader = new FileReader(list);
-					listProp.load(reader);
-					reader.close();
-					List<ListService.Item> serviceList = new LinkedList<ListService.Item>();
-					for (Map.Entry entry : listProp.entrySet()) {
-						serviceList.add(new ListService.Item(entry));
+					if (locale.getLanguage().equals(lg) || linkedMap.get(StringHelper.getFileNameWithoutExtension(list.getName())) == null) {
+						Properties listProp = new Properties();
+						Reader reader = new FileReader(list);
+						listProp.load(reader);
+						reader.close();
+						List<ListService.Item> serviceList = new LinkedList<ListService.Item>();
+
+						for (Map.Entry entry : listProp.entrySet()) {
+							serviceList.add(new ListService.Item(entry));
+						}
+
+						Collections.sort(serviceList, new ListService.OrderList());
+
+						String listKey = StringHelper.getFileNameWithoutExtension(list.getName());
+						if (lg != null) {
+							listKey = listKey.substring(0, listKey.length() - 3); /* remove language from file name */
+						}
+						linkedMap.put(listKey, serviceList);
 					}
-					linkedMap.put(StringHelper.getFileNameWithoutExtension(list.getName()), serviceList);
 				}
 			}
 			return linkedMap;
@@ -1736,7 +1746,7 @@ public class Template implements Comparable<Template> {
 		while (keys.hasNext()) {
 			String key = (String) keys.next();
 			if (key.startsWith("html.")) {
-				String renderer = key.replaceFirst("html.","");
+				String renderer = key.replaceFirst("html.", "");
 				if (!renderer.contains(".")) {
 					outRenderes.add(renderer);
 				}
@@ -1769,9 +1779,9 @@ public class Template implements Comparable<Template> {
 		String params = "";
 		String templateParams = getHTMLFileParams(ctx.getDevice());
 		if (templateParams != null) {
-			params = '?'+templateParams;
-		}		
-		return URLHelper.mergePath(getLocalTemplateTargetFolder(globalContext), renderer)+params;
+			params = '?' + templateParams;
+		}
+		return URLHelper.mergePath(getLocalTemplateTargetFolder(globalContext), renderer) + params;
 	}
 
 	public List<String> getResources() {

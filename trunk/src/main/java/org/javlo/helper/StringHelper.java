@@ -1290,26 +1290,7 @@ public class StringHelper {
 	}
 
 	public static void main(String[] args) {
-		System.out.println("***** StringHelper.main : " + getPixelValue(" 12px")); // TODO:
-																					// remove
-																					// debug
-																					// trace
-		System.out.println("***** StringHelper.main : " + getPixelValue(" 12 px")); // TODO:
-																					// remove
-																					// debug
-																					// trace
-		System.out.println("***** StringHelper.main : " + getPixelValue(" 12%")); // TODO:
-																					// remove
-																					// debug
-																					// trace
-		System.out.println("***** StringHelper.main : " + getPixelValue(null)); // TODO:
-																				// remove
-																				// debug
-																				// trace
-		System.out.println("***** StringHelper.main : " + getPixelValue("coucou")); // TODO:
-																					// remove
-																					// debug
-																					// trace
+		
 	}
 
 	/**

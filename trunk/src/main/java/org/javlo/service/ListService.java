@@ -4,6 +4,7 @@ import java.io.IOException;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.Comparator;
+import java.util.LinkedHashMap;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Locale;
@@ -14,31 +15,30 @@ import org.apache.commons.lang.NotImplementedException;
 import org.javlo.context.ContentContext;
 import org.javlo.context.GlobalContext;
 import org.javlo.navigation.MenuElement;
-import org.javlo.service.ListService.MapAllList.OrderList;
 
 public class ListService {
+	
+	public static class OrderList implements Comparator<Item> {
+
+		@Override
+		public int compare(Item item1, Item item2) {
+			if (item1.getKey().startsWith("_")) {
+				if (!item2.getKey().startsWith("_")) {
+					return 1;
+				}
+			} else if (item2.getKey().startsWith("_")) {
+				if (!item1.getKey().startsWith("_")) {
+					return -1;
+				}
+
+			}
+			return item1.getValue().compareTo(item2.getValue());
+		}
+	}
 
 	public static class MapAllList implements Map<String, List<Item>> {
 
-		public static class OrderList implements Comparator<Item> {
-
-			@Override
-			public int compare(Item item1, Item item2) {
-				if (item1.getKey().startsWith("_")) {
-					if (!item2.getKey().startsWith("_")) {
-						return 1;
-					}
-				} else if (item2.getKey().startsWith("_")) {
-					if (!item1.getKey().startsWith("_")) {
-						return -1;
-					}
-
-				}
-				return item1.getValue().compareTo(item2.getValue());
-			}
-		}
-
-		private final ContentContext ctx;
+			private final ContentContext ctx;
 
 		public MapAllList(ContentContext ctx) {
 			this.ctx = ctx;
@@ -184,5 +184,13 @@ public class ListService {
 
 	public Map<String, List<Item>> getAllList(ContentContext ctx) {
 		return new MapAllList(ctx);
+	}
+	
+	public static Map<String,String> listToStringMap(List<Item> list) {
+		Map<String,String> outMap = new LinkedHashMap<String, String>();
+		for (Item item : list) {
+			outMap.put(item.getKey(), item.getValue());
+		}
+		return outMap;
 	}
 }

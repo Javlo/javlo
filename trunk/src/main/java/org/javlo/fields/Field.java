@@ -25,6 +25,8 @@ import org.javlo.helper.XHTMLHelper;
 import org.javlo.i18n.I18nAccess;
 import org.javlo.navigation.MenuElement;
 import org.javlo.service.ContentService;
+import org.javlo.service.ListService;
+import org.javlo.service.ListService.Item;
 import org.javlo.service.RequestService;
 import org.javlo.service.ReverseLinkService;
 
@@ -230,6 +232,13 @@ public class Field implements Cloneable {
 						}						
 						keyValue.put(key, value);
 					}
+				}
+			}
+			//TODO:debug this
+			if(keyValue.size() == 0) {
+				List<Item> list = ListService.getInstance(ctx).getAllList(ctx).get(listName);				
+				if (list != null) {
+					keyValue = ListService.listToStringMap(list);
 				}
 			}
 		}
