@@ -1,7 +1,7 @@
-<%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
-<%@ taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions" %>
-<%@ taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt" %>
-<c:if test="${pagination.pageSize > 0}"> 
+<%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c"
+%><%@ taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions"
+%><%@ taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt"
+%><c:if test="${pagination.pageSize > 0}"> 
 <div class="pagination">
 	<c:if test="${pagination.page > 1 && pagination.maxPage > 1}">
 		<span class="previous"><a href="${info.currentURL}?webaction=view.pagination&page=${pagination.page-1}&key=${pagination.key}">&lt;&lt;</a></span>
