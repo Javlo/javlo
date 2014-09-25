@@ -1042,7 +1042,7 @@ public class ResourceHelper {
 		if (!folder.isDirectory()) {
 			return null;
 		}
-		File file = new File(URLHelper.mergePath(folder.getAbsolutePath(), StringHelper.getFileNameFromPath(fileItem.getName())));
+		File file = new File(URLHelper.mergePath(folder.getAbsolutePath(), StringHelper.createFileName(StringHelper.getFileNameFromPath(fileItem.getName()))));
 		
 		if (!file.exists()) {
 			file.createNewFile();
