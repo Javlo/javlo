@@ -24,6 +24,8 @@ import org.javlo.service.RequestService;
 public class GenericQuiz extends SmartGenericForm {
 
 	public static final String TYPE = "generic-quiz";
+	
+	public static final int QUESTION_INDEX = 8;
 
 	@Override
 	public String getType() {
@@ -180,6 +182,7 @@ public class GenericQuiz extends SmartGenericForm {
 		public Collection<? extends Object> getFieldTypes() {
 			return FIELD_TYPES;
 		}
+		
 
 	}
 
@@ -198,7 +201,7 @@ public class GenericQuiz extends SmartGenericForm {
 					String value = (String) LangHelper.arrays(data, 2, "");
 					String list = (String) LangHelper.arrays(data, 3, "");
 					int order = Integer.parseInt((String) LangHelper.arrays(data, 4, "0"));
-					String response = (String) LangHelper.arrays(data, 7, "");
+					String response = (String) LangHelper.arrays(data, QUESTION_INDEX, "");
 					Question field = new Question(label, type, value, list, order, response);
 					fields.add(field);
 				}
