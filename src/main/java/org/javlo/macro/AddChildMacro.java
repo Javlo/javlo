@@ -32,7 +32,7 @@ public class AddChildMacro extends AbstractMacro {
 			index++;
 		}
 		MenuElement defaultPage = content.getNavigation(ctx).searchChildFromName(DEFAULT_PAGE_NAME);
-		MenuElement newPage = MacroHelper.addPageIfNotExist(ctx, ctx.getCurrentPage(),newPageName, false, true);
+		MenuElement newPage = MacroHelper.addPageIfNotExist(ctx, ctx.getCurrentPage(),newPageName, true, true);
 		if (defaultPage != null)  {
 			ContentElementList comps = defaultPage.getContent(ctx);
 			String parentId = "0";
