@@ -158,7 +158,7 @@ public class ViewActions implements IAction {
 			timeB = cal.getTime();
 		}
 		try {
-			for (MenuElement page : content.getNavigation(ctx).getAllChildren()) {
+			for (MenuElement page : content.getNavigation(ctx).getAllChildren()) {				
 				if (page.isChangeNotification()) {
 					Date mod = page.getModificationDate();
 					if (mod != null && mod.after(timeB) && !mod.after(timeA)) {
@@ -179,12 +179,10 @@ public class ViewActions implements IAction {
 	private static void sendPageChangeNotification(ContentContext ctx, MenuElement page) throws Exception {
 		ctx = ctx.getContextOnPage(page);
 		GlobalContext globalContext = ctx.getGlobalContext();
-
 		I18nAccess i18nAccess = I18nAccess.getInstance(ctx);
-
 		MailingBuilder mb = new MailingBuilder();
 		mb.setSender(globalContext.getAdministratorEmail());
-		mb.setEditorGroups(new LinkedList<String>(page.getEditorRoles()));
+		mb.setEditorGroups(new LinkedList<String>(page.getEditorRolesAndParent()));
 		mb.getExcludedUsers().add(page.getLatestEditor());
 		mb.setSubject(i18nAccess.getText("collaborative.mail.modified", "Page modified: ") + page.getTitle(ctx));
 		mb.prepare(ctx);

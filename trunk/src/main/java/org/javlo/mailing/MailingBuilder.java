@@ -126,7 +126,6 @@ public class MailingBuilder {
 		try {
 			HttpServletRequest request = ctx.getRequest();
 			GlobalContext globalContext = GlobalContext.getInstance(request);
-
 			allRecipients.clear();
 			if (editorGroups != null && !editorGroups.isEmpty()) {
 				explodeGroups(allRecipients, editorGroups, excludedUsers, AdminUserFactory.createUserFactory(globalContext, request.getSession()));
@@ -175,40 +174,40 @@ public class MailingBuilder {
 			params.put(ContentOnlyServlet.TEMPLATE_PARAM_NAME, currentTemplate);
 		}
 		String url = URLHelper.createURL(pageCtx);
-
-		GlobalContext globalContext = GlobalContext.getInstance(ctx.getRequest());
-
+		GlobalContext globalContext = GlobalContext.getInstance(ctx.getRequest());		
 		for (Entry<InternetAddress, String> receiver : allRecipients.entrySet()) {
-
 			Mailing m = new Mailing();
-			m.setFrom(new InternetAddress(sender));
+			m.setFrom(new InternetAddress(sender));			
 			m.setReceivers(Collections.singleton(receiver.getKey()));
 			m.setSubject(subject);
 			m.setAdminEmail(globalContext.getAdministratorEmail());
 			if (reportTo != null) {
 				m.setNotif(new InternetAddress(reportTo));
 			}
-			User user = AdminUserFactory.createAdminUserFactory(globalContext, ctx.getRequest().getSession()).getUser(receiver.getValue());			 
+			User user = AdminUserFactory.createAdminUserFactory(globalContext, ctx.getRequest().getSession()).getUser(receiver.getValue());
 			String oneTimeToken = null;
 			try {
 				if (user != null) {
 					oneTimeToken = ctx.getGlobalContext().createOneTimeToken(user.getUserInfo().getToken());
 					url = URLHelper.addParam(url, LoginFilter.TOKEN_PARAM, oneTimeToken);
 				}
-				m.setContent(NetHelper.readPageForMailing(new URL(url)));
+				String content = NetHelper.readPageForMailing(new URL(url));
+				if (content != null) {
+					m.setContent(content);
+					m.setHtml(true);
+					List<String> roles = new LinkedList<String>();
+					if (editorGroups != null) {
+						roles.addAll(editorGroups);
+					}
+					if (visitorGroups != null) {
+						roles.addAll(visitorGroups);
+					}
+					m.setRoles(roles);
+					m.store(ctx.getRequest().getSession().getServletContext());
+				}
 			} finally {
 				ctx.getGlobalContext().convertOneTimeToken(oneTimeToken);
-			}			 
-			m.setHtml(true);
-			List<String> roles = new LinkedList<String>();
-			if (editorGroups != null) {
-				roles.addAll(editorGroups);
 			}
-			if (visitorGroups != null) {
-				roles.addAll(visitorGroups);
-			}
-			m.setRoles(roles);
-			m.store(ctx.getRequest().getSession().getServletContext());
 		}
 	}
 }

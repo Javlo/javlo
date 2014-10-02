@@ -107,7 +107,7 @@ public class ContentOnlyServlet extends HttpServlet {
 			}	
 			
 			if (ctx.getGlobalContext().isCollaborativeMode()) {
-				Set<String> pageRoles = ctx.getCurrentPage().getEditorRoles();
+				Set<String> pageRoles = ctx.getCurrentPage().getEditorRolesAndParent();
 				if ((pageRoles.size() > 0 || ctx.getCurrentEditUser() == null)) { 
 					if (ctx.getCurrentEditUser() == null || !ctx.getCurrentEditUser().validForRoles(pageRoles)) {
 						ctx.setSpecialContentRenderer("/jsp/view/no_access.jsp");

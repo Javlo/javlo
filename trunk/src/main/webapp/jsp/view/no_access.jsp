@@ -1,5 +1,5 @@
 <%@page contentType="text/html"
 %><div class="error">
-	<p>Sorry, you don't have access to this page.</p>
+	<p>${i18n.view['user.no-access']}</p>
 </div>
 

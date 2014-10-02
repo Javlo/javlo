@@ -176,6 +176,37 @@ public class PageBean implements Serializable {
 	public Map<String, String> getAdminRoles() {
 		return new CollectionAsMap<String>(page.getEditorRoles());
 	}
+	
+	public Map<String, String> getAdminRolesAndParent() {
+		return new CollectionAsMap<String>(page.getEditorRolesAndParent());
+	}
+	
+	public String getFirstRoles() {
+		Map<String,String> roles = getRoles();
+		if (roles != null && roles.size() > 0) {
+			return roles.keySet().iterator().next();
+		} else {
+			return null;
+		}
+	}
+	
+	public String getFirstAdminRole() {
+		Map<String,String> roles = getAdminRoles();
+		if (roles != null && roles.size() > 0) {
+			return roles.keySet().iterator().next();
+		} else {
+			return null;
+		}
+	}
+	
+	public String getFirstAdminRoleAndParent() {
+		Map<String,String> roles = getAdminRolesAndParent();
+		if (roles != null && roles.size() > 0) {
+			return roles.keySet().iterator().next();
+		} else {
+			return null;
+		}
+	}
 
 	public String getShortURL() {
 		try {

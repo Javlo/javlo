@@ -33,7 +33,7 @@ public class URLTriggerThread extends Thread {
 					//Trig url
 					urlToTrigger.openConnection().getInputStream().close();
 				} catch (Throwable t) {
-					t.printStackTrace();
+					//t.printStackTrace();
 				}
 
 				sleepLatch.await(secBetweenTrigger, TimeUnit.SECONDS);
