@@ -31,7 +31,7 @@ public class UserSearch extends AbstractVisualComponent implements IAction {
 	public String getType() {
 		return TYPE;
 	}
-	
+
 	@Override
 	public boolean isUnique() {
 		return true;
@@ -89,6 +89,21 @@ public class UserSearch extends AbstractVisualComponent implements IAction {
 		}
 		out.println("</div>");
 
+		GlobalContext globalContext = ctx.getGlobalContext();
+		if (globalContext.getAdminUserRoles() != null && globalContext.getAdminUserRoles().size() > 0) {
+			out.println("<div class=\"line\"><label id=\"role\">group</label>");
+			out.println("<select id=\"role\" name=\"role\">");
+			out.println("<option></option>");
+			for (String role : globalContext.getAdminUserRoles()) {
+				String selected = "";
+				if (rs.getParameter("role", "").equals(role)) {
+					selected = " selected=\"selected\"";
+				}
+				out.println("<option value=\"" + role + "\"" + selected + ">" + role + "</option>");
+			}
+			out.println("</select></div>");
+		}
+
 		out.println("<input type=\"submit\" value=\"search...\" />");
 		out.println("</fieldset>");
 		out.println("</from>");
@@ -109,14 +124,14 @@ public class UserSearch extends AbstractVisualComponent implements IAction {
 						oddEven = "even";
 					}
 					String country = XHTMLHelper.renderListItem(countries, user.getCountry());
-					String function = XHTMLHelper.renderMultiListItem(functions, StringHelper.stringToCollection(user.getFunction(),";"));
+					String function = XHTMLHelper.renderMultiListItem(functions, StringHelper.stringToCollection(user.getFunction(), ";"));
 					String organization = XHTMLHelper.renderListItem(organizations, user.getOrganization());
 					String avatar = "&nbsp;";
 					String avatarURL = URLHelper.createAvatarUrl(ctx, user);
 					if (avatarURL != null) {
 						avatar = "<img src=\"" + avatarURL + "\" alt=\"" + user.getFirstName() + ' ' + user.getLastName() + "\" />";
 					}
-					
+
 					out.println("<tr class=\"" + oddEven + "\"><td>" + avatar + "</td><td>" + user.getFirstName() + "</td><td>" + user.getLastName() + "</td><td><a href=\"mailto:" + user.getEmail() + "\">contact</a></td><td>" + organization + "</td><td>" + country + "</td><td>" + function + "</td><td>" + user.getPhone() + "</td></tr>");
 				}
 				out.println("</table>");
@@ -132,7 +147,8 @@ public class UserSearch extends AbstractVisualComponent implements IAction {
 		String text = rs.getParameter("text", "").trim();
 		String country = rs.getParameter("country", "").trim();
 		String domain = rs.getParameter("domain", "").trim();
-		if (text.length() == 0 && country.length() == 0 && domain.length() == 0) {
+		String role = rs.getParameter("role", "").trim();
+		if (text.length() == 0 && country.length() == 0 && domain.length() == 0 && role.length() == 0) {
 			return null;
 		}
 		GlobalContext globalContext = GlobalContext.getInstance(ctx.getRequest());
@@ -143,7 +159,9 @@ public class UserSearch extends AbstractVisualComponent implements IAction {
 			if (BeanHelper.beanToString(user).contains(text)) {
 				if (country.length() == 0 || ((UserInfo) user).getCountry().equals(country)) {
 					if (domain.length() == 0 || ((UserInfo) user).getFunction().equals(domain)) {
-						result.add(user);
+						if (role.length() == 0 || ((UserInfo) user).getRoles().contains(role)) {
+							result.add(user);
+						}
 					}
 				}
 			}

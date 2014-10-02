@@ -1975,6 +1975,14 @@ public class MenuElement implements Serializable, IPrintInfo {
 	public Set<String> getEditorRoles() {
 		return editGroups;
 	}
+	
+	public Set<String> getEditorRolesAndParent() {
+		Set<String> roles = new HashSet<String>(editGroups);
+		if (getParent() != null) {
+			roles.addAll(getParent().getEditorRolesAndParent());
+		}
+		return roles;
+	}
 
 	public Collection<String> getExternalResources(ContentContext ctx) throws Exception {
 		PageDescription desc = getPageDescriptionCached(ctx, ctx.getRequestContentLanguage());

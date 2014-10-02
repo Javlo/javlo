@@ -94,6 +94,14 @@ public abstract class ElementaryURLHelper {
 			return url = url + '?' + name + '=' + StringHelper.neverNull(value);
 		}
 	}
+	
+	public static String addParams(String url,String params) {
+		if (url.contains("?")) {
+			return url = url + '&' + StringHelper.neverNull(params);
+		} else {
+			return url = url + '?' + StringHelper.neverNull(params);
+		}
+	}
 
 	/**
 	 * add get attribute to a url.
@@ -589,26 +597,7 @@ public abstract class ElementaryURLHelper {
 	 */
 
 	public static void main(String[] args) {
-		/*
-		 * String totalURI =
-		 * "http://localhost:8080/perso/view/fr/test#anchor;jsessionid=C7B2998A8806C17C05CD673F1E09B890?image__142=0&page__142=0"
-		 * ; String[] splitURI = totalURI.split("\\?|\\#|\\;"); String uri =
-		 * splitURI[0]; String params = ""; for (int i = 1; i < splitURI.length;
-		 * i++) { params = params + totalURI.substring(uri.length()); }
-		 * System.out.println("uri = "+uri);
-		 * System.out.println("param = "+params);
-		 */
-
-		System.out.println("*** 1. " + mergePath("/test/dc", "/path3"));
-		System.out.println("*** 2. " + mergePath("/test/dc?ceci=test", "/path3"));
-		System.out.println("*** 3. " + mergePath("/test/dc", "/path3?lavie=moi"));
-		System.out.println("*** 4. " + mergePath("/test/dc?ceci=test", "/path3?moi=patrick"));
-		System.out.println("*** 5. " + mergePath("//","/modules/template"));
-		
-
-		System.out.println("**** remove param : test.html?test=test = " + removeParam("test.html?test=test"));
-		System.out.println("**** remove param : test.html = " + removeParam("test.html"));
-
+		System.out.println("***** ElementaryURLHelper.main : getParamsAsString = "+getParamsAsString("http://www.lesoir.be?test=test")); //TODO: remove debug trace
 	}
 
 	/**
@@ -624,6 +613,16 @@ public abstract class ElementaryURLHelper {
 			return url;
 		} else {
 			return url.substring(0, url.indexOf('?'));
+		}
+	}
+	
+	public static final String getParamsAsString(String url) {
+		if (url == null) {
+			return null;
+		} else if (!url.contains("?")) {
+			return "";
+		} else {
+			return url.substring(url.indexOf('?')+1,url.length());
 		}
 	}
 

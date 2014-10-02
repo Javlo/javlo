@@ -60,6 +60,7 @@ import org.javlo.helper.Comparator.MapEntryComparator;
 import org.javlo.i18n.I18nAccess;
 import org.javlo.message.GenericMessage;
 import org.javlo.navigation.MenuElement;
+import org.javlo.navigation.PageBean;
 import org.javlo.service.ContentService;
 import org.javlo.service.ListService;
 import org.javlo.service.RequestService;
@@ -1976,16 +1977,21 @@ public class XHTMLHelper {
 		for (String param : params) {
 			xhtml = xhtml.replace("${param." + param + "}", URLDecoder.decode(requestService.getParameter(param, ""), ContentContext.CHARACTER_ENCODING));
 		}
-
 		InfoBean infoBean = InfoBean.getCurrentInfoBean(ctx.getRequest());
 		Map<String, Object> properties = BeanUtils.describe(infoBean);
 		for (String key : properties.keySet()) {
-			String jstlStr = "${" + InfoBean.REQUEST_KEY + '.' + key + '}';
+			String jstlStr = "${" + InfoBean.REQUEST_KEY + '.' + key + '}';			
 			if (properties.get(key) != null) {
 				xhtml = xhtml.replace(jstlStr, properties.get(key).toString());
 			}
 		}
-
+		properties = BeanUtils.describe(infoBean.getPage());
+		for (String key : properties.keySet()) {
+			String jstlStr = "${" + InfoBean.REQUEST_KEY + ".page." + key + '}';			
+			if (properties.get(key) != null) {
+				xhtml = xhtml.replace(jstlStr, properties.get(key).toString());
+			}
+		}
 		if (Basket.isInstance(ctx)) {
 			properties = BeanUtils.describe(Basket.getInstance(ctx));
 			for (String key : properties.keySet()) {
@@ -2295,8 +2301,10 @@ public class XHTMLHelper {
 						hrefValue = URLHelper.createRSSURL(ctx, channel);
 						tag.getAttributes().put("href", hrefValue);
 					} else if ((hrefValue != null) && (!StringHelper.isURL(hrefValue)) && (!StringHelper.isMailURL(hrefValue)) && !hrefValue.contains("${") && !ResourceHelper.isResourceURL(ctx, hrefValue) && !ResourceHelper.isTransformURL(ctx, hrefValue)) {
-						hrefValue = URLHelper.createURLCheckLg(ctx, hrefValue);
-						tag.getAttributes().put("href", hrefValue);
+						String url = URLHelper.removeParam(hrefValue);
+						String params = URLHelper.getParamsAsString(hrefValue);
+						url = URLHelper.createURLCheckLg(ctx, url);
+						tag.getAttributes().put("href", URLHelper.addParams(url,params));
 					}
 					remplacement.addReplacement(tag.getOpenStart(), tag.getOpenEnd() + 1, tag.toString());
 				}

@@ -61,7 +61,7 @@ public class XHTML extends AbstractVisualComponent {
 
 	@Override
 	public String getViewXHTMLCode(ContentContext ctx) throws Exception {
-		return XHTMLHelper.replaceJSTLData(ctx, XHTMLHelper.replaceLinks(ctx, getValue()));
+		return XHTMLHelper.replaceLinks(ctx, XHTMLHelper.replaceJSTLData(ctx, getValue()));
 	}
 
 	@Override
