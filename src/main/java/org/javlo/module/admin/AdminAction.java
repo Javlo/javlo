@@ -1129,13 +1129,13 @@ public class AdminAction extends AbstractModuleAction {
 							File oldLogo = null;
 							if (td.getLink() != null) {
 								oldLogo = new File(URLHelper.mergePath(currentGlobalContext.getStaticFolder(), td.getLogo()));
-							}
+							}							
 							if (file.getName().trim().length() > 0) {
 								String logoPath = URLHelper.mergePath("logo", file.getName());
-								File logo = new File(URLHelper.mergePath(currentGlobalContext.getStaticFolder(), logoPath));
+								File logo = new File(URLHelper.mergePath(currentGlobalContext.getStaticFolder(), logoPath));							
 								td.setLogo(logoPath);
 								ResourceHelper.writeStreamToFile(file.getInputStream(), logo);
-								if (oldLogo != null && oldLogo.exists()) {
+								if (oldLogo != null && oldLogo.exists() && !oldLogo.getName().equals(file.getName())) {									
 									oldLogo.delete();
 								}
 							}	
