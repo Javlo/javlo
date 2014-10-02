@@ -582,6 +582,10 @@ public class Module {
 	public String getActionName() {
 		return config.get("class.action");
 	}
+	
+	public boolean isMobile() {
+		return StringHelper.isTrue(config.get("mobile"));
+	}
 
 	public Properties loadEditI18n(GlobalContext globalContext, HttpSession session) throws IOException {
 		File file = new File(URLHelper.mergePath(moduleRoot.getAbsolutePath(), "/i18n/edit_" + globalContext.getDefaultEditLanguage() + ".properties"));
