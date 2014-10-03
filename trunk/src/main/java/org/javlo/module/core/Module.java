@@ -332,6 +332,7 @@ public class Module {
 	private final Collection<String> jsURI = new LinkedList<String>();
 	private String renderer;
 	private String defaultRenderer;
+	private String mobileRenderer;
 	private String viewRenderer;
 	private Map<String, Box> boxes = new HashMap<String, Box>();
 	private Map<String, Box> defaultBoxes;
@@ -494,6 +495,12 @@ public class Module {
 		if (renderer != null) {
 			renderer = URLHelper.mergePath(path, renderer);
 			defaultRenderer = renderer;
+		}
+		
+		/* main renderer */
+		mobileRenderer = config.get("renderer.mobile");
+		if (mobileRenderer != null) {
+			mobileRenderer = URLHelper.mergePath(path, defaultRenderer);			
 		}
 
 		/* view renderer */
@@ -669,6 +676,10 @@ public class Module {
 
 	public String getRenderer() {		
 		return renderer;
+	}
+	
+	public String getMobileRenderer() {
+		return mobileRenderer;
 	}
 
 	/**
