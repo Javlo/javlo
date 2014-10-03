@@ -1,9 +1,9 @@
 package org.javlo.actions;
 
-import java.io.StringWriter;
 import java.util.LinkedList;
 import java.util.List;
 
+import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 
 import org.javlo.context.ContentContext;
@@ -14,7 +14,6 @@ import org.javlo.module.core.ModuleBean;
 import org.javlo.module.core.ModuleException;
 import org.javlo.module.core.ModulesContext;
 import org.javlo.service.RequestService;
-import org.javlo.utils.JSONMap;
 
 public class MobileAction implements IAction {
 
@@ -27,7 +26,7 @@ public class MobileAction implements IAction {
 		return "mobile";
 	}
 	
-	public static String performModulesList(RequestService rs, HttpSession session, ContentContext ctx, MessageRepository messageRepository, I18nAccess i18nAccess) throws ModuleException {
+	public static String performModulesList(RequestService rs, HttpSession session, ContentContext ctx, MessageRepository messageRepository, I18nAccess i18nAccess, HttpServletRequest request) throws ModuleException {
 		List<ModuleBean> modules = new LinkedList<ModuleBean>();
 		ModulesContext moduleContext = ModulesContext.getInstance(session, ctx.getGlobalContext());
 		for (Module module : moduleContext.getModules()) {			
@@ -35,9 +34,8 @@ public class MobileAction implements IAction {
 				modules.add(new ModuleBean(module));
 			}
 		}
-		StringWriter strWriter = new StringWriter();
-		JSONMap.JSON.toJson(modules, strWriter);
-		ctx.addAjaxData("modules", strWriter.toString());
+		ctx.getAjaxData().put("modules", modules);
+
 		return null;
 	}
 
