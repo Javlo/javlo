@@ -17,6 +17,7 @@ public class Product {
 		private double price;
 		private double reduction;
 		private double vat;
+		private double weight;
 		private String currencyCode;
 		private String name;
 		private String description;
@@ -26,7 +27,7 @@ public class Product {
 		public ProductBean() {
 		};
 
-		public ProductBean(String id, double price, double reduction, double vat, String currencyCode, String name, String description, String imageURL, int quantity) {
+		public ProductBean(String id, double price, double reduction, double vat, String currencyCode, String name, String description, String imageURL, int quantity, double weight) {
 			this.id = id;
 			this.price = price;
 			this.currencyCode = currencyCode;
@@ -36,6 +37,7 @@ public class Product {
 			this.quantity = quantity;
 			this.reduction = reduction;
 			this.vat = vat;
+			this.weight = weight;
 		}
 		
 		@Override
@@ -113,6 +115,14 @@ public class Product {
 
 		public void setVAT(double vat) {
 			this.vat = vat;
+		}
+
+		public double getWeight() {
+			return weight;
+		}
+
+		public void setWeight(double weight) {
+			this.weight = weight;
 		}
 
 	}
@@ -268,7 +278,7 @@ public class Product {
 	}
 
 	public ProductBean getBean() {
-		return new ProductBean(getId(), getPrice(), getReduction(), getVAT(), getCurrencyCode(), getName(), getShortDescription(), getImageURL(), getQuantity());
+		return new ProductBean(getId(), getPrice(), getReduction(), getVAT(), getCurrencyCode(), getName(), getShortDescription(), getImageURL(), getQuantity(), getWeight());
 	}
 
 }

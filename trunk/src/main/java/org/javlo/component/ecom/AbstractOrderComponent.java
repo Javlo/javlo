@@ -65,7 +65,7 @@ public abstract class AbstractOrderComponent extends AbstractVisualComponent {
 		return "order";
 	}
 	
-	protected String getConfirmationEmail(Basket basket) {
+	protected String getConfirmationEmail(ContentContext ctx, Basket basket) {
 		ByteArrayOutputStream outStream = new ByteArrayOutputStream();
 		PrintStream out = new PrintStream(outStream);
 		out.println(getData().get("mail.body"));
@@ -75,7 +75,7 @@ public abstract class AbstractOrderComponent extends AbstractVisualComponent {
 			out.println(getData().get("order.account"));		
 		}
 		out.println("");
-		out.println(getData().get("order.total")+basket.getTotalIncludingVATString());
+		out.println(getData().get("order.total")+basket.getTotalString(ctx,true));
 		if (getData().get("order.communication") != null && getData().get("order.communication").toString().trim().length() > 0) {
 			out.println(getData().get("order.communication")+basket.getStructutedCommunication());
 		}
@@ -133,8 +133,8 @@ public abstract class AbstractOrderComponent extends AbstractVisualComponent {
 				logger.warning("page not found : "+mailingPage);
 			}
 			Map<String,String> params = new HashMap<String,String>();
-			params.put("body", getConfirmationEmail(basket));
-			params.put("total", basket.getTotalIncludingVATString());
+			params.put("body", getConfirmationEmail(ctx,basket));
+			params.put("total", basket.getTotalString(ctx,true));
 			params.put("communication", basket.getStructutedCommunication());
 			params.put("firstName", StringHelper.toHTMLAttribute(basket.getFirstName()));
 			params.put("lastName", StringHelper.toHTMLAttribute(basket.getLastName()));
@@ -151,7 +151,7 @@ public abstract class AbstractOrderComponent extends AbstractVisualComponent {
 				params.put("organization",basket.getOrganization());
 			}
 			
-			double delivery = basket.getDeliveryIncludingVAT();			
+			double delivery = basket.getDelivery(ctx,true);			
 			params.put("delivery", Basket.renderPrice(ctx, delivery, basket.getCurrencyCode()));
 			
 			if (basket.getVATNumber() != null && basket.getVATNumber().trim().length() > 0) {
@@ -180,10 +180,10 @@ public abstract class AbstractOrderComponent extends AbstractVisualComponent {
 		}	
 		InternetAddress to = new InternetAddress(basket.getContactEmail());		
 		if (email == null) {
-			email = getConfirmationEmail(basket);
+			email = getConfirmationEmail(ctx,basket);
 			NetHelper.sendMail(ctx.getGlobalContext(), from, to, null, bcc, subject, email, null, false);
 		} else {					
-			NetHelper.sendMail(ctx.getGlobalContext(), from, to, null, bcc, subject, email, getConfirmationEmail(basket), true);
+			NetHelper.sendMail(ctx.getGlobalContext(), from, to, null, bcc, subject, email, getConfirmationEmail(ctx, basket), true);
 		}
 		
 	}

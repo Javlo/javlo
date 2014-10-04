@@ -73,7 +73,7 @@ public class TransferOrderComponent extends AbstractOrderComponent implements IA
 		
 		AbstractOrderComponent comp = (AbstractOrderComponent) ComponentHelper.getComponentFromRequest(ctx);
 		
-		String msg = XHTMLHelper.textToXHTML(comp.getConfirmationEmail(basket));
+		String msg = XHTMLHelper.textToXHTML(comp.getConfirmationEmail(ctx,basket));
 		
 		msg = "<p>" + i18nAccess.getViewText("ecom.basket-confirmed") + "</p><p>" + msg + "</p>";
 		

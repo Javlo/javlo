@@ -26,7 +26,6 @@ public class EditBasketComponent extends AbstractVisualComponent implements IAct
 	public void prepareView(ContentContext ctx) throws Exception {
 		super.prepareView(ctx);
 		Basket basket = Basket.getInstance(ctx);
-		basket.getDeliveryZones(ctx);
 		boolean reduction = false;
 		for (Product product : basket.getProducts()) {
 			if (product.getReduction() > 0) {
@@ -56,15 +55,17 @@ public class EditBasketComponent extends AbstractVisualComponent implements IAct
 
 		ctx.getRequest().setAttribute("reduction", reduction);
 		ctx.getRequest().setAttribute("basket", basket);
-		double delivery = basket.getDeliveryIncludingVAT();
-		if (delivery > 0) {
-			ctx.getRequest().setAttribute("deliveryStr", Basket.renderPrice(ctx, delivery, basket.getCurrencyCode()));
+		ctx.getRequest().setAttribute("totalNoVAT", basket.getTotalString(ctx, false));
+		ctx.getRequest().setAttribute("total", basket.getTotalString(ctx, true));
+		if (basket.getDeliveryZone() != null) {
+			double delivery = basket.getDelivery(ctx, true);
 			if (delivery > 0) {
 				ctx.getRequest().setAttribute("deliveryStr", Basket.renderPrice(ctx, delivery, basket.getCurrencyCode()));
-
+				if (delivery > 0) {
+					ctx.getRequest().setAttribute("deliveryStr", Basket.renderPrice(ctx, delivery, basket.getCurrencyCode()));
+				}
 			}
 		}
-
 		if (basket.getStep() >= Basket.FINAL_STEP) {
 			ctx.getRequest().setAttribute("reset", "true");
 			Basket.setInstance(ctx, null); // display final step and remove

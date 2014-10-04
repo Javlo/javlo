@@ -2,19 +2,12 @@ package org.javlo.ecom;
 
 import java.beans.Transient;
 import java.io.ByteArrayOutputStream;
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.InputStream;
 import java.io.PrintStream;
 import java.io.Serializable;
-import java.util.ArrayList;
-import java.util.Collections;
 import java.util.Date;
-import java.util.HashMap;
 import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
-import java.util.Map;
 import java.util.Set;
 import java.util.TreeSet;
 
@@ -23,7 +16,7 @@ import org.javlo.ecom.Product.ProductBean;
 import org.javlo.helper.ResourceHelper;
 import org.javlo.helper.StringHelper;
 import org.javlo.helper.URLHelper;
-import org.javlo.utils.CSVFactory;
+import org.javlo.module.ecom.DeliveryPrice;
 
 public class Basket implements Serializable {
 
@@ -62,9 +55,8 @@ public class Basket implements Serializable {
 	private String lastName = "";
 	private String organization = "";
 	private String vatNumber = "";
-	private boolean pickup = false;
 	private String address = "";
-	private String country;
+	private String country = null;
 	private String zip;
 	private String city;
 	private String info;
@@ -194,72 +186,49 @@ public class Basket implements Serializable {
 		return count;
 	}
 
-	public double getTotalIncludingVAT() {
+	public double getTotal(ContentContext ctx, boolean vat) {
 		double result = 0;
 		for (Product.ProductBean product : getProductsBean()) {
-			result = result + (product.getPrice() * (1 - product.getReduction()) * product.getQuantity());
-		}
-		return result + getDeliveryIncludingVAT();
-	}
-
-	public String getTotalIncludingVATString() {
-		return StringHelper.renderPrice(getTotalIncludingVAT(), getCurrencyCode());
-	}
-
-	public double getTotalExcludingVAT() {
-		double result = 0;
-		for (Product.ProductBean product : getProductsBean()) {
-			result = result + (((product.getPrice()) * (1 - product.getReduction()) * product.getQuantity()) / (1 + product.getVAT()));
-		}
-		return result + getDeliveryExcludingVAT();
-	}
-
-	public String getTotalExcludingVATString() {
-		return StringHelper.renderPrice(getTotalExcludingVAT(), getCurrencyCode());
-	}
-
-	public double getDeliveryIncludingVAT() {
-		double result = 0;
-		if (!pickup) {
-			if (getDeliveryZone() == null || getDeliveryZone().getPrices() != null && getDeliveryZone().getPrices().size() > 0) {
-
-				// pick url should exist here, assert ?
-				if (getDeliveryZone() != null) {
-					int number = 0;
-					for (Product product : products) {
-						number = number + (product.getQuantity() * (int) product.getWeight());
-						// result = result + ((product.getPrice() / (1 +
-						// product.getVAT())) * (1 -
-						// product.getReduction())*product.getQuantity());
-					}
-
-					// TODO: ensure increasing order in zones file
-
-					Set<Integer> offsets = new TreeSet<Integer>(getDeliveryZone().getPrices().keySet());
-					int up = 0;
-					for (int offset : offsets) {
-						up = offset;
-						if (up >= number) {
-							break;
-						}
-					}
-					if (up > 0) {
-						int units = number / up;
-						if (number > up) {
-							units = units + 1;
-						}
-						result = units * getDeliveryZone().getPrices().get(up);
-					}
-				} else {
-					return defaultDeleviry;
-				}
+			double vatFactor = 1;
+			if (!vat) {
+				vatFactor = 1 + product.getVAT();
 			}
+			result = result + (product.getPrice() * (1 - product.getReduction()) * product.getQuantity()) / vatFactor;
 		}
-		return result;
+		return result + getDelivery(ctx,vat);
+	}
+	
+	public String getTotalString(ContentContext ctx,boolean vat) {
+		return renderPrice(ctx, getTotal(ctx,vat), getCurrencyCode());
 	}
 
-	public double getDeliveryExcludingVAT() {
-		return getDeliveryIncludingVAT() / 1.21;
+	public String getDeliveryZone() {
+		return getCountry();
+	}
+
+	public double getDelivery(ContentContext ctx, boolean vat) {
+		if (getDeliveryZone() == null) {
+			return 0;
+		}
+		DeliveryPrice priceList = null;
+		try {
+			priceList = DeliveryPrice.getInstance(ctx);
+		} catch (Exception e) {			
+			e.printStackTrace();
+		}
+		if (priceList != null) {
+			double delivery = 0;
+			for (Product product : products) {
+				double vatFactor = 1;
+				if (vat) {
+					vatFactor = 1+product.getVAT();
+				}
+				delivery += priceList.getPrice(product.getQuantity()*product.getWeight(), getDeliveryZone())*vatFactor;
+			}
+			return delivery;
+		} else {
+			return defaultDeleviry;
+		}		
 	}
 
 	public int getSize() {
@@ -360,14 +329,6 @@ public class Basket implements Serializable {
 		this.vatNumber = vatNumber;
 	}
 
-	public boolean isPickup() {
-		return pickup;
-	}
-
-	public void setPickup(boolean pickup) {
-		this.pickup = pickup;
-	}
-
 	public String getAddress() {
 		return address;
 	}
@@ -376,68 +337,7 @@ public class Basket implements Serializable {
 		this.address = address;
 	}
 
-	private DeliveryZone zone;
-
-	public DeliveryZone getDeliveryZone() {
-		return zone;
-	}
-
-	public void setDeliveryZone(DeliveryZone zone) {
-		this.zone = zone;
-	}
-
-	private List<DeliveryZone> zones;
-	
 	private double defaultDeleviry = 0;
-
-	public List<DeliveryZone> getDeliveryZones(ContentContext ctx) {
-		
-		if (zones == null) {
-			try {
-				File zoneFile = new File(URLHelper.mergePath(ctx.getCurrentTemplate().getTemplateRealPath(),"ecom_zones.csv"));;
-				if (!zoneFile.exists()) {
-					return null;
-				}
-				InputStream in = new FileInputStream(zoneFile);
-
-				CSVFactory fact = new CSVFactory(in);
-				String[][] csv = fact.getArray();
-
-				zones = new ArrayList<DeliveryZone>();
-				int i = 1;
-				while (i < csv.length) {
-					String zone = csv[i][0];
-					String pickupURL = csv[i][4];								
-					if (!csv[i][1].trim().equals("")) {
-						zones.add(new DeliveryZone(zone, csv[i][1], ctx));
-						i++;
-					} else {
-						Map<Integer, Float> prices = new HashMap<Integer, Float>();
-						do {
-							int offset = Integer.valueOf(csv[i][2]);
-							float price = Float.valueOf(csv[i][3]);
-							prices.put(offset, price);
-							i++;	
-							
-							if (zone.trim().toLowerCase().equals("default")) {
-								defaultDeleviry = price;
-							}							
-						} while (i < csv.length && csv[i][0].equals(""));
-						DeliveryZone newZone = new DeliveryZone(zone, prices, ctx);
-						if (pickupURL != null && pickupURL.length() > 0) {
-							newZone.setPickupURL(pickupURL);
-						}
-						zones.add(newZone);
-					}
-				}
-				zones.add(new DeliveryZone("other", "", ctx));
-			} catch (Exception e) {
-				e.printStackTrace();
-				zones = Collections.emptyList();
-			}
-		}
-		return zones;
-	}
 
 	public String getVatNumber() {
 		return vatNumber;
@@ -477,22 +377,6 @@ public class Basket implements Serializable {
 
 	public void setInfo(String info) {
 		this.info = info;
-	}
-
-	public DeliveryZone getZone() {
-		return zone;
-	}
-
-	public void setZone(DeliveryZone zone) {
-		this.zone = zone;
-	}
-
-	public List<DeliveryZone> getZones() {
-		return zones;
-	}
-
-	public void setZones(List<DeliveryZone> zones) {
-		this.zones = zones;
 	}
 
 	public void setProducts(List<Product> products) {
@@ -615,8 +499,6 @@ public class Basket implements Serializable {
 		out.println("");
 		out.println("id : " + getId());
 		out.println("user : " + getUser());
-		out.println("total Ex. VAT : " + getTotalExcludingVATString());
-		out.println("total In. VAT : " + getTotalIncludingVATString());
 		out.println("Currency : " + getCurrencyCode());
 		out.println("Date : " + StringHelper.renderSortableTime(getDate()));
 		out.println("Step : " + getStep());

@@ -104,8 +104,8 @@ public class PaypalOrderComponent extends AbstractOrderComponent implements IAct
 		out.println("<input type=\"hidden\" name=\"return\" value=\"" + validReturnURL + "\" />");
 		out.println("<input type=\"hidden\" name=\"cancel_return\" value=\"" + cancelReturnURL + "\" />");
 		out.println("<input type=\"hidden\" name=\"notify_url\" value=\"" + notifyURL + "\" />");
-		if (basket.getDeliveryIncludingVAT() > 0) {
-			out.println("<input type=\"hidden\" name=\"shipping\" value=\"" +  PaypalConnector.formatDouble(basket.getDeliveryIncludingVAT()) + "\" />");			
+		if (basket.getDelivery(ctx,true) > 0) {
+			out.println("<input type=\"hidden\" name=\"shipping\" value=\"" +  PaypalConnector.formatDouble(basket.getDelivery(ctx,true)) + "\" />");			
 		}
 		int index = 1;
 		for (Product product : basket.getProducts()) {
@@ -114,10 +114,10 @@ public class PaypalOrderComponent extends AbstractOrderComponent implements IAct
 			out.println("<input type=\"hidden\" name=\"quantity_" + index + "\" id=\"quantity" + index + "\" value=\"" + product.getQuantity() + "\" />");
 			index++;
 		}
-		if (basket.getDeliveryIncludingVAT() > 0) {
+		if (basket.getDelivery(ctx,true) > 0) {
 			I18nAccess i18nAccess = I18nAccess.getInstance(ctx.getRequest());
 			out.println("<input type=\"hidden\" name=\"item_name_" + index + "\" id=\"" + index + "\" value=\"" + i18nAccess.getViewText("ecom.shipping") + "\" />");
-			out.println("<input type=\"hidden\" name=\"amount_" + index + "\" id=\"amount_" + index + "\" value=\"" + PaypalConnector.formatDouble(basket.getDeliveryIncludingVAT())  + "\" type=\"number\" />");
+			out.println("<input type=\"hidden\" name=\"amount_" + index + "\" id=\"amount_" + index + "\" value=\"" + PaypalConnector.formatDouble(basket.getDelivery(ctx,true))  + "\" type=\"number\" />");
 			out.println("<input type=\"hidden\" name=\"quantity_" + index + "\" id=\"quantity" + index + "\" value=\"1\" />");
 		}
 
@@ -181,7 +181,7 @@ public class PaypalOrderComponent extends AbstractOrderComponent implements IAct
 		// String url = connector.createPayment(basket.getTotalIncludingVAT(),
 		// basket.getCurrencyCode(), ctx.getGlobalContext().getGlobalTitle(),
 		// validReturnURL, cancelReturnURL);
-		String url = connector.createPaypalPayment(basket, validReturnURL, cancelReturnURL);
+		String url = connector.createPaypalPayment(ctx, basket, validReturnURL, cancelReturnURL);
 		basketPersistenceService.storeBasket(basket);
 
 		NetHelper.sendRedirectTemporarily(ctx.getResponse(), url);
@@ -213,7 +213,7 @@ public class PaypalOrderComponent extends AbstractOrderComponent implements IAct
 				NetHelper.sendMailToAdministrator(ctx.getGlobalContext(), "ecom error on paypal payement (performValid) : " + ctx.getGlobalContext().getContextKey(), error);
 				return "Fatal error : dead transaction, please try again.";
 			}
-			logger.info("basket:" + basket.getId() + "total tvac:" + basket.getTotalIncludingVATString() + " token:" + token + " payerID=" + payerID);
+			logger.info("basket:" + basket.getId() + "total tvac:" + basket.getTotalString(ctx,true) + " token:" + token + " payerID=" + payerID);
 			try {
 				String url = connector.executePaypalPayment(token, payerID);
 
@@ -258,7 +258,7 @@ public class PaypalOrderComponent extends AbstractOrderComponent implements IAct
 			logger.severe(error);
 			return "Ecom datal error : please try again.";
 		} else {
-			logger.info("basket returned :" + basket.getId() + " - total tvac:" + basket.getTotalIncludingVATString());
+			logger.info("basket returned :" + basket.getId() + " - total tvac:" + basket.getTotalString(ctx,true));
 			messageRepository.setGlobalMessage(new GenericMessage(i18nAccess.getViewText("ecom.message.final"), GenericMessage.INFO));
 
 			basket.setStep(Basket.FINAL_STEP);
@@ -303,8 +303,8 @@ public class PaypalOrderComponent extends AbstractOrderComponent implements IAct
 			}
 			if (paramName.equals("mc_gross")) {
 				double total = Double.parseDouble(paramValue);
-				if (total != basket.getTotalIncludingVAT()) {
-					fraud = "mc_gross != TotalIncludingVAT  ("+paramValue+" != "+PaypalConnector.formatDouble(basket.getTotalIncludingVAT())+")";
+				if (total != basket.getTotal(ctx,true)) {
+					fraud = "mc_gross != TotalIncludingVAT  ("+paramValue+" != "+PaypalConnector.formatDouble(basket.getTotal(ctx,true))+")";
 				}
 			}
 			str = str + "&" + paramName + "=" + URLEncoder.encode(paramValue);

@@ -1014,6 +1014,11 @@ public class GlobalContext implements Serializable, IPrintInfo {
 		}
 		return dataFolder;
 	}
+	
+	public File getDataBaseFolder() {
+		File dataBaseFolder = new File(getDataFolder(), "db");
+		return dataBaseFolder;
+	}
 
 	public String getStaticFolder() {
 		return URLHelper.mergePath(getDataFolder(), staticConfig.getStaticFolder());

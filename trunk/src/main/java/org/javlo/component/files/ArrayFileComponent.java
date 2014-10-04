@@ -471,7 +471,7 @@ public class ArrayFileComponent extends GenericFile {
 				outArray[y] = new Cell[w];
 				for (int x = 0; x < w; x++) {
 					outArray[y][x] = new Cell(null, outArray, x, y);
-					if (sheet.getRow(x) != null && sheet.getRow(y).getCell(x) != null) {
+					if (sheet.getRow(y) != null && sheet.getRow(y).getCell(x) != null) {
 						outArray[y][x].setValue(renderCell(ctx, readExcelCell(ctx, sheet.getRow(y).getCell(x))));
 					}
 				}

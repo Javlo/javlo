@@ -32,6 +32,8 @@ import org.javlo.message.GenericMessage;
 import org.javlo.message.MessageRepository;
 import org.javlo.module.core.Module;
 import org.javlo.module.core.ModulesContext;
+import org.javlo.module.ecom.DeliveryPrice;
+import org.javlo.service.ListService;
 import org.javlo.service.RequestService;
 import org.javlo.service.social.Facebook;
 import org.javlo.service.social.SocialService;
@@ -42,7 +44,6 @@ import org.javlo.user.IUserInfo;
 import org.javlo.user.User;
 import org.javlo.user.UserFactory;
 import org.javlo.user.UserInfo;
-import org.javlo.user.exception.UserAllreadyExistException;
 
 public class UserRegistration extends AbstractVisualComponent implements IAction {
 
@@ -75,6 +76,11 @@ public class UserRegistration extends AbstractVisualComponent implements IAction
 	@Override
 	public void prepareView(ContentContext ctx) throws Exception {
 		super.prepareView(ctx);
+		
+		DeliveryPrice deliveryPrice = DeliveryPrice.getInstance(ctx);
+		if (deliveryPrice != null) {
+			ListService.getInstance(ctx).addList("countries", deliveryPrice.getZone());			
+		}
 
 		if (ctx.getCurrentUser() != null) {
 			ctx.getRequest().setAttribute("user", ctx.getCurrentUser());
