@@ -31,11 +31,11 @@
 </c:if>
 	<tr>
 		<th colspan="${reduction?'4':'3'}">${i18n.view['ecom.total_evat']}</th>
-		<td>${basket.totalExcludingVATString}</td>
+		<td>${totalNoVAT}</td>
 	</tr>
 	<tr>
 		<th colspan="${reduction?'4':'3'}">${i18n.view['ecom.total_vat']}</th>
-		<td>${basket.totalIncludingVATString}</td>
+		<td>${total}</td>
 	</tr>
 </tfoot>
 

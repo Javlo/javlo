@@ -99,7 +99,7 @@ public class EcomService {
 					int j=0;
 					newData[data.length+i] = new String[LINE_SIZE];
 					newData[data.length+i][0] = "'"+basket.getId();j++;
-					newData[data.length+i][j] = basket.getDeliveryZone() == null ? "" : basket.getDeliveryZone().getName(); j++;
+					newData[data.length+i][j] = basket.getDeliveryZone() == null ? "" : basket.getDeliveryZone(); j++;
 					newData[data.length+i][j] = basket.getContactEmail(); j++;
 					newData[data.length+i][j] = basket.getFirstName(); j++;
 					newData[data.length+i][j] = basket.getLastName(); j++;

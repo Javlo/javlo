@@ -13,7 +13,7 @@
 	</div>
 	<div class="line">
 		<span class="label">${i18n.view['ecom.total_vat']}</span>
-		<span class="value">${basket.totalIncludingVATString}</span>
+		<span class="value">${total}</span>
 	</div>
 </div>
 </c:if>

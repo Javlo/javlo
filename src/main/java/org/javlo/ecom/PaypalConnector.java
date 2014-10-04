@@ -13,6 +13,7 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Properties;
 
+import org.javlo.context.ContentContext;
 import org.javlo.ecom.Product.ProductBean;
 
 import com.paypal.api.payments.Amount;
@@ -68,7 +69,7 @@ public class PaypalConnector {
 		return new DecimalFormat("0.00", DecimalFormatSymbols.getInstance(Locale.ENGLISH)).format(dbl);
 	}
 	
-	public String createPaypalPayment(Basket basket, URL returnURL, URL cancelURL) throws Exception {
+	public String createPaypalPayment(ContentContext ctx,Basket basket, URL returnURL, URL cancelURL) throws Exception {
 		OAuthTokenCredential tokenCredential = new OAuthTokenCredential(user, password);
 
 		String accessToken = tokenCredential.getAccessToken();
@@ -76,7 +77,7 @@ public class PaypalConnector {
 		
 
 		Amount amount = new Amount();
-		amount.setTotal(formatDouble(basket.getTotalIncludingVAT()));
+		amount.setTotal(formatDouble(basket.getTotal(ctx,true)));
 		amount.setCurrency(basket.getCurrencyCode());
 		// amount.setDetails(amountDetails);
 
@@ -165,23 +166,23 @@ public class PaypalConnector {
 
 	public static void main(String[] args) {
 		try {
-			testPayPalFromJavlo();
+			//testPayPalFromJavlo();
 		} catch (Exception e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 	}
 
-	private static void testPayPalFromJavlo() throws Exception {
+	/*private static void testPayPalFromJavlo() throws Exception {
 		PaypalConnector c = new PaypalConnector("https://api.sandbox.paypal.com", "AdXPHxByf43Y9wg8YovePiWLpzqi62ow1M3PYQig61f2mQit5E6_E-hGBLca", "EFof4xCAgQevlK2AX7XJrhkZgfnUPd8iTVLH5_DsR6TvTn64yHiGBPKaGsh3");
 		String url = testCreate(c);
 		openUrl(url);
 		String token = null;
 		String payerID = null;
 		testExecute(c, token, payerID);
-	}
+	}*/
 
-	private static String testCreate(PaypalConnector c) throws Exception {
+	private static String testCreate(ContentContext ctx, PaypalConnector c) throws Exception {
 		Basket basket = new Basket();
 		basket.setInfo("Basket info");
 		basket.setOrganization("Terrieur SA");
@@ -215,7 +216,7 @@ public class PaypalConnector {
 		product.setReduction(0);
 		products.add(product);
 		basket.setProductsBean(products);
-		String approvalUrl = c.createPaypalPayment(basket, new URL("http://localhost:8080/ecom/ok"), new URL("http://localhost:8080/ecom/cancel"));
+		String approvalUrl = c.createPaypalPayment(ctx,basket, new URL("http://localhost:8080/ecom/ok"), new URL("http://localhost:8080/ecom/cancel"));
 		System.out.println("Approval url: " + approvalUrl);
 		return approvalUrl;
 	}

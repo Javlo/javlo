@@ -4,6 +4,7 @@ import java.io.IOException;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.Comparator;
+import java.util.Hashtable;
 import java.util.LinkedHashMap;
 import java.util.LinkedList;
 import java.util.List;
@@ -17,7 +18,9 @@ import org.javlo.context.GlobalContext;
 import org.javlo.navigation.MenuElement;
 
 public class ListService {
-	
+
+	Map<String, List<Item>> localLists = new Hashtable<String, List<Item>>();
+
 	public static class OrderList implements Comparator<Item> {
 
 		@Override
@@ -38,7 +41,7 @@ public class ListService {
 
 	public static class MapAllList implements Map<String, List<Item>> {
 
-			private final ContentContext ctx;
+		private final ContentContext ctx;
 
 		public MapAllList(ContentContext ctx) {
 			this.ctx = ctx;
@@ -164,15 +167,18 @@ public class ListService {
 	}
 
 	public List<Item> getList(ContentContext ctx, String name) throws IOException, Exception {
-		List<Item> outList = ctx.getCurrentTemplate().getAllList(ctx.getGlobalContext(), new Locale(ctx.getRequestContentLanguage())).get(name);
+		List<Item> outList = localLists.get(name);
 		if (outList == null) {
-			ContentService content = ContentService.getInstance(ctx.getRequest());
-			MenuElement page = content.getNavigation(ctx).searchChildFromName(name);
-			if (page != null) {
-				outList = new LinkedList<Item>();
-				Collection<MenuElement> children = page.getChildMenuElements();
-				for (MenuElement child : children) {
-					outList.add(new Item(child.getName(), child.getTitle(ctx)));
+			outList = ctx.getCurrentTemplate().getAllList(ctx.getGlobalContext(), new Locale(ctx.getRequestContentLanguage())).get(name);
+			if (outList == null) {
+				ContentService content = ContentService.getInstance(ctx.getRequest());
+				MenuElement page = content.getNavigation(ctx).searchChildFromName(name);
+				if (page != null) {
+					outList = new LinkedList<Item>();
+					Collection<MenuElement> children = page.getChildMenuElements();
+					for (MenuElement child : children) {
+						outList.add(new Item(child.getName(), child.getTitle(ctx)));
+					}
 				}
 			}
 		}
@@ -181,13 +187,25 @@ public class ListService {
 		}
 		return outList;
 	}
+	
+	public void addList(String name, Collection<String> list) {
+		List<Item> finalList = new LinkedList<ListService.Item>();
+		for (String item : list) {
+			finalList.add(new Item(item,item));
+		}
+		addList(name, finalList);
+	}
+	
+	public void addList(String name, List<Item> list) {
+		localLists.put(name, list);
+	}
 
 	public Map<String, List<Item>> getAllList(ContentContext ctx) {
 		return new MapAllList(ctx);
 	}
-	
-	public static Map<String,String> listToStringMap(List<Item> list) {
-		Map<String,String> outMap = new LinkedHashMap<String, String>();
+
+	public static Map<String, String> listToStringMap(List<Item> list) {
+		Map<String, String> outMap = new LinkedHashMap<String, String>();
 		for (Item item : list) {
 			outMap.put(item.getKey(), item.getValue());
 		}
