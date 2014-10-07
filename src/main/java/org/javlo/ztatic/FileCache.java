@@ -176,7 +176,7 @@ public class FileCache {
 	 * @throws IOException
 	 */
 	public OutputStream saveFile(String key, String fileName) throws IOException {
-		File file = getFileName(key, fileName).getCanonicalFile();
+		File file = getFileName(key, fileName);
 		if (!file.exists()) {
 			try {
 				file.getParentFile().mkdirs();
