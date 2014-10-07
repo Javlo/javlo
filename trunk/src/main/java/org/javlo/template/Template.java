@@ -1659,6 +1659,8 @@ public class Template implements Comparable<Template> {
 
 	public synchronized String getRenderer(ContentContext ctx) throws IOException, BadXMLException {
 		synchronized (ctx.getGlobalContext().getLockImportTemplate()) {
+			
+			System.out.println("***** Template.getRenderer : ctx.getDevice() = "+ctx.getDevice()); //TODO: remove debug trace
 
 			String renderer = getRendererFile(ctx.getDevice());
 
