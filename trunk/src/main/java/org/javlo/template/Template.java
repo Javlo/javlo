@@ -1659,22 +1659,12 @@ public class Template implements Comparable<Template> {
 
 	public synchronized String getRenderer(ContentContext ctx) throws IOException, BadXMLException {
 		synchronized (ctx.getGlobalContext().getLockImportTemplate()) {
-			
-			System.out.println("***** Template.getRenderer : ctx.getDevice() = "+ctx.getDevice()); //TODO: remove debug trace
-
 			String renderer = getRendererFile(ctx.getDevice());
-			
-			System.out.println("***** Template.getRenderer : renderer = "+renderer); //TODO: remove debug trace
-
 			GlobalContext globalContext = GlobalContext.getInstance(ctx.getRequest());
 
 			String jspPath = URLHelper.mergePath(getTemplateTargetFolder(globalContext), renderer);
 			File jspFile = new File(jspPath);
-			
-			System.out.println("***** Template.getRenderer : jspFile = "+jspFile); //TODO: remove debug trace
-
 			if (!jspFile.exists()) {
-				System.out.println("***** Template.getRenderer : FOUND"); //TODO: remove debug trace
 				importTemplateInWebapp(globalContext.getStaticConfig(), ctx);
 				File HTMLFile = new File(URLHelper.mergePath(getTemplateTargetFolder(globalContext), getHTMLFile(ctx.getDevice())));
 				logger.info(jspFile + " not found, try to generate from " + HTMLFile);
@@ -1686,8 +1676,6 @@ public class Template implements Comparable<Template> {
 				int depth = XMLManipulationHelper.convertHTMLtoTemplate(globalContext, this, HTMLFile, jspFile, getMap(), getAreas(), resources, getTemplatePugin(globalContext), ids, isMailing());
 				setHTMLIDS(ids);
 				setDepth(depth);
-			} else {
-				System.out.println("***** Template.getRenderer : NOT FOUND."); //TODO: remove debug trace
 			}
 			return renderer;
 		}
