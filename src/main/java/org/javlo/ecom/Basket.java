@@ -8,8 +8,6 @@ import java.util.Date;
 import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
-import java.util.Set;
-import java.util.TreeSet;
 
 import org.javlo.context.ContentContext;
 import org.javlo.ecom.Product.ProductBean;
@@ -64,6 +62,7 @@ public class Basket implements Serializable {
 	private String transfertAddressLogin = "";
 	private String description;
 	private boolean presumptiveFraud = false;
+	private int promo = 0;
 
 	private int step = START_STEP;
 
@@ -576,6 +575,14 @@ public class Basket implements Serializable {
 
 	public void setPresumptiveFraud(boolean presumptiveFraud) {
 		this.presumptiveFraud = presumptiveFraud;
+	}
+
+	public int getPromo() {
+		return promo;
+	}
+
+	public void setPromo(int promo) {
+		this.promo = promo;
 	}
 
 }

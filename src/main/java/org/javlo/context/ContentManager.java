@@ -42,7 +42,7 @@ public class ContentManager {
 		}
 		return lg;
 	}
-
+	
 	public static String getContextName(HttpServletRequest request) {
 
 		String realPath = RequestService.getURI(request);

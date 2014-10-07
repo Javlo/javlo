@@ -36,8 +36,8 @@ public abstract class AbstractPropertiesComponent extends AbstractVisualComponen
 		out.println("<div class=\"edit\" style=\"padding: 3px;\">");
 		for (String field : fields) {
 			out.println("<div class=\"field-label\">");
-			out.println("<label for=\"" + createKeyWithField(field) + "\">");
-			out.println(i18nAccess.getText("field." + field));
+			out.println("<label for=\"" + createKeyWithField(field) + "\">");						
+			out.println(i18nAccess.getText("field." + field, field));
 			out.println("</label>");
 			out.println("</div>");
 			out.println("<div class=\"field-input\">");
