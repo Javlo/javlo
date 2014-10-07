@@ -464,9 +464,13 @@ public class Edit extends AbstractModuleAction {
 			String previewTargetCode = "<a class=\"action-button\" href=\"" + URLHelper.createResourceURL(ctx, resourceStatus.getTarget().getUri()) + "\">Download</a>";
 			if (StringHelper.isImage(resourceStatus.getSource().getFile().getName())) {
 				previewSourceCode = "<a href=\"" + URLHelper.createResourceURL(ctx, resourceStatus.getSource().getUri()) + "\">";
-				previewSourceCode = previewSourceCode + "<figure><img src=\"" + URLHelper.createTransformURL(ctx, resourceStatus.getSource().getUri(), "preview") + "?hash=" + resourceStatus.getSource().getFile().length() + "\" alt=\"source\" /><figcaption>" + StringHelper.renderSize(resourceStatus.getSource().getFile().length()) + "</figcaption></figure></a>";
+				String url = URLHelper.createTransformURL(ctx, resourceStatus.getSource().getUri(), "preview");
+				url = URLHelper.addParam(url, "hash", ""+resourceStatus.getSource().getFile().length());
+				previewSourceCode = previewSourceCode + "<figure><img src=\"" + url + "\" alt=\"source\" /><figcaption>" + StringHelper.renderSize(resourceStatus.getSource().getFile().length()) + "</figcaption></figure></a>";
 				previewTargetCode = "<a href=\"" + URLHelper.createResourceURL(ctx, resourceStatus.getTarget().getUri()) + "\">";
-				previewTargetCode = previewTargetCode + "<figure><img src=\"" + URLHelper.createTransformURL(ctx, resourceStatus.getTarget().getUri(), "preview") + "?hash=" + resourceStatus.getTarget().getFile().length() + "\"  alt=\"source\" /><figcaption>" + StringHelper.renderSize(resourceStatus.getTarget().getFile().length()) + "</figcaption></figure></a>";
+				url = URLHelper.createTransformURL(ctx, resourceStatus.getTarget().getUri(), "preview");
+				url = URLHelper.addParam(url, "hash", ""+resourceStatus.getTarget().getFile().length());
+				previewTargetCode = previewTargetCode + "<figure><img src=\"" + url + "\"  alt=\"source\" /><figcaption>" + StringHelper.renderSize(resourceStatus.getTarget().getFile().length()) + "</figcaption></figure></a>";
 			}
 			ctx.getRequest().setAttribute("previewSourceCode", previewSourceCode);
 			ctx.getRequest().setAttribute("previewTargetCode", previewTargetCode);

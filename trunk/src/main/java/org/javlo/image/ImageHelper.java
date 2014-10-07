@@ -82,7 +82,7 @@ public class ImageHelper {
 			out += "/none";
 		} else {
 			out += "/" + StringHelper.createFileName(compFilterKey);
-		}
+		}	
 		return out;
 	}
 

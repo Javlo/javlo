@@ -351,7 +351,7 @@ public class ImageTransformServlet extends HttpServlet {
 	}
 
 	private void imageTransform(ContentContext ctx, ImageConfig config, StaticInfo staticInfo, String filter, String area, Template template, IImageFilter comp, File imageFile, String imageName, String inFileExtention) throws IOException {
-
+		
 		String fileSize = StringHelper.renderSize(imageFile.length());
 
 		if (template != null) {
