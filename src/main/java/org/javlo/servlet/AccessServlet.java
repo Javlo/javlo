@@ -812,6 +812,7 @@ public class AccessServlet extends HttpServlet implements IVersion {
 								getServletContext().getRequestDispatcher("/jsp/view/content_view.jsp?area=" + area).include(request, response);
 							} else {
 								String jspPath = template.getRendererFullName(ctx);
+								System.out.println("***** AccessServlet.process : jspPath = "+jspPath); //TODO: remove debug trace
 								getServletContext().getRequestDispatcher(jspPath).include(request, response);
 							}
 						}
