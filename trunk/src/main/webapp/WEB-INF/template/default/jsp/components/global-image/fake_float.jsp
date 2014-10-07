@@ -31,7 +31,7 @@
 <div class="source" style="display: none;"><span class="container">${label}</span></div>
 <script type="text/javascript">
 jQuery("#comp-${compid} img").load(function() {
-	if (jQuery(this).src != "${info.ajaxLoaderURL}" && !jQuery(this).hasClass("refreshed") && jQuery(this).src.indexOf("/transform/")>=0) {
+	if (jQuery(this).attr("src") != "${info.ajaxLoaderURL}" && !jQuery(this).hasClass("refreshed") && jQuery(this).attr("src").indexOf("/transform/")>=0) {
 		floatZone("#comp-${compid} .source .container", "#comp-${compid} .zone1 .container", "#comp-${compid} .zone2 .container", "#comp-${compid} img");
 		var firstText=jQuery("#comp-${compid} .zone1 .container").html();
 		var secondText = jQuery("#comp-${compid} .zone2 .container").html();

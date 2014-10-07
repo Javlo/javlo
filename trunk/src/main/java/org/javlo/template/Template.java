@@ -1219,14 +1219,22 @@ public class Template implements Comparable<Template> {
 		}
 		return this;
 	}
-
+	
 	public String getFolder(GlobalContext globalContext) {
+		if (globalContext != null) {
+			return getFolder(globalContext.getContextKey());
+		} else {
+			return getFolder((String)null);
+		}
+	}
+
+	public String getFolder(String siteKey) {
 		if (dir == null) {
 			return null;
 		} else {
 			String siteFolder = __NO_CONTEXT;
-			if (globalContext != null) {
-				siteFolder = globalContext.getContextKey();
+			if (siteKey != null) {			
+				siteFolder = siteKey;
 			}
 			return dir.getName() + '/' + siteFolder;
 		}

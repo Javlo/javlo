@@ -1,6 +1,8 @@
 package org.javlo.helper;
 
 import java.io.IOException;
+import java.net.MalformedURLException;
+import java.net.URL;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.LinkedList;
@@ -12,7 +14,6 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import org.javlo.actions.ActionManager;
-import org.javlo.component.links.PageMirrorComponent;
 import org.javlo.context.ContentContext;
 import org.javlo.context.EditContext;
 import org.javlo.context.GlobalContext;
@@ -130,6 +131,29 @@ public class ServletHelper {
 		response.setStatus(503);
 		request.getSession().getServletContext().getRequestDispatcher("/jsp/view/error/blocked.jsp").include(request, response);
 		return;
+	}
+	
+	public static final String getContextKey(URL url) {
+		String realPath = url.getPath(); 
+		if (realPath != null && realPath.startsWith("/")) {
+			realPath = realPath.substring(1);
+		}
+		if (realPath != null && realPath.trim().length() > 0) {
+			return StringHelper.split(realPath, "/")[0].toLowerCase();
+		} else {
+			return StringHelper.stringToFileName(url.getHost().toLowerCase());
+		}
+	}
+	
+	public static void main(String[] args) {
+		try {
+			System.out.println("***** ServletHelper.main : 1."+getContextKey(new URL("http://localhost:8080/test")));
+			System.out.println("***** ServletHelper.main : 2."+getContextKey(new URL("http://localhost:8080/")));
+			System.out.println("***** ServletHelper.main : 3."+getContextKey(new URL("http://www.javlo.org/")));
+		} catch (MalformedURLException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} //TODO: remove debug trace
 	}
 
 }

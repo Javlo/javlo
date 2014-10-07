@@ -851,7 +851,7 @@ public class ImageTransformServlet extends HttpServlet {
 				//response.setHeader("Transfer-Encoding", null);
 				Calendar cal = Calendar.getInstance();
 				cal.roll(Calendar.MINUTE, 10);
-				response.setDateHeader("Expires", cal.getTimeInMillis());
+				//response.setDateHeader("Expires", cal.getTimeInMillis());
 				if (lastModified > 0) {
 					response.setDateHeader(NetHelper.HEADER_LAST_MODIFIED, lastModified);
 				}
@@ -1025,12 +1025,12 @@ public class ImageTransformServlet extends HttpServlet {
 				imageTransforming.remove(imageKey);
 			}
 			try {
-				if (out != null) {
+				if (out != null) {					
 					out.close();
 				}
 			} catch (Exception e) {
 				logger.warning(e.getMessage());
-				e.printStackTrace();
+				//e.printStackTrace();
 			}
 		}
 		servletRun--;

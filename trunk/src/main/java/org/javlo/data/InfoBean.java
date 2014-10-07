@@ -1,6 +1,7 @@
 package org.javlo.data;
 
 import java.io.File;
+import java.net.URL;
 import java.text.DateFormatSymbols;
 import java.util.Calendar;
 import java.util.Collection;
@@ -23,6 +24,7 @@ import org.javlo.context.GlobalContext;
 import org.javlo.helper.ElementaryURLHelper;
 import org.javlo.helper.NavigationHelper;
 import org.javlo.helper.NetHelper;
+import org.javlo.helper.ServletHelper;
 import org.javlo.helper.StringHelper;
 import org.javlo.helper.URLHelper;
 import org.javlo.message.GenericMessage;
@@ -456,7 +458,11 @@ public class InfoBean {
 	public String getTemplateFolder() {
 		try {
 			if (ctx.getCurrentTemplate() != null) {
-				return ctx.getCurrentTemplate().getFolder(globalContext);
+				String contextKey = globalContext.getContextKey();
+				if (ctx.getDMZServerInter() != null && ctx.getRenderMode() == ContentContext.PAGE_MODE) {
+					contextKey = ServletHelper.getContextKey(ctx.getDMZServerInter());
+				}
+				return ctx.getCurrentTemplate().getFolder(contextKey);
 			}
 		} catch (Exception e) {
 			e.printStackTrace();

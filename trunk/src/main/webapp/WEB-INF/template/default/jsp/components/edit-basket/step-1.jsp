@@ -42,7 +42,13 @@
 </table>
 
 <form id="validate-basket-form" action="${info.currentURL}" method="post">
-	<div>
+	<c:if test="${promo}">
+	<div class="line">
+		<label for="promo-code"><span>${i18n.view['ecom.promo-code']}</span></label>
+		<div class="input"><input id="promo-code" name="promo-code" /></div>
+	</div>
+	</c:if>
+	<div class="line">
 		<input type="hidden" name="webaction" value="basket.confirm" />
 		<input type="submit" value="${i18n.view['ecom.confirm-basket']}" /> 
 	</div>

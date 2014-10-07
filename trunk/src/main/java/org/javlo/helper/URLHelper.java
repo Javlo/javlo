@@ -769,7 +769,7 @@ public class URLHelper extends ElementaryURLHelper {
 		String templateFolder;
 		templateFolder = template.getLocalWorkTemplateFolder();
 
-		String templateFullPath = URLHelper.mergePath(templateFolder, template.getFolder(null));
+		String templateFullPath = URLHelper.mergePath(templateFolder, template.getFolder((String)null));
 
 		String url = template.getVisualFile();
 

@@ -3,8 +3,11 @@
  */
 package org.javlo.component.ecom;
 
+import java.util.Arrays;
+import java.util.List;
+
 import org.javlo.actions.IAction;
-import org.javlo.component.core.AbstractVisualComponent;
+import org.javlo.component.properties.AbstractPropertiesComponent;
 import org.javlo.context.ContentContext;
 import org.javlo.ecom.Basket;
 import org.javlo.ecom.Product;
@@ -20,7 +23,13 @@ import org.javlo.user.UserInfo;
 /**
  * @author pvandermaesen
  */
-public class EditBasketComponent extends AbstractVisualComponent implements IAction {
+public class EditBasketComponent extends AbstractPropertiesComponent implements IAction {
+	
+	private static final String PROMO_VALUE = "promo-value";
+	private static final String PROMO_KEY = "promo-key";
+	private static final String SHIPPING_MESSAGE = "shipping-message";
+	
+	static final List<String> FIELDS = Arrays.asList(new String[] { SHIPPING_MESSAGE, PROMO_KEY, PROMO_VALUE });
 
 	@Override
 	public void prepareView(ContentContext ctx) throws Exception {
@@ -57,6 +66,7 @@ public class EditBasketComponent extends AbstractVisualComponent implements IAct
 		ctx.getRequest().setAttribute("basket", basket);
 		ctx.getRequest().setAttribute("totalNoVAT", basket.getTotalString(ctx, false));
 		ctx.getRequest().setAttribute("total", basket.getTotalString(ctx, true));
+		ctx.getRequest().setAttribute("promo", !StringHelper.isEmpty(getFieldValue(PROMO_KEY)));
 		if (basket.getDeliveryZone() != null) {
 			double delivery = basket.getDelivery(ctx, true);
 			if (delivery > 0) {
@@ -70,7 +80,7 @@ public class EditBasketComponent extends AbstractVisualComponent implements IAct
 			ctx.getRequest().setAttribute("reset", "true");
 			Basket.setInstance(ctx, null); // display final step and remove
 		} else {
-			ctx.getRequest().setAttribute("shippingMessage", XHTMLHelper.textToXHTML(getValue(), ctx.getGlobalContext()));
+			ctx.getRequest().setAttribute("shippingMessage", XHTMLHelper.textToXHTML(getFieldValue(SHIPPING_MESSAGE), ctx.getGlobalContext()));
 		}
 	}
 
@@ -161,6 +171,11 @@ public class EditBasketComponent extends AbstractVisualComponent implements IAct
 	@Override
 	public boolean isEmpty(ContentContext ctx) {
 		return false;
+	}
+
+	@Override
+	public List<String> getFields(ContentContext ctx) throws Exception {
+		return FIELDS;
 	}
 
 }
