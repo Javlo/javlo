@@ -42,15 +42,6 @@ public class Device implements Serializable {
 		return currentDevice;
 	}
 
-	public static void main(String[] args) {
-		String regDevice = ".*(iphone|htc).*?>ipad";
-		Pattern pattern = Pattern.compile(regDevice);
-
-		System.out.println("**** match ? = " + pattern.matcher("lkdsjf sjfoi iphone ldsjfqoij, kjoij").matches());
-		System.out.println("**** match ? = " + pattern.matcher("lkdsjf sjfoi iphone ipad ldsjfqoij, kjoij").matches());
-		System.out.println("**** match ? = " + pattern.matcher("lkdsjf sjfoi iphone htc ldsjfqoij, kjoij").matches());
-		System.out.println("**** match ? = " + pattern.matcher("lkdsjf sjfoi ipad ldsjfqoij, kjoij").matches());
-	}
 
 	private String userAgent = null;
 
@@ -166,6 +157,12 @@ public class Device implements Serializable {
 
 	public void unforceDefault() {
 		forcedCode = null;
+	}
+	
+	public static void main(String[] args) {
+		String entry = "pdf?hash=1412688870812559429731099310123";
+		String localCode = entry.split("\\.|\\?")[0];
+		System.out.println("localCode = "+localCode);
 	}
 
 }

@@ -209,9 +209,12 @@ public class Image extends AbstractFileComponent implements IImageTitle, IPrevie
 					if (fileLink.equals(currentFileLink)) {
 						selected = " class=\"preview-image selected\"";
 					}
-					String realURL = URLHelper.createResourceURL(ctx, getPage(), '/' + getResourceURL(ctx, image)) + "?CRC32=" + staticInfo.getCRC32();
-					String previewURL = URLHelper.createTransformURL(ctx, getPage(), getResourceURL(ctx, image), "preview") + "?CRC32=" + staticInfo.getCRC32();
-					url = URLHelper.createTransformURL(ctx, getPage(), getResourceURL(ctx, image), "list") + "?hash=" + staticInfo.getVersionHash();
+					String realURL = URLHelper.createResourceURL(ctx, getPage(), '/' + getResourceURL(ctx, image));
+					realURL = URLHelper.addParam(realURL, "CRC32", ""+staticInfo.getCRC32());
+					String previewURL = URLHelper.createTransformURL(ctx, getPage(), getResourceURL(ctx, image), "preview");
+					previewURL = URLHelper.addParam(previewURL,"CRC32",""+ staticInfo.getCRC32());
+					url = URLHelper.createTransformURL(ctx, getPage(), getResourceURL(ctx, image), "list");
+					url = URLHelper.addParam(url,"hash",staticInfo.getVersionHash());
 					String id = "image_name_select__" + getId();
 					// if (i < maxDisplayedImage || isSelectedImage) {
 					out.print("<div " + selected + ">");
