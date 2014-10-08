@@ -188,6 +188,9 @@ public class MailingBuilder {
 			String oneTimeToken = null;
 			try {
 				if (user != null) {
+					if (user.getUserInfo().getToken() == null || user.getUserInfo().getToken().trim().length() == 0) {
+						user.getUserInfo().setToken(StringHelper.getRandomIdBase64());
+					}
 					oneTimeToken = ctx.getGlobalContext().createOneTimeToken(user.getUserInfo().getToken());
 					url = URLHelper.addParam(url, LoginFilter.TOKEN_PARAM, oneTimeToken);
 				}
