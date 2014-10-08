@@ -15,7 +15,7 @@
 }
 
 li .reaction-form {
-	margin-left: 12px;
+	text-align: right;
 }
 
 .reaction textarea {
@@ -25,12 +25,14 @@ li .reaction-form {
 
 .reaction .metapost .authors {
 	font-weight: bold;
+	display: inline-block;
+	width: 50%;
 }
 
 .reaction .metapost .date {
-	display: block;
+	float: right;
 	font-size: 0.9em;
-	font-style: italic;
-	text-align: right;	
+	font-style: italic;		
+	font-weight: normal;
 }
 

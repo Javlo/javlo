@@ -343,11 +343,12 @@ public class ReactionComponent extends DynamicComponent implements IAction {
 			StringWriter writer = new StringWriter();
 			PrintWriter out = new PrintWriter(writer);
 			GlobalContext globalContext = GlobalContext.getInstance(ctx.getRequest());
+			I18nAccess i18nAccess = I18nAccess.getInstance(ctx.getRequest());
 			out.println("new comment add on context : " + globalContext.getContextKey());
 			out.println("");
-			out.println("title : " + reaction.getTitle());
+			out.println(i18nAccess.getViewText("reaction.title", "title")+" : " + reaction.getTitle());
 			out.println("author : " + reaction.getAuthors());
-			out.println("text :");
+			out.println(i18nAccess.getViewText("reaction.text", "text")+" : ");
 			out.println(reaction.getText());
 			out.println("");
 			out.println("validation url : " + currentURL);
@@ -887,7 +888,9 @@ public class ReactionComponent extends DynamicComponent implements IAction {
 					userDisplayName = StringHelper.removeTag(reaction.getAuthors());
 					out.println(userDisplayName);
 				}
-				out.println("</span></div>");
+				out.println("</span><span class=\"first date\">");
+				out.println(StringHelper.renderTime(reaction.getDate()));
+				out.println("</span></div>");				
 
 				if (displayTitle) {
 					out.println("<span class=\"title\">");
@@ -903,9 +906,7 @@ public class ReactionComponent extends DynamicComponent implements IAction {
 				}
 				out.println("</div>");
 
-				out.println("<div class=\"metapost\"><span class=\"first date\">");
-				out.println(StringHelper.renderTime(reaction.getDate()));
-				out.println("</span></div>");
+			
 
 				if (displayReply && !ctx.isAsPageMode()) {
 					renderSendReactionForm(out, id, reaction, userDisplayName, ctx, i18nAccess);
