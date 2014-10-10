@@ -336,7 +336,7 @@ public class Basket implements Serializable {
 		this.address = address;
 	}
 
-	private double defaultDeleviry = 0;
+	private double defaultDeleviry = 9;
 
 	public String getVatNumber() {
 		return vatNumber;
