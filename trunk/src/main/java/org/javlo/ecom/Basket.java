@@ -62,7 +62,7 @@ public class Basket implements Serializable {
 	private String transfertAddressLogin = "";
 	private String description;
 	private boolean presumptiveFraud = false;
-	private int promo = 0;
+	private double userReduction = 0;
 
 	private int step = START_STEP;
 
@@ -194,7 +194,7 @@ public class Basket implements Serializable {
 			}
 			result = result + (product.getPrice() * (1 - product.getReduction()) * product.getQuantity()) / vatFactor;
 		}
-		return result + getDelivery(ctx,vat);
+		return result + (1-getUserReduction()) + getDelivery(ctx,vat);
 	}
 	
 	public String getTotalString(ContentContext ctx,boolean vat) {
@@ -577,12 +577,12 @@ public class Basket implements Serializable {
 		this.presumptiveFraud = presumptiveFraud;
 	}
 
-	public int getPromo() {
-		return promo;
+	public double getUserReduction() {
+		return userReduction;
 	}
 
-	public void setPromo(int promo) {
-		this.promo = promo;
+	public void setUserReduction(double userReduction) {
+		this.userReduction = userReduction;
 	}
 
 }

@@ -1,6 +1,8 @@
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c"
 %><%@ taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions"
-%><%@ taglib uri="http://java.sun.com/jstl/fmt" prefix="fmt" %>
+%><%@ taglib uri="http://java.sun.com/jstl/fmt" prefix="fmt"
+%><jsp:include page="step-1.jsp?nobutton=true" />
+<hr />
 <form method="post" action="${info.currentURL}">
 <fieldset>	
 	<legend>${i18n.view["ecom.delivery-address"]}</legend>
@@ -51,4 +53,3 @@
 	</div>
 </fieldset>
 </form>
-

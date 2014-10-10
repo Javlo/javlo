@@ -53,6 +53,9 @@ public class DeliveryPrice {
 	}
 
 	public double getPrice(double weight, String zone) {
+		if (zone == null || zone.trim().length() == 0) {
+			return 0;
+		}
 		int y = 1;
 		while (y < priceList.length-1 && priceList[y][0].getDoubleValue() < weight) {			
 			y++;			

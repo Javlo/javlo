@@ -158,6 +158,7 @@ public class XLSReader {
 			InputStream in = new FileInputStream(xslxFile);
 			try {
 				XSSFWorkbook workbook = new XSSFWorkbook(in);
+				
 				XSSFSheet sheet = workbook.getSheetAt(0);
 				Iterator<Row> rowIterator = sheet.iterator();
 				int w = 0;
@@ -211,8 +212,6 @@ public class XLSReader {
 			try {
 				HSSFWorkbook workbook = new HSSFWorkbook(in);
 				HSSFSheet sheet = workbook.getSheetAt(0);
-				
-				
 				
 				Iterator<Row> rowIterator = sheet.iterator();
 				int w = 0;
