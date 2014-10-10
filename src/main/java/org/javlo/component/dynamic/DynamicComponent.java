@@ -39,6 +39,7 @@ import org.javlo.fields.MetaField;
 import org.javlo.helper.StringHelper;
 import org.javlo.helper.URLHelper;
 import org.javlo.i18n.I18nAccess;
+import org.javlo.navigation.PageBean;
 import org.javlo.service.resource.Resource;
 import org.javlo.utils.StructuredProperties;
 import org.javlo.ztatic.IStaticContainer;
@@ -132,6 +133,9 @@ public class DynamicComponent extends AbstractVisualComponent implements IStatic
 	}
 
 	public String getViewXHTMLCode(ContentContext ctx, boolean asList) throws Exception {
+		
+		ctx.getRequest().setAttribute("page", new PageBean(ctx, getPage()));
+		
 		if (getStyle().equals(HIDDEN)) {
 			String emptyCode = getEmptyCode(ctx);
 			if (emptyCode != null) {
@@ -158,9 +162,13 @@ public class DynamicComponent extends AbstractVisualComponent implements IStatic
 					if (field != null) {
 						field.fillRequest(ctx);
 					}
+				}				
+				if (ctx.getCurrentTemplate() != null) {
+					String linkToJSP = URLHelper.createStaticTemplateURLWithoutContext(ctx, ctx.getCurrentTemplate(), "" + getListRenderer());
+					return executeJSP(ctx, linkToJSP);
+				} else {
+					return "";
 				}
-				String linkToJSP = URLHelper.createStaticTemplateURLWithoutContext(ctx, ctx.getCurrentTemplate(), "" + getListRenderer());
-				return executeJSP(ctx, linkToJSP);
 			}
 		} else {
 			if (getDynamicRenderer(ctx) != null) {

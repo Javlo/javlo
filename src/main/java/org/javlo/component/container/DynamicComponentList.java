@@ -188,7 +188,7 @@ public class DynamicComponentList extends AbstractPropertiesComponent {
 				realContent = false;
 				e.printStackTrace();
 			}
-		}
+		}		
 		return realContent;
 	}
 

@@ -11,6 +11,7 @@ import org.javlo.component.properties.AbstractPropertiesComponent;
 import org.javlo.context.ContentContext;
 import org.javlo.ecom.Basket;
 import org.javlo.ecom.Product;
+import org.javlo.helper.ComponentHelper;
 import org.javlo.helper.StringHelper;
 import org.javlo.helper.XHTMLHelper;
 import org.javlo.i18n.I18nAccess;
@@ -62,7 +63,10 @@ public class EditBasketComponent extends AbstractPropertiesComponent implements 
 			}
 		}
 
-		ctx.getRequest().setAttribute("reduction", reduction);
+		ctx.getRequest().setAttribute("reduction", reduction);		
+		if (basket.getUserReduction() > 0) {
+			ctx.getRequest().setAttribute("userReduction",  '-'+StringHelper.renderDoubleAsPercentage(basket.getUserReduction()));
+		}
 		ctx.getRequest().setAttribute("basket", basket);
 		ctx.getRequest().setAttribute("totalNoVAT", basket.getTotalString(ctx, false));
 		ctx.getRequest().setAttribute("total", basket.getTotalString(ctx, true));
@@ -93,9 +97,20 @@ public class EditBasketComponent extends AbstractPropertiesComponent implements 
 		return ECOM_COLOR;
 	}
 
-	public static String performConfirm(RequestService rs, ContentContext ctx, MessageRepository messageRepository, I18nAccess i18nAccess) {
+	public static String performConfirm(RequestService rs, ContentContext ctx, MessageRepository messageRepository, I18nAccess i18nAccess) throws Exception {
 		Basket basket = Basket.getInstance(ctx);
-		basket.setStep(Basket.REGISTRATION_STEP);
+		String promoCode = ctx.getRequest().getParameter("promo-code");		
+		if (promoCode != null && promoCode.trim().length() > 0) {
+			EditBasketComponent comp = (EditBasketComponent)ComponentHelper.getComponentFromRequest(ctx);
+			if (promoCode.equals(comp.getFieldValue(PROMO_KEY))) {				
+				basket.setStep(Basket.REGISTRATION_STEP);
+				basket.setUserReduction(Double.parseDouble(comp.getFieldValue(PROMO_VALUE))/100);
+			} else {
+				return "wrong promo code.";
+			}			
+		} else {			
+			basket.setStep(Basket.REGISTRATION_STEP);
+		}
 		return null;
 	}
 
