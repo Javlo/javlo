@@ -53,6 +53,7 @@ public class DeliveryPrice {
 	}
 
 	public double getPrice(double weight, String zone) {
+		System.out.println("***** DeliveryPrice.getPrice : zone = "+zone); //TODO: remove debug trace
 		if (zone == null || zone.trim().length() == 0) {
 			return 0;
 		}

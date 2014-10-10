@@ -167,7 +167,11 @@ public class ListService {
 	}
 
 	public List<Item> getList(ContentContext ctx, String name) throws IOException, Exception {
-		List<Item> outList = localLists.get(name);
+		List<Item> outList = getNavigationList(ctx,name);
+		if (outList != null) {
+			return outList;
+		}
+		outList = localLists.get(name);
 		if (outList == null) {
 			outList = ctx.getCurrentTemplate().getAllList(ctx.getGlobalContext(), new Locale(ctx.getRequestContentLanguage())).get(name);
 			if (outList == null) {
@@ -186,6 +190,20 @@ public class ListService {
 			Collections.sort(outList, new OrderList());
 		}
 		return outList;
+	}
+	
+	public List<Item> getNavigationList(ContentContext ctx, String name) throws Exception {
+		ContentService content = ContentService.getInstance(ctx.getRequest());
+		MenuElement page = content.getNavigation(ctx).searchChildFromName(name);
+		if (page == null) {
+			return null;
+		} else {
+			List<Item> outList = new LinkedList<ListService.Item>();
+			for (MenuElement child : page.getChildMenuElements()) {
+				outList.add(new Item(child.getName(), child.getTitle(ctx)));				
+			}			
+			return outList;
+		}
 	}
 	
 	public void addList(String name, Collection<String> list) {
