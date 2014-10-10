@@ -12,9 +12,11 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.Date;
+import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Properties;
+import java.util.Set;
 import java.util.TreeSet;
 import java.util.logging.Logger;
 
@@ -62,6 +64,9 @@ import org.javlo.user.UserFactory;
 public class ReactionComponent extends DynamicComponent implements IAction {
 	
 	public static String TYPE = "reaction";
+
+	private static final String HTTP_POSTED_IDS_ATTRIBUTE_NAME = ReactionComponent.class.getName() + "#HttpPostIds";
+	private static final int HTTP_POSTED_IDS_MAX_SIZE = 10000;
 
 	public static class Reaction {
 
@@ -229,6 +234,11 @@ public class ReactionComponent extends DynamicComponent implements IAction {
 		
 		RequestService requestService = RequestService.getInstance(ctx.getRequest());
 
+		String httpPostId = requestService.getParameter("httpPostId", null);
+		if (checkAlreadyPostAndRegister(ctx, httpPostId)) {
+			return null;
+		}
+
 		if (requestService.getParameter("fdata", "").length() > 0) {
 			String msg = "stay special field empty.";
 			MessageRepository messageRepository = MessageRepository.getInstance(ctx);
@@ -323,9 +333,62 @@ public class ReactionComponent extends DynamicComponent implements IAction {
 
 		return null;
 	}
-	
-	protected boolean isWithLink(ContentContext ctx) {
-		return StringHelper.isTrue(getConfig(ctx).getProperty("width-link", null));
+
+	private static boolean checkAlreadyPostAndRegister(ContentContext ctx, String httpPostId) {
+		HttpSession session = ctx.getRequest().getSession();
+		Set<String> ids = (Set<String>) session.getAttribute(HTTP_POSTED_IDS_ATTRIBUTE_NAME);
+		if (ids == null) {
+			ids = new HashSet<String>();
+			session.setAttribute(HTTP_POSTED_IDS_ATTRIBUTE_NAME, ids);
+		}
+		synchronized (ids) {
+			if (ids.contains(httpPostId) || ids.size() > HTTP_POSTED_IDS_MAX_SIZE) {
+				return true;
+			} else {
+				ids.add(httpPostId);
+				return false;
+			}
+		}
+	}
+
+	public static final String performDelete(HttpServletRequest request, HttpServletResponse response) throws Exception {
+
+		ContentContext ctx = ContentContext.getContentContext(request, response);
+		ContentService content = ContentService.getInstance(request);
+		IContentVisualComponent comp = content.getComponent(ctx, request.getParameter("comp"));
+
+		RequestService requestService = RequestService.getInstance(ctx.getRequest());
+
+		if (requestService.getParameter("fdata", "").length() > 0) {
+			String msg = "stay special field empty.";
+			MessageRepository messageRepository = MessageRepository.getInstance(ctx);
+			messageRepository.setGlobalMessage(new GenericMessage(msg, GenericMessage.ERROR));
+			return "";
+		}
+
+		if ((comp != null) && (comp instanceof ReactionComponent)) {
+			ReactionComponent reactionComp = (ReactionComponent) comp;
+			String reactionId = requestService.getParameter("reactionId", "").trim();
+
+			User currentUser = getCurrentUser(ctx);
+
+			Reaction currentReaction = null;
+
+			Collection<Reaction> allReactions = reactionComp.getAllReactions(ctx);
+			for (Reaction reaction : allReactions) {
+				if (reaction.getId().equals(reactionId)) {
+					currentReaction = reaction;
+					break;
+				}
+			}
+
+			if (currentReaction != null && reactionComp.isReactionDeletable(ctx, allReactions, currentReaction, currentUser)) {
+				reactionComp.deleteReaction(ctx, reactionId, true);
+			}
+
+		}
+
+		return null;
 	}
 
 	/**
@@ -813,11 +876,12 @@ public class ReactionComponent extends DynamicComponent implements IAction {
 
 		out.println("<div id=\"" + id + "\">");
 
-		User user = getCurrentUser(ctx);
+		User currentUser = getCurrentUser(ctx);
 
-		boolean viewAllowed = isRequestLoginToView(ctx) ? user != null : true;
+		boolean userLogged = currentUser != null;
+		boolean viewAllowed = isRequestLoginToView(ctx) ? userLogged : true;
 		boolean requestLoginToAdd = isRequestLoginToAdd(ctx);
-		boolean addAllowed = viewAllowed && (requestLoginToAdd ? user != null : true);
+		boolean addAllowed = viewAllowed && (requestLoginToAdd ? userLogged : true);
 		boolean replyAllowed = addAllowed && isReplyAllowed(ctx);
 
 		boolean displayUserInfo = requestLoginToAdd;
@@ -832,7 +896,7 @@ public class ReactionComponent extends DynamicComponent implements IAction {
 			if (title != null && title.trim().length() > 0) {
 				out.println("<h3><span>" + title + "</span></h3>");
 			}
-			renderReactions(out, id, "", null, reactions, ctx, i18nAccess, displayUserInfo, displayTitle, replyAllowed);
+			renderReactions(out, id, "", null, reactions, currentUser, ctx, i18nAccess, displayUserInfo, displayTitle, replyAllowed);
 			if (addAllowed) {
 				if (!ctx.isAsPageMode()) {
 					renderSendReactionForm(out, id, null, null, ctx, i18nAccess);
@@ -854,7 +918,7 @@ public class ReactionComponent extends DynamicComponent implements IAction {
 
 	private void renderReactions(PrintWriter out, String id, String parentHtmlIdSuffix, 
 			String parentReactionId, Collection<Reaction> reactions, 
-			ContentContext ctx, I18nAccess i18nAccess, 
+			User currentUser, ContentContext ctx, I18nAccess i18nAccess,
 			boolean displayUserInfo, boolean displayTitle, boolean displayReply) throws Exception {
 		parentReactionId = StringHelper.neverNull(parentReactionId);
 		int i = 0;
@@ -906,12 +970,14 @@ public class ReactionComponent extends DynamicComponent implements IAction {
 				}
 				out.println("</div>");
 
-			
+				if (currentUser != null && isReactionDeletable(ctx, reactions, reaction, currentUser)) {
+					renderDeleteReactionForm(out, htmlIdSuffix, reaction, ctx, i18nAccess);
+				}
 
 				if (displayReply && !ctx.isAsPageMode()) {
 					renderSendReactionForm(out, id, reaction, userDisplayName, ctx, i18nAccess);
 				}
-				renderReactions(out, id, htmlIdSuffix, reaction.getId(), reactions, ctx, i18nAccess, displayUserInfo, displayTitle, displayReply);
+				renderReactions(out, id, htmlIdSuffix, reaction.getId(), reactions, currentUser, ctx, i18nAccess, displayUserInfo, displayTitle, displayReply);
 				out.println("</li>");
 				first = false;
 			}
@@ -919,6 +985,34 @@ public class ReactionComponent extends DynamicComponent implements IAction {
 		if (!first) {
 			out.println("</ul>");
 		}
+	}
+
+	private boolean isReactionDeletable(ContentContext ctx, Collection<Reaction> allReactions, Reaction currentReaction, User currentUser) {
+		if (currentUser != null && currentReaction.getAuthors() != null && currentReaction.getAuthors().equals(currentUser.getLogin())) {
+			for (Reaction reaction : allReactions) {
+				if (currentReaction.getId().equals(reaction.getReplyOf())) {
+					return false;
+				}
+			}
+			return true;
+		}
+		return false;
+	}
+
+	private void renderDeleteReactionForm(PrintWriter out, String id, Reaction reaction, ContentContext ctx, I18nAccess i18nAccess) throws Exception {
+		out.println("<div class=\"reaction-delete-form\">");
+		String reactionId = reaction.getId();
+		out.println("<form id=\"reaction-" + getId() + "\" method=\"post\" action=\"" + URLHelper.createURL(ctx) + "#" + id + "\" class=\"inline_form\" >");
+		out.println("<input type=\"hidden\" name=\"webaction\" value=\"reaction.delete\" />");
+		out.println("<input type=\"hidden\" name=\"comp\" value=\"" + getId() + "\" />");
+		out.println("<input type=\"hidden\" name=\"reactionId\" value=\"" + StringHelper.neverNull(reactionId) + "\" />");
+		out.println("<div style=\"height: 0; width: 0; position: absolute; left: -9999px;\">");
+		out.println("<label for=\"info-" + getId() + "\" >stay empty.</label>");
+		out.println("<input id=\"info-" + getId() + "\" type=\"text\" name=\"fdata\" value=\"\" />");
+		out.println("</div>");
+		out.println("<input class=\"button light needconfirm\" type=\"submit\" name=\"ok\" value=\"" + i18nAccess.getViewText("global.delete") + "\" />");
+		out.println("</form>");
+		out.println("</div>");
 	}
 
 	private void renderSendReactionForm(PrintWriter out, String id, Reaction reaction, String replyToUser, ContentContext ctx, I18nAccess i18nAccess) throws Exception {
@@ -937,6 +1031,7 @@ public class ReactionComponent extends DynamicComponent implements IAction {
 		out.println("<form id=\"reaction-" + getId() + "\" method=\"post\" action=\"" + URLHelper.createURL(ctx) + "#" + id + "\" class=\"big_form\" title=\"" + formTitle + "\">");
 		out.println("<input type=\"hidden\" name=\"webaction\" value=\"reaction.add\" />");
 		out.println("<input type=\"hidden\" name=\"comp\" value=\"" + getId() + "\" />");
+		out.println("<input type=\"hidden\" name=\"httpPostId\" value=\"" + StringHelper.getRandomId() + "\" />");
 		out.println("<input type=\"hidden\" name=\"reactionId\" value=\"" + StringHelper.neverNull(reactionId) + "\" />");
 		Collection<Field> fields = getViewFields(ctx, reactionId);
 		for (Field field : fields) {
@@ -1096,6 +1191,10 @@ public class ReactionComponent extends DynamicComponent implements IAction {
 
 	public boolean isAllowHtml(ContentContext ctx) {
 		return StringHelper.isTrue(getConfig(ctx).getProperty("allow-html", null));
+	}
+
+	protected boolean isWithLink(ContentContext ctx) {
+		return StringHelper.isTrue(getConfig(ctx).getProperty("with-link", null));
 	}
 
 	public int getReactionSize(ContentContext ctx) {
