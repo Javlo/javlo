@@ -135,6 +135,9 @@ public abstract class AbstractOrderComponent extends AbstractVisualComponent {
 			Map<String,String> params = new HashMap<String,String>();
 			params.put("body", getConfirmationEmail(ctx,basket));
 			params.put("total", basket.getTotalString(ctx,true));
+			params.put("totalHVAT", basket.getTotalString(ctx,false));
+			params.put("VAT", basket.getVAT(ctx));
+			params.put("userReduction", StringHelper.renderDoubleAsPercentage(basket.getUserReduction()).replace("%", "&#37;"));
 			params.put("communication", basket.getStructutedCommunication());
 			params.put("firstName", StringHelper.toHTMLAttribute(basket.getFirstName()));
 			params.put("lastName", StringHelper.toHTMLAttribute(basket.getLastName()));
