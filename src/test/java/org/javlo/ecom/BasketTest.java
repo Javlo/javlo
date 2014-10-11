@@ -39,8 +39,7 @@ public class BasketTest extends TestCase {
 			product.setDescription("Short Desc article "+i);
 			double price = Math.random()*100;
 			int q = (int)Math.round(Math.random()*10)+1;
-			total += price*q;
-			System.out.println(i+".  "+q+"x"+price);
+			total += price*q;			
 			product.setPrice(price);
 			product.setCurrencyCode("EUR");
 			product.setQuantity(q);
