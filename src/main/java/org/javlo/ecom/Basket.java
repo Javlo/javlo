@@ -200,6 +200,10 @@ public class Basket implements Serializable {
 	public String getTotalString(ContentContext ctx,boolean vat) {
 		return renderPrice(ctx, getTotal(ctx,vat), getCurrencyCode());
 	}
+	
+	public String getVAT(ContentContext ctx) {
+		return renderPrice(ctx, getTotal(ctx,true)-getTotal(ctx,false), getCurrencyCode());
+	}
 
 	public String getDeliveryZone() {
 		return getCountry();
