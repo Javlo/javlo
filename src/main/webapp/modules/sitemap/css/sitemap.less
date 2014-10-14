@@ -1,0 +1,68 @@
+table form {
+	display: inline;
+	margin-right: 10px;
+}
+
+.action.check {
+	padding: 0;
+	width: 50px;
+}
+
+.action.check input {
+	width: 50px;
+	height: 50px;
+}
+
+.action.button input {
+	margin-right: 10px;
+}
+
+@depthColor: #eec342;
+
+#content tr.depth-0 td {
+	background-color: @depthColor;	 
+}
+
+#content tr.depth-1 td {
+	background-color: lighten(@depthColor, 10%);
+}
+
+#content tr.depth-2 td {
+	background-color: lighten(@depthColor, 20%);
+}
+
+#content tr.depth-3 td {
+	background-color: lighten(@depthColor, 30%);
+}
+
+#content tr.depth-4 td {
+	background-color: lighten(@depthColor, 40%);
+}
+
+#content tr.depth-5 td {
+	background-color: lighten(@depthColor, 20%);
+}
+
+tr.depth-1 .link {
+	padding-left: 20px; 
+}
+
+tr.depth-2 .link {
+	padding-left: 40px; 
+}
+
+tr.depth-3 .link {
+	padding-left: 60px; 
+}
+
+tr.depth-4 .link {
+	padding-left: 80px; 
+}
+
+tr.depth-5 .link {
+	padding-left: 100px; 
+}
+
+tr.depth-6 .link {
+	padding-left: 120px; 
+}

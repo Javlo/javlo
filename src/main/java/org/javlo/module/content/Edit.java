@@ -1432,11 +1432,7 @@ public class Edit extends AbstractModuleAction {
 		if (pagePrevious == null) {
 			page.setPriority(0);
 		} else {
-			if (page.getPreviousBrother() != null && page.getPreviousBrother().equals(pagePrevious)) { // page
-																										// is
-																										// not
-																										// really
-																										// moved
+			if (page.getPreviousBrother() != null && page.getPreviousBrother().equals(pagePrevious)) {
 				return null;
 			}
 			page.setPriority(pagePrevious.getPriority() + 1);
