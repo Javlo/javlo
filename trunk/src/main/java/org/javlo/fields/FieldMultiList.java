@@ -37,26 +37,26 @@ public class FieldMultiList extends Field {
 
 		out.println("<div class=\"line\">");
 		out.println(getEditLabelCode());
-		out.println("	<label for=\"" + getInputName() + "\">" + getLabel(new Locale(globalContext.getEditLanguage(ctx.getRequest().getSession()))) + " : </label>");
-		out.println("	<select multiple=\"multiple\" id=\"" + getInputName() + "\" name=\"" + getInputName() + "\" value=\"" + StringHelper.neverNull(getValue()) + "\">");
+		out.println("	<label>" + getLabel(new Locale(globalContext.getEditLanguage(ctx.getRequest().getSession()))) + " : </label>");
+		// out.println("	<select multiple=\"multiple\" id=\"" + getInputName() +
+		// "\" name=\"" + getInputName() + "\" value=\"" +
+		// StringHelper.neverNull(getValue()) + "\">");
 		Collection<Map.Entry<String, String>> valuesCol = getList(ctx, getListName(), new Locale(ctx.getContextLanguage())).entrySet();
 		Collection<Map.Entry<String, String>> values = valuesCol;
 
 		for (Map.Entry<String, String> value : values) {
-			String selected = "";
+			String checked = "";
 			if (getValue() != null) {
 				if (getValue().contains(value.getKey())) {
-					selected = " selected=\"selected\"";
+					checked = " checked=\"checked\"";
 				}
 			}
-			if (value.getKey() != null) {
-				out.println("		<option value=\"" + value.getKey() + "\"" + selected + ">" + value.getValue() + "</option>");
-			} else {
-				out.println("		<option" + selected + ">" + value.getValue() + "</option>");
-			}
+			String key = StringHelper.neverNull(value.getKey(), value.getValue());
+			String label = StringHelper.neverEmpty(value.getValue(), i18nAccess.getViewText("global.none", "?"));
+			out.println("		<input type=\"checkbox\" id=\"cb-" + key + "\" value=\"" + key + "\"" + checked + "/>" + "<label for=\"cb-" + key + "\">" + label + "</label>");
 		}
 
-		out.println("	</select>");
+		// out.println("	</select>");
 		if (getMessage() != null && getMessage().trim().length() > 0) {
 			out.println("	<div class=\"message " + getMessageTypeCSSClass() + "\">" + getMessage() + "</div>");
 		}

@@ -429,7 +429,12 @@ public class Module {
 			File[] cssFiles = cssFolder.listFiles();
 			Arrays.sort(cssFiles, new FileComparator(FileComparator.NAME, true));
 			for (File file : cssFiles) {
-				if (file.isFile() && StringHelper.getFileExtension(file.getName()).equalsIgnoreCase("css")) {
+				String ext = StringHelper.getFileExtension(file.getName());
+				if (file.isFile() && (ext.equalsIgnoreCase("css") || ext.equalsIgnoreCase("less"))) {
+					String fileName = file.getName();
+					if (ext.equalsIgnoreCase("less")) {
+						fileName = fileName.substring(0, fileName.length()-".less".length())+".css";
+					}
 					String url = URLHelper.mergePath("/", getModuleFolder() + '/' + getName() + '/' + CSS_FOLDER + '/' + file.getName());
 					cssURI.add(url);
 				}
@@ -1032,6 +1037,12 @@ public class Module {
 		Box box = new Box(name, title, renderer, action);
 		mainBoxes.add(box);
 		boxes.put(name, box);
+	}
+	
+	public static void main(String[] args) {
+		String fileName="text.less";
+		fileName = fileName.substring(0, fileName.length()-".less".length())+".css";
+		System.out.println(fileName);
 	}
 
 }
