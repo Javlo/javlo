@@ -155,7 +155,6 @@ public class DynamicComponent extends AbstractVisualComponent implements IStatic
 				}
 			}
 		}
-
 		if (asList) {
 			if (getListRenderer() != null) {
 				for (Field field : fields) {

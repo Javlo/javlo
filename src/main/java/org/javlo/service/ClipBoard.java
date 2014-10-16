@@ -47,7 +47,6 @@ public class ClipBoard {
 				label = comp.getType();
 				e.printStackTrace();
 			}			
-			System.out.println("***** ClipBoard.copy : label = "+label); //TODO: remove debug trace
 		}
 	}
 	

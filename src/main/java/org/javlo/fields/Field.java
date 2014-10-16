@@ -17,9 +17,11 @@ import javax.servlet.http.HttpServletRequest;
 
 import org.codehaus.plexus.util.StringUtils;
 import org.javlo.component.core.IContentVisualComponent;
+import org.javlo.component.dynamic.DynamicComponent;
 import org.javlo.config.StaticConfig;
 import org.javlo.context.ContentContext;
 import org.javlo.context.GlobalContext;
+import org.javlo.helper.ComponentHelper;
 import org.javlo.helper.StringHelper;
 import org.javlo.helper.XHTMLHelper;
 import org.javlo.i18n.I18nAccess;
@@ -36,6 +38,8 @@ public class Field implements Cloneable {
 
 		protected final ContentContext ctx;
 		protected final Locale contentLocale;
+
+		protected FieldBean refBean = null;
 
 		public FieldBean(ContentContext ctx) {
 			this.ctx = ctx;
@@ -60,6 +64,7 @@ public class Field implements Cloneable {
 
 		/**
 		 * i18n value of the field.
+		 * 
 		 * @return
 		 * @throws Exception
 		 */
@@ -138,9 +143,23 @@ public class Field implements Cloneable {
 				return null;
 			}
 		}
-		
-		public boolean isPertinent()  {
+
+		public boolean isPertinent() {
 			return Field.this.isPertinent();
+		}
+
+		public FieldBean getReference() throws Exception {
+			if (Field.this.isI18n()) {
+				return this;
+			} else if (refBean == null) {
+				DynamicComponent ref = Field.this.getReferenceComponent(ctx);
+				if (ref == null) {
+					return this;
+				} else {
+					refBean = ref.getField(ctx, Field.this.getName()).newFieldBean(ctx);
+				}
+			}
+			return refBean;
 		}
 
 	}
@@ -148,7 +167,7 @@ public class Field implements Cloneable {
 	protected static final int MESSAGE_ERROR = 1;
 	protected static final int MESSAGE_INFO = 2;
 
-	protected Properties properties;
+	public Properties properties;
 	private String name;
 	private String id;
 	private String message;
@@ -186,15 +205,15 @@ public class Field implements Cloneable {
 	}
 
 	public Map<String, String> getList(ContentContext ctx, String listName, Locale locale) throws Exception {
-		
+
 		if (keyValue != null) {
 			return keyValue;
 		}
 		keyValue = new LinkedHashMap<String, String>();
 
 		String path = properties.getProperty("list." + listName + ".path");
-		boolean addEmpty = StringHelper.isTrue(properties.getProperty("list."+listName+".empty", null));
-		if (path != null) {		
+		boolean addEmpty = StringHelper.isTrue(properties.getProperty("list." + listName + ".empty", null));
+		if (path != null) {
 			ContentService content = ContentService.getInstance(ctx.getRequest());
 			MenuElement page = content.getNavigation(ctx).searchChild(ctx, path);
 			if (page != null) {
@@ -208,8 +227,8 @@ public class Field implements Cloneable {
 			}
 		} else {
 			for (int i = 0; i < 9999; i++) {
-				String value = properties.getProperty("list." + listName + '.' + i);				
-				if (value != null) {					
+				String value = properties.getProperty("list." + listName + '.' + i);
+				if (value != null) {
 					String key = value;
 					String[] splitedValue = value.split(",");
 					if (splitedValue.length > 1) {
@@ -218,25 +237,25 @@ public class Field implements Cloneable {
 						} else {
 							value = splitedValue[1].trim();
 						}
-						keyValue.put(splitedValue[0].trim(), value);						
-					} else {						
+						keyValue.put(splitedValue[0].trim(), value);
+					} else {
 						if (properties.getProperty("list." + listName + '.' + i + ".key") != null) {
 							I18nAccess i18nAccess = I18nAccess.getInstance(ctx.getRequest());
-							String newValue = i18nAccess.getViewText(properties.getProperty("list." + listName + '.' + i + ".key"),(String)null);
+							String newValue = i18nAccess.getViewText(properties.getProperty("list." + listName + '.' + i + ".key"), (String) null);
 							if (newValue != null && newValue.trim().length() > 0) {
 								value = newValue;
-							}							
+							}
 						}
-						if (properties.getProperty("list." + listName + '.' + i + '.' + locale.getLanguage()) != null) {							
-							value = properties.getProperty("list." + listName + '.' + i + "." + locale.getLanguage());							
-						}						
+						if (properties.getProperty("list." + listName + '.' + i + '.' + locale.getLanguage()) != null) {
+							value = properties.getProperty("list." + listName + '.' + i + "." + locale.getLanguage());
+						}
 						keyValue.put(key, value);
 					}
 				}
 			}
-			//TODO:debug this
-			if(keyValue.size() == 0) {
-				List<Item> list = ListService.getInstance(ctx).getAllList(ctx).get(listName);				
+			// TODO:debug this
+			if (keyValue.size() == 0) {
+				List<Item> list = ListService.getInstance(ctx).getAllList(ctx).get(listName);
 				if (list != null) {
 					keyValue = ListService.listToStringMap(list);
 				}
@@ -274,13 +293,80 @@ public class Field implements Cloneable {
 		return writer.toString();
 	}
 
+	/**
+	 * for field with i18n false, the value come from default language version
+	 * of the page.
+	 * 
+	 * @throws Exception
+	 */
+	public DynamicComponent getReferenceComponent(ContentContext ctx) throws Exception {
+		if (ctx.getRequestContentLanguage().equals(ctx.getGlobalContext().getDefaultLanguage())) {
+			return null;
+		}
+		int componentPosition = ComponentHelper.getComponentPosition(ctx, comp);
+		ContentContext lgCtx = ctx.getContextForDefaultLanguage();
+		IContentVisualComponent refComp = ComponentHelper.getComponentWidthPosition(lgCtx, comp.getPage(), comp.getArea(), comp.getType(), componentPosition);
+		if (refComp == null) {
+			return null;
+		} else {
+			return (DynamicComponent) refComp;
+		}
+	}
+
+	/**
+	 * return true if this field is translated.
+	 * 
+	 * @return
+	 */
+	public boolean isI18n() {
+		String key = createKey("i18n");
+		return StringHelper.isTrue(properties.getProperty(key, "true"));
+	}
+
+	/**
+	 * render the field when he is used as reference value in a other language.
+	 * 
+	 * @param ctx
+	 * @return
+	 * @throws Exception
+	 */
+	protected String getReferenceFieldView(ContentContext ctx) throws Exception {
+		return "<div class=\"slave-field line form-group\"><label>" + getLabel(new Locale(ctx.getContextRequestLanguage())) + "</label>" + getViewXHTMLCode(ctx) + "</div>";
+	}
+
+	protected String referenceEditCode(ContentContext ctx) throws Exception {
+		if (!isI18n()) {
+			DynamicComponent refComp = getReferenceComponent(ctx);
+			if (refComp != null) {
+				return refComp.getField(ctx, getName()).getReferenceFieldView(ctx);
+			}
+		}
+		return null;
+	}
+
+	protected String referenceViewCode(ContentContext ctx) throws Exception {
+		if (!isI18n()) {
+			DynamicComponent refComp = getReferenceComponent(ctx);
+			if (refComp != null) {
+				return refComp.getField(ctx, getName()).getViewListXHTMLCode(ctx);
+			}
+		}
+		return null;
+	}
+
 	public String getEditXHTMLCode(ContentContext ctx) throws Exception {
+
+		String refCode = referenceEditCode(ctx);
+		if (refCode != null) {
+			return refCode;
+		}
+
 		StringWriter writer = new StringWriter();
 		PrintWriter out = new PrintWriter(writer);
 
 		out.println("<div class=\"line form-group\">");
 		out.println(getEditLabelCode());
-		
+
 		out.println("	<label for=\"" + getInputName() + "\">" + getLabel(new Locale(ctx.getContextRequestLanguage())) + " : </label>");
 		String readOnlyHTML = "";
 		if (isReadOnly()) {
@@ -305,12 +391,18 @@ public class Field implements Cloneable {
 			return prefix;
 		}
 	}
-	
-	public int getColsWidth(ContentContext ctx) {		
+
+	public int getColsWidth(ContentContext ctx) {
 		return Integer.parseInt(properties.getProperty("field." + getUnicName() + ".col-width", "12"));
 	}
 
 	public String getViewXHTMLCode(ContentContext ctx) throws Exception {
+
+		String refCode = referenceViewCode(ctx);
+		if (refCode != null) {
+			return refCode;
+		}
+
 		StringWriter writer = new StringWriter();
 		PrintWriter out = new PrintWriter(writer);
 
@@ -374,12 +466,12 @@ public class Field implements Cloneable {
 		} else {
 			outValue = getValue();
 		}
-		if (getRemplacementCode().size()>0) {
+		if (getRemplacementCode().size() > 0) {
 			for (Map.Entry<String, String> entry : getRemplacementCode().entrySet()) {
 				String value = XHTMLHelper.textToXHTML(entry.getValue());
 				value = XHTMLHelper.replaceJSTLData(ctx, value);
-				value = StringUtils.replace(value, "${source}", ""+entry.getKey());
-				outValue = StringUtils.replace(outValue, entry.getKey(),value);
+				value = StringUtils.replace(value, "${source}", "" + entry.getKey());
+				outValue = StringUtils.replace(outValue, entry.getKey(), value);
 			}
 		}
 		return outValue;
@@ -412,7 +504,7 @@ public class Field implements Cloneable {
 		}
 		return properties.getProperty(key);
 	}
-	
+
 	public boolean isSearch() {
 		String key = createKey("search");
 		return StringHelper.isTrue(properties.getProperty(key));
@@ -518,13 +610,13 @@ public class Field implements Cloneable {
 		}
 		String key = properties.getProperty(createKey("label.key"));
 		if (key != null) {
-			label = i18nAccess.getAllText(key.trim(),label);
+			label = i18nAccess.getAllText(key.trim(), label);
 		}
-		
+
 		return label;
 	}
 
-	private String getUserLabel() {
+	protected final String getUserLabel() {
 		return properties.getProperty(createKey("user-label"), null);
 	}
 
@@ -699,40 +791,54 @@ public class Field implements Cloneable {
 	public boolean isContentCachable() {
 		return true;
 	}
-	
+
 	public boolean initContent(ContentContext ctx) throws Exception {
-		String initialValue = getLabel(new Locale(ctx.getRequestContentLanguage()));	
+		String initialValue = getLabel(new Locale(ctx.getRequestContentLanguage()));
 		if (getValue() == null || getValue().trim().length() == 0) {
-			setValue(initialValue);		
+			setValue(initialValue);
 		}
 		return true;
 	}
-	
+
 	public Map<String, String> getRemplacementCode() {
 		if (replacementCode == null) {
 			replacementCode = new HashMap<String, String>();
 			String keyPrefix = createKey("replacement-");
-			for (int i=0; i<1000; i++) {
-				String source = properties.getProperty(keyPrefix+i+".source");
-				String target = properties.getProperty(keyPrefix+i+".target");
+			for (int i = 0; i < 1000; i++) {
+				String source = properties.getProperty(keyPrefix + i + ".source");
+				String target = properties.getProperty(keyPrefix + i + ".target");
 				if (source != null && target != null) {
 					replacementCode.put(source, target);
 				}
-			}			
+			}
 		}
 		return replacementCode;
 	}
-	
+
 	public void reload(ContentContext ctx) {
 		replacementCode = null;
 	}
-	
+
 	public boolean isTitle() {
 		return false;
 	}
-	
+
 	public String getPageDescription() {
 		return null;
 	}
+	
+	public Field getReference(ContentContext ctx) throws Exception {
+		if (isI18n()) {
+			return this;
+		} else {
+			DynamicComponent ref = Field.this.getReferenceComponent(ctx);
+			if (ref == null) {
+				return this;
+			} else {
+				return ref.getField(ctx, Field.this.getName());
+			}
+		}		
+	}
+
 
 }

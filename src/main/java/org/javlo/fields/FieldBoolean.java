@@ -20,6 +20,12 @@ public class FieldBoolean extends Field {
 
 	@Override
 	public String getEditXHTMLCode(ContentContext ctx) throws Exception {
+		
+		String refCode = referenceEditCode(ctx);
+		if (refCode != null) {
+			return refCode;
+		}
+		
 		StringWriter writer = new StringWriter();
 		PrintWriter out = new PrintWriter(writer);
 

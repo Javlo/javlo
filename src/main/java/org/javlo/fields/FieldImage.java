@@ -60,6 +60,12 @@ public class FieldImage extends FieldFile {
 
 	@Override
 	public String getViewXHTMLCode(ContentContext ctx) throws Exception {
+		
+		String refCode = referenceViewCode(ctx);
+		if (refCode != null) {
+			return refCode;
+		}
+		
 		StringWriter writer = new StringWriter();
 		PrintWriter out = new PrintWriter(writer);
 

@@ -148,12 +148,16 @@ public class SiteMapAction extends AbstractModuleAction {
 	private static String renderNavigation(ContentContext ctx, MenuElementBean item) {
 		ByteArrayOutputStream outStream = new ByteArrayOutputStream();
 		PrintStream out = new PrintStream(outStream);
-		out.println("<form action=\"" + URLHelper.createURL(ctx) + "\" method=\"post\"><input type=\"hidden\" name=\"webaction\" value=\"move\" />");
+		out.println("<form action=\"" + URLHelper.createURL(ctx) + "\" method=\"post\" class=\"ajax\"><input type=\"hidden\" name=\"webaction\" value=\"move\" />");
 		out.println("<table class=\"sTable3\" width=\"100%\" cellspacing=\"0\" cellpadding=\"0\">");
 		out.println("<thead><tr>");
 		out.println("<td>&nbsp;</td><td>&nbsp;</td><td>name</td><td>title</td><td>#children</td><td>creator</td>");
 		out.println("</tr></thead>");
-		out.println("<tr class=\"depth-root\">");
+		String depth = "root";
+		if (!item.isRoot()) {
+			depth=""+item.getDepth();
+		}
+		out.println("<tr class=\"depth-"+depth+"\">");
 		out.println(renderMenuElementBean(ctx, item));
 		out.println("</tr>");
 		out.println(renderChildrenNavigation(ctx, item));
@@ -163,9 +167,8 @@ public class SiteMapAction extends AbstractModuleAction {
 	}
 
 	@Override
-	public String prepare(ContentContext ctx, ModulesContext modulesContext) throws Exception {
-		ContentService content = ContentService.getInstance(ctx.getRequest());
-		ctx.getRequest().setAttribute("navigation", renderNavigation(ctx, new MenuElementBean(ctx, content.getNavigation(ctx))));
+	public String prepare(ContentContext ctx, ModulesContext modulesContext) throws Exception {		
+		ctx.getRequest().setAttribute("sitemap", renderNavigation(ctx, new MenuElementBean(ctx, ctx.getCurrentPage())));
 		return super.prepare(ctx, modulesContext);
 	}
 
@@ -223,6 +226,10 @@ public class SiteMapAction extends AbstractModuleAction {
 		}
 		
 		PersistenceService.getInstance(ctx.getGlobalContext()).setAskStore(true);
+		
+		if (ctx.isAjax()) {
+			ctx.getAjaxInsideZone().put("sitemap", renderNavigation(ctx, new MenuElementBean(ctx, ctx.getCurrentPage())));
+		}
 		
 		return null;
 	}
