@@ -1,6 +1,5 @@
 package org.javlo.module.content;
 
-import java.io.File;
 import java.io.IOException;
 import java.util.Collection;
 import java.util.Collections;
@@ -75,7 +74,6 @@ import org.javlo.user.AdminUserFactory;
 import org.javlo.user.AdminUserSecurity;
 import org.javlo.user.IUserFactory;
 import org.javlo.ztatic.FileCache;
-import org.lesscss.LessCompiler;
 
 public class Edit extends AbstractModuleAction {
 
@@ -1553,7 +1551,7 @@ public class Edit extends AbstractModuleAction {
 		return null;
 	}
 
-	public static String performPasteComp(RequestService rs, ContentContext ctx, ContentService content, ClipBoard clipboard, Module currentModule, PersistenceService persistenceService, MessageRepository messageRepository, I18nAccess i18nAccess) throws Exception {
+	public static String performPasteComp(RequestService rs, ContentContext ctx, ContentService content, EditContext editContext, ClipBoard clipboard, Module currentModule, PersistenceService persistenceService, MessageRepository messageRepository, I18nAccess i18nAccess) throws Exception {
 
 		if (!canModifyCurrentPage(ctx) || !checkPageSecurity(ctx)) {
 			messageRepository.setGlobalMessageAndNotification(ctx, new GenericMessage(i18nAccess.getText("action.block"), GenericMessage.ERROR));
@@ -1572,6 +1570,10 @@ public class Edit extends AbstractModuleAction {
 		MenuElement targetPage = content.getNavigation(ctx).searchChildFromId(rs.getParameter("pageContainerID", null));
 		if (targetPage == null) {
 			targetPage = ctx.getCurrentPage();
+		}
+		if (!ctx.isEditPreview()) {
+			ctx.setArea(editContext.getCurrentArea());
+			comp.setArea(null); // paste in current area			
 		}
 		String newId = content.createContent(ctx, targetPage, comp, previous, true);
 		if (ctx.isAjax()) {

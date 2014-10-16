@@ -35,6 +35,9 @@ public class DynamicComponentService {
 	}
 
 	private ContentContext getContentContextWithContent(ContentContext ctx, MenuElement page) throws Exception {
+		if (page.getContentByImplementation(ctx, DynamicComponent.class).size() > 0) {
+			return ctx;
+		}
 		GlobalContext globalContext = GlobalContext.getInstance(ctx.getRequest());
 		ContentContext lgCtx = new ContentContext(ctx);
 		Collection<String> languages = globalContext.getContentLanguages();

@@ -435,7 +435,7 @@ public class Module {
 					if (ext.equalsIgnoreCase("less")) {
 						fileName = fileName.substring(0, fileName.length()-".less".length())+".css";
 					}
-					String url = URLHelper.mergePath("/", getModuleFolder() + '/' + getName() + '/' + CSS_FOLDER + '/' + file.getName());
+					String url = URLHelper.mergePath("/", getModuleFolder() + '/' + getName() + '/' + CSS_FOLDER + '/' + fileName);
 					cssURI.add(url);
 				}
 			}

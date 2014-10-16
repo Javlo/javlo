@@ -213,5 +213,48 @@ public class ComponentHelper {
 		}
 		return null;
 	}
+	
+	/**
+	 * get the position of the component in the list of component with same type with current ContentContext
+	 * return -1 if component is not found. 
+	 * @throws Exception 
+	 */
+	public static int getComponentPosition(ContentContext ctx, IContentVisualComponent comp) throws Exception {
+		int componentPosition = 1;
+		ContentContext ctxCompArea = ctx.getContextWithArea(comp.getArea());
+		ContentElementList content = comp.getPage().getContent(ctxCompArea);
+		while (content.hasNext(ctxCompArea)) {
+				IContentVisualComponent nextComp = content.next(ctxCompArea);
+				if (nextComp.getId().equals(comp.getId())) {
+					return componentPosition;
+				}
+				if (nextComp.getType().equals(comp.getType())) {
+					componentPosition++;
+				}
+		}
+		return -1;
+	}
+	
+	/**
+	 * get the the component with the position in the list of component with same type with current ContentContext
+	 * return null if position is to big 
+	 * @throws Exception 
+	 */
+	public static IContentVisualComponent getComponentWidthPosition(ContentContext ctx, MenuElement page, String area, String type, int position) throws Exception {
+		int componentPosition =	0;
+		ContentContext ctxCompArea = ctx.getContextWithArea(area);
+		ContentElementList content = page.getContent(ctxCompArea);
+		while (content.hasNext(ctxCompArea)) {
+				IContentVisualComponent nextComp = content.next(ctxCompArea);				
+				if (nextComp.getType().equals(type)) {
+					componentPosition++;
+				}
+				if (componentPosition == position) {
+					return nextComp;
+				}
+		}
+		return null;
+	}
+
 
 }

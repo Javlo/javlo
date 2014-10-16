@@ -13,6 +13,16 @@ public class FieldLargeText extends Field {
 
 	@Override
 	public String getEditXHTMLCode(ContentContext ctx) {
+		
+		try {
+			String refCode = referenceEditCode(ctx);
+			if (refCode != null) {
+				return refCode;
+			}
+		} catch (Exception e) { 
+			e.printStackTrace();
+		}
+		
 		StringWriter writer = new StringWriter();
 		PrintWriter out = new PrintWriter(writer);
 		GlobalContext globalContext = GlobalContext.getInstance(ctx.getRequest());
@@ -40,6 +50,10 @@ public class FieldLargeText extends Field {
 	 */
 	@Override
 	public String getDisplayValue(ContentContext ctx, Locale locale) throws Exception {
+		String refCode = referenceViewCode(ctx);
+		if (refCode != null) {
+			return refCode;
+		}
 		return XHTMLHelper.textToXHTML( super.getDisplayValue(ctx, locale));
 	}
 

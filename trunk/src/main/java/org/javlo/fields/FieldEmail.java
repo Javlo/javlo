@@ -36,7 +36,16 @@ public class FieldEmail extends Field {
 	}
 
 	@Override
-	public String getViewXHTMLCode(ContentContext ctx) {
+	public String getViewXHTMLCode(ContentContext ctx) {		
+		try {
+			String refCode = referenceViewCode(ctx);
+			if (refCode != null) {
+				return refCode;
+			}
+		} catch (Exception e) {		
+			e.printStackTrace();
+		}
+		
 		StringWriter writer = new StringWriter();
 		PrintWriter out = new PrintWriter(writer);
 

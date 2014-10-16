@@ -54,8 +54,7 @@ public class DynamicComponentFilter extends AbstractPropertiesComponent implemen
 	@Override
 	protected String getEditXHTMLCode(ContentContext ctx) throws Exception {
 		GlobalContext globalContext = GlobalContext.getInstance(ctx.getRequest());
-		DynamicComponentService service = DynamicComponentService.getInstance(globalContext);
-		I18nAccess i18nAccess = I18nAccess.getInstance(ctx.getRequest());
+		DynamicComponentService service = DynamicComponentService.getInstance(globalContext);		
 
 		ByteArrayOutputStream outStream = new ByteArrayOutputStream();
 		PrintStream out = new PrintStream(outStream);
@@ -152,7 +151,6 @@ public class DynamicComponentFilter extends AbstractPropertiesComponent implemen
 	IFieldContainer getFieldContainer(ContentContext ctx) throws Exception {
 		GlobalContext globalContext = GlobalContext.getInstance(ctx.getRequest());
 		DynamicComponentService service = DynamicComponentService.getInstance(globalContext);
-
 		ContentService content = ContentService.getInstance(ctx.getRequest());
 		List<IFieldContainer> containers = service.getFieldContainers(ctx, content.getNavigation(ctx), getSelectedType());
 		if (containers.size() > 0) {

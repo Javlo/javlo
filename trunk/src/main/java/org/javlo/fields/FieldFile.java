@@ -136,7 +136,7 @@ public class FieldFile extends Field implements IStaticContainer {
 		return list;
 	}
 
-	protected String getPreviewCode(ContentContext ctx) throws Exception {
+	protected String getPreviewCode(ContentContext ctx, boolean title) throws Exception {
 
 		if ((getValue() != null && getValue().trim().length() == 0) || getCurrentFile() == null || getCurrentFile().trim().length() == 0) {
 			return "";
@@ -161,7 +161,9 @@ public class FieldFile extends Field implements IStaticContainer {
 		}
 
 		out.println("<img" + cssClass + "  src=\"" + img + "\" alt=\"" + getCurrentFile() + " preview\"/>");
-		out.println("<div class=\"title\">" + getCurrentFile() + "</div>");
+		if (title) {
+			out.println("<div class=\"title\">" + getCurrentFile() + "</div>");
+		}
 
 		out.close();
 		return writer.toString();
@@ -169,6 +171,12 @@ public class FieldFile extends Field implements IStaticContainer {
 
 	@Override
 	public String getEditXHTMLCode(ContentContext ctx) throws Exception {
+		
+		String refCode = referenceEditCode(ctx);
+		if (refCode != null) {
+			return refCode;
+		}
+		
 		StringWriter writer = new StringWriter();
 		PrintWriter out = new PrintWriter(writer);
 
@@ -211,12 +219,22 @@ public class FieldFile extends Field implements IStaticContainer {
 
 		out.println("</div>");
 		out.println("<div class=\"preview\">");
-		out.println(getPreviewCode(ctx));
+		out.println(getPreviewCode(ctx, true));
 		out.println("</div>");
 		out.println("</fieldset>");
 
 		out.close();
 		return writer.toString();
+	}
+	
+	/**
+	 * render the field when he is used as reference value in a other language.
+	 * @param ctx
+	 * @return
+	 * @throws Exception 
+	 */
+	protected String getReferenceFieldView(ContentContext ctx) throws Exception {
+		return "<div class=\"slave-field line form-group\"><label>"+getLabel(new Locale(ctx.getContextRequestLanguage()))+"</label>"+getPreviewCode(ctx, false)+"</div>";
 	}
 
 	public String getCurrentLink() {
@@ -242,6 +260,13 @@ public class FieldFile extends Field implements IStaticContainer {
 
 	@Override
 	public String getViewXHTMLCode(ContentContext ctx) throws Exception {
+		
+		String refCode = referenceViewCode(ctx);
+		if (refCode != null) {
+			return refCode;
+		}
+		
+		
 		StringWriter writer = new StringWriter();
 		PrintWriter out = new PrintWriter(writer);
 
@@ -372,7 +397,7 @@ public class FieldFile extends Field implements IStaticContainer {
 		properties.setProperty("field." + getUnicName() + ".value.folder", folder);
 	}
 
-	protected String getCurrentFile() {
+	public String getCurrentFile() {
 		return properties.getProperty("field." + getUnicName() + ".value.file", null);
 	}
 
