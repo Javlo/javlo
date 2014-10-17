@@ -262,9 +262,9 @@ public class ModulesContext {
 			try {
 				UserInterfaceContext uic = UserInterfaceContext.getInstance(session, globalContext);
 				if (uic.getCurrentModule() != null) {
-					outContext.setCurrentModule(uic.getCurrentModule());
-					globalContext.setSessionAttribute(session, KEY, outContext);
+					outContext.setCurrentModule(uic.getCurrentModule());					
 				}
+				globalContext.setSessionAttribute(session, KEY, outContext);
 				i18nAccess = I18nAccess.getInstance(globalContext, session);
 				i18nAccess.setCurrentModule(globalContext, session, outContext.getCurrentModule());
 			} catch (Exception e) {

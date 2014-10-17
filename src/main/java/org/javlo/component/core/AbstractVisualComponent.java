@@ -1485,9 +1485,10 @@ public abstract class AbstractVisualComponent implements IContentVisualComponent
 		if (logger.isLoggable(Level.FINE)) {
 			logger.fine("load : " + getType() + " on : " + URLHelper.createURL(ctx));
 		}
+		ctx.getRequest().setAttribute("comp", this);
 		ctx.getRequest().setAttribute("style", getStyle());
 		ctx.getRequest().setAttribute("value", getValue());
-		ctx.getRequest().setAttribute("type", getType());
+		ctx.getRequest().setAttribute("type", getType());		
 		ctx.getRequest().setAttribute("compid", getId());
 		if (getLayout() != null) {
 			ctx.getRequest().setAttribute("layout", getLayout().getStyle());
