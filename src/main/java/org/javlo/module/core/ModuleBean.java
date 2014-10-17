@@ -1,5 +1,7 @@
 package org.javlo.module.core;
 
+import org.javlo.context.ContentContext;
+import org.javlo.helper.URLHelper;
 
 public class ModuleBean {
 	
@@ -7,10 +9,12 @@ public class ModuleBean {
 	private String title;
 	private String url;
 
-	public ModuleBean(Module module) {
+	public ModuleBean(ContentContext ctx, Module module) {
 		setName(module.getName());
 		setTitle(module.getTitle());
-		url = "http://10.0.1.10:8080/edit/fr/root.html?module=" + module.getName();
+		ctx = ctx.getContextForAbsoluteURL();
+		ctx.setRenderMode(ContentContext.EDIT_MODE);
+		url = URLHelper.createModuleURL(ctx, "", module.getName());
 	}
 
 	public String getName() {
