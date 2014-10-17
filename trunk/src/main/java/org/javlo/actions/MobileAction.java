@@ -31,7 +31,7 @@ public class MobileAction implements IAction {
 		ModulesContext moduleContext = ModulesContext.getInstance(session, ctx.getGlobalContext());
 		for (Module module : moduleContext.getModules()) {			
 			if (module.isMobile()) {
-				modules.add(new ModuleBean(module));
+				modules.add(new ModuleBean(ctx, module));
 			}
 		}
 		ctx.getAjaxData().put("modules", modules);

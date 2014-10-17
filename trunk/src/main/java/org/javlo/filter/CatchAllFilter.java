@@ -528,6 +528,7 @@ public class CatchAllFilter implements Filter {
 						messageRepository.setGlobalMessage(new GenericMessage(msg, GenericMessage.ERROR));
 					} else {
 						globalContext.addPrincipal(user);
+						newUser = true;
 					}
 				}
 				UserInterfaceContext.getInstance(((HttpServletRequest) request).getSession(), globalContext);
