@@ -71,5 +71,11 @@ public class FieldDate extends Field implements IDate {
 	public String getType() {
 		return "date";
 	}
+	
+	@Override
+	public boolean initContent(ContentContext ctx) throws Exception {
+		setValue(StringHelper.renderDate(new Date()));
+		return true;
+	}
 
 }

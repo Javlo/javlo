@@ -639,8 +639,6 @@ public class SmartGenericForm extends AbstractVisualComponent implements IAction
 		List<String> badFileFormat = StringHelper.stringToCollection(badFileFormatRAW, ",");	
 		long maxFileSize = comp.getMaxFileSize();
 		
-		System.out.println("***** SmartGenericForm.performSubmit : maxFileSize = "+maxFileSize); //TODO: remove debug trace
-
 		for (FileItem file : requestService.getAllFileItem()) {
 			String ext = StringHelper.getFileExtension(file.getName()).toLowerCase();
 			if (badFileFormat.contains(ext)) {
@@ -717,9 +715,6 @@ public class SmartGenericForm extends AbstractVisualComponent implements IAction
 			logger.warning("spam detected fake field filled : " + comp.getPage().getPath());
 		}
 		
-
-		
-
 		if (errorFields.size() == 0) {
 			String mailContent = new String(outStream.toByteArray());
 			if (comp.isHTMLMail()) {
