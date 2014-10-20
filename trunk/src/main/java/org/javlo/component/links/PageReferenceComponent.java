@@ -1172,7 +1172,7 @@ public class PageReferenceComponent extends ComplexPropertiesLink implements IAc
 				newCtx.setArea(null);
 				ContentContext lgCtx = ctx;
 				if (GlobalContext.getInstance(ctx.getRequest()).isAutoSwitchToDefaultLanguage()) {
-					lgCtx = allChildren[i].getContentContextWithContent(ctx, ctx.getCurrentTemplate().isNavigationArea(ctx.getArea()));
+					lgCtx = allChildren[i].getContentContextWithContent(ctx);
 				}
 				if (filterPage(lgCtx, allChildren[i], filter) && (allChildren[i].getContentDateNeverNull(ctx).after(backDate.getTime()))) {
 					renderPageSelectLine(lgCtx, outTemp, currentSelection, allChildren[i]);
@@ -1578,7 +1578,7 @@ public class PageReferenceComponent extends ComplexPropertiesLink implements IAc
 		for (String pageId : selectedPage) {
 			MenuElement page = navigationService.getPage(ctx, pageId);
 			if (page != null) {
-				ContentContext lgCtx = page.getContentContextWithContent(ctx, ctx.getCurrentTemplate().isNavigationArea(ctx.getArea()));
+				ContentContext lgCtx = page.getContentContextWithContent(ctx);
 				Date pageDate = page.getModificationDate();
 				Date contentDate;
 				contentDate = page.getContentDate(lgCtx);
@@ -1667,7 +1667,13 @@ public class PageReferenceComponent extends ComplexPropertiesLink implements IAc
 		for (MenuElement page : pages) {
 			ContentContext lgCtx = ctx;
 			if (GlobalContext.getInstance(ctx.getRequest()).isAutoSwitchToDefaultLanguage()) {
-				lgCtx = page.getContentContextWithContent(ctx, ctx.getCurrentTemplate().isNavigationArea(ctx.getArea()));
+				lgCtx = page.getContentContextWithContent(ctx);
+			}
+			if (page.getName().equals("press_release_speeches-1")) {
+				ContentContext testCtx = new ContentContext(ctx);
+				for (String dflg : ctx.getGlobalContext().getDefaultLanguages()) {
+					testCtx.setAllLanguage(dflg);
+				}
 			}
 			if (filterPage(lgCtx, page, null)) {
 				if (countPage < getMaxNews(lgCtx)) {

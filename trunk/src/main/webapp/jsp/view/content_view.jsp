@@ -98,7 +98,6 @@ if (specificComp == null) {
 }
 IContentVisualComponent elem = null;
 IContentVisualComponent previousElem = null;
-
 	boolean languageChange = !ctx.getContentLanguage().equals(ctx.getLanguage()); 
 	if (languageChange) {
 		%><div lang="<%=ctx.getContentLanguage()%>"><%
