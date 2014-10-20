@@ -468,7 +468,7 @@ public class AccessServlet extends HttpServlet implements IVersion {
 					}
 				}
 				Template template = ctx.getCurrentTemplate();
-
+				
 				if (ctx.getRenderMode() != ContentContext.EDIT_MODE) {
 					/*** CHECK CONTENT AVAIBILITY ***/
 					boolean checkContentAviability = true;
