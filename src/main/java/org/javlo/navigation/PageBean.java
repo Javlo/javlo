@@ -114,7 +114,7 @@ public class PageBean implements Serializable {
 		return childrenBean;
 	}
 
-	public String getName() {
+	public String getName() {		
 		return page.getName();
 	}
 	
@@ -252,6 +252,10 @@ public class PageBean implements Serializable {
 		}
 	}
 	
+	public String getTechnicalTitle() {
+		return StringHelper.createFileName(getInfo().getTitle()).toLowerCase();
+	}
+	
 	public String getTitleOrSubtitle() {
 		try {
 			String title = page.getContentTitle(ctx);
@@ -307,7 +311,6 @@ public class PageBean implements Serializable {
 		}
 	}
 
-	
 	public boolean isChildrenAssociation() {
 		return page.isChildrenAssociation();
 	}

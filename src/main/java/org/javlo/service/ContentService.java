@@ -300,6 +300,7 @@ public class ContentService implements IPrintInfo {
 		bean.setArea(area);
 		bean.setAuthors(ctx.getCurrentEditUser().getLogin());
 		page.addContent(parentId, bean, releaseCache);
+		
 		return id;
 	}
 

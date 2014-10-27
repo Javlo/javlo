@@ -830,7 +830,7 @@ public class DynamicComponent extends AbstractVisualComponent implements IStatic
 	public String getTextTitle(ContentContext ctx) {
 		try {
 			for (Field field : getFields(ctx)) {
-				if (field.isTitle()) {
+				if (field.isTitle()) {					
 					return field.getValue();
 				}
 			}

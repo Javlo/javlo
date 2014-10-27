@@ -32,6 +32,7 @@ import org.javlo.component.core.IContentVisualComponent;
 import org.javlo.config.StaticConfig;
 import org.javlo.context.ContentContext;
 import org.javlo.context.GlobalContext;
+import org.javlo.helper.NetHelper;
 import org.javlo.helper.ResourceHelper;
 import org.javlo.helper.StringHelper;
 import org.javlo.helper.URLHelper;
@@ -39,6 +40,7 @@ import org.javlo.helper.XHTMLHelper;
 import org.javlo.helper.Comparator.StringComparator;
 import org.javlo.mailing.MailService;
 import org.javlo.message.GenericMessage;
+import org.javlo.navigation.MenuElement;
 import org.javlo.service.CaptchaService;
 import org.javlo.service.ContentService;
 import org.javlo.service.RequestService;
@@ -47,8 +49,14 @@ import org.javlo.utils.CollectionAsMap;
 import org.javlo.ztatic.StaticInfo;
 
 /**
- * store html form in csv file and send email with parameters. For use this component you need to create a renderer with a html form. this form need at least two field : <code>
- * &lt;input type=&quot;hidden&quot; name=&quot;webaction&quot; value=&quot;gform-registering.submit&quot; /&gt;<br/>&lt;input type=&quot;hidden&quot; name=&quot;comp_id&quot; value=&quot;${comp.id}&quot; /&gt; </code>. You can define required field with uppercase letter : "Firstname" > requierd, "firstname" > not requiered. for use captacha you need to tag : <code>&lt;img src=&quot;${info.captchaURL}&quot; alt=&quot;captcha&quot; /&gt;&lt;/label&gt;<br/>&lt;input type=&quot;text&quot; id=&quot;captcha&quot; name=&quot;captcha&quot; value=&quot;&quot; /&gt;</code> <h4>JSTL variable :</h4>
+ * store html form in csv file and send email with parameters. For use this
+ * component you need to create a renderer with a html form. this form need at
+ * least two field : <code>
+ * &lt;input type=&quot;hidden&quot; name=&quot;webaction&quot; value=&quot;gform-registering.submit&quot; /&gt;<br/>&lt;input type=&quot;hidden&quot; name=&quot;comp_id&quot; value=&quot;${comp.id}&quot; /&gt; </code>
+ * . You can define required field with uppercase letter : "Firstname" >
+ * requierd, "firstname" > not requiered. for use captacha you need to tag :
+ * <code>&lt;img src=&quot;${info.captchaURL}&quot; alt=&quot;captcha&quot; /&gt;&lt;/label&gt;<br/>&lt;input type=&quot;text&quot; id=&quot;captcha&quot; name=&quot;captcha&quot; value=&quot;&quot; /&gt;</code>
+ * <h4>JSTL variable :</h4>
  * <ul>
  * <li>inherited from {@link AbstractVisualComponent}</li>
  * <li>{@link String} msg : message to display.</li>
@@ -109,7 +117,12 @@ public class GenericForm extends AbstractVisualComponent implements IAction {
 					String value = outRenderers.get(key);
 
 					/*
-					 * if (!value.startsWith(workTemplate)) { ContentContext notAbstCtx = new ContentContext(ctx); notAbstCtx.setAbsoluteURL(false); value = URLHelper.createStaticTemplateURLWithoutContext(notAbstCtx, ctx.getCurrentTemplate(), value); outRenderers.remove(key); outRenderers.put(key, value); }
+					 * if (!value.startsWith(workTemplate)) { ContentContext
+					 * notAbstCtx = new ContentContext(ctx);
+					 * notAbstCtx.setAbsoluteURL(false); value =
+					 * URLHelper.createStaticTemplateURLWithoutContext
+					 * (notAbstCtx, ctx.getCurrentTemplate(), value);
+					 * outRenderers.remove(key); outRenderers.put(key, value); }
 					 */
 
 					outRenderers.put(key, value);
@@ -264,7 +277,7 @@ public class GenericForm extends AbstractVisualComponent implements IAction {
 
 		/** check captcha **/
 		String captcha = requestService.getParameter("captcha", null);
-		
+
 		if (comp.isCaptcha(ctx)) {
 			if (captcha == null || CaptchaService.getInstance(request.getSession()).getCurrentCaptchaCode() == null || !CaptchaService.getInstance(request.getSession()).getCurrentCaptchaCode().equals(captcha)) {
 				GenericMessage msg = new GenericMessage(comp.getLocalConfig(false).getProperty("error.captcha", "bad captcha."), GenericMessage.ERROR);
@@ -364,13 +377,16 @@ public class GenericForm extends AbstractVisualComponent implements IAction {
 					fakeFilled = true;
 				}
 
-				if (finalValue.trim().length() == 0 && StringHelper.containsUppercase(key)) { // needed field
+				if (finalValue.trim().length() == 0 && StringHelper.containsUppercase(key)) { // needed
+																								// field
 					errorFields.add(key);
 					GenericMessage msg = new GenericMessage(comp.getLocalConfig(false).getProperty("error.required", "please could you fill all required fields."), GenericMessage.ERROR);
 					request.setAttribute("msg", msg);
 				}
-				
-				if (finalValue.trim().length() == 0 && key.toLowerCase().trim().equals("email")) { // valid email field
+
+				if (finalValue.trim().length() == 0 && key.toLowerCase().trim().equals("email")) { // valid
+																									// email
+																									// field
 					errorFields.add(key);
 					GenericMessage msg = new GenericMessage(comp.getLocalConfig(false).getProperty("error.email-format", "your email format is'nt correct."), GenericMessage.ERROR);
 					request.setAttribute("msg", msg);
@@ -418,15 +434,35 @@ public class GenericForm extends AbstractVisualComponent implements IAction {
 						new InternetAddress(tmpEmail);
 						emailFrom = tmpEmail;
 					} catch (Exception e) {
+						logger.warning("Strange from email = "+tmpEmail);
 						logger.warning(e.getMessage());
 					}
 				}
-				String emailTo = comp.getLocalConfig(false).getProperty("mail.to", globalContext.getAdministratorEmail());
+
+				String emailTo = null;
+				String emailToField = comp.getLocalConfig(false).getProperty("mail.to.field", null);
+				if (emailToField != null && requestService.getParameter(emailToField, "") != null) {
+					String tmpEmail = requestService.getParameter(emailToField, "");
+					try {
+						new InternetAddress(tmpEmail);
+						emailTo = tmpEmail;
+					} catch (Exception e) {
+						emailTo = null;
+						logger.warning("Strange to email = "+tmpEmail);
+						logger.warning(e.getMessage());
+					}
+				}
+
+				if (emailTo == null) {
+					emailTo = comp.getLocalConfig(false).getProperty("mail.to", globalContext.getAdministratorEmail());
+				}
 				String emailCC = comp.getLocalConfig(false).getProperty("mail.cc", null);
 				String emailBCC = comp.getLocalConfig(false).getProperty("mail.bcc", null);
 
-				try {
+				String pageMailing = comp.getLocalConfig(false).getProperty("page.confirmation", null);
+				MenuElement pageConfirmation = content.getNavigation(ctx).searchChildFromName(pageMailing);
 
+				try {
 					MailService mailService = MailService.getInstance(globalContext.getStaticConfig());
 					InternetAddress fromEmail = new InternetAddress(emailFrom);
 					InternetAddress toEmail = new InternetAddress(emailTo);
@@ -449,6 +485,12 @@ public class GenericForm extends AbstractVisualComponent implements IAction {
 					}
 
 					mailService.sendMail(null, fromEmail, toEmail, ccList, bccList, subject, mailContent, comp.isHTMLMail());
+
+					if (pageConfirmation != null) {
+						logger.info("send mailing from:" + emailFrom + " to:" + emailTo);
+						NetHelper.sendPageByMailing(ctx, pageConfirmation, emailFrom, emailTo, params);
+					}
+
 				} catch (Exception e) {
 					e.printStackTrace();
 					GenericMessage msg = new GenericMessage(comp.getLocalConfig(false).getProperty("message.error", "technical error."), GenericMessage.ERROR);
