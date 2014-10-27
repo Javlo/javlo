@@ -111,6 +111,12 @@ public class CreateArticle implements IInteractiveMacro, IAction {
 			Date articleDate;
 			if (date != null && date.trim().length() > 0) {
 				articleDate = StringHelper.parseDate(date);
+				Calendar cal = Calendar.getInstance();
+				cal.setTime(articleDate);
+				Calendar now = Calendar.getInstance();
+				cal.set(Calendar.HOUR, now.get(Calendar.HOUR));
+				cal.set(Calendar.MINUTE, now.get(Calendar.MINUTE));
+				articleDate = cal.getTime();
 			} else {
 				articleDate = new Date();
 			}

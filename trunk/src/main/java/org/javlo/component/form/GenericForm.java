@@ -70,7 +70,7 @@ import org.javlo.ztatic.StaticInfo;
  * <li>error.captcha : message if catacha value is'nt correct.</li>
  * <li>message.thanks : confirmation message.</li>
  * <li>field.fake : name of fake field.</li>
- * <li>
+ * </ul>
  * 
  * @author Patrick Vandermaesen
  * 

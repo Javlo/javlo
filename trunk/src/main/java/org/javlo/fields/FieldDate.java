@@ -5,6 +5,7 @@ import java.io.StringWriter;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.Locale;
 
 import org.javlo.component.core.IDate;
 import org.javlo.context.ContentContext;
@@ -50,11 +51,10 @@ public class FieldDate extends Field implements IDate {
 		}
 
 		String format = getMetaData("format");
-
 		if (format == null) {
 			out.println(XHTMLHelper.textToXHTML(displayStr));
 		} else {
-			SimpleDateFormat dateFormat = new SimpleDateFormat(format);
+			SimpleDateFormat dateFormat = new SimpleDateFormat(format, new Locale(ctx.getRequestContentLanguage()));
 			try {
 				out.println(dateFormat.format(StringHelper.parseDate(displayStr)));
 			} catch (ParseException e) {
@@ -76,6 +76,11 @@ public class FieldDate extends Field implements IDate {
 	public boolean initContent(ContentContext ctx) throws Exception {
 		setValue(StringHelper.renderDate(new Date()));
 		return true;
+	}
+	
+	@Override
+	public String getSpecialClass() {
+		return " datepicker";
 	}
 
 }

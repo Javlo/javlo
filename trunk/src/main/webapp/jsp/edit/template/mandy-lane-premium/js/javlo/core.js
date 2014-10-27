@@ -16,7 +16,7 @@ jQuery(document).bind("ajaxUpdate",function () {
 	
 	//////////// DATE PICKER /////////////////
 	jQuery.datepicker.setDefaults( jQuery.datepicker.regional[ editLanguage ] );
-	//jQuery( ".datepicker" ).datepicker({maxDate: "+0D", dateFormat: dateFormat});
+	//jQuery( ".datepicker" ).datepicker({maxDate: "+0D", dateFormat: dateFormat});	
 	jQuery( ".datepicker" ).datepicker({ dateFormat: "dd/mm/yy", constrainInput: false });
 	fullHeight();
 	

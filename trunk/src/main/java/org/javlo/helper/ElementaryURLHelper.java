@@ -745,6 +745,19 @@ public abstract class ElementaryURLHelper {
 			return new URL("http://www.gravatar.com/avatar/"+StringHelper.md5Hex(email));
 		}
 	}
+	
+	/**
+	 * remove static folder at the start of the path.
+	 */
+	public static String removeStaticFolderPrefix(ContentContext ctx, String path) {
+		StaticConfig staticConfig = StaticConfig.getInstance(ctx.getRequest().getSession());
+		String startStatic = URLHelper.mergePath("/", staticConfig.getStaticFolder());
+		if (path.startsWith(startStatic)) {
+			return StringUtils.replaceOnce(path, startStatic, "");
+		} else {
+			return path;
+		}
+	}
 
 
 }
