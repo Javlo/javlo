@@ -117,6 +117,7 @@ public class CreateArticle implements IInteractiveMacro, IAction {
 			Calendar cal = Calendar.getInstance();
 			cal.setTime(articleDate);
 			MenuElement rootPage = ContentService.getInstance(ctx.getRequest()).getNavigation(ctx).searchChildFromName(pageName);
+			MenuElement newPage = null;
 			if (rootPage != null) {				
 				List<String> roles = new LinkedList<String>();
 				Set<String> roleSet = new HashSet<String>();
@@ -133,7 +134,7 @@ public class CreateArticle implements IInteractiveMacro, IAction {
 				String mountPageName = MacroHelper.getMonthPageName(ctx, yearPage.getName(), articleDate);
 				MenuElement mountPage = ContentService.getInstance(ctx.getRequest()).getNavigation(ctx).searchChildFromName(mountPageName);
 				if (mountPage != null) {
-					MenuElement newPage = MacroHelper.createArticlePageName(ctx, mountPage);
+					newPage = MacroHelper.createArticlePageName(ctx, mountPage);
 					if (newPage != null) {
 						if (create) {							
 							GlobalContext globalContext = GlobalContext.getInstance(ctx.getRequest());
@@ -211,12 +212,17 @@ public class CreateArticle implements IInteractiveMacro, IAction {
 			}
 			MacroModuleContext.getInstance(ctx.getRequest()).setActiveMacro(null);
 			if (ctx.isEditPreview()) {
-				if (newURL != null) {					
+				if (newURL != null && create) {					
 					newEditURL = URLHelper.addParam(newEditURL, "module", "content");
 					newEditURL = URLHelper.addParam(newEditURL, "webaction", "editPreview");
 					newEditURL = URLHelper.addParam(newEditURL, "previewEdit", "true");
-				}				
-				NetHelper.sendRedirectTemporarily(ctx.getResponse(), newEditURL);
+				}
+				if (create) {
+					NetHelper.sendRedirectTemporarily(ctx.getResponse(), newEditURL);
+				} else {			
+					ctx.setParentURL(newURL);
+					ctx.setClosePopup(true);
+				}
 				
 				//ctx.getRequest().getRequestDispatcher(editPressrealseURL).forward(ctx.getRequest(), ctx.getResponse());
 				

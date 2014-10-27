@@ -102,7 +102,7 @@ public class Description extends AbstractVisualComponent {
 	}
 
 	private boolean isNotDisplayHTML(ContentContext ctx) {
-		return StringHelper.neverNull(getStyle(ctx)).equals("hidden");
+		return StringHelper.neverNull(getStyle()).equals("hidden");
 	}
 
 	@Override

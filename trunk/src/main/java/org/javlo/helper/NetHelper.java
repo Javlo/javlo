@@ -3,7 +3,7 @@ package org.javlo.helper;
 import java.awt.image.BufferedImage;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
-import java.io.File;
+import java.io.DataOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
@@ -16,6 +16,7 @@ import java.net.UnknownHostException;
 import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Map;
 import java.util.zip.CRC32;
 
 import javax.imageio.ImageIO;
@@ -31,6 +32,8 @@ import org.javlo.context.GlobalContext;
 import org.javlo.image.ImageHelper;
 import org.javlo.image.ImageSize;
 import org.javlo.mailing.MailService;
+import org.javlo.mailing.MailingBuilder;
+import org.javlo.navigation.MenuElement;
 import org.javlo.service.resource.Resource;
 import org.javlo.utils.MapCollectionWrapper;
 import org.javlo.ztatic.FileCache;
@@ -58,11 +61,11 @@ public class NetHelper {
 	public static String readPageForMailing(URL url) throws Exception {
 		return readPage(url, true, true, null, null, null);
 	}
-	
+
 	public static String readPageForMailing(URL url, String login, String pwd) throws Exception {
 		return readPage(url, true, true, null, login, pwd);
 	}
-	
+
 	public static String readPage(URL url) throws Exception {
 		return readPage(url, false, false, null, null, null);
 	}
@@ -89,7 +92,7 @@ public class NetHelper {
 	 */
 	private static String readPage(URL url, boolean cssInline, boolean mailing, String userAgent, final String userName, final String password) throws Exception {
 
-		logger.info("create PDF from : " + url + "  user:" + userName + "  password found:" + (StringHelper.neverNull(password).length() > 1));
+		logger.info("readPage : " + url + "  user:" + userName + "  password found:" + (StringHelper.neverNull(password).length() > 1));
 
 		if (null != userName && userName.trim().length() != 0 && null != password && password.trim().length() != 0) {
 
@@ -113,23 +116,45 @@ public class NetHelper {
 
 		InputStream in = null;
 		try {
-			URLConnection conn = url.openConnection();
+			
+			String query = url.getQuery();
+			url = removeParams(url);
+
+			HttpURLConnection connection = (HttpURLConnection) url.openConnection();
+			connection.setRequestMethod("POST");
+			connection.setRequestProperty("Content-Type", "application/x-www-form-urlencoded");
+
+			connection.setRequestProperty("Content-Length", "" + Integer.toString(query.getBytes().length));
+			//connection.setRequestProperty("Content-Language", "en-US");
+
+			connection.setUseCaches(false);
+			connection.setDoInput(true);
+			connection.setDoOutput(true);
+			
+			connection.setAllowUserInteraction(true);
+			connection.setInstanceFollowRedirects(true);
+
+			// Send request
+			DataOutputStream wr = new DataOutputStream(connection.getOutputStream());
+			wr.writeBytes(query);
+			wr.flush();
+			wr.close();
+
+			URLConnection conn = connection;
 
 			if (conn instanceof HttpURLConnection) {
 				HttpURLConnection httpConn = (HttpURLConnection) conn;
 				if (userAgent != null) {
 					httpConn.setRequestProperty("User-Agent", userAgent);
-				}
-				httpConn.setDoInput(true);
-				httpConn.setAllowUserInteraction(true);
-				httpConn.setInstanceFollowRedirects(true);
+				}				
 				if (httpConn.getResponseCode() != HttpURLConnection.HTTP_OK && httpConn.getResponseCode() != HttpURLConnection.HTTP_MOVED_TEMP && httpConn.getResponseCode() != HttpURLConnection.HTTP_MOVED_PERM) {
-					logger.warning("help url '" + url + "' return error code : " + ((HttpURLConnection) conn).getResponseCode());
+					logger.warning("error readpage :  '" + url + "' return error code : " + ((HttpURLConnection) conn).getResponseCode());
 					return null;
 				}
 
 				if (url.getProtocol().equalsIgnoreCase("http") || url.getProtocol().equalsIgnoreCase("https")) {
 					if (httpConn.getResponseCode() != HttpURLConnection.HTTP_OK && httpConn.getResponseCode() != HttpURLConnection.HTTP_MOVED_TEMP && httpConn.getResponseCode() != HttpURLConnection.HTTP_MOVED_PERM) {
+						logger.warning("error readpage : " + httpConn.getResponseCode());
 						return null;
 					}
 				}
@@ -141,12 +166,27 @@ public class NetHelper {
 		}
 		String content = new String(out.toByteArray(), ContentContext.CHARACTER_ENCODING);
 		if (mailing) {
-			content = XHTMLHelper.prepareToMailing(content); // transform list -> array
+			content = XHTMLHelper.prepareToMailing(content); // transform list
+																// -> array
 		}
-		if (cssInline) {			
+		if (cssInline) {
 			return CSSParser.mergeCSS(content);
-		} 
+		}
 		return content;
+	}
+	
+	public static void main(String[] args) {
+		URL url;
+		try {
+			url = new URL("http://www.javlo.be?test=test");
+			System.out.println("***** NetHelper.main : 1.url = "+url); //TODO: remove debug trace
+			url = removeParams(url);
+			System.out.println("***** NetHelper.main : 2.url = "+url); //TODO: remove debug trace
+		} catch (Exception e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}		
+		
 	}
 
 	/**
@@ -755,5 +795,34 @@ public class NetHelper {
 			}
 		}
 		return null;
+	}
+	
+	/**
+	 * remove params of a url
+	 */
+	public static URL removeParams(URL url) {
+		if (url.getQuery() != null && url.getQuery().trim().length() > 0) {
+			try {
+				return new URL(url.toString().replace('?'+url.getQuery(), ""));
+			} catch (MalformedURLException e) {
+				e.printStackTrace();
+				return url;
+			}
+		} else  {
+			return url;
+		}
+		
+	}
+
+	public static void sendPageByMailing(ContentContext ctx, MenuElement page, String sender, String recipient, Map<String, Object> params) throws Exception {
+		ctx = ctx.getContextOnPage(page);
+		MailingBuilder mb = new MailingBuilder();
+		mb.setSender(sender);
+		mb.setRecipients(recipient);
+		mb.setMaps(params);
+		mb.setEditorGroups(new LinkedList<String>(page.getEditorRolesAndParent()));
+		mb.setSubject(page.getTitle(ctx));
+		mb.prepare(ctx);
+		mb.sendMailing(ctx);
 	}
 }

@@ -154,7 +154,7 @@ public class ListService {
 
 	}
 
-	private static final String KEY = "list";
+	private static final String KEY = ListService.class.getName();
 
 	public static ListService getInstance(ContentContext ctx) {
 		GlobalContext globalContext = ctx.getGlobalContext();

@@ -218,7 +218,7 @@ public class ContentElementList implements IContentComponentsList {
 		while (elems.hasNext()) {
 			IContentVisualComponent comp = (IContentVisualComponent) elems.next();
 			if (comp.isLabel(ctx) && !comp.isRepeat()) {
-				res = comp.getTextLabel();
+				res = comp.getTextTitle(ctx);
 				if (res == null) {
 					res = "";
 				}

@@ -157,11 +157,14 @@ for (IContentVisualComponent comp : components) {
       	 if (!ctx.isEditPreview()) {%><a class="copy ajax" title="${i18n.edit['content.copy']}" href="${info.currentURL}?webaction=copy&id=<%=comp.getId()%>"></a><%}%>
       </div>
       <div class="header-info">
-      	<%if (comp.isRepeat()) {%><span class="repeat" title="${i18n.edit['content.repeat']}"></span><%}
-      	if (comp.isList(ctx)) {%><span class="inlist" title="${i18n.edit['component.inlist']}"></span><%}
-      	if (comp.getStyle(ctx) != null && comp.getStyle(ctx).trim().length() > 0) {%><span class="style" title="<%=comp.getStyleTitle(ctx)%>"><%=comp.getStyleLabel(ctx)%></span><%}      	
+      	<%
+      	boolean sep=false;
+      	if (comp.isRepeat()) {%><span class="repeat" title="${i18n.edit['content.repeat']}"></span><%}
+      	if (comp.isList(ctx)) {%><span class="inlist" title="${i18n.edit['component.inlist']}"></span><%}      	
+      	if (comp.getStyle(ctx) != null && comp.getStyle(ctx).trim().length() > 0) { sep=true;%><span class="style" title="<%=comp.getStyleTitle(ctx)%>"><%=comp.getStyleLabel(ctx)%></span><%}      	
       	if (comp.getCurrentRenderer(ctx) != null && comp.getCurrentRenderer(ctx).trim().length() > 0) {      		
-      	%><%if (comp.getStyle(ctx) != null && comp.getStyle(ctx).trim().length() > 0) {%><span class="sep">-</span><%}%><span class="renderer" title="<%=comp.getCurrentRenderer(ctx)%>"><%=comp.getCurrentRenderer(ctx)%></span><%}
+      	%><%if (comp.getStyle(ctx) != null && comp.getStyle(ctx).trim().length() > 0) {sep=true;%><span class="sep">-</span><%}%><span class="renderer" title="<%=comp.getCurrentRenderer(ctx)%>"><%=comp.getCurrentRenderer(ctx)%></span><%}
+      	if (comp.isRealContent(ctx)) {if(sep) {%><span class="sep">-</span><%}%><span class="realcontent" title="${i18n.edit['component.realcontent']}">${i18n.edit['component.realcontent']}</span><%}
       	%>
       </div>
       <div id="tab1<%=inputSuffix%>">

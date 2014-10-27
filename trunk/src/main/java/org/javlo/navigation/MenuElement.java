@@ -3056,7 +3056,7 @@ public class MenuElement implements Serializable, IPrintInfo {
 			if ((desc.title.trim().length() == 0) && (name != null)) {
 				desc.title = name;
 			}
-		}
+		}		
 		return desc.title;
 	}
 
@@ -3704,6 +3704,9 @@ public class MenuElement implements Serializable, IPrintInfo {
 	 * @Deprecated use NavigationService.getPage(ContentContext, pageKey)
 	 */
 	public MenuElement searchChildFromName(String name) {
+		if (name == null) {
+			return null;
+		}
 		name = StringHelper.createFileName(name);
 		if (name.equals(this.getName())) {
 			return this;

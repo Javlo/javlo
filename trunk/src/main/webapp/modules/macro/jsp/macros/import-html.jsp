@@ -29,17 +29,17 @@
 <legend>CSS Selector</legend>
 <div class="line">
 	<label for="title">title :</label>
-	<input type="text" name="title" id="title" value="${titleSelector}" />
+	<input type="text" name="title" id="title" value="${not empty titleSelector?titleSelector:'h1'}" />
 </div>
 
 <div class="line">
 	<label for="image">image (tag img) :</label>
-	<input type="text" name="image" id="image" value="${imageSelector}"/>
+	<input type="text" name="image" id="image" value="${not empty imageSelector?imageSelector:'img'}"/>
 </div>
 
 <div class="line">
 	<label for="content">content :</label>
-	<input type="text" name="content" id="content" value="${contentSelector}" />
+	<input type="text" name="content" id="content" value="${not empty contentSelector?contentSelector:'.content'}" />
 </div>
 
 </fieldset>

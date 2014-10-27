@@ -2,6 +2,7 @@ package org.javlo.mailing;
 
 import java.io.UnsupportedEncodingException;
 import java.net.URL;
+import java.net.URLEncoder;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
@@ -11,6 +12,7 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
+import java.util.logging.Logger;
 
 import javax.mail.internet.AddressException;
 import javax.mail.internet.InternetAddress;
@@ -30,6 +32,8 @@ import org.javlo.user.User;
 import org.javlo.user.UserFactory;
 
 public class MailingBuilder {
+	
+	private static Logger logger = Logger.getLogger(MailingBuilder.class.getName());
 
 	private String currentTemplate;
 	private String sender;
@@ -41,6 +45,7 @@ public class MailingBuilder {
 	private String recipients;
 	private boolean isTestMailing;
 	private Map<InternetAddress, String> allRecipients = new HashMap<InternetAddress, String>();
+	private Map<String,Object> maps;
 
 	public void setCurrentTemplate(String currentTemplate) {
 		this.currentTemplate = currentTemplate;
@@ -174,6 +179,11 @@ public class MailingBuilder {
 			params.put(ContentOnlyServlet.TEMPLATE_PARAM_NAME, currentTemplate);
 		}
 		String url = URLHelper.createURL(pageCtx);
+		if (getMaps() != null) {				
+			for (Map.Entry<String, Object> entry : getMaps().entrySet()) {
+				url = URLHelper.addParam(url, entry.getKey(),  URLEncoder.encode(""+entry.getValue(), "UTF-8"));	
+			}					
+		}
 		GlobalContext globalContext = GlobalContext.getInstance(ctx.getRequest());
 		for (Entry<InternetAddress, String> receiver : allRecipients.entrySet()) {
 			Mailing m = new Mailing();
@@ -185,13 +195,12 @@ public class MailingBuilder {
 				m.setNotif(new InternetAddress(reportTo));
 			}
 			User user = AdminUserFactory.createAdminUserFactory(globalContext, ctx.getRequest().getSession()).getUser(receiver.getValue());
-
 			if (user != null) {
 				if (user.getUserInfo().getToken() == null || user.getUserInfo().getToken().trim().length() == 0) {
 					user.getUserInfo().setToken(StringHelper.getRandomIdBase64());
 				}
-				url = URLHelper.addParam(url, LoginFilter.TOKEN_PARAM, user.getUserInfo().getToken());
-			}
+				url = URLHelper.addParam(url, LoginFilter.TOKEN_PARAM, user.getUserInfo().getToken());				
+			}			
 			String content = NetHelper.readPageForMailing(new URL(url));
 			if (content != null) {
 				m.setContent(content);
@@ -205,7 +214,17 @@ public class MailingBuilder {
 				}
 				m.setRoles(roles);
 				m.store(ctx.getRequest().getSession().getServletContext());
+			} else {
+				logger.warning("content not found on url : "+url);
 			}
 		}
+	}
+
+	public Map<String,Object> getMaps() {
+		return maps;
+	}
+
+	public void setMaps(Map<String,Object> maps) {
+		this.maps = maps;
 	}
 }

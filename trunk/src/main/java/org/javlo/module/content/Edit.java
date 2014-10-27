@@ -742,8 +742,11 @@ public class Edit extends AbstractModuleAction {
 			newId = content.createContent(ctx, targetPage, areaKey, previousId, type, "", true);
 		}
 
-		if (StringHelper.isTrue(rs.getParameter("init", null))) {
-			IContentVisualComponent comp = content.getComponent(ctx, newId);
+				
+		IContentVisualComponent comp = content.getComponent(ctx, newId);
+		comp.setPreviousComponent(ComponentHelper.getPreviousComponent(comp, ctx));
+		comp.setNextComponent(ComponentHelper.getNextComponent(comp, ctx));
+		if (StringHelper.isTrue(rs.getParameter("init", null))) {			
 			comp.initContent(ctx);
 		}
 
