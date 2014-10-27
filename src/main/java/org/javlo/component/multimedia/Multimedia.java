@@ -397,7 +397,13 @@ public class Multimedia extends TimeRangeComponent implements IImageTitle {
 
 		out.println("<div class=\"line\">");
 		if (isFolder()) {
-			out.println(XHTMLHelper.getInputOneSelect(getInputBaseFolderName(), folderSelection, getCurrentRootFolder()));
+			RequestService requestService = RequestService.getInstance(ctx.getRequest());
+			String folder = getCurrentRootFolder();
+			String newFolder = URLHelper.removeStaticFolderPrefix(ctx,requestService.getParameter("path", ""));
+			if (newFolder.trim().length() > 1) {
+				folder = newFolder;
+			}
+			out.println(XHTMLHelper.getInputOneSelect(getInputBaseFolderName(), folderSelection, folder));
 		}
 
 		String backURL = URLHelper.createModuleURL(ctx, ctx.getPath(), "content");
@@ -698,7 +704,7 @@ public class Multimedia extends TimeRangeComponent implements IImageTitle {
 
 		List<MultimediaResource> allResource = new LinkedList<MultimediaResource>();
 		Map<String, MultimediaResource> allURL = new HashMap<String, MultimediaResource>();
-
+		
 		boolean countAccess = isCountAccess(ctx);
 		
 		for (File file : mulFiles) {

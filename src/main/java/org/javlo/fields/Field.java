@@ -353,6 +353,10 @@ public class Field implements Cloneable {
 		}
 		return null;
 	}
+	
+	public String getSpecialClass() {
+		return "";
+	}
 
 	public String getEditXHTMLCode(ContentContext ctx) throws Exception {
 
@@ -372,7 +376,7 @@ public class Field implements Cloneable {
 		if (isReadOnly()) {
 			readOnlyHTML = " readonly=\"readonly\"";
 		}
-		out.println("	<input" + readOnlyHTML + " id=\"" + getInputName() + "\" class=\"form-control\" name=\"" + getInputName() + "\" value=\"" + StringHelper.neverNull(getValue()) + "\"/>");
+		out.println("	<input" + readOnlyHTML + " id=\"" + getInputName() + "\" class=\"form-control"+getSpecialClass()+"\" name=\"" + getInputName() + "\" value=\"" + StringHelper.neverNull(getValue()) + "\"/>");
 		if (getMessage() != null && getMessage().trim().length() > 0) {
 			out.println("	<div class=\"message " + getMessageTypeCSSClass() + "\">" + getMessage() + "</div>");
 		}
