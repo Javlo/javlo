@@ -15,6 +15,8 @@ import org.javlo.helper.StringHelper;
 import org.javlo.i18n.I18nAccess;
 import org.javlo.service.RequestService;
 
+import bsh.ParseException;
+
 public abstract class AbstractPropertiesComponent extends AbstractVisualComponent {
 
 	protected Properties properties = new Properties();
@@ -62,7 +64,12 @@ public abstract class AbstractPropertiesComponent extends AbstractVisualComponen
 	}
 
 	protected long getFieldLongValue(String inField) {
-		return Long.parseLong(properties.getProperty(inField, "0"));
+		try {
+			return Long.parseLong(properties.getProperty(inField, "0"));
+		} catch (NumberFormatException e) {			
+			logger.warning(e.getMessage());
+			return 0;
+		}		
 	}
 
 	public abstract List<String> getFields(ContentContext ctx) throws Exception;

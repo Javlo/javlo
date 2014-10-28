@@ -11,7 +11,6 @@ import java.util.List;
 
 import org.javlo.context.ContentContext;
 import org.javlo.ecom.Product.ProductBean;
-import org.javlo.helper.ResourceHelper;
 import org.javlo.helper.StringHelper;
 import org.javlo.helper.URLHelper;
 import org.javlo.module.ecom.DeliveryPrice;
@@ -155,8 +154,7 @@ public class Basket implements Serializable {
 		return products;
 	}
 
-	public void addProduct(Product product) {
-		productsBean = null;
+	public void addProduct(Product product) {		
 		setValid(false);
 		for (Product item : products) {
 			if (item.getName().equals(product.getName()) && item.getPrice() == product.getPrice()) {
@@ -165,6 +163,7 @@ public class Basket implements Serializable {
 			}
 		}
 		products.add(product);
+		productsBean = null;
 	}
 
 	public void removeProduct(String id) {
@@ -192,18 +191,18 @@ public class Basket implements Serializable {
 			if (!vat) {
 				vatFactor = 1 + product.getVAT();
 			}
-			result = result + (product.getPrice() * (1 - product.getReduction()) * product.getQuantity()) / vatFactor;		
-		}		
-		result = result * (1-getUserReduction()) + getDelivery(ctx,vat);		
+			result = result + (product.getPrice() * (1 - product.getReduction()) * product.getQuantity()) / vatFactor;
+		}
+		result = result * (1 - getUserReduction()) + getDelivery(ctx, vat);
 		return result;
 	}
-	
-	public String getTotalString(ContentContext ctx,boolean vat) {
-		return renderPrice(ctx, getTotal(ctx,vat), getCurrencyCode());
+
+	public String getTotalString(ContentContext ctx, boolean vat) {
+		return renderPrice(ctx, getTotal(ctx, vat), getCurrencyCode());
 	}
-	
+
 	public String getVAT(ContentContext ctx) {
-		return renderPrice(ctx, getTotal(ctx,true)-getTotal(ctx,false), getCurrencyCode());
+		return renderPrice(ctx, getTotal(ctx, true) - getTotal(ctx, false), getCurrencyCode());
 	}
 
 	public String getDeliveryZone() {
@@ -217,7 +216,7 @@ public class Basket implements Serializable {
 		DeliveryPrice priceList = null;
 		try {
 			priceList = DeliveryPrice.getInstance(ctx);
-		} catch (Exception e) {			
+		} catch (Exception e) {
 			e.printStackTrace();
 		}
 		if (priceList != null) {
@@ -225,14 +224,14 @@ public class Basket implements Serializable {
 			for (Product product : products) {
 				double vatFactor = 1;
 				if (vat) {
-					vatFactor = 1+product.getVAT();
+					vatFactor = 1 + product.getVAT();
 				}
-				delivery += priceList.getPrice(product.getQuantity()*product.getWeight(), getDeliveryZone())*vatFactor;
+				delivery += priceList.getPrice(product.getQuantity() * product.getWeight(), getDeliveryZone()) * vatFactor;
 			}
 			return delivery;
 		} else {
 			return defaultDeleviry;
-		}		
+		}
 	}
 
 	public int getSize() {
@@ -384,6 +383,7 @@ public class Basket implements Serializable {
 	}
 
 	public void setProducts(List<Product> products) {
+		productsBean = null;
 		this.products = products;
 	}
 
@@ -445,22 +445,22 @@ public class Basket implements Serializable {
 		product.setReduction(0);
 		products.add(product);
 		basket.setProductsBean(products);
-		
-		System.out.println("TOTAL TVAC  = "+basket.getTotal(null, true));
-		System.out.println("TOTAL HTVAC = "+basket.getTotal(null, false));
-		
+
+		System.out.println("TOTAL TVAC  = " + basket.getTotal(null, true));
+		System.out.println("TOTAL HTVAC = " + basket.getTotal(null, false));
+
 	}
 
 	public List<Product.ProductBean> getProductsBean() {
 		if (productsBean == null) {
-			productsBean = new LinkedList<Product.ProductBean>();
+			productsBean = new LinkedList<Product.ProductBean>();			
 			for (Product product : getProducts()) {
 				productsBean.add(product.getBean());
 			}
 		}
 		return productsBean;
 	}
-
+	
 	public String getProductsBeanToString() {
 		ByteArrayOutputStream outStream = new ByteArrayOutputStream();
 		PrintStream out = new PrintStream(outStream);

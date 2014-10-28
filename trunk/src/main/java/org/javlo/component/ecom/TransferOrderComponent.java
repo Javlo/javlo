@@ -9,6 +9,7 @@ import org.javlo.context.ContentContext;
 import org.javlo.context.GlobalContext;
 import org.javlo.ecom.Basket;
 import org.javlo.ecom.BasketPersistenceService;
+import org.javlo.ecom.Product;
 import org.javlo.helper.ComponentHelper;
 import org.javlo.helper.NetHelper;
 import org.javlo.helper.URLHelper;
@@ -64,6 +65,7 @@ public class TransferOrderComponent extends AbstractOrderComponent implements IA
 		Basket basket = Basket.getInstance(ctx);
 		
 		if (basket.getCurrencyCode() == null) {
+			logger.severe("currency not found.");
 			return i18nAccess.getViewText("ecom.message.error");
 		}
 		
