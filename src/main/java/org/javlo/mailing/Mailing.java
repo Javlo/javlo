@@ -37,8 +37,6 @@ import org.javlo.context.ContentContext;
 import org.javlo.helper.PatternHelper;
 import org.javlo.helper.ResourceHelper;
 import org.javlo.helper.StringHelper;
-import org.javlo.helper.XHTMLHelper;
-import org.javlo.helper.XMLManipulationHelper.BadXMLException;
 import org.javlo.utils.CSVFactory;
 
 public class Mailing {
