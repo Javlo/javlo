@@ -265,12 +265,12 @@
 	<textarea id="users-access" name="users-access">${currentContext.usersAccess}</textarea>	
 </div>
 
-<!-- <c:if test="${not empty qrcode}">
+<c:if test="${not empty qrcode}">
 <div class="line">
 	<label for="qrcode">${i18n.edit['admin.form.mobil-access']}</label>
-	<img id="qrcode" src="${qrcode}" />
+	<input type="button" id="qrcode" onclick="jQuery('#qrcode').html('TEST');" value="qrcode" />	
 </div>
-</c:if> -->
+</c:if>
 
 </div>
 
