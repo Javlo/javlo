@@ -1,0 +1,17 @@
+
+span.label {
+    display: block;
+    font-weight: bold;
+    width: 150px;
+}
+
+.widgetbox ul, .widgetbox2 ul {
+    margin-left: 16px;
+}
+
+fieldset {
+    border: 1px solid #cccccc;
+    border-radius: 3px;
+    margin: 4px 0;
+    padding: 4px;
+}

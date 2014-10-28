@@ -25,13 +25,13 @@ public class MobileAction implements IAction {
 	public String getActionGroupName() {
 		return "mobile";
 	}
-	
+
 	public static String performModulesList(RequestService rs, HttpSession session, ContentContext ctx, MessageRepository messageRepository, I18nAccess i18nAccess, HttpServletRequest request) throws ModuleException {
 		List<ModuleBean> modules = new LinkedList<ModuleBean>();
 		ModulesContext moduleContext = ModulesContext.getInstance(session, ctx.getGlobalContext());
-		for (Module module : moduleContext.getModules()) {			
+		for (Module module : moduleContext.getModules()) {
 			if (module.isMobile()) {
-				modules.add(new ModuleBean(ctx, module));
+				modules.add(new ModuleBean(ctx, module));				
 			}
 		}
 		ctx.getAjaxData().put("modules", modules);

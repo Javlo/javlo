@@ -135,7 +135,6 @@
 	<input type="text" id="platform" name="platform" value="${currentContext.platformType}" />	
 </div>
 
-
 </div>
 
 <div class="one_half">
@@ -268,7 +267,14 @@
 <c:if test="${not empty qrcode}">
 <div class="line">
 	<label for="qrcode">${i18n.edit['admin.form.mobil-access']}</label>
-	<input type="button" id="qrcode" onclick="jQuery('#qrcode').html('TEST');" value="qrcode" />	
+	<input type="button" id="qrcode" value="qrcode" />
+	<script type="text/javascript">
+		jQuery('#qrcode').click(function() {
+			var item = jQuery(this);
+			item.wrap("<div id=\"qrcode-wrapper\" />");
+			jQuery("#qrcode-wrapper").html('<a href="${editAutoURL}"><img src="${qrcode}" /></a>');
+		});
+	</script>	
 </div>
 </c:if>
 
