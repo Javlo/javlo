@@ -12,9 +12,8 @@ public class ModuleBean {
 	public ModuleBean(ContentContext ctx, Module module) {
 		setName(module.getName());
 		setTitle(module.getTitle());
-		ctx = ctx.getContextForAbsoluteURL();
-		ctx.setRenderMode(ContentContext.EDIT_MODE);
-		url = URLHelper.createModuleURL(ctx, "", module.getName());
+		ctx = ctx.getContextForAbsoluteURL();		
+		url = URLHelper.createStaticURL(ctx, module.getMobileRenderer());
 	}
 
 	public String getName() {

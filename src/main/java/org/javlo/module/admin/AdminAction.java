@@ -191,7 +191,7 @@ public class AdminAction extends AbstractModuleAction {
 			setCollaborativeMode(globalContext.isCollaborativeMode());
 
 			setTemplateData(globalContext.getTemplateData());
-			
+
 			setProxyPathPrefix(globalContext.getProxyPathPrefix());
 
 			Properties properties = new Properties();
@@ -670,7 +670,7 @@ public class AdminAction extends AbstractModuleAction {
 		public boolean isListable() {
 			return comp.isListable();
 		}
-		
+
 		public boolean isCacheable() {
 			return comp.isContentCachable(ctx);
 		}
@@ -707,16 +707,21 @@ public class AdminAction extends AbstractModuleAction {
 
 		GlobalContext globalContext = GlobalContext.getInstance(ctx.getRequest());
 		if (!globalContext.isMaster()) {
-			
+
 			User user = ctx.getCurrentEditUser();
 			if (user.getUserInfo().getToken() != null) {
-				Map<String,String> params = new HashMap<String, String>();
+				Map<String, String> params = new HashMap<String, String>();
 				params.put("j_token", user.getUserInfo().getToken());
-				String editAutoURL = URLHelper.createURL(ctx.getContextForAbsoluteURL(), params);
+				ContentContext absCtx = ctx.getContextForAbsoluteURL();
+				absCtx.setRenderMode(ContentContext.VIEW_MODE);
+				String editAutoURL = URLHelper.createURL(absCtx, "/", params);
+				String suffix = ctx.getLanguage()+"/root.html";
+				editAutoURL = editAutoURL.replace(suffix, "");
 				String qrcodeImg = URLHelper.createQRCodeLink(ctx, editAutoURL);
+				ctx.getRequest().setAttribute("editAutoURL", editAutoURL);
 				ctx.getRequest().setAttribute("qrcode", qrcodeImg);
 			}
-			
+
 			editGlobalContext(ctx, currentModule, globalContext);
 			currentModule.setBreadcrumb(false);
 		} else {
@@ -922,12 +927,14 @@ public class AdminAction extends AbstractModuleAction {
 		}
 
 		try {
-			/*Collection<GlobalContext> allContext = GlobalContextFactory.getAllGlobalContext(session.getServletContext());
-			for (GlobalContext globalContext : allContext) {
-				if (globalContext.getUsersAccess().contains(user.getLogin())) {
-					return true;
-				}
-			}*/
+			/*
+			 * Collection<GlobalContext> allContext =
+			 * GlobalContextFactory.getAllGlobalContext
+			 * (session.getServletContext()); for (GlobalContext globalContext :
+			 * allContext) { if
+			 * (globalContext.getUsersAccess().contains(user.getLogin())) {
+			 * return true; } }
+			 */
 		} catch (Exception e) {
 			throw new ModuleException(e.getMessage());
 		}
@@ -1017,7 +1024,6 @@ public class AdminAction extends AbstractModuleAction {
 					currentGlobalContext.setDMZServerInter(requestService.getParameter("dmz-inter", ""));
 					currentGlobalContext.setDMZServerIntra(requestService.getParameter("dmz-intra", ""));
 					currentGlobalContext.setProxyPathPrefix(requestService.getParameter("proxy-prefix", ""));
-					
 
 					String dateFormat = requestService.getParameter("short-date", null);
 					if (dateFormat != null) {
@@ -1129,16 +1135,16 @@ public class AdminAction extends AbstractModuleAction {
 							File oldLogo = null;
 							if (td.getLink() != null) {
 								oldLogo = new File(URLHelper.mergePath(currentGlobalContext.getStaticFolder(), td.getLogo()));
-							}							
+							}
 							if (file.getName().trim().length() > 0) {
 								String logoPath = URLHelper.mergePath("logo", file.getName());
-								File logo = new File(URLHelper.mergePath(currentGlobalContext.getStaticFolder(), logoPath));							
+								File logo = new File(URLHelper.mergePath(currentGlobalContext.getStaticFolder(), logoPath));
 								td.setLogo(logoPath);
 								ResourceHelper.writeStreamToFile(file.getInputStream(), logo);
-								if (oldLogo != null && oldLogo.exists() && !oldLogo.getName().equals(file.getName())) {									
+								if (oldLogo != null && oldLogo.exists() && !oldLogo.getName().equals(file.getName())) {
 									oldLogo.delete();
 								}
-							}	
+							}
 						}
 					}
 
@@ -1270,7 +1276,7 @@ public class AdminAction extends AbstractModuleAction {
 
 		AdminUserFactory.createUserFactory(globalContext, session).reload(globalContext, session);
 		UserFactory.createUserFactory(globalContext, session).reload(globalContext, session);
-		
+
 		TemplateFactory.copyDefaultTemplate(session.getServletContext());
 
 		System.gc();

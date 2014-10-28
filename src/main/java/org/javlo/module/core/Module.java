@@ -505,7 +505,7 @@ public class Module {
 		/* main renderer */
 		mobileRenderer = config.get("renderer.mobile");
 		if (mobileRenderer != null) {
-			mobileRenderer = URLHelper.mergePath(path, defaultRenderer);			
+			mobileRenderer = URLHelper.mergePath(path, mobileRenderer);			
 		}
 
 		/* view renderer */
@@ -596,7 +596,7 @@ public class Module {
 	}
 	
 	public boolean isMobile() {
-		return StringHelper.isTrue(config.get("mobile"));
+		return getMobileRenderer() != null;
 	}
 
 	public Properties loadEditI18n(GlobalContext globalContext, HttpSession session) throws IOException {
