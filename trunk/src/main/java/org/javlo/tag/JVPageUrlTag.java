@@ -15,6 +15,8 @@ public class JVPageUrlTag extends TagSupport {
 
 	private String name = null;
 	
+	private String var = null;
+	
 	private String params = null;
 
 	public void setName(String name) {
@@ -32,7 +34,7 @@ public class JVPageUrlTag extends TagSupport {
 	@Override
 	public int doStartTag() throws JspException {
 		try {
-			JspWriter out = pageContext.getOut();
+			
 			ContentContext ctx;
 			ctx = ContentContext.getContentContext((HttpServletRequest) pageContext.getRequest(), (HttpServletResponse) pageContext.getResponse());
 			String url = URLHelper.createURLFromPageName(ctx, name);
@@ -43,11 +45,24 @@ public class JVPageUrlTag extends TagSupport {
 					url = url + '?' + params;
 				}
 			}
-			out.print(url);
+			if (var == null) {
+				JspWriter out = pageContext.getOut();
+				out.print(url);
+			} else {
+				pageContext.getRequest().setAttribute(var, url);
+			}
 		} catch (Exception ioe) {
 			throw new JspException("Error: " + ioe.getMessage());
 		}
 		return SKIP_BODY;
+	}
+
+	public String getVar() {
+		return var;
+	}
+
+	public void setVar(String var) {
+		this.var = var;
 	}
 
 }

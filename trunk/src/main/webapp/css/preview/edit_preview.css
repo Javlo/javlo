@@ -1371,7 +1371,7 @@ table.component-table td {
 
 .edit-preview .editable-component.hidden {
 	display: block  !important;
-	visibility: visible;
+	visibility: visible !important;
 }
 
 body.edit-preview .visible-separation {
