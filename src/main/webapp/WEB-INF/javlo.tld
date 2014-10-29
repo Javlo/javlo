@@ -28,6 +28,12 @@
             <description>the name of the target page.</description>
             <rtexprvalue>true</rtexprvalue>
         </attribute>
+         <attribute>
+            <name>var</name>
+            <required>false</required>
+            <description>create a attribute in scope request for url.</description>
+            <rtexprvalue>true</rtexprvalue>
+        </attribute>
         <attribute>
             <name>params</name>
             <required>false</required>

@@ -112,7 +112,7 @@ public class ChildrenLink extends AbstractVisualComponent implements IImageTitle
 			IImageTitle image = child.getImage(ctx);
 			if (image != null) {
 				String imageURL = URLHelper.createTransformURL(ctx, image.getResourceURL(ctx), getConfig(ctx).getProperty("filter", "list"));
-				return new ImageBean(imageURL, image.getImageDescription(ctx), image.getImageLinkURL(ctx));
+				return new ImageBean(URLHelper.createResourceURL(ctx, image.getResourceURL(ctx)), imageURL, image.getImageDescription(ctx), image.getImageLinkURL(ctx));
 			} else {
 				return null;
 			}
