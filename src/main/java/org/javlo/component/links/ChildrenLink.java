@@ -18,12 +18,15 @@ import org.javlo.component.image.IImageTitle;
 import org.javlo.component.image.ImageBean;
 import org.javlo.context.ContentContext;
 import org.javlo.exception.ResourceNotFoundException;
+import org.javlo.helper.MacroHelper;
 import org.javlo.helper.StringHelper;
 import org.javlo.helper.URLHelper;
 import org.javlo.helper.XHTMLHelper;
 import org.javlo.i18n.I18nAccess;
 import org.javlo.navigation.MenuElement;
 import org.javlo.service.RequestService;
+import org.javlo.user.AdminUserFactory;
+import org.javlo.user.User;
 
 /**
  * @author pvandermaesen
@@ -93,9 +96,48 @@ public class ChildrenLink extends AbstractVisualComponent implements IImageTitle
 			return child.isRealContent(ctx);
 		}
 		
+		public int getReactionSize() throws Exception {
+			return child.getReactionSize(ctx);
+		}
+		
+		public String getCreationDateString() throws FileNotFoundException, IOException {
+			return StringHelper.renderFullDate(ctx, child.getCreationDate());
+		}
+		
+		public String getCreationTimeString() throws FileNotFoundException, IOException {
+			return StringHelper.renderTimeOnly(child.getCreationDate());
+		}
+		
+		public String getModificationDateString() throws FileNotFoundException, IOException {
+			return StringHelper.renderFullDate(ctx, child.getModificationDate());
+		}
+		
+		public String getModificationTimeString() throws FileNotFoundException, IOException {
+			return StringHelper.renderTimeOnly(child.getModificationDate());
+		}
+		
+		public String getContentDateString() throws Exception {
+			return StringHelper.renderFullDate(ctx, child.getContentDate(ctx));
+		}
+		
 		public boolean isCurrentPageRealContent() throws Exception {
 			return currentPage.isRealContent(ctx);
 		}
+		
+		public String getCreator() {
+			return child.getCreator();
+		}
+		
+		public String getCreatorAvatarURL() {
+			AdminUserFactory userFactory = AdminUserFactory.createAdminUserFactory(ctx.getGlobalContext(), ctx.getRequest().getSession());
+			User user = userFactory.getUser(getCreator());
+			if (user != null) {
+				return URLHelper.createAvatarUrl(ctx, userFactory.getUser(user.getName()).getUserInfo());
+			} else {
+				return null;
+			}
+		}
+		
 		public MenuElement getPage() {
 			return child;
 		}		
@@ -300,6 +342,11 @@ public class ChildrenLink extends AbstractVisualComponent implements IImageTitle
 
 		boolean showAll = false;
 		boolean showOnlyNotVisible = false;
+		
+		if (ctx.getGlobalContext().isCollaborativeMode()) {
+			I18nAccess i18nAccess = I18nAccess.getInstance(ctx.getRequest());
+			ctx.getRequest().setAttribute("createChildButton", MacroHelper.getLaunchMacroXHTML(ctx, "create-child", i18nAccess.getViewText("macro.add-child.label", "Create new message.")));
+		}
 
 		if (getStyle() != null) {
 			showAll = getStyle().equalsIgnoreCase("all") || getStyle().equalsIgnoreCase(RECURSIVE);

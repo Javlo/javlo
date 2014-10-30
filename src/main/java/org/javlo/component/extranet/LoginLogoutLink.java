@@ -30,7 +30,7 @@ public class LoginLogoutLink extends AbstractVisualComponent {
 		IUserFactory userFactory = UserFactory.createUserFactory(ctx.getRequest());
 		User user = userFactory.getCurrentUser(ctx.getRequest().getSession());
 		if (user == null) {
-			out.println("<form id=\"loginform\" action=\""+URLHelper.createURL(ctx)+"\" method=\"post\">");
+			out.println("<form id=\"loginform\" action=\""+URLHelper.createURL(ctx.getContextWithOtherRenderMode(ContentContext.PREVIEW_MODE))+"\" method=\"post\">");
 			out.println("<div class=\"line\">");
 			out.println("<input type=\"hidden\" value=\"adminlogin\" name=\"login-type\" />");
 			out.println("<input type=\"hidden\" value=\"edit-login\" name=\"edit-login\" />");
