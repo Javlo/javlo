@@ -9,9 +9,8 @@ import java.util.LinkedList;
 import org.javlo.component.core.AbstractVisualComponent;
 import org.javlo.component.core.IContentVisualComponent;
 import org.javlo.context.ContentContext;
+import org.javlo.helper.MacroHelper;
 import org.javlo.helper.StringHelper;
-import org.javlo.helper.URLHelper;
-import org.javlo.i18n.I18nAccess;
 import org.javlo.macro.core.IMacro;
 import org.javlo.macro.core.MacroFactory;
 import org.javlo.service.RequestService;
@@ -27,19 +26,7 @@ public class LaunchMacro extends AbstractVisualComponent {
 
 	@Override
 	public String getViewXHTMLCode(ContentContext ctx) throws Exception {
-		ByteArrayOutputStream outStream = new ByteArrayOutputStream();
-		PrintStream out = new PrintStream(outStream);
-		out.println("<div class=\"macro\">");
-		out.println("<form action=\""+URLHelper.createURL(ctx)+"\" method=\"post\">");
-		out.println("<input type=\"hidden\" value=\"macro\" name=\"module\">");
-		out.println("<input type=\"hidden\" value=\"true\" name=\"previewEdit\">");
-		out.println("<input type=\"hidden\" value=\"macro.executeMacro\" name=\"webaction\">");		
-		out.println("<input type=\"hidden\" value=\""+getMacro()+"\" name=\"macro\">");				
-		out.println("<input class=\"action-button\" type=\"submit\" value=\""+getLabel()+"\">");
-		out.println("</form>");
-		out.println("</div>");
-		out.close();
-		return new String(outStream.toByteArray());
+		return MacroHelper.getLaunchMacroXHTML(ctx, getMacro(), getLabel());
 	}
 	
 	@Override

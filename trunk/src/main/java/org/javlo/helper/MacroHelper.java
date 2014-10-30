@@ -1,7 +1,9 @@
 package org.javlo.helper;
 
+import java.io.ByteArrayOutputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.io.PrintStream;
 import java.io.PrintWriter;
 import java.io.StringWriter;
 import java.text.DateFormatSymbols;
@@ -868,6 +870,22 @@ public class MacroHelper {
 			}
 		}
 		PersistenceService.getInstance(ctx.getGlobalContext()).setAskStore(true);
+	}
+	
+	public static String getLaunchMacroXHTML(ContentContext ctx, String macro, String label) {
+		ByteArrayOutputStream outStream = new ByteArrayOutputStream();
+		PrintStream out = new PrintStream(outStream);
+		out.println("<div class=\"macro\">");
+		out.println("<form action=\""+URLHelper.createURL(ctx)+"\" method=\"post\">");
+		out.println("<input type=\"hidden\" value=\"macro\" name=\"module\">");
+		out.println("<input type=\"hidden\" value=\"true\" name=\"previewEdit\">");
+		out.println("<input type=\"hidden\" value=\"macro.executeMacro\" name=\"webaction\">");		
+		out.println("<input type=\"hidden\" value=\""+macro+"\" name=\"macro\">");				
+		out.println("<input class=\"action-button\" type=\"submit\" value=\""+label+"\">");
+		out.println("</form>");
+		out.println("</div>");
+		out.close();
+		return new String(outStream.toByteArray());
 	}
 
 	public static void main(String[] args) {

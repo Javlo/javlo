@@ -874,7 +874,7 @@ public class ReactionComponent extends DynamicComponent implements IAction {
 
 		String id = "react-" + getId();
 
-		out.println("<div id=\"" + id + "\">");
+		out.println("<div id=\"reactions\"><div id=\"" + id + "\">");
 
 		User currentUser = getCurrentUser(ctx);
 
@@ -895,8 +895,7 @@ public class ReactionComponent extends DynamicComponent implements IAction {
 			String title = getTitle(ctx);
 			if (title != null && title.trim().length() > 0) {
 				out.println("<h3><span>" + title + "</span></h3>");
-			}
-			renderReactions(out, id, "", null, reactions, currentUser, ctx, i18nAccess, displayUserInfo, displayTitle, replyAllowed);
+			}			
 			if (addAllowed) {
 				if (!ctx.isAsPageMode()) {
 					renderSendReactionForm(out, id, null, null, ctx, i18nAccess);
@@ -906,12 +905,13 @@ public class ReactionComponent extends DynamicComponent implements IAction {
 				out.println(i18nAccess.getViewText("reaction.login-to-add"));
 				out.println("</p>");
 			}
+			renderReactions(out, id, "", null, reactions, currentUser, ctx, i18nAccess, displayUserInfo, displayTitle, replyAllowed);
 		} else {
 			out.println("<p>");
 			out.println(i18nAccess.getViewText("reaction.login-to-view"));
 			out.println("</p>");
 		}
-		out.println("</div>");
+		out.println("</div></div>");
 		out.close();
 		return writer.toString();
 	}
