@@ -35,6 +35,7 @@ public class MobileAction implements IAction {
 			}
 		}
 		ctx.getAjaxData().put("modules", modules);
+		ctx.getAjaxData().put("title", ctx.getGlobalContext().getGlobalTitle());
 
 		return null;
 	}
