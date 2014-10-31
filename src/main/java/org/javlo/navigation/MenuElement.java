@@ -48,7 +48,6 @@ import org.javlo.component.meta.MetaDescription;
 import org.javlo.component.meta.NotSearchPage;
 import org.javlo.component.meta.Tags;
 import org.javlo.component.meta.TimeRangeComponent;
-import org.javlo.component.text.Description;
 import org.javlo.component.title.GroupTitle;
 import org.javlo.component.title.WebSiteTitle;
 import org.javlo.component.web2.ReactionComponent;
@@ -1926,7 +1925,7 @@ public class MenuElement implements Serializable, IPrintInfo {
 	 * @param ctx
 	 * @return
 	 * @throws Exception
-	 */
+	 */ 
 	public String getDescription(ContentContext ctx) throws Exception {
 		PageDescription desc = getPageDescriptionCached(ctx, ctx.getRequestContentLanguage());
 

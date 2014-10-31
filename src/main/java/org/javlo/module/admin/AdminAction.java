@@ -709,13 +709,13 @@ public class AdminAction extends AbstractModuleAction {
 		if (!globalContext.isMaster()) {
 
 			User user = ctx.getCurrentEditUser();
-			if (user.getUserInfo().getToken() != null) {
+			if (user.getUserInfo().getToken() != null && user.getUserInfo().getToken().length() > 1) {
 				Map<String, String> params = new HashMap<String, String>();
 				params.put("j_token", user.getUserInfo().getToken());
 				ContentContext absCtx = ctx.getContextForAbsoluteURL();
 				absCtx.setRenderMode(ContentContext.VIEW_MODE);
 				String editAutoURL = URLHelper.createURL(absCtx, "/", params);
-				String suffix = ctx.getLanguage()+"/root.html";
+				String suffix = URLHelper.mergePath(ctx.getLanguage(),StringHelper.getFileNameFromPath(URLHelper.createURL(ctx, "/")));
 				editAutoURL = editAutoURL.replace(suffix, "");
 				String qrcodeImg = URLHelper.createQRCodeLink(ctx, editAutoURL);
 				ctx.getRequest().setAttribute("editAutoURL", editAutoURL);
