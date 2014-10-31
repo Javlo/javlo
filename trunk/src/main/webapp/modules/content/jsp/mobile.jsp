@@ -15,4 +15,12 @@ ServletHelper.execAction(ContentContext.getContentContext(request, response));
 </head>
 <body>
 <a class="action-button publish" href="${info.currentAbsoluteURL}?webaction=edit.publish&render-mode=1"><span>${i18n.edit['command.publish']}</span></a>
+<script type="text/javascript">
+function onMobileLoad() {
+	var out = {
+			message: '${messages.globalMessage.message}'
+		};
+	return JSON.stringify(out);
+}
+</script>
 </body>
