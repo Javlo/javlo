@@ -1,4 +1,5 @@
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c"
+%><%@ taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions"
 %><!DOCTYPE html>
 <html lang="${info.language}">
 <head>
@@ -10,4 +11,12 @@
 </head>
 <body>
 <jsp:include page="info.jsp"></jsp:include>
+<script type="text/javascript">
+function onMobileLoad() {
+	var out = {
+			message: '${messages.globalMessage.message}'
+		};
+	return JSON.stringify(out);
+}
+</script>
 </body>
