@@ -968,7 +968,7 @@ public class ReactionComponent extends DynamicComponent implements IAction {
 				} else {
 					out.println(XHTMLHelper.textToXHTML(StringHelper.removeTag(reaction.getText()), true, ctx.getGlobalContext()));
 				}
-				out.println("</div>");
+				out.println("</div><div class=\"actions\">");
 
 				if (currentUser != null && isReactionDeletable(ctx, reactions, reaction, currentUser)) {
 					renderDeleteReactionForm(out, htmlIdSuffix, reaction, ctx, i18nAccess);
@@ -977,6 +977,7 @@ public class ReactionComponent extends DynamicComponent implements IAction {
 				if (displayReply && !ctx.isAsPageMode()) {
 					renderSendReactionForm(out, id, reaction, userDisplayName, ctx, i18nAccess);
 				}
+				out.println("</div>");
 				renderReactions(out, id, htmlIdSuffix, reaction.getId(), reactions, currentUser, ctx, i18nAccess, displayUserInfo, displayTitle, displayReply);
 				out.println("</li>");
 				first = false;

@@ -1,7 +1,7 @@
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c"
 %><%@ taglib uri="http://java.sun.com/jsp/jstl/functions" prefix="fn" %>
 <c:choose>
-<c:when test="${url eq '#'}">
+<c:when test="${link eq '#'}">
 <figure>
 <span class="nolink">
 <img src="${previewURL}" alt="${not empty label?cleanLabel:cleanDescription}" />
