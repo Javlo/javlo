@@ -124,7 +124,7 @@ public class ChildrenLink extends AbstractVisualComponent implements IImageTitle
 			return currentPage.isRealContent(ctx);
 		}
 		
-		public String getCreator() {
+		public String getCreator() {			
 			return child.getCreator();
 		}
 		
