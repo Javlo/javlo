@@ -49,34 +49,34 @@
 <legend>${i18n.edit['user.info']}</legend>
 <div class="cols">
 <div class="one_half">
-	<div class="line">
+	<div class="line login">
 		<label for="login">login</label>
 		<input type="text" id="login" name="login" value="${userInfoMap["login"]}" /> 
 	</div>
 	<c:if test="${not empty webaction}">
-		<div class="line">
+		<div class="line password">
 			<label for="password">${i18n.view['form.password']}</label>
 			<input type="password" id="password" name="password" value="" /> 
 		</div>	
-		<div class="line">
+		<div class="line password">
 			<label for="password2">${i18n.view['form.password2']}</label>
 			<input type="password" id="password2" name="password2" value="" />		 
 		</div>
 	</c:if>
-	<div class="line">
+	<div class="line firstName">
 		<label for="firstName">firstName</label>
 		<input type="text" id="firstName" name="firstName" value="${userInfoMap["firstName"]}" /> 
 	</div>
-	<div class="line">
+	<div class="line lastName">
 		<label for="lastName">lastName</label>
 		<input type="text" id="lastName" name="lastName" value="${userInfoMap["lastName"]}" /> 
 	</div>
-	<div class="line">
+	<div class="line email">
 		<label for="email">email</label>
 		<input type="text" id="email" name="email" value="${userInfoMap["email"]}" /> 
 	</div>
-	<div class="line">
-		<label for="organization">organization</label>
+	<div class="line organization">
+		<label for="organization">${i18n.edit['field.organization']}</label>
 		<c:if test="${empty list.organization}">
 		<input type="text" id="organization" name="organization" value="${userInfoMap["organization"]}" />
 		</c:if> 
@@ -89,29 +89,29 @@
 		 	</select>
 		 </c:if> 
 	</div>
-	<div class="line">
+	<div class="line phone">
 		<label for="phone">phone</label>
 		<input type="text" id="phone" name="phone" value="${userInfoMap["phone"]}" /> 
 	</div>
-	<div class="line">
+	<div class="line mobile">
 		<label for="mobile">mobile</label>
 		<input type="text" id="mobile" name="mobile" value="${userInfoMap["mobile"]}" /> 
 	</div>
 </div>
-<div class="one_half">
+<div class="one_half address">
 	<div class="line">
 		<label for="address">address</label>
 		<input type="text" id="address" name="address" value="${userInfoMap["address"]}" /> 
 	</div>
-	<div class="line">
+	<div class="line postCode">
 		<label for="postCode">postCode</label>
 		<input type="text" id="postCode" name="postCode" value="${userInfoMap["postCode"]}" /> 
 	</div>
-	<div class="line">
+	<div class="line city">
 		<label for="city">city</label>
 		<input type="text" id="city" name="city" value="${userInfoMap["city"]}" /> 
 	</div>
-	<div class="line">
+	<div class="line country">
 		<label for="country">country</label>
 		<c:if test="${empty list.countries}">
 			<input type="text" id="country" name="country" value="${userInfoMap["country"]}" />
@@ -125,12 +125,12 @@
 		 	</select>
 		 </c:if>
 	</div>
-	<div class="line">
+	<div class="line preferredLanguageRaw">
 		<label for="preferredLanguageRaw">preferred Language</label>
 		<input type="text" id="preferredLanguageRaw" name="preferredLanguageRaw" value="${userInfoMap["preferredLanguageRaw"]}" /> 
 	</div>
 	<c:if test="${empty webaction}">
-	<div class="line">
+	<div class="line token">
 		<label for="token">token</label>
 		<c:if test="${fn:length(userInfoMap['token']) > 0}">
 			<a href="${info.homeAbsoluteURL}?j_token=${userInfoMap['token']}">
@@ -172,7 +172,7 @@
 </c:if>
 
 
-<fieldset>
+<fieldset class="social">
 <legend>${i18n.edit['user.social']}</legend>
 	<div class="one_half">
 		<div class="line">
@@ -197,7 +197,7 @@
 	</div>
 </fieldset>
 
-<fieldset>
+<fieldset class="avatar">
 <legend>${i18n.edit['user.avatar']}</legend>
 	<div class="one_half">
 		<div class="line">

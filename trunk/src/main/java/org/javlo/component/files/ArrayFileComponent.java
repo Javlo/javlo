@@ -887,8 +887,8 @@ public class ArrayFileComponent extends GenericFile {
 	}
 
 	public static void main(String[] args) {
-		File test = new File("c:/trans/book4.xls");
-		File outFile = new File("c:/trans/book4.html");
+		File test = new File("c:/trans/test.xlsx");
+		File outFile = new File("c:/trans/test.html");
 		try {
 			ResourceHelper.writeStringToFile(outFile, renderArray(test));
 		} catch (FileNotFoundException e) {
