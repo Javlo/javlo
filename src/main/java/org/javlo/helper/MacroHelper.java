@@ -247,6 +247,14 @@ public class MacroHelper {
 
 		return newPage;
 	}
+	
+	public static final MenuElement addPageIfNotExist(ContentContext ctx, MenuElement parentPage, String pageName, boolean top, boolean store) throws Exception {
+		return addPageIfNotExist(ctx, parentPage, pageName, top, store, true);
+	}
+	
+	public static final MenuElement addPage(ContentContext ctx, MenuElement parentPage, String pageName, boolean top, boolean store) throws Exception {
+		return addPageIfNotExist(ctx, parentPage, pageName, top, store, false);
+	}
 
 	/**
 	 * insert a page in the navigation if she does'nt exist.
@@ -260,13 +268,17 @@ public class MacroHelper {
 	 * @store store the result in the content repository if true.
 	 * @throws Exception
 	 */
-	public static final MenuElement addPageIfNotExist(ContentContext ctx, MenuElement parentPage, String pageName, boolean top, boolean store) throws Exception {
+	private static final MenuElement addPageIfNotExist(ContentContext ctx, MenuElement parentPage, String pageName, boolean top, boolean store, boolean returnPageIfFound) throws Exception {
 		ContentService content = ContentService.getInstance(ctx.getRequest());
 		MenuElement nav = content.getNavigation(ctx);
 
 		MenuElement newPage = nav.searchChildFromName(pageName);
 		if (newPage != null) {
-			return newPage;
+			if (returnPageIfFound) {
+				return newPage;
+			} else {
+				return null;
+			}
 		}
 
 		if (parentPage != null) {

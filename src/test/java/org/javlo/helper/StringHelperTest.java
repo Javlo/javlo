@@ -132,5 +132,15 @@ public class StringHelperTest extends TestCase {
 	  assertEquals(StringHelper.removeTag("<p>start <a href=\"#\">click</a> test</p>"), "start click test");	  
   }
   
+  public void testRemoveRepeatedChar() {
+	  assertEquals(StringHelper.removeRepeatedChar(null, '-'), null);
+	  assertEquals(StringHelper.removeRepeatedChar("", '-'), "");
+	  assertEquals(StringHelper.removeRepeatedChar("javlo", '-'), "javlo");
+	  assertEquals(StringHelper.removeRepeatedChar("javlo-love", '-'), "javlo-love");
+	  assertEquals(StringHelper.removeRepeatedChar("javlo--love", '-'), "javlo-love");
+	  assertEquals(StringHelper.removeRepeatedChar("-javlo--love-", '-'), "-javlo-love-");
+	  assertEquals(StringHelper.removeRepeatedChar("--javlo----love---------------", '-'), "-javlo-love-");
+  }
+  
  
 }
