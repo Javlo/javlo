@@ -119,7 +119,7 @@ public class BeanHelper {
 					String value = (String) method.invoke(bean, (Object[]) null);
 					if (value == null) {
 						value = "";
-					}
+					}					
 					res.put(name, value);
 				}
 			}

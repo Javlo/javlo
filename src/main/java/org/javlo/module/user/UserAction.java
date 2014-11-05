@@ -116,7 +116,7 @@ public class UserAction extends AbstractModuleAction {
 			if (user == null) {
 				return "user not found : " + requestService.getParameter("user", null);
 			}
-
+			
 			Map<String, String> userInfoMap = BeanHelper.bean2Map(user.getUserInfo());
 			ctx.getRequest().setAttribute("functions", LangHelper.collectionToMap(StringHelper.stringToCollection(userInfoMap.get("function"), ";")));
 

@@ -116,7 +116,7 @@ public class UserSearch extends AbstractVisualComponent implements IAction {
 			} else {
 				out.println("<table>");
 				I18nAccess i18nAccess = I18nAccess.getInstance(ctx.getRequest());
-				out.println("<tr><th>Photo</th><th>Firstname</th><th>Lastname</th><th>email</th><th>"+i18nAccess.getAllText("field.organization", "organization")+"</th><th>country</th><th>domain</th><th>phone</th></tr>");
+				out.println("<tr><th>Photo</th><th>Firstname</th><th>Lastname</th><th>email</th><th>"+i18nAccess.getAllText("field.organization", "organization")+"</th><th>country</th><th>"+i18nAccess.getAllText("field.domain", "domain")+"</th><th>phone</th></tr>");
 				int i = 0;
 				for (UserInfo user : users) {
 					i++;
@@ -131,6 +131,10 @@ public class UserSearch extends AbstractVisualComponent implements IAction {
 					String avatarURL = URLHelper.createAvatarUrl(ctx, user);
 					if (avatarURL != null) {
 						avatar = "<img src=\"" + avatarURL + "\" alt=\"" + user.getFirstName() + ' ' + user.getLastName() + "\" />";
+					}
+					
+					if (user.getUrl() != null && user.getUrl().trim().length() > 0) {
+						organization = "<a href=\""+user.getUrl()+"\">"+organization+"</a>";
 					}
 
 					out.println("<tr class=\"" + oddEven + "\"><td>" + avatar + "</td><td>" + user.getFirstName() + "</td><td>" + user.getLastName() + "</td><td><a href=\"mailto:" + user.getEmail() + "\">contact</a></td><td>" + organization + "</td><td>" + country + "</td><td>" + function + "</td><td>" + user.getPhone() + "</td></tr>");

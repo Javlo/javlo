@@ -92,7 +92,7 @@ public class UserInterfaceContext {
 			if (user != null) {
 				// not god user, so storable user
 				IUserInfo ui = user.getUserInfo();
-				ui.setInfo(toString());
+				//ui.setUserInfo(toString());
 				userFact.updateUserInfo(ui);
 			}
 		}

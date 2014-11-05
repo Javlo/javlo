@@ -37,6 +37,7 @@ public class UserInfo implements Comparable<IUserInfo>, IUserInfo, Serializable 
 	private String encryptLogin = StringHelper.getRandomId();
 	private String password;
 	private String title = "";
+	private String url = "";
 	private String firstName = "";
 	private String lastName = "";
 	private String email = "";
@@ -507,6 +508,14 @@ public class UserInfo implements Comparable<IUserInfo>, IUserInfo, Serializable 
 
 	public void setVat(String vat) {
 		this.vat = vat;
+	}
+
+	public String getUrl() {
+		return url;
+	}
+
+	public void setUrl(String url) {
+		this.url = url;
 	}
 	
 	
