@@ -585,20 +585,30 @@ public class AccessServlet extends HttpServlet implements IVersion {
 
 						response.setContentType("text/html; charset=" + ContentContext.CHARACTER_ENCODING);
 
-						GlobalContext masterContext = GlobalContextFactory.getMasterGlobalContext(request.getSession().getServletContext());
-						if (masterContext != null) {
-							File editCSS = new File(URLHelper.mergePath(masterContext.getStaticFolder(), "/edit/specific.css"));
-							if (editCSS.exists()) {
-								String savePathPrefix = ctx.getPathPrefix();
-								ContentContext.setForcePathPrefix(request, masterContext.getContextKey());
-								String cssURL = URLHelper.createResourceURL(ctx, URLHelper.mergePath(globalContext.getStaticConfig().getStaticFolder(), "/edit/specific.css"));
-								request.setAttribute("specificCSS", cssURL);
-								ContentContext.setForcePathPrefix(request, savePathPrefix);
-							}
-						} else {
-							logger.severe("master context not found.");
+						File editCSS = new File(URLHelper.mergePath(globalContext.getStaticFolder(), "/edit/specific.css"));
+						if (editCSS.exists()) {								
+							String savePathPrefix = ctx.getPathPrefix();
+							ContentContext.setForcePathPrefix(request, globalContext.getContextKey());
+							String cssURL = URLHelper.createResourceURL(ctx, URLHelper.mergePath(globalContext.getStaticConfig().getStaticFolder(), "/edit/specific.css"));
+							request.setAttribute("specificCSS", cssURL);
+							ContentContext.setForcePathPrefix(request, savePathPrefix);
 						}
-
+						if (request.getAttribute("specificCSS") == null) {
+							GlobalContext masterContext = GlobalContextFactory.getMasterGlobalContext(request.getSession().getServletContext());
+							if (masterContext != null) {
+								editCSS = new File(URLHelper.mergePath(masterContext.getStaticFolder(), "/edit/specific.css"));
+								if (editCSS.exists()) {								
+									String savePathPrefix = ctx.getPathPrefix();
+									ContentContext.setForcePathPrefix(request, masterContext.getContextKey());
+									String cssURL = URLHelper.createResourceURL(ctx, URLHelper.mergePath(globalContext.getStaticConfig().getStaticFolder(), "/edit/specific.css"));
+									request.setAttribute("specificCSS", cssURL);
+									ContentContext.setForcePathPrefix(request, savePathPrefix);
+								}
+							} else {
+								logger.severe("master context not found.");
+							}
+						}
+						
 						getServletContext().getRequestDispatcher(editCtx.getEditTemplate()).include(request, response);
 					}
 					localLogger.endCount("edit", "include edit");

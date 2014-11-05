@@ -267,7 +267,10 @@ public class ReactionComponent extends DynamicComponent implements IAction {
 			reaction.setReplyOf(reactionId);
 
 			for (Field field : fields) {
+				
 				field.process(request);
+				System.out.println(field.getName() + " = "+field.getValue());
+				
 				if (field.getName().equals("title")) {
 					if ((field.getValue() != null) && (field.getValue().trim().length() > 0)) {
 						reaction.setTitle(field.getValue());

@@ -23,6 +23,7 @@ function loadWysiwyg(cssQuery, complexity, chooseFileURL) {
 	if (complexity == "middle") {
 		tinymce.init({
 		    selector: cssQuery,
+		    convert_urls: false,
 		    content_css: wysiwygCss,
 		    plugins: [
 		        "advlist autolink lists link image charmap print preview anchor",
@@ -34,7 +35,8 @@ function loadWysiwyg(cssQuery, complexity, chooseFileURL) {
 		});
 	} else if (complexity == "high") {		
 		tinymce.init({
-		    selector: cssQuery,		    
+		    selector: cssQuery,		
+		    convert_urls: false,
 		    menubar : false,
 		    theme: "modern",
 		    content_css: wysiwygCss,
@@ -81,6 +83,7 @@ function loadWysiwyg(cssQuery, complexity, chooseFileURL) {
 		content_css: wysiwygCss,
 		add_form_submit_trigger: true,	
 		menubar : false,
+		convert_urls: false,
 		selector: cssQuery,
     	plugins: "paste",
         //paste_word_valid_elements: "b,strong,i,em,h1,h2,h3,h4,h5,h6,table,tr,th,td,ul,ol,li,p,a,div",
@@ -90,6 +93,7 @@ function loadWysiwyg(cssQuery, complexity, chooseFileURL) {
 		tinyMCE.init({
 		mode : "specific_textareas",
 		theme : "modern",
+		convert_urls: false,
 		content_css: wysiwygCss,
 		add_form_submit_trigger: true,	
 		menubar : false,
