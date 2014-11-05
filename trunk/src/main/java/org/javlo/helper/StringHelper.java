@@ -1628,6 +1628,25 @@ public class StringHelper {
 		}
 		return out.toString();
 	}
+	
+
+	/**
+	 * remove repeated char inside string.
+	 * sample : "javlo--love" "-" = "javlo-love".
+	 * @param str
+	 * @param c
+	 * @return
+	 */
+	public static String removeRepeatedChar(String str, char c) {
+		if (str == null) {
+			return null;
+		}
+		String doubleString = c+""+c;
+		while (str.contains(doubleString)) {
+			str = str.replace(doubleString, ""+c);
+		}
+		return str;
+	}
 
 	/**
 	 * remove sequence from a string. sample : removeSequence
