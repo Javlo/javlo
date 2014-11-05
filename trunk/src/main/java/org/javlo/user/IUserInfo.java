@@ -24,6 +24,8 @@ public interface IUserInfo {
 	public String getPassword();
 
 	public String getEmail();
+	
+	public String getUrl();
 
 	public String getInfo();
 

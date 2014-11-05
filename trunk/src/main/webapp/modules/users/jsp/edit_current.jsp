@@ -125,6 +125,10 @@
 		 	</select>
 		 </c:if>
 	</div>
+	<div class="line url">
+		<label for="url">url</label>
+		<input type="text" id="url" name="url" value="${userInfoMap["url"]}" /> 
+	</div>
 	<div class="line preferredLanguageRaw">
 		<label for="preferredLanguageRaw">preferred Language</label>
 		<input type="text" id="preferredLanguageRaw" name="preferredLanguageRaw" value="${userInfoMap["preferredLanguageRaw"]}" /> 
@@ -144,12 +148,12 @@
 	</div>
 	</c:if>
 	<div class="line">
-		<label for="info">info</label>
-		<textarea id="info" name="info">${userInfoMap["info"]}</textarea>
+		<label for="moreinfo">More info</label>
+		<textarea id="moreinfo" name="moreinfo">${userInfoMap['moreinfo']}</textarea>
 	</div>
 </div>
 </div>
-<div class="line">
+<div class="line function">
 		<label for="function">area of specialisation</label>
 		<c:if test="${empty list.functions}">
 		<input type="text" id="function" name="function" value="${userInfoMap["function"]}" />
@@ -167,7 +171,7 @@
 <c:if test="${not empty webaction}">
 	<div class="line">
 		<label for="message">you message to the administrator of the site :</label>
-		<textarea id="info" name="message">${param.message}</textarea>
+		<textarea id="message" name="message">${param.message}</textarea>
 	</div>
 </c:if>
 
