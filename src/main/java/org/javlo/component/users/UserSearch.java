@@ -115,7 +115,8 @@ public class UserSearch extends AbstractVisualComponent implements IAction {
 				out.println("<span class=\"error\">Sorry, no result</span>");
 			} else {
 				out.println("<table>");
-				out.println("<tr><th>Photo</th><th>Firstname</th><th>Lastname</th><th>email</th><th>organization</th><th>country</th><th>domain</th><th>phone</th></tr>");
+				I18nAccess i18nAccess = I18nAccess.getInstance(ctx.getRequest());
+				out.println("<tr><th>Photo</th><th>Firstname</th><th>Lastname</th><th>email</th><th>"+i18nAccess.getAllText("field.organization", "organization")+"</th><th>country</th><th>domain</th><th>phone</th></tr>");
 				int i = 0;
 				for (UserInfo user : users) {
 					i++;
