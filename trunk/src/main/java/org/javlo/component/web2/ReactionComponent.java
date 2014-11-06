@@ -1061,7 +1061,9 @@ public class ReactionComponent extends DynamicComponent implements IAction {
 		out.println("<input id=\"info-" + getId() + "\" type=\"text\" name=\"fdata\" value=\"\" />");
 		out.println("</div>");
 
+		out.println("<div class=\"actions\">");
 		out.println("<input class=\"button light\" type=\"submit\" name=\"ok\" value=\"" + i18nAccess.getViewText("global.send") + "\" />");
+		out.println("</div>");
 		out.println("</form>");
 		out.println("</div>");
 	}
