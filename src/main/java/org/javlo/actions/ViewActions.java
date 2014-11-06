@@ -183,7 +183,7 @@ public class ViewActions implements IAction {
 		MailingBuilder mb = new MailingBuilder();
 		mb.setSender(globalContext.getAdministratorEmail());
 		mb.setEditorGroups(new LinkedList<String>(page.getEditorRolesAndParent()));
-		mb.getExcludedUsers().add(page.getLatestEditor());
+		mb.getExcludedUsers().add(page.getLatestEditor());		
 		mb.setSubject(i18nAccess.getText("collaborative.mail.modified", "Page modified: ") + page.getTitle(ctx));
 		mb.prepare(ctx);
 		mb.sendMailing(ctx);
