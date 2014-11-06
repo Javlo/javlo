@@ -160,5 +160,13 @@ public class EcomService {
 	public void deletePayementService(String name) {		
 		globalContext.removeData(PAYEMENT_PREFIX+name);
 	}
+	
+	public double getDefaultDelivery() {
+		return Double.parseDouble(globalContext.getData("ecom.default-delivery", "0"));
+	}
+	
+	public void setDefaultDelivery(Double price) {
+		globalContext.setData("ecom.default-delivery", ""+price);
+	}
 
 }

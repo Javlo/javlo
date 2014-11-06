@@ -35,6 +35,7 @@ import org.javlo.config.StaticConfig;
 import org.javlo.context.ContentContext;
 import org.javlo.context.GlobalContext;
 import org.javlo.helper.NetHelper;
+import org.javlo.helper.PDFHelper;
 import org.javlo.helper.RequestHelper;
 import org.javlo.helper.ResourceHelper;
 import org.javlo.helper.StringHelper;
@@ -390,7 +391,12 @@ public class ImageTransformServlet extends HttpServlet {
 		// org.javlo.helper.Logger.stepCount("transform",
 		// "start - transformation - 1");
 
-		BufferedImage img = ImageIO.read(imageFile);
+		BufferedImage img;
+		if (inFileExtention.equalsIgnoreCase("pdf")) {
+			img = PDFHelper.getPDFImage(imageFile);
+		} else {
+			img = ImageIO.read(imageFile);
+		}
 		if (img == null) {
 			logger.warning("could'nt read : " + imageFile);
 			ctx.getResponse().setStatus(404);
@@ -791,7 +797,11 @@ public class ImageTransformServlet extends HttpServlet {
 					fileExtension = imageName.substring(index + 1);
 				}
 			}
-			response.setContentType(ImageHelper.getImageExtensionToManType(fileExtension));
+			if (!fileExtension.equalsIgnoreCase("pdf")) { 
+				response.setContentType(ImageHelper.getImageExtensionToManType(fileExtension));
+			} else {
+				response.setContentType(ImageHelper.getImageExtensionToManType("jpg"));
+			}
 			out = response.getOutputStream();
 
 			// org.javlo.helper.Logger.stepCount("transform",

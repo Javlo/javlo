@@ -230,8 +230,12 @@ public class Basket implements Serializable {
 			}
 			return delivery;
 		} else {
-			return defaultDeleviry;
+			return getEcomService(ctx).getDefaultDelivery();
 		}
+	}
+	
+	protected EcomService getEcomService(ContentContext ctx) {
+		return EcomService.getInstance(ctx.getGlobalContext(), ctx.getRequest().getSession());
 	}
 
 	public int getSize() {
@@ -340,7 +344,7 @@ public class Basket implements Serializable {
 		this.address = address;
 	}
 
-	private double defaultDeleviry = 9;
+	private double defaultDelivery = 0;
 
 	public String getVatNumber() {
 		return vatNumber;

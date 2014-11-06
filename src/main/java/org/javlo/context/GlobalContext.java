@@ -906,6 +906,19 @@ public class GlobalContext implements Serializable, IPrintInfo {
 		}
 		return prop.getProperty(key);
 	}
+	
+	public String getData(String key, String defaultValue) {
+		Properties prop = dataProperties;
+		if (prop == null) {
+			synchronized (lockDataFile) {
+				prop = dataProperties;
+				if (prop == null) {
+					prop = initDataFile();
+				}
+			}
+		}
+		return prop.getProperty(key, defaultValue);
+	}
 
 	public void removeData(String key) {
 		synchronized (lockDataFile) {

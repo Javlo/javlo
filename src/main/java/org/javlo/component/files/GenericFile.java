@@ -132,8 +132,7 @@ public class GenericFile extends AbstractFileComponent implements IReverseLinkCo
 	}
 
 	@Override
-	public String[] getStyleList(ContentContext ctx) {
-		System.out.println("***** GenericFile.getStyleList : super.getStyleList(ctx).length = "+super.getStyleList(ctx).length); //TODO: remove debug trace
+	public String[] getStyleList(ContentContext ctx) {		
 		if (super.getStyleList(ctx).length > 0) {
 			return super.getStyleList(ctx);
 		} else {
