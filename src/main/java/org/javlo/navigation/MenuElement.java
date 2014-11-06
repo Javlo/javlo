@@ -901,7 +901,7 @@ public class MenuElement implements Serializable, IPrintInfo {
 
 	boolean childrenAssociation = false;
 
-	boolean changeNotification = true;
+	boolean changeNotification = false;
 
 	// String path = null;
 	String id = StringHelper.getRandomId();

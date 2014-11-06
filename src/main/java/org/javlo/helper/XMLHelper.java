@@ -313,7 +313,7 @@ public class XMLHelper {
 				out.print("\" childrenAssociation=\"");
 				out.print(page.isChildrenAssociation());
 			}	
-			if (!page.isChangeNotification()) {
+			if ( page.isChangeNotification()) {
 				out.print("\" changeNotification=\"");
 				out.print(page.isChangeNotification());
 			}

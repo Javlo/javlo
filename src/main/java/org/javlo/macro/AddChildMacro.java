@@ -6,6 +6,7 @@ import org.javlo.component.core.ContentElementList;
 import org.javlo.context.ContentContext;
 import org.javlo.helper.MacroHelper;
 import org.javlo.helper.NetHelper;
+import org.javlo.helper.StringHelper;
 import org.javlo.helper.URLHelper;
 import org.javlo.navigation.MenuElement;
 import org.javlo.service.ContentService;
@@ -33,6 +34,12 @@ public class AddChildMacro extends AbstractMacro {
 		}
 		MenuElement defaultPage = content.getNavigation(ctx).searchChildFromName(DEFAULT_PAGE_NAME);
 		MenuElement newPage = MacroHelper.addPageIfNotExist(ctx, ctx.getCurrentPage(),newPageName, true, true);
+		boolean changeNotification = true;
+		if (getMacroProperties(ctx) != null) {
+			changeNotification = StringHelper.isTrue(getMacroProperties(ctx).getProperty("change-notification", "true"));
+		}
+		newPage.setChangeNotification(changeNotification);
+		
 		if (defaultPage != null)  {
 			ContentElementList comps = defaultPage.getContent(ctx);
 			String parentId = "0";
