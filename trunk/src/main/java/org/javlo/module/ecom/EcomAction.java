@@ -5,6 +5,7 @@ import java.io.IOException;
 import java.lang.reflect.InvocationTargetException;
 import java.util.Collection;
 import java.util.Date;
+import java.util.Locale;
 import java.util.logging.Logger;
 
 import javax.servlet.http.HttpServletRequest;
@@ -15,6 +16,7 @@ import org.javlo.context.ContentContext;
 import org.javlo.context.GlobalContext;
 import org.javlo.ecom.Basket;
 import org.javlo.ecom.BasketPersistenceService;
+import org.javlo.ecom.BasketSmartBean;
 import org.javlo.ecom.EcomService;
 import org.javlo.ecom.PayementExternalService;
 import org.javlo.helper.BeanHelper;
@@ -34,7 +36,8 @@ public class EcomAction extends AbstractModuleAction {
 	public String prepare(ContentContext ctx, ModulesContext modulesContext) throws Exception {
 		String outMsg = super.prepare(ctx, modulesContext);
 		BasketPersistenceService basketPersistenceService = BasketPersistenceService.getInstance(ctx.getGlobalContext());
-		ctx.getRequest().setAttribute("baskets", basketPersistenceService.getAllBaskets());
+		ctx.getRequest().setAttribute("baskets", BasketSmartBean.getListInstance(ctx, basketPersistenceService.getAllBaskets()));
+		ctx.getRequest().setAttribute("delivery", StringHelper.renderDouble(EcomService.getInstance(ctx.getGlobalContext(), ctx.getRequest().getSession()).getDefaultDelivery(), Locale.ENGLISH));
 		return outMsg;
 	}
 
@@ -78,7 +81,7 @@ public class EcomAction extends AbstractModuleAction {
 	
 	public static String performStoreBasket(RequestService rs, ContentContext ctx, MessageRepository messageRepository, I18nAccess i18nAccess) throws IllegalArgumentException, IllegalAccessException, InvocationTargetException, IOException {
 		BasketPersistenceService service = BasketPersistenceService.getInstance(ctx.getGlobalContext());
-		Collection baskets = service.getAllBaskets();
+		Collection baskets = BasketSmartBean.getListInstance(ctx, service.getAllBaskets());
 		File file = BasketPersistenceService.getFolder(ctx.getGlobalContext());
 		if (file.exists()) {
 			File storeFile = new File (URLHelper.mergePath(file.getAbsolutePath(), "csv", StringHelper.createFileName("basket_storage_"+StringHelper.renderSortableTime(new Date())+".csv")));
@@ -126,6 +129,16 @@ public class EcomAction extends AbstractModuleAction {
 	
 	public static String performImportPayement(RequestService rs, ContentContext ctx, MessageRepository messageRepository, I18nAccess i18nAccess) {
 		
+		return null;
+	}
+	
+	public static String performUpdate(RequestService rs, ContentContext ctx, MessageRepository messageRepository, I18nAccess i18nAccess) {
+		String deliveryString = rs.getParameter("delivery", null);
+		if (deliveryString != null) {
+			EcomService.getInstance(ctx.getGlobalContext(), ctx.getRequest().getSession()).setDefaultDelivery(Double.parseDouble(deliveryString));
+		} else {
+			return "delivery param not found.";
+		}
 		return null;
 	}
 
