@@ -87,5 +87,13 @@ public class BasketSmartBean {
 	public String getZip() {
 		return basket.getZip();
 	}
+	
+	public String getContactPhone() {
+		return basket.getContactPhone();
+	}
+	
+	public String getContactEmail() {
+		return basket.getContactEmail();
+	}
 
 }
