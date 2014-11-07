@@ -68,6 +68,8 @@ import org.apache.commons.io.FileExistsException;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.lang.StringUtils;
+import org.apache.pdfbox.pdmodel.PDDocument;
+import org.apache.pdfbox.util.PDFTextStripper;
 import org.apache.poi.hwpf.extractor.WordExtractor;
 import org.javlo.component.core.ComponentFactory;
 import org.javlo.component.core.IContentVisualComponent;
@@ -87,8 +89,6 @@ import org.javlo.user.UserFactory;
 import org.javlo.ztatic.FileCache;
 import org.javlo.ztatic.IStaticContainer;
 import org.javlo.ztatic.StaticInfo;
-import org.pdfbox.pdmodel.PDDocument;
-import org.pdfbox.util.PDFTextStripper;
 
 public class ResourceHelper {
 

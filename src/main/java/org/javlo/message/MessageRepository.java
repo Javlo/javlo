@@ -18,7 +18,6 @@ import org.javlo.helper.URLHelper;
 import org.javlo.i18n.I18nMessage;
 import org.javlo.service.NotificationService;
 import org.javlo.service.RequestService;
-import org.pdfbox.util.operator.SetGraphicsStateParameters;
 
 /**
  * contain the list of message.
