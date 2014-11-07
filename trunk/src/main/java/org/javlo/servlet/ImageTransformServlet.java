@@ -391,6 +391,9 @@ public class ImageTransformServlet extends HttpServlet {
 		// org.javlo.helper.Logger.stepCount("transform",
 		// "start - transformation - 1");
 
+		if (inFileExtention == null) {
+			inFileExtention = StringHelper.getFileExtension(imageFile.getName());
+		}
 		BufferedImage img;
 		if (inFileExtention.equalsIgnoreCase("pdf")) {
 			img = PDFHelper.getPDFImage(imageFile);
@@ -613,23 +616,22 @@ public class ImageTransformServlet extends HttpServlet {
 			OutputStream outImage = fc.saveFile(dir, imageName);
 
 			try {
-				String fileExtension = config.getFileExtension(ctx.getDevice(), filter, area);
-				if (fileExtension == null) {
-					if (inFileExtention != null) {
-						fileExtension = inFileExtention;
-					} else {
-						fileExtension = StringHelper.getFileExtension(imageFile.getName());
-					}
+				String imageType = config.getFileExtension(ctx.getDevice(), filter, area);
+				if (imageType == null) {
+					imageType = inFileExtention;
 				}
-				logger.info("write image : " + fileExtension + " width: " + img.getWidth() + " height: " + img.getHeight());
+				if ("pdf".equals(imageType)) {
+					imageType = "png";
+				}
+				logger.info("write image : " + imageType + " width: " + img.getWidth() + " height: " + img.getHeight());
 
 				if (comp != null && StringHelper.trimAndNullify(comp.getImageFilterKey(ctx)) != null) {
 					img = ((IImageFilter) comp).filterImage(ctx, img);
 				}
-				if (!"png".equals(fileExtension) && !"gif".equals(fileExtension)) {
+				if (!"png".equals(imageType) && !"gif".equals(imageType)) {
 					img = ImageEngine.removeAlpha(img);
 				}
-				ImageIO.write(img, fileExtension, outImage);
+				ImageIO.write(img, imageType, outImage);
 				if (metadata != null) {
 					ResourceHelper.writeImageMetadata(metadata, fc.getFileName(dir, dir).getCanonicalFile());
 				}
@@ -792,15 +794,12 @@ public class ImageTransformServlet extends HttpServlet {
 
 			String fileExtension = config.getFileExtension(ctx.getDevice(), filter, area);
 			if (fileExtension == null) {
-				int index = imageName.lastIndexOf('.');
-				if (index > -1) {
-					fileExtension = imageName.substring(index + 1);
-				}
+				fileExtension = StringHelper.getFileExtension(imageName);
 			}
-			if (!fileExtension.equalsIgnoreCase("pdf")) { 
-				response.setContentType(ImageHelper.getImageExtensionToManType(fileExtension));
+			if (fileExtension.equalsIgnoreCase("pdf")) { 
+				response.setContentType(ImageHelper.getImageExtensionToManType("png"));
 			} else {
-				response.setContentType(ImageHelper.getImageExtensionToManType("jpg"));
+				response.setContentType(ImageHelper.getImageExtensionToManType(fileExtension));
 			}
 			out = response.getOutputStream();
 
