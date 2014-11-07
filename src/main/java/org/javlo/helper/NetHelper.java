@@ -124,7 +124,6 @@ public class NetHelper {
 			connection.setRequestMethod("POST");
 			connection.setRequestProperty("Content-Type", "application/x-www-form-urlencoded");
 
-			System.out.println("***** NetHelper.readPage : query = "+query); //TODO: remove debug trace			
 			connection.setRequestProperty("Content-Length", "" + Integer.toString(query.getBytes().length));
 			//connection.setRequestProperty("Content-Language", "en-US");
 
