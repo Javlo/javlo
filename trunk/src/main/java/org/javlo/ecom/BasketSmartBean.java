@@ -63,6 +63,29 @@ public class BasketSmartBean {
 	public boolean isReadyToSend() {
 		return basket.isReadyToSend();
 	}
-	 
+	
+	public String getFirstName() {
+		return basket.getFirstName();
+	}
+	
+	public String getLastName() {
+		return basket.getLastName();
+	}
+	
+	public String getAddress() {
+		return basket.getAddress();
+	}
+	
+	public String getCity() {
+		return basket.getCity();
+	}
+	
+	public String getCountry() {
+		return basket.getCountry();
+	}
+	
+	public String getZip() {
+		return basket.getZip();
+	}
 
 }
