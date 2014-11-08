@@ -234,7 +234,7 @@ public class CreateArticle implements IInteractiveMacro, IAction {
 				
 				/*ctx.setClosePopup(true);
 				if (newURL != null) {
-					ctx.setParentURL(newURL);²
+					ctx.setParentURL(newURL);
 				}*/
 			}
 		} catch (Exception e) {
