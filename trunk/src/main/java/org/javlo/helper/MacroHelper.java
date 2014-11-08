@@ -13,6 +13,7 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.Date;
 import java.util.GregorianCalendar;
+import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Locale;
@@ -214,7 +215,8 @@ public class MacroHelper {
 	 * @param parentName
 	 *            the name of the parent page
 	 * @param pagePrefix
-	 *            the prefix of the new page (suffix in the number). sp. : prefix : news- page name : news-12
+	 *            the prefix of the new page (suffix in the number). sp. :
+	 *            prefix : news- page name : news-12
 	 * @return the new page
 	 * @throws Exception
 	 */
@@ -247,11 +249,11 @@ public class MacroHelper {
 
 		return newPage;
 	}
-	
+
 	public static final MenuElement addPageIfNotExist(ContentContext ctx, MenuElement parentPage, String pageName, boolean top, boolean store) throws Exception {
 		return addPageIfNotExist(ctx, parentPage, pageName, top, store, true);
 	}
-	
+
 	public static final MenuElement addPage(ContentContext ctx, MenuElement parentPage, String pageName, boolean top, boolean store) throws Exception {
 		return addPageIfNotExist(ctx, parentPage, pageName, top, store, false);
 	}
@@ -344,7 +346,8 @@ public class MacroHelper {
 	}
 
 	/**
-	 * insert the page in the navigation if she does not exist and add not existing parent page too.
+	 * insert the page in the navigation if she does not exist and add not
+	 * existing parent page too.
 	 * 
 	 * @param ctx
 	 * @param parentPage
@@ -419,7 +422,8 @@ public class MacroHelper {
 	}
 
 	/**
-	 * Copy all component in the current language to the otherLanguageContexts BUT with an empty value.
+	 * Copy all component in the current language to the otherLanguageContexts
+	 * BUT with an empty value.
 	 * 
 	 * @param currentPage
 	 * @param ctx
@@ -449,7 +453,8 @@ public class MacroHelper {
 	}
 
 	/**
-	 * Copy the local content of the current language to <code>toPage</code>. Create the page or the parent page if they don't exists.
+	 * Copy the local content of the current language to <code>toPage</code>.
+	 * Create the page or the parent page if they don't exists.
 	 * 
 	 * @param fromPage
 	 * @param fromCtx
@@ -731,9 +736,9 @@ public class MacroHelper {
 		}
 		return outPages;
 	}
-	
+
 	public static void createPageStructure(ContentContext ctx, MenuElement page, Map componentsType, boolean fakeContent) throws Exception {
-		createPageStructure(ctx,page,componentsType,fakeContent,null,null);
+		createPageStructure(ctx, page, componentsType, fakeContent, null, null);
 	}
 
 	public static void createPageStructure(ContentContext ctx, MenuElement page, Map componentsType, boolean fakeContent, Date date, Collection<String> tags) throws Exception {
@@ -766,18 +771,18 @@ public class MacroHelper {
 						}
 					}
 					if (type.equals(DateComponent.TYPE) && date != null) {
-						value = StringHelper.renderTime(date);						
+						value = StringHelper.renderTime(date);
 					} else if (type.equals(Tags.TYPE) && tags != null) {
-						value = StringHelper.collectionToString(tags,";");
+						value = StringHelper.collectionToString(tags, ";");
 					}
 					parentId = MacroHelper.addContent(lg, page, parentId, type, style, area, value, asList, ctx.getCurrentEditUser());
 				}
 			}
 		}
 	}
-	
+
 	public static void addContentInPage(ContentContext ctx, MenuElement newPage, String pageStructureName) throws IOException, Exception {
-		addContentInPage(ctx,newPage,pageStructureName,null,null);
+		addContentInPage(ctx, newPage, pageStructureName, null, null);
 	}
 
 	public static void addContentInPage(ContentContext ctx, MenuElement newPage, String pageStructureName, Date date, Collection<String> tags) throws IOException, Exception {
@@ -800,7 +805,7 @@ public class MacroHelper {
 				}
 				parentId = MacroHelper.addContent(lg, newPage, parentId, DateComponent.TYPE, dateValue, ctx.getCurrentEditUser());
 				if (tags != null) {
-					parentId = MacroHelper.addContent(lg, newPage, parentId, Tags.TYPE, StringHelper.collectionToString(tags,";"), ctx.getCurrentEditUser());
+					parentId = MacroHelper.addContent(lg, newPage, parentId, Tags.TYPE, StringHelper.collectionToString(tags, ";"), ctx.getCurrentEditUser());
 				}
 				parentId = MacroHelper.addContent(lg, newPage, parentId, Title.TYPE, "", ctx.getCurrentEditUser());
 				parentId = MacroHelper.addContent(lg, newPage, parentId, Description.TYPE, "", ctx.getCurrentEditUser());
@@ -823,7 +828,8 @@ public class MacroHelper {
 		GlobalContext globalContext = GlobalContext.getInstance(ctx.getRequest());
 
 		String monthName = MacroHelper.getDisplayName(cal, Calendar.MONTH, MacroHelper.CALENDAR_LONG, new Locale(globalContext.getDefaultLanguage()));
-		monthName = StringHelper.createFileName(monthName); // remove special char
+		monthName = StringHelper.createFileName(monthName); // remove special
+															// char
 
 		return yearPageName + "-" + monthName;
 	}
@@ -883,19 +889,34 @@ public class MacroHelper {
 		}
 		PersistenceService.getInstance(ctx.getGlobalContext()).setAskStore(true);
 	}
-	
+
 	public static String getLaunchMacroXHTML(ContentContext ctx, String macro, String label) {
 		ByteArrayOutputStream outStream = new ByteArrayOutputStream();
 		PrintStream out = new PrintStream(outStream);
-		out.println("<div class=\"macro\">");
-		out.println("<form action=\""+URLHelper.createURL(ctx)+"\" method=\"post\">");
-		out.println("<input type=\"hidden\" value=\"macro\" name=\"module\">");
-		out.println("<input type=\"hidden\" value=\"true\" name=\"previewEdit\">");
-		out.println("<input type=\"hidden\" value=\"macro.executeMacro\" name=\"webaction\">");		
-		out.println("<input type=\"hidden\" value=\""+macro+"\" name=\"macro\">");				
-		out.println("<input class=\"action-button\" type=\"submit\" value=\""+label+"\">");
-		out.println("</form>");
-		out.println("</div>");
+		IMacro macroClass = MacroFactory.getInstance(ctx.getGlobalContext().getStaticConfig()).getMacro(macro);
+		if (macroClass instanceof IInteractiveMacro) {
+			Map<String, String> params = new HashMap<String, String>();
+			params.put("editPreview", "true");
+			params.put("module", "macro");
+			params.put("previewEdit", "true");
+			params.put("webaction", "macro.executeInteractiveMacro");
+			params.put("macro", macro);
+			String url = URLHelper.createURL(ctx.getContextWithOtherRenderMode(ContentContext.EDIT_MODE), params);
+			String actionURL = "jQuery.colorbox({href : '" + url + "',opacity : 0.6,iframe : true,width : '95%',	height : '95%'}); return false;";
+			out.println("<div class=\"macro\">");
+			out.println("<a href=\"#\" onclick=\"" + actionURL + "\">" + label + "</a>");
+			out.println("</div>");
+		} else {
+			out.println("<div class=\"macro\">");
+			out.println("<form action=\"" + URLHelper.createURL(ctx) + "\" method=\"post\">");
+			out.println("<input type=\"hidden\" value=\"macro\" name=\"module\">");
+			out.println("<input type=\"hidden\" value=\"true\" name=\"previewEdit\">");
+			out.println("<input type=\"hidden\" value=\"macro.executeMacro\" name=\"webaction\">");
+			out.println("<input type=\"hidden\" value=\"" + macro + "\" name=\"macro\">");
+			out.println("<input class=\"action-button\" type=\"submit\" value=\"" + label + "\">");
+			out.println("</form>");
+			out.println("</div>");
+		}
 		out.close();
 		return new String(outStream.toByteArray());
 	}
@@ -917,9 +938,18 @@ public class MacroHelper {
 			type = StringUtils.split(type, "|")[0];
 		}
 
-		System.out.println("***** MacroHelper.main : type = " + type); // TODO: remove debug trace
-		System.out.println("***** MacroHelper.main : area = " + area); // TODO: remove debug trace
-		System.out.println("***** MacroHelper.main : style = " + style); // TODO: remove debug trace
+		System.out.println("***** MacroHelper.main : type = " + type); // TODO:
+																		// remove
+																		// debug
+																		// trace
+		System.out.println("***** MacroHelper.main : area = " + area); // TODO:
+																		// remove
+																		// debug
+																		// trace
+		System.out.println("***** MacroHelper.main : style = " + style); // TODO:
+																			// remove
+																			// debug
+																			// trace
 	}
 
 }

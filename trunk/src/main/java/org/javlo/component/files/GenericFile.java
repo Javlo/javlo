@@ -101,10 +101,10 @@ public class GenericFile extends AbstractFileComponent implements IReverseLinkCo
 		StringWriter res = new StringWriter();
 		PrintWriter out = new PrintWriter(res);
 		if ((getValue() != null) && (getValue().length() > 0)) {
-			prepareView(ctx);
-			String fileExtension = StringHelper.getFileExtension(getFileName());
-			if (FILE_EXTENSIONS_WITH_PREVIEW.contains(fileExtension)) {
-				out.print("<img src='" + ctx.getRequest().getAttribute("imagePreview") + "' /><br/>");
+			prepareView(ctx);			
+			Object imagePreviewAttribute = ctx.getRequest().getAttribute("imagePreview");
+			if (imagePreviewAttribute != null) {
+				out.print("<img src='" + imagePreviewAttribute + "' /><br/>");
 			}
 			out.print(getViewXHTMLCode(ctx));
 		} else {
@@ -172,10 +172,20 @@ public class GenericFile extends AbstractFileComponent implements IReverseLinkCo
 		GlobalContext globalContext = GlobalContext.getInstance(ctx.getRequest());
 		String fullName = ElementaryURLHelper.mergePath(getDirSelected(), getFileName());
 		fullName = ElementaryURLHelper.mergePath(globalContext.getStaticConfig().getFileFolder(), fullName);
-		ctx.getRequest().setAttribute("imagePreview", URLHelper.createTransformURL(ctx, fullName, "list"));
+		if (FILE_EXTENSIONS_WITH_PREVIEW.contains(StringHelper.getFileExtension(fullName))) {
+			ctx.getRequest().setAttribute("imagePreview", URLHelper.createTransformURL(ctx, fullName, "list"));
+		}
 		fullName = ElementaryURLHelper.mergePath(globalContext.getDataFolder(), fullName);
 		ctx.getRequest().setAttribute("ext", StringHelper.getFileExtension(getFileName()));
 		ctx.getRequest().setAttribute("size", StringHelper.getFileSize(fullName));
+		String url = ElementaryURLHelper.mergePath(getDirSelected(), getFileName());
+		ctx.getRequest().setAttribute("url", StringHelper.toXMLAttribute(url));
+		if (getLabel().trim().length() == 0) {
+			ctx.getRequest().setAttribute("label", getFileName());			
+		} else {
+			ctx.getRequest().setAttribute("label", textToXHTML(getLabel()));
+		}
+
 	}
 
 	/**
