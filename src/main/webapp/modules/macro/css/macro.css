@@ -20,8 +20,16 @@
 .macro-interface fieldset {
 	margin: 0;
 }
-
 	
 .dyntable td.action {
 	text-align: left;	
+}
+
+.create-content-children .line label {
+	display: block;
+	float: none;
+}
+
+.create-content-children textarea {
+	height: 160px;
 }

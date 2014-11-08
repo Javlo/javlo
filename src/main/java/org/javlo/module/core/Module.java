@@ -250,7 +250,8 @@ public class Module {
 		}
 
 		/**
-		 * this method is called when the box must be updated. This method is used only in ajax context.
+		 * this method is called when the box must be updated. This method is
+		 * used only in ajax context.
 		 * 
 		 * @param ctx
 		 * @throws IOException
@@ -433,7 +434,7 @@ public class Module {
 				if (file.isFile() && (ext.equalsIgnoreCase("css") || ext.equalsIgnoreCase("less"))) {
 					String fileName = file.getName();
 					if (ext.equalsIgnoreCase("less")) {
-						fileName = fileName.substring(0, fileName.length()-".less".length())+".css";
+						fileName = fileName.substring(0, fileName.length() - ".less".length()) + ".css";
 					}
 					String url = URLHelper.mergePath("/", getModuleFolder() + '/' + getName() + '/' + CSS_FOLDER + '/' + fileName);
 					cssURI.add(url);
@@ -441,17 +442,22 @@ public class Module {
 			}
 		}
 
-		String externalCSS = config.get("css.external");
+		String[] allExternalCSS = null;
+		if (config.get("css.external") != null) {
+			allExternalCSS = config.get("css.external").split(",");
+		}
 
-		if (externalCSS != null) {
-			cssFolder = new File(URLHelper.mergePath(moduleRoot.getAbsolutePath(), externalCSS));
-			if (cssFolder.isDirectory()) {
-				File[] cssFiles = cssFolder.listFiles();
-				Arrays.sort(cssFiles, new FileComparator(FileComparator.NAME, true));
-				for (File file : cssFiles) {
-					if (file.isFile() && StringHelper.getFileExtension(file.getName()).equalsIgnoreCase("css")) {
-						String url = URLHelper.mergePath("/", ModulesContext.MODULES_FOLDER + '/' + getName() + '/' + externalCSS + '/' + file.getName());
-						cssURI.add(url);
+		if (allExternalCSS != null) {
+			for (String externalCSS : allExternalCSS) {
+				cssFolder = new File(URLHelper.mergePath(moduleRoot.getAbsolutePath(), externalCSS));
+				if (cssFolder.isDirectory()) {
+					File[] cssFiles = cssFolder.listFiles();
+					Arrays.sort(cssFiles, new FileComparator(FileComparator.NAME, true));
+					for (File file : cssFiles) {
+						if (file.isFile() && StringHelper.getFileExtension(file.getName()).equalsIgnoreCase("css")) {
+							String url = URLHelper.mergePath("/", ModulesContext.MODULES_FOLDER + '/' + getName() + '/' + externalCSS + '/' + file.getName());
+							cssURI.add(url);
+						}
 					}
 				}
 			}
@@ -480,16 +486,15 @@ public class Module {
 		}
 
 		String externalJS = config.get("js.external");
-
-		if (externalCSS != null) {
-			cssFolder = new File(URLHelper.mergePath(moduleRoot.getAbsolutePath(), externalJS));
-			if (cssFolder.isDirectory()) {
-				File[] cssFiles = cssFolder.listFiles();
-				Arrays.sort(cssFiles, new FileComparator(FileComparator.NAME, true));
-				for (File file : cssFiles) {
+		if (externalJS != null) {
+			File jsEXternalFolder = new File(URLHelper.mergePath(moduleRoot.getAbsolutePath(), externalJS));
+			if (jsEXternalFolder.isDirectory()) {
+				File[] jsFiles = jsEXternalFolder.listFiles();
+				Arrays.sort(jsFiles, new FileComparator(FileComparator.NAME, true));
+				for (File file : jsFiles) {
 					if (file.isFile() && StringHelper.getFileExtension(file.getName()).equalsIgnoreCase("js")) {
 						String url = URLHelper.mergePath("/", ModulesContext.MODULES_FOLDER + '/' + getName() + '/' + externalJS + '/' + file.getName());
-						cssURI.add(url);
+						jsURI.add(url);
 					}
 				}
 			}
@@ -501,11 +506,11 @@ public class Module {
 			renderer = URLHelper.mergePath(path, renderer);
 			defaultRenderer = renderer;
 		}
-		
+
 		/* main renderer */
 		mobileRenderer = config.get("renderer.mobile");
 		if (mobileRenderer != null) {
-			mobileRenderer = URLHelper.mergePath(path, mobileRenderer);			
+			mobileRenderer = URLHelper.mergePath(path, mobileRenderer);
 		}
 
 		/* view renderer */
@@ -574,7 +579,7 @@ public class Module {
 
 		loadAction();
 	}
-	
+
 	protected void loadAction() {
 		/* action */
 		String actionName = config.get("class.action");
@@ -584,7 +589,7 @@ public class Module {
 			} catch (Exception e) {
 				e.printStackTrace();
 			}
-		}		
+		}
 	}
 
 	public String getModuleFolder() {
@@ -594,7 +599,7 @@ public class Module {
 	public String getActionName() {
 		return config.get("class.action");
 	}
-	
+
 	public boolean isMobile() {
 		return getMobileRenderer() != null;
 	}
@@ -679,10 +684,10 @@ public class Module {
 		return helpText;
 	}
 
-	public String getRenderer() {		
+	public String getRenderer() {
 		return renderer;
 	}
-	
+
 	public String getMobileRenderer() {
 		return mobileRenderer;
 	}
@@ -768,7 +773,6 @@ public class Module {
 		}
 		return false;
 	}
-
 
 	public boolean isBreadcrumb() {
 		return breadcrumb;
@@ -866,11 +870,11 @@ public class Module {
 		return box;
 	}
 
-	public synchronized void clearAllBoxes() {		
+	public synchronized void clearAllBoxes() {
 		boxes.clear();
 		sideBoxes.clear();
 		mainBoxes.clear();
-		setSidebar(false);		
+		setSidebar(false);
 	}
 
 	public String getBackUrl() {
@@ -941,7 +945,7 @@ public class Module {
 	public String getDescription() {
 		return description;
 	}
-	
+
 	public IModuleAction getAction() {
 		return action;
 	}
@@ -1038,10 +1042,10 @@ public class Module {
 		mainBoxes.add(box);
 		boxes.put(name, box);
 	}
-	
+
 	public static void main(String[] args) {
-		String fileName="text.less";
-		fileName = fileName.substring(0, fileName.length()-".less".length())+".css";
+		String fileName = "text.less";
+		fileName = fileName.substring(0, fileName.length() - ".less".length()) + ".css";
 		System.out.println(fileName);
 	}
 
