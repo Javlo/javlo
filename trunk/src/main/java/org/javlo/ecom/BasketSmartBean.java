@@ -95,5 +95,17 @@ public class BasketSmartBean {
 	public String getContactEmail() {
 		return basket.getContactEmail();
 	}
-
-}
+	
+	public String getProductsBeanToString() {
+		return basket.getProductsBeanToString();
+	}
+	
+	public String getInfo() {
+		return basket.getInfo();
+	}
+	
+	public String getStructuredCommunication() {
+		return basket.getStructutedCommunication();
+	}
+	
+ }

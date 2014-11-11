@@ -63,7 +63,7 @@ public class ExternalLink extends ComplexPropertiesLink implements IReverseLinkC
 	
 	private String getLink() {
 		String link = properties.getProperty(LINK_KEY, "");
-		if (link.contains("@")) {
+		if (link.contains("@") && !link.contains("http://") && !link.contains("https://")) {
 			link = "mailto:"+link;
 		}
 		return link;
