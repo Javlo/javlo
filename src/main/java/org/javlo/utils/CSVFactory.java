@@ -14,6 +14,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.OutputStream;
+import java.io.OutputStreamWriter;
 import java.io.PrintStream;
 import java.io.UnsupportedEncodingException;
 import java.io.Writer;
@@ -363,16 +364,16 @@ public class CSVFactory {
 	}
 
 	public static void storeContentAsMap(File file, List<Map<String, String>> content) throws IOException {
-		OutputStream out = null;
+		Writer out = null;
 		try {
-			out = new FileOutputStream(file);
+			out = new BufferedWriter(new OutputStreamWriter(new FileOutputStream(file), ContentContext.CHARACTER_ENCODING));			
 			storeContentAsMap(out, content);
 		} finally {
 			ResourceHelper.closeResource(out);
 		}
 	}
 
-	public static void storeContentAsMap(OutputStream out, List<Map<String, String>> content) throws IOException {
+	private static void storeContentAsMap(Writer out, List<Map<String, String>> content) throws IOException {
 		if (content.size() == 0) {
 			return;
 		}
@@ -396,7 +397,7 @@ public class CSVFactory {
 			}
 		}
 
-		CSVPrinter printer = new CSVPrinter(out);
+		CSVPrinter printer = new CSVPrinter(out);		
 		printer.setAlwaysQuote(true);
 		printer.writeln(rawContent);
 	}
