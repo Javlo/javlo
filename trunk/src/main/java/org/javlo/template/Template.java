@@ -24,9 +24,12 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
+import java.util.Map.Entry;
 import java.util.Properties;
 import java.util.Set;
+import java.util.logging.Level;
 import java.util.logging.Logger;
+import java.util.regex.Pattern;
 
 import javax.servlet.ServletContext;
 
@@ -2668,14 +2671,48 @@ public class Template implements Comparable<Template> {
 		return hash;
 	}
 	
-	private String getMimetypesFolder() {
+	private String getMimeTypesFolder() {
 		return properties.getString("mimetypes.folder", "mimetypes");
 	}
 	
-	public String getMineimage(String format) {
-		// ouvrir mapping properties ds getMineTypesFolder
-		// revoyer le chemin relatif vers l'image trouvé, unknow
-		return null;
+	public String getMimeTypeImage(String fileExtension) {
+		Pattern VALUE_SPLITTER = Pattern.compile("\\s*,\\s*");
+		File mappingFile = new File(URLHelper.mergePath(getTemplateRealPath(), getMimeTypesFolder(), "mapping.properties"));
+		if (!mappingFile.exists()) {
+			return null;
+		}
+		FileInputStream in = null;
+		String out = null;
+		String defaultImage = null;
+		try {
+			in = new FileInputStream(mappingFile);
+			Properties p = new Properties();
+			p.load(in);
+			for (Entry<Object, Object> prop : p.entrySet()) {
+				String value = (String) prop.getValue();
+				if (value != null) {
+					String[] extensions = VALUE_SPLITTER.split(value);
+					for (String extention : extensions) {
+						if (extention.equalsIgnoreCase(fileExtension)) {
+							out = (String) prop.getKey();
+						} else if (extention.equals("*")) {
+							defaultImage = (String) prop.getKey();
+						}
+					}
+				}
+			}
+		} catch (IOException e) {
+			logger.log(Level.WARNING, "Exception when parsing mapping.properties of template " + getName(), e);
+		} finally {
+			ResourceHelper.safeClose(in);
+		}
+		if (out == null) {
+			out = defaultImage;
+		}
+		if (out != null) {
+			out = URLHelper.mergePath(getMimeTypesFolder(), out);
+		}
+		return out;
 	}
 
 }
