@@ -186,7 +186,7 @@ public class Basket implements Serializable {
 
 	public double getTotal(ContentContext ctx, boolean vat) {
 		double result = 0;
-		for (Product.ProductBean product : getProductsBean()) {
+		for (Product.ProductBean product : getProductsBean()) {			
 			double vatFactor = 1;
 			if (!vat) {
 				vatFactor = 1 + product.getVAT();
@@ -195,7 +195,7 @@ public class Basket implements Serializable {
 		}
 		result = result * (1 - getUserReduction()) + getDelivery(ctx, vat);
 		return result;
-	}
+	} 
 
 	public String getTotalString(ContentContext ctx, boolean vat) {
 		return renderPrice(ctx, getTotal(ctx, vat), getCurrencyCode());
