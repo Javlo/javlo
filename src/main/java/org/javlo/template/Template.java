@@ -1989,6 +1989,10 @@ public class Template implements Comparable<Template> {
 		String templateFolder = config.getTemplateFolder();
 		return URLHelper.mergePath(templateFolder, getSourceFolderName());
 	}
+	
+	public String getWorkTemplateRealPath(GlobalContext globalContext) {
+		return URLHelper.mergePath(getWorkTemplateFolder(), getFolder(globalContext));
+	}
 
 	public boolean isDeleted() {
 		if (dir == null || !dir.exists()) {
