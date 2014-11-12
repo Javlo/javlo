@@ -349,9 +349,6 @@ public class URLHelper extends ElementaryURLHelper {
 			template = Template.getApplicationInstance(ctx.getRequest().getSession().getServletContext(), ctx, templateID);
 		}
 
-		// ContentService.createContent(ctx.getRequest());
-		MenuElement elem = ctx.getCurrentPage();
-
 		if (template == null) {
 			template = ctx.getCurrentTemplate();
 		}
