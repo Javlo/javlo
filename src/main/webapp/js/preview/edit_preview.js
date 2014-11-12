@@ -174,9 +174,7 @@ function onreadyPreview() {
 					layerOver(null, false);
 				}
 			});		
-	jQuery("#preview-layer").scroll( function() {
-		alert("scroll");
-	});
+	
 	jQuery(".preview-edit").click(function() {
 		
 		if (jQuery(this).hasClass("no-access")) {

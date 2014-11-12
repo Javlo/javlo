@@ -2667,5 +2667,15 @@ public class Template implements Comparable<Template> {
 		hash = hash + 31 * getTemplateData().hashCode();
 		return hash;
 	}
+	
+	private String getMimetypesFolder() {
+		return properties.getString("mimetypes.folder", "mimetypes");
+	}
+	
+	public String getMineimage(String format) {
+		// ouvrir mapping properties ds getMineTypesFolder
+		// revoyer le chemin relatif vers l'image trouvé, unknow
+		return null;
+	}
 
 }
