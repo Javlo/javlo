@@ -8,10 +8,6 @@ import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.io.StringWriter;
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.HashSet;
-import java.util.Set;
 
 import org.javlo.component.core.IReverseLinkComponent;
 import org.javlo.config.StaticConfig;
@@ -32,10 +28,6 @@ public class GenericFile extends AbstractFileComponent implements IReverseLinkCo
 	public static final String TYPE = "file";
 
 	private static final String HIDDEN = "hidden";
-
-	private static final Set<String> FILE_EXTENSIONS_WITH_PREVIEW = Collections.unmodifiableSet(new HashSet<String>(Arrays.asList(
-			"pdf", "png", "jpg", "jpeg", "gif"
-			)));
 
 	@Override
 	public String createFileURL(ContentContext ctx, String inURL) {
@@ -172,9 +164,7 @@ public class GenericFile extends AbstractFileComponent implements IReverseLinkCo
 		GlobalContext globalContext = GlobalContext.getInstance(ctx.getRequest());
 		String fullName = ElementaryURLHelper.mergePath(getDirSelected(), getFileName());
 		fullName = ElementaryURLHelper.mergePath(globalContext.getStaticConfig().getFileFolder(), fullName);
-		if (FILE_EXTENSIONS_WITH_PREVIEW.contains(StringHelper.getFileExtension(fullName))) {
-			ctx.getRequest().setAttribute("imagePreview", URLHelper.createTransformURL(ctx, fullName, "list"));
-		}
+		ctx.getRequest().setAttribute("imagePreview", URLHelper.createTransformURL(ctx, fullName, "list"));
 		fullName = ElementaryURLHelper.mergePath(globalContext.getDataFolder(), fullName);
 		ctx.getRequest().setAttribute("ext", StringHelper.getFileExtension(getFileName()));
 		ctx.getRequest().setAttribute("size", StringHelper.getFileSize(fullName));

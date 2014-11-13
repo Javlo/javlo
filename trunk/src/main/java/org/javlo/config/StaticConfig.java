@@ -1294,6 +1294,10 @@ public class StaticConfig extends Observable {
 		return properties.getString("edit-template.mode", "default");
 	}
 
+	public String getEditDefaultMimeTypeImage() {
+		return properties.getString("edit-template.default-icon", "mimetypes/default.png");
+	}
+
 	/**
 	 * return time between 2 modification check in second.
 	 * default : 5 minutes (300 sec.)
@@ -1335,5 +1339,4 @@ public class StaticConfig extends Observable {
 		return excludeContextDomain.contains(domain);
 	}
 
-	
 }

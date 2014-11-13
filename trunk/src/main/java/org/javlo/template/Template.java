@@ -2679,9 +2679,9 @@ public class Template implements Comparable<Template> {
 		return properties.getString("mimetypes.folder", "mimetypes");
 	}
 	
-	public String getMimeTypeImage(String fileExtension) {
+	public String getMimeTypeImage(GlobalContext globalContext, String fileExtension) {
 		Pattern VALUE_SPLITTER = Pattern.compile("\\s*,\\s*");
-		File mappingFile = new File(URLHelper.mergePath(getTemplateRealPath(), getMimeTypesFolder(), "mapping.properties"));
+		File mappingFile = new File(URLHelper.mergePath(getWorkTemplateRealPath(globalContext), getMimeTypesFolder(), "mapping.properties"));
 		if (!mappingFile.exists()) {
 			return null;
 		}
