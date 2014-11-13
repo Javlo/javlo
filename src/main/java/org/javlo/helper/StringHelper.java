@@ -1119,10 +1119,22 @@ public class StringHelper {
 			fileName = fileName.substring(0, fileName.indexOf('?'));
 		}
 		String ext = getFileExtension(fileName);
-		boolean res = ext.equalsIgnoreCase("jpg");
-		res = res || ext.equalsIgnoreCase("jpeg");
-		res = res || ext.equalsIgnoreCase("gif");
-		res = res || ext.equalsIgnoreCase("png");
+		return isImageExtension(ext);
+	}
+	/**
+	 * return true if the file extension is an image for wcms (sp. : tif or psd is not
+	 * an image).
+	 * 
+	 * @param fileExtension
+	 *            file extension
+	 * @return true if file name is a image
+	 * @see #getFileExtension(String)
+	 */
+	public static final boolean isImageExtension(String fileExtension) {
+		boolean res = fileExtension.equalsIgnoreCase("jpg");
+		res = res || fileExtension.equalsIgnoreCase("jpeg");
+		res = res || fileExtension.equalsIgnoreCase("gif");
+		res = res || fileExtension.equalsIgnoreCase("png");
 		return res;
 	}
 

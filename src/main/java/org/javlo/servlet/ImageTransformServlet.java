@@ -33,6 +33,7 @@ import org.javlo.component.core.IContentVisualComponent;
 import org.javlo.component.core.IImageFilter;
 import org.javlo.config.StaticConfig;
 import org.javlo.context.ContentContext;
+import org.javlo.context.EditContext;
 import org.javlo.context.GlobalContext;
 import org.javlo.helper.NetHelper;
 import org.javlo.helper.PDFHelper;
@@ -166,6 +167,8 @@ public class ImageTransformServlet extends HttpServlet {
 	public static final String VIEW_PICTURE_ACTION = "view picture";
 
 	private static final Map<String, Object> imageTransforming = new ConcurrentHashMap<String, Object>();
+
+	private static final String DEFAULT_IMAGE_TYPE = "png";
 
 	@Override
 	public void init() throws ServletException {
@@ -394,13 +397,34 @@ public class ImageTransformServlet extends HttpServlet {
 		if (inFileExtention == null) {
 			inFileExtention = StringHelper.getFileExtension(imageFile.getName());
 		}
-		BufferedImage img;
+		String imageType = null;
+		BufferedImage img = null;
 		if (inFileExtention.equalsIgnoreCase("pdf")) {
 			img = PDFHelper.getPDFImage(imageFile);
-		} else {
+			imageType = DEFAULT_IMAGE_TYPE;
+		} else if (StringHelper.isImage(imageFile.getName())) {
 			img = ImageIO.read(imageFile);
+			imageType = inFileExtention;
 		}
 		if (img == null) {
+			File mimeTypeImageFile = null;
+			if (template != null) {
+				String mimeTypeImageFilename = template.getMimeTypeImage(ctx.getGlobalContext(), inFileExtention);
+				if (mimeTypeImageFilename != null) {
+					String workTemplatePath = template.getWorkTemplateRealPath(ctx.getGlobalContext());
+					mimeTypeImageFile = new File(URLHelper.mergePath(workTemplatePath, mimeTypeImageFilename));
+				}
+			} else {
+				String defaultMimeTypeImage = ctx.getGlobalContext().getStaticConfig().getEditDefaultMimeTypeImage();
+				EditContext editContext = EditContext.getInstance(ctx.getGlobalContext(), ctx.getRequest().getSession());
+				mimeTypeImageFile = new File(URLHelper.mergePath(editContext.getEditTemplate(), defaultMimeTypeImage));
+			}
+			if (mimeTypeImageFile != null) {
+				img = ImageIO.read(mimeTypeImageFile);
+				imageType = DEFAULT_IMAGE_TYPE;
+			}
+		}
+		if (img == null || imageType == null) {
 			logger.warning("could'nt read : " + imageFile);
 			ctx.getResponse().setStatus(404);
 			return;
@@ -616,13 +640,6 @@ public class ImageTransformServlet extends HttpServlet {
 			OutputStream outImage = fc.saveFile(dir, imageName);
 
 			try {
-				String imageType = config.getFileExtension(ctx.getDevice(), filter, area);
-				if (imageType == null) {
-					imageType = inFileExtention;
-				}
-				if ("pdf".equals(imageType)) {
-					imageType = "png";
-				}
 				logger.info("write image : " + imageType + " width: " + img.getWidth() + " height: " + img.getHeight());
 
 				if (comp != null && StringHelper.trimAndNullify(comp.getImageFilterKey(ctx)) != null) {
@@ -796,10 +813,10 @@ public class ImageTransformServlet extends HttpServlet {
 			if (fileExtension == null) {
 				fileExtension = StringHelper.getFileExtension(imageName);
 			}
-			if (fileExtension.equalsIgnoreCase("pdf")) { 
-				response.setContentType(ImageHelper.getImageExtensionToManType("png"));
-			} else {
+			if (StringHelper.isImageExtension(fileExtension)) {
 				response.setContentType(ImageHelper.getImageExtensionToManType(fileExtension));
+			} else {
+				response.setContentType(ImageHelper.getImageExtensionToManType(DEFAULT_IMAGE_TYPE));
 			}
 			out = response.getOutputStream();
 
