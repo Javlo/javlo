@@ -6,6 +6,8 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.PrintStream;
 import java.io.StringReader;
+import java.net.URL;
+import java.net.URLEncoder;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
@@ -15,6 +17,7 @@ import java.util.HashMap;
 import java.util.Hashtable;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 import java.util.Properties;
 import java.util.logging.Logger;
@@ -32,6 +35,7 @@ import org.javlo.component.core.IContentVisualComponent;
 import org.javlo.config.StaticConfig;
 import org.javlo.context.ContentContext;
 import org.javlo.context.GlobalContext;
+import org.javlo.ecom.Basket;
 import org.javlo.helper.NetHelper;
 import org.javlo.helper.ResourceHelper;
 import org.javlo.helper.StringHelper;
@@ -46,6 +50,7 @@ import org.javlo.service.ContentService;
 import org.javlo.service.RequestService;
 import org.javlo.utils.CSVFactory;
 import org.javlo.utils.CollectionAsMap;
+import org.javlo.utils.ReadOnlyPropertiesMap;
 import org.javlo.ztatic.StaticInfo;
 
 /**
@@ -434,7 +439,7 @@ public class GenericForm extends AbstractVisualComponent implements IAction {
 						new InternetAddress(tmpEmail);
 						emailFrom = tmpEmail;
 					} catch (Exception e) {
-						logger.warning("Strange from email = "+tmpEmail);
+						logger.warning("Strange from email = " + tmpEmail);
 						logger.warning(e.getMessage());
 					}
 				}
@@ -448,7 +453,7 @@ public class GenericForm extends AbstractVisualComponent implements IAction {
 						emailTo = tmpEmail;
 					} catch (Exception e) {
 						emailTo = null;
-						logger.warning("Strange to email = "+tmpEmail);
+						logger.warning("Strange to email = " + tmpEmail);
 						logger.warning(e.getMessage());
 					}
 				}
@@ -490,6 +495,8 @@ public class GenericForm extends AbstractVisualComponent implements IAction {
 						logger.info("send mailing from:" + emailFrom + " to:" + emailTo);
 						NetHelper.sendPageByMailing(ctx, pageConfirmation, emailFrom, emailTo, params);
 					}
+					
+					comp.sendConfirmationEmail(ctx, params, toEmail);
 
 				} catch (Exception e) {
 					e.printStackTrace();
@@ -499,7 +506,7 @@ public class GenericForm extends AbstractVisualComponent implements IAction {
 					return null;
 				}
 			}
-
+			
 			GenericMessage msg = new GenericMessage(comp.getLocalConfig(false).getProperty("message.thanks"), GenericMessage.INFO);
 			request.setAttribute("msg", msg);
 			request.setAttribute("valid", "true");
@@ -513,6 +520,55 @@ public class GenericForm extends AbstractVisualComponent implements IAction {
 	@Override
 	public int getComplexityLevel(ContentContext ctx) {
 		return AbstractVisualComponent.COMPLEXITY_STANDARD;
+	}
+
+	protected void sendConfirmationEmail(ContentContext ctx, Map<String, Object> params, InternetAddress to) throws Exception {
+		if (to==null) {
+			return;
+		}
+		/** send email **/
+		String subject = getConfig(ctx).getProperty("mail.subject", "Javlo form register.");
+		if (subject == null) {
+			subject = "Transaction confirmed : " + ctx.getGlobalContext().getContextKey();
+		}
+
+		String email = null;
+		String mailingPage = getConfig(ctx).getProperty("mail.page", null);
+		String pageURL = "error:no link.";
+		if (mailingPage != null) {
+			MenuElement page = ContentService.getInstance(ctx.getGlobalContext()).getNavigation(ctx).searchChildFromName(mailingPage);
+			if (page == null) {
+				logger.warning("page not found : " + mailingPage);
+			}
+			pageURL = URLHelper.createURL(ctx.getContextForAbsoluteURL().getContextWithOtherRenderMode(ContentContext.PAGE_MODE), page.getPath(), params);
+			try {
+				email = NetHelper.readPageForMailing(new URL(pageURL));
+			} catch (Exception e) {
+				e.printStackTrace();
+			}
+		}
+
+		InternetAddress bcc = null;
+		String bccString = getConfig(ctx).getProperty("mail.bcc", null);
+		if (bccString != null && StringHelper.isMail(bccString)) {
+			bcc = new InternetAddress(getConfig(ctx).getProperty("mail.bcc", null));
+		}
+		InternetAddress from;
+		String fromString = getConfig(ctx).getProperty("mail.from", null);
+		if (fromString != null && StringHelper.isMail(fromString)) {
+			from = new InternetAddress(fromString);
+		} else {
+			from = new InternetAddress(ctx.getGlobalContext().getAdministratorEmail());
+		}		
+		if (email == null) {
+			email = getConfig(ctx).getProperty("mail.confirmation.body", null);
+			if (email != null) {
+				NetHelper.sendMail(ctx.getGlobalContext(), from, to, null, bcc, subject, email, null, false);
+			}
+		} else {
+			NetHelper.sendMail(ctx.getGlobalContext(), from, to, null, bcc, subject, email, getConfig(ctx).getProperty("mail.confirmation.body", null), true);
+		}
+
 	}
 
 }
