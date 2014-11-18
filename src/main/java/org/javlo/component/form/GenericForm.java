@@ -535,7 +535,7 @@ public class GenericForm extends AbstractVisualComponent implements IAction {
 					if (formEmail != null) {
 						toEmail = new InternetAddress(formEmail);
 					}
-					comp.sendConfirmationEmail(ctx, params, toEmail);
+					comp.sendConfirmationEmail(ctx, comp, params, toEmail);
 
 				} catch (Exception e) {
 					e.printStackTrace();
@@ -561,12 +561,12 @@ public class GenericForm extends AbstractVisualComponent implements IAction {
 		return AbstractVisualComponent.COMPLEXITY_STANDARD;
 	}
 
-	protected void sendConfirmationEmail(ContentContext ctx, Map<String, Object> params, InternetAddress to) throws Exception {
+	protected void sendConfirmationEmail(ContentContext ctx, GenericForm comp,  Map<String, Object> params, InternetAddress to) throws Exception {
 		if (to == null) {
 			return;
 		}
 		/** send email **/
-		String subject = getConfig(ctx).getProperty("mail.subject", "Javlo form register.");
+		String subject = comp.getLocalConfig(false).getProperty("mail.subject", null);
 		if (subject == null) {
 			subject = "Transaction confirmed : " + ctx.getGlobalContext().getContextKey();
 		}
