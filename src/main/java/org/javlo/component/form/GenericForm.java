@@ -36,6 +36,7 @@ import org.javlo.config.StaticConfig;
 import org.javlo.context.ContentContext;
 import org.javlo.context.GlobalContext;
 import org.javlo.helper.NetHelper;
+import org.javlo.helper.PatternHelper;
 import org.javlo.helper.ResourceHelper;
 import org.javlo.helper.StringHelper;
 import org.javlo.helper.URLHelper;
@@ -115,20 +116,23 @@ public class GenericForm extends AbstractVisualComponent implements IAction {
 			return super.getRenderes(ctx);
 		} else {
 			try {
-				String workTemplate = ctx.getCurrentTemplate().getLocalWorkTemplateFolder();
-				for (String key : outRenderers.keySet()) {
-					String value = outRenderers.get(key);
+				if (ctx.getCurrentTemplate() != null) {
+					String workTemplate = ctx.getCurrentTemplate().getLocalWorkTemplateFolder();
+					for (String key : outRenderers.keySet()) {
+						String value = outRenderers.get(key);
 
-					/*
-					 * if (!value.startsWith(workTemplate)) { ContentContext
-					 * notAbstCtx = new ContentContext(ctx);
-					 * notAbstCtx.setAbsoluteURL(false); value =
-					 * URLHelper.createStaticTemplateURLWithoutContext
-					 * (notAbstCtx, ctx.getCurrentTemplate(), value);
-					 * outRenderers.remove(key); outRenderers.put(key, value); }
-					 */
+						/*
+						 * if (!value.startsWith(workTemplate)) { ContentContext
+						 * notAbstCtx = new ContentContext(ctx);
+						 * notAbstCtx.setAbsoluteURL(false); value =
+						 * URLHelper.createStaticTemplateURLWithoutContext
+						 * (notAbstCtx, ctx.getCurrentTemplate(), value);
+						 * outRenderers.remove(key); outRenderers.put(key,
+						 * value); }
+						 */
 
-					outRenderers.put(key, value);
+						outRenderers.put(key, value);
+					}
 				}
 			} catch (Exception e) {
 				e.printStackTrace();
@@ -270,17 +274,17 @@ public class GenericForm extends AbstractVisualComponent implements IAction {
 	protected boolean isHTMLMail() {
 		return false;
 	}
-	
-	protected String getConfig(ContentContext ctx, String field, String condition) {				
-		return getConfig(ctx).getProperty("config."+field+'.'+condition, null);
+
+	protected String getConfig(ContentContext ctx, String field, String condition) {
+		return getConfig(ctx).getProperty("config." + field + '.' + condition, null);
 	}
-	
+
 	protected String getConfigMessage(ContentContext ctx, String field, String condition) {
-		return getConfig(ctx).getProperty("config."+field+'.'+condition+".message", null);
+		return getConfig(ctx).getProperty("config." + field + '.' + condition + ".message", null);
 	}
-	
-	protected Integer getMaxSize(ContentContext ctx, String field) {		
-		String maxSize = getConfig(ctx,field,"max-size");
+
+	protected Integer getMaxSize(ContentContext ctx, String field) {
+		String maxSize = getConfig(ctx, field, "max-size");
 		if (maxSize == null) {
 			return Integer.MAX_VALUE;
 		} else {
@@ -356,7 +360,7 @@ public class GenericForm extends AbstractVisualComponent implements IAction {
 				request.setAttribute("msg", msg);
 				return null;
 			}
-			InputStream in = file.getInputStream();			
+			InputStream in = file.getInputStream();
 			if (in != null) {
 				try {
 					if (file.getName().trim().length() > 0) {
@@ -382,6 +386,7 @@ public class GenericForm extends AbstractVisualComponent implements IAction {
 		PrintStream out = new PrintStream(outStream);
 
 		boolean noAttach = requestService.getParameter("no_attach", null) != null;
+		String formEmail = null;
 		for (String key : keys) {
 			if (!key.equals("webaction") && !key.equals("comp_id") && !key.equals("captcha")) {
 				Object value = params.get(key);
@@ -392,12 +397,9 @@ public class GenericForm extends AbstractVisualComponent implements IAction {
 				if (specialValues.get(key) != null) {
 					finalValue = specialValues.get(key);
 				}
-				
+
 				/* validation */
-				System.out.println("***** GenericForm.performSubmit : key = "+key); //TODO: remove debug trace
-				System.out.println("***** GenericForm.performSubmit : comp.getMaxSize(ctx, comp.getMaxSize(ctx, key)) = "+comp.getMaxSize(ctx, key)); //TODO: remove debug trace
 				if (finalValue != null && finalValue.length() > comp.getMaxSize(ctx, key)) {
-					System.out.println("***** GenericForm.performSubmit : ERROR key = "+key); //TODO: remove debug trace
 					errorFields.add(key);
 					GenericMessage msg = new GenericMessage(comp.getConfigMessage(ctx, key, "max-size"), GenericMessage.ERROR);
 					request.setAttribute("msg", msg);
@@ -408,18 +410,24 @@ public class GenericForm extends AbstractVisualComponent implements IAction {
 				} else if (!withXHTML && (finalValue.toLowerCase().contains("</a>") || finalValue.toLowerCase().contains("</div>"))) {
 					fakeFilled = true;
 				}
-				if (finalValue.trim().length() == 0 && StringHelper.containsUppercase(key)) { // needed field
+				if (finalValue.trim().length() == 0 && StringHelper.containsUppercase(key)) { // needed
+																								// field
 					if (!noAttach && attachField.contains(key)) {
 						errorFields.add(key);
 						GenericMessage msg = new GenericMessage(comp.getLocalConfig(false).getProperty("error.required", "please could you fill all required fields."), GenericMessage.ERROR);
 						request.setAttribute("msg", msg);
 					}
 				}
-
-				if (finalValue.trim().length() == 0 && key.toLowerCase().trim().equals("email")) { // valid email field
-					errorFields.add(key);
-					GenericMessage msg = new GenericMessage(comp.getLocalConfig(false).getProperty("error.email-format", "your email format is'nt correct."), GenericMessage.ERROR);
-					request.setAttribute("msg", msg);
+				if (finalValue.trim().length() > 0 && key.toLowerCase().trim().endsWith("email")) { // valid
+																									// email
+																									// field
+					if (!PatternHelper.MAIL_PATTERN.matcher(finalValue).matches()) {
+						errorFields.add(key);
+						GenericMessage msg = new GenericMessage(comp.getLocalConfig(false).getProperty("error.email-format", "your email format is'nt correct."), GenericMessage.ERROR);
+						request.setAttribute("msg", msg);
+					} else {
+						formEmail = finalValue;
+					}
 				}
 
 				if (value instanceof Object[]) {
@@ -515,12 +523,18 @@ public class GenericForm extends AbstractVisualComponent implements IAction {
 					}
 
 					mailService.sendMail(null, fromEmail, toEmail, ccList, bccList, subject, mailContent, comp.isHTMLMail());
+					// remove
+					// debug
+					// trace
 
 					if (pageConfirmation != null) {
 						logger.info("send mailing from:" + emailFrom + " to:" + emailTo);
 						NetHelper.sendPageByMailing(ctx, pageConfirmation, emailFrom, emailTo, params);
+					} 
+
+					if (formEmail != null) {
+						toEmail = new InternetAddress(formEmail);
 					}
-					
 					comp.sendConfirmationEmail(ctx, params, toEmail);
 
 				} catch (Exception e) {
@@ -531,7 +545,7 @@ public class GenericForm extends AbstractVisualComponent implements IAction {
 					return null;
 				}
 			}
-			
+
 			GenericMessage msg = new GenericMessage(comp.getLocalConfig(false).getProperty("message.thanks"), GenericMessage.INFO);
 			request.setAttribute("msg", msg);
 			request.setAttribute("valid", "true");
@@ -548,7 +562,7 @@ public class GenericForm extends AbstractVisualComponent implements IAction {
 	}
 
 	protected void sendConfirmationEmail(ContentContext ctx, Map<String, Object> params, InternetAddress to) throws Exception {
-		if (to==null) {
+		if (to == null) {
 			return;
 		}
 		/** send email **/
@@ -584,7 +598,7 @@ public class GenericForm extends AbstractVisualComponent implements IAction {
 			from = new InternetAddress(fromString);
 		} else {
 			from = new InternetAddress(ctx.getGlobalContext().getAdministratorEmail());
-		}		
+		}
 		if (email == null) {
 			email = getConfig(ctx).getProperty("mail.confirmation.body", null);
 			if (email != null) {
