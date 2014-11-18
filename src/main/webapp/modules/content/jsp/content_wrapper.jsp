@@ -3,7 +3,7 @@
 <div class="area-label">${info.area}</div>
 <div id="content-edit" class="full-height ${not empty userInterface.light?'light':''}">
 <c:set var="previewParams" value="?webaction=editPreview&_closeFrame=true&previewEdit=true&comp_id=${param.comp_id}" />
-	<form id="form-content" class="components ${empty param.previewEdit?'ajax':''}" action="${info.currentURL}${not empty param.previewEdit?'?previewEdit=true':''}" enctype="multipart/form-data" method="post">
+	<form role="form" id="form-content" class="components ${empty param.previewEdit?'ajax':''}" action="${info.currentURL}${not empty param.previewEdit?'?previewEdit=true':''}" enctype="multipart/form-data" method="post">
 		<input type="hidden" name="webaction" value="edit.save" />
 		<input type="hidden" name="render-mode" value="1" />
 		

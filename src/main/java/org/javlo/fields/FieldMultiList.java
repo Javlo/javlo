@@ -35,9 +35,9 @@ public class FieldMultiList extends Field {
 
 		GlobalContext globalContext = GlobalContext.getInstance(ctx.getRequest());
 
-		out.println("<div class=\"line\">");
+		out.println("<div class=\"line checkbox\">");
 		out.println(getEditLabelCode());
-		out.println("	<label>" + getLabel(new Locale(globalContext.getEditLanguage(ctx.getRequest().getSession()))) + " : </label>");
+		out.println("	<label>" + getLabel(new Locale(globalContext.getEditLanguage(ctx.getRequest().getSession()))) + " : ");
 		// out.println("	<select multiple=\"multiple\" id=\"" + getInputName() +
 		// "\" name=\"" + getInputName() + "\" value=\"" +
 		// StringHelper.neverNull(getValue()) + "\">");
@@ -53,14 +53,14 @@ public class FieldMultiList extends Field {
 			}
 			String key = StringHelper.neverNull(value.getKey(), value.getValue());
 			String label = StringHelper.neverEmpty(value.getValue(), i18nAccess.getViewText("global.none", "?"));
-			out.println("		<input type=\"checkbox\" id=\"cb-" + key + "\" value=\"" + key + "\"" + checked + "/>" + "<label for=\"cb-" + key + "\">" + label + "</label>");
+			out.println("		<input type=\"checkbox\" id=\"cb-" + key + "\" value=\"" + key + "\"" + checked + "/>" + label);
 		}
 
 		// out.println("	</select>");
 		if (getMessage() != null && getMessage().trim().length() > 0) {
 			out.println("	<div class=\"message " + getMessageTypeCSSClass() + "\">" + getMessage() + "</div>");
 		}
-		out.println("</div>");
+		out.println("</label></div>");
 
 		out.close();
 		return writer.toString();

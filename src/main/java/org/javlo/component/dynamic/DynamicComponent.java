@@ -451,7 +451,6 @@ public class DynamicComponent extends AbstractVisualComponent implements IStatic
 
 				for (Locale locale : translatedField) {
 					if (locale != null) {
-
 						out.println("<fieldset><legend>" + locale.getDisplayLanguage(new Locale(GlobalContext.getInstance(ctx.getRequest()).getEditLanguage(ctx.getRequest().getSession()))) + "</legend>");
 					}
 					field.setCurrentLocale(locale);
