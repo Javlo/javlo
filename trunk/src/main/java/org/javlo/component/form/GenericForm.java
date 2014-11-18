@@ -7,19 +7,19 @@ import java.io.InputStream;
 import java.io.PrintStream;
 import java.io.StringReader;
 import java.net.URL;
-import java.net.URLEncoder;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.Date;
 import java.util.Enumeration;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Hashtable;
 import java.util.LinkedList;
 import java.util.List;
-import java.util.Locale;
 import java.util.Map;
 import java.util.Properties;
+import java.util.Set;
 import java.util.logging.Logger;
 
 import javax.mail.internet.InternetAddress;
@@ -35,7 +35,6 @@ import org.javlo.component.core.IContentVisualComponent;
 import org.javlo.config.StaticConfig;
 import org.javlo.context.ContentContext;
 import org.javlo.context.GlobalContext;
-import org.javlo.ecom.Basket;
 import org.javlo.helper.NetHelper;
 import org.javlo.helper.ResourceHelper;
 import org.javlo.helper.StringHelper;
@@ -50,7 +49,6 @@ import org.javlo.service.ContentService;
 import org.javlo.service.RequestService;
 import org.javlo.utils.CSVFactory;
 import org.javlo.utils.CollectionAsMap;
-import org.javlo.utils.ReadOnlyPropertiesMap;
 import org.javlo.ztatic.StaticInfo;
 
 /**
@@ -272,6 +270,23 @@ public class GenericForm extends AbstractVisualComponent implements IAction {
 	protected boolean isHTMLMail() {
 		return false;
 	}
+	
+	protected String getConfig(ContentContext ctx, String field, String condition) {				
+		return getConfig(ctx).getProperty("config."+field+'.'+condition, null);
+	}
+	
+	protected String getConfigMessage(ContentContext ctx, String field, String condition) {
+		return getConfig(ctx).getProperty("config."+field+'.'+condition+".message", null);
+	}
+	
+	protected Integer getMaxSize(ContentContext ctx, String field) {		
+		String maxSize = getConfig(ctx,field,"max-size");
+		if (maxSize == null) {
+			return Integer.MAX_VALUE;
+		} else {
+			return Integer.parseInt(maxSize);
+		}
+	}
 
 	public static String performSubmit(HttpServletRequest request, HttpServletResponse response) throws Exception {
 
@@ -286,7 +301,6 @@ public class GenericForm extends AbstractVisualComponent implements IAction {
 		if (comp.isCaptcha(ctx)) {
 			if (captcha == null || CaptchaService.getInstance(request.getSession()).getCurrentCaptchaCode() == null || !CaptchaService.getInstance(request.getSession()).getCurrentCaptchaCode().equals(captcha)) {
 				GenericMessage msg = new GenericMessage(comp.getLocalConfig(false).getProperty("error.captcha", "bad captcha."), GenericMessage.ERROR);
-
 				request.setAttribute("msg", msg);
 				request.setAttribute("error_captcha", "true");
 				return null;
@@ -332,7 +346,9 @@ public class GenericForm extends AbstractVisualComponent implements IAction {
 		String maxFileSizeRAW = comp.getLocalConfig(false).getProperty("file.max-size", "" + (10 * 1024 * 1024));
 		long maxFileSize = Long.parseLong(maxFileSizeRAW);
 
+		Set<String> attachField = new HashSet<String>();
 		for (FileItem file : requestService.getAllFileItem()) {
+			attachField.add(file.getFieldName());
 			String ext = StringHelper.getFileExtension(file.getName()).toLowerCase();
 			if (badFileFormat.contains(ext)) {
 				logger.warning("file blocked because bad extenstion : " + file.getName());
@@ -340,7 +356,7 @@ public class GenericForm extends AbstractVisualComponent implements IAction {
 				request.setAttribute("msg", msg);
 				return null;
 			}
-			InputStream in = file.getInputStream();
+			InputStream in = file.getInputStream();			
 			if (in != null) {
 				try {
 					if (file.getName().trim().length() > 0) {
@@ -365,6 +381,7 @@ public class GenericForm extends AbstractVisualComponent implements IAction {
 		ByteArrayOutputStream outStream = new ByteArrayOutputStream();
 		PrintStream out = new PrintStream(outStream);
 
+		boolean noAttach = requestService.getParameter("no_attach", null) != null;
 		for (String key : keys) {
 			if (!key.equals("webaction") && !key.equals("comp_id") && !key.equals("captcha")) {
 				Object value = params.get(key);
@@ -375,23 +392,31 @@ public class GenericForm extends AbstractVisualComponent implements IAction {
 				if (specialValues.get(key) != null) {
 					finalValue = specialValues.get(key);
 				}
+				
+				/* validation */
+				System.out.println("***** GenericForm.performSubmit : key = "+key); //TODO: remove debug trace
+				System.out.println("***** GenericForm.performSubmit : comp.getMaxSize(ctx, comp.getMaxSize(ctx, key)) = "+comp.getMaxSize(ctx, key)); //TODO: remove debug trace
+				if (finalValue != null && finalValue.length() > comp.getMaxSize(ctx, key)) {
+					System.out.println("***** GenericForm.performSubmit : ERROR key = "+key); //TODO: remove debug trace
+					errorFields.add(key);
+					GenericMessage msg = new GenericMessage(comp.getConfigMessage(ctx, key, "max-size"), GenericMessage.ERROR);
+					request.setAttribute("msg", msg);
+				}
 
 				if (key.equals(fakeField) && finalValue.trim().length() > 0) {
 					fakeFilled = true;
 				} else if (!withXHTML && (finalValue.toLowerCase().contains("</a>") || finalValue.toLowerCase().contains("</div>"))) {
 					fakeFilled = true;
 				}
-
-				if (finalValue.trim().length() == 0 && StringHelper.containsUppercase(key)) { // needed
-																								// field
-					errorFields.add(key);
-					GenericMessage msg = new GenericMessage(comp.getLocalConfig(false).getProperty("error.required", "please could you fill all required fields."), GenericMessage.ERROR);
-					request.setAttribute("msg", msg);
+				if (finalValue.trim().length() == 0 && StringHelper.containsUppercase(key)) { // needed field
+					if (!noAttach && attachField.contains(key)) {
+						errorFields.add(key);
+						GenericMessage msg = new GenericMessage(comp.getLocalConfig(false).getProperty("error.required", "please could you fill all required fields."), GenericMessage.ERROR);
+						request.setAttribute("msg", msg);
+					}
 				}
 
-				if (finalValue.trim().length() == 0 && key.toLowerCase().trim().equals("email")) { // valid
-																									// email
-																									// field
+				if (finalValue.trim().length() == 0 && key.toLowerCase().trim().equals("email")) { // valid email field
 					errorFields.add(key);
 					GenericMessage msg = new GenericMessage(comp.getLocalConfig(false).getProperty("error.email-format", "your email format is'nt correct."), GenericMessage.ERROR);
 					request.setAttribute("msg", msg);
