@@ -25,7 +25,7 @@ public class FieldMultiList extends Field {
 
 	@Override
 	public String getDisplayValue(ContentContext ctx, Locale locale) throws Exception {
-		return getList(ctx, getListName(), locale).get(getValue());
+		return getValue();
 	}
 
 	@Override
@@ -40,8 +40,12 @@ public class FieldMultiList extends Field {
 		GlobalContext globalContext = GlobalContext.getInstance(ctx.getRequest());
 		out.println("<div class=\"line\">");
 		out.println("<label class=\"control-label\">" + getLabel(new Locale(globalContext.getEditLanguage(ctx.getRequest().getSession()))) + " : </label>");
-		out.println(getEditLabelCode());		
-		out.println("<div class=\"checkbox-inline\">");
+		out.println(getEditLabelCode());
+		if (ctx.isAsEditMode()) {
+			out.println("<div class=\"checkbox-inline\">");
+		} else {
+			out.println("<div class=\"checkbox\">");
+		}
 		// out.println("	<select multiple=\"multiple\" id=\"" + getInputName() +
 		// "\" name=\"" + getInputName() + "\" value=\"" +
 		// StringHelper.neverNull(getValue()) + "\">");
@@ -57,7 +61,7 @@ public class FieldMultiList extends Field {
 			}
 			String key = StringHelper.neverNull(value.getKey(), value.getValue());
 			String label = StringHelper.neverEmpty(value.getValue(), i18nAccess.getViewText("global.none", "?"));
-			out.println("<label><input type=\"checkbox\" name=\""+getInputName()+"\" id=\"cb-" + key + "\" value=\"" + key + "\"" + checked + "/>" + label+"</label>");
+			out.println("<label><input type=\"checkbox\" name=\"" + getInputName() + "\" id=\"cb-" + key + "\" value=\"" + key + "\"" + checked + "/>" + label + "</label>");
 		}
 
 		// out.println("	</select>");
@@ -104,7 +108,7 @@ public class FieldMultiList extends Field {
 		}
 		return modify;
 	}
-	
+
 	@Override
 	public String getViewXHTMLCode(ContentContext ctx) throws Exception {
 		ByteArrayOutputStream outStream = new ByteArrayOutputStream();
@@ -112,21 +116,23 @@ public class FieldMultiList extends Field {
 		String value = getValue();
 		out.println("<ul>");
 		for (String item : value.split(";")) {
-			out.println("<li>"+getList(ctx, getListName(), new Locale(ctx.getRequestContentLanguage())).get(item)+"</li>");
+			out.println("<li>" + getList(ctx, getListName(), new Locale(ctx.getRequestContentLanguage())).get(item) + "</li>");
 		}
-		out.println("</ul>");	
+		out.println("</ul>");
 		out.close();
 		return new String(outStream.toByteArray());
 	}
-	
+
 	@Override
 	public List<String> getValues(ContentContext ctx, Locale locale) throws Exception {
-		setCurrentLocale(locale);
 		List<String> out = new LinkedList<String>();
-		for (String item : getValue().split(";")) {
-			out.add(getList(ctx, getListName(), locale).get(item));
-		}
-
+		String val = getValue();
+		if (val != null) {
+			 Map<String, String> list = getList(ctx, getListName(), locale);
+			for (String item : val.split(";")) {
+				out.add(list.get(item));
+			}
+		}		
 		return out;
 	}
 

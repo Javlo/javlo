@@ -224,7 +224,12 @@ public class DynamicComponentFilter extends AbstractPropertiesComponent implemen
 	public static String performFilter(RequestService rs, ContentContext ctx, MessageRepository messageRepository, I18nAccess i18nAccess) throws Exception {
 		DynamicComponentFilter comp = (DynamicComponentFilter) ComponentHelper.getComponentFromRequest(ctx);
 		for (Field field : comp.getSearchField(ctx)) {
-			field.setValue(rs.getParameter(field.getInputName(), ""));
+			List<String> values = rs.getParameterListValues(field.getInputName(), null);
+			if(values != null && values.size() > 0) {
+				field.setValues(values);
+			} else {
+				field.setValue(rs.getParameter(field.getInputName(), ""));
+			}
 		}
 		return null;
 	}
