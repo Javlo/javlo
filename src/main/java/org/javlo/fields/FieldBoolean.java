@@ -31,9 +31,9 @@ public class FieldBoolean extends Field {
 
 		GlobalContext globalContext = GlobalContext.getInstance(ctx.getRequest());
 
-		out.println("<div class=\"line\">");
+		out.println("<div class=\"line checkbox\">");
 		out.println(getEditLabelCode());
-		out.println("	<label for=\"" + getInputName() + "\">" + getLabel(new Locale(globalContext.getEditLanguage(ctx.getRequest().getSession()))) + " : </label>");
+		out.println("	<label>" + getLabel(new Locale(globalContext.getEditLanguage(ctx.getRequest().getSession()))) + " : ");
 		String readOnlyHTML = "";
 		String checkedHTML = "";
 		if (isReadOnly()) {
@@ -46,7 +46,7 @@ public class FieldBoolean extends Field {
 		if (getMessage() != null && getMessage().trim().length() > 0) {
 			out.println("	<div class=\"message " + getMessageTypeCSSClass() + "\">" + getMessage() + "</div>");
 		}
-		out.println("</div>");
+		out.println("</label></div>");
 
 		out.close();
 		return writer.toString();

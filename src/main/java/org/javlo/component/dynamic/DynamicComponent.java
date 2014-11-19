@@ -265,11 +265,11 @@ public class DynamicComponent extends AbstractVisualComponent implements IStatic
 	}
 
 	@Override
-	public java.util.List<Field> getFields(ContentContext ctx) throws FileNotFoundException, IOException {
+	public java.util.List<Field> getFields(ContentContext ctx) throws Exception {
 
 		StaticConfig staticConfig = StaticConfig.getInstance(ctx.getRequest().getSession());
 		GlobalContext globalContext = GlobalContext.getInstance(ctx.getRequest());
-		I18nAccess i18nAccess = I18nAccess.getInstance(ctx.getRequest());
+		I18nAccess i18nAccess = I18nAccess.getInstance(ctx);
 
 		java.util.List<Field> outFields = new LinkedList<Field>();
 		java.util.List<String> fieldExecuted = new LinkedList<String>();
@@ -298,7 +298,7 @@ public class DynamicComponent extends AbstractVisualComponent implements IStatic
 	}
 
 	@Override
-	public Field getField(ContentContext ctx, String name) throws FileNotFoundException, IOException {
+	public Field getField(ContentContext ctx, String name) throws Exception {
 		java.util.List<Field> fields = getFields(ctx);
 		for (Field field : fields) {
 			if (field.getName().equals(name)) {
@@ -309,7 +309,7 @@ public class DynamicComponent extends AbstractVisualComponent implements IStatic
 	}
 
 	@Override
-	public String getFieldValue(ContentContext ctx, String name) throws FileNotFoundException, IOException {
+	public String getFieldValue(ContentContext ctx, String name) throws Exception {
 		Field field = getField(ctx, name);
 		if (field != null) {
 			return field.getValue();
@@ -689,9 +689,7 @@ public class DynamicComponent extends AbstractVisualComponent implements IStatic
 					return ((IDate) field).getDate(ctx);
 				}
 			}
-		} catch (FileNotFoundException e) {
-			e.printStackTrace();
-		} catch (IOException e) {
+		} catch (Exception e) {
 			e.printStackTrace();
 		}
 		return null;
@@ -746,7 +744,7 @@ public class DynamicComponent extends AbstractVisualComponent implements IStatic
 		return outInit;
 	}
 
-	public void reload(ContentContext ctx) throws FileNotFoundException, IOException {
+	public void reload(ContentContext ctx) throws Exception {
 		for (Field field : getFields(ctx)) {
 			field.reload(ctx);
 		}

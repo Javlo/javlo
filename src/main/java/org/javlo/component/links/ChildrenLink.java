@@ -207,7 +207,7 @@ public class ChildrenLink extends AbstractVisualComponent implements IImageTitle
 		out.println("<input type=\"hidden\" name=\"comp-" + getId() + "\" value=\"true\" />");
 		out.println("<div class=\"line\">");
 		out.println("<label for=\"" + getInputNameRendererTitle() + "\">" + i18n.getText("global.title") + "</label>");
-		out.println("<input type=\"text\" id=\"" + getInputNameRendererTitle() + "\" name=\"" + getInputNameRendererTitle() + "\" value=\"" + getRendererTitle() + "\"/>");
+		out.println("<input class=\"form-control\" type=\"text\" id=\"" + getInputNameRendererTitle() + "\" name=\"" + getInputNameRendererTitle() + "\" value=\"" + getRendererTitle() + "\"/>");
 		out.println("</div><div class=\"line\">");
 		if (getRenderes(ctx).size() < 1) {
 			out.println("</div><div class=\"line\">");

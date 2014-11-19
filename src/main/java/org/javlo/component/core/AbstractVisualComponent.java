@@ -453,7 +453,7 @@ public abstract class AbstractVisualComponent implements IContentVisualComponent
 		StringBuffer finalCode = new StringBuffer();
 		finalCode.append(getDebugHeader(ctx));
 		finalCode.append(getSpecialInputTag());
-		finalCode.append("<textarea class=\"resizable-textarea full-width\" id=\"" + getContentName() + "\" name=\"" + getContentName() + "\"");
+		finalCode.append("<textarea class=\"form-control resizable-textarea full-width\" id=\"" + getContentName() + "\" name=\"" + getContentName() + "\"");
 		finalCode.append(" rows=\"" + (countLine() + 1) + "\">");
 		finalCode.append(getValue());
 		finalCode.append("</textarea>");
@@ -523,7 +523,7 @@ public abstract class AbstractVisualComponent implements IContentVisualComponent
 			out.println("<div class=\"line\">");
 			String bgColInputName = "bgcol-" + getId();
 			out.println("<label for=\"" + bgColInputName + "\">" + i18nAccess.getText("component.background-color") + "</label>");
-			out.println("<input id=\"" + bgColInputName + "\" name=\"" + bgColInputName + "\" class=\"color\" type=\"text\" value=\"" + StringHelper.neverNull(getBackgroundColor()) + "\" />");
+			out.println("<input id=\"" + bgColInputName + "\" name=\"" + bgColInputName + "\" class=\"color form-control\" type=\"text\" value=\"" + StringHelper.neverNull(getBackgroundColor()) + "\" />");
 			out.println("</div>");
 		}
 
@@ -543,7 +543,7 @@ public abstract class AbstractVisualComponent implements IContentVisualComponent
 			}
 			out.println("<div class=\"line\">");
 			out.println("<label for=\"style-" + getId() + "\">" + getStyleTitle(ctx) + "</label>");
-			out.println(XHTMLHelper.getInputOneSelect("style-" + getId(), styles, stylesLabel, getStyle(), null, false));
+			out.println(XHTMLHelper.getInputOneSelect("style-" + getId(), styles, stylesLabel, getStyle(), "form-control", null, false));
 			out.println("</div>");
 		}
 
