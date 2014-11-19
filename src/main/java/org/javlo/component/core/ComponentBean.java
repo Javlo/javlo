@@ -26,7 +26,7 @@ public class ComponentBean implements Serializable, Comparable<ComponentBean> {
 
 	private String id;
 	private String type;
-	private String value;
+	private String value;	
 	private String style;
 	private boolean list = false;
 	private String language;

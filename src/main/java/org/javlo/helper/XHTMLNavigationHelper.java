@@ -201,7 +201,7 @@ public class XHTMLNavigationHelper {
 	public static String renderComboNavigation(ContentContext ctx, MenuElement rootPage, String id, String currentValue) throws Exception {
 		StringWriter res = new StringWriter();
 		PrintWriter out = new PrintWriter(res);
-		out.println("<select name=\"" + id + "\" id=\"" + id + "\">");
+		out.println("<select class=\"form-control\" name=\"" + id + "\" id=\"" + id + "\">");
 		MenuElement elem = rootPage;
 		String[] values = elem.getChildList();
 		for (String value : values) {

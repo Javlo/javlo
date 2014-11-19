@@ -1,8 +1,12 @@
 package org.javlo.fields;
 
+import java.io.ByteArrayOutputStream;
+import java.io.PrintStream;
 import java.io.PrintWriter;
 import java.io.StringWriter;
 import java.util.Collection;
+import java.util.LinkedList;
+import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 
@@ -53,7 +57,7 @@ public class FieldMultiList extends Field {
 			}
 			String key = StringHelper.neverNull(value.getKey(), value.getValue());
 			String label = StringHelper.neverEmpty(value.getValue(), i18nAccess.getViewText("global.none", "?"));
-			out.println("		<label><input type=\"checkbox\" id=\"cb-" + key + "\" value=\"" + key + "\"" + checked + "/>" + label+"</label>");
+			out.println("<label><input type=\"checkbox\" name=\""+getInputName()+"\" id=\"cb-" + key + "\" value=\"" + key + "\"" + checked + "/>" + label+"</label>");
 		}
 
 		// out.println("	</select>");
@@ -99,6 +103,31 @@ public class FieldMultiList extends Field {
 			}
 		}
 		return modify;
+	}
+	
+	@Override
+	public String getViewXHTMLCode(ContentContext ctx) throws Exception {
+		ByteArrayOutputStream outStream = new ByteArrayOutputStream();
+		PrintStream out = new PrintStream(outStream);
+		String value = getValue();
+		out.println("<ul>");
+		for (String item : value.split(";")) {
+			out.println("<li>"+getList(ctx, getListName(), new Locale(ctx.getRequestContentLanguage())).get(item)+"</li>");
+		}
+		out.println("</ul>");	
+		out.close();
+		return new String(outStream.toByteArray());
+	}
+	
+	@Override
+	public List<String> getValues(ContentContext ctx, Locale locale) throws Exception {
+		setCurrentLocale(locale);
+		List<String> out = new LinkedList<String>();
+		for (String item : getValue().split(";")) {
+			out.add(getList(ctx, getListName(), locale).get(item));
+		}
+
+		return out;
 	}
 
 }
