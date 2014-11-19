@@ -61,6 +61,15 @@ public class Field implements Cloneable {
 		public String getValue() {
 			return Field.this.getValue();
 		}
+		
+		public List<String> getValues() {
+			try {
+				return Field.this.getValues(ctx, contentLocale);
+			} catch (Exception e) {
+				e.printStackTrace();
+				return null;
+			}
+		}
 
 		/**
 		 * i18n value of the field.
@@ -499,6 +508,24 @@ public class Field implements Cloneable {
 			setCurrentLocale(null);
 			return getValue();
 		}
+	}
+	
+	/**
+	 * try to return values with locale and return default value if not.
+	 * 
+	 * @param locale
+	 * @return
+	 */
+	public List<String> getValues(ContentContext ctx, Locale locale) throws Exception {
+		setCurrentLocale(locale);
+		List<String> out = new LinkedList<String>();
+		if (getValue() != null) {
+			out.add(getValue());
+		} else {
+			setCurrentLocale(null);
+			out.add(getValue()); 
+		}
+		return out;
 	}
 
 	public String getValue() {

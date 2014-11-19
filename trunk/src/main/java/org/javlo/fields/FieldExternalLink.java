@@ -103,7 +103,7 @@ public class FieldExternalLink extends MetaField implements ILink {
 
 		out.println("<div class=\"line\">");
 		out.println("<label for=\"" + getInputLinkName() + "\">" + getLinkLabel() + " : </label>");
-		out.println("<input id=\"" + getInputLinkName() + "\" name=\"" + getInputLinkName() + "\" value=\"" + StringHelper.neverNull(getCurrentLink()) + "\"/>");
+		out.println("<input class=\"form-control\" id=\"" + getInputLinkName() + "\" name=\"" + getInputLinkName() + "\" value=\"" + StringHelper.neverNull(getCurrentLink()) + "\"/>");
 		if (getCurrentLinkErrorMessage().trim().length() > 0) {
 			out.println("<div class=\"error-message\">");
 			out.println(getCurrentLinkErrorMessage());
@@ -113,7 +113,7 @@ public class FieldExternalLink extends MetaField implements ILink {
 
 		out.println("<div class=\"line\">");
 		out.println("<label for=\"" + getInputLabelName() + "\">" + getLabelLabel() + " : </label>");
-		out.println("<input id=\"" + getInputLabelName() + "\" name=\"" + getInputLabelName() + "\" value=\"" + StringHelper.neverNull(getCurrentLabel()) + "\"/>");
+		out.println("<input class=\"form-control\" id=\"" + getInputLabelName() + "\" name=\"" + getInputLabelName() + "\" value=\"" + StringHelper.neverNull(getCurrentLabel()) + "\"/>");
 		out.println("</div>");
 
 		out.println("</fieldset>");

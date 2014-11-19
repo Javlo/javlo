@@ -276,7 +276,7 @@ public class GenericForm extends AbstractVisualComponent implements IAction {
 	}
 
 	protected String getConfig(ContentContext ctx, String field, String condition) {
-		return getConfig(ctx).getProperty("config." + field + '.' + condition, null);
+		return getLocalConfig(false).getProperty("config." + field + '.' + condition, null);
 	}
 
 	protected String getConfigMessage(ContentContext ctx, String field, String condition) {
@@ -398,8 +398,9 @@ public class GenericForm extends AbstractVisualComponent implements IAction {
 					finalValue = specialValues.get(key);
 				}
 
-				/* validation */
+				/* validation */				
 				if (finalValue != null && finalValue.length() > comp.getMaxSize(ctx, key)) {
+					System.out.println("***** GenericForm.performSubmit : comp.getMaxSize(ctx, key) = "+comp.getMaxSize(ctx, key)); //TODO: remove debug trace
 					errorFields.add(key);
 					GenericMessage msg = new GenericMessage(comp.getConfigMessage(ctx, key, "max-size"), GenericMessage.ERROR);
 					request.setAttribute("msg", msg);

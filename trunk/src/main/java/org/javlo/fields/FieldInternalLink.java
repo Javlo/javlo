@@ -45,7 +45,7 @@ public class FieldInternalLink extends Field {
 
 		out.println("<div class=\"line\">");
 		out.println("<label for=\"" + getInputLabelName() + "\">" + getLabelLabel() + " : </label>");
-		out.println("<input id=\"" + getInputLabelName() + "\" name=\"" + getInputLabelName() + "\" value=\"" + StringHelper.neverNull(getCurrentLabel()) + "\"/>");
+		out.println("<input class=\"form-control\" id=\"" + getInputLabelName() + "\" name=\"" + getInputLabelName() + "\" value=\"" + StringHelper.neverNull(getCurrentLabel()) + "\"/>");
 		out.println("</div>");
 
 		out.println("</fieldset>");
