@@ -360,6 +360,10 @@ public class XHTMLHelper {
 	public static String getDropDownFromMap(String name, Map map, String value) {
 		return getDropDownFromMap(name, map, value, null, false);
 	}
+	
+	public static String getDropDownFromMap(String name, Map map, String value, String emptyName, boolean sortValue) {
+		return getDropDownFromMap(name, map, value, emptyName, sortValue, null);
+	}
 
 	/**
 	 * create a drop down from a map.
@@ -375,7 +379,7 @@ public class XHTMLHelper {
 	 *            no empty element.
 	 * @return XHTML code with a dropdown.
 	 */
-	public static String getDropDownFromMap(String name, Map map, String value, String emptyName, boolean sortValue) {
+	public static String getDropDownFromMap(String name, Map map, String value, String emptyName, boolean sortValue, String cssClass) {
 		ByteArrayOutputStream outStream = new ByteArrayOutputStream();
 		PrintWriter out = new PrintWriter(outStream);
 
@@ -387,8 +391,11 @@ public class XHTMLHelper {
 		if (sortValue) {
 			Collections.sort(entriesList, new MapEntryComparator(true));
 		}
-
-		out.println("<select class=\"select\" id=\"" + name + "\" name=\"" + name + "\">");
+		if (cssClass != null) {
+			out.println("<select class=\"select\" id=\"" + name + "\" name=\"" + name + "\">");
+		} else {
+			out.println("<select class=\"select "+cssClass+"\" id=\"" + name + "\" name=\"" + name + "\">");
+		}
 		if (emptyName != null) {
 			out.print("<option value=\"\">" + emptyName + "</option>");
 		}
@@ -883,6 +890,17 @@ public class XHTMLHelper {
 		content.toArray(contentArray);
 		return getInputOneSelect(name, contentArray, value, js, sort);
 	}
+	
+	public static String getInputOneSelect(String name, List<String> content, String value, String cssClass, String js, boolean sort) {
+	
+		String[][] contentArray = new String[content.size()][];
+		for (int i=0; i<content.size(); i++) {
+			contentArray[i] = new String[2];
+			contentArray[i][0] = content.get(i);
+			contentArray[i][1] = content.get(i);
+		}
+		return getInputOneSelectInternal(name, name, contentArray, value, cssClass, js, null, sort);
+	}
 
 	public static String getInputOneSelect(String name, Map<String, String> content, String value) {
 		String[][] newContent = new String[content.size()][2];
@@ -897,6 +915,21 @@ public class XHTMLHelper {
 
 		return getInputOneSelectInternal(name, name, newContent, value, null, null, null, true);
 	}
+	
+	public static String getInputOneSelect(String name, Map<String, String> content, String value, String cssClass) {
+		String[][] newContent = new String[content.size()][2];
+		Collection<String> keys = content.keySet();
+		int i = 0;
+		for (String key : keys) {
+			newContent[i] = new String[2];
+			newContent[i][0] = key;
+			newContent[i][1] = content.get(key);
+			i++;
+		}
+
+		return getInputOneSelectInternal(name, name, newContent, value, cssClass, null, null, true);
+	}
+
 
 	public static String getInputOneSelect(String name, String[] content, String value) {
 		return getInputOneSelect(name, content, value, null, true);
@@ -925,13 +958,22 @@ public class XHTMLHelper {
 			newContent[i][0] = ids[i];
 			newContent[i][1] = labels[i];
 		}
-		return getInputOneSelect(name, newContent, value, js, sort);
+		return getInputOneSelectInternal(name, name, newContent, value, null, js, null, sort);		
+	}
+	
+	public static String getInputOneSelect(String name, String[] ids, String[] labels, String value, String cssClass, String js, boolean sort) {
+		String[][] newContent = new String[labels.length][2];
+		for (int i = 0; i < labels.length; i++) {
+			newContent[i][0] = ids[i];
+			newContent[i][1] = labels[i];
+		}
+		return getInputOneSelectInternal(name, name, newContent, value, cssClass, js, null, sort);		
 	}
 
 	public static String getInputOneSelect(String name, String[][] content, String value) {
 		return getInputOneSelect(name, content, value, null, true);
 	}
-
+	
 	public static String getInputOneSelect(String name, String[][] content, String value, boolean sorting) {
 		return getInputOneSelect(name, content, value, null, sorting);
 	}
@@ -1311,7 +1353,7 @@ public class XHTMLHelper {
 		for (String value : values) {
 			typeSelect.put(value, i18nAccess.getText("component.reverse-link." + value));
 		}
-		return getInputOneSelect(inputName, typeSelect, currentValue);
+		return getInputOneSelect(inputName, typeSelect, currentValue, "form-control");
 	}
 
 	public static String getRowCheckbox(ContentContext ctx, String field, String label, String value, GenericMessage message) throws ResourceNotFoundException {
@@ -1645,15 +1687,29 @@ public class XHTMLHelper {
 	}
 
 	public static String getTextInput(String name, String value) {
-		return getTextInput(name, value, new String[0][0]);
+		return getTextInput(name, value, new String[0][0], null);
+	}
+	
+	public static String getTextInput(String name, String value, String cssValue) {
+		return getTextInput(name, value, new String[0][0], cssValue);
 	}
 
+
 	public static String getTextInput(String name, String value, String[][] attributes) {
+		return getTextInput(name, value, attributes, null);
+	}
+	
+	private static String getTextInput(String name, String value, String[][] attributes, String cssClass) {
 		StringWriter res = new StringWriter();
 		PrintWriter out = new PrintWriter(res);
 		out.print("<input id=\"" + name + "\" type=\"text\" name=\"");
 		out.print(name);
 		out.print("\"");
+		if (cssClass != null) {
+			out.print(" class=\"");
+			out.print(cssClass);
+			out.print("\"");			
+		}
 		out.print(" value=\"");
 		out.print(value.replace("\"", "&quot;"));
 		out.print("\"");
@@ -1667,6 +1723,7 @@ public class XHTMLHelper {
 		out.println("/>");
 		return res.toString();
 	}
+
 
 	public static String removeTag(String html, String tag) throws BadXMLException {
 		TagDescription[] tags = XMLManipulationHelper.searchAllTag(html, false);

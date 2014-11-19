@@ -160,20 +160,20 @@ public class GlobalImage extends Image implements IImageFilter {
 				url = URLHelper.createTransformURL(ctx, ctx.getVirtualCurrentPage(), TemplateFactory.getTemplate(ctx, ctx.getVirtualCurrentPage()), getResourceURL(ctx, getFileName()), filter, this);
 			} catch (Exception e) {
 				e.printStackTrace();
-			}			
+			}
 			return url;
 		} catch (Exception e) {
 			e.printStackTrace();
 			return null;
 		}
 	}
-	
+
 	@Override
 	public String getImageHash(ContentContext ctx) {
 		if (getWidth(ctx) < 0) {
 			return getStaticInfo(ctx).getVersionHash();
 		} else {
-			return getStaticInfo(ctx).getVersionHash()+'_'+getWidth(ctx);
+			return getStaticInfo(ctx).getVersionHash() + '_' + getWidth(ctx);
 		}
 	}
 
@@ -190,7 +190,7 @@ public class GlobalImage extends Image implements IImageFilter {
 
 	@Override
 	public void prepareView(ContentContext ctx) throws Exception {
-		ctx.setCurrentTemplate(null); // reset template		
+		ctx.setCurrentTemplate(null); // reset template
 		super.prepareView(ctx);
 		ctx.getRequest().setAttribute("link", getLink());
 		String imageURL = getImageURL(ctx);
@@ -209,9 +209,9 @@ public class GlobalImage extends Image implements IImageFilter {
 		}
 		ctx.getRequest().setAttribute("filter", getFilter(ctx));
 		int width = getWidth(ctx);
-		if (width>=0) {
-			ctx.getRequest().setAttribute("imageWidth", width);			
-		}		
+		if (width >= 0) {
+			ctx.getRequest().setAttribute("imageWidth", width);
+		}
 	}
 
 	@Override
@@ -233,10 +233,11 @@ public class GlobalImage extends Image implements IImageFilter {
 		}
 
 		if (!isMeta() && !ctx.getGlobalContext().isMailingPlatform()) {
+			finalCode.append("<div class=\"line\">");
 			finalCode.append("<label for=\"" + getLabelXHTMLInputName() + "\">" + getImageLabelTitle(ctx) + " : </label>");
-			String[][] params = { { "rows", "3" }, { "cols", "40" } };
+			final String[][] params = { { "rows", "3" }, { "cols", "40" }, {"class", "form-control" } };
 			finalCode.append(XHTMLHelper.getTextArea(getLabelXHTMLInputName(), getLabel(), params));
-			finalCode.append("<br />");
+			finalCode.append("</div>");
 		}
 
 		I18nAccess i18nAccess = I18nAccess.getInstance(ctx.getRequest());
@@ -246,18 +247,18 @@ public class GlobalImage extends Image implements IImageFilter {
 			finalCode.append("<legend>" + i18nAccess.getText("global.metadata") + "</legend>");
 			finalCode.append("<div class=\"line\">");
 			finalCode.append("<label for=\"" + getInputNameDate() + "\">" + i18nAccess.getText("global.date") + " : </label>");
-			finalCode.append("<input type=\"text\" name=\"" + getInputNameDate() + "\" value=\"" + StringHelper.neverNull(StringHelper.renderTime(getDate())) + "\" />");
+			finalCode.append("<input class=\"form-control\" type=\"text\" name=\"" + getInputNameDate() + "\" value=\"" + StringHelper.neverNull(StringHelper.renderTime(getDate())) + "\" />");
 			finalCode.append("</div><div class=\"line\">");
 			finalCode.append("<label for=\"" + getInputNameLocation() + "\">" + i18nAccess.getText("global.location") + " : </label>");
-			finalCode.append("<input type=\"text\" name=\"" + getInputNameLocation() + "\" value=\"" + getLocation() + "\" />");
+			finalCode.append("<input class=\"form-control\" type=\"text\" name=\"" + getInputNameLocation() + "\" value=\"" + getLocation() + "\" />");
 			finalCode.append("</div><div class=\"line\">");
 			finalCode.append("<label for=\"" + getInputNameTitle() + "\">" + i18nAccess.getText("global.title") + " : </label>");
-			finalCode.append("<input type=\"text\" name=\"" + getInputNameTitle() + "\" value=\"" + getTitle() + "\" />");
+			finalCode.append("<input class=\"form-control\" type=\"text\" name=\"" + getInputNameTitle() + "\" value=\"" + getTitle() + "\" />");
 			finalCode.append("</div>");
 			if (getTranslatableResources(ctx).size() > 0) {
 				finalCode.append("<div class=\"line\">");
 				finalCode.append("<label for=\"" + getInputNameTranslation() + "\">" + i18nAccess.getText("content.resource.translationof") + " : </label>");
-				finalCode.append(XHTMLHelper.getDropDownFromMap(getInputNameTranslation(), getTranslatableResources(ctx), getTranslatedID(), "", true));
+				finalCode.append(XHTMLHelper.getDropDownFromMap(getInputNameTranslation(), getTranslatableResources(ctx), getTranslatedID(), "", true, "form-control"));
 				finalCode.append("</div>");
 			}
 			finalCode.append("</div>");
@@ -267,17 +268,17 @@ public class GlobalImage extends Image implements IImageFilter {
 		if (isLink()) {
 			finalCode.append("<div class=\"line\"><label for=\"img_link_" + getId() + "\">");
 			finalCode.append(getImageLinkTitle(ctx));
-			finalCode.append(" : </label><input id=\"img_link_" + getId() + "\" name=\"" + getLinkXHTMLInputName() + "\" type=\"text\" value=\"" + getLink() + "\"/></div>");
+			finalCode.append(" : </label><input class=\"form-control\" id=\"img_link_" + getId() + "\" name=\"" + getLinkXHTMLInputName() + "\" type=\"text\" value=\"" + getLink() + "\"/></div>");
 		}
 
 		finalCode.append("<div class=\"line\"><label for=\"new_dir_" + getId() + "\">");
 		finalCode.append(getNewDirLabelTitle(ctx));
-		finalCode.append(" : </label><input id=\"new_dir_" + getId() + "\" name=\"" + getNewDirInputName() + "\" type=\"text\"/></div>");
+		finalCode.append(" : </label><input class=\"form-control\" id=\"new_dir_" + getId() + "\" name=\"" + getNewDirInputName() + "\" type=\"text\"/></div>");
 		finalCode.append("<div class=\"line\"><label for=\"" + getDirInputName() + "\">");
 		finalCode.append(getDirLabelTitle(ctx));
 		finalCode.append(" : </label>");
 		if ((getDirList(getFileDirectory(ctx)) != null) && (getDirList(getFileDirectory(ctx)).length > 0)) {
-			Collection<String> dirsCol = new LinkedList<String>();
+			List<String> dirsCol = new LinkedList<String>();
 			dirsCol.add("");
 			String[] dirs = getDirList(getFileDirectory(ctx));
 			for (String dir : dirs) {
@@ -286,7 +287,7 @@ public class GlobalImage extends Image implements IImageFilter {
 				}
 				dirsCol.add(dir);
 			}
-			finalCode.append(XHTMLHelper.getInputOneSelect(getDirInputName(), dirsCol, getDirSelected(), getJSOnChange(ctx), true));
+			finalCode.append(XHTMLHelper.getInputOneSelect(getDirInputName(), dirsCol, getDirSelected(), "form-control", getJSOnChange(ctx), true));
 		}
 
 		Map<String, String> filesParams = new HashMap<String, String>();
@@ -325,7 +326,7 @@ public class GlobalImage extends Image implements IImageFilter {
 				filtersArray[i][1] = i18nAccess.getText("template.image.type." + filter, filter);
 				i++;
 			}
-			finalCode.append(XHTMLHelper.getInputOneSelect(getImageFilterInputName(), filtersArray, getFilter(ctx)));
+			finalCode.append(XHTMLHelper.getInputOneSelect(getImageFilterInputName(), filtersArray, getFilter(ctx)));			
 			finalCode.append("</div>");
 
 		} else {
@@ -1013,7 +1014,7 @@ public class GlobalImage extends Image implements IImageFilter {
 				int inWidth = Integer.parseInt(width);
 				if (inWidth != image.getWidth(ctx)) {
 					image.setModify();
-					image.setWidth(ctx, inWidth);					
+					image.setWidth(ctx, inWidth);
 				}
 			}
 			if (image.isModify()) {
@@ -1145,9 +1146,9 @@ public class GlobalImage extends Image implements IImageFilter {
 			return ImageEngine.resizeWidth(image, getWidth(ctx), false);
 		}
 	}
-	
+
 	@Override
-	public boolean isListable() {	
+	public boolean isListable() {
 		return true;
 	}
 

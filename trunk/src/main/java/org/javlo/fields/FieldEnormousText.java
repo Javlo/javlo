@@ -19,7 +19,7 @@ public class FieldEnormousText extends Field {
 
 		out.println("<div class=\"line\">");
 		out.println("<label for=\"" + getInputName() + "\">" + getLabel(new Locale(globalContext.getEditLanguage(ctx.getRequest().getSession()))) + " : </label>");
-		out.print("<textarea rows=\"30\" id=\"" + getInputName() + "\" name=\"" + getInputName() + "\">");
+		out.print("<textarea class=\"form-control\" rows=\"30\" id=\"" + getInputName() + "\" name=\"" + getInputName() + "\">");
 		out.print(StringHelper.neverNull(getValue()));
 		out.println("</textarea>");
 		out.println("</div>");

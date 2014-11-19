@@ -93,7 +93,7 @@ public class InternalLink extends ComplexPropertiesLink implements IInternalLink
 			out.println("</div><div class=\"line\"><label for=\"" + getLinkName() + "\">");
 
 			out.println(linkTitle + " : ");
-			out.println("</label><select id=\"" + getLinkName() + "\" name=\"" + getLinkName() + "\">");
+			out.println("</label><select class=\"form-control\" id=\"" + getLinkName() + "\" name=\"" + getLinkName() + "\">");
 			MenuElement elem = content.getNavigation(ctx);
 			String[] values = elem.getChildList();
 			String currentLink = null;
@@ -119,7 +119,7 @@ public class InternalLink extends ComplexPropertiesLink implements IInternalLink
 			out.println("</div><div class=\"line\"><label for=\"" + getLinkLabelName() + "\">");
 			out.print(labelTitle);
 			out.print(" : </label>");
-			out.println(XHTMLHelper.getTextInput(getLinkLabelName(), label));
+			out.println(XHTMLHelper.getTextInput(getLinkLabelName(), label, "form-control"));
 			out.println("</div>");
 		} catch (Exception e) {
 			e.printStackTrace();

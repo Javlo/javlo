@@ -184,25 +184,25 @@ public class FieldFile extends Field implements IStaticContainer {
 		out.println("<legend>" + getLabel(new Locale(globalContext.getEditLanguage(ctx.getRequest().getSession()))) + "</legend>");
 		out.println("<div class=\"commands\">");
 
-		out.println("<div class=\"line\">");
+		out.println("<div class=\"line suffix\">");
 		out.println("<label for=\"" + getInputCreateFolderName() + "\">" + getCreateFolderLabel() + " : </label>");
-		out.println("<input type=\"text\" id=\"" + getInputCreateFolderName() + "\" name=\"" + getInputCreateFolderName() + "\" />");
+		out.println("<input class=\"form-control\" type=\"text\" id=\"" + getInputCreateFolderName() + "\" name=\"" + getInputCreateFolderName() + "\" />");
 		out.println("<input type=\"submit\" class=\"ajax_update_click\" name=\"create\" value=\">>\" />");
 		out.println("</div>");
 
 		out.println("<div class=\"line\">");
 		out.println("<label for=\"" + getInputFolderName() + "\">" + getFolderLabel() + " : </label>");
-		out.println(XHTMLHelper.getInputOneSelect(getInputFolderName(), getFolderListForSelection(), getCurrentFolder(), "jQuery(this.form).trigger('submit');", true));
+		out.println(XHTMLHelper.getInputOneSelect(getInputFolderName(), getFolderListForSelection(), getCurrentFolder(), "form-control", "jQuery(this.form).trigger('submit');", true));
 		out.println("</div>");
 
 		out.println("<div class=\"line\">");
 		out.println("<label for=\"" + getInputFileName() + "\">" + getFileLabel() + " : </label>");
-		out.println(XHTMLHelper.getInputOneSelect(getInputFileName(), getFileList(), getCurrentFile(), "jQuery(this.form).trigger('submit');", true));
+		out.println(XHTMLHelper.getInputOneSelect(getInputFileName(), getFileList(), getCurrentFile(), "form-control", "jQuery(this.form).trigger('submit');", true));
 		out.println("</div>");
 
 		out.println("<div class=\"line\">");
 		out.println("<label for=\"" + getInputLabelFileName() + "\">" + getLabelLabel() + " : </label>");
-		out.println("<input type=\"text\" id=\"" + getInputLabelFileName() + "\" name=\"" + getInputLabelFileName() + "\" value=\"" + getCurrentLabel() + "\" />");
+		out.println("<input class=\"form-control\" type=\"text\" id=\"" + getInputLabelFileName() + "\" name=\"" + getInputLabelFileName() + "\" value=\"" + getCurrentLabel() + "\" />");
 		out.println("</div>");
 
 		out.println("<div class=\"line\">");
@@ -213,7 +213,7 @@ public class FieldFile extends Field implements IStaticContainer {
 		if (isWithLink()) {
 			out.println("<div class=\"line\">");
 			out.println("<label for=\"" + getInputLabelLinkName() + "\">" + getLinkLabel() + " : </label>");
-			out.println("<input type=\"text\" id=\"" + getInputLabelLinkName() + "\" name=\"" + getInputLabelLinkName() + "\" value=\"" + getCurrentLink() + "\" />");
+			out.println("<input class=\"form-control\" type=\"text\" id=\"" + getInputLabelLinkName() + "\" name=\"" + getInputLabelLinkName() + "\" value=\"" + getCurrentLink() + "\" />");
 			out.println("</div>");
 		}
 
