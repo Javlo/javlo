@@ -564,6 +564,16 @@ public class Field implements Cloneable {
 		properties.setProperty(key, StringHelper.neverNull(value));
 
 	}
+	
+	public void setValues(List<String> values) {
+		String sep = "";
+		String value = "";
+		for (String val : values) {
+			value = value + sep + val;
+			sep=";";
+		}
+		setValue(value);
+	}
 
 	public void setLabelValue(String value) {
 		properties.setProperty("field." + getUnicName() + ".user-label", value);

@@ -266,14 +266,11 @@ public class DynamicComponent extends AbstractVisualComponent implements IStatic
 
 	@Override
 	public java.util.List<Field> getFields(ContentContext ctx) throws Exception {
-
 		StaticConfig staticConfig = StaticConfig.getInstance(ctx.getRequest().getSession());
 		GlobalContext globalContext = GlobalContext.getInstance(ctx.getRequest());
 		I18nAccess i18nAccess = I18nAccess.getInstance(ctx);
-
 		java.util.List<Field> outFields = new LinkedList<Field>();
 		java.util.List<String> fieldExecuted = new LinkedList<String>();
-
 		Collection keys = properties.keySet();
 		for (Object keyObj : keys) {
 			String key = (String) keyObj;
