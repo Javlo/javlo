@@ -33,7 +33,6 @@ import org.javlo.component.core.IContentVisualComponent;
 import org.javlo.component.core.IImageFilter;
 import org.javlo.config.StaticConfig;
 import org.javlo.context.ContentContext;
-import org.javlo.context.EditContext;
 import org.javlo.context.GlobalContext;
 import org.javlo.helper.NetHelper;
 import org.javlo.helper.PDFHelper;
@@ -419,9 +418,11 @@ public class ImageTransformServlet extends HttpServlet {
 					mimeTypeImageFile = new File(URLHelper.mergePath(workTemplatePath, mimeTypeImageFilename));
 				}
 			} else {
-				String defaultMimeTypeImage = ctx.getGlobalContext().getStaticConfig().getEditDefaultMimeTypeImage();
-				EditContext editContext = EditContext.getInstance(ctx.getGlobalContext(), ctx.getRequest().getSession());
-				mimeTypeImageFile = new File(URLHelper.mergePath(editContext.getEditTemplate(), defaultMimeTypeImage));
+				StaticConfig staticConfig = ctx.getGlobalContext().getStaticConfig();
+				String defaultMimeTypeImage = staticConfig.getEditDefaultMimeTypeImage();
+				defaultMimeTypeImage = URLHelper.mergePath(staticConfig.getEditTemplateFolder(), defaultMimeTypeImage);
+				defaultMimeTypeImage = ctx.getRequest().getSession().getServletContext().getRealPath(defaultMimeTypeImage);
+				mimeTypeImageFile = new File(defaultMimeTypeImage);
 			}
 			if (mimeTypeImageFile != null) {
 				img = ImageIO.read(mimeTypeImageFile);
