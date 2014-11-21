@@ -39,6 +39,7 @@ import org.javlo.helper.NetHelper;
 import org.javlo.helper.PDFHelper;
 import org.javlo.helper.RequestHelper;
 import org.javlo.helper.ResourceHelper;
+import org.javlo.helper.SVGHelper;
 import org.javlo.helper.StringHelper;
 import org.javlo.helper.URLHelper;
 import org.javlo.image.ImageConfig;
@@ -401,6 +402,9 @@ public class ImageTransformServlet extends HttpServlet {
 		BufferedImage img = null;
 		if (inFileExtention.equalsIgnoreCase("pdf")) {
 			img = PDFHelper.getPDFImage(imageFile);
+			imageType = DEFAULT_IMAGE_TYPE;
+		} else if (inFileExtention.equalsIgnoreCase("svg")) {
+			img = SVGHelper.getSVGImage(imageFile);
 			imageType = DEFAULT_IMAGE_TYPE;
 		} else if (StringHelper.isImage(imageFile.getName())) {
 			img = ImageIO.read(imageFile);
