@@ -331,3 +331,9 @@ change log
  * link wysywig correction
  
 * 2.0.3.8 22/09/2014
+
+ * transform PDF as image for preview
+ 
+ * ImageTransform work with SVG format
+ 
+ * FieldMulti value

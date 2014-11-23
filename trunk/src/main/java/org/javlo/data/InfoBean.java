@@ -832,18 +832,33 @@ public class InfoBean {
 		return DateFormatSymbols.getInstance(new Locale(language)).getMonths();
 	}
 
-	public static void main(String[] args) {
-		String url = "http://localhost:8080";
-
-		System.out.println(url);
-	}
-
 	public String getAjaxLoaderURL() {
 		return URLHelper.createStaticURL(ctx, "/images/ajax_loader.gif");
 	}
 
 	public String getRandomId() {
 		return StringHelper.getRandomId();
+	}
+	
+	/**
+	 * return a random number between 0 and 9 
+	 */
+	public long getRandom10() {
+		return (long)(Math.random()*10);	
+	}
+	
+	/**
+	 * return a random number between 0 and 99 
+	 */
+	public long getRandom100() {
+		return (long)(Math.random()*100);	
+	}
+
+	/**
+	 * return a random number between 0 and 9999 
+	 */
+	public static long getRandom1000() {
+		return (long)(Math.random()*1000);
 	}
 
 	public boolean isRSSFeed() {

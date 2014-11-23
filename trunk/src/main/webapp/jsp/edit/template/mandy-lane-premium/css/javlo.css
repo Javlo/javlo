@@ -1250,9 +1250,13 @@ div.popup {
 	text-align: center;
 }
 
+div.popup input {
+	display: inline-block;
+}
+
 .upload input[type=text] {
 	width: 78%;
-	margin-bottom: 24px;
+	margin-bottom: 24px;	
 }
 
 /** preview **/
