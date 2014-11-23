@@ -137,10 +137,6 @@ public class DynamicComponentFilter extends AbstractPropertiesComponent implemen
 				out.println("<div class=\"alert alert-warning\" role=\"alert\">"+i18nAccess.getViewText("global.no-result")+"</div>");
 			}
 		}
-		
-		
-		
-
 		out.close();
 		return new String(outStream.toByteArray());
 
