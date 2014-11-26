@@ -628,7 +628,7 @@ public class ImageEngine {
 			 * resize }
 			 */
 		}
-		BufferedImage outImage = new BufferedImage(filter.getWidth(), filter.getHeight(), BufferedImage.TYPE_4BYTE_ABGR);
+		BufferedImage outImage = new BufferedImage(filter.getWidth(), filter.getHeight(), source.getType());
 		for (int x = 0; x < filter.getWidth(); x++) {
 			for (int y = 0; y < filter.getHeight(); y++) {
 				Color filterColor = new Color(filter.getRGB(x, y), true);
@@ -707,7 +707,7 @@ public class ImageEngine {
 			height = source.getHeight();
 		}
 
-		workImage = new BufferedImage(width, height, BufferedImage.TYPE_4BYTE_ABGR);
+		workImage = new BufferedImage(width, height, source.getType());
 
 		for (int x = 0; x < workImage.getWidth(); x++) {
 			for (int y = 0; y < workImage.getHeight(); y++) {
@@ -778,7 +778,7 @@ public class ImageEngine {
 				borderWidth = Math.abs((source.getWidth() - newWidth) / 2);
 			}
 
-			BufferedImage outImage = new BufferedImage(newWidth, newHeight, BufferedImage.TYPE_4BYTE_ABGR);
+			BufferedImage outImage = new BufferedImage(newWidth, newHeight, source.getType());
 			if (bgColor != null) {
 				fillImage(outImage, bgColor);
 			} 
@@ -793,7 +793,7 @@ public class ImageEngine {
 		} else if (focusZone) {
 			source = centerInterest(source, interestX, interestY, inWidth, inHeight);
 		}
-
+		
 		BufferedImage workImage;
 
 		int workWith = inWidth - (ml + mr);
@@ -810,7 +810,7 @@ public class ImageEngine {
 				workImage = resize(source, width, workHeight, hq);
 			}
 		}
-
+		
 		// repositioning the image
 		int realInterestX = (interestX * workImage.getWidth()) / 1000;
 		int deltaX = realInterestX - inWidth / 2;
@@ -828,7 +828,7 @@ public class ImageEngine {
 			deltaY = workImage.getHeight() - inHeight;
 		}
 
-		BufferedImage outImage = new BufferedImage(inWidth, inHeight, BufferedImage.TYPE_4BYTE_ABGR);
+		BufferedImage outImage = new BufferedImage(inWidth, inHeight, source.getType());
 		for (int x = deltaX; x < inWidth + deltaX; x++) {
 			for (int y = deltaY; y < inHeight + deltaY; y++) {
 				int targetY = y - deltaY;
@@ -849,6 +849,7 @@ public class ImageEngine {
 				}
 			}
 		}
+		
 		return outImage;
 	}
 	
@@ -1171,7 +1172,7 @@ public class ImageEngine {
 	 * @param args
 	 */
 	public static void main(String[] args) {
-		File source = new File("C:/trans/test.jpg");
+		File source = new File("C:/trans/11.jpg");
 		File target = new File("c:/trans/out.png");
 		try {		
 			BufferedImage sourceImage = ImageIO.read(source);

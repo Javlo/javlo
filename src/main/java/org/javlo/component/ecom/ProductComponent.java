@@ -84,6 +84,7 @@ public class ProductComponent extends AbstractPropertiesComponent implements IAc
 
 	public long getRealStock(ContentContext ctx) {
 		try {
+			loadViewData(ctx);
 			String value = getViewData(ctx).getProperty("stock");
 			return Long.valueOf(value);
 		} catch (Exception e) {
@@ -95,6 +96,7 @@ public class ProductComponent extends AbstractPropertiesComponent implements IAc
 
 	public long getVirtualStock(ContentContext ctx) {
 		try {
+			loadViewData(ctx);
 			String value = getViewData(ctx).getProperty("virtual");
 			return Long.valueOf(value);
 		} catch (Exception e) {
@@ -202,38 +204,33 @@ public class ProductComponent extends AbstractPropertiesComponent implements IAc
 				action = URLHelper.createURL(ctx);
 			}
 
-			out.println("<form class=\"add-basket\" id=\"product-"+getName()+"_"+getId()+"\" method=\"post\" action=\""+action+"\">");
+			out.println("<form role=\"form\" class=\"form-inline add-basket\" id=\"product-"+getName()+"_"+getId()+"\" method=\"post\" action=\""+action+"\">");
 			out.println("<input type=\"hidden\" name=\"webaction\" value=\"products.buy\" />");
 			out.println("<input type=\"hidden\" name=\"cid\" value=\""+getId()+"\" />");
 			I18nAccess i18nAccess = I18nAccess.getInstance(ctx);
 			
-			out.println("<div class=\"line name\">");		
+			out.println("<div class=\"list-group\"><div class=\"line list-group-item name\">");		
 			out.println("<span>"+getName()+"</span>");
 			out.println("</div>");
 			
-			out.println("<div class=\"line price\">");
-			out.println("<span class=\"label\">" + i18nAccess.getViewText("ecom.price") + "</span> <span>"+getPrice() + "&nbsp;" + getCurrency() + "</span>");
+			out.println("<div class=\"line list-group-item price\">");
+			out.println("<span class=\"label\">" + i18nAccess.getViewText("ecom.price") + "</span> <span class=\"badge\">"+getPrice() + "&nbsp;" + getCurrency() + "</span>");
 			out.println("</div>");
 			
-			out.println("<div class=\"line production\">");
-			out.println("<span class=\"label\">" + i18nAccess.getViewText("ecom.production") + "</span> <span>" + getProduction() + "</span>");
+			out.println("<div class=\"line list-group-item stock\">");
+			out.println("<span class=\"label\">" + i18nAccess.getViewText("ecom.stock") + "</span> <span class=\"badge\">"+getRealStock(ctx)+"</span>");
 			out.println("</div>");
 
-			out.println("<div class=\"line stock\">");
-			if (getVirtualStock(ctx) > 0) {
-				out.println("<span class=\"label\">" + i18nAccess.getViewText("ecom.stock") + "</span> <span>" + getVirtualStock(ctx) + "</span>");
-			} else {
-				out.println("<span class=\"label\">" + i18nAccess.getViewText("ecom.stock") + "</span><span class=\"soldout\">"+i18nAccess.getViewText("ecom.soldout")+"</span>");
-			}
+			
 			out.println("</div>");
 
 			if (getVirtualStock(ctx) > getOffset()) {
-				out.println("<div class=\"line quantity\">");
+				out.println("<div class=\"line form-group quantity\">");
 				String Qid = "product-"+StringHelper.getRandomId();
 				out.println("<label for=\""+Qid+"\"><span>"+i18nAccess.getViewText("ecom.quantity")+"</span></label>");
-				out.println("<input class=\"digit\" id=\""+Qid+"\" type=\"text\" name=\"quantity\" value=\"" + getOffset() + "\" maxlength=\"3\"/>");
+				out.println("<input class=\"form-control digit\" id=\""+Qid+"\" type=\"text\" name=\"quantity\" value=\"" + getOffset() + "\" maxlength=\"3\"/>");
 
-				out.println("<span class=\"buy\"><input class=\"buy\" type=\"submit\" name=\"buy\" value=\""+i18nAccess.getViewText("ecom.buy")+"\" /></span>");
+				out.println("<span class=\"buy\"><input class=\"btn btn-default buy\" type=\"submit\" name=\"buy\" value=\""+i18nAccess.getViewText("ecom.buy")+"\" /></span>");
 				out.println("</div>");
 			} else {
 				out.println("<span class=\"soldout\">"+i18nAccess.getViewText("ecom.soldout")+"</span>");

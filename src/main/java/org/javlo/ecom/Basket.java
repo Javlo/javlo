@@ -142,6 +142,12 @@ public class Basket implements Serializable {
 	public static boolean isInstance(ContentContext ctx) {
 		return ctx.getRequest().getSession().getAttribute(KEY) != null;
 	}
+	
+	public void payAll(ContentContext ctx) {
+		for (Product product : products) {
+			product.pay(ctx);
+		}
+	}
 
 	public void reserve(ContentContext ctx) {
 		for (Product product : products) {
@@ -221,12 +227,17 @@ public class Basket implements Serializable {
 		}
 		if (priceList != null) {
 			double delivery = 0;
-			for (Product product : products) {
-				double vatFactor = 1;
-				if (vat) {
-					vatFactor = 1 + product.getVAT();
+			try {
+				for (Product product : products) {
+					double vatFactor = 1;
+					if (vat) {
+						vatFactor = 1 + product.getVAT();
+					}
+					delivery += priceList.getPrice(product.getQuantity() * product.getWeight(), getDeliveryZone()) * vatFactor;
 				}
-				delivery += priceList.getPrice(product.getQuantity() * product.getWeight(), getDeliveryZone()) * vatFactor;
+			} catch (Exception e) {
+				e.printStackTrace();
+				return getEcomService(ctx).getDefaultDelivery();
 			}
 			return delivery;
 		} else {

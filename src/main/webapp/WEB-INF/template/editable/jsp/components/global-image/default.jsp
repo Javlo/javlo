@@ -14,13 +14,13 @@
 <c:set var="rel" value="${fn:startsWith(url,'http://')?'external':'shadowbox'}" />
 <c:set var="rel" value="${fn:endsWith(url,'.pdf')?'pdf':rel}" />
 <a rel="${rel}" class="${type}" href="${url}" title="${not empty label?cleanLabel:cleanDescription}">
-	<c:if test="${contentContext.asPreviewMode}">
+	<c:if test="${contentContext.asPreviewMode && filter != 'raw'}">
 		<c:set var="imageId" value="i${info.randomId}" />
 		<img id="${imageId}" src="${info.ajaxLoaderURL}" alt="${not empty description?cleanDescription:cleanLabel}" />
 	</c:if>
-	<c:if test="${not contentContext.asPreviewMode}">
+	<c:if test="${not (contentContext.asPreviewMode && filter != 'raw')}">
 		<c:set var="imageWidthTag" value='width="${imageWidth}" ' />
-		<img ${not empty imageWidth?imageWidthTag:''}src="${previewURL}" alt="${not empty description?cleanDescription:cleanLabel}" />
+		<img ${not empty imageWidth && filter!='raw'?imageWidthTag:''}src="${previewURL}" alt="${not empty description?cleanDescription:cleanLabel}" />
 	</c:if>
 </a>
 <c:if test="${empty param.nolabel}"><figcaption>${not empty label?label:description}</figcaption></c:if>
@@ -28,7 +28,7 @@
 </c:otherwise>
 </c:choose>
 
-<c:if test="${contentContext.asPreviewMode}">
+<c:if test="${contentContext.asPreviewMode && filter != 'raw'}">
 <script type="text/javascript">
 jQuery("#${imageId}").attr("src", "${previewURL}");
 jQuery("#${imageId}").load(function() {	

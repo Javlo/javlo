@@ -1060,8 +1060,8 @@ public class ImageTransformServlet extends HttpServlet {
 					out.close();
 				}
 			} catch (Exception e) {
+				e.printStackTrace();
 				logger.warning(e.getMessage());
-				//e.printStackTrace();
 			}
 		}
 		servletRun--;
@@ -1069,8 +1069,8 @@ public class ImageTransformServlet extends HttpServlet {
 	}
 
 	public static void main(String[] args) {
-		File image1 = new File("c:/trans/test.jpg");
-		File image2 = new File("c:/trans/test_out.jpg");
+		File image1 = new File("c:/trans/11.jpg");
+		File image2 = new File("c:/trans/11_out.jpg");
 		long time = System.currentTimeMillis();
 		try {
 			BufferedImage image = ImageIO.read(image1);
@@ -1079,6 +1079,9 @@ public class ImageTransformServlet extends HttpServlet {
 			image = ImageEngine.resize(image, 1920, 1200, true);
 			System.out.println("2. resize     : " + StringHelper.renderTimeInSecond(System.currentTimeMillis() - time));
 			time = System.currentTimeMillis();
+			
+			image = ImageEngine.resize(image, 512, 512, true, false, 0, 0, 0, 0, null, 512, 512, true, false);
+			
 			ImageIO.write(image, "jpg", image2);
 			System.out.println("2. write time : " + StringHelper.renderTimeInSecond(System.currentTimeMillis() - time));
 		} catch (IOException e) {

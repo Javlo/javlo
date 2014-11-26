@@ -50,11 +50,11 @@ public class TransferOrderComponent extends AbstractOrderComponent implements IA
 
 		ByteArrayOutputStream outStream = new ByteArrayOutputStream();
 		PrintStream out = new PrintStream(outStream);		
-		out.println("<form class=\"transfer\" action\""+URLHelper.createURL(ctx)+"\">");
+		out.println("<form class=\"transfer\" action\""+URLHelper.createURL(ctx)+"\" role=\"form\">");
 		out.println("<fieldset>");		
 		out.println("<input type=\"hidden\" name=\""+IContentVisualComponent.COMP_ID_REQUEST_PARAM+"\" value=\""+getId()+"\" />");
 		out.println("<input type=\"hidden\" name=\"webaction\" value=\"transfer.pay\" />");
-		out.println("<input type=\"submit\" value=\""+getData().get("button")+"\" />");
+		out.println("<input class=\"btn btn-default\" type=\"submit\" value=\""+getData().get("button")+"\" />");
 		out.println("</fieldset>");
 		out.println("</form>");
 		out.close();
@@ -82,6 +82,7 @@ public class TransferOrderComponent extends AbstractOrderComponent implements IA
 		comp.sendConfirmationEmail(ctx, basket);
 		ctx.getRequest().setAttribute("msg", msg);		
 		
+		basket.payAll(ctx);
 		basket.reset(ctx);
 		
 		NetHelper.sendMailToAdministrator(globalContext, "basket confirmed with transfert : "+globalContext.getContextKey(), basket.toString());
