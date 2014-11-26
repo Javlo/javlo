@@ -157,6 +157,13 @@ public class GenericFile extends AbstractFileComponent implements IReverseLinkCo
 	public String getType() {
 		return TYPE;
 	}
+	
+	@Override
+	public String getURL(ContentContext ctx) {
+		StaticConfig staticConfig = StaticConfig.getInstance(ctx.getRequest().getSession());
+		String fileLink = URLHelper.mergePath(getDirSelected(), getFileName());
+		return URLHelper.createResourceURL(ctx, getPage(), staticConfig.getFileFolder() + '/' + fileLink).replace('\\', '/');
+	}
 
 	@Override
 	public void prepareView(ContentContext ctx) throws Exception {
@@ -168,8 +175,8 @@ public class GenericFile extends AbstractFileComponent implements IReverseLinkCo
 		fullName = ElementaryURLHelper.mergePath(globalContext.getDataFolder(), fullName);
 		ctx.getRequest().setAttribute("ext", StringHelper.getFileExtension(getFileName()));
 		ctx.getRequest().setAttribute("size", StringHelper.getFileSize(fullName));
-		String url = ElementaryURLHelper.mergePath(getDirSelected(), getFileName());
-		ctx.getRequest().setAttribute("url", StringHelper.toXMLAttribute(url));
+		/*String url = ElementaryURLHelper.mergePath(getDirSelected(), getFileName());
+		ctx.getRequest().setAttribute("url", StringHelper.toXMLAttribute(url));*/
 		if (getLabel().trim().length() == 0) {
 			ctx.getRequest().setAttribute("label", getFileName());			
 		} else {

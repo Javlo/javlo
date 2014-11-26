@@ -59,27 +59,43 @@ public class NetHelper {
 	public static final String HEADER_IF_MODIFIED_SINCE_ETAG = "if-None-Match";
 
 	public static String readPageForMailing(URL url) throws Exception {
-		return readPage(url, true, true, null, null, null);
+		return readPage(url, true, true, null, null, null, false);
 	}
 
 	public static String readPageForMailing(URL url, String login, String pwd) throws Exception {
-		return readPage(url, true, true, null, login, pwd);
+		return readPage(url, true, true, null, login, pwd, false);
 	}
 
 	public static String readPage(URL url) throws Exception {
-		return readPage(url, false, false, null, null, null);
+		return readPage(url, false, false, null, null, null, false);
+	}
+
+	public static String readPageGet(URL url) throws Exception {
+		InputStream in=null;
+		ByteArrayOutputStream out = new ByteArrayOutputStream();
+		try {			
+			in = url.openStream();
+			ResourceHelper.writeStreamToStream(in, out);
+		} finally {
+			ResourceHelper.closeResource(in);
+		}
+		return new String(out.toByteArray(), ContentContext.CHARACTER_ENCODING);
+	}
+
+	public static String readPageNoError(URL url) throws Exception {
+		return readPage(url, false, false, null, null, null, true);
 	}
 
 	public static String readPage(URL url, final String userName, final String password) throws Exception {
-		return readPage(url, false, false, null, userName, password);
+		return readPage(url, false, false, null, userName, password, false);
 	}
 
 	public static String readPage(String inURL, boolean cssInline) throws Exception {
-		return readPage(new URL(inURL), cssInline, cssInline, null, null, null);
+		return readPage(new URL(inURL), cssInline, cssInline, null, null, null, false);
 	}
 
 	public static String readPage(URL url, boolean cssInline, String userAgent) throws Exception {
-		return readPage(url, cssInline, cssInline, userAgent, null, null);
+		return readPage(url, cssInline, cssInline, userAgent, null, null, false);
 	}
 
 	/**
@@ -90,7 +106,7 @@ public class NetHelper {
 	 * @return code returned by the http request on the URL.
 	 * @throws IOException
 	 */
-	private static String readPage(URL url, boolean cssInline, boolean mailing, String userAgent, final String userName, final String password) throws Exception {
+	private static String readPage(URL url, boolean cssInline, boolean mailing, String userAgent, final String userName, final String password, boolean noError) throws Exception {
 
 		logger.info("readPage : " + url + "  user:" + userName + "  password found:" + (StringHelper.neverNull(password).length() > 1));
 
@@ -116,7 +132,7 @@ public class NetHelper {
 
 		InputStream in = null;
 		try {
-			
+
 			String query = StringHelper.neverNull(url.getQuery(), "");
 			url = removeParams(url);
 
@@ -125,12 +141,12 @@ public class NetHelper {
 			connection.setRequestProperty("Content-Type", "application/x-www-form-urlencoded");
 
 			connection.setRequestProperty("Content-Length", "" + Integer.toString(query.getBytes().length));
-			//connection.setRequestProperty("Content-Language", "en-US");
+			// connection.setRequestProperty("Content-Language", "en-US");
 
 			connection.setUseCaches(false);
 			connection.setDoInput(true);
 			connection.setDoOutput(true);
-			
+
 			connection.setAllowUserInteraction(true);
 			connection.setInstanceFollowRedirects(true);
 
@@ -146,16 +162,18 @@ public class NetHelper {
 				HttpURLConnection httpConn = (HttpURLConnection) conn;
 				if (userAgent != null) {
 					httpConn.setRequestProperty("User-Agent", userAgent);
-				}				
-				if (httpConn.getResponseCode() != HttpURLConnection.HTTP_OK && httpConn.getResponseCode() != HttpURLConnection.HTTP_MOVED_TEMP && httpConn.getResponseCode() != HttpURLConnection.HTTP_MOVED_PERM) {
-					logger.warning("error readpage :  '" + url + "' return error code : " + ((HttpURLConnection) conn).getResponseCode());
-					return null;
 				}
-
-				if (url.getProtocol().equalsIgnoreCase("http") || url.getProtocol().equalsIgnoreCase("https")) {
+				if (!noError) {
 					if (httpConn.getResponseCode() != HttpURLConnection.HTTP_OK && httpConn.getResponseCode() != HttpURLConnection.HTTP_MOVED_TEMP && httpConn.getResponseCode() != HttpURLConnection.HTTP_MOVED_PERM) {
-						logger.warning("error readpage : " + httpConn.getResponseCode());
+						logger.warning("error readpage :  '" + url + "' return error code : " + ((HttpURLConnection) conn).getResponseCode());
 						return null;
+					}
+
+					if (url.getProtocol().equalsIgnoreCase("http") || url.getProtocol().equalsIgnoreCase("https")) {
+						if (httpConn.getResponseCode() != HttpURLConnection.HTTP_OK && httpConn.getResponseCode() != HttpURLConnection.HTTP_MOVED_TEMP && httpConn.getResponseCode() != HttpURLConnection.HTTP_MOVED_PERM) {
+							logger.warning("error readpage : " + httpConn.getResponseCode());
+							return null;
+						}
 					}
 				}
 			}
@@ -174,19 +192,25 @@ public class NetHelper {
 		}
 		return content;
 	}
-	
+
 	public static void main(String[] args) {
 		URL url;
 		try {
 			url = new URL("http://www.javlo.be?test=test");
-			System.out.println("***** NetHelper.main : 1.url = "+url); //TODO: remove debug trace
+			System.out.println("***** NetHelper.main : 1.url = " + url); // TODO:
+																			// remove
+																			// debug
+																			// trace
 			url = removeParams(url);
-			System.out.println("***** NetHelper.main : 2.url = "+url); //TODO: remove debug trace
+			System.out.println("***** NetHelper.main : 2.url = " + url); // TODO:
+																			// remove
+																			// debug
+																			// trace
 		} catch (Exception e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
-		}		
-		
+		}
+
 	}
 
 	/**
@@ -796,22 +820,22 @@ public class NetHelper {
 		}
 		return null;
 	}
-	
+
 	/**
 	 * remove params of a url
 	 */
 	public static URL removeParams(URL url) {
 		if (url.getQuery() != null && url.getQuery().trim().length() > 0) {
 			try {
-				return new URL(url.toString().replace('?'+url.getQuery(), ""));
+				return new URL(url.toString().replace('?' + url.getQuery(), ""));
 			} catch (MalformedURLException e) {
 				e.printStackTrace();
 				return url;
 			}
-		} else  {
+		} else {
 			return url;
 		}
-		
+
 	}
 
 	public static void sendPageByMailing(ContentContext ctx, MenuElement page, String sender, String recipient, Map<String, Object> params) throws Exception {
