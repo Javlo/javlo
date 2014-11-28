@@ -2,56 +2,29 @@ package org.javlo.helper;
 
 import java.awt.image.BufferedImage;
 import java.io.File;
-import java.io.FileInputStream;
-import java.util.logging.Level;
 import java.util.logging.Logger;
 
 import javax.imageio.ImageIO;
-
-import org.apache.batik.transcoder.TranscoderInput;
-import org.apache.batik.transcoder.TranscoderOutput;
-import org.apache.batik.transcoder.image.ImageTranscoder;
-import org.apache.batik.transcoder.image.PNGTranscoder;
 
 public class SVGHelper {
 
 	public static Logger logger = Logger.getLogger(SVGHelper.class.getName());
 
 	public static BufferedImage getSVGImage(File svgFile) {
-		FileInputStream in = null;
-		BufferedImage out = null;
-		try {
-			in = new FileInputStream(svgFile);
-			BufferedImageTranscoder imageTranscoder = new BufferedImageTranscoder();
-
-			imageTranscoder.addTranscodingHint(PNGTranscoder.KEY_HEIGHT, 10000F);
-			imageTranscoder.addTranscodingHint(PNGTranscoder.KEY_WIDTH, 10000F);
-			imageTranscoder.addTranscodingHint(PNGTranscoder.KEY_MAX_WIDTH, 3000F);
-
-			TranscoderInput input = new TranscoderInput(in);
-			imageTranscoder.transcode(input, null);
-
-			out = imageTranscoder.getBufferedImage();
-		} catch (Exception e) {
-			logger.log(Level.SEVERE, "Exception when converting SVG to buffered image: " + e.getMessage(), e);
-		} finally {
-			ResourceHelper.safeClose(in);
-		}
-		return out;
+		return null;
 	}
 
-	private static class BufferedImageTranscoder extends ImageTranscoder {
+	private static class BufferedImageTranscoder {
 
 		private BufferedImage img = null;
 
-		@Override
+		
 		public BufferedImage createImage(int w, int h) {
-			BufferedImage bi = new BufferedImage(w, h, BufferedImage.TYPE_INT_ARGB);
-			return bi;
+			return null;
 		}
 
-		@Override
-		public void writeImage(BufferedImage img, TranscoderOutput output) {
+		
+		public void writeImage(BufferedImage img, Object output) {
 			this.img = img;
 		}
 
