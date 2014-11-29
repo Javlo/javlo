@@ -326,11 +326,17 @@
 			<version>1.1</version>
 		</dependency> 
 
-		<!--<dependency>
+		<dependency>
 			<groupId>org.apache.xmlgraphics</groupId>
 			<artifactId>batik-transcoder</artifactId>
 			<version>1.7</version>
-		</dependency>  --> 
+			<exclusions>
+        		<exclusion>
+					<groupId>org.apache.xmlgraphics</groupId>
+					<artifactId>batik-js</artifactId>
+	        	</exclusion>
+      		</exclusions>
+		</dependency>
 
 	</dependencies>
 

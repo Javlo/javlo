@@ -151,6 +151,7 @@ public class GenericFileList extends AbstractVisualComponent implements IAction 
 	@Override
 	public void delete(ContentContext ctx) {
 		super.delete(ctx);
+		if (getFolder(ctx) != null && getFolder(ctx).exists())
 		for (File file : getFolder(ctx).listFiles()) {
 			file.delete();
 		}
