@@ -16,8 +16,9 @@ import org.javlo.component.form.SearchResultComponent;
 import org.javlo.context.ContentContext;
 import org.javlo.helper.PaginationContext;
 import org.javlo.helper.StringHelper;
+import org.javlo.search.ISearchEngine;
+import org.javlo.search.SearchEngineFactory;
 import org.javlo.search.SearchFilter;
-import org.javlo.search.SearchResult;
 import org.javlo.search.SearchResult.SearchElement;
 import org.javlo.service.RequestService;
 import org.javlo.template.TemplateSearchContext;
@@ -82,9 +83,8 @@ public class SearchActions implements IAction {
 							ctx.setSpecialContentRenderer(ctx.getCurrentTemplate().getSearchRenderer(ctx));
 						}
 					}
-					SearchResult search = SearchResult.getInstance(ctx);
-					search.search(ctx, groupId, searchStr, sort, componentList);
-					List<SearchElement> result = search.getSearchResult();
+					ISearchEngine search = SearchEngineFactory.getEngine(ctx);
+					List<SearchElement> result = search.search(ctx, groupId, searchStr, sort, componentList);
 					ctx.getRequest().getSession().setAttribute("searchList", result);
 					PaginationContext.getInstance(ctx.getRequest(), "searchPagination", result.size(), 10);
 				} else {
