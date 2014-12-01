@@ -1339,4 +1339,8 @@ public class StaticConfig extends Observable {
 		return excludeContextDomain.contains(domain);
 	}
 
+	public String getSearchEngineClassName() {
+		return properties.getString("searchengine.class", "org.javlo.search.DefaultSearchEngine").trim();
+	}
+
 }
