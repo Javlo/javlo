@@ -253,7 +253,15 @@ public class PageBean implements Serializable {
 	}
 	
 	public String getTechnicalTitle() {
-		return StringHelper.createFileName(getInfo().getTitle()).toLowerCase();
+		ContentContext defaultLangCtx = ctx.getContextForDefaultLanguage();
+		String title;
+		try {
+			title = page.getPageTitle(defaultLangCtx);
+		} catch (Exception e) {
+			title = page.getName();
+			e.printStackTrace();
+		}
+		return StringHelper.createFileName(title).toLowerCase();
 	}
 	
 	public String getTitleOrSubtitle() {

@@ -59,6 +59,16 @@ public class Title extends AbstractVisualComponent {
 		}
 		return "";
 	}
+	
+	@Override
+	public void prepareView(ContentContext ctx) throws Exception {	
+		super.prepareView(ctx);
+		String value = getValue();
+		GlobalContext globalContext = GlobalContext.getInstance(ctx.getRequest());
+		ReverseLinkService reverserLinkService = ReverseLinkService.getInstance(globalContext);
+		value = reverserLinkService.replaceLink(ctx, this, value);
+		ctx.getRequest().setAttribute("value", value);
+	}
 
 	/**
 	 * @see org.javlo.itf.IContentVisualComponent#getXHTMLCode()

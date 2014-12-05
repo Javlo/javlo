@@ -20,6 +20,7 @@ import org.javlo.i18n.I18nAccess;
 import org.javlo.message.GenericMessage;
 import org.javlo.module.mailing.MailingAction;
 import org.javlo.navigation.MenuElement;
+import org.javlo.navigation.PageBean;
 import org.javlo.service.ContentService;
 import org.javlo.service.NavigationService;
 import org.javlo.service.RequestService;
@@ -64,6 +65,38 @@ public class SimpleInternalLink extends ComplexPropertiesLink implements IIntern
 		}
 		return super.getTag(ctx);
 	}
+	
+	@Override
+	public void prepareView(ContentContext ctx) throws Exception {
+		super.prepareView(ctx);
+		String linkId = properties.getProperty(LINK_KEY, "/");
+
+		GlobalContext globalContext = GlobalContext.getInstance(ctx.getRequest());
+		NavigationService navigationService = NavigationService.getInstance(globalContext);
+		MenuElement child = navigationService.getPage(ctx, linkId);
+		if (child != null) {
+			ctx.getRequest().setAttribute("page", new PageBean(ctx, child));
+			String link = "#";
+			link = child.getPath();
+			String label = properties.getProperty(LABEL_KEY, "");
+			if (label.trim().length() == 0) {
+				label = child.getLabel(ctx);
+			}
+			ctx.getRequest().setAttribute("label", label);
+			String url = URLHelper.createURL(ctx, link);
+			if (ctx.getRenderMode() != ContentContext.PAGE_MODE) {
+				ctx.getRequest().setAttribute("url", StringHelper.toXMLAttribute(url));
+			} else {
+				ContentContext viewCtx = new ContentContext(ctx);
+				viewCtx.setRenderMode(ContentContext.VIEW_MODE);
+				url = URLHelper.createURL(viewCtx, link);
+				if (getParam().trim().length() == 0) {
+					ctx.getRequest().setAttribute("url", StringHelper.toXMLAttribute(url) + "?" + MailingAction.MAILING_FEEDBACK_PARAM_NAME + "=##data##");
+				} else {
+					ctx.getRequest().setAttribute("url", StringHelper.toXMLAttribute(url) + getParam() + "&" + MailingAction.MAILING_FEEDBACK_PARAM_NAME + "=##data##");
+				}
+			}
+		}}
 
 	/**
 	 * @see org.javlo.itf.IContentVisualComponent#getXHTMLCode()

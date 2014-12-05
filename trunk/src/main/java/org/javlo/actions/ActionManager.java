@@ -216,7 +216,7 @@ public class ActionManager {
 				t.printStackTrace();
 			} else {
 				t.printStackTrace();
-				if (t.getCause().getMessage() != null) {
+				if (t.getCause() != null && t.getCause().getMessage() != null) {
 					message = "error in action '" + actionName + "' : " + t.getCause().getMessage();
 				} else {
 					message = "error in action '" + actionName + "' contact administrator, current time : " + StringHelper.renderTime(new Date());

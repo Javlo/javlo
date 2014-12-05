@@ -467,7 +467,7 @@ public class DataAction implements IAction {
 				ctx.setNeedRefresh(true);				
 			}
 		} catch (FileExistsException e) {
-			messageRepository.setGlobalMessage(new GenericMessage(i18nAccess.getText("data.file-allready-exist", "file allready exist."), GenericMessage.ERROR));
+			messageRepository.setGlobalMessage(new GenericMessage(i18nAccess.getText("data.file-allready-exist", "file already exist."), GenericMessage.ERROR));
 		}
 		return null;
 	}

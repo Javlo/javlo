@@ -337,3 +337,11 @@ change log
  * ImageTransform work with SVG format
  
  * FieldMulti value
+ 
+ * don't call prepareView is there are no renderer defined.
+ 
+ * sitemap filter
+ 
+ * integration of lucent search engine (test integration, by default not actived)
+ 
+* 2.0.3.8.1 05/12/2014

@@ -9,7 +9,6 @@ import org.javlo.context.ContentContext;
 import org.javlo.context.GlobalContext;
 import org.javlo.ecom.Basket;
 import org.javlo.ecom.BasketPersistenceService;
-import org.javlo.ecom.Product;
 import org.javlo.helper.ComponentHelper;
 import org.javlo.helper.NetHelper;
 import org.javlo.helper.URLHelper;

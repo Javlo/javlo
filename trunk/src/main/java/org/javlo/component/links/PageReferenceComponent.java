@@ -30,6 +30,7 @@ import org.javlo.bean.Link;
 import org.javlo.component.core.AbstractVisualComponent;
 import org.javlo.component.core.ComplexPropertiesLink;
 import org.javlo.component.core.ComponentBean;
+import org.javlo.component.core.IContentVisualComponent;
 import org.javlo.component.image.IImageTitle;
 import org.javlo.component.meta.Tags;
 import org.javlo.context.ContentContext;
@@ -176,6 +177,10 @@ public class PageReferenceComponent extends ComplexPropertiesLink implements IAc
 			}
 
 			PageBean bean = new PageBean();
+			bean.ctx = ctx;
+			bean.lgCtx = ctx;
+			bean.page = page;
+			bean.comp = comp;
 			bean.language = lgCtx.getRequestContentLanguage();
 			lgCtx.setRequestContentLanguage(bean.language); // fix
 															// requestContentLanguage
@@ -346,6 +351,11 @@ public class PageReferenceComponent extends ComplexPropertiesLink implements IAc
 		private Collection<Link> staticResources = new LinkedList<Link>();
 		private final Collection<Image> images = new LinkedList<Image>();
 		private int reactionSize = 0;
+		private ContentContext ctx;
+		private ContentContext lgCtx;
+		private MenuElement page;
+		private PageReferenceComponent comp;
+		private List<PageBean> children = null;
 
 		private Collection<String> tags = new LinkedList<String>();
 		private final Collection<String> tagsLabel = new LinkedList<String>();
@@ -659,6 +669,31 @@ public class PageReferenceComponent extends ComplexPropertiesLink implements IAc
 			this.sortableModificationDate = sortableModificationDate;
 		}
 
+		public List<PageBean> getChildren() throws Exception {
+			if (children == null) {
+				List<PageBean> workChildren = new LinkedList<PageBean>();
+				if (page != null) {
+					for (MenuElement child : page.getChildMenuElementsList()) {
+						workChildren.add(PageBean.getInstance(ctx, lgCtx, child, comp));
+					}
+				}
+				children = workChildren;
+			}
+			return children;
+		}
+		
+		public String getTechnicalTitle() {
+			ContentContext defaultLangCtx = ctx.getContextForDefaultLanguage();
+			String title;
+			try {
+				title = page.getTitle(defaultLangCtx);
+			} catch (Exception e) {
+				title = page.getName();
+				e.printStackTrace();
+			}
+			return StringHelper.createFileName(title).toLowerCase();
+		}
+
 	}
 
 	public static class PagesStatus {
@@ -861,13 +896,13 @@ public class PageReferenceComponent extends ComplexPropertiesLink implements IAc
 	 */
 	protected boolean filterPage(ContentContext ctx, MenuElement page, String filter) throws Exception {
 		Collection<String> commands = extractCommandFromFilter(filter);
-		
+
 		if (commands.contains("all")) {
 			return true;
-		}	
+		}
 		if (!validPageForCommand(ctx, page, commands)) {
 			return false;
-		}		
+		}
 		filter = removeCommandFromFilter(filter);
 
 		if (filter != null && !(page.getTitle(ctx) + ' ' + page.getName()).contains(filter)) {
@@ -1698,7 +1733,7 @@ public class PageReferenceComponent extends ComplexPropertiesLink implements IAc
 										}
 										if (monthFilter == null || TimeHelper.betweenInDay(page.getContentDateNeverNull(lgCtx), startDate.getTime(), endDate.getTime())) {
 											countPage++;
-											if (countPage >= firstPageNumber && countPage <= lastPageNumber) {												
+											if (countPage >= firstPageNumber && countPage <= lastPageNumber) {
 												pageBeans.add(PageBean.getInstance(ctx, lgCtx, page, this));
 											}
 										}
@@ -1775,10 +1810,10 @@ public class PageReferenceComponent extends ComplexPropertiesLink implements IAc
 			ContentService content = ContentService.getInstance(ctx.getRequest());
 			MenuElement menu = content.getNavigation(ctx);
 			MenuElement[] allChildren = menu.getAllChildren();
-			List<String> currentPageSelected = getPageSelected();			
+			List<String> currentPageSelected = getPageSelected();
 			List<String> pagesSelected = new LinkedList<String>();
 			List<String> pagesNotSelected = new LinkedList<String>();
-			
+
 			for (MenuElement element : allChildren) {
 				String selectedPage = requestService.getParameter(getPageId(element), null);
 				if (requestService.getParameter(getPageDisplayedId(element), null) != null) {
@@ -1792,10 +1827,9 @@ public class PageReferenceComponent extends ComplexPropertiesLink implements IAc
 			pagesSelected.addAll(currentPageSelected);
 			pagesSelected.removeAll(pagesNotSelected);
 			if (!currentPageSelected.equals(pagesSelected)) {
-				setPageSelected(StringHelper.collectionToString(pagesSelected,PAGE_SEPARATOR));
+				setPageSelected(StringHelper.collectionToString(pagesSelected, PAGE_SEPARATOR));
 				setModify();
-			}			
-
+			}
 
 			String order = requestService.getParameter(getOrderInputName(), "date");
 			if (!getOrder().equals(order)) {
@@ -1869,11 +1903,11 @@ public class PageReferenceComponent extends ComplexPropertiesLink implements IAc
 			}
 
 			String lastPageNumber = requestService.getParameter(getLastPageNumberInputName(), "");
-			if (!lastPageNumber.equals(""+getLastPageNumber())) {
+			if (!lastPageNumber.equals("" + getLastPageNumber())) {
 				setLastPageNumber(lastPageNumber);
 				setModify();
 			}
-			
+
 			boolean defaultSelected = requestService.getParameter(getDefaultSelectedInputName(), null) != null;
 			if (defaultSelected != isDefaultSelected()) {
 				setModify();
@@ -1932,6 +1966,7 @@ public class PageReferenceComponent extends ComplexPropertiesLink implements IAc
 		}
 		properties.setProperty(PAGE_REF_PROP_KEY, pagesSelected);
 	}
+
 	private List<String> getPageSelected() {
 		return StringHelper.stringToCollection(properties.getProperty(PAGE_REF_PROP_KEY, ""), PAGE_SEPARATOR);
 	}

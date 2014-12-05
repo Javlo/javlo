@@ -134,7 +134,7 @@ public class SiteMapAction extends AbstractModuleAction {
 		PrintStream out = new PrintStream(outStream);
 
 		for (MenuElementBean child : item.getChildren()) {
-			out.println("<tr class=\"depth-" + item.getDepth() + "\">");
+			out.println("<tr class=\"depth-" + child.getDepth() + "\">");
 			out.println(renderMenuElementBean(ctx, child));
 			out.println("</tr>");
 			out.println(renderChildrenNavigation(ctx, child));
@@ -168,7 +168,7 @@ public class SiteMapAction extends AbstractModuleAction {
 
 	@Override
 	public String prepare(ContentContext ctx, ModulesContext modulesContext) throws Exception {		
-		ctx.getRequest().setAttribute("sitemap", renderNavigation(ctx, new MenuElementBean(ctx, ctx.getCurrentPage())));
+		ctx.getRequest().setAttribute("sitemap", renderNavigation(ctx, new MenuElementBean(ctx, ctx.getCurrentPage())));		
 		return super.prepare(ctx, modulesContext);
 	}
 

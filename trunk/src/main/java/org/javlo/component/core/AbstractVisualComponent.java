@@ -71,7 +71,8 @@ import org.javlo.utils.SuffixPrefix;
  * <li>{@link String} type : the component type. See {@link #getType()}</li>
  * <li>{@link String} layout : the layout of the component is css (can be null).</li>
  * <li>{@link String} style : the style selected for the component. See
- * {@link #getStyle(ContentContext)}</li>
+ * <li>{@link String} previewAttributes : a string with attribute for preview edition (class and data attribute).</li>
+ * <li>{@link #getStyle(ContentContext)}</li>
  * </ul>
  * 
  * @author Patrick Vandermaesen
@@ -1438,7 +1439,9 @@ public abstract class AbstractVisualComponent implements IContentVisualComponent
 					long beforeTime = System.currentTimeMillis();
 					String content;
 					synchronized (getLock(ctx)) {
-						prepareView(ctx);
+						if (getRenderer(ctx) != null) {
+							prepareView(ctx);
+						}
 						content = renderViewXHTMLCode(ctx);
 						setContentCache(ctx, content);
 					}
@@ -1449,13 +1452,17 @@ public abstract class AbstractVisualComponent implements IContentVisualComponent
 					if (isContentTimeCachable(ctx) && globalContext.isPreviewMode()) {
 						long beforeTime = System.currentTimeMillis();
 						synchronized (getLock(ctx)) {
-							prepareView(ctx);
+							if (getRenderer(ctx) != null) {
+								prepareView(ctx);
+							}
 							content = renderViewXHTMLCode(ctx);
 							logger.fine("render content time cache '" + getType() + "' : " + (System.currentTimeMillis() - beforeTime) / 1000 + " sec.");
 							setContentTimeCache(ctx, content);
 						}
 					} else {
-						prepareView(ctx);
+						if (getRenderer(ctx) != null) {
+							prepareView(ctx);
+						}
 						content = renderViewXHTMLCode(ctx);
 					}
 					return content;
@@ -1490,6 +1497,7 @@ public abstract class AbstractVisualComponent implements IContentVisualComponent
 		ctx.getRequest().setAttribute("value", getValue());
 		ctx.getRequest().setAttribute("type", getType());		
 		ctx.getRequest().setAttribute("compid", getId());
+		ctx.getRequest().setAttribute("previewAttributes", getSpecialPreviewCssClass(ctx, getStyle(ctx))+getSpecialPreviewCssId(ctx));
 		if (getLayout() != null) {
 			ctx.getRequest().setAttribute("layout", getLayout().getStyle());
 		} else {
