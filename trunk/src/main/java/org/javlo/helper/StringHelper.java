@@ -930,6 +930,9 @@ public class StringHelper {
 	 * @return a string on length 12 with the the last number is the mod 97
 	 */
 	public static String encodeAsStructuredCommunicationMod97(String code) {
+		if (code == null) {
+			return null;
+		}
 		if (code.length() != 10) {
 			throw new ParameterException("length of code must be 10.");
 		} else {
@@ -937,7 +940,11 @@ public class StringHelper {
 			Long mod = codeAsLong % 97;
 			code = code.substring(0, 3) + '/' + code.substring(3, 7) + '/' + code.substring(7);
 			if (mod < 10) {
-				return code + '0' + mod;
+				if (mod == 0) {
+					return code + "97";
+				} else {
+					return code + '0' + mod;
+				}
 			} else {
 				return code + mod;
 			}

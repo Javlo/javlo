@@ -88,8 +88,10 @@ public class StringHelperTest extends TestCase {
   }
   
   public void testEncodeAsStructuredCommunicationMod97() throws Exception {
+	  assertEquals(StringHelper.encodeAsStructuredCommunicationMod97(null), null);
 	  assertEquals(StringHelper.encodeAsStructuredCommunicationMod97("3542232806"), "354/2232/80695");
 	  assertEquals(StringHelper.encodeAsStructuredCommunicationMod97("0000000007"), "000/0000/00707");
+	  assertEquals(StringHelper.encodeAsStructuredCommunicationMod97("1417553926"), "141/7553/92697");	  
   }
   
   public void testGetItem() throws Exception {
