@@ -76,6 +76,7 @@ public class WysiwygParagraph extends AbstractVisualComponent {
 
 	@Override
 	public String getViewXHTMLCode(ContentContext ctx) throws Exception {
+		prepareView(ctx);
 		return (String)ctx.getRequest().getAttribute("text");
 	}
 

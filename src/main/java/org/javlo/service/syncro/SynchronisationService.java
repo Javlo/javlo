@@ -473,7 +473,7 @@ public class SynchronisationService {
 						}
 					}
 				} else {
-					// Intra = Exist, DMZ = Exist > The process is already done in the first loop.
+					// Intra = Exist, DMZ = Exist > The process is allready done in the first loop.
 				}
 			}
 			System.out.println("***** SynchronisationService.syncroResource : 1.needRefresh = "+needRefresh); //TODO: remove debug trace

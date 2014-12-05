@@ -25,29 +25,34 @@ table form {
 
 @depthColor: #eec342;
 
-#content tr.depth-0 td {
+#content tr.depth-1 td {
 	background-color: @depthColor;	 
 }
 
-#content tr.depth-1 td {
+#content tr.depth-2 td {
 	background-color: lighten(@depthColor, 10%);
 }
 
-#content tr.depth-2 td {
-	background-color: lighten(@depthColor, 20%);
-}
-
 #content tr.depth-3 td {
-	background-color: lighten(@depthColor, 30%);
+	background-color: lighten(@depthColor, 20%);
 }
 
 #content tr.depth-4 td {
-	background-color: lighten(@depthColor, 40%);
+	background-color: lighten(@depthColor, 30%);
 }
 
 #content tr.depth-5 td {
-	background-color: lighten(@depthColor, 20%);
+	background-color: lighten(@depthColor, 40%);
 }
+
+#content tr.depth-6 td {
+	background-color: lighten(@depthColor, 50%);
+}
+
+#content tr.depth-7 td {
+	background-color: lighten(@depthColor, 60%);
+}
+
 
 tr.depth-1 .link {
 	padding-left: 20px; 

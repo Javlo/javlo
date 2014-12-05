@@ -514,7 +514,7 @@ public class XMLManipulationHelper {
 						tags[i].getAttributes().put("data-pdfheight", "" + template.getPDFHeigth());
 					}
 
-					String mainPageAssociationCode = "<%if (currentPage.isChildrenAssociation()) {%><jsp:include page=\"/jsp/view/page_association.jsp\" /><%} else {%>";
+					String mainPageAssociationCode = "<%if (currentPage.isChildrenAssociation() && (request.getParameter(\""+Template.FORCE_TEMPLATE_PARAM_NAME+"\") == null)) {%><jsp:include page=\"/jsp/view/page_association.jsp\" /><%} else {%>";
 
 					String openPageCode = "<c:if test=\"${contentContext.pageAssociation}\"><div id=\"page_<%=currentPage.getId()%>\" class=\"_page_associate <%if (currentPage.getNextBrother() == null) {%>last<%}%>\"></c:if>" + mainPageAssociationCode;
 					String closePageCode = "<c:if test=\"${contentContext.pageAssociation}\"></div></c:if><c:if test=\"${not contentContext.pageAssociation}\">";
