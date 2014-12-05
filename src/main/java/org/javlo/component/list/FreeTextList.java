@@ -120,7 +120,7 @@ public class FreeTextList extends AbstractVisualComponent {
 			}
 		}
 		value = applyReplacement(value);
-		value = StringHelper.textToList(value, sep, getStyle(ctx), true, globalContext);
+		value = StringHelper.textToList(globalContext, value, sep, getStyle(ctx), true);
 
 		return "<div " + getSpecialPreviewCssClass(ctx, getStyle(ctx) + ' ' + getType()) + getSpecialPreviewCssId(ctx) + ">" + value + "</div>";
 	}

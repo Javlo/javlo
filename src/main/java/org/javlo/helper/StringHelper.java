@@ -2297,6 +2297,10 @@ public class StringHelper {
 		}
 		return outText;
 	}
+	
+	public static String textToList(GlobalContext globalContext, String text, String sep, String layout, boolean autoLink) {
+		return textToList(globalContext, text, sep, layout, autoLink, null);
+	}
 
 	/**
 	 * @param sep
@@ -2308,7 +2312,7 @@ public class StringHelper {
 	 *            next level.
 	 * @return a xhtml list.
 	 */
-	public static String textToList(String text, String sep, String layout, boolean autoLink, GlobalContext globalContext) {
+	public static String textToList(GlobalContext globalContext, String text, String sep, String layout, boolean autoLink, String ulClass) {
 
 		char subListChar = '-';
 
@@ -2340,7 +2344,11 @@ public class StringHelper {
 			String line = removeFirstChar(rawLine, subListChar);
 			int depth = rawLine.length() - line.length();
 
-			writer.write("<" + firstTag + ">");
+			if (ulClass == null) {
+				writer.write("<" + firstTag + ">");
+			} else {
+				writer.write("<" + firstTag + " class=\""+ulClass+"\">");
+			}
 			boolean firstPass = true;
 			int cd = 0;
 			String cssClass = " class=\"first\"";
@@ -2353,7 +2361,7 @@ public class StringHelper {
 				}
 				while (depth > cd) {
 					writer.newLine();
-					writer.write("<" + secondTag + ">");
+					writer.write("<" + secondTag + ">");					
 					cd++;
 				}
 				while (depth < cd) {
