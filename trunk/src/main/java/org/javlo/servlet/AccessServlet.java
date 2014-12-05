@@ -241,18 +241,8 @@ public class AccessServlet extends HttpServlet implements IVersion {
 					if (FIRST_REQUEST) {
 						FIRST_REQUEST = false;
 						try {
-							GlobalContext.getDefaultContext(request.getSession()); // create
-																					// default
-																					// context
-																					// if
-																					// not
-																					// exist
-							GlobalContext.getMasterContext(request.getSession()); // create
-																					// master
-																					// context
-																					// if
-																					// not
-																					// exist
+							GlobalContext.getDefaultContext(request.getSession()); 
+							GlobalContext.getMasterContext(request.getSession());
 							if (globalContext.getDMZServerIntra() != null) {
 								SynchroThread synchro = (SynchroThread) AbstractThread.createInstance(staticConfig.getThreadFolder(), SynchroThread.class);
 								synchro.initSynchronisationThread(staticConfig, globalContext, request.getSession().getServletContext());
