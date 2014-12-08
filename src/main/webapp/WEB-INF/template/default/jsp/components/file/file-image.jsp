@@ -6,6 +6,8 @@
 <div class="file pdf">
 <a class="standard" href="${url}">
 <figure><img src="${imagePreview}" alt="${label}" />
-<figcaption>${label}<span class="info">(<span class="format">${ext}</span><span class="size">${size}</span>)</span></figcaption>
+<c:set var="description" value="" />
+<c:if test="${not empty cleanDescription}"><c:set var="description" value='<span class="description">${cleanDescription}</span>' /></c:if>
+<figcaption><span class="label">${label}<span class="info">(<span class="format">${ext}</span><span class="size">${size}</span>)</span></span>${not empty cleanDescription?description:''}</figcaption>
 </figure></a>
 </div></c:if>

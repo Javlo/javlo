@@ -116,7 +116,7 @@ public class SubTitle extends AbstractVisualComponent {
 
 	@Override
 	public int getSearchLevel() {
-		return SEARCH_LEVEL_HIGH;
+		return SEARCH_LEVEL_MIDDLE;
 	}
 	
 	/**
