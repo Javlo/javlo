@@ -26,6 +26,11 @@ public class Description extends AbstractVisualComponent {
 	public String getHexColor() {
 		return META_COLOR;
 	}
+	
+	@Override
+	public int getSearchLevel() {
+		return SEARCH_LEVEL_MIDDLE;
+	}
 
 	@Override
 	public List<SuffixPrefix> getMarkerList(ContentContext ctx) {

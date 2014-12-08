@@ -961,6 +961,10 @@ public class XHTMLHelper {
 		return getInputOneSelectInternal(name, name, newContent, value, null, js, null, sort);		
 	}
 	
+	public static String getInputOneSelect(String name, String[] ids, String value, String cssClass, String js, boolean sort) {
+		return getInputOneSelect(name, ids, ids, value, cssClass, js, sort);
+	}
+	
 	public static String getInputOneSelect(String name, String[] ids, String[] labels, String value, String cssClass, String js, boolean sort) {
 		String[][] newContent = new String[labels.length][2];
 		for (int i = 0; i < labels.length; i++) {
