@@ -2,13 +2,18 @@ package org.javlo.service.syncro;
 
 import java.io.File;
 import java.io.FileOutputStream;
+import java.io.IOException;
 import java.util.HashMap;
 import java.util.Locale;
 import java.util.Map;
 
+import org.apache.commons.lang.StringUtils;
 import org.javlo.context.ContentContext;
 import org.javlo.helper.ResourceHelper;
+import org.javlo.helper.StringHelper;
 import org.javlo.helper.URLHelper;
+
+import bsh.StringUtil;
 
 import com.dropbox.core.DbxClient;
 import com.dropbox.core.DbxEntry;
@@ -56,7 +61,15 @@ public class DropboxService {
 		Map<String, File> outFileList = new HashMap<String, File>();
 		for (File child : ResourceHelper.getAllFilesList(dir)) {
 			if (child.isFile()) {
-				outFileList.put(child.getAbsolutePath().replaceFirst(dir.getAbsolutePath(), ""), child);
+				try {
+					child = child.getCanonicalFile();
+					String prefix = StringHelper.cleanPath(dir.getAbsolutePath());
+					String path = StringHelper.cleanPath(child.getAbsolutePath());
+					String key = StringUtils.replaceOnce(path, prefix, "");
+					outFileList.put(key, child);
+				} catch (IOException e) { 
+					e.printStackTrace();
+				}							
 			}
 		}
 		return outFileList;
@@ -82,8 +95,9 @@ public class DropboxService {
 	public void synchronize(File localFolder, String dropboxFolder) throws DropboxServiceException {
 		if (!localFolder.isDirectory()) {
 			throw new DropboxServiceException("local folder : " + localFolder + " not found.");
-		} else {
+		} else {			
 			try {
+				localFolder = localFolder.getCanonicalFile();
 				Map<String, File> localFiles = getAllLocalFile(localFolder);
 				for (Map.Entry<String, DbxEntry> childEntry : getAllDropboxFile(client, dropboxFolder).entrySet()) {
 					if (localFiles.get(childEntry.getKey()) == null) {
