@@ -1342,5 +1342,13 @@ public class StaticConfig extends Observable {
 	public String getSearchEngineClassName() {
 		return properties.getString("searchengine.class", "org.javlo.search.DefaultSearchEngine").trim();
 	}
+	
+	public String getDropboxAppKey() {
+		return properties.getString("dropbox.app-key", null);		
+	}
+
+	public String getDropboxAppSecret() {		
+		return properties.getString("dropbox.app-secret", null);
+	}
 
 }
