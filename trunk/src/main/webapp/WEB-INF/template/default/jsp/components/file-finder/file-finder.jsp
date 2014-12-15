@@ -21,8 +21,19 @@
 				</figure>
 			</a>
 		</td>
-		<td class="name"><a href="${file.URL}"><h3>${file.title}</h3><div class="description">${file.description}</div></a></td>
-		<td class="type"><div class="badge">${file.type}</div><div class="badge">${file.size}</div><div class="badge">${file.date}</div></td>			
+		<td class="name"><a href="${file.URL}"><h3>${file.title}</h3><p class="description">${file.description}</p></a></td>
+		<td class="type"><div class="badge">${file.type}</div><div class="badge">${file.size}</div><div class="badge">${file.date}</div>
+		<c:url var="shareTwitter" value="https://twitter.com/share">
+			<c:param name="url" value="${file.absoluteURL}" />
+			<c:param name="text" value="${file.title}" />			
+		</c:url>
+		<a class="btn btn-default btn-block twitter" href="${shareTwitter }" target="twitter">${i18n.view['global.shareon']} twitter</a>
+		<c:url var="sharePinterest" value="https://www.pinterest.com/pin/create/button/">
+			<c:param name="url" value="${file.absoluteURL}" />
+			<c:param name="description" value="${file.title}" />			
+		</c:url>			
+		<a class="btn btn-default btn-block pinterest" href="${sharePinterest}" target="pinterest">${i18n.view['global.shareon']} pinterest</a></td>
+		
 </tr>
 </c:forEach>
 </table>

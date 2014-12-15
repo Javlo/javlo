@@ -68,7 +68,8 @@ public class InternalLink extends ComplexPropertiesLink implements IInternalLink
 
 		String link = "/";
 		if (linkIdStr != null) {
-			// MenuElement elemChild = content.getNavigation(ctx).searchChildFromId(linkIdStr);
+			// MenuElement elemChild =
+			// content.getNavigation(ctx).searchChildFromId(linkIdStr);
 			GlobalContext globalContext = GlobalContext.getInstance(ctx.getRequest());
 			NavigationService navigationService = NavigationService.getInstance(globalContext);
 			MenuElement elemChild = navigationService.getPage(ctx, linkIdStr);
@@ -83,14 +84,17 @@ public class InternalLink extends ComplexPropertiesLink implements IInternalLink
 			String labelTitle = i18nAccess.getText("component.link.label");
 			String reverseLinkLabel = i18nAccess.getText("component.link.reverse");
 
-			String reverseLink = properties.getProperty(REVERSE_LINK_KEY, null);
-			if (reverseLink == null) {
-				reverseLink = "none";
+			if (isReversedLink(ctx)) {
+				String reverseLink = properties.getProperty(REVERSE_LINK_KEY, null);
+				if (reverseLink == null) {
+					reverseLink = "none";
+				}
+				out.println("<div class=\"line\"><label for=\"" + getReverseLinkName() + "\">" + reverseLinkLabel + " : </label>");
+				out.println(XHTMLHelper.getReverlinkSelectType(ctx, getReverseLinkName(), reverseLink));
+				out.println("</div>");
 			}
-			out.println("<div class=\"line\"><label for=\"" + getReverseLinkName() + "\">" + reverseLinkLabel + " : </label>");
-			out.println(XHTMLHelper.getReverlinkSelectType(ctx, getReverseLinkName(), reverseLink));
 
-			out.println("</div><div class=\"line\"><label for=\"" + getLinkName() + "\">");
+			out.println("<div class=\"line\"><label for=\"" + getLinkName() + "\">");
 
 			out.println(linkTitle + " : ");
 			out.println("</label><select class=\"form-control\" id=\"" + getLinkName() + "\" name=\"" + getLinkName() + "\">");
@@ -192,7 +196,7 @@ public class InternalLink extends ComplexPropertiesLink implements IInternalLink
 				String titleCreation = i18nAccess.getText(pf + TITLE_DESCRIPTION);
 				String titleImageDescription = i18nAccess.getText(pf + TITLE_IMAGE_DESCRIPTION);
 				String image = i18nAccess.getText(pf + IMAGE);
-			return new String[] { title, titleImage, titleCreation, titleImageDescription, image, i18nAccess.getText("global.hidden") };
+				return new String[] { title, titleImage, titleCreation, titleImageDescription, image, i18nAccess.getText("global.hidden") };
 			}
 		} catch (Exception e) {
 			e.printStackTrace();
@@ -249,13 +253,13 @@ public class InternalLink extends ComplexPropertiesLink implements IInternalLink
 				res.append("<div class=\"details\">");
 				res.append("<div class=\"title\">");
 			}
-			
-			String title = I18nAccess.getInstance(ctx).getViewText("global.gotopage","");
+
+			String title = I18nAccess.getInstance(ctx).getViewText("global.gotopage", "");
 			if (title.trim().length() > 0) {
-				title = " title=\""+StringHelper.toXMLAttribute(title)+"\"";
+				title = " title=\"" + StringHelper.toXMLAttribute(title) + "\"";
 			}
-			
-			res.append("<a " + getSpecialPreviewCssClass(ctx,"") + getSpecialPreviewCssId(ctx) + " href=\" ");
+
+			res.append("<a " + getSpecialPreviewCssClass(ctx, "") + getSpecialPreviewCssId(ctx) + " href=\" ");
 			if (ctx.getRenderMode() != ContentContext.PAGE_MODE) {
 				res.append(StringHelper.toXMLAttribute(url));
 			} else {
@@ -268,7 +272,7 @@ public class InternalLink extends ComplexPropertiesLink implements IInternalLink
 					res.append(StringHelper.toXMLAttribute(url) + getParam() + "&" + MailingAction.MAILING_FEEDBACK_PARAM_NAME + "=##data##");
 				}
 			}
-			res.append("\""+title+">");
+			res.append("\"" + title + ">");
 			res.append(label);
 			res.append("</a>");
 			if (style.contains(DESCRIPTION) || style.contains(IMAGE)) {
@@ -326,17 +330,17 @@ public class InternalLink extends ComplexPropertiesLink implements IInternalLink
 	@Override
 	public boolean isOnlyFirstOccurrence() {
 		return properties.getProperty(REVERSE_LINK_KEY, "none").equals(ReverseLinkService.ONLY_FIRST);
-	}	
+	}
 
 	@Override
 	public boolean isOnlyThisPage() {
 		return properties.getProperty(REVERSE_LINK_KEY, "none").equals(ReverseLinkService.ONLY_THIS_PAGE);
 	}
-	
+
 	@Override
 	public boolean isOnlyPreviousComponent() {
 		return properties.getProperty(REVERSE_LINK_KEY, "none").equals(ReverseLinkService.ONLY_PREVIOUS_COMPONENT);
-	}	
+	}
 
 	@Override
 	public boolean isReverseLink() {
@@ -413,7 +417,9 @@ public class InternalLink extends ComplexPropertiesLink implements IInternalLink
 		return ctx.getGlobalContext().getLockLoadContent();
 	}
 	
-	
-
+	@Override
+	public String getListGroup() {
+		return "link";
+	}
 
 }

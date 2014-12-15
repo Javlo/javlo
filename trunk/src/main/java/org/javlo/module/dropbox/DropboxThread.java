@@ -16,14 +16,16 @@ public class DropboxThread extends Thread {
 	
 	private DropboxService service;
 	private File localRoot;
+	private boolean upload;
 	private String dropboxFolder;
 
-	public DropboxThread (ContentContext ctx, DropboxConfig config) {
+	public DropboxThread (ContentContext ctx, DropboxConfig config, boolean upload) {
 		setName("dropbox thread");
 		service = DropboxService.getInstance(ctx, config.getToken());				
 		localRoot = new File(URLHelper.mergePath(ctx.getGlobalContext().getStaticFolder(), config.getLocalFolder()));
 		localRoot.mkdirs();
 		this.dropboxFolder = config.getDropboxFolder();
+		this.upload = upload;
 	}
 	
 	@Override
@@ -31,7 +33,11 @@ public class DropboxThread extends Thread {
 		logger.info("start dropbox thread. localRoot="+localRoot);
 		super.run();
 		try {
-			service.synchronize(localRoot, dropboxFolder);
+			if (upload) {
+				service.upload(localRoot, dropboxFolder);
+			} else {
+				service.download(localRoot, dropboxFolder);
+			}
 		} catch (DropboxServiceException e) {
 			e.printStackTrace();
 		}

@@ -60,11 +60,11 @@ public class ExternalLink extends ComplexPropertiesLink implements IReverseLinkC
 		}
 		return false;
 	}
-	
+
 	private String getLink() {
 		String link = properties.getProperty(LINK_KEY, "");
 		if (link.contains("@") && !link.contains("http://") && !link.contains("https://")) {
-			link = "mailto:"+link;
+			link = "mailto:" + link;
 		}
 		return link;
 	}
@@ -95,9 +95,9 @@ public class ExternalLink extends ComplexPropertiesLink implements IReverseLinkC
 			GlobalContext globalContext = GlobalContext.getInstance(ctx.getRequest());
 			if (globalContext.isOpenExernalLinkAsPopup(link)) {
 				target = "target=\"_blank\" ";
-				String title = I18nAccess.getInstance(ctx).getViewText("global.newwindow","");
+				String title = I18nAccess.getInstance(ctx).getViewText("global.newwindow", "");
 				if (title.trim().length() > 0) {
-					target = target+"title=\""+title+"\" ";
+					target = target + "title=\"" + title + "\" ";
 				}
 			}
 
@@ -145,23 +145,25 @@ public class ExternalLink extends ComplexPropertiesLink implements IReverseLinkC
 			String labelTitle = i18nAccess.getText("component.link.label");
 			String reverseLinkLabel = i18nAccess.getText("component.link.reverse");
 
-			out.println("<div class=\"edit three-col-layout\"><div class=\"line\">");
+			out.println("<div class=\"edit three-col-layout\">");
 			String reverseLink = properties.getProperty(REVERSE_LINK_KEY, ReverseLinkService.NONE);
 
-			// 1.3 to 1.4 conversion from legacy value "true" to corresponding
-			// "all"
-			if (StringHelper.isTrue(reverseLink)) {
-				reverseLink = ReverseLinkService.ALL;
+			if (isReversedLink(ctx)) {
+				out.println("<div class=\"line\">");
+				if (StringHelper.isTrue(reverseLink)) {
+					reverseLink = ReverseLinkService.ALL;
+				}
+				out.println("<label for=\"" + getReverseLinkName() + "\">" + reverseLinkLabel + " : </label>");
+				out.println(XHTMLHelper.getReverlinkSelectType(ctx, getReverseLinkName(), reverseLink));
+				out.println("</div>");
 			}
-			out.println("<label for=\"" + getReverseLinkName() + "\">" + reverseLinkLabel + " : </label>");
-			out.println(XHTMLHelper.getReverlinkSelectType(ctx, getReverseLinkName(), reverseLink));
-			out.println("</div><div class=\"line\">");
+			out.println("<div class=\"line\">");
 			out.println("<label for=\"" + getLinkName() + "\">" + linkTitle + "</label>");
 			out.print("<input class=\"form-control\" id=\"" + getLinkName() + "\" name=\"" + getLinkName() + "\" value=\"");
 			out.print(link);
 			out.println("\"/></div><div class=\"line suffix\">");
 			out.print("<label for=\"" + getLinkLabelName() + "\">" + labelTitle + "</label>");
-			out.print("<input class=\"form-control\" id=\"" + getLinkLabelName() + "\" name=\"" + getLinkLabelName() + "\" value=\""+label+"\" />");			
+			out.print("<input class=\"form-control\" id=\"" + getLinkLabelName() + "\" name=\"" + getLinkLabelName() + "\" value=\"" + label + "\" />");
 			out.println("<input class=\"btn btn-primary\" type=\"submit\" name=\"" + getDownloadTitleInputName() + "\" value=\"" + i18nAccess.getText("action.read-title") + "\" />");
 			out.println("</div></div>");
 		} catch (Exception e) {
@@ -196,7 +198,7 @@ public class ExternalLink extends ComplexPropertiesLink implements IReverseLinkC
 		String reverseLinkName = requestService.getParameter(getReverseLinkName(), ReverseLinkService.NONE);
 
 		if (requestService.getParameter(getDownloadTitleInputName(), null) != null) {
-			String url = link;			
+			String url = link;
 			if (!StringHelper.isURL(url)) {
 				url = getLinkURL(ctx);
 			}
@@ -295,11 +297,11 @@ public class ExternalLink extends ComplexPropertiesLink implements IReverseLinkC
 	public boolean isOnlyThisPage() {
 		return properties.getProperty(REVERSE_LINK_KEY, "none").equals(ReverseLinkService.ONLY_THIS_PAGE);
 	}
-	
+
 	@Override
 	public boolean isOnlyPreviousComponent() {
 		return properties.getProperty(REVERSE_LINK_KEY, "none").equals(ReverseLinkService.ONLY_PREVIOUS_COMPONENT);
-	}	
+	}
 
 	@Override
 	public String getURL(ContentContext ctx) {
@@ -314,5 +316,10 @@ public class ExternalLink extends ComplexPropertiesLink implements IReverseLinkC
 		storeProperties();
 		setModify();
 		return true;
+	}
+	
+	@Override
+	public String getListGroup() {
+		return "link";
 	}
 }

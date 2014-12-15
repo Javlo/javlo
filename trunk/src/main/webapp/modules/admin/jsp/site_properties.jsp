@@ -184,6 +184,11 @@
 	<label class="suffix" for="wizz">${i18n.edit['admin.form.wizz']}</label>	
 </div>
 
+<div class="line">	
+	<input type="checkbox" id="Reversedlink" name="reversedlink" ${currentContext.reversedlink?'checked="checked"':""}" />
+	<label class="suffix" for="Reversedlink">${i18n.edit['admin.form.reversedlink']}</label>	
+</div>
+
 <div class="line">		
 	<label for="help-url">${i18n.edit['admin.title.help-url']}</label>
 	<input type="text" id="help-url" name="help-url" value="${currentContext.helpURL}" />	

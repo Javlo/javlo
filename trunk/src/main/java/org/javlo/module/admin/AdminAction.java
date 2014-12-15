@@ -133,6 +133,8 @@ public class AdminAction extends AbstractModuleAction {
 		private boolean editability;
 		private String userFactoryClassName = "";
 		private String adminUserFactoryClassName = "";
+		
+		private boolean reversedlink;
 
 		private TemplateData templateData = null;
 
@@ -193,6 +195,8 @@ public class AdminAction extends AbstractModuleAction {
 			setTemplateData(globalContext.getTemplateData());
 
 			setProxyPathPrefix(globalContext.getProxyPathPrefix());
+			
+			setReversedlink(globalContext.isReversedLink());
 
 			Properties properties = new Properties();
 			properties.putAll(globalContext.getURIAlias());
@@ -647,6 +651,14 @@ public class AdminAction extends AbstractModuleAction {
 			this.platformType = platform;
 		}
 
+		public boolean isReversedlink() {
+			return reversedlink;
+		}
+
+		public void setReversedlink(boolean reversedlink) {
+			this.reversedlink = reversedlink;
+		}
+
 	}
 
 	public static class ComponentBean {
@@ -979,6 +991,7 @@ public class AdminAction extends AbstractModuleAction {
 					currentGlobalContext.setOnlyCreatorModify(StringHelper.isTrue(requestService.getParameter("only-creator-modify", null)));
 					currentGlobalContext.setCollaborativeMode((StringHelper.isTrue(requestService.getParameter("collaborative-mode", null))));
 					currentGlobalContext.setPlatformType(requestService.getParameter("platform", StaticConfig.MAILING_PLATFORM));
+					currentGlobalContext.setReversedLink(requestService.getParameter("reversedlink", null) != null);
 					try {
 						currentGlobalContext.setURLFactory(requestService.getParameter("urlfactory", ""));
 					} catch (Exception e1) {
