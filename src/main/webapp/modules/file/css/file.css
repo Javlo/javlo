@@ -54,3 +54,15 @@
 	float: none;
 	margin-right: 0;
 }
+
+#fill-all-form input, .filter-field {
+	width: 80px;
+	-webkit-transition: width 200ms ease-in-out;
+    -moz-transition: width 200ms ease-in-out;
+    -o-transition: width 200ms ease-in-out;
+    transition: width 200ms ease-in-out;
+}
+
+#fill-all-form input:FOCUS, .filter-field:FOCUS {
+	width: 160px;
+}

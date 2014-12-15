@@ -746,5 +746,11 @@ public interface IContentVisualComponent extends Comparable<IContentVisualCompon
 	 * @return
 	 */
 	public String getPageDescription(ContentContext ctx);
+	
+	/**
+	 * return the name of group component.
+	 * @return
+	 */
+	public String getListGroup();
 
 }

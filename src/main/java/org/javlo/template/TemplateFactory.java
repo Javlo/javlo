@@ -235,6 +235,7 @@ public class TemplateFactory {
 	 * @throws IOException
 	 */
 	public static Template getDiskTemplate(ServletContext application, String templateName) throws IOException {
+		templateName = StringHelper.createFileName(templateName);
 		List<Template> templates = new LinkedList(getDiskTemplates(application).values());
 		Template outTemplate = null;
 		for (Template template : templates) {
@@ -320,7 +321,8 @@ public class TemplateFactory {
 	 */
 	public static Template createDiskTemplates(ServletContext application, String name, String source) throws IOException {
 		StaticConfig staticConfig = StaticConfig.getInstance(application);
-		File templateFolder = new File(URLHelper.mergePath(staticConfig.getTemplateFolder(), StringHelper.createFileName(name)));
+		name = StringHelper.createFileName(name);
+		File templateFolder = new File(URLHelper.mergePath(staticConfig.getTemplateFolder(), name));
 		if (templateFolder.exists()) {
 			logger.warning("Folder exist : "+templateFolder);
 			return null;

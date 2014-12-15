@@ -263,11 +263,9 @@ public class SimpleInternalLink extends ComplexPropertiesLink implements IIntern
 				String linkIdStr = properties.getProperty(LINK_KEY, "");
 				String oldLabel = getLabel();
 				if ((!label.equals(oldLabel)) || (!linkIdStr.equals(idLink))) {
-
 					if (linkIdStr.trim().length() == 0) {
 						setNeedRefresh(true);
 					}
-
 					setModify();
 					properties.setProperty(LINK_KEY, idLink);
 					properties.setProperty(LABEL_KEY, label);
@@ -359,6 +357,11 @@ public class SimpleInternalLink extends ComplexPropertiesLink implements IIntern
 		properties.setProperty(LINK_KEY, "0");		
 		properties.setProperty(LABEL_KEY, getType());
 		return true;
+	}
+	
+	@Override
+	public String getListGroup() {
+		return "link";
 	}
 
 }

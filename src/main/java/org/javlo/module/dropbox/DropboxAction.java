@@ -86,6 +86,14 @@ public class DropboxAction implements IModuleAction {
 			localFolder = dataList.get(1);
 			dropboxFolder = dataList.get(2);
 		}
+		
+		public boolean isValid() {
+			if (token == null || localFolder == null || dropboxFolder == null) {
+				return false;
+			} else {
+				return token.length()>5 && localFolder.startsWith("/") && dropboxFolder.startsWith("/");
+			}
+		}
 	}
 
 	@Override
@@ -115,9 +123,14 @@ public class DropboxAction implements IModuleAction {
 			String dropboxUrl = URLHelper.createURL(ctx, params);
 			ctx.getRequest().setAttribute("dropboxUrl", dropboxUrl);
 		} else {
+			try {
 			ctx.getRequest().setAttribute("config", config);
 			DbxClient client = new DbxClient(new DbxRequestConfig("Javlo/2.0", Locale.getDefault().toString()), config.getToken());
 			ctx.getRequest().setAttribute("linkedAccount", client.getAccountInfo().displayName);
+			} catch (Exception e) {
+				e.printStackTrace();
+				return "Error, no connection to Dropbox.";
+			}
 		}
 
 		return null;
@@ -269,7 +282,17 @@ public class DropboxAction implements IModuleAction {
 
 	public static String performToLocal(RequestService rs, ContentContext ctx) {
 		if (dropboxThread == null || !dropboxThread.isAlive()) {
-			dropboxThread = new DropboxThread(ctx, getConfig(ctx));
+			dropboxThread = new DropboxThread(ctx, getConfig(ctx), false);
+			dropboxThread.start();
+		} else {
+			return "thread already running.";
+		}
+		return null;
+	}
+	
+	public static String performToDropbox(RequestService rs, ContentContext ctx) {
+		if (dropboxThread == null || !dropboxThread.isAlive()) {
+			dropboxThread = new DropboxThread(ctx, getConfig(ctx), true);
 			dropboxThread.start();
 		} else {
 			return "thread already running.";

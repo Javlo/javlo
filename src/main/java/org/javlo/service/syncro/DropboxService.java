@@ -1,6 +1,7 @@
 package org.javlo.service.syncro;
 
 import java.io.File;
+import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.util.HashMap;
@@ -13,12 +14,11 @@ import org.javlo.helper.ResourceHelper;
 import org.javlo.helper.StringHelper;
 import org.javlo.helper.URLHelper;
 
-import bsh.StringUtil;
-
 import com.dropbox.core.DbxClient;
 import com.dropbox.core.DbxEntry;
 import com.dropbox.core.DbxException;
 import com.dropbox.core.DbxRequestConfig;
+import com.dropbox.core.DbxWriteMode;
 
 public class DropboxService {
 
@@ -92,7 +92,8 @@ public class DropboxService {
 		return outFileList;
 	}
 
-	public void synchronize(File localFolder, String dropboxFolder) throws DropboxServiceException {
+	public void download(File localFolder, String dropboxFolder) throws DropboxServiceException {
+		totalDownloadSize=0;
 		if (!localFolder.isDirectory()) {
 			throw new DropboxServiceException("local folder : " + localFolder + " not found.");
 		} else {			
@@ -101,9 +102,9 @@ public class DropboxService {
 				Map<String, File> localFiles = getAllLocalFile(localFolder);
 				for (Map.Entry<String, DbxEntry> childEntry : getAllDropboxFile(client, dropboxFolder).entrySet()) {
 					if (localFiles.get(childEntry.getKey()) == null) {
-						File targetFile = new File(URLHelper.mergePath(localFolder.getAbsolutePath(), childEntry.getKey()));
-						targetFile.getParentFile().mkdirs();
+						File targetFile = new File(URLHelper.mergePath(localFolder.getAbsolutePath(), childEntry.getKey()));						
 						if (!targetFile.exists()) {
+							targetFile.getParentFile().mkdirs();
 							FileOutputStream outputStream = new FileOutputStream(targetFile);
 							try {
 								DbxEntry.File downloadedFile = client.getFile(childEntry.getValue().path, null, outputStream);
@@ -112,6 +113,35 @@ public class DropboxService {
 								ResourceHelper.closeResource(outputStream);
 							}
 						}
+					} else {
+						System.out.println("file found localy : " + childEntry.getKey());
+					}
+				}
+				return;
+			} catch (Exception e) {
+				throw new DropboxServiceException(e);
+			}
+		}
+	}
+	
+	public void upload(File localFolder, String dropboxFolder) throws DropboxServiceException {
+		totalDownloadSize=0;
+		if (!localFolder.isDirectory()) {
+			throw new DropboxServiceException("local folder : " + localFolder + " not found.");
+		} else {			
+			try {
+				localFolder = localFolder.getCanonicalFile();
+				Map<String, DbxEntry> dropboxFile = getAllDropboxFile(client, dropboxFolder);
+				for (Map.Entry<String, File> childEntry : getAllLocalFile(localFolder).entrySet()) {
+					if (dropboxFile.get(childEntry.getKey()) == null) {						
+						FileInputStream inputStream = new FileInputStream(childEntry.getValue());
+						try {
+							DbxEntry.File uploadedFile = client.uploadFile(URLHelper.mergePath(dropboxFolder,childEntry.getKey()),DbxWriteMode.add(), childEntry.getValue().length(), inputStream);
+							totalDownloadSize = totalDownloadSize + uploadedFile.numBytes;
+						} finally {
+							ResourceHelper.closeResource(inputStream);
+						}
+						
 					} else {
 						System.out.println("file found localy : " + childEntry.getKey());
 					}

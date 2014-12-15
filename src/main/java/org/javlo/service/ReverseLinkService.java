@@ -181,6 +181,10 @@ public class ReverseLinkService {
 	}
 
 	public String replaceLink(ContentContext ctx, IContentVisualComponent comp, String contentValue) throws Exception {
+		
+		if (!ctx.getGlobalContext().isReversedLink()) {
+			return contentValue;
+		}
 
 		ContentService content = ContentService.getInstance(ctx.getRequest());
 		MenuElement root = content.getNavigation(ctx);

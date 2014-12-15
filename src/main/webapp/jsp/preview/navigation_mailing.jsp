@@ -3,7 +3,7 @@
 <c:set var="rootAssociation" value="${info.page.rootOfChildrenAssociation}" />
 <c:if test="${not empty rootAssociation}">
 <fieldset class="closable composition">
-	<legend>${info.page.rootOfChildrenAssociation.title}</legend>
+	<div class="legend">${info.page.rootOfChildrenAssociation.title}</div>
 	
 	<form class="preview-edit" id="page_properties_composition" action="${rootAssociation.page.editUrl}?module=content&webaction=changeMode&mode=3&previewEdit=true" method="post">
 		<div class="pc_line">							

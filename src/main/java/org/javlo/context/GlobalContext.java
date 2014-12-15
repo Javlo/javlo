@@ -1774,10 +1774,6 @@ public class GlobalContext implements Serializable, IPrintInfo {
 		return properties.getBoolean("private-page", true);
 	}
 
-	public boolean isReversedLink() {
-		return properties.getBoolean("reversed-link", false);
-	}
-
 	public boolean isRightOnPage() {
 		return properties.getBoolean("right-on-page", false);
 	}
@@ -2472,13 +2468,6 @@ public class GlobalContext implements Serializable, IPrintInfo {
 		properties.setProperty("languages", languages);
 	}
 
-	public void setReversedLink(boolean extendMenu) {
-		synchronized (properties) {
-			properties.setProperty("reversed-link", extendMenu);
-			save();
-		}
-	}
-
 	public void setRightOnPage(boolean rightOnPage) {
 		synchronized (properties) {
 			properties.setProperty("right-on-page", rightOnPage);
@@ -3002,6 +2991,15 @@ public class GlobalContext implements Serializable, IPrintInfo {
 
 	public void setMainContextKey(String mainContextKey) {
 		this.mainContextKey = mainContextKey;
+	}
+	
+	public boolean isReversedLink() {
+		return properties.getBoolean("reversedLink", true);
+	}
+	
+	public void setReversedLink(boolean rl) {
+		properties.setProperty("reversedLink", rl);
+		save();
 	}
 	
 	@Override

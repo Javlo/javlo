@@ -1226,16 +1226,20 @@ public class StringHelper {
 		res = res || ext.equalsIgnoreCase("flac");
 		return res;
 	}
-
+	
 	public static boolean isTrue(Object inBool) {
+		return isTrue(inBool, false);
+	}
+
+	public static boolean isTrue(Object inBool, boolean defaultValue) {
 		if (inBool == null) {
-			return false;
+			return defaultValue;
 		}
 		if (inBool instanceof Boolean) {
 			return (Boolean) inBool;
 		}
 		String bool = "" + inBool;
-		boolean res = false;
+		boolean res = defaultValue;
 
 		bool = bool.trim();
 		if (bool.equalsIgnoreCase("true")) {

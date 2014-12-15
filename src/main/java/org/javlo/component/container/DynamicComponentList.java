@@ -118,7 +118,8 @@ public class DynamicComponentList extends AbstractPropertiesComponent {
 		DynamicComponentService service = DynamicComponentService.getInstance(globalContext);
 
 		List<IFieldContainer> containers = service.getFieldContainers(ctx, content.getNavigation(ctx), getSelectedType());
-
+		List<IFieldContainer> visibleContainers = new LinkedList<IFieldContainer>();
+		
 		for (IFieldContainer container : containers) {
 			boolean display = true;
 			List<Field> fields = container.getFields(ctx);
@@ -129,10 +130,15 @@ public class DynamicComponentList extends AbstractPropertiesComponent {
 			}
 			if (display) {
 				realContent = true;
-				out.println("<div class=\"dynamic-component\">");
-				out.println(container.getViewListXHTMLCode(ctx));
-				out.println("</div>");
+				visibleContainers.add(container);
 			}
+		}
+		int index = 0;
+		ctx.getRequest().setAttribute("componentSize", visibleContainers.size());
+		for (IFieldContainer container : visibleContainers) {			
+				index++;
+				ctx.getRequest().setAttribute("componentIndex", index);
+				out.println(container.getViewListXHTMLCode(ctx));							
 		}
 
 		out.close();

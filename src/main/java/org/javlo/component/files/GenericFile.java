@@ -233,19 +233,7 @@ public class GenericFile extends AbstractFileComponent implements IReverseLinkCo
 
 			fullName = ElementaryURLHelper.mergePath(globalContext.getDataFolder(), fullName);
 			res.append(" <span class=\"info\">(<span class=\"format\">" + StringHelper.getFileExtension(getFileName()) + "</span> <span class=\"size\">" + ctx.getRequest().getAttribute("size") + "</span>)</span></a>");
-			if ((getDescription().trim().length() > 0) && (ctx.getRenderMode() != ContentContext.EDIT_MODE)) { /*
-																												 * not
-																												 * set
-																												 * description
-																												 * when
-																												 * EDIT_MODE
-																												 * (
-																												 * see
-																												 * getPreviewCode
-																												 * (
-																												 * )
-																												 * method
-																												 */
+			if ((getDescription().trim().length() > 0) && (ctx.getRenderMode() != ContentContext.EDIT_MODE)) { 
 				res.append("<span class=\"description\">" + getDescription() + "</span>");
 			}
 		} else {
@@ -300,6 +288,11 @@ public class GenericFile extends AbstractFileComponent implements IReverseLinkCo
 		} catch (Exception e) {
 		}
 		return 0;
+	}
+	
+	@Override
+	public String getListGroup() {
+		return "link";
 	}
 
 }

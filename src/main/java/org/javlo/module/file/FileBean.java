@@ -32,8 +32,8 @@ public class FileBean {
 				return file1.getStaticInfo().getFile().getName().compareTo(file2.getStaticInfo().getFile().getName());
 			} else if (sort == 3) {
 				return file1.getStaticInfo().getTitle(ctx).compareTo(file2.getStaticInfo().getTitle(ctx));
-			} else if (sort == 3) {
-				return file1.getStaticInfo().getCreationDate(ctx).compareTo(file2.getStaticInfo().getCreationDate(ctx));
+			} else if (sort == 4) {
+				return -file1.getStaticInfo().getCreationDate(ctx).compareTo(file2.getStaticInfo().getCreationDate(ctx));
 			} else {
 				return -file1.getStaticInfo().getDate(ctx).compareTo(file2.getStaticInfo().getDate(ctx));
 			}
@@ -61,6 +61,27 @@ public class FileBean {
 	}
 
 	public String getURL() {
+		GlobalContext globalContext = GlobalContext.getInstance(ctx.getRequest());
+		if (!isDirectory()) {
+			return URLHelper.createResourceURL(ctx, '/' + globalContext.getStaticConfig().getStaticFolder() + staticInfo.getStaticURL());
+		} else {
+			String currentURL;
+			try {
+				currentURL = InfoBean.getCurrentInfoBean(ctx).getCurrentURL();
+				String path = staticInfo.getStaticURL();
+				if (AdminUserSecurity.getInstance().isGod(ctx.getCurrentEditUser())) {
+					path = URLHelper.mergePath("/" + globalContext.getStaticConfig().getStaticFolder(), staticInfo.getStaticURL());
+				}
+				return URLHelper.addParam(currentURL, "path", path);
+			} catch (Exception e) {
+				e.printStackTrace();
+			}
+			return null;
+		}
+	}
+	
+	public String getAbsoluteURL() {
+		ContentContext ctx = this.ctx.getContextForAbsoluteURL();
 		GlobalContext globalContext = GlobalContext.getInstance(ctx.getRequest());
 		if (!isDirectory()) {
 			return URLHelper.createResourceURL(ctx, '/' + globalContext.getStaticConfig().getStaticFolder() + staticInfo.getStaticURL());

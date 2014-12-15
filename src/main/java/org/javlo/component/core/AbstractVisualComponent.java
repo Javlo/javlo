@@ -69,9 +69,11 @@ import org.javlo.utils.SuffixPrefix;
  * <li>{@link String} value : the raw value of the component. See
  * {@link #getValue()}</li>
  * <li>{@link String} type : the component type. See {@link #getType()}</li>
- * <li>{@link String} layout : the layout of the component is css (can be null).</li>
+ * <li>{@link String} layout : the layout of the component is css (can be null).
+ * </li>
  * <li>{@link String} style : the style selected for the component. See
- * <li>{@link String} previewAttributes : a string with attribute for preview edition (class and data attribute).</li>
+ * <li>{@link String} previewAttributes : a string with attribute for preview
+ * edition (class and data attribute).</li>
  * <li>{@link #getStyle(ContentContext)}</li>
  * </ul>
  * 
@@ -247,7 +249,7 @@ public abstract class AbstractVisualComponent implements IContentVisualComponent
 
 	@Override
 	public int getComplexityLevel(ContentContext ctx) {
-		return getConfig(ctx).getComplexity(COMPLEXITY_EASY);		
+		return getConfig(ctx).getComplexity(COMPLEXITY_EASY);
 	}
 
 	@Override
@@ -487,7 +489,7 @@ public abstract class AbstractVisualComponent implements IContentVisualComponent
 			out.println("</div>");
 		}
 
-		if (isListable()) { 
+		if (isListable()) {
 			out.println("<div class=\"line\">");
 			out.println("<label for=\"inlist-" + getId() + "\">" + i18nAccess.getText("component.inlist") + "</label>");
 			out.println(XHTMLHelper.getCheckbox("inlist-" + getId(), isList(ctx)));
@@ -504,17 +506,17 @@ public abstract class AbstractVisualComponent implements IContentVisualComponent
 			out.println(i18nAccess.getText("global.default"));
 			out.println("</label>");
 			id = "layout-left-" + getId();
-			out.println("<label for=\"" + id + "\">");			
+			out.println("<label for=\"" + id + "\">");
 			out.println(XHTMLHelper.getRadio(id, name, "left", layout.isLeft()));
 			out.println(i18nAccess.getText("component.layout.left"));
 			out.println("</label>");
 			id = "layout-center-" + getId();
-			out.println("<label for=\"" + id + "\">");			
+			out.println("<label for=\"" + id + "\">");
 			out.println(XHTMLHelper.getRadio(id, name, "center", layout.isCenter()));
 			out.println(i18nAccess.getText("component.layout.center"));
 			out.println("</label>");
 			id = "layout-right-" + getId();
-			out.println("<label for=\"" + id + "\">");			
+			out.println("<label for=\"" + id + "\">");
 			out.println(XHTMLHelper.getRadio(id, name, "right", layout.isRight()));
 			out.println(i18nAccess.getText("component.layout.right"));
 			out.println("</label>");
@@ -647,7 +649,7 @@ public abstract class AbstractVisualComponent implements IContentVisualComponent
 			setStyle(ctx, newStyle);
 			setModify();
 			setNeedRefresh(true);
-			
+
 		}
 
 		/** in list **/
@@ -691,8 +693,8 @@ public abstract class AbstractVisualComponent implements IContentVisualComponent
 					// is repeated and
 					// user is not on
 					// the definition
-					// page					
-					return ("<div " + getSpecialPreviewCssClass(ctx, "pc_empty-component") + getSpecialPreviewCssId(ctx) + ">"+getEmptyXHTMLCode(ctx)+"</div>");
+					// page
+					return ("<div " + getSpecialPreviewCssClass(ctx, "pc_empty-component") + getSpecialPreviewCssId(ctx) + ">" + getEmptyXHTMLCode(ctx) + "</div>");
 				}
 			}
 		}
@@ -725,8 +727,23 @@ public abstract class AbstractVisualComponent implements IContentVisualComponent
 			if (getStyle(ctx) != null && getStyle(ctx).trim().length() > 0) {
 				cssClass = ' ' + getStyle(ctx);
 			}
-			return "<ul class=\"" + getType() + cssClass + "\">";
+			if (getListClass(ctx) != null) {
+				cssClass = cssClass + ' ' + getListClass(ctx);
+			}
+			return "<" + getListTag(ctx) + " class=\"" + getType() + cssClass + "\">";
 		}
+	}
+
+	protected String getListClass(ContentContext ctx) {
+		return getConfig(ctx).getProperty("list.class", null);
+	}
+
+	protected String getListTag(ContentContext ctx) {
+		return getConfig(ctx).getProperty("list.tag", "ul");
+	}
+
+	protected String getListItemTag(ContentContext ctx) {
+		return getConfig(ctx).getProperty("list.item.tag", "li");
 	}
 
 	public String getFormName() {
@@ -832,11 +849,11 @@ public abstract class AbstractVisualComponent implements IContentVisualComponent
 	public String getLastSufix(ContentContext ctx) {
 		if (previousComponent != null) {
 			if (((AbstractVisualComponent) previousComponent).componentBean.isList() && previousComponent.getType().equals(getType())) {
-				return "</ul>";
+				return "</"+getListTag(ctx)+">";
 			}
 		}
 		if (componentBean.isList()) {
-			return "</ul>";
+			return "</"+getListTag(ctx)+">";
 		}
 		return "";
 	}
@@ -865,27 +882,35 @@ public abstract class AbstractVisualComponent implements IContentVisualComponent
 		return getConfig(ctx).getProperty("tag", "div");
 	}
 
+	protected boolean isWrapped(ContentContext ctx) {
+		return StringHelper.isTrue(getConfig(ctx).getProperty("wrapped", null), true);
+	}
+
 	@Override
 	public String getPrefixViewXHTMLCode(ContentContext ctx) {
-		if (getConfig(ctx).getProperty("prefix", null) != null) {
-			return getConfig(ctx).getProperty("prefix", null);
-		}
-		String style = getStyle(ctx);
-		if (style != null) {
-			style = style + ' ';
+		if (isWrapped(ctx)) {
+			if (getConfig(ctx).getProperty("prefix", null) != null) {
+				return getConfig(ctx).getProperty("prefix", null);
+			}
+			String style = getStyle(ctx);
+			if (style != null) {
+				style = style + ' ';
+			} else {
+				style = "";
+			}
+			if (getPreviousComponent() == null || !getPreviousComponent().getType().equals(getType())) {
+				style = style + " first ";
+			}
+			if (getNextComponent() == null || !getNextComponent().getType().equals(getType())) {
+				style = style + " last ";
+			}
+			if (!componentBean.isList()) {
+				return "<" + getTag(ctx) + " " + getSpecialPreviewCssClass(ctx, style + getType()) + getSpecialPreviewCssId(ctx) + " " + getInlineStyle(ctx) + ">";
+			} else {
+				return "<" + getListItemTag(ctx) + getSpecialPreviewCssClass(ctx, style + getType()) + getSpecialPreviewCssId(ctx) + " >";
+			}
 		} else {
-			style = "";
-		}
-		if (getPreviousComponent() == null || !getPreviousComponent().getType().equals(getType())) {
-			style = style + " first ";
-		}		
-		if (getNextComponent() == null || !getNextComponent().getType().equals(getType())) {
-			style = style + " last ";
-		}
-		if (!componentBean.isList()) {
-			return "<" + getTag(ctx) + " " + getSpecialPreviewCssClass(ctx, style + getType()) + getSpecialPreviewCssId(ctx) + " " + getInlineStyle(ctx) + ">";
-		} else {
-			return "<li" + getSpecialPreviewCssClass(ctx, style + getType()) + getSpecialPreviewCssId(ctx) + " >";
+			return "";
 		}
 	}
 
@@ -1006,7 +1031,12 @@ public abstract class AbstractVisualComponent implements IContentVisualComponent
 			out.println("<fieldset class=\"display\">");
 			out.println("<legend>" + i18nAccess.getText("content.page-teaser.display-type") + "</legend><div class=\"line\">");
 
-			if (getRendererTitle() != null) { /* for use title you must implement method getRendererTitle and return empty string if empty and not null (default value). */
+			if (getRendererTitle() != null) { /*
+											 * for use title you must implement
+											 * method getRendererTitle and
+											 * return empty string if empty and
+											 * not null (default value).
+											 */
 				out.println("<div class=\"line\">");
 				out.println("<label for=\"" + getInputNameRendererTitle() + "\">" + i18nAccess.getText("global.title") + " : </label>");
 				out.println("<input type=\"text\" id=\"" + getInputNameRendererTitle() + "\" name=\"" + getInputNameRendererTitle() + "\" value=\"" + getRendererTitle() + "\"  />");
@@ -1075,11 +1105,11 @@ public abstract class AbstractVisualComponent implements IContentVisualComponent
 			GlobalContext globalContext = GlobalContext.getInstance(ctx.getRequest());
 			EditContext editCtx = EditContext.getInstance(globalContext, ctx.getRequest().getSession());
 			try {
-				String classPrefix = "not-";				
+				String classPrefix = "not-";
 				if (!globalContext.isOnlyCreatorModify() || (ctx.getCurrentEditUser() != null && (AdminUserSecurity.getInstance().isAdmin(ctx.getCurrentEditUser()) || getAuthors().equals(ctx.getCurrentEditUser().getLogin())))) {
 					if (!AdminUserSecurity.getInstance().haveRole(ctx.getCurrentEditUser(), AdminUserSecurity.LIGHT_INTERFACE_ROLE) || getComplexityLevel(ctx) == IContentVisualComponent.COMPLEXITY_EASY) {
-						classPrefix = "";	
-					}					
+						classPrefix = "";
+					}
 				}
 				RequestService rs = RequestService.getInstance(ctx.getRequest());
 				if (!StringHelper.isTrue(rs.getParameter(NOT_EDIT_PREVIEW_PARAM_NAME, null))) {
@@ -1141,7 +1171,7 @@ public abstract class AbstractVisualComponent implements IContentVisualComponent
 		}
 		String currentRenderer = getCurrentRenderer(ctx);
 		if (currentRenderer != null) {
-			style = style + ' ' +currentRenderer;
+			style = style + ' ' + currentRenderer;
 		}
 		return style.trim();
 	}
@@ -1149,7 +1179,7 @@ public abstract class AbstractVisualComponent implements IContentVisualComponent
 	public boolean isColored() {
 		return (getBackgroundColor() != null && getBackgroundColor().length() > 2) || (getTextColor() != null && getTextColor().length() > 2);
 	}
-	
+
 	public boolean isBackgroundColored() {
 		return (getBackgroundColor() != null && getBackgroundColor().length() > 2);
 	}
@@ -1185,7 +1215,7 @@ public abstract class AbstractVisualComponent implements IContentVisualComponent
 				return getStyleList(ctx);
 			}
 			for (int i = 0; i < styleLabel.length; i++) {
-				styleLabel[i] = i18nAccess.getText(styleLabel[i],styleLabel[i]);
+				styleLabel[i] = i18nAccess.getText(styleLabel[i], styleLabel[i]);
 			}
 			return styleLabel;
 		} catch (Exception e) {
@@ -1218,15 +1248,17 @@ public abstract class AbstractVisualComponent implements IContentVisualComponent
 
 	@Override
 	public String getSuffixViewXHTMLCode(ContentContext ctx) {
-
-		if (getConfig(ctx).getProperty("suffix", null) != null) {
-			return getConfig(ctx).getProperty("suffix", null);
-		}
-
-		if (!componentBean.isList()) {
-			return "</" + getTag(ctx) + ">";
+		if (isWrapped(ctx)) {
+			if (getConfig(ctx).getProperty("suffix", null) != null) {
+				return getConfig(ctx).getProperty("suffix", null);
+			}
+			if (!componentBean.isList()) {
+				return "</" + getTag(ctx) + ">";
+			} else {
+				return "</"+getListItemTag(ctx)+'>';
+			}
 		} else {
-			return "</li>";
+			return "";
 		}
 	}
 
@@ -1379,7 +1411,7 @@ public abstract class AbstractVisualComponent implements IContentVisualComponent
 
 	@Override
 	public final String getXHTMLCode(ContentContext ctx) {
-		
+
 		setNeedRefresh(false);
 		ctx.getRequest().setAttribute("comp", this);
 
@@ -1390,7 +1422,7 @@ public abstract class AbstractVisualComponent implements IContentVisualComponent
 			}
 
 			GlobalContext globalContext = GlobalContext.getInstance(ctx.getRequest());
-			
+
 			if ((ctx.getRenderMode() == ContentContext.PREVIEW_MODE)) {
 				EditContext editCtx = EditContext.getInstance(globalContext, ctx.getRequest().getSession());
 				if (editCtx.isEditPreview() && isDefaultValue(ctx)) {
@@ -1495,9 +1527,9 @@ public abstract class AbstractVisualComponent implements IContentVisualComponent
 		ctx.getRequest().setAttribute("comp", this);
 		ctx.getRequest().setAttribute("style", getStyle());
 		ctx.getRequest().setAttribute("value", getValue());
-		ctx.getRequest().setAttribute("type", getType());		
+		ctx.getRequest().setAttribute("type", getType());
 		ctx.getRequest().setAttribute("compid", getId());
-		ctx.getRequest().setAttribute("previewAttributes", getSpecialPreviewCssClass(ctx, getStyle(ctx))+getSpecialPreviewCssId(ctx));
+		ctx.getRequest().setAttribute("previewAttributes", getSpecialPreviewCssClass(ctx, getStyle(ctx)) + getSpecialPreviewCssId(ctx));
 		if (getLayout() != null) {
 			ctx.getRequest().setAttribute("layout", getLayout().getStyle());
 		} else {
@@ -2071,25 +2103,35 @@ public abstract class AbstractVisualComponent implements IContentVisualComponent
 	public ComponentLayout getLayout() {
 		return componentBean.getLayout();
 	}
-	
+
 	@Override
-	public boolean equals(ContentContext ctx, IContentVisualComponent comp) {		
+	public boolean equals(ContentContext ctx, IContentVisualComponent comp) {
 		return getComponentBean().compareTo(componentBean) == 0;
 	}
-	
+
 	@Override
-	public String getEmptyXHTMLCode(ContentContext ctx) throws Exception {		
+	public String getEmptyXHTMLCode(ContentContext ctx) throws Exception {
 		if (isHiddenInMode(ctx.getRenderMode()) || !AdminUserSecurity.getInstance().canModifyConponent(ctx, getId())) {
 			return "";
 		} else {
 			I18nAccess i18nAccess = I18nAccess.getInstance(ctx.getRequest());
-			return '['+i18nAccess.getText("content."+getType(), getType())+']';
+			return '[' + i18nAccess.getText("content." + getType(), getType()) + ']';
 		}
+	}
+
+	@Override
+	public String getPageDescription(ContentContext ctx) {
+		return null;
 	}
 	
 	@Override
-	public String getPageDescription(ContentContext ctx) {	
-		return null;
+	public String getListGroup() {
+		return getType();
+	}
+
+
+	public boolean isReversedLink(ContentContext ctx) {
+		return ctx.getGlobalContext().isReversedLink();
 	}
 
 }

@@ -86,6 +86,19 @@ public class OpenCell extends TableComponent {
 	}
 	
 	@Override
+	protected String getAlign(ContentContext ctx) {
+		String align = getFieldValue("align");
+		if (align == null || align.trim().length() == 0) {
+			try {
+				align = getContext(ctx).getTableBreak().getAlign(ctx);
+			} catch (Exception e) {
+				e.printStackTrace();
+			}
+		}
+		return align;
+	}
+	
+	@Override
 	protected String getVAlign(ContentContext ctx) {
 		String valign = getFieldValue("valign");
 		if (valign == null || valign.trim().length() == 0) {

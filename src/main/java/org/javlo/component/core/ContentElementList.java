@@ -288,7 +288,7 @@ public class ContentElementList implements IContentComponentsList {
 			if (ctx.getRenderMode() != ContentContext.EDIT_MODE) {
 
 				if (isPrevious(ctx)) {
-					if (!previousElem(ctx).getType().equals(currentElem(ctx).getType())) {
+					if (!previousElem(ctx).getListGroup().equals(currentElem(ctx).getListGroup())) {
 						prefix.append(currentElem(ctx).getFirstPrefix(ctx));
 					}
 				} else {
@@ -299,7 +299,7 @@ public class ContentElementList implements IContentComponentsList {
 
 		return prefix.toString();
 	}
-
+	
 	public String getSubTitle(ContentContext ctx) {
 		String res = "";
 		Iterator elems = contentElements.iterator();		
@@ -324,7 +324,7 @@ public class ContentElementList implements IContentComponentsList {
 		if (ctx.getRenderMode() != ContentContext.EDIT_MODE) {
 			if (contentElements.size() != 0) {
 				if (isNext(ctx)) {
-					if (!nextElem(ctx).getType().equals(currentElem(ctx).getType())) {
+					if (!nextElem(ctx).getListGroup().equals(currentElem(ctx).getListGroup())) {					
 						sufix.append(currentElem(ctx).getLastSufix(ctx));
 					}
 				} else {
