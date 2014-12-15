@@ -23,6 +23,7 @@ import org.apache.http.conn.HttpHostConnectException;
 import org.apache.http.conn.params.ConnRoutePNames;
 import org.apache.http.conn.scheme.SchemeRegistry;
 import org.apache.http.impl.client.DefaultHttpClient;
+import org.apache.http.impl.conn.PoolingClientConnectionManager;
 import org.apache.http.impl.conn.tsccm.ThreadSafeClientConnManager;
 import org.apache.http.util.EntityUtils;
 import org.javlo.client.localmodule.model.HttpException;
@@ -53,9 +54,8 @@ public class ServerClientService {
 	public ServerClientService(ServerConfig server, String proxyHost, Integer proxyPort, String proxyUsername, String proxyPassword) {
 		this.server = server;
 
-		httpClient = new DefaultHttpClient();
-
-		//httpClient.getParams().setParameter(ClientPNames.CONNECTION_MANAGER_FACTORY_CLASS_NAME, HttpClientServiceClientConnectionManagerFactory.class.getName());
+		ClientConnectionManager connMan = new PoolingClientConnectionManager();//TODO Is it correct?
+		httpClient = new DefaultHttpClient(connMan);
 
 		if (proxyHost != null) {
 			httpClient.getCredentialsProvider().setCredentials(
@@ -66,6 +66,11 @@ public class ServerClientService {
 
 			httpClient.getParams().setParameter(ConnRoutePNames.DEFAULT_PROXY, proxy);
 		}
+	}
+
+	@Deprecated
+	public DefaultHttpClient getHttpClient() {
+		return httpClient;
 	}
 
 	public ServerConfig getServer() {

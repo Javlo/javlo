@@ -57,6 +57,11 @@ public class ClientTray {
 		getInstance().setWorseServerStatus(worseStatus);
 	}
 
+	public void onSyncroStateChange(boolean snchroActive) {
+		this.snchroActive = snchroActive;
+		refreshIcon();
+	}
+
 	private I18nService i18n = I18nService.getInstance();
 
 	private PopupMenu menu;
@@ -70,6 +75,7 @@ public class ClientTray {
 	private Image errorIcon;
 	private boolean trayAdded = false;
 	private boolean activeState = false;
+	private boolean snchroActive = false;
 	private ServerStatus worseServerStatus = ServerStatus.UNKNOWN;
 
 	private TrayMessageAction lastMessageAction;
@@ -216,7 +222,7 @@ public class ClientTray {
 
 	private void refreshIcon() {
 		if (trayAdded) {
-			if (activeState) {
+			if (activeState || snchroActive) {
 				tray.setImage(activeIcon);
 			} else {
 				switch (worseServerStatus) {

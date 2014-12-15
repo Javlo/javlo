@@ -6,7 +6,11 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.net.InetAddress;
 import java.net.URL;
+import java.net.UnknownHostException;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Properties;
@@ -24,7 +28,6 @@ public class ConfigService {
 	private static final Logger logger = Logger.getLogger(ConfigService.class.getName());
 
 	private static final String FILE_NAME = "${user.home}${file.separator}.javlo-localmodule.properties";
-	public static final String DEFAULT_FOLDER = "${user.home}${file.separator}javlo-localmodule";
 
 	private static ConfigService instance;
 	public static ConfigService getInstance() {
@@ -103,6 +106,11 @@ public class ConfigService {
 		bean.setProxyUsername(StringHelper.trimAndNullify(properties.getProperty("http.proxyUserName")));
 		bean.setProxyPassword(StringHelper.trimAndNullify(properties.getProperty("http.proxyPassword")));
 
+		bean.setComputerName(StringHelper.trimAndNullify(properties.getProperty("local.computerName")));
+		if (bean.getComputerName() == null) {
+			bean.setComputerName(getDefaultComputerName());
+		}
+
 		List<ServerConfig> servers = new LinkedList<ServerConfig>();
 		int i = 0;
 		while (true) {
@@ -124,11 +132,17 @@ public class ConfigService {
 				}
 			}
 			server.setType(type);
+
+			server.setSynchronize(Boolean.parseBoolean(properties.getProperty(base + "synchro", "false")));
+			server.setSynchronizedFolder(StringHelper.trimAndNullify(properties.getProperty(base + "synchroFolder")));
+
 			server.setCheckPhrase(properties.getProperty(base + "checkphrase"));
+
 			servers.add(server);
 			i++;
 		}
 		bean.setServers(servers.toArray(new ServerConfig[servers.size()]));
+
 		return bean;
 	}
 
@@ -152,8 +166,13 @@ public class ConfigService {
 			setProperty(out, base + "url", server.getServerURL());
 			setProperty(out, base + "title", server.getTitle());
 			setProperty(out, base + "type", server.getType() == null ? null : server.getType().name());
+			setProperty(out, base + "synchro", Boolean.toString(server.isSynchronize()));
+			setProperty(out, base + "synchroFolder", server.getSynchronizedFolder());
 			setProperty(out, base + "checkphrase", server.getCheckPhrase());
 		}
+
+		setProperty(out, "local.computerName", bean.getComputerName());
+
 		setProperty(out, "http.proxyHost", StringHelper.neverNull(bean.getProxyHost()));
 		setProperty(out, "http.proxyPort", StringHelper.neverNull(bean.getProxyPort()));
 		setProperty(out, "http.proxyUserName", StringHelper.neverNull(bean.getProxyUsername()));
@@ -167,6 +186,16 @@ public class ConfigService {
 		} else {
 			out.setProperty(key, value);
 		}
+	}
+
+	public static String getDefaultComputerName() {
+		String out;
+		try {
+			out = InetAddress.getLocalHost().getHostName();
+		} catch (UnknownHostException ex) {
+			out = new SimpleDateFormat("'Computer'D-sSSS").format(new Date());
+		}
+		return out;
 	}
 
 }

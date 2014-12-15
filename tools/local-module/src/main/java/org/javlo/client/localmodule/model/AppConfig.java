@@ -4,6 +4,9 @@ package org.javlo.client.localmodule.model;
 public class AppConfig {
 
 	private ServerConfig[] servers;
+
+	private String computerName;
+
 	private String proxyHost;
 	private Integer proxyPort;
 	private String proxyUsername;
@@ -20,6 +23,14 @@ public class AppConfig {
 
 	public void setServers(ServerConfig[] servers) {
 		this.servers = servers;
+	}
+
+	public String getComputerName() {
+		return computerName;
+	}
+
+	public void setComputerName(String computerName) {
+		this.computerName = computerName;
 	}
 
 	public String getProxyHost() {
