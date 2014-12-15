@@ -6,6 +6,7 @@ import java.util.Map;
 
 import org.javlo.client.localmodule.model.AppConfig;
 import org.javlo.client.localmodule.model.ServerConfig;
+import org.javlo.client.localmodule.service.synchro.SynchroControlService;
 import org.javlo.client.localmodule.ui.ClientTray;
 import org.javlo.client.localmodule.ui.StatusFrame;
 
@@ -54,6 +55,10 @@ public class ServiceFactory {
 		return NotificationClientService.getInstance();
 	}
 
+	public SynchroControlService getSynchroControl() {
+		return SynchroControlService.getInstance();
+	}
+
 	public ServerClientService getClient(ServerConfig serverConfig) {
 		ServerClientService client = clients.get(serverConfig.getServerURL());
 		if (client == null) {
@@ -72,6 +77,7 @@ public class ServiceFactory {
 
 	public void onConfigChange() {
 		getNotificationClient().start();
+		//getSynchroControl().start();//TODO is it correct?
 		synchronized (clients) {
 			for (Iterator<ServerClientService> iterator = clients.values().iterator(); iterator.hasNext();) {
 				iterator.next().dispose();

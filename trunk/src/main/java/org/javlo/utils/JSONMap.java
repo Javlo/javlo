@@ -24,7 +24,7 @@ public class JSONMap implements Map<String, Object> {
 	public static final Gson JSON = new GsonBuilder().setDateFormat("yyyy-MM-dd_HH-mm-ss-SSS ").create();
 
 	public static JSONMap parseMap(String jsonStr) {
-		return transformMap(JSON.fromJson(jsonStr, JsonArray.class));
+		return transformMap(JSON.fromJson(jsonStr, JsonElement.class));
 	}
 
 	public static Object parse(String jsonStr) {

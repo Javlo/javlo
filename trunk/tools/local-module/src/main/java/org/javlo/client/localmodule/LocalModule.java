@@ -58,6 +58,7 @@ public class LocalModule implements Runnable {
 		tray.show();
 
 		NotificationClientService.getInstance().start();
+		//SynchroControlService.getInstance().start();//TODO Is it correct?
 	}
 
 }
