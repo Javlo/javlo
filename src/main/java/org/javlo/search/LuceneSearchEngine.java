@@ -4,8 +4,10 @@ import java.util.Collection;
 import java.util.Date;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.logging.Logger;
 import java.util.regex.Pattern;
 
+import org.apache.lucene.analysis.Analyzer;
 import org.apache.lucene.analysis.standard.StandardAnalyzer;
 import org.apache.lucene.document.Document;
 import org.apache.lucene.document.Field;
@@ -25,7 +27,9 @@ import org.apache.lucene.store.RAMDirectory;
 import org.apache.lucene.util.Version;
 import org.javlo.component.core.ContentElementList;
 import org.javlo.component.core.IContentVisualComponent;
+import org.javlo.config.StaticConfig;
 import org.javlo.context.ContentContext;
+import org.javlo.context.GlobalContext;
 import org.javlo.helper.ResourceHelper;
 import org.javlo.helper.StringHelper;
 import org.javlo.helper.URLHelper;
@@ -37,11 +41,18 @@ import org.javlo.search.SearchResult.SearchElement;
 import org.javlo.service.ContentService;
 
 /**
- * Work in progress.
+ * Lucene Search Engine implementation.
  * 
  * @author bdumont
  */
 public class LuceneSearchEngine implements ISearchEngine {
+
+	private static Logger logger = Logger.getLogger(LuceneSearchEngine.class.getName());
+
+	private static final String MANUAL_QUERY_PREFIX = ":";
+	private static final int MAX_RESULTS = 5000;
+
+	private static final String GLOBAL_CONTEXT_KEY_PREFIX = LuceneLanguageIndex.class.getSimpleName() + "-lang=";
 
 	private static final String ID_FIELD = "_id";
 	private static final String TYPE_FIELD = "_type";
@@ -51,26 +62,38 @@ public class LuceneSearchEngine implements ISearchEngine {
 	private static final Pattern ESCAPER = Pattern.compile("([ +\\-!\\(\\)\\{\\}\\[\\\\\\]^\\\"~\\*\\?\\:]|&&|\\|\\|)");
 	private static final String ESCAPER_REPLACE = "\\\\$0";
 
-	private Directory index;
-	private StandardAnalyzer analyzer;
+	private static class LuceneLanguageIndex {
+
+		private Directory index;
+		//TODO Is analyzer multi thread safe?
+		private Analyzer analyzer;
+
+	}
 
 	@Override
 	public List<SearchElement> search(ContentContext ctx, String groupId, String searchStr, String sort, List<String> componentList) throws Exception {
-		init(ctx);
+		LuceneLanguageIndex langIndex = getLanguageIndexInstance(ctx);
 
-		String queryPattern = "level3:{QUERY}^3 level2:{QUERY}^2 level1:{QUERY}^1";//TODO move this to static config
+		//TODO sort, componentList, SearchFilter are currently not taken into account
 
-		String escapedStr = escapeLucene(searchStr.trim());
+		String queryStr;
 
-		String queryStr = queryPattern.replace("{QUERY}", escapedStr);
-		System.out.println(queryStr);
+		String cleanedStr = searchStr.trim();
+		if (cleanedStr.startsWith(MANUAL_QUERY_PREFIX)) {
+			queryStr = cleanedStr.substring(MANUAL_QUERY_PREFIX.length()).trim();
+		} else {
+			cleanedStr = escapeLucene(cleanedStr);
+			StaticConfig staticConfig = StaticConfig.getInstance(ctx.getRequest().getSession());
+			String queryPattern = staticConfig.getSearchEngineLucenePattern();
+			queryStr = queryPattern.replace("{QUERY}", cleanedStr);
+		}
 
-		Query q = new QueryParser("level3", analyzer).parse(queryStr);
+		Query q = new QueryParser("level3", langIndex.analyzer).parse(queryStr);
 
-		int hitsPerPage = 5000;
-		IndexReader reader = DirectoryReader.open(index);
+		//TODO Is there a better way than TopScoreDocCollector to return all result?
+		IndexReader reader = DirectoryReader.open(langIndex.index);
 		IndexSearcher searcher = new IndexSearcher(reader);
-		TopScoreDocCollector collector = TopScoreDocCollector.create(hitsPerPage, true);
+		TopScoreDocCollector collector = TopScoreDocCollector.create(MAX_RESULTS, true);
 		searcher.search(q, collector);
 		ScoreDoc[] hits = collector.topDocs().scoreDocs;
 
@@ -81,11 +104,15 @@ public class LuceneSearchEngine implements ISearchEngine {
 
 		List<SearchElement> result = new LinkedList<SearchElement>();
 
+		groupId = StringHelper.trimAndNullify(groupId);
+
 		for (ScoreDoc scoreDoc : hits) {
 			Document doc = searcher.doc(scoreDoc.doc);
 			String pageId = doc.get(ID_FIELD);
 			MenuElement page = nav.searchChildFromId(pageId);
-			addResult(result, ctx, page, searchStr, page.getName(), page.getFullLabel(ctxWithContent), URLHelper.createURL(ctxWithContent, page.getPath()), page.getDescription(ctxWithContent), 1);
+			if (groupId == null || page.getGroupID(ctx).contains(groupId)) {
+				addResult(result, ctx, page, searchStr, page.getName(), page.getFullLabel(ctxWithContent), URLHelper.createURL(ctxWithContent, page.getPath()), page.getDescription(ctxWithContent), 1);
+			}
 		}
 		if (result.size() == 0) {
 			I18nAccess i18nAccess = I18nAccess.getInstance(ctx.getRequest());
@@ -126,32 +153,39 @@ public class LuceneSearchEngine implements ISearchEngine {
 				rst.setFullDate(StringHelper.renderFullDate(ctx, date));
 				rst.setMediumDate(StringHelper.renderMediumDate(ctx, date));
 			} else {
-				//logger.warning("date not found on : " + page.getPath());
+				logger.warning("date not found on : " + page.getPath());
 			}
 		} catch (Exception e) {
-			//logger.warning(e.getMessage());
+			logger.warning(e.getMessage());
 		}
 		result.add(rst);
 	}
 
-	private void init(ContentContext ctx) throws Exception {
-		if (index != null) {
-			return;
+	private LuceneLanguageIndex getLanguageIndexInstance(ContentContext ctx) throws Exception {
+		String key = GLOBAL_CONTEXT_KEY_PREFIX + ctx.getRequestContentLanguage();
+		GlobalContext globalContext = ctx.getGlobalContext();
+		//TODO need synchronized block?
+		LuceneLanguageIndex out = (LuceneLanguageIndex) globalContext.getAttribute(key);
+		if (out == null) {
+			out = new LuceneLanguageIndex();
+			indexLanguage(ctx, out);
+			globalContext.setAttribute(key, out);
 		}
+		return out;
+	}
 
-		analyzer = new StandardAnalyzer();
-		index = new RAMDirectory();
+	private void indexLanguage(ContentContext ctx, LuceneLanguageIndex langIndex) throws Exception {
 
-		//TODO index by language
-		//TODO move index to site scope (not session scope)
+		langIndex.analyzer = new StandardAnalyzer();
+		langIndex.index = new RAMDirectory();
 
 		ContentService content = ContentService.getInstance(ctx.getRequest());
 		MenuElement nav = content.getNavigation(ctx);
 
-		IndexWriterConfig config = new IndexWriterConfig(Version.LUCENE_4_10_2, analyzer);
+		IndexWriterConfig config = new IndexWriterConfig(Version.LUCENE_4_10_2, langIndex.analyzer);
 		IndexWriter w = null;
 		try {
-			w = new IndexWriter(index, config);
+			w = new IndexWriter(langIndex.index, config);
 			indexPage(nav, ctx, w);
 		} finally {
 			ResourceHelper.safeClose(w);
@@ -173,7 +207,7 @@ public class LuceneSearchEngine implements ISearchEngine {
 				for (IContentVisualComponent cpt : elemList.getIterable(ctxWithContent)) {
 					if (cpt.getSearchLevel() > 0) {
 						doc.add(new TextField(LEVEL_FIELD_PREFIX + cpt.getSearchLevel(), cpt.getTextForSearch(), Field.Store.NO));
-						//Automatic boost? (currently done via StaticConfig)
+						// TODO Automatic boost? (currently done via StaticConfig.getSearchEngineLucenePattern())
 						//field.setBoost(1F + ((float) cpt.getSearchLevel()) / 10F);
 					}
 				}
