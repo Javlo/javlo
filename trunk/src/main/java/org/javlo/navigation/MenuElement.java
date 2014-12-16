@@ -1277,7 +1277,7 @@ public class MenuElement implements Serializable, IPrintInfo {
 		return contentElementListMap;
 	}
 
-	public Map<String, ContentElementList> getLocalContentElementListMap() {
+	private Map<String, ContentElementList> getLocalContentElementListMap() {
 		if (localContentElementListMap == null) {
 			localContentElementListMap = new HashMap<String, ContentElementList>();
 		}
