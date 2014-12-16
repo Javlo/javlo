@@ -347,3 +347,5 @@ change log
 * 2.0.3.8.1 05/12/2014
 
  * add bootstrap cols in edit mode
+ 
+ * export business component directly in xlsx file
