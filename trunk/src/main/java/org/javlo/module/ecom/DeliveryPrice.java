@@ -8,7 +8,7 @@ import java.util.List;
 import org.javlo.context.ContentContext;
 import org.javlo.helper.URLHelper;
 import org.javlo.utils.Cell;
-import org.javlo.utils.XLSReader;
+import org.javlo.utils.XLSTools;
 
 public class DeliveryPrice {
 
@@ -39,7 +39,7 @@ public class DeliveryPrice {
 	}
 
 	private DeliveryPrice(ContentContext ctx, File file) throws Exception {
-		priceList = XLSReader.getArray(ctx, file);
+		priceList = XLSTools.getArray(ctx, file);
 	}
 
 	public List<String> getZone() {

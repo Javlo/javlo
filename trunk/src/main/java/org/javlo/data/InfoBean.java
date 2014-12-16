@@ -744,6 +744,10 @@ public class InfoBean {
 	public boolean isPreview() {
 		return ctx.getRenderMode() == ContentContext.PREVIEW_MODE;
 	}
+	
+	public boolean isView() {
+		return ctx.getRenderMode() == ContentContext.VIEW_MODE;
+	}
 
 	public String getPublishDate() {
 		try {
