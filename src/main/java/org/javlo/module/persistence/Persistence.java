@@ -110,11 +110,8 @@ public class Persistence extends AbstractModuleAction {
 		Collections.sort(allExportType);
 		List<ExportBean> beans = new LinkedList<ExportBean>();
 		for (String type : allExportType) {
-			Map<String, String> params = new HashMap<String, String>();
-			params.put("encoding", "unicode");
-			params.put("separator", ";");
 			String csvURL = URLHelper.createStaticURL(absCtx, "/expcomp/" + ctx.getRequestContentLanguage() + '/' + type + ".csv");
-			String excelURL = URLHelper.createStaticURL(absCtx, "/expcomp/" + ctx.getRequestContentLanguage() + '/' + type + ".csv", params);
+			String excelURL = URLHelper.createStaticURL(absCtx, "/expcomp/" + ctx.getRequestContentLanguage() + '/' + type + ".xlsx");
 			beans.add(new ExportBean(type, csvURL, excelURL));
 		}
 		ctx.getRequest().setAttribute("exportLinks", beans);

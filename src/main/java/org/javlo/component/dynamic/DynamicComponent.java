@@ -129,6 +129,9 @@ public class DynamicComponent extends AbstractVisualComponent implements IStatic
 	 */
 	@Override
 	public String getViewXHTMLCode(ContentContext ctx) throws Exception {
+		if (getRenderer(ctx) == null) {
+			prepareView(ctx);
+		}
 		return getViewXHTMLCode(ctx, false);
 	}
 

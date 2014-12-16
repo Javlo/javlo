@@ -7,19 +7,25 @@ import java.io.PrintWriter;
 import java.io.StringWriter;
 import java.util.Collection;
 import java.util.HashMap;
+import java.util.LinkedList;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 
 import org.javlo.component.core.ComponentBean;
 import org.javlo.component.core.ContentElementList;
 import org.javlo.component.core.IContentVisualComponent;
+import org.javlo.component.dynamic.DynamicComponent;
 import org.javlo.component.text.DynamicParagraph;
 import org.javlo.context.ContentContext;
 import org.javlo.context.GlobalContext;
+import org.javlo.fields.Field;
 import org.javlo.i18n.I18nAccess;
 import org.javlo.navigation.MenuElement;
 import org.javlo.service.ContentService;
 import org.javlo.service.RequestService;
+import org.javlo.utils.CSVFactory;
+import org.javlo.utils.Cell;
 
 /**
  * @author pvandermaesen some method for help create component.
@@ -254,6 +260,89 @@ public class ComponentHelper {
 				}
 		}
 		return null;
+	}
+	
+	public static Cell[][] componentsToArray (ContentContext ctx, Collection<IContentVisualComponent> components, String type) throws Exception {
+		boolean firstLine = true;
+		List<String[]> cols = new LinkedList<String[]>();
+		for (IContentVisualComponent comp : components) {
+			if (type == null || comp.getType().equals(type)) {
+				if (comp instanceof DynamicComponent) {
+					DynamicComponent dcomp = (DynamicComponent) comp;
+					if (firstLine) {
+						firstLine = false;
+						List<String> values = new LinkedList<String>();
+						values.add("page");
+						values.add("authors");
+						values.add("style");
+						values.add("area");
+						List<Field> fields = dcomp.getFields(ctx);						
+						for (Field field : fields) {
+							values.add(field.getName());
+						}
+						String[] row = new String[values.size()];
+						int i=0;
+						for (String val : values) {
+							row[i] = val;
+							i++;
+						}
+						cols.add(row);
+					}
+
+					List<String> values = new LinkedList<String>();
+					values.add(comp.getPage().getName());
+					values.add(comp.getAuthors());
+					values.add(comp.getStyle(ctx));
+					values.add(comp.getArea());
+					List<Field> fields = dcomp.getFields(ctx);
+					for (Field field : fields) {
+						values.add(field.getValue(new Locale(ctx.getRequestContentLanguage())));
+					}
+					String[] row = new String[values.size()];
+					int i=0;
+					for (String val : values) {
+						row[i] = val;
+						i++;
+					}
+					cols.add(row);
+				} else {
+					if (firstLine) {
+						firstLine = false;
+						List<String> values = new LinkedList<String>();
+						values.add("page");
+						values.add("authors");
+						values.add("value");
+						values.add("style");
+						values.add("area");
+					}
+					List<String> values = new LinkedList<String>();
+					values.add(comp.getPage().getName());
+					values.add(comp.getAuthors());
+					values.add(comp.getValue(ctx));
+					values.add(comp.getStyle(ctx));
+					values.add(comp.getArea());
+					String[] row = new String[values.size()];
+					int i=0;
+					for (String val : values) {
+						row[i] = val;
+						i++;
+					}
+					cols.add(row);				
+				}
+			}
+		}
+		Cell[][] cells = new Cell[cols.size()][];
+		int i=0;
+		for (String[] row : cols) {
+			cells[i] = new Cell[row.length];
+			int j=0;
+			for (String cell : row) {				
+				cells[i][j] = new Cell(cell,null,cells,i,j);
+				j++;
+			}
+			i++;
+		}
+		return cells;
 	}
 
 

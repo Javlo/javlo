@@ -19,12 +19,15 @@ import org.javlo.component.dynamic.DynamicComponent;
 import org.javlo.context.ContentContext;
 import org.javlo.context.GlobalContext;
 import org.javlo.fields.Field;
+import org.javlo.helper.ComponentHelper;
 import org.javlo.helper.ResourceHelper;
 import org.javlo.helper.StringHelper;
 import org.javlo.service.ContentService;
 import org.javlo.service.RequestService;
 import org.javlo.template.TemplateFactory;
 import org.javlo.utils.CSVFactory;
+import org.javlo.utils.Cell;
+import org.javlo.utils.XLSTools;
 
 public class ExportComponents extends HttpServlet {
 
@@ -78,6 +81,32 @@ public class ExportComponents extends HttpServlet {
 						}
 						ResourceHelper.writeStringToStream(xhtml, response.getOutputStream(), ContentContext.CHARACTER_ENCODING);
 					}
+				} else if (componentType.toLowerCase().endsWith(".xlsx")) {
+					response.setContentType("application/vnd.openxmlformats-officedocument.spreadsheetml.sheet");
+					String[] splittedPath = StringUtils.split(request.getPathInfo(), '/');
+					GlobalContext globalContext = GlobalContext.getInstance(ctx.getRequest());
+					String lg = globalContext.getDefaultLanguage();
+					if (splittedPath.length > 1) {
+						if (splittedPath[0].length() == 2) {
+							if (globalContext.getContentLanguages().contains(splittedPath[0])) {
+								lg = splittedPath[0];
+							} else {
+								logger.warning("bad path structure : " + componentType);
+								response.setStatus(HttpServletResponse.SC_NOT_FOUND, "lang not found.");
+								return;
+							}
+						}
+						componentType = splittedPath[1];
+
+					} else if (splittedPath.length != 1) {
+						logger.warning("bad path structure : " + componentType);
+						response.setStatus(HttpServletResponse.SC_NOT_FOUND, "bad path structure : $lang/$comp_type.");
+						return;
+					}
+					componentType = componentType.replace(".xlsx", "").replace("/", "");
+					ContentService content = ContentService.getInstance(request);					
+					Cell[][] cells = ComponentHelper.componentsToArray(ctx, content.getAllContent(ctx), componentType);
+					XLSTools.writeXLSX(cells, response.getOutputStream());
 				} else {
 					logger.warning("bad format : " + componentType);
 					response.setStatus(HttpServletResponse.SC_NOT_FOUND);
