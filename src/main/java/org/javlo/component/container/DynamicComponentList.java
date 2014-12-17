@@ -13,8 +13,10 @@ import org.javlo.context.ContentContext;
 import org.javlo.context.GlobalContext;
 import org.javlo.fields.Field;
 import org.javlo.fields.IFieldContainer;
+import org.javlo.helper.StringHelper;
 import org.javlo.helper.XHTMLHelper;
 import org.javlo.i18n.I18nAccess;
+import org.javlo.navigation.MenuElement;
 import org.javlo.service.ContentService;
 import org.javlo.service.DynamicComponentService;
 
@@ -53,7 +55,17 @@ public class DynamicComponentList extends AbstractPropertiesComponent {
 		List<String> container = service.getAllType(ctx, content.getNavigation(ctx));
 
 		out.println(XHTMLHelper.getInputOneSelect(createKeyWithField("type"), container, getSelectedType()));
-
+		
+		String childrenLabel = i18nAccess.getText("component.filter.children", "search only on children pages.");
+		out.println("<div class=\"checkbox\">");
+		String checked="";
+		if (isOnlyChildren()) {
+			checked=" checked=\"checked\"";
+		}
+		out.println("<label><input name=\""+createKeyWithField("children")+"\" type=\"checkbox\""+checked+" />");
+		out.println(childrenLabel+"</label>");
+		out.println("</div>");
+		
 		IFieldContainer fieldContainer = getFieldContainer(ctx);
 		if (fieldContainer != null) {
 			out.println("<fieldset>");
@@ -117,7 +129,11 @@ public class DynamicComponentList extends AbstractPropertiesComponent {
 		GlobalContext globalContext = GlobalContext.getInstance(ctx.getRequest());
 		DynamicComponentService service = DynamicComponentService.getInstance(globalContext);
 
-		List<IFieldContainer> containers = service.getFieldContainers(ctx, content.getNavigation(ctx), getSelectedType());
+		MenuElement rootPage = content.getNavigation(ctx);
+		if (isOnlyChildren()) {
+			rootPage = ctx.getCurrentPage();
+		}
+		List<IFieldContainer> containers = service.getFieldContainers(ctx, rootPage, getSelectedType());		
 		List<IFieldContainer> visibleContainers = new LinkedList<IFieldContainer>();
 		
 		for (IFieldContainer container : containers) {
@@ -167,6 +183,7 @@ public class DynamicComponentList extends AbstractPropertiesComponent {
 	public List<String> getFields(ContentContext ctx) throws Exception {
 		List<String> outList = new LinkedList<String>();
 		outList.add("type");
+		outList.add("children");
 		if (getSelectedType() != null) {
 			IFieldContainer container = getFieldContainer(ctx);
 			if (container != null) {
@@ -226,5 +243,10 @@ public class DynamicComponentList extends AbstractPropertiesComponent {
 	public int getComplexityLevel(ContentContext ctx) {
 		return COMPLEXITY_STANDARD;
 	}
+	
+	private boolean isOnlyChildren() {
+		return StringHelper.isTrue(properties.getProperty("children"));
+	}
+
 
 }

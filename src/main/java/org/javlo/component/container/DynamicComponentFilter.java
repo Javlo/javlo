@@ -64,7 +64,7 @@ public class DynamicComponentFilter extends AbstractPropertiesComponent implemen
 		List<String> container = service.getAllType(ctx, content.getNavigation(ctx));
 
 		out.println(XHTMLHelper.getInputOneSelect(createKeyWithField("type"), container, getSelectedType()));
-
+		
 		out.close();
 		return new String(outStream.toByteArray());
 	}
@@ -145,7 +145,7 @@ public class DynamicComponentFilter extends AbstractPropertiesComponent implemen
 	private String getSelectedType() {
 		return properties.getProperty("type");
 	}
-
+	
 	IFieldContainer getFieldContainer(ContentContext ctx) throws Exception {
 		GlobalContext globalContext = GlobalContext.getInstance(ctx.getRequest());
 		DynamicComponentService service = DynamicComponentService.getInstance(globalContext);

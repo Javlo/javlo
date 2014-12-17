@@ -1014,13 +1014,11 @@ public class Template implements Comparable<Template> {
 
 	public void addRow() {
 		String rowName = null;
-		int rowNumber = 0;
 		String newRowName = null;
 		for (int i = 1; i < 9999 && newRowName == null; i++) {
-			rowName = "row-" + i;
+			rowName = "row-" + StringHelper.renderNumber(i, 4);
 			if (getRow(rowName) == null) {
 				newRowName = rowName;
-				rowNumber = i;
 			}
 		}
 		List<Row> rows = getRows();
