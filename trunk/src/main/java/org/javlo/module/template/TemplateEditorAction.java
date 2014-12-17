@@ -39,12 +39,12 @@ public class TemplateEditorAction extends AbstractModuleAction {
 		ajaxPrepare(ctx);
 		return msg;
 	}
-	
+
 	private static void ajaxPrepare(ContentContext ctx) throws Exception {
 		List<String> editableTemplateUnvalid = new LinkedList<String>();
 		List<String> editableTemplateValid = new LinkedList<String>();
 		TemplateEditorContext editorContext = TemplateEditorContext.getInstance(ctx.getRequest().getSession());
-		
+
 		if (editorContext.getCurrentTemplate() != null && (editorContext.getCurrentTemplate().isValid() || editorContext.getCurrentTemplate().isDeleted())) {
 			editorContext.setCurrentTemplate(null);
 		}
@@ -53,7 +53,7 @@ public class TemplateEditorAction extends AbstractModuleAction {
 			if (template.isEditable() && !template.isValid() && !template.isDeleted()) {
 				editableTemplateUnvalid.add(template.getName());
 				// choose first template as current template.
-				if (editorContext.getCurrentTemplate() == null || editorContext.getCurrentTemplate().isValid()  || editorContext.getCurrentTemplate().isDeleted()) {
+				if (editorContext.getCurrentTemplate() == null || editorContext.getCurrentTemplate().isValid() || editorContext.getCurrentTemplate().isDeleted()) {
 					editorContext.setCurrentTemplate(template);
 				}
 			} else if (template.isEditable() && template.isValid()) {
@@ -71,10 +71,10 @@ public class TemplateEditorAction extends AbstractModuleAction {
 			templateURL = URLHelper.addParam(templateURL, "hash", "" + editorCtx.getCurrentTemplate().hashCode());
 			ctx.getRequest().setAttribute("templateURL", templateURL);
 		}
-		ctx.getRequest().setAttribute("templates", editableTemplateUnvalid);		
+		ctx.getRequest().setAttribute("templates", editableTemplateUnvalid);
 		if (editorCtx.getCurrentTemplate() != null) {
 			Template.TemplateBean templateBean = new Template.TemplateBean(ctx, editorCtx.getCurrentTemplate());
-			ctx.getRequest().setAttribute("template", templateBean);			
+			ctx.getRequest().setAttribute("template", templateBean);
 			ctx.getRequest().setAttribute("fonts", XHTMLHelper.WEB_FONTS);
 		}
 	}
@@ -118,36 +118,43 @@ public class TemplateEditorAction extends AbstractModuleAction {
 			if (area == null) {
 				return "no active area.";
 			} else {
-				
+
 				String newName = rs.getParameter("name", "");
-				if (!area.getName().equals(newName)) {
-					if (area.getName().equals(ComponentBean.DEFAULT_AREA)) {
-						msg = i18nAccess.getText("template.message.error.no-content", "All template need main area : "+ComponentBean.DEFAULT_AREA);
+				newName = StringHelper.createFileName(newName.trim());
+				if (newName.length() > 0) {
+					if (!area.getName().equals(newName)) {
+						if (editorContext.getCurrentTemplate().getArea(editorContext.getCurrentTemplate().getRows(), newName) != null) {
+							msg = i18nAccess.getText("template.message.error.area-exist", "Area allready exist : " + newName);
+						} else {
+							if (area.getName().equals(ComponentBean.DEFAULT_AREA)) {
+								msg = i18nAccess.getText("template.message.error.no-content", "All template need main area : " + ComponentBean.DEFAULT_AREA);
+							}
+							area.setName(newName);
+							editorContext.setArea(newName);
+						}
 					}
-					area.setName(newName);					
-					editorContext.setArea(newName);
 				}
-				
+
 				area.setWidth(rs.getParameter("width", ""));
 				area.setHeight(rs.getParameter("height", ""));
 				area.setMargin(rs.getParameter("margin", ""));
 				area.setPadding(rs.getParameter("padding", ""));
 				area.setBorderWidth(rs.getParameter("borderWidth", ""));
-				area.setBorderColor(rs.getParameter("borderColor", ""));				
+				area.setBorderColor(rs.getParameter("borderColor", ""));
 				area.setTitleColor(rs.getParameter("titleColor", ""));
 				area.setTextColor(rs.getParameter("textColor", ""));
 				area.setLinkColor(rs.getParameter("linkColor", ""));
 				area.setTextSize(rs.getParameter("textSize", ""));
 				area.setFont(rs.getParameter("font", ""));
 				area.setBackgroundColor(rs.getParameter("backgroundColor", ""));
-				
-				area.setH1Size(rs.getParameter("h1size",""));
-				area.setH2Size(rs.getParameter("h2size",""));
-				area.setH3Size(rs.getParameter("h3size",""));
-				area.setH4Size(rs.getParameter("h4size",""));
-				area.setH5Size(rs.getParameter("h5size",""));
-				area.setH6Size(rs.getParameter("h6size",""));
-				
+
+				area.setH1Size(rs.getParameter("h1size", ""));
+				area.setH2Size(rs.getParameter("h2size", ""));
+				area.setH3Size(rs.getParameter("h3size", ""));
+				area.setH4Size(rs.getParameter("h4size", ""));
+				area.setH5Size(rs.getParameter("h5size", ""));
+				area.setH6Size(rs.getParameter("h6size", ""));
+
 				editorContext.getCurrentTemplate().storeRows(rows);
 			}
 		}
@@ -175,20 +182,20 @@ public class TemplateEditorAction extends AbstractModuleAction {
 					row.setPadding(rs.getParameter("padding", ""));
 					row.setBorderWidth(rs.getParameter("borderWidth", ""));
 					row.setBorderColor(rs.getParameter("borderColor", ""));
-					row.setTitleColor(rs.getParameter("titleColor", ""));					
+					row.setTitleColor(rs.getParameter("titleColor", ""));
 					row.setTextColor(rs.getParameter("textColor", ""));
 					row.setTextSize(rs.getParameter("textSize", ""));
 					row.setFont(rs.getParameter("font", ""));
 					row.setBackgroundColor(rs.getParameter("backgroundColor", ""));
 					row.setLinkColor(rs.getParameter("linkColor", ""));
-					
-					row.setH1Size(rs.getParameter("h1size",""));
-					row.setH2Size(rs.getParameter("h2size",""));
-					row.setH3Size(rs.getParameter("h3size",""));
-					row.setH4Size(rs.getParameter("h4size",""));
-					row.setH5Size(rs.getParameter("h5size",""));
-					row.setH6Size(rs.getParameter("h6size",""));					
-					
+
+					row.setH1Size(rs.getParameter("h1size", ""));
+					row.setH2Size(rs.getParameter("h2size", ""));
+					row.setH3Size(rs.getParameter("h3size", ""));
+					row.setH4Size(rs.getParameter("h4size", ""));
+					row.setH5Size(rs.getParameter("h5size", ""));
+					row.setH6Size(rs.getParameter("h6size", ""));
+
 					editorContext.getCurrentTemplate().storeRows(rows);
 				}
 			}
@@ -224,19 +231,19 @@ public class TemplateEditorAction extends AbstractModuleAction {
 				style.setLinkColor(rs.getParameter("linkColor", ""));
 				style.setTextSize(rs.getParameter("textSize", ""));
 				style.setFont(rs.getParameter("font", ""));
-				
-				style.setH1Size(rs.getParameter("h1size",""));
-				style.setH2Size(rs.getParameter("h2size",""));
-				style.setH3Size(rs.getParameter("h3size",""));
-				style.setH4Size(rs.getParameter("h4size",""));
-				style.setH5Size(rs.getParameter("h5size",""));
-				style.setH6Size(rs.getParameter("h6size",""));
-				
-				style.setBackgroundColor(rs.getParameter("backgroundColor", ""));				
-				String parent = rs.getParameter("parent", null);				
+
+				style.setH1Size(rs.getParameter("h1size", ""));
+				style.setH2Size(rs.getParameter("h2size", ""));
+				style.setH3Size(rs.getParameter("h3size", ""));
+				style.setH4Size(rs.getParameter("h4size", ""));
+				style.setH5Size(rs.getParameter("h5size", ""));
+				style.setH6Size(rs.getParameter("h6size", ""));
+
+				style.setBackgroundColor(rs.getParameter("backgroundColor", ""));
+				String parent = rs.getParameter("parent", null);
 				if (parent != null && !parent.equals(editorContext.getCurrentTemplate().getParentName())) {
 					Template template = TemplateFactory.getTemplates(ctx.getRequest().getSession().getServletContext()).get(parent);
-					if (template != null) {		
+					if (template != null) {
 						style.setEmptyField(template.getStyle());
 						editorContext.getCurrentTemplate().setParentName(parent);
 					}
@@ -258,7 +265,7 @@ public class TemplateEditorAction extends AbstractModuleAction {
 				}
 			}
 			editorContext.getCurrentTemplate().clearRenderer(ctx);
-		}		
+		}
 		return null;
 	}
 
@@ -292,9 +299,9 @@ public class TemplateEditorAction extends AbstractModuleAction {
 		if (templateName.trim().length() < 3) {
 			return "template name must be at least 4 chars.";
 		} else if (TemplateFactory.getDiskTemplate(application, templateName) != null) {
-			return "template name '"+templateName+"' allready exist.";
+			return "template name '" + templateName + "' allready exist.";
 		} else {
-			Template newTemplate = TemplateFactory.createDiskTemplates(application, templateName,null);
+			Template newTemplate = TemplateFactory.createDiskTemplates(application, templateName, null);
 			newTemplate.setParentName("editable");
 			Row row = new Row(newTemplate);
 			row.setName("row-1");
@@ -309,7 +316,7 @@ public class TemplateEditorAction extends AbstractModuleAction {
 			TemplateEditorContext editorContext = TemplateEditorContext.getInstance(ctx.getRequest().getSession());
 			editorContext.setCurrentTemplate(template);
 			template.importTemplateInWebapp(staticConfig, ctx);
-			
+
 		}
 		return null;
 	}
