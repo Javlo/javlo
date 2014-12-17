@@ -6,6 +6,7 @@ import java.io.IOException;
 import java.io.PrintStream;
 import java.io.PrintWriter;
 import java.io.StringWriter;
+import java.lang.reflect.InvocationTargetException;
 import java.text.DateFormatSymbols;
 import java.util.Arrays;
 import java.util.Calendar;
@@ -919,6 +920,28 @@ public class MacroHelper {
 		}
 		out.close();
 		return new String(outStream.toByteArray());
+	}
+	
+	public static MenuElement duplicatePage(ContentContext ctx, MenuElement page, String newname) throws SecurityException, IllegalArgumentException, IllegalAccessException, InvocationTargetException {
+		MenuElement outPage = MenuElement.getInstance(ctx.getGlobalContext());
+		outPage.setName(newname);
+		ComponentBean[] sourceData = page.getContent();
+		ComponentBean[] targetData = new ComponentBean[sourceData.length];
+		int i=0;
+		for (ComponentBean bean : sourceData) {
+			targetData[i] = new ComponentBean(bean);
+			i++;
+		}
+		outPage.setContent(targetData);
+		return outPage;
+	}
+	
+	public static void copyChildren (ContentContext ctx, MenuElement source, MenuElement target, String sourcePattern, String targetPattern) throws SecurityException, IllegalArgumentException, IllegalAccessException, InvocationTargetException {
+		for (MenuElement child : source.getChildMenuElements())	{
+			MenuElement newChild = duplicatePage(ctx, child, child.getName().replace(sourcePattern, targetPattern));
+			target.addChildMenuElement(newChild);
+			copyChildren(ctx, child, newChild, sourcePattern, targetPattern);
+		}
 	}
 
 	public static void main(String[] args) {
