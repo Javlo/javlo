@@ -135,6 +135,41 @@ public class MacroHelper {
 		page.addContent(parentCompId, comp);
 		return comp.getId();
 	}
+	
+	/**
+	 * add content to a page
+	 * 
+	 * @param lg
+	 * 
+	 * @param page
+	 *            the page when the content must be insered
+	 * @param parentCompId
+	 *            the parent component id
+	 * @param contentType
+	 *            the type of the component
+	 * @param style
+	 *            the style of the component
+	 * @param renderer
+	 * 	          the renderer selection of the component
+	 * @param area
+	 *            the area of the component
+	 * @param value
+	 *            the value of the component
+	 * @return the if of the new component
+	 * @throws Exception
+	 */
+	public static final String addContent(String lg, MenuElement page, String parentCompId, String contentType, String style, String area, String renderer, String value, User authors) throws Exception {
+		ComponentBean comp = new ComponentBean(StringHelper.getRandomId(), contentType, value, lg, false, authors);
+		if (area != null) {
+			comp.setArea(area);
+		}
+		if (style != null) {
+			comp.setStyle(style);
+		}
+		comp.setRenderer(renderer);
+		page.addContent(parentCompId, comp);
+		return comp.getId();
+	}
 
 	public static final String addContent(String lg, MenuElement page, String parentCompId, String contentType, String style, String area, String value, boolean inList, User authors) throws Exception {
 		ComponentBean comp = new ComponentBean(StringHelper.getRandomId(), contentType, value, lg, false, authors);
@@ -446,7 +481,7 @@ public class MacroHelper {
 						if (withContent) {
 							content = comp.getValue(ctxNoArea);
 						}
-						parentId = addContent(lgCtx.getRequestContentLanguage(), currentPage, parentId, comp.getType(), comp.getStyle(ctxNoArea), comp.getArea(), content, ctx.getCurrentEditUser());
+						parentId = addContent(lgCtx.getRequestContentLanguage(), currentPage, parentId, comp.getType(), comp.getStyle(ctxNoArea), comp.getArea(), comp.getCurrentRenderer(ctx), content, ctx.getCurrentEditUser());
 					}
 				}
 			}
