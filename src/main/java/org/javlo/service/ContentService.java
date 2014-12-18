@@ -35,6 +35,8 @@ import org.javlo.module.core.IPrintInfo;
 import org.javlo.navigation.MenuElement;
 import org.javlo.template.TemplateFactory;
 
+import sun.misc.Perf.GetPerfAction;
+
 /**
  * @author pvanderm represent a content
  */
@@ -626,6 +628,7 @@ public class ContentService implements IPrintInfo {
 		logger.fine("release preview nav");
 		clearComponentCache();
 		setPreviewNav(null);
+		PersistenceService.getInstance(ctx.getGlobalContext()).resetVersion();
 		if (this.previewGlobalMap != null) {
 			this.previewGlobalMap.clear();
 		}

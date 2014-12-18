@@ -890,6 +890,14 @@ public class MacroHelper {
 		}
 		PersistenceService.getInstance(ctx.getGlobalContext()).setAskStore(true);
 	}
+	
+	public static void deleteContentByLanguage(ContentContext ctx, MenuElement page, String lg) {
+		for (ComponentBean bean : page.getContent()) {
+			if (bean.getLanguage().equals(lg)) {
+				page.removeContent(ctx, bean.getId(), false);
+			}
+		}		
+	}
 
 	public static String getLaunchMacroXHTML(ContentContext ctx, String macro, String label) {
 		ByteArrayOutputStream outStream = new ByteArrayOutputStream();
@@ -924,12 +932,14 @@ public class MacroHelper {
 	
 	public static MenuElement duplicatePage(ContentContext ctx, MenuElement page, String newname) throws SecurityException, IllegalArgumentException, IllegalAccessException, InvocationTargetException {
 		MenuElement outPage = MenuElement.getInstance(ctx.getGlobalContext());
+		outPage.setId(StringHelper.getRandomId()) ;
 		outPage.setName(newname);
 		ComponentBean[] sourceData = page.getContent();
 		ComponentBean[] targetData = new ComponentBean[sourceData.length];
 		int i=0;
-		for (ComponentBean bean : sourceData) {
+		for (ComponentBean bean : sourceData) {			
 			targetData[i] = new ComponentBean(bean);
+			targetData[i].setId(StringHelper.getRandomId());
 			i++;
 		}
 		outPage.setContent(targetData);

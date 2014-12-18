@@ -42,13 +42,23 @@ public class TransactionFile {
 		return out;
 	}
 
-	public void commit() throws IOException {
+	public void commit() {
+		File tempTargetFile = new File(targetFile.getAbsolutePath()+".temp_"+StringHelper.getRandomId());
 		try {
-			out.close();
-			targetFile.delete();
-			//tempFile.renameTo(targetFile);
-			FileUtils.moveFile(tempFile, targetFile);
-			tempFile = null;
+			try {
+				out.close();
+				FileUtils.moveFile(targetFile, tempTargetFile);
+				FileUtils.moveFile(tempFile, targetFile);
+				tempFile = null;
+				tempTargetFile.delete();
+			} catch (IOException e) {
+				try {
+					FileUtils.moveFile(tempTargetFile, targetFile);
+				} catch (IOException e1) {				
+					e1.printStackTrace();
+				}
+				e.printStackTrace();
+			}
 		} finally {
 			if (tempFile != null) {
 				tempFile.delete();

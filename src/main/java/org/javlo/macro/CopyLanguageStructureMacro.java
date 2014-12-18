@@ -3,6 +3,7 @@ package org.javlo.macro;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
+import java.util.logging.Logger;
 
 import org.javlo.context.ContentContext;
 import org.javlo.context.GlobalContext;
@@ -12,6 +13,8 @@ import org.javlo.service.ContentService;
 import org.javlo.service.PersistenceService;
 
 public class CopyLanguageStructureMacro extends AbstractMacro {
+	
+	private static Logger logger = Logger.getLogger(CopyLanguageStructureMacro.class.getName());
 
 	@Override
 	public String getName() {
@@ -34,7 +37,12 @@ public class CopyLanguageStructureMacro extends AbstractMacro {
 			}
 		}
 
-		MacroHelper.copyLanguageStructure(rootPage, ctx, otherLanguageContexts, true);
+		String allLgStr = "";
+		for (ContentContext lgCtx : otherLanguageContexts) {
+			allLgStr = allLgStr + lgCtx.getLanguage() + ' ';
+		}
+		logger.info("copy language structure from "+ctx.getLanguage()+" to "+allLgStr.trim());		
+		MacroHelper.copyLanguageStructure(rootPage, ctx, otherLanguageContexts, true);		
 		for (MenuElement child : rootPage.getAllChildren()) {
 			MacroHelper.copyLanguageStructure(child, ctx, otherLanguageContexts, true);
 		}

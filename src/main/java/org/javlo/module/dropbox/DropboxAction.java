@@ -178,6 +178,8 @@ public class DropboxAction implements IModuleAction {
 		params.put("webaction", "dropbox.backToken");
 		params.put("module", "dropboxsynchro");
 		String redirectUri = URLHelper.createURL(ctx.getContextForAbsoluteURL(), "/", params);
+		System.out.println("***** DropboxAction.initWebAuth : protocol = "+ctx.getRequest().getProtocol()); //TODO: remove debug trace
+		System.out.println("***** DropboxAction.initWebAuth : redirectUri = "+redirectUri); //TODO: remove debug trace
 		DbxWebAuth auth = new DbxWebAuth(requestConfig, getAppInfo(ctx), redirectUri, csrfTokenStore);
 		setWebAuth(ctx.getRequest().getSession(), auth);
 

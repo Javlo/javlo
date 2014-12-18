@@ -870,14 +870,22 @@ public class ContentContext {
 		} else {
 			String requestProtocol = request.getProtocol().toLowerCase();
 			if (requestProtocol.startsWith("http")) {
-				protocol = "http";
+				if (request.isSecure()) {
+					protocol = "https"; // https dy default if secure
+				} else {
+					protocol = "http"; // http dy default
+				}
 			} else if (requestProtocol.startsWith("https")) {
 				protocol = "https";
 			} else if (requestProtocol.startsWith("ftp")) {
 				protocol = "ftp";
 			} else {
 				logger.warning("protocol not identified : " + requestProtocol);
-				protocol = "http"; // http dy default
+				if (request.isSecure()) {
+					protocol = "https"; // https dy default if secure
+				} else {
+					protocol = "http"; // http dy default
+				}
 			}
 			return protocol;
 		}
