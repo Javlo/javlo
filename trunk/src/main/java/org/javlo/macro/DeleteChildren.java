@@ -1,6 +1,7 @@
 package org.javlo.macro;
 
 import java.util.Collection;
+import java.util.LinkedList;
 import java.util.Map;
 
 import org.javlo.context.ContentContext;
@@ -20,11 +21,12 @@ public class DeleteChildren extends AbstractMacro {
 	public String perform(ContentContext ctx, Map<String, Object> params) throws Exception {
 		GlobalContext globalContext = GlobalContext.getInstance(ctx.getRequest());
 		NavigationService service = NavigationService.getInstance(globalContext);
-
-		Collection<MenuElement> pages = ctx.getCurrentPage().getChildMenuElements();
-		for (MenuElement menuElement : pages) {
+		
+		Collection<MenuElement> mustDelete = new LinkedList<MenuElement>(ctx.getCurrentPage().getChildMenuElements());
+		for (MenuElement menuElement : mustDelete) {
 			service.removeNavigationNoStore(ctx, menuElement);
 		}
+		mustDelete=null;
 
 		PersistenceService persistenceService = PersistenceService.getInstance(globalContext);
 		persistenceService.store(ctx);
