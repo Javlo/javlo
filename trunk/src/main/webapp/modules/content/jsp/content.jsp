@@ -128,7 +128,7 @@ for (IContentVisualComponent comp : components) {
 		authors = " <span class=\"authors\"> - "+comp.getAuthors()+"</span>";
 	}
 	%>
- <div id="comp-<%=comp.getId()%>" class="<%=readOnlyClass%><%=comp.getType()%><%if (components.size()==1) {%> new<%}%>">
+ <div id="comp-<%=comp.getId()%>" class="<%=readOnlyClass%><%=comp.getType()%><%if (components.size()==1) {%> new<%}%> component-wrapper">
  <input type="hidden" name="components" value="<%=comp.getId()%>" />
  <div class="component-title"><a style="color: #<%=comp.getHexColor()%>" href="#" onclick="scrollToFirstQuarter(jQuery('#content-edit'),this); return false;"><%=comp.getComponentLabel(ctx, globalContext.getEditLanguage(request.getSession()))+authors%></a></div>
  <div class="tabs component"> 	    	  
