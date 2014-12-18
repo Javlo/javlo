@@ -275,6 +275,24 @@ public class NetHelper {
 			ResourceHelper.closeResource(in);
 		}
 	}
+	
+	/**
+	 * read a page a put content in a Stream.
+	 * 
+	 * @param out
+	 *            the output stream, it receive the url inputstream
+	 * @return code returned by the http request on the URL.
+	 * @throws IOException
+	 */
+	public static String readPageWithGet(URL url) throws Exception {
+		InputStream in = null;
+		try {
+			in = url.openConnection().getInputStream();
+			return ResourceHelper.writeStreamToString(in, ContentContext.CHARACTER_ENCODING);
+		} finally {
+			ResourceHelper.closeResource(in);
+		}
+	}
 
 	/**
 	 * extract the title of a web page.
