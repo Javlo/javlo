@@ -2,6 +2,7 @@ package org.javlo.component.title;
 
 import org.javlo.component.core.AbstractVisualComponent;
 import org.javlo.component.core.ComponentLayout;
+import org.javlo.component.core.ISubTitle;
 import org.javlo.context.ContentContext;
 import org.javlo.context.GlobalContext;
 import org.javlo.exception.ResourceNotFoundException;
@@ -14,7 +15,7 @@ import org.javlo.template.Area;
 /**
  * @author pvandermaesen
  */
-public class SubTitle extends AbstractVisualComponent {
+public class SubTitle extends AbstractVisualComponent implements ISubTitle {
 
 	public static final String TYPE = "subtitle";
 
@@ -182,6 +183,16 @@ public class SubTitle extends AbstractVisualComponent {
 	@Override
 	public boolean isContentCachable(ContentContext ctx) {
 		return true;
+	}
+
+	@Override
+	public String getSubTitle(ContentContext ctx) {	
+		return getValue(ctx);
+	}
+
+	@Override
+	public int getSubTitleLevel(ContentContext ctx) {	
+		return getTitleLevel(ctx);
 	}
 	
 

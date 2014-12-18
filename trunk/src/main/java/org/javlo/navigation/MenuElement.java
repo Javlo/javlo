@@ -2939,11 +2939,10 @@ public class MenuElement implements Serializable, IPrintInfo {
 			return desc.subTitle;
 		}
 
-		newCtx.setDefaultArea();
-		desc.subTitle = getContent(newCtx).getSubTitle(newCtx);
-		if (desc.subTitle == null) {
-			newCtx.setArea(null); // warning : check if the method is needed.
-			desc.subTitle = getContent(newCtx).getSubTitle(ctx);
+		newCtx.setArea(null);
+		desc.subTitle = getLocalContent(newCtx).getSubTitle(newCtx);
+		if (desc.subTitle == null) {			
+			desc.subTitle = getContent(newCtx).getSubTitle(newCtx);
 		}
 
 		return desc.subTitle;

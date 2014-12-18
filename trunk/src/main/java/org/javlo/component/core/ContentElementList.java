@@ -302,19 +302,29 @@ public class ContentElementList implements IContentComponentsList {
 	
 	public String getSubTitle(ContentContext ctx) {
 		String res = "";
-		Iterator elems = contentElements.iterator();		
+		Iterator elems = contentElements.iterator();	
+		int bestLevel = Integer.MAX_VALUE;
+		String bestSubTitle = "";
 		while (elems.hasNext()) {
 			IContentVisualComponent comp = (IContentVisualComponent) elems.next();			
-			if (comp instanceof SubTitle) {
-				res = comp.getValue(ctx);
-				if (res == null) {
-					res = "";
-				} else {
-					return res;
+			if (comp instanceof ISubTitle) {				
+				res = ((ISubTitle)comp).getSubTitle(ctx);
+				int level = ((ISubTitle)comp).getSubTitleLevel(ctx);
+				
+				System.out.println("***** ContentElementList.getSubTitle : type = "+comp.getType()); //TODO: remove debug trace
+				System.out.println("***** ContentElementList.getSubTitle : level = "+level); //TODO: remove debug trace
+				
+				if (res != null) {
+					if (level == 2) {
+						return res;
+					} if (level < bestLevel && level > 1) {
+						bestLevel = level;
+						bestSubTitle = res;
+					}
 				}
 			}
 		}
-		return "";
+		return bestSubTitle;
 	}
 
 	@Override
