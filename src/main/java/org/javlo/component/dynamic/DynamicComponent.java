@@ -5,7 +5,6 @@ package org.javlo.component.dynamic;
 
 import java.io.ByteArrayOutputStream;
 import java.io.File;
-import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.io.StringWriter;
@@ -27,6 +26,7 @@ import org.javlo.component.core.ComponentBean;
 import org.javlo.component.core.IContentVisualComponent;
 import org.javlo.component.core.IDate;
 import org.javlo.component.core.ILink;
+import org.javlo.component.core.ISubTitle;
 import org.javlo.component.image.IImageTitle;
 import org.javlo.config.StaticConfig;
 import org.javlo.context.ContentContext;
@@ -47,7 +47,7 @@ import org.javlo.ztatic.IStaticContainer;
 /**
  * @author pvandermaesen
  */
-public class DynamicComponent extends AbstractVisualComponent implements IStaticContainer, IFieldContainer, IDate, ILink, IImageTitle {
+public class DynamicComponent extends AbstractVisualComponent implements IStaticContainer, IFieldContainer, IDate, ILink, IImageTitle, ISubTitle {
 
 	public static final String HIDDEN = "hidden";
 
@@ -136,9 +136,9 @@ public class DynamicComponent extends AbstractVisualComponent implements IStatic
 	}
 
 	public String getViewXHTMLCode(ContentContext ctx, boolean asList) throws Exception {
-		
+
 		ctx.getRequest().setAttribute("page", new PageBean(ctx, getPage()));
-		
+
 		if (getStyle().equals(HIDDEN)) {
 			String emptyCode = getEmptyCode(ctx);
 			if (emptyCode != null) {
@@ -164,7 +164,7 @@ public class DynamicComponent extends AbstractVisualComponent implements IStatic
 					if (field != null) {
 						field.fillRequest(ctx);
 					}
-				}				
+				}
 				if (ctx.getCurrentTemplate() != null) {
 					String linkToJSP = URLHelper.createStaticTemplateURLWithoutContext(ctx, ctx.getCurrentTemplate(), "" + getListRenderer());
 					return executeJSP(ctx, linkToJSP);
@@ -247,7 +247,7 @@ public class DynamicComponent extends AbstractVisualComponent implements IStatic
 		out.close();
 		return writer.toString();
 	}
-	
+
 	@Override
 	public java.util.List<String> getFieldsNames() {
 		java.util.List<String> outFields = new LinkedList<String>();
@@ -827,7 +827,7 @@ public class DynamicComponent extends AbstractVisualComponent implements IStatic
 	public String getTextTitle(ContentContext ctx) {
 		try {
 			for (Field field : getFields(ctx)) {
-				if (field.isTitle()) {					
+				if (field.isTitle()) {
 					return field.getValue();
 				}
 			}
@@ -836,9 +836,9 @@ public class DynamicComponent extends AbstractVisualComponent implements IStatic
 		}
 		return null;
 	}
-	
+
 	@Override
-	public String getSpecificClass(ContentContext ctx) {	
+	public String getSpecificClass(ContentContext ctx) {
 		return "dynamic-component";
 	}
 
@@ -854,6 +854,38 @@ public class DynamicComponent extends AbstractVisualComponent implements IStatic
 			e.printStackTrace();
 		}
 		return null;
+	}
+
+	@Override
+	public String getSubTitle(ContentContext ctx) {
+		try {
+			for (int i = 2; i < 6; i++) {
+				for (Field field : getFields(ctx)) {
+					if (field.getType().equals("h" + i)) {
+						return field.getValue();
+					}
+				}
+			}
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		return null;
+	}
+
+	@Override
+	public int getSubTitleLevel(ContentContext ctx) {
+		try {
+			for (int i = 2; i < 6; i++) {
+				for (Field field : getFields(ctx)) {
+					if (field.getType().equals("h" + i)) {
+						return i;
+					}
+				}
+			}
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		return 0;
 	}
 
 }
