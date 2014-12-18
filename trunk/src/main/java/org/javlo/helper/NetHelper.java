@@ -149,6 +149,10 @@ public class NetHelper {
 
 			connection.setAllowUserInteraction(true);
 			connection.setInstanceFollowRedirects(true);
+			
+			if (userAgent != null) {
+				connection.setRequestProperty("User-Agent", userAgent);
+			}
 
 			// Send request
 			DataOutputStream wr = new DataOutputStream(connection.getOutputStream());
@@ -159,10 +163,7 @@ public class NetHelper {
 			URLConnection conn = connection;
 
 			if (conn instanceof HttpURLConnection) {
-				HttpURLConnection httpConn = (HttpURLConnection) conn;
-				if (userAgent != null) {
-					httpConn.setRequestProperty("User-Agent", userAgent);
-				}
+				HttpURLConnection httpConn = (HttpURLConnection) conn;				
 				if (!noError) {
 					if (httpConn.getResponseCode() != HttpURLConnection.HTTP_OK && httpConn.getResponseCode() != HttpURLConnection.HTTP_MOVED_TEMP && httpConn.getResponseCode() != HttpURLConnection.HTTP_MOVED_PERM) {
 						logger.warning("error readpage :  '" + url + "' return error code : " + ((HttpURLConnection) conn).getResponseCode());
