@@ -487,4 +487,13 @@ public class Image extends AbstractFileComponent implements IImageTitle, IPrevie
 			return false;
 		}
 	}
+	
+	@Override
+	public int getPriority(ContentContext ctx) {
+		if (getConfig(ctx).getProperty("image.priority", null) == null) {
+			return 5;
+		} else {
+			return Integer.parseInt(getConfig(ctx).getProperty("image.priority", null));
+		}
+	}
 }

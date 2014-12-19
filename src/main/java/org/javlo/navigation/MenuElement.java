@@ -2260,28 +2260,34 @@ public class MenuElement implements Serializable, IPrintInfo {
 	}
 
 	public IImageTitle getImage(ContentContext ctx) throws Exception {
-		PageDescription desc = getPageDescriptionCached(ctx, ctx.getRequestContentLanguage());
-		IImageTitle res = null;
+		PageDescription desc = getPageDescriptionCached(ctx, ctx.getRequestContentLanguage());		
 		if (desc.imageLink != null) {
-			res = desc.imageLink;
+			return desc.imageLink;
 		}
-		if (res != null) {
-			return res;
-		}
-		IContentComponentsList contentList = getAllContent(ctx);
+		ContentContext noAreaCtx = ctx.getContextWithArea(null);
+		IContentComponentsList contentList = getAllContent(noAreaCtx);
+		IImageTitle bestImageTitle = null;
+		int bestPriority = Integer.MIN_VALUE;
 		while (contentList.hasNext(ctx)) {
-			IContentVisualComponent elem = contentList.next(ctx);
-			if ((elem instanceof IImageTitle) && (!elem.isEmpty(ctx)) && (!elem.isRepeat())) {
+			IContentVisualComponent elem = contentList.next(noAreaCtx);
+			if ((elem instanceof IImageTitle) && (!elem.isEmpty(noAreaCtx)) && (!elem.isRepeat())) {
 				IImageTitle imageComp = (IImageTitle) elem;
-				if (imageComp.isImageValid(ctx)) {
-					res = imageComp;
-					// desc.imageLink = new WeakReference<IImageTitle>(res);
-					desc.imageLink = new ImageTitleBean(res.getImageDescription(ctx), res.getResourceURL(ctx), res.getImageLinkURL(ctx));
-					return res;
+				if (imageComp.isImageValid(noAreaCtx)) {
+					int priority = imageComp.getPriority(noAreaCtx); 
+					if (priority == 9) {
+						desc.imageLink = new ImageTitleBean(noAreaCtx,imageComp);
+						return imageComp;
+					} else if (priority > bestPriority) {
+						bestPriority=priority;
+						bestImageTitle = imageComp;
+					}
 				}
 			}
 		}
-		return null;
+		if (bestImageTitle != null) {
+			desc.imageLink = new ImageTitleBean(noAreaCtx,bestImageTitle);
+		}
+		return desc.imageLink;
 	}
 
 	public Collection<IImageTitle> getImages(ContentContext ctx) throws Exception {

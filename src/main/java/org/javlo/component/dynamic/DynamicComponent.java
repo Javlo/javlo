@@ -887,5 +887,14 @@ public class DynamicComponent extends AbstractVisualComponent implements IStatic
 		}
 		return 0;
 	}
+	
+	@Override
+	public int getPriority(ContentContext ctx) {
+		if (getProperties().getProperty("image.priority", null) == null) {
+			return 5;
+		} else {
+			return Integer.parseInt(getProperties().getProperty("image.priority", null));
+		}
+	}
 
 }

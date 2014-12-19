@@ -873,5 +873,14 @@ public class SmartExternalLink extends ComplexPropertiesLink implements IReverse
 	public String getImageLinkURL(ContentContext ctx) {
 		return null;
 	}
+	
+	@Override
+	public int getPriority(ContentContext ctx) {
+		if (getConfig(ctx).getProperty("image.priority", null) == null) {
+			return 4;
+		} else {
+			return Integer.parseInt(getConfig(ctx).getProperty("image.priority", null));
+		}
+	}
 
 }

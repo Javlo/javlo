@@ -990,5 +990,14 @@ public class Multimedia extends TimeRangeComponent implements IImageTitle {
 	protected Object getLock(ContentContext ctx) {
 		return ctx.getGlobalContext().getLockLoadContent();
 	}
+	
+	@Override
+	public int getPriority(ContentContext ctx) {
+		if (getConfig(ctx).getProperty("image.priority", null) == null) {
+			return 4;
+		} else {
+			return Integer.parseInt(getConfig(ctx).getProperty("image.priority", null));
+		}
+	}
 
 }
