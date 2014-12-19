@@ -246,7 +246,7 @@ public class ReverseLinkService {
 						}
 						if (replace) {
 							url = StringHelper.toXMLAttribute(url);
-							if (componentPage.getComponent() != null && componentPage.getComponent().isOnlyPreviousComponent()) {
+							if (componentPage != null && componentPage.getComponent() != null && componentPage.getComponent().isOnlyPreviousComponent()) {
 								IContentVisualComponent prevComp = componentPage.getPrevious();
 								if (prevComp != null && comp != null && prevComp.getId().equals(comp.getId())) {
 									remplacement.addReplacement(textPos, textPos + text.length(), "<a href=\"" + url + "\"" + target + ">" + text + "</a>");

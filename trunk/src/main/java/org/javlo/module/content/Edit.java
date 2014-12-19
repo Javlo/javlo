@@ -842,6 +842,8 @@ public class Edit extends AbstractModuleAction {
 					ctx.setClosePopup(true);
 				}
 			}
+			
+			ReverseLinkService.getInstance(globalContext).clearCache();
 
 			modifPage(ctx, targetPage);
 			autoPublish(request, response);
@@ -1352,10 +1354,11 @@ public class Edit extends AbstractModuleAction {
 
 		NavigationService navigationService = NavigationService.getInstance(globalContext);
 		navigationService.clearPage(ctx);
+		ReverseLinkService.getInstance(globalContext).clearCache();
 
 		ctx.setPath(newPath);
 		String forwardURL = ctx.getResponse().encodeRedirectURL(URLHelper.createURL(ctx));
-		ctx.getResponse().sendRedirect(forwardURL);
+		ctx.getResponse().sendRedirect(forwardURL);		
 
 		return message;
 	}
