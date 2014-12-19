@@ -3061,6 +3061,24 @@ public class MenuElement implements Serializable, IPrintInfo {
 		}		
 		return desc.title;
 	}
+	
+	/**
+	 * create a title without space and special character with the title of the page in the default language.
+	 * @param ctx
+	 * @return
+	 */
+	public String getTechnicalTitle(ContentContext ctx) {
+		ContentContext defaultLangCtx = ctx.getContextForDefaultLanguage();
+		String title;
+		try {
+			title = getPageTitle(defaultLangCtx);
+		} catch (Exception e) {
+			title = getName();
+			e.printStackTrace();
+		}
+		return StringHelper.createFileName(title).toLowerCase();
+	}
+
 
 	/**
 	 * get title withtout repeat content
