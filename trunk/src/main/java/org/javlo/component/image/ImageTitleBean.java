@@ -9,12 +9,14 @@ public class ImageTitleBean implements IImageTitle, Serializable {
 	private final String imageDescription;
 	private final String imageURL;
 	private final String imageLink;
+	private final int priority;
 	
 	public ImageTitleBean(String imageDescription, String imageURL, String imageLink) {
 		super();
 		this.imageDescription = imageDescription;
 		this.imageURL = imageURL;
 		this.imageLink = imageLink;
+		this.priority = 5;
 	}
 	
 	public ImageTitleBean(ContentContext ctx, IImageTitle imageTitle) {
@@ -22,6 +24,7 @@ public class ImageTitleBean implements IImageTitle, Serializable {
 		this.imageDescription = imageTitle.getImageDescription(ctx);
 		this.imageURL = imageTitle.getResourceURL(ctx);
 		this.imageLink = imageTitle.getImageLinkURL(ctx);
+		this.priority = imageTitle.getPriority(ctx);
 	}
 	
 	@Override
@@ -42,6 +45,11 @@ public class ImageTitleBean implements IImageTitle, Serializable {
 	@Override
 	public String getImageLinkURL(ContentContext ctx) {
 		return imageLink;
+	}
+	
+	@Override
+	public int getPriority(ContentContext ctx) {
+		return priority;
 	}
 
 	

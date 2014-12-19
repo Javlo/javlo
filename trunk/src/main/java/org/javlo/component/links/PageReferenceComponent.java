@@ -148,6 +148,7 @@ public class PageReferenceComponent extends ComplexPropertiesLink implements IAc
 
 		private MenuElement rootOfChildrenAssociation;
 		private String humanName;
+		private Image image;
 
 		/**
 		 * 
@@ -267,7 +268,9 @@ public class PageReferenceComponent extends ComplexPropertiesLink implements IAc
 				bean.imagePath = image.getResourceURL(lgCtx);
 				bean.imageURL = URLHelper.createTransformURL(lgCtx, page, image.getResourceURL(lgCtx), filter);
 				bean.viewImageURL = URLHelper.createTransformURL(lgCtx, page, image.getResourceURL(lgCtx), "thumb-view");
-				bean.imageDescription = XHTMLHelper.stringToAttribute(image.getImageDescription(lgCtx));
+				bean.imageDescription = XHTMLHelper.stringToAttribute(image.getImageDescription(lgCtx));			
+				PageBean.Image imageBean = new PageBean.Image(bean.imageURL, bean.viewImageURL, "", "", bean.imageDescription, bean.imagePath);				
+				bean.setImage(imageBean);
 			}
 			Collection<IImageTitle> images = page.getImages(lgCtx);
 
@@ -397,18 +400,13 @@ public class PageReferenceComponent extends ComplexPropertiesLink implements IAc
 		}
 
 		/**
-		 * return the first image of image list, if list is'nt empty. Null if
+		 * return one image.
 		 * list is empty.
 		 * 
 		 * @return
 		 */
 		public Image getImage() {
-			Collection<Image> images = getImages();
-			if (images != null && images.size() > 0) {
-				return images.iterator().next();
-			} else {
-				return null;
-			}
+			return image;
 		}
 
 		public String getImageURL() {
@@ -692,6 +690,10 @@ public class PageReferenceComponent extends ComplexPropertiesLink implements IAc
 				e.printStackTrace();
 			}
 			return StringHelper.createFileName(title).toLowerCase();
+		}
+
+		public void setImage(Image image) {
+			this.image = image;
 		}
 
 	}

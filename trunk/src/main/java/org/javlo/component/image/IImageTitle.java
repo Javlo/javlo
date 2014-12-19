@@ -15,5 +15,11 @@ public interface IImageTitle extends Serializable {
 	public String getImageLinkURL(ContentContext ctx);
 
 	public boolean isImageValid(ContentContext ctx);
+	
+	/**
+	 * return the priority of the picture inside the page (9=max)
+	 * @return
+	 */
+	public int getPriority(ContentContext ctx);
 
 }
