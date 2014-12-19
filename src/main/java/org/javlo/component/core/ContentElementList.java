@@ -310,10 +310,6 @@ public class ContentElementList implements IContentComponentsList {
 			if (comp instanceof ISubTitle) {				
 				res = ((ISubTitle)comp).getSubTitle(ctx);
 				int level = ((ISubTitle)comp).getSubTitleLevel(ctx);
-				
-				System.out.println("***** ContentElementList.getSubTitle : type = "+comp.getType()); //TODO: remove debug trace
-				System.out.println("***** ContentElementList.getSubTitle : level = "+level); //TODO: remove debug trace
-				
 				if (res != null) {
 					if (level == 2) {
 						return res;
