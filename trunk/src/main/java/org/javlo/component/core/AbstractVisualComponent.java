@@ -40,6 +40,7 @@ import org.apache.commons.lang.StringEscapeUtils;
 import org.apache.commons.lang.StringUtils;
 import org.javlo.cache.ICache;
 import org.javlo.component.config.ComponentConfig;
+import org.javlo.component.title.Title;
 import org.javlo.context.ContentContext;
 import org.javlo.context.EditContext;
 import org.javlo.context.GlobalContext;
@@ -887,7 +888,7 @@ public abstract class AbstractVisualComponent implements IContentVisualComponent
 	}
 
 	@Override
-	public String getPrefixViewXHTMLCode(ContentContext ctx) {
+	public String getPrefixViewXHTMLCode(ContentContext ctx) {		
 		if (isWrapped(ctx)) {
 			if (getConfig(ctx).getProperty("prefix", null) != null) {
 				return getConfig(ctx).getProperty("prefix", null);
