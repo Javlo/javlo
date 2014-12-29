@@ -294,11 +294,11 @@ body.preview-only {
 	text-transform: none;
 }
 
-.add-page {
+#preview_command .add-page {
 	overflow: hidden;
 }
 
-.add-page input {
+#preview_command .add-page input {
 	float: left;
 }
 

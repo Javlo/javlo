@@ -91,9 +91,10 @@ public class LocalImageSharedContentProvider extends AbstractSharedContentProvid
 			for (String category : categories.keySet()) {
 				String catKey = category;
 				category = '/'+category;		
-				if (category.contains(cp.getName()) || category.contains(parentName) || !category.startsWith(template.getImportFolder()) && !category.startsWith(template.getImportImageFolder()) && !category.startsWith(template.getImportGalleryFolder()) && !category.startsWith(template.getImportResourceFolder())) {
+				//if (category.contains(cp.getName()) || category.contains(parentName) || !category.startsWith(template.getImportFolder()) && !category.startsWith(template.getImportImageFolder()) && !category.startsWith(template.getImportGalleryFolder()) && !category.startsWith(template.getImportResourceFolder())) {
+				//if (category.contains(cp.getName()) || category.contains(parentName)) {
 					outCategories.put(catKey, catKey);
-				}
+				//}
 			}
 		} catch (Exception e) {
 			e.printStackTrace();

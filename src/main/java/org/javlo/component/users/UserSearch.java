@@ -114,9 +114,16 @@ public class UserSearch extends AbstractVisualComponent implements IAction {
 			if (users.size() == 0) {
 				out.println("<span class=\"error\">Sorry, no result</span>");
 			} else {
+				StringBuffer emails = new StringBuffer();
+				String sep="";
+				for (UserInfo user : users) {
+					emails.append(sep);
+					emails.append(user.getEmail());					
+					sep=";";
+				}
 				out.println("<table>");
 				I18nAccess i18nAccess = I18nAccess.getInstance(ctx.getRequest());
-				out.println("<tr><th>Photo</th><th>Firstname</th><th>Lastname</th><th>email</th><th>"+i18nAccess.getAllText("field.organization", "organization")+"</th><th>country</th><th>"+i18nAccess.getAllText("field.domain", "domain")+"</th><th>phone</th></tr>");
+				out.println("<tr><th>Photo</th><th>Firstname</th><th>Lastname</th><th>email (<a href=\"mailto:"+emails+"\">all</a>)</th><th>"+i18nAccess.getAllText("field.organization", "organization")+"</th><th>country</th><th>"+i18nAccess.getAllText("field.domain", "domain")+"</th><th>phone</th></tr>");
 				int i = 0;
 				for (UserInfo user : users) {
 					i++;
@@ -137,7 +144,7 @@ public class UserSearch extends AbstractVisualComponent implements IAction {
 						organization = "<a href=\""+user.getUrl()+"\">"+organization+"</a>";
 					}
 
-					out.println("<tr class=\"" + oddEven + "\"><td>" + avatar + "</td><td>" + user.getFirstName() + "</td><td>" + user.getLastName() + "</td><td><a href=\"mailto:" + user.getEmail() + "\">contact</a></td><td>" + organization + "</td><td>" + country + "</td><td>" + function + "</td><td>" + user.getPhone() + "</td></tr>");
+					out.println("<tr class=\"" + oddEven + "\"><td>" + avatar + "</td><td>" + user.getFirstName() + "</td><td>" + user.getLastName() + "</td><td><a href=\"mailto:" + user.getEmail() + "\">"+ user.getEmail() +"</a></td><td>" + organization + "</td><td>" + country + "</td><td>" + function + "</td><td>" + user.getPhone() + "</td></tr>");
 				}
 				out.println("</table>");
 			}

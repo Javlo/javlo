@@ -15,8 +15,6 @@ import org.javlo.helper.StringHelper;
 import org.javlo.i18n.I18nAccess;
 import org.javlo.service.RequestService;
 
-import bsh.ParseException;
-
 public abstract class AbstractPropertiesComponent extends AbstractVisualComponent {
 
 	protected Properties properties = new Properties();
