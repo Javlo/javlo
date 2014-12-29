@@ -84,6 +84,8 @@ org.javlo.component.core.MessageContainer
 org.javlo.component.column.OpenCell
 org.javlo.component.column.OpenRow
 org.javlo.component.column.TableBreak
+org.javlo.component.column.OpenCol
+org.javlo.component.column.CloseCol
 
 --content.title.ecom
 
@@ -109,7 +111,6 @@ org.javlo.component.web2.ReactionComponent
 org.javlo.component.web2.PageRank
 org.javlo.component.web2.SimplePoll
 org.javlo.component.web2.Survey
-Map
 
 --content.title.special
 

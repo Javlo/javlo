@@ -316,7 +316,9 @@ public class GlobalImage extends Image implements IImageFilter {
 			finalCode.append(" : </label>");
 
 			List<String> filters = new ArrayList<String>();
-			filters.add(RAW_FILTER);
+			if (isAllowRAW(ctx)) {
+				filters.add(RAW_FILTER);
+			}
 			filters.addAll(currentTemplate.getImageFilters());
 
 			String[][] filtersArray = new String[filters.size()][2];

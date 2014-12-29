@@ -1,3 +1,5 @@
+<%@page import="org.javlo.component.column.OpenCol"%>
+<%@page import="org.javlo.component.column.ColContext"%>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c"
 %><%@ taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions"
 %><%@page contentType="text/html"
@@ -181,6 +183,13 @@ if (TableContext.isInstance(ctx)) {
 	TableContext tableContext = TableContext.getInstance(ctx, null);
 	if (tableContext.isTableOpen()) {	
 		%><%=TableBreak.closeTable(ctx, tableContext)%><%
+	}
+}
+
+if (ColContext.isInstance(ctx)) {
+	ColContext colContext = ColContext.getInstance(ctx, null);
+	if (colContext.isOpen()) {
+		%><%=OpenCol.closeRow(ctx, colContext)%><%
 	}
 }
 

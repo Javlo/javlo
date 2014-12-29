@@ -16,6 +16,7 @@ import org.javlo.component.files.AbstractFileComponent;
 import org.javlo.config.StaticConfig;
 import org.javlo.context.ContentContext;
 import org.javlo.context.GlobalContext;
+import org.javlo.helper.StringHelper;
 import org.javlo.helper.URLHelper;
 import org.javlo.i18n.I18nAccess;
 import org.javlo.image.ImageConfig;
@@ -495,5 +496,9 @@ public class Image extends AbstractFileComponent implements IImageTitle, IPrevie
 		} else {
 			return Integer.parseInt(getConfig(ctx).getProperty("image.priority", null));
 		}
+	}
+	
+	protected boolean isAllowRAW(ContentContext ctx) {
+		return StringHelper.isTrue(getConfig(ctx).getProperty("filter.allow-raw", null), true);
 	}
 }
