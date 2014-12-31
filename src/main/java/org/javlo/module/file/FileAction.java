@@ -72,7 +72,7 @@ public class FileAction extends AbstractModuleAction {
 
 	@Override
 	public String prepare(ContentContext ctx, ModulesContext modulesContext) throws Exception {
-
+		
 		String msg = super.prepare(ctx, modulesContext);
 		FileModuleContext fileModuleContext = (FileModuleContext) LangHelper.smartInstance(ctx.getRequest(), ctx.getResponse(), FileModuleContext.class);
 
@@ -126,6 +126,7 @@ public class FileAction extends AbstractModuleAction {
 					fileList.add(new FileBean(ctx, StaticInfo.getInstance(ctx, file)));
 				}
 				Collections.sort(fileList, new FileBean.FileBeanComparator(ctx, fileModuleContext.getSort()));
+				Collections.sort(allFileInfo, new FileBean.FileBeanComparator(ctx, fileModuleContext.getSort()));
 				allFileInfo.addAll(fileList);
 				ctx.getRequest().setAttribute("files", allFileInfo);
 			} else {
@@ -392,7 +393,7 @@ public class FileAction extends AbstractModuleAction {
 		if (folderName.length() > 0) {
 			folder = new File(sourceFolder, URLHelper.mergePath(fileModuleContext.getPath(), folderName));
 			if (!folder.exists()) {
-				folder.mkdir();
+				folder.mkdir();				
 			}
 		}
 

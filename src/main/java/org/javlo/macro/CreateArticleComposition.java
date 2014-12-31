@@ -213,7 +213,9 @@ public class CreateArticleComposition extends AbstractInteractiveMacro implement
 							}
 						} else {
 							newPage.setTemplateName(config.getProperty("template.article", "mailing_one_area"));
-							layoutPage.setTemplateName(config.getProperty("template.composition", "mailing"));
+							if (config.getProperty("template.composition", null) != null) {
+								layoutPage.setTemplateName(config.getProperty("template.composition", null));
+							}
 							layoutPage.setChildrenAssociation(true);
 							MacroHelper.addPageIfNotExist(ctx, layoutPage.getName(), layoutPage.getName() + "-1", false);		
 							

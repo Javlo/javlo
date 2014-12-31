@@ -390,12 +390,12 @@ public class Multimedia extends TimeRangeComponent implements IImageTitle {
 			}
 		}
 
-		out.println("<div class=\"line\">");
-		out.println("<label for=\"" + getInputTitle() + "\">" + i18nAccess.getText("global.title") + "</label>");
-		out.println(" : <input style=\"width: 120px;\" type=\"text\" id=\"" + getInputTitle() + "\" name=\"" + getInputTitle() + "\" value=\"" + getTitle() + "\"/>");
+		out.println("<div class=\"form-group form-inline\">");
+		out.println("<label>" + i18nAccess.getText("global.title"));
+		out.println(" : <input class=\"form-control\" type=\"text\" id=\"" + getInputTitle() + "\" name=\"" + getInputTitle() + "\" value=\"" + getTitle() + "\"/></label>");
 		out.println("</div>");
 
-		out.println("<div class=\"line\">");
+		out.println("<div class=\"form-group form-inline\">");
 		if (isFolder()) {
 			RequestService requestService = RequestService.getInstance(ctx.getRequest());
 			String folder = getCurrentRootFolder();
@@ -403,7 +403,7 @@ public class Multimedia extends TimeRangeComponent implements IImageTitle {
 			if (newFolder.trim().length() > 1) {
 				folder = newFolder;
 			}
-			out.println(XHTMLHelper.getInputOneSelect(getInputBaseFolderName(), folderSelection, folder));
+			out.println(XHTMLHelper.getInputOneSelect(getInputBaseFolderName(), folderSelection, folder, "form-control"));
 		}
 
 		String backURL = URLHelper.createModuleURL(ctx, ctx.getPath(), "content");
@@ -417,54 +417,57 @@ public class Multimedia extends TimeRangeComponent implements IImageTitle {
 		filesParams.put(ElementaryURLHelper.BACK_PARAM_NAME, backURL);
 		
 		String staticURL = URLHelper.createModuleURL(ctx, ctx.getPath(), "file", filesParams);
-		out.println("&nbsp;<a class=\"" + EDIT_ACTION_CSS_CLASS + "\" href=\"" + staticURL + "\">");
+		out.println("<a class=\"" + EDIT_ACTION_CSS_CLASS + " btn btn-default btn-xs\" href=\"" + staticURL + "\">");
 		out.println(i18nAccess.getText("content.goto-static"));
 		out.println("</a>");
 		out.println("</div>");
 
-		out.println("<div class=\"line\">");
+		out.println("<div class=\"row\"><div class=\"col-xs-3 form-inline\"><div class=\"form-group\">");
 		out.println("<label for=\"" + getInputStartDateName() + "\">" + i18nAccess.getText("content.multimedia-gallery.date-range") + "</label>");
-		out.println(" : <input id=\"contentdate\" style=\"width: 120px;\" type=\"text\" id=\"" + getInputStartDateName() + "\" name=\"" + getInputStartDateName() + "\" value=\"" + StringHelper.renderDateWithDefaultValue(getStartDate(), "") + "\"/> - ");
-		out.println("<input style=\"width: 120px;\" type=\"text\" id=\"" + getInputEndDateName() + "\" name=\"" + getInputEndDateName() + "\" value=\"" + StringHelper.renderDateWithDefaultValue(getEndDate(), "") + "\"/>");
-		out.println("</div>");
+		out.println(" : <input class=\"form-control\" id=\"contentdate\" type=\"text\" id=\"" + getInputStartDateName() + "\" name=\"" + getInputStartDateName() + "\" value=\"" + StringHelper.renderDateWithDefaultValue(getStartDate(), "") + "\"/> - ");
+		out.println("<input class=\"form-control\" type=\"text\" id=\"" + getInputEndDateName() + "\" name=\"" + getInputEndDateName() + "\" value=\"" + StringHelper.renderDateWithDefaultValue(getEndDate(), "") + "\"/>");
+		out.println("</div></div><div class=\"col-xs-2 form-inline\">");
 
-		out.println("<div class=\"line\">");
-		out.println("<label for=\"" + getInputMaxListSizeName() + "\">" + i18nAccess.getText("content.multimedia-gallery.list-size") + "</label>");
-		out.println(" : <input style=\"width: 120px;\" type=\"text\" id=\"" + getInputMaxListSizeName() + "\" name=\"" + getInputMaxListSizeName() + "\" value=\"" + getMaxListSize() + "\"/>");
-		out.println("</div>");
+		out.println("<div class=\"form-group\">");
+		out.println("<label>" + i18nAccess.getText("content.multimedia-gallery.list-size"));
+		out.println(" : <input class=\"form-control\" type=\"text\" id=\"" + getInputMaxListSizeName() + "\" name=\"" + getInputMaxListSizeName() + "\" value=\"" + getMaxListSize() + "\"/></label>");
+		out.println("</div></div><div class=\"col-xs-2 form-inline\">");
 
-		out.println("<div class=\"line\">");
-		out.println("<label for=\"" + getInputPageSizeName() + "\">" + i18nAccess.getText("content.multimedia-gallery.page-size") + "</label>");
-		out.println(" : <input style=\"width: 120px;\" type=\"text\" id=\"" + getInputPageSizeName() + "\" name=\"" + getInputPageSizeName() + "\" value=\"" + getPageSize() + "\"/>");
-		out.println("</div>");
+		out.println("<div class=\"form-group\">");
+		out.println("<label>" + i18nAccess.getText("content.multimedia-gallery.page-size"));
+		out.println(" : <input class=\"form-control\" type=\"text\" id=\"" + getInputPageSizeName() + "\" name=\"" + getInputPageSizeName() + "\" value=\"" + getPageSize() + "\"/></label>");
+		out.println("</div></div></div>");
+		
+		out.println("<fieldset class=\"order\">");
+		out.println("<legend>" + i18nAccess.getText("global.order") + "</legend>");
 				
-		out.println("<div class=\"line\">");
-		out.print("<input type=\"checkbox\" name=\"" + getInputNameReverseOrder() + "\" id=\"" + getInputNameReverseOrder() + "\" ");
+		out.println("<div class=\"checkbox-inline\">");
+		out.print("<label><input type=\"checkbox\" name=\"" + getInputNameReverseOrder() + "\" id=\"" + getInputNameReverseOrder() + "\" ");
 		if (isReverseOrder(ctx)) {
 			out.print("checked=\"checked\" ");
 		}
 		out.print("/>");
-		out.println("<label for=\"" + getInputNameReverseOrder() + "\"> reverse order.</label>");
+		out.println("reverse order.</label>");
 		out.println("</div>");
 		
-		out.println("<div class=\"line\">");
-		out.print("<input type=\"checkbox\" name=\"" + getInputNameNameOrder() + "\" id=\"" + getInputNameNameOrder() + "\" ");
+		out.println("<div class=\"checkbox-inline\">");
+		out.print("<label><input type=\"checkbox\" name=\"" + getInputNameNameOrder() + "\" id=\"" + getInputNameNameOrder() + "\" ");
 		if (isNameOrder(ctx)) {
 			out.print("checked=\"checked\" ");
 		}
 		out.print("/>");
-		out.println("<label for=\"" + getInputNameNameOrder() + "\"> order by name.</label>");
+		out.println(" order by name.</label>");
 		out.println("</div>");
 		
 		
-		out.println("<div class=\"line\">");
-		out.print("<input type=\"checkbox\" name=\"" + getInputNameOrderByAccess() + "\" id=\"" + getInputNameOrderByAccess() + "\" ");
+		out.println("<div class=\"checkbox-inline\">");
+		out.print("<label><input type=\"checkbox\" name=\"" + getInputNameOrderByAccess() + "\" id=\"" + getInputNameOrderByAccess() + "\" ");
 		if (isOrderByAccess(ctx)) {
 			out.print("checked=\"checked\" ");
 		}
 		out.print("/>");
-		out.println("<label for=\"" + getInputNameOrderByAccess() + "\"> order by access.</label>");
-		out.println("</div>");
+		out.println(" order by access.</label>");
+		out.println("</div></fieldset>");
 
 		/* tags */
 		Collection<String> tags = globalContext.getTags();
@@ -477,11 +480,10 @@ public class Multimedia extends TimeRangeComponent implements IImageTitle {
 				if (selectedTags.contains(tag)) {
 					checked = " checked=\"checked\"";
 				}
-				out.println("<span class=\"line-inline\"><input type=\"checkbox\" id=\"" + getInputTag(tag) + "\" name=\"" + getInputTag(tag) + "\"" + checked + " /><label for=\"" + getInputTag(tag) + "\">" + tag + "</label></span>");
+				out.println("<span class=\"checkbox-inline\"><label class=\"checkbox-inline\"><input type=\"checkbox\" id=\"" + getInputTag(tag) + "\" name=\"" + getInputTag(tag) + "\"" + checked + " /> " + tag + "</label></span>");
 			}
 			out.println("</fieldset>");
 		}
-
 		out.close();
 		return writer.toString();
 	}
@@ -699,7 +701,7 @@ public class Multimedia extends TimeRangeComponent implements IImageTitle {
 	public void prepareView(ContentContext ctx) throws Exception {
 		super.prepareView(ctx);
 		GlobalContext globalContext = GlobalContext.getInstance(ctx.getRequest());
-
+		
 		Collection<File> mulFiles = getAllMultimediaFiles(ctx);
 
 		List<MultimediaResource> allResource = new LinkedList<MultimediaResource>();

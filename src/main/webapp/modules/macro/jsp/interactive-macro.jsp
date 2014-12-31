@@ -28,7 +28,7 @@
 			<c:if test="${not empty param.previewEdit}">
 			<input type="hidden" name="previewEdit" value="true" />
 			</c:if>
-			<input class="action-button" type="submit" value="${i18n.edit['global.cancel']}" />			 
+			<input class="btn btn-default" type="submit" value="${i18n.edit['global.cancel']}" />			 
 		</div>
 	</form>
 </div>

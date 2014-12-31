@@ -463,11 +463,11 @@ public class Edit extends AbstractModuleAction {
 			if (StringHelper.isImage(resourceStatus.getSource().getFile().getName())) {
 				previewSourceCode = "<a href=\"" + URLHelper.createResourceURL(ctx, resourceStatus.getSource().getUri()) + "\">";
 				String url = URLHelper.createTransformURL(ctx, resourceStatus.getSource().getUri(), "preview");
-				url = URLHelper.addParam(url, "hash", ""+resourceStatus.getSource().getFile().length());
+				url = URLHelper.addParam(url, "hash", "" + resourceStatus.getSource().getFile().length());
 				previewSourceCode = previewSourceCode + "<figure><img src=\"" + url + "\" alt=\"source\" /><figcaption>" + StringHelper.renderSize(resourceStatus.getSource().getFile().length()) + "</figcaption></figure></a>";
 				previewTargetCode = "<a href=\"" + URLHelper.createResourceURL(ctx, resourceStatus.getTarget().getUri()) + "\">";
 				url = URLHelper.createTransformURL(ctx, resourceStatus.getTarget().getUri(), "preview");
-				url = URLHelper.addParam(url, "hash", ""+resourceStatus.getTarget().getFile().length());
+				url = URLHelper.addParam(url, "hash", "" + resourceStatus.getTarget().getFile().length());
 				previewTargetCode = previewTargetCode + "<figure><img src=\"" + url + "\"  alt=\"source\" /><figcaption>" + StringHelper.renderSize(resourceStatus.getTarget().getFile().length()) + "</figcaption></figure></a>";
 			}
 			ctx.getRequest().setAttribute("previewSourceCode", previewSourceCode);
@@ -736,17 +736,16 @@ public class Edit extends AbstractModuleAction {
 				return "error no item in clipBoard";
 			} else {
 				ComponentBean bean = (ComponentBean) copied;
-				newId = content.createContent(ctx, previousId, bean.getType(), bean.getValue(), false, bean.getRenderer());
+				newId = content.createContent(ctx, targetPage, areaKey, previousId, bean, true);
 			}
 		} else {
 			newId = content.createContent(ctx, targetPage, areaKey, previousId, type, "", true);
 		}
 
-				
 		IContentVisualComponent comp = content.getComponent(ctx, newId);
 		comp.setPreviousComponent(ComponentHelper.getPreviousComponent(comp, ctx));
 		comp.setNextComponent(ComponentHelper.getNextComponent(comp, ctx));
-		if (StringHelper.isTrue(rs.getParameter("init", null))) {			
+		if (!type.equals("clipboard") && StringHelper.isTrue(rs.getParameter("init", null))) {
 			comp.initContent(ctx);
 		}
 
@@ -832,9 +831,7 @@ public class Edit extends AbstractModuleAction {
 					if (rs.getParameter("pageCompID", null) != null) {
 						selecterPrefix = "#page_" + rs.getParameter("pageCompID", "#ID_NOT_DEFINED") + " #";
 					}
-					if (targetPage != null) {
-						ctx.setCurrentPageCached(targetPage);
-					}
+					ctx.setCurrentPageCached(targetPage);
 				}
 
 				ctx.getAjaxInsideZone().put(selecterPrefix + comp.getArea(), ServletHelper.executeJSP(ctx, "/jsp/view/content_view.jsp?area=" + comp.getArea()));
@@ -842,7 +839,7 @@ public class Edit extends AbstractModuleAction {
 					ctx.setClosePopup(true);
 				}
 			}
-			
+
 			ReverseLinkService.getInstance(globalContext).clearCache();
 
 			modifPage(ctx, targetPage);
@@ -1336,20 +1333,22 @@ public class Edit extends AbstractModuleAction {
 		}
 
 		String newPath = menuElement.getParent().getPath();
+		if (menuElement.isChildrenAssociation()) {			
+			newPath = "/";
+			menuElement = menuElement.getParent();
+		}
 
-		if (message == null) {
-			if (menuElement == null) {
-				message = i18nAccess.getText("action.remove.can-not-delete");
-			} else {
-				synchronized (menuElement) {
-					menuElement.clearVirtualParent();
-				}
-				NavigationService service = NavigationService.getInstance(globalContext);
-				service.removeNavigation(ctx, menuElement);
-				String msg = i18nAccess.getText("action.remove.deleted", new String[][] { { "path", path } });
-				MessageRepository.getInstance(ctx).setGlobalMessage(new GenericMessage(msg, GenericMessage.INFO));
-				autoPublish(ctx.getRequest(), ctx.getResponse());
+		if (menuElement == null) {
+			message = i18nAccess.getText("action.remove.can-not-delete");
+		} else {
+			synchronized (menuElement) {
+				menuElement.clearVirtualParent();
 			}
+			NavigationService service = NavigationService.getInstance(globalContext);
+			service.removeNavigation(ctx, menuElement);
+			String msg = i18nAccess.getText("action.remove.deleted", new String[][] { { "path", path } });
+			MessageRepository.getInstance(ctx).setGlobalMessage(new GenericMessage(msg, GenericMessage.INFO));
+			autoPublish(ctx.getRequest(), ctx.getResponse());
 		}
 
 		NavigationService navigationService = NavigationService.getInstance(globalContext);
@@ -1358,7 +1357,7 @@ public class Edit extends AbstractModuleAction {
 
 		ctx.setPath(newPath);
 		String forwardURL = ctx.getResponse().encodeRedirectURL(URLHelper.createURL(ctx));
-		ctx.getResponse().sendRedirect(forwardURL);		
+		ctx.getResponse().sendRedirect(forwardURL);
 
 		return message;
 	}
@@ -1579,7 +1578,7 @@ public class Edit extends AbstractModuleAction {
 		}
 		if (!ctx.isEditPreview()) {
 			ctx.setArea(editContext.getCurrentArea());
-			comp.setArea(null); // paste in current area			
+			comp.setArea(null); // paste in current area
 		}
 		String newId = content.createContent(ctx, targetPage, comp, previous, true);
 		if (ctx.isAjax()) {

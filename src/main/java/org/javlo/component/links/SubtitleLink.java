@@ -55,10 +55,19 @@ public class SubtitleLink extends AbstractVisualComponent {
 	public String getEditText(ContentContext ctx, String key) {
 		return "";
 	}
+	
+	protected String getMainArea(ContentContext ctx) {
+		String mainArea = getConfig(ctx).getProperty("area.main", null);
+		if (mainArea == null) {
+			mainArea = ctx.getArea();
+		}
+		return mainArea;
+	}
 
 	@Override
 	public void prepareView(ContentContext ctx) throws Exception {
 		super.prepareView(ctx);
+		ctx = ctx.getContextWithArea(getMainArea(ctx));
 		MenuElement myPage = getPage();
 		ContentElementList content = myPage.getContent(ctx);
 		ByteArrayOutputStream outStream = new ByteArrayOutputStream();

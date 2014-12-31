@@ -19,7 +19,12 @@
 
 <c:if test="${not empty param[BACK_PARAM_NAME]}"><a class="action-button back" href="${param[BACK_PARAM_NAME]}&path=${param.path}"><span>${i18n.edit['action.back']}</span></a></c:if>
 <c:if test="${empty param.templateid && empty param.select}"><a class="action-button save" href="#save" onclick="jQuery('#form-meta').submit(); return false;"><span>${i18n.edit['action.update']}</span></a></c:if>
-<a href="${info.absoluteLocalURLPrefix}${currentModule.path}/jsp/upload.jsp" class="popup cboxElement action-button"><span>${i18n.edit['action.add-files']}</span></a>
+<c:url var="uploadCurrentURL" value="${info.currentURL}" context="/" />
+<c:url var="uploadJSPURL" value="${info.absoluteLocalURLPrefix}${currentModule.path}/jsp/upload.jsp" >
+	<c:param name="currentURL" value="${uploadCurrentURL}" />
+	<c:if test="${not empty param[BACK_PARAM_NAME]}"><c:param name="${BACK_PARAM_NAME}" value="${param[BACK_PARAM_NAME]}" /></c:if>
+</c:url>
+<a href="${uploadJSPURL}" class="popup cboxElement action-button"><span>${i18n.edit['action.add-files']}</span></a>
 <c:if test="${not empty param.templateid}">
 <a class="action-button ajax" href="${info.currentURL}?webaction=template.commit&webaction=browse&templateid=${param.templateid}&from-module=template"><span>${i18n.edit['template.action.commit']}</span></a>
 <a class="action-button ajax" href="${info.currentURL}?webaction=template.commitChildren&webaction=browse&templateid=${param.templateid}&from-module=template"><span>${i18n.edit['template.action.commit-children']}</span></a>
@@ -27,6 +32,7 @@
 
 <form id="form-sorted" action="${info.currentURL}" method="get" class="js-submit">
 <input type="hidden" name="webaction" value="file.order" />
+<c:if test="${not empty param[BACK_PARAM_NAME]}"><input type="hidden" name="${BACK_PARAM_NAME}" value="${param[BACK_PARAM_NAME]}" /></c:if>
 <select class="action-field" name="order">
 	<option value="1"${sort == '1'?' selected="selected"':''}>${i18n.edit['action.sort.date']}</option>
 	<option value="2"${sort == '2'?' selected="selected"':''}>${i18n.edit['action.sort.name']}</option>	
