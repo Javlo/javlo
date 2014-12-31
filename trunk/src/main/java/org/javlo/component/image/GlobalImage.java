@@ -235,7 +235,7 @@ public class GlobalImage extends Image implements IImageFilter {
 		if (!isMeta() && !ctx.getGlobalContext().isMailingPlatform()) {
 			finalCode.append("<div class=\"line\">");
 			finalCode.append("<label for=\"" + getLabelXHTMLInputName() + "\">" + getImageLabelTitle(ctx) + " : </label>");
-			final String[][] params = { { "rows", "3" }, { "cols", "40" }, {"class", "form-control" } };
+			final String[][] params = { { "rows", "3" }, { "cols", "40" }, { "class", "form-control" } };
 			finalCode.append(XHTMLHelper.getTextArea(getLabelXHTMLInputName(), getLabel(), params));
 			finalCode.append("</div>");
 		}
@@ -277,6 +277,7 @@ public class GlobalImage extends Image implements IImageFilter {
 		finalCode.append("<div class=\"line\"><label for=\"" + getDirInputName() + "\">");
 		finalCode.append(getDirLabelTitle(ctx));
 		finalCode.append(" : </label>");
+		String folder = getDirSelected();
 		if ((getDirList(getFileDirectory(ctx)) != null) && (getDirList(getFileDirectory(ctx)).length > 0)) {
 			List<String> dirsCol = new LinkedList<String>();
 			dirsCol.add("");
@@ -286,23 +287,29 @@ public class GlobalImage extends Image implements IImageFilter {
 					dir = dir.substring(1);
 				}
 				dirsCol.add(dir);
-			}
-			finalCode.append(XHTMLHelper.getInputOneSelect(getDirInputName(), dirsCol, getDirSelected(), "form-control", getJSOnChange(ctx), true));
+			}						
+			if (ctx.getRequest().getParameter("path") != null) {
+				String newFolder = URLHelper.removeStaticFolderPrefix(ctx, ctx.getRequest().getParameter("path"));
+				newFolder = newFolder.replaceFirst("/"+ctx.getGlobalContext().getStaticConfig().getImageFolderName()+'/', "");
+				if (newFolder.trim().length() > 1) {
+					folder = newFolder;
+				}
+			}			
+			finalCode.append(XHTMLHelper.getInputOneSelect(getDirInputName(), dirsCol, folder, "form-control", getJSOnChange(ctx), true));
 		}
 
 		Map<String, String> filesParams = new HashMap<String, String>();
-		String path = URLHelper.mergePath(FileAction.getPathPrefix(ctx), StaticConfig.getInstance(ctx.getRequest().getSession()).getImageFolderName(), getDirSelected());
+		String path = URLHelper.mergePath(FileAction.getPathPrefix(ctx), StaticConfig.getInstance(ctx.getRequest().getSession()).getImageFolderName(), folder);
 		filesParams.put("path", path);
 		filesParams.put("webaction", "changeRenderer");
 		filesParams.put("page", "meta");
-
 		String backURL = URLHelper.createModuleURL(ctx, ctx.getPath(), "content");
 		backURL = URLHelper.addParam(backURL, "comp_id", "cp_" + getId());
 		backURL = URLHelper.addParam(backURL, "webaction", "editPreview");
 		filesParams.put(ElementaryURLHelper.BACK_PARAM_NAME, backURL);
 
 		String staticURL = URLHelper.createModuleURL(ctx, ctx.getPath(), "file", filesParams);
-		finalCode.append("<a class=\"" + EDIT_ACTION_CSS_CLASS + "\" href=\"" + staticURL + "\">");
+		finalCode.append("<a class=\"" + EDIT_ACTION_CSS_CLASS + " btn btn-default btn-xs\" href=\"" + staticURL + "\">");
 		finalCode.append(i18nAccess.getText("content.goto-static"));
 		finalCode.append("</a>");
 		finalCode.append("</div>");
@@ -328,7 +335,7 @@ public class GlobalImage extends Image implements IImageFilter {
 				filtersArray[i][1] = i18nAccess.getText("template.image.type." + filter, filter);
 				i++;
 			}
-			finalCode.append(XHTMLHelper.getInputOneSelect(getImageFilterInputName(), filtersArray, getFilter(ctx)));			
+			finalCode.append(XHTMLHelper.getInputOneSelect(getImageFilterInputName(), filtersArray, getFilter(ctx)));
 			finalCode.append("</div>");
 
 		} else {
@@ -351,7 +358,7 @@ public class GlobalImage extends Image implements IImageFilter {
 		if (canUpload(ctx)) {
 			finalCode.append("<div class=\"line\"><label for=\"" + getFileXHTMLInputName() + "\">" + getImageUploadTitle(ctx) + " : </label>");
 			finalCode.append("<input name=\"" + getFileXHTMLInputName() + "\" type=\"file\"/>");
-			finalCode.append(" <button name=\"upload\" type=\"submit\" clas=\"action-button\" onclick=\"jQuery(this).parent().find('.ajax-loader').addClass('active');\">" + getFileUploadActionTitle(ctx) + "</button>");
+			finalCode.append(" <button name=\"upload\" type=\"submit\" class=\"btn btn-default btn-xs\" onclick=\"jQuery(this).parent().find('.ajax-loader').addClass('active');\">" + getFileUploadActionTitle(ctx) + "</button>");
 			finalCode.append("<span class=\"ajax-loader\"></span>");
 			finalCode.append("</div>");
 

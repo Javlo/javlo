@@ -1,4 +1,54 @@
+/** javlo integration **/
+.form-control label, .form-control input {
+	width: auto;
+}
 
+.btn {
+	display: inline-block;
+	padding: 6px 12px;
+	margin-bottom: 0;
+	font-size: 14px;
+	font-weight: 400;
+	line-height: 1.42857143;
+	text-align: center;
+	white-space: nowrap;
+	vertical-align: middle;
+	-ms-touch-action: manipulation;
+	touch-action: manipulation;
+	cursor: pointer;
+	-webkit-user-select: none;
+	-moz-user-select: none;
+	-ms-user-select: none;
+	user-select: none;
+	background-image: none;
+	border: 1px solid transparent;
+	border-radius: 4px;
+}
+
+.btn-default {
+	color: #333;
+	background-color: #fff;
+	border-color: #ccc;
+}
+
+.btn-xs, .btn-group-xs>.btn {
+	padding: 1px 5px;
+	font-size: 12px;
+	line-height: 1.5;
+	border-radius: 3px;
+}
+
+.btn-default:hover, .btn-default:focus, .btn-default.focus, .btn-default:active, .btn-default.active, .open>.dropdown-toggle.btn-default {
+	color: #333;
+	background-color: #e6e6e6;
+	border-color: #adadad;
+}
+.btn:hover, .btn:focus, .btn.focus {
+	color: #333;
+	text-decoration: none;
+}
+
+/** bootstrap code **/
 button, input, optgroup, select, textarea {
 	color: inherit;
 	font: inherit;
@@ -606,11 +656,10 @@ textarea.input-lg, select[multiple].input-lg {
 }
 
 /* correction */
-
 legend {
 	display: inline-block;
 	font-size: 13px;
-	width: auto;	
+	width: auto;
 }
 
 label {
@@ -622,25 +671,28 @@ label {
 	width: auto;
 }
 
-.checkbox input[type="radio"], .checkbox input[type="checkbox"], .checkbox-inline input[type="radio"], .checkbox-inline input[type="checkbox"] {	
-    line-height: normal;
-    margin: 4px 0 0 -20px;       
+.checkbox input[type="radio"], .checkbox input[type="checkbox"],
+	.checkbox-inline input[type="radio"], .checkbox-inline input[type="checkbox"]
+	{
+	line-height: normal;
+	margin: 4px 0 0 -20px;
 }
 
 .form-control {
-    background-color: #ffffff;
-    background-image: none;
-    border: 1px solid #cccccc;
-    border-radius: 4px;
-    box-shadow: 0 1px 1px rgba(0, 0, 0, 0.075) inset;
-    color: #555555;
-    display: block;
-    font-size: 11px;
-    height: 20px;
-    line-height: 1.42857;
-    padding: 1px 3px;
-    transition: border-color 0.15s ease-in-out 0s, box-shadow 0.15s ease-in-out 0s;
-    width: 100%;
+	background-color: #ffffff;
+	background-image: none;
+	border: 1px solid #cccccc;
+	border-radius: 4px;
+	box-shadow: 0 1px 1px rgba(0, 0, 0, 0.075) inset;
+	color: #555555;
+	display: block;
+	font-size: 11px;
+	height: 20px;
+	line-height: 1.42857;
+	padding: 1px 3px;
+	transition: border-color 0.15s ease-in-out 0s, box-shadow 0.15s
+		ease-in-out 0s;
+	width: 100%;
 }
 
 .suffix .form-control {

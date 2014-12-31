@@ -104,6 +104,14 @@ public class FileBean {
 	public boolean isImage() {
 		return StringHelper.isImage(getName());
 	}
+	
+	public boolean isVideo() {
+		return StringHelper.isVideo(getName());
+	}
+	
+	public String getFileExtension() {
+		return StringHelper.getFileExtension(getName()).toLowerCase();
+	}
 
 	public String getType() {
 		if (isDirectory()) {

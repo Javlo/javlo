@@ -464,8 +464,8 @@ public class Video extends GlobalImage implements IAction, IVideo {
 				}
 				ctx.getRequest().setAttribute("vid", videoCode);
 				ctx.getRequest().setAttribute("url", "http://www.youtube.com/embed/" + videoCode);
-				ctx.getRequest().setAttribute("width", StringHelper.neverNull(width, getConfig(ctx).getProperty("youyube.width", "420")));
-				ctx.getRequest().setAttribute("height", StringHelper.neverNull(height, getConfig(ctx).getProperty("youyube.height", "315")));
+				ctx.getRequest().setAttribute("width", StringHelper.neverNull(width, getConfig(ctx).getProperty("youtube.width", "420")));
+				ctx.getRequest().setAttribute("height", StringHelper.neverNull(height, getConfig(ctx).getProperty("youtube.height", "315")));
 				if (!onlyPrepare) {
 					return executeJSP(ctx, getConfig(ctx).getRenderes().get("youtube"));
 				}

@@ -2,6 +2,7 @@
 %><%@ taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions"
 %><%@taglib uri="http://java.sun.com/jstl/fmt" prefix="fmt" %>
 <c:if test="${fn:length(files) > 0}">
+<div class="table-responsive">
 <table class="table">
 <thead>
 	<tr>
@@ -13,13 +14,28 @@
 </thead>
 <c:forEach var="file" items="${files}">
 <tr>
-		<td class="thumb">
-			<a href="${file.URL}">
+		<td class="thumb">		
+			<c:if test="${!file.video}">
+				<a href="${file.URL}">
 				<figure class="thumbnail">
 					<img src="${file.thumbURL}" alt="preview of ${file.name}" lang="en" />
 					<figcaption class="caption"><p>${file.name}</p></figcaption>
 				</figure>
-			</a>
+				</a>
+			</c:if>
+			<c:if test="${file.video}">
+					<!-- "Video For Everybody" http://camendesign.com/code/video_for_everybody -->
+					<video controls="controls">
+					<source src="${file.absoluteURL}" type="video/mp4" />
+					<object type="application/x-shockwave-flash" data="http://flashfox.googlecode.com/svn/trunk/flashfox.swf">
+						<param name="movie" value="http://flashfox.googlecode.com/svn/trunk/flashfox.swf" />
+						<param name="allowFullScreen" value="true" />
+						<param name="wmode" value="transparent" />
+						<param name="flashVars" value="controls=true&amp;src=${file.absoluteURL}" />
+						<span lang="en" title="No video playback capabilities, please download the video below">${file.name}</span>
+					</object>
+					</video>
+			</c:if>			
 		</td>
 		<td class="name"><a href="${file.URL}"><h3>${file.title}</h3><p class="description">${file.description}</p></a></td>
 		<td class="type"><div class="badge">${file.type}</div><div class="badge">${file.size}</div><div class="badge">${file.date}</div>
@@ -37,4 +53,5 @@
 </tr>
 </c:forEach>
 </table>
+</div>
 </c:if>

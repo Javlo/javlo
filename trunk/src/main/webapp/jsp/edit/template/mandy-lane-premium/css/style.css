@@ -1337,8 +1337,8 @@ button.button:hover,.button:active {
 
 .widgetbox2 .content label {
 	display: block;
-	padding: 0;
-	width: 120px;
+	/*padding: 0;*/
+	/*width: 120px;*/
 	margin-right: 15px;
 	float: left;
 }
