@@ -140,7 +140,7 @@ public class PageMirrorComponent extends AbstractVisualComponent {
 	 * @see org.javlo.itf.IContentVisualComponent#getXHTMLCode()
 	 */
 	@Override
-	public void prepareView(ContentContext ctx) throws Exception {
+	public void prepareView(ContentContext ctx) throws Exception {		
 		MenuElement page = getMirrorPage(ctx);
 		if (page != null) {
 			if (ctx.getSpecialContentRenderer() == null) {
@@ -181,6 +181,7 @@ public class PageMirrorComponent extends AbstractVisualComponent {
 
 	@Override
 	public String getViewXHTMLCode(ContentContext ctx) throws Exception {
+		prepareView(ctx);
 		return (String) ctx.getRequest().getAttribute("xhtml");
 	}
 
