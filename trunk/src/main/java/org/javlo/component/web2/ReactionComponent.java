@@ -973,7 +973,7 @@ public class ReactionComponent extends DynamicComponent implements IAction {
 				}
 				out.println("</div><div class=\"actions\">");
 
-				if (currentUser != null && isReactionDeletable(ctx, reactions, reaction, currentUser)) {
+				if (currentUser != null && isReactionDeletable(ctx, reactions, reaction, currentUser) && !ctx.isAsPageMode()) {
 					renderDeleteReactionForm(out, htmlIdSuffix, reaction, ctx, i18nAccess);
 				}
 
