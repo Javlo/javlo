@@ -1,3 +1,4 @@
-.function .inline-line {
-	width: 280px;
+.function .checkbox-inline {
+	min-width: 280px;
+    margin-left: 10px;
 }
