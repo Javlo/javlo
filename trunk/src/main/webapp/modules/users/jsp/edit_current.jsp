@@ -173,7 +173,7 @@
 <c:if test="${not empty webaction}">
 	<div class="form-group">
 		<label for="message">you message to the administrator of the site :
-		<textarea class="btn btn-default" id="message" name="message">${param.message}</textarea></label>
+		<textarea class="form-control" id="message" name="message">${param.message}</textarea></label>
 	</div>
 </c:if>
 
@@ -227,9 +227,9 @@
 	</div>
 </fieldset>
 
-<div class="action">
-	<input type="submit" name="back" value="${i18n.edit['global.back']}" />
-	<input type="submit" name="ok" value="${i18n.edit['global.ok']}" />
+<div class="form-group">
+	<input class="btn btn-default" type="submit" name="back" value="${i18n.edit['global.back']}" />
+	<input class="btn btn-default" type="submit" name="ok" value="${i18n.edit['global.ok']}" />
 </div>
 
 </form>
