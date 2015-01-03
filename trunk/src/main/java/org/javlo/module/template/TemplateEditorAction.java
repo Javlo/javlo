@@ -3,6 +3,7 @@ package org.javlo.module.template;
 import java.awt.image.BufferedImage;
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.LinkedList;
 import java.util.List;
@@ -32,6 +33,8 @@ import org.javlo.template.TemplateStyle;
 import org.javlo.ztatic.FileCache;
 
 public class TemplateEditorAction extends AbstractModuleAction {
+
+	public static final List<String> RESERVED_AREA_NAME = Arrays.asList(new String[] { "body", "area", "html", "div", "span" });
 
 	@Override
 	public String prepare(ContentContext ctx, ModulesContext modulesContext) throws Exception {
@@ -118,11 +121,16 @@ public class TemplateEditorAction extends AbstractModuleAction {
 			if (area == null) {
 				return "no active area.";
 			} else {
-
 				String newName = rs.getParameter("name", "");
 				newName = StringHelper.createFileName(newName.trim());
 				if (newName.length() > 0) {
-					if (!area.getName().equals(newName)) {
+					if (newName.length() < 2) {
+						msg = i18nAccess.getText("template.message.error.area-to-smapp", "Area min size : 2 chars.");
+					} else if (RESERVED_AREA_NAME.contains(newName)) {
+						msg = i18nAccess.getText("template.message.error.area-reserved", newName + " is a reserved word.");
+					} else if (StringHelper.isDigit(newName)) {
+						msg = i18nAccess.getText("template.message.error.area-digit", "Area name can not be a number.");
+					} else if (!area.getName().equals(newName)) {
 						if (editorContext.getCurrentTemplate().getArea(editorContext.getCurrentTemplate().getRows(), newName) != null) {
 							msg = i18nAccess.getText("template.message.error.area-exist", "Area allready exist : " + newName);
 						} else {
