@@ -29,8 +29,10 @@ public class DynamicComponentList extends AbstractPropertiesComponent {
 	private static final String EQUALS = "equals";
 
 	private static final String MATCH = "match";
+	
+	private static final String START = "start";
 
-	static final List<String> filtersType = Arrays.asList(new String[] { EQUALS, CONTAINS, MATCH });
+	static final List<String> filtersType = Arrays.asList(new String[] { EQUALS, CONTAINS, START, MATCH });
 
 	private static final String FILTER_SUFFIX = "-filter";
 	private static final String FILTER_TYPE_SUFFIX = "-filter-type";
@@ -104,6 +106,8 @@ public class DynamicComponentList extends AbstractPropertiesComponent {
 				return value.equals(filter);
 			} else if (filterType.equals(CONTAINS)) {
 				return value.contains(filter);
+			} else if (filterType.equals(START)) {				
+				return value.toLowerCase().startsWith(filter.toLowerCase());
 			} else if (filterType.equals(MATCH)) {
 				Pattern p = Pattern.compile(filter);
 				return p.matcher(value).matches();
