@@ -27,5 +27,7 @@ public interface IFieldContainer extends IContentVisualComponent {
 	public String getViewXHTMLCode(ContentContext ctx) throws Exception;
 	
 	public String getViewListXHTMLCode(ContentContext ctx) throws Exception;
+	
+	public boolean isRealContent(ContentContext ctx);
 
 }

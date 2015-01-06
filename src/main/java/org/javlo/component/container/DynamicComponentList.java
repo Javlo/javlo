@@ -29,7 +29,7 @@ public class DynamicComponentList extends AbstractPropertiesComponent {
 	private static final String EQUALS = "equals";
 
 	private static final String MATCH = "match";
-	
+
 	private static final String START = "start";
 
 	static final List<String> filtersType = Arrays.asList(new String[] { EQUALS, CONTAINS, START, MATCH });
@@ -57,17 +57,17 @@ public class DynamicComponentList extends AbstractPropertiesComponent {
 		List<String> container = service.getAllType(ctx, content.getNavigation(ctx));
 
 		out.println(XHTMLHelper.getInputOneSelect(createKeyWithField("type"), container, getSelectedType()));
-		
+
 		String childrenLabel = i18nAccess.getText("component.filter.children", "search only on children pages.");
 		out.println("<div class=\"checkbox\">");
-		String checked="";
+		String checked = "";
 		if (isOnlyChildren()) {
-			checked=" checked=\"checked\"";
+			checked = " checked=\"checked\"";
 		}
-		out.println("<label><input name=\""+createKeyWithField("children")+"\" type=\"checkbox\""+checked+" />");
-		out.println(childrenLabel+"</label>");
+		out.println("<label><input name=\"" + createKeyWithField("children") + "\" type=\"checkbox\"" + checked + " />");
+		out.println(childrenLabel + "</label>");
 		out.println("</div>");
-		
+
 		IFieldContainer fieldContainer = getFieldContainer(ctx);
 		if (fieldContainer != null) {
 			out.println("<fieldset>");
@@ -94,7 +94,7 @@ public class DynamicComponentList extends AbstractPropertiesComponent {
 
 		String filterType = properties.getProperty(name + FILTER_TYPE_SUFFIX, CONTAINS);
 		String filter = properties.getProperty(name + FILTER_SUFFIX, "");
-		
+
 		if (value == null) {
 			return filter == null || filter.trim().length() == 0;
 		}
@@ -110,7 +110,7 @@ public class DynamicComponentList extends AbstractPropertiesComponent {
 				return value.equals(filter);
 			} else if (filterType.equals(CONTAINS)) {
 				return value.contains(filter);
-			} else if (filterType.equals(START)) {				
+			} else if (filterType.equals(START)) {
 				return value.toLowerCase().startsWith(filter.toLowerCase());
 			} else if (filterType.equals(MATCH)) {
 				Pattern p = Pattern.compile(filter);
@@ -141,28 +141,30 @@ public class DynamicComponentList extends AbstractPropertiesComponent {
 		if (isOnlyChildren()) {
 			rootPage = ctx.getCurrentPage();
 		}
-		List<IFieldContainer> containers = service.getFieldContainers(ctx, rootPage, getSelectedType());		
+		List<IFieldContainer> containers = service.getFieldContainers(ctx, rootPage, getSelectedType());
 		List<IFieldContainer> visibleContainers = new LinkedList<IFieldContainer>();
-		
+
 		for (IFieldContainer container : containers) {
-			boolean display = true;
-			List<Field> fields = container.getFields(ctx);
-			for (Field field : fields) {
-				if (!fieldMatch(ctx, field.getName(), field.getValue(new Locale(ctx.getRequestContentLanguage())))) {
-					display = false;
+			if (container.isRealContent(ctx)) {
+				boolean display = true;
+				List<Field> fields = container.getFields(ctx);
+				for (Field field : fields) {
+					if (!fieldMatch(ctx, field.getName(), field.getValue(new Locale(ctx.getRequestContentLanguage())))) {
+						display = false;
+					}
 				}
-			}
-			if (display) {
-				realContent = true;
-				visibleContainers.add(container);
+				if (display) {
+					realContent = true;
+					visibleContainers.add(container);
+				}
 			}
 		}
 		int index = 0;
 		ctx.getRequest().setAttribute("componentSize", visibleContainers.size());
-		for (IFieldContainer container : visibleContainers) {			
-				index++;
-				ctx.getRequest().setAttribute("componentIndex", index);
-				out.println(container.getViewListXHTMLCode(ctx));							
+		for (IFieldContainer container : visibleContainers) {
+			index++;
+			ctx.getRequest().setAttribute("componentIndex", index);
+			out.println(container.getViewListXHTMLCode(ctx));
 		}
 
 		out.close();
@@ -219,7 +221,7 @@ public class DynamicComponentList extends AbstractPropertiesComponent {
 				realContent = false;
 				e.printStackTrace();
 			}
-		}		
+		}
 		return realContent;
 	}
 
@@ -251,10 +253,9 @@ public class DynamicComponentList extends AbstractPropertiesComponent {
 	public int getComplexityLevel(ContentContext ctx) {
 		return COMPLEXITY_STANDARD;
 	}
-	
+
 	private boolean isOnlyChildren() {
 		return StringHelper.isTrue(properties.getProperty("children"));
 	}
-
 
 }
