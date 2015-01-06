@@ -71,6 +71,7 @@ public class DynamicComponentFilter extends AbstractPropertiesComponent implemen
 
 	@Override
 	public String getViewXHTMLCode(ContentContext ctx) throws Exception {
+		prepareView(ctx);
 
 		realContent = false;
 
