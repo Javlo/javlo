@@ -9,7 +9,12 @@
 		</div>
 		<div class="line">
 			<label for="mailing-sender">${i18n.edit['mailing.form.sender']}</label>
-			<input type="text" id="mailing-sender" name="sender" value="<c:out value="${mailing.sender}" escapeXml="true" />" />
+			<c:if test="${empty senders}"><input type="text" id="mailing-sender" name="sender" value="<c:out value="${mailing.sender}" escapeXml="true" />" /></c:if>
+			<c:if test="${not empty senders}"><select id="mailing-sender" name="sender">
+				<c:forEach var="sender" items="${senders}">
+					<option ${fn:contains(senders, mailing.sender)?'selected="selected"':''} value="<c:out value="${sender}" escapeXml="true" />"><c:out value="${sender}" escapeXml="true" /></option>
+				</c:forEach>
+			</select></c:if>
 		</div>
 		<div class="line">
 			<label for="mailing-subject">${i18n.edit['mailing.form.subject']}</label>

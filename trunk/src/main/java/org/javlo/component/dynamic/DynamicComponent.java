@@ -5,6 +5,7 @@ package org.javlo.component.dynamic;
 
 import java.io.ByteArrayOutputStream;
 import java.io.File;
+import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.io.StringWriter;
@@ -58,19 +59,29 @@ public class DynamicComponent extends AbstractVisualComponent implements IStatic
 
 	@Override
 	public String[] getStyleList(ContentContext ctx) {
-		return new String[] { "standard", HIDDEN };
+		String[] superStyle = super.getStyleList(ctx);
+		if (superStyle == null || superStyle.length == 0) {
+			return new String[] { "standard", HIDDEN };
+		} else {
+			return superStyle;
+		}
 	}
 
 	@Override
-	public String[] getStyleLabelList(ContentContext ctx) {
-		I18nAccess i18nAccess;
-		try {
-			i18nAccess = I18nAccess.getInstance(ctx.getRequest());
-			return new String[] { "standard", i18nAccess.getText("global.hidden") };
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
-		return getStyleList(ctx);
+	public String[] getStyleLabelList(ContentContext ctx) {		
+		String[] superLabelStyle = super.getStyleLabelList(ctx);
+		if (superLabelStyle == null || superLabelStyle.length == 0) {
+			I18nAccess i18nAccess;
+			try {
+				i18nAccess = I18nAccess.getInstance(ctx.getRequest());
+				return new String[] { "standard", i18nAccess.getText("global.hidden") };
+			} catch (Exception e) {
+				e.printStackTrace();
+				return null;
+			}			
+		} else {
+			return superLabelStyle;
+		}		
 	}
 
 	public class FieldOrderComparator implements Comparator<Field> {
@@ -887,7 +898,7 @@ public class DynamicComponent extends AbstractVisualComponent implements IStatic
 		}
 		return 0;
 	}
-	
+
 	@Override
 	public int getPriority(ContentContext ctx) {
 		if (getProperties().getProperty("image.priority", null) == null) {

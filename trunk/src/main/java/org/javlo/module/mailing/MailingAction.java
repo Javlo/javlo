@@ -26,7 +26,6 @@ import org.javlo.helper.StringHelper;
 import org.javlo.helper.URLHelper;
 import org.javlo.i18n.I18nAccess;
 import org.javlo.mailing.MailingFactory;
-import org.javlo.mailing.MailingThread;
 import org.javlo.message.GenericMessage;
 import org.javlo.message.MessageRepository;
 import org.javlo.module.core.AbstractModuleContext;
@@ -35,7 +34,6 @@ import org.javlo.module.core.ModulesContext;
 import org.javlo.service.DataToIDService;
 import org.javlo.service.RequestService;
 import org.javlo.service.syncro.SynchroHelper;
-import org.javlo.servlet.ContentOnlyServlet;
 import org.javlo.template.Template;
 import org.javlo.template.TemplateFactory;
 import org.javlo.user.IUserFactory;
@@ -137,6 +135,9 @@ public class MailingAction extends AbstractModuleAction {
 			IUserFactory userFactory = UserFactory.createUserFactory(request);
 			Set<String> roles = userFactory.getAllRoles(globalContext, session);
 			request.setAttribute("groups", roles);
+			if (ctx.getCurrentTemplate().getSenders() != null) {
+				request.setAttribute("senders", ctx.getCurrentTemplate().getSenders());
+			}
 			break;
 		case 3:
 			String confirmMessage = i18nAccess.getText("mailing.message.confirm", new String[][] { { "count", "" + mailingContext.getAllRecipients().size() } });

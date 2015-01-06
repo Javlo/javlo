@@ -314,6 +314,15 @@ public class MenuElement implements Serializable, IPrintInfo {
 		public List<String> getTags() {
 			return tags;
 		}
+		
+		public String getFirstTag() {
+			List<String> tags = getTags();			
+			if (tags == null || tags.size() == 0) {
+				return null;
+			} else {
+				return tags.get(0);
+			}
+		}
 
 		public void setTags(List<String> tags) {
 			this.tags = tags;

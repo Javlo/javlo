@@ -40,7 +40,6 @@ import org.apache.commons.lang.StringEscapeUtils;
 import org.apache.commons.lang.StringUtils;
 import org.javlo.cache.ICache;
 import org.javlo.component.config.ComponentConfig;
-import org.javlo.component.title.Title;
 import org.javlo.context.ContentContext;
 import org.javlo.context.EditContext;
 import org.javlo.context.GlobalContext;
@@ -722,7 +721,7 @@ public abstract class AbstractVisualComponent implements IContentVisualComponent
 	@Override
 	public String getFirstPrefix(ContentContext ctx) {
 		if (!componentBean.isList()) {
-			return "";
+			return getConfig(ctx).getProperty("prefix.first", "");
 		} else {
 			String cssClass = "";
 			if (getStyle(ctx) != null && getStyle(ctx).trim().length() > 0) {
@@ -856,7 +855,7 @@ public abstract class AbstractVisualComponent implements IContentVisualComponent
 		if (componentBean.isList()) {
 			return "</"+getListTag(ctx)+">";
 		}
-		return "";
+		return getConfig(ctx).getProperty("suffix.last", "");
 	}
 
 	@Override
@@ -2130,9 +2129,8 @@ public abstract class AbstractVisualComponent implements IContentVisualComponent
 		return getType();
 	}
 
-
 	public boolean isReversedLink(ContentContext ctx) {
 		return ctx.getGlobalContext().isReversedLink();
 	}
-
+	
 }

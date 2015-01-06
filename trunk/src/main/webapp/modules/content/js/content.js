@@ -24,14 +24,15 @@ function loadWysiwyg(cssQuery, complexity, chooseFileURL) {
 		tinymce.init({
 		    selector: cssQuery,
 		    convert_urls: false,
+		    menubar : false,
 		    content_css: wysiwygCss,
 		    plugins: [
 		        "advlist autolink lists link image charmap print preview anchor",
 		        "searchreplace visualblocks code fullscreen",
-		        "insertdatetime media table contextmenu paste"
+		        "insertdatetime media table contextmenu paste textcolor"
 		    ],
 		    //paste_word_valid_elements: "b,strong,i,em,h1,h2,h3,h4,h5,h6,table,tr,th,td,ul,ol,li,p,a,div",
-		    toolbar: "insertfile undo redo | styleselect | bold italic | alignleft aligncenter alignright alignjustify | bullist numlist outdent indent | link image"
+		    toolbar: "undo redo searchreplace | bold italic forecolor backcolor | charmap | alignleft aligncenter alignright alignjustify | bullist numlist outdent indent"
 		});
 	} else if (complexity == "high") {		
 		tinymce.init({
@@ -40,6 +41,7 @@ function loadWysiwyg(cssQuery, complexity, chooseFileURL) {
 		    menubar : false,
 		    theme: "modern",
 		    content_css: wysiwygCss,
+		    textcolor_map : ["111111","MyBlack","993300","My Burnt orange"],
 		    plugins: [
 		        "advlist autolink lists link image charmap print preview hr anchor pagebreak",
 		        "searchreplace wordcount visualblocks visualchars code fullscreen",
