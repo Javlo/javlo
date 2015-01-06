@@ -5,6 +5,7 @@ import java.util.Map;
 
 import org.javlo.component.core.IContentVisualComponent;
 import org.javlo.context.ContentContext;
+import org.javlo.navigation.MenuElement;
 
 public interface IFieldContainer extends IContentVisualComponent {
 	
@@ -29,5 +30,7 @@ public interface IFieldContainer extends IContentVisualComponent {
 	public String getViewListXHTMLCode(ContentContext ctx) throws Exception;
 	
 	public boolean isRealContent(ContentContext ctx);
+	
+	public MenuElement getPage();
 
 }
