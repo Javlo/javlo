@@ -31,6 +31,8 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 import java.util.regex.Pattern;
 
+import javax.mail.internet.AddressException;
+import javax.mail.internet.InternetAddress;
 import javax.servlet.ServletContext;
 
 import org.apache.commons.configuration.ConfigurationException;
@@ -2214,6 +2216,25 @@ public class Template implements Comparable<Template> {
 
 	public boolean isSubjectLocked() {
 		return StringHelper.isTrue(properties.getString("mail.subject.locked", "false"));
+	}
+	
+	public List<InternetAddress> getSenders() {
+		String senders = properties.getString("mail.senders");		
+		if (senders == null || senders.trim().length() == 0) {
+			return getParent().getSenders();
+		} else {
+		List<InternetAddress> outList = new LinkedList<InternetAddress>();
+		for (String sender : StringUtils.split(senders, ',')) {
+			sender = sender.trim();
+			try {
+				InternetAddress iAdd = new InternetAddress(sender);
+				outList.add(iAdd);
+			} catch (AddressException e) {
+				e.printStackTrace();
+			}
+		}
+		return outList;
+		}
 	}
 
 	public boolean isTemplateInWebapp(ContentContext ctx) throws IOException {

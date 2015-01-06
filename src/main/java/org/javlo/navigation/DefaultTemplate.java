@@ -11,6 +11,8 @@ import java.util.Map;
 import java.util.Properties;
 import java.util.logging.Logger;
 
+import javax.mail.internet.InternetAddress;
+
 import org.apache.commons.configuration.ConfigurationException;
 import org.apache.commons.configuration.PropertiesConfiguration;
 import org.javlo.config.StaticConfig;
@@ -371,6 +373,11 @@ public class DefaultTemplate extends Template {
 	
 	@Override
 	public String getHTMLFileParams(Device device) {	
+		return null;
+	}
+	
+	@Override
+	public List<InternetAddress> getSenders() {
 		return null;
 	}
 

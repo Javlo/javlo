@@ -32,9 +32,9 @@ public class FieldTextList extends FieldLargeText {
 		StringWriter writer = new StringWriter();
 		PrintWriter out = new PrintWriter(writer);
 
-		out.println("<p class=\"" + getType() + " " + getName() + "\">");
+		out.println("<div class=\"" + getType() + " " + getName() + "\">");
 		out.println(StringHelper.textToList(null, StringHelper.neverNull(getValue()), getMetaData("sep"), null, true, getCSSClass()));
-		out.println("</p>");
+		out.println("</div>");
 
 		out.close();		
 		return writer.toString();
