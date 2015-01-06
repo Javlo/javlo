@@ -94,6 +94,10 @@ public class DynamicComponentList extends AbstractPropertiesComponent {
 
 		String filterType = properties.getProperty(name + FILTER_TYPE_SUFFIX, CONTAINS);
 		String filter = properties.getProperty(name + FILTER_SUFFIX, "");
+		
+		if (value == null) {
+			return filter == null || filter.trim().length() == 0;
+		}
 
 		if (ctx.getRequest().getParameter(name) != null) {
 			filter = ctx.getRequest().getParameter(name);
