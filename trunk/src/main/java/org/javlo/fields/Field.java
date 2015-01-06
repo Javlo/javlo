@@ -880,6 +880,10 @@ public class Field implements Cloneable {
 			}
 		}		
 	}
+	
+	public boolean isRealContent(ContentContext ctx) {
+		return getValue() != null && getValue().trim().length() > 0;
+	}
 
 
 }
