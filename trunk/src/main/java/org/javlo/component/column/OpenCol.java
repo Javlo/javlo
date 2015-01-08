@@ -34,11 +34,11 @@ public class OpenCol extends AbstractVisualComponent {
 	}
 
 	public String getRowCssClass(ContentContext ctx) {
-		return getConfig(ctx).getProperty("row.class", "row");
+		return getConfig(ctx).getProperty("row.class", "container_12");
 	}
 
 	public String getColCssClass(ContentContext ctx, int width) throws Exception {
-		String outCol = getConfig(ctx).getProperty("col.class", "grid-${width}");
+		String outCol = getConfig(ctx).getProperty("col.class", "grid_${width}");
 		return outCol.replace("${width}", "" + width);
 	}
 
