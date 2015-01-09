@@ -529,12 +529,12 @@ public class AccessServlet extends HttpServlet implements IVersion {
 				/** ******* */
 				/* TRACKING */
 				/** ******* */
-
-				localLogger.startCount("tracking1");
-				// if (!request.getServletPath().equals("/admin")) {
-				Tracker.trace(request, response);
-				// }
-				localLogger.endCount("tracking", "tracking user");
+				
+				if (StringHelper.isTrue(request.getParameter("tracking"), true)) {
+					localLogger.startCount("tracking1");
+					Tracker.trace(request, response);
+					localLogger.endCount("tracking", "tracking user");
+				}
 
 				if (logger.isLoggable(Level.FINE)) {
 					logger.fine(requestLabel + " : tracking " + df.format((double) (System.currentTimeMillis() - startTime) / (double) 1000) + " sec.");
