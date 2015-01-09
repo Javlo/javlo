@@ -7,6 +7,7 @@ import java.util.logging.Logger;
 import javax.swing.JOptionPane;
 
 import org.javlo.client.localmodule.model.ServerConfig;
+import org.javlo.client.localmodule.service.synchro.SynchroControlService;
 import org.javlo.client.localmodule.ui.ClientTray;
 import org.javlo.client.localmodule.ui.ConfigFrame;
 import org.javlo.client.localmodule.ui.StatusFrame;
@@ -39,6 +40,10 @@ public class ActionService {
 
 	public void showStatus() {
 		StatusFrame.showDialog();
+	}
+
+	public void startSynchro() {
+		factory.getSynchroControl().wakeUp();
 	}
 
 	public void openWebInterface() {
@@ -75,10 +80,17 @@ public class ActionService {
 	public void exit() {
 		NotificationClientService notifClient = NotificationClientService.getInstance();
 		notifClient.stop();
+		SynchroControlService synchroControl = SynchroControlService.getInstance();
+		synchroControl.stop();
 		try {
-			while (notifClient.isStarted()) {
+			while (notifClient.isStarted() || synchroControl.isStarted()) {
 				Thread.sleep(300);
-				notifClient.stop();
+				if (notifClient.isStarted()) {
+					notifClient.stop();
+				}
+				if (synchroControl.isStarted()) {
+					synchroControl.stop();
+				}
 			}
 		} catch (InterruptedException ex) {
 			ex.printStackTrace();

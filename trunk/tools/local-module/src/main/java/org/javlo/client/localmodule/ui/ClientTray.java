@@ -57,8 +57,8 @@ public class ClientTray {
 		getInstance().setWorseServerStatus(worseStatus);
 	}
 
-	public void onSyncroStateChange(boolean snchroActive) {
-		this.snchroActive = snchroActive;
+	public void onSyncStateChange(boolean syncActive) {
+		this.syncActive = syncActive;
 		refreshIcon();
 	}
 
@@ -75,7 +75,7 @@ public class ClientTray {
 	private Image errorIcon;
 	private boolean trayAdded = false;
 	private boolean activeState = false;
-	private boolean snchroActive = false;
+	private boolean syncActive = false;
 	private ServerStatus worseServerStatus = ServerStatus.UNKNOWN;
 
 	private TrayMessageAction lastMessageAction;
@@ -105,6 +105,7 @@ public class ClientTray {
 		showAllNotifications = new MenuItem(i18n.get("menu.show-all-notifications"));
 
 		MenuItem statusItem = new MenuItem(i18n.get("menu.status"));
+		MenuItem startSynchroItem = new MenuItem(i18n.get("menu.start-synchro"));
 		MenuItem configItem = new MenuItem(i18n.get("menu.open-config"));
 		MenuItem aboutItem = new MenuItem(i18n.get("menu.about"));
 		MenuItem exitItem = new MenuItem(i18n.get("menu.exit"));
@@ -112,6 +113,8 @@ public class ClientTray {
 		menu.add(notificationsItem);
 		menu.addSeparator();
 		menu.add(statusItem);
+		menu.addSeparator();
+		menu.add(startSynchroItem);
 		menu.addSeparator();
 		menu.add(configItem);
 		menu.add(aboutItem);
@@ -144,6 +147,13 @@ public class ClientTray {
 			@Override
 			public void actionPerformed(ActionEvent e) {
 				getAction().showStatus();
+			}
+		});
+
+		startSynchroItem.addActionListener(new ActionListener() {
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				getAction().startSynchro();
 			}
 		});
 
@@ -222,7 +232,7 @@ public class ClientTray {
 
 	private void refreshIcon() {
 		if (trayAdded) {
-			if (activeState || snchroActive) {
+			if (activeState || syncActive) {
 				tray.setImage(activeIcon);
 			} else {
 				switch (worseServerStatus) {

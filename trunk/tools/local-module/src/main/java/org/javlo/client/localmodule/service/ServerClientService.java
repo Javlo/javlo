@@ -30,9 +30,11 @@ import org.javlo.client.localmodule.model.HttpException;
 import org.javlo.client.localmodule.model.RemoteNotification;
 import org.javlo.client.localmodule.model.ServerConfig;
 import org.javlo.client.localmodule.model.ServerStatus;
+import org.javlo.client.localmodule.service.synchro.TokenHttpClientService;
 import org.javlo.helper.StringHelper;
 import org.javlo.helper.URLHelper;
 import org.javlo.service.NotificationService.NotificationContainer;
+import org.javlo.service.syncro.HttpClientService;
 import org.javlo.utils.JSONMap;
 
 import com.google.gson.reflect.TypeToken;
@@ -42,6 +44,8 @@ public class ServerClientService {
 	private static final Logger logger = Logger.getLogger(NotificationClientService.class.getName());
 
 	private DefaultHttpClient httpClient;
+	
+	private HttpClientService syncHttpClient;
 
 	private final ServerConfig server;
 
@@ -71,6 +75,13 @@ public class ServerClientService {
 	@Deprecated
 	public DefaultHttpClient getHttpClient() {
 		return httpClient;
+	}
+
+	public HttpClientService getSyncHttpClient() {
+		if (syncHttpClient == null) {
+			syncHttpClient = new TokenHttpClientService(this);
+		}
+		return syncHttpClient;
 	}
 
 	public ServerConfig getServer() {
