@@ -234,6 +234,7 @@ public class ServerClientService {
 	}
 
 	private String httpGetAsString(String url) throws IOException {
+		url = URLHelper.addParam(url, "tracking", "false");
 		HttpResponse response = null;
 		try {
 			logger.info("Start request to server: " + url);
