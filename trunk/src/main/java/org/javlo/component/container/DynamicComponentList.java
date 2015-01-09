@@ -122,7 +122,9 @@ public class DynamicComponentList extends AbstractPropertiesComponent {
 
 	@Override
 	public String getViewXHTMLCode(ContentContext ctx) throws Exception {
-
+		
+		prepareView(ctx);
+		
 		realContent = false;
 
 		IFieldContainer fieldContainer = getFieldContainer(ctx);
