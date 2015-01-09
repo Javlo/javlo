@@ -95,6 +95,9 @@ public class UserRegistration extends AbstractVisualComponent implements IAction
 		I18nAccess i18nAccess = I18nAccess.getInstance(ctx.getRequest());
 		if (ctx.getRequest().getAttribute("registration-message") == null) {
 			Module userModule = ModulesContext.getInstance(ctx.getRequest().getSession(), ctx.getGlobalContext()).searchModule("users");
+			if (userModule == null) {
+				return "<div class=\"error\">error : user module not found.</div>";
+			}
 			i18nAccess.setCurrentModule(ctx.getGlobalContext(), ctx.getRequest().getSession(), userModule);
 			ctx.getRequest().setAttribute("webaction", "user-registration.register");
 
