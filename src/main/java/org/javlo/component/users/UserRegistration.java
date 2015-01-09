@@ -91,6 +91,7 @@ public class UserRegistration extends AbstractVisualComponent implements IAction
 
 	@Override
 	public String getViewXHTMLCode(ContentContext ctx) throws Exception {
+		prepareView(ctx);
 		I18nAccess i18nAccess = I18nAccess.getInstance(ctx.getRequest());
 		if (ctx.getRequest().getAttribute("registration-message") == null) {
 			Module userModule = ModulesContext.getInstance(ctx.getRequest().getSession(), ctx.getGlobalContext()).searchModule("users");
