@@ -1,6 +1,5 @@
 package org.javlo.client.localmodule.service.synchro;
 
-import java.io.File;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -27,9 +26,6 @@ public class SynchroControlService {
 	private final Object lock = new Object();
 	private Thread synchroThread = null;
 	private boolean stopping = false;
-
-	private String lastKey = null;
-	private ObserverSynchroService ss = null;
 
 	private boolean waiting = false;
 
@@ -89,31 +85,19 @@ public class SynchroControlService {
 		try {
 			synchronized (lock) {
 				while (!stopping) {
-					//TODO synchronize/lock on config?
 					//TODO validate config
 					//TODO make it multi server
 
 					for (ServerConfig server : factory.getConfig().getBean().getServers()) {
 						//Get the service
-						File localFolder = server.getSynchronizedFolderFile();
-						if (localFolder == null) {
-							continue;
+						ObserverSynchroService ss = factory.getSynchroService(server);
+						if (ss != null) {
+							//Use the service
+							ss.setLocalName(factory.getConfig().getBean().getComputerName());
+							factory.getTray().onSyncStateChange(true);
+							ss.synchronize();
+							factory.getTray().onSyncStateChange(false);
 						}
-						String key = server.getServerURL() + "|" + localFolder.getAbsolutePath();
-
-						if (ss == null || lastKey == null || !key.equals(lastKey)) {
-							//TODO validate config
-//							if (!factory.getConfig().isValid()) {
-//								throw new IllegalArgumentException();
-//							}
-							ss = ObserverSynchroService.createInstance(new TokenHttpClientService(factory.getClient(server)), localFolder);
-							lastKey = key;
-						}
-						//Use the service
-						ss.setLocalName(factory.getConfig().getBean().getComputerName());
-						factory.getTray().onSyncroStateChange(true);
-						ss.synchronize();
-						factory.getTray().onSyncroStateChange(false);
 					}
 					//Wait next loop
 					logger.info("- wait ----------------------------------------------------------");
@@ -130,7 +114,7 @@ public class SynchroControlService {
 			factory.getTray().displayErrorMessage(factory.getI18n().get("error.synchro.fatal"), ex, false);
 			logger.log(Level.SEVERE, ex.getClass().getSimpleName() + " occured during synchro process", ex);
 		} finally {
-			factory.getTray().onSyncroStateChange(false);
+			factory.getTray().onSyncStateChange(false);
 		}
 	}
 }

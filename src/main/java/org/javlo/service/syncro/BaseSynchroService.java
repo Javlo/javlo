@@ -67,6 +67,10 @@ public abstract class BaseSynchroService extends AbstractSynchroService<BaseSync
 		this.splitBigFiles = splitBigFiles;
 	}
 
+	public File getBaseFolderFile() {
+		return baseFolderFile;
+	}
+
 	@Override
 	public String getDistantName() {
 		return httpClientService.getServerURL();

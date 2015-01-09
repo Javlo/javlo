@@ -10,6 +10,7 @@ import org.javlo.client.localmodule.service.ActionService;
 import org.javlo.client.localmodule.service.ConfigService;
 import org.javlo.client.localmodule.service.I18nService;
 import org.javlo.client.localmodule.service.NotificationClientService;
+import org.javlo.client.localmodule.service.synchro.SynchroControlService;
 import org.javlo.client.localmodule.ui.ClientTray;
 
 public class LocalModule implements Runnable {
@@ -58,7 +59,7 @@ public class LocalModule implements Runnable {
 		tray.show();
 
 		NotificationClientService.getInstance().start();
-		//SynchroControlService.getInstance().start();//TODO Is it correct?
+		SynchroControlService.getInstance().start();
 	}
 
 }
