@@ -102,7 +102,6 @@
 					});
 
 					parent.width(thumbWidth).height(thumbHeight);
-
 					$(this).hide().appendTo(parent).fadeIn(300);
 
 				}).attr('src', href);
@@ -111,7 +110,7 @@
 			//Set initial width
 			this.width = this.list.children().eq(0).outerWidth(true);
 
-			this.list.width(this.width * (obj.group.length + 1)).css('left', Math.floor($(window).width() * 0.5 - (obj.index * this.width + this.width * 0.5)));
+			this.list.width(this.width * (obj.group.length + 2)).css('left', Math.floor($(window).width() * 0.5 - (obj.index * this.width + this.width * 0.5)));			
 		},
 
 		beforeLoad: function (opts, obj) {
