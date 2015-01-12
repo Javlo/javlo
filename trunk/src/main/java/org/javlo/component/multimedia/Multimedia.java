@@ -661,8 +661,23 @@ public class Multimedia extends TimeRangeComponent implements IImageTitle {
 	public String getType() {
 		return TYPE;
 	}
-
+	
 	protected MultimediaResource getFirstResource(ContentContext ctx) throws Exception {
+		List<MultimediaResource> resources = getMultimediaResources(ctx);	
+		if (resources.size() == 0) {
+			return null;
+		} else {			
+			MultimediaResource resource = resources.get(0);			
+			String fileName = ResourceHelper.removeDataFolderDir(ctx.getGlobalContext(), resource.getPath()); 
+			System.out.println("***** Multimedia.getFirstResource : fileName = "+fileName); //TODO: remove debug trace
+			resource.setURL(fileName);
+			resource.setPreviewURL(fileName);
+			return resource;
+		}
+	}
+
+
+	protected MultimediaResource _getFirstResource(ContentContext ctx) throws Exception {
 		Collection<File> mulFiles = getAllMultimediaFiles(ctx);
 		if (mulFiles.size() == 0) {
 			return null;
@@ -697,8 +712,7 @@ public class Multimedia extends TimeRangeComponent implements IImageTitle {
 		}
 	}
 
-	@Override
-	public void prepareView(ContentContext ctx) throws Exception {
+	protected List<MultimediaResource> getMultimediaResources(ContentContext ctx) throws Exception {
 		super.prepareView(ctx);
 		GlobalContext globalContext = GlobalContext.getInstance(ctx.getRequest());
 		
@@ -779,6 +793,7 @@ public class Multimedia extends TimeRangeComponent implements IImageTitle {
 				resource.setTags(info.getTags(lgCtx));
 				resource.setLanguage(lgCtx.getRequestContentLanguage());
 				resource.setIndex(info.getAccessFromSomeDays(lgCtx));
+				resource.setPath(info.getFile().getAbsolutePath() );
 
 				allURL.put(resource.getURL(), resource);
 
@@ -817,7 +832,12 @@ public class Multimedia extends TimeRangeComponent implements IImageTitle {
 				Collections.sort(allResource, new MultimediaResource.SortByDate(isReverseOrder(ctx)));
 			}
 		}
-
+		return allResource;
+	}
+	
+	@Override
+	public void prepareView(ContentContext ctx) throws Exception {
+		List<MultimediaResource> allResource = getMultimediaResources(ctx);
 		int max = Math.min(getMaxListSize(), allResource.size());
 		PaginationContext pagination = PaginationContext.getInstance(ctx.getRequest(), getId(), max, getPageSize());
 		ctx.getRequest().setAttribute("title", getTitle());
