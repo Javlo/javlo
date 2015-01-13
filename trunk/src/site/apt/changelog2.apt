@@ -363,3 +363,5 @@ change log
  * edit user bootstrap layout + sort children macro
  
  * tracking paramter activation
+ 
+ * new debug notes (priority, users, creation date)
