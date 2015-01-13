@@ -668,8 +668,7 @@ public class Multimedia extends TimeRangeComponent implements IImageTitle {
 			return null;
 		} else {			
 			MultimediaResource resource = resources.get(0);			
-			String fileName = ResourceHelper.removeDataFolderDir(ctx.getGlobalContext(), resource.getPath()); 
-			System.out.println("***** Multimedia.getFirstResource : fileName = "+fileName); //TODO: remove debug trace
+			String fileName = ResourceHelper.removeDataFolderDir(ctx.getGlobalContext(), resource.getPath());
 			resource.setURL(fileName);
 			resource.setPreviewURL(fileName);
 			return resource;

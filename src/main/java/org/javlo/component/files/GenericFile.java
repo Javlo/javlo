@@ -190,6 +190,8 @@ public class GenericFile extends AbstractFileComponent implements IReverseLinkCo
 	 */
 	@Override
 	public String getViewXHTMLCode(ContentContext ctx) throws Exception {
+		
+		prepareView(ctx);
 
 		if (getStyle(ctx).equals(HIDDEN)) {
 			return "";
