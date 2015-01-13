@@ -46,15 +46,21 @@ public class DashboardAction extends AbstractModuleAction {
 		private String authors;
 		private String area;
 		private String url;
+		private String priority;
+		private boolean currentUser;
 		private PageBean page;
+		private String date;
 
-		public DebugNoteBean(String message, String authors, String area, String pageURL, PageBean page) {
+		public DebugNoteBean(String message, String priority, boolean currentUser, String modifDate, String authors, String area, String pageURL, PageBean page) {
 			super();
 			this.message = message;
 			this.authors = authors;
 			this.area = area;
 			this.url = pageURL;
 			this.page = page;
+			this.priority = priority;
+			this.currentUser = currentUser;
+			this.setDate(modifDate);
 		}
 
 		public String getMessage() {
@@ -97,6 +103,30 @@ public class DashboardAction extends AbstractModuleAction {
 			this.page = page;
 		}
 
+		public String getPriority() {
+			return priority;
+		}
+
+		public void setPriority(String priority) {
+			this.priority = priority;
+		}
+
+		public boolean isCurrentUser() {
+			return currentUser;
+		}
+
+		public void setCurrentUser(boolean currentUser) {
+			this.currentUser = currentUser;
+		}
+
+		public String getDate() {
+			return date;
+		}
+
+		public void setDate(String date) {
+			this.date = date;
+		}
+
 	}
 
 	public static void main(String[] args) {
@@ -125,7 +155,7 @@ public class DashboardAction extends AbstractModuleAction {
 				Map<String, String> params = new HashMap<String, String>();
 				params.put("module", "content");
 				String url = URLHelper.createURL(ctx, comp.getPage().getPath(), params);
-				debugNoteList.add(new DebugNoteBean(comp.getValue(ctx), comp.getAuthors(), comp.getArea(), url, comp.getPage().getPageBean(ctx)));
+				debugNoteList.add(new DebugNoteBean(((DebugNote)comp).getText(), ((DebugNote)comp).getPriority(), ((DebugNote)comp).getUserList().contains(ctx.getCurrentEditUser().getLogin()), ((DebugNote)comp).getModifDate(), comp.getAuthors(), comp.getArea(), url, comp.getPage().getPageBean(ctx)));
 			}
 		}
 		ctx.getRequest().setAttribute("debugNotes", debugNoteList);
