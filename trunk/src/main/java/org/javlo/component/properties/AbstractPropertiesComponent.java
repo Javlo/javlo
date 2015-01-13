@@ -184,5 +184,20 @@ public abstract class AbstractPropertiesComponent extends AbstractVisualComponen
 		}
 		setValue(res);
 	}
+	
+	@Override
+	public boolean isRealContent(ContentContext ctx) {
+		try {
+			for (String field : getFields(ctx)) {
+				String fieldValue = getFieldValue(field);
+				if (fieldValue != null && fieldValue.trim().length() > 0) {
+					return true;
+				}
+			}
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		return false;
+	}
 
 }

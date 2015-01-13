@@ -27,7 +27,7 @@
      <td class="con1">${note.message}</td>
      <td class="con0">${note.authors}</td>	 
      <td class="con1 forme">${note.currentUser?'<span class="check">X</span>':''}</td>
-     <td class="con0  priority">${note.priority}</td>
+     <td class="con0 priority">${note.priority}</td>
  </tr>     
 </c:forEach>
 </tbody>

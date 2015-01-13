@@ -111,7 +111,7 @@ public class FileFinder extends AbstractPropertiesComponent {
 				outFileList.add(new FileBean(ctx, info));
 			}
 		}
-
+		Collections.sort(outFileList, new FileBean.FileBeanComparator(ctx, 2));
 		return outFileList;
 	}
 
@@ -128,7 +128,7 @@ public class FileFinder extends AbstractPropertiesComponent {
 		ctx.getRequest().setAttribute("filter", filter);
 		ctx.getRequest().setAttribute("files", getFileList(ctx, filter));
 	}
-
+	
 	@Override
 	public String getType() {
 		return TYPE;
