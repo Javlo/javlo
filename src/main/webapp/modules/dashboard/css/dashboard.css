@@ -21,3 +21,7 @@ span.label {
     height: 250px;
     width: auto;
 }
+
+td.forme, td.priority {
+	text-align: center;
+}
