@@ -47,6 +47,7 @@ import org.javlo.message.GenericMessage;
 import org.javlo.navigation.MenuElement;
 import org.javlo.service.CaptchaService;
 import org.javlo.service.ContentService;
+import org.javlo.service.ListService;
 import org.javlo.service.RequestService;
 import org.javlo.utils.CSVFactory;
 import org.javlo.utils.CollectionAsMap;
@@ -67,6 +68,10 @@ import org.javlo.ztatic.StaticInfo;
  * <li>{@link Map} errorFields: field with error.</li>
  * <li>{@link String} valid: contains true if form is valid.</li>
  * </ul>
+ * <h5>Local JSTL</h5>
+ * <ul>
+ * <li>ci18n : local i18n map.</li>
+ * </ul>
  * <h4>keys for message and config can be use in content</h4>
  * <ul>
  * <li>captcha : true for use captacha</li>
@@ -83,7 +88,7 @@ public class GenericForm extends AbstractVisualComponent implements IAction {
 
 	private static Logger logger = Logger.getLogger(GenericForm.class.getName());
 
-	private Properties bundle;
+	private Properties bundle;	
 
 	protected static final Object LOCK = new Object();
 
@@ -161,7 +166,15 @@ public class GenericForm extends AbstractVisualComponent implements IAction {
 	@Override
 	public void prepareView(ContentContext ctx) throws Exception {
 		super.prepareView(ctx);
-		ctx.getRequest().setAttribute("ci18n", getLocalConfig(false));
+		Properties prop = getLocalConfig(false);
+		ctx.getRequest().setAttribute("ci18n", prop);
+		
+		ListService listService = ListService.getInstance(ctx);
+		for (Object key : prop.keySet()) {
+			if (((String)key).startsWith("list.")) {
+				listService.addList(((String)key).replaceFirst("list.", ""), StringHelper.stringToCollection(prop.getProperty(((String)key)), ";"));				
+			}
+		}		
 	}
 
 	@Override
@@ -195,7 +208,7 @@ public class GenericForm extends AbstractVisualComponent implements IAction {
 		}
 		return bundle;
 	}
-
+	
 	protected File getFile(ContentContext ctx) throws IOException {
 		GlobalContext globalContext = GlobalContext.getInstance(ctx.getRequest());
 		String fileName = "df-" + getId() + ".csv";
