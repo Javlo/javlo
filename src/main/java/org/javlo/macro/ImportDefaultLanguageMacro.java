@@ -47,5 +47,10 @@ public class ImportDefaultLanguageMacro extends AbstractMacro {
 	public boolean isPreview() {
 		return true;
 	}
+	
+	@Override
+	public boolean isAdmin() {
+		return false;
+	}
 
 }
