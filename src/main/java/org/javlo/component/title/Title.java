@@ -69,6 +69,10 @@ public class Title extends AbstractVisualComponent {
 		value = reverserLinkService.replaceLink(ctx, this, value);
 		ctx.getRequest().setAttribute("value", value);
 	}
+	
+	protected String getInsideTag(ContentContext ctx) {
+		return getConfig(ctx).getProperty("tag.inside", "span");
+	}
 
 	/**
 	 * @see org.javlo.itf.IContentVisualComponent#getXHTMLCode()
@@ -80,10 +84,22 @@ public class Title extends AbstractVisualComponent {
 		}
 		StringBuffer res = new StringBuffer();
 		String style="";
-		if (getLayout() != null && getLayout().getLayout().length() > 0) {
-			style = " style=\""+getLayout().getStyle()+'"';
+		
+		String colorStyle = "";
+		if (getTextColor() != null && getTextColor().length() > 3) {
+			colorStyle=" color:"+getTextColor()+';';
 		}
-		res.append("<h1"+style+" " + getSpecialPreviewCssClass(ctx, getStyle(ctx)) + getSpecialPreviewCssId(ctx) + "><span>");
+		String colorClass="";
+		if (getBackgroundColor() != null && getBackgroundColor().length() > 3) {
+			colorStyle=colorStyle+" background-color:"+getBackgroundColor()+';';
+			colorClass = ' '+COLORED_WRAPPER_CLASS;
+		}		
+		if (getLayout() != null && getLayout().getLayout().length() > 0) {
+			style = " style=\""+getLayout().getStyle()+colorStyle+'"';			
+		} else if (colorStyle.length()>0) {
+			style = " style=\""+colorStyle+'"';
+		}
+		res.append("<h1"+style+" " + getSpecialPreviewCssClass(ctx, getStyle(ctx)+colorClass) + getSpecialPreviewCssId(ctx) + "><"+getInsideTag(ctx)+">");
 
 		String value = getValue();
 		GlobalContext globalContext = GlobalContext.getInstance(ctx.getRequest());
@@ -91,7 +107,7 @@ public class Title extends AbstractVisualComponent {
 		value = reverserLinkService.replaceLink(ctx, this, value);
 
 		res.append(value);
-		res.append("</span></h1>");
+		res.append("</"+getInsideTag(ctx)+"></h1>");
 		return res.toString();
 	}
 

@@ -898,6 +898,9 @@ public abstract class AbstractVisualComponent implements IContentVisualComponent
 			} else {
 				style = "";
 			}
+			if (isBackgroundColored()) {
+				style = style + " colored-wrapper";
+			}
 			if (getPreviousComponent() == null || !getPreviousComponent().getType().equals(getType())) {
 				style = style + " first ";
 			}

@@ -1067,6 +1067,11 @@ public class GlobalImage extends Image implements IImageFilter {
 	protected String getLabelTextInputName() {
 		return getId() + ID_SEPARATOR + "label-text";
 	}
+	
+	protected String getEditorComplexity(ContentContext ctx) {
+		return getConfig(ctx).getProperty("editor-complexity", "middle");
+	}
+
 
 	@Override
 	public String getSpecialTagXHTML(ContentContext ctx) throws Exception {
@@ -1093,7 +1098,7 @@ public class GlobalImage extends Image implements IImageFilter {
 		String id = "special-label-" + getId();
 		String[][] paramsLabelText = new String[][] { { "rows", "3" }, { "cols", "100" }, { "class", "tinymce-light" }, { "id", id } };
 		out.println(XHTMLHelper.getTextArea(getLabelTextInputName(), getLabel(), paramsLabelText));
-		out.println("<script type=\"text/javascript\">jQuery(document).ready(loadWysiwyg('#" + id + "','light','" + chooseImageURL + "'));</script>");
+		out.println("<script type=\"text/javascript\">jQuery(document).ready(loadWysiwyg('#" + id + "','"+getEditorComplexity(ctx)+"','" + chooseImageURL + "'));</script>");
 		out.println("</div>");
 
 		if (isFloatText(ctx)) {

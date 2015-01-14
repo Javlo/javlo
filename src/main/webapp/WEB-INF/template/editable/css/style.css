@@ -109,6 +109,13 @@ h1, h2, h3, h4, h5, h6 {
 	border: 1px white solid;
 }
 
+h1.colored-wrapper div {	
+	margin: -1px;
+	padding: 8;	
+	border: 1px #ffffff solid;
+	margin-bottom: 15px;
+}
+
 table {
 	border-collapse: collapse;
 	font-size: inherit;
@@ -166,6 +173,16 @@ table.table td, table.table th {
 .float-image p {
 	padding: 0;
 	margin: 0;
+}
+
+.file .info {
+    font-style: italic;
+    padding-left: 3px;
+}
+
+.file .size {
+    display: inline-block;
+    padding-left: 2px;
 }
 
 table.float-image, table.float-image  td, table.float-image  th {
