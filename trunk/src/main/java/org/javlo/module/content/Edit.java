@@ -1578,8 +1578,9 @@ public class Edit extends AbstractModuleAction {
 		}
 		if (!ctx.isEditPreview()) {
 			ctx.setArea(editContext.getCurrentArea());
-			comp.setArea(null); // paste in current area
+			comp.setArea(null); // paste in current area			
 		}
+		comp.setLanguage(null);
 		String newId = content.createContent(ctx, targetPage, comp, previous, true);
 		if (ctx.isAjax()) {
 			updateComponent(ctx, currentModule, newId, previous);
