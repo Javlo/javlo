@@ -280,7 +280,7 @@ public abstract class AbstractFileComponent extends AbstractVisualComponent impl
 
 		finalCode.append("</div><div class=\"col-md-8\">");
 
-		if (this instanceof IReverseLinkComponent) {
+		if (this instanceof IReverseLinkComponent && isReversedLink(ctx)) {
 			/*
 			 * finalCode.append("<div class=\"line\">");
 			 * finalCode.append(XHTMLHelper

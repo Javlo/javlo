@@ -32,7 +32,7 @@ function loadWysiwyg(cssQuery, complexity, chooseFileURL) {
 		        "insertdatetime media table contextmenu paste textcolor"
 		    ],
 		    //paste_word_valid_elements: "b,strong,i,em,h1,h2,h3,h4,h5,h6,table,tr,th,td,ul,ol,li,p,a,div",
-		    toolbar: "undo redo searchreplace | bold italic forecolor backcolor | charmap | alignleft aligncenter alignright alignjustify | bullist numlist outdent indent"
+		    toolbar: "undo redo searchreplace | bold italic forecolor backcolor | charmap | alignleft aligncenter alignright alignjustify | link | bullist numlist outdent indent"
 		});
 	} else if (complexity == "high") {		
 		tinymce.init({

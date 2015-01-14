@@ -17,13 +17,13 @@ import org.javlo.template.Area;
  */
 public class SubTitle extends AbstractVisualComponent implements ISubTitle {
 
-	public static final String TYPE = "subtitle";
+	public static final String TYPE = "subtitle";	
 
 	@Override
 	public String getPrefixViewXHTMLCode(ContentContext ctx) {
 		String cssClass = "subtitle-wrapper subtitle-wrapper-"+getStyle();
 		if (isBackgroundColored()) {
-			cssClass = cssClass + " colored-wrapper";
+			cssClass = cssClass + " "+COLORED_WRAPPER_CLASS;
 		}
 		return "<div " + getSpecialPreviewCssClass(ctx, cssClass) + getSpecialPreviewCssId(ctx) + " "+getInlineStyle(ctx)+">";
 	}

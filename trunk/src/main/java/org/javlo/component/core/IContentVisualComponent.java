@@ -51,6 +51,8 @@ public interface IContentVisualComponent extends Comparable<IContentVisualCompon
 	static public String DYN_COMP_COLOR = "99CCF9";
 	static public String WEB2_COLOR = "5A4C93";
 	static public String CONTAINER_COLOR = "D57C60";
+	
+	public static final String COLORED_WRAPPER_CLASS = "colored-wrapper";
 
 	/**
 	 * get the configuration of the component. from project or from template.
