@@ -37,11 +37,11 @@ public class DashOnImageMacro extends AbstractMacro {
 
 	@Override
 	public boolean isAdmin() {
-		return false;
+		return true;
 	}
 
 	@Override
 	public boolean isPreview() {
-		return true;
+		return false;
 	}
 };
