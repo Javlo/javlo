@@ -219,6 +219,7 @@ public class ContentService implements IPrintInfo {
 			lg = ctx.getRequestContentLanguage();
 		}
 		ComponentBean bean = new ComponentBean(inBean);
+		bean.setLanguage(lg);
 		bean.setId(id);
 		if (bean.getArea() == null) {
 			bean.setArea(ctx.getArea());
