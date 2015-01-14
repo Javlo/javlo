@@ -357,10 +357,6 @@ li.line {
 	height: 160px;
 }
 
-.component input.form-control, .component textarea.form-control, .component select.form-control {
-    width: 100%;
-}
-
 .text img {
 	float: left;
 }
