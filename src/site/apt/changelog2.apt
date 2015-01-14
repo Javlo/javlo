@@ -365,3 +365,5 @@ change log
  * tracking paramter activation
  
  * new debug notes (priority, users, creation date)
+ 
+ * correct copy component between 2 language bug
