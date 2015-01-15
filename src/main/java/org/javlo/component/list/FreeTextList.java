@@ -111,7 +111,9 @@ public class FreeTextList extends AbstractVisualComponent {
 				if ((sep != null) && sep.length() > 0) {
 					int sepIndex = line.indexOf(sep);
 					if (sepIndex >= 0) {
-						lines.add(new PrefixedText(line.substring(0, sepIndex + 1), line.substring(sepIndex + 1), null));
+						String prefix = line.substring(0, sepIndex + 1);
+						prefix = prefix.replace(sep, "<span class=\"sep\">"+sep+"</span>");
+						lines.add(new PrefixedText(prefix, line.substring(sepIndex + 1), null));
 					} else {
 						lines.add(new PrefixedText(null, line, null));
 					}

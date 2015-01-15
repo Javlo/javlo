@@ -188,6 +188,21 @@ public class ListService {
 		}
 		if (outList != null) {
 			Collections.sort(outList, new OrderList());
+		} else if (name.contains("-")) {
+			String[] numbers = name.split("-");
+			try {
+				int start = Integer.parseInt(numbers[0]);
+				int end = Integer.parseInt(numbers[1]);
+				List<Item> numberedList = new LinkedList<Item>();
+				if (start<end) {
+					for (int i=start; i<=end; i++) {
+						numberedList.add(new Item(""+i,""+i));
+					}
+					return numberedList;
+				}
+			} catch (Exception e) {
+				e.printStackTrace();
+			}
 		}
 		return outList;
 	}
@@ -224,7 +239,7 @@ public class ListService {
 
 	public static Map<String, String> listToStringMap(List<Item> list) {
 		Map<String, String> outMap = new LinkedHashMap<String, String>();
-		for (Item item : list) {
+		for (Item item : list) {			
 			outMap.put(item.getKey(), item.getValue());
 		}
 		return outMap;

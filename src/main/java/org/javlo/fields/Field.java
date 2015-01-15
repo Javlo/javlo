@@ -263,9 +263,13 @@ public class Field implements Cloneable {
 				}
 			}
 			// TODO:debug this
-			if (keyValue.size() == 0) {
-				List<Item> list = ListService.getInstance(ctx).getAllList(ctx).get(listName);
+			System.out.println("***** Field.getList : keyValue.size() = "+keyValue.size()); //TODO: remove debug trace
+			System.out.println("***** Field.getList : listName = "+listName); //TODO: remove debug trace
+			if (keyValue.size() == 0) {				
+				List<Item> list = ListService.getInstance(ctx).getList(ctx,listName);		
+				System.out.println("***** Field.getList : list = "+list); //TODO: remove debug trace
 				if (list != null) {
+					System.out.println("***** Field.getList : size = "+list.size()); //TODO: remove debug trace
 					keyValue = ListService.listToStringMap(list);
 				}
 			}
