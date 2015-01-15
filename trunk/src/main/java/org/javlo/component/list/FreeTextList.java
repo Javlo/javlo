@@ -19,6 +19,7 @@ import org.javlo.helper.XHTMLHelper;
 import org.javlo.i18n.I18nAccess;
 import org.javlo.service.RequestService;
 import org.javlo.service.ReverseLinkService;
+import org.javlo.text.PrefixedText;
 import org.javlo.utils.SuffixPrefix;
 
 /**
@@ -96,11 +97,27 @@ public class FreeTextList extends AbstractVisualComponent {
 		if (getRenderer(ctx) != null) {
 			ReverseLinkService reverserLinkService = ReverseLinkService.getInstance(ctx.getGlobalContext());
 			String value = XHTMLHelper.autoLink(reverserLinkService.replaceLink(ctx, this, getValue()));
+			String sep = getSeparatorValue();
+			if (value.length() > 3) {
+				if (value.startsWith("{")) {
+					sep = "" + value.charAt(1);
+					value = value.substring(3);
+				}
+			}			
 			BufferedReader read = new BufferedReader(new StringReader(value));
 			String line = read.readLine();
-			List<String> lines = new LinkedList<String>();
-			while (line != null) {
-				lines.add(line);
+			List<PrefixedText> lines = new LinkedList<PrefixedText>();
+			while (line != null) {				
+				if ((sep != null) && sep.length() > 0) {
+					int sepIndex = line.indexOf(sep);
+					if (sepIndex >= 0) {
+						lines.add(new PrefixedText(line.substring(0, sepIndex + 1), line.substring(sepIndex + 1), null));
+					} else {
+						lines.add(new PrefixedText(null, line, null));
+					}
+				} else {
+					lines.add(new PrefixedText(null, line, null));	
+				}				
 				line = read.readLine();
 			}
 			ctx.getRequest().setAttribute("lines", lines);
