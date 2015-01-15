@@ -30,7 +30,6 @@ import org.javlo.bean.Link;
 import org.javlo.component.core.AbstractVisualComponent;
 import org.javlo.component.core.ComplexPropertiesLink;
 import org.javlo.component.core.ComponentBean;
-import org.javlo.component.core.IContentVisualComponent;
 import org.javlo.component.image.IImageTitle;
 import org.javlo.component.meta.Tags;
 import org.javlo.context.ContentContext;
@@ -46,6 +45,7 @@ import org.javlo.helper.Comparator.MenuElementCreationDateComparator;
 import org.javlo.helper.Comparator.MenuElementGlobalDateComparator;
 import org.javlo.helper.Comparator.MenuElementModificationDateComparator;
 import org.javlo.helper.Comparator.MenuElementPopularityComparator;
+import org.javlo.helper.Comparator.MenuElementPriorityComparator;
 import org.javlo.helper.Comparator.MenuElementVisitComparator;
 import org.javlo.i18n.I18nAccess;
 import org.javlo.module.content.Edit;
@@ -230,6 +230,7 @@ public class PageReferenceComponent extends ComplexPropertiesLink implements IAc
 			bean.modificationDate = StringHelper.renderShortDate(lgCtx, page.getModificationDate());
 			bean.sortableModificationDate = StringHelper.renderShortDate(lgCtx, page.getModificationDate());
 			bean.sortableCreationDate = StringHelper.renderSortableDate(page.getCreationDate());
+			bean.priority = page.getPriority();
 			if (page.getContentDate(lgCtx) != null) {
 				bean.date = StringHelper.renderShortDate(lgCtx, page.getContentDate(lgCtx));
 				bean.sortableDate = StringHelper.renderSortableDate(page.getContentDate(lgCtx));
@@ -345,6 +346,7 @@ public class PageReferenceComponent extends ComplexPropertiesLink implements IAc
 		private String path = null;
 		private String creator = null;
 		private String publishURL;
+		private int priority = 0;
 		private boolean childrenOfAssociation = false;
 		private boolean childrenAssociation = false;
 		private boolean mailing = false;
@@ -1545,7 +1547,7 @@ public class PageReferenceComponent extends ComplexPropertiesLink implements IAc
 	}
 
 	private boolean isNoOrder(ContentContext ctx) {
-		return checkOrder(ctx, "no");
+		return checkOrder(ctx, "no-order");
 	}
 
 	private boolean isPopularityOrder(ContentContext ctx) {
@@ -1639,7 +1641,7 @@ public class PageReferenceComponent extends ComplexPropertiesLink implements IAc
 		if (isReverseOrder(ctx)) {
 			ascending = !ascending;
 		}
-
+		
 		if (!isNoOrder(ctx)) {
 			if (isReactionOrder(ctx)) {
 				Collections.sort(pages, new ReactionMenuElementComparator(ctx, ascending));
@@ -1660,6 +1662,8 @@ public class PageReferenceComponent extends ComplexPropertiesLink implements IAc
 					popularitySorting(ctx, pages, getMaxNews(ctx));
 				}
 			}
+		} else {			
+			Collections.sort(pages, new MenuElementPriorityComparator(!ascending));
 		}
 
 		int countPage = 0;
