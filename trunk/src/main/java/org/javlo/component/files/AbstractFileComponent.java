@@ -159,9 +159,11 @@ public abstract class AbstractFileComponent extends AbstractVisualComponent impl
 		if (getLabel() != null && getLabel().length() > 0) {
 			ctx.getRequest().setAttribute("label", getLabel());
 			ctx.getRequest().setAttribute("cleanLabel", StringHelper.removeTag(getLabel()));
+			ctx.getRequest().setAttribute("htmlLabel", XHTMLHelper.textToXHTML(XHTMLHelper.autoLink(getLabel())));
 		} else if (staticInfo != null) {
 			ctx.getRequest().setAttribute("label", staticInfo.getTitle(ctx));
 			ctx.getRequest().setAttribute("cleanLabel", StringHelper.removeTag(staticInfo.getTitle(ctx)));
+			ctx.getRequest().setAttribute("htmlLabel", XHTMLHelper.textToXHTML(XHTMLHelper.autoLink(getLabel())));
 		}
 		ctx.getRequest().setAttribute("resource", staticInfo);
 	}

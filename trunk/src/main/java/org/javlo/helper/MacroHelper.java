@@ -966,6 +966,9 @@ public class MacroHelper {
 	}
 	
 	public static MenuElement duplicatePage(ContentContext ctx, MenuElement page, String newname) throws SecurityException, IllegalArgumentException, IllegalAccessException, InvocationTargetException {
+		if (page.getName().equals(newname)) {
+			return null;
+		}
 		MenuElement outPage = MenuElement.getInstance(ctx.getGlobalContext());
 		outPage.setId(StringHelper.getRandomId()) ;
 		outPage.setName(newname);
@@ -981,12 +984,20 @@ public class MacroHelper {
 		return outPage;
 	}
 	
-	public static void copyChildren (ContentContext ctx, MenuElement source, MenuElement target, String sourcePattern, String targetPattern) throws SecurityException, IllegalArgumentException, IllegalAccessException, InvocationTargetException {
+	public static String copyChildren (ContentContext ctx, MenuElement source, MenuElement target, String sourcePattern, String targetPattern) throws SecurityException, IllegalArgumentException, IllegalAccessException, InvocationTargetException {
+		String errorPage = "";
+		String sep = "";
 		for (MenuElement child : source.getChildMenuElements())	{
 			MenuElement newChild = duplicatePage(ctx, child, child.getName().replace(sourcePattern, targetPattern));
-			target.addChildMenuElement(newChild);
-			copyChildren(ctx, child, newChild, sourcePattern, targetPattern);
+			if (newChild != null) {
+				target.addChildMenuElement(newChild);
+				errorPage = errorPage+copyChildren(ctx, child, newChild, sourcePattern, targetPattern);
+			} else {
+				errorPage = errorPage+sep+child.getName();
+				sep = ",";
+			}
 		}
+		return errorPage;
 	}
 
 	public static void main(String[] args) {

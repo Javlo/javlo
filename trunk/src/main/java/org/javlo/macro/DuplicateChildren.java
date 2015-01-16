@@ -4,7 +4,6 @@ import java.util.Map;
 
 import org.javlo.context.ContentContext;
 import org.javlo.context.EditContext;
-import org.javlo.context.GlobalContext;
 import org.javlo.helper.MacroHelper;
 import org.javlo.navigation.MenuElement;
 import org.javlo.service.ContentService;
@@ -18,7 +17,7 @@ public class DuplicateChildren extends AbstractMacro {
 
 	@Override
 	public String perform(ContentContext ctx, Map<String, Object> params) throws Exception {
-		GlobalContext globalContext = GlobalContext.getInstance(ctx.getRequest());
+		String msg;
 		EditContext editContext = EditContext.getInstance(ctx.getGlobalContext(), ctx.getRequest().getSession());
 		if (editContext.getContextForCopy(ctx) == null) {
 			return "no source page in ClipBoard.";
@@ -28,10 +27,14 @@ public class DuplicateChildren extends AbstractMacro {
 			if (sourcePage == null) {
 				return "source page not found.";				
 			} else {
-				MacroHelper.copyChildren(ctx, sourcePage, ctx.getCurrentPage(), sourcePage.getName(), ctx.getCurrentPage().getName());
+				msg = MacroHelper.copyChildren(ctx, sourcePage, ctx.getCurrentPage(), sourcePage.getName(), ctx.getCurrentPage().getName());
 			}
 		}
-		return null;
+		if (msg.length() > 0) {
+			return "error on : "+msg;
+		} else {
+			return null;
+		}
 	}
 
 	@Override
