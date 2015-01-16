@@ -5,7 +5,6 @@ package org.javlo.component.dynamic;
 
 import java.io.ByteArrayOutputStream;
 import java.io.File;
-import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.io.StringWriter;
@@ -806,8 +805,8 @@ public class DynamicComponent extends AbstractVisualComponent implements IStatic
 	public String getResourceURL(ContentContext ctx) {
 		FieldImage image = getImageField(ctx);
 		if (image != null) {
-			try {
-				return image.getFileURL(ctx);
+			try {				
+				return ((FieldImage)image.getReference(ctx)).getFileURL(ctx);
 			} catch (Exception e) {
 				e.printStackTrace();
 			}
