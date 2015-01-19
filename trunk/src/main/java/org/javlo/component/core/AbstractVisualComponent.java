@@ -99,6 +99,8 @@ public abstract class AbstractVisualComponent implements IContentVisualComponent
 
 	protected static final String HIDDEN = "hidden";
 
+	public static final String FORCE_COMPONENT_ID = "___FORCE_COMPONENT_ID";
+
 	private final Map<String, Properties> i18nView = new HashMap<String, Properties>();
 
 	private ComponentBean componentBean = new ComponentBean();
@@ -683,7 +685,7 @@ public abstract class AbstractVisualComponent implements IContentVisualComponent
 	 * viewTimeCache.get(getContentCacheKey(ctx)); }
 	 */
 
-	protected String getEmptyCode(ContentContext ctx) throws Exception {
+	protected String getEmptyCode(ContentContext ctx) throws Exception {		
 		if ((ctx.getRenderMode() == ContentContext.PREVIEW_MODE)) {
 			GlobalContext globalContext = GlobalContext.getInstance(ctx.getRequest());
 			EditContext editCtx = EditContext.getInstance(globalContext, ctx.getRequest().getSession());
@@ -694,7 +696,13 @@ public abstract class AbstractVisualComponent implements IContentVisualComponent
 					// user is not on
 					// the definition
 					// page
-					return ("<div " + getSpecialPreviewCssClass(ctx, "pc_empty-component") + getSpecialPreviewCssId(ctx) + ">" + getEmptyXHTMLCode(ctx) + "</div>");
+					String prefix = "";
+					String suffix = "";
+					if (!isWrapped(ctx)) {
+						prefix = getForcedPrefixViewXHTMLCode(ctx);
+						suffix = getForcedSuffixViewXHTMLCode(ctx);
+					}					
+					return (prefix + "<div " + getSpecialPreviewCssClass(ctx, "pc_empty-component") + getSpecialPreviewCssId(ctx) + ">" + getEmptyXHTMLCode(ctx) + "</div>" + suffix);
 				}
 			}
 		}
@@ -849,11 +857,11 @@ public abstract class AbstractVisualComponent implements IContentVisualComponent
 	public String getLastSufix(ContentContext ctx) {
 		if (previousComponent != null) {
 			if (((AbstractVisualComponent) previousComponent).componentBean.isList() && previousComponent.getType().equals(getType())) {
-				return "</"+getListTag(ctx)+">";
+				return "</" + getListTag(ctx) + ">";
 			}
 		}
 		if (componentBean.isList()) {
-			return "</"+getListTag(ctx)+">";
+			return "</" + getListTag(ctx) + ">";
 		}
 		return getConfig(ctx).getProperty("suffix.last", "");
 	}
@@ -887,33 +895,37 @@ public abstract class AbstractVisualComponent implements IContentVisualComponent
 	}
 
 	@Override
-	public String getPrefixViewXHTMLCode(ContentContext ctx) {		
+	public String getPrefixViewXHTMLCode(ContentContext ctx) {
 		if (isWrapped(ctx)) {
-			if (getConfig(ctx).getProperty("prefix", null) != null) {
-				return getConfig(ctx).getProperty("prefix", null);
-			}
-			String style = getStyle(ctx);
-			if (style != null) {
-				style = style + ' ';
-			} else {
-				style = "";
-			}
-			if (isBackgroundColored()) {
-				style = style + " colored-wrapper";
-			}
-			if (getPreviousComponent() == null || !getPreviousComponent().getType().equals(getType())) {
-				style = style + " first ";
-			}
-			if (getNextComponent() == null || !getNextComponent().getType().equals(getType())) {
-				style = style + " last ";
-			}
-			if (!componentBean.isList()) {
-				return "<" + getTag(ctx) + " " + getSpecialPreviewCssClass(ctx, style + getType()) + getSpecialPreviewCssId(ctx) + " " + getInlineStyle(ctx) + ">";
-			} else {
-				return "<" + getListItemTag(ctx) + getSpecialPreviewCssClass(ctx, style + getType()) + getSpecialPreviewCssId(ctx) + " >";
-			}
+			return getForcedPrefixViewXHTMLCode(ctx);
 		} else {
 			return "";
+		}
+	}
+
+	protected String getForcedPrefixViewXHTMLCode(ContentContext ctx) {
+		if (getConfig(ctx).getProperty("prefix", null) != null) {
+			return getConfig(ctx).getProperty("prefix", null);
+		}
+		String style = getStyle(ctx);
+		if (style != null) {
+			style = style + ' ';
+		} else {
+			style = "";
+		}
+		if (isBackgroundColored()) {
+			style = style + " colored-wrapper";
+		}
+		if (getPreviousComponent() == null || !getPreviousComponent().getType().equals(getType())) {
+			style = style + " first ";
+		}
+		if (getNextComponent() == null || !getNextComponent().getType().equals(getType())) {
+			style = style + " last ";
+		}
+		if (!componentBean.isList()) {
+			return "<" + getTag(ctx) + " " + getSpecialPreviewCssClass(ctx, style + getType()) + getSpecialPreviewCssId(ctx) + " " + getInlineStyle(ctx) + ">";
+		} else {
+			return "<" + getListItemTag(ctx) + getSpecialPreviewCssClass(ctx, style + getType()) + getSpecialPreviewCssId(ctx) + " >";
 		}
 	}
 
@@ -1133,9 +1145,32 @@ public abstract class AbstractVisualComponent implements IContentVisualComponent
 		return "";
 	}
 
+	protected String getForcedId(ContentContext ctx) {
+		String compID = (String) ctx.getRequest().getAttribute(FORCE_COMPONENT_ID); // user
+																					// for
+																					// miror
+																					// mecanism
+		if (compID == null) {
+			compID = getId();
+		}
+		return compID;
+	}
+
+	protected static void setForcedId(ContentContext ctx, String id) {
+		if (id == null) {
+			ctx.getRequest().removeAttribute(FORCE_COMPONENT_ID); // user for
+																	// miror
+																	// mecanism
+		} else {
+			ctx.getRequest().setAttribute(FORCE_COMPONENT_ID, id); // user for
+																	// miror
+																	// mecanism
+		}
+	}
+
 	public String getSpecialPreviewCssId(ContentContext ctx) {
 		if (ctx.getRenderMode() == ContentContext.PREVIEW_MODE) {
-			return " id=\"cp_" + getId() + "\"";
+			return " id=\"cp_" + getForcedId(ctx) + "\"";
 		} else {
 			return "";
 		}
@@ -1252,16 +1287,20 @@ public abstract class AbstractVisualComponent implements IContentVisualComponent
 	@Override
 	public String getSuffixViewXHTMLCode(ContentContext ctx) {
 		if (isWrapped(ctx)) {
-			if (getConfig(ctx).getProperty("suffix", null) != null) {
-				return getConfig(ctx).getProperty("suffix", null);
-			}
-			if (!componentBean.isList()) {
-				return "</" + getTag(ctx) + ">";
-			} else {
-				return "</"+getListItemTag(ctx)+'>';
-			}
+			return getForcedSuffixViewXHTMLCode(ctx);
 		} else {
 			return "";
+		}
+	}
+
+	private String getForcedSuffixViewXHTMLCode(ContentContext ctx) {
+		if (getConfig(ctx).getProperty("suffix", null) != null) {
+			return getConfig(ctx).getProperty("suffix", null);
+		}
+		if (!componentBean.isList()) {
+			return "</" + getTag(ctx) + ">";
+		} else {
+			return "</" + getListItemTag(ctx) + '>';
 		}
 	}
 
@@ -1382,7 +1421,13 @@ public abstract class AbstractVisualComponent implements IContentVisualComponent
 	protected String renderViewXHTMLCode(ContentContext ctx) throws Exception {
 		if (HIDDEN.equals(getStyle())) {
 			if (ctx.getRenderMode() == ContentContext.PREVIEW_MODE && EditContext.getInstance(GlobalContext.getInstance(ctx.getRequest()), ctx.getRequest().getSession()).isEditPreview()) {
-				return '[' + getType() + ']';
+				String prefix = "";
+				String suffix = "";
+				if (!isWrapped(ctx)) {
+					prefix = getForcedPrefixViewXHTMLCode(ctx);
+					suffix = getForcedSuffixViewXHTMLCode(ctx);
+				}
+				return prefix+'[' + getType() + ']'+suffix;
 			} else {
 				return "";
 			}
@@ -2115,11 +2160,18 @@ public abstract class AbstractVisualComponent implements IContentVisualComponent
 
 	@Override
 	public String getEmptyXHTMLCode(ContentContext ctx) throws Exception {
+		System.out.println("***** AbstractVisualComponent.getEmptyXHTMLCode : type = "+getType()); //TODO: remove debug trace
 		if (isHiddenInMode(ctx.getRenderMode()) || !AdminUserSecurity.getInstance().canModifyConponent(ctx, getId())) {
 			return "";
 		} else {
 			I18nAccess i18nAccess = I18nAccess.getInstance(ctx.getRequest());
-			return '[' + i18nAccess.getText("content." + getType(), getType()) + ']';
+			String prefix = "";
+			String suffix = "";
+			if (!isWrapped(ctx)) {
+				prefix = getForcedPrefixViewXHTMLCode(ctx);
+				suffix = getForcedSuffixViewXHTMLCode(ctx);
+			}				
+			return prefix+'[' + i18nAccess.getText("content." + getType(), getType()) + ']'+suffix;
 		}
 	}
 
@@ -2127,7 +2179,7 @@ public abstract class AbstractVisualComponent implements IContentVisualComponent
 	public String getPageDescription(ContentContext ctx) {
 		return null;
 	}
-	
+
 	@Override
 	public String getListGroup() {
 		return getType();
@@ -2136,5 +2188,5 @@ public abstract class AbstractVisualComponent implements IContentVisualComponent
 	public boolean isReversedLink(ContentContext ctx) {
 		return ctx.getGlobalContext().isReversedLink();
 	}
-	
+
 }

@@ -1,5 +1,3 @@
-<%@page import="org.javlo.component.column.OpenCol"%>
-<%@page import="org.javlo.component.column.ColContext"%>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c"
 %><%@ taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions"
 %><%@page contentType="text/html"
@@ -20,6 +18,8 @@
 		org.javlo.component.container.IContainer,
 		org.javlo.component.column.TableContext,
 		org.javlo.component.column.TableBreak,
+		org.javlo.component.column.ColContext,
+		org.javlo.component.column.OpenCol,
 		org.javlo.context.GlobalContext,
 		org.javlo.user.User,
 		org.javlo.user.UserFactory,
@@ -158,6 +158,7 @@ if (globalContext.isCollaborativeMode() && ctx.getRenderMode() == ContentContext
 	request.setAttribute("date", StringHelper.renderTime(elem.getModificationDate()));%><jsp:include page="display_user.jsp"></jsp:include><%
 }
 String xhtmlCode = elem.getXHTMLCode(ctx);
+
 %><c:if test="${editPreview}"><%
 if (xhtmlCode != null && StringHelper.removeTag(xhtmlCode).trim().length() == 0 && !xhtmlCode.toLowerCase().contains("<img")) {
 	I18nAccess i18nAccess = I18nAccess.getInstance(ctx);
