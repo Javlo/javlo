@@ -53,7 +53,7 @@ if ((template != null)&&(template.getHomeRenderer(globalContext) != null)) {
 		url = URLHelper.mergePath(request.getContextPath(),url);
 	}*/
 	ctx.setForcePathPrefix(request,forcePathPreview);	
-	request.getRequestDispatcher(url).forward(request, response);
+	//request.getRequestDispatcher(url).forward(request, response);
 	//response.sendRedirect(url);
 	//NetHelper.sendRedirectTemporarily(response, url);
 	//request.getRequestDispatcher(URLHelper.createForwardURL(ctx, url)).forward(request, response);

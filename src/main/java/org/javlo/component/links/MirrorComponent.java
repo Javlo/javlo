@@ -36,6 +36,10 @@ public class MirrorComponent extends AbstractVisualComponent {
 		return "linked-comp-" + getId();
 	}
 
+	public String getUnlinkInputName() {
+		return "unlink-comp-" + getId();
+	}
+
 	@Override
 	protected String getEditXHTMLCode(ContentContext ctx) throws Exception {
 
@@ -51,19 +55,27 @@ public class MirrorComponent extends AbstractVisualComponent {
 
 		StringWriter writer = new StringWriter();
 		PrintWriter out = new PrintWriter(writer);
-		out.println("<div class=\"line\"><input name=\"" + getCurrentInputName() + "\" id=\"" + getCurrentInputName() + "\" type=\"hidden\" readonly=\"readonly\" value=\"" + StringHelper.neverNull(getMirrorComponentId()) + "\" />");
+		out.println("<div class=\"row\"><div class=\"col-sm-4\"><div class=\"form-group\"><input name=\"" + getCurrentInputName() + "\" id=\"" + getCurrentInputName() + "\" type=\"hidden\" readonly=\"readonly\" value=\"" + StringHelper.neverNull(getMirrorComponentId()) + "\" />");
 
 		IContentVisualComponent currentComp = getMirrorComponent(ctx);
-
 		if (comp != null && !comp.getId().equals(getId())) {
-			String[][] params = new String[][] { { "type", comp.getType() }, { "language", comp.getLanguage() } };
+			String[][] params = new String[][] { { "type", i18nAccess.getText("comp." + comp.getType(), comp.getType()) }, { "language", comp.getLanguage() } };
 			String label = i18nAccess.getText("content.mirror.link", params);
-			out.println("<input type=\"submit\" value=\"" + label + "\" onclick=\"jQuery('#" + getCurrentInputName() + "').val('" + comp.getId() + "');\" />");
+			out.println("<input class=\"btn btn-default\" type=\"submit\" value=\"" + label + "\" onclick=\"jQuery('#" + getCurrentInputName() + "').val('" + comp.getId() + "');\" />");
+		} else {
+			out.println("<input class=\"btn btn-primary\" disabled type=\"submit\" value=\"" + i18nAccess.getText("content.mirror.no-copy", "copy a other component for link.") + "\" />");
+		}
+		out.println("</div></div>");
+		if (currentComp != null) {
+			out.println("<div class=\"col-sm-4\">" + i18nAccess.getText("content.mirror.type") + currentComp.getType() + " (<a href=\"" + URLHelper.createURL(ctx, currentComp.getPage()) + "\">" + currentComp.getPage().getPath() + "</a>)</div>");
+		}
+		if (getValue().trim().length() > 0) {
+			out.println("<div class=\"col-sm-4\">");
+			String label = i18nAccess.getText("content.mirror.unlink");
+			out.println("<input class=\"btn btn-default\" type=\"submit\" value=\"" + label + "\" name=\"" + getUnlinkInputName() + "\" />");
+			out.println("</div>");
 		}
 
-		if (currentComp != null) {
-			out.println("&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;" + i18nAccess.getText("content.mirror.type") + currentComp.getType()+" (<a href=\""+URLHelper.createURL(ctx, currentComp.getPage())+"\">"+currentComp.getPage().getPath()+"</a>)");
-		}
 		out.println("</div>");
 		out.close();
 		return writer.toString();
@@ -88,11 +100,11 @@ public class MirrorComponent extends AbstractVisualComponent {
 	public String getHexColor() {
 		return LINK_COLOR;
 	}
-	
+
 	protected String getMirrorComponentId() {
 		return getValue();
 	}
-	
+
 	protected void setMirrorComponentId(String compId) {
 		setValue(compId);
 	}
@@ -106,15 +118,17 @@ public class MirrorComponent extends AbstractVisualComponent {
 	@Override
 	public String getPrefixViewXHTMLCode(ContentContext ctx) {
 		IContentVisualComponent comp;
-		try {
+		try {			
 			comp = getMirrorComponent(ctx);
 			if (comp != null) {
+				AbstractVisualComponent.setForcedId(ctx, getId());
 				return comp.getPrefixViewXHTMLCode(ctx);
 			}
 		} catch (Exception e) {
 			e.printStackTrace();
+		} finally {
+			AbstractVisualComponent.setForcedId(ctx, null);	
 		}
-
 		return super.getPrefixViewXHTMLCode(ctx);
 	}
 
@@ -152,7 +166,7 @@ public class MirrorComponent extends AbstractVisualComponent {
 		}
 		return "";
 	}
-	
+
 	@Override
 	public String getEmptyXHTMLCode(ContentContext ctx) throws Exception {
 		AbstractVisualComponent comp = (AbstractVisualComponent) getMirrorComponent(ctx);
@@ -205,7 +219,18 @@ public class MirrorComponent extends AbstractVisualComponent {
 	public void performEdit(ContentContext ctx) throws Exception {
 		RequestService requestService = RequestService.getInstance(ctx.getRequest());
 		String newLink = requestService.getParameter(getCurrentInputName(), getMirrorComponentId());
-		if (newLink != null) {
+		if (requestService.getParameter(getUnlinkInputName(), null) != null) {			
+			IContentVisualComponent comp = getMirrorComponent(ctx);
+			if (comp != null) {				
+				ContentService content = ContentService.getInstance(ctx.getGlobalContext());
+				ComponentBean bean = new ComponentBean(comp.getComponentBean());				
+				bean.setArea(getArea());
+				content.createContent(ctx, bean, getId(), isBackgroundColored());
+				deleteMySelf(ctx);
+				setModify();
+				setNeedRefresh(true);
+			}
+		} else if (newLink != null) {
 			if (!newLink.equals(getMirrorComponentId())) {
 				setMirrorComponentId(newLink);
 				setModify();
