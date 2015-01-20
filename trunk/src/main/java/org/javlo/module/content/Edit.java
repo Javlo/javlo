@@ -26,6 +26,7 @@ import org.javlo.component.core.IContentComponentsList;
 import org.javlo.component.core.IContentVisualComponent;
 import org.javlo.component.core.IReverseLinkComponent;
 import org.javlo.component.dynamic.DynamicComponent;
+import org.javlo.component.links.MirrorComponent;
 import org.javlo.component.links.PageMirrorComponent;
 import org.javlo.component.title.Title;
 import org.javlo.config.StaticConfig;
@@ -736,7 +737,12 @@ public class Edit extends AbstractModuleAction {
 				return "error no item in clipBoard";
 			} else {
 				ComponentBean bean = (ComponentBean) copied;
-				newId = content.createContent(ctx, targetPage, areaKey, previousId, bean, true);
+				if (globalContext.isMailingPlatform()) {
+					newId = content.createContent(ctx, targetPage, areaKey, previousId, bean, true);
+				} else {
+					ComponentBean mirrorComponentBean = new ComponentBean(MirrorComponent.TYPE, bean.getId(), ctx.getRequestContentLanguage());					
+					newId = content.createContent(ctx, targetPage, areaKey, previousId, mirrorComponentBean, true);
+				}
 			}
 		} else {
 			newId = content.createContent(ctx, targetPage, areaKey, previousId, type, "", true);

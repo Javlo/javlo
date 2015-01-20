@@ -1146,25 +1146,22 @@ public abstract class AbstractVisualComponent implements IContentVisualComponent
 	}
 
 	protected String getForcedId(ContentContext ctx) {
-		String compID = (String) ctx.getRequest().getAttribute(FORCE_COMPONENT_ID); // user
-																					// for
-																					// miror
-																					// mecanism
+		/* user for	mirror mecanism */
+		String compID = (String) ctx.getRequest().getAttribute(FORCE_COMPONENT_ID); 
+		//System.out.println("***** AbstractVisualComponent.getForcedId : area="+getArea()+" type="+getType()+" compID = "+compID); //TODO: remove debug trace
 		if (compID == null) {
 			compID = getId();
 		}
 		return compID;
 	}
 
-	protected static void setForcedId(ContentContext ctx, String id) {
+	protected static void setForcedId(ContentContext ctx, String id) {		
 		if (id == null) {
-			ctx.getRequest().removeAttribute(FORCE_COMPONENT_ID); // user for
-																	// miror
-																	// mecanism
+			/* user for mirror mecanism */
+			ctx.getRequest().removeAttribute(FORCE_COMPONENT_ID); 
 		} else {
-			ctx.getRequest().setAttribute(FORCE_COMPONENT_ID, id); // user for
-																	// miror
-																	// mecanism
+			/* user for mirror mecanism */			
+			ctx.getRequest().setAttribute(FORCE_COMPONENT_ID, id);
 		}
 	}
 
@@ -1572,11 +1569,12 @@ public abstract class AbstractVisualComponent implements IContentVisualComponent
 		if (logger.isLoggable(Level.FINE)) {
 			logger.fine("load : " + getType() + " on : " + URLHelper.createURL(ctx));
 		}
+		
 		ctx.getRequest().setAttribute("comp", this);
 		ctx.getRequest().setAttribute("style", getStyle());
 		ctx.getRequest().setAttribute("value", getValue());
 		ctx.getRequest().setAttribute("type", getType());
-		ctx.getRequest().setAttribute("compid", getId());
+		ctx.getRequest().setAttribute("compid", getForcedId(ctx));
 		ctx.getRequest().setAttribute("renderer", getCurrentRenderer(ctx));
 		ctx.getRequest().setAttribute("previewAttributes", getSpecialPreviewCssClass(ctx, getStyle(ctx)) + getSpecialPreviewCssId(ctx));
 		if (getLayout() != null) {
@@ -2159,8 +2157,7 @@ public abstract class AbstractVisualComponent implements IContentVisualComponent
 	}
 
 	@Override
-	public String getEmptyXHTMLCode(ContentContext ctx) throws Exception {
-		System.out.println("***** AbstractVisualComponent.getEmptyXHTMLCode : type = "+getType()); //TODO: remove debug trace
+	public String getEmptyXHTMLCode(ContentContext ctx) throws Exception {		
 		if (isHiddenInMode(ctx.getRenderMode()) || !AdminUserSecurity.getInstance().canModifyConponent(ctx, getId())) {
 			return "";
 		} else {
