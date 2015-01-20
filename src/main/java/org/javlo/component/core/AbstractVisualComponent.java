@@ -195,6 +195,9 @@ public abstract class AbstractVisualComponent implements IContentVisualComponent
 
 	@Override
 	public void delete(ContentContext ctx) {
+		if (getPreviousComponent() != null) {
+			getPreviousComponent().setNextComponent(getNextComponent());
+		}
 		try {
 			resetViewData(ctx);
 		} catch (IOException e) {
