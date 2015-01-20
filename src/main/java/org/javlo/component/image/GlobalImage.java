@@ -22,8 +22,10 @@ import java.util.logging.Logger;
 
 import org.apache.commons.fileupload.FileItem;
 import org.javlo.component.core.ComponentContext;
+import org.javlo.component.core.IContentVisualComponent;
 import org.javlo.component.core.IImageFilter;
 import org.javlo.component.core.IReverseLinkComponent;
+import org.javlo.component.links.MirrorComponent;
 import org.javlo.config.StaticConfig;
 import org.javlo.context.ContentContext;
 import org.javlo.context.EditContext;
@@ -994,8 +996,15 @@ public class GlobalImage extends Image implements IImageFilter {
 
 	public static String performDataFeedBack(ContentContext ctx, EditContext editContext, GlobalContext globalContext, User currentUser, ContentService content, ComponentContext componentContext, RequestService rs, I18nAccess i18nAccess, MessageRepository messageRepository, Module currentModule, AdminUserFactory adminUserFactory) throws Exception {
 
-		GlobalImage image = (GlobalImage) ComponentHelper.getComponentFromRequest(ctx, "compid");
-		if (image.getConfig(ctx).isDataFeedBack() && currentUser != null && currentUser.validForRoles(AdminUserSecurity.CONTENT_ROLE)) {
+		IContentVisualComponent comp = ComponentHelper.getComponentFromRequest(ctx, "compid");
+		GlobalImage image = null;
+		if (comp instanceof GlobalImage) {
+			image = (GlobalImage) comp;
+		}
+		/*} else if (comp instanceof MirrorComponent) {
+			image = (GlobalImage)((MirrorComponent) comp).getMirrorComponent(ctx);
+		}*/
+		if (image != null && image.getConfig(ctx).isDataFeedBack() && currentUser != null && currentUser.validForRoles(AdminUserSecurity.CONTENT_ROLE)) {
 			logger.info("exec data feed back (template:" + ctx.getCurrentTemplate().getName() + ").");
 			String firstText = rs.getParameter("firsttext", null);
 			String secondText = rs.getParameter("secondtext", null);

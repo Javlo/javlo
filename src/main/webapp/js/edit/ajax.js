@@ -30,8 +30,12 @@ jQuery(document).ready(function() {
 		}
 	});
 	jQuery('form.ajax').live("submit", function(event) {
-		var form = jQuery(this);		
+		var	form = jQuery(this);
 		var ajaxSubmit = true;
+		if (form.data("ajaxSubmit") != null) {
+			alert("ajaxSubmit = "+form.data("ajaxSubmit"))
+			ajaxSubmit = form.data("ajaxSubmit");
+		}
 		if (!canPostDataWithAjax()) {
 			jQuery.each(form.find("input[type='file']"), function() {			
 				if (jQuery(this).val().length > 0) {			

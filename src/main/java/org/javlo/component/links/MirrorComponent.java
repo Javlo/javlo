@@ -41,6 +41,11 @@ public class MirrorComponent extends AbstractVisualComponent {
 	}
 
 	@Override
+	public void prepareView(ContentContext ctx) throws Exception {		
+		super.prepareView(ctx);		
+	}
+	
+	@Override
 	protected String getEditXHTMLCode(ContentContext ctx) throws Exception {
 
 		I18nAccess i18nAccess = I18nAccess.getInstance(ctx.getRequest());
@@ -72,7 +77,7 @@ public class MirrorComponent extends AbstractVisualComponent {
 		if (getValue().trim().length() > 0) {
 			out.println("<div class=\"col-sm-4\">");
 			String label = i18nAccess.getText("content.mirror.unlink");
-			out.println("<input class=\"btn btn-default\" type=\"submit\" value=\"" + label + "\" name=\"" + getUnlinkInputName() + "\" />");
+			out.println("<input class=\"btn btn-default\" onclick=\"jQuery(this.form).data('ajaxSubmit', false); return true;\" type=\"submit\" value=\"" + label + "\" name=\"" + getUnlinkInputName() + "\" />");
 			out.println("</div>");
 		}
 
@@ -109,21 +114,21 @@ public class MirrorComponent extends AbstractVisualComponent {
 		setValue(compId);
 	}
 
-	protected IContentVisualComponent getMirrorComponent(ContentContext ctx) throws Exception {
+	public IContentVisualComponent getMirrorComponent(ContentContext ctx) throws Exception {
 		String compId = getMirrorComponentId();
 		ContentService content = ContentService.getInstance(ctx.getRequest());
 		return content.getComponentAllLanguage(ctx, compId);
 	}
 
 	@Override
-	public String getPrefixViewXHTMLCode(ContentContext ctx) {
+	public String getPrefixViewXHTMLCode(ContentContext ctx) {		
 		IContentVisualComponent comp;
 		try {			
-			comp = getMirrorComponent(ctx);
+			comp = getMirrorComponent(ctx);			
 			if (comp != null) {
 				AbstractVisualComponent.setForcedId(ctx, getId());
 				return comp.getPrefixViewXHTMLCode(ctx);
-			}
+			} 
 		} catch (Exception e) {
 			e.printStackTrace();
 		} finally {
@@ -156,11 +161,14 @@ public class MirrorComponent extends AbstractVisualComponent {
 	 * @see org.javlo.itf.IContentVisualComponent#getXHTMLCode()
 	 */
 	@Override
-	public String getViewXHTMLCode(ContentContext ctx) throws Exception {
-		AbstractVisualComponent comp = (AbstractVisualComponent) getMirrorComponent(ctx);
+	public String getViewXHTMLCode(ContentContext ctx) throws Exception {		
+		AbstractVisualComponent comp = (AbstractVisualComponent) getMirrorComponent(ctx);		
 		if (comp != null) {
+			AbstractVisualComponent.setForcedId(ctx, getId());
 			comp.prepareView(ctx);
-			return comp.getXHTMLCode(ctx);
+			String xhtml = comp.getXHTMLCode(ctx);
+			AbstractVisualComponent.setForcedId(ctx, null);
+			return xhtml;
 		} else {
 			deleteMySelf(ctx);
 		}
@@ -227,6 +235,7 @@ public class MirrorComponent extends AbstractVisualComponent {
 				bean.setArea(getArea());
 				content.createContent(ctx, bean, getId(), isBackgroundColored());
 				deleteMySelf(ctx);
+				ctx.setClosePopup(true);
 				setModify();
 				setNeedRefresh(true);
 			}
