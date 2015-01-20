@@ -3359,12 +3359,15 @@ public class MenuElement implements Serializable, IPrintInfo {
 		while ((contentList.hasNext(ctxForceArea))) {
 			IContentVisualComponent component = contentList.next(ctxForceArea);
 			if (component != null) {
-				if (!component.isEmpty(ctxForceArea) || (ctx.getCurrentTemplate() != null && ctx.getCurrentTemplate().isMailing())) { // mailing
-																																		// never
-																																		// empty
+				if (!component.isEmpty(ctxForceArea) || (ctx.getCurrentTemplate() != null && ctx.getCurrentTemplate().isMailing())) { 
 					if (!component.isRepeat() || component.getType() == ForceRealContent.TYPE) {
-						desc.setEmpty(area, false);
-						return false;
+						boolean realContent = false;
+						if (component instanceof ForceRealContent) {
+							ForceRealContent fComp = (ForceRealContent)component;
+							realContent = StringHelper.isTrue(fComp.getValue());
+						} 
+						desc.setEmpty(area, realContent);
+						return realContent;
 					}
 				}
 			}
@@ -3451,6 +3454,10 @@ public class MenuElement implements Serializable, IPrintInfo {
 		ContentElementList comps = getContent(contentAreaCtx);
 		while (comps.hasNext(contentAreaCtx)) {
 			IContentVisualComponent comp = comps.next(contentAreaCtx);
+			if (comp instanceof ForceRealContent) {
+				desc.realContent = !StringHelper.isTrue(comp.getValue(contentAreaCtx));
+				return desc.realContent;
+			}
 			if (comp.isRealContent(contentAreaCtx) && !comp.isRepeat()) {
 				desc.realContent = true;
 				return true;
