@@ -367,3 +367,5 @@ change log
  * new debug notes (priority, users, creation date)
  
  * correct copy component between 2 language bug
+ 
+ * force not read content
