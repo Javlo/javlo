@@ -39,6 +39,10 @@ public class NoExtURLPathTitleCreator extends NoExtURLCreator {
 			lgCtx.setRequestContentLanguage(globalContext.getDefaultLanguage());
 		}
 		String label = currentPage.getLocalTitle(lgCtx);
+		String sTitle = currentPage.getSubTitle(lgCtx);
+		if (sTitle != null && sTitle.trim().length() > 0) {
+			label = label + '-' + sTitle;
+		}
 		String path = URLEncoder.encode(StringHelper.createI18NURL(label), ContentContext.CHARACTER_ENCODING);
 
 		return getParentPath(ctx, currentPage.getParent()) + '/' + ctx.getFormat() + '/' + path;
