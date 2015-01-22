@@ -34,6 +34,9 @@ public class NoExtURLCreator implements IURLFactory {
 			lgCtx.setRequestContentLanguage(globalContext.getDefaultLanguage());
 		}
 		String label = currentPage.getLocalTitle(lgCtx);
+		if (currentPage.getUrlNumber() > 0) {
+			label = label + '-' +currentPage.getUrlNumber();
+		}
 		String path = URLEncoder.encode(StringHelper.createI18NURL(label), ContentContext.CHARACTER_ENCODING);
 
 		return getParentPath(currentPage.getParent()) + '/' + ctx.getFormat() + '/' + path;

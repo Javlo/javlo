@@ -529,6 +529,7 @@ public class ContentService implements IPrintInfo {
 						Map<String, String> contentAttributeMap = new HashMap<String, String>();
 						setViewNav(persistenceService.load(ctx, ContentContext.VIEW_MODE, contentAttributeMap, null));
 						viewGlobalMap = contentAttributeMap;
+						NavigationService.checkSameUrl(ctx);
 						logger.info("load view of '" + globalContext.getContextKey() + "' nav in " + StringHelper.renderTimeInSecond((System.currentTimeMillis() - startTime) / 1000) + " sec.");
 					}
 				}

@@ -1,14 +1,16 @@
 package org.javlo.service;
 
 import java.util.Collection;
+import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Map;
 import java.util.logging.Logger;
-
 
 import org.javlo.cache.ICache;
 import org.javlo.context.ContentContext;
 import org.javlo.context.GlobalContext;
+import org.javlo.navigation.IURLFactory;
 import org.javlo.navigation.MenuElement;
 import org.javlo.service.exception.ServiceException;
 
@@ -36,9 +38,11 @@ public class NavigationService {
 		return service;
 	}
 
-	// private Map<String, MenuElement> viewPageCache = new HashMap<String, MenuElement>();
+	// private Map<String, MenuElement> viewPageCache = new HashMap<String,
+	// MenuElement>();
 
-	// private Map<String, MenuElement> previewPageCache = new HashMap<String, MenuElement>();
+	// private Map<String, MenuElement> previewPageCache = new HashMap<String,
+	// MenuElement>();
 
 	private PersistenceService persistenceService;
 
@@ -148,6 +152,28 @@ public class NavigationService {
 		}
 		if (elem.getParent() != null) {
 			elem.getParent().removeChild(elem);
+		}
+	}
+
+	public static void checkSameUrl(ContentContext ctx) throws Exception {
+		ContentContext lgCtx = new ContentContext(ctx);
+		IURLFactory urlFactory = ctx.getGlobalContext().getURLFactory(lgCtx);
+		if (urlFactory != null) {
+			Collection<String> lgs = ctx.getGlobalContext().getContentLanguages();
+			Map<String, String> pages = new HashMap<String, String>();
+			for (String lg : lgs) {
+				lgCtx.setRequestContentLanguage(lg);
+				MenuElement[] children = ContentService.getInstance(ctx.getGlobalContext()).getNavigation(lgCtx).getAllChildren();
+				for (MenuElement menuElement : children) {
+					String url = lgCtx.getRequestContentLanguage() + urlFactory.createURL(lgCtx, menuElement);
+					if (pages.keySet().contains(url)) {
+						menuElement.setUrlNumber(menuElement.getUrlNumber() + 1);
+						logger.info("page:"+menuElement.getPath()+" as new URL number : "+menuElement.getUrlNumber());
+					} else {
+						pages.put(url, menuElement.getName());
+					}
+				}
+			}
 		}
 	}
 

@@ -972,6 +972,8 @@ public class MenuElement implements Serializable, IPrintInfo {
 	private String referenceLanguage = null;
 
 	private String type = PAGE_TYPE_DEFAULT;
+	
+	private int urlNumber = 0;
 
 	/**
 	 * protect page localy if there are linked with other website.
@@ -1475,8 +1477,13 @@ public class MenuElement implements Serializable, IPrintInfo {
 		Collection<Resource> outList = new LinkedList<Resource>();
 		while (contentList.hasNext(ctx)) {
 			IContentVisualComponent comp = contentList.next(ctx);
-			if (comp instanceof IStaticContainer) {
-				outList.addAll(((IStaticContainer) comp).getAllResources(ctx));
+			if (comp instanceof IStaticContainer) {				
+				Collection<Resource> resources = ((IStaticContainer) comp).getAllResources(ctx);
+				if (resources != null) {
+					outList.addAll(resources);
+				} else {
+					logger.warning("ressources list null on a "+comp.getType()+" id:"+comp.getId());
+				}
 			}
 		}
 		return outList;
@@ -4382,6 +4389,19 @@ public class MenuElement implements Serializable, IPrintInfo {
 		out.println("**** #contentElementListMap      : " + contentElementListMap.size());
 		out.println("**** #localContentElementListMap : " + localContentElementListMap.size());
 		out.println("****");
+	}
+
+	/**
+	 * in case of same URL, this value in incremented.
+	 * all URL factory (implementation of @IURLFactory) can use this number for create different URL.
+	 * @return
+	 */
+	public int getUrlNumber() {
+		return urlNumber;
+	}
+
+	public void setUrlNumber(int urlNumber) {
+		this.urlNumber = urlNumber;
 	}
 
 }
