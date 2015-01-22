@@ -32,6 +32,9 @@ public class DefaultLanguageTitleURLCreator extends AbstractURLFactory {
 			return ((PageURL) comps.iterator().next()).getValue();
 		}
 		String title = currentPage.getTitle(defaultLgCtx);
+		if (currentPage.getUrlNumber() > 0) {
+			title = title + '-' +currentPage.getUrlNumber();
+		}
 		String path = URLEncoder.encode(StringHelper.createI18NURL(title), ContentContext.CHARACTER_ENCODING);
 
 		String url = path;

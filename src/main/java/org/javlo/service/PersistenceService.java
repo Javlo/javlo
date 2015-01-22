@@ -998,6 +998,7 @@ public class PersistenceService {
 				ResourceHelper.closeResource(in);
 				ResourceHelper.closeResource(zip);
 			}
+			
 			return root;
 		}
 	}

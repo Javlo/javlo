@@ -1269,11 +1269,14 @@ public class Edit extends AbstractModuleAction {
 			/*** check url ***/
 			ContentContext lgCtx = new ContentContext(ctx);
 			Collection<String> lgs = globalContext.getContentLanguages();
-			Map<String, String> pages = new HashMap<String, String>();
-			Collection<String> errorPageNames = new LinkedList<String>();
-			String dblURL = null;
 			IURLFactory urlFactory = globalContext.getURLFactory(lgCtx);
+			String dblURL = null;
+			Collection<String> errorPageNames = null;
 			if (urlFactory != null) {
+				Map<String, String> pages = new HashMap<String, String>();
+				errorPageNames = new LinkedList<String>();
+				// correct identical URL.
+				NavigationService.checkSameUrl(ctx);
 				for (String lg : lgs) {
 					lgCtx.setRequestContentLanguage(lg);
 					MenuElement[] children = ContentService.getInstance(globalContext).getNavigation(lgCtx).getAllChildren();

@@ -43,6 +43,9 @@ public class NoExtURLPathTitleCreator extends NoExtURLCreator {
 		if (sTitle != null && sTitle.trim().length() > 0) {
 			label = label + '-' + sTitle;
 		}
+		if (currentPage.getUrlNumber() > 0) {
+			label = label + '-' + currentPage.getUrlNumber();
+		}
 		String path = URLEncoder.encode(StringHelper.createI18NURL(label), ContentContext.CHARACTER_ENCODING);
 
 		return getParentPath(ctx, currentPage.getParent()) + '/' + ctx.getFormat() + '/' + path;
