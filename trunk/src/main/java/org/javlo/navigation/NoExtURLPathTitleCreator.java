@@ -66,21 +66,7 @@ public class NoExtURLPathTitleCreator extends NoExtURLCreator {
 
 	@Override
 	public String createURLKey(String url) {
-		if (url.length() < 2) {
-			return url;
-		}
-		String workURL = url.substring(0, url.length() - 1); // remove last char
-		int afterExtPos = workURL.lastIndexOf('/');
-		if (afterExtPos > 0) {
-			int beofreExtPos = workURL.substring(0, afterExtPos - 1).lastIndexOf('/');
-			if (afterExtPos < 0 || beofreExtPos < 0) {
-				return url;
-			} else {
-				return url.substring(0, beofreExtPos) + url.substring(afterExtPos, url.length());
-			}
-		} else {
-			return url;
-		}
+		return url;
 	}
 
 }

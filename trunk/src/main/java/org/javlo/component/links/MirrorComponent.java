@@ -7,12 +7,19 @@ import java.io.PrintWriter;
 import java.io.StringWriter;
 import java.util.Collection;
 import java.util.Collections;
+import java.util.List;
+import java.util.Locale;
+import java.util.Map;
 import java.util.logging.Logger;
 
 import org.javlo.component.core.AbstractVisualComponent;
 import org.javlo.component.core.ComponentBean;
 import org.javlo.component.core.IContentVisualComponent;
+import org.javlo.component.core.ISubTitle;
+import org.javlo.component.image.IImageTitle;
 import org.javlo.context.ContentContext;
+import org.javlo.fields.Field;
+import org.javlo.fields.IFieldContainer;
 import org.javlo.helper.StringHelper;
 import org.javlo.helper.URLHelper;
 import org.javlo.i18n.I18nAccess;
@@ -23,7 +30,7 @@ import org.javlo.service.RequestService;
 /**
  * @author pvandermaesen
  */
-public class MirrorComponent extends AbstractVisualComponent {
+public class MirrorComponent extends AbstractVisualComponent implements IFieldContainer, IImageTitle, ISubTitle {
 
 	public static final String TYPE = "mirror";
 
@@ -246,6 +253,272 @@ public class MirrorComponent extends AbstractVisualComponent {
 				setNeedRefresh(true);
 			}
 		}
+	}
+
+	@Override
+	public String getLabel(ContentContext ctx) {
+		IContentVisualComponent comp = null;
+		try {
+			comp = getMirrorComponent(ctx);
+			if (comp instanceof IFieldContainer) {
+				return ((IFieldContainer)comp).getLabel(ctx);
+			}
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		return null;
+	}
+
+	@Override
+	public List<String> getFieldsNames(ContentContext ctx) throws Exception {
+		IContentVisualComponent comp = null;
+		try {
+			comp = getMirrorComponent(ctx);
+			if (comp instanceof IFieldContainer) {
+				return ((IFieldContainer)comp).getFieldsNames(ctx);
+			}
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		return null;
+	}
+
+	@Override
+	public List<Field> getFields(ContentContext ctx) throws Exception {
+		IContentVisualComponent comp = null;
+		try {
+			comp = getMirrorComponent(ctx);
+			if (comp instanceof IFieldContainer) {
+				return ((IFieldContainer)comp).getFields(ctx);
+			}
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		return null;
+	}
+
+	@Override
+	public Field getField(ContentContext ctx, String name) throws Exception {
+		IContentVisualComponent comp = null;
+		try {
+			comp = getMirrorComponent(ctx);
+			if (comp instanceof IFieldContainer) {
+				return ((IFieldContainer)comp).getField(ctx,name);
+			}
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		return null;
+	}
+
+	@Override
+	public String getFieldValue(ContentContext ctx, String name) throws Exception {
+		IContentVisualComponent comp = null;
+		try {
+			comp = getMirrorComponent(ctx);
+			if (comp instanceof IFieldContainer) {
+				return ((IFieldContainer)comp).getFieldValue(ctx,name);
+			}
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		return null;
+	}
+
+	@Override
+	public Map<String, String> getList(ContentContext ctx, String listName, Locale locale) throws Exception {
+		IContentVisualComponent comp = null;
+		try {
+			comp = getMirrorComponent(ctx);
+			if (comp instanceof IFieldContainer) {
+				return ((IFieldContainer)comp).getList(ctx,listName,locale);
+			}
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		return null;
+	}
+
+	@Override
+	public Map<String, String> getList(ContentContext ctx ,String listName) throws Exception {
+		IContentVisualComponent comp = null;
+		try {
+			comp = getMirrorComponent(ctx);
+			if (comp instanceof IFieldContainer) {
+				return ((IFieldContainer)comp).getList(ctx,listName);
+			}
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		return null;
+	}
+
+	@Override
+	public String getViewListXHTMLCode(ContentContext ctx) throws Exception {
+		IContentVisualComponent comp = null;
+		try {
+			comp = getMirrorComponent(ctx);
+			if (comp instanceof IFieldContainer) {
+				return ((IFieldContainer)comp).getViewListXHTMLCode(ctx);
+			}
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		return null;
+	}
+
+	@Override
+	public boolean isFieldContainer(ContentContext ctx) {
+		IContentVisualComponent comp = null;
+		try {
+			comp = getMirrorComponent(ctx);
+			if (comp instanceof IFieldContainer) {
+				return ((IFieldContainer)comp).isFieldContainer(ctx);
+			}
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		return false;
+	}
+	
+	@Override
+	public String getContainerType(ContentContext ctx) {
+		IContentVisualComponent comp = null;
+		try {
+			comp = getMirrorComponent(ctx);
+			if (comp instanceof IFieldContainer) {
+				return ((IFieldContainer)comp).getContainerType(ctx);
+			}
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		return null;
+	}
+
+	@Override
+	public String getImageDescription(ContentContext ctx) {
+		IContentVisualComponent comp = null;
+		try {
+			comp = getMirrorComponent(ctx);
+			if (comp instanceof IImageTitle) {
+				return ((IImageTitle)comp).getImageDescription(ctx);
+			}
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		return null;
+	}
+
+	@Override
+	public String getResourceURL(ContentContext ctx) {
+		IContentVisualComponent comp = null;
+		try {
+			comp = getMirrorComponent(ctx);
+			if (comp instanceof IImageTitle) {
+				return ((IImageTitle)comp).getResourceURL(ctx);
+			}
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		return null;
+	}
+
+	@Override
+	public String getImageLinkURL(ContentContext ctx) {
+		IContentVisualComponent comp = null;
+		try {
+			comp = getMirrorComponent(ctx);
+			if (comp instanceof IImageTitle) {
+				return ((IImageTitle)comp).getImageLinkURL(ctx);
+			}
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		return null;
+	}
+
+	@Override
+	public boolean isImageValid(ContentContext ctx) {
+		IContentVisualComponent comp = null;
+		try {
+			comp = getMirrorComponent(ctx);
+			if (comp instanceof IImageTitle) {
+				return ((IImageTitle)comp).isImageValid(ctx);
+			}
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		return false;
+	}
+
+	@Override
+	public int getPriority(ContentContext ctx) {
+		IContentVisualComponent comp = null;
+		try {
+			comp = getMirrorComponent(ctx);
+			if (comp instanceof IImageTitle) {
+				return ((IImageTitle)comp).getPriority(ctx);
+			}
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		return 0;
+	}
+
+	@Override
+	public String getSubTitle(ContentContext ctx) {
+		IContentVisualComponent comp = null;
+		try {
+			comp = getMirrorComponent(ctx);
+			if (comp instanceof IImageTitle) {
+				return ((ISubTitle)comp).getSubTitle(ctx);
+			}
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		return null;
+	}
+
+	@Override
+	public int getSubTitleLevel(ContentContext ctx) {
+		IContentVisualComponent comp = null;
+		try {
+			comp = getMirrorComponent(ctx);
+			if (comp instanceof IImageTitle) {
+				return ((ISubTitle)comp).getSubTitleLevel(ctx);
+			}
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		return 0;
+	}
+	
+	@Override
+	public boolean isRealContent(ContentContext ctx) {
+		IContentVisualComponent comp;
+		try {
+			comp = getMirrorComponent(ctx);
+			if (comp != null) {
+				return comp.isRealContent(ctx);
+			}
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		return false;		
+	}
+	
+	@Override
+	public boolean isLabel(ContentContext ctx) {
+		IContentVisualComponent comp;
+		try {
+			comp = getMirrorComponent(ctx);
+			if (comp != null) {
+				return comp.isLabel(ctx);
+			}
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		return false;
 	}
 
 }

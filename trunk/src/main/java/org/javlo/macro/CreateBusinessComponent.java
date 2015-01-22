@@ -65,7 +65,7 @@ public class CreateBusinessComponent implements IInteractiveMacro, IAction {
 				if (wrapper.isDynamicComponent()) {
 					DynamicComponent dynComp = ((DynamicComponent) wrapper.getComponent());
 					dynComp.init(dynComp.getComponentBean(), ctx);
-					if (dynComp.getFieldsNames().contains("name") && dynComp.getDataPath() != null) {
+					if (dynComp.getFieldsNames(ctx).contains("name") && dynComp.getDataPath() != null) {
 						dynamicComponents.add(Pair.of(wrapper.getType(), wrapper.getLabel()));
 					}
 				}
