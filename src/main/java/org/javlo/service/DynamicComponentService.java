@@ -11,7 +11,6 @@ import org.javlo.context.ContentContext;
 import org.javlo.context.GlobalContext;
 import org.javlo.fields.IFieldContainer;
 import org.javlo.navigation.MenuElement;
-import org.javlo.service.exception.ServiceException;
 
 public class DynamicComponentService {
 
@@ -60,13 +59,11 @@ public class DynamicComponentService {
 			for (MenuElement child : children) {
 				ContentContext ctxWithContent = getContentContextWithContent(ctx, child);
 				if (ctxWithContent != null) {
-					List<IContentVisualComponent> content = child.getContentByType(ctxWithContent, fieldType);
-					for (IContentVisualComponent item : content) {
-						if (item instanceof IFieldContainer) {
+					List<IContentVisualComponent> content = child.getContentByImplementation(ctxWithContent, IFieldContainer.class);
+					for (IContentVisualComponent item : content) {						
+						if (((IFieldContainer)item).isFieldContainer(ctxWithContent) && ((IFieldContainer)item).getContainerType(ctxWithContent).equals(fieldType)) {
 							outContainer.add((IFieldContainer) item);
-						} else {
-							throw new ServiceException("component : " + fieldType + " is not a IFieldContainer.");
-						}
+						} 
 					}
 				}
 			}

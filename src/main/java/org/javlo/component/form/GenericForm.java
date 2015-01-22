@@ -423,8 +423,7 @@ public class GenericForm extends AbstractVisualComponent implements IAction {
 				} else if (!withXHTML && (finalValue.toLowerCase().contains("</a>") || finalValue.toLowerCase().contains("</div>"))) {
 					fakeFilled = true;
 				}
-				if (finalValue.trim().length() == 0 && StringHelper.containsUppercase(key)) { // needed
-					
+				if (finalValue.trim().length() == 0 && StringHelper.containsUppercase(key)) { // needed					
 					if (!attachField.contains(key)) {
 						errorFields.add(key);
 						GenericMessage msg = new GenericMessage(comp.getLocalConfig(false).getProperty("error.required", "please could you fill all required fields."), GenericMessage.ERROR);
@@ -435,12 +434,9 @@ public class GenericForm extends AbstractVisualComponent implements IAction {
 							GenericMessage msg = new GenericMessage(comp.getLocalConfig(false).getProperty("error.required", "please could you fill all required fields."), GenericMessage.ERROR);
 							request.setAttribute("msg", msg);
 						}						
-					}
-																								// field
+					}					
 				}
-				if (finalValue.trim().length() > 0 && key.toLowerCase().trim().endsWith("email")) { // valid
-																									// email
-																									// field
+				if (finalValue.trim().length() > 0 && key.toLowerCase().trim().endsWith("email")) {
 					if (!PatternHelper.MAIL_PATTERN.matcher(finalValue).matches()) {
 						errorFields.add(key);
 						GenericMessage msg = new GenericMessage(comp.getLocalConfig(false).getProperty("error.email-format", "your email format is'nt correct."), GenericMessage.ERROR);
@@ -522,8 +518,12 @@ public class GenericForm extends AbstractVisualComponent implements IAction {
 
 				try {
 					MailService mailService = MailService.getInstance(globalContext.getStaticConfig());
+					
+					String adminEmailTo = comp.getLocalConfig(false).getProperty("mail.admin.to", globalContext.getAdministratorEmail());
+					
 					InternetAddress fromEmail = new InternetAddress(emailFrom);
 					InternetAddress toEmail = new InternetAddress(emailTo);
+					InternetAddress adminEmail = new InternetAddress(adminEmailTo);
 					InternetAddress ccEmail = null;
 					if (emailCC != null && emailCC.trim().length() > 0) {
 						ccEmail = new InternetAddress(emailCC);
@@ -542,7 +542,7 @@ public class GenericForm extends AbstractVisualComponent implements IAction {
 						bccList = Arrays.asList(bccEmail);
 					}
 
-					mailService.sendMail(null, fromEmail, toEmail, ccList, bccList, subject, mailContent, comp.isHTMLMail());
+					mailService.sendMail(null, fromEmail, adminEmail, ccList, bccList, subject, mailContent, comp.isHTMLMail());
 					// remove
 					// debug
 					// trace

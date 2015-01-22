@@ -176,7 +176,7 @@ public class DynamicComponent extends AbstractVisualComponent implements IStatic
 					}
 				}
 				if (ctx.getCurrentTemplate() != null) {
-					String linkToJSP = URLHelper.createStaticTemplateURLWithoutContext(ctx, ctx.getCurrentTemplate(), "" + getListRenderer());
+					String linkToJSP = URLHelper.createStaticTemplateURLWithoutContext(ctx, ctx.getCurrentTemplate(), "" + getListRenderer());					
 					return executeJSP(ctx, linkToJSP);
 				} else {
 					return "";
@@ -259,7 +259,7 @@ public class DynamicComponent extends AbstractVisualComponent implements IStatic
 	}
 
 	@Override
-	public java.util.List<String> getFieldsNames() {
+	public java.util.List<String> getFieldsNames(ContentContext ctx) {
 		java.util.List<String> outFields = new LinkedList<String>();
 		Collection keys = properties.keySet();
 		for (Object keyObj : keys) {
@@ -361,7 +361,7 @@ public class DynamicComponent extends AbstractVisualComponent implements IStatic
 	}
 
 	@Override
-	public Map<String, String> getList(String listName, Locale locale) {
+	public Map<String, String> getList(ContentContext ctx, String listName, Locale locale) {
 		Map<String, String> res = new HashMap<String, String>();
 		for (int i = 0; i < 9999; i++) {
 			String value = properties.getProperty("list." + listName + "." + i);
@@ -386,7 +386,7 @@ public class DynamicComponent extends AbstractVisualComponent implements IStatic
 	}
 
 	@Override
-	public Map<String, String> getList(String listName) {
+	public Map<String, String> getList(ContentContext ctx, String listName) {
 		Map<String, String> res = new HashMap<String, String>();
 		for (int i = 0; i < 9999; i++) {
 			String value = properties.getProperty("list." + listName + "." + i);
@@ -914,6 +914,16 @@ public class DynamicComponent extends AbstractVisualComponent implements IStatic
 		} else {
 			return Integer.parseInt(getProperties().getProperty("image.priority", null));
 		}
+	}
+
+	@Override
+	public boolean isFieldContainer(ContentContext ctx) {
+		return true;
+	}
+
+	@Override
+	public String getContainerType(ContentContext ctx) {
+		return getType();
 	}
 
 }
