@@ -11,6 +11,9 @@ public class TicketBean implements Serializable {
 
 	private static final long serialVersionUID = 1L;
 
+	public static final String CATEGORY_DEBUG_NOTE = "debug-note";
+
+	public final int PRIORITY_NONE = 0;
 	public final int PRIORITY_LOW = 1;
 	public final int PRIORITY_MIDDLE = 2;
 	public final int PRIORITY_HIGH = 3;
@@ -31,6 +34,7 @@ public class TicketBean implements Serializable {
 	private int priority = 1;
 	private String status = "new";
 	private List<Comment> comments = new LinkedList<Comment>();
+	private List<String> users = new LinkedList<String>();
 
 	public String getTitle() {
 		return title;
@@ -107,6 +111,10 @@ public class TicketBean implements Serializable {
 		this.category = category;
 	}
 
+	public boolean isDebugNote() {
+		return CATEGORY_DEBUG_NOTE.equals(this.category);
+	}
+
 	public Date getCreationDate() {
 		return creationDate;
 	}
@@ -174,4 +182,13 @@ public class TicketBean implements Serializable {
 	public void setShare(String share) {
 		this.share = share;
 	}
+
+	public List<String> getUsers() {
+		return users;
+	}
+
+	public void setUsers(List<String> users) {
+		this.users = users;
+	}
+
 }

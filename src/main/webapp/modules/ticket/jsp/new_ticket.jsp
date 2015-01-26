@@ -7,6 +7,7 @@
 	<div class="line">
 		<label for="priority">priority</label>
 		<select id="priority" name="priority">
+			<option value="0">none</option>
 			<option value="1">low</option>
 			<option value="2">middle</option>
 			<option value="3">high</option>

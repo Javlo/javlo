@@ -29,7 +29,7 @@ a.unread {
 	background-color: #EF3513;
 }
 
-.status.onold, .share.allsites {
+.status.onhold, .share.allsites {
 	background-color: #5C75A1;	
 }
 

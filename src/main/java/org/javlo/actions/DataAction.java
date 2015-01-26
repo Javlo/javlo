@@ -2,7 +2,6 @@ package org.javlo.actions;
 
 import java.io.ByteArrayOutputStream;
 import java.io.File;
-import java.io.IOException;
 import java.io.InputStream;
 import java.io.PrintStream;
 import java.text.ParseException;
@@ -17,7 +16,6 @@ import java.util.logging.Logger;
 
 import javax.servlet.http.HttpSession;
 
-import org.apache.commons.configuration.ConfigurationException;
 import org.apache.commons.fileupload.FileItem;
 import org.apache.commons.io.FileExistsException;
 import org.codehaus.plexus.util.StringUtils;
@@ -204,7 +202,7 @@ public class DataAction implements IAction {
 		return null;
 	}
 
-	public static String performTickets(ContentContext ctx) throws ConfigurationException, IOException {
+	public static String performTickets(ContentContext ctx) throws Exception {
 		ctx.getAjaxData().put("tickets", TicketAction.getMyTicket(ctx));
 		return null;
 	}
