@@ -1,12 +1,11 @@
 package org.javlo.module.ticket;
 
-import java.io.IOException;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
 
-import org.apache.commons.configuration.ConfigurationException;
 import org.javlo.actions.AbstractModuleAction;
 import org.javlo.context.ContentContext;
 import org.javlo.context.GlobalContext;
@@ -17,8 +16,10 @@ import org.javlo.message.MessageRepository;
 import org.javlo.module.core.Module;
 import org.javlo.module.core.ModulesContext;
 import org.javlo.service.RequestService;
+import org.javlo.user.AdminUserFactory;
 import org.javlo.user.AdminUserSecurity;
 import org.javlo.user.User;
+import org.javlo.user.UserFactory;
 
 public class TicketAction extends AbstractModuleAction {
 
@@ -27,7 +28,7 @@ public class TicketAction extends AbstractModuleAction {
 		return "ticket";
 	}
 
-	public static Map<String, TicketBean> getMyTicket(ContentContext ctx) throws IOException, ConfigurationException {
+	public static Map<String, TicketBean> getMyTicket(ContentContext ctx) throws Exception {
 		GlobalContext globalContext = GlobalContext.getInstance(ctx.getRequest());
 		Map<String, TicketBean> myTickets = new HashMap<String, TicketBean>();
 
@@ -99,6 +100,9 @@ public class TicketAction extends AbstractModuleAction {
 			ticketModule.restoreBoxes();
 		}
 
+		UserFactory userFactory = AdminUserFactory.createUserFactory(ctx.getGlobalContext(), ctx.getRequest().getSession());
+		ctx.getRequest().setAttribute("ticketUsers", userFactory.getUserInfoList());
+
 		return msg;
 	}
 
@@ -138,6 +142,7 @@ public class TicketAction extends AbstractModuleAction {
 			ticket.setStatus(rs.getParameter("status", ticket.getStatus()));
 			ticket.setShare(rs.getParameter("share", ticket.getShare()));
 			ticket.setUrl(rs.getParameter("url", ticket.getUrl()));
+			ticket.setUsers(rs.getParameterListValues("users", Collections.<String> emptyList()));
 			if (rs.getParameter("comment", "").trim().length() > 0) {
 				ticket.addComments(new Comment(user.getLogin(), rs.getParameter("comment", "")));
 				if (!ticket.getAuthors().equals(ctx.getCurrentEditUser().getLogin())) {
@@ -147,7 +152,7 @@ public class TicketAction extends AbstractModuleAction {
 				ctx.getRequest().setAttribute("back-list", true);
 			}
 		}
-		ticketService.updateTicket(ticket);
+		ticketService.updateTicket(ctx, ticket);
 
 		messageRepository.addMessage(new GenericMessage("ticket updated.", GenericMessage.INFO));
 		return null;

@@ -26,11 +26,13 @@ public class DebugNote extends AbstractPropertiesComponent {
 
 	private static final String TEXT = "text";
 
+	private static final String STATUS = "status";
+
 	private static final String USER = "user";
 	
 	private static final String MODIF_DATE = "modif_date";
 
-	private static final List<String> FIELDS = Arrays.asList(new String[] {TEXT, USER, PRIORITY, MODIF_DATE});
+	private static final List<String> FIELDS = Arrays.asList(new String[] { TEXT, STATUS, USER, PRIORITY, MODIF_DATE });
 
 	public static final String TYPE = "debug-note";
 	
@@ -54,7 +56,14 @@ public class DebugNote extends AbstractPropertiesComponent {
 	public void setText(String text) {
 		setFieldValue(TEXT, text);
 	}
+
+	public String getStatus() {
+		return getFieldValue(STATUS);
+	}
 	
+	public void setStatus(String status) {
+		setFieldValue(STATUS, status);
+	}
 
 	public String getUser() {
 		return getFieldValue(USER);
@@ -67,7 +76,11 @@ public class DebugNote extends AbstractPropertiesComponent {
 	public void setUser(String user) {
 		setFieldValue(USER, user);
 	}
-	
+
+	public void setUserList(List<String> list) {
+		setUser(StringHelper.collectionToString(list, getListSeparator()));
+	}
+
 	public String getPriority() {
 		return getFieldValue(PRIORITY);
 	}
