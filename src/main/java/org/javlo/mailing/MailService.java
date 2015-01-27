@@ -253,7 +253,7 @@ public class MailService {
 
 						MimeBodyPart attachment = new MimeBodyPart();
 
-						DataSource fds = new ByteArrayDataSource(attach.getData(), ResourceHelper.getFileExtensionToManType(StringHelper.getFileExtension(attach.getName())));
+						DataSource fds = new ByteArrayDataSource(attach.getData(), ResourceHelper.getFileExtensionToMineType(StringHelper.getFileExtension(attach.getName())));
 						attachment.setDataHandler(new DataHandler(fds));
 						attachment.setHeader("Content-ID", "<" + id + ">");
 						attachment.setFileName(attach.getName());

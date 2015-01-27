@@ -2,12 +2,17 @@ package org.javlo.service;
 
 import java.util.Collection;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import java.util.logging.Logger;
 
 import org.javlo.cache.ICache;
+import org.javlo.component.core.ComponentFactory;
+import org.javlo.component.core.IContentVisualComponent;
+import org.javlo.component.links.PageMirrorComponent;
 import org.javlo.context.ContentContext;
 import org.javlo.context.GlobalContext;
 import org.javlo.navigation.IURLFactory;
@@ -137,18 +142,28 @@ public class NavigationService {
 	}
 
 	public void removeNavigation(ContentContext ctx, MenuElement elem) throws Exception {
-		removeNavigationRec(elem);
-		persistenceService.store(ctx);
+		Set<String> pageDeleted = new HashSet<String>();
+		removeNavigationRec(pageDeleted, elem);
+		persistenceService.store(ctx);		
+		for (IContentVisualComponent comp : ComponentFactory.getAllComponentsFromContext(ctx)) {
+			if (comp instanceof PageMirrorComponent) {
+				PageMirrorComponent pageMirror = (PageMirrorComponent)comp;
+				if (pageMirror.isDeleteIfNoSource() && !pageDeleted.contains(pageMirror.getPage().getId())) {
+					removeNavigationRec(pageDeleted, comp.getPage());
+				}
+			}
+		}
 	}
 
 	public void removeNavigationNoStore(ContentContext ctx, MenuElement elem) throws Exception {
-		removeNavigationRec(elem);
+		Set<String> pageDeleted = new HashSet<String>();
+		removeNavigationRec(pageDeleted, elem);
 	}
 
-	private void removeNavigationRec(MenuElement elem) throws Exception {
+	private void removeNavigationRec(Collection<String> deletedPage, MenuElement elem) throws Exception {
 		Collection<MenuElement> children = new LinkedList<MenuElement>(elem.getChildMenuElements());
 		for (MenuElement element : children) {
-			removeNavigationRec(element);
+			removeNavigationRec(deletedPage, element);
 		}
 		if (elem.getParent() != null) {
 			elem.getParent().removeChild(elem);

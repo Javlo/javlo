@@ -98,6 +98,7 @@ public class MenuElement implements Serializable, IPrintInfo {
 		String title = null;
 		String localTitle = null;
 		String subTitle = null;
+		int subTitleLevel = -1;
 		String pageTitle = null;
 		String forcedPageTitle = null;
 		String linkOn = null;
@@ -1451,16 +1452,12 @@ public class MenuElement implements Serializable, IPrintInfo {
 	 * @throws Exception
 	 */
 	private ContentElementList getAllLocalContent(ContentContext ctx) throws Exception {
-
 		ContentElementList localContentElementList = getLocalContentElementListMap().get(ctx.getRequestContentLanguage());
 		if (localContentElementList == null) {
 			logger.fine("update all local content on (ctx:" + ctx + ")");
-
 			localContentElementList = new ContentElementList(componentBean, ctx, this, true);
-
 			getLocalContentElementListMap().put(ctx.getRequestContentLanguage(), localContentElementList);
 		}
-
 		localContentElementList.initialize(ctx);
 		return localContentElementList;
 	}
@@ -2968,6 +2965,25 @@ public class MenuElement implements Serializable, IPrintInfo {
 		}
 
 		return desc.subTitle;
+	}
+	
+	public int getSubTitleLevel(ContentContext ctx) throws Exception {
+
+		ContentContext newCtx = new ContentContext(ctx);
+
+		PageDescription desc = getPageDescriptionCached(ctx, newCtx.getRequestContentLanguage());
+
+		if (desc.subTitleLevel >= 0) {
+			return desc.subTitleLevel;
+		}
+
+		newCtx.setArea(null);
+		desc.subTitleLevel = getLocalContent(newCtx).getSubTitleLevel(newCtx);
+		if (desc.subTitleLevel < 0) {			
+			desc.subTitleLevel = getContent(newCtx).getSubTitleLevel(newCtx);
+		}
+
+		return desc.subTitleLevel;
 	}
 
 	public List<String> getTags(ContentContext ctx) throws Exception {

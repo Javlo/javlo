@@ -14,6 +14,8 @@ import java.util.logging.Logger;
 import org.javlo.component.core.AbstractVisualComponent;
 import org.javlo.component.core.ComponentBean;
 import org.javlo.component.core.ContentElementList;
+import org.javlo.component.core.ISubTitle;
+import org.javlo.component.image.IImageTitle;
 import org.javlo.context.ContentContext;
 import org.javlo.context.EditContext;
 import org.javlo.context.GlobalContext;
@@ -34,15 +36,15 @@ import org.javlo.template.TemplateFactory;
  * 
  * @author pvandermaesen
  */
-public class PageMirrorComponent extends AbstractVisualComponent {
+public class PageMirrorComponent extends AbstractVisualComponent implements IImageTitle, ISubTitle {
 
 	public static final String TYPE = "mirror-page";
 
-	private static final String WITH_REPEAT = "repeat";
+	private static final String DELETE_IF_NO_SOURCE = "delete-if-source-deleted";
 
-	private static final String WITHOUT_REPEAT = "no-repeat";
+	private static final String NO_DELETE = "never-delete-page";
 
-	private static final String[] STYLES = new String[] { WITHOUT_REPEAT, WITH_REPEAT };
+	private static final String[] STYLES = new String[] { NO_DELETE, DELETE_IF_NO_SOURCE };
 
 	/**
 	 * create a static logger.
@@ -81,14 +83,16 @@ public class PageMirrorComponent extends AbstractVisualComponent {
 
 		StringWriter writer = new StringWriter();
 		PrintWriter out = new PrintWriter(writer);
-		out.println("<div class=\"line\"><input name=\"" + getCurrentInputName() + "\" id=\"" + getCurrentInputName() + "\" type=\"hidden\" readonly=\"readonly\" value=\"" + StringHelper.neverNull(getValue()) + "\" />");
+		out.println("<div class=\"row\"><div class=\"col-xs-6\"><div class=\"form-group\"><input name=\"" + getCurrentInputName() + "\" id=\"" + getCurrentInputName() + "\" type=\"hidden\" readonly=\"readonly\" value=\"" + StringHelper.neverNull(getValue()) + "\" /></div>");
 
 		MenuElement currentPage = getMirrorPage(ctx);
 		if (currentPage == null) {
 			if (copiedPage != null && !copiedPage.getPath().equals(ctx.getPath())) {
 				String[][] params = new String[][] { { "path", copiedPage.getPath() } };
 				String label = i18nAccess.getText("content.mirror-page.link", params);
-				out.println("<input type=\"submit\" value=\"" + label + "\" onclick=\"jQuery('#" + getCurrentInputName() + "').val('" + copiedPage.getId() + "');\" />");
+				out.println("<div class=\"form-group\"><input class=\"btn btn-default\" type=\"submit\" value=\"" + label + "\" onclick=\"jQuery('#" + getCurrentInputName() + "').val('" + copiedPage.getId() + "');\" /></div>");
+			} else {
+				out.println("<div class=\"alert alert-info\" role=\"alert\">"+i18nAccess.getText("mirror-page.copy-page", "copy a page.")+"</div>");
 			}
 		}
 		if (currentPage != null) {
@@ -100,10 +104,10 @@ public class PageMirrorComponent extends AbstractVisualComponent {
 			} else {
 				pageURL = URLHelper.createURL(ctx, currentPage);
 			}
-			out.println("<div class=\"line\"><a href=\"" + pageURL + "\"" + target + ">" + i18nAccess.getText("global.path") + " : " + currentPage.getPath() + "</a></div>");
-			out.println("<div class=\"line\"><input name=\"" + getUnlinkAndCopyInputName() + "\" type=\"submit\" value=\"" + i18nAccess.getText("action.unlink-copy") + "\" /></div>");
+			out.println("<div class=\"form-group\"><a href=\"" + pageURL + "\"" + target + ">" + i18nAccess.getText("global.path") + " : " + currentPage.getPath() + "</a></div>");
+			out.println("</div><div class=\"col-xs-6\"><div class=\"form-group\"><input class=\"btn btn-default\" name=\"" + getUnlinkAndCopyInputName() + "\" type=\"submit\" value=\"" + i18nAccess.getText("action.unlink-copy") + "\" /></div>");
 		}
-		out.println("</div>");
+		out.println("</div></div>");
 		out.close();
 		return writer.toString();
 	}
@@ -162,7 +166,6 @@ public class PageMirrorComponent extends AbstractVisualComponent {
 					rs.setParameter(NOT_EDIT_PREVIEW_PARAM_NAME, "true");
 					String xhtml = executeJSP(ctx, Edit.CONTENT_RENDERER + '?' + NOT_EDIT_PREVIEW_PARAM_NAME + "=true");
 					rs.setParameter(NOT_EDIT_PREVIEW_PARAM_NAME, "false");
-
 					ctx.setVirtualCurrentPage(null);
 					ctx.setArea(area);
 					ctx.setVirtualArea(null);
@@ -175,8 +178,7 @@ public class PageMirrorComponent extends AbstractVisualComponent {
 			deleteMySelf(ctx);
 			ctx.getRequest().setAttribute("xhtml", "");
 		}
-		super.prepareView(ctx); // set variable for jstl after rendering
-								// targeted page.
+		super.prepareView(ctx);
 	}
 
 	@Override
@@ -197,8 +199,7 @@ public class PageMirrorComponent extends AbstractVisualComponent {
 
 	private List<ComponentBean> getCopiedPageContent(ContentContext ctx) throws Exception {
 		List<ComponentBean> outBeans = new LinkedList<ComponentBean>();
-		MenuElement copiedPage = getMirrorPage(ctx);
-		ctx.setArea(ComponentBean.DEFAULT_AREA);
+		MenuElement copiedPage = getMirrorPage(ctx);		
 		ContentElementList content = copiedPage.getContent(ctx);
 		while (content.hasNext(ctx)) {
 			outBeans.add(new ComponentBean(content.next(ctx).getComponentBean()));
@@ -222,19 +223,168 @@ public class PageMirrorComponent extends AbstractVisualComponent {
 			if (getPreviousComponent() != null) {
 				previousId = getPreviousComponent().getId();
 			}
-
-			List<ComponentBean> data = getCopiedPageContent(new ContentContext(ctx));
+			List<ComponentBean> data = getCopiedPageContent(ctx.getContextWithArea(getArea()));
 			ContentService content = ContentService.getInstance(ctx.getRequest());
-			ComponentHelper.changeAllArea(data, getArea()); // same area than
-															// page mirror
-															// component.
+			ComponentHelper.changeAllArea(data, getArea()); 
 			String id = content.createContent(ctx, getPage(), data, previousId, true);
 			deleteMySelf(ctx);
 			setNeedRefresh(true);
 			if (ctx.isEditPreview()) {
 				ctx.setClosePopup(true);
 			}
+		}
+	}
+	
+	public boolean isDeleteIfNoSource() {
+		return getStyle().equals(DELETE_IF_NO_SOURCE);
+	}
+	
+	@Override
+	public boolean isLabel(ContentContext ctx) {
+		return !StringHelper.isEmpty(getValue());
+	}
+	
+	@Override
+	public String getTextTitle(ContentContext ctx) {
+		MenuElement page;
+		try {
+			page = getMirrorPage(ctx);
+			if (page != null) {
+				return page.getTitle(ctx);
+			} else {
+				return "[error bad page mirror]";
+			}
+		} catch (Exception e) {
+			e.printStackTrace();
+			return e.getMessage();
+		}
+	}
+	
+	@Override
+	public boolean isRealContent(ContentContext ctx) {
+		MenuElement page;
+		try {
+			page = getMirrorPage(ctx);
+			if (page != null) {
+				return page.isRealContent(ctx);
+			} else {
+				return false;
+			}
+		} catch (Exception e) {
+			e.printStackTrace();
+			return false;
+		}
+	}
 
+	@Override
+	public String getImageDescription(ContentContext ctx) {
+		MenuElement page;
+		try {
+			page = getMirrorPage(ctx);
+			if (page != null) {
+				return page.getImage(ctx).getImageDescription(ctx);
+			} else {
+				return null;
+			}
+		} catch (Exception e) {
+			e.printStackTrace();
+			return null;
+		}
+	}
+
+	@Override
+	public String getResourceURL(ContentContext ctx) {
+		MenuElement page;
+		try {
+			page = getMirrorPage(ctx);
+			if (page != null) {
+				return page.getImage(ctx).getResourceURL(ctx);
+			} else {
+				return null;
+			}
+		} catch (Exception e) {
+			e.printStackTrace();
+			return null;
+		}
+	}
+
+	@Override
+	public String getImageLinkURL(ContentContext ctx) {
+		MenuElement page;
+		try {
+			page = getMirrorPage(ctx);
+			if (page != null) {
+				return page.getImage(ctx).getImageLinkURL(ctx);
+			} else {
+				return null;
+			}
+		} catch (Exception e) {
+			e.printStackTrace();
+			return null;
+		}
+	}
+
+	@Override
+	public boolean isImageValid(ContentContext ctx) {
+		MenuElement page;
+		try {
+			page = getMirrorPage(ctx);
+			if (page != null) {
+				return page.getImage(ctx).isImageValid(ctx);
+			} else {
+				return false;
+			}
+		} catch (Exception e) {
+			e.printStackTrace();
+			return false;
+		}
+	}
+
+	@Override
+	public int getPriority(ContentContext ctx) {
+		MenuElement page;
+		try {
+			page = getMirrorPage(ctx);
+			if (page != null) {
+				return page.getImage(ctx).getPriority(ctx);
+			} else {
+				return 0;
+			}
+		} catch (Exception e) {
+			e.printStackTrace();
+			return 0;
+		}
+	}
+
+	@Override
+	public String getSubTitle(ContentContext ctx) {
+		MenuElement page;
+		try {
+			page = getMirrorPage(ctx);
+			if (page != null) {
+				return page.getSubTitle(ctx);
+			} else {
+				return null;
+			}
+		} catch (Exception e) {
+			e.printStackTrace();
+			return null;
+		}
+	}
+
+	@Override
+	public int getSubTitleLevel(ContentContext ctx) {
+		MenuElement page;
+		try {
+			page = getMirrorPage(ctx);
+			if (page != null) {
+				return page.getSubTitleLevel(ctx);
+			} else {
+				return 0;
+			}
+		} catch (Exception e) {
+			e.printStackTrace();
+			return 0;
 		}
 	}
 

@@ -426,7 +426,7 @@ public class Video extends GlobalImage implements IAction, IVideo {
 					ctx.getRequest().setAttribute("url", getLink());
 				}
 			}
-			ctx.getRequest().setAttribute("type", ResourceHelper.getFileExtensionToManType(StringHelper.getFileExtension(getFileName())));
+			ctx.getRequest().setAttribute("type", ResourceHelper.getFileExtensionToMineType(StringHelper.getFileExtension(getFileName())));
 			ctx.getRequest().setAttribute("label", getLabel());
 			if (getDecorationImage() != null && getDecorationImage().trim().length() > 0) {
 				String imageLink = getResourceURL(ctx, getDecorationImage());
@@ -447,7 +447,7 @@ public class Video extends GlobalImage implements IAction, IVideo {
 				String fileLink = getResourceURL(ctx, getFileName());
 				ctx.getRequest().setAttribute("file", URLHelper.createResourceURL(ctx, getPage(), fileLink).replace('\\', '/'));
 				ctx.getRequest().setAttribute("url", URLHelper.createResourceURL(ctx, getPage(), fileLink).replace('\\', '/'));
-				ctx.getRequest().setAttribute("type", ResourceHelper.getFileExtensionToManType(StringHelper.getFileExtension(getFileName())));
+				ctx.getRequest().setAttribute("type", ResourceHelper.getFileExtensionToMineType(StringHelper.getFileExtension(getFileName())));
 				if (getDecorationImage() != null && getDecorationImage().trim().length() > 0) {
 					String imageLink = getResourceURL(ctx, getDecorationImage());
 					ctx.getRequest().setAttribute("image", URLHelper.createTransformURL(ctx, imageLink, imageFilter));

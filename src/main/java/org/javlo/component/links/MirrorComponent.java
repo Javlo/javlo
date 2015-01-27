@@ -48,10 +48,10 @@ public class MirrorComponent extends AbstractVisualComponent implements IFieldCo
 	}
 
 	@Override
-	public void prepareView(ContentContext ctx) throws Exception {		
-		super.prepareView(ctx);		
+	public void prepareView(ContentContext ctx) throws Exception {
+		super.prepareView(ctx);
 	}
-	
+
 	@Override
 	protected String getEditXHTMLCode(ContentContext ctx) throws Exception {
 
@@ -124,22 +124,22 @@ public class MirrorComponent extends AbstractVisualComponent implements IFieldCo
 	public IContentVisualComponent getMirrorComponent(ContentContext ctx) throws Exception {
 		String compId = getMirrorComponentId();
 		ContentService content = ContentService.getInstance(ctx.getRequest());
-		return content.getComponentAllLanguage(ctx, compId);
+		return content.getComponentNoRealContentType(ctx, compId);
 	}
 
 	@Override
-	public String getPrefixViewXHTMLCode(ContentContext ctx) {		
+	public String getPrefixViewXHTMLCode(ContentContext ctx) {
 		IContentVisualComponent comp;
-		try {			
-			comp = getMirrorComponent(ctx);			
+		try {
+			comp = getMirrorComponent(ctx);
 			if (comp != null) {
 				AbstractVisualComponent.setForcedId(ctx, getId());
 				return comp.getPrefixViewXHTMLCode(ctx);
-			} 
+			}
 		} catch (Exception e) {
 			e.printStackTrace();
 		} finally {
-			AbstractVisualComponent.setForcedId(ctx, null);	
+			AbstractVisualComponent.setForcedId(ctx, null);
 		}
 		return super.getPrefixViewXHTMLCode(ctx);
 	}
@@ -168,8 +168,8 @@ public class MirrorComponent extends AbstractVisualComponent implements IFieldCo
 	 * @see org.javlo.itf.IContentVisualComponent#getXHTMLCode()
 	 */
 	@Override
-	public String getViewXHTMLCode(ContentContext ctx) throws Exception {		
-		AbstractVisualComponent comp = (AbstractVisualComponent) getMirrorComponent(ctx);		
+	public String getViewXHTMLCode(ContentContext ctx) throws Exception {
+		AbstractVisualComponent comp = (AbstractVisualComponent) getMirrorComponent(ctx);
 		if (comp != null) {
 			AbstractVisualComponent.setForcedId(ctx, getId());
 			comp.prepareView(ctx);
@@ -234,11 +234,11 @@ public class MirrorComponent extends AbstractVisualComponent implements IFieldCo
 	public void performEdit(ContentContext ctx) throws Exception {
 		RequestService requestService = RequestService.getInstance(ctx.getRequest());
 		String newLink = requestService.getParameter(getCurrentInputName(), getMirrorComponentId());
-		if (requestService.getParameter(getUnlinkInputName(), null) != null) {			
+		if (requestService.getParameter(getUnlinkInputName(), null) != null) {
 			IContentVisualComponent comp = getMirrorComponent(ctx);
-			if (comp != null) {				
+			if (comp != null) {
 				ContentService content = ContentService.getInstance(ctx.getGlobalContext());
-				ComponentBean bean = new ComponentBean(comp.getComponentBean());				
+				ComponentBean bean = new ComponentBean(comp.getComponentBean());
 				bean.setArea(getArea());
 				content.createContent(ctx, bean, getId(), isBackgroundColored());
 				deleteMySelf(ctx);
@@ -261,7 +261,7 @@ public class MirrorComponent extends AbstractVisualComponent implements IFieldCo
 		try {
 			comp = getMirrorComponent(ctx);
 			if (comp instanceof IFieldContainer) {
-				return ((IFieldContainer)comp).getLabel(ctx);
+				return ((IFieldContainer) comp).getLabel(ctx);
 			}
 		} catch (Exception e) {
 			e.printStackTrace();
@@ -275,7 +275,7 @@ public class MirrorComponent extends AbstractVisualComponent implements IFieldCo
 		try {
 			comp = getMirrorComponent(ctx);
 			if (comp instanceof IFieldContainer) {
-				return ((IFieldContainer)comp).getFieldsNames(ctx);
+				return ((IFieldContainer) comp).getFieldsNames(ctx);
 			}
 		} catch (Exception e) {
 			e.printStackTrace();
@@ -289,7 +289,7 @@ public class MirrorComponent extends AbstractVisualComponent implements IFieldCo
 		try {
 			comp = getMirrorComponent(ctx);
 			if (comp instanceof IFieldContainer) {
-				return ((IFieldContainer)comp).getFields(ctx);
+				return ((IFieldContainer) comp).getFields(ctx);
 			}
 		} catch (Exception e) {
 			e.printStackTrace();
@@ -303,7 +303,7 @@ public class MirrorComponent extends AbstractVisualComponent implements IFieldCo
 		try {
 			comp = getMirrorComponent(ctx);
 			if (comp instanceof IFieldContainer) {
-				return ((IFieldContainer)comp).getField(ctx,name);
+				return ((IFieldContainer) comp).getField(ctx, name);
 			}
 		} catch (Exception e) {
 			e.printStackTrace();
@@ -317,7 +317,7 @@ public class MirrorComponent extends AbstractVisualComponent implements IFieldCo
 		try {
 			comp = getMirrorComponent(ctx);
 			if (comp instanceof IFieldContainer) {
-				return ((IFieldContainer)comp).getFieldValue(ctx,name);
+				return ((IFieldContainer) comp).getFieldValue(ctx, name);
 			}
 		} catch (Exception e) {
 			e.printStackTrace();
@@ -331,7 +331,7 @@ public class MirrorComponent extends AbstractVisualComponent implements IFieldCo
 		try {
 			comp = getMirrorComponent(ctx);
 			if (comp instanceof IFieldContainer) {
-				return ((IFieldContainer)comp).getList(ctx,listName,locale);
+				return ((IFieldContainer) comp).getList(ctx, listName, locale);
 			}
 		} catch (Exception e) {
 			e.printStackTrace();
@@ -340,12 +340,12 @@ public class MirrorComponent extends AbstractVisualComponent implements IFieldCo
 	}
 
 	@Override
-	public Map<String, String> getList(ContentContext ctx ,String listName) throws Exception {
+	public Map<String, String> getList(ContentContext ctx, String listName) throws Exception {
 		IContentVisualComponent comp = null;
 		try {
 			comp = getMirrorComponent(ctx);
 			if (comp instanceof IFieldContainer) {
-				return ((IFieldContainer)comp).getList(ctx,listName);
+				return ((IFieldContainer) comp).getList(ctx, listName);
 			}
 		} catch (Exception e) {
 			e.printStackTrace();
@@ -359,7 +359,7 @@ public class MirrorComponent extends AbstractVisualComponent implements IFieldCo
 		try {
 			comp = getMirrorComponent(ctx);
 			if (comp instanceof IFieldContainer) {
-				return ((IFieldContainer)comp).getViewListXHTMLCode(ctx);
+				return ((IFieldContainer) comp).getViewListXHTMLCode(ctx);
 			}
 		} catch (Exception e) {
 			e.printStackTrace();
@@ -373,21 +373,21 @@ public class MirrorComponent extends AbstractVisualComponent implements IFieldCo
 		try {
 			comp = getMirrorComponent(ctx);
 			if (comp instanceof IFieldContainer) {
-				return ((IFieldContainer)comp).isFieldContainer(ctx);
+				return ((IFieldContainer) comp).isFieldContainer(ctx);
 			}
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
 		return false;
 	}
-	
+
 	@Override
 	public String getContainerType(ContentContext ctx) {
 		IContentVisualComponent comp = null;
 		try {
 			comp = getMirrorComponent(ctx);
 			if (comp instanceof IFieldContainer) {
-				return ((IFieldContainer)comp).getContainerType(ctx);
+				return ((IFieldContainer) comp).getContainerType(ctx);
 			}
 		} catch (Exception e) {
 			e.printStackTrace();
@@ -401,7 +401,7 @@ public class MirrorComponent extends AbstractVisualComponent implements IFieldCo
 		try {
 			comp = getMirrorComponent(ctx);
 			if (comp instanceof IImageTitle) {
-				return ((IImageTitle)comp).getImageDescription(ctx);
+				return ((IImageTitle) comp).getImageDescription(ctx);
 			}
 		} catch (Exception e) {
 			e.printStackTrace();
@@ -415,7 +415,7 @@ public class MirrorComponent extends AbstractVisualComponent implements IFieldCo
 		try {
 			comp = getMirrorComponent(ctx);
 			if (comp instanceof IImageTitle) {
-				return ((IImageTitle)comp).getResourceURL(ctx);
+				return ((IImageTitle) comp).getResourceURL(ctx);
 			}
 		} catch (Exception e) {
 			e.printStackTrace();
@@ -429,7 +429,7 @@ public class MirrorComponent extends AbstractVisualComponent implements IFieldCo
 		try {
 			comp = getMirrorComponent(ctx);
 			if (comp instanceof IImageTitle) {
-				return ((IImageTitle)comp).getImageLinkURL(ctx);
+				return ((IImageTitle) comp).getImageLinkURL(ctx);
 			}
 		} catch (Exception e) {
 			e.printStackTrace();
@@ -443,7 +443,7 @@ public class MirrorComponent extends AbstractVisualComponent implements IFieldCo
 		try {
 			comp = getMirrorComponent(ctx);
 			if (comp instanceof IImageTitle) {
-				return ((IImageTitle)comp).isImageValid(ctx);
+				return ((IImageTitle) comp).isImageValid(ctx);
 			}
 		} catch (Exception e) {
 			e.printStackTrace();
@@ -457,7 +457,7 @@ public class MirrorComponent extends AbstractVisualComponent implements IFieldCo
 		try {
 			comp = getMirrorComponent(ctx);
 			if (comp instanceof IImageTitle) {
-				return ((IImageTitle)comp).getPriority(ctx);
+				return ((IImageTitle) comp).getPriority(ctx);
 			}
 		} catch (Exception e) {
 			e.printStackTrace();
@@ -471,7 +471,7 @@ public class MirrorComponent extends AbstractVisualComponent implements IFieldCo
 		try {
 			comp = getMirrorComponent(ctx);
 			if (comp instanceof IImageTitle) {
-				return ((ISubTitle)comp).getSubTitle(ctx);
+				return ((ISubTitle) comp).getSubTitle(ctx);
 			}
 		} catch (Exception e) {
 			e.printStackTrace();
@@ -485,28 +485,29 @@ public class MirrorComponent extends AbstractVisualComponent implements IFieldCo
 		try {
 			comp = getMirrorComponent(ctx);
 			if (comp instanceof IImageTitle) {
-				return ((ISubTitle)comp).getSubTitleLevel(ctx);
+				return ((ISubTitle) comp).getSubTitleLevel(ctx);
 			}
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
 		return 0;
 	}
-	
+
 	@Override
-	public boolean isRealContent(ContentContext ctx) {
+	public boolean isRealContent(ContentContext ctx) {		
 		IContentVisualComponent comp;
 		try {
 			comp = getMirrorComponent(ctx);
 			if (comp != null) {
-				return comp.isRealContent(ctx);
+				boolean realContent = comp.isRealContent(ctx);				
+				return realContent;
 			}
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
-		return false;		
+		return false;
 	}
-	
+
 	@Override
 	public boolean isLabel(ContentContext ctx) {
 		IContentVisualComponent comp;

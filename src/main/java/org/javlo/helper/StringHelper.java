@@ -1086,6 +1086,24 @@ public class StringHelper {
 			return true;
 		}
 	}
+	
+	public static boolean isFloat(String str) {
+		int countSep = 0;
+		if (str == null || str.length() == 0) {
+			return false;
+		} else {
+			for (char c : str.toCharArray()) {
+				if (!isDigit(c)) {
+					if (c == '.') {
+						countSep++;
+					} else {
+						return false;
+					}
+				}
+			}
+			return countSep < 2;
+		}
+	}
 
 	/**
 	 * return true if the filename in a html image).
@@ -1128,6 +1146,26 @@ public class StringHelper {
 		String ext = getFileExtension(fileName);
 		return isImageExtension(ext);
 	}
+	
+	/**
+	 * return true if the filename in a image for wcms (sp. : tif or psd in not
+	 * a image).
+	 * 
+	 * @param fileName
+	 *            file name with extension
+	 * @return true if file name is a image
+	 */
+	public static final boolean isExcelFile(String fileName) {
+		if (fileName == null) {
+			return false;
+		}
+		if (fileName.contains("?")) {
+			fileName = fileName.substring(0, fileName.indexOf('?'));
+		}
+		String ext = getFileExtension(fileName).trim();
+		return ext.equalsIgnoreCase("xls") || ext.equalsIgnoreCase("xlsx");
+	}
+	
 	/**
 	 * return true if the file extension is an image for wcms (sp. : tif or psd is not
 	 * an image).

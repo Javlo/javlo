@@ -66,6 +66,8 @@ import org.javlo.service.PublishListener;
 import org.javlo.service.RequestService;
 import org.javlo.service.ReverseLinkService;
 import org.javlo.service.resource.ResourceStatus;
+import org.javlo.service.shared.ISharedContentProvider;
+import org.javlo.service.shared.JavloSharedContentProvider;
 import org.javlo.service.shared.SharedContent;
 import org.javlo.service.shared.SharedContentService;
 import org.javlo.service.syncro.SynchroHelper;
@@ -1037,6 +1039,10 @@ public class Edit extends AbstractModuleAction {
 			String pageShared = requestService.getParameter("share", null);
 			if (pageShared != null) {
 				page.setSharedName(pageShared);
+				ISharedContentProvider provider = SharedContentService.getInstance(ctx).getProvider(ctx, JavloSharedContentProvider.NAME);
+				if (provider != null) {
+					provider.refresh(ctx);
+				}
 			}
 
 			/** publish time range **/

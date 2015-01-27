@@ -530,6 +530,12 @@ public class ContentContext {
 		return outContext;
 	}
 	
+	public ContentContext getContextWidthOtherRequestLanguage(String lang) {
+		ContentContext outContext = new ContentContext(this);
+		outContext.setRequestContentLanguage(lang);
+		return outContext;
+	}
+	
 	public ContentContext getContextWithInternalURL() {
 		ContentContext outContext = new ContentContext(this);
 		outContext.setInternalURL(true);
