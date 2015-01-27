@@ -273,10 +273,10 @@ public class ResourceHelper {
 		}
 		String content = FileUtils.readFileToString(file1, ContentContext.CHARACTER_ENCODING);
 		List<String> keys = new LinkedList<String>(filter.keySet());
-		Collections.sort(keys, new Comparator<String>() {			
+		Collections.sort(keys, new Comparator<String>() {
 			public int compare(String s1, String s2) {
 				return s2.length() - s1.length();
-			}			
+			}
 		});
 		for (String key : keys) {
 			if (filter.get(key) != null && filter.get(key).trim().length() > 0) {
@@ -287,7 +287,7 @@ public class ResourceHelper {
 		FileUtils.writeStringToFile(file2, content, ContentContext.CHARACTER_ENCODING);
 	}
 
-	public static void filteredFileCopyEscapeScriplet(File file1, File file2, Map<String, String> filter) throws IOException {		
+	public static void filteredFileCopyEscapeScriplet(File file1, File file2, Map<String, String> filter) throws IOException {
 		if (!file2.exists()) {
 			file2.getParentFile().mkdirs();
 			file2.createNewFile();
@@ -300,12 +300,12 @@ public class ResourceHelper {
 
 		List<String> keys = new LinkedList<String>(filter.keySet());
 		// sort because big key must be replaced before little key.
-		Collections.sort(keys, new Comparator<String>() {			
+		Collections.sort(keys, new Comparator<String>() {
 			public int compare(String s1, String s2) {
 				return s2.length() - s1.length();
-			}			
-		});		
-		for (String key : keys) {			
+			}
+		});
+		for (String key : keys) {
 			if (filter.get(key) != null && filter.get(key).trim().length() > 0) {
 				content = content.replace(key, filter.get(key));
 				content = content.replace(key.toUpperCase(), filter.get(key));
@@ -516,7 +516,7 @@ public class ResourceHelper {
 		// Arrays.sort(res);
 		return res;
 	}
-	
+
 	public static String getFile(String fileName) {
 		String[] elems = fileName.split("/");
 		if (elems.length < 1) {
@@ -551,7 +551,7 @@ public class ResourceHelper {
 		return outContent;
 	}
 
-	public static final String getFileExtensionToManType(String ext) {
+	public static final String getFileExtensionToMineType(String ext) {
 		ext = ext.trim().toLowerCase();
 		if (ext.equals("gif")) {
 			return "image/GIF";
@@ -589,6 +589,14 @@ public class ResourceHelper {
 			return "application/x-shockwave-flash";
 		} else if (ext.equals("properties")) {
 			return "text/text";
+		} else if (ext.equals("xls")) {
+			return "application/vnd.ms-excel";
+		} else if (ext.equals("xlsx")) {
+			return "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet";
+		} else if (ext.equals("doc")) {
+			return "application/msword";
+		} else if (ext.equals("xlsx")) {
+			return "application/vnd.openxmlformats-officedocument.wordprocessingml.document";
 		}
 		return "application/octet-stream";
 	}
@@ -769,16 +777,16 @@ public class ResourceHelper {
 		file = StringHelper.getFileNameFromPath(file);
 		return file.startsWith("content_" + ContentContext.PREVIEW_MODE);
 	}
-	
+
 	public static boolean isResourceURL(ContentContext ctx, String url) {
-		String startURL = URLHelper.createResourceURL(ctx, "/");		
+		String startURL = URLHelper.createResourceURL(ctx, "/");
 		return url.startsWith(startURL);
 	}
-	
+
 	public static boolean isTransformURL(ContentContext ctx, String url) throws Exception {
 		final String FAKE_FILTER = "___FAKE_FILTER___";
 		String startURL = URLHelper.createTransformURL(ctx, "/", FAKE_FILTER);
-		startURL = startURL.substring(0, startURL.indexOf(FAKE_FILTER));		
+		startURL = startURL.substring(0, startURL.indexOf(FAKE_FILTER));
 		return url.startsWith(startURL);
 	}
 
@@ -1027,7 +1035,7 @@ public class ResourceHelper {
 			ResourceHelper.closeResource(in);
 		}
 	}
-	
+
 	public static final int writeFileToStream(File fileIn, OutputStream out) throws IOException {
 		InputStream in = null;
 		try {
@@ -1043,7 +1051,7 @@ public class ResourceHelper {
 			return null;
 		}
 		File file = new File(URLHelper.mergePath(folder.getAbsolutePath(), StringHelper.createFileName(StringHelper.getFileNameFromPath(fileItem.getName()))));
-		
+
 		if (!file.exists()) {
 			file.createNewFile();
 		} else {
@@ -1083,7 +1091,7 @@ public class ResourceHelper {
 		int byteReaded = in.read(buffer);
 		while (byteReaded >= 0) {
 			size = size + byteReaded;
-			if (size > maxSize && maxSize>0) {
+			if (size > maxSize && maxSize > 0) {
 				return -1;
 			}
 			out.write(buffer, 0, byteReaded);
@@ -1123,7 +1131,7 @@ public class ResourceHelper {
 		out.write(contentByte);
 		out.close();
 	}
-	
+
 	public static final void writeStringToStream(String content, OutputStream out, String encoding) throws IOException {
 		byte[] contentByte = content.getBytes(encoding);
 		out.write(contentByte);
@@ -1300,10 +1308,10 @@ public class ResourceHelper {
 		}
 		return null;
 	}
-	
+
 	public static String storeBean(Serializable bean, File file) throws FileNotFoundException {
 		OutputStream out = new FileOutputStream(file);
-		XMLEncoder encoder = null;		
+		XMLEncoder encoder = null;
 		try {
 			encoder = new XMLEncoder(out, ContentContext.CHARACTER_ENCODING, true, 0);
 			encoder.writeObject(bean);
@@ -1432,20 +1440,21 @@ public class ResourceHelper {
 	}
 
 	public static void main(String[] args) {
-		List<String> keys = new LinkedList<String>(Arrays.asList(new String[] {"patrick", "pat", "Patrick Vandermaesen" }));
-		Collections.sort(keys, new Comparator<String>() {			
+		List<String> keys = new LinkedList<String>(Arrays.asList(new String[] { "patrick", "pat", "Patrick Vandermaesen" }));
+		Collections.sort(keys, new Comparator<String>() {
 			public int compare(String s1, String s2) {
 				return s2.length() - s1.length();
-			}			
+			}
 		});
 		for (String string : keys) {
 			System.out.println(string);
 		}
 	}
-	
-	
+
 	/**
-	 * clear a folder list, remove '/' if found as first char and replace '\' by '/'
+	 * clear a folder list, remove '/' if found as first char and replace '\' by
+	 * '/'
+	 * 
 	 * @param folders
 	 * @return
 	 */
@@ -1453,23 +1462,36 @@ public class ResourceHelper {
 		List<String> outFolders = new LinkedList<String>();
 		for (String folder : folders) {
 			if (folder != null) {
-			folder = folder.replace('\\', '/');
-			while (folder.length() > 0 && folder.startsWith("/")) {
-				folder = folder.substring(1);
-			}
-			outFolders.add(folder);
+				folder = folder.replace('\\', '/');
+				while (folder.length() > 0 && folder.startsWith("/")) {
+					folder = folder.substring(1);
+				}
+				outFolders.add(folder);
 			} else {
 				outFolders.add(null);
 			}
 		}
-		return outFolders;		
+		return outFolders;
 	}
-	
+
 	public static List<String> removePrefixFromPathList(Collection<? extends Object> pathList, String prefix) {
 		List<String> outPathList = new LinkedList<String>();
 		for (Object path : pathList) {
 			outPathList.add(StringUtils.replaceOnce(path.toString(), prefix, ""));
 		}
 		return outPathList;
+	}
+
+	public static String changeExtention(String filename, String newext) {
+		if (filename == null || newext == null) {
+			return filename;
+		} else {
+			String currentExt = StringHelper.getFileExtension(filename);
+			if (currentExt == null || currentExt.trim().length() == 0) {
+				return filename + '.' + newext;
+			} else {
+				return filename.substring(0, filename.length() - (currentExt.length() + 1)) + '.' + newext;
+			}
+		}
 	}
 }

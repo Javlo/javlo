@@ -322,6 +322,27 @@ public class ContentElementList implements IContentComponentsList {
 		}
 		return bestSubTitle;
 	}
+	
+	public int getSubTitleLevel(ContentContext ctx) {
+		Iterator elems = contentElements.iterator();	
+		int bestLevel = Integer.MAX_VALUE;		
+		while (elems.hasNext()) {
+			IContentVisualComponent comp = (IContentVisualComponent) elems.next();			
+			if (comp instanceof ISubTitle) {				
+				int level = ((ISubTitle)comp).getSubTitleLevel(ctx);			
+				if (level == 2) {
+					return level;
+				} if (level < bestLevel && level > 1) {
+					bestLevel = level;					
+				}
+				
+			}
+		}
+		if (bestLevel == Integer.MAX_VALUE) {
+			return -1;
+		}
+		return bestLevel;
+	}
 
 	@Override
 	public String getSufixXHTMLCode(ContentContext ctx) {
@@ -480,7 +501,6 @@ public class ContentElementList implements IContentComponentsList {
 
 	@Override
 	public IContentVisualComponent next(ContentContext ctx) {
-
 		IContentVisualComponent comp = getElement(pos);
 		pos = pos + 1;
 		while ((comp != null) && (!isVisible(ctx, comp))) {

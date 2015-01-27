@@ -85,7 +85,7 @@ public class CatchAllFilter implements Filter {
 		if (uri.endsWith(Template.GZ_FILE_EXT)) {
 			String realFile = uri.substring(0, uri.length() - ('.' + Template.GZ_FILE_EXT).length());
 			((HttpServletResponse) response).setHeader("Content-Encoding", "gzip");
-			((HttpServletResponse) response).setHeader("Content-Type", ResourceHelper.getFileExtensionToManType(StringHelper.getFileExtension(realFile)));
+			((HttpServletResponse) response).setHeader("Content-Type", ResourceHelper.getFileExtensionToMineType(StringHelper.getFileExtension(realFile)));
 		}
 
 		String host = ServletHelper.getSiteKey(httpRequest);

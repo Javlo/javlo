@@ -81,7 +81,7 @@ public class VFSServlet extends HttpServlet {
 						in = file.getContent().getInputStream();
 						out = response.getOutputStream();
 
-						response.setContentType(ResourceHelper.getFileExtensionToManType(StringHelper.getFileExtension(resourceURI)));
+						response.setContentType(ResourceHelper.getFileExtensionToMineType(StringHelper.getFileExtension(resourceURI)));
 						ResourceHelper.writeStreamToStream(in, out);
 					}
 				}

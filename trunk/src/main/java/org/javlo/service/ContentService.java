@@ -139,12 +139,9 @@ public class ContentService implements IPrintInfo {
 		return content;
 	}
 
-	private static IContentVisualComponent searchComponent(ContentContext ctx, MenuElement page, String id) throws Exception {
+	private static IContentVisualComponent searchComponent(ContentContext ctx, MenuElement page, String id, boolean noRealContentType) throws Exception {
 		ContentContext noAreaCtx = ctx.getContextWithoutArea();
-		ContentContext ctxWithContent = noAreaCtx.getContextWithContent(page);
-		if (ctxWithContent == null) {
-			ctxWithContent = noAreaCtx;
-		}
+
 		/** search on current language **/
 		ContentElementList content = page.getAllContent(noAreaCtx);
 		while (content.hasNext(noAreaCtx)) {
@@ -153,33 +150,50 @@ public class ContentService implements IPrintInfo {
 				return elem;
 			}
 		}
-		/** search on content with real content **/
-		content = page.getAllContent(ctxWithContent);
-		while (content.hasNext(ctxWithContent)) {
-			IContentVisualComponent elem = content.next(ctxWithContent);
-			if (elem.getId().equals(id)) {
-				return elem;
-			}
-		}
 
-		MenuElement[] children = page.getAllChildren();
-		for (MenuElement menuElement : children) {
-			ctxWithContent = noAreaCtx.getContextWithContent(menuElement);
+		if (noRealContentType) {
+			for (String lg : ctx.getGlobalContext().getContentLanguages()) {
+				ContentContext ctxLg = noAreaCtx.getContextWidthOtherRequestLanguage(lg);
+				while (content.hasNext(ctxLg)) {
+					IContentVisualComponent elem = content.next(ctxLg);
+					if (elem.getId().equals(id)) {
+						return elem;
+					}
+				}
+			}
+		} else {
+			ContentContext ctxWithContent = noAreaCtx.getContextWithContent(page);
 			if (ctxWithContent == null) {
 				ctxWithContent = noAreaCtx;
 			}
-			content = menuElement.getAllContent(noAreaCtx);
-			while (content.hasNext(noAreaCtx)) {
-				IContentVisualComponent elem = content.next(noAreaCtx);
-				if (elem.getId().equals(id)) {
-					return elem;
-				}
-			}
-			content = menuElement.getAllContent(ctxWithContent);
+			/** search on content with real content **/
+			content = page.getAllContent(ctxWithContent);
 			while (content.hasNext(ctxWithContent)) {
 				IContentVisualComponent elem = content.next(ctxWithContent);
 				if (elem.getId().equals(id)) {
 					return elem;
+				}
+			}
+
+			MenuElement[] children = page.getAllChildren();
+			for (MenuElement menuElement : children) {
+				ctxWithContent = noAreaCtx.getContextWithContent(menuElement);
+				if (ctxWithContent == null) {
+					ctxWithContent = noAreaCtx;
+				}
+				content = menuElement.getAllContent(noAreaCtx);
+				while (content.hasNext(noAreaCtx)) {
+					IContentVisualComponent elem = content.next(noAreaCtx);
+					if (elem.getId().equals(id)) {
+						return elem;
+					}
+				}
+				content = menuElement.getAllContent(ctxWithContent);
+				while (content.hasNext(ctxWithContent)) {
+					IContentVisualComponent elem = content.next(ctxWithContent);
+					if (elem.getId().equals(id)) {
+						return elem;
+					}
 				}
 			}
 		}
@@ -228,7 +242,6 @@ public class ContentService implements IPrintInfo {
 		page.addContent(parentId, bean, releaseCache);
 		return id;
 	}
-	
 
 	public String createContent(ContentContext ctx, ComponentBean inBean, String parentId, boolean releaseCache) throws Exception {
 		String id = StringHelper.getRandomId();
@@ -303,17 +316,17 @@ public class ContentService implements IPrintInfo {
 		bean.setArea(area);
 		bean.setAuthors(ctx.getCurrentEditUser().getLogin());
 		page.addContent(parentId, bean, releaseCache);
-		
+
 		return id;
 	}
-	
-	public String createContent(ContentContext ctx, MenuElement page, String area, String parentId, ComponentBean inBean, boolean releaseCache) throws Exception {		
+
+	public String createContent(ContentContext ctx, MenuElement page, String area, String parentId, ComponentBean inBean, boolean releaseCache) throws Exception {
 		ComponentBean bean = new ComponentBean(inBean);
 		bean.setId(StringHelper.getRandomId());
 		bean.setArea(area);
 		bean.setAuthors(ctx.getCurrentEditUser().getLogin());
 		bean.setLanguage(ctx.getRequestContentLanguage());
-		page.addContent(parentId, bean, releaseCache);		
+		page.addContent(parentId, bean, releaseCache);
 		return bean.getId();
 	}
 
@@ -371,7 +384,7 @@ public class ContentService implements IPrintInfo {
 				return null;
 			}
 			return timeTravelerGlobalMap.get(key);
-		} else {			
+		} else {
 			if (previewGlobalMap == null) {
 				return null;
 			}
@@ -412,6 +425,27 @@ public class ContentService implements IPrintInfo {
 		}
 		return component;
 	}
+	
+	public IContentVisualComponent getComponentNoRealContentType(ContentContext ctx, String id) throws Exception {
+		if (id == null) {
+			return null;
+		}
+		WeakReference<IContentVisualComponent> ref = components.get(getComponentKey(ctx, id));
+		IContentVisualComponent component = null;
+		if (ref != null) {
+			component = ref.get();
+		}
+		if (component == null) {
+			component = searchComponent(ctx, getNavigation(ctx), id, true);
+			if (component != null) {
+				components.put(getComponentKey(ctx, id), new WeakReference<IContentVisualComponent>(component));
+			}
+		}
+		if (component == null) {
+			components.remove(getComponentKey(ctx, id));
+		}
+		return component;
+	}
 
 	public IContentVisualComponent getComponent(ContentContext ctx, String id) throws Exception {
 		if (id == null) {
@@ -423,7 +457,7 @@ public class ContentService implements IPrintInfo {
 			component = ref.get();
 		}
 		if (component == null) {
-			component = searchComponent(ctx, getNavigation(ctx), id);
+			component = searchComponent(ctx, getNavigation(ctx), id, false);
 			if (component != null) {
 				components.put(getComponentKey(ctx, id), new WeakReference<IContentVisualComponent>(component));
 			}
@@ -449,7 +483,7 @@ public class ContentService implements IPrintInfo {
 		while (component == null && languages.hasNext()) {
 			ContentContext localContext = new ContentContext(ctx);
 			localContext.setRequestContentLanguage(languages.next());
-			component = searchComponent(localContext, getNavigation(localContext), id);
+			component = searchComponent(localContext, getNavigation(localContext), id, true);
 			if (component != null) {
 				components.put(getComponentKey(ctx, id), new WeakReference<IContentVisualComponent>(component));
 			}
@@ -506,7 +540,9 @@ public class ContentService implements IPrintInfo {
 				timeTravelerGlobalMap = contentAttributeMap;
 			}
 			res = timeTravelerNav;
-		} else if (!ctx.isAsViewMode() || !previewMode) { // TODO: check the test was with : || !previewMode
+		} else if (!ctx.isAsViewMode() || !previewMode) { // TODO: check the
+															// test was with :
+															// || !previewMode
 			if (previewNav == null) {
 				synchronized (ctx.getGlobalContext().getLockLoadContent()) {
 					if (previewNav == null) {
@@ -724,7 +760,7 @@ public class ContentService implements IPrintInfo {
 		} else {
 			if (previewGlobalMap == null) {
 				previewGlobalMap = new HashMap<String, String>();
-			}			
+			}
 			previewGlobalMap.put(key, value);
 		}
 	}

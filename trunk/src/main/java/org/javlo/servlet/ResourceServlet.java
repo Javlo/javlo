@@ -5,7 +5,6 @@ import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
-import java.util.Collections;
 import java.util.logging.Logger;
 
 import javax.servlet.ServletException;
@@ -21,7 +20,6 @@ import org.javlo.helper.RequestHelper;
 import org.javlo.helper.ResourceHelper;
 import org.javlo.helper.StringHelper;
 import org.javlo.helper.URLHelper;
-import org.javlo.image.ImageHelper;
 import org.javlo.service.syncro.FileStructureFactory;
 import org.javlo.tracking.Track;
 import org.javlo.tracking.Tracker;
@@ -29,6 +27,8 @@ import org.javlo.user.IUserFactory;
 import org.javlo.user.User;
 import org.javlo.user.UserFactory;
 import org.javlo.user.UserSecurity;
+import org.javlo.utils.CSVFactory;
+import org.javlo.utils.XLSTools;
 import org.javlo.ztatic.StaticInfo;
 
 /**
@@ -161,7 +161,7 @@ public class ResourceServlet extends HttpServlet {
 
 			logger.fine("load static resource : " + resourceURI);
 
-			response.setContentType(ResourceHelper.getFileExtensionToManType(StringHelper.getFileExtension(resourceURI)));
+			response.setContentType(ResourceHelper.getFileExtensionToMineType(StringHelper.getFileExtension(resourceURI)));
 			if (!pathInfo.equals(FILE_INFO)) {
 				File file = new File(URLHelper.mergePath(dataFolder, resourceURI));
 				StaticInfo info = StaticInfo.getInstance(ctx, file);
@@ -173,6 +173,22 @@ public class ResourceServlet extends HttpServlet {
 					response.setContentLength((int) file.length());
 					StaticInfo.getInstance(ctx, file).addAccess(ctx);
 				} else {
+					if (StringHelper.isExcelFile(file.getName())) {
+						File csvFile = new File(ResourceHelper.changeExtention(file.getAbsolutePath(), "csv"));
+						if (csvFile.exists()) {							
+							csvFile = new File(URLHelper.mergePath(dataFolder, ResourceHelper.changeExtention(resourceURI, "csv")));
+							response.setContentType(ResourceHelper.getFileExtensionToMineType(StringHelper.getFileExtension(file.getName())));
+							response.setHeader("Cache-Control", "no-cache");
+							response.setHeader("Accept-Ranges", "bytes");
+							CSVFactory csvFactory = new CSVFactory(csvFile);							
+							if (StringHelper.getFileExtension(file.getName()).equals("xls")) {
+								XLSTools.writeXLS(XLSTools.getCellArray(csvFactory.getArray()), response.getOutputStream());
+							} else 	{
+								XLSTools.writeXLSX(XLSTools.getCellArray(csvFactory.getArray()), response.getOutputStream());
+							}
+							return;
+						}
+					}
 					response.setStatus(HttpServletResponse.SC_NOT_FOUND);
 					return;
 				}
@@ -188,7 +204,7 @@ public class ResourceServlet extends HttpServlet {
 					String finalName = URLHelper.mergePath(dataFolder, resourceURI);
 
 					File file = new File(finalName);
-					response.setContentType(ResourceHelper.getFileExtensionToManType(StringHelper.getFileExtension(file.getName())));
+					response.setContentType(ResourceHelper.getFileExtensionToMineType(StringHelper.getFileExtension(file.getName())));
 					response.setHeader("Cache-Control", "no-cache");
 					response.setHeader("Accept-Ranges", "bytes");
 					response.setDateHeader(NetHelper.HEADER_LAST_MODIFIED, file.lastModified());

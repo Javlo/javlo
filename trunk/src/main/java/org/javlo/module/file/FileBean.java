@@ -180,7 +180,7 @@ public class FileBean {
 	}
 
 	public String getManType() {
-		return ResourceHelper.getFileExtensionToManType(StringHelper.getFileExtension(getName()));
+		return ResourceHelper.getFileExtensionToMineType(StringHelper.getFileExtension(getName()));
 	}
 
 	public Map<String, String> getTags() {

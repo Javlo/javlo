@@ -40,6 +40,14 @@ public class ResourceHelperTest extends TestCase {
 		assertEquals(correctedFolders.get(4), null);
 		assertEquals(correctedFolders.get(5), "dir1/dir2");
 	}
+	
+	public void testChangeFileExtension() {
+		assertEquals(ResourceHelper.changeExtention("test.jpg", "png"), "test.png");
+		assertEquals(ResourceHelper.changeExtention("test", "png"), "test.png");
+		assertEquals(ResourceHelper.changeExtention("test.jpg", null), "test.jpg");
+		assertEquals(ResourceHelper.changeExtention(null, null), null);
+		assertEquals(ResourceHelper.changeExtention(null, "png"), null);
+	}
 
 }
 

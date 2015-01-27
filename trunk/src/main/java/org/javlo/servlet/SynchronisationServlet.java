@@ -265,7 +265,7 @@ public class SynchronisationServlet extends HttpServlet {
 							response.sendError(HttpServletResponse.SC_PRECONDITION_FAILED, ex.getMessage());
 						}
 					} else {
-						response.setContentType(ResourceHelper.getFileExtensionToManType(StringHelper.getFileExtension(fileName)));
+						response.setContentType(ResourceHelper.getFileExtensionToMineType(StringHelper.getFileExtension(fileName)));
 						out = response.getOutputStream();
 						File file = new File(fileName);
 						if (!file.isDirectory()) {

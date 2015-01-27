@@ -157,6 +157,24 @@ public class XLSTools {
 		}
 		return outCell;
 	}
+	
+	public static Cell[][] getCellArray(String[][] array) throws Exception {
+		Cell[][] outArray = new Cell[array.length][];
+		for (int y = 0; y < array.length; y++) {	
+			outArray[y] = new Cell[array[y].length];
+			for (int x = 0; x < array[y].length; x++) {
+				String val = array[y][x];
+				Double dblVal = null;
+				if (StringHelper.isFloat(val)) {
+					dblVal = Double.parseDouble(val);
+				}
+				if (val!=null) {					
+					outArray[y][x] = new Cell(val, dblVal, outArray, x, y);
+				} 
+			}
+		}
+		return outArray;
+	}
 
 	protected static Cell[][] getXLSXArray(ContentContext ctx, File xslxFile) throws Exception {
 		InputStream in = new FileInputStream(xslxFile);
@@ -184,7 +202,7 @@ public class XLSTools {
 						if (sheet.getRow(y).getCell(x).getCellType() == HSSFCell.CELL_TYPE_NUMERIC) {
 							outArray[y][x].setDoubleValue(sheet.getRow(y).getCell(x).getNumericCellValue());
 						}
-						outArray[y][x].setValue(renderCell(ctx, readExcelCell(ctx, sheet.getRow(y).getCell(x))));
+						outArray[y][x].setValue(renderCell(readExcelCell(ctx, sheet.getRow(y).getCell(x))));
 					}
 				}
 			}
@@ -265,7 +283,7 @@ public class XLSTools {
 
 	}
 
-	protected String renderCell(String content) {
+	protected static String renderCell(String content) {
 		if (content.trim().length() == 0) {
 			content = "&nbsp;";
 		}
@@ -297,15 +315,15 @@ public class XLSTools {
 		workbook.write(out);
 	}
 	
-	public static void writeXLSX(Cell[][] array, OutputStream out) throws IOException {
+	public static void writeXLSX(Cell[][] array, OutputStream out) throws IOException {		
 		XSSFWorkbook workbook = new XSSFWorkbook();
 		XSSFSheet sheet = workbook.createSheet();
 		int rowNum = 0;
 		for (Cell[] row : array) {
 			XSSFRow excelRow = sheet.createRow(rowNum);
 			rowNum++;
-			int cellNum = 0;
-			for (Cell cell : row) {
+			int cellNum = 0;			
+			for (Cell cell : row) {				
 				XSSFCell excelCell = excelRow.createCell(cellNum);
 				if (cell == null) {
 					excelCell.setCellType(HSSFCell.CELL_TYPE_BLANK);
@@ -323,17 +341,12 @@ public class XLSTools {
 	}
 
 	public static void main(String[] args) {
-		File test = new File("C:/Users/pvandermaesen/Dropbox/Documents/pro/volpaiole/in/delivery.xlsx");
-		File outTest = new File("C:/Users/pvandermaesen/Dropbox/Documents/pro/volpaiole/in/out_test.xlsx");
-		try {
-			Cell[][] array = getArray(null, test);
-			for (int x = 0; x < array.length; x++) {
-				System.out.println("");
-				for (int y = 0; y < array[x].length; y++) {
-					System.out.print(array[x][y] + ",");
-				}
-			}
-			writeXLSX(array, new FileOutputStream(outTest));
+		File test = new File("C:/trans/member.csv");
+		
+		try {			
+			CSVFactory csvFactory = new CSVFactory(test);
+			FileOutputStream out = new FileOutputStream(new  File("c:/trans/out.xlsx"));
+			XLSTools.writeXLSX(XLSTools.getCellArray(csvFactory.getArray()), out);
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
