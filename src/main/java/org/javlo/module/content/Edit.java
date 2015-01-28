@@ -89,6 +89,8 @@ public class Edit extends AbstractModuleAction {
 		EditContext editContext = EditContext.getInstance(globalContext, ctx.getRequest().getSession());
 		I18nAccess i18nAccess = I18nAccess.getInstance(ctx.getRequest());
 		ClipBoard clipBoard = ClipBoard.getInstance(ctx.getRequest());
+		
+		ctx = ctx.getContextWithOtherRenderMode(ContentContext.EDIT_MODE);
 
 		IContentVisualComponent currentTypeComponent = ComponentFactory.getComponentWithType(ctx, editContext.getActiveType());
 
@@ -1512,12 +1514,11 @@ public class Edit extends AbstractModuleAction {
 		newCtx.setRenderMode(ContentContext.EDIT_MODE);
 		newCtx.setRequest(ctx.getRequest());
 		newCtx.setResponse(ctx.getResponse());
-
+		
 		ContentElementList elems = newCtx.getCurrentPage().getContent(newCtx);
 
 		String parentId = rs.getParameter("previous", null);
 		if (parentId == null) {
-			// return "bad request structure : need 'previous' as parameter.";
 			parentId = "0";
 			ctx = ctx.getContextWithArea(null);
 		}
@@ -1526,14 +1527,12 @@ public class Edit extends AbstractModuleAction {
 		int c = 0;
 		while (elems.hasNext(ctx)) {
 			ComponentBean bean = new ComponentBean(elems.next(ctx).getComponentBean());
-			// bean.setArea(ctx.getArea()); the source component is always in
-			// the same area
 			bean.setLanguage(ctx.getRequestContentLanguage());
 			parentId = content.createContent(ctx, bean, parentId, true);
 			c++;
 		}
 
-		if (parent != null) {
+		if (parent != null) {			
 			IContentVisualComponent nextParent = parent.next();
 			IContentVisualComponent newParent = content.getComponent(ctx, parentId);
 			newParent.setNextComponent(nextParent); // reconnect the list
