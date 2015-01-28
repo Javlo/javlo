@@ -158,16 +158,19 @@ public class ComponentHelper {
 		return res.toString();
 	}
 	
-	public static void moveComponent(ContentContext ctx, IContentVisualComponent comp, IContentVisualComponent newPrevious, MenuElement targetPage, String area) {
+	public static void moveComponent(ContentContext ctx, IContentVisualComponent comp, IContentVisualComponent newPrevious, MenuElement targetPage, String area) throws Exception {
 		comp.getPage().removeContent(ctx, comp.getId());
 		comp.getComponentBean().setArea(area);
 		if (newPrevious != null) {
 			newPrevious.getPage().addContent(newPrevious.getId(), comp.getComponentBean());
 			comp.setPage(newPrevious.getPage());
+						
 		} else {
 			targetPage.addContent("0", comp.getComponentBean());
 			comp.setPage(targetPage);
-		}		
+		}	
+		ContentContext areaCtx = ctx.getContextWithArea(comp.getArea());
+		updateNextAndPreviouv(areaCtx, comp.getPage().getContent(areaCtx).getIterable(areaCtx));
 	}
 	
 	/**
@@ -260,6 +263,13 @@ public class ComponentHelper {
 				}
 		}
 		return null;
+	}
+	
+	public static void updateNextAndPreviouv (ContentContext ctx, Iterable<IContentVisualComponent> comps) throws Exception {
+		for (IContentVisualComponent comp : comps) {
+			comp.setPreviousComponent(getPreviousComponent(comp, ctx));
+			comp.setNextComponent(getNextComponent(comp, ctx));
+		}
 	}
 	
 	public static Cell[][] componentsToArray (ContentContext ctx, Collection<IContentVisualComponent> components, String type) throws Exception {
