@@ -317,7 +317,7 @@ public class StaticConfig extends Observable {
 	}
 
 	public String getContextFolder() {
-		String path = properties.getString("context-folder", "WEB-INF/context");
+		String path = properties.getString("context-folder", "/WEB-INF/context");
 
 		path = replaceFolderVariable(path);
 
@@ -641,13 +641,13 @@ public class StaticConfig extends Observable {
 	}
 
 	public String getLocalMailingFolder() {
-		String outMailingFolder = properties.getString("mailing.folder", "mailing/todo");
+		String outMailingFolder = properties.getString("mailing.folder", "/mailing/todo");
 		outMailingFolder = replaceFolderVariable(outMailingFolder);
 		return outMailingFolder;
 	}
 
 	public String getLocalMailingHistoryFolder() {
-		String outMailingFolder = properties.getString("mailing-history.folder", "mailing/old");
+		String outMailingFolder = properties.getString("mailing-history.folder", "/mailing/old");
 		outMailingFolder = replaceFolderVariable(outMailingFolder);
 		return outMailingFolder;
 	}
@@ -659,7 +659,7 @@ public class StaticConfig extends Observable {
 	}
 
 	public String getLocalShareDataFolder() {
-		String path = properties.getString("share-folder", "WEB-INF/share-files");
+		String path = properties.getString("share-folder", "/WEB-INF/share-files");
 		path = replaceFolderVariable(path);
 		return path;
 	}
@@ -953,7 +953,7 @@ public class StaticConfig extends Observable {
 	}
 
 	public String getTrashContextFolder() {
-		String path = properties.getString("trash-context-folder", "trash-context-folder");
+		String path = properties.getString("trash-context-folder", "/trash-context-folder");
 		path = replaceFolderVariable(path);
 		if (isDataFolderRelative()) {
 			path = application.getRealPath(path);
@@ -962,7 +962,7 @@ public class StaticConfig extends Observable {
 	}
 
 	public String getTrashFolder() {
-		String path = properties.getString("trash-folder", "WEB-INF/.trash");
+		String path = properties.getString("trash-folder", "/WEB-INF/.trash");
 
 		path = replaceFolderVariable(path);
 
@@ -1177,7 +1177,7 @@ public class StaticConfig extends Observable {
 	}
 
 	public String getLogFile() {
-		return properties.getString("log.file", "../../logs/catalina.out");
+		return properties.getString("log.file", "/../../logs/catalina.out");
 	}
 
 	public String getSiteEmail() {

@@ -308,7 +308,7 @@ public class FileCache {
 			e.printStackTrace();
 		}
 
-		File oldCacheDir = new File(application.getRealPath("_dc_cache"));
+		File oldCacheDir = new File(application.getRealPath("/_dc_cache"));
 		try {
 			FileUtils.deleteDirectory(oldCacheDir);
 		} catch (IOException e) {

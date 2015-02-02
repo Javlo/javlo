@@ -9,9 +9,7 @@ import java.awt.image.BufferedImage;
 import java.awt.image.ColorModel;
 import java.awt.image.WritableRaster;
 import java.io.BufferedInputStream;
-import java.io.File;
 import java.io.FileInputStream;
-import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
 import java.nio.charset.Charset;
@@ -21,7 +19,6 @@ import java.util.logging.Logger;
 
 import javax.imageio.ImageIO;
 import javax.servlet.ServletContext;
-import javax.servlet.http.HttpServletRequest;
 
 import org.apache.commons.lang.StringUtils;
 import org.javlo.component.core.IImageFilter;
@@ -186,23 +183,6 @@ public class ImageHelper {
 		return buffImage;
 	}
 
-	public static InputStream loadFileFromDisk(HttpServletRequest request, String cacheDir, String name, int width, int filter) {
-		String realFile = request.getSession().getServletContext().getRealPath(cacheDir + "/" + createSpecialDirectory(width, filter) + "/" + pathToKey(name));
-		InputStream stream = null;
-		File file = new File(realFile);
-		if (file.exists()) {
-			try {
-				stream = new FileInputStream(file);
-			} catch (FileNotFoundException e) {
-				// do nothing just return null
-			}
-		} else {
-			// System.out.println("can not load form disk : " +
-			// file.getAbsolutePath());
-		}
-		return stream;
-	}
-
 	/**
 	 * research image in subdirectories
 	 * 
@@ -231,16 +211,6 @@ public class ImageHelper {
 			res = str.substring(0, MAX_STRING_SIZE - 1).trim() + "...";
 		}
 		return res;
-	}
-
-	public static boolean thumbnailExist(HttpServletRequest request, String cacheDir, String name, int width, int filter) {
-		String realPath = request.getSession().getServletContext().getRealPath(cacheDir + "/" + createSpecialDirectory(width, filter) + "/" + DIR_DIR + "/" + pathToKey(name));
-		File file = new File(realPath);
-		if (!file.exists()) {
-			// System.out.println("file not found in disk cache : " +
-			// file.getAbsolutePath());
-		}
-		return file.exists();
 	}
 
 	public static void main(String[] args) {
