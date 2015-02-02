@@ -397,19 +397,32 @@ public class ImageTransformServlet extends HttpServlet {
 		if (inFileExtention == null) {
 			inFileExtention = StringHelper.getFileExtension(imageFile.getName());
 		}
-		String imageType = null;
 		BufferedImage img = null;
-		if (inFileExtention.equalsIgnoreCase("pdf")) {
-			img = PDFHelper.getPDFImage(imageFile);
-			imageType = DEFAULT_IMAGE_TYPE;
-		} else if (inFileExtention.equalsIgnoreCase("svg")) {
-			img = SVGHelper.getSVGImage(imageFile);
-			imageType = DEFAULT_IMAGE_TYPE;
-		} else if (StringHelper.isImage(imageFile.getName())) {
-			img = ImageIO.read(imageFile);
-			imageType = inFileExtention;
+		String imageType = null;
+		{//Alternative image file (file.ext.<jpg/jpeg/png/gif>) 
+			String alternativeFileBase = imageFile.getPath() + ".";
+			for (String imgExt : IMAGES_EXT) {
+				File alternativeFile = new File(alternativeFileBase + imgExt);
+				if (alternativeFile.exists()) {
+					img = ImageIO.read(alternativeFile);
+					imageType = imgExt;
+					break;
+				}
+			}
 		}
-		if (img == null) {
+		if (img == null) { //Image from content
+			if (inFileExtention.equalsIgnoreCase("pdf")) {
+				img = PDFHelper.getPDFImage(imageFile);
+				imageType = DEFAULT_IMAGE_TYPE;
+			} else if (inFileExtention.equalsIgnoreCase("svg")) {
+				img = SVGHelper.getSVGImage(imageFile);
+				imageType = DEFAULT_IMAGE_TYPE;
+			} else if (StringHelper.isImage(imageFile.getName())) {
+				img = ImageIO.read(imageFile);
+				imageType = inFileExtention;
+			}
+		}
+		if (img == null) { //Icon from template
 			File mimeTypeImageFile = null;
 			if (template != null) {
 				String mimeTypeImageFilename = template.getMimeTypeImage(ctx.getGlobalContext(), inFileExtention);
