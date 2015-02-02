@@ -101,7 +101,7 @@ public class TicketAction extends AbstractModuleAction {
 		}
 
 		UserFactory userFactory = AdminUserFactory.createUserFactory(ctx.getGlobalContext(), ctx.getRequest().getSession());
-		ctx.getRequest().setAttribute("ticketUsers", userFactory.getUserInfoList());
+		ctx.getRequest().setAttribute("ticketAvailableUsers", userFactory.getUserInfoList());
 
 		return msg;
 	}

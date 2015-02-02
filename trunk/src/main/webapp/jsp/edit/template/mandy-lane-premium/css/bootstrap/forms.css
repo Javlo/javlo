@@ -699,3 +699,7 @@ label {
 	display: inline-block;
 	margin-right: 6px;
 }
+
+.widgetbox2 .content .form-group label {
+	float: none;
+}
