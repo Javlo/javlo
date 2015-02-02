@@ -163,9 +163,6 @@ public class ConfigHelper {
 			return Collections.emptyList();
 		}
 		File dynCompDir = new File(serveltContext.getRealPath(COMPONENTS_PROPERTIES_FOLDER));
-		if (!dynCompDir.exists()) {
-
-		}
 		List<Properties> outProperties = new LinkedList<Properties>();
 		File[] propertiesFile = dynCompDir.listFiles(new PropertiesFilter());
 		if (propertiesFile != null) {

@@ -84,8 +84,6 @@ public class EditContext implements Serializable {
 
 	String teasersDirectory = null;
 
-	String userStaticDirectory = null;
-
 	String defaultViewLanguage = null;
 
 	// static final HashSet<String> adminUserRoles = new HashSet<String>(Arrays.asList(new String[] { AdminUserSecurity.FULL_CONTROL_ROLE, AdminUserSecurity.CONTENT_ROLE, AdminUserSecurity.REMOVE_STATIC_ROLE, AdminUserSecurity.NAVIGATION_ROLE, AdminUserSecurity.ADD_NAVIGATION_ROLE, AdminUserSecurity.USER_ROLE, AdminUserSecurity.ADMIN_USER_ROLE, AdminUserSecurity.STATISTICS_ROLE, AdminUserSecurity.PUBLISHER_ROLE, AdminUserSecurity.MAILING_ROLE, AdminUserSecurity.MACRO_ROLE, AdminUserSecurity.WEBDESGIN_ROLE, AdminUserSecurity.LIGHT_INTERFACE_ROLE, AdminUserSecurity.SYNCHRO_CLIENT, AdminUserSecurity.SYNCHRO_ADMIN, AdminUserSecurity.SYNCHRO_SERVER }));
@@ -475,10 +473,6 @@ public class EditContext implements Serializable {
 
 	public void setEditUser(User editUser) {
 		this.editUser = editUser;
-	}
-
-	public String getUserStaticDirectory() {
-		return userStaticDirectory;
 	}
 
 	public boolean isMailing() {

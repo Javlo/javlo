@@ -861,7 +861,7 @@ public class ImageTransformServlet extends HttpServlet {
 												// we do'nt need static folder
 												// ????
 				if (filter.startsWith("template") || localFile) {
-					baseFolder = getServletContext().getRealPath("");
+					baseFolder = getServletContext().getRealPath("/");
 				}
 
 				File imageFile = new File(URLHelper.mergePath(baseFolder, imageName));

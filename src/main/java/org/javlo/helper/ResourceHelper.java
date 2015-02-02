@@ -58,7 +58,6 @@ import javax.imageio.stream.FileImageInputStream;
 import javax.imageio.stream.FileImageOutputStream;
 import javax.servlet.ServletContext;
 import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpSession;
 
 import org.apache.commons.codec.binary.Base64;
 import org.apache.commons.configuration.ConfigurationException;
@@ -75,7 +74,6 @@ import org.javlo.component.core.ComponentFactory;
 import org.javlo.component.core.IContentVisualComponent;
 import org.javlo.config.StaticConfig;
 import org.javlo.context.ContentContext;
-import org.javlo.context.EditContext;
 import org.javlo.context.GlobalContext;
 import org.javlo.exception.ResourceNotFoundException;
 import org.javlo.filter.DirectoryFilter;
@@ -84,8 +82,6 @@ import org.javlo.module.core.Module;
 import org.javlo.module.core.ModuleException;
 import org.javlo.module.core.ModulesContext;
 import org.javlo.service.resource.Resource;
-import org.javlo.user.IUserFactory;
-import org.javlo.user.UserFactory;
 import org.javlo.ztatic.FileCache;
 import org.javlo.ztatic.IStaticContainer;
 import org.javlo.ztatic.StaticInfo;
@@ -219,25 +215,6 @@ public class ResourceHelper {
 		realPath = ResourceHelper.getLinuxPath(realPath);
 		fullPath = ResourceHelper.getLinuxPath(fullPath);
 
-		if (fullPath.startsWith(realPath)) {
-			return fullPath.substring(realPath.length());
-		}
-		return fullPath;
-	}
-
-	/**
-	 * extract a relative path from a full path.
-	 * 
-	 * @param application
-	 *            the servlet context.
-	 * @param fullPath
-	 *            a full path
-	 * @return retrun a relative path (sample:
-	 *         /opt/tomcat/webapps/dc/WEB-INF/static/images ->
-	 *         /WEB-INF/static/images)
-	 */
-	public static String extractRelativeDir(ServletContext application, String fullPath) {
-		String realPath = application.getRealPath("");
 		if (fullPath.startsWith(realPath)) {
 			return fullPath.substring(realPath.length());
 		}
@@ -601,18 +578,6 @@ public class ResourceHelper {
 		return "application/octet-stream";
 	}
 
-	public static File[] getFileList(String directory, FilenameFilter filter, HttpServletRequest request) {
-		String basePath = request.getSession().getServletContext().getRealPath(directory);
-		File dir = new File(basePath);
-		File[] res;
-		if (dir.exists()) {
-			res = dir.listFiles(filter);
-		} else {
-			res = new File[0];
-		}
-		return res;
-	}
-
 	public static File[] getFileList(String directory, HttpServletRequest request) {
 		File dir = new File(directory);
 		File[] res;
@@ -704,38 +669,6 @@ public class ResourceHelper {
 
 	public static String getUserDirName(String userName) {
 		return StringHelper.stringWithoutSpecialChar(userName) + '-' + StringHelper.encryptPassword(userName).substring(0, 5);
-	}
-
-	public static String getUserStaticDir(GlobalContext globalContext, HttpSession session) {
-		EditContext editContext = EditContext.getInstance(globalContext, session);
-		String userStaticPath = editContext.getUserStaticDirectory();
-
-		String userDir = "_not_logged";
-		IUserFactory userFactory = UserFactory.createUserFactory(globalContext, session);
-		if (userFactory.getCurrentUser(session) != null) {
-			String userName = userFactory.getCurrentUser(session).getLogin();
-			userDir = getUserDirName(userName);
-		}
-		userStaticPath = userStaticPath + '/' + userDir;
-		return userStaticPath;
-	}
-
-	public static File getUserStaticRealDir(GlobalContext globalContext, HttpSession session) {
-		EditContext editContext = EditContext.getInstance(globalContext, session);
-		String userStaticPath = session.getServletContext().getRealPath(editContext.getUserStaticDirectory());
-
-		String userDir = "_not_logged";
-		IUserFactory userFactory = UserFactory.createUserFactory(globalContext, session);
-		if (userFactory.getCurrentUser(session) != null) {
-			String userName = userFactory.getCurrentUser(session).getLogin();
-			userDir = getUserDirName(userName);
-		}
-		userStaticPath = userStaticPath + '/' + userDir;
-		File dir = new File(userStaticPath);
-		if (!dir.exists()) {
-			dir.mkdirs();
-		}
-		return dir;
 	}
 
 	/**

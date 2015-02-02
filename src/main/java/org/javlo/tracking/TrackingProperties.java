@@ -18,7 +18,7 @@ public class TrackingProperties {
 
 	PropertiesConfiguration properties = new PropertiesConfiguration();
 
-	static final String propertiesFile = "WEB-INF/config/tracking.properties";
+	static final String propertiesFile = "/WEB-INF/config/tracking.properties";
 
 	private TrackingProperties(ServletContext application) throws ConfigurationException, IOException {
 		File propFile = new File(application.getRealPath(propertiesFile));
