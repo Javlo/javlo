@@ -2807,6 +2807,13 @@ public class StringHelper {
 		return text;
 	}
 
+	public static String trimLineReturn(String string) {
+		if(string== null) {
+			return null;
+		}
+		return string.replaceAll("(^[\r\n]+)|([\r\n]+$)", "");
+	}
+
 	public String cleanString(String text) {
 		try {
 			return java.net.URLDecoder.decode(text, ContentContext.CHARACTER_ENCODING);

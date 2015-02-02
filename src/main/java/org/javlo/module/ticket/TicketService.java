@@ -134,7 +134,7 @@ public class TicketService {
 		t.setCreationDate(d.getCreationDate());
 		t.setLastUpdateDate(StringHelper.parseSortableTime(d.getModifDate()));
 		t.setTitle(I18nAccess.getInstance(ctx).getText("content." + DebugNote.TYPE) + ": " + d.getPage().getTitle(ctx));
-		t.setShare("site");
+		t.setShare(TicketBean.SHARE_SITE);
 		t.setComments(new LinkedList<Comment>());
 		Reader in = new StringReader(d.getText());
 		BufferedReader r = new BufferedReader(in);
@@ -148,9 +148,9 @@ public class TicketService {
 			if (m.matches()) {
 				w.flush();
 				if (comment == null) {
-					t.setMessage(buffer.toString());
+					t.setMessage(StringHelper.trimLineReturn(buffer.toString()));
 				} else {
-					comment.setMessage(buffer.toString());
+					comment.setMessage(StringHelper.trimLineReturn(buffer.toString()));
 					t.getComments().add(comment);
 				}
 				comment = new Comment();
@@ -163,13 +163,16 @@ public class TicketService {
 		}
 		w.flush();
 		if (comment == null) {
-			t.setMessage(buffer.toString());
+			t.setMessage(StringHelper.trimLineReturn(buffer.toString()));
 		} else {
-			comment.setMessage(buffer.toString());
+			comment.setMessage(StringHelper.trimLineReturn(buffer.toString()));
 			t.getComments().add(comment);
 		}
 		t.setPriority(StringHelper.safeParseInt(d.getPriority(), 0));
-		t.setStatus(d.getStatus());
+		t.setStatus(StringHelper.trimAndNullify(d.getStatus()));
+		if (t.getStatus() == null) {
+			t.setStatus(TicketBean.STATUS_NEW);
+		}
 		t.setAuthors(d.getAuthors());
 		t.setUsers(d.getUserList());
 		t.setUrl(url);

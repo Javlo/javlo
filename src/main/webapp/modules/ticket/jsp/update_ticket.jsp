@@ -24,7 +24,7 @@
 				<option ${ticket.status == 'new'?'selected="selected"':''}>new</option>
 				<option ${ticket.status == 'working'?'selected="selected"':''}>working</option>
 				<option value="onhold" ${ticket.status == 'onhold'?'selected="selected"':''}>on hold</option>
-				<option ${ticket.status == 'refuse'?'selected="selected"':''}>refuse</option>
+				<option ${ticket.status == 'rejected'?'selected="selected"':''}>rejected</option>
 				<option ${ticket.status == 'done'?'selected="selected"':''}>done</option>
 				<option ${ticket.status == 'archived'?'selected="selected"':''}>archived</option>
 			</select>
@@ -52,14 +52,38 @@
 			<label>category : </label>${ticket.category}			
 		</div>
 </div></div>
+		<c:set var="strListSeparator" value="|||"/>
+		<c:set var="knownUsers" value="${strListSeparator}"/>
+		<c:set var="ticketUsers" value="${strListSeparator}"/>
+		<c:forEach var="userLogin" items="${ticket.users}">
+			<c:set var="ticketUsers" value="${ticketUsers}${userLogin}${strListSeparator}"/>
+		</c:forEach>
 		<fieldset>
 			<legend>user</legend>
-			<c:forEach var="user" items="${ticketUsers}">
+			<c:forEach var="user" items="${ticketAvailableUsers}">
+				<c:set var="knownUsers" value="${knownUsers}${user.login}${strListSeparator}"/>
+				<c:set var="userKey" value="${strListSeparator}${user.login}${strListSeparator}" />
 				<label class="checkbox-inline">
-					<input type="checkbox" name="users" value="${user.login}" ${fn:contains(ticket.users,user.login)?'checked="checked"':''} /> ${user.login}
+					<input type="checkbox" name="users" value="${user.login}" ${fn:contains(ticketUsers, userKey)?'checked="checked"':''} /> ${user.login}
 				</label>
 			</c:forEach>
 		</fieldset>
+		<c:set var="minOne" value="false" />
+		<c:set var="buffer">
+			<fieldset>
+				<legend>Unknown/deleted users</legend>
+				<c:forEach var="userLogin" items="${ticket.users}">
+					<c:set var="userKey" value="${strListSeparator}${userLogin}${strListSeparator}" />
+					<c:if test="${not fn:contains(knownUsers,userKey)}">
+						<label class="checkbox-inline">
+							<input type="checkbox" name="users" value="${userLogin}" checked="checked" /> ${userLogin}
+						</label>
+						<c:set var="minOne" value="true" />
+					</c:if>
+				</c:forEach>
+			</fieldset>
+		</c:set>
+		<c:if test="${minOne}"><c:out value="${buffer}" escapeXml="false" /></c:if>
 		<div class="frame">
 		
 		<c:if test="${not empty ticket.url}">	
