@@ -5,6 +5,7 @@
 
 --content.title.meta
 
+org.javlo.component.title.Heading
 org.javlo.component.title.Title
 org.javlo.component.title.SubTitle
 org.javlo.component.title.PageTitle

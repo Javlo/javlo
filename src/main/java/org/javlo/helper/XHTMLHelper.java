@@ -210,7 +210,7 @@ public class XHTMLHelper {
 		}
 		String outXHTML = url;
 		String target = "";
-		if (globalContext != null && globalContext.isOpenExernalLinkAsPopup(url)) {
+		if (globalContext != null && globalContext.isOpenExternalLinkAsPopup(url)) {
 			target = " target=\"blank\"";
 		}
 

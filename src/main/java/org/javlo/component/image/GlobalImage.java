@@ -654,7 +654,7 @@ public class GlobalImage extends Image implements IImageFilter {
 					} else {
 						String target = "";
 						GlobalContext globalContext = GlobalContext.getInstance(ctx.getRequest());
-						if (globalContext.isOpenExernalLinkAsPopup(getLink())) {
+						if (globalContext.isOpenExternalLinkAsPopup(getLink())) {
 							target = "target=\"_blank\" ";
 						}
 						res.append("<a" + cssLinkClass + ' ' + target + "href=\"" + XHTMLHelper.escapeXHTML(getLink()) + "\" title=\"" + StringHelper.removeTag(getStaticLabel(ctx)) + "\" rel=\"" + getConfig(ctx).getProperty("rel", "shadowbox") + "\">");

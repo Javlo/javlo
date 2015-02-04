@@ -1268,7 +1268,7 @@ public class AdminAction extends AbstractModuleAction {
 	}
 
 	public static final String performClearCache(HttpServletRequest request, GlobalContext globalContext, HttpSession session, User user, ContentContext ctx, MessageRepository messageRepository, I18nAccess i18nAccess) throws Exception {
-		if (!AdminUserSecurity.getInstance().isMaster(user) && !AdminUserSecurity.getInstance().isGod(user) && !AdminUserSecurity.getInstance().isAdmin(user)) {
+		if (!AdminUserSecurity.getInstance().isAdmin(user)) {
 			return "security error !";
 		}
 		String currentContextKey = request.getParameter("context");
@@ -1296,7 +1296,7 @@ public class AdminAction extends AbstractModuleAction {
 	}
 
 	public static String performClearimagecache(HttpServletRequest request, GlobalContext globalContext, HttpSession session, User user, ContentContext ctx, MessageRepository messageRepository, I18nAccess i18nAccess, FileCache fileCache) {
-		if (!AdminUserSecurity.getInstance().isMaster(user) && !AdminUserSecurity.getInstance().isGod(user) && !AdminUserSecurity.getInstance().isAdmin(user)) {
+		if (!AdminUserSecurity.getInstance().isAdmin(user)) {
 			return "security error !";
 		}
 		String currentContextKey = request.getParameter("context");

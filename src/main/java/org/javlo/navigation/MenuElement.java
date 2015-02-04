@@ -2402,7 +2402,6 @@ public class MenuElement implements Serializable, IPrintInfo {
 
 	public String getLabel(ContentContext ctx) throws Exception {
 		String res = getFullLabel(ctx);
-
 		if (res != null) {
 			if ((res.trim().length() == 0) && (name != null)) {
 				res = name;

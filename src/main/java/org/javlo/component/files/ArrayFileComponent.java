@@ -374,7 +374,7 @@ public class ArrayFileComponent extends GenericFile {
 		if (cell.getHyperlink() != null) {
 			String target = "";
 			String url = cell.getHyperlink().getAddress();
-			if (ctx.getGlobalContext().isOpenExernalLinkAsPopup(url)) {
+			if (ctx.getGlobalContext().isOpenExternalLinkAsPopup(url)) {
 				target = " target=\"_blank\"";
 			}
 			outCell = "<a class=\"cell-link\" href=\"" + url + "\"" + target + ">" + outCell + "</a>";
@@ -406,7 +406,7 @@ public class ArrayFileComponent extends GenericFile {
 		if (cell.getHyperlink() != null) {
 			String target = "";
 			String url = cell.getHyperlink().getAddress();
-			if (ctx.getGlobalContext().isOpenExernalLinkAsPopup(url)) {
+			if (ctx.getGlobalContext().isOpenExternalLinkAsPopup(url)) {
 				target = " target=\"_blank\"";
 			}
 			outCell = "<a class=\"cell-link\" href=\"" + url + "\"" + target + ">" + outCell + "</a>";

@@ -20,7 +20,7 @@ public abstract class AbstractPropertiesComponent extends AbstractVisualComponen
 	protected Properties properties = new Properties();
 
 	protected String createKeyWithField(String inField) {
-		return "field_" + inField + "_" + getId();
+		return getInputName(inField);
 	}
 
 	@Override
