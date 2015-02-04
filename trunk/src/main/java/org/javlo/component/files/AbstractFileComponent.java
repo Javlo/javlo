@@ -152,7 +152,7 @@ public abstract class AbstractFileComponent extends AbstractVisualComponent impl
 		super.prepareView(ctx);
 		String url = getURL(ctx);
 		ctx.getRequest().setAttribute("url", url);
-		ctx.getRequest().setAttribute("blank", ctx.getGlobalContext().isOpenExernalLinkAsPopup(url));
+		ctx.getRequest().setAttribute("blank", ctx.getGlobalContext().isOpenExternalLinkAsPopup(url));
 		ctx.getRequest().setAttribute("descritpion", getDescription());
 		ctx.getRequest().setAttribute("cleanDescription", StringHelper.removeTag(getDescription()));
 		StaticInfo staticInfo = getStaticInfo(ctx);

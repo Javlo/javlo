@@ -14,6 +14,9 @@ public class StringRemplacementHelper {
 		int sourceStart;
 		int sourceEnd;
 		String content;
+		public StringReplacement(){
+			
+		};
 		public String getContent() {
 			return content;
 		}

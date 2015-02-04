@@ -219,7 +219,7 @@ public class ReverseLinkService {
 				GlobalContext globalContext = GlobalContext.getInstance(ctx.getRequest());
 
 				if (url != null) {
-					if (URLHelper.isAbsoluteURL(url) && globalContext.isOpenExernalLinkAsPopup(url)) {
+					if (URLHelper.isAbsoluteURL(url) && globalContext.isOpenExternalLinkAsPopup(url)) {
 						target = " target=\"_blank\"";
 					}
 					int textPos = contentValue.indexOf(text);

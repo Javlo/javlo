@@ -1747,7 +1747,7 @@ public class GlobalContext implements Serializable, IPrintInfo {
 		return properties.getBoolean("is-collaborative-mode", false);
 	}
 
-	public boolean isOpenExernalLinkAsPopup(String url) {
+	public boolean isOpenExternalLinkAsPopup(String url) {
 		if (!isOpenExternalLinkAsPopup()) {
 			return false;
 		}

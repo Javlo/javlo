@@ -80,7 +80,7 @@ public class FieldExternalLink extends MetaField implements ILink {
 		if (label.trim().length() > 0) {
 			out.println("<span class=\"" + getType() + "\">");
 			String target = "";
-			if (!link.startsWith("/") && GlobalContext.getInstance(ctx.getRequest()).isOpenExernalLinkAsPopup(link)) {
+			if (!link.startsWith("/") && GlobalContext.getInstance(ctx.getRequest()).isOpenExternalLinkAsPopup(link)) {
 				target = " target=\"_blank\"";
 			}
 
