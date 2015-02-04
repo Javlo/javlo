@@ -329,7 +329,7 @@ public class PageMirrorComponent extends AbstractVisualComponent implements IIma
 		MenuElement page;
 		try {
 			page = getMirrorPage(ctx);
-			if (page != null) {
+			if (page != null && page.getImage(ctx) != null) {
 				return page.getImage(ctx).isImageValid(ctx);
 			} else {
 				return false;
