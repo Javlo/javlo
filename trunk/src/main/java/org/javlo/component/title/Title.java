@@ -117,11 +117,6 @@ public class Title extends AbstractVisualComponent {
 	}
 
 	@Override
-	public boolean isLabel(ContentContext ctx) {
-		return true;
-	}
-
-	@Override
 	public String getHexColor() {
 		return META_COLOR;
 	}
@@ -162,6 +157,12 @@ public class Title extends AbstractVisualComponent {
 	@Override
 	public boolean isContentCachable(ContentContext ctx) {
 		return true;
+	}
+	
+
+	@Override
+	public int getLabelLevel(ContentContext ctx) {
+		return HIGH_LABEL_LEVEL;
 	}
 
 }

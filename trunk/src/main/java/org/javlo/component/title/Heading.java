@@ -99,11 +99,6 @@ public class Heading extends AbstractPropertiesComponent implements ISubTitle {
 	}
 
 	@Override
-	public boolean isLabel(ContentContext ctx) {
-		return getDepth(ctx) == 1;
-	}
-
-	@Override
 	public String getTextTitle(ContentContext ctx) {
 		return getFieldValue(TEXT);
 	}
@@ -184,6 +179,17 @@ public class Heading extends AbstractPropertiesComponent implements ISubTitle {
 	@Override
 	public int getSubTitleLevel(ContentContext ctx) {
 		return getDepth(ctx);
+	}
+	
+	@Override
+	public int getLabelLevel(ContentContext ctx) {
+		if (getDepth(ctx) == 1) { 
+			return HIGH_LABEL_LEVEL;
+		} else if (getDepth(ctx) > 1) { 
+			return MIDDLE_LABEL_LEVEL-getDepth(ctx);
+		} else {
+			return 0;
+		}
 	}
 
 }

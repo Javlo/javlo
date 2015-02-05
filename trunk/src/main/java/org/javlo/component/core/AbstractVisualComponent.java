@@ -1725,8 +1725,8 @@ public abstract class AbstractVisualComponent implements IContentVisualComponent
 	}
 
 	@Override
-	public boolean isLabel(ContentContext ctx) {
-		return false;
+	public int getLabelLevel(ContentContext ctx) {
+		return 0;
 	}
 
 	@Override

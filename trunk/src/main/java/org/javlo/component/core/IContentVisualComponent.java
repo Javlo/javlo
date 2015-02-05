@@ -53,6 +53,10 @@ public interface IContentVisualComponent extends Comparable<IContentVisualCompon
 	static public String CONTAINER_COLOR = "D57C60";
 	
 	public static final String COLORED_WRAPPER_CLASS = "colored-wrapper";
+	
+	public static int HIGH_LABEL_LEVEL = Integer.MAX_VALUE;
+	public static int MIDDLE_LABEL_LEVEL = Integer.MAX_VALUE-1000;
+	public static int LOW_LABEL_LEVEL = Integer.MAX_VALUE-10000;
 
 	/**
 	 * get the configuration of the component. from project or from template.
@@ -275,12 +279,13 @@ public interface IContentVisualComponent extends Comparable<IContentVisualCompon
 	public void setRepeat(boolean newRepeat);
 
 	/**
-	 * return true if this component is the label of the page. this label is set
-	 * in the navigation
+	 * define the level of label.
+	 * If there area most than 1 level on page, the label of the page is the bigger level.
 	 * 
-	 * @return a boolean, true if the component is the label of the page
+	 * @param ctx
+	 * @return 0=default, no the components is'nt label.
 	 */
-	public boolean isLabel(ContentContext ctx);
+	public int getLabelLevel(ContentContext ctx);
 
 	/**
 	 * return the java script code called when global form is submited.

@@ -509,17 +509,17 @@ public class MirrorComponent extends AbstractVisualComponent implements IFieldCo
 	}
 
 	@Override
-	public boolean isLabel(ContentContext ctx) {
+	public int getLabelLevel(ContentContext ctx) {
 		IContentVisualComponent comp;
 		try {
 			comp = getMirrorComponent(ctx);
 			if (comp != null) {
-				return comp.isLabel(ctx);
+				return comp.getLabelLevel(ctx);
 			}
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
-		return false;
+		return 0;
 	}
 
 }
