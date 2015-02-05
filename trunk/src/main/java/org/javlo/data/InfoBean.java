@@ -1116,5 +1116,15 @@ public class InfoBean {
 		EditContext editCtx = EditContext.getInstance(globalContext, ctx.getRequest().getSession());
 		return editCtx.getContextForCopy(ctx);
 	}
+	
+	public List<PageBean> getParentPageList() throws Exception {
+		LinkedList<PageBean> pages = new LinkedList<PageBean>();
+		MenuElement page = ctx.getCurrentPage();
+		while (page != null) {
+			pages.add(0, page.getPageBean(ctx));
+			page = page.getParent();
+		}
+		return pages;	
+	}
 
 }

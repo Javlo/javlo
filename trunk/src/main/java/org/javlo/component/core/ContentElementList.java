@@ -381,21 +381,22 @@ public class ContentElementList implements IContentComponentsList {
 		String res = "";
 		Iterator elems = contentElements.iterator();
 		int maxLabelLevel = 0;
-		while (elems.hasNext() && res.length() == 0) {
+		while (elems.hasNext() && maxLabelLevel < IContentVisualComponent.HIGH_LABEL_LEVEL) {
 			IContentVisualComponent comp = (IContentVisualComponent) elems.next();			
-			if (comp.getLabelLevel(ctx)>maxLabelLevel && !comp.isRepeat()) {
-				maxLabelLevel = comp.getLabelLevel(ctx);
+			if (comp.getLabelLevel(ctx)>maxLabelLevel && !comp.isRepeat()) {				
 				res = comp.getTextTitle(ctx);
 				if (res == null) {
 					res = "";
+				} else {
+					maxLabelLevel = comp.getLabelLevel(ctx);
 				}
 			}
-		}
+		}		
 		if (repeat) {
 			if (res.length() == 0) { // if no element not repeat search with repeat element
 				elems = contentElements.iterator();
 				maxLabelLevel = 0;
-				while (elems.hasNext() && res.length() == 0) {
+				while (elems.hasNext() && maxLabelLevel < IContentVisualComponent.HIGH_LABEL_LEVEL) {
 					IContentVisualComponent comp = (IContentVisualComponent) elems.next();
 					if (comp.getLabelLevel(ctx)>maxLabelLevel) {
 						res = comp.getTextTitle(ctx);
@@ -426,7 +427,7 @@ public class ContentElementList implements IContentComponentsList {
 		}
 		return res;
 	}
-
+	
 	public String getXHTMLTitle(ContentContext ctx) throws Exception {
 		String res = "";
 		Iterator elems = contentElements.iterator();
