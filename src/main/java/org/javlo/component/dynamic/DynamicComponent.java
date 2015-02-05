@@ -829,17 +829,17 @@ public class DynamicComponent extends AbstractVisualComponent implements IStatic
 	}
 
 	@Override
-	public boolean isLabel(ContentContext ctx) {
+	public int getLabelLevel(ContentContext ctx) {
 		try {
 			for (Field field : getFields(ctx)) {
 				if (field.isTitle()) {
-					return true;
+					return HIGH_LABEL_LEVEL-1;
 				}
 			}
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
-		return false;
+		return 0;
 	}
 
 	@Override

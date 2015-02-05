@@ -50,8 +50,8 @@ public class ImageTitle extends Image {
 	}
 
 	@Override
-	public boolean isLabel(ContentContext ctx) {
-		return true;
+	public int getLabelLevel(ContentContext ctx) {
+		return HIGH_LABEL_LEVEL;
 	}
 	
 	public String getTitle() {

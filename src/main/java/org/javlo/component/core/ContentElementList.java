@@ -215,12 +215,15 @@ public class ContentElementList implements IContentComponentsList {
 		
 		String firstSubtitle = null;
 		
+		int currentLabelLevel = 0;
 		while (elems.hasNext()) {
 			IContentVisualComponent comp = (IContentVisualComponent) elems.next();
-			if (comp.isLabel(ctx) && !comp.isRepeat()) {
+			if (comp.getLabelLevel(ctx)>currentLabelLevel && !comp.isRepeat()) {
 				res = comp.getTextTitle(ctx);
 				if (res == null) {
 					res = "";
+				} else {
+					currentLabelLevel = comp.getLabelLevel(ctx); 
 				}
 			}
 			if (comp instanceof MenuTitle && !comp.isRepeat()) {
@@ -229,15 +232,18 @@ public class ContentElementList implements IContentComponentsList {
 			if (firstSubtitle == null && comp instanceof SubTitle) {
 				firstSubtitle = comp.getTextLabel();
 			}
-		}
+		}		
 		if (res.length() == 0) { // if no element not repeat search with repeat element
+			currentLabelLevel = 0;
 			elems = contentElements.iterator();
 			while (elems.hasNext()) {
 				IContentVisualComponent comp = (IContentVisualComponent) elems.next();
-				if (comp.isLabel(ctx)) {
+				if (comp.getLabelLevel(ctx)>currentLabelLevel) {
 					res = comp.getTextLabel();
 					if (res == null) {
 						res = "";
+					} else {
+						currentLabelLevel = comp.getLabelLevel(ctx); 
 					}
 				}
 				if (comp instanceof MenuTitle) {
@@ -374,9 +380,11 @@ public class ContentElementList implements IContentComponentsList {
 
 		String res = "";
 		Iterator elems = contentElements.iterator();
+		int maxLabelLevel = 0;
 		while (elems.hasNext() && res.length() == 0) {
-			IContentVisualComponent comp = (IContentVisualComponent) elems.next();
-			if (comp.isLabel(ctx) && !comp.isRepeat()) {
+			IContentVisualComponent comp = (IContentVisualComponent) elems.next();			
+			if (comp.getLabelLevel(ctx)>maxLabelLevel && !comp.isRepeat()) {
+				maxLabelLevel = comp.getLabelLevel(ctx);
 				res = comp.getTextTitle(ctx);
 				if (res == null) {
 					res = "";
@@ -386,12 +394,15 @@ public class ContentElementList implements IContentComponentsList {
 		if (repeat) {
 			if (res.length() == 0) { // if no element not repeat search with repeat element
 				elems = contentElements.iterator();
+				maxLabelLevel = 0;
 				while (elems.hasNext() && res.length() == 0) {
 					IContentVisualComponent comp = (IContentVisualComponent) elems.next();
-					if (comp.isLabel(ctx)) {
+					if (comp.getLabelLevel(ctx)>maxLabelLevel) {
 						res = comp.getTextTitle(ctx);
 						if (res == null) {
 							res = "";
+						} else {
+							maxLabelLevel = comp.getLabelLevel(ctx);
 						}
 					}
 				}
@@ -406,7 +417,7 @@ public class ContentElementList implements IContentComponentsList {
 						res = comp.getTextTitle(ctx);
 						if (res == null) {
 							res = "";
-						}
+						} 
 						return res;
 					}
 				}
@@ -419,10 +430,12 @@ public class ContentElementList implements IContentComponentsList {
 	public String getXHTMLTitle(ContentContext ctx) throws Exception {
 		String res = "";
 		Iterator elems = contentElements.iterator();
+		int maxLabelLevel = 0;
 		while (elems.hasNext()) {
 			IContentVisualComponent comp = (IContentVisualComponent) elems.next();
-			if (comp.isLabel(ctx)) {
+			if (comp.getLabelLevel(ctx)>maxLabelLevel) {
 				res = comp.getXHTMLCode(ctx);
+				maxLabelLevel = comp.getLabelLevel(ctx);
 			}
 
 		}

@@ -371,3 +371,5 @@ change log
  * force not read content
  
  * no same url mecanism (method UrlNumber in MenuElement)
+ 
+ * change isLabel with labelLevel

@@ -160,11 +160,12 @@ public class PageMirrorComponent extends AbstractVisualComponent implements IIma
 						ctx.setVirtualArea(area);
 						ctx.setArea(ComponentBean.DEFAULT_AREA);
 						ctx.getRequest().setAttribute(ContentContext.CHANGE_AREA_ATTRIBUTE_NAME, ComponentBean.DEFAULT_AREA);
-					}
+					}					
 					ctx.setPath(page.getPath());
-					RequestService rs = RequestService.getInstance(ctx.getRequest());
+					RequestService rs = RequestService.getInstance(ctx.getRequest());					
 					rs.setParameter(NOT_EDIT_PREVIEW_PARAM_NAME, "true");
-					String xhtml = executeJSP(ctx, Edit.CONTENT_RENDERER + '?' + NOT_EDIT_PREVIEW_PARAM_NAME + "=true");
+					String param = Edit.CONTENT_RENDERER + '?' + NOT_EDIT_PREVIEW_PARAM_NAME + "=true";
+					String xhtml = executeJSP(ctx, param);
 					rs.setParameter(NOT_EDIT_PREVIEW_PARAM_NAME, "false");
 					ctx.setVirtualCurrentPage(null);
 					ctx.setArea(area);
@@ -240,8 +241,12 @@ public class PageMirrorComponent extends AbstractVisualComponent implements IIma
 	}
 	
 	@Override
-	public boolean isLabel(ContentContext ctx) {
-		return !StringHelper.isEmpty(getValue());
+	public int getLabelLevel(ContentContext ctx) {
+		if (!StringHelper.isEmpty(getValue())) {
+			return LOW_LABEL_LEVEL;
+		} else {
+			return 0;
+		}
 	}
 	
 	@Override
@@ -329,7 +334,7 @@ public class PageMirrorComponent extends AbstractVisualComponent implements IIma
 		MenuElement page;
 		try {
 			page = getMirrorPage(ctx);
-			if (page != null && page.getImage(ctx) != null) {
+			if (page != null && page.getImage(ctx) != null ) {
 				return page.getImage(ctx).isImageValid(ctx);
 			} else {
 				return false;
