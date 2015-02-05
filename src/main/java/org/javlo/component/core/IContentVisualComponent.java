@@ -54,9 +54,9 @@ public interface IContentVisualComponent extends Comparable<IContentVisualCompon
 	
 	public static final String COLORED_WRAPPER_CLASS = "colored-wrapper";
 	
-	public static int HIGH_LABEL_LEVEL = Integer.MAX_VALUE;
-	public static int MIDDLE_LABEL_LEVEL = Integer.MAX_VALUE-1000;
-	public static int LOW_LABEL_LEVEL = Integer.MAX_VALUE-10000;
+	public static int HIGH_LABEL_LEVEL = 1000;
+	public static int MIDDLE_LABEL_LEVEL = 100;
+	public static int LOW_LABEL_LEVEL = 10;
 
 	/**
 	 * get the configuration of the component. from project or from template.
