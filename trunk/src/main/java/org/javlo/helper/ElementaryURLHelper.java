@@ -616,6 +616,14 @@ public abstract class ElementaryURLHelper {
 		}
 	}
 	
+	public static final String removeSite (GlobalContext globalContext, String url) {
+		if (url.startsWith("/"+globalContext.getContextKey())) {
+			return url.substring(("/"+globalContext.getContextKey()).length());			
+		} else {
+			return url;
+		}
+	}
+	
 	public static final String getParamsAsString(String url) {
 		if (url == null) {
 			return null;
@@ -718,10 +726,10 @@ public abstract class ElementaryURLHelper {
 	 * @return
 	 */
 	public static String createForwardURL(ContentContext ctx, String url) {
-		if (ctx.getRequest().getContextPath() != null && ctx.getRequest().getContextPath().length() > 1) {
+		if (ctx.getRequest().getContextPath() != null && ctx.getRequest().getContextPath().length() > 1) {			
 			if (!url.startsWith("/")) {
 				return url;
-			} else {
+			} else {				
 				url = url.substring(1);
 				if (url.contains("/")) {
 					url = url.substring(url.indexOf('/'));
