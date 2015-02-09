@@ -79,6 +79,17 @@ public class CatchAllFilter implements Filter {
 			((HttpServletResponse) response).sendRedirect(forwardURL);
 			return;
 		}
+		
+
+		if (StringHelper.isTrue(request.getParameter(ContentContext.FORWARD_AJAX))) {			
+			try {
+				ContentContext ctx = ContentContext.getContentContext(httpRequest, (HttpServletResponse)response);				
+				((HttpServletRequest) request).getRequestDispatcher(URLHelper.createForwardURL(ctx, URLHelper.createAjaxURL(ctx))).forward(httpRequest, response);
+				return;
+			} catch (Exception e) {
+				e.printStackTrace();
+			}			
+		}
 
 		String uri = RequestService.getURI(httpRequest);
 

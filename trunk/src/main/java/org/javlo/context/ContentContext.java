@@ -64,6 +64,8 @@ public class ContentContext {
 	public static final int MODULE_MODE = 8; // view module outside cms context.
 
 	public static final String FORWARD_PATH_REQUEST_KEY = "forward-path";
+	
+	public static final String FORWARD_AJAX = "ajax-request";
 
 	public static final String FORCE_MODE_PARAMETER_NAME = "render-mode";
 
