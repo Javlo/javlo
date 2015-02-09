@@ -80,17 +80,6 @@ public class CatchAllFilter implements Filter {
 			return;
 		}
 		
-
-		if (StringHelper.isTrue(request.getParameter(ContentContext.FORWARD_AJAX))) {			
-			try {
-				ContentContext ctx = ContentContext.getContentContext(httpRequest, (HttpServletResponse)response);				
-				((HttpServletRequest) request).getRequestDispatcher(URLHelper.createForwardURL(ctx, URLHelper.createAjaxURL(ctx))).forward(httpRequest, response);
-				return;
-			} catch (Exception e) {
-				e.printStackTrace();
-			}			
-		}
-
 		String uri = RequestService.getURI(httpRequest);
 
 		if (uri.endsWith(Template.GZ_FILE_EXT)) {
@@ -157,6 +146,18 @@ public class CatchAllFilter implements Filter {
 		if (globalContext == null) {
 			((HttpServletResponse) response).setStatus(HttpServletResponse.SC_NOT_FOUND, "context not found.");
 			return;
+		}
+		
+		if (StringHelper.isTrue(request.getParameter(ContentContext.FORWARD_AJAX))) {			
+			try {
+				ContentContext ctx = ContentContext.getContentContext(httpRequest, (HttpServletResponse)response);
+				String url = URLHelper.createAjaxURL(ctx);				
+				String forwardURL = URLHelper.removeSite(globalContext, url);				
+				((HttpServletRequest) request).getRequestDispatcher(forwardURL).forward(httpRequest, response);
+				return;
+			} catch (Exception e) {
+				e.printStackTrace();
+			}			
 		}
 
 		/***************/
