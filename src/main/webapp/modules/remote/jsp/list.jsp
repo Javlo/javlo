@@ -11,7 +11,8 @@
        <th class="head1">change date</th>       
        <th class="head0">text</th>
        <th class="head1">message</th>
-       <th class="head0">&nbsp;</th>
+       <th class="head0">server info</th>
+       <th class="head1">&nbsp;</th>
      </tr>     
 </thead>
 <colgroup>    
@@ -22,6 +23,7 @@
     <col class="con0" />
     <col class="con1" />
     <col class="con0" />
+    <col class="con1" />
 </colgroup>
 <tbody> 
  <c:forEach var="remote" items="${remotes}">
@@ -32,6 +34,14 @@
      <td class="con0">${remote.latestChangeDisplay}</td>
      <td class="con1">${remote.text}</td>
      <td class="con0">${remote.error}</td>   
+     <td class="con1">
+     	<c:if test="${remote.serverInfo.loaded}">
+     		${remote.serverInfo.localName} (${remote.serverInfo.localAddr}:${remote.serverInfo.localPort})
+     	</c:if>
+     	<c:if test="${not remote.serverInfo.loaded}">
+     		${remote.serverInfo.message}
+     	</c:if>
+     </td>
      <td class="con0">
      	<a class="action-button" href="${info.currentURL}?webaction=check&id=${remote.id}">check</a>
      	<a class="action-button" href="${info.currentURL}?webaction=delete&id=${remote.id}">delete</a>
@@ -47,7 +57,8 @@
        <th class="head1">#error</th>       
        <th class="head0">#valid</th>
        <th class="head1">message</th>
-       <th class="head0">&nbsp;</th>
+       <th class="head0">server info</th>
+       <th class="head1">&nbsp;</th>
      </tr>
 </tfoot>
 </table>

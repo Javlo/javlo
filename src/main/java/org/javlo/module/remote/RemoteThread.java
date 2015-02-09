@@ -24,13 +24,14 @@ public class RemoteThread extends Thread {
 		try {
 			while (!stop) {
 				countCheck++;
+				String defaulSynchroCode = remoteService.getDefaultSynchroCode();
 				for (RemoteBean bean : remoteService.getRemotes()) {
 					if (bean.getPriority() == RemoteBean.PRIORITY_HIGH) {
-						bean.check();
+						bean.check(defaulSynchroCode);
 					} else if (bean.getPriority() == RemoteBean.PRIORITY_MIDDLE && countCheck%100==0) {
-						bean.check();						
+						bean.check(defaulSynchroCode);
 					} else if (bean.getPriority() == RemoteBean.PRIORITY_LOW && countCheck%1000==0) {
-						bean.check();
+						bean.check(defaulSynchroCode);
 					}
 					if (!bean.isValid()) {
 						logger.warning("error on : "+bean.getUrl()+" msg:"+bean.getError());

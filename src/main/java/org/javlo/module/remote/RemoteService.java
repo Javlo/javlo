@@ -154,6 +154,10 @@ public class RemoteService {
 	GlobalContext getGlobalContext() {
 		return globalContext;
 	}
+
+	public String getDefaultSynchroCode() {
+		return getGlobalContext().getStaticConfig().getSynchroCode();
+	}
 	
 	@Override
 	protected void finalize() throws Throwable {	
@@ -162,4 +166,5 @@ public class RemoteService {
 			remoteThread.setStop(true);
 		}
 	}
+
 }

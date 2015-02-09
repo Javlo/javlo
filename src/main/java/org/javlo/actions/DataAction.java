@@ -9,11 +9,15 @@ import java.util.Arrays;
 import java.util.Calendar;
 import java.util.Collection;
 import java.util.Date;
+import java.util.Enumeration;
+import java.util.LinkedHashMap;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.logging.Logger;
 
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
 import org.apache.commons.fileupload.FileItem;
@@ -27,8 +31,10 @@ import org.javlo.component.image.GlobalImage;
 import org.javlo.component.image.Image;
 import org.javlo.component.multimedia.Multimedia;
 import org.javlo.component.title.Title;
+import org.javlo.config.StaticConfig;
 import org.javlo.context.ContentContext;
 import org.javlo.context.GlobalContext;
+import org.javlo.helper.BeanHelper;
 import org.javlo.helper.ContentHelper;
 import org.javlo.helper.LangHelper;
 import org.javlo.helper.ResourceHelper;
@@ -62,6 +68,8 @@ import org.javlo.ztatic.StaticInfo;
 public class DataAction implements IAction {
 
 	private static Logger logger = Logger.getLogger(DataAction.class.getName());
+
+	public static final String SYNCHRO_CODE_PARAM = "synchrocode";
 
 	@Override
 	public String getActionGroupName() {
@@ -141,6 +149,55 @@ public class DataAction implements IAction {
 		return null;
 	}
 
+	public static String performServerInfo(HttpServletRequest request, ContentContext ctx, RequestService requestService, StaticConfig staticConfig, HttpServletResponse response) {
+
+		String clientSynchroCode = requestService.getParameter(SYNCHRO_CODE_PARAM, null);
+
+		if (clientSynchroCode == null) {
+			logger.warning("no synchro code sent to webaction data.serverInfo");
+			response.setStatus(HttpServletResponse.SC_FORBIDDEN);
+			return null;
+		} else if (!clientSynchroCode.equals(staticConfig.getSynchroCode())) {
+			logger.warning("bad synchro code sent to webaction data.serverInfo");
+			response.setStatus(HttpServletResponse.SC_FORBIDDEN);
+			return null;
+		}
+
+		Map<String, Object> serverInfo = new LinkedHashMap<String, Object>();
+		BeanHelper.extractPropertiesAsString(serverInfo, request,
+				"remotePort",
+				"remoteHost",
+				"remoteAddr",
+				"localAddr",
+				"localName",
+				"localPort",
+				"serverName",
+				"serverPort",
+				"characterEncoding"
+				//, "contextPath"
+				);
+		serverInfo.put("contextKey", ctx.getGlobalContext().getContextKey());
+		ctx.getAjaxData().put("serverInfo", serverInfo);
+
+		Map<String, Object> headersOut = new LinkedHashMap<String, Object>();
+		@SuppressWarnings("unchecked")
+		Enumeration<String> headers = request.getHeaderNames();
+		while (headers.hasMoreElements()) {
+			String headerName = headers.nextElement();
+			@SuppressWarnings("unchecked")
+			Enumeration<String> values = request.getHeaders(headerName);
+			List<String> valuesOut = new LinkedList<String>();
+			while (values.hasMoreElements()) {
+				String headerValue = values.nextElement();
+				valuesOut.add(headerValue);
+			}
+			headersOut.put(headerName, valuesOut);
+		}
+		ctx.getAjaxData().put("requestHeaders", headersOut);
+
+		return null;
+	}
+	
 	public static String performOneTimeToken(ContentContext ctx, User user) {
 		if (user != null) {
 			GlobalContext globalContext = GlobalContext.getInstance(ctx.getRequest());
@@ -268,19 +325,19 @@ public class DataAction implements IAction {
 	 * @return
 	 * @throws Exception
 	 */
-	protected static File createOrUpdateGallery(ContentContext ctx, File targetFolder, String importFolder, Collection<FileItem> imageItem, ImportConfigBean config) throws Exception {		
+	protected static File createOrUpdateGallery(ContentContext ctx, File targetFolder, String importFolder, Collection<FileItem> imageItem, ImportConfigBean config) throws Exception {
 		Collection<IContentVisualComponent> mediaComps = ctx.getCurrentPage().getContentByType(ctx, Multimedia.TYPE);
 		boolean galleryFound = false;
 		Template tpl = ctx.getCurrentTemplate();
 		GlobalContext gc = ctx.getGlobalContext();
 		ContentService cs = ContentService.getInstance(gc);
 		String galleryRelativeFolder = null;
-		
+
 		String baseGalleryFolder = tpl.getImportGalleryFolder();
 		if (!config.isCreateContentOnImportImage()) {
 			baseGalleryFolder = tpl.getImportImageFolder();
 		}
-		
+
 		if (mediaComps.size() > 0) {
 			for (IContentVisualComponent comp : mediaComps) {
 				Multimedia multimedia = (Multimedia) comp;
@@ -296,11 +353,10 @@ public class DataAction implements IAction {
 			String galFolder = importFolder;
 			if (galFolder.trim().length() == 0) {
 				galFolder = "images";
-			}			
-			galleryRelativeFolder = URLHelper.mergePath(gc.getStaticConfig().getStaticFolder(), baseGalleryFolder, importFolder);			
+			}
+			galleryRelativeFolder = URLHelper.mergePath(gc.getStaticConfig().getStaticFolder(), baseGalleryFolder, importFolder);
 		}
 		targetFolder = new File(URLHelper.mergePath(gc.getDataFolder(), galleryRelativeFolder));
-		
 
 		if (!targetFolder.exists()) {
 			targetFolder.mkdirs();
@@ -353,9 +409,9 @@ public class DataAction implements IAction {
 		// Calendar cal = Calendar.getInstance();
 		// String importFolder = "" + (cal.get(Calendar.MONTH) + 1) + '_' +
 		// cal.get(Calendar.YEAR);
-		String importFolder = StringHelper.createFileName(ctx.getCurrentPage().getTitle(ctx.getContextForDefaultLanguage()));		
-		importFolder = StringHelper.trimOn(importFolder.trim(), "_");		
-		importFolder = importFolder.replace('-', '_');		
+		String importFolder = StringHelper.createFileName(ctx.getCurrentPage().getTitle(ctx.getContextForDefaultLanguage()));
+		importFolder = StringHelper.trimOn(importFolder.trim(), "_");
+		importFolder = importFolder.replace('-', '_');
 		int countImages = 0;
 		FileItem imageItem = null;
 		try {
@@ -390,8 +446,9 @@ public class DataAction implements IAction {
 					TanukiImportTools.createContentFromTanuki(ctx, in, item.getName(), ctx.getRequestContentLanguage());
 					in.close();
 					ctx.setNeedRefresh(true);
-				}  else {
-					boolean isArray = StringHelper.getFileExtension(item.getName()).equalsIgnoreCase("xls") || StringHelper.getFileExtension(item.getName()).equalsIgnoreCase("xlsx") || StringHelper.getFileExtension(item.getName()).equalsIgnoreCase("ods") || StringHelper.getFileExtension(item.getName()).equalsIgnoreCase("csv");
+				} else {
+					boolean isArray = StringHelper.getFileExtension(item.getName()).equalsIgnoreCase("xls") || StringHelper.getFileExtension(item.getName()).equalsIgnoreCase("xlsx") || StringHelper.getFileExtension(item.getName()).equalsIgnoreCase("ods")
+							|| StringHelper.getFileExtension(item.getName()).equalsIgnoreCase("csv");
 					String resourceRelativeFolder = URLHelper.mergePath(gc.getStaticConfig().getStaticFolder(), tpl.getImportResourceFolder(), importFolder);
 					File targetFolder = new File(URLHelper.mergePath(gc.getDataFolder(), resourceRelativeFolder));
 					if (!targetFolder.exists()) {
@@ -447,7 +504,7 @@ public class DataAction implements IAction {
 				}
 			}
 			if (!config.isCreateContentOnImportImage()) {
-				SharedContentContext sharedContentContext = SharedContentContext.getInstance(ctx.getRequest().getSession());				
+				SharedContentContext sharedContentContext = SharedContentContext.getInstance(ctx.getRequest().getSession());
 				sharedContentContext.setProvider(LocalImageSharedContentProvider.NAME);
 				SharedContentService.getInstance(ctx).clearCache();
 				ISharedContentProvider provider = SharedContentService.getInstance(ctx).getProvider(ctx, sharedContentContext.getProvider());
@@ -455,14 +512,14 @@ public class DataAction implements IAction {
 				provider.getContent(ctx); // refresh categories list
 				String prefix = URLHelper.mergePath(gc.getDataFolder(), gc.getStaticConfig().getImageFolder()).replace('\\', '/');
 				if (folderSelection != null) {
-					String currentPath = folderSelection.getAbsolutePath().replace('\\', '/');				
-					String cat = StringUtils.replace(currentPath, prefix, "");				
+					String currentPath = folderSelection.getAbsolutePath().replace('\\', '/');
+					String cat = StringUtils.replace(currentPath, prefix, "");
 					if (cat.length() > 1) { // remove '/'
 						cat = cat.substring(1);
 					}
 					sharedContentContext.setCategories(new LinkedList<String>(Arrays.asList(new String[] { cat })));
 				}
-				ctx.setNeedRefresh(true);				
+				ctx.setNeedRefresh(true);
 			}
 		} catch (FileExistsException e) {
 			messageRepository.setGlobalMessage(new GenericMessage(i18nAccess.getText("data.file-allready-exist", "file already exist."), GenericMessage.ERROR));
@@ -474,7 +531,7 @@ public class DataAction implements IAction {
 		ctx.getAjaxData().put("sessionId", session.getId());
 		return null;
 	}
-	
+
 	public static String performTab(RequestService rs, HttpSession session) {
 		session.setAttribute("tab", rs.getParameter("tab", null));
 		return null;
