@@ -840,7 +840,7 @@ public class AccessServlet extends HttpServlet implements IVersion {
 				Writer out = response.getWriter();
 				out.write("<div style=\"margin-top: 50px; margin-left: auto; margin-right: auto; border: 2px #ff0000 solid; width: 500px; padding: 3px;\" id=\"fatal-error\">");
 				out.write("<h1 style=\"margin: 0px; padding: 1px; font-size: 120%; text-align: center;\">Techinal error.</h1>");
-				out.write("<p style=\"text-align: center;\"><a href=\"mailto:manual_error@javlo.org?subject=fatal error in javlo : " + globalContext.getContextKey() + "\">Describe your error in a email.</a></p>");
+				out.write("<p style=\"text-align: center;\"><a href=\"mailto:"+staticConfig.getManualErrorEmail()+"?subject=fatal error in javlo : " + globalContext.getContextKey() + "\">Describe your error in a email.</a></p>");
 				out.write("<p style=\"padding: 10px 10px 10px 10px; margin-bottom: 10px; color: #000000; border: 1px solid #ff0000; background-color: #ffeaea;\">" + t.getMessage() + "</p>");
 				out.write("</div>");
 

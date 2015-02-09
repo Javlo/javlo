@@ -87,7 +87,7 @@ public class XHTMLHelper {
 
 	private static final String[] TEXT_COLORS = { "#005", "#050", "#500", "#505", "#550", "#055", "#555" };
 	
-	public static final List<String> WEB_FONTS = Arrays.asList(new String[] {"Arial, sans-serif","Courier, monospace, serif","Myriad Pro, Myriad Pro Regular, PT Sans, sans-serif","Times New Roman, serif","Verdana, Geneva, sans-serif"});
+	public static final List<String> WEB_FONTS = Arrays.asList(new String[] {"Arial, sans-serif","Courier, monospace, serif","Myriad Pro, Myriad Pro Regular, PT Sans, sans-serif","Times New Roman, serif","Verdana, Geneva, sans-serif", "Open Sans, sans-serif"});
 
 	private static final Pattern CSS_IMPORT_PATTERN = Pattern.compile("@import\\s+" +
 

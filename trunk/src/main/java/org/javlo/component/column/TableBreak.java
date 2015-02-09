@@ -15,7 +15,7 @@ import org.javlo.helper.StringHelper;
 
 public class TableBreak extends TableComponent {
 
-	private static final List<String> tableFields = Arrays.asList(new String[] { "padding", "width", "valign", "align", "border", "grid", "spacing", "col", "row" });
+	private static final List<String> tableFields = Arrays.asList(new String[] { "padding", "width", "valign", "align", "border", "grid", "spacing", "col", "row", "backgroundcolor" });
 
 	private String TYPE = "table-break";
 

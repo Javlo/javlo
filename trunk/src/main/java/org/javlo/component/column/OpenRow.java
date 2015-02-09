@@ -89,5 +89,19 @@ public class OpenRow extends TableComponent {
 	public boolean isRowBreak() {	
 		return true;
 	}
+	
+	@Override
+	public String getCellBackgroundColor(ContentContext ctx) {
+		String bg = getFieldValue("backgroundcolor");
+		if (bg == null || bg.trim().length() == 0) {
+			try {
+				bg = getContext(ctx).getTableBreak().getCellBackgroundColor(ctx);
+			} catch (Exception e) {
+				e.printStackTrace();
+			}
+		}
+		return bg;
+	}
+	
 
 }

@@ -6,9 +6,12 @@ import java.util.Arrays;
 import java.util.LinkedList;
 import java.util.List;
 
+import org.javlo.component.core.ComponentLayout;
 import org.javlo.component.core.ISubTitle;
 import org.javlo.component.properties.AbstractPropertiesComponent;
 import org.javlo.context.ContentContext;
+import org.javlo.exception.ResourceNotFoundException;
+import org.javlo.helper.StringHelper;
 import org.javlo.helper.URLHelper;
 import org.javlo.i18n.I18nAccess;
 import org.javlo.navigation.MenuElement;
@@ -90,8 +93,6 @@ public class Heading extends AbstractPropertiesComponent implements ISubTitle {
 				return 5;
 			case '6':
 				return 6;
-			case '7':
-				return 7;
 			default:
 				return 0;
 			}
@@ -125,10 +126,28 @@ public class Heading extends AbstractPropertiesComponent implements ISubTitle {
 		} else {
 			link = null;
 		}
+		
+		String style="";		
 		if (link != null) {
-			return "<a href=\""+link+"\""+target+">"+getTextTitle(ctx)+"</span>";
-		} else { 
-			return "<span>"+getTextTitle(ctx)+"</span>";
+			if (getBackgroundColor() != null && getBackgroundColor().length() > 2) {
+				style = "border: 1px "+getBackgroundColor()+" solid; ";
+			}
+			if (getTextColor() != null && getTextColor().length() > 2) {
+				style = style + "color:"+getTextColor()+";";
+			}
+			if (style.length()>0) {
+				style=" style=\""+style+"\"";
+			}
+			return "<a"+style+" href=\""+link+"\""+target+">"+getTextTitle(ctx)+"</a>";
+		} else {
+			if (getBackgroundColor() != null && getBackgroundColor().length() > 2) {
+				style = " style=\"border: 1px "+getBackgroundColor()+" solid; \"";
+			}
+			String tag = "span";
+			if (ctx.getGlobalContext().isMailingPlatform()) {
+				tag = "div";
+			}
+			return "<"+tag+" class=\"inside-wrapper\""+style+">"+getTextTitle(ctx)+"</"+tag+">";
 		}
 	}
 
@@ -160,6 +179,14 @@ public class Heading extends AbstractPropertiesComponent implements ISubTitle {
 	public String getHexColor() {
 		return META_COLOR;
 	}
+	
+	@Override
+	protected void init() throws ResourceNotFoundException {
+		super.init();
+		if (getLayout() == null) {
+			getComponentBean().setLayout(new ComponentLayout(""));
+		}
+	}
 
 	@Override
 	public boolean initContent(ContentContext ctx) throws Exception {
@@ -190,6 +217,54 @@ public class Heading extends AbstractPropertiesComponent implements ISubTitle {
 		} else {
 			return 0;
 		}
+	}
+	
+	public String getXHTMLId(ContentContext ctx) {
+		if (ctx.getRequest().getAttribute("__subtitle__" + getId()) != null) {
+			return (String) ctx.getRequest().getAttribute("__subtitle__" + getId());
+		}
+		String htmlID = StringHelper.createFileName(getValue()).replace('-', '_');
+		if (htmlID.trim().length() == 0) {
+			htmlID = "empty";
+		}
+		htmlID = "H_" + htmlID;
+		while (ctx.getRequest().getAttribute("__subtitle__" + htmlID) != null) {
+			htmlID = htmlID + "_bis";
+		}
+		ctx.getRequest().setAttribute("__subtitle__" + htmlID, "");
+		ctx.getRequest().setAttribute("__subtitle__" + getId(), htmlID);
+		return htmlID;
+	}
+	
+	@Override
+	public String getPrefixViewXHTMLCode(ContentContext ctx) {
+		String cssClass = "";
+		if (isBackgroundColored()) {
+			cssClass = cssClass + " "+COLORED_WRAPPER_CLASS;
+		}
+		return '<'+getTag(ctx)+' ' + getSpecialPreviewCssClass(ctx, cssClass) + getSpecialPreviewCssId(ctx) + " "+getInlineStyle(ctx)+">";
+	}
+	
+	protected String getInlineStyle(ContentContext ctx) {
+		String inlineStyle = "";
+		if (getBackgroundColor() != null && getBackgroundColor().length() > 2) {
+			inlineStyle = " overflow: hidden; border: 1px "+getBackgroundColor()+" solid; background-color: " + getBackgroundColor() + ';';
+		}
+		if (getTextColor() != null && getTextColor().length() > 2) {
+			inlineStyle = inlineStyle + " color: " + getTextColor() + ';';
+		}
+		if (getLayout() != null) {
+			inlineStyle = inlineStyle + ' ' + getLayout().getStyle();
+		}
+		if (inlineStyle.length() > 0) {
+			inlineStyle = " style=\"" + inlineStyle + "\"";
+		}
+		return inlineStyle;
+	}
+	
+	@Override
+	public String getSuffixViewXHTMLCode(ContentContext ctx) {
+		return "</"+getTag(ctx)+'>';
 	}
 
 }

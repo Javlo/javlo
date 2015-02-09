@@ -14,7 +14,7 @@ import org.javlo.helper.XHTMLHelper;
 
 public abstract class TableComponent extends AbstractPropertiesComponent {
 
-	private static final List<String> fields = Arrays.asList(new String[] { "padding", "width", "valign", "align", "colspan" });
+	private static final List<String> fields = Arrays.asList(new String[] { "padding", "width", "valign", "align", "colspan", "backgroundcolor" });
 
 	public TableComponent() {
 	}
@@ -24,24 +24,32 @@ public abstract class TableComponent extends AbstractPropertiesComponent {
 		return fields;
 	}
 
+	public String getCellBackgroundColor(ContentContext ctx) {
+		return getFieldValue("backgroundcolor");
+	}
+
 	protected String getTDStyle(ContentContext ctx) throws Exception {
 		StringBuffer outStyle = new StringBuffer();
 		TableContext tableContext = getContext(ctx);
 
 		String padding = getPadding(ctx);
 		if (padding != null && padding.trim().length() > 0) {
-			if ((tableContext.isFirst(this) || tableContext.isLast(this)) && (!tableContext.getTableBreak().isGrid(ctx) && !tableContext.getTableBreak().isBorder(ctx))) {
+			if ((tableContext.isFirst(this) || tableContext.isLast(this)) && (!tableContext.getTableBreak().isGrid(ctx) && !tableContext.getTableBreak().isBorder(ctx)) && getCellBackgroundColor(ctx).length() < 2) {				
 				if (tableContext.isFirst(this)) {
-					outStyle.append("padding: " + padding + " " + padding + " " + padding + " 0;");
+					outStyle.append("padding: " + padding + ' ' + padding + ' ' + padding + ' ' + '0' + ';');
 				}
 				if (tableContext.isLast(this)) {
-					outStyle.append("padding: " + padding + " 0 " + padding + " " + padding + ";");
+					outStyle.append("padding: " + padding + ' ' + '0' + ' ' + padding + " " + padding + ';');
 				}
 			} else {
 				outStyle.append("padding:" + padding + ';');
 			}
 		}
-		
+
+		if (getCellBackgroundColor(ctx).length() > 2) {
+			outStyle.append("background-color:" + getCellBackgroundColor(ctx) + ';');
+		}
+
 		String width = getWidth(ctx);
 		if (width != null && width.trim().length() > 0) {
 			outStyle.append("width:" + getWidth(ctx) + "%;");
@@ -134,6 +142,10 @@ public abstract class TableComponent extends AbstractPropertiesComponent {
 		return createKeyWithField("padding");
 	}
 
+	protected String getBackgroundColorInputName() {
+		return createKeyWithField("backgroundcolor");
+	}
+
 	protected String getVAlignInputName() {
 		return createKeyWithField("valign");
 	}
@@ -154,6 +166,10 @@ public abstract class TableComponent extends AbstractPropertiesComponent {
 	protected String getEditXHTMLCode(ContentContext ctx) throws Exception {
 		ByteArrayOutputStream outStream = new ByteArrayOutputStream();
 		PrintStream out = new PrintStream(outStream);
+		out.println("<div class=\"line\">");
+		out.println("<label for=\"" + getBackgroundColorInputName() + "\">background color : </label>");
+		out.println("<input class=\"color form-control\" name=\"" + getBackgroundColorInputName() + "\" value=\"" + getFieldValue("backgroundcolor") + "\" />");
+		out.println("</div>");
 		out.println("<div class=\"line\">");
 		out.println("<label for=\"" + getPaddingInputName() + "\">padding : </label>");
 		out.println("<input name=\"" + getPaddingInputName() + "\" value=\"" + getFieldValue("padding") + "\" />");

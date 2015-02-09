@@ -19,6 +19,7 @@ public class SearchResultComponent extends AbstractVisualComponent {
 
 	@Override
 	public String getViewXHTMLCode(ContentContext ctx) throws Exception {
+		prepareView(ctx);
 		//String renderer = "/jsp/components/search/search_result.jsp";
 		String renderer = null;
 

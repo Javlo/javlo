@@ -73,6 +73,19 @@ public class OpenCell extends TableComponent {
 	}
 	
 	@Override
+	public String getCellBackgroundColor(ContentContext ctx) {
+		String bg = getFieldValue("backgroundcolor");
+		if (bg == null || bg.trim().length() == 0) {
+			try {
+				bg = getContext(ctx).getTableBreak().getCellBackgroundColor(ctx);
+			} catch (Exception e) {
+				e.printStackTrace();
+			}
+		}
+		return bg;
+	}
+	
+	@Override
 	protected String getWidth(ContentContext ctx) {
 		String width = getFieldValue("width");
 		if (width == null || width.trim().length() == 0) {

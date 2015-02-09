@@ -8,7 +8,7 @@ import java.util.LinkedList;
 import org.javlo.component.core.AbstractVisualComponent;
 import org.javlo.component.core.ContentElementList;
 import org.javlo.component.core.IContentVisualComponent;
-import org.javlo.component.title.SubTitle;
+import org.javlo.component.core.ISubTitle;
 import org.javlo.context.ContentContext;
 import org.javlo.navigation.MenuElement;
 
@@ -55,7 +55,7 @@ public class SubtitleLink extends AbstractVisualComponent {
 	public String getEditText(ContentContext ctx, String key) {
 		return "";
 	}
-	
+
 	protected String getMainArea(ContentContext ctx) {
 		String mainArea = getConfig(ctx).getProperty("area.main", null);
 		if (mainArea == null) {
@@ -75,13 +75,15 @@ public class SubtitleLink extends AbstractVisualComponent {
 		Collection<Link> links = new LinkedList<Link>();
 		while (content.hasNext(ctx)) {
 			IContentVisualComponent comp = content.next(ctx);
-			if (comp instanceof SubTitle) {
-				SubTitle subTitle = (SubTitle) comp;
-				Link link = new Link();
-				link.setLabel(subTitle.getValue());
-				link.setUrl("#" + subTitle.getXHTMLId(ctx));
-				link.setLevel(subTitle.getStyle(ctx));
-				links.add(link);
+			if (comp instanceof ISubTitle) {
+				ISubTitle subTitle = (ISubTitle) comp;
+				if (subTitle.getSubTitleLevel(ctx) > 1) {
+					Link link = new Link();
+					link.setLabel(subTitle.getSubTitle(ctx));
+					link.setUrl("#" + subTitle.getXHTMLId(ctx));
+					link.setLevel(""+subTitle.getSubTitleLevel(ctx));
+					links.add(link);
+				}
 			}
 		}
 		out.close();
