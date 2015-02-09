@@ -926,4 +926,9 @@ public class DynamicComponent extends AbstractVisualComponent implements IStatic
 		return getType();
 	}
 
+	@Override
+	public String getXHTMLId(ContentContext ctx) {
+		return getType()+'-'+getId();
+	}
+
 }

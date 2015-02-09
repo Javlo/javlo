@@ -13,6 +13,7 @@ import org.javlo.component.core.IContentVisualComponent;
 import org.javlo.component.core.IReverseLinkComponent;
 import org.javlo.context.ContentContext;
 import org.javlo.context.GlobalContext;
+import org.javlo.helper.ComponentHelper;
 import org.javlo.helper.StringHelper;
 import org.javlo.helper.StringRemplacementHelper;
 import org.javlo.helper.URLHelper;
@@ -247,7 +248,7 @@ public class ReverseLinkService {
 						if (replace) {
 							url = StringHelper.toXMLAttribute(url);
 							if (componentPage != null && componentPage.getComponent() != null && componentPage.getComponent().isOnlyPreviousComponent()) {
-								IContentVisualComponent prevComp = componentPage.getPrevious();
+								IContentVisualComponent prevComp = ComponentHelper.getPreviousComponent((IContentVisualComponent)componentPage.getComponent(), ctx);
 								if (prevComp != null && comp != null && prevComp.getId().equals(comp.getId())) {
 									remplacement.addReplacement(textPos, textPos + text.length(), "<a href=\"" + url + "\"" + target + ">" + text + "</a>");
 								}
@@ -265,12 +266,14 @@ public class ReverseLinkService {
 									linkInfo.append("<a href=\"" + pageURL + "\">" + parentPage.getLabel(ctx) + "</a>");
 									linkInfo.append("</span>");
 									if (componentPage != null && ctx.getRequest().getAttribute("replaced-" + componentPage.hashCode()) == null) {
-										remplacement.addReplacement(textPos, textPos + text.length(), linkInfo + "<a class=\"reverse-link-preview\" href=\"" + url + "\" id=\"link-" + randomId + "\">" + text + "</a>");
+										if (!componentPage.getComponent().isOnlyThisPage() || componentPage.getPage().equals(currentPage)) {
+											remplacement.addReplacement(textPos, textPos + text.length(), linkInfo + "<a class=\"reverse-link-preview\" href=\"" + url + "\" id=\"link-" + randomId + "\">" + text + "</a>");
+										}
 									}
 								} else if (componentPage != null) {
 									componentPage.getComponent();
 									if (!componentPage.getComponent().isOnlyThisPage() || componentPage.getPage().equals(currentPage)) {
-										if (componentPage != null && ctx.getRequest().getAttribute("replaced-" + componentPage.hashCode()) == null) {
+										if (ctx.getRequest().getAttribute("replaced-" + componentPage.hashCode()) == null) {
 											remplacement.addReplacement(textPos, textPos + text.length(), "<a href=\"" + url + "\"" + target + ">" + text + "</a>");
 										}
 									}

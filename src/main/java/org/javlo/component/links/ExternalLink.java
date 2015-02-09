@@ -311,8 +311,8 @@ public class ExternalLink extends ComplexPropertiesLink implements IReverseLinkC
 	@Override
 	public boolean initContent(ContentContext ctx) throws Exception {
 		super.initContent(ctx);
-		properties.setProperty(LINK_KEY, "http://www.javlo.org");
-		properties.setProperty(LABEL_KEY, "javlo.org");
+		properties.setProperty(LINK_KEY, getConfig(ctx).getProperty("content.default.link", "http://www.javlo.org"));
+		properties.setProperty(LABEL_KEY, getConfig(ctx).getProperty("content.default.label", "javlo.org"));
 		storeProperties();
 		setModify();
 		return true;

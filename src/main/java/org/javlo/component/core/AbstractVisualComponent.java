@@ -539,7 +539,7 @@ public abstract class AbstractVisualComponent implements IContentVisualComponent
 			out.println("<div class=\"line\">");
 			String textColInputName = "textcol-" + getId();
 			out.println("<label for=\"" + textColInputName + "\">" + i18nAccess.getText("component.text-color") + "</label>");
-			out.println("<input id=\"" + textColInputName + "\" name=\"" + textColInputName + "\" class=\"color\" type=\"text\" value=\"" + StringHelper.neverNull(getTextColor()) + "\" />");
+			out.println("<input id=\"" + textColInputName + "\" name=\"" + textColInputName + "\" class=\"color form-control\" type=\"text\" value=\"" + StringHelper.neverNull(getTextColor()) + "\" />");
 			out.println("</div>");
 		}
 
@@ -555,7 +555,7 @@ public abstract class AbstractVisualComponent implements IContentVisualComponent
 			out.println("</div>");
 		}
 
-		if (getRenderes(ctx) == null || getRenderes(ctx).size() > 0) {
+		if (getRenderes(ctx) == null || getRenderes(ctx).size() > 1) {
 			out.println(getSelectRendererXHTML(ctx));
 		}
 
