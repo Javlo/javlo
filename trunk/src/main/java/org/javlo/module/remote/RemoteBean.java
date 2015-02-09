@@ -1,13 +1,25 @@
 package org.javlo.module.remote;
 
+import java.beans.Transient;
 import java.io.Serializable;
 import java.net.URL;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.LinkedHashMap;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.Map;
 
 import org.apache.commons.lang.builder.HashCodeBuilder;
+import org.javlo.actions.DataAction;
+import org.javlo.context.ContentContext;
 import org.javlo.helper.NetHelper;
 import org.javlo.helper.StringHelper;
+import org.javlo.helper.URLHelper;
+import org.javlo.utils.JSONMap;
+
+import com.google.gson.JsonSyntaxException;
+import com.google.gson.reflect.TypeToken;
 
 public class RemoteBean implements Serializable {
 
@@ -19,6 +31,7 @@ public class RemoteBean implements Serializable {
 
 	private String id = StringHelper.getRandomId();
 	private String url;
+	private String synchroCode;
 	private String authors;
 	private String latestEditor;
 	private String text;
@@ -29,8 +42,11 @@ public class RemoteBean implements Serializable {
 	private Date creationDate = new Date();
 	private int errorCount = 0;
 	private int validCount = 0;
+
 	transient long latestHashStore = -1;
-	
+
+	private Map<String, Object> serverInfo;
+
 	public String getId() {
 		return id;
 	}
@@ -42,6 +58,12 @@ public class RemoteBean implements Serializable {
 	}
 	public void setUrl(String url) {
 		this.url = url;
+	}
+	public String getSynchroCode() {
+		return synchroCode;
+	}
+	public void setSynchroCode(String synchroCode) {
+		this.synchroCode = synchroCode;
 	}
 	public String getAuthors() {
 		return authors;
@@ -73,16 +95,59 @@ public class RemoteBean implements Serializable {
 	public void setLatestUnvalid(Date latestUnvalid) {
 		this.latestUnvalid = latestUnvalid;
 	}	
-	public boolean check() {
+	public boolean check(String defaulSynchroCode) {
+		return check(defaulSynchroCode, false);
+	}
+	public boolean check(String defaulSynchroCode, boolean forceLoadServerInfo) {
+		if (serverInfo == null || forceLoadServerInfo) {
+			Map<String, Object> serverInfoOut = new LinkedHashMap<String, Object>();
+			try {
+				String synchroCodeLocal = StringHelper.trimAndNullify(this.synchroCode);
+				if (synchroCodeLocal == null) {
+					synchroCodeLocal = defaulSynchroCode;
+				}
+				String srvUrl = url;
+				srvUrl = URLHelper.addParam(srvUrl, ContentContext.FORWARD_AJAX, "true");
+				srvUrl = URLHelper.addParam(srvUrl, "webaction", "data.serverInfo");
+				srvUrl = URLHelper.addParam(srvUrl, DataAction.SYNCHRO_CODE_PARAM, synchroCodeLocal);
+				String content = NetHelper.readPageGet(new URL(srvUrl));
+				if (content == null) {
+					serverInfoOut.put("message", "Error: No content read (The url targets a javlo server? Synchro code is correct?)");
+				} else {
+					JSONMap ajaxMap = JSONMap.parseMap(content);
+					JSONMap dataMap = ajaxMap.getMap("data");
+					if (dataMap == null) {
+						serverInfoOut.put("message", "No data map.");
+					} else {
+						Map<String, Object> serverInfo = dataMap.getValue("serverInfo",
+								new TypeToken<LinkedHashMap<String, Object>>() {
+								}.getType());
+						Map<String, List<String>> requestHeaders = dataMap.getValue("requestHeaders",
+								new TypeToken<LinkedHashMap<String, LinkedList<String>>>() {
+								}.getType());
+						serverInfoOut.put("loaded", true);
+						serverInfoOut.put("message", "Server info loaded correctly.");
+						serverInfoOut.putAll(serverInfo);
+						serverInfoOut.put("requestHeaders", requestHeaders);
+					}
+				}
+			} catch (JsonSyntaxException ex) {
+				serverInfoOut.put("message", "No data.");
+			} catch (Exception ex) {
+				ex.printStackTrace();
+				serverInfoOut.put("message", "Exception when retrieving server info: " + ex.getMessage());
+			}
+			this.serverInfo = serverInfoOut;
+		}
 		try {
-			String content = NetHelper.readPage(new URL(url));	
+			String content = NetHelper.readPage(new URL(url));
 			if (content.contains(text)) {
 				latestValid = new Date();
 				setError("");
 				validCount++;
 				return true;
 			} else {
-				setError("'"+text+"' not found.");
+				setError("'" + text + "' not found.");
 				latestUnvalid = new Date();
 				errorCount++;
 				return false;
@@ -144,7 +209,15 @@ public class RemoteBean implements Serializable {
 			return StringHelper.renderTime(getLatestValid());
 		}
 	}
-	
+
+	@Transient
+	public Map<String, Object> getServerInfo() {
+		return serverInfo;
+	}
+	public void setServerInfo(Map<String, Object> serverInfo) {
+		this.serverInfo = serverInfo;
+	}
+
 	public int getStoreHashCode() {
 		 return new HashCodeBuilder(17, 37).
 			       append(latestValid).

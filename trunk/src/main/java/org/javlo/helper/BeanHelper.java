@@ -196,6 +196,24 @@ public class BeanHelper {
 		return notFound;
 	}
 
+	public static void extractPropertiesAsString(Map<String, Object> out, Object bean, String... propertyNames) {
+		Class<? extends Object> beanClass = bean.getClass();
+		for (String propertyName : propertyNames) {
+			String getterName = "get" + StringHelper.firstLetterUpper(propertyName);
+			try {
+				Method getter = beanClass.getMethod(getterName);
+				Object value = getter.invoke(bean);
+				if (value != null && !(value instanceof String)) {
+					value = value.toString();
+				}
+				out.put(propertyName, value);
+			} catch (Exception e) {
+				throw new RuntimeException("Exception when reading property: '" + propertyName +
+						"' on class: " + beanClass, e);
+			}
+		}
+	}
+
 	/**
 	 * copy bean1 in bean2, if method set exist in bean2.
 	 * 

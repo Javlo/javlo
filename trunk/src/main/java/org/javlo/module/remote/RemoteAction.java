@@ -1,7 +1,5 @@
 package org.javlo.module.remote;
 
-import java.io.IOException;
-
 import org.javlo.actions.AbstractModuleAction;
 import org.javlo.context.ContentContext;
 import org.javlo.context.GlobalContext;
@@ -34,10 +32,11 @@ public class RemoteAction extends AbstractModuleAction {
 		} else {
 			RemoteBean newBean = new RemoteBean();
 			newBean.setUrl(rs.getParameter("url", ""));
+			newBean.setSynchroCode(rs.getParameter("synchrocode", null));
 			newBean.setAuthors(ctx.getCurrentEditUser().getLogin());
 			newBean.setText(rs.getParameter("text", ""));
 			newBean.setPriority(Integer.parseInt(rs.getParameter("priority", "1")));
-			newBean.check();
+			newBean.check(remoteSevice.getDefaultSynchroCode());
 			remoteSevice.updateRemove(newBean);
 		}
 
@@ -47,16 +46,17 @@ public class RemoteAction extends AbstractModuleAction {
 	public static String performCheck(RequestService rs, GlobalContext globalContext, ContentContext ctx, MessageRepository messageRepository, I18nAccess i18nAccess) throws Exception {
 		String id = rs.getParameter("id", null);
 		RemoteService remoteService = RemoteService.getInstance(ctx);
+		String defaultSynchroCode = remoteService.getDefaultSynchroCode();
 		if (id != null) {
 			RemoteBean bean = remoteService.getRemote(id);
 			if (bean == null) {
 				return "remote not found : " + id;
 			} else {
-				bean.check();
+				bean.check(defaultSynchroCode, true);
 			}
 		} else {
 			for (RemoteBean bean : remoteService.getRemotes()) {
-				bean.check();
+				bean.check(defaultSynchroCode, true);
 			}
 		}
 		return null;

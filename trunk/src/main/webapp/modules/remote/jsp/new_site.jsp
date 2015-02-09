@@ -22,6 +22,10 @@
 		<label for="text">text</label>
 		<input type="text" id="text" name="text" />
 	</div>	
+	<div class="line">
+		<label for="synchrocode">synchro code</label>
+		<input type="password" id="synchrocode" name="synchrocode" />
+	</div>	
 	<div class="action">
 		<input type="submit" value="${i18n.view['global.ok']}" />
 	</div>	
