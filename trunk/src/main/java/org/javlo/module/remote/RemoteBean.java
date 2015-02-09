@@ -101,6 +101,9 @@ public class RemoteBean implements Serializable {
 	public boolean check(String defaulSynchroCode, boolean forceLoadServerInfo) {
 		if (serverInfo == null || forceLoadServerInfo) {
 			Map<String, Object> serverInfoOut = new LinkedHashMap<String, Object>();
+			if (serverInfo != null) {
+				serverInfoOut.putAll(serverInfo);
+			}
 			try {
 				String synchroCodeLocal = StringHelper.trimAndNullify(this.synchroCode);
 				if (synchroCodeLocal == null) {
@@ -126,7 +129,7 @@ public class RemoteBean implements Serializable {
 								new TypeToken<LinkedHashMap<String, LinkedList<String>>>() {
 								}.getType());
 						serverInfoOut.put("loaded", true);
-						serverInfoOut.put("message", "Server info loaded correctly.");
+						serverInfoOut.remove("message");
 						serverInfoOut.putAll(serverInfo);
 						serverInfoOut.put("requestHeaders", requestHeaders);
 					}
