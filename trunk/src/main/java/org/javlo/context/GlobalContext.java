@@ -109,6 +109,7 @@ public class GlobalContext implements Serializable, IPrintInfo {
 
 		@Override
 		public void run() {
+			logger.info("start store property thread : "+this.getName());
 			while (!globalContext.stopStoreThread) {
 				if (globalContext.needStoreData) {
 					globalContext.needStoreData = false;
@@ -120,6 +121,7 @@ public class GlobalContext implements Serializable, IPrintInfo {
 					e.printStackTrace();
 				}
 			}
+			logger.info("stop store property thread : "+this.getName());
 		}
 	}
 

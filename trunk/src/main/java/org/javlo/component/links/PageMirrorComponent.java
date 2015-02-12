@@ -129,7 +129,7 @@ public class PageMirrorComponent extends AbstractVisualComponent implements IIma
 		return LINK_COLOR;
 	}
 
-	private MenuElement getMirrorPage(ContentContext ctx) throws Exception {
+	public MenuElement getMirrorPage(ContentContext ctx) throws Exception {
 		String pageId = getValue();
 		ContentService content = ContentService.getInstance(ctx.getRequest());
 		return content.getNavigation(ctx).searchChildFromId(pageId);

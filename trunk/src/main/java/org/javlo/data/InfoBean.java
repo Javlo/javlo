@@ -1126,5 +1126,5 @@ public class InfoBean {
 		}
 		return pages;	
 	}
-
+	
 }

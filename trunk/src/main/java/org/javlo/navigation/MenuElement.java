@@ -39,6 +39,7 @@ import org.javlo.component.dynamic.DynamicComponent;
 import org.javlo.component.image.IImageTitle;
 import org.javlo.component.image.ImageBean;
 import org.javlo.component.image.ImageTitleBean;
+import org.javlo.component.links.PageMirrorComponent;
 import org.javlo.component.meta.Category;
 import org.javlo.component.meta.DateComponent;
 import org.javlo.component.meta.ForceRealContent;
@@ -315,9 +316,9 @@ public class MenuElement implements Serializable, IPrintInfo {
 		public List<String> getTags() {
 			return tags;
 		}
-		
+
 		public String getFirstTag() {
-			List<String> tags = getTags();			
+			List<String> tags = getTags();
 			if (tags == null || tags.size() == 0) {
 				return null;
 			} else {
@@ -518,7 +519,7 @@ public class MenuElement implements Serializable, IPrintInfo {
 			Collection<ImageBean> outImages = new LinkedList<ImageBean>();
 			for (IImageTitle image : getImages()) {
 				try {
-					outImages.add(new ImageBean(URLHelper.createResourceURL(ctx, image.getResourceURL(ctx)), URLHelper.createTransformURL(ctx, image.getResourceURL(ctx), "preview") ,image.getImageDescription(ctx), image.getImageLinkURL(ctx)));
+					outImages.add(new ImageBean(URLHelper.createResourceURL(ctx, image.getResourceURL(ctx)), URLHelper.createTransformURL(ctx, image.getResourceURL(ctx), "preview"), image.getImageDescription(ctx), image.getImageLinkURL(ctx)));
 				} catch (Exception e) {
 					e.printStackTrace();
 				}
@@ -973,7 +974,7 @@ public class MenuElement implements Serializable, IPrintInfo {
 	private String referenceLanguage = null;
 
 	private String type = PAGE_TYPE_DEFAULT;
-	
+
 	private int urlNumber = 0;
 
 	/**
@@ -1474,12 +1475,12 @@ public class MenuElement implements Serializable, IPrintInfo {
 		Collection<Resource> outList = new LinkedList<Resource>();
 		while (contentList.hasNext(ctx)) {
 			IContentVisualComponent comp = contentList.next(ctx);
-			if (comp instanceof IStaticContainer) {				
+			if (comp instanceof IStaticContainer) {
 				Collection<Resource> resources = ((IStaticContainer) comp).getAllResources(ctx);
 				if (resources != null) {
 					outList.addAll(resources);
 				} else {
-					logger.warning("ressources list null on a "+comp.getType()+" id:"+comp.getId());
+					logger.warning("ressources list null on a " + comp.getType() + " id:" + comp.getId());
 				}
 			}
 		}
@@ -1798,6 +1799,14 @@ public class MenuElement implements Serializable, IPrintInfo {
 			IContentVisualComponent comp = content.next(ctx);
 			if (clazz.isInstance(comp)) {
 				outComp.add(comp);
+			} else if (comp instanceof PageMirrorComponent) {
+				PageMirrorComponent pageMirror = (PageMirrorComponent) comp;
+				if (pageMirror.getArea().equals(ctx.getArea())) {
+					List<IContentVisualComponent> mirrorContent = pageMirror.getMirrorPage(ctx).getContentByImplementation(ctx, clazz);
+					for (IContentVisualComponent mComp : mirrorContent) {
+						outComp.add(mComp);
+					}
+				}
 			}
 		}
 		content.initialize(ctx);
@@ -1938,7 +1947,7 @@ public class MenuElement implements Serializable, IPrintInfo {
 	 * @param ctx
 	 * @return
 	 * @throws Exception
-	 */ 
+	 */
 	public String getDescription(ContentContext ctx) throws Exception {
 		PageDescription desc = getPageDescriptionCached(ctx, ctx.getRequestContentLanguage());
 
@@ -2273,7 +2282,7 @@ public class MenuElement implements Serializable, IPrintInfo {
 	}
 
 	public IImageTitle getImage(ContentContext ctx) throws Exception {
-		PageDescription desc = getPageDescriptionCached(ctx, ctx.getRequestContentLanguage());		
+		PageDescription desc = getPageDescriptionCached(ctx, ctx.getRequestContentLanguage());
 		if (desc.imageLink != null) {
 			return desc.imageLink;
 		}
@@ -2286,19 +2295,19 @@ public class MenuElement implements Serializable, IPrintInfo {
 			if ((elem instanceof IImageTitle) && (!elem.isEmpty(noAreaCtx)) && (!elem.isRepeat())) {
 				IImageTitle imageComp = (IImageTitle) elem;
 				if (imageComp.isImageValid(noAreaCtx)) {
-					int priority = imageComp.getPriority(noAreaCtx); 
+					int priority = imageComp.getPriority(noAreaCtx);
 					if (priority == 9) {
-						desc.imageLink = new ImageTitleBean(noAreaCtx,imageComp);
+						desc.imageLink = new ImageTitleBean(noAreaCtx, imageComp);
 						return imageComp;
 					} else if (priority > bestPriority) {
-						bestPriority=priority;
+						bestPriority = priority;
 						bestImageTitle = imageComp;
 					}
 				}
 			}
 		}
 		if (bestImageTitle != null) {
-			desc.imageLink = new ImageTitleBean(noAreaCtx,bestImageTitle);
+			desc.imageLink = new ImageTitleBean(noAreaCtx, bestImageTitle);
 		}
 		return desc.imageLink;
 	}
@@ -2959,13 +2968,13 @@ public class MenuElement implements Serializable, IPrintInfo {
 
 		newCtx.setArea(null);
 		desc.subTitle = getLocalContent(newCtx).getSubTitle(newCtx);
-		if (desc.subTitle == null) {			
+		if (desc.subTitle == null) {
 			desc.subTitle = getContent(newCtx).getSubTitle(newCtx);
 		}
 
 		return desc.subTitle;
 	}
-	
+
 	public int getSubTitleLevel(ContentContext ctx) throws Exception {
 
 		ContentContext newCtx = new ContentContext(ctx);
@@ -2978,7 +2987,7 @@ public class MenuElement implements Serializable, IPrintInfo {
 
 		newCtx.setArea(null);
 		desc.subTitleLevel = getLocalContent(newCtx).getSubTitleLevel(newCtx);
-		if (desc.subTitleLevel < 0) {			
+		if (desc.subTitleLevel < 0) {
 			desc.subTitleLevel = getContent(newCtx).getSubTitleLevel(newCtx);
 		}
 
@@ -3095,12 +3104,14 @@ public class MenuElement implements Serializable, IPrintInfo {
 			if ((desc.title.trim().length() == 0) && (name != null)) {
 				desc.title = name;
 			}
-		}		
+		}
 		return desc.title;
 	}
-	
+
 	/**
-	 * create a title without space and special character with the title of the page in the default language.
+	 * create a title without space and special character with the title of the
+	 * page in the default language.
+	 * 
 	 * @param ctx
 	 * @return
 	 */
@@ -3115,7 +3126,6 @@ public class MenuElement implements Serializable, IPrintInfo {
 		}
 		return StringHelper.createFileName(title).toLowerCase();
 	}
-
 
 	/**
 	 * get title withtout repeat content
@@ -3134,7 +3144,7 @@ public class MenuElement implements Serializable, IPrintInfo {
 		if (desc.localTitle != null) {
 			return desc.localTitle;
 		}
-		desc.localTitle = getLocalContent(newCtx).getLocalTitle(newCtx);	
+		desc.localTitle = getLocalContent(newCtx).getLocalTitle(newCtx);
 		if (desc.localTitle != null) {
 			if ((desc.localTitle.trim().length() == 0) && (name != null)) {
 				desc.localTitle = name;
@@ -3379,13 +3389,13 @@ public class MenuElement implements Serializable, IPrintInfo {
 		while ((contentList.hasNext(ctxForceArea))) {
 			IContentVisualComponent component = contentList.next(ctxForceArea);
 			if (component != null) {
-				if (!component.isEmpty(ctxForceArea) || (ctx.getCurrentTemplate() != null && ctx.getCurrentTemplate().isMailing())) { 
+				if (!component.isEmpty(ctxForceArea) || (ctx.getCurrentTemplate() != null && ctx.getCurrentTemplate().isMailing())) {
 					if (!component.isRepeat() || component.getType() == ForceRealContent.TYPE) {
 						boolean realContent = false;
 						if (component instanceof ForceRealContent) {
-							ForceRealContent fComp = (ForceRealContent)component;
+							ForceRealContent fComp = (ForceRealContent) component;
 							realContent = StringHelper.isTrue(fComp.getValue());
-						} 
+						}
 						desc.setEmpty(area, realContent);
 						return realContent;
 					}
@@ -4405,8 +4415,10 @@ public class MenuElement implements Serializable, IPrintInfo {
 	}
 
 	/**
-	 * in case of same URL, this value in incremented.
-	 * all URL factory (implementation of @IURLFactory) can use this number for create different URL.
+	 * in case of same URL, this value in incremented. all URL factory
+	 * (implementation of @IURLFactory) can use this number for create different
+	 * URL.
+	 * 
 	 * @return
 	 */
 	public int getUrlNumber() {

@@ -6,15 +6,15 @@
 	page-break-after:auto;
 } 
 
-.float-image .image-wrapper {
+.float-image .image-wrapper, .float-image-width .image-wrapper {
 	margin-bottom: 5px;	
 }
 
-.float-image.right .image-wrapper {
+.float-image.right .image-wrapper, .float-image-width.right .image-wrapper {
 	margin-left: 10px;	
 }
 
-.float-image.left .image-wrapper {
+.float-image.left .image-wrapper, .float-image-width.left .image-wrapper {
 	margin-right: 10px;	
 }
 

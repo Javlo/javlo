@@ -71,6 +71,7 @@ import org.javlo.utils.SuffixPrefix;
  * <li>{@link String} type : the component type. See {@link #getType()}</li>
  * <li>{@link String} layout : the layout of the component is css (can be null).
  * </li>
+ * <li>{@link STring} componentWidth : the width of component forced by contributor (if component manage it)
  * <li>{@link String} style : the style selected for the component. See
  * <li>{@link String} previewAttributes : a string with attribute for preview
  * edition (class and data attribute).</li>
@@ -467,6 +468,17 @@ public abstract class AbstractVisualComponent implements IContentVisualComponent
 		finalCode.append("</textarea>");
 		return finalCode.toString();
 	}
+	
+	public boolean isAskWidth(ContentContext ctx) {
+		return false;
+	}
+	
+	public String getWidth() {
+		return null; 
+	}
+	
+	public void setWidth(String width) {		
+	}
 
 	@Override
 	public String getXHTMLConfig(ContentContext ctx) throws Exception {
@@ -498,6 +510,13 @@ public abstract class AbstractVisualComponent implements IContentVisualComponent
 			out.println("<div class=\"line\">");
 			out.println("<label for=\"inlist-" + getId() + "\">" + i18nAccess.getText("component.inlist") + "</label>");
 			out.println(XHTMLHelper.getCheckbox("inlist-" + getId(), isList(ctx)));
+			out.println("</div>");
+		}
+		if (isAskWidth(ctx)) {
+			out.println("<div class=\"line\">");
+			String inputName = getInputName("width");
+			out.println("<label for=\"" + inputName + "\">" + i18nAccess.getText("component.width") + "</label>");
+			out.println("<input id=\"" + inputName + "\" name=\"" + inputName + "\" class=\"form-control\" type=\"text\" value=\"" + StringHelper.neverNull(getWidth()) + "\" />");
 			out.println("</div>");
 		}
 		if (getLayout() != null) {
@@ -594,6 +613,10 @@ public abstract class AbstractVisualComponent implements IContentVisualComponent
 			setRepeat(isRepeat);
 			setModify();
 			setNeedRefresh(true);
+		}
+		
+		if (isAskWidth(ctx)) {
+			setWidth(requestService.getParameter(getInputName("width"),""));
 		}
 
 		boolean isList = requestService.getParameter("inlist-" + getId(), null) != null;
@@ -1580,6 +1603,11 @@ public abstract class AbstractVisualComponent implements IContentVisualComponent
 		ctx.getRequest().setAttribute("compid", getForcedId(ctx));
 		ctx.getRequest().setAttribute("renderer", getCurrentRenderer(ctx));
 		ctx.getRequest().setAttribute("previewAttributes", getSpecialPreviewCssClass(ctx, getStyle(ctx)) + getSpecialPreviewCssId(ctx));
+		if (isAskWidth(ctx) && getWidth() != null) {
+			ctx.getRequest().setAttribute("componentWidth", getWidth());
+		} else {
+			ctx.getRequest().removeAttribute("componentWidth");
+		}
 		if (getLayout() != null) {
 			ctx.getRequest().setAttribute("layout", getLayout().getStyle());
 		} else {
