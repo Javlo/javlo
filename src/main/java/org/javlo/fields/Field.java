@@ -62,6 +62,10 @@ public class Field implements Cloneable {
 			return Field.this.getValue();
 		}
 		
+		public String getXHTMLValue() {
+			return XHTMLHelper.textToXHTML(Field.this.getValue());
+		}
+		
 		public List<String> getValues() {
 			try {
 				return Field.this.getValues(ctx, contentLocale);

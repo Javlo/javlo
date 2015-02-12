@@ -156,7 +156,7 @@ table.table td, table.table th {
 	margin: 0 0 5px 0;
 }
 
-.float-image p {
+.float-image p, .float-image-width p {
 	padding: 0;
 	margin: 0;
 }
@@ -185,4 +185,11 @@ table.float-image, table.float-image  td, table.float-image  th {
 
 ._page_associate, .style_wrapper {
 	width: 100%;
+}
+
+.global-image .center img, .global-image .center figure {
+	display: block;
+	width: auto;
+	margin: 0 auto;
+	
 }

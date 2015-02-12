@@ -1,10 +1,11 @@
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c"
-%><%@ taglib uri="http://java.sun.com/jsp/jstl/functions" prefix="fn" %>
+%><%@ taglib uri="http://java.sun.com/jsp/jstl/functions" prefix="fn"
+%><c:set var="styleWidth" value="" /><c:if test="${not empty componentWidth && !param['clean-html']}"><c:set var="styleWidth" value=' style="width: ${componentWidth};"' /></c:if>
 <c:choose>
 <c:when test="${link eq '#'}">
 <figure>
 <span class="nolink">
-<img src="${previewURL}" alt="${not empty label?cleanLabel:cleanDescription}" />
+<img src="${previewURL}" alt="${not empty label?cleanLabel:cleanDescription}"${styleWidth} />
 <c:if test="${empty param.nolabel}"><figcaption>${not empty label?label:description}</figcaption></c:if>
 </span>
 </figure>
@@ -16,11 +17,11 @@
 <a rel="${rel}" class="${type}" href="${url}" title="${not empty label?cleanLabel:cleanDescription}">
 	<c:if test="${contentContext.asPreviewMode && filter != 'raw'}">
 		<c:set var="imageId" value="i${info.randomId}" />
-		<img id="${imageId}" src="${info.ajaxLoaderURL}" alt="${not empty description?cleanDescription:cleanLabel}" />
+		<img id="${imageId}" src="${info.ajaxLoaderURL}" alt="${not empty description?cleanDescription:cleanLabel}"${styleWidth} />
 	</c:if>
 	<c:if test="${not (contentContext.asPreviewMode && filter != 'raw')}">
 		<c:set var="imageWidthTag" value='width="${imageWidth}" ' />
-		<img ${not empty imageWidth?imageWidthTag && filter!='raw':''}src="${previewURL}" alt="${not empty description?cleanDescription:cleanLabel}" />
+		<img ${not empty imageWidth && filter!='raw'?imageWidthTag:''}src="${previewURL}" alt="${not empty description?cleanDescription:cleanLabel}"${styleWidth} />
 	</c:if>
 </a>
 <c:if test="${empty param.nolabel}"><figcaption>${not empty label?label:description}</figcaption></c:if>

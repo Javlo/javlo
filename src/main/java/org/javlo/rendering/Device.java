@@ -144,7 +144,7 @@ public class Device implements Serializable {
 
 	@Override
 	public String toString() {
-		return getLabel();
+		return getCode();
 	}
 
 	public boolean isHuman() {

@@ -144,6 +144,21 @@ public class GlobalImage extends Image implements IImageFilter {
 	public void setTranslatedID(String id) {
 		properties.setProperty("translated", id);
 	}
+	
+	@Override
+	public boolean isAskWidth(ContentContext ctx) {
+		return true;
+	}
+	
+	@Override
+	public String getWidth() {
+		return properties.getProperty("width", null);
+	}
+
+	@Override
+	public void setWidth(String width) {
+		properties.setProperty("width", width);
+	}
 
 	protected String getDefaultFilter() {
 		return "standard";
