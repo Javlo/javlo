@@ -659,6 +659,8 @@ public class ImageTransformServlet extends HttpServlet {
 
 			try {
 				logger.info("write image : " + imageType + " width: " + img.getWidth() + " height: " + img.getHeight());
+				
+				imageType = StringHelper.neverNull(config.getFileExtension(ctx.getDevice(), filter, area), imageType);
 
 				if (comp != null && StringHelper.trimAndNullify(comp.getImageFilterKey(ctx)) != null) {
 					img = ((IImageFilter) comp).filterImage(ctx, img);

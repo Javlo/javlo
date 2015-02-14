@@ -97,6 +97,8 @@ public class ContentContext {
 	private MenuElement virtualCurrentPage = null;
 
 	private boolean pageAssociation = false;
+	
+	private boolean postRequest = false;
 
 	private static ContentContext createContentContext(HttpServletRequest request, HttpServletResponse response, boolean free) {
 		ContentContext ctx = new ContentContext();
@@ -1765,5 +1767,13 @@ public class ContentContext {
 
 	public void setCheckContentArea(boolean checkContentArea) {
 		this.checkContentArea = checkContentArea;
+	}
+
+	public boolean isPostRequest() {
+		return postRequest;
+	}
+
+	public void setPostRequest(boolean postRequest) {
+		this.postRequest = postRequest;
 	}
 }

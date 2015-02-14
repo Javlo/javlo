@@ -2737,5 +2737,9 @@ public class Template implements Comparable<Template> {
 		}
 		return out;
 	}
+	
+	public boolean isLanguageLinkKeepGetParams() {
+		return StringHelper.isTrue(properties.getString("language.keepParams"));
+	}
 
 }

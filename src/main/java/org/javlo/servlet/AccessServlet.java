@@ -137,12 +137,12 @@ public class AccessServlet extends HttpServlet implements IVersion {
 
 	@Override
 	protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException {
-		process(request, response);
+		process(request, response, false);
 	}
 
 	@Override
 	protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException {
-		process(request, response);
+		process(request, response, true);
 	}
 
 	@Override
@@ -203,7 +203,7 @@ public class AccessServlet extends HttpServlet implements IVersion {
 		TemplateFactory.copyDefaultTemplate(getServletContext());
 	}
 
-	public void process(HttpServletRequest request, HttpServletResponse response) throws ServletException {
+	public void process(HttpServletRequest request, HttpServletResponse response, boolean post) throws ServletException {
 
 		try {
 
@@ -233,6 +233,7 @@ public class AccessServlet extends HttpServlet implements IVersion {
 			Thread.currentThread().setName("AccessServlet-" + globalContext.getContextKey());
 
 			ContentContext ctx = ContentContext.getContentContext(request, response);
+			ctx.setPostRequest(post);
 
 			globalContext.initExternalService(ctx);
 

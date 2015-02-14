@@ -77,6 +77,7 @@ import org.javlo.template.Template;
 import org.javlo.user.AdminUserFactory;
 import org.javlo.user.IUserFactory;
 import org.javlo.user.User;
+import org.javlo.utils.BooleanBean;
 import org.javlo.utils.SmartMap;
 import org.javlo.utils.StructuredProperties;
 import org.javlo.utils.TimeMap;
@@ -96,25 +97,43 @@ public class GlobalContext implements Serializable, IPrintInfo {
 
 	private final Object lockLoadContent = new Object();
 
-	private class StorePropertyThread extends Thread {
+	private static class StorePropertyThread extends Thread {
+		
+		private boolean stopStoreThread = false;
 
-		private static final int SLEEP_BETWEEN_STORAGE = 10 * 1000; // 10 sec
-
-		GlobalContext globalContext = null;
+		private static final int SLEEP_BETWEEN_STORAGE = 2 * 1000; // 10 sec
+		
+		private Properties dataProperties = null;
+		
+		private Object lockDataFile;
+		
+		private String contextKey;
+		
+		private File dataFile;
+		
+		private BooleanBean needStoreData = null;
 
 		public StorePropertyThread(GlobalContext globalContext) {
 			super(StorePropertyThread.class.getSimpleName() + "-" + globalContext.getContextKey());
-			this.globalContext = globalContext;
+			this.contextKey = globalContext.getContextKey();
+			this.needStoreData = globalContext.needStoreData;
+			this.dataProperties = globalContext.dataProperties;
+			this.lockDataFile = globalContext.lockDataFile;
+			try {
+				this.dataFile = globalContext.getDataFile();
+			} catch (IOException e) {				
+				e.printStackTrace();
+			}
 		}
 
 		@Override
 		public void run() {
 			logger.info("start store property thread : "+this.getName());
-			while (!globalContext.stopStoreThread) {
-				if (globalContext.needStoreData) {
-					globalContext.needStoreData = false;
-					globalContext.saveData();
-				}
+			while (!stopStoreThread) {
+				if (needStoreData.isValue()) {
+					needStoreData.setValue(false);
+					saveData(dataProperties, lockDataFile, contextKey, dataFile);
+				} 
 				try {
 					Thread.sleep(SLEEP_BETWEEN_STORAGE);
 				} catch (InterruptedException e) {
@@ -122,6 +141,10 @@ public class GlobalContext implements Serializable, IPrintInfo {
 				}
 			}
 			logger.info("stop store property thread : "+this.getName());
+		}
+		
+		public void setDataProperties(Properties dataProperties) {
+			this.dataProperties = dataProperties;
 		}
 	}
 
@@ -157,6 +180,8 @@ public class GlobalContext implements Serializable, IPrintInfo {
 	private Integer firstLoadVersion = null;
 
 	private Integer latestUndoVersion = null;
+	
+	private StorePropertyThread storePropertyThread = null;
 
 	/**
 	 * create a static logger.
@@ -175,9 +200,16 @@ public class GlobalContext implements Serializable, IPrintInfo {
 
 	public GlobalContext(String contextKey) {
 		this.contextKey = contextKey;
-		properties.setDelimiterParsingDisabled(true);
-		StorePropertyThread storePropertyThread = new StorePropertyThread(this);
-		storePropertyThread.start();		
+		properties.setDelimiterParsingDisabled(true);	
+		COUNT_INSTANCE++;
+		logger.info("create globalContext : "+contextKey+" [total globalContext : "+COUNT_INSTANCE+']');
+	}
+	
+	private void startThread() {
+		if (storePropertyThread == null || storePropertyThread.stopStoreThread) {			
+			storePropertyThread = new StorePropertyThread(this);
+			storePropertyThread.start();
+		}		
 	}
 
 	private static void addResources(ContentContext ctx, File dir, Collection<StaticInfo> resources) throws Exception {
@@ -308,6 +340,7 @@ public class GlobalContext implements Serializable, IPrintInfo {
 
 					newInstance.initCacheManager();
 				}
+				newInstance.startThread();
 			}
 		}
 		return newInstance;
@@ -333,7 +366,7 @@ public class GlobalContext implements Serializable, IPrintInfo {
 			if (newInstance == null) {
 				newInstance = new GlobalContext(contextKey);
 				newInstance.staticConfig = staticConfig;
-				newInstance.application = session.getServletContext();
+				newInstance.application = session.getServletContext();				
 			} else {
 				newInstance.staticConfig = staticConfig;
 				return newInstance;
@@ -420,6 +453,7 @@ public class GlobalContext implements Serializable, IPrintInfo {
 					newInstance.properties.load(newInstance.contextFile);
 				}
 			}
+			newInstance.startThread();
 
 			session.getServletContext().setAttribute(contextKey, newInstance);
 			session.setAttribute(KEY, newInstance);
@@ -556,9 +590,7 @@ public class GlobalContext implements Serializable, IPrintInfo {
 
 	private Set<String> noPopupDomain = null;
 
-	private boolean needStoreData = false;
-
-	private boolean stopStoreThread = false;
+	private BooleanBean needStoreData = new BooleanBean(false);
 
 	private Long accountSize = null;
 
@@ -652,7 +684,7 @@ public class GlobalContext implements Serializable, IPrintInfo {
 			synchronized (staticConfig.getContextFolder()) {
 				application.removeAttribute(contextKey);
 			}
-			stopStoreThread = true;
+			storePropertyThread.stopStoreThread = true;
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
@@ -668,7 +700,8 @@ public class GlobalContext implements Serializable, IPrintInfo {
 
 	@Override
 	protected void finalize() throws Throwable {
-		stopStoreThread = true;
+		storePropertyThread.stopStoreThread = true;
+		COUNT_INSTANCE--;
 		super.finalize();
 	}
 
@@ -1194,6 +1227,9 @@ public class GlobalContext implements Serializable, IPrintInfo {
 	 * @return
 	 */
 	public String getFolder() {
+		if (properties.getString("folder") == null || properties.getString("folder").trim().length() == 0) {
+			throw new RuntimeException("folder not found for context : "+getContextKey());
+		}
 		return properties.getString("folder");
 	}
 
@@ -1644,6 +1680,7 @@ public class GlobalContext implements Serializable, IPrintInfo {
 			ResourceHelper.closeResource(in);
 		}
 		dataProperties = outProp;
+		storePropertyThread.setDataProperties(dataProperties);
 		return outProp;
 	}
 
@@ -2083,23 +2120,31 @@ public class GlobalContext implements Serializable, IPrintInfo {
 	}
 
 	private void askStoreData() {
-		needStoreData = true;
+		needStoreData.setValue(true);
+	}
+	
+	private void saveData() {
+		try {
+			saveData(dataProperties, lockDataFile, getContextKey(), getDataFile());
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
 	}
 
-	private void saveData() {
+	private static void saveData(Properties dataProperties, Object lockDataFile, String contextKey, File dataFile) {
 		if (dataProperties != null) {
 			synchronized (lockDataFile) {
 				TransactionFile tf = null;
 				try {
 					long startTime = System.currentTimeMillis();
 
-					logger.finest("start storage data of context " + getContextKey());
+					logger.finest("start storage data of context " + contextKey);
 
-					tf = new TransactionFile(getDataFile());
-					dataProperties.store(tf.getOutputStream(), getContextKey());
+					tf = new TransactionFile(dataFile);
+					dataProperties.store(tf.getOutputStream(), contextKey);
 					tf.commit();
 
-					logger.fine("store data for : " + getContextKey() + " size:" + dataProperties.size() + " time:" + StringHelper.renderTimeInSecond(System.currentTimeMillis() - startTime));
+					logger.fine("store data for : " + contextKey + " size:" + dataProperties.size() + " time:" + StringHelper.renderTimeInSecond(System.currentTimeMillis() - startTime));
 				} catch (Exception e) {
 					try {
 						tf.rollback();
@@ -2757,6 +2802,8 @@ public class GlobalContext implements Serializable, IPrintInfo {
 		out.println("****");
 		out.println("**** ContextKey         :  " + getContextKey());
 		out.println("**** Alias of           :  " + getAliasOf());
+		out.println("**** Data folder        :  " + getDataFolder());
+		
 		out.println("****");
 		
 		ContentService content = ContentService.getInstance(ctx.getRequest());
@@ -2786,6 +2833,7 @@ public class GlobalContext implements Serializable, IPrintInfo {
 		out.println("**** Alias of           :  " + getAliasOf());
 		out.println("**** User Factory       :  " + getUserFactoryClassName());
 		out.println("**** Admin User Factory :  " + getAdminUserFactoryClassName());
+		out.println("**** Data folder        :  " + getDataFolder());
 		if (session != null) {
 			try {
 				out.println("**** Modules            :  " + StringHelper.collectionToString(ModulesContext.getInstance(session, this).getAllModules(), ", "));

@@ -1901,11 +1901,18 @@ public class XHTMLHelper {
 				if (!lg.equals(ctx.getLanguage())) {
 					lgcode = "lang=\"" + lg + "\" ";
 				}
-
 				Locale currentLg = new Locale(ctx.getRequestContentLanguage());
 				Locale targetLg = new Locale(lg);
-
-				writer.write("<li " + cssClass + "><a " + lgcode + "title=\"" + targetLg.getDisplayLanguage(currentLg) + "\" href=\"" + URLHelper.createURL(localCtx) + "\"><span>" + lg + "</span></a></li>");
+				Map<String, Object> params = null;
+				try {
+					if (ctx.getCurrentTemplate().isLanguageLinkKeepGetParams() && !ctx.isPostRequest()) {
+						RequestService requestService = RequestService.getInstance(ctx.getRequest());
+						params = requestService.getParameterMap();
+					}
+				} catch (Exception e) {
+					e.printStackTrace();
+				}
+				writer.write("<li " + cssClass + "><a " + lgcode + "title=\"" + targetLg.getDisplayLanguage(currentLg) + "\" href=\"" + URLHelper.createURL(localCtx, params) + "\"><span>" + lg + "</span></a></li>");
 			}
 			writer.write("</ul>");
 			writer.newLine();
@@ -1938,15 +1945,12 @@ public class XHTMLHelper {
 		}
 		StringWriter out = new StringWriter();
 		BufferedWriter writer = new BufferedWriter(out);
-
 		try {
-
 			if (autoChange) {
 				writer.write("<select id=\"" + selectId + "\" onchange=\"document.forms['select_language_form'].submit();\" name=\"" + inputName + "\">");
 			} else {
 				writer.write("<select id=\"" + selectId + "\" name=\"" + inputName + "\">");
 			}
-
 			GlobalContext globalContext = GlobalContext.getInstance(ctx.getRequest());
 			Set<String> languages;
 			if (ctx.getRenderMode() == ContentContext.VIEW_MODE) {
@@ -1954,7 +1958,6 @@ public class XHTMLHelper {
 			} else {
 				languages = globalContext.getLanguages();
 			}
-
 			for (String lg : languages) {
 				ContentContext localCtx = new ContentContext(ctx);
 				localCtx.setLanguage(lg);
@@ -1972,7 +1975,6 @@ public class XHTMLHelper {
 				writer.write("<option lang=\"" + lg + "\" " + cssClass + " value=\"" + lg + "\"" + selected + ">" + lg + " - " + locale.getDisplayLanguage(locale) + "</option>");
 			}
 			writer.write("</select>");
-
 			writer.close();
 		} catch (IOException e) {
 			e.printStackTrace();
@@ -1983,7 +1985,6 @@ public class XHTMLHelper {
 	public static String renderSelectLanguage(ContentContext ctx, boolean autoChange, String selectId, String inputId, String currentLg, boolean renderForm) {
 		StringWriter out = new StringWriter();
 		BufferedWriter writer = new BufferedWriter(out);
-
 		try {
 			I18nAccess i18nAccess = I18nAccess.getInstance(ctx.getRequest());
 			if (renderForm) {
@@ -2018,15 +2019,6 @@ public class XHTMLHelper {
 		out.println("<div class=\"resource-special-links\"><a class=\"hd\" href=\"" + URLHelper.createResourceURL(ctx, multimediaFileURL) + "\" title=\"" + StringHelper.removeTag(staticInfo.getFullDescription(ctx)) + "\">");
 		out.println("HD");
 		out.println("</a>");
-		/*
-		 * if (staticInfo.getLinkedPage(ctx) != null) { String pageURL =
-		 * URLHelper.createURL(ctx, staticInfo.getLinkedPage(ctx).getPath());
-		 * out.println("<a class=\"linked-page\" href=\"" + pageURL +
-		 * "\" title=\"" +
-		 * StringHelper.removeTag(staticInfo.getLinkedPage(ctx).getTitle(ctx)) +
-		 * "\">"); out.println(staticInfo.getLinkedPage(ctx).getTitle(ctx));
-		 * out.println("</a>"); }
-		 */
 		out.println("</div>");
 		out.close();
 		return writer.toString();

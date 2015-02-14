@@ -42,7 +42,7 @@ public class URLHelper extends ElementaryURLHelper {
 	public static String VFS_SERVLET_NAME = "vfs";
 
 	public static String TEMPLATE_RESOURCE_PREFIX = "__tpl__";
-	
+
 	public static String cleanPath(String path, boolean trimStartSeparator) {
 		path = path.replaceAll("[/\\\\]+", "/");
 		if (trimStartSeparator) {
@@ -162,8 +162,7 @@ public class URLHelper extends ElementaryURLHelper {
 	public static String createAvatarUrl(ContentContext ctx, IUserInfo userInfo) {
 		if (userInfo instanceof AdminUserInfo) {
 			AdminUserInfo adminUserInfo = (AdminUserInfo) userInfo;
-			String url = mergePath(ctx.getGlobalContext().getStaticConfig().getAvatarFolder(),
-					userInfo.getLogin() + ".png");
+			String url = mergePath(ctx.getGlobalContext().getStaticConfig().getAvatarFolder(), userInfo.getLogin() + ".png");
 			if (new File(mergePath(ctx.getGlobalContext().getDataFolder(), url)).exists()) {
 				try {
 					return createTransformURL(ctx, url, "avatar");
@@ -195,24 +194,24 @@ public class URLHelper extends ElementaryURLHelper {
 		if (ctx.isAsPreviewMode()) {
 			command = "link_preview";
 		}
-		if (comp == null) {			 
-			return createStaticURL(ctx, "/qrcode/"+command+"/");
+		if (comp == null) {
+			return createStaticURL(ctx, "/qrcode/" + command + "/");
 		}
-		return createStaticURL(ctx, "/qrcode/"+command+"/"+comp.getId()+".png");
-		
+		return createStaticURL(ctx, "/qrcode/" + command + "/" + comp.getId() + ".png");
+
 	}
-	
+
 	public static String createExpCompLink(ContentContext ctx, String compId) {
-		Map<String,String> params = new HashMap<String, String>();
-		params.put(ContentContext.FORCE_MODE_PARAMETER_NAME, ""+ctx.getRenderMode());
-		return createStaticURL(ctx, "/expcomp/"+compId+".html", params);		
+		Map<String, String> params = new HashMap<String, String>();
+		params.put(ContentContext.FORCE_MODE_PARAMETER_NAME, "" + ctx.getRenderMode());
+		return createStaticURL(ctx, "/expcomp/" + compId + ".html", params);
 	}
-	
+
 	public static String createQRCodeLink(ContentContext ctx, String data) {
 		String command = "data";
 		String code = StringHelper.getRandomIdBase64();
 		ctx.getGlobalContext().setTimeAttribute(code, data);
-		return createStaticURL(ctx, "/qrcode/"+command+"/"+code+".png");
+		return createStaticURL(ctx, "/qrcode/" + command + "/" + code + ".png");
 	}
 
 	public static String createResourceURL(ContentContext ctx, File file) {
@@ -374,7 +373,8 @@ public class URLHelper extends ElementaryURLHelper {
 			url = URLHelper.addParam(url, "template-id", templateVersion);
 		}
 		return createStaticURL(ctx, null, URLHelper.mergePath(templateFullPath, url), widthPath);
-		// return createStaticURL(ctx, URLHelper.mergePath(templateFullPath, url));
+		// return createStaticURL(ctx, URLHelper.mergePath(templateFullPath,
+		// url));
 	}
 
 	public static String createStaticTemplatePluginURL(ContentContext ctx, String url, String pluginFolder) throws Exception {
@@ -441,7 +441,14 @@ public class URLHelper extends ElementaryURLHelper {
 			template = Template.getApplicationInstance(ctx.getRequest().getSession().getServletContext(), ctx, globalContext.getDefaultTemplate());
 		}
 		String templateFullPath;
-		templateFullPath = URLHelper.mergePath(template.getLocalWorkTemplateFolder(), template.getFolder(globalContext)); // TODO Check why it was null before globalContext
+		templateFullPath = URLHelper.mergePath(template.getLocalWorkTemplateFolder(), template.getFolder(globalContext)); // TODO
+																															// Check
+																															// why
+																															// it
+																															// was
+																															// null
+																															// before
+																															// globalContext
 
 		if (url == null) {
 			return null;
@@ -498,9 +505,10 @@ public class URLHelper extends ElementaryURLHelper {
 	public static String createURL(ContentContext ctx) {
 		return createURL(ctx, ctx.getPath());
 	}
-	
+
 	/**
 	 * create URL without context.
+	 * 
 	 * @param ctx
 	 * @return
 	 */
@@ -531,18 +539,19 @@ public class URLHelper extends ElementaryURLHelper {
 			return createURL(ctx, page.getPath());
 		}
 	}
-	
+
 	/**
-	 * add suffix to the URL.
-	 * sample (suffix: #suffix) : www.javlo.org >> www.javlo.org#suffix 
-	 * sample 2 (suffix: #suffix) : www.javlo.org?test=test >> www.javlo.org#suffix?test=test
+	 * add suffix to the URL. sample (suffix: #suffix) : www.javlo.org >>
+	 * www.javlo.org#suffix sample 2 (suffix: #suffix) : www.javlo.org?test=test
+	 * >> www.javlo.org#suffix?test=test
+	 * 
 	 * @param URL
 	 * @param suffix
 	 * @return
 	 */
 	public static String addSuffix(String URL, String suffix) {
 		if (URL.contains("?")) {
-			URL = URL.replace("?", suffix+'?');
+			URL = URL.replace("?", suffix + '?');
 		} else {
 			URL = URL + suffix;
 		}
@@ -558,13 +567,14 @@ public class URLHelper extends ElementaryURLHelper {
 	 *            the current context of the content.
 	 * @return a URL
 	 */
-	public static String createURL(ContentContext ctx, String uri) {		
+	public static String createURL(ContentContext ctx, String uri) {
 		GlobalContext globalContext = GlobalContext.getInstance(ctx.getRequest());
 		return createURL(ctx, globalContext, uri, false, false, true, true);
 	}
 
 	/**
 	 * create url without context and without encoreURL (remove jsessionid)
+	 * 
 	 * @param ctx
 	 * @param uri
 	 * @return
@@ -576,16 +586,16 @@ public class URLHelper extends ElementaryURLHelper {
 		ctx.setForcePathPrefix(pathPrefix);
 		return url;
 	}
-	
+
 	public static String createURLWithtoutEncodeURL(ContentContext ctx, String uri) {
 		GlobalContext globalContext = GlobalContext.getInstance(ctx.getRequest());
 		return createURL(ctx, globalContext, uri, false, false, true, false);
 	}
-	
+
 	public static String createURLWithtoutContext(ContentContext ctx, String uri) {
 		GlobalContext globalContext = GlobalContext.getInstance(ctx.getRequest());
 		return createURL(ctx, globalContext, uri, false, false, false, false);
-	}	
+	}
 
 	public static String createURL(ContentContext ctx, GlobalContext globalContext, String uri) {
 		return createURL(ctx, globalContext, uri, false, false, true, true);
@@ -594,23 +604,25 @@ public class URLHelper extends ElementaryURLHelper {
 	public static String createURL(ContentContext ctx, String path, Map params) {
 		StringBuffer finalURL = new StringBuffer();
 		finalURL.append(path);
-		char sep = '?';
-		if (path.indexOf('?') >= 0) {
-			sep = '&';
-		}
-		Iterator keys = params.keySet().iterator();
-		while (keys.hasNext()) {
-			String key = (String) keys.next();
-			String value = (String) params.get(key);
-			finalURL.append(sep);
-			finalURL.append(key);
-			finalURL.append('=');
-			finalURL.append(URLEncoder.encode(value));
-			sep = '&';
+		if (params != null) {
+			char sep = '?';
+			if (path.indexOf('?') >= 0) {
+				sep = '&';
+			}		
+			Iterator keys = params.keySet().iterator();
+			while (keys.hasNext()) {
+				String key = (String) keys.next();
+				String value = (String) params.get(key);
+				finalURL.append(sep);
+				finalURL.append(key);
+				finalURL.append('=');
+				finalURL.append(URLEncoder.encode(value));
+				sep = '&';
+			}
 		}
 		return createURL(ctx, finalURL.toString());
 	}
-	
+
 	public static String createStaticURL(ContentContext ctx, String path, Map params) {
 		StringBuffer finalURL = new StringBuffer();
 		finalURL.append(path);
@@ -766,7 +778,7 @@ public class URLHelper extends ElementaryURLHelper {
 		String templateFolder;
 		templateFolder = template.getLocalWorkTemplateFolder();
 
-		String templateFullPath = URLHelper.mergePath(templateFolder, template.getFolder((String)null));
+		String templateFullPath = URLHelper.mergePath(templateFolder, template.getFolder((String) null));
 
 		String url = template.getVisualFile();
 
@@ -779,7 +791,9 @@ public class URLHelper extends ElementaryURLHelper {
 	}
 
 	/**
-	 * transform a url to a crypted param url. sampe : http://www.cms.com?id=342&user=patrick --> http://www.cms.com?crypted_param=sl4ZDC74DR5673DT5
+	 * transform a url to a crypted param url. sampe :
+	 * http://www.cms.com?id=342&user=patrick -->
+	 * http://www.cms.com?crypted_param=sl4ZDC74DR5673DT5
 	 * 
 	 * @param ctx
 	 *            current content context.
@@ -794,7 +808,9 @@ public class URLHelper extends ElementaryURLHelper {
 		}
 		StaticConfig staticConfig = StaticConfig.getInstance(ctx.getRequest().getSession());
 		String[] dec = url.split("\\?");
-		// String encodedParam = StringHelper.encodeBase64ToURLParam(StringSecurityUtil.encode('?'+dec[1], staticConfig.getSecretKey()));
+		// String encodedParam =
+		// StringHelper.encodeBase64ToURLParam(StringSecurityUtil.encode('?'+dec[1],
+		// staticConfig.getSecretKey()));
 		String encodedParam = StringSecurityUtil.encode('?' + dec[1], staticConfig.getSecretKey());
 		return URLHelper.addParam(dec[0], RequestHelper.CRYPTED_PARAM_NAME, encodedParam);
 
@@ -804,7 +820,8 @@ public class URLHelper extends ElementaryURLHelper {
 	 * extract a host name from a url
 	 * 
 	 * @param url
-	 *            a url sample : http://www.host.ext/view/fr/test.html (extract name : host)
+	 *            a url sample : http://www.host.ext/view/fr/test.html (extract
+	 *            name : host)
 	 * @return return a name (hostname without last extension)
 	 */
 	public static String extractName(String url) {
@@ -1072,17 +1089,19 @@ public class URLHelper extends ElementaryURLHelper {
 		if (url.getPort() >= 0 && url.getPort() != 80) {
 			port = ":" + url.getPort();
 		}
-		
+
 		String query = "";
 		if (url.getQuery() != null) {
-			query = '?'+url.getQuery();
+			query = '?' + url.getQuery();
 		}
-		
+
 		return url.getProtocol() + "://" + url.getHost() + port + '/' + URLHelper.mergePath(pathItems) + query;
 	}
 
 	/**
-	 * get the parent url of a url. sample: http://www.javlo.org/static/images/visual.png >> http://www.javlo.org/static/images
+	 * get the parent url of a url. sample:
+	 * http://www.javlo.org/static/images/visual.png >>
+	 * http://www.javlo.org/static/images
 	 * 
 	 * @param url
 	 * @return a url to a folder.
@@ -1099,9 +1118,12 @@ public class URLHelper extends ElementaryURLHelper {
 	}
 
 	public static void main(String[] args) {
-		
-			System.out.println("***** URLHelper.main : "+addCredential("http://www.javlo.org","admin", "adminpwd")); //TODO: remove debug trace
-		
+
+		System.out.println("***** URLHelper.main : " + addCredential("http://www.javlo.org", "admin", "adminpwd")); // TODO:
+																													// remove
+																													// debug
+																													// trace
+
 	}
 
 	public static String replaceFolderVariable(ContentContext ctx, String url) {
@@ -1112,14 +1134,14 @@ public class URLHelper extends ElementaryURLHelper {
 		return outURL;
 	}
 
-	
 	/**
-	 * transform text to url.
-	 * if absolute url >> return same link, if contains '/' >> search on path, don't contains '/' >> search as page name.
+	 * transform text to url. if absolute url >> return same link, if contains
+	 * '/' >> search on path, don't contains '/' >> search as page name.
+	 * 
 	 * @param ctx
 	 * @param link
 	 * @return
-	 * @throws Exception 
+	 * @throws Exception
 	 */
 	public static String smartLink(ContentContext ctx, String link) throws Exception {
 		if (link == null) {
@@ -1127,7 +1149,8 @@ public class URLHelper extends ElementaryURLHelper {
 		}
 		if (URLHelper.isAbsoluteURL(link)) {
 			return link;
-		} if (link.contains("/")) {
+		}
+		if (link.contains("/")) {
 			String url = URLHelper.createURL(ctx, link);
 			if (url != null) {
 				return url;
@@ -1143,17 +1166,19 @@ public class URLHelper extends ElementaryURLHelper {
 			}
 		}
 	}
-	
+
 	public static String addMailingFeedback(ContentContext ctx, String url) {
 		if (ctx.getRenderMode() == ContentContext.PAGE_MODE && url != null) {
 			return addParam(url, MailingAction.MAILING_FEEDBACK_PARAM_NAME, "##data##");
 		} else {
 			return url;
-		}		
+		}
 	}
-	
+
 	/**
-	 * transform url with credential.  semple : http://www.javlo.be >> http://login:password@www.javlo.be
+	 * transform url with credential. semple : http://www.javlo.be >>
+	 * http://login:password@www.javlo.be
+	 * 
 	 * @param url
 	 * @param login
 	 * @param password
@@ -1161,16 +1186,16 @@ public class URLHelper extends ElementaryURLHelper {
 	 */
 	public static String addCredential(String url, String login, String password) {
 		if (url != null && StringHelper.isURL(url)) {
-			return url.replace("http://", "http://"+login+':'+password+"@");
+			return url.replace("http://", "http://" + login + ':' + password + "@");
 		} else {
 			return url;
 		}
 	}
-	
+
 	public static String getFileURL(ContentContext ctx, File file) {
-		 File rootStatic = new File(ctx.getGlobalContext().getDataFolder());
-		 String relativePath  =  file.getAbsolutePath().replace(rootStatic.getAbsolutePath(),"");
-		 return URLHelper.createResourceURL(ctx, relativePath);
+		File rootStatic = new File(ctx.getGlobalContext().getDataFolder());
+		String relativePath = file.getAbsolutePath().replace(rootStatic.getAbsolutePath(), "");
+		return URLHelper.createResourceURL(ctx, relativePath);
 	}
 
 }
