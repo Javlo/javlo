@@ -373,3 +373,9 @@
  * no same url mecanism (method UrlNumber in MenuElement)
  
  * change isLabel with labelLevel
+ 
+ * GlobalContext thread, now have no reference to GlobalContext
+ 
+ * keep params for langugae link
+ 
+* 2.0.3.8.2 141/02/2015

@@ -429,8 +429,7 @@ public class PersistenceService {
 	}
 
 	protected String getDirectory() {
-		String dir = URLHelper.mergePath(globalContext.getDataFolder(), _DIRECTORY);
-		return dir;
+		return URLHelper.mergePath(globalContext.getDataFolder(), _DIRECTORY);
 	}
 
 	private String getTrackingDirectory() {
@@ -1299,7 +1298,7 @@ public class PersistenceService {
 	}
 
 	public synchronized void store(ContentContext ctx, int renderMode, boolean async) throws Exception {
-
+		
 		setAskStore(false);
 
 		synchronized (ctx.getGlobalContext().getLockLoadContent()) {

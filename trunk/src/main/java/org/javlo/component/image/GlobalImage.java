@@ -1093,9 +1093,8 @@ public class GlobalImage extends Image implements IImageFilter {
 	}
 	
 	protected String getEditorComplexity(ContentContext ctx) {
-		return getConfig(ctx).getProperty("editor-complexity", "middle");
+		return getConfig(ctx).getProperty("editor-complexity", "light");
 	}
-
 
 	@Override
 	public String getSpecialTagXHTML(ContentContext ctx) throws Exception {
