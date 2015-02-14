@@ -1227,9 +1227,6 @@ public class GlobalContext implements Serializable, IPrintInfo {
 	 * @return
 	 */
 	public String getFolder() {
-		if (properties.getString("folder") == null || properties.getString("folder").trim().length() == 0) {
-			throw new RuntimeException("folder not found for context : "+getContextKey());
-		}
 		return properties.getString("folder");
 	}
 
