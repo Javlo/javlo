@@ -3,13 +3,15 @@
 %><%@page import="org.javlo.template.TemplateFactory"
 %><%@page import="org.javlo.template.Template"
 %><%@page import="org.javlo.context.ContentContext"
+%><%@page import="org.javlo.config.StaticConfig"
 %><%@page import="org.javlo.navigation.MenuElement"
 %><%
 ContentContext ctx = ContentContext.getContentContext(request, response);
+StaticConfig staticConfig = ctx.getGlobalContext().getStaticConfig();
 if (ctx.isInteractiveMode() && ctx.getRenderMode() == ContentContext.PREVIEW_MODE) {%>
-<jsp:include page="/jsp/preview/command.jsp" /><%
+<jsp:include page="<%=staticConfig.getPreviewCommandFilePath()%>" /><%
 } else if (ctx.isInteractiveMode() && ctx.getRenderMode() == ContentContext.TIME_MODE) {%>
-	<jsp:include page="/jsp/time-traveler/command.jsp" />
+	<jsp:include page="<%=staticConfig.getTimeTravelerFilePath()%>" />
 	<%MessageRepository messageRepository = MessageRepository.getInstance(ctx);
     %><div id="message-container" class="standard"><%
 	if (messageRepository.getGlobalMessage().getMessage().trim().length() > 0) {%>

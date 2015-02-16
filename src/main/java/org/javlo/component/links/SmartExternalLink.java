@@ -578,7 +578,7 @@ public class SmartExternalLink extends ComplexPropertiesLink implements IReverse
 				res.append("\">");
 				if (getImageURI(ctx) != null) {
 					res.append("<span class=\"image\">");
-					String imageURL = URLHelper.createTransformURL(ctx, getImageURI(ctx), "list");
+					String imageURL = URLHelper.createTransformURL(ctx, getImageURI(ctx), "extern");
 					res.append("<img src=\"" + imageURL + "\" alt=\"" + getTitle(ctx) + "\" />");
 					res.append("</span>");
 				}

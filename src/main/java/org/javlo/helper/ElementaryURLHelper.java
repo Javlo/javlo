@@ -208,11 +208,12 @@ public abstract class ElementaryURLHelper {
 				} catch (Exception e) {
 					e.printStackTrace();
 				}
-				if (currentModule == null || ctx.getCurrentEditUser() == null) {
+				mode = "/" + previewPrefix + "edit/";
+				/*if (currentModule == null || ctx.getCurrentEditUser() == null) {
 					mode = "/" + previewPrefix + "edit/";
 				} else {
 					mode = "/" + previewPrefix + "edit-" + currentModule.getName() + "/";
-				}
+				}*/
 			} else if (ctx.getRenderMode() == ContentContext.PREVIEW_MODE) {
 				mode = "/preview/";
 			} else if (ctx.getRenderMode() == ContentContext.PAGE_MODE) {

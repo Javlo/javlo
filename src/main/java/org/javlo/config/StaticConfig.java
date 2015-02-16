@@ -1296,7 +1296,7 @@ public class StaticConfig extends Observable {
 	 * @return
 	 */
 	public String getEditTemplateMode() {
-		return properties.getString("edit-template.mode", "default");
+		return properties.getString("edit-template.mode", "dark");
 	}
 
 	public String getEditDefaultMimeTypeImage() {
@@ -1358,6 +1358,14 @@ public class StaticConfig extends Observable {
 
 	public String getDropboxAppSecret() {		
 		return properties.getString("dropbox.app-secret", null);
+	}
+	
+	public String getPreviewCommandFilePath() {		
+		return properties.getString("preview.command-file", "/jsp/preview/command.jsp");
+	}
+	
+	public String getTimeTravelerFilePath() {		
+		return properties.getString("preview.timetraveler-file", "/jsp/time-traveler/command.jsp");
 	}
 
 }
